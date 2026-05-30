@@ -1,0 +1,2214 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Endodirect — Educação Médica</title>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --navy:#1a2744;--bg:#f0f2f7;--surface:#fff;--s2:#f8f9fc;
+  --bd:#e4e8f0;--bd2:#d0d5e8;--tx:#1a2744;--t2:#5a6a8a;--t3:#9aaac0;
+  --blue:#3b6fd4;--blue2:#5585e8;--blue-l:#eef2ff;
+  --grn:#22c55e;--grn-l:#f0fdf4;--red:#ef4444;--red-l:#fef2f2;
+  --gold:#f59e0b;--gold-l:#fffbeb;--pur:#8b5cf6;--pur-l:#f5f3ff;
+  --r:12px;--rs:8px;--font:'Segoe UI',system-ui,sans-serif;
+}
+html,body{height:100%;overflow:hidden;font-family:var(--font)}
+body{background:var(--bg);color:var(--tx);display:flex;flex-direction:column}
+#login-screen{position:fixed;inset:0;z-index:1000;background:linear-gradient(135deg,#e8ecf5,#f5f7fc 60%,#e2e8f5);display:flex;align-items:center;justify-content:center}
+.login-card{background:#fff;border-radius:24px;box-shadow:0 12px 50px rgba(26,39,68,.18);width:520px;max-width:94vw;overflow:hidden}
+.login-hdr{background:linear-gradient(160deg,#1a2744 60%,#2a3f6e);padding:2.6rem 2.4rem 2.1rem;display:flex;flex-direction:column;align-items:center;gap:.7rem}
+.login-logo{display:flex;align-items:center;gap:14px}
+.login-ico{display:flex;align-items:center;justify-content:center}
+.login-name{font-size:2rem;font-weight:800;color:#fff;letter-spacing:-.02em}
+.login-sub{font-size:.75rem;color:rgba(255,255,255,.5);letter-spacing:.1em;text-transform:uppercase}
+.login-body{padding:2.4rem 2.6rem 2.6rem}
+.login-google{width:100%;display:flex;align-items:center;justify-content:center;gap:.8rem;background:#fff;border:1.5px solid var(--bd2);border-radius:10px;padding:.85rem 1rem;font-size:.95rem;font-weight:500;color:var(--tx);cursor:pointer;font-family:var(--font);margin-bottom:1.3rem}
+.login-divider{display:flex;align-items:center;gap:.8rem;margin-bottom:1.3rem}
+.login-divider span{font-size:.78rem;color:var(--t3)}
+.login-divider::before,.login-divider::after{content:'';flex:1;height:1px;background:var(--bd)}
+.fld{margin-bottom:.95rem}
+.fld label{font-size:.72rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--t2);display:block;margin-bottom:6px}
+.fld input{width:100%;background:#fff;border:1.5px solid var(--bd2);border-radius:10px;padding:.72rem 1rem;font-family:var(--font);font-size:.95rem;color:var(--tx);outline:none}
+.login-btn{width:100%;background:var(--navy);color:#fff;border:none;border-radius:10px;padding:.92rem;font-size:1.02rem;font-weight:600;cursor:pointer;font-family:var(--font);margin-top:.4rem}
+.login-err{background:var(--red-l);border:1px solid #fecaca;border-radius:10px;padding:.6rem .9rem;font-size:.8rem;color:var(--red);margin-bottom:.95rem;display:none}
+#app-screen{display:none;flex-direction:column;height:100%}
+.topbar{height:52px;background:var(--surface);border-bottom:1px solid var(--bd);display:flex;align-items:center;justify-content:space-between;padding:0 1.2rem 0 0;flex-shrink:0;z-index:50}
+.tb-left{display:flex;align-items:center;height:100%}
+.tb-logo{width:190px;height:100%;background:var(--navy);display:flex;align-items:center;gap:9px;padding:0 1.1rem;flex-shrink:0}
+.tb-logo span{font-size:1.05rem;font-weight:700;color:#fff}
+.tb-bc{padding:0 1.1rem;font-size:.7rem;color:var(--t3);font-weight:600;letter-spacing:.07em;text-transform:uppercase}
+.tb-right{display:flex;align-items:center;gap:.6rem}
+.tb-user{display:flex;align-items:center;gap:.5rem;cursor:pointer;position:relative}
+.tb-uname{font-size:.76rem;font-weight:600;color:var(--tx)}
+.tb-usub{font-size:.62rem;color:var(--t3)}
+.tb-avatar{width:30px;height:30px;background:var(--navy);border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:.73rem;font-weight:700;color:#fff;flex-shrink:0}
+.btn-cta{background:var(--blue);color:#fff;border:none;border-radius:99px;padding:.36rem .85rem;font-size:.73rem;font-weight:600;cursor:pointer;display:flex;align-items:center;gap:4px;font-family:var(--font);white-space:nowrap}
+.user-menu{display:none;position:absolute;top:calc(100% + 8px);right:0;background:#fff;border:1px solid var(--bd);border-radius:var(--r);box-shadow:0 8px 24px rgba(0,0,0,.12);min-width:170px;z-index:300;padding:.3rem 0}
+.user-menu-hd{padding:.5rem .9rem .3rem;border-bottom:1px solid var(--bd)}
+.um-name{font-size:.78rem;font-weight:600}
+.um-email{font-size:.65rem;color:var(--t3)}
+.um-btn{display:block;width:100%;background:none;border:none;font-family:var(--font);font-size:.78rem;color:var(--red);text-align:left;padding:.45rem .9rem;cursor:pointer}
+.workspace{flex:1;display:flex;overflow:hidden}
+.sidebar{width:190px;background:var(--navy);display:flex;flex-direction:column;padding:.6rem .5rem;flex-shrink:0;overflow-y:auto}
+.sb-sec{font-size:.54rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:rgba(255,255,255,.3);padding:.55rem .82rem .22rem;margin-top:.3rem}
+.sb-item{display:flex;align-items:center;gap:8px;padding:.46rem .8rem;border-radius:var(--rs);font-size:.76rem;font-weight:500;color:rgba(255,255,255,.65);cursor:pointer;transition:all .13s;border:none;background:none;font-family:var(--font);width:100%;text-align:left}
+.sb-item:hover{background:rgba(255,255,255,.08);color:#fff}
+.sb-item.on{background:rgba(255,255,255,.16);color:#fff;font-weight:600}
+.sb-spacer{flex:1}
+.panel{flex:1;overflow-y:auto;display:none;flex-direction:column}
+.panel.on{display:flex}
+.breadcrumb{padding:.55rem 1.5rem;font-size:.64rem;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--t3);border-bottom:1px solid var(--bd);flex-shrink:0}
+.breadcrumb b{color:var(--blue);font-weight:600}
+.ph{padding:1rem 1.5rem .35rem}
+.ph h1{font-size:1.35rem;font-weight:700;letter-spacing:-.02em}
+.ph p{font-size:.78rem;color:var(--t2)}
+.pc{padding:.8rem 1.5rem 3rem;max-width:1100px;width:100%}
+.card{background:var(--surface);border:1px solid var(--bd);border-radius:var(--r);padding:1rem 1.1rem}
+.card-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:.65rem}
+.card-title{font-size:.7rem;font-weight:600;color:var(--t2);text-transform:uppercase;letter-spacing:.07em}
+.g2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.g3{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+.g4{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}
+.btn{border:none;border-radius:var(--rs);padding:.42rem .88rem;font-family:var(--font);font-size:.75rem;font-weight:500;cursor:pointer;display:inline-flex;align-items:center;gap:5px;line-height:1}
+.btn-primary{background:var(--blue);color:#fff}
+.btn-primary:hover:not(:disabled){background:var(--blue2)}
+.btn-outline{background:transparent;border:1px solid var(--bd2);color:var(--t2)}
+.btn-outline:hover:not(:disabled){border-color:var(--blue);color:var(--blue)}
+.btn-ghost{background:transparent;border:none;color:var(--t2)}
+.btn-ghost:hover:not(:disabled){color:var(--tx);background:var(--s2)}
+.btn-danger{background:var(--red-l);color:var(--red);border:1px solid #fecaca}
+.btn-sm{padding:.26rem .6rem;font-size:.68rem}
+.fld2{margin-bottom:.65rem}
+.flbl,.fld2 label{font-size:.62rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--t2);display:block;margin-bottom:3px}
+input[type=text],input[type=search],input[type=number],select,textarea{background:#fff;border:1px solid var(--bd2);border-radius:var(--rs);padding:.44rem .72rem;font-family:var(--font);font-size:.79rem;color:var(--tx);outline:none;width:100%}
+input:focus,select:focus,textarea:focus{border-color:var(--blue);box-shadow:0 0 0 3px rgba(59,111,212,.1)}
+textarea{resize:vertical;line-height:1.6}
+.tag{display:inline-flex;align-items:center;padding:2px 7px;border-radius:99px;font-size:.6rem;font-weight:600;white-space:nowrap}
+.tag-blue{background:var(--blue-l);color:var(--blue)}
+.tag-grn{background:var(--grn-l);color:#16a34a}
+.tag-red{background:var(--red-l);color:var(--red)}
+.tag-pur{background:var(--pur-l);color:var(--pur)}
+.tag-gold{background:var(--gold-l);color:#d97706}
+.notify{position:fixed;bottom:1.2rem;right:1.2rem;background:var(--tx);border-radius:var(--r);padding:.55rem .9rem;font-size:.75rem;color:#fff;box-shadow:0 8px 24px rgba(0,0,0,.2);z-index:1100;max-width:280px;pointer-events:none}
+.notify.ok{background:#16a34a}
+.notify.err{background:var(--red)}
+.notify.info{background:var(--blue)}
+.ld{display:inline-flex;align-items:center;gap:.5rem;color:var(--t2);font-size:.75rem}
+.ld-dots{display:flex;gap:3px}
+.ld-dots span{width:4px;height:4px;border-radius:50%;background:var(--blue);animation:ldp 1.2s infinite}
+.ld-dots span:nth-child(2){animation-delay:.2s}
+.ld-dots span:nth-child(3){animation-delay:.4s}
+@keyframes ldp{0%,80%,100%{opacity:.25;transform:scale(.8)}40%{opacity:1;transform:scale(1)}}
+.divider{border:none;border-top:1px solid var(--bd);margin:.75rem 0}
+.gen-box{background:var(--s2);border:1px solid var(--bd);border-radius:var(--r);padding:.95rem 1.1rem;margin-bottom:.85rem}
+.tog-row{display:flex;border:1px solid var(--bd2);border-radius:var(--rs);overflow:hidden;width:fit-content}
+.tog-btn{background:#fff;border:none;padding:.3rem .82rem;font-size:.7rem;font-weight:500;color:var(--t2);cursor:pointer;font-family:var(--font)}
+.tog-btn.on{background:var(--blue);color:#fff}
+.sec-title{font-size:.68rem;font-weight:600;color:var(--t2);text-transform:uppercase;letter-spacing:.07em}
+.sec-h{display:flex;align-items:center;justify-content:space-between;margin-bottom:.55rem}
+.empty{text-align:center;padding:1.5rem 1rem;color:var(--t3);font-size:.75rem}
+.rec-box{background:var(--navy);border-radius:var(--r);padding:.9rem;color:#fff}
+.perf-bar{display:flex;align-items:center;gap:.65rem;margin-bottom:.55rem}
+.perf-bar-label{font-size:.74rem;color:var(--tx);min-width:130px}
+.perf-bar-track{flex:1;height:7px;background:var(--bd);border-radius:99px;overflow:hidden}
+.perf-bar-fill{height:100%;border-radius:99px;background:var(--blue)}
+.perf-bar-pct{font-size:.68rem;font-weight:600;color:var(--tx);min-width:28px;text-align:right}
+.q-list{display:flex;flex-direction:column;gap:4px}
+.q-row{background:var(--surface);border:1px solid var(--bd);border-radius:var(--r);padding:.7rem .9rem;cursor:pointer}
+.q-row:hover{border-color:var(--blue);background:var(--blue-l)}
+.q-row-top{display:flex;align-items:flex-start;justify-content:space-between;gap:.7rem}
+.q-stem-prev{font-size:.77rem;color:var(--tx);line-height:1.5;flex:1}
+.q-detail{background:var(--s2);border:1px solid var(--bd);border-radius:var(--r);padding:.9rem 1.1rem;margin-top:3px}
+.q-stem{font-size:.84rem;line-height:1.7;color:var(--tx);margin-bottom:.85rem;font-weight:500}
+.qo{background:#fff;border:1.5px solid var(--bd2);border-radius:var(--rs);padding:.48rem .8rem;cursor:pointer;display:flex;gap:.5rem;align-items:flex-start;font-size:.77rem;color:var(--t2);line-height:1.5;margin-bottom:4px}
+.qo:hover{border-color:var(--blue);color:var(--tx);background:var(--blue-l)}
+.qo.correct{border-color:var(--grn)!important;color:#16a34a!important;background:var(--grn-l)!important}
+.qo.wrong{border-color:var(--red)!important;color:var(--red)!important;background:var(--red-l)!important}
+.qo-ltr{font-weight:700;flex-shrink:0;width:14px}
+.q-fb{border-radius:var(--rs);padding:.55rem .8rem;font-size:.75rem;line-height:1.6;margin:.65rem 0}
+.q-fb.ok{background:var(--grn-l);color:#16a34a;border:1px solid #bbf7d0}
+.q-fb.er{background:var(--red-l);color:var(--red);border:1px solid #fecaca}
+.fc-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(195px,1fr));gap:9px}
+.fc-card{background:var(--surface);border:1.5px solid var(--bd);border-radius:var(--r);padding:.85rem;cursor:pointer;min-height:100px;display:flex;flex-direction:column}
+.fc-card:hover{border-color:var(--blue)}
+.fc-card.rev{border-color:#86efac;background:var(--grn-l)}
+.fc-cat{font-size:.54rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--t3);margin-bottom:5px}
+.fc-front{font-size:.77rem;color:var(--tx);line-height:1.5;flex:1;font-weight:500}
+.fc-back{font-size:.73rem;color:#16a34a;margin-top:.4rem;line-height:1.5;display:none;border-top:1px solid #bbf7d0;padding-top:.35rem}
+.fc-card.rev .fc-back{display:block}
+.fc-foot{display:flex;align-items:center;justify-content:space-between;margin-top:.55rem;padding-top:.35rem;border-top:1px solid var(--bd)}
+.study-c{background:var(--surface);border:1.5px solid var(--bd);border-radius:16px;padding:1.6rem 1.3rem;text-align:center;min-height:180px;display:flex;flex-direction:column;align-items:center;justify-content:center;cursor:pointer;margin-bottom:.75rem}
+.study-c.fl{border-color:#86efac;background:var(--grn-l)}
+.sr-card{background:var(--surface);border:2px solid var(--bd);border-radius:16px;min-height:190px;display:flex;flex-direction:column;align-items:center;justify-content:center;cursor:pointer;padding:1.4rem;text-align:center;margin-bottom:.7rem}
+.sr-card.flipped{border-color:#86efac;background:var(--grn-l)}
+.sr-btn{border:none;border-radius:var(--rs);padding:.48rem 1rem;font-size:.74rem;font-weight:600;cursor:pointer;font-family:var(--font)}
+.sr-easy{background:#dcfce7;color:#16a34a}
+.sr-hard{background:#fef9c3;color:#ca8a04}
+.sr-again{background:var(--red-l);color:var(--red)}
+.mm-item{background:var(--surface);border:1px solid var(--bd);border-radius:var(--r);padding:.75rem .9rem;display:flex;align-items:center;justify-content:space-between;gap:.7rem}
+.crono-day{background:var(--surface);border:1px solid var(--bd);border-radius:var(--r);padding:.8rem .95rem;margin-bottom:.5rem}
+.crono-day-title{font-size:.76rem;font-weight:700;color:var(--navy);margin-bottom:.5rem;text-transform:uppercase;letter-spacing:.05em}
+.crono-sess{display:flex;align-items:center;gap:.6rem;padding:.42rem .65rem;background:var(--s2);border-radius:var(--rs);margin-bottom:3px;font-size:.77rem}
+.sim-bubble{border-radius:var(--r);padding:.65rem .9rem;margin-bottom:.5rem;font-size:.8rem;line-height:1.65}
+.sim-bubble.doc{background:var(--blue-l);border-left:3px solid var(--blue)}
+.sim-bubble.feed{background:var(--grn-l);border-left:3px solid var(--grn)}
+.sim-bubble.er{background:var(--red-l);border-left:3px solid var(--red)}
+.sim-opt{background:#fff;border:1.5px solid var(--bd2);border-radius:var(--rs);padding:.52rem .88rem;cursor:pointer;display:flex;gap:.55rem;align-items:flex-start;font-size:.79rem;color:var(--t2);line-height:1.5;margin-bottom:5px;font-family:var(--font);width:100%;text-align:left}
+.sim-opt:hover{border-color:var(--blue);background:var(--blue-l);color:var(--tx)}
+.sim-opt.sel{border-color:var(--blue)!important;background:var(--blue-l)!important;color:var(--blue)!important}
+.sim-opt.correct{border-color:var(--grn)!important;background:var(--grn-l)!important;color:#16a34a!important}
+.sim-opt.wrong{border-color:var(--red)!important;background:var(--red-l)!important;color:var(--red)!important}
+.sf-header{position:sticky;top:0;z-index:20;background:var(--navy);color:#fff;padding:.55rem 1.3rem;display:flex;align-items:center;justify-content:space-between;flex-shrink:0}
+.sf-timer{font-size:1.1rem;font-weight:700;font-family:monospace;letter-spacing:.08em}
+.sf-timer.warn{color:#fbbf24}
+.sf-timer.crit{color:#f87171;animation:pulse 1s infinite}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.4}}
+.sf-nav-btn{width:28px;height:28px;border-radius:5px;border:1px solid var(--bd2);background:#fff;font-size:.67rem;font-weight:600;cursor:pointer;font-family:var(--font);display:inline-flex;align-items:center;justify-content:center}
+.sf-nav-btn.ans{background:var(--blue);color:#fff;border-color:var(--blue)}
+.sf-nav-btn.flag{background:var(--gold-l);border-color:var(--gold)}
+.note-item{padding:.55rem .8rem;cursor:pointer;border-bottom:1px solid var(--bd)}
+.note-item.on{background:var(--blue-l);border-left:3px solid var(--blue)}
+.note-title{font-size:.77rem;font-weight:600;color:var(--tx);margin-bottom:2px}
+.note-sub{font-size:.62rem;color:var(--t3)}
+.note-tb-btn{background:none;border:1px solid var(--bd2);border-radius:5px;padding:3px 7px;font-size:.7rem;font-weight:600;cursor:pointer;font-family:var(--font);color:var(--tx)}
+.note-tb-btn:hover{background:var(--blue-l);border-color:var(--blue);color:var(--blue)}
+.rep-area-row{display:flex;align-items:center;gap:.7rem;margin-bottom:.55rem}
+.rep-area-name{font-size:.77rem;color:var(--tx);min-width:150px}
+.rep-area-track{flex:1;height:8px;background:var(--bd);border-radius:99px;overflow:hidden}
+.rep-area-fill{height:100%;border-radius:99px}
+.rep-area-pct{font-size:.68rem;font-weight:600;min-width:45px;text-align:right}
+.faq-item{border-bottom:1px solid var(--bd);padding:.5rem 0}
+.faq-q{font-size:.79rem;font-weight:600;cursor:pointer;display:flex;justify-content:space-between;align-items:center}
+.faq-a{font-size:.75rem;color:var(--t2);line-height:1.6;margin-top:.3rem;display:none}
+.faq-a.open{display:block}
+.adm-tab{background:#fff;border:1.5px solid var(--bd2);border-radius:99px;padding:.3rem .88rem;font-size:.74rem;font-weight:500;color:var(--t2);cursor:pointer;font-family:var(--font)}
+.adm-tab.on{background:var(--blue);border-color:var(--blue);color:#fff;font-weight:600}
+.adm-form{background:#fff;border:1px solid var(--bd);border-radius:var(--r);padding:1.1rem 1.3rem;margin-bottom:.9rem}
+.adm-field{margin-bottom:.75rem}
+.adm-field label{display:block;font-size:.62rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--t2);margin-bottom:3px}
+.adm-row{background:#fff;border:1px solid var(--bd);border-radius:var(--rs);padding:.65rem .88rem;margin-bottom:4px;display:flex;align-items:flex-start;gap:.65rem}
+.adm-row-info{flex:1;min-width:0}
+.adm-row-title{font-size:.79rem;font-weight:600;color:var(--tx);margin-bottom:2px}
+.adm-row-sub{font-size:.66rem;color:var(--t3)}
+.adm-stat{background:#fff;border:1px solid var(--bd);border-radius:var(--r);padding:.8rem .88rem;text-align:center}
+.adm-stat-n{font-size:1.5rem;font-weight:700}
+.adm-stat-l{font-size:.62rem;color:var(--t3);margin-top:1px}
+.art-drop{border:2px dashed var(--bd2);border-radius:var(--r);padding:1.5rem 1rem;text-align:center;cursor:pointer;background:var(--s2)}
+.art-drop:hover,.art-drop.drag{border-color:var(--blue);background:var(--blue-l)}
+.chat-wrap{display:flex;flex-direction:column;height:100%;overflow:hidden}
+.chat-msgs{flex:1;overflow-y:auto;padding:.9rem 1.3rem;display:flex;flex-direction:column;gap:.65rem}
+.chat-bubble{max-width:72%;border-radius:14px;padding:.6rem .88rem;font-size:.79rem;line-height:1.6}
+.chat-bubble.user{background:var(--blue);color:#fff;align-self:flex-end;border-bottom-right-radius:4px}
+.chat-bubble.ai{background:var(--surface);border:1px solid var(--bd);color:var(--tx);align-self:flex-start;border-bottom-left-radius:4px}
+.chat-name{font-size:.58rem;font-weight:700;color:var(--blue);text-transform:uppercase;letter-spacing:.07em;margin-bottom:3px}
+.chat-input-row{padding:.7rem 1.1rem;border-top:1px solid var(--bd);display:flex;gap:.5rem;align-items:center;background:var(--surface);flex-shrink:0}
+.chat-sugg{display:flex;flex-wrap:wrap;gap:.35rem;padding:.5rem 1.1rem .35rem;border-top:1px solid var(--bd);background:var(--s2)}
+.chat-sugg-btn{background:#fff;border:1px solid var(--bd2);border-radius:99px;padding:.2rem .65rem;font-size:.67rem;color:var(--t2);cursor:pointer;font-family:var(--font)}
+.modal-bg{display:none;position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:900;align-items:center;justify-content:center}
+.modal-box{background:#fff;border-radius:18px;width:min(460px,94vw);box-shadow:0 16px 48px rgba(0,0,0,.2);overflow:hidden}
+.modal-hdr{background:linear-gradient(160deg,#1a2744 60%,#2a3f6e);padding:1.1rem 1.3rem;display:flex;align-items:center;justify-content:space-between}
+.modal-hdr-title{font-size:.92rem;font-weight:700;color:#fff}
+.modal-close{background:rgba(255,255,255,.15);border:none;border-radius:8px;width:28px;height:28px;color:#fff;cursor:pointer;font-size:.9rem}
+.modal-body{padding:1.2rem 1.3rem}
+.fb-star{font-size:1.5rem;cursor:pointer;opacity:.35}
+.fb-cat-btn,.fb-tipo-btn{background:#fff;border:1.5px solid var(--bd2);border-radius:99px;padding:.26rem .7rem;font-size:.7rem;font-weight:500;color:var(--t2);cursor:pointer;font-family:var(--font)}
+.fb-cat-btn.on{background:var(--blue-l);border-color:var(--blue);color:var(--blue);font-weight:600}
+.fb-tipo-btn.on{background:var(--gold-l);border-color:var(--gold);color:#d97706;font-weight:600}
+.cat-pill{background:#fff;border:1.5px solid var(--bd2);border-radius:99px;padding:.26rem .7rem;font-size:.7rem;font-weight:500;color:var(--t2);cursor:pointer;font-family:var(--font)}
+.cat-pill:hover{border-color:var(--blue);color:var(--blue)}
+.cat-pill.on{background:var(--blue-l);border-color:var(--blue);color:var(--blue);font-weight:600}
+</style>
+</head>
+<body>
+<div class="modal-bg" id="onboard-modal">
+  <div class="modal-box">
+    <div class="modal-hdr"><span class="modal-hdr-title">👋 Bem-vindo ao Endodirect</span></div>
+    <div class="modal-body">
+      <div style="font-size:.8rem;color:var(--t2);margin-bottom:1.1rem;line-height:1.55">Antes de começar, conte um pouco sobre você. Isso ajuda a personalizar sua experiência.</div>
+      <div style="margin-bottom:1rem">
+        <div class="flbl" style="margin-bottom:.45rem">1. Você é:</div>
+        <div style="display:flex;gap:.5rem">
+          <label style="flex:1;display:flex;align-items:center;justify-content:center;gap:.4rem;cursor:pointer;font-size:.79rem;border:1.5px solid var(--bd2);border-radius:var(--rs);padding:.55rem;color:var(--tx)" id="ob-res-lbl"><input type="radio" name="ob-perfil" value="Residente" style="width:auto;accent-color:var(--blue)"> Médico Residente</label>
+          <label style="flex:1;display:flex;align-items:center;justify-content:center;gap:.4rem;cursor:pointer;font-size:.79rem;border:1.5px solid var(--bd2);border-radius:var(--rs);padding:.55rem;color:var(--tx)" id="ob-endo-lbl"><input type="radio" name="ob-perfil" value="Endocrinologista" style="width:auto;accent-color:var(--blue)"> Endocrinologista</label>
+        </div>
+      </div>
+      <div id="ob-grad-wrap" style="display:none;margin-bottom:.85rem">
+        <div class="flbl" style="margin-bottom:.3rem">2. Instituição de graduação</div>
+        <input type="text" id="ob-grad" placeholder="Ex: USP, UNIFESP, UFMG…">
+      </div>
+      <div id="ob-resid-wrap" style="display:none;margin-bottom:.85rem">
+        <div class="flbl" style="margin-bottom:.3rem">3. Instituição da residência médica</div>
+        <input type="text" id="ob-resid" placeholder="Ex: HC-FMUSP, INCA…">
+      </div>
+      <div id="ob-err" style="display:none;background:var(--red-l);border:1px solid #fecaca;border-radius:var(--rs);padding:.45rem .75rem;font-size:.73rem;color:var(--red);margin-bottom:.7rem"></div>
+      <button class="btn btn-primary" id="ob-submit" style="width:100%;justify-content:center;padding:.6rem">Começar →</button>
+    </div>
+  </div>
+</div>
+
+<div class="modal-bg" id="feedback-modal">
+  <div class="modal-box">
+    <div class="modal-hdr"><span class="modal-hdr-title">💬 Feedback</span><button class="modal-close" id="fb-modal-close">✕</button></div>
+    <div id="fb-body" class="modal-body">
+      <div style="margin-bottom:.9rem">
+        <div class="flbl" style="margin-bottom:.4rem">Avaliação</div>
+        <div style="display:flex;gap:.35rem">
+          <span class="fb-star" data-v="1">⭐</span><span class="fb-star" data-v="2">⭐</span><span class="fb-star" data-v="3">⭐</span><span class="fb-star" data-v="4">⭐</span><span class="fb-star" data-v="5">⭐</span>
+        </div>
+      </div>
+      <div style="margin-bottom:.8rem"><div class="flbl" style="margin-bottom:.4rem">Categoria</div>
+        <div style="display:flex;flex-wrap:wrap;gap:.35rem" id="fb-cat-row">
+          <button class="fb-cat-btn" data-cat="Questões">❓ Questões</button>
+          <button class="fb-cat-btn" data-cat="Flashcards">▭ Flashcards</button>
+          <button class="fb-cat-btn" data-cat="Simulado">📝 Simulado</button>
+          <button class="fb-cat-btn" data-cat="Chat IA">🤖 Chat IA</button>
+          <button class="fb-cat-btn" data-cat="Outro">💬 Outro</button>
+        </div>
+      </div>
+      <div style="margin-bottom:.8rem"><div class="flbl" style="margin-bottom:.4rem">Tipo</div>
+        <div style="display:flex;gap:.35rem;flex-wrap:wrap" id="fb-tipo-row">
+          <button class="fb-tipo-btn" data-tipo="Sugestão">💡 Sugestão</button>
+          <button class="fb-tipo-btn" data-tipo="Problema">🐛 Problema</button>
+          <button class="fb-tipo-btn" data-tipo="Elogio">👏 Elogio</button>
+        </div>
+      </div>
+      <div style="margin-bottom:.9rem"><div class="flbl" style="margin-bottom:.4rem">Mensagem</div>
+        <textarea id="fb-text" rows="3" placeholder="Descreva com detalhes…" style="width:100%;font-size:.81rem;resize:none"></textarea>
+      </div>
+      <div style="display:flex;gap:.55rem;justify-content:flex-end">
+        <button class="btn btn-outline" id="fb-cancel">Cancelar</button>
+        <button class="btn btn-primary" id="fb-submit">📤 Enviar</button>
+      </div>
+    </div>
+    <div id="fb-success" style="display:none;padding:2rem 1.3rem;text-align:center">
+      <div style="font-size:2.2rem;margin-bottom:.6rem">🎉</div>
+      <div style="font-size:.95rem;font-weight:700;margin-bottom:.8rem">Obrigado pelo feedback!</div>
+      <button class="btn btn-primary btn-sm" id="fb-close-ok">Fechar</button>
+    </div>
+  </div>
+</div>
+
+<div id="login-screen">
+  <div class="login-card">
+    <div class="login-hdr">
+      <div class="login-logo"><div class="login-ico"><img id="logo-login-img" alt="Endodirect" style="width:72px;height:72px;object-fit:contain;display:block"></div><div class="login-name">Endodirect</div></div>
+      <div class="login-sub">Plataforma de educação médica</div>
+    </div>
+    <div class="login-body">
+      <div style="font-size:1.15rem;font-weight:700;text-align:center;margin-bottom:1.3rem">Entrar</div>
+      <button class="login-google" id="btn-google-login">
+        <svg viewBox="0 0 48 48" width="19" height="19"><path fill="#FFC107" d="M43.6 20.1H42V20H24v8h11.3C33.7 32.2 29.3 35 24 35c-6.1 0-11-4.9-11-11s4.9-11 11-11c2.8 0 5.3 1 7.2 2.7l5.7-5.7C33.5 7.2 29 5 24 5 12.9 5 4 13.9 4 25s8.9 20 20 20 20-8.9 20-20c0-1.3-.1-2.6-.4-3.9z"/><path fill="#FF3D00" d="M6.3 14.7l6.6 4.8C14.5 15.9 18.9 13 24 13c2.8 0 5.3 1 7.2 2.7l5.7-5.7C33.5 7.2 29 5 24 5 16.3 5 9.7 9.3 6.3 14.7z"/><path fill="#4CAF50" d="M24 45c4.9 0 9.4-1.9 12.7-4.9l-5.9-5c-1.8 1.3-4 2-6.8 2-5.2 0-9.6-3.5-11.2-8.3l-6.5 5C9.6 40.5 16.3 45 24 45z"/><path fill="#1976D2" d="M43.6 20.1H42V20H24v8h11.3c-.8 2.2-2.2 4.1-4.1 5.5l5.9 5C40.3 36.1 44 31 44 25c0-1.3-.1-2.6-.4-3.9z"/></svg>
+        Continuar com o Google
+      </button>
+      <div class="login-divider"><span>OU</span></div>
+      <div id="login-err" class="login-err">E-mail ou senha incorretos.</div>
+      <div class="fld"><label>E-mail</label><input type="text" id="login-email" placeholder="nome@exemplo.com"></div>
+      <div class="fld"><label>Senha</label>
+        <div style="position:relative">
+          <input type="password" id="login-pass" placeholder="Sua senha" style="padding-right:2.2rem">
+          <button id="btn-toggle-pass" style="position:absolute;right:9px;top:50%;transform:translateY(-50%);background:none;border:none;cursor:pointer;color:var(--t3);font-size:.77rem">👁</button>
+        </div>
+      </div>
+      <button class="login-btn" id="btn-login">Entrar</button>
+      <div style="font-size:.65rem;color:var(--t3);margin-top:.5rem;line-height:1.5">aluno@endodirect.med.br / Aluno@2026<br>admin@endodirect.med.br / Admin@2026</div>
+    </div>
+  </div>
+</div>
+
+<div id="app-screen">
+  <div class="topbar">
+    <div class="tb-left">
+      <div class="tb-logo"><img id="logo-tb-img" alt="Endodirect" style="width:34px;height:34px;object-fit:contain;display:block"><span>Endodirect</span></div>
+      <div class="tb-bc" id="tb-bc">Dashboard</div>
+    </div>
+    <div class="tb-right">
+      <button class="btn-cta" id="btn-feedback-cta" style="background:#f59e0b">💬 Feedback</button>
+      <button class="btn-cta" id="btn-chat-cta">🤖 Chat IA</button>
+      <div class="tb-user" id="tb-user-btn">
+        <div style="text-align:right"><div class="tb-uname" id="tb-uname">—</div><div class="tb-usub" id="tb-usub">—</div></div>
+        <div class="tb-avatar" id="tb-avatar">?</div>
+        <div class="user-menu" id="user-menu">
+          <div class="user-menu-hd"><div class="um-name" id="um-name">—</div><div class="um-email" id="um-email">—</div></div>
+          <button class="um-btn" id="btn-logout">↩ Sair</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="workspace">
+    <div class="sidebar">
+      <div style="padding:.8rem .8rem .5rem;border-bottom:1px solid rgba(255,255,255,.1);margin-bottom:.35rem"><div style="font-size:.54rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:rgba(255,255,255,.35)" id="sb-role-lbl">Menu</div></div>
+      <div id="sb-aluno">
+        <div class="sb-sec">Estudo</div>
+        <button class="sb-item on" data-p="dash">⊞ Dashboard</button>
+        <button class="sb-item" data-p="quest">📝 Questões</button>
+        <button class="sb-item" data-p="flash">🃏 Flashcards</button>
+        <button class="sb-item" data-p="mmap">✦ Mind Map</button>
+        <button class="sb-item" data-p="podcast">🎧 Podcasts</button>
+        <button class="sb-item" data-p="crono">📅 Cronograma</button>
+        <button class="sb-item" data-p="sr">🔁 Revisão Espaçada</button>
+        <div class="sb-sec">Clínica</div>
+        <button class="sb-item" data-p="sim">♡ Simulador</button>
+        <button class="sb-item" data-p="simfull">📝 Simulado</button>
+        <button class="sb-item" data-p="calc">🧮 Calculadoras</button>
+        <button class="sb-item" data-p="rx">💊 Prescrição</button>
+        <button class="sb-item" data-p="art">📄 Resumidor</button>
+        <div class="sb-sec">Pessoal</div>
+        <button class="sb-item" data-p="notas">📓 Caderno</button>
+        <button class="sb-item" data-p="mural">📢 Mural</button>
+        <button class="sb-item" data-p="chat">💬 Chat IA</button>
+      </div>
+      <div id="sb-admin" style="display:none">
+        <div class="sb-sec">Admin</div>
+        <button class="sb-item on" data-p="adm">⊞ Painel Admin</button>
+      </div>
+      <div class="sb-spacer"></div>
+      <div style="border-top:1px solid rgba(255,255,255,.1);margin:.35rem 0"></div>
+      <button class="sb-item" data-p="support">🛟 Suporte</button>
+    </div>
+
+    <div class="panel on" id="panel-dash">
+      <div class="breadcrumb">Dashboard <b>/ Visão Geral</b></div>
+      <div class="ph"><h1 id="dash-greeting">Bem-vindo.</h1><p>Continue seus estudos em endocrinologia e metabologia.</p></div>
+      <div class="pc">
+        <div class="g4" style="margin-bottom:10px">
+          <div class="card" style="text-align:center;cursor:pointer" id="dc-quest"><div style="font-size:1.45rem;font-weight:700;color:var(--blue)" id="d-qn">0</div><div style="font-size:.66rem;color:var(--t3)">Questões</div></div>
+          <div class="card" style="text-align:center;cursor:pointer" id="dc-flash"><div style="font-size:1.45rem;font-weight:700;color:var(--pur)" id="d-fcn">0</div><div style="font-size:.66rem;color:var(--t3)">Flashcards</div></div>
+          <div class="card" style="text-align:center;cursor:pointer" id="dc-sr"><div style="font-size:1.45rem;font-weight:700;color:var(--red)" id="d-sr-due">0</div><div style="font-size:.66rem;color:var(--t3)">Cards p/ revisar</div></div>
+          <div class="card" style="text-align:center;cursor:pointer" id="dc-mm"><div style="font-size:1.45rem;font-weight:700;color:var(--gold)" id="d-mmn">0</div><div style="font-size:.66rem;color:var(--t3)">Mapas mentais</div></div>
+        </div>
+        <div class="g2" style="margin-bottom:10px">
+          <div class="card"><div class="card-head"><span class="card-title">Desempenho por área</span></div><div id="perf-bars"><div class="empty">Responda questões para ver.</div></div></div>
+          <div class="rec-box"><div style="font-size:1.3rem;margin-bottom:.4rem">⚡</div><div style="font-size:.56rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:rgba(255,255,255,.45);margin-bottom:.3rem">Recomendações IA</div><div style="font-size:.69rem;color:rgba(255,255,255,.65);line-height:1.55" id="d-rec">Gere questões para receber recomendações.</div><button class="btn btn-sm" id="d-chat-btn" style="margin-top:.7rem;background:rgba(255,255,255,.15);color:#fff;border:1px solid rgba(255,255,255,.2);font-size:.67rem">💬 Perguntar à IA</button></div>
+        </div>
+        <div class="g3">
+          <div class="card"><div class="card-head"><span class="card-title">📅 Cronograma</span><button class="btn btn-ghost btn-sm" id="d-crono-btn">Ver</button></div><div id="d-crono-prev"><div style="font-size:.74rem;color:var(--t3)">Nenhum plano.</div></div></div>
+          <div class="card"><div class="card-head"><span class="card-title">🔁 Revisão</span><button class="btn btn-ghost btn-sm" id="d-sr-btn">Revisar</button></div><div id="d-sr-prev"><div style="font-size:.74rem;color:var(--t3)">Nenhum card.</div></div></div>
+          <div class="card"><div class="card-head"><span class="card-title">📓 Notas</span><button class="btn btn-ghost btn-sm" id="d-notas-btn">Ver</button></div><div id="d-notas-prev"><div style="font-size:.74rem;color:var(--t3)">Nenhuma nota.</div></div></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="panel" id="panel-quest">
+      <div class="breadcrumb">Dashboard <b>/ Questões</b></div>
+      <div class="ph"><h1>Banco de Questões</h1></div>
+      <div class="pc">
+        <div class="tog-row" style="margin-bottom:.85rem" id="q-mode-row">
+          <button class="tog-btn on" data-qmode="ia">🤖 Geradas por IA</button>
+          <button class="tog-btn" data-qmode="provas">🏛️ Provas anteriores</button>
+        </div>
+        <div class="gen-box" id="q-panel-ia">
+          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:.65rem;flex-wrap:wrap;gap:.45rem">
+            <span class="sec-title">Gerar com IA</span>
+            <div class="tog-row" id="qtype-row"><button class="tog-btn on" data-qt="mc">Múltipla escolha</button><button class="tog-btn" data-qt="disc">Discursiva</button></div>
+          </div>
+          <div class="g2" style="margin-bottom:.65rem">
+            <div class="fld2" style="margin:0"><label>Subespecialidade</label><select id="q-sub"><option value="">Todas</option><option>Diabetes</option><option>Obesidade</option><option>Tireoide</option><option>Adrenal</option><option>Neuroendocrinologia</option><option>Osteometabolismo</option><option>Endocrinologia Pediátrica</option><option>Endocrinologia Esportiva</option><option>Endocrinologia Masculina</option><option>Endocrinologia Feminina</option><option>Transgeneridade</option></select></div>
+            <div class="fld2" style="margin:0"><label>Quantidade</label><select id="q-qty"><option value="1">1</option><option value="3" selected>3</option><option value="5">5</option><option value="10">10</option></select></div>
+          </div>
+          <div class="fld2">
+            <label>Dificuldade</label>
+            <div style="display:flex;gap:.5rem;flex-wrap:wrap">
+              <label style="display:flex;align-items:center;gap:.4rem;cursor:pointer;font-size:.77rem;font-weight:400;text-transform:none;letter-spacing:0;color:var(--tx)"><input type="radio" name="q-diff" value="basico" style="width:auto;accent-color:var(--grn)"> <span class="tag tag-grn">Fácil</span></label>
+              <label style="display:flex;align-items:center;gap:.4rem;cursor:pointer;font-size:.77rem;font-weight:400;text-transform:none;letter-spacing:0;color:var(--tx)"><input type="radio" name="q-diff" value="intermediario" checked style="width:auto;accent-color:var(--blue)"> <span class="tag tag-blue">Médio</span></label>
+              <label style="display:flex;align-items:center;gap:.4rem;cursor:pointer;font-size:.77rem;font-weight:400;text-transform:none;letter-spacing:0;color:var(--tx)"><input type="radio" name="q-diff" value="avancado" style="width:auto;accent-color:var(--red)"> <span class="tag tag-red">Difícil</span></label>
+            </div>
+          </div>
+          <div class="fld2"><label>Tema específico (opcional)</label><input type="text" id="q-topic" placeholder="Ex: Cetoacidose diabética…"></div>
+          <button class="btn btn-primary" id="btn-genq">▶ Gerar questões</button>
+        </div>
+        <div class="gen-box" id="q-panel-provas" style="display:none">
+          <span class="sec-title" style="display:block;margin-bottom:.7rem">🏛️ Questões de provas anteriores</span>
+          <div class="g3" style="margin-bottom:.65rem">
+            <div class="fld2" style="margin:0"><label>Instituição</label><select id="q-inst"><option value="">Todas</option></select></div>
+            <div class="fld2" style="margin:0"><label>Ano</label><select id="q-ano"><option value="">Todos</option></select></div>
+            <div class="fld2" style="margin:0"><label>Subespecialidade</label><select id="q-parea"><option value="">Todas</option><option>Diabetes</option><option>Obesidade</option><option>Tireoide</option><option>Adrenal</option><option>Neuroendocrinologia</option><option>Osteometabolismo</option><option>Endocrinologia Pediátrica</option><option>Endocrinologia Esportiva</option><option>Endocrinologia Masculina</option><option>Endocrinologia Feminina</option><option>Transgeneridade</option></select></div>
+          </div>
+          <div style="background:var(--blue-l);border-radius:var(--rs);padding:.55rem .8rem;font-size:.74rem;color:var(--blue);margin-bottom:.7rem" id="q-prova-info">Selecione filtros para ver questões.</div>
+          <button class="btn btn-primary" id="btn-filter-provas">🔍 Buscar questões</button>
+        </div>
+        <div id="q-gen-results"></div>
+        <div class="divider"></div>
+        <div class="sec-h"><span class="sec-title">Banco salvo <span id="q-saved-count" style="font-weight:400;text-transform:none;letter-spacing:0;color:var(--t3)"></span></span></div>
+        <div id="q-saved-list"></div>
+      </div>
+    </div>
+
+    <div class="panel" id="panel-flash">
+      <div class="breadcrumb">Dashboard <b>/ Flashcards</b></div>
+      <div class="ph"><h1>Flashcards</h1></div>
+      <div class="pc">
+        <div style="display:flex;gap:7px;margin-bottom:.85rem;flex-wrap:wrap">
+          <button class="btn btn-primary btn-sm" id="fc-btn-create">+ Novo card</button>
+          <button class="btn btn-outline btn-sm" id="fc-btn-gen">▶ Gerar com IA</button>
+          <button class="btn btn-outline btn-sm" id="fc-btn-study">📖 Estudar</button>
+        </div>
+        <div id="fc-create" style="display:none" class="gen-box">
+          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:.65rem"><span class="sec-title">Novo card</span><button class="btn btn-ghost btn-sm" id="fc-create-cancel">✕</button></div>
+          <div class="fld2"><label>Frente</label><textarea id="fc-f" rows="2" placeholder="Pergunta"></textarea></div>
+          <div class="fld2"><label>Verso</label><textarea id="fc-b" rows="3" placeholder="Resposta"></textarea></div>
+          <div class="fld2"><label>Categoria</label><div id="fc-cat-pills" style="display:flex;flex-wrap:wrap;gap:.3rem"></div></div>
+          <div style="display:flex;gap:6px"><button class="btn btn-primary btn-sm" id="fc-save-btn">Salvar</button><button class="btn btn-outline btn-sm" id="fc-create-cancel2">Cancelar</button></div>
+        </div>
+        <div id="fc-gen" style="display:none" class="gen-box">
+          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:.65rem"><span class="sec-title">Gerar com IA</span><button class="btn btn-ghost btn-sm" id="fc-gen-cancel">✕</button></div>
+          <div class="g3" style="margin-bottom:.65rem">
+            <div class="fld2" style="margin:0"><label>Subespecialidade</label><select id="fc-gsub"><option>Diabetes</option><option>Obesidade</option><option>Tireoide</option><option>Adrenal</option><option>Neuroendocrinologia</option><option>Osteometabolismo</option><option>Pediatria</option><option>Esportiva</option><option>Endocrinologia Masculina</option><option>Endocrinologia Feminina</option><option>Transgeneridade</option></select></div>
+            <div class="fld2" style="margin:0"><label>Tema (opcional)</label><input type="text" id="fc-gt" placeholder="Ex: Tireoidite de Hashimoto"></div>
+            <div class="fld2" style="margin:0"><label>Quantidade</label><select id="fc-gq"><option value="5">5</option><option value="10" selected>10</option><option value="15">15</option></select></div>
+          </div>
+          <button class="btn btn-primary btn-sm" id="btn-fcgen">Gerar</button>
+        </div>
+        <div id="fc-study" style="display:none">
+          <div style="max-width:440px;margin:0 auto">
+            <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:.65rem"><span class="sec-title">Modo estudo</span><button class="btn btn-outline btn-sm" id="fc-end-study">Sair</button></div>
+            <div style="font-size:.68rem;color:var(--t3);text-align:center;margin-bottom:.55rem" id="study-prog"></div>
+            <div class="study-c" id="study-c"><div id="study-front" style="font-size:.93rem;font-weight:600;color:var(--tx);line-height:1.55"></div><div id="study-back" style="font-size:.81rem;color:#16a34a;line-height:1.6;display:none"></div><div style="font-size:.62rem;color:var(--t3);margin-top:.65rem" id="study-hint">Clique para revelar</div></div>
+            <div style="display:flex;gap:.55rem;justify-content:center"><button class="btn btn-outline btn-sm" id="study-prev">← Anterior</button><button class="btn btn-outline btn-sm" id="study-next">Próximo →</button></div>
+          </div>
+        </div>
+        <div id="fc-filter-row" style="display:flex;flex-wrap:wrap;gap:.3rem;margin-bottom:.75rem"></div>
+        <div id="fc-grid" class="fc-grid"></div>
+      </div>
+    </div>
+
+    <div class="panel" id="panel-podcast">
+      <div class="breadcrumb">Dashboard <b>/ Podcasts</b></div>
+      <div class="ph"><h1>Podcasts</h1><p>Episódios em áudio de endocrinologia para escutar na plataforma.</p></div>
+      <div class="pc">
+        <div id="pod-filter-row" style="display:flex;flex-wrap:wrap;gap:.3rem;margin-bottom:.85rem"></div>
+        <div id="pod-list" style="display:flex;flex-direction:column;gap:8px"></div>
+      </div>
+    </div>
+
+    <div class="panel" id="panel-mmap">
+      <div class="breadcrumb">Dashboard <b>/ Mind Map</b></div>
+      <div class="ph"><h1>Mind Map</h1></div>
+      <div class="pc">
+        <div class="gen-box">
+          <div style="display:flex;gap:8px;align-items:flex-end">
+            <div style="flex:1"><label class="flbl">Tema</label><input type="text" id="mm-topic" placeholder="Ex: Hipotireoidismo…"></div>
+            <button class="btn btn-primary" id="btn-mmgen">▶ Gerar</button>
+          </div>
+        </div>
+        <div id="mm-live" style="display:none;margin-bottom:.85rem">
+          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:.55rem;flex-wrap:wrap;gap:.45rem">
+            <span style="font-size:.87rem;font-weight:600;color:var(--tx)" id="mm-live-title"></span>
+            <div style="display:flex;gap:5px"><button class="btn btn-primary btn-sm" id="btn-mm-save">💾 Salvar</button><button class="btn btn-ghost btn-sm" id="btn-mm-close">✕</button></div>
+          </div>
+          <div style="background:#f5f6fa;border:1px solid var(--bd);border-radius:var(--r);overflow:auto;padding:.9rem;min-height:280px"><div id="mm-svg"></div></div>
+        </div>
+        <div class="sec-h"><span class="sec-title">Salvos <span id="mm-count" style="font-weight:400;text-transform:none;letter-spacing:0;color:var(--t3)"></span></span></div>
+        <div id="mm-list" style="display:flex;flex-direction:column;gap:6px"></div>
+      </div>
+    </div>
+
+    <div class="panel" id="panel-crono">
+      <div class="breadcrumb">Dashboard <b>/ Cronograma</b></div>
+      <div class="ph"><h1>Cronograma Semanal</h1></div>
+      <div class="pc">
+        <div class="gen-box">
+          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:.75rem"><span class="sec-title">Horas por área</span><div style="font-size:.73rem;color:var(--t3)">Total: <strong id="crono-total">0</strong>h/sem</div></div>
+          <div id="crono-areas"></div>
+          <div class="fld2" style="margin-top:.7rem"><label>Preferência de horário</label>
+            <div style="display:flex;gap:.5rem;flex-wrap:wrap">
+              <label style="display:flex;align-items:center;gap:.4rem;cursor:pointer;font-size:.77rem;font-weight:400;text-transform:none;letter-spacing:0;color:var(--tx)"><input type="radio" name="crono-sess" value="manhã" checked style="width:auto;accent-color:var(--blue)"> Manhã</label>
+              <label style="display:flex;align-items:center;gap:.4rem;cursor:pointer;font-size:.77rem;font-weight:400;text-transform:none;letter-spacing:0;color:var(--tx)"><input type="radio" name="crono-sess" value="tarde" style="width:auto;accent-color:var(--blue)"> Tarde</label>
+              <label style="display:flex;align-items:center;gap:.4rem;cursor:pointer;font-size:.77rem;font-weight:400;text-transform:none;letter-spacing:0;color:var(--tx)"><input type="radio" name="crono-sess" value="noite" style="width:auto;accent-color:var(--blue)"> Noite</label>
+            </div>
+          </div>
+          <button class="btn btn-primary" id="btn-crono-gen">▶ Gerar plano com IA</button>
+        </div>
+        <div id="crono-plan" style="display:none">
+          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:.7rem">
+            <span class="sec-title">Plano gerado</span>
+            <div style="display:flex;gap:5px"><button class="btn btn-primary btn-sm" id="btn-crono-save">💾 Salvar</button><button class="btn btn-ghost btn-sm" id="btn-crono-regen">🔄 Regerar</button></div>
+          </div>
+          <div id="crono-days"></div>
+        </div>
+        <div id="crono-saved-wrap" style="display:none">
+          <div class="divider"></div>
+          <div class="sec-h"><span class="sec-title">Plano atual</span><button class="btn btn-danger btn-sm" id="btn-crono-clear">🗑 Limpar</button></div>
+          <div id="crono-saved-days"></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="panel" id="panel-sr">
+      <div class="breadcrumb">Dashboard <b>/ Revisão Espaçada</b></div>
+      <div class="ph"><h1>Revisão Espaçada</h1><p>Algoritmo SM-2</p></div>
+      <div class="pc">
+        <div class="g3" style="margin-bottom:.85rem">
+          <div class="card" style="text-align:center"><div style="font-size:1.45rem;font-weight:700;color:var(--red)" id="sr-due">0</div><div style="font-size:.66rem;color:var(--t3)">Para revisar hoje</div></div>
+          <div class="card" style="text-align:center"><div style="font-size:1.45rem;font-weight:700;color:var(--blue)" id="sr-total">0</div><div style="font-size:.66rem;color:var(--t3)">Total de cards</div></div>
+          <div class="card" style="text-align:center"><div style="font-size:1.45rem;font-weight:700;color:var(--grn)" id="sr-mastered">0</div><div style="font-size:.66rem;color:var(--t3)">Dominados (≥7d)</div></div>
+        </div>
+        <div id="sr-session" style="display:none">
+          <div style="max-width:440px;margin:0 auto">
+            <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:.55rem"><span class="sec-title" id="sr-prog-lbl"></span><button class="btn btn-ghost btn-sm" id="btn-sr-stop">Encerrar</button></div>
+            <div class="sr-card" id="sr-card">
+              <div style="font-size:.93rem;font-weight:600;color:var(--tx);line-height:1.55;text-align:center" id="sr-front"></div>
+              <div style="font-size:.83rem;color:#16a34a;line-height:1.6;text-align:center;display:none" id="sr-back"></div>
+              <div style="font-size:.62rem;color:var(--t3);margin-top:.65rem;text-align:center" id="sr-hint">Clique para revelar</div>
+            </div>
+            <div style="display:flex;gap:.5rem;justify-content:center" id="sr-ratings">
+              <button class="sr-btn sr-again" id="sr-again">🔁 Repetir</button>
+              <button class="sr-btn sr-hard" id="sr-hard">😅 Difícil</button>
+              <button class="sr-btn sr-easy" id="sr-easy">✓ Fácil</button>
+            </div>
+          </div>
+        </div>
+        <div id="sr-idle">
+          <div style="display:flex;gap:7px;margin-bottom:.85rem">
+            <button class="btn btn-primary" id="btn-sr-start">▶ Iniciar revisão</button>
+            <button class="btn btn-outline btn-sm" id="btn-sr-all">Todos os cards</button>
+            <button class="btn btn-ghost btn-sm" id="btn-sr-reset" style="margin-left:auto">🔄 Resetar</button>
+          </div>
+          <div class="sec-h"><span class="sec-title">Todos os cards <span id="sr-list-count" style="font-weight:400;text-transform:none;letter-spacing:0;color:var(--t3)"></span></span></div>
+          <div id="sr-card-list"></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="panel" id="panel-sim">
+      <div class="breadcrumb">Dashboard <b>/ Simulador</b></div>
+      <div class="ph"><h1>Simulador de Caso Clínico</h1></div>
+      <div class="pc">
+        <div class="gen-box" id="sim-setup">
+          <div class="g2" style="margin-bottom:.65rem">
+            <div class="fld2" style="margin:0"><label>Subespecialidade</label><select id="sim-sub"><option value="">Todas</option><option>Diabetes</option><option>Obesidade</option><option>Tireoide</option><option>Adrenal</option><option>Neuroendocrinologia</option><option>Osteometabolismo</option><option>Endocrinologia Pediátrica</option><option>Endocrinologia Esportiva</option><option>Endocrinologia Masculina</option><option>Endocrinologia Feminina</option><option>Transgeneridade</option></select></div>
+            <div class="fld2" style="margin:0"><label>Complexidade</label><select id="sim-level"><option value="simples">Fácil</option><option value="moderado" selected>Médio</option><option value="complexo">Difícil</option></select></div>
+          </div>
+          <div class="fld2">
+            <label>Modo de resposta</label>
+            <div style="display:flex;gap:.7rem;flex-wrap:wrap">
+              <label style="display:flex;align-items:center;gap:.4rem;cursor:pointer;font-size:.77rem;font-weight:400;text-transform:none;letter-spacing:0;color:var(--tx)"><input type="radio" name="sim-mode" value="mc" checked style="width:auto;accent-color:var(--blue)"> <span class="tag tag-blue">Múltipla escolha</span></label>
+              <label style="display:flex;align-items:center;gap:.4rem;cursor:pointer;font-size:.77rem;font-weight:400;text-transform:none;letter-spacing:0;color:var(--tx)"><input type="radio" name="sim-mode" value="open" style="width:auto;accent-color:var(--pur)"> <span class="tag tag-pur">Resposta aberta</span></label>
+            </div>
+          </div>
+          <button class="btn btn-primary" id="btn-sim-start">▶ Iniciar simulação</button>
+        </div>
+        <div id="sim-content" style="display:none"><div id="sim-msgs"></div><div id="sim-input-wrap" style="margin-top:.65rem"></div></div>
+        <div id="sim-result" style="display:none"></div>
+      </div>
+    </div>
+
+    <div class="panel" id="panel-simfull" style="overflow:hidden;padding:0">
+      <div id="sf-setup" style="flex:1;overflow-y:auto;padding:1rem 1.5rem">
+        <div class="ph" style="padding:0 0 .35rem"><h1>Simulado Cronometrado</h1></div>
+        <div class="gen-box" style="margin-top:.85rem">
+          <div class="g3" style="margin-bottom:.65rem">
+            <div class="fld2" style="margin:0"><label>Subespecialidade</label><select id="sf-area"><option value="">Todas</option><option>Diabetes</option><option>Obesidade</option><option>Tireoide</option><option>Adrenal</option><option>Neuroendocrinologia</option><option>Osteometabolismo</option><option>Endocrinologia Pediátrica</option><option>Endocrinologia Esportiva</option><option>Endocrinologia Masculina</option><option>Endocrinologia Feminina</option><option>Transgeneridade</option></select></div>
+            <div class="fld2" style="margin:0"><label>Questões</label><select id="sf-qty"><option value="20">20</option><option value="40">40</option><option value="60" selected>60</option><option value="100">100</option></select></div>
+            <div class="fld2" style="margin:0"><label>Tempo</label><select id="sf-time"><option value="60">60 min</option><option value="90">90 min</option><option value="120" selected>120 min</option><option value="180">180 min</option></select></div>
+          </div>
+          <div class="fld2"><label>Fonte</label>
+            <div style="display:flex;gap:.5rem;flex-wrap:wrap">
+              <label style="display:flex;align-items:center;gap:.35rem;cursor:pointer;font-size:.77rem;font-weight:400;text-transform:none;letter-spacing:0;color:var(--tx)"><input type="radio" name="sf-fonte" value="ia" checked style="width:auto;accent-color:var(--blue)"> 🤖 IA</label>
+              <label style="display:flex;align-items:center;gap:.35rem;cursor:pointer;font-size:.77rem;font-weight:400;text-transform:none;letter-spacing:0;color:var(--tx)"><input type="radio" name="sf-fonte" value="provas" style="width:auto;accent-color:var(--pur)"> 🏛️ Provas</label>
+              <label style="display:flex;align-items:center;gap:.35rem;cursor:pointer;font-size:.77rem;font-weight:400;text-transform:none;letter-spacing:0;color:var(--tx)"><input type="radio" name="sf-fonte" value="misto" style="width:auto;accent-color:var(--grn)"> 🔀 Misto</label>
+            </div>
+          </div>
+          <div id="sf-prova-filters" style="display:none;background:var(--s2);border:1px solid var(--bd);border-radius:var(--rs);padding:.7rem .85rem;margin-bottom:.65rem">
+            <div class="g2" style="gap:8px">
+              <div class="fld2" style="margin:0"><label>Instituição</label><select id="sf-inst"><option value="">Todas</option></select></div>
+              <div class="fld2" style="margin:0"><label>Ano</label><select id="sf-ano-prova"><option value="">Todos</option></select></div>
+            </div>
+          </div>
+          <button class="btn btn-primary" id="btn-sf-start">▶ Iniciar simulado</button>
+        </div>
+        <div id="sf-prev-results"></div>
+      </div>
+      <div id="sf-exam" style="display:none;flex-direction:column;height:100%">
+        <div class="sf-header">
+          <div style="font-size:.79rem;font-weight:600" id="sf-exam-title">—</div>
+          <div style="display:flex;align-items:center;gap:1.1rem">
+            <div><div style="font-size:.56rem;opacity:.6;text-align:center">Respondidas</div><div style="font-size:.83rem;font-weight:700" id="sf-answered">0/0</div></div>
+            <div><div style="font-size:.56rem;opacity:.6;text-align:center">Tempo</div><div class="sf-timer" id="sf-timer">00:00</div></div>
+            <button class="btn btn-sm" style="background:rgba(255,255,255,.15);color:#fff;border:1px solid rgba(255,255,255,.3)" id="btn-sf-submit">Entregar</button>
+          </div>
+        </div>
+        <div style="display:flex;flex:1;overflow:hidden">
+          <div style="width:195px;border-right:1px solid var(--bd);background:var(--s2);padding:.7rem;overflow-y:auto;flex-shrink:0">
+            <div style="font-size:.62rem;font-weight:600;text-transform:uppercase;letter-spacing:.07em;color:var(--t3);margin-bottom:.5rem">Navegação</div>
+            <div style="display:flex;flex-wrap:wrap;gap:4px" id="sf-nav"></div>
+          </div>
+          <div style="flex:1;overflow-y:auto;padding:1.1rem 1.5rem">
+            <div style="font-size:.68rem;font-weight:600;color:var(--t2);text-transform:uppercase;letter-spacing:.07em;margin-bottom:.5rem" id="sf-q-counter"></div>
+            <div style="font-size:.86rem;line-height:1.72;color:var(--tx);margin-bottom:.85rem;font-weight:500" id="sf-q-stem"></div>
+            <div id="sf-q-opts"></div>
+            <div style="display:flex;gap:.5rem;margin-top:.8rem">
+              <button class="btn btn-outline btn-sm" id="btn-sf-prev">← Anterior</button>
+              <button class="btn btn-outline btn-sm" id="btn-sf-flag">🚩 Marcar</button>
+              <button class="btn btn-primary btn-sm" id="btn-sf-next">Próxima →</button>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div id="sf-report" style="display:none;flex:1;overflow-y:auto;padding:1.3rem 1.5rem">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:1rem">
+          <h2 style="font-size:1.1rem;font-weight:700">Relatório</h2>
+          <button class="btn btn-primary btn-sm" id="btn-sf-redo">+ Novo simulado</button>
+        </div>
+        <div id="sf-report-content"></div>
+      </div>
+    </div>
+
+    <div class="panel" id="panel-calc">
+      <div class="breadcrumb">Dashboard <b>/ Calculadoras</b></div>
+      <div class="ph"><h1>Calculadoras Clínicas</h1></div>
+      <div class="pc"><div class="g3" id="calc-grid"></div><div id="calc-detail"></div></div>
+    </div>
+
+    <div class="panel" id="panel-rx">
+      <div class="breadcrumb">Dashboard <b>/ Prescrição</b></div>
+      <div class="ph"><h1>Prescrição Simulada</h1></div>
+      <div class="pc">
+        <div class="gen-box">
+          <div class="g2" style="margin-bottom:.65rem">
+            <div class="fld2" style="margin:0"><label>Subespecialidade</label><select id="rx-sub"><option value="">Todas</option><option>Diabetes</option><option>Obesidade</option><option>Tireoide</option><option>Adrenal</option><option>Neuroendocrinologia</option><option>Osteometabolismo</option><option>Endocrinologia Pediátrica</option><option>Endocrinologia Esportiva</option><option>Endocrinologia Masculina</option><option>Endocrinologia Feminina</option><option>Transgeneridade</option></select></div>
+            <div class="fld2" style="margin:0"><label>Complexidade</label><select id="rx-level"><option value="simples">Fácil</option><option value="moderado" selected>Médio</option><option value="complexo">Difícil</option></select></div>
+          </div>
+          <button class="btn btn-primary" id="btn-rx-gen">▶ Gerar caso</button>
+        </div>
+        <div id="rx-case-wrap" style="display:none">
+          <div class="card" style="margin-bottom:.85rem"><div class="card-head"><span class="card-title">Caso Clínico</span><span class="tag tag-blue" id="rx-case-tag"></span></div><div style="font-size:.82rem;line-height:1.72" id="rx-case-text"></div></div>
+          <div class="card" style="margin-bottom:.85rem">
+            <div class="card-head"><span class="card-title">Sua Prescrição</span></div>
+            <div class="fld2"><label>Diagnóstico</label><input type="text" id="rx-diag" placeholder="Ex: PAC moderada"></div>
+            <div class="fld2"><label>Prescrição</label><textarea id="rx-text" rows="7" placeholder="1. Dipirona 1g IV 6/6h&#10;2. …"></textarea></div>
+            <div style="display:flex;gap:6px"><button class="btn btn-primary" id="btn-rx-eval">✓ Avaliar</button><button class="btn btn-outline" id="btn-rx-new">🔄 Novo caso</button></div>
+          </div>
+          <div id="rx-feedback"></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="panel" id="panel-art">
+      <div class="breadcrumb">Dashboard <b>/ Resumidor</b></div>
+      <div class="ph"><h1>Resumidor de Artigos</h1></div>
+      <div class="pc">
+        <div class="gen-box">
+          <div style="display:flex;border:1.5px solid var(--bd2);border-radius:var(--rs);overflow:hidden;width:fit-content;margin-bottom:.8rem">
+            <button id="art-tab-text" style="background:var(--blue);color:#fff;border:none;padding:.3rem .85rem;font-size:.7rem;font-weight:600;cursor:pointer;font-family:var(--font)">📝 Colar texto</button>
+            <button id="art-tab-file" style="background:#fff;color:var(--t2);border:none;padding:.3rem .85rem;font-size:.7rem;font-weight:500;cursor:pointer;font-family:var(--font)">📎 Importar arquivo</button>
+          </div>
+          <div id="art-text-panel">
+            <div class="fld2"><label>Cole o texto do artigo</label><textarea id="art-text" rows="7" placeholder="Cole aqui o texto…"></textarea></div>
+          </div>
+          <div id="art-file-panel" style="display:none">
+            <div id="art-dropzone" class="art-drop" style="margin-bottom:.65rem">
+              <div style="font-size:1.9rem;margin-bottom:.3rem">📄</div>
+              <div style="font-size:.8rem;font-weight:600;color:var(--tx);margin-bottom:.15rem">Arraste o arquivo ou clique para selecionar</div>
+              <div style="font-size:.68rem;color:var(--t3)">PDF ou TXT — Máx. 10 MB</div>
+            </div>
+            <input type="file" id="art-file-input" accept=".pdf,.txt" style="display:none">
+            <div id="art-file-info" style="display:none;background:#fff;border:1px solid var(--bd);border-radius:var(--rs);padding:.5rem .8rem;align-items:center;gap:.55rem;margin-bottom:.65rem">
+              <span id="art-file-icon" style="font-size:1.15rem">📄</span>
+              <span id="art-file-name" style="flex:1;font-size:.79rem;font-weight:600;color:var(--tx)"></span>
+              <span id="art-file-size" style="font-size:.66rem;color:var(--t3)"></span>
+              <button id="art-file-clear" style="background:none;border:none;cursor:pointer;color:var(--t3);font-size:.85rem;line-height:1">✕</button>
+            </div>
+            <div id="art-file-preview" style="display:none;background:var(--s2);border:1px solid var(--bd);border-radius:var(--rs);padding:.5rem .8rem;font-size:.73rem;color:var(--t2);max-height:90px;overflow:hidden;margin-bottom:.65rem;line-height:1.55"></div>
+          </div>
+          <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap">
+            <button class="btn btn-primary" id="btn-art">▶ Resumir</button>
+            <label style="display:flex;align-items:center;gap:5px;font-size:.73rem;color:var(--t2);cursor:pointer"><input type="checkbox" id="art-gen-q" checked style="width:auto;accent-color:var(--blue)">Gerar questões</label>
+            <label style="display:flex;align-items:center;gap:5px;font-size:.73rem;color:var(--t2);cursor:pointer"><input type="checkbox" id="art-gen-fc" style="width:auto;accent-color:var(--blue)">Gerar flashcards</label>
+          </div>
+        </div>
+        <div id="art-result"></div>
+      </div>
+    </div>
+
+    <div class="panel" id="panel-notas" style="flex-direction:row;overflow:hidden;padding:0">
+      <div style="width:195px;border-right:1px solid var(--bd);display:flex;flex-direction:column;background:var(--s2);flex-shrink:0">
+        <div style="padding:.6rem .72rem;border-bottom:1px solid var(--bd)"><button class="btn btn-primary btn-sm" id="btn-note-new" style="width:100%">+ Nova nota</button></div>
+        <div style="padding:.45rem .65rem;border-bottom:1px solid var(--bd)"><input type="search" id="note-search" placeholder="Buscar…" style="font-size:.7rem"></div>
+        <div id="note-list" style="flex:1;overflow-y:auto"></div>
+      </div>
+      <div style="flex:1;display:flex;flex-direction:column;overflow:hidden">
+        <div style="flex:1;display:flex;align-items:center;justify-content:center;color:var(--t3);font-size:.78rem" id="note-empty">Selecione ou crie uma nota</div>
+        <div id="note-editor" style="display:none;flex:1;flex-direction:column;overflow:hidden">
+          <div style="display:flex;gap:4px;padding:.5rem .8rem;border-bottom:1px solid var(--bd);background:var(--surface);flex-wrap:wrap;flex-shrink:0">
+            <button class="note-tb-btn" data-cmd="bold"><b>N</b></button>
+            <button class="note-tb-btn" data-cmd="italic"><i>I</i></button>
+            <button class="note-tb-btn" data-cmd="underline"><u>S</u></button>
+            <button class="note-tb-btn" data-cmd="ul">• Lista</button>
+            <button class="note-tb-btn" data-cmd="ol">1. Lista</button>
+            <div style="flex:1"></div>
+            <button class="btn btn-primary btn-sm" id="btn-note-save">💾 Salvar</button>
+            <button class="btn btn-danger btn-sm" id="btn-note-del">🗑</button>
+          </div>
+          <div style="flex:1;overflow-y:auto;padding:1.1rem 1.3rem">
+            <input type="text" id="note-title-input" placeholder="Título…" style="width:100%;border:none;outline:none;font-size:1.15rem;font-weight:700;color:var(--tx);font-family:var(--font);margin-bottom:.7rem;background:transparent">
+            <div id="note-body" contenteditable="true" style="min-height:280px;outline:none;font-size:.82rem;line-height:1.8;color:var(--tx)" data-placeholder="Comece a escrever…"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="panel" id="panel-mural">
+      <div class="breadcrumb">Dashboard <b>/ Mural</b></div>
+      <div class="ph"><h1>Mural</h1></div>
+      <div class="pc" id="mural-pc"></div>
+    </div>
+
+    <div class="panel" id="panel-chat" style="overflow:hidden">
+      <div class="breadcrumb">Dashboard <b>/ Chat IA</b></div>
+      <div class="chat-wrap">
+        <div class="chat-sugg" id="chat-sugg">
+          <span style="font-size:.64rem;font-weight:600;color:var(--t3);text-transform:uppercase;letter-spacing:.06em;align-self:center;margin-right:.2rem">Sugestões:</span>
+          <button class="chat-sugg-btn">Critérios diagnósticos de DM2</button>
+          <button class="chat-sugg-btn">Conduta na tireoidite de Hashimoto</button>
+          <button class="chat-sugg-btn">Rastreio de osteoporose</button>
+        </div>
+        <div class="chat-msgs" id="chat-msgs"><div class="chat-bubble ai"><div class="chat-name">Endodirect IA</div>Olá! Como posso ajudar?</div></div>
+        <div class="chat-input-row">
+          <textarea id="chat-input" placeholder="Faça sua pergunta médica…" style="flex:1;height:40px;max-height:100px;resize:none;font-size:.79rem"></textarea>
+          <button class="btn btn-primary" id="btn-send-chat">Enviar →</button>
+          <button class="btn btn-ghost btn-sm" id="btn-clear-chat">🗑</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="panel" id="panel-support">
+      <div class="breadcrumb">Dashboard <b>/ Suporte</b></div>
+      <div class="ph"><h1>Suporte</h1></div>
+      <div class="pc">
+        <div class="card">
+          <div class="faq-item"><div class="faq-q">Como usar o Chat IA? <span>▾</span></div><div class="faq-a">Acesse Chat IA no menu e faça perguntas sobre endocrinologia. A IA responde com base em evidências científicas.</div></div>
+          <div class="faq-item"><div class="faq-q">Como gerar questões por subespecialidade? <span>▾</span></div><div class="faq-a">No Banco de Questões, escolha a subespecialidade (diabetes, tireoide, etc.), o nível e clique em "Gerar questões".</div></div>
+          <div class="faq-item"><div class="faq-q">Como inserir provas anteriores? <span>▾</span></div><div class="faq-a">Faça login como admin e acesse a aba Provas. Importe um PDF da prova SBEM ou insira manualmente.</div></div>
+          <div class="faq-item"><div class="faq-q">Como funciona a revisão espaçada? <span>▾</span></div><div class="faq-a">Utiliza o algoritmo SM-2. Os cards com maior dificuldade aparecem com mais frequência até serem dominados.</div></div>
+        </div>
+        <div style="font-size:.77rem;color:var(--t2);margin-top:.7rem">📧 suporte@endodirect.med.br</div>
+      </div>
+    </div>
+
+    <div class="panel" id="panel-adm" style="overflow:hidden;flex-direction:column">
+      <div class="breadcrumb">Admin <b>/ Painel Administrativo</b></div>
+      <div style="padding:.9rem 1.5rem .15rem"><h1 style="font-size:1.25rem;font-weight:700">Painel Admin</h1></div>
+      <div style="display:flex;gap:.3rem;padding:.55rem 1.5rem;border-bottom:1px solid var(--bd);flex-shrink:0;flex-wrap:wrap" id="adm-tabs">
+        <button class="adm-tab on" data-tab="analytics">📊 Analytics</button>
+        <button class="adm-tab" data-tab="provas">🏛️ Provas</button>
+        <button class="adm-tab" data-tab="questoes">? Questões</button>
+        <button class="adm-tab" data-tab="podcasts">🎧 Podcasts</button>
+        <button class="adm-tab" data-tab="mural">📣 Mural</button>
+        <button class="adm-tab" data-tab="usuarios">👤 Usuários</button>
+      </div>
+      <div style="flex:1;overflow-y:auto;padding:1.1rem 1.5rem 2rem" id="adm-body"></div>
+    </div>
+
+  </div>
+</div>
+<script>
+(function(){
+'use strict';
+
+var DEFAULT_SUBESP='<option value="">Todas</option><option>Diabetes</option><option>Obesidade</option><option>Tireoide</option><option>Adrenal</option><option>Neuroendocrinologia</option><option>Osteometabolismo</option><option>Endocrinologia Pediátrica</option><option>Endocrinologia Esportiva</option><option>Endocrinologia Masculina</option><option>Endocrinologia Feminina</option><option>Transgeneridade</option>';
+var BCOLORS=['#8b5cf6','#3b82f6','#10b981','#f59e0b','#ef4444','#ec4899'];
+var FC_CATS=['Diabetes','Obesidade','Tireoide','Adrenal','Neuroendocrinologia','Osteometabolismo','Pediatria','Esportiva','Endocrinologia Masculina','Endocrinologia Feminina','Transgeneridade'];
+var AREAS_CRONO=[
+  {name:'Diabetes',color:'#3b6fd4'},{name:'Obesidade',color:'#10b981'},
+  {name:'Tireoide',color:'#f59e0b'},{name:'Adrenal',color:'#ec4899'},
+  {name:'Neuroendocrinologia',color:'#8b5cf6'},{name:'Osteometabolismo',color:'#06b6d4'},
+  {name:'Endocrinologia Pediátrica',color:'#ef4444'},{name:'Endocrinologia Esportiva',color:'#14b8a6'},
+  {name:'Endocrinologia Masculina',color:'#6366f1'},{name:'Endocrinologia Feminina',color:'#d946ef'},
+  {name:'Transgeneridade',color:'#f97316'}
+];
+var CALCS=[
+  {id:'imc',name:'IMC',area:'Antropometria',desc:'Índice de Massa Corporal',
+   fields:[{id:'imc_peso',label:'Peso (kg)',type:'num'},{id:'imc_alt',label:'Altura (cm)',type:'num'}],
+   calc:function(v){var p=parseFloat(v.imc_peso)||0;var a=(parseFloat(v.imc_alt)||0)/100;return a>0?p/(a*a):0;},
+   interp:function(s){return s<18.5?{t:'Baixo peso',c:'tag-gold'}:s<25?{t:'Eutrófico',c:'tag-grn'}:s<30?{t:'Sobrepeso',c:'tag-gold'}:s<35?{t:'Obesidade grau I',c:'tag-red'}:s<40?{t:'Obesidade grau II',c:'tag-red'}:{t:'Obesidade grau III',c:'tag-red'};},
+   unit:'kg/m²'},
+  {id:'nacorr',name:'Na⁺ corrigido',area:'Distúrbios hidroeletrolíticos',desc:'Sódio corrigido pela glicemia',
+   fields:[{id:'na_med',label:'Sódio medido (mEq/L)',type:'num'},{id:'na_gli',label:'Glicemia (mg/dL)',type:'num'}],
+   calc:function(v){var na=parseFloat(v.na_med)||0;var g=parseFloat(v.na_gli)||0;return g>100?na+1.6*((g-100)/100):na;},
+   interp:function(s){return s<135?{t:'Hiponatremia',c:'tag-red'}:s>145?{t:'Hipernatremia',c:'tag-red'}:{t:'Sódio corrigido normal',c:'tag-grn'};},
+   unit:'mEq/L',note:'Correção de 1,6 mEq/L para cada 100 mg/dL de glicose acima de 100.'},
+  {id:'cacorr',name:'Cálcio corrigido',area:'Osteometabolismo',desc:'Cálcio corrigido pela albumina',
+   fields:[{id:'ca_med',label:'Cálcio total (mg/dL)',type:'num'},{id:'ca_alb',label:'Albumina (g/dL)',type:'num'}],
+   calc:function(v){var ca=parseFloat(v.ca_med)||0;var alb=parseFloat(v.ca_alb)||0;return ca+0.8*(4-alb);},
+   interp:function(s){return s<8.5?{t:'Hipocalcemia',c:'tag-red'}:s>10.5?{t:'Hipercalcemia',c:'tag-red'}:{t:'Cálcio corrigido normal',c:'tag-grn'};},
+   unit:'mg/dL',note:'Soma 0,8 mg/dL para cada 1 g/dL de albumina abaixo de 4.'},
+  {id:'cortic',name:'Equivalência de corticoides',area:'Adrenal',desc:'Conversão entre glicocorticoides',
+   fields:[{id:'cort_dose',label:'Dose (mg)',type:'num'},{id:'cort_de',label:'Converter de',type:'select',opts:['Hidrocortisona','Prednisona','Prednisolona','Metilprednisolona','Dexametasona','Betametasona'],vals:[20,5,5,4,0.75,0.6]},{id:'cort_para',label:'Converter para',type:'select',opts:['Hidrocortisona','Prednisona','Prednisolona','Metilprednisolona','Dexametasona','Betametasona'],vals:[20,5,5,4,0.75,0.6]}],
+   calc:function(v){var d=parseFloat(v.cort_dose)||0;var de=parseFloat(v.cort_de)||1;var para=parseFloat(v.cort_para)||1;return de>0?d*(para/de):0;},
+   interp:function(s){return{t:'Dose equivalente: '+(Math.round(s*100)/100)+' mg',c:'tag-blue'};},
+   unit:'mg',note:'Equivalência anti-inflamatória. Não reflete potência mineralocorticoide.'},
+  {id:'ckdepi',name:'TFG (CKD-EPI 2021)',area:'Função renal',desc:'Taxa de filtração glomerular',
+   fields:[{id:'ckd_cr',label:'Creatinina (mg/dL)',type:'num'},{id:'ckd_idade',label:'Idade (anos)',type:'num'},{id:'ckd_sexo',label:'Sexo',type:'select',opts:['Masculino','Feminino'],vals:[0,1]}],
+   calc:function(v){var cr=parseFloat(v.ckd_cr)||0;var idade=parseFloat(v.ckd_idade)||0;var fem=parseInt(v.ckd_sexo)===1;if(cr<=0||idade<=0)return 0;var k=fem?0.7:0.9;var a=fem?-0.241:-0.302;var minv=Math.min(cr/k,1);var maxv=Math.max(cr/k,1);var egfr=142*Math.pow(minv,a)*Math.pow(maxv,-1.200)*Math.pow(0.9938,idade);if(fem)egfr*=1.012;return egfr;},
+   interp:function(s){return s>=90?{t:'G1 — normal (≥90)',c:'tag-grn'}:s>=60?{t:'G2 — leve (60-89)',c:'tag-grn'}:s>=45?{t:'G3a — leve-moderada (45-59)',c:'tag-gold'}:s>=30?{t:'G3b — moderada-grave (30-44)',c:'tag-gold'}:s>=15?{t:'G4 — grave (15-29)',c:'tag-red'}:{t:'G5 — falência (<15)',c:'tag-red'};},
+   unit:'mL/min/1,73m²',note:'CKD-EPI 2021, sem coeficiente de raça.'},
+  {id:'ldl',name:'LDL (Friedewald)',area:'Lipidologia',desc:'Cálculo do LDL-colesterol',
+   fields:[{id:'ldl_ct',label:'Colesterol total (mg/dL)',type:'num'},{id:'ldl_hdl',label:'HDL (mg/dL)',type:'num'},{id:'ldl_tg',label:'Triglicérides (mg/dL)',type:'num'}],
+   calc:function(v){var ct=parseFloat(v.ldl_ct)||0;var hdl=parseFloat(v.ldl_hdl)||0;var tg=parseFloat(v.ldl_tg)||0;return ct-hdl-(tg/5);},
+   interp:function(s,v){if((parseFloat(v.ldl_tg)||0)>400)return{t:'TG >400 — fórmula não válida',c:'tag-red'};return s<70?{t:'Ótimo (<70)',c:'tag-grn'}:s<100?{t:'Desejável (70-99)',c:'tag-grn'}:s<130?{t:'Limítrofe (100-129)',c:'tag-gold'}:s<160?{t:'Alto (130-159)',c:'tag-gold'}:{t:'Muito alto (≥160)',c:'tag-red'};},
+   unit:'mg/dL',note:'Fórmula de Friedewald. Inválida se TG > 400 mg/dL.'},
+  {id:'homa',name:'HOMA-IR',area:'Diabetes',desc:'Resistência à insulina',
+   fields:[{id:'homa_gli',label:'Glicemia de jejum (mg/dL)',type:'num'},{id:'homa_ins',label:'Insulina de jejum (µUI/mL)',type:'num'}],
+   calc:function(v){var g=parseFloat(v.homa_gli)||0;var ins=parseFloat(v.homa_ins)||0;return(g*ins)/405;},
+   interp:function(s){return s<2.5?{t:'Sem resistência insulínica',c:'tag-grn'}:s<3.8?{t:'Resistência limítrofe',c:'tag-gold'}:{t:'Resistência à insulina',c:'tag-red'};},
+   unit:'',note:'Ponto de corte varia conforme população (referência: ~2,5-3,8).'},
+];
+
+var USERS=[
+  {email:'aluno@endodirect.med.br',pass:'Aluno@2026',name:'Rodolpho',role:'aluno',sub:'Residente'},
+  {email:'admin@endodirect.med.br',pass:'Admin@2026',name:'Administrador',role:'admin',sub:'Gestor'},
+  {email:'google',pass:'',name:'Rodolpho',role:'aluno',sub:'Residente'},
+];
+
+// ── STORAGE EM MEMÓRIA (artefatos não permitem localStorage) ──
+var mem={};
+function lsGet(k){var v=mem['endodirect_v1_'+k];return v!==undefined?v:null;}
+function lsSet(k,v){try{mem['endodirect_v1_'+k]=JSON.parse(JSON.stringify(v));}catch(e){mem['endodirect_v1_'+k]=v;}}
+
+var DB={
+  q:lsGet('q')||[],
+  fc:lsGet('fc')||[],
+  mm:lsGet('mm')||[],
+  notes:lsGet('notes')||[],
+  crono:lsGet('crono')||null,
+  sf_results:lsGet('sf_results')||[],
+  perf:lsGet('perf')||{}
+};
+function persist(){
+  ['q','fc','mm','notes','crono','sf_results','perf'].forEach(function(k){lsSet(k,DB[k]);});
+}
+var provasDB=lsGet('provas')||[];
+function persistProvas(){lsSet('provas',provasDB);}
+var admAvisos=lsGet('adm_avisos')||[];
+var admQuestoes=lsGet('adm_questoes')||[];
+var podcasts=lsGet('podcasts')||[];
+function persistPodcasts(){lsSet('podcasts',podcasts);}
+
+function esc(s){return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');}
+function ldHTML(){return'<div class="ld"><div class="ld-dots"><span></span><span></span><span></span></div>Gerando…</div>';}
+function notify(msg,type){
+  var el=document.createElement('div');
+  el.className='notify '+(type||'info');
+  el.textContent=msg;
+  document.body.appendChild(el);
+  setTimeout(function(){el.remove();},2700);
+}
+function parseJ(raw){
+  if(!raw)return null;
+  var c=raw.replace(/```json[\s]*/gi,'').replace(/```[\s]*/g,'').trim();
+  try{return JSON.parse(c);}catch(e){}
+  var m=c.match(/(\{[\s\S]*\})/)||c.match(/(\[[\s\S]*\])/);
+  if(m){try{return JSON.parse(m[1]);}catch(e){}}
+  return null;
+}
+function diffTag(d){
+  var map={basico:'tag-grn',intermediario:'tag-blue',avancado:'tag-red'};
+  var lbl={basico:'F',intermediario:'M',avancado:'D'};
+  return'<span class="tag '+(map[d]||'tag-blue')+'">'+(lbl[d]||'M')+'</span>';
+}
+function genCode(area){
+  var map={Diabetes:'DM',Obesidade:'OBE',Tireoide:'TIR',Adrenal:'ADR',Neuroendocrinologia:'NEU',Osteometabolismo:'OST','Endocrinologia Pediátrica':'PED','Endocrinologia Esportiva':'ESP','Endocrinologia Masculina':'MAS','Endocrinologia Feminina':'FEM',Transgeneridade:'TRG'};
+  var pfx=null;
+  for(var k in map){if((area||'').indexOf(k)>=0){pfx=map[k];break;}}
+  if(!pfx)pfx=(area||'').replace(/[^A-Za-z]/g,'').substring(0,3).toUpperCase()||'END';
+  var n=DB.q.filter(function(q){return(q.code||'').indexOf(pfx)===0;}).length+1;
+  return pfx+('000'+n).slice(-3);
+}
+
+// ── API (ambiente do artefato injeta autenticação) ──
+function callAI(sys,usr,maxTok){
+  maxTok=maxTok||1500;
+  return fetch('https://api.anthropic.com/v1/messages',{
+    method:'POST',
+    headers:{'Content-Type':'application/json','anthropic-version':'2023-06-01'},
+    body:JSON.stringify({model:'claude-sonnet-4-20250514',max_tokens:maxTok,system:sys,messages:[{role:'user',content:usr}]})
+  }).then(function(r){
+    if(!r.ok){return r.json().catch(function(){return{};}).then(function(e){throw new Error((e.error&&e.error.message)||'Erro HTTP '+r.status);});}
+    return r.json();
+  }).then(function(d){return(d.content&&d.content[0]&&d.content[0].text)||'';});
+}
+function callAIwithPDF(sys,b64){
+  return fetch('https://api.anthropic.com/v1/messages',{
+    method:'POST',
+    headers:{'Content-Type':'application/json','anthropic-version':'2023-06-01'},
+    body:JSON.stringify({model:'claude-sonnet-4-20250514',max_tokens:2000,system:sys,messages:[{role:'user',content:[{type:'document',source:{type:'base64',media_type:'application/pdf',data:b64}},{type:'text',text:'Analise este documento e retorne o JSON solicitado.'}]}]})
+  }).then(function(r){
+    if(!r.ok){return r.json().catch(function(){return{};}).then(function(e){throw new Error((e.error&&e.error.message)||'Erro HTTP '+r.status);});}
+    return r.json();
+  }).then(function(d){return(d.content&&d.content[0]&&d.content[0].text)||'';});
+}
+
+var currentUser=null;
+function startApp(){
+  var u=currentUser;
+  document.getElementById('login-screen').style.display='none';
+  document.getElementById('app-screen').style.display='flex';
+  document.getElementById('tb-uname').textContent=u.name;
+  document.getElementById('tb-usub').textContent=u.sub;
+  document.getElementById('tb-avatar').textContent=u.name.charAt(0);
+  document.getElementById('um-name').textContent=u.name;
+  document.getElementById('um-email').textContent=u.email==='google'?u.name+'@gmail.com':u.email;
+  document.getElementById('dash-greeting').textContent='Bem-vindo, '+u.name+'.';
+  var isAdmin=u.role==='admin';
+  document.getElementById('sb-aluno').style.display=isAdmin?'none':'block';
+  document.getElementById('sb-admin').style.display=isAdmin?'block':'none';
+  document.getElementById('sb-role-lbl').textContent=isAdmin?'Admin':'Menu';
+  document.getElementById('btn-chat-cta').style.display=isAdmin?'none':'flex';
+  document.querySelectorAll('.panel').forEach(function(p){p.classList.remove('on');});
+  if(isAdmin){goPanel('adm');}else{goPanel('dash');initAll();}
+}
+function doLogin(u){
+  currentUser=u;
+  if(u.role==='aluno'){
+    var prof=lsGet('user_profile');
+    if(!prof){openOnboard();return;}
+    currentUser.sub=prof.perfil;
+    currentUser.profile=prof;
+  }
+  startApp();
+}
+function openOnboard(){
+  document.getElementById('login-screen').style.display='none';
+  document.getElementById('onboard-modal').style.display='flex';
+  document.getElementById('ob-err').style.display='none';
+  document.querySelectorAll('input[name="ob-perfil"]').forEach(function(r){r.checked=false;});
+  ['ob-grad','ob-resid'].forEach(function(id){var e=document.getElementById(id);if(e)e.value='';});
+  document.getElementById('ob-grad-wrap').style.display='none';
+  document.getElementById('ob-resid-wrap').style.display='none';
+  document.getElementById('ob-res-lbl').style.borderColor='var(--bd2)';
+  document.getElementById('ob-res-lbl').style.background='#fff';
+  document.getElementById('ob-endo-lbl').style.borderColor='var(--bd2)';
+  document.getElementById('ob-endo-lbl').style.background='#fff';
+}
+function submitOnboard(){
+  var perfil=(document.querySelector('input[name="ob-perfil"]:checked')||{}).value;
+  var err=document.getElementById('ob-err');
+  if(!perfil){err.textContent='Selecione se você é residente ou endocrinologista.';err.style.display='block';return;}
+  var grad=(document.getElementById('ob-grad').value||'').trim();
+  if(!grad){err.textContent='Informe sua instituição de graduação.';err.style.display='block';return;}
+  var prof={perfil:perfil,graduacao:grad};
+  if(perfil==='Endocrinologista'){
+    var resid=(document.getElementById('ob-resid').value||'').trim();
+    if(!resid){err.textContent='Informe sua instituição de residência médica.';err.style.display='block';return;}
+    prof.residencia=resid;
+  }
+  lsSet('user_profile',prof);
+  currentUser.sub=perfil;currentUser.profile=prof;
+  document.getElementById('onboard-modal').style.display='none';
+  startApp();
+}
+function doLogout(){
+  currentUser=null;
+  document.getElementById('app-screen').style.display='none';
+  document.getElementById('login-screen').style.display='flex';
+  document.getElementById('user-menu').style.display='none';
+}
+
+var PANEL_LABELS={dash:'Dashboard',quest:'Questões',flash:'Flashcards',mmap:'Mind Map',podcast:'Podcasts',crono:'Cronograma',sr:'Revisão Espaçada',sim:'Simulador',simfull:'Simulado',calc:'Calculadoras',rx:'Prescrição',art:'Resumidor',notas:'Caderno',mural:'Mural',chat:'Chat IA',support:'Suporte',adm:'Painel Admin'};
+function goPanel(id){
+  document.querySelectorAll('.panel').forEach(function(p){p.classList.remove('on');});
+  var el=document.getElementById('panel-'+id);
+  if(el)el.classList.add('on');
+  document.querySelectorAll('.sb-item[data-p]').forEach(function(b){b.classList.toggle('on',b.dataset.p===id);});
+  var bc=document.getElementById('tb-bc');
+  if(bc)bc.textContent=PANEL_LABELS[id]||id;
+  if(id==='dash')refreshDash();
+  if(id==='quest'){renderSavedQ();populateInst('q-inst');updateProvaInfo();}
+  if(id==='flash')renderFC();
+  if(id==='mmap')renderMMList();
+  if(id==='podcast')renderPodcasts();
+  if(id==='crono')initCrono();
+  if(id==='sr')renderSR();
+  if(id==='calc')initCalc();
+  if(id==='notas')renderNoteList();
+  if(id==='mural')initMural();
+  if(id==='simfull'){renderSFPrev();populateInst('sf-inst');}
+  if(id==='art')initArtUpload();
+  if(id==='adm')renderAdmTab('analytics');
+}
+
+function refreshDash(){
+  DB.fc.forEach(function(c){srInit(c);});
+  var due=DB.fc.filter(srIsDue).length;
+  setText('d-qn',DB.q.length);setText('d-fcn',DB.fc.length);setText('d-sr-due',due);setText('d-mmn',DB.mm.length);
+  renderPerfBars();updateDashRec();renderDashCrono();renderDashNotas();
+}
+function setText(id,v){var e=document.getElementById(id);if(e)e.textContent=v;}
+function renderPerfBars(){
+  var el=document.getElementById('perf-bars');if(!el)return;
+  var entries=Object.keys(DB.perf);
+  if(!entries.length){el.innerHTML='<div class="empty">Responda questões para ver.</div>';return;}
+  el.innerHTML=entries.map(function(a){
+    var d=DB.perf[a];var pct=d.total?Math.round(d.correct/d.total*100):0;
+    var col=pct>=80?'var(--grn)':pct>=60?'var(--blue)':'var(--red)';
+    return'<div class="perf-bar"><div class="perf-bar-label">'+esc(a.substring(0,20))+'</div><div class="perf-bar-track"><div class="perf-bar-fill" style="width:'+pct+'%;background:'+col+'"></div></div><div class="perf-bar-pct">'+pct+'%</div></div>';
+  }).join('');
+}
+function updateDashRec(){
+  var el=document.getElementById('d-rec');if(!el)return;
+  var entries=Object.keys(DB.perf);if(!entries.length)return;
+  var worst=entries.sort(function(a,b){return(DB.perf[a].correct/Math.max(1,DB.perf[a].total))-(DB.perf[b].correct/Math.max(1,DB.perf[b].total));})[0];
+  var pct=DB.perf[worst].total?Math.round(DB.perf[worst].correct/DB.perf[worst].total*100):0;
+  el.textContent='Reforçar '+worst+': '+pct+'% de acerto.';
+}
+function renderDashCrono(){
+  var el=document.getElementById('d-crono-prev');if(!el)return;
+  if(!DB.crono||!DB.crono.days||!DB.crono.days[0]){el.innerHTML='<div style="font-size:.73rem;color:var(--t3)">Nenhum plano.</div>';return;}
+  el.innerHTML=(DB.crono.days[0].sessions||[]).slice(0,3).map(function(s){return'<div style="display:flex;align-items:center;gap:.45rem;padding:.28rem 0;border-bottom:1px solid var(--bd);font-size:.74rem"><span style="color:var(--t3);min-width:48px">'+esc(s.time)+'</span><span>'+esc(s.area)+'</span><span class="tag tag-blue" style="margin-left:auto">'+s.duration+'h</span></div>';}).join('');
+}
+function renderDashNotas(){
+  var el=document.getElementById('d-notas-prev');if(!el)return;
+  if(!DB.notes.length){el.innerHTML='<div style="font-size:.73rem;color:var(--t3)">Nenhuma nota.</div>';return;}
+  el.innerHTML=DB.notes.slice(-3).reverse().map(function(n){return'<div style="font-size:.76rem;font-weight:500;padding:.28rem 0;border-bottom:1px solid var(--bd)">'+esc(n.title||'Sem título')+'</div>';}).join('');
+}
+
+var qtype='mc';
+var genQs=[];
+function genQuestions(){
+  var btn=document.getElementById('btn-genq');
+  var sub=document.getElementById('q-sub').value;
+  var qty=parseInt(document.getElementById('q-qty').value)||3;
+  var topic=(document.getElementById('q-topic').value||'').trim();
+  var diff=(document.querySelector('input[name="q-diff"]:checked')||{}).value||'intermediario';
+  var spec=sub?'Endocrinologia — '+sub:'Endocrinologia (todas as subespecialidades)';
+  var areaTag=sub||'Endocrinologia';
+  var isMC=qtype==='mc';
+  btn.disabled=true;btn.innerHTML=ldHTML();
+  var res=document.getElementById('q-gen-results');res.innerHTML=ldHTML();
+  var sys=isMC
+    ?'Médico endocrinologista examinador BR. JSON APENAS: {"questions":[{"stem":"vinheta clínica 3-4 linhas","options":{"A":"texto","B":"texto","C":"texto","D":"texto"},"answer":"A","explanation":"1-2 frases","area":"'+areaTag+'","dificuldade":"'+diff+'"}]}'
+    :'Médico endocrinologista examinador BR. JSON APENAS: {"questions":[{"stem":"vinheta clínica 3-4 linhas","expected":"resposta modelo","area":"'+areaTag+'","dificuldade":"'+diff+'"}]}';
+  callAI(sys,'Gere exatamente '+qty+' questão(ões) de '+spec+', nível '+diff+(topic?', tema: '+topic:'')+'.', qty<=3?1300:qty<=5?1900:2600)
+  .then(function(raw){
+    var data=parseJ(raw);
+    if(!data||!data.questions||!data.questions.length)throw new Error('Resposta inválida. Tente novamente.');
+    genQs=data.questions;renderGenQ(isMC);
+  }).catch(function(e){res.innerHTML='<div style="color:var(--red);font-size:.78rem;padding:.5rem;background:var(--red-l);border-radius:var(--rs)">❌ '+esc(e.message)+'</div>';})
+  .then(function(){btn.disabled=false;btn.innerHTML='▶ Gerar questões';});
+}
+function renderGenQ(isMC){
+  var res=document.getElementById('q-gen-results');
+  res.innerHTML='<div style="display:flex;align-items:center;justify-content:space-between;margin:.15rem 0 .5rem"><span class="sec-title">'+genQs.length+' questão(ões)</span><button class="btn btn-primary btn-sm" id="btn-save-all-q">💾 Salvar todas</button></div><div class="q-list">'+genQs.map(function(q,i){return qRowHTML(q,i,'gen',isMC);}).join('')+'</div>';
+  document.getElementById('btn-save-all-q').addEventListener('click',saveAllQ);
+}
+function qRowHTML(q,i,src,isMC){
+  return'<div><div class="q-row" data-qi="'+i+'" data-src="'+src+'" data-mc="'+isMC+'"><div class="q-row-top"><div class="q-stem-prev">'+esc((q.stem||'').substring(0,150))+((q.stem||'').length>150?'…':'')+'</div><div style="display:flex;gap:3px;flex-shrink:0">'+(q.code?'<span style="font-family:monospace;font-size:.59rem;font-weight:700;background:#f1f0ff;color:#6d5fd8;padding:1px 6px;border-radius:99px">'+esc(q.code)+'</span>':'')+diffTag(q.dificuldade||'intermediario')+(q.inst?'<span class="tag tag-pur" style="font-size:.57rem">'+esc(q.inst)+'</span>':'')+'</div></div></div><div id="qd-'+src+'-'+i+'" style="display:none"></div></div>';
+}
+function toggleQDetail(i,src,isMC){
+  var el=document.getElementById('qd-'+src+'-'+i);if(!el)return;
+  var open=el.style.display!=='none'&&el.innerHTML!=='';
+  document.querySelectorAll('[id^="qd-"]').forEach(function(e){e.style.display='none';e.innerHTML='';});
+  if(open)return;
+  var q=src==='gen'?genQs[i]:DB.q[i];if(!q)return;
+  el.style.display='block';
+  if(isMC){
+    var opts=Object.keys(q.options||{}).map(function(k){return'<div class="qo" id="qo-'+src+'-'+i+'-'+k+'" data-letter="'+k+'" data-answer="'+esc(q.answer||'')+'" data-exp="'+esc(q.explanation||'')+'" data-src="'+src+'" data-idx="'+i+'"><span class="qo-ltr">'+k+'</span>'+esc(q.options[k])+'</div>';}).join('');
+    el.innerHTML='<div class="q-detail"><div class="q-stem">'+esc(q.stem)+'</div>'+opts+'<div id="qfb-'+src+'-'+i+'"></div>'+(src==='gen'?'<div style="margin-top:.4rem"><button class="btn btn-outline btn-sm" data-save-q="'+i+'">💾 Salvar</button></div>':'')+'</div>';
+  }else{
+    el.innerHTML='<div class="q-detail"><div class="q-stem">'+esc(q.stem)+'</div><div class="fld2"><label>Sua resposta</label><textarea id="disc-'+src+'-'+i+'" rows="4" placeholder="Escreva…"></textarea></div><div style="display:flex;gap:5px"><button class="btn btn-primary btn-sm" data-eval-disc="'+i+'" data-eval-src="'+src+'">Avaliar</button>'+(src==='gen'?'<button class="btn btn-outline btn-sm" data-save-q="'+i+'">💾 Salvar</button>':'')+'</div><div id="qfb-'+src+'-'+i+'"></div></div>';
+  }
+}
+function selectOpt(letter,answer,explanation,src,idx){
+  var pfx='qo-'+src+'-'+idx+'-';
+  if(document.querySelector('[id^="'+pfx+'"].correct,[id^="'+pfx+'"].wrong'))return;
+  var ok=letter===answer;
+  document.querySelectorAll('[id^="'+pfx+'"]').forEach(function(el){
+    var l=el.id.replace(pfx,'');
+    if(l===answer)el.classList.add('correct');
+    else if(l===letter&&!ok)el.classList.add('wrong');
+  });
+  var fb=document.getElementById('qfb-'+src+'-'+idx);
+  if(fb)fb.innerHTML='<div class="q-fb '+(ok?'ok':'er')+'">'+(ok?'✓ Correto!':'✗ Incorreto — Gabarito: '+answer)+' — '+esc(explanation.replace(/&quot;/g,'"'))+'</div>';
+  var q=src==='gen'?genQs[parseInt(idx)]:DB.q[parseInt(idx)];
+  if(q&&q.area){if(!DB.perf[q.area])DB.perf[q.area]={correct:0,total:0};DB.perf[q.area].total++;if(ok)DB.perf[q.area].correct++;persist();}
+}
+function evalDisc(i,src,btn){
+  var ta=document.getElementById('disc-'+src+'-'+i);
+  if(!ta||!ta.value.trim()){notify('Escreva sua resposta.','err');return;}
+  var q=src==='gen'?genQs[i]:DB.q[i];
+  btn.disabled=true;btn.textContent='Avaliando…';
+  var fb=document.getElementById('qfb-'+src+'-'+i);fb.innerHTML=ldHTML();
+  callAI('Preceptor de medicina. Avalie em 3-4 frases.','Questão: '+q.stem+'\nEsperado: '+(q.expected||'')+'\nAluno: '+ta.value)
+  .then(function(r){fb.innerHTML='<div style="background:var(--blue-l);border-left:3px solid var(--blue);border-radius:0 var(--rs) var(--rs) 0;padding:.6rem .8rem;font-size:.75rem;color:var(--t2);line-height:1.6;margin-top:.65rem">'+esc(r)+'</div>';})
+  .catch(function(e){fb.innerHTML='<div style="color:var(--red);font-size:.74rem">Erro: '+esc(e.message)+'</div>';})
+  .then(function(){btn.disabled=false;btn.textContent='Avaliar';});
+}
+function saveAllQ(){
+  var n=0;
+  genQs.forEach(function(q){
+    if(!DB.q.find(function(x){return x.stem===q.stem;})){
+      DB.q.push(Object.assign({},q,{code:genCode(q.area),type:qtype,at:Date.now()}));n++;
+    }
+  });
+  persist();refreshDash();renderSavedQ();notify(n+' questão(ões) salva(s)!','ok');
+}
+function saveOneQ(i){
+  var q=genQs[i];if(!q)return;
+  if(!DB.q.find(function(x){return x.stem===q.stem;})){
+    DB.q.push(Object.assign({},q,{code:genCode(q.area),type:qtype,at:Date.now()}));
+    persist();refreshDash();renderSavedQ();notify('Questão salva!','ok');
+  }else notify('Já salva.','info');
+}
+function renderSavedQ(){
+  var el=document.getElementById('q-saved-list');if(!el)return;
+  setText('q-saved-count','('+DB.q.length+')');
+  if(!DB.q.length){el.innerHTML='<div class="empty">Nenhuma questão salva.</div>';return;}
+  el.innerHTML='<div class="q-list">'+DB.q.map(function(q,i){return'<div><div class="q-row" data-qi="'+i+'" data-src="saved" data-mc="'+(q.type!=='disc')+'"><div class="q-row-top"><div class="q-stem-prev">'+esc((q.stem||'').substring(0,140))+'…</div><div style="display:flex;gap:3px;align-items:center">'+(q.code?'<span style="font-family:monospace;font-size:.59rem;font-weight:700;background:#f1f0ff;color:#6d5fd8;padding:1px 6px;border-radius:99px">'+esc(q.code)+'</span>':'')+diffTag(q.dificuldade)+'<button class="btn btn-ghost btn-sm" data-del-q="'+i+'" style="padding:2px 4px">✕</button></div></div></div><div id="qd-saved-'+i+'" style="display:none"></div></div>';}).join('')+'</div>';
+}
+var INST_PADRAO=['SBEM'];
+function getInstList(){var s={};INST_PADRAO.forEach(function(i){s[i]=1;});provasDB.forEach(function(q){if(q.inst)s[q.inst]=1;});return Object.keys(s);}
+function populateInst(selId){
+  var sel=document.getElementById(selId);if(!sel)return;
+  var cur=sel.value;
+  sel.innerHTML='<option value="">Todas</option>'+getInstList().map(function(i){return'<option value="'+esc(i)+'">'+esc(i)+'</option>';}).join('');
+  if(cur)sel.value=cur;
+}
+function populateAno(selId,inst){
+  var sel=document.getElementById(selId);if(!sel)return;
+  var pool=inst?provasDB.filter(function(q){return q.inst===inst;}):provasDB;
+  var anos=pool.map(function(q){return q.ano;}).filter(function(v,i,a){return a.indexOf(v)===i;}).sort(function(a,b){return b-a;});
+  sel.innerHTML='<option value="">Todos</option>'+anos.map(function(a){return'<option value="'+a+'">'+a+'</option>';}).join('');
+}
+function filterProvas(inst,ano,area){
+  return provasDB.filter(function(q){
+    return(!inst||q.inst===inst)&&(!ano||String(q.ano)===String(ano))&&(!area||q.area===area);
+  });
+}
+function updateProvaInfo(){
+  var inst=(document.getElementById('q-inst')||{}).value||'';
+  var ano=(document.getElementById('q-ano')||{}).value||'';
+  var area=(document.getElementById('q-parea')||{}).value||'';
+  populateAno('q-ano',inst);
+  var n=filterProvas(inst,ano,area).length;
+  var el=document.getElementById('q-prova-info');
+  if(el)el.textContent=n>0?n+' questão(ões) disponível(is).':'Nenhuma questão com esses filtros.';
+}
+function renderProvaResults(qs){
+  if(!qs.length){document.getElementById('q-gen-results').innerHTML='<div class="empty">Nenhuma questão encontrada.</div>';return;}
+  genQs=qs.map(function(q){return Object.assign({},q,{type:'mc'});});
+  renderGenQ(true);
+}
+// ── FLASHCARDS ──
+var studyCards=[],studyIdx=0,fcSelectedCat='Diabetes',fcFilter='';
+function renderFcCatPills(){
+  var el=document.getElementById('fc-cat-pills');if(!el)return;
+  el.innerHTML=FC_CATS.map(function(c){return'<button class="cat-pill'+(c===fcSelectedCat?' on':'')+'" data-fccat="'+esc(c)+'">'+esc(c)+'</button>';}).join('');
+}
+function renderFcFilter(){
+  var el=document.getElementById('fc-filter-row');if(!el)return;
+  var cats={};DB.fc.forEach(function(c){if(c.cat)cats[c.cat]=(cats[c.cat]||0)+1;});
+  el.innerHTML='<button class="cat-pill'+(fcFilter===''?' on':'')+'" data-fcfilter="">Todos ('+DB.fc.length+')</button>'+Object.keys(cats).map(function(c){return'<button class="cat-pill'+(fcFilter===c?' on':'')+'" data-fcfilter="'+esc(c)+'">'+esc(c)+' ('+cats[c]+')</button>';}).join('');
+}
+function saveFC(){
+  var f=(document.getElementById('fc-f').value||'').trim();
+  var b=(document.getElementById('fc-b').value||'').trim();
+  if(!f||!b){notify('Preencha frente e verso.','err');return;}
+  DB.fc.push({id:Date.now(),front:f,back:b,cat:fcSelectedCat,at:Date.now()});
+  persist();
+  document.getElementById('fc-f').value='';document.getElementById('fc-b').value='';
+  document.getElementById('fc-create').style.display='none';
+  renderFC();refreshDash();notify('Flashcard criado!','ok');
+}
+function genFC(){
+  var sub=document.getElementById('fc-gsub').value;
+  var topic=(document.getElementById('fc-gt').value||'').trim();
+  var qty=parseInt(document.getElementById('fc-gq').value)||10;
+  var btn=document.getElementById('btn-fcgen');
+  btn.disabled=true;btn.innerHTML=ldHTML();
+  callAI('Endocrinologista educador BR. JSON APENAS: {"cards":[{"front":"pergunta curta","back":"resposta objetiva 1-2 frases"}]}','Gere '+qty+' flashcards de '+sub+(topic?', tema '+topic:'')+'.',1800)
+  .then(function(raw){
+    var d=parseJ(raw);if(!d||!d.cards)throw new Error('Resposta inválida.');
+    d.cards.forEach(function(c){DB.fc.push({id:Date.now()+Math.random(),front:c.front,back:c.back,cat:sub,at:Date.now()});});
+    persist();document.getElementById('fc-gen').style.display='none';renderFC();refreshDash();notify(d.cards.length+' flashcards gerados!','ok');
+  }).catch(function(e){notify('Erro: '+e.message,'err');})
+  .then(function(){btn.disabled=false;btn.innerHTML='Gerar';});
+}
+function renderFC(){
+  renderFcFilter();
+  var el=document.getElementById('fc-grid');if(!el)return;
+  var list=fcFilter?DB.fc.filter(function(c){return c.cat===fcFilter;}):DB.fc;
+  if(!list.length){el.innerHTML='<div class="empty" style="grid-column:1/-1">Nenhum flashcard.</div>';return;}
+  el.innerHTML=list.map(function(c){var i=DB.fc.indexOf(c);return'<div class="fc-card" data-fctoggle="'+i+'"><div class="fc-cat">'+esc(c.cat||'Geral')+'</div><div class="fc-front">'+esc(c.front)+'</div><div class="fc-back">'+esc(c.back)+'</div><div class="fc-foot"><span style="font-size:.58rem;color:var(--t3)">Clique p/ virar</span><button class="btn btn-ghost btn-sm" data-fcdel="'+i+'" style="padding:1px 5px">✕</button></div></div>';}).join('');
+}
+function toggleFC(i){
+  var cards=document.querySelectorAll('[data-fctoggle]');
+  cards.forEach(function(c){if(c.dataset.fctoggle==String(i))c.classList.toggle('rev');});
+}
+function startStudy(){
+  studyCards=fcFilter?DB.fc.filter(function(c){return c.cat===fcFilter;}):DB.fc.slice();
+  if(!studyCards.length){notify('Nenhum card para estudar.','err');return;}
+  studyIdx=0;
+  document.getElementById('fc-study').style.display='block';
+  document.getElementById('fc-grid').style.display='none';
+  document.getElementById('fc-filter-row').style.display='none';
+  renderStudyCard();
+}
+function endStudy(){
+  document.getElementById('fc-study').style.display='none';
+  document.getElementById('fc-grid').style.display='grid';
+  document.getElementById('fc-filter-row').style.display='flex';
+}
+function renderStudyCard(){
+  var c=studyCards[studyIdx];if(!c)return;
+  setText('study-prog','Card '+(studyIdx+1)+' de '+studyCards.length);
+  setText('study-front',c.front);setText('study-back',c.back);
+  document.getElementById('study-back').style.display='none';
+  document.getElementById('study-hint').style.display='block';
+  document.getElementById('study-c').classList.remove('fl');
+}
+function flipStudy(){
+  var b=document.getElementById('study-back');
+  var open=b.style.display!=='none';
+  b.style.display=open?'none':'block';
+  document.getElementById('study-hint').style.display=open?'block':'none';
+  document.getElementById('study-c').classList.toggle('fl',!open);
+}
+
+// ── MIND MAP ──
+var curMM=null;
+function wrapTxt(t,max){
+  var words=String(t).split(' '),lines=[],cur='';
+  words.forEach(function(w){if((cur+' '+w).trim().length>max){if(cur)lines.push(cur);cur=w;}else cur=(cur+' '+w).trim();});
+  if(cur)lines.push(cur);return lines;
+}
+function svgTxt(x,y,lines,opts){
+  opts=opts||{};
+  return lines.map(function(l,i){return'<text x="'+x+'" y="'+(y+i*(opts.lh||13))+'" text-anchor="'+(opts.anchor||'middle')+'" font-size="'+(opts.size||11)+'" font-weight="'+(opts.weight||400)+'" fill="'+(opts.fill||'#1a2744')+'" font-family="Segoe UI,sans-serif">'+esc(l)+'</text>';}).join('');
+}
+function buildSVG(data){
+  var cx=430,cy=300,nodes=data.branches||[];
+  var W=860,H=600;
+  var svg='<svg viewBox="0 0 '+W+' '+H+'" width="100%" style="min-width:760px">';
+  var R=210;
+  nodes.forEach(function(b,i){
+    var ang=(i/nodes.length)*2*Math.PI-Math.PI/2;
+    var bx=cx+Math.cos(ang)*R,by=cy+Math.sin(ang)*R;
+    var col=BCOLORS[i%BCOLORS.length];
+    svg+='<path d="M'+cx+' '+cy+' Q'+((cx+bx)/2)+' '+((cy+by)/2)+' '+bx+' '+by+'" stroke="'+col+'" stroke-width="2.5" fill="none" opacity="0.55"/>';
+    var subs=b.children||b.subtopics||[];
+    var sub=subs.slice(0,4);
+    sub.forEach(function(s,j){
+      var sang=ang+(j-(sub.length-1)/2)*0.42;
+      var sx=bx+Math.cos(sang)*120,sy=by+Math.sin(sang)*120;
+      svg+='<line x1="'+bx+'" y1="'+by+'" x2="'+sx+'" y2="'+sy+'" stroke="'+col+'" stroke-width="1.4" opacity="0.4"/>';
+      var sl=wrapTxt(typeof s==='string'?s:(s.title||s.name||''),18);
+      svg+='<rect x="'+(sx-58)+'" y="'+(sy-(sl.length*12)/2-7)+'" width="116" height="'+(sl.length*12+12)+'" rx="7" fill="#fff" stroke="'+col+'" stroke-width="1.2"/>';
+      svg+=svgTxt(sx,sy-(sl.length*12)/2+5,sl,{size:9.5,fill:'#3a4a6a'});
+    });
+    var bl=wrapTxt(b.title||b.name||'',16);
+    svg+='<rect x="'+(bx-62)+'" y="'+(by-(bl.length*13)/2-9)+'" width="124" height="'+(bl.length*13+16)+'" rx="9" fill="'+col+'"/>';
+    svg+=svgTxt(bx,by-(bl.length*13)/2+5,bl,{size:11,weight:700,fill:'#fff'});
+  });
+  var cl=wrapTxt(data.central||data.title||'Tema',16);
+  svg+='<circle cx="'+cx+'" cy="'+cy+'" r="62" fill="#1a2744"/>';
+  svg+=svgTxt(cx,cy-(cl.length*14)/2+5,cl,{size:13,weight:700,fill:'#fff'});
+  svg+='</svg>';
+  return svg;
+}
+function genMM(){
+  var topic=(document.getElementById('mm-topic').value||'').trim();
+  if(!topic){notify('Digite um tema.','err');return;}
+  var btn=document.getElementById('btn-mmgen');
+  btn.disabled=true;btn.innerHTML=ldHTML();
+  callAI('Endocrinologista educador. JSON APENAS: {"central":"tema","branches":[{"title":"ramo","children":["sub1","sub2","sub3"]}]} (4-6 ramos, 3-4 subtópicos cada).','Mapa mental sobre: '+topic,1500)
+  .then(function(raw){
+    var d=parseJ(raw);if(!d||!d.branches)throw new Error('Resposta inválida.');
+    curMM={topic:topic,data:d};
+    document.getElementById('mm-live').style.display='block';
+    setText('mm-live-title',d.central||topic);
+    document.getElementById('mm-svg').innerHTML=buildSVG(d);
+  }).catch(function(e){notify('Erro: '+e.message,'err');})
+  .then(function(){btn.disabled=false;btn.innerHTML='▶ Gerar';});
+}
+function saveMM(){
+  if(!curMM)return;
+  DB.mm.push({id:Date.now(),topic:curMM.topic,data:curMM.data,at:Date.now()});
+  persist();renderMMList();refreshDash();notify('Mapa salvo!','ok');
+}
+function renderMMList(){
+  var el=document.getElementById('mm-list');if(!el)return;
+  setText('mm-count','('+DB.mm.length+')');
+  if(!DB.mm.length){el.innerHTML='<div class="empty">Nenhum mapa salvo.</div>';return;}
+  el.innerHTML=DB.mm.map(function(m,i){return'<div class="mm-item"><div><div style="font-size:.8rem;font-weight:600">'+esc(m.topic)+'</div><div style="font-size:.63rem;color:var(--t3)">'+new Date(m.at).toLocaleDateString('pt-BR')+'</div></div><div style="display:flex;gap:4px"><button class="btn btn-outline btn-sm" data-mmview="'+i+'">Ver</button><button class="btn btn-ghost btn-sm" data-mmdel="'+i+'">✕</button></div></div>';}).join('');
+}
+function viewMM(i){
+  var m=DB.mm[i];if(!m)return;
+  curMM={topic:m.topic,data:m.data};
+  document.getElementById('mm-live').style.display='block';
+  setText('mm-live-title',m.data.central||m.topic);
+  document.getElementById('mm-svg').innerHTML=buildSVG(m.data);
+  document.getElementById('panel-mmap').scrollTop=0;
+}
+
+// ── PODCASTS (aluno) ──
+var podFilter='';
+function renderPodcasts(){
+  var frow=document.getElementById('pod-filter-row');
+  var cats={};podcasts.forEach(function(p){if(p.area)cats[p.area]=(cats[p.area]||0)+1;});
+  if(frow)frow.innerHTML='<button class="cat-pill'+(podFilter===''?' on':'')+'" data-podfilter="">Todos ('+podcasts.length+')</button>'+Object.keys(cats).map(function(c){return'<button class="cat-pill'+(podFilter===c?' on':'')+'" data-podfilter="'+esc(c)+'">'+esc(c)+' ('+cats[c]+')</button>';}).join('');
+  var el=document.getElementById('pod-list');if(!el)return;
+  var list=podFilter?podcasts.filter(function(p){return p.area===podFilter;}):podcasts;
+  if(!list.length){el.innerHTML='<div class="empty">Nenhum podcast disponível ainda. O admin pode adicionar episódios.</div>';return;}
+  el.innerHTML=list.map(function(p){return'<div class="card"><div style="display:flex;align-items:flex-start;gap:.8rem"><div style="width:46px;height:46px;border-radius:10px;background:var(--navy);display:flex;align-items:center;justify-content:center;font-size:1.3rem;flex-shrink:0">🎧</div><div style="flex:1;min-width:0"><div style="font-size:.85rem;font-weight:700;color:var(--tx);margin-bottom:2px">'+esc(p.title)+'</div><div style="font-size:.68rem;color:var(--t3);margin-bottom:.4rem">'+(p.area?'<span class="tag tag-blue" style="margin-right:5px">'+esc(p.area)+'</span>':'')+esc(p.desc||'')+'</div><audio controls preload="none" style="width:100%;height:36px" src="'+p.audio+'"></audio></div></div></div>';}).join('');
+}
+
+// ── CRONOGRAMA ──
+var pendingCrono=null;
+function initCrono(){
+  var el=document.getElementById('crono-areas');
+  if(el&&!el.dataset.init){
+    el.innerHTML=AREAS_CRONO.map(function(a){return'<div style="display:flex;align-items:center;gap:.6rem;margin-bottom:.4rem"><span style="width:9px;height:9px;border-radius:2px;background:'+a.color+';flex-shrink:0"></span><span style="font-size:.77rem;flex:1">'+esc(a.name)+'</span><input type="number" min="0" max="40" value="0" data-crono-area="'+esc(a.name)+'" style="width:62px;text-align:center" class="crono-h"></div>';}).join('');
+    el.dataset.init='1';
+    el.addEventListener('input',function(){
+      var t=0;el.querySelectorAll('.crono-h').forEach(function(i){t+=parseInt(i.value)||0;});
+      setText('crono-total',t);
+    });
+  }
+  renderSavedCrono();
+}
+function genCrono(){
+  var areas=[];
+  document.querySelectorAll('.crono-h').forEach(function(i){var h=parseInt(i.value)||0;if(h>0)areas.push({area:i.dataset.cronoArea,hours:h});});
+  if(!areas.length){notify('Defina horas para ao menos uma área.','err');return;}
+  var sess=(document.querySelector('input[name="crono-sess"]:checked')||{}).value||'manhã';
+  var btn=document.getElementById('btn-crono-gen');
+  btn.disabled=true;btn.innerHTML=ldHTML();
+  callAI('Mentor de estudos médicos. JSON APENAS: {"days":[{"day":"Segunda","sessions":[{"time":"08:00","area":"Diabetes","duration":2,"topic":"tema"}]}]}. 7 dias, sessões no turno '+sess+', distribuindo as horas.','Distribua: '+areas.map(function(a){return a.area+' '+a.hours+'h';}).join(', '),2200)
+  .then(function(raw){
+    var d=parseJ(raw);if(!d||!d.days)throw new Error('Resposta inválida.');
+    pendingCrono=d;renderCronoPlan(d);
+  }).catch(function(e){notify('Erro: '+e.message,'err');})
+  .then(function(){btn.disabled=false;btn.innerHTML='▶ Gerar plano com IA';});
+}
+function cronoDayHTML(day){
+  return'<div class="crono-day"><div class="crono-day-title">'+esc(day.day)+'</div>'+(day.sessions||[]).map(function(s){return'<div class="crono-sess"><span style="font-family:monospace;color:var(--t2);min-width:46px">'+esc(s.time)+'</span><span style="flex:1"><strong>'+esc(s.area)+'</strong>'+(s.topic?' — '+esc(s.topic):'')+'</span><span class="tag tag-blue">'+s.duration+'h</span></div>';}).join('')+'</div>';
+}
+function renderCronoPlan(d){
+  document.getElementById('crono-plan').style.display='block';
+  document.getElementById('crono-days').innerHTML=(d.days||[]).map(cronoDayHTML).join('');
+}
+function saveCrono(){
+  if(!pendingCrono)return;
+  DB.crono=pendingCrono;persist();
+  document.getElementById('crono-plan').style.display='none';
+  renderSavedCrono();refreshDash();notify('Cronograma salvo!','ok');
+}
+function renderSavedCrono(){
+  var wrap=document.getElementById('crono-saved-wrap');if(!wrap)return;
+  if(!DB.crono||!DB.crono.days){wrap.style.display='none';return;}
+  wrap.style.display='block';
+  document.getElementById('crono-saved-days').innerHTML=DB.crono.days.map(cronoDayHTML).join('');
+}
+
+// ── REVISÃO ESPAÇADA (SM-2) ──
+var srQueue=[],srIdx=0,srFlipped=false;
+function srInit(c){
+  if(c.ef===undefined)c.ef=2.5;
+  if(c.interval===undefined)c.interval=0;
+  if(c.reps===undefined)c.reps=0;
+  if(c.due===undefined)c.due=Date.now();
+}
+function srIsDue(c){srInit(c);return c.due<=Date.now();}
+function srUpdate(c,q){
+  srInit(c);
+  if(q<3){c.reps=0;c.interval=1;}
+  else{
+    c.ef=Math.max(1.3,c.ef+(0.1-(5-q)*(0.08+(5-q)*0.02)));
+    c.reps++;
+    if(c.reps===1)c.interval=1;
+    else if(c.reps===2)c.interval=6;
+    else c.interval=Math.round(c.interval*c.ef);
+  }
+  c.due=Date.now()+c.interval*86400000;
+  persist();
+}
+function renderSR(){
+  DB.fc.forEach(srInit);
+  var due=DB.fc.filter(srIsDue).length;
+  var mastered=DB.fc.filter(function(c){return c.interval>=7;}).length;
+  setText('sr-due',due);setText('sr-total',DB.fc.length);setText('sr-mastered',mastered);
+  var el=document.getElementById('sr-card-list');
+  setText('sr-list-count','('+DB.fc.length+')');
+  if(el){
+    if(!DB.fc.length)el.innerHTML='<div class="empty">Crie flashcards primeiro.</div>';
+    else el.innerHTML=DB.fc.map(function(c){var d=srIsDue(c);return'<div class="adm-row"><div class="adm-row-info"><div class="adm-row-title">'+esc(c.front)+'</div><div class="adm-row-sub">'+esc(c.cat||'Geral')+' • intervalo '+(c.interval||0)+'d • EF '+(Math.round((c.ef||2.5)*100)/100)+'</div></div>'+(d?'<span class="tag tag-red">Devido</span>':'<span class="tag tag-grn">'+Math.max(0,Math.ceil((c.due-Date.now())/86400000))+'d</span>')+'</div>';}).join('');
+  }
+}
+function startSR(all){
+  DB.fc.forEach(srInit);
+  srQueue=all?DB.fc.slice():DB.fc.filter(srIsDue);
+  if(!srQueue.length){notify(all?'Nenhum card.':'Nenhum card para revisar agora!','info');return;}
+  srIdx=0;srFlipped=false;
+  document.getElementById('sr-idle').style.display='none';
+  document.getElementById('sr-session').style.display='block';
+  renderSRCard();
+}
+function renderSRCard(){
+  var c=srQueue[srIdx];
+  if(!c){finishSR();return;}
+  setText('sr-prog-lbl','Card '+(srIdx+1)+' de '+srQueue.length);
+  setText('sr-front',c.front);setText('sr-back',c.back);
+  srFlipped=false;
+  document.getElementById('sr-back').style.display='none';
+  document.getElementById('sr-hint').style.display='block';
+  document.getElementById('sr-card').classList.remove('flipped');
+  document.getElementById('sr-ratings').style.visibility='hidden';
+}
+function flipSR(){
+  srFlipped=!srFlipped;
+  document.getElementById('sr-back').style.display=srFlipped?'block':'none';
+  document.getElementById('sr-hint').style.display=srFlipped?'none':'block';
+  document.getElementById('sr-card').classList.toggle('flipped',srFlipped);
+  document.getElementById('sr-ratings').style.visibility=srFlipped?'visible':'hidden';
+}
+function rateSR(q){
+  var c=srQueue[srIdx];if(!c)return;
+  srUpdate(c,q);
+  srIdx++;
+  if(srIdx>=srQueue.length)finishSR();else renderSRCard();
+}
+function finishSR(){
+  document.getElementById('sr-session').style.display='none';
+  document.getElementById('sr-idle').style.display='block';
+  renderSR();refreshDash();notify('Revisão concluída!','ok');
+}
+
+// ── CALCULADORAS ──
+var activeCalc=null;
+function initCalc(){
+  var el=document.getElementById('calc-grid');if(!el)return;
+  el.innerHTML=CALCS.map(function(c){return'<div class="card" style="cursor:pointer" data-calc="'+c.id+'"><div style="font-size:.84rem;font-weight:700;color:var(--tx);margin-bottom:2px">'+esc(c.name)+'</div><div style="font-size:.66rem;color:var(--t3);margin-bottom:.3rem">'+esc(c.area)+'</div><div style="font-size:.71rem;color:var(--t2)">'+esc(c.desc)+'</div></div>';}).join('');
+  if(activeCalc)openCalc(activeCalc);
+}
+function openCalc(id){
+  activeCalc=id;
+  var c=CALCS.find(function(x){return x.id===id;});if(!c)return;
+  var det=document.getElementById('calc-detail');
+  det.innerHTML='<div class="card" style="margin-top:.85rem"><div class="card-head"><span style="font-size:.92rem;font-weight:700">'+esc(c.name)+'</span><span class="tag tag-blue">'+esc(c.area)+'</span></div>'+
+    c.fields.map(function(f){
+      if(f.type==='select')return'<div class="fld2"><label>'+esc(f.label)+'</label><select data-calc-field="'+f.id+'">'+f.opts.map(function(o,i){return'<option value="'+f.vals[i]+'">'+esc(o)+'</option>';}).join('')+'</select></div>';
+      return'<div class="fld2"><label>'+esc(f.label)+'</label><input type="number" step="any" data-calc-field="'+f.id+'" placeholder="0"></div>';
+    }).join('')+
+    '<div id="calc-result" style="margin-top:.5rem"></div>'+
+    (c.note?'<div style="font-size:.68rem;color:var(--t3);margin-top:.6rem;line-height:1.5;border-top:1px solid var(--bd);padding-top:.5rem">ℹ️ '+esc(c.note)+'</div>':'')+
+  '</div>';
+  det.querySelectorAll('[data-calc-field]').forEach(function(inp){inp.addEventListener('input',calcUpdate);inp.addEventListener('change',calcUpdate);});
+  calcUpdate();
+  det.scrollIntoView({behavior:'smooth',block:'nearest'});
+}
+function calcUpdate(){
+  var c=CALCS.find(function(x){return x.id===activeCalc;});if(!c)return;
+  var v={};
+  document.querySelectorAll('[data-calc-field]').forEach(function(inp){v[inp.dataset.calcField]=inp.value;});
+  var allEmpty=c.fields.every(function(f){return f.type==='select'||!v[f.id];});
+  var res=document.getElementById('calc-result');if(!res)return;
+  if(allEmpty){res.innerHTML='';return;}
+  var s=c.calc(v);
+  var rounded=Math.round(s*100)/100;
+  var it=c.interp(s,v);
+  res.innerHTML='<div style="background:var(--navy);border-radius:var(--r);padding:.85rem 1rem;color:#fff;text-align:center"><div style="font-size:1.65rem;font-weight:700">'+rounded+(c.unit?' <span style="font-size:.8rem;font-weight:400;opacity:.7">'+c.unit+'</span>':'')+'</div><div style="margin-top:.4rem"><span class="tag '+it.c+'" style="font-size:.68rem">'+esc(it.t)+'</span></div></div>';
+}
+
+// ── PRESCRIÇÃO ──
+var rxCase=null;
+function genRxCase(){
+  var sub=document.getElementById('rx-sub').value;
+  var level=document.getElementById('rx-level').value;
+  var btn=document.getElementById('btn-rx-gen');
+  btn.disabled=true;btn.innerHTML=ldHTML();
+  callAI('Preceptor de endocrinologia BR. JSON APENAS: {"caso":"vinheta clínica com dados para prescrição (4-6 linhas)","area":"'+(sub||'Endocrinologia')+'"}','Caso clínico de '+(sub||'endocrinologia')+', complexidade '+level+', que demande prescrição.',900)
+  .then(function(raw){
+    var d=parseJ(raw);if(!d||!d.caso)throw new Error('Resposta inválida.');
+    rxCase=d;
+    document.getElementById('rx-case-wrap').style.display='block';
+    setText('rx-case-text',d.caso);
+    setText('rx-case-tag',d.area||sub||'Endocrinologia');
+    document.getElementById('rx-diag').value='';document.getElementById('rx-text').value='';
+    document.getElementById('rx-feedback').innerHTML='';
+  }).catch(function(e){notify('Erro: '+e.message,'err');})
+  .then(function(){btn.disabled=false;btn.innerHTML='▶ Gerar caso';});
+}
+function evalRx(){
+  if(!rxCase)return;
+  var diag=(document.getElementById('rx-diag').value||'').trim();
+  var presc=(document.getElementById('rx-text').value||'').trim();
+  if(!presc){notify('Escreva sua prescrição.','err');return;}
+  var btn=document.getElementById('btn-rx-eval');
+  btn.disabled=true;btn.textContent='Avaliando…';
+  var fb=document.getElementById('rx-feedback');fb.innerHTML=ldHTML();
+  callAI('Preceptor de endocrinologia. Avalie a prescrição: acertos, erros, doses, segurança. Markdown curto.','Caso: '+rxCase.caso+'\n\nDiagnóstico do aluno: '+diag+'\nPrescrição:\n'+presc,1200)
+  .then(function(r){fb.innerHTML='<div class="card" style="margin-top:.5rem"><div class="card-head"><span class="card-title">Avaliação da IA</span></div><div style="font-size:.79rem;line-height:1.7;white-space:pre-wrap">'+esc(r)+'</div></div>';})
+  .catch(function(e){fb.innerHTML='<div style="color:var(--red);font-size:.75rem">Erro: '+esc(e.message)+'</div>';})
+  .then(function(){btn.disabled=false;btn.textContent='✓ Avaliar';});
+}
+// ── RESUMIDOR ──
+var artFileData=null,artFileInited=false;
+function initArtUpload(){
+  if(artFileInited)return;artFileInited=true;
+  var dz=document.getElementById('art-dropzone');
+  var inp=document.getElementById('art-file-input');
+  if(!dz||!inp)return;
+  dz.addEventListener('click',function(){inp.click();});
+  inp.addEventListener('change',function(e){if(e.target.files[0])handleArtFile(e.target.files[0]);});
+  ['dragenter','dragover'].forEach(function(ev){dz.addEventListener(ev,function(e){e.preventDefault();dz.classList.add('drag');});});
+  ['dragleave','drop'].forEach(function(ev){dz.addEventListener(ev,function(e){e.preventDefault();dz.classList.remove('drag');});});
+  dz.addEventListener('drop',function(e){if(e.dataTransfer.files[0])handleArtFile(e.dataTransfer.files[0]);});
+  var clr=document.getElementById('art-file-clear');
+  if(clr)clr.addEventListener('click',function(){artFileData=null;inp.value='';document.getElementById('art-file-info').style.display='none';document.getElementById('art-file-preview').style.display='none';});
+}
+function handleArtFile(file){
+  if(file.size>10*1024*1024){notify('Arquivo muito grande (máx 10 MB).','err');return;}
+  var isPdf=file.type==='application/pdf'||/\.pdf$/i.test(file.name);
+  var isTxt=file.type==='text/plain'||/\.txt$/i.test(file.name);
+  if(!isPdf&&!isTxt){notify('Apenas PDF ou TXT.','err');return;}
+  document.getElementById('art-file-info').style.display='flex';
+  setText('art-file-name',file.name);
+  setText('art-file-size',(file.size/1024).toFixed(0)+' KB');
+  setText('art-file-icon',isPdf?'📕':'📄');
+  if(isTxt){
+    var r=new FileReader();
+    r.onload=function(e){artFileData={type:'txt',text:e.target.result};
+      var pv=document.getElementById('art-file-preview');pv.style.display='block';pv.textContent=e.target.result.substring(0,300)+'…';};
+    r.readAsText(file);
+  }else{
+    var r2=new FileReader();
+    r2.onload=function(e){artFileData={type:'pdf',base64:e.target.result.split(',')[1]};
+      var pv=document.getElementById('art-file-preview');pv.style.display='block';pv.textContent='PDF carregado — pronto para resumir.';};
+    r2.readAsDataURL(file);
+  }
+}
+function resumeArt(){
+  var mode=document.getElementById('art-file-panel').style.display!=='none'?'file':'text';
+  var genQ=document.getElementById('art-gen-q').checked;
+  var genFCck=document.getElementById('art-gen-fc').checked;
+  var btn=document.getElementById('btn-art');
+  var out=document.getElementById('art-result');
+  var sys='Pesquisador médico. Retorne JSON APENAS: {"resumo":"resumo estruturado em markdown (objetivos, métodos, resultados, conclusão)","pontos":["ponto-chave 1","2","3"]'+(genQ?',"questions":[{"stem":"...","options":{"A":"","B":"","C":"","D":""},"answer":"A","explanation":"","area":"Endocrinologia","dificuldade":"intermediario"}]':'')+(genFCck?',"cards":[{"front":"","back":""}]':'')+'}';
+  btn.disabled=true;btn.innerHTML=ldHTML();out.innerHTML=ldHTML();
+  var p;
+  if(mode==='file'&&artFileData&&artFileData.type==='pdf'){
+    p=callAIwithPDF(sys+' '+(genQ?'Gere 3 questões. ':'')+(genFCck?'Gere 5 flashcards.':''),artFileData.base64);
+  }else{
+    var txt=mode==='file'&&artFileData&&artFileData.type==='txt'?artFileData.text:(document.getElementById('art-text').value||'').trim();
+    if(!txt){notify('Forneça o texto ou arquivo.','err');btn.disabled=false;btn.innerHTML='▶ Resumir';out.innerHTML='';return;}
+    p=callAI(sys+' '+(genQ?'Gere 3 questões. ':'')+(genFCck?'Gere 5 flashcards.':''),'Artigo:\n'+txt.substring(0,8000),2500);
+  }
+  p.then(function(raw){
+    var d=parseJ(raw);if(!d)throw new Error('Resposta inválida.');
+    var html='<div class="card" style="margin-bottom:.7rem"><div class="card-head"><span class="card-title">📄 Resumo</span></div><div style="font-size:.8rem;line-height:1.72;white-space:pre-wrap">'+esc(d.resumo||'')+'</div>';
+    if(d.pontos&&d.pontos.length)html+='<div style="margin-top:.7rem"><div class="card-title" style="margin-bottom:.4rem">Pontos-chave</div>'+d.pontos.map(function(p){return'<div style="font-size:.77rem;padding:.2rem 0;display:flex;gap:.4rem"><span style="color:var(--blue)">▸</span>'+esc(p)+'</div>';}).join('')+'</div>';
+    html+='</div>';
+    var savedMsg=[];
+    if(d.questions&&d.questions.length){d.questions.forEach(function(q){DB.q.push(Object.assign({},q,{code:genCode(q.area||'Endocrinologia'),type:'mc',at:Date.now()}));});savedMsg.push(d.questions.length+' questões');}
+    if(d.cards&&d.cards.length){d.cards.forEach(function(c){DB.fc.push({id:Date.now()+Math.random(),front:c.front,back:c.back,cat:'Artigos',at:Date.now()});});savedMsg.push(d.cards.length+' flashcards');}
+    if(savedMsg.length){persist();refreshDash();html+='<div style="background:var(--grn-l);border:1px solid #bbf7d0;border-radius:var(--rs);padding:.5rem .8rem;font-size:.76rem;color:#16a34a">✓ Salvos: '+savedMsg.join(' e ')+'.</div>';}
+    out.innerHTML=html;
+  }).catch(function(e){out.innerHTML='<div style="color:var(--red);font-size:.78rem;padding:.5rem;background:var(--red-l);border-radius:var(--rs)">❌ '+esc(e.message)+'</div>';})
+  .then(function(){btn.disabled=false;btn.innerHTML='▶ Resumir';});
+}
+
+// ── CADERNO ──
+var noteId=null;
+function newNote(){
+  var n={id:Date.now(),title:'',body:'',at:Date.now()};
+  DB.notes.push(n);noteId=n.id;persist();
+  renderNoteList();openNote(n.id);
+}
+function openNote(id){
+  noteId=id;
+  var n=DB.notes.find(function(x){return x.id===id;});if(!n)return;
+  document.getElementById('note-empty').style.display='none';
+  document.getElementById('note-editor').style.display='flex';
+  document.getElementById('note-title-input').value=n.title||'';
+  document.getElementById('note-body').innerHTML=n.body||'';
+  renderNoteList();
+}
+function saveNote(){
+  var n=DB.notes.find(function(x){return x.id===noteId;});if(!n)return;
+  n.title=document.getElementById('note-title-input').value;
+  n.body=document.getElementById('note-body').innerHTML;
+  n.at=Date.now();persist();renderNoteList();refreshDash();notify('Nota salva!','ok');
+}
+function deleteNote(){
+  if(!noteId)return;
+  DB.notes=DB.notes.filter(function(x){return x.id!==noteId;});
+  noteId=null;persist();
+  document.getElementById('note-editor').style.display='none';
+  document.getElementById('note-empty').style.display='flex';
+  renderNoteList();refreshDash();notify('Nota excluída.','info');
+}
+function renderNoteList(){
+  var el=document.getElementById('note-list');if(!el)return;
+  var q=((document.getElementById('note-search')||{}).value||'').toLowerCase();
+  var list=DB.notes.filter(function(n){return!q||(n.title||'').toLowerCase().indexOf(q)>=0||(n.body||'').toLowerCase().indexOf(q)>=0;});
+  if(!list.length){el.innerHTML='<div class="empty" style="font-size:.7rem">Nenhuma nota.</div>';return;}
+  el.innerHTML=list.slice().reverse().map(function(n){return'<div class="note-item'+(n.id===noteId?' on':'')+'" data-note="'+n.id+'"><div class="note-title">'+esc(n.title||'Sem título')+'</div><div class="note-sub">'+new Date(n.at).toLocaleDateString('pt-BR')+'</div></div>';}).join('');
+}
+function execNoteCmd(cmd){
+  var map={bold:'bold',italic:'italic',underline:'underline',ul:'insertUnorderedList',ol:'insertOrderedList'};
+  document.execCommand(map[cmd]||cmd,false,null);
+  document.getElementById('note-body').focus();
+}
+
+// ── MURAL ──
+function initMural(){
+  var el=document.getElementById('mural-pc');if(!el)return;
+  if(!admAvisos.length){el.innerHTML='<div class="empty">Nenhum aviso no mural.</div>';return;}
+  el.innerHTML=admAvisos.slice().reverse().map(function(a){
+    var tagc=a.tipo==='Urgente'?'tag-red':a.tipo==='Evento'?'tag-pur':'tag-blue';
+    return'<div class="card" style="margin-bottom:.6rem"><div style="display:flex;align-items:center;gap:.5rem;margin-bottom:.4rem"><span class="tag '+tagc+'">'+esc(a.tipo||'Aviso')+'</span><span style="font-size:.83rem;font-weight:700">'+esc(a.titulo)+'</span><span style="font-size:.63rem;color:var(--t3);margin-left:auto">'+new Date(a.at).toLocaleDateString('pt-BR')+'</span></div><div style="font-size:.79rem;color:var(--t2);line-height:1.65">'+esc(a.texto)+'</div></div>';
+  }).join('');
+}
+
+// ── SIMULADOR OSCE ──
+var simState=null;
+function startSim(){
+  var sub=document.getElementById('sim-sub').value;
+  var level=document.getElementById('sim-level').value;
+  var mode=(document.querySelector('input[name="sim-mode"]:checked')||{}).value||'mc';
+  var btn=document.getElementById('btn-sim-start');
+  btn.disabled=true;btn.innerHTML=ldHTML();
+  var sys='Preceptor de endocrinologia conduzindo simulação de caso clínico passo a passo (estilo OSCE). JSON APENAS: {"intro":"apresentação do paciente","steps":[{"pergunta":"o que você faz/pergunta?"'+(mode==='mc'?',"options":{"A":"","B":"","C":"","D":""},"correct":"A","feedback":"explicação"':',"ideal":"resposta ideal"')+'}]}. 4-5 passos progressivos.';
+  callAI(sys,'Caso de '+(sub||'endocrinologia')+', complexidade '+level+', modo '+(mode==='mc'?'múltipla escolha':'resposta aberta')+'.',2400)
+  .then(function(raw){
+    var d=parseJ(raw);if(!d||!d.steps)throw new Error('Resposta inválida.');
+    simState={data:d,step:0,mode:mode,score:0};
+    document.getElementById('sim-setup').style.display='none';
+    document.getElementById('sim-result').style.display='none';
+    document.getElementById('sim-content').style.display='block';
+    document.getElementById('sim-msgs').innerHTML='<div class="sim-bubble doc"><strong>📋 Caso:</strong> '+esc(d.intro)+'</div>';
+    renderSimStep();
+  }).catch(function(e){notify('Erro: '+e.message,'err');})
+  .then(function(){btn.disabled=false;btn.innerHTML='▶ Iniciar simulação';});
+}
+function renderSimStep(){
+  var s=simState.data.steps[simState.step];
+  if(!s){finishSim();return;}
+  var msgs=document.getElementById('sim-msgs');
+  msgs.innerHTML+='<div class="sim-bubble doc"><strong>Passo '+(simState.step+1)+':</strong> '+esc(s.pergunta)+'</div>';
+  var wrap=document.getElementById('sim-input-wrap');
+  if(simState.mode==='mc'){
+    wrap.innerHTML=Object.keys(s.options||{}).map(function(k){return'<button class="sim-opt" data-sim-opt="'+k+'"><span style="font-weight:700">'+k+'</span>'+esc(s.options[k])+'</button>';}).join('');
+  }else{
+    wrap.innerHTML='<textarea id="sim-open-input" rows="3" placeholder="Sua conduta…"></textarea><button class="btn btn-primary btn-sm" id="btn-sim-submit-open" style="margin-top:.4rem">Responder</button>';
+  }
+  msgs.scrollTop=msgs.scrollHeight;
+}
+function selectSimOpt(letter){
+  var s=simState.data.steps[simState.step];
+  var ok=letter===s.correct;
+  if(ok)simState.score++;
+  var msgs=document.getElementById('sim-msgs');
+  msgs.innerHTML+='<div class="sim-bubble '+(ok?'feed':'er')+'"><strong>'+(ok?'✓':'✗')+' Você: '+letter+'</strong> — '+esc(s.feedback||'')+(ok?'':' (Correto: '+s.correct+')')+'</div>';
+  simState.step++;
+  document.getElementById('sim-input-wrap').innerHTML='';
+  setTimeout(renderSimStep,400);
+}
+function submitSimOpen(){
+  var ta=document.getElementById('sim-open-input');
+  if(!ta||!ta.value.trim()){notify('Escreva sua conduta.','err');return;}
+  var s=simState.data.steps[simState.step];
+  var ans=ta.value;
+  var msgs=document.getElementById('sim-msgs');
+  document.getElementById('sim-input-wrap').innerHTML=ldHTML();
+  callAI('Preceptor. Compare a resposta do aluno com a ideal e dê feedback em 2-3 frases.','Pergunta: '+s.pergunta+'\nIdeal: '+(s.ideal||'')+'\nAluno: '+ans)
+  .then(function(r){
+    msgs.innerHTML+='<div class="sim-bubble feed"><strong>Sua resposta:</strong> '+esc(ans)+'</div><div class="sim-bubble doc">'+esc(r)+'</div>';
+    simState.step++;simState.score++;
+    document.getElementById('sim-input-wrap').innerHTML='';
+    renderSimStep();
+  }).catch(function(e){notify('Erro: '+e.message,'err');document.getElementById('sim-input-wrap').innerHTML='';});
+}
+function finishSim(){
+  document.getElementById('sim-content').style.display='none';
+  var total=simState.data.steps.length;
+  var pct=Math.round(simState.score/total*100);
+  document.getElementById('sim-result').style.display='block';
+  document.getElementById('sim-result').innerHTML='<div class="card" style="text-align:center"><div style="font-size:2rem">'+(pct>=70?'🎉':'📚')+'</div><div style="font-size:1.1rem;font-weight:700;margin:.4rem 0">Simulação concluída!</div><div style="font-size:.85rem;color:var(--t2)">Pontuação: '+simState.score+'/'+total+' ('+pct+'%)</div><button class="btn btn-primary" id="btn-sim-restart" style="margin-top:.8rem">Nova simulação</button></div>';
+  document.getElementById('btn-sim-restart').addEventListener('click',function(){
+    document.getElementById('sim-result').style.display='none';
+    document.getElementById('sim-setup').style.display='block';
+  });
+}
+
+// ── SIMULADO CRONOMETRADO ──
+var sfState=null,sfTimer=null;
+function renderSFPrev(){
+  var el=document.getElementById('sf-prev-results');if(!el)return;
+  if(!DB.sf_results.length){el.innerHTML='';return;}
+  el.innerHTML='<div class="divider"></div><div class="sec-title" style="margin-bottom:.5rem">Simulados anteriores</div>'+DB.sf_results.slice().reverse().slice(0,5).map(function(r){return'<div class="adm-row"><div class="adm-row-info"><div class="adm-row-title">'+r.correct+'/'+r.total+' acertos ('+Math.round(r.correct/r.total*100)+'%)</div><div class="adm-row-sub">'+esc(r.area||'Todas')+' • '+new Date(r.at).toLocaleDateString('pt-BR')+'</div></div><span class="tag '+(r.correct/r.total>=0.7?'tag-grn':'tag-gold')+'">'+Math.round(r.correct/r.total*100)+'%</span></div>';}).join('');
+}
+function startSimFull(){
+  var area=document.getElementById('sf-area').value;
+  var qty=parseInt(document.getElementById('sf-qty').value)||60;
+  var time=parseInt(document.getElementById('sf-time').value)||120;
+  var fonte=(document.querySelector('input[name="sf-fonte"]:checked')||{}).value||'ia';
+  var btn=document.getElementById('btn-sf-start');
+  if(fonte==='provas'||fonte==='misto'){
+    var inst=(document.getElementById('sf-inst')||{}).value||'';
+    var ano=(document.getElementById('sf-ano-prova')||{}).value||'';
+    var pool=filterProvas(inst,ano,area);
+    if(fonte==='provas'){
+      if(!pool.length){notify('Sem questões de provas com esses filtros.','err');return;}
+      var qs=pool.slice(0,qty);
+      launchSF(qs,time,area);return;
+    }
+    // misto: metade provas, metade IA
+    var half=Math.min(pool.length,Math.floor(qty/2));
+    var provasPart=pool.slice(0,half);
+    var need=qty-half;
+    btn.disabled=true;btn.innerHTML=ldHTML();
+    genSFQuestions(area,need).then(function(iaqs){
+      launchSF(provasPart.concat(iaqs),time,area);
+    }).catch(function(e){notify('Erro: '+e.message,'err');}).then(function(){btn.disabled=false;btn.innerHTML='▶ Iniciar simulado';});
+    return;
+  }
+  btn.disabled=true;btn.innerHTML=ldHTML();
+  genSFQuestions(area,qty).then(function(qs){
+    launchSF(qs,time,area);
+  }).catch(function(e){notify('Erro: '+e.message,'err');}).then(function(){btn.disabled=false;btn.innerHTML='▶ Iniciar simulado';});
+}
+function genSFQuestions(area,qty){
+  // gera em lotes de até 10 para caber no limite de tokens
+  var batches=[],remaining=qty;
+  while(remaining>0){batches.push(Math.min(10,remaining));remaining-=10;}
+  var all=[];
+  return batches.reduce(function(prom,n){
+    return prom.then(function(){
+      return callAI('Examinador de endocrinologia BR. JSON APENAS: {"questions":[{"stem":"vinheta","options":{"A":"","B":"","C":"","D":""},"answer":"A","explanation":"","area":"'+(area||'Endocrinologia')+'","dificuldade":"intermediario"}]}','Gere '+n+' questões de '+(area||'endocrinologia geral')+', variadas.',2600)
+      .then(function(raw){var d=parseJ(raw);if(d&&d.questions)all=all.concat(d.questions);});
+    });
+  },Promise.resolve()).then(function(){
+    if(!all.length)throw new Error('Não foi possível gerar questões.');
+    return all.slice(0,qty);
+  });
+}
+function launchSF(qs,time,area){
+  sfState={qs:qs,answers:{},flags:{},idx:0,total:qs.length,area:area,timeLeft:time*60,startedAt:Date.now()};
+  document.getElementById('sf-setup').style.display='none';
+  document.getElementById('sf-report').style.display='none';
+  document.getElementById('sf-exam').style.display='flex';
+  setText('sf-exam-title','Simulado — '+(area||'Endocrinologia')+' ('+qs.length+'q)');
+  buildSFNav();renderSFQuestion();startSFTimer();
+}
+function buildSFNav(){
+  var nav=document.getElementById('sf-nav');
+  nav.innerHTML=sfState.qs.map(function(q,i){return'<button class="sf-nav-btn'+(sfState.answers[i]?' ans':'')+(sfState.flags[i]?' flag':'')+(i===sfState.idx?'" style="outline:2px solid #fff;outline-offset:1px':'')+'" data-sfnav="'+i+'">'+(i+1)+'</button>';}).join('');
+}
+function renderSFQuestion(){
+  var q=sfState.qs[sfState.idx];if(!q)return;
+  setText('sf-q-counter','Questão '+(sfState.idx+1)+' de '+sfState.total);
+  setText('sf-q-stem',q.stem);
+  var sel=sfState.answers[sfState.idx];
+  document.getElementById('sf-q-opts').innerHTML=Object.keys(q.options||{}).map(function(k){return'<button class="sim-opt'+(sel===k?' sel':'')+'" data-sfopt="'+k+'"><span style="font-weight:700">'+k+'</span>'+esc(q.options[k])+'</button>';}).join('');
+  setText('sf-answered',Object.keys(sfState.answers).length+'/'+sfState.total);
+  buildSFNav();
+}
+function sfSelectOpt(k){
+  sfState.answers[sfState.idx]=k;
+  renderSFQuestion();
+}
+function startSFTimer(){
+  if(sfTimer)clearInterval(sfTimer);
+  var upd=function(){
+    var m=Math.floor(sfState.timeLeft/60),s=sfState.timeLeft%60;
+    var el=document.getElementById('sf-timer');
+    el.textContent=('0'+m).slice(-2)+':'+('0'+s).slice(-2);
+    el.className='sf-timer'+(sfState.timeLeft<60?' crit':sfState.timeLeft<300?' warn':'');
+    if(sfState.timeLeft<=0){clearInterval(sfTimer);submitSF();return;}
+    sfState.timeLeft--;
+  };
+  upd();sfTimer=setInterval(upd,1000);
+}
+function submitSF(){
+  if(sfTimer)clearInterval(sfTimer);
+  var correct=0,byArea={};
+  sfState.qs.forEach(function(q,i){
+    var ok=sfState.answers[i]===q.answer;
+    if(ok)correct++;
+    var a=q.area||'Geral';
+    if(!byArea[a])byArea[a]={c:0,t:0};
+    byArea[a].t++;if(ok)byArea[a].c++;
+    if(q.area){if(!DB.perf[q.area])DB.perf[q.area]={correct:0,total:0};DB.perf[q.area].total++;if(ok)DB.perf[q.area].correct++;}
+  });
+  DB.sf_results.push({correct:correct,total:sfState.total,area:sfState.area,at:Date.now()});
+  persist();
+  document.getElementById('sf-exam').style.display='none';
+  document.getElementById('sf-report').style.display='block';
+  var pct=Math.round(correct/sfState.total*100);
+  var html='<div class="card" style="text-align:center;margin-bottom:.85rem"><div style="font-size:2.2rem">'+(pct>=70?'🎉':'📚')+'</div><div style="font-size:1.4rem;font-weight:700;margin:.3rem 0">'+correct+'/'+sfState.total+' ('+pct+'%)</div><div style="font-size:.78rem;color:var(--t2)">Tempo usado: '+Math.round((Date.now()-sfState.startedAt)/60000)+' min</div></div>';
+  html+='<div class="card" style="margin-bottom:.85rem"><div class="card-head"><span class="card-title">Desempenho por área</span></div>'+Object.keys(byArea).map(function(a){var d=byArea[a];var p=Math.round(d.c/d.t*100);var col=p>=70?'var(--grn)':p>=50?'var(--gold)':'var(--red)';return'<div class="rep-area-row"><div class="rep-area-name">'+esc(a)+'</div><div class="rep-area-track"><div class="rep-area-fill" style="width:'+p+'%;background:'+col+'"></div></div><div class="rep-area-pct">'+d.c+'/'+d.t+'</div></div>';}).join('')+'</div>';
+  html+='<div class="sec-title" style="margin-bottom:.5rem">Revisão das questões</div>';
+  html+=sfState.qs.map(function(q,i){
+    var ua=sfState.answers[i];var ok=ua===q.answer;
+    return'<div class="card" style="margin-bottom:.5rem"><div style="display:flex;gap:.5rem;align-items:flex-start"><span class="tag '+(ok?'tag-grn':'tag-red')+'">'+(i+1)+(ok?' ✓':' ✗')+'</span><div style="flex:1"><div style="font-size:.79rem;line-height:1.6;margin-bottom:.4rem">'+esc(q.stem)+'</div><div style="font-size:.74rem;color:var(--t2)">Sua resposta: <strong>'+(ua||'—')+'</strong> • Gabarito: <strong>'+esc(q.answer)+'</strong></div>'+(q.explanation?'<div style="font-size:.73rem;color:var(--t2);margin-top:.3rem;background:var(--s2);padding:.4rem .6rem;border-radius:var(--rs)">'+esc(q.explanation)+'</div>':'')+'</div></div></div>';
+  }).join('');
+  document.getElementById('sf-report-content').innerHTML=html;
+  refreshDash();
+}
+
+// ── FEEDBACK ──
+var fbState={rating:0,cat:'',tipo:''};
+function openFeedback(){
+  fbState={rating:0,cat:'',tipo:''};
+  document.getElementById('fb-body').style.display='block';
+  document.getElementById('fb-success').style.display='none';
+  document.getElementById('fb-text').value='';
+  document.querySelectorAll('.fb-star').forEach(function(s){s.style.opacity='0.35';});
+  document.querySelectorAll('.fb-cat-btn,.fb-tipo-btn').forEach(function(b){b.classList.remove('on');});
+  document.getElementById('feedback-modal').style.display='flex';
+}
+function closeFeedback(){document.getElementById('feedback-modal').style.display='none';}
+function submitFeedback(){
+  if(!fbState.rating){notify('Dê uma avaliação em estrelas.','err');return;}
+  if(!fbState.cat){notify('Selecione uma categoria.','err');return;}
+  document.getElementById('fb-body').style.display='none';
+  document.getElementById('fb-success').style.display='block';
+}
+
+// ── CHAT ──
+var chatHistory=[];
+function appendMsg(role,text){
+  var msgs=document.getElementById('chat-msgs');
+  var div=document.createElement('div');
+  div.className='chat-bubble '+(role==='user'?'user':'ai');
+  div.innerHTML=(role==='user'?'':'<div class="chat-name">Endodirect IA</div>')+esc(text).replace(/\n/g,'<br>');
+  msgs.appendChild(div);msgs.scrollTop=msgs.scrollHeight;
+  return div;
+}
+function sendChat(text){
+  text=(text||document.getElementById('chat-input').value||'').trim();
+  if(!text)return;
+  document.getElementById('chat-input').value='';
+  appendMsg('user',text);
+  chatHistory.push({role:'user',content:text});
+  var loading=appendMsg('ai','…');
+  loading.innerHTML='<div class="chat-name">Endodirect IA</div>'+ldHTML();
+  callAI('Você é um assistente médico especializado em endocrinologia e metabologia, respondendo a médicos no Brasil. Seja preciso, baseado em evidências, e cite diretrizes quando relevante (SBEM, SBD, ADA). Responda em português.',text,1200)
+  .then(function(r){
+    loading.innerHTML='<div class="chat-name">Endodirect IA</div>'+esc(r).replace(/\n/g,'<br>');
+    chatHistory.push({role:'assistant',content:r});
+    document.getElementById('chat-msgs').scrollTop=document.getElementById('chat-msgs').scrollHeight;
+  }).catch(function(e){loading.innerHTML='<div class="chat-name">Endodirect IA</div><span style="color:var(--red)">Erro: '+esc(e.message)+'</span>';});
+}
+
+// ── ADMIN ──
+var admCurrentTab='analytics',admGab='',pdfBase64Prova=null;
+function renderAdmTab(tab){
+  admCurrentTab=tab;
+  document.querySelectorAll('.adm-tab').forEach(function(b){b.classList.toggle('on',b.dataset.tab===tab);});
+  var body=document.getElementById('adm-body');
+  if(tab==='analytics')body.innerHTML=admAnalyticsHTML();
+  else if(tab==='provas')body.innerHTML=admProvasHTML();
+  else if(tab==='questoes')body.innerHTML=admQuestoesHTML();
+  else if(tab==='podcasts')body.innerHTML=admPodcastsHTML();
+  else if(tab==='mural')body.innerHTML=admMuralHTML();
+  else if(tab==='usuarios')body.innerHTML=admUsersHTML();
+  bindAdmTab(tab);
+}
+function admAnalyticsHTML(){
+  return'<div class="g4" style="margin-bottom:1rem"><div class="adm-stat"><div class="adm-stat-n" style="color:var(--blue)">'+USERS.filter(function(u){return u.role==='aluno';}).length+'</div><div class="adm-stat-l">Alunos</div></div><div class="adm-stat"><div class="adm-stat-n" style="color:var(--pur)">'+provasDB.length+'</div><div class="adm-stat-l">Q. de provas</div></div><div class="adm-stat"><div class="adm-stat-n" style="color:var(--gold)">'+podcasts.length+'</div><div class="adm-stat-l">Podcasts</div></div><div class="adm-stat"><div class="adm-stat-n" style="color:var(--grn)">'+admAvisos.length+'</div><div class="adm-stat-l">Avisos</div></div></div><div class="card"><div class="card-head"><span class="card-title">Visão geral</span></div><div style="font-size:.79rem;color:var(--t2);line-height:1.7">Painel administrativo do Endodirect. Use as abas acima para gerenciar provas anteriores, questões, podcasts, mural de avisos e usuários.</div></div>';
+}
+function admProvasHTML(){
+  return'<div class="adm-form"><div style="font-size:.85rem;font-weight:700;margin-bottom:.7rem">🏛️ Importar prova (PDF) com IA</div><div class="adm-field"><label>Instituição</label><input type="text" id="adm-prova-inst" placeholder="Ex: SBEM"></div><div class="adm-field"><label>Ano</label><input type="number" id="adm-prova-ano" placeholder="2024"></div><div class="adm-field"><label>Arquivo PDF da prova</label><input type="file" id="adm-prova-file" accept=".pdf"></div><button class="btn btn-primary" id="btn-adm-extract">🤖 Extrair questões com IA</button><div id="adm-extract-result" style="margin-top:.7rem"></div></div>'+
+  '<div class="adm-form"><div style="font-size:.85rem;font-weight:700;margin-bottom:.7rem">✍️ Adicionar questão manual</div><div class="adm-field"><label>Instituição</label><input type="text" id="adm-mq-inst" placeholder="SBEM"></div><div class="adm-field"><label>Ano</label><input type="number" id="adm-mq-ano" placeholder="2024"></div><div class="adm-field"><label>Subespecialidade</label><select id="adm-mq-area">'+DEFAULT_SUBESP+'</select></div><div class="adm-field"><label>Enunciado</label><textarea id="adm-mq-stem" rows="3"></textarea></div><div class="g2"><div class="adm-field"><label>Alt. A</label><input type="text" id="adm-mq-a"></div><div class="adm-field"><label>Alt. B</label><input type="text" id="adm-mq-b"></div><div class="adm-field"><label>Alt. C</label><input type="text" id="adm-mq-c"></div><div class="adm-field"><label>Alt. D</label><input type="text" id="adm-mq-d"></div></div><div class="adm-field"><label>Gabarito</label><select id="adm-mq-ans"><option>A</option><option>B</option><option>C</option><option>D</option></select></div><div class="adm-field"><label>Explicação</label><textarea id="adm-mq-exp" rows="2"></textarea></div><button class="btn btn-primary" id="btn-adm-addq">+ Adicionar</button></div>'+
+  '<div class="sec-title" style="margin:.5rem 0">Questões cadastradas ('+provasDB.length+')</div><div id="adm-provas-list">'+(provasDB.length?provasDB.map(function(q,i){return'<div class="adm-row"><div class="adm-row-info"><div class="adm-row-title">'+esc((q.stem||'').substring(0,90))+'…</div><div class="adm-row-sub">'+esc(q.inst||'')+' '+esc(String(q.ano||''))+' • '+esc(q.area||'')+' • Gab: '+esc(q.answer||'')+'</div></div><button class="btn btn-ghost btn-sm" data-adm-delprova="'+i+'">✕</button></div>';}).join(''):'<div class="empty">Nenhuma questão de prova cadastrada.</div>')+'</div>';
+}
+function admQuestoesHTML(){
+  return'<div class="card"><div class="card-head"><span class="card-title">Banco de questões (geradas)</span></div>'+(DB.q.length?'<div style="font-size:.79rem;color:var(--t2)">'+DB.q.length+' questões no banco do aluno.</div>':'<div class="empty">Nenhuma questão gerada ainda.</div>')+'</div>';
+}
+function admPodcastsHTML(){
+  return'<div class="adm-form"><div style="font-size:.85rem;font-weight:700;margin-bottom:.7rem">🎧 Adicionar podcast</div><div class="adm-field"><label>Título</label><input type="text" id="adm-pod-title" placeholder="Ex: Atualização em DM2"></div><div class="adm-field"><label>Subespecialidade</label><select id="adm-pod-area">'+DEFAULT_SUBESP+'</select></div><div class="adm-field"><label>Descrição</label><input type="text" id="adm-pod-desc" placeholder="Breve descrição"></div><div class="adm-field"><label>Arquivo de áudio (MP3/M4A)</label><input type="file" id="adm-pod-file" accept="audio/*"></div><button class="btn btn-primary" id="btn-adm-addpod">+ Adicionar podcast</button></div>'+
+  '<div class="sec-title" style="margin:.5rem 0">Podcasts ('+podcasts.length+')</div><div id="adm-pod-list">'+(podcasts.length?podcasts.map(function(p,i){return'<div class="adm-row"><div class="adm-row-info"><div class="adm-row-title">'+esc(p.title)+'</div><div class="adm-row-sub">'+esc(p.area||'')+' • '+esc(p.desc||'')+'</div></div><button class="btn btn-ghost btn-sm" data-adm-delpod="'+i+'">✕</button></div>';}).join(''):'<div class="empty">Nenhum podcast.</div>')+'</div>';
+}
+function admMuralHTML(){
+  return'<div class="adm-form"><div style="font-size:.85rem;font-weight:700;margin-bottom:.7rem">📣 Novo aviso</div><div class="adm-field"><label>Título</label><input type="text" id="adm-av-title"></div><div class="adm-field"><label>Tipo</label><select id="adm-av-tipo"><option>Aviso</option><option>Urgente</option><option>Evento</option></select></div><div class="adm-field"><label>Texto</label><textarea id="adm-av-text" rows="3"></textarea></div><button class="btn btn-primary" id="btn-adm-addav">+ Publicar</button></div>'+
+  '<div class="sec-title" style="margin:.5rem 0">Avisos ('+admAvisos.length+')</div><div id="adm-av-list">'+(admAvisos.length?admAvisos.slice().reverse().map(function(a){var i=admAvisos.indexOf(a);return'<div class="adm-row"><div class="adm-row-info"><div class="adm-row-title">'+esc(a.titulo)+'</div><div class="adm-row-sub">'+esc(a.tipo)+' • '+new Date(a.at).toLocaleDateString('pt-BR')+'</div></div><button class="btn btn-ghost btn-sm" data-adm-delav="'+i+'">✕</button></div>';}).join(''):'<div class="empty">Nenhum aviso.</div>')+'</div>';
+}
+function admUsersHTML(){
+  return'<div class="sec-title" style="margin-bottom:.5rem">Usuários</div>'+USERS.filter(function(u){return u.email!=='google';}).map(function(u){return'<div class="adm-row"><div class="tb-avatar" style="background:var(--navy)">'+u.name.charAt(0)+'</div><div class="adm-row-info"><div class="adm-row-title">'+esc(u.name)+'</div><div class="adm-row-sub">'+esc(u.email)+' • '+esc(u.sub)+'</div></div><span class="tag '+(u.role==='admin'?'tag-pur':'tag-blue')+'">'+esc(u.role)+'</span></div>';}).join('');
+}
+function persistAdm(){lsSet('adm_avisos',admAvisos);lsSet('adm_questoes',admQuestoes);}
+function bindAdmTab(tab){
+  var body=document.getElementById('adm-body');
+  if(tab==='provas'){
+    var ef=document.getElementById('adm-prova-file');
+    if(ef)ef.addEventListener('change',function(e){
+      var f=e.target.files[0];if(!f)return;
+      var r=new FileReader();r.onload=function(ev){pdfBase64Prova=ev.target.result.split(',')[1];notify('PDF carregado.','ok');};r.readAsDataURL(f);
+    });
+    var be=document.getElementById('btn-adm-extract');
+    if(be)be.addEventListener('click',function(){
+      if(!pdfBase64Prova){notify('Selecione um PDF.','err');return;}
+      var inst=(document.getElementById('adm-prova-inst').value||'SBEM').trim();
+      var ano=parseInt(document.getElementById('adm-prova-ano').value)||new Date().getFullYear();
+      be.disabled=true;be.innerHTML=ldHTML();
+      var rd=document.getElementById('adm-extract-result');rd.innerHTML=ldHTML();
+      callAIwithPDF('Extraia TODAS as questões de múltipla escolha desta prova de endocrinologia. JSON APENAS: {"questions":[{"stem":"","options":{"A":"","B":"","C":"","D":""},"answer":"A","explanation":"","area":"Diabetes"}]}',pdfBase64Prova)
+      .then(function(raw){
+        var d=parseJ(raw);if(!d||!d.questions)throw new Error('Não foi possível extrair questões.');
+        d.questions.forEach(function(q){provasDB.push(Object.assign({},q,{inst:inst,ano:ano}));});
+        persistProvas();rd.innerHTML='<div style="background:var(--grn-l);border:1px solid #bbf7d0;border-radius:var(--rs);padding:.5rem .8rem;font-size:.77rem;color:#16a34a">✓ '+d.questions.length+' questões extraídas e salvas!</div>';
+        renderAdmTab('provas');
+      }).catch(function(e){rd.innerHTML='<div style="color:var(--red);font-size:.77rem">❌ '+esc(e.message)+'</div>';})
+      .then(function(){be.disabled=false;be.innerHTML='🤖 Extrair questões com IA';});
+    });
+    var ba=document.getElementById('btn-adm-addq');
+    if(ba)ba.addEventListener('click',function(){
+      var stem=(document.getElementById('adm-mq-stem').value||'').trim();
+      if(!stem){notify('Preencha o enunciado.','err');return;}
+      provasDB.push({stem:stem,options:{A:document.getElementById('adm-mq-a').value,B:document.getElementById('adm-mq-b').value,C:document.getElementById('adm-mq-c').value,D:document.getElementById('adm-mq-d').value},answer:document.getElementById('adm-mq-ans').value,explanation:document.getElementById('adm-mq-exp').value,area:document.getElementById('adm-mq-area').value,inst:(document.getElementById('adm-mq-inst').value||'SBEM').trim(),ano:parseInt(document.getElementById('adm-mq-ano').value)||new Date().getFullYear()});
+      persistProvas();notify('Questão adicionada!','ok');renderAdmTab('provas');
+    });
+    body.querySelectorAll('[data-adm-delprova]').forEach(function(b){b.addEventListener('click',function(){provasDB.splice(parseInt(b.dataset.admDelprova),1);persistProvas();renderAdmTab('provas');});});
+  }
+  if(tab==='podcasts'){
+    var pf=document.getElementById('adm-pod-file');
+    var podAudioData=null;
+    if(pf)pf.addEventListener('change',function(e){var f=e.target.files[0];if(!f)return;if(f.size>25*1024*1024){notify('Áudio muito grande (máx 25 MB).','err');return;}var r=new FileReader();r.onload=function(ev){podAudioData=ev.target.result;notify('Áudio carregado.','ok');};r.readAsDataURL(f);});
+    var bp=document.getElementById('btn-adm-addpod');
+    if(bp)bp.addEventListener('click',function(){
+      var title=(document.getElementById('adm-pod-title').value||'').trim();
+      if(!title){notify('Informe o título.','err');return;}
+      if(!podAudioData){notify('Selecione o arquivo de áudio.','err');return;}
+      podcasts.push({title:title,area:document.getElementById('adm-pod-area').value,desc:document.getElementById('adm-pod-desc').value,audio:podAudioData,at:Date.now()});
+      persistPodcasts();notify('Podcast adicionado!','ok');renderAdmTab('podcasts');
+    });
+    body.querySelectorAll('[data-adm-delpod]').forEach(function(b){b.addEventListener('click',function(){podcasts.splice(parseInt(b.dataset.admDelpod),1);persistPodcasts();renderAdmTab('podcasts');});});
+  }
+  if(tab==='mural'){
+    var bav=document.getElementById('btn-adm-addav');
+    if(bav)bav.addEventListener('click',function(){
+      var t=(document.getElementById('adm-av-title').value||'').trim();
+      if(!t){notify('Informe o título.','err');return;}
+      admAvisos.push({titulo:t,tipo:document.getElementById('adm-av-tipo').value,texto:document.getElementById('adm-av-text').value,at:Date.now()});
+      persistAdm();notify('Aviso publicado!','ok');renderAdmTab('mural');
+    });
+    body.querySelectorAll('[data-adm-delav]').forEach(function(b){b.addEventListener('click',function(){admAvisos.splice(parseInt(b.dataset.admDelav),1);persistAdm();renderAdmTab('mural');});});
+  }
+}
+
+// ── INIT ──
+function initAll(){
+  renderFcCatPills();
+}
+
+// ── DELEGAÇÃO DE EVENTOS GLOBAL ──
+document.addEventListener('click',function(e){
+  var t=e.target;
+  var c=function(sel){return t.closest(sel);};
+  // questões
+  var qrow=c('.q-row');
+  if(qrow){toggleQDetail(parseInt(qrow.dataset.qi),qrow.dataset.src,qrow.dataset.mc==='true');return;}
+  var qo=c('.qo');
+  if(qo&&qo.dataset.answer!==undefined){selectOpt(qo.dataset.letter,qo.dataset.answer,qo.dataset.exp,qo.dataset.src,qo.dataset.idx);return;}
+  var ev=c('[data-eval-disc]');
+  if(ev){evalDisc(parseInt(ev.dataset.evalDisc),ev.dataset.evalSrc,ev);return;}
+  var sq=c('[data-save-q]');
+  if(sq){saveOneQ(parseInt(sq.dataset.saveQ));return;}
+  var dq=c('[data-del-q]');
+  if(dq){DB.q.splice(parseInt(dq.dataset.delQ),1);persist();renderSavedQ();refreshDash();return;}
+  // flashcards
+  var fctog=c('[data-fctoggle]');
+  if(fctog&&!c('[data-fcdel]')){toggleFC(parseInt(fctog.dataset.fctoggle));return;}
+  var fcdel=c('[data-fcdel]');
+  if(fcdel){e.stopPropagation();DB.fc.splice(parseInt(fcdel.dataset.fcdel),1);persist();renderFC();refreshDash();return;}
+  var fccat=c('[data-fccat]');
+  if(fccat){fcSelectedCat=fccat.dataset.fccat;renderFcCatPills();return;}
+  var fcf=c('[data-fcfilter]');
+  if(fcf){fcFilter=fcf.dataset.fcfilter;renderFC();return;}
+  // mind map
+  var mmv=c('[data-mmview]');if(mmv){viewMM(parseInt(mmv.dataset.mmview));return;}
+  var mmd=c('[data-mmdel]');if(mmd){DB.mm.splice(parseInt(mmd.dataset.mmdel),1);persist();renderMMList();refreshDash();return;}
+  // podcasts
+  var pf=c('[data-podfilter]');if(pf){podFilter=pf.dataset.podfilter;renderPodcasts();return;}
+  // calc
+  var cc=c('[data-calc]');if(cc){openCalc(cc.dataset.calc);return;}
+  // sim
+  var so=c('[data-sim-opt]');if(so){selectSimOpt(so.dataset.simOpt);return;}
+  if(c('#btn-sim-submit-open')){submitSimOpen();return;}
+  // simfull
+  var sfo=c('[data-sfopt]');if(sfo){sfSelectOpt(sfo.dataset.sfopt);return;}
+  var sfn=c('[data-sfnav]');if(sfn){sfState.idx=parseInt(sfn.dataset.sfnav);renderSFQuestion();return;}
+  // notas
+  var note=c('[data-note]');if(note){openNote(parseInt(note.dataset.note));return;}
+  var ncmd=c('[data-cmd]');if(ncmd){execNoteCmd(ncmd.dataset.cmd);return;}
+  // chat sugg
+  if(t.classList.contains('chat-sugg-btn')){sendChat(t.textContent);return;}
+  // faq
+  var faq=c('.faq-q');if(faq){var a=faq.parentElement.querySelector('.faq-a');if(a)a.classList.toggle('open');return;}
+  // feedback stars
+  var star=c('.fb-star');if(star){fbState.rating=parseInt(star.dataset.v);document.querySelectorAll('.fb-star').forEach(function(s){s.style.opacity=parseInt(s.dataset.v)<=fbState.rating?'1':'0.35';});return;}
+  var fbc=c('.fb-cat-btn');if(fbc){fbState.cat=fbc.dataset.cat;document.querySelectorAll('.fb-cat-btn').forEach(function(b){b.classList.toggle('on',b===fbc);});return;}
+  var fbt=c('.fb-tipo-btn');if(fbt){fbState.tipo=fbt.dataset.tipo;document.querySelectorAll('.fb-tipo-btn').forEach(function(b){b.classList.toggle('on',b===fbt);});return;}
+});
+
+// ── DOMContentLoaded: bindings ──
+document.addEventListener('DOMContentLoaded',function(){
+  // LOGO (imagem original embutida)
+  var LOGO_SRC='data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAA7YAAAQoCAYAAAA+MUIlAAAACXBIWXMAAC4jAAAuIwF4pT92AAAgAElEQVR4nOzdDZBd5X0n6FfA8o0a2ZJFg6WWsGMnDtCqzRTYKTAiQ2UAZwuqVl7AVUFyGWyTMLauxhlZgIw2AmRlmG6NowQ74EVmtwwZayuwEwOZ9QTZZsfGNZnoAmEGGyO1hLjIUqwPI74G0Nbb7nYa0d33nHvPvfd8PE8VFYpIt895zy3MT+97fv8Zhw8fDlAWjXptUQjhVA8UoKcWjP01Ufx386IUF7V97K/JbDny1/YPDk/1awGoAMGWUmnUa/E/di70VAEq7bsTbn48BO8PIWwd+/ut/YPD+6u+SABlcoynCQCUzMQ/4Jz0Dzsb9Vr8PwfGwu7E0BuD8P7+weGtJVsTgFKzY0up2LEFIEPjwXf8WPTWsdB75FFoAHpMsKVUBFsAumRkLOxuGQ++Ai9A7ziKDACQ3sDYX7/6w9Sx480TA+/WscDrWDNAhwm2AADZmSrwfncs6G4dK68SdgEyJNgCAHTehdOE3S1jYdfIIoAWeceWUvGOLQAFdmAs5I4HXe/sAiQk2FIqgi0AJfPdCe/rbjF/F2ByjiIDAOTXkUeY6xN2dQVdgDF2bCkVO7YAVMx3J4RcR5eByhJsKRXBFoCKe3As6D6gjAqoEsGWUhFsAeBX4kzdB8Z2cx+wLECZCbaUimALAFOymwuUlmBLqQi2AJBIfWw3N4bcrZYMKDrBllIRbAEgtZEJIVcBFVBIgi2lItgCQFsOTAi53ssFCkOwpVQEWwDIjJALFIZgS6kItgDQETHkbop/eScXyCPBllIRbAGg48bfyd2gXRnIC8GWUhFsAaCr6hN2cvdbeqBXjrLyAAC0aDCEMBxC2Neo1x5o1GtXWEigF+zYUip2bAGg58bfx3VUGegawZZSEWwBIFfiUeUNY83KjioDHeMoMgAAnRKPKt8TQtjeqNc2Neq1RVYa6ATBFgAATusLISwNIfx9PF3VqNeWWXEgS44iUyqOIgNAYXgXF8iMHVsAAHoh7uJ+PoSwbaxRebGnALRKsAUAoNcuDyE82qjXtjumDLTCUWRKxVFkACiFA2Ntyhu0KQNJ2LEFACBv4jHlW0II+8balBd4QsB0BFsAAPJs6dh7uFu8hwtMRbAFAKAILhx7DzcG3Cs8MWAiwRYAgCKJAfevFE0BEwm2AAAU0UAI4R4BFwiCLQAABSfgAoItAAClIOBChQm2AACUiYALFSTYAgBQRgIuVIhgCwBAmQm4UAGCLQAAVTAx4JqDCyUj2AIAUCUDY3NwtzTqtcWePJSDYAsAQBVdGEJ4dCzgLvANgGITbAEAqLIYcLc16rVNjXrtVN8EKCbBFgAAQlgaQojv364RcKF4BFsAAPilvhDCLSGErRqUoVgEWwAAeLvxBmUFU1AQgi0AAExuvGDK+7eQc4ItAABM71fv31onyCfBFgAAmht9/7ZRr213PBnyR7AFAIDkBsaOJz9g/i3kh2ALAADpXT7Wnux4MuSAYAsAAK0ZP5681fFk6C3BFgAA2jM4djx5g/Zk6A3BFgAAsvH5sfbkK6wndJdgCwAA2YnHk/+qUa9tUS4F3SPYAgBA9i4cK5dabm2h8wRbAADojLh7O2z3FjpPsAUAgM6Ku7fbjAaCzhFsAQCgO8ZHAy2y3pAtwRYAALonjgb6e+/eQrYEWwAA6D7v3kKGBFsAAOgNzcmQEcEWAAB6Z2Jz8qmeA7RGsAUAgN6Lu7fbG/XaFZ4FpCfYAgBAPsTd279q1Gub7N5COoItAADky9Kxd2+NBYKEBFsAAMifAWOBIDnBFgAA8kuxFCQg2AIAQL6NF0st9pxgcoItAADkXyyWerRRr63xrOCdBFsAACiOWxxNhncSbAEAoFgcTYYjCLYAAFA8jibDBIItAAAUl6PJVF4QbAEAoPDi0eStjXptkUdJVQm2AABQfAMhhL9v1GvLPEuqSLAFAIDyuKdRr23yPKkawRYAAMplaaNe2+q9W6pEsAUAgPIZHBsJ5L1bKkGwBQCAcurz3i1VIdgCAEC5ee+W0hNsAQCg/Jaad0uZCbYAAFANcd7tFu/dUkaCLQAAVMfgWLhd7JlTJoItAABUSyyVelSpFGUi2AIAQDUplaI0BFsAAKiuWCr1gFIpik6wBQCAart87L1b4ZbCEmwBAIBYKrVVYzJFJdgCAADRgHFAFJVgCwAAjOsbC7cakykUwRYAAJiob6wxWbilMARbAABgMjHcbrAyFIFgCwAATOXzZt1SBIItAAAwnTjrdpNxQOSZYAsAADSz1Kxb8kywBQAAkhgUbskrwRYAAEhKuCWXBFsAACCNGG63Nuq1RVaNvBBsAQCAtAbGdm6FW3LhGI+Bktnaw9uJP3u/LxRd5DtHt23tHxzu2HeuUa+tCSHc4qlCYfSNhdvF/YPDvfxvMAgzDh8+bBUAgJ4TbKGwDoQQhFt6ylFkAACgHX2OJdNrgi0AANAu4ZaeEmwBAIAsCLf0jGALAABkRbilJwRbAAAgS8ItXSfYAgAAWRNu6SrBFgAA6AThlq4RbAEAgE4RbukKwRYAAOgk4ZaOE2wBAIBOE27pKMEWAADoBuGWjhFsAQCAbhkPtwusOlkRbAEAgG6K4faBRr12qpUnC4ItAADQC4NjO7fCLW0TbAEAgF4RbsmEYAsAAPRSDLcPeAK0Q7AFAAB67cJGvbbJU6BVgi0AAJAHS4VbWiXYAgAAeRHD7RpPg7QEWwAAIE9uadRryzwR0hBsAQCAvLmnUa9d4amQlGALAADk0aZGvbbIkyEJwRYAAMijvrEZt8ItTQm2AABAXvWN7dye6gkxHcEWAADIs8GxnVvhlikJtgAAQN7FcLvBU2Iqgi0AAFAEccatcMukBFsAAKAoPm/GLZMRbAEAgCKJM24Xe2JMJNgCAABF84AxQEwk2AIAAEVjDBBvI9gCAABFFJuSH/DkCIItAABQYBc26rVNHiCCLQAAUGRLNSUj2AIAAEWnKbniBFsAAKAMYlPyAk+ymgRbAACgDPrGwq2m5AoSbAEAgLKITckbPM3qOSaEsKbqizCF/SGErbm8suLbUvUFAACgY2KZ1Nb+wWEBt0JuuLmp6osAJVET+wMZvr19IBe+6wuxOm+jcxQAgOG5fOt7YyZiwuXPhw9XfREAoAIuyvsfJjTqtTV+wB3I0IEQwqL+wWF/QF0B3rEFAADKSJlUhQi2AABAWSmTqgjBFgAAKLNYJrXME643wRYAACi7exr12iJPubwEWwAAoAq8b1tigi0AAFAFAyGETZ50OQm2AABAVVzeqNeWe9rlI9gCAABVMux923IRbAEAgKrZ4n3bchFsAQCAqunzvm25CLYAAEAVed+2RARbAACgqrxvWxKCLQAAUGXm25aAYAsAAFRdfN92WdUXocgEWwAAgBA2eN+2uARbAAAAI4AKTbAFAAD4pcFGvbbGWhSPYAsAAPDPbmnUa4utR7EItgAAAP9skxFAxSLYAgAA/LNRIw0AAATtSURBVHM2GQFULIItAADA2y3VlFwcgi0AAMA7aUquCMEWAADgneIs2wWeQv4JtgAAAO9kBFBBCLYAAAATGwOUe4ItAADAxAbHwq3GH8EWAACg0OcFWwAAgIldGoyBwGyAFRYBgCcGzAY7BVgEAAJ4Y9JsoFGAEoBzqK6Tk7uVQ5tFGAB4HxqK2T1JsCi0XYBNl1c5b3xxIqzpJ7tQjxhA+JvbHF4tcOlBSZNDC0X7t8AAA==';
+  var lLogin=document.getElementById('logo-login-img');if(lLogin)lLogin.src=LOGO_SRC;
+  var lTb=document.getElementById('logo-tb-img');if(lTb)lTb.src=LOGO_SRC;
+  // LOGIN
+  var doLoginAttempt=function(){
+    var email=(document.getElementById('login-email').value||'').trim().toLowerCase();
+    var pass=document.getElementById('login-pass').value||'';
+    var u=USERS.find(function(x){return x.email===email&&x.pass===pass;});
+    if(!u){document.getElementById('login-err').style.display='block';return;}
+    document.getElementById('login-err').style.display='none';
+    doLogin(Object.assign({},u));
+  };
+  document.getElementById('btn-login').addEventListener('click',doLoginAttempt);
+  document.getElementById('login-pass').addEventListener('keydown',function(e){if(e.key==='Enter')doLoginAttempt();});
+  document.getElementById('login-email').addEventListener('keydown',function(e){if(e.key==='Enter')doLoginAttempt();});
+  document.getElementById('btn-google-login').addEventListener('click',function(){doLogin(Object.assign({},USERS.find(function(x){return x.email==='google';})));});
+  document.getElementById('btn-toggle-pass').addEventListener('click',function(){var p=document.getElementById('login-pass');p.type=p.type==='password'?'text':'password';});
+
+  // ONBOARDING
+  document.querySelectorAll('input[name="ob-perfil"]').forEach(function(r){
+    r.addEventListener('change',function(){
+      var isEndo=r.value==='Endocrinologista';
+      document.getElementById('ob-grad-wrap').style.display='block';
+      document.getElementById('ob-resid-wrap').style.display=isEndo?'block':'none';
+      document.getElementById('ob-res-lbl').style.borderColor=r.value==='Residente'?'var(--blue)':'var(--bd2)';
+      document.getElementById('ob-res-lbl').style.background=r.value==='Residente'?'var(--blue-l)':'#fff';
+      document.getElementById('ob-endo-lbl').style.borderColor=isEndo?'var(--blue)':'var(--bd2)';
+      document.getElementById('ob-endo-lbl').style.background=isEndo?'var(--blue-l)':'#fff';
+    });
+  });
+  document.getElementById('ob-submit').addEventListener('click',submitOnboard);
+
+  // USER MENU
+  document.getElementById('tb-user-btn').addEventListener('click',function(e){e.stopPropagation();var m=document.getElementById('user-menu');m.style.display=m.style.display==='block'?'none':'block';});
+  document.addEventListener('click',function(){document.getElementById('user-menu').style.display='none';});
+  document.getElementById('btn-logout').addEventListener('click',doLogout);
+
+  // NAV
+  document.querySelectorAll('.sb-item[data-p]').forEach(function(b){b.addEventListener('click',function(){goPanel(b.dataset.p);});});
+  document.getElementById('btn-chat-cta').addEventListener('click',function(){goPanel('chat');});
+  document.getElementById('btn-feedback-cta').addEventListener('click',openFeedback);
+
+  // DASHBOARD shortcuts
+  document.getElementById('dc-quest').addEventListener('click',function(){goPanel('quest');});
+  document.getElementById('dc-flash').addEventListener('click',function(){goPanel('flash');});
+  document.getElementById('dc-sr').addEventListener('click',function(){goPanel('sr');});
+  document.getElementById('dc-mm').addEventListener('click',function(){goPanel('mmap');});
+  document.getElementById('d-chat-btn').addEventListener('click',function(){goPanel('chat');});
+  document.getElementById('d-crono-btn').addEventListener('click',function(){goPanel('crono');});
+  document.getElementById('d-sr-btn').addEventListener('click',function(){goPanel('sr');});
+  document.getElementById('d-notas-btn').addEventListener('click',function(){goPanel('notas');});
+
+  // ADMIN TABS
+  document.querySelectorAll('.adm-tab').forEach(function(b){b.addEventListener('click',function(){renderAdmTab(b.dataset.tab);});});
+
+  // QUESTÕES
+  document.querySelectorAll('[data-qmode]').forEach(function(b){b.addEventListener('click',function(){
+    document.querySelectorAll('[data-qmode]').forEach(function(x){x.classList.toggle('on',x===b);});
+    var ia=b.dataset.qmode==='ia';
+    document.getElementById('q-panel-ia').style.display=ia?'block':'none';
+    document.getElementById('q-panel-provas').style.display=ia?'none':'block';
+  });});
+  document.querySelectorAll('[data-qt]').forEach(function(b){b.addEventListener('click',function(){qtype=b.dataset.qt;document.querySelectorAll('[data-qt]').forEach(function(x){x.classList.toggle('on',x===b);});});});
+  document.getElementById('btn-genq').addEventListener('click',genQuestions);
+  ['q-inst','q-ano','q-parea'].forEach(function(id){var e=document.getElementById(id);if(e)e.addEventListener('change',updateProvaInfo);});
+  document.getElementById('btn-filter-provas').addEventListener('click',function(){
+    var inst=document.getElementById('q-inst').value;var ano=document.getElementById('q-ano').value;var area=document.getElementById('q-parea').value;
+    renderProvaResults(filterProvas(inst,ano,area));
+  });
+
+  // FLASHCARDS
+  document.getElementById('fc-btn-create').addEventListener('click',function(){var d=document.getElementById('fc-create');d.style.display=d.style.display==='none'?'block':'none';document.getElementById('fc-gen').style.display='none';document.getElementById('fc-study').style.display='none';renderFcCatPills();});
+  document.getElementById('fc-btn-gen').addEventListener('click',function(){var d=document.getElementById('fc-gen');d.style.display=d.style.display==='none'?'block':'none';document.getElementById('fc-create').style.display='none';document.getElementById('fc-study').style.display='none';});
+  document.getElementById('fc-btn-study').addEventListener('click',startStudy);
+  document.getElementById('fc-create-cancel').addEventListener('click',function(){document.getElementById('fc-create').style.display='none';});
+  document.getElementById('fc-create-cancel2').addEventListener('click',function(){document.getElementById('fc-create').style.display='none';});
+  document.getElementById('fc-gen-cancel').addEventListener('click',function(){document.getElementById('fc-gen').style.display='none';});
+  document.getElementById('fc-save-btn').addEventListener('click',saveFC);
+  document.getElementById('btn-fcgen').addEventListener('click',genFC);
+  document.getElementById('fc-end-study').addEventListener('click',endStudy);
+  document.getElementById('study-c').addEventListener('click',flipStudy);
+  document.getElementById('study-prev').addEventListener('click',function(){if(studyIdx>0){studyIdx--;renderStudyCard();}});
+  document.getElementById('study-next').addEventListener('click',function(){if(studyIdx<studyCards.length-1){studyIdx++;renderStudyCard();}else{notify('Fim dos cards!','ok');endStudy();}});
+
+  // MIND MAP
+  document.getElementById('btn-mmgen').addEventListener('click',genMM);
+  document.getElementById('btn-mm-save').addEventListener('click',saveMM);
+  document.getElementById('btn-mm-close').addEventListener('click',function(){document.getElementById('mm-live').style.display='none';});
+
+  // CRONOGRAMA
+  document.getElementById('btn-crono-gen').addEventListener('click',genCrono);
+  document.getElementById('btn-crono-save').addEventListener('click',saveCrono);
+  document.getElementById('btn-crono-regen').addEventListener('click',genCrono);
+  document.getElementById('btn-crono-clear').addEventListener('click',function(){DB.crono=null;persist();renderSavedCrono();refreshDash();notify('Cronograma removido.','info');});
+
+  // REVISÃO
+  document.getElementById('btn-sr-start').addEventListener('click',function(){startSR(false);});
+  document.getElementById('btn-sr-all').addEventListener('click',function(){startSR(true);});
+  document.getElementById('btn-sr-stop').addEventListener('click',finishSR);
+  document.getElementById('btn-sr-reset').addEventListener('click',function(){DB.fc.forEach(function(c){c.ef=2.5;c.interval=0;c.reps=0;c.due=Date.now();});persist();renderSR();notify('Progresso resetado.','info');});
+  document.getElementById('sr-card').addEventListener('click',flipSR);
+  document.getElementById('sr-again').addEventListener('click',function(){rateSR(1);});
+  document.getElementById('sr-hard').addEventListener('click',function(){rateSR(3);});
+  document.getElementById('sr-easy').addEventListener('click',function(){rateSR(5);});
+
+  // SIMULADOR
+  document.getElementById('btn-sim-start').addEventListener('click',startSim);
+
+  // SIMULADO
+  document.getElementById('btn-sf-start').addEventListener('click',startSimFull);
+  document.querySelectorAll('input[name="sf-fonte"]').forEach(function(r){r.addEventListener('change',function(){document.getElementById('sf-prova-filters').style.display=(r.value==='provas'||r.value==='misto')?'block':'none';if(r.value!=='ia')populateInst('sf-inst');});});
+  var sfInst=document.getElementById('sf-inst');if(sfInst)sfInst.addEventListener('change',function(){populateAno('sf-ano-prova',sfInst.value);});
+  document.getElementById('btn-sf-prev').addEventListener('click',function(){if(sfState.idx>0){sfState.idx--;renderSFQuestion();}});
+  document.getElementById('btn-sf-next').addEventListener('click',function(){if(sfState.idx<sfState.total-1){sfState.idx++;renderSFQuestion();}});
+  document.getElementById('btn-sf-flag').addEventListener('click',function(){sfState.flags[sfState.idx]=!sfState.flags[sfState.idx];buildSFNav();});
+  document.getElementById('btn-sf-submit').addEventListener('click',function(){if(confirm('Entregar o simulado?'))submitSF();});
+  document.getElementById('btn-sf-redo').addEventListener('click',function(){document.getElementById('sf-report').style.display='none';document.getElementById('sf-setup').style.display='block';renderSFPrev();});
+
+  // PRESCRIÇÃO
+  document.getElementById('btn-rx-gen').addEventListener('click',genRxCase);
+  document.getElementById('btn-rx-eval').addEventListener('click',evalRx);
+  document.getElementById('btn-rx-new').addEventListener('click',genRxCase);
+
+  // RESUMIDOR
+  document.getElementById('btn-art').addEventListener('click',resumeArt);
+  document.getElementById('art-tab-text').addEventListener('click',function(){
+    document.getElementById('art-tab-text').style.background='var(--blue)';document.getElementById('art-tab-text').style.color='#fff';
+    document.getElementById('art-tab-file').style.background='#fff';document.getElementById('art-tab-file').style.color='var(--t2)';
+    document.getElementById('art-text-panel').style.display='block';document.getElementById('art-file-panel').style.display='none';
+  });
+  document.getElementById('art-tab-file').addEventListener('click',function(){
+    document.getElementById('art-tab-file').style.background='var(--blue)';document.getElementById('art-tab-file').style.color='#fff';
+    document.getElementById('art-tab-text').style.background='#fff';document.getElementById('art-tab-text').style.color='var(--t2)';
+    document.getElementById('art-file-panel').style.display='block';document.getElementById('art-text-panel').style.display='none';
+    initArtUpload();
+  });
+
+  // CADERNO
+  document.getElementById('btn-note-new').addEventListener('click',newNote);
+  document.getElementById('btn-note-save').addEventListener('click',saveNote);
+  document.getElementById('btn-note-del').addEventListener('click',deleteNote);
+  document.getElementById('note-search').addEventListener('input',renderNoteList);
+  var nb=document.getElementById('note-body');
+  if(nb){
+    var ph=nb.getAttribute('data-placeholder');
+    nb.addEventListener('focus',function(){if(nb.textContent.trim()==='')nb.innerHTML='';});
+  }
+
+  // CHAT
+  document.getElementById('btn-send-chat').addEventListener('click',function(){sendChat();});
+  document.getElementById('chat-input').addEventListener('keydown',function(e){if(e.key==='Enter'&&!e.shiftKey){e.preventDefault();sendChat();}});
+  document.getElementById('btn-clear-chat').addEventListener('click',function(){chatHistory=[];document.getElementById('chat-msgs').innerHTML='<div class="chat-bubble ai"><div class="chat-name">Endodirect IA</div>Olá! Como posso ajudar?</div>';});
+
+  // FEEDBACK
+  document.getElementById('fb-modal-close').addEventListener('click',closeFeedback);
+  document.getElementById('fb-cancel').addEventListener('click',closeFeedback);
+  document.getElementById('fb-close-ok').addEventListener('click',closeFeedback);
+  document.getElementById('fb-submit').addEventListener('click',submitFeedback);
+});
+})();
+</script>
+</body>
+</html>
