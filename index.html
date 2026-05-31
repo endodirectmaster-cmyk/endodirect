@@ -196,6 +196,35 @@ textarea{resize:vertical;line-height:1.6}
 .faq-q{font-size:.79rem;font-weight:600;cursor:pointer;display:flex;justify-content:space-between;align-items:center}
 .faq-a{font-size:.75rem;color:var(--t2);line-height:1.6;margin-top:.3rem;display:none}
 .faq-a.open{display:block}
+.mural-ph{border-bottom:1px solid var(--bd);padding-bottom:.9rem}
+.mural-ph h1{display:flex;align-items:baseline;gap:.65rem;flex-wrap:wrap}
+.mural-updated{font-size:.72rem;font-weight:500;color:var(--t3);letter-spacing:0}
+#panel-mural .pc{max-width:none}
+.mural-shell{display:flex;flex-direction:column;gap:1rem}
+.mural-status{display:inline-flex;align-items:center;width:max-content;border-radius:5px;background:var(--grn-l);color:#15803d;font-size:.66rem;font-weight:800;padding:.32rem .55rem}
+.mural-hero,.mural-filter-card{background:#fff;border:1px solid var(--bd);border-radius:var(--r);box-shadow:0 1px 2px rgba(26,39,68,.03)}
+.mural-hero{padding:1.25rem 1.35rem}
+.mural-eyebrow,.mural-filter-label{font-size:.64rem;font-weight:800;letter-spacing:.1em;text-transform:uppercase;color:var(--t3)}
+.mural-hero h2{font-size:1.35rem;font-weight:800;color:var(--tx);letter-spacing:-.02em;margin:.55rem 0 .45rem}
+.mural-hero p{font-size:.8rem;color:var(--t2);line-height:1.55}
+.mural-filter-card{padding:1.05rem 1.25rem;display:flex;align-items:end;gap:.9rem;justify-content:space-between;flex-wrap:wrap}
+.mural-filter-main{display:grid;grid-template-columns:minmax(240px,520px) max-content max-content;align-items:end;justify-content:start;gap:.7rem;flex:1;min-width:0}
+.mural-filter-field{display:flex;flex-direction:column;gap:.35rem;min-width:0}
+.mural-filter-select{height:40px}
+.mural-count-pill{display:inline-flex;align-items:center;justify-content:center;border-radius:5px;background:var(--blue-l);color:var(--blue);font-size:.66rem;font-weight:800;padding:.34rem .6rem;white-space:nowrap}
+.mural-theme-pill{display:inline-flex;align-items:center;justify-content:center;border-radius:5px;background:var(--s2);color:var(--tx);font-size:.66rem;font-weight:800;padding:.34rem .6rem;white-space:nowrap}
+.mural-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:1rem}
+.mural-card{position:relative;background:#fff;border:1px solid var(--bd);border-left:4px solid var(--blue);border-radius:var(--rs);padding:1.2rem 1.25rem;min-height:178px;box-shadow:0 1px 2px rgba(26,39,68,.035)}
+.mural-card-red{border-left-color:#c0392b}
+.mural-card-purple{border-left-color:#6d3fb5}
+.mural-card-tags{display:flex;align-items:center;gap:.45rem;flex-wrap:wrap;margin-bottom:.75rem}
+.mural-card h3{font-size:1rem;font-weight:800;color:var(--tx);line-height:1.35;margin-bottom:.42rem}
+.mural-date{font-size:.72rem;font-weight:800;color:var(--t3);margin-bottom:.65rem}
+.mural-text{font-size:.79rem;color:var(--t2);line-height:1.7;margin-bottom:.9rem}
+.mural-source{font-size:.75rem;font-weight:800;color:#064d8b}
+.mural-source a{color:#064d8b;text-decoration:none}
+.mural-source a:hover{text-decoration:underline}
+.mural-empty{grid-column:1/-1}
 .adm-tab{background:#fff;border:1.5px solid var(--bd2);border-radius:99px;padding:.3rem .88rem;font-size:.74rem;font-weight:500;color:var(--t2);cursor:pointer;font-family:var(--font)}
 .adm-tab.on{background:var(--blue);border-color:var(--blue);color:#fff;font-weight:600}
 .admin-mode{height:100%;overflow:hidden}
@@ -284,7 +313,7 @@ textarea{resize:vertical;line-height:1.6}
 .cat-pill:hover{border-color:var(--blue);color:var(--blue)}
 .cat-pill.on{background:var(--blue-l);border-color:var(--blue);color:var(--blue);font-weight:600}
 @media (max-width:820px){
-  html,body{height:100%;overflow:auto}
+  html,body{height:auto;min-height:100%;overflow:auto}
   body{min-height:100dvh;touch-action:manipulation}
   #login-screen{align-items:flex-start;overflow:auto;padding:calc(16px + env(safe-area-inset-top)) 14px calc(18px + env(safe-area-inset-bottom))}
   .login-card{width:100%;max-width:430px;margin:auto;border-radius:20px}
@@ -326,6 +355,15 @@ textarea{resize:vertical;line-height:1.6}
   .ph h1{font-size:1.18rem}
   .pc{max-width:none;padding:.7rem .9rem 4.5rem}
   .g2,.g3,.g4{grid-template-columns:1fr}
+  .mural-ph{padding:.85rem .9rem .75rem}
+  .mural-hero{padding:1rem}
+  .mural-hero h2{font-size:1.16rem}
+  .mural-filter-card{display:block;padding:.95rem}
+  .mural-filter-main{grid-template-columns:1fr;gap:.55rem}
+  .mural-count-pill,.mural-theme-pill{width:100%}
+  #mural-clear{width:100%;justify-content:center;margin-top:.65rem;min-height:40px}
+  .mural-grid{grid-template-columns:1fr;gap:.75rem}
+  .mural-card{min-height:0;padding:1rem}
   .card{padding:.9rem}
   .card-head,.sec-h,.q-row-top,.mm-item,.adm-row{align-items:flex-start;flex-direction:column}
   .adm-tab{flex:0 0 auto}
@@ -900,7 +938,7 @@ textarea{resize:vertical;line-height:1.6}
 
     <div class="panel" id="panel-mural">
       <div class="breadcrumb">Dashboard <b>/ Mural</b></div>
-      <div class="ph"><h1>Mural</h1></div>
+      <div class="ph mural-ph"><h1>Mural <span class="mural-updated" id="mural-updated"></span></h1></div>
       <div class="pc" id="mural-pc"></div>
     </div>
 
@@ -2281,13 +2319,58 @@ function execNoteCmd(cmd){
 }
 
 // ── MURAL ──
+var muralFilter='';
 function initMural(){
   var el=document.getElementById('mural-pc');if(!el)return;
-  if(!admAvisos.length){el.innerHTML='<div class="empty">Nenhum aviso no mural.</div>';return;}
-  el.innerHTML=admAvisos.slice().reverse().map(function(a){
-    var tagc=a.tipo==='Urgente'?'tag-red':a.tipo==='Evento'?'tag-pur':'tag-blue';
-    return'<div class="card" style="margin-bottom:.6rem"><div style="display:flex;align-items:center;gap:.5rem;margin-bottom:.4rem"><span class="tag '+tagc+'">'+esc(a.tipo||'Aviso')+'</span><span style="font-size:.83rem;font-weight:700">'+esc(a.titulo)+'</span><span style="font-size:.63rem;color:var(--t3);margin-left:auto">'+new Date(a.at).toLocaleDateString('pt-BR')+'</span></div><div style="font-size:.79rem;color:var(--t2);line-height:1.65">'+esc(a.texto)+'</div></div>';
-  }).join('');
+  function dateBR(v){
+    var d=new Date(v||Date.now());
+    if(isNaN(d.getTime()))d=new Date();
+    return d.toLocaleDateString('pt-BR');
+  }
+  function fonteOf(a){return String((a&&a.fonte)||'').trim()||String((a&&a.tipo)||'Geral').trim()||'Geral';}
+  function tipoClass(tipo){
+    var t=String(tipo||'').toLowerCase();
+    if(t.indexOf('urgent')>=0)return{card:' mural-card-red',tag:'tag-red'};
+    if(t.indexOf('event')>=0)return{card:' mural-card-purple',tag:'tag-pur'};
+    return{card:'',tag:'tag-blue'};
+  }
+  function noticeHTML(a){
+    var tipo=a.tipo||'Aviso';
+    var cls=tipoClass(tipo);
+    var fonte=fonteOf(a);
+    var source=a.link?'<a href="'+esc(a.link)+'" target="_blank" rel="noopener">'+esc(fonte)+'</a>':esc(fonte);
+    return'<article class="mural-card'+cls.card+'" data-mural-card>'
+      +'<div class="mural-card-tags"><span class="tag '+cls.tag+'">'+esc(tipo)+'</span><span class="tag tag-blue">'+esc(fonte)+'</span></div>'
+      +'<h3>'+esc(a.titulo||'Aviso aos alunos')+'</h3>'
+      +'<div class="mural-date">'+dateBR(a.at)+'</div>'
+      +'<div class="mural-text">'+esc(a.texto||'Comunicado publicado pela equipe Endodirect.')+'</div>'
+      +'<div class="mural-source">Fonte: '+source+'</div>'
+      +'</article>';
+  }
+  var latest=admAvisos.reduce(function(max,a){return Math.max(max,Number(a.at)||0);},0);
+  var updated=document.getElementById('mural-updated');
+  if(updated)updated.textContent='Atualizado em '+dateBR(latest||Date.now());
+  var fontes=[];
+  admAvisos.forEach(function(a){var f=fonteOf(a);if(fontes.indexOf(f)<0)fontes.push(f);});
+  fontes.sort(function(a,b){return a.localeCompare(b,'pt-BR');});
+  if(muralFilter&&fontes.indexOf(muralFilter)<0)muralFilter='';
+  var avisos=admAvisos.slice().reverse().filter(function(a){return !muralFilter||fonteOf(a)===muralFilter;});
+  var count=admAvisos.length+' '+(admAvisos.length===1?'aviso':'avisos');
+  var tema=muralFilter||'Todos os temas';
+  var options='<option value="">Todos</option>'+fontes.map(function(f){return'<option value="'+esc(f)+'">'+esc(f)+'</option>';}).join('');
+  el.innerHTML='<div class="mural-shell">'
+    +'<span class="mural-status">Supabase: Conectado</span>'
+    +'<section class="mural-hero"><div class="mural-eyebrow">Avisos para alunos</div><h2>Calendário, notícias e leituras essenciais</h2><p>Acompanhe prazos, julgados recentes, atualizações do curso e temas úteis para estudo dirigido. Os links abrem as fontes oficiais.</p></section>'
+    +'<section class="mural-filter-card"><div class="mural-filter-main"><label class="mural-filter-field"><span class="mural-filter-label">Tema / Fonte</span><select class="mural-filter-select" id="mural-filter">'+options+'</select></label><span class="mural-count-pill">'+esc(count)+'</span><span class="mural-theme-pill">'+esc(tema)+'</span></div><button class="btn btn-outline" id="mural-clear" type="button">Limpar filtro</button></section>'
+    +'<section class="mural-grid">'+(avisos.length?avisos.map(noticeHTML).join(''):'<div class="empty mural-empty">Nenhum aviso encontrado para este filtro.</div>')+'</section>'
+    +'</div>';
+  var sel=document.getElementById('mural-filter');
+  if(sel){
+    sel.value=muralFilter;
+    sel.addEventListener('change',function(){muralFilter=this.value;initMural();});
+  }
+  var clear=document.getElementById('mural-clear');
+  if(clear)clear.addEventListener('click',function(){muralFilter='';initMural();});
 }
 
 // ── SIMULADOR OSCE ──
