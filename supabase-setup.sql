@@ -39,7 +39,8 @@ insert into public.endodirect_admins (email, name) values
   ('nakamura.epm79@gmail.com', 'Nakamura'),
   ('rodolphomend@gmail.com', 'Rodolpho Mendonca'),
   ('drrafaelgiorgi@hotmail.com', 'Rafael Giorgi'),
-  ('brunosimiao1906@gmail.com', 'Bruno Simiao')
+  ('brunosimiao1906@gmail.com', 'Bruno Simiao'),
+  ('endodirectmaster@gmail.com', 'Endodirect Master')
 on conflict (email) do update set name = excluded.name;
 
 drop trigger if exists endodirect_app_state_touch_updated_at on public.endodirect_app_state;
@@ -74,7 +75,8 @@ with check (
       'nakamura.epm79@gmail.com',
       'rodolphomend@gmail.com',
       'drrafaelgiorgi@hotmail.com',
-      'brunosimiao1906@gmail.com'
+      'brunosimiao1906@gmail.com',
+      'endodirectmaster@gmail.com'
     )
   )
 );
@@ -92,7 +94,8 @@ with check (
       'nakamura.epm79@gmail.com',
       'rodolphomend@gmail.com',
       'drrafaelgiorgi@hotmail.com',
-      'brunosimiao1906@gmail.com'
+      'brunosimiao1906@gmail.com',
+      'endodirectmaster@gmail.com'
     )
   )
 );
@@ -112,7 +115,8 @@ using (
     'nakamura.epm79@gmail.com',
     'rodolphomend@gmail.com',
     'drrafaelgiorgi@hotmail.com',
-    'brunosimiao1906@gmail.com'
+    'brunosimiao1906@gmail.com',
+    'endodirectmaster@gmail.com'
   )
 )
 with check (
@@ -120,7 +124,8 @@ with check (
     'nakamura.epm79@gmail.com',
     'rodolphomend@gmail.com',
     'drrafaelgiorgi@hotmail.com',
-    'brunosimiao1906@gmail.com'
+    'brunosimiao1906@gmail.com',
+    'endodirectmaster@gmail.com'
   )
 );
 
