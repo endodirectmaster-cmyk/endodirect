@@ -1083,6 +1083,149 @@ function parseJ(raw){
   if(m){try{return JSON.parse(m[1]);}catch(e){}}
   return null;
 }
+function normImportKey(s){return String(s||'').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/[^a-z0-9]+/g,'_').replace(/^_+|_+$/g,'');}
+function cleanImportText(v){
+  if(v===undefined||v===null)return '';
+  var s=String(v).replace(/\u00a0/g,' ').trim();
+  if(/<\/?[a-z][\s\S]*>/i.test(s)){
+    var d=document.createElement('div');
+    d.innerHTML=s;
+    s=d.textContent||d.innerText||s;
+  }
+  return s.replace(/\s+/g,' ').trim();
+}
+function importVal(obj,keys){
+  if(!obj||typeof obj!=='object')return '';
+  var map={};
+  Object.keys(obj).forEach(function(k){map[normImportKey(k)]=obj[k];});
+  for(var i=0;i<keys.length;i++){
+    var nk=normImportKey(keys[i]);
+    if(map[nk]!==undefined&&map[nk]!==null&&String(map[nk]).trim()!=='')return map[nk];
+  }
+  return '';
+}
+function parseCSV(text){
+  text=String(text||'').replace(/^\uFEFF/,'');
+  var first=(text.split(/\r?\n/)[0]||''),semi=(first.match(/;/g)||[]).length,comma=(first.match(/,/g)||[]).length,tabs=(first.match(/\t/g)||[]).length;
+  var delim=tabs?'\t':(semi>=comma?';':',');
+  var rows=[],row=[],cell='',quoted=false;
+  for(var i=0;i<text.length;i++){
+    var ch=text.charAt(i);
+    if(quoted){
+      if(ch==='"'){
+        if(text.charAt(i+1)==='"'){cell+='"';i++;}
+        else quoted=false;
+      }else cell+=ch;
+    }else{
+      if(ch==='"')quoted=true;
+      else if(ch===delim){row.push(cell);cell='';}
+      else if(ch==='\n'){row.push(cell);rows.push(row);row=[];cell='';}
+      else if(ch!=='\r')cell+=ch;
+    }
+  }
+  row.push(cell);rows.push(row);
+  rows=rows.filter(function(r){return r.some(function(c){return String(c||'').trim()!=='';});});
+  if(rows.length<2)return [];
+  var headers=rows.shift().map(normImportKey);
+  return rows.map(function(r){
+    var o={};
+    headers.forEach(function(h,i){if(h)o[h]=r[i]||'';});
+    return o;
+  });
+}
+function importRowsFromPayload(payload){
+  if(Array.isArray(payload))return payload;
+  if(payload&&Array.isArray(payload.questions))return payload.questions;
+  if(payload&&Array.isArray(payload.questoes))return payload.questoes;
+  if(payload&&Array.isArray(payload.data))return payload.data;
+  if(payload&&Array.isArray(payload.items))return payload.items;
+  return [];
+}
+function optionArrayToObject(arr){
+  var out={},answer='';
+  if(!Array.isArray(arr))return{options:out,answer:answer};
+  arr.forEach(function(item,idx){
+    var letter=String(importVal(item,['letter','letra','key','option','opcao'])||'ABCDE'.charAt(idx)).toUpperCase().replace(/[^A-E]/g,'').charAt(0);
+    if(!letter)return;
+    var text=typeof item==='string'?item:importVal(item,['text','texto','label','descricao','description','value']);
+    text=cleanImportText(text);
+    if(text)out[letter]=text;
+    var ok=importVal(item,['correct','correta','is_correct','certa']);
+    if(ok===true||String(ok).toLowerCase()==='true'||String(ok).toLowerCase()==='sim'||String(ok)==='1')answer=letter;
+  });
+  return{options:out,answer:answer};
+}
+function normalizeImportAnswer(raw,options){
+  var ans=cleanImportText(raw).toUpperCase();
+  if(!ans)return '';
+  if(/^[1-5]$/.test(ans))return 'ABCDE'.charAt(parseInt(ans,10)-1);
+  var direct=ans.match(/^[A-E]$/);
+  if(direct)return direct[0];
+  var short=ans.match(/\b([A-E])\b/);
+  if(short&&ans.length<=20)return short[1];
+  var cmp=normImportKey(ans);
+  for(var k in options){if(normImportKey(options[k])===cmp)return k;}
+  return '';
+}
+function normalizeImportedQuestion(raw){
+  raw=raw||{};
+  var opts={},arrayOpts=optionArrayToObject(importVal(raw,['options','opcoes','alternativas','alternatives']));
+  if(raw.options&&typeof raw.options==='object'&&!Array.isArray(raw.options))opts=Object.assign({},raw.options);
+  if(raw.opcoes&&typeof raw.opcoes==='object'&&!Array.isArray(raw.opcoes))opts=Object.assign(opts,raw.opcoes);
+  if(raw.alternativas&&typeof raw.alternativas==='object'&&!Array.isArray(raw.alternativas))opts=Object.assign(opts,raw.alternativas);
+  opts=Object.assign({},arrayOpts.options,opts);
+  ['A','B','C','D','E'].forEach(function(l){
+    var v=importVal(opts,[l,l.toLowerCase()])||importVal(raw,[l,l.toLowerCase(),'alt_'+l,'alternativa_'+l,'alternativa'+l,'opcao_'+l,'opcao'+l,'option_'+l,'option'+l]);
+    v=cleanImportText(v);
+    if(v)opts[l]=v;
+  });
+  var options={};
+  ['A','B','C','D','E'].forEach(function(l){if(cleanImportText(opts[l]))options[l]=cleanImportText(opts[l]);});
+  var stem=cleanImportText(importVal(raw,['stem','question','questao','enunciado','pergunta','texto','descricao','description']));
+  var answer=normalizeImportAnswer(importVal(raw,['answer','gabarito','resposta','correta','alternativa_correta','correct'])||arrayOpts.answer,options);
+  var letters=Object.keys(options);
+  if(!stem||letters.length<2)return null;
+  if(!answer||!options[answer])answer=letters[0];
+  var ano=parseInt(importVal(raw,['ano','year','data','date','created_at']),10);
+  return{
+    stem:stem,
+    options:options,
+    answer:answer,
+    explanation:cleanImportText(importVal(raw,['explanation','comentario','comentarios','comentário','explicacao','explicação','justificativa','rationale'])),
+    area:cleanImportText(importVal(raw,['area','subespecialidade','subcategoria','categoria','tema','assunto','disciplina']))||'Endocrinologia',
+    inst:cleanImportText(importVal(raw,['inst','instituicao','instituição','banca','origem','source']))||'Endodirect',
+    ano:ano||new Date().getFullYear(),
+    importedAt:new Date().toISOString(),
+    sourceId:cleanImportText(importVal(raw,['id','codigo','code','numero']))
+  };
+}
+function questionFingerprint(q){return normImportKey((q&&q.stem)||'');}
+function importQuestionBankText(text,fileName){
+  var payload=parseJ(text),rows=importRowsFromPayload(payload);
+  if(!rows.length)rows=parseCSV(text);
+  var existing={};
+  provasDB.forEach(function(q){var fp=questionFingerprint(q);if(fp)existing[fp]=1;});
+  var added=0,duplicates=0,invalid=0;
+  rows.forEach(function(raw){
+    var q=normalizeImportedQuestion(raw);
+    if(!q){invalid++;return;}
+    var fp=questionFingerprint(q);
+    if(existing[fp]){duplicates++;return;}
+    existing[fp]=1;
+    provasDB.push(q);
+    added++;
+  });
+  return{total:rows.length,added:added,duplicates:duplicates,invalid:invalid,file:fileName||''};
+}
+function downloadImportTemplate(){
+  var csv='stem;A;B;C;D;E;answer;explanation;area;inst;ano\n"Enunciado da questao";"Alternativa A";"Alternativa B";"Alternativa C";"Alternativa D";"Alternativa E";"A";"Comentario da questao";"Tireoide";"Endodirect";"2024"';
+  var blob=new Blob(["\uFEFF"+csv],{type:'text/csv;charset=utf-8'});
+  var a=document.createElement('a');
+  a.href=URL.createObjectURL(blob);
+  a.download='modelo-importacao-endodirect.csv';
+  document.body.appendChild(a);a.click();a.remove();
+  setTimeout(function(){URL.revokeObjectURL(a.href);},800);
+}
 function diffTag(d){
   var map={basico:'tag-grn',intermediario:'tag-blue',avancado:'tag-red'};
   var lbl={basico:'F',intermediario:'M',avancado:'D'};
@@ -2216,7 +2359,8 @@ function admAnalyticsHTML(){
   return'<div class="g4" style="margin-bottom:1rem"><div class="adm-stat"><div class="adm-stat-n" style="color:var(--blue)">'+USERS.filter(function(u){return u.role==='aluno';}).length+'</div><div class="adm-stat-l">Alunos</div></div><div class="adm-stat"><div class="adm-stat-n" style="color:var(--pur)">'+provasDB.length+'</div><div class="adm-stat-l">Q. de provas</div></div><div class="adm-stat"><div class="adm-stat-n" style="color:var(--gold)">'+podcasts.length+'</div><div class="adm-stat-l">Podcasts</div></div><div class="adm-stat"><div class="adm-stat-n" style="color:var(--grn)">'+admAvisos.length+'</div><div class="adm-stat-l">Avisos</div></div></div><div class="card"><div class="card-head"><span class="card-title">Visão geral</span></div><div style="font-size:.79rem;color:var(--t2);line-height:1.7">Painel administrativo do Endodirect. Use as abas acima para gerenciar provas anteriores, questões, podcasts, mural de avisos e usuários.</div></div>';
 }
 function admProvasHTML(){
-  return'<div class="adm-form"><div style="font-size:.85rem;font-weight:700;margin-bottom:.7rem">🏛️ Importar prova (PDF) com IA</div><div class="adm-field"><label>Instituição</label><input type="text" id="adm-prova-inst" placeholder="Ex: SBEM"></div><div class="adm-field"><label>Ano</label><input type="number" id="adm-prova-ano" placeholder="2024"></div><div class="adm-field"><label>Arquivo PDF da prova</label><input type="file" id="adm-prova-file" accept=".pdf"></div><button class="btn btn-primary" id="btn-adm-extract">🤖 Extrair questões com IA</button><div id="adm-extract-result" style="margin-top:.7rem"></div></div>'+
+  return'<div class="adm-form"><div style="font-size:.85rem;font-weight:700;margin-bottom:.7rem">Importar banco de questões</div><div class="adm-field"><label>Arquivo CSV ou JSON</label><input type="file" id="adm-import-file" accept=".csv,.json,text/csv,application/json"></div><div style="font-size:.76rem;color:var(--t2);line-height:1.6;margin-bottom:.75rem">Campos aceitos: enunciado/questao/stem, alternativas A-E, gabarito/resposta, comentario/explicacao, area/subcategoria, banca/instituicao e ano.</div><div style="display:flex;gap:.5rem;flex-wrap:wrap"><button class="btn btn-primary" id="btn-adm-import">Importar banco</button><button class="btn btn-ghost" id="btn-adm-template">Baixar modelo CSV</button></div><div id="adm-import-result" style="margin-top:.7rem"></div></div>'+
+  '<div class="adm-form"><div style="font-size:.85rem;font-weight:700;margin-bottom:.7rem">🏛️ Importar prova (PDF) com IA</div><div class="adm-field"><label>Instituição</label><input type="text" id="adm-prova-inst" placeholder="Ex: SBEM"></div><div class="adm-field"><label>Ano</label><input type="number" id="adm-prova-ano" placeholder="2024"></div><div class="adm-field"><label>Arquivo PDF da prova</label><input type="file" id="adm-prova-file" accept=".pdf"></div><button class="btn btn-primary" id="btn-adm-extract">🤖 Extrair questões com IA</button><div id="adm-extract-result" style="margin-top:.7rem"></div></div>'+
   '<div class="adm-form"><div style="font-size:.85rem;font-weight:700;margin-bottom:.7rem">✍️ Adicionar questão manual</div><div class="adm-field"><label>Instituição</label><input type="text" id="adm-mq-inst" placeholder="SBEM"></div><div class="adm-field"><label>Ano</label><input type="number" id="adm-mq-ano" placeholder="2024"></div><div class="adm-field"><label>Subespecialidade</label><select id="adm-mq-area">'+DEFAULT_SUBESP+'</select></div><div class="adm-field"><label>Enunciado</label><textarea id="adm-mq-stem" rows="3"></textarea></div><div class="g2"><div class="adm-field"><label>Alt. A</label><input type="text" id="adm-mq-a"></div><div class="adm-field"><label>Alt. B</label><input type="text" id="adm-mq-b"></div><div class="adm-field"><label>Alt. C</label><input type="text" id="adm-mq-c"></div><div class="adm-field"><label>Alt. D</label><input type="text" id="adm-mq-d"></div></div><div class="adm-field"><label>Gabarito</label><select id="adm-mq-ans"><option>A</option><option>B</option><option>C</option><option>D</option></select></div><div class="adm-field"><label>Explicação</label><textarea id="adm-mq-exp" rows="2"></textarea></div><button class="btn btn-primary" id="btn-adm-addq">+ Adicionar</button></div>'+
   '<div class="sec-title" style="margin:.5rem 0">Questões cadastradas ('+provasDB.length+')</div><div id="adm-provas-list">'+(provasDB.length?provasDB.map(function(q,i){return'<div class="adm-row"><div class="adm-row-info"><div class="adm-row-title">'+esc((q.stem||'').substring(0,90))+'…</div><div class="adm-row-sub">'+esc(q.inst||'')+' '+esc(String(q.ano||''))+' • '+esc(q.area||'')+' • Gab: '+esc(q.answer||'')+'</div></div><button class="btn btn-ghost btn-sm" data-adm-delprova="'+i+'">✕</button></div>';}).join(''):'<div class="empty">Nenhuma questão de prova cadastrada.</div>')+'</div>';
 }
@@ -2238,6 +2382,39 @@ function persistAdm(){lsSet('adm_avisos',admAvisos);lsSet('adm_questoes',admQues
 function bindAdmTab(tab){
   var body=document.getElementById('adm-body');
   if(tab==='provas'){
+    var bt=document.getElementById('btn-adm-template');
+    if(bt)bt.addEventListener('click',downloadImportTemplate);
+    var bi=document.getElementById('btn-adm-import');
+    if(bi)bi.addEventListener('click',function(){
+      var fileInput=document.getElementById('adm-import-file');
+      var file=fileInput&&fileInput.files&&fileInput.files[0];
+      var out=document.getElementById('adm-import-result');
+      if(!file){notify('Selecione um arquivo CSV ou JSON.','err');return;}
+      bi.disabled=true;
+      bi.innerHTML=ldHTML();
+      if(out)out.innerHTML=ldHTML();
+      var r=new FileReader();
+      r.onload=function(ev){
+        try{
+          var res=importQuestionBankText(ev.target.result,file.name);
+          if(!res.total)throw new Error('Arquivo sem questões reconhecíveis.');
+          if(res.added){
+            persistProvas();
+            notify(res.added+' questões importadas para o banco.','ok');
+            renderAdmTab('provas');
+          }else{
+            if(out)out.innerHTML='<div style="background:var(--gold-l);border:1px solid #fde68a;border-radius:var(--rs);padding:.5rem .8rem;font-size:.77rem;color:#b45309">Nenhuma questão nova importada. Duplicadas: '+res.duplicates+' • Inválidas: '+res.invalid+'</div>';
+            notify('Nenhuma questão nova importada.','info');
+          }
+        }catch(err){
+          if(out)out.innerHTML='<div style="color:var(--red);font-size:.77rem">✕ '+esc(err.message)+'</div>';
+          notify(err.message,'err');
+        }
+      };
+      r.onerror=function(){notify('Não foi possível ler o arquivo.','err');};
+      r.onloadend=function(){if(document.getElementById('btn-adm-import')){bi.disabled=false;bi.innerHTML='Importar banco';}};
+      r.readAsText(file,'utf-8');
+    });
     var ef=document.getElementById('adm-prova-file');
     if(ef)ef.addEventListener('change',function(e){
       var f=e.target.files[0];if(!f)return;
