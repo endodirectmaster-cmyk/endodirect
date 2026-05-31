@@ -104,6 +104,11 @@ textarea{resize:vertical;line-height:1.6}
 .tag-red{background:var(--red-l);color:var(--red)}
 .tag-pur{background:var(--pur-l);color:var(--pur)}
 .tag-gold{background:var(--gold-l);color:#d97706}
+.upload-status{display:none;margin:.5rem 0 .7rem;padding:.5rem .65rem;border-radius:var(--rs);font-size:.72rem;font-weight:600;line-height:1.45}
+.upload-status.info{display:block;background:var(--blue-l);color:var(--blue);border:1px solid #bfdbfe}
+.upload-status.ok{display:block;background:var(--grn-l);color:#16a34a;border:1px solid #bbf7d0}
+.upload-status.err{display:block;background:var(--red-l);color:var(--red);border:1px solid #fecaca}
+.asset-meta{font-size:.66rem;color:var(--t3);word-break:break-word;margin-bottom:.5rem}
 .notify{position:fixed;bottom:1.2rem;right:1.2rem;background:var(--tx);border-radius:var(--r);padding:.55rem .9rem;font-size:.75rem;color:#fff;box-shadow:0 8px 24px rgba(0,0,0,.2);z-index:1100;max-width:280px;pointer-events:none}
 .notify.ok{background:#16a34a}
 .notify.err{background:var(--red)}
@@ -1083,6 +1088,9 @@ var GOOGLE_ADMIN_EMAILS=USERS.filter(function(u){return u.provider==='google'&&u
 // ── SUPABASE + STORAGE ──
 var SUPABASE_URL='https://eutizblmrcypzyqzczgq.supabase.co';
 var SUPABASE_PUBLISHABLE_KEY='sb_publishable_wm27KaGZ0qKHFjTx80c23A_LMLH7DEU';
+var SUPABASE_ASSET_BUCKET='endodirect-assets';
+var MAX_VIDEO_UPLOAD_BYTES=500*1024*1024;
+var MAX_AUDIO_UPLOAD_BYTES=200*1024*1024;
 var supabaseClient=null;
 var remoteStateLoaded=false,remoteStateSaveTimer=null,remoteStateWarned=false;
 var REMOTE_STATE_KEYS=['q','fc','mm','notes','crono','sf_results','perf','provas','adm_avisos','adm_questoes','podcasts','adm_cursos','adm_estudantes','adm_perfil','user_profile'];
@@ -1098,6 +1106,58 @@ function getSupabaseClient(){
     console.warn('Supabase init failed',e);
   }
   return supabaseClient;
+}
+function formatBytes(n){
+  n=Number(n)||0;
+  if(n>=1024*1024*1024)return (n/(1024*1024*1024)).toFixed(1)+' GB';
+  if(n>=1024*1024)return (n/(1024*1024)).toFixed(1)+' MB';
+  if(n>=1024)return Math.round(n/1024)+' KB';
+  return n+' B';
+}
+function safeFileName(name){
+  var parts=String(name||'arquivo').split('.');
+  var ext=parts.length>1?('.'+parts.pop().toLowerCase().replace(/[^a-z0-9]/g,'')):'';
+  var base=parts.join('.')||'arquivo';
+  base=base.normalize?base.normalize('NFD').replace(/[\u0300-\u036f]/g,''):base;
+  base=base.toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/^-+|-+$/g,'').slice(0,70)||'arquivo';
+  return base+ext;
+}
+function assetPath(folder,file){
+  var day=new Date().toISOString().slice(0,10);
+  return folder+'/'+day+'/'+Date.now()+'-'+safeFileName(file&&file.name);
+}
+function setUploadStatus(id,msg,type){
+  var el=document.getElementById(id);
+  if(!el)return;
+  el.textContent=msg||'';
+  el.className='upload-status '+(type||'info');
+}
+function uploadAdminAsset(file,folder){
+  var client=getSupabaseClient();
+  if(!client||!client.storage)return Promise.reject(new Error('Supabase Storage nao esta disponivel.'));
+  if(!currentUser||currentUser.role!=='admin')return Promise.reject(new Error('Apenas administradores podem subir arquivos.'));
+  var path=assetPath(folder,file);
+  var sessionPromise=client.auth&&client.auth.getSession?client.auth.getSession():Promise.resolve({data:{session:null}});
+  return sessionPromise.then(function(res){
+    if(!res.data||!res.data.session)throw new Error('Entre como admin pelo Google para subir arquivos no Supabase Storage.');
+    return client.storage.from(SUPABASE_ASSET_BUCKET).upload(path,file,{
+      cacheControl:'3600',
+      upsert:false,
+      contentType:file.type||undefined
+    });
+  }).then(function(res){
+    if(res.error)throw res.error;
+    var pub=client.storage.from(SUPABASE_ASSET_BUCKET).getPublicUrl(path);
+    var url=pub&&pub.data&&pub.data.publicUrl;
+    if(!url)throw new Error('Upload concluido, mas nao foi possivel gerar URL publica.');
+    return{bucket:SUPABASE_ASSET_BUCKET,path:path,url:url,name:file.name,size:file.size,type:file.type||'',uploadedAt:Date.now()};
+  });
+}
+function uploadErrorMessage(e){
+  var msg=(e&&e.message)||String(e||'Erro desconhecido');
+  if(/bucket|not found|does not exist|404/i.test(msg))return 'Bucket "'+SUPABASE_ASSET_BUCKET+'" nao encontrado. Crie o bucket publico no Supabase Storage e tente novamente.';
+  if(/row-level security|policy|permission|unauthorized|403/i.test(msg))return 'Sem permissao de upload. Entre pelo Google como admin e confirme a policy de INSERT no bucket "'+SUPABASE_ASSET_BUCKET+'".';
+  return msg;
 }
 var mem={};
 function lsGet(k){
@@ -1993,7 +2053,7 @@ function renderPodcasts(){
   var el=document.getElementById('pod-list');if(!el)return;
   var list=podFilter?podcasts.filter(function(p){return p.area===podFilter;}):podcasts;
   if(!list.length){el.innerHTML='<div class="empty">Nenhum podcast disponível ainda. O admin pode adicionar episódios.</div>';return;}
-  el.innerHTML=list.map(function(p){return'<div class="card"><div style="display:flex;align-items:flex-start;gap:.8rem"><div style="width:46px;height:46px;border-radius:10px;background:var(--navy);display:flex;align-items:center;justify-content:center;font-size:1.3rem;flex-shrink:0">🎧</div><div style="flex:1;min-width:0"><div style="font-size:.85rem;font-weight:700;color:var(--tx);margin-bottom:2px">'+esc(p.title)+'</div><div style="font-size:.68rem;color:var(--t3);margin-bottom:.4rem">'+(p.area?'<span class="tag tag-blue" style="margin-right:5px">'+esc(p.area)+'</span>':'')+esc(p.desc||'')+'</div><audio controls preload="none" style="width:100%;height:36px" src="'+p.audio+'"></audio></div></div></div>';}).join('');
+  el.innerHTML=list.map(function(p){return'<div class="card"><div style="display:flex;align-items:flex-start;gap:.8rem"><div style="width:46px;height:46px;border-radius:10px;background:var(--navy);display:flex;align-items:center;justify-content:center;font-size:1.3rem;flex-shrink:0">🎧</div><div style="flex:1;min-width:0"><div style="font-size:.85rem;font-weight:700;color:var(--tx);margin-bottom:2px">'+esc(p.title)+'</div><div style="font-size:.68rem;color:var(--t3);margin-bottom:.4rem">'+(p.area?'<span class="tag tag-blue" style="margin-right:5px">'+esc(p.area)+'</span>':'')+esc(p.desc||'')+'</div><audio controls preload="none" style="width:100%;height:36px" src="'+esc(p.audio||'')+'"></audio></div></div></div>';}).join('');
 }
 
 // ── CURSOS (aluno) ──
@@ -2797,7 +2857,8 @@ function admConteudoHTML(){
   var formHTML='<div class="card" style="margin-bottom:1.1rem"><div style="font-size:1rem;font-weight:700;margin-bottom:.8rem">🎧 Adicionar podcast</div>'
     +'<div class="g2" style="margin-bottom:.7rem"><div class="fld2" style="margin:0"><label>Título</label><input type="text" id="adm-pod-title" placeholder="Ex: Atualização em DM2"></div><div class="fld2" style="margin:0"><label>Subespecialidade</label><select id="adm-pod-area">'+DEFAULT_SUBESP+'</select></div></div>'
     +'<div class="fld2"><label>Descrição</label><input type="text" id="adm-pod-desc" placeholder="Breve descrição"></div>'
-    +'<div class="fld2"><label>Arquivo de áudio (MP3/M4A)</label><input type="file" id="adm-pod-file" accept="audio/*"></div>'
+    +'<div class="fld2"><label>Arquivo de áudio (MP3/M4A/WAV)</label><input type="file" id="adm-pod-file" accept="audio/*"><div style="font-size:.68rem;color:var(--t3);margin-top:.25rem">O arquivo será enviado ao Supabase Storage e ficará disponível para os alunos. Máx. '+formatBytes(MAX_AUDIO_UPLOAD_BYTES)+'.</div></div>'
+    +'<div class="upload-status" id="adm-pod-upload-status"></div>'
     +'<button class="btn btn-primary" id="btn-adm-addpod">+ Adicionar podcast</button></div>';
 
   var ouvirHTML='<div style="display:flex;align-items:center;gap:.6rem;flex-wrap:wrap;margin-bottom:.9rem">'
@@ -2805,7 +2866,7 @@ function admConteudoHTML(){
     +'<select id="adm-pod-filtersel" style="width:auto;min-width:230px"><option value="">Todas as subespecialidades ('+podcasts.length+')</option>'+SUB.map(function(s){return '<option value="'+esc(s)+'"'+(admPodFiltro===s?' selected':'')+'>'+esc(s)+' ('+(cont[s]||0)+')</option>';}).join('')+'</select>'
     +(admPodFiltro?'<button class="btn btn-ghost btn-sm" id="adm-pod-clearfilter">✕ Limpar</button>':'')
   +'</div>'
-  +'<div id="adm-pod-list">'+(lista.length?lista.map(function(p){var i=podcasts.indexOf(p);return '<div class="card" style="margin-bottom:.6rem"><div style="display:flex;align-items:flex-start;gap:.8rem"><div style="width:46px;height:46px;border-radius:10px;background:var(--navy);display:flex;align-items:center;justify-content:center;font-size:1.3rem;flex-shrink:0">🎧</div><div style="flex:1;min-width:0"><div style="font-size:.85rem;font-weight:700;color:var(--tx);margin-bottom:2px">'+esc(p.title)+'</div><div style="display:flex;flex-wrap:wrap;gap:.3rem;margin-bottom:.4rem">'+(p.area?'<span class="tag tag-blue">'+esc(p.area)+'</span>':'')+(p.desc?'<span style="font-size:.7rem;color:var(--t3);align-self:center">'+esc(p.desc)+'</span>':'')+'</div><audio controls preload="none" style="width:100%;height:36px" src="'+p.audio+'"></audio></div><button class="btn btn-ghost btn-sm" data-adm-delpod="'+i+'" style="padding:2px 6px">🗑</button></div></div>';}).join(''):'<div class="empty">Nenhum podcast '+(admPodFiltro?'nesta subespecialidade':'cadastrado ainda')+'.</div>')+'</div>';
+  +'<div id="adm-pod-list">'+(lista.length?lista.map(function(p){var i=podcasts.indexOf(p);var meta=p.asset?'<div class="asset-meta">Supabase Storage: '+esc(p.asset.name||'audio')+' · '+formatBytes(p.asset.size)+'</div>':'';return '<div class="card" style="margin-bottom:.6rem"><div style="display:flex;align-items:flex-start;gap:.8rem"><div style="width:46px;height:46px;border-radius:10px;background:var(--navy);display:flex;align-items:center;justify-content:center;font-size:1.3rem;flex-shrink:0">🎧</div><div style="flex:1;min-width:0"><div style="font-size:.85rem;font-weight:700;color:var(--tx);margin-bottom:2px">'+esc(p.title)+'</div><div style="display:flex;flex-wrap:wrap;gap:.3rem;margin-bottom:.4rem">'+(p.area?'<span class="tag tag-blue">'+esc(p.area)+'</span>':'')+(p.desc?'<span style="font-size:.7rem;color:var(--t3);align-self:center">'+esc(p.desc)+'</span>':'')+'</div>'+meta+'<audio controls preload="none" style="width:100%;height:36px" src="'+esc(p.audio||'')+'"></audio></div><button class="btn btn-ghost btn-sm" data-adm-delpod="'+i+'" style="padding:2px 6px">🗑</button></div></div>';}).join(''):'<div class="empty">Nenhum podcast '+(admPodFiltro?'nesta subespecialidade':'cadastrado ainda')+'.</div>')+'</div>';
 
   return '<div class="adm-ph"><h1>Podcasts</h1><p>Podcasts e materiais de áudio disponíveis para os estudantes.</p></div>'
   +'<div class="adm-pc">'
@@ -2919,12 +2980,12 @@ function vimeoId(url){
 }
 function playerEmbed(c){
   if(!c)return '';
-  if(c.tipo==='file'||/^data:video\//.test(c.src||''))return '<video controls style="width:100%;max-height:62vh;display:block" src="'+c.src+'"></video>';
+  if(c.tipo==='file'||/^data:video\//.test(c.src||''))return '<video controls style="width:100%;max-height:62vh;display:block" src="'+esc(c.src||'')+'"></video>';
   var y=ytId(c.src);if(y)return '<iframe title="'+esc(c.title||'Videoaula')+'" src="https://www.youtube.com/embed/'+y+'" style="width:100%;aspect-ratio:16/9;border:0;display:block" allowfullscreen></iframe>';
   var v=vimeoId(c.src);if(v)return '<iframe title="'+esc(c.title||'Videoaula')+'" src="https://player.vimeo.com/video/'+v+'" style="width:100%;aspect-ratio:16/9;border:0;display:block" allowfullscreen></iframe>';
   return '<video controls style="width:100%;max-height:62vh;display:block" src="'+esc(c.src||'')+'"></video>';
 }
-var admCursoFiltro='',admCursoVideoData=null,admCursoSubtab='ver';
+var admCursoFiltro='',admCursoVideoFile=null,admCursoVideoData=null,admCursoSubtab='ver';
 function admCursosHTML(){
   var SUB=['Diabetes','Obesidade','Tireoide','Adrenal','Neuroendocrinologia','Osteometabolismo','Endocrinologia Pediátrica','Endocrinologia Esportiva','Endocrinologia Masculina','Endocrinologia Feminina','Transgeneridade'];
   var cont={};admCursos.forEach(function(c){if(c.sub)cont[c.sub]=(cont[c.sub]||0)+1;});
@@ -2937,8 +2998,9 @@ function admCursosHTML(){
     +'<div class="fld2"><label>Vídeo</label>'
       +'<div style="display:flex;border:1.5px solid var(--bd2);border-radius:var(--rs);overflow:hidden;width:fit-content;margin-bottom:.6rem"><button type="button" id="adm-curso-tab-link" class="tog-btn on">🔗 Link (YouTube/Vimeo)</button><button type="button" id="adm-curso-tab-file" class="tog-btn">📎 Arquivo</button></div>'
       +'<div id="adm-curso-link-panel"><input type="text" id="adm-curso-link" placeholder="Cole a URL do vídeo (YouTube, Vimeo ou MP4)"></div>'
-      +'<div id="adm-curso-file-panel" style="display:none"><div class="art-drop" id="adm-curso-drop" style="padding:1.5rem 1rem"><div style="font-size:1.7rem;margin-bottom:.3rem">🎞️</div><div style="font-size:.82rem;font-weight:600;color:var(--tx)">Arraste o vídeo ou clique para selecionar</div><div style="font-size:.66rem;color:var(--t3);margin-top:.15rem">MP4, WEBM · Máx. 50 MB</div></div><input type="file" id="adm-curso-file" accept="video/*" style="display:none"><div id="adm-curso-fname" style="display:none;font-size:.76rem;color:var(--grn);margin-top:.5rem"></div></div>'
+      +'<div id="adm-curso-file-panel" style="display:none"><div class="art-drop" id="adm-curso-drop" style="padding:1.5rem 1rem"><div style="font-size:1.7rem;margin-bottom:.3rem">🎞️</div><div style="font-size:.82rem;font-weight:600;color:var(--tx)">Arraste o vídeo ou clique para selecionar</div><div style="font-size:.66rem;color:var(--t3);margin-top:.15rem">MP4, WEBM, MOV · Supabase Storage · Máx. '+formatBytes(MAX_VIDEO_UPLOAD_BYTES)+'</div></div><input type="file" id="adm-curso-file" accept="video/*" style="display:none"><div id="adm-curso-fname" style="display:none;font-size:.76rem;color:var(--grn);margin-top:.5rem"></div></div>'
     +'</div>'
+    +'<div class="upload-status" id="adm-curso-upload-status"></div>'
     +'<button class="btn btn-primary" id="btn-adm-addcurso">+ Adicionar aula</button></div>';
 
   var verHTML='<div style="display:flex;align-items:center;gap:.6rem;flex-wrap:wrap;margin-bottom:.9rem">'
@@ -2947,7 +3009,7 @@ function admCursosHTML(){
     +(admCursoFiltro?'<button class="btn btn-ghost btn-sm" id="adm-curso-clearfilter">✕ Limpar</button>':'')
   +'</div>'
   +'<div id="adm-curso-player" style="display:none;margin-bottom:1.1rem"></div>'
-  +'<div id="adm-curso-list" class="g2" style="align-items:start">'+(lista.length?lista.map(function(c){var i=admCursos.indexOf(c);return '<div class="card"><div style="display:flex;align-items:flex-start;gap:.7rem"><div style="width:48px;height:48px;border-radius:10px;background:var(--navy);display:flex;align-items:center;justify-content:center;font-size:1.3rem;flex-shrink:0">🎬</div><div style="flex:1;min-width:0"><div style="font-size:.86rem;font-weight:700;color:var(--tx);margin-bottom:.25rem">'+esc(c.title)+'</div><div style="display:flex;flex-wrap:wrap;gap:.3rem;margin-bottom:.4rem"><span class="tag tag-blue">'+esc(c.sub)+'</span>'+(c.modulo?'<span class="tag tag-pur">'+esc(c.modulo)+'</span>':'')+(c.dur?'<span class="tag tag-gold">'+esc(c.dur)+'</span>':'')+'</div>'+(c.desc?'<div style="font-size:.74rem;color:var(--t2);line-height:1.5;margin-bottom:.4rem">'+esc(c.desc)+'</div>':'')+'<div style="font-size:.66rem;color:var(--t3);word-break:break-all;margin-bottom:.5rem">'+(c.tipo==='link'?'🔗 '+esc(c.src):'🎞️ Arquivo de vídeo')+'</div><div style="display:flex;gap:5px"><button class="btn btn-primary btn-sm" data-adm-playcurso="'+i+'">▶ Assistir</button><button class="btn btn-ghost btn-sm" data-adm-delcurso="'+i+'">🗑</button></div></div></div></div>';}).join(''):'<div class="empty" style="grid-column:1/-1">Nenhuma videoaula '+(admCursoFiltro?'nesta subespecialidade':'cadastrada ainda')+'.</div>')+'</div>';
+  +'<div id="adm-curso-list" class="g2" style="align-items:start">'+(lista.length?lista.map(function(c){var i=admCursos.indexOf(c);var meta=c.asset?'<div class="asset-meta">Supabase Storage: '+esc(c.asset.name||'video')+' · '+formatBytes(c.asset.size)+'</div>':'';return '<div class="card"><div style="display:flex;align-items:flex-start;gap:.7rem"><div style="width:48px;height:48px;border-radius:10px;background:var(--navy);display:flex;align-items:center;justify-content:center;font-size:1.3rem;flex-shrink:0">🎬</div><div style="flex:1;min-width:0"><div style="font-size:.86rem;font-weight:700;color:var(--tx);margin-bottom:.25rem">'+esc(c.title)+'</div><div style="display:flex;flex-wrap:wrap;gap:.3rem;margin-bottom:.4rem"><span class="tag tag-blue">'+esc(c.sub)+'</span>'+(c.modulo?'<span class="tag tag-pur">'+esc(c.modulo)+'</span>':'')+(c.dur?'<span class="tag tag-gold">'+esc(c.dur)+'</span>':'')+'</div>'+(c.desc?'<div style="font-size:.74rem;color:var(--t2);line-height:1.5;margin-bottom:.4rem">'+esc(c.desc)+'</div>':'')+'<div style="font-size:.66rem;color:var(--t3);word-break:break-all;margin-bottom:.5rem">'+(c.tipo==='link'?'🔗 '+esc(c.src):'🎞️ Arquivo de vídeo')+'</div>'+meta+'<div style="display:flex;gap:5px"><button class="btn btn-primary btn-sm" data-adm-playcurso="'+i+'">▶ Assistir</button><button class="btn btn-ghost btn-sm" data-adm-delcurso="'+i+'">🗑</button></div></div></div></div>';}).join(''):'<div class="empty" style="grid-column:1/-1">Nenhuma videoaula '+(admCursoFiltro?'nesta subespecialidade':'cadastrada ainda')+'.</div>')+'</div>';
 
   return '<div class="adm-ph"><h1>Cursos</h1><p>Importe e organize videoaulas por subespecialidade.</p></div>'
   +'<div class="adm-pc">'
@@ -2956,7 +3018,7 @@ function admCursosHTML(){
     +'<button class="pill-tab'+(admCursoSubtab==='importar'?' on':'')+'" data-csub="importar">⬆️ Importar videoaula</button>'
   +'</div>'
   +(admCursoSubtab==='importar'?formHTML:verHTML)
-  +'<div style="font-size:.7rem;color:var(--t3);margin-top:.7rem">ℹ️ Aulas por link são reproduzidas diretamente da fonte. Uploads de arquivo, neste protótipo, ficam salvos apenas na sessão.</div>'
+  +'<div style="font-size:.7rem;color:var(--t3);margin-top:.7rem">ℹ️ Aulas por link são reproduzidas diretamente da fonte. Uploads de arquivo são salvos no Supabase Storage e sincronizados para os alunos.</div>'
   +'</div>';
 }
 
@@ -3046,15 +3108,38 @@ function bindAdmSec(sec){
       var title=(document.getElementById('adm-curso-title').value||'').trim();
       if(!title){notify('Informe o título da aula.','err');return;}
       var c={title:title,sub:document.getElementById('adm-curso-sub').value,modulo:(document.getElementById('adm-curso-modulo').value||'').trim(),dur:(document.getElementById('adm-curso-dur').value||'').trim(),desc:(document.getElementById('adm-curso-desc').value||'').trim(),at:Date.now()};
+      function finishCurso(assetUrl,asset){
+        c.tipo=asset?'file':'link';
+        c.src=assetUrl;
+        if(asset){c.asset=asset;c.storage='supabase';}
+        admCursos.push(c);
+        persistCursos();
+        admCursoVideoFile=null;admCursoVideoData=null;
+        notify('Videoaula adicionada!','ok');
+        admCursoSubtab='ver';
+        renderAdmSec('cursos');
+        renderCursosAluno();
+      }
       if(cFonte==='link'){
         var link=(document.getElementById('adm-curso-link').value||'').trim();
         if(!link){notify('Cole a URL do vídeo.','err');return;}
-        c.tipo='link';c.src=link;
-      }else{
-        if(!admCursoVideoData){notify('Selecione o arquivo de vídeo.','err');return;}
-        c.tipo='file';c.src=admCursoVideoData;
+        finishCurso(link,null);
+        return;
       }
-      admCursos.push(c);persistCursos();admCursoVideoData=null;notify('Videoaula adicionada!','ok');admCursoSubtab='ver';renderAdmSec('cursos');
+      if(!admCursoVideoFile){notify('Selecione o arquivo de vídeo.','err');return;}
+      bAddCurso.disabled=true;bAddCurso.innerHTML=ldHTML();
+      setUploadStatus('adm-curso-upload-status','Enviando videoaula para o Supabase Storage...','info');
+      uploadAdminAsset(admCursoVideoFile,'videoaulas')
+        .then(function(asset){
+          setUploadStatus('adm-curso-upload-status','Upload concluído. Salvando aula...','ok');
+          finishCurso(asset.url,asset);
+        })
+        .catch(function(e){
+          var msg=uploadErrorMessage(e);
+          setUploadStatus('adm-curso-upload-status',msg,'err');
+          notify(msg,'err');
+        })
+        .then(function(){bAddCurso.disabled=false;bAddCurso.innerHTML='+ Adicionar aula';});
     });
     } // fim aba importar
     var cFsel=document.getElementById('adm-curso-filtersel');
@@ -3076,14 +3161,31 @@ function bindAdmSec(sec){
     main.querySelectorAll('[data-podsub]').forEach(function(b){b.addEventListener('click',function(){admPodSubtab=b.dataset.podsub;renderAdmSec('conteudo');});});
     if(admPodSubtab==='adicionar'){
       var pf=document.getElementById('adm-pod-file');
-      if(pf)pf.addEventListener('change',function(e){var f=e.target.files[0];if(!f)return;if(f.size>25*1024*1024){notify('Áudio muito grande (máx 25 MB).','err');return;}var r=new FileReader();r.onload=function(ev){podAudioDataAdm=ev.target.result;notify('Áudio carregado.','ok');};r.readAsDataURL(f);});
+      if(pf)pf.addEventListener('change',function(e){
+        var f=e.target.files[0];if(!f)return;
+        if(!/^audio\//.test(f.type)){notify('Selecione um arquivo de áudio.','err');pf.value='';return;}
+        if(f.size>MAX_AUDIO_UPLOAD_BYTES){notify('Áudio muito grande (máx '+formatBytes(MAX_AUDIO_UPLOAD_BYTES)+').','err');pf.value='';return;}
+        podAudioDataAdm=f;
+        setUploadStatus('adm-pod-upload-status','Áudio selecionado: '+f.name+' ('+formatBytes(f.size)+').','info');
+      });
       var bp=document.getElementById('btn-adm-addpod');
       if(bp)bp.addEventListener('click',function(){
         var title=(document.getElementById('adm-pod-title').value||'').trim();
         if(!title){notify('Informe o título.','err');return;}
         if(!podAudioDataAdm){notify('Selecione o arquivo de áudio.','err');return;}
-        podcasts.push({title:title,area:document.getElementById('adm-pod-area').value,desc:document.getElementById('adm-pod-desc').value,audio:podAudioDataAdm,at:Date.now()});
-        persistPodcasts();podAudioDataAdm=null;notify('Podcast adicionado!','ok');admPodSubtab='ouvir';renderAdmSec('conteudo');
+        bp.disabled=true;bp.innerHTML=ldHTML();
+        setUploadStatus('adm-pod-upload-status','Enviando podcast para o Supabase Storage...','info');
+        uploadAdminAsset(podAudioDataAdm,'podcasts')
+          .then(function(asset){
+            podcasts.push({title:title,area:document.getElementById('adm-pod-area').value,desc:document.getElementById('adm-pod-desc').value,audio:asset.url,asset:asset,storage:'supabase',at:Date.now()});
+            persistPodcasts();podAudioDataAdm=null;notify('Podcast adicionado!','ok');admPodSubtab='ouvir';renderAdmSec('conteudo');renderPodcasts();
+          })
+          .catch(function(e){
+            var msg=uploadErrorMessage(e);
+            setUploadStatus('adm-pod-upload-status',msg,'err');
+            notify(msg,'err');
+          })
+          .then(function(){bp.disabled=false;bp.innerHTML='+ Adicionar podcast';});
       });
     }
     var pFsel=document.getElementById('adm-pod-filtersel');
@@ -3190,13 +3292,12 @@ function handleAdmProva(f){
 var mqImgData=null;
 function handleCursoVideo(f){
   if(!/^video\//.test(f.type)){notify('Selecione um arquivo de vídeo.','err');return;}
-  if(f.size>50*1024*1024){notify('Vídeo muito grande (máx 50 MB).','err');return;}
-  var r=new FileReader();
-  r.onload=function(ev){
-    admCursoVideoData=ev.target.result;
-    var fn=document.getElementById('adm-curso-fname');
-    if(fn){fn.style.display='block';fn.textContent='✓ '+f.name+' carregado ('+(f.size/(1024*1024)).toFixed(1)+' MB)';}
-  };r.readAsDataURL(f);
+  if(f.size>MAX_VIDEO_UPLOAD_BYTES){notify('Vídeo muito grande (máx '+formatBytes(MAX_VIDEO_UPLOAD_BYTES)+').','err');return;}
+  admCursoVideoFile=f;
+  admCursoVideoData={name:f.name,size:f.size,type:f.type};
+  var fn=document.getElementById('adm-curso-fname');
+  if(fn){fn.style.display='block';fn.textContent='✓ '+f.name+' selecionado para upload ('+formatBytes(f.size)+')';}
+  setUploadStatus('adm-curso-upload-status','Arquivo pronto para envio ao Supabase Storage.','info');
 }
 function handleMqImg(f){
   if(!/^image\//.test(f.type)){notify('Selecione uma imagem.','err');return;}
