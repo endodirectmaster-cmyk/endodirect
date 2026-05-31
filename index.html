@@ -198,12 +198,63 @@ textarea{resize:vertical;line-height:1.6}
 .faq-a.open{display:block}
 .adm-tab{background:#fff;border:1.5px solid var(--bd2);border-radius:99px;padding:.3rem .88rem;font-size:.74rem;font-weight:500;color:var(--t2);cursor:pointer;font-family:var(--font)}
 .adm-tab.on{background:var(--blue);border-color:var(--blue);color:#fff;font-weight:600}
+.admin-mode{height:100%;overflow:hidden}
+.admin-mode .workspace{height:100%;display:block;overflow:hidden}
+#panel-adm.on{display:flex;height:100%;width:100%;background:var(--bg)}
+#panel-adm .adm-sidebar{width:210px;background:var(--navy);display:flex;flex-direction:column;flex-shrink:0;overflow-y:auto}
+#panel-adm .adm-content{flex:1;display:flex;flex-direction:column;overflow:hidden;background:var(--bg);min-width:0}
+#panel-adm .adm-topbar{height:56px;background:var(--surface);border-bottom:1px solid var(--bd);display:flex;align-items:center;justify-content:space-between;padding:0 1.6rem;flex-shrink:0}
+#panel-adm .adm-title-wrap{display:flex;align-items:center;gap:.75rem;min-width:0}
+.adm-menu-btn{display:none;width:38px;height:38px;border-radius:10px;border:1px solid var(--bd2);background:#fff;color:var(--navy);align-items:center;justify-content:center;font-size:1.15rem;font-weight:800;cursor:pointer}
+.adm-backdrop{display:none;position:fixed;inset:0;border:0;background:rgba(9,19,43,.42);z-index:30}
+#panel-adm .sb-sec{color:rgba(255,255,255,.32)}
+.adm-nav{width:100%;display:flex;align-items:center;gap:8px;border:0;background:transparent;color:rgba(255,255,255,.72);font-family:var(--font);font-size:.76rem;font-weight:600;text-align:left;border-radius:var(--rs);padding:.5rem .72rem;margin-bottom:3px;cursor:pointer;line-height:1.25}
+.adm-nav:hover{background:rgba(255,255,255,.08);color:#fff}
+.adm-nav.on{background:rgba(255,255,255,.18);color:#fff}
+.adm-ph{padding:1.45rem 1.55rem .75rem}
+.adm-ph h1{font-size:1.36rem;font-weight:800;color:var(--tx);letter-spacing:-.02em;margin:0}
+.adm-ph p{font-size:.78rem;color:var(--t2);margin-top:.22rem;line-height:1.5}
+.adm-pc{padding:0 1.55rem 2rem;width:100%;max-width:none}
+.adm-subtabs{display:flex;align-items:center;gap:1.2rem;border-bottom:1px solid var(--bd);margin-bottom:1rem}
+.adm-subtab{border:0;background:transparent;color:var(--t2);font-family:var(--font);font-size:.78rem;font-weight:600;padding:.72rem 0 .66rem;border-bottom:2px solid transparent;cursor:pointer}
+.adm-subtab.on{color:var(--blue);border-bottom-color:var(--blue)}
+.pill-tab-row{display:flex;align-items:center;gap:.5rem;flex-wrap:wrap;margin:.9rem 0 1rem}
+.pill-tab{border:1px solid var(--bd2);background:#fff;color:var(--t2);font-family:var(--font);font-size:.78rem;font-weight:700;border-radius:999px;padding:.55rem 1.05rem;cursor:pointer;box-shadow:0 1px 2px rgba(26,39,68,.04)}
+.pill-tab.on{background:var(--blue);border-color:var(--blue);color:#fff;box-shadow:0 8px 20px rgba(59,111,212,.24)}
+.adm-bigstat{background:#fff;border:1px solid var(--bd);border-radius:var(--r);padding:1rem 1.25rem;min-height:100px;display:flex;flex-direction:column;justify-content:center;box-shadow:0 1px 1px rgba(26,39,68,.02)}
+.adm-bigstat-n{font-size:2rem;font-weight:800;line-height:1}
+.adm-bigstat-l{font-size:.72rem;color:var(--t2);margin-top:.55rem}
+.adm-table{background:#fff;border:1px solid var(--bd);border-radius:var(--r);overflow:hidden}
+.adm-table-head,.adm-table-row{display:flex;align-items:center;gap:1rem;padding:.78rem 1rem}
+.adm-table-head{font-size:.62rem;font-weight:800;text-transform:uppercase;letter-spacing:.08em;color:var(--t3);border-bottom:1px solid var(--bd);background:#fff}
+.adm-table-row{min-height:58px;border-bottom:1px solid var(--bd)}
+.adm-table-row:last-child{border-bottom:0}
 .adm-form{background:#fff;border:1px solid var(--bd);border-radius:var(--r);padding:1.1rem 1.3rem;margin-bottom:.9rem}
 .adm-field{margin-bottom:.75rem}
 .adm-field label{display:block;font-size:.62rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--t2);margin-bottom:3px}
 .adm-row{background:#fff;border:1px solid var(--bd);border-radius:var(--rs);padding:.65rem .88rem;margin-bottom:4px;display:flex;align-items:flex-start;gap:.65rem}
 .adm-row-info{flex:1;min-width:0}
 .adm-row-title{font-size:.79rem;font-weight:600;color:var(--tx);margin-bottom:2px}
+
+@media(max-width:760px){
+  #panel-adm.on{position:relative;overflow:hidden}
+  #panel-adm .adm-sidebar{position:fixed;left:0;top:0;bottom:0;width:258px;max-width:82vw;z-index:40;transform:translateX(-100%);transition:transform .2s ease;box-shadow:none}
+  .admin-menu-open #panel-adm .adm-sidebar{transform:translateX(0);box-shadow:14px 0 34px rgba(9,19,43,.22)}
+  .admin-menu-open #panel-adm .adm-backdrop{display:block}
+  #panel-adm .adm-content{width:100%;min-width:0}
+  #panel-adm .adm-topbar{height:54px;padding:0 .85rem;gap:.65rem}
+  #panel-adm .adm-title-wrap{flex:1}
+  .adm-menu-btn{display:inline-flex;flex-shrink:0}
+  #adm-sec-title{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .adm-ph{padding:1.2rem 1rem .65rem}
+  .adm-pc{padding:0 1rem 1.5rem}
+  .adm-pc [style*="grid-template-columns"]{grid-template-columns:1fr!important}
+  .adm-pc [style*="display:grid"]{gap:.75rem!important}
+  .adm-subtabs{gap:.9rem;overflow-x:auto;white-space:nowrap;padding-bottom:1px}
+  .pill-tab-row{overflow-x:auto;flex-wrap:nowrap;padding-bottom:.25rem}
+  .adm-table{overflow-x:auto}
+  .adm-table-head,.adm-table-row{min-width:720px}
+}
 .adm-row-sub{font-size:.66rem;color:var(--t3)}
 .adm-stat{background:#fff;border:1px solid var(--bd);border-radius:var(--r);padding:.8rem .88rem;text-align:center}
 .adm-stat-n{font-size:1.5rem;font-weight:700}
@@ -375,7 +426,7 @@ textarea{resize:vertical;line-height:1.6}
 <div id="login-screen">
   <div class="login-card">
     <div class="login-hdr">
-      <div class="login-logo"><div class="login-ico"><img class="logo-img login-logo-img" src="logo.png.png" alt="Endodirect"></div><div class="login-name">Endodirect</div></div>
+      <div class="login-logo"><div class="login-ico"><img id="logo-login-img" class="logo-img login-logo-img" src="logo.png.png" alt="Endodirect"></div><div class="login-name">Endodirect</div></div>
       <div class="login-sub">Plataforma de educação médica</div>
     </div>
     <div class="login-body">
@@ -404,7 +455,7 @@ textarea{resize:vertical;line-height:1.6}
   <div class="topbar">
     <div class="tb-left">
       <button class="mobile-menu-btn" id="btn-mobile-nav" type="button" aria-label="Abrir menu" aria-expanded="false">&#9776;<span>Menu</span></button>
-      <div class="tb-logo"><img class="logo-img tb-logo-img" src="logo.png.png" alt="Endodirect"><span>Endodirect</span></div>
+      <div class="tb-logo"><img id="logo-tb-img" class="logo-img tb-logo-img" src="logo.png.png" alt="Endodirect"><span>Endodirect</span></div>
       <div class="tb-bc" id="tb-bc">Dashboard</div>
     </div>
     <div class="tb-right">
@@ -874,18 +925,44 @@ textarea{resize:vertical;line-height:1.6}
       </div>
     </div>
 
-    <div class="panel" id="panel-adm" style="overflow:hidden;flex-direction:column">
-      <div class="breadcrumb">Admin <b>/ Painel Administrativo</b></div>
-      <div style="padding:.9rem 1.5rem .15rem"><h1 style="font-size:1.25rem;font-weight:700">Painel Admin</h1></div>
-      <div style="display:flex;gap:.3rem;padding:.55rem 1.5rem;border-bottom:1px solid var(--bd);flex-shrink:0;flex-wrap:wrap" id="adm-tabs">
-        <button class="adm-tab on" data-tab="analytics">📊 Analytics</button>
-        <button class="adm-tab" data-tab="provas">🏛️ Provas</button>
-        <button class="adm-tab" data-tab="questoes">? Questões</button>
-        <button class="adm-tab" data-tab="podcasts">🎧 Podcasts</button>
-        <button class="adm-tab" data-tab="mural">📣 Mural</button>
-        <button class="adm-tab" data-tab="usuarios">👤 Usuários</button>
+    <div class="panel" id="panel-adm" style="overflow:hidden;flex-direction:row;padding:0">
+      <div class="adm-sidebar">
+        <div style="padding:1rem .9rem .8rem;border-bottom:1px solid rgba(255,255,255,.1);display:flex;align-items:center;gap:9px">
+          <div id="logo-adm-img" style="width:30px;height:30px;display:flex;align-items:center;justify-content:center"></div>
+          <span style="font-size:1.05rem;font-weight:700;color:#fff">Endodirect</span>
+        </div>
+        <div style="padding:.7rem .55rem;flex:1">
+          <div class="sb-sec">Gestão</div>
+          <button class="adm-nav on" data-asec="analytics">📊 Analytics</button>
+          <button class="adm-nav" data-asec="mural">📣 Mural</button>
+          <button class="adm-nav" data-asec="provas">📝 Provas &amp; Questões</button>
+          <button class="adm-nav" data-asec="cursos">🎬 Cursos</button>
+          <button class="adm-nav" data-asec="estudantes">👥 Estudantes</button>
+          <button class="adm-nav" data-asec="conteudo">🎧 Podcasts</button>
+          <button class="adm-nav" data-asec="chat">💬 Chat</button>
+          <div class="sb-sec" style="margin-top:.8rem">Conta</div>
+          <button class="adm-nav" data-asec="perfil">👤 Perfil</button>
+          <button class="adm-nav" data-asec="suporte">🛟 Suporte</button>
+        </div>
+        <div style="padding:.55rem;border-top:1px solid rgba(255,255,255,.1)">
+          <div class="sb-sec" style="padding-top:0">Sair</div>
+          <button class="adm-nav" id="adm-logout">↩ Encerrar sessão</button>
+        </div>
       </div>
-      <div style="flex:1;overflow-y:auto;padding:1.1rem 1.5rem 2rem" id="adm-body"></div>
+      <button class="adm-backdrop" id="adm-backdrop" aria-label="Fechar menu administrativo"></button>
+      <div class="adm-content">
+        <div class="adm-topbar">
+          <div class="adm-title-wrap">
+            <button class="adm-menu-btn" id="adm-menu-btn" type="button" aria-label="Abrir menu administrativo" aria-expanded="false">☰</button>
+            <span style="font-size:.72rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--t3)" id="adm-sec-title">Provas &amp; Questões</span>
+          </div>
+          <div style="display:flex;align-items:center;gap:.6rem">
+            <div style="text-align:right"><div style="font-size:.78rem;font-weight:700;color:var(--tx)" id="adm-uname">Administrador</div><div style="font-size:.62rem;color:var(--t3)">Professor</div></div>
+            <div class="tb-avatar" id="adm-uavatar" style="background:var(--navy)">A</div>
+          </div>
+        </div>
+        <div style="flex:1;overflow-y:auto" id="adm-main"></div>
+      </div>
     </div>
 
   </div>
@@ -959,7 +1036,7 @@ var SUPABASE_URL='https://eutizblmrcypzyqzczgq.supabase.co';
 var SUPABASE_PUBLISHABLE_KEY='sb_publishable_wm27KaGZ0qKHFjTx80c23A_LMLH7DEU';
 var supabaseClient=null;
 var remoteStateLoaded=false,remoteStateSaveTimer=null,remoteStateWarned=false;
-var REMOTE_STATE_KEYS=['q','fc','mm','notes','crono','sf_results','perf','provas','adm_avisos','adm_questoes','podcasts','user_profile'];
+var REMOTE_STATE_KEYS=['q','fc','mm','notes','crono','sf_results','perf','provas','adm_avisos','adm_questoes','podcasts','adm_cursos','adm_estudantes','adm_perfil','user_profile'];
 function getSupabaseClient(){
   if(supabaseClient)return supabaseClient;
   if(!window.supabase||!window.supabase.createClient)return null;
@@ -1009,7 +1086,7 @@ function userStatePayload(){
   return{q:DB.q,fc:DB.fc,mm:DB.mm,notes:DB.notes,crono:DB.crono,sf_results:DB.sf_results,perf:DB.perf,user_profile:lsGet('user_profile')};
 }
 function globalStatePayload(){
-  return{provas:provasDB,adm_avisos:admAvisos,adm_questoes:admQuestoes,podcasts:podcasts};
+  return{provas:provasDB,adm_avisos:admAvisos,adm_questoes:admQuestoes,podcasts:podcasts,adm_cursos:admCursos,adm_estudantes:admEstudantes,adm_perfil:admPerfil};
 }
 function currentStatePayload(){
   return Object.assign({},userStatePayload(),globalStatePayload());
@@ -1027,6 +1104,9 @@ function applyStatePayload(payload){
   if(Array.isArray(payload.adm_avisos))admAvisos=payload.adm_avisos;
   if(Array.isArray(payload.adm_questoes))admQuestoes=payload.adm_questoes;
   if(Array.isArray(payload.podcasts))podcasts=payload.podcasts;
+  if(Array.isArray(payload.adm_cursos))admCursos=payload.adm_cursos;
+  if(Array.isArray(payload.adm_estudantes))admEstudantes=payload.adm_estudantes;
+  if(payload.adm_perfil&&typeof payload.adm_perfil==='object')admPerfil=payload.adm_perfil;
   REMOTE_STATE_KEYS.forEach(function(k){if(payload[k]!==undefined)lsSet(k,payload[k]);});
 }
 function refreshAfterRemoteState(){
@@ -1037,7 +1117,7 @@ function refreshAfterRemoteState(){
   try{renderPodcasts();}catch(e){}
   try{renderSavedCrono();}catch(e){}
   try{renderNoteList();}catch(e){}
-  try{if(currentUser&&currentUser.role==='admin')renderAdmTab(admCurrentTab);}catch(e){}
+  try{if(currentUser&&currentUser.role==='admin')renderAdmSec(admCurrentSec||'analytics');}catch(e){}
 }
 function canUseRemoteState(){
   return !!(currentUser&&currentUser.id&&getSupabaseClient());
@@ -1286,21 +1366,38 @@ function callAIwithPDF(sys,b64){
 var currentUser=null;
 function startApp(){
   var u=currentUser;
+  var isAdmin=u.role==='admin';
+  var app=document.getElementById('app-screen');
   document.getElementById('login-screen').style.display='none';
-  document.getElementById('app-screen').style.display='flex';
+  app.style.display=isAdmin?'block':'flex';
+  app.classList.toggle('admin-mode',isAdmin);
+  document.body.classList.remove('admin-menu-open');
+  var topbar=document.querySelector('.topbar');
+  var sidebar=document.querySelector('.workspace>.sidebar');
+  if(topbar)topbar.style.display=isAdmin?'none':'flex';
+  if(sidebar)sidebar.style.display=isAdmin?'none':'flex';
   document.getElementById('tb-uname').textContent=u.name;
   document.getElementById('tb-usub').textContent=u.role==='admin'?'Professor':u.sub;
   document.getElementById('tb-avatar').textContent=u.name.charAt(0);
   document.getElementById('um-name').textContent=u.name;
   document.getElementById('um-email').textContent=u.email==='google'?u.name+'@gmail.com':u.email;
   document.getElementById('dash-greeting').textContent='Bem-vindo, '+u.name+'.';
-  var isAdmin=u.role==='admin';
   document.getElementById('sb-aluno').style.display=isAdmin?'none':'block';
-  document.getElementById('sb-admin').style.display=isAdmin?'block':'none';
+  document.getElementById('sb-admin').style.display='none';
   document.getElementById('sb-role-lbl').textContent=isAdmin?'Admin':'Menu';
   document.getElementById('btn-chat-cta').style.display=isAdmin?'none':'flex';
   document.querySelectorAll('.panel').forEach(function(p){p.classList.remove('on');});
-  if(isAdmin){goPanel('adm');}else{goPanel('dash');initAll();}
+  if(isAdmin){
+    var adminName=(admPerfil&&admPerfil.nome)||u.name||'Administrador';
+    setText('adm-uname',adminName);
+    var av=document.getElementById('adm-uavatar');if(av)av.textContent=adminName.charAt(0);
+    var al=document.getElementById('logo-adm-img');var tbLogo=document.getElementById('logo-tb-img');
+    if(al&&tbLogo)al.innerHTML='<img src="'+tbLogo.src+'" alt="Endodirect" style="width:30px;height:30px;object-fit:contain">';
+    goPanel('adm');
+    renderAdmSec('analytics');
+  }else{
+    goPanel('dash');initAll();
+  }
 }
 function doLogin(u){
   currentUser=u;
@@ -1351,6 +1448,8 @@ function doLogout(){
   if(client&&currentUser&&currentUser.auth==='supabase-google'){client.auth.signOut().catch(function(){});}
   currentUser=null;
   remoteStateLoaded=false;
+  document.body.classList.remove('mobile-nav-open','admin-menu-open');
+  document.getElementById('app-screen').classList.remove('admin-mode');
   document.getElementById('app-screen').style.display='none';
   document.getElementById('login-screen').style.display='flex';
   document.getElementById('user-menu').style.display='none';
@@ -1485,6 +1584,17 @@ function toggleMobileNav(){
   var b=document.getElementById('btn-mobile-nav');
   if(b)b.setAttribute('aria-expanded',open?'true':'false');
 }
+function closeAdminNav(){
+  document.body.classList.remove('admin-menu-open');
+  var b=document.getElementById('adm-menu-btn');
+  if(b)b.setAttribute('aria-expanded','false');
+}
+function toggleAdminNav(){
+  var open=!document.body.classList.contains('admin-menu-open');
+  document.body.classList.toggle('admin-menu-open',open);
+  var b=document.getElementById('adm-menu-btn');
+  if(b)b.setAttribute('aria-expanded',open?'true':'false');
+}
 function goPanel(id){
   document.querySelectorAll('.panel').forEach(function(p){p.classList.remove('on');});
   var el=document.getElementById('panel-'+id);
@@ -1504,7 +1614,7 @@ function goPanel(id){
   if(id==='mural')initMural();
   if(id==='simfull'){renderSFPrev();populateInst('sf-inst');}
   if(id==='art')initArtUpload();
-  if(id==='adm')renderAdmTab('analytics');
+  if(id==='adm')renderAdmSec('analytics');
   closeMobileNav();
 }
 
@@ -2373,134 +2483,610 @@ function sendChat(text){
   }).catch(function(e){loading.innerHTML='<div class="chat-name">Endodirect IA</div><span style="color:var(--red)">Erro: '+esc(e.message)+'</span>';});
 }
 
-// ── ADMIN ──
-var admCurrentTab='analytics',admGab='',pdfBase64Prova=null;
-function renderAdmTab(tab){
-  admCurrentTab=tab;
-  document.querySelectorAll('.adm-tab').forEach(function(b){b.classList.toggle('on',b.dataset.tab===tab);});
-  var body=document.getElementById('adm-body');
-  if(tab==='analytics')body.innerHTML=admAnalyticsHTML();
-  else if(tab==='provas')body.innerHTML=admProvasHTML();
-  else if(tab==='questoes')body.innerHTML=admQuestoesHTML();
-  else if(tab==='podcasts')body.innerHTML=admPodcastsHTML();
-  else if(tab==='mural')body.innerHTML=admMuralHTML();
-  else if(tab==='usuarios')body.innerHTML=admUsersHTML();
-  bindAdmTab(tab);
+// ── ADMIN (layout estilo Lexia) ──
+var admCurrentSec='analytics',admProvaSubtab='importar',pdfBase64Prova=null,podAudioDataAdm=null;
+function renderAdmSec(sec){
+  admCurrentSec=sec;
+  document.querySelectorAll('.adm-nav[data-asec]').forEach(function(b){b.classList.toggle('on',b.dataset.asec===sec);});
+  var titles={provas:'Provas & Questões',cursos:'Cursos',estudantes:'Estudantes',analytics:'Analytics',mural:'Mural',conteudo:'Podcasts',chat:'Chat',perfil:'Perfil',suporte:'Suporte'};
+  setText('adm-sec-title',titles[sec]||sec);
+  var m=document.getElementById('adm-main');if(!m)return;
+  if(sec==='provas')m.innerHTML=admProvasSecHTML();
+  else if(sec==='cursos')m.innerHTML=admCursosHTML();
+  else if(sec==='estudantes')m.innerHTML=admEstudantesHTML();
+  else if(sec==='analytics')m.innerHTML=admAnalyticsHTML();
+  else if(sec==='mural')m.innerHTML=admMuralSecHTML();
+  else if(sec==='conteudo')m.innerHTML=admConteudoHTML();
+  else if(sec==='chat')m.innerHTML=admChatHTML();
+  else if(sec==='perfil')m.innerHTML=admPerfilHTML();
+  else if(sec==='suporte')m.innerHTML=admSuporteHTML();
+  bindAdmSec(sec);
+}
+
+// ---------- PROVAS & QUESTÕES ----------
+function admProvasSecHTML(){
+  var areas={};provasDB.forEach(function(q){var a=q.area||'Sem área';areas[a]=(areas[a]||0)+1;});
+  var anos={};provasDB.forEach(function(q){if(q.ano)anos[q.ano]=(anos[q.ano]||0)+1;});
+  var insts={};provasDB.forEach(function(q){if(q.inst)insts[q.inst]=(insts[q.inst]||0)+1;});
+  var pendentes=0;
+  return '<div class="adm-ph"><h1>Provas &amp; Questões</h1></div>'
+  +'<div class="adm-pc">'
+  +'<div class="adm-subtabs">'
+    +'<button class="adm-subtab'+(admProvaSubtab==='importar'?' on':'')+'" data-psub="importar">Importar PDF (IA)</button>'
+    +'<button class="adm-subtab'+(admProvaSubtab==='manual'?' on':'')+'" data-psub="manual">Inserir manualmente</button>'
+    +'<button class="adm-subtab'+(admProvaSubtab==='banco'?' on':'')+'" data-psub="banco">Banco de questões</button>'
+  +'</div>'
+  +'<div id="adm-psub-body">'+admProvaSubBody(areas,anos,insts,pendentes)+'</div>'
+  +'</div>';
+}
+function admProvaSubBody(areas,anos,insts,pendentes){
+  if(admProvaSubtab==='importar'){
+    return '<div class="card"><div style="font-size:1rem;font-weight:700;margin-bottom:.3rem">Importar prova em PDF via IA</div><div style="font-size:.77rem;color:var(--t2);margin-bottom:1rem">A IA extrai questões, alternativas e gabaritos automaticamente e adiciona ao banco usado pelo aluno.</div>'
+      +'<div class="art-drop" id="adm-prova-drop" style="margin-bottom:1rem;padding:2rem 1rem"><div style="font-size:2rem;margin-bottom:.4rem">📄</div><div style="font-size:.86rem;font-weight:700;color:var(--tx)">Arraste o PDF ou clique para selecionar</div><div style="font-size:.7rem;color:var(--t3);margin-top:.2rem">Apenas .pdf · Máx. 20 MB</div></div>'
+      +'<input type="file" id="adm-prova-file" accept=".pdf" style="display:none">'
+      +'<div id="adm-prova-fname" style="display:none;font-size:.76rem;color:var(--grn);margin-bottom:.8rem"></div>'
+      +'<div class="g3" style="margin-bottom:.9rem"><div class="fld2" style="margin:0"><label>Área</label><select id="adm-prova-area">'+DEFAULT_SUBESP+'</select></div><div class="fld2" style="margin:0"><label>Instituição / Exame</label><input type="text" id="adm-prova-inst" placeholder="Ex: SBEM · 2026"></div><div class="fld2" style="margin:0"><label>Ano</label><input type="number" id="adm-prova-ano" placeholder="2026"></div></div>'
+      +'<button class="btn btn-primary" id="btn-adm-extract">🤖 Extrair com IA</button><div id="adm-extract-result" style="margin-top:.8rem"></div></div>';
+  }
+  if(admProvaSubtab==='manual'){
+    return '<div class="card"><div style="font-size:1rem;font-weight:700;margin-bottom:1rem">Inserir questão manualmente</div>'
+      +'<div class="g2" style="margin-bottom:.7rem"><div class="fld2" style="margin:0"><label>Área *</label><select id="adm-mq-area">'+DEFAULT_SUBESP+'</select></div><div class="fld2" style="margin:0"><label>Prova / Fonte</label><input type="text" id="adm-mq-inst" placeholder="Ex: SBEM · 2024"></div></div>'
+      +'<div class="g2" style="margin-bottom:.7rem"><div class="fld2" style="margin:0"><label>Ano</label><input type="number" id="adm-mq-ano" placeholder="2026"></div><div class="fld2" style="margin:0"><label>Dificuldade</label><select id="adm-mq-diff"><option value="basico">Fácil</option><option value="intermediario" selected>Médio</option><option value="avancado">Difícil</option></select></div></div>'
+      +'<div class="fld2"><label>Enunciado *</label><textarea id="adm-mq-stem" rows="3" placeholder="Enunciado completo…"></textarea></div>'
+      +'<div class="fld2"><label>Imagem do enunciado (opcional)</label><div class="art-drop" id="adm-mq-imgdrop" style="padding:1.3rem 1rem"><div style="font-size:1.5rem;margin-bottom:.2rem">🖼️</div><div style="font-size:.8rem;font-weight:600;color:var(--tx)">Clique ou arraste uma imagem</div><div style="font-size:.66rem;color:var(--t3);margin-top:.15rem">JPG, PNG, GIF · Máx. 5 MB</div></div><input type="file" id="adm-mq-imgfile" accept="image/*" style="display:none"><div id="adm-mq-imgprev" style="display:none;margin-top:.5rem"></div></div>'
+      +'<div class="fld2"><label>Alternativas (marque a correta)</label>'
+        +['A','B','C','D'].map(function(l){return '<div style="display:flex;align-items:center;gap:.6rem;margin-bottom:5px"><span style="font-weight:700;color:var(--blue);width:16px">'+l+'</span><input type="text" id="adm-mq-'+l.toLowerCase()+'" placeholder="Alternativa '+l+'" style="flex:1"><input type="radio" name="adm-mq-ans" value="'+l+'"'+(l==='A'?' checked':'')+' style="width:auto;accent-color:var(--blue)"></div>';}).join('')
+      +'</div>'
+      +'<div class="fld2"><label>Comentário / Fundamento</label><textarea id="adm-mq-exp" rows="2"></textarea></div>'
+      +'<div style="display:flex;gap:6px"><button class="btn btn-primary" id="btn-adm-addq">💾 Salvar questão</button><button class="btn btn-outline" id="btn-adm-clearq">Limpar</button></div></div>';
+  }
+  // banco
+  var totalBanco=provasDB.length+DB.q.length;
+  return '<div class="g2" style="margin-bottom:.9rem;grid-template-columns:repeat(4,1fr)">'
+    +'<div class="adm-bigstat"><div class="adm-bigstat-n" style="color:var(--blue)">'+totalBanco+'</div><div class="adm-bigstat-l">Questões totais no banco</div></div>'
+    +'<div class="adm-bigstat"><div class="adm-bigstat-n" style="color:var(--grn)">'+DB.q.length+'</div><div class="adm-bigstat-l">Geradas para alunos</div></div>'
+    +'<div class="adm-bigstat"><div class="adm-bigstat-n" style="color:var(--gold)">'+pendentes+'</div><div class="adm-bigstat-l">Pendentes de revisão</div></div>'
+    +'<div class="adm-bigstat"><div class="adm-bigstat-n" style="color:var(--pur)">'+provasDB.length+'</div><div class="adm-bigstat-l">De provas anteriores</div></div>'
+  +'</div>'
+  +'<div class="g2" style="align-items:start">'
+    +'<div class="card"><div class="card-head"><span class="card-title">Questões por área</span></div>'+(Object.keys(areas).length?Object.keys(areas).sort(function(a,b){return areas[b]-areas[a];}).map(function(a){return '<div style="display:flex;justify-content:space-between;padding:.42rem 0;border-bottom:1px solid var(--bd);font-size:.79rem"><span>'+esc(a)+'</span><span style="font-weight:700;color:var(--t2)">'+areas[a]+'</span></div>';}).join(''):'<div class="empty">Nenhuma questão de prova cadastrada.</div>')+'</div>'
+    +'<div class="card"><div class="card-head"><span class="card-title">Questões por instituição</span></div>'+(Object.keys(insts).length?Object.keys(insts).map(function(a){return '<div style="display:flex;justify-content:space-between;padding:.42rem 0;border-bottom:1px solid var(--bd);font-size:.79rem"><span>'+esc(a)+'</span><span style="font-weight:700;color:var(--t2)">'+insts[a]+'</span></div>';}).join(''):'<div class="empty">Nenhuma.</div>')+'</div>'
+  +'</div>'
+  +'<div class="sec-title" style="margin:1rem 0 .5rem">Questões de provas cadastradas ('+provasDB.length+')</div>'
+  +'<div id="adm-provas-list">'+(provasDB.length?provasDB.map(function(q,i){return '<div class="adm-row"><div class="adm-row-info"><div class="adm-row-title">'+esc((q.stem||'').substring(0,90))+'…</div><div class="adm-row-sub">'+esc(q.inst||'')+' '+esc(String(q.ano||''))+' • '+esc(q.area||'')+' • Gab: '+esc(q.answer||'')+'</div></div><button class="btn btn-ghost btn-sm" data-adm-delprova="'+i+'">✕</button></div>';}).join(''):'<div class="empty">Nenhuma questão de prova cadastrada.</div>')+'</div>';
+}
+
+// ---------- ESTUDANTES ----------
+var admEstudantes=lsGet('adm_estudantes')||[{nome:'Rodolpho',email:'aluno@endodirect.med.br',cpf:'',turma:'Turma 2026',perfil:'Residente',status:'Ativo',xp:0}];
+function persistEstudantes(){lsSet('adm_estudantes',admEstudantes);queueRemoteStateSave();}
+var admEstShowForm=false;
+function admEstudantesHTML(){
+  var ativos=admEstudantes.filter(function(e){return e.status!=='Inativo';}).length;
+  var inativos=admEstudantes.filter(function(e){return e.status==='Inativo';}).length;
+  return '<div class="adm-ph" style="display:flex;align-items:flex-start;justify-content:space-between"><div><h1>Estudantes</h1></div><div style="display:flex;gap:.5rem;align-items:center"><input type="search" id="adm-est-search" placeholder="Buscar por nome…" style="width:200px"><button class="btn btn-primary" id="btn-adm-est-new">+ Cadastrar</button></div></div>'
+  +'<div class="adm-pc">'
+  +(admEstShowForm?admEstFormHTML():'')
+  +'<div class="g2" style="grid-template-columns:repeat(4,1fr);margin-bottom:1rem">'
+    +'<div class="adm-bigstat"><div class="adm-bigstat-n" style="color:var(--tx)">'+admEstudantes.length+'</div><div class="adm-bigstat-l">Total</div></div>'
+    +'<div class="adm-bigstat"><div class="adm-bigstat-n" style="color:var(--grn)">'+ativos+'</div><div class="adm-bigstat-l">Ativos</div></div>'
+    +'<div class="adm-bigstat"><div class="adm-bigstat-n" style="color:var(--gold)">'+inativos+'</div><div class="adm-bigstat-l">Inativos</div></div>'
+    +'<div class="adm-bigstat"><div class="adm-bigstat-n" style="color:var(--blue)">'+admEstudantes.length+'</div><div class="adm-bigstat-l">Este mês</div></div>'
+  +'</div>'
+  +'<div class="adm-table">'
+    +'<div class="adm-table-head"><span style="flex:2.2">Estudante</span><span style="flex:2.5">E-mail</span><span style="flex:1.5">Turma</span><span style="flex:1.2">Perfil</span><span style="flex:1">Status</span><span style="flex:.6;text-align:right">Ações</span></div>'
+    +'<div id="adm-est-rows">'+admEstRowsHTML()+'</div>'
+  +'</div>'
+  +'<div style="font-size:.7rem;color:var(--t3);margin-top:.7rem">ℹ️ No protótipo, os cadastros ficam salvos nesta sessão. O cadastro real com login de aluno exige backend com autenticação.</div>'
+  +'</div>';
+}
+function admEstRowsHTML(filtro){
+  var list=admEstudantes;
+  if(filtro)list=admEstudantes.filter(function(e){return(e.nome||'').toLowerCase().indexOf(filtro.toLowerCase())>=0;});
+  if(!list.length)return '<div class="empty">Nenhum estudante encontrado.</div>';
+  return list.map(function(e){var i=admEstudantes.indexOf(e);var st=e.status==='Inativo'?'tag-red':'tag-grn';
+    return '<div class="adm-table-row"><span style="flex:2.2;display:flex;align-items:center;gap:.6rem"><span class="tb-avatar" style="background:var(--navy)">'+(e.nome||'?').charAt(0)+'</span><span style="font-size:.82rem;font-weight:600">'+esc(e.nome)+'</span></span><span style="flex:2.5;font-size:.78rem;color:var(--t2)">'+esc(e.email||'')+'</span><span style="flex:1.5;font-size:.76rem;color:var(--t2)">'+esc(e.turma||'')+'</span><span style="flex:1.2"><span class="tag tag-blue">'+esc(e.perfil||'Estudante')+'</span></span><span style="flex:1"><span class="tag '+st+'">'+esc(e.status||'Ativo')+'</span></span><span style="flex:.6;text-align:right"><button class="btn btn-ghost btn-sm" data-adm-delest="'+i+'" style="padding:2px 6px">🗑</button></span></div>';
+  }).join('');
+}
+function admEstFormHTML(){
+  return '<div class="card" style="margin-bottom:1rem"><div style="font-size:1rem;font-weight:700;margin-bottom:.3rem">Cadastrar estudante</div><div style="font-size:.74rem;color:var(--t2);margin-bottom:.9rem">XP e trilha são calculados pelo uso da plataforma; o cadastro solicita apenas dados básicos.</div>'
+    +'<div class="g2" style="grid-template-columns:repeat(4,1fr);margin-bottom:.7rem"><div class="fld2" style="margin:0"><label>Nome</label><input type="text" id="adm-est-nome" placeholder="Nome completo"></div><div class="fld2" style="margin:0"><label>E-mail</label><input type="text" id="adm-est-email" placeholder="aluno@email.com"></div><div class="fld2" style="margin:0"><label>CPF</label><input type="text" id="adm-est-cpf" placeholder="000.000.000-00"></div><div class="fld2" style="margin:0"><label>Turma</label><input type="text" id="adm-est-turma" value="Turma 2026" ></div></div>'
+    +'<div class="g2" style="margin-bottom:.7rem"><div class="fld2" style="margin:0"><label>Perfil</label><select id="adm-est-perfil"><option>Residente</option><option>Endocrinologista</option><option>Estudante</option></select></div><div class="fld2" style="margin:0"><label>Status</label><select id="adm-est-status"><option>Ativo</option><option>Inativo</option></select></div></div>'
+    +'<div style="display:flex;gap:6px"><button class="btn btn-primary" id="btn-adm-est-save">💾 Salvar</button><button class="btn btn-outline" id="btn-adm-est-cancel">Cancelar</button></div></div>';
+}
+
+// ---------- PERFIL (editável) ----------
+var admPerfil=lsGet('adm_perfil')||{nome:'Administrador',email:'admin@endodirect.med.br',contato:'',instituicao:'',cpf:''};
+function persistPerfil(){lsSet('adm_perfil',admPerfil);queueRemoteStateSave();}
+var admPerfilEdit=false;
+function admPerfilHTML(){
+  var p=admPerfil;
+  var inner;
+  if(admPerfilEdit){
+    inner='<div class="card"><div class="card-head"><span class="card-title">Editar dados</span></div>'
+      +'<div class="g2" style="margin-bottom:.7rem"><div class="fld2" style="margin:0"><label>Nome</label><input type="text" id="adm-pf-nome" value="'+esc(p.nome)+'"></div><div class="fld2" style="margin:0"><label>Email</label><input type="text" id="adm-pf-email" value="'+esc(p.email)+'"></div></div>'
+      +'<div class="g2" style="margin-bottom:.7rem"><div class="fld2" style="margin:0"><label>Contato</label><input type="text" id="adm-pf-contato" value="'+esc(p.contato||'')+'" placeholder="(00) 00000-0000"></div><div class="fld2" style="margin:0"><label>CPF</label><input type="text" id="adm-pf-cpf" value="'+esc(p.cpf||'')+'" placeholder="000.000.000-00"></div></div>'
+      +'<div class="fld2"><label>Instituição</label><input type="text" id="adm-pf-inst" value="'+esc(p.instituicao||'')+'" placeholder="Instituição / hospital"></div>'
+      +'<div style="display:flex;gap:6px"><button class="btn btn-primary" id="btn-adm-pf-save">💾 Salvar</button><button class="btn btn-outline" id="btn-adm-pf-cancel">Cancelar</button></div></div>';
+  }else{
+    inner='<div class="card"><div class="card-head"><span class="card-title">Dados cadastrados</span><span class="tag tag-grn">Sessão ativa</span></div>'
+      +'<div style="display:flex;justify-content:space-between;padding:.55rem 0;border-bottom:1px solid var(--bd);font-size:.8rem"><span style="color:var(--t2)">Email</span><span style="font-weight:600">'+esc(p.email)+'</span></div>'
+      +'<div style="display:flex;justify-content:space-between;padding:.55rem 0;border-bottom:1px solid var(--bd);font-size:.8rem"><span style="color:var(--t2)">Contato</span><span style="font-weight:600">'+(p.contato?esc(p.contato):'<span style="color:var(--t3)">Não informado</span>')+'</span></div>'
+      +'<div style="display:flex;justify-content:space-between;padding:.55rem 0;border-bottom:1px solid var(--bd);font-size:.8rem"><span style="color:var(--t2)">CPF</span><span style="font-weight:600">'+(p.cpf?esc(p.cpf):'<span style="color:var(--t3)">Não informado</span>')+'</span></div>'
+      +'<div style="display:flex;justify-content:space-between;padding:.55rem 0;border-bottom:1px solid var(--bd);font-size:.8rem"><span style="color:var(--t2)">Instituição</span><span style="font-weight:600">'+(p.instituicao?esc(p.instituicao):'<span style="color:var(--t3)">Não informado</span>')+'</span></div>'
+      +'<div style="display:flex;justify-content:space-between;padding:.55rem 0;font-size:.8rem"><span style="color:var(--t2)">Função</span><span style="font-weight:600">Professor</span></div>'
+    +'</div>';
+  }
+  return '<div class="adm-ph" style="display:flex;align-items:flex-start;justify-content:space-between"><h1>Perfil do professor</h1>'+(admPerfilEdit?'':'<button class="btn btn-primary" id="btn-adm-perfil-edit">✏️ Editar perfil</button>')+'</div>'
+  +'<div class="adm-pc">'
+  +'<div class="card" style="margin-bottom:1rem"><div style="display:flex;align-items:center;gap:1rem"><div class="tb-avatar" style="width:58px;height:58px;font-size:1.3rem;background:var(--navy);border-radius:14px">'+(p.nome||'A').charAt(0)+'</div><div style="flex:1"><div style="font-size:1.3rem;font-weight:800">'+esc(p.nome)+'</div><div style="font-size:.8rem;color:var(--t2)">Professor</div><div style="margin-top:.4rem"><span class="tag tag-blue">'+esc(p.email)+'</span></div></div></div></div>'
+  +inner
+  +'</div>';
+}
+
+// ---------- SUPORTE ----------
+function admSuporteHTML(){
+  return '<div class="adm-ph"><h1>Suporte</h1></div>'
+  +'<div class="adm-pc"><div class="card">'
+    +'<div class="faq-item"><div class="faq-q">Como importar uma prova em PDF? <span>▾</span></div><div class="faq-a">Em Provas &amp; Questões → Importar PDF (IA), arraste o arquivo da prova, defina área/instituição/ano e clique em Extrair com IA. As questões vão para o banco do aluno.</div></div>'
+    +'<div class="faq-item"><div class="faq-q">Como cadastrar um estudante? <span>▾</span></div><div class="faq-a">Na seção Estudantes, clique em "+ Cadastrar", preencha os dados básicos e salve. No protótipo o cadastro fica salvo na sessão.</div></div>'
+    +'<div class="faq-item"><div class="faq-q">Como publicar um aviso no mural dos alunos? <span>▾</span></div><div class="faq-a">Em Mural, preencha título, tipo e texto e clique em "Publicar no mural". O aviso aparece no mural do estudante.</div></div>'
+    +'<div class="faq-item"><div class="faq-q">Como adicionar podcasts? <span>▾</span></div><div class="faq-a">Em Conteúdo, informe título, subespecialidade e selecione o arquivo de áudio (MP3/M4A).</div></div>'
+  +'</div>'
+  +'<div style="font-size:.77rem;color:var(--t2);margin-top:.7rem">📧 suporte@endodirect.med.br</div>'
+  +'</div>';
+}
+
+function persistAdm(){lsSet('adm_avisos',admAvisos);lsSet('adm_questoes',admQuestoes);queueRemoteStateSave();}
+var admMuralShowForm=false,admMuralEdit=null;
+function admMuralSecHTML(){
+  var formHTML=admMuralShowForm?(
+    '<div class="card" style="margin-bottom:1.1rem"><div style="font-size:1rem;font-weight:700;margin-bottom:.3rem">'+(admMuralEdit!==null?'✏️ Editar aviso':'📣 Novo aviso')+'</div><div style="font-size:.74rem;color:var(--t2);margin-bottom:.9rem">O card aparece imediatamente no mural do estudante.</div>'
+    +'<div class="g2" style="margin-bottom:.7rem"><div class="fld2" style="margin:0"><label>Título</label><input type="text" id="adm-av-title" placeholder="Título do aviso"></div><div class="fld2" style="margin:0"><label>Tipo</label><select id="adm-av-tipo"><option>Aviso</option><option>Urgente</option><option>Evento</option></select></div></div>'
+    +'<div class="g2" style="margin-bottom:.7rem"><div class="fld2" style="margin:0"><label>Fonte (opcional)</label><input type="text" id="adm-av-fonte" placeholder="Ex: SBEM, Ministério da Saúde…"></div><div class="fld2" style="margin:0"><label>Link (opcional)</label><input type="text" id="adm-av-link" placeholder="https://…"></div></div>'
+    +'<div class="fld2"><label>Texto</label><textarea id="adm-av-text" rows="3" placeholder="Conteúdo do aviso…"></textarea></div>'
+    +'<div style="display:flex;gap:6px"><button class="btn btn-primary" id="btn-adm-addav">'+(admMuralEdit!==null?'💾 Salvar alterações':'+ Publicar no mural')+'</button><button class="btn btn-outline" id="btn-adm-av-cancel">Cancelar</button></div></div>'
+  ):'';
+
+  return '<div class="adm-ph" style="display:flex;align-items:flex-start;justify-content:space-between"><div><h1>Mural</h1></div><button class="btn btn-primary" id="btn-adm-newav" style="padding:.55rem 1.1rem">+ Novo aviso</button></div>'
+  +'<div class="adm-pc">'
+  +formHTML
+  // banner de gestão
+  +'<div class="card" style="margin-bottom:1.1rem"><div style="display:flex;align-items:flex-start;justify-content:space-between;gap:1rem;flex-wrap:wrap"><div style="flex:1;min-width:240px"><div style="font-size:.62rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--t3);margin-bottom:.3rem">Gestão do mural dos alunos</div><div style="font-size:1.15rem;font-weight:700;color:var(--tx);margin-bottom:.35rem">Edite avisos, notícias e comunicados importantes</div><div style="font-size:.79rem;color:var(--t2);line-height:1.55">Os cards abaixo alimentam a aba Mural do estudante. Use para destacar diretrizes, atualizações de subespecialidades e comunicados internos.</div></div><button class="btn btn-outline" id="btn-adm-mural-preview">👁 Pré-visualizar como aluno</button></div></div>'
+  // cards em grade
+  +'<div class="g2" id="adm-av-list" style="align-items:start">'+(admAvisos.length?admAvisos.slice().reverse().map(function(a){var i=admAvisos.indexOf(a);var bc=a.tipo==='Urgente'?'var(--red)':a.tipo==='Evento'?'var(--pur)':'var(--blue)';var tagc=a.tipo==='Urgente'?'tag-red':a.tipo==='Evento'?'tag-pur':'tag-blue';
+    return '<div class="card" style="border-left:4px solid '+bc+'">'
+      +'<div style="margin-bottom:.5rem"><span class="tag '+tagc+'">'+esc(a.tipo||'Aviso')+'</span></div>'
+      +'<div style="font-size:1rem;font-weight:700;color:var(--tx);line-height:1.35;margin-bottom:.3rem">'+esc(a.titulo)+'</div>'
+      +'<div style="font-size:.72rem;font-weight:600;color:'+bc+';margin-bottom:.5rem">'+new Date(a.at).toLocaleDateString('pt-BR')+'</div>'
+      +'<div style="font-size:.79rem;color:var(--t2);line-height:1.6;margin-bottom:.6rem">'+esc(a.texto||'')+'</div>'
+      +(a.fonte?'<div style="font-size:.74rem;font-weight:700;color:var(--blue);margin-bottom:.7rem">Fonte: '+esc(a.fonte)+(a.link?' · <a href="'+esc(a.link)+'" target="_blank" rel="noopener" style="color:var(--blue)">abrir link</a>':'')+'</div>':'')
+      +'<div style="display:flex;gap:6px"><button class="btn btn-outline btn-sm" data-adm-editav="'+i+'">Editar</button><button class="btn btn-outline btn-sm" data-adm-delav="'+i+'">Remover</button></div>'
+    +'</div>';}).join(''):'<div class="empty" style="grid-column:1/-1">Nenhum aviso publicado. Clique em "+ Novo aviso" para começar.</div>')+'</div>'
+  +'</div>';
+}
+
+// ---------- PODCASTS (admin) ----------
+var admPodSubtab='ouvir',admPodFiltro='';
+function admConteudoHTML(){
+  var SUB=['Diabetes','Obesidade','Tireoide','Adrenal','Neuroendocrinologia','Osteometabolismo','Endocrinologia Pediátrica','Endocrinologia Esportiva','Endocrinologia Masculina','Endocrinologia Feminina','Transgeneridade'];
+  var cont={};podcasts.forEach(function(p){if(p.area)cont[p.area]=(cont[p.area]||0)+1;});
+  var lista=admPodFiltro?podcasts.filter(function(p){return p.area===admPodFiltro;}):podcasts;
+
+  var formHTML='<div class="card" style="margin-bottom:1.1rem"><div style="font-size:1rem;font-weight:700;margin-bottom:.8rem">🎧 Adicionar podcast</div>'
+    +'<div class="g2" style="margin-bottom:.7rem"><div class="fld2" style="margin:0"><label>Título</label><input type="text" id="adm-pod-title" placeholder="Ex: Atualização em DM2"></div><div class="fld2" style="margin:0"><label>Subespecialidade</label><select id="adm-pod-area">'+DEFAULT_SUBESP+'</select></div></div>'
+    +'<div class="fld2"><label>Descrição</label><input type="text" id="adm-pod-desc" placeholder="Breve descrição"></div>'
+    +'<div class="fld2"><label>Arquivo de áudio (MP3/M4A)</label><input type="file" id="adm-pod-file" accept="audio/*"></div>'
+    +'<button class="btn btn-primary" id="btn-adm-addpod">+ Adicionar podcast</button></div>';
+
+  var ouvirHTML='<div style="display:flex;align-items:center;gap:.6rem;flex-wrap:wrap;margin-bottom:.9rem">'
+    +'<span style="font-size:.72rem;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--t3)">Filtrar por subespecialidade:</span>'
+    +'<select id="adm-pod-filtersel" style="width:auto;min-width:230px"><option value="">Todas as subespecialidades ('+podcasts.length+')</option>'+SUB.map(function(s){return '<option value="'+esc(s)+'"'+(admPodFiltro===s?' selected':'')+'>'+esc(s)+' ('+(cont[s]||0)+')</option>';}).join('')+'</select>'
+    +(admPodFiltro?'<button class="btn btn-ghost btn-sm" id="adm-pod-clearfilter">✕ Limpar</button>':'')
+  +'</div>'
+  +'<div id="adm-pod-list">'+(lista.length?lista.map(function(p){var i=podcasts.indexOf(p);return '<div class="card" style="margin-bottom:.6rem"><div style="display:flex;align-items:flex-start;gap:.8rem"><div style="width:46px;height:46px;border-radius:10px;background:var(--navy);display:flex;align-items:center;justify-content:center;font-size:1.3rem;flex-shrink:0">🎧</div><div style="flex:1;min-width:0"><div style="font-size:.85rem;font-weight:700;color:var(--tx);margin-bottom:2px">'+esc(p.title)+'</div><div style="display:flex;flex-wrap:wrap;gap:.3rem;margin-bottom:.4rem">'+(p.area?'<span class="tag tag-blue">'+esc(p.area)+'</span>':'')+(p.desc?'<span style="font-size:.7rem;color:var(--t3);align-self:center">'+esc(p.desc)+'</span>':'')+'</div><audio controls preload="none" style="width:100%;height:36px" src="'+p.audio+'"></audio></div><button class="btn btn-ghost btn-sm" data-adm-delpod="'+i+'" style="padding:2px 6px">🗑</button></div></div>';}).join(''):'<div class="empty">Nenhum podcast '+(admPodFiltro?'nesta subespecialidade':'cadastrado ainda')+'.</div>')+'</div>';
+
+  return '<div class="adm-ph"><h1>Podcasts</h1><p>Podcasts e materiais de áudio disponíveis para os estudantes.</p></div>'
+  +'<div class="adm-pc">'
+  +'<div class="pill-tab-row">'
+    +'<button class="pill-tab'+(admPodSubtab==='ouvir'?' on':'')+'" data-podsub="ouvir">🎧 Ouvir podcasts</button>'
+    +'<button class="pill-tab'+(admPodSubtab==='adicionar'?' on':'')+'" data-podsub="adicionar">⬆️ Adicionar podcast</button>'
+  +'</div>'
+  +(admPodSubtab==='adicionar'?formHTML:ouvirHTML)
+  +'</div>';
+}
+
+// ---------- CHAT ----------
+function admChatHTML(){
+  return '<div class="adm-ph"><h1>Chat</h1><p>Assistente de endocrinologia para tirar dúvidas.</p></div>'
+  +'<div class="adm-pc"><div class="card" style="padding:0;overflow:hidden;height:62vh;display:flex;flex-direction:column">'
+    +'<div id="adm-chat-msgs" style="flex:1;overflow-y:auto;padding:1rem 1.2rem;display:flex;flex-direction:column;gap:.6rem"><div class="chat-bubble ai"><div class="chat-name">Endodirect IA</div>Olá! Como posso ajudar?</div></div>'
+    +'<div style="padding:.7rem 1rem;border-top:1px solid var(--bd);display:flex;gap:.5rem"><textarea id="adm-chat-input" placeholder="Digite sua pergunta…" style="flex:1;height:40px;max-height:90px;resize:none;font-size:.79rem"></textarea><button class="btn btn-primary" id="btn-adm-chat-send">Enviar →</button></div>'
+  +'</div></div>';
+}
+
+function persistAdm(){lsSet('adm_avisos',admAvisos);lsSet('adm_questoes',admQuestoes);queueRemoteStateSave();}
+
+// ---------- ANALYTICS ----------
+// Dados de demonstração combinados com o uso real desta sessão.
+function buildAnalytics(){
+  var SUB_LIST=['Diabetes','Obesidade','Tireoide','Adrenal','Neuroendocrinologia','Osteometabolismo','Endocrinologia Pediátrica','Endocrinologia Esportiva','Endocrinologia Masculina','Endocrinologia Feminina','Transgeneridade'];
+  // base de demonstração (acessos por subespecialidade)
+  var acessosBase={Diabetes:1240,Obesidade:890,Tireoide:1010,Adrenal:430,Neuroendocrinologia:380,Osteometabolismo:520,'Endocrinologia Pediátrica':610,'Endocrinologia Esportiva':340,'Endocrinologia Masculina':470,'Endocrinologia Feminina':560,Transgeneridade:290};
+  // desempenho por área: junta a base de demonstração com o desempenho real registrado (DB.perf)
+  var perfBase={Diabetes:{c:78,t:100},Obesidade:{c:71,t:100},Tireoide:{c:83,t:100},Adrenal:{c:54,t:100},Neuroendocrinologia:{c:49,t:100},Osteometabolismo:{c:66,t:100},'Endocrinologia Pediátrica':{c:61,t:100},'Endocrinologia Esportiva':{c:58,t:100},'Endocrinologia Masculina':{c:69,t:100},'Endocrinologia Feminina':{c:74,t:100},Transgeneridade:{c:52,t:100}};
+  Object.keys(DB.perf||{}).forEach(function(a){
+    if(!perfBase[a])perfBase[a]={c:0,t:0};
+    perfBase[a].c+=DB.perf[a].correct;perfBase[a].t+=DB.perf[a].total;
+  });
+  var perfArr=Object.keys(perfBase).map(function(a){var d=perfBase[a];var pct=d.t?Math.round(d.c/d.t*100):0;return{area:a,pct:pct,total:d.t};});
+  // idade média dos alunos (usa estudantes cadastrados se tiverem idade; senão base de demonstração)
+  var idades=admEstudantes.map(function(e){return parseInt(e.idade);}).filter(function(v){return v>0;});
+  var idadeMedia=idades.length?Math.round(idades.reduce(function(a,b){return a+b;},0)/idades.length):31;
+  var idadeMin=idades.length?Math.min.apply(null,idades):26;
+  var idadeMax=idades.length?Math.max.apply(null,idades):44;
+  return{
+    SUB_LIST:SUB_LIST,
+    acessos:acessosBase,
+    perfArr:perfArr,
+    tempoMedio:'24 min',
+    tempoSemana:'3h 12min',
+    sessoesSemana:8,
+    totalAlunos:admEstudantes.length,
+    idadeMedia:idadeMedia,idadeMin:idadeMin,idadeMax:idadeMax,
+    distIdade:[{faixa:'24-29',n:Math.max(1,Math.round(admEstudantes.length*0.35)||4)},{faixa:'30-35',n:Math.max(1,Math.round(admEstudantes.length*0.4)||5)},{faixa:'36-42',n:Math.max(0,Math.round(admEstudantes.length*0.18)||2)},{faixa:'43+',n:Math.max(0,Math.round(admEstudantes.length*0.07)||1)}]
+  };
 }
 function admAnalyticsHTML(){
-  return'<div class="g4" style="margin-bottom:1rem"><div class="adm-stat"><div class="adm-stat-n" style="color:var(--blue)">'+USERS.filter(function(u){return u.role==='aluno';}).length+'</div><div class="adm-stat-l">Alunos</div></div><div class="adm-stat"><div class="adm-stat-n" style="color:var(--pur)">'+provasDB.length+'</div><div class="adm-stat-l">Q. de provas</div></div><div class="adm-stat"><div class="adm-stat-n" style="color:var(--gold)">'+podcasts.length+'</div><div class="adm-stat-l">Podcasts</div></div><div class="adm-stat"><div class="adm-stat-n" style="color:var(--grn)">'+admAvisos.length+'</div><div class="adm-stat-l">Avisos</div></div></div><div class="card"><div class="card-head"><span class="card-title">Visão geral</span></div><div style="font-size:.79rem;color:var(--t2);line-height:1.7">Painel administrativo do Endodirect. Use as abas acima para gerenciar provas anteriores, questões, podcasts, mural de avisos e usuários.</div></div>';
+  var a=buildAnalytics();
+  var acessosArr=Object.keys(a.acessos).map(function(k){return{sub:k,n:a.acessos[k]};}).sort(function(x,y){return y.n-x.n;});
+  var maxAcesso=acessosArr[0]?acessosArr[0].n:1;
+  var perfOrd=a.perfArr.slice().sort(function(x,y){return y.pct-x.pct;});
+  var melhores=perfOrd.slice(0,3);
+  var piores=perfOrd.slice().sort(function(x,y){return x.pct-y.pct;}).slice(0,3);
+  var maxDist=Math.max.apply(null,a.distIdade.map(function(d){return d.n;}));
+
+  return '<div class="adm-ph"><h1>Analytics</h1><p>Indicadores de uso e desempenho dos estudantes na plataforma.</p></div>'
+  +'<div class="adm-pc">'
+  +'<div style="display:flex;align-items:center;gap:.5rem;margin-bottom:1rem"><span class="tag tag-blue">Período: últimos 30 dias</span><span style="font-size:.7rem;color:var(--t3)">Combina dados de demonstração com o uso registrado nesta sessão.</span></div>'
+  // KPIs
+  +'<div class="g2" style="grid-template-columns:repeat(4,1fr);margin-bottom:1.1rem">'
+    +'<div class="adm-bigstat"><div class="adm-bigstat-n" style="color:var(--blue)">'+a.tempoMedio+'</div><div class="adm-bigstat-l">Tempo médio por sessão</div></div>'
+    +'<div class="adm-bigstat"><div class="adm-bigstat-n" style="color:var(--grn)">'+a.tempoSemana+'</div><div class="adm-bigstat-l">Tempo médio / aluno / semana</div></div>'
+    +'<div class="adm-bigstat"><div class="adm-bigstat-n" style="color:var(--gold)">'+a.idadeMedia+' anos</div><div class="adm-bigstat-l">Idade média dos alunos</div></div>'
+    +'<div class="adm-bigstat"><div class="adm-bigstat-n" style="color:var(--pur)">'+a.totalAlunos+'</div><div class="adm-bigstat-l">Estudantes ativos</div></div>'
+  +'</div>'
+  // subespecialidades mais acessadas + distribuição de idade
+  +'<div class="g2" style="align-items:start;margin-bottom:1.1rem">'
+    +'<div class="card"><div class="card-head"><span class="card-title">Subespecialidades mais acessadas</span></div>'
+      +acessosArr.map(function(x){var p=Math.round(x.n/maxAcesso*100);return '<div class="rep-area-row"><div class="rep-area-name" style="min-width:170px">'+esc(x.sub)+'</div><div class="rep-area-track"><div class="rep-area-fill" style="width:'+p+'%;background:var(--blue)"></div></div><div class="rep-area-pct" style="min-width:48px">'+x.n+'</div></div>';}).join('')
+    +'</div>'
+    +'<div class="card"><div class="card-head"><span class="card-title">Distribuição etária dos alunos</span></div>'
+      +'<div style="font-size:.74rem;color:var(--t2);margin-bottom:.7rem">Faixa de '+a.idadeMin+' a '+a.idadeMax+' anos · média de '+a.idadeMedia+' anos</div>'
+      +a.distIdade.map(function(d){var p=maxDist?Math.round(d.n/maxDist*100):0;return '<div class="rep-area-row"><div class="rep-area-name" style="min-width:70px">'+esc(d.faixa)+'</div><div class="rep-area-track"><div class="rep-area-fill" style="width:'+p+'%;background:var(--gold)"></div></div><div class="rep-area-pct">'+d.n+'</div></div>';}).join('')
+    +'</div>'
+  +'</div>'
+  // maior acerto / maior erro
+  +'<div class="g2" style="align-items:start;margin-bottom:1.1rem">'
+    +'<div class="card"><div class="card-head"><span class="card-title">✅ Maior acerto</span></div>'
+      +melhores.map(function(x){return '<div class="rep-area-row"><div class="rep-area-name" style="min-width:170px">'+esc(x.area)+'</div><div class="rep-area-track"><div class="rep-area-fill" style="width:'+x.pct+'%;background:var(--grn)"></div></div><div class="rep-area-pct">'+x.pct+'%</div></div>';}).join('')
+    +'</div>'
+    +'<div class="card"><div class="card-head"><span class="card-title">⚠️ Maior erro</span></div>'
+      +piores.map(function(x){return '<div class="rep-area-row"><div class="rep-area-name" style="min-width:170px">'+esc(x.area)+'</div><div class="rep-area-track"><div class="rep-area-fill" style="width:'+(100-x.pct)+'%;background:var(--red)"></div></div><div class="rep-area-pct">'+(100-x.pct)+'%</div></div>';}).join('')
+    +'</div>'
+  +'</div>'
+  // tabela completa de desempenho
+  +'<div class="sec-title" style="margin-bottom:.5rem">Desempenho por subespecialidade</div>'
+  +'<div class="adm-table">'
+    +'<div class="adm-table-head"><span style="flex:2.5">Subespecialidade</span><span style="flex:1">Respostas</span><span style="flex:2">Taxa de acerto</span><span style="flex:1;text-align:right">%</span></div>'
+    +perfOrd.map(function(x){var col=x.pct>=75?'var(--grn)':x.pct>=55?'var(--gold)':'var(--red)';return '<div class="adm-table-row"><span style="flex:2.5;font-size:.8rem;font-weight:600">'+esc(x.area)+'</span><span style="flex:1;font-size:.78rem;color:var(--t2)">'+x.total+'</span><span style="flex:2"><div class="rep-area-track"><div class="rep-area-fill" style="width:'+x.pct+'%;background:'+col+'"></div></div></span><span style="flex:1;text-align:right;font-weight:700;color:'+col+'">'+x.pct+'%</span></div>';}).join('')
+  +'</div>'
+  +'<div style="font-size:.7rem;color:var(--t3);margin-top:.7rem">ℹ️ Métricas de tempo de permanência e idade exigem backend com registro de sessões e cadastro completo dos alunos. Aqui são apresentadas como demonstração combinada ao uso desta sessão.</div>'
+  +'</div>';
 }
-function admProvasHTML(){
-  return'<div class="adm-form"><div style="font-size:.85rem;font-weight:700;margin-bottom:.7rem">Importar banco de questões</div><div class="adm-field"><label>Arquivo CSV ou JSON</label><input type="file" id="adm-import-file" accept=".csv,.json,text/csv,application/json"></div><div style="font-size:.76rem;color:var(--t2);line-height:1.6;margin-bottom:.75rem">Campos aceitos: enunciado/questao/stem, alternativas A-E, gabarito/resposta, comentario/explicacao, area/subcategoria, banca/instituicao e ano.</div><div style="display:flex;gap:.5rem;flex-wrap:wrap"><button class="btn btn-primary" id="btn-adm-import">Importar banco</button><button class="btn btn-ghost" id="btn-adm-template">Baixar modelo CSV</button></div><div id="adm-import-result" style="margin-top:.7rem"></div></div>'+
-  '<div class="adm-form"><div style="font-size:.85rem;font-weight:700;margin-bottom:.7rem">🏛️ Importar prova (PDF) com IA</div><div class="adm-field"><label>Instituição</label><input type="text" id="adm-prova-inst" placeholder="Ex: SBEM"></div><div class="adm-field"><label>Ano</label><input type="number" id="adm-prova-ano" placeholder="2024"></div><div class="adm-field"><label>Arquivo PDF da prova</label><input type="file" id="adm-prova-file" accept=".pdf"></div><button class="btn btn-primary" id="btn-adm-extract">🤖 Extrair questões com IA</button><div id="adm-extract-result" style="margin-top:.7rem"></div></div>'+
-  '<div class="adm-form"><div style="font-size:.85rem;font-weight:700;margin-bottom:.7rem">✍️ Adicionar questão manual</div><div class="adm-field"><label>Instituição</label><input type="text" id="adm-mq-inst" placeholder="SBEM"></div><div class="adm-field"><label>Ano</label><input type="number" id="adm-mq-ano" placeholder="2024"></div><div class="adm-field"><label>Subespecialidade</label><select id="adm-mq-area">'+DEFAULT_SUBESP+'</select></div><div class="adm-field"><label>Enunciado</label><textarea id="adm-mq-stem" rows="3"></textarea></div><div class="g2"><div class="adm-field"><label>Alt. A</label><input type="text" id="adm-mq-a"></div><div class="adm-field"><label>Alt. B</label><input type="text" id="adm-mq-b"></div><div class="adm-field"><label>Alt. C</label><input type="text" id="adm-mq-c"></div><div class="adm-field"><label>Alt. D</label><input type="text" id="adm-mq-d"></div></div><div class="adm-field"><label>Gabarito</label><select id="adm-mq-ans"><option>A</option><option>B</option><option>C</option><option>D</option></select></div><div class="adm-field"><label>Explicação</label><textarea id="adm-mq-exp" rows="2"></textarea></div><button class="btn btn-primary" id="btn-adm-addq">+ Adicionar</button></div>'+
-  '<div class="sec-title" style="margin:.5rem 0">Questões cadastradas ('+provasDB.length+')</div><div id="adm-provas-list">'+(provasDB.length?provasDB.map(function(q,i){return'<div class="adm-row"><div class="adm-row-info"><div class="adm-row-title">'+esc((q.stem||'').substring(0,90))+'…</div><div class="adm-row-sub">'+esc(q.inst||'')+' '+esc(String(q.ano||''))+' • '+esc(q.area||'')+' • Gab: '+esc(q.answer||'')+'</div></div><button class="btn btn-ghost btn-sm" data-adm-delprova="'+i+'">✕</button></div>';}).join(''):'<div class="empty">Nenhuma questão de prova cadastrada.</div>')+'</div>';
+
+// ---------- CURSOS ----------
+var admCursos=lsGet('adm_cursos')||[];
+function persistCursos(){lsSet('adm_cursos',admCursos);queueRemoteStateSave();}
+function ytId(url){
+  var m=String(url||'').match(/(?:youtube\.com\/(?:watch\?v=|embed\/|shorts\/)|youtu\.be\/)([A-Za-z0-9_-]{6,})/);
+  return m?m[1]:'';
 }
-function admQuestoesHTML(){
-  return'<div class="card"><div class="card-head"><span class="card-title">Banco de questões (geradas)</span></div>'+(DB.q.length?'<div style="font-size:.79rem;color:var(--t2)">'+DB.q.length+' questões no banco do aluno.</div>':'<div class="empty">Nenhuma questão gerada ainda.</div>')+'</div>';
+function vimeoId(url){
+  var m=String(url||'').match(/vimeo\.com\/(?:video\/)?(\d+)/);
+  return m?m[1]:'';
 }
-function admPodcastsHTML(){
-  return'<div class="adm-form"><div style="font-size:.85rem;font-weight:700;margin-bottom:.7rem">🎧 Adicionar podcast</div><div class="adm-field"><label>Título</label><input type="text" id="adm-pod-title" placeholder="Ex: Atualização em DM2"></div><div class="adm-field"><label>Subespecialidade</label><select id="adm-pod-area">'+DEFAULT_SUBESP+'</select></div><div class="adm-field"><label>Descrição</label><input type="text" id="adm-pod-desc" placeholder="Breve descrição"></div><div class="adm-field"><label>Arquivo de áudio (MP3/M4A)</label><input type="file" id="adm-pod-file" accept="audio/*"></div><button class="btn btn-primary" id="btn-adm-addpod">+ Adicionar podcast</button></div>'+
-  '<div class="sec-title" style="margin:.5rem 0">Podcasts ('+podcasts.length+')</div><div id="adm-pod-list">'+(podcasts.length?podcasts.map(function(p,i){return'<div class="adm-row"><div class="adm-row-info"><div class="adm-row-title">'+esc(p.title)+'</div><div class="adm-row-sub">'+esc(p.area||'')+' • '+esc(p.desc||'')+'</div></div><button class="btn btn-ghost btn-sm" data-adm-delpod="'+i+'">✕</button></div>';}).join(''):'<div class="empty">Nenhum podcast.</div>')+'</div>';
+function playerEmbed(c){
+  if(!c)return '';
+  if(c.tipo==='file'||/^data:video\//.test(c.src||''))return '<video controls style="width:100%;max-height:62vh;display:block" src="'+c.src+'"></video>';
+  var y=ytId(c.src);if(y)return '<iframe title="'+esc(c.title||'Videoaula')+'" src="https://www.youtube.com/embed/'+y+'" style="width:100%;aspect-ratio:16/9;border:0;display:block" allowfullscreen></iframe>';
+  var v=vimeoId(c.src);if(v)return '<iframe title="'+esc(c.title||'Videoaula')+'" src="https://player.vimeo.com/video/'+v+'" style="width:100%;aspect-ratio:16/9;border:0;display:block" allowfullscreen></iframe>';
+  return '<video controls style="width:100%;max-height:62vh;display:block" src="'+esc(c.src||'')+'"></video>';
 }
-function admMuralHTML(){
-  return'<div class="adm-form"><div style="font-size:.85rem;font-weight:700;margin-bottom:.7rem">📣 Novo aviso</div><div class="adm-field"><label>Título</label><input type="text" id="adm-av-title"></div><div class="adm-field"><label>Tipo</label><select id="adm-av-tipo"><option>Aviso</option><option>Urgente</option><option>Evento</option></select></div><div class="adm-field"><label>Texto</label><textarea id="adm-av-text" rows="3"></textarea></div><button class="btn btn-primary" id="btn-adm-addav">+ Publicar</button></div>'+
-  '<div class="sec-title" style="margin:.5rem 0">Avisos ('+admAvisos.length+')</div><div id="adm-av-list">'+(admAvisos.length?admAvisos.slice().reverse().map(function(a){var i=admAvisos.indexOf(a);return'<div class="adm-row"><div class="adm-row-info"><div class="adm-row-title">'+esc(a.titulo)+'</div><div class="adm-row-sub">'+esc(a.tipo)+' • '+new Date(a.at).toLocaleDateString('pt-BR')+'</div></div><button class="btn btn-ghost btn-sm" data-adm-delav="'+i+'">✕</button></div>';}).join(''):'<div class="empty">Nenhum aviso.</div>')+'</div>';
+var admCursoFiltro='',admCursoVideoData=null,admCursoSubtab='ver';
+function admCursosHTML(){
+  var SUB=['Diabetes','Obesidade','Tireoide','Adrenal','Neuroendocrinologia','Osteometabolismo','Endocrinologia Pediátrica','Endocrinologia Esportiva','Endocrinologia Masculina','Endocrinologia Feminina','Transgeneridade'];
+  var cont={};admCursos.forEach(function(c){if(c.sub)cont[c.sub]=(cont[c.sub]||0)+1;});
+  var lista=admCursoFiltro?admCursos.filter(function(c){return c.sub===admCursoFiltro;}):admCursos;
+
+  var formHTML='<div class="card" style="margin-bottom:1.1rem"><div style="font-size:1rem;font-weight:700;margin-bottom:.8rem">🎬 Importar videoaula</div>'
+    +'<div class="g2" style="margin-bottom:.7rem"><div class="fld2" style="margin:0"><label>Título da aula</label><input type="text" id="adm-curso-title" placeholder="Ex: Manejo da cetoacidose diabética"></div><div class="fld2" style="margin:0"><label>Subespecialidade</label><select id="adm-curso-sub">'+SUB.map(function(s){return '<option>'+esc(s)+'</option>';}).join('')+'</select></div></div>'
+    +'<div class="g2" style="margin-bottom:.7rem"><div class="fld2" style="margin:0"><label>Módulo / Curso</label><input type="text" id="adm-curso-modulo" placeholder="Ex: Emergências endócrinas"></div><div class="fld2" style="margin:0"><label>Duração (opcional)</label><input type="text" id="adm-curso-dur" placeholder="Ex: 18 min"></div></div>'
+    +'<div class="fld2"><label>Descrição</label><textarea id="adm-curso-desc" rows="2" placeholder="Breve descrição da aula…"></textarea></div>'
+    +'<div class="fld2"><label>Vídeo</label>'
+      +'<div style="display:flex;border:1.5px solid var(--bd2);border-radius:var(--rs);overflow:hidden;width:fit-content;margin-bottom:.6rem"><button type="button" id="adm-curso-tab-link" class="tog-btn on">🔗 Link (YouTube/Vimeo)</button><button type="button" id="adm-curso-tab-file" class="tog-btn">📎 Arquivo</button></div>'
+      +'<div id="adm-curso-link-panel"><input type="text" id="adm-curso-link" placeholder="Cole a URL do vídeo (YouTube, Vimeo ou MP4)"></div>'
+      +'<div id="adm-curso-file-panel" style="display:none"><div class="art-drop" id="adm-curso-drop" style="padding:1.5rem 1rem"><div style="font-size:1.7rem;margin-bottom:.3rem">🎞️</div><div style="font-size:.82rem;font-weight:600;color:var(--tx)">Arraste o vídeo ou clique para selecionar</div><div style="font-size:.66rem;color:var(--t3);margin-top:.15rem">MP4, WEBM · Máx. 50 MB</div></div><input type="file" id="adm-curso-file" accept="video/*" style="display:none"><div id="adm-curso-fname" style="display:none;font-size:.76rem;color:var(--grn);margin-top:.5rem"></div></div>'
+    +'</div>'
+    +'<button class="btn btn-primary" id="btn-adm-addcurso">+ Adicionar aula</button></div>';
+
+  var verHTML='<div style="display:flex;align-items:center;gap:.6rem;flex-wrap:wrap;margin-bottom:.9rem">'
+    +'<span style="font-size:.72rem;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--t3)">Filtrar por subespecialidade:</span>'
+    +'<select id="adm-curso-filtersel" style="width:auto;min-width:230px"><option value="">Todas as subespecialidades ('+admCursos.length+')</option>'+SUB.map(function(s){return '<option value="'+esc(s)+'"'+(admCursoFiltro===s?' selected':'')+'>'+esc(s)+' ('+(cont[s]||0)+')</option>';}).join('')+'</select>'
+    +(admCursoFiltro?'<button class="btn btn-ghost btn-sm" id="adm-curso-clearfilter">✕ Limpar</button>':'')
+  +'</div>'
+  +'<div id="adm-curso-player" style="display:none;margin-bottom:1.1rem"></div>'
+  +'<div id="adm-curso-list" class="g2" style="align-items:start">'+(lista.length?lista.map(function(c){var i=admCursos.indexOf(c);return '<div class="card"><div style="display:flex;align-items:flex-start;gap:.7rem"><div style="width:48px;height:48px;border-radius:10px;background:var(--navy);display:flex;align-items:center;justify-content:center;font-size:1.3rem;flex-shrink:0">🎬</div><div style="flex:1;min-width:0"><div style="font-size:.86rem;font-weight:700;color:var(--tx);margin-bottom:.25rem">'+esc(c.title)+'</div><div style="display:flex;flex-wrap:wrap;gap:.3rem;margin-bottom:.4rem"><span class="tag tag-blue">'+esc(c.sub)+'</span>'+(c.modulo?'<span class="tag tag-pur">'+esc(c.modulo)+'</span>':'')+(c.dur?'<span class="tag tag-gold">'+esc(c.dur)+'</span>':'')+'</div>'+(c.desc?'<div style="font-size:.74rem;color:var(--t2);line-height:1.5;margin-bottom:.4rem">'+esc(c.desc)+'</div>':'')+'<div style="font-size:.66rem;color:var(--t3);word-break:break-all;margin-bottom:.5rem">'+(c.tipo==='link'?'🔗 '+esc(c.src):'🎞️ Arquivo de vídeo')+'</div><div style="display:flex;gap:5px"><button class="btn btn-primary btn-sm" data-adm-playcurso="'+i+'">▶ Assistir</button><button class="btn btn-ghost btn-sm" data-adm-delcurso="'+i+'">🗑</button></div></div></div></div>';}).join(''):'<div class="empty" style="grid-column:1/-1">Nenhuma videoaula '+(admCursoFiltro?'nesta subespecialidade':'cadastrada ainda')+'.</div>')+'</div>';
+
+  return '<div class="adm-ph"><h1>Cursos</h1><p>Importe e organize videoaulas por subespecialidade.</p></div>'
+  +'<div class="adm-pc">'
+  +'<div class="pill-tab-row">'
+    +'<button class="pill-tab'+(admCursoSubtab==='ver'?' on':'')+'" data-csub="ver">📺 Ver cursos</button>'
+    +'<button class="pill-tab'+(admCursoSubtab==='importar'?' on':'')+'" data-csub="importar">⬆️ Importar videoaula</button>'
+  +'</div>'
+  +(admCursoSubtab==='importar'?formHTML:verHTML)
+  +'<div style="font-size:.7rem;color:var(--t3);margin-top:.7rem">ℹ️ Aulas por link são reproduzidas diretamente da fonte. Uploads de arquivo, neste protótipo, ficam salvos apenas na sessão.</div>'
+  +'</div>';
 }
-function admUsersHTML(){
-  return'<div class="sec-title" style="margin-bottom:.5rem">Usuários</div>'+USERS.filter(function(u){return u.email!=='google';}).map(function(u){return'<div class="adm-row"><div class="tb-avatar" style="background:var(--navy)">'+u.name.charAt(0)+'</div><div class="adm-row-info"><div class="adm-row-title">'+esc(u.name)+'</div><div class="adm-row-sub">'+esc(u.email)+' • '+esc(u.sub)+'</div></div><span class="tag '+(u.role==='admin'?'tag-pur':'tag-blue')+'">'+esc(u.role)+'</span></div>';}).join('');
-}
-function persistAdm(){lsSet('adm_avisos',admAvisos);lsSet('adm_questoes',admQuestoes);queueRemoteStateSave();}
-function bindAdmTab(tab){
-  var body=document.getElementById('adm-body');
-  if(tab==='provas'){
-    var bt=document.getElementById('btn-adm-template');
-    if(bt)bt.addEventListener('click',downloadImportTemplate);
-    var bi=document.getElementById('btn-adm-import');
-    if(bi)bi.addEventListener('click',function(){
-      var fileInput=document.getElementById('adm-import-file');
-      var file=fileInput&&fileInput.files&&fileInput.files[0];
-      var out=document.getElementById('adm-import-result');
-      if(!file){notify('Selecione um arquivo CSV ou JSON.','err');return;}
-      bi.disabled=true;
-      bi.innerHTML=ldHTML();
-      if(out)out.innerHTML=ldHTML();
-      var r=new FileReader();
-      r.onload=function(ev){
-        try{
-          var res=importQuestionBankText(ev.target.result,file.name);
-          if(!res.total)throw new Error('Arquivo sem questões reconhecíveis.');
-          if(res.added){
-            persistProvas();
-            notify(res.added+' questões importadas para o banco.','ok');
-            renderAdmTab('provas');
-          }else{
-            if(out)out.innerHTML='<div style="background:var(--gold-l);border:1px solid #fde68a;border-radius:var(--rs);padding:.5rem .8rem;font-size:.77rem;color:#b45309">Nenhuma questão nova importada. Duplicadas: '+res.duplicates+' • Inválidas: '+res.invalid+'</div>';
-            notify('Nenhuma questão nova importada.','info');
-          }
-        }catch(err){
-          if(out)out.innerHTML='<div style="color:var(--red);font-size:.77rem">✕ '+esc(err.message)+'</div>';
-          notify(err.message,'err');
-        }
-      };
-      r.onerror=function(){notify('Não foi possível ler o arquivo.','err');};
-      r.onloadend=function(){if(document.getElementById('btn-adm-import')){bi.disabled=false;bi.innerHTML='Importar banco';}};
-      r.readAsText(file,'utf-8');
-    });
+
+function bindAdmSec(sec){
+  var main=document.getElementById('adm-main');
+  // subtabs de provas
+  main.querySelectorAll('[data-psub]').forEach(function(b){b.addEventListener('click',function(){admProvaSubtab=b.dataset.psub;renderAdmSec('provas');});});
+
+  if(sec==='provas'&&admProvaSubtab==='importar'){
+    var drop=document.getElementById('adm-prova-drop');
     var ef=document.getElementById('adm-prova-file');
-    if(ef)ef.addEventListener('change',function(e){
-      var f=e.target.files[0];if(!f)return;
-      var r=new FileReader();r.onload=function(ev){pdfBase64Prova=ev.target.result.split(',')[1];notify('PDF carregado.','ok');};r.readAsDataURL(f);
-    });
+    if(drop&&ef){
+      drop.addEventListener('click',function(){ef.click();});
+      ['dragenter','dragover'].forEach(function(ev){drop.addEventListener(ev,function(e){e.preventDefault();drop.classList.add('drag');});});
+      ['dragleave','drop'].forEach(function(ev){drop.addEventListener(ev,function(e){e.preventDefault();drop.classList.remove('drag');});});
+      drop.addEventListener('drop',function(e){if(e.dataTransfer.files[0]){ef.files=e.dataTransfer.files;handleAdmProva(e.dataTransfer.files[0]);}});
+      ef.addEventListener('change',function(e){if(e.target.files[0])handleAdmProva(e.target.files[0]);});
+    }
     var be=document.getElementById('btn-adm-extract');
     if(be)be.addEventListener('click',function(){
       if(!pdfBase64Prova){notify('Selecione um PDF.','err');return;}
       var inst=(document.getElementById('adm-prova-inst').value||'SBEM').trim();
       var ano=parseInt(document.getElementById('adm-prova-ano').value)||new Date().getFullYear();
+      var area=document.getElementById('adm-prova-area').value;
       be.disabled=true;be.innerHTML=ldHTML();
       var rd=document.getElementById('adm-extract-result');rd.innerHTML=ldHTML();
-      callAIwithPDF('Extraia TODAS as questões de múltipla escolha desta prova de endocrinologia. JSON APENAS: {"questions":[{"stem":"","options":{"A":"","B":"","C":"","D":""},"answer":"A","explanation":"","area":"Diabetes"}]}',pdfBase64Prova)
+      callAIwithPDF('Extraia TODAS as questões de múltipla escolha desta prova de endocrinologia. JSON APENAS: {"questions":[{"stem":"","options":{"A":"","B":"","C":"","D":""},"answer":"A","explanation":"","area":"'+(area||'Diabetes')+'"}]}',pdfBase64Prova)
       .then(function(raw){
         var d=parseJ(raw);if(!d||!d.questions)throw new Error('Não foi possível extrair questões.');
-        d.questions.forEach(function(q){provasDB.push(Object.assign({},q,{inst:inst,ano:ano}));});
-        persistProvas();rd.innerHTML='<div style="background:var(--grn-l);border:1px solid #bbf7d0;border-radius:var(--rs);padding:.5rem .8rem;font-size:.77rem;color:#16a34a">✓ '+d.questions.length+' questões extraídas e salvas!</div>';
-        renderAdmTab('provas');
+        d.questions.forEach(function(q){provasDB.push(Object.assign({},q,{inst:inst,ano:ano,area:q.area||area}));});
+        persistProvas();
+        rd.innerHTML='<div style="background:var(--grn-l);border:1px solid #bbf7d0;border-radius:var(--rs);padding:.5rem .8rem;font-size:.77rem;color:#16a34a">✓ '+d.questions.length+' questões extraídas e salvas!</div>';
       }).catch(function(e){rd.innerHTML='<div style="color:var(--red);font-size:.77rem">❌ '+esc(e.message)+'</div>';})
-      .then(function(){be.disabled=false;be.innerHTML='🤖 Extrair questões com IA';});
+      .then(function(){be.disabled=false;be.innerHTML='🤖 Extrair com IA';});
     });
+  }
+  if(sec==='provas'&&admProvaSubtab==='manual'){
+    var imgdrop=document.getElementById('adm-mq-imgdrop');
+    var imgfile=document.getElementById('adm-mq-imgfile');
+    if(imgdrop&&imgfile){
+      imgdrop.addEventListener('click',function(){imgfile.click();});
+      ['dragenter','dragover'].forEach(function(ev){imgdrop.addEventListener(ev,function(e){e.preventDefault();imgdrop.classList.add('drag');});});
+      ['dragleave','drop'].forEach(function(ev){imgdrop.addEventListener(ev,function(e){e.preventDefault();imgdrop.classList.remove('drag');});});
+      imgdrop.addEventListener('drop',function(e){if(e.dataTransfer.files[0])handleMqImg(e.dataTransfer.files[0]);});
+      imgfile.addEventListener('change',function(e){if(e.target.files[0])handleMqImg(e.target.files[0]);});
+    }
     var ba=document.getElementById('btn-adm-addq');
     if(ba)ba.addEventListener('click',function(){
       var stem=(document.getElementById('adm-mq-stem').value||'').trim();
       if(!stem){notify('Preencha o enunciado.','err');return;}
-      provasDB.push({stem:stem,options:{A:document.getElementById('adm-mq-a').value,B:document.getElementById('adm-mq-b').value,C:document.getElementById('adm-mq-c').value,D:document.getElementById('adm-mq-d').value},answer:document.getElementById('adm-mq-ans').value,explanation:document.getElementById('adm-mq-exp').value,area:document.getElementById('adm-mq-area').value,inst:(document.getElementById('adm-mq-inst').value||'SBEM').trim(),ano:parseInt(document.getElementById('adm-mq-ano').value)||new Date().getFullYear()});
-      persistProvas();notify('Questão adicionada!','ok');renderAdmTab('provas');
+      var ans=(document.querySelector('input[name="adm-mq-ans"]:checked')||{}).value||'A';
+      var q={stem:stem,options:{A:document.getElementById('adm-mq-a').value,B:document.getElementById('adm-mq-b').value,C:document.getElementById('adm-mq-c').value,D:document.getElementById('adm-mq-d').value},answer:ans,explanation:document.getElementById('adm-mq-exp').value,area:document.getElementById('adm-mq-area').value,dificuldade:document.getElementById('adm-mq-diff').value,inst:(document.getElementById('adm-mq-inst').value||'SBEM').trim(),ano:parseInt(document.getElementById('adm-mq-ano').value)||new Date().getFullYear()};
+      if(mqImgData)q.img=mqImgData;
+      provasDB.push(q);
+      persistProvas();mqImgData=null;notify('Questão adicionada!','ok');admProvaSubtab='banco';renderAdmSec('provas');
     });
-    body.querySelectorAll('[data-adm-delprova]').forEach(function(b){b.addEventListener('click',function(){provasDB.splice(parseInt(b.dataset.admDelprova),1);persistProvas();renderAdmTab('provas');});});
+    var bc=document.getElementById('btn-adm-clearq');
+    if(bc)bc.addEventListener('click',function(){['adm-mq-stem','adm-mq-a','adm-mq-b','adm-mq-c','adm-mq-d','adm-mq-exp','adm-mq-inst'].forEach(function(id){var e=document.getElementById(id);if(e)e.value='';});mqImgData=null;var pv=document.getElementById('adm-mq-imgprev');if(pv){pv.style.display='none';pv.innerHTML='';}});
   }
-  if(tab==='podcasts'){
-    var pf=document.getElementById('adm-pod-file');
-    var podAudioData=null;
-    if(pf)pf.addEventListener('change',function(e){var f=e.target.files[0];if(!f)return;if(f.size>25*1024*1024){notify('Áudio muito grande (máx 25 MB).','err');return;}var r=new FileReader();r.onload=function(ev){podAudioData=ev.target.result;notify('Áudio carregado.','ok');};r.readAsDataURL(f);});
-    var bp=document.getElementById('btn-adm-addpod');
-    if(bp)bp.addEventListener('click',function(){
-      var title=(document.getElementById('adm-pod-title').value||'').trim();
-      if(!title){notify('Informe o título.','err');return;}
-      if(!podAudioData){notify('Selecione o arquivo de áudio.','err');return;}
-      podcasts.push({title:title,area:document.getElementById('adm-pod-area').value,desc:document.getElementById('adm-pod-desc').value,audio:podAudioData,at:Date.now()});
-      persistPodcasts();notify('Podcast adicionado!','ok');renderAdmTab('podcasts');
+  if(sec==='provas'&&admProvaSubtab==='banco'){
+    main.querySelectorAll('[data-adm-delprova]').forEach(function(b){b.addEventListener('click',function(){provasDB.splice(parseInt(b.dataset.admDelprova),1);persistProvas();renderAdmSec('provas');});});
+  }
+
+  if(sec==='cursos'){
+    main.querySelectorAll('[data-csub]').forEach(function(b){b.addEventListener('click',function(){admCursoSubtab=b.dataset.csub;renderAdmSec('cursos');});});
+    if(admCursoSubtab==='importar'){
+      var cTabLink=document.getElementById('adm-curso-tab-link');
+    var cTabFile=document.getElementById('adm-curso-tab-file');
+    var cLinkPanel=document.getElementById('adm-curso-link-panel');
+    var cFilePanel=document.getElementById('adm-curso-file-panel');
+    var cFonte='link';
+    if(cTabLink&&cTabFile){
+      cTabLink.addEventListener('click',function(){cFonte='link';cTabLink.classList.add('on');cTabFile.classList.remove('on');cLinkPanel.style.display='block';cFilePanel.style.display='none';});
+      cTabFile.addEventListener('click',function(){cFonte='file';cTabFile.classList.add('on');cTabLink.classList.remove('on');cFilePanel.style.display='block';cLinkPanel.style.display='none';});
+    }
+    var cDrop=document.getElementById('adm-curso-drop');
+    var cFile=document.getElementById('adm-curso-file');
+    if(cDrop&&cFile){
+      cDrop.addEventListener('click',function(){cFile.click();});
+      ['dragenter','dragover'].forEach(function(ev){cDrop.addEventListener(ev,function(e){e.preventDefault();cDrop.classList.add('drag');});});
+      ['dragleave','drop'].forEach(function(ev){cDrop.addEventListener(ev,function(e){e.preventDefault();cDrop.classList.remove('drag');});});
+      cDrop.addEventListener('drop',function(e){if(e.dataTransfer.files[0])handleCursoVideo(e.dataTransfer.files[0]);});
+      cFile.addEventListener('change',function(e){if(e.target.files[0])handleCursoVideo(e.target.files[0]);});
+    }
+    var bAddCurso=document.getElementById('btn-adm-addcurso');
+    if(bAddCurso)bAddCurso.addEventListener('click',function(){
+      var title=(document.getElementById('adm-curso-title').value||'').trim();
+      if(!title){notify('Informe o título da aula.','err');return;}
+      var c={title:title,sub:document.getElementById('adm-curso-sub').value,modulo:(document.getElementById('adm-curso-modulo').value||'').trim(),dur:(document.getElementById('adm-curso-dur').value||'').trim(),desc:(document.getElementById('adm-curso-desc').value||'').trim(),at:Date.now()};
+      if(cFonte==='link'){
+        var link=(document.getElementById('adm-curso-link').value||'').trim();
+        if(!link){notify('Cole a URL do vídeo.','err');return;}
+        c.tipo='link';c.src=link;
+      }else{
+        if(!admCursoVideoData){notify('Selecione o arquivo de vídeo.','err');return;}
+        c.tipo='file';c.src=admCursoVideoData;
+      }
+      admCursos.push(c);persistCursos();admCursoVideoData=null;notify('Videoaula adicionada!','ok');admCursoSubtab='ver';renderAdmSec('cursos');
     });
-    body.querySelectorAll('[data-adm-delpod]').forEach(function(b){b.addEventListener('click',function(){podcasts.splice(parseInt(b.dataset.admDelpod),1);persistPodcasts();renderAdmTab('podcasts');});});
+    } // fim aba importar
+    var cFsel=document.getElementById('adm-curso-filtersel');
+    if(cFsel)cFsel.addEventListener('change',function(){admCursoFiltro=cFsel.value;renderAdmSec('cursos');});
+    var cClear=document.getElementById('adm-curso-clearfilter');
+    if(cClear)cClear.addEventListener('click',function(){admCursoFiltro='';renderAdmSec('cursos');});
+    main.querySelectorAll('[data-adm-playcurso]').forEach(function(b){b.addEventListener('click',function(){
+      var c=admCursos[parseInt(b.dataset.admPlaycurso)];if(!c)return;
+      var box=document.getElementById('adm-curso-player');
+      box.style.display='block';
+      box.innerHTML='<div class="card"><div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:.55rem"><span style="font-size:.9rem;font-weight:700">'+esc(c.title)+'</span><button class="btn btn-ghost btn-sm" id="adm-curso-player-close">✕ Fechar</button></div><div style="background:#000;border-radius:var(--r);overflow:hidden">'+playerEmbed(c)+'</div>'+(c.desc?'<div style="font-size:.76rem;color:var(--t2);line-height:1.6;margin-top:.55rem">'+esc(c.desc)+'</div>':'')+'</div>';
+      var cl=document.getElementById('adm-curso-player-close');if(cl)cl.addEventListener('click',function(){box.style.display='none';box.innerHTML='';});
+      box.scrollIntoView({behavior:'smooth',block:'start'});
+    });});
+    main.querySelectorAll('[data-adm-delcurso]').forEach(function(b){b.addEventListener('click',function(){admCursos.splice(parseInt(b.dataset.admDelcurso),1);persistCursos();renderAdmSec('cursos');});});
   }
-  if(tab==='mural'){
+
+  if(sec==='conteudo'){
+    main.querySelectorAll('[data-podsub]').forEach(function(b){b.addEventListener('click',function(){admPodSubtab=b.dataset.podsub;renderAdmSec('conteudo');});});
+    if(admPodSubtab==='adicionar'){
+      var pf=document.getElementById('adm-pod-file');
+      if(pf)pf.addEventListener('change',function(e){var f=e.target.files[0];if(!f)return;if(f.size>25*1024*1024){notify('Áudio muito grande (máx 25 MB).','err');return;}var r=new FileReader();r.onload=function(ev){podAudioDataAdm=ev.target.result;notify('Áudio carregado.','ok');};r.readAsDataURL(f);});
+      var bp=document.getElementById('btn-adm-addpod');
+      if(bp)bp.addEventListener('click',function(){
+        var title=(document.getElementById('adm-pod-title').value||'').trim();
+        if(!title){notify('Informe o título.','err');return;}
+        if(!podAudioDataAdm){notify('Selecione o arquivo de áudio.','err');return;}
+        podcasts.push({title:title,area:document.getElementById('adm-pod-area').value,desc:document.getElementById('adm-pod-desc').value,audio:podAudioDataAdm,at:Date.now()});
+        persistPodcasts();podAudioDataAdm=null;notify('Podcast adicionado!','ok');admPodSubtab='ouvir';renderAdmSec('conteudo');
+      });
+    }
+    var pFsel=document.getElementById('adm-pod-filtersel');
+    if(pFsel)pFsel.addEventListener('change',function(){admPodFiltro=pFsel.value;renderAdmSec('conteudo');});
+    var pClear=document.getElementById('adm-pod-clearfilter');
+    if(pClear)pClear.addEventListener('click',function(){admPodFiltro='';renderAdmSec('conteudo');});
+    main.querySelectorAll('[data-adm-delpod]').forEach(function(b){b.addEventListener('click',function(){podcasts.splice(parseInt(b.dataset.admDelpod),1);persistPodcasts();renderAdmSec('conteudo');});});
+  }
+
+  if(sec==='mural'){
+    var bNew=document.getElementById('btn-adm-newav');
+    if(bNew)bNew.addEventListener('click',function(){admMuralShowForm=!admMuralShowForm;admMuralEdit=null;renderAdmSec('mural');});
+    var bCancel=document.getElementById('btn-adm-av-cancel');
+    if(bCancel)bCancel.addEventListener('click',function(){admMuralShowForm=false;admMuralEdit=null;renderAdmSec('mural');});
+    // preenche o form quando estiver editando
+    if(admMuralShowForm&&admMuralEdit!==null){
+      var av=admAvisos[admMuralEdit];
+      if(av){
+        var ft=document.getElementById('adm-av-title');if(ft)ft.value=av.titulo||'';
+        var fp=document.getElementById('adm-av-tipo');if(fp)fp.value=av.tipo||'Aviso';
+        var ff=document.getElementById('adm-av-fonte');if(ff)ff.value=av.fonte||'';
+        var fl=document.getElementById('adm-av-link');if(fl)fl.value=av.link||'';
+        var fx=document.getElementById('adm-av-text');if(fx)fx.value=av.texto||'';
+      }
+    }
     var bav=document.getElementById('btn-adm-addav');
     if(bav)bav.addEventListener('click',function(){
       var t=(document.getElementById('adm-av-title').value||'').trim();
       if(!t){notify('Informe o título.','err');return;}
-      admAvisos.push({titulo:t,tipo:document.getElementById('adm-av-tipo').value,texto:document.getElementById('adm-av-text').value,at:Date.now()});
-      persistAdm();notify('Aviso publicado!','ok');renderAdmTab('mural');
+      var dados={titulo:t,tipo:document.getElementById('adm-av-tipo').value,fonte:(document.getElementById('adm-av-fonte').value||'').trim(),link:(document.getElementById('adm-av-link').value||'').trim(),texto:document.getElementById('adm-av-text').value};
+      if(admMuralEdit!==null&&admAvisos[admMuralEdit]){
+        dados.at=admAvisos[admMuralEdit].at;
+        admAvisos[admMuralEdit]=dados;notify('Aviso atualizado!','ok');
+      }else{
+        dados.at=Date.now();admAvisos.push(dados);notify('Aviso publicado!','ok');
+      }
+      persistAdm();admMuralShowForm=false;admMuralEdit=null;renderAdmSec('mural');
     });
-    body.querySelectorAll('[data-adm-delav]').forEach(function(b){b.addEventListener('click',function(){admAvisos.splice(parseInt(b.dataset.admDelav),1);persistAdm();renderAdmTab('mural');});});
+    main.querySelectorAll('[data-adm-editav]').forEach(function(b){b.addEventListener('click',function(){admMuralEdit=parseInt(b.dataset.admEditav);admMuralShowForm=true;renderAdmSec('mural');document.getElementById('adm-main').scrollTop=0;});});
+    main.querySelectorAll('[data-adm-delav]').forEach(function(b){b.addEventListener('click',function(){admAvisos.splice(parseInt(b.dataset.admDelav),1);persistAdm();renderAdmSec('mural');});});
+    var bPrev=document.getElementById('btn-adm-mural-preview');
+    if(bPrev)bPrev.addEventListener('click',function(){notify('Pré-visualização do mural do aluno','info');});
   }
+
+  if(sec==='chat'){
+    var send=document.getElementById('btn-adm-chat-send');
+    var inp=document.getElementById('adm-chat-input');
+    var sendAdmChat=function(){
+      var txt=(inp.value||'').trim();if(!txt)return;
+      inp.value='';
+      var msgs=document.getElementById('adm-chat-msgs');
+      var ud=document.createElement('div');ud.className='chat-bubble user';ud.innerHTML=esc(txt).replace(/\n/g,'<br>');msgs.appendChild(ud);
+      var ld=document.createElement('div');ld.className='chat-bubble ai';ld.innerHTML='<div class="chat-name">Endodirect IA</div>'+ldHTML();msgs.appendChild(ld);msgs.scrollTop=msgs.scrollHeight;
+      callAI('Você é um assistente médico especializado em endocrinologia e metabologia, respondendo no Brasil. Seja preciso, baseado em evidências (SBEM, SBD, ADA). Responda em português.',txt,1200)
+      .then(function(r){ld.innerHTML='<div class="chat-name">Endodirect IA</div>'+esc(r).replace(/\n/g,'<br>');msgs.scrollTop=msgs.scrollHeight;})
+      .catch(function(e){ld.innerHTML='<div class="chat-name">Endodirect IA</div><span style="color:var(--red)">Erro: '+esc(e.message)+'</span>';});
+    };
+    if(send)send.addEventListener('click',sendAdmChat);
+    if(inp)inp.addEventListener('keydown',function(e){if(e.key==='Enter'&&!e.shiftKey){e.preventDefault();sendAdmChat();}});
+  }
+
+  if(sec==='estudantes'){
+    var bnew=document.getElementById('btn-adm-est-new');
+    if(bnew)bnew.addEventListener('click',function(){admEstShowForm=!admEstShowForm;renderAdmSec('estudantes');});
+    var bsave=document.getElementById('btn-adm-est-save');
+    if(bsave)bsave.addEventListener('click',function(){
+      var nome=(document.getElementById('adm-est-nome').value||'').trim();
+      if(!nome){notify('Informe o nome.','err');return;}
+      admEstudantes.push({nome:nome,email:(document.getElementById('adm-est-email').value||'').trim(),cpf:(document.getElementById('adm-est-cpf').value||'').trim(),turma:(document.getElementById('adm-est-turma').value||'Turma 2026').trim(),perfil:document.getElementById('adm-est-perfil').value,status:document.getElementById('adm-est-status').value,xp:0});
+      persistEstudantes();admEstShowForm=false;notify('Estudante cadastrado!','ok');renderAdmSec('estudantes');
+    });
+    var bcancel=document.getElementById('btn-adm-est-cancel');
+    if(bcancel)bcancel.addEventListener('click',function(){admEstShowForm=false;renderAdmSec('estudantes');});
+    var search=document.getElementById('adm-est-search');
+    if(search)search.addEventListener('input',function(){var rows=document.getElementById('adm-est-rows');if(rows)rows.innerHTML=admEstRowsHTML(search.value);});
+    main.querySelectorAll('[data-adm-delest]').forEach(function(b){b.addEventListener('click',function(){admEstudantes.splice(parseInt(b.dataset.admDelest),1);persistEstudantes();renderAdmSec('estudantes');});});
+  }
+
+  if(sec==='perfil'){
+    var bedit=document.getElementById('btn-adm-perfil-edit');
+    if(bedit)bedit.addEventListener('click',function(){admPerfilEdit=true;renderAdmSec('perfil');});
+    var bpsave=document.getElementById('btn-adm-pf-save');
+    if(bpsave)bpsave.addEventListener('click',function(){
+      admPerfil.nome=(document.getElementById('adm-pf-nome').value||'').trim()||'Administrador';
+      admPerfil.email=(document.getElementById('adm-pf-email').value||'').trim();
+      admPerfil.contato=(document.getElementById('adm-pf-contato').value||'').trim();
+      admPerfil.cpf=(document.getElementById('adm-pf-cpf').value||'').trim();
+      admPerfil.instituicao=(document.getElementById('adm-pf-inst').value||'').trim();
+      persistPerfil();admPerfilEdit=false;
+      setText('adm-uname',admPerfil.nome);
+      var av=document.getElementById('adm-uavatar');if(av)av.textContent=admPerfil.nome.charAt(0);
+      notify('Perfil atualizado!','ok');renderAdmSec('perfil');
+    });
+    var bpcancel=document.getElementById('btn-adm-pf-cancel');
+    if(bpcancel)bpcancel.addEventListener('click',function(){admPerfilEdit=false;renderAdmSec('perfil');});
+  }
+}
+function handleAdmProva(f){
+  var r=new FileReader();
+  r.onload=function(ev){pdfBase64Prova=ev.target.result.split(',')[1];
+    var fn=document.getElementById('adm-prova-fname');if(fn){fn.style.display='block';fn.textContent='✓ '+f.name+' carregado';}
+  };r.readAsDataURL(f);
+}
+var mqImgData=null;
+function handleCursoVideo(f){
+  if(!/^video\//.test(f.type)){notify('Selecione um arquivo de vídeo.','err');return;}
+  if(f.size>50*1024*1024){notify('Vídeo muito grande (máx 50 MB).','err');return;}
+  var r=new FileReader();
+  r.onload=function(ev){
+    admCursoVideoData=ev.target.result;
+    var fn=document.getElementById('adm-curso-fname');
+    if(fn){fn.style.display='block';fn.textContent='✓ '+f.name+' carregado ('+(f.size/(1024*1024)).toFixed(1)+' MB)';}
+  };r.readAsDataURL(f);
+}
+function handleMqImg(f){
+  if(!/^image\//.test(f.type)){notify('Selecione uma imagem.','err');return;}
+  if(f.size>5*1024*1024){notify('Imagem muito grande (máx 5 MB).','err');return;}
+  var r=new FileReader();
+  r.onload=function(ev){
+    mqImgData=ev.target.result;
+    var pv=document.getElementById('adm-mq-imgprev');
+    if(pv){pv.style.display='block';pv.innerHTML='<div style="display:flex;align-items:center;gap:.6rem;background:var(--s2);border:1px solid var(--bd);border-radius:var(--rs);padding:.5rem .7rem"><img src="'+ev.target.result+'" style="height:50px;border-radius:6px"><span style="flex:1;font-size:.76rem;color:var(--t2)">'+esc(f.name)+'</span><button class="btn btn-ghost btn-sm" id="adm-mq-imgclear">✕</button></div>';
+      var clr=document.getElementById('adm-mq-imgclear');if(clr)clr.addEventListener('click',function(){mqImgData=null;pv.style.display='none';pv.innerHTML='';});
+    }
+  };r.readAsDataURL(f);
 }
 
 // ── INIT ──
@@ -2563,6 +3149,7 @@ document.addEventListener('DOMContentLoaded',function(){
   startSupabaseAuthWatcher();
   // LOGO (imagem original embutida)
   var LOGO_SRC='data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAA7YAAAQoCAYAAAA+MUIlAAAACXBIWXMAAC4jAAAuIwF4pT92AAAgAElEQVR4nOzdDZBd5X0n6FfA8o0a2ZJFg6WWsGMnDtCqzRTYKTAiQ2UAZwuqVl7AVUFyGWyTMLauxhlZgIw2AmRlmG6NowQ74EVmtwwZayuwEwOZ9QTZZsfGNZnoAmEGGyO1hLjIUqwPI74G0Nbb7nYa0d33nHvPvfd8PE8VFYpIt895zy3MT+97fv8Zhw8fDlAWjXptUQjhVA8UoKcWjP01Ufx386IUF7V97K/JbDny1/YPDk/1awGoAMGWUmnUa/E/di70VAEq7bsTbn48BO8PIWwd+/ut/YPD+6u+SABlcoynCQCUzMQ/4Jz0Dzsb9Vr8PwfGwu7E0BuD8P7+weGtJVsTgFKzY0up2LEFIEPjwXf8WPTWsdB75FFoAHpMsKVUBFsAumRkLOxuGQ++Ai9A7ziKDACQ3sDYX7/6w9Sx480TA+/WscDrWDNAhwm2AADZmSrwfncs6G4dK68SdgEyJNgCAHTehdOE3S1jYdfIIoAWeceWUvGOLQAFdmAs5I4HXe/sAiQk2FIqgi0AJfPdCe/rbjF/F2ByjiIDAOTXkUeY6xN2dQVdgDF2bCkVO7YAVMx3J4RcR5eByhJsKRXBFoCKe3As6D6gjAqoEsGWUhFsAeBX4kzdB8Z2cx+wLECZCbaUimALAFOymwuUlmBLqQi2AJBIfWw3N4bcrZYMKDrBllIRbAEgtZEJIVcBFVBIgi2lItgCQFsOTAi53ssFCkOwpVQEWwDIjJALFIZgS6kItgDQETHkbop/eScXyCPBllIRbAGg48bfyd2gXRnIC8GWUhFsAaCr6hN2cvdbeqBXjrLyAAC0aDCEMBxC2Neo1x5o1GtXWEigF+zYUip2bAGg58bfx3VUGegawZZSEWwBIFfiUeUNY83KjioDHeMoMgAAnRKPKt8TQtjeqNc2Neq1RVYa6ATBFgAATusLISwNIfx9PF3VqNeWWXEgS44iUyqOIgNAYXgXF8iMHVsAAHoh7uJ+PoSwbaxRebGnALRKsAUAoNcuDyE82qjXtjumDLTCUWRKxVFkACiFA2Ntyhu0KQNJ2LEFACBv4jHlW0II+8balBd4QsB0BFsAAPJs6dh7uFu8hwtMRbAFAKAILhx7DzcG3Cs8MWAiwRYAgCKJAfevFE0BEwm2AAAU0UAI4R4BFwiCLQAABSfgAoItAAClIOBChQm2AACUiYALFSTYAgBQRgIuVIhgCwBAmQm4UAGCLQAAVTAx4JqDCyUj2AIAUCUDY3NwtzTqtcWePJSDYAsAQBVdGEJ4dCzgLvANgGITbAEAqLIYcLc16rVNjXrtVN8EKCbBFgAAQlgaQojv364RcKF4BFsAAPilvhDCLSGErRqUoVgEWwAAeLvxBmUFU1AQgi0AAExuvGDK+7eQc4ItAABM71fv31onyCfBFgAAmht9/7ZRr213PBnyR7AFAIDkBsaOJz9g/i3kh2ALAADpXT7Wnux4MuSAYAsAAK0ZP5681fFk6C3BFgAA2jM4djx5g/Zk6A3BFgAAsvH5sfbkK6wndJdgCwAA2YnHk/+qUa9tUS4F3SPYAgBA9i4cK5dabm2h8wRbAADojLh7O2z3FjpPsAUAgM6Ku7fbjAaCzhFsAQCgO8ZHAy2y3pAtwRYAALonjgb6e+/eQrYEWwAA6D7v3kKGBFsAAOgNzcmQEcEWAAB6Z2Jz8qmeA7RGsAUAgN6Lu7fbG/XaFZ4FpCfYAgBAPsTd279q1Gub7N5COoItAADky9Kxd2+NBYKEBFsAAMifAWOBIDnBFgAA8kuxFCQg2AIAQL6NF0st9pxgcoItAADkXyyWerRRr63xrOCdBFsAACiOWxxNhncSbAEAoFgcTYYjCLYAAFA8jibDBIItAAAUl6PJVF4QbAEAoPDi0eStjXptkUdJVQm2AABQfAMhhL9v1GvLPEuqSLAFAIDyuKdRr23yPKkawRYAAMplaaNe2+q9W6pEsAUAgPIZHBsJ5L1bKkGwBQCAcurz3i1VIdgCAEC5ee+W0hNsAQCg/Jaad0uZCbYAAFANcd7tFu/dUkaCLQAAVMfgWLhd7JlTJoItAABUSyyVelSpFGUi2AIAQDUplaI0BFsAAKiuWCr1gFIpik6wBQCAart87L1b4ZbCEmwBAIBYKrVVYzJFJdgCAADRgHFAFJVgCwAAjOsbC7cakykUwRYAAJiob6wxWbilMARbAABgMjHcbrAyFIFgCwAATOXzZt1SBIItAAAwnTjrdpNxQOSZYAsAADSz1Kxb8kywBQAAkhgUbskrwRYAAEhKuCWXBFsAACCNGG63Nuq1RVaNvBBsAQCAtAbGdm6FW3LhGI+Bktnaw9uJP3u/LxRd5DtHt23tHxzu2HeuUa+tCSHc4qlCYfSNhdvF/YPDvfxvMAgzDh8+bBUAgJ4TbKGwDoQQhFt6ylFkAACgHX2OJdNrgi0AANAu4ZaeEmwBAIAsCLf0jGALAABkRbilJwRbAAAgS8ItXSfYAgAAWRNu6SrBFgAA6AThlq4RbAEAgE4RbukKwRYAAOgk4ZaOE2wBAIBOE27pKMEWAADoBuGWjhFsAQCAbhkPtwusOlkRbAEAgG6K4faBRr12qpUnC4ItAADQC4NjO7fCLW0TbAEAgF4RbsmEYAsAAPRSDLcPeAK0Q7AFAAB67cJGvbbJU6BVgi0AAJAHS4VbWiXYAgAAeRHD7RpPg7QEWwAAIE9uadRryzwR0hBsAQCAvLmnUa9d4amQlGALAADk0aZGvbbIkyEJwRYAAMijvrEZt8ItTQm2AABAXvWN7dye6gkxHcEWAADIs8GxnVvhlikJtgAAQN7FcLvBU2Iqgi0AAFAEccatcMukBFsAAKAoPm/GLZMRbAEAgCKJM24Xe2JMJNgCAABF84AxQEwk2AIAAEVjDBBvI9gCAABFFJuSH/DkCIItAABQYBc26rVNHiCCLQAAUGRLNSUj2AIAAEWnKbniBFsAAKAMYlPyAk+ymgRbAACgDPrGwq2m5AoSbAEAgLKITckbPM3qOSaEsKbqizCF/SGErbm8suLbUvUFAACgY2KZ1Nb+wWEBt0JuuLmp6osAJVET+wMZvr19IBe+6wuxOm+jcxQAgOG5fOt7YyZiwuXPhw9XfREAoAIuyvsfJjTqtTV+wB3I0IEQwqL+wWF/QF0B3rEFAADKSJlUhQi2AABAWSmTqgjBFgAAKLNYJrXME643wRYAACi7exr12iJPubwEWwAAoAq8b1tigi0AAFAFAyGETZ50OQm2AABAVVzeqNeWe9rlI9gCAABVMux923IRbAEAgKrZ4n3bchFsAQCAqunzvm25CLYAAEAVed+2RARbAACgqrxvWxKCLQAAUGXm25aAYAsAAFRdfN92WdUXocgEWwAAgBA2eN+2uARbAAAAI4AKTbAFAAD4pcFGvbbGWhSPYAsAAPDPbmnUa4utR7EItgAAAP9skxFAxSLYAgAA/LNRIw0AAATtSURBVHM2GQFULIItAADA2y3VlFwcgi0AAMA7aUquCMEWAADgneIs2wWeQv4JtgAAAO9kBFBBCLYAAAATGwOUe4ItAADAxAbHwq3GH8EWAACg0OcFWwAAgIldGoyBwGyAFRYBgCcGzAY7BVgEAAJ4Y9JsoFGAEoBzqK6Tk7uVQ5tFGAB4HxqK2T1JsCi0XYBNl1c5b3xxIqzpJ7tQjxhA+JvbHF4tcOlBSZNDC0X7t8AAA==';
+  LOGO_SRC='logo.png.png';
   var lLogin=document.getElementById('logo-login-img');if(lLogin)lLogin.src=LOGO_SRC;
   var lTb=document.getElementById('logo-tb-img');if(lTb)lTb.src=LOGO_SRC;
   // LOGIN
@@ -2622,7 +3209,7 @@ document.addEventListener('DOMContentLoaded',function(){
   if(mobileNavClose)mobileNavClose.addEventListener('click',closeMobileNav);
   var mobileNavBackdrop=document.getElementById('mobile-nav-backdrop');
   if(mobileNavBackdrop)mobileNavBackdrop.addEventListener('click',closeMobileNav);
-  document.addEventListener('keydown',function(e){if(e.key==='Escape')closeMobileNav();});
+  document.addEventListener('keydown',function(e){if(e.key==='Escape'){closeMobileNav();closeAdminNav();}});
 
   // NAV
   document.querySelectorAll('.sb-item[data-p]').forEach(function(b){b.addEventListener('click',function(){goPanel(b.dataset.p);});});
@@ -2639,8 +3226,11 @@ document.addEventListener('DOMContentLoaded',function(){
   document.getElementById('d-sr-btn').addEventListener('click',function(){goPanel('sr');});
   document.getElementById('d-notas-btn').addEventListener('click',function(){goPanel('notas');});
 
-  // ADMIN TABS
-  document.querySelectorAll('.adm-tab').forEach(function(b){b.addEventListener('click',function(){renderAdmTab(b.dataset.tab);});});
+  // ADMIN NAV
+  var admMenuBtn=document.getElementById('adm-menu-btn');if(admMenuBtn)admMenuBtn.addEventListener('click',function(e){e.stopPropagation();toggleAdminNav();});
+  var admBackdrop=document.getElementById('adm-backdrop');if(admBackdrop)admBackdrop.addEventListener('click',closeAdminNav);
+  document.querySelectorAll('.adm-nav[data-asec]').forEach(function(b){b.addEventListener('click',function(){renderAdmSec(b.dataset.asec);closeAdminNav();});});
+  var admLogout=document.getElementById('adm-logout');if(admLogout)admLogout.addEventListener('click',doLogout);
 
   // QUESTÕES
   document.querySelectorAll('[data-qmode]').forEach(function(b){b.addEventListener('click',function(){
