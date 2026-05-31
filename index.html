@@ -1453,26 +1453,31 @@ function genCode(area){
 }
 
 // ── API (ambiente do artefato injeta autenticação) ──
-function callAI(sys,usr,maxTok){
-  maxTok=maxTok||1500;
-  return fetch('https://api.anthropic.com/v1/messages',{
+var AI_API_ENDPOINT='/api/ai';
+function aiRequest(payload){
+  return fetch(AI_API_ENDPOINT,{
     method:'POST',
-    headers:{'Content-Type':'application/json','anthropic-version':'2023-06-01'},
-    body:JSON.stringify({model:'claude-sonnet-4-20250514',max_tokens:maxTok,system:sys,messages:[{role:'user',content:usr}]})
+    headers:{'Content-Type':'application/json'},
+    credentials:'same-origin',
+    body:JSON.stringify(payload||{})
   }).then(function(r){
-    if(!r.ok){return r.json().catch(function(){return{};}).then(function(e){throw new Error((e.error&&e.error.message)||'Erro HTTP '+r.status);});}
-    return r.json();
-  }).then(function(d){return(d.content&&d.content[0]&&d.content[0].text)||'';});
+    return r.json().catch(function(){return{};}).then(function(d){
+      if(!r.ok)throw new Error(d.error||d.message||('Erro HTTP '+r.status));
+      return d;
+    });
+  }).then(function(d){return d.text||'';});
+}
+function callAI(sys,usr,maxTok){
+  return aiRequest({system:sys,prompt:usr,maxTokens:maxTok||1500});
 }
 function callAIwithPDF(sys,b64){
-  return fetch('https://api.anthropic.com/v1/messages',{
-    method:'POST',
-    headers:{'Content-Type':'application/json','anthropic-version':'2023-06-01'},
-    body:JSON.stringify({model:'claude-sonnet-4-20250514',max_tokens:2000,system:sys,messages:[{role:'user',content:[{type:'document',source:{type:'base64',media_type:'application/pdf',data:b64}},{type:'text',text:'Analise este documento e retorne o JSON solicitado.'}]}]})
-  }).then(function(r){
-    if(!r.ok){return r.json().catch(function(){return{};}).then(function(e){throw new Error((e.error&&e.error.message)||'Erro HTTP '+r.status);});}
-    return r.json();
-  }).then(function(d){return(d.content&&d.content[0]&&d.content[0].text)||'';});
+  return aiRequest({
+    system:sys,
+    prompt:'Analise este documento e retorne o JSON solicitado.',
+    documentBase64:b64,
+    mediaType:'application/pdf',
+    maxTokens:2000
+  });
 }
 
 var currentUser=null;
