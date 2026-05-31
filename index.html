@@ -49,6 +49,9 @@ body{background:var(--bg);color:var(--tx);display:flex;flex-direction:column}
 .tb-logo-img{width:34px;height:34px;flex-shrink:0}
 .tb-logo span{font-size:1.05rem;font-weight:700;color:#fff}
 .tb-bc{padding:0 1.1rem;font-size:.7rem;color:var(--t3);font-weight:600;letter-spacing:.07em;text-transform:uppercase}
+.mobile-menu-btn{display:none}
+.mobile-nav-head{display:none}
+.mobile-nav-backdrop{display:none}
 .tb-right{display:flex;align-items:center;gap:.6rem}
 .tb-user{display:flex;align-items:center;gap:.5rem;cursor:pointer;position:relative}
 .tb-uname{font-size:.76rem;font-weight:600;color:var(--tx)}
@@ -242,6 +245,8 @@ textarea{resize:vertical;line-height:1.6}
   .login-body{padding:1.45rem 1.25rem 1.65rem}
   #app-screen{height:auto;min-height:100dvh}
   .topbar{height:auto;min-height:58px;padding:0 .7rem;gap:.45rem}
+  .mobile-menu-btn{display:inline-flex;align-items:center;justify-content:center;gap:6px;width:42px;height:42px;border:1px solid var(--bd2);border-radius:11px;background:#fff;color:var(--navy);font-family:var(--font);font-size:1.2rem;font-weight:700;cursor:pointer;flex-shrink:0}
+  .mobile-menu-btn span{font-size:.72rem;font-weight:700;letter-spacing:.02em}
   .tb-logo{width:auto;min-width:0;background:transparent;padding:.55rem 0;gap:7px}
   .tb-logo span{color:var(--tx);font-size:.92rem}
   .tb-logo-img{width:30px;height:30px}
@@ -250,10 +255,20 @@ textarea{resize:vertical;line-height:1.6}
   .btn-cta{padding:.34rem .58rem;font-size:.68rem}
   .tb-uname{max-width:118px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
   .workspace{display:block;overflow:visible}
-  .sidebar{width:100%;height:auto;display:block;white-space:nowrap;overflow-x:auto;overflow-y:hidden;padding:.45rem;position:sticky;top:0;z-index:45}
-  .sidebar>div:first-child,.sb-sec,.sb-spacer{display:none!important}
-  .sidebar .sb-item{width:auto;display:inline-flex;margin-right:.25rem;padding:.5rem .72rem}
-  .panel{min-height:calc(100dvh - 112px);overflow:visible}
+  body.mobile-nav-open{overflow:hidden}
+  .mobile-nav-backdrop{position:fixed;inset:0;background:rgba(10,20,40,.48);z-index:80}
+  body.mobile-nav-open .mobile-nav-backdrop{display:block}
+  .mobile-nav-head{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:.15rem .1rem .75rem;margin-bottom:.35rem;border-bottom:1px solid rgba(255,255,255,.12);color:#fff}
+  .mobile-nav-head span{font-size:.72rem;font-weight:800;letter-spacing:.1em;text-transform:uppercase;color:rgba(255,255,255,.55)}
+  .mobile-nav-close{width:34px;height:34px;border:1px solid rgba(255,255,255,.18);border-radius:9px;background:rgba(255,255,255,.08);color:#fff;font-size:1.2rem;line-height:1;cursor:pointer}
+  .sidebar{width:min(82vw,310px);height:100dvh;display:flex;flex-direction:column;white-space:normal;overflow-x:hidden;overflow-y:auto;padding:calc(.65rem + env(safe-area-inset-top)) .7rem calc(.85rem + env(safe-area-inset-bottom));position:fixed;top:0;left:0;z-index:90;transform:translateX(-105%);transition:transform .22s ease;box-shadow:18px 0 42px rgba(9,18,38,.3)}
+  body.mobile-nav-open .sidebar{transform:translateX(0)}
+  .sb-role-head{display:none!important}
+  .sb-sec{display:block!important;margin-top:.45rem;padding:.55rem .72rem .28rem}
+  .sb-spacer{display:block!important;min-height:.3rem;flex:1}
+  .sidebar .sb-item{width:100%;display:flex;margin:0 0 .24rem 0;padding:.66rem .8rem;border-radius:10px;font-size:.82rem;white-space:normal}
+  .sidebar .sb-item.on{background:rgba(255,255,255,.18)}
+  .panel{min-height:calc(100dvh - 58px);overflow:visible}
   .panel.on{display:flex}
   .breadcrumb{display:none}
   .ph{padding:.85rem .9rem .2rem}
@@ -273,6 +288,8 @@ textarea{resize:vertical;line-height:1.6}
   .login-card{max-width:100%;box-shadow:0 10px 35px rgba(26,39,68,.14)}
   .login-google,.login-btn{min-height:48px}
   .topbar{padding-right:.55rem}
+  .mobile-menu-btn{width:40px;height:40px}
+  .mobile-menu-btn span{display:none}
   .tb-logo span{display:none}
   .btn-cta span{display:none}
   .tb-user{gap:.35rem}
@@ -386,6 +403,7 @@ textarea{resize:vertical;line-height:1.6}
 <div id="app-screen">
   <div class="topbar">
     <div class="tb-left">
+      <button class="mobile-menu-btn" id="btn-mobile-nav" type="button" aria-label="Abrir menu" aria-expanded="false">&#9776;<span>Menu</span></button>
       <div class="tb-logo"><img class="logo-img tb-logo-img" src="logo.png.png" alt="Endodirect"><span>Endodirect</span></div>
       <div class="tb-bc" id="tb-bc">Dashboard</div>
     </div>
@@ -403,9 +421,11 @@ textarea{resize:vertical;line-height:1.6}
     </div>
   </div>
 
+  <div class="mobile-nav-backdrop" id="mobile-nav-backdrop"></div>
   <div class="workspace">
     <div class="sidebar">
-      <div style="padding:.8rem .8rem .5rem;border-bottom:1px solid rgba(255,255,255,.1);margin-bottom:.35rem"><div style="font-size:.54rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:rgba(255,255,255,.35)" id="sb-role-lbl">Menu</div></div>
+      <div class="mobile-nav-head"><span>Menu</span><button class="mobile-nav-close" id="btn-mobile-nav-close" type="button" aria-label="Fechar menu">&times;</button></div>
+      <div class="sb-role-head" style="padding:.8rem .8rem .5rem;border-bottom:1px solid rgba(255,255,255,.1);margin-bottom:.35rem"><div style="font-size:.54rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:rgba(255,255,255,.35)" id="sb-role-lbl">Menu</div></div>
       <div id="sb-aluno">
         <div class="sb-sec">Estudo</div>
         <button class="sb-item on" data-p="dash">⊞ Dashboard</button>
@@ -1454,6 +1474,17 @@ function startGoogleOAuth(){
 }
 
 var PANEL_LABELS={dash:'Dashboard',quest:'Questões',flash:'Flashcards',mmap:'Mind Map',podcast:'Podcasts',crono:'Cronograma',sr:'Revisão Espaçada',sim:'Simulador',simfull:'Simulado',calc:'Calculadoras',rx:'Prescrição',art:'Resumidor',notas:'Caderno',mural:'Mural',chat:'Chat IA',support:'Suporte',adm:'Painel Admin'};
+function closeMobileNav(){
+  document.body.classList.remove('mobile-nav-open');
+  var b=document.getElementById('btn-mobile-nav');
+  if(b)b.setAttribute('aria-expanded','false');
+}
+function toggleMobileNav(){
+  var open=!document.body.classList.contains('mobile-nav-open');
+  document.body.classList.toggle('mobile-nav-open',open);
+  var b=document.getElementById('btn-mobile-nav');
+  if(b)b.setAttribute('aria-expanded',open?'true':'false');
+}
 function goPanel(id){
   document.querySelectorAll('.panel').forEach(function(p){p.classList.remove('on');});
   var el=document.getElementById('panel-'+id);
@@ -1474,6 +1505,7 @@ function goPanel(id){
   if(id==='simfull'){renderSFPrev();populateInst('sf-inst');}
   if(id==='art')initArtUpload();
   if(id==='adm')renderAdmTab('analytics');
+  closeMobileNav();
 }
 
 function refreshDash(){
@@ -2582,6 +2614,15 @@ document.addEventListener('DOMContentLoaded',function(){
   document.getElementById('tb-user-btn').addEventListener('click',function(e){e.stopPropagation();var m=document.getElementById('user-menu');m.style.display=m.style.display==='block'?'none':'block';});
   document.addEventListener('click',function(){document.getElementById('user-menu').style.display='none';});
   document.getElementById('btn-logout').addEventListener('click',doLogout);
+
+  // MOBILE NAV
+  var mobileNavBtn=document.getElementById('btn-mobile-nav');
+  if(mobileNavBtn)mobileNavBtn.addEventListener('click',function(e){e.stopPropagation();toggleMobileNav();});
+  var mobileNavClose=document.getElementById('btn-mobile-nav-close');
+  if(mobileNavClose)mobileNavClose.addEventListener('click',closeMobileNav);
+  var mobileNavBackdrop=document.getElementById('mobile-nav-backdrop');
+  if(mobileNavBackdrop)mobileNavBackdrop.addEventListener('click',closeMobileNav);
+  document.addEventListener('keydown',function(e){if(e.key==='Escape')closeMobileNav();});
 
   // NAV
   document.querySelectorAll('.sb-item[data-p]').forEach(function(b){b.addEventListener('click',function(){goPanel(b.dataset.p);});});
