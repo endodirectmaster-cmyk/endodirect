@@ -1133,6 +1133,17 @@ function showLoginError(msg){
   var err=document.getElementById('login-err');
   if(err){err.textContent=msg;err.style.display='block';}
 }
+function legacyGooglePromptLogin(){
+  var email=(window.prompt('Informe o e-mail da sua conta Google autorizada:')||'').trim().toLowerCase();
+  if(!email)return;
+  var u=USERS.find(function(x){return x.provider==='google'&&x.email===email;});
+  if(!u){
+    showLoginError('E-mail Google nao autorizado para acesso admin.');
+    return;
+  }
+  document.getElementById('login-err').style.display='none';
+  doLogin(Object.assign({},u,{auth:'google'}));
+}
 function loginFromSupabaseSession(session){
   if(!session||!session.user||!session.user.email)return;
   var email=(session.user.email||'').toLowerCase();
@@ -1157,6 +1168,26 @@ function startSupabaseAuthWatcher(){
 }
 function startGoogleOAuth(){
   var client=getSupabaseClient();
+  if(!client){
+    showLoginError('Supabase ainda nao carregou. Usando acesso temporario por e-mail.');
+    legacyGooglePromptLogin();
+    return;
+  }
+  fetch(SUPABASE_URL+'/auth/v1/settings',{headers:{apikey:SUPABASE_PUBLISHABLE_KEY}})
+    .then(function(r){
+      if(!r.ok)throw new Error('Project URL invalido ou Auth indisponivel.');
+      return client.auth.signInWithOAuth({
+        provider:'google',
+        options:{redirectTo:window.location.origin+window.location.pathname}
+      });
+    })
+    .then(function(res){if(res&&res.error)throw res.error;})
+    .catch(function(e){
+      showLoginError('Confirme o Project URL do Supabase para ativar login Google real. Usando acesso temporario por e-mail.');
+      console.warn('Supabase OAuth unavailable',e);
+      legacyGooglePromptLogin();
+    });
+  return;
   if(!client){
     showLoginError('Supabase ainda não carregou. Atualize a página e tente novamente.');
     return;
