@@ -863,8 +863,12 @@ var CALCS=[
 var USERS=[
   {email:'aluno@endodirect.med.br',pass:'Aluno@2026',name:'Rodolpho',role:'aluno',sub:'Residente'},
   {email:'admin@endodirect.med.br',pass:'Admin@2026',name:'Administrador',role:'admin',sub:'Gestor'},
-  {email:'google',pass:'',name:'Rodolpho',role:'aluno',sub:'Residente'},
+  {email:'nakamura.epm79@gmail.com',pass:null,name:'Nakamura',role:'admin',sub:'Gestor',provider:'google'},
+  {email:'rodolphomend@gmail.com',pass:null,name:'Rodolpho Mendonca',role:'admin',sub:'Gestor',provider:'google'},
+  {email:'drrafaelgiorgi@hotmail.com',pass:null,name:'Rafael Giorgi',role:'admin',sub:'Gestor',provider:'google'},
+  {email:'brunosimiao1906@gmail.com',pass:null,name:'Bruno Simiao',role:'admin',sub:'Gestor',provider:'google'},
 ];
+var GOOGLE_ADMIN_EMAILS=USERS.filter(function(u){return u.provider==='google'&&u.role==='admin';}).map(function(u){return u.email;});
 
 // ── STORAGE EM MEMÓRIA (artefatos não permitem localStorage) ──
 var mem={};
@@ -2059,15 +2063,28 @@ document.addEventListener('DOMContentLoaded',function(){
   var doLoginAttempt=function(){
     var email=(document.getElementById('login-email').value||'').trim().toLowerCase();
     var pass=document.getElementById('login-pass').value||'';
-    var u=USERS.find(function(x){return x.email===email&&x.pass===pass;});
-    if(!u){document.getElementById('login-err').style.display='block';return;}
+    var u=USERS.find(function(x){return x.email===email&&x.pass&&x.pass===pass;});
+    if(!u){var err=document.getElementById('login-err');err.textContent='E-mail ou senha incorretos.';err.style.display='block';return;}
     document.getElementById('login-err').style.display='none';
     doLogin(Object.assign({},u));
+  };
+  var doGoogleLogin=function(){
+    var email=(window.prompt('Informe o e-mail da sua conta Google autorizada:')||'').trim().toLowerCase();
+    if(!email)return;
+    var u=USERS.find(function(x){return x.provider==='google'&&x.email===email;});
+    if(!u){
+      var err=document.getElementById('login-err');
+      err.textContent='E-mail Google não autorizado para acesso admin.';
+      err.style.display='block';
+      return;
+    }
+    document.getElementById('login-err').style.display='none';
+    doLogin(Object.assign({},u,{auth:'google'}));
   };
   document.getElementById('btn-login').addEventListener('click',doLoginAttempt);
   document.getElementById('login-pass').addEventListener('keydown',function(e){if(e.key==='Enter')doLoginAttempt();});
   document.getElementById('login-email').addEventListener('keydown',function(e){if(e.key==='Enter')doLoginAttempt();});
-  document.getElementById('btn-google-login').addEventListener('click',function(){doLogin(Object.assign({},USERS.find(function(x){return x.email==='google';})));});
+  document.getElementById('btn-google-login').addEventListener('click',doGoogleLogin);
   document.getElementById('btn-toggle-pass').addEventListener('click',function(){var p=document.getElementById('login-pass');p.type=p.type==='password'?'text':'password';});
 
   // ONBOARDING
