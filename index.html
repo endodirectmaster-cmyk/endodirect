@@ -21,6 +21,8 @@ body{background:var(--bg);color:var(--tx);display:flex;flex-direction:column}
 .login-hdr{background:linear-gradient(160deg,#1a2744 60%,#2a3f6e);padding:2.6rem 2.4rem 2.1rem;display:flex;flex-direction:column;align-items:center;gap:.7rem}
 .login-logo{display:flex;align-items:center;gap:14px}
 .login-ico{display:flex;align-items:center;justify-content:center}
+.logo-img{display:block;object-fit:contain}
+.login-logo-img{width:80px;height:80px}
 .login-name{font-size:2rem;font-weight:800;color:#fff;letter-spacing:-.02em}
 .login-sub{font-size:.75rem;color:rgba(255,255,255,.5);letter-spacing:.1em;text-transform:uppercase}
 .login-body{padding:2.4rem 2.6rem 2.6rem}
@@ -37,6 +39,7 @@ body{background:var(--bg);color:var(--tx);display:flex;flex-direction:column}
 .topbar{height:52px;background:var(--surface);border-bottom:1px solid var(--bd);display:flex;align-items:center;justify-content:space-between;padding:0 1.2rem 0 0;flex-shrink:0;z-index:50}
 .tb-left{display:flex;align-items:center;height:100%}
 .tb-logo{width:190px;height:100%;background:var(--navy);display:flex;align-items:center;gap:9px;padding:0 1.1rem;flex-shrink:0}
+.tb-logo-img{width:34px;height:34px;flex-shrink:0}
 .tb-logo span{font-size:1.05rem;font-weight:700;color:#fff}
 .tb-bc{padding:0 1.1rem;font-size:.7rem;color:var(--t3);font-weight:600;letter-spacing:.07em;text-transform:uppercase}
 .tb-right{display:flex;align-items:center;gap:.6rem}
@@ -293,7 +296,7 @@ textarea{resize:vertical;line-height:1.6}
 <div id="login-screen">
   <div class="login-card">
     <div class="login-hdr">
-      <div class="login-logo"><div class="login-ico"><div id="logo-login-img" style="width:80px;height:80px;display:flex;align-items:center;justify-content:center"></div></div><div class="login-name">Endodirect</div></div>
+      <div class="login-logo"><div class="login-ico"><img class="logo-img login-logo-img" src="logo.png.png" alt="Endodirect"></div><div class="login-name">Endodirect</div></div>
       <div class="login-sub">Plataforma de educação médica</div>
     </div>
     <div class="login-body">
@@ -320,7 +323,7 @@ textarea{resize:vertical;line-height:1.6}
 <div id="app-screen">
   <div class="topbar">
     <div class="tb-left">
-      <div class="tb-logo"><div id="logo-tb-img" style="width:34px;height:34px;display:flex;align-items:center;justify-content:center"></div><span>Endodirect</span></div>
+      <div class="tb-logo"><img class="logo-img tb-logo-img" src="logo.png.png" alt="Endodirect"><span>Endodirect</span></div>
       <div class="tb-bc" id="tb-bc">Dashboard</div>
     </div>
     <div class="tb-right">
