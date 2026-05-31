@@ -223,6 +223,7 @@ textarea{resize:vertical;line-height:1.6}
 .cat-pill:hover{border-color:var(--blue);color:var(--blue)}
 .cat-pill.on{background:var(--blue-l);border-color:var(--blue);color:var(--blue);font-weight:600}
 </style>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 </head>
 <body>
 <div class="modal-bg" id="onboard-modal">
@@ -870,10 +871,36 @@ var USERS=[
 ];
 var GOOGLE_ADMIN_EMAILS=USERS.filter(function(u){return u.provider==='google'&&u.role==='admin';}).map(function(u){return u.email;});
 
-// ── STORAGE EM MEMÓRIA (artefatos não permitem localStorage) ──
+// ── SUPABASE + STORAGE ──
+var SUPABASE_URL='https://eutizblmrcypzygzczgq.supabase.co';
+var SUPABASE_PUBLISHABLE_KEY='sb_publishable_wm27KaGZ0qKHFjTx80c23A_LMLH7DEU';
+var supabaseClient=null;
+var remoteStateLoaded=false,remoteStateSaveTimer=null,remoteStateWarned=false;
+var REMOTE_STATE_KEYS=['q','fc','mm','notes','crono','sf_results','perf','provas','adm_avisos','adm_questoes','podcasts','user_profile'];
+function getSupabaseClient(){
+  if(supabaseClient)return supabaseClient;
+  if(!window.supabase||!window.supabase.createClient)return null;
+  try{
+    supabaseClient=window.supabase.createClient(SUPABASE_URL,SUPABASE_PUBLISHABLE_KEY,{
+      auth:{persistSession:true,autoRefreshToken:true,detectSessionInUrl:true},
+      global:{headers:{'x-application-name':'endodirect'}}
+    });
+  }catch(e){
+    console.warn('Supabase init failed',e);
+  }
+  return supabaseClient;
+}
 var mem={};
-function lsGet(k){var v=mem['endodirect_v1_'+k];return v!==undefined?v:null;}
-function lsSet(k,v){try{mem['endodirect_v1_'+k]=JSON.parse(JSON.stringify(v));}catch(e){mem['endodirect_v1_'+k]=v;}}
+function lsGet(k){
+  var key='endodirect_v1_'+k;
+  try{var raw=window.localStorage&&localStorage.getItem(key);if(raw!==null)return JSON.parse(raw);}catch(e){}
+  var v=mem[key];return v!==undefined?v:null;
+}
+function lsSet(k,v){
+  var key='endodirect_v1_'+k;
+  try{if(window.localStorage){localStorage.setItem(key,JSON.stringify(v));return;}}catch(e){}
+  try{mem[key]=JSON.parse(JSON.stringify(v));}catch(err){mem[key]=v;}
+}
 
 var DB={
   q:lsGet('q')||[],
@@ -886,13 +913,95 @@ var DB={
 };
 function persist(){
   ['q','fc','mm','notes','crono','sf_results','perf'].forEach(function(k){lsSet(k,DB[k]);});
+  queueRemoteStateSave();
 }
 var provasDB=lsGet('provas')||[];
-function persistProvas(){lsSet('provas',provasDB);}
+function persistProvas(){lsSet('provas',provasDB);queueRemoteStateSave();}
 var admAvisos=lsGet('adm_avisos')||[];
 var admQuestoes=lsGet('adm_questoes')||[];
 var podcasts=lsGet('podcasts')||[];
-function persistPodcasts(){lsSet('podcasts',podcasts);}
+function persistPodcasts(){lsSet('podcasts',podcasts);queueRemoteStateSave();}
+
+function userStatePayload(){
+  return{q:DB.q,fc:DB.fc,mm:DB.mm,notes:DB.notes,crono:DB.crono,sf_results:DB.sf_results,perf:DB.perf,user_profile:lsGet('user_profile')};
+}
+function globalStatePayload(){
+  return{provas:provasDB,adm_avisos:admAvisos,adm_questoes:admQuestoes,podcasts:podcasts};
+}
+function currentStatePayload(){
+  return Object.assign({},userStatePayload(),globalStatePayload());
+}
+function applyStatePayload(payload){
+  payload=payload||{};
+  if(Array.isArray(payload.q))DB.q=payload.q;
+  if(Array.isArray(payload.fc))DB.fc=payload.fc;
+  if(Array.isArray(payload.mm))DB.mm=payload.mm;
+  if(Array.isArray(payload.notes))DB.notes=payload.notes;
+  if(payload.crono!==undefined)DB.crono=payload.crono;
+  if(Array.isArray(payload.sf_results))DB.sf_results=payload.sf_results;
+  if(payload.perf&&typeof payload.perf==='object')DB.perf=payload.perf;
+  if(Array.isArray(payload.provas))provasDB=payload.provas;
+  if(Array.isArray(payload.adm_avisos))admAvisos=payload.adm_avisos;
+  if(Array.isArray(payload.adm_questoes))admQuestoes=payload.adm_questoes;
+  if(Array.isArray(payload.podcasts))podcasts=payload.podcasts;
+  REMOTE_STATE_KEYS.forEach(function(k){if(payload[k]!==undefined)lsSet(k,payload[k]);});
+}
+function refreshAfterRemoteState(){
+  try{refreshDash();}catch(e){}
+  try{renderSavedQ();}catch(e){}
+  try{renderFC();}catch(e){}
+  try{renderMMList();}catch(e){}
+  try{renderPodcasts();}catch(e){}
+  try{renderSavedCrono();}catch(e){}
+  try{renderNoteList();}catch(e){}
+  try{if(currentUser&&currentUser.role==='admin')renderAdmTab(admCurrentTab);}catch(e){}
+}
+function canUseRemoteState(){
+  return !!(currentUser&&currentUser.id&&getSupabaseClient());
+}
+function hydrateRemoteState(){
+  if(!canUseRemoteState()||remoteStateLoaded)return;
+  var client=getSupabaseClient();
+  var userLoad=client.from('endodirect_app_state').select('payload').eq('user_id',currentUser.id).maybeSingle()
+    .then(function(res){if(res.error)throw res.error;if(res.data&&res.data.payload)applyStatePayload(res.data.payload);});
+  var globalLoad=client.from('endodirect_global_state').select('payload').eq('id','main').maybeSingle()
+    .then(function(res){if(res.error)throw res.error;if(res.data&&res.data.payload)applyStatePayload(res.data.payload);});
+  Promise.all([userLoad,globalLoad])
+    .then(function(){
+      remoteStateLoaded=true;
+      refreshAfterRemoteState();
+      notify('Dados sincronizados com Supabase.','ok');
+      queueRemoteStateSave();
+    }).catch(function(e){
+      if(!remoteStateWarned){
+        remoteStateWarned=true;
+        console.warn('Supabase state unavailable',e);
+        notify('Supabase conectado. Execute o SQL de setup para ativar a sincronização.','info');
+      }
+    });
+}
+function queueRemoteStateSave(){
+  if(!canUseRemoteState())return;
+  clearTimeout(remoteStateSaveTimer);
+  remoteStateSaveTimer=setTimeout(saveRemoteState,600);
+}
+function saveRemoteState(){
+  if(!canUseRemoteState())return;
+  var client=getSupabaseClient();
+  var row={user_id:currentUser.id,email:currentUser.email,role:currentUser.role,payload:userStatePayload(),updated_at:new Date().toISOString()};
+  var ops=[client.from('endodirect_app_state').upsert(row,{onConflict:'user_id'}).then(function(res){if(res.error)throw res.error;})];
+  if(currentUser.role==='admin'){
+    ops.push(client.from('endodirect_global_state').upsert({id:'main',payload:globalStatePayload(),updated_by:currentUser.id,updated_at:new Date().toISOString()},{onConflict:'id'}).then(function(res){if(res.error)throw res.error;}));
+  }
+  Promise.all(ops)
+    .catch(function(e){
+      if(!remoteStateWarned){
+        remoteStateWarned=true;
+        console.warn('Supabase save failed',e);
+        notify('Não foi possível salvar no Supabase ainda. Verifique o setup SQL.','err');
+      }
+    });
+}
 
 function esc(s){return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');}
 function ldHTML(){return'<div class="ld"><div class="ld-dots"><span></span><span></span><span></span></div>Gerando…</div>';}
@@ -969,6 +1078,8 @@ function startApp(){
 }
 function doLogin(u){
   currentUser=u;
+  remoteStateLoaded=false;
+  remoteStateWarned=false;
   if(u.role==='aluno'){
     var prof=lsGet('user_profile');
     if(!prof){openOnboard();return;}
@@ -976,6 +1087,7 @@ function doLogin(u){
     currentUser.profile=prof;
   }
   startApp();
+  hydrateRemoteState();
 }
 function openOnboard(){
   document.getElementById('login-screen').style.display='none';
@@ -1006,12 +1118,57 @@ function submitOnboard(){
   currentUser.sub=perfil;currentUser.profile=prof;
   document.getElementById('onboard-modal').style.display='none';
   startApp();
+  queueRemoteStateSave();
 }
 function doLogout(){
+  var client=getSupabaseClient();
+  if(client&&currentUser&&currentUser.auth==='supabase-google'){client.auth.signOut().catch(function(){});}
   currentUser=null;
+  remoteStateLoaded=false;
   document.getElementById('app-screen').style.display='none';
   document.getElementById('login-screen').style.display='flex';
   document.getElementById('user-menu').style.display='none';
+}
+function showLoginError(msg){
+  var err=document.getElementById('login-err');
+  if(err){err.textContent=msg;err.style.display='block';}
+}
+function loginFromSupabaseSession(session){
+  if(!session||!session.user||!session.user.email)return;
+  var email=(session.user.email||'').toLowerCase();
+  var u=USERS.find(function(x){return x.provider==='google'&&x.email===email;});
+  if(!u){
+    showLoginError('E-mail Google não autorizado para acesso admin.');
+    getSupabaseClient().auth.signOut().catch(function(){});
+    return;
+  }
+  document.getElementById('login-err').style.display='none';
+  doLogin(Object.assign({},u,{id:session.user.id,auth:'supabase-google'}));
+}
+function startSupabaseAuthWatcher(){
+  var client=getSupabaseClient();
+  if(!client)return;
+  client.auth.getSession().then(function(res){
+    if(res.data&&res.data.session)loginFromSupabaseSession(res.data.session);
+  });
+  client.auth.onAuthStateChange(function(event,session){
+    if(event==='SIGNED_IN'&&session)loginFromSupabaseSession(session);
+  });
+}
+function startGoogleOAuth(){
+  var client=getSupabaseClient();
+  if(!client){
+    showLoginError('Supabase ainda não carregou. Atualize a página e tente novamente.');
+    return;
+  }
+  client.auth.signInWithOAuth({
+    provider:'google',
+    options:{redirectTo:window.location.origin+window.location.pathname}
+  }).then(function(res){
+    if(res.error)showLoginError('Erro no login Google: '+res.error.message);
+  }).catch(function(e){
+    showLoginError('Erro no login Google: '+e.message);
+  });
 }
 
 var PANEL_LABELS={dash:'Dashboard',quest:'Questões',flash:'Flashcards',mmap:'Mind Map',podcast:'Podcasts',crono:'Cronograma',sr:'Revisão Espaçada',sim:'Simulador',simfull:'Simulado',calc:'Calculadoras',rx:'Prescrição',art:'Resumidor',notas:'Caderno',mural:'Mural',chat:'Chat IA',support:'Suporte',adm:'Painel Admin'};
@@ -1938,7 +2095,7 @@ function admMuralHTML(){
 function admUsersHTML(){
   return'<div class="sec-title" style="margin-bottom:.5rem">Usuários</div>'+USERS.filter(function(u){return u.email!=='google';}).map(function(u){return'<div class="adm-row"><div class="tb-avatar" style="background:var(--navy)">'+u.name.charAt(0)+'</div><div class="adm-row-info"><div class="adm-row-title">'+esc(u.name)+'</div><div class="adm-row-sub">'+esc(u.email)+' • '+esc(u.sub)+'</div></div><span class="tag '+(u.role==='admin'?'tag-pur':'tag-blue')+'">'+esc(u.role)+'</span></div>';}).join('');
 }
-function persistAdm(){lsSet('adm_avisos',admAvisos);lsSet('adm_questoes',admQuestoes);}
+function persistAdm(){lsSet('adm_avisos',admAvisos);lsSet('adm_questoes',admQuestoes);queueRemoteStateSave();}
 function bindAdmTab(tab){
   var body=document.getElementById('adm-body');
   if(tab==='provas'){
@@ -2055,6 +2212,7 @@ document.addEventListener('click',function(e){
 
 // ── DOMContentLoaded: bindings ──
 document.addEventListener('DOMContentLoaded',function(){
+  startSupabaseAuthWatcher();
   // LOGO (imagem original embutida)
   var LOGO_SRC='data:image/png;base64,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';
   var lLogin=document.getElementById('logo-login-img');if(lLogin)lLogin.src=LOGO_SRC;
@@ -2069,6 +2227,8 @@ document.addEventListener('DOMContentLoaded',function(){
     doLogin(Object.assign({},u));
   };
   var doGoogleLogin=function(){
+    startGoogleOAuth();
+    return;
     var email=(window.prompt('Informe o e-mail da sua conta Google autorizada:')||'').trim().toLowerCase();
     if(!email)return;
     var u=USERS.find(function(x){return x.provider==='google'&&x.email===email;});
