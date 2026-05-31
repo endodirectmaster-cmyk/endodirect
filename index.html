@@ -2,7 +2,12 @@
 <html lang="pt-BR">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="theme-color" content="#1a2744">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Endodirect">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="mobile-web-app-capable" content="yes">
 <title>Endodirect — Educação Médica</title>
 <style>
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
@@ -34,6 +39,8 @@ body{background:var(--bg);color:var(--tx);display:flex;flex-direction:column}
 .fld label{font-size:.72rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--t2);display:block;margin-bottom:6px}
 .fld input{width:100%;background:#fff;border:1.5px solid var(--bd2);border-radius:10px;padding:.72rem 1rem;font-family:var(--font);font-size:.95rem;color:var(--tx);outline:none}
 .login-btn{width:100%;background:var(--navy);color:#fff;border:none;border-radius:10px;padding:.92rem;font-size:1.02rem;font-weight:600;cursor:pointer;font-family:var(--font);margin-top:.4rem}
+.login-link{width:100%;background:none;border:none;color:var(--blue);font-family:var(--font);font-size:.78rem;font-weight:600;cursor:pointer;text-align:center;margin-top:.75rem;padding:.25rem}
+.login-link:hover{text-decoration:underline}
 .login-err{background:var(--red-l);border:1px solid #fecaca;border-radius:10px;padding:.6rem .9rem;font-size:.8rem;color:var(--red);margin-bottom:.95rem;display:none}
 #app-screen{display:none;flex-direction:column;height:100%}
 .topbar{height:52px;background:var(--surface);border-bottom:1px solid var(--bd);display:flex;align-items:center;justify-content:space-between;padding:0 1.2rem 0 0;flex-shrink:0;z-index:50}
@@ -222,6 +229,60 @@ textarea{resize:vertical;line-height:1.6}
 .cat-pill{background:#fff;border:1.5px solid var(--bd2);border-radius:99px;padding:.26rem .7rem;font-size:.7rem;font-weight:500;color:var(--t2);cursor:pointer;font-family:var(--font)}
 .cat-pill:hover{border-color:var(--blue);color:var(--blue)}
 .cat-pill.on{background:var(--blue-l);border-color:var(--blue);color:var(--blue);font-weight:600}
+@media (max-width:820px){
+  html,body{height:100%;overflow:auto}
+  body{min-height:100dvh;touch-action:manipulation}
+  #login-screen{align-items:flex-start;overflow:auto;padding:calc(16px + env(safe-area-inset-top)) 14px calc(18px + env(safe-area-inset-bottom))}
+  .login-card{width:100%;max-width:430px;margin:auto;border-radius:20px}
+  .login-hdr{padding:1.65rem 1.25rem 1.3rem}
+  .login-logo{flex-direction:column;text-align:center;gap:8px}
+  .login-logo-img{width:66px;height:66px}
+  .login-name{font-size:1.65rem;letter-spacing:0}
+  .login-sub{text-align:center;font-size:.68rem;line-height:1.45}
+  .login-body{padding:1.45rem 1.25rem 1.65rem}
+  #app-screen{height:auto;min-height:100dvh}
+  .topbar{height:auto;min-height:58px;padding:0 .7rem;gap:.45rem}
+  .tb-logo{width:auto;min-width:0;background:transparent;padding:.55rem 0;gap:7px}
+  .tb-logo span{color:var(--tx);font-size:.92rem}
+  .tb-logo-img{width:30px;height:30px}
+  .tb-bc{display:none}
+  .tb-right{gap:.35rem;margin-left:auto}
+  .btn-cta{padding:.34rem .58rem;font-size:.68rem}
+  .tb-uname{max-width:118px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+  .workspace{display:block;overflow:visible}
+  .sidebar{width:100%;height:auto;display:block;white-space:nowrap;overflow-x:auto;overflow-y:hidden;padding:.45rem;position:sticky;top:0;z-index:45}
+  .sidebar>div:first-child,.sb-sec,.sb-spacer{display:none!important}
+  .sidebar .sb-item{width:auto;display:inline-flex;margin-right:.25rem;padding:.5rem .72rem}
+  .panel{min-height:calc(100dvh - 112px);overflow:visible}
+  .panel.on{display:flex}
+  .breadcrumb{display:none}
+  .ph{padding:.85rem .9rem .2rem}
+  .ph h1{font-size:1.18rem}
+  .pc{max-width:none;padding:.7rem .9rem 4.5rem}
+  .g2,.g3,.g4{grid-template-columns:1fr}
+  .card{padding:.9rem}
+  .card-head,.sec-h,.q-row-top,.mm-item,.adm-row{align-items:flex-start;flex-direction:column}
+  .adm-tab{flex:0 0 auto}
+  .chat-bubble{max-width:92%}
+  .chat-msgs{padding:.8rem .85rem}
+  .chat-input-row{padding:.65rem .8rem calc(.65rem + env(safe-area-inset-bottom))}
+  .modal-bg{align-items:flex-end;padding:0}
+  .modal-box{width:100vw;max-height:92dvh;border-radius:18px 18px 0 0;overflow:auto}
+}
+@media (max-width:560px){
+  .login-card{max-width:100%;box-shadow:0 10px 35px rgba(26,39,68,.14)}
+  .login-google,.login-btn{min-height:48px}
+  .topbar{padding-right:.55rem}
+  .tb-logo span{display:none}
+  .btn-cta span{display:none}
+  .tb-user{gap:.35rem}
+  .tb-uname{max-width:104px;font-size:.72rem}
+  .tb-usub{font-size:.58rem}
+  .tb-avatar{width:29px;height:29px;border-radius:7px}
+  .pc{padding-left:.75rem;padding-right:.75rem}
+  .ph{padding-left:.75rem;padding-right:.75rem}
+  .adm-tab{font-size:.68rem;padding:.28rem .66rem}
+}
 </style>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 </head>
@@ -316,6 +377,7 @@ textarea{resize:vertical;line-height:1.6}
         </div>
       </div>
       <button class="login-btn" id="btn-login">Entrar</button>
+      <button class="login-link" id="btn-forgot-pass" type="button">Esqueci minha senha</button>
       <div style="font-size:.65rem;color:var(--t3);margin-top:.5rem;line-height:1.5">aluno@endodirect.med.br / Aluno@2026<br>admin@endodirect.med.br / Admin@2026</div>
     </div>
   </div>
@@ -863,12 +925,12 @@ var CALCS=[
 
 var USERS=[
   {email:'aluno@endodirect.med.br',pass:'Aluno@2026',name:'Rodolpho',role:'aluno',sub:'Residente'},
-  {email:'admin@endodirect.med.br',pass:'Admin@2026',name:'Administrador',role:'admin',sub:'Gestor'},
-  {email:'nakamura.epm79@gmail.com',pass:null,name:'Nakamura',role:'admin',sub:'Gestor',provider:'google'},
-  {email:'rodolphomend@gmail.com',pass:null,name:'Rodolpho Mendonca',role:'admin',sub:'Gestor',provider:'google'},
-  {email:'drrafaelgiorgi@hotmail.com',pass:null,name:'Rafael Giorgi',role:'admin',sub:'Gestor',provider:'google'},
-  {email:'brunosimiao1906@gmail.com',pass:null,name:'Bruno Simiao',role:'admin',sub:'Gestor',provider:'google'},
-  {email:'endodirectmaster@gmail.com',pass:null,name:'Endodirect Master',role:'admin',sub:'Gestor',provider:'google'},
+  {email:'admin@endodirect.med.br',pass:'Admin@2026',name:'Administrador',role:'admin',sub:'Professor'},
+  {email:'nakamura.epm79@gmail.com',pass:null,name:'Nakamura',role:'admin',sub:'Professor',provider:'google'},
+  {email:'rodolphomend@gmail.com',pass:null,name:'Rodolpho Mendonca',role:'admin',sub:'Professor',provider:'google'},
+  {email:'drrafaelgiorgi@hotmail.com',pass:null,name:'Rafael Giorgi',role:'admin',sub:'Professor',provider:'google'},
+  {email:'brunosimiao1906@gmail.com',pass:null,name:'Bruno Simiao',role:'admin',sub:'Professor',provider:'google'},
+  {email:'endodirectmaster@gmail.com',pass:null,name:'Endodirect Master',role:'admin',sub:'Professor',provider:'google'},
 ];
 var GOOGLE_ADMIN_EMAILS=USERS.filter(function(u){return u.provider==='google'&&u.role==='admin';}).map(function(u){return u.email;});
 
@@ -1064,7 +1126,7 @@ function startApp(){
   document.getElementById('login-screen').style.display='none';
   document.getElementById('app-screen').style.display='flex';
   document.getElementById('tb-uname').textContent=u.name;
-  document.getElementById('tb-usub').textContent=u.sub;
+  document.getElementById('tb-usub').textContent=u.role==='admin'?'Professor':u.sub;
   document.getElementById('tb-avatar').textContent=u.name.charAt(0);
   document.getElementById('um-name').textContent=u.name;
   document.getElementById('um-email').textContent=u.email==='google'?u.name+'@gmail.com':u.email;
@@ -1134,6 +1196,49 @@ function showLoginError(msg){
   var err=document.getElementById('login-err');
   if(err){err.textContent=msg;err.style.display='block';}
 }
+function clearLoginError(){
+  var err=document.getElementById('login-err');
+  if(err)err.style.display='none';
+}
+function isPasswordRecoveryUrl(){
+  return /type=recovery|reset=1/.test(window.location.search+window.location.hash);
+}
+function handlePasswordRecovery(){
+  var client=getSupabaseClient();
+  if(!client)return;
+  var pass=window.prompt('Digite sua nova senha do Endodirect (minimo 8 caracteres):');
+  if(!pass)return;
+  if(pass.length<8){notify('A senha precisa ter pelo menos 8 caracteres.','err');return;}
+  client.auth.updateUser({password:pass}).then(function(res){
+    if(res.error)throw res.error;
+    notify('Senha atualizada com sucesso. Entre novamente.','ok');
+    return client.auth.signOut();
+  }).catch(function(e){
+    showLoginError('Nao foi possivel atualizar a senha: '+e.message);
+  });
+}
+function forgotPassword(){
+  var email=(document.getElementById('login-email').value||'').trim().toLowerCase();
+  if(!email){
+    showLoginError('Informe seu e-mail para recuperar a senha.');
+    document.getElementById('login-email').focus();
+    return;
+  }
+  var client=getSupabaseClient();
+  if(!client){
+    showLoginError('Recuperacao de senha indisponivel no momento. Atualize a pagina e tente novamente.');
+    return;
+  }
+  clearLoginError();
+  client.auth.resetPasswordForEmail(email,{redirectTo:window.location.origin+window.location.pathname+'?reset=1'})
+    .then(function(res){
+      if(res.error)throw res.error;
+      notify('Se esta conta existir, enviaremos o link de recuperacao.','ok');
+    })
+    .catch(function(e){
+      showLoginError('Nao foi possivel enviar a recuperacao: '+e.message);
+    });
+}
 function legacyGooglePromptLogin(){
   var email=(window.prompt('Informe o e-mail da sua conta Google autorizada:')||'').trim().toLowerCase();
   if(!email)return;
@@ -1161,9 +1266,11 @@ function startSupabaseAuthWatcher(){
   var client=getSupabaseClient();
   if(!client)return;
   client.auth.getSession().then(function(res){
+    if(isPasswordRecoveryUrl())return;
     if(res.data&&res.data.session)loginFromSupabaseSession(res.data.session);
   });
   client.auth.onAuthStateChange(function(event,session){
+    if(event==='PASSWORD_RECOVERY'){handlePasswordRecovery();return;}
     if(event==='SIGNED_IN'&&session)loginFromSupabaseSession(session);
   });
 }
@@ -2277,6 +2384,7 @@ document.addEventListener('DOMContentLoaded',function(){
   document.getElementById('login-pass').addEventListener('keydown',function(e){if(e.key==='Enter')doLoginAttempt();});
   document.getElementById('login-email').addEventListener('keydown',function(e){if(e.key==='Enter')doLoginAttempt();});
   document.getElementById('btn-google-login').addEventListener('click',doGoogleLogin);
+  document.getElementById('btn-forgot-pass').addEventListener('click',forgotPassword);
   document.getElementById('btn-toggle-pass').addEventListener('click',function(){var p=document.getElementById('login-pass');p.type=p.type==='password'?'text':'password';});
 
   // ONBOARDING
