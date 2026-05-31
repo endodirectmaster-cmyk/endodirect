@@ -484,6 +484,7 @@ textarea{resize:vertical;line-height:1.6}
         <button class="sb-item" data-p="flash">🃏 Flashcards</button>
         <button class="sb-item" data-p="mmap">✦ Mind Map</button>
         <button class="sb-item" data-p="podcast">🎧 Podcasts</button>
+        <button class="sb-item" data-p="cursos">🎬 Cursos</button>
         <button class="sb-item" data-p="crono">📅 Cronograma</button>
         <button class="sb-item" data-p="sr">🔁 Revisão Espaçada</button>
         <div class="sb-sec">Clínica</div>
@@ -617,6 +618,16 @@ textarea{resize:vertical;line-height:1.6}
       <div class="pc">
         <div id="pod-filter-row" style="display:flex;flex-wrap:wrap;gap:.3rem;margin-bottom:.85rem"></div>
         <div id="pod-list" style="display:flex;flex-direction:column;gap:8px"></div>
+      </div>
+    </div>
+
+    <div class="panel" id="panel-cursos">
+      <div class="breadcrumb">Dashboard <b>/ Cursos</b></div>
+      <div class="ph"><h1>Cursos</h1><p>Videoaulas publicadas pelo professor, organizadas por subespecialidade.</p></div>
+      <div class="pc">
+        <div id="curso-filter-row" style="display:flex;flex-wrap:wrap;gap:.3rem;margin-bottom:.85rem"></div>
+        <div id="curso-player" style="display:none;margin-bottom:.85rem"></div>
+        <div id="curso-list" class="g2" style="align-items:start"></div>
       </div>
     </div>
 
@@ -1115,6 +1126,9 @@ function refreshAfterRemoteState(){
   try{renderFC();}catch(e){}
   try{renderMMList();}catch(e){}
   try{renderPodcasts();}catch(e){}
+  try{renderCursosAluno();}catch(e){}
+  try{initMural();}catch(e){}
+  try{updateProvaInfo();}catch(e){}
   try{renderSavedCrono();}catch(e){}
   try{renderNoteList();}catch(e){}
   try{if(currentUser&&currentUser.role==='admin')renderAdmSec(admCurrentSec||'analytics');}catch(e){}
@@ -1572,7 +1586,7 @@ function startGoogleOAuth(){
   });
 }
 
-var PANEL_LABELS={dash:'Dashboard',quest:'Questões',flash:'Flashcards',mmap:'Mind Map',podcast:'Podcasts',crono:'Cronograma',sr:'Revisão Espaçada',sim:'Simulador',simfull:'Simulado',calc:'Calculadoras',rx:'Prescrição',art:'Resumidor',notas:'Caderno',mural:'Mural',chat:'Chat IA',support:'Suporte',adm:'Painel Admin'};
+var PANEL_LABELS={dash:'Dashboard',quest:'Questões',flash:'Flashcards',mmap:'Mind Map',podcast:'Podcasts',cursos:'Cursos',crono:'Cronograma',sr:'Revisão Espaçada',sim:'Simulador',simfull:'Simulado',calc:'Calculadoras',rx:'Prescrição',art:'Resumidor',notas:'Caderno',mural:'Mural',chat:'Chat IA',support:'Suporte',adm:'Painel Admin'};
 function closeMobileNav(){
   document.body.classList.remove('mobile-nav-open');
   var b=document.getElementById('btn-mobile-nav');
@@ -1607,6 +1621,7 @@ function goPanel(id){
   if(id==='flash')renderFC();
   if(id==='mmap')renderMMList();
   if(id==='podcast')renderPodcasts();
+  if(id==='cursos')renderCursosAluno();
   if(id==='crono')initCrono();
   if(id==='sr')renderSR();
   if(id==='calc')initCalc();
@@ -1941,6 +1956,30 @@ function renderPodcasts(){
   var list=podFilter?podcasts.filter(function(p){return p.area===podFilter;}):podcasts;
   if(!list.length){el.innerHTML='<div class="empty">Nenhum podcast disponível ainda. O admin pode adicionar episódios.</div>';return;}
   el.innerHTML=list.map(function(p){return'<div class="card"><div style="display:flex;align-items:flex-start;gap:.8rem"><div style="width:46px;height:46px;border-radius:10px;background:var(--navy);display:flex;align-items:center;justify-content:center;font-size:1.3rem;flex-shrink:0">🎧</div><div style="flex:1;min-width:0"><div style="font-size:.85rem;font-weight:700;color:var(--tx);margin-bottom:2px">'+esc(p.title)+'</div><div style="font-size:.68rem;color:var(--t3);margin-bottom:.4rem">'+(p.area?'<span class="tag tag-blue" style="margin-right:5px">'+esc(p.area)+'</span>':'')+esc(p.desc||'')+'</div><audio controls preload="none" style="width:100%;height:36px" src="'+p.audio+'"></audio></div></div></div>';}).join('');
+}
+
+// ── CURSOS (aluno) ──
+var cursoFilter='';
+function renderCursosAluno(){
+  var data=Array.isArray(admCursos)?admCursos:[];
+  var frow=document.getElementById('curso-filter-row');
+  var cats={};data.forEach(function(c){if(c.sub)cats[c.sub]=(cats[c.sub]||0)+1;});
+  if(frow)frow.innerHTML='<button class="cat-pill'+(cursoFilter===''?' on':'')+'" data-cursofilter="">Todos ('+data.length+')</button>'+Object.keys(cats).map(function(c){return'<button class="cat-pill'+(cursoFilter===c?' on':'')+'" data-cursofilter="'+esc(c)+'">'+esc(c)+' ('+cats[c]+')</button>';}).join('');
+  var el=document.getElementById('curso-list');if(!el)return;
+  var list=cursoFilter?data.filter(function(c){return c.sub===cursoFilter;}):data;
+  if(!list.length){el.innerHTML='<div class="empty" style="grid-column:1/-1">Nenhuma videoaula '+(cursoFilter?'nesta subespecialidade':'disponível ainda')+'.</div>';return;}
+  el.innerHTML=list.map(function(c){
+    var i=data.indexOf(c);
+    return '<div class="card"><div style="display:flex;align-items:flex-start;gap:.8rem"><div style="width:46px;height:46px;border-radius:10px;background:var(--navy);display:flex;align-items:center;justify-content:center;font-size:1.25rem;flex-shrink:0">🎬</div><div style="flex:1;min-width:0"><div style="font-size:.85rem;font-weight:700;color:var(--tx);margin-bottom:2px">'+esc(c.title||'Videoaula')+'</div><div style="display:flex;flex-wrap:wrap;gap:.3rem;margin:.25rem 0 .45rem">'+(c.sub?'<span class="tag tag-blue">'+esc(c.sub)+'</span>':'')+(c.modulo?'<span class="tag tag-pur">'+esc(c.modulo)+'</span>':'')+(c.dur?'<span class="tag tag-gold">'+esc(c.dur)+'</span>':'')+'</div>'+(c.desc?'<div style="font-size:.73rem;color:var(--t2);line-height:1.55;margin-bottom:.55rem">'+esc(c.desc)+'</div>':'')+'<button class="btn btn-primary btn-sm" data-curso-play="'+i+'">▶ Assistir</button></div></div></div>';
+  }).join('');
+}
+function playCursoAluno(i){
+  var data=Array.isArray(admCursos)?admCursos:[];
+  var c=data[i];if(!c)return;
+  var box=document.getElementById('curso-player');if(!box)return;
+  box.style.display='block';
+  box.innerHTML='<div class="card"><div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:.55rem;gap:.7rem"><span style="font-size:.9rem;font-weight:700">'+esc(c.title||'Videoaula')+'</span><button class="btn btn-ghost btn-sm" id="curso-player-close">✕ Fechar</button></div><div style="background:#000;border-radius:var(--r);overflow:hidden">'+playerEmbed(c)+'</div>'+(c.desc?'<div style="font-size:.76rem;color:var(--t2);line-height:1.6;margin-top:.55rem">'+esc(c.desc)+'</div>':'')+'</div>';
+  var panel=document.getElementById('panel-cursos');if(panel)panel.scrollTop=0;
 }
 
 // ── CRONOGRAMA ──
@@ -3123,6 +3162,10 @@ document.addEventListener('click',function(e){
   var mmd=c('[data-mmdel]');if(mmd){DB.mm.splice(parseInt(mmd.dataset.mmdel),1);persist();renderMMList();refreshDash();return;}
   // podcasts
   var pf=c('[data-podfilter]');if(pf){podFilter=pf.dataset.podfilter;renderPodcasts();return;}
+  // cursos
+  var cf=c('[data-cursofilter]');if(cf){cursoFilter=cf.dataset.cursofilter;renderCursosAluno();return;}
+  var cp=c('[data-curso-play]');if(cp){playCursoAluno(parseInt(cp.dataset.cursoPlay));return;}
+  if(c('#curso-player-close')){var bx=document.getElementById('curso-player');if(bx){bx.style.display='none';bx.innerHTML='';}return;}
   // calc
   var cc=c('[data-calc]');if(cc){openCalc(cc.dataset.calc);return;}
   // sim
