@@ -1191,7 +1191,15 @@ function persist(){
 }
 var provasDB=lsGet('provas')||[];
 function persistProvas(){lsSet('provas',provasDB);queueRemoteStateSave();}
+function defaultMuralAvisos(){
+  var now=Date.now();
+  return [
+    {titulo:'Radar diario de Endocrinologia ativado',tipo:'Radar',fonte:'Endodirect',texto:'A curadoria automatica busca diariamente artigos recentes e relevantes nas principais revistas de endocrinologia e metabolismo. Os destaques entram aqui em formato de cards para leitura rapida.',at:now-3600000,autoSeed:true,sourceId:'seed:radar-endocrinologia'},
+    {titulo:'Como acompanhar os destaques cientificos',tipo:'Aviso',fonte:'Endodirect',texto:'Use este mural para revisar atualizacoes clinicas, artigos comentados, comunicados do curso e leituras essenciais. Os cards com link abrem a fonte original em uma nova aba.',at:now-7200000,autoSeed:true,sourceId:'seed:como-usar-mural'}
+  ];
+}
 var admAvisos=lsGet('adm_avisos')||[];
+if(!admAvisos.length)admAvisos=defaultMuralAvisos();
 var admQuestoes=lsGet('adm_questoes')||[];
 var podcasts=lsGet('podcasts')||[];
 function persistPodcasts(){lsSet('podcasts',podcasts);queueRemoteStateSave();}
@@ -1215,7 +1223,7 @@ function applyStatePayload(payload){
   if(Array.isArray(payload.sf_results))DB.sf_results=payload.sf_results;
   if(payload.perf&&typeof payload.perf==='object')DB.perf=payload.perf;
   if(Array.isArray(payload.provas))provasDB=payload.provas;
-  if(Array.isArray(payload.adm_avisos))admAvisos=payload.adm_avisos;
+  if(Array.isArray(payload.adm_avisos))admAvisos=payload.adm_avisos.length?payload.adm_avisos:defaultMuralAvisos();
   if(Array.isArray(payload.adm_questoes))admQuestoes=payload.adm_questoes;
   if(Array.isArray(payload.podcasts))podcasts=payload.podcasts;
   if(Array.isArray(payload.adm_cursos))admCursos=payload.adm_cursos;
@@ -2429,7 +2437,6 @@ function initMural(){
   var tema=muralFilter||'Todos os temas';
   var options='<option value="">Todos</option>'+fontes.map(function(f){return'<option value="'+esc(f)+'">'+esc(f)+'</option>';}).join('');
   el.innerHTML='<div class="mural-shell">'
-    +'<span class="mural-status">Supabase: Conectado</span>'
     +'<section class="mural-hero"><div class="mural-eyebrow">Avisos para alunos</div><h2>Calendário, notícias e leituras essenciais</h2><p>Acompanhe prazos, julgados recentes, atualizações do curso e temas úteis para estudo dirigido. Os links abrem as fontes oficiais.</p></section>'
     +'<section class="mural-filter-card"><div class="mural-filter-main"><label class="mural-filter-field"><span class="mural-filter-label">Tema / Fonte</span><select class="mural-filter-select" id="mural-filter">'+options+'</select></label><span class="mural-count-pill">'+esc(count)+'</span><span class="mural-theme-pill">'+esc(tema)+'</span></div><button class="btn btn-outline" id="mural-clear" type="button">Limpar filtro</button></section>'
     +'<section class="mural-grid">'+(avisos.length?avisos.map(noticeHTML).join(''):'<div class="empty mural-empty">Nenhum aviso encontrado para este filtro.</div>')+'</section>'
