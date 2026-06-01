@@ -166,6 +166,12 @@ textarea{resize:vertical;line-height:1.6}
 .sr-hard{background:#fef9c3;color:#ca8a04}
 .sr-again{background:var(--red-l);color:var(--red)}
 .mm-item{background:var(--surface);border:1px solid var(--bd);border-radius:var(--r);padding:.75rem .9rem;display:flex;align-items:center;justify-content:space-between;gap:.7rem}
+.mm-gen-card{padding:1rem 1.1rem}
+.mm-generate-row{display:grid;grid-template-columns:minmax(0,1fr) max-content;gap:8px;align-items:end}
+.mm-live-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:.55rem;flex-wrap:wrap;gap:.45rem}
+.mm-live-actions{display:flex;gap:5px;align-items:center}
+.mm-map-wrap{background:#f5f6fa;border:1px solid var(--bd);border-radius:var(--r);overflow:auto;padding:0;min-height:640px;max-height:calc(100vh - 210px)}
+.mm-svg-stage{min-width:1180px;min-height:640px}
 .crono-day{background:var(--surface);border:1px solid var(--bd);border-radius:var(--r);padding:.8rem .95rem;margin-bottom:.5rem}
 .crono-day-title{font-size:.76rem;font-weight:700;color:var(--navy);margin-bottom:.5rem;text-transform:uppercase;letter-spacing:.05em}
 .crono-sess{display:flex;align-items:center;gap:.6rem;padding:.42rem .65rem;background:var(--s2);border-radius:var(--rs);margin-bottom:3px;font-size:.77rem}
@@ -374,6 +380,10 @@ textarea{resize:vertical;line-height:1.6}
   #mural-clear{width:100%;justify-content:center;margin-top:.65rem;min-height:40px}
   .mural-grid{grid-template-columns:1fr;gap:.75rem}
   .mural-card{min-height:0;padding:1rem}
+  .mm-generate-row{grid-template-columns:1fr}
+  .mm-generate-row .btn{width:100%;justify-content:center}
+  .mm-map-wrap{min-height:560px;max-height:68vh}
+  .mm-svg-stage{min-width:980px}
   .card{padding:.9rem}
   .card-head,.sec-h,.q-row-top,.mm-item,.adm-row{align-items:flex-start;flex-direction:column}
   .adm-tab{flex:0 0 auto}
@@ -683,18 +693,18 @@ textarea{resize:vertical;line-height:1.6}
       <div class="breadcrumb">Dashboard <b>/ Mind Map</b></div>
       <div class="ph"><h1>Mind Map</h1></div>
       <div class="pc">
-        <div class="gen-box">
-          <div style="display:flex;gap:8px;align-items:flex-end">
+        <div class="gen-box mm-gen-card">
+          <div class="mm-generate-row">
             <div style="flex:1"><label class="flbl">Tema</label><input type="text" id="mm-topic" placeholder="Ex: Hipotireoidismo…"></div>
             <button class="btn btn-primary" id="btn-mmgen">▶ Gerar</button>
           </div>
         </div>
         <div id="mm-live" style="display:none;margin-bottom:.85rem">
-          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:.55rem;flex-wrap:wrap;gap:.45rem">
+          <div class="mm-live-head">
             <span style="font-size:.87rem;font-weight:600;color:var(--tx)" id="mm-live-title"></span>
             <div style="display:flex;gap:5px"><button class="btn btn-primary btn-sm" id="btn-mm-save">💾 Salvar</button><button class="btn btn-outline btn-sm" id="btn-mm-edit">✏️ Editar</button><button class="btn btn-ghost btn-sm" id="btn-mm-close">✕</button></div>
           </div>
-          <div style="background:#f5f6fa;border:1px solid var(--bd);border-radius:var(--r);overflow:auto;padding:.9rem;min-height:280px" id="mm-svg-wrap"><div id="mm-svg"></div></div>
+          <div class="mm-map-wrap" id="mm-svg-wrap"><div class="mm-svg-stage" id="mm-svg"></div></div>
           <div id="mm-edit-panel" style="display:none;margin-top:.75rem;border:1px solid var(--bd);border-radius:var(--r);background:var(--surface);padding:.9rem 1rem">
             <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:.6rem">
               <span style="font-size:.68rem;font-weight:700;letter-spacing:.07em;text-transform:uppercase;color:var(--t2)">✏️ Editar mapa</span>
@@ -1205,12 +1215,25 @@ function persistProvas(){lsSet('provas',provasDB);queueRemoteStateSave();}
 function defaultMuralAvisos(){
   var now=Date.now();
   return [
-    {titulo:'Radar diario de Endocrinologia ativado',tipo:'Radar',fonte:'Endodirect',texto:'A curadoria automatica busca diariamente artigos recentes e relevantes nas principais revistas de endocrinologia e metabolismo. Os destaques entram aqui em formato de cards para leitura rapida.',at:now-3600000,autoSeed:true,sourceId:'seed:radar-endocrinologia'},
-    {titulo:'Como acompanhar os destaques cientificos',tipo:'Aviso',fonte:'Endodirect',texto:'Use este mural para revisar atualizacoes clinicas, artigos comentados, comunicados do curso e leituras essenciais. Os cards com link abrem a fonte original em uma nova aba.',at:now-7200000,autoSeed:true,sourceId:'seed:como-usar-mural'}
+    {titulo:'Intrapartum and Early Postpartum Use of Automated Insulin Delivery in Type 1 Diabetes: A Prespecified Analysis of the CIRCUIT Randomized Controlled Trial.',tipo:'Artigo',fonte:'Diabetes Care',link:'https://doi.org/10.2337/dc26-0470',texto:'Ensaio clinico. Analise pre-especificada do estudo CIRCUIT avaliou efetividade e seguranca de sistema automatizado de entrega de insulina no intraparto e pos-parto inicial em diabetes tipo 1. Por que importa: pode orientar discussoes sobre tecnologia, gestacao e transicao de cuidados glicemicos em cenarios de alto risco. Cautela: revisar criterios de inclusao, desfechos e aplicabilidade antes de extrapolar para todos os servicos.',at:now-2400000,auto:true,sourceId:'pubmed:42201836',pmid:'42201836',publicationDate:'2026 May 27'},
+    {titulo:'DiaBetter Together: Outcomes of a Randomized Controlled Trial Evaluating a Peer Mentor Behavioral Intervention for Young Adults With Type 1 Diabetes During the Transfer From Pediatric to Adult Care.',tipo:'Artigo',fonte:'Diabetes Care',link:'https://doi.org/10.2337/dc26-0395',texto:'Ensaio clinico randomizado avaliou uma intervencao comportamental com mentores pares durante a transferencia do cuidado pediatrico para o adulto em jovens com diabetes tipo 1. Por que importa: reforca estrategias para reduzir perda de seguimento e melhorar suporte em uma fase vulneravel do cuidado. Cautela: confirmar intensidade da intervencao e viabilidade local antes de incorporar ao fluxo assistencial.',at:now-1200000,auto:true,sourceId:'pubmed:42201336',pmid:'42201336',publicationDate:'2026 May 27'}
   ];
 }
-var admAvisos=lsGet('adm_avisos')||[];
-if(!admAvisos.length)admAvisos=defaultMuralAvisos();
+function muralNoticeKey(a){
+  a=a||{};
+  return String(a.sourceId||a.link||a.titulo||'').trim().toLowerCase();
+}
+function mergeRadarAvisos(list){
+  var merged=Array.isArray(list)?list.slice():[];
+  var seen={};
+  merged.forEach(function(a){var k=muralNoticeKey(a);if(k)seen[k]=true;});
+  defaultMuralAvisos().forEach(function(a){
+    var k=muralNoticeKey(a);
+    if(k&&!seen[k]){merged.push(a);seen[k]=true;}
+  });
+  return merged;
+}
+var admAvisos=mergeRadarAvisos(lsGet('adm_avisos')||[]);
 var admQuestoes=lsGet('adm_questoes')||[];
 var podcasts=lsGet('podcasts')||[];
 function persistPodcasts(){lsSet('podcasts',podcasts);queueRemoteStateSave();}
@@ -1234,7 +1257,7 @@ function applyStatePayload(payload){
   if(Array.isArray(payload.sf_results))DB.sf_results=payload.sf_results;
   if(payload.perf&&typeof payload.perf==='object')DB.perf=payload.perf;
   if(Array.isArray(payload.provas))provasDB=payload.provas;
-  if(Array.isArray(payload.adm_avisos))admAvisos=payload.adm_avisos.length?payload.adm_avisos:defaultMuralAvisos();
+  if(Array.isArray(payload.adm_avisos))admAvisos=mergeRadarAvisos(payload.adm_avisos);
   if(Array.isArray(payload.adm_questoes))admQuestoes=payload.adm_questoes;
   if(Array.isArray(payload.podcasts))podcasts=payload.podcasts;
   if(Array.isArray(payload.adm_cursos))admCursos=payload.adm_cursos;
@@ -1275,7 +1298,6 @@ function hydrateRemoteState(){
       if(!remoteStateWarned){
         remoteStateWarned=true;
         console.warn('Supabase state unavailable',e);
-        notify('Supabase conectado. Execute o SQL de setup para ativar a sincronização.','info');
       }
     });
 }
@@ -2023,27 +2045,35 @@ function buildSVG(data){
   data=normalizeMMData(data);
   if(!data.root)return'';
   var branches=data.branches||[];
-  var totalLeaves=0;branches.forEach(function(b){totalLeaves+=Math.max(1,(b.leaves||[]).length);});
-  var W=920,RX=115,BX=320,LX=530,LW=350,lH=34,bPad=24;
-  var H=Math.max(500,totalLeaves*lH+branches.length*bPad+100);
-  var svg='<svg xmlns="http://www.w3.org/2000/svg" width="'+W+'" height="'+H+'" viewBox="0 0 '+W+' '+H+'" style="min-width:'+W+'px">';
-  var rLines=wrapTxt(data.root,14),rH=Math.max(50,rLines.length*18+16),rW=160,rY=H/2,c0=BCOLORS[0];
-  svg+='<rect x="'+(RX-rW/2)+'" y="'+(rY-rH/2)+'" width="'+rW+'" height="'+rH+'" rx="12" fill="'+c0+'20" stroke="'+c0+'" stroke-width="2.5"/>';
-  svg+=svgTxt(rLines,RX,rY,13,'#1a2744','700');
-  var runY=60;
-  var brYs=branches.map(function(b){var lc=Math.max(1,(b.leaves||[]).length);var by=runY+lc*lH/2;runY+=lc*lH+bPad;return by;});
+  var counts=branches.map(function(b){return Math.max(1,(b.leaves||[]).length);});
+  var totalLeaves=counts.reduce(function(s,n){return s+n;},0);
+  var maxLeaves=counts.reduce(function(m,n){return Math.max(m,n);},1);
+  var W=1240,RX=150,BX=430,LX=650,LW=430,lH=34,bPad=58;
+  var H=Math.max(680,branches.length*122+170,totalLeaves*18+360,maxLeaves*lH+350);
+  var rootY=Math.min(H-82,Math.max(505,Math.round(H*.76)));
+  var svg='<svg xmlns="http://www.w3.org/2000/svg" width="'+W+'" height="'+H+'" viewBox="0 0 '+W+' '+H+'" style="min-width:'+W+'px;display:block">';
+  svg+='<defs><filter id="mmShadow" x="-20%" y="-20%" width="140%" height="140%"><feDropShadow dx="0" dy="4" stdDeviation="5" flood-color="#1a2744" flood-opacity=".08"/></filter></defs>';
+  var rLines=wrapTxt(data.root,18),rH=Math.max(62,rLines.length*18+18),rW=210,rY=rootY,c0=BCOLORS[0];
+  svg+='<rect x="'+(RX-rW/2)+'" y="'+(rY-rH/2)+'" width="'+rW+'" height="'+rH+'" rx="15" fill="'+c0+'17" stroke="'+c0+'" stroke-width="3" filter="url(#mmShadow)"/>';
+  svg+=svgTxt(rLines,RX,rY,13,'#1a2744','800');
+  var topY=112;
+  var bottomY=Math.min(H-105,Math.max(rootY+265,topY+Math.max(0,branches.length-1)*118));
+  var brYs=branches.map(function(b,bi){
+    if(branches.length<=1)return Math.max(topY+80,rootY-185);
+    return topY+((bottomY-topY)*bi)/(branches.length-1);
+  });
   branches.forEach(function(b,bi){
     var col=BCOLORS[bi%BCOLORS.length],by=brYs[bi],cpx=(RX+rW/2+BX)/2;
-    svg+='<path d="M'+(RX+rW/2)+' '+rY+' C'+cpx+' '+rY+' '+cpx+' '+by+' '+BX+' '+by+'" fill="none" stroke="'+col+'" stroke-width="2.2" opacity=".8"/>';
-    var bLines=wrapTxt(b.label||'',16),bW=175,bH=Math.max(38,bLines.length*17+14);
-    svg+='<rect x="'+BX+'" y="'+(by-bH/2)+'" width="'+bW+'" height="'+bH+'" rx="9" fill="'+col+'20" stroke="'+col+'" stroke-width="1.8"/>';
-    svg+=svgTxt(bLines,BX+bW/2,by,12,col,'700');
+    svg+='<path d="M'+(RX+rW/2)+' '+rY+' C'+cpx+' '+rY+' '+(cpx-18)+' '+by+' '+BX+' '+by+'" fill="none" stroke="'+col+'" stroke-width="3" opacity=".72"/>';
+    var bLines=wrapTxt(b.label||'',20),bW=220,bH=Math.max(48,bLines.length*17+16);
+    svg+='<rect x="'+BX+'" y="'+(by-bH/2)+'" width="'+bW+'" height="'+bH+'" rx="12" fill="'+col+'16" stroke="'+col+'" stroke-width="2.2" filter="url(#mmShadow)"/>';
+    svg+=svgTxt(bLines,BX+bW/2,by,12,col,'800');
     (b.leaves||[]).forEach(function(lf,li){
       var lc=Math.max(1,(b.leaves||[]).length),lStartY=by-(lc-1)*lH/2,ly=lStartY+li*lH;
-      svg+='<path d="M'+(BX+bW)+' '+by+' C'+((BX+bW+LX)/2)+' '+by+' '+((BX+bW+LX)/2)+' '+ly+' '+LX+' '+ly+'" fill="none" stroke="'+col+'" stroke-width="1.4" opacity=".55"/>';
-      var lfLines=wrapTxt(lf||'',42),lfH=Math.max(22,lfLines.length*15+8);
-      svg+='<rect x="'+LX+'" y="'+(ly-lfH/2)+'" width="'+LW+'" height="'+lfH+'" rx="7" fill="'+col+'0f" stroke="'+col+'55" stroke-width="1"/>';
-      svg+=svgTxt(lfLines,LX+LW/2,ly,11,col,'500');
+      svg+='<path d="M'+(BX+bW)+' '+by+' C'+((BX+bW+LX)/2)+' '+by+' '+((BX+bW+LX)/2)+' '+ly+' '+LX+' '+ly+'" fill="none" stroke="'+col+'" stroke-width="1.55" opacity=".55"/>';
+      var lfLines=wrapTxt(lf||'',38),lfH=Math.max(25,lfLines.length*15+9);
+      svg+='<rect x="'+LX+'" y="'+(ly-lfH/2)+'" width="'+LW+'" height="'+lfH+'" rx="8" fill="'+col+'0f" stroke="'+col+'55" stroke-width="1.1"/>';
+      svg+=svgTxt(lfLines,LX+LW/2,ly,11,col,'600');
     });
   });
   svg+='</svg>';
