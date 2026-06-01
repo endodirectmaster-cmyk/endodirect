@@ -1212,19 +1212,68 @@ function persist(){
 }
 var provasDB=lsGet('provas')||[];
 function persistProvas(){lsSet('provas',provasDB);queueRemoteStateSave();}
+var MURAL_SOURCE_FILTERS=[
+  'Diabetes Care',
+  'The New England Journal of Medicine',
+  'Journal of Clinical Endocrinology & Metabolism',
+  'Endocrine Reviews',
+  'Obesity',
+  'Nature Reviews Endocrinology',
+  'The Lancet Diabetes & Endocrinology'
+];
+function normalizeMuralSource(source){
+  var s=String(source||'').trim();
+  var map={
+    'NEJM':'The New England Journal of Medicine',
+    'N Engl J Med':'The New England Journal of Medicine',
+    'The Journal of clinical endocrinology and metabolism':'Journal of Clinical Endocrinology & Metabolism',
+    'J Clin Endocrinol Metab':'Journal of Clinical Endocrinology & Metabolism',
+    'JCEM':'Journal of Clinical Endocrinology & Metabolism',
+    'Endocr Rev':'Endocrine Reviews',
+    'Obesity (Silver Spring, Md.)':'Obesity',
+    'Obesity (Silver Spring)':'Obesity'
+  };
+  return map[s]||s;
+}
 function defaultMuralAvisos(){
   var now=Date.now();
   return [
     {titulo:'Intrapartum and Early Postpartum Use of Automated Insulin Delivery in Type 1 Diabetes: A Prespecified Analysis of the CIRCUIT Randomized Controlled Trial.',tipo:'Artigo',fonte:'Diabetes Care',link:'https://doi.org/10.2337/dc26-0470',texto:'Ensaio clinico. Analise pre-especificada do estudo CIRCUIT avaliou efetividade e seguranca de sistema automatizado de entrega de insulina no intraparto e pos-parto inicial em diabetes tipo 1. Por que importa: pode orientar discussoes sobre tecnologia, gestacao e transicao de cuidados glicemicos em cenarios de alto risco. Cautela: revisar criterios de inclusao, desfechos e aplicabilidade antes de extrapolar para todos os servicos.',at:now-2400000,auto:true,sourceId:'pubmed:42201836',pmid:'42201836',publicationDate:'2026 May 27'},
-    {titulo:'DiaBetter Together: Outcomes of a Randomized Controlled Trial Evaluating a Peer Mentor Behavioral Intervention for Young Adults With Type 1 Diabetes During the Transfer From Pediatric to Adult Care.',tipo:'Artigo',fonte:'Diabetes Care',link:'https://doi.org/10.2337/dc26-0395',texto:'Ensaio clinico randomizado avaliou uma intervencao comportamental com mentores pares durante a transferencia do cuidado pediatrico para o adulto em jovens com diabetes tipo 1. Por que importa: reforca estrategias para reduzir perda de seguimento e melhorar suporte em uma fase vulneravel do cuidado. Cautela: confirmar intensidade da intervencao e viabilidade local antes de incorporar ao fluxo assistencial.',at:now-1200000,auto:true,sourceId:'pubmed:42201336',pmid:'42201336',publicationDate:'2026 May 27'}
+    {titulo:'DiaBetter Together: Outcomes of a Randomized Controlled Trial Evaluating a Peer Mentor Behavioral Intervention for Young Adults With Type 1 Diabetes During the Transfer From Pediatric to Adult Care.',tipo:'Artigo',fonte:'Diabetes Care',link:'https://doi.org/10.2337/dc26-0395',texto:'Ensaio clinico randomizado avaliou uma intervencao comportamental com mentores pares durante a transferencia do cuidado pediatrico para o adulto em jovens com diabetes tipo 1. Por que importa: reforca estrategias para reduzir perda de seguimento e melhorar suporte em uma fase vulneravel do cuidado. Cautela: confirmar intensidade da intervencao e viabilidade local antes de incorporar ao fluxo assistencial.',at:now-1200000,auto:true,sourceId:'pubmed:42201336',pmid:'42201336',publicationDate:'2026 May 27'},
+    {titulo:'GLP-1 Receptor Agonists and Eating Disorders - Cause for Concern.',tipo:'Artigo',fonte:'The New England Journal of Medicine',link:'https://doi.org/10.1056/NEJMp2600300',texto:'Perspectiva clinica. Discute sinais de cautela sobre agonistas do receptor de GLP-1 em pessoas com transtornos alimentares ou vulnerabilidade para comportamentos alimentares de risco. Por que importa: ajuda a reforcar triagem, acompanhamento multiprofissional e seguranca em tratamentos para obesidade e diabetes. Cautela: e um artigo de perspectiva; deve orientar vigilancia, nao substituir ensaios clinicos ou diretrizes.',at:now-900000,auto:true,sourceId:'pubmed:42041223',pmid:'42041223',publicationDate:'2026 Apr 30'},
+    {titulo:'First large-scale screening of Notch biallelic variants implicates novel candidate genes in congenital hypothyroidism.',tipo:'Artigo',fonte:'Journal of Clinical Endocrinology & Metabolism',link:'https://doi.org/10.1210/clinem/dgag208',texto:'Estudo genetico em larga escala avaliou variantes bialelicas da via Notch e apontou novos genes candidatos em hipotireoidismo congenito. Por que importa: pode ampliar a discussao sobre investigacao molecular, aconselhamento genetico e fisiopatologia tireoidiana no ensino de endocrinologia. Cautela: achados geneticos exigem validacao funcional e correlacao clinica antes de mudar protocolos.',at:now-800000,auto:true,sourceId:'pubmed:42192612',pmid:'42192612',publicationDate:'2026 May 26'},
+    {titulo:'Beyond aldosterone and renin: emerging biomarkers for diagnosing and subtyping primary aldosteronism.',tipo:'Artigo',fonte:'Endocrine Reviews',link:'https://doi.org/10.1210/endrev/bnag016',texto:'Revisao discute biomarcadores emergentes alem da aldosterona e da renina para diagnostico e subtipagem do hiperaldosteronismo primario. Por que importa: pode refinar a selecao de testes, estratificacao e encaminhamento para investigacao especializada. Cautela: interpretar a luz da disponibilidade local dos marcadores e da qualidade das evidencias incluidas.',at:now-700000,auto:true,sourceId:'pubmed:42186715',pmid:'42186715',publicationDate:'2026 May 26'},
+    {titulo:'The Lipid Droplet-Associated Hydrolase Is Associated With Obesity and Adipose Tissue Inflammation in Children.',tipo:'Artigo',fonte:'Obesity',link:'https://doi.org/10.1002/oby.70216',texto:'Estudo translacional relaciona hidrolase associada a goticulas lipidicas com obesidade e inflamacao do tecido adiposo em criancas. Por que importa: destaca mecanismos biologicos que podem ajudar a compreender risco metabolico precoce e inflamacao adipocitaria. Cautela: associacao biologica nao prova causalidade e ainda precisa de validacao longitudinal.',at:now-600000,auto:true,sourceId:'pubmed:42206925',pmid:'42206925',publicationDate:'2026 May 28'}
   ];
 }
 function muralNoticeKey(a){
   a=a||{};
   return String(a.sourceId||a.link||a.titulo||'').trim().toLowerCase();
 }
+function defaultMuralMap(){
+  var map={};
+  defaultMuralAvisos().forEach(function(a){
+    var k=muralNoticeKey(a);
+    if(k)map[k]=a;
+  });
+  return map;
+}
+function normalizeMuralAviso(a,defaults){
+  var item=Object.assign({},a||{});
+  item.fonte=normalizeMuralSource(item.fonte);
+  var k=muralNoticeKey(item);
+  var original=defaults&&defaults[k];
+  if(original&&(item.auto||original.auto)){
+    item=Object.assign({},item,original,{at:item.at||original.at});
+  }
+  if(item.auto&&item.texto&&/(Following the|Transition between|primary outcome|trial evaluated|health care is complex|This trial|compared intrapartum)/i.test(item.texto)){
+    item.texto='Artigo recente selecionado pelo radar Endodirect nas principais revistas de endocrinologia e metabolismo. Por que importa: merece leitura por possivel impacto em ensino, atualizacao clinica e pratica endocrinologica. Cautela: ler o artigo completo antes de extrapolar os achados.';
+  }
+  return item;
+}
 function mergeRadarAvisos(list){
-  var merged=Array.isArray(list)?list.slice():[];
+  var defaults=defaultMuralMap();
+  var merged=Array.isArray(list)?list.map(function(a){return normalizeMuralAviso(a,defaults);}):[];
   var seen={};
   merged.forEach(function(a){var k=muralNoticeKey(a);if(k)seen[k]=true;});
   defaultMuralAvisos().forEach(function(a){
@@ -2487,7 +2536,7 @@ function initMural(){
     if(isNaN(d.getTime()))d=new Date();
     return d.toLocaleDateString('pt-BR');
   }
-  function fonteOf(a){return String((a&&a.fonte)||'').trim()||String((a&&a.tipo)||'Geral').trim()||'Geral';}
+  function fonteOf(a){return normalizeMuralSource(String((a&&a.fonte)||'').trim()||String((a&&a.tipo)||'Geral').trim()||'Geral');}
   function tipoClass(tipo){
     var t=String(tipo||'').toLowerCase();
     if(t.indexOf('urgent')>=0)return{card:' mural-card-red',tag:'tag-red'};
@@ -2510,7 +2559,7 @@ function initMural(){
   var latest=admAvisos.reduce(function(max,a){return Math.max(max,Number(a.at)||0);},0);
   var updated=document.getElementById('mural-updated');
   if(updated)updated.textContent='Atualizado em '+dateBR(latest||Date.now());
-  var fontes=[];
+  var fontes=MURAL_SOURCE_FILTERS.slice();
   admAvisos.forEach(function(a){var f=fonteOf(a);if(fontes.indexOf(f)<0)fontes.push(f);});
   fontes.sort(function(a,b){return a.localeCompare(b,'pt-BR');});
   if(muralFilter&&fontes.indexOf(muralFilter)<0)muralFilter='';
@@ -2925,14 +2974,14 @@ function admMuralSecHTML(){
     if(isNaN(d.getTime()))d=new Date();
     return d.toLocaleDateString('pt-BR');
   }
-  function fonteOf(a){return String((a&&a.fonte)||'').trim()||String((a&&a.tipo)||'Geral').trim()||'Geral';}
+  function fonteOf(a){return normalizeMuralSource(String((a&&a.fonte)||'').trim()||String((a&&a.tipo)||'Geral').trim()||'Geral');}
   function tipoClass(tipo){
     var t=String(tipo||'').toLowerCase();
     if(t.indexOf('urgent')>=0)return{card:' mural-card-red',tag:'tag-red'};
     if(t.indexOf('event')>=0)return{card:' mural-card-purple',tag:'tag-pur'};
     return{card:'',tag:'tag-blue'};
   }
-  var fontes=[];
+  var fontes=MURAL_SOURCE_FILTERS.slice();
   admAvisos.forEach(function(a){var f=fonteOf(a);if(fontes.indexOf(f)<0)fontes.push(f);});
   fontes.sort(function(a,b){return a.localeCompare(b,'pt-BR');});
   if(admMuralFilter&&fontes.indexOf(admMuralFilter)<0)admMuralFilter='';
@@ -2943,7 +2992,7 @@ function admMuralSecHTML(){
   function cardHTML(a){
     var i=admAvisos.indexOf(a),tipo=a.tipo||'Aviso',fonte=fonteOf(a),cls=tipoClass(tipo);
     var source=a.link?'<a href="'+esc(a.link)+'" target="_blank" rel="noopener">'+esc(fonte)+'</a>':esc(fonte);
-    return '<article class="mural-card'+cls.card+'">'
+    return '<article class="mural-card'+cls.card+'" data-mural-card>'
       +'<div class="mural-card-tags"><span class="tag '+cls.tag+'">'+esc(tipo)+'</span><span class="tag tag-muted">'+esc(fonte)+'</span></div>'
       +'<h3>'+esc(a.titulo||'Aviso aos alunos')+'</h3>'
       +'<div class="mural-date">'+dateBR(a.at)+'</div>'
