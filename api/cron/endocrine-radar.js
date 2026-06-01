@@ -35,7 +35,8 @@ const TOPIC_QUERY = [
 ].map((term) => `${term}[Title/Abstract]`).join(' OR ');
 
 function json(res, status, body) {
-  res.status(status).setHeader('Content-Type', 'application/json; charset=utf-8');
+  res.statusCode = status;
+  res.setHeader('Content-Type', 'application/json; charset=utf-8');
   res.end(JSON.stringify(body));
 }
 
