@@ -1101,7 +1101,7 @@ var CALCS=[
 ];
 
 var USERS=[
-  {email:'aluno@endodirect.med.br',pass:'Aluno@2026',name:'Rodolpho',role:'aluno',sub:'Residente'},
+  {email:'aluno@endodirect.med.br',pass:'Aluno@2026',name:'Aluno Endodirect',role:'aluno',sub:'Residente'},
   {email:'admin@endodirect.med.br',pass:'Admin@2026',name:'Administrador',role:'admin',sub:'Professor'},
   {email:'nakamura.epm79@gmail.com',pass:null,name:'Nakamura',role:'admin',sub:'Professor',provider:'google'},
   {email:'rodolphomend@gmail.com',pass:null,name:'Rodolpho Mendonca',role:'admin',sub:'Professor',provider:'google'},
@@ -1110,6 +1110,14 @@ var USERS=[
   {email:'endodirectmaster@gmail.com',pass:null,name:'Endodirect Master',role:'admin',sub:'Professor',provider:'google'},
 ];
 var GOOGLE_ADMIN_EMAILS=USERS.filter(function(u){return u.provider==='google'&&u.role==='admin';}).map(function(u){return u.email;});
+function normalizeAdmEstudantes(list){
+  return (Array.isArray(list)?list:[]).map(function(e){
+    if(e&&e.email==='aluno@endodirect.med.br'&&String(e.nome||'').trim().toLowerCase()==='rodolpho'){
+      return Object.assign({},e,{nome:'Aluno Endodirect'});
+    }
+    return e;
+  });
+}
 
 // ── SUPABASE + STORAGE ──
 var SUPABASE_URL='https://eutizblmrcypzyqzczgq.supabase.co';
@@ -1310,7 +1318,7 @@ function applyStatePayload(payload){
   if(Array.isArray(payload.adm_questoes))admQuestoes=payload.adm_questoes;
   if(Array.isArray(payload.podcasts))podcasts=payload.podcasts;
   if(Array.isArray(payload.adm_cursos))admCursos=payload.adm_cursos;
-  if(Array.isArray(payload.adm_estudantes))admEstudantes=payload.adm_estudantes;
+  if(Array.isArray(payload.adm_estudantes))admEstudantes=normalizeAdmEstudantes(payload.adm_estudantes);
   if(payload.adm_perfil&&typeof payload.adm_perfil==='object')admPerfil=payload.adm_perfil;
   REMOTE_STATE_KEYS.forEach(function(k){if(payload[k]!==undefined)lsSet(k,payload[k]);});
 }
@@ -2887,7 +2895,7 @@ function admProvaSubBody(areas,anos,insts,pendentes){
 }
 
 // ---------- ESTUDANTES ----------
-var admEstudantes=lsGet('adm_estudantes')||[{nome:'Rodolpho',email:'aluno@endodirect.med.br',cpf:'',turma:'Turma 2026',perfil:'Residente',status:'Ativo',xp:0}];
+var admEstudantes=normalizeAdmEstudantes(lsGet('adm_estudantes')||[{nome:'Aluno Endodirect',email:'aluno@endodirect.med.br',cpf:'',turma:'Turma 2026',perfil:'Residente',status:'Ativo',xp:0}]);
 function persistEstudantes(){lsSet('adm_estudantes',admEstudantes);queueRemoteStateSave();}
 var admEstShowForm=false;
 function admEstudantesHTML(){
