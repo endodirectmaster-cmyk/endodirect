@@ -692,9 +692,20 @@ textarea{resize:vertical;line-height:1.6}
         <div id="mm-live" style="display:none;margin-bottom:.85rem">
           <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:.55rem;flex-wrap:wrap;gap:.45rem">
             <span style="font-size:.87rem;font-weight:600;color:var(--tx)" id="mm-live-title"></span>
-            <div style="display:flex;gap:5px"><button class="btn btn-primary btn-sm" id="btn-mm-save">💾 Salvar</button><button class="btn btn-ghost btn-sm" id="btn-mm-close">✕</button></div>
+            <div style="display:flex;gap:5px"><button class="btn btn-primary btn-sm" id="btn-mm-save">💾 Salvar</button><button class="btn btn-outline btn-sm" id="btn-mm-edit">✏️ Editar</button><button class="btn btn-ghost btn-sm" id="btn-mm-close">✕</button></div>
           </div>
-          <div style="background:#f5f6fa;border:1px solid var(--bd);border-radius:var(--r);overflow:auto;padding:.9rem;min-height:280px"><div id="mm-svg"></div></div>
+          <div style="background:#f5f6fa;border:1px solid var(--bd);border-radius:var(--r);overflow:auto;padding:.9rem;min-height:280px" id="mm-svg-wrap"><div id="mm-svg"></div></div>
+          <div id="mm-edit-panel" style="display:none;margin-top:.75rem;border:1px solid var(--bd);border-radius:var(--r);background:var(--surface);padding:.9rem 1rem">
+            <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:.6rem">
+              <span style="font-size:.68rem;font-weight:700;letter-spacing:.07em;text-transform:uppercase;color:var(--t2)">✏️ Editar mapa</span>
+              <button class="btn btn-outline btn-sm" id="btn-mm-add-branch">+ Ramo</button>
+            </div>
+            <div class="fld2"><label>Tema central</label><input type="text" id="mm-edit-root"></div>
+            <div id="mm-edit-branches"></div>
+            <div style="display:flex;gap:5px;margin-top:.7rem">
+              <button class="btn btn-primary btn-sm" id="btn-mm-edit-done">✓ Concluir edição</button>
+            </div>
+          </div>
         </div>
         <div class="sec-h"><span class="sec-title">Salvos <span id="mm-count" style="font-weight:400;text-transform:none;letter-spacing:0;color:var(--t3)"></span></span></div>
         <div id="mm-list" style="display:flex;flex-direction:column;gap:6px"></div>
@@ -1988,42 +1999,53 @@ function flipStudy(){
 
 // ── MIND MAP ──
 var curMM=null;
-function wrapTxt(t,max){
-  var words=String(t).split(' '),lines=[],cur='';
-  words.forEach(function(w){if((cur+' '+w).trim().length>max){if(cur)lines.push(cur);cur=w;}else cur=(cur+' '+w).trim();});
-  if(cur)lines.push(cur);return lines;
+function wrapTxt(text,max){
+  var words=String(text||'').split(/\s+/).filter(Boolean),lines=[],line='';
+  words.forEach(function(w){if((line+' '+w).trim().length<=max)line=(line+' '+w).trim();else{if(line)lines.push(line);line=w;}});
+  if(line)lines.push(line);
+  return lines.length?lines:[String(text||'').substring(0,max)];
 }
-function svgTxt(x,y,lines,opts){
-  opts=opts||{};
-  return lines.map(function(l,i){return'<text x="'+x+'" y="'+(y+i*(opts.lh||13))+'" text-anchor="'+(opts.anchor||'middle')+'" font-size="'+(opts.size||11)+'" font-weight="'+(opts.weight||400)+'" fill="'+(opts.fill||'#1a2744')+'" font-family="Segoe UI,sans-serif">'+esc(l)+'</text>';}).join('');
+function svgTxt(lines,x,y,sz,fill,fw){
+  var lh=sz*1.35,sy=y-(lines.length-1)*lh/2;
+  return lines.map(function(l,i){return'<text x="'+x+'" y="'+(sy+i*lh)+'" text-anchor="middle" font-size="'+sz+'" fill="'+fill+'" font-weight="'+(fw||'normal')+'" font-family="Segoe UI,sans-serif">'+esc(l)+'</text>';}).join('');
+}
+function normalizeMMData(data){
+  data=data||{};
+  var root=data.root||data.central||data.title||'Tema';
+  var branches=(data.branches||[]).map(function(b){
+    var leaves=b.leaves||b.children||b.subtopics||[];
+    leaves=leaves.map(function(lf){return typeof lf==='string'?lf:(lf.title||lf.name||lf.label||'');}).filter(Boolean);
+    return {label:b.label||b.title||b.name||'Ramo',leaves:leaves.length?leaves:['Detalhe']};
+  });
+  return {root:root,branches:branches};
 }
 function buildSVG(data){
-  var cx=430,cy=300,nodes=data.branches||[];
-  var W=860,H=600;
-  var svg='<svg viewBox="0 0 '+W+' '+H+'" width="100%" style="min-width:760px">';
-  var R=210;
-  nodes.forEach(function(b,i){
-    var ang=(i/nodes.length)*2*Math.PI-Math.PI/2;
-    var bx=cx+Math.cos(ang)*R,by=cy+Math.sin(ang)*R;
-    var col=BCOLORS[i%BCOLORS.length];
-    svg+='<path d="M'+cx+' '+cy+' Q'+((cx+bx)/2)+' '+((cy+by)/2)+' '+bx+' '+by+'" stroke="'+col+'" stroke-width="2.5" fill="none" opacity="0.55"/>';
-    var subs=b.children||b.subtopics||[];
-    var sub=subs.slice(0,4);
-    sub.forEach(function(s,j){
-      var sang=ang+(j-(sub.length-1)/2)*0.42;
-      var sx=bx+Math.cos(sang)*120,sy=by+Math.sin(sang)*120;
-      svg+='<line x1="'+bx+'" y1="'+by+'" x2="'+sx+'" y2="'+sy+'" stroke="'+col+'" stroke-width="1.4" opacity="0.4"/>';
-      var sl=wrapTxt(typeof s==='string'?s:(s.title||s.name||''),18);
-      svg+='<rect x="'+(sx-58)+'" y="'+(sy-(sl.length*12)/2-7)+'" width="116" height="'+(sl.length*12+12)+'" rx="7" fill="#fff" stroke="'+col+'" stroke-width="1.2"/>';
-      svg+=svgTxt(sx,sy-(sl.length*12)/2+5,sl,{size:9.5,fill:'#3a4a6a'});
+  data=normalizeMMData(data);
+  if(!data.root)return'';
+  var branches=data.branches||[];
+  var totalLeaves=0;branches.forEach(function(b){totalLeaves+=Math.max(1,(b.leaves||[]).length);});
+  var W=920,RX=115,BX=320,LX=530,LW=350,lH=34,bPad=24;
+  var H=Math.max(500,totalLeaves*lH+branches.length*bPad+100);
+  var svg='<svg xmlns="http://www.w3.org/2000/svg" width="'+W+'" height="'+H+'" viewBox="0 0 '+W+' '+H+'" style="min-width:'+W+'px">';
+  var rLines=wrapTxt(data.root,14),rH=Math.max(50,rLines.length*18+16),rW=160,rY=H/2,c0=BCOLORS[0];
+  svg+='<rect x="'+(RX-rW/2)+'" y="'+(rY-rH/2)+'" width="'+rW+'" height="'+rH+'" rx="12" fill="'+c0+'20" stroke="'+c0+'" stroke-width="2.5"/>';
+  svg+=svgTxt(rLines,RX,rY,13,'#1a2744','700');
+  var runY=60;
+  var brYs=branches.map(function(b){var lc=Math.max(1,(b.leaves||[]).length);var by=runY+lc*lH/2;runY+=lc*lH+bPad;return by;});
+  branches.forEach(function(b,bi){
+    var col=BCOLORS[bi%BCOLORS.length],by=brYs[bi],cpx=(RX+rW/2+BX)/2;
+    svg+='<path d="M'+(RX+rW/2)+' '+rY+' C'+cpx+' '+rY+' '+cpx+' '+by+' '+BX+' '+by+'" fill="none" stroke="'+col+'" stroke-width="2.2" opacity=".8"/>';
+    var bLines=wrapTxt(b.label||'',16),bW=175,bH=Math.max(38,bLines.length*17+14);
+    svg+='<rect x="'+BX+'" y="'+(by-bH/2)+'" width="'+bW+'" height="'+bH+'" rx="9" fill="'+col+'20" stroke="'+col+'" stroke-width="1.8"/>';
+    svg+=svgTxt(bLines,BX+bW/2,by,12,col,'700');
+    (b.leaves||[]).forEach(function(lf,li){
+      var lc=Math.max(1,(b.leaves||[]).length),lStartY=by-(lc-1)*lH/2,ly=lStartY+li*lH;
+      svg+='<path d="M'+(BX+bW)+' '+by+' C'+((BX+bW+LX)/2)+' '+by+' '+((BX+bW+LX)/2)+' '+ly+' '+LX+' '+ly+'" fill="none" stroke="'+col+'" stroke-width="1.4" opacity=".55"/>';
+      var lfLines=wrapTxt(lf||'',42),lfH=Math.max(22,lfLines.length*15+8);
+      svg+='<rect x="'+LX+'" y="'+(ly-lfH/2)+'" width="'+LW+'" height="'+lfH+'" rx="7" fill="'+col+'0f" stroke="'+col+'55" stroke-width="1"/>';
+      svg+=svgTxt(lfLines,LX+LW/2,ly,11,col,'500');
     });
-    var bl=wrapTxt(b.title||b.name||'',16);
-    svg+='<rect x="'+(bx-62)+'" y="'+(by-(bl.length*13)/2-9)+'" width="124" height="'+(bl.length*13+16)+'" rx="9" fill="'+col+'"/>';
-    svg+=svgTxt(bx,by-(bl.length*13)/2+5,bl,{size:11,weight:700,fill:'#fff'});
   });
-  var cl=wrapTxt(data.central||data.title||'Tema',16);
-  svg+='<circle cx="'+cx+'" cy="'+cy+'" r="62" fill="#1a2744"/>';
-  svg+=svgTxt(cx,cy-(cl.length*14)/2+5,cl,{size:13,weight:700,fill:'#fff'});
   svg+='</svg>';
   return svg;
 }
@@ -2032,34 +2054,64 @@ function genMM(){
   if(!topic){notify('Digite um tema.','err');return;}
   var btn=document.getElementById('btn-mmgen');
   btn.disabled=true;btn.innerHTML=ldHTML();
-  callAI('Endocrinologista educador. JSON APENAS: {"central":"tema","branches":[{"title":"ramo","children":["sub1","sub2","sub3"]}]} (4-6 ramos, 3-4 subtópicos cada).','Mapa mental sobre: '+topic,1500)
+  document.getElementById('mm-live').style.display='block';
+  document.getElementById('mm-edit-panel').style.display='none';
+  setText('mm-live-title',topic);
+  document.getElementById('mm-svg').innerHTML=ldHTML();
+  callAI('Endocrinologista educador. JSON APENAS: {"root":"Tema","branches":[{"label":"Ramo","leaves":["detalhe 1","detalhe 2","detalhe 3"]}]}. Crie 5-6 ramos com 3-5 folhas cada, em portugues medico claro.','Mapa mental sobre: '+topic,1800)
   .then(function(raw){
     var d=parseJ(raw);if(!d||!d.branches)throw new Error('Resposta inválida.');
-    curMM={topic:topic,data:d};
-    document.getElementById('mm-live').style.display='block';
-    setText('mm-live-title',d.central||topic);
+    d=normalizeMMData(d);
+    curMM={id:Date.now(),topic:topic,data:d,at:Date.now()};
+    setText('mm-live-title',d.root||topic);
     document.getElementById('mm-svg').innerHTML=buildSVG(d);
-  }).catch(function(e){notify('Erro: '+e.message,'err');})
+  }).catch(function(e){document.getElementById('mm-svg').innerHTML='<div style="color:var(--red);padding:1rem;font-size:.78rem">Erro: '+esc(e.message)+'</div>';notify('Erro: '+e.message,'err');})
   .then(function(){btn.disabled=false;btn.innerHTML='▶ Gerar';});
 }
 function saveMM(){
   if(!curMM)return;
-  DB.mm.push({id:Date.now(),topic:curMM.topic,data:curMM.data,at:Date.now()});
+  curMM.data=normalizeMMData(curMM.data);
+  curMM.at=curMM.at||Date.now();
+  var idx=DB.mm.findIndex(function(m){return m.id===curMM.id||(m.topic===curMM.topic&&m.at===curMM.at);});
+  if(idx>=0)DB.mm[idx]=curMM;else DB.mm.push(curMM);
   persist();renderMMList();refreshDash();notify('Mapa salvo!','ok');
 }
 function renderMMList(){
   var el=document.getElementById('mm-list');if(!el)return;
   setText('mm-count','('+DB.mm.length+')');
   if(!DB.mm.length){el.innerHTML='<div class="empty">Nenhum mapa salvo.</div>';return;}
-  el.innerHTML=DB.mm.map(function(m,i){return'<div class="mm-item"><div><div style="font-size:.8rem;font-weight:600">'+esc(m.topic)+'</div><div style="font-size:.63rem;color:var(--t3)">'+new Date(m.at).toLocaleDateString('pt-BR')+'</div></div><div style="display:flex;gap:4px"><button class="btn btn-outline btn-sm" data-mmview="'+i+'">Ver</button><button class="btn btn-ghost btn-sm" data-mmdel="'+i+'">✕</button></div></div>';}).join('');
+  el.innerHTML=DB.mm.map(function(m,i){
+    var d=normalizeMMData(m.data);
+    return'<div class="mm-item"><div><div style="font-size:.8rem;font-weight:600">'+esc(m.topic)+'</div><div style="font-size:.63rem;color:var(--t3)">'+d.branches.length+' ramos · '+new Date(m.at||Date.now()).toLocaleDateString('pt-BR')+'</div></div><div style="display:flex;gap:4px"><button class="btn btn-outline btn-sm" data-mmview="'+i+'">Abrir</button><button class="btn btn-ghost btn-sm" data-mmdel="'+i+'">✕</button></div></div>';
+  }).join('');
 }
 function viewMM(i){
   var m=DB.mm[i];if(!m)return;
-  curMM={topic:m.topic,data:m.data};
+  curMM={id:m.id||Date.now(),topic:m.topic,data:normalizeMMData(m.data),at:m.at||Date.now()};
   document.getElementById('mm-live').style.display='block';
-  setText('mm-live-title',m.data.central||m.topic);
-  document.getElementById('mm-svg').innerHTML=buildSVG(m.data);
+  document.getElementById('mm-edit-panel').style.display='none';
+  setText('mm-live-title',curMM.data.root||m.topic);
+  document.getElementById('mm-svg').innerHTML=buildSVG(curMM.data);
   document.getElementById('panel-mmap').scrollTop=0;
+}
+function mmRedraw(){
+  if(curMM)document.getElementById('mm-svg').innerHTML=buildSVG(curMM.data);
+}
+function renderMMEditFields(){
+  if(!curMM)return;
+  curMM.data=normalizeMMData(curMM.data);
+  document.getElementById('mm-edit-root').value=curMM.data.root||'';
+  var wrap=document.getElementById('mm-edit-branches');
+  wrap.innerHTML=(curMM.data.branches||[]).map(function(b,bi){
+    var col=BCOLORS[bi%BCOLORS.length];
+    var leaves=(b.leaves||[]).map(function(lf,li){
+      return'<div style="display:flex;gap:5px;align-items:center;margin-bottom:4px"><input type="text" data-mm-leaf="'+bi+'-'+li+'" value="'+esc(lf)+'" style="flex:1;font-size:.74rem;padding:.32rem .55rem"><button class="btn btn-ghost btn-sm" data-mm-del-leaf="'+bi+'-'+li+'" style="padding:2px 6px;color:var(--red)">✕</button></div>';
+    }).join('');
+    return'<div style="border-left:3px solid '+col+';background:var(--s2);border-radius:0 var(--rs) var(--rs) 0;padding:.6rem .75rem;margin-bottom:.55rem">'
+      +'<div style="display:flex;gap:5px;align-items:center;margin-bottom:.5rem"><input type="text" data-mm-branch="'+bi+'" value="'+esc(b.label||'')+'" placeholder="Nome do ramo" style="flex:1;font-size:.78rem;font-weight:600;padding:.34rem .55rem"><button class="btn btn-ghost btn-sm" data-mm-del-branch="'+bi+'" style="padding:2px 6px;color:var(--red)">🗑</button></div>'
+      +'<div style="padding-left:.3rem">'+leaves+'<button class="btn btn-outline btn-sm" data-mm-add-leaf="'+bi+'" style="margin-top:2px;font-size:.66rem;padding:.2rem .6rem">+ Detalhe</button></div>'
+      +'</div>';
+  }).join('');
 }
 
 // ── PODCASTS (aluno) ──
@@ -3537,7 +3589,68 @@ document.addEventListener('DOMContentLoaded',function(){
   // MIND MAP
   document.getElementById('btn-mmgen').addEventListener('click',genMM);
   document.getElementById('btn-mm-save').addEventListener('click',saveMM);
-  document.getElementById('btn-mm-close').addEventListener('click',function(){document.getElementById('mm-live').style.display='none';});
+  document.getElementById('btn-mm-close').addEventListener('click',function(){
+    document.getElementById('mm-live').style.display='none';
+    document.getElementById('mm-edit-panel').style.display='none';
+    curMM=null;
+  });
+  document.getElementById('btn-mm-edit').addEventListener('click',function(){
+    if(!curMM)return;
+    var ep=document.getElementById('mm-edit-panel');
+    if(ep.style.display!=='none'){ep.style.display='none';return;}
+    renderMMEditFields();
+    ep.style.display='block';
+    ep.scrollIntoView({behavior:'smooth',block:'nearest'});
+  });
+  document.getElementById('btn-mm-edit-done').addEventListener('click',function(){
+    document.getElementById('mm-edit-panel').style.display='none';
+    notify('Edição concluída.','ok');
+  });
+  document.getElementById('mm-edit-root').addEventListener('input',function(){
+    if(!curMM)return;
+    curMM.data.root=this.value;
+    setText('mm-live-title',this.value||curMM.topic);
+    mmRedraw();
+  });
+  document.getElementById('mm-edit-branches').addEventListener('input',function(e){
+    if(!curMM)return;
+    var t=e.target;
+    if(t.dataset.mmBranch!==undefined){
+      curMM.data.branches[parseInt(t.dataset.mmBranch,10)].label=t.value;
+      mmRedraw();
+    }else if(t.dataset.mmLeaf!==undefined){
+      var p=t.dataset.mmLeaf.split('-');
+      curMM.data.branches[parseInt(p[0],10)].leaves[parseInt(p[1],10)]=t.value;
+      mmRedraw();
+    }
+  });
+  document.getElementById('mm-edit-branches').addEventListener('click',function(e){
+    if(!curMM)return;
+    var db=e.target.closest('[data-mm-del-branch]');
+    if(db){
+      curMM.data.branches.splice(parseInt(db.dataset.mmDelBranch,10),1);
+      renderMMEditFields();mmRedraw();return;
+    }
+    var dl=e.target.closest('[data-mm-del-leaf]');
+    if(dl){
+      var p=dl.dataset.mmDelLeaf.split('-');
+      curMM.data.branches[parseInt(p[0],10)].leaves.splice(parseInt(p[1],10),1);
+      renderMMEditFields();mmRedraw();return;
+    }
+    var al=e.target.closest('[data-mm-add-leaf]');
+    if(al){
+      var bi=parseInt(al.dataset.mmAddLeaf,10);
+      if(!curMM.data.branches[bi].leaves)curMM.data.branches[bi].leaves=[];
+      curMM.data.branches[bi].leaves.push('Novo detalhe');
+      renderMMEditFields();mmRedraw();
+    }
+  });
+  document.getElementById('btn-mm-add-branch').addEventListener('click',function(){
+    if(!curMM)return;
+    if(!curMM.data.branches)curMM.data.branches=[];
+    curMM.data.branches.push({label:'Novo ramo',leaves:['Detalhe']});
+    renderMMEditFields();mmRedraw();
+  });
 
   // CRONOGRAMA
   document.getElementById('btn-crono-gen').addEventListener('click',genCrono);
