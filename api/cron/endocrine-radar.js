@@ -232,13 +232,16 @@ function supabaseHeaders(serviceKey) {
 async function loadGlobalPayload(serviceKey) {
   const url = `${SUPABASE_URL}/rest/v1/endodirect_global_state?id=eq.main&select=payload`;
   const response = await fetch(url, { headers: supabaseHeaders(serviceKey) });
-  if (!response.ok) throw new Error(`Supabase leitura HTTP ${response.status}`);
+  if (!response.ok) {
+    const detail = await response.text().catch(() => '');
+    throw new Error(`Supabase leitura HTTP ${response.status}${detail ? ': ' + detail.slice(0, 300) : ''}`);
+  }
   const rows = await response.json();
   return rows && rows[0] && rows[0].payload ? rows[0].payload : {};
 }
 
 async function saveGlobalPayload(serviceKey, payload) {
-  const response = await fetch(`${SUPABASE_URL}/rest/v1/endodirect_global_state`, {
+  const response = await fetch(`${SUPABASE_URL}/rest/v1/endodirect_global_state?on_conflict=id`, {
     method: 'POST',
     headers: {
       ...supabaseHeaders(serviceKey),
@@ -247,11 +250,14 @@ async function saveGlobalPayload(serviceKey, payload) {
     body: JSON.stringify({
       id: 'main',
       payload,
-      updated_by: 'vercel-cron:endocrine-radar',
+      updated_by: null,
       updated_at: new Date().toISOString()
     })
   });
-  if (!response.ok) throw new Error(`Supabase gravacao HTTP ${response.status}`);
+  if (!response.ok) {
+    const detail = await response.text().catch(() => '');
+    throw new Error(`Supabase gravacao HTTP ${response.status}${detail ? ': ' + detail.slice(0, 300) : ''}`);
+  }
 }
 
 function mergeMuralItems(payload, incoming) {
