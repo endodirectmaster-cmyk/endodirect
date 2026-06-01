@@ -167,11 +167,32 @@ textarea{resize:vertical;line-height:1.6}
 .sr-again{background:var(--red-l);color:var(--red)}
 .mm-item{background:var(--surface);border:1px solid var(--bd);border-radius:var(--r);padding:.75rem .9rem;display:flex;align-items:center;justify-content:space-between;gap:.7rem}
 .mm-gen-card{padding:1rem 1.1rem}
-.mm-generate-row{display:grid;grid-template-columns:minmax(0,1fr) max-content;gap:8px;align-items:end}
+.mm-generate-row{display:grid;grid-template-columns:minmax(0,1fr) max-content max-content;gap:8px;align-items:end}
+.mm-help{font-size:.68rem;color:var(--t3);margin-top:.65rem}
 .mm-live-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:.55rem;flex-wrap:wrap;gap:.45rem}
 .mm-live-actions{display:flex;gap:5px;align-items:center}
-.mm-map-wrap{background:#f5f6fa;border:1px solid var(--bd);border-radius:var(--r);overflow:auto;padding:0;min-height:640px;max-height:calc(100vh - 210px)}
-.mm-svg-stage{min-width:1180px;min-height:640px}
+.mm-map-wrap{background:#f5f6fa;border:1px solid var(--bd);border-radius:var(--r);overflow:auto;padding:.9rem;min-height:640px}
+.mm-svg-stage{min-width:max-content;min-height:620px;position:relative}
+.mm-editor{display:flex;align-items:center;gap:0;padding:1.15rem .5rem;min-width:max-content}
+.mm-editor>*{position:relative;z-index:1}
+.mm-gap{width:42px;flex-shrink:0}
+.mm-central{background:var(--navy);color:#fff;border-radius:14px;padding:.85rem 1.1rem;font-size:.95rem;font-weight:800;min-width:150px;max-width:230px;outline:none;box-shadow:0 10px 22px rgba(26,39,68,.18);line-height:1.35;flex-shrink:0}
+.mm-central:focus{box-shadow:0 0 0 3px rgba(59,111,212,.35),0 10px 22px rgba(26,39,68,.18)}
+.mm-branches{display:flex;flex-direction:column;gap:1.05rem}
+.mm-branch-row{display:flex;align-items:center;gap:0}
+.mm-branch-txt{color:#fff;border-radius:10px;padding:.55rem .85rem;font-size:.82rem;font-weight:700;min-width:135px;max-width:240px;outline:none;line-height:1.35;box-shadow:0 3px 9px rgba(26,39,68,.08)}
+.mm-branch-txt:focus{filter:brightness(1.06);box-shadow:0 0 0 3px rgba(0,0,0,.14)}
+.mm-subs-block{display:flex;flex-direction:column;gap:.45rem}
+.mm-node-wrap{position:relative;display:inline-flex;align-items:center}
+.mm-sub-txt{background:#fff;border:1.5px solid var(--bd2);border-radius:9px;padding:.42rem .72rem;font-size:.76rem;color:var(--tx);min-width:120px;max-width:320px;outline:none;line-height:1.45}
+.mm-sub-txt:focus{border-color:var(--blue);box-shadow:0 0 0 3px rgba(59,111,212,.12)}
+.mm-del{position:absolute;top:-7px;right:-7px;width:18px;height:18px;border:none;border-radius:50%;background:var(--red);color:#fff;font-size:.62rem;cursor:pointer;display:none;align-items:center;justify-content:center;line-height:1;font-family:var(--font);padding:0;box-shadow:0 1px 4px rgba(0,0,0,.25);z-index:5}
+.mm-node-wrap:hover .mm-del{display:inline-flex}
+.mm-add-sub{align-self:flex-start;background:none;border:1px dashed var(--bd2);border-radius:7px;padding:.24rem .65rem;font-size:.68rem;color:var(--t3);cursor:pointer;font-family:var(--font)}
+.mm-add-sub:hover{border-color:var(--blue);color:var(--blue);background:#fff}
+.mm-add-branch{background:none;border:1.5px dashed var(--bd2);border-radius:9px;padding:.45rem .9rem;font-size:.76rem;color:var(--t2);cursor:pointer;font-family:var(--font);align-self:flex-start;margin-top:.6rem}
+.mm-add-branch:hover{border-color:var(--blue);color:var(--blue);background:var(--blue-l)}
+.mm-conn-layer{position:absolute;left:0;top:0;z-index:0;overflow:visible;pointer-events:none}
 .crono-day{background:var(--surface);border:1px solid var(--bd);border-radius:var(--r);padding:.8rem .95rem;margin-bottom:.5rem}
 .crono-day-title{font-size:.76rem;font-weight:700;color:var(--navy);margin-bottom:.5rem;text-transform:uppercase;letter-spacing:.05em}
 .crono-sess{display:flex;align-items:center;gap:.6rem;padding:.42rem .65rem;background:var(--s2);border-radius:var(--rs);margin-bottom:3px;font-size:.77rem}
@@ -696,26 +717,17 @@ textarea{resize:vertical;line-height:1.6}
         <div class="gen-box mm-gen-card">
           <div class="mm-generate-row">
             <div style="flex:1"><label class="flbl">Tema</label><input type="text" id="mm-topic" placeholder="Ex: Hipotireoidismo…"></div>
-            <button class="btn btn-primary" id="btn-mmgen">▶ Gerar</button>
+            <button class="btn btn-primary" id="btn-mmgen">🤖 Gerar com IA</button>
+            <button class="btn btn-outline" id="btn-mmblank">✏️ Manual</button>
           </div>
+          <div class="mm-help">💡 Clique em qualquer caixa para editar o texto. Use os botões para adicionar ou remover ramos e subramos.</div>
         </div>
         <div id="mm-live" style="display:none;margin-bottom:.85rem">
           <div class="mm-live-head">
             <span style="font-size:.87rem;font-weight:600;color:var(--tx)" id="mm-live-title"></span>
-            <div style="display:flex;gap:5px"><button class="btn btn-primary btn-sm" id="btn-mm-save">💾 Salvar</button><button class="btn btn-outline btn-sm" id="btn-mm-edit">✏️ Editar</button><button class="btn btn-ghost btn-sm" id="btn-mm-close">✕</button></div>
+            <div style="display:flex;gap:5px"><button class="btn btn-primary btn-sm" id="btn-mm-save">💾 Salvar</button><button class="btn btn-ghost btn-sm" id="btn-mm-close">×</button></div>
           </div>
           <div class="mm-map-wrap" id="mm-svg-wrap"><div class="mm-svg-stage" id="mm-svg"></div></div>
-          <div id="mm-edit-panel" style="display:none;margin-top:.75rem;border:1px solid var(--bd);border-radius:var(--r);background:var(--surface);padding:.9rem 1rem">
-            <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:.6rem">
-              <span style="font-size:.68rem;font-weight:700;letter-spacing:.07em;text-transform:uppercase;color:var(--t2)">✏️ Editar mapa</span>
-              <button class="btn btn-outline btn-sm" id="btn-mm-add-branch">+ Ramo</button>
-            </div>
-            <div class="fld2"><label>Tema central</label><input type="text" id="mm-edit-root"></div>
-            <div id="mm-edit-branches"></div>
-            <div style="display:flex;gap:5px;margin-top:.7rem">
-              <button class="btn btn-primary btn-sm" id="btn-mm-edit-done">✓ Concluir edição</button>
-            </div>
-          </div>
         </div>
         <div class="sec-h"><span class="sec-title">Salvos <span id="mm-count" style="font-weight:400;text-transform:none;letter-spacing:0;color:var(--t3)"></span></span></div>
         <div id="mm-list" style="display:flex;flex-direction:column;gap:6px"></div>
@@ -2142,7 +2154,6 @@ function genMM(){
   var btn=document.getElementById('btn-mmgen');
   btn.disabled=true;btn.innerHTML=ldHTML();
   document.getElementById('mm-live').style.display='block';
-  document.getElementById('mm-edit-panel').style.display='none';
   setText('mm-live-title',topic);
   document.getElementById('mm-svg').innerHTML=ldHTML();
   callAI('Endocrinologista educador. JSON APENAS: {"root":"Tema","branches":[{"label":"Ramo","leaves":["detalhe 1","detalhe 2","detalhe 3"]}]}. Crie 5-6 ramos com 3-5 folhas cada, em portugues medico claro.','Mapa mental sobre: '+topic,1800)
@@ -2151,12 +2162,45 @@ function genMM(){
     d=normalizeMMData(d);
     curMM={id:Date.now(),topic:topic,data:d,at:Date.now()};
     setText('mm-live-title',d.root||topic);
-    document.getElementById('mm-svg').innerHTML=buildSVG(d);
-  }).catch(function(e){document.getElementById('mm-svg').innerHTML='<div style="color:var(--red);padding:1rem;font-size:.78rem">Erro: '+esc(e.message)+'</div>';notify('Erro: '+e.message,'err');})
-  .then(function(){btn.disabled=false;btn.innerHTML='▶ Gerar';});
+    renderMMEditor();
+  }).catch(function(e){
+    curMM={id:Date.now(),topic:topic,data:sampleMMData(topic),at:Date.now()};
+    setText('mm-live-title',curMM.data.root||topic);
+    renderMMEditor();
+    notify('IA indisponível agora. Abri um mapa editável para você ajustar.','info');
+  }).then(function(){btn.disabled=false;btn.innerHTML='🤖 Gerar com IA';});
+}
+function sampleMMData(topic){
+  var t=(topic||'Hipertireoidismo').trim()||'Hipertireoidismo';
+  if(/hiper/i.test(t)){
+    return normalizeMMData({root:t,branches:[
+      {label:'Causas',leaves:['Doença de Graves','Bócio multinodular tóxico','Adenoma tóxico','Tireoidite subaguda']},
+      {label:'Sintomas Clínicos',leaves:['Taquicardia e palpitações','Perda de peso','Tremores finos','Intolerância ao calor']},
+      {label:'Diagnóstico',leaves:['TSH suprimido','T4 livre elevado','Cintilografia tireoidiana','Anticorpos TRAb']},
+      {label:'Tratamento',leaves:['Tionamidas (PTU, metimazol)','Iodo radioativo','Tireoidectomia','Betabloqueadores']},
+      {label:'Complicações',leaves:['Crise tireotóxica','Fibrilação atrial','Osteoporose','Oftalmopatia de Graves']},
+      {label:'Populações Especiais',leaves:['Hipertireoidismo na gravidez','Tempestade tireoidiana neonatal','Idosos com forma apática','Hipertireoidismo subclínico']}
+    ]});
+  }
+  return normalizeMMData({root:t,branches:[
+    {label:'Definição',leaves:['Conceitos essenciais','Epidemiologia','Principais formas']},
+    {label:'Etiologia',leaves:['Causas comuns','Fatores de risco','Mecanismos associados']},
+    {label:'Diagnóstico',leaves:['Quadro clínico','Exames laboratoriais','Exames complementares']},
+    {label:'Tratamento',leaves:['Medidas iniciais','Terapias específicas','Seguimento']},
+    {label:'Complicações',leaves:['Riscos agudos','Riscos crônicos','Prevenção']}
+  ]});
+}
+function newBlankMM(){
+  var topic=(document.getElementById('mm-topic').value||'').trim();
+  if(!topic){notify('Digite um tema.','err');return;}
+  curMM={id:Date.now(),topic:topic,data:sampleMMData(topic),at:Date.now()};
+  document.getElementById('mm-live').style.display='block';
+  setText('mm-live-title',curMM.data.root||topic);
+  renderMMEditor();
 }
 function saveMM(){
   if(!curMM)return;
+  syncMMFromDOM();
   curMM.data=normalizeMMData(curMM.data);
   curMM.at=curMM.at||Date.now();
   var idx=DB.mm.findIndex(function(m){return m.id===curMM.id||(m.topic===curMM.topic&&m.at===curMM.at);});
@@ -2169,36 +2213,82 @@ function renderMMList(){
   if(!DB.mm.length){el.innerHTML='<div class="empty">Nenhum mapa salvo.</div>';return;}
   el.innerHTML=DB.mm.map(function(m,i){
     var d=normalizeMMData(m.data);
-    return'<div class="mm-item"><div><div style="font-size:.8rem;font-weight:600">'+esc(m.topic)+'</div><div style="font-size:.63rem;color:var(--t3)">'+d.branches.length+' ramos · '+new Date(m.at||Date.now()).toLocaleDateString('pt-BR')+'</div></div><div style="display:flex;gap:4px"><button class="btn btn-outline btn-sm" data-mmview="'+i+'">Abrir</button><button class="btn btn-ghost btn-sm" data-mmdel="'+i+'">✕</button></div></div>';
+    return'<div class="mm-item"><div><div style="font-size:.8rem;font-weight:600">'+esc(m.topic)+'</div><div style="font-size:.63rem;color:var(--t3)">'+new Date(m.at||Date.now()).toLocaleDateString('pt-BR')+'</div></div><div style="display:flex;gap:4px"><button class="btn btn-outline btn-sm" data-mmview="'+i+'">Ver</button><button class="btn btn-ghost btn-sm" data-mmdel="'+i+'">×</button></div></div>';
   }).join('');
 }
 function viewMM(i){
   var m=DB.mm[i];if(!m)return;
   curMM={id:m.id||Date.now(),topic:m.topic,data:normalizeMMData(m.data),at:m.at||Date.now()};
   document.getElementById('mm-live').style.display='block';
-  document.getElementById('mm-edit-panel').style.display='none';
   setText('mm-live-title',curMM.data.root||m.topic);
-  document.getElementById('mm-svg').innerHTML=buildSVG(curMM.data);
+  renderMMEditor();
   document.getElementById('panel-mmap').scrollTop=0;
 }
 function mmRedraw(){
-  if(curMM)document.getElementById('mm-svg').innerHTML=buildSVG(curMM.data);
+  if(curMM)renderMMEditor();
 }
-function renderMMEditFields(){
+function renderMMEditor(){
   if(!curMM)return;
   curMM.data=normalizeMMData(curMM.data);
-  document.getElementById('mm-edit-root').value=curMM.data.root||'';
-  var wrap=document.getElementById('mm-edit-branches');
-  wrap.innerHTML=(curMM.data.branches||[]).map(function(b,bi){
-    var col=BCOLORS[bi%BCOLORS.length];
-    var leaves=(b.leaves||[]).map(function(lf,li){
-      return'<div style="display:flex;gap:5px;align-items:center;margin-bottom:4px"><input type="text" data-mm-leaf="'+bi+'-'+li+'" value="'+esc(lf)+'" style="flex:1;font-size:.74rem;padding:.32rem .55rem"><button class="btn btn-ghost btn-sm" data-mm-del-leaf="'+bi+'-'+li+'" style="padding:2px 6px;color:var(--red)">✕</button></div>';
-    }).join('');
-    return'<div style="border-left:3px solid '+col+';background:var(--s2);border-radius:0 var(--rs) var(--rs) 0;padding:.6rem .75rem;margin-bottom:.55rem">'
-      +'<div style="display:flex;gap:5px;align-items:center;margin-bottom:.5rem"><input type="text" data-mm-branch="'+bi+'" value="'+esc(b.label||'')+'" placeholder="Nome do ramo" style="flex:1;font-size:.78rem;font-weight:600;padding:.34rem .55rem"><button class="btn btn-ghost btn-sm" data-mm-del-branch="'+bi+'" style="padding:2px 6px;color:var(--red)">🗑</button></div>'
-      +'<div style="padding-left:.3rem">'+leaves+'<button class="btn btn-outline btn-sm" data-mm-add-leaf="'+bi+'" style="margin-top:2px;font-size:.66rem;padding:.2rem .6rem">+ Detalhe</button></div>'
-      +'</div>';
+  var root=curMM.data.root||curMM.topic||'Tema';
+  var html='<div class="mm-editor" id="mm-editor"><svg class="mm-conn-layer" id="mm-conn-layer"></svg>'
+    +'<div class="mm-node-wrap"><div class="mm-central" contenteditable="true" spellcheck="false" data-mm-root>'+esc(root)+'</div></div>'
+    +'<div class="mm-gap"></div><div class="mm-branches">';
+  html+=(curMM.data.branches||[]).map(function(b,bi){
+    var col=BCOLORS[bi%BCOLORS.length],leaves=b.leaves||[];
+    return'<div class="mm-branch-row" data-mm-branch-row="'+bi+'">'
+      +'<div class="mm-node-wrap"><div class="mm-branch-txt" contenteditable="true" spellcheck="false" data-mm-branch="'+bi+'" style="background:'+col+'">'+esc(b.label||'Ramo')+'</div><button class="mm-del" data-mmdelbranch="'+bi+'" title="Remover ramo">×</button></div>'
+      +'<div class="mm-gap"></div>'
+      +'<div class="mm-subs-block">'
+      +leaves.map(function(lf,li){return'<div class="mm-node-wrap"><div class="mm-sub-txt" contenteditable="true" spellcheck="false" data-mm-sub="'+bi+'-'+li+'">'+esc(lf)+'</div><button class="mm-del" data-mmdelsub="'+bi+'-'+li+'" title="Remover subramo">×</button></div>';}).join('')
+      +'<button class="mm-add-sub" data-mmaddsub="'+bi+'">+ subramo</button>'
+      +'</div></div>';
   }).join('');
+  html+='<button class="mm-add-branch" data-mmaddbranch>+ Adicionar ramo</button></div></div>';
+  var stage=document.getElementById('mm-svg');
+  stage.innerHTML=html;
+  var editor=document.getElementById('mm-editor');
+  editor.addEventListener('input',function(){syncMMFromDOM();setTimeout(drawMMConnections,0);});
+  setTimeout(drawMMConnections,30);
+}
+function syncMMFromDOM(){
+  if(!curMM)return;
+  var rootEl=document.querySelector('[data-mm-root]');
+  var branches=[];
+  document.querySelectorAll('[data-mm-branch-row]').forEach(function(row){
+    var bEl=row.querySelector('[data-mm-branch]');
+    var leaves=[];
+    row.querySelectorAll('[data-mm-sub]').forEach(function(s){var txt=(s.innerText||s.textContent||'').trim();if(txt)leaves.push(txt);});
+    var label=(bEl?bEl.innerText:bEl&&bEl.textContent||'').trim();
+    branches.push({label:label||'Ramo',leaves:leaves.length?leaves:['Detalhe']});
+  });
+  var root=(rootEl?rootEl.innerText:curMM.topic||'Tema').trim()||curMM.topic||'Tema';
+  curMM.data=normalizeMMData({root:root,branches:branches});
+  curMM.topic=root;
+  setText('mm-live-title',root);
+}
+function drawMMConnections(){
+  var editor=document.getElementById('mm-editor'),svg=document.getElementById('mm-conn-layer'),central=document.querySelector('[data-mm-root]');
+  if(!editor||!svg||!central)return;
+  var er=editor.getBoundingClientRect();
+  var w=Math.max(editor.scrollWidth,editor.offsetWidth),h=Math.max(editor.scrollHeight,editor.offsetHeight);
+  svg.setAttribute('width',w);svg.setAttribute('height',h);svg.setAttribute('viewBox','0 0 '+w+' '+h);
+  svg.style.width=w+'px';svg.style.height=h+'px';
+  var cr=central.getBoundingClientRect();
+  var sx=cr.right-er.left,sy=cr.top-er.top+cr.height/2,paths='';
+  document.querySelectorAll('[data-mm-branch-row]').forEach(function(row,bi){
+    var col=BCOLORS[bi%BCOLORS.length],br=row.querySelector('[data-mm-branch]');
+    if(!br)return;
+    var rr=br.getBoundingClientRect();
+    var bx=rr.left-er.left,by=rr.top-er.top+rr.height/2;
+    paths+='<path d="M'+sx+' '+sy+' C'+(sx+22)+' '+sy+' '+(bx-24)+' '+by+' '+bx+' '+by+'" fill="none" stroke="#1a2744" stroke-width="2.2" opacity=".88"/>';
+    var bsx=rr.right-er.left,bsy=by;
+    row.querySelectorAll('[data-mm-sub]').forEach(function(sub){
+      var sr=sub.getBoundingClientRect(),ex=sr.left-er.left,ey=sr.top-er.top+sr.height/2;
+      paths+='<path d="M'+bsx+' '+bsy+' C'+(bsx+18)+' '+bsy+' '+(ex-18)+' '+ey+' '+ex+' '+ey+'" fill="none" stroke="'+col+'" stroke-width="2" opacity=".74"/>';
+    });
+  });
+  svg.innerHTML=paths;
 }
 
 // ── PODCASTS (aluno) ──
@@ -3529,6 +3619,10 @@ document.addEventListener('click',function(e){
   // mind map
   var mmv=c('[data-mmview]');if(mmv){viewMM(parseInt(mmv.dataset.mmview));return;}
   var mmd=c('[data-mmdel]');if(mmd){DB.mm.splice(parseInt(mmd.dataset.mmdel),1);persist();renderMMList();refreshDash();return;}
+  var mmab=c('[data-mmaddbranch]');if(mmab&&curMM){syncMMFromDOM();curMM.data.branches.push({label:'Novo ramo',leaves:['Novo subramo']});renderMMEditor();return;}
+  var mmas=c('[data-mmaddsub]');if(mmas&&curMM){syncMMFromDOM();var bi=parseInt(mmas.dataset.mmaddsub,10);if(curMM.data.branches[bi]){curMM.data.branches[bi].leaves.push('Novo subramo');renderMMEditor();}return;}
+  var mmdb=c('[data-mmdelbranch]');if(mmdb&&curMM){syncMMFromDOM();curMM.data.branches.splice(parseInt(mmdb.dataset.mmdelbranch,10),1);renderMMEditor();return;}
+  var mmds=c('[data-mmdelsub]');if(mmds&&curMM){syncMMFromDOM();var p=mmds.dataset.mmdelsub.split('-');var b=curMM.data.branches[parseInt(p[0],10)];if(b){b.leaves.splice(parseInt(p[1],10),1);renderMMEditor();}return;}
   // podcasts
   var pf=c('[data-podfilter]');if(pf){podFilter=pf.dataset.podfilter;renderPodcasts();return;}
   // cursos
@@ -3675,68 +3769,11 @@ document.addEventListener('DOMContentLoaded',function(){
 
   // MIND MAP
   document.getElementById('btn-mmgen').addEventListener('click',genMM);
+  document.getElementById('btn-mmblank').addEventListener('click',newBlankMM);
   document.getElementById('btn-mm-save').addEventListener('click',saveMM);
   document.getElementById('btn-mm-close').addEventListener('click',function(){
     document.getElementById('mm-live').style.display='none';
-    document.getElementById('mm-edit-panel').style.display='none';
     curMM=null;
-  });
-  document.getElementById('btn-mm-edit').addEventListener('click',function(){
-    if(!curMM)return;
-    var ep=document.getElementById('mm-edit-panel');
-    if(ep.style.display!=='none'){ep.style.display='none';return;}
-    renderMMEditFields();
-    ep.style.display='block';
-    ep.scrollIntoView({behavior:'smooth',block:'nearest'});
-  });
-  document.getElementById('btn-mm-edit-done').addEventListener('click',function(){
-    document.getElementById('mm-edit-panel').style.display='none';
-    notify('Edição concluída.','ok');
-  });
-  document.getElementById('mm-edit-root').addEventListener('input',function(){
-    if(!curMM)return;
-    curMM.data.root=this.value;
-    setText('mm-live-title',this.value||curMM.topic);
-    mmRedraw();
-  });
-  document.getElementById('mm-edit-branches').addEventListener('input',function(e){
-    if(!curMM)return;
-    var t=e.target;
-    if(t.dataset.mmBranch!==undefined){
-      curMM.data.branches[parseInt(t.dataset.mmBranch,10)].label=t.value;
-      mmRedraw();
-    }else if(t.dataset.mmLeaf!==undefined){
-      var p=t.dataset.mmLeaf.split('-');
-      curMM.data.branches[parseInt(p[0],10)].leaves[parseInt(p[1],10)]=t.value;
-      mmRedraw();
-    }
-  });
-  document.getElementById('mm-edit-branches').addEventListener('click',function(e){
-    if(!curMM)return;
-    var db=e.target.closest('[data-mm-del-branch]');
-    if(db){
-      curMM.data.branches.splice(parseInt(db.dataset.mmDelBranch,10),1);
-      renderMMEditFields();mmRedraw();return;
-    }
-    var dl=e.target.closest('[data-mm-del-leaf]');
-    if(dl){
-      var p=dl.dataset.mmDelLeaf.split('-');
-      curMM.data.branches[parseInt(p[0],10)].leaves.splice(parseInt(p[1],10),1);
-      renderMMEditFields();mmRedraw();return;
-    }
-    var al=e.target.closest('[data-mm-add-leaf]');
-    if(al){
-      var bi=parseInt(al.dataset.mmAddLeaf,10);
-      if(!curMM.data.branches[bi].leaves)curMM.data.branches[bi].leaves=[];
-      curMM.data.branches[bi].leaves.push('Novo detalhe');
-      renderMMEditFields();mmRedraw();
-    }
-  });
-  document.getElementById('btn-mm-add-branch').addEventListener('click',function(){
-    if(!curMM)return;
-    if(!curMM.data.branches)curMM.data.branches=[];
-    curMM.data.branches.push({label:'Novo ramo',leaves:['Detalhe']});
-    renderMMEditFields();mmRedraw();
   });
 
   // CRONOGRAMA
