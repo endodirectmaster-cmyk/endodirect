@@ -1,5 +1,11 @@
 const DEFAULT_MODEL = process.env.ANTHROPIC_MODEL || 'claude-sonnet-4-20250514';
 
+function json(res, status, body) {
+  res.statusCode = status;
+  res.setHeader('Content-Type', 'application/json; charset=utf-8');
+  res.end(JSON.stringify(body));
+}
+
 function parseBody(req) {
   if (!req.body) return {};
   if (typeof req.body === 'string') {
@@ -26,17 +32,18 @@ function extractText(payload) {
 module.exports = async function handler(req, res) {
   if (req.method === 'OPTIONS') {
     res.setHeader('Allow', 'POST, OPTIONS');
-    return res.status(204).end();
+    res.statusCode = 204;
+    return res.end();
   }
 
   if (req.method !== 'POST') {
     res.setHeader('Allow', 'POST, OPTIONS');
-    return res.status(405).json({ error: 'Metodo nao permitido.' });
+    return json(res, 405, { error: 'Metodo nao permitido.' });
   }
 
   const apiKey = process.env.ANTHROPIC_API_KEY;
   if (!apiKey) {
-    return res.status(500).json({
+    return json(res, 500, {
       error: 'IA nao configurada no servidor. Defina ANTHROPIC_API_KEY nas variaveis de ambiente do Vercel.'
     });
   }
@@ -49,7 +56,7 @@ module.exports = async function handler(req, res) {
   const mediaType = String(body.mediaType || 'application/pdf');
 
   if (!prompt && !documentBase64) {
-    return res.status(400).json({ error: 'Envie uma pergunta ou documento para a IA.' });
+    return json(res, 400, { error: 'Envie uma pergunta ou documento para a IA.' });
   }
 
   const content = documentBase64
@@ -85,11 +92,11 @@ module.exports = async function handler(req, res) {
     const data = await upstream.json().catch(() => ({}));
     if (!upstream.ok) {
       const message = data && data.error && data.error.message ? data.error.message : `Erro HTTP ${upstream.status}`;
-      return res.status(upstream.status).json({ error: message });
+      return json(res, upstream.status, { error: message });
     }
 
-    return res.status(200).json({ text: extractText(data) });
+    return json(res, 200, { text: extractText(data) });
   } catch (error) {
-    return res.status(500).json({ error: error && error.message ? error.message : 'Falha ao chamar a IA.' });
+    return json(res, 500, { error: error && error.message ? error.message : 'Falha ao chamar a IA.' });
   }
 };
