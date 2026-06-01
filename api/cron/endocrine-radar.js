@@ -59,9 +59,16 @@ function firstSentences(text, maxSentences) {
   return parts.slice(0, maxSentences).join(' ').slice(0, 650).trim();
 }
 
+function journalMatches(title, journal) {
+  const clean = cleanText(title).toLowerCase();
+  const query = cleanText(journal.query).toLowerCase();
+  const name = cleanText(journal.name).toLowerCase();
+  return clean === query || clean === name || clean.includes(query) || clean.includes(name);
+}
+
 function normalizeJournal(title) {
   const clean = cleanText(title);
-  const found = JOURNALS.find((journal) => clean.toLowerCase() === journal.query.toLowerCase());
+  const found = JOURNALS.find((journal) => journalMatches(clean, journal));
   return found ? found.name : clean;
 }
 
@@ -101,7 +108,7 @@ function limitationFor(type) {
 }
 
 function scoreArticle(article) {
-  const journal = JOURNALS.find((item) => article.journal.toLowerCase().includes(item.query.toLowerCase()));
+  const journal = JOURNALS.find((item) => journalMatches(article.journal, item));
   let score = journal ? journal.weight : 4;
   const haystack = `${article.title} ${article.abstract} ${(article.publicationTypes || []).join(' ')}`.toLowerCase();
   ['randomized', 'clinical trial', 'guideline', 'consensus', 'meta-analysis', 'systematic review', 'phase 3'].forEach((term) => {
@@ -203,21 +210,32 @@ async function findRelevantArticles() {
 }
 
 function buildMuralItem(article) {
-  const summary = firstSentences(article.abstract, 2) || 'Artigo recente selecionado pelo radar Endodirect nas principais revistas de endocrinologia e metabolismo.';
   const why = practiceRelevance(article);
   const limitation = limitationFor(article.studyType);
+  const focus = portugueseFocus(article);
   return {
     titulo: article.title,
     tipo: 'Artigo',
     fonte: article.journal,
     link: article.link,
-    texto: `${article.studyType}. ${summary} Por que importa: ${why} Cautela: ${limitation}`,
+    texto: `${article.studyType}. Artigo recente sobre ${focus}, selecionado pelo radar Endodirect entre revistas lideres de endocrinologia e metabolismo. A leitura ajuda a acompanhar evidencias novas, hipoteses mecanisticas e possiveis impactos em condutas, ensino e selecao de temas para estudo. Por que importa: ${why} Cautela: ${limitation}`,
     at: Date.now(),
     auto: true,
     sourceId: `pubmed:${article.pmid}`,
     pmid: article.pmid,
     publicationDate: article.publicationDate
   };
+}
+
+function portugueseFocus(article) {
+  const haystack = `${article.title} ${article.abstract}`.toLowerCase();
+  if (haystack.includes('diabetes') || haystack.includes('glucose') || haystack.includes('insulin')) return 'diabetes, tecnologia e controle metabolico';
+  if (haystack.includes('obesity') || haystack.includes('weight') || haystack.includes('glp-1') || haystack.includes('tirzepatide')) return 'obesidade, farmacoterapia metabolica e risco cardiometabolico';
+  if (haystack.includes('thyroid') || haystack.includes('hypothyroidism')) return 'tireoide, diagnostico e acompanhamento clinico';
+  if (haystack.includes('adrenal') || haystack.includes('aldosterone') || haystack.includes('cushing')) return 'adrenal, hipertensao secundaria e endocrinologia clinica';
+  if (haystack.includes('pituitary')) return 'hipofise e neuroendocrinologia';
+  if (haystack.includes('bone') || haystack.includes('osteoporosis') || haystack.includes('mineral')) return 'osso, metabolismo mineral e risco de fratura';
+  return 'endocrinologia e metabolismo';
 }
 
 function supabaseHeaders(serviceKey) {
@@ -263,12 +281,17 @@ async function saveGlobalPayload(serviceKey, payload) {
 function mergeMuralItems(payload, incoming) {
   const now = Date.now();
   const current = Array.isArray(payload.adm_avisos) ? payload.adm_avisos : [];
-  const existingKeys = new Set(current.map((item) => item && (item.sourceId || item.link || item.titulo)).filter(Boolean));
+  const keyOf = (item) => item && (item.sourceId || item.link || item.titulo);
+  const incomingByKey = new Map(incoming.map((item) => [keyOf(item), item]).filter(([key]) => key));
+  const existingKeys = new Set(current.map(keyOf).filter(Boolean));
   const fresh = incoming.filter((item) => !existingKeys.has(item.sourceId) && !existingKeys.has(item.link) && !existingKeys.has(item.titulo));
   const retained = current.filter((item) => {
     if (!(item && item.auto && String(item.sourceId || '').startsWith('pubmed:'))) return true;
     const itemTime = Number(item.at) || 0;
     return now - itemTime < AUTO_ITEM_TTL_MS;
+  }).map((item) => {
+    const replacement = incomingByKey.get(keyOf(item));
+    return replacement ? { ...item, ...replacement, at: item.at || replacement.at } : item;
   });
   return {
     payload: {
