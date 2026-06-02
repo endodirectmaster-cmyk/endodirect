@@ -87,6 +87,10 @@ body{background:var(--bg);color:var(--tx);display:flex;flex-direction:column}
 .btn{border:none;border-radius:var(--rs);padding:.42rem .88rem;font-family:var(--font);font-size:.75rem;font-weight:500;cursor:pointer;display:inline-flex;align-items:center;gap:5px;line-height:1}
 .btn-primary{background:var(--blue);color:#fff}
 .btn-primary:hover:not(:disabled){background:var(--blue2)}
+.btn:disabled{cursor:wait;opacity:.88}
+.btn-primary:disabled{background:var(--blue);border-color:var(--blue);color:#fff;opacity:.92}
+.btn-primary:disabled .ld{color:#fff}
+.btn-primary:disabled .ld-dots span{background:#fff}
 .btn-outline{background:transparent;border:1px solid var(--bd2);color:var(--t2)}
 .btn-outline:hover:not(:disabled){border-color:var(--blue);color:var(--blue)}
 .btn-ghost{background:transparent;border:none;color:var(--t2)}
@@ -205,6 +209,26 @@ textarea{resize:vertical;line-height:1.6}
 .sim-opt.sel{border-color:var(--blue)!important;background:var(--blue-l)!important;color:var(--blue)!important}
 .sim-opt.correct{border-color:var(--grn)!important;background:var(--grn-l)!important;color:#16a34a!important}
 .sim-opt.wrong{border-color:var(--red)!important;background:var(--red-l)!important;color:var(--red)!important}
+.sim-report{padding:1.15rem}
+.sim-report-head{display:flex;align-items:center;justify-content:space-between;gap:1rem;flex-wrap:wrap;margin-bottom:1rem}
+.sim-score{font-size:2rem;font-weight:800;color:var(--blue)}
+.sim-score small{display:block;font-size:.72rem;color:var(--t2);font-weight:600;margin-top:.12rem}
+.sim-report-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:.75rem;margin:.85rem 0}
+.sim-report-box{background:var(--s2);border:1px solid var(--bd);border-radius:var(--rs);padding:.75rem .85rem}
+.sim-report-box h4{font-size:.72rem;text-transform:uppercase;letter-spacing:.07em;color:var(--t2);margin:0 0 .45rem}
+.sim-report-box ul{margin:0;padding-left:1.1rem;color:var(--t2);font-size:.78rem;line-height:1.6}
+.ai-report-card{padding:1rem 1.1rem}
+.ai-report{font-size:.82rem;line-height:1.65;color:var(--tx)}
+.ai-report h3,.ai-report h4{margin:.85rem 0 .45rem;color:var(--tx)}
+.ai-report h3{font-size:1rem}
+.ai-report h4{font-size:.9rem}
+.ai-report p{margin:.35rem 0}
+.ai-report hr{border:0;border-top:1px solid var(--bd);margin:.8rem 0}
+.ai-report ul{margin:.4rem 0 .7rem;padding-left:1.2rem}
+.ai-report table{width:100%;border-collapse:separate;border-spacing:0;margin:.6rem 0;border:1px solid var(--bd);border-radius:var(--rs);overflow:hidden;font-size:.74rem}
+.ai-report th,.ai-report td{padding:.5rem .6rem;border-bottom:1px solid var(--bd);vertical-align:top;text-align:left}
+.ai-report tr:last-child td{border-bottom:0}
+.ai-report th{background:var(--s2);font-size:.62rem;text-transform:uppercase;letter-spacing:.06em;color:var(--t2)}
 .sf-header{position:sticky;top:0;z-index:20;background:var(--navy);color:#fff;padding:.55rem 1.3rem;display:flex;align-items:center;justify-content:space-between;flex-shrink:0}
 .sf-timer{font-size:1.1rem;font-weight:700;font-family:monospace;letter-spacing:.08em}
 .sf-timer.warn{color:#fbbf24}
@@ -249,6 +273,15 @@ textarea{resize:vertical;line-height:1.6}
 .mural-card{position:relative;background:#fff;border:1px solid var(--bd);border-left:4px solid var(--blue);border-radius:var(--rs);padding:1.2rem 1.25rem;min-height:178px;box-shadow:0 1px 2px rgba(26,39,68,.035)}
 .mural-card-red{border-left-color:#c0392b}
 .mural-card-purple{border-left-color:#6d3fb5}
+.mural-card-diabetes{border-left-color:#2563eb}
+.mural-card-obesidade{border-left-color:#16a34a}
+.mural-card-tireoide{border-left-color:#8b5cf6}
+.mural-card-adrenal{border-left-color:#f59e0b}
+.mural-card-neuroendocrinologia{border-left-color:#0ea5e9}
+.mural-card-osteometabolismo{border-left-color:#10b981}
+.mural-card-lipides{border-left-color:#ef4444}
+.mural-card-reproducao{border-left-color:#ec4899}
+.mural-card-pediatria{border-left-color:#6366f1}
 .mural-card-tags{display:flex;align-items:center;gap:.45rem;flex-wrap:wrap;margin-bottom:.75rem}
 .mural-card h3{font-size:1rem;font-weight:800;color:var(--tx);line-height:1.35;margin-bottom:.42rem}
 .mural-date{font-size:.72rem;font-weight:800;color:var(--t3);margin-bottom:.65rem}
@@ -262,6 +295,15 @@ textarea{resize:vertical;line-height:1.6}
 .mural-admin-grid .mural-card{min-height:188px}
 .mural-admin-toolbar{display:flex;align-items:flex-start;justify-content:space-between;gap:1rem;flex-wrap:wrap}
 .tag-muted{background:var(--s2);color:var(--tx)}
+.tag-sub-diabetes{background:#dbeafe;color:#1d4ed8}
+.tag-sub-obesidade{background:#dcfce7;color:#15803d}
+.tag-sub-tireoide{background:#ede9fe;color:#6d28d9}
+.tag-sub-adrenal{background:#fef3c7;color:#b45309}
+.tag-sub-neuroendocrinologia{background:#e0f2fe;color:#0369a1}
+.tag-sub-osteometabolismo{background:#d1fae5;color:#047857}
+.tag-sub-lipides{background:#fee2e2;color:#b91c1c}
+.tag-sub-reproducao{background:#fce7f3;color:#be185d}
+.tag-sub-pediatria{background:#e0e7ff;color:#4338ca}
 .adm-tab{background:#fff;border:1.5px solid var(--bd2);border-radius:99px;padding:.3rem .88rem;font-size:.74rem;font-weight:500;color:var(--t2);cursor:pointer;font-family:var(--font)}
 .adm-tab.on{background:var(--blue);border-color:var(--blue);color:#fff;font-weight:600}
 .admin-mode{height:100%;overflow:hidden}
@@ -401,6 +443,8 @@ textarea{resize:vertical;line-height:1.6}
   #mural-clear{width:100%;justify-content:center;margin-top:.65rem;min-height:40px}
   .mural-grid{grid-template-columns:1fr;gap:.75rem}
   .mural-card{min-height:0;padding:1rem}
+  .sim-report-grid{grid-template-columns:1fr}
+  .sim-report-head{align-items:flex-start;flex-direction:column}
   .mm-generate-row{grid-template-columns:1fr}
   .mm-generate-row .btn{width:100%;justify-content:center}
   .mm-map-wrap{min-height:560px;max-height:68vh}
@@ -436,14 +480,15 @@ textarea{resize:vertical;line-height:1.6}
 <body>
 <div class="modal-bg" id="onboard-modal">
   <div class="modal-box">
-    <div class="modal-hdr"><span class="modal-hdr-title">👋 Bem-vindo ao Endodirect</span></div>
+    <div class="modal-hdr"><span class="modal-hdr-title">👋 Bem-vindo(a) ao Endodirect</span></div>
     <div class="modal-body">
       <div style="font-size:.8rem;color:var(--t2);margin-bottom:1.1rem;line-height:1.55">Antes de começar, conte um pouco sobre você. Isso ajuda a personalizar sua experiência.</div>
       <div style="margin-bottom:1rem">
         <div class="flbl" style="margin-bottom:.45rem">1. Você é:</div>
-        <div style="display:flex;gap:.5rem">
-          <label style="flex:1;display:flex;align-items:center;justify-content:center;gap:.4rem;cursor:pointer;font-size:.79rem;border:1.5px solid var(--bd2);border-radius:var(--rs);padding:.55rem;color:var(--tx)" id="ob-res-lbl"><input type="radio" name="ob-perfil" value="Residente" style="width:auto;accent-color:var(--blue)"> Médico Residente</label>
-          <label style="flex:1;display:flex;align-items:center;justify-content:center;gap:.4rem;cursor:pointer;font-size:.79rem;border:1.5px solid var(--bd2);border-radius:var(--rs);padding:.55rem;color:var(--tx)" id="ob-endo-lbl"><input type="radio" name="ob-perfil" value="Endocrinologista" style="width:auto;accent-color:var(--blue)"> Endocrinologista</label>
+        <div style="display:flex;gap:.5rem;flex-wrap:wrap">
+          <label style="flex:1 1 150px;display:flex;align-items:center;justify-content:center;gap:.4rem;cursor:pointer;font-size:.79rem;border:1.5px solid var(--bd2);border-radius:var(--rs);padding:.55rem;color:var(--tx)" id="ob-res-lbl"><input type="radio" name="ob-perfil" value="Residente" style="width:auto;accent-color:var(--blue)"> Médico(a) Residente</label>
+          <label style="flex:1 1 150px;display:flex;align-items:center;justify-content:center;gap:.4rem;cursor:pointer;font-size:.79rem;border:1.5px solid var(--bd2);border-radius:var(--rs);padding:.55rem;color:var(--tx)" id="ob-endo-lbl"><input type="radio" name="ob-perfil" value="Endocrinologista" style="width:auto;accent-color:var(--blue)"> Endocrinologista</label>
+          <label style="flex:1 1 150px;display:flex;align-items:center;justify-content:center;gap:.4rem;cursor:pointer;font-size:.79rem;border:1.5px solid var(--bd2);border-radius:var(--rs);padding:.55rem;color:var(--tx)" id="ob-outros-lbl"><input type="radio" name="ob-perfil" value="Outros" style="width:auto;accent-color:var(--blue)"> Outros</label>
         </div>
       </div>
       <div id="ob-grad-wrap" style="display:none;margin-bottom:.85rem">
@@ -453,6 +498,10 @@ textarea{resize:vertical;line-height:1.6}
       <div id="ob-resid-wrap" style="display:none;margin-bottom:.85rem">
         <div class="flbl" style="margin-bottom:.3rem">3. Instituição da residência médica</div>
         <input type="text" id="ob-resid" placeholder="Ex: HC-FMUSP, INCA…">
+      </div>
+      <div id="ob-outros-wrap" style="display:none;margin-bottom:.85rem">
+        <div class="flbl" style="margin-bottom:.3rem">2. Especialidade ou área de atuação</div>
+        <input type="text" id="ob-outros" placeholder="Ex: Cardiologista, Intensivista, Clínico geral…">
       </div>
       <div id="ob-err" style="display:none;background:var(--red-l);border:1px solid #fecaca;border-radius:var(--rs);padding:.45rem .75rem;font-size:.73rem;color:var(--red);margin-bottom:.7rem"></div>
       <button class="btn btn-primary" id="ob-submit" style="width:100%;justify-content:center;padding:.6rem">Começar →</button>
@@ -583,12 +632,12 @@ textarea{resize:vertical;line-height:1.6}
       </div>
       <div class="sb-spacer"></div>
       <div style="border-top:1px solid rgba(255,255,255,.1);margin:.35rem 0"></div>
-      <button class="sb-item" data-p="support">🛟 Suporte</button>
+      <button class="sb-item" data-p="support">❔ Suporte</button>
     </div>
 
     <div class="panel on" id="panel-dash">
       <div class="breadcrumb">Dashboard <b>/ Visão Geral</b></div>
-      <div class="ph"><h1 id="dash-greeting">Bem-vindo.</h1><p>Continue seus estudos em endocrinologia e metabologia.</p></div>
+      <div class="ph"><h1 id="dash-greeting">Bem-vindo.</h1><p>Continue seus estudos.</p></div>
       <div class="pc">
         <div class="g4" style="margin-bottom:10px">
           <div class="card" style="text-align:center;cursor:pointer" id="dc-quest"><div style="font-size:1.45rem;font-weight:700;color:var(--blue)" id="d-qn">0</div><div style="font-size:.66rem;color:var(--t3)">Questões</div></div>
@@ -1010,10 +1059,9 @@ textarea{resize:vertical;line-height:1.6}
         <div class="card">
           <div class="faq-item"><div class="faq-q">Como usar o Chat IA? <span>▾</span></div><div class="faq-a">Acesse Chat IA no menu e faça perguntas sobre endocrinologia. A IA responde com base em evidências científicas.</div></div>
           <div class="faq-item"><div class="faq-q">Como gerar questões por subespecialidade? <span>▾</span></div><div class="faq-a">No Banco de Questões, escolha a subespecialidade (diabetes, tireoide, etc.), o nível e clique em "Gerar questões".</div></div>
-          <div class="faq-item"><div class="faq-q">Como inserir provas anteriores? <span>▾</span></div><div class="faq-a">Faça login como admin e acesse a aba Provas. Importe um PDF da prova SBEM ou insira manualmente.</div></div>
           <div class="faq-item"><div class="faq-q">Como funciona a revisão espaçada? <span>▾</span></div><div class="faq-a">Utiliza o algoritmo SM-2. Os cards com maior dificuldade aparecem com mais frequência até serem dominados.</div></div>
         </div>
-        <div style="font-size:.77rem;color:var(--t2);margin-top:.7rem">📧 suporte@endodirect.med.br</div>
+        <div style="font-size:.77rem;color:var(--t2);margin-top:.7rem">✉️ suporte@endodirect.com.br</div>
       </div>
     </div>
 
@@ -1034,7 +1082,7 @@ textarea{resize:vertical;line-height:1.6}
           <button class="adm-nav" data-asec="chat">💬 Chat</button>
           <div class="sb-sec" style="margin-top:.8rem">Conta</div>
           <button class="adm-nav" data-asec="perfil">👤 Perfil</button>
-          <button class="adm-nav" data-asec="suporte">🛟 Suporte</button>
+          <button class="adm-nav" data-asec="suporte">❔ Suporte</button>
         </div>
         <div style="padding:.55rem;border-top:1px solid rgba(255,255,255,.1)">
           <div class="sb-sec" style="padding-top:0">Sair</div>
@@ -1241,6 +1289,10 @@ var MURAL_SOURCE_FILTERS=[
   'Nature Reviews Endocrinology',
   'The Lancet Diabetes & Endocrinology'
 ];
+var MURAL_SUBSPECIALTY_FILTERS=[
+  'Diabetes','Obesidade','Tireoide','Adrenal','Neuroendocrinologia','Osteometabolismo','Lípides',
+  'Endocrinologia Pediátrica','Endocrinologia Feminina','Endocrinologia Masculina','Reprodução','Metabolismo'
+];
 function normalizeMuralSource(source){
   var s=String(source||'').trim();
   var map={
@@ -1255,15 +1307,70 @@ function normalizeMuralSource(source){
   };
   return map[s]||s;
 }
+function muralPlain(v){
+  return String(v||'').normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase();
+}
+function normalizeMuralType(tipo,titulo,texto,fonte){
+  var raw=String(tipo||'').trim();
+  var p=muralPlain([raw,titulo,texto,fonte].join(' '));
+  if(raw&&raw!=='Artigo'){
+    if(p.indexOf('meta-anal')>=0||p.indexOf('metanal')>=0)return'Metanálise';
+    if(p.indexOf('ensaio clinico')>=0||p.indexOf('clinical trial')>=0||p.indexOf('randomized')>=0||p.indexOf('randomised')>=0)return'Ensaio Clínico';
+    if(p.indexOf('artigo de revisao')>=0||p.indexOf('review')>=0)return'Artigo de Revisão';
+    if(p.indexOf('perspectiva clinica')>=0||p.indexOf('perspective')>=0)return'Perspectiva Clínica';
+    if(p.indexOf('estudo genetico')>=0||p.indexOf('genetic')>=0)return'Estudo Genético';
+    if(p.indexOf('estudo translacional')>=0||p.indexOf('translational')>=0)return'Estudo Translacional';
+    return raw;
+  }
+  if(p.indexOf('meta-anal')>=0||p.indexOf('metanal')>=0||p.indexOf('systematic review')>=0||p.indexOf('revisao sistematica')>=0)return'Metanálise';
+  if(p.indexOf('randomized')>=0||p.indexOf('randomised')>=0||p.indexOf('controlled trial')>=0||p.indexOf('clinical trial')>=0||p.indexOf('ensaio clinico')>=0||p.indexOf('trial')>=0)return'Ensaio Clínico';
+  if(p.indexOf('endocrine reviews')>=0||p.indexOf('nature reviews')>=0||p.indexOf('review')>=0||p.indexOf('revisao')>=0)return'Artigo de Revisão';
+  if(p.indexOf('perspective')>=0||p.indexOf('perspectiva')>=0)return'Perspectiva Clínica';
+  if(p.indexOf('genetic')>=0||p.indexOf('variant')>=0||p.indexOf('gene')>=0)return'Estudo Genético';
+  if(p.indexOf('translational')>=0||p.indexOf('translacional')>=0)return'Estudo Translacional';
+  return'Artigo Científico';
+}
+function inferMuralSubspecialty(item){
+  item=item||{};
+  if(item.subespecialidade)return item.subespecialidade;
+  var p=muralPlain([item.titulo,item.texto,item.fonte,item.tipo].join(' '));
+  if(/diabet|insulin|glicemi|glucose|glp-?1|hba1c|glycemic/.test(p))return'Diabetes';
+  if(/obes|adipos|peso|bariatr|weight|eating disorder/.test(p))return'Obesidade';
+  if(/lipid|lipide|colesterol|triglicer|droplet/.test(p))return'Lípides';
+  if(/thyroid|tireo|hipotire|hipertire|graves|notch/.test(p))return'Tireoide';
+  if(/adrenal|aldoster|cortisol|renin|feocromocit/.test(p))return'Adrenal';
+  if(/pituitary|hipofis|prolact|neuroendocr/.test(p))return'Neuroendocrinologia';
+  if(/bone|mineral|osteopor|vitamina d|calcio|parat/.test(p))return'Osteometabolismo';
+  if(/pediatr|children|crianca|congenital/.test(p))return'Endocrinologia Pediátrica';
+  if(/pregnan|gesta|postpartum|gravidez|menopaus|female/.test(p))return'Endocrinologia Feminina';
+  if(/testosterone|testosterona|androgen|male/.test(p))return'Endocrinologia Masculina';
+  if(/reproduc|fertil|gonad/.test(p))return'Reprodução';
+  return'Metabolismo';
+}
+function muralSubspecialty(item){return inferMuralSubspecialty(item||{});}
+function muralDisplayType(item){return normalizeMuralType((item&&item.tipo)||'',(item&&item.titulo)||'',(item&&item.texto)||'',((item&&item.fonte)||''));}
+function muralSubMeta(sub){
+  var key=muralPlain(sub);
+  if(key.indexOf('diabetes')>=0)return{card:' mural-card-diabetes',tag:'tag-sub-diabetes'};
+  if(key.indexOf('obes')>=0)return{card:' mural-card-obesidade',tag:'tag-sub-obesidade'};
+  if(key.indexOf('tireo')>=0)return{card:' mural-card-tireoide',tag:'tag-sub-tireoide'};
+  if(key.indexOf('adrenal')>=0)return{card:' mural-card-adrenal',tag:'tag-sub-adrenal'};
+  if(key.indexOf('neuro')>=0)return{card:' mural-card-neuroendocrinologia',tag:'tag-sub-neuroendocrinologia'};
+  if(key.indexOf('osteo')>=0||key.indexOf('mineral')>=0)return{card:' mural-card-osteometabolismo',tag:'tag-sub-osteometabolismo'};
+  if(key.indexOf('lip')>=0)return{card:' mural-card-lipides',tag:'tag-sub-lipides'};
+  if(key.indexOf('repro')>=0||key.indexOf('femin')>=0||key.indexOf('mascul')>=0)return{card:' mural-card-reproducao',tag:'tag-sub-reproducao'};
+  if(key.indexOf('pediatr')>=0)return{card:' mural-card-pediatria',tag:'tag-sub-pediatria'};
+  return{card:'',tag:'tag-muted'};
+}
 function defaultMuralAvisos(){
   var now=Date.now();
   return [
-    {titulo:'Intrapartum and Early Postpartum Use of Automated Insulin Delivery in Type 1 Diabetes: A Prespecified Analysis of the CIRCUIT Randomized Controlled Trial.',tipo:'Artigo',fonte:'Diabetes Care',link:'https://doi.org/10.2337/dc26-0470',texto:'Ensaio clinico. Analise pre-especificada do estudo CIRCUIT avaliou efetividade e seguranca de sistema automatizado de entrega de insulina no intraparto e pos-parto inicial em diabetes tipo 1. Por que importa: pode orientar discussoes sobre tecnologia, gestacao e transicao de cuidados glicemicos em cenarios de alto risco. Cautela: revisar criterios de inclusao, desfechos e aplicabilidade antes de extrapolar para todos os servicos.',at:now-2400000,auto:true,sourceId:'pubmed:42201836',pmid:'42201836',publicationDate:'2026 May 27'},
-    {titulo:'DiaBetter Together: Outcomes of a Randomized Controlled Trial Evaluating a Peer Mentor Behavioral Intervention for Young Adults With Type 1 Diabetes During the Transfer From Pediatric to Adult Care.',tipo:'Artigo',fonte:'Diabetes Care',link:'https://doi.org/10.2337/dc26-0395',texto:'Ensaio clinico randomizado avaliou uma intervencao comportamental com mentores pares durante a transferencia do cuidado pediatrico para o adulto em jovens com diabetes tipo 1. Por que importa: reforca estrategias para reduzir perda de seguimento e melhorar suporte em uma fase vulneravel do cuidado. Cautela: confirmar intensidade da intervencao e viabilidade local antes de incorporar ao fluxo assistencial.',at:now-1200000,auto:true,sourceId:'pubmed:42201336',pmid:'42201336',publicationDate:'2026 May 27'},
-    {titulo:'GLP-1 Receptor Agonists and Eating Disorders - Cause for Concern.',tipo:'Artigo',fonte:'The New England Journal of Medicine',link:'https://doi.org/10.1056/NEJMp2600300',texto:'Perspectiva clinica. Discute sinais de cautela sobre agonistas do receptor de GLP-1 em pessoas com transtornos alimentares ou vulnerabilidade para comportamentos alimentares de risco. Por que importa: ajuda a reforcar triagem, acompanhamento multiprofissional e seguranca em tratamentos para obesidade e diabetes. Cautela: e um artigo de perspectiva; deve orientar vigilancia, nao substituir ensaios clinicos ou diretrizes.',at:now-900000,auto:true,sourceId:'pubmed:42041223',pmid:'42041223',publicationDate:'2026 Apr 30'},
-    {titulo:'First large-scale screening of Notch biallelic variants implicates novel candidate genes in congenital hypothyroidism.',tipo:'Artigo',fonte:'Journal of Clinical Endocrinology & Metabolism',link:'https://doi.org/10.1210/clinem/dgag208',texto:'Estudo genetico em larga escala avaliou variantes bialelicas da via Notch e apontou novos genes candidatos em hipotireoidismo congenito. Por que importa: pode ampliar a discussao sobre investigacao molecular, aconselhamento genetico e fisiopatologia tireoidiana no ensino de endocrinologia. Cautela: achados geneticos exigem validacao funcional e correlacao clinica antes de mudar protocolos.',at:now-800000,auto:true,sourceId:'pubmed:42192612',pmid:'42192612',publicationDate:'2026 May 26'},
-    {titulo:'Beyond aldosterone and renin: emerging biomarkers for diagnosing and subtyping primary aldosteronism.',tipo:'Artigo',fonte:'Endocrine Reviews',link:'https://doi.org/10.1210/endrev/bnag016',texto:'Revisao discute biomarcadores emergentes alem da aldosterona e da renina para diagnostico e subtipagem do hiperaldosteronismo primario. Por que importa: pode refinar a selecao de testes, estratificacao e encaminhamento para investigacao especializada. Cautela: interpretar a luz da disponibilidade local dos marcadores e da qualidade das evidencias incluidas.',at:now-700000,auto:true,sourceId:'pubmed:42186715',pmid:'42186715',publicationDate:'2026 May 26'},
-    {titulo:'The Lipid Droplet-Associated Hydrolase Is Associated With Obesity and Adipose Tissue Inflammation in Children.',tipo:'Artigo',fonte:'Obesity',link:'https://doi.org/10.1002/oby.70216',texto:'Estudo translacional relaciona hidrolase associada a goticulas lipidicas com obesidade e inflamacao do tecido adiposo em criancas. Por que importa: destaca mecanismos biologicos que podem ajudar a compreender risco metabolico precoce e inflamacao adipocitaria. Cautela: associacao biologica nao prova causalidade e ainda precisa de validacao longitudinal.',at:now-600000,auto:true,sourceId:'pubmed:42206925',pmid:'42206925',publicationDate:'2026 May 28'}
+    {titulo:'Intrapartum and Early Postpartum Use of Automated Insulin Delivery in Type 1 Diabetes: A Prespecified Analysis of the CIRCUIT Randomized Controlled Trial.',tipo:'Ensaio Clínico',subespecialidade:'Diabetes',fonte:'Diabetes Care',link:'https://doi.org/10.2337/dc26-0470',texto:'Ensaio clinico. Analise pre-especificada do estudo CIRCUIT avaliou efetividade e seguranca de sistema automatizado de entrega de insulina no intraparto e pos-parto inicial em diabetes tipo 1. Por que importa: pode orientar discussoes sobre tecnologia, gestacao e transicao de cuidados glicemicos em cenarios de alto risco. Cautela: revisar criterios de inclusao, desfechos e aplicabilidade antes de extrapolar para todos os servicos.',at:now-2400000,auto:true,sourceId:'pubmed:42201836',pmid:'42201836',publicationDate:'2026 May 27'},
+    {titulo:'DiaBetter Together: Outcomes of a Randomized Controlled Trial Evaluating a Peer Mentor Behavioral Intervention for Young Adults With Type 1 Diabetes During the Transfer From Pediatric to Adult Care.',tipo:'Ensaio Clínico',subespecialidade:'Diabetes',fonte:'Diabetes Care',link:'https://doi.org/10.2337/dc26-0395',texto:'Ensaio clinico randomizado avaliou uma intervencao comportamental com mentores pares durante a transferencia do cuidado pediatrico para o adulto em jovens com diabetes tipo 1. Por que importa: reforca estrategias para reduzir perda de seguimento e melhorar suporte em uma fase vulneravel do cuidado. Cautela: confirmar intensidade da intervencao e viabilidade local antes de incorporar ao fluxo assistencial.',at:now-1200000,auto:true,sourceId:'pubmed:42201336',pmid:'42201336',publicationDate:'2026 May 27'},
+    {titulo:'GLP-1 Receptor Agonists and Eating Disorders - Cause for Concern.',tipo:'Perspectiva Clinica',subespecialidade:'Obesidade',fonte:'The New England Journal of Medicine',link:'https://doi.org/10.1056/NEJMp2600300',texto:'Perspectiva clinica. Discute sinais de cautela sobre agonistas do receptor de GLP-1 em pessoas com transtornos alimentares ou vulnerabilidade para comportamentos alimentares de risco. Por que importa: ajuda a reforcar triagem, acompanhamento multiprofissional e seguranca em tratamentos para obesidade e diabetes. Cautela: e um artigo de perspectiva; deve orientar vigilancia, nao substituir ensaios clinicos ou diretrizes.',at:now-900000,auto:true,sourceId:'pubmed:42041223',pmid:'42041223',publicationDate:'2026 Apr 30'},
+    {titulo:'First large-scale screening of Notch biallelic variants implicates novel candidate genes in congenital hypothyroidism.',tipo:'Estudo Genetico',subespecialidade:'Tireoide',fonte:'Journal of Clinical Endocrinology & Metabolism',link:'https://doi.org/10.1210/clinem/dgag208',texto:'Estudo genetico em larga escala avaliou variantes bialelicas da via Notch e apontou novos genes candidatos em hipotireoidismo congenito. Por que importa: pode ampliar a discussao sobre investigacao molecular, aconselhamento genetico e fisiopatologia tireoidiana no ensino de endocrinologia. Cautela: achados geneticos exigem validacao funcional e correlacao clinica antes de mudar protocolos.',at:now-800000,auto:true,sourceId:'pubmed:42192612',pmid:'42192612',publicationDate:'2026 May 26'},
+    {titulo:'Beyond aldosterone and renin: emerging biomarkers for diagnosing and subtyping primary aldosteronism.',tipo:'Artigo de Revisão',subespecialidade:'Adrenal',fonte:'Endocrine Reviews',link:'https://doi.org/10.1210/endrev/bnag016',texto:'Revisao discute biomarcadores emergentes alem da aldosterona e da renina para diagnostico e subtipagem do hiperaldosteronismo primario. Por que importa: pode refinar a selecao de testes, estratificacao e encaminhamento para investigacao especializada. Cautela: interpretar a luz da disponibilidade local dos marcadores e da qualidade das evidencias incluidas.',at:now-700000,auto:true,sourceId:'pubmed:42186715',pmid:'42186715',publicationDate:'2026 May 26'},
+    {titulo:'The Lipid Droplet-Associated Hydrolase Is Associated With Obesity and Adipose Tissue Inflammation in Children.',tipo:'Estudo Translacional',subespecialidade:'Obesidade',fonte:'Obesity',link:'https://doi.org/10.1002/oby.70216',texto:'Estudo translacional relaciona hidrolase associada a goticulas lipidicas com obesidade e inflamacao do tecido adiposo em criancas. Por que importa: destaca mecanismos biologicos que podem ajudar a compreender risco metabolico precoce e inflamacao adipocitaria. Cautela: associacao biologica nao prova causalidade e ainda precisa de validacao longitudinal.',at:now-600000,auto:true,sourceId:'pubmed:42206925',pmid:'42206925',publicationDate:'2026 May 28'}
   ];
 }
 function muralNoticeKey(a){
@@ -1289,6 +1396,8 @@ function normalizeMuralAviso(a,defaults){
   if(item.auto&&item.texto&&/(Following the|Transition between|primary outcome|trial evaluated|health care is complex|This trial|compared intrapartum)/i.test(item.texto)){
     item.texto='Artigo recente selecionado pelo radar Endodirect nas principais revistas de endocrinologia e metabolismo. Por que importa: merece leitura por possivel impacto em ensino, atualizacao clinica e pratica endocrinologica. Cautela: ler o artigo completo antes de extrapolar os achados.';
   }
+  item.tipo=normalizeMuralType(item.tipo,item.titulo,item.texto,item.fonte);
+  item.subespecialidade=inferMuralSubspecialty(item);
   return item;
 }
 function mergeRadarAvisos(list){
@@ -1361,7 +1470,7 @@ function hydrateRemoteState(){
     .then(function(){
       remoteStateLoaded=true;
       refreshAfterRemoteState();
-      notify('Dados sincronizados com Supabase.','ok');
+      
       queueRemoteStateSave();
     }).catch(function(e){
       if(!remoteStateWarned){
@@ -1394,7 +1503,7 @@ function saveRemoteState(){
 }
 
 function esc(s){return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');}
-function ldHTML(){return'<div class="ld"><div class="ld-dots"><span></span><span></span><span></span></div>Gerando…</div>';}
+function ldHTML(label){return'<span class="ld"><span class="ld-dots"><span></span><span></span><span></span></span><span>'+esc(label||'Gerando...')+'</span></span>';}
 function notify(msg,type){
   var el=document.createElement('div');
   el.className='notify '+(type||'info');
@@ -1409,6 +1518,54 @@ function parseJ(raw){
   var m=c.match(/(\{[\s\S]*\})/)||c.match(/(\[[\s\S]*\])/);
   if(m){try{return JSON.parse(m[1]);}catch(e){}}
   return null;
+}
+function sleep(ms){return new Promise(function(resolve){setTimeout(resolve,ms);});}
+function callAIJson(sys,usr,maxTok,retries){
+  retries=retries==null?1:retries;
+  return callAI(sys,usr,maxTok).then(function(raw){
+    var d=parseJ(raw);
+    if(!d)throw new Error('Resposta invalida da IA.');
+    return d;
+  }).catch(function(e){
+    if(retries>0)return sleep(650).then(function(){return callAIJson(sys,usr,maxTok,retries-1);});
+    throw e;
+  });
+}
+function mdInline(s){return esc(s).replace(/\*\*(.+?)\*\*/g,'<strong>$1</strong>').replace(/`([^`]+)`/g,'<code>$1</code>');}
+function isMarkdownTableSep(line){return /^\s*\|?[\s:-]+\|[\s|:-]*$/.test(line||'');}
+function formatAIReport(md){
+  var lines=String(md||'').replace(/\r/g,'').split('\n');
+  var out=[],list=[];
+  function flushList(){
+    if(list.length){out.push('<ul>'+list.map(function(x){return'<li>'+mdInline(x)+'</li>';}).join('')+'</ul>');list=[];}
+  }
+  for(var i=0;i<lines.length;i++){
+    var line=lines[i].trim();
+    if(!line){flushList();continue;}
+    if(line==='---'){flushList();out.push('<hr>');continue;}
+    if(isMarkdownTableSep(line))continue;
+    if(line.indexOf('|')>=0&&line.split('|').filter(function(c){return c.trim();}).length>=2){
+      flushList();
+      var rows=[];
+      while(i<lines.length&&lines[i].indexOf('|')>=0){
+        if(!isMarkdownTableSep(lines[i]))rows.push(lines[i].split('|').map(function(c){return c.trim();}).filter(Boolean));
+        i++;
+      }
+      i--;
+      if(rows.length){
+        var head=rows[0],body=rows.slice(1);
+        out.push('<table><thead><tr>'+head.map(function(c){return'<th>'+mdInline(c)+'</th>';}).join('')+'</tr></thead><tbody>'+body.map(function(r){return'<tr>'+r.map(function(c){return'<td>'+mdInline(c)+'</td>';}).join('')+'</tr>';}).join('')+'</tbody></table>');
+      }
+      continue;
+    }
+    if(/^#{2,4}\s+/.test(line)){flushList();out.push('<h3>'+mdInline(line.replace(/^#{2,4}\s+/,''))+'</h3>');continue;}
+    if(/^[-*]\s+/.test(line)){list.push(line.replace(/^[-*]\s+/,''));continue;}
+    if(/^\d+\.\s+/.test(line)){list.push(line.replace(/^\d+\.\s+/,''));continue;}
+    flushList();
+    out.push('<p>'+mdInline(line)+'</p>');
+  }
+  flushList();
+  return '<div class="card ai-report-card"><div class="card-head"><span class="card-title">Avaliacao da IA</span></div><div class="ai-report">'+out.join('')+'</div></div>';
 }
 function normImportKey(s){return String(s||'').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/[^a-z0-9]+/g,'_').replace(/^_+|_+$/g,'');}
 function cleanImportText(v){
@@ -2667,7 +2824,7 @@ function initMural(){
   var options='<option value="">Todos</option>'+fontes.map(function(f){return'<option value="'+esc(f)+'">'+esc(f)+'</option>';}).join('');
   el.innerHTML='<div class="mural-shell">'
     +'<section class="mural-hero"><div class="mural-eyebrow">Avisos para alunos</div><h2>Calendário, notícias e leituras essenciais</h2><p>Acompanhe prazos, julgados recentes, atualizações do curso e temas úteis para estudo dirigido. Os links abrem as fontes oficiais.</p></section>'
-    +'<section class="mural-filter-card"><div class="mural-filter-main"><label class="mural-filter-field"><span class="mural-filter-label">Tema / Fonte</span><select class="mural-filter-select" id="mural-filter">'+options+'</select></label><span class="mural-count-pill">'+esc(count)+'</span><span class="mural-theme-pill">'+esc(tema)+'</span></div><button class="btn btn-outline" id="mural-clear" type="button">Limpar filtro</button></section>'
+    +'<section class="mural-filter-card"><div class="mural-filter-main"><label class="mural-filter-field"><span class="mural-filter-label">Subespecialidade</span><select class="mural-filter-select" id="mural-filter">'+options+'</select></label><span class="mural-count-pill">'+esc(count)+'</span><span class="mural-theme-pill">'+esc(tema)+'</span></div><button class="btn btn-outline" id="mural-clear" type="button">Limpar filtro</button></section>'
     +'<section class="mural-grid">'+(avisos.length?avisos.map(noticeHTML).join(''):'<div class="empty mural-empty">Nenhum aviso encontrado para este filtro.</div>')+'</section>'
     +'</div>';
   var sel=document.getElementById('mural-filter');
@@ -3056,11 +3213,12 @@ function admSuporteHTML(){
   return '<div class="adm-ph"><h1>Suporte</h1></div>'
   +'<div class="adm-pc"><div class="card">'
     +'<div class="faq-item"><div class="faq-q">Como importar uma prova em PDF? <span>▾</span></div><div class="faq-a">Em Provas &amp; Questões → Importar PDF (IA), arraste o arquivo da prova, defina área/instituição/ano e clique em Extrair com IA. As questões vão para o banco do aluno.</div></div>'
+    +'<div class="faq-item"><div class="faq-q">Como inserir provas anteriores? <span>▾</span></div><div class="faq-a">Em Provas &amp; Questões, use a aba Banco de questões para revisar o acervo ou a aba Inserir manualmente para cadastrar questões avulsas com alternativas, gabarito e comentário.</div></div>'
     +'<div class="faq-item"><div class="faq-q">Como cadastrar um estudante? <span>▾</span></div><div class="faq-a">Na seção Estudantes, clique em "+ Cadastrar", preencha os dados básicos e salve. No protótipo o cadastro fica salvo na sessão.</div></div>'
     +'<div class="faq-item"><div class="faq-q">Como publicar um aviso no mural dos alunos? <span>▾</span></div><div class="faq-a">Em Mural, preencha título, tipo e texto e clique em "Publicar no mural". O aviso aparece no mural do estudante.</div></div>'
     +'<div class="faq-item"><div class="faq-q">Como adicionar podcasts? <span>▾</span></div><div class="faq-a">Em Conteúdo, informe título, subespecialidade e selecione o arquivo de áudio (MP3/M4A).</div></div>'
   +'</div>'
-  +'<div style="font-size:.77rem;color:var(--t2);margin-top:.7rem">📧 suporte@endodirect.med.br</div>'
+  +'<div style="font-size:.77rem;color:var(--t2);margin-top:.7rem">✉️ suporte@endodirect.com.br</div>'
   +'</div>';
 }
 
@@ -3113,7 +3271,7 @@ function admMuralSecHTML(){
   // banner de gestão
   +'<div class="card" style="margin-bottom:1.1rem"><div style="display:flex;align-items:flex-start;justify-content:space-between;gap:1rem;flex-wrap:wrap"><div style="flex:1;min-width:240px"><div style="font-size:.62rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--t3);margin-bottom:.3rem">Gestão do mural dos alunos</div><div style="font-size:1.15rem;font-weight:700;color:var(--tx);margin-bottom:.35rem">Edite avisos, notícias e comunicados importantes</div><div style="font-size:.79rem;color:var(--t2);line-height:1.55">Os cards abaixo alimentam a aba Mural do estudante. Use para destacar diretrizes, atualizações de subespecialidades e comunicados internos.</div></div><button class="btn btn-outline" id="btn-adm-mural-preview">👁 Pré-visualizar como aluno</button></div></div>'
   // cards em grade
-  +'<section class="mural-filter-card"><div class="mural-filter-main"><label class="mural-filter-field"><span class="mural-filter-label">Tema / Fonte</span><select class="mural-filter-select" id="adm-mural-filter">'+options+'</select></label><span class="mural-count-pill">'+esc(count)+'</span><span class="mural-theme-pill">'+esc(tema)+'</span></div><button class="btn btn-outline" id="adm-mural-clear" type="button">Limpar filtro</button></section>'
+  +'<section class="mural-filter-card"><div class="mural-filter-main"><label class="mural-filter-field"><span class="mural-filter-label">Subespecialidade</span><select class="mural-filter-select" id="adm-mural-filter">'+options+'</select></label><span class="mural-count-pill">'+esc(count)+'</span><span class="mural-theme-pill">'+esc(tema)+'</span></div><button class="btn btn-outline" id="adm-mural-clear" type="button">Limpar filtro</button></section>'
   +'<div class="mural-grid mural-admin-grid" id="adm-av-list">'+(avisos.length?avisos.map(cardHTML).join(''):'<div class="empty mural-empty">'+(admAvisos.length?'Nenhum aviso encontrado para este filtro.':'Nenhum aviso publicado. Clique em "+ Novo aviso" para começar.')+'</div>')+'</div>'
   +'</div>';
 }
@@ -3650,6 +3808,343 @@ document.addEventListener('click',function(e){
   var fbt=c('.fb-tipo-btn');if(fbt){fbState.tipo=fbt.dataset.tipo;document.querySelectorAll('.fb-tipo-btn').forEach(function(b){b.classList.toggle('on',b===fbt);});return;}
 });
 
+// ---------- POLISH OVERRIDES ----------
+function profileDisplayLabel(profile){
+  if(!profile)return'';
+  if(profile.displayPerfil)return profile.displayPerfil;
+  if(profile.perfil==='Residente')return'Médico(a) Residente';
+  if(profile.perfil==='Outros')return profile.especialidade||'Outro profissional';
+  return profile.perfil||'';
+}
+var __doLoginBase=doLogin;
+doLogin=function(u){
+  currentUser=u;
+  remoteStateLoaded=false;
+  remoteStateWarned=false;
+  if(u.role==='aluno'){
+    var prof=lsGet('user_profile');
+    if(!prof){openOnboard();return;}
+    currentUser.sub=profileDisplayLabel(prof);
+    currentUser.profile=prof;
+  }
+  startApp();
+  hydrateRemoteState();
+};
+openOnboard=function(){
+  document.getElementById('login-screen').style.display='none';
+  document.getElementById('onboard-modal').style.display='flex';
+  document.getElementById('ob-err').style.display='none';
+  document.querySelectorAll('input[name="ob-perfil"]').forEach(function(r){r.checked=false;});
+  ['ob-grad','ob-resid','ob-outros'].forEach(function(id){var e=document.getElementById(id);if(e)e.value='';});
+  setupOnboardProfileChoices();
+};
+submitOnboard=function(){
+  var perfil=(document.querySelector('input[name="ob-perfil"]:checked')||{}).value;
+  var err=document.getElementById('ob-err');
+  if(!perfil){err.textContent='Selecione uma opção de perfil.';err.style.display='block';return;}
+  var grad=(document.getElementById('ob-grad').value||'').trim();
+  if(!grad){err.textContent='Informe sua instituição de graduação.';err.style.display='block';return;}
+  var prof={perfil:perfil,graduacao:grad};
+  if(perfil==='Residente'){
+    prof.displayPerfil='Médico(a) Residente';
+  }else if(perfil==='Endocrinologista'){
+    var resid=(document.getElementById('ob-resid').value||'').trim();
+    if(!resid){err.textContent='Informe sua instituição de residência médica.';err.style.display='block';return;}
+    prof.residencia=resid;
+    prof.displayPerfil='Endocrinologista';
+  }else{
+    var esp=(document.getElementById('ob-outros').value||'').trim();
+    if(!esp){err.textContent='Descreva sua especialidade ou área de atuação.';err.style.display='block';return;}
+    prof.especialidade=esp;
+    prof.displayPerfil=esp;
+  }
+  lsSet('user_profile',prof);
+  currentUser.sub=profileDisplayLabel(prof);
+  currentUser.profile=prof;
+  document.getElementById('onboard-modal').style.display='none';
+  startApp();
+  queueRemoteStateSave();
+};
+function setupOnboardProfileChoices(){
+  var perfil=(document.querySelector('input[name="ob-perfil"]:checked')||{}).value;
+  var has=!!perfil;
+  var grad=document.getElementById('ob-grad-wrap');
+  var resid=document.getElementById('ob-resid-wrap');
+  var outros=document.getElementById('ob-outros-wrap');
+  if(grad)grad.style.display=has?'block':'none';
+  if(resid)resid.style.display=perfil==='Endocrinologista'?'block':'none';
+  if(outros)outros.style.display=perfil==='Outros'?'block':'none';
+  [['ob-res-lbl','Residente'],['ob-endo-lbl','Endocrinologista'],['ob-outros-lbl','Outros']].forEach(function(pair){
+    var el=document.getElementById(pair[0]);if(!el)return;
+    var on=perfil===pair[1];
+    el.style.borderColor=on?'var(--blue)':'var(--bd2)';
+    el.style.background=on?'#eff6ff':'#fff';
+  });
+}
+genFC=function(){
+  var sub=document.getElementById('fc-gsub').value,topic=document.getElementById('fc-gt').value.trim(),qty=parseInt(document.getElementById('fc-gq').value)||5;
+  var btn=document.getElementById('btn-fcgen');
+  btn.disabled=true;btn.innerHTML=ldHTML('Gerando...');
+  callAIJson('Endocrinologista educador BR. JSON APENAS: {"cards":[{"front":"pergunta curta","back":"resposta objetiva 1-2 frases"}]}','Gere '+qty+' flashcards de '+sub+(topic?', tema '+topic:'')+'.',1800,1)
+  .then(function(d){
+    if(!d||!d.cards)throw new Error('Resposta inválida.');
+    d.cards.forEach(function(c){DB.fc.push({id:Date.now()+Math.random(),front:c.front,back:c.back,cat:sub,due:Date.now(),box:1,at:Date.now()});});
+    persist();notify('Flashcards gerados!','ok');document.getElementById('fc-gen').style.display='none';renderFC();refreshDash();
+  }).catch(function(e){notify('Erro: '+e.message,'err');})
+  .then(function(){btn.disabled=false;btn.innerHTML='Gerar';});
+};
+genMM=function(){
+  var topic=(document.getElementById('mm-topic').value||'').trim();
+  if(!topic){notify('Digite um tema.','err');return;}
+  var btn=document.getElementById('btn-mmgen');
+  btn.disabled=true;btn.innerHTML=ldHTML('Gerando...');
+  setText('mm-live-title',topic);
+  document.getElementById('mm-live').style.display='block';
+  document.getElementById('mm-svg').innerHTML='<div class="empty">'+ldHTML('Gerando mapa...')+'</div>';
+  callAIJson('Endocrinologista educador. JSON APENAS: {"root":"Tema","branches":[{"label":"Ramo","leaves":["detalhe 1","detalhe 2","detalhe 3"]}]}. Crie 5-6 ramos com 3-5 folhas cada, em portugues medico claro.','Mapa mental sobre: '+topic,1800,1)
+  .then(function(d){
+    if(!d||!d.branches)throw new Error('Resposta inválida.');
+    d=normalizeMMData(d);
+    curMM={id:Date.now(),topic:topic,data:d,at:Date.now()};
+    setText('mm-live-title',d.root||topic);
+    renderMMEditor();
+  })
+  .catch(function(e){
+    curMM={id:Date.now(),topic:topic,data:sampleMMData(topic),at:Date.now()};
+    setText('mm-live-title',curMM.data.root||topic);
+    renderMMEditor();
+    notify('IA indisponível agora. Abri um mapa editável para você ajustar.','info');
+  })
+  .then(function(){btn.disabled=false;btn.innerHTML='🤖 Gerar com IA';});
+};
+function muralFilterOptions(list,current){
+  var subs=MURAL_SUBSPECIALTY_FILTERS.slice();
+  list.forEach(function(a){var s=muralSubspecialty(a);if(subs.indexOf(s)<0)subs.push(s);});
+  subs.sort(function(a,b){return a.localeCompare(b,'pt-BR');});
+  if(current&&subs.indexOf(current)<0)current='';
+  return{current:current,html:'<option value="">Todos</option>'+subs.map(function(s){return'<option value="'+esc(s)+'">'+esc(s)+'</option>';}).join('')};
+}
+function muralNoticeCardHTML(a,admin){
+  function dateBR(v){var d=new Date(v||Date.now());if(isNaN(d.getTime()))d=new Date();return d.toLocaleDateString('pt-BR');}
+  var sub=muralSubspecialty(a),meta=muralSubMeta(sub),tipo=muralDisplayType(a);
+  var fonte=normalizeMuralSource(String((a&&a.fonte)||'Endodirect').trim()||'Endodirect');
+  var source=a.link?'<a href="'+esc(a.link)+'" target="_blank" rel="noopener">'+esc(fonte)+'</a>':esc(fonte);
+  var i=admAvisos.indexOf(a);
+  return'<article class="mural-card '+meta.card+'" data-mural-card>'
+    +'<div class="mural-card-tags"><span class="tag tag-blue">'+esc(tipo)+'</span><span class="tag '+meta.tag+'">'+esc(sub)+'</span></div>'
+    +'<h3>'+esc(a.titulo||'Aviso aos alunos')+'</h3>'
+    +'<div class="mural-date">'+dateBR(a.at)+'</div>'
+    +'<div class="mural-text">'+esc(a.texto||'Comunicado publicado pela equipe Endodirect.')+'</div>'
+    +'<div class="mural-source">Fonte: '+source+'</div>'
+    +(admin?'<div class="mural-card-actions"><button class="btn btn-outline btn-sm" data-adm-editav="'+i+'">Editar</button><button class="btn btn-outline btn-sm" data-adm-delav="'+i+'">Remover</button></div>':'')
+    +'</article>';
+}
+initMural=function(){
+  var el=document.getElementById('mural-pc');if(!el)return;
+  function dateBR(v){var d=new Date(v||Date.now());if(isNaN(d.getTime()))d=new Date();return d.toLocaleDateString('pt-BR');}
+  admAvisos=admAvisos.map(function(a){return normalizeMuralAviso(a,defaultMuralMap());});
+  var opt=muralFilterOptions(admAvisos,muralFilter);
+  muralFilter=opt.current;
+  var avisos=admAvisos.slice().reverse().filter(function(a){return !muralFilter||muralSubspecialty(a)===muralFilter;});
+  var latest=admAvisos.reduce(function(max,a){return Math.max(max,Number(a.at)||0);},0);
+  var updated=document.getElementById('mural-updated');if(updated)updated.textContent='Atualizado em '+dateBR(latest||Date.now());
+  var count=admAvisos.length+' '+(admAvisos.length===1?'aviso':'avisos');
+  var tema=muralFilter||'Todas as subespecialidades';
+  el.innerHTML='<div class="mural-shell">'
+    +'<section class="mural-hero"><div class="mural-eyebrow">Avisos para alunos</div><h2>Calendário, notícias e leituras essenciais</h2><p>Acompanhe prazos, artigos recentes, atualizações do curso e temas úteis para estudo dirigido. Os links abrem as fontes oficiais.</p></section>'
+    +'<section class="mural-filter-card"><div class="mural-filter-main"><label class="mural-filter-field"><span class="mural-filter-label">Subespecialidade</span><select class="mural-filter-select" id="mural-filter">'+opt.html+'</select></label><span class="mural-count-pill">'+esc(count)+'</span><span class="mural-theme-pill">'+esc(tema)+'</span></div><button class="btn btn-outline" id="mural-clear" type="button">Limpar filtro</button></section>'
+    +'<section class="mural-grid">'+(avisos.length?avisos.map(function(a){return muralNoticeCardHTML(a,false);}).join(''):'<div class="empty mural-empty">Nenhum aviso encontrado para este filtro.</div>')+'</section>'
+    +'</div>';
+  var sel=document.getElementById('mural-filter');if(sel){sel.value=muralFilter;sel.addEventListener('change',function(){muralFilter=this.value;initMural();});}
+  var clear=document.getElementById('mural-clear');if(clear)clear.addEventListener('click',function(){muralFilter='';initMural();});
+};
+function simRetry(promiseFactory){
+  return promiseFactory().catch(function(){return sleep(700).then(promiseFactory);});
+}
+startSim=function(){
+  var sub=document.getElementById('sim-sub').value;
+  var level=document.getElementById('sim-level').value;
+  var mode=(document.querySelector('input[name="sim-mode"]:checked')||{}).value||'mc';
+  var btn=document.getElementById('btn-sim-start');
+  btn.disabled=true;btn.innerHTML=ldHTML('Gerando...');
+  var sys='Preceptor de endocrinologia conduzindo simulação de caso clínico passo a passo (estilo OSCE). JSON APENAS: {"intro":"apresentação do paciente","steps":[{"pergunta":"o que você faz/pergunta?"'+(mode==='mc'?',"options":{"A":"","B":"","C":"","D":""},"correct":"A","feedback":"explicação curta com raciocínio"':',"ideal":"resposta ideal"')+'}]}. 4-5 passos progressivos.';
+  simRetry(function(){return callAIJson(sys,'Caso de '+(sub||'endocrinologia')+', complexidade '+level+', modo '+(mode==='mc'?'múltipla escolha':'resposta aberta')+'.',2400,0);})
+  .then(function(d){
+    if(!d||!d.steps||!d.steps.length)throw new Error('Resposta inválida.');
+    simState={data:d,step:0,mode:mode,score:0,answers:[],sub:sub||'Endocrinologia',level:level};
+    document.getElementById('sim-setup').style.display='none';
+    document.getElementById('sim-result').style.display='none';
+    document.getElementById('sim-content').style.display='block';
+    document.getElementById('sim-msgs').innerHTML='<div class="sim-bubble doc"><strong>📋 Caso:</strong> '+esc(d.intro)+'</div>';
+    renderSimStep();
+  }).catch(function(e){notify('Erro: '+e.message,'err');})
+  .then(function(){btn.disabled=false;btn.innerHTML='▶ Iniciar simulação';});
+};
+renderSimStep=function(){
+  var s=simState.data.steps[simState.step];
+  if(!s){finishSim();return;}
+  var msgs=document.getElementById('sim-msgs');
+  msgs.innerHTML+='<div class="sim-bubble doc"><strong>Passo '+(simState.step+1)+':</strong> '+esc(s.pergunta)+'</div>';
+  var wrap=document.getElementById('sim-input-wrap');
+  if(simState.mode==='mc'){
+    wrap.innerHTML=Object.keys(s.options||{}).map(function(k){return'<button class="sim-opt" data-sim-opt="'+k+'"><span style="font-weight:700">'+k+'</span>'+esc(s.options[k])+'</button>';}).join('');
+  }else{
+    wrap.innerHTML='<textarea id="sim-open-input" rows="3" placeholder="Sua conduta..."></textarea><button class="btn btn-primary btn-sm" id="btn-sim-submit-open" style="margin-top:.4rem">Responder</button>';
+  }
+  msgs.scrollTop=msgs.scrollHeight;
+};
+selectSimOpt=function(letter){
+  var s=simState.data.steps[simState.step];
+  var ok=letter===s.correct;
+  if(ok)simState.score++;
+  simState.answers.push({question:s.pergunta,answer:letter,correct:s.correct,ok:ok,feedback:s.feedback||''});
+  var msgs=document.getElementById('sim-msgs');
+  msgs.innerHTML+='<div class="sim-bubble '+(ok?'feed':'er')+'"><strong>'+(ok?'✓':'✕')+' Você: '+letter+'</strong> - '+esc(s.feedback||'')+(ok?'':' (Correto: '+esc(s.correct||'')+')')+'</div>';
+  simState.step++;
+  document.getElementById('sim-input-wrap').innerHTML='';
+  setTimeout(renderSimStep,400);
+};
+submitSimOpen=function(){
+  var ta=document.getElementById('sim-open-input');
+  if(!ta||!ta.value.trim()){notify('Escreva sua conduta.','err');return;}
+  var s=simState.data.steps[simState.step],ans=ta.value.trim(),msgs=document.getElementById('sim-msgs'),wrap=document.getElementById('sim-input-wrap');
+  wrap.innerHTML=ldHTML('Avaliando...');
+  simRetry(function(){return callAI('Preceptor. Compare a resposta do aluno com a ideal e dê feedback em 2-3 frases. Termine com uma estimativa objetiva: Aderência: alta, parcial ou baixa.','Pergunta: '+s.pergunta+'\nIdeal: '+(s.ideal||'')+'\nAluno: '+ans);})
+  .then(function(r){
+    var ok=!/baixa/i.test(r);
+    if(ok)simState.score++;
+    simState.answers.push({question:s.pergunta,answer:ans,correct:s.ideal||'',ok:ok,feedback:r});
+    msgs.innerHTML+='<div class="sim-bubble feed"><strong>Sua resposta:</strong> '+esc(ans)+'</div><div class="sim-bubble doc">'+esc(r)+'</div>';
+    simState.step++;wrap.innerHTML='';renderSimStep();
+  }).catch(function(e){notify('Erro: '+e.message,'err');wrap.innerHTML='';});
+};
+finishSim=function(){
+  document.getElementById('sim-content').style.display='none';
+  var total=simState.data.steps.length,pct=Math.round((simState.score/total)*100);
+  var strengths=[],weak=[];
+  (simState.answers||[]).forEach(function(a,idx){
+    var label='Passo '+(idx+1);
+    if(a.ok)strengths.push(label+': conduta compatível com o raciocínio esperado.');
+    else weak.push(label+': revisar '+(a.feedback||'a justificativa do caso').replace(/\s+/g,' ').slice(0,120)+'.');
+  });
+  if(!strengths.length)strengths.push('Reconheceu a estrutura do caso e completou a simulação.');
+  if(!weak.length)weak.push('Continue treinando justificativa, priorização diagnóstica e comunicação da conduta.');
+  var verdict=pct>=80?'Excelente desempenho':pct>=60?'Bom desempenho, com pontos de ajuste':'Revisão recomendada antes de repetir o caso';
+  var result=document.getElementById('sim-result');
+  result.style.display='block';
+  result.innerHTML='<div class="sim-report">'
+    +'<div class="sim-report-head"><div><div class="sim-report-kicker">Relatório final</div><h3>Simulação concluída</h3><p>'+esc(simState.sub)+' - '+esc(simState.level)+'</p></div><div class="sim-report-score"><strong>'+pct+'%</strong><span>'+simState.score+'/'+total+' pontos</span></div></div>'
+    +'<div class="sim-report-verdict">'+esc(verdict)+'</div>'
+    +'<div class="sim-report-grid"><div class="sim-report-box"><h4>Pontos fortes</h4><ul>'+strengths.slice(0,4).map(function(x){return'<li>'+esc(x)+'</li>';}).join('')+'</ul></div><div class="sim-report-box"><h4>Pontos a melhorar</h4><ul>'+weak.slice(0,4).map(function(x){return'<li>'+esc(x)+'</li>';}).join('')+'</ul></div></div>'
+    +'<button class="btn btn-primary" id="btn-sim-restart" style="margin-top:.8rem">Nova simulação</button>'
+    +'</div>';
+  document.getElementById('btn-sim-restart').addEventListener('click',function(){result.style.display='none';document.getElementById('sim-setup').style.display='block';});
+};
+genRxCase=function(){
+  var sub=document.getElementById('rx-sub').value||'Endocrinologia';
+  var level=document.getElementById('rx-level').value;
+  var btn=document.getElementById('btn-rx-gen');
+  btn.disabled=true;
+  btn.innerHTML=ldHTML('Gerando...');
+  simRetry(function(){
+    return callAI('Preceptor de endocrinologia BR. JSON APENAS: {"caso":"vinheta clinica com dados suficientes para uma prescricao segura, em 4 a 6 linhas","area":"'+sub+'"}','Caso clinico de '+sub+', complexidade '+level+', que demande prescricao. Use português do Brasil.',1100);
+  })
+  .then(function(raw){
+    var d=parseJ(raw);
+    if(!d||!d.caso)throw new Error('Resposta inválida.');
+    rxCase={caso:d.caso,area:d.area||sub};
+    document.getElementById('rx-case-wrap').style.display='block';
+    setText('rx-case-text',rxCase.caso);
+    setText('rx-case-tag',rxCase.area);
+    document.getElementById('rx-diag').value='';
+    document.getElementById('rx-text').value='';
+    document.getElementById('rx-feedback').innerHTML='';
+  })
+  .catch(function(e){notify('Erro ao gerar caso: '+e.message,'err');})
+  .then(function(){btn.disabled=false;btn.innerHTML='▶ Gerar caso';});
+};
+evalRx=function(){
+  var txt=document.getElementById('rx-text').value.trim();
+  var diag=(document.getElementById('rx-diag').value||'').trim();
+  if(!txt){notify('Escreva sua prescrição.','err');return;}
+  var btn=document.getElementById('btn-rx-eval'),fb=document.getElementById('rx-feedback');
+  btn.disabled=true;btn.innerHTML=ldHTML('Avaliando...');
+  fb.style.display='block';
+  fb.innerHTML=ldHTML('Avaliando prescrição...');
+  var sys='Preceptor de endocrinologia. Avalie a prescrição do aluno com foco em segurança, indicação, dose, titulação, contraindicações, monitorização e educação do paciente. Responda em português com seções curtas: acertos, falhas, correção sugerida e nota final.';
+  simRetry(function(){return callAI(sys,'Caso: '+(rxCase&&rxCase.caso||'')+'\nDiagnóstico do aluno: '+diag+'\nPrescrição do aluno:\n'+txt,2200);})
+  .then(function(r){fb.innerHTML=formatAIReport(r);})
+  .catch(function(e){fb.innerHTML='<div style="color:var(--red)">Erro: '+esc(e.message)+'</div>';})
+  .then(function(){btn.disabled=false;btn.innerHTML='✓ Avaliar';});
+};
+admMuralSecHTML=function(){
+  function dateBR(v){var d=new Date(v||Date.now());if(isNaN(d.getTime()))d=new Date();return d.toLocaleDateString('pt-BR');}
+  admAvisos=admAvisos.map(function(a){return normalizeMuralAviso(a,defaultMuralMap());});
+  var opt=muralFilterOptions(admAvisos,admMuralFilter);
+  admMuralFilter=opt.current;
+  var avisos=admAvisos.slice().reverse().filter(function(a){return !admMuralFilter||muralSubspecialty(a)===admMuralFilter;});
+  var count=admAvisos.length+' '+(admAvisos.length===1?'aviso':'avisos');
+  var tema=admMuralFilter||'Todas as subespecialidades';
+  var tipoOpts=['Aviso','Comunicado','Artigo de Revisão','Ensaio Clínico','Metanálise','Perspectiva Clínica','Estudo Genético','Estudo Translacional','Evento','Urgente'].map(function(t){return'<option>'+esc(t)+'</option>';}).join('');
+  var subOpts=MURAL_SUBSPECIALTY_FILTERS.map(function(s){return'<option>'+esc(s)+'</option>';}).join('');
+  var formHTML=admMuralShowForm?(
+    '<div class="card" style="margin-bottom:1.1rem"><div style="font-size:1rem;font-weight:700;margin-bottom:.3rem">'+(admMuralEdit!==null?'✏️ Editar aviso':'📣 Novo aviso')+'</div><div style="font-size:.74rem;color:var(--t2);margin-bottom:.9rem">O card aparece imediatamente no mural do estudante.</div>'
+    +'<div class="g2" style="margin-bottom:.7rem"><div class="fld2" style="margin:0"><label>Título</label><input type="text" id="adm-av-title" placeholder="Título do aviso"></div><div class="fld2" style="margin:0"><label>Tipo do conteúdo</label><select id="adm-av-tipo">'+tipoOpts+'</select></div></div>'
+    +'<div class="g2" style="margin-bottom:.7rem"><div class="fld2" style="margin:0"><label>Subespecialidade</label><select id="adm-av-sub">'+subOpts+'</select></div><div class="fld2" style="margin:0"><label>Fonte / revista (opcional)</label><input type="text" id="adm-av-fonte" placeholder="Ex: NEJM, JCEM, SBEM..."></div></div>'
+    +'<div class="fld2"><label>Link (opcional)</label><input type="text" id="adm-av-link" placeholder="https://..."></div>'
+    +'<div class="fld2"><label>Texto</label><textarea id="adm-av-text" rows="3" placeholder="Resumo em português, mantendo apenas o título no idioma original..."></textarea></div>'
+    +'<div style="display:flex;gap:6px"><button class="btn btn-primary" id="btn-adm-addav">'+(admMuralEdit!==null?'💾 Salvar alterações':'+ Publicar no mural')+'</button><button class="btn btn-outline" id="btn-adm-av-cancel">Cancelar</button></div></div>'
+  ):'';
+  return '<div class="adm-ph" style="display:flex;align-items:flex-start;justify-content:space-between"><div><h1>Mural</h1></div><button class="btn btn-primary" id="btn-adm-newav" style="padding:.55rem 1.1rem">+ Novo aviso</button></div>'
+  +'<div class="adm-pc">'
+  +formHTML
+  +'<div class="card" style="margin-bottom:1.1rem"><div style="display:flex;align-items:flex-start;justify-content:space-between;gap:1rem;flex-wrap:wrap"><div style="flex:1;min-width:240px"><div style="font-size:.62rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--t3);margin-bottom:.3rem">Gestão do mural dos alunos</div><div style="font-size:1.15rem;font-weight:700;color:var(--tx);margin-bottom:.35rem">Edite avisos, notícias e comunicados importantes</div><div style="font-size:.79rem;color:var(--t2);line-height:1.55">Os cards abaixo alimentam a aba Mural do estudante. Use etiquetas por tipo de conteúdo e subespecialidade para organizar leituras e atualizações.</div></div><button class="btn btn-outline" id="btn-adm-mural-preview">👁 Pré-visualizar como aluno</button></div></div>'
+  +'<section class="mural-filter-card"><div class="mural-filter-main"><label class="mural-filter-field"><span class="mural-filter-label">Subespecialidade</span><select class="mural-filter-select" id="adm-mural-filter">'+opt.html+'</select></label><span class="mural-count-pill">'+esc(count)+'</span><span class="mural-theme-pill">'+esc(tema)+'</span></div><button class="btn btn-outline" id="adm-mural-clear" type="button">Limpar filtro</button></section>'
+  +'<div class="mural-grid mural-admin-grid" id="adm-av-list">'+(avisos.length?avisos.map(function(a){return muralNoticeCardHTML(a,true);}).join(''):'<div class="empty mural-empty">'+(admAvisos.length?'Nenhum aviso encontrado para este filtro.':'Nenhum aviso publicado. Clique em "+ Novo aviso" para começar.')+'</div>')+'</div>'
+  +'</div>';
+};
+var __bindAdmSecBase=bindAdmSec;
+bindAdmSec=function(sec){
+  __bindAdmSecBase(sec);
+  if(sec!=='mural')return;
+  var av=admMuralEdit!==null?admAvisos[admMuralEdit]:null;
+  if(av){
+    var sub=document.getElementById('adm-av-sub');
+    if(sub)sub.value=muralSubspecialty(av);
+    var tipo=document.getElementById('adm-av-tipo');
+    if(tipo)tipo.value=muralDisplayType(av);
+  }
+  var old=document.getElementById('btn-adm-addav');
+  if(old){
+    var btn=old.cloneNode(true);
+    old.parentNode.replaceChild(btn,old);
+    btn.addEventListener('click',function(){
+      var t=(document.getElementById('adm-av-title').value||'').trim();
+      if(!t){notify('Preencha o título.','err');return;}
+      var dados={
+        titulo:t,
+        tipo:(document.getElementById('adm-av-tipo').value||'Aviso'),
+        subespecialidade:(document.getElementById('adm-av-sub').value||'Endocrinologia Geral'),
+        fonte:(document.getElementById('adm-av-fonte').value||'').trim(),
+        link:(document.getElementById('adm-av-link').value||'').trim(),
+        texto:(document.getElementById('adm-av-text').value||'').trim()
+      };
+      dados=normalizeMuralAviso(dados,defaultMuralMap());
+      if(admMuralEdit!==null){
+        dados.at=admAvisos[admMuralEdit].at||Date.now();
+        admAvisos[admMuralEdit]=Object.assign({},admAvisos[admMuralEdit],dados);
+        notify('Aviso atualizado.','ok');
+      }else{
+        dados.at=Date.now();
+        admAvisos.push(dados);
+        notify('Aviso publicado no mural.','ok');
+      }
+      admMuralShowForm=false;admMuralEdit=null;persistAdm();renderAdmSec('mural');
+    });
+  }
+};
+document.addEventListener('DOMContentLoaded',function(){setupOnboardProfileChoices();document.querySelectorAll('input[name="ob-perfil"]').forEach(function(r){r.addEventListener('change',setupOnboardProfileChoices);});});
+
 // ── DOMContentLoaded: bindings ──
 document.addEventListener('DOMContentLoaded',function(){
   startSupabaseAuthWatcher();
@@ -3691,15 +4186,7 @@ document.addEventListener('DOMContentLoaded',function(){
 
   // ONBOARDING
   document.querySelectorAll('input[name="ob-perfil"]').forEach(function(r){
-    r.addEventListener('change',function(){
-      var isEndo=r.value==='Endocrinologista';
-      document.getElementById('ob-grad-wrap').style.display='block';
-      document.getElementById('ob-resid-wrap').style.display=isEndo?'block':'none';
-      document.getElementById('ob-res-lbl').style.borderColor=r.value==='Residente'?'var(--blue)':'var(--bd2)';
-      document.getElementById('ob-res-lbl').style.background=r.value==='Residente'?'var(--blue-l)':'#fff';
-      document.getElementById('ob-endo-lbl').style.borderColor=isEndo?'var(--blue)':'var(--bd2)';
-      document.getElementById('ob-endo-lbl').style.background=isEndo?'var(--blue-l)':'#fff';
-    });
+    r.addEventListener('change',setupOnboardProfileChoices);
   });
   document.getElementById('ob-submit').addEventListener('click',submitOnboard);
 
