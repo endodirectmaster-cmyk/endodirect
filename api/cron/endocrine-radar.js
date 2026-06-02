@@ -1,4 +1,4 @@
-const SUPABASE_URL = process.env.SUPABASE_URL || process.env.NEXT_PUBLIC_SUPABASE_URL || 'https://eutizblmrcypzyqzczgq.supabase.co';
+const SUPABASE_URL = process.env.SUPABASE_URL || process.env.NEXT_PUBLIC_SUPABASE_URL || 'https://auth.endodirect.com.br';
 const PUBMED_BASE_URL = 'https://eutils.ncbi.nlm.nih.gov/entrez/eutils';
 const MAX_MURAL_ITEMS = 50;
 const AUTO_ITEM_TTL_MS = 45 * 24 * 60 * 60 * 1000;
