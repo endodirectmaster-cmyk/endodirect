@@ -660,11 +660,11 @@ textarea{resize:vertical;line-height:1.6}
 
     <div class="panel" id="panel-quest">
       <div class="breadcrumb">Dashboard <b>/ Questões</b></div>
-      <div class="ph"><h1>Banco de Questões</h1></div>
+      <div class="ph"><h1>Questões</h1></div>
       <div class="pc">
         <div class="tog-row" style="margin-bottom:.85rem" id="q-mode-row">
           <button class="tog-btn on" data-qmode="ia">🤖 Geradas por IA</button>
-          <button class="tog-btn" data-qmode="provas">🏛️ Provas anteriores</button>
+          <button class="tog-btn" data-qmode="provas">🏛️ Banco de Questões</button>
         </div>
         <div class="gen-box" id="q-panel-ia">
           <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:.65rem;flex-wrap:wrap;gap:.45rem">
@@ -1457,6 +1457,7 @@ function refreshAfterRemoteState(){
   try{renderPodcasts();}catch(e){}
   try{renderCursosAluno();}catch(e){}
   try{initMural();}catch(e){}
+  try{populateInst('q-inst');}catch(e){}
   try{updateProvaInfo();}catch(e){}
   try{renderSavedCrono();}catch(e){}
   try{renderNoteList();}catch(e){}
@@ -1465,9 +1466,23 @@ function refreshAfterRemoteState(){
 function canUseRemoteState(){
   return !!(currentUser&&currentUser.id&&getSupabaseClient());
 }
-function hydrateRemoteState(){
-  if(!canUseRemoteState()||remoteStateLoaded)return;
+function hydratePublicContent(){
   var client=getSupabaseClient();
+  if(!client||remoteStateLoaded)return;
+  client.rpc('endodirect_public_content').then(function(res){
+    if(res.error)throw res.error;
+    if(res.data)applyStatePayload(res.data);
+    remoteStateLoaded=true;
+    refreshAfterRemoteState();
+  }).catch(function(e){
+    if(!remoteStateWarned){remoteStateWarned=true;console.warn('Supabase public content unavailable',e);}
+  });
+}
+function hydrateRemoteState(){
+  if(remoteStateLoaded)return;
+  var client=getSupabaseClient();
+  if(!client)return;
+  if(!(currentUser&&currentUser.id)){hydratePublicContent();return;}
   var userLoad=client.from('endodirect_app_state').select('payload').eq('user_id',currentUser.id).maybeSingle()
     .then(function(res){if(res.error)throw res.error;if(res.data&&res.data.payload)applyStatePayload(res.data.payload);});
   var globalLoad=client.from('endodirect_global_state').select('payload').eq('id','main').maybeSingle()
@@ -3873,6 +3888,7 @@ submitOnboard=function(){
   currentUser.profile=prof;
   document.getElementById('onboard-modal').style.display='none';
   startApp();
+  hydrateRemoteState();
   queueRemoteStateSave();
 };
 function setupOnboardProfileChoices(){

@@ -139,3 +139,25 @@ grant usage on schema public to anon, authenticated;
 grant select, insert, update on public.endodirect_app_state to authenticated;
 grant select, insert, update on public.endodirect_global_state to authenticated;
 grant select on public.endodirect_admins to authenticated;
+
+-- Public, read-only content for students who have no Supabase session.
+-- Returns ONLY non-sensitive content (questions, mural, podcasts, courses);
+-- intentionally excludes adm_estudantes (student roster) and adm_perfil (admin PII).
+create or replace function public.endodirect_public_content()
+returns jsonb
+language sql
+security definer
+set search_path = public
+as $$
+  select jsonb_build_object(
+    'provas',     coalesce(payload->'provas',     '[]'::jsonb),
+    'adm_avisos', coalesce(payload->'adm_avisos', '[]'::jsonb),
+    'podcasts',   coalesce(payload->'podcasts',   '[]'::jsonb),
+    'adm_cursos', coalesce(payload->'adm_cursos', '[]'::jsonb)
+  )
+  from public.endodirect_global_state
+  where id = 'main';
+$$;
+
+revoke all on function public.endodirect_public_content() from public;
+grant execute on function public.endodirect_public_content() to anon, authenticated;
