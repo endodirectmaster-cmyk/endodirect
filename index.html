@@ -3849,21 +3849,24 @@ submitOnboard=function(){
   var perfil=(document.querySelector('input[name="ob-perfil"]:checked')||{}).value;
   var err=document.getElementById('ob-err');
   if(!perfil){err.textContent='Selecione uma opção de perfil.';err.style.display='block';return;}
-  var grad=(document.getElementById('ob-grad').value||'').trim();
-  if(!grad){err.textContent='Informe sua instituição de graduação.';err.style.display='block';return;}
-  var prof={perfil:perfil,graduacao:grad};
-  if(perfil==='Residente'){
-    prof.displayPerfil='Médico(a) Residente';
-  }else if(perfil==='Endocrinologista'){
-    var resid=(document.getElementById('ob-resid').value||'').trim();
-    if(!resid){err.textContent='Informe sua instituição de residência médica.';err.style.display='block';return;}
-    prof.residencia=resid;
-    prof.displayPerfil='Endocrinologista';
-  }else{
+  var prof={perfil:perfil};
+  if(perfil==='Outros'){
     var esp=(document.getElementById('ob-outros').value||'').trim();
     if(!esp){err.textContent='Descreva sua especialidade ou área de atuação.';err.style.display='block';return;}
     prof.especialidade=esp;
     prof.displayPerfil=esp;
+  }else{
+    var grad=(document.getElementById('ob-grad').value||'').trim();
+    if(!grad){err.textContent='Informe sua instituição de graduação.';err.style.display='block';return;}
+    prof.graduacao=grad;
+    if(perfil==='Residente'){
+      prof.displayPerfil='Médico(a) Residente';
+    }else{
+      var resid=(document.getElementById('ob-resid').value||'').trim();
+      if(!resid){err.textContent='Informe sua instituição de residência médica.';err.style.display='block';return;}
+      prof.residencia=resid;
+      prof.displayPerfil='Endocrinologista';
+    }
   }
   lsSet('user_profile',prof);
   currentUser.sub=profileDisplayLabel(prof);
@@ -3874,11 +3877,10 @@ submitOnboard=function(){
 };
 function setupOnboardProfileChoices(){
   var perfil=(document.querySelector('input[name="ob-perfil"]:checked')||{}).value;
-  var has=!!perfil;
   var grad=document.getElementById('ob-grad-wrap');
   var resid=document.getElementById('ob-resid-wrap');
   var outros=document.getElementById('ob-outros-wrap');
-  if(grad)grad.style.display=has?'block':'none';
+  if(grad)grad.style.display=(perfil==='Residente'||perfil==='Endocrinologista')?'block':'none';
   if(resid)resid.style.display=perfil==='Endocrinologista'?'block':'none';
   if(outros)outros.style.display=perfil==='Outros'?'block':'none';
   [['ob-res-lbl','Residente'],['ob-endo-lbl','Endocrinologista'],['ob-outros-lbl','Outros']].forEach(function(pair){
@@ -3913,7 +3915,7 @@ function renderPerfil(){
         +'<option value="Endocrinologista"'+(perfilVal==='Endocrinologista'?' selected':'')+'>Endocrinologista</option>'
         +'<option value="Outros"'+(perfilVal==='Outros'?' selected':'')+'>Outros</option>'
       +'</select></div></div>'
-      +'<div class="fld2" style="margin-bottom:.7rem"><label>Instituição de graduação</label><input type="text" id="pf-grad" value="'+esc(prof.graduacao||'')+'" placeholder="Ex: USP, UNIFESP, UFMG…"></div>'
+      +'<div class="fld2" id="pf-grad-wrap" style="margin-bottom:.7rem;display:'+(perfilVal==='Outros'?'none':'block')+'"><label>Instituição de graduação</label><input type="text" id="pf-grad" value="'+esc(prof.graduacao||'')+'" placeholder="Ex: USP, UNIFESP, UFMG…"></div>'
       +'<div class="fld2" id="pf-resid-wrap" style="margin-bottom:.7rem;display:'+(perfilVal==='Endocrinologista'?'block':'none')+'"><label>Instituição de residência médica</label><input type="text" id="pf-resid" value="'+esc(prof.residencia||'')+'" placeholder="Ex: HC-FMUSP, INCA…"></div>'
       +'<div class="fld2" id="pf-outros-wrap" style="margin-bottom:.7rem;display:'+(perfilVal==='Outros'?'block':'none')+'"><label>Especialidade / área de atuação</label><input type="text" id="pf-outros" value="'+esc(prof.especialidade||'')+'" placeholder="Ex: Cardiologista, Clínico geral…"></div>'
       +'<div id="pf-err" style="display:none;background:var(--red-l);border:1px solid #fecaca;border-radius:var(--rs);padding:.45rem .75rem;font-size:.73rem;color:var(--red);margin-bottom:.7rem"></div>'
@@ -3943,7 +3945,8 @@ function wirePerfil(){
   var sel=document.getElementById('pf-perfil');
   if(sel)sel.addEventListener('change',function(){
     var v=sel.value;
-    var rw=document.getElementById('pf-resid-wrap');var ow=document.getElementById('pf-outros-wrap');
+    var gw=document.getElementById('pf-grad-wrap');var rw=document.getElementById('pf-resid-wrap');var ow=document.getElementById('pf-outros-wrap');
+    if(gw)gw.style.display=v==='Outros'?'none':'block';
     if(rw)rw.style.display=v==='Endocrinologista'?'block':'none';
     if(ow)ow.style.display=v==='Outros'?'block':'none';
   });
@@ -3954,18 +3957,21 @@ function wirePerfil(){
     var nome=(document.getElementById('pf-nome').value||'').trim();
     if(!nome){fail('Informe seu nome.');return;}
     var perfil=document.getElementById('pf-perfil').value;
-    var grad=(document.getElementById('pf-grad').value||'').trim();
-    if(!grad){fail('Informe sua instituição de graduação.');return;}
-    var prof={perfil:perfil,graduacao:grad};
-    if(perfil==='Residente'){prof.displayPerfil='Médico(a) Residente';}
-    else if(perfil==='Endocrinologista'){
-      var resid=(document.getElementById('pf-resid').value||'').trim();
-      if(!resid){fail('Informe sua instituição de residência médica.');return;}
-      prof.residencia=resid;prof.displayPerfil='Endocrinologista';
-    }else{
+    var prof={perfil:perfil};
+    if(perfil==='Outros'){
       var esp=(document.getElementById('pf-outros').value||'').trim();
       if(!esp){fail('Descreva sua especialidade ou área de atuação.');return;}
       prof.especialidade=esp;prof.displayPerfil=esp;
+    }else{
+      var grad=(document.getElementById('pf-grad').value||'').trim();
+      if(!grad){fail('Informe sua instituição de graduação.');return;}
+      prof.graduacao=grad;
+      if(perfil==='Residente'){prof.displayPerfil='Médico(a) Residente';}
+      else{
+        var resid=(document.getElementById('pf-resid').value||'').trim();
+        if(!resid){fail('Informe sua instituição de residência médica.');return;}
+        prof.residencia=resid;prof.displayPerfil='Endocrinologista';
+      }
     }
     lsSet('user_profile',prof);
     if(currentUser){currentUser.name=nome;currentUser.profile=prof;currentUser.sub=profileDisplayLabel(prof);}
