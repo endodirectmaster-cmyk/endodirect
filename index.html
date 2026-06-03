@@ -2095,7 +2095,7 @@ function renderGenQ(isMC){
   document.getElementById('btn-save-all-q').addEventListener('click',saveAllQ);
 }
 function qRowHTML(q,i,src,isMC){
-  return'<div><div class="q-row" data-qi="'+i+'" data-src="'+src+'" data-mc="'+isMC+'"><div class="q-row-top"><div class="q-stem-prev">'+esc((q.stem||'').substring(0,150))+((q.stem||'').length>150?'…':'')+'</div><div style="display:flex;gap:3px;flex-shrink:0">'+(q.code?'<span style="font-family:monospace;font-size:.59rem;font-weight:700;background:#f1f0ff;color:#6d5fd8;padding:1px 6px;border-radius:99px">'+esc(q.code)+'</span>':'')+diffTag(q.dificuldade||'intermediario')+(q.inst?'<span class="tag tag-pur" style="font-size:.57rem">'+esc(q.inst)+'</span>':'')+'</div></div></div><div id="qd-'+src+'-'+i+'" style="display:none"></div></div>';
+  return'<div><div class="q-row" data-qi="'+i+'" data-src="'+src+'" data-mc="'+(q.type?(q.type!=='disc'):isMC)+'"><div class="q-row-top"><div class="q-stem-prev">'+esc((q.stem||'').substring(0,150))+((q.stem||'').length>150?'…':'')+'</div><div style="display:flex;gap:3px;flex-shrink:0">'+(q.code?'<span style="font-family:monospace;font-size:.59rem;font-weight:700;background:#f1f0ff;color:#6d5fd8;padding:1px 6px;border-radius:99px">'+esc(q.code)+'</span>':'')+diffTag(q.dificuldade||'intermediario')+(q.inst?'<span class="tag tag-pur" style="font-size:.57rem">'+esc(q.inst)+'</span>':'')+'</div></div></div><div id="qd-'+src+'-'+i+'" style="display:none"></div></div>';
 }
 function toggleQDetail(i,src,isMC){
   var el=document.getElementById('qd-'+src+'-'+i);if(!el)return;
@@ -2108,7 +2108,7 @@ function toggleQDetail(i,src,isMC){
     var opts=Object.keys(q.options||{}).map(function(k){return'<div class="qo" id="qo-'+src+'-'+i+'-'+k+'" data-letter="'+k+'" data-answer="'+esc(q.answer||'')+'" data-exp="'+esc(q.explanation||'')+'" data-src="'+src+'" data-idx="'+i+'"><span class="qo-ltr">'+k+'</span>'+esc(q.options[k])+'</div>';}).join('');
     el.innerHTML='<div class="q-detail"><div class="q-stem">'+esc(q.stem)+'</div>'+opts+'<div id="qfb-'+src+'-'+i+'"></div>'+(src==='gen'?'<div style="margin-top:.4rem"><button class="btn btn-outline btn-sm" data-save-q="'+i+'">💾 Salvar</button></div>':'')+'</div>';
   }else{
-    el.innerHTML='<div class="q-detail"><div class="q-stem">'+esc(q.stem)+'</div><div class="fld2"><label>Sua resposta</label><textarea id="disc-'+src+'-'+i+'" rows="4" placeholder="Escreva…"></textarea></div><div style="display:flex;gap:5px"><button class="btn btn-primary btn-sm" data-eval-disc="'+i+'" data-eval-src="'+src+'">Avaliar</button>'+(src==='gen'?'<button class="btn btn-outline btn-sm" data-save-q="'+i+'">💾 Salvar</button>':'')+'</div><div id="qfb-'+src+'-'+i+'"></div></div>';
+    el.innerHTML='<div class="q-detail"><div class="q-stem">'+esc(q.stem)+'</div><div class="fld2"><label>Sua resposta</label><textarea id="disc-'+src+'-'+i+'" rows="4" placeholder="Escreva…"></textarea></div><div style="display:flex;gap:5px;flex-wrap:wrap"><button class="btn btn-primary btn-sm" data-eval-disc="'+i+'" data-eval-src="'+src+'">Avaliar</button>'+((q.expected||q.explanation)?'<button class="btn btn-outline btn-sm" data-reveal-disc="'+i+'" data-reveal-src="'+src+'">📋 Ver expectativa</button>':'')+(src==='gen'?'<button class="btn btn-outline btn-sm" data-save-q="'+i+'">💾 Salvar</button>':'')+'</div><div id="qexp-'+src+'-'+i+'" style="display:none;white-space:pre-wrap;background:var(--grn-l);border:1px solid #bbf7d0;border-radius:var(--rs);padding:.6rem .8rem;font-size:.75rem;color:var(--t2);line-height:1.6;margin-top:.55rem"></div><div id="qfb-'+src+'-'+i+'"></div></div>';
   }
 }
 function selectOpt(letter,answer,explanation,src,idx){
@@ -2124,6 +2124,12 @@ function selectOpt(letter,answer,explanation,src,idx){
   if(fb)fb.innerHTML='<div class="q-fb '+(ok?'ok':'er')+'">'+(ok?'✓ Correto!':'✗ Incorreto — Gabarito: '+answer)+' — '+esc(explanation.replace(/&quot;/g,'"'))+'</div>';
   var q=src==='gen'?genQs[parseInt(idx)]:DB.q[parseInt(idx)];
   if(q&&q.area){if(!DB.perf[q.area])DB.perf[q.area]={correct:0,total:0};DB.perf[q.area].total++;if(ok)DB.perf[q.area].correct++;persist();}
+}
+function revealDisc(i,src){
+  var q=src==='gen'?genQs[i]:DB.q[i];if(!q)return;
+  var box=document.getElementById('qexp-'+src+'-'+i);if(!box)return;
+  if(box.style.display==='none'||!box.style.display){box.textContent=q.expected||q.explanation||'';box.style.display='block';}
+  else{box.style.display='none';}
 }
 function evalDisc(i,src,btn){
   var ta=document.getElementById('disc-'+src+'-'+i);
@@ -2188,7 +2194,7 @@ function updateProvaInfo(){
 }
 function renderProvaResults(qs){
   if(!qs.length){document.getElementById('q-gen-results').innerHTML='<div class="empty">Nenhuma questão encontrada.</div>';return;}
-  genQs=qs.map(function(q){return Object.assign({},q,{type:'mc'});});
+  genQs=qs.map(function(q){return Object.assign({},q,{type:q.type||(q.options&&Object.keys(q.options).length?'mc':'disc')});});
   renderGenQ(true);
 }
 // ── FLASHCARDS ──
@@ -3783,6 +3789,8 @@ document.addEventListener('click',function(e){
   if(qo&&qo.dataset.answer!==undefined){selectOpt(qo.dataset.letter,qo.dataset.answer,qo.dataset.exp,qo.dataset.src,qo.dataset.idx);return;}
   var ev=c('[data-eval-disc]');
   if(ev){evalDisc(parseInt(ev.dataset.evalDisc),ev.dataset.evalSrc,ev);return;}
+  var rv=c('[data-reveal-disc]');
+  if(rv){revealDisc(parseInt(rv.dataset.revealDisc),rv.dataset.revealSrc);return;}
   var sq=c('[data-save-q]');
   if(sq){saveOneQ(parseInt(sq.dataset.saveQ));return;}
   var dq=c('[data-del-q]');
