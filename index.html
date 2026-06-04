@@ -1207,7 +1207,7 @@ var MAX_VIDEO_UPLOAD_BYTES=500*1024*1024;
 var MAX_AUDIO_UPLOAD_BYTES=200*1024*1024;
 var supabaseClient=null;
 var remoteStateLoaded=false,remoteStateSaveTimer=null,remoteStateWarned=false;
-var REMOTE_STATE_KEYS=['q','fc','mm','notes','crono','sf_results','perf','provas','adm_avisos','adm_questoes','podcasts','adm_cursos','adm_estudantes','adm_perfil','user_profile'];
+var REMOTE_STATE_KEYS=['q','fc','mm','notes','crono','sf_results','perf','provas','adm_avisos','adm_questoes','podcasts','adm_cursos','adm_estudantes','adm_perfil','user_profile','mm_shared'];
 function getSupabaseClient(){
   if(supabaseClient)return supabaseClient;
   if(!window.supabase||!window.supabase.createClient)return null;
@@ -1455,6 +1455,7 @@ function applyStatePayload(payload){
   if(Array.isArray(payload.sf_results))DB.sf_results=payload.sf_results;
   if(payload.perf&&typeof payload.perf==='object')DB.perf=payload.perf;
   if(Array.isArray(payload.provas))provasDB=payload.provas;
+  if(Array.isArray(payload.mm_shared)){sharedMM=payload.mm_shared;try{renderMMList();}catch(e){}}
   if(Array.isArray(payload.adm_avisos))admAvisos=mergeRadarAvisos(payload.adm_avisos);
   if(Array.isArray(payload.adm_questoes))admQuestoes=payload.adm_questoes;
   if(Array.isArray(payload.podcasts))podcasts=payload.podcasts;
@@ -2356,6 +2357,7 @@ function flipStudy(){
 
 // ── MIND MAP ──
 var curMM=null;
+var sharedMM=lsGet('mm_shared')||[];
 function wrapTxt(text,max){
   var words=String(text||'').split(/\s+/).filter(Boolean),lines=[],line='';
   words.forEach(function(w){if((line+' '+w).trim().length<=max)line=(line+' '+w).trim();else{if(line)lines.push(line);line=w;}});
@@ -2475,12 +2477,25 @@ function saveMM(){
 }
 function renderMMList(){
   var el=document.getElementById('mm-list');if(!el)return;
-  setText('mm-count','('+DB.mm.length+')');
-  if(!DB.mm.length){el.innerHTML='<div class="empty">Nenhum mapa salvo.</div>';return;}
-  el.innerHTML=DB.mm.map(function(m,i){
+  var shared=sharedMM||[];
+  setText('mm-count','('+(shared.length+DB.mm.length)+')');
+  if(!shared.length&&!DB.mm.length){el.innerHTML='<div class="empty">Nenhum mapa salvo.</div>';return;}
+  var html=shared.map(function(m,j){
+    return'<div class="mm-item"><div><div style="font-size:.8rem;font-weight:600">'+esc(m.topic)+' <span class="tag tag-pur" style="font-size:.55rem">Professor</span></div><div style="font-size:.63rem;color:var(--t3)">'+esc(m.sub||'Endodirect')+'</div></div><div style="display:flex;gap:4px"><button class="btn btn-outline btn-sm" data-mmviewshared="'+j+'">Ver</button></div></div>';
+  }).join('');
+  html+=DB.mm.map(function(m,i){
     var d=normalizeMMData(m.data);
     return'<div class="mm-item"><div><div style="font-size:.8rem;font-weight:600">'+esc(m.topic)+'</div><div style="font-size:.63rem;color:var(--t3)">'+new Date(m.at||Date.now()).toLocaleDateString('pt-BR')+'</div></div><div style="display:flex;gap:4px"><button class="btn btn-outline btn-sm" data-mmview="'+i+'">Ver</button><button class="btn btn-ghost btn-sm" data-mmdel="'+i+'">×</button></div></div>';
   }).join('');
+  el.innerHTML=html;
+}
+function viewMMShared(j){
+  var m=(sharedMM||[])[j];if(!m)return;
+  curMM={id:Date.now(),topic:m.topic,data:normalizeMMData(m.data),at:Date.now()};
+  document.getElementById('mm-live').style.display='block';
+  setText('mm-live-title',curMM.data.root||m.topic);
+  renderMMEditor();
+  document.getElementById('panel-mmap').scrollTop=0;
 }
 function viewMM(i){
   var m=DB.mm[i];if(!m)return;
@@ -3887,6 +3902,7 @@ document.addEventListener('click',function(e){
   var fcf=c('[data-fcfilter]');
   if(fcf){fcFilter=fcf.dataset.fcfilter;renderFC();return;}
   // mind map
+  var mmvs=c('[data-mmviewshared]');if(mmvs){viewMMShared(parseInt(mmvs.dataset.mmviewshared));return;}
   var mmv=c('[data-mmview]');if(mmv){viewMM(parseInt(mmv.dataset.mmview));return;}
   var mmd=c('[data-mmdel]');if(mmd){DB.mm.splice(parseInt(mmd.dataset.mmdel),1);persist();renderMMList();refreshDash();return;}
   var mmab=c('[data-mmaddbranch]');if(mmab&&curMM){syncMMFromDOM();curMM.data.branches.push({label:'Novo ramo',leaves:['Novo subramo']});renderMMEditor();return;}
