@@ -264,7 +264,7 @@ textarea{resize:vertical;line-height:1.6}
 .mural-hero h2{font-size:1.35rem;font-weight:800;color:var(--tx);letter-spacing:-.02em;margin:.55rem 0 .45rem}
 .mural-hero p{font-size:.8rem;color:var(--t2);line-height:1.55}
 .mural-filter-card{padding:1.05rem 1.25rem;display:flex;align-items:end;gap:.9rem;justify-content:space-between;flex-wrap:wrap}
-.mural-filter-main{display:grid;grid-template-columns:minmax(240px,520px) max-content max-content;align-items:end;justify-content:start;gap:.7rem;flex:1;min-width:0}
+.mural-filter-main{display:grid;grid-template-columns:minmax(170px,1fr) minmax(170px,1fr) max-content max-content;align-items:end;justify-content:start;gap:.7rem;flex:1;min-width:0}
 .mural-filter-field{display:flex;flex-direction:column;gap:.35rem;min-width:0}
 .mural-filter-select{height:40px}
 .mural-count-pill{display:inline-flex;align-items:center;justify-content:center;border-radius:5px;background:var(--blue-l);color:var(--blue);font-size:.66rem;font-weight:800;padding:.34rem .6rem;white-space:nowrap}
@@ -2173,9 +2173,9 @@ function toggleQDetail(i,src,isMC){
   el.style.display='block';
   if(isMC){
     var opts=Object.keys(q.options||{}).map(function(k){return'<div class="qo" id="qo-'+src+'-'+i+'-'+k+'" data-letter="'+k+'" data-answer="'+esc(q.answer||'')+'" data-exp="'+esc(q.explanation||'')+'" data-src="'+src+'" data-idx="'+i+'"><span class="qo-ltr">'+k+'</span>'+esc(q.options[k])+'</div>';}).join('');
-    el.innerHTML='<div class="q-detail"><div class="q-stem">'+esc(q.stem)+'</div>'+(q.img?'<img src="'+q.img+'" alt="Figura" style="max-width:100%;display:block;border-radius:8px;margin:.55rem 0;border:1px solid var(--bd)">':'')+opts+'<div id="qfb-'+src+'-'+i+'"></div>'+(src==='gen'?'<div style="margin-top:.4rem"><button class="btn btn-outline btn-sm" data-save-q="'+i+'">💾 Salvar</button></div>':'')+'</div>';
+    el.innerHTML='<div class="q-detail">'+(src==='saved'?'<div class="q-stem">'+esc(q.stem)+'</div>':'')+(q.img?'<img src="'+q.img+'" alt="Figura" style="max-width:100%;display:block;border-radius:8px;margin:.55rem 0;border:1px solid var(--bd)">':'')+opts+'<div id="qfb-'+src+'-'+i+'"></div>'+(src==='gen'?'<div style="margin-top:.4rem"><button class="btn btn-outline btn-sm" data-save-q="'+i+'">💾 Salvar</button></div>':'')+'</div>';
   }else{
-    el.innerHTML='<div class="q-detail"><div class="q-stem">'+esc(q.stem)+'</div>'+(q.img?'<img src="'+q.img+'" alt="Figura" style="max-width:100%;display:block;border-radius:8px;margin:.55rem 0;border:1px solid var(--bd)">':'')+'<div class="fld2"><label>Sua resposta</label><textarea id="disc-'+src+'-'+i+'" rows="4" placeholder="Escreva…"></textarea></div><div style="display:flex;gap:5px;flex-wrap:wrap"><button class="btn btn-primary btn-sm" data-eval-disc="'+i+'" data-eval-src="'+src+'">Avaliar</button>'+((q.expected||q.explanation)?'<button class="btn btn-outline btn-sm" data-reveal-disc="'+i+'" data-reveal-src="'+src+'">📋 Ver expectativa</button>':'')+(src==='gen'?'<button class="btn btn-outline btn-sm" data-save-q="'+i+'">💾 Salvar</button>':'')+'</div><div id="qexp-'+src+'-'+i+'" style="display:none;white-space:pre-wrap;background:var(--grn-l);border:1px solid #bbf7d0;border-radius:var(--rs);padding:.6rem .8rem;font-size:.75rem;color:var(--t2);line-height:1.6;margin-top:.55rem"></div><div id="qfb-'+src+'-'+i+'"></div></div>';
+    el.innerHTML='<div class="q-detail">'+(src==='saved'?'<div class="q-stem">'+esc(q.stem)+'</div>':'')+(q.img?'<img src="'+q.img+'" alt="Figura" style="max-width:100%;display:block;border-radius:8px;margin:.55rem 0;border:1px solid var(--bd)">':'')+'<div class="fld2"><label>Sua resposta</label><textarea id="disc-'+src+'-'+i+'" rows="4" placeholder="Escreva…"></textarea></div><div style="display:flex;gap:5px;flex-wrap:wrap"><button class="btn btn-primary btn-sm" data-eval-disc="'+i+'" data-eval-src="'+src+'">Avaliar</button>'+((q.expected||q.explanation)?'<button class="btn btn-outline btn-sm" data-reveal-disc="'+i+'" data-reveal-src="'+src+'">📋 Ver expectativa</button>':'')+(src==='gen'?'<button class="btn btn-outline btn-sm" data-save-q="'+i+'">💾 Salvar</button>':'')+'</div><div id="qexp-'+src+'-'+i+'" style="display:none;white-space:pre-wrap;background:var(--grn-l);border:1px solid #bbf7d0;border-radius:var(--rs);padding:.6rem .8rem;font-size:.75rem;color:var(--t2);line-height:1.6;margin-top:.55rem"></div><div id="qfb-'+src+'-'+i+'"></div></div>';
   }
 }
 function selectOpt(letter,answer,explanation,src,idx){
@@ -2880,6 +2880,7 @@ function execNoteCmd(cmd){
 
 // ── MURAL ──
 var muralFilter='';
+var muralTipoFilter='';
 function initMural(){
   var el=document.getElementById('mural-pc');if(!el)return;
   function dateBR(v){
@@ -4140,18 +4141,30 @@ initMural=function(){
   admAvisos=admAvisos.map(function(a){return normalizeMuralAviso(a,defaultMuralMap());});
   var opt=muralFilterOptions(admAvisos,muralFilter);
   muralFilter=opt.current;
-  var avisos=admAvisos.slice().reverse().filter(function(a){return !muralFilter||muralSubspecialty(a)===muralFilter;});
+  var tiposSet={};admAvisos.forEach(function(a){tiposSet[muralDisplayType(a)]=1;});
+  var tipoList=Object.keys(tiposSet).sort(function(a,b){return a.localeCompare(b,'pt-BR');});
+  if(muralTipoFilter&&tipoList.indexOf(muralTipoFilter)<0)muralTipoFilter='';
+  var tipoOpts='<option value="">Todos os tipos</option>'+tipoList.map(function(t){return'<option value="'+esc(t)+'">'+esc(t)+'</option>';}).join('');
+  var avisos=admAvisos.slice().sort(function(a,b){return (Number(b.at)||0)-(Number(a.at)||0);}).filter(function(a){
+    return (!muralFilter||muralSubspecialty(a)===muralFilter)&&(!muralTipoFilter||muralDisplayType(a)===muralTipoFilter);
+  });
+  if(!muralFilter){
+    var per={},capped=[];
+    avisos.forEach(function(a){var s=muralSubspecialty(a);per[s]=per[s]||0;if(per[s]<2){capped.push(a);per[s]++;}});
+    avisos=capped;
+  }
   var latest=admAvisos.reduce(function(max,a){return Math.max(max,Number(a.at)||0);},0);
   var updated=document.getElementById('mural-updated');if(updated)updated.textContent='Atualizado em '+dateBR(latest||Date.now());
-  var count=admAvisos.length+' '+(admAvisos.length===1?'aviso':'avisos');
-  var tema=muralFilter||'Todas as subespecialidades';
+  var count=avisos.length+' '+(avisos.length===1?'aviso':'avisos');
+  var tema=muralFilter||(muralTipoFilter||'Todas as subespecialidades');
   el.innerHTML='<div class="mural-shell">'
     +'<section class="mural-hero"><div class="mural-eyebrow">Avisos para alunos</div><h2>Calendário, notícias e leituras essenciais</h2><p>Acompanhe prazos, artigos recentes, atualizações do curso e temas úteis para estudo dirigido. Os links abrem as fontes oficiais.</p></section>'
-    +'<section class="mural-filter-card"><div class="mural-filter-main"><label class="mural-filter-field"><span class="mural-filter-label">Subespecialidade</span><select class="mural-filter-select" id="mural-filter">'+opt.html+'</select></label><span class="mural-count-pill">'+esc(count)+'</span><span class="mural-theme-pill">'+esc(tema)+'</span></div><button class="btn btn-outline" id="mural-clear" type="button">Limpar filtro</button></section>'
+    +'<section class="mural-filter-card"><div class="mural-filter-main"><label class="mural-filter-field"><span class="mural-filter-label">Subespecialidade</span><select class="mural-filter-select" id="mural-filter">'+opt.html+'</select></label><label class="mural-filter-field"><span class="mural-filter-label">Tipo de artigo</span><select class="mural-filter-select" id="mural-filter-tipo">'+tipoOpts+'</select></label><span class="mural-count-pill">'+esc(count)+'</span><span class="mural-theme-pill">'+esc(tema)+'</span></div><button class="btn btn-outline" id="mural-clear" type="button">Limpar filtro</button></section>'
     +'<section class="mural-grid">'+(avisos.length?avisos.map(function(a){return muralNoticeCardHTML(a,false);}).join(''):'<div class="empty mural-empty">Nenhum aviso encontrado para este filtro.</div>')+'</section>'
     +'</div>';
   var sel=document.getElementById('mural-filter');if(sel){sel.value=muralFilter;sel.addEventListener('change',function(){muralFilter=this.value;initMural();});}
-  var clear=document.getElementById('mural-clear');if(clear)clear.addEventListener('click',function(){muralFilter='';initMural();});
+  var selt=document.getElementById('mural-filter-tipo');if(selt){selt.value=muralTipoFilter;selt.addEventListener('change',function(){muralTipoFilter=this.value;initMural();});}
+  var clear=document.getElementById('mural-clear');if(clear)clear.addEventListener('click',function(){muralFilter='';muralTipoFilter='';initMural();});
 };
 function simRetry(promiseFactory){
   return promiseFactory().catch(function(){return sleep(700).then(promiseFactory);});
