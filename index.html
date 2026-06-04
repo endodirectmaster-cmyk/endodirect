@@ -1099,6 +1099,7 @@ textarea{resize:vertical;line-height:1.6}
           <button class="adm-nav" data-asec="cursos">🎬 Cursos</button>
           <button class="adm-nav" data-asec="estudantes">👥 Estudantes</button>
           <button class="adm-nav" data-asec="conteudo">🎧 Podcasts</button>
+          <button class="adm-nav" data-asec="mapas">✦ Mapas Mentais</button>
           <button class="adm-nav" data-asec="chat">💬 Chat</button>
           <div class="sb-sec" style="margin-top:.8rem">Conta</div>
           <button class="adm-nav" data-asec="perfil">👤 Perfil</button>
@@ -1440,7 +1441,7 @@ function userStatePayload(){
   return{q:DB.q,fc:DB.fc,mm:DB.mm,notes:DB.notes,crono:DB.crono,sf_results:DB.sf_results,perf:DB.perf,user_profile:lsGet('user_profile')};
 }
 function globalStatePayload(){
-  return{provas:provasDB,adm_avisos:admAvisos,adm_questoes:admQuestoes,podcasts:podcasts,adm_cursos:admCursos,adm_estudantes:admEstudantes,adm_perfil:admPerfil};
+  return{provas:provasDB,adm_avisos:admAvisos,adm_questoes:admQuestoes,podcasts:podcasts,adm_cursos:admCursos,adm_estudantes:admEstudantes,adm_perfil:admPerfil,mm_shared:sharedMM};
 }
 function currentStatePayload(){
   return Object.assign({},userStatePayload(),globalStatePayload());
@@ -3195,10 +3196,56 @@ function sendChat(text){
 
 // ── ADMIN (layout estilo Lexia) ──
 var admCurrentSec='analytics',admProvaSubtab='importar',pdfBase64Prova=null,podAudioDataAdm=null;
+var admMMDraft=null,admMMEditId=null;
+var ADM_MM_SUBESP=['Diabetes','Obesidade','Tireoide','Adrenal','Neuroendocrinologia','Osteometabolismo','Endocrinologia Pediátrica','Endocrinologia Feminina e Andrologia','Dislipidemia e Aterosclerose','Endocrinologia Masculina','Endocrinologia Esportiva','Transgeneridade'];
+function persistSharedMM(){lsSet('mm_shared',sharedMM);queueRemoteStateSave();try{renderMMList();}catch(e){}}
+function admMMSyncDraft(){
+  if(!admMMDraft)return;
+  var rootEl=document.getElementById('adm-mm-root');if(rootEl)admMMDraft.data.root=(rootEl.value||'').trim()||admMMDraft.topic;
+  var subEl=document.getElementById('adm-mm-sub');if(subEl)admMMDraft.sub=subEl.value;
+  document.querySelectorAll('.adm-mm-blabel').forEach(function(inp){var bi=parseInt(inp.dataset.bi,10);if(admMMDraft.data.branches[bi])admMMDraft.data.branches[bi].label=(inp.value||'').trim()||'Ramo';});
+  document.querySelectorAll('.adm-mm-bleaves').forEach(function(ta){var bi=parseInt(ta.dataset.bi,10);if(admMMDraft.data.branches[bi])admMMDraft.data.branches[bi].leaves=(ta.value||'').split('\n').map(function(s){return s.trim();}).filter(Boolean);});
+}
+function admMMSave(){
+  if(!admMMDraft)return;
+  admMMSyncDraft();
+  admMMDraft.data=normalizeMMData(admMMDraft.data);
+  admMMDraft.topic=admMMDraft.data.root||admMMDraft.topic||'Mapa';
+  if(admMMEditId){
+    var idx=sharedMM.findIndex(function(m){return m.id===admMMEditId;});
+    if(idx>=0)sharedMM[idx]={id:admMMEditId,topic:admMMDraft.topic,sub:admMMDraft.sub,data:admMMDraft.data,at:sharedMM[idx].at||Date.now()};
+    else sharedMM.push({id:admMMEditId,topic:admMMDraft.topic,sub:admMMDraft.sub,data:admMMDraft.data,at:Date.now()});
+  }else{
+    sharedMM.push({id:'mm-'+Date.now(),topic:admMMDraft.topic,sub:admMMDraft.sub,data:admMMDraft.data,at:Date.now()});
+  }
+  admMMDraft=null;admMMEditId=null;
+  persistSharedMM();renderAdmSec('mapas');
+  notify('Mapa publicado para os alunos!','ok');
+}
+function admMapasHTML(){
+  var editor;
+  if(admMMDraft){
+    var d=admMMDraft;
+    editor='<div class="card" style="margin-bottom:1rem"><div class="card-head"><span class="card-title">'+(admMMEditId?'Editar mapa':'Novo mapa')+'</span></div>'
+      +'<div class="g2" style="margin-bottom:.6rem"><div class="fld2" style="margin:0"><label>Subespecialidade</label><select id="adm-mm-sub">'+ADM_MM_SUBESP.map(function(s){return'<option'+(d.sub===s?' selected':'')+'>'+esc(s)+'</option>';}).join('')+'</select></div><div class="fld2" style="margin:0"><label>Tema (título)</label><input type="text" id="adm-mm-root" value="'+esc(d.data.root||d.topic||'')+'"></div></div>'
+      +'<div id="adm-mm-branches">'+(d.data.branches||[]).map(function(b,bi){return '<div class="card" style="margin-bottom:.5rem;padding:.6rem .8rem"><div style="display:flex;gap:.5rem;align-items:center;margin-bottom:.35rem"><input type="text" class="adm-mm-blabel" data-bi="'+bi+'" value="'+esc(b.label||'')+'" placeholder="Nome do ramo" style="font-weight:600;flex:1"><button class="btn btn-ghost btn-sm" data-adm-mm-delb="'+bi+'" style="padding:2px 6px">×</button></div><textarea class="adm-mm-bleaves" data-bi="'+bi+'" rows="4" placeholder="Um item por linha">'+esc((b.leaves||[]).join('\n'))+'</textarea></div>';}).join('')+'</div>'
+      +'<div style="display:flex;gap:6px;flex-wrap:wrap"><button class="btn btn-outline btn-sm" id="adm-mm-addb">+ Ramo</button><button class="btn btn-primary" id="adm-mm-save">💾 Salvar e publicar</button><button class="btn btn-outline" id="adm-mm-cancel">Cancelar</button></div></div>';
+  }else{
+    editor='<div class="card" style="margin-bottom:1rem"><div class="card-head"><span class="card-title">Criar mapa mental</span></div>'
+      +'<div class="g2" style="margin-bottom:.6rem"><div class="fld2" style="margin:0"><label>Subespecialidade</label><select id="adm-mm-newsub">'+ADM_MM_SUBESP.map(function(s){return'<option>'+esc(s)+'</option>';}).join('')+'</select></div><div class="fld2" style="margin:0"><label>Tema</label><input type="text" id="adm-mm-newtopic" placeholder="Ex: Hipotireoidismo"></div></div>'
+      +'<div style="display:flex;gap:6px;flex-wrap:wrap"><button class="btn btn-primary" id="adm-mm-gen">🤖 Gerar com IA</button><button class="btn btn-outline" id="adm-mm-blank">+ Criar em branco</button></div>'
+      +'<div id="adm-mm-genres" style="margin-top:.5rem;font-size:.74rem;color:var(--t3)">Ao salvar, o mapa fica disponível automaticamente no painel de todos os alunos.</div></div>';
+  }
+  var list=(sharedMM||[]).map(function(m,j){return '<div style="display:flex;align-items:center;justify-content:space-between;gap:.6rem;padding:.55rem 0;border-bottom:1px solid var(--bd)"><div style="min-width:0"><div style="font-weight:600;font-size:.82rem">'+esc(m.topic)+'</div><div style="font-size:.68rem;color:var(--t3)">'+esc(m.sub||'')+' · '+((m.data&&m.data.branches&&m.data.branches.length)||0)+' ramos</div></div><div style="display:flex;gap:5px;flex-shrink:0"><button class="btn btn-outline btn-sm" data-adm-mm-edit="'+j+'">Editar</button><button class="btn btn-ghost btn-sm" data-adm-mm-del="'+j+'">Remover</button></div></div>';}).join('');
+  return '<div class="adm-ph"><h1>Mapas Mentais</h1></div>'
+    +'<div class="adm-pc">'+editor
+    +'<div class="card"><div class="card-head"><span class="card-title">Mapas publicados para os alunos</span><span class="tag tag-grn">'+(sharedMM||[]).length+'</span></div>'+(list||'<div class="empty">Nenhum mapa publicado ainda.</div>')+'</div>'
+    +'</div>';
+}
 function renderAdmSec(sec){
   admCurrentSec=sec;
   document.querySelectorAll('.adm-nav[data-asec]').forEach(function(b){b.classList.toggle('on',b.dataset.asec===sec);});
-  var titles={provas:'Provas & Questões',cursos:'Cursos',estudantes:'Estudantes',analytics:'Analytics',mural:'Mural',conteudo:'Podcasts',chat:'Chat',perfil:'Perfil',suporte:'Suporte'};
+  var titles={provas:'Provas & Questões',cursos:'Cursos',estudantes:'Estudantes',analytics:'Analytics',mural:'Mural',conteudo:'Podcasts',mapas:'Mapas Mentais',chat:'Chat',perfil:'Perfil',suporte:'Suporte'};
   setText('adm-sec-title',titles[sec]||sec);
   var m=document.getElementById('adm-main');if(!m)return;
   if(sec==='provas')m.innerHTML=admProvasSecHTML();
@@ -3210,6 +3257,7 @@ function renderAdmSec(sec){
   else if(sec==='chat')m.innerHTML=admChatHTML();
   else if(sec==='perfil')m.innerHTML=admPerfilHTML();
   else if(sec==='suporte')m.innerHTML=admSuporteHTML();
+  else if(sec==='mapas')m.innerHTML=admMapasHTML();
   bindAdmSec(sec);
 }
 
@@ -3578,6 +3626,32 @@ function admCursosHTML(){
 
 function bindAdmSec(sec){
   var main=document.getElementById('adm-main');
+  if(sec==='mapas'){
+    var gen=document.getElementById('adm-mm-gen');
+    if(gen)gen.addEventListener('click',function(){
+      var sub=document.getElementById('adm-mm-newsub').value;
+      var topic=(document.getElementById('adm-mm-newtopic').value||'').trim();
+      if(!topic){notify('Digite um tema.','err');return;}
+      gen.disabled=true;gen.innerHTML=ldHTML('Gerando...');
+      callAI('Endocrinologista educador. JSON APENAS: {"root":"Tema","branches":[{"label":"Ramo","leaves":["detalhe 1","detalhe 2","detalhe 3"]}]}. Crie 5-6 ramos com 3-5 folhas cada, em portugues medico claro.','Mapa mental sobre: '+topic,1800)
+      .then(function(raw){var dd=parseJ(raw);if(!dd||!dd.branches)throw new Error('Resposta inválida.');admMMDraft={topic:topic,sub:sub,data:normalizeMMData(dd)};admMMEditId=null;renderAdmSec('mapas');})
+      .catch(function(e){notify('Erro ao gerar: '+e.message,'err');gen.disabled=false;gen.innerHTML='🤖 Gerar com IA';});
+    });
+    var blank=document.getElementById('adm-mm-blank');
+    if(blank)blank.addEventListener('click',function(){
+      var sub=document.getElementById('adm-mm-newsub').value;
+      var topic=(document.getElementById('adm-mm-newtopic').value||'').trim()||'Novo mapa';
+      admMMDraft={topic:topic,sub:sub,data:{root:topic,branches:[{label:'Ramo 1',leaves:['Detalhe']}]}};admMMEditId=null;renderAdmSec('mapas');
+    });
+    var addb=document.getElementById('adm-mm-addb');
+    if(addb)addb.addEventListener('click',function(){admMMSyncDraft();admMMDraft.data.branches.push({label:'Novo ramo',leaves:['Detalhe']});renderAdmSec('mapas');});
+    var save=document.getElementById('adm-mm-save');if(save)save.addEventListener('click',admMMSave);
+    var cancel=document.getElementById('adm-mm-cancel');if(cancel)cancel.addEventListener('click',function(){admMMDraft=null;admMMEditId=null;renderAdmSec('mapas');});
+    main.querySelectorAll('[data-adm-mm-delb]').forEach(function(b){b.addEventListener('click',function(){admMMSyncDraft();admMMDraft.data.branches.splice(parseInt(b.dataset.admMmDelb,10),1);renderAdmSec('mapas');});});
+    main.querySelectorAll('[data-adm-mm-edit]').forEach(function(b){b.addEventListener('click',function(){var m=sharedMM[parseInt(b.dataset.admMmEdit,10)];if(!m)return;admMMDraft={topic:m.topic,sub:m.sub,data:normalizeMMData(m.data)};admMMEditId=m.id;renderAdmSec('mapas');});});
+    main.querySelectorAll('[data-adm-mm-del]').forEach(function(b){b.addEventListener('click',function(){sharedMM.splice(parseInt(b.dataset.admMmDel,10),1);persistSharedMM();renderAdmSec('mapas');notify('Mapa removido.','ok');});});
+    return;
+  }
   // subtabs de provas
   main.querySelectorAll('[data-psub]').forEach(function(b){b.addEventListener('click',function(){admProvaSubtab=b.dataset.psub;renderAdmSec('provas');});});
 
