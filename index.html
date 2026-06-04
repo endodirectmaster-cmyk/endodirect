@@ -624,7 +624,7 @@ textarea{resize:vertical;line-height:1.6}
         <button class="sb-item on" data-p="dash">⊞ Dashboard</button>
         <button class="sb-item" data-p="quest">📝 Questões</button>
         <button class="sb-item" data-p="flash">🃏 Flashcards</button>
-        <button class="sb-item" data-p="mmap">✦ Mind Map</button>
+        <button class="sb-item" data-p="mmap">✦ Mapas Mentais</button>
         <button class="sb-item" data-p="podcast">🎧 Podcasts</button>
         <button class="sb-item" data-p="cursos">🎬 Cursos</button>
         <button class="sb-item" data-p="crono">📅 Cronograma</button>
@@ -775,8 +775,8 @@ textarea{resize:vertical;line-height:1.6}
     </div>
 
     <div class="panel" id="panel-mmap">
-      <div class="breadcrumb">Dashboard <b>/ Mind Map</b></div>
-      <div class="ph"><h1>Mind Map</h1></div>
+      <div class="breadcrumb">Dashboard <b>/ Mapas Mentais</b></div>
+      <div class="ph"><h1>Mapas Mentais</h1></div>
       <div class="pc">
         <div class="gen-box mm-gen-card">
           <div class="mm-generate-row">
@@ -2034,7 +2034,7 @@ function startGoogleOAuth(){
   });
 }
 
-var PANEL_LABELS={dash:'Dashboard',quest:'Questões',flash:'Flashcards',mmap:'Mind Map',podcast:'Podcasts',cursos:'Cursos',crono:'Cronograma',sr:'Revisão Espaçada',sim:'Simulador',simfull:'Simulado',calc:'Calculadoras',rx:'Prescrição',art:'Resumidor',notas:'Caderno',mural:'Mural',chat:'Chat IA',perfil:'Perfil',support:'Suporte',adm:'Painel Admin'};
+var PANEL_LABELS={dash:'Dashboard',quest:'Questões',flash:'Flashcards',mmap:'Mapas Mentais',podcast:'Podcasts',cursos:'Cursos',crono:'Cronograma',sr:'Revisão Espaçada',sim:'Simulador',simfull:'Simulado',calc:'Calculadoras',rx:'Prescrição',art:'Resumidor',notas:'Caderno',mural:'Mural',chat:'Chat IA',perfil:'Perfil',support:'Suporte',adm:'Painel Admin'};
 function closeMobileNav(){
   document.body.classList.remove('mobile-nav-open');
   var b=document.getElementById('btn-mobile-nav');
@@ -2142,7 +2142,7 @@ function genQuestions(){
   .then(function(){btn.disabled=false;btn.innerHTML='▶ Gerar questões';});
 }
 var genPage=0;
-var GEN_PER_PAGE=6;
+var GEN_PER_PAGE=3;
 function renderGenQ(isMC){
   var res=document.getElementById('q-gen-results');
   var total=genQs.length;
