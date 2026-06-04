@@ -37,7 +37,7 @@ body{background:var(--bg);color:var(--tx);display:flex;flex-direction:column}
 .login-divider::before,.login-divider::after{content:'';flex:1;height:1px;background:var(--bd)}
 .fld{margin-bottom:.95rem}
 .fld label{font-size:.72rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--t2);display:block;margin-bottom:6px}
-.fld input{width:100%;background:#fff;border:1.5px solid var(--bd2);border-radius:10px;padding:.72rem 1rem;font-family:var(--font);font-size:.95rem;color:var(--tx);outline:none}
+.login-body .fld input{width:100%;background:#fff;border:1.5px solid var(--bd2);border-radius:10px;padding:.85rem 1rem;font-family:var(--font);font-size:.95rem;color:var(--tx);outline:none}
 .login-btn{width:100%;background:var(--navy);color:#fff;border:none;border-radius:10px;padding:.92rem;font-size:1.02rem;font-weight:600;cursor:pointer;font-family:var(--font);margin-top:.4rem}
 .login-link{width:100%;background:none;border:none;color:var(--blue);font-family:var(--font);font-size:.78rem;font-weight:600;cursor:pointer;text-align:center;margin-top:.75rem;padding:.25rem}
 .login-link:hover{text-decoration:underline}
@@ -505,6 +505,20 @@ textarea{resize:vertical;line-height:1.6}
       </div>
       <div id="ob-err" style="display:none;background:var(--red-l);border:1px solid #fecaca;border-radius:var(--rs);padding:.45rem .75rem;font-size:.73rem;color:var(--red);margin-bottom:.7rem"></div>
       <button class="btn btn-primary" id="ob-submit" style="width:100%;justify-content:center;padding:.6rem">Começar →</button>
+    </div>
+  </div>
+</div>
+
+<div class="modal-bg" id="session-modal">
+  <div class="modal-box" style="max-width:400px">
+    <div class="modal-hdr"><span class="modal-hdr-title">⏰ Sessão inativa</span></div>
+    <div class="modal-body">
+      <div style="font-size:.84rem;color:var(--t2);line-height:1.55;margin-bottom:.8rem">Você está inativo há algum tempo. Por segurança, sua sessão será encerrada. Deseja permanecer conectado?</div>
+      <div style="font-size:.78rem;color:var(--t3);margin-bottom:1.1rem">Encerrando em <b id="session-countdown" style="color:var(--red)">60</b> segundos…</div>
+      <div style="display:flex;gap:.5rem">
+        <button class="btn btn-primary" id="btn-session-stay" style="flex:1;justify-content:center;padding:.6rem">Permanecer conectado</button>
+        <button class="btn btn-outline" id="btn-session-logout" style="justify-content:center">Sair</button>
+      </div>
     </div>
   </div>
 </div>
@@ -1776,6 +1790,7 @@ function callAIwithPDF(sys,b64){
 var currentUser=null;
 function startApp(){
   var u=currentUser;
+  startSessionWatcher();
   var isAdmin=u.role==='admin';
   var app=document.getElementById('app-screen');
   document.getElementById('login-screen').style.display='none';
@@ -1853,7 +1868,44 @@ function submitOnboard(){
   startApp();
   queueRemoteStateSave();
 }
+// ── SESSÃO: encerramento por inatividade ──
+var SESSION_IDLE_MS=30*60*1000,SESSION_COUNTDOWN_S=60;
+var sessionLastActivity=Date.now(),sessionCountdownTimer=null,sessionWatcher=null;
+function markSessionActivity(){
+  var m=document.getElementById('session-modal');
+  if(m&&m.style.display==='flex')return;
+  sessionLastActivity=Date.now();
+}
+function startSessionWatcher(){
+  sessionLastActivity=Date.now();
+  if(sessionWatcher)return;
+  sessionWatcher=setInterval(function(){
+    if(!currentUser)return;
+    var m=document.getElementById('session-modal');
+    if(m&&m.style.display==='flex')return;
+    if(Date.now()-sessionLastActivity>=SESSION_IDLE_MS)showSessionWarning();
+  },10000);
+}
+function showSessionWarning(){
+  if(!currentUser)return;
+  var m=document.getElementById('session-modal');if(!m)return;
+  m.style.display='flex';
+  var left=SESSION_COUNTDOWN_S,cd=document.getElementById('session-countdown');
+  if(cd)cd.textContent=left;
+  clearInterval(sessionCountdownTimer);
+  sessionCountdownTimer=setInterval(function(){
+    left--;if(cd)cd.textContent=left;
+    if(left<=0){clearInterval(sessionCountdownTimer);hideSessionWarning();doLogout();try{notify('Sessão encerrada por inatividade.','info');}catch(e){}}
+  },1000);
+}
+function hideSessionWarning(){
+  clearInterval(sessionCountdownTimer);
+  var m=document.getElementById('session-modal');if(m)m.style.display='none';
+}
+function keepSessionAlive(){hideSessionWarning();sessionLastActivity=Date.now();}
+['mousemove','mousedown','keydown','touchstart','scroll'].forEach(function(ev){document.addEventListener(ev,markSessionActivity,true);});
 function doLogout(){
+  hideSessionWarning();
   var client=getSupabaseClient();
   if(client&&currentUser&&currentUser.auth==='supabase-google'){client.auth.signOut().catch(function(){});}
   currentUser=null;
@@ -2085,17 +2137,32 @@ function genQuestions(){
   .then(function(raw){
     var data=parseJ(raw);
     if(!data||!data.questions||!data.questions.length)throw new Error('Resposta inválida. Tente novamente.');
-    genQs=data.questions;renderGenQ(isMC);
+    genQs=data.questions;genPage=0;renderGenQ(isMC);
   }).catch(function(e){res.innerHTML='<div style="color:var(--red);font-size:.78rem;padding:.5rem;background:var(--red-l);border-radius:var(--rs)">❌ '+esc(e.message)+'</div>';})
   .then(function(){btn.disabled=false;btn.innerHTML='▶ Gerar questões';});
 }
+var genPage=0;
+var GEN_PER_PAGE=6;
 function renderGenQ(isMC){
   var res=document.getElementById('q-gen-results');
-  res.innerHTML='<div style="display:flex;align-items:center;justify-content:space-between;margin:.15rem 0 .5rem"><span class="sec-title">'+genQs.length+' questão(ões)</span><button class="btn btn-primary btn-sm" id="btn-save-all-q">💾 Salvar todas</button></div><div class="q-list">'+genQs.map(function(q,i){return qRowHTML(q,i,'gen',isMC);}).join('')+'</div>';
+  var total=genQs.length;
+  var pages=Math.max(1,Math.ceil(total/GEN_PER_PAGE));
+  if(genPage>=pages)genPage=pages-1;
+  if(genPage<0)genPage=0;
+  var start=genPage*GEN_PER_PAGE,end=Math.min(start+GEN_PER_PAGE,total);
+  var rows='';for(var i=start;i<end;i++){rows+=qRowHTML(genQs[i],i,'gen',isMC);}
+  var nav=pages>1?'<div style="display:flex;align-items:center;justify-content:center;gap:.7rem;margin-top:.8rem;flex-wrap:wrap">'
+    +'<button class="btn btn-outline btn-sm" id="gen-prev"'+(genPage===0?' disabled':'')+'>← Anterior</button>'
+    +'<span style="font-size:.76rem;color:var(--t2)">Página '+(genPage+1)+' de '+pages+'</span>'
+    +'<button class="btn btn-outline btn-sm" id="gen-next"'+(genPage>=pages-1?' disabled':'')+'>Próxima →</button>'
+    +'</div>':'';
+  res.innerHTML='<div style="display:flex;align-items:center;justify-content:space-between;margin:.15rem 0 .5rem"><span class="sec-title">'+total+' questão(ões)</span><button class="btn btn-primary btn-sm" id="btn-save-all-q">💾 Salvar todas</button></div><div class="q-list">'+rows+'</div>'+nav;
   document.getElementById('btn-save-all-q').addEventListener('click',saveAllQ);
+  var pv=document.getElementById('gen-prev');if(pv)pv.addEventListener('click',function(){genPage--;renderGenQ(isMC);res.scrollIntoView({behavior:'smooth',block:'start'});});
+  var nx=document.getElementById('gen-next');if(nx)nx.addEventListener('click',function(){genPage++;renderGenQ(isMC);res.scrollIntoView({behavior:'smooth',block:'start'});});
 }
 function qRowHTML(q,i,src,isMC){
-  return'<div><div class="q-row" data-qi="'+i+'" data-src="'+src+'" data-mc="'+(q.type?(q.type!=='disc'):isMC)+'"><div class="q-row-top"><div class="q-stem-prev">'+esc((q.stem||'').substring(0,150))+((q.stem||'').length>150?'…':'')+'</div><div style="display:flex;gap:3px;flex-shrink:0">'+(q.code?'<span style="font-family:monospace;font-size:.59rem;font-weight:700;background:#f1f0ff;color:#6d5fd8;padding:1px 6px;border-radius:99px">'+esc(q.code)+'</span>':'')+diffTag(q.dificuldade||'intermediario')+(q.inst?'<span class="tag tag-pur" style="font-size:.57rem">'+esc(q.inst)+'</span>':'')+'</div></div></div><div id="qd-'+src+'-'+i+'" style="display:none"></div></div>';
+  return'<div><div class="q-row" data-qi="'+i+'" data-src="'+src+'" data-mc="'+(q.type?(q.type!=='disc'):isMC)+'"><div class="q-row-top"><div class="q-stem-prev">'+esc(q.stem||'')+'</div><div style="display:flex;gap:3px;flex-shrink:0">'+(q.code?'<span style="font-family:monospace;font-size:.59rem;font-weight:700;background:#f1f0ff;color:#6d5fd8;padding:1px 6px;border-radius:99px">'+esc(q.code)+'</span>':'')+diffTag(q.dificuldade||'intermediario')+(q.inst?'<span class="tag tag-pur" style="font-size:.57rem">'+esc(q.inst)+'</span>':'')+'</div></div></div><div id="qd-'+src+'-'+i+'" style="display:none"></div></div>';
 }
 function toggleQDetail(i,src,isMC){
   var el=document.getElementById('qd-'+src+'-'+i);if(!el)return;
@@ -2164,7 +2231,7 @@ function renderSavedQ(){
   if(!DB.q.length){el.innerHTML='<div class="empty">Nenhuma questão salva.</div>';return;}
   el.innerHTML='<div class="q-list">'+DB.q.map(function(q,i){return'<div><div class="q-row" data-qi="'+i+'" data-src="saved" data-mc="'+(q.type!=='disc')+'"><div class="q-row-top"><div class="q-stem-prev">'+esc((q.stem||'').substring(0,140))+'…</div><div style="display:flex;gap:3px;align-items:center">'+(q.code?'<span style="font-family:monospace;font-size:.59rem;font-weight:700;background:#f1f0ff;color:#6d5fd8;padding:1px 6px;border-radius:99px">'+esc(q.code)+'</span>':'')+diffTag(q.dificuldade)+'<button class="btn btn-ghost btn-sm" data-del-q="'+i+'" style="padding:2px 4px">✕</button></div></div></div><div id="qd-saved-'+i+'" style="display:none"></div></div>';}).join('')+'</div>';
 }
-var INST_PADRAO=['SBEM'];
+var INST_PADRAO=[];
 function getInstList(){var s={};INST_PADRAO.forEach(function(i){s[i]=1;});provasDB.forEach(function(q){if(q.inst)s[q.inst]=1;});return Object.keys(s);}
 function populateInst(selId){
   var sel=document.getElementById(selId);if(!sel)return;
@@ -2195,6 +2262,7 @@ function updateProvaInfo(){
 function renderProvaResults(qs){
   if(!qs.length){document.getElementById('q-gen-results').innerHTML='<div class="empty">Nenhuma questão encontrada.</div>';return;}
   genQs=qs.map(function(q){return Object.assign({},q,{type:q.type||(q.options&&Object.keys(q.options).length?'mc':'disc')});});
+  genPage=0;
   renderGenQ(true);
 }
 // ── FLASHCARDS ──
@@ -4305,6 +4373,8 @@ document.addEventListener('DOMContentLoaded',function(){
     doLogin(Object.assign({},u,{auth:'google'}));
   };
   document.getElementById('btn-login').addEventListener('click',doLoginAttempt);
+  var bStay=document.getElementById('btn-session-stay');if(bStay)bStay.addEventListener('click',keepSessionAlive);
+  var bSout=document.getElementById('btn-session-logout');if(bSout)bSout.addEventListener('click',function(){hideSessionWarning();doLogout();});
   document.getElementById('login-pass').addEventListener('keydown',function(e){if(e.key==='Enter')doLoginAttempt();});
   document.getElementById('login-email').addEventListener('keydown',function(e){if(e.key==='Enter')doLoginAttempt();});
   document.getElementById('btn-google-login').addEventListener('click',doGoogleLogin);
