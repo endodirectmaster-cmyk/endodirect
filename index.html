@@ -3198,8 +3198,8 @@ function sendChat(text){
 }
 
 // ── ADMIN (layout estilo Lexia) ──
-var admCurrentSec='analytics',admProvaSubtab='importar',pdfBase64Prova=null,podAudioDataAdm=null;
-var admMMDraft=null,admMMEditId=null;
+var admCurrentSec='analytics',admProvaSubtab='importar',pdfBase64Prova=null,podAudioDataAdm=null,admBancoArea='',admBancoCode='',admBancoAno='',admBancoInst='';
+var admMMDraft=null,admMMEditId=null,admMMFilterSub='';
 var ADM_MM_SUBESP=['Diabetes','Obesidade','Tireoide','Adrenal','Neuroendocrinologia','Osteometabolismo','Endocrinologia Pediátrica','Endocrinologia Feminina e Andrologia','Dislipidemia e Aterosclerose','Endocrinologia Masculina','Endocrinologia Esportiva','Transgeneridade'];
 function persistSharedMM(){lsSet('mm_shared',sharedMM);queueRemoteStateSave();try{renderMMList();}catch(e){}}
 function admMMSyncDraft(){
@@ -3239,10 +3239,10 @@ function admMapasHTML(){
       +'<div style="display:flex;gap:6px;flex-wrap:wrap"><button class="btn btn-primary" id="adm-mm-gen">🤖 Gerar com IA</button><button class="btn btn-outline" id="adm-mm-blank">+ Criar em branco</button></div>'
       +'<div id="adm-mm-genres" style="margin-top:.5rem;font-size:.74rem;color:var(--t3)">Ao salvar, o mapa fica disponível automaticamente no painel de todos os alunos.</div></div>';
   }
-  var list=(sharedMM||[]).map(function(m,j){return '<div style="display:flex;align-items:center;justify-content:space-between;gap:.6rem;padding:.55rem 0;border-bottom:1px solid var(--bd)"><div style="min-width:0"><div style="font-weight:600;font-size:.82rem">'+esc(m.topic)+'</div><div style="font-size:.68rem;color:var(--t3)">'+esc(m.sub||'')+' · '+((m.data&&m.data.branches&&m.data.branches.length)||0)+' ramos</div></div><div style="display:flex;gap:5px;flex-shrink:0"><button class="btn btn-outline btn-sm" data-adm-mm-edit="'+j+'">Editar</button><button class="btn btn-ghost btn-sm" data-adm-mm-del="'+j+'">Remover</button></div></div>';}).join('');
+  var __sp=[];(sharedMM||[]).forEach(function(m){var s=m.sub||'';if(s&&__sp.indexOf(s)<0)__sp.push(s);});__sp.sort();var mmFilterSel='<select id="adm-mm-filter" style="width:auto;min-width:190px;font-size:.76rem"><option value="">Todas as subespecialidades</option>'+__sp.map(function(s){return'<option'+(admMMFilterSub===s?' selected':'')+'>'+esc(s)+'</option>';}).join('')+'</select>';var __rows=(sharedMM||[]).map(function(m,j){return{m:m,j:j};}).filter(function(o){return!admMMFilterSub||(o.m.sub||'')===admMMFilterSub;});var list=__rows.map(function(o){var m=o.m,j=o.j;return '<div style="display:flex;align-items:center;justify-content:space-between;gap:.6rem;padding:.55rem 0;border-bottom:1px solid var(--bd)"><div style="min-width:0"><div style="font-weight:600;font-size:.82rem">'+esc(m.topic)+'</div><div style="font-size:.68rem;color:var(--t3)">'+esc(m.sub||'')+' · '+((m.data&&m.data.branches&&m.data.branches.length)||0)+' ramos</div></div><div style="display:flex;gap:5px;flex-shrink:0"><button class="btn btn-outline btn-sm" data-adm-mm-edit="'+j+'">Editar</button><button class="btn btn-ghost btn-sm" data-adm-mm-del="'+j+'">Remover</button></div></div>';}).join('');
   return '<div class="adm-ph"><h1>Mapas Mentais</h1></div>'
     +'<div class="adm-pc">'+editor
-    +'<div class="card"><div class="card-head"><span class="card-title">Mapas publicados para os alunos</span><span class="tag tag-grn">'+(sharedMM||[]).length+'</span></div>'+(list||'<div class="empty">Nenhum mapa publicado ainda.</div>')+'</div>'
+    +'<div class="card"><div class="card-head" style="flex-wrap:wrap;gap:.5rem"><span class="card-title">Mapas publicados para os alunos</span><div style="display:flex;gap:.5rem;align-items:center">'+mmFilterSel+'<span class="tag tag-grn">'+__rows.length+'</span></div></div>'+(list||'<div class="empty">Nenhum mapa nesta subespecialidade.</div>')+'</div>'
     +'</div>';
 }
 function renderAdmSec(sec){
@@ -3313,10 +3313,13 @@ function admProvaSubBody(areas,anos,insts,pendentes){
     +'<div class="card"><div class="card-head"><span class="card-title">Questões por área</span></div>'+(Object.keys(areas).length?Object.keys(areas).sort(function(a,b){return areas[b]-areas[a];}).map(function(a){return '<div style="display:flex;justify-content:space-between;padding:.42rem 0;border-bottom:1px solid var(--bd);font-size:.79rem"><span>'+esc(a)+'</span><span style="font-weight:700;color:var(--t2)">'+areas[a]+'</span></div>';}).join(''):'<div class="empty">Nenhuma questão de prova cadastrada.</div>')+'</div>'
     +'<div class="card"><div class="card-head"><span class="card-title">Questões por instituição</span></div>'+(Object.keys(insts).length?Object.keys(insts).map(function(a){return '<div style="display:flex;justify-content:space-between;padding:.42rem 0;border-bottom:1px solid var(--bd);font-size:.79rem"><span>'+esc(a)+'</span><span style="font-weight:700;color:var(--t2)">'+insts[a]+'</span></div>';}).join(''):'<div class="empty">Nenhuma.</div>')+'</div>'
   +'</div>'
-  +'<div class="sec-title" style="margin:1rem 0 .5rem">Questões de provas cadastradas ('+provasDB.length+')</div>'
-  +'<div id="adm-provas-list">'+(provasDB.length?provasDB.map(function(q,i){return '<div class="adm-row"><div class="adm-row-info"><div class="adm-row-title">'+esc((q.stem||'').substring(0,90))+'…</div><div class="adm-row-sub">'+esc(q.inst||'')+' '+esc(String(q.ano||''))+' • '+esc(q.area||'')+' • Gab: '+esc(q.answer||'')+'</div></div><button class="btn btn-ghost btn-sm" data-adm-delprova="'+i+'">✕</button></div>';}).join(''):'<div class="empty">Nenhuma questão de prova cadastrada.</div>')+'</div>';
+  +(function(){var areaList=Object.keys(areas).sort();var anosList=Object.keys(anos).sort(function(a,b){return b-a;});var instList=Object.keys(insts).sort();return '<div class="card" style="margin-bottom:.7rem"><div class="g2" style="grid-template-columns:repeat(4,1fr);gap:.6rem;margin:0"><div class="fld2" style="margin:0"><label>Subespecialidade</label><select id="adm-bq-area"><option value="">Todas</option>'+areaList.map(function(a){return'<option'+(admBancoArea===a?' selected':'')+'>'+esc(a)+'</option>';}).join('')+'</select></div><div class="fld2" style="margin:0"><label>Código</label><input type="text" id="adm-bq-code" placeholder="Ex: DM-001" value="'+esc(admBancoCode)+'"></div><div class="fld2" style="margin:0"><label>Ano</label><select id="adm-bq-ano"><option value="">Todos</option>'+anosList.map(function(a){return'<option'+(String(admBancoAno)===String(a)?' selected':'')+'>'+esc(a)+'</option>';}).join('')+'</select></div><div class="fld2" style="margin:0"><label>Instituição</label><select id="adm-bq-inst"><option value="">Todas</option>'+instList.map(function(a){return'<option'+(admBancoInst===a?' selected':'')+'>'+esc(a)+'</option>';}).join('')+'</select></div></div><div style="margin-top:.5rem"><button class="btn btn-outline btn-sm" id="adm-bq-clear">Limpar filtros</button></div></div>';})()
+  +'<div class="sec-title" style="margin:1rem 0 .5rem">Questões de provas cadastradas (<span id="adm-bq-count">'+admProvasFilter().length+'</span>)</div>'
+  +'<div id="adm-provas-list">'+admProvasListHTML()+'</div>';
 }
 
+function admProvasFilter(){var fa=admBancoArea,fc=(admBancoCode||'').toLowerCase().trim(),fan=admBancoAno,fi=admBancoInst;var out=[];provasDB.forEach(function(q,i){if(fa&&(q.area||'')!==fa)return;if(fan&&String(q.ano||'')!==String(fan))return;if(fi&&(q.inst||'')!==fi)return;if(fc&&String(q.code||'').toLowerCase().indexOf(fc)<0)return;out.push({q:q,i:i});});return out;}
+function admProvasListHTML(){var rows=admProvasFilter();if(!rows.length)return '<div class="empty">Nenhuma questão encontrada com esses filtros.</div>';return rows.map(function(o){var q=o.q,i=o.i;return '<div class="adm-row"><div class="adm-row-info"><div class="adm-row-title">'+esc((q.stem||'').substring(0,90))+'…</div><div class="adm-row-sub">'+(q.code?esc(q.code)+' • ':'')+esc(q.inst||'')+' '+esc(String(q.ano||''))+' • '+esc(q.area||'')+' • Gab: '+esc(q.answer||'')+'</div></div><button class="btn btn-ghost btn-sm" data-adm-delprova="'+i+'">✕</button></div>';}).join('');}
 // ---------- ESTUDANTES ----------
 var admEstudantes=normalizeAdmEstudantes(lsGet('adm_estudantes')||[{nome:'Aluno Endodirect',email:'aluno@endodirect.med.br',cpf:'',turma:'Turma 2026',perfil:'Residente',status:'Ativo',xp:0}]);
 function persistEstudantes(){lsSet('adm_estudantes',admEstudantes);queueRemoteStateSave();}
@@ -3653,6 +3656,7 @@ function bindAdmSec(sec){
     main.querySelectorAll('[data-adm-mm-delb]').forEach(function(b){b.addEventListener('click',function(){admMMSyncDraft();admMMDraft.data.branches.splice(parseInt(b.dataset.admMmDelb,10),1);renderAdmSec('mapas');});});
     main.querySelectorAll('[data-adm-mm-edit]').forEach(function(b){b.addEventListener('click',function(){var m=sharedMM[parseInt(b.dataset.admMmEdit,10)];if(!m)return;admMMDraft={topic:m.topic,sub:m.sub,data:normalizeMMData(m.data)};admMMEditId=m.id;renderAdmSec('mapas');});});
     main.querySelectorAll('[data-adm-mm-del]').forEach(function(b){b.addEventListener('click',function(){sharedMM.splice(parseInt(b.dataset.admMmDel,10),1);persistSharedMM();renderAdmSec('mapas');notify('Mapa removido.','ok');});});
+    var __mmf=document.getElementById('adm-mm-filter');if(__mmf)__mmf.addEventListener('change',function(){admMMFilterSub=__mmf.value;renderAdmSec('mapas');});
     return;
   }
   // subtabs de provas
@@ -3710,7 +3714,14 @@ function bindAdmSec(sec){
     if(bc)bc.addEventListener('click',function(){['adm-mq-stem','adm-mq-a','adm-mq-b','adm-mq-c','adm-mq-d','adm-mq-exp','adm-mq-inst'].forEach(function(id){var e=document.getElementById(id);if(e)e.value='';});mqImgData=null;var pv=document.getElementById('adm-mq-imgprev');if(pv){pv.style.display='none';pv.innerHTML='';}});
   }
   if(sec==='provas'&&admProvaSubtab==='banco'){
-    main.querySelectorAll('[data-adm-delprova]').forEach(function(b){b.addEventListener('click',function(){provasDB.splice(parseInt(b.dataset.admDelprova),1);persistProvas();renderAdmSec('provas');});});
+    function bindProvaDel(){main.querySelectorAll('[data-adm-delprova]').forEach(function(b){b.addEventListener('click',function(){provasDB.splice(parseInt(b.dataset.admDelprova),1);persistProvas();renderAdmSec('provas');});});}
+    function refreshBanco(){var lst=document.getElementById('adm-provas-list');if(lst)lst.innerHTML=admProvasListHTML();var cnt=document.getElementById('adm-bq-count');if(cnt)cnt.textContent=admProvasFilter().length;bindProvaDel();}
+    var fa=document.getElementById('adm-bq-area');if(fa)fa.addEventListener('change',function(){admBancoArea=fa.value;refreshBanco();});
+    var fc=document.getElementById('adm-bq-code');if(fc)fc.addEventListener('input',function(){admBancoCode=fc.value;refreshBanco();});
+    var fan=document.getElementById('adm-bq-ano');if(fan)fan.addEventListener('change',function(){admBancoAno=fan.value;refreshBanco();});
+    var fi=document.getElementById('adm-bq-inst');if(fi)fi.addEventListener('change',function(){admBancoInst=fi.value;refreshBanco();});
+    var fcl=document.getElementById('adm-bq-clear');if(fcl)fcl.addEventListener('click',function(){admBancoArea='';admBancoCode='';admBancoAno='';admBancoInst='';renderAdmSec('provas');});
+    bindProvaDel();
   }
 
   if(sec==='cursos'){
