@@ -1,8 +1,12 @@
 const SUPABASE_URL = process.env.SUPABASE_URL || process.env.NEXT_PUBLIC_SUPABASE_URL || 'https://auth.endodirect.com.br';
 const PUBMED_BASE_URL = 'https://eutils.ncbi.nlm.nih.gov/entrez/eutils';
+const ANTHROPIC_MODEL = process.env.ANTHROPIC_MODEL || 'claude-sonnet-4-20250514';
 const MAX_MURAL_ITEMS = 50;
 const AUTO_ITEM_TTL_MS = 45 * 24 * 60 * 60 * 1000;
+const ARTICLES_PER_DAY = 3;
+const AI_TIMEOUT_MS = 8000;
 
+// Revistas prioritarias (peso = prioridade editorial)
 const JOURNALS = [
   { name: 'The New England Journal of Medicine', query: 'N Engl J Med', weight: 10 },
   { name: 'The Lancet Diabetes & Endocrinology', query: 'Lancet Diabetes Endocrinol', weight: 10 },
@@ -16,22 +20,13 @@ const JOURNALS = [
   { name: 'Endocrinology', query: 'Endocrinology', weight: 7 }
 ];
 
+// Eixos clinicos: diabetes, obesidade, tireoide, adrenal, hipofise, osso/mineral, reproducao e lipides
 const TOPIC_QUERY = [
-  'endocrinology',
-  'diabetes',
-  'obesity',
-  'thyroid',
-  'adrenal',
-  'pituitary',
-  'hypogonadism',
-  'osteoporosis',
-  'bone mineral',
-  'metabolism',
-  'glucose',
-  'insulin',
-  'GLP-1',
-  'semaglutide',
-  'tirzepatide'
+  'endocrinology', 'diabetes', 'obesity', 'thyroid', 'adrenal', 'pituitary',
+  'hypogonadism', 'osteoporosis', 'bone mineral', 'metabolism', 'glucose', 'insulin',
+  'GLP-1', 'semaglutide', 'tirzepatide',
+  'lipid', 'cholesterol', 'LDL', 'statin', 'dyslipidemia',
+  'polycystic ovary', 'PCOS', 'testosterone', 'menopause', 'fertility', 'reproductive'
 ].map((term) => `${term}[Title/Abstract]`).join(' OR ');
 
 function json(res, status, body) {
@@ -43,13 +38,9 @@ function json(res, status, body) {
 function cleanText(value) {
   return String(value || '')
     .replace(/<[^>]*>/g, ' ')
-    .replace(/&lt;/g, '<')
-    .replace(/&gt;/g, '>')
-    .replace(/&amp;/g, '&')
-    .replace(/&quot;/g, '"')
-    .replace(/&#39;/g, "'")
-    .replace(/\s+/g, ' ')
-    .trim();
+    .replace(/&lt;/g, '<').replace(/&gt;/g, '>').replace(/&amp;/g, '&')
+    .replace(/&quot;/g, '"').replace(/&#39;/g, "'")
+    .replace(/\s+/g, ' ').trim();
 }
 
 function firstSentences(text, maxSentences) {
@@ -74,36 +65,45 @@ function normalizeJournal(title) {
 
 function inferStudyType(article) {
   const haystack = `${article.title} ${article.abstract} ${(article.publicationTypes || []).join(' ')}`.toLowerCase();
-  if (haystack.includes('randomized') || haystack.includes('randomised') || haystack.includes('clinical trial')) return 'Ensaio clinico';
+  if (haystack.includes('randomized') || haystack.includes('randomised') || haystack.includes('clinical trial')) return 'Ensaio clinico randomizado';
   if (haystack.includes('guideline') || haystack.includes('consensus')) return 'Diretriz/consenso';
   if (haystack.includes('meta-analysis') || haystack.includes('systematic review')) return 'Revisao sistematica/metanalise';
-  if (haystack.includes('cohort') || haystack.includes('prospective')) return 'Coorte';
+  if (haystack.includes('cohort') || haystack.includes('prospective')) return 'Estudo de coorte';
+  if (haystack.includes('case-control')) return 'Caso-controle';
   if (haystack.includes('review')) return 'Revisao narrativa';
   return 'Artigo cientifico';
 }
 
+function portugueseFocus(article) {
+  const h = `${article.title} ${article.abstract}`.toLowerCase();
+  if (h.includes('lipid') || h.includes('cholesterol') || h.includes('ldl') || h.includes('statin') || h.includes('dyslipid')) return 'lipides, dislipidemia e risco cardiovascular';
+  if (h.includes('pcos') || h.includes('polycystic') || h.includes('fertility') || h.includes('reproductive') || h.includes('testosterone') || h.includes('menopause') || h.includes('hypogonad')) return 'reproducao, eixo gonadal e saude hormonal';
+  if (h.includes('diabetes') || h.includes('glucose') || h.includes('insulin')) return 'diabetes, tecnologia e controle metabolico';
+  if (h.includes('obesity') || h.includes('weight') || h.includes('glp-1') || h.includes('tirzepatide')) return 'obesidade, farmacoterapia metabolica e risco cardiometabolico';
+  if (h.includes('thyroid') || h.includes('hypothyroidism')) return 'tireoide, diagnostico e acompanhamento clinico';
+  if (h.includes('adrenal') || h.includes('aldosterone') || h.includes('cushing')) return 'adrenal, hipertensao secundaria e endocrinologia clinica';
+  if (h.includes('pituitary')) return 'hipofise e neuroendocrinologia';
+  if (h.includes('bone') || h.includes('osteoporosis') || h.includes('mineral')) return 'osso, metabolismo mineral e risco de fratura';
+  return 'endocrinologia e metabolismo';
+}
+
 function practiceRelevance(article) {
-  const haystack = `${article.title} ${article.abstract}`.toLowerCase();
-  if (haystack.includes('diabetes') || haystack.includes('glucose') || haystack.includes('insulin')) {
-    return 'pode refinar decisoes de acompanhamento, tratamento e estratificacao de risco em diabetes e metabolismo.';
-  }
-  if (haystack.includes('obesity') || haystack.includes('weight') || haystack.includes('glp-1') || haystack.includes('tirzepatide')) {
-    return 'ajuda a atualizar condutas em obesidade, farmacoterapia metabolica e reducao de risco cardiometabolico.';
-  }
-  if (haystack.includes('thyroid')) {
-    return 'pode impactar investigacao, seguimento e tomada de decisao em doencas tireoidianas.';
-  }
-  if (haystack.includes('adrenal') || haystack.includes('pituitary')) {
-    return 'traz pontos uteis para diagnostico e manejo de endocrinopatias adrenal/hipofisarias.';
-  }
+  const h = `${article.title} ${article.abstract}`.toLowerCase();
+  if (h.includes('lipid') || h.includes('cholesterol') || h.includes('ldl') || h.includes('statin') || h.includes('dyslipid')) return 'pode refinar o manejo da dislipidemia e a reducao de risco cardiovascular.';
+  if (h.includes('pcos') || h.includes('polycystic') || h.includes('fertility') || h.includes('reproductive') || h.includes('testosterone') || h.includes('menopause') || h.includes('hypogonad')) return 'ajuda em decisoes de saude reprodutiva, SOP, hipogonadismo e reposicao hormonal.';
+  if (h.includes('diabetes') || h.includes('glucose') || h.includes('insulin')) return 'pode refinar decisoes de acompanhamento, tratamento e estratificacao de risco em diabetes e metabolismo.';
+  if (h.includes('obesity') || h.includes('weight') || h.includes('glp-1') || h.includes('tirzepatide')) return 'ajuda a atualizar condutas em obesidade, farmacoterapia metabolica e reducao de risco cardiometabolico.';
+  if (h.includes('thyroid')) return 'pode impactar investigacao, seguimento e tomada de decisao em doencas tireoidianas.';
+  if (h.includes('adrenal') || h.includes('pituitary')) return 'traz pontos uteis para diagnostico e manejo de endocrinopatias adrenal/hipofisarias.';
   return 'merece leitura por possivel impacto em ensino, atualizacao clinica e pratica endocrinologica.';
 }
 
 function limitationFor(type) {
-  if (type.includes('Ensaio')) return 'confirmar criterios de inclusao, desfechos e aplicabilidade ao perfil dos pacientes antes de mudar conduta.';
-  if (type.includes('Revisao')) return 'interpretar a luz da qualidade dos estudos incluidos e de eventual heterogeneidade.';
-  if (type.includes('Coorte')) return 'associacao observacional nao prova causalidade e pode ter confundimento residual.';
-  if (type.includes('Diretriz')) return 'adaptar recomendacoes ao contexto local, disponibilidade e preferencias do paciente.';
+  const t = String(type || '').toLowerCase();
+  if (t.includes('ensaio')) return 'confirmar criterios de inclusao, desfechos e aplicabilidade ao perfil dos pacientes antes de mudar conduta.';
+  if (t.includes('revisao') || t.includes('metanalise')) return 'interpretar a luz da qualidade dos estudos incluidos e de eventual heterogeneidade.';
+  if (t.includes('coorte') || t.includes('caso-controle')) return 'associacao observacional nao prova causalidade e pode ter confundimento residual.';
+  if (t.includes('diretriz')) return 'adaptar recomendacoes ao contexto local, disponibilidade e preferencias do paciente.';
   return 'ler o artigo completo antes de extrapolar os achados.';
 }
 
@@ -114,7 +114,7 @@ function scoreArticle(article) {
   ['randomized', 'clinical trial', 'guideline', 'consensus', 'meta-analysis', 'systematic review', 'phase 3'].forEach((term) => {
     if (haystack.includes(term)) score += 2;
   });
-  ['editorial', 'letter', 'comment'].forEach((term) => {
+  ['editorial', 'letter', 'comment', 'erratum', 'retraction'].forEach((term) => {
     if (haystack.includes(term)) score -= 3;
   });
   if (article.abstract && article.abstract.length > 350) score += 1;
@@ -136,35 +136,21 @@ async function fetchJson(url) {
 async function searchPubMed() {
   const journalQuery = JOURNALS.map((journal) => `"${journal.query}"[Journal]`).join(' OR ');
   const term = `(${journalQuery}) AND (${TOPIC_QUERY}) AND ("last 21 days"[PDat])`;
-  const url = pubmedUrl('esearch.fcgi', {
-    db: 'pubmed',
-    retmode: 'json',
-    retmax: '30',
-    sort: 'date',
-    term
-  });
+  const url = pubmedUrl('esearch.fcgi', { db: 'pubmed', retmode: 'json', retmax: '40', sort: 'date', term });
   const data = await fetchJson(url);
   return (data.esearchresult && data.esearchresult.idlist) || [];
 }
 
 async function summarizePubMed(ids) {
   if (!ids.length) return [];
-  const url = pubmedUrl('esummary.fcgi', {
-    db: 'pubmed',
-    retmode: 'json',
-    id: ids.join(',')
-  });
+  const url = pubmedUrl('esummary.fcgi', { db: 'pubmed', retmode: 'json', id: ids.join(',') });
   const data = await fetchJson(url);
   return ids.map((id) => data.result && data.result[id]).filter(Boolean);
 }
 
 async function fetchAbstracts(ids) {
   if (!ids.length) return {};
-  const url = pubmedUrl('efetch.fcgi', {
-    db: 'pubmed',
-    retmode: 'xml',
-    id: ids.join(',')
-  });
+  const url = pubmedUrl('efetch.fcgi', { db: 'pubmed', retmode: 'xml', id: ids.join(',') });
   const response = await fetch(url, { headers: { Accept: 'application/xml,text/xml' } });
   if (!response.ok) throw new Error(`PubMed abstracts HTTP ${response.status}`);
   const xml = await response.text();
@@ -206,36 +192,76 @@ async function findRelevantArticles() {
   return articles
     .filter((article) => article.title && article.journal)
     .sort((a, b) => b.score - a.score)
-    .slice(0, 2);
+    .slice(0, ARTICLES_PER_DAY);
 }
 
-function buildMuralItem(article) {
-  const why = practiceRelevance(article);
-  const limitation = limitationFor(article.studyType);
-  const focus = portugueseFocus(article);
+// ---- Resumo em portugues via Anthropic (fonte primaria = abstract do PubMed) ----
+async function summarizeWithAI(apiKey, article) {
+  if (!apiKey) return null;
+  const controller = new AbortController();
+  const timer = setTimeout(() => controller.abort(), AI_TIMEOUT_MS);
+  const system = 'Voce e um endocrinologista que resume evidencias para outros medicos, em portugues do Brasil, com rigor, sem exageros e sem inventar dados. Responda APENAS com JSON valido.';
+  const prompt = `Resuma o artigo cientifico abaixo para o mural do Endodirect.
+Titulo: ${article.title}
+Revista: ${article.journal}
+Tipo inferido: ${article.studyType}
+Abstract: ${article.abstract || '(abstract nao disponivel)'}
+
+Responda SOMENTE com JSON neste formato exato:
+{"tipo":"<tipo de estudo em portugues>","resumo":"<3 a 5 linhas: objetivo, metodo e principal achado, em portugues claro>","porque":"<1-2 frases: por que importa na pratica clinica>","cautela":"<1 frase de cautela/limitacao metodologica>"}
+Regras: use apenas informacao presente no abstract/titulo; nao invente numeros; se o abstract faltar, seja conservador. Texto sempre em portugues do Brasil.`;
+  try {
+    const r = await fetch('https://api.anthropic.com/v1/messages', {
+      method: 'POST',
+      signal: controller.signal,
+      headers: { 'Content-Type': 'application/json', 'x-api-key': apiKey, 'anthropic-version': '2023-06-01' },
+      body: JSON.stringify({ model: ANTHROPIC_MODEL, max_tokens: 700, system, messages: [{ role: 'user', content: prompt }] })
+    });
+    const data = await r.json().catch(() => ({}));
+    if (!r.ok) return null;
+    const txt = Array.isArray(data.content) ? ((data.content.find((p) => p && p.type === 'text') || {}).text || '') : '';
+    const m = txt.match(/\{[\s\S]*\}/);
+    if (!m) return null;
+    const obj = JSON.parse(m[0]);
+    if (!obj || !obj.resumo) return null;
+    return obj;
+  } catch (e) {
+    return null;
+  } finally {
+    clearTimeout(timer);
+  }
+}
+
+async function buildMuralItem(article, apiKey) {
+  const ai = await summarizeWithAI(apiKey, article);
+  const tipoEstudo = (ai && ai.tipo) || article.studyType;
+  const resumo = (ai && ai.resumo) || firstSentences(article.abstract, 4)
+    || `Artigo recente sobre ${portugueseFocus(article)}, selecionado pelo radar Endodirect entre revistas lideres de endocrinologia e metabolismo.`;
+  const porque = (ai && ai.porque) || practiceRelevance(article);
+  const cautela = (ai && ai.cautela) || limitationFor(tipoEstudo);
+  const pubmedLink = `https://pubmed.ncbi.nlm.nih.gov/${article.pmid}/`;
+  const fontes = `PubMed (${pubmedLink})` + (article.link && article.link !== pubmedLink ? ` · Artigo/DOI (${article.link})` : '');
+  const dataLinha = article.publicationDate ? `Data de publicacao: ${article.publicationDate}\n` : '';
+  const texto =
+`${dataLinha}Tipo de estudo: ${tipoEstudo}
+Resumo: ${resumo}
+Por que importa na pratica: ${porque}
+Cautela/limitacao: ${cautela}
+Fontes consultadas: ${fontes}`;
   return {
     titulo: article.title,
     tipo: 'Artigo',
     fonte: article.journal,
     link: article.link,
-    texto: `${article.studyType}. Artigo recente sobre ${focus}, selecionado pelo radar Endodirect entre revistas lideres de endocrinologia e metabolismo. A leitura ajuda a acompanhar evidencias novas, hipoteses mecanisticas e possiveis impactos em condutas, ensino e selecao de temas para estudo. Por que importa: ${why} Cautela: ${limitation}`,
+    texto,
     at: Date.now(),
     auto: true,
     sourceId: `pubmed:${article.pmid}`,
     pmid: article.pmid,
-    publicationDate: article.publicationDate
+    studyType: tipoEstudo,
+    publicationDate: article.publicationDate,
+    aiSummary: !!ai
   };
-}
-
-function portugueseFocus(article) {
-  const haystack = `${article.title} ${article.abstract}`.toLowerCase();
-  if (haystack.includes('diabetes') || haystack.includes('glucose') || haystack.includes('insulin')) return 'diabetes, tecnologia e controle metabolico';
-  if (haystack.includes('obesity') || haystack.includes('weight') || haystack.includes('glp-1') || haystack.includes('tirzepatide')) return 'obesidade, farmacoterapia metabolica e risco cardiometabolico';
-  if (haystack.includes('thyroid') || haystack.includes('hypothyroidism')) return 'tireoide, diagnostico e acompanhamento clinico';
-  if (haystack.includes('adrenal') || haystack.includes('aldosterone') || haystack.includes('cushing')) return 'adrenal, hipertensao secundaria e endocrinologia clinica';
-  if (haystack.includes('pituitary')) return 'hipofise e neuroendocrinologia';
-  if (haystack.includes('bone') || haystack.includes('osteoporosis') || haystack.includes('mineral')) return 'osso, metabolismo mineral e risco de fratura';
-  return 'endocrinologia e metabolismo';
 }
 
 function supabaseHeaders(serviceKey) {
@@ -261,16 +287,8 @@ async function loadGlobalPayload(serviceKey) {
 async function saveGlobalPayload(serviceKey, payload) {
   const response = await fetch(`${SUPABASE_URL}/rest/v1/endodirect_global_state?on_conflict=id`, {
     method: 'POST',
-    headers: {
-      ...supabaseHeaders(serviceKey),
-      Prefer: 'resolution=merge-duplicates,return=minimal'
-    },
-    body: JSON.stringify({
-      id: 'main',
-      payload,
-      updated_by: null,
-      updated_at: new Date().toISOString()
-    })
+    headers: { ...supabaseHeaders(serviceKey), Prefer: 'resolution=merge-duplicates,return=minimal' },
+    body: JSON.stringify({ id: 'main', payload, updated_by: null, updated_at: new Date().toISOString() })
   });
   if (!response.ok) {
     const detail = await response.text().catch(() => '');
@@ -294,10 +312,7 @@ function mergeMuralItems(payload, incoming) {
     return replacement ? { ...item, ...replacement, at: item.at || replacement.at } : item;
   });
   return {
-    payload: {
-      ...payload,
-      adm_avisos: [...fresh, ...retained].slice(0, MAX_MURAL_ITEMS)
-    },
+    payload: { ...payload, adm_avisos: [...fresh, ...retained].slice(0, MAX_MURAL_ITEMS) },
     fresh
   };
 }
@@ -322,9 +337,12 @@ module.exports = async function handler(req, res) {
     });
   }
 
+  const anthropicKey = process.env.ANTHROPIC_API_KEY;
+
   try {
     const articles = await findRelevantArticles();
-    const incoming = articles.map(buildMuralItem);
+    // Resumo via IA em paralelo (com timeout e fallback) para caber no tempo de execucao.
+    const incoming = await Promise.all(articles.map((a) => buildMuralItem(a, anthropicKey)));
     const payload = await loadGlobalPayload(serviceKey);
     const merged = mergeMuralItems(payload, incoming);
     await saveGlobalPayload(serviceKey, merged.payload);
@@ -332,11 +350,8 @@ module.exports = async function handler(req, res) {
       ok: true,
       inserted: merged.fresh.length,
       considered: incoming.length,
-      items: merged.fresh.map((item) => ({
-        titulo: item.titulo,
-        fonte: item.fonte,
-        link: item.link
-      }))
+      aiSummaries: incoming.filter((i) => i.aiSummary).length,
+      items: merged.fresh.map((item) => ({ titulo: item.titulo, fonte: item.fonte, link: item.link }))
     });
   } catch (error) {
     return json(res, 500, {
@@ -345,3 +360,7 @@ module.exports = async function handler(req, res) {
     });
   }
 };
+
+// Permite ate 60s de execucao (3 chamadas de IA + PubMed). Em plano Hobby o teto e menor;
+// nesse caso a IA tem timeout e ha fallback para o resumo templated.
+module.exports.config = { maxDuration: 60 };
