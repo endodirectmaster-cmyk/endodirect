@@ -1,10 +1,10 @@
 const SUPABASE_URL = process.env.SUPABASE_URL || process.env.NEXT_PUBLIC_SUPABASE_URL || 'https://auth.endodirect.com.br';
 const PUBMED_BASE_URL = 'https://eutils.ncbi.nlm.nih.gov/entrez/eutils';
-const ANTHROPIC_MODEL = process.env.ANTHROPIC_MODEL || 'claude-sonnet-4-20250514';
+const ANTHROPIC_MODEL = process.env.ANTHROPIC_MODEL || 'claude-sonnet-4-6';
 const MAX_MURAL_ITEMS = 50;
 const AUTO_ITEM_TTL_MS = 45 * 24 * 60 * 60 * 1000;
 const ARTICLES_PER_DAY = 3;
-const AI_TIMEOUT_MS = 8000;
+const AI_TIMEOUT_MS = 20000;
 
 // Revistas prioritarias (peso = prioridade editorial)
 const JOURNALS = [
@@ -262,8 +262,9 @@ Regras: use apenas informacao presente no abstract/titulo; nao invente numeros; 
 async function buildMuralItem(article, apiKey) {
   const ai = await summarizeWithAI(apiKey, article);
   const tipoEstudo = (ai && ai.tipo) || article.studyType;
-  const resumo = (ai && ai.resumo) || firstSentences(article.abstract, 4)
-    || `Artigo recente sobre ${portugueseFocus(article)}, selecionado pelo radar Endodirect entre revistas lideres de endocrinologia e metabolismo.`;
+  // Fallback sempre em portugues — nunca usar o abstract original (ingles) como resumo.
+  const resumo = (ai && ai.resumo)
+    || `Artigo recente sobre ${portugueseFocus(article)}, publicado em ${article.journal} e selecionado pelo radar Endodirect entre revistas lideres de endocrinologia e metabolismo. Consulte o resumo original (em ingles) pelo link para os detalhes.`;
   const porque = (ai && ai.porque) || practiceRelevance(article);
   const cautela = (ai && ai.cautela) || limitationFor(tipoEstudo);
   const pubmedLink = `https://pubmed.ncbi.nlm.nih.gov/${article.pmid}/`;
