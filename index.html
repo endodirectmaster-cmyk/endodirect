@@ -1127,9 +1127,9 @@ textarea{resize:vertical;line-height:1.6}
             <button class="adm-menu-btn" id="adm-menu-btn" type="button" aria-label="Abrir menu administrativo" aria-expanded="false">☰</button>
             <span style="font-size:.72rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--t3)" id="adm-sec-title">Provas &amp; Questões</span>
           </div>
-          <div style="display:flex;align-items:center;gap:.6rem">
+          <div class="tb-user" id="adm-user-btn" style="gap:.6rem">
             <div style="text-align:right"><div style="font-size:.78rem;font-weight:700;color:var(--tx)" id="adm-uname">Administrador</div><div style="font-size:.62rem;color:var(--t3)">Professor</div></div>
-            <div class="tb-avatar" id="adm-uavatar" style="background:var(--navy)">A</div>
+            <div class="tb-avatar" id="adm-uavatar" style="background:var(--navy)">A</div><div class="user-menu" id="adm-user-menu"><div class="user-menu-hd"><div class="um-name" id="adm-um-name">Administrador</div><div class="um-email" id="adm-um-email">Professor</div></div><button class="um-btn" id="adm-logout-top">↩ Encerrar sessão</button></div>
           </div>
         </div>
         <div style="flex:1;overflow-y:auto" id="adm-main"></div>
@@ -1849,7 +1849,7 @@ function startApp(){
   document.querySelectorAll('.panel').forEach(function(p){p.classList.remove('on');});
   if(isAdmin){
     var adminName=(admPerfil&&admPerfil.nome)||u.name||'Administrador';
-    setText('adm-uname',adminName);
+    setText('adm-uname',adminName);setText('adm-um-name',adminName);
     var av=document.getElementById('adm-uavatar');if(av)av.textContent=adminName.charAt(0);
     var al=document.getElementById('logo-adm-img');var tbLogo=document.getElementById('logo-tb-img');
     if(al&&tbLogo)al.innerHTML='<img src="'+tbLogo.src+'" alt="Endodirect" style="width:30px;height:30px;object-fit:contain">';
@@ -4008,7 +4008,7 @@ function bindAdmSec(sec){
       admPerfil.cpf=(document.getElementById('adm-pf-cpf').value||'').trim();
       admPerfil.instituicao=(document.getElementById('adm-pf-inst').value||'').trim();
       persistPerfil();admPerfilEdit=false;
-      setText('adm-uname',admPerfil.nome);
+      setText('adm-uname',admPerfil.nome);setText('adm-um-name',admPerfil.nome);
       var av=document.getElementById('adm-uavatar');if(av)av.textContent=admPerfil.nome.charAt(0);
       notify('Perfil atualizado!','ok');renderAdmSec('perfil');
     });
@@ -4071,7 +4071,7 @@ document.addEventListener('click',function(e){
   var fctog=c('[data-fctoggle]');
   if(fctog&&!c('[data-fcdel]')){toggleFC(parseInt(fctog.dataset.fctoggle));return;}
   var fcdel=c('[data-fcdel]');
-  if(fcdel){e.stopPropagation();DB.fc.splice(parseInt(fcdel.dataset.fcdel),1);persist();renderFC();refreshDash();return;}
+  if(fcdel){e.stopPropagation();if(!confirm('Deseja realmente excluir este flashcard? Esta ação não pode ser desfeita.'))return;DB.fc.splice(parseInt(fcdel.dataset.fcdel),1);persist();renderFC();refreshDash();return;}
   var fccat=c('[data-fccat]');
   if(fccat){fcSelectedCat=fccat.dataset.fccat;renderFcCatPills();return;}
   var fcf=c('[data-fcfilter]');
@@ -4609,7 +4609,9 @@ document.addEventListener('DOMContentLoaded',function(){
 
   // USER MENU
   document.getElementById('tb-user-btn').addEventListener('click',function(e){e.stopPropagation();var m=document.getElementById('user-menu');m.style.display=m.style.display==='block'?'none':'block';});
-  document.addEventListener('click',function(){document.getElementById('user-menu').style.display='none';});
+  var admUB=document.getElementById('adm-user-btn');if(admUB)admUB.addEventListener('click',function(e){e.stopPropagation();var m=document.getElementById('adm-user-menu');m.style.display=m.style.display==='block'?'none':'block';});
+  var admLogoutTop=document.getElementById('adm-logout-top');if(admLogoutTop)admLogoutTop.addEventListener('click',doLogout);
+  document.addEventListener('click',function(){document.getElementById('user-menu').style.display='none';var am=document.getElementById('adm-user-menu');if(am)am.style.display='none';});
   document.getElementById('btn-logout').addEventListener('click',doLogout);
 
   // MOBILE NAV
