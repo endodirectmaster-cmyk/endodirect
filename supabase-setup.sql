@@ -161,3 +161,84 @@ $$;
 
 revoke all on function public.endodirect_public_content() from public;
 grant execute on function public.endodirect_public_content() to anon, authenticated;
+
+-- =====================================================================
+-- FASE 1 (acesso pago): assinaturas + conteudo restrito a membros ativos
+-- Aditivo e nao destrutivo. O bloqueio efetivo do conteudo publico
+-- (reduzir endodirect_public_content a um teaser) sera ativado na virada
+-- de go-live, junto com o pagar.me (Fase 2).
+-- =====================================================================
+
+create table if not exists public.endodirect_assinaturas (
+  id uuid primary key default gen_random_uuid(),
+  user_id uuid references auth.users(id) on delete cascade,
+  email text not null,
+  status text not null default 'inactive' check (status in ('active','inactive','canceled','past_due','expired')),
+  plano text,
+  tipo text check (tipo in ('recorrente','avulso')),
+  current_period_end timestamptz,
+  provider text not null default 'pagarme',
+  provider_customer_id text,
+  provider_subscription_id text,
+  provider_order_id text,
+  notes text,
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now()
+);
+create unique index if not exists endodirect_assinaturas_email_uniq on public.endodirect_assinaturas (lower(email));
+create index if not exists endodirect_assinaturas_user_idx on public.endodirect_assinaturas (user_id);
+
+drop trigger if exists endodirect_assinaturas_touch_updated_at on public.endodirect_assinaturas;
+create trigger endodirect_assinaturas_touch_updated_at
+before update on public.endodirect_assinaturas
+for each row execute function public.endodirect_touch_updated_at();
+
+alter table public.endodirect_assinaturas enable row level security;
+
+drop policy if exists "endodirect_assinaturas_select" on public.endodirect_assinaturas;
+create policy "endodirect_assinaturas_select"
+on public.endodirect_assinaturas
+for select to authenticated
+using (
+  user_id = auth.uid()
+  or exists (select 1 from public.endodirect_admins a where lower(a.email) = lower(auth.jwt() ->> 'email'))
+);
+-- Sem policies de insert/update/delete: somente o service role (webhook) escreve.
+
+grant select on public.endodirect_assinaturas to authenticated;
+
+create or replace function public.endodirect_is_active_member()
+returns boolean language sql security definer set search_path = public stable as $$
+  select coalesce((
+    select true from public.endodirect_admins a
+    where lower(a.email) = lower(auth.jwt() ->> 'email') limit 1
+  ), false)
+  or coalesce((
+    select true from public.endodirect_assinaturas s
+    where s.user_id = auth.uid()
+      and s.status = 'active'
+      and (s.current_period_end is null or s.current_period_end > now())
+    limit 1
+  ), false);
+$$;
+revoke all on function public.endodirect_is_active_member() from public;
+grant execute on function public.endodirect_is_active_member() to anon, authenticated;
+
+create or replace function public.endodirect_member_content()
+returns jsonb language sql security definer set search_path = public stable as $$
+  select case when public.endodirect_is_active_member() then
+    jsonb_build_object(
+      'member', true,
+      'provas',     coalesce(payload->'provas',     '[]'::jsonb),
+      'adm_avisos', coalesce(payload->'adm_avisos', '[]'::jsonb),
+      'podcasts',   coalesce(payload->'podcasts',   '[]'::jsonb),
+      'adm_cursos', coalesce(payload->'adm_cursos', '[]'::jsonb),
+      'mm_shared',  coalesce(payload->'mm_shared',  '[]'::jsonb)
+    )
+  else
+    jsonb_build_object('member', false, 'adm_avisos', coalesce(payload->'adm_avisos', '[]'::jsonb))
+  end
+  from public.endodirect_global_state where id = 'main';
+$$;
+revoke all on function public.endodirect_member_content() from public;
+grant execute on function public.endodirect_member_content() to anon, authenticated;
