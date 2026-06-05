@@ -135,8 +135,8 @@ async function fetchJson(url) {
 
 async function searchPubMed() {
   const journalQuery = JOURNALS.map((journal) => `"${journal.query}"[Journal]`).join(' OR ');
-  const term = `(${journalQuery}) AND (${TOPIC_QUERY}) AND ("last 21 days"[PDat])`;
-  const url = pubmedUrl('esearch.fcgi', { db: 'pubmed', retmode: 'json', retmax: '40', sort: 'date', term });
+  const term = `(${journalQuery}) AND (${TOPIC_QUERY}) AND ("last 30 days"[PDat])`;
+  const url = pubmedUrl('esearch.fcgi', { db: 'pubmed', retmode: 'json', retmax: '80', sort: 'date', term });
   const data = await fetchJson(url);
   return (data.esearchresult && data.esearchresult.idlist) || [];
 }
@@ -171,7 +171,8 @@ function articleLink(summary) {
   return `https://pubmed.ncbi.nlm.nih.gov/${summary.uid}/`;
 }
 
-async function findRelevantArticles() {
+async function findRelevantArticles(excludeKeys) {
+  const exclude = excludeKeys instanceof Set ? excludeKeys : new Set();
   const ids = await searchPubMed();
   const summaries = await summarizePubMed(ids);
   const abstracts = await fetchAbstracts(ids);
@@ -191,8 +192,23 @@ async function findRelevantArticles() {
   });
   return articles
     .filter((article) => article.title && article.journal)
+    // Evita repetir artigos ja publicados no mural (motivo de o mural "nao atualizar").
+    .filter((article) => !exclude.has(`pubmed:${article.pmid}`) && !exclude.has(String(article.pmid)) && !exclude.has(article.link) && !exclude.has(article.title))
     .sort((a, b) => b.score - a.score)
     .slice(0, ARTICLES_PER_DAY);
+}
+
+function existingMuralKeys(payload) {
+  const items = Array.isArray(payload.adm_avisos) ? payload.adm_avisos : [];
+  const keys = new Set();
+  items.forEach((item) => {
+    if (!item) return;
+    if (item.sourceId) keys.add(item.sourceId);
+    if (item.pmid) { keys.add(String(item.pmid)); keys.add(`pubmed:${item.pmid}`); }
+    if (item.link) keys.add(item.link);
+    if (item.titulo) keys.add(item.titulo);
+  });
+  return keys;
 }
 
 // ---- Resumo em portugues via Anthropic (fonte primaria = abstract do PubMed) ----
@@ -340,10 +356,11 @@ module.exports = async function handler(req, res) {
   const anthropicKey = process.env.ANTHROPIC_API_KEY;
 
   try {
-    const articles = await findRelevantArticles();
+    // Carrega o estado primeiro para saber o que ja foi publicado e nao repetir artigos.
+    const payload = await loadGlobalPayload(serviceKey);
+    const articles = await findRelevantArticles(existingMuralKeys(payload));
     // Resumo via IA em paralelo (com timeout e fallback) para caber no tempo de execucao.
     const incoming = await Promise.all(articles.map((a) => buildMuralItem(a, anthropicKey)));
-    const payload = await loadGlobalPayload(serviceKey);
     const merged = mergeMuralItems(payload, incoming);
     await saveGlobalPayload(serviceKey, merged.payload);
     return json(res, 200, {

@@ -803,6 +803,7 @@ textarea{resize:vertical;line-height:1.6}
           <div class="mm-map-wrap" id="mm-svg-wrap"><div class="mm-svg-stage" id="mm-svg"></div></div>
         </div>
         <div class="sec-h"><span class="sec-title">Salvos <span id="mm-count" style="font-weight:400;text-transform:none;letter-spacing:0;color:var(--t3)"></span></span></div>
+        <div style="margin-bottom:.65rem"><select id="mm-sub-filter" style="max-width:340px"><option value="">Todas as subespecialidades</option></select></div>
         <div id="mm-list" style="display:flex;flex-direction:column;gap:6px"></div>
       </div>
     </div>
@@ -1309,6 +1310,30 @@ function persist(){
   queueRemoteStateSave();
 }
 var provasDB=lsGet('provas')||[];
+var FC_SEED={
+ "Diabetes":[["Critérios laboratoriais para diagnóstico de diabetes mellitus?","Glicemia de jejum ≥126 mg/dL, glicemia 2h no TOTG ≥200 mg/dL, HbA1c ≥6,5% ou glicemia casual ≥200 mg/dL com sintomas. Confirmar com 2º teste se assintomático."],["Alvo geral de HbA1c na maioria dos adultos com DM2?","<7%. Individualizar: mais rígido (~6,5%) em jovens/recém-diagnosticados; mais flexível (~8%) em idosos frágeis ou com muitas comorbidades."],["Quais classes de antidiabéticos têm benefício cardiovascular e renal comprovado?","Inibidores de SGLT2 (empagliflozina, dapagliflozina) e agonistas de GLP-1 (semaglutida, liraglutida)."],["Pilares do manejo inicial da cetoacidose diabética?","Hidratação com SF 0,9%, insulina regular IV, reposição de potássio (iniciar quando K<5,2 com diurese presente) e correção do fator precipitante. Bicarbonato não é rotina."],["Primeira linha farmacológica do DM2?","Metformina associada a mudanças no estilo de vida, salvo contraindicação (ex.: TFG<30 mL/min)."]],
+ "Obesidade":[["Classificação da obesidade pelo IMC (OMS)?","Sobrepeso 25–29,9; obesidade grau I 30–34,9; grau II 35–39,9; grau III ≥40 kg/m²."],["Indicações clássicas de cirurgia bariátrica?","IMC ≥40, ou ≥35 com comorbidades. Diretrizes recentes consideram a partir de IMC 30–35 em DM2 de difícil controle."],["Mecanismo dos agonistas de GLP-1 na obesidade?","Reduzem apetite, aumentam saciedade central e retardam o esvaziamento gástrico, diminuindo a ingestão alimentar (ex.: semaglutida 2,4 mg)."],["Meta inicial de perda de peso clinicamente significativa?","5–10% do peso corporal, já suficiente para melhorar comorbidades metabólicas."],["Complicação metabólica mais associada à obesidade visceral?","Resistência insulínica e síndrome metabólica (dislipidemia, HAS, DM2 e esteatose hepática)."]],
+ "Tireoide":[["TSH alto com T4 livre baixo — interpretação?","Hipotireoidismo primário; causa mais comum é a tireoidite de Hashimoto (autoimune)."],["TSH baixo com T4/T3 elevados — conduta diagnóstica?","Hipertireoidismo. Solicitar TRAb e/ou cintilografia; doença de Graves é a causa mais frequente."],["Definição de hipotireoidismo subclínico e quando tratar?","TSH elevado com T4 livre normal. Tratar se TSH>10, sintomas, gestação/desejo de gestar ou anti-TPO positivo."],["Avaliação inicial de um nódulo tireoidiano?","TSH e ultrassom; PAAF conforme TI-RADS/tamanho. Se TSH baixo, cintilografia para investigar nódulo hiperfuncionante."],["Tratamento da crise tireotóxica?","Tionamida (propiltiouracil), betabloqueador (propranolol), iodo (após a tionamida), corticoide e medidas de suporte."]],
+ "Adrenal":[["Testes de rastreio para síndrome de Cushing?","Cortisol salivar noturno, cortisol livre urinário de 24h ou supressão com 1 mg de dexametasona overnight."],["Rastreio do hiperaldosteronismo primário?","Relação aldosterona/renina (ARR) elevada; confirmar com teste de sobrecarga salina ou de captopril."],["Achados típicos da insuficiência adrenal primária (Addison)?","Hiperpigmentação, hipotensão, hiponatremia e hipercalemia; cortisol baixo com ACTH alto."],["Conduta na crise adrenal?","Hidrocortisona IV imediata (100 mg), hidratação com SF 0,9% e glicose e tratamento do precipitante. Não atrasar para colher exames."],["Investigação de feocromocitoma?","Metanefrinas plasmáticas livres ou metanefrinas fracionadas urinárias; em seguida, imagem de adrenais (TC/RM)."]],
+ "Neuroendocrinologia":[["Causa mais comum de hiperprolactinemia patológica?","Prolactinoma. Antes, excluir gestação, hipotireoidismo e fármacos (antipsicóticos, metoclopramida)."],["Tratamento de primeira linha do prolactinoma?","Agonistas dopaminérgicos (cabergolina, bromocriptina), mesmo em macroadenomas."],["Como diagnosticar acromegalia?","IGF-1 elevado para idade/sexo e ausência de supressão do GH no TOTG; depois, RM de hipófise."],["Diabetes insipidus central vs. nefrogênico?","Após restrição hídrica, dá-se desmopressina: no central a urina concentra; no nefrogênico não há resposta."],["Cuidado na reposição do pan-hipopituitarismo?","Repor glicocorticoide ANTES da levotiroxina para evitar precipitar crise adrenal."]],
+ "Osteometabolismo":[["Critério densitométrico de osteoporose (T-score)?","T-score ≤ −2,5 em coluna, fêmur ou rádio. Osteopenia entre −1,0 e −2,5."],["Causa mais comum de hipercalcemia ambulatorial?","Hiperparatireoidismo primário (PTH alto ou inapropriadamente normal). Em internados, predomina a malignidade."],["Primeira linha no tratamento da osteoporose?","Bisfosfonatos (alendronato, ácido zoledrônico), com cálcio e vitamina D adequados."],["Perfil laboratorial da deficiência de vitamina D?","25-OH-vitamina D baixa, tendência à hipocalcemia, PTH elevado (hiperpara secundário) e fosfatase alcalina alta."],["Hiperpara primário vs. hipercalcemia da malignidade?","No primário o PTH está alto; na malignidade o PTH está suprimido, frequentemente com PTHrP elevado."]],
+ "Pediatria":[["Causa mais comum de baixa estatura na infância?","Variantes do normal: baixa estatura familiar e atraso constitucional do crescimento e da puberdade."],["Definição de puberdade precoce central?","Caracteres sexuais secundários antes dos 8 anos (meninas) ou 9 anos (meninos), com ativação do eixo hipotálamo-hipófise-gonadal."],["Forma mais comum de hiperplasia adrenal congênita?","Deficiência de 21-hidroxilase, com 17-OH-progesterona elevada; pode cursar com perda de sal."],["Doenças endócrinas detectadas no teste do pezinho?","Hipotireoidismo congênito e hiperplasia adrenal congênita, entre outras."],["Conduta no hipotireoidismo congênito?","Iniciar levotiroxina precocemente (primeiras 2 semanas) para prevenir déficit neurocognitivo."]],
+ "Esportiva":[["O que é a tríade da mulher atleta / RED-S?","Baixa disponibilidade energética, disfunção menstrual e baixa densidade óssea; o RED-S amplia para múltiplos sistemas."],["Efeitos endócrinos do abuso de esteroides anabolizantes?","Supressão do eixo gonadal, hipogonadismo, ginecomastia, infertilidade, dislipidemia e dano hepático."],["Como o exercício afeta a sensibilidade à insulina?","Aumenta a captação muscular de glicose (via GLUT4, independente de insulina) e melhora a sensibilidade insulínica."],["Por que atletas de endurance têm risco de hiponatremia?","Ingestão excessiva de água durante provas longas; manejar com restrição hídrica e, se grave, salina hipertônica."],["Cuidado com a glicemia no exercício em DM1?","Ajustar insulina e carboidratos; atenção à hipoglicemia tardia após exercício aeróbico prolongado."]],
+ "Endocrinologia Masculina":[["Como diagnosticar hipogonadismo masculino?","Testosterona total baixa em 2 dosagens matinais somada a sintomas. Diferenciar primário (LH/FSH altos) de central (LH/FSH baixos ou normais)."],["Causa genética mais comum de hipogonadismo primário?","Síndrome de Klinefelter (47,XXY)."],["Contraindicações à reposição de testosterona?","Câncer de próstata ou mama ativo, PSA elevado não investigado, policitemia, ICC descompensada e desejo de fertilidade."],["Efeito da testosterona exógena sobre a fertilidade?","Suprime a espermatogênese por feedback negativo. Em quem deseja fertilidade, preferir hCG/clomifeno."],["Avaliação da disfunção erétil de causa endócrina?","Testosterona total matinal, glicemia/HbA1c e prolactina; avaliar também fatores vasculares e medicamentosos."]],
+ "Endocrinologia Feminina":[["Critérios de Rotterdam para SOP?","2 de 3: oligo/anovulação, hiperandrogenismo (clínico ou laboratorial) e ovários policísticos ao US, após excluir outras causas."],["Primeira linha na SOP sem desejo de gestar?","Mudança de estilo de vida + anticoncepcional combinado; metformina se houver alteração metabólica."],["Causa mais comum de amenorreia secundária?","Gestação. Depois: SOP, amenorreia hipotalâmica funcional, hiperprolactinemia e falência ovariana."],["Definição laboratorial de menopausa?","12 meses de amenorreia por falência ovariana, com FSH elevado e estradiol baixo (idade média ~50 anos)."],["Indicação e cautela da terapia hormonal da menopausa?","Sintomas vasomotores moderados/graves; iniciar próximo à menopausa (<60 anos / <10 anos). Avaliar risco tromboembólico e de câncer de mama."]],
+ "Transgeneridade":[["Base da hormonização feminilizante (mulheres trans)?","Estrogênio associado a antiandrogênio (espironolactona ou acetato de ciproterona) para feminização e supressão da testosterona."],["Base da hormonização masculinizante (homens trans)?","Testosterona (IM ou transdérmica) visando níveis na faixa masculina; monitorar hematócrito e perfil lipídico."],["Principal cautela da estrogenoterapia em mulheres trans?","Risco tromboembólico; preferir estradiol (evitar etinilestradiol) e avaliar tabagismo e fatores de risco."],["Monitorização da hormonização masculinizante?","Testosterona, hematócrito/hemoglobina (risco de eritrocitose) e perfil lipídico."],["Efeitos esperados da testosterona em homens trans?","Amenorreia, voz mais grave, aumento de pelos e de massa muscular; mudanças ao longo de meses, algumas irreversíveis."]]
+};
+function seedFlashcards(){
+  if(lsGet('fc_seeded'))return 0;
+  var added=0;
+  Object.keys(FC_SEED).forEach(function(cat){
+    FC_SEED[cat].forEach(function(pair){
+      DB.fc.push({id:Date.now()+Math.random(),front:pair[0],back:pair[1],cat:cat,at:Date.now(),seed:true});added++;
+    });
+  });
+  lsSet('fc_seeded',1);lsSet('fc',DB.fc);
+  return added;
+}
 function persistProvas(){lsSet('provas',provasDB);queueRemoteStateSave();}
 var MURAL_SOURCE_FILTERS=[
   'Diabetes Care',
@@ -2371,6 +2396,7 @@ function flipStudy(){
 // ── MIND MAP ──
 var curMM=null;
 var sharedMM=lsGet('mm_shared')||[];
+var mmSubFilter='';
 function wrapTxt(text,max){
   var words=String(text||'').split(/\s+/).filter(Boolean),lines=[],line='';
   words.forEach(function(w){if((line+' '+w).trim().length<=max)line=(line+' '+w).trim();else{if(line)lines.push(line);line=w;}});
@@ -2491,15 +2517,28 @@ function saveMM(){
 function renderMMList(){
   var el=document.getElementById('mm-list');if(!el)return;
   var shared=sharedMM||[];
-  setText('mm-count','('+(shared.length+DB.mm.length)+')');
-  if(!shared.length&&!DB.mm.length){el.innerHTML='<div class="empty">Nenhum mapa salvo.</div>';return;}
-  var html=shared.map(function(m,j){
+  var fsel=document.getElementById('mm-sub-filter');
+  if(fsel){
+    var subs={};shared.forEach(function(m){if(m.sub)subs[m.sub]=(subs[m.sub]||0)+1;});
+    var keys=Object.keys(subs).sort(function(a,b){return a.localeCompare(b,'pt-BR');});
+    if(mmSubFilter&&!subs[mmSubFilter])mmSubFilter='';
+    fsel.innerHTML='<option value="">Todas as subespecialidades ('+shared.length+')</option>'+keys.map(function(s){return '<option value="'+esc(s)+'">'+esc(s)+' ('+subs[s]+')</option>';}).join('');
+    fsel.value=mmSubFilter;
+  }
+  var showPersonal=!mmSubFilter;
+  var fshared=mmSubFilter?shared.filter(function(m){return (m.sub||'')===mmSubFilter;}):shared;
+  var total=fshared.length+(showPersonal?DB.mm.length:0);
+  setText('mm-count','('+total+')');
+  if(!total){el.innerHTML='<div class="empty">'+(mmSubFilter?'Nenhum mapa nesta subespecialidade.':'Nenhum mapa salvo.')+'</div>';return;}
+  var html=fshared.map(function(m){
+    var j=shared.indexOf(m);
     return'<div class="mm-item"><div><div style="font-size:.8rem;font-weight:600">'+esc(m.topic)+' <span class="tag tag-pur" style="font-size:.55rem">Professor</span></div><div style="font-size:.63rem;color:var(--t3)">'+esc(m.sub||'Endodirect')+'</div></div><div style="display:flex;gap:4px"><button class="btn btn-outline btn-sm" data-mmviewshared="'+j+'">Ver</button></div></div>';
   }).join('');
-  html+=DB.mm.map(function(m,i){
-    var d=normalizeMMData(m.data);
-    return'<div class="mm-item"><div><div style="font-size:.8rem;font-weight:600">'+esc(m.topic)+'</div><div style="font-size:.63rem;color:var(--t3)">'+new Date(m.at||Date.now()).toLocaleDateString('pt-BR')+'</div></div><div style="display:flex;gap:4px"><button class="btn btn-outline btn-sm" data-mmview="'+i+'">Ver</button><button class="btn btn-ghost btn-sm" data-mmdel="'+i+'">×</button></div></div>';
-  }).join('');
+  if(showPersonal){
+    html+=DB.mm.map(function(m,i){
+      return'<div class="mm-item"><div><div style="font-size:.8rem;font-weight:600">'+esc(m.topic)+'</div><div style="font-size:.63rem;color:var(--t3)">'+new Date(m.at||Date.now()).toLocaleDateString('pt-BR')+'</div></div><div style="display:flex;gap:4px"><button class="btn btn-outline btn-sm" data-mmview="'+i+'">Ver</button><button class="btn btn-ghost btn-sm" data-mmdel="'+i+'">×</button></div></div>';
+    }).join('');
+  }
   el.innerHTML=html;
 }
 function viewMMShared(j){
@@ -4523,6 +4562,8 @@ document.addEventListener('DOMContentLoaded',function(){setupOnboardProfileChoic
 document.addEventListener('DOMContentLoaded',function(){
   startSupabaseAuthWatcher();
   setupMMPinchZoom();
+  seedFlashcards();
+  var mmsf=document.getElementById('mm-sub-filter');if(mmsf)mmsf.addEventListener('change',function(){mmSubFilter=this.value;renderMMList();});
   // LOGO (imagem original embutida)
   var LOGO_SRC='data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAA7YAAAQoCAYAAAA+MUIlAAAACXBIWXMAAC4jAAAuIwF4pT92AAAgAElEQVR4nOzdDZBd5X0n6FfA8o0a2ZJFg6WWsGMnDtCqzRTYKTAiQ2UAZwuqVl7AVUFyGWyTMLauxhlZgIw2AmRlmG6NowQ74EVmtwwZayuwEwOZ9QTZZsfGNZnoAmEGGyO1hLjIUqwPI74G0Nbb7nYa0d33nHvPvfd8PE8VFYpIt895zy3MT+97fv8Zhw8fDlAWjXptUQjhVA8UoKcWjP01Ufx386IUF7V97K/JbDny1/YPDk/1awGoAMGWUmnUa/E/di70VAEq7bsTbn48BO8PIWwd+/ut/YPD+6u+SABlcoynCQCUzMQ/4Jz0Dzsb9Vr8PwfGwu7E0BuD8P7+weGtJVsTgFKzY0up2LEFIEPjwXf8WPTWsdB75FFoAHpMsKVUBFsAumRkLOxuGQ++Ai9A7ziKDACQ3sDYX7/6w9Sx480TA+/WscDrWDNAhwm2AADZmSrwfncs6G4dK68SdgEyJNgCAHTehdOE3S1jYdfIIoAWeceWUvGOLQAFdmAs5I4HXe/sAiQk2FIqgi0AJfPdCe/rbjF/F2ByjiIDAOTXkUeY6xN2dQVdgDF2bCkVO7YAVMx3J4RcR5eByhJsKRXBFoCKe3As6D6gjAqoEsGWUhFsAeBX4kzdB8Z2cx+wLECZCbaUimALAFOymwuUlmBLqQi2AJBIfWw3N4bcrZYMKDrBllIRbAEgtZEJIVcBFVBIgi2lItgCQFsOTAi53ssFCkOwpVQEWwDIjJALFIZgS6kItgDQETHkbop/eScXyCPBllIRbAGg48bfyd2gXRnIC8GWUhFsAaCr6hN2cvdbeqBXjrLyAAC0aDCEMBxC2Neo1x5o1GtXWEigF+zYUip2bAGg58bfx3VUGegawZZSEWwBIFfiUeUNY83KjioDHeMoMgAAnRKPKt8TQtjeqNc2Neq1RVYa6ATBFgAATusLISwNIfx9PF3VqNeWWXEgS44iUyqOIgNAYXgXF8iMHVsAAHoh7uJ+PoSwbaxRebGnALRKsAUAoNcuDyE82qjXtjumDLTCUWRKxVFkACiFA2Ntyhu0KQNJ2LEFACBv4jHlW0II+8balBd4QsB0BFsAAPJs6dh7uFu8hwtMRbAFAKAILhx7DzcG3Cs8MWAiwRYAgCKJAfevFE0BEwm2AAAU0UAI4R4BFwiCLQAABSfgAoItAAClIOBChQm2AACUiYALFSTYAgBQRgIuVIhgCwBAmQm4UAGCLQAAVTAx4JqDCyUj2AIAUCUDY3NwtzTqtcWePJSDYAsAQBVdGEJ4dCzgLvANgGITbAEAqLIYcLc16rVNjXrtVN8EKCbBFgAAQlgaQojv364RcKF4BFsAAPilvhDCLSGErRqUoVgEWwAAeLvxBmUFU1AQgi0AAExuvGDK+7eQc4ItAABM71fv31onyCfBFgAAmht9/7ZRr213PBnyR7AFAIDkBsaOJz9g/i3kh2ALAADpXT7Wnux4MuSAYAsAAK0ZP5681fFk6C3BFgAA2jM4djx5g/Zk6A3BFgAAsvH5sfbkK6wndJdgCwAA2YnHk/+qUa9tUS4F3SPYAgBA9i4cK5dabm2h8wRbAADojLh7O2z3FjpPsAUAgM6Ku7fbjAaCzhFsAQCgO8ZHAy2y3pAtwRYAALonjgb6e+/eQrYEWwAA6D7v3kKGBFsAAOgNzcmQEcEWAAB6Z2Jz8qmeA7RGsAUAgN6Lu7fbG/XaFZ4FpCfYAgBAPsTd279q1Gub7N5COoItAADky9Kxd2+NBYKEBFsAAMifAWOBIDnBFgAA8kuxFCQg2AIAQL6NF0st9pxgcoItAADkXyyWerRRr63xrOCdBFsAACiOWxxNhncSbAEAoFgcTYYjCLYAAFA8jibDBIItAAAUl6PJVF4QbAEAoPDi0eStjXptkUdJVQm2AABQfAMhhL9v1GvLPEuqSLAFAIDyuKdRr23yPKkawRYAAMplaaNe2+q9W6pEsAUAgPIZHBsJ5L1bKkGwBQCAcurz3i1VIdgCAEC5ee+W0hNsAQCg/Jaad0uZCbYAAFANcd7tFu/dUkaCLQAAVMfgWLhd7JlTJoItAABUSyyVelSpFGUi2AIAQDUplaI0BFsAAKiuWCr1gFIpik6wBQCAart87L1b4ZbCEmwBAIBYKrVVYzJFJdgCAADRgHFAFJVgCwAAjOsbC7cakykUwRYAAJiob6wxWbilMARbAABgMjHcbrAyFIFgCwAATOXzZt1SBIItAAAwnTjrdpNxQOSZYAsAADSz1Kxb8kywBQAAkhgUbskrwRYAAEhKuCWXBFsAACCNGG63Nuq1RVaNvBBsAQCAtAbGdm6FW3LhGI+Bktnaw9uJP3u/LxRd5DtHt23tHxzu2HeuUa+tCSHc4qlCYfSNhdvF/YPDvfxvMAgzDh8+bBUAgJ4TbKGwDoQQhFt6ylFkAACgHX2OJdNrgi0AANAu4ZaeEmwBAIAsCLf0jGALAABkRbilJwRbAAAgS8ItXSfYAgAAWRNu6SrBFgAA6AThlq4RbAEAgE4RbukKwRYAAOgk4ZaOE2wBAIBOE27pKMEWAADoBuGWjhFsAQCAbhkPtwusOlkRbAEAgG6K4faBRr12qpUnC4ItAADQC4NjO7fCLW0TbAEAgF4RbsmEYAsAAPRSDLcPeAK0Q7AFAAB67cJGvbbJU6BVgi0AAJAHS4VbWiXYAgAAeRHD7RpPg7QEWwAAIE9uadRryzwR0hBsAQCAvLmnUa9d4amQlGALAADk0aZGvbbIkyEJwRYAAMijvrEZt8ItTQm2AABAXvWN7dye6gkxHcEWAADIs8GxnVvhlikJtgAAQN7FcLvBU2Iqgi0AAFAEccatcMukBFsAAKAoPm/GLZMRbAEAgCKJM24Xe2JMJNgCAABF84AxQEwk2AIAAEVjDBBvI9gCAABFFJuSH/DkCIItAABQYBc26rVNHiCCLQAAUGRLNSUj2AIAAEWnKbniBFsAAKAMYlPyAk+ymgRbAACgDPrGwq2m5AoSbAEAgLKITckbPM3qOSaEsKbqizCF/SGErbm8suLbUvUFAACgY2KZ1Nb+wWEBt0JuuLmp6osAJVET+wMZvr19IBe+6wuxOm+jcxQAgOG5fOt7YyZiwuXPhw9XfREAoAIuyvsfJjTqtTV+wB3I0IEQwqL+wWF/QF0B3rEFAADKSJlUhQi2AABAWSmTqgjBFgAAKLNYJrXME643wRYAACi7exr12iJPubwEWwAAoAq8b1tigi0AAFAFAyGETZ50OQm2AABAVVzeqNeWe9rlI9gCAABVMux923IRbAEAgKrZ4n3bchFsAQCAqunzvm25CLYAAEAVed+2RARbAACgqrxvWxKCLQAAUGXm25aAYAsAAFRdfN92WdUXocgEWwAAgBA2eN+2uARbAAAAI4AKTbAFAAD4pcFGvbbGWhSPYAsAAPDPbmnUa4utR7EItgAAAP9skxFAxSLYAgAA/LNRIw0AAATtSURBVHM2GQFULIItAADA2y3VlFwcgi0AAMA7aUquCMEWAADgneIs2wWeQv4JtgAAAO9kBFBBCLYAAAATGwOUe4ItAADAxAbHwq3GH8EWAACg0OcFWwAAgIldGoyBwGyAFRYBgCcGzAY7BVgEAAJ4Y9JsoFGAEoBzqK6Tk7uVQ5tFGAB4HxqK2T1JsCi0XYBNl1c5b3xxIqzpJ7tQjxhA+JvbHF4tcOlBSZNDC0X7t8AAA==';
   LOGO_SRC='logo.png.png';
