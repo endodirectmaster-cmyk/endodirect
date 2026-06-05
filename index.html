@@ -705,10 +705,11 @@ textarea{resize:vertical;line-height:1.6}
         </div>
         <div class="gen-box" id="q-panel-provas" style="display:none">
           <span class="sec-title" style="display:block;margin-bottom:.7rem">🏛️ Questões de provas anteriores</span>
-          <div class="g3" style="margin-bottom:.65rem">
+          <div class="g4" style="margin-bottom:.65rem">
             <div class="fld2" style="margin:0"><label>Instituição</label><select id="q-inst"><option value="">Todas</option></select></div>
             <div class="fld2" style="margin:0"><label>Ano</label><select id="q-ano"><option value="">Todos</option></select></div>
             <div class="fld2" style="margin:0"><label>Subespecialidade</label><select id="q-parea"><option value="">Todas</option><option>Diabetes</option><option>Obesidade</option><option>Tireoide</option><option>Adrenal</option><option>Neuroendocrinologia</option><option>Osteometabolismo</option><option>Endocrinologia Pediátrica</option><option>Endocrinologia Esportiva</option><option>Endocrinologia Masculina</option><option>Endocrinologia Feminina</option><option>Transgeneridade</option></select></div>
+            <div class="fld2" style="margin:0"><label>Tipo</label><select id="q-ptype"><option value="">Todas</option><option value="mc">Objetivas</option><option value="disc">Discursivas</option></select></div>
           </div>
           <div style="background:var(--blue-l);border-radius:var(--rs);padding:.55rem .8rem;font-size:.74rem;color:var(--blue);margin-bottom:.7rem" id="q-prova-info">Selecione filtros para ver questões.</div>
           <button class="btn btn-primary" id="btn-filter-provas">🔍 Buscar questões</button>
@@ -2263,17 +2264,20 @@ function populateAno(selId,inst){
   var anos=pool.map(function(q){return q.ano;}).filter(function(v,i,a){return a.indexOf(v)===i;}).sort(function(a,b){return b-a;});
   sel.innerHTML='<option value="">Todos</option>'+anos.map(function(a){return'<option value="'+a+'">'+a+'</option>';}).join('');
 }
-function filterProvas(inst,ano,area){
+function filterProvas(inst,ano,area,type){
   return provasDB.filter(function(q){
-    return(!inst||q.inst===inst)&&(!ano||String(q.ano)===String(ano))&&(!area||q.area===area);
+    var isDisc=(q.type==='disc');
+    var typeOk=!type||(type==='disc'?isDisc:!isDisc);
+    return(!inst||q.inst===inst)&&(!ano||String(q.ano)===String(ano))&&(!area||q.area===area)&&typeOk;
   });
 }
 function updateProvaInfo(){
   var inst=(document.getElementById('q-inst')||{}).value||'';
   var ano=(document.getElementById('q-ano')||{}).value||'';
   var area=(document.getElementById('q-parea')||{}).value||'';
+  var type=(document.getElementById('q-ptype')||{}).value||'';
   populateAno('q-ano',inst);
-  var n=filterProvas(inst,ano,area).length;
+  var n=filterProvas(inst,ano,area,type).length;
   var el=document.getElementById('q-prova-info');
   if(el)el.textContent=n>0?n+' questão(ões) disponível(is).':'Nenhuma questão com esses filtros.';
 }
@@ -4569,10 +4573,10 @@ document.addEventListener('DOMContentLoaded',function(){
   });});
   document.querySelectorAll('[data-qt]').forEach(function(b){b.addEventListener('click',function(){qtype=b.dataset.qt;document.querySelectorAll('[data-qt]').forEach(function(x){x.classList.toggle('on',x===b);});});});
   document.getElementById('btn-genq').addEventListener('click',genQuestions);
-  ['q-inst','q-ano','q-parea'].forEach(function(id){var e=document.getElementById(id);if(e)e.addEventListener('change',updateProvaInfo);});
+  ['q-inst','q-ano','q-parea','q-ptype'].forEach(function(id){var e=document.getElementById(id);if(e)e.addEventListener('change',updateProvaInfo);});
   document.getElementById('btn-filter-provas').addEventListener('click',function(){
-    var inst=document.getElementById('q-inst').value;var ano=document.getElementById('q-ano').value;var area=document.getElementById('q-parea').value;
-    renderProvaResults(filterProvas(inst,ano,area));
+    var inst=document.getElementById('q-inst').value;var ano=document.getElementById('q-ano').value;var area=document.getElementById('q-parea').value;var type=(document.getElementById('q-ptype')||{}).value||'';
+    renderProvaResults(filterProvas(inst,ano,area,type));
   });
 
   // FLASHCARDS
