@@ -600,6 +600,14 @@ textarea{resize:vertical;line-height:1.6}
   </div>
 </div>
 
+<div id="assine-screen" style="display:none;position:fixed;inset:0;z-index:500;background:var(--bg);align-items:center;justify-content:center;padding:1.2rem">
+  <div style="max-width:430px;width:100%;background:#fff;border:1px solid var(--bd);border-radius:16px;padding:1.7rem 1.5rem;text-align:center;box-shadow:0 14px 44px rgba(9,18,38,.14)">
+    <div style="font-size:1.18rem;font-weight:800;color:var(--navy);margin-bottom:.5rem">Acesso exclusivo para assinantes</div>
+    <p style="font-size:.85rem;color:var(--t2);line-height:1.6;margin:.3rem 0 1.2rem">A conta <b id="assine-email"></b> ainda não tem uma assinatura ativa. Assine para liberar o acesso completo ao Endodirect — banco de questões, cursos, podcasts e mapas mentais.</p>
+    <button class="btn btn-primary" id="assine-cta" style="width:100%;justify-content:center;margin-bottom:.55rem">Assinar o Endodirect</button>
+    <button class="btn btn-outline" id="assine-logout" style="width:100%;justify-content:center">Sair</button>
+  </div>
+</div>
 <div id="app-screen">
   <div class="topbar">
     <div class="tb-left">
@@ -1531,21 +1539,24 @@ function hydrateRemoteState(){
   var client=getSupabaseClient();
   if(!client)return;
   if(!(currentUser&&currentUser.id)){hydratePublicContent();return;}
-  var userLoad=client.from('endodirect_app_state').select('payload').eq('user_id',currentUser.id).maybeSingle()
-    .then(function(res){if(res.error)throw res.error;if(res.data&&res.data.payload)applyStatePayload(res.data.payload);});
-  var globalLoad=client.from('endodirect_global_state').select('payload').eq('id','main').maybeSingle()
-    .then(function(res){if(res.error)throw res.error;if(res.data&&res.data.payload)applyStatePayload(res.data.payload);});
-  Promise.all([userLoad,globalLoad])
+  var loads=[
+    client.from('endodirect_app_state').select('payload').eq('user_id',currentUser.id).maybeSingle()
+      .then(function(res){if(res.error)throw res.error;if(res.data&&res.data.payload)applyStatePayload(res.data.payload);})
+  ];
+  if(currentUser.role==='admin'){
+    loads.push(client.from('endodirect_global_state').select('payload').eq('id','main').maybeSingle()
+      .then(function(res){if(res.error)throw res.error;if(res.data&&res.data.payload)applyStatePayload(res.data.payload);}));
+  }else{
+    loads.push(client.rpc('endodirect_member_content')
+      .then(function(res){if(res.error)throw res.error;if(res.data)applyStatePayload(res.data);}));
+  }
+  Promise.all(loads)
     .then(function(){
       remoteStateLoaded=true;
       refreshAfterRemoteState();
-      
       queueRemoteStateSave();
     }).catch(function(e){
-      if(!remoteStateWarned){
-        remoteStateWarned=true;
-        console.warn('Supabase state unavailable',e);
-      }
+      if(!remoteStateWarned){remoteStateWarned=true;console.warn('Supabase state unavailable',e);}
     });
 }
 function queueRemoteStateSave(){
@@ -2008,18 +2019,41 @@ function legacyGooglePromptLogin(){
   document.getElementById('login-err').style.display='none';
   doLogin(Object.assign({},u,{auth:'google'}));
 }
+function isAdminEmail(email){email=(email||"").toLowerCase();return GOOGLE_ADMIN_EMAILS.indexOf(email)>=0||USERS.some(function(x){return x.role==='admin'&&x.email===email;});}
 function loginFromSupabaseSession(session){
   if(!session||!session.user||!session.user.email)return;
   var email=(session.user.email||'').toLowerCase();
-  var u=USERS.find(function(x){return x.provider==='google'&&x.email===email;});
-  if(!u){
-    showLoginError('E-mail Google nao autorizado para acesso admin: '+email);
-    getSupabaseClient().auth.signOut().catch(function(){});
+  if(isAdminEmail(email)){
+    var au=USERS.find(function(x){return x.role==='admin'&&x.email===email;})||{name:email.split('@')[0],role:'admin',sub:'Professor'};
+    clearLoginError();
+    doLogin(Object.assign({},au,{email:email,id:session.user.id,auth:'supabase-google'}));
     return;
   }
-  document.getElementById('login-err').style.display='none';
-  doLogin(Object.assign({},u,{id:session.user.id,auth:'supabase-google'}));
+  enterAsMember(session);
 }
+function enterAsMember(session){
+  var client=getSupabaseClient();
+  var email=(session.user.email||'').toLowerCase();
+  clearLoginError();
+  if(!client){showAssineScreen(email);return;}
+  client.rpc('endodirect_is_active_member').then(function(res){
+    if(res.error)throw res.error;
+    if(res.data===true){
+      var nm=(session.user.user_metadata&&(session.user.user_metadata.nome||session.user.user_metadata.name))||email.split('@')[0];
+      doLogin({email:email,name:nm,role:'aluno',sub:'Residente',id:session.user.id,auth:'supabase'});
+    }else{
+      showAssineScreen(email);
+    }
+  }).catch(function(){showAssineScreen(email);});
+}
+function showAssineScreen(email){
+  var ls=document.getElementById('login-screen');if(ls)ls.style.display='none';
+  var ap=document.getElementById('app-screen');if(ap)ap.style.display='none';
+  var sc=document.getElementById('assine-screen');if(!sc)return;
+  setText('assine-email',email||'');
+  sc.style.display='flex';
+}
+function hideAssineScreen(){var sc=document.getElementById('assine-screen');if(sc)sc.style.display='none';}
 function startSupabaseAuthWatcher(){
   var client=getSupabaseClient();
   if(!client)return;
@@ -4571,10 +4605,17 @@ document.addEventListener('DOMContentLoaded',function(){
   var doLoginAttempt=function(){
     var email=(document.getElementById('login-email').value||'').trim().toLowerCase();
     var pass=document.getElementById('login-pass').value||'';
-    var u=USERS.find(function(x){return x.email===email&&x.pass&&x.pass===pass;});
-    if(!u){var err=document.getElementById('login-err');err.textContent='E-mail ou senha incorretos.';err.style.display='block';return;}
-    document.getElementById('login-err').style.display='none';
-    doLogin(Object.assign({},u));
+    clearLoginError();
+    var demo=USERS.find(function(x){return x.email===email&&x.pass&&x.pass===pass;});
+    if(demo){doLogin(Object.assign({},demo));return;}
+    var client=getSupabaseClient();
+    if(!client){showLoginError('E-mail ou senha incorretos.');return;}
+    var btn=document.getElementById('btn-login');if(btn)btn.disabled=true;
+    client.auth.signInWithPassword({email:email,password:pass}).then(function(res){
+      if(res.error)throw res.error;
+    }).catch(function(){
+      showLoginError('E-mail ou senha incorretos.');
+    }).then(function(){if(btn)btn.disabled=false;});
   };
   var doGoogleLogin=function(){
     startGoogleOAuth();
@@ -4592,6 +4633,8 @@ document.addEventListener('DOMContentLoaded',function(){
     doLogin(Object.assign({},u,{auth:'google'}));
   };
   document.getElementById('btn-login').addEventListener('click',doLoginAttempt);
+  var aLogoutBtn=document.getElementById('assine-logout');if(aLogoutBtn)aLogoutBtn.addEventListener('click',function(){var c=getSupabaseClient();if(c&&c.auth)c.auth.signOut().catch(function(){});hideAssineScreen();var ls=document.getElementById('login-screen');if(ls)ls.style.display='flex';});
+  var aCtaBtn=document.getElementById('assine-cta');if(aCtaBtn)aCtaBtn.addEventListener('click',function(){notify('O pagamento pela plataforma (pagar.me) chega na próxima fase. Em breve!','info');});
   var bStay=document.getElementById('btn-session-stay');if(bStay)bStay.addEventListener('click',keepSessionAlive);
   var bSout=document.getElementById('btn-session-logout');if(bSout)bSout.addEventListener('click',function(){hideSessionWarning();doLogout();});
   document.getElementById('login-pass').addEventListener('keydown',function(e){if(e.key==='Enter')doLoginAttempt();});
