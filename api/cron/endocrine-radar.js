@@ -190,12 +190,23 @@ async function findRelevantArticles(excludeKeys) {
     article.score = scoreArticle(article);
     return article;
   });
-  return articles
+  const ranked = articles
     .filter((article) => article.title && article.journal)
     // Evita repetir artigos ja publicados no mural (motivo de o mural "nao atualizar").
     .filter((article) => !exclude.has(`pubmed:${article.pmid}`) && !exclude.has(String(article.pmid)) && !exclude.has(article.link) && !exclude.has(article.title))
-    .sort((a, b) => b.score - a.score)
-    .slice(0, ARTICLES_PER_DAY);
+    .sort((a, b) => b.score - a.score);
+  const selected = ranked.slice(0, ARTICLES_PER_DAY);
+  // Garante presenca de metanalise/revisao sistematica quando houver candidata no periodo.
+  if (selected.length === ARTICLES_PER_DAY && !selected.some(isMetaAnalysis)) {
+    const meta = ranked.find(isMetaAnalysis);
+    if (meta) selected[selected.length - 1] = meta;
+  }
+  return selected;
+}
+
+function isMetaAnalysis(article) {
+  const h = `${article.title} ${article.abstract} ${(article.publicationTypes || []).join(' ')} ${article.studyType || ''}`.toLowerCase();
+  return h.includes('meta-analysis') || h.includes('meta analysis') || h.includes('metanal') || h.includes('systematic review');
 }
 
 function existingMuralKeys(payload) {

@@ -1374,7 +1374,7 @@ function normalizeMuralType(tipo,titulo,texto,fonte){
     if(p.indexOf('artigo de revisao')>=0||p.indexOf('review')>=0)return'Artigo de Revisão';
     if(p.indexOf('perspectiva clinica')>=0||p.indexOf('perspective')>=0)return'Perspectiva Clínica';
     if(p.indexOf('estudo genetico')>=0||p.indexOf('genetic')>=0)return'Estudo Genético';
-    if(p.indexOf('estudo translacional')>=0||p.indexOf('translational')>=0)return'Estudo Translacional';
+    if(p.indexOf('estudo translacional')>=0||p.indexOf('translational')>=0)return'Artigo Científico';
     return raw;
   }
   if(p.indexOf('meta-anal')>=0||p.indexOf('metanal')>=0||p.indexOf('systematic review')>=0||p.indexOf('revisao sistematica')>=0)return'Metanálise';
@@ -1382,7 +1382,6 @@ function normalizeMuralType(tipo,titulo,texto,fonte){
   if(p.indexOf('endocrine reviews')>=0||p.indexOf('nature reviews')>=0||p.indexOf('review')>=0||p.indexOf('revisao')>=0)return'Artigo de Revisão';
   if(p.indexOf('perspective')>=0||p.indexOf('perspectiva')>=0)return'Perspectiva Clínica';
   if(p.indexOf('genetic')>=0||p.indexOf('variant')>=0||p.indexOf('gene')>=0)return'Estudo Genético';
-  if(p.indexOf('translational')>=0||p.indexOf('translacional')>=0)return'Estudo Translacional';
   return'Artigo Científico';
 }
 function inferMuralSubspecialty(item){
@@ -1425,7 +1424,7 @@ function defaultMuralAvisos(){
     {titulo:'GLP-1 Receptor Agonists and Eating Disorders - Cause for Concern.',tipo:'Perspectiva Clinica',subespecialidade:'Obesidade',fonte:'The New England Journal of Medicine',link:'https://doi.org/10.1056/NEJMp2600300',texto:'Perspectiva clinica. Discute sinais de cautela sobre agonistas do receptor de GLP-1 em pessoas com transtornos alimentares ou vulnerabilidade para comportamentos alimentares de risco. Por que importa: ajuda a reforcar triagem, acompanhamento multiprofissional e seguranca em tratamentos para obesidade e diabetes. Cautela: e um artigo de perspectiva; deve orientar vigilancia, nao substituir ensaios clinicos ou diretrizes.',at:now-900000,auto:true,sourceId:'pubmed:42041223',pmid:'42041223',publicationDate:'2026 Apr 30'},
     {titulo:'First large-scale screening of Notch biallelic variants implicates novel candidate genes in congenital hypothyroidism.',tipo:'Estudo Genetico',subespecialidade:'Tireoide',fonte:'Journal of Clinical Endocrinology & Metabolism',link:'https://doi.org/10.1210/clinem/dgag208',texto:'Estudo genetico em larga escala avaliou variantes bialelicas da via Notch e apontou novos genes candidatos em hipotireoidismo congenito. Por que importa: pode ampliar a discussao sobre investigacao molecular, aconselhamento genetico e fisiopatologia tireoidiana no ensino de endocrinologia. Cautela: achados geneticos exigem validacao funcional e correlacao clinica antes de mudar protocolos.',at:now-800000,auto:true,sourceId:'pubmed:42192612',pmid:'42192612',publicationDate:'2026 May 26'},
     {titulo:'Beyond aldosterone and renin: emerging biomarkers for diagnosing and subtyping primary aldosteronism.',tipo:'Artigo de Revisão',subespecialidade:'Adrenal',fonte:'Endocrine Reviews',link:'https://doi.org/10.1210/endrev/bnag016',texto:'Revisao discute biomarcadores emergentes alem da aldosterona e da renina para diagnostico e subtipagem do hiperaldosteronismo primario. Por que importa: pode refinar a selecao de testes, estratificacao e encaminhamento para investigacao especializada. Cautela: interpretar a luz da disponibilidade local dos marcadores e da qualidade das evidencias incluidas.',at:now-700000,auto:true,sourceId:'pubmed:42186715',pmid:'42186715',publicationDate:'2026 May 26'},
-    {titulo:'The Lipid Droplet-Associated Hydrolase Is Associated With Obesity and Adipose Tissue Inflammation in Children.',tipo:'Estudo Translacional',subespecialidade:'Obesidade',fonte:'Obesity',link:'https://doi.org/10.1002/oby.70216',texto:'Estudo translacional relaciona hidrolase associada a goticulas lipidicas com obesidade e inflamacao do tecido adiposo em criancas. Por que importa: destaca mecanismos biologicos que podem ajudar a compreender risco metabolico precoce e inflamacao adipocitaria. Cautela: associacao biologica nao prova causalidade e ainda precisa de validacao longitudinal.',at:now-600000,auto:true,sourceId:'pubmed:42206925',pmid:'42206925',publicationDate:'2026 May 28'}
+    {titulo:'The Lipid Droplet-Associated Hydrolase Is Associated With Obesity and Adipose Tissue Inflammation in Children.',tipo:'Artigo Científico',subespecialidade:'Obesidade',fonte:'Obesity',link:'https://doi.org/10.1002/oby.70216',texto:'Estudo translacional relaciona hidrolase associada a goticulas lipidicas com obesidade e inflamacao do tecido adiposo em criancas. Por que importa: destaca mecanismos biologicos que podem ajudar a compreender risco metabolico precoce e inflamacao adipocitaria. Cautela: associacao biologica nao prova causalidade e ainda precisa de validacao longitudinal.',at:now-600000,auto:true,sourceId:'pubmed:42206925',pmid:'42206925',publicationDate:'2026 May 28'}
   ];
 }
 function muralNoticeKey(a){
@@ -4498,7 +4497,7 @@ admMuralSecHTML=function(){
   var avisos=admAvisos.slice().reverse().filter(function(a){return !admMuralFilter||muralSubspecialty(a)===admMuralFilter;});
   var count=admAvisos.length+' '+(admAvisos.length===1?'aviso':'avisos');
   var tema=admMuralFilter||'Todas as subespecialidades';
-  var tipoOpts=['Aviso','Comunicado','Artigo de Revisão','Ensaio Clínico','Metanálise','Perspectiva Clínica','Estudo Genético','Estudo Translacional','Evento','Urgente'].map(function(t){return'<option>'+esc(t)+'</option>';}).join('');
+  var tipoOpts=['Aviso','Comunicado','Artigo de Revisão','Ensaio Clínico','Metanálise','Perspectiva Clínica','Estudo Genético','Evento','Urgente'].map(function(t){return'<option>'+esc(t)+'</option>';}).join('');
   var subOpts=MURAL_SUBSPECIALTY_FILTERS.map(function(s){return'<option>'+esc(s)+'</option>';}).join('');
   var formHTML=admMuralShowForm?(
     '<div class="card" style="margin-bottom:1.1rem"><div style="font-size:1rem;font-weight:700;margin-bottom:.3rem">'+(admMuralEdit!==null?'✏️ Editar aviso':'📣 Novo aviso')+'</div><div style="font-size:.74rem;color:var(--t2);margin-bottom:.9rem">O card aparece imediatamente no mural do estudante.</div>'
