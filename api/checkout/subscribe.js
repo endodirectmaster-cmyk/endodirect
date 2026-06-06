@@ -1,33 +1,36 @@
-// Endodirect — Checkout de ASSINATURA (Fase 2b — pagar.me API v5)
+// Endodirect — Checkout de ASSINATURA (Fase 2b — pagar.me API v5, preco inline)
 // =====================================================================
 // Cria uma assinatura recorrente no pagar.me a partir de um cartao
 // TOKENIZADO no navegador (o numero do cartao NUNCA passa por aqui),
 // e ja libera o acesso do aluno (cria a conta + assinatura ativa).
 //
+// Nao depende de "Planos" no painel: o preco e a periodicidade sao
+// definidos aqui (inline) e configurados por variaveis de ambiente.
+//
 // Fluxo:
 //   1. Front: aluno preenche o cartao -> tokeniza direto no pagar.me
 //      (POST https://api.pagar.me/core/v5/tokens?appId=PUBLIC_KEY) -> card_token
 //   2. Front -> POST /api/checkout/subscribe { plan, card_token, email, name, document }
-//   3. Aqui (secret key): cria customer + subscription no pagar.me
+//   3. Aqui (secret key): cria customer + subscription (preco inline) no pagar.me
 //   4. Em caso de sucesso: cria a conta (Supabase Auth) + assinatura ativa
-//      e dispara o e-mail de "definir senha". O webhook cuida das
-//      renovacoes/cancelamentos seguintes.
+//      e dispara o e-mail de "definir senha". O webhook mantem sincronizado.
 //
 // VARIAVEIS DE AMBIENTE (Vercel):
-//   PAGARME_SECRET_KEY     (sk_test_... / sk_live_...) — NUNCA exposta no front
-//   PAGARME_PLAN_MENSAL    (plan_... do plano mensal em Recorrencia > Planos)
-//   PAGARME_PLAN_ANUAL     (plan_... do plano anual)   [opcional]
+//   PAGARME_SECRET_KEY            (sk_test_... / sk_live_...) — NUNCA no front
+//   PAGARME_SUB_MENSAL_AMOUNT     preco mensal em CENTAVOS (ex.: 4990 = R$49,90)
+//   PAGARME_SUB_ANUAL_AMOUNT      preco anual em CENTAVOS  (ex.: 49900) [opcional]
 //   SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY (ou SUPABASE_SECRET_KEY) — ja existem
 //
 // OBS: alguns nomes de campos da API v5 estao marcados com TODO(pagarme)
-// para confirmarmos no primeiro teste de sandbox (lendo a resposta da API).
+// para confirmarmos no 1o teste de sandbox (lendo a resposta da API).
 // =====================================================================
 
 const PAGARME_API = 'https://api.pagar.me/core/v5';
 const SECRET_KEY = process.env.PAGARME_SECRET_KEY || '';
-const PLANS = {
-  mensal: process.env.PAGARME_PLAN_MENSAL || '',
-  anual: process.env.PAGARME_PLAN_ANUAL || ''
+
+const SUB_PLANS = {
+  mensal: { interval: 'month', interval_count: 1, amount: Number(process.env.PAGARME_SUB_MENSAL_AMOUNT || 0), label: 'Assinatura mensal' },
+  anual: { interval: 'year', interval_count: 1, amount: Number(process.env.PAGARME_SUB_ANUAL_AMOUNT || 0), label: 'Assinatura anual' }
 };
 
 const SUPABASE_URL = process.env.SUPABASE_URL || process.env.NEXT_PUBLIC_SUPABASE_URL || 'https://auth.endodirect.com.br';
@@ -38,7 +41,6 @@ function json(res, status, body) {
   res.setHeader('Content-Type', 'application/json; charset=utf-8');
   res.end(JSON.stringify(body));
 }
-
 function readRawBody(req) {
   return new Promise((resolve, reject) => {
     const chunks = [];
@@ -47,27 +49,21 @@ function readRawBody(req) {
     req.on('error', reject);
   });
 }
+function onlyDigits(s) { return String(s || '').replace(/\D+/g, ''); }
 
 function pagarmeHeaders() {
   // pagar.me v5: Basic auth com a secret key como usuario e senha vazia.
   return {
     Authorization: 'Basic ' + Buffer.from(SECRET_KEY + ':').toString('base64'),
-    'Content-Type': 'application/json',
-    Accept: 'application/json'
+    'Content-Type': 'application/json', Accept: 'application/json'
   };
 }
-
 async function pagarme(path, body) {
-  const r = await fetch(`${PAGARME_API}${path}`, {
-    method: 'POST', headers: pagarmeHeaders(), body: JSON.stringify(body)
-  });
+  const r = await fetch(`${PAGARME_API}${path}`, { method: 'POST', headers: pagarmeHeaders(), body: JSON.stringify(body) });
   const data = await r.json().catch(() => ({}));
   if (!r.ok) {
     const msg = (data && (data.message || (data.errors && JSON.stringify(data.errors)))) || ('HTTP ' + r.status);
-    const err = new Error(msg);
-    err.status = r.status;
-    err.detail = data;
-    throw err;
+    const err = new Error(msg); err.status = r.status; err.detail = data; throw err;
   }
   return data;
 }
@@ -116,14 +112,12 @@ async function upsertAssinatura(row) {
   if (!ins.ok && ins.status !== 409 && ins.status !== 422) throw new Error('POST assinatura ' + ins.status);
 }
 
-function onlyDigits(s) { return String(s || '').replace(/\D+/g, ''); }
-
 module.exports = async function handler(req, res) {
   if (req.method === 'GET') {
     return json(res, 200, {
       ok: true, service: 'endodirect-subscribe',
       ready: !!(SECRET_KEY && SERVICE_ROLE),
-      plans: { mensal: !!PLANS.mensal, anual: !!PLANS.anual }
+      plans: { mensal: SUB_PLANS.mensal.amount > 0, anual: SUB_PLANS.anual.amount > 0 }
     });
   }
   if (req.method !== 'POST') { res.setHeader('Allow', 'GET, POST'); return json(res, 405, { ok: false, error: 'Metodo nao permitido.' }); }
@@ -134,49 +128,47 @@ module.exports = async function handler(req, res) {
   try { body = JSON.parse((await readRawBody(req)).toString('utf8') || '{}'); } catch (e) { return json(res, 400, { ok: false, error: 'JSON invalido.' }); }
 
   const planKey = String(body.plan || '').toLowerCase();
-  const planId = PLANS[planKey];
+  const cfg = SUB_PLANS[planKey];
   const email = String(body.email || '').trim().toLowerCase();
   const name = String(body.name || '').trim();
   const document = onlyDigits(body.document);
   const cardToken = String(body.card_token || body.cardToken || '').trim();
 
-  if (!planId) return json(res, 400, { ok: false, error: 'Plano invalido ou nao configurado.' });
+  if (!cfg || !(cfg.amount > 0)) return json(res, 400, { ok: false, error: 'Plano invalido ou preco nao configurado.' });
   if (!email || !/.+@.+\..+/.test(email)) return json(res, 400, { ok: false, error: 'E-mail invalido.' });
   if (!cardToken) return json(res, 400, { ok: false, error: 'Cartao nao tokenizado.' });
 
   try {
-    // 1) Cliente no pagar.me. TODO(pagarme): confirmar campos (document_type, type).
+    // 1) Cliente. TODO(pagarme): confirmar 'document_type'/'type'.
     const customer = await pagarme('/customers', {
-      name: name || email.split('@')[0],
-      email: email,
-      type: 'individual',
-      document: document || undefined,
-      document_type: document ? 'CPF' : undefined
+      name: name || email.split('@')[0], email: email, type: 'individual',
+      document: document || undefined, document_type: document ? 'CPF' : undefined
     });
 
-    // 2) Assinatura com o plano + cartao tokenizado.
-    //    TODO(pagarme): confirmar 'card_token' vs 'card'/'token' no corpo da v5.
+    // 2) Assinatura com preco inline (sem plano). TODO(pagarme): confirmar
+    //    'card_token', 'billing_type', 'items[].pricing_scheme.price' (centavos).
     const sub = await pagarme('/subscriptions', {
-      plan_id: planId,
       customer_id: customer.id,
       payment_method: 'credit_card',
-      card_token: cardToken
+      card_token: cardToken,
+      interval: cfg.interval,
+      interval_count: cfg.interval_count,
+      billing_type: 'prepaid',
+      installments: 1,
+      items: [{ description: 'Endodirect — ' + cfg.label, quantity: 1, pricing_scheme: { scheme_type: 'unit', price: cfg.amount } }]
     });
 
     const status = String(sub.status || '').toLowerCase();
     const okStatuses = ['active', 'trialing', 'future', 'paid'];
-    const liberar = okStatuses.indexOf(status) >= 0 || !status; // se vier sem status, confiamos no 200
-
-    if (!liberar) {
+    if (status && okStatuses.indexOf(status) < 0) {
       return json(res, 200, { ok: false, status: status, error: 'Pagamento nao aprovado.', subscriptionId: sub.id });
     }
 
-    // 3) Libera o acesso imediatamente (o webhook mantem sincronizado depois).
+    // 3) Libera o acesso imediatamente; o webhook mantem sincronizado.
     const user = await ensureUser(email, name);
     const nextBilling = sub.next_billing_at || (sub.current_cycle && sub.current_cycle.end_at) || null;
     await upsertAssinatura({
-      user_id: user.id, email: email, status: 'active',
-      plano: planKey, tipo: 'recorrente',
+      user_id: user.id, email: email, status: 'active', plano: planKey, tipo: 'recorrente',
       current_period_end: nextBilling ? new Date(Date.parse(nextBilling)).toISOString() : null,
       provider: 'pagarme', provider_customer_id: customer.id || null,
       provider_subscription_id: sub.id || null, updated_at: new Date().toISOString()
