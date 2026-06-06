@@ -603,7 +603,7 @@ textarea{resize:vertical;line-height:1.6}
 <div id="assine-screen" style="display:none;position:fixed;inset:0;z-index:500;background:var(--bg);align-items:center;justify-content:center;padding:1.2rem">
   <div style="max-width:430px;width:100%;background:#fff;border:1px solid var(--bd);border-radius:16px;padding:1.7rem 1.5rem;text-align:center;box-shadow:0 14px 44px rgba(9,18,38,.14)">
     <div style="font-size:1.18rem;font-weight:800;color:var(--navy);margin-bottom:.5rem">Acesso exclusivo para assinantes</div>
-    <p style="font-size:.85rem;color:var(--t2);line-height:1.6;margin:.3rem 0 1.2rem">A conta <b id="assine-email"></b> ainda não tem uma assinatura ativa. Assine para liberar o acesso completo ao Endodirect — banco de questões, cursos, podcasts e mapas mentais.</p>
+    <p style="font-size:.85rem;color:var(--t2);line-height:1.6;margin:.3rem 0 1.2rem">A conta <b id="assine-email"></b> ainda não tem acesso ativo. Assine para liberar simulador, flashcards, mapas mentais, podcasts e o curso de Lípides — ou compre um curso avulso.</p>
     <div id="assine-plans" style="display:flex;flex-direction:column;gap:.5rem;margin-bottom:.55rem"></div>
     <button class="btn btn-outline" id="assine-logout" style="width:100%;justify-content:center">Sair</button>
   </div>
@@ -1208,7 +1208,22 @@ var USERS=[
   {email:'endodirectmaster@gmail.com',pass:null,name:'Endodirect Master',role:'admin',sub:'Professor',provider:'google'},
 ];
 var GOOGLE_ADMIN_EMAILS=USERS.filter(function(u){return u.provider==='google'&&u.role==='admin';}).map(function(u){return u.email;});
-var ENDO_PAYMENT_PLANS=[{label:'Assinatura (plano recorrente)',url:'https://payment-link-v3-sdx.pagar.me/pl_27zZadYby4PxDQkPuKFBRMvqkEXOgnGJ'},{label:'Acesso avulso',url:'https://payment-link-v3-sdx.pagar.me/pl_2r9BQAE1M8yg1r5tLEIv7Z6zmPlVja4n'}];
+// Links de pagamento do pagar.me. Cole a URL de cada produto aqui.
+//  - Assinatura: 3 periodos (mesmo acesso) — crie 1 link RECORRENTE por periodo.
+//  - Cursos avulsos: acesso de 1 ano — crie 1 link AVULSO por curso e configure
+//    no link a metadata.scope (ex.: { "scope": "curso:endoteem" }) para o webhook
+//    liberar o curso certo. A assinatura e detectada automaticamente como 'plano'.
+// (links sandbox anteriores: assinatura pl_27zZadYby4PxDQkPuKFBRMvqkEXOgnGJ ; avulso pl_2r9BQAE1M8yg1r5tLEIv7Z6zmPlVja4n)
+var ENDO_ASSINATURA_PERIODOS=[
+  {key:'trimestral',label:'Trimestral',mes:80,total:240,economia:'',       destaque:false,url:''},
+  {key:'semestral', label:'Semestral', mes:60,total:360,economia:'25% off', destaque:false,url:''},
+  {key:'anual',     label:'Anual',     mes:45,total:540,economia:'44% off', destaque:true, url:''}
+];
+var ENDO_CURSOS_AVULSOS=[
+  {slug:'lipides',        label:'Lípides',                  url:''},
+  {slug:'endoteem',       label:'EndoTEEM',                 url:''},
+  {slug:'endo_essencial', label:'Endocrinologia Essencial', url:''}
+];
 function normalizeAdmEstudantes(list){
   return (Array.isArray(list)?list:[]).map(function(e){
     if(e&&e.email==='aluno@endodirect.com.br'&&String(e.nome||'').trim().toLowerCase()==='rodolpho'){
@@ -2047,12 +2062,27 @@ function enterAsMember(session){
     }
   }).catch(function(){showAssineScreen(email);});
 }
+function assineBRL(n){return 'R$ '+Number(n||0).toLocaleString('pt-BR');}
 function renderAssinePlans(){
   var wrap=document.getElementById('assine-plans');if(!wrap)return;
-  var html=(ENDO_PAYMENT_PLANS||[]).filter(function(p){return p&&p.url;}).map(function(p){
-    return '<a class="btn btn-primary" style="width:100%;justify-content:center;text-decoration:none" href="'+esc(p.url)+'" target="_blank" rel="noopener">'+esc(p.label||'Assinar')+'</a>';
-  }).join('');
-  wrap.innerHTML=html||'<div style="font-size:.8rem;color:var(--t3)">Planos disponiveis em breve.</div>';
+  var html='';
+  html+='<div style="font-size:.6rem;font-weight:700;letter-spacing:.09em;text-transform:uppercase;color:var(--t3);text-align:left;margin:.1rem 0 .1rem">Assinatura</div>';
+  (ENDO_ASSINATURA_PERIODOS||[]).forEach(function(p){
+    var sub='R$ '+p.mes+'/mês · '+assineBRL(p.total)+' à vista'+(p.economia?' · '+p.economia:'');
+    if(p.url){
+      html+='<a class="btn '+(p.destaque?'btn-primary':'btn-outline')+'" style="width:100%;justify-content:space-between;align-items:center;text-decoration:none" href="'+esc(p.url)+'" target="_blank" rel="noopener"><span style="font-weight:700">'+esc(p.label)+(p.destaque?' ★':'')+'</span><span style="font-size:.7rem;opacity:.9">'+esc(sub)+'</span></a>';
+    }else{
+      html+='<div class="btn btn-outline" style="width:100%;justify-content:space-between;align-items:center;opacity:.5;cursor:default"><span style="font-weight:700">'+esc(p.label)+'</span><span style="font-size:.7rem">'+esc(sub)+'</span></div>';
+    }
+  });
+  var cursos=(ENDO_CURSOS_AVULSOS||[]).filter(function(c){return c&&c.url;});
+  if(cursos.length){
+    html+='<div style="font-size:.6rem;font-weight:700;letter-spacing:.09em;text-transform:uppercase;color:var(--t3);text-align:left;margin:.55rem 0 .1rem">Cursos avulsos · acesso 1 ano</div>';
+    cursos.forEach(function(c){
+      html+='<a class="btn btn-outline" style="width:100%;justify-content:center;text-decoration:none" href="'+esc(c.url)+'" target="_blank" rel="noopener">'+esc(c.label)+'</a>';
+    });
+  }
+  wrap.innerHTML=html||'<div style="font-size:.8rem;color:var(--t3)">Planos disponíveis em breve.</div>';
 }
 function showAssineScreen(email){
   var ls=document.getElementById('login-screen');if(ls)ls.style.display='none';

@@ -1,10 +1,17 @@
 // Endodirect — Webhook do pagar.me (Fase 2 — ESQUELETO)
 // =====================================================================
 // O que faz: recebe os eventos de pagamento do pagar.me e libera/revoga
-// o acesso do aluno automaticamente, gravando em public.endodirect_assinaturas
-// (criada na Fase 1). No pagamento confirmado, cria a conta do aluno
-// (Supabase Auth, ja confirmada), ativa a assinatura e dispara o e-mail
+// o acesso do aluno automaticamente, gravando em public.endodirect_acessos
+// (Etapa 1) com o ESCOPO correto: 'plano' (assinatura) ou 'curso:<slug>'
+// (curso avulso). No pagamento confirmado, cria a conta do aluno
+// (Supabase Auth, ja confirmada), ativa o acesso e dispara o e-mail
 // para o aluno definir a senha.
+//
+// ESCOPO (importante): para cursos avulsos, configure metadata.scope no
+// link/produto do pagar.me, ex.: { "scope": "curso:endoteem" }. Assinaturas
+// sao detectadas automaticamente como 'plano'. Sem metadata.scope, ha uma
+// heuristica pelo nome do item; se nada casar, o evento e ignorado (nao
+// libera acesso errado).
 //
 // Endpoint (apos deploy): https://SEU-DOMINIO/api/webhooks/pagarme
 //
@@ -119,37 +126,40 @@ async function sendSetPasswordEmail(email) {
 }
 
 async function patchById(id, row) {
-  const up = await fetch(`${SUPABASE_URL}/rest/v1/endodirect_assinaturas?id=eq.${id}`, {
+  const up = await fetch(`${SUPABASE_URL}/rest/v1/endodirect_acessos?id=eq.${id}`, {
     method: 'PATCH', headers: { ...sbHeaders(), Prefer: 'return=minimal' }, body: JSON.stringify(row)
   });
-  if (!up.ok) throw new Error(`PATCH assinatura ${up.status}: ${(await up.text().catch(() => '')).slice(0, 200)}`);
+  if (!up.ok) throw new Error(`PATCH acesso ${up.status}: ${(await up.text().catch(() => '')).slice(0, 200)}`);
 }
 
-async function findAssinaturaId(userId, email) {
-  const q = `${SUPABASE_URL}/rest/v1/endodirect_assinaturas?or=(user_id.eq.${userId},email.eq.${encodeURIComponent(email)})&select=id`;
+async function findAcessoId(email, scope) {
+  const q = `${SUPABASE_URL}/rest/v1/endodirect_acessos?email=eq.${encodeURIComponent(email)}&scope=eq.${encodeURIComponent(scope)}&select=id`;
   const r = await fetch(q, { headers: sbHeaders() });
   const rows = r.ok ? await r.json().catch(() => []) : [];
   return rows && rows[0] ? rows[0].id : null;
 }
 
-async function upsertAssinatura(row) {
+async function upsertAcesso(row) {
   // Idempotente e a prova de corrida: order.paid e charge.paid chegam quase juntos.
-  const existingId = await findAssinaturaId(row.user_id, row.email);
+  const existingId = await findAcessoId(row.email, row.scope);
   if (existingId) return patchById(existingId, row);
-  const ins = await fetch(`${SUPABASE_URL}/rest/v1/endodirect_assinaturas`, {
+  const ins = await fetch(`${SUPABASE_URL}/rest/v1/endodirect_acessos`, {
     method: 'POST', headers: { ...sbHeaders(), Prefer: 'return=minimal' }, body: JSON.stringify(row)
   });
   if (ins.ok) return;
   // Conflito (a outra requisicao inseriu primeiro): busca de novo e atualiza.
   if (ins.status === 409 || ins.status === 422) {
-    const again = await findAssinaturaId(row.user_id, row.email);
+    const again = await findAcessoId(row.email, row.scope);
     if (again) return patchById(again, row);
   }
-  throw new Error(`POST assinatura ${ins.status}: ${(await ins.text().catch(() => '')).slice(0, 200)}`);
+  throw new Error(`POST acesso ${ins.status}: ${(await ins.text().catch(() => '')).slice(0, 200)}`);
 }
 
-async function setStatusByEmail(email, status) {
-  await fetch(`${SUPABASE_URL}/rest/v1/endodirect_assinaturas?email=eq.${encodeURIComponent(email)}`, {
+// Atualiza status dos acessos do e-mail; se scope for informado, so daquele escopo.
+async function setStatusByEmail(email, status, scope) {
+  let url = `${SUPABASE_URL}/rest/v1/endodirect_acessos?email=eq.${encodeURIComponent(email)}`;
+  if (scope) url += `&scope=eq.${encodeURIComponent(scope)}`;
+  await fetch(url, {
     method: 'PATCH', headers: { ...sbHeaders(), Prefer: 'return=minimal' },
     body: JSON.stringify({ status: status, updated_at: new Date().toISOString() })
   });
@@ -161,30 +171,72 @@ function extractInfo(body, type) {
   const d = (body && body.data) || body || {};
   const sub = d.subscription || (d.invoice && d.invoice.subscription) || (type.indexOf('subscription') >= 0 ? d : null);
   const inv = d.invoice || (type.indexOf('invoice') >= 0 ? d : null);
+  const order = d.order || (type.indexOf('order') >= 0 ? d : null);
+  const charge = (Array.isArray(d.charges) && d.charges[0]) || (type.indexOf('charge') >= 0 ? d : null);
   const customer = d.customer
     || (sub && sub.customer)
     || (inv && inv.customer)
-    || (Array.isArray(d.charges) && d.charges[0] && d.charges[0].customer)
-    || (d.order && d.order.customer)
+    || (charge && charge.customer)
+    || (order && order.customer)
     || {};
   const cycle = (sub && (sub.current_cycle || sub.cycle)) || d.current_cycle || d.cycle || (inv && inv.cycle) || null;
+  // metadata pode vir em varios niveis (order/charge/subscription/raiz)
+  const meta = Object.assign({},
+    (sub && sub.metadata) || {},
+    (order && order.metadata) || {},
+    (charge && charge.metadata) || {},
+    d.metadata || {},
+    body.metadata || {}
+  );
+  // descricoes dos itens (fallback p/ inferir o curso quando nao ha metadata.scope)
+  const items = (sub && sub.items) || (order && order.items) || d.items || [];
+  const itemText = Array.isArray(items)
+    ? items.map((it) => String((it && (it.description || it.name)) || '')).join(' | ')
+    : '';
   return {
     email: String(customer.email || '').toLowerCase(),
     name: customer.name || '',
     customerId: customer.id || '',
-    orderId: (type.indexOf('order') >= 0 ? d.id : '') || d.order_id || (d.order && d.order.id) || '',
+    orderId: (order && order.id) || d.order_id || '',
     subscriptionId: (sub && sub.id) || d.subscription_id || (inv && inv.subscription_id) || '',
     nextBilling: (sub && sub.next_billing_at) || d.next_billing_at || d.current_period_end
-      || (cycle && (cycle.end_at || cycle.billing_at)) || (inv && inv.due_at) || ''
+      || (cycle && (cycle.end_at || cycle.billing_at)) || (inv && inv.due_at) || '',
+    scopeHint: String(meta.scope || meta.escopo || meta.curso || '').toLowerCase().trim(),
+    itemText: itemText.toLowerCase()
   };
 }
 
-function computePeriodEnd(tipo, info) {
+// Escopos validos conhecidos (mantenha em sincronia com endodirect_cursos)
+const CURSO_SLUGS = ['lipides', 'endoteem', 'endo_essencial'];
+
+// Decide o escopo do acesso a partir do payload.
+// Prioridade: metadata.scope -> assinatura => 'plano' -> heuristica no nome do item.
+function pickScope(info) {
+  let s = info.scopeHint;
+  if (s) {
+    if (s === 'plano' || s === 'assinatura') return 'plano';
+    if (s.indexOf('curso:') === 0) return CURSO_SLUGS.indexOf(s.slice(6)) >= 0 ? s : '';
+    if (CURSO_SLUGS.indexOf(s) >= 0) return 'curso:' + s;
+  }
+  if (info.subscriptionId) return 'plano';
+  const t = info.itemText || '';
+  if (/endoteem|teem/.test(t)) return 'curso:endoteem';
+  if (/essencial/.test(t)) return 'curso:endo_essencial';
+  if (/l[ií]pid/.test(t)) return 'curso:lipides';
+  if (/plano|assinatura|recorr/.test(t)) return 'plano';
+  return ''; // desconhecido -> nao provisiona (evita liberar errado)
+}
+
+function computePeriodEnd(scope, info) {
+  // Curso avulso: acesso fixo (padrao 365 dias).
+  if (scope && scope.indexOf('curso:') === 0) {
+    return new Date(Date.now() + AVULSO_DIAS * 86400000).toISOString();
+  }
+  // Plano recorrente: usa a proxima cobranca, se vier no payload.
   if (info.nextBilling) {
     const t = Date.parse(info.nextBilling);
     if (!isNaN(t)) return new Date(t).toISOString();
   }
-  if (tipo === 'avulso') return new Date(Date.now() + AVULSO_DIAS * 86400000).toISOString();
   return null; // recorrente sem data informada => ativo ate cancelar
 }
 
@@ -221,17 +273,20 @@ module.exports = async function handler(req, res) {
   const info = extractInfo(body, type);
 
   try {
+    const scope = pickScope(info);
+
     if (PAID_EVENTS.indexOf(type) >= 0) {
       if (!info.email) return json(res, 200, { ok: true, skipped: 'payload sem e-mail do cliente', type });
-      const tipo = (type.indexOf('subscription') >= 0 || info.subscriptionId) ? 'recorrente' : 'avulso';
+      if (!scope) return json(res, 200, { ok: true, skipped: 'escopo nao identificado (defina metadata.scope no link/produto)', type });
+      const tipo = scope.indexOf('curso:') === 0 ? 'avulso' : 'recorrente';
       const user = await ensureUser(info.email, info.name);
-      await upsertAssinatura({
+      await upsertAcesso({
         user_id: user.id,
         email: info.email,
+        scope: scope,
         status: 'active',
-        plano: body.plano || (tipo === 'recorrente' ? 'assinatura' : 'avulso'),
         tipo: tipo,
-        current_period_end: computePeriodEnd(tipo, info),
+        expires_at: computePeriodEnd(scope, info),
         provider: 'pagarme',
         provider_customer_id: info.customerId || null,
         provider_subscription_id: info.subscriptionId || null,
@@ -239,17 +294,18 @@ module.exports = async function handler(req, res) {
         updated_at: new Date().toISOString()
       });
       await sendSetPasswordEmail(info.email);
-      return json(res, 200, { ok: true, action: 'activated', email: info.email, tipo: tipo, authConfigured: auth !== null });
+      return json(res, 200, { ok: true, action: 'activated', email: info.email, scope: scope, tipo: tipo, authConfigured: auth !== null });
     }
 
     if (REVOKE_EVENTS.indexOf(type) >= 0) {
-      if (info.email) await setStatusByEmail(info.email, 'canceled');
-      return json(res, 200, { ok: true, action: 'revoked', email: info.email, authConfigured: auth !== null });
+      // Revoga so o escopo afetado, se identificavel; senao, todos do e-mail.
+      if (info.email) await setStatusByEmail(info.email, 'canceled', scope || undefined);
+      return json(res, 200, { ok: true, action: 'revoked', email: info.email, scope: scope || 'all', authConfigured: auth !== null });
     }
 
     if (PASTDUE_EVENTS.indexOf(type) >= 0) {
-      if (info.email) await setStatusByEmail(info.email, 'past_due');
-      return json(res, 200, { ok: true, action: 'past_due', email: info.email, authConfigured: auth !== null });
+      if (info.email) await setStatusByEmail(info.email, 'past_due', scope || undefined);
+      return json(res, 200, { ok: true, action: 'past_due', email: info.email, scope: scope || 'all', authConfigured: auth !== null });
     }
 
     return json(res, 200, { ok: true, ignored: type || '(sem type)', authConfigured: auth !== null });
