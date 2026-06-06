@@ -192,6 +192,25 @@ module.exports = async function handler(req, res) {
   if ((!raw || !raw.length) && req.body) { try { raw = Buffer.from(JSON.stringify(req.body)); } catch (e) {} }
 
   const auth = verifyAuth(req, raw);
+  // Diagnostico temporario de autenticacao (sem vazar a senha — apenas usuario e tamanhos).
+  try {
+    const got = req.headers.authorization || '';
+    let decUser = null, decPassLen = null;
+    if (/^Basic /i.test(got)) {
+      try {
+        const dec = Buffer.from(got.split(' ')[1] || '', 'base64').toString('utf8');
+        const idx = dec.indexOf(':');
+        decUser = idx >= 0 ? dec.slice(0, idx) : dec;
+        decPassLen = idx >= 0 ? (dec.length - idx - 1) : 0;
+      } catch (e) {}
+    }
+    console.log('[pagarme-webhook] auth-debug', JSON.stringify({
+      hasAuth: !!got, scheme: got.split(' ')[0] || null,
+      recvUser: decUser, recvPassLen: decPassLen,
+      expUser: BASIC_USER, expPassLen: (BASIC_PASS || '').length,
+      result: auth
+    }));
+  } catch (e) {}
   if (auth === false) return json(res, 401, { ok: false, error: 'Credencial/assinatura do webhook invalida.' });
   // auth === null => nenhuma credencial configurada (modo esqueleto): aceita, mas sinaliza no retorno.
 
