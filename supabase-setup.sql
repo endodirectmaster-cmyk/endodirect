@@ -382,8 +382,14 @@ returns jsonb language sql security definer set search_path = public stable as $
                        then coalesce((select payload->'podcasts' from g), '[]'::jsonb) else '[]'::jsonb end,
     'mm_shared',  case when 'plano' = any((select scopes from a))
                        then coalesce((select payload->'mm_shared' from g), '[]'::jsonb) else '[]'::jsonb end,
-    'adm_cursos', case when coalesce(array_length((select scopes from a), 1), 0) > 0
-                       then coalesce((select payload->'adm_cursos' from g), '[]'::jsonb) else '[]'::jsonb end
+    'adm_cursos', case when coalesce(array_length((select scopes from a), 1), 0) > 0 then (
+                    -- so as videoaulas do(s) curso(s) que o aluno tem acesso;
+                    -- aulas sem curso definido aparecem para qualquer membro.
+                    select coalesce(jsonb_agg(v), '[]'::jsonb)
+                    from jsonb_array_elements(coalesce((select payload->'adm_cursos' from g), '[]'::jsonb)) v
+                    where coalesce(v->>'curso', '') = ''
+                       or ('curso:' || (v->>'curso')) = any((select scopes from a))
+                  ) else '[]'::jsonb end
   );
 $$;
 revoke all on function public.endodirect_member_content() from public;
