@@ -192,7 +192,8 @@ module.exports = async function handler(req, res) {
   if ((!raw || !raw.length) && req.body) { try { raw = Buffer.from(JSON.stringify(req.body)); } catch (e) {} }
 
   const auth = verifyAuth(req, raw);
-  // Diagnostico temporario de autenticacao (sem vazar a senha — apenas usuario e tamanhos).
+  // Diagnostico temporario (sem vazar a senha): vai no log E na resposta 401.
+  var diag = {};
   try {
     const got = req.headers.authorization || '';
     let decUser = null, decPassLen = null;
@@ -204,14 +205,14 @@ module.exports = async function handler(req, res) {
         decPassLen = idx >= 0 ? (dec.length - idx - 1) : 0;
       } catch (e) {}
     }
-    console.log('[pagarme-webhook] auth-debug', JSON.stringify({
+    diag = {
       hasAuth: !!got, scheme: got.split(' ')[0] || null,
       recvUser: decUser, recvPassLen: decPassLen,
-      expUser: BASIC_USER, expPassLen: (BASIC_PASS || '').length,
-      result: auth
-    }));
+      expUser: BASIC_USER, expPassLen: (BASIC_PASS || '').length, result: auth
+    };
+    console.log('[pagarme-webhook] auth-debug', JSON.stringify(diag));
   } catch (e) {}
-  if (auth === false) return json(res, 401, { ok: false, error: 'Credencial/assinatura do webhook invalida.' });
+  if (auth === false) return json(res, 401, { ok: false, error: 'Credencial do webhook invalida.', debug: diag });
   // auth === null => nenhuma credencial configurada (modo esqueleto): aceita, mas sinaliza no retorno.
 
   let body;
