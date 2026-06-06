@@ -118,20 +118,34 @@ async function sendSetPasswordEmail(email) {
   } catch (e) { /* best-effort */ }
 }
 
+async function patchById(id, row) {
+  const up = await fetch(`${SUPABASE_URL}/rest/v1/endodirect_assinaturas?id=eq.${id}`, {
+    method: 'PATCH', headers: { ...sbHeaders(), Prefer: 'return=minimal' }, body: JSON.stringify(row)
+  });
+  if (!up.ok) throw new Error(`PATCH assinatura ${up.status}: ${(await up.text().catch(() => '')).slice(0, 200)}`);
+}
+
+async function findAssinaturaId(userId, email) {
+  const q = `${SUPABASE_URL}/rest/v1/endodirect_assinaturas?or=(user_id.eq.${userId},email.eq.${encodeURIComponent(email)})&select=id`;
+  const r = await fetch(q, { headers: sbHeaders() });
+  const rows = r.ok ? await r.json().catch(() => []) : [];
+  return rows && rows[0] ? rows[0].id : null;
+}
+
 async function upsertAssinatura(row) {
-  const find = await fetch(`${SUPABASE_URL}/rest/v1/endodirect_assinaturas?user_id=eq.${row.user_id}&select=id`, { headers: sbHeaders() });
-  const existing = find.ok ? await find.json().catch(() => []) : [];
-  if (existing && existing[0]) {
-    const up = await fetch(`${SUPABASE_URL}/rest/v1/endodirect_assinaturas?id=eq.${existing[0].id}`, {
-      method: 'PATCH', headers: { ...sbHeaders(), Prefer: 'return=minimal' }, body: JSON.stringify(row)
-    });
-    if (!up.ok) throw new Error(`PATCH assinatura ${up.status}: ${(await up.text().catch(() => '')).slice(0, 200)}`);
-  } else {
-    const ins = await fetch(`${SUPABASE_URL}/rest/v1/endodirect_assinaturas`, {
-      method: 'POST', headers: { ...sbHeaders(), Prefer: 'return=minimal' }, body: JSON.stringify(row)
-    });
-    if (!ins.ok) throw new Error(`POST assinatura ${ins.status}: ${(await ins.text().catch(() => '')).slice(0, 200)}`);
+  // Idempotente e a prova de corrida: order.paid e charge.paid chegam quase juntos.
+  const existingId = await findAssinaturaId(row.user_id, row.email);
+  if (existingId) return patchById(existingId, row);
+  const ins = await fetch(`${SUPABASE_URL}/rest/v1/endodirect_assinaturas`, {
+    method: 'POST', headers: { ...sbHeaders(), Prefer: 'return=minimal' }, body: JSON.stringify(row)
+  });
+  if (ins.ok) return;
+  // Conflito (a outra requisicao inseriu primeiro): busca de novo e atualiza.
+  if (ins.status === 409 || ins.status === 422) {
+    const again = await findAssinaturaId(row.user_id, row.email);
+    if (again) return patchById(again, row);
   }
+  throw new Error(`POST assinatura ${ins.status}: ${(await ins.text().catch(() => '')).slice(0, 200)}`);
 }
 
 async function setStatusByEmail(email, status) {
@@ -192,30 +206,7 @@ module.exports = async function handler(req, res) {
   if ((!raw || !raw.length) && req.body) { try { raw = Buffer.from(JSON.stringify(req.body)); } catch (e) {} }
 
   const auth = verifyAuth(req, raw);
-  // Diagnostico temporario (sem vazar a senha): vai no log E na resposta 401.
-  var diag = {};
-  try {
-    const got = req.headers.authorization || '';
-    let decUser = null, decPassLen = null, decPass = '';
-    if (/^Basic /i.test(got)) {
-      try {
-        const dec = Buffer.from(got.split(' ')[1] || '', 'base64').toString('utf8');
-        const idx = dec.indexOf(':');
-        decUser = idx >= 0 ? dec.slice(0, idx) : dec;
-        decPass = idx >= 0 ? dec.slice(idx + 1) : '';
-        decPassLen = decPass.length;
-      } catch (e) {}
-    }
-    const fp = (x) => crypto.createHash('sha256').update(String(x || '')).digest('hex').slice(0, 10);
-    diag = {
-      hasAuth: !!got, scheme: got.split(' ')[0] || null,
-      recvUser: decUser, recvPassLen: decPassLen, recvPassFp: fp(decPass),
-      expUser: BASIC_USER, expPassLen: (BASIC_PASS || '').length, expPassFp: fp(BASIC_PASS),
-      result: auth
-    };
-    console.log('[pagarme-webhook] auth-debug', JSON.stringify(diag));
-  } catch (e) {}
-  if (auth === false) return json(res, 401, { ok: false, error: 'Credencial do webhook invalida.', debug: diag });
+  if (auth === false) return json(res, 401, { ok: false, error: 'Credencial do webhook invalida.' });
   // auth === null => nenhuma credencial configurada (modo esqueleto): aceita, mas sinaliza no retorno.
 
   let body;
