@@ -1208,7 +1208,7 @@ var USERS=[
   {email:'endodirectmaster@gmail.com',pass:null,name:'Endodirect Master',role:'admin',sub:'Professor',provider:'google'},
 ];
 var GOOGLE_ADMIN_EMAILS=USERS.filter(function(u){return u.provider==='google'&&u.role==='admin';}).map(function(u){return u.email;});
-var ENDO_PAYMENT_LINKS={avulso:'https://payment-link-v3-sdx.pagar.me/pl_2r9BQAE1M8yg1r5tLEIv7Z6zmPlVja4n',mensal:'',anual:''};
+var ENDO_PAYMENT_PLANS=[{label:'Assinatura (plano recorrente)',url:'https://payment-link-v3-sdx.pagar.me/pl_27zZadYby4PxDQkPuKFBRMvqkEXOgnGJ'},{label:'Acesso avulso',url:'https://payment-link-v3-sdx.pagar.me/pl_2r9BQAE1M8yg1r5tLEIv7Z6zmPlVja4n'}];
 function normalizeAdmEstudantes(list){
   return (Array.isArray(list)?list:[]).map(function(e){
     if(e&&e.email==='aluno@endodirect.com.br'&&String(e.nome||'').trim().toLowerCase()==='rodolpho'){
@@ -2049,9 +2049,8 @@ function enterAsMember(session){
 }
 function renderAssinePlans(){
   var wrap=document.getElementById('assine-plans');if(!wrap)return;
-  var plans=[{key:'mensal',label:'Assinar — plano mensal'},{key:'anual',label:'Assinar — plano anual'},{key:'avulso',label:'Comprar acesso avulso'}];
-  var html=plans.filter(function(p){return ENDO_PAYMENT_LINKS[p.key];}).map(function(p){
-    return '<a class="btn btn-primary" style="width:100%;justify-content:center;text-decoration:none" href="'+esc(ENDO_PAYMENT_LINKS[p.key])+'" target="_blank" rel="noopener">'+esc(p.label)+'</a>';
+  var html=(ENDO_PAYMENT_PLANS||[]).filter(function(p){return p&&p.url;}).map(function(p){
+    return '<a class="btn btn-primary" style="width:100%;justify-content:center;text-decoration:none" href="'+esc(p.url)+'" target="_blank" rel="noopener">'+esc(p.label||'Assinar')+'</a>';
   }).join('');
   wrap.innerHTML=html||'<div style="font-size:.8rem;color:var(--t3)">Planos disponiveis em breve.</div>';
 }
