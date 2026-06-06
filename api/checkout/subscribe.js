@@ -19,7 +19,7 @@
 //   PAGARME_SECRET_KEY               (sk_test_... / sk_live_...) — NUNCA no front
 //   PAGARME_SUB_TRIMESTRAL_AMOUNT    total trimestral em CENTAVOS (padrao 24000 = R$240)
 //   PAGARME_SUB_SEMESTRAL_AMOUNT     total semestral em CENTAVOS  (padrao 36000 = R$360)
-//   PAGARME_SUB_ANUAL_AMOUNT         total anual em CENTAVOS       (padrao 54000 = R$540)
+//   PAGARME_SUB_ANUAL_AMOUNT         total anual em CENTAVOS       (padrao 48000 = R$480)
 //   SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY (ou SUPABASE_SECRET_KEY) — ja existem
 //
 // OBS: alguns nomes de campos da API v5 estao marcados com TODO(pagarme)
@@ -31,11 +31,11 @@ const SECRET_KEY = process.env.PAGARME_SECRET_KEY || '';
 
 // 3 periodicidades, mesmo acesso (escopo "plano"). Cobranca pelo periodo
 // inteiro, adiantada: trimestral R$240 (R$80/mes), semestral R$360 (R$60/mes),
-// anual R$540 (R$45/mes). Os valores podem ser sobrescritos por env (CENTAVOS).
+// anual R$480 (R$40/mes). Os valores podem ser sobrescritos por env (CENTAVOS).
 const SUB_PLANS = {
   trimestral: { interval: 'month', interval_count: 3,  amount: Number(process.env.PAGARME_SUB_TRIMESTRAL_AMOUNT || 24000), label: 'Assinatura trimestral' },
   semestral:  { interval: 'month', interval_count: 6,  amount: Number(process.env.PAGARME_SUB_SEMESTRAL_AMOUNT  || 36000), label: 'Assinatura semestral' },
-  anual:      { interval: 'month', interval_count: 12, amount: Number(process.env.PAGARME_SUB_ANUAL_AMOUNT      || 54000), label: 'Assinatura anual' }
+  anual:      { interval: 'month', interval_count: 12, amount: Number(process.env.PAGARME_SUB_ANUAL_AMOUNT      || 48000), label: 'Assinatura anual' }
 };
 
 const SUPABASE_URL = process.env.SUPABASE_URL || process.env.NEXT_PUBLIC_SUPABASE_URL || 'https://auth.endodirect.com.br';

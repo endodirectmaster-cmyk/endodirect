@@ -1221,17 +1221,17 @@ var ENDO_ASSINATURA_BENEFICIOS=['Simulador','Flashcards','Mapas mentais','Podcas
 var ENDO_ASSINATURA_PERIODOS=[
   {key:'trimestral',label:'Trimestral',mes:80,total:240,economia:'',       destaque:false,url:''},
   {key:'semestral', label:'Semestral', mes:60,total:360,economia:'25% off', destaque:false,url:''},
-  {key:'anual',     label:'Anual',     mes:45,total:540,economia:'44% off', destaque:true, badge:'Mais popular', url:''}
+  {key:'anual',     label:'Anual',     mes:40,total:480,economia:'50% off', destaque:true, badge:'Mais popular', url:''}
 ];
 var ENDO_CURSOS_AVULSOS=[
   {slug:'lipides',        label:'Lípides',                  url:''},
   {slug:'endoteem',       label:'EndoTEEM',                 url:''},
   {slug:'endo_essencial', label:'Endocrinologia Essencial', url:''}
 ];
-// Combos (oferta-herói): EndoTEEM (R$5.500) + Assinatura Anual (R$540) = R$6.040.
-// Combo por R$5.700 => economia de R$340. Ajuste 'total' e cole a 'url'.
+// Combos (oferta-herói): EndoTEEM (R$5.500) + Assinatura Anual (R$480) = R$5.980.
+// Combo por R$5.700 => economia de R$280. Ajuste 'total' e cole a 'url'.
 var ENDO_COMBOS=[
-  {key:'combo_endoteem_anual', label:'Assinatura Anual + EndoTEEM', total:5700, de:6040,
+  {key:'combo_endoteem_anual', label:'Assinatura Anual + EndoTEEM', total:5700, de:5980,
    inclui:['Tudo da assinatura (simulador, flashcards, mapas, podcasts, Lípides)','Banco de questões + curso EndoTEEM completo','1 ano de acesso'],
    scope:'plano,curso:endoteem', url:''}
 ];
