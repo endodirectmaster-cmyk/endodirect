@@ -604,7 +604,7 @@ textarea{resize:vertical;line-height:1.6}
   <div style="max-width:430px;width:100%;background:#fff;border:1px solid var(--bd);border-radius:16px;padding:1.7rem 1.5rem;text-align:center;box-shadow:0 14px 44px rgba(9,18,38,.14)">
     <div style="font-size:1.18rem;font-weight:800;color:var(--navy);margin-bottom:.5rem">Acesso exclusivo para assinantes</div>
     <p style="font-size:.85rem;color:var(--t2);line-height:1.6;margin:.3rem 0 1.2rem">A conta <b id="assine-email"></b> ainda não tem uma assinatura ativa. Assine para liberar o acesso completo ao Endodirect — banco de questões, cursos, podcasts e mapas mentais.</p>
-    <button class="btn btn-primary" id="assine-cta" style="width:100%;justify-content:center;margin-bottom:.55rem">Assinar o Endodirect</button>
+    <div id="assine-plans" style="display:flex;flex-direction:column;gap:.5rem;margin-bottom:.55rem"></div>
     <button class="btn btn-outline" id="assine-logout" style="width:100%;justify-content:center">Sair</button>
   </div>
 </div>
@@ -1208,6 +1208,7 @@ var USERS=[
   {email:'endodirectmaster@gmail.com',pass:null,name:'Endodirect Master',role:'admin',sub:'Professor',provider:'google'},
 ];
 var GOOGLE_ADMIN_EMAILS=USERS.filter(function(u){return u.provider==='google'&&u.role==='admin';}).map(function(u){return u.email;});
+var ENDO_PAYMENT_LINKS={avulso:'https://payment-link-v3-sdx.pagar.me/pl_2r9BQAE1M8yg1r5tLEIv7Z6zmPlVja4n',mensal:'',anual:''};
 function normalizeAdmEstudantes(list){
   return (Array.isArray(list)?list:[]).map(function(e){
     if(e&&e.email==='aluno@endodirect.com.br'&&String(e.nome||'').trim().toLowerCase()==='rodolpho'){
@@ -2046,11 +2047,20 @@ function enterAsMember(session){
     }
   }).catch(function(){showAssineScreen(email);});
 }
+function renderAssinePlans(){
+  var wrap=document.getElementById('assine-plans');if(!wrap)return;
+  var plans=[{key:'mensal',label:'Assinar — plano mensal'},{key:'anual',label:'Assinar — plano anual'},{key:'avulso',label:'Comprar acesso avulso'}];
+  var html=plans.filter(function(p){return ENDO_PAYMENT_LINKS[p.key];}).map(function(p){
+    return '<a class="btn btn-primary" style="width:100%;justify-content:center;text-decoration:none" href="'+esc(ENDO_PAYMENT_LINKS[p.key])+'" target="_blank" rel="noopener">'+esc(p.label)+'</a>';
+  }).join('');
+  wrap.innerHTML=html||'<div style="font-size:.8rem;color:var(--t3)">Planos disponiveis em breve.</div>';
+}
 function showAssineScreen(email){
   var ls=document.getElementById('login-screen');if(ls)ls.style.display='none';
   var ap=document.getElementById('app-screen');if(ap)ap.style.display='none';
   var sc=document.getElementById('assine-screen');if(!sc)return;
   setText('assine-email',email||'');
+  renderAssinePlans();
   sc.style.display='flex';
 }
 function hideAssineScreen(){var sc=document.getElementById('assine-screen');if(sc)sc.style.display='none';}
@@ -4634,7 +4644,6 @@ document.addEventListener('DOMContentLoaded',function(){
   };
   document.getElementById('btn-login').addEventListener('click',doLoginAttempt);
   var aLogoutBtn=document.getElementById('assine-logout');if(aLogoutBtn)aLogoutBtn.addEventListener('click',function(){var c=getSupabaseClient();if(c&&c.auth)c.auth.signOut().catch(function(){});hideAssineScreen();var ls=document.getElementById('login-screen');if(ls)ls.style.display='flex';});
-  var aCtaBtn=document.getElementById('assine-cta');if(aCtaBtn)aCtaBtn.addEventListener('click',function(){notify('O pagamento pela plataforma (pagar.me) chega na próxima fase. Em breve!','info');});
   var bStay=document.getElementById('btn-session-stay');if(bStay)bStay.addEventListener('click',keepSessionAlive);
   var bSout=document.getElementById('btn-session-logout');if(bSout)bSout.addEventListener('click',function(){hideSessionWarning();doLogout();});
   document.getElementById('login-pass').addEventListener('keydown',function(e){if(e.key==='Enter')doLoginAttempt();});
