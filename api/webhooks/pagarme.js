@@ -196,19 +196,22 @@ module.exports = async function handler(req, res) {
   var diag = {};
   try {
     const got = req.headers.authorization || '';
-    let decUser = null, decPassLen = null;
+    let decUser = null, decPassLen = null, decPass = '';
     if (/^Basic /i.test(got)) {
       try {
         const dec = Buffer.from(got.split(' ')[1] || '', 'base64').toString('utf8');
         const idx = dec.indexOf(':');
         decUser = idx >= 0 ? dec.slice(0, idx) : dec;
-        decPassLen = idx >= 0 ? (dec.length - idx - 1) : 0;
+        decPass = idx >= 0 ? dec.slice(idx + 1) : '';
+        decPassLen = decPass.length;
       } catch (e) {}
     }
+    const fp = (x) => crypto.createHash('sha256').update(String(x || '')).digest('hex').slice(0, 10);
     diag = {
       hasAuth: !!got, scheme: got.split(' ')[0] || null,
-      recvUser: decUser, recvPassLen: decPassLen,
-      expUser: BASIC_USER, expPassLen: (BASIC_PASS || '').length, result: auth
+      recvUser: decUser, recvPassLen: decPassLen, recvPassFp: fp(decPass),
+      expUser: BASIC_USER, expPassLen: (BASIC_PASS || '').length, expPassFp: fp(BASIC_PASS),
+      result: auth
     };
     console.log('[pagarme-webhook] auth-debug', JSON.stringify(diag));
   } catch (e) {}
