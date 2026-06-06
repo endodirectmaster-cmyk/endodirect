@@ -156,21 +156,26 @@ async function setStatusByEmail(email, status) {
 }
 
 // ---- Extracao do payload do pagar.me (TODO(pagarme): confirmar campos na doc v5) ----
-function extractInfo(body) {
+function extractInfo(body, type) {
+  type = type || '';
   const d = (body && body.data) || body || {};
+  const sub = d.subscription || (d.invoice && d.invoice.subscription) || (type.indexOf('subscription') >= 0 ? d : null);
+  const inv = d.invoice || (type.indexOf('invoice') >= 0 ? d : null);
   const customer = d.customer
+    || (sub && sub.customer)
+    || (inv && inv.customer)
     || (Array.isArray(d.charges) && d.charges[0] && d.charges[0].customer)
-    || (d.subscription && d.subscription.customer)
     || (d.order && d.order.customer)
     || {};
+  const cycle = (sub && (sub.current_cycle || sub.cycle)) || d.current_cycle || d.cycle || (inv && inv.cycle) || null;
   return {
     email: String(customer.email || '').toLowerCase(),
     name: customer.name || '',
     customerId: customer.id || '',
-    orderId: d.id || d.order_id || (d.order && d.order.id) || '',
-    subscriptionId: (d.subscription && d.subscription.id) || d.subscription_id || '',
-    nextBilling: d.next_billing_at || d.current_period_end
-      || (d.current_cycle && (d.current_cycle.end_at || d.current_cycle.billing_at)) || ''
+    orderId: (type.indexOf('order') >= 0 ? d.id : '') || d.order_id || (d.order && d.order.id) || '',
+    subscriptionId: (sub && sub.id) || d.subscription_id || (inv && inv.subscription_id) || '',
+    nextBilling: (sub && sub.next_billing_at) || d.next_billing_at || d.current_period_end
+      || (cycle && (cycle.end_at || cycle.billing_at)) || (inv && inv.due_at) || ''
   };
 }
 
@@ -213,7 +218,7 @@ module.exports = async function handler(req, res) {
   try { body = JSON.parse((raw && raw.toString('utf8')) || '{}'); } catch (e) { return json(res, 400, { ok: false, error: 'JSON invalido.' }); }
 
   const type = String(body.type || body.event || '').toLowerCase();
-  const info = extractInfo(body);
+  const info = extractInfo(body, type);
 
   try {
     if (PAID_EVENTS.indexOf(type) >= 0) {
