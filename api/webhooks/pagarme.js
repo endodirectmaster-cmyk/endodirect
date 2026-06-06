@@ -209,27 +209,41 @@ function extractInfo(body, type) {
 // Escopos validos conhecidos (mantenha em sincronia com endodirect_cursos)
 const CURSO_SLUGS = ['lipides', 'endoteem', 'endo_essencial'];
 
-// Decide o escopo do acesso a partir do payload.
+// Normaliza um token de escopo (ex.: 'endoteem' -> 'curso:endoteem').
+function normScope(s) {
+  s = String(s || '').trim().toLowerCase();
+  if (!s) return '';
+  if (s === 'plano' || s === 'assinatura') return 'plano';
+  if (s.indexOf('curso:') === 0) return CURSO_SLUGS.indexOf(s.slice(6)) >= 0 ? s : '';
+  if (CURSO_SLUGS.indexOf(s) >= 0) return 'curso:' + s;
+  return '';
+}
+
+// Decide o(s) escopo(s) do acesso a partir do payload. Combos usam
+// metadata.scope com lista separada por virgula, ex.: 'plano,curso:endoteem'.
 // Prioridade: metadata.scope -> assinatura => 'plano' -> heuristica no nome do item.
-function pickScope(info) {
-  let s = info.scopeHint;
-  if (s) {
-    if (s === 'plano' || s === 'assinatura') return 'plano';
-    if (s.indexOf('curso:') === 0) return CURSO_SLUGS.indexOf(s.slice(6)) >= 0 ? s : '';
-    if (CURSO_SLUGS.indexOf(s) >= 0) return 'curso:' + s;
+function pickScopes(info) {
+  const out = [];
+  if (info.scopeHint) {
+    info.scopeHint.split(/[,;]+/).forEach((tok) => {
+      const n = normScope(tok);
+      if (n && out.indexOf(n) < 0) out.push(n);
+    });
   }
-  if (info.subscriptionId) return 'plano';
+  if (out.length) return out;
+  if (info.subscriptionId) return ['plano'];
   const t = info.itemText || '';
-  if (/endoteem|teem/.test(t)) return 'curso:endoteem';
-  if (/essencial/.test(t)) return 'curso:endo_essencial';
-  if (/l[ií]pid/.test(t)) return 'curso:lipides';
-  if (/plano|assinatura|recorr/.test(t)) return 'plano';
-  return ''; // desconhecido -> nao provisiona (evita liberar errado)
+  if (/endoteem|teem/.test(t)) return ['curso:endoteem'];
+  if (/essencial/.test(t)) return ['curso:endo_essencial'];
+  if (/l[ií]pid/.test(t)) return ['curso:lipides'];
+  if (/plano|assinatura|recorr/.test(t)) return ['plano'];
+  return []; // desconhecido -> nao provisiona (evita liberar errado)
 }
 
 function computePeriodEnd(scope, info) {
-  // Curso avulso: acesso fixo (padrao 365 dias).
-  if (scope && scope.indexOf('curso:') === 0) {
+  // Curso avulso, OU plano comprado avulso (combo/one-time, sem assinatura
+  // recorrente): acesso fixo (padrao 365 dias).
+  if ((scope && scope.indexOf('curso:') === 0) || !info.subscriptionId) {
     return new Date(Date.now() + AVULSO_DIAS * 86400000).toISOString();
   }
   // Plano recorrente: usa a proxima cobranca, se vier no payload.
@@ -273,39 +287,47 @@ module.exports = async function handler(req, res) {
   const info = extractInfo(body, type);
 
   try {
-    const scope = pickScope(info);
+    const scopes = pickScopes(info);
 
     if (PAID_EVENTS.indexOf(type) >= 0) {
       if (!info.email) return json(res, 200, { ok: true, skipped: 'payload sem e-mail do cliente', type });
-      if (!scope) return json(res, 200, { ok: true, skipped: 'escopo nao identificado (defina metadata.scope no link/produto)', type });
-      const tipo = scope.indexOf('curso:') === 0 ? 'avulso' : 'recorrente';
+      if (!scopes.length) return json(res, 200, { ok: true, skipped: 'escopo nao identificado (defina metadata.scope no link/produto)', type });
       const user = await ensureUser(info.email, info.name);
-      await upsertAcesso({
-        user_id: user.id,
-        email: info.email,
-        scope: scope,
-        status: 'active',
-        tipo: tipo,
-        expires_at: computePeriodEnd(scope, info),
-        provider: 'pagarme',
-        provider_customer_id: info.customerId || null,
-        provider_subscription_id: info.subscriptionId || null,
-        provider_order_id: info.orderId || null,
-        updated_at: new Date().toISOString()
-      });
+      for (const scope of scopes) {
+        const tipo = (scope.indexOf('curso:') === 0 || !info.subscriptionId) ? 'avulso' : 'recorrente';
+        await upsertAcesso({
+          user_id: user.id,
+          email: info.email,
+          scope: scope,
+          status: 'active',
+          tipo: tipo,
+          expires_at: computePeriodEnd(scope, info),
+          provider: 'pagarme',
+          provider_customer_id: info.customerId || null,
+          provider_subscription_id: info.subscriptionId || null,
+          provider_order_id: info.orderId || null,
+          updated_at: new Date().toISOString()
+        });
+      }
       await sendSetPasswordEmail(info.email);
-      return json(res, 200, { ok: true, action: 'activated', email: info.email, scope: scope, tipo: tipo, authConfigured: auth !== null });
+      return json(res, 200, { ok: true, action: 'activated', email: info.email, scopes: scopes, authConfigured: auth !== null });
     }
 
     if (REVOKE_EVENTS.indexOf(type) >= 0) {
-      // Revoga so o escopo afetado, se identificavel; senao, todos do e-mail.
-      if (info.email) await setStatusByEmail(info.email, 'canceled', scope || undefined);
-      return json(res, 200, { ok: true, action: 'revoked', email: info.email, scope: scope || 'all', authConfigured: auth !== null });
+      // Revoga so o(s) escopo(s) afetado(s), se identificavel; senao, todos do e-mail.
+      if (info.email) {
+        if (scopes.length) { for (const s of scopes) await setStatusByEmail(info.email, 'canceled', s); }
+        else await setStatusByEmail(info.email, 'canceled');
+      }
+      return json(res, 200, { ok: true, action: 'revoked', email: info.email, scopes: scopes.length ? scopes : 'all', authConfigured: auth !== null });
     }
 
     if (PASTDUE_EVENTS.indexOf(type) >= 0) {
-      if (info.email) await setStatusByEmail(info.email, 'past_due', scope || undefined);
-      return json(res, 200, { ok: true, action: 'past_due', email: info.email, scope: scope || 'all', authConfigured: auth !== null });
+      if (info.email) {
+        if (scopes.length) { for (const s of scopes) await setStatusByEmail(info.email, 'past_due', s); }
+        else await setStatusByEmail(info.email, 'past_due');
+      }
+      return json(res, 200, { ok: true, action: 'past_due', email: info.email, scopes: scopes.length ? scopes : 'all', authConfigured: auth !== null });
     }
 
     return json(res, 200, { ok: true, ignored: type || '(sem type)', authConfigured: auth !== null });
