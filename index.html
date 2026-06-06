@@ -1519,6 +1519,8 @@ function applyStatePayload(payload){
   if(Array.isArray(payload.adm_cursos))admCursos=payload.adm_cursos;
   if(Array.isArray(payload.adm_estudantes))admEstudantes=normalizeAdmEstudantes(payload.adm_estudantes);
   if(payload.adm_perfil&&typeof payload.adm_perfil==='object')admPerfil=payload.adm_perfil;
+  if(Array.isArray(payload.acessos))userAcessos=payload.acessos;
+  if(Array.isArray(payload.cursos))catalogoCursos=payload.cursos;
   REMOTE_STATE_KEYS.forEach(function(k){if(payload[k]!==undefined)lsSet(k,payload[k]);});
 }
 function refreshAfterRemoteState(){
@@ -1533,6 +1535,7 @@ function refreshAfterRemoteState(){
   try{updateProvaInfo();}catch(e){}
   try{renderSavedCrono();}catch(e){}
   try{renderNoteList();}catch(e){}
+  try{markLockedNavItems();}catch(e){}
   try{if(currentUser&&currentUser.role==='admin')renderAdmSec(admCurrentSec||'analytics');}catch(e){}
 }
 function canUseRemoteState(){
@@ -2164,7 +2167,75 @@ function toggleAdminNav(){
   var b=document.getElementById('adm-menu-btn');
   if(b)b.setAttribute('aria-expanded',open?'true':'false');
 }
+// ── ACESSO / GATING (Etapa 4) ──
+// Escopos ativos do aluno (ex.: ['plano','curso:lipides']). Admin = acesso total.
+var userAcessos=[];
+var catalogoCursos=[];
+// Escopo exigido para ABRIR cada painel. Ausente = livre para qualquer membro.
+// (o banco de questoes e gerido dentro do painel 'quest', sub-aba Provas.)
+var PANEL_SCOPE={
+  sim:'plano', simfull:'plano', flash:'plano', mmap:'plano', podcast:'plano'
+};
+function isAdminUser(){return !!(currentUser&&currentUser.role==='admin');}
+function hasScope(scope){return !scope||isAdminUser()||userAcessos.indexOf(scope)>=0;}
+function canSeePanel(id){return hasScope(PANEL_SCOPE[id]||null);}
+function canAccessBanco(){return hasScope('curso:endoteem');}
+function scopeNome(scope){
+  if(scope==='plano')return'a Assinatura';
+  if(scope==='curso:endoteem')return'o curso EndoTEEM';
+  if(scope==='curso:lipides')return'o curso de Lípides';
+  if(scope==='curso:endo_essencial')return'o curso Endocrinologia Essencial';
+  return'um plano';
+}
+function ensureLockedPanel(){
+  var p=document.getElementById('panel-locked');
+  if(p)return p;
+  var ref=document.getElementById('panel-dash');
+  p=document.createElement('div');p.className='panel';p.id='panel-locked';
+  if(ref&&ref.parentNode)ref.parentNode.appendChild(p);else document.body.appendChild(p);
+  return p;
+}
+function showLockedPanel(id){
+  document.querySelectorAll('.panel').forEach(function(p){p.classList.remove('on');});
+  var p=ensureLockedPanel();p.classList.add('on');
+  document.querySelectorAll('.sb-item[data-p]').forEach(function(b){b.classList.toggle('on',b.dataset.p===id);});
+  var bc=document.getElementById('tb-bc');if(bc)bc.textContent=PANEL_LABELS[id]||id;
+  var scope=PANEL_SCOPE[id];var nome=scopeNome(scope);
+  var label=PANEL_LABELS[id]||'este recurso';
+  var via=scope==='plano'?'assinando o Endodirect':'adquirindo '+nome;
+  p.innerHTML='<div class="breadcrumb">'+esc(label)+' <b>/ Bloqueado</b></div>'
+    +'<div class="ph"><h1>🔒 '+esc(label)+'</h1></div>'
+    +'<div class="pc"><div class="card" style="max-width:520px;margin:1.2rem auto;text-align:center;padding:1.9rem 1.5rem">'
+    +'<div style="font-size:2.3rem;margin-bottom:.5rem">🔒</div>'
+    +'<div style="font-size:1.02rem;font-weight:800;color:var(--navy);margin-bottom:.4rem">Recurso de '+esc(nome)+'</div>'
+    +'<p style="font-size:.84rem;color:var(--t2);line-height:1.6;margin:.3rem 0 1.2rem">Libere <b>'+esc(label)+'</b> '+esc(via)+'.</p>'
+    +'<button class="btn btn-primary" id="locked-cta" style="justify-content:center">Ver planos e cursos</button>'
+    +'</div></div>';
+  var btn=document.getElementById('locked-cta');
+  if(btn)btn.addEventListener('click',function(){showAssineScreen((currentUser&&currentUser.email)||'');});
+  closeMobileNav();
+}
+function markLockedNavItems(){
+  document.querySelectorAll('#sb-aluno .sb-item[data-p]').forEach(function(b){
+    var locked=!canSeePanel(b.dataset.p);
+    var has=b.querySelector('.sb-lock');
+    if(locked&&!has){var s=document.createElement('span');s.className='sb-lock';s.textContent='🔒';s.style.marginLeft='auto';s.style.opacity='.65';s.style.fontSize='.68rem';b.appendChild(s);}
+    else if(!locked&&has){has.remove();}
+  });
+}
+function showBancoLock(show){
+  var el=document.getElementById('q-banco-lock');
+  if(!el){
+    var ref=document.getElementById('q-panel-provas');
+    el=document.createElement('div');el.id='q-banco-lock';el.className='gen-box';el.style.display='none';
+    el.innerHTML='<div style="text-align:center;padding:1.1rem .5rem"><div style="font-size:2.1rem;margin-bottom:.4rem">🔒</div><div style="font-size:.96rem;font-weight:800;color:var(--navy);margin-bottom:.35rem">Banco de Questões</div><p style="font-size:.83rem;color:var(--t2);line-height:1.6;margin:.2rem auto 1rem;max-width:380px">O acervo completo de questões de provas faz parte do <b>curso EndoTEEM</b>.</p><button class="btn btn-primary" id="q-banco-buy" style="justify-content:center">Conhecer o EndoTEEM</button></div>';
+    if(ref&&ref.parentNode)ref.parentNode.insertBefore(el,ref.nextSibling);
+    var bb=el.querySelector('#q-banco-buy');if(bb)bb.addEventListener('click',function(){showAssineScreen((currentUser&&currentUser.email)||'');});
+  }
+  el.style.display=show?'block':'none';
+}
 function goPanel(id){
+  if(!canSeePanel(id)){showLockedPanel(id);return;}
   document.querySelectorAll('.panel').forEach(function(p){p.classList.remove('on');});
   var el=document.getElementById('panel-'+id);
   if(el)el.classList.add('on');
@@ -4726,8 +4797,15 @@ document.addEventListener('DOMContentLoaded',function(){
 
   // QUESTÕES
   document.querySelectorAll('[data-qmode]').forEach(function(b){b.addEventListener('click',function(){
-    document.querySelectorAll('[data-qmode]').forEach(function(x){x.classList.toggle('on',x===b);});
     var ia=b.dataset.qmode==='ia';
+    document.querySelectorAll('[data-qmode]').forEach(function(x){x.classList.toggle('on',x===b);});
+    if(!ia&&!canAccessBanco()){
+      document.getElementById('q-panel-ia').style.display='none';
+      document.getElementById('q-panel-provas').style.display='none';
+      showBancoLock(true);
+      return;
+    }
+    showBancoLock(false);
     document.getElementById('q-panel-ia').style.display=ia?'block':'none';
     document.getElementById('q-panel-provas').style.display=ia?'none':'block';
   });});
@@ -4784,7 +4862,15 @@ document.addEventListener('DOMContentLoaded',function(){
 
   // SIMULADO
   document.getElementById('btn-sf-start').addEventListener('click',startSimFull);
-  document.querySelectorAll('input[name="sf-fonte"]').forEach(function(r){r.addEventListener('change',function(){document.getElementById('sf-prova-filters').style.display=(r.value==='provas'||r.value==='misto')?'block':'none';if(r.value!=='ia')populateInst('sf-inst');});});
+  document.querySelectorAll('input[name="sf-fonte"]').forEach(function(r){r.addEventListener('change',function(){
+    if((r.value==='provas'||r.value==='misto')&&!canAccessBanco()){
+      var ia=document.querySelector('input[name="sf-fonte"][value="ia"]');if(ia)ia.checked=true;
+      document.getElementById('sf-prova-filters').style.display='none';
+      notify('Questões de provas fazem parte do curso EndoTEEM. Usando fonte IA.','err');
+      return;
+    }
+    document.getElementById('sf-prova-filters').style.display=(r.value==='provas'||r.value==='misto')?'block':'none';if(r.value!=='ia')populateInst('sf-inst');
+  });});
   var sfInst=document.getElementById('sf-inst');if(sfInst)sfInst.addEventListener('change',function(){populateAno('sf-ano-prova',sfInst.value);});
   document.getElementById('btn-sf-prev').addEventListener('click',function(){if(sfState.idx>0){sfState.idx--;renderSFQuestion();}});
   document.getElementById('btn-sf-next').addEventListener('click',function(){if(sfState.idx<sfState.total-1){sfState.idx++;renderSFQuestion();}});

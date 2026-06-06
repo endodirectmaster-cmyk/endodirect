@@ -357,30 +357,34 @@ $$;
 revoke all on function public.endodirect_is_active_member() from public;
 grant execute on function public.endodirect_is_active_member() to anon, authenticated;
 
+-- Conteudo do membro, ja filtrado por escopo (gating no servidor):
+--   provas (banco de questoes) -> curso:endoteem
+--   podcasts, mm_shared (mapas) -> plano
+--   adm_cursos (videoaulas)     -> qualquer membro (gating por curso vira na Etapa 2)
+--   adm_avisos                  -> todos (mural)
+-- O catalogo de cursos (vitrine) e os escopos ativos vao sempre.
 create or replace function public.endodirect_member_content()
 returns jsonb language sql security definer set search_path = public stable as $$
+  with a as (select public.endodirect_acessos_ativos() as scopes),
+       g as (select payload from public.endodirect_global_state where id = 'main')
   select jsonb_build_object(
-    'member',  public.endodirect_is_active_member(),
-    'acessos', to_jsonb(public.endodirect_acessos_ativos()),
-    -- vitrine: catalogo de cursos sempre visivel (sem conteudo, so metadados)
+    'member',  coalesce(array_length((select scopes from a), 1), 0) > 0,
+    'acessos', to_jsonb((select scopes from a)),
     'cursos',  coalesce((select jsonb_agg(jsonb_build_object(
                   'slug', slug, 'nome', nome, 'descricao', descricao,
                   'preco_avulso_cents', preco_avulso_cents,
                   'incluso_no_plano', incluso_no_plano, 'ativo', ativo, 'ordem', ordem
-                ) order by ordem, nome) from public.endodirect_cursos where ativo), '[]'::jsonb)
-  )
-  || case when public.endodirect_is_active_member() then
-       jsonb_build_object(
-         'provas',     coalesce(payload->'provas',     '[]'::jsonb),
-         'adm_avisos', coalesce(payload->'adm_avisos', '[]'::jsonb),
-         'podcasts',   coalesce(payload->'podcasts',   '[]'::jsonb),
-         'adm_cursos', coalesce(payload->'adm_cursos', '[]'::jsonb),
-         'mm_shared',  coalesce(payload->'mm_shared',  '[]'::jsonb)
-       )
-     else
-       jsonb_build_object('adm_avisos', coalesce(payload->'adm_avisos', '[]'::jsonb))
-     end
-  from public.endodirect_global_state where id = 'main';
+                ) order by ordem, nome) from public.endodirect_cursos where ativo), '[]'::jsonb),
+    'adm_avisos', coalesce((select payload->'adm_avisos' from g), '[]'::jsonb),
+    'provas',     case when 'curso:endoteem' = any((select scopes from a))
+                       then coalesce((select payload->'provas' from g), '[]'::jsonb) else '[]'::jsonb end,
+    'podcasts',   case when 'plano' = any((select scopes from a))
+                       then coalesce((select payload->'podcasts' from g), '[]'::jsonb) else '[]'::jsonb end,
+    'mm_shared',  case when 'plano' = any((select scopes from a))
+                       then coalesce((select payload->'mm_shared' from g), '[]'::jsonb) else '[]'::jsonb end,
+    'adm_cursos', case when coalesce(array_length((select scopes from a), 1), 0) > 0
+                       then coalesce((select payload->'adm_cursos' from g), '[]'::jsonb) else '[]'::jsonb end
+  );
 $$;
 revoke all on function public.endodirect_member_content() from public;
 grant execute on function public.endodirect_member_content() to anon, authenticated;
