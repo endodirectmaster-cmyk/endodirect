@@ -1214,7 +1214,7 @@ var GOOGLE_ADMIN_EMAILS=USERS.filter(function(u){return u.provider==='google'&&u
 //  - Cursos a parte (ex.: EndoTEEM): link avulso com metadata.scope
 //    "curso:endoteem". Combos: lista separada por virgula, ex.:
 //    { "scope": "plano:premium,curso:endoteem" }.
-var ENDO_TIER_BASE=['Simulador','Flashcards','Mapas mentais','Podcasts exclusivos'];
+var ENDO_TIER_BASE=['Banco de questões','Simulador','Flashcards','Mapas mentais','Podcasts exclusivos','Prescrição','Resumidor de artigos'];
 var ENDO_TIERS=[
   {key:'standard', nome:'Standard', preco:50, scope:'plano:standard', badge:'',
    cursos:['Curso de Hiperglicemia Hospitalar'], url:''},
@@ -2222,14 +2222,14 @@ function toggleAdminNav(){
 var userAcessos=[];
 var catalogoCursos=[];
 // Escopo exigido para ABRIR cada painel. Ausente = livre para qualquer membro.
-// (o banco de questoes e gerido dentro do painel 'quest', sub-aba Provas.)
+// (banco de questoes = sub-aba Provas em 'quest', liberada por qualquer pacote.)
 var PANEL_SCOPE={
-  sim:'plano', simfull:'plano', flash:'plano', mmap:'plano', podcast:'plano'
+  sim:'plano', simfull:'plano', flash:'plano', mmap:'plano', podcast:'plano', rx:'plano', art:'plano'
 };
 function isAdminUser(){return !!(currentUser&&currentUser.role==='admin');}
 function hasScope(scope){return !scope||isAdminUser()||userAcessos.indexOf(scope)>=0;}
 function canSeePanel(id){return hasScope(PANEL_SCOPE[id]||null);}
-function canAccessBanco(){return hasScope('curso:endoteem');}
+function canAccessBanco(){return hasScope('plano')||hasScope('curso:endoteem');}
 function scopeNome(scope){
   if(scope==='plano')return'Assinatura';
   if(scope==='curso:endoteem')return'curso EndoTEEM';
@@ -2253,8 +2253,8 @@ function showLockedPanel(id){
   var bc=document.getElementById('tb-bc');if(bc)bc.textContent=PANEL_LABELS[id]||id;
   var scope=PANEL_SCOPE[id];var nome=scopeNome(scope);
   var label=PANEL_LABELS[id]||'este recurso';
-  var titulo=scope==='plano'?'Recurso da Assinatura':('Recurso do '+nome);
-  var via=scope==='plano'?'assinando o Endodirect':'adquirindo o '+nome;
+  var titulo=scope==='plano'?'Recurso dos pacotes':('Recurso do '+nome);
+  var via=scope==='plano'?'adquirindo um pacote (Standard, Gold ou Premium)':'adquirindo o '+nome;
   p.innerHTML='<div class="breadcrumb">'+esc(label)+' <b>/ Bloqueado</b></div>'
     +'<div class="ph"><h1>🔒 '+esc(label)+'</h1></div>'
     +'<div class="pc"><div class="card" style="max-width:520px;margin:1.2rem auto;text-align:center;padding:1.9rem 1.5rem">'
@@ -2280,7 +2280,7 @@ function showBancoLock(show){
   if(!el){
     var ref=document.getElementById('q-panel-provas');
     el=document.createElement('div');el.id='q-banco-lock';el.className='gen-box';el.style.display='none';
-    el.innerHTML='<div style="text-align:center;padding:1.1rem .5rem"><div style="font-size:2.1rem;margin-bottom:.4rem">🔒</div><div style="font-size:.96rem;font-weight:800;color:var(--navy);margin-bottom:.35rem">Banco de Questões</div><p style="font-size:.83rem;color:var(--t2);line-height:1.6;margin:.2rem auto 1rem;max-width:380px">O acervo completo de questões de provas faz parte do <b>curso EndoTEEM</b>.</p><button class="btn btn-primary" id="q-banco-buy" style="justify-content:center">Conhecer o EndoTEEM</button></div>';
+    el.innerHTML='<div style="text-align:center;padding:1.1rem .5rem"><div style="font-size:2.1rem;margin-bottom:.4rem">🔒</div><div style="font-size:.96rem;font-weight:800;color:var(--navy);margin-bottom:.35rem">Banco de Questões</div><p style="font-size:.83rem;color:var(--t2);line-height:1.6;margin:.2rem auto 1rem;max-width:400px">O acervo de questões de provas é liberado ao adquirir <b>qualquer pacote</b> (Standard, Gold ou Premium).</p><button class="btn btn-primary" id="q-banco-buy" style="justify-content:center">Ver pacotes</button></div>';
     if(ref&&ref.parentNode)ref.parentNode.insertBefore(el,ref.nextSibling);
     var bb=el.querySelector('#q-banco-buy');if(bb)bb.addEventListener('click',function(){showAssineScreen((currentUser&&currentUser.email)||'');});
   }
