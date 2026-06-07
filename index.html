@@ -2600,7 +2600,18 @@ function renderSavedQ(){
   el.innerHTML='<div class="q-list">'+DB.q.map(function(q,i){return'<div><div class="q-row" data-qi="'+i+'" data-src="saved" data-mc="'+(q.type!=='disc')+'"><div class="q-row-top"><div class="q-stem-prev">'+esc((q.stem||'').substring(0,140))+'…</div><div style="display:flex;gap:3px;align-items:center">'+(q.code?'<span style="font-family:monospace;font-size:.59rem;font-weight:700;background:#f1f0ff;color:#6d5fd8;padding:1px 6px;border-radius:99px">'+esc(q.code)+'</span>':'')+diffTag(q.dificuldade)+'<button class="btn btn-ghost btn-sm" data-del-q="'+i+'" style="padding:2px 4px">✕</button></div></div></div><div id="qd-saved-'+i+'" style="display:none"></div></div>';}).join('')+'</div>';
 }
 var INST_PADRAO=[];
-function getInstList(){var s={};INST_PADRAO.forEach(function(i){s[i]=1;});provasDB.forEach(function(q){if(q.inst)s[q.inst]=1;});return Object.keys(s);}
+// Em DEGUSTAÇÃO o aluno só enxerga uma amostra FIXA de 100 questões da
+// instituição Endodirect. O banco do TEEM fica bloqueado (liberado apenas a
+// quem compra o EndoTEEM). Espelha a regra do member_content no cliente, para
+// valer também no login demo (que não passa pelo member_content).
+function degHash(s){var h=0,t=String(s||'');for(var i=0;i<t.length;i++){h=((h<<5)-h+t.charCodeAt(i))|0;}return h>>>0;}
+function provasPool(){
+  if(!isDegustacao())return provasDB;
+  var endo=provasDB.filter(function(q){return (q.inst||'')==='Endodirect';});
+  endo.sort(function(a,b){return degHash((a.code||'')+'|'+(a.stem||''))-degHash((b.code||'')+'|'+(b.stem||''));});
+  return endo.slice(0,100);
+}
+function getInstList(){var s={};if(!isDegustacao())INST_PADRAO.forEach(function(i){s[i]=1;});provasPool().forEach(function(q){if(q.inst)s[q.inst]=1;});return Object.keys(s);}
 function populateInst(selId){
   var sel=document.getElementById(selId);if(!sel)return;
   var cur=sel.value;
@@ -2609,12 +2620,13 @@ function populateInst(selId){
 }
 function populateAno(selId,inst){
   var sel=document.getElementById(selId);if(!sel)return;
-  var pool=inst?provasDB.filter(function(q){return q.inst===inst;}):provasDB;
+  var base=provasPool();
+  var pool=inst?base.filter(function(q){return q.inst===inst;}):base;
   var anos=pool.map(function(q){return q.ano;}).filter(function(v,i,a){return a.indexOf(v)===i;}).sort(function(a,b){return b-a;});
   sel.innerHTML='<option value="">Todos</option>'+anos.map(function(a){return'<option value="'+a+'">'+a+'</option>';}).join('');
 }
 function filterProvas(inst,ano,area,type){
-  return provasDB.filter(function(q){
+  return provasPool().filter(function(q){
     var isDisc=(q.type==='disc');
     var typeOk=!type||(type==='disc'?isDisc:!isDisc);
     return(!inst||q.inst===inst)&&(!ano||String(q.ano)===String(ano))&&(!area||q.area===area)&&typeOk;
@@ -2627,7 +2639,7 @@ function updateProvaInfo(){
   var type=(document.getElementById('q-ptype')||{}).value||'';
   populateAno('q-ano',inst);
   var n=filterProvas(inst,ano,area,type).length;
-  var total=provasDB.length;
+  var total=provasPool().length;
   var el=document.getElementById('q-prova-info');
   if(el){
     if(isDegustacao()){
