@@ -603,7 +603,7 @@ textarea{resize:vertical;line-height:1.6}
 <div id="assine-screen" style="display:none;position:fixed;inset:0;z-index:500;background:#0f1115;align-items:center;justify-content:center;padding:1.2rem;overflow:auto">
   <div style="max-width:1040px;width:100%;background:#15171c;border:1px solid #2a2f3a;border-radius:18px;padding:2rem 1.8rem;text-align:center;box-shadow:0 24px 60px rgba(0,0,0,.45)">
     <div style="font-size:1.5rem;font-weight:800;color:#fff;margin-bottom:.35rem">Endodirect — Pacotes</div>
-    <p style="font-size:.86rem;color:#9aa3b2;line-height:1.6;margin:.2rem auto 1.4rem;max-width:620px">A conta <b style="color:#cbd2dd" id="assine-email"></b> ainda não tem acesso ativo. Quanto maior o pacote, mais cursos inclusos — mesmo conjunto de ferramentas em todos.</p>
+    <p style="font-size:.86rem;color:#9aa3b2;line-height:1.6;margin:.2rem auto 1.4rem;max-width:620px">A conta <b style="color:#cbd2dd" id="assine-email"></b> ainda não tem acesso ativo. Adquira seu pacote e desbloqueie todos os benefícios da plataforma.</p>
     <div id="assine-plans" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:1rem;margin-bottom:1.1rem;align-items:stretch"></div>
     <button class="btn" id="assine-logout" style="width:auto;min-width:160px;justify-content:center;background:transparent;color:#9aa3b2;border:1px solid #2a2f3a">Sair</button>
   </div>
@@ -1499,8 +1499,12 @@ function persistPodcasts(){lsSet('podcasts',podcasts);queueRemoteStateSave();}
 function userStatePayload(){
   return{q:DB.q,fc:DB.fc,mm:DB.mm,notes:DB.notes,crono:DB.crono,sf_results:DB.sf_results,perf:DB.perf,user_profile:lsGet('user_profile')};
 }
+function isRadarAuto(a){return !!(a&&a.auto&&String(a.sourceId||'').indexOf('pubmed:')===0);}
 function globalStatePayload(){
-  return{provas:provasDB,adm_avisos:admAvisos,adm_questoes:admQuestoes,podcasts:podcasts,adm_cursos:admCursos,adm_estudantes:admEstudantes,adm_perfil:admPerfil,mm_shared:sharedMM};
+  // O radar (auto/PubMed) mora em radar_avisos (gravado só pelo cron); o
+  // professor grava apenas os avisos manuais em adm_avisos. A leitura
+  // (member_content/public_content) mescla os dois.
+  return{provas:provasDB,adm_avisos:admAvisos.filter(function(a){return !isRadarAuto(a);}),adm_questoes:admQuestoes,podcasts:podcasts,adm_cursos:admCursos,adm_estudantes:admEstudantes,adm_perfil:admPerfil,mm_shared:sharedMM};
 }
 function currentStatePayload(){
   return Object.assign({},userStatePayload(),globalStatePayload());

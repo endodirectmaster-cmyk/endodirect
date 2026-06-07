@@ -210,7 +210,9 @@ function isMetaAnalysis(article) {
 }
 
 function existingMuralKeys(payload) {
-  const items = Array.isArray(payload.adm_avisos) ? payload.adm_avisos : [];
+  // Deduplica contra o radar automatico E contra os avisos manuais do professor.
+  const items = (Array.isArray(payload.radar_avisos) ? payload.radar_avisos : [])
+    .concat(Array.isArray(payload.adm_avisos) ? payload.adm_avisos : []);
   const keys = new Set();
   items.forEach((item) => {
     if (!item) return;
@@ -326,13 +328,13 @@ async function saveGlobalPayload(serviceKey, payload) {
 
 function mergeMuralItems(payload, incoming) {
   const now = Date.now();
-  const current = Array.isArray(payload.adm_avisos) ? payload.adm_avisos : [];
+  // O radar tem campo proprio (radar_avisos); nunca toca em adm_avisos (professor).
+  const current = Array.isArray(payload.radar_avisos) ? payload.radar_avisos : [];
   const keyOf = (item) => item && (item.sourceId || item.link || item.titulo);
   const incomingByKey = new Map(incoming.map((item) => [keyOf(item), item]).filter(([key]) => key));
   const existingKeys = new Set(current.map(keyOf).filter(Boolean));
   const fresh = incoming.filter((item) => !existingKeys.has(item.sourceId) && !existingKeys.has(item.link) && !existingKeys.has(item.titulo));
   const retained = current.filter((item) => {
-    if (!(item && item.auto && String(item.sourceId || '').startsWith('pubmed:'))) return true;
     const itemTime = Number(item.at) || 0;
     return now - itemTime < AUTO_ITEM_TTL_MS;
   }).map((item) => {
@@ -340,7 +342,7 @@ function mergeMuralItems(payload, incoming) {
     return replacement ? { ...item, ...replacement, at: item.at || replacement.at } : item;
   });
   return {
-    payload: { ...payload, adm_avisos: [...fresh, ...retained].slice(0, MAX_MURAL_ITEMS) },
+    payload: { ...payload, radar_avisos: [...fresh, ...retained].slice(0, MAX_MURAL_ITEMS) },
     fresh
   };
 }

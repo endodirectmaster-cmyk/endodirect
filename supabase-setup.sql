@@ -152,7 +152,7 @@ set search_path = public
 as $$
   select jsonb_build_object(
     'provas',     coalesce(payload->'provas',     '[]'::jsonb),
-    'adm_avisos', coalesce(payload->'adm_avisos', '[]'::jsonb),
+    'adm_avisos', coalesce(payload->'adm_avisos', '[]'::jsonb) || coalesce(payload->'radar_avisos', '[]'::jsonb),
     'podcasts',   coalesce(payload->'podcasts',   '[]'::jsonb),
     'adm_cursos', coalesce(payload->'adm_cursos', '[]'::jsonb)
   )
@@ -413,7 +413,7 @@ returns jsonb language sql security definer set search_path = public stable as $
                   'preco_avulso_cents', preco_avulso_cents, 'tier', tier,
                   'incluso_no_plano', incluso_no_plano, 'ativo', ativo, 'ordem', ordem
                 ) order by ordem, nome) from public.endodirect_cursos where ativo), '[]'::jsonb),
-    'adm_avisos', coalesce((select payload->'adm_avisos' from g), '[]'::jsonb),
+    'adm_avisos', coalesce((select payload->'adm_avisos' from g), '[]'::jsonb) || coalesce((select payload->'radar_avisos' from g), '[]'::jsonb),
     'provas',     case when (select scopes from a) @> array['curso:endoteem']
                        then coalesce((select payload->'provas' from g), '[]'::jsonb) else '[]'::jsonb end,
     'podcasts',   case when (select scopes from a) @> array['plano']
