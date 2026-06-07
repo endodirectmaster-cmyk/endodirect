@@ -1219,7 +1219,11 @@ var CALCS=[
 ];
 
 var USERS=[
-  {email:'aluno@endodirect.com.br',pass:'Aluno@2026',name:'Aluno Endodirect',role:'aluno',sub:'Residente'},
+  // Demo 1: aluno real em modo DEGUSTAÇÃO (sem pacote) — vê as degustações.
+  {email:'aluno@endodirect.com.br',pass:'Aluno@2026',name:'Aluno Endodirect',role:'aluno',sub:'Residente',acessos:[]},
+  // Demo 2: aluno com acesso TOTAL (todos os pacotes e cursos) — testa o
+  // painel do estudante completo, sem limites de degustação.
+  {email:'alunopro@endodirect.com.br',pass:'AlunoPro@2026',name:'Aluno Premium',role:'aluno',sub:'Residente',acessos:['plano','curso:endoteem','curso:lipides','curso:hiperglicemia','curso:endo_essencial']},
   {email:'admin@endodirect.com.br',pass:'Admin@2026',name:'Administrador',role:'admin',sub:'Professor'},
   {email:'nakamura.epm79@gmail.com',pass:null,name:'Nakamura',role:'admin',sub:'Professor',provider:'google'},
   {email:'rodolphomend@gmail.com',pass:null,name:'Rodolpho Mendonca',role:'admin',sub:'Professor',provider:'google'},
@@ -2044,6 +2048,10 @@ function doLogin(u){
     lsSet('adm_perfil',admPerfil);
   }
   if(u.role==='aluno'){
+    // Contas demo carregam os acessos embutidos (define se é degustação ou
+    // acesso total). Alunos reais não têm esse campo: os acessos vêm do
+    // member_content no hydrate.
+    if(Array.isArray(u.acessos))userAcessos=u.acessos.slice();
     var prof=lsGet('user_profile');
     if(!prof){openOnboard();return;}
     currentUser.sub=prof.perfil;
