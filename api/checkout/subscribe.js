@@ -17,9 +17,9 @@
 //
 // VARIAVEIS DE AMBIENTE (Vercel):
 //   PAGARME_SECRET_KEY               (sk_test_... / sk_live_...) — NUNCA no front
-//   PAGARME_TIER_STANDARD_AMOUNT     mensal em CENTAVOS (padrao 4500 = R$45)
-//   PAGARME_TIER_GOLD_AMOUNT         mensal em CENTAVOS (padrao 6000 = R$60)
-//   PAGARME_TIER_PREMIUM_AMOUNT      mensal em CENTAVOS (padrao 8500 = R$85)
+//   PAGARME_TIER_STANDARD_AMOUNT     mensal em CENTAVOS (padrao 5000 = R$50)
+//   PAGARME_TIER_GOLD_AMOUNT         mensal em CENTAVOS (padrao 7000 = R$70)
+//   PAGARME_TIER_PREMIUM_AMOUNT      mensal em CENTAVOS (padrao 9000 = R$90)
 //   SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY (ou SUPABASE_SECRET_KEY) — ja existem
 //
 // OBS: alguns nomes de campos da API v5 estao marcados com TODO(pagarme)
@@ -31,11 +31,11 @@ const SECRET_KEY = process.env.PAGARME_SECRET_KEY || '';
 
 // Pacotes (tiers) — assinatura MENSAL recorrente. Cada tier libera um nivel
 // de acesso (Standard < Gold < Premium). Valores em CENTAVOS, sobrescritiveis
-// por env: Standard R$45, Gold R$60, Premium R$85.
+// por env: Standard R$50, Gold R$70, Premium R$90.
 const SUB_PLANS = {
-  standard: { interval: 'month', interval_count: 1, amount: Number(process.env.PAGARME_TIER_STANDARD_AMOUNT || 4500), label: 'Pacote Standard', scope: 'plano:standard' },
-  gold:     { interval: 'month', interval_count: 1, amount: Number(process.env.PAGARME_TIER_GOLD_AMOUNT     || 6000), label: 'Pacote Gold',     scope: 'plano:gold' },
-  premium:  { interval: 'month', interval_count: 1, amount: Number(process.env.PAGARME_TIER_PREMIUM_AMOUNT  || 8500), label: 'Pacote Premium',  scope: 'plano:premium' }
+  standard: { interval: 'month', interval_count: 1, amount: Number(process.env.PAGARME_TIER_STANDARD_AMOUNT || 5000), label: 'Pacote Standard', scope: 'plano:standard' },
+  gold:     { interval: 'month', interval_count: 1, amount: Number(process.env.PAGARME_TIER_GOLD_AMOUNT     || 7000), label: 'Pacote Gold',     scope: 'plano:gold' },
+  premium:  { interval: 'month', interval_count: 1, amount: Number(process.env.PAGARME_TIER_PREMIUM_AMOUNT  || 9000), label: 'Pacote Premium',  scope: 'plano:premium' }
 };
 
 const SUPABASE_URL = process.env.SUPABASE_URL || process.env.NEXT_PUBLIC_SUPABASE_URL || 'https://auth.endodirect.com.br';
