@@ -1429,6 +1429,24 @@ function inferMuralSubspecialty(item){
 }
 function muralSubspecialty(item){return inferMuralSubspecialty(item||{});}
 function muralDisplayType(item){return normalizeMuralType((item&&item.tipo)||'',(item&&item.titulo)||'',(item&&item.texto)||'',((item&&item.fonte)||''));}
+// Relevância: peso da revista + peso do tipo de estudo (avisos urgentes no topo).
+function muralRelevance(a){
+  var src=normalizeMuralSource((a&&a.fonte)||'');
+  var sw={'The New England Journal of Medicine':10,'The Lancet Diabetes & Endocrinology':10,'Nature Reviews Endocrinology':9,'Diabetes Care':9,'Endocrine Reviews':9,'Journal of Clinical Endocrinology & Metabolism':8,'Obesity':7}[src]||5;
+  var t=muralDisplayType(a);
+  if(t==='Urgente')return 1000;
+  var tw={'Metanálise':4,'Ensaio Clínico':3,'Artigo de Revisão':2,'Estudo Original':1,'Estudo Genético':1,'Perspectiva Clínica':1}[t]||0;
+  return sw+tw;
+}
+function muralSortList(list,mode){
+  var arr=(list||[]).slice();
+  if(mode==='antigos')return arr.sort(function(a,b){return (Number(a.at)||0)-(Number(b.at)||0);});
+  if(mode==='relevantes')return arr.sort(function(a,b){var d=muralRelevance(b)-muralRelevance(a);return d!==0?d:(Number(b.at)||0)-(Number(a.at)||0);});
+  return arr.sort(function(a,b){return (Number(b.at)||0)-(Number(a.at)||0);});
+}
+function muralSortOptions(sel){
+  return [['novos','Mais novos'],['relevantes','Mais relevantes'],['antigos','Mais antigos']].map(function(o){return'<option value="'+o[0]+'"'+((sel||'novos')===o[0]?' selected':'')+'>'+o[1]+'</option>';}).join('');
+}
 function muralSubMeta(sub){
   var key=muralPlain(sub);
   if(key.indexOf('diabetes')>=0)return{card:' mural-card-diabetes',tag:'tag-sub-diabetes'};
@@ -3169,6 +3187,7 @@ function execNoteCmd(cmd){
 // ── MURAL ──
 var muralFilter='';
 var muralTipoFilter='';
+var muralSort='novos';
 function initMural(){
   var el=document.getElementById('mural-pc');if(!el)return;
   function dateBR(v){
@@ -3662,7 +3681,7 @@ function admSuporteHTML(){
 }
 
 function persistAdm(){lsSet('adm_avisos',admAvisos);lsSet('adm_questoes',admQuestoes);queueRemoteStateSave();}
-var admMuralShowForm=false,admMuralEdit=null,admMuralFilter='';
+var admMuralShowForm=false,admMuralEdit=null,admMuralFilter='',admMuralTipoFilter='',admMuralSort='novos';
 function admMuralSecHTML(){
   function dateBR(v){
     var d=new Date(v||Date.now());
@@ -4195,8 +4214,12 @@ function bindAdmSec(sec){
     });});
     var admMF=document.getElementById('adm-mural-filter');
     if(admMF){admMF.value=admMuralFilter;admMF.addEventListener('change',function(){admMuralFilter=this.value;renderAdmSec('mural');});}
+    var admMFt=document.getElementById('adm-mural-filter-tipo');
+    if(admMFt){admMFt.value=admMuralTipoFilter;admMFt.addEventListener('change',function(){admMuralTipoFilter=this.value;renderAdmSec('mural');});}
+    var admMFs=document.getElementById('adm-mural-filter-sort');
+    if(admMFs){admMFs.value=admMuralSort;admMFs.addEventListener('change',function(){admMuralSort=this.value;renderAdmSec('mural');});}
     var admMC=document.getElementById('adm-mural-clear');
-    if(admMC)admMC.addEventListener('click',function(){admMuralFilter='';renderAdmSec('mural');});
+    if(admMC)admMC.addEventListener('click',function(){admMuralFilter='';admMuralTipoFilter='';renderAdmSec('mural');});
     // preenche o form quando estiver editando
     if(admMuralShowForm&&admMuralEdit!==null){
       var av=admAvisos[admMuralEdit];
@@ -4600,7 +4623,7 @@ function muralNoticeCardHTML(a,admin){
     +'<div class="mural-date">'+dateBR(a.at)+'</div>'
     +'<div class="mural-text">'+esc(a.texto||'Comunicado publicado pela equipe Endodirect.')+'</div>'
     +'<div class="mural-source">Fonte: '+source+'</div>'
-    +(admin?'<div class="mural-card-actions"><button class="btn btn-outline btn-sm" data-adm-editav="'+i+'">Editar</button><button class="btn btn-outline btn-sm" data-adm-delav="'+i+'">Remover</button></div>':'')
+    +(admin?'<div class="mural-card-actions">'+(isRadarAuto(a)?'<button class="btn btn-outline btn-sm" data-adm-hideradar="'+esc(avisoKeyStr(a))+'">🙈 Ocultar</button>':'<button class="btn btn-outline btn-sm" data-adm-editav="'+i+'">Editar</button><button class="btn btn-outline btn-sm" data-adm-delav="'+i+'">Remover</button>')+'</div>':'')
     +'</article>';
 }
 initMural=function(){
@@ -4613,7 +4636,7 @@ initMural=function(){
   var tipoList=Object.keys(tiposSet).sort(function(a,b){return a.localeCompare(b,'pt-BR');});
   if(muralTipoFilter&&tipoList.indexOf(muralTipoFilter)<0)muralTipoFilter='';
   var tipoOpts='<option value="">Todos os tipos</option>'+tipoList.map(function(t){return'<option value="'+esc(t)+'">'+esc(t)+'</option>';}).join('');
-  var avisos=admAvisos.slice().sort(function(a,b){return (Number(b.at)||0)-(Number(a.at)||0);}).filter(function(a){
+  var avisos=muralSortList(admAvisos,muralSort).filter(function(a){
     return (!muralFilter||muralSubspecialty(a)===muralFilter)&&(!muralTipoFilter||muralDisplayType(a)===muralTipoFilter);
   });
   if(!muralFilter){
@@ -4627,11 +4650,12 @@ initMural=function(){
   var tema=muralFilter||(muralTipoFilter||'Todas as subespecialidades');
   el.innerHTML='<div class="mural-shell">'
     +'<section class="mural-hero"><div class="mural-eyebrow">Avisos para alunos</div><h2>Calendário, notícias e leituras essenciais</h2><p>Acompanhe prazos, artigos recentes, atualizações do curso e temas úteis para estudo dirigido. Os links abrem as fontes oficiais.</p></section>'
-    +'<section class="mural-filter-card"><div class="mural-filter-main"><label class="mural-filter-field"><span class="mural-filter-label">Subespecialidade</span><select class="mural-filter-select" id="mural-filter">'+opt.html+'</select></label><label class="mural-filter-field"><span class="mural-filter-label">Tipo de artigo</span><select class="mural-filter-select" id="mural-filter-tipo">'+tipoOpts+'</select></label><span class="mural-count-pill">'+esc(count)+'</span><span class="mural-theme-pill">'+esc(tema)+'</span></div><button class="btn btn-outline" id="mural-clear" type="button">Limpar filtro</button></section>'
+    +'<section class="mural-filter-card"><div class="mural-filter-main"><label class="mural-filter-field"><span class="mural-filter-label">Subespecialidade</span><select class="mural-filter-select" id="mural-filter">'+opt.html+'</select></label><label class="mural-filter-field"><span class="mural-filter-label">Tipo de artigo</span><select class="mural-filter-select" id="mural-filter-tipo">'+tipoOpts+'</select></label><label class="mural-filter-field"><span class="mural-filter-label">Ordenar</span><select class="mural-filter-select" id="mural-filter-sort">'+muralSortOptions(muralSort)+'</select></label><span class="mural-count-pill">'+esc(count)+'</span><span class="mural-theme-pill">'+esc(tema)+'</span></div><button class="btn btn-outline" id="mural-clear" type="button">Limpar filtro</button></section>'
     +'<section class="mural-grid">'+(avisos.length?avisos.map(function(a){return muralNoticeCardHTML(a,false);}).join(''):'<div class="empty mural-empty">Nenhum aviso encontrado para este filtro.</div>')+'</section>'
     +'</div>';
   var sel=document.getElementById('mural-filter');if(sel){sel.value=muralFilter;sel.addEventListener('change',function(){muralFilter=this.value;initMural();});}
   var selt=document.getElementById('mural-filter-tipo');if(selt){selt.value=muralTipoFilter;selt.addEventListener('change',function(){muralTipoFilter=this.value;initMural();});}
+  var sels=document.getElementById('mural-filter-sort');if(sels){sels.value=muralSort;sels.addEventListener('change',function(){muralSort=this.value;initMural();});}
   var clear=document.getElementById('mural-clear');if(clear)clear.addEventListener('click',function(){muralFilter='';muralTipoFilter='';initMural();});
 };
 function simRetry(promiseFactory){
@@ -4758,9 +4782,13 @@ admMuralSecHTML=function(){
   admAvisos=admAvisos.map(function(a){return normalizeMuralAviso(a,defaultMuralMap());});
   var opt=muralFilterOptions(admAvisos,admMuralFilter);
   admMuralFilter=opt.current;
-  var avisos=admAvisos.slice().reverse().filter(function(a){return !admMuralFilter||muralSubspecialty(a)===admMuralFilter;});
-  var count=admAvisos.length+' '+(admAvisos.length===1?'aviso':'avisos');
-  var tema=admMuralFilter||'Todas as subespecialidades';
+  var tiposSet={};admAvisos.forEach(function(a){tiposSet[muralDisplayType(a)]=1;});
+  var tipoList=Object.keys(tiposSet).sort(function(a,b){return a.localeCompare(b,'pt-BR');});
+  if(admMuralTipoFilter&&tipoList.indexOf(admMuralTipoFilter)<0)admMuralTipoFilter='';
+  var tipoFiltroOpts='<option value="">Todos os tipos</option>'+tipoList.map(function(t){return'<option value="'+esc(t)+'"'+(admMuralTipoFilter===t?' selected':'')+'>'+esc(t)+'</option>';}).join('');
+  var avisos=muralSortList(admAvisos,admMuralSort).filter(function(a){return (!admMuralFilter||muralSubspecialty(a)===admMuralFilter)&&(!admMuralTipoFilter||muralDisplayType(a)===admMuralTipoFilter);});
+  var count=avisos.length+' '+(avisos.length===1?'aviso':'avisos');
+  var tema=admMuralFilter||admMuralTipoFilter||'Todas as subespecialidades';
   var tipoOpts=['Aviso','Comunicado','Artigo de Revisão','Ensaio Clínico','Metanálise','Perspectiva Clínica','Estudo Genético','Estudo Original','Evento','Urgente'].map(function(t){return'<option>'+esc(t)+'</option>';}).join('');
   var subOpts=MURAL_SUBSPECIALTY_FILTERS.map(function(s){return'<option>'+esc(s)+'</option>';}).join('');
   var formHTML=admMuralShowForm?(
@@ -4775,7 +4803,7 @@ admMuralSecHTML=function(){
   +'<div class="adm-pc">'
   +formHTML
   +'<div class="card" style="margin-bottom:1.1rem"><div style="display:flex;align-items:flex-start;justify-content:space-between;gap:1rem;flex-wrap:wrap"><div style="flex:1;min-width:240px"><div style="font-size:.62rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--t3);margin-bottom:.3rem">Gestão do mural dos alunos</div><div style="font-size:1.15rem;font-weight:700;color:var(--tx);margin-bottom:.35rem">Edite avisos, notícias e comunicados importantes</div><div style="font-size:.79rem;color:var(--t2);line-height:1.55">Os cards abaixo alimentam a aba Mural do estudante. Use etiquetas por tipo de conteúdo e subespecialidade para organizar leituras e atualizações.</div></div><button class="btn btn-outline" id="btn-adm-mural-preview">👁 Pré-visualizar como aluno</button></div></div>'
-  +'<section class="mural-filter-card"><div class="mural-filter-main"><label class="mural-filter-field"><span class="mural-filter-label">Subespecialidade</span><select class="mural-filter-select" id="adm-mural-filter">'+opt.html+'</select></label><span class="mural-count-pill">'+esc(count)+'</span><span class="mural-theme-pill">'+esc(tema)+'</span></div><button class="btn btn-outline" id="adm-mural-clear" type="button">Limpar filtro</button></section>'
+  +'<section class="mural-filter-card"><div class="mural-filter-main"><label class="mural-filter-field"><span class="mural-filter-label">Subespecialidade</span><select class="mural-filter-select" id="adm-mural-filter">'+opt.html+'</select></label><label class="mural-filter-field"><span class="mural-filter-label">Tipo de artigo</span><select class="mural-filter-select" id="adm-mural-filter-tipo">'+tipoFiltroOpts+'</select></label><label class="mural-filter-field"><span class="mural-filter-label">Ordenar</span><select class="mural-filter-select" id="adm-mural-filter-sort">'+muralSortOptions(admMuralSort)+'</select></label><span class="mural-count-pill">'+esc(count)+'</span><span class="mural-theme-pill">'+esc(tema)+'</span></div><button class="btn btn-outline" id="adm-mural-clear" type="button">Limpar filtro</button></section>'
   +'<div class="mural-grid mural-admin-grid" id="adm-av-list">'+(avisos.length?avisos.map(function(a){return muralNoticeCardHTML(a,true);}).join(''):'<div class="empty mural-empty">'+(admAvisos.length?'Nenhum aviso encontrado para este filtro.':'Nenhum aviso publicado. Clique em "+ Novo aviso" para começar.')+'</div>')+'</div>'
   +'</div>';
 };
