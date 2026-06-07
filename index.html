@@ -382,6 +382,16 @@ textarea{resize:vertical;line-height:1.6}
 .art-drop:hover,.art-drop.drag{border-color:var(--blue);background:var(--blue-l)}
 .chat-wrap{display:flex;flex-direction:column;height:100%;overflow:hidden}
 .chat-msgs{flex:1;overflow-y:auto;padding:.9rem 1.3rem;display:flex;flex-direction:column;gap:.65rem}
+.ai-md h3{font-size:.86rem;font-weight:700;margin:.55rem 0 .3rem;color:var(--navy)}
+.ai-md p{margin:.35rem 0}
+.ai-md ul{margin:.3rem 0 .3rem 1.1rem;padding:0}
+.ai-md li{margin:.15rem 0}
+.ai-md hr{border:0;border-top:1px solid var(--bd);margin:.6rem 0}
+.ai-md blockquote{margin:.4rem 0;padding:.35rem .7rem;border-left:3px solid var(--blue);background:var(--blue-l);border-radius:6px;font-size:.95em}
+.ai-md table{border-collapse:collapse;width:100%;margin:.45rem 0;font-size:.92em;display:block;overflow-x:auto}
+.ai-md th,.ai-md td{border:1px solid var(--bd);padding:.32rem .5rem;text-align:left;vertical-align:top}
+.ai-md th{background:var(--s2,#f1f5f9);font-weight:700}
+.ai-md code{background:var(--s2,#f1f5f9);padding:.05rem .3rem;border-radius:4px;font-size:.92em}
 .chat-bubble{max-width:72%;border-radius:14px;padding:.6rem .88rem;font-size:.79rem;line-height:1.6}
 .chat-bubble.user{background:var(--blue);color:#fff;align-self:flex-end;border-bottom-right-radius:4px}
 .chat-bubble.ai{background:var(--surface);border:1px solid var(--bd);color:var(--tx);align-self:flex-start;border-bottom-left-radius:4px}
@@ -1529,7 +1539,10 @@ var podcasts=lsGet('podcasts')||[];
 function persistPodcasts(){lsSet('podcasts',podcasts);queueRemoteStateSave();}
 
 function userStatePayload(){
-  return{q:DB.q,fc:DB.fc,mm:DB.mm,notes:DB.notes,crono:DB.crono,sf_results:DB.sf_results,perf:DB.perf,user_profile:lsGet('user_profile')};
+  // adm_perfil é PESSOAL (vai no app_state do próprio admin, não no global).
+  var p={q:DB.q,fc:DB.fc,mm:DB.mm,notes:DB.notes,crono:DB.crono,sf_results:DB.sf_results,perf:DB.perf,user_profile:lsGet('user_profile')};
+  if(currentUser&&currentUser.role==='admin')p.adm_perfil=admPerfil;
+  return p;
 }
 function isRadarAuto(a){return !!(a&&a.auto&&String(a.sourceId||'').indexOf('pubmed:')===0);}
 function avisoKeyStr(a){return String((a&&(a.sourceId||a.link||a.titulo))||'');}
@@ -1537,7 +1550,7 @@ function globalStatePayload(){
   // O radar (auto/PubMed) mora em radar_avisos (gravado só pelo cron); o
   // professor grava apenas os avisos manuais em adm_avisos. A leitura
   // (member_content/public_content) mescla os dois.
-  return{provas:provasDB,adm_avisos:admAvisos.filter(function(a){return !isRadarAuto(a);}),radar_avisos:radarAvisos,radar_hidden:radarHidden,adm_questoes:admQuestoes,podcasts:podcasts,adm_cursos:admCursos,adm_estudantes:admEstudantes,adm_perfil:admPerfil,mm_shared:sharedMM};
+  return{provas:provasDB,adm_avisos:admAvisos.filter(function(a){return !isRadarAuto(a);}),radar_avisos:radarAvisos,radar_hidden:radarHidden,adm_questoes:admQuestoes,podcasts:podcasts,adm_cursos:admCursos,adm_estudantes:admEstudantes,mm_shared:sharedMM};
 }
 function currentStatePayload(){
   return Object.assign({},userStatePayload(),globalStatePayload());
@@ -1694,7 +1707,7 @@ function callAIJson(sys,usr,maxTok,retries){
 }
 function mdInline(s){return esc(s).replace(/\*\*(.+?)\*\*/g,'<strong>$1</strong>').replace(/`([^`]+)`/g,'<code>$1</code>');}
 function isMarkdownTableSep(line){return /^\s*\|?[\s:-]+\|[\s|:-]*$/.test(line||'');}
-function formatAIReport(md){
+function mdToHtml(md){
   var lines=String(md||'').replace(/\r/g,'').split('\n');
   var out=[],list=[];
   function flushList(){
@@ -1719,14 +1732,18 @@ function formatAIReport(md){
       }
       continue;
     }
-    if(/^#{2,4}\s+/.test(line)){flushList();out.push('<h3>'+mdInline(line.replace(/^#{2,4}\s+/,''))+'</h3>');continue;}
+    if(/^>\s?/.test(line)){flushList();out.push('<blockquote>'+mdInline(line.replace(/^>\s?/,''))+'</blockquote>');continue;}
+    if(/^#{1,4}\s+/.test(line)){flushList();out.push('<h3>'+mdInline(line.replace(/^#{1,4}\s+/,''))+'</h3>');continue;}
     if(/^[-*]\s+/.test(line)){list.push(line.replace(/^[-*]\s+/,''));continue;}
     if(/^\d+\.\s+/.test(line)){list.push(line.replace(/^\d+\.\s+/,''));continue;}
     flushList();
     out.push('<p>'+mdInline(line)+'</p>');
   }
   flushList();
-  return '<div class="card ai-report-card"><div class="card-head"><span class="card-title">Avaliacao da IA</span></div><div class="ai-report">'+out.join('')+'</div></div>';
+  return out.join('');
+}
+function formatAIReport(md){
+  return '<div class="card ai-report-card"><div class="card-head"><span class="card-title">Avaliacao da IA</span></div><div class="ai-report">'+mdToHtml(md)+'</div></div>';
 }
 function normImportKey(s){return String(s||'').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/[^a-z0-9]+/g,'_').replace(/^_+|_+$/g,'');}
 function cleanImportText(v){
@@ -1954,6 +1971,13 @@ function doLogin(u){
   currentUser=u;
   remoteStateLoaded=false;
   remoteStateWarned=false;
+  if(u.role==='admin'){
+    // Perfil do professor é PESSOAL: inicia pela identidade da sessão para
+    // nunca mostrar dados de outro admin (corrige vazamento). O perfil salvo
+    // do próprio admin é restaurado no hydrate do app_state.
+    admPerfil={nome:u.name||'Professor',email:(u.email&&u.email.indexOf('@')>=0)?u.email:'',contato:'',instituicao:'',cpf:''};
+    lsSet('adm_perfil',admPerfil);
+  }
   if(u.role==='aluno'){
     var prof=lsGet('user_profile');
     if(!prof){openOnboard();return;}
@@ -3553,7 +3577,7 @@ function sendChat(text){
   loading.innerHTML='<div class="chat-name">Endodirect IA</div>'+ldHTML();
   callAI('Você é um assistente médico especializado em endocrinologia e metabologia, respondendo a médicos no Brasil. Seja preciso, baseado em evidências, e cite diretrizes quando relevante (SBEM, SBD, ADA). Responda em português.',text,1200)
   .then(function(r){
-    loading.innerHTML='<div class="chat-name">Endodirect IA</div>'+esc(r).replace(/\n/g,'<br>');
+    loading.innerHTML='<div class="chat-name">Endodirect IA</div><div class="ai-md">'+mdToHtml(r)+'</div>';
     chatHistory.push({role:'assistant',content:r});
     document.getElementById('chat-msgs').scrollTop=document.getElementById('chat-msgs').scrollHeight;
   }).catch(function(e){loading.innerHTML='<div class="chat-name">Endodirect IA</div><span style="color:var(--red)">Erro: '+esc(e.message)+'</span>';});
@@ -4347,7 +4371,7 @@ function bindAdmSec(sec){
       var ud=document.createElement('div');ud.className='chat-bubble user';ud.innerHTML=esc(txt).replace(/\n/g,'<br>');msgs.appendChild(ud);
       var ld=document.createElement('div');ld.className='chat-bubble ai';ld.innerHTML='<div class="chat-name">Endodirect IA</div>'+ldHTML();msgs.appendChild(ld);msgs.scrollTop=msgs.scrollHeight;
       callAI('Você é um assistente médico especializado em endocrinologia e metabologia, respondendo no Brasil. Seja preciso, baseado em evidências (SBEM, SBD, ADA). Responda em português.',txt,1200)
-      .then(function(r){ld.innerHTML='<div class="chat-name">Endodirect IA</div>'+esc(r).replace(/\n/g,'<br>');msgs.scrollTop=msgs.scrollHeight;})
+      .then(function(r){ld.innerHTML='<div class="chat-name">Endodirect IA</div><div class="ai-md">'+mdToHtml(r)+'</div>';msgs.scrollTop=msgs.scrollHeight;})
       .catch(function(e){ld.innerHTML='<div class="chat-name">Endodirect IA</div><span style="color:var(--red)">Erro: '+esc(e.message)+'</span>';});
     };
     if(send)send.addEventListener('click',sendAdmChat);
