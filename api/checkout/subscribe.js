@@ -16,9 +16,10 @@
 //      e dispara o e-mail de "definir senha". O webhook mantem sincronizado.
 //
 // VARIAVEIS DE AMBIENTE (Vercel):
-//   PAGARME_SECRET_KEY            (sk_test_... / sk_live_...) — NUNCA no front
-//   PAGARME_SUB_MENSAL_AMOUNT     preco mensal em CENTAVOS (ex.: 4990 = R$49,90)
-//   PAGARME_SUB_ANUAL_AMOUNT      preco anual em CENTAVOS  (ex.: 49900) [opcional]
+//   PAGARME_SECRET_KEY               (sk_test_... / sk_live_...) — NUNCA no front
+//   PAGARME_TIER_STANDARD_AMOUNT     mensal em CENTAVOS (padrao 5000 = R$50)
+//   PAGARME_TIER_GOLD_AMOUNT         mensal em CENTAVOS (padrao 7000 = R$70)
+//   PAGARME_TIER_PREMIUM_AMOUNT      mensal em CENTAVOS (padrao 9000 = R$90)
 //   SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY (ou SUPABASE_SECRET_KEY) — ja existem
 //
 // OBS: alguns nomes de campos da API v5 estao marcados com TODO(pagarme)
@@ -28,9 +29,13 @@
 const PAGARME_API = 'https://api.pagar.me/core/v5';
 const SECRET_KEY = process.env.PAGARME_SECRET_KEY || '';
 
+// Pacotes (tiers) — assinatura MENSAL recorrente. Cada tier libera um nivel
+// de acesso (Standard < Gold < Premium). Valores em CENTAVOS, sobrescritiveis
+// por env: Standard R$50, Gold R$70, Premium R$90.
 const SUB_PLANS = {
-  mensal: { interval: 'month', interval_count: 1, amount: Number(process.env.PAGARME_SUB_MENSAL_AMOUNT || 0), label: 'Assinatura mensal' },
-  anual: { interval: 'year', interval_count: 1, amount: Number(process.env.PAGARME_SUB_ANUAL_AMOUNT || 0), label: 'Assinatura anual' }
+  standard: { interval: 'month', interval_count: 1, amount: Number(process.env.PAGARME_TIER_STANDARD_AMOUNT || 5000), label: 'Pacote Standard', scope: 'plano:standard' },
+  gold:     { interval: 'month', interval_count: 1, amount: Number(process.env.PAGARME_TIER_GOLD_AMOUNT     || 7000), label: 'Pacote Gold',     scope: 'plano:gold' },
+  premium:  { interval: 'month', interval_count: 1, amount: Number(process.env.PAGARME_TIER_PREMIUM_AMOUNT  || 9000), label: 'Pacote Premium',  scope: 'plano:premium' }
 };
 
 const SUPABASE_URL = process.env.SUPABASE_URL || process.env.NEXT_PUBLIC_SUPABASE_URL || 'https://auth.endodirect.com.br';
@@ -96,20 +101,22 @@ async function sendSetPasswordEmail(email) {
     });
   } catch (e) {}
 }
-async function upsertAssinatura(row) {
-  const find = await fetch(`${SUPABASE_URL}/rest/v1/endodirect_assinaturas?or=(user_id.eq.${row.user_id},email.eq.${encodeURIComponent(row.email)})&select=id`, { headers: sbHeaders() });
+// Upsert por (email, scope) em endodirect_acessos. Idempotente.
+async function upsertAcesso(row) {
+  const q = `${SUPABASE_URL}/rest/v1/endodirect_acessos?email=eq.${encodeURIComponent(row.email)}&scope=eq.${encodeURIComponent(row.scope)}&select=id`;
+  const find = await fetch(q, { headers: sbHeaders() });
   const rows = find.ok ? await find.json().catch(() => []) : [];
   if (rows && rows[0]) {
-    const up = await fetch(`${SUPABASE_URL}/rest/v1/endodirect_assinaturas?id=eq.${rows[0].id}`, {
+    const up = await fetch(`${SUPABASE_URL}/rest/v1/endodirect_acessos?id=eq.${rows[0].id}`, {
       method: 'PATCH', headers: { ...sbHeaders(), Prefer: 'return=minimal' }, body: JSON.stringify(row)
     });
-    if (!up.ok) throw new Error('PATCH assinatura ' + up.status);
+    if (!up.ok) throw new Error('PATCH acesso ' + up.status);
     return;
   }
-  const ins = await fetch(`${SUPABASE_URL}/rest/v1/endodirect_assinaturas`, {
+  const ins = await fetch(`${SUPABASE_URL}/rest/v1/endodirect_acessos`, {
     method: 'POST', headers: { ...sbHeaders(), Prefer: 'return=minimal' }, body: JSON.stringify(row)
   });
-  if (!ins.ok && ins.status !== 409 && ins.status !== 422) throw new Error('POST assinatura ' + ins.status);
+  if (!ins.ok && ins.status !== 409 && ins.status !== 422) throw new Error('POST acesso ' + ins.status);
 }
 
 module.exports = async function handler(req, res) {
@@ -117,7 +124,11 @@ module.exports = async function handler(req, res) {
     return json(res, 200, {
       ok: true, service: 'endodirect-subscribe',
       ready: !!(SECRET_KEY && SERVICE_ROLE),
-      plans: { mensal: SUB_PLANS.mensal.amount > 0, anual: SUB_PLANS.anual.amount > 0 }
+      plans: {
+        standard: SUB_PLANS.standard.amount > 0,
+        gold: SUB_PLANS.gold.amount > 0,
+        premium: SUB_PLANS.premium.amount > 0
+      }
     });
   }
   if (req.method !== 'POST') { res.setHeader('Allow', 'GET, POST'); return json(res, 405, { ok: false, error: 'Metodo nao permitido.' }); }
@@ -167,11 +178,12 @@ module.exports = async function handler(req, res) {
     // 3) Libera o acesso imediatamente; o webhook mantem sincronizado.
     const user = await ensureUser(email, name);
     const nextBilling = sub.next_billing_at || (sub.current_cycle && sub.current_cycle.end_at) || null;
-    await upsertAssinatura({
-      user_id: user.id, email: email, status: 'active', plano: planKey, tipo: 'recorrente',
-      current_period_end: nextBilling ? new Date(Date.parse(nextBilling)).toISOString() : null,
+    await upsertAcesso({
+      user_id: user.id, email: email, scope: cfg.scope, status: 'active', tipo: 'recorrente',
+      expires_at: nextBilling ? new Date(Date.parse(nextBilling)).toISOString() : null,
       provider: 'pagarme', provider_customer_id: customer.id || null,
-      provider_subscription_id: sub.id || null, updated_at: new Date().toISOString()
+      provider_subscription_id: sub.id || null,
+      notes: planKey, updated_at: new Date().toISOString()
     });
     await sendSetPasswordEmail(email);
 
