@@ -207,13 +207,19 @@ function extractInfo(body, type) {
 }
 
 // Escopos validos conhecidos (mantenha em sincronia com endodirect_cursos)
-const CURSO_SLUGS = ['lipides', 'endoteem', 'endo_essencial'];
+const CURSO_SLUGS = ['hiperglicemia', 'lipides', 'endoteem', 'endo_essencial'];
+const TIERS = ['standard', 'gold', 'premium'];
 
-// Normaliza um token de escopo (ex.: 'endoteem' -> 'curso:endoteem').
+// Normaliza um token de escopo:
+//   'gold' / 'plano:gold' -> 'plano:gold' (pacote)
+//   'endoteem' / 'curso:endoteem' -> 'curso:endoteem' (curso avulso)
+//   'plano' / 'assinatura' -> 'plano' (legado; conta como Gold no banco)
 function normScope(s) {
   s = String(s || '').trim().toLowerCase();
   if (!s) return '';
   if (s === 'plano' || s === 'assinatura') return 'plano';
+  if (s.indexOf('plano:') === 0) return TIERS.indexOf(s.slice(6)) >= 0 ? s : '';
+  if (TIERS.indexOf(s) >= 0) return 'plano:' + s;
   if (s.indexOf('curso:') === 0) return CURSO_SLUGS.indexOf(s.slice(6)) >= 0 ? s : '';
   if (CURSO_SLUGS.indexOf(s) >= 0) return 'curso:' + s;
   return '';
@@ -231,12 +237,15 @@ function pickScopes(info) {
     });
   }
   if (out.length) return out;
-  if (info.subscriptionId) return ['plano'];
   const t = info.itemText || '';
+  if (/premium/.test(t)) return ['plano:premium'];
+  if (/gold/.test(t)) return ['plano:gold'];
+  if (/standard/.test(t)) return ['plano:standard'];
   if (/endoteem|teem/.test(t)) return ['curso:endoteem'];
+  if (/hiperglicemia/.test(t)) return ['curso:hiperglicemia'];
   if (/essencial/.test(t)) return ['curso:endo_essencial'];
   if (/l[ií]pid/.test(t)) return ['curso:lipides'];
-  if (/plano|assinatura|recorr/.test(t)) return ['plano'];
+  if (info.subscriptionId || /plano|assinatura|recorr/.test(t)) return ['plano'];
   return []; // desconhecido -> nao provisiona (evita liberar errado)
 }
 

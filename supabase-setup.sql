@@ -243,11 +243,28 @@ create trigger endodirect_cursos_touch_updated_at
 before update on public.endodirect_cursos
 for each row execute function public.endodirect_touch_updated_at();
 
-insert into public.endodirect_cursos (slug, nome, incluso_no_plano, ordem) values
-  ('lipides',        'Lípides',                   true,  1),
-  ('endoteem',       'EndoTEEM',                  false, 2),
-  ('endo_essencial', 'Endocrinologia Essencial',  false, 3)
+-- 'tier' define em qual pacote o curso entra (standard < gold < premium).
+-- null = curso fora dos pacotes (vendido a parte, ex.: EndoTEEM).
+alter table public.endodirect_cursos add column if not exists tier text;
+do $$ begin
+  if not exists (select 1 from pg_constraint where conname = 'endodirect_cursos_tier_chk') then
+    alter table public.endodirect_cursos
+      add constraint endodirect_cursos_tier_chk check (tier is null or tier in ('standard','gold','premium'));
+  end if;
+end $$;
+
+insert into public.endodirect_cursos (slug, nome, tier, ordem) values
+  ('hiperglicemia',  'Hiperglicemia Hospitalar',  'standard', 1),
+  ('lipides',        'Lípides',                   'gold',     2),
+  ('endo_essencial', 'Endocrinologia Essencial',  'premium',  3),
+  ('endoteem',       'EndoTEEM',                  null,       4)
 on conflict (slug) do nothing;
+
+-- Garante os tiers mesmo se os cursos ja existiam (migracao do modelo antigo).
+update public.endodirect_cursos set tier = 'standard' where slug = 'hiperglicemia';
+update public.endodirect_cursos set tier = 'gold'     where slug = 'lipides';
+update public.endodirect_cursos set tier = 'premium'  where slug = 'endo_essencial';
+update public.endodirect_cursos set tier = null       where slug = 'endoteem';
 
 alter table public.endodirect_cursos enable row level security;
 
@@ -306,9 +323,12 @@ using (
 
 grant select on public.endodirect_acessos to authenticated;
 
--- Escopos ativos do usuario atual (admin => todos). Inclui legado de
--- endodirect_assinaturas como "plano" e expande "plano" para os cursos
--- marcados como incluso_no_plano.
+-- Escopos ativos do usuario atual. Modelo de PACOTES (tiers):
+--   plano:standard < plano:gold < plano:premium  (cumulativos)
+-- Emite o sentinela 'plano' (libera as ferramentas) quando o usuario tem
+-- qualquer tier, e expande para 'curso:<slug>' de todos os cursos incluidos
+-- ate o tier dele. Mantem cursos avulsos diretos (ex.: curso:endoteem).
+-- Legado: assinaturas antigas e scope 'plano' contam como Gold.
 create or replace function public.endodirect_acessos_ativos()
 returns text[]
 language plpgsql security definer set search_path = public stable as $$
@@ -316,32 +336,49 @@ declare
   is_admin boolean;
   base text[];
   result text[];
+  max_rank int := 0;
+  s text;
 begin
   is_admin := exists (
     select 1 from public.endodirect_admins a
     where lower(a.email) = lower(auth.jwt() ->> 'email')
   );
   if is_admin then
-    return array['plano']::text[]
+    return array['plano','plano:standard','plano:gold','plano:premium']::text[]
       || coalesce((select array_agg('curso:' || slug) from public.endodirect_cursos where ativo), '{}');
   end if;
 
+  -- escopos brutos ativos (acessos + legado de assinaturas como Gold)
   select coalesce(array_agg(distinct scope), '{}') into base from (
     select scope from public.endodirect_acessos
       where user_id = auth.uid()
         and status = 'active'
         and (expires_at is null or expires_at > now())
     union all
-    select 'plano' from public.endodirect_assinaturas
+    select 'plano:gold' from public.endodirect_assinaturas
       where user_id = auth.uid()
         and status = 'active'
         and (current_period_end is null or current_period_end > now())
-  ) s;
+  ) q;
 
   result := base;
-  if 'plano' = any(base) then
-    result := result
-      || coalesce((select array_agg('curso:' || slug) from public.endodirect_cursos where ativo and incluso_no_plano), '{}');
+
+  -- maior tier do usuario (legado 'plano' = gold)
+  foreach s in array base loop
+    if    s = 'plano'          then max_rank := greatest(max_rank, 2);
+    elsif s = 'plano:standard' then max_rank := greatest(max_rank, 1);
+    elsif s = 'plano:gold'     then max_rank := greatest(max_rank, 2);
+    elsif s = 'plano:premium'  then max_rank := greatest(max_rank, 3);
+    end if;
+  end loop;
+
+  if max_rank > 0 then
+    result := result || array['plano'];  -- sentinela: libera as ferramentas
+    result := result || coalesce((
+      select array_agg('curso:' || slug) from public.endodirect_cursos
+      where ativo and tier is not null
+        and (case tier when 'standard' then 1 when 'gold' then 2 when 'premium' then 3 else 0 end) <= max_rank
+    ), '{}');
   end if;
 
   return (select coalesce(array_agg(distinct x), '{}') from unnest(result) x);
@@ -372,7 +409,7 @@ returns jsonb language sql security definer set search_path = public stable as $
     'acessos', to_jsonb((select scopes from a)),
     'cursos',  coalesce((select jsonb_agg(jsonb_build_object(
                   'slug', slug, 'nome', nome, 'descricao', descricao,
-                  'preco_avulso_cents', preco_avulso_cents,
+                  'preco_avulso_cents', preco_avulso_cents, 'tier', tier,
                   'incluso_no_plano', incluso_no_plano, 'ativo', ativo, 'ordem', ordem
                 ) order by ordem, nome) from public.endodirect_cursos where ativo), '[]'::jsonb),
     'adm_avisos', coalesce((select payload->'adm_avisos' from g), '[]'::jsonb),

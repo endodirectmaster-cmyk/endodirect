@@ -17,9 +17,9 @@
 //
 // VARIAVEIS DE AMBIENTE (Vercel):
 //   PAGARME_SECRET_KEY               (sk_test_... / sk_live_...) — NUNCA no front
-//   PAGARME_SUB_TRIMESTRAL_AMOUNT    total trimestral em CENTAVOS (padrao 24000 = R$240)
-//   PAGARME_SUB_SEMESTRAL_AMOUNT     total semestral em CENTAVOS  (padrao 36000 = R$360)
-//   PAGARME_SUB_ANUAL_AMOUNT         total anual em CENTAVOS       (padrao 48000 = R$480)
+//   PAGARME_TIER_STANDARD_AMOUNT     mensal em CENTAVOS (padrao 4500 = R$45)
+//   PAGARME_TIER_GOLD_AMOUNT         mensal em CENTAVOS (padrao 6000 = R$60)
+//   PAGARME_TIER_PREMIUM_AMOUNT      mensal em CENTAVOS (padrao 8500 = R$85)
 //   SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY (ou SUPABASE_SECRET_KEY) — ja existem
 //
 // OBS: alguns nomes de campos da API v5 estao marcados com TODO(pagarme)
@@ -29,13 +29,13 @@
 const PAGARME_API = 'https://api.pagar.me/core/v5';
 const SECRET_KEY = process.env.PAGARME_SECRET_KEY || '';
 
-// 3 periodicidades, mesmo acesso (escopo "plano"). Cobranca pelo periodo
-// inteiro, adiantada: trimestral R$240 (R$80/mes), semestral R$360 (R$60/mes),
-// anual R$480 (R$40/mes). Os valores podem ser sobrescritos por env (CENTAVOS).
+// Pacotes (tiers) — assinatura MENSAL recorrente. Cada tier libera um nivel
+// de acesso (Standard < Gold < Premium). Valores em CENTAVOS, sobrescritiveis
+// por env: Standard R$45, Gold R$60, Premium R$85.
 const SUB_PLANS = {
-  trimestral: { interval: 'month', interval_count: 3,  amount: Number(process.env.PAGARME_SUB_TRIMESTRAL_AMOUNT || 24000), label: 'Assinatura trimestral' },
-  semestral:  { interval: 'month', interval_count: 6,  amount: Number(process.env.PAGARME_SUB_SEMESTRAL_AMOUNT  || 36000), label: 'Assinatura semestral' },
-  anual:      { interval: 'month', interval_count: 12, amount: Number(process.env.PAGARME_SUB_ANUAL_AMOUNT      || 48000), label: 'Assinatura anual' }
+  standard: { interval: 'month', interval_count: 1, amount: Number(process.env.PAGARME_TIER_STANDARD_AMOUNT || 4500), label: 'Pacote Standard', scope: 'plano:standard' },
+  gold:     { interval: 'month', interval_count: 1, amount: Number(process.env.PAGARME_TIER_GOLD_AMOUNT     || 6000), label: 'Pacote Gold',     scope: 'plano:gold' },
+  premium:  { interval: 'month', interval_count: 1, amount: Number(process.env.PAGARME_TIER_PREMIUM_AMOUNT  || 8500), label: 'Pacote Premium',  scope: 'plano:premium' }
 };
 
 const SUPABASE_URL = process.env.SUPABASE_URL || process.env.NEXT_PUBLIC_SUPABASE_URL || 'https://auth.endodirect.com.br';
@@ -125,9 +125,9 @@ module.exports = async function handler(req, res) {
       ok: true, service: 'endodirect-subscribe',
       ready: !!(SECRET_KEY && SERVICE_ROLE),
       plans: {
-        trimestral: SUB_PLANS.trimestral.amount > 0,
-        semestral: SUB_PLANS.semestral.amount > 0,
-        anual: SUB_PLANS.anual.amount > 0
+        standard: SUB_PLANS.standard.amount > 0,
+        gold: SUB_PLANS.gold.amount > 0,
+        premium: SUB_PLANS.premium.amount > 0
       }
     });
   }
@@ -179,7 +179,7 @@ module.exports = async function handler(req, res) {
     const user = await ensureUser(email, name);
     const nextBilling = sub.next_billing_at || (sub.current_cycle && sub.current_cycle.end_at) || null;
     await upsertAcesso({
-      user_id: user.id, email: email, scope: 'plano', status: 'active', tipo: 'recorrente',
+      user_id: user.id, email: email, scope: cfg.scope, status: 'active', tipo: 'recorrente',
       expires_at: nextBilling ? new Date(Date.parse(nextBilling)).toISOString() : null,
       provider: 'pagarme', provider_customer_id: customer.id || null,
       provider_subscription_id: sub.id || null,
