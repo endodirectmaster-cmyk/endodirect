@@ -1265,7 +1265,7 @@ var RESUMABLE_THRESHOLD_BYTES=20*1024*1024;
 var MAX_AUDIO_UPLOAD_BYTES=200*1024*1024;
 var supabaseClient=null;
 var remoteStateLoaded=false,remoteStateSaveTimer=null,remoteStateWarned=false;
-var REMOTE_STATE_KEYS=['q','fc','mm','notes','crono','sf_results','perf','provas','adm_avisos','adm_questoes','podcasts','adm_cursos','adm_estudantes','adm_perfil','user_profile','mm_shared'];
+var REMOTE_STATE_KEYS=['q','fc','mm','notes','crono','sf_results','perf','provas','adm_avisos','adm_questoes','podcasts','adm_cursos','adm_estudantes','adm_perfil','user_profile','mm_shared','deg_trials'];
 function getSupabaseClient(){
   if(supabaseClient)return supabaseClient;
   if(!window.supabase||!window.supabase.createClient)return null;
@@ -1396,6 +1396,8 @@ function persist(){
   queueRemoteStateSave();
 }
 var provasDB=lsGet('provas')||[];
+// Degustação: contagem de usos das ferramentas com cota (3 usos cada).
+var degTrials=lsGet('deg_trials')||{};
 var FC_SEED={
  "Diabetes":[["Critérios laboratoriais para diagnóstico de diabetes mellitus?","Glicemia de jejum ≥126 mg/dL, glicemia 2h no TOTG ≥200 mg/dL, HbA1c ≥6,5% ou glicemia casual ≥200 mg/dL com sintomas. Confirmar com 2º teste se assintomático."],["Alvo geral de HbA1c na maioria dos adultos com DM2?","<7%. Individualizar: mais rígido (~6,5%) em jovens/recém-diagnosticados; mais flexível (~8%) em idosos frágeis ou com muitas comorbidades."],["Quais classes de antidiabéticos têm benefício cardiovascular e renal comprovado?","Inibidores de SGLT2 (empagliflozina, dapagliflozina) e agonistas de GLP-1 (semaglutida, liraglutida)."],["Pilares do manejo inicial da cetoacidose diabética?","Hidratação com SF 0,9%, insulina regular IV, reposição de potássio (iniciar quando K<5,2 com diurese presente) e correção do fator precipitante. Bicarbonato não é rotina."],["Primeira linha farmacológica do DM2?","Metformina associada a mudanças no estilo de vida, salvo contraindicação (ex.: TFG<30 mL/min)."]],
  "Obesidade":[["Classificação da obesidade pelo IMC (OMS)?","Sobrepeso 25–29,9; obesidade grau I 30–34,9; grau II 35–39,9; grau III ≥40 kg/m²."],["Indicações clássicas de cirurgia bariátrica?","IMC ≥40, ou ≥35 com comorbidades. Diretrizes recentes consideram a partir de IMC 30–35 em DM2 de difícil controle."],["Mecanismo dos agonistas de GLP-1 na obesidade?","Reduzem apetite, aumentam saciedade central e retardam o esvaziamento gástrico, diminuindo a ingestão alimentar (ex.: semaglutida 2,4 mg)."],["Meta inicial de perda de peso clinicamente significativa?","5–10% do peso corporal, já suficiente para melhorar comorbidades metabólicas."],["Complicação metabólica mais associada à obesidade visceral?","Resistência insulínica e síndrome metabólica (dislipidemia, HAS, DM2 e esteatose hepática)."]],
@@ -1583,7 +1585,7 @@ function persistPodcasts(){lsSet('podcasts',podcasts);queueRemoteStateSave();}
 
 function userStatePayload(){
   // adm_perfil é PESSOAL (vai no app_state do próprio admin, não no global).
-  var p={q:DB.q,fc:DB.fc,mm:DB.mm,notes:DB.notes,crono:DB.crono,sf_results:DB.sf_results,perf:DB.perf,user_profile:lsGet('user_profile')};
+  var p={q:DB.q,fc:DB.fc,mm:DB.mm,notes:DB.notes,crono:DB.crono,sf_results:DB.sf_results,perf:DB.perf,user_profile:lsGet('user_profile'),deg_trials:degTrials};
   if(currentUser&&currentUser.role==='admin'){
     // Nunca persiste o perfil de OUTRO admin: se o e-mail do perfil em memória
     // não bater com o da sessão (resíduo de localStorage antigo), reconstrói da
@@ -1638,6 +1640,7 @@ function applyStatePayload(payload){
     var _me=String((currentUser&&currentUser.email)||'').toLowerCase();
     if(!(_pe&&_me&&_pe!==_me))admPerfil=payload.adm_perfil;
   }
+  if(payload.deg_trials&&typeof payload.deg_trials==='object')degTrials=payload.deg_trials;
   if(Array.isArray(payload.acessos))userAcessos=payload.acessos;
   if(Array.isArray(payload.cursos))catalogoCursos=payload.cursos;
   REMOTE_STATE_KEYS.forEach(function(k){if(payload[k]!==undefined)lsSet(k,payload[k]);});
@@ -2343,9 +2346,36 @@ function hasScope(scope){return !scope||isAdminUser()||userAcessos.indexOf(scope
 function isDegustacao(){return !!(currentUser&&currentUser.role==='aluno'&&!isAdminUser()&&(!userAcessos||userAcessos.length===0));}
 // Paineis liberados na degustacao (o resto fica 🔒 com upsell).
 var DEGUSTACAO_PANELS={dash:1,flash:1,mmap:1,quest:1,mural:1,perfil:1,support:1};
+// Ferramentas com IA liberadas na degustação por COTA (3 usos cada): simulador
+// de casos, simulado, prescrição e chat IA. Após esgotar, vira upsell.
+var TRIAL_PANELS={sim:1,simfull:1,rx:1,chat:1};
+var TRIAL_LIMIT=3;
+function trialUsed(id){return Math.max(0,parseInt((degTrials&&degTrials[id])||0,10)||0);}
+function trialLeft(id){return Math.max(0,TRIAL_LIMIT-trialUsed(id));}
+// Consome 1 uso da cota de degustação. Fora da degustação não há limite.
+// Retorna false (e mostra upsell) quando a cota acabou.
+function consumeTrial(id){
+  if(!isDegustacao())return true;
+  if(trialLeft(id)<=0){
+    notify('Você usou suas '+TRIAL_LIMIT+' degustações de '+(PANEL_LABELS[id]||'recurso')+'. Adquira um pacote para liberar.','err');
+    showAssineScreen((currentUser&&currentUser.email)||'');
+    try{markLockedNavItems();}catch(e){}
+    return false;
+  }
+  degTrials[id]=trialUsed(id)+1;
+  lsSet('deg_trials',degTrials);queueRemoteStateSave();
+  var left=trialLeft(id);
+  notify('🎁 Degustação de '+(PANEL_LABELS[id]||'recurso')+': '+left+' de '+TRIAL_LIMIT+' usos restantes.',left>0?'info':'err');
+  if(left<=0){try{markLockedNavItems();}catch(e){}}
+  return true;
+}
 function canSeePanel(id){
   if(isAdminUser())return true;
-  if(isDegustacao())return !!DEGUSTACAO_PANELS[id];
+  if(isDegustacao()){
+    if(DEGUSTACAO_PANELS[id])return true;
+    if(TRIAL_PANELS[id])return trialLeft(id)>0;
+    return false;
+  }
   return hasScope(PANEL_SCOPE[id]||null);
 }
 // Bloqueia geração por IA na degustação (custo) — só conteúdo pré-salvo/banco.
@@ -2354,6 +2384,20 @@ function blockIfDegustacao(){
   return false;
 }
 function canAccessBanco(){return isDegustacao()||hasScope('plano')||hasScope('curso:endoteem');}
+// Na degustação, as questões geradas por IA ficam bloqueadas: esconde a aba
+// "Geradas por IA" e força o "Banco de Questões".
+function applyQuestDegustacao(){
+  var iaTab=document.querySelector('[data-qmode="ia"]');
+  var provTab=document.querySelector('[data-qmode="provas"]');
+  var iaP=document.getElementById('q-panel-ia'),provP=document.getElementById('q-panel-provas');
+  if(isDegustacao()){
+    if(iaTab){iaTab.style.display='none';iaTab.classList.remove('on');}
+    if(provTab)provTab.classList.add('on');
+    if(iaP)iaP.style.display='none';
+    if(provP)provP.style.display='block';
+    showBancoLock(false);
+  }else if(iaTab){iaTab.style.display='';}
+}
 function scopeNome(scope){
   if(scope==='plano')return'Assinatura';
   if(scope==='curso:endoteem')return'curso EndoTEEM';
@@ -2377,8 +2421,23 @@ function showLockedPanel(id){
   var bc=document.getElementById('tb-bc');if(bc)bc.textContent=PANEL_LABELS[id]||id;
   var scope=PANEL_SCOPE[id];var nome=scopeNome(scope);
   var label=PANEL_LABELS[id]||'este recurso';
-  var titulo=scope==='plano'?'Recurso dos pacotes':('Recurso do '+nome);
+  var trialEsgotado=isDegustacao()&&TRIAL_PANELS[id]&&trialLeft(id)<=0;
+  var titulo=trialEsgotado?'Degustação concluída':(scope==='plano'?'Recurso dos pacotes':('Recurso do '+nome));
   var via=scope==='plano'?'adquirindo um pacote (Standard, Gold ou Premium)':'adquirindo o '+nome;
+  if(trialEsgotado){
+    p.innerHTML='<div class="breadcrumb">'+esc(label)+' <b>/ Bloqueado</b></div>'
+      +'<div class="ph"><h1>🔒 '+esc(label)+'</h1></div>'
+      +'<div class="pc"><div class="card" style="max-width:520px;margin:1.2rem auto;text-align:center;padding:1.9rem 1.5rem">'
+      +'<div style="font-size:2.3rem;margin-bottom:.5rem">🎁</div>'
+      +'<div style="font-size:1.02rem;font-weight:800;color:var(--navy);margin-bottom:.4rem">'+esc(titulo)+'</div>'
+      +'<p style="font-size:.84rem;color:var(--t2);line-height:1.6;margin:.3rem 0 1.2rem">Você usou suas <b>'+TRIAL_LIMIT+' degustações</b> de <b>'+esc(label)+'</b>. Adquira um pacote (Standard, Gold ou Premium) para uso ilimitado.</p>'
+      +'<button class="btn btn-primary" id="locked-cta" style="justify-content:center">Ver planos e cursos</button>'
+      +'</div></div>';
+    var bte=document.getElementById('locked-cta');
+    if(bte)bte.addEventListener('click',function(){showAssineScreen((currentUser&&currentUser.email)||'');});
+    closeMobileNav();
+    return;
+  }
   p.innerHTML='<div class="breadcrumb">'+esc(label)+' <b>/ Bloqueado</b></div>'
     +'<div class="ph"><h1>🔒 '+esc(label)+'</h1></div>'
     +'<div class="pc"><div class="card" style="max-width:520px;margin:1.2rem auto;text-align:center;padding:1.9rem 1.5rem">'
@@ -2419,7 +2478,7 @@ function goPanel(id){
   var bc=document.getElementById('tb-bc');
   if(bc)bc.textContent=PANEL_LABELS[id]||id;
   if(id==='dash')refreshDash();
-  if(id==='quest'){renderSavedQ();populateInst('q-inst');updateProvaInfo();}
+  if(id==='quest'){applyQuestDegustacao();renderSavedQ();populateInst('q-inst');updateProvaInfo();}
   if(id==='flash')renderFC();
   if(id==='mmap')renderMMList();
   if(id==='podcast')renderPodcasts();
@@ -3504,6 +3563,7 @@ function renderSFPrev(){
   el.innerHTML='<div class="divider"></div><div class="sec-title" style="margin-bottom:.5rem">Simulados anteriores</div>'+DB.sf_results.slice().reverse().slice(0,5).map(function(r){return'<div class="adm-row"><div class="adm-row-info"><div class="adm-row-title">'+r.correct+'/'+r.total+' acertos ('+Math.round(r.correct/r.total*100)+'%)</div><div class="adm-row-sub">'+esc(r.area||'Todas')+' • '+new Date(r.at).toLocaleDateString('pt-BR')+'</div></div><span class="tag '+(r.correct/r.total>=0.7?'tag-grn':'tag-gold')+'">'+Math.round(r.correct/r.total*100)+'%</span></div>';}).join('');
 }
 function startSimFull(){
+  if(!consumeTrial('simfull'))return;
   var area=document.getElementById('sf-area').value;
   var qty=parseInt(document.getElementById('sf-qty').value)||60;
   var time=parseInt(document.getElementById('sf-time').value)||120;
@@ -3644,6 +3704,7 @@ function appendMsg(role,text){
 function sendChat(text){
   text=(text||document.getElementById('chat-input').value||'').trim();
   if(!text)return;
+  if(!consumeTrial('chat'))return;
   document.getElementById('chat-input').value='';
   appendMsg('user',text);
   chatHistory.push({role:'user',content:text});
@@ -4852,6 +4913,7 @@ function simRetry(promiseFactory){
   return promiseFactory().catch(function(){return sleep(700).then(promiseFactory);});
 }
 startSim=function(){
+  if(!consumeTrial('sim'))return;
   var sub=document.getElementById('sim-sub').value;
   var level=document.getElementById('sim-level').value;
   var mode=(document.querySelector('input[name="sim-mode"]:checked')||{}).value||'mc';
@@ -4931,6 +4993,7 @@ finishSim=function(){
   document.getElementById('btn-sim-restart').addEventListener('click',function(){result.style.display='none';document.getElementById('sim-setup').style.display='block';});
 };
 genRxCase=function(){
+  if(!consumeTrial('rx'))return;
   var sub=document.getElementById('rx-sub').value||'Endocrinologia';
   var level=document.getElementById('rx-level').value;
   var btn=document.getElementById('btn-rx-gen');
