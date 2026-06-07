@@ -1493,6 +1493,7 @@ function mergeRadarAvisos(list){
 }
 var admAvisos=mergeRadarAvisos(lsGet('adm_avisos')||[]);
 var radarAvisos=[]; // avisos automaticos do radar (campo radar_avisos); preservado nos saves do admin
+var radarHidden=[]; // sourceIds de itens do radar ocultados pelo professor (cron nao re-insere)
 var admQuestoes=lsGet('adm_questoes')||[];
 var podcasts=lsGet('podcasts')||[];
 function persistPodcasts(){lsSet('podcasts',podcasts);queueRemoteStateSave();}
@@ -1501,11 +1502,12 @@ function userStatePayload(){
   return{q:DB.q,fc:DB.fc,mm:DB.mm,notes:DB.notes,crono:DB.crono,sf_results:DB.sf_results,perf:DB.perf,user_profile:lsGet('user_profile')};
 }
 function isRadarAuto(a){return !!(a&&a.auto&&String(a.sourceId||'').indexOf('pubmed:')===0);}
+function avisoKeyStr(a){return String((a&&(a.sourceId||a.link||a.titulo))||'');}
 function globalStatePayload(){
   // O radar (auto/PubMed) mora em radar_avisos (gravado só pelo cron); o
   // professor grava apenas os avisos manuais em adm_avisos. A leitura
   // (member_content/public_content) mescla os dois.
-  return{provas:provasDB,adm_avisos:admAvisos.filter(function(a){return !isRadarAuto(a);}),radar_avisos:radarAvisos,adm_questoes:admQuestoes,podcasts:podcasts,adm_cursos:admCursos,adm_estudantes:admEstudantes,adm_perfil:admPerfil,mm_shared:sharedMM};
+  return{provas:provasDB,adm_avisos:admAvisos.filter(function(a){return !isRadarAuto(a);}),radar_avisos:radarAvisos,radar_hidden:radarHidden,adm_questoes:admQuestoes,podcasts:podcasts,adm_cursos:admCursos,adm_estudantes:admEstudantes,adm_perfil:admPerfil,mm_shared:sharedMM};
 }
 function currentStatePayload(){
   return Object.assign({},userStatePayload(),globalStatePayload());
@@ -1522,6 +1524,7 @@ function applyStatePayload(payload){
   if(Array.isArray(payload.provas))provasDB=payload.provas;
   if(Array.isArray(payload.mm_shared)){sharedMM=payload.mm_shared;try{renderMMList();}catch(e){}}
   if(Array.isArray(payload.radar_avisos))radarAvisos=payload.radar_avisos;
+  if(Array.isArray(payload.radar_hidden))radarHidden=payload.radar_hidden;
   if(Array.isArray(payload.adm_avisos)||Array.isArray(payload.radar_avisos)){
     admAvisos=mergeRadarAvisos((Array.isArray(payload.adm_avisos)?payload.adm_avisos:[]).concat(Array.isArray(payload.radar_avisos)?payload.radar_avisos:[]));
   }
@@ -3200,7 +3203,7 @@ function initMural(){
   admAvisos.forEach(function(a){var f=fonteOf(a);if(fontes.indexOf(f)<0)fontes.push(f);});
   fontes.sort(function(a,b){return a.localeCompare(b,'pt-BR');});
   if(muralFilter&&fontes.indexOf(muralFilter)<0)muralFilter='';
-  var avisos=admAvisos.slice().reverse().filter(function(a){return !muralFilter||fonteOf(a)===muralFilter;});
+  var avisos=admAvisos.slice().sort(function(a,b){return (Number(b.at)||0)-(Number(a.at)||0);}).filter(function(a){return !muralFilter||fonteOf(a)===muralFilter;});
   var count=admAvisos.length+' '+(admAvisos.length===1?'aviso':'avisos');
   var tema=muralFilter||'Todos os temas';
   var options='<option value="">Todos</option>'+fontes.map(function(f){return'<option value="'+esc(f)+'">'+esc(f)+'</option>';}).join('');
@@ -3677,7 +3680,7 @@ function admMuralSecHTML(){
   admAvisos.forEach(function(a){var f=fonteOf(a);if(fontes.indexOf(f)<0)fontes.push(f);});
   fontes.sort(function(a,b){return a.localeCompare(b,'pt-BR');});
   if(admMuralFilter&&fontes.indexOf(admMuralFilter)<0)admMuralFilter='';
-  var avisos=admAvisos.slice().reverse().filter(function(a){return !admMuralFilter||fonteOf(a)===admMuralFilter;});
+  var avisos=admAvisos.slice().sort(function(a,b){return (Number(b.at)||0)-(Number(a.at)||0);}).filter(function(a){return !admMuralFilter||fonteOf(a)===admMuralFilter;});
   var count=admAvisos.length+' '+(admAvisos.length===1?'aviso':'avisos');
   var tema=admMuralFilter||'Todos os temas';
   var options='<option value="">Todos</option>'+fontes.map(function(f){return'<option value="'+esc(f)+'">'+esc(f)+'</option>';}).join('');
@@ -3690,7 +3693,7 @@ function admMuralSecHTML(){
       +'<div class="mural-date">'+dateBR(a.at)+'</div>'
       +'<div class="mural-text">'+esc(a.texto||'Comunicado publicado pela equipe Endodirect.')+'</div>'
       +'<div class="mural-source">Fonte: '+source+'</div>'
-      +'<div class="mural-card-actions"><button class="btn btn-outline btn-sm" data-adm-editav="'+i+'">Editar</button><button class="btn btn-outline btn-sm" data-adm-delav="'+i+'">Remover</button></div>'
+      +'<div class="mural-card-actions">'+(isRadarAuto(a)?'<button class="btn btn-outline btn-sm" data-adm-hideradar="'+esc(avisoKeyStr(a))+'">🙈 Ocultar</button>':'<button class="btn btn-outline btn-sm" data-adm-editav="'+i+'">Editar</button><button class="btn btn-outline btn-sm" data-adm-delav="'+i+'">Remover</button>')+'</div>'
       +'</article>';
   }
   var formHTML=admMuralShowForm?(
@@ -4181,6 +4184,15 @@ function bindAdmSec(sec){
     });
     var bCancel=document.getElementById('btn-adm-av-cancel');
     if(bCancel)bCancel.addEventListener('click',function(){admMuralShowForm=false;admMuralEdit=null;renderAdmSec('mural');});
+    main.querySelectorAll('[data-adm-hideradar]').forEach(function(b){b.addEventListener('click',function(){
+      var key=b.dataset.admHideradar;
+      radarAvisos=radarAvisos.filter(function(x){return avisoKeyStr(x)!==key;});
+      admAvisos=admAvisos.filter(function(x){return avisoKeyStr(x)!==key;});
+      if(key&&radarHidden.indexOf(key)<0)radarHidden.push(key);
+      saveRemoteState();
+      notify('Artigo ocultado do mural.','ok');
+      renderAdmSec('mural');
+    });});
     var admMF=document.getElementById('adm-mural-filter');
     if(admMF){admMF.value=admMuralFilter;admMF.addEventListener('change',function(){admMuralFilter=this.value;renderAdmSec('mural');});}
     var admMC=document.getElementById('adm-mural-clear');
