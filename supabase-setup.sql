@@ -414,11 +414,21 @@ returns jsonb language sql security definer set search_path = public stable as $
                   'incluso_no_plano', incluso_no_plano, 'ativo', ativo, 'ordem', ordem
                 ) order by ordem, nome) from public.endodirect_cursos where ativo), '[]'::jsonb),
     'adm_avisos', coalesce((select payload->'adm_avisos' from g), '[]'::jsonb) || coalesce((select payload->'radar_avisos' from g), '[]'::jsonb),
-    'provas',     case when (select scopes from a) @> array['plano'] or (select scopes from a) @> array['curso:endoteem']
-                       then coalesce((select payload->'provas' from g), '[]'::jsonb) else '[]'::jsonb end,
+    -- Banco de questoes: completo para pacote/EndoTEEM; DEGUSTACAO (sem nenhum
+    -- acesso) recebe uma amostra aleatoria de ate 100 questoes.
+    'provas',     case
+                    when (select scopes from a) @> array['plano'] or (select scopes from a) @> array['curso:endoteem']
+                      then coalesce((select payload->'provas' from g), '[]'::jsonb)
+                    when coalesce(array_length((select scopes from a), 1), 0) = 0
+                      then coalesce((select jsonb_agg(v) from (
+                             select v from jsonb_array_elements(coalesce((select payload->'provas' from g), '[]'::jsonb)) v
+                             order by random() limit 100
+                           ) s), '[]'::jsonb)
+                    else '[]'::jsonb end,
     'podcasts',   case when (select scopes from a) @> array['plano']
                        then coalesce((select payload->'podcasts' from g), '[]'::jsonb) else '[]'::jsonb end,
-    'mm_shared',  case when (select scopes from a) @> array['plano']
+    -- Mapas mentais (modelos do professor): pacote OU degustacao.
+    'mm_shared',  case when (select scopes from a) @> array['plano'] or coalesce(array_length((select scopes from a), 1), 0) = 0
                        then coalesce((select payload->'mm_shared' from g), '[]'::jsonb) else '[]'::jsonb end,
     'adm_cursos', case when coalesce(array_length((select scopes from a), 1), 0) > 0 then (
                     -- so as videoaulas do(s) curso(s) que o aluno tem acesso;
