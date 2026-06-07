@@ -4,6 +4,7 @@
 create or replace function public.endodirect_touch_updated_at()
 returns trigger
 language plpgsql
+set search_path = public
 as $$
 begin
   new.updated_at = now();
@@ -413,11 +414,11 @@ returns jsonb language sql security definer set search_path = public stable as $
                   'incluso_no_plano', incluso_no_plano, 'ativo', ativo, 'ordem', ordem
                 ) order by ordem, nome) from public.endodirect_cursos where ativo), '[]'::jsonb),
     'adm_avisos', coalesce((select payload->'adm_avisos' from g), '[]'::jsonb),
-    'provas',     case when 'curso:endoteem' = any((select scopes from a))
+    'provas',     case when (select scopes from a) @> array['curso:endoteem']
                        then coalesce((select payload->'provas' from g), '[]'::jsonb) else '[]'::jsonb end,
-    'podcasts',   case when 'plano' = any((select scopes from a))
+    'podcasts',   case when (select scopes from a) @> array['plano']
                        then coalesce((select payload->'podcasts' from g), '[]'::jsonb) else '[]'::jsonb end,
-    'mm_shared',  case when 'plano' = any((select scopes from a))
+    'mm_shared',  case when (select scopes from a) @> array['plano']
                        then coalesce((select payload->'mm_shared' from g), '[]'::jsonb) else '[]'::jsonb end,
     'adm_cursos', case when coalesce(array_length((select scopes from a), 1), 0) > 0 then (
                     -- so as videoaulas do(s) curso(s) que o aluno tem acesso;
@@ -425,7 +426,7 @@ returns jsonb language sql security definer set search_path = public stable as $
                     select coalesce(jsonb_agg(v), '[]'::jsonb)
                     from jsonb_array_elements(coalesce((select payload->'adm_cursos' from g), '[]'::jsonb)) v
                     where coalesce(v->>'curso', '') = ''
-                       or ('curso:' || (v->>'curso')) = any((select scopes from a))
+                       or (select scopes from a) @> array['curso:' || (v->>'curso')]
                   ) else '[]'::jsonb end
   );
 $$;
