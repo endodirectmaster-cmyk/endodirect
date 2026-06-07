@@ -1618,7 +1618,14 @@ function applyStatePayload(payload){
   if(Array.isArray(payload.podcasts))podcasts=payload.podcasts;
   if(Array.isArray(payload.adm_cursos))admCursos=payload.adm_cursos;
   if(Array.isArray(payload.adm_estudantes))admEstudantes=normalizeAdmEstudantes(payload.adm_estudantes);
-  if(payload.adm_perfil&&typeof payload.adm_perfil==='object')admPerfil=payload.adm_perfil;
+  if(payload.adm_perfil&&typeof payload.adm_perfil==='object'){
+    // Segurança: só aceita o perfil salvo se o e-mail bater com o do admin
+    // logado. Um perfil com e-mail de OUTRO admin (resíduo de estado antigo)
+    // é rejeitado para nunca mostrar o nome/e-mail de outra pessoa.
+    var _pe=String(payload.adm_perfil.email||'').toLowerCase();
+    var _me=String((currentUser&&currentUser.email)||'').toLowerCase();
+    if(!(_pe&&_me&&_pe!==_me))admPerfil=payload.adm_perfil;
+  }
   if(Array.isArray(payload.acessos))userAcessos=payload.acessos;
   if(Array.isArray(payload.cursos))catalogoCursos=payload.cursos;
   REMOTE_STATE_KEYS.forEach(function(k){if(payload[k]!==undefined)lsSet(k,payload[k]);});
