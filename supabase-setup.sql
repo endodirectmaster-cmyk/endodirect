@@ -419,7 +419,7 @@ returns jsonb language sql security definer set search_path = public stable as $
     --     (sem acesso) recebe amostra FIXA de 100 (ordem deterministica md5).
     --   TEEM (prova de titulo): somente com curso:endoteem.
     'provas',     (case
-                     when (select scopes from a) @> array['plano']
+                     when (select scopes from a) @> array['plano'] or (select scopes from a) @> array['curso:endoteem']
                        then coalesce((select jsonb_agg(v) from jsonb_array_elements(coalesce((select payload->'provas' from g), '[]'::jsonb)) v where v->>'inst' = 'Endodirect'), '[]'::jsonb)
                      when coalesce(array_length((select scopes from a), 1), 0) = 0
                        then coalesce((select jsonb_agg(v) from (
