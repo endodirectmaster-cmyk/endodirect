@@ -752,7 +752,7 @@ textarea{resize:vertical;line-height:1.6}
         <div id="fc-gen" style="display:none" class="gen-box">
           <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:.65rem"><span class="sec-title">Gerar com IA</span><button class="btn btn-ghost btn-sm" id="fc-gen-cancel">✕</button></div>
           <div class="g3" style="margin-bottom:.65rem">
-            <div class="fld2" style="margin:0"><label>Subespecialidade</label><select id="fc-gsub"><option>Diabetes</option><option>Obesidade</option><option>Tireoide</option><option>Adrenal</option><option>Neuroendocrinologia</option><option>Osteometabolismo</option><option>Pediatria</option><option>Esportiva</option><option>Endocrinologia Masculina</option><option>Endocrinologia Feminina</option><option>Transgeneridade</option></select></div>
+            <div class="fld2" style="margin:0"><label>Subespecialidade</label><select id="fc-gsub"><option>Diabetes</option><option>Obesidade</option><option>Tireoide</option><option>Adrenal</option><option>Neuroendocrinologia</option><option>Osteometabolismo</option><option>Lípides</option><option>Pediatria</option><option>Esportiva</option><option>Endocrinologia Masculina</option><option>Endocrinologia Feminina</option><option>Transgeneridade</option></select></div>
             <div class="fld2" style="margin:0"><label>Tema (opcional)</label><input type="text" id="fc-gt" placeholder="Ex: Tireoidite de Hashimoto"></div>
             <div class="fld2" style="margin:0"><label>Quantidade</label><select id="fc-gq"><option value="5">5</option><option value="10" selected>10</option><option value="15">15</option></select></div>
           </div>
@@ -1347,17 +1347,22 @@ var FC_SEED={
  "Esportiva":[["O que é a tríade da mulher atleta / RED-S?","Baixa disponibilidade energética, disfunção menstrual e baixa densidade óssea; o RED-S amplia para múltiplos sistemas."],["Efeitos endócrinos do abuso de esteroides anabolizantes?","Supressão do eixo gonadal, hipogonadismo, ginecomastia, infertilidade, dislipidemia e dano hepático."],["Como o exercício afeta a sensibilidade à insulina?","Aumenta a captação muscular de glicose (via GLUT4, independente de insulina) e melhora a sensibilidade insulínica."],["Por que atletas de endurance têm risco de hiponatremia?","Ingestão excessiva de água durante provas longas; manejar com restrição hídrica e, se grave, salina hipertônica."],["Cuidado com a glicemia no exercício em DM1?","Ajustar insulina e carboidratos; atenção à hipoglicemia tardia após exercício aeróbico prolongado."]],
  "Endocrinologia Masculina":[["Como diagnosticar hipogonadismo masculino?","Testosterona total baixa em 2 dosagens matinais somada a sintomas. Diferenciar primário (LH/FSH altos) de central (LH/FSH baixos ou normais)."],["Causa genética mais comum de hipogonadismo primário?","Síndrome de Klinefelter (47,XXY)."],["Contraindicações à reposição de testosterona?","Câncer de próstata ou mama ativo, PSA elevado não investigado, policitemia, ICC descompensada e desejo de fertilidade."],["Efeito da testosterona exógena sobre a fertilidade?","Suprime a espermatogênese por feedback negativo. Em quem deseja fertilidade, preferir hCG/clomifeno."],["Avaliação da disfunção erétil de causa endócrina?","Testosterona total matinal, glicemia/HbA1c e prolactina; avaliar também fatores vasculares e medicamentosos."]],
  "Endocrinologia Feminina":[["Critérios de Rotterdam para SOP?","2 de 3: oligo/anovulação, hiperandrogenismo (clínico ou laboratorial) e ovários policísticos ao US, após excluir outras causas."],["Primeira linha na SOP sem desejo de gestar?","Mudança de estilo de vida + anticoncepcional combinado; metformina se houver alteração metabólica."],["Causa mais comum de amenorreia secundária?","Gestação. Depois: SOP, amenorreia hipotalâmica funcional, hiperprolactinemia e falência ovariana."],["Definição laboratorial de menopausa?","12 meses de amenorreia por falência ovariana, com FSH elevado e estradiol baixo (idade média ~50 anos)."],["Indicação e cautela da terapia hormonal da menopausa?","Sintomas vasomotores moderados/graves; iniciar próximo à menopausa (<60 anos / <10 anos). Avaliar risco tromboembólico e de câncer de mama."]],
- "Transgeneridade":[["Base da hormonização feminilizante (mulheres trans)?","Estrogênio associado a antiandrogênio (espironolactona ou acetato de ciproterona) para feminização e supressão da testosterona."],["Base da hormonização masculinizante (homens trans)?","Testosterona (IM ou transdérmica) visando níveis na faixa masculina; monitorar hematócrito e perfil lipídico."],["Principal cautela da estrogenoterapia em mulheres trans?","Risco tromboembólico; preferir estradiol (evitar etinilestradiol) e avaliar tabagismo e fatores de risco."],["Monitorização da hormonização masculinizante?","Testosterona, hematócrito/hemoglobina (risco de eritrocitose) e perfil lipídico."],["Efeitos esperados da testosterona em homens trans?","Amenorreia, voz mais grave, aumento de pelos e de massa muscular; mudanças ao longo de meses, algumas irreversíveis."]]
+ "Transgeneridade":[["Base da hormonização feminilizante (mulheres trans)?","Estrogênio associado a antiandrogênio (espironolactona ou acetato de ciproterona) para feminização e supressão da testosterona."],["Base da hormonização masculinizante (homens trans)?","Testosterona (IM ou transdérmica) visando níveis na faixa masculina; monitorar hematócrito e perfil lipídico."],["Principal cautela da estrogenoterapia em mulheres trans?","Risco tromboembólico; preferir estradiol (evitar etinilestradiol) e avaliar tabagismo e fatores de risco."],["Monitorização da hormonização masculinizante?","Testosterona, hematócrito/hemoglobina (risco de eritrocitose) e perfil lipídico."],["Efeitos esperados da testosterona em homens trans?","Amenorreia, voz mais grave, aumento de pelos e de massa muscular; mudanças ao longo de meses, algumas irreversíveis."]],
+ "Lípides":[["Metas de LDL conforme o risco cardiovascular?","Muito alto risco: LDL <50 mg/dL (e redução ≥50%); alto risco <70; intermediário <100; baixo <130 mg/dL."],["Primeira linha farmacológica na dislipidemia?","Estatinas de alta potência (atorvastatina, rosuvastatina), que reduzem LDL e eventos cardiovasculares."],["Quando associar ezetimiba à estatina?","Quando a meta de LDL não é atingida com a dose máxima tolerada da estatina; reduz o LDL ~15–25% adicional."],["Indicação dos inibidores de PCSK9?","Alto/muito alto risco fora da meta apesar de estatina + ezetimiba, ou intolerância a estatina (ex.: evolocumabe, alirocumabe)."],["Conduta na hipertrigliceridemia grave (≥500 mg/dL)?","Prevenir pancreatite: restrição de gordura, tratar causas secundárias (álcool, DM descompensado) e fibrato (fenofibrato); ômega-3 em alta dose."]]
 };
 function seedFlashcards(){
-  if(lsGet('fc_seeded'))return 0;
+  // Idempotente: semeia ~5 cards por subespecialidade apenas nas categorias
+  // que ainda nao tem nenhum card (respeita decks existentes e cobre novas
+  // subespecialidades). Roda tambem apos o carregamento remoto.
+  var catsPresent={};DB.fc.forEach(function(c){if(c&&c.cat)catsPresent[c.cat]=1;});
   var added=0;
   Object.keys(FC_SEED).forEach(function(cat){
+    if(catsPresent[cat])return;
     FC_SEED[cat].forEach(function(pair){
-      DB.fc.push({id:Date.now()+Math.random(),front:pair[0],back:pair[1],cat:cat,at:Date.now(),seed:true});added++;
+      DB.fc.push({id:Date.now()+Math.random(),front:pair[0],back:pair[1],cat:cat,due:Date.now(),box:1,at:Date.now(),seed:true});added++;
     });
   });
-  lsSet('fc_seeded',1);lsSet('fc',DB.fc);
+  if(added){lsSet('fc_seeded',1);lsSet('fc',DB.fc);}
   return added;
 }
 function persistProvas(){lsSet('provas',provasDB);queueRemoteStateSave();}
@@ -1556,6 +1561,7 @@ function applyStatePayload(payload){
   REMOTE_STATE_KEYS.forEach(function(k){if(payload[k]!==undefined)lsSet(k,payload[k]);});
 }
 function refreshAfterRemoteState(){
+  try{if(currentUser&&currentUser.id&&seedFlashcards()>0)queueRemoteStateSave();}catch(e){}
   try{refreshDash();}catch(e){}
   try{renderSavedQ();}catch(e){}
   try{renderFC();}catch(e){}
