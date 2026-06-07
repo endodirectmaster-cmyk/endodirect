@@ -501,6 +501,7 @@ textarea{resize:vertical;line-height:1.6}
 }
 </style>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="https://cdn.jsdelivr.net/npm/tus-js-client@4/dist/tus.min.js"></script>
 </head>
 <body>
 <div class="modal-bg" id="onboard-modal">
@@ -1259,7 +1260,8 @@ function normalizeAdmEstudantes(list){
 var SUPABASE_URL='https://auth.endodirect.com.br';
 var SUPABASE_PUBLISHABLE_KEY='sb_publishable_wm27KaGZ0qKHFjTx80c23A_LMLH7DEU';
 var SUPABASE_ASSET_BUCKET='endodirect-assets';
-var MAX_VIDEO_UPLOAD_BYTES=500*1024*1024;
+var MAX_VIDEO_UPLOAD_BYTES=5*1024*1024*1024;
+var RESUMABLE_THRESHOLD_BYTES=20*1024*1024;
 var MAX_AUDIO_UPLOAD_BYTES=200*1024*1024;
 var supabaseClient=null;
 var remoteStateLoaded=false,remoteStateSaveTimer=null,remoteStateWarned=false;
@@ -1321,6 +1323,45 @@ function uploadAdminAsset(file,folder){
     var url=pub&&pub.data&&pub.data.publicUrl;
     if(!url)throw new Error('Upload concluido, mas nao foi possivel gerar URL publica.');
     return{bucket:SUPABASE_ASSET_BUCKET,path:path,url:url,name:file.name,size:file.size,type:file.type||'',uploadedAt:Date.now()};
+  });
+}
+// Upload resumável (protocolo TUS) para arquivos grandes (videoaulas).
+// Envia em blocos de 6 MB, retoma de onde parou em caso de queda de rede e
+// reporta progresso. Suporta arquivos de até o limite do bucket (5 GB).
+function uploadAdminAssetResumable(file,folder,onProgress){
+  var client=getSupabaseClient();
+  if(!client||!client.storage)return Promise.reject(new Error('Supabase Storage nao esta disponivel.'));
+  if(!currentUser||currentUser.role!=='admin')return Promise.reject(new Error('Apenas administradores podem subir arquivos.'));
+  // Sem a lib TUS disponível ou arquivo pequeno: usa upload padrão.
+  if(!window.tus||!window.tus.Upload||file.size<RESUMABLE_THRESHOLD_BYTES)return uploadAdminAsset(file,folder);
+  var path=assetPath(folder,file);
+  var sessionPromise=client.auth&&client.auth.getSession?client.auth.getSession():Promise.resolve({data:{session:null}});
+  return sessionPromise.then(function(res){
+    var session=res.data&&res.data.session;
+    if(!session)throw new Error('Entre como admin pelo Google para subir arquivos no Supabase Storage.');
+    return new Promise(function(resolve,reject){
+      var upload=new window.tus.Upload(file,{
+        endpoint:SUPABASE_URL.replace(/\/+$/,'')+'/storage/v1/upload/resumable',
+        retryDelays:[0,3000,5000,10000,20000],
+        headers:{authorization:'Bearer '+session.access_token,'x-upsert':'false'},
+        uploadDataDuringCreation:true,
+        removeFingerprintOnSuccess:true,
+        chunkSize:6*1024*1024,
+        metadata:{bucketName:SUPABASE_ASSET_BUCKET,objectName:path,contentType:file.type||'application/octet-stream',cacheControl:'3600'},
+        onError:function(err){reject(err);},
+        onProgress:function(sent,total){if(typeof onProgress==='function')try{onProgress(sent,total);}catch(e){}},
+        onSuccess:function(){
+          var pub=client.storage.from(SUPABASE_ASSET_BUCKET).getPublicUrl(path);
+          var url=pub&&pub.data&&pub.data.publicUrl;
+          if(!url){reject(new Error('Upload concluido, mas nao foi possivel gerar URL publica.'));return;}
+          resolve({bucket:SUPABASE_ASSET_BUCKET,path:path,url:url,name:file.name,size:file.size,type:file.type||'',uploadedAt:Date.now()});
+        }
+      });
+      upload.findPreviousUploads().then(function(prev){
+        if(prev&&prev.length)upload.resumeFromPreviousUpload(prev[0]);
+        upload.start();
+      }).catch(function(){upload.start();});
+    });
   });
 }
 function uploadErrorMessage(e){
@@ -2018,7 +2059,7 @@ function submitOnboard(){
   currentUser.sub=perfil;currentUser.profile=prof;
   document.getElementById('onboard-modal').style.display='none';
   startApp();
-  queueRemoteStateSave();
+  hydrateRemoteState();
 }
 // ── SESSÃO: encerramento por inatividade ──
 var SESSION_IDLE_MS=30*60*1000,SESSION_COUNTDOWN_S=60;
@@ -4226,7 +4267,10 @@ function bindAdmSec(sec){
       if(!admCursoVideoFile){notify('Selecione o arquivo de vídeo.','err');return;}
       bAddCurso.disabled=true;bAddCurso.innerHTML=ldHTML();
       setUploadStatus('adm-curso-upload-status','Enviando videoaula para o Supabase Storage...','info');
-      uploadAdminAsset(admCursoVideoFile,'videoaulas')
+      uploadAdminAssetResumable(admCursoVideoFile,'videoaulas',function(sent,total){
+        var pct=total?Math.round(sent/total*100):0;
+        setUploadStatus('adm-curso-upload-status','Enviando videoaula… '+pct+'% ('+formatBytes(sent)+' de '+formatBytes(total)+')','info');
+      })
         .then(function(asset){
           setUploadStatus('adm-curso-upload-status','Upload concluído. Salvando aula...','ok');
           finishCurso(asset.url,asset);
