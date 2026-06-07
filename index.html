@@ -1492,6 +1492,7 @@ function mergeRadarAvisos(list){
   return merged;
 }
 var admAvisos=mergeRadarAvisos(lsGet('adm_avisos')||[]);
+var radarAvisos=[]; // avisos automaticos do radar (campo radar_avisos); preservado nos saves do admin
 var admQuestoes=lsGet('adm_questoes')||[];
 var podcasts=lsGet('podcasts')||[];
 function persistPodcasts(){lsSet('podcasts',podcasts);queueRemoteStateSave();}
@@ -1504,7 +1505,7 @@ function globalStatePayload(){
   // O radar (auto/PubMed) mora em radar_avisos (gravado só pelo cron); o
   // professor grava apenas os avisos manuais em adm_avisos. A leitura
   // (member_content/public_content) mescla os dois.
-  return{provas:provasDB,adm_avisos:admAvisos.filter(function(a){return !isRadarAuto(a);}),adm_questoes:admQuestoes,podcasts:podcasts,adm_cursos:admCursos,adm_estudantes:admEstudantes,adm_perfil:admPerfil,mm_shared:sharedMM};
+  return{provas:provasDB,adm_avisos:admAvisos.filter(function(a){return !isRadarAuto(a);}),radar_avisos:radarAvisos,adm_questoes:admQuestoes,podcasts:podcasts,adm_cursos:admCursos,adm_estudantes:admEstudantes,adm_perfil:admPerfil,mm_shared:sharedMM};
 }
 function currentStatePayload(){
   return Object.assign({},userStatePayload(),globalStatePayload());
@@ -1520,7 +1521,10 @@ function applyStatePayload(payload){
   if(payload.perf&&typeof payload.perf==='object')DB.perf=payload.perf;
   if(Array.isArray(payload.provas))provasDB=payload.provas;
   if(Array.isArray(payload.mm_shared)){sharedMM=payload.mm_shared;try{renderMMList();}catch(e){}}
-  if(Array.isArray(payload.adm_avisos))admAvisos=mergeRadarAvisos(payload.adm_avisos);
+  if(Array.isArray(payload.radar_avisos))radarAvisos=payload.radar_avisos;
+  if(Array.isArray(payload.adm_avisos)||Array.isArray(payload.radar_avisos)){
+    admAvisos=mergeRadarAvisos((Array.isArray(payload.adm_avisos)?payload.adm_avisos:[]).concat(Array.isArray(payload.radar_avisos)?payload.radar_avisos:[]));
+  }
   if(Array.isArray(payload.adm_questoes))admQuestoes=payload.adm_questoes;
   if(Array.isArray(payload.podcasts))podcasts=payload.podcasts;
   if(Array.isArray(payload.adm_cursos))admCursos=payload.adm_cursos;
@@ -2206,11 +2210,12 @@ function hasScope(scope){return !scope||isAdminUser()||userAcessos.indexOf(scope
 function canSeePanel(id){return hasScope(PANEL_SCOPE[id]||null);}
 function canAccessBanco(){return hasScope('curso:endoteem');}
 function scopeNome(scope){
-  if(scope==='plano')return'a Assinatura';
-  if(scope==='curso:endoteem')return'o curso EndoTEEM';
-  if(scope==='curso:lipides')return'o curso de Lípides';
-  if(scope==='curso:endo_essencial')return'o curso Endocrinologia Essencial';
-  return'um plano';
+  if(scope==='plano')return'Assinatura';
+  if(scope==='curso:endoteem')return'curso EndoTEEM';
+  if(scope==='curso:hiperglicemia')return'curso de Hiperglicemia Hospitalar';
+  if(scope==='curso:lipides')return'curso de Lípides';
+  if(scope==='curso:endo_essencial')return'curso de Endocrinologia Essencial';
+  return'pacote';
 }
 function ensureLockedPanel(){
   var p=document.getElementById('panel-locked');
@@ -2227,12 +2232,13 @@ function showLockedPanel(id){
   var bc=document.getElementById('tb-bc');if(bc)bc.textContent=PANEL_LABELS[id]||id;
   var scope=PANEL_SCOPE[id];var nome=scopeNome(scope);
   var label=PANEL_LABELS[id]||'este recurso';
-  var via=scope==='plano'?'assinando o Endodirect':'adquirindo '+nome;
+  var titulo=scope==='plano'?'Recurso da Assinatura':('Recurso do '+nome);
+  var via=scope==='plano'?'assinando o Endodirect':'adquirindo o '+nome;
   p.innerHTML='<div class="breadcrumb">'+esc(label)+' <b>/ Bloqueado</b></div>'
     +'<div class="ph"><h1>🔒 '+esc(label)+'</h1></div>'
     +'<div class="pc"><div class="card" style="max-width:520px;margin:1.2rem auto;text-align:center;padding:1.9rem 1.5rem">'
     +'<div style="font-size:2.3rem;margin-bottom:.5rem">🔒</div>'
-    +'<div style="font-size:1.02rem;font-weight:800;color:var(--navy);margin-bottom:.4rem">Recurso de '+esc(nome)+'</div>'
+    +'<div style="font-size:1.02rem;font-weight:800;color:var(--navy);margin-bottom:.4rem">'+esc(titulo)+'</div>'
     +'<p style="font-size:.84rem;color:var(--t2);line-height:1.6;margin:.3rem 0 1.2rem">Libere <b>'+esc(label)+'</b> '+esc(via)+'.</p>'
     +'<button class="btn btn-primary" id="locked-cta" style="justify-content:center">Ver planos e cursos</button>'
     +'</div></div>';
@@ -3695,7 +3701,7 @@ function admMuralSecHTML(){
     +'<div style="display:flex;gap:6px"><button class="btn btn-primary" id="btn-adm-addav">'+(admMuralEdit!==null?'💾 Salvar alterações':'+ Publicar no mural')+'</button><button class="btn btn-outline" id="btn-adm-av-cancel">Cancelar</button></div></div>'
   ):'';
 
-  return '<div class="adm-ph" style="display:flex;align-items:flex-start;justify-content:space-between"><div><h1>Mural</h1></div><button class="btn btn-primary" id="btn-adm-newav" style="padding:.55rem 1.1rem">+ Novo aviso</button></div>'
+  return '<div class="adm-ph" style="display:flex;align-items:flex-start;justify-content:space-between;gap:.6rem;flex-wrap:wrap"><div><h1>Mural</h1></div><div style="display:flex;gap:.5rem;flex-wrap:wrap"><button class="btn btn-outline" id="btn-adm-radar" style="padding:.55rem 1rem">🔄 Atualizar radar agora</button><button class="btn btn-primary" id="btn-adm-newav" style="padding:.55rem 1.1rem">+ Novo aviso</button></div></div>'
   +'<div class="adm-pc">'
   +formHTML
   // banner de gestão
@@ -4154,6 +4160,25 @@ function bindAdmSec(sec){
   if(sec==='mural'){
     var bNew=document.getElementById('btn-adm-newav');
     if(bNew)bNew.addEventListener('click',function(){admMuralShowForm=!admMuralShowForm;admMuralEdit=null;renderAdmSec('mural');});
+    var bRadar=document.getElementById('btn-adm-radar');
+    if(bRadar)bRadar.addEventListener('click',function(){
+      var client=getSupabaseClient();
+      if(!client){notify('Supabase indisponível.','err');return;}
+      bRadar.disabled=true;bRadar.innerHTML=ldHTML('Buscando artigos...');
+      client.auth.getSession().then(function(res){
+        var token=res&&res.data&&res.data.session&&res.data.session.access_token;
+        if(!token)throw new Error('Sessão expirada. Entre novamente.');
+        return fetch('/api/admin/refresh-radar',{method:'POST',headers:{Authorization:'Bearer '+token}});
+      }).then(function(r){return r.json().catch(function(){return{ok:false,error:'Resposta inválida do servidor.'};});})
+      .then(function(d){
+        if(!d.ok)throw new Error(d.error||'Falha ao atualizar.');
+        notify(d.inserted>0?('Radar atualizado: '+d.inserted+' novo(s) artigo(s)!'):'Radar atualizado — nenhum artigo novo hoje.','ok');
+        return client.from('endodirect_global_state').select('payload').eq('id','main').maybeSingle().then(function(g){
+          if(g&&g.data&&g.data.payload)applyStatePayload(g.data.payload);
+          renderAdmSec('mural');
+        });
+      }).catch(function(e){notify('Erro: '+(e&&e.message||e),'err');var b=document.getElementById('btn-adm-radar');if(b){b.disabled=false;b.textContent='🔄 Atualizar radar agora';}});
+    });
     var bCancel=document.getElementById('btn-adm-av-cancel');
     if(bCancel)bCancel.addEventListener('click',function(){admMuralShowForm=false;admMuralEdit=null;renderAdmSec('mural');});
     var admMF=document.getElementById('adm-mural-filter');
@@ -4734,7 +4759,7 @@ admMuralSecHTML=function(){
     +'<div class="fld2"><label>Texto</label><textarea id="adm-av-text" rows="3" placeholder="Resumo em português, mantendo apenas o título no idioma original..."></textarea></div>'
     +'<div style="display:flex;gap:6px"><button class="btn btn-primary" id="btn-adm-addav">'+(admMuralEdit!==null?'💾 Salvar alterações':'+ Publicar no mural')+'</button><button class="btn btn-outline" id="btn-adm-av-cancel">Cancelar</button></div></div>'
   ):'';
-  return '<div class="adm-ph" style="display:flex;align-items:flex-start;justify-content:space-between"><div><h1>Mural</h1></div><button class="btn btn-primary" id="btn-adm-newav" style="padding:.55rem 1.1rem">+ Novo aviso</button></div>'
+  return '<div class="adm-ph" style="display:flex;align-items:flex-start;justify-content:space-between;gap:.6rem;flex-wrap:wrap"><div><h1>Mural</h1></div><div style="display:flex;gap:.5rem;flex-wrap:wrap"><button class="btn btn-outline" id="btn-adm-radar" style="padding:.55rem 1rem">🔄 Atualizar radar agora</button><button class="btn btn-primary" id="btn-adm-newav" style="padding:.55rem 1.1rem">+ Novo aviso</button></div></div>'
   +'<div class="adm-pc">'
   +formHTML
   +'<div class="card" style="margin-bottom:1.1rem"><div style="display:flex;align-items:flex-start;justify-content:space-between;gap:1rem;flex-wrap:wrap"><div style="flex:1;min-width:240px"><div style="font-size:.62rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--t3);margin-bottom:.3rem">Gestão do mural dos alunos</div><div style="font-size:1.15rem;font-weight:700;color:var(--tx);margin-bottom:.35rem">Edite avisos, notícias e comunicados importantes</div><div style="font-size:.79rem;color:var(--t2);line-height:1.55">Os cards abaixo alimentam a aba Mural do estudante. Use etiquetas por tipo de conteúdo e subespecialidade para organizar leituras e atualizações.</div></div><button class="btn btn-outline" id="btn-adm-mural-preview">👁 Pré-visualizar como aluno</button></div></div>'
