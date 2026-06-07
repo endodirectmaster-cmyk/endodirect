@@ -157,14 +157,18 @@ textarea{resize:vertical;line-height:1.6}
 .q-fb.ok{background:var(--grn-l);color:#16a34a;border:1px solid #bbf7d0}
 .q-fb.er{background:var(--red-l);color:var(--red);border:1px solid #fecaca}
 .fc-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(195px,1fr));gap:9px}
-.fc-card{background:var(--surface);border:1.5px solid var(--bd);border-radius:var(--r);padding:.85rem;cursor:pointer;min-height:100px;display:flex;flex-direction:column}
-.fc-card:hover{border-color:var(--blue)}
-.fc-card.rev{border-color:#86efac;background:var(--grn-l)}
+.fc-card{position:relative;min-height:150px;cursor:pointer;perspective:1100px}
+.fc-inner{position:relative;width:100%;height:100%;min-height:150px;transition:transform .55s cubic-bezier(.4,.2,.2,1);transform-style:preserve-3d}
+.fc-card.rev .fc-inner{transform:rotateY(180deg)}
+.fc-face{position:absolute;inset:0;display:flex;flex-direction:column;background:var(--surface);border:1.5px solid var(--bd);border-radius:var(--r);padding:.85rem;backface-visibility:hidden;-webkit-backface-visibility:hidden;overflow:auto}
+.fc-card:hover .fc-face{border-color:var(--blue)}
+.fc-face-back{transform:rotateY(180deg);background:var(--grn-l);border-color:#86efac}
 .fc-cat{font-size:.54rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--t3);margin-bottom:5px}
 .fc-front{font-size:.77rem;color:var(--tx);line-height:1.5;flex:1;font-weight:500}
-.fc-back{font-size:.73rem;color:#16a34a;margin-top:.4rem;line-height:1.5;display:none;border-top:1px solid #bbf7d0;padding-top:.35rem}
-.fc-card.rev .fc-back{display:block}
-.fc-foot{display:flex;align-items:center;justify-content:space-between;margin-top:.55rem;padding-top:.35rem;border-top:1px solid var(--bd)}
+.fc-back{font-size:.74rem;color:#16a34a;line-height:1.5;flex:1}
+.fc-hint{font-size:.56rem;color:var(--t3);margin-top:.5rem;text-align:right}
+.fc-del{position:absolute;top:5px;right:5px;z-index:3;border:none;background:rgba(255,255,255,.75);color:var(--t3);border-radius:6px;cursor:pointer;font-size:.72rem;line-height:1;padding:3px 6px}
+.fc-del:hover{color:#dc2626}
 .study-c{background:var(--surface);border:1.5px solid var(--bd);border-radius:16px;padding:1.6rem 1.3rem;text-align:center;min-height:180px;display:flex;flex-direction:column;align-items:center;justify-content:center;cursor:pointer;margin-bottom:.75rem}
 .study-c.fl{border-color:#86efac;background:var(--grn-l)}
 .sr-card{background:var(--surface);border:2px solid var(--bd);border-radius:16px;min-height:190px;display:flex;flex-direction:column;align-items:center;justify-content:center;cursor:pointer;padding:1.4rem;text-align:center;margin-bottom:.7rem}
@@ -2534,8 +2538,17 @@ function updateProvaInfo(){
   var type=(document.getElementById('q-ptype')||{}).value||'';
   populateAno('q-ano',inst);
   var n=filterProvas(inst,ano,area,type).length;
+  var total=provasDB.length;
   var el=document.getElementById('q-prova-info');
-  if(el)el.textContent=n>0?n+' questão(ões) disponível(is).':'Nenhuma questão com esses filtros.';
+  if(el){
+    if(isDegustacao()){
+      el.textContent='🎁 Degustação: mostrando '+n+' de '+total+' questões do banco Endodirect (amostra). Assine um pacote para o banco completo.';
+    }else if(n>0){
+      el.textContent='Mostrando '+n+' de '+total+' questão(ões) no seu banco.';
+    }else{
+      el.textContent='Nenhuma questão com esses filtros (seu banco tem '+total+').';
+    }
+  }
 }
 function renderProvaResults(qs){
   if(!qs.length){document.getElementById('q-gen-results').innerHTML='<div class="empty">Nenhuma questão encontrada.</div>';return;}
@@ -2583,7 +2596,7 @@ function renderFC(){
   var el=document.getElementById('fc-grid');if(!el)return;
   var list=fcFilter?DB.fc.filter(function(c){return c.cat===fcFilter;}):DB.fc;
   if(!list.length){el.innerHTML='<div class="empty" style="grid-column:1/-1">Nenhum flashcard.</div>';return;}
-  el.innerHTML=list.map(function(c){var i=DB.fc.indexOf(c);return'<div class="fc-card" data-fctoggle="'+i+'"><div class="fc-cat">'+esc(c.cat||'Geral')+'</div><div class="fc-front">'+esc(c.front)+'</div><div class="fc-back">'+esc(c.back)+'</div><div class="fc-foot"><span style="font-size:.58rem;color:var(--t3)">Clique p/ virar</span><button class="btn btn-ghost btn-sm" data-fcdel="'+i+'" style="padding:1px 5px">✕</button></div></div>';}).join('');
+  el.innerHTML=list.map(function(c){var i=DB.fc.indexOf(c);return'<div class="fc-card" data-fctoggle="'+i+'"><button class="fc-del" data-fcdel="'+i+'" title="Excluir">✕</button><div class="fc-inner"><div class="fc-face fc-face-front"><div class="fc-cat">'+esc(c.cat||'Geral')+'</div><div class="fc-front">'+esc(c.front)+'</div><div class="fc-hint">Clique para virar ↻</div></div><div class="fc-face fc-face-back"><div class="fc-cat">Resposta</div><div class="fc-back">'+esc(c.back)+'</div><div class="fc-hint">Clique para voltar ↺</div></div></div></div>';}).join('');
 }
 function toggleFC(i){
   var cards=document.querySelectorAll('[data-fctoggle]');
