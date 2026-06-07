@@ -1584,7 +1584,19 @@ function persistPodcasts(){lsSet('podcasts',podcasts);queueRemoteStateSave();}
 function userStatePayload(){
   // adm_perfil é PESSOAL (vai no app_state do próprio admin, não no global).
   var p={q:DB.q,fc:DB.fc,mm:DB.mm,notes:DB.notes,crono:DB.crono,sf_results:DB.sf_results,perf:DB.perf,user_profile:lsGet('user_profile')};
-  if(currentUser&&currentUser.role==='admin')p.adm_perfil=admPerfil;
+  if(currentUser&&currentUser.role==='admin'){
+    // Nunca persiste o perfil de OUTRO admin: se o e-mail do perfil em memória
+    // não bater com o da sessão (resíduo de localStorage antigo), reconstrói da
+    // identidade da sessão antes de salvar. Blinda contra recorrência do vazamento.
+    var ap=admPerfil||{};
+    var ae=String(ap.email||'').toLowerCase();
+    var ce=String((currentUser.email||'')).toLowerCase();
+    if(ae&&ce&&ae!==ce){
+      ap={nome:currentUser.name||'Professor',email:(ce.indexOf('@')>=0?currentUser.email:''),contato:'',instituicao:'',cpf:''};
+      admPerfil=ap;
+    }
+    p.adm_perfil=ap;
+  }
   return p;
 }
 function isRadarAuto(a){return !!(a&&a.auto&&String(a.sourceId||'').indexOf('pubmed:')===0);}
@@ -2333,7 +2345,7 @@ function isDegustacao(){return !!(currentUser&&currentUser.role==='aluno'&&!isAd
 var DEGUSTACAO_PANELS={dash:1,flash:1,mmap:1,quest:1,mural:1,perfil:1,support:1};
 function canSeePanel(id){
   if(isAdminUser())return true;
-  if(isDegustacao())return DEGUSTACAO_PANELS[id]===true;
+  if(isDegustacao())return !!DEGUSTACAO_PANELS[id];
   return hasScope(PANEL_SCOPE[id]||null);
 }
 // Bloqueia geração por IA na degustação (custo) — só conteúdo pré-salvo/banco.
