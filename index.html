@@ -1679,7 +1679,7 @@ function refreshAfterRemoteState(){
   try{renderSavedCrono();}catch(e){}
   try{renderNoteList();}catch(e){}
   try{markLockedNavItems();}catch(e){}
-  try{if(currentUser&&currentUser.role==='admin')renderAdmSec(admCurrentSec||'analytics');}catch(e){}
+  try{if(currentUser&&currentUser.role==='admin'){refreshAdminIdentity();renderAdmSec(admCurrentSec||'analytics');}}catch(e){}
 }
 function canUseRemoteState(){
   return !!(currentUser&&currentUser.id&&getSupabaseClient());
@@ -2000,6 +2000,17 @@ function callAIwithPDF(sys,b64){
 }
 
 var currentUser=null;
+// Atualiza nome/e-mail/avatar do professor no topo (botão e menu). Reaplica
+// após o hydrate para corrigir o cabeçalho quando o admPerfil é ajustado
+// (ex.: identidade da sessão sobrepondo resíduo de localStorage).
+function refreshAdminIdentity(){
+  if(!(currentUser&&currentUser.role==='admin'))return;
+  var nome=(admPerfil&&admPerfil.nome)||currentUser.name||'Administrador';
+  var em=(admPerfil&&admPerfil.email)||currentUser.email||'';
+  setText('adm-uname',nome);setText('adm-um-name',nome);
+  setText('adm-um-email',(em&&em.indexOf('@')>=0)?em:'Professor');
+  var av=document.getElementById('adm-uavatar');if(av)av.textContent=(nome||'A').charAt(0);
+}
 function startApp(){
   var u=currentUser;
   startSessionWatcher();
@@ -2025,9 +2036,7 @@ function startApp(){
   document.getElementById('btn-chat-cta').style.display=isAdmin?'none':'flex';
   document.querySelectorAll('.panel').forEach(function(p){p.classList.remove('on');});
   if(isAdmin){
-    var adminName=(admPerfil&&admPerfil.nome)||u.name||'Administrador';
-    setText('adm-uname',adminName);setText('adm-um-name',adminName);
-    var av=document.getElementById('adm-uavatar');if(av)av.textContent=adminName.charAt(0);
+    refreshAdminIdentity();
     var al=document.getElementById('logo-adm-img');var tbLogo=document.getElementById('logo-tb-img');
     if(al&&tbLogo)al.innerHTML='<img src="'+tbLogo.src+'" alt="Endodirect" style="width:30px;height:30px;object-fit:contain">';
     goPanel('adm');
@@ -4552,8 +4561,7 @@ function bindAdmSec(sec){
       admPerfil.cpf=(document.getElementById('adm-pf-cpf').value||'').trim();
       admPerfil.instituicao=(document.getElementById('adm-pf-inst').value||'').trim();
       persistPerfil();admPerfilEdit=false;
-      setText('adm-uname',admPerfil.nome);setText('adm-um-name',admPerfil.nome);
-      var av=document.getElementById('adm-uavatar');if(av)av.textContent=admPerfil.nome.charAt(0);
+      refreshAdminIdentity();
       notify('Perfil atualizado!','ok');renderAdmSec('perfil');
     });
     var bpcancel=document.getElementById('btn-adm-pf-cancel');
