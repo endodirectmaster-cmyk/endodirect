@@ -4668,21 +4668,22 @@ function playerEmbed(c){
   var v=vimeoId(c.src);if(v)return '<iframe title="'+esc(c.title||'Videoaula')+'" src="https://player.vimeo.com/video/'+v+'" style="width:100%;aspect-ratio:16/9;border:0;display:block" allowfullscreen></iframe>';
   return '<video controls style="width:100%;max-height:62vh;display:block" src="'+esc(c.src||'')+'"></video>';
 }
-var admCursoFiltro='',admCursoVideoFile=null,admCursoVideoData=null,admCursoSubtab='ver';
+var admCursoFiltro='',admCursoVideoFile=null,admCursoVideoData=null,admCursoSubtab='ver',admCursoEditIdx=null;
 function admCursosHTML(){
   var cont={};admCursos.forEach(function(c){if(c.curso)cont[c.curso]=(cont[c.curso]||0)+1;});
   var lista=admCursoFiltro?admCursos.filter(function(c){return c.curso===admCursoFiltro;}):admCursos;
 
-  var formHTML='<div class="card" style="margin-bottom:1.1rem"><div style="font-size:1rem;font-weight:700;margin-bottom:.8rem">🎬 Importar videoaula</div>'
-    +'<div class="g2" style="margin-bottom:.7rem"><div class="fld2" style="margin:0"><label>Título da aula</label><input type="text" id="adm-curso-title" placeholder="Ex: Manejo da cetoacidose diabética"></div><div class="fld2" style="margin:0"><label>Curso (controla o acesso)</label><select id="adm-curso-curso">'+cursoSlugOptions('',false)+'</select></div></div>'
-    +'<div class="g2" style="margin-bottom:.7rem"><div class="fld2" style="margin:0"><label>Módulo (opcional)</label><input type="text" id="adm-curso-modulo" placeholder="Ex: Emergências endócrinas"></div><div class="fld2" style="margin:0"><label>Duração (opcional)</label><input type="text" id="adm-curso-dur" placeholder="Ex: 18 min"></div></div>'
-    +'<div class="fld2"><label>Descrição</label><textarea id="adm-curso-desc" rows="2" placeholder="Breve descrição da aula…"></textarea></div>'
+  var ed=(admCursoEditIdx!=null&&admCursos[admCursoEditIdx])?admCursos[admCursoEditIdx]:null;
+  var formHTML='<div class="card" style="margin-bottom:1.1rem"><div style="font-size:1rem;font-weight:700;margin-bottom:.8rem">'+(ed?'✏️ Editar aula':'🎬 Importar videoaula')+'</div>'
+    +'<div class="g2" style="margin-bottom:.7rem"><div class="fld2" style="margin:0"><label>Título da aula</label><input type="text" id="adm-curso-title" value="'+(ed?esc(ed.title||''):'')+'" placeholder="Ex: Manejo da cetoacidose diabética"></div><div class="fld2" style="margin:0"><label>Curso (controla o acesso)</label><select id="adm-curso-curso">'+cursoSlugOptions(ed?(ed.curso||''):'',false)+'</select></div></div>'
+    +'<div class="g2" style="margin-bottom:.7rem"><div class="fld2" style="margin:0"><label>Módulo (opcional)</label><input type="text" id="adm-curso-modulo" value="'+(ed?esc(ed.modulo||''):'')+'" placeholder="Ex: Emergências endócrinas"></div><div class="fld2" style="margin:0"><label>Duração (opcional)</label><input type="text" id="adm-curso-dur" value="'+(ed?esc(ed.dur||''):'')+'" placeholder="Ex: 18 min"></div></div>'
+    +'<div class="fld2"><label>Descrição</label><textarea id="adm-curso-desc" rows="2" placeholder="Breve descrição da aula…">'+(ed?esc(ed.desc||''):'')+'</textarea></div>'
     +'<div class="fld2"><label>Vídeo (link YouTube / Vimeo)</label>'
-      +'<input type="text" id="adm-curso-link" placeholder="Cole a URL do vídeo (YouTube ou Vimeo)">'
+      +'<input type="text" id="adm-curso-link" value="'+(ed?esc(ed.src||''):'')+'" placeholder="Cole a URL do vídeo (YouTube ou Vimeo)">'
       +'<div style="font-size:.66rem;color:var(--t3);margin-top:.3rem">Use links do YouTube ou Vimeo — o vídeo é reproduzido direto da fonte (sem ocupar armazenamento).</div>'
     +'</div>'
     +'<div class="upload-status" id="adm-curso-upload-status"></div>'
-    +'<button class="btn btn-primary" id="btn-adm-addcurso">+ Adicionar aula</button></div>';
+    +'<div style="display:flex;gap:.5rem;flex-wrap:wrap"><button class="btn btn-primary" id="btn-adm-addcurso">'+(ed?'💾 Salvar alterações':'+ Adicionar aula')+'</button>'+(ed?'<button class="btn btn-ghost" id="btn-adm-cancelcurso">Cancelar</button>':'')+'</div></div>';
 
   function cursoTile(slug,nome,n,icon){
     var active=admCursoFiltro===slug;
@@ -4697,7 +4698,7 @@ function admCursosHTML(){
       +(Array.isArray(catalogoCursos)?catalogoCursos:[]).map(function(cc){return cursoTile(cc.slug,cc.nome,cont[cc.slug]||0,'🎓');}).join('')
     +'</div>'
   +'<div id="adm-curso-player" style="display:none;margin-bottom:1.1rem"></div>'
-  +'<div id="adm-curso-list" class="g2" style="align-items:start">'+(lista.length?lista.map(function(c){var i=admCursos.indexOf(c);var meta=c.asset?'<div class="asset-meta">Supabase Storage: '+esc(c.asset.name||'video')+' · '+formatBytes(c.asset.size)+'</div>':'';return '<div class="card"><div style="display:flex;align-items:flex-start;gap:.7rem"><div style="width:48px;height:48px;border-radius:10px;background:var(--navy);display:flex;align-items:center;justify-content:center;font-size:1.3rem;flex-shrink:0">🎬</div><div style="flex:1;min-width:0"><div style="font-size:.86rem;font-weight:700;color:var(--tx);margin-bottom:.25rem">'+esc(c.title)+'</div><div style="display:flex;flex-wrap:wrap;gap:.3rem;margin-bottom:.4rem">'+(c.curso?'<span class="tag tag-grn">'+esc(cursoNomeBySlug(c.curso))+'</span>':'<span class="tag" style="background:#eef1f5;color:#7a8699">Sem curso</span>')+(c.modulo?'<span class="tag tag-pur">'+esc(c.modulo)+'</span>':'')+(c.dur?'<span class="tag tag-gold">'+esc(c.dur)+'</span>':'')+'</div>'+(c.desc?'<div style="font-size:.74rem;color:var(--t2);line-height:1.5;margin-bottom:.4rem">'+esc(c.desc)+'</div>':'')+'<div style="font-size:.66rem;color:var(--t3);word-break:break-all;margin-bottom:.5rem">'+(c.tipo==='link'?'🔗 '+esc(c.src):'🎞️ Arquivo de vídeo')+'</div>'+meta+'<div style="display:flex;gap:5px"><button class="btn btn-primary btn-sm" data-adm-playcurso="'+i+'">▶ Assistir</button><button class="btn btn-outline btn-sm" data-adm-delcurso="'+i+'" style="color:var(--red);border-color:var(--red)">🗑 Excluir</button></div></div></div></div>';}).join(''):'<div class="empty" style="grid-column:1/-1">Nenhuma videoaula '+(admCursoFiltro?'neste curso':'cadastrada ainda')+'.</div>')+'</div>';
+  +'<div id="adm-curso-list" class="g2" style="align-items:start">'+(lista.length?lista.map(function(c){var i=admCursos.indexOf(c);var meta=c.asset?'<div class="asset-meta">Supabase Storage: '+esc(c.asset.name||'video')+' · '+formatBytes(c.asset.size)+'</div>':'';return '<div class="card"><div style="display:flex;align-items:flex-start;gap:.7rem"><div style="width:48px;height:48px;border-radius:10px;background:var(--navy);display:flex;align-items:center;justify-content:center;font-size:1.3rem;flex-shrink:0">🎬</div><div style="flex:1;min-width:0"><div style="font-size:.86rem;font-weight:700;color:var(--tx);margin-bottom:.25rem">'+esc(c.title)+'</div><div style="display:flex;flex-wrap:wrap;gap:.3rem;margin-bottom:.4rem">'+(c.curso?'<span class="tag tag-grn">'+esc(cursoNomeBySlug(c.curso))+'</span>':'<span class="tag" style="background:#eef1f5;color:#7a8699">Sem curso</span>')+(c.modulo?'<span class="tag tag-pur">'+esc(c.modulo)+'</span>':'')+(c.dur?'<span class="tag tag-gold">'+esc(c.dur)+'</span>':'')+'</div>'+(c.desc?'<div style="font-size:.74rem;color:var(--t2);line-height:1.5;margin-bottom:.4rem">'+esc(c.desc)+'</div>':'')+'<div style="font-size:.66rem;color:var(--t3);word-break:break-all;margin-bottom:.5rem">'+(c.tipo==='link'?'🔗 '+esc(c.src):'🎞️ Arquivo de vídeo')+'</div>'+meta+'<div style="display:flex;gap:5px;flex-wrap:wrap"><button class="btn btn-primary btn-sm" data-adm-playcurso="'+i+'">▶ Assistir</button><button class="btn btn-outline btn-sm" data-adm-editcurso="'+i+'">✏️ Editar</button><button class="btn btn-outline btn-sm" data-adm-delcurso="'+i+'" style="color:var(--red);border-color:var(--red)">🗑 Excluir</button></div></div></div></div>';}).join(''):'<div class="empty" style="grid-column:1/-1">Nenhuma videoaula '+(admCursoFiltro?'neste curso':'cadastrada ainda')+'.</div>')+'</div>';
 
   return '<div class="adm-ph"><h1>Cursos</h1><p>Importe e organize videoaulas por curso.</p></div>'
   +'<div class="adm-pc">'
@@ -4810,7 +4811,7 @@ function bindAdmSec(sec){
   }
 
   if(sec==='cursos'){
-    main.querySelectorAll('[data-csub]').forEach(function(b){b.addEventListener('click',function(){admCursoSubtab=b.dataset.csub;renderAdmSec('cursos');});});
+    main.querySelectorAll('[data-csub]').forEach(function(b){b.addEventListener('click',function(){admCursoSubtab=b.dataset.csub;admCursoEditIdx=null;renderAdmSec('cursos');});});
     if(admCursoSubtab==='catalogo'){
       if(!(Array.isArray(catalogoCursos)&&catalogoCursos.length))loadCursoCatalogo(function(){renderAdmSec('cursos');});
       var bCatSave=document.getElementById('btn-cat-save');
@@ -4831,15 +4832,23 @@ function bindAdmSec(sec){
       var link=(document.getElementById('adm-curso-link').value||'').trim();
       if(!link){notify('Cole a URL do vídeo (YouTube ou Vimeo).','err');return;}
       var cursoSelEl=document.getElementById('adm-curso-curso');
-      var c={title:title,curso:cursoSelEl?cursoSelEl.value:'',modulo:(document.getElementById('adm-curso-modulo').value||'').trim(),dur:(document.getElementById('adm-curso-dur').value||'').trim(),desc:(document.getElementById('adm-curso-desc').value||'').trim(),at:Date.now(),tipo:'link',src:link};
-      admCursos.push(c);
-      persistCursos();
-      notify('Videoaula adicionada!','ok');
+      var dados={title:title,curso:cursoSelEl?cursoSelEl.value:'',modulo:(document.getElementById('adm-curso-modulo').value||'').trim(),dur:(document.getElementById('adm-curso-dur').value||'').trim(),desc:(document.getElementById('adm-curso-desc').value||'').trim(),tipo:'link',src:link};
+      if(admCursoEditIdx!=null&&admCursos[admCursoEditIdx]){
+        admCursos[admCursoEditIdx]=Object.assign({},admCursos[admCursoEditIdx],dados);
+        admCursoEditIdx=null;
+        persistCursos();notify('Aula atualizada!','ok');
+      }else{
+        admCursos.push(Object.assign({at:Date.now()},dados));
+        persistCursos();notify('Videoaula adicionada!','ok');
+      }
       admCursoSubtab='ver';
       renderAdmSec('cursos');
       renderCursosAluno();
     });
+    var cCancelCurso=document.getElementById('btn-adm-cancelcurso');
+    if(cCancelCurso)cCancelCurso.addEventListener('click',function(){admCursoEditIdx=null;admCursoSubtab='ver';renderAdmSec('cursos');});
     } // fim aba importar
+    main.querySelectorAll('[data-adm-editcurso]').forEach(function(b){b.addEventListener('click',function(){admCursoEditIdx=parseInt(b.dataset.admEditcurso);admCursoSubtab='importar';renderAdmSec('cursos');});});
     main.querySelectorAll('[data-curso-btn]').forEach(function(b){b.addEventListener('click',function(){admCursoFiltro=b.dataset.cursoBtn||'';renderAdmSec('cursos');});});
     main.querySelectorAll('[data-adm-playcurso]').forEach(function(b){b.addEventListener('click',function(){
       var c=admCursos[parseInt(b.dataset.admPlaycurso)];if(!c)return;
