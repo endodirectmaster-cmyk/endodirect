@@ -2944,6 +2944,10 @@ var catalogoCursos=[];
 var PANEL_SCOPE={
   sim:'plano', simfull:'plano', flash:'plano', mmap:'plano', podcast:'plano', rx:'plano', art:'plano'
 };
+// Tier mínimo por painel: Simulador de Casos = Gold(2); Prescrição = Premium(3).
+// Os demais ficam em qualquer pacote (tier 1).
+var PANEL_MIN_TIER={sim:2, rx:3};
+function planRank(){var k=currentPlanKey();return k==='premium'?3:(k==='gold'?2:(k==='standard'?1:0));}
 function isAdminUser(){return !!(currentUser&&currentUser.role==='admin');}
 function hasScope(scope){return !scope||isAdminUser()||userAcessos.indexOf(scope)>=0;}
 // Degustacao: aluno logado, sem nenhum acesso ativo (não comprou pacote/curso).
@@ -2980,7 +2984,10 @@ function canSeePanel(id){
     if(TRIAL_PANELS[id])return trialLeft(id)>0;
     return false;
   }
-  return hasScope(PANEL_SCOPE[id]||null);
+  if(!hasScope(PANEL_SCOPE[id]||null))return false;
+  var min=PANEL_MIN_TIER[id]||0;
+  if(min>0&&planRank()<min)return false; // plano abaixo do exigido (ex.: Gold em recurso Premium)
+  return true;
 }
 // Bloqueia geração por IA na degustação (custo) — só conteúdo pré-salvo/banco.
 function blockIfDegustacao(){
@@ -3026,10 +3033,14 @@ function showLockedPanel(id){
   var scope=PANEL_SCOPE[id];var nome=scopeNome(scope);
   var label=PANEL_LABELS[id]||'este recurso';
   var trialEsgotado=isDegustacao()&&TRIAL_PANELS[id]&&trialLeft(id)<=0;
-  var titulo=trialEsgotado?'Degustação concluída':(scope==='plano'?'Recurso dos pacotes':('Recurso do '+nome));
+  var minTier=PANEL_MIN_TIER[id]||0;
+  var minName=minTier===3?'Premium':(minTier===2?'Gold':'');
+  var titulo=trialEsgotado?'Degustação concluída':(minName?('Exclusivo do plano '+minName):(scope==='plano'?'Recurso dos pacotes':('Recurso do '+nome)));
   var hasPlan=!isDegustacao()&&!trialEsgotado;
   var ctaLabel=hasPlan?'Fazer upgrade do plano':'Ver planos e cursos';
-  var via=scope==='plano'?(hasPlan?'fazendo upgrade do seu plano':'adquirindo um pacote (Standard, Gold ou Premium)'):(hasPlan?'fazendo upgrade do seu plano':'adquirindo o '+nome);
+  var via=minName
+    ? (hasPlan?('fazendo upgrade para o plano '+minName):('assinando o plano '+minName))
+    : (scope==='plano'?(hasPlan?'fazendo upgrade do seu plano':'adquirindo um pacote (Standard, Gold ou Premium)'):(hasPlan?'fazendo upgrade do seu plano':'adquirindo o '+nome));
   if(trialEsgotado){
     p.innerHTML='<div class="breadcrumb">'+esc(label)+' <b>/ Bloqueado</b></div>'
       +'<div class="ph"><h1>🔒 '+esc(label)+'</h1></div>'
@@ -3040,7 +3051,7 @@ function showLockedPanel(id){
       +'<button class="btn btn-primary" id="locked-cta" style="justify-content:center">'+esc(ctaLabel)+'</button>'
       +'</div></div>';
     var bte=document.getElementById('locked-cta');
-    if(bte)bte.addEventListener('click',function(){showAssineScreen((currentUser&&currentUser.email)||'',{upgrade:hasPlan});});
+    if(bte)bte.addEventListener('click',function(){showAssineScreen((currentUser&&currentUser.email)||'',{upgrade:hasPlan,highlight:(minName?minName.toLowerCase():'')});});
     closeMobileNav();
     return;
   }
@@ -3053,7 +3064,7 @@ function showLockedPanel(id){
     +'<button class="btn btn-primary" id="locked-cta" style="justify-content:center">'+esc(ctaLabel)+'</button>'
     +'</div></div>';
   var btn=document.getElementById('locked-cta');
-  if(btn)btn.addEventListener('click',function(){showAssineScreen((currentUser&&currentUser.email)||'',{upgrade:hasPlan});});
+  if(btn)btn.addEventListener('click',function(){showAssineScreen((currentUser&&currentUser.email)||'',{upgrade:hasPlan,highlight:(minName?minName.toLowerCase():'')});});
   closeMobileNav();
 }
 function currentPlanKey(){
