@@ -591,7 +591,93 @@ textarea{resize:vertical;line-height:1.6}
   </div>
 </div>
 
-<div id="login-screen">
+<style>
+#landing-screen{position:fixed;inset:0;overflow:auto;background:#0f1115;color:#e6e9ef;z-index:900}
+.lp-wrap{max-width:1100px;margin:0 auto;padding:0 1.2rem}
+.lp-nav{position:sticky;top:0;background:rgba(15,17,21,.88);backdrop-filter:blur(8px);border-bottom:1px solid #20242c;z-index:5}
+.lp-nav-in{display:flex;align-items:center;justify-content:space-between;height:64px}
+.lp-brand{display:flex;align-items:center;gap:.55rem;font-weight:800;font-size:1.05rem;color:#fff}
+.lp-brand img{width:30px;height:30px;object-fit:contain;border-radius:7px}
+.lp-cta{background:#e0a93b;color:#1a1320;border:0;border-radius:999px;padding:.6rem 1.15rem;font-weight:800;cursor:pointer;font-size:.85rem;text-decoration:none;display:inline-block}
+.lp-cta:hover{filter:brightness(1.06)}
+.lp-ghost{background:transparent;color:#cbd2dd;border:1px solid #2a2f3a;border-radius:999px;padding:.6rem 1.15rem;font-weight:700;cursor:pointer;font-size:.85rem;text-decoration:none;display:inline-block}
+.lp-hero{text-align:center;padding:4.2rem 0 3rem}
+.lp-eyebrow{display:inline-block;font-size:.7rem;font-weight:800;letter-spacing:.1em;text-transform:uppercase;color:#e0a93b;background:rgba(224,169,59,.1);border:1px solid rgba(224,169,59,.25);padding:.3rem .7rem;border-radius:999px;margin-bottom:1.1rem}
+.lp-hero h1{font-size:2.6rem;line-height:1.12;font-weight:800;margin:0 0 1rem;letter-spacing:-.01em;color:#fff}
+.lp-hero h1 span{color:#e0a93b}
+.lp-hero p{font-size:1.05rem;color:#aeb6c2;max-width:660px;margin:0 auto 1.7rem;line-height:1.6}
+.lp-hero-btns{display:flex;gap:.7rem;justify-content:center;flex-wrap:wrap}
+.lp-section{padding:2.6rem 0}
+.lp-sec-title{text-align:center;font-size:1.7rem;font-weight:800;margin:0 0 .5rem;color:#fff}
+.lp-sec-sub{text-align:center;color:#8a93a3;margin:0 auto 2rem;max-width:580px;font-size:.92rem;line-height:1.55}
+.lp-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(245px,1fr));gap:1rem}
+.lp-card{background:#16191f;border:1px solid #232730;border-radius:16px;padding:1.3rem;transition:transform .2s,border-color .2s}
+.lp-card:hover{transform:translateY(-3px);border-color:#3a4150}
+.lp-ico{font-size:1.7rem;margin-bottom:.6rem}
+.lp-card h3{margin:0 0 .35rem;font-size:1rem;font-weight:700;color:#fff}
+.lp-card p{margin:0;font-size:.84rem;color:#9aa3b2;line-height:1.55}
+.lp-plans{display:grid;grid-template-columns:repeat(auto-fit,minmax(235px,1fr));gap:1rem;align-items:stretch}
+.lp-plan{position:relative;border:1.5px solid #2a2f3a;border-radius:16px;padding:1.5rem 1.25rem;background:#16191f;display:flex;flex-direction:column}
+.lp-plan.hot{border-color:#e0a93b;background:rgba(224,169,59,.06)}
+.lp-plan .badge{position:absolute;top:-11px;left:50%;transform:translateX(-50%);font-size:.58rem;font-weight:800;text-transform:uppercase;letter-spacing:.06em;background:#e0a93b;color:#1a1320;padding:.18rem .6rem;border-radius:999px;white-space:nowrap}
+.lp-plan .nm{font-weight:800;font-size:1.15rem;color:#fff}
+.lp-plan .pr{font-size:2rem;font-weight:800;margin:.3rem 0 .1rem;color:#fff}
+.lp-plan .pr small{font-size:.72rem;color:#8a93a3;font-weight:600}
+.lp-plan ul{list-style:none;padding:0;margin:1rem 0 1.2rem;display:flex;flex-direction:column;gap:.45rem}
+.lp-plan li{font-size:.8rem;color:#aeb6c2;display:flex;gap:.45rem;align-items:flex-start;line-height:1.4}
+.lp-plan li::before{content:"✓";color:#5fd39a;font-weight:800}
+.lp-foot{border-top:1px solid #20242c;padding:1.8rem 0;text-align:center;color:#6b7480;font-size:.8rem}
+.lp-foot a{color:#8a93a3;text-decoration:none}
+@media(max-width:640px){.lp-hero h1{font-size:1.95rem}.lp-hero{padding:2.8rem 0 2rem}.lp-sec-title{font-size:1.4rem}}
+</style>
+<div id="landing-screen">
+  <div class="lp-nav"><div class="lp-wrap lp-nav-in">
+    <div class="lp-brand"><img src="logo.png.png" alt="Endodirect">Endodirect</div>
+    <button class="lp-cta" onclick="showLoginScreen()">Acessar a plataforma →</button>
+  </div></div>
+  <div class="lp-wrap">
+    <section class="lp-hero">
+      <span class="lp-eyebrow">Educação médica · Endocrinologia &amp; Metabologia</span>
+      <h1>Domine a <span>Endocrinologia</span> com uma plataforma feita para a sua prática e aprovação</h1>
+      <p>Banco de questões comentadas, flashcards inteligentes, mapas mentais, simulados, prescrição e um assistente de IA — tudo em um só lugar, baseado nas principais diretrizes (SBEM, SBD, ADA).</p>
+      <div class="lp-hero-btns">
+        <button class="lp-cta" onclick="showLoginScreen()">Acessar a plataforma</button>
+        <a class="lp-ghost" href="#planos">Ver planos</a>
+      </div>
+    </section>
+    <section class="lp-section">
+      <h2 class="lp-sec-title">Tudo o que você precisa para estudar</h2>
+      <p class="lp-sec-sub">Ferramentas integradas para teoria, prática clínica e revisão — com inteligência artificial.</p>
+      <div class="lp-grid">
+        <div class="lp-card"><div class="lp-ico">📝</div><h3>Banco de Questões</h3><p>Questões de provas comentadas, filtráveis por subespecialidade, ano e tipo.</p></div>
+        <div class="lp-card"><div class="lp-ico">🤖</div><h3>Questões por IA</h3><p>Gere questões inéditas sobre qualquer tema endócrino, no nível que quiser.</p></div>
+        <div class="lp-card"><div class="lp-ico">🃏</div><h3>Flashcards</h3><p>Cartões com revisão espaçada e efeito flip 3D, organizados por subespecialidade.</p></div>
+        <div class="lp-card"><div class="lp-ico">✦</div><h3>Mapas Mentais</h3><p>Mapas visuais editáveis para fixar as conexões entre os conceitos.</p></div>
+        <div class="lp-card"><div class="lp-ico">♡</div><h3>Simulador de Casos</h3><p>Casos clínicos passo a passo, estilo OSCE, com feedback imediato.</p></div>
+        <div class="lp-card"><div class="lp-ico">📝</div><h3>Simulado</h3><p>Provas cronometradas com correção e desempenho por área.</p></div>
+        <div class="lp-card"><div class="lp-ico">💊</div><h3>Prescrição Comentada</h3><p>Treine prescrições e receba avaliação detalhada da IA.</p></div>
+        <div class="lp-card"><div class="lp-ico">💬</div><h3>Chat IA</h3><p>Tire dúvidas com um assistente especializado em endocrinologia.</p></div>
+        <div class="lp-card"><div class="lp-ico">🎧</div><h3>Podcasts</h3><p>Episódios sobre atualizações e temas-chave, direto do Spotify.</p></div>
+        <div class="lp-card"><div class="lp-ico">🎬</div><h3>Cursos</h3><p>Videoaulas organizadas por curso e módulo.</p></div>
+        <div class="lp-card"><div class="lp-ico">📅</div><h3>Cronograma &amp; Revisão</h3><p>Plano de estudos personalizado e revisão espaçada inteligente.</p></div>
+        <div class="lp-card"><div class="lp-ico">📢</div><h3>Mural de Atualizações</h3><p>Radar diário com os artigos mais relevantes das principais revistas.</p></div>
+      </div>
+    </section>
+    <section class="lp-section" id="planos">
+      <h2 class="lp-sec-title">Planos</h2>
+      <p class="lp-sec-sub">Escolha o pacote ideal e desbloqueie todos os benefícios da plataforma.</p>
+      <div class="lp-plans">
+        <div class="lp-plan"><div class="nm">Standard</div><div class="pr">R$ 50<small>/mês</small></div><ul><li>Banco de questões</li><li>Flashcards e mapas mentais</li><li>Simulador e simulado</li><li>Prescrição e resumidor</li><li>Podcasts exclusivos</li><li>Curso de Hiperglicemia Hospitalar</li></ul><button class="lp-cta" style="margin-top:auto;width:100%;text-align:center" onclick="showLoginScreen()">Acessar</button></div>
+        <div class="lp-plan hot"><span class="badge">Mais popular</span><div class="nm">Gold</div><div class="pr">R$ 70<small>/mês</small></div><ul><li>Tudo do Standard</li><li>+ Curso de Lípides</li><li>Conteúdos completos liberados</li></ul><button class="lp-cta" style="margin-top:auto;width:100%;text-align:center" onclick="showLoginScreen()">Acessar</button></div>
+        <div class="lp-plan"><div class="nm">Premium</div><div class="pr">R$ 90<small>/mês</small></div><ul><li>Tudo do Gold</li><li>+ Curso de Endocrinologia Essencial</li><li>Acesso completo à plataforma</li></ul><button class="lp-ghost" style="margin-top:auto;width:100%;text-align:center" onclick="showLoginScreen()">Acessar</button></div>
+      </div>
+      <p style="text-align:center;color:#6b7480;font-size:.78rem;margin-top:1.1rem">EndoTEEM (banco de questões para a prova de título) é um produto à parte. Consulte na plataforma.</p>
+    </section>
+  </div>
+  <div class="lp-foot"><div class="lp-wrap">© <span id="lp-year"></span> Endodirect · Educação médica em Endocrinologia · <a href="/privacidade" target="_blank" rel="noopener">Privacidade</a> · <a href="/termos" target="_blank" rel="noopener">Termos</a></div></div>
+</div>
+
+<div id="login-screen" style="display:none">
   <div class="login-card">
     <div class="login-hdr">
       <div class="login-logo"><div class="login-ico"><img id="logo-login-img" class="logo-img login-logo-img" src="logo.png.png" alt="Endodirect"></div><div class="login-name">Endodirect</div></div>
@@ -2024,12 +2110,17 @@ function refreshAdminIdentity(){
   setText('adm-um-email',(em&&em.indexOf('@')>=0)?em:'Professor');
   var av=document.getElementById('adm-uavatar');if(av)av.textContent=(nome||'A').charAt(0);
 }
+// Landing (site público): mostrada por padrão a visitantes sem sessão.
+// O botão "Acessar a plataforma" revela a tela de login.
+function showLoginScreen(){var l=document.getElementById('landing-screen');if(l)l.style.display='none';var ls=document.getElementById('login-screen');if(ls)ls.style.display='flex';try{window.scrollTo(0,0);}catch(e){}}
+function showLandingScreen(){var l=document.getElementById('landing-screen');if(l)l.style.display='block';var ls=document.getElementById('login-screen');if(ls)ls.style.display='none';}
 function startApp(){
   var u=currentUser;
   startSessionWatcher();
   var isAdmin=u.role==='admin';
   var app=document.getElementById('app-screen');
   document.getElementById('login-screen').style.display='none';
+  var lp=document.getElementById('landing-screen');if(lp)lp.style.display='none';
   app.style.display=isAdmin?'block':'flex';
   app.classList.toggle('admin-mode',isAdmin);
   document.body.classList.remove('admin-menu-open');
@@ -5220,6 +5311,9 @@ document.addEventListener('DOMContentLoaded',function(){setupOnboardProfileChoic
 
 // ── DOMContentLoaded: bindings ──
 document.addEventListener('DOMContentLoaded',function(){
+  var lpy=document.getElementById('lp-year');if(lpy)lpy.textContent=new Date().getFullYear();
+  // Recuperação de senha cai direto na tela de login (não na landing).
+  try{if(isPasswordRecoveryUrl())showLoginScreen();}catch(e){}
   startSupabaseAuthWatcher();
   setupMMPinchZoom();
   seedFlashcards();
