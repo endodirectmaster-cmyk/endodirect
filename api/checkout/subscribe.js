@@ -183,12 +183,18 @@ module.exports = async function handler(req, res) {
     console.log('[subscribe] status=' + status + ' cardId=' + (cardId || 'none') + ' sub=' + JSON.stringify(sub).slice(0, 1500));
     const okStatuses = ['active', 'trialing', 'future', 'paid'];
     if (status && okStatuses.indexOf(status) < 0) {
+      // Busca a cobranca da assinatura para descobrir o motivo exato da recusa.
       let reason = '';
       try {
-        const charge = (Array.isArray(sub.charges) && sub.charges[0]) || null;
+        const cr = await fetch(`${PAGARME_API}/subscriptions/${sub.id}/charges`, { headers: pagarmeHeaders() });
+        const cd = await cr.json().catch(() => ({}));
+        const charge = (cd && Array.isArray(cd.data) && cd.data[0]) || null;
         const lt = charge && charge.last_transaction;
-        reason = (lt && (lt.acquirer_message || lt.gateway_response_errors)) || '';
-      } catch (e) {}
+        reason = (lt && (lt.acquirer_message || lt.gateway_response_message
+          || (lt.gateway_response && lt.gateway_response.errors && JSON.stringify(lt.gateway_response.errors))))
+          || (charge && charge.status) || '';
+        console.log('[subscribe] charge=' + JSON.stringify(charge).slice(0, 1500));
+      } catch (e) { console.log('[subscribe] charges fetch err', (e && e.message) || e); }
       return json(res, 200, { ok: false, status: status, error: 'Pagamento nao aprovado.' + (reason ? ' (' + reason + ')' : ''), subscriptionId: sub.id });
     }
 
