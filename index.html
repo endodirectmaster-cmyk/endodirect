@@ -1406,7 +1406,7 @@ var provasDB=lsGet('provas')||[];
 // Degustação: contagem de usos das ferramentas com cota (3 usos cada).
 var degTrials=lsGet('deg_trials')||{};
 var FC_SEED={
- "Diabetes":[["Critérios laboratoriais para diagnóstico de diabetes mellitus?","Glicemia de jejum ≥126 mg/dL, glicemia 2h no TOTG ≥200 mg/dL, HbA1c ≥6,5% ou glicemia casual ≥200 mg/dL com sintomas. Confirmar com 2º teste se assintomático."],["Alvo geral de HbA1c na maioria dos adultos com DM2?","<7%. Individualizar: mais rígido (~6,5%) em jovens/recém-diagnosticados; mais flexível (~8%) em idosos frágeis ou com muitas comorbidades."],["Quais classes de antidiabéticos têm benefício cardiovascular e renal comprovado?","Inibidores de SGLT2 (empagliflozina, dapagliflozina) e agonistas de GLP-1 (semaglutida, liraglutida)."],["Pilares do manejo inicial da cetoacidose diabética?","Hidratação com SF 0,9%, insulina regular IV, reposição de potássio (iniciar quando K<5,2 com diurese presente) e correção do fator precipitante. Bicarbonato não é rotina."],["Primeira linha farmacológica do DM2?","Metformina associada a mudanças no estilo de vida, salvo contraindicação (ex.: TFG<30 mL/min)."]],
+ "Diabetes":[["Critérios laboratoriais para diagnóstico de diabetes mellitus?","Glicemia de jejum ≥126 mg/dL, glicemia 1h no TOTG ≥209 mg/dL (critério SBD/IDF), glicemia 2h no TOTG ≥200 mg/dL, HbA1c ≥6,5% ou glicemia casual ≥200 mg/dL com sintomas. Confirmar com 2º teste se assintomático."],["Alvo geral de HbA1c na maioria dos adultos com DM2?","<7%. Individualizar: mais rígido (~6,5%) em jovens/recém-diagnosticados; mais flexível (~8%) em idosos frágeis ou com muitas comorbidades."],["Quais classes de antidiabéticos têm benefício cardiovascular e renal comprovado?","Inibidores de SGLT2 (empagliflozina, dapagliflozina) e agonistas de GLP-1 (semaglutida, liraglutida)."],["Pilares do manejo inicial da cetoacidose diabética?","Hidratação com SF 0,9%, insulina regular IV, reposição de potássio (iniciar quando K<5,2 com diurese presente) e correção do fator precipitante. Bicarbonato não é rotina."],["Primeira linha farmacológica do DM2?","Metformina associada a mudanças no estilo de vida, salvo contraindicação (ex.: TFG<30 mL/min)."]],
  "Obesidade":[["Classificação da obesidade pelo IMC (OMS)?","Sobrepeso 25–29,9; obesidade grau I 30–34,9; grau II 35–39,9; grau III ≥40 kg/m²."],["Indicações clássicas de cirurgia bariátrica?","IMC ≥40, ou ≥35 com comorbidades. Diretrizes recentes consideram a partir de IMC 30–35 em DM2 de difícil controle."],["Mecanismo dos agonistas de GLP-1 na obesidade?","Reduzem apetite, aumentam saciedade central e retardam o esvaziamento gástrico, diminuindo a ingestão alimentar (ex.: semaglutida 2,4 mg)."],["Meta inicial de perda de peso clinicamente significativa?","5–10% do peso corporal, já suficiente para melhorar comorbidades metabólicas."],["Complicação metabólica mais associada à obesidade visceral?","Resistência insulínica e síndrome metabólica (dislipidemia, HAS, DM2 e esteatose hepática)."]],
  "Tireoide":[["TSH alto com T4 livre baixo — interpretação?","Hipotireoidismo primário; causa mais comum é a tireoidite de Hashimoto (autoimune)."],["TSH baixo com T4/T3 elevados — conduta diagnóstica?","Hipertireoidismo. Solicitar TRAb e/ou cintilografia; doença de Graves é a causa mais frequente."],["Definição de hipotireoidismo subclínico e quando tratar?","TSH elevado com T4 livre normal. Tratar se TSH>10, sintomas, gestação/desejo de gestar ou anti-TPO positivo."],["Avaliação inicial de um nódulo tireoidiano?","TSH e ultrassom; PAAF conforme TI-RADS/tamanho. Se TSH baixo, cintilografia para investigar nódulo hiperfuncionante."],["Tratamento da crise tireotóxica?","Tionamida (propiltiouracil), betabloqueador (propranolol), iodo (após a tionamida), corticoide e medidas de suporte."]],
  "Adrenal":[["Testes de rastreio para síndrome de Cushing?","Cortisol salivar noturno, cortisol livre urinário de 24h ou supressão com 1 mg de dexametasona overnight."],["Rastreio do hiperaldosteronismo primário?","Relação aldosterona/renina (ARR) elevada; confirmar com teste de sobrecarga salina ou de captopril."],["Achados típicos da insuficiência adrenal primária (Addison)?","Hiperpigmentação, hipotensão, hiponatremia e hipercalemia; cortisol baixo com ACTH alto."],["Conduta na crise adrenal?","Hidrocortisona IV imediata (100 mg), hidratação com SF 0,9% e glicose e tratamento do precipitante. Não atrasar para colher exames."],["Investigação de feocromocitoma?","Metanefrinas plasmáticas livres ou metanefrinas fracionadas urinárias; em seguida, imagem de adrenais (TC/RM)."]],
@@ -1431,8 +1431,18 @@ function seedFlashcards(){
       DB.fc.push({id:Date.now()+Math.random(),front:pair[0],back:pair[1],cat:cat,due:Date.now(),box:1,at:Date.now(),seed:true});added++;
     });
   });
-  if(added){lsSet('fc_seeded',1);lsSet('fc',DB.fc);}
-  return added;
+  // Reconcilia o conteúdo dos cards SEED já existentes com o FC_SEED atual
+  // (propaga correções de conteúdo sem duplicar nem tocar cards do usuário).
+  var fixed=0;
+  Object.keys(FC_SEED).forEach(function(cat){
+    FC_SEED[cat].forEach(function(pair){
+      DB.fc.forEach(function(c){
+        if(c&&c.seed&&c.cat===cat&&c.front===pair[0]&&c.back!==pair[1]){c.back=pair[1];fixed++;}
+      });
+    });
+  });
+  if(added||fixed){lsSet('fc_seeded',1);lsSet('fc',DB.fc);}
+  return added+fixed;
 }
 function persistProvas(){lsSet('provas',provasDB);queueRemoteStateSave();}
 var MURAL_SOURCE_FILTERS=[
@@ -2960,7 +2970,7 @@ function sampleMMData(topic){
 }
 var MM_SEED=[
   {topic:'Diabetes Mellitus tipo 2',sub:'Diabetes',data:{root:'Diabetes Mellitus tipo 2',branches:[
-    {label:'Diagnóstico',leaves:['Glicemia de jejum ≥126','HbA1c ≥6,5%','TOTG 2h ≥200','Glicemia casual ≥200 + sintomas']},
+    {label:'Diagnóstico',leaves:['Glicemia de jejum ≥126','HbA1c ≥6,5%','TOTG 1h ≥209 (SBD/IDF)','TOTG 2h ≥200','Glicemia casual ≥200 + sintomas']},
     {label:'Tratamento',leaves:['Metformina (1ª linha)','iSGLT2 (proteção CV/renal)','Agonista GLP-1','Insulina quando necessário']},
     {label:'Metas',leaves:['HbA1c <7% (individualizar)','PA <130/80 mmHg','LDL conforme risco']},
     {label:'Rastreio de complicações',leaves:['Fundo de olho','Albuminúria e TFG','Exame dos pés','Perfil lipídico']},
