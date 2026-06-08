@@ -2824,7 +2824,8 @@ function ckPay(){
       // Sem reload: mantém a sessão e atualiza o acesso em tela.
       var ap=document.getElementById('app-screen');if(ap&&currentUser)ap.style.display=(currentUser.role==='admin')?'block':'flex';
       try{goPanel('dash');}catch(e){}
-      try{hydrateRemoteState();}catch(e){} // re-hidrata: refreshAfterRemoteState reaplica o gating (desbloqueia os painéis)
+      // re-hidrata forçando nova busca (o guard remoteStateLoaded impediria) p/ pegar o novo acesso
+      try{remoteStateLoaded=false;hydrateRemoteState();}catch(e){}
     }).catch(function(e){ckErr((e&&e.message)||'Falha ao processar o pagamento.');btn.disabled=false;btn.textContent=old;});
   });
 }
@@ -5831,11 +5832,8 @@ document.addEventListener('DOMContentLoaded',function(){
     var btn=document.getElementById('btn-login');if(btn)btn.disabled=true;
     client.auth.signInWithPassword({email:email,password:pass}).then(function(res){
       if(res.error)throw res.error;
-    }).catch(function(e){
-      var msg=(e&&e.message)?e.message:'';
-      var el=document.getElementById('login-err');
-      if(el){el.textContent=msg?('Erro: '+msg):'E-mail ou senha incorretos.';el.style.display='block';}
-      else showLoginError('E-mail ou senha incorretos.');
+    }).catch(function(){
+      showLoginError('E-mail ou senha incorretos.');
     }).then(function(){if(btn)btn.disabled=false;});
   };
   var doGoogleLogin=function(){
