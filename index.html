@@ -661,7 +661,8 @@ textarea{resize:vertical;line-height:1.6}
 .lp-mural-meta{font-size:.68rem;color:#8a93a3}
 .lp-team{display:grid;grid-template-columns:repeat(auto-fit,minmax(258px,1fr));gap:1rem}
 .lp-prof{background:#16191f;border:1px solid #232730;border-radius:16px;padding:1.3rem;text-align:center}
-.lp-prof .av{width:62px;height:62px;border-radius:50%;background:linear-gradient(135deg,#e8b94e,#c9962f);color:#1a1320;font-weight:800;font-size:1.35rem;display:flex;align-items:center;justify-content:center;margin:0 auto .7rem}
+.lp-prof .av{position:relative;overflow:hidden;width:74px;height:74px;border-radius:50%;background:linear-gradient(135deg,#e8b94e,#c9962f);color:#1a1320;font-weight:800;font-size:1.45rem;display:flex;align-items:center;justify-content:center;margin:0 auto .7rem}
+.lp-prof .av img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
 .lp-prof h3{margin:0 0 .7rem;font-size:1rem;color:#fff}
 .lp-prof ul{list-style:none;padding:0;margin:0;text-align:left;display:flex;flex-direction:column;gap:.4rem}
 .lp-prof li{font-size:.78rem;color:#9aa3b2;line-height:1.4;display:flex;gap:.45rem}
@@ -786,27 +787,27 @@ textarea{resize:vertical;line-height:1.6}
       <h2 class="lp-sec-title">Quem ensina</h2>
       <p class="lp-sec-sub">Conteúdo produzido por endocrinologistas com sólida formação e experiência em ensino.</p>
       <div class="lp-team">
-        <div class="lp-prof"><div class="av">AN</div><h3>Antônio Eduardo Nakamura</h3><ul>
+        <div class="lp-prof"><div class="av">AN<img src="professores/nakamura.jpg" alt="Antônio Eduardo Nakamura" onerror="this.remove()"></div><h3>Antônio Eduardo Nakamura</h3><ul>
           <li>Graduação na UNIFESP</li>
           <li>Residência de Clínica Médica na UNIFESP</li>
           <li>Residência de Endocrinologia e Metabologia na UNIFESP</li>
           <li>Título de Especialista pela SBEM</li>
           <li>Ex-Preceptor da Residência de Endocrinologia na UNIFESP</li>
         </ul></div>
-        <div class="lp-prof"><div class="av">RM</div><h3>Rodolpho Pinto de Mendonça</h3><ul>
+        <div class="lp-prof"><div class="av">RM<img src="professores/rodolpho.jpg" alt="Rodolpho Pinto de Mendonça" onerror="this.remove()"></div><h3>Rodolpho Pinto de Mendonça</h3><ul>
           <li>Graduação na UFRN</li>
           <li>Residência de Clínica Médica na UNICAMP</li>
           <li>Residência de Endocrinologia e Metabologia na UNIFESP</li>
           <li>Título de Especialista pela SBEM</li>
           <li>Ex-Preceptor da Residência de Endocrinologia na UNIFESP</li>
         </ul></div>
-        <div class="lp-prof"><div class="av">RG</div><h3>Rafael Buck Giorgi</h3><ul>
+        <div class="lp-prof"><div class="av">RG<img src="professores/rafael.jpg" alt="Rafael Buck Giorgi" onerror="this.remove()"></div><h3>Rafael Buck Giorgi</h3><ul>
           <li>Residência de Clínica Médica e Endocrinologia pela PUC-SP</li>
           <li>Mestrado em Endocrinologia pela UNIFESP</li>
           <li>Preceptor de Clínica Médica na PUC-SP</li>
           <li>Coordenador do ambulatório de Adrenais e Hipertensão (PUC-SP)</li>
         </ul></div>
-        <div class="lp-prof"><div class="av">BS</div><h3>Bruno Moreira Simião</h3><ul>
+        <div class="lp-prof"><div class="av">BS<img src="professores/bruno.jpg" alt="Bruno Moreira Simião" onerror="this.remove()"></div><h3>Bruno Moreira Simião</h3><ul>
           <li>Graduação na UNIFESP</li>
           <li>Residência de Pediatria na UNIFESP</li>
           <li>Residência de Endocrinologia Pediátrica na UNIFESP</li>
@@ -829,7 +830,7 @@ textarea{resize:vertical;line-height:1.6}
       <p class="lp-sec-sub">Tudo o que você precisa saber antes de começar.</p>
       <div class="lp-faq">
         <details><summary>O que é o Endodirect?</summary><p>Uma plataforma de educação médica em Endocrinologia e Metabologia, reunindo banco de questões comentadas, flashcards, mapas mentais, simulador de casos, simulado, prescrição, podcasts, cursos e um assistente de IA — tudo baseado nas principais diretrizes (SBEM, SBD, ADA).</p></details>
-        <details><summary>Para quem é a plataforma?</summary><p>Para residentes, endocrinologistas e médicos que querem se aprofundar e se manter atualizados na especialidade.</p></details>
+        <details><summary>Para quem é a plataforma?</summary><p>Principalmente residentes e endocrinologistas, mas também médicos de outras áreas — como Clínica Médica, Cardiologia e Geriatria — que querem se aprofundar e se manter atualizados em endocrinologia e metabologia.</p></details>
         <details><summary>Posso testar antes de assinar?</summary><p>Sim. Ao entrar, você acessa o modo degustação: flashcards e mapas mentais pré-salvos, 50 questões do banco Endodirect, o mural de atualizações e 3 usos de cada uma das ferramentas com IA (simulador de casos, simulado, prescrição e chat).</p></details>
         <details><summary>Qual a diferença entre os planos?</summary><p>Todos os planos incluem as ferramentas principais (banco, flashcards, mapas, simulador, simulado, prescrição, resumidor e podcasts). O Gold acrescenta o curso de Lípides e o Premium acrescenta também o curso de Endocrinologia Essencial. Veja os detalhes na seção Planos.</p></details>
         <details><summary>O EndoTEEM está incluído?</summary><p>Não. O EndoTEEM — banco de questões voltado à prova de título — é um produto à parte, voltado a quem vai prestar a prova de especialista.</p></details>
@@ -5483,6 +5484,9 @@ document.addEventListener('DOMContentLoaded',function(){setupOnboardProfileChoic
 // ── DOMContentLoaded: bindings ──
 document.addEventListener('DOMContentLoaded',function(){
   var lpy=document.getElementById('lp-year');if(lpy)lpy.textContent=new Date().getFullYear();
+  // Garante o "Acessar a plataforma" mesmo se o onclick inline falhar.
+  var lpEl=document.getElementById('landing-screen');
+  if(lpEl)lpEl.addEventListener('click',function(e){var b=e.target.closest?e.target.closest('.lp-cta'):null;if(b){e.preventDefault();showLoginScreen();}});
   // Recuperação de senha cai direto na tela de login (não na landing).
   try{if(isPasswordRecoveryUrl())showLoginScreen();}catch(e){}
   startSupabaseAuthWatcher();
