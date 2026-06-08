@@ -3174,6 +3174,18 @@ function drawMMConnections(){
 
 // ── PODCASTS (aluno) ──
 var podFilter='';
+function spotifyEmbedUrl(url){
+  var m=String(url||'').match(/open\.spotify\.com\/(?:intl-[a-z]+\/)?(episode|show|playlist|track|album)\/([A-Za-z0-9]+)/);
+  return m?('https://open.spotify.com/embed/'+m[1]+'/'+m[2]):'';
+}
+function podcastPlayerHTML(p){
+  if(p&&p.tipo==='spotify'&&p.src){
+    var e=spotifyEmbedUrl(p.src);
+    if(e)return '<iframe style="border-radius:12px;width:100%;height:152px;border:0" src="'+esc(e)+'" loading="lazy" allow="autoplay;clipboard-write;encrypted-media;fullscreen;picture-in-picture"></iframe>';
+    return '<a href="'+esc(p.src)+'" target="_blank" rel="noopener" style="font-size:.75rem;color:var(--blue)">🎧 Abrir no Spotify</a>';
+  }
+  return '<audio controls preload="none" style="width:100%;height:36px" src="'+esc((p&&p.audio)||'')+'"></audio>';
+}
 function renderPodcasts(){
   var frow=document.getElementById('pod-filter-row');
   var cats={};podcasts.forEach(function(p){if(p.area)cats[p.area]=(cats[p.area]||0)+1;});
@@ -3181,7 +3193,7 @@ function renderPodcasts(){
   var el=document.getElementById('pod-list');if(!el)return;
   var list=podFilter?podcasts.filter(function(p){return p.area===podFilter;}):podcasts;
   if(!list.length){el.innerHTML='<div class="empty">Nenhum podcast disponível ainda. O admin pode adicionar episódios.</div>';return;}
-  el.innerHTML=list.map(function(p){return'<div class="card"><div style="display:flex;align-items:flex-start;gap:.8rem"><div style="width:46px;height:46px;border-radius:10px;background:var(--navy);display:flex;align-items:center;justify-content:center;font-size:1.3rem;flex-shrink:0">🎧</div><div style="flex:1;min-width:0"><div style="font-size:.85rem;font-weight:700;color:var(--tx);margin-bottom:2px">'+esc(p.title)+'</div><div style="font-size:.68rem;color:var(--t3);margin-bottom:.4rem">'+(p.area?'<span class="tag tag-blue" style="margin-right:5px">'+esc(p.area)+'</span>':'')+esc(p.desc||'')+'</div><audio controls preload="none" style="width:100%;height:36px" src="'+esc(p.audio||'')+'"></audio></div></div></div>';}).join('');
+  el.innerHTML=list.map(function(p){return'<div class="card"><div style="display:flex;align-items:flex-start;gap:.8rem"><div style="width:46px;height:46px;border-radius:10px;background:var(--navy);display:flex;align-items:center;justify-content:center;font-size:1.3rem;flex-shrink:0">🎧</div><div style="flex:1;min-width:0"><div style="font-size:.85rem;font-weight:700;color:var(--tx);margin-bottom:2px">'+esc(p.title)+'</div><div style="font-size:.68rem;color:var(--t3);margin-bottom:.4rem">'+(p.area?'<span class="tag tag-blue" style="margin-right:5px">'+esc(p.area)+'</span>':'')+esc(p.desc||'')+'</div>'+podcastPlayerHTML(p)+'</div></div></div>';}).join('');
 }
 
 // ── CURSOS (aluno) ──
@@ -4069,7 +4081,7 @@ function admConteudoHTML(){
   var formHTML='<div class="card" style="margin-bottom:1.1rem"><div style="font-size:1rem;font-weight:700;margin-bottom:.8rem">🎧 Adicionar podcast</div>'
     +'<div class="g2" style="margin-bottom:.7rem"><div class="fld2" style="margin:0"><label>Título</label><input type="text" id="adm-pod-title" placeholder="Ex: Atualização em DM2"></div><div class="fld2" style="margin:0"><label>Subespecialidade</label><select id="adm-pod-area">'+DEFAULT_SUBESP+'</select></div></div>'
     +'<div class="fld2"><label>Descrição</label><input type="text" id="adm-pod-desc" placeholder="Breve descrição"></div>'
-    +'<div class="fld2"><label>Arquivo de áudio (MP3/M4A/WAV)</label><input type="file" id="adm-pod-file" accept="audio/*"><div style="font-size:.68rem;color:var(--t3);margin-top:.25rem">O arquivo será enviado ao Supabase Storage e ficará disponível para os alunos. Máx. '+formatBytes(MAX_AUDIO_UPLOAD_BYTES)+'.</div></div>'
+    +'<div class="fld2"><label>Link do Spotify (episódio ou show)</label><input type="text" id="adm-pod-link" placeholder="Ex: https://open.spotify.com/episode/..."><div style="font-size:.68rem;color:var(--t3);margin-top:.25rem">No Spotify, abra o episódio/show → botão <b>Compartilhar</b> → <b>Copiar link</b> e cole aqui. O player é incorporado direto do Spotify, sem ocupar armazenamento.</div></div>'
     +'<div class="upload-status" id="adm-pod-upload-status"></div>'
     +'<button class="btn btn-primary" id="btn-adm-addpod">+ Adicionar podcast</button></div>';
 
@@ -4078,7 +4090,7 @@ function admConteudoHTML(){
     +'<select id="adm-pod-filtersel" style="width:auto;min-width:230px"><option value="">Todas as subespecialidades ('+podcasts.length+')</option>'+SUB.map(function(s){return '<option value="'+esc(s)+'"'+(admPodFiltro===s?' selected':'')+'>'+esc(s)+' ('+(cont[s]||0)+')</option>';}).join('')+'</select>'
     +(admPodFiltro?'<button class="btn btn-ghost btn-sm" id="adm-pod-clearfilter">✕ Limpar</button>':'')
   +'</div>'
-  +'<div id="adm-pod-list">'+(lista.length?lista.map(function(p){var i=podcasts.indexOf(p);var meta=p.asset?'<div class="asset-meta">Supabase Storage: '+esc(p.asset.name||'audio')+' · '+formatBytes(p.asset.size)+'</div>':'';return '<div class="card" style="margin-bottom:.6rem"><div style="display:flex;align-items:flex-start;gap:.8rem"><div style="width:46px;height:46px;border-radius:10px;background:var(--navy);display:flex;align-items:center;justify-content:center;font-size:1.3rem;flex-shrink:0">🎧</div><div style="flex:1;min-width:0"><div style="font-size:.85rem;font-weight:700;color:var(--tx);margin-bottom:2px">'+esc(p.title)+'</div><div style="display:flex;flex-wrap:wrap;gap:.3rem;margin-bottom:.4rem">'+(p.area?'<span class="tag tag-blue">'+esc(p.area)+'</span>':'')+(p.desc?'<span style="font-size:.7rem;color:var(--t3);align-self:center">'+esc(p.desc)+'</span>':'')+'</div>'+meta+'<audio controls preload="none" style="width:100%;height:36px" src="'+esc(p.audio||'')+'"></audio></div><button class="btn btn-outline btn-sm" data-adm-delpod="'+i+'" style="padding:2px 8px;color:var(--red);border-color:var(--red)">🗑 Excluir</button></div></div>';}).join(''):'<div class="empty">Nenhum podcast '+(admPodFiltro?'nesta subespecialidade':'cadastrado ainda')+'.</div>')+'</div>';
+  +'<div id="adm-pod-list">'+(lista.length?lista.map(function(p){var i=podcasts.indexOf(p);var meta=p.asset?'<div class="asset-meta">Supabase Storage: '+esc(p.asset.name||'audio')+' · '+formatBytes(p.asset.size)+'</div>':'';return '<div class="card" style="margin-bottom:.6rem"><div style="display:flex;align-items:flex-start;gap:.8rem"><div style="width:46px;height:46px;border-radius:10px;background:var(--navy);display:flex;align-items:center;justify-content:center;font-size:1.3rem;flex-shrink:0">🎧</div><div style="flex:1;min-width:0"><div style="font-size:.85rem;font-weight:700;color:var(--tx);margin-bottom:2px">'+esc(p.title)+'</div><div style="display:flex;flex-wrap:wrap;gap:.3rem;margin-bottom:.4rem">'+(p.area?'<span class="tag tag-blue">'+esc(p.area)+'</span>':'')+(p.desc?'<span style="font-size:.7rem;color:var(--t3);align-self:center">'+esc(p.desc)+'</span>':'')+'</div>'+meta+''+podcastPlayerHTML(p)+'</div><button class="btn btn-outline btn-sm" data-adm-delpod="'+i+'" style="padding:2px 8px;color:var(--red);border-color:var(--red)">🗑 Excluir</button></div></div>';}).join(''):'<div class="empty">Nenhum podcast '+(admPodFiltro?'nesta subespecialidade':'cadastrado ainda')+'.</div>')+'</div>';
 
   return '<div class="adm-ph"><h1>Podcasts</h1><p>Podcasts e materiais de áudio disponíveis para os estudantes.</p></div>'
   +'<div class="adm-pc">'
@@ -4430,32 +4442,15 @@ function bindAdmSec(sec){
   if(sec==='conteudo'){
     main.querySelectorAll('[data-podsub]').forEach(function(b){b.addEventListener('click',function(){admPodSubtab=b.dataset.podsub;renderAdmSec('conteudo');});});
     if(admPodSubtab==='adicionar'){
-      var pf=document.getElementById('adm-pod-file');
-      if(pf)pf.addEventListener('change',function(e){
-        var f=e.target.files[0];if(!f)return;
-        if(!/^audio\//.test(f.type)){notify('Selecione um arquivo de áudio.','err');pf.value='';return;}
-        if(f.size>MAX_AUDIO_UPLOAD_BYTES){notify('Áudio muito grande (máx '+formatBytes(MAX_AUDIO_UPLOAD_BYTES)+').','err');pf.value='';return;}
-        podAudioDataAdm=f;
-        setUploadStatus('adm-pod-upload-status','Áudio selecionado: '+f.name+' ('+formatBytes(f.size)+').','info');
-      });
       var bp=document.getElementById('btn-adm-addpod');
       if(bp)bp.addEventListener('click',function(){
         var title=(document.getElementById('adm-pod-title').value||'').trim();
         if(!title){notify('Informe o título.','err');return;}
-        if(!podAudioDataAdm){notify('Selecione o arquivo de áudio.','err');return;}
-        bp.disabled=true;bp.innerHTML=ldHTML();
-        setUploadStatus('adm-pod-upload-status','Enviando podcast para o Supabase Storage...','info');
-        uploadAdminAsset(podAudioDataAdm,'podcasts')
-          .then(function(asset){
-            podcasts.push({title:title,area:document.getElementById('adm-pod-area').value,desc:document.getElementById('adm-pod-desc').value,audio:asset.url,asset:asset,storage:'supabase',at:Date.now()});
-            persistPodcasts();podAudioDataAdm=null;notify('Podcast adicionado!','ok');admPodSubtab='ouvir';renderAdmSec('conteudo');renderPodcasts();
-          })
-          .catch(function(e){
-            var msg=uploadErrorMessage(e);
-            setUploadStatus('adm-pod-upload-status',msg,'err');
-            notify(msg,'err');
-          })
-          .then(function(){bp.disabled=false;bp.innerHTML='+ Adicionar podcast';});
+        var link=(document.getElementById('adm-pod-link').value||'').trim();
+        if(!link){notify('Cole o link do Spotify.','err');return;}
+        if(!spotifyEmbedUrl(link)){notify('Link do Spotify inválido. Use a URL de um episódio ou show (open.spotify.com).','err');return;}
+        podcasts.push({title:title,area:document.getElementById('adm-pod-area').value,desc:document.getElementById('adm-pod-desc').value,src:link,tipo:'spotify',at:Date.now()});
+        persistPodcasts();notify('Podcast adicionado!','ok');admPodSubtab='ouvir';renderAdmSec('conteudo');renderPodcasts();
       });
     }
     var pFsel=document.getElementById('adm-pod-filtersel');
