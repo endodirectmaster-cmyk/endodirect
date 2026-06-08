@@ -1659,7 +1659,7 @@ function renderDegustacaoBar(){
     if(!bar){
       bar=document.createElement('div');bar.id='degustacao-bar';
       bar.style.cssText='display:flex;align-items:center;justify-content:center;gap:.8rem;flex-wrap:wrap;background:linear-gradient(90deg,#e0a93b,#d59a2e);color:#241a04;font-size:.8rem;font-weight:600;padding:.5rem 1rem;text-align:center';
-      bar.innerHTML='🎁 Modo degustação — flashcards, mapas mentais, 100 questões do banco e mural liberados. <button id="degustacao-cta" type="button" style="background:#1a1320;color:#fff;border:0;border-radius:999px;padding:.32rem .9rem;font-weight:700;cursor:pointer">Ver pacotes e desbloquear tudo</button>';
+      bar.innerHTML='🎁 Modo degustação — flashcards, mapas mentais, 50 questões do banco e mural liberados. <button id="degustacao-cta" type="button" style="background:#1a1320;color:#fff;border:0;border-radius:999px;padding:.32rem .9rem;font-weight:700;cursor:pointer">Ver pacotes e desbloquear tudo</button>';
       var ws=app.querySelector('.workspace');
       if(ws)app.insertBefore(bar,ws);else app.appendChild(bar);
       var cta=bar.querySelector('#degustacao-cta');if(cta)cta.addEventListener('click',function(){showAssineScreen((currentUser&&currentUser.email)||'');});
@@ -2699,7 +2699,7 @@ function renderSavedQ(){
   el.innerHTML='<div class="q-list">'+DB.q.map(function(q,i){return'<div><div class="q-row" data-qi="'+i+'" data-src="saved" data-mc="'+(q.type!=='disc')+'"><div class="q-row-top"><div class="q-stem-prev">'+esc((q.stem||'').substring(0,140))+'…</div><div style="display:flex;gap:3px;align-items:center">'+(q.code?'<span style="font-family:monospace;font-size:.59rem;font-weight:700;background:#f1f0ff;color:#6d5fd8;padding:1px 6px;border-radius:99px">'+esc(q.code)+'</span>':'')+diffTag(q.dificuldade)+'<button class="btn btn-ghost btn-sm" data-del-q="'+i+'" style="padding:2px 4px">✕</button></div></div></div><div id="qd-saved-'+i+'" style="display:none"></div></div>';}).join('')+'</div>';
 }
 var INST_PADRAO=[];
-// Em DEGUSTAÇÃO o aluno só enxerga uma amostra FIXA de 100 questões da
+// Em DEGUSTAÇÃO o aluno só enxerga uma amostra FIXA de 50 questões da
 // instituição Endodirect. O banco do TEEM fica bloqueado (liberado apenas a
 // quem compra o EndoTEEM). Espelha a regra do member_content no cliente, para
 // valer também no login demo (que não passa pelo member_content).
@@ -2708,7 +2708,7 @@ function provasPool(){
   if(!isDegustacao())return provasDB;
   var endo=provasDB.filter(function(q){return (q.inst||'')==='Endodirect';});
   endo.sort(function(a,b){return degHash((a.code||'')+'|'+(a.stem||''))-degHash((b.code||'')+'|'+(b.stem||''));});
-  return endo.slice(0,100);
+  return endo.slice(0,50);
 }
 function getInstList(){var s={};if(!isDegustacao())INST_PADRAO.forEach(function(i){s[i]=1;});provasPool().forEach(function(q){if(q.inst)s[q.inst]=1;});return Object.keys(s);}
 function populateInst(selId){
