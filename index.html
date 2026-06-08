@@ -626,6 +626,18 @@ textarea{resize:vertical;line-height:1.6}
 .lp-plan ul{list-style:none;padding:0;margin:1rem 0 1.2rem;display:flex;flex-direction:column;gap:.45rem}
 .lp-plan li{font-size:.8rem;color:#aeb6c2;display:flex;gap:.45rem;align-items:flex-start;line-height:1.4}
 .lp-plan li::before{content:"✓";color:#5fd39a;font-weight:800}
+.lp-show{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:1.1rem}
+.lp-shot{background:#16191f;border:1px solid #232730;border-radius:16px;padding:1.1rem;display:flex;flex-direction:column}
+.lp-shot-tag{font-size:.62rem;font-weight:800;letter-spacing:.07em;text-transform:uppercase;color:#e0a93b;margin-bottom:.7rem}
+.lp-q-stem{font-size:.82rem;color:#e6e9ef;line-height:1.5;margin-bottom:.7rem}
+.lp-q-opt{font-size:.78rem;color:#aeb6c2;border:1px solid #2a2f3a;border-radius:9px;padding:.45rem .6rem;margin-bottom:.4rem}
+.lp-q-opt.ok{border-color:#2e7d54;background:rgba(95,211,154,.1);color:#7fe0ad;font-weight:600}
+.lp-fc{background:#1b1f27;border-radius:12px;padding:1.1rem;min-height:120px;display:flex;flex-direction:column;justify-content:center}
+.lp-mural-card{border:1px solid #2a2f3a;border-radius:12px;padding:.9rem;background:#1b1f27}
+.lp-mural-tags{display:flex;gap:.35rem;margin-bottom:.5rem;flex-wrap:wrap}
+.lp-mural-tag{font-size:.6rem;font-weight:700;padding:.12rem .5rem;border-radius:999px}
+.lp-mural-card h4{margin:.1rem 0 .35rem;font-size:.86rem;color:#fff;line-height:1.35}
+.lp-mural-meta{font-size:.68rem;color:#8a93a3}
 .lp-foot{border-top:1px solid #20242c;padding:1.8rem 0;text-align:center;color:#6b7480;font-size:.8rem}
 .lp-foot a{color:#8a93a3;text-decoration:none}
 @media(max-width:640px){.lp-hero h1{font-size:1.95rem}.lp-hero{padding:2.8rem 0 2rem}.lp-sec-title{font-size:1.4rem}}
@@ -638,7 +650,7 @@ textarea{resize:vertical;line-height:1.6}
   <div class="lp-wrap">
     <section class="lp-hero">
       <span class="lp-eyebrow">Educação médica · Endocrinologia &amp; Metabologia</span>
-      <h1>Domine a <span>Endocrinologia</span> com uma plataforma feita para a sua prática e aprovação</h1>
+      <h1>A plataforma completa de <span>Endocrinologia</span> para residentes e endocrinologistas</h1>
       <p>Banco de questões comentadas, flashcards inteligentes, mapas mentais, simulados, prescrição e um assistente de IA — tudo em um só lugar, baseado nas principais diretrizes (SBEM, SBD, ADA).</p>
       <div class="lp-hero-btns">
         <button class="lp-cta" onclick="showLoginScreen()">Acessar a plataforma</button>
@@ -657,10 +669,62 @@ textarea{resize:vertical;line-height:1.6}
         <div class="lp-card"><div class="lp-ico">📝</div><h3>Simulado</h3><p>Provas cronometradas com correção e desempenho por área.</p></div>
         <div class="lp-card"><div class="lp-ico">💊</div><h3>Prescrição Comentada</h3><p>Treine prescrições e receba avaliação detalhada da IA.</p></div>
         <div class="lp-card"><div class="lp-ico">💬</div><h3>Chat IA</h3><p>Tire dúvidas com um assistente especializado em endocrinologia.</p></div>
-        <div class="lp-card"><div class="lp-ico">🎧</div><h3>Podcasts</h3><p>Episódios sobre atualizações e temas-chave, direto do Spotify.</p></div>
+        <div class="lp-card"><div class="lp-ico">🎧</div><h3>Podcasts</h3><p>Episódios sobre atualizações e temas-chave da endocrinologia.</p></div>
         <div class="lp-card"><div class="lp-ico">🎬</div><h3>Cursos</h3><p>Videoaulas organizadas por curso e módulo.</p></div>
         <div class="lp-card"><div class="lp-ico">📅</div><h3>Cronograma &amp; Revisão</h3><p>Plano de estudos personalizado e revisão espaçada inteligente.</p></div>
         <div class="lp-card"><div class="lp-ico">📢</div><h3>Mural de Atualizações</h3><p>Radar diário com os artigos mais relevantes das principais revistas.</p></div>
+      </div>
+    </section>
+    <section class="lp-section">
+      <h2 class="lp-sec-title">Veja por dentro</h2>
+      <p class="lp-sec-sub">Exemplos do conteúdo e das ferramentas que você usa na plataforma.</p>
+      <div class="lp-show">
+        <div class="lp-shot">
+          <div class="lp-shot-tag">📝 Banco de Questões</div>
+          <div class="lp-q-stem">Homem, 52 anos, assintomático, glicemia de jejum 132 mg/dL em exame de rotina. Qual a conduta para o diagnóstico de diabetes?</div>
+          <div class="lp-q-opt">A. Iniciar metformina imediatamente</div>
+          <div class="lp-q-opt ok">B. Repetir um exame para confirmação ✓</div>
+          <div class="lp-q-opt">C. Apenas orientar dieta e reavaliar em 1 ano</div>
+          <div class="lp-q-opt">D. Descartar diabetes</div>
+        </div>
+        <div class="lp-shot">
+          <div class="lp-shot-tag">🃏 Flashcards</div>
+          <div class="lp-fc" style="border-left:5px solid #2563eb">
+            <div style="font-size:.6rem;font-weight:800;letter-spacing:.08em;text-transform:uppercase;color:#2563eb;margin-bottom:8px">Diabetes</div>
+            <div style="font-size:.92rem;font-weight:600;color:#fff;line-height:1.45">Critérios diagnósticos de diabetes mellitus?</div>
+            <div style="font-size:.7rem;color:#6b7480;margin-top:14px">Clique para virar ↻</div>
+          </div>
+        </div>
+        <div class="lp-shot">
+          <div class="lp-shot-tag">✦ Mapas Mentais</div>
+          <svg viewBox="0 0 320 168" style="width:100%;height:auto;margin-top:.2rem">
+            <line x1="160" y1="84" x2="78" y2="34" stroke="#3a4150" stroke-width="1.5"/>
+            <line x1="160" y1="84" x2="78" y2="134" stroke="#3a4150" stroke-width="1.5"/>
+            <line x1="160" y1="84" x2="242" y2="34" stroke="#3a4150" stroke-width="1.5"/>
+            <line x1="160" y1="84" x2="242" y2="134" stroke="#3a4150" stroke-width="1.5"/>
+            <g font-size="9" font-weight="600">
+              <rect x="22" y="20" width="112" height="28" rx="8" fill="#1b1f27" stroke="#2a2f3a"/><text x="78" y="38" text-anchor="middle" fill="#aeb6c2">Diagnóstico</text>
+              <rect x="22" y="120" width="112" height="28" rx="8" fill="#1b1f27" stroke="#2a2f3a"/><text x="78" y="138" text-anchor="middle" fill="#aeb6c2">Complicações</text>
+              <rect x="186" y="20" width="112" height="28" rx="8" fill="#1b1f27" stroke="#2a2f3a"/><text x="242" y="38" text-anchor="middle" fill="#aeb6c2">Tratamento</text>
+              <rect x="186" y="120" width="112" height="28" rx="8" fill="#1b1f27" stroke="#2a2f3a"/><text x="242" y="138" text-anchor="middle" fill="#aeb6c2">Rastreio</text>
+            </g>
+            <rect x="116" y="68" width="88" height="32" rx="10" fill="#e0a93b"/>
+            <text x="160" y="88" text-anchor="middle" font-size="11" font-weight="800" fill="#1a1320">Diabetes</text>
+          </svg>
+        </div>
+        <div class="lp-shot">
+          <div class="lp-shot-tag">📢 Mural de Atualizações</div>
+          <div class="lp-mural-card">
+            <div class="lp-mural-tags"><span class="lp-mural-tag" style="background:rgba(96,165,250,.15);color:#7ab8ff">Diretriz</span><span class="lp-mural-tag" style="background:rgba(13,148,136,.18);color:#5fd3c0">Tireoide</span></div>
+            <h4>Novo guideline de tireoide e gestação — ATA 2026</h4>
+            <div class="lp-mural-meta">Atualizado pelo radar diário · Fonte: American Thyroid Association</div>
+          </div>
+          <div class="lp-mural-card" style="margin-top:.6rem">
+            <div class="lp-mural-tags"><span class="lp-mural-tag" style="background:rgba(217,119,6,.18);color:#f0b35b">Ensaio clínico</span><span class="lp-mural-tag" style="background:rgba(217,119,6,.12);color:#e0a93b">Obesidade</span></div>
+            <h4>Tirzepatida na manutenção do peso — análise dos estudos recentes</h4>
+            <div class="lp-mural-meta">Atualizado pelo radar diário · Fonte: Congresso Europeu de Obesidade</div>
+          </div>
+        </div>
       </div>
     </section>
     <section class="lp-section" id="planos">
@@ -669,7 +733,7 @@ textarea{resize:vertical;line-height:1.6}
       <div class="lp-plans">
         <div class="lp-plan"><div class="nm">Standard</div><div class="pr">R$ 50<small>/mês</small></div><ul><li>Banco de questões</li><li>Flashcards e mapas mentais</li><li>Simulador e simulado</li><li>Prescrição e resumidor</li><li>Podcasts exclusivos</li><li>Curso de Hiperglicemia Hospitalar</li></ul><button class="lp-cta" style="margin-top:auto;width:100%;text-align:center" onclick="showLoginScreen()">Acessar</button></div>
         <div class="lp-plan hot"><span class="badge">Mais popular</span><div class="nm">Gold</div><div class="pr">R$ 70<small>/mês</small></div><ul><li>Tudo do Standard</li><li>+ Curso de Lípides</li><li>Conteúdos completos liberados</li></ul><button class="lp-cta" style="margin-top:auto;width:100%;text-align:center" onclick="showLoginScreen()">Acessar</button></div>
-        <div class="lp-plan"><div class="nm">Premium</div><div class="pr">R$ 90<small>/mês</small></div><ul><li>Tudo do Gold</li><li>+ Curso de Endocrinologia Essencial</li><li>Acesso completo à plataforma</li></ul><button class="lp-ghost" style="margin-top:auto;width:100%;text-align:center" onclick="showLoginScreen()">Acessar</button></div>
+        <div class="lp-plan"><div class="nm">Premium</div><div class="pr">R$ 90<small>/mês</small></div><ul><li>Tudo do Gold</li><li>+ Curso de Endocrinologia Essencial</li><li>Acesso completo à plataforma</li></ul><button class="lp-cta" style="margin-top:auto;width:100%;text-align:center" onclick="showLoginScreen()">Acessar</button></div>
       </div>
       <p style="text-align:center;color:#6b7480;font-size:.78rem;margin-top:1.1rem">EndoTEEM (banco de questões para a prova de título) é um produto à parte. Consulte na plataforma.</p>
     </section>
