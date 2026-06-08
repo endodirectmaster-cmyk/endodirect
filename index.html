@@ -873,7 +873,7 @@ textarea{resize:vertical;line-height:1.6}
           <div class="lp-stage">
             <div class="lp-bub2 doc st1">📋 Mulher, 58 anos, DM2 há 10 anos. HbA1c 8,5% em metformina 2 g/dia; TFG 38 mL/min (DRC 3b), IMC 31, PA 138/85, LDL 110, sem hipoglicemias. Otimize o tratamento.</div>
             <div class="lp-bub2 me st2">Manter metformina 1 g/dia (ajuste pela TFG); iniciar dapagliflozina 10 mg/dia; intensificar estatina de alta potência; alvo de HbA1c &lt; 7%, sem hipoglicemias.</div>
-            <div class="lp-bub2 fb st3">✓ Prescrição registrada — gerando a avaliação detalhada da IA…</div>
+            <div class="lp-bub2 fb st3">✓ Prescrição registrada — gerando avaliação detalhada…</div>
             <div class="lp-report">
               <div class="score"><b>88%</b><span>Relatório Final</span></div>
               <div class="lp-rep-box"><h5 style="color:#5fd39a">Acertos</h5>Ajuste da metformina pela função renal e escolha do iSGLT2, que reduz desfechos renais e cardiovasculares mesmo com controle glicêmico modesto. Intensificação da estatina coerente com o alto risco e meta de HbA1c individualizada.</div>
@@ -986,8 +986,8 @@ textarea{resize:vertical;line-height:1.6}
 
 <div id="assine-screen" style="display:none;position:fixed;inset:0;z-index:500;background:#0f1115;align-items:flex-start;justify-content:center;padding:1.2rem;overflow:auto">
   <div style="max-width:1040px;width:100%;margin:auto;background:#15171c;border:1px solid #2a2f3a;border-radius:18px;padding:2rem 1.8rem;text-align:center;box-shadow:0 24px 60px rgba(0,0,0,.45)">
-    <div style="font-size:1.5rem;font-weight:800;color:#fff;margin-bottom:.35rem">Endodirect — Pacotes</div>
-    <p style="font-size:.86rem;color:#9aa3b2;line-height:1.6;margin:.2rem auto 1.4rem;max-width:620px">A conta <b style="color:#cbd2dd" id="assine-email"></b> ainda não tem acesso ativo. Adquira seu pacote e desbloqueie todos os benefícios da plataforma.</p>
+    <div id="assine-title" style="font-size:1.5rem;font-weight:800;color:#fff;margin-bottom:.35rem">Endodirect — Pacotes</div>
+    <p id="assine-sub" style="font-size:.86rem;color:#9aa3b2;line-height:1.6;margin:.2rem auto 1.4rem;max-width:620px">A conta <b style="color:#cbd2dd" id="assine-email"></b> ainda não tem acesso ativo. Adquira seu pacote e desbloqueie todos os benefícios da plataforma.</p>
     <div id="assine-plans" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:1rem;margin-bottom:1.1rem;align-items:stretch"></div>
     <div style="display:flex;gap:.7rem;justify-content:center;flex-wrap:wrap">
       <button class="btn" id="assine-back" style="width:auto;min-width:160px;justify-content:center;background:#e0a93b;color:#1a1320;border:0;font-weight:700">← Voltar à plataforma</button>
@@ -1043,6 +1043,7 @@ textarea{resize:vertical;line-height:1.6}
         <button class="sb-item" data-p="mural">📢 Mural</button>
         <button class="sb-item" data-p="chat">💬 Chat IA</button>
         <button class="sb-item" data-p="perfil">👤 Perfil</button>
+        <button class="sb-item" id="sb-upgrade" type="button" style="margin-top:.35rem;background:rgba(224,169,59,.16);color:#f0c469;font-weight:700">⭐ Fazer upgrade</button>
       </div>
       <div id="sb-admin" style="display:none">
         <div class="sb-sec">Admin</div>
@@ -2652,10 +2653,18 @@ function cursoPrecoLabel(slug){
   for(var i=0;i<cat.length;i++){if(cat[i].slug===slug&&cat[i].preco_avulso_cents>0)return assineBRL(cat[i].preco_avulso_cents/100);}
   return '';
 }
-function showAssineScreen(email){
+function showAssineScreen(email,opts){
   var ls=document.getElementById('login-screen');if(ls)ls.style.display='none';
   var ap=document.getElementById('app-screen');if(ap)ap.style.display='none';
   var sc=document.getElementById('assine-screen');if(!sc)return;
+  var upgrade=!!(opts&&opts.upgrade);
+  var ttl=document.getElementById('assine-title'),sub=document.getElementById('assine-sub');
+  if(ttl)ttl.textContent=upgrade?'Endodirect — Fazer upgrade':'Endodirect — Pacotes';
+  if(sub){
+    sub.innerHTML=upgrade
+      ? 'Quer liberar mais recursos? Escolha um pacote superior para a conta <b style="color:#cbd2dd" id="assine-email"></b> e desbloqueie tudo da plataforma.'
+      : 'A conta <b style="color:#cbd2dd" id="assine-email"></b> ainda não tem acesso ativo. Adquira seu pacote e desbloqueie todos os benefícios da plataforma.';
+  }
   setText('assine-email',email||'');
   renderAssinePlans();
   if(!(Array.isArray(catalogoCursos)&&catalogoCursos.length))loadCursoCatalogo(function(){renderAssinePlans();});
@@ -5696,6 +5705,7 @@ document.addEventListener('DOMContentLoaded',function(){
 
   // NAV
   document.querySelectorAll('.sb-item[data-p]').forEach(function(b){b.addEventListener('click',function(){goPanel(b.dataset.p);});});
+  var upBtn=document.getElementById('sb-upgrade');if(upBtn)upBtn.addEventListener('click',function(){try{closeMobileNav();}catch(e){}showAssineScreen((currentUser&&currentUser.email)||'',{upgrade:!isDegustacao()});});
   document.getElementById('btn-chat-cta').addEventListener('click',function(){goPanel('chat');});
   document.getElementById('btn-feedback-cta').addEventListener('click',openFeedback);
 
