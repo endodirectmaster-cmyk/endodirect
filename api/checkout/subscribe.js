@@ -152,6 +152,17 @@ module.exports = async function handler(req, res) {
   if (!document || document.length < 11) return json(res, 400, { ok: false, error: 'CPF e obrigatorio para o pagamento.' });
   if (!phone || phone.length < 10) return json(res, 400, { ok: false, error: 'Telefone (celular com DDD) e obrigatorio.' });
 
+  // Endereco de cobranca (exigido pelo antifraude do pagar.me).
+  const addr = body.address || {};
+  const zip = onlyDigits(addr.zip || addr.zip_code);
+  const line1 = String(addr.line1 || addr.line_1 || '').trim();
+  const city = String(addr.city || '').trim();
+  const state = String(addr.state || addr.uf || '').trim().toUpperCase().slice(0, 2);
+  if (zip.length < 8 || !line1 || !city || state.length !== 2) {
+    return json(res, 400, { ok: false, error: 'Endereco de cobranca incompleto (CEP, endereco, cidade e UF).' });
+  }
+  const billingAddress = { line_1: line1, zip_code: zip, city: city, state: state, country: 'BR' };
+
   // pagar.me exige ao menos um telefone do cliente.
   const phones = { mobile_phone: { country_code: '55', area_code: phone.slice(0, 2), number: phone.slice(2) } };
 
@@ -175,7 +186,7 @@ module.exports = async function handler(req, res) {
     //    card_token solto na assinatura). Fallback: card_token na assinatura.
     let cardId = null;
     try {
-      const card = await pagarme(`/customers/${customer.id}/cards`, { token: cardToken });
+      const card = await pagarme(`/customers/${customer.id}/cards`, { token: cardToken, billing_address: billingAddress });
       cardId = (card && card.id) || null;
     } catch (e) {
       console.log('[subscribe] criar cartao falhou, fallback card_token:', (e && e.message) || e);
