@@ -1031,7 +1031,7 @@ textarea{resize:vertical;line-height:1.6}
       <div class="ck-fld" style="flex:1"><label>Validade (MM/AA)</label><input id="ck-exp" type="text" inputmode="numeric" autocomplete="cc-exp" placeholder="MM/AA" maxlength="5"></div>
       <div class="ck-fld" style="flex:1"><label>CVV</label><input id="ck-cvv" type="text" inputmode="numeric" autocomplete="cc-csc" placeholder="123" maxlength="4"></div>
     </div>
-    <div class="ck-fld"><label>CPF (opcional)</label><input id="ck-doc" type="text" inputmode="numeric" placeholder="000.000.000-00" maxlength="14"></div>
+    <div class="ck-fld"><label>CPF</label><input id="ck-doc" type="text" inputmode="numeric" placeholder="000.000.000-00" maxlength="14"></div>
     <button id="ck-pay" type="button" class="btn" style="width:100%;justify-content:center;background:#3b6fd4;color:#fff;border:0;font-weight:700;margin-top:.4rem">Assinar agora</button>
     <div style="font-size:.68rem;color:#6b7480;text-align:center;margin-top:.7rem;line-height:1.55">🔒 Pagamento processado pelo <b style="color:#8a93a3">pagar.me</b>. Não armazenamos os dados do seu cartão. Cobrança mensal, cancele quando quiser.</div>
   </div>
@@ -2769,6 +2769,7 @@ function ckPay(){
   if(num.length<13){ckErr('Número do cartão inválido.');return;}
   if(exp.length<4){ckErr('Validade inválida (use MM/AA).');return;}
   if(cvv.length<3){ckErr('CVV inválido.');return;}
+  if(doc.length!==11){ckErr('Informe um CPF válido (11 dígitos).');return;}
   var mm=exp.slice(0,2), yy=exp.slice(2,4);
   loadPmConfig(function(cfg){
     if(!cfg||!cfg.enabled||!cfg.public_key){ckErr('O checkout ainda está sendo configurado. Tente novamente em instantes.');return;}
@@ -5804,6 +5805,7 @@ document.addEventListener('DOMContentLoaded',function(){
   var ckModal=document.getElementById('checkout-modal');if(ckModal)ckModal.addEventListener('click',function(e){if(e.target===ckModal)closeCheckout();});
   var ckExp=document.getElementById('ck-exp');if(ckExp)ckExp.addEventListener('input',function(){var v=this.value.replace(/\D+/g,'').slice(0,4);this.value=v.length>2?v.slice(0,2)+'/'+v.slice(2):v;});
   var ckNum=document.getElementById('ck-num');if(ckNum)ckNum.addEventListener('input',function(){var v=this.value.replace(/\D+/g,'').slice(0,19);this.value=v.replace(/(.{4})/g,'$1 ').trim();});
+  var ckDoc=document.getElementById('ck-doc');if(ckDoc)ckDoc.addEventListener('input',function(){var v=this.value.replace(/\D+/g,'').slice(0,11);v=v.replace(/(\d{3})(\d)/,'$1.$2').replace(/(\d{3})(\d)/,'$1.$2').replace(/(\d{3})(\d{1,2})$/,'$1-$2');this.value=v;});
   var bStay=document.getElementById('btn-session-stay');if(bStay)bStay.addEventListener('click',keepSessionAlive);
   var bSout=document.getElementById('btn-session-logout');if(bSout)bSout.addEventListener('click',function(){hideSessionWarning();doLogout();});
   document.getElementById('login-pass').addEventListener('keydown',function(e){if(e.key==='Enter')doLoginAttempt();});
