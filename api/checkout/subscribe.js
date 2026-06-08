@@ -63,8 +63,8 @@ function pagarmeHeaders() {
     'Content-Type': 'application/json', Accept: 'application/json'
   };
 }
-async function pagarme(path, body) {
-  const r = await fetch(`${PAGARME_API}${path}`, { method: 'POST', headers: pagarmeHeaders(), body: JSON.stringify(body) });
+async function pagarme(path, body, method) {
+  const r = await fetch(`${PAGARME_API}${path}`, { method: method || 'POST', headers: pagarmeHeaders(), body: body ? JSON.stringify(body) : undefined });
   const data = await r.json().catch(() => ({}));
   if (!r.ok) {
     const msg = (data && (data.message || (data.errors && JSON.stringify(data.errors)))) || ('HTTP ' + r.status);
@@ -152,10 +152,19 @@ module.exports = async function handler(req, res) {
 
   try {
     // 1) Cliente.
+    const docType = document.length > 11 ? 'CNPJ' : 'CPF';
     const customer = await pagarme('/customers', {
       name: name || email.split('@')[0], email: email, type: 'individual',
-      document: document, document_type: document.length > 11 ? 'CNPJ' : 'CPF'
+      document: document, document_type: docType
     });
+    // O pagar.me reaproveita o cliente pelo e-mail; se ja existia sem documento,
+    // o POST nao atualiza. Garante o CPF no cadastro com um PUT (best-effort).
+    try {
+      await pagarme('/customers/' + customer.id, {
+        name: name || customer.name || email.split('@')[0], email: email, type: 'individual',
+        document: document, document_type: docType
+      }, 'PUT');
+    } catch (e) { console.log('[subscribe] update customer doc falhou:', (e && e.message) || e); }
 
     // 2) Salva o cartao no cliente a partir do token (mais confiavel que enviar
     //    card_token solto na assinatura). Fallback: card_token na assinatura.
@@ -187,13 +196,13 @@ module.exports = async function handler(req, res) {
       // Busca a cobranca da assinatura para descobrir o motivo exato da recusa.
       let reason = '';
       try {
-        const cr = await fetch(`${PAGARME_API}/subscriptions/${sub.id}/charges`, { headers: pagarmeHeaders() });
+        const cr = await fetch(`${PAGARME_API}/charges?subscription_id=${encodeURIComponent(sub.id)}&size=1`, { headers: pagarmeHeaders() });
         const cd = await cr.json().catch(() => ({}));
         const charge = (cd && Array.isArray(cd.data) && cd.data[0]) || null;
         const lt = charge && charge.last_transaction;
-        reason = (lt && (lt.acquirer_message || lt.gateway_response_message
-          || (lt.gateway_response && lt.gateway_response.errors && JSON.stringify(lt.gateway_response.errors))))
-          || (charge && charge.status) || '';
+        const gw = lt && lt.gateway_response;
+        reason = (gw && Array.isArray(gw.errors) && gw.errors[0] && gw.errors[0].message)
+          || (lt && lt.acquirer_message) || (charge && charge.status) || '';
         console.log('[subscribe] charge=' + JSON.stringify(charge).slice(0, 1500));
       } catch (e) { console.log('[subscribe] charges fetch err', (e && e.message) || e); }
       return json(res, 200, { ok: false, status: status, error: 'Pagamento nao aprovado.' + (reason ? ' (' + reason + ')' : ''), subscriptionId: sub.id });
