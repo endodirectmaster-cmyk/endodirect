@@ -748,6 +748,11 @@ textarea{resize:vertical;line-height:1.6}
   .lp-hero-btns .lp-cta,.lp-hero-btns .lp-ghost{width:100%;text-align:center}
   .lp-plan{padding:1.3rem 1.05rem}
 }
+#checkout-modal .ck-fld{margin-bottom:.7rem}
+#checkout-modal .ck-fld label{display:block;font-size:.66rem;font-weight:700;letter-spacing:.04em;text-transform:uppercase;color:#8a93a3;margin-bottom:.25rem}
+#checkout-modal .ck-fld input{width:100%;background:#0e1830;border:1px solid #2a3a5c;border-radius:9px;padding:.6rem .7rem;color:#e6e9ef;font-size:.9rem;font-family:var(--font);outline:none}
+#checkout-modal .ck-fld input:focus{border-color:#3b6fd4}
+#checkout-modal .ck-fld input[readonly]{color:#9aa3b2;background:#0b1426}
 </style>
 <div id="landing-screen">
   <div class="lp-nav"><div class="lp-wrap lp-nav-in">
@@ -1009,6 +1014,26 @@ textarea{resize:vertical;line-height:1.6}
       <button class="btn" id="assine-logout" style="width:auto;min-width:160px;justify-content:center;background:transparent;color:#9aa3b2;border:1px solid #2a3a5c">Sair</button>
     </div>
     <div style="text-align:center;margin-top:1rem;font-size:.72rem;color:#6b7480"><a href="/privacidade" target="_blank" rel="noopener" style="color:#8a93a3;text-decoration:none">Privacidade</a> · <a href="/termos" target="_blank" rel="noopener" style="color:#8a93a3;text-decoration:none">Termos</a></div>
+  </div>
+</div>
+<div id="checkout-modal" style="display:none;position:fixed;inset:0;z-index:1200;background:rgba(6,11,22,.82);align-items:flex-start;justify-content:center;overflow:auto;padding:1.2rem">
+  <div style="max-width:440px;width:100%;margin:auto;background:#121c33;border:1px solid #2a3a5c;border-radius:16px;padding:1.6rem 1.4rem;box-shadow:0 24px 60px rgba(0,0,0,.5)">
+    <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:.2rem">
+      <div style="font-size:1.18rem;font-weight:800;color:#fff">Assinar <span id="ck-plan-nome"></span></div>
+      <button id="ck-close" type="button" aria-label="Fechar" style="background:none;border:0;color:#9aa3b2;font-size:1.4rem;cursor:pointer;line-height:1">&times;</button>
+    </div>
+    <div id="ck-price" style="font-size:.84rem;color:#9dbcff;font-weight:700;margin-bottom:1rem"></div>
+    <div id="ck-err" style="display:none;background:rgba(224,106,106,.12);border:1px solid #7a3a3a;color:#f0a0a0;border-radius:9px;padding:.5rem .7rem;font-size:.78rem;margin-bottom:.8rem"></div>
+    <div class="ck-fld"><label>E-mail da conta</label><input id="ck-email" type="email" readonly></div>
+    <div class="ck-fld"><label>Nome no cartão</label><input id="ck-name" type="text" autocomplete="cc-name" placeholder="Como está impresso no cartão"></div>
+    <div class="ck-fld"><label>Número do cartão</label><input id="ck-num" type="text" inputmode="numeric" autocomplete="cc-number" placeholder="0000 0000 0000 0000" maxlength="23"></div>
+    <div style="display:flex;gap:.6rem">
+      <div class="ck-fld" style="flex:1"><label>Validade (MM/AA)</label><input id="ck-exp" type="text" inputmode="numeric" autocomplete="cc-exp" placeholder="MM/AA" maxlength="5"></div>
+      <div class="ck-fld" style="flex:1"><label>CVV</label><input id="ck-cvv" type="text" inputmode="numeric" autocomplete="cc-csc" placeholder="123" maxlength="4"></div>
+    </div>
+    <div class="ck-fld"><label>CPF (opcional)</label><input id="ck-doc" type="text" inputmode="numeric" placeholder="000.000.000-00" maxlength="14"></div>
+    <button id="ck-pay" type="button" class="btn" style="width:100%;justify-content:center;background:#3b6fd4;color:#fff;border:0;font-weight:700;margin-top:.4rem">Assinar agora</button>
+    <div style="font-size:.68rem;color:#6b7480;text-align:center;margin-top:.7rem;line-height:1.55">🔒 Pagamento processado pelo <b style="color:#8a93a3">pagar.me</b>. Não armazenamos os dados do seu cartão. Cobrança mensal, cancele quando quiser.</div>
   </div>
 </div>
 <div id="app-screen">
@@ -2645,9 +2670,7 @@ function renderAssinePlans(){
     if(sel)bd=hi?'#5585e8':(top?'#8b5cf6':'#5fd39a');
     var bens=benefits.map(function(b){var c=b.indexOf('Curso')===0;return '<div style="display:flex;gap:.45rem;align-items:flex-start;font-size:.78rem;color:'+(c?'#f0dcae':'#aeb6c2')+';line-height:1.4"><span style="color:'+(c?'#f5b32c':'#5fd39a')+';font-weight:700">'+(c?'★':'✓')+'</span><span'+(c?' style="font-weight:600"':'')+'>'+esc(b)+'</span></div>';}).join('');
     var excl=(t.excl||[]).map(function(b){return '<div style="display:flex;gap:.45rem;align-items:flex-start;font-size:.78rem;color:#7e8aa0;line-height:1.4"><span style="color:#e06a6a;font-weight:700">✕</span><span>'+esc(b)+'</span></div>';}).join('');
-    var cta=t.url
-      ? '<a class="btn" style="width:100%;justify-content:center;text-decoration:none;margin-top:auto;background:'+(hi?'#3b6fd4':(top?'#8b5cf6':'transparent'))+';color:'+(hi||top?'#fff':'#cbd2dd')+';border:1px solid '+bd+'" href="'+esc(t.url)+'" target="_blank" rel="noopener">Assinar '+esc(t.nome)+'</a>'
-      : '<div class="btn" style="width:100%;justify-content:center;margin-top:auto;background:transparent;color:#6b7480;border:1px solid #2a3a5c;cursor:default">Em breve</div>';
+    var cta='<button type="button" class="btn assine-buy" data-plan="'+esc(t.key)+'" style="width:100%;justify-content:center;margin-top:auto;background:'+(top?'#8b5cf6':'#3b6fd4')+';color:#fff;border:0;font-weight:700">Assinar '+esc(t.nome)+'</button>';
     return '<div id="assine-plan-'+esc(t.key)+'" style="position:relative;display:flex;flex-direction:column;gap:.55rem;text-align:left;border:'+(sel?'2px':'1.5px')+' solid '+bd+';border-radius:14px;padding:1.1rem 1rem;background:'+bg+';height:100%'+(sel?';box-shadow:0 0 0 4px rgba(95,211,154,.18)':'')+'">'
       +badge
       +(sel?'<span style="position:absolute;top:-11px;right:12px;font-size:.54rem;font-weight:800;text-transform:uppercase;letter-spacing:.06em;background:#2e7d54;color:#dcffe9;padding:.16rem .5rem;border-radius:999px">✓ Escolhido</span>':'')
@@ -2709,6 +2732,61 @@ function maybeResumePlanIntent(){
   showAssineScreen(currentUser.email||'',{highlight:key});
 }
 function hideAssineScreen(){var sc=document.getElementById('assine-screen');if(sc)sc.style.display='none';}
+// ── Checkout in-app (pagar.me) ──────────────────────────────────────────
+// Cartão é tokenizado no navegador (nunca passa pelo nosso servidor) e a
+// assinatura é criada por /api/checkout/subscribe, vinculada à conta logada.
+var _ckPlan='', _pmCfg=null;
+function ckErr(m){var e=document.getElementById('ck-err');if(e){e.textContent=m||'';e.style.display=m?'block':'none';}}
+function loadPmConfig(cb){
+  if(_pmCfg){cb(_pmCfg);return;}
+  fetch('/api/checkout/config').then(function(r){return r.json();}).then(function(d){_pmCfg=d||{};cb(_pmCfg);}).catch(function(){_pmCfg={enabled:false};cb(_pmCfg);});
+}
+function openCheckout(key){
+  var t=(ENDO_TIERS||[]).filter(function(x){return x&&x.key===key;})[0];
+  if(!t)return;
+  if(!currentUser||!currentUser.email){try{sessionStorage.setItem('endo_plan_intent',key);}catch(e){}showLoginScreen();return;}
+  _ckPlan=key;
+  setText('ck-plan-nome',t.nome);
+  var pr=document.getElementById('ck-price');if(pr)pr.textContent='R$ '+t.preco+'/mês · assinatura mensal, cancele quando quiser';
+  var em=document.getElementById('ck-email');if(em)em.value=currentUser.email;
+  ckErr('');
+  ['ck-name','ck-num','ck-exp','ck-cvv','ck-doc'].forEach(function(id){var e=document.getElementById(id);if(e)e.value='';});
+  var m=document.getElementById('checkout-modal');if(m)m.style.display='flex';
+  var n=document.getElementById('ck-name');if(n)setTimeout(function(){try{n.focus();}catch(e){}},80);
+}
+function closeCheckout(){var m=document.getElementById('checkout-modal');if(m)m.style.display='none';}
+function ckPay(){
+  var btn=document.getElementById('ck-pay');if(!btn||btn.disabled)return;
+  ckErr('');
+  var name=(document.getElementById('ck-name').value||'').trim();
+  var num=(document.getElementById('ck-num').value||'').replace(/\D+/g,'');
+  var exp=(document.getElementById('ck-exp').value||'').replace(/\D+/g,'');
+  var cvv=(document.getElementById('ck-cvv').value||'').replace(/\D+/g,'');
+  var doc=(document.getElementById('ck-doc').value||'').replace(/\D+/g,'');
+  var email=(currentUser&&currentUser.email)||'';
+  if(!email){ckErr('Sessão expirada. Entre novamente.');return;}
+  if(!name){ckErr('Informe o nome impresso no cartão.');return;}
+  if(num.length<13){ckErr('Número do cartão inválido.');return;}
+  if(exp.length<4){ckErr('Validade inválida (use MM/AA).');return;}
+  if(cvv.length<3){ckErr('CVV inválido.');return;}
+  var mm=exp.slice(0,2), yy=exp.slice(2,4);
+  loadPmConfig(function(cfg){
+    if(!cfg||!cfg.enabled||!cfg.public_key){ckErr('O checkout ainda está sendo configurado. Tente novamente em instantes.');return;}
+    btn.disabled=true;var old=btn.textContent;btn.textContent='Processando…';
+    fetch('https://api.pagar.me/core/v5/tokens?appId='+encodeURIComponent(cfg.public_key),{
+      method:'POST',headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({type:'card',card:{number:num,holder_name:name,exp_month:Number(mm),exp_year:Number(yy),cvv:cvv}})
+    }).then(function(r){return r.json().catch(function(){return {};});}).then(function(tok){
+      if(!tok||!tok.id)throw new Error((tok&&tok.message)||'Não foi possível validar o cartão. Confira os dados.');
+      return fetch('/api/checkout/subscribe',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({plan:_ckPlan,card_token:tok.id,email:email,name:name,document:doc})});
+    }).then(function(r){return r.json().catch(function(){return {};});}).then(function(d){
+      if(!d||!d.ok)throw new Error((d&&d.error)||'Pagamento não aprovado. Tente outro cartão.');
+      closeCheckout();
+      try{notify('Assinatura ativada! Atualizando seu acesso…','ok');}catch(e){}
+      setTimeout(function(){try{location.reload();}catch(e){}},1400);
+    }).catch(function(e){ckErr((e&&e.message)||'Falha ao processar o pagamento.');btn.disabled=false;btn.textContent=old;});
+  });
+}
 // Compra de um plano a partir da landing. Conta primeiro: o aluno cria/entra na
 // conta e conclui a assinatura dentro da plataforma, de modo que a assinatura já
 // fique vinculada à conta no momento do pagamento.
@@ -5719,6 +5797,13 @@ document.addEventListener('DOMContentLoaded',function(){
     if(ap&&currentUser){ap.style.display=(currentUser.role==='admin')?'block':'flex';try{goPanel(currentUser.role==='admin'?'adm':'dash');}catch(e){}}
     else{var ls=document.getElementById('login-screen');if(ls)ls.style.display='flex';}
   });
+  // Checkout in-app: abre o formulário ao clicar em "Assinar <plano>".
+  document.addEventListener('click',function(e){var b=e.target.closest?e.target.closest('.assine-buy'):null;if(b){e.preventDefault();openCheckout(b.getAttribute('data-plan'));}});
+  var ckCloseBtn=document.getElementById('ck-close');if(ckCloseBtn)ckCloseBtn.addEventListener('click',closeCheckout);
+  var ckPayBtn=document.getElementById('ck-pay');if(ckPayBtn)ckPayBtn.addEventListener('click',ckPay);
+  var ckModal=document.getElementById('checkout-modal');if(ckModal)ckModal.addEventListener('click',function(e){if(e.target===ckModal)closeCheckout();});
+  var ckExp=document.getElementById('ck-exp');if(ckExp)ckExp.addEventListener('input',function(){var v=this.value.replace(/\D+/g,'').slice(0,4);this.value=v.length>2?v.slice(0,2)+'/'+v.slice(2):v;});
+  var ckNum=document.getElementById('ck-num');if(ckNum)ckNum.addEventListener('input',function(){var v=this.value.replace(/\D+/g,'').slice(0,19);this.value=v.replace(/(.{4})/g,'$1 ').trim();});
   var bStay=document.getElementById('btn-session-stay');if(bStay)bStay.addEventListener('click',keepSessionAlive);
   var bSout=document.getElementById('btn-session-logout');if(bSout)bSout.addEventListener('click',function(){hideSessionWarning();doLogout();});
   document.getElementById('login-pass').addEventListener('keydown',function(e){if(e.key==='Enter')doLoginAttempt();});
