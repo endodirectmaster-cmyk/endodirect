@@ -4684,7 +4684,17 @@ doLogin=function(u){
   currentUser=u;
   remoteStateLoaded=false;
   remoteStateWarned=false;
+  if(u.role==='admin'){
+    // Perfil do professor é PESSOAL: inicia pela identidade da sessão para
+    // nunca mostrar dados de outro admin. O perfil salvo do próprio admin é
+    // restaurado no hydrate (com o guard de e-mail).
+    admPerfil={nome:u.name||'Professor',email:(u.email&&u.email.indexOf('@')>=0)?u.email:'',contato:'',instituicao:'',cpf:''};
+    lsSet('adm_perfil',admPerfil);
+  }
   if(u.role==='aluno'){
+    // Contas demo carregam os acessos embutidos (degustação x acesso total).
+    // Alunos reais não têm esse campo: os acessos vêm do member_content.
+    if(Array.isArray(u.acessos))userAcessos=u.acessos.slice();
     var prof=lsGet('user_profile');
     if(!prof){openOnboard();return;}
     currentUser.sub=profileDisplayLabel(prof);
