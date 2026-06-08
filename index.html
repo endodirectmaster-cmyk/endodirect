@@ -5831,8 +5831,11 @@ document.addEventListener('DOMContentLoaded',function(){
     var btn=document.getElementById('btn-login');if(btn)btn.disabled=true;
     client.auth.signInWithPassword({email:email,password:pass}).then(function(res){
       if(res.error)throw res.error;
-    }).catch(function(){
-      showLoginError('E-mail ou senha incorretos.');
+    }).catch(function(e){
+      var msg=(e&&e.message)?e.message:'';
+      var el=document.getElementById('login-err');
+      if(el){el.textContent=msg?('Erro: '+msg):'E-mail ou senha incorretos.';el.style.display='block';}
+      else showLoginError('E-mail ou senha incorretos.');
     }).then(function(){if(btn)btn.disabled=false;});
   };
   var doGoogleLogin=function(){
