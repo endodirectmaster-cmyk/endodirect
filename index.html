@@ -24,8 +24,8 @@
 }
 html,body{height:100%;overflow:hidden;font-family:var(--font)}
 body{background:var(--bg);color:var(--tx);display:flex;flex-direction:column}
-#login-screen{position:fixed;inset:0;z-index:1000;background:linear-gradient(135deg,#e8ecf5,#f5f7fc 60%,#e2e8f5);display:flex;align-items:center;justify-content:center}
-.login-card{background:#fff;border-radius:24px;box-shadow:0 12px 50px rgba(26,39,68,.18);width:520px;max-width:94vw;overflow:hidden}
+#login-screen{position:fixed;inset:0;z-index:1000;background:linear-gradient(135deg,#e8ecf5,#f5f7fc 60%,#e2e8f5);display:flex;align-items:flex-start;justify-content:center;overflow:auto;padding:24px 16px}
+.login-card{background:#fff;border-radius:24px;box-shadow:0 12px 50px rgba(26,39,68,.18);width:520px;max-width:94vw;overflow:hidden;margin:auto}
 .login-hdr{background:linear-gradient(160deg,#1a2744 60%,#2a3f6e);padding:2.6rem 2.4rem 2.1rem;display:flex;flex-direction:column;align-items:center;gap:.7rem}
 .login-logo{display:flex;align-items:center;gap:14px}
 .login-ico{display:flex;align-items:center;justify-content:center}
@@ -686,7 +686,7 @@ textarea{resize:vertical;line-height:1.6}
   <div class="lp-wrap">
     <section class="lp-hero">
       <h1>A plataforma completa de <span>Endocrinologia</span> para residentes e endocrinologistas</h1>
-      <p>Banco de questões comentadas, flashcards inteligentes, mapas mentais, simulados, prescrição e um assistente de IA — tudo em um só lugar, baseado nas principais diretrizes (SBEM, SBD, ADA).</p>
+      <p>Banco de questões comentadas, flashcards inteligentes, mapas mentais, simulados, prescrição e um assistente de IA — tudo em um só lugar, baseado nas principais diretrizes (SBEM, SBD, ADA). Útil também para clínicos, cardiologistas, geriatras e outras especialidades.</p>
       <div class="lp-hero-btns">
         <button class="lp-cta" onclick="showLoginScreen()">Acessar a plataforma</button>
         <a class="lp-ghost" href="#planos">Ver planos</a>
@@ -794,7 +794,7 @@ textarea{resize:vertical;line-height:1.6}
           <li>Título de Especialista pela SBEM</li>
           <li>Ex-Preceptor da Residência de Endocrinologia na UNIFESP</li>
         </ul></div>
-        <div class="lp-prof"><div class="av">RM<img src="professores/rodolpho.jpg" alt="Rodolpho Pinto de Mendonça" style="object-position:73% 15%" onerror="this.remove()"></div><h3>Rodolpho Pinto de Mendonça</h3><ul>
+        <div class="lp-prof"><div class="av">RM<img src="professores/rodolpho.jpg" alt="Rodolpho Pinto de Mendonça" style="object-position:34% 28%" onerror="this.remove()"></div><h3>Rodolpho Pinto de Mendonça</h3><ul>
           <li>Graduação na UFRN</li>
           <li>Residência de Clínica Médica na UNICAMP</li>
           <li>Residência de Endocrinologia e Metabologia na UNIFESP</li>
