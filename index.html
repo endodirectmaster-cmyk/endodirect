@@ -2723,7 +2723,13 @@ function cursoPrecoLabel(slug){
   return '';
 }
 var assineHighlight='';
+var assineReturnPanel='';
 function showAssineScreen(email,opts){
+  // Lembra a seção atual para o "Voltar à plataforma" retornar a ela.
+  try{
+    if(currentUser&&currentUser.role==='admin'){assineReturnPanel='adm';}
+    else{var on=document.querySelector('#sb-aluno .sb-item.on[data-p]');assineReturnPanel=(on&&on.dataset.p)||'dash';}
+  }catch(e){assineReturnPanel='dash';}
   var ls=document.getElementById('login-screen');if(ls)ls.style.display='none';
   var ap=document.getElementById('app-screen');if(ap)ap.style.display='none';
   var sc=document.getElementById('assine-screen');if(!sc)return;
@@ -5906,7 +5912,7 @@ document.addEventListener('DOMContentLoaded',function(){
     // pacotes a partir da degustação / de um recurso bloqueado).
     hideAssineScreen();
     var ap=document.getElementById('app-screen');
-    if(ap&&currentUser){ap.style.display=(currentUser.role==='admin')?'block':'flex';try{goPanel(currentUser.role==='admin'?'adm':'dash');}catch(e){}}
+    if(ap&&currentUser){ap.style.display=(currentUser.role==='admin')?'block':'flex';try{goPanel(assineReturnPanel||(currentUser.role==='admin'?'adm':'dash'));}catch(e){}}
     else{var ls=document.getElementById('login-screen');if(ls)ls.style.display='flex';}
   });
   // Checkout in-app: abre o formulário ao clicar em "Assinar <plano>".
