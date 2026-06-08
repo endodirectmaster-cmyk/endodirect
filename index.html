@@ -2053,7 +2053,7 @@ function startApp(){
     var al=document.getElementById('logo-adm-img');var tbLogo=document.getElementById('logo-tb-img');
     if(al&&tbLogo)al.innerHTML='<img src="'+tbLogo.src+'" alt="Endodirect" style="width:30px;height:30px;object-fit:contain">';
     goPanel('adm');
-    renderAdmSec('analytics');
+    renderAdmSec(admRestoreSec());
   }else{
     goPanel('dash');initAll();
   }
@@ -2529,7 +2529,7 @@ function goPanel(id){
   if(id==='simfull'){renderSFPrev();populateInst('sf-inst');}
   if(id==='art')initArtUpload();
   if(id==='perfil')renderPerfil();
-  if(id==='adm')renderAdmSec('analytics');
+  if(id==='adm')renderAdmSec(admRestoreSec());
   closeMobileNav();
 }
 
@@ -3877,8 +3877,14 @@ function admMapasHTML(){
     +'<div class="card"><div class="card-head" style="flex-wrap:wrap;gap:.5rem"><span class="card-title">Mapas publicados para os alunos</span><div style="display:flex;gap:.5rem;align-items:center">'+mmFilterSel+'<span class="tag tag-grn">'+__rows.length+'</span></div></div>'+(list||'<div class="empty">Nenhum mapa nesta subespecialidade.</div>')+'</div>'
     +'</div>';
 }
+function admRestoreSec(){
+  var ok=['analytics','mural','provas','cursos','estudantes','conteudo','mapas','chat','perfil','suporte'];
+  var s=lsGet('adm_sec');
+  return ok.indexOf(s)>=0?s:'analytics';
+}
 function renderAdmSec(sec){
   admCurrentSec=sec;
+  try{lsSet('adm_sec',sec);}catch(e){}
   document.querySelectorAll('.adm-nav[data-asec]').forEach(function(b){b.classList.toggle('on',b.dataset.asec===sec);});
   var titles={provas:'Provas & Questões',cursos:'Cursos',estudantes:'Estudantes',analytics:'Analytics',mural:'Mural',conteudo:'Podcasts',mapas:'Mapas Mentais',chat:'Chat',perfil:'Perfil',suporte:'Suporte'};
   setText('adm-sec-title',titles[sec]||sec);
