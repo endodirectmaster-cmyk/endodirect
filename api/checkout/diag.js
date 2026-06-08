@@ -1,5 +1,5 @@
 // TEMPORÁRIO — diagnóstico do checkout pagar.me (sandbox). REMOVER após uso.
-// GET /api/checkout/_diag?t=endodiag2026
+// GET /api/checkout/diag?t=endodiag2026
 // Roda token -> customer -> card -> subscription -> charges e devolve tudo.
 const API = 'https://api.pagar.me/core/v5';
 const PUB = process.env.PAGARME_PUBLIC_KEY || '';
