@@ -143,28 +143,33 @@ module.exports = async function handler(req, res) {
   const email = String(body.email || '').trim().toLowerCase();
   const name = String(body.name || '').trim();
   const document = onlyDigits(body.document);
+  const phone = onlyDigits(body.phone);
   const cardToken = String(body.card_token || body.cardToken || '').trim();
 
   if (!cfg || !(cfg.amount > 0)) return json(res, 400, { ok: false, error: 'Plano invalido ou preco nao configurado.' });
   if (!email || !/.+@.+\..+/.test(email)) return json(res, 400, { ok: false, error: 'E-mail invalido.' });
   if (!cardToken) return json(res, 400, { ok: false, error: 'Cartao nao tokenizado.' });
   if (!document || document.length < 11) return json(res, 400, { ok: false, error: 'CPF e obrigatorio para o pagamento.' });
+  if (!phone || phone.length < 10) return json(res, 400, { ok: false, error: 'Telefone (celular com DDD) e obrigatorio.' });
+
+  // pagar.me exige ao menos um telefone do cliente.
+  const phones = { mobile_phone: { country_code: '55', area_code: phone.slice(0, 2), number: phone.slice(2) } };
 
   try {
     // 1) Cliente.
     const docType = document.length > 11 ? 'CNPJ' : 'CPF';
     const customer = await pagarme('/customers', {
       name: name || email.split('@')[0], email: email, type: 'individual',
-      document: document, document_type: docType
+      document: document, document_type: docType, phones: phones
     });
-    // O pagar.me reaproveita o cliente pelo e-mail; se ja existia sem documento,
-    // o POST nao atualiza. Garante o CPF no cadastro com um PUT (best-effort).
+    // O pagar.me reaproveita o cliente pelo e-mail; se ja existia sem documento/
+    // telefone, o POST nao atualiza. Garante CPF + telefone com um PUT (best-effort).
     try {
       await pagarme('/customers/' + customer.id, {
         name: name || customer.name || email.split('@')[0], email: email, type: 'individual',
-        document: document, document_type: docType
+        document: document, document_type: docType, phones: phones
       }, 'PUT');
-    } catch (e) { console.log('[subscribe] update customer doc falhou:', (e && e.message) || e); }
+    } catch (e) { console.log('[subscribe] update customer falhou:', (e && e.message) || e); }
 
     // 2) Salva o cartao no cliente a partir do token (mais confiavel que enviar
     //    card_token solto na assinatura). Fallback: card_token na assinatura.
