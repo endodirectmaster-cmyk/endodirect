@@ -626,6 +626,24 @@ textarea{resize:vertical;line-height:1.6}
 .lp-plan ul{list-style:none;padding:0;margin:1rem 0 1.2rem;display:flex;flex-direction:column;gap:.45rem}
 .lp-plan li{font-size:.8rem;color:#aeb6c2;display:flex;gap:.45rem;align-items:flex-start;line-height:1.4}
 .lp-plan li::before{content:"✓";color:#5fd39a;font-weight:800}
+.lp-flip{-webkit-perspective:1000px;perspective:1000px;min-height:140px}
+.lp-flip-in{position:relative;width:100%;height:140px;-webkit-transform-style:preserve-3d;transform-style:preserve-3d;-webkit-animation:lpflip 7s infinite;animation:lpflip 7s infinite}
+.lp-flip-face{position:absolute;inset:0;-webkit-backface-visibility:hidden;backface-visibility:hidden;border-radius:12px;padding:1rem;display:flex;flex-direction:column;justify-content:center;background:#1b1f27;border-left:5px solid #2563eb;overflow:hidden}
+.lp-flip-back{-webkit-transform:rotateY(180deg);transform:rotateY(180deg);border-left-color:#5fd39a}
+@-webkit-keyframes lpflip{0%,42%{-webkit-transform:rotateY(0)}50%,92%{-webkit-transform:rotateY(180deg)}100%{-webkit-transform:rotateY(0)}}
+@keyframes lpflip{0%,42%{transform:rotateY(0)}50%,92%{transform:rotateY(180deg)}100%{transform:rotateY(0)}}
+.lp-bub{font-size:.77rem;line-height:1.45;border-radius:10px;padding:.5rem .7rem;margin-bottom:.45rem;max-width:94%}
+.lp-bub.doc{background:#1b1f27;border:1px solid #2a2f3a;color:#cdd4df}
+.lp-bub.me{background:rgba(224,169,59,.14);color:#f0c876;margin-left:auto}
+.lp-bub.fb{background:rgba(95,211,154,.1);border:1px solid #2e7d54;color:#7fe0ad}
+.lp-rx-pr{font-size:.76rem;color:#cdd4df;background:#11141a;border:1px solid #2a2f3a;border-radius:9px;padding:.55rem .7rem;margin-bottom:.45rem;line-height:1.5;white-space:pre-line}
+.lp-anim>*{opacity:0}
+.lp-anim .doc{-webkit-animation:lpA 8s infinite;animation:lpA 8s infinite}
+.lp-anim .me,.lp-anim .lp-rx-pr{-webkit-animation:lpB 8s infinite;animation:lpB 8s infinite}
+.lp-anim .fb{-webkit-animation:lpC 8s infinite;animation:lpC 8s infinite}
+@keyframes lpA{0%{opacity:0}6%{opacity:1}92%{opacity:1}100%{opacity:0}}
+@keyframes lpB{0%,16%{opacity:0;transform:translateY(7px)}24%,92%{opacity:1;transform:none}100%{opacity:0}}
+@keyframes lpC{0%,42%{opacity:0;transform:translateY(7px)}50%,92%{opacity:1;transform:none}100%{opacity:0}}
 .lp-show{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:1.1rem}
 .lp-shot{background:#16191f;border:1px solid #232730;border-radius:16px;padding:1.1rem;display:flex;flex-direction:column}
 .lp-shot-tag{font-size:.62rem;font-weight:800;letter-spacing:.07em;text-transform:uppercase;color:#e0a93b;margin-bottom:.7rem}
@@ -663,7 +681,6 @@ textarea{resize:vertical;line-height:1.6}
   </div></div>
   <div class="lp-wrap">
     <section class="lp-hero">
-      <span class="lp-eyebrow">Educação médica · Endocrinologia &amp; Metabologia</span>
       <h1>A plataforma completa de <span>Endocrinologia</span> para residentes e endocrinologistas</h1>
       <p>Banco de questões comentadas, flashcards inteligentes, mapas mentais, simulados, prescrição e um assistente de IA — tudo em um só lugar, baseado nas principais diretrizes (SBEM, SBD, ADA).</p>
       <div class="lp-hero-btns">
@@ -703,10 +720,18 @@ textarea{resize:vertical;line-height:1.6}
         </div>
         <div class="lp-shot">
           <div class="lp-shot-tag">🃏 Flashcards</div>
-          <div class="lp-fc" style="border-left:5px solid #2563eb">
-            <div style="font-size:.6rem;font-weight:800;letter-spacing:.08em;text-transform:uppercase;color:#2563eb;margin-bottom:8px">Diabetes</div>
-            <div style="font-size:.92rem;font-weight:600;color:#fff;line-height:1.45">Critérios diagnósticos de diabetes mellitus?</div>
-            <div style="font-size:.7rem;color:#6b7480;margin-top:14px">Clique para virar ↻</div>
+          <div class="lp-flip">
+            <div class="lp-flip-in">
+              <div class="lp-flip-face">
+                <div style="font-size:.6rem;font-weight:800;letter-spacing:.08em;text-transform:uppercase;color:#2563eb;margin-bottom:8px">Diabetes</div>
+                <div style="font-size:.92rem;font-weight:600;color:#fff;line-height:1.45">Critérios diagnósticos de diabetes mellitus?</div>
+                <div style="font-size:.68rem;color:#6b7480;margin-top:12px">Vira automaticamente ↻</div>
+              </div>
+              <div class="lp-flip-face lp-flip-back">
+                <div style="font-size:.6rem;font-weight:800;letter-spacing:.08em;text-transform:uppercase;color:#5fd39a;margin-bottom:6px">Resposta</div>
+                <div style="font-size:.74rem;color:#cdd4df;line-height:1.45">Jejum ≥126, TOTG-1h ≥209, TOTG-2h ≥200, HbA1c ≥6,5% ou glicemia casual ≥200 + sintomas. Confirmar 2º exame se assintomático.</div>
+              </div>
+            </div>
           </div>
         </div>
         <div class="lp-shot">
@@ -738,6 +763,18 @@ textarea{resize:vertical;line-height:1.6}
             <h4>Tirzepatida na manutenção do peso — análise dos estudos recentes</h4>
             <div class="lp-mural-meta">Atualizado pelo radar diário · Fonte: Congresso Europeu de Obesidade</div>
           </div>
+        </div>
+        <div class="lp-shot lp-anim lp-sim">
+          <div class="lp-shot-tag">♡ Simulador de Casos</div>
+          <div class="lp-bub doc">📋 Mulher, 32 anos, com taquicardia, perda de peso e TSH suprimido. Qual o próximo passo?</div>
+          <div class="lp-bub me">Solicitar TRAb e T4 livre</div>
+          <div class="lp-bub fb">✓ Conduta adequada — investigação de tireotoxicose (doença de Graves é a causa mais provável).</div>
+        </div>
+        <div class="lp-shot lp-anim lp-rx">
+          <div class="lp-shot-tag">💊 Prescrição Comentada</div>
+          <div class="lp-bub doc">📋 DM2, IMC 31, HbA1c 8,2% sem uso prévio de medicação. Prescreva.</div>
+          <div class="lp-rx-pr">Metformina 500 mg, VO, 2x/dia após refeições, titular conforme tolerância.</div>
+          <div class="lp-bub fb">✓ Avaliação da IA: 1ª linha correta; considere iSGLT2/GLP-1 pelo perfil. Oriente titulação gradual e função renal.</div>
         </div>
       </div>
     </section>
