@@ -742,7 +742,7 @@ textarea{resize:vertical;line-height:1.6}
           <span class="sec-title" style="display:block;margin-bottom:.7rem">🏛️ Questões de provas anteriores</span>
           <div class="g4" style="margin-bottom:.65rem">
             <div class="fld2" style="margin:0"><label>Instituição</label><select id="q-inst"><option value="">Todas</option></select></div>
-            <div class="fld2" style="margin:0"><label>Ano</label><select id="q-ano"><option value="">Todos</option></select></div>
+            <div class="fld2" style="margin:0" id="q-ano-field"><label>Ano</label><select id="q-ano"><option value="">Todos</option></select></div>
             <div class="fld2" style="margin:0"><label>Subespecialidade</label><select id="q-parea"><option value="">Todas</option><option>Diabetes</option><option>Obesidade</option><option>Tireoide</option><option>Adrenal</option><option>Neuroendocrinologia</option><option>Osteometabolismo</option><option>Endocrinologia Pediátrica</option><option>Endocrinologia Esportiva</option><option>Endocrinologia Masculina</option><option>Endocrinologia Feminina</option><option>Transgeneridade</option></select></div>
             <div class="fld2" style="margin:0"><label>Tipo</label><select id="q-ptype"><option value="">Todas</option><option value="mc">Objetivas</option><option value="disc">Discursivas</option></select></div>
           </div>
@@ -2560,6 +2560,7 @@ function renderDashNotas(){
 
 var qtype='mc';
 var genQs=[];
+var genAnswered={};// idx -> {ok} das questões respondidas na busca atual (contador)
 function genQuestions(){
   if(blockIfDegustacao())return;
   var btn=document.getElementById('btn-genq');
@@ -2598,10 +2599,20 @@ function renderGenQ(isMC){
     +'<span style="font-size:.76rem;color:var(--t2)">Página '+(genPage+1)+' de '+pages+'</span>'
     +'<button class="btn btn-outline btn-sm" id="gen-next"'+(genPage>=pages-1?' disabled':'')+'>Próxima →</button>'
     +'</div>':'';
-  res.innerHTML='<div style="display:flex;align-items:center;justify-content:space-between;margin:.15rem 0 .5rem"><span class="sec-title">'+total+' questão(ões)</span><button class="btn btn-primary btn-sm" id="btn-save-all-q">💾 Salvar todas</button></div><div class="q-list">'+rows+'</div>'+nav;
+  res.innerHTML='<div style="display:flex;align-items:center;justify-content:space-between;gap:.6rem;flex-wrap:wrap;margin:.15rem 0 .5rem"><div style="display:flex;align-items:baseline;gap:.6rem;flex-wrap:wrap"><span class="sec-title">'+total+' questão(ões)</span><span id="gen-counter" style="font-size:.74rem;font-weight:600;color:var(--blue)"></span></div><button class="btn btn-primary btn-sm" id="btn-save-all-q">💾 Salvar todas</button></div><div class="q-list">'+rows+'</div>'+nav;
   document.getElementById('btn-save-all-q').addEventListener('click',saveAllQ);
+  updateGenCounter();
   var pv=document.getElementById('gen-prev');if(pv)pv.addEventListener('click',function(){genPage--;renderGenQ(isMC);res.scrollIntoView({behavior:'smooth',block:'start'});});
   var nx=document.getElementById('gen-next');if(nx)nx.addEventListener('click',function(){genPage++;renderGenQ(isMC);res.scrollIntoView({behavior:'smooth',block:'start'});});
+}
+function updateGenCounter(){
+  var el=document.getElementById('gen-counter');if(!el)return;
+  var keys=Object.keys(genAnswered);
+  var respondidas=keys.length;
+  var acertos=keys.filter(function(k){return genAnswered[k]&&genAnswered[k].ok;}).length;
+  if(!respondidas){el.textContent='';return;}
+  var pct=Math.round(acertos/respondidas*100);
+  el.textContent='Respondidas: '+respondidas+'/'+genQs.length+' · Acertos: '+acertos+' ('+pct+'%)';
 }
 function qRowHTML(q,i,src,isMC){
   return'<div><div class="q-row" data-qi="'+i+'" data-src="'+src+'" data-mc="'+(q.type?(q.type!=='disc'):isMC)+'"><div class="q-row-top"><div class="q-stem-prev">'+esc(q.stem||'')+'</div><div style="display:flex;gap:3px;flex-shrink:0">'+(q.code?'<span style="font-family:monospace;font-size:.59rem;font-weight:700;background:#f1f0ff;color:#6d5fd8;padding:1px 6px;border-radius:99px">'+esc(q.code)+'</span>':'')+diffTag(q.dificuldade||'intermediario')+(q.inst?'<span class="tag tag-pur" style="font-size:.57rem">'+esc(q.inst)+'</span>':'')+'</div></div></div><div id="qd-'+src+'-'+i+'" style="display:none"></div></div>';
@@ -2645,7 +2656,8 @@ function selectOpt(letter,answer,explanation,src,idx){
   var fb=document.getElementById('qfb-'+src+'-'+idx);
   if(fb)fb.innerHTML='<div class="q-fb '+(ok?'ok':'er')+'">'+(ok?'✓ Correto!':'✗ Incorreto — Gabarito: '+answer)+' — '+esc(explanation.replace(/&quot;/g,'"'))+'</div>';
   var q=src==='gen'?genQs[parseInt(idx)]:DB.q[parseInt(idx)];
-  if(q&&q.area){if(!DB.perf[q.area])DB.perf[q.area]={correct:0,total:0};DB.perf[q.area].total++;if(ok)DB.perf[q.area].correct++;persist();}
+  if(src==='gen'){genAnswered[parseInt(idx)]={ok:ok};updateGenCounter();}
+  if(q&&q.area){if(!DB.perf[q.area])DB.perf[q.area]={correct:0,total:0};DB.perf[q.area].total++;if(ok)DB.perf[q.area].correct++;persist();try{refreshDash();}catch(e){}}
 }
 function revealDisc(i,src){
   var q=src==='gen'?genQs[i]:DB.q[i];if(!q)return;
@@ -2725,6 +2737,15 @@ function updateProvaInfo(){
   var area=(document.getElementById('q-parea')||{}).value||'';
   var type=(document.getElementById('q-ptype')||{}).value||'';
   populateAno('q-ano',inst);
+  // O banco Endodirect não é organizado por ano de prova (anos são genéricos),
+  // então o filtro de Ano só faz sentido para instituições com provas datadas
+  // (ex.: TEEM). Esconde o filtro para Endodirect / degustação.
+  var anoField=document.getElementById('q-ano-field');
+  if(anoField){
+    var hideAno=isDegustacao()||inst==='Endodirect';
+    anoField.style.display=hideAno?'none':'';
+    if(hideAno){var anoSel=document.getElementById('q-ano');if(anoSel)anoSel.value='';ano='';}
+  }
   var n=filterProvas(inst,ano,area,type).length;
   var total=provasPool().length;
   var el=document.getElementById('q-prova-info');
@@ -2741,6 +2762,7 @@ function updateProvaInfo(){
 function renderProvaResults(qs){
   if(!qs.length){document.getElementById('q-gen-results').innerHTML='<div class="empty">Nenhuma questão encontrada.</div>';return;}
   genQs=qs.map(function(q){return Object.assign({},q,{type:q.type||(q.options&&Object.keys(q.options).length?'mc':'disc')});});
+  genAnswered={};
   genPage=0;
   renderGenQ(true);
 }
