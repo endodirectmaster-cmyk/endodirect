@@ -2731,7 +2731,7 @@ function showAssineScreen(email,opts){
   assineHighlight=(opts&&opts.highlight)||'';
   var chosen=assineHighlight?(ENDO_TIERS||[]).filter(function(x){return x&&x.key===assineHighlight;})[0]:null;
   var ttl=document.getElementById('assine-title'),sub=document.getElementById('assine-sub');
-  if(ttl)ttl.textContent=upgrade?'Endodirect — Fazer upgrade':'Endodirect — Pacotes';
+  if(ttl)ttl.textContent=upgrade?'Upgrade':'Endodirect — Pacotes';
   if(sub){
     sub.innerHTML=chosen
       ? 'Você escolheu o plano <b style="color:#cbd2dd">'+esc(chosen.nome)+'</b>. Conclua a assinatura para a conta <b style="color:#cbd2dd" id="assine-email"></b> e desbloqueie a plataforma.'
