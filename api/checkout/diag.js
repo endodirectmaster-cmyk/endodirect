@@ -41,8 +41,10 @@ module.exports = async function handler(req, res) {
     out.subscription = { status: sub.status, subStatus: sub.data && sub.data.status, id: sub.data && sub.data.id, body: sub.data };
 
     if (sub.data && sub.data.id) {
-      const ch = await call('GET', '/subscriptions/' + sub.data.id + '/charges', null, true);
-      out.charges = { status: ch.status, body: ch.data };
+      const chq = await call('GET', '/charges', null, true, '?subscription_id=' + sub.data.id + '&size=5');
+      out.chargesByQuery = { status: chq.status, body: chq.data };
+      const inv = await call('GET', '/invoices', null, true, '?subscription_id=' + sub.data.id + '&size=5');
+      out.invoices = { status: inv.status, body: inv.data };
     }
     res.statusCode = 200;
     res.end(JSON.stringify(out));
