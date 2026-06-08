@@ -416,7 +416,7 @@ returns jsonb language sql security definer set search_path = public stable as $
     'adm_avisos', coalesce((select payload->'adm_avisos' from g), '[]'::jsonb) || coalesce((select payload->'radar_avisos' from g), '[]'::jsonb),
     -- Banco de questoes por instituicao:
     --   Endodirect (geral): liberado por qualquer pacote (plano); DEGUSTACAO
-    --     (sem acesso) recebe amostra FIXA de 100 (ordem deterministica md5).
+    --     (sem acesso) recebe amostra FIXA de 50 (ordem deterministica md5).
     --   TEEM (prova de titulo): somente com curso:endoteem.
     'provas',     (case
                      when (select scopes from a) @> array['plano'] or (select scopes from a) @> array['curso:endoteem']
@@ -424,7 +424,7 @@ returns jsonb language sql security definer set search_path = public stable as $
                      when coalesce(array_length((select scopes from a), 1), 0) = 0
                        then coalesce((select jsonb_agg(v) from (
                               select v from jsonb_array_elements(coalesce((select payload->'provas' from g), '[]'::jsonb)) v
-                              where v->>'inst' = 'Endodirect' order by md5(v::text) limit 100
+                              where v->>'inst' = 'Endodirect' order by md5(v::text) limit 50
                             ) s), '[]'::jsonb)
                      else '[]'::jsonb end)
                   ||
