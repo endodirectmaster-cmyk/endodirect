@@ -1094,6 +1094,7 @@ textarea{resize:vertical;line-height:1.6}
         <button class="sb-item" data-p="mural">📢 Mural</button>
         <button class="sb-item" data-p="chat">💬 Chat IA</button>
         <button class="sb-item" data-p="perfil">👤 Perfil</button>
+        <div id="sb-plan" style="display:none;margin:.55rem .2rem .15rem;padding:.5rem .65rem;border-radius:10px;background:rgba(255,255,255,.06)"><span style="display:block;text-transform:uppercase;letter-spacing:.07em;font-weight:700;font-size:.55rem;color:rgba(255,255,255,.42);margin-bottom:.12rem">Seu plano</span><span id="sb-plan-name" style="font-weight:800;color:#fff;font-size:.85rem">—</span></div>
         <button class="sb-item" id="sb-upgrade" type="button" style="margin-top:.35rem;background:rgba(224,169,59,.16);color:#f0c469;font-weight:700">⭐ Fazer upgrade</button>
       </div>
       <div id="sb-admin" style="display:none">
@@ -3005,7 +3006,9 @@ function showLockedPanel(id){
   var label=PANEL_LABELS[id]||'este recurso';
   var trialEsgotado=isDegustacao()&&TRIAL_PANELS[id]&&trialLeft(id)<=0;
   var titulo=trialEsgotado?'Degustação concluída':(scope==='plano'?'Recurso dos pacotes':('Recurso do '+nome));
-  var via=scope==='plano'?'adquirindo um pacote (Standard, Gold ou Premium)':'adquirindo o '+nome;
+  var hasPlan=!isDegustacao()&&!trialEsgotado;
+  var ctaLabel=hasPlan?'Fazer upgrade do plano':'Ver planos e cursos';
+  var via=scope==='plano'?(hasPlan?'fazendo upgrade do seu plano':'adquirindo um pacote (Standard, Gold ou Premium)'):(hasPlan?'fazendo upgrade do seu plano':'adquirindo o '+nome);
   if(trialEsgotado){
     p.innerHTML='<div class="breadcrumb">'+esc(label)+' <b>/ Bloqueado</b></div>'
       +'<div class="ph"><h1>🔒 '+esc(label)+'</h1></div>'
@@ -3013,10 +3016,10 @@ function showLockedPanel(id){
       +'<div style="font-size:2.3rem;margin-bottom:.5rem">🎁</div>'
       +'<div style="font-size:1.02rem;font-weight:800;color:var(--navy);margin-bottom:.4rem">'+esc(titulo)+'</div>'
       +'<p style="font-size:.84rem;color:var(--t2);line-height:1.6;margin:.3rem 0 1.2rem">Você usou suas <b>'+TRIAL_LIMIT+' degustações</b> de <b>'+esc(label)+'</b>. Adquira um pacote (Standard, Gold ou Premium) para uso ilimitado.</p>'
-      +'<button class="btn btn-primary" id="locked-cta" style="justify-content:center">Ver planos e cursos</button>'
+      +'<button class="btn btn-primary" id="locked-cta" style="justify-content:center">'+esc(ctaLabel)+'</button>'
       +'</div></div>';
     var bte=document.getElementById('locked-cta');
-    if(bte)bte.addEventListener('click',function(){showAssineScreen((currentUser&&currentUser.email)||'');});
+    if(bte)bte.addEventListener('click',function(){showAssineScreen((currentUser&&currentUser.email)||'',{upgrade:hasPlan});});
     closeMobileNav();
     return;
   }
@@ -3026,13 +3029,33 @@ function showLockedPanel(id){
     +'<div style="font-size:2.3rem;margin-bottom:.5rem">🔒</div>'
     +'<div style="font-size:1.02rem;font-weight:800;color:var(--navy);margin-bottom:.4rem">'+esc(titulo)+'</div>'
     +'<p style="font-size:.84rem;color:var(--t2);line-height:1.6;margin:.3rem 0 1.2rem">Libere <b>'+esc(label)+'</b> '+esc(via)+'.</p>'
-    +'<button class="btn btn-primary" id="locked-cta" style="justify-content:center">Ver planos e cursos</button>'
+    +'<button class="btn btn-primary" id="locked-cta" style="justify-content:center">'+esc(ctaLabel)+'</button>'
     +'</div></div>';
   var btn=document.getElementById('locked-cta');
-  if(btn)btn.addEventListener('click',function(){showAssineScreen((currentUser&&currentUser.email)||'');});
+  if(btn)btn.addEventListener('click',function(){showAssineScreen((currentUser&&currentUser.email)||'',{upgrade:hasPlan});});
   closeMobileNav();
 }
+function currentPlanKey(){
+  if(!Array.isArray(userAcessos))return '';
+  if(userAcessos.indexOf('plano:premium')>=0)return 'premium';
+  if(userAcessos.indexOf('plano:gold')>=0)return 'gold';
+  if(userAcessos.indexOf('plano:standard')>=0)return 'standard';
+  if(userAcessos.indexOf('plano')>=0)return 'gold';
+  return '';
+}
+// Mostra o plano atual do aluno na sidebar e ajusta o botão de upgrade.
+function updatePlanBadge(){
+  var box=document.getElementById('sb-plan'),nm=document.getElementById('sb-plan-name'),up=document.getElementById('sb-upgrade');
+  if(!box||!nm)return;
+  if(isAdminUser()){box.style.display='none';if(up)up.style.display='none';return;}
+  var k=currentPlanKey();
+  var labels={standard:'Standard',gold:'Gold',premium:'Premium'};
+  nm.textContent=k?labels[k]:'Degustação';
+  box.style.display='block';
+  if(up)up.style.display=(k==='premium')?'none':'flex';
+}
 function markLockedNavItems(){
+  try{updatePlanBadge();}catch(e){}
   document.querySelectorAll('#sb-aluno .sb-item[data-p]').forEach(function(b){
     var locked=!canSeePanel(b.dataset.p);
     var has=b.querySelector('.sb-lock');
