@@ -619,8 +619,8 @@ textarea{resize:vertical;line-height:1.6}
   </div>
 </div>
 
-<div id="assine-screen" style="display:none;position:fixed;inset:0;z-index:500;background:#0f1115;align-items:center;justify-content:center;padding:1.2rem;overflow:auto">
-  <div style="max-width:1040px;width:100%;background:#15171c;border:1px solid #2a2f3a;border-radius:18px;padding:2rem 1.8rem;text-align:center;box-shadow:0 24px 60px rgba(0,0,0,.45)">
+<div id="assine-screen" style="display:none;position:fixed;inset:0;z-index:500;background:#0f1115;align-items:flex-start;justify-content:center;padding:1.2rem;overflow:auto">
+  <div style="max-width:1040px;width:100%;margin:auto;background:#15171c;border:1px solid #2a2f3a;border-radius:18px;padding:2rem 1.8rem;text-align:center;box-shadow:0 24px 60px rgba(0,0,0,.45)">
     <div style="font-size:1.5rem;font-weight:800;color:#fff;margin-bottom:.35rem">Endodirect — Pacotes</div>
     <p style="font-size:.86rem;color:#9aa3b2;line-height:1.6;margin:.2rem auto 1.4rem;max-width:620px">A conta <b style="color:#cbd2dd" id="assine-email"></b> ainda não tem acesso ativo. Adquira seu pacote e desbloqueie todos os benefícios da plataforma.</p>
     <div id="assine-plans" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:1rem;margin-bottom:1.1rem;align-items:stretch"></div>
@@ -2286,7 +2286,15 @@ function startSupabaseAuthWatcher(){
   });
   client.auth.onAuthStateChange(function(event,session){
     if(event==='PASSWORD_RECOVERY'){handlePasswordRecovery();return;}
-    if(event==='SIGNED_IN'&&session)loginFromSupabaseSession(session);
+    if(event==='SIGNED_IN'&&session){
+      // Evita re-login (que reseta a tela para o dashboard) quando o Supabase
+      // re-emite SIGNED_IN ao voltar o foco para a aba / renovar token com o
+      // MESMO usuário já logado. Só faz login de fato em troca de usuário.
+      var sid=session.user&&session.user.id;
+      var semail=String((session.user&&session.user.email)||'').toLowerCase();
+      if(currentUser&&((sid&&currentUser.id===sid)||(semail&&String(currentUser.email||'').toLowerCase()===semail)))return;
+      loginFromSupabaseSession(session);
+    }
   });
 }
 function startGoogleOAuth(){
