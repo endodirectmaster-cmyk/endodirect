@@ -923,7 +923,7 @@ textarea{resize:vertical;line-height:1.6}
           </div>
           <button class="btn btn-primary" id="btn-sim-start">▶ Iniciar simulação</button>
         </div>
-        <div id="sim-content" style="display:none"><div id="sim-msgs"></div><div id="sim-input-wrap" style="margin-top:.65rem"></div></div>
+        <div id="sim-content" style="display:none"><div id="sim-counter" style="font-size:.74rem;font-weight:600;color:var(--blue);margin-bottom:.5rem"></div><div id="sim-msgs"></div><div id="sim-input-wrap" style="margin-top:.65rem"></div></div>
         <div id="sim-result" style="display:none"></div>
       </div>
     </div>
@@ -4971,6 +4971,12 @@ initMural=function(){
 function simRetry(promiseFactory){
   return promiseFactory().catch(function(){return sleep(700).then(promiseFactory);});
 }
+function updateSimCounter(){
+  var el=document.getElementById('sim-counter');if(!el||!simState||!simState.data)return;
+  var resp=(simState.answers||[]).length,total=(simState.data.steps||[]).length,ac=simState.score||0;
+  var pct=resp?Math.round(ac/resp*100):0;
+  el.textContent='Passos: '+resp+'/'+total+' · Acertos: '+ac+(resp?' ('+pct+'%)':'');
+}
 startSim=function(){
   if(!consumeTrial('sim'))return;
   var sub=document.getElementById('sim-sub').value;
@@ -4992,6 +4998,7 @@ startSim=function(){
   .then(function(){btn.disabled=false;btn.innerHTML='▶ Iniciar simulação';});
 };
 renderSimStep=function(){
+  updateSimCounter();
   var s=simState.data.steps[simState.step];
   if(!s){finishSim();return;}
   var msgs=document.getElementById('sim-msgs');
@@ -5012,6 +5019,7 @@ selectSimOpt=function(letter){
   var msgs=document.getElementById('sim-msgs');
   msgs.innerHTML+='<div class="sim-bubble '+(ok?'feed':'er')+'"><strong>'+(ok?'✓':'✕')+' Você: '+letter+'</strong> - '+esc(s.feedback||'')+(ok?'':' (Correto: '+esc(s.correct||'')+')')+'</div>';
   simState.step++;
+  updateSimCounter();
   document.getElementById('sim-input-wrap').innerHTML='';
   setTimeout(renderSimStep,400);
 };
@@ -5026,7 +5034,7 @@ submitSimOpen=function(){
     if(ok)simState.score++;
     simState.answers.push({question:s.pergunta,answer:ans,correct:s.ideal||'',ok:ok,feedback:r});
     msgs.innerHTML+='<div class="sim-bubble feed"><strong>Sua resposta:</strong> '+esc(ans)+'</div><div class="sim-bubble doc">'+esc(r)+'</div>';
-    simState.step++;wrap.innerHTML='';renderSimStep();
+    simState.step++;updateSimCounter();wrap.innerHTML='';renderSimStep();
   }).catch(function(e){notify('Erro: '+e.message,'err');wrap.innerHTML='';});
 };
 finishSim=function(){
