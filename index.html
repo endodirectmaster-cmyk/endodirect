@@ -638,6 +638,20 @@ textarea{resize:vertical;line-height:1.6}
 .lp-mural-tag{font-size:.6rem;font-weight:700;padding:.12rem .5rem;border-radius:999px}
 .lp-mural-card h4{margin:.1rem 0 .35rem;font-size:.86rem;color:#fff;line-height:1.35}
 .lp-mural-meta{font-size:.68rem;color:#8a93a3}
+.lp-team{display:grid;grid-template-columns:repeat(auto-fit,minmax(258px,1fr));gap:1rem}
+.lp-prof{background:#16191f;border:1px solid #232730;border-radius:16px;padding:1.3rem;text-align:center}
+.lp-prof .av{width:62px;height:62px;border-radius:50%;background:linear-gradient(135deg,#e8b94e,#c9962f);color:#1a1320;font-weight:800;font-size:1.35rem;display:flex;align-items:center;justify-content:center;margin:0 auto .7rem}
+.lp-prof h3{margin:0 0 .7rem;font-size:1rem;color:#fff}
+.lp-prof ul{list-style:none;padding:0;margin:0;text-align:left;display:flex;flex-direction:column;gap:.4rem}
+.lp-prof li{font-size:.78rem;color:#9aa3b2;line-height:1.4;display:flex;gap:.45rem}
+.lp-prof li::before{content:"•";color:#e0a93b;flex-shrink:0}
+.lp-faq{max-width:760px;margin:0 auto;display:flex;flex-direction:column;gap:.6rem}
+.lp-faq details{background:#16191f;border:1px solid #232730;border-radius:12px}
+.lp-faq summary{cursor:pointer;padding:.9rem 1.05rem;font-weight:600;color:#e6e9ef;font-size:.9rem;list-style:none;display:flex;justify-content:space-between;align-items:center;gap:.8rem}
+.lp-faq summary::-webkit-details-marker{display:none}
+.lp-faq summary::after{content:"+";color:#e0a93b;font-weight:800;font-size:1.15rem;flex-shrink:0}
+.lp-faq details[open] summary::after{content:"\2212"}
+.lp-faq details p{margin:0;padding:0 1.05rem 1rem;font-size:.83rem;color:#9aa3b2;line-height:1.6}
 .lp-foot{border-top:1px solid #20242c;padding:1.8rem 0;text-align:center;color:#6b7480;font-size:.8rem}
 .lp-foot a{color:#8a93a3;text-decoration:none}
 @media(max-width:640px){.lp-hero h1{font-size:1.95rem}.lp-hero{padding:2.8rem 0 2rem}.lp-sec-title{font-size:1.4rem}}
@@ -727,6 +741,38 @@ textarea{resize:vertical;line-height:1.6}
         </div>
       </div>
     </section>
+    <section class="lp-section">
+      <h2 class="lp-sec-title">Quem ensina</h2>
+      <p class="lp-sec-sub">Conteúdo produzido por endocrinologistas com sólida formação e experiência em ensino.</p>
+      <div class="lp-team">
+        <div class="lp-prof"><div class="av">AN</div><h3>Antônio Eduardo Nakamura</h3><ul>
+          <li>Graduação na UNIFESP</li>
+          <li>Residência de Clínica Médica na UNIFESP</li>
+          <li>Residência de Endocrinologia e Metabologia na UNIFESP</li>
+          <li>Título de Especialista pela SBEM</li>
+          <li>Ex-Preceptor da Residência de Endocrinologia na UNIFESP</li>
+        </ul></div>
+        <div class="lp-prof"><div class="av">RM</div><h3>Rodolpho Pinto de Mendonça</h3><ul>
+          <li>Graduação na UFRN</li>
+          <li>Residência de Clínica Médica na UNICAMP</li>
+          <li>Residência de Endocrinologia e Metabologia na UNIFESP</li>
+          <li>Título de Especialista pela SBEM</li>
+          <li>Ex-Preceptor da Residência de Endocrinologia na UNIFESP</li>
+        </ul></div>
+        <div class="lp-prof"><div class="av">RG</div><h3>Rafael Buck Giorgi</h3><ul>
+          <li>Residência de Clínica Médica e Endocrinologia pela PUC-SP</li>
+          <li>Mestrado em Endocrinologia pela UNIFESP</li>
+          <li>Preceptor de Clínica Médica na PUC-SP</li>
+          <li>Coordenador do ambulatório de Adrenais e Hipertensão (PUC-SP)</li>
+        </ul></div>
+        <div class="lp-prof"><div class="av">BS</div><h3>Bruno Moreira Simião</h3><ul>
+          <li>Graduação na UNIFESP</li>
+          <li>Residência de Pediatria na UNIFESP</li>
+          <li>Residência de Endocrinologia Pediátrica na UNIFESP</li>
+          <li>Certificado de Área de Atuação em Endocrinologia Pediátrica (SBEM)</li>
+        </ul></div>
+      </div>
+    </section>
     <section class="lp-section" id="planos">
       <h2 class="lp-sec-title">Planos</h2>
       <p class="lp-sec-sub">Escolha o pacote ideal e desbloqueie todos os benefícios da plataforma.</p>
@@ -736,6 +782,19 @@ textarea{resize:vertical;line-height:1.6}
         <div class="lp-plan"><div class="nm">Premium</div><div class="pr">R$ 90<small>/mês</small></div><ul><li>Tudo do Gold</li><li>+ Curso de Endocrinologia Essencial</li><li>Acesso completo à plataforma</li></ul><button class="lp-cta" style="margin-top:auto;width:100%;text-align:center" onclick="showLoginScreen()">Acessar</button></div>
       </div>
       <p style="text-align:center;color:#6b7480;font-size:.78rem;margin-top:1.1rem">EndoTEEM (banco de questões para a prova de título) é um produto à parte. Consulte na plataforma.</p>
+    </section>
+    <section class="lp-section">
+      <h2 class="lp-sec-title">Perguntas frequentes</h2>
+      <p class="lp-sec-sub">Tudo o que você precisa saber antes de começar.</p>
+      <div class="lp-faq">
+        <details><summary>O que é a Endodirect?</summary><p>Uma plataforma de educação médica em Endocrinologia e Metabologia, reunindo banco de questões comentadas, flashcards, mapas mentais, simulador de casos, simulado, prescrição, podcasts, cursos e um assistente de IA — tudo baseado nas principais diretrizes (SBEM, SBD, ADA).</p></details>
+        <details><summary>Para quem é a plataforma?</summary><p>Para residentes de Clínica Médica e Endocrinologia, endocrinologistas e médicos que querem se aprofundar e se manter atualizados na especialidade.</p></details>
+        <details><summary>Posso testar antes de assinar?</summary><p>Sim. Ao entrar, você acessa o modo degustação: flashcards e mapas mentais pré-salvos, 50 questões do banco Endodirect, o mural de atualizações e 3 usos de cada uma das ferramentas com IA (simulador de casos, simulado, prescrição e chat).</p></details>
+        <details><summary>Qual a diferença entre os planos?</summary><p>Todos os planos incluem as ferramentas principais (banco, flashcards, mapas, simulador, simulado, prescrição, resumidor e podcasts). O Gold acrescenta o curso de Lípides e o Premium acrescenta também o curso de Endocrinologia Essencial. Veja os detalhes na seção Planos.</p></details>
+        <details><summary>O EndoTEEM está incluído?</summary><p>Não. O EndoTEEM — banco de questões voltado à prova de título — é um produto à parte, voltado a quem vai prestar a prova de especialista.</p></details>
+        <details><summary>Funciona no celular?</summary><p>Sim. A plataforma é responsiva e funciona pelo navegador no computador, no iOS e no Android.</p></details>
+        <details><summary>O conteúdo é atualizado com que frequência?</summary><p>O mural traz um radar diário com os artigos mais relevantes das principais revistas, e o conteúdo segue as diretrizes vigentes (SBEM, SBD, ADA), revisado continuamente pela equipe.</p></details>
+      </div>
     </section>
   </div>
   <div class="lp-foot"><div class="lp-wrap">© <span id="lp-year"></span> Endodirect · Educação médica em Endocrinologia · <a href="/privacidade" target="_blank" rel="noopener">Privacidade</a> · <a href="/termos" target="_blank" rel="noopener">Termos</a></div></div>
