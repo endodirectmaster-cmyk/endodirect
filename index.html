@@ -2801,12 +2801,28 @@ function genFC(){
   }).catch(function(e){notify('Erro: '+e.message,'err');})
   .then(function(){btn.disabled=false;btn.innerHTML='Gerar';});
 }
+function fcCatColor(cat){
+  var k=String(cat||'').toLowerCase();
+  if(k.indexOf('diabet')>=0)return'#2563eb';
+  if(k.indexOf('obes')>=0)return'#d97706';
+  if(k.indexOf('tireo')>=0)return'#0d9488';
+  if(k.indexOf('adrenal')>=0)return'#7c3aed';
+  if(k.indexOf('neuro')>=0)return'#db2777';
+  if(k.indexOf('osteo')>=0||k.indexOf('mineral')>=0)return'#0891b2';
+  if(k.indexOf('pediatr')>=0)return'#0ea5e9';
+  if(k.indexOf('esport')>=0)return'#16a34a';
+  if(k.indexOf('mascul')>=0)return'#4f46e5';
+  if(k.indexOf('femin')>=0)return'#e11d48';
+  if(k.indexOf('transgen')>=0)return'#9333ea';
+  if(k.indexOf('lip')>=0)return'#dc2626';
+  return'#64748b';
+}
 function renderFC(){
   renderFcFilter();
   var el=document.getElementById('fc-grid');if(!el)return;
   var list=fcFilter?DB.fc.filter(function(c){return c.cat===fcFilter;}):DB.fc;
   if(!list.length){el.innerHTML='<div class="empty" style="grid-column:1/-1">Nenhum flashcard.</div>';return;}
-  el.innerHTML=list.map(function(c){var i=DB.fc.indexOf(c);return'<div class="fc-card" data-fctoggle="'+i+'"><button class="fc-del" data-fcdel="'+i+'" title="Excluir">✕</button><div class="fc-inner"><div class="fc-face fc-face-front"><div class="fc-cat">'+esc(c.cat||'Geral')+'</div><div class="fc-front">'+esc(c.front)+'</div><div class="fc-hint">Clique para virar ↻</div></div><div class="fc-face fc-face-back"><div class="fc-cat">Resposta</div><div class="fc-back">'+esc(c.back)+'</div><div class="fc-hint">Clique para voltar ↺</div></div></div></div>';}).join('');
+  el.innerHTML=list.map(function(c){var i=DB.fc.indexOf(c);var col=fcCatColor(c.cat);return'<div class="fc-card" data-fctoggle="'+i+'"><button class="fc-del" data-fcdel="'+i+'" title="Excluir">✕</button><div class="fc-inner"><div class="fc-face fc-face-front" style="border-left:5px solid '+col+'"><div class="fc-cat" style="color:'+col+'">'+esc(c.cat||'Geral')+'</div><div class="fc-front">'+esc(c.front)+'</div><div class="fc-hint">Clique para virar ↻</div></div><div class="fc-face fc-face-back" style="border-left:5px solid '+col+'"><div class="fc-cat" style="color:'+col+'">Resposta</div><div class="fc-back">'+esc(c.back)+'</div><div class="fc-hint">Clique para voltar ↺</div></div></div></div>';}).join('');
 }
 function toggleFC(i){
   var cards=document.querySelectorAll('[data-fctoggle]');
@@ -2828,8 +2844,10 @@ function endStudy(){
 }
 function renderStudyCard(){
   var c=studyCards[studyIdx];if(!c)return;
-  setText('study-prog','Card '+(studyIdx+1)+' de '+studyCards.length);
+  var col=fcCatColor(c.cat);
+  setText('study-prog','Card '+(studyIdx+1)+' de '+studyCards.length+(c.cat?' · '+c.cat:''));
   setText('study-front',c.front);setText('study-back',c.back);
+  document.querySelectorAll('#study-c .study-face').forEach(function(f){f.style.borderLeft='5px solid '+col;});
   document.getElementById('study-c').classList.remove('fl');
 }
 function flipStudy(){
