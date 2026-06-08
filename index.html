@@ -624,7 +624,10 @@ textarea{resize:vertical;line-height:1.6}
     <div style="font-size:1.5rem;font-weight:800;color:#fff;margin-bottom:.35rem">Endodirect — Pacotes</div>
     <p style="font-size:.86rem;color:#9aa3b2;line-height:1.6;margin:.2rem auto 1.4rem;max-width:620px">A conta <b style="color:#cbd2dd" id="assine-email"></b> ainda não tem acesso ativo. Adquira seu pacote e desbloqueie todos os benefícios da plataforma.</p>
     <div id="assine-plans" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:1rem;margin-bottom:1.1rem;align-items:stretch"></div>
-    <button class="btn" id="assine-logout" style="width:auto;min-width:160px;justify-content:center;background:transparent;color:#9aa3b2;border:1px solid #2a2f3a">Sair</button>
+    <div style="display:flex;gap:.7rem;justify-content:center;flex-wrap:wrap">
+      <button class="btn" id="assine-back" style="width:auto;min-width:160px;justify-content:center;background:#e0a93b;color:#1a1320;border:0;font-weight:700">← Voltar à plataforma</button>
+      <button class="btn" id="assine-logout" style="width:auto;min-width:160px;justify-content:center;background:transparent;color:#9aa3b2;border:1px solid #2a2f3a">Sair</button>
+    </div>
     <div style="text-align:center;margin-top:1rem;font-size:.72rem;color:#6b7480"><a href="/privacidade" target="_blank" rel="noopener" style="color:#8a93a3;text-decoration:none">Privacidade</a> · <a href="/termos" target="_blank" rel="noopener" style="color:#8a93a3;text-decoration:none">Termos</a></div>
   </div>
 </div>
@@ -5180,6 +5183,14 @@ document.addEventListener('DOMContentLoaded',function(){
   };
   document.getElementById('btn-login').addEventListener('click',doLoginAttempt);
   var aLogoutBtn=document.getElementById('assine-logout');if(aLogoutBtn)aLogoutBtn.addEventListener('click',function(){var c=getSupabaseClient();if(c&&c.auth)c.auth.signOut().catch(function(){});hideAssineScreen();var ls=document.getElementById('login-screen');if(ls)ls.style.display='flex';});
+  var aBackBtn=document.getElementById('assine-back');if(aBackBtn)aBackBtn.addEventListener('click',function(){
+    // Volta para a plataforma sem deslogar (usado quando o aluno só foi ver os
+    // pacotes a partir da degustação / de um recurso bloqueado).
+    hideAssineScreen();
+    var ap=document.getElementById('app-screen');
+    if(ap&&currentUser){ap.style.display=(currentUser.role==='admin')?'block':'flex';try{goPanel(currentUser.role==='admin'?'adm':'dash');}catch(e){}}
+    else{var ls=document.getElementById('login-screen');if(ls)ls.style.display='flex';}
+  });
   var bStay=document.getElementById('btn-session-stay');if(bStay)bStay.addEventListener('click',keepSessionAlive);
   var bSout=document.getElementById('btn-session-logout');if(bSout)bSout.addEventListener('click',function(){hideSessionWarning();doLogout();});
   document.getElementById('login-pass').addEventListener('keydown',function(e){if(e.key==='Enter')doLoginAttempt();});
