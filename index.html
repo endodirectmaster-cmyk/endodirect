@@ -677,6 +677,18 @@ textarea{resize:vertical;line-height:1.6}
 @keyframes dStep3{0%,25%{opacity:0;transform:translateY(8px)}29%,52%{opacity:1;transform:none}57%,100%{opacity:0}}
 @keyframes dStep4{0%,35%{opacity:0;transform:translateY(8px)}39%,52%{opacity:1;transform:none}57%,100%{opacity:0}}
 @keyframes dRep{0%,58%{opacity:0;transform:scale(.97)}65%,93%{opacity:1;transform:none}100%{opacity:0}}
+.lp-mm-card{cursor:pointer;transition:border-color .2s,transform .2s}
+.lp-mm-card:hover{border-color:#3a4150;transform:translateY(-3px)}
+.lp-mm-modal{position:fixed;inset:0;z-index:1100;background:rgba(8,10,14,.86);display:none;align-items:flex-start;justify-content:center;overflow:auto;padding:24px 16px}
+.lp-mm-modal.on{display:flex}
+.lp-mm-box{background:#14171d;border:1px solid #2a2f3a;border-radius:18px;max-width:920px;width:100%;margin:auto;padding:1.5rem 1.4rem 1.7rem;position:relative}
+.lp-mm-close{position:absolute;top:.8rem;right:.9rem;background:#1b1f27;border:1px solid #2a2f3a;color:#cbd2dd;border-radius:9px;padding:.35rem .7rem;cursor:pointer;font-weight:700;font-size:.85rem}
+.lp-mm-title{font-size:1.2rem;font-weight:800;color:#fff;margin:0 0 1rem}
+.lp-mm-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:.9rem}
+.lp-mm-branch{border:1px solid #2a2f3a;border-radius:12px;padding:.9rem;background:#16191f}
+.lp-mm-branch h4{margin:0 0 .6rem;font-size:.74rem;font-weight:800;color:#fff;display:inline-block;padding:.25rem .7rem;border-radius:999px}
+.lp-mm-branch ul{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:.4rem}
+.lp-mm-branch li{font-size:.8rem;color:#cdd4df;line-height:1.4;padding-left:.6rem;border-left:2px solid #2a2f3a}
 .lp-show{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:1.1rem}
 .lp-shot{background:#16191f;border:1px solid #232730;border-radius:16px;padding:1.1rem;display:flex;flex-direction:column}
 .lp-shot-tag{font-size:.62rem;font-weight:800;letter-spacing:.07em;text-transform:uppercase;color:#e0a93b;margin-bottom:.7rem}
@@ -769,22 +781,23 @@ textarea{resize:vertical;line-height:1.6}
             </div>
           </div>
         </div>
-        <div class="lp-shot">
+        <div class="lp-shot lp-mm-card" onclick="showMMModal()" title="Clique para ampliar">
           <div class="lp-shot-tag">✦ Mapas Mentais</div>
-          <svg viewBox="0 0 320 168" style="width:100%;height:auto;margin-top:.2rem">
-            <line x1="160" y1="84" x2="78" y2="34" stroke="#3a4150" stroke-width="1.5"/>
-            <line x1="160" y1="84" x2="78" y2="134" stroke="#3a4150" stroke-width="1.5"/>
-            <line x1="160" y1="84" x2="242" y2="34" stroke="#3a4150" stroke-width="1.5"/>
-            <line x1="160" y1="84" x2="242" y2="134" stroke="#3a4150" stroke-width="1.5"/>
-            <g font-size="9" font-weight="600">
-              <rect x="22" y="20" width="112" height="28" rx="8" fill="#1b1f27" stroke="#2a2f3a"/><text x="78" y="38" text-anchor="middle" fill="#aeb6c2">Causas</text>
-              <rect x="22" y="120" width="112" height="28" rx="8" fill="#1b1f27" stroke="#2a2f3a"/><text x="78" y="138" text-anchor="middle" fill="#aeb6c2">Tratamento</text>
-              <rect x="186" y="20" width="112" height="28" rx="8" fill="#1b1f27" stroke="#2a2f3a"/><text x="242" y="38" text-anchor="middle" fill="#aeb6c2">Diagnóstico</text>
-              <rect x="186" y="120" width="112" height="28" rx="8" fill="#1b1f27" stroke="#2a2f3a"/><text x="242" y="138" text-anchor="middle" fill="#aeb6c2">Gestação</text>
+          <svg viewBox="0 0 320 200" style="width:100%;height:auto;margin-top:.2rem">
+            <g stroke="#3a4150" stroke-width="1.5">
+              <line x1="120" y1="100" x2="196" y2="26"/><line x1="120" y1="100" x2="196" y2="63"/><line x1="120" y1="100" x2="196" y2="100"/><line x1="120" y1="100" x2="196" y2="137"/><line x1="120" y1="100" x2="196" y2="174"/>
             </g>
-            <rect x="92" y="68" width="136" height="32" rx="10" fill="#e0a93b"/>
-            <text x="160" y="88" text-anchor="middle" font-size="10" font-weight="800" fill="#1a1320">Hipotireoidismo</text>
+            <g font-size="9" font-weight="700">
+              <rect x="196" y="14" width="116" height="24" rx="7" fill="#7c3aed"/><text x="254" y="30" text-anchor="middle" fill="#fff">Etiologia</text>
+              <rect x="196" y="51" width="116" height="24" rx="7" fill="#2563eb"/><text x="254" y="67" text-anchor="middle" fill="#fff">Fisiopatologia</text>
+              <rect x="196" y="88" width="116" height="24" rx="7" fill="#10b981"/><text x="254" y="104" text-anchor="middle" fill="#08251a">Manifestações</text>
+              <rect x="196" y="125" width="116" height="24" rx="7" fill="#e0a93b"/><text x="254" y="141" text-anchor="middle" fill="#1a1320">Diagnóstico</text>
+              <rect x="196" y="162" width="116" height="24" rx="7" fill="#ef4444"/><text x="254" y="178" text-anchor="middle" fill="#fff">Tratamento</text>
+            </g>
+            <rect x="8" y="84" width="120" height="32" rx="10" fill="#1a1320" stroke="#3a4150"/>
+            <text x="68" y="104" text-anchor="middle" font-size="10" font-weight="800" fill="#fff">Hipotireoidismo</text>
           </svg>
+          <div style="font-size:.68rem;color:#8a93a3;margin-top:.5rem;text-align:center">🔍 Clique para ampliar</div>
         </div>
         <div class="lp-shot">
           <div class="lp-shot-tag">📢 Mural de Atualizações</div>
@@ -891,6 +904,19 @@ textarea{resize:vertical;line-height:1.6}
         <details><summary>O conteúdo é atualizado com que frequência?</summary><p>Diariamente. Toda a plataforma é atualizada todos os dias — não apenas o mural (radar diário das principais revistas), mas também questões, flashcards, mapas mentais e demais conteúdos, sempre seguindo as diretrizes vigentes (SBEM, SBD, ADA).</p></details>
       </div>
     </section>
+  </div>
+  <div class="lp-mm-modal" id="lp-mm-modal" onclick="if(event.target===this)hideMMModal()">
+    <div class="lp-mm-box">
+      <button class="lp-mm-close" onclick="hideMMModal()">✕ Fechar</button>
+      <h3 class="lp-mm-title">✦ Mapa mental · Hipotireoidismo</h3>
+      <div class="lp-mm-grid">
+        <div class="lp-mm-branch"><h4 style="background:#7c3aed">Etiologia</h4><ul><li>Tireoidite de Hashimoto (autoimune)</li><li>Tireoidectomia total ou parcial</li><li>Radioiodoterapia prévia</li><li>Deficiência de iodo</li><li>Hipotireoidismo central (hipofisário ou hipotalâmico)</li></ul></div>
+        <div class="lp-mm-branch"><h4 style="background:#2563eb">Fisiopatologia</h4><ul><li>Redução da síntese de T3 e T4</li><li>Elevação compensatória do TSH</li><li>Diminuição da taxa metabólica basal</li><li>Acúmulo de glicosaminoglicanas nos tecidos</li><li>Comprometimento da termogênese</li></ul></div>
+        <div class="lp-mm-branch"><h4 style="background:#10b981;color:#08251a">Manifestações Clínicas</h4><ul><li>Fadiga, sonolência e bradicardia</li><li>Ganho de peso e intolerância ao frio</li><li>Pele seca, cabelos quebradiços e queda capilar</li><li>Constipação intestinal</li><li>Mixedema facial e edema periorbitário</li><li>Depressão e lentificação cognitiva</li></ul></div>
+        <div class="lp-mm-branch"><h4 style="background:#e0a93b;color:#1a1320">Diagnóstico</h4><ul><li>TSH elevado (hipotireoidismo primário)</li><li>T4 livre reduzido</li><li>Anti-TPO e anti-tireoglobulina positivos (Hashimoto)</li><li>TSH normal/baixo com T4 livre baixo (hipotireoidismo central)</li></ul></div>
+        <div class="lp-mm-branch"><h4 style="background:#ef4444">Tratamento</h4><ul><li>Levotiroxina sódica (LT4) via oral em jejum</li><li>Dose inicial: 1,6 mcg/kg/dia no adulto jovem</li><li>Dose reduzida em idosos e cardiopatas</li><li>Monitorização com TSH a cada 6-8 semanas</li><li>Ajuste conforme sintomas e exames laboratoriais</li></ul></div>
+      </div>
+    </div>
   </div>
   <div class="lp-foot"><div class="lp-wrap">© <span id="lp-year"></span> Endodirect · Educação médica em Endocrinologia · <a href="/privacidade" target="_blank" rel="noopener">Privacidade</a> · <a href="/termos" target="_blank" rel="noopener">Termos</a></div></div>
 </div>
@@ -2332,6 +2358,8 @@ function refreshAdminIdentity(){
 // O botão "Acessar a plataforma" revela a tela de login.
 function showLoginScreen(){var l=document.getElementById('landing-screen');if(l)l.style.display='none';var ls=document.getElementById('login-screen');if(ls)ls.style.display='flex';try{window.scrollTo(0,0);}catch(e){}}
 function showLandingScreen(){var l=document.getElementById('landing-screen');if(l)l.style.display='block';var ls=document.getElementById('login-screen');if(ls)ls.style.display='none';}
+function showMMModal(){var m=document.getElementById('lp-mm-modal');if(m)m.classList.add('on');}
+function hideMMModal(){var m=document.getElementById('lp-mm-modal');if(m)m.classList.remove('on');}
 function startApp(){
   var u=currentUser;
   startSessionWatcher();
@@ -3293,11 +3321,11 @@ var MM_SEED=[
     {label:'Complicações',leaves:['Crise tireotóxica','Fibrilação atrial','Osteoporose','Oftalmopatia de Graves']}
   ]}},
   {topic:'Hipotireoidismo',sub:'Tireoide',data:{root:'Hipotireoidismo',branches:[
-    {label:'Causas',leaves:['Tireoidite de Hashimoto','Pós-tireoidectomia / iodo radioativo','Deficiência de iodo','Fármacos (amiodarona, lítio)','Central (hipofisário/hipotalâmico)']},
-    {label:'Quadro clínico',leaves:['Fadiga e ganho de peso','Intolerância ao frio','Pele seca e queda de cabelo','Bradicardia e constipação']},
-    {label:'Diagnóstico',leaves:['Primário: TSH alto + T4 livre baixo','Central: T4 baixo com TSH baixo/normal','Anti-TPO positivo (Hashimoto)','Subclínico: TSH alto, T4 normal']},
-    {label:'Tratamento',leaves:['Levotiroxina (dose por peso)','Reavaliar TSH em 6–8 semanas','Tomar em jejum, longe de outros fármacos','Iniciar baixo em idoso/cardiopata']},
-    {label:'Situações especiais',leaves:['Gestação: alvo de TSH por trimestre; aumentar dose','Subclínico: tratar se TSH>10, sintomas, anti-TPO+ ou gestação','Coma mixedematoso (emergência)']}
+    {label:'Etiologia',leaves:['Tireoidite de Hashimoto (autoimune)','Tireoidectomia total ou parcial','Radioiodoterapia prévia','Deficiência de iodo','Hipotireoidismo central (hipofisário ou hipotalâmico)']},
+    {label:'Fisiopatologia',leaves:['Redução da síntese de T3 e T4','Elevação compensatória do TSH','Diminuição da taxa metabólica basal','Acúmulo de glicosaminoglicanas nos tecidos','Comprometimento da termogênese']},
+    {label:'Manifestações Clínicas',leaves:['Fadiga, sonolência e bradicardia','Ganho de peso e intolerância ao frio','Pele seca, cabelos quebradiços e queda capilar','Constipação intestinal','Mixedema facial e edema periorbitário','Depressão e lentificação cognitiva']},
+    {label:'Diagnóstico',leaves:['TSH elevado (hipotireoidismo primário)','T4 livre reduzido','Anti-TPO e anti-tireoglobulina positivos (Hashimoto)','TSH normal/baixo com T4 livre baixo (hipotireoidismo central)']},
+    {label:'Tratamento',leaves:['Levotiroxina sódica (LT4) via oral em jejum','Dose inicial: 1,6 mcg/kg/dia no adulto jovem','Dose reduzida em idosos e cardiopatas','Monitorização com TSH a cada 6-8 semanas','Ajuste conforme sintomas e exames laboratoriais']}
   ]}},
   {topic:'Obesidade',sub:'Obesidade',data:{root:'Obesidade',branches:[
     {label:'Classificação (IMC)',leaves:['Sobrepeso 25–29,9','Grau I 30–34,9','Grau II 35–39,9','Grau III ≥40']},
