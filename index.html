@@ -753,6 +753,11 @@ textarea{resize:vertical;line-height:1.6}
 #checkout-modal .ck-fld input{width:100%;background:#0e1830;border:1px solid #2a3a5c;border-radius:9px;padding:.6rem .7rem;color:#e6e9ef;font-size:.9rem;font-family:var(--font);outline:none}
 #checkout-modal .ck-fld input:focus{border-color:#3b6fd4}
 #checkout-modal .ck-fld input[readonly]{color:#9aa3b2;background:#0b1426}
+#checkout-modal .ck-fld select{width:100%;background:#0e1830;border:1px solid #2a3a5c;border-radius:9px;padding:.6rem .7rem;color:#e6e9ef;font-size:.9rem;font-family:var(--font);outline:none}
+#checkout-modal .ck-seg{flex:1;background:#0e1830;border:1px solid #2a3a5c;color:#9aa3b2;border-radius:9px;padding:.5rem;font-weight:700;font-size:.82rem;cursor:pointer;font-family:var(--font)}
+#checkout-modal .ck-seg.on{background:#3b6fd4;border-color:#3b6fd4;color:#fff}
+#checkout-modal .ck-pixqr{width:190px;height:190px;background:#fff;border-radius:10px;display:block;margin:.6rem auto;padding:6px}
+#checkout-modal .ck-copy{width:100%;background:#18243f;border:1px solid #2a3a5c;color:#cbd2dd;border-radius:9px;padding:.55rem .7rem;font-size:.72rem;word-break:break-all;cursor:pointer;font-family:var(--font)}
 </style>
 <div id="landing-screen">
   <div class="lp-nav"><div class="lp-wrap lp-nav-in">
@@ -1022,28 +1027,43 @@ textarea{resize:vertical;line-height:1.6}
       <div style="font-size:1.18rem;font-weight:800;color:#fff">Assinar <span id="ck-plan-nome"></span></div>
       <button id="ck-close" type="button" aria-label="Fechar" style="background:none;border:0;color:#9aa3b2;font-size:1.4rem;cursor:pointer;line-height:1">&times;</button>
     </div>
-    <div id="ck-price" style="font-size:.84rem;color:#9dbcff;font-weight:700;margin-bottom:1rem"></div>
+    <div id="ck-cycle-row" style="display:flex;gap:.5rem;margin:.2rem 0 .7rem">
+      <button type="button" class="ck-seg on" data-cycle="mensal">Mensal</button>
+      <button type="button" class="ck-seg" data-cycle="anual">Anual</button>
+    </div>
+    <div id="ck-price" style="font-size:.84rem;color:#9dbcff;font-weight:700;margin-bottom:.8rem"></div>
+    <div id="ck-method-row" style="display:none;gap:.5rem;margin-bottom:.8rem">
+      <button type="button" class="ck-seg on" data-method="credit_card">Cartão</button>
+      <button type="button" class="ck-seg" data-method="pix">PIX</button>
+      <button type="button" class="ck-seg" data-method="boleto">Boleto</button>
+    </div>
     <div id="ck-err" style="display:none;background:rgba(224,106,106,.12);border:1px solid #7a3a3a;color:#f0a0a0;border-radius:9px;padding:.5rem .7rem;font-size:.78rem;margin-bottom:.8rem"></div>
     <div class="ck-fld"><label>E-mail da conta</label><input id="ck-email" type="email" readonly></div>
-    <div class="ck-fld"><label>Nome no cartão</label><input id="ck-name" type="text" autocomplete="cc-name" placeholder="Como está impresso no cartão"></div>
-    <div class="ck-fld"><label>Número do cartão</label><input id="ck-num" type="text" inputmode="numeric" autocomplete="cc-number" placeholder="0000 0000 0000 0000" maxlength="23"></div>
-    <div style="display:flex;gap:.6rem">
-      <div class="ck-fld" style="flex:1"><label>Validade (MM/AA)</label><input id="ck-exp" type="text" inputmode="numeric" autocomplete="cc-exp" placeholder="MM/AA" maxlength="5"></div>
-      <div class="ck-fld" style="flex:1"><label>CVV</label><input id="ck-cvv" type="text" inputmode="numeric" autocomplete="cc-csc" placeholder="123" maxlength="4"></div>
+    <div id="ck-card-fields">
+      <div class="ck-fld"><label>Nome no cartão</label><input id="ck-name" type="text" autocomplete="cc-name" placeholder="Como está impresso no cartão"></div>
+      <div class="ck-fld"><label>Número do cartão</label><input id="ck-num" type="text" inputmode="numeric" autocomplete="cc-number" placeholder="0000 0000 0000 0000" maxlength="23"></div>
+      <div style="display:flex;gap:.6rem">
+        <div class="ck-fld" style="flex:1"><label>Validade (MM/AA)</label><input id="ck-exp" type="text" inputmode="numeric" autocomplete="cc-exp" placeholder="MM/AA" maxlength="5"></div>
+        <div class="ck-fld" style="flex:1"><label>CVV</label><input id="ck-cvv" type="text" inputmode="numeric" autocomplete="cc-csc" placeholder="123" maxlength="4"></div>
+      </div>
+      <div class="ck-fld" id="ck-inst-fld" style="display:none"><label>Parcelas</label><select id="ck-inst"></select></div>
     </div>
     <div class="ck-fld"><label>CPF</label><input id="ck-doc" type="text" inputmode="numeric" placeholder="000.000.000-00" maxlength="14"></div>
     <div class="ck-fld"><label>Celular (com DDD)</label><input id="ck-phone" type="text" inputmode="numeric" autocomplete="tel" placeholder="(00) 00000-0000" maxlength="16"></div>
-    <div style="font-size:.62rem;font-weight:800;letter-spacing:.06em;text-transform:uppercase;color:#6b7480;margin:.3rem 0 .55rem;border-top:1px solid #2a3a5c;padding-top:.7rem">Endereço de cobrança</div>
-    <div style="display:flex;gap:.6rem">
-      <div class="ck-fld" style="flex:1.2"><label>CEP</label><input id="ck-cep" type="text" inputmode="numeric" autocomplete="postal-code" placeholder="00000-000" maxlength="9"></div>
-      <div class="ck-fld" style="flex:.8"><label>UF</label><input id="ck-uf" type="text" autocomplete="address-level1" placeholder="SP" maxlength="2"></div>
-    </div>
-    <div class="ck-fld"><label>Endereço</label><input id="ck-addr" type="text" autocomplete="street-address" placeholder="Rua / Avenida e bairro"></div>
-    <div style="display:flex;gap:.6rem">
-      <div class="ck-fld" style="flex:.6"><label>Número</label><input id="ck-numero" type="text" inputmode="numeric" placeholder="123" maxlength="10"></div>
-      <div class="ck-fld" style="flex:1.4"><label>Cidade</label><input id="ck-city" type="text" autocomplete="address-level2" placeholder="Cidade"></div>
+    <div id="ck-addr-fields">
+      <div style="font-size:.62rem;font-weight:800;letter-spacing:.06em;text-transform:uppercase;color:#6b7480;margin:.3rem 0 .55rem;border-top:1px solid #2a3a5c;padding-top:.7rem">Endereço de cobrança</div>
+      <div style="display:flex;gap:.6rem">
+        <div class="ck-fld" style="flex:1.2"><label>CEP</label><input id="ck-cep" type="text" inputmode="numeric" autocomplete="postal-code" placeholder="00000-000" maxlength="9"></div>
+        <div class="ck-fld" style="flex:.8"><label>UF</label><input id="ck-uf" type="text" autocomplete="address-level1" placeholder="SP" maxlength="2"></div>
+      </div>
+      <div class="ck-fld"><label>Endereço</label><input id="ck-addr" type="text" autocomplete="street-address" placeholder="Rua / Avenida e bairro"></div>
+      <div style="display:flex;gap:.6rem">
+        <div class="ck-fld" style="flex:.6"><label>Número</label><input id="ck-numero" type="text" inputmode="numeric" placeholder="123" maxlength="10"></div>
+        <div class="ck-fld" style="flex:1.4"><label>Cidade</label><input id="ck-city" type="text" autocomplete="address-level2" placeholder="Cidade"></div>
+      </div>
     </div>
     <button id="ck-pay" type="button" class="btn" style="width:100%;justify-content:center;background:#3b6fd4;color:#fff;border:0;font-weight:700;margin-top:.4rem">Assinar agora</button>
+    <div id="ck-result" style="display:none;margin-top:.8rem"></div>
     <div style="font-size:.68rem;color:#6b7480;text-align:center;margin-top:.7rem;line-height:1.55">🔒 Pagamento processado pelo <b style="color:#8a93a3">pagar.me</b>. Não armazenamos os dados do seu cartão.</div>
   </div>
 </div>
@@ -2767,24 +2787,55 @@ function hideAssineScreen(){var sc=document.getElementById('assine-screen');if(s
 // ── Checkout in-app (pagar.me) ──────────────────────────────────────────
 // Cartão é tokenizado no navegador (nunca passa pelo nosso servidor) e a
 // assinatura é criada por /api/checkout/subscribe, vinculada à conta logada.
-var _ckPlan='', _pmCfg=null;
+var _ckPlan='', _ckCycle='mensal', _ckMethod='credit_card', _pmCfg=null;
 function ckErr(m){var e=document.getElementById('ck-err');if(e){e.textContent=m||'';e.style.display=m?'block':'none';}}
 function loadPmConfig(cb){
   if(_pmCfg){cb(_pmCfg);return;}
   fetch('/api/checkout/config').then(function(r){return r.json();}).then(function(d){_pmCfg=d||{};cb(_pmCfg);}).catch(function(){_pmCfg={enabled:false};cb(_pmCfg);});
 }
+function ckBrl(c){return 'R$ '+(Number(c||0)/100).toLocaleString('pt-BR',{minimumFractionDigits:2,maximumFractionDigits:2});}
+function ckTier(){return (ENDO_TIERS||[]).filter(function(x){return x&&x.key===_ckPlan;})[0]||null;}
+function ckMonthlyCents(){var a=_pmCfg&&_pmCfg.amounts;if(a&&a[_ckPlan])return a[_ckPlan];var t=ckTier();return t?Math.round(t.preco*100):0;}
+function ckAnnualCents(){var a=_pmCfg&&_pmCfg.annual;return (a&&a[_ckPlan])||(ckMonthlyCents()*10);}
+function ckMaxInst(){return (_pmCfg&&_pmCfg.max_installments)||12;}
+function ckSeg(rowId,attr,val){var r=document.getElementById(rowId);if(!r)return;r.querySelectorAll('['+attr+']').forEach(function(b){b.classList.toggle('on',b.getAttribute(attr)===val);});}
+function ckFillInstallments(){
+  var sel=document.getElementById('ck-inst');if(!sel)return;var a=ckAnnualCents(),max=ckMaxInst(),cur=sel.value,html='';
+  for(var n=1;n<=max;n++){html+='<option value="'+n+'">'+n+'x de '+ckBrl(Math.round(a/n))+(n===1?' à vista':'')+'</option>';}
+  sel.innerHTML=html;if(cur)sel.value=cur;
+}
+function ckUpdateView(){
+  var anual=_ckCycle==='anual';var method=anual?_ckMethod:'credit_card';
+  var mr=document.getElementById('ck-method-row');if(mr)mr.style.display=anual?'flex':'none';
+  var cardF=document.getElementById('ck-card-fields');if(cardF)cardF.style.display=(method==='credit_card')?'block':'none';
+  var addrF=document.getElementById('ck-addr-fields');if(addrF)addrF.style.display=(method==='credit_card'||method==='boleto')?'block':'none';
+  var instFld=document.getElementById('ck-inst-fld');if(instFld)instFld.style.display=(anual&&method==='credit_card')?'block':'none';
+  if(anual&&method==='credit_card')ckFillInstallments();
+  var rs=document.getElementById('ck-result');if(rs){rs.style.display='none';rs.innerHTML='';}
+  var pr=document.getElementById('ck-price');
+  if(pr){
+    if(!anual){pr.textContent=ckBrl(ckMonthlyCents())+'/mês · assinatura mensal, cancele quando quiser';}
+    else{var a=ckAnnualCents();pr.textContent=ckBrl(a)+'/ano (~ '+ckBrl(Math.round(a/12))+'/mês) · pagamento único, 12 meses de acesso';}
+  }
+  var pay=document.getElementById('ck-pay');
+  if(pay)pay.textContent=!anual?'Assinar agora':(method==='pix'?'Gerar PIX':(method==='boleto'?'Gerar boleto':'Pagar agora'));
+}
+function ckSetCycle(c){_ckCycle=(c==='anual')?'anual':'mensal';if(_ckCycle!=='anual')_ckMethod='credit_card';ckSeg('ck-cycle-row','data-cycle',_ckCycle);ckSeg('ck-method-row','data-method',_ckMethod);ckErr('');ckUpdateView();}
+function ckSetMethod(m){if(_ckCycle!=='anual')return;_ckMethod=['credit_card','pix','boleto'].indexOf(m)>=0?m:'credit_card';ckSeg('ck-method-row','data-method',_ckMethod);ckErr('');ckUpdateView();}
 function openCheckout(key){
   var t=(ENDO_TIERS||[]).filter(function(x){return x&&x.key===key;})[0];
   if(!t)return;
   if(!currentUser||!currentUser.email){try{sessionStorage.setItem('endo_plan_intent',key);}catch(e){}showLoginScreen();return;}
-  _ckPlan=key;
+  _ckPlan=key;_ckCycle='mensal';_ckMethod='credit_card';
   setText('ck-plan-nome',t.nome);
-  var pr=document.getElementById('ck-price');if(pr)pr.textContent='R$ '+t.preco+'/mês · assinatura mensal, cancele quando quiser';
   var em=document.getElementById('ck-email');if(em)em.value=currentUser.email;
   ckErr('');
   ['ck-name','ck-num','ck-exp','ck-cvv','ck-doc','ck-phone','ck-cep','ck-uf','ck-addr','ck-numero','ck-city'].forEach(function(id){var e=document.getElementById(id);if(e)e.value='';});
+  ckSeg('ck-cycle-row','data-cycle','mensal');ckSeg('ck-method-row','data-method','credit_card');
+  var pay=document.getElementById('ck-pay');if(pay)pay.disabled=false;
+  loadPmConfig(function(){ckUpdateView();});
+  ckUpdateView();
   var m=document.getElementById('checkout-modal');if(m)m.style.display='flex';
-  var n=document.getElementById('ck-name');if(n)setTimeout(function(){try{n.focus();}catch(e){}},80);
 }
 function closeCheckout(){var m=document.getElementById('checkout-modal');if(m)m.style.display='none';}
 // Preenche endereço a partir do CEP (ViaCEP). Best-effort; campos seguem editáveis.
@@ -2798,55 +2849,109 @@ function ckCepLookup(cep){
     if(numEl){try{numEl.focus();}catch(e){}}
   }).catch(function(){});
 }
+function ckGrantSuccess(msg){
+  closeCheckout();hideAssineScreen();
+  try{notify(msg||'Pagamento aprovado! Acesso liberado. 🎉','ok');}catch(e){}
+  var ap=document.getElementById('app-screen');if(ap&&currentUser)ap.style.display=(currentUser.role==='admin')?'block':'flex';
+  try{goPanel('dash');}catch(e){}
+  try{remoteStateLoaded=false;hydrateRemoteState();}catch(e){}
+}
+function ckVerify(){
+  try{notify('Verificando pagamento…','info');}catch(e){}
+  try{remoteStateLoaded=false;hydrateRemoteState();}catch(e){}
+  setTimeout(function(){
+    if(!isDegustacao()&&currentPlanKey()){ckGrantSuccess('Pagamento confirmado! Acesso liberado. 🎉');}
+    else{try{notify('Ainda não identificamos o pagamento. PIX leva alguns segundos; boleto pode levar 1–2 dias úteis.','info');}catch(e){}}
+  },2600);
+}
+function ckRenderResult(html){var rs=document.getElementById('ck-result');if(!rs)return;rs.style.display='block';rs.innerHTML=html;
+  var cp=document.getElementById('ck-pix-copy');if(cp)cp.addEventListener('click',function(){var t=cp.getAttribute('data-copy')||'';try{navigator.clipboard.writeText(t);notify('Código PIX copiado!','ok');}catch(e){}});
+  var vf=document.getElementById('ck-verify');if(vf)vf.addEventListener('click',ckVerify);
+}
+function ckRenderPix(d){
+  var p=d.pix||{};
+  ckRenderResult('<div style="background:#0e1830;border:1px solid #2a3a5c;border-radius:10px;padding:.8rem;text-align:center">'
+    +'<div style="font-size:.82rem;font-weight:700;color:#9dbcff;margin-bottom:.3rem">Pague com PIX para liberar o acesso</div>'
+    +(p.qr_code_url?'<img class="ck-pixqr" src="'+esc(p.qr_code_url)+'" alt="QR PIX">':'')
+    +(p.qr_code?'<button type="button" class="ck-copy" id="ck-pix-copy" data-copy="'+esc(p.qr_code)+'">📋 Copiar código PIX (copia e cola)</button>':'')
+    +'<div style="font-size:.7rem;color:#8a93a3;margin-top:.5rem;line-height:1.5">Após o pagamento, seu acesso é liberado automaticamente (alguns segundos).</div>'
+    +'<button type="button" class="btn" id="ck-verify" style="width:100%;justify-content:center;background:#2e7d54;color:#fff;border:0;font-weight:700;margin-top:.6rem">Já paguei — verificar</button>'
+    +'</div>');
+}
+function ckRenderBoleto(d){
+  var b=d.boleto||{};var link=b.url||b.pdf||'';
+  ckRenderResult('<div style="background:#0e1830;border:1px solid #2a3a5c;border-radius:10px;padding:.8rem;text-align:center">'
+    +'<div style="font-size:.82rem;font-weight:700;color:#9dbcff;margin-bottom:.4rem">Boleto gerado</div>'
+    +(link?'<a class="btn" href="'+esc(link)+'" target="_blank" rel="noopener" style="width:100%;justify-content:center;background:#3b6fd4;color:#fff;border:0;font-weight:700;text-decoration:none">📄 Abrir / imprimir boleto</a>':'')
+    +(b.line?'<button type="button" class="ck-copy" id="ck-pix-copy" data-copy="'+esc(b.line)+'" style="margin-top:.5rem">📋 Copiar linha digitável</button>':'')
+    +'<div style="font-size:.7rem;color:#8a93a3;margin-top:.5rem;line-height:1.5">O acesso é liberado após a compensação (1–2 dias úteis).</div>'
+    +'<button type="button" class="btn" id="ck-verify" style="width:100%;justify-content:center;background:#2e7d54;color:#fff;border:0;font-weight:700;margin-top:.6rem">Já paguei — verificar</button>'
+    +'</div>');
+}
 function ckPay(){
   var btn=document.getElementById('ck-pay');if(!btn||btn.disabled)return;
   ckErr('');
-  var name=(document.getElementById('ck-name').value||'').trim();
-  var num=(document.getElementById('ck-num').value||'').replace(/\D+/g,'');
-  var exp=(document.getElementById('ck-exp').value||'').replace(/\D+/g,'');
-  var cvv=(document.getElementById('ck-cvv').value||'').replace(/\D+/g,'');
+  var anual=_ckCycle==='anual';var method=anual?_ckMethod:'credit_card';
   var doc=(document.getElementById('ck-doc').value||'').replace(/\D+/g,'');
   var phone=(document.getElementById('ck-phone').value||'').replace(/\D+/g,'');
-  var cep=(document.getElementById('ck-cep').value||'').replace(/\D+/g,'');
-  var uf=(document.getElementById('ck-uf').value||'').trim().toUpperCase();
-  var addr=(document.getElementById('ck-addr').value||'').trim();
-  var numero=(document.getElementById('ck-numero').value||'').trim();
-  var city=(document.getElementById('ck-city').value||'').trim();
   var email=(currentUser&&currentUser.email)||'';
   if(!email){ckErr('Sessão expirada. Entre novamente.');return;}
-  if(!name){ckErr('Informe o nome impresso no cartão.');return;}
-  if(num.length<13){ckErr('Número do cartão inválido.');return;}
-  if(exp.length<4){ckErr('Validade inválida (use MM/AA).');return;}
-  if(cvv.length<3){ckErr('CVV inválido.');return;}
   if(doc.length!==11){ckErr('Informe um CPF válido (11 dígitos).');return;}
   if(phone.length<10){ckErr('Informe um celular válido com DDD.');return;}
-  if(cep.length!==8){ckErr('Informe um CEP válido (8 dígitos).');return;}
-  if(!addr){ckErr('Informe o endereço.');return;}
-  if(!numero){ckErr('Informe o número.');return;}
-  if(!city){ckErr('Informe a cidade.');return;}
-  if(uf.length!==2){ckErr('Informe a UF (2 letras).');return;}
-  var line1=addr+', '+numero;
-  var mm=exp.slice(0,2), yy=exp.slice(2,4);
+  var needAddr=(method==='credit_card'||method==='boleto');
+  var cep='',uf='',addr='',numero='',city='',line1='';
+  if(needAddr){
+    cep=(document.getElementById('ck-cep').value||'').replace(/\D+/g,'');
+    uf=(document.getElementById('ck-uf').value||'').trim().toUpperCase();
+    addr=(document.getElementById('ck-addr').value||'').trim();
+    numero=(document.getElementById('ck-numero').value||'').trim();
+    city=(document.getElementById('ck-city').value||'').trim();
+    if(cep.length!==8){ckErr('Informe um CEP válido (8 dígitos).');return;}
+    if(!addr){ckErr('Informe o endereço.');return;}
+    if(!numero){ckErr('Informe o número.');return;}
+    if(!city){ckErr('Informe a cidade.');return;}
+    if(uf.length!==2){ckErr('Informe a UF (2 letras).');return;}
+    line1=addr+', '+numero;
+  }
+  var address=needAddr?{zip:cep,line1:line1,city:city,state:uf}:undefined;
+  var holder=(currentUser&&currentUser.name)||email.split('@')[0];
   loadPmConfig(function(cfg){
     if(!cfg||!cfg.enabled||!cfg.public_key){ckErr('O checkout ainda está sendo configurado. Tente novamente em instantes.');return;}
-    btn.disabled=true;var old=btn.textContent;btn.textContent='Processando…';
-    fetch('https://api.pagar.me/core/v5/tokens?appId='+encodeURIComponent(cfg.public_key),{
-      method:'POST',headers:{'Content-Type':'application/json'},
-      body:JSON.stringify({type:'card',card:{number:num,holder_name:name,exp_month:Number(mm),exp_year:Number(yy),cvv:cvv}})
-    }).then(function(r){return r.json().catch(function(){return {};});}).then(function(tok){
-      if(!tok||!tok.id)throw new Error((tok&&tok.message)||'Não foi possível validar o cartão. Confira os dados.');
-      return fetch('/api/checkout/subscribe',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({plan:_ckPlan,card_token:tok.id,email:email,name:name,document:doc,phone:phone,address:{zip:cep,line1:line1,city:city,state:uf}})});
-    }).then(function(r){return r.json().catch(function(){return {};});}).then(function(d){
-      if(!d||!d.ok)throw new Error(((d&&d.error)||'Pagamento não aprovado.')+((d&&d.status)?' [status: '+d.status+']':''));
-      closeCheckout();
-      hideAssineScreen();
-      try{notify('Assinatura ativada! Acesso liberado. 🎉','ok');}catch(e){}
-      // Sem reload: mantém a sessão e atualiza o acesso em tela.
-      var ap=document.getElementById('app-screen');if(ap&&currentUser)ap.style.display=(currentUser.role==='admin')?'block':'flex';
-      try{goPanel('dash');}catch(e){}
-      // re-hidrata forçando nova busca (o guard remoteStateLoaded impediria) p/ pegar o novo acesso
-      try{remoteStateLoaded=false;hydrateRemoteState();}catch(e){}
-    }).catch(function(e){ckErr((e&&e.message)||'Falha ao processar o pagamento.');btn.disabled=false;btn.textContent=old;});
+    var old=btn.textContent;
+    function done(){btn.disabled=false;btn.textContent=old;}
+    if(method==='credit_card'){
+      var name=(document.getElementById('ck-name').value||'').trim();
+      var num=(document.getElementById('ck-num').value||'').replace(/\D+/g,'');
+      var exp=(document.getElementById('ck-exp').value||'').replace(/\D+/g,'');
+      var cvv=(document.getElementById('ck-cvv').value||'').replace(/\D+/g,'');
+      if(!name){ckErr('Informe o nome impresso no cartão.');return;}
+      if(num.length<13){ckErr('Número do cartão inválido.');return;}
+      if(exp.length<4){ckErr('Validade inválida (use MM/AA).');return;}
+      if(cvv.length<3){ckErr('CVV inválido.');return;}
+      var mm=exp.slice(0,2),yy=exp.slice(2,4);
+      btn.disabled=true;btn.textContent='Processando…';
+      fetch('https://api.pagar.me/core/v5/tokens?appId='+encodeURIComponent(cfg.public_key),{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({type:'card',card:{number:num,holder_name:name,exp_month:Number(mm),exp_year:Number(yy),cvv:cvv}})})
+      .then(function(r){return r.json().catch(function(){return {};});}).then(function(tok){
+        if(!tok||!tok.id)throw new Error((tok&&tok.message)||'Não foi possível validar o cartão. Confira os dados.');
+        if(!anual){
+          return fetch('/api/checkout/subscribe',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({plan:_ckPlan,card_token:tok.id,email:email,name:name,document:doc,phone:phone,address:address})});
+        }
+        var inst=parseInt((document.getElementById('ck-inst')||{}).value,10)||1;
+        return fetch('/api/checkout/order',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({plan:_ckPlan,method:'credit_card',installments:inst,card_token:tok.id,email:email,name:name,document:doc,phone:phone,address:address})});
+      }).then(function(r){return r.json().catch(function(){return {};});}).then(function(d){
+        if(!d||!d.ok)throw new Error(((d&&d.error)||'Pagamento não aprovado.')+((d&&d.status)?' [status: '+d.status+']':''));
+        ckGrantSuccess(anual?'Plano anual ativado! Acesso liberado. 🎉':'Assinatura ativada! Acesso liberado. 🎉');
+      }).catch(function(e){ckErr((e&&e.message)||'Falha ao processar o pagamento.');done();});
+    }else{
+      // PIX ou Boleto (anual): pagamento único
+      btn.disabled=true;btn.textContent='Gerando…';
+      fetch('/api/checkout/order',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({plan:_ckPlan,method:method,email:email,name:holder,document:doc,phone:phone,address:address})})
+      .then(function(r){return r.json().catch(function(){return {};});}).then(function(d){
+        if(!d||!d.ok)throw new Error((d&&d.error)||'Não foi possível gerar a cobrança.');
+        if(method==='pix')ckRenderPix(d);else ckRenderBoleto(d);
+        done();
+      }).catch(function(e){ckErr((e&&e.message)||'Falha ao gerar a cobrança.');done();});
+    }
   });
 }
 // Compra de um plano a partir da landing. Conta primeiro: o aluno cria/entra na
@@ -5938,6 +6043,8 @@ document.addEventListener('DOMContentLoaded',function(){
   var ckCloseBtn=document.getElementById('ck-close');if(ckCloseBtn)ckCloseBtn.addEventListener('click',closeCheckout);
   var ckPayBtn=document.getElementById('ck-pay');if(ckPayBtn)ckPayBtn.addEventListener('click',ckPay);
   var ckModal=document.getElementById('checkout-modal');if(ckModal)ckModal.addEventListener('click',function(e){if(e.target===ckModal)closeCheckout();});
+  var ckCycleRow=document.getElementById('ck-cycle-row');if(ckCycleRow)ckCycleRow.addEventListener('click',function(e){var b=e.target.closest('[data-cycle]');if(b)ckSetCycle(b.getAttribute('data-cycle'));});
+  var ckMethodRow=document.getElementById('ck-method-row');if(ckMethodRow)ckMethodRow.addEventListener('click',function(e){var b=e.target.closest('[data-method]');if(b)ckSetMethod(b.getAttribute('data-method'));});
   var ckExp=document.getElementById('ck-exp');if(ckExp)ckExp.addEventListener('input',function(){var v=this.value.replace(/\D+/g,'').slice(0,4);this.value=v.length>2?v.slice(0,2)+'/'+v.slice(2):v;});
   var ckNum=document.getElementById('ck-num');if(ckNum)ckNum.addEventListener('input',function(){var v=this.value.replace(/\D+/g,'').slice(0,19);this.value=v.replace(/(.{4})/g,'$1 ').trim();});
   var ckDoc=document.getElementById('ck-doc');if(ckDoc)ckDoc.addEventListener('input',function(){var v=this.value.replace(/\D+/g,'').slice(0,11);v=v.replace(/(\d{3})(\d)/,'$1.$2').replace(/(\d{3})(\d)/,'$1.$2').replace(/(\d{3})(\d{1,2})$/,'$1-$2');this.value=v;});

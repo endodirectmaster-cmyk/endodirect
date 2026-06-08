@@ -24,6 +24,12 @@ module.exports = function handler(req, res) {
       standard: Number(process.env.PAGARME_TIER_STANDARD_AMOUNT || 5000),
       gold: Number(process.env.PAGARME_TIER_GOLD_AMOUNT || 7000),
       premium: Number(process.env.PAGARME_TIER_PREMIUM_AMOUNT || 9000)
-    }
+    },
+    annual: {
+      standard: Number(process.env.PAGARME_ANNUAL_STANDARD_AMOUNT || 50000),
+      gold: Number(process.env.PAGARME_ANNUAL_GOLD_AMOUNT || 70000),
+      premium: Number(process.env.PAGARME_ANNUAL_PREMIUM_AMOUNT || 90000)
+    },
+    max_installments: Number(process.env.PAGARME_MAX_INSTALLMENTS || 12)
   }));
 };
