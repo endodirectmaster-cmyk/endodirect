@@ -1038,10 +1038,13 @@ textarea{resize:vertical;line-height:1.6}
       <div class="ck-fld" style="flex:1.2"><label>CEP</label><input id="ck-cep" type="text" inputmode="numeric" autocomplete="postal-code" placeholder="00000-000" maxlength="9"></div>
       <div class="ck-fld" style="flex:.8"><label>UF</label><input id="ck-uf" type="text" autocomplete="address-level1" placeholder="SP" maxlength="2"></div>
     </div>
-    <div class="ck-fld"><label>Endereço e número</label><input id="ck-addr" type="text" autocomplete="street-address" placeholder="Rua, número, bairro"></div>
-    <div class="ck-fld"><label>Cidade</label><input id="ck-city" type="text" autocomplete="address-level2" placeholder="Cidade"></div>
+    <div class="ck-fld"><label>Endereço</label><input id="ck-addr" type="text" autocomplete="street-address" placeholder="Rua / Avenida e bairro"></div>
+    <div style="display:flex;gap:.6rem">
+      <div class="ck-fld" style="flex:.6"><label>Número</label><input id="ck-numero" type="text" inputmode="numeric" placeholder="123" maxlength="10"></div>
+      <div class="ck-fld" style="flex:1.4"><label>Cidade</label><input id="ck-city" type="text" autocomplete="address-level2" placeholder="Cidade"></div>
+    </div>
     <button id="ck-pay" type="button" class="btn" style="width:100%;justify-content:center;background:#3b6fd4;color:#fff;border:0;font-weight:700;margin-top:.4rem">Assinar agora</button>
-    <div style="font-size:.68rem;color:#6b7480;text-align:center;margin-top:.7rem;line-height:1.55">🔒 Pagamento processado pelo <b style="color:#8a93a3">pagar.me</b>. Não armazenamos os dados do seu cartão. Cobrança mensal, cancele quando quiser.</div>
+    <div style="font-size:.68rem;color:#6b7480;text-align:center;margin-top:.7rem;line-height:1.55">🔒 Pagamento processado pelo <b style="color:#8a93a3">pagar.me</b>. Não armazenamos os dados do seu cartão.</div>
   </div>
 </div>
 <div id="app-screen">
@@ -2758,7 +2761,7 @@ function openCheckout(key){
   var pr=document.getElementById('ck-price');if(pr)pr.textContent='R$ '+t.preco+'/mês · assinatura mensal, cancele quando quiser';
   var em=document.getElementById('ck-email');if(em)em.value=currentUser.email;
   ckErr('');
-  ['ck-name','ck-num','ck-exp','ck-cvv','ck-doc','ck-phone','ck-cep','ck-uf','ck-addr','ck-city'].forEach(function(id){var e=document.getElementById(id);if(e)e.value='';});
+  ['ck-name','ck-num','ck-exp','ck-cvv','ck-doc','ck-phone','ck-cep','ck-uf','ck-addr','ck-numero','ck-city'].forEach(function(id){var e=document.getElementById(id);if(e)e.value='';});
   var m=document.getElementById('checkout-modal');if(m)m.style.display='flex';
   var n=document.getElementById('ck-name');if(n)setTimeout(function(){try{n.focus();}catch(e){}},80);
 }
@@ -2767,11 +2770,11 @@ function closeCheckout(){var m=document.getElementById('checkout-modal');if(m)m.
 function ckCepLookup(cep){
   fetch('https://viacep.com.br/ws/'+cep+'/json/').then(function(r){return r.json();}).then(function(d){
     if(!d||d.erro)return;
-    var addrEl=document.getElementById('ck-addr'),cityEl=document.getElementById('ck-city'),ufEl=document.getElementById('ck-uf');
-    if(addrEl&&!addrEl.value&&d.logradouro)addrEl.value=d.logradouro+(d.bairro?', '+d.bairro:'')+', ';
+    var addrEl=document.getElementById('ck-addr'),cityEl=document.getElementById('ck-city'),ufEl=document.getElementById('ck-uf'),numEl=document.getElementById('ck-numero');
+    if(addrEl&&!addrEl.value&&d.logradouro)addrEl.value=d.logradouro+(d.bairro?', '+d.bairro:'');
     if(cityEl&&d.localidade)cityEl.value=d.localidade;
     if(ufEl&&d.uf)ufEl.value=d.uf;
-    if(addrEl){try{addrEl.focus();var L=addrEl.value.length;addrEl.setSelectionRange(L,L);}catch(e){}}
+    if(numEl){try{numEl.focus();}catch(e){}}
   }).catch(function(){});
 }
 function ckPay(){
@@ -2786,6 +2789,7 @@ function ckPay(){
   var cep=(document.getElementById('ck-cep').value||'').replace(/\D+/g,'');
   var uf=(document.getElementById('ck-uf').value||'').trim().toUpperCase();
   var addr=(document.getElementById('ck-addr').value||'').trim();
+  var numero=(document.getElementById('ck-numero').value||'').trim();
   var city=(document.getElementById('ck-city').value||'').trim();
   var email=(currentUser&&currentUser.email)||'';
   if(!email){ckErr('Sessão expirada. Entre novamente.');return;}
@@ -2796,9 +2800,11 @@ function ckPay(){
   if(doc.length!==11){ckErr('Informe um CPF válido (11 dígitos).');return;}
   if(phone.length<10){ckErr('Informe um celular válido com DDD.');return;}
   if(cep.length!==8){ckErr('Informe um CEP válido (8 dígitos).');return;}
-  if(!addr){ckErr('Informe o endereço e o número.');return;}
+  if(!addr){ckErr('Informe o endereço.');return;}
+  if(!numero){ckErr('Informe o número.');return;}
   if(!city){ckErr('Informe a cidade.');return;}
   if(uf.length!==2){ckErr('Informe a UF (2 letras).');return;}
+  var line1=addr+', '+numero;
   var mm=exp.slice(0,2), yy=exp.slice(2,4);
   loadPmConfig(function(cfg){
     if(!cfg||!cfg.enabled||!cfg.public_key){ckErr('O checkout ainda está sendo configurado. Tente novamente em instantes.');return;}
@@ -2808,7 +2814,7 @@ function ckPay(){
       body:JSON.stringify({type:'card',card:{number:num,holder_name:name,exp_month:Number(mm),exp_year:Number(yy),cvv:cvv}})
     }).then(function(r){return r.json().catch(function(){return {};});}).then(function(tok){
       if(!tok||!tok.id)throw new Error((tok&&tok.message)||'Não foi possível validar o cartão. Confira os dados.');
-      return fetch('/api/checkout/subscribe',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({plan:_ckPlan,card_token:tok.id,email:email,name:name,document:doc,phone:phone,address:{zip:cep,line1:addr,city:city,state:uf}})});
+      return fetch('/api/checkout/subscribe',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({plan:_ckPlan,card_token:tok.id,email:email,name:name,document:doc,phone:phone,address:{zip:cep,line1:line1,city:city,state:uf}})});
     }).then(function(r){return r.json().catch(function(){return {};});}).then(function(d){
       if(!d||!d.ok)throw new Error(((d&&d.error)||'Pagamento não aprovado.')+((d&&d.status)?' [status: '+d.status+']':''));
       closeCheckout();
