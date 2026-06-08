@@ -3827,15 +3827,29 @@ function renderPodcasts(){
 
 // ── CURSOS (aluno) ──
 var cursoFilter='';
+function cursoAcessivel(slug){return !slug||isAdminUser()||(Array.isArray(userAcessos)&&userAcessos.indexOf('curso:'+slug)>=0);}
 function renderCursosAluno(){
   var data=Array.isArray(admCursos)?admCursos:[];
   var frow=document.getElementById('curso-filter-row');
-  var cats={};data.forEach(function(c){if(c.curso)cats[c.curso]=(cats[c.curso]||0)+1;});
-  function aTile(slug,nome,n,icon){var active=cursoFilter===slug;return '<button type="button" data-cursofilter="'+esc(slug)+'" style="display:flex;flex-direction:column;align-items:flex-start;gap:.2rem;border:1.5px solid '+(active?'var(--blue)':'var(--bd2)')+';background:'+(active?'var(--blue-l)':'var(--surface)')+';border-radius:14px;padding:.7rem .9rem;cursor:pointer;min-width:155px;text-align:left"><span style="font-size:1.45rem">'+icon+'</span><span style="font-size:.83rem;font-weight:700;color:var(--tx)">'+esc(nome)+'</span><span style="font-size:.68rem;color:var(--t3)">'+n+' aula'+(n===1?'':'s')+'</span></button>';}
-  if(frow)frow.innerHTML='<div style="display:flex;flex-wrap:wrap;gap:.6rem">'+aTile('','Todos os cursos',data.length,'📚')+Object.keys(cats).map(function(s){return aTile(s,cursoNomeBySlug(s),cats[s],'🎓');}).join('')+'</div>';
+  var cnt={};data.forEach(function(c){if(c.curso)cnt[c.curso]=(cnt[c.curso]||0)+1;});
+  // Catálogo completo (igual ao admin); fallback p/ cursos que têm aula.
+  var catalog=(Array.isArray(catalogoCursos)&&catalogoCursos.length)
+    ? catalogoCursos.map(function(cc){return {slug:cc.slug,nome:cc.nome||cursoNomeBySlug(cc.slug)};})
+    : Object.keys(cnt).map(function(s){return {slug:s,nome:cursoNomeBySlug(s)};});
+  function aTile(slug,nome,n,icon){
+    var active=cursoFilter===slug;
+    if(!cursoAcessivel(slug)){
+      // Não incluído no plano: opaco e sem clique.
+      return '<div title="Não incluído no seu plano" style="display:flex;flex-direction:column;align-items:flex-start;gap:.2rem;border:1.5px dashed var(--bd2);background:var(--s2);border-radius:14px;padding:.7rem .9rem;min-width:155px;text-align:left;opacity:.45;cursor:not-allowed"><span style="font-size:1.45rem;filter:grayscale(1)">'+icon+'</span><span style="font-size:.83rem;font-weight:700;color:var(--t2)">'+esc(nome)+'</span><span style="font-size:.68rem;color:var(--t3)">🔒 Não incluído</span></div>';
+    }
+    return '<button type="button" data-cursofilter="'+esc(slug)+'" style="display:flex;flex-direction:column;align-items:flex-start;gap:.2rem;border:1.5px solid '+(active?'var(--blue)':'var(--bd2)')+';background:'+(active?'var(--blue-l)':'var(--surface)')+';border-radius:14px;padding:.7rem .9rem;cursor:pointer;min-width:155px;text-align:left"><span style="font-size:1.45rem">'+icon+'</span><span style="font-size:.83rem;font-weight:700;color:var(--tx)">'+esc(nome)+'</span><span style="font-size:.68rem;color:var(--t3)">'+n+' aula'+(n===1?'':'s')+'</span></button>';
+  }
+  var allCount=data.filter(function(c){return cursoAcessivel(c.curso);}).length;
+  if(frow)frow.innerHTML='<div style="display:flex;flex-wrap:wrap;gap:.6rem">'+aTile('','Todos os cursos',allCount,'📚')+catalog.map(function(cc){return aTile(cc.slug,cc.nome,cnt[cc.slug]||0,'🎓');}).join('')+'</div>';
+  if(cursoFilter&&!cursoAcessivel(cursoFilter))cursoFilter='';
   var el=document.getElementById('curso-list');if(!el)return;
-  var list=cursoFilter?data.filter(function(c){return c.curso===cursoFilter;}):data;
-  if(!list.length){el.innerHTML='<div class="empty" style="grid-column:1/-1">Nenhuma videoaula '+(cursoFilter?'neste curso':'disponível ainda')+'.</div>';return;}
+  var list=cursoFilter?data.filter(function(c){return c.curso===cursoFilter;}):data.filter(function(c){return cursoAcessivel(c.curso);});
+  if(!list.length){el.innerHTML='<div class="empty" style="grid-column:1/-1">Nenhuma videoaula '+(cursoFilter?'neste curso':'disponível no seu plano ainda')+'.</div>';return;}
   el.innerHTML=list.map(function(c){
     var i=data.indexOf(c);
     return '<div class="card"><div style="display:flex;align-items:flex-start;gap:.8rem"><div style="width:46px;height:46px;border-radius:10px;background:var(--navy);display:flex;align-items:center;justify-content:center;font-size:1.25rem;flex-shrink:0">🎬</div><div style="flex:1;min-width:0"><div style="font-size:.85rem;font-weight:700;color:var(--tx);margin-bottom:2px">'+esc(c.title||'Videoaula')+'</div><div style="display:flex;flex-wrap:wrap;gap:.3rem;margin:.25rem 0 .45rem">'+(c.curso?'<span class="tag tag-grn">'+esc(cursoNomeBySlug(c.curso))+'</span>':'')+(c.modulo?'<span class="tag tag-pur">'+esc(c.modulo)+'</span>':'')+(c.dur?'<span class="tag tag-gold">'+esc(c.dur)+'</span>':'')+'</div>'+(c.desc?'<div style="font-size:.73rem;color:var(--t2);line-height:1.55;margin-bottom:.55rem">'+esc(c.desc)+'</div>':'')+'<button class="btn btn-primary btn-sm" data-curso-play="'+i+'">▶ Assistir</button></div></div></div>';
