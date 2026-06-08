@@ -597,51 +597,55 @@ textarea{resize:vertical;line-height:1.6}
 </div>
 
 <style>
-#landing-screen{position:fixed;inset:0;overflow:auto;background:#0f1115;color:#e6e9ef;z-index:900}
+#landing-screen{position:fixed;inset:0;overflow:auto;background:#0e1830;color:#e6e9ef;z-index:900}
 .lp-wrap{max-width:1100px;margin:0 auto;padding:0 1.2rem}
-.lp-nav{position:sticky;top:0;background:rgba(15,17,21,.88);backdrop-filter:blur(8px);border-bottom:1px solid #20242c;z-index:5}
+.lp-nav{position:sticky;top:0;background:rgba(13,20,36,.9);backdrop-filter:blur(8px);border-bottom:1px solid #21304d;z-index:5}
 .lp-nav-in{display:flex;align-items:center;justify-content:space-between;height:64px}
 .lp-brand{display:flex;align-items:center;gap:.55rem;font-weight:800;font-size:1.05rem;color:#fff}
 .lp-brand img{width:30px;height:30px;object-fit:contain;border-radius:7px}
-.lp-cta{background:#e0a93b;color:#1a1320;border:0;border-radius:999px;padding:.6rem 1.15rem;font-weight:800;cursor:pointer;font-size:.85rem;text-decoration:none;display:inline-block}
-.lp-cta:hover{filter:brightness(1.06)}
-.lp-ghost{background:transparent;color:#cbd2dd;border:1px solid #2a2f3a;border-radius:999px;padding:.6rem 1.15rem;font-weight:700;cursor:pointer;font-size:.85rem;text-decoration:none;display:inline-block}
+.lp-cta{background:#3b6fd4;color:#fff;border:0;border-radius:999px;padding:.6rem 1.15rem;font-weight:800;cursor:pointer;font-size:.85rem;text-decoration:none;display:inline-block}
+.lp-cta:hover{filter:brightness(1.08)}
+.lp-ghost{background:transparent;color:#cbd2dd;border:1px solid #2a3a5c;border-radius:999px;padding:.6rem 1.15rem;font-weight:700;cursor:pointer;font-size:.85rem;text-decoration:none;display:inline-block}
 .lp-hero{text-align:center;padding:4.2rem 0 3rem}
-.lp-eyebrow{display:inline-block;font-size:.7rem;font-weight:800;letter-spacing:.1em;text-transform:uppercase;color:#e0a93b;background:rgba(224,169,59,.1);border:1px solid rgba(224,169,59,.25);padding:.3rem .7rem;border-radius:999px;margin-bottom:1.1rem}
+.lp-eyebrow{display:inline-block;font-size:.7rem;font-weight:800;letter-spacing:.1em;text-transform:uppercase;color:#6f9bff;background:rgba(85,133,232,.12);border:1px solid rgba(85,133,232,.3);padding:.3rem .7rem;border-radius:999px;margin-bottom:1.1rem}
 .lp-hero h1{font-size:2.6rem;line-height:1.12;font-weight:800;margin:0 0 1rem;letter-spacing:-.01em;color:#fff}
-.lp-hero h1 span{color:#e0a93b}
+.lp-hero h1 span{color:#6f9bff}
 .lp-hero p{font-size:1.05rem;color:#aeb6c2;max-width:660px;margin:0 auto 1.7rem;line-height:1.6}
 .lp-hero-btns{display:flex;gap:.7rem;justify-content:center;flex-wrap:wrap}
 .lp-section{padding:2.6rem 0}
 .lp-sec-title{text-align:center;font-size:1.7rem;font-weight:800;margin:0 0 .5rem;color:#fff}
 .lp-sec-sub{text-align:center;color:#8a93a3;margin:0 auto 2rem;max-width:580px;font-size:.92rem;line-height:1.55}
 .lp-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(245px,1fr));gap:1rem}
-.lp-card{background:#16191f;border:1px solid #232730;border-radius:16px;padding:1.3rem;transition:transform .2s,border-color .2s}
-.lp-card:hover{transform:translateY(-3px);border-color:#3a4150}
+.lp-card{background:#14203a;border:1px solid #223052;border-radius:16px;padding:1.3rem;transition:transform .2s,border-color .2s}
+.lp-card:hover{transform:translateY(-3px);border-color:#3a5180}
 .lp-ico{font-size:1.7rem;margin-bottom:.6rem}
 .lp-card h3{margin:0 0 .35rem;font-size:1rem;font-weight:700;color:#fff}
 .lp-card p{margin:0;font-size:.84rem;color:#9aa3b2;line-height:1.55}
 .lp-plans{display:grid;grid-template-columns:repeat(auto-fit,minmax(235px,1fr));gap:1rem;align-items:stretch}
-.lp-plan{position:relative;border:1.5px solid #2a2f3a;border-radius:16px;padding:1.5rem 1.25rem;background:#16191f;display:flex;flex-direction:column}
-.lp-plan.hot{border-color:#e0a93b;background:rgba(224,169,59,.06)}
-.lp-plan .badge{position:absolute;top:-11px;left:50%;transform:translateX(-50%);font-size:.58rem;font-weight:800;text-transform:uppercase;letter-spacing:.06em;background:#e0a93b;color:#1a1320;padding:.18rem .6rem;border-radius:999px;white-space:nowrap}
+.lp-plan{position:relative;border:1.5px solid #2a3a5c;border-radius:16px;padding:1.5rem 1.25rem;background:#14203a;display:flex;flex-direction:column}
+.lp-plan.hot{border-color:#5585e8;background:rgba(85,133,232,.08)}
+.lp-plan .badge{position:absolute;top:-11px;left:50%;transform:translateX(-50%);font-size:.58rem;font-weight:800;text-transform:uppercase;letter-spacing:.06em;background:#3b6fd4;color:#fff;padding:.18rem .6rem;border-radius:999px;white-space:nowrap}
 .lp-plan .nm{font-weight:800;font-size:1.15rem;color:#fff}
 .lp-plan .pr{font-size:2rem;font-weight:800;margin:.3rem 0 .1rem;color:#fff}
 .lp-plan .pr small{font-size:.72rem;color:#8a93a3;font-weight:600}
 .lp-plan ul{list-style:none;padding:0;margin:1rem 0 1.2rem;display:flex;flex-direction:column;gap:.45rem}
 .lp-plan li{font-size:.8rem;color:#aeb6c2;display:flex;gap:.45rem;align-items:flex-start;line-height:1.4}
 .lp-plan li::before{content:"✓";color:#5fd39a;font-weight:800}
+.lp-plan li.x{color:#7e8aa0}
+.lp-plan li.x::before{content:"✕";color:#e06a6a}
+.lp-plan li.course{color:#cfe0ff}
+.lp-plan li.course::before{content:"★";color:#6f9bff}
 .lp-flip{-webkit-perspective:1000px;perspective:1000px;min-height:140px}
 .lp-flip-in{position:relative;width:100%;height:140px;-webkit-transform-style:preserve-3d;transform-style:preserve-3d;-webkit-animation:lpflip 7s infinite;animation:lpflip 7s infinite}
-.lp-flip-face{position:absolute;inset:0;-webkit-backface-visibility:hidden;backface-visibility:hidden;border-radius:12px;padding:1rem;display:flex;flex-direction:column;justify-content:center;background:#1b1f27;border-left:5px solid #2563eb;overflow:hidden}
+.lp-flip-face{position:absolute;inset:0;-webkit-backface-visibility:hidden;backface-visibility:hidden;border-radius:12px;padding:1rem;display:flex;flex-direction:column;justify-content:center;background:#18243f;border-left:5px solid #3b6fd4;overflow:hidden}
 .lp-flip-back{-webkit-transform:rotateY(180deg);transform:rotateY(180deg);border-left-color:#5fd39a}
 @-webkit-keyframes lpflip{0%,42%{-webkit-transform:rotateY(0)}50%,92%{-webkit-transform:rotateY(180deg)}100%{-webkit-transform:rotateY(0)}}
 @keyframes lpflip{0%,42%{transform:rotateY(0)}50%,92%{transform:rotateY(180deg)}100%{transform:rotateY(0)}}
 .lp-bub{font-size:.77rem;line-height:1.45;border-radius:10px;padding:.5rem .7rem;margin-bottom:.45rem;max-width:94%}
-.lp-bub.doc{background:#1b1f27;border:1px solid #2a2f3a;color:#cdd4df}
-.lp-bub.me{background:rgba(224,169,59,.14);color:#f0c876;margin-left:auto}
+.lp-bub.doc{background:#18243f;border:1px solid #2a3a5c;color:#cdd4df}
+.lp-bub.me{background:rgba(85,133,232,.16);color:#9dbcff;margin-left:auto}
 .lp-bub.fb{background:rgba(95,211,154,.1);border:1px solid #2e7d54;color:#7fe0ad}
-.lp-rx-pr{font-size:.76rem;color:#cdd4df;background:#11141a;border:1px solid #2a2f3a;border-radius:9px;padding:.55rem .7rem;margin-bottom:.45rem;line-height:1.5;white-space:pre-line}
+.lp-rx-pr{font-size:.76rem;color:#cdd4df;background:#0f1a30;border:1px solid #2a3a5c;border-radius:9px;padding:.55rem .7rem;margin-bottom:.45rem;line-height:1.5;white-space:pre-line}
 .lp-anim>*{opacity:0}
 .lp-anim .doc{-webkit-animation:lpA 8s infinite;animation:lpA 8s infinite}
 .lp-anim .me,.lp-anim .lp-rx-pr{-webkit-animation:lpB 8s infinite;animation:lpB 8s infinite}
@@ -651,22 +655,22 @@ textarea{resize:vertical;line-height:1.6}
 @keyframes lpC{0%,42%{opacity:0;transform:translateY(7px)}50%,92%{opacity:1;transform:none}100%{opacity:0}}
 .lp-q-reveal{-webkit-animation:lpHL 8s infinite;animation:lpHL 8s infinite}
 .lp-q-exp{opacity:0;margin-top:.35rem;-webkit-animation:lpC 8s infinite;animation:lpC 8s infinite}
-@keyframes lpHL{0%,44%{border-color:#2a2f3a;background:transparent;color:#aeb6c2}52%,92%{border-color:#2e7d54;background:rgba(95,211,154,.1);color:#7fe0ad;font-weight:600}100%{border-color:#2a2f3a;background:transparent;color:#aeb6c2}}
+@keyframes lpHL{0%,44%{border-color:#2a3a5c;background:transparent;color:#aeb6c2}52%,92%{border-color:#2e7d54;background:rgba(95,211,154,.1);color:#7fe0ad;font-weight:600}100%{border-color:#2a3a5c;background:transparent;color:#aeb6c2}}
 .lp-demo{display:grid;grid-template-columns:1fr 1fr;gap:1.1rem}
 @media(max-width:760px){.lp-demo{grid-template-columns:1fr}}
-.lp-panel{background:#16191f;border:1px solid #232730;border-radius:16px;padding:1.1rem}
-.lp-panel-tag{font-size:.7rem;font-weight:800;letter-spacing:.07em;text-transform:uppercase;color:#e0a93b;margin-bottom:.8rem;display:flex;align-items:center;gap:.4rem}
+.lp-panel{background:#14203a;border:1px solid #223052;border-radius:16px;padding:1.1rem}
+.lp-panel-tag{font-size:.7rem;font-weight:800;letter-spacing:.07em;text-transform:uppercase;color:#6f9bff;margin-bottom:.8rem;display:flex;align-items:center;gap:.4rem}
 .lp-stage{position:relative;min-height:420px}
 .lp-stage>.st1,.lp-stage>.st2,.lp-stage>.st3,.lp-stage>.st4{opacity:0}
 .lp-bub2{font-size:.78rem;line-height:1.45;border-radius:10px;padding:.5rem .7rem;margin-bottom:.45rem;max-width:92%}
-.lp-bub2.doc{background:#1b1f27;border:1px solid #2a2f3a;color:#cdd4df}
-.lp-bub2.me{background:rgba(224,169,59,.14);color:#f0c876;margin-left:auto}
+.lp-bub2.doc{background:#18243f;border:1px solid #2a3a5c;color:#cdd4df}
+.lp-bub2.me{background:rgba(85,133,232,.16);color:#9dbcff;margin-left:auto}
 .lp-bub2.fb{background:rgba(95,211,154,.1);border:1px solid #2e7d54;color:#9fe6c0}
-.lp-report{position:absolute;inset:0;background:#16191f;display:flex;flex-direction:column;gap:.5rem;opacity:0;-webkit-animation:dRep 15s infinite;animation:dRep 15s infinite}
+.lp-report{position:absolute;inset:0;background:#14203a;display:flex;flex-direction:column;gap:.5rem;opacity:0;-webkit-animation:dRep 15s infinite;animation:dRep 15s infinite}
 .lp-report .score{display:flex;align-items:center;gap:.7rem;margin-bottom:.1rem}
 .lp-report .score b{font-size:1.9rem;color:#5fd39a;line-height:1}
 .lp-report .score span{font-size:.72rem;color:#8a93a3;text-transform:uppercase;letter-spacing:.06em;font-weight:700}
-.lp-rep-box{border:1px solid #2a2f3a;border-radius:10px;padding:.5rem .7rem;font-size:.76rem;line-height:1.45;color:#aeb6c2}
+.lp-rep-box{border:1px solid #2a3a5c;border-radius:10px;padding:.5rem .7rem;font-size:.76rem;line-height:1.45;color:#aeb6c2}
 .lp-rep-box h5{margin:0 0 .2rem;font-size:.62rem;letter-spacing:.06em;text-transform:uppercase}
 .st1{-webkit-animation:dStep1 15s infinite;animation:dStep1 15s infinite}
 .st2{-webkit-animation:dStep2 15s infinite;animation:dStep2 15s infinite}
@@ -677,7 +681,7 @@ textarea{resize:vertical;line-height:1.6}
 @keyframes dStep3{0%,25%{opacity:0;transform:translateY(8px)}29%,52%{opacity:1;transform:none}57%,100%{opacity:0}}
 @keyframes dStep4{0%,35%{opacity:0;transform:translateY(8px)}39%,52%{opacity:1;transform:none}57%,100%{opacity:0}}
 @keyframes dRep{0%,58%{opacity:0;transform:scale(.97)}65%,93%{opacity:1;transform:none}100%{opacity:0}}
-.lp-mm-rot{position:relative;min-height:64px;margin-top:.6rem;border-top:1px solid #232730;padding-top:.6rem}
+.lp-mm-rot{position:relative;min-height:64px;margin-top:.6rem;border-top:1px solid #223052;padding-top:.6rem}
 .lp-mm-rot>div{position:absolute;left:0;right:0;top:.6rem;opacity:0}
 .lp-mm-rot .rb{font-size:.6rem;font-weight:800;text-transform:uppercase;letter-spacing:.05em;display:inline-block;padding:.12rem .55rem;border-radius:999px;margin-bottom:.35rem}
 .lp-mm-rot .rl{font-size:.72rem;color:#aeb6c2;line-height:1.45}
@@ -692,47 +696,57 @@ textarea{resize:vertical;line-height:1.6}
 @keyframes mrot4{0%,58%{opacity:0}61%,78%{opacity:1}81%,100%{opacity:0}}
 @keyframes mrot5{0%,78%{opacity:0}81%,98%{opacity:1}100%{opacity:0}}
 .lp-mm-card{cursor:pointer;transition:border-color .2s,transform .2s}
-.lp-mm-card:hover{border-color:#3a4150;transform:translateY(-3px)}
-.lp-mm-modal{position:fixed;inset:0;z-index:1100;background:rgba(8,10,14,.86);display:none;align-items:flex-start;justify-content:center;overflow:auto;padding:24px 16px}
+.lp-mm-card:hover{border-color:#3a5180;transform:translateY(-3px)}
+.lp-mm-modal{position:fixed;inset:0;z-index:1100;background:rgba(6,11,22,.88);display:none;align-items:flex-start;justify-content:center;overflow:auto;padding:24px 16px}
 .lp-mm-modal.on{display:flex}
-.lp-mm-box{background:#14171d;border:1px solid #2a2f3a;border-radius:18px;max-width:920px;width:100%;margin:auto;padding:1.5rem 1.4rem 1.7rem;position:relative}
-.lp-mm-close{position:absolute;top:.8rem;right:.9rem;background:#1b1f27;border:1px solid #2a2f3a;color:#cbd2dd;border-radius:9px;padding:.35rem .7rem;cursor:pointer;font-weight:700;font-size:.85rem}
+.lp-mm-box{background:#121c33;border:1px solid #2a3a5c;border-radius:18px;max-width:920px;width:100%;margin:auto;padding:1.5rem 1.4rem 1.7rem;position:relative}
+.lp-mm-close{position:absolute;top:.8rem;right:.9rem;background:#18243f;border:1px solid #2a3a5c;color:#cbd2dd;border-radius:9px;padding:.35rem .7rem;cursor:pointer;font-weight:700;font-size:.85rem}
 .lp-mm-title{font-size:1.2rem;font-weight:800;color:#fff;margin:0 0 1rem}
 .lp-mm-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:.9rem}
-.lp-mm-branch{border:1px solid #2a2f3a;border-radius:12px;padding:.9rem;background:#16191f}
+.lp-mm-branch{border:1px solid #2a3a5c;border-radius:12px;padding:.9rem;background:#14203a}
 .lp-mm-branch h4{margin:0 0 .6rem;font-size:.74rem;font-weight:800;color:#fff;display:inline-block;padding:.25rem .7rem;border-radius:999px}
 .lp-mm-branch ul{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:.4rem}
-.lp-mm-branch li{font-size:.8rem;color:#cdd4df;line-height:1.4;padding-left:.6rem;border-left:2px solid #2a2f3a}
+.lp-mm-branch li{font-size:.8rem;color:#cdd4df;line-height:1.4;padding-left:.6rem;border-left:2px solid #2a3a5c}
 .lp-show{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:1.1rem}
-.lp-shot{background:#16191f;border:1px solid #232730;border-radius:16px;padding:1.1rem;display:flex;flex-direction:column}
-.lp-shot-tag{font-size:.62rem;font-weight:800;letter-spacing:.07em;text-transform:uppercase;color:#e0a93b;margin-bottom:.7rem}
+.lp-shot{background:#14203a;border:1px solid #223052;border-radius:16px;padding:1.1rem;display:flex;flex-direction:column}
+.lp-shot-tag{font-size:.62rem;font-weight:800;letter-spacing:.07em;text-transform:uppercase;color:#6f9bff;margin-bottom:.7rem}
 .lp-q-stem{font-size:.82rem;color:#e6e9ef;line-height:1.5;margin-bottom:.7rem}
-.lp-q-opt{font-size:.78rem;color:#aeb6c2;border:1px solid #2a2f3a;border-radius:9px;padding:.45rem .6rem;margin-bottom:.4rem}
+.lp-q-opt{font-size:.78rem;color:#aeb6c2;border:1px solid #2a3a5c;border-radius:9px;padding:.45rem .6rem;margin-bottom:.4rem}
 .lp-q-opt.ok{border-color:#2e7d54;background:rgba(95,211,154,.1);color:#7fe0ad;font-weight:600}
-.lp-fc{background:#1b1f27;border-radius:12px;padding:1.1rem;min-height:120px;display:flex;flex-direction:column;justify-content:center}
-.lp-mural-card{border:1px solid #2a2f3a;border-radius:12px;padding:.9rem;background:#1b1f27}
+.lp-fc{background:#18243f;border-radius:12px;padding:1.1rem;min-height:120px;display:flex;flex-direction:column;justify-content:center}
+.lp-mural-card{border:1px solid #2a3a5c;border-radius:12px;padding:.9rem;background:#18243f}
 .lp-mural-tags{display:flex;gap:.35rem;margin-bottom:.5rem;flex-wrap:wrap}
 .lp-mural-tag{font-size:.6rem;font-weight:700;padding:.12rem .5rem;border-radius:999px}
 .lp-mural-card h4{margin:.1rem 0 .35rem;font-size:.86rem;color:#fff;line-height:1.35}
 .lp-mural-meta{font-size:.68rem;color:#8a93a3}
 .lp-team{display:grid;grid-template-columns:repeat(auto-fit,minmax(258px,1fr));gap:1rem}
-.lp-prof{background:#16191f;border:1px solid #232730;border-radius:16px;padding:1.3rem;text-align:center}
-.lp-prof .av{position:relative;overflow:hidden;width:74px;height:74px;border-radius:50%;background:linear-gradient(135deg,#e8b94e,#c9962f);color:#1a1320;font-weight:800;font-size:1.45rem;display:flex;align-items:center;justify-content:center;margin:0 auto .7rem}
+.lp-prof{background:#14203a;border:1px solid #223052;border-radius:16px;padding:1.3rem;text-align:center}
+.lp-prof .av{position:relative;overflow:hidden;width:74px;height:74px;border-radius:50%;background:linear-gradient(135deg,#5585e8,#2f5fc0);color:#fff;font-weight:800;font-size:1.45rem;display:flex;align-items:center;justify-content:center;margin:0 auto .7rem}
 .lp-prof .av img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:center 18%}
 .lp-prof h3{margin:0 0 .7rem;font-size:1rem;color:#fff}
 .lp-prof ul{list-style:none;padding:0;margin:0;text-align:left;display:flex;flex-direction:column;gap:.4rem}
 .lp-prof li{font-size:.78rem;color:#9aa3b2;line-height:1.4;display:flex;gap:.45rem}
-.lp-prof li::before{content:"•";color:#e0a93b;flex-shrink:0}
+.lp-prof li::before{content:"•";color:#6f9bff;flex-shrink:0}
 .lp-faq{max-width:760px;margin:0 auto;display:flex;flex-direction:column;gap:.6rem}
-.lp-faq details{background:#16191f;border:1px solid #232730;border-radius:12px}
+.lp-faq details{background:#14203a;border:1px solid #223052;border-radius:12px}
 .lp-faq summary{cursor:pointer;padding:.9rem 1.05rem;font-weight:600;color:#e6e9ef;font-size:.9rem;list-style:none;display:flex;justify-content:space-between;align-items:center;gap:.8rem}
 .lp-faq summary::-webkit-details-marker{display:none}
-.lp-faq summary::after{content:"+";color:#e0a93b;font-weight:800;font-size:1.15rem;flex-shrink:0}
+.lp-faq summary::after{content:"+";color:#6f9bff;font-weight:800;font-size:1.15rem;flex-shrink:0}
 .lp-faq details[open] summary::after{content:"\2212"}
 .lp-faq details p{margin:0;padding:0 1.05rem 1rem;font-size:.83rem;color:#9aa3b2;line-height:1.6}
-.lp-foot{border-top:1px solid #20242c;padding:1.8rem 0;text-align:center;color:#6b7480;font-size:.8rem}
+.lp-foot{border-top:1px solid #21304d;padding:1.8rem 0;text-align:center;color:#6b7480;font-size:.8rem}
 .lp-foot a{color:#8a93a3;text-decoration:none}
-@media(max-width:640px){.lp-hero h1{font-size:1.95rem}.lp-hero{padding:2.8rem 0 2rem}.lp-sec-title{font-size:1.4rem}}
+@media(max-width:640px){.lp-hero h1{font-size:1.95rem}.lp-hero{padding:2.6rem 0 1.8rem}.lp-hero p{font-size:.96rem}.lp-sec-title{font-size:1.4rem}.lp-section{padding:2rem 0}.lp-stage{min-height:380px}}
+@media(max-width:480px){
+  .lp-wrap{padding:0 1rem}
+  .lp-nav-in{height:56px}
+  .lp-nav .lp-cta{padding:.5rem .8rem;font-size:.76rem}
+  .lp-brand{font-size:.98rem;gap:.45rem}.lp-brand img{width:26px;height:26px}
+  .lp-hero{padding:2.2rem 0 1.6rem}
+  .lp-hero-btns{flex-direction:column}
+  .lp-hero-btns .lp-cta,.lp-hero-btns .lp-ghost{width:100%;text-align:center}
+  .lp-plan{padding:1.3rem 1.05rem}
+}
 </style>
 <div id="landing-screen">
   <div class="lp-nav"><div class="lp-wrap lp-nav-in">
@@ -784,7 +798,7 @@ textarea{resize:vertical;line-height:1.6}
           <div class="lp-flip">
             <div class="lp-flip-in">
               <div class="lp-flip-face">
-                <div style="font-size:.6rem;font-weight:800;letter-spacing:.08em;text-transform:uppercase;color:#2563eb;margin-bottom:8px">Diabetes</div>
+                <div style="font-size:.6rem;font-weight:800;letter-spacing:.08em;text-transform:uppercase;color:#5b8def;margin-bottom:8px">Diabetes</div>
                 <div style="font-size:.92rem;font-weight:600;color:#fff;line-height:1.45">Critérios diagnósticos de diabetes mellitus?</div>
                 <div style="font-size:.68rem;color:#6b7480;margin-top:12px">Vira automaticamente ↻</div>
               </div>
@@ -796,14 +810,14 @@ textarea{resize:vertical;line-height:1.6}
           </div>
           <div class="lp-flip" style="margin-top:.7rem">
             <div class="lp-flip-in">
-              <div class="lp-flip-face" style="border-left-color:#0d9488">
-                <div style="font-size:.6rem;font-weight:800;letter-spacing:.08em;text-transform:uppercase;color:#0d9488;margin-bottom:8px">Tireoide</div>
-                <div style="font-size:.92rem;font-weight:600;color:#fff;line-height:1.45">TSH alto com T4 livre baixo — interpretação?</div>
-                <div style="font-size:.68rem;color:#6b7480;margin-top:12px">Vira automaticamente ↻</div>
+              <div class="lp-flip-face" style="border-left-color:#f59e0b">
+                <div style="font-size:.6rem;font-weight:800;letter-spacing:.08em;text-transform:uppercase;color:#f59e0b;margin-bottom:8px">Tireoide</div>
+                <div style="font-size:.88rem;font-weight:600;color:#fff;line-height:1.4">TSH normal/elevado com T4 livre e T3 altos — como investigar?</div>
+                <div style="font-size:.68rem;color:#6b7480;margin-top:10px">Vira automaticamente ↻</div>
               </div>
               <div class="lp-flip-face lp-flip-back">
                 <div style="font-size:.6rem;font-weight:800;letter-spacing:.08em;text-transform:uppercase;color:#5fd39a;margin-bottom:6px">Resposta</div>
-                <div style="font-size:.74rem;color:#cdd4df;line-height:1.45">Hipotireoidismo primário; a causa mais comum é a tireoidite de Hashimoto (autoimune).</div>
+                <div style="font-size:.71rem;color:#cdd4df;line-height:1.4">Secreção inapropriada de TSH. Antes, excluir interferência laboratorial (biotina, anticorpos heterófilos). Causas: adenoma hipofisário secretor de TSH (subunidade α↑, RM de sela) e resistência aos hormônios tireoidianos (mutação do TRβ).</div>
               </div>
             </div>
           </div>
@@ -811,29 +825,29 @@ textarea{resize:vertical;line-height:1.6}
         <div class="lp-shot">
           <div class="lp-shot-tag">✦ Mapas Mentais</div>
           <svg viewBox="0 0 320 200" style="width:100%;height:auto;margin-top:.2rem">
-            <g stroke="#3a4150" stroke-width="1.5">
+            <g stroke="#3a5180" stroke-width="1.5">
               <line x1="120" y1="100" x2="196" y2="26"/><line x1="120" y1="100" x2="196" y2="63"/><line x1="120" y1="100" x2="196" y2="100"/><line x1="120" y1="100" x2="196" y2="137"/><line x1="120" y1="100" x2="196" y2="174"/>
             </g>
             <g font-size="9" font-weight="700">
-              <rect x="196" y="14" width="116" height="24" rx="7" fill="#7c3aed"/><text x="254" y="30" text-anchor="middle" fill="#fff">Etiologia</text>
-              <rect x="196" y="51" width="116" height="24" rx="7" fill="#2563eb"/><text x="254" y="67" text-anchor="middle" fill="#fff">Fisiopatologia</text>
+              <rect x="196" y="14" width="116" height="24" rx="7" fill="#8b5cf6"/><text x="254" y="30" text-anchor="middle" fill="#fff">Etiologia</text>
+              <rect x="196" y="51" width="116" height="24" rx="7" fill="#3b6fd4"/><text x="254" y="67" text-anchor="middle" fill="#fff">Fisiopatologia</text>
               <rect x="196" y="88" width="116" height="24" rx="7" fill="#10b981"/><text x="254" y="104" text-anchor="middle" fill="#08251a">Manifestações</text>
-              <rect x="196" y="125" width="116" height="24" rx="7" fill="#e0a93b"/><text x="254" y="141" text-anchor="middle" fill="#1a1320">Diagnóstico</text>
+              <rect x="196" y="125" width="116" height="24" rx="7" fill="#f59e0b"/><text x="254" y="141" text-anchor="middle" fill="#1a1320">Diagnóstico</text>
               <rect x="196" y="162" width="116" height="24" rx="7" fill="#ef4444"/><text x="254" y="178" text-anchor="middle" fill="#fff">Tratamento</text>
             </g>
-            <rect x="8" y="84" width="120" height="32" rx="10" fill="#1a1320" stroke="#3a4150"/>
+            <rect x="8" y="84" width="120" height="32" rx="10" fill="#1a2744" stroke="#3a5180"/>
             <text x="68" y="104" text-anchor="middle" font-size="10" font-weight="800" fill="#fff">Hipotireoidismo</text>
           </svg>
         </div>
         <div class="lp-shot">
           <div class="lp-shot-tag">📢 Mural de Atualizações</div>
           <div class="lp-mural-card">
-            <div class="lp-mural-tags"><span class="lp-mural-tag" style="background:rgba(96,165,250,.15);color:#7ab8ff">Diretriz</span><span class="lp-mural-tag" style="background:rgba(13,148,136,.18);color:#5fd3c0">Tireoide</span></div>
+            <div class="lp-mural-tags"><span class="lp-mural-tag" style="background:rgba(59,111,212,.18);color:#7ab8ff">Diretriz</span><span class="lp-mural-tag" style="background:rgba(245,158,11,.16);color:#f0b35b">Tireoide</span></div>
             <h4>Novo guideline de tireoide e gestação — ATA 2026</h4>
             <div class="lp-mural-meta">Atualizado pelo radar diário · Fonte: American Thyroid Association</div>
           </div>
           <div class="lp-mural-card" style="margin-top:.6rem">
-            <div class="lp-mural-tags"><span class="lp-mural-tag" style="background:rgba(217,119,6,.18);color:#f0b35b">Ensaio clínico</span><span class="lp-mural-tag" style="background:rgba(217,119,6,.12);color:#e0a93b">Obesidade</span></div>
+            <div class="lp-mural-tags"><span class="lp-mural-tag" style="background:rgba(139,92,246,.18);color:#b79dff">Ensaio clínico</span><span class="lp-mural-tag" style="background:rgba(16,185,129,.18);color:#34d399">Obesidade</span></div>
             <h4>Tirzepatida na manutenção do peso — análise dos estudos recentes</h4>
             <div class="lp-mural-meta">Atualizado pelo radar diário · Fonte: Congresso Europeu de Obesidade</div>
           </div>
@@ -920,9 +934,9 @@ textarea{resize:vertical;line-height:1.6}
       <h2 class="lp-sec-title">Planos</h2>
       <p class="lp-sec-sub">Escolha o pacote ideal e desbloqueie todos os benefícios da plataforma.</p>
       <div class="lp-plans">
-        <div class="lp-plan"><div class="nm">Standard</div><div class="pr">R$ 50<small>/mês</small></div><ul><li>Banco de questões</li><li>Simulador</li><li>Flashcards</li><li>Mapas mentais</li><li>Podcasts exclusivos</li><li>Prescrição</li><li>Resumidor de artigos</li><li><b>Curso de Hiperglicemia Hospitalar</b></li></ul><button class="lp-cta" style="margin-top:auto;width:100%;text-align:center" onclick="showLoginScreen()">Acessar</button></div>
-        <div class="lp-plan hot"><span class="badge">Mais popular</span><div class="nm">Gold</div><div class="pr">R$ 70<small>/mês</small></div><ul><li>Banco de questões</li><li>Simulador</li><li>Flashcards</li><li>Mapas mentais</li><li>Podcasts exclusivos</li><li>Prescrição</li><li>Resumidor de artigos</li><li><b>Curso de Hiperglicemia Hospitalar</b></li><li><b>Curso de Lípides</b></li></ul><button class="lp-cta" style="margin-top:auto;width:100%;text-align:center" onclick="showLoginScreen()">Acessar</button></div>
-        <div class="lp-plan"><span class="badge" style="background:#7a5cff;color:#fff">Completo</span><div class="nm">Premium</div><div class="pr">R$ 90<small>/mês</small></div><ul><li>Banco de questões</li><li>Simulador</li><li>Flashcards</li><li>Mapas mentais</li><li>Podcasts exclusivos</li><li>Prescrição</li><li>Resumidor de artigos</li><li><b>Curso de Hiperglicemia Hospitalar</b></li><li><b>Curso de Lípides</b></li><li><b>Curso de Endocrinologia Essencial</b></li></ul><button class="lp-cta" style="margin-top:auto;width:100%;text-align:center" onclick="showLoginScreen()">Acessar</button></div>
+        <div class="lp-plan"><div class="nm">Standard</div><div class="pr">R$ 50<small>/mês</small></div><ul><li>Banco de questões</li><li>Simulado</li><li>Flashcards</li><li>Mapas mentais</li><li>Podcasts exclusivos</li><li>Resumidor de artigos</li><li class="x">Simulador de Casos</li><li class="x">Prescrição Comentada</li></ul><button class="lp-cta" style="margin-top:auto;width:100%;text-align:center" onclick="showLoginScreen()">Acessar</button></div>
+        <div class="lp-plan hot"><span class="badge">Mais popular</span><div class="nm">Gold</div><div class="pr">R$ 70<small>/mês</small></div><ul><li>Banco de questões</li><li>Simulado</li><li>Flashcards</li><li>Mapas mentais</li><li>Podcasts exclusivos</li><li>Resumidor de artigos</li><li>Simulador de Casos</li><li class="course">Curso de Hiperglicemia Hospitalar</li><li class="course">Curso de Lípides</li></ul><button class="lp-cta" style="margin-top:auto;width:100%;text-align:center" onclick="showLoginScreen()">Acessar</button></div>
+        <div class="lp-plan"><span class="badge" style="background:#8b5cf6;color:#fff">Completo</span><div class="nm">Premium</div><div class="pr">R$ 90<small>/mês</small></div><ul><li>Banco de questões</li><li>Simulado</li><li>Flashcards</li><li>Mapas mentais</li><li>Podcasts exclusivos</li><li>Resumidor de artigos</li><li>Simulador de Casos</li><li>Prescrição Comentada</li><li class="course">Curso de Hiperglicemia Hospitalar</li><li class="course">Curso de Lípides</li><li class="course">Curso de Endocrinologia Essencial</li></ul><button class="lp-cta" style="margin-top:auto;width:100%;text-align:center" onclick="showLoginScreen()">Acessar</button></div>
       </div>
       <p style="text-align:center;color:#6b7480;font-size:.78rem;margin-top:1.1rem">O EndoTEEM é um produto à parte. Consulte na plataforma.</p>
     </section>
@@ -933,7 +947,7 @@ textarea{resize:vertical;line-height:1.6}
         <details><summary>O que é o Endodirect?</summary><p>Uma plataforma de educação médica em Endocrinologia e Metabologia, reunindo banco de questões comentadas, flashcards, mapas mentais, simulador de casos, simulado, prescrição, podcasts, cursos e um assistente de IA — tudo baseado nas principais diretrizes (SBEM, SBD, ADA).</p></details>
         <details><summary>Para quem é a plataforma?</summary><p>Principalmente residentes e endocrinologistas, mas também médicos de outras áreas — como Clínica Médica, Cardiologia e Geriatria — que querem se aprofundar e se manter atualizados em endocrinologia e metabologia.</p></details>
         <details><summary>Posso testar antes de assinar?</summary><p>Sim. Ao entrar, você acessa o modo degustação: flashcards e mapas mentais pré-salvos, 50 questões do banco Endodirect, o mural de atualizações e 3 usos de cada uma das ferramentas com IA (simulador de casos, simulado, prescrição e chat).</p></details>
-        <details><summary>Qual a diferença entre os planos?</summary><p>Todos os planos incluem as ferramentas principais (banco, flashcards, mapas, simulador, simulado, prescrição, resumidor e podcasts). O Gold acrescenta o curso de Lípides e o Premium acrescenta também o curso de Endocrinologia Essencial. Veja os detalhes na seção Planos.</p></details>
+        <details><summary>Qual a diferença entre os planos?</summary><p>O <b>Standard</b> reúne as ferramentas principais: banco de questões, simulado, flashcards, mapas mentais, podcasts e resumidor de artigos. O <b>Gold</b> acrescenta o Simulador de Casos e os cursos de Hiperglicemia Hospitalar e de Lípides. O <b>Premium</b> inclui tudo do Gold, mais a Prescrição Comentada e o curso de Endocrinologia Essencial. Veja os detalhes na seção Planos.</p></details>
         <details><summary>O EndoTEEM está incluído?</summary><p>Não. O EndoTEEM — banco de questões voltado à prova de título — é um produto à parte, voltado a quem vai prestar a prova de especialista.</p></details>
         <details><summary>Funciona no celular?</summary><p>Sim. A plataforma é responsiva e funciona pelo navegador no computador, no iOS e no Android.</p></details>
         <details><summary>O conteúdo é atualizado com que frequência?</summary><p>Diariamente. Toda a plataforma é atualizada todos os dias — não apenas o mural (radar diário das principais revistas), mas também questões, flashcards, mapas mentais e demais conteúdos, sempre seguindo as diretrizes vigentes (SBEM, SBD, ADA).</p></details>
@@ -945,10 +959,10 @@ textarea{resize:vertical;line-height:1.6}
       <button class="lp-mm-close" onclick="hideMMModal()">✕ Fechar</button>
       <h3 class="lp-mm-title">✦ Mapa mental · Hipotireoidismo</h3>
       <div class="lp-mm-grid">
-        <div class="lp-mm-branch"><h4 style="background:#7c3aed">Etiologia</h4><ul><li>Tireoidite de Hashimoto (autoimune)</li><li>Tireoidectomia total ou parcial</li><li>Radioiodoterapia prévia</li><li>Deficiência de iodo</li><li>Hipotireoidismo central (hipofisário ou hipotalâmico)</li></ul></div>
-        <div class="lp-mm-branch"><h4 style="background:#2563eb">Fisiopatologia</h4><ul><li>Redução da síntese de T3 e T4</li><li>Elevação compensatória do TSH</li><li>Diminuição da taxa metabólica basal</li><li>Acúmulo de glicosaminoglicanas nos tecidos</li><li>Comprometimento da termogênese</li></ul></div>
+        <div class="lp-mm-branch"><h4 style="background:#8b5cf6">Etiologia</h4><ul><li>Tireoidite de Hashimoto (autoimune)</li><li>Tireoidectomia total ou parcial</li><li>Radioiodoterapia prévia</li><li>Deficiência de iodo</li><li>Hipotireoidismo central (hipofisário ou hipotalâmico)</li></ul></div>
+        <div class="lp-mm-branch"><h4 style="background:#3b6fd4">Fisiopatologia</h4><ul><li>Redução da síntese de T3 e T4</li><li>Elevação compensatória do TSH</li><li>Diminuição da taxa metabólica basal</li><li>Acúmulo de glicosaminoglicanas nos tecidos</li><li>Comprometimento da termogênese</li></ul></div>
         <div class="lp-mm-branch"><h4 style="background:#10b981;color:#08251a">Manifestações Clínicas</h4><ul><li>Fadiga, sonolência e bradicardia</li><li>Ganho de peso e intolerância ao frio</li><li>Pele seca, cabelos quebradiços e queda capilar</li><li>Constipação intestinal</li><li>Mixedema facial e edema periorbitário</li><li>Depressão e lentificação cognitiva</li></ul></div>
-        <div class="lp-mm-branch"><h4 style="background:#e0a93b;color:#1a1320">Diagnóstico</h4><ul><li>TSH elevado (hipotireoidismo primário)</li><li>T4 livre reduzido</li><li>Anti-TPO e anti-tireoglobulina positivos (Hashimoto)</li><li>TSH normal/baixo com T4 livre baixo (hipotireoidismo central)</li></ul></div>
+        <div class="lp-mm-branch"><h4 style="background:#f59e0b;color:#1a1320">Diagnóstico</h4><ul><li>TSH elevado (hipotireoidismo primário)</li><li>T4 livre reduzido</li><li>Anti-TPO e anti-tireoglobulina positivos (Hashimoto)</li><li>TSH normal/baixo com T4 livre baixo (hipotireoidismo central)</li></ul></div>
         <div class="lp-mm-branch"><h4 style="background:#ef4444">Tratamento</h4><ul><li>Levotiroxina sódica (LT4) via oral em jejum</li><li>Dose inicial: 1,6 mcg/kg/dia no adulto jovem</li><li>Dose reduzida em idosos e cardiopatas</li><li>Monitorização com TSH a cada 6-8 semanas</li><li>Ajuste conforme sintomas e exames laboratoriais</li></ul></div>
       </div>
     </div>
@@ -1607,14 +1621,14 @@ var GOOGLE_ADMIN_EMAILS=USERS.filter(function(u){return u.provider==='google'&&u
 //  - Cursos a parte (ex.: EndoTEEM): link avulso com metadata.scope
 //    "curso:endoteem". Combos: lista separada por virgula, ex.:
 //    { "scope": "plano:premium,curso:endoteem" }.
-var ENDO_TIER_BASE=['Banco de questões','Simulador','Flashcards','Mapas mentais','Podcasts exclusivos','Prescrição','Resumidor de artigos'];
+var ENDO_TIER_BASE=['Banco de questões','Simulado','Flashcards','Mapas mentais','Podcasts exclusivos','Resumidor de artigos'];
 var ENDO_TIERS=[
   {key:'standard', nome:'Standard', preco:50, scope:'plano:standard', badge:'',
-   cursos:['Curso de Hiperglicemia Hospitalar'], url:''},
+   cursos:[], url:''},
   {key:'gold', nome:'Gold', preco:70, scope:'plano:gold', badge:'Mais popular',
-   cursos:['Curso de Hiperglicemia Hospitalar','Curso de Lípides'], url:''},
+   cursos:['Simulador de Casos','Curso de Hiperglicemia Hospitalar','Curso de Lípides'], url:''},
   {key:'premium', nome:'Premium', preco:90, scope:'plano:premium', badge:'Completo',
-   cursos:['Curso de Hiperglicemia Hospitalar','Curso de Lípides','Curso de Endocrinologia Essencial'], url:''}
+   cursos:['Simulador de Casos','Prescrição Comentada','Curso de Hiperglicemia Hospitalar','Curso de Lípides','Curso de Endocrinologia Essencial'], url:''}
 ];
 // Cursos vendidos a parte (fora dos pacotes). EndoTEEM = banco de questoes.
 var ENDO_CURSOS_AVULSOS=[
