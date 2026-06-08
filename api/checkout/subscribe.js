@@ -148,12 +148,13 @@ module.exports = async function handler(req, res) {
   if (!cfg || !(cfg.amount > 0)) return json(res, 400, { ok: false, error: 'Plano invalido ou preco nao configurado.' });
   if (!email || !/.+@.+\..+/.test(email)) return json(res, 400, { ok: false, error: 'E-mail invalido.' });
   if (!cardToken) return json(res, 400, { ok: false, error: 'Cartao nao tokenizado.' });
+  if (!document || document.length < 11) return json(res, 400, { ok: false, error: 'CPF e obrigatorio para o pagamento.' });
 
   try {
     // 1) Cliente.
     const customer = await pagarme('/customers', {
       name: name || email.split('@')[0], email: email, type: 'individual',
-      document: document || undefined, document_type: document ? 'CPF' : undefined
+      document: document, document_type: document.length > 11 ? 'CNPJ' : 'CPF'
     });
 
     // 2) Salva o cartao no cliente a partir do token (mais confiavel que enviar
