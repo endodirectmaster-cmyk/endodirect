@@ -4114,6 +4114,7 @@ function admConteudoHTML(){
     +'<span style="font-size:.72rem;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--t3)">Filtrar por subespecialidade:</span>'
     +'<select id="adm-pod-filtersel" style="width:auto;min-width:230px"><option value="">Todas as subespecialidades ('+podcasts.length+')</option>'+SUB.map(function(s){return '<option value="'+esc(s)+'"'+(admPodFiltro===s?' selected':'')+'>'+esc(s)+' ('+(cont[s]||0)+')</option>';}).join('')+'</select>'
     +(admPodFiltro?'<button class="btn btn-ghost btn-sm" id="adm-pod-clearfilter">✕ Limpar</button>':'')
+    +'<button class="btn btn-outline btn-sm" id="btn-adm-pod-recat" style="margin-left:auto">🏷️ Categorizar automaticamente</button>'
   +'</div>'
   +'<div id="adm-pod-list">'+(lista.length?lista.map(function(p){var i=podcasts.indexOf(p);var meta=p.asset?'<div class="asset-meta">Supabase Storage: '+esc(p.asset.name||'audio')+' · '+formatBytes(p.asset.size)+'</div>':'';return '<div class="card" style="margin-bottom:.6rem"><div style="display:flex;align-items:flex-start;gap:.8rem"><div style="width:46px;height:46px;border-radius:10px;background:var(--navy);display:flex;align-items:center;justify-content:center;font-size:1.3rem;flex-shrink:0">🎧</div><div style="flex:1;min-width:0"><div style="font-size:.85rem;font-weight:700;color:var(--tx);margin-bottom:2px">'+esc(p.title)+'</div><div style="display:flex;flex-wrap:wrap;gap:.3rem;margin-bottom:.4rem">'+(p.area?'<span class="tag tag-blue">'+esc(p.area)+'</span>':'')+(p.desc?'<span style="font-size:.7rem;color:var(--t3);align-self:center">'+esc(p.desc)+'</span>':'')+'</div>'+meta+''+podcastPlayerHTML(p)+'</div><button class="btn btn-outline btn-sm" data-adm-delpod="'+i+'" style="padding:2px 8px;color:var(--red);border-color:var(--red)">🗑 Excluir</button></div></div>';}).join(''):'<div class="empty">Nenhum podcast '+(admPodFiltro?'nesta subespecialidade':'cadastrado ainda')+'.</div>')+'</div>';
 
@@ -4505,6 +4506,13 @@ function bindAdmSec(sec){
         }).then(function(){rssBtn.disabled=false;rssBtn.innerHTML='📥 Importar episódios';});
       });
     }
+    var recatBtn=document.getElementById('btn-adm-pod-recat');
+    if(recatBtn)recatBtn.addEventListener('click',function(){
+      var n=0;
+      podcasts.forEach(function(p){if(!p.area){var s=inferPodcastSub((p.title||'')+' '+(p.desc||''));if(s){p.area=s;n++;}}});
+      if(n){persistPodcasts();renderAdmSec('conteudo');renderPodcasts();}
+      notify(n?(n+' podcast(s) categorizado(s) automaticamente.'):'Nenhum podcast sem categoria para classificar.',n?'ok':'info');
+    });
     var pFsel=document.getElementById('adm-pod-filtersel');
     if(pFsel)pFsel.addEventListener('change',function(){admPodFiltro=pFsel.value;renderAdmSec('conteudo');});
     var pClear=document.getElementById('adm-pod-clearfilter');
