@@ -150,29 +150,46 @@ module.exports = async function handler(req, res) {
   if (!cardToken) return json(res, 400, { ok: false, error: 'Cartao nao tokenizado.' });
 
   try {
-    // 1) Cliente. TODO(pagarme): confirmar 'document_type'/'type'.
+    // 1) Cliente.
     const customer = await pagarme('/customers', {
       name: name || email.split('@')[0], email: email, type: 'individual',
       document: document || undefined, document_type: document ? 'CPF' : undefined
     });
 
-    // 2) Assinatura com preco inline (sem plano). TODO(pagarme): confirmar
-    //    'card_token', 'billing_type', 'items[].pricing_scheme.price' (centavos).
-    const sub = await pagarme('/subscriptions', {
+    // 2) Salva o cartao no cliente a partir do token (mais confiavel que enviar
+    //    card_token solto na assinatura). Fallback: card_token na assinatura.
+    let cardId = null;
+    try {
+      const card = await pagarme(`/customers/${customer.id}/cards`, { token: cardToken });
+      cardId = (card && card.id) || null;
+    } catch (e) {
+      console.log('[subscribe] criar cartao falhou, fallback card_token:', (e && e.message) || e);
+    }
+
+    // 3) Assinatura com preco inline (sem plano).
+    const subBody = {
       customer_id: customer.id,
       payment_method: 'credit_card',
-      card_token: cardToken,
       interval: cfg.interval,
       interval_count: cfg.interval_count,
       billing_type: 'prepaid',
       installments: 1,
       items: [{ description: 'Endodirect — ' + cfg.label, quantity: 1, pricing_scheme: { scheme_type: 'unit', price: cfg.amount } }]
-    });
+    };
+    if (cardId) subBody.card_id = cardId; else subBody.card_token = cardToken;
+    const sub = await pagarme('/subscriptions', subBody);
 
     const status = String(sub.status || '').toLowerCase();
+    console.log('[subscribe] status=' + status + ' cardId=' + (cardId || 'none') + ' sub=' + JSON.stringify(sub).slice(0, 1500));
     const okStatuses = ['active', 'trialing', 'future', 'paid'];
     if (status && okStatuses.indexOf(status) < 0) {
-      return json(res, 200, { ok: false, status: status, error: 'Pagamento nao aprovado.', subscriptionId: sub.id });
+      let reason = '';
+      try {
+        const charge = (Array.isArray(sub.charges) && sub.charges[0]) || null;
+        const lt = charge && charge.last_transaction;
+        reason = (lt && (lt.acquirer_message || lt.gateway_response_errors)) || '';
+      } catch (e) {}
+      return json(res, 200, { ok: false, status: status, error: 'Pagamento nao aprovado.' + (reason ? ' (' + reason + ')' : ''), subscriptionId: sub.id });
     }
 
     // 3) Libera o acesso imediatamente; o webhook mantem sincronizado.
