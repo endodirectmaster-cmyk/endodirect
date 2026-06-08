@@ -4251,19 +4251,25 @@ function admCursosHTML(){
     +'<div class="g2" style="margin-bottom:.7rem"><div class="fld2" style="margin:0"><label>Título da aula</label><input type="text" id="adm-curso-title" placeholder="Ex: Manejo da cetoacidose diabética"></div><div class="fld2" style="margin:0"><label>Curso (controla o acesso)</label><select id="adm-curso-curso">'+cursoSlugOptions('',false)+'</select></div></div>'
     +'<div class="g2" style="margin-bottom:.7rem"><div class="fld2" style="margin:0"><label>Módulo (opcional)</label><input type="text" id="adm-curso-modulo" placeholder="Ex: Emergências endócrinas"></div><div class="fld2" style="margin:0"><label>Duração (opcional)</label><input type="text" id="adm-curso-dur" placeholder="Ex: 18 min"></div></div>'
     +'<div class="fld2"><label>Descrição</label><textarea id="adm-curso-desc" rows="2" placeholder="Breve descrição da aula…"></textarea></div>'
-    +'<div class="fld2"><label>Vídeo</label>'
-      +'<div style="display:flex;border:1.5px solid var(--bd2);border-radius:var(--rs);overflow:hidden;width:fit-content;margin-bottom:.6rem"><button type="button" id="adm-curso-tab-link" class="tog-btn on">🔗 Link (YouTube/Vimeo)</button><button type="button" id="adm-curso-tab-file" class="tog-btn">📎 Arquivo</button></div>'
-      +'<div id="adm-curso-link-panel"><input type="text" id="adm-curso-link" placeholder="Cole a URL do vídeo (YouTube, Vimeo ou MP4)"></div>'
-      +'<div id="adm-curso-file-panel" style="display:none"><div class="art-drop" id="adm-curso-drop" style="padding:1.5rem 1rem"><div style="font-size:1.7rem;margin-bottom:.3rem">🎞️</div><div style="font-size:.82rem;font-weight:600;color:var(--tx)">Arraste o vídeo ou clique para selecionar</div><div style="font-size:.66rem;color:var(--t3);margin-top:.15rem">MP4, WEBM, MOV · Supabase Storage · Máx. '+formatBytes(MAX_VIDEO_UPLOAD_BYTES)+'</div></div><input type="file" id="adm-curso-file" accept="video/*" style="display:none"><div id="adm-curso-fname" style="display:none;font-size:.76rem;color:var(--grn);margin-top:.5rem"></div></div>'
+    +'<div class="fld2"><label>Vídeo (link YouTube / Vimeo)</label>'
+      +'<input type="text" id="adm-curso-link" placeholder="Cole a URL do vídeo (YouTube ou Vimeo)">'
+      +'<div style="font-size:.66rem;color:var(--t3);margin-top:.3rem">Use links do YouTube ou Vimeo — o vídeo é reproduzido direto da fonte (sem ocupar armazenamento).</div>'
     +'</div>'
     +'<div class="upload-status" id="adm-curso-upload-status"></div>'
     +'<button class="btn btn-primary" id="btn-adm-addcurso">+ Adicionar aula</button></div>';
 
-  var verHTML='<div style="display:flex;align-items:center;gap:.6rem;flex-wrap:wrap;margin-bottom:.9rem">'
-    +'<span style="font-size:.72rem;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--t3)">Filtrar por curso:</span>'
-    +'<select id="adm-curso-filtersel" style="width:auto;min-width:230px"><option value="">Todos os cursos ('+admCursos.length+')</option>'+(Array.isArray(catalogoCursos)?catalogoCursos:[]).map(function(cc){return '<option value="'+esc(cc.slug)+'"'+(admCursoFiltro===cc.slug?' selected':'')+'>'+esc(cc.nome)+' ('+(cont[cc.slug]||0)+')</option>';}).join('')+'</select>'
-    +(admCursoFiltro?'<button class="btn btn-ghost btn-sm" id="adm-curso-clearfilter">✕ Limpar</button>':'')
-  +'</div>'
+  function cursoTile(slug,nome,n,icon){
+    var active=admCursoFiltro===slug;
+    return '<button type="button" data-curso-btn="'+esc(slug)+'" style="display:flex;flex-direction:column;align-items:flex-start;gap:.2rem;border:1.5px solid '+(active?'var(--blue)':'var(--bd2)')+';background:'+(active?'var(--blue-l)':'var(--surface)')+';border-radius:14px;padding:.8rem .95rem;cursor:pointer;min-width:160px;text-align:left">'
+      +'<span style="font-size:1.5rem">'+icon+'</span>'
+      +'<span style="font-size:.84rem;font-weight:700;color:var(--tx)">'+esc(nome)+'</span>'
+      +'<span style="font-size:.7rem;color:var(--t3)">'+n+' aula'+(n===1?'':'s')+'</span></button>';
+  }
+  var verHTML='<div style="font-size:.72rem;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--t3);margin-bottom:.6rem">Escolha um curso para abrir</div>'
+    +'<div style="display:flex;flex-wrap:wrap;gap:.7rem;margin-bottom:1.1rem">'
+      +cursoTile('','Todos os cursos',admCursos.length,'📚')
+      +(Array.isArray(catalogoCursos)?catalogoCursos:[]).map(function(cc){return cursoTile(cc.slug,cc.nome,cont[cc.slug]||0,'🎓');}).join('')
+    +'</div>'
   +'<div id="adm-curso-player" style="display:none;margin-bottom:1.1rem"></div>'
   +'<div id="adm-curso-list" class="g2" style="align-items:start">'+(lista.length?lista.map(function(c){var i=admCursos.indexOf(c);var meta=c.asset?'<div class="asset-meta">Supabase Storage: '+esc(c.asset.name||'video')+' · '+formatBytes(c.asset.size)+'</div>':'';return '<div class="card"><div style="display:flex;align-items:flex-start;gap:.7rem"><div style="width:48px;height:48px;border-radius:10px;background:var(--navy);display:flex;align-items:center;justify-content:center;font-size:1.3rem;flex-shrink:0">🎬</div><div style="flex:1;min-width:0"><div style="font-size:.86rem;font-weight:700;color:var(--tx);margin-bottom:.25rem">'+esc(c.title)+'</div><div style="display:flex;flex-wrap:wrap;gap:.3rem;margin-bottom:.4rem">'+(c.curso?'<span class="tag tag-grn">'+esc(cursoNomeBySlug(c.curso))+'</span>':'<span class="tag" style="background:#eef1f5;color:#7a8699">Sem curso</span>')+(c.modulo?'<span class="tag tag-pur">'+esc(c.modulo)+'</span>':'')+(c.dur?'<span class="tag tag-gold">'+esc(c.dur)+'</span>':'')+'</div>'+(c.desc?'<div style="font-size:.74rem;color:var(--t2);line-height:1.5;margin-bottom:.4rem">'+esc(c.desc)+'</div>':'')+'<div style="font-size:.66rem;color:var(--t3);word-break:break-all;margin-bottom:.5rem">'+(c.tipo==='link'?'🔗 '+esc(c.src):'🎞️ Arquivo de vídeo')+'</div>'+meta+'<div style="display:flex;gap:5px"><button class="btn btn-primary btn-sm" data-adm-playcurso="'+i+'">▶ Assistir</button><button class="btn btn-ghost btn-sm" data-adm-delcurso="'+i+'">🗑</button></div></div></div></div>';}).join(''):'<div class="empty" style="grid-column:1/-1">Nenhuma videoaula '+(admCursoFiltro?'neste curso':'cadastrada ainda')+'.</div>')+'</div>';
 
@@ -4275,7 +4281,7 @@ function admCursosHTML(){
     +'<button class="pill-tab'+(admCursoSubtab==='importar'?' on':'')+'" data-csub="importar">⬆️ Importar videoaula</button>'
   +'</div>'
   +(admCursoSubtab==='catalogo'?admCatalogoHTML():(admCursoSubtab==='importar'?formHTML:verHTML))
-  +'<div style="font-size:.7rem;color:var(--t3);margin-top:.7rem">ℹ️ Aulas por link são reproduzidas diretamente da fonte. Uploads de arquivo são salvos no Supabase Storage e sincronizados para os alunos.</div>'
+  +'<div style="font-size:.7rem;color:var(--t3);margin-top:.7rem">ℹ️ As videoaulas são adicionadas por link (YouTube ou Vimeo) e reproduzidas diretamente da fonte — sem ocupar armazenamento.</div>'
   +'</div>';
 }
 
@@ -4392,71 +4398,23 @@ function bindAdmSec(sec){
       });
     }
     if(admCursoSubtab==='importar'){
-      var cTabLink=document.getElementById('adm-curso-tab-link');
-    var cTabFile=document.getElementById('adm-curso-tab-file');
-    var cLinkPanel=document.getElementById('adm-curso-link-panel');
-    var cFilePanel=document.getElementById('adm-curso-file-panel');
-    var cFonte='link';
-    if(cTabLink&&cTabFile){
-      cTabLink.addEventListener('click',function(){cFonte='link';cTabLink.classList.add('on');cTabFile.classList.remove('on');cLinkPanel.style.display='block';cFilePanel.style.display='none';});
-      cTabFile.addEventListener('click',function(){cFonte='file';cTabFile.classList.add('on');cTabLink.classList.remove('on');cFilePanel.style.display='block';cLinkPanel.style.display='none';});
-    }
-    var cDrop=document.getElementById('adm-curso-drop');
-    var cFile=document.getElementById('adm-curso-file');
-    if(cDrop&&cFile){
-      cDrop.addEventListener('click',function(){cFile.click();});
-      ['dragenter','dragover'].forEach(function(ev){cDrop.addEventListener(ev,function(e){e.preventDefault();cDrop.classList.add('drag');});});
-      ['dragleave','drop'].forEach(function(ev){cDrop.addEventListener(ev,function(e){e.preventDefault();cDrop.classList.remove('drag');});});
-      cDrop.addEventListener('drop',function(e){if(e.dataTransfer.files[0])handleCursoVideo(e.dataTransfer.files[0]);});
-      cFile.addEventListener('change',function(e){if(e.target.files[0])handleCursoVideo(e.target.files[0]);});
-    }
     var bAddCurso=document.getElementById('btn-adm-addcurso');
     if(bAddCurso)bAddCurso.addEventListener('click',function(){
       var title=(document.getElementById('adm-curso-title').value||'').trim();
       if(!title){notify('Informe o título da aula.','err');return;}
+      var link=(document.getElementById('adm-curso-link').value||'').trim();
+      if(!link){notify('Cole a URL do vídeo (YouTube ou Vimeo).','err');return;}
       var cursoSelEl=document.getElementById('adm-curso-curso');
-      var c={title:title,curso:cursoSelEl?cursoSelEl.value:'',modulo:(document.getElementById('adm-curso-modulo').value||'').trim(),dur:(document.getElementById('adm-curso-dur').value||'').trim(),desc:(document.getElementById('adm-curso-desc').value||'').trim(),at:Date.now()};
-      function finishCurso(assetUrl,asset){
-        c.tipo=asset?'file':'link';
-        c.src=assetUrl;
-        if(asset){c.asset=asset;c.storage='supabase';}
-        admCursos.push(c);
-        persistCursos();
-        admCursoVideoFile=null;admCursoVideoData=null;
-        notify('Videoaula adicionada!','ok');
-        admCursoSubtab='ver';
-        renderAdmSec('cursos');
-        renderCursosAluno();
-      }
-      if(cFonte==='link'){
-        var link=(document.getElementById('adm-curso-link').value||'').trim();
-        if(!link){notify('Cole a URL do vídeo.','err');return;}
-        finishCurso(link,null);
-        return;
-      }
-      if(!admCursoVideoFile){notify('Selecione o arquivo de vídeo.','err');return;}
-      bAddCurso.disabled=true;bAddCurso.innerHTML=ldHTML();
-      setUploadStatus('adm-curso-upload-status','Enviando videoaula para o Supabase Storage...','info');
-      uploadAdminAssetResumable(admCursoVideoFile,'videoaulas',function(sent,total){
-        var pct=total?Math.round(sent/total*100):0;
-        setUploadStatus('adm-curso-upload-status','Enviando videoaula… '+pct+'% ('+formatBytes(sent)+' de '+formatBytes(total)+')','info');
-      })
-        .then(function(asset){
-          setUploadStatus('adm-curso-upload-status','Upload concluído. Salvando aula...','ok');
-          finishCurso(asset.url,asset);
-        })
-        .catch(function(e){
-          var msg=uploadErrorMessage(e);
-          setUploadStatus('adm-curso-upload-status',msg,'err');
-          notify(msg,'err');
-        })
-        .then(function(){bAddCurso.disabled=false;bAddCurso.innerHTML='+ Adicionar aula';});
+      var c={title:title,curso:cursoSelEl?cursoSelEl.value:'',modulo:(document.getElementById('adm-curso-modulo').value||'').trim(),dur:(document.getElementById('adm-curso-dur').value||'').trim(),desc:(document.getElementById('adm-curso-desc').value||'').trim(),at:Date.now(),tipo:'link',src:link};
+      admCursos.push(c);
+      persistCursos();
+      notify('Videoaula adicionada!','ok');
+      admCursoSubtab='ver';
+      renderAdmSec('cursos');
+      renderCursosAluno();
     });
     } // fim aba importar
-    var cFsel=document.getElementById('adm-curso-filtersel');
-    if(cFsel)cFsel.addEventListener('change',function(){admCursoFiltro=cFsel.value;renderAdmSec('cursos');});
-    var cClear=document.getElementById('adm-curso-clearfilter');
-    if(cClear)cClear.addEventListener('click',function(){admCursoFiltro='';renderAdmSec('cursos');});
+    main.querySelectorAll('[data-curso-btn]').forEach(function(b){b.addEventListener('click',function(){admCursoFiltro=b.dataset.cursoBtn||'';renderAdmSec('cursos');});});
     main.querySelectorAll('[data-adm-playcurso]').forEach(function(b){b.addEventListener('click',function(){
       var c=admCursos[parseInt(b.dataset.admPlaycurso)];if(!c)return;
       var box=document.getElementById('adm-curso-player');
