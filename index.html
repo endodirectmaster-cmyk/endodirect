@@ -855,7 +855,7 @@ textarea{resize:vertical;line-height:1.6}
         <div class="lp-shot">
           <div class="lp-shot-tag">🎬 Cursos · Videoaulas</div>
           <div style="border-radius:12px;overflow:hidden;background:#000;aspect-ratio:16/9">
-            <iframe src="https://player.vimeo.com/video/1199272118?title=0&byline=0&portrait=0&dnt=1" style="width:100%;height:100%;border:0" loading="lazy" allow="autoplay;fullscreen;picture-in-picture" allowfullscreen title="Aula 1 — Obesidade"></iframe>
+            <iframe id="lp-aula-vimeo" src="https://player.vimeo.com/video/1199272118?background=1&muted=1&dnt=1&title=0&byline=0&portrait=0" style="width:100%;height:100%;border:0" loading="lazy" allow="autoplay;fullscreen;picture-in-picture" allowfullscreen title="Aula 1 — Obesidade"></iframe>
           </div>
           <div style="margin-top:.6rem"><span class="lp-mural-tag" style="background:rgba(16,185,129,.18);color:#5fd3c0;font-size:.6rem;font-weight:700;padding:.12rem .5rem;border-radius:999px">Endocrinologia Essencial</span></div>
           <div style="font-size:.86rem;font-weight:700;color:#fff;margin-top:.45rem">Aula 1 — Introdução à Obesidade</div>
@@ -998,14 +998,14 @@ textarea{resize:vertical;line-height:1.6}
   </div>
 </div>
 
-<div id="assine-screen" style="display:none;position:fixed;inset:0;z-index:500;background:#0f1115;align-items:flex-start;justify-content:center;padding:1.2rem;overflow:auto">
-  <div style="max-width:1040px;width:100%;margin:auto;background:#15171c;border:1px solid #2a2f3a;border-radius:18px;padding:2rem 1.8rem;text-align:center;box-shadow:0 24px 60px rgba(0,0,0,.45)">
+<div id="assine-screen" style="display:none;position:fixed;inset:0;z-index:500;background:#0e1830;align-items:flex-start;justify-content:center;padding:1.2rem;overflow:auto">
+  <div style="max-width:1040px;width:100%;margin:auto;background:#121c33;border:1px solid #2a3a5c;border-radius:18px;padding:2rem 1.8rem;text-align:center;box-shadow:0 24px 60px rgba(0,0,0,.45)">
     <div id="assine-title" style="font-size:1.5rem;font-weight:800;color:#fff;margin-bottom:.35rem">Endodirect — Pacotes</div>
     <p id="assine-sub" style="font-size:.86rem;color:#9aa3b2;line-height:1.6;margin:.2rem auto 1.4rem;max-width:620px">A conta <b style="color:#cbd2dd" id="assine-email"></b> ainda não tem acesso ativo. Adquira seu pacote e desbloqueie todos os benefícios da plataforma.</p>
     <div id="assine-plans" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:1rem;margin-bottom:1.1rem;align-items:stretch"></div>
     <div style="display:flex;gap:.7rem;justify-content:center;flex-wrap:wrap">
-      <button class="btn" id="assine-back" style="width:auto;min-width:160px;justify-content:center;background:#e0a93b;color:#1a1320;border:0;font-weight:700">← Voltar à plataforma</button>
-      <button class="btn" id="assine-logout" style="width:auto;min-width:160px;justify-content:center;background:transparent;color:#9aa3b2;border:1px solid #2a2f3a">Sair</button>
+      <button class="btn" id="assine-back" style="width:auto;min-width:160px;justify-content:center;background:#3b6fd4;color:#fff;border:0;font-weight:700">← Voltar à plataforma</button>
+      <button class="btn" id="assine-logout" style="width:auto;min-width:160px;justify-content:center;background:transparent;color:#9aa3b2;border:1px solid #2a3a5c">Sair</button>
     </div>
     <div style="text-align:center;margin-top:1rem;font-size:.72rem;color:#6b7480"><a href="/privacidade" target="_blank" rel="noopener" style="color:#8a93a3;text-decoration:none">Privacidade</a> · <a href="/termos" target="_blank" rel="noopener" style="color:#8a93a3;text-decoration:none">Termos</a></div>
   </div>
@@ -1624,7 +1624,7 @@ var GOOGLE_ADMIN_EMAILS=USERS.filter(function(u){return u.provider==='google'&&u
 var ENDO_TIER_BASE=['Banco de questões','Simulado','Flashcards','Mapas mentais','Podcasts exclusivos','Resumidor de artigos'];
 var ENDO_TIERS=[
   {key:'standard', nome:'Standard', preco:50, scope:'plano:standard', badge:'',
-   cursos:[], url:''},
+   cursos:[], excl:['Simulador de Casos','Prescrição Comentada'], url:''},
   {key:'gold', nome:'Gold', preco:70, scope:'plano:gold', badge:'Mais popular',
    cursos:['Simulador de Casos','Curso de Hiperglicemia Hospitalar','Curso de Lípides'], url:''},
   {key:'premium', nome:'Premium', preco:90, scope:'plano:premium', badge:'Completo',
@@ -2634,21 +2634,22 @@ function renderAssinePlans(){
   var wrap=document.getElementById('assine-plans');if(!wrap)return;
   var html=(ENDO_TIERS||[]).map(function(t){
     var hi=t.badge==='Mais popular', top=t.badge==='Completo';
-    var acc=hi?'#e0a93b':(top?'#b094ff':'#fff');
-    var bd=hi?'#e0a93b':(top?'#7a5cff':'#2a2f3a');
-    var bg=hi?'rgba(224,169,59,.07)':(top?'rgba(122,92,255,.08)':'#1b1e25');
+    var acc=hi?'#6f9bff':(top?'#b79dff':'#fff');
+    var bd=hi?'#5585e8':(top?'#8b5cf6':'#2a3a5c');
+    var bg=hi?'rgba(85,133,232,.08)':(top?'rgba(139,92,246,.1)':'#14203a');
     var benefits=(ENDO_TIER_BASE||[]).concat(t.cursos||[]);
-    var badge=t.badge?'<span style="position:absolute;top:-11px;left:50%;transform:translateX(-50%);font-size:.56rem;font-weight:800;text-transform:uppercase;letter-spacing:.06em;background:'+(hi?'#e0a93b':'#7a5cff')+';color:#1a1320;padding:.16rem .55rem;border-radius:999px;white-space:nowrap">'+esc(t.badge)+'</span>':'';
-    var bens=benefits.map(function(b){var c=b.indexOf('Curso')===0;return '<div style="display:flex;gap:.45rem;align-items:flex-start;font-size:.78rem;color:'+(c?'#e6e9ef':'#aeb6c2')+';line-height:1.4"><span style="color:'+(c?'#e0a93b':'#5fd39a')+';font-weight:700">✓</span><span'+(c?' style="font-weight:700"':'')+'>'+esc(b)+'</span></div>';}).join('');
+    var badge=t.badge?'<span style="position:absolute;top:-11px;left:50%;transform:translateX(-50%);font-size:.56rem;font-weight:800;text-transform:uppercase;letter-spacing:.06em;background:'+(hi?'#3b6fd4':'#8b5cf6')+';color:#fff;padding:.16rem .55rem;border-radius:999px;white-space:nowrap">'+esc(t.badge)+'</span>':'';
+    var bens=benefits.map(function(b){var c=b.indexOf('Curso')===0;return '<div style="display:flex;gap:.45rem;align-items:flex-start;font-size:.78rem;color:'+(c?'#cfe0ff':'#aeb6c2')+';line-height:1.4"><span style="color:'+(c?'#6f9bff':'#5fd39a')+';font-weight:700">'+(c?'★':'✓')+'</span><span'+(c?' style="font-weight:600"':'')+'>'+esc(b)+'</span></div>';}).join('');
+    var excl=(t.excl||[]).map(function(b){return '<div style="display:flex;gap:.45rem;align-items:flex-start;font-size:.78rem;color:#7e8aa0;line-height:1.4"><span style="color:#e06a6a;font-weight:700">✕</span><span>'+esc(b)+'</span></div>';}).join('');
     var cta=t.url
-      ? '<a class="btn" style="width:100%;justify-content:center;text-decoration:none;margin-top:auto;background:'+(hi?'#e0a93b':(top?'#7a5cff':'transparent'))+';color:'+(hi?'#1a1320':(top?'#fff':'#cbd2dd'))+';border:1px solid '+bd+'" href="'+esc(t.url)+'" target="_blank" rel="noopener">Assinar '+esc(t.nome)+'</a>'
-      : '<div class="btn" style="width:100%;justify-content:center;margin-top:auto;background:transparent;color:#6b7480;border:1px solid #2a2f3a;cursor:default">Em breve</div>';
+      ? '<a class="btn" style="width:100%;justify-content:center;text-decoration:none;margin-top:auto;background:'+(hi?'#3b6fd4':(top?'#8b5cf6':'transparent'))+';color:'+(hi||top?'#fff':'#cbd2dd')+';border:1px solid '+bd+'" href="'+esc(t.url)+'" target="_blank" rel="noopener">Assinar '+esc(t.nome)+'</a>'
+      : '<div class="btn" style="width:100%;justify-content:center;margin-top:auto;background:transparent;color:#6b7480;border:1px solid #2a3a5c;cursor:default">Em breve</div>';
     return '<div style="position:relative;display:flex;flex-direction:column;gap:.55rem;text-align:left;border:1.5px solid '+bd+';border-radius:14px;padding:1.1rem 1rem;background:'+bg+';height:100%">'
       +badge
       +'<div style="font-size:1.1rem;font-weight:800;color:'+acc+'">'+esc(t.nome)+'</div>'
       +'<div><span style="font-size:1.6rem;font-weight:800;color:'+acc+'">R$ '+t.preco+'</span><span style="font-size:.72rem;color:#8a93a3">/mês</span></div>'
-      +'<div style="font-size:.58rem;font-weight:700;letter-spacing:.09em;text-transform:uppercase;color:#6b7480;border-top:1px solid #2a2f3a;padding-top:.6rem">Inclui</div>'
-      +'<div style="display:flex;flex-direction:column;gap:.32rem">'+bens+'</div>'
+      +'<div style="font-size:.58rem;font-weight:700;letter-spacing:.09em;text-transform:uppercase;color:#6b7480;border-top:1px solid #2a3a5c;padding-top:.6rem">Inclui</div>'
+      +'<div style="display:flex;flex-direction:column;gap:.32rem">'+bens+excl+'</div>'
       +cta
     +'</div>';
   }).join('');
@@ -2657,7 +2658,7 @@ function renderAssinePlans(){
   if(cursos.length){
     html+=cursos.map(function(c){
       var preco=cursoPrecoLabel(c.slug);
-      return '<a class="btn" style="grid-column:1/-1;justify-content:space-between;align-items:center;text-decoration:none;background:#1b1e25;color:#cbd2dd;border:1px solid #2a2f3a" href="'+esc(c.url)+'" target="_blank" rel="noopener"><span style="font-weight:700">'+esc(c.label)+'</span>'+(preco?'<span style="font-size:.72rem;color:#8a93a3">'+esc(preco)+'</span>':'')+'</a>';
+      return '<a class="btn" style="grid-column:1/-1;justify-content:space-between;align-items:center;text-decoration:none;background:#18243f;color:#cbd2dd;border:1px solid #2a3a5c" href="'+esc(c.url)+'" target="_blank" rel="noopener"><span style="font-weight:700">'+esc(c.label)+'</span>'+(preco?'<span style="font-size:.72rem;color:#8a93a3">'+esc(preco)+'</span>':'')+'</a>';
     }).join('');
   }
   wrap.innerHTML=html||'<div style="grid-column:1/-1;font-size:.85rem;color:#8a93a3">Pacotes disponíveis em breve.</div>';
@@ -5863,6 +5864,41 @@ document.addEventListener('DOMContentLoaded',function(){
   document.getElementById('fb-close-ok').addEventListener('click',closeFeedback);
   document.getElementById('fb-submit').addEventListener('click',submitFeedback);
 });
+})();
+</script>
+<script>
+/* Videoaula da landing: toca automaticamente (sem som) e fica em loop apenas
+   num recorte curto da parte mais impactante da aula. Ajuste AULA_START/AULA_DUR
+   para mudar o trecho (em segundos). Usa o SDK do Vimeo; se ele não carregar,
+   o vídeo continua em autoplay/loop (modo background) do início. */
+(function(){
+  var AULA_START=8, AULA_DUR=10, AULA_END=AULA_START+AULA_DUR;
+  function initAulaLoop(){
+    var f=document.getElementById('lp-aula-vimeo');
+    if(!f||!window.Vimeo||!window.Vimeo.Player)return;
+    var p;
+    try{p=new window.Vimeo.Player(f);}catch(e){return;}
+    p.setVolume(0).catch(function(){});
+    p.ready().then(function(){return p.setCurrentTime(AULA_START);})
+     .then(function(){return p.play();}).catch(function(){});
+    var seeking=false;
+    p.on('timeupdate',function(d){
+      if(!d||typeof d.seconds!=='number'||seeking)return;
+      if(d.seconds>=AULA_END||d.seconds<AULA_START-0.4){
+        seeking=true;
+        p.setCurrentTime(AULA_START).then(function(){seeking=false;}).catch(function(){seeking=false;});
+      }
+    });
+  }
+  function loadAulaSDK(){
+    if(window.Vimeo&&window.Vimeo.Player){initAulaLoop();return;}
+    var s=document.createElement('script');
+    s.src='https://player.vimeo.com/api/player.js';s.async=true;
+    s.onload=initAulaLoop;
+    document.head.appendChild(s);
+  }
+  if(document.readyState!=='loading')loadAulaSDK();
+  else document.addEventListener('DOMContentLoaded',loadAulaSDK);
 })();
 </script>
 </body>
