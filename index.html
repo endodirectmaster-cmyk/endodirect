@@ -677,6 +677,20 @@ textarea{resize:vertical;line-height:1.6}
 @keyframes dStep3{0%,25%{opacity:0;transform:translateY(8px)}29%,52%{opacity:1;transform:none}57%,100%{opacity:0}}
 @keyframes dStep4{0%,35%{opacity:0;transform:translateY(8px)}39%,52%{opacity:1;transform:none}57%,100%{opacity:0}}
 @keyframes dRep{0%,58%{opacity:0;transform:scale(.97)}65%,93%{opacity:1;transform:none}100%{opacity:0}}
+.lp-mm-rot{position:relative;min-height:64px;margin-top:.6rem;border-top:1px solid #232730;padding-top:.6rem}
+.lp-mm-rot>div{position:absolute;left:0;right:0;top:.6rem;opacity:0}
+.lp-mm-rot .rb{font-size:.6rem;font-weight:800;text-transform:uppercase;letter-spacing:.05em;display:inline-block;padding:.12rem .55rem;border-radius:999px;margin-bottom:.35rem}
+.lp-mm-rot .rl{font-size:.72rem;color:#aeb6c2;line-height:1.45}
+.lp-mm-rot>.r1{-webkit-animation:mrot1 16s infinite;animation:mrot1 16s infinite}
+.lp-mm-rot>.r2{-webkit-animation:mrot2 16s infinite;animation:mrot2 16s infinite}
+.lp-mm-rot>.r3{-webkit-animation:mrot3 16s infinite;animation:mrot3 16s infinite}
+.lp-mm-rot>.r4{-webkit-animation:mrot4 16s infinite;animation:mrot4 16s infinite}
+.lp-mm-rot>.r5{-webkit-animation:mrot5 16s infinite;animation:mrot5 16s infinite}
+@keyframes mrot1{0%{opacity:0}2%,18%{opacity:1}21%,100%{opacity:0}}
+@keyframes mrot2{0%,18%{opacity:0}21%,38%{opacity:1}41%,100%{opacity:0}}
+@keyframes mrot3{0%,38%{opacity:0}41%,58%{opacity:1}61%,100%{opacity:0}}
+@keyframes mrot4{0%,58%{opacity:0}61%,78%{opacity:1}81%,100%{opacity:0}}
+@keyframes mrot5{0%,78%{opacity:0}81%,98%{opacity:1}100%{opacity:0}}
 .lp-mm-card{cursor:pointer;transition:border-color .2s,transform .2s}
 .lp-mm-card:hover{border-color:#3a4150;transform:translateY(-3px)}
 .lp-mm-modal{position:fixed;inset:0;z-index:1100;background:rgba(8,10,14,.86);display:none;align-items:flex-start;justify-content:center;overflow:auto;padding:24px 16px}
@@ -780,6 +794,19 @@ textarea{resize:vertical;line-height:1.6}
               </div>
             </div>
           </div>
+          <div class="lp-flip" style="margin-top:.7rem">
+            <div class="lp-flip-in" style="-webkit-animation-delay:-3.5s;animation-delay:-3.5s">
+              <div class="lp-flip-face" style="border-left-color:#0d9488">
+                <div style="font-size:.6rem;font-weight:800;letter-spacing:.08em;text-transform:uppercase;color:#0d9488;margin-bottom:8px">Tireoide</div>
+                <div style="font-size:.92rem;font-weight:600;color:#fff;line-height:1.45">TSH alto com T4 livre baixo — interpretação?</div>
+                <div style="font-size:.68rem;color:#6b7480;margin-top:12px">Vira automaticamente ↻</div>
+              </div>
+              <div class="lp-flip-face lp-flip-back">
+                <div style="font-size:.6rem;font-weight:800;letter-spacing:.08em;text-transform:uppercase;color:#5fd39a;margin-bottom:6px">Resposta</div>
+                <div style="font-size:.74rem;color:#cdd4df;line-height:1.45">Hipotireoidismo primário; a causa mais comum é a tireoidite de Hashimoto (autoimune).</div>
+              </div>
+            </div>
+          </div>
         </div>
         <div class="lp-shot lp-mm-card" onclick="showMMModal()" title="Clique para ampliar">
           <div class="lp-shot-tag">✦ Mapas Mentais</div>
@@ -797,6 +824,13 @@ textarea{resize:vertical;line-height:1.6}
             <rect x="8" y="84" width="120" height="32" rx="10" fill="#1a1320" stroke="#3a4150"/>
             <text x="68" y="104" text-anchor="middle" font-size="10" font-weight="800" fill="#fff">Hipotireoidismo</text>
           </svg>
+          <div class="lp-mm-rot">
+            <div class="r1"><span class="rb" style="background:#7c3aed;color:#fff">Etiologia</span><div class="rl">Hashimoto · Tireoidectomia · Radioiodoterapia · Deficiência de iodo · Causa central</div></div>
+            <div class="r2"><span class="rb" style="background:#2563eb;color:#fff">Fisiopatologia</span><div class="rl">↓ síntese de T3/T4 · ↑ TSH compensatório · ↓ metabolismo basal · ↓ termogênese</div></div>
+            <div class="r3"><span class="rb" style="background:#10b981;color:#08251a">Manifestações</span><div class="rl">Fadiga e bradicardia · Ganho de peso · Pele seca · Constipação · Mixedema</div></div>
+            <div class="r4"><span class="rb" style="background:#e0a93b;color:#1a1320">Diagnóstico</span><div class="rl">TSH alto + T4 livre baixo · Anti-TPO+ (Hashimoto) · Central: T4 baixo com TSH baixo/normal</div></div>
+            <div class="r5"><span class="rb" style="background:#ef4444;color:#fff">Tratamento</span><div class="rl">Levotiroxina em jejum · 1,6 mcg/kg/dia · Reavaliar TSH 6–8 sem · Reduzir no idoso/cardiopata</div></div>
+          </div>
           <div style="font-size:.68rem;color:#8a93a3;margin-top:.5rem;text-align:center">🔍 Clique para ampliar</div>
         </div>
         <div class="lp-shot">
@@ -811,6 +845,15 @@ textarea{resize:vertical;line-height:1.6}
             <h4>Tirzepatida na manutenção do peso — análise dos estudos recentes</h4>
             <div class="lp-mural-meta">Atualizado pelo radar diário · Fonte: Congresso Europeu de Obesidade</div>
           </div>
+        </div>
+        <div class="lp-shot">
+          <div class="lp-shot-tag">🎬 Cursos · Videoaulas</div>
+          <div style="border-radius:12px;overflow:hidden;background:#000;aspect-ratio:16/9">
+            <iframe src="https://player.vimeo.com/video/1199272118?title=0&byline=0&portrait=0" style="width:100%;height:100%;border:0" loading="lazy" allow="autoplay;fullscreen;picture-in-picture" allowfullscreen title="Aula 1 — Obesidade"></iframe>
+          </div>
+          <div style="margin-top:.6rem"><span class="lp-mural-tag" style="background:rgba(16,185,129,.18);color:#5fd3c0;font-size:.6rem;font-weight:700;padding:.12rem .5rem;border-radius:999px">Endocrinologia Essencial</span></div>
+          <div style="font-size:.86rem;font-weight:700;color:#fff;margin-top:.45rem">Aula 1 — Introdução à Obesidade</div>
+          <div style="font-size:.74rem;color:#9aa3b2;line-height:1.45;margin-top:.2rem">Trecho da videoaula do curso Endocrinologia Essencial.</div>
         </div>
       </div>
     </section>
