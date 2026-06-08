@@ -2061,6 +2061,7 @@ function renderDegustacaoBar(){
 function refreshAfterRemoteState(){
   try{if(currentUser&&currentUser.id){var s=(seedFlashcards()||0)+(seedMindmaps()||0);if(s>0)queueRemoteStateSave();}}catch(e){}
   try{renderDegustacaoBar();}catch(e){}
+  try{maybeResumePlanIntent();}catch(e){}
   try{refreshDash();}catch(e){}
   try{renderSavedQ();}catch(e){}
   try{renderFC();}catch(e){}
@@ -2638,15 +2639,18 @@ function renderAssinePlans(){
     var acc=hi?'#6f9bff':(top?'#b79dff':'#fff');
     var bd=hi?'#5585e8':(top?'#8b5cf6':'#2a3a5c');
     var bg=hi?'rgba(85,133,232,.08)':(top?'rgba(139,92,246,.1)':'#14203a');
+    var sel=assineHighlight&&t.key===assineHighlight;
     var benefits=(ENDO_TIER_BASE||[]).concat(t.cursos||[]);
     var badge=t.badge?'<span style="position:absolute;top:-11px;left:50%;transform:translateX(-50%);font-size:.56rem;font-weight:800;text-transform:uppercase;letter-spacing:.06em;background:'+(hi?'#3b6fd4':'#8b5cf6')+';color:#fff;padding:.16rem .55rem;border-radius:999px;white-space:nowrap">'+esc(t.badge)+'</span>':'';
+    if(sel)bd=hi?'#5585e8':(top?'#8b5cf6':'#5fd39a');
     var bens=benefits.map(function(b){var c=b.indexOf('Curso')===0;return '<div style="display:flex;gap:.45rem;align-items:flex-start;font-size:.78rem;color:'+(c?'#f0dcae':'#aeb6c2')+';line-height:1.4"><span style="color:'+(c?'#f5b32c':'#5fd39a')+';font-weight:700">'+(c?'★':'✓')+'</span><span'+(c?' style="font-weight:600"':'')+'>'+esc(b)+'</span></div>';}).join('');
     var excl=(t.excl||[]).map(function(b){return '<div style="display:flex;gap:.45rem;align-items:flex-start;font-size:.78rem;color:#7e8aa0;line-height:1.4"><span style="color:#e06a6a;font-weight:700">✕</span><span>'+esc(b)+'</span></div>';}).join('');
     var cta=t.url
       ? '<a class="btn" style="width:100%;justify-content:center;text-decoration:none;margin-top:auto;background:'+(hi?'#3b6fd4':(top?'#8b5cf6':'transparent'))+';color:'+(hi||top?'#fff':'#cbd2dd')+';border:1px solid '+bd+'" href="'+esc(t.url)+'" target="_blank" rel="noopener">Assinar '+esc(t.nome)+'</a>'
       : '<div class="btn" style="width:100%;justify-content:center;margin-top:auto;background:transparent;color:#6b7480;border:1px solid #2a3a5c;cursor:default">Em breve</div>';
-    return '<div style="position:relative;display:flex;flex-direction:column;gap:.55rem;text-align:left;border:1.5px solid '+bd+';border-radius:14px;padding:1.1rem 1rem;background:'+bg+';height:100%">'
+    return '<div id="assine-plan-'+esc(t.key)+'" style="position:relative;display:flex;flex-direction:column;gap:.55rem;text-align:left;border:'+(sel?'2px':'1.5px')+' solid '+bd+';border-radius:14px;padding:1.1rem 1rem;background:'+bg+';height:100%'+(sel?';box-shadow:0 0 0 4px rgba(95,211,154,.18)':'')+'">'
       +badge
+      +(sel?'<span style="position:absolute;top:-11px;right:12px;font-size:.54rem;font-weight:800;text-transform:uppercase;letter-spacing:.06em;background:#2e7d54;color:#dcffe9;padding:.16rem .5rem;border-radius:999px">✓ Escolhido</span>':'')
       +'<div style="font-size:1.1rem;font-weight:800;color:'+acc+'">'+esc(t.nome)+'</div>'
       +'<div><span style="font-size:1.6rem;font-weight:800;color:'+acc+'">R$ '+t.preco+'</span><span style="font-size:.72rem;color:#8a93a3">/mês</span></div>'
       +'<div style="font-size:.58rem;font-weight:700;letter-spacing:.09em;text-transform:uppercase;color:#6b7480;border-top:1px solid #2a3a5c;padding-top:.6rem">Inclui</div>'
@@ -2669,28 +2673,47 @@ function cursoPrecoLabel(slug){
   for(var i=0;i<cat.length;i++){if(cat[i].slug===slug&&cat[i].preco_avulso_cents>0)return assineBRL(cat[i].preco_avulso_cents/100);}
   return '';
 }
+var assineHighlight='';
 function showAssineScreen(email,opts){
   var ls=document.getElementById('login-screen');if(ls)ls.style.display='none';
   var ap=document.getElementById('app-screen');if(ap)ap.style.display='none';
   var sc=document.getElementById('assine-screen');if(!sc)return;
   var upgrade=!!(opts&&opts.upgrade);
+  assineHighlight=(opts&&opts.highlight)||'';
+  var chosen=assineHighlight?(ENDO_TIERS||[]).filter(function(x){return x&&x.key===assineHighlight;})[0]:null;
   var ttl=document.getElementById('assine-title'),sub=document.getElementById('assine-sub');
   if(ttl)ttl.textContent=upgrade?'Endodirect — Fazer upgrade':'Endodirect — Pacotes';
   if(sub){
-    sub.innerHTML=upgrade
-      ? 'Quer liberar mais recursos? Escolha um pacote superior para a conta <b style="color:#cbd2dd" id="assine-email"></b> e desbloqueie tudo da plataforma.'
-      : 'A conta <b style="color:#cbd2dd" id="assine-email"></b> ainda não tem acesso ativo. Adquira seu pacote e desbloqueie todos os benefícios da plataforma.';
+    sub.innerHTML=chosen
+      ? 'Você escolheu o plano <b style="color:#cbd2dd">'+esc(chosen.nome)+'</b>. Conclua a assinatura para a conta <b style="color:#cbd2dd" id="assine-email"></b> e desbloqueie a plataforma.'
+      : (upgrade
+        ? 'Quer liberar mais recursos? Escolha um pacote superior para a conta <b style="color:#cbd2dd" id="assine-email"></b> e desbloqueie tudo da plataforma.'
+        : 'A conta <b style="color:#cbd2dd" id="assine-email"></b> ainda não tem acesso ativo. Adquira seu pacote e desbloqueie todos os benefícios da plataforma.');
   }
   setText('assine-email',email||'');
   renderAssinePlans();
   if(!(Array.isArray(catalogoCursos)&&catalogoCursos.length))loadCursoCatalogo(function(){renderAssinePlans();});
   sc.style.display='flex';
+  if(assineHighlight){try{var card=document.getElementById('assine-plan-'+assineHighlight);if(card&&card.scrollIntoView)setTimeout(function(){card.scrollIntoView({behavior:'smooth',block:'center'});},120);}catch(e){}}
+}
+// Retoma a intenção de compra após o login: se o aluno clicou em "Adquirir" um
+// plano na landing e ainda não tem acesso, abre a tela de pacotes com o plano
+// escolhido destacado. Roda uma única vez (consome a intenção).
+function maybeResumePlanIntent(){
+  var key='';
+  try{key=sessionStorage.getItem('endo_plan_intent')||'';}catch(e){}
+  if(!key)return;
+  try{sessionStorage.removeItem('endo_plan_intent');}catch(e){}
+  if(!currentUser||currentUser.role!=='aluno'||isAdminUser())return;
+  if(!isDegustacao())return; // já tem pacote ativo: não incomoda
+  showAssineScreen(currentUser.email||'',{highlight:key});
 }
 function hideAssineScreen(){var sc=document.getElementById('assine-screen');if(sc)sc.style.display='none';}
 // Compra de um plano a partir da landing. Conta primeiro: o aluno cria/entra na
 // conta e conclui a assinatura dentro da plataforma, de modo que a assinatura já
 // fique vinculada à conta no momento do pagamento.
 function goCheckout(key){
+  try{sessionStorage.setItem('endo_plan_intent',key||'');}catch(e){}
   showLoginScreen();
 }
 function startSupabaseAuthWatcher(){
