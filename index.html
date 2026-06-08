@@ -874,7 +874,7 @@ textarea{resize:vertical;line-height:1.6}
       <p class="lp-sec-sub">No Simulador de Casos e na Prescrição Comentada você conduz o caso passo a passo e, no fim, recebe nota, pontos fortes, pontos a melhorar e conclusão.</p>
       <div class="lp-demo">
         <div class="lp-panel">
-          <div class="lp-panel-tag">♡ Simulador de Casos</div>
+          <div class="lp-panel-tag">🩺 Simulador de Casos</div>
           <div class="lp-stage">
             <div class="lp-bub2 doc st1">📋 Caso: mulher, 28 anos, com amenorreia, galactorreia e cefaleia. TSH normal e β-hCG negativo.</div>
             <div class="lp-bub2 doc st2"><b>Passo 1:</b> qual o exame inicial?</div>
@@ -1085,7 +1085,7 @@ textarea{resize:vertical;line-height:1.6}
         <button class="sb-item" data-p="crono">📅 Cronograma</button>
         <button class="sb-item" data-p="sr">🔁 Revisão Espaçada</button>
         <div class="sb-sec">Clínica</div>
-        <button class="sb-item" data-p="sim">♡ Simulador</button>
+        <button class="sb-item" data-p="sim">🩺 Simulador</button>
         <button class="sb-item" data-p="simfull">📝 Simulado</button>
         <button class="sb-item" data-p="calc">🧮 Calculadoras</button>
         <button class="sb-item" data-p="rx">💊 Prescrição</button>
@@ -3832,14 +3832,20 @@ function podcastPlayerHTML(p){
   }
   return '<audio controls preload="none" style="width:100%;height:36px" src="'+esc((p&&p.audio)||'')+'"></audio>';
 }
+// Ordem das categorias de podcast; "Miscelânea" (não categorizados) sempre por último.
+var POD_ORDER=['Tireoide','Diabetes','Obesidade','Adrenal','Neuroendocrinologia','Osteometabolismo','Dislipidemia','Endocrinologia Pediátrica','Endocrinologia Esportiva','Endocrinologia Masculina','Endocrinologia Feminina','Transgeneridade'];
+function podArea(p){return (p&&p.area)?p.area:'Miscelânea';}
 function renderPodcasts(){
   var frow=document.getElementById('pod-filter-row');
-  var cats={};podcasts.forEach(function(p){if(p.area)cats[p.area]=(cats[p.area]||0)+1;});
-  if(frow)frow.innerHTML='<button class="cat-pill'+(podFilter===''?' on':'')+'" data-podfilter="">Todos ('+podcasts.length+')</button>'+Object.keys(cats).map(function(c){return'<button class="cat-pill'+(podFilter===c?' on':'')+'" data-podfilter="'+esc(c)+'">'+esc(c)+' ('+cats[c]+')</button>';}).join('');
+  var cats={};podcasts.forEach(function(p){var a=podArea(p);cats[a]=(cats[a]||0)+1;});
+  var order=POD_ORDER.filter(function(c){return cats[c];});
+  Object.keys(cats).forEach(function(c){if(c!=='Miscelânea'&&order.indexOf(c)<0)order.push(c);});
+  if(cats['Miscelânea'])order.push('Miscelânea'); // sempre ao final
+  if(frow)frow.innerHTML='<button class="cat-pill'+(podFilter===''?' on':'')+'" data-podfilter="">Todos ('+podcasts.length+')</button>'+order.map(function(c){return'<button class="cat-pill'+(podFilter===c?' on':'')+'" data-podfilter="'+esc(c)+'">'+esc(c)+' ('+cats[c]+')</button>';}).join('');
   var el=document.getElementById('pod-list');if(!el)return;
-  var list=podFilter?podcasts.filter(function(p){return p.area===podFilter;}):podcasts;
+  var list=podFilter?podcasts.filter(function(p){return podArea(p)===podFilter;}):podcasts;
   if(!list.length){el.innerHTML='<div class="empty">Nenhum podcast disponível ainda. O admin pode adicionar episódios.</div>';return;}
-  el.innerHTML=list.map(function(p){return'<div class="card"><div style="display:flex;align-items:flex-start;gap:.8rem"><div style="width:46px;height:46px;border-radius:10px;background:var(--navy);display:flex;align-items:center;justify-content:center;font-size:1.3rem;flex-shrink:0">🎧</div><div style="flex:1;min-width:0"><div style="font-size:.85rem;font-weight:700;color:var(--tx);margin-bottom:2px">'+esc(p.title)+'</div><div style="font-size:.68rem;color:var(--t3);margin-bottom:.4rem">'+(p.area?'<span class="tag tag-blue" style="margin-right:5px">'+esc(p.area)+'</span>':'')+esc(p.desc||'')+'</div>'+podcastPlayerHTML(p)+'</div></div></div>';}).join('');
+  el.innerHTML=list.map(function(p){var a=podArea(p);return'<div class="card"><div style="display:flex;align-items:flex-start;gap:.8rem"><div style="width:46px;height:46px;border-radius:10px;background:var(--navy);display:flex;align-items:center;justify-content:center;font-size:1.3rem;flex-shrink:0">🎧</div><div style="flex:1;min-width:0"><div style="font-size:.85rem;font-weight:700;color:var(--tx);margin-bottom:2px">'+esc(p.title)+'</div><div style="font-size:.68rem;color:var(--t3);margin-bottom:.4rem"><span class="tag tag-blue" style="margin-right:5px">'+esc(a)+'</span>'+esc(p.desc||'')+'</div>'+podcastPlayerHTML(p)+'</div></div></div>';}).join('');
 }
 
 // ── CURSOS (aluno) ──
