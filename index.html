@@ -2780,7 +2780,7 @@ function ckPay(){
       if(!tok||!tok.id)throw new Error((tok&&tok.message)||'Não foi possível validar o cartão. Confira os dados.');
       return fetch('/api/checkout/subscribe',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({plan:_ckPlan,card_token:tok.id,email:email,name:name,document:doc})});
     }).then(function(r){return r.json().catch(function(){return {};});}).then(function(d){
-      if(!d||!d.ok)throw new Error((d&&d.error)||'Pagamento não aprovado. Tente outro cartão.');
+      if(!d||!d.ok)throw new Error(((d&&d.error)||'Pagamento não aprovado.')+((d&&d.status)?' [status: '+d.status+']':''));
       closeCheckout();
       try{notify('Assinatura ativada! Atualizando seu acesso…','ok');}catch(e){}
       setTimeout(function(){try{location.reload();}catch(e){}},1400);
