@@ -1057,6 +1057,7 @@ textarea{resize:vertical;line-height:1.6}
     <div class="tb-right">
       <button class="btn-cta" id="btn-feedback-cta" style="background:#f59e0b">💬 Feedback</button>
       <button class="btn-cta" id="btn-chat-cta">🤖 Chat IA</button>
+      <span id="tb-plan" title="Seu plano" style="display:none;font-size:.66rem;font-weight:800;padding:.3rem .7rem;border-radius:999px;white-space:nowrap;letter-spacing:.02em"></span>
       <div class="tb-user" id="tb-user-btn">
         <div style="text-align:right"><div class="tb-uname" id="tb-uname">—</div><div class="tb-usub" id="tb-usub">—</div></div>
         <div class="tb-avatar" id="tb-avatar">?</div>
@@ -1094,8 +1095,6 @@ textarea{resize:vertical;line-height:1.6}
         <button class="sb-item" data-p="mural">📢 Mural</button>
         <button class="sb-item" data-p="chat">💬 Chat IA</button>
         <button class="sb-item" data-p="perfil">👤 Perfil</button>
-        <div id="sb-plan" style="display:none;margin:.55rem .2rem .15rem;padding:.5rem .65rem;border-radius:10px;background:rgba(255,255,255,.06)"><span style="display:block;text-transform:uppercase;letter-spacing:.07em;font-weight:700;font-size:.55rem;color:rgba(255,255,255,.42);margin-bottom:.12rem">Seu plano</span><span id="sb-plan-name" style="font-weight:800;color:#fff;font-size:.85rem">—</span></div>
-        <button class="sb-item" id="sb-upgrade" type="button" style="margin-top:.35rem;background:rgba(224,169,59,.16);color:#f0c469;font-weight:700">⭐ Fazer upgrade</button>
       </div>
       <div id="sb-admin" style="display:none">
         <div class="sb-sec">Admin</div>
@@ -1527,6 +1526,15 @@ textarea{resize:vertical;line-height:1.6}
 
     <div class="panel" id="panel-perfil">
       <div class="breadcrumb">Dashboard <b>/ Perfil</b></div>
+      <div id="perfil-plan-card" class="pc" style="display:none">
+        <div class="card" style="display:flex;align-items:center;justify-content:space-between;gap:1rem;flex-wrap:wrap">
+          <div>
+            <div style="font-size:.62rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--t3)">Seu plano</div>
+            <div id="perfil-plan-name" style="font-size:1.15rem;font-weight:800;color:var(--navy)">—</div>
+          </div>
+          <button class="btn btn-primary" id="perfil-upgrade" type="button" style="min-width:180px;justify-content:center">⭐ Fazer upgrade</button>
+        </div>
+      </div>
       <div id="perfil-body"></div>
     </div>
 
@@ -3044,16 +3052,36 @@ function currentPlanKey(){
   if(userAcessos.indexOf('plano')>=0)return 'gold';
   return '';
 }
-// Mostra o plano atual do aluno na sidebar e ajusta o botão de upgrade.
+// Mostra o plano atual do aluno na topbar (canto superior direito) e na aba Perfil.
 function updatePlanBadge(){
-  var box=document.getElementById('sb-plan'),nm=document.getElementById('sb-plan-name'),up=document.getElementById('sb-upgrade');
-  if(!box||!nm)return;
-  if(isAdminUser()){box.style.display='none';if(up)up.style.display='none';return;}
   var k=currentPlanKey();
   var labels={standard:'Standard',gold:'Gold',premium:'Premium'};
-  nm.textContent=k?labels[k]:'Degustação';
-  box.style.display='block';
-  if(up)up.style.display=(k==='premium')?'none':'flex';
+  var label=k?labels[k]:'Degustação';
+  var isAluno=!!(currentUser&&currentUser.role==='aluno')&&!isAdminUser();
+  // Chip na topbar
+  var chip=document.getElementById('tb-plan');
+  if(chip){
+    if(!isAluno){chip.style.display='none';}
+    else{
+      chip.textContent=label;
+      chip.style.display='inline-block';
+      chip.style.background=k?(k==='premium'?'rgba(139,92,246,.14)':'rgba(59,111,212,.14)'):'rgba(154,170,192,.18)';
+      chip.style.color=k?(k==='premium'?'#7a5cff':'#3b6fd4'):'#6b7a90';
+    }
+  }
+  // Card na aba Perfil
+  var pc=document.getElementById('perfil-plan-card'),pn=document.getElementById('perfil-plan-name'),pu=document.getElementById('perfil-upgrade');
+  if(pc){
+    if(!isAluno){pc.style.display='none';}
+    else{
+      pc.style.display='block';
+      if(pn)pn.textContent=label;
+      if(pu){
+        pu.style.display=(k==='premium')?'none':'inline-flex';
+        pu.textContent=isDegustacao()?'⭐ Ver pacotes':'⭐ Fazer upgrade do plano';
+      }
+    }
+  }
 }
 function markLockedNavItems(){
   try{updatePlanBadge();}catch(e){}
@@ -5903,7 +5931,7 @@ document.addEventListener('DOMContentLoaded',function(){
 
   // NAV
   document.querySelectorAll('.sb-item[data-p]').forEach(function(b){b.addEventListener('click',function(){goPanel(b.dataset.p);});});
-  var upBtn=document.getElementById('sb-upgrade');if(upBtn)upBtn.addEventListener('click',function(){try{closeMobileNav();}catch(e){}showAssineScreen((currentUser&&currentUser.email)||'',{upgrade:!isDegustacao()});});
+  var upBtn=document.getElementById('perfil-upgrade');if(upBtn)upBtn.addEventListener('click',function(){try{closeMobileNav();}catch(e){}showAssineScreen((currentUser&&currentUser.email)||'',{upgrade:!isDegustacao()});});
   document.getElementById('btn-chat-cta').addEventListener('click',function(){goPanel('chat');});
   document.getElementById('btn-feedback-cta').addEventListener('click',openFeedback);
 
