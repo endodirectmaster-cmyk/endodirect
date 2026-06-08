@@ -2679,8 +2679,12 @@ function enterAsMember(session){
 function assineBRL(n){return 'R$ '+Number(n||0).toLocaleString('pt-BR');}
 function renderAssinePlans(){
   var wrap=document.getElementById('assine-plans');if(!wrap)return;
+  var RANK={standard:1,gold:2,premium:3};
+  var curRank=RANK[currentPlanKey()]||0; // plano atual do aluno (0 = degustação)
   var html=(ENDO_TIERS||[]).map(function(t){
     var hi=t.badge==='Mais popular', top=t.badge==='Completo';
+    var tierRank=RANK[t.key]||0;
+    var owned=curRank>0&&tierRank<=curRank; // já tem (atual ou inferior) -> escurece
     var acc=hi?'#6f9bff':(top?'#b79dff':'#fff');
     var bd=hi?'#5585e8':(top?'#8b5cf6':'#2a3a5c');
     var bg=hi?'rgba(85,133,232,.08)':(top?'rgba(139,92,246,.1)':'#14203a');
@@ -2690,8 +2694,10 @@ function renderAssinePlans(){
     if(sel)bd=hi?'#5585e8':(top?'#8b5cf6':'#5fd39a');
     var bens=benefits.map(function(b){var c=b.indexOf('Curso')===0;return '<div style="display:flex;gap:.45rem;align-items:flex-start;font-size:.78rem;color:'+(c?'#f0dcae':'#aeb6c2')+';line-height:1.4"><span style="color:'+(c?'#f5b32c':'#5fd39a')+';font-weight:700">'+(c?'★':'✓')+'</span><span'+(c?' style="font-weight:600"':'')+'>'+esc(b)+'</span></div>';}).join('');
     var excl=(t.excl||[]).map(function(b){return '<div style="display:flex;gap:.45rem;align-items:flex-start;font-size:.78rem;color:#7e8aa0;line-height:1.4"><span style="color:#e06a6a;font-weight:700">✕</span><span>'+esc(b)+'</span></div>';}).join('');
-    var cta='<button type="button" class="btn assine-buy" data-plan="'+esc(t.key)+'" style="width:100%;justify-content:center;margin-top:auto;background:'+(top?'#8b5cf6':'#3b6fd4')+';color:#fff;border:0;font-weight:700">Assinar '+esc(t.nome)+'</button>';
-    return '<div id="assine-plan-'+esc(t.key)+'" style="position:relative;display:flex;flex-direction:column;gap:.55rem;text-align:left;border:'+(sel?'2px':'1.5px')+' solid '+bd+';border-radius:14px;padding:1.1rem 1rem;background:'+bg+';height:100%'+(sel?';box-shadow:0 0 0 4px rgba(95,211,154,.18)':'')+'">'
+    var cta=owned
+      ? '<div class="btn" style="width:100%;justify-content:center;margin-top:auto;background:transparent;color:#8a93a3;border:1px solid #2a3a5c;cursor:default;font-weight:700">'+(tierRank===curRank?'✓ Plano atual':'Já incluído')+'</div>'
+      : '<button type="button" class="btn assine-buy" data-plan="'+esc(t.key)+'" style="width:100%;justify-content:center;margin-top:auto;background:'+(top?'#8b5cf6':'#3b6fd4')+';color:#fff;border:0;font-weight:700">Assinar '+esc(t.nome)+'</button>';
+    return '<div id="assine-plan-'+esc(t.key)+'" style="position:relative;display:flex;flex-direction:column;gap:.55rem;text-align:left;border:'+(sel?'2px':'1.5px')+' solid '+bd+';border-radius:14px;padding:1.1rem 1rem;background:'+bg+';height:100%'+(owned?';opacity:.4;filter:grayscale(.45)':'')+(sel?';box-shadow:0 0 0 4px rgba(95,211,154,.18)':'')+'">'
       +badge
       +(sel?'<span style="position:absolute;top:-11px;right:12px;font-size:.54rem;font-weight:800;text-transform:uppercase;letter-spacing:.06em;background:#2e7d54;color:#dcffe9;padding:.16rem .5rem;border-radius:999px">✓ Escolhido</span>':'')
       +'<div style="font-size:1.1rem;font-weight:800;color:'+acc+'">'+esc(t.nome)+'</div>'
