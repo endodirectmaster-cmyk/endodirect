@@ -2687,13 +2687,11 @@ function showAssineScreen(email,opts){
   sc.style.display='flex';
 }
 function hideAssineScreen(){var sc=document.getElementById('assine-screen');if(sc)sc.style.display='none';}
-// Compra de um plano a partir da landing. Se o pacote tiver link de checkout
-// (ENDO_TIERS[].url, ex.: pagar.me), abre direto; caso contrário, leva à tela
-// de pacotes (seleção/assinatura) em vez da tela de login.
+// Compra de um plano a partir da landing. Conta primeiro: o aluno cria/entra na
+// conta e conclui a assinatura dentro da plataforma, de modo que a assinatura já
+// fique vinculada à conta no momento do pagamento.
 function goCheckout(key){
-  var t=(ENDO_TIERS||[]).filter(function(x){return x&&x.key===key;})[0];
-  if(t&&t.url){try{window.open(t.url,'_blank','noopener');return;}catch(e){}}
-  showAssineScreen((currentUser&&currentUser.email)||'');
+  showLoginScreen();
 }
 function startSupabaseAuthWatcher(){
   var client=getSupabaseClient();
