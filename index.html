@@ -652,6 +652,31 @@ textarea{resize:vertical;line-height:1.6}
 .lp-q-reveal{-webkit-animation:lpHL 8s infinite;animation:lpHL 8s infinite}
 .lp-q-exp{opacity:0;margin-top:.35rem;-webkit-animation:lpC 8s infinite;animation:lpC 8s infinite}
 @keyframes lpHL{0%,44%{border-color:#2a2f3a;background:transparent;color:#aeb6c2}52%,92%{border-color:#2e7d54;background:rgba(95,211,154,.1);color:#7fe0ad;font-weight:600}100%{border-color:#2a2f3a;background:transparent;color:#aeb6c2}}
+.lp-demo{display:grid;grid-template-columns:1fr 1fr;gap:1.1rem}
+@media(max-width:760px){.lp-demo{grid-template-columns:1fr}}
+.lp-panel{background:#16191f;border:1px solid #232730;border-radius:16px;padding:1.1rem}
+.lp-panel-tag{font-size:.7rem;font-weight:800;letter-spacing:.07em;text-transform:uppercase;color:#e0a93b;margin-bottom:.8rem;display:flex;align-items:center;gap:.4rem}
+.lp-stage{position:relative;min-height:316px}
+.lp-stage>.st1,.lp-stage>.st2,.lp-stage>.st3,.lp-stage>.st4{opacity:0}
+.lp-bub2{font-size:.78rem;line-height:1.45;border-radius:10px;padding:.5rem .7rem;margin-bottom:.45rem;max-width:92%}
+.lp-bub2.doc{background:#1b1f27;border:1px solid #2a2f3a;color:#cdd4df}
+.lp-bub2.me{background:rgba(224,169,59,.14);color:#f0c876;margin-left:auto}
+.lp-bub2.fb{background:rgba(95,211,154,.1);border:1px solid #2e7d54;color:#9fe6c0}
+.lp-report{position:absolute;inset:0;background:#16191f;display:flex;flex-direction:column;gap:.5rem;opacity:0;-webkit-animation:dRep 15s infinite;animation:dRep 15s infinite}
+.lp-report .score{display:flex;align-items:center;gap:.7rem;margin-bottom:.1rem}
+.lp-report .score b{font-size:1.9rem;color:#5fd39a;line-height:1}
+.lp-report .score span{font-size:.72rem;color:#8a93a3;text-transform:uppercase;letter-spacing:.06em;font-weight:700}
+.lp-rep-box{border:1px solid #2a2f3a;border-radius:10px;padding:.5rem .7rem;font-size:.76rem;line-height:1.45;color:#aeb6c2}
+.lp-rep-box h5{margin:0 0 .2rem;font-size:.62rem;letter-spacing:.06em;text-transform:uppercase}
+.st1{-webkit-animation:dStep1 15s infinite;animation:dStep1 15s infinite}
+.st2{-webkit-animation:dStep2 15s infinite;animation:dStep2 15s infinite}
+.st3{-webkit-animation:dStep3 15s infinite;animation:dStep3 15s infinite}
+.st4{-webkit-animation:dStep4 15s infinite;animation:dStep4 15s infinite}
+@keyframes dStep1{0%,3%{opacity:0;transform:translateY(8px)}7%,52%{opacity:1;transform:none}57%,100%{opacity:0}}
+@keyframes dStep2{0%,15%{opacity:0;transform:translateY(8px)}19%,52%{opacity:1;transform:none}57%,100%{opacity:0}}
+@keyframes dStep3{0%,25%{opacity:0;transform:translateY(8px)}29%,52%{opacity:1;transform:none}57%,100%{opacity:0}}
+@keyframes dStep4{0%,35%{opacity:0;transform:translateY(8px)}39%,52%{opacity:1;transform:none}57%,100%{opacity:0}}
+@keyframes dRep{0%,58%{opacity:0;transform:scale(.97)}65%,93%{opacity:1;transform:none}100%{opacity:0}}
 .lp-show{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:1.1rem}
 .lp-shot{background:#16191f;border:1px solid #232730;border-radius:16px;padding:1.1rem;display:flex;flex-direction:column}
 .lp-shot-tag{font-size:.62rem;font-weight:800;letter-spacing:.07em;text-transform:uppercase;color:#e0a93b;margin-bottom:.7rem}
@@ -690,8 +715,8 @@ textarea{resize:vertical;line-height:1.6}
   </div></div>
   <div class="lp-wrap">
     <section class="lp-hero">
-      <h1>A plataforma completa de <span>Endocrinologia</span> para residentes e endocrinologistas</h1>
-      <p>Banco de questões comentadas, flashcards inteligentes, mapas mentais, simulados, prescrição e um assistente de IA — tudo em um só lugar, baseado nas principais diretrizes (SBEM, SBD, ADA). Útil também para clínicos, cardiologistas, geriatras e outras especialidades.</p>
+      <h1>A plataforma completa de <span>Endocrinologia</span> e Metabologia</h1>
+      <p>Banco de questões comentadas, flashcards, mapas mentais, simulados, prescrição e um assistente de IA — para residentes, endocrinologistas e médicos de outras áreas (clínica médica, cardiologia, geriatria) que querem se aprofundar e se manter atualizados. Baseado nas principais diretrizes (SBEM, SBD, ADA).</p>
       <div class="lp-hero-btns">
         <button class="lp-cta" onclick="showLoginScreen()">Acessar a plataforma</button>
         <a class="lp-ghost" href="#planos">Ver planos</a>
@@ -774,17 +799,40 @@ textarea{resize:vertical;line-height:1.6}
             <div class="lp-mural-meta">Atualizado pelo radar diário · Fonte: Congresso Europeu de Obesidade</div>
           </div>
         </div>
-        <div class="lp-shot lp-anim lp-sim">
-          <div class="lp-shot-tag">♡ Simulador de Casos</div>
-          <div class="lp-bub doc">📋 Homem, 45 anos, HAS resistente (3 anti-hipertensivos, incluindo diurético) há 3 anos. K⁺ 3,1 mEq/L, relação aldosterona/renina elevada. Próximo passo?</div>
-          <div class="lp-bub me">Confirmar com teste de sobrecarga salina e localizar com TC de adrenais</div>
-          <div class="lp-bub fb">✓ Hiperaldosteronismo primário: após a triagem (ARR), confirme a autonomia da aldosterona (sobrecarga salina/captopril) e faça TC. Se houver indicação cirúrgica, o cateterismo de veias adrenais define a lateralização.</div>
+      </div>
+    </section>
+    <section class="lp-section">
+      <h2 class="lp-sec-title">Aprenda interagindo com a IA</h2>
+      <p class="lp-sec-sub">No Simulador de Casos e na Prescrição Comentada você conduz o caso passo a passo e, no fim, recebe nota, pontos fortes, pontos a melhorar e conclusão.</p>
+      <div class="lp-demo">
+        <div class="lp-panel">
+          <div class="lp-panel-tag">♡ Simulador de Casos</div>
+          <div class="lp-stage">
+            <div class="lp-bub2 doc st1">📋 Caso: mulher, 28 anos, com amenorreia, galactorreia e cefaleia. TSH normal e β-hCG negativo.</div>
+            <div class="lp-bub2 doc st2"><b>Passo 1:</b> qual o exame inicial?</div>
+            <div class="lp-bub2 me st3">Dosar prolactina</div>
+            <div class="lp-bub2 fb st4">✓ Correto. Prolactina elevada → investigar prolactinoma com RM de sela, após excluir fármacos e hipotireoidismo.</div>
+            <div class="lp-report">
+              <div class="score"><b>80%</b><span>Relatório final</span></div>
+              <div class="lp-rep-box"><h5 style="color:#5fd39a">Pontos fortes</h5>Priorização diagnóstica correta; conduta segura e raciocínio bem estruturado.</div>
+              <div class="lp-rep-box"><h5 style="color:#f0b35b">Pontos a melhorar</h5>Detalhar a exclusão de causas secundárias antes da imagem.</div>
+              <div class="lp-rep-box"><h5 style="color:#7ab8ff">Conclusão</h5>Bom desempenho — pronto para casos de complexidade intermediária.</div>
+            </div>
+          </div>
         </div>
-        <div class="lp-shot lp-anim lp-rx">
-          <div class="lp-shot-tag">💊 Prescrição Comentada</div>
-          <div class="lp-bub doc">📋 Mulher, 58 anos, DM2 com DRC estágio 3b (TFG 38), HbA1c 8,5% em uso de metformina 2 g/dia. Otimize a conduta.</div>
-          <div class="lp-rx-pr">Reduzir metformina para 1 g/dia (TFG &lt; 45) e iniciar dapagliflozina 10 mg/dia.</div>
-          <div class="lp-bub fb">✓ Avaliação da IA: ajuste da metformina pela TFG correto; iSGLT2 indicado pela nefro/cardioproteção mesmo com controle modesto (suspender se TFG &lt; 25). Prefira-o à sulfonilureia (risco de hipoglicemia). Monitore TFG e volemia e oriente as "sick-day rules".</div>
+        <div class="lp-panel">
+          <div class="lp-panel-tag">💊 Prescrição Comentada</div>
+          <div class="lp-stage">
+            <div class="lp-bub2 doc st1">📋 Mulher, 58 anos, DM2 com DRC estágio 3b (TFG 38), HbA1c 8,5% em metformina 2 g/dia. Faça a prescrição.</div>
+            <div class="lp-bub2 me st2">Reduzir metformina para 1 g/dia e iniciar dapagliflozina 10 mg/dia.</div>
+            <div class="lp-bub2 doc st3">⏳ Avaliando sua prescrição…</div>
+            <div class="lp-report">
+              <div class="score"><b>85%</b><span>Avaliação da IA</span></div>
+              <div class="lp-rep-box"><h5 style="color:#5fd39a">Acertos</h5>Ajuste da metformina pela TFG e escolha do iSGLT2 pela nefro/cardioproteção.</div>
+              <div class="lp-rep-box"><h5 style="color:#f0b35b">A corrigir</h5>Especificar titulação, metas e monitorização de TFG/volemia.</div>
+              <div class="lp-rep-box"><h5 style="color:#7ab8ff">Conclusão</h5>Prescrição segura e atual, com pequenos ajustes de detalhamento.</div>
+            </div>
+          </div>
         </div>
       </div>
     </section>
