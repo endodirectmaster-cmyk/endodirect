@@ -2818,8 +2818,12 @@ function ckPay(){
     }).then(function(r){return r.json().catch(function(){return {};});}).then(function(d){
       if(!d||!d.ok)throw new Error(((d&&d.error)||'Pagamento não aprovado.')+((d&&d.status)?' [status: '+d.status+']':''));
       closeCheckout();
-      try{notify('Assinatura ativada! Atualizando seu acesso…','ok');}catch(e){}
-      setTimeout(function(){try{location.reload();}catch(e){}},1400);
+      hideAssineScreen();
+      try{notify('Assinatura ativada! Acesso liberado. 🎉','ok');}catch(e){}
+      // Sem reload: mantém a sessão e atualiza o acesso em tela.
+      var ap=document.getElementById('app-screen');if(ap&&currentUser)ap.style.display=(currentUser.role==='admin')?'block':'flex';
+      try{goPanel('dash');}catch(e){}
+      try{hydrateRemoteState();}catch(e){} // re-hidrata: refreshAfterRemoteState reaplica o gating (desbloqueia os painéis)
     }).catch(function(e){ckErr((e&&e.message)||'Falha ao processar o pagamento.');btn.disabled=false;btn.textContent=old;});
   });
 }
