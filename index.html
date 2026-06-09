@@ -2695,6 +2695,7 @@ function keepSessionAlive(){hideSessionWarning();sessionLastActivity=Date.now();
 ['mousemove','mousedown','keydown','touchstart','scroll'].forEach(function(ev){document.addEventListener(ev,markSessionActivity,true);});
 function doLogout(){
   hideSessionWarning();
+  try{lsSet('demo_session',null);lsSet('last_panel',null);}catch(e){}
   var client=getSupabaseClient();
   if(client&&currentUser&&currentUser.auth==='supabase-google'){client.auth.signOut().catch(function(){});}
   currentUser=null;
@@ -2766,6 +2767,7 @@ function legacyGooglePromptLogin(){
 function isAdminEmail(email){email=(email||"").toLowerCase();return GOOGLE_ADMIN_EMAILS.indexOf(email)>=0||USERS.some(function(x){return x.role==='admin'&&x.email===email;});}
 function loginFromSupabaseSession(session){
   if(!session||!session.user||!session.user.email)return;
+  lsSet('demo_session',null); // login real: invalida qualquer sessão demo persistida
   var email=(session.user.email||'').toLowerCase();
   if(isAdminEmail(email)){
     var au=USERS.find(function(x){return x.role==='admin'&&x.email===email;})||{name:email.split('@')[0],role:'admin',sub:'Professor'};
@@ -3353,6 +3355,7 @@ function showBancoLock(show){
 }
 function goPanel(id){
   if(!canSeePanel(id)){showLockedPanel(id);return;}
+  try{if(currentUser&&currentUser.role!=='admin')lsSet('last_panel',id);}catch(e){} // lembra o painel p/ restaurar no reload
   document.querySelectorAll('.panel').forEach(function(p){p.classList.remove('on');});
   var el=document.getElementById('panel-'+id);
   if(el)el.classList.add('on');
@@ -4242,20 +4245,27 @@ function initCalc(){
   el.innerHTML=CALCS.map(function(c){return'<div class="card" style="cursor:pointer" data-calc="'+c.id+'"><div style="font-size:.84rem;font-weight:700;color:var(--tx);margin-bottom:2px">'+esc(c.name)+'</div><div style="font-size:.66rem;color:var(--t3);margin-bottom:.3rem">'+esc(c.area)+'</div><div style="font-size:.71rem;color:var(--t2)">'+esc(c.desc)+'</div></div>';}).join('');
   if(activeCalc)openCalc(activeCalc);
 }
+function closeCalc(){
+  activeCalc=null;
+  var det=document.getElementById('calc-detail');if(det)det.innerHTML='';
+  var grid=document.getElementById('calc-grid');if(grid)grid.scrollIntoView({behavior:'smooth',block:'nearest'});
+}
 function openCalc(id){
   activeCalc=id;
   var c=CALCS.find(function(x){return x.id===id;});if(!c)return;
   var det=document.getElementById('calc-detail');
+  var closeBtn='<button class="btn btn-outline btn-sm" id="calc-close" style="margin-left:auto" title="Minimizar">✕ Minimizar</button>';
   if(c.external){
-    det.innerHTML='<div class="card" style="margin-top:.85rem"><div class="card-head"><span style="font-size:.92rem;font-weight:700">'+esc(c.name)+'</span><span class="tag tag-blue">'+esc(c.area)+'</span></div>'
+    det.innerHTML='<div class="card" style="margin-top:.85rem"><div class="card-head"><span style="font-size:.92rem;font-weight:700">'+esc(c.name)+'</span><span class="tag tag-blue">'+esc(c.area)+'</span>'+closeBtn+'</div>'
       +(c.desc2?'<div style="font-size:.78rem;color:var(--t2);line-height:1.6;margin:.5rem 0 .8rem">'+c.desc2+'</div>':'')
       +'<a class="btn btn-primary" href="'+esc(c.link)+'" target="_blank" rel="noopener" style="justify-content:center;text-decoration:none">'+esc(c.cta||'Abrir ferramenta oficial')+' ↗</a>'
       +(c.note?'<div style="font-size:.68rem;color:var(--t3);margin-top:.6rem;line-height:1.5;border-top:1px solid var(--bd);padding-top:.5rem">ℹ️ '+esc(c.note)+'</div>':'')
       +'</div>';
+    var cbx=document.getElementById('calc-close');if(cbx)cbx.addEventListener('click',closeCalc);
     det.scrollIntoView({behavior:'smooth',block:'nearest'});
     return;
   }
-  det.innerHTML='<div class="card" style="margin-top:.85rem"><div class="card-head"><span style="font-size:.92rem;font-weight:700">'+esc(c.name)+'</span><span class="tag tag-blue">'+esc(c.area)+'</span></div>'+
+  det.innerHTML='<div class="card" style="margin-top:.85rem"><div class="card-head"><span style="font-size:.92rem;font-weight:700">'+esc(c.name)+'</span><span class="tag tag-blue">'+esc(c.area)+'</span>'+closeBtn+'</div>'+
     c.fields.map(function(f){
       if(f.type==='select')return'<div class="fld2"><label>'+esc(f.label)+'</label><select data-calc-field="'+f.id+'">'+f.opts.map(function(o,i){return'<option value="'+f.vals[i]+'">'+esc(o)+'</option>';}).join('')+'</select></div>';
       return'<div class="fld2"><label>'+esc(f.label)+'</label><input type="number" step="any" data-calc-field="'+f.id+'" placeholder="0"></div>';
@@ -4264,6 +4274,7 @@ function openCalc(id){
     (c.note?'<div style="font-size:.68rem;color:var(--t3);margin-top:.6rem;line-height:1.5;border-top:1px solid var(--bd);padding-top:.5rem">ℹ️ '+esc(c.note)+'</div>':'')+
   '</div>';
   det.querySelectorAll('[data-calc-field]').forEach(function(inp){inp.addEventListener('input',calcUpdate);inp.addEventListener('change',calcUpdate);});
+  var cb2=document.getElementById('calc-close');if(cb2)cb2.addEventListener('click',closeCalc);
   calcUpdate();
   det.scrollIntoView({behavior:'smooth',block:'nearest'});
 }
@@ -6008,6 +6019,7 @@ function wirePerfil(){
     var av=document.getElementById('tb-avatar');if(av)av.textContent=nome.charAt(0);
     setText('um-name',nome);setText('dash-greeting','Bem-vindo, '+nome+'.');
     perfilEdit=false;
+    try{markLockedNavItems();}catch(e){} // atualiza visibilidade do Assistente de Prescrição
     notify('Perfil atualizado!','ok');
     renderPerfil();
   });
@@ -6326,6 +6338,20 @@ document.addEventListener('DOMContentLoaded',function(){
   // Recuperação de senha cai direto na tela de login (não na landing).
   try{if(isPasswordRecoveryUrl())showLoginScreen();}catch(e){}
   startSupabaseAuthWatcher();
+  // Restaura sessão de conta demo no reload (logins de teste não têm sessão
+  // Supabase). demo_session só fica setado quando o último login foi demo
+  // (login real e logout limpam), então restaurar aqui não conflita.
+  try{
+    var __ds=lsGet('demo_session');
+    if(__ds&&!currentUser&&!isPasswordRecoveryUrl()){
+      var __u=USERS.find(function(x){return x.email===__ds;});
+      if(__u){
+        doLogin(Object.assign({},__u));
+        var __lp=lsGet('last_panel');
+        if(__lp&&currentUser&&currentUser.role!=='admin'){try{if(canSeePanel(__lp))goPanel(__lp);}catch(e){}}
+      }
+    }
+  }catch(e){}
   setupMMPinchZoom();
   seedFlashcards();
   var mmsf=document.getElementById('mm-sub-filter');if(mmsf)mmsf.addEventListener('change',function(){mmSubFilter=this.value;renderMMList();});
@@ -6340,7 +6366,7 @@ document.addEventListener('DOMContentLoaded',function(){
     var pass=document.getElementById('login-pass').value||'';
     clearLoginError();
     var demo=USERS.find(function(x){return x.email===email&&x.pass&&x.pass===pass;});
-    if(demo){doLogin(Object.assign({},demo));return;}
+    if(demo){lsSet('demo_session',demo.email);doLogin(Object.assign({},demo));return;}
     var client=getSupabaseClient();
     if(!client){showLoginError('E-mail ou senha incorretos.');return;}
     var btn=document.getElementById('btn-login');if(btn)btn.disabled=true;
