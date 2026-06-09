@@ -22,6 +22,7 @@ module.exports = async function handler(req, res) {
     const result = await runRadar();
     return json(res, 200, { ok: true, ...result });
   } catch (error) {
+    console.error('[cron-radar] erro:', (error && error.stack) || error);
     return json(res, 500, { ok: false, error: (error && error.message) || 'Falha ao atualizar o radar.' });
   }
 };
