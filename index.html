@@ -4599,6 +4599,16 @@ var muralFilter='';
 var muralTipoFilter='';
 var muralSort='novos';
 var muralShowBreaking=(lsGet('mural_show_breaking')!==false); // mostra Breaking News por padrão
+var MURAL_PER_PAGE=10,muralPage=0,admMuralPage=0; // paginação do mural (10/pág)
+// HTML do paginador (vazio se só houver 1 página).
+function muralPagerHTML(page,pages,pfx){
+  if(pages<=1)return '';
+  return '<section class="mural-pager" style="display:flex;align-items:center;justify-content:center;gap:.9rem;margin-top:1.1rem">'
+    +'<button class="btn btn-outline btn-sm" id="'+pfx+'-prev"'+(page<=0?' disabled':'')+'>‹ Anterior</button>'
+    +'<span style="font-size:.78rem;color:var(--t2)">Página '+(page+1)+' de '+pages+'</span>'
+    +'<button class="btn btn-outline btn-sm" id="'+pfx+'-next"'+(page>=pages-1?' disabled':'')+'>Próxima ›</button>'
+    +'</section>';
+}
 function initMural(){
   var el=document.getElementById('mural-pc');if(!el)return;
   function dateBR(v){
@@ -5626,15 +5636,17 @@ function bindAdmSec(sec){
       renderAdmSec('mural');
     });});
     var admMF=document.getElementById('adm-mural-filter');
-    if(admMF){admMF.value=admMuralFilter;admMF.addEventListener('change',function(){admMuralFilter=this.value;renderAdmSec('mural');});}
+    if(admMF){admMF.value=admMuralFilter;admMF.addEventListener('change',function(){admMuralFilter=this.value;admMuralPage=0;renderAdmSec('mural');});}
     var admMFt=document.getElementById('adm-mural-filter-tipo');
-    if(admMFt){admMFt.value=admMuralTipoFilter;admMFt.addEventListener('change',function(){admMuralTipoFilter=this.value;renderAdmSec('mural');});}
+    if(admMFt){admMFt.value=admMuralTipoFilter;admMFt.addEventListener('change',function(){admMuralTipoFilter=this.value;admMuralPage=0;renderAdmSec('mural');});}
     var admMFs=document.getElementById('adm-mural-filter-sort');
-    if(admMFs){admMFs.value=admMuralSort;admMFs.addEventListener('change',function(){admMuralSort=this.value;renderAdmSec('mural');});}
+    if(admMFs){admMFs.value=admMuralSort;admMFs.addEventListener('change',function(){admMuralSort=this.value;admMuralPage=0;renderAdmSec('mural');});}
     var admBn=document.getElementById('adm-mural-bn-toggle');
-    if(admBn)admBn.addEventListener('click',function(){muralShowBreaking=!muralShowBreaking;lsSet('mural_show_breaking',muralShowBreaking);renderAdmSec('mural');});
+    if(admBn)admBn.addEventListener('click',function(){muralShowBreaking=!muralShowBreaking;lsSet('mural_show_breaking',muralShowBreaking);admMuralPage=0;renderAdmSec('mural');});
     var admMC=document.getElementById('adm-mural-clear');
-    if(admMC)admMC.addEventListener('click',function(){admMuralFilter='';admMuralTipoFilter='';renderAdmSec('mural');});
+    if(admMC)admMC.addEventListener('click',function(){admMuralFilter='';admMuralTipoFilter='';admMuralPage=0;renderAdmSec('mural');});
+    var admMp=document.getElementById('adm-mural-prev');if(admMp)admMp.addEventListener('click',function(){if(admMuralPage>0){admMuralPage--;renderAdmSec('mural');}});
+    var admMn=document.getElementById('adm-mural-next');if(admMn)admMn.addEventListener('click',function(){admMuralPage++;renderAdmSec('mural');});
     // preenche o form quando estiver editando
     if(admMuralShowForm&&admMuralEdit!==null){
       var av=admAvisos[admMuralEdit];
@@ -6071,6 +6083,9 @@ initMural=function(){
     avisos.forEach(function(a){var s=muralSubspecialty(a);per[s]=per[s]||0;if(per[s]<2){capped.push(a);per[s]++;}});
     avisos=capped;
   }
+  var mPages=Math.max(1,Math.ceil(avisos.length/MURAL_PER_PAGE));
+  if(muralPage>=mPages)muralPage=mPages-1;if(muralPage<0)muralPage=0;
+  var pageAvisos=avisos.slice(muralPage*MURAL_PER_PAGE,muralPage*MURAL_PER_PAGE+MURAL_PER_PAGE);
   var latest=admAvisos.reduce(function(max,a){return Math.max(max,Number(a.at)||0);},0);
   var updated=document.getElementById('mural-updated');if(updated)updated.textContent='Atualizado em '+dateBR(latest||Date.now());
   var count=avisos.length+' '+(avisos.length===1?'aviso':'avisos');
@@ -6078,13 +6093,16 @@ initMural=function(){
   el.innerHTML='<div class="mural-shell">'
     +'<section class="mural-hero"><div class="mural-eyebrow">Avisos para alunos</div><h2>Calendário, notícias e leituras essenciais</h2><p>Acompanhe prazos, artigos recentes, atualizações do curso e temas úteis para estudo dirigido. Os links abrem as fontes oficiais.</p></section>'
     +'<section class="mural-filter-card"><div class="mural-filter-main"><label class="mural-filter-field"><span class="mural-filter-label">Subespecialidade</span><select class="mural-filter-select" id="mural-filter">'+opt.html+'</select></label><label class="mural-filter-field"><span class="mural-filter-label">Tipo de artigo</span><select class="mural-filter-select" id="mural-filter-tipo">'+tipoOpts+'</select></label><label class="mural-filter-field"><span class="mural-filter-label">Ordenar</span><select class="mural-filter-select" id="mural-filter-sort">'+muralSortOptions(muralSort)+'</select></label><div class="mural-switch-wrap"><button type="button" id="mural-bn-toggle" class="mural-switch'+(muralShowBreaking?' on':'')+'" role="switch" aria-checked="'+(muralShowBreaking?'true':'false')+'" title="Mostrar Breaking News"><span class="ms-dot"></span></button><span>📣 Breaking News</span></div><span class="mural-count-pill">'+esc(count)+'</span><span class="mural-theme-pill">'+esc(tema)+'</span></div><button class="btn btn-outline" id="mural-clear" type="button">Limpar filtro</button></section>'
-    +'<section class="mural-grid">'+(avisos.length?avisos.map(function(a){return muralNoticeCardHTML(a,false);}).join(''):'<div class="empty mural-empty">Nenhum aviso encontrado para este filtro.</div>')+'</section>'
+    +'<section class="mural-grid">'+(pageAvisos.length?pageAvisos.map(function(a){return muralNoticeCardHTML(a,false);}).join(''):'<div class="empty mural-empty">Nenhum aviso encontrado para este filtro.</div>')+'</section>'
+    +muralPagerHTML(muralPage,mPages,'mural')
     +'</div>';
-  var sel=document.getElementById('mural-filter');if(sel){sel.value=muralFilter;sel.addEventListener('change',function(){muralFilter=this.value;initMural();});}
-  var selt=document.getElementById('mural-filter-tipo');if(selt){selt.value=muralTipoFilter;selt.addEventListener('change',function(){muralTipoFilter=this.value;initMural();});}
-  var sels=document.getElementById('mural-filter-sort');if(sels){sels.value=muralSort;sels.addEventListener('change',function(){muralSort=this.value;initMural();});}
-  var bn=document.getElementById('mural-bn-toggle');if(bn)bn.addEventListener('click',function(){muralShowBreaking=!muralShowBreaking;lsSet('mural_show_breaking',muralShowBreaking);initMural();});
-  var clear=document.getElementById('mural-clear');if(clear)clear.addEventListener('click',function(){muralFilter='';muralTipoFilter='';initMural();});
+  var sel=document.getElementById('mural-filter');if(sel){sel.value=muralFilter;sel.addEventListener('change',function(){muralFilter=this.value;muralPage=0;initMural();});}
+  var selt=document.getElementById('mural-filter-tipo');if(selt){selt.value=muralTipoFilter;selt.addEventListener('change',function(){muralTipoFilter=this.value;muralPage=0;initMural();});}
+  var sels=document.getElementById('mural-filter-sort');if(sels){sels.value=muralSort;sels.addEventListener('change',function(){muralSort=this.value;muralPage=0;initMural();});}
+  var bn=document.getElementById('mural-bn-toggle');if(bn)bn.addEventListener('click',function(){muralShowBreaking=!muralShowBreaking;lsSet('mural_show_breaking',muralShowBreaking);muralPage=0;initMural();});
+  var clear=document.getElementById('mural-clear');if(clear)clear.addEventListener('click',function(){muralFilter='';muralTipoFilter='';muralPage=0;initMural();});
+  var mp=document.getElementById('mural-prev');if(mp)mp.addEventListener('click',function(){if(muralPage>0){muralPage--;initMural();}});
+  var mn=document.getElementById('mural-next');if(mn)mn.addEventListener('click',function(){if(muralPage<mPages-1){muralPage++;initMural();}});
 };
 function simRetry(promiseFactory){
   return promiseFactory().catch(function(){return sleep(700).then(promiseFactory);});
@@ -6225,6 +6243,9 @@ admMuralSecHTML=function(){
   if(admMuralTipoFilter&&tipoList.indexOf(admMuralTipoFilter)<0)admMuralTipoFilter='';
   var tipoFiltroOpts='<option value="">Todos os tipos</option>'+tipoList.map(function(t){return'<option value="'+esc(t)+'"'+(admMuralTipoFilter===t?' selected':'')+'>'+esc(t)+'</option>';}).join('');
   var avisos=muralSortList(admAvisos,admMuralSort).filter(function(a){return (!admMuralFilter||muralSubspecialty(a)===admMuralFilter)&&(!admMuralTipoFilter||muralDisplayType(a)===admMuralTipoFilter)&&(muralShowBreaking||muralDisplayType(a)!=='Breaking News');});
+  var admMPages=Math.max(1,Math.ceil(avisos.length/MURAL_PER_PAGE));
+  if(admMuralPage>=admMPages)admMuralPage=admMPages-1;if(admMuralPage<0)admMuralPage=0;
+  var admPageAvisos=avisos.slice(admMuralPage*MURAL_PER_PAGE,admMuralPage*MURAL_PER_PAGE+MURAL_PER_PAGE);
   var count=avisos.length+' '+(avisos.length===1?'aviso':'avisos');
   var tema=admMuralFilter||admMuralTipoFilter||'Todas as subespecialidades';
   var tipoOpts=['Aviso','Comunicado','Artigo de Revisão','Ensaio Clínico','Metanálise','Perspectiva Clínica','Estudo Genético','Estudo Original','Evento','Urgente'].map(function(t){return'<option>'+esc(t)+'</option>';}).join('');
@@ -6242,7 +6263,8 @@ admMuralSecHTML=function(){
   +formHTML
   +'<div class="card" style="margin-bottom:1.1rem"><div style="display:flex;align-items:flex-start;justify-content:space-between;gap:1rem;flex-wrap:wrap"><div style="flex:1;min-width:240px"><div style="font-size:.62rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--t3);margin-bottom:.3rem">Gestão do mural dos alunos</div><div style="font-size:1.15rem;font-weight:700;color:var(--tx);margin-bottom:.35rem">Edite avisos, notícias e comunicados importantes</div><div style="font-size:.79rem;color:var(--t2);line-height:1.55">Os cards abaixo alimentam a aba Mural do estudante. Use etiquetas por tipo de conteúdo e subespecialidade para organizar leituras e atualizações.</div></div><button class="btn btn-outline" id="btn-adm-mural-preview">👁 Pré-visualizar como aluno</button></div></div>'
   +'<section class="mural-filter-card"><div class="mural-filter-main"><label class="mural-filter-field"><span class="mural-filter-label">Subespecialidade</span><select class="mural-filter-select" id="adm-mural-filter">'+opt.html+'</select></label><label class="mural-filter-field"><span class="mural-filter-label">Tipo de artigo</span><select class="mural-filter-select" id="adm-mural-filter-tipo">'+tipoFiltroOpts+'</select></label><label class="mural-filter-field"><span class="mural-filter-label">Ordenar</span><select class="mural-filter-select" id="adm-mural-filter-sort">'+muralSortOptions(admMuralSort)+'</select></label><div class="mural-switch-wrap"><button type="button" id="adm-mural-bn-toggle" class="mural-switch'+(muralShowBreaking?' on':'')+'" role="switch" aria-checked="'+(muralShowBreaking?'true':'false')+'" title="Mostrar Breaking News"><span class="ms-dot"></span></button><span>📣 Breaking News</span></div><span class="mural-count-pill">'+esc(count)+'</span><span class="mural-theme-pill">'+esc(tema)+'</span></div><button class="btn btn-outline" id="adm-mural-clear" type="button">Limpar filtro</button></section>'
-  +'<div class="mural-grid mural-admin-grid" id="adm-av-list">'+(avisos.length?avisos.map(function(a){return muralNoticeCardHTML(a,true);}).join(''):'<div class="empty mural-empty">'+(admAvisos.length?'Nenhum aviso encontrado para este filtro.':'Nenhum aviso publicado. Clique em "+ Novo aviso" para começar.')+'</div>')+'</div>'
+  +'<div class="mural-grid mural-admin-grid" id="adm-av-list">'+(admPageAvisos.length?admPageAvisos.map(function(a){return muralNoticeCardHTML(a,true);}).join(''):'<div class="empty mural-empty">'+(admAvisos.length?'Nenhum aviso encontrado para este filtro.':'Nenhum aviso publicado. Clique em "+ Novo aviso" para começar.')+'</div>')+'</div>'
+  +muralPagerHTML(admMuralPage,admMPages,'adm-mural')
   +'</div>';
 };
 var __bindAdmSecBase=bindAdmSec;
