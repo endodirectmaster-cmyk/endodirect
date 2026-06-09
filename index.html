@@ -5599,7 +5599,7 @@ function bindAdmSec(sec){
     if(bRadar)bRadar.addEventListener('click',function(){
       var client=getSupabaseClient();
       if(!client){notify('Supabase indisponível.','err');return;}
-      bRadar.disabled=true;bRadar.innerHTML=ldHTML('Buscando artigos...');
+      bRadar.disabled=true;bRadar.innerHTML=ldHTML('Atualizando...');
       client.auth.getSession().then(function(res){
         var token=res&&res.data&&res.data.session&&res.data.session.access_token;
         if(!token)throw new Error('Sessão expirada. Entre novamente.');
