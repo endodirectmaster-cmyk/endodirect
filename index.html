@@ -1113,6 +1113,7 @@ textarea{resize:vertical;line-height:1.6}
         <button class="sb-item" data-p="calc">🧮 Calculadoras</button>
         <button class="sb-item" data-p="simfull">📝 Simulado</button>
         <button class="sb-item" data-p="rx">💊 Prescrição</button>
+        <button class="sb-item" data-p="presc" id="sb-presc" style="display:none">💉 Assistente de Prescrição</button>
         <button class="sb-item" data-p="sim">🩺 Simulador</button>
         <button class="sb-item" data-p="art">📄 Resumidor</button>
         <div class="sb-sec">Pessoal</div>
@@ -1458,6 +1459,23 @@ textarea{resize:vertical;line-height:1.6}
           </div>
           <div id="rx-feedback"></div>
         </div>
+      </div>
+    </div>
+
+    <div class="panel" id="panel-presc">
+      <div class="breadcrumb">Dashboard <b>/ Assistente de Prescrição</b></div>
+      <div class="ph"><h1>Assistente de Prescrição</h1><p>Apoio à prescrição com receituário, LME, exames e seguimento — baseado em diretrizes (SBEM, SBD, ADA) e na regulamentação brasileira (ANVISA, SUS).</p></div>
+      <div class="pc">
+        <div style="background:#fff7ed;border:1px solid #fed7aa;border-radius:var(--rs);padding:.7rem .9rem;margin-bottom:.85rem;font-size:.72rem;color:#9a3412;line-height:1.55">⚠️ <b>Ferramenta educacional de apoio à decisão.</b> Não substitui o julgamento clínico, a avaliação individual do paciente nem a consulta às bulas e diretrizes vigentes. Confira sempre doses, contraindicações e interações antes de prescrever.</div>
+        <div class="gen-box">
+          <div class="fld2"><label>Diagnóstico / condição clínica *</label><input type="text" id="presc-dx" placeholder="Ex: Diabetes mellitus tipo 2; Hipotireoidismo; Osteoporose pós-menopausa"></div>
+          <div class="g2" style="margin-bottom:.65rem">
+            <div class="fld2" style="margin:0"><label>Medicamento ou classe (opcional)</label><input type="text" id="presc-med" placeholder="Ex: semaglutida; levotiroxina; alendronato"></div>
+            <div class="fld2" style="margin:0"><label>Dados do paciente (opcional)</label><input type="text" id="presc-pac" placeholder="Ex: 58 anos, DRC estágio 3, HbA1c 8,5%"></div>
+          </div>
+          <button class="btn btn-primary" id="btn-presc-gen">▶ Gerar orientação</button>
+        </div>
+        <div id="presc-result"></div>
       </div>
     </div>
 
@@ -2574,6 +2592,7 @@ function startApp(){
     renderAdmSec(admRestoreSec());
   }else{
     goPanel('dash');initAll();
+    try{markLockedNavItems();}catch(e){}
   }
 }
 function doLogin(u){
@@ -3081,7 +3100,7 @@ function startGoogleOAuth(){
   });
 }
 
-var PANEL_LABELS={dash:'Dashboard',quest:'Questões',flash:'Flashcards',mmap:'Mapas Mentais',podcast:'Podcasts',cursos:'Cursos',crono:'Cronograma',sr:'Revisão Espaçada',sim:'Simulador',simfull:'Simulado',calc:'Calculadoras',rx:'Prescrição',art:'Resumidor',notas:'Caderno',mural:'Mural',chat:'Chat IA',perfil:'Perfil',support:'Suporte',adm:'Painel Admin'};
+var PANEL_LABELS={dash:'Dashboard',quest:'Questões',flash:'Flashcards',mmap:'Mapas Mentais',podcast:'Podcasts',cursos:'Cursos',crono:'Cronograma',sr:'Revisão Espaçada',sim:'Simulador',simfull:'Simulado',calc:'Calculadoras',rx:'Prescrição',presc:'Assistente de Prescrição',art:'Resumidor',notas:'Caderno',mural:'Mural',chat:'Chat IA',perfil:'Perfil',support:'Suporte',adm:'Painel Admin'};
 function closeMobileNav(){
   document.body.classList.remove('mobile-nav-open');
   var b=document.getElementById('btn-mobile-nav');
@@ -3111,11 +3130,15 @@ var catalogoCursos=[];
 // Escopo exigido para ABRIR cada painel. Ausente = livre para qualquer membro.
 // (banco de questoes = sub-aba Provas em 'quest', liberada por qualquer pacote.)
 var PANEL_SCOPE={
-  sim:'plano', simfull:'plano', flash:'plano', mmap:'plano', podcast:'plano', rx:'plano', art:'plano'
+  sim:'plano', simfull:'plano', flash:'plano', mmap:'plano', podcast:'plano', rx:'plano', presc:'plano', art:'plano'
 };
 // Tier mínimo por painel: Prescrição = Gold(2); Simulador de Casos = Premium(3).
 // Os demais ficam em qualquer pacote (tier 1).
-var PANEL_MIN_TIER={rx:2, sim:3};
+var PANEL_MIN_TIER={rx:2, presc:2, sim:3};
+// Assistente de Prescrição: oferecido apenas a quem se identificou como
+// Endocrinologista ou "Outros" (outro profissional) na janela inicial.
+function userPerfil(){var p=(currentUser&&currentUser.profile)||lsGet('user_profile')||{};return p.perfil||'';}
+function prescProfileOk(){var pf=userPerfil();return pf==='Endocrinologista'||pf==='Outros';}
 function planRank(){var k=currentPlanKey();return k==='premium'?3:(k==='gold'?2:(k==='standard'?1:0));}
 function isAdminUser(){return !!(currentUser&&currentUser.role==='admin');}
 function hasScope(scope){return !scope||isAdminUser()||userAcessos.indexOf(scope)>=0;}
@@ -3157,6 +3180,7 @@ function consumeTrial(id){
 }
 function canSeePanel(id){
   if(isAdminUser())return true;
+  if(id==='presc'&&!prescProfileOk())return false;
   if(isDegustacao()){
     if(id==='mural')return muralTrialActive(); // degustação do mural: 7 dias
     if(DEGUSTACAO_PANELS[id])return true;
@@ -3301,6 +3325,7 @@ function updatePlanBadge(){
 }
 function markLockedNavItems(){
   try{updatePlanBadge();}catch(e){}
+  var sp=document.getElementById('sb-presc');if(sp)sp.style.display=prescProfileOk()?'':'none';
   document.querySelectorAll('#sb-aluno .sb-item[data-p]').forEach(function(b){
     var locked=!canSeePanel(b.dataset.p);
     var has=b.querySelector('.sb-lock');
@@ -3338,6 +3363,7 @@ function goPanel(id){
   if(id==='calc')initCalc();
   if(id==='notas')renderNoteList();
   if(id==='mural')initMural();
+  if(id==='presc')initPresc();
   if(id==='simfull'){renderSFPrev();populateInst('sf-inst');}
   if(id==='art')initArtUpload();
   if(id==='perfil')renderPerfil();
@@ -4279,6 +4305,186 @@ function evalRx(){
   .catch(function(e){fb.innerHTML='<div style="color:var(--red);font-size:.75rem">Erro: '+esc(e.message)+'</div>';})
   .then(function(){btn.disabled=false;btn.textContent='✓ Avaliar';});
 }
+// ── ASSISTENTE DE PRESCRIÇÃO (Endocrinologista / Outros) ──
+var prescInited=false;
+function initPresc(){
+  if(prescInited)return;prescInited=true;
+  var btn=document.getElementById('btn-presc-gen');
+  if(btn)btn.addEventListener('click',genPresc);
+  var dx=document.getElementById('presc-dx');
+  if(dx)dx.addEventListener('keydown',function(e){if(e.key==='Enter'){e.preventDefault();genPresc();}});
+}
+function prescList(arr){
+  if(!arr||!arr.length)return'<div style="font-size:.78rem;color:var(--t3)">—</div>';
+  return'<ul style="margin:.2rem 0 0;padding-left:1.1rem;font-size:.79rem;line-height:1.65">'+arr.map(function(x){return'<li>'+esc(String(x))+'</li>';}).join('')+'</ul>';
+}
+function prescCard(title,inner,accent){
+  return'<div class="card" style="margin-top:.7rem;border-left:4px solid '+(accent||'var(--blue)')+'"><div class="card-head"><span class="card-title">'+esc(title)+'</span></div>'+inner+'</div>';
+}
+// Base curada (revisada) das condições endócrinas prioritárias. Modelo híbrido:
+// quando o diagnóstico/medicamento casa com uma entrada, a orientação é montada
+// deterministicamente a partir daqui (sem IA); fora da lista, recorre-se à IA.
+// Doses = faixas usuais para adulto; conferir bula/PCDT/diretriz vigente.
+var PRESC_KB=[
+  {keys:['diabetes tipo 2','dm2','diabetes mellitus tipo 2','diabetes 2'],area:'Diabetes',
+   data:{resumo:'DM2: metformina como base; associar iSGLT2 ou análogo de GLP-1 conforme risco cardiovascular/renal e necessidade de perda de peso.',
+   prescricao:[{medicamento:'Metformina XR',dose:'500–2000 mg/dia',via:'VO',posologia:'1x/dia à noite, titular semanalmente',duracao:'contínuo'},
+     {medicamento:'Dapagliflozina (iSGLT2)',dose:'10 mg',via:'VO',posologia:'1x/dia',duracao:'contínuo (benefício CV/renal)'},
+     {medicamento:'Semaglutida (GLP-1)',dose:'0,25→1,0 mg/sem',via:'SC',posologia:'1x/semana, titular mensalmente',duracao:'contínuo'}],
+   receituario:{tipo:'Receita simples',justificativa:'Antidiabéticos orais e injetáveis não são substâncias de controle especial.'},
+   lme:{aplicavel:false,observacao:'No SUS, o CEAF contempla principalmente as insulinas análogas (ver entrada de insulina). Metformina/iSGLT2/GLP-1 não compõem o componente especializado.'},
+   exames:{basais:['HbA1c','Glicemia de jejum','Creatinina e TFG','Perfil lipídico','TGO/TGP','EAS / relação albumina-creatinina urinária'],monitorizacao:['HbA1c a cada 3–6 meses','TFG e albuminúria anuais','Perfil lipídico anual']},
+   periodicidade:'Retorno em 3 meses para ajuste; estável, a cada 3–6 meses.',
+   orientacoes:['Mudança de estilo de vida (dieta e atividade física)','iSGLT2: hidratação e higiene genital; suspender em intercorrências agudas','GLP-1: náusea inicial transitória, titular devagar'],
+   alertas:['Metformina: suspender se TFG <30; cautela 30–45','Risco de cetoacidose euglicêmica com iSGLT2','Não associar GLP-1 a inibidor de DPP-4']}},
+  {keys:['diabetes tipo 1','dm1','insulina','insulina análoga','glargina','asparte','lispro'],area:'Diabetes',
+   data:{resumo:'DM1 / insulinização: esquema basal-bolus com análogos de insulina; insulinas análogas disponíveis no SUS via Componente Especializado (PCDT Diabete Melito).',
+   prescricao:[{medicamento:'Insulina glargina (basal)',dose:'0,2–0,4 UI/kg/dia',via:'SC',posologia:'1x/dia',duracao:'contínuo'},
+     {medicamento:'Insulina asparte/lispro (bolus)',dose:'conforme contagem de carboidratos',via:'SC',posologia:'antes das refeições',duracao:'contínuo'}],
+   receituario:{tipo:'Receita simples',justificativa:'Insulinas não são de controle especial.'},
+   lme:{aplicavel:true,cid:'E10 (DM1) / E11 (DM2 insulinodependente)',medicamentos:'Insulinas análogas de ação prolongada (glargina, detemir, degludeca) e rápida (asparte, lispro, glulisina)',exames_exigidos:['HbA1c','Glicemia de jejum','Relatório com diagnóstico e esquema atual'],criterios:'Conforme PCDT Diabete Melito (hipoglicemias/controle inadequado com insulina humana).',observacao:'Preencher LME com CID, medicamento, posologia e exames; renovação periódica.'},
+   exames:{basais:['HbA1c','Glicemia de jejum','Função renal','TSH e anti-TPO (rastreio autoimune)'],monitorizacao:['HbA1c a cada 3 meses','Monitorização glicêmica capilar/contínua','Rastreio anual de complicações']},
+   periodicidade:'Retornos a cada 3 meses (ou antes se descontrole/hipoglicemias).',
+   orientacoes:['Educação em contagem de carboidratos','Técnica de aplicação e rodízio de locais','Conduta na hipoglicemia'],
+   alertas:['Risco de hipoglicemia','Ajustar em exercício e doença aguda']}},
+  {keys:['osteoporose','osteopenia','osteometabolismo','fratura por fragilidade'],area:'Osteometabolismo',
+   data:{resumo:'Osteoporose: bisfosfonato como 1ª linha + reposição de cálcio/vitamina D; opções no SUS via Componente Especializado.',
+   prescricao:[{medicamento:'Alendronato de sódio',dose:'70 mg',via:'VO',posologia:'1x/semana, em jejum, com água, permanecer ereto 30 min',duracao:'reavaliar em 3–5 anos'},
+     {medicamento:'Colecalciferol (vit. D)',dose:'1.000–2.000 UI/dia',via:'VO',posologia:'1x/dia',duracao:'contínuo'},
+     {medicamento:'Carbonato de cálcio',dose:'500–1.000 mg de Ca elementar/dia',via:'VO',posologia:'às refeições',duracao:'contínuo'}],
+   receituario:{tipo:'Receita simples',justificativa:'Não são substâncias de controle especial.'},
+   lme:{aplicavel:true,cid:'M80 / M81',medicamentos:'Alendronato, risedronato, raloxifeno, calcitriol, calcitonina, pamidronato/ácido zoledrônico e teriparatida (conforme PCDT)',exames_exigidos:['Densitometria óssea (DMO)','Cálcio total e iônico','Creatinina/TFG','25-OH-vitamina D'],criterios:'T-score ≤ −2,5 e/ou fratura por fragilidade, conforme PCDT Osteoporose.',observacao:'Teriparatida exige critérios específicos (falha/alto risco).'},
+   exames:{basais:['Densitometria óssea (DMO)','Cálcio, fósforo, PTH','25-OH-vitamina D','Função renal','Fosfatase alcalina'],monitorizacao:['DMO a cada 1–2 anos','Cálcio e vitamina D periódicos']},
+   periodicidade:'Reavaliação clínica/laboratorial anual; DMO em 1–2 anos.',
+   orientacoes:['Corrigir vitamina D e cálcio antes do antirreabsortivo','Tomar bisfosfonato em jejum, manter-se ereto 30 min','Prevenção de quedas, suspensão de tabagismo/álcool'],
+   alertas:['Não iniciar bisfosfonato com hipocalcemia/déficit de vit. D','Avaliação odontológica (osteonecrose de mandíbula)','Bisfosfonato VO contraindicado se TFG <30–35']}},
+  {keys:['hipotireoidismo','levotiroxina','tireoide','hashimoto','tsh elevado'],area:'Tireoide',
+   data:{resumo:'Hipotireoidismo: reposição com levotiroxina, ajustada pelo TSH.',
+   prescricao:[{medicamento:'Levotiroxina sódica',dose:'1,6 mcg/kg/dia (iniciar 25–50 mcg em idosos/cardiopatas)',via:'VO',posologia:'1x/dia em jejum, 30–60 min antes do café',duracao:'contínuo'}],
+   receituario:{tipo:'Receita simples',justificativa:'Levotiroxina não é de controle especial.'},
+   lme:{aplicavel:false,observacao:'Levotiroxina é medicamento do componente básico da assistência farmacêutica.'},
+   exames:{basais:['TSH','T4 livre','Anti-TPO'],monitorizacao:['TSH (e T4L) 6–8 semanas após início/ajuste','Após estável, TSH a cada 6–12 meses']},
+   periodicidade:'Reavaliar TSH em 6–8 semanas após cada ajuste de dose.',
+   orientacoes:['Tomar em jejum, longe de cálcio/ferro/omeprazol','Aderência diária é essencial','Ajustar dose na gestação (necessidade aumenta)'],
+   alertas:['Iniciar com dose baixa em coronariopatas/idosos','Excesso → tireotoxicose iatrogênica e perda óssea']}},
+  {keys:['hipertireoidismo','tireotoxicose','graves','metimazol','tiamazol','tapazol'],area:'Tireoide',
+   data:{resumo:'Hipertireoidismo (ex.: Doença de Graves): tionamida (metimazol) + betabloqueador para sintomas.',
+   prescricao:[{medicamento:'Metimazol (tiamazol)',dose:'10–30 mg/dia',via:'VO',posologia:'1–2x/dia, titular pelo T4L',duracao:'12–18 meses (Graves)'},
+     {medicamento:'Propranolol',dose:'10–40 mg',via:'VO',posologia:'8/8h conforme sintomas adrenérgicos',duracao:'até controle'}],
+   receituario:{tipo:'Receita simples',justificativa:'Tionamidas e betabloqueadores não são de controle especial.'},
+   lme:{aplicavel:false,observacao:'Não compõe o Componente Especializado.'},
+   exames:{basais:['TSH','T4 livre','T3','TRAb','Hemograma','TGO/TGP/bilirrubinas'],monitorizacao:['T4L a cada 4–6 semanas até controle','Hemograma e função hepática se sintomas','TSH normaliza mais tardiamente']},
+   periodicidade:'Reavaliar T4 livre em 4–6 semanas e ajustar a dose.',
+   orientacoes:['Procurar atendimento se febre/odinofagia (suspender e fazer hemograma)','Discutir opções definitivas (radioiodo/cirurgia)'],
+   alertas:['Agranulocitose (rara e grave)','Hepatotoxicidade','Propiltiouracila preferida no 1º trimestre da gestação']}},
+  {keys:['hipogonadismo','testosterona','reposição hormonal masculina','andrógeno','anabolizante','deficiência androgênica'],area:'Endocrinologia Masculina',
+   data:{resumo:'Hipogonadismo masculino confirmado: reposição de testosterona com monitorização de hematócrito e próstata. Andrógenos são de CONTROLE ESPECIAL.',
+   prescricao:[{medicamento:'Undecilato de testosterona',dose:'1.000 mg',via:'IM',posologia:'a cada 10–14 semanas (após dose de ataque)',duracao:'contínuo, reavaliar'},
+     {medicamento:'Testosterona gel 1%',dose:'40–80 mg/dia',via:'Transdérmica',posologia:'1x/dia pela manhã',duracao:'contínuo'}],
+   receituario:{tipo:'Receita de Controle Especial (branca, 2 vias)',justificativa:'Esteroides anabolizantes/andrógenos estão sujeitos a controle especial (ANVISA) — exigem receita de controle especial em duas vias.'},
+   lme:{aplicavel:false,observacao:'Reposição de testosterona não faz parte do Componente Especializado/SUS.'},
+   exames:{basais:['Testosterona total (2 dosagens matinais)','LH e FSH','Hematócrito/hemoglobina','PSA (≥40 anos)','Perfil lipídico'],monitorizacao:['Testosterona, hematócrito e PSA em 3–6 meses e depois anualmente']},
+   periodicidade:'Reavaliação em 3–6 meses no início; depois anual.',
+   orientacoes:['Confirmar diagnóstico antes de iniciar (sintomas + 2 dosagens baixas)','Suprime a fertilidade — usar hCG/clomifeno se desejo reprodutivo'],
+   alertas:['Contraindicada em câncer de próstata/mama','Suspender se hematócrito >54% (eritrocitose)','Avaliar risco cardiovascular e apneia do sono']}}
+];
+function prescNorm(s){return String(s||'').toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g,'');}
+function prescMatch(dx,med){
+  var hay=prescNorm(dx+' '+med);
+  for(var i=0;i<PRESC_KB.length;i++){
+    var ks=PRESC_KB[i].keys;
+    for(var j=0;j<ks.length;j++){if(hay.indexOf(prescNorm(ks[j]))>=0)return PRESC_KB[i];}
+  }
+  return null;
+}
+function genPresc(){
+  if(typeof blockIfDegustacao==='function'&&blockIfDegustacao())return;
+  var dx=(document.getElementById('presc-dx').value||'').trim();
+  if(!dx){notify('Informe o diagnóstico ou condição clínica.','err');return;}
+  var med=(document.getElementById('presc-med').value||'').trim();
+  var pac=(document.getElementById('presc-pac').value||'').trim();
+  var btn=document.getElementById('btn-presc-gen');
+  var out=document.getElementById('presc-result');
+  // Híbrido: 1º tenta a base curada (determinística, revisada).
+  var hit=prescMatch(dx,med);
+  if(hit){renderPresc(hit.data,dx,'curado');return;}
+  btn.disabled=true;btn.innerHTML=ldHTML('Gerando orientação...');
+  out.innerHTML='';
+  var sys='Você é um assistente de prescrição para endocrinologistas e médicos no Brasil. '
+    +'Responda em português do Brasil, baseado em diretrizes vigentes (SBEM, SBD, ADA, Endocrine Society) e na regulamentação brasileira. '
+    +'Regras de receituário (ANVISA Portaria 344/98): receita simples (maioria); receita de controle especial em 2 vias (lista C1 — ex.: alguns antidepressivos/anticonvulsivantes); notificação de receita B azul (psicotrópicos, ex.: benzodiazepínicos); notificação de receita A amarela (entorpecentes); receita de antimicrobianos em 2 vias (RDC 471/2021). '
+    +'LME = Laudo para Solicitação/Autorização de Medicamento do Componente Especializado da Assistência Farmacêutica (CEAF/SUS): indique se o fármaco pertence ao componente especializado, o CID-10, exames/critérios exigidos no protocolo (PCDT) e observações. '
+    +'Seja conservador com doses (faixas usuais para adulto, salvo dados do paciente), sinalize ajuste renal/hepático e contraindicações. '
+    +'Responda APENAS JSON válido, sem markdown, no formato: '
+    +'{"resumo":"1-2 frases","prescricao":[{"medicamento":"","dose":"","via":"","posologia":"","duracao":""}],'
+    +'"receituario":{"tipo":"","justificativa":""},'
+    +'"lme":{"aplicavel":true,"cid":"","medicamentos":"","exames_exigidos":["",""],"criterios":"","observacao":""},'
+    +'"exames":{"basais":["",""],"monitorizacao":["",""]},'
+    +'"periodicidade":"","orientacoes":["",""],"alertas":["",""]}';
+  var usr='Condição/diagnóstico: '+dx+(med?('\nMedicamento/classe de interesse: '+med):'')+(pac?('\nDados do paciente: '+pac):'')
+    +'\nGere a orientação de prescrição com prescrição sugerida, tipo de receituário, LME (se aplicável), exames basais e de monitorização, periodicidade de seguimento, orientações ao paciente e alertas de segurança.';
+  callAIJson(sys,usr,2000,1).then(function(d){
+    if(!d||(!d.prescricao&&!d.resumo))throw new Error('Resposta inválida da IA.');
+    renderPresc(d,dx);
+  }).catch(function(e){
+    out.innerHTML='<div style="color:var(--red);font-size:.78rem;margin-top:.6rem">Erro: '+esc(e.message||'falha ao gerar')+'</div>';
+  }).then(function(){btn.disabled=false;btn.innerHTML='▶ Gerar orientação';});
+}
+function renderPresc(d,dx,source){
+  var out=document.getElementById('presc-result');
+  var html='';
+  var srcTag=source==='curado'
+    ?'<span class="tag tag-grn" style="font-size:.62rem">✓ Conteúdo curado</span>'
+    :'<span class="tag tag-blue" style="font-size:.62rem">IA</span>';
+  html+='<div class="card" style="margin-top:.85rem"><div class="card-head"><span class="card-title">📋 Orientação — '+esc(dx)+'</span>'+srcTag+'</div>'
+    +'<div style="font-size:.8rem;line-height:1.7;color:var(--t2)">'+esc(d.resumo||'')+'</div></div>';
+  var presc=Array.isArray(d.prescricao)?d.prescricao:[];
+  var ph=presc.length?presc.map(function(m){
+    return'<div style="border-top:1px solid var(--bd);padding:.5rem 0;font-size:.79rem;line-height:1.6">'
+      +'<div style="font-weight:700;color:var(--tx)">'+esc(m.medicamento||'')+(m.dose?(' — '+esc(m.dose)):'')+'</div>'
+      +'<div style="color:var(--t2)">'+[m.via,m.posologia,m.duracao].filter(Boolean).map(esc).join(' · ')+'</div></div>';
+  }).join(''):'<div style="font-size:.78rem;color:var(--t3)">—</div>';
+  html+=prescCard('💊 Prescrição sugerida',ph,'#2563eb');
+  if(d.receituario){
+    html+=prescCard('🧾 Receituário',
+      '<div style="font-size:.79rem;line-height:1.65"><b>'+esc(d.receituario.tipo||'—')+'</b>'
+      +(d.receituario.justificativa?('<div style="color:var(--t2);margin-top:.25rem">'+esc(d.receituario.justificativa)+'</div>'):'')+'</div>','#6d3fb5');
+  }
+  if(d.lme){
+    if(d.lme.aplicavel){
+      var li='<div style="font-size:.79rem;line-height:1.65">';
+      if(d.lme.cid)li+='<div><b>CID-10:</b> '+esc(d.lme.cid)+'</div>';
+      if(d.lme.medicamentos)li+='<div><b>Medicamentos (CEAF):</b> '+esc(d.lme.medicamentos)+'</div>';
+      if(d.lme.criterios)li+='<div style="margin-top:.25rem"><b>Critérios:</b> '+esc(d.lme.criterios)+'</div>';
+      li+='<div style="margin-top:.3rem"><b>Exames exigidos:</b>'+prescList(d.lme.exames_exigidos)+'</div>';
+      if(d.lme.observacao)li+='<div style="color:var(--t3);margin-top:.3rem;font-size:.74rem">'+esc(d.lme.observacao)+'</div>';
+      li+='</div>';
+      html+=prescCard('📑 LME — Componente Especializado (SUS)',li,'#16a34a');
+    }else{
+      html+=prescCard('📑 LME — Componente Especializado (SUS)','<div style="font-size:.78rem;color:var(--t2)">Não se aplica: medicamento fora do Componente Especializado da Assistência Farmacêutica.'+(d.lme.observacao?(' '+esc(d.lme.observacao)):'')+'</div>','#16a34a');
+    }
+  }
+  if(d.exames){
+    html+=prescCard('🧪 Exames',
+      '<div style="font-size:.79rem"><div style="font-weight:700;color:var(--tx)">Basais / antes de iniciar</div>'+prescList(d.exames.basais)
+      +'<div style="font-weight:700;color:var(--tx);margin-top:.5rem">Monitorização</div>'+prescList(d.exames.monitorizacao)+'</div>','#0ea5e9');
+  }
+  if(d.periodicidade){
+    html+=prescCard('📅 Periodicidade de seguimento','<div style="font-size:.79rem;line-height:1.65;color:var(--t2)">'+esc(d.periodicidade)+'</div>','#f59e0b');
+  }
+  if(d.orientacoes&&d.orientacoes.length){
+    html+=prescCard('🗣️ Orientações ao paciente',prescList(d.orientacoes),'#10b981');
+  }
+  if(d.alertas&&d.alertas.length){
+    html+=prescCard('⚠️ Alertas de segurança',prescList(d.alertas),'#c0392b');
+  }
+  var fonte=source==='curado'
+    ?'Conteúdo curado a partir de diretrizes (SBEM, SBD, ADA) e da regulamentação brasileira (ANVISA Portaria 344/98, PCDT/CEAF do SUS). Doses são faixas usuais para adulto.'
+    :'Conteúdo gerado por IA com base em diretrizes e na regulamentação brasileira (ANVISA Portaria 344/98, CEAF/SUS).';
+  html+='<div style="font-size:.7rem;color:var(--t3);margin-top:.7rem;line-height:1.5;border-top:1px solid var(--bd);padding-top:.5rem">ℹ️ '+fonte+' Confira sempre doses, contraindicações, interações e a versão vigente dos protocolos antes de prescrever.</div>';
+  out.innerHTML=html;
+  out.scrollIntoView({behavior:'smooth',block:'nearest'});
+}
 // ── RESUMIDOR ──
 var artFileData=null,artFileInited=false;
 function initArtUpload(){
@@ -5173,7 +5379,6 @@ function admCursosHTML(){
   return '<div class="adm-ph"><h1>Cursos</h1><p>Importe e organize videoaulas por curso.</p></div>'
   +'<div class="adm-pc">'
   +'<div class="pill-tab-row">'
-    +'<button class="pill-tab'+(admCursoSubtab==='catalogo'?' on':'')+'" data-csub="catalogo">📦 Catálogo &amp; planos</button>'
     +'<button class="pill-tab'+(admCursoSubtab==='ver'?' on':'')+'" data-csub="ver">📺 Ver cursos</button>'
     +'<button class="pill-tab'+(admCursoSubtab==='importar'?' on':'')+'" data-csub="importar">⬆️ Importar videoaula</button>'
   +'</div>'
