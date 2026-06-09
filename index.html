@@ -278,6 +278,11 @@ textarea{resize:vertical;line-height:1.6}
 .mural-filter-main{display:grid;grid-template-columns:minmax(170px,1fr) minmax(170px,1fr) max-content max-content;align-items:end;justify-content:start;gap:.7rem;flex:1;min-width:0}
 .mural-filter-field{display:flex;flex-direction:column;gap:.35rem;min-width:0}
 .mural-filter-select{height:40px}
+.mural-switch-wrap{display:flex;align-items:center;gap:.5rem;font-size:.78rem;color:var(--t2);font-weight:600;white-space:nowrap}
+.mural-switch{width:42px;height:24px;border-radius:999px;border:none;background:var(--bd2);position:relative;cursor:pointer;flex-shrink:0;transition:background .15s;padding:0}
+.mural-switch.on{background:var(--blue)}
+.mural-switch .ms-dot{position:absolute;top:3px;left:3px;width:18px;height:18px;border-radius:50%;background:#fff;transition:left .15s;box-shadow:0 1px 3px rgba(0,0,0,.25)}
+.mural-switch.on .ms-dot{left:21px}
 .mural-count-pill{display:inline-flex;align-items:center;justify-content:center;border-radius:5px;background:var(--blue-l);color:var(--blue);font-size:.66rem;font-weight:800;padding:.34rem .6rem;white-space:nowrap}
 .mural-theme-pill{display:inline-flex;align-items:center;justify-content:center;border-radius:5px;background:var(--s2);color:var(--tx);font-size:.66rem;font-weight:800;padding:.34rem .6rem;white-space:nowrap}
 .mural-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:1rem}
@@ -4336,6 +4341,7 @@ function execNoteCmd(cmd){
 var muralFilter='';
 var muralTipoFilter='';
 var muralSort='novos';
+var muralShowBreaking=(lsGet('mural_show_breaking')!==false); // mostra Breaking News por padrão
 function initMural(){
   var el=document.getElementById('mural-pc');if(!el)return;
   function dateBR(v){
@@ -5369,6 +5375,8 @@ function bindAdmSec(sec){
     if(admMFt){admMFt.value=admMuralTipoFilter;admMFt.addEventListener('change',function(){admMuralTipoFilter=this.value;renderAdmSec('mural');});}
     var admMFs=document.getElementById('adm-mural-filter-sort');
     if(admMFs){admMFs.value=admMuralSort;admMFs.addEventListener('change',function(){admMuralSort=this.value;renderAdmSec('mural');});}
+    var admBn=document.getElementById('adm-mural-bn-toggle');
+    if(admBn)admBn.addEventListener('click',function(){muralShowBreaking=!muralShowBreaking;lsSet('mural_show_breaking',muralShowBreaking);renderAdmSec('mural');});
     var admMC=document.getElementById('adm-mural-clear');
     if(admMC)admMC.addEventListener('click',function(){admMuralFilter='';admMuralTipoFilter='';renderAdmSec('mural');});
     // preenche o form quando estiver editando
@@ -5800,7 +5808,7 @@ initMural=function(){
   if(muralTipoFilter&&tipoList.indexOf(muralTipoFilter)<0)muralTipoFilter='';
   var tipoOpts='<option value="">Todos os tipos</option>'+tipoList.map(function(t){return'<option value="'+esc(t)+'">'+esc(t)+'</option>';}).join('');
   var avisos=muralSortList(admAvisos,muralSort).filter(function(a){
-    return (!muralFilter||muralSubspecialty(a)===muralFilter)&&(!muralTipoFilter||muralDisplayType(a)===muralTipoFilter);
+    return (!muralFilter||muralSubspecialty(a)===muralFilter)&&(!muralTipoFilter||muralDisplayType(a)===muralTipoFilter)&&(muralShowBreaking||muralDisplayType(a)!=='Breaking News');
   });
   if(!muralFilter){
     var per={},capped=[];
@@ -5813,12 +5821,13 @@ initMural=function(){
   var tema=muralFilter||(muralTipoFilter||'Todas as subespecialidades');
   el.innerHTML='<div class="mural-shell">'
     +'<section class="mural-hero"><div class="mural-eyebrow">Avisos para alunos</div><h2>Calendário, notícias e leituras essenciais</h2><p>Acompanhe prazos, artigos recentes, atualizações do curso e temas úteis para estudo dirigido. Os links abrem as fontes oficiais.</p></section>'
-    +'<section class="mural-filter-card"><div class="mural-filter-main"><label class="mural-filter-field"><span class="mural-filter-label">Subespecialidade</span><select class="mural-filter-select" id="mural-filter">'+opt.html+'</select></label><label class="mural-filter-field"><span class="mural-filter-label">Tipo de artigo</span><select class="mural-filter-select" id="mural-filter-tipo">'+tipoOpts+'</select></label><label class="mural-filter-field"><span class="mural-filter-label">Ordenar</span><select class="mural-filter-select" id="mural-filter-sort">'+muralSortOptions(muralSort)+'</select></label><span class="mural-count-pill">'+esc(count)+'</span><span class="mural-theme-pill">'+esc(tema)+'</span></div><button class="btn btn-outline" id="mural-clear" type="button">Limpar filtro</button></section>'
+    +'<section class="mural-filter-card"><div class="mural-filter-main"><label class="mural-filter-field"><span class="mural-filter-label">Subespecialidade</span><select class="mural-filter-select" id="mural-filter">'+opt.html+'</select></label><label class="mural-filter-field"><span class="mural-filter-label">Tipo de artigo</span><select class="mural-filter-select" id="mural-filter-tipo">'+tipoOpts+'</select></label><label class="mural-filter-field"><span class="mural-filter-label">Ordenar</span><select class="mural-filter-select" id="mural-filter-sort">'+muralSortOptions(muralSort)+'</select></label><div class="mural-switch-wrap"><button type="button" id="mural-bn-toggle" class="mural-switch'+(muralShowBreaking?' on':'')+'" role="switch" aria-checked="'+(muralShowBreaking?'true':'false')+'" title="Mostrar Breaking News"><span class="ms-dot"></span></button><span>📣 Breaking News</span></div><span class="mural-count-pill">'+esc(count)+'</span><span class="mural-theme-pill">'+esc(tema)+'</span></div><button class="btn btn-outline" id="mural-clear" type="button">Limpar filtro</button></section>'
     +'<section class="mural-grid">'+(avisos.length?avisos.map(function(a){return muralNoticeCardHTML(a,false);}).join(''):'<div class="empty mural-empty">Nenhum aviso encontrado para este filtro.</div>')+'</section>'
     +'</div>';
   var sel=document.getElementById('mural-filter');if(sel){sel.value=muralFilter;sel.addEventListener('change',function(){muralFilter=this.value;initMural();});}
   var selt=document.getElementById('mural-filter-tipo');if(selt){selt.value=muralTipoFilter;selt.addEventListener('change',function(){muralTipoFilter=this.value;initMural();});}
   var sels=document.getElementById('mural-filter-sort');if(sels){sels.value=muralSort;sels.addEventListener('change',function(){muralSort=this.value;initMural();});}
+  var bn=document.getElementById('mural-bn-toggle');if(bn)bn.addEventListener('click',function(){muralShowBreaking=!muralShowBreaking;lsSet('mural_show_breaking',muralShowBreaking);initMural();});
   var clear=document.getElementById('mural-clear');if(clear)clear.addEventListener('click',function(){muralFilter='';muralTipoFilter='';initMural();});
 };
 function simRetry(promiseFactory){
@@ -5959,7 +5968,7 @@ admMuralSecHTML=function(){
   var tipoList=Object.keys(tiposSet).sort(function(a,b){return a.localeCompare(b,'pt-BR');});
   if(admMuralTipoFilter&&tipoList.indexOf(admMuralTipoFilter)<0)admMuralTipoFilter='';
   var tipoFiltroOpts='<option value="">Todos os tipos</option>'+tipoList.map(function(t){return'<option value="'+esc(t)+'"'+(admMuralTipoFilter===t?' selected':'')+'>'+esc(t)+'</option>';}).join('');
-  var avisos=muralSortList(admAvisos,admMuralSort).filter(function(a){return (!admMuralFilter||muralSubspecialty(a)===admMuralFilter)&&(!admMuralTipoFilter||muralDisplayType(a)===admMuralTipoFilter);});
+  var avisos=muralSortList(admAvisos,admMuralSort).filter(function(a){return (!admMuralFilter||muralSubspecialty(a)===admMuralFilter)&&(!admMuralTipoFilter||muralDisplayType(a)===admMuralTipoFilter)&&(muralShowBreaking||muralDisplayType(a)!=='Breaking News');});
   var count=avisos.length+' '+(avisos.length===1?'aviso':'avisos');
   var tema=admMuralFilter||admMuralTipoFilter||'Todas as subespecialidades';
   var tipoOpts=['Aviso','Comunicado','Artigo de Revisão','Ensaio Clínico','Metanálise','Perspectiva Clínica','Estudo Genético','Estudo Original','Evento','Urgente'].map(function(t){return'<option>'+esc(t)+'</option>';}).join('');
@@ -5976,7 +5985,7 @@ admMuralSecHTML=function(){
   +'<div class="adm-pc">'
   +formHTML
   +'<div class="card" style="margin-bottom:1.1rem"><div style="display:flex;align-items:flex-start;justify-content:space-between;gap:1rem;flex-wrap:wrap"><div style="flex:1;min-width:240px"><div style="font-size:.62rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--t3);margin-bottom:.3rem">Gestão do mural dos alunos</div><div style="font-size:1.15rem;font-weight:700;color:var(--tx);margin-bottom:.35rem">Edite avisos, notícias e comunicados importantes</div><div style="font-size:.79rem;color:var(--t2);line-height:1.55">Os cards abaixo alimentam a aba Mural do estudante. Use etiquetas por tipo de conteúdo e subespecialidade para organizar leituras e atualizações.</div></div><button class="btn btn-outline" id="btn-adm-mural-preview">👁 Pré-visualizar como aluno</button></div></div>'
-  +'<section class="mural-filter-card"><div class="mural-filter-main"><label class="mural-filter-field"><span class="mural-filter-label">Subespecialidade</span><select class="mural-filter-select" id="adm-mural-filter">'+opt.html+'</select></label><label class="mural-filter-field"><span class="mural-filter-label">Tipo de artigo</span><select class="mural-filter-select" id="adm-mural-filter-tipo">'+tipoFiltroOpts+'</select></label><label class="mural-filter-field"><span class="mural-filter-label">Ordenar</span><select class="mural-filter-select" id="adm-mural-filter-sort">'+muralSortOptions(admMuralSort)+'</select></label><span class="mural-count-pill">'+esc(count)+'</span><span class="mural-theme-pill">'+esc(tema)+'</span></div><button class="btn btn-outline" id="adm-mural-clear" type="button">Limpar filtro</button></section>'
+  +'<section class="mural-filter-card"><div class="mural-filter-main"><label class="mural-filter-field"><span class="mural-filter-label">Subespecialidade</span><select class="mural-filter-select" id="adm-mural-filter">'+opt.html+'</select></label><label class="mural-filter-field"><span class="mural-filter-label">Tipo de artigo</span><select class="mural-filter-select" id="adm-mural-filter-tipo">'+tipoFiltroOpts+'</select></label><label class="mural-filter-field"><span class="mural-filter-label">Ordenar</span><select class="mural-filter-select" id="adm-mural-filter-sort">'+muralSortOptions(admMuralSort)+'</select></label><div class="mural-switch-wrap"><button type="button" id="adm-mural-bn-toggle" class="mural-switch'+(muralShowBreaking?' on':'')+'" role="switch" aria-checked="'+(muralShowBreaking?'true':'false')+'" title="Mostrar Breaking News"><span class="ms-dot"></span></button><span>📣 Breaking News</span></div><span class="mural-count-pill">'+esc(count)+'</span><span class="mural-theme-pill">'+esc(tema)+'</span></div><button class="btn btn-outline" id="adm-mural-clear" type="button">Limpar filtro</button></section>'
   +'<div class="mural-grid mural-admin-grid" id="adm-av-list">'+(avisos.length?avisos.map(function(a){return muralNoticeCardHTML(a,true);}).join(''):'<div class="empty mural-empty">'+(admAvisos.length?'Nenhum aviso encontrado para este filtro.':'Nenhum aviso publicado. Clique em "+ Novo aviso" para começar.')+'</div>')+'</div>'
   +'</div>';
 };
