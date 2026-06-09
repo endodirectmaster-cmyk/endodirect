@@ -1472,7 +1472,7 @@ textarea{resize:vertical;line-height:1.6}
 
     <div class="panel" id="panel-presc">
       <div class="breadcrumb">Dashboard <b>/ Assistente de Prescrição</b></div>
-      <div class="ph"><h1>Assistente de Prescrição</h1><p>Apoio à prescrição com receituário, LME, exames e seguimento — baseado em diretrizes (SBEM, SBD, ADA) e na regulamentação brasileira (ANVISA, SUS).</p></div>
+      <div class="ph"><h1>Assistente de Prescrição</h1><p>Apoio à prescrição com receituário, LME, exames e seguimento — conforme a regulamentação brasileira (ANVISA, SUS).</p></div>
       <div class="pc">
         <div style="background:#fff7ed;border:1px solid #fed7aa;border-radius:var(--rs);padding:.7rem .9rem;margin-bottom:.85rem;font-size:.72rem;color:#9a3412;line-height:1.55">⚠️ <b>Ferramenta educacional de apoio à decisão.</b> Não substitui o julgamento clínico, a avaliação individual do paciente nem a consulta às bulas e diretrizes vigentes. Confira sempre doses, contraindicações e interações antes de prescrever.</div>
         <div id="presc-tool"></div>
@@ -4506,6 +4506,8 @@ function prescPosFor(pa,nome){
   for(var k in PRESC_POS){if(h.indexOf(k)>=0&&k.length>bestK.length){bestK=k;best=PRESC_POS[k];}}
   return best;
 }
+// Catálogo externo (ANVISA/CMED) carregado sob demanda e mesclado ao curado.
+var prescExtLoaded=false,prescMedAll=PRESC_MEDS.slice();
 function prescLoadCatalogo(cb){
   if(prescExtLoaded){if(cb)cb();return;}
   fetch('presc-catalogo.json').then(function(r){return r.ok?r.json():null;}).then(function(d){
@@ -4535,10 +4537,6 @@ function renderPrescTool(){
       +'<div style="display:flex;gap:.4rem"><div class="fld2" style="margin:0;flex:1"><label>CRM</label><input type="text" id="presc-presc-crm" value="'+esc(pr.crm||'')+'" placeholder="CRM"></div>'
         +'<div class="fld2" style="margin:0;width:70px"><label>UF</label><input type="text" id="presc-presc-uf" value="'+esc(pr.uf||'')+'" placeholder="UF" maxlength="2"></div></div>'
     +'</div><div class="fld2" style="margin:.5rem 0 0"><label>Especialidade (opcional)</label><input type="text" id="presc-presc-esp" value="'+esc(pesp)+'" placeholder="Ex: Endocrinologia"></div></div>'
-    +'<div class="card" style="margin-bottom:.7rem;background:#f8fafc"><div style="display:flex;gap:.5rem;flex-wrap:wrap;align-items:flex-end">'
-      +'<div class="fld2" style="margin:0;flex:1;min-width:220px"><label>🤖 Sugerir conduta por IA (opcional)</label><input type="text" id="presc-ai-dx" placeholder="Ex: Diabetes tipo 2; Hipotireoidismo; Osteoporose"></div>'
-      +'<button class="btn btn-outline" id="presc-ai-btn" data-act="ai">Sugerir conduta</button>'
-    +'</div><div style="font-size:.66rem;color:var(--t3);margin-top:.4rem">A IA pré-preenche medicamentos e exames; revise e edite antes de prescrever.</div></div>'
     +'<div class="presc-tabs">'+tabBtn('rx','🧾 Receituário')+tabBtn('lme','📄 LME')+tabBtn('exames','🧪 Exames')+'</div>'
     +'<div id="presc-tab-rx" class="presc-tab"></div>'
     +'<div id="presc-tab-lme" class="presc-tab"></div>'
