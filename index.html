@@ -1928,6 +1928,7 @@ function muralPlain(v){
 }
 function normalizeMuralType(tipo,titulo,texto,fonte){
   var raw=String(tipo||'').trim();
+  if(/breaking/i.test(raw))return'Breaking News';
   var p=muralPlain([raw,titulo,texto,fonte].join(' '));
   if(raw&&raw!=='Artigo'){
     if(p.indexOf('meta-anal')>=0||p.indexOf('metanal')>=0)return'Metanálise';
@@ -1970,6 +1971,7 @@ function muralRelevance(a){
   var sw={'The New England Journal of Medicine':10,'The Lancet Diabetes & Endocrinology':10,'Nature Reviews Endocrinology':9,'Diabetes Care':9,'Endocrine Reviews':9,'Journal of Clinical Endocrinology & Metabolism':8,'Obesity':7}[src]||5;
   var t=muralDisplayType(a);
   if(t==='Urgente')return 1000;
+  if(t==='Breaking News')return 900;
   var tw={'Metanálise':4,'Ensaio Clínico':3,'Artigo de Revisão':2,'Estudo Original':1,'Estudo Genético':1,'Perspectiva Clínica':1}[t]||0;
   return sw+tw;
 }
@@ -4310,6 +4312,7 @@ function initMural(){
   function fonteOf(a){return normalizeMuralSource(String((a&&a.fonte)||'').trim()||String((a&&a.tipo)||'Geral').trim()||'Geral');}
   function tipoClass(tipo){
     var t=String(tipo||'').toLowerCase();
+    if(t.indexOf('breaking')>=0)return{card:' mural-card-red',tag:'tag-red'};
     if(t.indexOf('urgent')>=0)return{card:' mural-card-red',tag:'tag-red'};
     if(t.indexOf('event')>=0)return{card:' mural-card-purple',tag:'tag-pur'};
     return{card:'',tag:'tag-blue'};
@@ -4811,6 +4814,7 @@ function admMuralSecHTML(){
   function fonteOf(a){return normalizeMuralSource(String((a&&a.fonte)||'').trim()||String((a&&a.tipo)||'Geral').trim()||'Geral');}
   function tipoClass(tipo){
     var t=String(tipo||'').toLowerCase();
+    if(t.indexOf('breaking')>=0)return{card:' mural-card-red',tag:'tag-red'};
     if(t.indexOf('urgent')>=0)return{card:' mural-card-red',tag:'tag-red'};
     if(t.indexOf('event')>=0)return{card:' mural-card-purple',tag:'tag-pur'};
     return{card:'',tag:'tag-blue'};
