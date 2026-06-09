@@ -129,6 +129,14 @@ textarea{resize:vertical;line-height:1.6}
 @keyframes ldp{0%,80%,100%{opacity:.25;transform:scale(.8)}40%{opacity:1;transform:scale(1)}}
 .divider{border:none;border-top:1px solid var(--bd);margin:.75rem 0}
 .gen-box{background:var(--s2);border:1px solid var(--bd);border-radius:var(--r);padding:.95rem 1.1rem;margin-bottom:.85rem}
+.presc-tabs{display:flex;gap:.35rem;border-bottom:2px solid var(--bd);margin-bottom:.8rem}
+.presc-tabbtn{background:none;border:none;border-bottom:2px solid transparent;margin-bottom:-2px;padding:.5rem .9rem;font-size:.8rem;font-weight:600;color:var(--t2);cursor:pointer;font-family:var(--font)}
+.presc-tabbtn.on{color:var(--blue);border-bottom-color:var(--blue)}
+.presc-drop{position:absolute;top:100%;left:0;right:0;z-index:30;background:#fff;border:1px solid var(--bd2);border-radius:0 0 var(--rs) var(--rs);max-height:280px;overflow:auto;box-shadow:0 8px 22px rgba(0,0,0,.12)}
+.presc-drop:empty{display:none}
+.presc-drop-item{padding:.45rem .7rem;font-size:.79rem;cursor:pointer;border-bottom:1px solid var(--bd)}
+.presc-drop-item:hover{background:var(--s2)}
+.presc-item{border:1px solid var(--bd);border-radius:var(--rs);padding:.7rem .8rem;margin-bottom:.6rem;background:#fff}
 .tog-row{display:flex;border:1px solid var(--bd2);border-radius:var(--rs);overflow:hidden;width:fit-content}
 .tog-btn{background:#fff;border:none;padding:.3rem .82rem;font-size:.7rem;font-weight:500;color:var(--t2);cursor:pointer;font-family:var(--font)}
 .tog-btn.on{background:var(--blue);color:#fff}
@@ -1467,15 +1475,7 @@ textarea{resize:vertical;line-height:1.6}
       <div class="ph"><h1>Assistente de Prescrição</h1><p>Apoio à prescrição com receituário, LME, exames e seguimento — baseado em diretrizes (SBEM, SBD, ADA) e na regulamentação brasileira (ANVISA, SUS).</p></div>
       <div class="pc">
         <div style="background:#fff7ed;border:1px solid #fed7aa;border-radius:var(--rs);padding:.7rem .9rem;margin-bottom:.85rem;font-size:.72rem;color:#9a3412;line-height:1.55">⚠️ <b>Ferramenta educacional de apoio à decisão.</b> Não substitui o julgamento clínico, a avaliação individual do paciente nem a consulta às bulas e diretrizes vigentes. Confira sempre doses, contraindicações e interações antes de prescrever.</div>
-        <div class="gen-box">
-          <div class="fld2"><label>Diagnóstico / condição clínica *</label><input type="text" id="presc-dx" placeholder="Ex: Diabetes mellitus tipo 2; Hipotireoidismo; Osteoporose pós-menopausa"></div>
-          <div class="g2" style="margin-bottom:.65rem">
-            <div class="fld2" style="margin:0"><label>Medicamento ou classe (opcional)</label><input type="text" id="presc-med" placeholder="Ex: semaglutida; levotiroxina; alendronato"></div>
-            <div class="fld2" style="margin:0"><label>Dados do paciente (opcional)</label><input type="text" id="presc-pac" placeholder="Ex: 58 anos, DRC estágio 3, HbA1c 8,5%"></div>
-          </div>
-          <button class="btn btn-primary" id="btn-presc-gen">▶ Gerar orientação</button>
-        </div>
-        <div id="presc-result"></div>
+        <div id="presc-tool"></div>
       </div>
     </div>
 
@@ -4325,12 +4325,298 @@ function evalRx(){
 }
 // ── ASSISTENTE DE PRESCRIÇÃO (Endocrinologista / Outros) ──
 var prescInited=false;
+// ===================== ASSISTENTE DE PRESCRIÇÃO (builder) =====================
+// Catálogo de medicações (endocrinologia + comuns). Posologia memorizada e
+// editável. r = tipo de receita: simples | especial(C1 2 vias) | b1 (notif. B
+// azul) | b2 (anorexígeno) | a (notif. A) | atb (antimicrobiano 2 vias).
+// lme:true → oferece preenchimento via LME (CEAF/SUS).
+var PRESC_MEDS=[
+  {n:'Metformina',apres:['500 mg','850 mg','1 g XR'],via:'VO',pos:'1 comp VO 2x/dia, após as refeições (titular semanalmente)',r:'simples'},
+  {n:'Gliclazida MR',apres:['30 mg','60 mg'],via:'VO',pos:'1 comp VO 1x/dia pela manhã',r:'simples'},
+  {n:'Glibenclamida',apres:['5 mg'],via:'VO',pos:'1 comp VO 1x/dia antes do café',r:'simples'},
+  {n:'Glimepirida',apres:['1 mg','2 mg','4 mg'],via:'VO',pos:'1 comp VO 1x/dia pela manhã',r:'simples'},
+  {n:'Dapagliflozina',apres:['10 mg'],via:'VO',pos:'1 comp VO 1x/dia',r:'simples'},
+  {n:'Empagliflozina',apres:['10 mg','25 mg'],via:'VO',pos:'1 comp VO 1x/dia',r:'simples'},
+  {n:'Sitagliptina',apres:['50 mg','100 mg'],via:'VO',pos:'1 comp VO 1x/dia',r:'simples'},
+  {n:'Linagliptina',apres:['5 mg'],via:'VO',pos:'1 comp VO 1x/dia',r:'simples'},
+  {n:'Pioglitazona',apres:['15 mg','30 mg'],via:'VO',pos:'1 comp VO 1x/dia',r:'simples'},
+  {n:'Acarbose',apres:['50 mg','100 mg'],via:'VO',pos:'1 comp VO 3x/dia no início das refeições',r:'simples'},
+  {n:'Repaglinida',apres:['0,5 mg','1 mg','2 mg'],via:'VO',pos:'1 comp VO antes das refeições principais',r:'simples'},
+  {n:'Semaglutida (Ozempic)',apres:['0,25 mg','0,5 mg','1 mg (caneta)'],via:'SC',pos:'0,25 mg SC 1x/semana por 4 sem, depois 0,5 mg/semana (titular até 1 mg)',r:'simples'},
+  {n:'Semaglutida oral (Rybelsus)',apres:['3 mg','7 mg','14 mg'],via:'VO',pos:'1 comp VO em jejum com pouca água, 30 min antes de comer/beber',r:'simples'},
+  {n:'Liraglutida (Victoza)',apres:['6 mg/mL (caneta)'],via:'SC',pos:'0,6 mg SC 1x/dia por 1 sem; titular até 1,2–1,8 mg/dia',r:'simples'},
+  {n:'Dulaglutida',apres:['0,75 mg','1,5 mg (caneta)'],via:'SC',pos:'0,75–1,5 mg SC 1x/semana',r:'simples'},
+  {n:'Tirzepatida',apres:['2,5 mg','5 mg (caneta)'],via:'SC',pos:'2,5 mg SC 1x/semana por 4 sem; titular conforme resposta',r:'simples'},
+  {n:'Insulina NPH',apres:['100 UI/mL'],via:'SC',pos:'Dose individualizada (ex.: 0,2 UI/kg/dia); ajustar pela glicemia',r:'simples'},
+  {n:'Insulina Regular',apres:['100 UI/mL'],via:'SC',pos:'Pré-prandial / correção, conforme glicemia',r:'simples'},
+  {n:'Insulina Glargina',apres:['100 UI/mL','300 UI/mL'],via:'SC',pos:'1x/dia em horário fixo; dose individualizada',r:'simples',lme:true},
+  {n:'Insulina Degludeca',apres:['100 UI/mL'],via:'SC',pos:'1x/dia; dose individualizada',r:'simples',lme:true},
+  {n:'Insulina Lispro',apres:['100 UI/mL'],via:'SC',pos:'Pré-prandial, conforme contagem de carboidratos',r:'simples',lme:true},
+  {n:'Insulina Asparte',apres:['100 UI/mL'],via:'SC',pos:'Pré-prandial, conforme contagem de carboidratos',r:'simples',lme:true},
+  {n:'Levotiroxina',apres:['25 mcg','50 mcg','75 mcg','88 mcg','100 mcg','112 mcg','125 mcg','150 mcg'],via:'VO',pos:'1 comp VO em jejum, 30–60 min antes do café',r:'simples'},
+  {n:'Metimazol (Tapazol)',apres:['5 mg','10 mg'],via:'VO',pos:'10–30 mg/dia VO, conforme T4 livre',r:'simples'},
+  {n:'Propiltiouracila',apres:['100 mg'],via:'VO',pos:'100 mg VO 3x/dia (ajustar)',r:'simples'},
+  {n:'Alendronato',apres:['70 mg'],via:'VO',pos:'1 comp VO 1x/semana, em jejum, com água; permanecer ereto 30 min',r:'simples'},
+  {n:'Risedronato',apres:['35 mg'],via:'VO',pos:'1 comp VO 1x/semana, em jejum',r:'simples'},
+  {n:'Ácido zoledrônico',apres:['5 mg/100 mL'],via:'IV',pos:'5 mg IV 1x/ano (infusão ≥15 min); garantir vit. D e cálcio',r:'simples'},
+  {n:'Denosumabe',apres:['60 mg (seringa)'],via:'SC',pos:'60 mg SC a cada 6 meses',r:'simples'},
+  {n:'Teriparatida',apres:['caneta 20 mcg'],via:'SC',pos:'20 mcg SC 1x/dia',r:'simples',lme:true},
+  {n:'Colecalciferol (Vit. D3)',apres:['1.000 UI','7.000 UI','50.000 UI'],via:'VO',pos:'Reposição conforme nível; manutenção 1.000–2.000 UI/dia',r:'simples'},
+  {n:'Carbonato de cálcio',apres:['500 mg','600 mg'],via:'VO',pos:'500–1.000 mg/dia VO com as refeições',r:'simples'},
+  {n:'Calcitriol',apres:['0,25 mcg'],via:'VO',pos:'0,25–0,5 mcg/dia VO',r:'simples'},
+  {n:'Orlistate',apres:['120 mg'],via:'VO',pos:'120 mg VO 3x/dia com refeições gordurosas',r:'simples'},
+  {n:'Sibutramina',apres:['10 mg','15 mg'],via:'VO',pos:'10–15 mg VO 1x/dia pela manhã',r:'b2'},
+  {n:'Topiramato',apres:['25 mg','50 mg','100 mg'],via:'VO',pos:'Titular gradualmente conforme indicação',r:'especial'},
+  {n:'Cabergolina',apres:['0,5 mg'],via:'VO',pos:'0,5 mg VO 1–2x/semana (titular pela prolactina)',r:'simples'},
+  {n:'Bromocriptina',apres:['2,5 mg'],via:'VO',pos:'1,25–2,5 mg VO 1–2x/dia',r:'simples'},
+  {n:'Hidrocortisona',apres:['10 mg','20 mg'],via:'VO',pos:'15–25 mg/dia VO divididos (maior dose pela manhã)',r:'simples'},
+  {n:'Prednisona',apres:['5 mg','20 mg'],via:'VO',pos:'Dose conforme indicação clínica',r:'simples'},
+  {n:'Dexametasona',apres:['0,5 mg','4 mg'],via:'VO',pos:'Conforme indicação',r:'simples'},
+  {n:'Fludrocortisona',apres:['0,1 mg'],via:'VO',pos:'0,05–0,2 mg/dia VO',r:'simples'},
+  {n:'Octreotida LAR',apres:['20 mg','30 mg'],via:'IM',pos:'20–30 mg IM a cada 28 dias',r:'simples',lme:true},
+  {n:'Testosterona undecilato (Nebido)',apres:['1.000 mg/4 mL'],via:'IM',pos:'1.000 mg IM; repetir em 6 sem e depois a cada 10–14 sem',r:'especial'},
+  {n:'Testosterona gel',apres:['1% (sachê/pump)'],via:'Tópica',pos:'Aplicar 1x/dia pela manhã (ombros/braços)',r:'especial'},
+  {n:'Estradiol',apres:['1 mg','2 mg','gel'],via:'VO',pos:'Conforme terapia hormonal',r:'simples'},
+  {n:'Tibolona',apres:['2,5 mg'],via:'VO',pos:'2,5 mg VO 1x/dia',r:'simples'},
+  {n:'Clomifeno',apres:['50 mg'],via:'VO',pos:'50 mg VO/dia por 5 dias (indução de ovulação)',r:'simples'},
+  {n:'Letrozol',apres:['2,5 mg'],via:'VO',pos:'2,5 mg VO/dia',r:'simples'},
+  {n:'Espironolactona',apres:['25 mg','50 mg','100 mg'],via:'VO',pos:'50–100 mg/dia VO',r:'simples'},
+  {n:'Finasterida',apres:['1 mg','5 mg'],via:'VO',pos:'1 mg/dia (alopecia) ou 5 mg/dia',r:'simples'},
+  {n:'Sinvastatina',apres:['20 mg','40 mg'],via:'VO',pos:'1 comp VO à noite',r:'simples'},
+  {n:'Atorvastatina',apres:['10 mg','20 mg','40 mg','80 mg'],via:'VO',pos:'1 comp VO 1x/dia',r:'simples'},
+  {n:'Rosuvastatina',apres:['10 mg','20 mg','40 mg'],via:'VO',pos:'1 comp VO 1x/dia',r:'simples'},
+  {n:'Ezetimiba',apres:['10 mg'],via:'VO',pos:'1 comp VO 1x/dia',r:'simples'},
+  {n:'Fenofibrato',apres:['160 mg','200 mg'],via:'VO',pos:'1 comp VO 1x/dia',r:'simples'},
+  {n:'Dipirona',apres:['500 mg','1 g'],via:'VO',pos:'500–1.000 mg VO até 4x/dia se dor/febre',r:'simples'},
+  {n:'Paracetamol',apres:['500 mg','750 mg'],via:'VO',pos:'500–750 mg VO até 4x/dia',r:'simples'},
+  {n:'Ibuprofeno',apres:['400 mg','600 mg'],via:'VO',pos:'400–600 mg VO 8/8h se dor',r:'simples'},
+  {n:'Omeprazol',apres:['20 mg','40 mg'],via:'VO',pos:'20–40 mg VO em jejum',r:'simples'},
+  {n:'Losartana',apres:['50 mg','100 mg'],via:'VO',pos:'50 mg VO 1–2x/dia',r:'simples'},
+  {n:'Enalapril',apres:['10 mg','20 mg'],via:'VO',pos:'10–20 mg VO 2x/dia',r:'simples'},
+  {n:'Anlodipino',apres:['5 mg','10 mg'],via:'VO',pos:'5–10 mg VO 1x/dia',r:'simples'},
+  {n:'Hidroclorotiazida',apres:['25 mg'],via:'VO',pos:'25 mg VO pela manhã',r:'simples'},
+  {n:'Amoxicilina',apres:['500 mg'],via:'VO',pos:'500 mg VO 8/8h por 7 dias',r:'atb'},
+  {n:'Amoxicilina + Clavulanato',apres:['875+125 mg'],via:'VO',pos:'1 comp VO 12/12h por 7–10 dias',r:'atb'},
+  {n:'Azitromicina',apres:['500 mg'],via:'VO',pos:'500 mg VO 1x/dia por 3 dias',r:'atb'},
+  {n:'Cefalexina',apres:['500 mg'],via:'VO',pos:'500 mg VO 6/6h por 7 dias',r:'atb'},
+  {n:'Sertralina',apres:['50 mg'],via:'VO',pos:'50 mg VO 1x/dia',r:'simples'},
+  {n:'Fluoxetina',apres:['20 mg'],via:'VO',pos:'20 mg VO 1x/dia pela manhã',r:'simples'},
+  {n:'Clonazepam',apres:['0,5 mg','2 mg'],via:'VO',pos:'0,5–2 mg VO à noite',r:'b1'},
+  {n:'Zolpidem',apres:['10 mg'],via:'VO',pos:'10 mg VO ao deitar',r:'b1'},
+  {n:'Diazepam',apres:['5 mg','10 mg'],via:'VO',pos:'5–10 mg VO/dia',r:'b1'}
+];
+var PRESC_EXAMS=['Hemograma completo','Glicemia de jejum','Hemoglobina glicada (HbA1c)','Curva glicêmica (TOTG 75 g)','Insulina basal','Peptídeo C','TSH','T4 livre','T3 total','Anti-TPO','Anti-tireoglobulina','TRAb','Tireoglobulina','Calcitonina','Colesterol total e frações','HDL-colesterol','LDL-colesterol','Triglicerídeos','Apolipoproteína B','Lipoproteína (a)','Creatinina','Ureia','Taxa de filtração glomerular (TFGe)','Ácido úrico','Sódio','Potássio','Cálcio total','Cálcio iônico','Fósforo','Magnésio','PTH','25-OH-vitamina D','Fosfatase alcalina','AST (TGO)','ALT (TGP)','GGT','Albumina','Cortisol sérico (8h)','Cortisol salivar noturno','Cortisol livre urinário (24h)','ACTH','Aldosterona','Atividade de renina plasmática','Relação aldosterona/renina','Testosterona total','Testosterona livre','SHBG','DHEA-S','Androstenediona','17-OH-progesterona','LH','FSH','Estradiol','Progesterona','Prolactina','IGF-1','GH','Beta-HCG','Ferritina','Saturação de transferrina','EAS (urina tipo 1)','Microalbuminúria','Relação albumina/creatinina urinária','VHS','PCR','USG de tireoide','USG de abdome total','USG transvaginal/pélvico','Densitometria óssea (DXA)','RM de sela túrcica (hipófise)','TC de adrenais','Cintilografia de tireoide','PAAF de nódulo tireoidiano'];
+var PRESC_LMECAT=[
+  {n:'Osteoporose (alendronato/risedronato/raloxifeno/teriparatida)',cid:'M80 / M81',exames:['Densitometria óssea (T-score)','Cálcio sérico','25-OH-vitamina D','Função renal'],criterios:'T-score ≤ -2,5 (colo de fêmur/coluna) ou fratura por fragilidade. Conforme PCDT Osteoporose.'},
+  {n:'Diabetes — insulinas análogas (glargina/degludeca/lispro/asparte)',cid:'E10 / E11',exames:['HbA1c','Registro de glicemias','Função renal','Episódios de hipoglicemia documentados'],criterios:'DM com hipoglicemias de repetição/inadequação à insulina humana. Conforme PCDT Diabete Melito tipo 1/2.'},
+  {n:'Deficiência de GH — somatropina',cid:'E23.0',exames:['IGF-1','Teste de estímulo de GH','RM de sela túrcica'],criterios:'Deficiência de GH confirmada por teste de estímulo. Conforme PCDT.'},
+  {n:'Acromegalia — análogos de somatostatina (octreotida/lanreotida)',cid:'E22.0',exames:['IGF-1','GH (basal/pós-TOTG)','RM de sela túrcica'],criterios:'Acromegalia com IGF-1 elevado e doença ativa. Conforme PCDT Acromegalia.'},
+  {n:'Hiperprolactinemia — cabergolina/bromocriptina',cid:'E22.1',exames:['Prolactina','RM de sela túrcica'],criterios:'Prolactinoma/hiperprolactinemia sintomática. Conforme protocolo.'}
+];
+var PRESC_RLABEL={simples:'Receita Simples',especial:'Controle Especial (C1) — 2 vias',b1:'Notificação B (azul)',b2:'Notificação B2 (azul) — anorexígeno',a:'Notificação A (amarela)',atb:'Antimicrobiano — 2 vias (RDC 471/2021)'};
+var prescRx=[],prescExamsSel=[],prescLmeSel=null,prescTab='rx';
+function prescVal(id){var e=document.getElementById(id);return e?(e.value||'').trim():'';}
+function prescIsEspecial(r){return r==='especial'||r==='b1'||r==='b2'||r==='a';}
+function prescClassify(name){var k=prescNorm(name);for(var i=0;i<PRESC_MEDS.length;i++){if(prescNorm(PRESC_MEDS[i].n).indexOf(k)>=0||k.indexOf(prescNorm(PRESC_MEDS[i].n))>=0)return PRESC_MEDS[i].r;}return 'simples';}
+function renderPrescTool(){
+  var tool=document.getElementById('presc-tool');if(!tool)return;
+  var pr=lsGet('presc_prescritor')||{};
+  var pnome=pr.nome||(currentUser&&currentUser.name)||'';
+  var pesp=pr.esp||((currentUser&&currentUser.profile&&(currentUser.profile.especialidade||currentUser.profile.displayPerfil))||'');
+  var tabBtn=function(id,lbl){return '<button class="presc-tabbtn'+(prescTab===id?' on':'')+'" data-act="tab" data-tab="'+id+'">'+lbl+'</button>';};
+  tool.innerHTML=
+    '<div class="card" style="margin-bottom:.7rem"><div class="g2" style="margin-bottom:.5rem">'
+      +'<div class="fld2" style="margin:0"><label>Paciente</label><input type="text" id="presc-pac-nome" placeholder="Nome do paciente"></div>'
+      +'<div class="fld2" style="margin:0"><label>Idade</label><input type="text" id="presc-pac-idade" placeholder="Ex: 58 anos"></div>'
+    +'</div><div class="g2" style="margin:0">'
+      +'<div class="fld2" style="margin:0"><label>Prescritor</label><input type="text" id="presc-presc-nome" value="'+esc(pnome)+'" placeholder="Dr(a). Nome"></div>'
+      +'<div style="display:flex;gap:.4rem"><div class="fld2" style="margin:0;flex:1"><label>CRM</label><input type="text" id="presc-presc-crm" value="'+esc(pr.crm||'')+'" placeholder="CRM"></div>'
+        +'<div class="fld2" style="margin:0;width:70px"><label>UF</label><input type="text" id="presc-presc-uf" value="'+esc(pr.uf||'')+'" placeholder="UF" maxlength="2"></div></div>'
+    +'</div><div class="fld2" style="margin:.5rem 0 0"><label>Especialidade (opcional)</label><input type="text" id="presc-presc-esp" value="'+esc(pesp)+'" placeholder="Ex: Endocrinologia"></div></div>'
+    +'<div class="card" style="margin-bottom:.7rem;background:#f8fafc"><div style="display:flex;gap:.5rem;flex-wrap:wrap;align-items:flex-end">'
+      +'<div class="fld2" style="margin:0;flex:1;min-width:220px"><label>🤖 Sugerir conduta por IA (opcional)</label><input type="text" id="presc-ai-dx" placeholder="Ex: Diabetes tipo 2; Hipotireoidismo; Osteoporose"></div>'
+      +'<button class="btn btn-outline" id="presc-ai-btn" data-act="ai">Sugerir conduta</button>'
+    +'</div><div style="font-size:.66rem;color:var(--t3);margin-top:.4rem">A IA pré-preenche medicamentos e exames; revise e edite antes de prescrever.</div></div>'
+    +'<div class="presc-tabs">'+tabBtn('rx','🧾 Receituário')+tabBtn('lme','📄 LME')+tabBtn('exames','🧪 Exames')+'</div>'
+    +'<div id="presc-tab-rx" class="presc-tab"></div>'
+    +'<div id="presc-tab-lme" class="presc-tab"></div>'
+    +'<div id="presc-tab-exames" class="presc-tab"></div>';
+  renderRxList();renderLme();renderExList();prescSetTab(prescTab);
+}
+function prescSetTab(t){
+  prescTab=t;
+  ['rx','lme','exames'].forEach(function(id){var el=document.getElementById('presc-tab-'+id);if(el)el.style.display=(id===t)?'block':'none';});
+  document.querySelectorAll('.presc-tabbtn').forEach(function(b){b.classList.toggle('on',b.dataset.tab===t);});
+}
+function renderRxList(){
+  var box=document.getElementById('presc-tab-rx');if(!box)return;
+  var itemsHtml=prescRx.length?prescRx.map(function(m,i){
+    var apresOpts=(m.apres||['—']).map(function(a){return '<option'+(a===m.apresSel?' selected':'')+'>'+esc(a)+'</option>';}).join('');
+    return '<div class="presc-item">'
+      +'<div style="display:flex;justify-content:space-between;align-items:flex-start;gap:.5rem">'
+        +'<div style="font-weight:700;color:var(--tx);font-size:.85rem">'+(i+1)+'. '+esc(m.n)+'</div>'
+        +'<div style="display:flex;gap:.3rem;flex-shrink:0">'+(m.lme?'<button class="btn btn-outline btn-sm" data-act="rx2lme" data-i="'+i+'">📄 LME</button>':'')+'<button class="btn btn-outline btn-sm" data-act="delrx" data-i="'+i+'" style="color:var(--red);border-color:var(--red)">🗑</button></div>'
+      +'</div>'
+      +'<div style="display:flex;gap:.4rem;flex-wrap:wrap;margin:.35rem 0">'
+        +'<select data-rxapres="'+i+'" style="max-width:200px">'+apresOpts+'</select>'
+        +'<span class="tag '+(prescIsEspecial(m.r)?'tag-red':(m.r==='atb'?'tag-gold':'tag-blue'))+'" style="font-size:.6rem;align-self:center">'+esc(PRESC_RLABEL[m.r]||'Receita Simples')+'</span>'
+      +'</div>'
+      +'<textarea data-rxpos="'+i+'" rows="2" placeholder="Posologia" style="width:100%;font-size:.78rem">'+esc(m.pos||'')+'</textarea>'
+      +'<input type="text" data-rxqtd="'+i+'" value="'+esc(m.qtd||'')+'" placeholder="Quantidade (ex.: 1 caixa, 30 comprimidos)" style="width:100%;margin-top:.3rem;font-size:.78rem">'
+    +'</div>';
+  }).join(''):'<div class="empty" style="padding:1rem">Nenhum medicamento. Use a busca acima para adicionar.</div>';
+  box.innerHTML=
+    '<div style="position:relative"><input type="text" id="presc-rx-search" placeholder="🔎 Digite o medicamento (ex.: met, levo, alen)…" autocomplete="off" style="width:100%"><div id="presc-rx-drop" class="presc-drop"></div></div>'
+    +'<div id="presc-rx-items" style="margin-top:.6rem">'+itemsHtml+'</div>'
+    +'<div style="display:flex;gap:.5rem;flex-wrap:wrap;margin-top:.7rem">'
+      +'<button class="btn btn-primary" data-act="print" data-doc="simples">🖨 Receituário Simples</button>'
+      +'<button class="btn btn-primary" data-act="print" data-doc="especial" style="background:var(--red)">🖨 Controle Especial (2 vias)</button>'
+    +'</div>';
+}
+function renderExList(){
+  var box=document.getElementById('presc-tab-exames');if(!box)return;
+  var itemsHtml=prescExamsSel.length?('<ol style="margin:.3rem 0 0;padding-left:1.2rem;font-size:.82rem;line-height:1.9">'+prescExamsSel.map(function(e,i){return '<li>'+esc(e)+' <button class="btn btn-outline btn-sm" data-act="delex" data-i="'+i+'" style="color:var(--red);border-color:var(--red);padding:.05rem .35rem;margin-left:.3rem">✕</button></li>';}).join('')+'</ol>'):'<div class="empty" style="padding:1rem">Nenhum exame. Digite para adicionar.</div>';
+  box.innerHTML=
+    '<div style="position:relative"><input type="text" id="presc-ex-search" placeholder="🔎 Digite o exame (ex.: tsh, hba1c, densito)…" autocomplete="off" style="width:100%"><div id="presc-ex-drop" class="presc-drop"></div></div>'
+    +'<div id="presc-ex-items" style="margin-top:.6rem">'+itemsHtml+'</div>'
+    +'<div style="margin-top:.7rem"><button class="btn btn-primary" data-act="print" data-doc="exames">🖨 Solicitação de Exames</button></div>';
+}
+function renderLme(){
+  var box=document.getElementById('presc-tab-lme');if(!box)return;
+  var form='';
+  if(prescLmeSel){
+    var ex=(prescLmeSel.exames||[]).join('\n');
+    form='<div class="presc-item"><div style="font-weight:700;font-size:.85rem;margin-bottom:.4rem">'+esc(prescLmeSel.n)+'</div>'
+      +'<div class="g2" style="margin-bottom:.4rem"><div class="fld2" style="margin:0"><label>CID-10</label><input type="text" id="presc-lme-cid" value="'+esc(prescLmeSel.cid||'')+'"></div>'
+      +'<div class="fld2" style="margin:0"><label>Medicamento(s)</label><input type="text" id="presc-lme-med" value="'+esc(prescLmeSel.med||prescLmeSel.n)+'"></div></div>'
+      +'<div class="fld2" style="margin-bottom:.4rem"><label>Exames / critérios exigidos (um por linha)</label><textarea id="presc-lme-exames" rows="4">'+esc(ex)+'</textarea></div>'
+      +'<div class="fld2"><label>Observações / critérios clínicos</label><textarea id="presc-lme-crit" rows="3">'+esc(prescLmeSel.criterios||'')+'</textarea></div>'
+      +'<div style="margin-top:.6rem"><button class="btn btn-primary" data-act="print" data-doc="lme">🖨 Imprimir LME</button> <button class="btn btn-outline" data-act="lmeclear">Limpar</button></div></div>';
+  }else{
+    form='<div class="empty" style="padding:1rem">Selecione um medicamento/condição do CEAF abaixo para preencher o LME.</div>';
+  }
+  box.innerHTML=
+    '<div style="position:relative"><input type="text" id="presc-lme-search" placeholder="🔎 Medicamento ou condição do CEAF (ex.: insulina, osteoporose, GH)…" autocomplete="off" style="width:100%"><div id="presc-lme-drop" class="presc-drop"></div></div>'
+    +'<div style="margin-top:.6rem">'+form+'</div>';
+}
+function prescDrop(q,list,act){
+  var k=prescNorm(q);if(!k){return '';}
+  var hits=[];for(var i=0;i<list.length&&hits.length<14;i++){var nm=(typeof list[i]==='string')?list[i]:list[i].n;if(prescNorm(nm).indexOf(k)>=0)hits.push({i:i,nm:nm,sub:(typeof list[i]==='string')?'':((list[i].apres?list[i].apres[0]:'')+' · '+(PRESC_RLABEL[list[i].r]||''))});}
+  if(!hits.length)return '<div class="presc-drop-item" style="color:var(--t3)">Nenhum resultado</div>';
+  return hits.map(function(h){return '<div class="presc-drop-item" data-act="'+act+'" data-i="'+h.i+'">'+esc(h.nm)+(h.sub?' <small style="color:var(--t3)">'+esc(h.sub)+'</small>':'')+'</div>';}).join('');
+}
+function prescClick(e){
+  var t=e.target.closest&&e.target.closest('[data-act]');if(!t)return;
+  var act=t.dataset.act,i=parseInt(t.dataset.i,10);
+  if(act==='tab'){prescSetTab(t.dataset.tab);return;}
+  if(act==='addrx'){var m=PRESC_MEDS[i];if(m){prescRx.push({n:m.n,apres:m.apres,apresSel:m.apres[0],pos:m.pos,r:m.r,lme:!!m.lme,qtd:''});var s=document.getElementById('presc-rx-search');if(s)s.value='';var d=document.getElementById('presc-rx-drop');if(d)d.innerHTML='';renderRxList();}return;}
+  if(act==='delrx'){prescRx.splice(i,1);renderRxList();return;}
+  if(act==='addex'){var ex=PRESC_EXAMS[i];if(ex&&prescExamsSel.indexOf(ex)<0)prescExamsSel.push(ex);var es=document.getElementById('presc-ex-search');if(es)es.value='';var ed=document.getElementById('presc-ex-drop');if(ed)ed.innerHTML='';renderExList();return;}
+  if(act==='delex'){prescExamsSel.splice(i,1);renderExList();return;}
+  if(act==='addlme'){var L=PRESC_LMECAT[i];if(L){prescLmeSel={n:L.n,cid:L.cid,med:L.n,exames:(L.exames||[]).slice(),criterios:L.criterios};}var ls=document.getElementById('presc-lme-search');if(ls)ls.value='';renderLme();return;}
+  if(act==='rx2lme'){var med=prescRx[i];if(med){var found=null;for(var j=0;j<PRESC_LMECAT.length;j++){if(prescNorm(PRESC_LMECAT[j].n).indexOf(prescNorm(med.n.split(' ')[0]))>=0){found=PRESC_LMECAT[j];break;}}prescLmeSel=found?{n:found.n,cid:found.cid,med:med.n,exames:found.exames.slice(),criterios:found.criterios}:{n:med.n,cid:'',med:med.n,exames:[],criterios:''};prescSetTab('lme');renderLme();}return;}
+  if(act==='lmeclear'){prescLmeSel=null;renderLme();return;}
+  if(act==='ai'){prescAISuggest();return;}
+  if(act==='print'){prescPrintDoc(t.dataset.doc);return;}
+}
+function prescInput(e){
+  var el=e.target,id=el.id;
+  if(id==='presc-rx-search'){var d=document.getElementById('presc-rx-drop');if(d)d.innerHTML=prescDrop(el.value,PRESC_MEDS,'addrx');return;}
+  if(id==='presc-ex-search'){var de=document.getElementById('presc-ex-drop');if(de)de.innerHTML=prescDrop(el.value,PRESC_EXAMS,'addex');return;}
+  if(id==='presc-lme-search'){var dl=document.getElementById('presc-lme-drop');if(dl)dl.innerHTML=prescDrop(el.value,PRESC_LMECAT,'addlme');return;}
+  if(el.dataset.rxpos!==undefined){var ip=parseInt(el.dataset.rxpos,10);if(prescRx[ip])prescRx[ip].pos=el.value;return;}
+  if(el.dataset.rxqtd!==undefined){var iq=parseInt(el.dataset.rxqtd,10);if(prescRx[iq])prescRx[iq].qtd=el.value;return;}
+  if(el.dataset.rxapres!==undefined){var ia=parseInt(el.dataset.rxapres,10);if(prescRx[ia])prescRx[ia].apresSel=el.value;return;}
+}
+function prescPrintDoc(doc){
+  if(doc==='simples'||doc==='especial'){
+    var grp=prescRx.filter(function(m){return doc==='especial'?prescIsEspecial(m.r):(!prescIsEspecial(m.r));});
+    if(!grp.length){notify(doc==='especial'?'Nenhum medicamento de controle especial na lista.':'Nenhum medicamento de receita simples na lista.','err');return;}
+    var body=grp.map(function(m,i){return '<div class="rxln"><div class="rxn">'+(i+1)+'. '+esc(m.n)+(m.apresSel?(' '+esc(m.apresSel)):'')+(m.r==='atb'?'  <i>(antimicrobiano — 2 vias)</i>':'')+'</div><div class="rxp">'+esc(m.pos||'')+(m.qtd?('  —  '+esc(m.qtd)):'')+'</div></div>';}).join('');
+    prescPrint(doc==='especial'?'RECEITUÁRIO DE CONTROLE ESPECIAL':'RECEITUÁRIO',body,doc==='especial');
+    return;
+  }
+  if(doc==='exames'){
+    if(!prescExamsSel.length){notify('Nenhum exame selecionado.','err');return;}
+    var eb='<div class="rxln">'+prescExamsSel.map(function(e,i){return '<div class="exln">'+(i+1)+'. '+esc(e)+'</div>';}).join('')+'</div>';
+    prescPrint('SOLICITAÇÃO DE EXAMES',eb,false);
+    return;
+  }
+  if(doc==='lme'){
+    if(!prescLmeSel){notify('Selecione um medicamento para o LME.','err');return;}
+    var cid=prescVal('presc-lme-cid'),med=prescVal('presc-lme-med'),crit=prescVal('presc-lme-crit');
+    var exraw=document.getElementById('presc-lme-exames');var exl=exraw?(exraw.value||'').split('\n').filter(function(x){return x.trim();}):[];
+    var lb='<div class="rxln">'
+      +'<div class="rxn">CID-10: '+esc(cid||'—')+'</div>'
+      +'<div class="rxp"><b>Medicamento(s):</b> '+esc(med||'')+'</div>'
+      +'<div class="rxp" style="margin-top:.4rem"><b>Exames / critérios exigidos:</b></div>'+exl.map(function(x){return '<div class="exln">• '+esc(x)+'</div>';}).join('')
+      +(crit?('<div class="rxp" style="margin-top:.4rem"><b>Observações:</b> '+esc(crit)+'</div>'):'')
+      +'</div>';
+    prescPrint('LME — LAUDO P/ MEDICAMENTO ESPECIALIZADO (CEAF/SUS)',lb,false);
+    return;
+  }
+}
+function prescPrint(titulo,inner,vias){
+  var pac=prescVal('presc-pac-nome'),idade=prescVal('presc-pac-idade');
+  var pn=prescVal('presc-presc-nome'),pc=prescVal('presc-presc-crm'),pu=prescVal('presc-presc-uf'),pe=prescVal('presc-presc-esp');
+  lsSet('presc_prescritor',{nome:pn,crm:pc,uf:pu,esp:pe});
+  var dataStr=new Date().toLocaleDateString('pt-BR');
+  function via(label){
+    return '<div class="doc">'
+      +'<div class="dh"><div class="dt">'+esc(titulo)+'</div>'+(label?'<div class="dv">'+esc(label)+'</div>':'')+'</div>'
+      +'<div class="pac"><b>Paciente:</b> '+esc(pac||'____________________________________')+(idade?('&nbsp;&nbsp;&nbsp;<b>Idade:</b> '+esc(idade)):'')+'</div>'
+      +'<div class="bd">'+inner+'</div>'
+      +'<div class="sg"><div class="ln"></div>Dr(a). '+esc(pn||'')+(pc?(' — CRM '+esc(pc)+(pu?('/'+esc(pu)):'')):'')+(pe?('<div class="esp">'+esc(pe)+'</div>'):'')+'</div>'
+      +'<div class="dtt">'+esc(dataStr)+'</div></div>';
+  }
+  var content=vias?(via('1ª via — Farmácia')+'<div class="pgb"></div>'+via('2ª via — Paciente')):via('');
+  var css='*{box-sizing:border-box}body{font-family:Arial,Helvetica,sans-serif;color:#111;margin:0;padding:24px;font-size:13px}'
+    +'.doc{max-width:720px;margin:0 auto 18px;border:1px solid #ccc;border-radius:8px;padding:26px 30px}'
+    +'.dh{display:flex;justify-content:space-between;align-items:center;border-bottom:2px solid #1e3a5f;padding-bottom:8px;margin-bottom:14px}'
+    +'.dt{font-size:16px;font-weight:bold;color:#1e3a5f;letter-spacing:.5px}.dv{font-size:11px;color:#666;font-weight:bold}'
+    +'.pac{font-size:13px;margin-bottom:14px;padding-bottom:8px;border-bottom:1px dashed #bbb}'
+    +'.bd{min-height:220px}.rxln{margin-bottom:14px}.rxn{font-weight:bold;font-size:14px}.rxp{margin-left:18px;color:#222}.exln{margin-left:6px;line-height:1.9}'
+    +'.sg{margin-top:48px;text-align:center}.ln{border-top:1px solid #333;width:300px;margin:0 auto 4px}.esp{font-size:11px;color:#555}'
+    +'.dtt{text-align:right;margin-top:18px;font-size:12px;color:#555}.pgb{page-break-after:always}'
+    +'@media print{body{padding:0}.doc{border:none;margin:0 auto}}';
+  var w=window.open('','_blank','width=860,height=1000');
+  if(!w){notify('Permita pop-ups para gerar o documento de impressão.','err');return;}
+  w.document.write('<!doctype html><html><head><meta charset="utf-8"><title>'+esc(titulo)+'</title><style>'+css+'</style></head><body>'+content+'</body></html>');
+  w.document.close();w.focus();setTimeout(function(){try{w.print();}catch(e){}},400);
+}
+function prescAISuggest(){
+  if(typeof blockIfDegustacao==='function'&&blockIfDegustacao())return;
+  var dx=prescVal('presc-ai-dx');
+  if(!dx){notify('Informe o diagnóstico/condição para a IA sugerir.','err');return;}
+  function applyData(d){
+    (Array.isArray(d.prescricao)?d.prescricao:[]).forEach(function(m){
+      var nome=m.medicamento||'';if(!nome)return;
+      var pos=[m.dose,m.via,m.posologia,m.duracao].filter(Boolean).join(' · ');
+      prescRx.push({n:nome,apres:[m.dose||'—'],apresSel:(m.dose||'—'),pos:pos||(m.posologia||''),r:prescClassify(nome),lme:false,qtd:''});
+    });
+    var exs=[];if(d.exames){[].concat(d.exames.basais||[],d.exames.monitorizacao||[]).forEach(function(x){if(x)exs.push(x);});}
+    exs.forEach(function(x){if(prescExamsSel.indexOf(x)<0)prescExamsSel.push(x);});
+    if(d.lme&&d.lme.aplicavel){prescLmeSel={n:d.lme.medicamentos||dx,cid:d.lme.cid||'',med:d.lme.medicamentos||'',exames:Array.isArray(d.lme.exames_exigidos)?d.lme.exames_exigidos:[],criterios:d.lme.criterios||d.lme.observacao||''};}
+    renderRxList();renderExList();renderLme();prescSetTab('rx');
+    notify('Conduta sugerida pela IA inserida — revise e edite.','ok');
+  }
+  var hit=prescMatch(dx,'');
+  if(hit){applyData(hit.data);return;}
+  var btn=document.getElementById('presc-ai-btn');if(btn){btn.disabled=true;btn.innerHTML=ldHTML('Sugerindo...');}
+  var sys='Você é um assistente de prescrição para médicos no Brasil, baseado em diretrizes (SBEM, SBD, ADA, Endocrine Society) e na regulamentação brasileira. Responda APENAS JSON válido: {"prescricao":[{"medicamento":"","dose":"","via":"","posologia":"","duracao":""}],"exames":{"basais":["",""],"monitorizacao":["",""]},"lme":{"aplicavel":true,"cid":"","medicamentos":"","exames_exigidos":["",""],"criterios":""}}. Doses usuais para adulto; seja conservador.';
+  callAIJson(sys,'Condição/diagnóstico: '+dx+'. Gere prescrição sugerida, exames basais/monitorização e LME se aplicável.',1600,1)
+    .then(function(d){if(!d)throw new Error('Resposta inválida.');applyData(d);})
+    .catch(function(e){notify('Erro ao sugerir: '+(e.message||'falha'),'err');})
+    .then(function(){if(btn){btn.disabled=false;btn.innerHTML='Sugerir conduta';}});
+}
 function initPresc(){
-  if(prescInited)return;prescInited=true;
-  var btn=document.getElementById('btn-presc-gen');
-  if(btn)btn.addEventListener('click',genPresc);
-  var dx=document.getElementById('presc-dx');
-  if(dx)dx.addEventListener('keydown',function(e){if(e.key==='Enter'){e.preventDefault();genPresc();}});
+  renderPrescTool();
+  var tool=document.getElementById('presc-tool');
+  if(!tool||prescInited)return;
+  prescInited=true;
+  tool.addEventListener('click',prescClick);
+  tool.addEventListener('input',prescInput);
+  tool.addEventListener('change',prescInput);
 }
 function prescList(arr){
   if(!arr||!arr.length)return'<div style="font-size:.78rem;color:var(--t3)">—</div>';
