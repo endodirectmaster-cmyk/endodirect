@@ -1,4 +1,11 @@
 const DEFAULT_MODEL = process.env.ANTHROPIC_MODEL || 'claude-sonnet-4-6';
+// Modelos que o cliente pode solicitar por requisição (evita abuso/custo).
+// Recursos clínicos (prescrição/simulador) pedem Opus; o resto fica no default.
+const ALLOWED_MODELS = { 'claude-sonnet-4-6': 1, 'claude-opus-4-8': 1, 'claude-haiku-4-5': 1 };
+function pickModel(requested) {
+  const m = String(requested || '');
+  return ALLOWED_MODELS[m] ? m : DEFAULT_MODEL;
+}
 
 function json(res, status, body) {
   res.statusCode = status;
@@ -82,7 +89,7 @@ module.exports = async function handler(req, res) {
         'anthropic-version': '2023-06-01'
       },
       body: JSON.stringify({
-        model: DEFAULT_MODEL,
+        model: pickModel(body.model),
         max_tokens: maxTokens,
         system,
         messages: [{ role: 'user', content }]
