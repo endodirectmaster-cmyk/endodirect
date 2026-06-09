@@ -1665,6 +1665,11 @@ var CALCS=[
    calc:function(v){var g=parseFloat(v.homa_gli)||0;var ins=parseFloat(v.homa_ins)||0;return(g*ins)/405;},
    interp:function(s){return s<2.5?{t:'Sem resistência insulínica',c:'tag-grn'}:s<3.8?{t:'Resistência limítrofe',c:'tag-gold'}:{t:'Resistência à insulina',c:'tag-red'};},
    unit:'',note:'Ponto de corte varia conforme população (referência: ~2,5-3,8).'},
+  {id:'trp',name:'Reabsorção tubular de fósforo (TRP)',area:'Osteometabolismo',desc:'Fração de reabsorção tubular de fosfato',
+   fields:[{id:'trp_sp',label:'Fósforo sérico (mg/dL)',type:'num'},{id:'trp_up',label:'Fósforo urinário (mg/dL)',type:'num'},{id:'trp_scr',label:'Creatinina sérica (mg/dL)',type:'num'},{id:'trp_ucr',label:'Creatinina urinária (mg/dL)',type:'num'}],
+   calc:function(v){var sp=parseFloat(v.trp_sp)||0,up=parseFloat(v.trp_up)||0,scr=parseFloat(v.trp_scr)||0,ucr=parseFloat(v.trp_ucr)||0;if(sp<=0||ucr<=0)return 0;return (1-((up*scr)/(sp*ucr)))*100;},
+   interp:function(s){return s<85?{t:'Reabsorção reduzida — perda renal de fosfato (ex.: hiperPTH, raquitismo hipofosfatêmico)',c:'tag-gold'}:s<=95?{t:'Reabsorção normal (85–95%)',c:'tag-grn'}:{t:'Reabsorção aumentada (ex.: hipoparatireoidismo)',c:'tag-gold'};},
+   unit:'%',note:'TRP = [1 − (P urinário × Cr sérica) ÷ (P sérico × Cr urinária)] × 100. A fração de excreção de fosfato (FEPi) = 100 − TRP. Use amostra em jejum; referência ~85–95%.'},
 ];
 
 var USERS=[
