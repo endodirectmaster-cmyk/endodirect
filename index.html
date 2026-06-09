@@ -4321,6 +4321,82 @@ function prescList(arr){
 function prescCard(title,inner,accent){
   return'<div class="card" style="margin-top:.7rem;border-left:4px solid '+(accent||'var(--blue)')+'"><div class="card-head"><span class="card-title">'+esc(title)+'</span></div>'+inner+'</div>';
 }
+// Base curada (revisada) das condições endócrinas prioritárias. Modelo híbrido:
+// quando o diagnóstico/medicamento casa com uma entrada, a orientação é montada
+// deterministicamente a partir daqui (sem IA); fora da lista, recorre-se à IA.
+// Doses = faixas usuais para adulto; conferir bula/PCDT/diretriz vigente.
+var PRESC_KB=[
+  {keys:['diabetes tipo 2','dm2','diabetes mellitus tipo 2','diabetes 2'],area:'Diabetes',
+   data:{resumo:'DM2: metformina como base; associar iSGLT2 ou análogo de GLP-1 conforme risco cardiovascular/renal e necessidade de perda de peso.',
+   prescricao:[{medicamento:'Metformina XR',dose:'500–2000 mg/dia',via:'VO',posologia:'1x/dia à noite, titular semanalmente',duracao:'contínuo'},
+     {medicamento:'Dapagliflozina (iSGLT2)',dose:'10 mg',via:'VO',posologia:'1x/dia',duracao:'contínuo (benefício CV/renal)'},
+     {medicamento:'Semaglutida (GLP-1)',dose:'0,25→1,0 mg/sem',via:'SC',posologia:'1x/semana, titular mensalmente',duracao:'contínuo'}],
+   receituario:{tipo:'Receita simples',justificativa:'Antidiabéticos orais e injetáveis não são substâncias de controle especial.'},
+   lme:{aplicavel:false,observacao:'No SUS, o CEAF contempla principalmente as insulinas análogas (ver entrada de insulina). Metformina/iSGLT2/GLP-1 não compõem o componente especializado.'},
+   exames:{basais:['HbA1c','Glicemia de jejum','Creatinina e TFG','Perfil lipídico','TGO/TGP','EAS / relação albumina-creatinina urinária'],monitorizacao:['HbA1c a cada 3–6 meses','TFG e albuminúria anuais','Perfil lipídico anual']},
+   periodicidade:'Retorno em 3 meses para ajuste; estável, a cada 3–6 meses.',
+   orientacoes:['Mudança de estilo de vida (dieta e atividade física)','iSGLT2: hidratação e higiene genital; suspender em intercorrências agudas','GLP-1: náusea inicial transitória, titular devagar'],
+   alertas:['Metformina: suspender se TFG <30; cautela 30–45','Risco de cetoacidose euglicêmica com iSGLT2','Não associar GLP-1 a inibidor de DPP-4']}},
+  {keys:['diabetes tipo 1','dm1','insulina','insulina análoga','glargina','asparte','lispro'],area:'Diabetes',
+   data:{resumo:'DM1 / insulinização: esquema basal-bolus com análogos de insulina; insulinas análogas disponíveis no SUS via Componente Especializado (PCDT Diabete Melito).',
+   prescricao:[{medicamento:'Insulina glargina (basal)',dose:'0,2–0,4 UI/kg/dia',via:'SC',posologia:'1x/dia',duracao:'contínuo'},
+     {medicamento:'Insulina asparte/lispro (bolus)',dose:'conforme contagem de carboidratos',via:'SC',posologia:'antes das refeições',duracao:'contínuo'}],
+   receituario:{tipo:'Receita simples',justificativa:'Insulinas não são de controle especial.'},
+   lme:{aplicavel:true,cid:'E10 (DM1) / E11 (DM2 insulinodependente)',medicamentos:'Insulinas análogas de ação prolongada (glargina, detemir, degludeca) e rápida (asparte, lispro, glulisina)',exames_exigidos:['HbA1c','Glicemia de jejum','Relatório com diagnóstico e esquema atual'],criterios:'Conforme PCDT Diabete Melito (hipoglicemias/controle inadequado com insulina humana).',observacao:'Preencher LME com CID, medicamento, posologia e exames; renovação periódica.'},
+   exames:{basais:['HbA1c','Glicemia de jejum','Função renal','TSH e anti-TPO (rastreio autoimune)'],monitorizacao:['HbA1c a cada 3 meses','Monitorização glicêmica capilar/contínua','Rastreio anual de complicações']},
+   periodicidade:'Retornos a cada 3 meses (ou antes se descontrole/hipoglicemias).',
+   orientacoes:['Educação em contagem de carboidratos','Técnica de aplicação e rodízio de locais','Conduta na hipoglicemia'],
+   alertas:['Risco de hipoglicemia','Ajustar em exercício e doença aguda']}},
+  {keys:['osteoporose','osteopenia','osteometabolismo','fratura por fragilidade'],area:'Osteometabolismo',
+   data:{resumo:'Osteoporose: bisfosfonato como 1ª linha + reposição de cálcio/vitamina D; opções no SUS via Componente Especializado.',
+   prescricao:[{medicamento:'Alendronato de sódio',dose:'70 mg',via:'VO',posologia:'1x/semana, em jejum, com água, permanecer ereto 30 min',duracao:'reavaliar em 3–5 anos'},
+     {medicamento:'Colecalciferol (vit. D)',dose:'1.000–2.000 UI/dia',via:'VO',posologia:'1x/dia',duracao:'contínuo'},
+     {medicamento:'Carbonato de cálcio',dose:'500–1.000 mg de Ca elementar/dia',via:'VO',posologia:'às refeições',duracao:'contínuo'}],
+   receituario:{tipo:'Receita simples',justificativa:'Não são substâncias de controle especial.'},
+   lme:{aplicavel:true,cid:'M80 / M81',medicamentos:'Alendronato, risedronato, raloxifeno, calcitriol, calcitonina, pamidronato/ácido zoledrônico e teriparatida (conforme PCDT)',exames_exigidos:['Densitometria óssea (DMO)','Cálcio total e iônico','Creatinina/TFG','25-OH-vitamina D'],criterios:'T-score ≤ −2,5 e/ou fratura por fragilidade, conforme PCDT Osteoporose.',observacao:'Teriparatida exige critérios específicos (falha/alto risco).'},
+   exames:{basais:['Densitometria óssea (DMO)','Cálcio, fósforo, PTH','25-OH-vitamina D','Função renal','Fosfatase alcalina'],monitorizacao:['DMO a cada 1–2 anos','Cálcio e vitamina D periódicos']},
+   periodicidade:'Reavaliação clínica/laboratorial anual; DMO em 1–2 anos.',
+   orientacoes:['Corrigir vitamina D e cálcio antes do antirreabsortivo','Tomar bisfosfonato em jejum, manter-se ereto 30 min','Prevenção de quedas, suspensão de tabagismo/álcool'],
+   alertas:['Não iniciar bisfosfonato com hipocalcemia/déficit de vit. D','Avaliação odontológica (osteonecrose de mandíbula)','Bisfosfonato VO contraindicado se TFG <30–35']}},
+  {keys:['hipotireoidismo','levotiroxina','tireoide','hashimoto','tsh elevado'],area:'Tireoide',
+   data:{resumo:'Hipotireoidismo: reposição com levotiroxina, ajustada pelo TSH.',
+   prescricao:[{medicamento:'Levotiroxina sódica',dose:'1,6 mcg/kg/dia (iniciar 25–50 mcg em idosos/cardiopatas)',via:'VO',posologia:'1x/dia em jejum, 30–60 min antes do café',duracao:'contínuo'}],
+   receituario:{tipo:'Receita simples',justificativa:'Levotiroxina não é de controle especial.'},
+   lme:{aplicavel:false,observacao:'Levotiroxina é medicamento do componente básico da assistência farmacêutica.'},
+   exames:{basais:['TSH','T4 livre','Anti-TPO'],monitorizacao:['TSH (e T4L) 6–8 semanas após início/ajuste','Após estável, TSH a cada 6–12 meses']},
+   periodicidade:'Reavaliar TSH em 6–8 semanas após cada ajuste de dose.',
+   orientacoes:['Tomar em jejum, longe de cálcio/ferro/omeprazol','Aderência diária é essencial','Ajustar dose na gestação (necessidade aumenta)'],
+   alertas:['Iniciar com dose baixa em coronariopatas/idosos','Excesso → tireotoxicose iatrogênica e perda óssea']}},
+  {keys:['hipertireoidismo','tireotoxicose','graves','metimazol','tiamazol','tapazol'],area:'Tireoide',
+   data:{resumo:'Hipertireoidismo (ex.: Doença de Graves): tionamida (metimazol) + betabloqueador para sintomas.',
+   prescricao:[{medicamento:'Metimazol (tiamazol)',dose:'10–30 mg/dia',via:'VO',posologia:'1–2x/dia, titular pelo T4L',duracao:'12–18 meses (Graves)'},
+     {medicamento:'Propranolol',dose:'10–40 mg',via:'VO',posologia:'8/8h conforme sintomas adrenérgicos',duracao:'até controle'}],
+   receituario:{tipo:'Receita simples',justificativa:'Tionamidas e betabloqueadores não são de controle especial.'},
+   lme:{aplicavel:false,observacao:'Não compõe o Componente Especializado.'},
+   exames:{basais:['TSH','T4 livre','T3','TRAb','Hemograma','TGO/TGP/bilirrubinas'],monitorizacao:['T4L a cada 4–6 semanas até controle','Hemograma e função hepática se sintomas','TSH normaliza mais tardiamente']},
+   periodicidade:'Reavaliar T4 livre em 4–6 semanas e ajustar a dose.',
+   orientacoes:['Procurar atendimento se febre/odinofagia (suspender e fazer hemograma)','Discutir opções definitivas (radioiodo/cirurgia)'],
+   alertas:['Agranulocitose (rara e grave)','Hepatotoxicidade','Propiltiouracila preferida no 1º trimestre da gestação']}},
+  {keys:['hipogonadismo','testosterona','reposição hormonal masculina','andrógeno','anabolizante','deficiência androgênica'],area:'Endocrinologia Masculina',
+   data:{resumo:'Hipogonadismo masculino confirmado: reposição de testosterona com monitorização de hematócrito e próstata. Andrógenos são de CONTROLE ESPECIAL.',
+   prescricao:[{medicamento:'Undecilato de testosterona',dose:'1.000 mg',via:'IM',posologia:'a cada 10–14 semanas (após dose de ataque)',duracao:'contínuo, reavaliar'},
+     {medicamento:'Testosterona gel 1%',dose:'40–80 mg/dia',via:'Transdérmica',posologia:'1x/dia pela manhã',duracao:'contínuo'}],
+   receituario:{tipo:'Receita de Controle Especial (branca, 2 vias)',justificativa:'Esteroides anabolizantes/andrógenos estão sujeitos a controle especial (ANVISA) — exigem receita de controle especial em duas vias.'},
+   lme:{aplicavel:false,observacao:'Reposição de testosterona não faz parte do Componente Especializado/SUS.'},
+   exames:{basais:['Testosterona total (2 dosagens matinais)','LH e FSH','Hematócrito/hemoglobina','PSA (≥40 anos)','Perfil lipídico'],monitorizacao:['Testosterona, hematócrito e PSA em 3–6 meses e depois anualmente']},
+   periodicidade:'Reavaliação em 3–6 meses no início; depois anual.',
+   orientacoes:['Confirmar diagnóstico antes de iniciar (sintomas + 2 dosagens baixas)','Suprime a fertilidade — usar hCG/clomifeno se desejo reprodutivo'],
+   alertas:['Contraindicada em câncer de próstata/mama','Suspender se hematócrito >54% (eritrocitose)','Avaliar risco cardiovascular e apneia do sono']}}
+];
+function prescNorm(s){return String(s||'').toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g,'');}
+function prescMatch(dx,med){
+  var hay=prescNorm(dx+' '+med);
+  for(var i=0;i<PRESC_KB.length;i++){
+    var ks=PRESC_KB[i].keys;
+    for(var j=0;j<ks.length;j++){if(hay.indexOf(prescNorm(ks[j]))>=0)return PRESC_KB[i];}
+  }
+  return null;
+}
 function genPresc(){
   if(typeof blockIfDegustacao==='function'&&blockIfDegustacao())return;
   var dx=(document.getElementById('presc-dx').value||'').trim();
@@ -4329,6 +4405,9 @@ function genPresc(){
   var pac=(document.getElementById('presc-pac').value||'').trim();
   var btn=document.getElementById('btn-presc-gen');
   var out=document.getElementById('presc-result');
+  // Híbrido: 1º tenta a base curada (determinística, revisada).
+  var hit=prescMatch(dx,med);
+  if(hit){renderPresc(hit.data,dx,'curado');return;}
   btn.disabled=true;btn.innerHTML=ldHTML('Gerando orientação...');
   out.innerHTML='';
   var sys='Você é um assistente de prescrição para endocrinologistas e médicos no Brasil. '
@@ -4351,10 +4430,13 @@ function genPresc(){
     out.innerHTML='<div style="color:var(--red);font-size:.78rem;margin-top:.6rem">Erro: '+esc(e.message||'falha ao gerar')+'</div>';
   }).then(function(){btn.disabled=false;btn.innerHTML='▶ Gerar orientação';});
 }
-function renderPresc(d,dx){
+function renderPresc(d,dx,source){
   var out=document.getElementById('presc-result');
   var html='';
-  html+='<div class="card" style="margin-top:.85rem"><div class="card-head"><span class="card-title">📋 Orientação — '+esc(dx)+'</span></div>'
+  var srcTag=source==='curado'
+    ?'<span class="tag tag-grn" style="font-size:.62rem">✓ Conteúdo curado</span>'
+    :'<span class="tag tag-blue" style="font-size:.62rem">IA</span>';
+  html+='<div class="card" style="margin-top:.85rem"><div class="card-head"><span class="card-title">📋 Orientação — '+esc(dx)+'</span>'+srcTag+'</div>'
     +'<div style="font-size:.8rem;line-height:1.7;color:var(--t2)">'+esc(d.resumo||'')+'</div></div>';
   var presc=Array.isArray(d.prescricao)?d.prescricao:[];
   var ph=presc.length?presc.map(function(m){
@@ -4396,7 +4478,10 @@ function renderPresc(d,dx){
   if(d.alertas&&d.alertas.length){
     html+=prescCard('⚠️ Alertas de segurança',prescList(d.alertas),'#c0392b');
   }
-  html+='<div style="font-size:.7rem;color:var(--t3);margin-top:.7rem;line-height:1.5;border-top:1px solid var(--bd);padding-top:.5rem">ℹ️ Conteúdo gerado por IA com base em diretrizes e na regulamentação brasileira (ANVISA Portaria 344/98, CEAF/SUS). Confira sempre doses, contraindicações, interações e a versão vigente dos protocolos antes de prescrever.</div>';
+  var fonte=source==='curado'
+    ?'Conteúdo curado a partir de diretrizes (SBEM, SBD, ADA) e da regulamentação brasileira (ANVISA Portaria 344/98, PCDT/CEAF do SUS). Doses são faixas usuais para adulto.'
+    :'Conteúdo gerado por IA com base em diretrizes e na regulamentação brasileira (ANVISA Portaria 344/98, CEAF/SUS).';
+  html+='<div style="font-size:.7rem;color:var(--t3);margin-top:.7rem;line-height:1.5;border-top:1px solid var(--bd);padding-top:.5rem">ℹ️ '+fonte+' Confira sempre doses, contraindicações, interações e a versão vigente dos protocolos antes de prescrever.</div>';
   out.innerHTML=html;
   out.scrollIntoView({behavior:'smooth',block:'nearest'});
 }
