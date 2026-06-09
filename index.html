@@ -962,7 +962,7 @@ textarea{resize:vertical;line-height:1.6}
       <div class="lp-faq">
         <details><summary>O que é o Endodirect?</summary><p>Uma plataforma de educação médica em Endocrinologia e Metabologia, reunindo banco de questões comentadas, flashcards, mapas mentais, simulador de casos, simulado, prescrição, podcasts, cursos e um assistente de IA — tudo baseado nas principais diretrizes (SBEM, SBD, ADA).</p></details>
         <details><summary>Para quem é a plataforma?</summary><p>Para todos que querem se aprofundar e se manter atualizados em endocrinologia e metabologia.</p></details>
-        <details><summary>Posso testar antes de assinar?</summary><p>Sim. Ao entrar, você acessa o modo degustação: flashcards e mapas mentais pré-salvos, 50 questões do banco Endodirect, o mural de atualizações e 3 usos de cada uma das ferramentas com IA (simulador de casos, simulado, prescrição e chat).</p></details>
+        <details><summary>Posso testar antes de assinar?</summary><p>Sim. Ao entrar, você acessa o modo degustação: flashcards e mapas mentais pré-salvos, 50 questões do banco Endodirect, o mural de atualizações por 7 dias e 3 usos de cada uma das ferramentas com IA (simulador de casos, simulado, prescrição e chat).</p></details>
         <details><summary>Qual a diferença entre os planos?</summary><p>O <b>Standard</b> reúne banco de questões, simulado, flashcards, mapas mentais, podcasts, resumidor de artigos e o curso de Lípides. O <b>Gold</b> acrescenta a Prescrição Comentada e o curso de Hiperglicemia Hospitalar. O <b>Premium</b> inclui tudo do Gold, mais o Simulador de Casos e o curso de Endocrinologia Essencial. Veja os detalhes na seção Planos.</p></details>
         <details><summary>O EndoTEEM está incluído?</summary><p>Não. O EndoTEEM é um produto à parte, voltado a quem vai prestar a prova de especialista.</p></details>
         <details><summary>Funciona no celular?</summary><p>Sim. A plataforma é responsiva e funciona pelo navegador no computador, no iOS e no Android.</p></details>
@@ -2152,10 +2152,17 @@ function renderDegustacaoBar(){
     if(!bar){
       bar=document.createElement('div');bar.id='degustacao-bar';
       bar.style.cssText='display:flex;align-items:center;justify-content:center;gap:.8rem;flex-wrap:wrap;background:linear-gradient(90deg,#e0a93b,#d59a2e);color:#241a04;font-size:.8rem;font-weight:600;padding:.5rem 1rem;text-align:center';
-      bar.innerHTML='🎁 Modo degustação — flashcards, mapas mentais, 50 questões do banco e mural liberados. <button id="degustacao-cta" type="button" style="background:#1a1320;color:#fff;border:0;border-radius:999px;padding:.32rem .9rem;font-weight:700;cursor:pointer">Ver pacotes e desbloquear tudo</button>';
+      bar.innerHTML='<span id="degustacao-msg"></span> <button id="degustacao-cta" type="button" style="background:#1a1320;color:#fff;border:0;border-radius:999px;padding:.32rem .9rem;font-weight:700;cursor:pointer">Ver pacotes e desbloquear tudo</button>';
       var ws=app.querySelector('.workspace');
       if(ws)app.insertBefore(bar,ws);else app.appendChild(bar);
       var cta=bar.querySelector('#degustacao-cta');if(cta)cta.addEventListener('click',function(){showAssineScreen((currentUser&&currentUser.email)||'');});
+    }
+    var msg=bar.querySelector('#degustacao-msg');
+    if(msg){
+      var muralTxt;
+      if(muralTrialActive()){var d=muralDegDiasRestantes();muralTxt='mural por mais '+d+' dia'+(d===1?'':'s');}
+      else{muralTxt='mural encerrado';}
+      msg.innerHTML='🎁 Modo degustação — flashcards, mapas mentais, 50 questões do banco e '+muralTxt+'.';
     }
     bar.style.display='flex';
   }else if(bar){bar.style.display='none';}
@@ -3095,12 +3102,21 @@ function hasScope(scope){return !scope||isAdminUser()||userAcessos.indexOf(scope
 // Degustacao: aluno logado, sem nenhum acesso ativo (não comprou pacote/curso).
 function isDegustacao(){return !!(currentUser&&currentUser.role==='aluno'&&!isAdminUser()&&(!userAcessos||userAcessos.length===0));}
 // Paineis liberados na degustacao (o resto fica 🔒 com upsell).
-var DEGUSTACAO_PANELS={dash:1,flash:1,mmap:1,quest:1,mural:1,perfil:1,support:1};
+var DEGUSTACAO_PANELS={dash:1,flash:1,mmap:1,quest:1,perfil:1,support:1};
 // Ferramentas com IA liberadas na degustação por COTA (3 usos cada): simulador
 // de casos, simulado, prescrição e chat IA. Após esgotar, vira upsell.
 var TRIAL_PANELS={sim:1,simfull:1,rx:1,chat:1};
 var TRIAL_LIMIT=3;
+var DEG_MURAL_DIAS=7; // mural liberado na degustação só por 7 dias
 function trialUsed(id){return Math.max(0,parseInt((degTrials&&degTrials[id])||0,10)||0);}
+// Início da degustação (timestamp), definido na 1ª vez; usado p/ o mural de 7 dias.
+function degStart(){
+  if(!degTrials||typeof degTrials!=='object')degTrials={};
+  if(!degTrials.__start){degTrials.__start=Date.now();try{lsSet('deg_trials',degTrials);queueRemoteStateSave();}catch(e){}}
+  return degTrials.__start;
+}
+function muralDegDiasRestantes(){return Math.max(0,Math.ceil((DEG_MURAL_DIAS*86400000-(Date.now()-degStart()))/86400000));}
+function muralTrialActive(){return isDegustacao()&&(Date.now()-degStart())<DEG_MURAL_DIAS*86400000;}
 function trialLeft(id){return Math.max(0,TRIAL_LIMIT-trialUsed(id));}
 // Consome 1 uso da cota de degustação. Fora da degustação não há limite.
 // Retorna false (e mostra upsell) quando a cota acabou.
@@ -3122,6 +3138,7 @@ function consumeTrial(id){
 function canSeePanel(id){
   if(isAdminUser())return true;
   if(isDegustacao()){
+    if(id==='mural')return muralTrialActive(); // degustação do mural: 7 dias
     if(DEGUSTACAO_PANELS[id])return true;
     if(TRIAL_PANELS[id])return trialLeft(id)>0;
     return false;
@@ -3194,6 +3211,20 @@ function showLockedPanel(id){
       +'</div></div>';
     var bte=document.getElementById('locked-cta');
     if(bte)bte.addEventListener('click',function(){showAssineScreen((currentUser&&currentUser.email)||'',{upgrade:hasPlan,highlight:(minName?minName.toLowerCase():'')});});
+    closeMobileNav();
+    return;
+  }
+  if(isDegustacao()&&id==='mural'){
+    p.innerHTML='<div class="breadcrumb">'+esc(label)+' <b>/ Bloqueado</b></div>'
+      +'<div class="ph"><h1>🔒 '+esc(label)+'</h1></div>'
+      +'<div class="pc"><div class="card" style="max-width:520px;margin:1.2rem auto;text-align:center;padding:1.9rem 1.5rem">'
+      +'<div style="font-size:2.3rem;margin-bottom:.5rem">🎁</div>'
+      +'<div style="font-size:1.02rem;font-weight:800;color:var(--navy);margin-bottom:.4rem">Degustação do mural encerrada</div>'
+      +'<p style="font-size:.84rem;color:var(--t2);line-height:1.6;margin:.3rem 0 1.2rem">Seu acesso ao <b>Mural</b> na degustação durava <b>'+DEG_MURAL_DIAS+' dias</b> e já terminou. Adquira um pacote (Standard, Gold ou Premium) para continuar acompanhando as atualizações.</p>'
+      +'<button class="btn btn-primary" id="locked-cta" style="justify-content:center">Ver planos e cursos</button>'
+      +'</div></div>';
+    var bme=document.getElementById('locked-cta');
+    if(bme)bme.addEventListener('click',function(){showAssineScreen((currentUser&&currentUser.email)||'',{upgrade:false});});
     closeMobileNav();
     return;
   }
