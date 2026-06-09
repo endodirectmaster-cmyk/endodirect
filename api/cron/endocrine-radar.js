@@ -2,6 +2,7 @@
 // A logica fica em lib/radar.js (compartilhada com /api/admin/refresh-radar).
 // Auth: a Vercel envia Authorization: Bearer $CRON_SECRET (defina essa env).
 const { runRadar } = require('../../lib/radar');
+const { sendDailyNewsletter } = require('../../lib/newsletter');
 
 function json(res, status, body) {
   res.statusCode = status;
@@ -20,7 +21,12 @@ module.exports = async function handler(req, res) {
   }
   try {
     const result = await runRadar();
-    return json(res, 200, { ok: true, ...result });
+    // Newsletter diária (só no cron): envia os 3 mais relevantes do dia.
+    // Fail-safe: nunca derruba o cron do radar se o envio falhar.
+    let newsletter = { sent: false, reason: 'skipped' };
+    try { newsletter = await sendDailyNewsletter(result.topArticles); }
+    catch (e) { console.error('[cron-radar] newsletter erro:', (e && e.stack) || e); newsletter = { sent: false, reason: 'error' }; }
+    return json(res, 200, { ok: true, ...result, newsletter });
   } catch (error) {
     console.error('[cron-radar] erro:', (error && error.stack) || error);
     return json(res, 500, { ok: false, error: (error && error.message) || 'Falha ao atualizar o radar.' });
