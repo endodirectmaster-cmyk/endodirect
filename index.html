@@ -4415,15 +4415,49 @@ var PRESC_LMECAT=[
 ];
 var PRESC_RLABEL={simples:'Receita Simples',especial:'Controle Especial (C1) — 2 vias',b1:'Notificação B (azul)',b2:'Notificação B2 (azul) — anorexígeno',a:'Notificação A (amarela)',atb:'Antimicrobiano — 2 vias (RDC 471/2021)'};
 var prescRx=[],prescExamsSel=[],prescLmeSel=null,prescTab='rx';
-// Catálogo externo (ANVISA — dados abertos), carregado sob demanda e mesclado.
-var prescExtLoaded=false,prescMedAll=PRESC_MEDS.slice();
+// Posologia padrão memorizada por princípio ativo (faixas usuais p/ adulto;
+// editável). Aplicada às marcas importadas (ANVISA/CMED) no carregamento.
+var PRESC_POS={
+  'metformina':'1 comp VO 2x/dia após as refeições (titular)',
+  'gliclazida':'1 comp VO 1x/dia pela manhã','glibenclamida':'1 comp VO 1x/dia antes do café','glimepirida':'1 comp VO 1x/dia pela manhã',
+  'dapagliflozina':'1 comp VO 1x/dia','empagliflozina':'1 comp VO 1x/dia','canagliflozina':'1 comp VO 1x/dia',
+  'sitagliptina':'1 comp VO 1x/dia','linagliptina':'1 comp VO 1x/dia','vildagliptina':'1 comp VO 2x/dia',
+  'pioglitazona':'1 comp VO 1x/dia','acarbose':'1 comp VO 3x/dia no início das refeições','repaglinida':'1 comp VO antes das refeições',
+  'semaglutida':'SC 1x/semana (titular: 0,25→0,5→1 mg)','liraglutida':'SC 1x/dia (titular)','dulaglutida':'SC 1x/semana','tirzepatida':'SC 1x/semana (titular)',
+  'levotiroxina':'1 comp VO em jejum, 30–60 min antes do café','metimazol':'VO conforme T4 livre (10–30 mg/dia)','propiltiouracila':'100 mg VO 3x/dia (ajustar)',
+  'alendronato':'1 comp VO 1x/semana em jejum; permanecer ereto 30 min','risedronato':'1 comp VO 1x/semana em jejum','ibandronato':'1 comp VO 1x/mês em jejum',
+  'denosumabe':'60 mg SC a cada 6 meses','colecalciferol':'reposição conforme nível; manutenção 1.000–2.000 UI/dia','calcitriol':'0,25–0,5 mcg/dia VO',
+  'carbonato de calcio':'500–1.000 mg/dia VO com refeições','citrato de calcio':'500–1.000 mg/dia VO',
+  'atorvastatina':'1 comp VO 1x/dia','rosuvastatina':'1 comp VO 1x/dia','sinvastatina':'1 comp VO à noite','ezetimiba':'10 mg VO 1x/dia',
+  'fenofibrato':'1 comp VO 1x/dia','ciprofibrato':'100 mg VO 1x/dia','bezafibrato':'VO conforme apresentação',
+  'losartana':'50 mg VO 1–2x/dia','valsartana':'VO 1x/dia','enalapril':'10–20 mg VO 2x/dia','captopril':'25 mg VO 2–3x/dia',
+  'anlodipino':'5–10 mg VO 1x/dia','nifedipino':'VO conforme apresentação','hidroclorotiazida':'25 mg VO pela manhã','clortalidona':'12,5–25 mg VO pela manhã',
+  'furosemida':'VO conforme indicação','espironolactona':'25–100 mg/dia VO','indapamida':'1,5 mg VO pela manhã',
+  'atenolol':'25–100 mg VO 1x/dia','propranolol':'VO conforme indicação','metoprolol':'VO 1–2x/dia','carvedilol':'VO 2x/dia',
+  'omeprazol':'20–40 mg VO em jejum','pantoprazol':'40 mg VO em jejum','esomeprazol':'VO 1x/dia',
+  'dipirona':'500–1.000 mg VO até 4x/dia se dor/febre','paracetamol':'500–750 mg VO até 4x/dia','ibuprofeno':'400–600 mg VO 8/8h se dor',
+  'amoxicilina':'500 mg VO 8/8h por 7 dias','azitromicina':'500 mg VO 1x/dia por 3 dias','cefalexina':'500 mg VO 6/6h por 7 dias',
+  'ciprofloxacino':'500 mg VO 12/12h','nitrofurantoina':'100 mg VO 6/6h por 5–7 dias','sulfametoxazol':'VO 12/12h',
+  'sertralina':'50 mg VO 1x/dia','fluoxetina':'20 mg VO pela manhã','escitalopram':'10 mg VO 1x/dia','clonazepam':'0,5–2 mg VO à noite',
+  'prednisona':'dose conforme indicação','prednisolona':'dose conforme indicação','hidrocortisona':'15–25 mg/dia VO divididos (maior dose pela manhã)','dexametasona':'conforme indicação','fludrocortisona':'0,05–0,2 mg/dia VO',
+  'cabergolina':'0,5 mg VO 1–2x/semana (titular)','bromocriptina':'1,25–2,5 mg VO 1–2x/dia','finasterida':'1–5 mg VO 1x/dia',
+  'testosterona':'IM/transdérmica conforme apresentação (controle especial)','estradiol':'VO/transdérmica conforme terapia hormonal','tibolona':'2,5 mg VO 1x/dia',
+  'cinacalcete':'VO 1x/dia (titular pelo cálcio/PTH)','colchicina':'0,5 mg VO 1–2x/dia','alopurinol':'100–300 mg VO 1x/dia',
+  'sulfato ferroso':'VO 1–2x/dia, longe das refeições','acido folico':'5 mg VO 1x/dia','vitamina b12':'IM/VO conforme reposição'
+};
+function prescPosFor(pa,nome){
+  if(/[,+]/.test(pa||''))return ''; // associação: deixa em branco (posologia específica)
+  var h=prescNorm(pa||nome||'');
+  for(var k in PRESC_POS){if(h.indexOf(k)>=0)return PRESC_POS[k];}
+  return '';
+}
 function prescLoadCatalogo(cb){
   if(prescExtLoaded){if(cb)cb();return;}
   fetch('presc-catalogo.json').then(function(r){return r.ok?r.json():null;}).then(function(d){
     var meds=(d&&d.meds)||[];
     var seen={};PRESC_MEDS.forEach(function(m){seen[prescNorm(m.n)]=1;});
     var add=[];
-    meds.forEach(function(a){var n=a[0];if(!n)return;var key=prescNorm(n);if(seen[key])return;seen[key]=1;add.push({n:n,apres:['—'],apresSel:'—',via:'',pos:'',r:(a[2]||'simples'),lme:false,pa:(a[1]||'')});});
+    meds.forEach(function(a){var n=a[0];if(!n)return;var key=prescNorm(n);if(seen[key])return;seen[key]=1;var apr=(Array.isArray(a[3])&&a[3].length)?a[3]:['—'];add.push({n:n,apres:apr,apresSel:apr[0],via:'',pos:prescPosFor(a[1],n),r:(a[2]||'simples'),lme:false,pa:(a[1]||'')});});
     prescMedAll=PRESC_MEDS.concat(add);prescExtLoaded=true;
     var hint=document.getElementById('presc-rx-hint');if(hint)hint.textContent='Catálogo: '+prescMedAll.length.toLocaleString('pt-BR')+' medicamentos (curado + ANVISA). Busca por nome comercial ou princípio ativo.';
   }).catch(function(){}).then(function(){if(cb)cb();});
