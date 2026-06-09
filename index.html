@@ -4415,6 +4415,19 @@ var PRESC_LMECAT=[
 ];
 var PRESC_RLABEL={simples:'Receita Simples',especial:'Controle Especial (C1) — 2 vias',b1:'Notificação B (azul)',b2:'Notificação B2 (azul) — anorexígeno',a:'Notificação A (amarela)',atb:'Antimicrobiano — 2 vias (RDC 471/2021)'};
 var prescRx=[],prescExamsSel=[],prescLmeSel=null,prescTab='rx';
+// Catálogo externo (ANVISA — dados abertos), carregado sob demanda e mesclado.
+var prescExtLoaded=false,prescMedAll=PRESC_MEDS.slice();
+function prescLoadCatalogo(cb){
+  if(prescExtLoaded){if(cb)cb();return;}
+  fetch('presc-catalogo.json').then(function(r){return r.ok?r.json():null;}).then(function(d){
+    var meds=(d&&d.meds)||[];
+    var seen={};PRESC_MEDS.forEach(function(m){seen[prescNorm(m.n)]=1;});
+    var add=[];
+    meds.forEach(function(a){var n=a[0];if(!n)return;var key=prescNorm(n);if(seen[key])return;seen[key]=1;add.push({n:n,apres:['—'],apresSel:'—',via:'',pos:'',r:(a[2]||'simples'),lme:false,pa:(a[1]||'')});});
+    prescMedAll=PRESC_MEDS.concat(add);prescExtLoaded=true;
+    var hint=document.getElementById('presc-rx-hint');if(hint)hint.textContent='Catálogo: '+prescMedAll.length.toLocaleString('pt-BR')+' medicamentos (curado + ANVISA). Busca por nome comercial ou princípio ativo.';
+  }).catch(function(){}).then(function(){if(cb)cb();});
+}
 function prescVal(id){var e=document.getElementById(id);return e?(e.value||'').trim():'';}
 function prescIsEspecial(r){return r==='especial'||r==='b1'||r==='b2'||r==='a';}
 function prescClassify(name){var k=prescNorm(name);for(var i=0;i<PRESC_MEDS.length;i++){if(prescNorm(PRESC_MEDS[i].n).indexOf(k)>=0||k.indexOf(prescNorm(PRESC_MEDS[i].n))>=0)return PRESC_MEDS[i].r;}return 'simples';}
@@ -4466,7 +4479,8 @@ function renderRxList(){
     +'</div>';
   }).join(''):'<div class="empty" style="padding:1rem">Nenhum medicamento. Use a busca acima para adicionar.</div>';
   box.innerHTML=
-    '<div style="position:relative"><input type="text" id="presc-rx-search" placeholder="🔎 Digite o medicamento (ex.: met, levo, alen)…" autocomplete="off" style="width:100%"><div id="presc-rx-drop" class="presc-drop"></div></div>'
+    '<div style="position:relative"><input type="text" id="presc-rx-search" placeholder="🔎 Digite o medicamento ou princípio ativo (ex.: met, glifage, levo)…" autocomplete="off" style="width:100%"><div id="presc-rx-drop" class="presc-drop"></div></div>'
+    +'<div id="presc-rx-hint" style="font-size:.66rem;color:var(--t3);margin-top:.3rem">'+(prescExtLoaded?('Catálogo: '+prescMedAll.length.toLocaleString('pt-BR')+' medicamentos (curado + ANVISA). Busca por nome comercial ou princípio ativo.'):'Carregando catálogo completo da ANVISA…')+'</div>'
     +'<div id="presc-rx-items" style="margin-top:.6rem">'+itemsHtml+'</div>'
     +'<div style="display:flex;gap:.5rem;flex-wrap:wrap;margin-top:.7rem">'
       +'<button class="btn btn-primary" data-act="print" data-doc="simples">🖨 Receituário Simples</button>'
@@ -4501,7 +4515,13 @@ function renderLme(){
 }
 function prescDrop(q,list,act){
   var k=prescNorm(q);if(!k){return '';}
-  var hits=[];for(var i=0;i<list.length&&hits.length<14;i++){var nm=(typeof list[i]==='string')?list[i]:list[i].n;if(prescNorm(nm).indexOf(k)>=0)hits.push({i:i,nm:nm,sub:(typeof list[i]==='string')?'':((list[i].apres?list[i].apres[0]:'')+' · '+(PRESC_RLABEL[list[i].r]||''))});}
+  var hits=[];for(var i=0;i<list.length&&hits.length<16;i++){
+    var it=list[i];var nm=(typeof it==='string')?it:it.n;var pa=(typeof it==='string')?'':(it.pa||'');
+    if(prescNorm(nm).indexOf(k)<0&&!(pa&&prescNorm(pa).indexOf(k)>=0))continue;
+    var sub='';
+    if(typeof it!=='string'){sub=pa?pa:((it.apres&&it.apres[0]&&it.apres[0]!=='—')?it.apres[0]:'');if(it.r&&it.r!=='simples')sub=(sub?sub+' · ':'')+(PRESC_RLABEL[it.r]||'');}
+    hits.push({i:i,nm:nm,sub:sub});
+  }
   if(!hits.length)return '<div class="presc-drop-item" style="color:var(--t3)">Nenhum resultado</div>';
   return hits.map(function(h){return '<div class="presc-drop-item" data-act="'+act+'" data-i="'+h.i+'">'+esc(h.nm)+(h.sub?' <small style="color:var(--t3)">'+esc(h.sub)+'</small>':'')+'</div>';}).join('');
 }
@@ -4509,7 +4529,7 @@ function prescClick(e){
   var t=e.target.closest&&e.target.closest('[data-act]');if(!t)return;
   var act=t.dataset.act,i=parseInt(t.dataset.i,10);
   if(act==='tab'){prescSetTab(t.dataset.tab);return;}
-  if(act==='addrx'){var m=PRESC_MEDS[i];if(m){prescRx.push({n:m.n,apres:m.apres,apresSel:m.apres[0],pos:m.pos,r:m.r,lme:!!m.lme,qtd:''});var s=document.getElementById('presc-rx-search');if(s)s.value='';var d=document.getElementById('presc-rx-drop');if(d)d.innerHTML='';renderRxList();}return;}
+  if(act==='addrx'){var m=prescMedAll[i];if(m){prescRx.push({n:m.n,apres:(m.apres||['—']),apresSel:(m.apres?m.apres[0]:'—'),pos:m.pos||'',r:m.r,lme:!!m.lme,qtd:''});var s=document.getElementById('presc-rx-search');if(s)s.value='';var d=document.getElementById('presc-rx-drop');if(d)d.innerHTML='';renderRxList();}return;}
   if(act==='delrx'){prescRx.splice(i,1);renderRxList();return;}
   if(act==='addex'){var ex=PRESC_EXAMS[i];if(ex&&prescExamsSel.indexOf(ex)<0)prescExamsSel.push(ex);var es=document.getElementById('presc-ex-search');if(es)es.value='';var ed=document.getElementById('presc-ex-drop');if(ed)ed.innerHTML='';renderExList();return;}
   if(act==='delex'){prescExamsSel.splice(i,1);renderExList();return;}
@@ -4521,7 +4541,7 @@ function prescClick(e){
 }
 function prescInput(e){
   var el=e.target,id=el.id;
-  if(id==='presc-rx-search'){var d=document.getElementById('presc-rx-drop');if(d)d.innerHTML=prescDrop(el.value,PRESC_MEDS,'addrx');return;}
+  if(id==='presc-rx-search'){var d=document.getElementById('presc-rx-drop');if(d)d.innerHTML=prescDrop(el.value,prescMedAll,'addrx');return;}
   if(id==='presc-ex-search'){var de=document.getElementById('presc-ex-drop');if(de)de.innerHTML=prescDrop(el.value,PRESC_EXAMS,'addex');return;}
   if(id==='presc-lme-search'){var dl=document.getElementById('presc-lme-drop');if(dl)dl.innerHTML=prescDrop(el.value,PRESC_LMECAT,'addlme');return;}
   if(el.dataset.rxpos!==undefined){var ip=parseInt(el.dataset.rxpos,10);if(prescRx[ip])prescRx[ip].pos=el.value;return;}
@@ -4611,6 +4631,7 @@ function prescAISuggest(){
 }
 function initPresc(){
   renderPrescTool();
+  prescLoadCatalogo(function(){var h=document.getElementById('presc-rx-hint');if(h&&prescExtLoaded)h.textContent='Catálogo: '+prescMedAll.length.toLocaleString('pt-BR')+' medicamentos (curado + ANVISA). Busca por nome comercial ou princípio ativo.';});
   var tool=document.getElementById('presc-tool');
   if(!tool||prescInited)return;
   prescInited=true;
