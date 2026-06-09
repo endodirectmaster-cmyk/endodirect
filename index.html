@@ -2312,14 +2312,14 @@ function parseJ(raw){
   return null;
 }
 function sleep(ms){return new Promise(function(resolve){setTimeout(resolve,ms);});}
-function callAIJson(sys,usr,maxTok,retries){
+function callAIJson(sys,usr,maxTok,retries,model){
   retries=retries==null?1:retries;
-  return callAI(sys,usr,maxTok).then(function(raw){
+  return callAI(sys,usr,maxTok,model).then(function(raw){
     var d=parseJ(raw);
     if(!d)throw new Error('Resposta invalida da IA.');
     return d;
   }).catch(function(e){
-    if(retries>0)return sleep(650).then(function(){return callAIJson(sys,usr,maxTok,retries-1);});
+    if(retries>0)return sleep(650).then(function(){return callAIJson(sys,usr,maxTok,retries-1,model);});
     throw e;
   });
 }
@@ -2535,8 +2535,9 @@ function aiRequest(payload){
     });
   }).then(function(d){return d.text||'';});
 }
-function callAI(sys,usr,maxTok){
-  return aiRequest({system:sys,prompt:usr,maxTokens:maxTok||1500});
+var AI_MODEL_CLINICO='claude-opus-4-8'; // prescrição e simulador (raciocínio clínico)
+function callAI(sys,usr,maxTok,model){
+  return aiRequest({system:sys,prompt:usr,maxTokens:maxTok||1500,model:model});
 }
 function callAIwithPDF(sys,b64){
   return aiRequest({
@@ -4707,7 +4708,7 @@ function prescAISuggest(){
   if(hit){applyData(hit.data);return;}
   var btn=document.getElementById('presc-ai-btn');if(btn){btn.disabled=true;btn.innerHTML=ldHTML('Sugerindo...');}
   var sys='Você é um assistente de prescrição para médicos no Brasil, baseado em diretrizes (SBEM, SBD, ADA, Endocrine Society) e na regulamentação brasileira. Responda APENAS JSON válido: {"prescricao":[{"medicamento":"","dose":"","via":"","posologia":"","duracao":""}],"exames":{"basais":["",""],"monitorizacao":["",""]},"lme":{"aplicavel":true,"cid":"","medicamentos":"","exames_exigidos":["",""],"criterios":""}}. Doses usuais para adulto; seja conservador.';
-  callAIJson(sys,'Condição/diagnóstico: '+dx+'. Gere prescrição sugerida, exames basais/monitorização e LME se aplicável.',1600,1)
+  callAIJson(sys,'Condição/diagnóstico: '+dx+'. Gere prescrição sugerida, exames basais/monitorização e LME se aplicável.',1600,1,AI_MODEL_CLINICO)
     .then(function(d){if(!d)throw new Error('Resposta inválida.');applyData(d);})
     .catch(function(e){notify('Erro ao sugerir: '+(e.message||'falha'),'err');})
     .then(function(){if(btn){btn.disabled=false;btn.innerHTML='Sugerir conduta';}});
@@ -6530,7 +6531,7 @@ startSim=function(){
   var btn=document.getElementById('btn-sim-start');
   btn.disabled=true;btn.innerHTML=ldHTML('Gerando...');
   var sys='Preceptor de endocrinologia conduzindo simulação de caso clínico passo a passo (estilo OSCE). JSON APENAS: {"intro":"apresentação do paciente","steps":[{"pergunta":"o que você faz/pergunta?"'+(mode==='mc'?',"options":{"A":"","B":"","C":"","D":""},"correct":"A","feedback":"explicação curta com raciocínio"':',"ideal":"resposta ideal"')+'}]}. 4-5 passos progressivos.';
-  simRetry(function(){return callAIJson(sys,'Caso de '+(sub||'endocrinologia')+', complexidade '+level+', modo '+(mode==='mc'?'múltipla escolha':'resposta aberta')+'.',2400,0);})
+  simRetry(function(){return callAIJson(sys,'Caso de '+(sub||'endocrinologia')+', complexidade '+level+', modo '+(mode==='mc'?'múltipla escolha':'resposta aberta')+'.',2400,0,AI_MODEL_CLINICO);})
   .then(function(d){
     if(!d||!d.steps||!d.steps.length)throw new Error('Resposta inválida.');
     simState={data:d,step:0,mode:mode,score:0,answers:[],sub:sub||'Endocrinologia',level:level};
@@ -6573,7 +6574,7 @@ submitSimOpen=function(){
   if(!ta||!ta.value.trim()){notify('Escreva sua conduta.','err');return;}
   var s=simState.data.steps[simState.step],ans=ta.value.trim(),msgs=document.getElementById('sim-msgs'),wrap=document.getElementById('sim-input-wrap');
   wrap.innerHTML=ldHTML('Avaliando...');
-  simRetry(function(){return callAI('Preceptor. Compare a resposta do aluno com a ideal e dê feedback em 2-3 frases. Termine com uma estimativa objetiva: Aderência: alta, parcial ou baixa.','Pergunta: '+s.pergunta+'\nIdeal: '+(s.ideal||'')+'\nAluno: '+ans);})
+  simRetry(function(){return callAI('Preceptor. Compare a resposta do aluno com a ideal e dê feedback em 2-3 frases. Termine com uma estimativa objetiva: Aderência: alta, parcial ou baixa.','Pergunta: '+s.pergunta+'\nIdeal: '+(s.ideal||'')+'\nAluno: '+ans,1200,AI_MODEL_CLINICO);})
   .then(function(r){
     var ok=!/baixa/i.test(r);
     if(ok)simState.score++;
@@ -6612,7 +6613,7 @@ genRxCase=function(){
   btn.disabled=true;
   btn.innerHTML=ldHTML('Gerando...');
   simRetry(function(){
-    return callAI('Preceptor de endocrinologia BR. JSON APENAS: {"caso":"vinheta clinica com dados suficientes para uma prescricao segura, em 4 a 6 linhas","area":"'+sub+'"}','Caso clinico de '+sub+', complexidade '+level+', que demande prescricao. Use português do Brasil.',1100);
+    return callAI('Preceptor de endocrinologia BR. JSON APENAS: {"caso":"vinheta clinica com dados suficientes para uma prescricao segura, em 4 a 6 linhas","area":"'+sub+'"}','Caso clinico de '+sub+', complexidade '+level+', que demande prescricao. Use português do Brasil.',1100,AI_MODEL_CLINICO);
   })
   .then(function(raw){
     var d=parseJ(raw);
@@ -6637,7 +6638,7 @@ evalRx=function(){
   fb.style.display='block';
   fb.innerHTML=ldHTML('Avaliando prescrição...');
   var sys='Preceptor de endocrinologia. Avalie a prescrição do aluno com foco em segurança, indicação, dose, titulação, contraindicações, monitorização e educação do paciente. Responda em português com seções curtas: acertos, falhas, correção sugerida e nota final.';
-  simRetry(function(){return callAI(sys,'Caso: '+(rxCase&&rxCase.caso||'')+'\nDiagnóstico do aluno: '+diag+'\nPrescrição do aluno:\n'+txt,2200);})
+  simRetry(function(){return callAI(sys,'Caso: '+(rxCase&&rxCase.caso||'')+'\nDiagnóstico do aluno: '+diag+'\nPrescrição do aluno:\n'+txt,2200,AI_MODEL_CLINICO);})
   .then(function(r){fb.innerHTML=formatAIReport(r);})
   .catch(function(e){fb.innerHTML='<div style="color:var(--red)">Erro: '+esc(e.message)+'</div>';})
   .then(function(){btn.disabled=false;btn.innerHTML='✓ Avaliar';});
