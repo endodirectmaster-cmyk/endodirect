@@ -2139,7 +2139,14 @@ function userStatePayload(){
   }
   return p;
 }
-function isRadarAuto(a){return !!(a&&a.auto&&String(a.sourceId||'').indexOf('pubmed:')===0);}
+// Item automático do radar: artigos do PubMed (sourceId 'pubmed:') OU
+// Breaking News (sourceId 'news:' / tipo 'Breaking News' / flag breaking).
+// Esses NUNCA entram em adm_avisos (manuais) — vivem só em radar_avisos.
+function isRadarAuto(a){
+  if(!a||!a.auto)return false;
+  var sid=String(a.sourceId||'');
+  return sid.indexOf('pubmed:')===0||sid.indexOf('news:')===0||a.breaking===true||String(a.tipo||'').toLowerCase().indexOf('breaking')>=0;
+}
 function avisoKeyStr(a){return String((a&&(a.sourceId||a.link||a.titulo))||'');}
 function globalStatePayload(){
   // O radar (auto/PubMed) mora em radar_avisos (gravado só pelo cron); o
