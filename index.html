@@ -4417,39 +4417,88 @@ var PRESC_RLABEL={simples:'Receita Simples',especial:'Controle Especial (C1) —
 var prescRx=[],prescExamsSel=[],prescLmeSel=null,prescTab='rx';
 // Posologia padrão memorizada por princípio ativo (faixas usuais p/ adulto;
 // editável). Aplicada às marcas importadas (ANVISA/CMED) no carregamento.
+// O casamento usa a chave MAIS LONGA que casar (evita ex.: 'omeprazol' capturar
+// 'esomeprazol'). Associações (",", "+", ";") ficam em branco.
 var PRESC_POS={
+  // ── Diabetes / endócrino ──
   'metformina':'1 comp VO 2x/dia após as refeições (titular)',
   'gliclazida':'1 comp VO 1x/dia pela manhã','glibenclamida':'1 comp VO 1x/dia antes do café','glimepirida':'1 comp VO 1x/dia pela manhã',
   'dapagliflozina':'1 comp VO 1x/dia','empagliflozina':'1 comp VO 1x/dia','canagliflozina':'1 comp VO 1x/dia',
-  'sitagliptina':'1 comp VO 1x/dia','linagliptina':'1 comp VO 1x/dia','vildagliptina':'1 comp VO 2x/dia',
-  'pioglitazona':'1 comp VO 1x/dia','acarbose':'1 comp VO 3x/dia no início das refeições','repaglinida':'1 comp VO antes das refeições',
-  'semaglutida':'SC 1x/semana (titular: 0,25→0,5→1 mg)','liraglutida':'SC 1x/dia (titular)','dulaglutida':'SC 1x/semana','tirzepatida':'SC 1x/semana (titular)',
-  'levotiroxina':'1 comp VO em jejum, 30–60 min antes do café','metimazol':'VO conforme T4 livre (10–30 mg/dia)','propiltiouracila':'100 mg VO 3x/dia (ajustar)',
-  'alendronato':'1 comp VO 1x/semana em jejum; permanecer ereto 30 min','risedronato':'1 comp VO 1x/semana em jejum','ibandronato':'1 comp VO 1x/mês em jejum',
-  'denosumabe':'60 mg SC a cada 6 meses','colecalciferol':'reposição conforme nível; manutenção 1.000–2.000 UI/dia','calcitriol':'0,25–0,5 mcg/dia VO',
-  'carbonato de calcio':'500–1.000 mg/dia VO com refeições','citrato de calcio':'500–1.000 mg/dia VO',
-  'atorvastatina':'1 comp VO 1x/dia','rosuvastatina':'1 comp VO 1x/dia','sinvastatina':'1 comp VO à noite','ezetimiba':'10 mg VO 1x/dia',
-  'fenofibrato':'1 comp VO 1x/dia','ciprofibrato':'100 mg VO 1x/dia','bezafibrato':'VO conforme apresentação',
-  'losartana':'50 mg VO 1–2x/dia','valsartana':'VO 1x/dia','enalapril':'10–20 mg VO 2x/dia','captopril':'25 mg VO 2–3x/dia',
-  'anlodipino':'5–10 mg VO 1x/dia','nifedipino':'VO conforme apresentação','hidroclorotiazida':'25 mg VO pela manhã','clortalidona':'12,5–25 mg VO pela manhã',
-  'furosemida':'VO conforme indicação','espironolactona':'25–100 mg/dia VO','indapamida':'1,5 mg VO pela manhã',
-  'atenolol':'25–100 mg VO 1x/dia','propranolol':'VO conforme indicação','metoprolol':'VO 1–2x/dia','carvedilol':'VO 2x/dia',
-  'omeprazol':'20–40 mg VO em jejum','pantoprazol':'40 mg VO em jejum','esomeprazol':'VO 1x/dia',
-  'dipirona':'500–1.000 mg VO até 4x/dia se dor/febre','paracetamol':'500–750 mg VO até 4x/dia','ibuprofeno':'400–600 mg VO 8/8h se dor',
-  'amoxicilina':'500 mg VO 8/8h por 7 dias','azitromicina':'500 mg VO 1x/dia por 3 dias','cefalexina':'500 mg VO 6/6h por 7 dias',
-  'ciprofloxacino':'500 mg VO 12/12h','nitrofurantoina':'100 mg VO 6/6h por 5–7 dias','sulfametoxazol':'VO 12/12h',
-  'sertralina':'50 mg VO 1x/dia','fluoxetina':'20 mg VO pela manhã','escitalopram':'10 mg VO 1x/dia','clonazepam':'0,5–2 mg VO à noite',
-  'prednisona':'dose conforme indicação','prednisolona':'dose conforme indicação','hidrocortisona':'15–25 mg/dia VO divididos (maior dose pela manhã)','dexametasona':'conforme indicação','fludrocortisona':'0,05–0,2 mg/dia VO',
-  'cabergolina':'0,5 mg VO 1–2x/semana (titular)','bromocriptina':'1,25–2,5 mg VO 1–2x/dia','finasterida':'1–5 mg VO 1x/dia',
-  'testosterona':'IM/transdérmica conforme apresentação (controle especial)','estradiol':'VO/transdérmica conforme terapia hormonal','tibolona':'2,5 mg VO 1x/dia',
-  'cinacalcete':'VO 1x/dia (titular pelo cálcio/PTH)','colchicina':'0,5 mg VO 1–2x/dia','alopurinol':'100–300 mg VO 1x/dia',
-  'sulfato ferroso':'VO 1–2x/dia, longe das refeições','acido folico':'5 mg VO 1x/dia','vitamina b12':'IM/VO conforme reposição'
+  'sitagliptina':'1 comp VO 1x/dia','linagliptina':'1 comp VO 1x/dia','vildagliptina':'1 comp VO 2x/dia','alogliptina':'1 comp VO 1x/dia','saxagliptina':'1 comp VO 1x/dia',
+  'pioglitazona':'1 comp VO 1x/dia','acarbose':'1 comp VO 3x/dia no início das refeições','repaglinida':'1 comp VO antes das refeições','nateglinida':'1 comp VO antes das refeições',
+  'semaglutida':'SC 1x/semana (titular: 0,25→0,5→1 mg)','liraglutida':'SC 1x/dia (titular)','dulaglutida':'SC 1x/semana','tirzepatida':'SC 1x/semana (titular)','exenatida':'SC conforme apresentação','lixisenatida':'SC 1x/dia',
+  'insulina glargina':'SC 1x/dia em horário fixo; dose individualizada','insulina degludeca':'SC 1x/dia; dose individualizada','insulina detemir':'SC 1–2x/dia; dose individualizada','insulina lispro':'SC pré-prandial; conforme contagem de carboidratos','insulina asparte':'SC pré-prandial; conforme contagem de carboidratos','insulina glulisina':'SC pré-prandial','insulina humana':'SC conforme esquema; dose individualizada','insulina':'SC; dose individualizada conforme esquema',
+  'levotiroxina':'1 comp VO em jejum, 30–60 min antes do café','liotironina':'VO conforme indicação especializada','metimazol':'VO conforme T4 livre (10–30 mg/dia)','tiamazol':'VO conforme T4 livre (10–30 mg/dia)','propiltiouracila':'100 mg VO 3x/dia (ajustar)',
+  'somatropina':'SC 1x/dia à noite; dose individualizada','octreotida':'IM/SC conforme apresentação (LAR a cada 28 dias)','lanreotida':'SC profunda a cada 28 dias','desmopressina':'VO/nasal conforme indicação (monitorar sódio)',
+  'cabergolina':'0,5 mg VO 1–2x/semana (titular pela prolactina)','bromocriptina':'1,25–2,5 mg VO 1–2x/dia','cetoconazol':'tópico 1x/dia (VO restrito)','osilodrostat':'VO 2x/dia (titular; especializado)',
+  // ── Osso / cálcio / vitaminas ──
+  'alendronato':'1 comp VO 1x/semana em jejum; permanecer ereto 30 min','risedronato':'1 comp VO 1x/semana em jejum','ibandronato':'1 comp VO 1x/mês em jejum','acido zoledronico':'5 mg IV 1x/ano (infusão ≥15 min)',
+  'denosumabe':'60 mg SC a cada 6 meses','teriparatida':'20 mcg SC 1x/dia','romosozumabe':'210 mg SC 1x/mês por 12 meses','raloxifeno':'60 mg VO 1x/dia',
+  'colecalciferol':'reposição conforme nível; manutenção 1.000–2.000 UI/dia','calcitriol':'0,25–0,5 mcg/dia VO','carbonato de calcio':'500–1.000 mg/dia VO com refeições','citrato de calcio':'500–1.000 mg/dia VO','cinacalcete':'VO 1x/dia (titular pelo cálcio/PTH)',
+  'acido ascorbico':'500 mg–1 g VO 1x/dia','tiamina':'300 mg VO 1x/dia (reposição)','piridoxina':'40–100 mg VO 1x/dia','mecobalamina':'VO/IM conforme reposição','vitamina b12':'IM/VO conforme reposição','cianocobalamina':'IM/VO conforme reposição',
+  'acido folico':'5 mg VO 1x/dia','sulfato ferroso':'VO 1–2x/dia, longe das refeições','ferripolimaltose':'100 mg de ferro VO 1–2x/dia com alimento','sacarato de hidroxido ferrico':'IV hospitalar conforme déficit calculado','racealfatocoferol':'VO 1x/dia',
+  'cloreto de potassio':'VO conforme potassemia (ex.: 600 mg 2–3x/dia)','cloreto de sodio':'solução conforme indicação','glicose':'IV conforme indicação','bicarbonato de sodio':'VO/IV conforme indicação',
+  // ── Lípides / cardio ──
+  'atorvastatina':'1 comp VO 1x/dia','rosuvastatina':'1 comp VO 1x/dia','sinvastatina':'1 comp VO à noite','pravastatina':'1 comp VO à noite','pitavastatina':'1 comp VO 1x/dia','ezetimiba':'10 mg VO 1x/dia',
+  'fenofibrato':'1 comp VO 1x/dia','ciprofibrato':'100 mg VO 1x/dia','bezafibrato':'VO conforme apresentação','alirocumabe':'SC a cada 2 semanas','evolocumabe':'140 mg SC a cada 2 semanas','inclisirana':'SC dia 0, 3 meses e depois a cada 6 meses',
+  'losartana':'50 mg VO 1–2x/dia','valsartana':'80–160 mg VO 1x/dia','telmisartana':'40–80 mg VO 1x/dia','olmesartana':'20–40 mg VO 1x/dia','candesartana':'8–16 mg VO 1x/dia','irbesartana':'150–300 mg VO 1x/dia',
+  'enalapril':'10–20 mg VO 2x/dia','captopril':'25 mg VO 2–3x/dia','ramipril':'2,5–10 mg VO 1x/dia','lisinopril':'10–20 mg VO 1x/dia','perindopril':'4–8 mg VO 1x/dia',
+  'levanlodipino':'2,5–5 mg VO 1x/dia','anlodipino':'5–10 mg VO 1x/dia','nifedipino':'VO conforme apresentação (retard 20 mg 2x/dia)','verapamil':'VO conforme apresentação','diltiazem':'VO conforme apresentação',
+  'hidroclorotiazida':'25 mg VO pela manhã','clortalidona':'12,5–25 mg VO pela manhã','indapamida':'1,5 mg VO pela manhã','furosemida':'20–40 mg VO pela manhã (ajustar)','espironolactona':'25–100 mg/dia VO',
+  'atenolol':'25–100 mg VO 1x/dia','propranolol':'VO conforme indicação (40 mg 2–3x/dia)','metoprolol':'VO 1–2x/dia conforme apresentação','carvedilol':'VO 2x/dia (titular)','bisoprolol':'2,5–10 mg VO 1x/dia','nebivolol':'5 mg VO 1x/dia',
+  'metildopa':'250–500 mg VO 2–3x/dia','clonidina':'0,1–0,2 mg VO 2x/dia','hidralazina':'25–50 mg VO 2–3x/dia','doxazosina':'2–4 mg VO à noite','tansulosina':'0,4 mg VO 1x/dia após o café','dutasterida':'0,5 mg VO 1x/dia',
+  'amiodarona':'200 mg VO 1x/dia (após impregnação)','propafenona':'150 mg VO 3x/dia','digoxina':'0,125–0,25 mg VO 1x/dia','ivabradina':'5 mg VO 2x/dia','trimetazidina':'35 mg VO 2x/dia (MR)','isossorbida':'mononitrato 20–40 mg VO 2x/dia',
+  'rivaroxabana':'20 mg VO 1x/dia com alimento (FA); TEV: 15 mg 2x/dia por 21 dias e após 20 mg/dia','apixabana':'5 mg VO 2x/dia','dabigatrana':'150 mg VO 2x/dia','edoxabana':'60 mg VO 1x/dia','varfarina':'VO 1x/dia; ajustar pelo INR',
+  'enoxaparina':'SC: profilaxia 40 mg 1x/dia; dose plena 1 mg/kg 12/12h','clopidogrel':'75 mg VO 1x/dia','ticagrelor':'90 mg VO 2x/dia','prasugrel':'10 mg VO 1x/dia','acido acetilsalicilico':'100 mg VO 1x/dia após o almoço','cilostazol':'100 mg VO 2x/dia',
+  'sildenafila':'50 mg VO ~1h antes da relação (máx 1x/dia)','tadalafila':'5 mg VO 1x/dia ou 20 mg sob demanda','mirabegrona':'50 mg VO 1x/dia','solifenacina':'5–10 mg VO 1x/dia','oxibutinina':'5 mg VO 2–3x/dia',
+  // ── Psiquiatria / neurologia ──
+  'sertralina':'50 mg VO 1x/dia (titular até 100–200 mg)','fluoxetina':'20 mg VO pela manhã','escitalopram':'10 mg VO 1x/dia','citalopram':'20 mg VO 1x/dia','paroxetina':'20 mg VO 1x/dia pela manhã','fluvoxamina':'50–100 mg VO à noite',
+  'desvenlafaxina':'50 mg VO 1x/dia','venlafaxina':'75 mg VO 1x/dia (XR; titular)','duloxetina':'30–60 mg VO 1x/dia','vortioxetina':'10 mg VO 1x/dia','bupropiona':'150 mg VO 1x/dia pela manhã (XL; até 300 mg)',
+  'mirtazapina':'15–30 mg VO à noite','trazodona':'50–100 mg VO à noite','agomelatina':'25 mg VO à noite',
+  'amitriptilina':'25–75 mg VO à noite','nortriptilina':'25–75 mg VO à noite','clomipramina':'25–75 mg VO à noite','imipramina':'25–75 mg VO à noite',
+  'carbonato de litio':'300 mg VO 2–3x/dia (ajustar pela litemia)','quetiapina':'25–50 mg VO à noite (titular conforme indicação)','olanzapina':'5–10 mg VO à noite','risperidona':'1–2 mg VO 1–2x/dia','aripiprazol':'10–15 mg VO 1x/dia','haloperidol':'VO/IM conforme indicação','clozapina':'titulação especializada; monitorar hemograma','ziprasidona':'40 mg VO 2x/dia com alimentos','lurasidona':'40 mg VO 1x/dia com alimento',
+  'clonazepam':'0,5–2 mg VO à noite','alprazolam':'0,25–0,5 mg VO 2–3x/dia','diazepam':'5–10 mg VO/dia','lorazepam':'1–2 mg VO à noite','bromazepam':'3–6 mg VO à noite','clobazam':'10–20 mg VO à noite','buspirona':'5–10 mg VO 2–3x/dia',
+  'zolpidem':'10 mg VO ao deitar','eszopiclona':'2–3 mg VO ao deitar','zopiclona':'7,5 mg VO ao deitar','melatonina':'2–5 mg VO 30 min antes de deitar',
+  'pregabalina':'75 mg VO 2x/dia (titular até 300–600 mg/dia)','gabapentina':'300 mg VO 3x/dia (titular)','lamotrigina':'titulação lenta: 25 mg/dia, ↑ a cada 2 semanas','levetiracetam':'500 mg VO 2x/dia (titular)','lacosamida':'50–100 mg VO 2x/dia','topiramato':'titular 25 mg/semana até 100–200 mg/dia','carbamazepina':'200 mg VO 2–3x/dia (titular)','oxcarbazepina':'300 mg VO 2x/dia (titular)','divalproato':'250–500 mg VO 2–3x/dia (titular)','valproato':'250–500 mg VO 2–3x/dia (titular)','valproico':'250–500 mg VO 2–3x/dia (titular)','fenitoina':'100 mg VO 2–3x/dia','fenobarbital':'50–100 mg VO à noite',
+  'metilfenidato':'10 mg VO 1–2x/dia (titular; notificação A)','lisdexanfetamina':'30 mg VO 1x/dia pela manhã (titular; notificação A)',
+  'memantina':'5 mg/dia VO; titular semanal até 10 mg 2x/dia','donepezila':'5–10 mg VO à noite','rivastigmina':'VO 2x/dia ou adesivo 1x/dia (titular)','galantamina':'8 mg VO 1x/dia (titular até 16–24 mg)',
+  'sumatriptana':'50–100 mg VO no início da crise','naratriptana':'2,5 mg VO no início da crise','rizatriptana':'10 mg VO no início da crise','zolmitriptana':'2,5 mg VO no início da crise','flunarizina':'5–10 mg VO à noite','cinarizina':'25–75 mg VO conforme indicação','betaistina':'24 mg VO 2x/dia',
+  'baclofeno':'5–10 mg VO 3x/dia (titular)','tizanidina':'2 mg VO até 3x/dia','ciclobenzaprina':'5–10 mg VO à noite',
+  // ── Dor / antiinflamatórios ──
+  'dipirona':'500–1.000 mg VO até 4x/dia se dor/febre','paracetamol':'500–750 mg VO até 4x/dia','ibuprofeno':'400–600 mg VO 8/8h se dor','nimesulida':'100 mg VO 2x/dia por curto período','cetorolaco':'10 mg VO/SL até 4x/dia (máx 5 dias)','cetoprofeno':'50–100 mg VO 2x/dia','diclofenaco':'50 mg VO 2–3x/dia','meloxicam':'7,5–15 mg VO 1x/dia','etoricoxibe':'60–90 mg VO 1x/dia','celecoxibe':'200 mg VO 1x/dia','naproxeno':'250–500 mg VO 2x/dia','etodolaco':'300–400 mg VO 2x/dia','tenoxicam':'20 mg VO 1x/dia','piroxicam':'20 mg VO 1x/dia','aceclofenaco':'100 mg VO 2x/dia','parecoxibe':'40 mg IV/IM (hospitalar)',
+  'tramadol':'50–100 mg VO até 4x/dia (controle especial)','codeina':'30 mg VO até 4x/dia','morfina':'titulação conforme dor (notificação A)','tapentadol':'50–100 mg VO 12/12h (notificação A)','colchicina':'0,5 mg VO 1–2x/dia','alopurinol':'100–300 mg VO 1x/dia','febuxostate':'40–80 mg VO 1x/dia',
+  // ── Corticoides ──
+  'prednisona':'dose conforme indicação (manhã)','prednisolona':'dose conforme indicação (manhã)','hidrocortisona':'15–25 mg/dia VO divididos (maior dose pela manhã)','dexametasona':'conforme indicação','fludrocortisona':'0,05–0,2 mg/dia VO','metilprednisolona':'VO/IV conforme indicação','deflazacorte':'VO conforme indicação','betametasona':'VO/IM/tópica conforme indicação','budesonida':'inalatória/nasal conforme apresentação','beclometasona':'inalatória conforme apresentação','mometasona':'nasal 2 jatos/narina 1x/dia ou tópica 1x/dia','fluticasona':'nasal/inalatória conforme apresentação','triancinolona':'tópica/intralesional conforme indicação','clobetasol':'tópico 1–2x/dia por curto período',
+  // ── Gastro ──
+  'omeprazol':'20–40 mg VO em jejum','pantoprazol':'40 mg VO em jejum','esomeprazol':'40 mg VO em jejum','lansoprazol':'30 mg VO em jejum','rabeprazol':'20 mg VO 1x/dia','dexlansoprazol':'30–60 mg VO 1x/dia','vonoprazana':'20 mg VO 1x/dia','famotidina':'20–40 mg VO à noite',
+  'ondansetrona':'4–8 mg VO/IV até 8/8h','metoclopramida':'10 mg VO até 3x/dia','bromoprida':'10 mg VO 3x/dia','domperidona':'10 mg VO 3x/dia antes das refeições','loperamida':'2 mg VO após evacuação (máx 8 mg/dia)','lactulose':'15–30 mL VO 1–2x/dia','bisacodil':'5–10 mg VO à noite','trimebutina':'200 mg VO 3x/dia','mesalazina':'VO/retal conforme indicação','acido ursodesoxicolico':'10–15 mg/kg/dia VO divididos','racecadotrila':'100 mg VO 3x/dia','simeticona':'40–125 mg VO 3–4x/dia',
+  // ── Alergia / respiratório ──
+  'desloratadina':'5 mg VO 1x/dia','loratadina':'10 mg VO 1x/dia','fexofenadina':'120–180 mg VO 1x/dia','levocetirizina':'5 mg VO à noite','cetirizina':'10 mg VO 1x/dia','bilastina':'20 mg VO 1x/dia em jejum','ebastina':'10–20 mg VO 1x/dia','rupatadina':'10 mg VO 1x/dia','dexclorfeniramina':'2 mg VO 3–4x/dia','hidroxizina':'25 mg VO à noite','montelucaste':'10 mg VO à noite',
+  'salbutamol':'inalatório 100–200 mcg até 4x/dia se sintomas','formoterol':'inalatório 12/12h','salmeterol':'inalatório 12/12h','tiotropio':'inalatório 1x/dia','ipratropio':'inalatório conforme indicação',
+  'ambroxol':'30 mg VO 3x/dia','bromexina':'8 mg VO 3x/dia','acetilcisteina':'600 mg VO 1x/dia','carbocisteina':'VO conforme apresentação','acebrofilina':'10 mL VO 2x/dia','guaifenesina':'VO conforme apresentação','dropropizina':'VO 3x/dia','levodropropizina':'60 mg VO até 3x/dia',
+  // ── Antimicrobianos / antiparasitários / antifúngicos / antivirais ──
+  'amoxicilina':'500 mg VO 8/8h por 7 dias','azitromicina':'500 mg VO 1x/dia por 3 dias','claritromicina':'500 mg VO 12/12h','cefalexina':'500 mg VO 6/6h por 7 dias','cefuroxima':'500 mg VO 12/12h','ceftriaxona':'1–2 g IV/IM 1x/dia (hospitalar)','levofloxacino':'500–750 mg VO 1x/dia','moxifloxacino':'400 mg VO 1x/dia','ciprofloxacino':'500 mg VO 12/12h','norfloxacino':'400 mg VO 12/12h','doxiciclina':'100 mg VO 12/12h','clindamicina':'300 mg VO 6/6h','nitrofurantoina':'100 mg VO 6/6h por 5–7 dias','fosfomicina':'3 g VO dose única (ITU)','sulfametoxazol':'VO 12/12h','penicilina benzatina':'1,2 milhão UI IM conforme indicação','metronidazol':'400–500 mg VO 8/8h por 7 dias','secnidazol':'2 g VO dose única','tinidazol':'2 g VO dose única',
+  'vancomicina':'IV hospitalar conforme função renal/nível sérico','teicoplanina':'IV/IM hospitalar conforme protocolo','daptomicina':'IV hospitalar conforme protocolo','tigeciclina':'IV hospitalar conforme protocolo','tobramicina':'IV/colírio conforme indicação',
+  'fluconazol':'150 mg VO dose única (candidíase) ou conforme indicação','itraconazol':'100–200 mg VO 1x/dia com alimentos','voriconazol':'VO/IV conforme protocolo','terbinafina':'250 mg VO 1x/dia','nistatina':'susp. 100.000 UI/mL: bochechar e deglutir 4x/dia',
+  'aciclovir':'400 mg VO 3x/dia (herpes; ajustar à indicação)','valaciclovir':'500 mg–1 g VO conforme indicação','oseltamivir':'75 mg VO 12/12h por 5 dias',
+  'albendazol':'400 mg VO dose única (ou conforme parasitose)','mebendazol':'100 mg VO 12/12h por 3 dias','ivermectina':'200 mcg/kg VO dose única','nitazoxanida':'500 mg VO 12/12h por 3 dias','permetrina':'tópica conforme indicação (escabiose/pediculose)','lamivudina':'VO conforme esquema antirretroviral',
+  // ── Dermatologia ──
+  'isotretinoina':'0,5–1 mg/kg/dia VO com alimento (controle especial)','minoxidil':'tópico 1 mL 2x/dia no couro cabeludo','hidroquinona':'tópica 1x/dia à noite','tretinoina':'tópica à noite','adapaleno':'tópico à noite','mupirocina':'tópica 3x/dia','dexpantenol':'tópico conforme indicação','benzidamina':'tópica/bochecho conforme indicação',
+  // ── Gineco / hormônios sexuais ──
+  'finasterida':'1–5 mg VO 1x/dia','testosterona':'IM/transdérmica conforme apresentação (controle especial)','estradiol':'VO/transdérmica conforme terapia hormonal','estriol':'creme vaginal 1 aplicação à noite','promestrieno':'creme/cápsula vaginal 1x/dia','tibolona':'2,5 mg VO 1x/dia','progesterona':'100–200 mg VO/VV à noite conforme indicação','desogestrel':'75 mcg VO 1x/dia contínuo','dienogeste':'2 mg VO 1x/dia contínuo','levonorgestrel':'contracepção de emergência: 1,5 mg VO dose única','medroxiprogesterona':'VO/IM conforme indicação','noretisterona':'VO conforme indicação','ciproterona':'VO conforme indicação','drospirenona':'1 comp VO 1x/dia',
+  'clomifeno':'50 mg VO 1x/dia por 5 dias (D3–D7 do ciclo)','letrozol':'2,5 mg VO 1x/dia','anastrozol':'1 mg VO 1x/dia','tamoxifeno':'20 mg VO 1x/dia',
+  // ── Oftalmologia ──
+  'latanoprosta':'1 gota no(s) olho(s) à noite','bimatoprosta':'1 gota à noite','timolol':'1 gota 2x/dia','dorzolamida':'1 gota 2–3x/dia','brimonidina':'1 gota 2–3x/dia','olopatadina':'1 gota 1–2x/dia','carmelose':'1 gota quando necessário (lubrificante)','nafazolina':'1–2 gotas até 4x/dia (uso breve)','hialuronato de sodio':'conforme apresentação',
+  // ── Onco / imunobiológicos / hospitalar ──
+  'metotrexato':'7,5–25 mg VO/SC 1x/SEMANA (nunca diário)','adalimumabe':'40 mg SC a cada 14 dias','etanercepte':'50 mg SC 1x/semana','infliximabe':'IV conforme protocolo','ustequinumabe':'SC conforme protocolo','rituximabe':'IV hospitalar conforme protocolo','trastuzumabe':'IV/SC conforme protocolo','bevacizumabe':'IV hospitalar conforme protocolo','abiraterona':'1 g VO 1x/dia em jejum','imatinibe':'400 mg VO 1x/dia com alimento','erlotinibe':'150 mg VO 1x/dia em jejum','gefitinibe':'250 mg VO 1x/dia','everolimo':'10 mg VO 1x/dia','capecitabina':'VO conforme protocolo','temozolomida':'VO conforme protocolo','fulvestranto':'IM conforme protocolo','tacrolimo':'VO 2x/dia; ajustar por nível sérico','ciclosporina':'VO 2x/dia; ajustar por nível sérico','azatioprina':'VO 1x/dia conforme indicação','micofenolato':'VO 2x/dia',
+  'paclitaxel':'IV hospitalar conforme protocolo','carboplatina':'IV hospitalar conforme protocolo','oxaliplatina':'IV hospitalar conforme protocolo','doxorrubicina':'IV hospitalar conforme protocolo','gencitabina':'IV hospitalar conforme protocolo','irinotecano':'IV hospitalar conforme protocolo oncológico',
+  'imatinibe':'VO 1x/dia com alimento (protocolo oncológico)','capecitabina':'VO conforme protocolo oncológico','temozolomida':'VO conforme protocolo oncológico','metotrexato':'conforme indicação (oncológica 1x/sem; reumatológica 1x/sem com ácido fólico)','tamoxifeno':'20 mg VO 1x/dia','anastrozol':'1 mg VO 1x/dia','letrozol':'2,5 mg VO 1x/dia','exemestano':'25 mg VO 1x/dia após refeição','abiraterona':'1.000 mg VO 1x/dia em jejum (com prednisona)','fulvestranto':'500 mg IM dias 1, 15, 29 e depois mensal'
 };
 function prescPosFor(pa,nome){
-  if(/[,+]/.test(pa||''))return ''; // associação: deixa em branco (posologia específica)
-  var h=prescNorm(pa||nome||'');
-  for(var k in PRESC_POS){if(h.indexOf(k)>=0)return PRESC_POS[k];}
-  return '';
+  if(/[,+;]/.test(pa||''))return ''; // associação: posologia específica
+  var h=prescNorm(pa||nome||''),best='',bestK='';
+  for(var k in PRESC_POS){if(h.indexOf(k)>=0&&k.length>bestK.length){bestK=k;best=PRESC_POS[k];}}
+  return best;
 }
 function prescLoadCatalogo(cb){
   if(prescExtLoaded){if(cb)cb();return;}
