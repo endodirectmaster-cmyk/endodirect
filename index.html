@@ -1113,6 +1113,7 @@ textarea{resize:vertical;line-height:1.6}
         <button class="sb-item" data-p="calc">🧮 Calculadoras</button>
         <button class="sb-item" data-p="simfull">📝 Simulado</button>
         <button class="sb-item" data-p="rx">💊 Prescrição</button>
+        <button class="sb-item" data-p="presc" id="sb-presc" style="display:none">💉 Assistente de Prescrição</button>
         <button class="sb-item" data-p="sim">🩺 Simulador</button>
         <button class="sb-item" data-p="art">📄 Resumidor</button>
         <div class="sb-sec">Pessoal</div>
@@ -1458,6 +1459,23 @@ textarea{resize:vertical;line-height:1.6}
           </div>
           <div id="rx-feedback"></div>
         </div>
+      </div>
+    </div>
+
+    <div class="panel" id="panel-presc">
+      <div class="breadcrumb">Dashboard <b>/ Assistente de Prescrição</b></div>
+      <div class="ph"><h1>Assistente de Prescrição</h1><p>Apoio à prescrição com receituário, LME, exames e seguimento — baseado em diretrizes (SBEM, SBD, ADA) e na regulamentação brasileira (ANVISA, SUS).</p></div>
+      <div class="pc">
+        <div style="background:#fff7ed;border:1px solid #fed7aa;border-radius:var(--rs);padding:.7rem .9rem;margin-bottom:.85rem;font-size:.72rem;color:#9a3412;line-height:1.55">⚠️ <b>Ferramenta educacional de apoio à decisão.</b> Não substitui o julgamento clínico, a avaliação individual do paciente nem a consulta às bulas e diretrizes vigentes. Confira sempre doses, contraindicações e interações antes de prescrever.</div>
+        <div class="gen-box">
+          <div class="fld2"><label>Diagnóstico / condição clínica *</label><input type="text" id="presc-dx" placeholder="Ex: Diabetes mellitus tipo 2; Hipotireoidismo; Osteoporose pós-menopausa"></div>
+          <div class="g2" style="margin-bottom:.65rem">
+            <div class="fld2" style="margin:0"><label>Medicamento ou classe (opcional)</label><input type="text" id="presc-med" placeholder="Ex: semaglutida; levotiroxina; alendronato"></div>
+            <div class="fld2" style="margin:0"><label>Dados do paciente (opcional)</label><input type="text" id="presc-pac" placeholder="Ex: 58 anos, DRC estágio 3, HbA1c 8,5%"></div>
+          </div>
+          <button class="btn btn-primary" id="btn-presc-gen">▶ Gerar orientação</button>
+        </div>
+        <div id="presc-result"></div>
       </div>
     </div>
 
@@ -2574,6 +2592,7 @@ function startApp(){
     renderAdmSec(admRestoreSec());
   }else{
     goPanel('dash');initAll();
+    try{markLockedNavItems();}catch(e){}
   }
 }
 function doLogin(u){
@@ -3081,7 +3100,7 @@ function startGoogleOAuth(){
   });
 }
 
-var PANEL_LABELS={dash:'Dashboard',quest:'Questões',flash:'Flashcards',mmap:'Mapas Mentais',podcast:'Podcasts',cursos:'Cursos',crono:'Cronograma',sr:'Revisão Espaçada',sim:'Simulador',simfull:'Simulado',calc:'Calculadoras',rx:'Prescrição',art:'Resumidor',notas:'Caderno',mural:'Mural',chat:'Chat IA',perfil:'Perfil',support:'Suporte',adm:'Painel Admin'};
+var PANEL_LABELS={dash:'Dashboard',quest:'Questões',flash:'Flashcards',mmap:'Mapas Mentais',podcast:'Podcasts',cursos:'Cursos',crono:'Cronograma',sr:'Revisão Espaçada',sim:'Simulador',simfull:'Simulado',calc:'Calculadoras',rx:'Prescrição',presc:'Assistente de Prescrição',art:'Resumidor',notas:'Caderno',mural:'Mural',chat:'Chat IA',perfil:'Perfil',support:'Suporte',adm:'Painel Admin'};
 function closeMobileNav(){
   document.body.classList.remove('mobile-nav-open');
   var b=document.getElementById('btn-mobile-nav');
@@ -3111,11 +3130,15 @@ var catalogoCursos=[];
 // Escopo exigido para ABRIR cada painel. Ausente = livre para qualquer membro.
 // (banco de questoes = sub-aba Provas em 'quest', liberada por qualquer pacote.)
 var PANEL_SCOPE={
-  sim:'plano', simfull:'plano', flash:'plano', mmap:'plano', podcast:'plano', rx:'plano', art:'plano'
+  sim:'plano', simfull:'plano', flash:'plano', mmap:'plano', podcast:'plano', rx:'plano', presc:'plano', art:'plano'
 };
 // Tier mínimo por painel: Prescrição = Gold(2); Simulador de Casos = Premium(3).
 // Os demais ficam em qualquer pacote (tier 1).
-var PANEL_MIN_TIER={rx:2, sim:3};
+var PANEL_MIN_TIER={rx:2, presc:2, sim:3};
+// Assistente de Prescrição: oferecido apenas a quem se identificou como
+// Endocrinologista ou "Outros" (outro profissional) na janela inicial.
+function userPerfil(){var p=(currentUser&&currentUser.profile)||lsGet('user_profile')||{};return p.perfil||'';}
+function prescProfileOk(){var pf=userPerfil();return pf==='Endocrinologista'||pf==='Outros';}
 function planRank(){var k=currentPlanKey();return k==='premium'?3:(k==='gold'?2:(k==='standard'?1:0));}
 function isAdminUser(){return !!(currentUser&&currentUser.role==='admin');}
 function hasScope(scope){return !scope||isAdminUser()||userAcessos.indexOf(scope)>=0;}
@@ -3157,6 +3180,7 @@ function consumeTrial(id){
 }
 function canSeePanel(id){
   if(isAdminUser())return true;
+  if(id==='presc'&&!prescProfileOk())return false;
   if(isDegustacao()){
     if(id==='mural')return muralTrialActive(); // degustação do mural: 7 dias
     if(DEGUSTACAO_PANELS[id])return true;
@@ -3301,6 +3325,7 @@ function updatePlanBadge(){
 }
 function markLockedNavItems(){
   try{updatePlanBadge();}catch(e){}
+  var sp=document.getElementById('sb-presc');if(sp)sp.style.display=prescProfileOk()?'':'none';
   document.querySelectorAll('#sb-aluno .sb-item[data-p]').forEach(function(b){
     var locked=!canSeePanel(b.dataset.p);
     var has=b.querySelector('.sb-lock');
@@ -3338,6 +3363,7 @@ function goPanel(id){
   if(id==='calc')initCalc();
   if(id==='notas')renderNoteList();
   if(id==='mural')initMural();
+  if(id==='presc')initPresc();
   if(id==='simfull'){renderSFPrev();populateInst('sf-inst');}
   if(id==='art')initArtUpload();
   if(id==='perfil')renderPerfil();
@@ -4278,6 +4304,101 @@ function evalRx(){
   .then(function(r){fb.innerHTML='<div class="card" style="margin-top:.5rem"><div class="card-head"><span class="card-title">Avaliação da IA</span></div><div style="font-size:.79rem;line-height:1.7;white-space:pre-wrap">'+esc(r)+'</div></div>';})
   .catch(function(e){fb.innerHTML='<div style="color:var(--red);font-size:.75rem">Erro: '+esc(e.message)+'</div>';})
   .then(function(){btn.disabled=false;btn.textContent='✓ Avaliar';});
+}
+// ── ASSISTENTE DE PRESCRIÇÃO (Endocrinologista / Outros) ──
+var prescInited=false;
+function initPresc(){
+  if(prescInited)return;prescInited=true;
+  var btn=document.getElementById('btn-presc-gen');
+  if(btn)btn.addEventListener('click',genPresc);
+  var dx=document.getElementById('presc-dx');
+  if(dx)dx.addEventListener('keydown',function(e){if(e.key==='Enter'){e.preventDefault();genPresc();}});
+}
+function prescList(arr){
+  if(!arr||!arr.length)return'<div style="font-size:.78rem;color:var(--t3)">—</div>';
+  return'<ul style="margin:.2rem 0 0;padding-left:1.1rem;font-size:.79rem;line-height:1.65">'+arr.map(function(x){return'<li>'+esc(String(x))+'</li>';}).join('')+'</ul>';
+}
+function prescCard(title,inner,accent){
+  return'<div class="card" style="margin-top:.7rem;border-left:4px solid '+(accent||'var(--blue)')+'"><div class="card-head"><span class="card-title">'+esc(title)+'</span></div>'+inner+'</div>';
+}
+function genPresc(){
+  if(typeof blockIfDegustacao==='function'&&blockIfDegustacao())return;
+  var dx=(document.getElementById('presc-dx').value||'').trim();
+  if(!dx){notify('Informe o diagnóstico ou condição clínica.','err');return;}
+  var med=(document.getElementById('presc-med').value||'').trim();
+  var pac=(document.getElementById('presc-pac').value||'').trim();
+  var btn=document.getElementById('btn-presc-gen');
+  var out=document.getElementById('presc-result');
+  btn.disabled=true;btn.innerHTML=ldHTML('Gerando orientação...');
+  out.innerHTML='';
+  var sys='Você é um assistente de prescrição para endocrinologistas e médicos no Brasil. '
+    +'Responda em português do Brasil, baseado em diretrizes vigentes (SBEM, SBD, ADA, Endocrine Society) e na regulamentação brasileira. '
+    +'Regras de receituário (ANVISA Portaria 344/98): receita simples (maioria); receita de controle especial em 2 vias (lista C1 — ex.: alguns antidepressivos/anticonvulsivantes); notificação de receita B azul (psicotrópicos, ex.: benzodiazepínicos); notificação de receita A amarela (entorpecentes); receita de antimicrobianos em 2 vias (RDC 471/2021). '
+    +'LME = Laudo para Solicitação/Autorização de Medicamento do Componente Especializado da Assistência Farmacêutica (CEAF/SUS): indique se o fármaco pertence ao componente especializado, o CID-10, exames/critérios exigidos no protocolo (PCDT) e observações. '
+    +'Seja conservador com doses (faixas usuais para adulto, salvo dados do paciente), sinalize ajuste renal/hepático e contraindicações. '
+    +'Responda APENAS JSON válido, sem markdown, no formato: '
+    +'{"resumo":"1-2 frases","prescricao":[{"medicamento":"","dose":"","via":"","posologia":"","duracao":""}],'
+    +'"receituario":{"tipo":"","justificativa":""},'
+    +'"lme":{"aplicavel":true,"cid":"","medicamentos":"","exames_exigidos":["",""],"criterios":"","observacao":""},'
+    +'"exames":{"basais":["",""],"monitorizacao":["",""]},'
+    +'"periodicidade":"","orientacoes":["",""],"alertas":["",""]}';
+  var usr='Condição/diagnóstico: '+dx+(med?('\nMedicamento/classe de interesse: '+med):'')+(pac?('\nDados do paciente: '+pac):'')
+    +'\nGere a orientação de prescrição com prescrição sugerida, tipo de receituário, LME (se aplicável), exames basais e de monitorização, periodicidade de seguimento, orientações ao paciente e alertas de segurança.';
+  callAIJson(sys,usr,2000,1).then(function(d){
+    if(!d||(!d.prescricao&&!d.resumo))throw new Error('Resposta inválida da IA.');
+    renderPresc(d,dx);
+  }).catch(function(e){
+    out.innerHTML='<div style="color:var(--red);font-size:.78rem;margin-top:.6rem">Erro: '+esc(e.message||'falha ao gerar')+'</div>';
+  }).then(function(){btn.disabled=false;btn.innerHTML='▶ Gerar orientação';});
+}
+function renderPresc(d,dx){
+  var out=document.getElementById('presc-result');
+  var html='';
+  html+='<div class="card" style="margin-top:.85rem"><div class="card-head"><span class="card-title">📋 Orientação — '+esc(dx)+'</span></div>'
+    +'<div style="font-size:.8rem;line-height:1.7;color:var(--t2)">'+esc(d.resumo||'')+'</div></div>';
+  var presc=Array.isArray(d.prescricao)?d.prescricao:[];
+  var ph=presc.length?presc.map(function(m){
+    return'<div style="border-top:1px solid var(--bd);padding:.5rem 0;font-size:.79rem;line-height:1.6">'
+      +'<div style="font-weight:700;color:var(--tx)">'+esc(m.medicamento||'')+(m.dose?(' — '+esc(m.dose)):'')+'</div>'
+      +'<div style="color:var(--t2)">'+[m.via,m.posologia,m.duracao].filter(Boolean).map(esc).join(' · ')+'</div></div>';
+  }).join(''):'<div style="font-size:.78rem;color:var(--t3)">—</div>';
+  html+=prescCard('💊 Prescrição sugerida',ph,'#2563eb');
+  if(d.receituario){
+    html+=prescCard('🧾 Receituário',
+      '<div style="font-size:.79rem;line-height:1.65"><b>'+esc(d.receituario.tipo||'—')+'</b>'
+      +(d.receituario.justificativa?('<div style="color:var(--t2);margin-top:.25rem">'+esc(d.receituario.justificativa)+'</div>'):'')+'</div>','#6d3fb5');
+  }
+  if(d.lme){
+    if(d.lme.aplicavel){
+      var li='<div style="font-size:.79rem;line-height:1.65">';
+      if(d.lme.cid)li+='<div><b>CID-10:</b> '+esc(d.lme.cid)+'</div>';
+      if(d.lme.medicamentos)li+='<div><b>Medicamentos (CEAF):</b> '+esc(d.lme.medicamentos)+'</div>';
+      if(d.lme.criterios)li+='<div style="margin-top:.25rem"><b>Critérios:</b> '+esc(d.lme.criterios)+'</div>';
+      li+='<div style="margin-top:.3rem"><b>Exames exigidos:</b>'+prescList(d.lme.exames_exigidos)+'</div>';
+      if(d.lme.observacao)li+='<div style="color:var(--t3);margin-top:.3rem;font-size:.74rem">'+esc(d.lme.observacao)+'</div>';
+      li+='</div>';
+      html+=prescCard('📑 LME — Componente Especializado (SUS)',li,'#16a34a');
+    }else{
+      html+=prescCard('📑 LME — Componente Especializado (SUS)','<div style="font-size:.78rem;color:var(--t2)">Não se aplica: medicamento fora do Componente Especializado da Assistência Farmacêutica.'+(d.lme.observacao?(' '+esc(d.lme.observacao)):'')+'</div>','#16a34a');
+    }
+  }
+  if(d.exames){
+    html+=prescCard('🧪 Exames',
+      '<div style="font-size:.79rem"><div style="font-weight:700;color:var(--tx)">Basais / antes de iniciar</div>'+prescList(d.exames.basais)
+      +'<div style="font-weight:700;color:var(--tx);margin-top:.5rem">Monitorização</div>'+prescList(d.exames.monitorizacao)+'</div>','#0ea5e9');
+  }
+  if(d.periodicidade){
+    html+=prescCard('📅 Periodicidade de seguimento','<div style="font-size:.79rem;line-height:1.65;color:var(--t2)">'+esc(d.periodicidade)+'</div>','#f59e0b');
+  }
+  if(d.orientacoes&&d.orientacoes.length){
+    html+=prescCard('🗣️ Orientações ao paciente',prescList(d.orientacoes),'#10b981');
+  }
+  if(d.alertas&&d.alertas.length){
+    html+=prescCard('⚠️ Alertas de segurança',prescList(d.alertas),'#c0392b');
+  }
+  html+='<div style="font-size:.7rem;color:var(--t3);margin-top:.7rem;line-height:1.5;border-top:1px solid var(--bd);padding-top:.5rem">ℹ️ Conteúdo gerado por IA com base em diretrizes e na regulamentação brasileira (ANVISA Portaria 344/98, CEAF/SUS). Confira sempre doses, contraindicações, interações e a versão vigente dos protocolos antes de prescrever.</div>';
+  out.innerHTML=html;
+  out.scrollIntoView({behavior:'smooth',block:'nearest'});
 }
 // ── RESUMIDOR ──
 var artFileData=null,artFileInited=false;
