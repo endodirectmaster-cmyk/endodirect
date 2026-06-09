@@ -1670,6 +1670,31 @@ var CALCS=[
    calc:function(v){var sp=parseFloat(v.trp_sp)||0,up=parseFloat(v.trp_up)||0,scr=parseFloat(v.trp_scr)||0,ucr=parseFloat(v.trp_ucr)||0;if(sp<=0||ucr<=0)return 0;return (1-((up*scr)/(sp*ucr)))*100;},
    interp:function(s){return s<85?{t:'Reabsorção reduzida — perda renal de fosfato (ex.: hiperPTH, raquitismo hipofosfatêmico)',c:'tag-gold'}:s<=95?{t:'Reabsorção normal (85–95%)',c:'tag-grn'}:{t:'Reabsorção aumentada (ex.: hipoparatireoidismo)',c:'tag-gold'};},
    unit:'%',note:'TRP = [1 − (P urinário × Cr sérica) ÷ (P sérico × Cr urinária)] × 100. A fração de excreção de fosfato (FEPi) = 100 − TRP. Use amostra em jejum; referência ~85–95%.'},
+  {id:'lt4',name:'Dose de levotiroxina por peso',area:'Tireoide',desc:'Dose diária estimada de LT4',
+   fields:[{id:'lt4_peso',label:'Peso (kg)',type:'num'},{id:'lt4_ctx',label:'Situação',type:'select',opts:['Reposição plena (1,6 mcg/kg)','Idoso/cardiopata — início (0,5 mcg/kg)','Supressão pós-câncer (2,1 mcg/kg)'],vals:[1.6,0.5,2.1]}],
+   calc:function(v){var p=parseFloat(v.lt4_peso)||0;var f=parseFloat(v.lt4_ctx)||1.6;return p*f;},
+   interp:function(s){var r=Math.round(s/12.5)*12.5;return{t:'≈ '+r+' mcg/dia (ajuste ao comprimido disponível)',c:'tag-blue'};},
+   unit:'mcg/dia',note:'Reposição plena ~1,6 mcg/kg/dia. Em idosos/cardiopatas, iniciar baixo (12,5–25 mcg/dia) e titular. Supressão (câncer de tireoide) ~2 mcg/kg/dia. Tomar em jejum; reavaliar TSH em 6–8 semanas.'},
+  {id:'osmol',name:'Osmolalidade sérica calculada',area:'Distúrbios hidroeletrolíticos',desc:'Osmolalidade plasmática estimada',
+   fields:[{id:'osm_na',label:'Sódio (mEq/L)',type:'num'},{id:'osm_gli',label:'Glicemia (mg/dL)',type:'num'},{id:'osm_ur',label:'Ureia (mg/dL)',type:'num'}],
+   calc:function(v){var na=parseFloat(v.osm_na)||0,g=parseFloat(v.osm_gli)||0,u=parseFloat(v.osm_ur)||0;return 2*na+g/18+u/6;},
+   interp:function(s){return s<275?{t:'Baixa (<275)',c:'tag-gold'}:s<=295?{t:'Normal (275–295)',c:'tag-grn'}:{t:'Elevada (>295)',c:'tag-red'};},
+   unit:'mOsm/kg',note:'Fórmula: 2×Na + glicemia/18 + ureia/6. (Com BUN: 2×Na + glicemia/18 + BUN/2,8.) Referência ~275–295. Gap osmolar = osmolalidade medida − calculada (normal < 10).'},
+  {id:'drc',name:'Estadiamento da DRC (KDIGO)',area:'Função renal',desc:'Categoria G + A e risco de progressão',
+   fields:[{id:'drc_tfg',label:'TFG (mL/min/1,73m²)',type:'num'},{id:'drc_rac',label:'RAC urinária (mg/g)',type:'num'}],
+   calc:function(v){return parseFloat(v.drc_tfg)||0;},
+   interp:function(s,v){var tfg=parseFloat(v.drc_tfg)||0,rac=parseFloat(v.drc_rac)||0;
+     var g=tfg>=90?'G1':tfg>=60?'G2':tfg>=45?'G3a':tfg>=30?'G3b':tfg>=15?'G4':'G5';
+     var a=rac<30?'A1':(rac<=300?'A2':'A3');
+     var M={G1:['Baixo','Moderado','Alto'],G2:['Baixo','Moderado','Alto'],G3a:['Moderado','Alto','Muito alto'],G3b:['Alto','Muito alto','Muito alto'],G4:['Muito alto','Muito alto','Muito alto'],G5:['Muito alto','Muito alto','Muito alto']};
+     var risk=M[g][({A1:0,A2:1,A3:2})[a]];
+     var c=risk==='Baixo'?'tag-grn':(risk==='Moderado'?'tag-gold':'tag-red');
+     return{t:g+' / '+a+' — risco '+risk,c:c};},
+   unit:'mL/min/1,73m²',note:'KDIGO: categoria G pela TFG + categoria A pela RAC (A1 <30; A2 30–300; A3 >300 mg/g). G1/G2 só são DRC se houver outro marcador de lesão renal. A cor indica o risco de progressão.'},
+  {id:'frax',name:'FRAX',area:'Osteometabolismo',desc:'Risco de fratura em 10 anos (ferramenta oficial)',external:true,
+   link:'https://frax.shef.ac.uk/FRAX/tool.aspx?lang=pt',cta:'Abrir o FRAX oficial',
+   desc2:'O FRAX é um modelo validado e proprietário (coeficientes específicos por país). Para resultados corretos, use a calculadora oficial — selecione o país <b>Brasil</b> e preencha idade, sexo, peso, altura e os fatores de risco (fratura prévia, história familiar, tabagismo, corticoide, artrite reumatoide, álcool, DMO do colo femoral).',
+   note:'Não reproduzimos o cálculo internamente para não gerar resultados imprecisos. O link abre a ferramenta oficial (modelo Brasil), em português.'},
 ];
 
 var USERS=[
@@ -4132,6 +4157,15 @@ function openCalc(id){
   activeCalc=id;
   var c=CALCS.find(function(x){return x.id===id;});if(!c)return;
   var det=document.getElementById('calc-detail');
+  if(c.external){
+    det.innerHTML='<div class="card" style="margin-top:.85rem"><div class="card-head"><span style="font-size:.92rem;font-weight:700">'+esc(c.name)+'</span><span class="tag tag-blue">'+esc(c.area)+'</span></div>'
+      +(c.desc2?'<div style="font-size:.78rem;color:var(--t2);line-height:1.6;margin:.5rem 0 .8rem">'+c.desc2+'</div>':'')
+      +'<a class="btn btn-primary" href="'+esc(c.link)+'" target="_blank" rel="noopener" style="justify-content:center;text-decoration:none">'+esc(c.cta||'Abrir ferramenta oficial')+' ↗</a>'
+      +(c.note?'<div style="font-size:.68rem;color:var(--t3);margin-top:.6rem;line-height:1.5;border-top:1px solid var(--bd);padding-top:.5rem">ℹ️ '+esc(c.note)+'</div>':'')
+      +'</div>';
+    det.scrollIntoView({behavior:'smooth',block:'nearest'});
+    return;
+  }
   det.innerHTML='<div class="card" style="margin-top:.85rem"><div class="card-head"><span style="font-size:.92rem;font-weight:700">'+esc(c.name)+'</span><span class="tag tag-blue">'+esc(c.area)+'</span></div>'+
     c.fields.map(function(f){
       if(f.type==='select')return'<div class="fld2"><label>'+esc(f.label)+'</label><select data-calc-field="'+f.id+'">'+f.opts.map(function(o,i){return'<option value="'+f.vals[i]+'">'+esc(o)+'</option>';}).join('')+'</select></div>';
