@@ -2575,7 +2575,8 @@ function aiRequest(payload){
     });
   }).then(function(d){return d.text||'';});
 }
-var AI_MODEL_CLINICO='claude-opus-4-8'; // prescrição e simulador (raciocínio clínico)
+var AI_MODEL_CLINICO='claude-opus-4-8'; // avaliação e relatório clínico (raciocínio)
+var AI_MODEL_SIM_GEN='claude-sonnet-4-6'; // geração rápida de vinhetas de caso (latência menor)
 function callAI(sys,usr,maxTok,model){
   return aiRequest({system:sys,prompt:usr,maxTokens:maxTok||1500,model:model});
 }
@@ -6727,8 +6728,8 @@ startSim=function(){
   var mode=(document.querySelector('input[name="sim-mode"]:checked')||{}).value||'mc';
   var btn=document.getElementById('btn-sim-start');
   btn.disabled=true;btn.innerHTML=ldHTML('Gerando...');
-  var sys='Preceptor de endocrinologia conduzindo simulação de caso clínico passo a passo (estilo OSCE). JSON APENAS: {"intro":"apresentação do paciente","steps":[{"pergunta":"o que você faz/pergunta?"'+(mode==='mc'?',"options":{"A":"","B":"","C":"","D":""},"correct":"A","feedback":"explicação curta com raciocínio"':',"ideal":"resposta ideal"')+'}]}. 4-5 passos progressivos.';
-  simRetry(function(){return callAIJson(sys,'Caso de '+(sub||'endocrinologia')+', complexidade '+level+', modo '+(mode==='mc'?'múltipla escolha':'resposta aberta')+'.',2400,0,AI_MODEL_CLINICO);})
+  var sys='Você é preceptor de endocrinologia conduzindo um caso clínico passo a passo (estilo OSCE), em português do Brasil, com RIGOR TÉCNICO. A vinheta (intro) deve trazer dados objetivos: idade, sexo, queixa, antecedentes, exame físico e EXAMES LABORATORIAIS com valores e unidades (ex.: TSH 8,4 mUI/L; cortisol 2,1 µg/dL). JSON APENAS: {"intro":"vinheta com dados objetivos e laboratoriais","steps":[{"pergunta":"conduta/raciocínio solicitado"'+(mode==='mc'?',"options":{"A":"","B":"","C":"","D":""},"correct":"A","feedback":"justificativa técnica curta citando alvo/critério/dose/diretriz (SBEM, SBD, ADA, Endocrine Society, AACE) quando pertinente"':',"ideal":"resposta ideal detalhada com valores de corte, doses e monitorização"')+'}]}. Use 4 a 6 passos PROGRESSIVOS (anamnese dirigida → exames complementares → diagnóstico → conduta/titulação → monitorização). Valores de corte, doses e diretrizes corretos. As distratoras devem ser plausíveis.';
+  simRetry(function(){return callAIJson(sys,'Caso de '+(sub||'endocrinologia')+', complexidade '+level+', modo '+(mode==='mc'?'múltipla escolha':'resposta aberta')+'.',2600,0,AI_MODEL_SIM_GEN);})
   .then(function(d){
     if(!d||!d.steps||!d.steps.length)throw new Error('Resposta inválida.');
     simState={data:d,step:0,mode:mode,score:0,answers:[],sub:sub||'Endocrinologia',level:level};
@@ -6771,7 +6772,7 @@ submitSimOpen=function(){
   if(!ta||!ta.value.trim()){notify('Escreva sua conduta.','err');return;}
   var s=simState.data.steps[simState.step],ans=ta.value.trim(),msgs=document.getElementById('sim-msgs'),wrap=document.getElementById('sim-input-wrap');
   wrap.innerHTML=ldHTML('Avaliando...');
-  simRetry(function(){return callAI('Preceptor. Compare a resposta do aluno com a ideal e dê feedback em 2-3 frases. Termine com uma estimativa objetiva: Aderência: alta, parcial ou baixa.','Pergunta: '+s.pergunta+'\nIdeal: '+(s.ideal||'')+'\nAluno: '+ans,1200,AI_MODEL_CLINICO);})
+  simRetry(function(){return callAI('Você é preceptor de endocrinologia. Compare a conduta do aluno com a ideal e dê feedback técnico e específico em 2-3 frases: cite valores de corte, doses, titulação ou diretriz (SBEM, SBD, ADA, Endocrine Society) quando pertinente e aponte erros de segurança se houver. Termine com uma linha — Aderência: alta, parcial ou baixa.','Pergunta: '+s.pergunta+'\nConduta ideal: '+(s.ideal||'')+'\nResposta do aluno: '+ans,1200,AI_MODEL_CLINICO);})
   .then(function(r){
     var ok=!/baixa/i.test(r);
     if(ok)simState.score++;
@@ -6780,27 +6781,47 @@ submitSimOpen=function(){
     simState.step++;updateSimCounter();wrap.innerHTML='';renderSimStep();
   }).catch(function(e){notify('Erro: '+e.message,'err');wrap.innerHTML='';});
 };
-finishSim=function(){
-  document.getElementById('sim-content').style.display='none';
-  var total=simState.data.steps.length,pct=Math.round((simState.score/total)*100);
+function simReportRestart(){var r=document.getElementById('sim-result');if(r)r.style.display='none';var s=document.getElementById('sim-setup');if(s)s.style.display='block';}
+function renderSimReport(d,pct,total){
+  d=d||{};
+  function lis(arr){return (Array.isArray(arr)&&arr.length?arr:['—']).map(function(x){return '<li>'+esc(String(x))+'</li>';}).join('');}
+  var nota=(d.nota!=null&&isFinite(parseFloat(d.nota)))?(String(d.nota).replace('.',',')+'/10'):null;
+  var result=document.getElementById('sim-result');
+  result.innerHTML='<div class="sim-report">'
+    +'<div class="sim-report-head"><div><div class="sim-report-kicker">Relatório final</div><h3>Simulação concluída</h3><p>'+esc(simState.sub)+' · '+esc(simState.level)+'</p></div><div class="sim-report-score"><strong>'+pct+'%</strong><span>'+simState.score+'/'+total+' passos'+(nota?' · nota '+esc(nota):'')+'</span></div></div>'
+    +(d.veredito?'<div class="sim-report-verdict">'+esc(d.veredito)+'</div>':'')
+    +'<div class="sim-report-grid"><div class="sim-report-box"><h4>✅ Pontos fortes</h4><ul>'+lis(d.fortes)+'</ul></div><div class="sim-report-box"><h4>⚠️ Pontos a melhorar</h4><ul>'+lis(d.fracos)+'</ul></div></div>'
+    +(d.raciocinio?'<div class="sim-report-box" style="margin-top:.7rem"><h4>🧠 Raciocínio clínico</h4><p style="font-size:.85rem;line-height:1.6;color:var(--t2)">'+esc(d.raciocinio)+'</p></div>':'')
+    +(d.conduta?'<div class="sim-report-box" style="margin-top:.7rem"><h4>💊 Conduta, doses e segurança</h4><p style="font-size:.85rem;line-height:1.6;color:var(--t2)">'+esc(d.conduta)+'</p></div>':'')
+    +(d.conclusao?'<div class="sim-report-box" style="margin-top:.7rem"><h4>📌 Conclusão</h4><p style="font-size:.85rem;line-height:1.6;color:var(--t2)">'+esc(d.conclusao)+'</p></div>':'')
+    +((Array.isArray(d.estudar)&&d.estudar.length)?'<div class="sim-report-box" style="margin-top:.7rem"><h4>📚 Para estudar</h4><ul>'+lis(d.estudar)+'</ul></div>':'')
+    +'<button class="btn btn-primary" id="btn-sim-restart" style="margin-top:.9rem">Nova simulação</button>'
+    +'</div>';
+  var rb=document.getElementById('btn-sim-restart');if(rb)rb.addEventListener('click',simReportRestart);
+}
+function renderSimReportFallback(pct,total){
   var strengths=[],weak=[];
   (simState.answers||[]).forEach(function(a,idx){
     var label='Passo '+(idx+1);
     if(a.ok)strengths.push(label+': conduta compatível com o raciocínio esperado.');
-    else weak.push(label+': revisar '+(a.feedback||'a justificativa do caso').replace(/\s+/g,' ').slice(0,120)+'.');
+    else weak.push(label+': revisar '+String(a.feedback||'a justificativa do caso').replace(/\s+/g,' ').slice(0,120)+'.');
   });
   if(!strengths.length)strengths.push('Reconheceu a estrutura do caso e completou a simulação.');
   if(!weak.length)weak.push('Continue treinando justificativa, priorização diagnóstica e comunicação da conduta.');
-  var verdict=pct>=80?'Excelente desempenho':pct>=60?'Bom desempenho, com pontos de ajuste':'Revisão recomendada antes de repetir o caso';
+  renderSimReport({veredito:(pct>=80?'Excelente desempenho':pct>=60?'Bom desempenho, com pontos de ajuste':'Revisão recomendada antes de repetir o caso'),fortes:strengths.slice(0,4),fracos:weak.slice(0,4)},pct,total);
+}
+finishSim=function(){
+  document.getElementById('sim-content').style.display='none';
+  var total=simState.data.steps.length,pct=Math.round((simState.score/total)*100);
   var result=document.getElementById('sim-result');
   result.style.display='block';
-  result.innerHTML='<div class="sim-report">'
-    +'<div class="sim-report-head"><div><div class="sim-report-kicker">Relatório final</div><h3>Simulação concluída</h3><p>'+esc(simState.sub)+' - '+esc(simState.level)+'</p></div><div class="sim-report-score"><strong>'+pct+'%</strong><span>'+simState.score+'/'+total+' pontos</span></div></div>'
-    +'<div class="sim-report-verdict">'+esc(verdict)+'</div>'
-    +'<div class="sim-report-grid"><div class="sim-report-box"><h4>Pontos fortes</h4><ul>'+strengths.slice(0,4).map(function(x){return'<li>'+esc(x)+'</li>';}).join('')+'</ul></div><div class="sim-report-box"><h4>Pontos a melhorar</h4><ul>'+weak.slice(0,4).map(function(x){return'<li>'+esc(x)+'</li>';}).join('')+'</ul></div></div>'
-    +'<button class="btn btn-primary" id="btn-sim-restart" style="margin-top:.8rem">Nova simulação</button>'
-    +'</div>';
-  document.getElementById('btn-sim-restart').addEventListener('click',function(){result.style.display='none';document.getElementById('sim-setup').style.display='block';});
+  result.innerHTML='<div class="sim-report"><div class="sim-report-head"><div><div class="sim-report-kicker">Relatório final</div><h3>Gerando relatório do desempenho…</h3><p>'+esc(simState.sub)+' · '+esc(simState.level)+'</p></div><div class="sim-report-score"><strong>'+pct+'%</strong><span>'+simState.score+'/'+total+' passos</span></div></div><div style="margin-top:.6rem">'+ldHTML('Analisando suas condutas…')+'</div></div>';
+  var transcript=(simState.answers||[]).map(function(a,i){return 'Passo '+(i+1)+'\nPergunta: '+a.question+'\nResposta do aluno: '+a.answer+'\nReferência ideal: '+(a.correct||'')+'\nResultado: '+(a.ok?'adequada':'inadequada')+(a.feedback?('\nFeedback: '+a.feedback):'');}).join('\n\n');
+  var sys='Você é preceptor de endocrinologia avaliando o desempenho de um residente em um caso clínico simulado. Produza um RELATÓRIO técnico, específico e completo em português do Brasil. Responda em JSON APENAS: {"nota":<número 0-10 com uma casa decimal>,"veredito":"frase curta de síntese","fortes":["ponto específico 1","2","3"],"fracos":["ponto específico 1","2"],"raciocinio":"análise do raciocínio clínico, priorização diagnóstica e interpretação dos exames (2-4 frases)","conduta":"adequação das condutas, doses, titulação, monitorização e segurança (2-4 frases)","conclusao":"síntese final orientando o estudo (2-3 frases)","estudar":["tópico objetivo 1","2","3"]}. Cite alvos, valores de corte, doses e diretrizes (SBEM, SBD, ADA, Endocrine Society, AACE) quando pertinente. Baseie-se apenas nos dados do caso; não invente.';
+  var usr='Caso ('+simState.sub+', complexidade '+simState.level+'):\n'+(simState.data.intro||'')+'\n\nDesempenho passo a passo (acertos '+simState.score+'/'+total+'):\n'+transcript;
+  simRetry(function(){return callAIJson(sys,usr,1900,0,AI_MODEL_CLINICO);})
+  .then(function(d){renderSimReport(d,pct,total);})
+  .catch(function(){renderSimReportFallback(pct,total);});
 };
 genRxCase=function(){
   if(!consumeTrial('rx'))return;
@@ -6810,8 +6831,8 @@ genRxCase=function(){
   btn.disabled=true;
   btn.innerHTML=ldHTML('Gerando...');
   simRetry(function(){
-    return callAI('Preceptor de endocrinologia BR. JSON APENAS: {"caso":"vinheta clinica com dados suficientes para uma prescricao segura, em 4 a 6 linhas","area":"'+sub+'"}','Caso clinico de '+sub+', complexidade '+level+', que demande prescricao. Use português do Brasil.',1100,AI_MODEL_CLINICO);
-  })
+    return callAIJson('Você é preceptor de endocrinologia (Brasil). JSON APENAS: {"caso":"vinheta clínica em 4 a 6 linhas com dados objetivos (idade, sexo, queixa, antecedentes, exame físico e EXAMES LABORATORIAIS com valores e unidades) suficientes para uma prescrição segura e individualizada","area":"'+sub+'"}','Caso clínico de '+sub+', complexidade '+level+', que demande prescrição (incluindo dose e monitorização). Português do Brasil.',1100,0,AI_MODEL_SIM_GEN);
+  }).then(function(d){return JSON.stringify(d);})
   .then(function(raw){
     var d=parseJ(raw);
     if(!d||!d.caso)throw new Error('Resposta inválida.');
@@ -6834,8 +6855,8 @@ evalRx=function(){
   btn.disabled=true;btn.innerHTML=ldHTML('Avaliando...');
   fb.style.display='block';
   fb.innerHTML=ldHTML('Avaliando prescrição...');
-  var sys='Preceptor de endocrinologia. Avalie a prescrição do aluno com foco em segurança, indicação, dose, titulação, contraindicações, monitorização e educação do paciente. Responda em português com seções curtas: acertos, falhas, correção sugerida e nota final.';
-  simRetry(function(){return callAI(sys,'Caso: '+(rxCase&&rxCase.caso||'')+'\nDiagnóstico do aluno: '+diag+'\nPrescrição do aluno:\n'+txt,2200,AI_MODEL_CLINICO);})
+  var sys='Você é preceptor de endocrinologia avaliando a prescrição de um residente. Produza um RELATÓRIO completo e técnico em português do Brasil, em markdown, com estas seções (use ## em cada): Nota (0 a 10, com justificativa em 1 linha); Acertos; Falhas e riscos de segurança (interações, contraindicações, ajuste por função renal/hepática, dose ou titulação inadequada, duplicidade); Prescrição ideal comentada (medicamento, dose, via, posologia e duração); Monitorização e metas (exames de controle e alvos terapêuticos); Orientações ao paciente; Conclusão. Seja específico com doses, valores de corte e diretrizes (SBEM, SBD, ADA, Endocrine Society, AACE). Baseie-se apenas nos dados do caso; não invente.';
+  simRetry(function(){return callAI(sys,'Caso: '+(rxCase&&rxCase.caso||'')+'\nDiagnóstico do aluno: '+diag+'\nPrescrição do aluno:\n'+txt,2600,AI_MODEL_CLINICO);})
   .then(function(r){fb.innerHTML=formatAIReport(r);})
   .catch(function(e){fb.innerHTML='<div style="color:var(--red)">Erro: '+esc(e.message)+'</div>';})
   .then(function(){btn.disabled=false;btn.innerHTML='✓ Avaliar';});
