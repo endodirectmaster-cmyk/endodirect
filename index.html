@@ -5558,7 +5558,7 @@ function renderAdmSec(sec){
   if(sec==='provas')m.innerHTML=admProvasSecHTML();
   else if(sec==='cursos')m.innerHTML=admCursosHTML();
   else if(sec==='estudantes')m.innerHTML=admEstudantesHTML();
-  else if(sec==='analytics')m.innerHTML=admAnalyticsHTML();
+  else if(sec==='analytics'){m.innerHTML=admAnalyticsHTML();loadAdmOverview();var rtA=document.getElementById('adm-analytics-retry');if(rtA)rtA.addEventListener('click',function(){loadAdmOverview(true);});}
   else if(sec==='mural')m.innerHTML=admMuralSecHTML();
   else if(sec==='conteudo')m.innerHTML=admConteudoHTML();
   else if(sec==='chat')m.innerHTML=admChatHTML();
@@ -5814,80 +5814,65 @@ function persistAdm(){lsSet('adm_avisos',admAvisos);lsSet('adm_questoes',admQues
 
 // ---------- ANALYTICS ----------
 // Dados de demonstração combinados com o uso real desta sessão.
-function buildAnalytics(){
-  var SUB_LIST=['Diabetes','Obesidade','Tireoide','Adrenal','Neuroendocrinologia','Osteometabolismo','Endocrinologia Pediátrica','Endocrinologia Esportiva','Endocrinologia Masculina','Endocrinologia Feminina','Transgeneridade'];
-  // base de demonstração (acessos por subespecialidade)
-  var acessosBase={Diabetes:1240,Obesidade:890,Tireoide:1010,Adrenal:430,Neuroendocrinologia:380,Osteometabolismo:520,'Endocrinologia Pediátrica':610,'Endocrinologia Esportiva':340,'Endocrinologia Masculina':470,'Endocrinologia Feminina':560,Transgeneridade:290};
-  // desempenho por área: junta a base de demonstração com o desempenho real registrado (DB.perf)
-  var perfBase={Diabetes:{c:78,t:100},Obesidade:{c:71,t:100},Tireoide:{c:83,t:100},Adrenal:{c:54,t:100},Neuroendocrinologia:{c:49,t:100},Osteometabolismo:{c:66,t:100},'Endocrinologia Pediátrica':{c:61,t:100},'Endocrinologia Esportiva':{c:58,t:100},'Endocrinologia Masculina':{c:69,t:100},'Endocrinologia Feminina':{c:74,t:100},Transgeneridade:{c:52,t:100}};
-  Object.keys(DB.perf||{}).forEach(function(a){
-    if(!perfBase[a])perfBase[a]={c:0,t:0};
-    perfBase[a].c+=DB.perf[a].correct;perfBase[a].t+=DB.perf[a].total;
-  });
-  var perfArr=Object.keys(perfBase).map(function(a){var d=perfBase[a];var pct=d.t?Math.round(d.c/d.t*100):0;return{area:a,pct:pct,total:d.t};});
-  // idade média dos alunos (usa estudantes cadastrados se tiverem idade; senão base de demonstração)
-  var idades=admEstudantes.map(function(e){return parseInt(e.idade);}).filter(function(v){return v>0;});
-  var idadeMedia=idades.length?Math.round(idades.reduce(function(a,b){return a+b;},0)/idades.length):31;
-  var idadeMin=idades.length?Math.min.apply(null,idades):26;
-  var idadeMax=idades.length?Math.max.apply(null,idades):44;
-  return{
-    SUB_LIST:SUB_LIST,
-    acessos:acessosBase,
-    perfArr:perfArr,
-    tempoMedio:'24 min',
-    tempoSemana:'3h 12min',
-    sessoesSemana:8,
-    totalAlunos:admEstudantes.length,
-    idadeMedia:idadeMedia,idadeMin:idadeMin,idadeMax:idadeMax,
-    distIdade:[{faixa:'24-29',n:Math.max(1,Math.round(admEstudantes.length*0.35)||4)},{faixa:'30-35',n:Math.max(1,Math.round(admEstudantes.length*0.4)||5)},{faixa:'36-42',n:Math.max(0,Math.round(admEstudantes.length*0.18)||2)},{faixa:'43+',n:Math.max(0,Math.round(admEstudantes.length*0.07)||1)}]
-  };
+// ---------- ANALYTICS (dados reais via RPC endodirect_admin_overview) ----------
+var admOverview=null,admOverviewLoading=false,admOverviewErr='';
+function loadAdmOverview(force){
+  if(admOverviewLoading)return;
+  if(admOverview&&!force)return;
+  var client=getSupabaseClient();
+  if(!client){admOverviewErr='Supabase indisponível.';if(admCurrentSec==='analytics')renderAdmSec('analytics');return;}
+  admOverviewLoading=true;admOverviewErr='';
+  client.rpc('endodirect_admin_overview').then(function(res){
+    admOverviewLoading=false;
+    if(res.error)admOverviewErr=res.error.message||'Falha ao carregar os dados.';
+    else admOverview=res.data||{};
+    if(admCurrentSec==='analytics')renderAdmSec('analytics');
+  }).catch(function(e){admOverviewLoading=false;admOverviewErr=(e&&e.message)||'Falha ao carregar os dados.';if(admCurrentSec==='analytics')renderAdmSec('analytics');});
 }
 function admAnalyticsHTML(){
-  var a=buildAnalytics();
-  var acessosArr=Object.keys(a.acessos).map(function(k){return{sub:k,n:a.acessos[k]};}).sort(function(x,y){return y.n-x.n;});
-  var maxAcesso=acessosArr[0]?acessosArr[0].n:1;
-  var perfOrd=a.perfArr.slice().sort(function(x,y){return y.pct-x.pct;});
-  var melhores=perfOrd.slice(0,3);
-  var piores=perfOrd.slice().sort(function(x,y){return x.pct-y.pct;}).slice(0,3);
-  var maxDist=Math.max.apply(null,a.distIdade.map(function(d){return d.n;}));
-
-  return '<div class="adm-ph"><h1>Analytics</h1><p>Indicadores de uso e desempenho dos estudantes na plataforma.</p></div>'
-  +'<div class="adm-pc">'
-  +'<div style="display:flex;align-items:center;gap:.5rem;margin-bottom:1rem"><span class="tag tag-blue">Período: últimos 30 dias</span><span style="font-size:.7rem;color:var(--t3)">Combina dados de demonstração com o uso registrado nesta sessão.</span></div>'
-  // KPIs
-  +'<div class="g2" style="grid-template-columns:repeat(4,1fr);margin-bottom:1.1rem">'
-    +'<div class="adm-bigstat"><div class="adm-bigstat-n" style="color:var(--blue)">'+a.tempoMedio+'</div><div class="adm-bigstat-l">Tempo médio por sessão</div></div>'
-    +'<div class="adm-bigstat"><div class="adm-bigstat-n" style="color:var(--grn)">'+a.tempoSemana+'</div><div class="adm-bigstat-l">Tempo médio / aluno / semana</div></div>'
-    +'<div class="adm-bigstat"><div class="adm-bigstat-n" style="color:var(--gold)">'+a.idadeMedia+' anos</div><div class="adm-bigstat-l">Idade média dos alunos</div></div>'
-    +'<div class="adm-bigstat"><div class="adm-bigstat-n" style="color:var(--pur)">'+a.totalAlunos+'</div><div class="adm-bigstat-l">Estudantes ativos</div></div>'
-  +'</div>'
-  // subespecialidades mais acessadas + distribuição de idade
-  +'<div class="g2" style="align-items:start;margin-bottom:1.1rem">'
-    +'<div class="card"><div class="card-head"><span class="card-title">Subespecialidades mais acessadas</span></div>'
-      +acessosArr.map(function(x){var p=Math.round(x.n/maxAcesso*100);return '<div class="rep-area-row"><div class="rep-area-name" style="min-width:170px">'+esc(x.sub)+'</div><div class="rep-area-track"><div class="rep-area-fill" style="width:'+p+'%;background:var(--blue)"></div></div><div class="rep-area-pct" style="min-width:48px">'+x.n+'</div></div>';}).join('')
+  var head='<div class="adm-ph"><h1>Analytics</h1><p>Indicadores reais de uso e desempenho dos estudantes.</p></div><div class="adm-pc">';
+  if(admOverviewErr){
+    return head+'<div class="card" style="text-align:center;padding:1.6rem"><div style="font-size:1.6rem">⚠️</div><div style="font-weight:700;color:var(--navy);margin:.3rem 0">Não foi possível carregar os dados</div><p style="font-size:.82rem;color:var(--t2)">'+esc(admOverviewErr)+'</p><button class="btn btn-outline" id="adm-analytics-retry" style="margin-top:.6rem">Tentar de novo</button></div></div>';
+  }
+  if(!admOverview){
+    return head+'<div class="card" style="padding:1.6rem;text-align:center">'+ldHTML('Carregando dados reais dos alunos…')+'</div></div>';
+  }
+  var ov=admOverview,n=function(v){return Number(v||0);};
+  var taxa=n(ov.respostas)>0?Math.round(n(ov.acertos)/n(ov.respostas)*100):null;
+  var area=Array.isArray(ov.por_area)?ov.por_area:[];
+  var perfOrd=area.map(function(x){var t=n(x.total);return{area:x.area,total:t,pct:t?Math.round(n(x.correct)/t*100):0};}).sort(function(a,b){return b.pct-a.pct;});
+  var ult=ov.ultima_atividade?new Date(ov.ultima_atividade):null;
+  var ultTxt=ult&&!isNaN(ult.getTime())?ult.toLocaleDateString('pt-BR'):'—';
+  var recentes=Array.isArray(ov.simulados_recentes)?ov.simulados_recentes:[];
+  var semDados=n(ov.respostas)===0&&n(ov.simulados)===0;
+  var kpi=function(val,lbl,cor){return '<div class="adm-bigstat"><div class="adm-bigstat-n" style="color:'+cor+'">'+val+'</div><div class="adm-bigstat-l">'+lbl+'</div></div>';};
+  var html=head
+    +'<div style="display:flex;align-items:center;gap:.5rem;margin-bottom:1rem;flex-wrap:wrap"><span class="tag tag-blue">Dados reais</span><span style="font-size:.7rem;color:var(--t3)">Agregado do progresso salvo de cada aluno • última atividade: '+esc(ultTxt)+'</span></div>'
+    +'<div class="g2" style="grid-template-columns:repeat(4,1fr);margin-bottom:1.1rem">'
+      +kpi(n(ov.alunos),'Alunos cadastrados','var(--blue)')
+      +kpi(n(ov.ativos),'Alunos com atividade','var(--grn)')
+      +kpi(n(ov.simulados),'Simulados realizados','var(--gold)')
+      +kpi(taxa==null?'—':(taxa+'%'),'Taxa de acerto geral','var(--pur)')
+    +'</div>';
+  if(semDados){
+    html+='<div class="card" style="text-align:center;padding:1.5rem"><div style="font-size:1.5rem">📊</div><div style="font-weight:700;color:var(--navy);margin:.3rem 0">Ainda sem atividade de questões/simulados</div><p style="font-size:.82rem;color:var(--t2);max-width:540px;margin:.2rem auto">Assim que os alunos começarem a responder questões e simulados, o desempenho por subespecialidade aparece aqui automaticamente.</p></div>';
+  }else{
+    html+='<div class="g2" style="align-items:start;margin-bottom:1.1rem">'
+      +'<div class="card"><div class="card-head"><span class="card-title">✅ Maior acerto</span></div>'+(perfOrd.length?perfOrd.slice(0,3).map(function(x){return '<div class="rep-area-row"><div class="rep-area-name" style="min-width:170px">'+esc(x.area)+'</div><div class="rep-area-track"><div class="rep-area-fill" style="width:'+x.pct+'%;background:var(--grn)"></div></div><div class="rep-area-pct">'+x.pct+'%</div></div>';}).join(''):'<div class="empty" style="padding:.6rem">Sem dados.</div>')+'</div>'
+      +'<div class="card"><div class="card-head"><span class="card-title">⚠️ Maior erro</span></div>'+(perfOrd.length?perfOrd.slice().sort(function(a,b){return a.pct-b.pct;}).slice(0,3).map(function(x){return '<div class="rep-area-row"><div class="rep-area-name" style="min-width:170px">'+esc(x.area)+'</div><div class="rep-area-track"><div class="rep-area-fill" style="width:'+(100-x.pct)+'%;background:var(--red)"></div></div><div class="rep-area-pct">'+(100-x.pct)+'%</div></div>';}).join(''):'<div class="empty" style="padding:.6rem">Sem dados.</div>')+'</div>'
     +'</div>'
-    +'<div class="card"><div class="card-head"><span class="card-title">Distribuição etária dos alunos</span></div>'
-      +'<div style="font-size:.74rem;color:var(--t2);margin-bottom:.7rem">Faixa de '+a.idadeMin+' a '+a.idadeMax+' anos · média de '+a.idadeMedia+' anos</div>'
-      +a.distIdade.map(function(d){var p=maxDist?Math.round(d.n/maxDist*100):0;return '<div class="rep-area-row"><div class="rep-area-name" style="min-width:70px">'+esc(d.faixa)+'</div><div class="rep-area-track"><div class="rep-area-fill" style="width:'+p+'%;background:var(--gold)"></div></div><div class="rep-area-pct">'+d.n+'</div></div>';}).join('')
-    +'</div>'
+    +'<div class="sec-title" style="margin-bottom:.5rem">Desempenho por subespecialidade</div>'
+    +'<div class="adm-table"><div class="adm-table-head"><span style="flex:2.5">Subespecialidade</span><span style="flex:1">Respostas</span><span style="flex:2">Taxa de acerto</span><span style="flex:1;text-align:right">%</span></div>'
+      +perfOrd.map(function(x){var col=x.pct>=75?'var(--grn)':x.pct>=55?'var(--gold)':'var(--red)';return '<div class="adm-table-row"><span style="flex:2.5;font-size:.8rem;font-weight:600">'+esc(x.area)+'</span><span style="flex:1;font-size:.78rem;color:var(--t2)">'+x.total+'</span><span style="flex:2"><div class="rep-area-track"><div class="rep-area-fill" style="width:'+x.pct+'%;background:'+col+'"></div></div></span><span style="flex:1;text-align:right;font-weight:700;color:'+col+'">'+x.pct+'%</span></div>';}).join('')
+    +'</div>';
+  }
+  html+='<div class="g2" style="align-items:start;margin:1.1rem 0">'
+    +'<div class="card"><div class="card-head"><span class="card-title">Conteúdo de estudo dos alunos</span></div><div class="rep-area-row"><div class="rep-area-name" style="min-width:170px">Flashcards</div><div class="rep-area-pct" style="margin-left:auto">'+n(ov.flashcards)+'</div></div><div class="rep-area-row"><div class="rep-area-name" style="min-width:170px">Mapas mentais</div><div class="rep-area-pct" style="margin-left:auto">'+n(ov.mapas)+'</div></div><div class="rep-area-row"><div class="rep-area-name" style="min-width:170px">Total de respostas</div><div class="rep-area-pct" style="margin-left:auto">'+n(ov.respostas)+'</div></div></div>'
+    +'<div class="card"><div class="card-head"><span class="card-title">Simulados recentes</span></div>'+(recentes.length?recentes.map(function(r){var t=n(r.total),c=n(r.correct);var pct=t?Math.round(c/t*100):0;var d=r.at?new Date(Number(r.at)):null;var ds=d&&!isNaN(d.getTime())?d.toLocaleDateString('pt-BR'):'';return '<div class="adm-row"><div class="adm-row-info"><div class="adm-row-title">'+c+'/'+t+' ('+pct+'%)</div><div class="adm-row-sub">'+esc(r.area||'Todas')+(ds?' • '+ds:'')+'</div></div><span class="tag '+(pct>=70?'tag-grn':'tag-gold')+'">'+pct+'%</span></div>';}).join(''):'<div class="empty" style="padding:.6rem">Nenhum simulado realizado ainda.</div>')+'</div>'
   +'</div>'
-  // maior acerto / maior erro
-  +'<div class="g2" style="align-items:start;margin-bottom:1.1rem">'
-    +'<div class="card"><div class="card-head"><span class="card-title">✅ Maior acerto</span></div>'
-      +melhores.map(function(x){return '<div class="rep-area-row"><div class="rep-area-name" style="min-width:170px">'+esc(x.area)+'</div><div class="rep-area-track"><div class="rep-area-fill" style="width:'+x.pct+'%;background:var(--grn)"></div></div><div class="rep-area-pct">'+x.pct+'%</div></div>';}).join('')
-    +'</div>'
-    +'<div class="card"><div class="card-head"><span class="card-title">⚠️ Maior erro</span></div>'
-      +piores.map(function(x){return '<div class="rep-area-row"><div class="rep-area-name" style="min-width:170px">'+esc(x.area)+'</div><div class="rep-area-track"><div class="rep-area-fill" style="width:'+(100-x.pct)+'%;background:var(--red)"></div></div><div class="rep-area-pct">'+(100-x.pct)+'%</div></div>';}).join('')
-    +'</div>'
-  +'</div>'
-  // tabela completa de desempenho
-  +'<div class="sec-title" style="margin-bottom:.5rem">Desempenho por subespecialidade</div>'
-  +'<div class="adm-table">'
-    +'<div class="adm-table-head"><span style="flex:2.5">Subespecialidade</span><span style="flex:1">Respostas</span><span style="flex:2">Taxa de acerto</span><span style="flex:1;text-align:right">%</span></div>'
-    +perfOrd.map(function(x){var col=x.pct>=75?'var(--grn)':x.pct>=55?'var(--gold)':'var(--red)';return '<div class="adm-table-row"><span style="flex:2.5;font-size:.8rem;font-weight:600">'+esc(x.area)+'</span><span style="flex:1;font-size:.78rem;color:var(--t2)">'+x.total+'</span><span style="flex:2"><div class="rep-area-track"><div class="rep-area-fill" style="width:'+x.pct+'%;background:'+col+'"></div></div></span><span style="flex:1;text-align:right;font-weight:700;color:'+col+'">'+x.pct+'%</span></div>';}).join('')
-  +'</div>'
-  +'<div style="font-size:.7rem;color:var(--t3);margin-top:.7rem">ℹ️ Métricas de tempo de permanência e idade exigem backend com registro de sessões e cadastro completo dos alunos. Aqui são apresentadas como demonstração combinada ao uso desta sessão.</div>'
+  +'<div style="font-size:.7rem;color:var(--t3);margin-top:.4rem">ℹ️ Métricas de tempo de sessão exigem rastreamento dedicado e não são exibidas. Os números acima refletem o progresso real salvo por cada aluno.</div>'
   +'</div>';
+  return html;
 }
 
 // ---------- CURSOS ----------
