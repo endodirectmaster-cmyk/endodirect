@@ -1839,7 +1839,7 @@ var RESUMABLE_THRESHOLD_BYTES=20*1024*1024;
 var MAX_AUDIO_UPLOAD_BYTES=200*1024*1024;
 var supabaseClient=null;
 var remoteStateLoaded=false,remoteStateSaveTimer=null,remoteStateWarned=false;
-var REMOTE_STATE_KEYS=['q','fc','mm','notes','crono','sf_results','perf','provas','adm_avisos','adm_questoes','podcasts','adm_cursos','adm_estudantes','adm_perfil','user_profile','mm_shared','deg_trials'];
+var REMOTE_STATE_KEYS=['q','fc','mm','notes','crono','sf_results','perf','provas','adm_avisos','adm_questoes','podcasts','adm_cursos','adm_estudantes','adm_perfil','user_profile','mm_shared','deg_trials','ck_billing'];
 function getSupabaseClient(){
   if(supabaseClient)return supabaseClient;
   if(!window.supabase||!window.supabase.createClient)return null;
@@ -2171,7 +2171,7 @@ function persistPodcasts(){lsSet('podcasts',podcasts);queueRemoteStateSave();}
 
 function userStatePayload(){
   // adm_perfil é PESSOAL (vai no app_state do próprio admin, não no global).
-  var p={q:DB.q,fc:DB.fc,mm:DB.mm,notes:DB.notes,crono:DB.crono,sf_results:DB.sf_results,perf:DB.perf,user_profile:lsGet('user_profile'),deg_trials:degTrials};
+  var p={q:DB.q,fc:DB.fc,mm:DB.mm,notes:DB.notes,crono:DB.crono,sf_results:DB.sf_results,perf:DB.perf,user_profile:lsGet('user_profile'),deg_trials:degTrials,ck_billing:lsGet('ck_billing')};
   if(currentUser&&currentUser.role==='admin'){
     // Nunca persiste o perfil de OUTRO admin: se o e-mail do perfil em memória
     // não bater com o da sessão (resíduo de localStorage antigo), reconstrói da
@@ -3106,7 +3106,7 @@ function ckPay(){
   var address=needAddr?{zip:cep,line1:line1,city:city,state:uf}:undefined;
   // Salva os dados de cobrança (NUNCA o cartão) para pré-preencher nas próximas compras.
   try{var _pb=lsGet('ck_billing')||{};function _gv(id){return (document.getElementById(id)||{}).value||'';}
-    lsSet('ck_billing',{name:_gv('ck-name').trim()||_pb.name||'',doc:_gv('ck-doc')||_pb.doc||'',phone:_gv('ck-phone')||_pb.phone||'',cep:_gv('ck-cep')||_pb.cep||'',uf:_gv('ck-uf')||_pb.uf||'',addr:_gv('ck-addr')||_pb.addr||'',numero:_gv('ck-numero')||_pb.numero||'',city:_gv('ck-city')||_pb.city||''});}catch(e){}
+    lsSet('ck_billing',{name:_gv('ck-name').trim()||_pb.name||'',doc:_gv('ck-doc')||_pb.doc||'',phone:_gv('ck-phone')||_pb.phone||'',cep:_gv('ck-cep')||_pb.cep||'',uf:_gv('ck-uf')||_pb.uf||'',addr:_gv('ck-addr')||_pb.addr||'',numero:_gv('ck-numero')||_pb.numero||'',city:_gv('ck-city')||_pb.city||''});try{queueRemoteStateSave();}catch(e){}}catch(e){}
   var holder=(currentUser&&currentUser.name)||email.split('@')[0];
   loadPmConfig(function(cfg){
     if(!cfg||!cfg.enabled||!cfg.public_key){ckErr('O checkout ainda está sendo configurado. Tente novamente em instantes.');return;}
