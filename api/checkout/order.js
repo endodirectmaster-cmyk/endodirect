@@ -30,11 +30,9 @@ const ANNUAL = {
 const ANNUAL_DIAS = 365;
 
 // Oferta de Sócio-fundador: cupom que libera o Premium anual por um valor
-// promocional (padrão R$828 = "Premium pelo preço do Gold"). Ao esgotar as
-// vagas, desative com FOUNDER_ENABLED=0 na Vercel.
-const FOUNDER_COUPON = String(process.env.FOUNDER_COUPON || 'FUNDADOR').trim().toUpperCase();
-const FOUNDER_AMOUNT = Number(process.env.PAGARME_FOUNDER_PREMIUM_AMOUNT || 82800);
-const FOUNDER_ENABLED = String(process.env.FOUNDER_ENABLED || '1') !== '0';
+// promocional (padrão R$828 = "Premium pelo preço do Gold"). As regras +
+// o limite de vagas (auto-desativa ao esgotar) ficam em lib/founder.js.
+const { FOUNDER_COUPON, FOUNDER_AMOUNT, FOUNDER_ENABLED_ENV, FOUNDER_LIMIT, countFounderAccesses } = require('../../lib/founder');
 
 const SUPABASE_URL = process.env.SUPABASE_URL || process.env.NEXT_PUBLIC_SUPABASE_URL || 'https://auth.endodirect.com.br';
 const SERVICE_ROLE = process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.SUPABASE_SECRET_KEY || process.env.SUPABASE_SERVICE_KEY;
@@ -96,11 +94,15 @@ module.exports = async function handler(req, res) {
 
   if (!cfg || !(cfg.amount > 0)) return json(res, 400, { ok: false, error: 'Plano invalido ou preco anual nao configurado.' });
 
-  // Cupom Sócio-fundador: só vale para o Premium anual.
+  // Cupom Sócio-fundador: só vale para o Premium anual, e enquanto houver vaga.
   let amount = cfg.amount;
   let founderApplied = false;
   if (coupon) {
-    if (FOUNDER_ENABLED && coupon === FOUNDER_COUPON && planKey === 'premium' && FOUNDER_AMOUNT > 0) {
+    if (FOUNDER_ENABLED_ENV && coupon === FOUNDER_COUPON && planKey === 'premium' && FOUNDER_AMOUNT > 0) {
+      const used = await countFounderAccesses();
+      if (used != null && used >= FOUNDER_LIMIT) {
+        return json(res, 400, { ok: false, error: 'As vagas de Sócio-fundador se esgotaram. Garanta o Premium no valor normal.' });
+      }
       amount = FOUNDER_AMOUNT; founderApplied = true;
     } else {
       return json(res, 400, { ok: false, error: 'Cupom inválido ou não aplicável a este plano.' });

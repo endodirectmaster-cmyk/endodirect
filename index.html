@@ -987,7 +987,7 @@ textarea{resize:vertical;line-height:1.6}
         <button type="button" class="lp-cyc" data-lpcycle="anual">Anual <span class="lp-cyc-off">economize até 35%</span></button>
       </div>
       <div class="lp-founder">
-        <div class="lp-founder-txt"><span class="lp-founder-tag">🔥 LANÇAMENTO</span><b>Sócio-fundador:</b> Premium pelo preço do Gold — <b>12× R$ 69</b>, com preço travado para sempre. <span style="opacity:.85">Apenas as primeiras 100 vagas.</span></div>
+        <div class="lp-founder-txt"><span class="lp-founder-tag">🔥 LANÇAMENTO</span><b>Sócio-fundador:</b> Premium pelo preço do Gold — <b>12× R$ 69</b>, com preço travado para sempre. <span class="lp-founder-left" style="opacity:.85">Apenas as primeiras 100 vagas.</span></div>
         <button class="lp-cta lp-founder-btn" data-checkout="premium" data-cycle="anual" data-coupon="FUNDADOR">Quero ser fundador →</button>
       </div>
       <div class="lp-plans" id="lp-plans">
@@ -996,7 +996,14 @@ textarea{resize:vertical;line-height:1.6}
         <div class="lp-plan top"><span class="badge" style="background:#8b5cf6;color:#fff">Completo</span><div class="nm">Premium</div><div class="pr"><span class="pr-m">R$ 139<small>/mês</small></span><span class="pr-a">12× R$ 97<small>/mês no anual</small></span></div><div class="pr-note pr-a-note">R$ 1.164/ano · economize ~30%</div><div class="lp-founder-ribbon">🎟️ Sócio-fundador: 12× R$ 69 (cupom FUNDADOR)</div><ul><li>Banco de questões</li><li>Simulado</li><li>Flashcards</li><li>Mapas mentais</li><li>Podcasts exclusivos</li><li>Mural de atualizações</li><li>Newsletter diária</li><li>Resumidor de artigos</li><li>Prescrição Comentada</li><li>Simulador de Casos</li><li class="course">Curso de Endocrinologia Essencial</li></ul><button class="lp-cta" style="margin-top:auto;width:100%;text-align:center" data-checkout="premium">Assinar</button></div>
       </div>
       <p style="text-align:center;color:#6b7480;font-size:.78rem;margin-top:1.1rem">Plano anual em até 12× sem juros. O EndoTEEM é um produto à parte. Consulte na plataforma.</p>
-      <script>(function(){var wrap=document.getElementById('lp-plans');var btns=document.querySelectorAll('#planos .lp-cyc');function set(an){if(wrap)wrap.classList.toggle('show-anual',an);window.__lpCycle=an?'anual':'mensal';btns.forEach(function(x){x.classList.toggle('on',(x.getAttribute('data-lpcycle')==='anual')===an);});}btns.forEach(function(b){b.addEventListener('click',function(){set(b.getAttribute('data-lpcycle')==='anual');});});})();</script>
+      <script>(function(){var wrap=document.getElementById('lp-plans');var btns=document.querySelectorAll('#planos .lp-cyc');function set(an){if(wrap)wrap.classList.toggle('show-anual',an);window.__lpCycle=an?'anual':'mensal';btns.forEach(function(x){x.classList.toggle('on',(x.getAttribute('data-lpcycle')==='anual')===an);});}btns.forEach(function(b){b.addEventListener('click',function(){set(b.getAttribute('data-lpcycle')==='anual');});});
+      // Vagas de Sócio-fundador: atualiza/esconde a faixa conforme as vagas restantes.
+      fetch('/api/checkout/config').then(function(r){return r.json();}).then(function(d){
+        var f=d&&d.founder;var fb=document.querySelector('#planos .lp-founder');var rb=document.querySelector('#planos .lp-founder-ribbon');
+        if(!f||!f.enabled){if(fb)fb.style.display='none';if(rb)rb.style.display='none';return;}
+        var lim=f.limit||100;var rem=(typeof f.remaining==='number')?f.remaining:null;var left=document.querySelector('#planos .lp-founder-left');
+        if(left)left.textContent=(rem!=null)?('Restam '+rem+' de '+lim+' vagas.'):('Apenas as primeiras '+lim+' vagas.');
+      }).catch(function(){});})();</script>
     </section>
     <section class="lp-section">
       <h2 class="lp-sec-title">Perguntas frequentes</h2>
@@ -1060,6 +1067,7 @@ textarea{resize:vertical;line-height:1.6}
   <div style="max-width:1040px;width:100%;margin:auto;background:#121c33;border:1px solid #2a3a5c;border-radius:18px;padding:2rem 1.8rem;text-align:center;box-shadow:0 24px 60px rgba(0,0,0,.45)">
     <div id="assine-title" style="font-size:1.5rem;font-weight:800;color:#fff;margin-bottom:.35rem">Endodirect — Pacotes</div>
     <p id="assine-sub" style="font-size:.86rem;color:#9aa3b2;line-height:1.6;margin:.2rem auto 1.4rem;max-width:620px">A conta <b style="color:#cbd2dd" id="assine-email"></b> ainda não tem acesso ativo. Adquira seu pacote e desbloqueie todos os benefícios da plataforma.</p>
+    <div id="assine-founder" style="display:none;text-align:left;max-width:760px;margin:0 auto 1.3rem"></div>
     <div id="assine-plans" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:1rem;margin-bottom:1.1rem;align-items:stretch"></div>
     <div style="display:flex;gap:.7rem;justify-content:center;flex-wrap:wrap">
       <button class="btn" id="assine-back" style="width:auto;min-width:160px;justify-content:center;background:#3b6fd4;color:#fff;border:0;font-weight:700">← Voltar à plataforma</button>
@@ -2830,6 +2838,29 @@ function enterAsMember(session){
   doLogin({email:email,name:nm,role:'aluno',sub:'Residente',id:session.user.id,auth:'supabase'});
 }
 function assineBRL(n){return 'R$ '+Number(n||0).toLocaleString('pt-BR');}
+// Espelha a faixa de Sócio-fundador da landing na tela de planos in-app.
+// Esconde sozinha quando a oferta está desativada/esgotada (config.founder)
+// ou quando o aluno já é Premium.
+function renderAssineFounder(){
+  var box=document.getElementById('assine-founder');if(!box)return;
+  function hide(){box.style.display='none';box.innerHTML='';}
+  if(currentPlanKey()==='premium'){hide();return;}
+  loadPmConfig(function(cfg){
+    var f=cfg&&cfg.founder;
+    if(!f||!f.enabled){hide();return;}
+    var lim=f.limit||100;var rem=(typeof f.remaining==='number')?f.remaining:null;
+    var vagas=(rem!=null)?('Restam <b>'+rem+'</b> de '+lim+' vagas.'):('Apenas as primeiras '+lim+' vagas.');
+    box.innerHTML='<div style="display:flex;align-items:center;justify-content:space-between;gap:1rem;flex-wrap:wrap;background:linear-gradient(90deg,#1a1430,#241a3d);border:1px solid #5b3aa6;border-radius:14px;padding:.85rem 1.2rem">'
+      +'<div style="color:#e8e3f5;font-size:.9rem;line-height:1.55;flex:1 1 300px">'
+        +'<span style="display:inline-block;background:#7c3aed;color:#fff;font-size:.64rem;font-weight:800;padding:.15rem .5rem;border-radius:999px;margin-right:.5rem;letter-spacing:.02em">🔥 LANÇAMENTO</span>'
+        +'<b>Sócio-fundador:</b> Premium pelo preço do Gold — <b>12× R$ 69</b>, preço travado para sempre. <span style="opacity:.85">'+vagas+'</span></div>'
+      +'<button type="button" class="btn" id="assine-founder-btn" style="background:#7c3aed;color:#fff;border:0;font-weight:800;width:auto;border-radius:999px;padding:.62rem 1.1rem;white-space:nowrap">Quero ser fundador →</button>'
+    +'</div>';
+    box.style.display='block';
+    var b=document.getElementById('assine-founder-btn');
+    if(b)b.addEventListener('click',function(){window.__lpCycle='anual';window.__lpCoupon=String(f.coupon||'FUNDADOR');openCheckout('premium');});
+  });
+}
 function renderAssinePlans(){
   var wrap=document.getElementById('assine-plans');if(!wrap)return;
   var RANK={standard:1,gold:2,premium:3};
@@ -2899,6 +2930,7 @@ function showAssineScreen(email,opts){
         : 'A conta <b style="color:#cbd2dd" id="assine-email"></b> ainda não tem acesso ativo. Adquira seu pacote e desbloqueie todos os benefícios da plataforma.');
   }
   setText('assine-email',email||'');
+  renderAssineFounder();
   renderAssinePlans();
   if(!(Array.isArray(catalogoCursos)&&catalogoCursos.length))loadCursoCatalogo(function(){renderAssinePlans();});
   sc.style.display='flex';
