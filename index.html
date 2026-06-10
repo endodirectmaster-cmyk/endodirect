@@ -783,7 +783,7 @@ textarea{resize:vertical;line-height:1.6}
 <div id="landing-screen">
   <div class="lp-nav"><div class="lp-wrap lp-nav-in">
     <div class="lp-brand"><img src="logo.png.png" alt="Endodirect">Endodirect</div>
-    <button class="lp-cta" onclick="showLoginScreen()">Acessar a plataforma →</button>
+    <button class="lp-cta" onclick="showLoginScreen()">Acessar a plataforma</button>
   </div></div>
   <div class="lp-wrap">
     <section class="lp-hero">
@@ -974,6 +974,7 @@ textarea{resize:vertical;line-height:1.6}
         .lp-plans.show-anual .pr .pr-a{display:inline}
         .lp-plans.show-anual .pr-note.pr-a-note{display:block}
         .lp-plan .pr-note{font-size:.74rem;color:#8a93a3;margin:-.35rem 0 .2rem;font-weight:600}
+        #planos .lp-plans{max-width:760px;margin-left:auto;margin-right:auto}
         .lp-founder{display:flex;align-items:center;justify-content:space-between;gap:1rem;flex-wrap:wrap;max-width:920px;margin:0 auto 1.7rem;background:linear-gradient(90deg,#1a1430,#241a3d);border:1px solid #5b3aa6;border-radius:14px;padding:.85rem 1.2rem}
         .lp-founder-txt{color:#e8e3f5;font-size:.9rem;line-height:1.55;flex:1 1 320px}
         .lp-founder-tag{display:inline-block;background:#7c3aed;color:#fff;font-size:.64rem;font-weight:800;padding:.15rem .5rem;border-radius:999px;margin-right:.5rem;vertical-align:middle;letter-spacing:.02em}
@@ -987,13 +988,12 @@ textarea{resize:vertical;line-height:1.6}
         <button type="button" class="lp-cyc" data-lpcycle="anual">Anual <span class="lp-cyc-off">economize até 35%</span></button>
       </div>
       <div class="lp-founder">
-        <div class="lp-founder-txt"><span class="lp-founder-tag">🔥 LANÇAMENTO</span><b>Sócio-fundador:</b> Premium pelo preço do Gold — <b>12× R$ 69</b>, com preço travado para sempre. <span class="lp-founder-left" style="opacity:.85">Apenas as primeiras 100 vagas.</span></div>
-        <button class="lp-cta lp-founder-btn" data-checkout="premium" data-cycle="anual" data-coupon="FUNDADOR">Quero ser fundador →</button>
+        <div class="lp-founder-txt"><span class="lp-founder-tag">🔥 LANÇAMENTO</span><b>Sócio-fundador:</b> Gold pelo preço do Standard — <b>12× R$ 45</b>, com preço travado para sempre. <span class="lp-founder-left" style="opacity:.85">Apenas as primeiras 100 vagas.</span></div>
+        <button class="lp-cta lp-founder-btn" data-checkout="gold" data-cycle="anual" data-coupon="FUNDADOR">Quero ser fundador</button>
       </div>
       <div class="lp-plans" id="lp-plans">
-        <div class="lp-plan"><div class="nm">Standard</div><div class="pr"><span class="pr-m">R$ 69<small>/mês</small></span><span class="pr-a">12× R$ 45<small>/mês no anual</small></span></div><div class="pr-note pr-a-note">R$ 540/ano · economize ~35%</div><ul><li>Banco de questões</li><li>Simulado</li><li>Flashcards</li><li>Mapas mentais</li><li>Podcasts exclusivos</li><li>Mural de atualizações</li><li>Newsletter diária</li><li class="x">Resumidor de artigos</li><li class="x">Simulador de Casos</li><li class="x">Prescrição Comentada</li></ul><button class="lp-cta" style="margin-top:auto;width:100%;text-align:center" data-checkout="standard">Assinar</button></div>
-        <div class="lp-plan hot"><span class="badge">Mais popular</span><div class="nm">Gold</div><div class="pr"><span class="pr-m">R$ 99<small>/mês</small></span><span class="pr-a">12× R$ 69<small>/mês no anual</small></span></div><div class="pr-note pr-a-note">R$ 828/ano · economize ~30%</div><ul><li>Banco de questões</li><li>Simulado</li><li>Flashcards</li><li>Mapas mentais</li><li>Podcasts exclusivos</li><li>Mural de atualizações</li><li>Newsletter diária</li><li>Resumidor de artigos</li><li>Prescrição Comentada</li><li class="x">Simulador de Casos</li></ul><button class="lp-cta" style="margin-top:auto;width:100%;text-align:center" data-checkout="gold">Assinar</button></div>
-        <div class="lp-plan top"><span class="badge" style="background:#8b5cf6;color:#fff">Completo</span><div class="nm">Premium</div><div class="pr"><span class="pr-m">R$ 139<small>/mês</small></span><span class="pr-a">12× R$ 97<small>/mês no anual</small></span></div><div class="pr-note pr-a-note">R$ 1.164/ano · economize ~30%</div><div class="lp-founder-ribbon">🎟️ Sócio-fundador: 12× R$ 69 (cupom FUNDADOR)</div><ul><li>Banco de questões</li><li>Simulado</li><li>Flashcards</li><li>Mapas mentais</li><li>Podcasts exclusivos</li><li>Mural de atualizações</li><li>Newsletter diária</li><li>Resumidor de artigos</li><li>Prescrição Comentada</li><li>Simulador de Casos</li><li class="course">Curso de Endocrinologia Essencial</li></ul><button class="lp-cta" style="margin-top:auto;width:100%;text-align:center" data-checkout="premium">Assinar</button></div>
+        <div class="lp-plan"><div class="nm">Standard</div><div class="pr"><span class="pr-m">R$ 69<small>/mês</small></span><span class="pr-a">12× R$ 45<small>/mês no anual</small></span></div><div class="pr-note pr-a-note">R$ 540/ano · economize ~35%</div><ul><li>Banco de questões</li><li>Simulado</li><li>Flashcards</li><li>Mapas mentais</li><li>Podcasts exclusivos</li><li>Mural de atualizações</li><li>Newsletter diária</li><li>Resumidor de artigos</li><li>Simulador de Casos</li><li class="x">Prescrição Comentada</li></ul><button class="lp-cta" style="margin-top:auto;width:100%;text-align:center" data-checkout="standard">Assinar</button></div>
+        <div class="lp-plan hot"><span class="badge">Completo</span><div class="nm">Gold</div><div class="pr"><span class="pr-m">R$ 99<small>/mês</small></span><span class="pr-a">12× R$ 69<small>/mês no anual</small></span></div><div class="pr-note pr-a-note">R$ 828/ano · economize ~30%</div><div class="lp-founder-ribbon">🎟️ Sócio-fundador: 12× R$ 45 (cupom FUNDADOR)</div><ul><li>Banco de questões</li><li>Simulado</li><li>Flashcards</li><li>Mapas mentais</li><li>Podcasts exclusivos</li><li>Mural de atualizações</li><li>Newsletter diária</li><li>Resumidor de artigos</li><li>Simulador de Casos</li><li>Prescrição Comentada</li><li class="course">Curso de Endocrinologia Essencial</li></ul><button class="lp-cta" style="margin-top:auto;width:100%;text-align:center" data-checkout="gold">Assinar</button></div>
       </div>
       <p style="text-align:center;color:#6b7480;font-size:.78rem;margin-top:1.1rem">Plano anual em até 12× sem juros. O EndoTEEM é um produto à parte. Consulte na plataforma.</p>
       <script>(function(){var wrap=document.getElementById('lp-plans');var btns=document.querySelectorAll('#planos .lp-cyc');function set(an){if(wrap)wrap.classList.toggle('show-anual',an);window.__lpCycle=an?'anual':'mensal';btns.forEach(function(x){x.classList.toggle('on',(x.getAttribute('data-lpcycle')==='anual')===an);});}btns.forEach(function(b){b.addEventListener('click',function(){set(b.getAttribute('data-lpcycle')==='anual');});});
@@ -1012,7 +1012,7 @@ textarea{resize:vertical;line-height:1.6}
         <details><summary>O que é o Endodirect?</summary><p>Uma plataforma de educação médica em Endocrinologia e Metabologia, reunindo banco de questões comentadas, flashcards, mapas mentais, simulador de casos, simulado, prescrição, podcasts, cursos e um assistente de IA — tudo baseado nas principais diretrizes (SBEM, SBD, ADA).</p></details>
         <details><summary>Para quem é a plataforma?</summary><p>Para todos que querem se aprofundar e se manter atualizados em endocrinologia e metabologia.</p></details>
         <details><summary>Posso testar antes de assinar?</summary><p>Sim. Ao entrar, você acessa o modo degustação: flashcards e mapas mentais pré-salvos, 50 questões do banco Endodirect, o mural de atualizações por 7 dias e 3 usos de cada uma das ferramentas com IA (simulador de casos, simulado, prescrição e chat).</p></details>
-        <details><summary>Qual a diferença entre os planos?</summary><p>O <b>Standard</b> reúne banco de questões, simulado, flashcards, mapas mentais, podcasts, o mural de atualizações e a newsletter diária. O <b>Gold</b> acrescenta o Resumidor de artigos e a Prescrição Comentada. O <b>Premium</b> inclui tudo do Gold, mais o Simulador de Casos e o curso de Endocrinologia Essencial. Todos os planos podem ser pagos no mensal ou no anual (em até 12× sem juros). Veja os detalhes na seção Planos.</p></details>
+        <details><summary>Qual a diferença entre os planos?</summary><p>O <b>Standard</b> reúne banco de questões, simulado, flashcards, mapas mentais, podcasts, mural de atualizações, newsletter diária, o Resumidor de artigos e o Simulador de Casos. O <b>Gold</b> inclui tudo do Standard e acrescenta a Prescrição Comentada e o curso de Endocrinologia Essencial. Todos os planos podem ser pagos no mensal ou no anual (em até 12× sem juros). Veja os detalhes na seção Planos.</p></details>
         <details><summary>O EndoTEEM está incluído?</summary><p>Não. O EndoTEEM é um produto à parte, voltado a quem vai prestar a prova de especialista.</p></details>
         <details><summary>Funciona no celular?</summary><p>Sim. A plataforma é responsiva e funciona pelo navegador no computador, no iOS e no Android.</p></details>
         <details><summary>O conteúdo é atualizado com que frequência?</summary><p>Diariamente nossa equipe atualiza o mural (radar diário das principais revistas), mas também questões, flashcards, mapas mentais e demais conteúdos, sempre seguindo as recomendações das diretrizes vigentes.</p></details>
@@ -1806,11 +1806,9 @@ var GOOGLE_ADMIN_EMAILS=USERS.filter(function(u){return u.provider==='google'&&u
 var ENDO_TIER_BASE=['Banco de questões','Simulado','Flashcards','Mapas mentais','Podcasts exclusivos','Mural','Newsletter diária'];
 var ENDO_TIERS=[
   {key:'standard', nome:'Standard', preco:69, scope:'plano:standard', badge:'',
-   cursos:[], excl:['Resumidor de artigos','Simulador de Casos','Prescrição Comentada'], url:''},
-  {key:'gold', nome:'Gold', preco:99, scope:'plano:gold', badge:'Mais popular',
-   cursos:['Resumidor de artigos','Prescrição Comentada'], excl:['Simulador de Casos'], url:''},
-  {key:'premium', nome:'Premium', preco:139, scope:'plano:premium', badge:'Completo',
-   cursos:['Resumidor de artigos','Simulador de Casos','Prescrição Comentada','Curso de Endocrinologia Essencial'], url:''}
+   cursos:['Resumidor de artigos','Simulador de Casos'], excl:['Prescrição Comentada'], url:''},
+  {key:'gold', nome:'Gold', preco:99, scope:'plano:gold', badge:'Completo',
+   cursos:['Resumidor de artigos','Simulador de Casos','Prescrição Comentada','Curso de Endocrinologia Essencial'], excl:[], url:''}
 ];
 // Cursos vendidos a parte (fora dos pacotes). EndoTEEM = banco de questoes.
 var ENDO_CURSOS_AVULSOS=[
@@ -2840,11 +2838,11 @@ function enterAsMember(session){
 function assineBRL(n){return 'R$ '+Number(n||0).toLocaleString('pt-BR');}
 // Espelha a faixa de Sócio-fundador da landing na tela de planos in-app.
 // Esconde sozinha quando a oferta está desativada/esgotada (config.founder)
-// ou quando o aluno já é Premium.
+// ou quando o aluno já é Gold.
 function renderAssineFounder(){
   var box=document.getElementById('assine-founder');if(!box)return;
   function hide(){box.style.display='none';box.innerHTML='';}
-  if(currentPlanKey()==='premium'){hide();return;}
+  if(currentPlanKey()==='gold'){hide();return;}
   loadPmConfig(function(cfg){
     var f=cfg&&cfg.founder;
     if(!f||!f.enabled){hide();return;}
@@ -2853,12 +2851,12 @@ function renderAssineFounder(){
     box.innerHTML='<div style="display:flex;align-items:center;justify-content:space-between;gap:1rem;flex-wrap:wrap;background:linear-gradient(90deg,#1a1430,#241a3d);border:1px solid #5b3aa6;border-radius:14px;padding:.85rem 1.2rem">'
       +'<div style="color:#e8e3f5;font-size:.9rem;line-height:1.55;flex:1 1 300px">'
         +'<span style="display:inline-block;background:#7c3aed;color:#fff;font-size:.64rem;font-weight:800;padding:.15rem .5rem;border-radius:999px;margin-right:.5rem;letter-spacing:.02em">🔥 LANÇAMENTO</span>'
-        +'<b>Sócio-fundador:</b> Premium pelo preço do Gold — <b>12× R$ 69</b>, preço travado para sempre. <span style="opacity:.85">'+vagas+'</span></div>'
-      +'<button type="button" class="btn" id="assine-founder-btn" style="background:#7c3aed;color:#fff;border:0;font-weight:800;width:auto;border-radius:999px;padding:.62rem 1.1rem;white-space:nowrap">Quero ser fundador →</button>'
+        +'<b>Sócio-fundador:</b> Gold pelo preço do Standard — <b>12× R$ 45</b>, preço travado para sempre. <span style="opacity:.85">'+vagas+'</span></div>'
+      +'<button type="button" class="btn" id="assine-founder-btn" style="background:#7c3aed;color:#fff;border:0;font-weight:800;width:auto;border-radius:999px;padding:.62rem 1.1rem;white-space:nowrap">Quero ser fundador</button>'
     +'</div>';
     box.style.display='block';
     var b=document.getElementById('assine-founder-btn');
-    if(b)b.addEventListener('click',function(){window.__lpCycle='anual';window.__lpCoupon=String(f.coupon||'FUNDADOR');openCheckout('premium');});
+    if(b)b.addEventListener('click',function(){window.__lpCycle='anual';window.__lpCoupon=String(f.coupon||'FUNDADOR');openCheckout('gold');});
   });
 }
 function renderAssinePlans(){
@@ -2963,7 +2961,7 @@ function ckTier(){return (ENDO_TIERS||[]).filter(function(x){return x&&x.key===_
 function ckMonthlyCents(){var a=_pmCfg&&_pmCfg.amounts;if(a&&a[_ckPlan])return a[_ckPlan];var t=ckTier();return t?Math.round(t.preco*100):0;}
 function ckFounder(){return (_pmCfg&&_pmCfg.founder)||null;}
 function ckCouponVal(){var e=document.getElementById('ck-coupon');return e?(e.value||'').trim().toUpperCase():'';}
-function ckFounderActive(){var f=ckFounder();return !!(f&&f.enabled&&_ckCycle==='anual'&&_ckPlan===(f.plan||'premium')&&ckCouponVal()&&ckCouponVal()===String(f.coupon||'').toUpperCase());}
+function ckFounderActive(){var f=ckFounder();return !!(f&&f.enabled&&_ckCycle==='anual'&&_ckPlan===(f.plan||'gold')&&ckCouponVal()&&ckCouponVal()===String(f.coupon||'').toUpperCase());}
 function ckAnnualCents(){if(ckFounderActive())return ckFounder().annual_amount;var a=_pmCfg&&_pmCfg.annual;return (a&&a[_ckPlan])||(ckMonthlyCents()*10);}
 function ckMaxInst(){return (_pmCfg&&_pmCfg.max_installments)||12;}
 function ckSeg(rowId,attr,val){var r=document.getElementById(rowId);if(!r)return;r.querySelectorAll('['+attr+']').forEach(function(b){b.classList.toggle('on',b.getAttribute(attr)===val);});}
@@ -2978,7 +2976,7 @@ function ckUpdateView(){
   var cardF=document.getElementById('ck-card-fields');if(cardF)cardF.style.display=(method==='credit_card')?'block':'none';
   var addrF=document.getElementById('ck-addr-fields');if(addrF)addrF.style.display=(method==='credit_card'||method==='boleto')?'block':'none';
   var instFld=document.getElementById('ck-inst-fld');if(instFld)instFld.style.display=(anual&&method==='credit_card')?'block':'none';
-  // Cupom: só no anual; mostra dica de Sócio-fundador para o Premium.
+  // Cupom: só no anual; mostra dica de Sócio-fundador para o Gold.
   var cpFld=document.getElementById('ck-coupon-fld');
   if(cpFld){var f=ckFounder();var showCp=anual&&!!(f&&f.enabled);cpFld.style.display=showCp?'block':'none';}
   var cpMsg=document.getElementById('ck-coupon-msg');
@@ -3224,9 +3222,9 @@ var catalogoCursos=[];
 var PANEL_SCOPE={
   sim:'plano', simfull:'plano', flash:'plano', mmap:'plano', podcast:'plano', rx:'plano', presc:'plano', art:'plano'
 };
-// Tier mínimo por painel: Prescrição = Gold(2); Simulador de Casos = Premium(3).
+// Tier mínimo por painel: Prescrição = Gold(2). Simulador e Resumidor entram já no Standard.
 // Os demais ficam em qualquer pacote (tier 1).
-var PANEL_MIN_TIER={rx:2, presc:2, sim:3, art:2};
+var PANEL_MIN_TIER={rx:2, presc:2};
 // Assistente de Prescrição: oferecido apenas a quem se identificou como
 // Endocrinologista ou "Outros" (outro profissional) na janela inicial.
 function userPerfil(){var p=(currentUser&&currentUser.profile)||lsGet('user_profile')||{};return p.perfil||'';}
@@ -3335,14 +3333,14 @@ function showLockedPanel(id){
   var ctaLabel=hasPlan?'Fazer upgrade do plano':'Ver planos e cursos';
   var via=minName
     ? (hasPlan?('fazendo upgrade para o plano '+minName):('assinando o plano '+minName))
-    : (scope==='plano'?(hasPlan?'fazendo upgrade do seu plano':'adquirindo um pacote (Standard, Gold ou Premium)'):(hasPlan?'fazendo upgrade do seu plano':'adquirindo o '+nome));
+    : (scope==='plano'?(hasPlan?'fazendo upgrade do seu plano':'adquirindo um pacote (Standard ou Gold)'):(hasPlan?'fazendo upgrade do seu plano':'adquirindo o '+nome));
   if(trialEsgotado){
     p.innerHTML='<div class="breadcrumb">'+esc(label)+' <b>/ Bloqueado</b></div>'
       +'<div class="ph"><h1>🔒 '+esc(label)+'</h1></div>'
       +'<div class="pc"><div class="card" style="max-width:520px;margin:1.2rem auto;text-align:center;padding:1.9rem 1.5rem">'
       +'<div style="font-size:2.3rem;margin-bottom:.5rem">🎁</div>'
       +'<div style="font-size:1.02rem;font-weight:800;color:var(--navy);margin-bottom:.4rem">'+esc(titulo)+'</div>'
-      +'<p style="font-size:.84rem;color:var(--t2);line-height:1.6;margin:.3rem 0 1.2rem">Você usou suas <b>'+TRIAL_LIMIT+' degustações</b> de <b>'+esc(label)+'</b>. Adquira um pacote (Standard, Gold ou Premium) para uso ilimitado.</p>'
+      +'<p style="font-size:.84rem;color:var(--t2);line-height:1.6;margin:.3rem 0 1.2rem">Você usou suas <b>'+TRIAL_LIMIT+' degustações</b> de <b>'+esc(label)+'</b>. Adquira um pacote (Standard ou Gold) para uso ilimitado.</p>'
       +'<button class="btn btn-primary" id="locked-cta" style="justify-content:center">'+esc(ctaLabel)+'</button>'
       +'</div></div>';
     var bte=document.getElementById('locked-cta');
@@ -3356,7 +3354,7 @@ function showLockedPanel(id){
       +'<div class="pc"><div class="card" style="max-width:520px;margin:1.2rem auto;text-align:center;padding:1.9rem 1.5rem">'
       +'<div style="font-size:2.3rem;margin-bottom:.5rem">🎁</div>'
       +'<div style="font-size:1.02rem;font-weight:800;color:var(--navy);margin-bottom:.4rem">Degustação do mural encerrada</div>'
-      +'<p style="font-size:.84rem;color:var(--t2);line-height:1.6;margin:.3rem 0 1.2rem">Seu acesso ao <b>Mural</b> na degustação durava <b>'+DEG_MURAL_DIAS+' dias</b> e já terminou. Adquira um pacote (Standard, Gold ou Premium) para continuar acompanhando as atualizações.</p>'
+      +'<p style="font-size:.84rem;color:var(--t2);line-height:1.6;margin:.3rem 0 1.2rem">Seu acesso ao <b>Mural</b> na degustação durava <b>'+DEG_MURAL_DIAS+' dias</b> e já terminou. Adquira um pacote (Standard ou Gold) para continuar acompanhando as atualizações.</p>'
       +'<button class="btn btn-primary" id="locked-cta" style="justify-content:center">Ver planos e cursos</button>'
       +'</div></div>';
     var bme=document.getElementById('locked-cta');
@@ -3430,7 +3428,7 @@ function showBancoLock(show){
   if(!el){
     var ref=document.getElementById('q-panel-provas');
     el=document.createElement('div');el.id='q-banco-lock';el.className='gen-box';el.style.display='none';
-    el.innerHTML='<div style="text-align:center;padding:1.1rem .5rem"><div style="font-size:2.1rem;margin-bottom:.4rem">🔒</div><div style="font-size:.96rem;font-weight:800;color:var(--navy);margin-bottom:.35rem">Banco de Questões</div><p style="font-size:.83rem;color:var(--t2);line-height:1.6;margin:.2rem auto 1rem;max-width:400px">O acervo de questões de provas é liberado ao adquirir <b>qualquer pacote</b> (Standard, Gold ou Premium).</p><button class="btn btn-primary" id="q-banco-buy" style="justify-content:center">Ver pacotes</button></div>';
+    el.innerHTML='<div style="text-align:center;padding:1.1rem .5rem"><div style="font-size:2.1rem;margin-bottom:.4rem">🔒</div><div style="font-size:.96rem;font-weight:800;color:var(--navy);margin-bottom:.35rem">Banco de Questões</div><p style="font-size:.83rem;color:var(--t2);line-height:1.6;margin:.2rem auto 1rem;max-width:400px">O acervo de questões de provas é liberado ao adquirir <b>qualquer pacote</b> (Standard ou Gold).</p><button class="btn btn-primary" id="q-banco-buy" style="justify-content:center">Ver pacotes</button></div>';
     if(ref&&ref.parentNode)ref.parentNode.insertBefore(el,ref.nextSibling);
     var bb=el.querySelector('#q-banco-buy');if(bb)bb.addEventListener('click',function(){showAssineScreen((currentUser&&currentUser.email)||'');});
   }
@@ -5907,9 +5905,9 @@ function saveCursoCatalogo(rows){
 }
 function admCatalogoHTML(){
   var cat=Array.isArray(catalogoCursos)?catalogoCursos:[];
-  var intro='<div style="font-size:.78rem;color:var(--t2);line-height:1.6;margin-bottom:.9rem">Defina nome, preço avulso e o <b>pacote</b> de cada curso. O pacote controla em qual nível (Standard / Gold / Premium) o curso é liberado. <b>Nenhum</b> = vendido só à parte (ex.: EndoTEEM).</div>';
+  var intro='<div style="font-size:.78rem;color:var(--t2);line-height:1.6;margin-bottom:.9rem">Defina nome, preço avulso e o <b>pacote</b> de cada curso. O pacote controla em qual nível (Standard / Gold) o curso é liberado. <b>Nenhum</b> = vendido só à parte (ex.: EndoTEEM).</div>';
   if(!cat.length)return intro+'<div class="card"><div class="empty">Carregando catálogo…</div></div>';
-  function tierOpt(sel){var o=[['','Nenhum (à parte)'],['standard','Standard'],['gold','Gold'],['premium','Premium']];return o.map(function(p){return '<option value="'+p[0]+'"'+((sel||'')===p[0]?' selected':'')+'>'+p[1]+'</option>';}).join('');}
+  function tierOpt(sel){var o=[['','Nenhum (à parte)'],['standard','Standard'],['gold','Gold']];return o.map(function(p){return '<option value="'+p[0]+'"'+((sel||'')===p[0]?' selected':'')+'>'+p[1]+'</option>';}).join('');}
   return intro+cat.map(function(c){
     var reais=((c.preco_avulso_cents||0)/100).toFixed(2);
     return '<div class="card" style="margin-bottom:.9rem" data-cat-slug="'+esc(c.slug)+'">'

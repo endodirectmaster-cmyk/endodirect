@@ -32,7 +32,7 @@ const ANNUAL_DIAS = 365;
 // Oferta de Sócio-fundador: cupom que libera o Premium anual por um valor
 // promocional (padrão R$828 = "Premium pelo preço do Gold"). As regras +
 // o limite de vagas (auto-desativa ao esgotar) ficam em lib/founder.js.
-const { FOUNDER_COUPON, FOUNDER_AMOUNT, FOUNDER_ENABLED_ENV, FOUNDER_LIMIT, countFounderAccesses } = require('../../lib/founder');
+const { FOUNDER_COUPON, FOUNDER_AMOUNT, FOUNDER_ENABLED_ENV, FOUNDER_LIMIT, FOUNDER_PLAN, countFounderAccesses } = require('../../lib/founder');
 
 const SUPABASE_URL = process.env.SUPABASE_URL || process.env.NEXT_PUBLIC_SUPABASE_URL || 'https://auth.endodirect.com.br';
 const SERVICE_ROLE = process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.SUPABASE_SECRET_KEY || process.env.SUPABASE_SERVICE_KEY;
@@ -98,7 +98,7 @@ module.exports = async function handler(req, res) {
   let amount = cfg.amount;
   let founderApplied = false;
   if (coupon) {
-    if (FOUNDER_ENABLED_ENV && coupon === FOUNDER_COUPON && planKey === 'premium' && FOUNDER_AMOUNT > 0) {
+    if (FOUNDER_ENABLED_ENV && coupon === FOUNDER_COUPON && planKey === FOUNDER_PLAN && FOUNDER_AMOUNT > 0) {
       const used = await countFounderAccesses();
       if (used != null && used >= FOUNDER_LIMIT) {
         return json(res, 400, { ok: false, error: 'As vagas de Sócio-fundador se esgotaram. Garanta o Premium no valor normal.' });
