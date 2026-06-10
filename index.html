@@ -6036,6 +6036,27 @@ function bindAdmSec(sec){
         });
       }).catch(function(e){notify('Erro: '+(e&&e.message||e),'err');var b=document.getElementById('btn-adm-radar');if(b){b.disabled=false;b.textContent='🔄 Atualizar radar agora';}});
     });
+    var bNlt=document.getElementById('btn-adm-nltest');
+    if(bNlt)bNlt.addEventListener('click',function(){
+      var client=getSupabaseClient();
+      if(!client){notify('Supabase indisponível.','err');return;}
+      var myEmail=(currentUser&&currentUser.email)||'';
+      var to=prompt('Enviar uma prévia da newsletter para qual e-mail?',myEmail);
+      if(to===null)return;
+      to=String(to).trim();
+      if(!to||to.indexOf('@')<0){notify('Informe um e-mail válido.','err');return;}
+      bNlt.disabled=true;bNlt.innerHTML=ldHTML('Enviando...');
+      client.auth.getSession().then(function(res){
+        var token=res&&res.data&&res.data.session&&res.data.session.access_token;
+        if(!token)throw new Error('Sessão expirada. Entre novamente.');
+        return fetch('/api/newsletter/test?to='+encodeURIComponent(to),{method:'POST',headers:{Authorization:'Bearer '+token}});
+      }).then(function(r){return r.json().catch(function(){return{ok:false,error:'Resposta inválida do servidor.'};});})
+      .then(function(d){
+        if(!d.ok)throw new Error(d.error||'Falha ao enviar teste.');
+        notify('Prévia da newsletter enviada para '+to+'.','ok');
+      }).catch(function(e){notify('Erro: '+(e&&e.message||e),'err');})
+      .then(function(){var b=document.getElementById('btn-adm-nltest');if(b){b.disabled=false;b.innerHTML='✉️ Enviar teste da newsletter';}});
+    });
     var bCancel=document.getElementById('btn-adm-av-cancel');
     if(bCancel)bCancel.addEventListener('click',function(){admMuralShowForm=false;admMuralEdit=null;renderAdmSec('mural');});
     main.querySelectorAll('[data-adm-hideradar]').forEach(function(b){b.addEventListener('click',function(){
@@ -6672,7 +6693,7 @@ admMuralSecHTML=function(){
     +'<div class="fld2"><label>Texto</label><textarea id="adm-av-text" rows="3" placeholder="Resumo em português, mantendo apenas o título no idioma original..."></textarea></div>'
     +'<div style="display:flex;gap:6px"><button class="btn btn-primary" id="btn-adm-addav">'+(admMuralEdit!==null?'💾 Salvar alterações':'+ Publicar no mural')+'</button><button class="btn btn-outline" id="btn-adm-av-cancel">Cancelar</button></div></div>'
   ):'';
-  return '<div class="adm-ph" style="display:flex;align-items:flex-start;justify-content:space-between;gap:.6rem;flex-wrap:wrap"><div><h1>Mural</h1></div><div style="display:flex;gap:.5rem;flex-wrap:wrap"><button class="btn btn-outline" id="btn-adm-radar" style="padding:.55rem 1rem">🔄 Atualizar radar agora</button><button class="btn btn-primary" id="btn-adm-newav" style="padding:.55rem 1.1rem">+ Novo aviso</button></div></div>'
+  return '<div class="adm-ph" style="display:flex;align-items:flex-start;justify-content:space-between;gap:.6rem;flex-wrap:wrap"><div><h1>Mural</h1></div><div style="display:flex;gap:.5rem;flex-wrap:wrap"><button class="btn btn-outline" id="btn-adm-radar" style="padding:.55rem 1rem">🔄 Atualizar radar agora</button><button class="btn btn-outline" id="btn-adm-nltest" style="padding:.55rem 1rem">✉️ Enviar teste da newsletter</button><button class="btn btn-primary" id="btn-adm-newav" style="padding:.55rem 1.1rem">+ Novo aviso</button></div></div>'
   +'<div class="adm-pc">'
   +formHTML
   +'<div class="card" style="margin-bottom:1.1rem"><div style="display:flex;align-items:flex-start;justify-content:space-between;gap:1rem;flex-wrap:wrap"><div style="flex:1;min-width:240px"><div style="font-size:.62rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--t3);margin-bottom:.3rem">Gestão do mural dos alunos</div><div style="font-size:1.15rem;font-weight:700;color:var(--tx);margin-bottom:.35rem">Edite avisos, notícias e comunicados importantes</div><div style="font-size:.79rem;color:var(--t2);line-height:1.55">Os cards abaixo alimentam a aba Mural do estudante. Use etiquetas por tipo de conteúdo e subespecialidade para organizar leituras e atualizações.</div></div><button class="btn btn-outline" id="btn-adm-mural-preview">👁 Pré-visualizar como aluno</button></div></div>'
