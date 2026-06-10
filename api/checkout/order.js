@@ -23,11 +23,18 @@ const PAGARME_API = 'https://api.pagar.me/core/v5';
 const SECRET_KEY = process.env.PAGARME_SECRET_KEY || '';
 
 const ANNUAL = {
-  standard: { amount: Number(process.env.PAGARME_ANNUAL_STANDARD_AMOUNT || 50000), label: 'Plano Standard (anual)', scope: 'plano:standard' },
-  gold:     { amount: Number(process.env.PAGARME_ANNUAL_GOLD_AMOUNT     || 70000), label: 'Plano Gold (anual)',     scope: 'plano:gold' },
-  premium:  { amount: Number(process.env.PAGARME_ANNUAL_PREMIUM_AMOUNT  || 90000), label: 'Plano Premium (anual)',  scope: 'plano:premium' }
+  standard: { amount: Number(process.env.PAGARME_ANNUAL_STANDARD_AMOUNT || 54000), label: 'Plano Standard (anual)', scope: 'plano:standard' },
+  gold:     { amount: Number(process.env.PAGARME_ANNUAL_GOLD_AMOUNT     || 82800), label: 'Plano Gold (anual)',     scope: 'plano:gold' },
+  premium:  { amount: Number(process.env.PAGARME_ANNUAL_PREMIUM_AMOUNT  || 116400), label: 'Plano Premium (anual)', scope: 'plano:premium' }
 };
 const ANNUAL_DIAS = 365;
+
+// Oferta de Sócio-fundador: cupom que libera o Premium anual por um valor
+// promocional (padrão R$828 = "Premium pelo preço do Gold"). Ao esgotar as
+// vagas, desative com FOUNDER_ENABLED=0 na Vercel.
+const FOUNDER_COUPON = String(process.env.FOUNDER_COUPON || 'FUNDADOR').trim().toUpperCase();
+const FOUNDER_AMOUNT = Number(process.env.PAGARME_FOUNDER_PREMIUM_AMOUNT || 82800);
+const FOUNDER_ENABLED = String(process.env.FOUNDER_ENABLED || '1') !== '0';
 
 const SUPABASE_URL = process.env.SUPABASE_URL || process.env.NEXT_PUBLIC_SUPABASE_URL || 'https://auth.endodirect.com.br';
 const SERVICE_ROLE = process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.SUPABASE_SECRET_KEY || process.env.SUPABASE_SERVICE_KEY;
@@ -80,6 +87,7 @@ module.exports = async function handler(req, res) {
   const phone = onlyDigits(body.phone);
   const cardToken = String(body.card_token || '').trim();
   const installments = Math.max(1, Math.min(12, parseInt(body.installments, 10) || 1));
+  const coupon = String(body.coupon || '').trim().toUpperCase();
   const addr = body.address || {};
   const zip = onlyDigits(addr.zip || addr.zip_code);
   const line1 = String(addr.line1 || addr.line_1 || '').trim();
@@ -87,6 +95,17 @@ module.exports = async function handler(req, res) {
   const state = String(addr.state || addr.uf || '').trim().toUpperCase().slice(0, 2);
 
   if (!cfg || !(cfg.amount > 0)) return json(res, 400, { ok: false, error: 'Plano invalido ou preco anual nao configurado.' });
+
+  // Cupom Sócio-fundador: só vale para o Premium anual.
+  let amount = cfg.amount;
+  let founderApplied = false;
+  if (coupon) {
+    if (FOUNDER_ENABLED && coupon === FOUNDER_COUPON && planKey === 'premium' && FOUNDER_AMOUNT > 0) {
+      amount = FOUNDER_AMOUNT; founderApplied = true;
+    } else {
+      return json(res, 400, { ok: false, error: 'Cupom inválido ou não aplicável a este plano.' });
+    }
+  }
   if (!email || !/.+@.+\..+/.test(email)) return json(res, 400, { ok: false, error: 'E-mail invalido.' });
   if (!document || document.length < 11) return json(res, 400, { ok: false, error: 'CPF e obrigatorio.' });
   if (!phone || phone.length < 10) return json(res, 400, { ok: false, error: 'Telefone (celular com DDD) e obrigatorio.' });
@@ -123,9 +142,9 @@ module.exports = async function handler(req, res) {
 
     const order = await pagarme('/orders', {
       customer_id: customer.id,
-      items: [{ amount: cfg.amount, description: 'Endodirect — ' + cfg.label, quantity: 1 }],
+      items: [{ amount: amount, description: 'Endodirect — ' + cfg.label + (founderApplied ? ' (Sócio-fundador)' : ''), quantity: 1 }],
       payments: [payment],
-      metadata: { scope: cfg.scope, plan: planKey, cycle: 'anual' }
+      metadata: { scope: cfg.scope, plan: planKey, cycle: 'anual', coupon: founderApplied ? FOUNDER_COUPON : '' }
     });
 
     const charge = (Array.isArray(order.charges) && order.charges[0]) || {};
@@ -152,7 +171,7 @@ module.exports = async function handler(req, res) {
     await upsertAcesso({ user_id: user.id, email: email, scope: cfg.scope, status: 'active', tipo: 'avulso',
       expires_at: new Date(Date.now() + ANNUAL_DIAS * 86400000).toISOString(),
       provider: 'pagarme', provider_customer_id: customer.id || null, provider_order_id: order.id || null,
-      notes: planKey + ':anual', updated_at: new Date().toISOString() });
+      notes: planKey + ':anual' + (founderApplied ? ':fundador' : ''), updated_at: new Date().toISOString() });
     await sendSetPasswordEmail(email);
     return json(res, 200, { ok: true, method: 'credit_card', status: 'paid', order_id: order.id });
   } catch (e) {
