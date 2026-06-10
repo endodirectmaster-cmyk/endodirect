@@ -547,6 +547,14 @@ textarea{resize:vertical;line-height:1.6}
         <div class="flbl" style="margin-bottom:.3rem">Especialidade ou área de atuação</div>
         <input type="text" id="ob-outros" placeholder="Ex: Cardiologista, Intensivista, Clínico geral…">
       </div>
+      <div id="ob-crm-wrap" style="display:none;margin-bottom:.85rem">
+        <div class="flbl" style="margin-bottom:.3rem">Registro profissional (para prescrição)</div>
+        <div style="display:flex;gap:.4rem">
+          <input type="text" id="ob-crm" placeholder="CRM" style="flex:1">
+          <input type="text" id="ob-uf" placeholder="UF" maxlength="2" style="width:70px;text-transform:uppercase">
+        </div>
+        <div style="font-size:.68rem;color:var(--t3);margin-top:.3rem">Opcional agora — necessário para emitir receitas pela Memed.</div>
+      </div>
       <div id="ob-err" style="display:none;background:var(--red-l);border:1px solid #fecaca;border-radius:var(--rs);padding:.45rem .75rem;font-size:.73rem;color:var(--red);margin-bottom:.7rem"></div>
       <button class="btn btn-primary" id="ob-submit" style="width:100%;justify-content:center;padding:.6rem">Começar →</button>
     </div>
@@ -4716,15 +4724,108 @@ function prescAISuggest(){
     .catch(function(e){notify('Erro ao sugerir: '+(e.message||'falha'),'err');})
     .then(function(){if(btn){btn.disabled=false;btn.innerHTML='Sugerir conduta';}});
 }
+// ---------- Integração Memed (Sinapse Prescrição) ----------
+// Gated por ambiente: se /api/memed/token responder configured:false (sem
+// chaves na Vercel), mantemos o receituário próprio. Com as chaves, o módulo
+// da Memed substitui a ferramenta.
+var prescMemed={configured:null,color:'#0a7d68',script:''};
+function prescCheckMemed(cb){
+  if(prescMemed.configured!==null){cb(prescMemed.configured);return;}
+  fetch('/api/memed/token').then(function(r){return r.json();}).then(function(d){
+    prescMemed.configured=!!(d&&d.configured);
+    if(d&&d.color)prescMemed.color=d.color;
+    if(d&&d.script)prescMemed.script=d.script;
+    cb(prescMemed.configured);
+  }).catch(function(){prescMemed.configured=false;cb(false);});
+}
+function renderPrescMemed(){
+  var tool=document.getElementById('presc-tool');if(!tool)return;
+  var pr=lsGet('presc_prescritor')||{};
+  var prof=(currentUser&&currentUser.profile)||{};
+  var pnome=pr.nome||(currentUser&&currentUser.name)||'';
+  var pcrm=pr.crm||prof.crm||'';
+  var puf=pr.uf||prof.uf||'';
+  var pcpf=pr.cpf||'';
+  tool.innerHTML=
+    '<div class="card" style="margin-bottom:.7rem">'
+    +'<div style="font-size:.82rem;color:var(--t2);margin-bottom:.7rem">Prescrição digital via <b>Memed</b> — busca de medicamentos, posologia, impressão e assinatura digital, enviada ao paciente.</div>'
+    +'<div class="g2" style="margin-bottom:.5rem">'
+      +'<div class="fld2" style="margin:0"><label>Prescritor</label><input type="text" id="memed-nome" value="'+esc(pnome)+'" placeholder="Dr(a). Nome"></div>'
+      +'<div class="fld2" style="margin:0"><label>CPF do prescritor (opcional)</label><input type="text" id="memed-cpf" value="'+esc(pcpf)+'" placeholder="000.000.000-00"></div>'
+    +'</div>'
+    +'<div style="display:flex;gap:.4rem;margin-bottom:.5rem"><div class="fld2" style="margin:0;flex:1"><label>CRM</label><input type="text" id="memed-crm" value="'+esc(pcrm)+'" placeholder="CRM"></div>'
+      +'<div class="fld2" style="margin:0;width:90px"><label>UF</label><input type="text" id="memed-uf" value="'+esc(puf)+'" placeholder="UF" maxlength="2" style="text-transform:uppercase"></div></div>'
+    +'<div class="g2" style="margin-bottom:.6rem">'
+      +'<div class="fld2" style="margin:0"><label>Paciente (opcional)</label><input type="text" id="memed-pac-nome" placeholder="Nome do paciente"></div>'
+      +'<div class="fld2" style="margin:0"><label>CPF do paciente (opcional)</label><input type="text" id="memed-pac-cpf" placeholder="000.000.000-00"></div>'
+    +'</div>'
+    +'<button class="btn btn-primary" id="memed-open">💊 Abrir prescrição Memed</button>'
+    +'<div id="memed-msg" style="font-size:.72rem;color:var(--t3);margin-top:.55rem"></div>'
+    +'</div>';
+  var btn=document.getElementById('memed-open');
+  if(btn)btn.addEventListener('click',prescMemedOpen);
+}
+function prescMemedOpen(){
+  var nome=prescVal('memed-nome'),crm=prescVal('memed-crm'),uf=prescVal('memed-uf').toUpperCase(),cpf=prescVal('memed-cpf');
+  var msg=document.getElementById('memed-msg');
+  function showErr(t){if(msg){msg.style.color='var(--red)';msg.textContent=t;}}
+  if(!crm||!uf){showErr('Informe CRM e UF do prescritor.');return;}
+  lsSet('presc_prescritor',Object.assign(lsGet('presc_prescritor')||{},{nome:nome,crm:crm,uf:uf,cpf:cpf}));
+  var client=getSupabaseClient();
+  if(!client){showErr('Supabase indisponível.');return;}
+  var btn=document.getElementById('memed-open');if(btn){btn.disabled=true;btn.innerHTML=ldHTML('Conectando à Memed…');}
+  if(msg){msg.style.color='var(--t3)';msg.textContent='';}
+  client.auth.getSession().then(function(res){
+    var token=res&&res.data&&res.data.session&&res.data.session.access_token;
+    if(!token)throw new Error('Sessão expirada. Entre novamente.');
+    return fetch('/api/memed/token',{method:'POST',headers:{'Content-Type':'application/json',Authorization:'Bearer '+token},body:JSON.stringify({nome:nome,crm:crm,uf:uf,cpf:cpf})});
+  }).then(function(r){return r.json().catch(function(){return{ok:false,error:'Resposta inválida do servidor.'};});})
+  .then(function(d){
+    if(!d.ok||!d.token)throw new Error(d.error||'Falha ao conectar à Memed.');
+    return prescMemedLaunch(d.token,d.color,d.script);
+  }).then(function(){if(msg){msg.style.color='var(--grn)';msg.textContent='Módulo Memed aberto.';}})
+  .catch(function(e){showErr('Erro: '+(e&&e.message||e));})
+  .then(function(){var b=document.getElementById('memed-open');if(b){b.disabled=false;b.innerHTML='💊 Abrir prescrição Memed';}});
+}
+function prescMemedLaunch(token,color,scriptUrl){
+  return new Promise(function(resolve,reject){
+    function openModule(){
+      if(!window.MdSinapsePrescricao){reject(new Error('SDK da Memed não carregou.'));return;}
+      try{
+        MdSinapsePrescricao.event.add('core:moduleInit',function(module){
+          if(module.name==='plataforma.prescricao'){
+            var pn=prescVal('memed-pac-nome'),pc=prescVal('memed-pac-cpf');
+            if(pn){try{MdHub.command.send('plataforma.prescricao','setPaciente',{nome:pn,cpf:(pc||'').replace(/\D/g,'')});}catch(e){}}
+            try{MdHub.module.show('plataforma.prescricao');}catch(e){}
+          }
+        });
+        resolve();
+      }catch(e){reject(e);}
+    }
+    if(window.MdSinapsePrescricao){openModule();return;}
+    var s=document.createElement('script');
+    s.type='text/javascript';
+    s.src=scriptUrl||'https://integrations.memed.com.br/modulos/plataforma.sinapse-prescricao/build/sinapse-prescricao.min.js';
+    s.setAttribute('data-color',color||'#0a7d68');
+    s.setAttribute('data-token',token);
+    s.onload=openModule;
+    s.onerror=function(){reject(new Error('Falha ao carregar o SDK da Memed.'));};
+    document.body.appendChild(s);
+  });
+}
 function initPresc(){
-  renderPrescTool();
-  prescLoadCatalogo(function(){var h=document.getElementById('presc-rx-hint');if(h&&prescExtLoaded)h.textContent='Catálogo: '+prescMedAll.length.toLocaleString('pt-BR')+' medicamentos (curado + ANVISA). Busca por nome comercial ou princípio ativo.';});
-  var tool=document.getElementById('presc-tool');
-  if(!tool||prescInited)return;
-  prescInited=true;
-  tool.addEventListener('click',prescClick);
-  tool.addEventListener('input',prescInput);
-  tool.addEventListener('change',prescInput);
+  prescCheckMemed(function(on){
+    if(on){renderPrescMemed();return;}
+    // Fallback: receituário próprio (ANVISA/CMED) enquanto a Memed não estiver configurada.
+    renderPrescTool();
+    prescLoadCatalogo(function(){var h=document.getElementById('presc-rx-hint');if(h&&prescExtLoaded)h.textContent='Catálogo: '+prescMedAll.length.toLocaleString('pt-BR')+' medicamentos (curado + ANVISA). Busca por nome comercial ou princípio ativo.';});
+    var tool=document.getElementById('presc-tool');
+    if(!tool||prescInited)return;
+    prescInited=true;
+    tool.addEventListener('click',prescClick);
+    tool.addEventListener('input',prescInput);
+    tool.addEventListener('change',prescInput);
+  });
 }
 function prescList(arr){
   if(!arr||!arr.length)return'<div style="font-size:.78rem;color:var(--t3)">—</div>';
@@ -6295,7 +6396,7 @@ openOnboard=function(){
   document.getElementById('onboard-modal').style.display='flex';
   document.getElementById('ob-err').style.display='none';
   document.querySelectorAll('input[name="ob-perfil"]').forEach(function(r){r.checked=false;});
-  ['ob-grad','ob-resid','ob-outros'].forEach(function(id){var e=document.getElementById(id);if(e)e.value='';});
+  ['ob-grad','ob-resid','ob-outros','ob-crm','ob-uf'].forEach(function(id){var e=document.getElementById(id);if(e)e.value='';});
   setupOnboardProfileChoices();
 };
 submitOnboard=function(){
@@ -6321,6 +6422,11 @@ submitOnboard=function(){
       prof.displayPerfil='Endocrinologista';
     }
   }
+  if(perfil==='Endocrinologista'||perfil==='Outros'){
+    var obCrm=(document.getElementById('ob-crm')||{}).value;var obUf=(document.getElementById('ob-uf')||{}).value;
+    if(obCrm&&String(obCrm).trim())prof.crm=String(obCrm).trim();
+    if(obUf&&String(obUf).trim())prof.uf=String(obUf).trim().toUpperCase();
+  }
   lsSet('user_profile',prof);
   currentUser.sub=profileDisplayLabel(prof);
   currentUser.profile=prof;
@@ -6338,6 +6444,8 @@ function setupOnboardProfileChoices(){
   if(grad)grad.style.display=(perfil==='Residente'||perfil==='Endocrinologista')?'block':'none';
   if(resid)resid.style.display=perfil==='Endocrinologista'?'block':'none';
   if(outros)outros.style.display=perfil==='Outros'?'block':'none';
+  var crmw=document.getElementById('ob-crm-wrap');
+  if(crmw)crmw.style.display=(perfil==='Endocrinologista'||perfil==='Outros')?'block':'none';
   [['ob-res-lbl','Residente'],['ob-endo-lbl','Endocrinologista'],['ob-outros-lbl','Outros']].forEach(function(pair){
     var el=document.getElementById(pair[0]);if(!el)return;
     var on=perfil===pair[1];
