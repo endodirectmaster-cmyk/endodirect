@@ -160,10 +160,12 @@ textarea{resize:vertical;line-height:1.6}
 .qo:hover{border-color:var(--blue);color:var(--tx);background:var(--blue-l)}
 .qo.correct{border-color:var(--grn)!important;color:#16a34a!important;background:var(--grn-l)!important}
 .qo.wrong{border-color:var(--red)!important;color:var(--red)!important;background:var(--red-l)!important}
+.qo.annul{border-color:#f59e0b!important;color:#b45309!important;background:#fffbeb!important}
 .qo-ltr{font-weight:700;flex-shrink:0;width:14px}
 .q-fb{border-radius:var(--rs);padding:.55rem .8rem;font-size:.75rem;line-height:1.6;margin:.65rem 0}
 .q-fb.ok{background:var(--grn-l);color:#16a34a;border:1px solid #bbf7d0}
 .q-fb.er{background:var(--red-l);color:var(--red);border:1px solid #fecaca}
+.q-fb.annul{background:#fffbeb;color:#b45309;border:1px solid #fde68a}
 .fc-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(195px,1fr));gap:9px}
 .fc-card{position:relative;min-height:150px;cursor:pointer;-webkit-perspective:1100px;perspective:1100px}
 .fc-inner{position:relative;width:100%;height:100%;min-height:150px;transition:-webkit-transform .55s cubic-bezier(.4,.2,.2,1);transition:transform .55s cubic-bezier(.4,.2,.2,1);-webkit-transform-style:preserve-3d;transform-style:preserve-3d}
@@ -2318,6 +2320,12 @@ function queueRemoteStateSave(){
 }
 function saveRemoteState(){
   if(!canUseRemoteState())return;
+  // Guarda crítica: nunca gravar antes do hydrate concluir. Sem isso, uma
+  // edição/ação precoce sobrescreveria o estado remoto (global e do usuário)
+  // com o localStorage — possivelmente vazio (máquina nova) ou com as provas
+  // FILTRADAS de uma sessão de aluno — apagando o banco para todos. O próprio
+  // hydrateRemoteState dispara um save ao terminar, então nada se perde.
+  if(!remoteStateLoaded)return;
   var client=getSupabaseClient();
   var row={user_id:currentUser.id,email:currentUser.email,role:currentUser.role,payload:userStatePayload(),updated_at:new Date().toISOString()};
   var ops=[client.from('endodirect_app_state').upsert(row,{onConflict:'user_id'}).then(function(res){if(res.error)throw res.error;})];
@@ -3405,7 +3413,7 @@ function updatePlanBadge(){
       pc.style.display='block';
       if(pn)pn.textContent=label;
       if(pu){
-        pu.style.display=(k==='premium')?'none':'inline-flex';
+        pu.style.display=(k==='premium'||k==='gold')?'none':'inline-flex';
         pu.textContent=isDegustacao()?'⭐ Ver pacotes':'⭐ Fazer upgrade do plano';
       }
     }
@@ -3544,9 +3552,9 @@ function renderGenQ(isMC){
 }
 function updateGenCounter(){
   var el=document.getElementById('gen-counter');if(!el)return;
-  var keys=Object.keys(genAnswered);
+  var keys=Object.keys(genAnswered).filter(function(k){return genAnswered[k]&&!genAnswered[k].anulada;});
   var respondidas=keys.length;
-  var acertos=keys.filter(function(k){return genAnswered[k]&&genAnswered[k].ok;}).length;
+  var acertos=keys.filter(function(k){return genAnswered[k].ok;}).length;
   if(!respondidas){el.textContent='';return;}
   var pct=Math.round(acertos/respondidas*100);
   el.textContent='Respondidas: '+respondidas+'/'+genQs.length+' · Acertos: '+acertos+' ('+pct+'%)';
@@ -3583,18 +3591,28 @@ function toggleQDetail(i,src,isMC){
 }
 function selectOpt(letter,answer,explanation,src,idx){
   var pfx='qo-'+src+'-'+idx+'-';
-  if(document.querySelector('[id^="'+pfx+'"].correct,[id^="'+pfx+'"].wrong'))return;
-  var ok=letter===answer;
+  if(document.querySelector('[id^="'+pfx+'"].correct,[id^="'+pfx+'"].wrong,[id^="'+pfx+'"].annul'))return;
+  var q=src==='gen'?genQs[parseInt(idx)]:DB.q[parseInt(idx)];
+  var anulada=!answer; // gabarito vazio = questão anulada pela banca (não pontua)
+  var ok=!anulada&&letter===answer;
   document.querySelectorAll('[id^="'+pfx+'"]').forEach(function(el){
     var l=el.id.replace(pfx,'');
-    if(l===answer)el.classList.add('correct');
+    if(anulada){if(l===letter)el.classList.add('annul');}
+    else if(l===answer)el.classList.add('correct');
     else if(l===letter&&!ok)el.classList.add('wrong');
   });
+  var expImg=(q&&q.expImg)?'<img src="'+esc(q.expImg)+'" alt="Figura do comentário" style="max-width:100%;display:block;border-radius:8px;margin:.5rem 0;border:1px solid var(--bd)">':'';
+  var expTxt=esc(String(explanation||'').replace(/&quot;/g,'"'));
   var fb=document.getElementById('qfb-'+src+'-'+idx);
-  if(fb)fb.innerHTML='<div class="q-fb '+(ok?'ok':'er')+'">'+(ok?'✓ Correto!':'✗ Incorreto — Gabarito: '+answer)+' — '+esc(explanation.replace(/&quot;/g,'"'))+'</div>';
-  var q=src==='gen'?genQs[parseInt(idx)]:DB.q[parseInt(idx)];
-  if(src==='gen'){genAnswered[parseInt(idx)]={ok:ok};updateGenCounter();}
-  if(q&&q.area){if(!DB.perf[q.area])DB.perf[q.area]={correct:0,total:0};DB.perf[q.area].total++;if(ok)DB.perf[q.area].correct++;persist();try{refreshDash();}catch(e){}}
+  if(fb){
+    if(anulada){
+      fb.innerHTML='<div class="q-fb annul">⚠️ Questão anulada pela banca — não conta na pontuação.'+(expTxt?' '+expTxt:'')+'</div>'+expImg;
+    }else{
+      fb.innerHTML='<div class="q-fb '+(ok?'ok':'er')+'">'+(ok?'✓ Correto!':'✗ Incorreto — Gabarito: '+esc(answer))+(expTxt?' — '+expTxt:'')+'</div>'+expImg;
+    }
+  }
+  if(src==='gen'){genAnswered[parseInt(idx)]={ok:ok,anulada:anulada};updateGenCounter();}
+  if(!anulada&&q&&q.area){if(!DB.perf[q.area])DB.perf[q.area]={correct:0,total:0};DB.perf[q.area].total++;if(ok)DB.perf[q.area].correct++;persist();try{refreshDash();}catch(e){}}
 }
 function revealDisc(i,src){
   var q=src==='gen'?genQs[i]:DB.q[i];if(!q)return;
@@ -5405,12 +5423,13 @@ function submitSF(){
   if(sfTimer)clearInterval(sfTimer);
   var correct=0,byArea={};
   sfState.qs.forEach(function(q,i){
-    var ok=sfState.answers[i]===q.answer;
+    var anulada=!q.answer; // anulada pela banca: creditada a todos, fora do perf
+    var ok=anulada||(sfState.answers[i]===q.answer);
     if(ok)correct++;
     var a=q.area||'Geral';
     if(!byArea[a])byArea[a]={c:0,t:0};
     byArea[a].t++;if(ok)byArea[a].c++;
-    if(q.area){if(!DB.perf[q.area])DB.perf[q.area]={correct:0,total:0};DB.perf[q.area].total++;if(ok)DB.perf[q.area].correct++;}
+    if(!anulada&&q.area){if(!DB.perf[q.area])DB.perf[q.area]={correct:0,total:0};DB.perf[q.area].total++;if(ok)DB.perf[q.area].correct++;}
   });
   DB.sf_results.push({correct:correct,total:sfState.total,area:sfState.area,at:Date.now()});
   persist();
@@ -5421,8 +5440,10 @@ function submitSF(){
   html+='<div class="card" style="margin-bottom:.85rem"><div class="card-head"><span class="card-title">Desempenho por área</span></div>'+Object.keys(byArea).map(function(a){var d=byArea[a];var p=Math.round(d.c/d.t*100);var col=p>=70?'var(--grn)':p>=50?'var(--gold)':'var(--red)';return'<div class="rep-area-row"><div class="rep-area-name">'+esc(a)+'</div><div class="rep-area-track"><div class="rep-area-fill" style="width:'+p+'%;background:'+col+'"></div></div><div class="rep-area-pct">'+d.c+'/'+d.t+'</div></div>';}).join('')+'</div>';
   html+='<div class="sec-title" style="margin-bottom:.5rem">Revisão das questões</div>';
   html+=sfState.qs.map(function(q,i){
-    var ua=sfState.answers[i];var ok=ua===q.answer;
-    return'<div class="card" style="margin-bottom:.5rem"><div style="display:flex;gap:.5rem;align-items:flex-start"><span class="tag '+(ok?'tag-grn':'tag-red')+'">'+(i+1)+(ok?' ✓':' ✗')+'</span><div style="flex:1"><div style="font-size:.79rem;line-height:1.6;margin-bottom:.4rem">'+esc(q.stem)+'</div><div style="font-size:.74rem;color:var(--t2)">Sua resposta: <strong>'+(ua||'—')+'</strong> • Gabarito: <strong>'+esc(q.answer)+'</strong></div>'+(q.explanation?'<div style="font-size:.73rem;color:var(--t2);margin-top:.3rem;background:var(--s2);padding:.4rem .6rem;border-radius:var(--rs)">'+esc(q.explanation)+'</div>':'')+'</div></div></div>';
+    var ua=sfState.answers[i];var anulada=!q.answer;var ok=anulada||(ua===q.answer);
+    var gabHtml=anulada?'<strong style="color:#b45309">Anulada pela banca</strong>':'Gabarito: <strong>'+esc(q.answer)+'</strong>';
+    var expImg=q.expImg?'<img src="'+esc(q.expImg)+'" alt="Figura do comentário" style="max-width:100%;display:block;border-radius:8px;margin-top:.4rem;border:1px solid var(--bd)">':'';
+    return'<div class="card" style="margin-bottom:.5rem"><div style="display:flex;gap:.5rem;align-items:flex-start"><span class="tag '+(anulada?'tag-gold':(ok?'tag-grn':'tag-red'))+'">'+(i+1)+(anulada?' ⚠':(ok?' ✓':' ✗'))+'</span><div style="flex:1"><div style="font-size:.79rem;line-height:1.6;margin-bottom:.4rem">'+esc(q.stem)+'</div><div style="font-size:.74rem;color:var(--t2)">Sua resposta: <strong>'+(ua||'—')+'</strong> • '+gabHtml+'</div>'+(q.explanation?'<div style="font-size:.73rem;color:var(--t2);margin-top:.3rem;background:var(--s2);padding:.4rem .6rem;border-radius:var(--rs)">'+esc(q.explanation)+expImg+'</div>':expImg)+'</div></div></div>';
   }).join('');
   document.getElementById('sf-report-content').innerHTML=html;
   refreshDash();
@@ -5604,7 +5625,7 @@ function admProvaSubBody(areas,anos,insts,pendentes){
 function admBancoActiveFilter(){return!!(admBancoArea||admBancoCode||admBancoAno||admBancoInst);}
 function admBancoCount(){return admBancoActiveFilter()?admProvasFilter().length:provasDB.length;}
 function admProvasFilter(){var fa=admBancoArea,fc=(admBancoCode||'').toLowerCase().trim(),fan=admBancoAno,fi=admBancoInst;var out=[];provasDB.forEach(function(q,i){if(fa&&(q.area||'')!==fa)return;if(fan&&String(q.ano||'')!==String(fan))return;if(fi&&(q.inst||'')!==fi)return;if(fc&&String(q.code||'').toLowerCase().indexOf(fc)<0)return;out.push({q:q,i:i});});return out;}
-function admProvaEditHTML(q,i){var mc=q.type!=='disc';var curImg=admBancoEditImg!==undefined?admBancoEditImg:(q.expImg||'');var ansSel=mc?'<div class="fld2" style="margin:0 0 .6rem"><label>Gabarito</label><select id="adm-bq-edit-ans">'+Object.keys(q.options||{}).map(function(k){return '<option value="'+k+'"'+(k===(q.answer||'')?' selected':'')+'>'+k+' — '+esc((q.options[k]||'').substring(0,70))+'</option>';}).join('')+'</select></div>':'';var imgPrev=curImg?'<div style="display:flex;align-items:center;gap:.6rem;background:var(--s2);border:1px solid var(--bd);border-radius:var(--rs);padding:.5rem .7rem"><img src="'+curImg+'" style="height:50px;border-radius:6px"><span style="flex:1;font-size:.74rem;color:var(--t2)">Imagem do comentário</span><button class="btn btn-ghost btn-sm" id="adm-bq-edit-imgclear">✕</button></div>':'';return '<div style="background:var(--surface);border:1px solid var(--blue);border-radius:var(--r);padding:.85rem 1rem;margin-bottom:.6rem"><div style="font-size:.72rem;color:var(--t3);margin-bottom:.5rem">✏️ Editando'+(q.code?' · '+esc(q.code):'')+(q.area?' · '+esc(q.area):'')+'</div><div class="q-stem" style="font-size:.82rem;line-height:1.5;margin-bottom:.6rem">'+esc(q.stem||'')+'</div>'+ansSel+'<div class="fld2" style="margin:0 0 .6rem"><label>Comentário / Fundamento</label><textarea id="adm-bq-edit-exp" rows="4">'+esc(q.explanation||q.expected||'')+'</textarea></div><div class="fld2" style="margin:0 0 .6rem"><label>Imagem no comentário (opcional)</label><div class="art-drop" id="adm-bq-edit-imgdrop" style="padding:1rem"><div style="font-size:1.3rem">🖼️</div><div style="font-size:.76rem;font-weight:600;color:var(--tx)">Clique ou arraste uma imagem</div><div style="font-size:.64rem;color:var(--t3)">JPG, PNG, GIF · Máx. 5 MB</div></div><input type="file" id="adm-bq-edit-imgfile" accept="image/*" style="display:none"><div id="adm-bq-edit-imgprev" style="margin-top:.5rem">'+imgPrev+'</div></div><div style="display:flex;gap:6px"><button class="btn btn-primary btn-sm" id="adm-bq-edit-save">💾 Salvar</button><button class="btn btn-outline btn-sm" id="adm-bq-edit-cancel">Cancelar</button></div></div>';}
+function admProvaEditHTML(q,i){var mc=q.type!=='disc';var curImg=admBancoEditImg!==undefined?admBancoEditImg:(q.expImg||'');var ansSel=mc?'<div class="fld2" style="margin:0 0 .6rem"><label>Gabarito</label><select id="adm-bq-edit-ans"><option value=""'+(!q.answer?' selected':'')+'>— Anulada (sem gabarito) —</option>'+Object.keys(q.options||{}).map(function(k){return '<option value="'+k+'"'+(k===(q.answer||'')?' selected':'')+'>'+k+' — '+esc((q.options[k]||'').substring(0,70))+'</option>';}).join('')+'</select></div>':'';var imgPrev=curImg?'<div style="display:flex;align-items:center;gap:.6rem;background:var(--s2);border:1px solid var(--bd);border-radius:var(--rs);padding:.5rem .7rem"><img src="'+curImg+'" style="height:50px;border-radius:6px"><span style="flex:1;font-size:.74rem;color:var(--t2)">Imagem do comentário</span><button class="btn btn-ghost btn-sm" id="adm-bq-edit-imgclear">✕</button></div>':'';return '<div style="background:var(--surface);border:1px solid var(--blue);border-radius:var(--r);padding:.85rem 1rem;margin-bottom:.6rem"><div style="font-size:.72rem;color:var(--t3);margin-bottom:.5rem">✏️ Editando'+(q.code?' · '+esc(q.code):'')+(q.area?' · '+esc(q.area):'')+'</div><div class="q-stem" style="font-size:.82rem;line-height:1.5;margin-bottom:.6rem">'+esc(q.stem||'')+'</div>'+ansSel+'<div class="fld2" style="margin:0 0 .6rem"><label>Comentário / Fundamento</label><textarea id="adm-bq-edit-exp" rows="4">'+esc(q.explanation||q.expected||'')+'</textarea></div><div class="fld2" style="margin:0 0 .6rem"><label>Imagem no comentário (opcional)</label><div class="art-drop" id="adm-bq-edit-imgdrop" style="padding:1rem"><div style="font-size:1.3rem">🖼️</div><div style="font-size:.76rem;font-weight:600;color:var(--tx)">Clique ou arraste uma imagem</div><div style="font-size:.64rem;color:var(--t3)">JPG, PNG, GIF · Máx. 5 MB</div></div><input type="file" id="adm-bq-edit-imgfile" accept="image/*" style="display:none"><div id="adm-bq-edit-imgprev" style="margin-top:.5rem">'+imgPrev+'</div></div><div style="display:flex;gap:6px"><button class="btn btn-primary btn-sm" id="adm-bq-edit-save">💾 Salvar</button><button class="btn btn-outline btn-sm" id="adm-bq-edit-cancel">Cancelar</button></div></div>';}
 function admProvaCardHTML(q,i){if(i===admBancoEditIdx)return admProvaEditHTML(q,i);var mc=q.type!=='disc';var meta=[];if(q.inst)meta.push(esc(q.inst));if(q.ano)meta.push(esc(String(q.ano)));if(q.area)meta.push(esc(q.area));var tags='<div style="display:flex;gap:4px;align-items:center;flex-wrap:wrap;margin-bottom:.5rem">'+(q.code?'<span style="font-family:monospace;font-size:.6rem;font-weight:700;background:#f1f0ff;color:#6d5fd8;padding:1px 7px;border-radius:99px">'+esc(q.code)+'</span>':'')+diffTag(q.dificuldade||'intermediario')+(meta.length?'<span style="font-size:.66rem;color:var(--t3)">'+meta.join(' · ')+'</span>':'')+'<button class="btn btn-ghost btn-sm" data-adm-bq-edit="'+i+'" style="margin-left:auto;padding:2px 7px" title="Editar gabarito e comentário">✏️</button><button class="btn btn-outline btn-sm" data-adm-delprova="'+i+'" style="padding:2px 8px;color:var(--red);border-color:var(--red)" title="Excluir">🗑 Excluir</button></div>';var img=q.img?'<img src="'+q.img+'" alt="Figura" style="max-width:100%;display:block;border-radius:8px;margin:.55rem 0;border:1px solid var(--bd)">':'';var body;if(mc){body=Object.keys(q.options||{}).map(function(k){var ok=k===(q.answer||'');return'<div style="display:flex;gap:.5rem;align-items:flex-start;padding:.4rem .6rem;border-radius:8px;margin-bottom:4px;font-size:.8rem;'+(ok?'background:var(--grn-l);border:1px solid #bbf7d0':'background:#f8f8fb;border:1px solid var(--bd)')+'"><span style="font-weight:700;color:'+(ok?'#16a34a':'var(--blue)')+'">'+k+'</span><span>'+esc(q.options[k])+'</span>'+(ok?'<span style="margin-left:auto;color:#16a34a;font-weight:700">✓</span>':'')+'</div>';}).join('')+'<div style="font-size:.74rem;color:var(--t2);margin-top:.3rem"><b>Gabarito:</b> '+esc(q.answer||'—')+'</div>';}else{body='<div style="font-size:.73rem;color:var(--t3);font-style:italic;margin-bottom:.3rem">Questão discursiva</div>';}var exp=(q.explanation||q.expected||q.expImg)?'<div style="white-space:pre-wrap;background:var(--grn-l);border:1px solid #bbf7d0;border-radius:var(--rs);padding:.55rem .8rem;font-size:.74rem;color:var(--t2);line-height:1.6;margin-top:.5rem"><b>'+(mc?'Comentário':'Expectativa')+':</b> '+esc(q.explanation||q.expected||'')+(q.expImg?'<img src="'+q.expImg+'" alt="Figura do comentário" style="max-width:100%;display:block;border-radius:8px;margin-top:.5rem;border:1px solid #bbf7d0">':'')+'</div>':'';return '<div style="background:var(--surface);border:1px solid var(--bd);border-radius:var(--r);padding:.85rem 1rem;margin-bottom:.6rem">'+tags+'<div class="q-stem" style="font-size:.85rem;line-height:1.55;margin-bottom:.5rem">'+esc(q.stem||'')+'</div>'+img+body+exp+'</div>';}
 function admProvasListHTML(){if(!admBancoActiveFilter())return '<div class="empty">Use os filtros acima (subespecialidade, código, ano ou instituição) para localizar as questões.</div>';var rows=admProvasFilter();if(!rows.length)return '<div class="empty">Nenhuma questão encontrada com esses filtros.</div>';var per=ADM_BANCO_PER,total=rows.length,pages=Math.max(1,Math.ceil(total/per));if(admBancoPage>=pages)admBancoPage=pages-1;if(admBancoPage<0)admBancoPage=0;var start=admBancoPage*per,end=Math.min(start+per,total);var html='';for(var k=start;k<end;k++){html+=admProvaCardHTML(rows[k].q,rows[k].i);}var nav=pages>1?'<div style="display:flex;align-items:center;justify-content:center;gap:.7rem;margin-top:.6rem;flex-wrap:wrap"><button class="btn btn-outline btn-sm" id="adm-bq-prev"'+(admBancoPage===0?' disabled':'')+'>← Anterior</button><span style="font-size:.76rem;color:var(--t2)">Página '+(admBancoPage+1)+' de '+pages+'</span><button class="btn btn-outline btn-sm" id="adm-bq-next"'+(admBancoPage>=pages-1?' disabled':'')+'>Próxima →</button></div>':'';return html+nav;}
 // ---------- ESTUDANTES ----------
@@ -7146,7 +7167,7 @@ document.addEventListener('DOMContentLoaded',function(){
     if((r.value==='provas'||r.value==='misto')&&!canAccessBanco()){
       var ia=document.querySelector('input[name="sf-fonte"][value="ia"]');if(ia)ia.checked=true;
       document.getElementById('sf-prova-filters').style.display='none';
-      notify('Questões de provas fazem parte do curso EndoTEEM. Usando fonte IA.','err');
+      notify('O banco de provas é liberado em qualquer pacote (Standard ou Gold) ou no EndoTEEM. Usando fonte IA.','err');
       return;
     }
     document.getElementById('sf-prova-filters').style.display=(r.value==='provas'||r.value==='misto')?'block':'none';if(r.value!=='ia')populateInst('sf-inst');
