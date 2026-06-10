@@ -2874,6 +2874,7 @@ function renderAssineFounder(){
 function renderAssinePlans(){
   var wrap=document.getElementById('assine-plans');if(!wrap)return;
   var RANK={standard:1,gold:2,premium:3};
+  var ANUAL_MES={standard:45,gold:69},ANUAL_TOTAL={standard:540,gold:828}; // espelha a vitrine (anual em destaque)
   var curRank=RANK[currentPlanKey()]||0; // plano atual do aluno (0 = degustação)
   var html=(ENDO_TIERS||[]).map(function(t){
     var hi=t.badge==='Mais popular', top=t.badge==='Completo';
@@ -2895,7 +2896,8 @@ function renderAssinePlans(){
       +badge
       +(sel?'<span style="position:absolute;top:-11px;right:12px;font-size:.54rem;font-weight:800;text-transform:uppercase;letter-spacing:.06em;background:#2e7d54;color:#dcffe9;padding:.16rem .5rem;border-radius:999px">✓ Escolhido</span>':'')
       +'<div style="font-size:1.1rem;font-weight:800;color:'+acc+'">'+esc(t.nome)+'</div>'
-      +'<div><span style="font-size:1.6rem;font-weight:800;color:'+acc+'">R$ '+t.preco+'</span><span style="font-size:.72rem;color:#8a93a3">/mês</span></div>'
+      +'<div><span style="font-size:1.6rem;font-weight:800;color:'+acc+'">12× R$ '+(ANUAL_MES[t.key]||t.preco)+'</span><span style="font-size:.72rem;color:#8a93a3">/mês no anual</span></div>'
+      +'<div style="font-size:.7rem;color:#8a93a3;margin-top:-.1rem">R$ '+(ANUAL_TOTAL[t.key]||(t.preco*12))+'/ano · ou R$ '+t.preco+'/mês no mensal</div>'
       +'<div style="font-size:.58rem;font-weight:700;letter-spacing:.09em;text-transform:uppercase;color:#6b7480;border-top:1px solid #2a3a5c;padding-top:.6rem">Inclui</div>'
       +'<div style="display:flex;flex-direction:column;gap:.32rem">'+bens+excl+'</div>'
       +cta
@@ -7073,7 +7075,7 @@ document.addEventListener('DOMContentLoaded',function(){
     else{var ls=document.getElementById('login-screen');if(ls)ls.style.display='flex';}
   });
   // Checkout in-app: abre o formulário ao clicar em "Assinar <plano>".
-  document.addEventListener('click',function(e){var b=e.target.closest?e.target.closest('.assine-buy'):null;if(b){e.preventDefault();openCheckout(b.getAttribute('data-plan'));}});
+  document.addEventListener('click',function(e){var b=e.target.closest?e.target.closest('.assine-buy'):null;if(b){e.preventDefault();window.__lpCycle='anual';openCheckout(b.getAttribute('data-plan'));}});
   var ckCloseBtn=document.getElementById('ck-close');if(ckCloseBtn)ckCloseBtn.addEventListener('click',closeCheckout);
   var ckPayBtn=document.getElementById('ck-pay');if(ckPayBtn)ckPayBtn.addEventListener('click',ckPay);
   var ckModal=document.getElementById('checkout-modal');if(ckModal)ckModal.addEventListener('click',function(e){if(e.target===ckModal)closeCheckout();});
