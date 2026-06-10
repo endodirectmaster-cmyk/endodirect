@@ -974,6 +974,11 @@ textarea{resize:vertical;line-height:1.6}
         .lp-plans.show-anual .pr .pr-a{display:inline}
         .lp-plans.show-anual .pr-note.pr-a-note{display:block}
         .lp-plan .pr-note{font-size:.74rem;color:#8a93a3;margin:-.35rem 0 .2rem;font-weight:600}
+        .lp-founder{display:flex;align-items:center;justify-content:space-between;gap:1rem;flex-wrap:wrap;max-width:920px;margin:0 auto 1.7rem;background:linear-gradient(90deg,#1a1430,#241a3d);border:1px solid #5b3aa6;border-radius:14px;padding:.85rem 1.2rem}
+        .lp-founder-txt{color:#e8e3f5;font-size:.9rem;line-height:1.55;flex:1 1 320px}
+        .lp-founder-tag{display:inline-block;background:#7c3aed;color:#fff;font-size:.64rem;font-weight:800;padding:.15rem .5rem;border-radius:999px;margin-right:.5rem;vertical-align:middle;letter-spacing:.02em}
+        .lp-founder-btn{background:#7c3aed!important;color:#fff!important;border:0!important;font-weight:800;padding:.62rem 1.1rem!important;white-space:nowrap;width:auto!important;border-radius:999px!important}
+        .lp-founder-ribbon{font-size:.74rem;font-weight:800;color:#c4b5fd;background:rgba(124,58,237,.16);border:1px solid #5b3aa6;border-radius:8px;padding:.28rem .5rem;margin:-.05rem 0 .5rem;text-align:center}
       </style>
       <h2 class="lp-sec-title">Planos</h2>
       <p class="lp-sec-sub">Escolha o pacote ideal e desbloqueie todos os benefícios da plataforma.</p>
@@ -981,10 +986,14 @@ textarea{resize:vertical;line-height:1.6}
         <button type="button" class="lp-cyc on" data-lpcycle="mensal">Mensal</button>
         <button type="button" class="lp-cyc" data-lpcycle="anual">Anual <span class="lp-cyc-off">economize até 35%</span></button>
       </div>
+      <div class="lp-founder">
+        <div class="lp-founder-txt"><span class="lp-founder-tag">🔥 LANÇAMENTO</span><b>Sócio-fundador:</b> Premium pelo preço do Gold — <b>12× R$ 69</b>, com preço travado para sempre. <span style="opacity:.85">Apenas as primeiras 100 vagas.</span></div>
+        <button class="lp-cta lp-founder-btn" data-checkout="premium" data-cycle="anual" data-coupon="FUNDADOR">Quero ser fundador →</button>
+      </div>
       <div class="lp-plans" id="lp-plans">
         <div class="lp-plan"><div class="nm">Standard</div><div class="pr"><span class="pr-m">R$ 69<small>/mês</small></span><span class="pr-a">12× R$ 45<small>/mês no anual</small></span></div><div class="pr-note pr-a-note">R$ 540/ano · economize ~35%</div><ul><li>Banco de questões</li><li>Simulado</li><li>Flashcards</li><li>Mapas mentais</li><li>Podcasts exclusivos</li><li>Mural de atualizações</li><li>Newsletter diária</li><li class="x">Resumidor de artigos</li><li class="x">Simulador de Casos</li><li class="x">Prescrição Comentada</li></ul><button class="lp-cta" style="margin-top:auto;width:100%;text-align:center" data-checkout="standard">Assinar</button></div>
         <div class="lp-plan hot"><span class="badge">Mais popular</span><div class="nm">Gold</div><div class="pr"><span class="pr-m">R$ 99<small>/mês</small></span><span class="pr-a">12× R$ 69<small>/mês no anual</small></span></div><div class="pr-note pr-a-note">R$ 828/ano · economize ~30%</div><ul><li>Banco de questões</li><li>Simulado</li><li>Flashcards</li><li>Mapas mentais</li><li>Podcasts exclusivos</li><li>Mural de atualizações</li><li>Newsletter diária</li><li>Resumidor de artigos</li><li>Prescrição Comentada</li><li class="x">Simulador de Casos</li></ul><button class="lp-cta" style="margin-top:auto;width:100%;text-align:center" data-checkout="gold">Assinar</button></div>
-        <div class="lp-plan top"><span class="badge" style="background:#8b5cf6;color:#fff">Completo</span><div class="nm">Premium</div><div class="pr"><span class="pr-m">R$ 139<small>/mês</small></span><span class="pr-a">12× R$ 97<small>/mês no anual</small></span></div><div class="pr-note pr-a-note">R$ 1.164/ano · economize ~30%</div><ul><li>Banco de questões</li><li>Simulado</li><li>Flashcards</li><li>Mapas mentais</li><li>Podcasts exclusivos</li><li>Mural de atualizações</li><li>Newsletter diária</li><li>Resumidor de artigos</li><li>Prescrição Comentada</li><li>Simulador de Casos</li><li class="course">Curso de Endocrinologia Essencial</li></ul><button class="lp-cta" style="margin-top:auto;width:100%;text-align:center" data-checkout="premium">Assinar</button></div>
+        <div class="lp-plan top"><span class="badge" style="background:#8b5cf6;color:#fff">Completo</span><div class="nm">Premium</div><div class="pr"><span class="pr-m">R$ 139<small>/mês</small></span><span class="pr-a">12× R$ 97<small>/mês no anual</small></span></div><div class="pr-note pr-a-note">R$ 1.164/ano · economize ~30%</div><div class="lp-founder-ribbon">🎟️ Sócio-fundador: 12× R$ 69 (cupom FUNDADOR)</div><ul><li>Banco de questões</li><li>Simulado</li><li>Flashcards</li><li>Mapas mentais</li><li>Podcasts exclusivos</li><li>Mural de atualizações</li><li>Newsletter diária</li><li>Resumidor de artigos</li><li>Prescrição Comentada</li><li>Simulador de Casos</li><li class="course">Curso de Endocrinologia Essencial</li></ul><button class="lp-cta" style="margin-top:auto;width:100%;text-align:center" data-checkout="premium">Assinar</button></div>
       </div>
       <p style="text-align:center;color:#6b7480;font-size:.78rem;margin-top:1.1rem">Plano anual em até 12× sem juros. O EndoTEEM é um produto à parte. Consulte na plataforma.</p>
       <script>(function(){var wrap=document.getElementById('lp-plans');var btns=document.querySelectorAll('#planos .lp-cyc');function set(an){if(wrap)wrap.classList.toggle('show-anual',an);window.__lpCycle=an?'anual':'mensal';btns.forEach(function(x){x.classList.toggle('on',(x.getAttribute('data-lpcycle')==='anual')===an);});}btns.forEach(function(b){b.addEventListener('click',function(){set(b.getAttribute('data-lpcycle')==='anual');});});})();</script>
@@ -1070,6 +1079,7 @@ textarea{resize:vertical;line-height:1.6}
       <button type="button" class="ck-seg" data-cycle="anual">Anual</button>
     </div>
     <div id="ck-price" style="font-size:.84rem;color:#9dbcff;font-weight:700;margin-bottom:.8rem"></div>
+    <div class="ck-fld" id="ck-coupon-fld" style="display:none"><label>Cupom (opcional)</label><input id="ck-coupon" type="text" placeholder="Ex.: FUNDADOR" autocomplete="off" style="text-transform:uppercase"><div id="ck-coupon-msg" style="font-size:.72rem;margin-top:.25rem;color:#8a93a3"></div></div>
     <div id="ck-method-row" style="display:none;gap:.5rem;margin-bottom:.8rem">
       <button type="button" class="ck-seg on" data-method="credit_card">Cartão</button>
       <button type="button" class="ck-seg" data-method="pix">PIX</button>
@@ -2919,7 +2929,10 @@ function loadPmConfig(cb){
 function ckBrl(c){return 'R$ '+(Number(c||0)/100).toLocaleString('pt-BR',{minimumFractionDigits:2,maximumFractionDigits:2});}
 function ckTier(){return (ENDO_TIERS||[]).filter(function(x){return x&&x.key===_ckPlan;})[0]||null;}
 function ckMonthlyCents(){var a=_pmCfg&&_pmCfg.amounts;if(a&&a[_ckPlan])return a[_ckPlan];var t=ckTier();return t?Math.round(t.preco*100):0;}
-function ckAnnualCents(){var a=_pmCfg&&_pmCfg.annual;return (a&&a[_ckPlan])||(ckMonthlyCents()*10);}
+function ckFounder(){return (_pmCfg&&_pmCfg.founder)||null;}
+function ckCouponVal(){var e=document.getElementById('ck-coupon');return e?(e.value||'').trim().toUpperCase():'';}
+function ckFounderActive(){var f=ckFounder();return !!(f&&f.enabled&&_ckCycle==='anual'&&_ckPlan===(f.plan||'premium')&&ckCouponVal()&&ckCouponVal()===String(f.coupon||'').toUpperCase());}
+function ckAnnualCents(){if(ckFounderActive())return ckFounder().annual_amount;var a=_pmCfg&&_pmCfg.annual;return (a&&a[_ckPlan])||(ckMonthlyCents()*10);}
 function ckMaxInst(){return (_pmCfg&&_pmCfg.max_installments)||12;}
 function ckSeg(rowId,attr,val){var r=document.getElementById(rowId);if(!r)return;r.querySelectorAll('['+attr+']').forEach(function(b){b.classList.toggle('on',b.getAttribute(attr)===val);});}
 function ckFillInstallments(){
@@ -2933,12 +2946,17 @@ function ckUpdateView(){
   var cardF=document.getElementById('ck-card-fields');if(cardF)cardF.style.display=(method==='credit_card')?'block':'none';
   var addrF=document.getElementById('ck-addr-fields');if(addrF)addrF.style.display=(method==='credit_card'||method==='boleto')?'block':'none';
   var instFld=document.getElementById('ck-inst-fld');if(instFld)instFld.style.display=(anual&&method==='credit_card')?'block':'none';
+  // Cupom: só no anual; mostra dica de Sócio-fundador para o Premium.
+  var cpFld=document.getElementById('ck-coupon-fld');
+  if(cpFld){var f=ckFounder();var showCp=anual&&!!(f&&f.enabled);cpFld.style.display=showCp?'block':'none';}
+  var cpMsg=document.getElementById('ck-coupon-msg');
+  if(cpMsg){if(ckFounderActive()){cpMsg.textContent='🎟️ Cupom Sócio-fundador aplicado!';cpMsg.style.color='#4ade80';}else if(anual&&ckCouponVal()){cpMsg.textContent='Cupom não aplicável a este plano.';cpMsg.style.color='#f0a0a0';}else{cpMsg.textContent='';}}
   if(anual&&method==='credit_card')ckFillInstallments();
   var rs=document.getElementById('ck-result');if(rs){rs.style.display='none';rs.innerHTML='';}
   var pr=document.getElementById('ck-price');
   if(pr){
     if(!anual){pr.textContent=ckBrl(ckMonthlyCents())+'/mês · assinatura mensal, cancele quando quiser';}
-    else{var a=ckAnnualCents();pr.textContent=ckBrl(a)+'/ano (~ '+ckBrl(Math.round(a/12))+'/mês) · pagamento único, 12 meses de acesso';}
+    else{var a=ckAnnualCents();var fnd=ckFounderActive();pr.textContent=(fnd?'🎟️ Sócio-fundador — ':'')+ckBrl(a)+'/ano (~ '+ckBrl(Math.round(a/12))+'/mês) · pagamento único, 12 meses de acesso';}
   }
   var pay=document.getElementById('ck-pay');
   if(pay)pay.textContent=!anual?'Assinar agora':(method==='pix'?'Gerar PIX':(method==='boleto'?'Gerar boleto':'Pagar agora'));
@@ -2949,12 +2967,13 @@ function openCheckout(key){
   var t=(ENDO_TIERS||[]).filter(function(x){return x&&x.key===key;})[0];
   if(!t)return;
   if(!currentUser||!currentUser.email){try{sessionStorage.setItem('endo_plan_intent',key);}catch(e){}showLoginScreen();return;}
-  var startCycle=(window.__lpCycle==='anual')?'anual':'mensal';
+  var startCycle=(window.__lpCycle==='anual')?'anual':'mensal';window.__lpCycle='';
   _ckPlan=key;_ckCycle=startCycle;_ckMethod='credit_card';
   setText('ck-plan-nome',t.nome);
   var em=document.getElementById('ck-email');if(em)em.value=currentUser.email;
   ckErr('');
   ['ck-name','ck-num','ck-exp','ck-cvv','ck-doc','ck-phone','ck-cep','ck-uf','ck-addr','ck-numero','ck-city'].forEach(function(id){var e=document.getElementById(id);if(e)e.value='';});
+  var cpEl=document.getElementById('ck-coupon');if(cpEl)cpEl.value=(window.__lpCoupon||'');window.__lpCoupon='';
   ckSeg('ck-cycle-row','data-cycle',startCycle);ckSeg('ck-method-row','data-method','credit_card');
   var pay=document.getElementById('ck-pay');if(pay)pay.disabled=false;
   loadPmConfig(function(){ckUpdateView();});
@@ -3061,7 +3080,7 @@ function ckPay(){
           return fetch('/api/checkout/subscribe',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({plan:_ckPlan,card_token:tok.id,email:email,name:name,document:doc,phone:phone,address:address})});
         }
         var inst=parseInt((document.getElementById('ck-inst')||{}).value,10)||1;
-        return fetch('/api/checkout/order',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({plan:_ckPlan,method:'credit_card',installments:inst,card_token:tok.id,email:email,name:name,document:doc,phone:phone,address:address})});
+        return fetch('/api/checkout/order',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({plan:_ckPlan,method:'credit_card',installments:inst,card_token:tok.id,email:email,name:name,document:doc,phone:phone,address:address,coupon:ckCouponVal()})});
       }).then(function(r){return r.json().catch(function(){return {};});}).then(function(d){
         if(!d||!d.ok)throw new Error(((d&&d.error)||'Pagamento não aprovado.')+((d&&d.status)?' [status: '+d.status+']':''));
         ckGrantSuccess(anual?'Plano anual ativado! Acesso liberado. 🎉':'Assinatura ativada! Acesso liberado. 🎉');
@@ -3069,7 +3088,7 @@ function ckPay(){
     }else{
       // PIX ou Boleto (anual): pagamento único
       btn.disabled=true;btn.textContent='Gerando…';
-      fetch('/api/checkout/order',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({plan:_ckPlan,method:method,email:email,name:holder,document:doc,phone:phone,address:address})})
+      fetch('/api/checkout/order',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({plan:_ckPlan,method:method,email:email,name:holder,document:doc,phone:phone,address:address,coupon:ckCouponVal()})})
       .then(function(r){return r.json().catch(function(){return {};});}).then(function(d){
         if(!d||!d.ok)throw new Error((d&&d.error)||'Não foi possível gerar a cobrança.');
         if(method==='pix')ckRenderPix(d);else ckRenderBoleto(d);
@@ -6876,7 +6895,7 @@ document.addEventListener('DOMContentLoaded',function(){
   // CTAs da landing: botões de plano (data-checkout) vão para a compra;
   // os demais ("Acessar a plataforma") vão para o login.
   var lpEl=document.getElementById('landing-screen');
-  if(lpEl)lpEl.addEventListener('click',function(e){var b=e.target.closest?e.target.closest('.lp-cta'):null;if(!b)return;e.preventDefault();var co=b.getAttribute('data-checkout');if(co){goCheckout(co);}else{showLoginScreen();}});
+  if(lpEl)lpEl.addEventListener('click',function(e){var b=e.target.closest?e.target.closest('.lp-cta'):null;if(!b)return;e.preventDefault();var co=b.getAttribute('data-checkout');if(co){if(b.getAttribute('data-cycle')==='anual')window.__lpCycle='anual';var cp=b.getAttribute('data-coupon');if(cp)window.__lpCoupon=cp;goCheckout(co);}else{showLoginScreen();}});
   // Recuperação de senha cai direto na tela de login (não na landing).
   try{if(isPasswordRecoveryUrl())showLoginScreen();}catch(e){}
   startSupabaseAuthWatcher();
@@ -6950,6 +6969,7 @@ document.addEventListener('DOMContentLoaded',function(){
   var ckModal=document.getElementById('checkout-modal');if(ckModal)ckModal.addEventListener('click',function(e){if(e.target===ckModal)closeCheckout();});
   var ckCycleRow=document.getElementById('ck-cycle-row');if(ckCycleRow)ckCycleRow.addEventListener('click',function(e){var b=e.target.closest('[data-cycle]');if(b)ckSetCycle(b.getAttribute('data-cycle'));});
   var ckMethodRow=document.getElementById('ck-method-row');if(ckMethodRow)ckMethodRow.addEventListener('click',function(e){var b=e.target.closest('[data-method]');if(b)ckSetMethod(b.getAttribute('data-method'));});
+  var ckCoupon=document.getElementById('ck-coupon');if(ckCoupon)ckCoupon.addEventListener('input',function(){ckErr('');ckUpdateView();});
   var ckExp=document.getElementById('ck-exp');if(ckExp)ckExp.addEventListener('input',function(){var v=this.value.replace(/\D+/g,'').slice(0,4);this.value=v.length>2?v.slice(0,2)+'/'+v.slice(2):v;});
   var ckNum=document.getElementById('ck-num');if(ckNum)ckNum.addEventListener('input',function(){var v=this.value.replace(/\D+/g,'').slice(0,19);this.value=v.replace(/(.{4})/g,'$1 ').trim();});
   var ckDoc=document.getElementById('ck-doc');if(ckDoc)ckDoc.addEventListener('input',function(){var v=this.value.replace(/\D+/g,'').slice(0,11);v=v.replace(/(\d{3})(\d)/,'$1.$2').replace(/(\d{3})(\d)/,'$1.$2').replace(/(\d{3})(\d{1,2})$/,'$1-$2');this.value=v;});

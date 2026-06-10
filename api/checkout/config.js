@@ -31,6 +31,12 @@ module.exports = function handler(req, res) {
       gold: Number(process.env.PAGARME_ANNUAL_GOLD_AMOUNT || 82800),
       premium: Number(process.env.PAGARME_ANNUAL_PREMIUM_AMOUNT || 116400)
     },
-    max_installments: Number(process.env.PAGARME_MAX_INSTALLMENTS || 12)
+    max_installments: Number(process.env.PAGARME_MAX_INSTALLMENTS || 12),
+    founder: {
+      enabled: String(process.env.FOUNDER_ENABLED || '1') !== '0',
+      coupon: String(process.env.FOUNDER_COUPON || 'FUNDADOR').trim().toUpperCase(),
+      plan: 'premium',
+      annual_amount: Number(process.env.PAGARME_FOUNDER_PREMIUM_AMOUNT || 82800)
+    }
   }));
 };
