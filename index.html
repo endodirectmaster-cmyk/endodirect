@@ -3606,7 +3606,7 @@ function selectOpt(letter,answer,explanation,src,idx){
   var fb=document.getElementById('qfb-'+src+'-'+idx);
   if(fb){
     if(anulada){
-      fb.innerHTML='<div class="q-fb annul">⚠️ Questão anulada pela banca — não conta na pontuação.'+(expTxt?' '+expTxt:'')+'</div>'+expImg;
+      fb.innerHTML='<div class="q-fb annul">⚠️ Questão anulada (sem gabarito oficial) — não conta na pontuação.'+(expTxt?' '+expTxt:'')+'</div>'+expImg;
     }else{
       fb.innerHTML='<div class="q-fb '+(ok?'ok':'er')+'">'+(ok?'✓ Correto!':'✗ Incorreto — Gabarito: '+esc(answer))+(expTxt?' — '+expTxt:'')+'</div>'+expImg;
     }
@@ -5441,7 +5441,7 @@ function submitSF(){
   html+='<div class="sec-title" style="margin-bottom:.5rem">Revisão das questões</div>';
   html+=sfState.qs.map(function(q,i){
     var ua=sfState.answers[i];var anulada=!q.answer;var ok=anulada||(ua===q.answer);
-    var gabHtml=anulada?'<strong style="color:#b45309">Anulada pela banca</strong>':'Gabarito: <strong>'+esc(q.answer)+'</strong>';
+    var gabHtml=anulada?'<strong style="color:#b45309">Anulada (sem gabarito)</strong>':'Gabarito: <strong>'+esc(q.answer)+'</strong>';
     var expImg=q.expImg?'<img src="'+esc(q.expImg)+'" alt="Figura do comentário" style="max-width:100%;display:block;border-radius:8px;margin-top:.4rem;border:1px solid var(--bd)">':'';
     return'<div class="card" style="margin-bottom:.5rem"><div style="display:flex;gap:.5rem;align-items:flex-start"><span class="tag '+(anulada?'tag-gold':(ok?'tag-grn':'tag-red'))+'">'+(i+1)+(anulada?' ⚠':(ok?' ✓':' ✗'))+'</span><div style="flex:1"><div style="font-size:.79rem;line-height:1.6;margin-bottom:.4rem">'+esc(q.stem)+'</div><div style="font-size:.74rem;color:var(--t2)">Sua resposta: <strong>'+(ua||'—')+'</strong> • '+gabHtml+'</div>'+(q.explanation?'<div style="font-size:.73rem;color:var(--t2);margin-top:.3rem;background:var(--s2);padding:.4rem .6rem;border-radius:var(--rs)">'+esc(q.explanation)+expImg+'</div>':expImg)+'</div></div></div>';
   }).join('');
