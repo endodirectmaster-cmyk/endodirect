@@ -522,7 +522,6 @@ textarea{resize:vertical;line-height:1.6}
 </style>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="https://cdn.jsdelivr.net/npm/tus-js-client@4/dist/tus.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/jszip@3.10.1/dist/jszip.min.js"></script>
 <script src="growth-lms.js"></script>
 </head>
 <body>
@@ -1574,7 +1573,6 @@ textarea{resize:vertical;line-height:1.6}
         <div style="padding:.6rem .72rem;border-bottom:1px solid var(--bd)"><button class="btn btn-primary btn-sm" id="btn-note-new" style="width:100%">+ Nova nota</button></div>
         <div style="padding:.45rem .65rem;border-bottom:1px solid var(--bd)"><input type="search" id="note-search" placeholder="Buscar…" style="font-size:.7rem"></div>
         <div id="note-list" style="flex:1;overflow-y:auto"></div>
-        <div style="padding:.55rem .6rem;border-top:1px solid var(--bd)"><button class="btn btn-outline btn-sm" id="btn-obsidian-export" style="width:100%" title="Baixa um .zip (cofre) com Caderno, Flashcards, Mapas mentais e Questões em Markdown pronto para o Obsidian">🔮 Exportar p/ Obsidian</button></div>
       </div>
       <div style="flex:1;display:flex;flex-direction:column;overflow:hidden">
         <div style="flex:1;display:flex;align-items:center;justify-content:center;color:var(--t3);font-size:.78rem" id="note-empty">Selecione ou crie uma nota</div>
@@ -5228,85 +5226,6 @@ function resumeArt(){
   .then(function(){btn.disabled=false;btn.innerHTML='▶ Resumir';});
 }
 
-// ── EXPORTAR PARA O OBSIDIAN ──
-// Gera um .zip (estrutura de cofre) com Caderno, Flashcards, Mapas mentais e
-// Questões salvas em Markdown compatível com o Obsidian. 100% no navegador.
-function _obsHtmlToMd(html){
-  if(!html)return'';
-  var div=document.createElement('div');div.innerHTML=html;
-  function walk(node){
-    var out='';
-    node.childNodes.forEach(function(n){
-      if(n.nodeType===3){out+=n.textContent;return;}
-      if(n.nodeType!==1)return;
-      var tag=n.tagName.toLowerCase(),inner=walk(n);
-      if(tag==='h1')out+='\n# '+inner+'\n';
-      else if(tag==='h2')out+='\n## '+inner+'\n';
-      else if(tag==='h3')out+='\n### '+inner+'\n';
-      else if(tag==='b'||tag==='strong')out+='**'+inner+'**';
-      else if(tag==='i'||tag==='em')out+='*'+inner+'*';
-      else if(tag==='a')out+='['+inner+']('+(n.getAttribute('href')||'')+')';
-      else if(tag==='br')out+='\n';
-      else if(tag==='p'||tag==='div')out+='\n'+inner+'\n';
-      else if(tag==='blockquote')out+='\n> '+inner+'\n';
-      else if(tag==='ul'||tag==='ol')out+='\n'+inner;
-      else if(tag==='li'){var p=n.parentNode&&n.parentNode.tagName?n.parentNode.tagName.toLowerCase():'';out+=(p==='ol'?'1. ':'- ')+inner+'\n';}
-      else out+=inner;
-    });
-    return out;
-  }
-  return walk(div).replace(/\n{3,}/g,'\n\n').trim();
-}
-function _obsName(s){return String(s||'sem-titulo').replace(/[\\\/:*?"<>|#^\[\]]/g,' ').replace(/\s+/g,' ').trim().slice(0,80)||'sem-titulo';}
-function _obsTag(s){return _obsName(s).replace(/\s+/g,'-').toLowerCase();}
-function _obsDate(ts){return new Date(ts||Date.now()).toISOString().slice(0,10);}
-function exportToObsidian(){
-  if(typeof JSZip==='undefined'){notify('A biblioteca de exportação ainda está carregando — tente de novo em instantes.','err');return;}
-  var counts={notas:0,fc:0,mm:0,q:0};
-  var zip=new JSZip(),root=zip.folder('Endodirect');
-  // Caderno
-  (DB.notes||[]).forEach(function(n){
-    var title=n.title||'Sem título';
-    var md='---\ntags: [endodirect, caderno]\ncriado: '+_obsDate(n.at)+'\n---\n\n# '+title+'\n\n'+_obsHtmlToMd(n.body)+'\n';
-    root.folder('Caderno').file(_obsName(title)+'.md',md);counts.notas++;
-  });
-  // Flashcards por categoria (formato do plugin Spaced Repetition: pergunta / ? / resposta)
-  var byCat={};(DB.fc||[]).forEach(function(c){var cat=c.cat||'Geral';(byCat[cat]=byCat[cat]||[]).push(c);});
-  Object.keys(byCat).forEach(function(cat){
-    var md='---\ntags: [endodirect, flashcards]\n---\n\n# Flashcards — '+cat+'\n\n#flashcard/'+_obsTag(cat)+'\n\n';
-    md+=byCat[cat].map(function(c){return (c.front||'').trim()+'\n?\n'+(c.back||'').trim();}).join('\n\n');
-    root.folder('Flashcards').file(_obsName(cat)+'.md',md+'\n');counts.fc+=byCat[cat].length;
-  });
-  // Mapas mentais (outline em bullets aninhados)
-  (DB.mm||[]).forEach(function(m){
-    var d=(typeof normalizeMMData==='function')?normalizeMMData(m.data):(m.data||{});
-    var topic=m.topic||d.root||'Mapa mental';
-    var md='---\ntags: [endodirect, mapa-mental]\ncriado: '+_obsDate(m.at)+'\n---\n\n# '+topic+'\n\n';
-    (d.branches||[]).forEach(function(b){
-      md+='- **'+(b.label||'Ramo')+'**\n';
-      (b.leaves||[]).forEach(function(lf){md+='\t- '+lf+'\n';});
-    });
-    root.folder('Mapas Mentais').file(_obsName(topic)+'.md',md);counts.mm++;
-  });
-  // Questões salvas
-  (DB.q||[]).forEach(function(q,i){
-    if(!q||!q.stem)return;
-    var area=q.area||'Endocrinologia';
-    var opts=Object.keys(q.options||{}).map(function(l){return (l===q.answer?'- [x] **'+l+')** ':'- [ ] '+l+') ')+q.options[l];}).join('\n');
-    var md='---\ntags: [endodirect, questoes, '+_obsTag(area)+']\nbanca: '+(q.inst||'Endodirect')+'\n---\n\n# Questão — '+area+'\n\n'+q.stem+'\n\n'+opts+'\n\n> [!success] Gabarito: '+(q.answer||'?')+'\n'+(q.explanation?'\n> [!note] Comentário\n> '+String(q.explanation).replace(/\n/g,'\n> ')+'\n':'');
-    root.folder('Questões').folder(_obsName(area)).file(_obsName(q.code||('questao-'+(i+1)))+'.md',md);counts.q++;
-  });
-  if(!counts.notas&&!counts.fc&&!counts.mm&&!counts.q){notify('Nada para exportar ainda — crie notas, flashcards, mapas ou salve questões primeiro.','err');return;}
-  root.file('README.md','---\ntags: [endodirect]\n---\n\n# Endodirect — cofre exportado\n\nExportado em '+_obsDate()+'.\n\n- 📓 Caderno: '+counts.notas+' nota(s)\n- 🃏 Flashcards: '+counts.fc+' card(s)\n- 🧠 Mapas mentais: '+counts.mm+'\n- ❓ Questões: '+counts.q+'\n\n**Como usar:** descompacte e mova a pasta `Endodirect` para dentro do seu cofre do Obsidian (ou abra a pasta como um cofre). Os flashcards usam o formato do plugin **Spaced Repetition** (pergunta · `?` · resposta) com a tag `#flashcard`. As questões usam *callouts* para gabarito e comentário.\n');
-  var btn=document.getElementById('btn-obsidian-export'),old=btn?btn.innerHTML:'';
-  if(btn){btn.disabled=true;btn.innerHTML='Gerando…';}
-  zip.generateAsync({type:'blob'}).then(function(blob){
-    var a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='Endodirect-Obsidian-'+_obsDate()+'.zip';
-    document.body.appendChild(a);a.click();setTimeout(function(){URL.revokeObjectURL(a.href);a.remove();},1500);
-    notify('Cofre exportado: '+counts.notas+' notas · '+counts.fc+' flashcards · '+counts.mm+' mapas · '+counts.q+' questões.','ok');
-  }).catch(function(e){notify('Erro ao gerar o arquivo: '+(e&&e.message||e),'err');}).then(function(){if(btn){btn.disabled=false;btn.innerHTML=old;}});
-}
-
 // ── CADERNO ──
 var noteId=null;
 function newNote(){
@@ -7424,7 +7343,6 @@ document.addEventListener('DOMContentLoaded',function(){
   document.getElementById('btn-note-save').addEventListener('click',saveNote);
   document.getElementById('btn-note-del').addEventListener('click',deleteNote);
   document.getElementById('note-search').addEventListener('input',renderNoteList);
-  var obsBtn=document.getElementById('btn-obsidian-export');if(obsBtn)obsBtn.addEventListener('click',exportToObsidian);
   var nb=document.getElementById('note-body');
   if(nb){
     var ph=nb.getAttribute('data-placeholder');
