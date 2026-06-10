@@ -1000,12 +1000,13 @@ textarea{resize:vertical;line-height:1.6}
         <div class="lp-plan hot"><span class="badge">Completo</span><div class="nm">Gold</div><div class="pr"><span class="pr-m">R$ 99<small>/mês</small></span><span class="pr-a">12× R$ 69<small>/mês no anual</small></span></div><div class="pr-note pr-a-note">R$ 828/ano · economize ~30%</div><div class="lp-founder-ribbon">🎟️ <b>Sócio-fundador</b> · 12× R$ 45,00<span class="lp-fr-cupom">cupom FUNDADOR</span></div><ul><li>Banco de questões</li><li>Simulado</li><li>Flashcards</li><li>Mapas mentais</li><li>Podcasts exclusivos</li><li>Mural de atualizações</li><li>Newsletter diária</li><li>Resumidor de artigos</li><li>Simulador de Casos</li><li>Prescrição Comentada</li><li class="course">Curso de Endocrinologia Essencial</li></ul><button class="lp-cta" style="margin-top:auto;width:100%;text-align:center" data-checkout="gold">Assinar</button></div>
       </div>
       <p style="text-align:center;color:#6b7480;font-size:.78rem;margin-top:1.1rem">Plano anual em até 12× sem juros. O EndoTEEM é um produto à parte. Consulte na plataforma.</p>
-      <script>(function(){window.__lpCycle='anual';var wrap=document.getElementById('lp-plans');var btns=document.querySelectorAll('#planos .lp-cyc');function set(an){if(wrap)wrap.classList.toggle('show-anual',an);window.__lpCycle=an?'anual':'mensal';btns.forEach(function(x){x.classList.toggle('on',(x.getAttribute('data-lpcycle')==='anual')===an);});}btns.forEach(function(b){b.addEventListener('click',function(){set(b.getAttribute('data-lpcycle')==='anual');});});
-      // Esconde a faixa de Sócio-fundador quando a oferta está desativada/esgotada.
-      fetch('/api/checkout/config').then(function(r){return r.json();}).then(function(d){
-        var f=d&&d.founder;var fb=document.querySelector('#planos .lp-founder');var rb=document.querySelector('#planos .lp-founder-ribbon');
-        if(!f||!f.enabled){if(fb)fb.style.display='none';if(rb)rb.style.display='none';}
-      }).catch(function(){});})();</script>
+      <script>(function(){window.__lpCycle='anual';var wrap=document.getElementById('lp-plans');var btns=document.querySelectorAll('#planos .lp-cyc');var founderOn=true;
+      // Faixa/selo de Sócio-fundador: só no plano ANUAL (o cupom só vale no anual) e enquanto houver vagas.
+      function applyFounder(){var an=window.__lpCycle==='anual';var show=founderOn&&an;var fb=document.querySelector('#planos .lp-founder');var rb=document.querySelector('#planos .lp-founder-ribbon');if(fb)fb.style.display=show?'':'none';if(rb)rb.style.display=show?'':'none';}
+      function set(an){if(wrap)wrap.classList.toggle('show-anual',an);window.__lpCycle=an?'anual':'mensal';btns.forEach(function(x){x.classList.toggle('on',(x.getAttribute('data-lpcycle')==='anual')===an);});applyFounder();}
+      btns.forEach(function(b){b.addEventListener('click',function(){set(b.getAttribute('data-lpcycle')==='anual');});});
+      applyFounder();
+      fetch('/api/checkout/config').then(function(r){return r.json();}).then(function(d){var f=d&&d.founder;founderOn=!!(f&&f.enabled);applyFounder();}).catch(function(){});})();</script>
     </section>
     <section class="lp-section">
       <h2 class="lp-sec-title">Perguntas frequentes</h2>
