@@ -551,12 +551,12 @@ textarea{resize:vertical;line-height:1.6}
         <input type="text" id="ob-outros" placeholder="Ex: Cardiologista, Intensivista, Clínico geral…">
       </div>
       <div id="ob-crm-wrap" style="display:none;margin-bottom:.85rem">
-        <div class="flbl" style="margin-bottom:.3rem">Registro profissional (para prescrição)</div>
+        <div class="flbl" style="margin-bottom:.3rem">CRM e UF <span style="color:var(--red)">*</span></div>
         <div style="display:flex;gap:.4rem">
-          <input type="text" id="ob-crm" placeholder="CRM" style="flex:1">
+          <input type="text" id="ob-crm" placeholder="Número do CRM" inputmode="numeric" style="flex:1">
           <input type="text" id="ob-uf" placeholder="UF" maxlength="2" style="width:70px;text-transform:uppercase">
         </div>
-        <div style="font-size:.68rem;color:var(--t3);margin-top:.3rem">Opcional agora — necessário para emitir receitas pela Memed.</div>
+        <div style="font-size:.68rem;color:var(--t3);margin-top:.3rem">Obrigatório — usado para emitir receitas pela Memed. Informe o número do CRM e a UF (ex.: SP).</div>
       </div>
       <div id="ob-err" style="display:none;background:var(--red-l);border:1px solid #fecaca;border-radius:var(--rs);padding:.45rem .75rem;font-size:.73rem;color:var(--red);margin-bottom:.7rem"></div>
       <button class="btn btn-primary" id="ob-submit" style="width:100%;justify-content:center;padding:.6rem">Começar →</button>
@@ -6574,11 +6574,13 @@ submitOnboard=function(){
       prof.displayPerfil='Endocrinologista';
     }
   }
-  if(perfil==='Endocrinologista'||perfil==='Outros'){
-    var obCrm=(document.getElementById('ob-crm')||{}).value;var obUf=(document.getElementById('ob-uf')||{}).value;
-    if(obCrm&&String(obCrm).trim())prof.crm=String(obCrm).trim();
-    if(obUf&&String(obUf).trim())prof.uf=String(obUf).trim().toUpperCase();
-  }
+  // CRM + UF obrigatórios para todos os perfis (necessários para a prescrição via Memed).
+  var obCrm=((document.getElementById('ob-crm')||{}).value||'').trim();
+  var obUf=((document.getElementById('ob-uf')||{}).value||'').trim().toUpperCase();
+  var UFS=['AC','AL','AP','AM','BA','CE','DF','ES','GO','MA','MT','MS','MG','PA','PB','PR','PE','PI','RJ','RN','RS','RO','RR','SC','SP','SE','TO'];
+  if(!obCrm||obCrm.replace(/\D/g,'').length<4){err.textContent='Informe um CRM válido (necessário para a prescrição via Memed).';err.style.display='block';return;}
+  if(UFS.indexOf(obUf)<0){err.textContent='Informe a UF do seu CRM (sigla de 2 letras, ex.: SP).';err.style.display='block';return;}
+  prof.crm=obCrm;prof.uf=obUf;
   lsSet('user_profile',prof);
   currentUser.sub=profileDisplayLabel(prof);
   currentUser.profile=prof;
@@ -6597,7 +6599,7 @@ function setupOnboardProfileChoices(){
   if(resid)resid.style.display=perfil==='Endocrinologista'?'block':'none';
   if(outros)outros.style.display=perfil==='Outros'?'block':'none';
   var crmw=document.getElementById('ob-crm-wrap');
-  if(crmw)crmw.style.display=(perfil==='Endocrinologista'||perfil==='Outros')?'block':'none';
+  if(crmw)crmw.style.display=perfil?'block':'none';
   [['ob-res-lbl','Residente'],['ob-endo-lbl','Endocrinologista'],['ob-outros-lbl','Outros']].forEach(function(pair){
     var el=document.getElementById(pair[0]);if(!el)return;
     var on=perfil===pair[1];
