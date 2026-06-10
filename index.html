@@ -547,6 +547,14 @@ textarea{resize:vertical;line-height:1.6}
         <div class="flbl" style="margin-bottom:.3rem">Especialidade ou área de atuação</div>
         <input type="text" id="ob-outros" placeholder="Ex: Cardiologista, Intensivista, Clínico geral…">
       </div>
+      <div id="ob-crm-wrap" style="display:none;margin-bottom:.85rem">
+        <div class="flbl" style="margin-bottom:.3rem">Registro profissional (para prescrição)</div>
+        <div style="display:flex;gap:.4rem">
+          <input type="text" id="ob-crm" placeholder="CRM" style="flex:1">
+          <input type="text" id="ob-uf" placeholder="UF" maxlength="2" style="width:70px;text-transform:uppercase">
+        </div>
+        <div style="font-size:.68rem;color:var(--t3);margin-top:.3rem">Opcional agora — necessário para emitir receitas pela Memed.</div>
+      </div>
       <div id="ob-err" style="display:none;background:var(--red-l);border:1px solid #fecaca;border-radius:var(--rs);padding:.45rem .75rem;font-size:.73rem;color:var(--red);margin-bottom:.7rem"></div>
       <button class="btn btn-primary" id="ob-submit" style="width:100%;justify-content:center;padding:.6rem">Começar →</button>
     </div>
@@ -955,14 +963,31 @@ textarea{resize:vertical;line-height:1.6}
       </div>
     </section>
     <section class="lp-section" id="planos">
+      <style>
+        .lp-cycle{display:flex;justify-content:center;gap:.25rem;margin:0 auto 1.7rem;background:#0e1726;border:1px solid #22304d;border-radius:999px;padding:.25rem;width:max-content}
+        .lp-cyc{background:transparent;border:0;color:#9aa3b2;font-weight:700;font-size:.82rem;padding:.5rem 1.2rem;border-radius:999px;cursor:pointer;display:flex;align-items:center;gap:.45rem;transition:all .15s}
+        .lp-cyc.on{background:#1e88e5;color:#fff}
+        .lp-cyc-off{font-size:.6rem;background:#16351f;color:#4ade80;padding:.12rem .45rem;border-radius:999px;font-weight:800}
+        .lp-cyc.on .lp-cyc-off{background:rgba(255,255,255,.22);color:#fff}
+        .lp-plan .pr .pr-a,.lp-plan .pr-note.pr-a-note{display:none}
+        .lp-plans.show-anual .pr .pr-m{display:none}
+        .lp-plans.show-anual .pr .pr-a{display:inline}
+        .lp-plans.show-anual .pr-note.pr-a-note{display:block}
+        .lp-plan .pr-note{font-size:.74rem;color:#8a93a3;margin:-.35rem 0 .2rem;font-weight:600}
+      </style>
       <h2 class="lp-sec-title">Planos</h2>
       <p class="lp-sec-sub">Escolha o pacote ideal e desbloqueie todos os benefícios da plataforma.</p>
-      <div class="lp-plans">
-        <div class="lp-plan"><div class="nm">Standard</div><div class="pr">R$ 50<small>/mês</small></div><ul><li>Banco de questões</li><li>Simulado</li><li>Flashcards</li><li>Mapas mentais</li><li>Podcasts exclusivos</li><li>Resumidor de artigos</li><li class="x">Simulador de Casos</li><li class="x">Prescrição Comentada</li><li class="course">Curso de Lípides</li></ul><button class="lp-cta" style="margin-top:auto;width:100%;text-align:center" data-checkout="standard">Assinar</button></div>
-        <div class="lp-plan hot"><span class="badge">Mais popular</span><div class="nm">Gold</div><div class="pr">R$ 70<small>/mês</small></div><ul><li>Banco de questões</li><li>Simulado</li><li>Flashcards</li><li>Mapas mentais</li><li>Podcasts exclusivos</li><li>Resumidor de artigos</li><li>Prescrição Comentada</li><li class="x">Simulador de Casos</li><li class="course">Curso de Hiperglicemia Hospitalar</li><li class="course">Curso de Lípides</li></ul><button class="lp-cta" style="margin-top:auto;width:100%;text-align:center" data-checkout="gold">Assinar</button></div>
-        <div class="lp-plan top"><span class="badge" style="background:#8b5cf6;color:#fff">Completo</span><div class="nm">Premium</div><div class="pr">R$ 90<small>/mês</small></div><ul><li>Banco de questões</li><li>Simulado</li><li>Flashcards</li><li>Mapas mentais</li><li>Podcasts exclusivos</li><li>Resumidor de artigos</li><li>Simulador de Casos</li><li>Prescrição Comentada</li><li class="course">Curso de Hiperglicemia Hospitalar</li><li class="course">Curso de Lípides</li><li class="course">Curso de Endocrinologia Essencial</li></ul><button class="lp-cta" style="margin-top:auto;width:100%;text-align:center" data-checkout="premium">Assinar</button></div>
+      <div class="lp-cycle">
+        <button type="button" class="lp-cyc on" data-lpcycle="mensal">Mensal</button>
+        <button type="button" class="lp-cyc" data-lpcycle="anual">Anual <span class="lp-cyc-off">2 meses grátis</span></button>
       </div>
-      <p style="text-align:center;color:#6b7480;font-size:.78rem;margin-top:1.1rem">O EndoTEEM é um produto à parte. Consulte na plataforma.</p>
+      <div class="lp-plans" id="lp-plans">
+        <div class="lp-plan"><div class="nm">Standard</div><div class="pr"><span class="pr-m">R$ 69<small>/mês</small></span><span class="pr-a">12× R$ 45<small>/mês no anual</small></span></div><div class="pr-note pr-a-note">R$ 540/ano · economize ~35%</div><ul><li>Banco de questões</li><li>Simulado</li><li>Flashcards</li><li>Mapas mentais</li><li>Podcasts exclusivos</li><li>Mural de atualizações</li><li>Newsletter diária</li><li class="x">Resumidor de artigos</li><li class="x">Simulador de Casos</li><li class="x">Prescrição Comentada</li></ul><button class="lp-cta" style="margin-top:auto;width:100%;text-align:center" data-checkout="standard">Assinar</button></div>
+        <div class="lp-plan hot"><span class="badge">Mais popular</span><div class="nm">Gold</div><div class="pr"><span class="pr-m">R$ 99<small>/mês</small></span><span class="pr-a">12× R$ 69<small>/mês no anual</small></span></div><div class="pr-note pr-a-note">R$ 828/ano · economize ~30%</div><ul><li>Banco de questões</li><li>Simulado</li><li>Flashcards</li><li>Mapas mentais</li><li>Podcasts exclusivos</li><li>Mural de atualizações</li><li>Newsletter diária</li><li>Resumidor de artigos</li><li>Prescrição Comentada</li><li class="x">Simulador de Casos</li></ul><button class="lp-cta" style="margin-top:auto;width:100%;text-align:center" data-checkout="gold">Assinar</button></div>
+        <div class="lp-plan top"><span class="badge" style="background:#8b5cf6;color:#fff">Completo</span><div class="nm">Premium</div><div class="pr"><span class="pr-m">R$ 139<small>/mês</small></span><span class="pr-a">12× R$ 97<small>/mês no anual</small></span></div><div class="pr-note pr-a-note">R$ 1.164/ano · economize ~30%</div><ul><li>Banco de questões</li><li>Simulado</li><li>Flashcards</li><li>Mapas mentais</li><li>Podcasts exclusivos</li><li>Mural de atualizações</li><li>Newsletter diária</li><li>Resumidor de artigos</li><li>Prescrição Comentada</li><li>Simulador de Casos</li><li class="course">Curso de Endocrinologia Essencial</li></ul><button class="lp-cta" style="margin-top:auto;width:100%;text-align:center" data-checkout="premium">Assinar</button></div>
+      </div>
+      <p style="text-align:center;color:#6b7480;font-size:.78rem;margin-top:1.1rem">Plano anual em até 12× sem juros. O EndoTEEM é um produto à parte. Consulte na plataforma.</p>
+      <script>(function(){var wrap=document.getElementById('lp-plans');var btns=document.querySelectorAll('#planos .lp-cyc');function set(an){if(wrap)wrap.classList.toggle('show-anual',an);window.__lpCycle=an?'anual':'mensal';btns.forEach(function(x){x.classList.toggle('on',(x.getAttribute('data-lpcycle')==='anual')===an);});}btns.forEach(function(b){b.addEventListener('click',function(){set(b.getAttribute('data-lpcycle')==='anual');});});})();</script>
     </section>
     <section class="lp-section">
       <h2 class="lp-sec-title">Perguntas frequentes</h2>
@@ -971,7 +996,7 @@ textarea{resize:vertical;line-height:1.6}
         <details><summary>O que é o Endodirect?</summary><p>Uma plataforma de educação médica em Endocrinologia e Metabologia, reunindo banco de questões comentadas, flashcards, mapas mentais, simulador de casos, simulado, prescrição, podcasts, cursos e um assistente de IA — tudo baseado nas principais diretrizes (SBEM, SBD, ADA).</p></details>
         <details><summary>Para quem é a plataforma?</summary><p>Para todos que querem se aprofundar e se manter atualizados em endocrinologia e metabologia.</p></details>
         <details><summary>Posso testar antes de assinar?</summary><p>Sim. Ao entrar, você acessa o modo degustação: flashcards e mapas mentais pré-salvos, 50 questões do banco Endodirect, o mural de atualizações por 7 dias e 3 usos de cada uma das ferramentas com IA (simulador de casos, simulado, prescrição e chat).</p></details>
-        <details><summary>Qual a diferença entre os planos?</summary><p>O <b>Standard</b> reúne banco de questões, simulado, flashcards, mapas mentais, podcasts, resumidor de artigos e o curso de Lípides. O <b>Gold</b> acrescenta a Prescrição Comentada e o curso de Hiperglicemia Hospitalar. O <b>Premium</b> inclui tudo do Gold, mais o Simulador de Casos e o curso de Endocrinologia Essencial. Veja os detalhes na seção Planos.</p></details>
+        <details><summary>Qual a diferença entre os planos?</summary><p>O <b>Standard</b> reúne banco de questões, simulado, flashcards, mapas mentais, podcasts, o mural de atualizações e a newsletter diária. O <b>Gold</b> acrescenta o Resumidor de artigos e a Prescrição Comentada. O <b>Premium</b> inclui tudo do Gold, mais o Simulador de Casos e o curso de Endocrinologia Essencial. Todos os planos podem ser pagos no mensal ou no anual (em até 12× sem juros). Veja os detalhes na seção Planos.</p></details>
         <details><summary>O EndoTEEM está incluído?</summary><p>Não. O EndoTEEM é um produto à parte, voltado a quem vai prestar a prova de especialista.</p></details>
         <details><summary>Funciona no celular?</summary><p>Sim. A plataforma é responsiva e funciona pelo navegador no computador, no iOS e no Android.</p></details>
         <details><summary>O conteúdo é atualizado com que frequência?</summary><p>Diariamente nossa equipe atualiza o mural (radar diário das principais revistas), mas também questões, flashcards, mapas mentais e demais conteúdos, sempre seguindo as recomendações das diretrizes vigentes.</p></details>
@@ -1760,14 +1785,14 @@ var GOOGLE_ADMIN_EMAILS=USERS.filter(function(u){return u.provider==='google'&&u
 //  - Cursos a parte (ex.: EndoTEEM): link avulso com metadata.scope
 //    "curso:endoteem". Combos: lista separada por virgula, ex.:
 //    { "scope": "plano:premium,curso:endoteem" }.
-var ENDO_TIER_BASE=['Banco de questões','Simulado','Flashcards','Mapas mentais','Podcasts exclusivos','Resumidor de artigos'];
+var ENDO_TIER_BASE=['Banco de questões','Simulado','Flashcards','Mapas mentais','Podcasts exclusivos','Mural','Newsletter diária'];
 var ENDO_TIERS=[
-  {key:'standard', nome:'Standard', preco:50, scope:'plano:standard', badge:'',
-   cursos:['Curso de Lípides'], excl:['Simulador de Casos','Prescrição Comentada'], url:''},
-  {key:'gold', nome:'Gold', preco:70, scope:'plano:gold', badge:'Mais popular',
-   cursos:['Prescrição Comentada','Curso de Hiperglicemia Hospitalar','Curso de Lípides'], excl:['Simulador de Casos'], url:''},
-  {key:'premium', nome:'Premium', preco:90, scope:'plano:premium', badge:'Completo',
-   cursos:['Simulador de Casos','Prescrição Comentada','Curso de Hiperglicemia Hospitalar','Curso de Lípides','Curso de Endocrinologia Essencial'], url:''}
+  {key:'standard', nome:'Standard', preco:69, scope:'plano:standard', badge:'',
+   cursos:[], excl:['Resumidor de artigos','Simulador de Casos','Prescrição Comentada'], url:''},
+  {key:'gold', nome:'Gold', preco:99, scope:'plano:gold', badge:'Mais popular',
+   cursos:['Resumidor de artigos','Prescrição Comentada'], excl:['Simulador de Casos'], url:''},
+  {key:'premium', nome:'Premium', preco:139, scope:'plano:premium', badge:'Completo',
+   cursos:['Resumidor de artigos','Simulador de Casos','Prescrição Comentada','Curso de Endocrinologia Essencial'], url:''}
 ];
 // Cursos vendidos a parte (fora dos pacotes). EndoTEEM = banco de questoes.
 var ENDO_CURSOS_AVULSOS=[
@@ -2924,12 +2949,13 @@ function openCheckout(key){
   var t=(ENDO_TIERS||[]).filter(function(x){return x&&x.key===key;})[0];
   if(!t)return;
   if(!currentUser||!currentUser.email){try{sessionStorage.setItem('endo_plan_intent',key);}catch(e){}showLoginScreen();return;}
-  _ckPlan=key;_ckCycle='mensal';_ckMethod='credit_card';
+  var startCycle=(window.__lpCycle==='anual')?'anual':'mensal';
+  _ckPlan=key;_ckCycle=startCycle;_ckMethod='credit_card';
   setText('ck-plan-nome',t.nome);
   var em=document.getElementById('ck-email');if(em)em.value=currentUser.email;
   ckErr('');
   ['ck-name','ck-num','ck-exp','ck-cvv','ck-doc','ck-phone','ck-cep','ck-uf','ck-addr','ck-numero','ck-city'].forEach(function(id){var e=document.getElementById(id);if(e)e.value='';});
-  ckSeg('ck-cycle-row','data-cycle','mensal');ckSeg('ck-method-row','data-method','credit_card');
+  ckSeg('ck-cycle-row','data-cycle',startCycle);ckSeg('ck-method-row','data-method','credit_card');
   var pay=document.getElementById('ck-pay');if(pay)pay.disabled=false;
   loadPmConfig(function(){ckUpdateView();});
   ckUpdateView();
@@ -3149,7 +3175,7 @@ var PANEL_SCOPE={
 };
 // Tier mínimo por painel: Prescrição = Gold(2); Simulador de Casos = Premium(3).
 // Os demais ficam em qualquer pacote (tier 1).
-var PANEL_MIN_TIER={rx:2, presc:2, sim:3};
+var PANEL_MIN_TIER={rx:2, presc:2, sim:3, art:2};
 // Assistente de Prescrição: oferecido apenas a quem se identificou como
 // Endocrinologista ou "Outros" (outro profissional) na janela inicial.
 function userPerfil(){var p=(currentUser&&currentUser.profile)||lsGet('user_profile')||{};return p.perfil||'';}
@@ -4716,15 +4742,108 @@ function prescAISuggest(){
     .catch(function(e){notify('Erro ao sugerir: '+(e.message||'falha'),'err');})
     .then(function(){if(btn){btn.disabled=false;btn.innerHTML='Sugerir conduta';}});
 }
+// ---------- Integração Memed (Sinapse Prescrição) ----------
+// Gated por ambiente: se /api/memed/token responder configured:false (sem
+// chaves na Vercel), mantemos o receituário próprio. Com as chaves, o módulo
+// da Memed substitui a ferramenta.
+var prescMemed={configured:null,color:'#0a7d68',script:''};
+function prescCheckMemed(cb){
+  if(prescMemed.configured!==null){cb(prescMemed.configured);return;}
+  fetch('/api/memed/token').then(function(r){return r.json();}).then(function(d){
+    prescMemed.configured=!!(d&&d.configured);
+    if(d&&d.color)prescMemed.color=d.color;
+    if(d&&d.script)prescMemed.script=d.script;
+    cb(prescMemed.configured);
+  }).catch(function(){prescMemed.configured=false;cb(false);});
+}
+function renderPrescMemed(){
+  var tool=document.getElementById('presc-tool');if(!tool)return;
+  var pr=lsGet('presc_prescritor')||{};
+  var prof=(currentUser&&currentUser.profile)||{};
+  var pnome=pr.nome||(currentUser&&currentUser.name)||'';
+  var pcrm=pr.crm||prof.crm||'';
+  var puf=pr.uf||prof.uf||'';
+  var pcpf=pr.cpf||'';
+  tool.innerHTML=
+    '<div class="card" style="margin-bottom:.7rem">'
+    +'<div style="font-size:.82rem;color:var(--t2);margin-bottom:.7rem">Prescrição digital via <b>Memed</b> — busca de medicamentos, posologia, impressão e assinatura digital, enviada ao paciente.</div>'
+    +'<div class="g2" style="margin-bottom:.5rem">'
+      +'<div class="fld2" style="margin:0"><label>Prescritor</label><input type="text" id="memed-nome" value="'+esc(pnome)+'" placeholder="Dr(a). Nome"></div>'
+      +'<div class="fld2" style="margin:0"><label>CPF do prescritor (opcional)</label><input type="text" id="memed-cpf" value="'+esc(pcpf)+'" placeholder="000.000.000-00"></div>'
+    +'</div>'
+    +'<div style="display:flex;gap:.4rem;margin-bottom:.5rem"><div class="fld2" style="margin:0;flex:1"><label>CRM</label><input type="text" id="memed-crm" value="'+esc(pcrm)+'" placeholder="CRM"></div>'
+      +'<div class="fld2" style="margin:0;width:90px"><label>UF</label><input type="text" id="memed-uf" value="'+esc(puf)+'" placeholder="UF" maxlength="2" style="text-transform:uppercase"></div></div>'
+    +'<div class="g2" style="margin-bottom:.6rem">'
+      +'<div class="fld2" style="margin:0"><label>Paciente (opcional)</label><input type="text" id="memed-pac-nome" placeholder="Nome do paciente"></div>'
+      +'<div class="fld2" style="margin:0"><label>CPF do paciente (opcional)</label><input type="text" id="memed-pac-cpf" placeholder="000.000.000-00"></div>'
+    +'</div>'
+    +'<button class="btn btn-primary" id="memed-open">💊 Abrir prescrição Memed</button>'
+    +'<div id="memed-msg" style="font-size:.72rem;color:var(--t3);margin-top:.55rem"></div>'
+    +'</div>';
+  var btn=document.getElementById('memed-open');
+  if(btn)btn.addEventListener('click',prescMemedOpen);
+}
+function prescMemedOpen(){
+  var nome=prescVal('memed-nome'),crm=prescVal('memed-crm'),uf=prescVal('memed-uf').toUpperCase(),cpf=prescVal('memed-cpf');
+  var msg=document.getElementById('memed-msg');
+  function showErr(t){if(msg){msg.style.color='var(--red)';msg.textContent=t;}}
+  if(!crm||!uf){showErr('Informe CRM e UF do prescritor.');return;}
+  lsSet('presc_prescritor',Object.assign(lsGet('presc_prescritor')||{},{nome:nome,crm:crm,uf:uf,cpf:cpf}));
+  var client=getSupabaseClient();
+  if(!client){showErr('Supabase indisponível.');return;}
+  var btn=document.getElementById('memed-open');if(btn){btn.disabled=true;btn.innerHTML=ldHTML('Conectando à Memed…');}
+  if(msg){msg.style.color='var(--t3)';msg.textContent='';}
+  client.auth.getSession().then(function(res){
+    var token=res&&res.data&&res.data.session&&res.data.session.access_token;
+    if(!token)throw new Error('Sessão expirada. Entre novamente.');
+    return fetch('/api/memed/token',{method:'POST',headers:{'Content-Type':'application/json',Authorization:'Bearer '+token},body:JSON.stringify({nome:nome,crm:crm,uf:uf,cpf:cpf})});
+  }).then(function(r){return r.json().catch(function(){return{ok:false,error:'Resposta inválida do servidor.'};});})
+  .then(function(d){
+    if(!d.ok||!d.token)throw new Error(d.error||'Falha ao conectar à Memed.');
+    return prescMemedLaunch(d.token,d.color,d.script);
+  }).then(function(){if(msg){msg.style.color='var(--grn)';msg.textContent='Módulo Memed aberto.';}})
+  .catch(function(e){showErr('Erro: '+(e&&e.message||e));})
+  .then(function(){var b=document.getElementById('memed-open');if(b){b.disabled=false;b.innerHTML='💊 Abrir prescrição Memed';}});
+}
+function prescMemedLaunch(token,color,scriptUrl){
+  return new Promise(function(resolve,reject){
+    function openModule(){
+      if(!window.MdSinapsePrescricao){reject(new Error('SDK da Memed não carregou.'));return;}
+      try{
+        MdSinapsePrescricao.event.add('core:moduleInit',function(module){
+          if(module.name==='plataforma.prescricao'){
+            var pn=prescVal('memed-pac-nome'),pc=prescVal('memed-pac-cpf');
+            if(pn){try{MdHub.command.send('plataforma.prescricao','setPaciente',{nome:pn,cpf:(pc||'').replace(/\D/g,'')});}catch(e){}}
+            try{MdHub.module.show('plataforma.prescricao');}catch(e){}
+          }
+        });
+        resolve();
+      }catch(e){reject(e);}
+    }
+    if(window.MdSinapsePrescricao){openModule();return;}
+    var s=document.createElement('script');
+    s.type='text/javascript';
+    s.src=scriptUrl||'https://integrations.memed.com.br/modulos/plataforma.sinapse-prescricao/build/sinapse-prescricao.min.js';
+    s.setAttribute('data-color',color||'#0a7d68');
+    s.setAttribute('data-token',token);
+    s.onload=openModule;
+    s.onerror=function(){reject(new Error('Falha ao carregar o SDK da Memed.'));};
+    document.body.appendChild(s);
+  });
+}
 function initPresc(){
-  renderPrescTool();
-  prescLoadCatalogo(function(){var h=document.getElementById('presc-rx-hint');if(h&&prescExtLoaded)h.textContent='Catálogo: '+prescMedAll.length.toLocaleString('pt-BR')+' medicamentos (curado + ANVISA). Busca por nome comercial ou princípio ativo.';});
-  var tool=document.getElementById('presc-tool');
-  if(!tool||prescInited)return;
-  prescInited=true;
-  tool.addEventListener('click',prescClick);
-  tool.addEventListener('input',prescInput);
-  tool.addEventListener('change',prescInput);
+  prescCheckMemed(function(on){
+    if(on){renderPrescMemed();return;}
+    // Fallback: receituário próprio (ANVISA/CMED) enquanto a Memed não estiver configurada.
+    renderPrescTool();
+    prescLoadCatalogo(function(){var h=document.getElementById('presc-rx-hint');if(h&&prescExtLoaded)h.textContent='Catálogo: '+prescMedAll.length.toLocaleString('pt-BR')+' medicamentos (curado + ANVISA). Busca por nome comercial ou princípio ativo.';});
+    var tool=document.getElementById('presc-tool');
+    if(!tool||prescInited)return;
+    prescInited=true;
+    tool.addEventListener('click',prescClick);
+    tool.addEventListener('input',prescInput);
+    tool.addEventListener('change',prescInput);
+  });
 }
 function prescList(arr){
   if(!arr||!arr.length)return'<div style="font-size:.78rem;color:var(--t3)">—</div>';
@@ -6036,6 +6155,27 @@ function bindAdmSec(sec){
         });
       }).catch(function(e){notify('Erro: '+(e&&e.message||e),'err');var b=document.getElementById('btn-adm-radar');if(b){b.disabled=false;b.textContent='🔄 Atualizar radar agora';}});
     });
+    var bNlt=document.getElementById('btn-adm-nltest');
+    if(bNlt)bNlt.addEventListener('click',function(){
+      var client=getSupabaseClient();
+      if(!client){notify('Supabase indisponível.','err');return;}
+      var myEmail=(currentUser&&currentUser.email)||'';
+      var to=prompt('Enviar uma prévia da newsletter para qual e-mail?',myEmail);
+      if(to===null)return;
+      to=String(to).trim();
+      if(!to||to.indexOf('@')<0){notify('Informe um e-mail válido.','err');return;}
+      bNlt.disabled=true;bNlt.innerHTML=ldHTML('Enviando...');
+      client.auth.getSession().then(function(res){
+        var token=res&&res.data&&res.data.session&&res.data.session.access_token;
+        if(!token)throw new Error('Sessão expirada. Entre novamente.');
+        return fetch('/api/newsletter/test?to='+encodeURIComponent(to),{method:'POST',headers:{Authorization:'Bearer '+token}});
+      }).then(function(r){return r.json().catch(function(){return{ok:false,error:'Resposta inválida do servidor.'};});})
+      .then(function(d){
+        if(!d.ok)throw new Error(d.error||'Falha ao enviar teste.');
+        notify('Prévia da newsletter enviada para '+to+'.','ok');
+      }).catch(function(e){notify('Erro: '+(e&&e.message||e),'err');})
+      .then(function(){var b=document.getElementById('btn-adm-nltest');if(b){b.disabled=false;b.innerHTML='✉️ Enviar teste da newsletter';}});
+    });
     var bCancel=document.getElementById('btn-adm-av-cancel');
     if(bCancel)bCancel.addEventListener('click',function(){admMuralShowForm=false;admMuralEdit=null;renderAdmSec('mural');});
     main.querySelectorAll('[data-adm-hideradar]').forEach(function(b){b.addEventListener('click',function(){
@@ -6274,7 +6414,7 @@ openOnboard=function(){
   document.getElementById('onboard-modal').style.display='flex';
   document.getElementById('ob-err').style.display='none';
   document.querySelectorAll('input[name="ob-perfil"]').forEach(function(r){r.checked=false;});
-  ['ob-grad','ob-resid','ob-outros'].forEach(function(id){var e=document.getElementById(id);if(e)e.value='';});
+  ['ob-grad','ob-resid','ob-outros','ob-crm','ob-uf'].forEach(function(id){var e=document.getElementById(id);if(e)e.value='';});
   setupOnboardProfileChoices();
 };
 submitOnboard=function(){
@@ -6300,6 +6440,11 @@ submitOnboard=function(){
       prof.displayPerfil='Endocrinologista';
     }
   }
+  if(perfil==='Endocrinologista'||perfil==='Outros'){
+    var obCrm=(document.getElementById('ob-crm')||{}).value;var obUf=(document.getElementById('ob-uf')||{}).value;
+    if(obCrm&&String(obCrm).trim())prof.crm=String(obCrm).trim();
+    if(obUf&&String(obUf).trim())prof.uf=String(obUf).trim().toUpperCase();
+  }
   lsSet('user_profile',prof);
   currentUser.sub=profileDisplayLabel(prof);
   currentUser.profile=prof;
@@ -6317,6 +6462,8 @@ function setupOnboardProfileChoices(){
   if(grad)grad.style.display=(perfil==='Residente'||perfil==='Endocrinologista')?'block':'none';
   if(resid)resid.style.display=perfil==='Endocrinologista'?'block':'none';
   if(outros)outros.style.display=perfil==='Outros'?'block':'none';
+  var crmw=document.getElementById('ob-crm-wrap');
+  if(crmw)crmw.style.display=(perfil==='Endocrinologista'||perfil==='Outros')?'block':'none';
   [['ob-res-lbl','Residente'],['ob-endo-lbl','Endocrinologista'],['ob-outros-lbl','Outros']].forEach(function(pair){
     var el=document.getElementById(pair[0]);if(!el)return;
     var on=perfil===pair[1];
@@ -6672,7 +6819,7 @@ admMuralSecHTML=function(){
     +'<div class="fld2"><label>Texto</label><textarea id="adm-av-text" rows="3" placeholder="Resumo em português, mantendo apenas o título no idioma original..."></textarea></div>'
     +'<div style="display:flex;gap:6px"><button class="btn btn-primary" id="btn-adm-addav">'+(admMuralEdit!==null?'💾 Salvar alterações':'+ Publicar no mural')+'</button><button class="btn btn-outline" id="btn-adm-av-cancel">Cancelar</button></div></div>'
   ):'';
-  return '<div class="adm-ph" style="display:flex;align-items:flex-start;justify-content:space-between;gap:.6rem;flex-wrap:wrap"><div><h1>Mural</h1></div><div style="display:flex;gap:.5rem;flex-wrap:wrap"><button class="btn btn-outline" id="btn-adm-radar" style="padding:.55rem 1rem">🔄 Atualizar radar agora</button><button class="btn btn-primary" id="btn-adm-newav" style="padding:.55rem 1.1rem">+ Novo aviso</button></div></div>'
+  return '<div class="adm-ph" style="display:flex;align-items:flex-start;justify-content:space-between;gap:.6rem;flex-wrap:wrap"><div><h1>Mural</h1></div><div style="display:flex;gap:.5rem;flex-wrap:wrap"><button class="btn btn-outline" id="btn-adm-radar" style="padding:.55rem 1rem">🔄 Atualizar radar agora</button><button class="btn btn-outline" id="btn-adm-nltest" style="padding:.55rem 1rem">✉️ Enviar teste da newsletter</button><button class="btn btn-primary" id="btn-adm-newav" style="padding:.55rem 1.1rem">+ Novo aviso</button></div></div>'
   +'<div class="adm-pc">'
   +formHTML
   +'<div class="card" style="margin-bottom:1.1rem"><div style="display:flex;align-items:flex-start;justify-content:space-between;gap:1rem;flex-wrap:wrap"><div style="flex:1;min-width:240px"><div style="font-size:.62rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--t3);margin-bottom:.3rem">Gestão do mural dos alunos</div><div style="font-size:1.15rem;font-weight:700;color:var(--tx);margin-bottom:.35rem">Edite avisos, notícias e comunicados importantes</div><div style="font-size:.79rem;color:var(--t2);line-height:1.55">Os cards abaixo alimentam a aba Mural do estudante. Use etiquetas por tipo de conteúdo e subespecialidade para organizar leituras e atualizações.</div></div><button class="btn btn-outline" id="btn-adm-mural-preview">👁 Pré-visualizar como aluno</button></div></div>'
