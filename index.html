@@ -2166,6 +2166,9 @@ function mergeRadarAvisos(list){
 var admAvisos=mergeRadarAvisos(lsGet('adm_avisos')||[]);
 var radarAvisos=[]; // avisos automaticos do radar (campo radar_avisos); preservado nos saves do admin
 var radarHidden=[]; // sourceIds de itens do radar ocultados pelo professor (cron nao re-insere)
+// Chaves do payload global geridas pelo SERVIDOR (cron/newsletter): preservadas
+// nos saves do admin para não serem apagadas (newsletter_extra/unsub/sent/edição).
+var globalServerKeys={};
 var admQuestoes=lsGet('adm_questoes')||[];
 var podcasts=lsGet('podcasts')||[];
 function persistPodcasts(){lsSet('podcasts',podcasts);queueRemoteStateSave();}
@@ -2201,7 +2204,8 @@ function globalStatePayload(){
   // O radar (auto/PubMed) mora em radar_avisos (gravado só pelo cron); o
   // professor grava apenas os avisos manuais em adm_avisos. A leitura
   // (member_content/public_content) mescla os dois.
-  return{provas:provasDB,adm_avisos:admAvisos.filter(function(a){return !isRadarAuto(a);}),radar_avisos:radarAvisos,radar_hidden:radarHidden,adm_questoes:admQuestoes,podcasts:podcasts,adm_cursos:admCursos,adm_estudantes:admEstudantes,mm_shared:sharedMM};
+  // Mescla as chaves geridas pelo servidor (newsletter_*) para NÃO apagá-las no save.
+  return Object.assign({},globalServerKeys,{provas:provasDB,adm_avisos:admAvisos.filter(function(a){return !isRadarAuto(a);}),radar_avisos:radarAvisos,radar_hidden:radarHidden,adm_questoes:admQuestoes,podcasts:podcasts,adm_cursos:admCursos,adm_estudantes:admEstudantes,mm_shared:sharedMM});
 }
 function currentStatePayload(){
   return Object.assign({},userStatePayload(),globalStatePayload());
@@ -2237,6 +2241,8 @@ function applyStatePayload(payload){
   if(payload.deg_trials&&typeof payload.deg_trials==='object')degTrials=payload.deg_trials;
   if(Array.isArray(payload.acessos))userAcessos=payload.acessos;
   if(Array.isArray(payload.cursos))catalogoCursos=payload.cursos;
+  // Preserva chaves geridas pelo servidor (newsletter) para o save do admin não apagá-las.
+  ['newsletter_extra','newsletter_unsub','newsletter_sent','newsletter'].forEach(function(k){if(payload[k]!==undefined)globalServerKeys[k]=payload[k];});
   REMOTE_STATE_KEYS.forEach(function(k){if(payload[k]!==undefined)lsSet(k,payload[k]);});
 }
 function renderDegustacaoBar(){
