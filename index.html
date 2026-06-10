@@ -3602,7 +3602,7 @@ function selectOpt(letter,answer,explanation,src,idx){
     else if(l===letter&&!ok)el.classList.add('wrong');
   });
   var expImg=(q&&q.expImg)?'<img src="'+esc(q.expImg)+'" alt="Figura do comentário" style="max-width:100%;display:block;border-radius:8px;margin:.5rem 0;border:1px solid var(--bd)">':'';
-  var expTxt=esc(String(explanation||'').replace(/&quot;/g,'"'));
+  var expTxt=esc(String(explanation||'').replace(/&quot;/g,'"')).replace(/\n/g,'<br>');
   var fb=document.getElementById('qfb-'+src+'-'+idx);
   if(fb){
     if(anulada){
