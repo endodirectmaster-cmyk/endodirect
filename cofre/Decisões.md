@@ -8,6 +8,7 @@ atualizado: 2026-06-10
 Log de decisões de produto e técnicas (mais recentes no topo).
 
 ## 2026-06
+- **CRM + UF obrigatórios no onboarding** (todos os perfis), para alimentar o Memed sem redigitar. Ver [[Integrações]].
 - **Cofre de conhecimento no repo** (este cofre) em vez de exportação Obsidian para alunos. O Obsidian é para organizar a IA/projeto, não recurso de estudante. Botão de export removido (#172). Ver [[README]].
 - **Calculadoras:** adicionar TmP/GFR (Payne) e escore-z de estatura/idade (OMS+CDC, LMS). OMS como referência padrão. Ver [[Calculadoras]].
 - **Newsletter personalizada** por subespecialidade escolhida pelo aluno no Perfil.
