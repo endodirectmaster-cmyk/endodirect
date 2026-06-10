@@ -988,21 +988,19 @@ textarea{resize:vertical;line-height:1.6}
         <button type="button" class="lp-cyc" data-lpcycle="anual">Anual <span class="lp-cyc-off">economize até 35%</span></button>
       </div>
       <div class="lp-founder">
-        <div class="lp-founder-txt"><span class="lp-founder-tag">🔥 LANÇAMENTO</span><b>Sócio-fundador:</b> Gold pelo preço do Standard — <b>12× R$ 45</b>, com preço travado para sempre. <span class="lp-founder-left" style="opacity:.85">Apenas as primeiras 100 vagas.</span></div>
+        <div class="lp-founder-txt"><span class="lp-founder-tag">🔥 LANÇAMENTO</span><b>Sócio-fundador:</b> Gold pelo preço do Standard — <b>12× R$ 45,00</b>, com preço travado para sempre.</div>
         <button class="lp-cta lp-founder-btn" data-checkout="gold" data-cycle="anual" data-coupon="FUNDADOR">Quero ser fundador</button>
       </div>
       <div class="lp-plans" id="lp-plans">
         <div class="lp-plan"><div class="nm">Standard</div><div class="pr"><span class="pr-m">R$ 69<small>/mês</small></span><span class="pr-a">12× R$ 45<small>/mês no anual</small></span></div><div class="pr-note pr-a-note">R$ 540/ano · economize ~35%</div><ul><li>Banco de questões</li><li>Simulado</li><li>Flashcards</li><li>Mapas mentais</li><li>Podcasts exclusivos</li><li>Mural de atualizações</li><li>Newsletter diária</li><li>Resumidor de artigos</li><li>Simulador de Casos</li><li class="x">Prescrição Comentada</li></ul><button class="lp-cta" style="margin-top:auto;width:100%;text-align:center" data-checkout="standard">Assinar</button></div>
-        <div class="lp-plan hot"><span class="badge">Completo</span><div class="nm">Gold</div><div class="pr"><span class="pr-m">R$ 99<small>/mês</small></span><span class="pr-a">12× R$ 69<small>/mês no anual</small></span></div><div class="pr-note pr-a-note">R$ 828/ano · economize ~30%</div><div class="lp-founder-ribbon">🎟️ Sócio-fundador: 12× R$ 45 (cupom FUNDADOR)</div><ul><li>Banco de questões</li><li>Simulado</li><li>Flashcards</li><li>Mapas mentais</li><li>Podcasts exclusivos</li><li>Mural de atualizações</li><li>Newsletter diária</li><li>Resumidor de artigos</li><li>Simulador de Casos</li><li>Prescrição Comentada</li><li class="course">Curso de Endocrinologia Essencial</li></ul><button class="lp-cta" style="margin-top:auto;width:100%;text-align:center" data-checkout="gold">Assinar</button></div>
+        <div class="lp-plan hot"><span class="badge">Completo</span><div class="nm">Gold</div><div class="pr"><span class="pr-m">R$ 99<small>/mês</small></span><span class="pr-a">12× R$ 69<small>/mês no anual</small></span></div><div class="pr-note pr-a-note">R$ 828/ano · economize ~30%</div><div class="lp-founder-ribbon">🎟️ Sócio-fundador: 12× R$ 45,00 (cupom FUNDADOR)</div><ul><li>Banco de questões</li><li>Simulado</li><li>Flashcards</li><li>Mapas mentais</li><li>Podcasts exclusivos</li><li>Mural de atualizações</li><li>Newsletter diária</li><li>Resumidor de artigos</li><li>Simulador de Casos</li><li>Prescrição Comentada</li><li class="course">Curso de Endocrinologia Essencial</li></ul><button class="lp-cta" style="margin-top:auto;width:100%;text-align:center" data-checkout="gold">Assinar</button></div>
       </div>
       <p style="text-align:center;color:#6b7480;font-size:.78rem;margin-top:1.1rem">Plano anual em até 12× sem juros. O EndoTEEM é um produto à parte. Consulte na plataforma.</p>
       <script>(function(){var wrap=document.getElementById('lp-plans');var btns=document.querySelectorAll('#planos .lp-cyc');function set(an){if(wrap)wrap.classList.toggle('show-anual',an);window.__lpCycle=an?'anual':'mensal';btns.forEach(function(x){x.classList.toggle('on',(x.getAttribute('data-lpcycle')==='anual')===an);});}btns.forEach(function(b){b.addEventListener('click',function(){set(b.getAttribute('data-lpcycle')==='anual');});});
-      // Vagas de Sócio-fundador: atualiza/esconde a faixa conforme as vagas restantes.
+      // Esconde a faixa de Sócio-fundador quando a oferta está desativada/esgotada.
       fetch('/api/checkout/config').then(function(r){return r.json();}).then(function(d){
         var f=d&&d.founder;var fb=document.querySelector('#planos .lp-founder');var rb=document.querySelector('#planos .lp-founder-ribbon');
-        if(!f||!f.enabled){if(fb)fb.style.display='none';if(rb)rb.style.display='none';return;}
-        var lim=f.limit||100;var rem=(typeof f.remaining==='number')?f.remaining:null;var left=document.querySelector('#planos .lp-founder-left');
-        if(left)left.textContent=(rem!=null)?('Restam '+rem+' de '+lim+' vagas.'):('Apenas as primeiras '+lim+' vagas.');
+        if(!f||!f.enabled){if(fb)fb.style.display='none';if(rb)rb.style.display='none';}
       }).catch(function(){});})();</script>
     </section>
     <section class="lp-section">
@@ -2846,12 +2844,10 @@ function renderAssineFounder(){
   loadPmConfig(function(cfg){
     var f=cfg&&cfg.founder;
     if(!f||!f.enabled){hide();return;}
-    var lim=f.limit||100;var rem=(typeof f.remaining==='number')?f.remaining:null;
-    var vagas=(rem!=null)?('Restam <b>'+rem+'</b> de '+lim+' vagas.'):('Apenas as primeiras '+lim+' vagas.');
     box.innerHTML='<div style="display:flex;align-items:center;justify-content:space-between;gap:1rem;flex-wrap:wrap;background:linear-gradient(90deg,#1a1430,#241a3d);border:1px solid #5b3aa6;border-radius:14px;padding:.85rem 1.2rem">'
       +'<div style="color:#e8e3f5;font-size:.9rem;line-height:1.55;flex:1 1 300px">'
         +'<span style="display:inline-block;background:#7c3aed;color:#fff;font-size:.64rem;font-weight:800;padding:.15rem .5rem;border-radius:999px;margin-right:.5rem;letter-spacing:.02em">🔥 LANÇAMENTO</span>'
-        +'<b>Sócio-fundador:</b> Gold pelo preço do Standard — <b>12× R$ 45</b>, preço travado para sempre. <span style="opacity:.85">'+vagas+'</span></div>'
+        +'<b>Sócio-fundador:</b> Gold pelo preço do Standard — <b>12× R$ 45,00</b>, preço travado para sempre.</div>'
       +'<button type="button" class="btn" id="assine-founder-btn" style="background:#7c3aed;color:#fff;border:0;font-weight:800;width:auto;border-radius:999px;padding:.62rem 1.1rem;white-space:nowrap">Quero ser fundador</button>'
     +'</div>';
     box.style.display='block';
