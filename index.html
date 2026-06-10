@@ -6603,9 +6603,19 @@ function renderPerfil(){
       +row('Função','Aluno',true)
     +'</div>';
   }
+  // Card de preferências da newsletter (temas de interesse por subespecialidade)
+  var nlSubs=Array.isArray(prof.newsletterSubs)?prof.newsletterSubs:[];
+  var nlBoxes=MURAL_SUBSPECIALTY_FILTERS.map(function(s){
+    var on=nlSubs.indexOf(s)>=0;
+    return '<label style="display:flex;align-items:center;gap:.45rem;font-size:.78rem;padding:.4rem .55rem;border:1px solid var(--bd);border-radius:var(--rs);cursor:pointer;background:'+(on?'#eff6ff':'#fff')+'"><input type="checkbox" class="pf-nl-sub" value="'+esc(s)+'"'+(on?' checked':'')+' style="margin:0;cursor:pointer"> '+esc(s)+'</label>';
+  }).join('');
+  var nlCard='<div class="card" style="margin-top:1rem"><div class="card-head"><span class="card-title">📬 Newsletter — temas de interesse</span></div>'
+    +'<p style="font-size:.78rem;color:var(--t2);margin:.1rem 0 .8rem">Escolha as subespecialidades que mais te interessam e a sua newsletter diária priorizará esses temas. Sem nenhuma marcada, você recebe os destaques gerais do dia.</p>'
+    +'<div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:.5rem;margin-bottom:.85rem">'+nlBoxes+'</div>'
+    +'<div style="display:flex;align-items:center;gap:.7rem"><button class="btn btn-primary" id="btn-pf-nl-save">💾 Salvar preferências</button><span id="pf-nl-msg" style="font-size:.76rem;font-weight:600"></span></div></div>';
   body.innerHTML='<div class="ph" style="display:flex;align-items:flex-start;justify-content:space-between;flex-wrap:wrap;gap:.6rem"><div><h1>Meu perfil</h1><p>Gerencie seus dados cadastrais.</p></div>'+(perfilEdit?'':'<button class="btn btn-primary" id="btn-perfil-edit">✏️ Editar perfil</button>')+'</div>'
     +'<div class="card" style="margin-bottom:1rem"><div style="display:flex;align-items:center;gap:1rem"><div class="tb-avatar" style="width:58px;height:58px;font-size:1.3rem;background:var(--navy);border-radius:14px">'+esc(nome.charAt(0))+'</div><div style="flex:1"><div style="font-size:1.3rem;font-weight:800">'+esc(nome)+'</div><div style="font-size:.8rem;color:var(--t2)">'+esc(label)+'</div><div style="margin-top:.4rem"><span class="tag tag-blue">'+esc(email)+'</span></div></div></div></div>'
-    +inner;
+    +inner+(perfilEdit?'':nlCard);
   wirePerfil();
 }
 function wirePerfil(){
@@ -6644,6 +6654,9 @@ function wirePerfil(){
         prof.residencia=resid;prof.displayPerfil='Endocrinologista';
       }
     }
+    var _old=lsGet('user_profile')||{};
+    if(_old.newsletterSubs)prof.newsletterSubs=_old.newsletterSubs; // preserva preferências da newsletter
+    if(_old.crm)prof.crm=_old.crm;if(_old.uf)prof.uf=_old.uf; // preserva CRM/UF (prescrição)
     lsSet('user_profile',prof);
     if(currentUser){currentUser.name=nome;currentUser.profile=prof;currentUser.sub=profileDisplayLabel(prof);}
     queueRemoteStateSave();
@@ -6654,6 +6667,25 @@ function wirePerfil(){
     try{markLockedNavItems();}catch(e){} // atualiza visibilidade do Assistente de Prescrição
     notify('Perfil atualizado!','ok');
     renderPerfil();
+  });
+  // Realça visualmente o quadrado marcado
+  document.querySelectorAll('.pf-nl-sub').forEach(function(c){
+    c.addEventListener('change',function(){
+      var lbl=c.closest('label');if(lbl)lbl.style.background=c.checked?'#eff6ff':'#fff';
+    });
+  });
+  // Salvar preferências de newsletter
+  var nlSave=document.getElementById('btn-pf-nl-save');
+  if(nlSave)nlSave.addEventListener('click',function(){
+    var subs=[];
+    document.querySelectorAll('.pf-nl-sub:checked').forEach(function(c){subs.push(c.value);});
+    var prof=lsGet('user_profile')||{};
+    prof.newsletterSubs=subs;
+    lsSet('user_profile',prof);
+    if(currentUser)currentUser.profile=prof;
+    queueRemoteStateSave();
+    var msg=document.getElementById('pf-nl-msg');
+    if(msg){msg.textContent=subs.length?('Salvo · '+subs.length+' tema(s) selecionado(s).'):'Salvo · você receberá os destaques gerais.';msg.style.color='var(--grn)';}
   });
 }
 genFC=function(){
