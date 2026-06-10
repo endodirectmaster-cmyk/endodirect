@@ -6678,7 +6678,7 @@ function muralNoticeCardHTML(a,admin){
     +'<div class="mural-date">'+dateBR(a.at)+'</div>'
     +'<div class="mural-text">'+esc(a.texto||'Comunicado publicado pela equipe Endodirect.')+'</div>'
     +'<div class="mural-source">Fonte: '+source+'</div>'
-    +(admin?'<div class="mural-card-actions">'+(isRadarAuto(a)?'<button class="btn btn-outline btn-sm" data-adm-hideradar="'+esc(avisoKeyStr(a))+'">🙈 Ocultar</button>':'<button class="btn btn-outline btn-sm" data-adm-editav="'+i+'">Editar</button><button class="btn btn-outline btn-sm" data-adm-delav="'+i+'" style="color:var(--red);border-color:var(--red)">🗑 Excluir</button>')+'</div>':'')
+    +(admin?'<div class="mural-card-actions">'+(isRadarAuto(a)?'<button class="btn btn-outline btn-sm" data-adm-editav="'+i+'">✏️ Editar</button><button class="btn btn-outline btn-sm" data-adm-hideradar="'+esc(avisoKeyStr(a))+'">🙈 Ocultar</button>':'<button class="btn btn-outline btn-sm" data-adm-editav="'+i+'">Editar</button><button class="btn btn-outline btn-sm" data-adm-delav="'+i+'" style="color:var(--red);border-color:var(--red)">🗑 Excluir</button>')+'</div>':'')
     +'</article>';
 }
 initMural=function(){
@@ -6931,8 +6931,15 @@ bindAdmSec=function(sec){
       };
       dados=normalizeMuralAviso(dados,defaultMuralMap());
       if(admMuralEdit!==null){
-        dados.at=admAvisos[admMuralEdit].at||Date.now();
-        admAvisos[admMuralEdit]=Object.assign({},admAvisos[admMuralEdit],dados);
+        var origAv=admAvisos[admMuralEdit];
+        dados.at=(origAv&&origAv.at)||Date.now();
+        var updatedAv=Object.assign({},origAv,dados);
+        admAvisos[admMuralEdit]=updatedAv;
+        // Card automático (radar/breaking): sincroniza no radarAvisos pela chave original, senão a edição não persiste (globalStatePayload usa radarAvisos).
+        if(isRadarAuto(updatedAv)){
+          var _rk=avisoKeyStr(origAv);
+          for(var _ri=0;_ri<radarAvisos.length;_ri++){if(avisoKeyStr(radarAvisos[_ri])===_rk){radarAvisos[_ri]=updatedAv;break;}}
+        }
         notify('Aviso atualizado.','ok');
       }else{
         dados.at=Date.now();
