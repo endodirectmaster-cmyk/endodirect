@@ -16,7 +16,7 @@ atualizado: 2026-06-10
 
 ## RLS e RPCs (security-definer)
 - `endodirect_member_content` — conteúdo do membro.
-- `endodirect_admin_overview` — visão do admin (inclui contagem de fundadores).
+- `endodirect_admin_overview` — visão do admin (analytics). Agrega do `app_state` dos alunos. Retorna: `alunos`, `ativos`, `respostas`, `acertos`, `simulados`, `flashcards`, `mapas`, `ultima_atividade`, `por_area`, `simulado_media`, `simulados_recentes`, e **origem geográfica**: `com_uf`/`por_uf` (UF de `user_profile.uf` com fallback `ck_billing.uf` — de todos) e `com_cidade`/`por_cidade` (cidade de `ck_billing.city` — só de quem fez checkout). A definição **não** está no `supabase-setup.sql`; é mantida por migration na base (ex.: `admin_overview_add_geo`). O check de admin é via `auth.jwt()->>'email'` — não dá para chamar pela service role.
 
 ## Shapes de dados (cliente)
 
