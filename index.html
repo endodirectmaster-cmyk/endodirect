@@ -522,6 +522,7 @@ textarea{resize:vertical;line-height:1.6}
 </style>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="https://cdn.jsdelivr.net/npm/tus-js-client@4/dist/tus.min.js"></script>
+<script src="growth-lms.js"></script>
 </head>
 <body>
 <div class="modal-bg" id="onboard-modal">
@@ -1703,6 +1704,32 @@ var AREAS_CRONO=[
   {name:'Endocrinologia Masculina',color:'#6366f1'},{name:'Endocrinologia Feminina',color:'#d946ef'},
   {name:'Transgeneridade',color:'#f97316'}
 ];
+// Helpers das calculadoras de crescimento (escore-z por LMS). Dados oficiais
+// CDC 2000 / OMS 2006+2007 carregados em window.GROWTH_LMS (growth-lms.js).
+function _gLMSrow(tab,age){
+  if(!tab||!tab.length)return null;
+  if(age<=tab[0][0])return tab[0];
+  if(age>=tab[tab.length-1][0])return tab[tab.length-1];
+  for(var i=1;i<tab.length;i++){if(tab[i][0]>=age){var a=tab[i-1],b=tab[i],t=(age-a[0])/(b[0]-a[0]);return[age,a[1]+t*(b[1]-a[1]),a[2]+t*(b[2]-a[2]),a[3]+t*(b[3]-a[3])];}}
+  return tab[tab.length-1];
+}
+function growthZ(base,sex,ageMo,x){
+  var G=window.GROWTH_LMS;if(!G||!G[base]||!G[base][sex])return NaN;
+  var r=_gLMSrow(G[base][sex],ageMo);if(!r)return NaN;
+  var L=r[1],M=r[2],S=r[3];if(!(M>0)||!(x>0))return NaN;
+  return Math.abs(L)<1e-7?Math.log(x/M)/S:(Math.pow(x/M,L)-1)/(L*S);
+}
+function zToPct(z){ // CDF normal padrão × 100 (Abramowitz-Stegun 7.1.26)
+  if(!isFinite(z))return NaN;
+  var az=Math.abs(z),t=1/(1+0.2316419*az),d=0.3989422804*Math.exp(-az*az/2);
+  var q=d*t*(0.31938153+t*(-0.356563782+t*(1.781477937+t*(-1.821255978+t*1.330274429))));
+  return (z>=0?1-q:q)*100;
+}
+function fmtPct(p){ // rótulo de percentil amigável
+  if(!isFinite(p))return'';
+  if(p<0.1)return'< P0,1';if(p>99.9)return'> P99,9';
+  return'P'+(p<1||p>99?(Math.round(p*10)/10):Math.round(p));
+}
 var CALCS=[
   {id:'imc',name:'IMC',area:'Antropometria',desc:'Índice de Massa Corporal',
    fields:[{id:'imc_peso',label:'Peso (kg)',type:'num'},{id:'imc_alt',label:'Altura (cm)',type:'num'}],
@@ -1744,6 +1771,11 @@ var CALCS=[
    calc:function(v){var sp=parseFloat(v.trp_sp)||0,up=parseFloat(v.trp_up)||0,scr=parseFloat(v.trp_scr)||0,ucr=parseFloat(v.trp_ucr)||0;if(sp<=0||ucr<=0)return 0;return (1-((up*scr)/(sp*ucr)))*100;},
    interp:function(s){return s<85?{t:'Reabsorção reduzida — perda renal de fosfato (ex.: hiperPTH, raquitismo hipofosfatêmico)',c:'tag-gold'}:s<=95?{t:'Reabsorção normal (85–95%)',c:'tag-grn'}:{t:'Reabsorção aumentada (ex.: hipoparatireoidismo)',c:'tag-gold'};},
    unit:'%',note:'TRP = [1 − (P urinário × Cr sérica) ÷ (P sérico × Cr urinária)] × 100. A fração de excreção de fosfato (FEPi) = 100 − TRP. Use amostra em jejum; referência ~85–95%.'},
+  {id:'tmpgfr',name:'TmP/GFR (limiar renal de fosfato)',area:'Osteometabolismo',desc:'Limiar tubular máximo de fosfato corrigido pela TFG (Payne)',
+   fields:[{id:'tmp_sp',label:'Fósforo sérico (mg/dL)',type:'num'},{id:'tmp_up',label:'Fósforo urinário (mg/dL)',type:'num'},{id:'tmp_scr',label:'Creatinina sérica (mg/dL)',type:'num'},{id:'tmp_ucr',label:'Creatinina urinária (mg/dL)',type:'num'}],
+   calc:function(v){var sp=parseFloat(v.tmp_sp)||0,up=parseFloat(v.tmp_up)||0,scr=parseFloat(v.tmp_scr)||0,ucr=parseFloat(v.tmp_ucr)||0;if(sp<=0||ucr<=0||scr<=0||up<=0)return 0;var trp=1-((up*scr)/(sp*ucr));if(trp<0)trp=0;if(trp>1)trp=1;return trp<=0.86?trp*sp:(0.3*trp/(1-0.8*trp))*sp;},
+   interp:function(s,v){if(s<=0)return{t:'Preencha fósforo e creatinina (sérico e urinário).',c:'tag-gold'};return s<2.5?{t:'Baixo (< 2,5 mg/dL) — perda renal de fosfato (hiperPTH, raquitismo hipofosfatêmico/FGF23, sínd. de Fanconi, TIO)',c:'tag-gold'}:s<=4.2?{t:'Normal no adulto (~2,5–4,2 mg/dL)',c:'tag-grn'}:{t:'Elevado (> 4,2 mg/dL) — reabsorção aumentada (hipoparatireoidismo, acromegalia)',c:'tag-gold'};},
+   unit:'mg/dL',note:'TmP/GFR = limiar tubular máximo de reabsorção de fosfato corrigido pela TFG (fórmula de Payne, 1998). Calcula a TRP = 1 − (P urinário × Cr sérica)/(P sérico × Cr urinária); se TRP ≤ 0,86 → TmP/GFR = TRP × P sérico; se TRP > 0,86 → TmP/GFR = [0,3 × TRP/(1 − 0,8 × TRP)] × P sérico. Use urina em jejum (2ª da manhã) e sangue simultâneos. Referência no adulto ~2,5–4,2 mg/dL (0,8–1,35 mmol/L); crianças/adolescentes têm limiar mais alto (interprete por idade). Marcador-chave nas hipofosfatemias por perda renal (ex.: raquitismo hipofosfatêmico ligado ao X, osteomalácia tumoral por FGF23).'},
   {id:'lt4',name:'Dose de levotiroxina por peso',area:'Tireoide',desc:'Dose diária estimada de LT4',
    fields:[{id:'lt4_peso',label:'Peso (kg)',type:'num'},{id:'lt4_ctx',label:'Situação',type:'select',opts:['Reposição plena (1,6 mcg/kg)','Idoso/cardiopata — início (0,5 mcg/kg)','Supressão pós-câncer (2,1 mcg/kg)'],vals:[1.6,0.5,2.1]}],
    calc:function(v){var p=parseFloat(v.lt4_peso)||0;var f=parseFloat(v.lt4_ctx)||1.6;return p*f;},
@@ -1774,6 +1806,17 @@ var CALCS=[
    calc:function(v){var p=parseFloat(v.alvo_pai)||0,m=parseFloat(v.alvo_mae)||0,a=parseFloat(v.alvo_sexo);if(isNaN(a))a=13;if(p<=0||m<=0)return 0;return (p+m+a)/2;},
    interp:function(s){if(s<=0)return{t:'Preencha as alturas dos pais',c:'tag-gold'};var lo=Math.round((s-8.5)*10)/10,hi=Math.round((s+8.5)*10)/10;return{t:'Faixa-alvo: '+lo+'–'+hi+' cm (±8,5)',c:'tag-blue'};},
    unit:'cm',note:'Método de Tanner: menino = (pai + mãe + 13)/2; menina = (pai + mãe − 13)/2. A faixa-alvo abrange ±8,5 cm (≈ ±2 DP). Compare com o canal de crescimento atual da criança.'},
+  {id:'zha',name:'Escore-z de estatura/idade',area:'Crescimento',desc:'Z-score de estatura (ou comprimento) para idade — OMS e CDC',
+   fields:[{id:'zha_alt',label:'Estatura / comprimento (cm)',type:'num'},{id:'zha_idade',label:'Idade (meses)',type:'num'},{id:'zha_sexo',label:'Sexo',type:'select',opts:['Masculino','Feminino'],vals:[0,1]},{id:'zha_base',label:'Referência',type:'select',opts:['OMS (0–19 anos)','CDC (2–20 anos)'],vals:[0,1]}],
+   calc:function(v){var alt=parseFloat(v.zha_alt),mo=parseFloat(v.zha_idade);if(isNaN(alt)||alt<=0||isNaN(mo)||mo<0)return NaN;var sex=parseInt(v.zha_sexo)===1?'F':'M';var base=parseInt(v.zha_base)===1?'cdc':'who';if(base==='cdc'&&(mo<24||mo>240))return NaN;if(base==='who'&&mo>228)return NaN;return growthZ(base,sex,mo,alt);},
+   interp:function(s,v){var alt=parseFloat(v.zha_alt),mo=parseFloat(v.zha_idade);var base=parseInt(v.zha_base)===1?'cdc':'who';
+     if(isNaN(alt)||alt<=0||isNaN(mo)||mo<0)return{t:'Informe a estatura (cm) e a idade (meses).',c:'tag-gold'};
+     if(base==='cdc'&&(mo<24||mo>240))return{t:'A referência CDC (estatura/idade) cobre 24–240 meses. Para < 2 anos, use a OMS.',c:'tag-gold'};
+     if(base==='who'&&mo>228)return{t:'A referência OMS (estatura/idade) cobre 0–228 meses (0–19 anos).',c:'tag-gold'};
+     if(!isFinite(s))return{t:'Dados insuficientes para o cálculo.',c:'tag-gold'};
+     var pct=fmtPct(zToPct(s));var px=pct?' · '+pct:'';
+     return s<-3?{t:'Baixa estatura grave (< −3 DP)'+px,c:'tag-red'}:s<-2?{t:'Baixa estatura (< −2 DP) — investigar'+px,c:'tag-gold'}:s<=2?{t:'Estatura adequada para a idade'+px,c:'tag-grn'}:s<=3?{t:'Estatura elevada (> +2 DP)'+px,c:'tag-gold'}:{t:'Estatura muito elevada (> +3 DP)'+px,c:'tag-gold'};},
+   unit:'escore-z',note:'Escore-z de estatura-para-idade (comprimento até 24 meses) calculado pelo método LMS oficial: z = [(estatura/M)^L − 1] ÷ (L × S). Bases: OMS (WHO Child Growth Standards 2006, 0–5 anos + WHO Growth Reference 2007, 5–19 anos) e CDC 2000 (2–20 anos). A OMS é a referência recomendada no Brasil (Ministério da Saúde/SBP), sobretudo até 5 anos. Baixa estatura = z < −2 (≈ P3); abaixo de −3 é grave. Interpolação linear entre meses. Idade em meses (ex.: 8 anos = 96; use a calculadora de idade corrigida se prematuro).'},
   {id:'velcresc',name:'Velocidade de crescimento',area:'Crescimento',desc:'Ganho estatural anualizado',
    fields:[{id:'vc_a2',label:'Altura atual (cm)',type:'num'},{id:'vc_a1',label:'Altura anterior (cm)',type:'num'},{id:'vc_int',label:'Intervalo entre as medidas (meses)',type:'num'}],
    calc:function(v){var a2=parseFloat(v.vc_a2)||0,a1=parseFloat(v.vc_a1)||0,m=parseFloat(v.vc_int)||0;if(m<=0)return 0;return (a2-a1)/(m/12);},
@@ -4418,9 +4461,10 @@ function calcUpdate(){
   var res=document.getElementById('calc-result');if(!res)return;
   if(allEmpty){res.innerHTML='';return;}
   var s=c.calc(v);
-  var rounded=Math.round(s*100)/100;
+  var ok=isFinite(s);
+  var rounded=ok?Math.round(s*100)/100:'—';
   var it=c.interp(s,v);
-  res.innerHTML='<div style="background:var(--navy);border-radius:var(--r);padding:.85rem 1rem;color:#fff;text-align:center"><div style="font-size:1.65rem;font-weight:700">'+rounded+(c.unit?' <span style="font-size:.8rem;font-weight:400;opacity:.7">'+c.unit+'</span>':'')+'</div><div style="margin-top:.4rem"><span class="tag '+it.c+'" style="font-size:.68rem">'+esc(it.t)+'</span></div></div>';
+  res.innerHTML='<div style="background:var(--navy);border-radius:var(--r);padding:.85rem 1rem;color:#fff;text-align:center"><div style="font-size:1.65rem;font-weight:700">'+rounded+(c.unit&&ok?' <span style="font-size:.8rem;font-weight:400;opacity:.7">'+c.unit+'</span>':'')+'</div><div style="margin-top:.4rem"><span class="tag '+it.c+'" style="font-size:.68rem">'+esc(it.t)+'</span></div></div>';
 }
 
 // ── PRESCRIÇÃO ──
