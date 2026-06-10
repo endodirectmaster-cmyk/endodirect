@@ -1074,6 +1074,7 @@ textarea{resize:vertical;line-height:1.6}
   <div style="max-width:1040px;width:100%;margin:auto;background:#121c33;border:1px solid #2a3a5c;border-radius:18px;padding:2rem 1.8rem;text-align:center;box-shadow:0 24px 60px rgba(0,0,0,.45)">
     <div id="assine-title" style="font-size:1.5rem;font-weight:800;color:#fff;margin-bottom:.35rem">Endodirect — Pacotes</div>
     <p id="assine-sub" style="font-size:.86rem;color:#9aa3b2;line-height:1.6;margin:.2rem auto 1.4rem;max-width:620px">A conta <b style="color:#cbd2dd" id="assine-email"></b> ainda não tem acesso ativo. Adquira seu pacote e desbloqueie todos os benefícios da plataforma.</p>
+    <div id="assine-cycle" style="display:flex;justify-content:center;gap:.25rem;margin:0 auto 1.2rem;background:#0e1726;border:1px solid #22304d;border-radius:999px;padding:.25rem;width:max-content"></div>
     <div id="assine-founder" style="display:none;text-align:left;max-width:760px;margin:0 auto 1.3rem"></div>
     <div id="assine-plans" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:1rem;margin-bottom:1.1rem;align-items:stretch"></div>
     <div style="display:flex;gap:.7rem;justify-content:center;flex-wrap:wrap">
@@ -2853,9 +2854,17 @@ function assineBRL(n){return 'R$ '+Number(n||0).toLocaleString('pt-BR');}
 // Espelha a faixa de Sócio-fundador da landing na tela de planos in-app.
 // Esconde sozinha quando a oferta está desativada/esgotada (config.founder)
 // ou quando o aluno já é Gold.
+var assineAnnual=true; // tela de pacotes in-app: ciclo selecionado (anual por padrão)
+function renderAssineCycle(){
+  var el=document.getElementById('assine-cycle');if(!el)return;
+  function seg(an,lbl,off){var on=(assineAnnual===an);return '<button type="button" class="btn" data-assine-cyc="'+(an?'anual':'mensal')+'" style="background:'+(on?'#3b6fd4':'transparent')+';color:'+(on?'#fff':'#9aa3b2')+';border:0;border-radius:999px;padding:.5rem 1.1rem;font-weight:700;font-size:.82rem;width:auto;display:flex;align-items:center;gap:.4rem">'+lbl+(off?'<span style="font-size:.6rem;background:'+(on?'rgba(255,255,255,.22)':'#16351f')+';color:'+(on?'#fff':'#4ade80')+';padding:.1rem .4rem;border-radius:999px;font-weight:800">'+off+'</span>':'')+'</button>';}
+  el.innerHTML=seg(true,'Anual','economize até 35%')+seg(false,'Mensal','');
+  el.querySelectorAll('[data-assine-cyc]').forEach(function(b){b.addEventListener('click',function(){assineAnnual=b.getAttribute('data-assine-cyc')==='anual';renderAssineCycle();renderAssineFounder();renderAssinePlans();});});
+}
 function renderAssineFounder(){
   var box=document.getElementById('assine-founder');if(!box)return;
   function hide(){box.style.display='none';box.innerHTML='';}
+  if(!assineAnnual){hide();return;} // cupom de fundador é anual-only
   if(currentPlanKey()==='gold'){hide();return;}
   loadPmConfig(function(cfg){
     var f=cfg&&cfg.founder;
@@ -2896,8 +2905,12 @@ function renderAssinePlans(){
       +badge
       +(sel?'<span style="position:absolute;top:-11px;right:12px;font-size:.54rem;font-weight:800;text-transform:uppercase;letter-spacing:.06em;background:#2e7d54;color:#dcffe9;padding:.16rem .5rem;border-radius:999px">✓ Escolhido</span>':'')
       +'<div style="font-size:1.1rem;font-weight:800;color:'+acc+'">'+esc(t.nome)+'</div>'
-      +'<div><span style="font-size:1.6rem;font-weight:800;color:'+acc+'">12× R$ '+(ANUAL_MES[t.key]||t.preco)+'</span><span style="font-size:.72rem;color:#8a93a3">/mês no anual</span></div>'
-      +'<div style="font-size:.7rem;color:#8a93a3;margin-top:-.1rem">R$ '+(ANUAL_TOTAL[t.key]||(t.preco*12))+'/ano · ou R$ '+t.preco+'/mês no mensal</div>'
+      +(assineAnnual
+        ? '<div><span style="font-size:1.6rem;font-weight:800;color:'+acc+'">12× R$ '+(ANUAL_MES[t.key]||t.preco)+'</span><span style="font-size:.72rem;color:#8a93a3">/mês no anual</span></div>'
+          +'<div style="font-size:.7rem;color:#8a93a3;margin-top:-.1rem">R$ '+(ANUAL_TOTAL[t.key]||(t.preco*12))+'/ano · ou R$ '+t.preco+'/mês no mensal</div>'
+        : '<div><span style="font-size:1.6rem;font-weight:800;color:'+acc+'">R$ '+t.preco+'</span><span style="font-size:.72rem;color:#8a93a3">/mês</span></div>'
+          +'<div style="font-size:.7rem;color:#8a93a3;margin-top:-.1rem">no plano mensal · ou 12× R$ '+(ANUAL_MES[t.key]||t.preco)+'/mês no anual</div>')
+      +((assineAnnual&&t.key==='gold')?'<div style="font-size:.66rem;font-weight:700;color:#c4b5fd;background:rgba(124,58,237,.16);border:1px solid #5b3aa6;border-radius:8px;padding:.32rem .5rem;text-align:center;line-height:1.4;margin-top:.1rem">🎟️ <b style="color:#ddd6fe">Sócio-fundador</b> · 12× R$ 45,00<span style="display:block;font-size:.6rem;font-weight:800;color:#a78bfa">cupom FUNDADOR</span></div>':'')
       +'<div style="font-size:.58rem;font-weight:700;letter-spacing:.09em;text-transform:uppercase;color:#6b7480;border-top:1px solid #2a3a5c;padding-top:.6rem">Inclui</div>'
       +'<div style="display:flex;flex-direction:column;gap:.32rem">'+bens+excl+'</div>'
       +cta
@@ -2942,6 +2955,8 @@ function showAssineScreen(email,opts){
         : 'A conta <b style="color:#cbd2dd" id="assine-email"></b> ainda não tem acesso ativo. Adquira seu pacote e desbloqueie todos os benefícios da plataforma.');
   }
   setText('assine-email',email||'');
+  assineAnnual=true;
+  renderAssineCycle();
   renderAssineFounder();
   renderAssinePlans();
   if(!(Array.isArray(catalogoCursos)&&catalogoCursos.length))loadCursoCatalogo(function(){renderAssinePlans();});
@@ -7075,7 +7090,7 @@ document.addEventListener('DOMContentLoaded',function(){
     else{var ls=document.getElementById('login-screen');if(ls)ls.style.display='flex';}
   });
   // Checkout in-app: abre o formulário ao clicar em "Assinar <plano>".
-  document.addEventListener('click',function(e){var b=e.target.closest?e.target.closest('.assine-buy'):null;if(b){e.preventDefault();window.__lpCycle='anual';openCheckout(b.getAttribute('data-plan'));}});
+  document.addEventListener('click',function(e){var b=e.target.closest?e.target.closest('.assine-buy'):null;if(b){e.preventDefault();window.__lpCycle=assineAnnual?'anual':'mensal';openCheckout(b.getAttribute('data-plan'));}});
   var ckCloseBtn=document.getElementById('ck-close');if(ckCloseBtn)ckCloseBtn.addEventListener('click',closeCheckout);
   var ckPayBtn=document.getElementById('ck-pay');if(ckPayBtn)ckPayBtn.addEventListener('click',ckPay);
   var ckModal=document.getElementById('checkout-modal');if(ckModal)ckModal.addEventListener('click',function(e){if(e.target===ckModal)closeCheckout();});
