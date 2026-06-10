@@ -22,7 +22,7 @@ const SERVICE_ROLE = process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.SUPABA
 
 const MEMED_API_KEY = process.env.MEMED_API_KEY || '';
 const MEMED_SECRET = process.env.MEMED_SECRET || process.env.MEMED_SECRET_KEY || '';
-const MEMED_API_BASE = (process.env.MEMED_API_BASE || 'https://api.memed.com.br').replace(/\/+$/, '');
+const MEMED_API_BASE = (process.env.MEMED_API_BASE || 'https://integrations.api.memed.com.br').replace(/\/+$/, '');
 const MEMED_COLOR = process.env.MEMED_COLOR || '#0a7d68';
 const MEMED_SCRIPT = process.env.MEMED_SCRIPT || 'https://integrations.memed.com.br/modulos/plataforma.sinapse-prescricao/build/sinapse-prescricao.min.js';
 
@@ -49,21 +49,21 @@ async function userFromToken(token) {
   return r.json().catch(() => null);
 }
 
-// Sincroniza o prescritor na Memed e devolve o token do SDK.
+// Sincroniza o prescritor na Memed (cadastro de usuário/médico) e devolve o
+// token do SDK. Formato JSON:API; campos planos (nome, sobrenome, crm, uf...)
+// conforme a referência do prescritor. Token em data.attributes.token.
 async function getMemedToken(p) {
   const url = `${MEMED_API_BASE}/v1/sinapse-prescricao/usuarios?api-key=${encodeURIComponent(MEMED_API_KEY)}&secret-key=${encodeURIComponent(MEMED_SECRET)}`;
-  const body = {
-    data: {
-      type: 'usuarios',
-      attributes: {
-        external_id: String(p.externalId || p.cpf || p.crm || ''),
-        nome: p.nome || '',
-        sobrenome: p.sobrenome || '.',
-        cpf: p.cpf || undefined,
-        board: { board_code: 'CRM', board_number: String(p.crm || ''), board_state: String(p.uf || '').toUpperCase() }
-      }
-    }
+  const attributes = {
+    external_id: String(p.externalId || p.cpf || p.crm || ''),
+    nome: p.nome || '',
+    sobrenome: p.sobrenome || '.',
+    crm: String(p.crm || ''),
+    uf: String(p.uf || '').toUpperCase()
   };
+  if (p.cpf) attributes.cpf = String(p.cpf);
+  if (p.email) attributes.email = String(p.email);
+  const body = { data: { type: 'usuarios', attributes } };
   const r = await fetch(url, {
     method: 'POST',
     headers: { 'Content-Type': 'application/vnd.api+json', Accept: 'application/vnd.api+json' },
@@ -71,7 +71,7 @@ async function getMemedToken(p) {
   });
   const data = await r.json().catch(() => ({}));
   if (!r.ok) {
-    const msg = (data && (data.errors && data.errors[0] && (data.errors[0].detail || data.errors[0].title))) || `Erro HTTP ${r.status} da Memed`;
+    const msg = (data && data.errors && data.errors[0] && (data.errors[0].detail || data.errors[0].title)) || `Erro HTTP ${r.status} da Memed`;
     throw new Error(msg);
   }
   const token = data && data.data && data.data.attributes && data.data.attributes.token;
@@ -107,6 +107,7 @@ module.exports = async function handler(req, res) {
       nome: b.nome || (user && user.user_metadata && user.user_metadata.name) || email,
       sobrenome: b.sobrenome || '',
       cpf: String(b.cpf || '').replace(/\D/g, '') || undefined,
+      email,
       crm, uf
     });
     return json(res, 200, { ok: true, configured: true, token: memedToken, color: MEMED_COLOR, script: MEMED_SCRIPT });
