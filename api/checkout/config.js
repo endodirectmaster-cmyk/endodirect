@@ -22,7 +22,7 @@ module.exports = async function handler(req, res) {
   // Estado da oferta de Sócio-fundador (vagas restantes; desativa ao esgotar).
   var founder;
   try { founder = await founderStatus(); }
-  catch (e) { founder = { enabled: String(process.env.FOUNDER_ENABLED || '1') !== '0', coupon: String(process.env.FOUNDER_COUPON || 'FUNDADOR').trim().toUpperCase(), plan: 'premium', annual_amount: Number(process.env.PAGARME_FOUNDER_PREMIUM_AMOUNT || 82800), limit: Number(process.env.FOUNDER_LIMIT || 100), remaining: null }; }
+  catch (e) { founder = { enabled: String(process.env.FOUNDER_ENABLED || '1') !== '0', coupon: String(process.env.FOUNDER_COUPON || 'FUNDADOR').trim().toUpperCase(), plan: String(process.env.FOUNDER_PLAN || 'gold').trim().toLowerCase(), annual_amount: Number(process.env.PAGARME_FOUNDER_AMOUNT || process.env.PAGARME_FOUNDER_PREMIUM_AMOUNT || 54000), limit: Number(process.env.FOUNDER_LIMIT || 100), remaining: null }; }
   res.end(JSON.stringify({
     ok: true,
     enabled: !!PUBLIC_KEY,
