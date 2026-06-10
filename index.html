@@ -1054,6 +1054,7 @@ textarea{resize:vertical;line-height:1.6}
       </button>
       <div class="login-divider"><span>OU</span></div>
       <div id="login-err" class="login-err">E-mail ou senha incorretos.</div>
+      <div id="login-ok" style="display:none;background:#ecfdf5;border:1px solid #86efac;color:#15803d;border-radius:10px;padding:.7rem .85rem;font-size:.77rem;line-height:1.5;margin-bottom:.7rem"></div>
       <div class="fld"><label>E-mail</label><input type="text" id="login-email" placeholder="nome@exemplo.com"></div>
       <div class="fld"><label>Senha</label>
         <div style="position:relative">
@@ -1061,6 +1062,7 @@ textarea{resize:vertical;line-height:1.6}
           <button id="btn-toggle-pass" style="position:absolute;right:9px;top:50%;transform:translateY(-50%);background:none;border:none;cursor:pointer;color:var(--t3);font-size:.77rem">👁</button>
         </div>
       </div>
+      <div class="fld" id="login-pass2-wrap" style="display:none"><label>Confirmar senha</label><input type="password" id="login-pass2" placeholder="Repita a senha"></div>
       <button class="login-btn" id="btn-login">Entrar</button>
       <button class="login-btn" id="btn-signup" type="button" style="display:none">Criar conta</button>
       <div id="signup-hint" style="display:none;font-size:.72rem;color:var(--t3);text-align:center;margin-top:.6rem;line-height:1.55">Crie sua conta gratuita e explore no modo degustação. Assine quando quiser para liberar tudo.</div>
@@ -7139,24 +7141,47 @@ document.addEventListener('DOMContentLoaded',function(){
     var fp=document.getElementById('btn-forgot-pass');if(fp)fp.style.display=signup?'none':'';
     var tg=document.getElementById('btn-toggle-mode');if(tg)tg.innerHTML=signup?'Já tem conta? <b>Entrar</b>':'Não tem conta? <b>Cadastre-se</b>';
     var pw=document.getElementById('login-pass');if(pw)pw.setAttribute('placeholder',signup?'Crie uma senha (mín. 6 caracteres)':'Sua senha');
+    var p2=document.getElementById('login-pass2-wrap');if(p2)p2.style.display=signup?'':'none';
+    var ok=document.getElementById('login-ok');if(ok)ok.style.display='none';
   };
   window.__setLoginMode=setLoginMode;
+  var _lastSignupEmail='';
+  function wireResendConfirm(){
+    var rb=document.getElementById('btn-resend-confirm');if(!rb)return;
+    rb.addEventListener('click',function(){
+      var client=getSupabaseClient();if(!client||!client.auth.resend||!_lastSignupEmail)return;
+      rb.disabled=true;rb.textContent='Reenviando…';
+      client.auth.resend({type:'signup',email:_lastSignupEmail,options:{emailRedirectTo:window.location.origin+window.location.pathname}}).then(function(r){
+        if(r&&r.error)throw r.error;
+        rb.textContent='E-mail reenviado ✓';
+      }).catch(function(e){rb.disabled=false;rb.textContent='Reenviar e-mail de confirmação';notify('Não foi possível reenviar: '+((e&&e.message)||''),'err');});
+    });
+  }
   var doSignup=function(){
     var email=(document.getElementById('login-email').value||'').trim().toLowerCase();
     var pass=document.getElementById('login-pass').value||'';
-    clearLoginError();
-    if(!email||email.indexOf('@')<1){showLoginError('Informe um e-mail válido.');document.getElementById('login-email').focus();return;}
+    var pass2=(document.getElementById('login-pass2')||{}).value||'';
+    clearLoginError();var _ok0=document.getElementById('login-ok');if(_ok0)_ok0.style.display='none';
+    if(!email||email.indexOf('@')<1||email.indexOf('.')<0){showLoginError('Informe um e-mail válido.');document.getElementById('login-email').focus();return;}
     if(pass.length<6){showLoginError('A senha deve ter ao menos 6 caracteres.');document.getElementById('login-pass').focus();return;}
+    if(pass!==pass2){showLoginError('As senhas não conferem.');var _p2=document.getElementById('login-pass2');if(_p2)_p2.focus();return;}
     var client=getSupabaseClient();
     if(!client){showLoginError('Cadastro indisponível no momento. Atualize a página e tente novamente.');return;}
     var btn=document.getElementById('btn-signup');if(btn)btn.disabled=true;
     client.auth.signUp({email:email,password:pass,options:{emailRedirectTo:window.location.origin+window.location.pathname}}).then(function(res){
       if(res.error)throw res.error;
-      if(res.data&&res.data.session){notify('Conta criada! Entrando…','ok');}
-      else{notify('Conta criada! Enviamos um e-mail de confirmação — confirme para entrar.','ok');setLoginMode('entrar');}
+      var u=res.data&&res.data.user;
+      // Supabase devolve user com identities vazio quando o e-mail já existe (sem erro).
+      if(u&&Array.isArray(u.identities)&&u.identities.length===0){showLoginError('Este e-mail já tem conta. Faça login ou use "Esqueci minha senha".');return;}
+      if(res.data&&res.data.session){notify('Conta criada! Entrando…','ok');return;}
+      _lastSignupEmail=email;
+      setLoginMode('entrar');
+      var ok=document.getElementById('login-ok');
+      if(ok){ok.innerHTML='✅ <b>Conta criada!</b> Enviamos um link de confirmação para <b>'+esc(email)+'</b>. Clique nele para ativar o acesso — depois você entra direto na plataforma.<br><button type="button" id="btn-resend-confirm" style="margin-top:.45rem;background:none;border:none;color:#15803d;font-weight:700;cursor:pointer;font-size:.74rem;padding:0;text-decoration:underline">Reenviar e-mail de confirmação</button>';ok.style.display='block';wireResendConfirm();}
     }).catch(function(e){
       var m=String((e&&e.message)||'');
       if(/registered|already|exists/i.test(m))showLoginError('Este e-mail já tem conta. Faça login ou use "Esqueci minha senha".');
+      else if(/rate|limit|seconds/i.test(m))showLoginError('Muitas tentativas. Aguarde um momento e tente de novo.');
       else showLoginError('Não foi possível criar a conta: '+m);
     }).then(function(){if(btn)btn.disabled=false;});
   };

@@ -8,6 +8,7 @@ atualizado: 2026-06-10
 Log de decisões de produto e técnicas (mais recentes no topo).
 
 ## 2026-06
+- **Confirmar e-mail = ON** no Supabase + auto-cadastro completo na tela de login: toggle Entrar/Criar conta, confirmar senha, painel persistente "confirme seu e-mail" e botão **Reenviar**. Ao clicar no link, o usuário volta logado (degustação → onboarding CRM/UF). Ver [[Pendências]].
 - **CRM + UF obrigatórios no onboarding** (todos os perfis), para alimentar o Memed sem redigitar. Ver [[Integrações]].
 - **Cofre de conhecimento no repo** (este cofre) em vez de exportação Obsidian para alunos. O Obsidian é para organizar a IA/projeto, não recurso de estudante. Botão de export removido (#172). Ver [[README]].
 - **Calculadoras:** adicionar TmP/GFR (Payne) e escore-z de estatura/idade (OMS+CDC, LMS). OMS como referência padrão. Ver [[Calculadoras]].
