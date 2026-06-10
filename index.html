@@ -3014,7 +3014,10 @@ function openCheckout(key){
   setText('ck-plan-nome',t.nome);
   var em=document.getElementById('ck-email');if(em)em.value=currentUser.email;
   ckErr('');
-  ['ck-name','ck-num','ck-exp','ck-cvv','ck-doc','ck-phone','ck-cep','ck-uf','ck-addr','ck-numero','ck-city'].forEach(function(id){var e=document.getElementById(id);if(e)e.value='';});
+  ['ck-num','ck-exp','ck-cvv'].forEach(function(id){var e=document.getElementById(id);if(e)e.value='';});
+  // Pré-preenche os dados de cobrança salvos (nunca o cartão), agilizando próximas compras.
+  (function(){var b=lsGet('ck_billing')||{};function pf(id,v){var e=document.getElementById(id);if(e)e.value=v||'';}
+    pf('ck-name',b.name||(currentUser&&currentUser.name)||'');pf('ck-doc',b.doc);pf('ck-phone',b.phone);pf('ck-cep',b.cep);pf('ck-uf',b.uf);pf('ck-addr',b.addr);pf('ck-numero',b.numero);pf('ck-city',b.city);})();
   var cpEl=document.getElementById('ck-coupon');if(cpEl)cpEl.value=(window.__lpCoupon||'');window.__lpCoupon='';
   ckSeg('ck-cycle-row','data-cycle',startCycle);ckSeg('ck-method-row','data-method','credit_card');
   var pay=document.getElementById('ck-pay');if(pay)pay.disabled=false;
@@ -3099,6 +3102,9 @@ function ckPay(){
     line1=addr+', '+numero;
   }
   var address=needAddr?{zip:cep,line1:line1,city:city,state:uf}:undefined;
+  // Salva os dados de cobrança (NUNCA o cartão) para pré-preencher nas próximas compras.
+  try{var _pb=lsGet('ck_billing')||{};function _gv(id){return (document.getElementById(id)||{}).value||'';}
+    lsSet('ck_billing',{name:_gv('ck-name').trim()||_pb.name||'',doc:_gv('ck-doc')||_pb.doc||'',phone:_gv('ck-phone')||_pb.phone||'',cep:_gv('ck-cep')||_pb.cep||'',uf:_gv('ck-uf')||_pb.uf||'',addr:_gv('ck-addr')||_pb.addr||'',numero:_gv('ck-numero')||_pb.numero||'',city:_gv('ck-city')||_pb.city||''});}catch(e){}
   var holder=(currentUser&&currentUser.name)||email.split('@')[0];
   loadPmConfig(function(cfg){
     if(!cfg||!cfg.enabled||!cfg.public_key){ckErr('O checkout ainda está sendo configurado. Tente novamente em instantes.');return;}
