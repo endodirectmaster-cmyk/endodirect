@@ -9,7 +9,7 @@ atualizado: 2026-06-10
 - [ ] **pagar.me:** fazer compra real de teste (PIX) + estorno para validar liberação/revogação de acesso ponta a ponta. (Migração para LIVE já feita — ver [[Pagamentos pagar.me]].)
 - [ ] **Memed:** resolver assinatura do contrato e configurar `MEMED_API_KEY`/`MEMED_SECRET`. Ver [[Integrações]].
 - [ ] **Newsletter:** confirmar com Eduardo e Bruno se receberam (checar spam; usar botão "Enviar teste" no admin). Ver [[Newsletter e Radar]].
-- [ ] **Supabase:** decidir a configuração "Confirm email".
+- [ ] **Supabase (auth):** ativar **Confirm email = ON** (decidido) e garantir que **Site URL / Redirect URLs** incluam `https://www.endodirect.com.br` (e `https://endodirect.com.br`) — necessário para o link de confirmação do auto-cadastro retornar logado. Dashboard: Authentication → Sign In/Providers → Email (toggle Confirm email) e Authentication → URL Configuration.
 
 ## Lado do código / curadoria
 - [ ] Revisar **Grupo 2** — 29 gabaritos ambíguos (`gabaritos-suspeitos.md`). Ver [[Banco de Questões]].
