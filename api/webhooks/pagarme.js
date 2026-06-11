@@ -95,17 +95,7 @@ function verifyAuth(req, raw) {
       recvPass = normCred(i >= 0 ? dec.slice(i + 1) : '');
     } catch (e) {}
     const expUser = normCred(BASIC_USER), expPass = normCred(BASIC_PASS);
-    const ok = !!got && safeEqual(recvUser, expUser) && safeEqual(recvPass, expPass);
-    if (!ok) {
-      // Diagnóstico seguro (NUNCA expõe os valores; só comprimentos e se batem).
-      console.log('[whdbg]',
-        'userLen=' + recvUser.length + '/' + expUser.length,
-        'passLen=' + recvPass.length + '/' + expPass.length,
-        'userMatch=' + (recvUser === expUser),
-        'passMatch=' + (recvPass === expPass),
-        'hasHeader=' + !!got);
-    }
-    return ok;
+    return !!got && safeEqual(recvUser, expUser) && safeEqual(recvPass, expPass);
   }
   if (WEBHOOK_SECRET) {
     const sig = req.headers['x-hub-signature'] || req.headers['x-pagarme-signature'] || req.headers['x-signature'] || '';
