@@ -90,7 +90,7 @@ async function getMemedToken(p) {
   const body = { data: { type: 'usuarios', attributes } };
   const r = await fetch(url, {
     method: 'POST',
-    headers: { 'Content-Type': 'application/vnd.api+json', Accept: 'application/vnd.api+json' },
+    headers: { 'Content-Type': 'application/json', Accept: 'application/vnd.api+json' },
     body: JSON.stringify(body)
   });
   const data = await r.json().catch(() => ({}));
