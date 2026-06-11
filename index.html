@@ -3185,7 +3185,7 @@ function openCheckout(key){
   ckUpdateView();
   var m=document.getElementById('checkout-modal');if(m)m.style.display='flex';
 }
-function closeCheckout(){var m=document.getElementById('checkout-modal');if(m)m.style.display='none';}
+function closeCheckout(){try{ckStopAutoVerify();}catch(e){}var m=document.getElementById('checkout-modal');if(m)m.style.display='none';}
 // Preenche endereço a partir do CEP (ViaCEP). Best-effort; campos seguem editáveis.
 function ckCepLookup(cep){
   fetch('https://viacep.com.br/ws/'+cep+'/json/').then(function(r){return r.json();}).then(function(d){
@@ -3212,6 +3212,22 @@ function ckVerify(){
     else{try{notify('Ainda não identificamos o pagamento. PIX leva alguns segundos; boleto pode levar 1–2 dias úteis.','info');}catch(e){}}
   },2600);
 }
+// Verificação AUTOMÁTICA do PIX/boleto: após gerar a cobrança, fica checando o
+// estado remoto a cada 5s e libera o acesso sozinho assim que o webhook provisiona
+// (sem o aluno precisar clicar em "Já paguei"). Para sozinho ao liberar, ao fechar
+// o checkout, ou após ~5 min (evita polling infinito; PIX cai em segundos).
+var _ckPoll=null,_ckPollN=0;
+function ckStopAutoVerify(){if(_ckPoll){clearInterval(_ckPoll);_ckPoll=null;}_ckPollN=0;}
+function ckStartAutoVerify(){
+  ckStopAutoVerify();
+  try{remoteStateLoaded=false;hydrateRemoteState();}catch(e){}
+  _ckPoll=setInterval(function(){
+    _ckPollN++;
+    if(!isDegustacao()&&currentPlanKey()){ckStopAutoVerify();ckGrantSuccess('Pagamento confirmado! Acesso liberado. 🎉');return;}
+    if(_ckPollN>60){ckStopAutoVerify();return;}
+    try{remoteStateLoaded=false;hydrateRemoteState();}catch(e){}
+  },5000);
+}
 function ckRenderResult(html){var rs=document.getElementById('ck-result');if(!rs)return;rs.style.display='block';rs.innerHTML=html;
   var cp=document.getElementById('ck-pix-copy');if(cp)cp.addEventListener('click',function(){var t=cp.getAttribute('data-copy')||'';try{navigator.clipboard.writeText(t);notify('Código PIX copiado!','ok');}catch(e){}});
   var vf=document.getElementById('ck-verify');if(vf)vf.addEventListener('click',ckVerify);
@@ -3225,6 +3241,7 @@ function ckRenderPix(d){
     +'<div style="font-size:.7rem;color:#8a93a3;margin-top:.5rem;line-height:1.5">Após o pagamento, seu acesso é liberado automaticamente (alguns segundos).</div>'
     +'<button type="button" class="btn" id="ck-verify" style="width:100%;justify-content:center;background:#2e7d54;color:#fff;border:0;font-weight:700;margin-top:.6rem">Já paguei — verificar</button>'
     +'</div>');
+  ckStartAutoVerify();
 }
 function ckRenderBoleto(d){
   var b=d.boleto||{};var link=b.url||b.pdf||'';
@@ -3235,6 +3252,7 @@ function ckRenderBoleto(d){
     +'<div style="font-size:.7rem;color:#8a93a3;margin-top:.5rem;line-height:1.5">O acesso é liberado após a compensação (1–2 dias úteis).</div>'
     +'<button type="button" class="btn" id="ck-verify" style="width:100%;justify-content:center;background:#2e7d54;color:#fff;border:0;font-weight:700;margin-top:.6rem">Já paguei — verificar</button>'
     +'</div>');
+  ckStartAutoVerify();
 }
 function ckPay(){
   var btn=document.getElementById('ck-pay');if(!btn||btn.disabled)return;
