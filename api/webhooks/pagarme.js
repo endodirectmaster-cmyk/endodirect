@@ -79,10 +79,20 @@ function verifyAuth(req, raw) {
     const expected = 'Basic ' + Buffer.from(BASIC_USER + ':' + BASIC_PASS).toString('base64');
     const ok = safeEqual(got, expected);
     if (!ok) {
-      // Diagnóstico seguro (sem expor senha): por que o Basic Auth falhou.
-      let recvUser = '';
-      try { recvUser = Buffer.from(String(got).replace(/^Basic\s+/i, ''), 'base64').toString('utf8').split(':')[0]; } catch (e) {}
-      console.log('[whdbg]', 'lenMatch=' + (got.length === expected.length), 'userMatch=' + (recvUser === BASIC_USER), 'hasHeader=' + !!got, 'recvLen=' + got.length, 'expLen=' + expected.length);
+      // Diagnóstico seguro (NUNCA expõe os valores; só comprimentos e se batem).
+      let recvUser = '', recvPass = '';
+      try {
+        const dec = Buffer.from(String(got).replace(/^Basic\s+/i, ''), 'base64').toString('utf8');
+        const i = dec.indexOf(':');
+        recvUser = i >= 0 ? dec.slice(0, i) : dec;
+        recvPass = i >= 0 ? dec.slice(i + 1) : '';
+      } catch (e) {}
+      console.log('[whdbg]',
+        'userLen=' + recvUser.length + '/' + BASIC_USER.length,
+        'passLen=' + recvPass.length + '/' + BASIC_PASS.length,
+        'userMatch=' + (recvUser === BASIC_USER),
+        'passMatch=' + (recvPass === BASIC_PASS),
+        'hasHeader=' + !!got);
     }
     return ok;
   }
