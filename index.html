@@ -2314,7 +2314,7 @@ function renderDegustacaoBar(){
     if(!bar){
       bar=document.createElement('div');bar.id='degustacao-bar';
       bar.style.cssText='display:flex;align-items:center;justify-content:center;gap:.75rem;flex-wrap:wrap;background:linear-gradient(90deg,#fcd34d,#f59e0b);color:#3a2c05;font-size:.82rem;font-weight:600;padding:.6rem 1rem;text-align:center;box-shadow:inset 0 -1px 0 rgba(120,80,0,.18),0 1px 4px rgba(0,0,0,.08)';
-      bar.innerHTML='<span id="degustacao-msg" style="display:inline-flex;align-items:center;gap:.5rem;flex-wrap:wrap;justify-content:center"></span> <button id="degustacao-cta" type="button" style="background:#14203a;color:#fff;border:0;border-radius:999px;padding:.4rem 1.05rem;font-weight:700;cursor:pointer;box-shadow:0 1px 3px rgba(0,0,0,.25);white-space:nowrap;transition:transform .08s ease" onmouseover="this.style.transform=\'translateY(-1px)\'" onmouseout="this.style.transform=\'none\'">Ver pacotes e desbloquear tudo →</button>';
+      bar.innerHTML='<span id="degustacao-msg" style="display:inline-flex;align-items:center;gap:.5rem;flex-wrap:wrap;justify-content:center"></span> <button id="degustacao-cta" type="button" style="background:#14203a;color:#fff;border:0;border-radius:999px;padding:.4rem 1.05rem;font-weight:700;cursor:pointer;box-shadow:0 1px 3px rgba(0,0,0,.25);white-space:nowrap;transition:transform .08s ease" onmouseover="this.style.transform=\'translateY(-1px)\'" onmouseout="this.style.transform=\'none\'">Ver pacotes e desbloquear tudo</button>';
       var ws=app.querySelector('.workspace');
       if(ws)app.insertBefore(bar,ws);else app.appendChild(bar);
       var cta=bar.querySelector('#degustacao-cta');if(cta)cta.addEventListener('click',function(){showAssineScreen((currentUser&&currentUser.email)||'');});
@@ -3450,7 +3450,7 @@ function hasScope(scope){return !scope||isAdminUser()||userAcessos.indexOf(scope
 // Degustacao: aluno logado, sem nenhum acesso ativo (não comprou pacote/curso).
 function isDegustacao(){return !!(currentUser&&currentUser.role==='aluno'&&!isAdminUser()&&(!userAcessos||userAcessos.length===0));}
 // Paineis liberados na degustacao (o resto fica 🔒 com upsell).
-var DEGUSTACAO_PANELS={dash:1,flash:1,mmap:1,quest:1,perfil:1,support:1};
+var DEGUSTACAO_PANELS={dash:1,flash:1,mmap:1,quest:1,perfil:1,support:1,calc:1,podcast:1,crono:1};
 // Ferramentas com IA liberadas na degustação por COTA (3 usos cada): simulador
 // de casos, simulado, prescrição e chat IA. Após esgotar, vira upsell.
 var TRIAL_PANELS={sim:1,simfull:1,rx:1,chat:1};
@@ -3636,6 +3636,30 @@ function markLockedNavItems(){
     if(locked&&!has){var s=document.createElement('span');s.className='sb-lock';s.textContent='🔒';s.style.marginLeft='auto';s.style.opacity='.65';s.style.fontSize='.68rem';b.appendChild(s);}
     else if(!locked&&has){has.remove();}
   });
+  try{applyDegLocks();}catch(e){}
+}
+// Bloqueios visuais da DEGUSTAÇÃO: "Gerar com IA" (flashcards/mapas) e as fontes
+// IA/Misto do Simulado ficam travadas (só conteúdo pré-salvo/banco é liberado).
+function applyDegLocks(){
+  var deg=isDegustacao();
+  [['fc-btn-gen','▶ Gerar com IA'],['btn-mmgen','🤖 Gerar com IA']].forEach(function(p){
+    var b=document.getElementById(p[0]);if(!b)return;
+    if(deg){b.innerHTML='🔒 Gerar com IA';b.style.opacity='.65';b.title='Disponível nos pacotes';b.dataset.degLock='1';}
+    else if(b.dataset.degLock){b.innerHTML=p[1];b.style.opacity='';b.title='';delete b.dataset.degLock;}
+  });
+  ['ia','misto'].forEach(function(v){
+    var r=document.querySelector('input[name="sf-fonte"][value="'+v+'"]');if(!r)return;
+    var lab=r.closest('label');
+    if(deg){r.disabled=true;if(lab){lab.style.opacity='.5';lab.style.cursor='not-allowed';lab.title='Disponível nos pacotes';}}
+    else{r.disabled=false;if(lab){lab.style.opacity='';lab.style.cursor='pointer';lab.title='';}}
+  });
+  if(deg){
+    var checked=document.querySelector('input[name="sf-fonte"]:checked');
+    if(!checked||checked.disabled){
+      var pr=document.querySelector('input[name="sf-fonte"][value="provas"]');
+      if(pr){pr.checked=true;try{pr.dispatchEvent(new Event('change'));}catch(e){}}
+    }
+  }
 }
 function showBancoLock(show){
   var el=document.getElementById('q-banco-lock');
@@ -7485,7 +7509,7 @@ document.addEventListener('DOMContentLoaded',function(){
 
   // FLASHCARDS
   document.getElementById('fc-btn-create').addEventListener('click',function(){var d=document.getElementById('fc-create');d.style.display=d.style.display==='none'?'block':'none';document.getElementById('fc-gen').style.display='none';document.getElementById('fc-study').style.display='none';renderFcCatPills();});
-  document.getElementById('fc-btn-gen').addEventListener('click',function(){var d=document.getElementById('fc-gen');d.style.display=d.style.display==='none'?'block':'none';document.getElementById('fc-create').style.display='none';document.getElementById('fc-study').style.display='none';});
+  document.getElementById('fc-btn-gen').addEventListener('click',function(){if(isDegustacao()){showAssineScreen((currentUser&&currentUser.email)||'');return;}var d=document.getElementById('fc-gen');d.style.display=d.style.display==='none'?'block':'none';document.getElementById('fc-create').style.display='none';document.getElementById('fc-study').style.display='none';});
   document.getElementById('fc-btn-study').addEventListener('click',startStudy);
   document.getElementById('fc-create-cancel').addEventListener('click',function(){document.getElementById('fc-create').style.display='none';});
   document.getElementById('fc-create-cancel2').addEventListener('click',function(){document.getElementById('fc-create').style.display='none';});
