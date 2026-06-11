@@ -13,6 +13,7 @@ atualizado: 2026-06-10
 - `endodirect_cursos` — cursos (coluna `tier`).
 - `endodirect_state_backup` — backups manuais do estado.
 - `endodirect_acessos` — acessos liberados (escopo, status, validade). Alimentada pelo checkout e pelo [[Pagamentos pagar.me|webhook]].
+- `endodirect_devices` — anti-compartilhamento: dispositivos ativos por aluno `(user_id, device_id, last_seen)`. Limite de **2**; RPCs `endodirect_session_claim` (login, mantém os 2 mais recentes) e `endodirect_session_check` (heartbeat). Cliente: `device_id` em `localStorage`, heartbeat 60s, expulsa com overlay "Sessão encerrada". Só para `role='aluno'` (admins isentos). DDL em `supabase/device-session-limit.sql` (migration `device_session_limit`).
 
 ## RLS e RPCs (security-definer)
 - `endodirect_member_content` — conteúdo do membro.
