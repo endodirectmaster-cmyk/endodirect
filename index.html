@@ -5062,6 +5062,8 @@ function renderPrescMemed(){
   var pcrm=pr.crm||prof.crm||'';
   var puf=pr.uf||prof.uf||'';
   var pcpf=pr.cpf||'';
+  var pesp=pr.especialidade||(prof.perfil==='Endocrinologista'?'Endocrinologia e Metabologia':(prof.especialidade||''));
+  var pnasc=pr.nascimento||'';
   tool.innerHTML=
     '<div class="card" style="margin-bottom:.7rem">'
     +'<div style="font-size:.82rem;color:var(--t2);margin-bottom:.7rem">Prescrição digital via <b>Memed</b> — busca de medicamentos, posologia, impressão e assinatura digital, enviada ao paciente.</div>'
@@ -5071,6 +5073,10 @@ function renderPrescMemed(){
     +'</div>'
     +'<div style="display:flex;gap:.4rem;margin-bottom:.5rem"><div class="fld2" style="margin:0;flex:1"><label>CRM</label><input type="text" id="memed-crm" value="'+esc(pcrm)+'" placeholder="CRM"></div>'
       +'<div class="fld2" style="margin:0;width:90px"><label>UF</label><input type="text" id="memed-uf" value="'+esc(puf)+'" placeholder="UF" maxlength="2" style="text-transform:uppercase"></div></div>'
+    +'<div class="g2" style="margin-bottom:.5rem">'
+      +'<div class="fld2" style="margin:0"><label>Especialidade</label><input type="text" id="memed-esp" value="'+esc(pesp)+'" placeholder="Ex: Endocrinologia e Metabologia"></div>'
+      +'<div class="fld2" style="margin:0"><label>Data de nascimento</label><input type="date" id="memed-nasc" value="'+esc(pnasc)+'"></div>'
+    +'</div>'
     +'<div class="g2" style="margin-bottom:.5rem">'
       +'<div class="fld2" style="margin:0"><label>Paciente (opcional)</label><input type="text" id="memed-pac-nome" placeholder="Nome do paciente"></div>'
       +'<div class="fld2" style="margin:0"><label>CPF do paciente (opcional)</label><input type="text" id="memed-pac-cpf" placeholder="000.000.000-00"></div>'
@@ -5088,10 +5094,15 @@ function renderPrescMemed(){
 }
 function prescMemedOpen(){
   var nome=prescVal('memed-nome'),crm=prescVal('memed-crm'),uf=prescVal('memed-uf').toUpperCase(),cpf=prescVal('memed-cpf');
+  var esp=prescVal('memed-esp'),nasc=prescVal('memed-nasc');
   var msg=document.getElementById('memed-msg');
   function showErr(t){if(msg){msg.style.color='var(--red)';msg.textContent=t;}}
   if(!crm||!uf){showErr('Informe CRM e UF do prescritor.');return;}
-  lsSet('presc_prescritor',Object.assign(lsGet('presc_prescritor')||{},{nome:nome,crm:crm,uf:uf,cpf:cpf}));
+  // Cadastro do prescritor completo (exigência Memed): CPF, especialidade e nascimento.
+  if((cpf||'').replace(/\D/g,'').length!==11){showErr('Informe o CPF do prescritor (11 dígitos).');return;}
+  if(!esp){showErr('Informe a especialidade do prescritor.');return;}
+  if(!nasc){showErr('Informe a data de nascimento do prescritor.');return;}
+  lsSet('presc_prescritor',Object.assign(lsGet('presc_prescritor')||{},{nome:nome,crm:crm,uf:uf,cpf:cpf,especialidade:esp,nascimento:nasc}));
   var client=getSupabaseClient();
   if(!client){showErr('Supabase indisponível.');return;}
   var btn=document.getElementById('memed-open');if(btn){btn.disabled=true;btn.innerHTML=ldHTML('Conectando à Memed…');}
@@ -5099,7 +5110,7 @@ function prescMemedOpen(){
   client.auth.getSession().then(function(res){
     var token=res&&res.data&&res.data.session&&res.data.session.access_token;
     if(!token)throw new Error('Sessão expirada. Entre novamente.');
-    return fetch('/api/memed/token',{method:'POST',headers:{'Content-Type':'application/json',Authorization:'Bearer '+token},body:JSON.stringify({nome:nome,crm:crm,uf:uf,cpf:cpf})});
+    return fetch('/api/memed/token',{method:'POST',headers:{'Content-Type':'application/json',Authorization:'Bearer '+token},body:JSON.stringify({nome:nome,crm:crm,uf:uf,cpf:cpf,especialidade:esp,nascimento:nasc})});
   }).then(function(r){return r.json().catch(function(){return{ok:false,error:'Resposta inválida do servidor.'};});})
   .then(function(d){
     if(!d.ok||!d.token)throw new Error(d.error||'Falha ao conectar à Memed.');

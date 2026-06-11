@@ -54,15 +54,24 @@ async function userFromToken(token) {
 // conforme a referência do prescritor. Token em data.attributes.token.
 async function getMemedToken(p) {
   const url = `${MEMED_API_BASE}/v1/sinapse-prescricao/usuarios?api-key=${encodeURIComponent(MEMED_API_KEY)}&secret-key=${encodeURIComponent(MEMED_SECRET)}`;
+  // Divide o nome completo em nome + sobrenome (a Memed exige os dois).
+  let nome = (p.nome || '').trim(), sobrenome = (p.sobrenome || '').trim();
+  if (!sobrenome) {
+    const parts = nome.split(/\s+/);
+    if (parts.length > 1) { sobrenome = parts.slice(1).join(' '); nome = parts[0]; }
+  }
   const attributes = {
     external_id: String(p.externalId || p.cpf || p.crm || ''),
-    nome: p.nome || '',
-    sobrenome: p.sobrenome || '.',
+    nome: nome,
+    sobrenome: sobrenome || '.',
     crm: String(p.crm || ''),
     uf: String(p.uf || '').toUpperCase()
   };
   if (p.cpf) attributes.cpf = String(p.cpf);
   if (p.email) attributes.email = String(p.email);
+  // Cadastro completo do prescritor (exigência Memed p/ não revogar a chave).
+  if (p.especialidade) attributes.especialidade = String(p.especialidade);
+  if (p.dataNascimento) attributes.data_nascimento = String(p.dataNascimento); // YYYY-MM-DD
   const body = { data: { type: 'usuarios', attributes } };
   const r = await fetch(url, {
     method: 'POST',
@@ -108,7 +117,9 @@ module.exports = async function handler(req, res) {
       sobrenome: b.sobrenome || '',
       cpf: String(b.cpf || '').replace(/\D/g, '') || undefined,
       email,
-      crm, uf
+      crm, uf,
+      especialidade: b.especialidade ? String(b.especialidade).trim() : undefined,
+      dataNascimento: b.nascimento ? String(b.nascimento).trim() : undefined
     });
     return json(res, 200, { ok: true, configured: true, token: memedToken, color: MEMED_COLOR, script: MEMED_SCRIPT });
   } catch (error) {
