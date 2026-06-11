@@ -1184,7 +1184,7 @@ textarea{resize:vertical;line-height:1.6}
         <button class="sb-item" data-p="calc">🧮 Calculadoras</button>
         <button class="sb-item" data-p="simfull">📝 Simulado</button>
         <button class="sb-item" data-p="rx">💊 Prescrição Simulada</button>
-        <button class="sb-item" data-p="presc" id="sb-presc" style="display:none">💉 Consultório</button>
+        <button class="sb-item" data-p="presc" id="sb-presc" style="display:none">🧑‍⚕️ Consultório</button>
         <button class="sb-item" data-p="sim">🩺 OSCE</button>
         <button class="sb-item" data-p="art">📄 Resumidor</button>
         <div class="sb-sec">Pessoal</div>
@@ -1421,7 +1421,7 @@ textarea{resize:vertical;line-height:1.6}
 
     <div class="panel" id="panel-sim">
       <div class="breadcrumb">Dashboard <b>/ OSCE</b></div>
-      <div class="ph"><h1>OSCE — Caso Clínico</h1></div>
+      <div class="ph"><h1>OSCE — Caso Clínico</h1><p>Conduza um caso clínico no estilo OSCE, passo a passo (anamnese, exame, conduta), e receba nota e feedback ao final.</p></div>
       <div class="pc">
         <div class="gen-box" id="sim-setup">
           <div class="g2" style="margin-bottom:.65rem">
@@ -1511,7 +1511,7 @@ textarea{resize:vertical;line-height:1.6}
 
     <div class="panel" id="panel-rx">
       <div class="breadcrumb">Dashboard <b>/ Prescrição Simulada</b></div>
-      <div class="ph"><h1>Prescrição Simulada</h1></div>
+      <div class="ph"><h1>Prescrição Simulada</h1><p>Treine a conduta e a prescrição de um caso clínico simulado e receba uma correção comentada ao final.</p></div>
       <div class="pc">
         <div class="gen-box">
           <div class="g2" style="margin-bottom:.65rem">
@@ -3450,7 +3450,7 @@ function hasScope(scope){return !scope||isAdminUser()||userAcessos.indexOf(scope
 // Degustacao: aluno logado, sem nenhum acesso ativo (não comprou pacote/curso).
 function isDegustacao(){return !!(currentUser&&currentUser.role==='aluno'&&!isAdminUser()&&(!userAcessos||userAcessos.length===0));}
 // Paineis liberados na degustacao (o resto fica 🔒 com upsell).
-var DEGUSTACAO_PANELS={dash:1,flash:1,mmap:1,quest:1,perfil:1,support:1,calc:1,podcast:1,crono:1};
+var DEGUSTACAO_PANELS={dash:1,flash:1,mmap:1,quest:1,perfil:1,support:1,calc:1,podcast:1,crono:1,notas:1};
 // Ferramentas com IA liberadas na degustação por COTA (3 usos cada): simulador
 // de casos, simulado, prescrição e chat IA. Após esgotar, vira upsell.
 var TRIAL_PANELS={sim:1,simfull:1,rx:1,chat:1};
