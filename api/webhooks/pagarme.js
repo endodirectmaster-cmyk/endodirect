@@ -77,7 +77,23 @@ function verifyAuth(req, raw) {
   if (BASIC_USER || BASIC_PASS) {
     const got = req.headers.authorization || '';
     const expected = 'Basic ' + Buffer.from(BASIC_USER + ':' + BASIC_PASS).toString('base64');
-    return safeEqual(got, expected);
+    const ok = safeEqual(got, expected);
+    if (!ok) {
+      // Diagnóstico seguro (sem expor senha): por que o Basic Auth falhou.
+      let recvUser = '';
+      try { recvUser = Buffer.from(String(got).replace(/^Basic\s+/i, ''), 'base64').toString('utf8').split(':')[0]; } catch (e) {}
+      console.log('[webhook-auth-debug]', JSON.stringify({
+        hasAuthHeader: !!got,
+        scheme: (String(got).split(' ')[0] || null),
+        recvUser: recvUser,
+        envUser: BASIC_USER,
+        envUserLen: BASIC_USER.length,
+        envPassLen: BASIC_PASS.length,
+        recvLen: got.length,
+        expectedLen: expected.length
+      }));
+    }
+    return ok;
   }
   if (WEBHOOK_SECRET) {
     const sig = req.headers['x-hub-signature'] || req.headers['x-pagarme-signature'] || req.headers['x-signature'] || '';
