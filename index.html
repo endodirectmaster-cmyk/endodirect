@@ -3025,7 +3025,7 @@ function renderAssineFounder(){
 }
 function renderAssinePlans(){
   var wrap=document.getElementById('assine-plans');if(!wrap)return;
-  var RANK={standard:1,gold:2,premium:3};
+  var RANK={standard:1,gold:2};
   var ANUAL_MES={standard:45,gold:69},ANUAL_TOTAL={standard:540,gold:828}; // espelha a vitrine (anual em destaque)
   var curRank=RANK[currentPlanKey()]||0; // plano atual do aluno (0 = degustação)
   var html=(ENDO_TIERS||[]).map(function(t){
@@ -3407,7 +3407,7 @@ var PANEL_MIN_TIER={rx:2, presc:2};
 // Endocrinologista ou "Outros" (outro profissional) na janela inicial.
 function userPerfil(){var p=(currentUser&&currentUser.profile)||lsGet('user_profile')||{};return p.perfil||'';}
 function prescProfileOk(){var pf=userPerfil();return pf==='Endocrinologista'||pf==='Outros';}
-function planRank(){var k=currentPlanKey();return k==='premium'?3:(k==='gold'?2:(k==='standard'?1:0));}
+function planRank(){var k=currentPlanKey();return k==='gold'?2:(k==='standard'?1:0);}
 function isAdminUser(){return !!(currentUser&&currentUser.role==='admin');}
 function hasScope(scope){return !scope||isAdminUser()||userAcessos.indexOf(scope)>=0;}
 // Degustacao: aluno logado, sem nenhum acesso ativo (não comprou pacote/curso).
@@ -3505,7 +3505,7 @@ function showLockedPanel(id){
   var label=PANEL_LABELS[id]||'este recurso';
   var trialEsgotado=isDegustacao()&&TRIAL_PANELS[id]&&trialLeft(id)<=0;
   var minTier=PANEL_MIN_TIER[id]||0;
-  var minName=minTier===3?'Premium':(minTier===2?'Gold':'');
+  var minName=minTier===2?'Gold':'';
   var titulo=trialEsgotado?'Degustação concluída':(minName?('Exclusivo do plano '+minName):(scope==='plano'?'Recurso dos pacotes':('Recurso do '+nome)));
   var hasPlan=!isDegustacao()&&!trialEsgotado;
   var ctaLabel=hasPlan?'Fazer upgrade do plano':'Ver planos e cursos';
@@ -3554,7 +3554,6 @@ function showLockedPanel(id){
 }
 function currentPlanKey(){
   if(!Array.isArray(userAcessos))return '';
-  if(userAcessos.indexOf('plano:premium')>=0)return 'premium';
   if(userAcessos.indexOf('plano:gold')>=0)return 'gold';
   if(userAcessos.indexOf('plano:standard')>=0)return 'standard';
   if(userAcessos.indexOf('plano')>=0)return 'gold';
@@ -3563,7 +3562,7 @@ function currentPlanKey(){
 // Mostra o plano atual do aluno na topbar (canto superior direito) e na aba Perfil.
 function updatePlanBadge(){
   var k=currentPlanKey();
-  var labels={standard:'Standard',gold:'Gold',premium:'Premium'};
+  var labels={standard:'Standard',gold:'Gold'};
   var label=k?labels[k]:'Degustação';
   var isAluno=!!(currentUser&&currentUser.role==='aluno')&&!isAdminUser();
   // Chip na topbar
@@ -3573,8 +3572,8 @@ function updatePlanBadge(){
     else{
       chip.textContent=label;
       chip.style.display='inline-block';
-      chip.style.background=k?(k==='premium'?'rgba(139,92,246,.14)':'rgba(59,111,212,.14)'):'rgba(154,170,192,.18)';
-      chip.style.color=k?(k==='premium'?'#7a5cff':'#3b6fd4'):'#6b7a90';
+      chip.style.background=k?'rgba(59,111,212,.14)':'rgba(154,170,192,.18)';
+      chip.style.color=k?'#3b6fd4':'#6b7a90';
     }
   }
   // Card na aba Perfil
@@ -3585,7 +3584,7 @@ function updatePlanBadge(){
       pc.style.display='block';
       if(pn)pn.textContent=label;
       if(pu){
-        pu.style.display=(k==='premium'||k==='gold')?'none':'inline-flex';
+        pu.style.display=(k==='gold')?'none':'inline-flex';
         pu.textContent=isDegustacao()?'⭐ Ver pacotes':'⭐ Fazer upgrade do plano';
       }
     }

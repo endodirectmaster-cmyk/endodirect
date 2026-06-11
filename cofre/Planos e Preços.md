@@ -12,7 +12,7 @@ atualizado: 2026-06-10
 | **Gold** | R$ 99/mês | 12× R$ 69 = R$ 828 | R$ 69 |
 
 - O **anual fica em destaque** (à esquerda); o mensal é secundário (à direita).
-- Existe um tier `premium` no código (R$139/mês; anual R$1164) como legado, mas a vitrine usa **2 pacotes**.
+- **Premium removido** (2026-06-11): não existe mais como pacote. Tirado de `config.js`, `subscribe.js`, `order.js`, do webhook (`TIERS`/heurística) e do sistema de tiers do `index.html` (`RANK`/`planRank`/labels). Gold é o tier máximo (rank 2); nenhum recurso exige tier 3. `PANEL_MIN_TIER={rx:2, presc:2}` (Prescrição exige Gold).
 
 ## Oferta de Sócio-fundador
 - **"Gold pelo preço do Standard"**: Gold anual por **12× R$ 45 (R$ 540)**.

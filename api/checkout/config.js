@@ -29,13 +29,11 @@ module.exports = async function handler(req, res) {
     public_key: PUBLIC_KEY,
     amounts: {
       standard: Number(process.env.PAGARME_TIER_STANDARD_AMOUNT || 6900),
-      gold: Number(process.env.PAGARME_TIER_GOLD_AMOUNT || 9900),
-      premium: Number(process.env.PAGARME_TIER_PREMIUM_AMOUNT || 13900)
+      gold: Number(process.env.PAGARME_TIER_GOLD_AMOUNT || 9900)
     },
     annual: {
       standard: Number(process.env.PAGARME_ANNUAL_STANDARD_AMOUNT || 54000),
-      gold: Number(process.env.PAGARME_ANNUAL_GOLD_AMOUNT || 82800),
-      premium: Number(process.env.PAGARME_ANNUAL_PREMIUM_AMOUNT || 116400)
+      gold: Number(process.env.PAGARME_ANNUAL_GOLD_AMOUNT || 82800)
     },
     max_installments: Number(process.env.PAGARME_MAX_INSTALLMENTS || 12),
     founder: founder
