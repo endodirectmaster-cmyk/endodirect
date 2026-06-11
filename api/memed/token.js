@@ -20,8 +20,8 @@
 const SUPABASE_URL = process.env.SUPABASE_URL || process.env.NEXT_PUBLIC_SUPABASE_URL || 'https://auth.endodirect.com.br';
 const SERVICE_ROLE = process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.SUPABASE_SECRET_KEY || process.env.SUPABASE_SERVICE_KEY;
 
-const MEMED_API_KEY = process.env.MEMED_API_KEY || '';
-const MEMED_SECRET = process.env.MEMED_SECRET || process.env.MEMED_SECRET_KEY || '';
+const MEMED_API_KEY = (process.env.MEMED_API_KEY || '').trim();
+const MEMED_SECRET = (process.env.MEMED_SECRET || process.env.MEMED_SECRET_KEY || '').trim();
 // Allowlist opcional (homologação): se definida, SÓ esses e-mails veem a Memed;
 // os demais ficam no receituário próprio. Em produção (chaves reais), deixe
 // MEMED_ALLOW vazia para liberar a todos. Ex.: "memed.teste@endodirect.com.br".
@@ -131,7 +131,10 @@ module.exports = async function handler(req, res) {
     });
     return json(res, 200, { ok: true, configured: true, token: memedToken, color: MEMED_COLOR, script: MEMED_SCRIPT });
   } catch (error) {
-    console.error('[memed-token] erro:', (error && error.stack) || error);
+    // Diagnóstico seguro: só comprimentos das chaves (sem expor valores) +
+    // a mensagem da Memed. Homologação esperada: api-key=56, secret-key=55.
+    console.log('[memed-dbg] keyLen=' + MEMED_API_KEY.length + ' secLen=' + MEMED_SECRET.length + ' base=' + MEMED_API_BASE);
+    console.error('[memed-token] erro:', (error && error.message) || error);
     return json(res, 502, { ok: false, error: (error && error.message) || 'Falha ao autenticar na Memed.' });
   }
 };
