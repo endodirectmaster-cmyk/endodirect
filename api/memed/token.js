@@ -27,7 +27,9 @@ const MEMED_SECRET = (process.env.MEMED_SECRET || process.env.MEMED_SECRET_KEY |
 // MEMED_ALLOW vazia para liberar a todos. Ex.: "memed.teste@endodirect.com.br".
 const MEMED_ALLOW = (process.env.MEMED_ALLOW || '').split(',').map(function (s) { return s.trim().toLowerCase(); }).filter(Boolean);
 function emailAllowed(email) { return MEMED_ALLOW.length === 0 || MEMED_ALLOW.indexOf(String(email || '').toLowerCase()) >= 0; }
-const MEMED_API_BASE = (process.env.MEMED_API_BASE || 'https://integrations.api.memed.com.br').replace(/\/+$/, '');
+// Base SEM o /v1 (o código já acrescenta /v1 nas rotas). Remove barra e /v1
+// finais — assim funciona mesmo se MEMED_API_BASE for setado com o /v1 da doc.
+const MEMED_API_BASE = (process.env.MEMED_API_BASE || 'https://integrations.api.memed.com.br').replace(/\/+$/, '').replace(/\/v1$/i, '');
 const MEMED_COLOR = process.env.MEMED_COLOR || '#0a7d68';
 const MEMED_SCRIPT = process.env.MEMED_SCRIPT || 'https://integrations.memed.com.br/modulos/plataforma.sinapse-prescricao/build/sinapse-prescricao.min.js';
 
@@ -55,8 +57,10 @@ async function userFromToken(token) {
 }
 
 // Sincroniza o prescritor na Memed (cadastro de usuário/médico) e devolve o
-// token do SDK. Formato JSON:API; campos planos (nome, sobrenome, crm, uf...)
-// conforme a referência do prescritor. Token em data.attributes.token.
+// token do SDK. Estrutura JSON:API conforme a doc "Cadastrar o prescritor":
+// data.attributes com external_id, nome, sobrenome, cpf, board{board_code,
+// board_number, board_state}, data_nascimento (DD/MM/YYYY). Token em
+// data.attributes.token.
 async function getMemedToken(p) {
   const url = `${MEMED_API_BASE}/v1/sinapse-prescricao/usuarios?api-key=${encodeURIComponent(MEMED_API_KEY)}&secret-key=${encodeURIComponent(MEMED_SECRET)}`;
   // Divide o nome completo em nome + sobrenome (a Memed exige os dois).
@@ -65,18 +69,24 @@ async function getMemedToken(p) {
     const parts = nome.split(/\s+/);
     if (parts.length > 1) { sobrenome = parts.slice(1).join(' '); nome = parts[0]; }
   }
+  // data_nascimento: a Memed exige DD/MM/YYYY (o input <date> envia YYYY-MM-DD).
+  let nasc = String(p.dataNascimento || '').trim();
+  const mIso = nasc.match(/^(\d{4})-(\d{2})-(\d{2})$/);
+  if (mIso) nasc = mIso[3] + '/' + mIso[2] + '/' + mIso[1];
   const attributes = {
     external_id: String(p.externalId || p.cpf || p.crm || ''),
     nome: nome,
     sobrenome: sobrenome || '.',
-    crm: String(p.crm || ''),
-    uf: String(p.uf || '').toUpperCase()
+    cpf: String(p.cpf || '').replace(/\D/g, ''),
+    board: {
+      board_code: 'CRM',
+      board_number: String(p.crm || '').replace(/\D/g, ''),
+      board_state: String(p.uf || '').toUpperCase()
+    }
   };
-  if (p.cpf) attributes.cpf = String(p.cpf);
+  if (nasc) attributes.data_nascimento = nasc;
   if (p.email) attributes.email = String(p.email);
-  // Cadastro completo do prescritor (exigência Memed p/ não revogar a chave).
-  if (p.especialidade) attributes.especialidade = String(p.especialidade);
-  if (p.dataNascimento) attributes.data_nascimento = String(p.dataNascimento); // YYYY-MM-DD
+  if (p.telefone) attributes.telefone = String(p.telefone).replace(/\D/g, '');
   const body = { data: { type: 'usuarios', attributes } };
   const r = await fetch(url, {
     method: 'POST',
