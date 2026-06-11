@@ -8,6 +8,7 @@ atualizado: 2026-06-10
 Log de decisões de produto e técnicas (mais recentes no topo).
 
 ## 2026-06
+- **Login por usuário (anti-bleed):** o `user_profile`/estudo locais deixam de ser confiados cegamente. `doLogin` rastreia `last_uid`; ao trocar de conta no navegador, `clearLocalUserData()` limpa os dados locais do aluno anterior, e a decisão de onboarding passa a ser feita **após o hydrate** (perfil remoto manda) via `maybeOnboardAfterHydrate`. Corrige: aluno novo pulando o onboarding (CRM/UF) e herdando o perfil de um teste anterior. ⚠️ Editar o **override** de `doLogin` (~l.6583), não a base.
 - **Confirmar e-mail = ON** no Supabase + auto-cadastro completo na tela de login: toggle Entrar/Criar conta, confirmar senha, painel persistente "confirme seu e-mail" e botão **Reenviar**. Ao clicar no link, o usuário volta logado (degustação → onboarding CRM/UF). Ver [[Pendências]].
 - **CRM + UF obrigatórios no onboarding** (todos os perfis), para alimentar o Memed sem redigitar. Ver [[Integrações]].
 - **Cofre de conhecimento no repo** (este cofre) em vez de exportação Obsidian para alunos. O Obsidian é para organizar a IA/projeto, não recurso de estudante. Botão de export removido (#172). Ver [[README]].
