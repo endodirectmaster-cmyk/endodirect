@@ -567,12 +567,6 @@ textarea{resize:vertical;line-height:1.6}
         </div>
         <div style="font-size:.68rem;color:var(--t3);margin-top:.3rem">Campo obrigatório</div>
       </div>
-      <div id="ob-contato-wrap" style="display:none;margin-bottom:.85rem">
-        <div class="flbl" style="margin-bottom:.3rem">CPF <span style="color:var(--red)">*</span></div>
-        <input type="text" id="ob-cpf" placeholder="Somente números" inputmode="numeric">
-        <div class="flbl" style="margin:.6rem 0 .3rem">Contato (telefone) <span style="color:var(--red)">*</span></div>
-        <input type="text" id="ob-contato" placeholder="(DDD) 9...." inputmode="tel">
-      </div>
       <div id="ob-err" style="display:none;background:var(--red-l);border:1px solid #fecaca;border-radius:var(--rs);padding:.45rem .75rem;font-size:.73rem;color:var(--red);margin-bottom:.7rem"></div>
       <button class="btn btn-primary" id="ob-submit" style="width:100%;justify-content:center;padding:.6rem">Começar →</button>
     </div>
@@ -6746,7 +6740,7 @@ openOnboard=function(){
   document.getElementById('onboard-modal').style.display='flex';
   document.getElementById('ob-err').style.display='none';
   document.querySelectorAll('input[name="ob-perfil"]').forEach(function(r){r.checked=false;});
-  ['ob-grad','ob-resid','ob-outros','ob-crm','ob-uf','ob-ano','ob-cpf','ob-contato'].forEach(function(id){var e=document.getElementById(id);if(e)e.value='';});
+  ['ob-grad','ob-resid','ob-outros','ob-crm','ob-uf','ob-ano'].forEach(function(id){var e=document.getElementById(id);if(e)e.value='';});
   setupOnboardProfileChoices();
 };
 submitOnboard=function(){
@@ -6754,13 +6748,6 @@ submitOnboard=function(){
   var err=document.getElementById('ob-err');
   if(!perfil){err.textContent='Selecione uma opção de perfil.';err.style.display='block';return;}
   var prof={perfil:perfil};
-  // CPF + contato (todos os perfis): pré-preenchem o perfil e o checkout.
-  var obCpf=((document.getElementById('ob-cpf')||{}).value||'').trim();
-  var obContato=((document.getElementById('ob-contato')||{}).value||'').trim();
-  if(obCpf.replace(/\D/g,'').length!==11){err.textContent='Informe um CPF válido (11 dígitos).';err.style.display='block';return;}
-  if(obContato.replace(/\D/g,'').length<10){err.textContent='Informe um telefone de contato com DDD.';err.style.display='block';return;}
-  prof.cpf=obCpf;prof.contato=obContato;
-  try{var _ckb=lsGet('ck_billing')||{};_ckb.doc=obCpf;_ckb.phone=obContato;lsSet('ck_billing',_ckb);}catch(e){}
   if(perfil==='Estudante'){
     // Estudante de medicina: instituição + ano. Sem CRM (não prescreve).
     var gradE=(document.getElementById('ob-grad').value||'').trim();
@@ -6820,8 +6807,6 @@ function setupOnboardProfileChoices(){
   // CRM/UF só para médicos (não para estudante, que não prescreve).
   var crmw=document.getElementById('ob-crm-wrap');
   if(crmw)crmw.style.display=(perfil&&perfil!=='Estudante')?'block':'none';
-  var ctw=document.getElementById('ob-contato-wrap');
-  if(ctw)ctw.style.display=perfil?'block':'none';
   [['ob-res-lbl','Residente'],['ob-endo-lbl','Endocrinologista'],['ob-outros-lbl','Outros'],['ob-est-lbl','Estudante']].forEach(function(pair){
     var el=document.getElementById(pair[0]);if(!el)return;
     var on=perfil===pair[1];
