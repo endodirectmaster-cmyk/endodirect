@@ -1179,13 +1179,13 @@ textarea{resize:vertical;line-height:1.6}
         <button class="sb-item" data-p="podcast">🎧 Podcasts</button>
         <button class="sb-item" data-p="cursos">🎬 Cursos</button>
         <button class="sb-item" data-p="crono">📅 Cronograma</button>
-        <button class="sb-item" data-p="sr">🔁 Revisão Espaçada</button>
+        <button class="sb-item" data-p="sr">🔁 Revisão</button>
         <div class="sb-sec">Clínica</div>
         <button class="sb-item" data-p="calc">🧮 Calculadoras</button>
         <button class="sb-item" data-p="simfull">📝 Simulado</button>
-        <button class="sb-item" data-p="rx">💊 Prescrição</button>
-        <button class="sb-item" data-p="presc" id="sb-presc" style="display:none">💉 Assistente de Prescrição</button>
-        <button class="sb-item" data-p="sim">🩺 Simulador</button>
+        <button class="sb-item" data-p="rx">💊 Prescrição Simulada</button>
+        <button class="sb-item" data-p="presc" id="sb-presc" style="display:none">💉 Consultório</button>
+        <button class="sb-item" data-p="sim">🩺 OSCE</button>
         <button class="sb-item" data-p="art">📄 Resumidor</button>
         <div class="sb-sec">Pessoal</div>
         <button class="sb-item" data-p="notas">📓 Caderno</button>
@@ -1384,8 +1384,8 @@ textarea{resize:vertical;line-height:1.6}
     </div>
 
     <div class="panel" id="panel-sr">
-      <div class="breadcrumb">Dashboard <b>/ Revisão Espaçada</b></div>
-      <div class="ph"><h1>Revisão Espaçada</h1><p>Algoritmo SM-2</p></div>
+      <div class="breadcrumb">Dashboard <b>/ Revisão</b></div>
+      <div class="ph"><h1>Revisão</h1><p>Algoritmo SM-2</p></div>
       <div class="pc">
         <div class="g3" style="margin-bottom:.85rem">
           <div class="card" style="text-align:center"><div style="font-size:1.45rem;font-weight:700;color:var(--red)" id="sr-due">0</div><div style="font-size:.66rem;color:var(--t3)">Para revisar hoje</div></div>
@@ -1420,8 +1420,8 @@ textarea{resize:vertical;line-height:1.6}
     </div>
 
     <div class="panel" id="panel-sim">
-      <div class="breadcrumb">Dashboard <b>/ Simulador</b></div>
-      <div class="ph"><h1>Simulador de Caso Clínico</h1></div>
+      <div class="breadcrumb">Dashboard <b>/ OSCE</b></div>
+      <div class="ph"><h1>OSCE — Caso Clínico</h1></div>
       <div class="pc">
         <div class="gen-box" id="sim-setup">
           <div class="g2" style="margin-bottom:.65rem">
@@ -1510,7 +1510,7 @@ textarea{resize:vertical;line-height:1.6}
     </div>
 
     <div class="panel" id="panel-rx">
-      <div class="breadcrumb">Dashboard <b>/ Prescrição</b></div>
+      <div class="breadcrumb">Dashboard <b>/ Prescrição Simulada</b></div>
       <div class="ph"><h1>Prescrição Simulada</h1></div>
       <div class="pc">
         <div class="gen-box">
@@ -1534,8 +1534,8 @@ textarea{resize:vertical;line-height:1.6}
     </div>
 
     <div class="panel" id="panel-presc">
-      <div class="breadcrumb">Dashboard <b>/ Assistente de Prescrição</b></div>
-      <div class="ph"><h1>Assistente de Prescrição</h1><p>Apoio à prescrição com receituário, LME, exames e seguimento — conforme a regulamentação brasileira (ANVISA, SUS).</p></div>
+      <div class="breadcrumb">Dashboard <b>/ Consultório</b></div>
+      <div class="ph"><h1>Consultório</h1><p>Apoio à prescrição com receituário, LME, exames e seguimento — conforme a regulamentação brasileira (ANVISA, SUS).</p></div>
       <div class="pc">
         <div style="background:#fff7ed;border:1px solid #fed7aa;border-radius:var(--rs);padding:.7rem .9rem;margin-bottom:.85rem;font-size:.72rem;color:#9a3412;line-height:1.55">⚠️ <b>Ferramenta educacional de apoio à decisão.</b> Não substitui o julgamento clínico, a avaliação individual do paciente nem a consulta às bulas e diretrizes vigentes. Confira sempre doses, contraindicações e interações antes de prescrever.</div>
         <div id="presc-tool"></div>
@@ -2313,8 +2313,8 @@ function renderDegustacaoBar(){
   if(isDegustacao()){
     if(!bar){
       bar=document.createElement('div');bar.id='degustacao-bar';
-      bar.style.cssText='display:flex;align-items:center;justify-content:center;gap:.8rem;flex-wrap:wrap;background:linear-gradient(90deg,#e0a93b,#d59a2e);color:#241a04;font-size:.8rem;font-weight:600;padding:.5rem 1rem;text-align:center';
-      bar.innerHTML='<span id="degustacao-msg"></span> <button id="degustacao-cta" type="button" style="background:#1a1320;color:#fff;border:0;border-radius:999px;padding:.32rem .9rem;font-weight:700;cursor:pointer">Ver pacotes e desbloquear tudo</button>';
+      bar.style.cssText='display:flex;align-items:center;justify-content:center;gap:.75rem;flex-wrap:wrap;background:linear-gradient(90deg,#fcd34d,#f59e0b);color:#3a2c05;font-size:.82rem;font-weight:600;padding:.6rem 1rem;text-align:center;box-shadow:inset 0 -1px 0 rgba(120,80,0,.18),0 1px 4px rgba(0,0,0,.08)';
+      bar.innerHTML='<span id="degustacao-msg" style="display:inline-flex;align-items:center;gap:.5rem;flex-wrap:wrap;justify-content:center"></span> <button id="degustacao-cta" type="button" style="background:#14203a;color:#fff;border:0;border-radius:999px;padding:.4rem 1.05rem;font-weight:700;cursor:pointer;box-shadow:0 1px 3px rgba(0,0,0,.25);white-space:nowrap;transition:transform .08s ease" onmouseover="this.style.transform=\'translateY(-1px)\'" onmouseout="this.style.transform=\'none\'">Ver pacotes e desbloquear tudo →</button>';
       var ws=app.querySelector('.workspace');
       if(ws)app.insertBefore(bar,ws);else app.appendChild(bar);
       var cta=bar.querySelector('#degustacao-cta');if(cta)cta.addEventListener('click',function(){showAssineScreen((currentUser&&currentUser.email)||'');});
@@ -2324,7 +2324,7 @@ function renderDegustacaoBar(){
       var muralTxt;
       if(muralTrialActive()){var d=muralDegDiasRestantes();muralTxt='mural por mais '+d+' dia'+(d===1?'':'s');}
       else{muralTxt='mural encerrado';}
-      msg.innerHTML='🎁 Modo degustação — flashcards, mapas mentais, 50 questões do banco e '+muralTxt+'.';
+      msg.innerHTML='<span style="display:inline-flex;align-items:center;gap:.3rem;background:rgba(255,255,255,.5);border:1px solid rgba(120,80,0,.25);border-radius:999px;padding:.1rem .6rem;font-weight:800">🎁 Modo degustação</span> <span style="opacity:.92">flashcards, mapas mentais, 50 questões do banco e '+muralTxt+'</span>';
     }
     bar.style.display='flex';
   }else if(bar){bar.style.display='none';}
@@ -3402,7 +3402,7 @@ function startGoogleOAuth(){
   });
 }
 
-var PANEL_LABELS={dash:'Dashboard',quest:'Questões',flash:'Flashcards',mmap:'Mapas Mentais',podcast:'Podcasts',cursos:'Cursos',crono:'Cronograma',sr:'Revisão Espaçada',sim:'Simulador',simfull:'Simulado',calc:'Calculadoras',rx:'Prescrição',presc:'Assistente de Prescrição',art:'Resumidor',notas:'Caderno',mural:'Mural',chat:'Chat IA',perfil:'Perfil',support:'Suporte',adm:'Painel Admin'};
+var PANEL_LABELS={dash:'Dashboard',quest:'Questões',flash:'Flashcards',mmap:'Mapas Mentais',podcast:'Podcasts',cursos:'Cursos',crono:'Cronograma',sr:'Revisão',sim:'OSCE',simfull:'Simulado',calc:'Calculadoras',rx:'Prescrição Simulada',presc:'Consultório',art:'Resumidor',notas:'Caderno',mural:'Mural',chat:'Chat IA',perfil:'Perfil',support:'Suporte',adm:'Painel Admin'};
 function closeMobileNav(){
   document.body.classList.remove('mobile-nav-open');
   var b=document.getElementById('btn-mobile-nav');
