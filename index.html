@@ -536,11 +536,21 @@ textarea{resize:vertical;line-height:1.6}
           <label style="flex:1 1 150px;display:flex;align-items:center;justify-content:center;gap:.4rem;cursor:pointer;font-size:.79rem;border:1.5px solid var(--bd2);border-radius:var(--rs);padding:.55rem;color:var(--tx)" id="ob-res-lbl"><input type="radio" name="ob-perfil" value="Residente" style="width:auto;accent-color:var(--blue)"> Médico(a) Residente</label>
           <label style="flex:1 1 150px;display:flex;align-items:center;justify-content:center;gap:.4rem;cursor:pointer;font-size:.79rem;border:1.5px solid var(--bd2);border-radius:var(--rs);padding:.55rem;color:var(--tx)" id="ob-endo-lbl"><input type="radio" name="ob-perfil" value="Endocrinologista" style="width:auto;accent-color:var(--blue)"> Endocrinologista</label>
           <label style="flex:1 1 150px;display:flex;align-items:center;justify-content:center;gap:.4rem;cursor:pointer;font-size:.79rem;border:1.5px solid var(--bd2);border-radius:var(--rs);padding:.55rem;color:var(--tx)" id="ob-outros-lbl"><input type="radio" name="ob-perfil" value="Outros" style="width:auto;accent-color:var(--blue)"> Outros</label>
+          <label style="flex:1 1 150px;display:flex;align-items:center;justify-content:center;gap:.4rem;cursor:pointer;font-size:.79rem;border:1.5px solid var(--bd2);border-radius:var(--rs);padding:.55rem;color:var(--tx)" id="ob-est-lbl"><input type="radio" name="ob-perfil" value="Estudante" style="width:auto;accent-color:var(--blue)"> Estudante de medicina</label>
         </div>
       </div>
       <div id="ob-grad-wrap" style="display:none;margin-bottom:.85rem">
         <div class="flbl" style="margin-bottom:.3rem">Instituição de graduação</div>
         <input type="text" id="ob-grad" placeholder="Ex: USP, UNIFESP, UFMG…">
+      </div>
+      <div id="ob-ano-wrap" style="display:none;margin-bottom:.85rem">
+        <div class="flbl" style="margin-bottom:.3rem">Ano / período do curso</div>
+        <select id="ob-ano">
+          <option value="">Selecione…</option>
+          <option>1º ano</option><option>2º ano</option><option>3º ano</option>
+          <option>4º ano</option><option>5º ano</option><option>6º ano</option>
+          <option>Internato</option>
+        </select>
       </div>
       <div id="ob-resid-wrap" style="display:none;margin-bottom:.85rem">
         <div class="flbl" style="margin-bottom:.3rem">Instituição da residência médica</div>
@@ -3428,10 +3438,11 @@ var PANEL_SCOPE={
 // Tier mínimo por painel: Prescrição = Gold(2). Simulador e Resumidor entram já no Standard.
 // Os demais ficam em qualquer pacote (tier 1).
 var PANEL_MIN_TIER={rx:2, presc:2};
-// Assistente de Prescrição: oferecido apenas a quem se identificou como
-// Endocrinologista ou "Outros" (outro profissional) na janela inicial.
+// Prescrição (rx) e Assistente de Prescrição (presc): só para MÉDICOS — quem se
+// identificou como Médico(a) Residente, Endocrinologista ou "Outros". Estudante
+// de medicina NÃO prescreve, então essas ferramentas ficam ocultas para ele.
 function userPerfil(){var p=(currentUser&&currentUser.profile)||lsGet('user_profile')||{};return p.perfil||'';}
-function prescProfileOk(){var pf=userPerfil();return pf==='Endocrinologista'||pf==='Outros';}
+function prescProfileOk(){var pf=userPerfil();return pf==='Residente'||pf==='Endocrinologista'||pf==='Outros';}
 function planRank(){var k=currentPlanKey();return k==='gold'?2:(k==='standard'?1:0);}
 function isAdminUser(){return !!(currentUser&&currentUser.role==='admin');}
 function hasScope(scope){return !scope||isAdminUser()||userAcessos.indexOf(scope)>=0;}
@@ -3473,7 +3484,7 @@ function consumeTrial(id){
 }
 function canSeePanel(id){
   if(isAdminUser())return true;
-  if(id==='presc'&&!prescProfileOk())return false;
+  if((id==='presc'||id==='rx')&&!prescProfileOk())return false;
   if(isDegustacao()){
     if(id==='mural')return muralTrialActive(); // degustação do mural: 7 dias
     if(DEGUSTACAO_PANELS[id])return true;
@@ -3617,7 +3628,9 @@ function updatePlanBadge(){
 }
 function markLockedNavItems(){
   try{updatePlanBadge();}catch(e){}
-  var sp=document.getElementById('sb-presc');if(sp)sp.style.display=prescProfileOk()?'':'none';
+  var okRx=prescProfileOk();
+  var sp=document.getElementById('sb-presc');if(sp)sp.style.display=okRx?'':'none';
+  var srx=document.querySelector('#sb-aluno .sb-item[data-p="rx"]');if(srx)srx.style.display=okRx?'':'none';
   document.querySelectorAll('#sb-aluno .sb-item[data-p]').forEach(function(b){
     var locked=!canSeePanel(b.dataset.p);
     var has=b.querySelector('.sb-lock');
@@ -6649,6 +6662,7 @@ function profileDisplayLabel(profile){
   if(!profile)return'';
   if(profile.displayPerfil)return profile.displayPerfil;
   if(profile.perfil==='Residente')return'Médico(a) Residente';
+  if(profile.perfil==='Estudante')return (profile.graduacao||'Estudante')+(profile.ano?' · '+profile.ano:'');
   if(profile.perfil==='Outros')return profile.especialidade||'Outro profissional';
   return profile.perfil||'';
 }
@@ -6700,7 +6714,7 @@ openOnboard=function(){
   document.getElementById('onboard-modal').style.display='flex';
   document.getElementById('ob-err').style.display='none';
   document.querySelectorAll('input[name="ob-perfil"]').forEach(function(r){r.checked=false;});
-  ['ob-grad','ob-resid','ob-outros','ob-crm','ob-uf'].forEach(function(id){var e=document.getElementById(id);if(e)e.value='';});
+  ['ob-grad','ob-resid','ob-outros','ob-crm','ob-uf','ob-ano'].forEach(function(id){var e=document.getElementById(id);if(e)e.value='';});
   setupOnboardProfileChoices();
 };
 submitOnboard=function(){
@@ -6708,6 +6722,22 @@ submitOnboard=function(){
   var err=document.getElementById('ob-err');
   if(!perfil){err.textContent='Selecione uma opção de perfil.';err.style.display='block';return;}
   var prof={perfil:perfil};
+  if(perfil==='Estudante'){
+    // Estudante de medicina: instituição + ano. Sem CRM (não prescreve).
+    var gradE=(document.getElementById('ob-grad').value||'').trim();
+    var anoE=(document.getElementById('ob-ano').value||'').trim();
+    if(!gradE){err.textContent='Informe sua instituição de graduação.';err.style.display='block';return;}
+    if(!anoE){err.textContent='Informe o ano/período do curso.';err.style.display='block';return;}
+    prof.graduacao=gradE;prof.ano=anoE;
+    prof.displayPerfil=gradE+' · '+anoE; // ex.: "USP · 5º ano" (canto superior direito)
+    lsSet('user_profile',prof);
+    currentUser.sub=profileDisplayLabel(prof);
+    currentUser.profile=prof;
+    document.getElementById('onboard-modal').style.display='none';
+    startApp();hydrateRemoteState();queueRemoteStateSave();
+    try{markLockedNavItems();}catch(e){} // esconde Prescrição/Assistente para estudante
+    return;
+  }
   if(perfil==='Outros'){
     var esp=(document.getElementById('ob-outros').value||'').trim();
     if(!esp){err.textContent='Descreva sua especialidade ou área de atuação.';err.style.display='block';return;}
@@ -6747,12 +6777,16 @@ function setupOnboardProfileChoices(){
   var grad=document.getElementById('ob-grad-wrap');
   var resid=document.getElementById('ob-resid-wrap');
   var outros=document.getElementById('ob-outros-wrap');
-  if(grad)grad.style.display=(perfil==='Residente'||perfil==='Endocrinologista')?'block':'none';
+  var anow=document.getElementById('ob-ano-wrap');
+  // Instituição de graduação: residente, endocrinologista e estudante.
+  if(grad)grad.style.display=(perfil==='Residente'||perfil==='Endocrinologista'||perfil==='Estudante')?'block':'none';
   if(resid)resid.style.display=perfil==='Endocrinologista'?'block':'none';
   if(outros)outros.style.display=perfil==='Outros'?'block':'none';
+  if(anow)anow.style.display=perfil==='Estudante'?'block':'none';
+  // CRM/UF só para médicos (não para estudante, que não prescreve).
   var crmw=document.getElementById('ob-crm-wrap');
-  if(crmw)crmw.style.display=perfil?'block':'none';
-  [['ob-res-lbl','Residente'],['ob-endo-lbl','Endocrinologista'],['ob-outros-lbl','Outros']].forEach(function(pair){
+  if(crmw)crmw.style.display=(perfil&&perfil!=='Estudante')?'block':'none';
+  [['ob-res-lbl','Residente'],['ob-endo-lbl','Endocrinologista'],['ob-outros-lbl','Outros'],['ob-est-lbl','Estudante']].forEach(function(pair){
     var el=document.getElementById(pair[0]);if(!el)return;
     var on=perfil===pair[1];
     el.style.borderColor=on?'var(--blue)':'var(--bd2)';
@@ -6783,8 +6817,10 @@ function renderPerfil(){
         +'<option value="Residente"'+(perfilVal==='Residente'?' selected':'')+'>Médico(a) Residente</option>'
         +'<option value="Endocrinologista"'+(perfilVal==='Endocrinologista'?' selected':'')+'>Endocrinologista</option>'
         +'<option value="Outros"'+(perfilVal==='Outros'?' selected':'')+'>Outros</option>'
+        +'<option value="Estudante"'+(perfilVal==='Estudante'?' selected':'')+'>Estudante de medicina</option>'
       +'</select></div></div>'
       +'<div class="fld2" id="pf-grad-wrap" style="margin-bottom:.7rem;display:'+(perfilVal==='Outros'?'none':'block')+'"><label>Instituição de graduação</label><input type="text" id="pf-grad" value="'+esc(prof.graduacao||'')+'" placeholder="Ex: USP, UNIFESP, UFMG…"></div>'
+      +'<div class="fld2" id="pf-ano-wrap" style="margin-bottom:.7rem;display:'+(perfilVal==='Estudante'?'block':'none')+'"><label>Ano / período do curso</label><select id="pf-ano"><option value="">Selecione…</option>'+['1º ano','2º ano','3º ano','4º ano','5º ano','6º ano','Internato'].map(function(a){return '<option'+(prof.ano===a?' selected':'')+'>'+a+'</option>';}).join('')+'</select></div>'
       +'<div class="fld2" id="pf-resid-wrap" style="margin-bottom:.7rem;display:'+(perfilVal==='Endocrinologista'?'block':'none')+'"><label>Instituição de residência médica</label><input type="text" id="pf-resid" value="'+esc(prof.residencia||'')+'" placeholder="Ex: HC-FMUSP, INCA…"></div>'
       +'<div class="fld2" id="pf-outros-wrap" style="margin-bottom:.7rem;display:'+(perfilVal==='Outros'?'block':'none')+'"><label>Especialidade / área de atuação</label><input type="text" id="pf-outros" value="'+esc(prof.especialidade||'')+'" placeholder="Ex: Cardiologista, Clínico geral…"></div>'
       +'<div id="pf-err" style="display:none;background:var(--red-l);border:1px solid #fecaca;border-radius:var(--rs);padding:.45rem .75rem;font-size:.73rem;color:var(--red);margin-bottom:.7rem"></div>'
@@ -6824,10 +6860,11 @@ function wirePerfil(){
   var sel=document.getElementById('pf-perfil');
   if(sel)sel.addEventListener('change',function(){
     var v=sel.value;
-    var gw=document.getElementById('pf-grad-wrap');var rw=document.getElementById('pf-resid-wrap');var ow=document.getElementById('pf-outros-wrap');
+    var gw=document.getElementById('pf-grad-wrap');var rw=document.getElementById('pf-resid-wrap');var ow=document.getElementById('pf-outros-wrap');var aw=document.getElementById('pf-ano-wrap');
     if(gw)gw.style.display=v==='Outros'?'none':'block';
     if(rw)rw.style.display=v==='Endocrinologista'?'block':'none';
     if(ow)ow.style.display=v==='Outros'?'block':'none';
+    if(aw)aw.style.display=v==='Estudante'?'block':'none';
   });
   var bsave=document.getElementById('btn-pf-save');
   if(bsave)bsave.addEventListener('click',function(){
@@ -6837,7 +6874,13 @@ function wirePerfil(){
     if(!nome){fail('Informe seu nome.');return;}
     var perfil=document.getElementById('pf-perfil').value;
     var prof={perfil:perfil};
-    if(perfil==='Outros'){
+    if(perfil==='Estudante'){
+      var gradE=(document.getElementById('pf-grad').value||'').trim();
+      var anoE=(document.getElementById('pf-ano').value||'').trim();
+      if(!gradE){fail('Informe sua instituição de graduação.');return;}
+      if(!anoE){fail('Informe o ano/período do curso.');return;}
+      prof.graduacao=gradE;prof.ano=anoE;prof.displayPerfil=gradE+' · '+anoE;
+    }else if(perfil==='Outros'){
       var esp=(document.getElementById('pf-outros').value||'').trim();
       if(!esp){fail('Descreva sua especialidade ou área de atuação.');return;}
       prof.especialidade=esp;prof.displayPerfil=esp;
