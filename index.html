@@ -565,7 +565,7 @@ textarea{resize:vertical;line-height:1.6}
           <input type="text" id="ob-crm" placeholder="Número do CRM" inputmode="numeric" style="flex:1">
           <input type="text" id="ob-uf" placeholder="UF" maxlength="2" style="width:70px;text-transform:uppercase">
         </div>
-        <div style="font-size:.68rem;color:var(--t3);margin-top:.3rem">Obrigatório — usado para emitir receitas pela Memed. Informe o número do CRM e a UF (ex.: SP).</div>
+        <div style="font-size:.68rem;color:var(--t3);margin-top:.3rem">Campo obrigatório</div>
       </div>
       <div id="ob-err" style="display:none;background:var(--red-l);border:1px solid #fecaca;border-radius:var(--rs);padding:.45rem .75rem;font-size:.73rem;color:var(--red);margin-bottom:.7rem"></div>
       <button class="btn btn-primary" id="ob-submit" style="width:100%;justify-content:center;padding:.6rem">Começar →</button>
@@ -6746,9 +6746,7 @@ submitOnboard=function(){
     prof.especialidade=esp;
     prof.displayPerfil=esp;
   }else{
-    var grad=(document.getElementById('ob-grad').value||'').trim();
-    if(!grad){err.textContent='Informe sua instituição de graduação.';err.style.display='block';return;}
-    prof.graduacao=grad;
+    // Médicos (Residente / Endocrinologista): sem instituição de graduação.
     if(perfil==='Residente'){
       prof.displayPerfil='Médico(a) Residente';
     }else{
@@ -6780,8 +6778,8 @@ function setupOnboardProfileChoices(){
   var resid=document.getElementById('ob-resid-wrap');
   var outros=document.getElementById('ob-outros-wrap');
   var anow=document.getElementById('ob-ano-wrap');
-  // Instituição de graduação: residente, endocrinologista e estudante.
-  if(grad)grad.style.display=(perfil==='Residente'||perfil==='Endocrinologista'||perfil==='Estudante')?'block':'none';
+  // Instituição de graduação: só para o estudante de medicina.
+  if(grad)grad.style.display=(perfil==='Estudante')?'block':'none';
   if(resid)resid.style.display=perfil==='Endocrinologista'?'block':'none';
   if(outros)outros.style.display=perfil==='Outros'?'block':'none';
   if(anow)anow.style.display=perfil==='Estudante'?'block':'none';
@@ -6821,7 +6819,7 @@ function renderPerfil(){
         +'<option value="Outros"'+(perfilVal==='Outros'?' selected':'')+'>Outros</option>'
         +'<option value="Estudante"'+(perfilVal==='Estudante'?' selected':'')+'>Estudante de medicina</option>'
       +'</select></div></div>'
-      +'<div class="fld2" id="pf-grad-wrap" style="margin-bottom:.7rem;display:'+(perfilVal==='Outros'?'none':'block')+'"><label>Instituição de graduação</label><input type="text" id="pf-grad" value="'+esc(prof.graduacao||'')+'" placeholder="Ex: USP, UNIFESP, UFMG…"></div>'
+      +'<div class="fld2" id="pf-grad-wrap" style="margin-bottom:.7rem;display:'+(perfilVal==='Estudante'?'block':'none')+'"><label>Instituição de graduação</label><input type="text" id="pf-grad" value="'+esc(prof.graduacao||'')+'" placeholder="Ex: USP, UNIFESP, UFMG…"></div>'
       +'<div class="fld2" id="pf-ano-wrap" style="margin-bottom:.7rem;display:'+(perfilVal==='Estudante'?'block':'none')+'"><label>Ano / período do curso</label><select id="pf-ano"><option value="">Selecione…</option>'+['1º ano','2º ano','3º ano','4º ano','5º ano','6º ano'].map(function(a){return '<option'+(prof.ano===a?' selected':'')+'>'+a+'</option>';}).join('')+'</select></div>'
       +'<div class="fld2" id="pf-resid-wrap" style="margin-bottom:.7rem;display:'+(perfilVal==='Endocrinologista'?'block':'none')+'"><label>Instituição de residência médica</label><input type="text" id="pf-resid" value="'+esc(prof.residencia||'')+'" placeholder="Ex: HC-FMUSP, INCA…"></div>'
       +'<div class="fld2" id="pf-outros-wrap" style="margin-bottom:.7rem;display:'+(perfilVal==='Outros'?'block':'none')+'"><label>Especialidade / área de atuação</label><input type="text" id="pf-outros" value="'+esc(prof.especialidade||'')+'" placeholder="Ex: Cardiologista, Clínico geral…"></div>'
@@ -6863,7 +6861,7 @@ function wirePerfil(){
   if(sel)sel.addEventListener('change',function(){
     var v=sel.value;
     var gw=document.getElementById('pf-grad-wrap');var rw=document.getElementById('pf-resid-wrap');var ow=document.getElementById('pf-outros-wrap');var aw=document.getElementById('pf-ano-wrap');
-    if(gw)gw.style.display=v==='Outros'?'none':'block';
+    if(gw)gw.style.display=v==='Estudante'?'block':'none';
     if(rw)rw.style.display=v==='Endocrinologista'?'block':'none';
     if(ow)ow.style.display=v==='Outros'?'block':'none';
     if(aw)aw.style.display=v==='Estudante'?'block':'none';
@@ -6887,9 +6885,7 @@ function wirePerfil(){
       if(!esp){fail('Descreva sua especialidade ou área de atuação.');return;}
       prof.especialidade=esp;prof.displayPerfil=esp;
     }else{
-      var grad=(document.getElementById('pf-grad').value||'').trim();
-      if(!grad){fail('Informe sua instituição de graduação.');return;}
-      prof.graduacao=grad;
+      // Médicos (Residente / Endocrinologista): sem instituição de graduação.
       if(perfil==='Residente'){prof.displayPerfil='Médico(a) Residente';}
       else{
         var resid=(document.getElementById('pf-resid').value||'').trim();
