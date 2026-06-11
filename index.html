@@ -2870,7 +2870,10 @@ function doLogout(){
   hideSessionWarning();
   try{lsSet('demo_session',null);lsSet('last_panel',null);}catch(e){}
   var client=getSupabaseClient();
-  if(client&&currentUser&&currentUser.auth==='supabase-google'){client.auth.signOut().catch(function(){});}
+  // Encerra a sessão do Supabase em QUALQUER login real (e-mail/senha ou Google),
+  // senão o watcher reencontra a sessão e re-loga sozinho ao voltar/recarregar.
+  if(client&&client.auth){try{client.auth.signOut().catch(function(){});}catch(e){}}
+  if(deviceWatcher){clearInterval(deviceWatcher);deviceWatcher=null;}
   currentUser=null;
   remoteStateLoaded=false;
   document.body.classList.remove('mobile-nav-open','admin-menu-open');
