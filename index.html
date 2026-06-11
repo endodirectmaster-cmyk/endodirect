@@ -553,7 +553,7 @@ textarea{resize:vertical;line-height:1.6}
       </div>
       <div id="ob-resid-wrap" style="display:none;margin-bottom:.85rem">
         <div class="flbl" style="margin-bottom:.3rem">Instituição da residência médica</div>
-        <input type="text" id="ob-resid" placeholder="Ex: HC-FMUSP, INCA…">
+        <input type="text" id="ob-resid" placeholder="Ex: HC-FMUSP, UNIFESP…">
       </div>
       <div id="ob-outros-wrap" style="display:none;margin-bottom:.85rem">
         <div class="flbl" style="margin-bottom:.3rem">Especialidade ou área de atuação</div>
@@ -6818,7 +6818,7 @@ function renderPerfil(){
       +'</select></div></div>'
       +'<div class="fld2" id="pf-grad-wrap" style="margin-bottom:.7rem;display:'+(perfilVal==='Estudante'?'block':'none')+'"><label>Instituição de graduação</label><input type="text" id="pf-grad" value="'+esc(prof.graduacao||'')+'" placeholder="Ex: USP, UNIFESP, UFMG…"></div>'
       +'<div class="fld2" id="pf-ano-wrap" style="margin-bottom:.7rem;display:'+(perfilVal==='Estudante'?'block':'none')+'"><label>Ano / período do curso</label><select id="pf-ano"><option value="">Selecione…</option>'+['1º ano','2º ano','3º ano','4º ano','5º ano','6º ano'].map(function(a){return '<option'+(prof.ano===a?' selected':'')+'>'+a+'</option>';}).join('')+'</select></div>'
-      +'<div class="fld2" id="pf-resid-wrap" style="margin-bottom:.7rem;display:'+((perfilVal==='Residente'||perfilVal==='Endocrinologista')?'block':'none')+'"><label>Instituição de residência médica</label><input type="text" id="pf-resid" value="'+esc(prof.residencia||'')+'" placeholder="Ex: HC-FMUSP, INCA…"></div>'
+      +'<div class="fld2" id="pf-resid-wrap" style="margin-bottom:.7rem;display:'+((perfilVal==='Residente'||perfilVal==='Endocrinologista')?'block':'none')+'"><label>Instituição de residência médica</label><input type="text" id="pf-resid" value="'+esc(prof.residencia||'')+'" placeholder="Ex: HC-FMUSP, UNIFESP…"></div>'
       +'<div class="fld2" id="pf-outros-wrap" style="margin-bottom:.7rem;display:'+(perfilVal==='Outros'?'block':'none')+'"><label>Especialidade / área de atuação</label><input type="text" id="pf-outros" value="'+esc(prof.especialidade||'')+'" placeholder="Ex: Cardiologista, Clínico geral…"></div>'
       +'<div id="pf-err" style="display:none;background:var(--red-l);border:1px solid #fecaca;border-radius:var(--rs);padding:.45rem .75rem;font-size:.73rem;color:var(--red);margin-bottom:.7rem"></div>'
       +'<div style="display:flex;gap:6px"><button class="btn btn-primary" id="btn-pf-save">💾 Salvar</button><button class="btn btn-outline" id="btn-pf-cancel">Cancelar</button></div></div>';
