@@ -5044,14 +5044,23 @@ function prescAISuggest(){
 // Gated por ambiente: se /api/memed/token responder configured:false (sem
 // chaves na Vercel), mantemos o receituário próprio. Com as chaves, o módulo
 // da Memed substitui a ferramenta.
-var prescMemed={configured:null,color:'#0a7d68',script:''};
+var prescMemed={configured:null,color:'#0a7d68',script:'',allow:[]};
+// Memed efetiva: configurada E (sem allowlist OU e-mail do usuário na allowlist).
+// A allowlist é a trava de homologação (só a conta de teste vê a Memed sandbox).
+function memedEffective(){
+  if(!prescMemed.configured)return false;
+  var al=prescMemed.allow||[];
+  if(!al.length)return true;
+  return al.indexOf(String((currentUser&&currentUser.email)||'').toLowerCase())>=0;
+}
 function prescCheckMemed(cb){
-  if(prescMemed.configured!==null){cb(prescMemed.configured);return;}
+  if(prescMemed.configured!==null){cb(memedEffective());return;}
   fetch('/api/memed/token').then(function(r){return r.json();}).then(function(d){
     prescMemed.configured=!!(d&&d.configured);
     if(d&&d.color)prescMemed.color=d.color;
     if(d&&d.script)prescMemed.script=d.script;
-    cb(prescMemed.configured);
+    prescMemed.allow=(d&&Array.isArray(d.allow))?d.allow:[];
+    cb(memedEffective());
   }).catch(function(){prescMemed.configured=false;cb(false);});
 }
 function renderPrescMemed(){

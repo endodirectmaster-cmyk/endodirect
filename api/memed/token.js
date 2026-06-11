@@ -22,6 +22,11 @@ const SERVICE_ROLE = process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.SUPABA
 
 const MEMED_API_KEY = process.env.MEMED_API_KEY || '';
 const MEMED_SECRET = process.env.MEMED_SECRET || process.env.MEMED_SECRET_KEY || '';
+// Allowlist opcional (homologação): se definida, SÓ esses e-mails veem a Memed;
+// os demais ficam no receituário próprio. Em produção (chaves reais), deixe
+// MEMED_ALLOW vazia para liberar a todos. Ex.: "memed.teste@endodirect.com.br".
+const MEMED_ALLOW = (process.env.MEMED_ALLOW || '').split(',').map(function (s) { return s.trim().toLowerCase(); }).filter(Boolean);
+function emailAllowed(email) { return MEMED_ALLOW.length === 0 || MEMED_ALLOW.indexOf(String(email || '').toLowerCase()) >= 0; }
 const MEMED_API_BASE = (process.env.MEMED_API_BASE || 'https://integrations.api.memed.com.br').replace(/\/+$/, '');
 const MEMED_COLOR = process.env.MEMED_COLOR || '#0a7d68';
 const MEMED_SCRIPT = process.env.MEMED_SCRIPT || 'https://integrations.memed.com.br/modulos/plataforma.sinapse-prescricao/build/sinapse-prescricao.min.js';
@@ -91,7 +96,7 @@ async function getMemedToken(p) {
 module.exports = async function handler(req, res) {
   // GET = checagem de configuração (o front decide entre Memed e fallback).
   if (req.method === 'GET') {
-    return json(res, 200, { ok: true, configured: isConfigured(), color: MEMED_COLOR, script: MEMED_SCRIPT });
+    return json(res, 200, { ok: true, configured: isConfigured(), color: MEMED_COLOR, script: MEMED_SCRIPT, allow: MEMED_ALLOW });
   }
   if (req.method !== 'POST') { res.setHeader('Allow', 'GET, POST'); return json(res, 405, { ok: false, error: 'Metodo nao permitido.' }); }
 
@@ -104,6 +109,9 @@ module.exports = async function handler(req, res) {
   const user = await userFromToken(token);
   const email = user && String(user.email || '').toLowerCase();
   if (!email) return json(res, 401, { ok: false, error: 'Sessao invalida.' });
+  // Trava de homologação: fora da allowlist, responde como não-configurado
+  // (o front mantém o receituário próprio). Sem allowlist, libera a todos.
+  if (!emailAllowed(email)) return json(res, 200, { ok: true, configured: false });
 
   const b = parseBody(req);
   const crm = String(b.crm || '').trim();
