@@ -2881,6 +2881,13 @@ function clearLoginError(){
 function isPasswordRecoveryUrl(){
   return /type=recovery|reset=1/.test(window.location.search+window.location.hash);
 }
+// Retorno de um link de e-mail de autenticação (confirmação de cadastro, magic
+// link, etc.). Nesses casos NÃO mostramos a landing: se o link trouxe sessão, o
+// watcher loga e vai pro dashboard; se não trouxe, cai no login com aviso.
+function isAuthCallbackUrl(){
+  var s=window.location.search+window.location.hash;
+  return /access_token=|[?&#]code=|type=signup|type=magiclink|type=invite|type=email_change/.test(s);
+}
 function handlePasswordRecovery(){
   var client=getSupabaseClient();
   if(!client)return;
@@ -7217,8 +7224,20 @@ document.addEventListener('DOMContentLoaded',function(){
   // os demais ("Acessar a plataforma") vão para o login.
   var lpEl=document.getElementById('landing-screen');
   if(lpEl)lpEl.addEventListener('click',function(e){var b=e.target.closest?e.target.closest('.lp-cta'):null;if(!b)return;e.preventDefault();var co=b.getAttribute('data-checkout');if(co){if(b.getAttribute('data-cycle')==='anual')window.__lpCycle='anual';var cp=b.getAttribute('data-coupon');if(cp)window.__lpCoupon=cp;goCheckout(co);}else{showLoginScreen();}});
-  // Recuperação de senha cai direto na tela de login (não na landing).
-  try{if(isPasswordRecoveryUrl())showLoginScreen();}catch(e){}
+  // Recuperação de senha e retorno de links de e-mail (confirmação de cadastro,
+  // magic link) caem na tela de login — nunca na landing. Se o link trouxe sessão,
+  // o watcher loga e leva direto ao dashboard; senão, fica no login com aviso.
+  try{
+    if(isPasswordRecoveryUrl()){showLoginScreen();}
+    else if(isAuthCallbackUrl()){
+      showLoginScreen();
+      // Confirmou o e-mail mas o link não trouxe sessão? Avisa para fazer login.
+      var __wasSignup=/type=signup/.test(window.location.search+window.location.hash);
+      setTimeout(function(){
+        if(!currentUser){try{notify(__wasSignup?'E-mail confirmado! Faça login para entrar. ✅':'Tudo certo! Faça login para entrar.','ok');}catch(e){}}
+      },2500);
+    }
+  }catch(e){}
   startSupabaseAuthWatcher();
   // Restaura sessão de conta demo no reload (logins de teste não têm sessão
   // Supabase). demo_session só fica setado quando o último login foi demo
