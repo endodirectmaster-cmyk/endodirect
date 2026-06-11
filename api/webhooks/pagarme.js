@@ -43,8 +43,8 @@ const crypto = require('crypto');
 const SUPABASE_URL = process.env.SUPABASE_URL || process.env.NEXT_PUBLIC_SUPABASE_URL || 'https://auth.endodirect.com.br';
 const SERVICE_ROLE = process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.SUPABASE_SECRET_KEY || process.env.SUPABASE_SERVICE_KEY;
 const WEBHOOK_SECRET = process.env.PAGARME_WEBHOOK_SECRET || '';
-const BASIC_USER = process.env.PAGARME_WEBHOOK_BASIC_USER || '';
-const BASIC_PASS = process.env.PAGARME_WEBHOOK_BASIC_PASS || '';
+const BASIC_USER = (process.env.PAGARME_WEBHOOK_BASIC_USER || '').trim();
+const BASIC_PASS = (process.env.PAGARME_WEBHOOK_BASIC_PASS || '').trim();
 const AVULSO_DIAS = Number(process.env.ENDODIRECT_AVULSO_DIAS || 365);
 
 const PAID_EVENTS = ['order.paid', 'charge.paid', 'subscription.charged', 'invoice.paid'];
@@ -82,16 +82,7 @@ function verifyAuth(req, raw) {
       // Diagnóstico seguro (sem expor senha): por que o Basic Auth falhou.
       let recvUser = '';
       try { recvUser = Buffer.from(String(got).replace(/^Basic\s+/i, ''), 'base64').toString('utf8').split(':')[0]; } catch (e) {}
-      console.log('[webhook-auth-debug]', JSON.stringify({
-        hasAuthHeader: !!got,
-        scheme: (String(got).split(' ')[0] || null),
-        recvUser: recvUser,
-        envUser: BASIC_USER,
-        envUserLen: BASIC_USER.length,
-        envPassLen: BASIC_PASS.length,
-        recvLen: got.length,
-        expectedLen: expected.length
-      }));
+      console.log('[whdbg]', 'lenMatch=' + (got.length === expected.length), 'userMatch=' + (recvUser === BASIC_USER), 'hasHeader=' + !!got, 'recvLen=' + got.length, 'expLen=' + expected.length);
     }
     return ok;
   }
