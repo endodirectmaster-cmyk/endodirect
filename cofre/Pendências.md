@@ -20,6 +20,8 @@ atualizado: 2026-06-11
 - [ ] Revisar **Grupo 2** — 29 gabaritos ambíguos (`gabaritos-suspeitos.md`). Ver [[Banco de Questões]].
 
 ## Concluídas recentes
+- [x] **Onboarding/UI (2026-06-11):** perfil "Estudante de medicina" (instituição + ano → badge `USP · 5º ano`); campos por perfil (médicos: residência + CRM; estudante: graduação + ano); janela aparece antes do dashboard; renomes do menu (Consultório, OSCE, Revisão, Prescrição Simulada); banner de degustação repaginado. Cache de borda corrigido (`vercel.json`: `index.html` sempre revalida, #201) — alunos recebem updates sem hard-refresh.
+- [x] **Degustação (2026-06-11):** liberados Calculadoras, Podcasts e Cronograma; "Gerar com IA" travado em Flashcards/Mapas (só visualizar os atuais); Simulado limitado à fonte Provas (IA/Misto bloqueados).
 - [x] pagar.me TEST → LIVE (chaves + webhook) — 2026-06-10.
 - [x] Health check reconhece formato de chave LIVE do pagar.me (#169).
 - [x] Newsletter por subespecialidade (#168).
