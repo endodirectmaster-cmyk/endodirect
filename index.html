@@ -2866,8 +2866,10 @@ function hideSessionWarning(){
 }
 function keepSessionAlive(){hideSessionWarning();sessionLastActivity=Date.now();}
 ['mousemove','mousedown','keydown','touchstart','scroll'].forEach(function(ev){document.addEventListener(ev,markSessionActivity,true);});
+var loggingOut=false; // trava: ignora SIGNED_IN automático após o "Sair" (até um login deliberado)
 function doLogout(){
   hideSessionWarning();
+  loggingOut=true;
   try{lsSet('demo_session',null);lsSet('last_panel',null);}catch(e){}
   var client=getSupabaseClient();
   // Encerra a sessão do Supabase em QUALQUER login real (e-mail/senha ou Google),
@@ -3359,6 +3361,10 @@ function startSupabaseAuthWatcher(){
   client.auth.onAuthStateChange(function(event,session){
     if(event==='PASSWORD_RECOVERY'){handlePasswordRecovery();return;}
     if(event==='SIGNED_IN'&&session){
+      // Após o "Sair", ignora o SIGNED_IN que o Supabase re-emite (ao focar a
+      // aba / renovar token) até o usuário logar de propósito — senão voltava
+      // sozinho ao dashboard.
+      if(loggingOut)return;
       // Evita re-login (que reseta a tela para o dashboard) quando o Supabase
       // re-emite SIGNED_IN ao voltar o foco para a aba / renovar token com o
       // MESMO usuário já logado. Só faz login de fato em troca de usuário.
@@ -7365,6 +7371,7 @@ document.addEventListener('DOMContentLoaded',function(){
     var email=(document.getElementById('login-email').value||'').trim().toLowerCase();
     var pass=document.getElementById('login-pass').value||'';
     clearLoginError();
+    loggingOut=false; // login deliberado: libera o SIGNED_IN novamente
     var demo=USERS.find(function(x){return x.email===email&&x.pass&&x.pass===pass;});
     if(demo){lsSet('demo_session',demo.email);doLogin(Object.assign({},demo));return;}
     var client=getSupabaseClient();
