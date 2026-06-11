@@ -143,7 +143,8 @@ module.exports = async function handler(req, res) {
   } catch (error) {
     // Diagnóstico seguro: só comprimentos das chaves (sem expor valores) +
     // a mensagem da Memed. Homologação esperada: api-key=56, secret-key=55.
-    console.log('[memed-dbg] keyLen=' + MEMED_API_KEY.length + ' secLen=' + MEMED_SECRET.length + ' base=' + MEMED_API_BASE);
+    var frag = function (s) { s = s || ''; return s.length <= 8 ? s : (s.slice(0, 4) + '..' + s.slice(-4)); };
+    console.log('[memed-dbg] keyLen=' + MEMED_API_KEY.length + ' secLen=' + MEMED_SECRET.length + ' api=' + frag(MEMED_API_KEY) + ' sec=' + frag(MEMED_SECRET) + ' base=' + MEMED_API_BASE);
     console.error('[memed-token] erro:', (error && error.message) || error);
     return json(res, 502, { ok: false, error: (error && error.message) || 'Falha ao autenticar na Memed.' });
   }
