@@ -1,12 +1,13 @@
 ---
 tags: [cofre, pendencias]
-atualizado: 2026-06-10
+atualizado: 2026-06-11
 ---
 
 # Pendências
 
 ## Lado do usuário (fora do código)
-- [ ] **🔴 Webhook pagar.me retorna 401 (Basic Auth não bate).** Logs de 2026-06-11: TODAS as chamadas a `/api/webhooks/pagarme` dão 401. Cartão provisiona (síncrono em order/subscribe), mas **PIX/boleto não liberam acesso** e **estorno/cancelamento não revogam** (dependem do webhook). **Fix:** deixar `PAGARME_WEBHOOK_BASIC_USER`/`PAGARME_WEBHOOK_BASIC_PASS` (Vercel + redeploy) **idênticos** ao Usuário/Senha do webhook no pagar.me; validar nos logs (virar 200). Ver [[Pagamentos pagar.me]].
+- [x] **Webhook pagar.me — 401 RESOLVIDO (2026-06-11).** Diagnóstico (logs `[whdbg]`): o usuário batia, mas a senha enviada pelo webhook tinha um caractere "fantasma" (15 chars vs 14/12 no Vercel) e **as edições no painel do pagar.me não persistiam** — ele seguia mandando a senha original. **Fix em duas frentes:** (1) **código** — `verifyAuth` agora normaliza Usuário/Senha para **só ASCII visível** (`/[^!-~]/g`) antes de comparar com `timingSafeEqual` (#192→#194); fica imune a espaço/zero-width/BOM colado no painel; (2) **operação** — webhook **recriado do zero** com Usuário `endodirect` / Senha `endohook2026` (digitada na criação) e `PAGARME_WEBHOOK_BASIC_PASS=endohook2026` no Vercel. Validado ponta a ponta: **PIX real** liberou `plano:standard` (active) e o webhook respondeu **200**. Diagnóstico removido após confirmar. Ver [[Pagamentos pagar.me]].
+- [ ] **PIX × duração do acesso (conferir).** O PIX da conta de teste liberou **1 ano** (`tipo: avulso`, `ENDODIRECT_AVULSO_DIAS=365`). Conferir no pagar.me **qual valor o PIX cobrou** do Standard mensal — se cobrou o preço mensal (R$69) mas liberou 365 dias, alinhar duração/preço do PIX (mensal deveria liberar ~30 dias). Ver [[Pagamentos pagar.me]].
 - [x] **pagar.me — validação LIVE (2026-06-11):** compra real (cartão, Gold mensal) liberou acesso ✅. Bug achado: tela R$99 × cobrança R$70 (defaults divergentes) — **corrigido** (#185). Premium removido (#186). Estorno/revogação dependem do webhook (acima); acesso de teste da Gabriella revogado manualmente.
 - [x] **Domínio apex (`endodirect.com.br`):** resolvido em 2026-06-11. O registro A do apex no Registro.br foi trocado do IP antigo da Vercel (`76.76.21.21`) para o novo (`216.198.79.1`); a Vercel passou a "Valid Configuration" e o apex faz **307 → `www`**. (Auth já estava blindado pelo `www` no código, #183.)
 - [ ] **Supabase (URL Configuration):** **Site URL = `https://www.endodirect.com.br`**; em Redirect URLs, manter `https://www.endodirect.com.br/**` e `https://endodirect.com.br/**`.
