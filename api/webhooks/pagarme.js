@@ -72,28 +72,36 @@ function safeEqual(a, b) {
   try { return crypto.timingSafeEqual(Buffer.from(a), Buffer.from(b)); } catch (e) { return false; }
 }
 
+// Normaliza credenciais do Basic Auth: remove QUALQUER caractere invisível
+// (espaço, tab, quebra, no-break space, zero-width, BOM, controle) de qualquer
+// posição. O painel do pagar.me às vezes guarda um char invisível "grudado" na
+// senha (vindo de copiar/colar) que nunca aparece na tela — e isso derrubava o
+// Basic Auth com 401. Como a senha do webhook não tem espaços legítimos, limpar
+// os dois lados antes de comparar resolve sem afetar o segredo de verdade.
+function normCred(s) {
+  return String(s || '').replace(/[\u0000-\u0020\u007F\u00A0\u00AD\u200B-\u200F\u202A-\u202E\u2028\u2029\u202F\u205F\u2060\u3000\uFEFF]/g, '');
+}
+
 // Retorna true (ok), false (invalido) ou null (nenhuma credencial configurada = modo esqueleto)
 function verifyAuth(req, raw) {
   if (BASIC_USER || BASIC_PASS) {
     const got = req.headers.authorization || '';
-    // Decodifica o Basic Auth e compara usuário/senha JÁ "trimados" dos dois
-    // lados — assim um espaço/quebra invisível colado no campo do pagar.me ou
-    // na variável da Vercel não derruba a autenticação (causa comum de 401).
     let recvUser = '', recvPass = '';
     try {
       const dec = Buffer.from(String(got).replace(/^Basic\s+/i, ''), 'base64').toString('utf8');
       const i = dec.indexOf(':');
-      recvUser = (i >= 0 ? dec.slice(0, i) : dec).trim();
-      recvPass = (i >= 0 ? dec.slice(i + 1) : '').trim();
+      recvUser = normCred(i >= 0 ? dec.slice(0, i) : dec);
+      recvPass = normCred(i >= 0 ? dec.slice(i + 1) : '');
     } catch (e) {}
-    const ok = !!got && safeEqual(recvUser, BASIC_USER) && safeEqual(recvPass, BASIC_PASS);
+    const expUser = normCred(BASIC_USER), expPass = normCred(BASIC_PASS);
+    const ok = !!got && safeEqual(recvUser, expUser) && safeEqual(recvPass, expPass);
     if (!ok) {
       // Diagnóstico seguro (NUNCA expõe os valores; só comprimentos e se batem).
       console.log('[whdbg]',
-        'userLen=' + recvUser.length + '/' + BASIC_USER.length,
-        'passLen=' + recvPass.length + '/' + BASIC_PASS.length,
-        'userMatch=' + (recvUser === BASIC_USER),
-        'passMatch=' + (recvPass === BASIC_PASS),
+        'userLen=' + recvUser.length + '/' + expUser.length,
+        'passLen=' + recvPass.length + '/' + expPass.length,
+        'userMatch=' + (recvUser === expUser),
+        'passMatch=' + (recvPass === expPass),
         'hasHeader=' + !!got);
     }
     return ok;
