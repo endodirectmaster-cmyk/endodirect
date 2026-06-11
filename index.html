@@ -1886,6 +1886,14 @@ var MAX_AUDIO_UPLOAD_BYTES=200*1024*1024;
 var supabaseClient=null;
 var remoteStateLoaded=false,remoteStateSaveTimer=null,remoteStateWarned=false;
 var REMOTE_STATE_KEYS=['q','fc','mm','notes','crono','sf_results','perf','provas','adm_avisos','adm_questoes','podcasts','adm_cursos','adm_estudantes','adm_perfil','user_profile','mm_shared','deg_trials','ck_billing'];
+// Base CANÔNICA para os redirects de auth (confirmação, recuperação, OAuth).
+// Sempre www em produção — evita cair no apex (endodirect.com.br) que pode não
+// responder e deixar o usuário preso após confirmar o e-mail. Em localhost usa
+// a própria origem (dev). Garante que o link sempre volta para um domínio vivo.
+function authBaseURL(){
+  try{if(/^(localhost|127\.0\.0\.1)/.test(location.hostname))return location.origin;}catch(e){}
+  return 'https://www.endodirect.com.br';
+}
 function getSupabaseClient(){
   if(supabaseClient)return supabaseClient;
   if(!window.supabase||!window.supabase.createClient)return null;
@@ -2900,7 +2908,7 @@ function forgotPassword(){
     return;
   }
   clearLoginError();
-  client.auth.resetPasswordForEmail(email,{redirectTo:window.location.origin+window.location.pathname+'?reset=1'})
+  client.auth.resetPasswordForEmail(email,{redirectTo:authBaseURL()+'/?reset=1'})
     .then(function(res){
       if(res.error)throw res.error;
       notify('Se esta conta existir, enviaremos o link de recuperacao.','ok');
@@ -3336,7 +3344,7 @@ function startGoogleOAuth(){
       if(!r.ok)throw new Error('Project URL invalido ou Auth indisponivel.');
       return client.auth.signInWithOAuth({
         provider:'google',
-        options:{redirectTo:window.location.origin+window.location.pathname,queryParams:{prompt:'select_account'}}
+        options:{redirectTo:authBaseURL()+'/',queryParams:{prompt:'select_account'}}
       });
     })
     .then(function(res){if(res&&res.error)throw res.error;})
@@ -3352,7 +3360,7 @@ function startGoogleOAuth(){
   }
   client.auth.signInWithOAuth({
     provider:'google',
-    options:{redirectTo:window.location.origin+window.location.pathname}
+    options:{redirectTo:authBaseURL()+'/'}
   }).then(function(res){
     if(res.error)showLoginError('Erro no login Google: '+res.error.message);
   }).catch(function(e){
@@ -7254,7 +7262,7 @@ document.addEventListener('DOMContentLoaded',function(){
     rb.addEventListener('click',function(){
       var client=getSupabaseClient();if(!client||!client.auth.resend||!_lastSignupEmail)return;
       rb.disabled=true;rb.textContent='Reenviando…';
-      client.auth.resend({type:'signup',email:_lastSignupEmail,options:{emailRedirectTo:window.location.origin+window.location.pathname}}).then(function(r){
+      client.auth.resend({type:'signup',email:_lastSignupEmail,options:{emailRedirectTo:authBaseURL()+'/'}}).then(function(r){
         if(r&&r.error)throw r.error;
         rb.textContent='E-mail reenviado ✓';
       }).catch(function(e){rb.disabled=false;rb.textContent='Reenviar e-mail de confirmação';notify('Não foi possível reenviar: '+((e&&e.message)||''),'err');});
@@ -7271,7 +7279,7 @@ document.addEventListener('DOMContentLoaded',function(){
     var client=getSupabaseClient();
     if(!client){showLoginError('Cadastro indisponível no momento. Atualize a página e tente novamente.');return;}
     var btn=document.getElementById('btn-signup');if(btn)btn.disabled=true;
-    client.auth.signUp({email:email,password:pass,options:{emailRedirectTo:window.location.origin+window.location.pathname}}).then(function(res){
+    client.auth.signUp({email:email,password:pass,options:{emailRedirectTo:authBaseURL()+'/'}}).then(function(res){
       if(res.error)throw res.error;
       var u=res.data&&res.data.user;
       // Supabase devolve user com identities vazio quando o e-mail já existe (sem erro).
