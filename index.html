@@ -2366,9 +2366,11 @@ function hydrateRemoteState(){
     .then(function(){
       remoteStateLoaded=true;
       refreshAfterRemoteState();
+      maybeOnboardAfterHydrate();
       queueRemoteStateSave();
     }).catch(function(e){
       if(!remoteStateWarned){remoteStateWarned=true;console.warn('Supabase state unavailable',e);}
+      try{maybeOnboardAfterHydrate();}catch(_e){}
     });
 }
 function queueRemoteStateSave(){
@@ -2711,10 +2713,40 @@ function startApp(){
   }
 }
 var demoOnboardToPresc=false; // demo alunopro: após a janela inicial, abre o Assistente de IA
+var pendingOnboardCheck=false; // decidir o onboarding após o hydrate (com base no perfil REMOTO)
+// Limpa os dados LOCAIS pessoais do aluno (perfil, estudo, cobrança, cotas) ao
+// trocar de conta no mesmo navegador. Não toca em conteúdo global/admin. O
+// hydrate em seguida traz o estado REMOTO do usuário correto.
+function clearLocalUserData(){
+  ['user_profile','q','fc','mm','notes','crono','sf_results','perf','ck_billing','deg_trials','fc_seeded','mm_seeded'].forEach(function(k){lsSet(k,null);});
+  try{DB.q=[];DB.fc=[];DB.mm=[];DB.notes=[];DB.crono=null;DB.sf_results=[];DB.perf={};}catch(e){}
+  try{degTrials={};}catch(e){}
+}
+// Após o hydrate: se o aluno (membro real) continuar sem perfil, é a 1ª vez —
+// abre o onboarding. Se o perfil veio do remoto, aplica e segue sem onboarding.
+function maybeOnboardAfterHydrate(){
+  if(!pendingOnboardCheck)return;
+  pendingOnboardCheck=false;
+  if(!currentUser||currentUser.role!=='aluno')return;
+  var prof=lsGet('user_profile');
+  if(prof&&prof.perfil){
+    currentUser.profile=prof;currentUser.sub=profileDisplayLabel(prof);
+    try{setText('tb-usub',profileDisplayLabel(prof));}catch(e){}
+    return;
+  }
+  openOnboard();
+}
 function doLogin(u){
   currentUser=u;
   remoteStateLoaded=false;
   remoteStateWarned=false;
+  pendingOnboardCheck=false;
+  // Identidade do usuário neste navegador. Se a conta mudou (ou não sabemos a
+  // quem o estado local pertence), não confiamos no perfil salvo localmente —
+  // isso evita vazar dados entre contas e pular o onboarding de um aluno novo.
+  var uid=String(u.id||u.email||'').toLowerCase();
+  var ownLocal=!!(uid && String(lsGet('last_uid')||'').toLowerCase()===uid);
+  lsSet('last_uid',uid);
   if(u.role==='admin'){
     // Perfil do professor é PESSOAL: inicia pela identidade da sessão para
     // nunca mostrar dados de outro admin (corrige vazamento). O perfil salvo
@@ -2727,14 +2759,25 @@ function doLogin(u){
     // acesso total). Alunos reais não têm esse campo: os acessos vêm do
     // member_content no hydrate.
     if(Array.isArray(u.acessos))userAcessos=u.acessos.slice();
-    var prof=lsGet('user_profile');
-    // Conta demo "alunopro": acesso total, mas sempre exibe a janela inicial
-    // (perfil) como se fosse o primeiro acesso, e depois abre o Assistente de IA.
+    // Conta demo "alunopro": acesso total, mas sempre exibe a janela inicial.
     var forceOnboard=(String(u.email||'').toLowerCase()==='alunopro@endodirect.com.br');
-    if(forceOnboard)demoOnboardToPresc=true;
-    if(!prof||forceOnboard){openOnboard();return;}
-    currentUser.sub=prof.perfil;
-    currentUser.profile=prof;
+    if(forceOnboard){demoOnboardToPresc=true;openOnboard();return;}
+    var prof=lsGet('user_profile');
+    var isMember=!!(currentUser&&currentUser.id);
+    if(ownLocal){
+      // Mesmo usuário neste navegador: estado local é confiável.
+      if(prof){currentUser.sub=prof.perfil;currentUser.profile=prof;}
+      else if(isMember){pendingOnboardCheck=true;} // confirma no remoto antes de pedir o onboarding
+      else{openOnboard();return;}
+    }else if(isMember){
+      // Membro real cujo estado local pode ser de OUTRA conta (ou navegador novo).
+      if(prof){clearLocalUserData();pendingOnboardCheck=true;} // descarta e decide pelo remoto após o hydrate
+      else{openOnboard();return;} // navegador limpo -> onboarding
+    }else{
+      // Conta demo (sem id remoto).
+      if(prof){currentUser.sub=prof.perfil;currentUser.profile=prof;}
+      else{openOnboard();return;}
+    }
   }
   startApp();
   hydrateRemoteState();
@@ -6541,6 +6584,13 @@ doLogin=function(u){
   currentUser=u;
   remoteStateLoaded=false;
   remoteStateWarned=false;
+  pendingOnboardCheck=false;
+  // A conta mudou neste navegador? Se sim (ou se não sabemos a quem o estado
+  // local pertence), não confiamos no perfil salvo localmente — isso evita
+  // vazar dados entre contas e pular o onboarding de um aluno novo.
+  var uid=String(u.id||u.email||'').toLowerCase();
+  var ownLocal=!!(uid && String(lsGet('last_uid')||'').toLowerCase()===uid);
+  lsSet('last_uid',uid);
   if(u.role==='admin'){
     // Perfil do professor é PESSOAL: inicia pela identidade da sessão para
     // nunca mostrar dados de outro admin. O perfil salvo do próprio admin é
@@ -6553,9 +6603,21 @@ doLogin=function(u){
     // Alunos reais não têm esse campo: os acessos vêm do member_content.
     if(Array.isArray(u.acessos))userAcessos=u.acessos.slice();
     var prof=lsGet('user_profile');
-    if(!prof){openOnboard();return;}
-    currentUser.sub=profileDisplayLabel(prof);
-    currentUser.profile=prof;
+    var isMember=!!(currentUser&&currentUser.id);
+    if(ownLocal){
+      // Mesmo usuário neste navegador: estado local é confiável.
+      if(prof){currentUser.sub=profileDisplayLabel(prof);currentUser.profile=prof;}
+      else if(isMember){pendingOnboardCheck=true;} // confirma o perfil no remoto antes do onboarding
+      else{openOnboard();return;}
+    }else if(isMember){
+      // Membro real cujo estado local pode ser de OUTRA conta (ou navegador novo).
+      if(prof){clearLocalUserData();pendingOnboardCheck=true;} // descarta e decide pelo remoto após o hydrate
+      else{openOnboard();return;} // navegador limpo -> onboarding
+    }else{
+      // Conta demo (sem id remoto).
+      if(prof){currentUser.sub=profileDisplayLabel(prof);currentUser.profile=prof;}
+      else{openOnboard();return;}
+    }
   }
   startApp();
   hydrateRemoteState();
