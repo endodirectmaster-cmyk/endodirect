@@ -1894,7 +1894,7 @@ var RESUMABLE_THRESHOLD_BYTES=20*1024*1024;
 var MAX_AUDIO_UPLOAD_BYTES=200*1024*1024;
 var supabaseClient=null;
 var remoteStateLoaded=false,remoteStateSaveTimer=null,remoteStateWarned=false;
-var REMOTE_STATE_KEYS=['q','fc','mm','notes','crono','sf_results','perf','provas','adm_avisos','adm_questoes','podcasts','adm_cursos','adm_estudantes','adm_perfil','user_profile','mm_shared','deg_trials','ck_billing'];
+var REMOTE_STATE_KEYS=['q','fc','mm','notes','crono','sf_results','perf','provas','adm_avisos','adm_questoes','podcasts','adm_cursos','adm_estudantes','adm_perfil','user_profile','mm_shared','deg_trials','ck_billing','presc_emitidas'];
 // Base CANÔNICA para os redirects de auth (confirmação, recuperação, OAuth).
 // Sempre www em produção — evita cair no apex (endodirect.com.br) que pode não
 // responder e deixar o usuário preso após confirmar o e-mail. Em localhost usa
@@ -5071,9 +5071,14 @@ function renderPrescMemed(){
     +'</div>'
     +'<div style="display:flex;gap:.4rem;margin-bottom:.5rem"><div class="fld2" style="margin:0;flex:1"><label>CRM</label><input type="text" id="memed-crm" value="'+esc(pcrm)+'" placeholder="CRM"></div>'
       +'<div class="fld2" style="margin:0;width:90px"><label>UF</label><input type="text" id="memed-uf" value="'+esc(puf)+'" placeholder="UF" maxlength="2" style="text-transform:uppercase"></div></div>'
-    +'<div class="g2" style="margin-bottom:.6rem">'
+    +'<div class="g2" style="margin-bottom:.5rem">'
       +'<div class="fld2" style="margin:0"><label>Paciente (opcional)</label><input type="text" id="memed-pac-nome" placeholder="Nome do paciente"></div>'
       +'<div class="fld2" style="margin:0"><label>CPF do paciente (opcional)</label><input type="text" id="memed-pac-cpf" placeholder="000.000.000-00"></div>'
+    +'</div>'
+    +'<div class="g2" style="margin-bottom:.6rem">'
+      +'<div class="fld2" style="margin:0"><label>E-mail do paciente (opcional)</label><input type="email" id="memed-pac-email" placeholder="paciente@email.com"></div>'
+      +'<div style="display:flex;gap:.4rem"><div class="fld2" style="margin:0;flex:1"><label>Telefone (opcional)</label><input type="text" id="memed-pac-fone" placeholder="(DDD) 9..." inputmode="tel"></div>'
+        +'<div class="fld2" style="margin:0;width:140px"><label>Nascimento (opcional)</label><input type="date" id="memed-pac-nasc"></div></div>'
     +'</div>'
     +'<button class="btn btn-primary" id="memed-open">💊 Abrir prescrição Memed</button>'
     +'<div id="memed-msg" style="font-size:.72rem;color:var(--t3);margin-top:.55rem"></div>'
@@ -5110,8 +5115,20 @@ function prescMemedLaunch(token,color,scriptUrl){
       try{
         MdSinapsePrescricao.event.add('core:moduleInit',function(module){
           if(module.name==='plataforma.prescricao'){
-            var pn=prescVal('memed-pac-nome'),pc=prescVal('memed-pac-cpf');
-            if(pn){try{MdHub.command.send('plataforma.prescricao','setPaciente',{nome:pn,cpf:(pc||'').replace(/\D/g,'')});}catch(e){}}
+            var pn=prescVal('memed-pac-nome'),pc=prescVal('memed-pac-cpf'),pe=prescVal('memed-pac-email'),pf=prescVal('memed-pac-fone'),pnasc=prescVal('memed-pac-nasc');
+            if(pn){
+              var pac={nome:pn};
+              if(pc)pac.cpf=(pc||'').replace(/\D/g,'');
+              if(pe)pac.email=pe;
+              if(pf)pac.telefone=(pf||'').replace(/\D/g,'');
+              if(pnasc)pac.data_nascimento=pnasc; // input date -> YYYY-MM-DD
+              try{MdHub.command.send('plataforma.prescricao','setPaciente',pac);}catch(e){}
+            }
+            // Evento prescricaoImpressa: registra a emissão no prontuário (Caderno).
+            try{MdHub.event.add('prescricaoImpressa',function(data){
+              try{var log=lsGet('presc_emitidas')||[];log.unshift({ts:Date.now(),paciente:pn||'',prescritor:prescVal('memed-nome')||'',data:data||null});lsSet('presc_emitidas',log.slice(0,100));queueRemoteStateSave();}catch(e){}
+              try{notify('Prescrição emitida e registrada no prontuário. ✅','ok');}catch(e){}
+            });}catch(e){}
             try{MdHub.module.show('plataforma.prescricao');}catch(e){}
           }
         });
