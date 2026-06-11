@@ -93,8 +93,12 @@ async function getMemedToken(p) {
     headers: { 'Content-Type': 'application/json', Accept: 'application/vnd.api+json' },
     body: JSON.stringify(body)
   });
-  const data = await r.json().catch(() => ({}));
+  const raw = await r.text();
+  let data = {};
+  try { data = JSON.parse(raw); } catch (e) {}
   if (!r.ok) {
+    // Diagnóstico: status HTTP + corpo cru da Memed (revela a causa real).
+    console.log('[memed-resp] status=' + r.status + ' body=' + String(raw).slice(0, 500));
     const msg = (data && data.errors && data.errors[0] && (data.errors[0].detail || data.errors[0].title)) || `Erro HTTP ${r.status} da Memed`;
     throw new Error(msg);
   }
