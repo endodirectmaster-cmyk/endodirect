@@ -76,17 +76,19 @@ function safeEqual(a, b) {
 function verifyAuth(req, raw) {
   if (BASIC_USER || BASIC_PASS) {
     const got = req.headers.authorization || '';
-    const expected = 'Basic ' + Buffer.from(BASIC_USER + ':' + BASIC_PASS).toString('base64');
-    const ok = safeEqual(got, expected);
+    // Decodifica o Basic Auth e compara usuário/senha JÁ "trimados" dos dois
+    // lados — assim um espaço/quebra invisível colado no campo do pagar.me ou
+    // na variável da Vercel não derruba a autenticação (causa comum de 401).
+    let recvUser = '', recvPass = '';
+    try {
+      const dec = Buffer.from(String(got).replace(/^Basic\s+/i, ''), 'base64').toString('utf8');
+      const i = dec.indexOf(':');
+      recvUser = (i >= 0 ? dec.slice(0, i) : dec).trim();
+      recvPass = (i >= 0 ? dec.slice(i + 1) : '').trim();
+    } catch (e) {}
+    const ok = !!got && safeEqual(recvUser, BASIC_USER) && safeEqual(recvPass, BASIC_PASS);
     if (!ok) {
       // Diagnóstico seguro (NUNCA expõe os valores; só comprimentos e se batem).
-      let recvUser = '', recvPass = '';
-      try {
-        const dec = Buffer.from(String(got).replace(/^Basic\s+/i, ''), 'base64').toString('utf8');
-        const i = dec.indexOf(':');
-        recvUser = i >= 0 ? dec.slice(0, i) : dec;
-        recvPass = i >= 0 ? dec.slice(i + 1) : '';
-      } catch (e) {}
       console.log('[whdbg]',
         'userLen=' + recvUser.length + '/' + BASIC_USER.length,
         'passLen=' + recvPass.length + '/' + BASIC_PASS.length,
