@@ -2943,6 +2943,47 @@ function enterAsMember(session){
   // resolvido por userAcessos (member_content) + isDegustacao().
   var nm=(session.user.user_metadata&&(session.user.user_metadata.nome||session.user.user_metadata.name))||email.split('@')[0];
   doLogin({email:email,name:nm,role:'aluno',sub:'Residente',id:session.user.id,auth:'supabase'});
+  claimDeviceSlot();startDeviceWatcher(); // limite de 2 dispositivos (anti-compartilhamento)
+}
+// ---------- LIMITE DE DISPOSITIVOS (anti-compartilhamento de login) ----------
+// Máx. 2 dispositivos/sessões por aluno. Ao entrar num 3º, o mais antigo é
+// removido no servidor e cai no próximo heartbeat. Só vale para alunos reais.
+function getDeviceId(){
+  var id=lsGet('device_id');
+  if(!id||String(id).length<12){
+    id='dev_'+Math.random().toString(36).slice(2)+Math.random().toString(36).slice(2)+Date.now().toString(36);
+    lsSet('device_id',id);
+  }
+  return id;
+}
+var deviceWatcher=null;
+function claimDeviceSlot(){
+  var client=getSupabaseClient();
+  if(!client||!(currentUser&&currentUser.id)||currentUser.role!=='aluno')return;
+  try{client.rpc('endodirect_session_claim',{p_device_id:getDeviceId(),p_ua:(navigator.userAgent||'').slice(0,300)}).then(function(){},function(){});}catch(e){}
+}
+function deviceTick(){
+  var client=getSupabaseClient();
+  if(!client||!(currentUser&&currentUser.id)||currentUser.role!=='aluno')return;
+  try{client.rpc('endodirect_session_check',{p_device_id:getDeviceId()}).then(function(res){
+    if(res&&res.data===false)onSessionEvicted();
+  },function(){});}catch(e){}
+}
+function startDeviceWatcher(){
+  if(deviceWatcher)return;
+  deviceWatcher=setInterval(deviceTick,60000);
+  try{document.addEventListener('visibilitychange',function(){if(!document.hidden)deviceTick();});}catch(e){}
+}
+function onSessionEvicted(){
+  if(deviceWatcher){clearInterval(deviceWatcher);deviceWatcher=null;}
+  var client=getSupabaseClient();
+  try{if(client&&client.auth)client.auth.signOut().catch(function(){});}catch(e){}
+  if(document.getElementById('evicted-ov'))return;
+  var o=document.createElement('div');o.id='evicted-ov';
+  o.style.cssText='position:fixed;inset:0;z-index:99999;background:rgba(6,11,22,.92);display:flex;align-items:center;justify-content:center;padding:1.2rem';
+  o.innerHTML='<div style="max-width:420px;background:#121c33;border:1px solid #2a3a5c;border-radius:16px;padding:1.8rem 1.6rem;text-align:center;color:#fff;font-family:inherit"><div style="font-size:2rem">🔒</div><div style="font-size:1.12rem;font-weight:800;margin:.4rem 0">Sessão encerrada</div><p style="font-size:.86rem;color:#9aa3b2;line-height:1.6;margin:.2rem 0 0">Sua conta atingiu o limite de <b>2 dispositivos</b> e foi acessada em outro aparelho. Por segurança, esta sessão foi encerrada.</p><button id="evicted-ok" style="margin-top:1.1rem;background:#3b6fd4;color:#fff;border:0;border-radius:10px;padding:.7rem 1.4rem;font-weight:700;cursor:pointer">Entendi</button></div>';
+  document.body.appendChild(o);
+  var b=document.getElementById('evicted-ok');if(b)b.addEventListener('click',function(){try{location.reload();}catch(e){location.href='/';}});
 }
 function assineBRL(n){return 'R$ '+Number(n||0).toLocaleString('pt-BR');}
 // Espelha a faixa de Sócio-fundador da landing na tela de planos in-app.
