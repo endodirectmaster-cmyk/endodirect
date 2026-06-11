@@ -5150,7 +5150,7 @@ function prescMemedLaunch(token,color,scriptUrl){
               if(pc)pac.cpf=(pc||'').replace(/\D/g,'');
               if(pe)pac.email=pe;
               if(pf)pac.telefone=(pf||'').replace(/\D/g,'');
-              if(pnasc)pac.data_nascimento=pnasc; // input date -> YYYY-MM-DD
+              if(pnasc)pac.data_nascimento=pnasc.replace(/^(\d{4})-(\d{2})-(\d{2})$/,'$3/$2/$1'); // Memed: DD/MM/YYYY
               try{MdHub.command.send('plataforma.prescricao','setPaciente',pac);}catch(e){}
             }
             // Evento prescricaoImpressa: registra a emissão no prontuário (Caderno).
