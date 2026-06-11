@@ -24,13 +24,12 @@ const SECRET_KEY = process.env.PAGARME_SECRET_KEY || '';
 
 const ANNUAL = {
   standard: { amount: Number(process.env.PAGARME_ANNUAL_STANDARD_AMOUNT || 54000), label: 'Plano Standard (anual)', scope: 'plano:standard' },
-  gold:     { amount: Number(process.env.PAGARME_ANNUAL_GOLD_AMOUNT     || 82800), label: 'Plano Gold (anual)',     scope: 'plano:gold' },
-  premium:  { amount: Number(process.env.PAGARME_ANNUAL_PREMIUM_AMOUNT  || 116400), label: 'Plano Premium (anual)', scope: 'plano:premium' }
+  gold:     { amount: Number(process.env.PAGARME_ANNUAL_GOLD_AMOUNT     || 82800), label: 'Plano Gold (anual)',     scope: 'plano:gold' }
 };
 const ANNUAL_DIAS = 365;
 
-// Oferta de Sócio-fundador: cupom que libera o Premium anual por um valor
-// promocional (padrão R$828 = "Premium pelo preço do Gold"). As regras +
+// Oferta de Sócio-fundador: cupom que libera o Gold anual por um valor
+// promocional (padrão R$540 = "Gold pelo preço do Standard"). As regras +
 // o limite de vagas (auto-desativa ao esgotar) ficam em lib/founder.js.
 const { FOUNDER_COUPON, FOUNDER_AMOUNT, FOUNDER_ENABLED_ENV, FOUNDER_LIMIT, FOUNDER_PLAN, countFounderAccesses } = require('../../lib/founder');
 
@@ -69,7 +68,7 @@ async function upsertAcesso(row) {
 }
 
 module.exports = async function handler(req, res) {
-  if (req.method === 'GET') return json(res, 200, { ok: true, service: 'endodirect-order', ready: !!(SECRET_KEY && SERVICE_ROLE), annual: { standard: ANNUAL.standard.amount, gold: ANNUAL.gold.amount, premium: ANNUAL.premium.amount } });
+  if (req.method === 'GET') return json(res, 200, { ok: true, service: 'endodirect-order', ready: !!(SECRET_KEY && SERVICE_ROLE), annual: { standard: ANNUAL.standard.amount, gold: ANNUAL.gold.amount } });
   if (req.method !== 'POST') { res.setHeader('Allow', 'GET, POST'); return json(res, 405, { ok: false, error: 'Metodo nao permitido.' }); }
   if (!SECRET_KEY) return json(res, 500, { ok: false, error: 'PAGARME_SECRET_KEY ausente no servidor.' });
   if (!SERVICE_ROLE) return json(res, 500, { ok: false, error: 'Chave de servico do Supabase ausente.' });
@@ -101,7 +100,7 @@ module.exports = async function handler(req, res) {
     if (FOUNDER_ENABLED_ENV && coupon === FOUNDER_COUPON && planKey === FOUNDER_PLAN && FOUNDER_AMOUNT > 0) {
       const used = await countFounderAccesses();
       if (used != null && used >= FOUNDER_LIMIT) {
-        return json(res, 400, { ok: false, error: 'As vagas de Sócio-fundador se esgotaram. Garanta o Premium no valor normal.' });
+        return json(res, 400, { ok: false, error: 'As vagas de Sócio-fundador se esgotaram. Garanta o Gold no valor normal.' });
       }
       amount = FOUNDER_AMOUNT; founderApplied = true;
     } else {

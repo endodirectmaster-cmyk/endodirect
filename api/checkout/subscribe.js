@@ -19,7 +19,6 @@
 //   PAGARME_SECRET_KEY               (sk_test_... / sk_live_...) — NUNCA no front
 //   PAGARME_TIER_STANDARD_AMOUNT     mensal em CENTAVOS (padrao 6900 = R$69)
 //   PAGARME_TIER_GOLD_AMOUNT         mensal em CENTAVOS (padrao 9900 = R$99)
-//   PAGARME_TIER_PREMIUM_AMOUNT      mensal em CENTAVOS (padrao 13900 = R$139)
 //   IMPORTANTE: os padroes DEVEM bater com api/checkout/config.js (o que a tela
 //   mostra). Mantenha os dois em sincronia (ou sete os env acima como fonte unica).
 //   SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY (ou SUPABASE_SECRET_KEY) — ja existem
@@ -32,13 +31,12 @@ const PAGARME_API = 'https://api.pagar.me/core/v5';
 const SECRET_KEY = process.env.PAGARME_SECRET_KEY || '';
 
 // Pacotes (tiers) — assinatura MENSAL recorrente. Cada tier libera um nivel
-// de acesso (Standard < Gold < Premium). Valores em CENTAVOS, sobrescritiveis
-// por env. Padroes ALINHADOS com api/checkout/config.js: Standard R$69, Gold
-// R$99, Premium R$139 (o valor cobrado tem que ser igual ao valor exibido).
+// de acesso (Standard < Gold). Valores em CENTAVOS, sobrescritiveis por env.
+// Padroes ALINHADOS com api/checkout/config.js: Standard R$69, Gold R$99
+// (o valor cobrado tem que ser igual ao valor exibido).
 const SUB_PLANS = {
   standard: { interval: 'month', interval_count: 1, amount: Number(process.env.PAGARME_TIER_STANDARD_AMOUNT || 6900), label: 'Pacote Standard', scope: 'plano:standard' },
-  gold:     { interval: 'month', interval_count: 1, amount: Number(process.env.PAGARME_TIER_GOLD_AMOUNT     || 9900), label: 'Pacote Gold',     scope: 'plano:gold' },
-  premium:  { interval: 'month', interval_count: 1, amount: Number(process.env.PAGARME_TIER_PREMIUM_AMOUNT  || 13900), label: 'Pacote Premium',  scope: 'plano:premium' }
+  gold:     { interval: 'month', interval_count: 1, amount: Number(process.env.PAGARME_TIER_GOLD_AMOUNT     || 9900), label: 'Pacote Gold',     scope: 'plano:gold' }
 };
 
 const SUPABASE_URL = process.env.SUPABASE_URL || process.env.NEXT_PUBLIC_SUPABASE_URL || 'https://auth.endodirect.com.br';
@@ -129,8 +127,7 @@ module.exports = async function handler(req, res) {
       ready: !!(SECRET_KEY && SERVICE_ROLE),
       plans: {
         standard: SUB_PLANS.standard.amount > 0,
-        gold: SUB_PLANS.gold.amount > 0,
-        premium: SUB_PLANS.premium.amount > 0
+        gold: SUB_PLANS.gold.amount > 0
       }
     });
   }

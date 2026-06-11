@@ -208,7 +208,7 @@ function extractInfo(body, type) {
 
 // Escopos validos conhecidos (mantenha em sincronia com endodirect_cursos)
 const CURSO_SLUGS = ['hiperglicemia', 'lipides', 'endoteem', 'endo_essencial'];
-const TIERS = ['standard', 'gold', 'premium'];
+const TIERS = ['standard', 'gold'];
 
 // Normaliza um token de escopo:
 //   'gold' / 'plano:gold' -> 'plano:gold' (pacote)
@@ -238,7 +238,6 @@ function pickScopes(info) {
   }
   if (out.length) return out;
   const t = info.itemText || '';
-  if (/premium/.test(t)) return ['plano:premium'];
   if (/gold/.test(t)) return ['plano:gold'];
   if (/standard/.test(t)) return ['plano:standard'];
   if (/endoteem|teem/.test(t)) return ['curso:endoteem'];
