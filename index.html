@@ -3438,9 +3438,11 @@ var PANEL_SCOPE={
 // Tier mínimo por painel: Prescrição = Gold(2). Simulador e Resumidor entram já no Standard.
 // Os demais ficam em qualquer pacote (tier 1).
 var PANEL_MIN_TIER={rx:2, presc:2};
-// Prescrição (rx) e Assistente de Prescrição (presc): só para MÉDICOS — quem se
+// Assistente de Prescrição (presc, integração MEMED): só para MÉDICOS — quem se
 // identificou como Médico(a) Residente, Endocrinologista ou "Outros". Estudante
-// de medicina NÃO prescreve, então essas ferramentas ficam ocultas para ele.
+// de medicina NÃO emite receita, então o Assistente fica oculto para ele.
+// (A "Prescrição" educacional — painel rx — continua disponível para todos,
+// inclusive estudantes, sujeita apenas ao gating de plano.)
 function userPerfil(){var p=(currentUser&&currentUser.profile)||lsGet('user_profile')||{};return p.perfil||'';}
 function prescProfileOk(){var pf=userPerfil();return pf==='Residente'||pf==='Endocrinologista'||pf==='Outros';}
 function planRank(){var k=currentPlanKey();return k==='gold'?2:(k==='standard'?1:0);}
@@ -3484,7 +3486,7 @@ function consumeTrial(id){
 }
 function canSeePanel(id){
   if(isAdminUser())return true;
-  if((id==='presc'||id==='rx')&&!prescProfileOk())return false;
+  if(id==='presc'&&!prescProfileOk())return false;
   if(isDegustacao()){
     if(id==='mural')return muralTrialActive(); // degustação do mural: 7 dias
     if(DEGUSTACAO_PANELS[id])return true;
@@ -3628,9 +3630,7 @@ function updatePlanBadge(){
 }
 function markLockedNavItems(){
   try{updatePlanBadge();}catch(e){}
-  var okRx=prescProfileOk();
-  var sp=document.getElementById('sb-presc');if(sp)sp.style.display=okRx?'':'none';
-  var srx=document.querySelector('#sb-aluno .sb-item[data-p="rx"]');if(srx)srx.style.display=okRx?'':'none';
+  var sp=document.getElementById('sb-presc');if(sp)sp.style.display=prescProfileOk()?'':'none';
   document.querySelectorAll('#sb-aluno .sb-item[data-p]').forEach(function(b){
     var locked=!canSeePanel(b.dataset.p);
     var has=b.querySelector('.sb-lock');
