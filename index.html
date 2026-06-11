@@ -6711,6 +6711,9 @@ doLogin=function(u){
 };
 openOnboard=function(){
   document.getElementById('login-screen').style.display='none';
+  // Esconde o dashboard enquanto o onboarding está aberto: o aluno vê a janela
+  // primeiro, e o dashboard só aparece depois do "Começar" (startApp no submit).
+  var ap=document.getElementById('app-screen');if(ap)ap.style.display='none';
   document.getElementById('onboard-modal').style.display='flex';
   document.getElementById('ob-err').style.display='none';
   document.querySelectorAll('input[name="ob-perfil"]').forEach(function(r){r.checked=false;});
