@@ -72,14 +72,15 @@ function safeEqual(a, b) {
   try { return crypto.timingSafeEqual(Buffer.from(a), Buffer.from(b)); } catch (e) { return false; }
 }
 
-// Normaliza credenciais do Basic Auth: remove QUALQUER caractere invisível
-// (espaço, tab, quebra, no-break space, zero-width, BOM, controle) de qualquer
-// posição. O painel do pagar.me às vezes guarda um char invisível "grudado" na
-// senha (vindo de copiar/colar) que nunca aparece na tela — e isso derrubava o
-// Basic Auth com 401. Como a senha do webhook não tem espaços legítimos, limpar
-// os dois lados antes de comparar resolve sem afetar o segredo de verdade.
+// Normaliza credenciais do Basic Auth: mantém SÓ caracteres ASCII visíveis
+// (0x21 '!' a 0x7E '~') e descarta QUALQUER outra coisa — espaço, tab, quebra,
+// no-break space, zero-width, BOM e qualquer variante de espaço/char invisível
+// Unicode, esteja onde estiver. O painel do pagar.me às vezes guarda um char
+// invisível "grudado" na senha (vindo de copiar/colar) que nunca aparece na
+// tela e derrubava o Basic Auth com 401. Como o usuário/senha do webhook são
+// ASCII puro, isso resolve sem afetar o segredo de verdade.
 function normCred(s) {
-  return String(s || '').replace(/[\u0000-\u0020\u007F\u00A0\u00AD\u200B-\u200F\u202A-\u202E\u2028\u2029\u202F\u205F\u2060\u3000\uFEFF]/g, '');
+  return String(s || '').replace(/[^!-~]/g, '');
 }
 
 // Retorna true (ok), false (invalido) ou null (nenhuma credencial configurada = modo esqueleto)
