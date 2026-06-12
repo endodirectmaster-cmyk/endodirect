@@ -97,7 +97,10 @@ html[data-theme="light"] .tag-sub-reproducao{background:#fce7f3;color:#be185d}
 html[data-theme="light"] .tag-sub-pediatria{background:#e0e7ff;color:#4338ca}
 html[data-theme="light"] .mural-source,html[data-theme="light"] .mural-source a{color:#5c8bd6}
 html[data-theme="light"] #login-screen{background:linear-gradient(135deg,#e8ecf5,#f5f7fc 60%,#e2e8f5)}
-[data-theme-opt].on{background:var(--blue);color:#fff!important}
+.pf-theme-grid{display:flex;gap:.5rem;flex-wrap:wrap}
+.pf-theme-opt{border:1.5px solid var(--bd2);background:var(--surface);border-radius:10px;padding:.5rem 1.15rem;font-size:.83rem;font-weight:600;color:var(--tx);cursor:pointer;font-family:var(--font);transition:border-color .12s,background .12s,color .12s}
+.pf-theme-opt:hover{border-color:var(--blue)}
+.pf-theme-opt.on{background:var(--blue);border-color:var(--blue);color:#fff}
 html,body{height:100%;overflow:hidden;font-family:var(--font)}
 body{background:var(--bg);color:var(--tx);display:flex;flex-direction:column}
 #login-screen{position:fixed;inset:0;z-index:1000;background:linear-gradient(135deg,#0c1426,#101c34 60%,#0b1325);display:flex;align-items:flex-start;justify-content:center;overflow:auto;padding:24px 16px}
@@ -6099,9 +6102,9 @@ var admPerfilEdit=false;
 function themeCardHTML(){
   return '<div class="card" style="margin-top:1rem"><div class="card-head"><span class="card-title">🎨 Tema</span></div>'
     +'<p style="font-size:.78rem;color:var(--t2);margin:.1rem 0 .75rem">Escolha a aparência da plataforma — claro ou escuro.</p>'
-    +'<div style="display:inline-flex;border:1px solid var(--bd2);border-radius:999px;overflow:hidden">'
-    +'<button type="button" data-theme-opt="light" class="pf-theme-opt" style="border:0;background:none;padding:.45rem 1.05rem;font-size:.82rem;font-weight:600;color:var(--t2);cursor:pointer;font-family:var(--font)">☀️ Claro</button>'
-    +'<button type="button" data-theme-opt="dark" class="pf-theme-opt" style="border:0;background:none;padding:.45rem 1.05rem;font-size:.82rem;font-weight:600;color:var(--t2);cursor:pointer;font-family:var(--font)">🌙 Escuro</button>'
+    +'<div class="pf-theme-grid">'
+    +'<button type="button" data-theme-opt="light" class="pf-theme-opt">☀️ Claro</button>'
+    +'<button type="button" data-theme-opt="dark" class="pf-theme-opt">🌙 Escuro</button>'
     +'</div></div>';
 }
 function wireThemeToggle(){
