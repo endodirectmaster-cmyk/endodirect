@@ -2408,7 +2408,18 @@ function saveRemoteState(){
   var row={user_id:currentUser.id,email:currentUser.email,role:currentUser.role,payload:userStatePayload(),updated_at:new Date().toISOString()};
   var ops=[client.from('endodirect_app_state').upsert(row,{onConflict:'user_id'}).then(function(res){if(res.error)throw res.error;})];
   if(currentUser.role==='admin'){
-    ops.push(client.from('endodirect_global_state').upsert({id:'main',payload:globalStatePayload(),updated_by:currentUser.id,updated_at:new Date().toISOString()},{onConflict:'id'}).then(function(res){if(res.error)throw res.error;}));
+    // O estado global tem chaves que SÓ o cron/servidor escreve: radar_avisos
+    // (mural automático) e newsletter_* . O admin não as edita. Para um save do
+    // admin com cópia velha (carregada antes do cron rodar) NÃO apagar os itens
+    // novos do radar, relemos o payload atual e preservamos essas chaves do
+    // servidor antes do upsert (read-modify-write, igual o cron faz). As chaves
+    // que o professor edita (radar_hidden, adm_avisos, provas, etc.) seguem do admin.
+    ops.push(client.from('endodirect_global_state').select('payload').eq('id','main').maybeSingle().then(function(g){
+      var serverP=(g&&g.data&&g.data.payload)||{};
+      var p=globalStatePayload();
+      ['radar_avisos','newsletter_extra','newsletter_unsub','newsletter_sent','newsletter'].forEach(function(k){if(serverP[k]!==undefined)p[k]=serverP[k];});
+      return client.from('endodirect_global_state').upsert({id:'main',payload:p,updated_by:currentUser.id,updated_at:new Date().toISOString()},{onConflict:'id'}).then(function(res){if(res.error)throw res.error;});
+    }));
   }
   Promise.all(ops)
     .catch(function(e){
