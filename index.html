@@ -612,6 +612,19 @@ textarea{resize:vertical;line-height:1.6}
 .ref-card li::before{content:'▸';position:absolute;left:0;color:var(--blue)}
 .ref-link{font-size:.76rem;font-weight:700;color:var(--blue);text-decoration:none}
 .ref-link:hover{text-decoration:underline}
+.ref-soon{text-align:center;max-width:560px;margin:2.5rem auto;background:var(--surface);border:1px solid var(--bd);border-radius:16px;padding:2.6rem 1.8rem}
+.ref-soon-ico{font-size:3rem;line-height:1;margin-bottom:.6rem}
+.ref-soon h2{margin:0 0 .7rem;font-size:1.35rem;color:var(--tx)}
+.ref-soon p{margin:.35rem 0;color:var(--t2);font-size:.9rem;line-height:1.55}
+.ref-soon-sub{color:var(--t3) !important;font-size:.78rem !important;margin-top:1rem !important}
+.adm-ref-list{display:flex;flex-direction:column;gap:.6rem;margin-top:1rem}
+.adm-ref-row{border:1px solid var(--bd);border-radius:10px;padding:.7rem .85rem;background:var(--surface)}
+.adm-ref-row .arr-top{display:flex;justify-content:space-between;align-items:flex-start;gap:.6rem}
+.adm-ref-row h4{margin:.15rem 0;font-size:.9rem;color:var(--tx)}
+.adm-ref-row .arr-meta{font-size:.7rem;color:var(--t3)}
+.adm-ref-row ul{margin:.4rem 0 0;padding-left:1.1rem}
+.adm-ref-row li{font-size:.76rem;color:var(--t2);margin:.12rem 0}
+.adm-ref-acts{display:flex;gap:.4rem;flex-shrink:0}
 </style>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="https://cdn.jsdelivr.net/npm/tus-js-client@4/dist/tus.min.js"></script>
@@ -1770,6 +1783,7 @@ textarea{resize:vertical;line-height:1.6}
           <div class="sb-sec">Gestão</div>
           <button class="adm-nav on" data-asec="analytics">📊 Analytics</button>
           <button class="adm-nav" data-asec="mural">📣 Mural</button>
+          <button class="adm-nav" data-asec="ref">📋 Referência</button>
           <button class="adm-nav" data-asec="provas">📝 Provas &amp; Questões</button>
           <button class="adm-nav" data-asec="cursos">🎬 Cursos</button>
           <button class="adm-nav" data-asec="estudantes">👥 Estudantes</button>
@@ -1997,7 +2011,7 @@ var RESUMABLE_THRESHOLD_BYTES=20*1024*1024;
 var MAX_AUDIO_UPLOAD_BYTES=200*1024*1024;
 var supabaseClient=null;
 var remoteStateLoaded=false,remoteStateSaveTimer=null,remoteStateWarned=false;
-var REMOTE_STATE_KEYS=['q','fc','mm','notes','crono','sf_results','perf','provas','adm_avisos','adm_questoes','podcasts','adm_cursos','adm_estudantes','adm_perfil','user_profile','mm_shared','deg_trials','ck_billing','presc_emitidas'];
+var REMOTE_STATE_KEYS=['q','fc','mm','notes','crono','sf_results','perf','provas','adm_avisos','adm_questoes','podcasts','adm_cursos','adm_estudantes','adm_perfil','user_profile','mm_shared','deg_trials','ck_billing','presc_emitidas','diretrizes'];
 // Base CANÔNICA para os redirects de auth (confirmação, recuperação, OAuth).
 // Sempre www em produção — evita cair no apex (endodirect.com.br) que pode não
 // responder e deixar o usuário preso após confirmar o e-mail. Em localhost usa
@@ -2370,7 +2384,7 @@ function globalStatePayload(){
   // professor grava apenas os avisos manuais em adm_avisos. A leitura
   // (member_content/public_content) mescla os dois.
   // Mescla as chaves geridas pelo servidor (newsletter_*) para NÃO apagá-las no save.
-  return Object.assign({},globalServerKeys,{provas:provasDB,adm_avisos:admAvisos.filter(function(a){return !isRadarAuto(a);}),radar_avisos:radarAvisos,radar_hidden:radarHidden,adm_questoes:admQuestoes,podcasts:podcasts,adm_cursos:admCursos,adm_estudantes:admEstudantes,mm_shared:sharedMM});
+  return Object.assign({},globalServerKeys,{provas:provasDB,adm_avisos:admAvisos.filter(function(a){return !isRadarAuto(a);}),radar_avisos:radarAvisos,radar_hidden:radarHidden,adm_questoes:admQuestoes,podcasts:podcasts,adm_cursos:admCursos,adm_estudantes:admEstudantes,mm_shared:sharedMM,diretrizes:diretrizes});
 }
 function currentStatePayload(){
   return Object.assign({},userStatePayload(),globalStatePayload());
@@ -2395,6 +2409,7 @@ function applyStatePayload(payload){
   if(Array.isArray(payload.podcasts))podcasts=payload.podcasts;
   if(Array.isArray(payload.adm_cursos))admCursos=payload.adm_cursos;
   if(Array.isArray(payload.adm_estudantes))admEstudantes=normalizeAdmEstudantes(payload.adm_estudantes);
+  if(Array.isArray(payload.diretrizes))diretrizes=payload.diretrizes;
   if(payload.adm_perfil&&typeof payload.adm_perfil==='object'){
     // Segurança: só aceita o perfil salvo se o e-mail bater com o do admin
     // logado. Um perfil com e-mail de OUTRO admin (resíduo de estado antigo)
@@ -5662,23 +5677,17 @@ var REF_GUIDELINES=[
   {fonte:'Endocrine Society',ano:'2015',sub:'Obesidade',titulo:'Manejo farmacológico da obesidade',pts:['Avaliar IMC + comorbidades para indicar tratamento','Meta de perda ≥5–10% do peso','Estilo de vida + farmacoterapia (ex.: análogos de GLP-1)','Cirurgia bariátrica em casos selecionados'],url:'https://www.endocrine.org/clinical-practice-guidelines'},
   {fonte:'Endocrine Society',ano:'2019',sub:'Osteometabolismo',titulo:'Osteoporose pós-menopausa',pts:['Diagnóstico por DXA (T-score ≤ −2,5) e/ou FRAX','Repor cálcio e vitamina D','Antirreabsortivos (bisfosfonatos) são 1ª linha na maioria','Reavaliar adesão e resposta periodicamente'],url:'https://www.endocrine.org/clinical-practice-guidelines'}
 ];
+// Diretrizes editáveis pelo admin (CRUD). Semente = REF_GUIDELINES.
+var diretrizes=(function(){try{var s=lsGet('diretrizes');if(Array.isArray(s)&&s.length)return s;}catch(e){}return REF_GUIDELINES.slice();})();
 var refFonteFilter='';
+// Painel do aluno: "Em breve" até a curadoria liberar (o admin edita o conteúdo
+// em Admin › Referência; a publicação para alunos virá numa etapa seguinte).
 function renderRef(){
   var el=document.getElementById('ref-body'); if(!el)return;
-  var fontes=[]; REF_GUIDELINES.forEach(function(g){if(fontes.indexOf(g.fonte)<0)fontes.push(g.fonte);});
-  var chips='<button class="ref-chip'+(refFonteFilter?'':' on')+'" data-ref-fonte="">Todas</button>'+fontes.map(function(f){return '<button class="ref-chip'+(refFonteFilter===f?' on':'')+'" data-ref-fonte="'+esc(f)+'">'+esc(f)+'</button>';}).join('');
-  var list=REF_GUIDELINES.filter(function(g){return !refFonteFilter||g.fonte===refFonteFilter;});
-  var cards=list.map(function(g){
-    return '<div class="ref-card"><div class="ref-card-top"><span class="ref-badge">'+esc(g.fonte)+' · '+esc(g.ano)+'</span><span class="tag tag-muted" style="font-size:.6rem">'+esc(g.sub)+'</span></div>'
-      +'<h3>'+esc(g.titulo)+'</h3><ul>'+g.pts.map(function(p){return '<li>'+esc(p)+'</li>';}).join('')+'</ul>'
-      +'<a href="'+esc(g.url)+'" target="_blank" rel="noopener" class="ref-link">Ver diretriz original ↗</a></div>';
-  }).join('');
-  el.innerHTML='<div class="ph"><h1>📋 Referência rápida</h1><p>Resumos de diretrizes (ADA, ATA, Endocrine Society) para consulta rápida — filtre por fonte.</p></div>'
-    +'<div class="ref-disclaimer">⚠️ <b>Resumos educacionais e simplificados.</b> Não substituem a leitura da diretriz original nem o julgamento clínico — confira sempre a fonte e a avaliação individual do paciente.</div>'
-    +'<div class="ref-filters">'+chips+'</div>'
-    +'<div class="ref-grid">'+cards+'</div>'
-    +'<p style="font-size:.72rem;color:var(--t3);margin-top:1.1rem">Conteúdo inicial (exemplo) — em curadoria pela equipe Endodirect.</p>';
-  el.querySelectorAll('[data-ref-fonte]').forEach(function(b){b.addEventListener('click',function(){refFonteFilter=b.dataset.refFonte;renderRef();});});
+  el.innerHTML='<div class="ph"><h1>📋 Referência rápida</h1><p>Resumos de diretrizes (ADA, ATA, Endocrine Society) para consulta rápida.</p></div>'
+    +'<div class="ref-soon"><div class="ref-soon-ico">🔜</div><h2>Em breve</h2>'
+    +'<p>Estamos preparando resumos das principais diretrizes de endocrinologia para você consultar rapidinho durante os estudos e a prática clínica.</p>'
+    +'<p class="ref-soon-sub">Em curadoria pela equipe Endodirect — disponível em breve.</p></div>';
 }
 function initMural(){
   var el=document.getElementById('mural-pc');if(!el)return;
@@ -6027,7 +6036,7 @@ function renderAdmSec(sec){
   admCurrentSec=sec;
   try{lsSet('adm_sec',sec);}catch(e){}
   document.querySelectorAll('.adm-nav[data-asec]').forEach(function(b){b.classList.toggle('on',b.dataset.asec===sec);});
-  var titles={provas:'Provas & Questões',cursos:'Cursos',estudantes:'Estudantes',analytics:'Analytics',mural:'Mural',conteudo:'Podcasts',mapas:'Mapas Mentais',chat:'Chat',perfil:'Perfil',suporte:'Suporte'};
+  var titles={provas:'Provas & Questões',cursos:'Cursos',estudantes:'Estudantes',analytics:'Analytics',mural:'Mural',ref:'Referência rápida',conteudo:'Podcasts',mapas:'Mapas Mentais',chat:'Chat',perfil:'Perfil',suporte:'Suporte'};
   setText('adm-sec-title',titles[sec]||sec);
   var m=document.getElementById('adm-main');if(!m)return;
   if(sec==='provas')m.innerHTML=admProvasSecHTML();
@@ -6035,6 +6044,7 @@ function renderAdmSec(sec){
   else if(sec==='estudantes')m.innerHTML=admEstudantesHTML();
   else if(sec==='analytics'){m.innerHTML=admAnalyticsHTML();loadAdmOverview();var rtA=document.getElementById('adm-analytics-retry');if(rtA)rtA.addEventListener('click',function(){loadAdmOverview(true);});}
   else if(sec==='mural')m.innerHTML=admMuralSecHTML();
+  else if(sec==='ref')m.innerHTML=admRefSecHTML();
   else if(sec==='conteudo')m.innerHTML=admConteudoHTML();
   else if(sec==='chat')m.innerHTML=admChatHTML();
   else if(sec==='perfil')m.innerHTML=admPerfilHTML();
@@ -6202,6 +6212,32 @@ function admSuporteHTML(){
 
 function persistAdm(){lsSet('adm_avisos',admAvisos);lsSet('adm_questoes',admQuestoes);queueRemoteStateSave();}
 var admMuralShowForm=false,admMuralEdit=null,admMuralFilter='',admMuralTipoFilter='',admMuralSort='novos';
+// ---------- REFERÊNCIA RÁPIDA (admin CRUD) ----------
+var admRefShowForm=false,admRefEdit=null;
+function persistDiretrizes(){lsSet('diretrizes',diretrizes);queueRemoteStateSave();}
+function admRefSecHTML(){
+  var g=(admRefEdit!==null&&diretrizes[admRefEdit])?diretrizes[admRefEdit]:null;
+  var formHTML=admRefShowForm?(
+    '<div class="card" style="margin-bottom:1.1rem"><div style="font-size:1rem;font-weight:700;margin-bottom:.3rem">'+(g?'✏️ Editar diretriz':'📋 Nova diretriz')+'</div>'
+    +'<div style="font-size:.74rem;color:var(--t2);margin-bottom:.9rem">Resumos exibidos na aba Referência. Para os alunos a aba mostra “Em breve” até a curadoria liberar.</div>'
+    +'<div class="g2" style="margin-bottom:.7rem"><div class="fld2" style="margin:0"><label>Fonte</label><input type="text" id="adm-ref-fonte" placeholder="Ex: ADA, ATA, Endocrine Society" value="'+esc(g?g.fonte:'')+'"></div><div class="fld2" style="margin:0"><label>Ano</label><input type="text" id="adm-ref-ano" placeholder="Ex: 2024" value="'+esc(g?g.ano:'')+'"></div></div>'
+    +'<div class="g2" style="margin-bottom:.7rem"><div class="fld2" style="margin:0"><label>Subespecialidade</label><input type="text" id="adm-ref-sub" placeholder="Ex: Diabetes, Tireoide" value="'+esc(g?g.sub:'')+'"></div><div class="fld2" style="margin:0"><label>Link da diretriz (opcional)</label><input type="text" id="adm-ref-url" placeholder="https://…" value="'+esc(g?g.url:'')+'"></div></div>'
+    +'<div class="fld2" style="margin-bottom:.7rem"><label>Título</label><input type="text" id="adm-ref-titulo" placeholder="Ex: Diagnóstico de Diabetes Mellitus" value="'+esc(g?g.titulo:'')+'"></div>'
+    +'<div class="fld2"><label>Pontos-chave (um por linha)</label><textarea id="adm-ref-pts" rows="5" placeholder="Glicemia de jejum ≥126 mg/dL&#10;HbA1c ≥6,5%&#10;…">'+esc(g?(g.pts||[]).join('\n'):'')+'</textarea></div>'
+    +'<div style="display:flex;gap:6px"><button class="btn btn-primary" id="btn-adm-ref-save">'+(g?'💾 Salvar alterações':'+ Adicionar diretriz')+'</button><button class="btn btn-outline" id="btn-adm-ref-cancel">Cancelar</button></div></div>'
+  ):'';
+  var rows=diretrizes.map(function(d,i){
+    return '<div class="adm-ref-row"><div class="arr-top"><div><span class="ref-badge">'+esc(d.fonte)+' · '+esc(d.ano)+'</span> <span class="arr-meta">'+esc(d.sub||'')+'</span><h4>'+esc(d.titulo)+'</h4></div>'
+      +'<div class="adm-ref-acts"><button class="btn btn-outline btn-sm" data-adm-refedit="'+i+'">Editar</button><button class="btn btn-outline btn-sm" data-adm-refdel="'+i+'" style="color:var(--red);border-color:var(--red)">🗑</button></div></div>'
+      +'<ul>'+(d.pts||[]).map(function(p){return '<li>'+esc(p)+'</li>';}).join('')+'</ul></div>';
+  }).join('');
+  return '<div class="adm-ph" style="display:flex;align-items:flex-start;justify-content:space-between;gap:.6rem;flex-wrap:wrap"><div><h1>Referência rápida</h1></div><div style="display:flex;gap:.5rem;flex-wrap:wrap"><button class="btn btn-primary" id="btn-adm-ref-new" style="padding:.55rem 1.1rem">+ Nova diretriz</button></div></div>'
+    +'<div class="adm-pc">'
+    +formHTML
+    +'<div class="card" style="margin-bottom:1.1rem"><div style="font-size:.62rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--t3);margin-bottom:.3rem">Conteúdo da aba Referência</div><div style="font-size:1.15rem;font-weight:700;color:var(--tx);margin-bottom:.35rem">Resumos de diretrizes para consulta rápida</div><div style="font-size:.79rem;color:var(--t2);line-height:1.55">Edite aqui os resumos (ADA, ATA, Endocrine Society…). <b>Para os alunos a aba ainda exibe “Em breve”</b> — a publicação será liberada numa próxima etapa.</div></div>'
+    +'<div class="adm-ref-list">'+(rows||'<div class="empty">Nenhuma diretriz cadastrada. Clique em “+ Nova diretriz”.</div>')+'</div>'
+    +'</div>';
+}
 function admMuralSecHTML(){
   function dateBR(v){
     var d=new Date(v||Date.now());
@@ -6692,6 +6728,25 @@ function bindAdmSec(sec){
     var pClear=document.getElementById('adm-pod-clearfilter');
     if(pClear)pClear.addEventListener('click',function(){admPodFiltro='';renderAdmSec('conteudo');});
     main.querySelectorAll('[data-adm-delpod]').forEach(function(b){b.addEventListener('click',function(){var p=podcasts[parseInt(b.dataset.admDelpod)];if(!confirm('Excluir o podcast "'+((p&&p.title)||'')+'"? Esta ação não pode ser desfeita.'))return;podcasts.splice(parseInt(b.dataset.admDelpod),1);persistPodcasts();renderAdmSec('conteudo');});});
+  }
+
+  if(sec==='ref'){
+    var rNew=document.getElementById('btn-adm-ref-new');
+    if(rNew)rNew.addEventListener('click',function(){admRefShowForm=!admRefShowForm;admRefEdit=null;renderAdmSec('ref');document.getElementById('adm-main').scrollTop=0;});
+    var rCancel=document.getElementById('btn-adm-ref-cancel');
+    if(rCancel)rCancel.addEventListener('click',function(){admRefShowForm=false;admRefEdit=null;renderAdmSec('ref');});
+    var rSave=document.getElementById('btn-adm-ref-save');
+    if(rSave)rSave.addEventListener('click',function(){
+      function val(id){var e=document.getElementById(id);return e?e.value.trim():'';}
+      var titulo=val('adm-ref-titulo');
+      if(!titulo){notify('Informe o título da diretriz.','err');return;}
+      var pts=(document.getElementById('adm-ref-pts').value||'').split('\n').map(function(s){return s.trim();}).filter(Boolean);
+      var obj={fonte:val('adm-ref-fonte')||'—',ano:val('adm-ref-ano'),sub:val('adm-ref-sub'),titulo:titulo,pts:pts,url:val('adm-ref-url')};
+      if(admRefEdit!==null&&diretrizes[admRefEdit])diretrizes[admRefEdit]=obj;else diretrizes.unshift(obj);
+      persistDiretrizes();admRefShowForm=false;admRefEdit=null;renderAdmSec('ref');notify('Diretriz salva.','ok');
+    });
+    main.querySelectorAll('[data-adm-refedit]').forEach(function(b){b.addEventListener('click',function(){admRefEdit=parseInt(b.dataset.admRefedit);admRefShowForm=true;renderAdmSec('ref');document.getElementById('adm-main').scrollTop=0;});});
+    main.querySelectorAll('[data-adm-refdel]').forEach(function(b){b.addEventListener('click',function(){var i=parseInt(b.dataset.admRefdel);var d=diretrizes[i];if(!confirm('Excluir a diretriz "'+((d&&d.titulo)||'')+'"? Esta ação não pode ser desfeita.'))return;diretrizes.splice(i,1);persistDiretrizes();renderAdmSec('ref');});});
   }
 
   if(sec==='mural'){
