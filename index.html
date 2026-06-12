@@ -58,17 +58,17 @@ window.addEventListener('load',function(){initProfVideos();initVimeoClip();});
 <style>
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 :root{
-  --navy:#1a2744;--bg:#f0f2f7;--surface:#fff;--s2:#f8f9fc;
-  --bd:#e4e8f0;--bd2:#d0d5e8;--tx:#1a2744;--t2:#5a6a8a;--t3:#9aaac0;
-  --blue:#3b6fd4;--blue2:#5585e8;--blue-l:#eef2ff;
-  --grn:#22c55e;--grn-l:#f0fdf4;--red:#ef4444;--red-l:#fef2f2;
-  --gold:#f59e0b;--gold-l:#fffbeb;--pur:#8b5cf6;--pur-l:#f5f3ff;
+  --navy:#111d35;--bg:#0b1325;--surface:#16233f;--s2:#1c2a48;
+  --bd:#283864;--bd2:#34467a;--tx:#e9eef8;--t2:#a7b2c6;--t3:#7b8aa4;
+  --blue:#3b6fd4;--blue2:#5585e8;--blue-l:#1d2d54;
+  --grn:#34d399;--grn-l:#10311f;--red:#f87171;--red-l:#3c1d20;
+  --gold:#f5b32c;--gold-l:#352a0e;--pur:#a78bfa;--pur-l:#261c42;
   --r:12px;--rs:8px;--font:'Segoe UI',system-ui,sans-serif;
 }
 html,body{height:100%;overflow:hidden;font-family:var(--font)}
 body{background:var(--bg);color:var(--tx);display:flex;flex-direction:column}
-#login-screen{position:fixed;inset:0;z-index:1000;background:linear-gradient(135deg,#e8ecf5,#f5f7fc 60%,#e2e8f5);display:flex;align-items:flex-start;justify-content:center;overflow:auto;padding:24px 16px}
-.login-card{background:#fff;border-radius:24px;box-shadow:0 12px 50px rgba(26,39,68,.18);width:520px;max-width:94vw;overflow:hidden;margin:auto}
+#login-screen{position:fixed;inset:0;z-index:1000;background:linear-gradient(135deg,#0c1426,#101c34 60%,#0b1325);display:flex;align-items:flex-start;justify-content:center;overflow:auto;padding:24px 16px}
+.login-card{background:var(--surface);border-radius:24px;box-shadow:0 12px 50px rgba(26,39,68,.18);width:520px;max-width:94vw;overflow:hidden;margin:auto}
 .login-hdr{background:linear-gradient(160deg,#1a2744 60%,#2a3f6e);padding:2.6rem 2.4rem 2.1rem;display:flex;flex-direction:column;align-items:center;gap:.7rem}
 .login-logo{display:flex;align-items:center;gap:14px}
 .login-ico{display:flex;align-items:center;justify-content:center}
@@ -77,17 +77,17 @@ body{background:var(--bg);color:var(--tx);display:flex;flex-direction:column}
 .login-name{font-size:2rem;font-weight:800;color:#fff;letter-spacing:-.02em}
 .login-sub{font-size:.75rem;color:rgba(255,255,255,.5);letter-spacing:.1em;text-transform:uppercase}
 .login-body{padding:2.4rem 2.6rem 2.6rem}
-.login-google{width:100%;display:flex;align-items:center;justify-content:center;gap:.8rem;background:#fff;border:1.5px solid var(--bd2);border-radius:10px;padding:.85rem 1rem;font-size:.95rem;font-weight:500;color:var(--tx);cursor:pointer;font-family:var(--font);margin-bottom:1.3rem}
+.login-google{width:100%;display:flex;align-items:center;justify-content:center;gap:.8rem;background:var(--surface);border:1.5px solid var(--bd2);border-radius:10px;padding:.85rem 1rem;font-size:.95rem;font-weight:500;color:var(--tx);cursor:pointer;font-family:var(--font);margin-bottom:1.3rem}
 .login-divider{display:flex;align-items:center;gap:.8rem;margin-bottom:1.3rem}
 .login-divider span{font-size:.78rem;color:var(--t3)}
 .login-divider::before,.login-divider::after{content:'';flex:1;height:1px;background:var(--bd)}
 .fld{margin-bottom:.95rem}
 .fld label{font-size:.72rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--t2);display:block;margin-bottom:6px}
-.login-body .fld input{width:100%;background:#fff;border:1.5px solid var(--bd2);border-radius:10px;padding:.85rem 1rem;font-family:var(--font);font-size:.95rem;color:var(--tx);outline:none}
+.login-body .fld input{width:100%;background:var(--surface);border:1.5px solid var(--bd2);border-radius:10px;padding:.85rem 1rem;font-family:var(--font);font-size:.95rem;color:var(--tx);outline:none}
 .login-btn{width:100%;background:var(--navy);color:#fff;border:none;border-radius:10px;padding:.92rem;font-size:1.02rem;font-weight:600;cursor:pointer;font-family:var(--font);margin-top:.4rem}
 .login-link{width:100%;background:none;border:none;color:var(--blue);font-family:var(--font);font-size:.78rem;font-weight:600;cursor:pointer;text-align:center;margin-top:.75rem;padding:.25rem}
 .login-link:hover{text-decoration:underline}
-.login-err{background:var(--red-l);border:1px solid #fecaca;border-radius:10px;padding:.6rem .9rem;font-size:.8rem;color:var(--red);margin-bottom:.95rem;display:none}
+.login-err{background:var(--red-l);border:1px solid #5a2326;border-radius:10px;padding:.6rem .9rem;font-size:.8rem;color:var(--red);margin-bottom:.95rem;display:none}
 #app-screen{display:none;flex-direction:column;height:100%}
 .topbar{height:52px;background:var(--surface);border-bottom:1px solid var(--bd);display:flex;align-items:center;justify-content:space-between;padding:0 1.2rem 0 0;flex-shrink:0;z-index:50}
 .tb-left{display:flex;align-items:center;height:100%}
@@ -105,7 +105,7 @@ body{background:var(--bg);color:var(--tx);display:flex;flex-direction:column}
 .tb-usub{font-size:.62rem;color:var(--t3)}
 .tb-avatar{width:30px;height:30px;background:var(--navy);border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:.73rem;font-weight:700;color:#fff;flex-shrink:0}
 .btn-cta{background:var(--blue);color:#fff;border:none;border-radius:99px;padding:.36rem .85rem;font-size:.73rem;font-weight:600;cursor:pointer;display:flex;align-items:center;gap:4px;font-family:var(--font);white-space:nowrap}
-.user-menu{display:none;position:absolute;top:calc(100% + 8px);right:0;background:#fff;border:1px solid var(--bd);border-radius:var(--r);box-shadow:0 8px 24px rgba(0,0,0,.12);min-width:170px;z-index:300;padding:.3rem 0}
+.user-menu{display:none;position:absolute;top:calc(100% + 8px);right:0;background:var(--surface);border:1px solid var(--bd);border-radius:var(--r);box-shadow:0 8px 24px rgba(0,0,0,.12);min-width:170px;z-index:300;padding:.3rem 0}
 .user-menu-hd{padding:.5rem .9rem .3rem;border-bottom:1px solid var(--bd)}
 .um-name{font-size:.78rem;font-weight:600}
 .um-email{font-size:.65rem;color:var(--t3)}
@@ -137,31 +137,31 @@ body{background:var(--bg);color:var(--tx);display:flex;flex-direction:column}
 .btn:disabled{cursor:wait;opacity:.88}
 .btn-primary:disabled{background:var(--blue);border-color:var(--blue);color:#fff;opacity:.92}
 .btn-primary:disabled .ld{color:#fff}
-.btn-primary:disabled .ld-dots span{background:#fff}
+.btn-primary:disabled .ld-dots span{background:var(--surface)}
 .btn-outline{background:transparent;border:1px solid var(--bd2);color:var(--t2)}
 .btn-outline:hover:not(:disabled){border-color:var(--blue);color:var(--blue)}
 .btn-ghost{background:transparent;border:none;color:var(--t2)}
 .btn-ghost:hover:not(:disabled){color:var(--tx);background:var(--s2)}
-.btn-danger{background:var(--red-l);color:var(--red);border:1px solid #fecaca}
+.btn-danger{background:var(--red-l);color:var(--red);border:1px solid #5a2326}
 .btn-sm{padding:.26rem .6rem;font-size:.68rem}
 .fld2{margin-bottom:.65rem}
 .flbl,.fld2 label{font-size:.62rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--t2);display:block;margin-bottom:3px}
-input[type=text],input[type=search],input[type=number],select,textarea{background:#fff;border:1px solid var(--bd2);border-radius:var(--rs);padding:.44rem .72rem;font-family:var(--font);font-size:.79rem;color:var(--tx);outline:none;width:100%}
+input[type=text],input[type=search],input[type=number],select,textarea{background:var(--surface);border:1px solid var(--bd2);border-radius:var(--rs);padding:.44rem .72rem;font-family:var(--font);font-size:.79rem;color:var(--tx);outline:none;width:100%}
 input:focus,select:focus,textarea:focus{border-color:var(--blue);box-shadow:0 0 0 3px rgba(59,111,212,.1)}
 textarea{resize:vertical;line-height:1.6}
 .tag{display:inline-flex;align-items:center;padding:2px 7px;border-radius:99px;font-size:.6rem;font-weight:600;white-space:nowrap}
 .tag-blue{background:var(--blue-l);color:var(--blue)}
-.tag-grn{background:var(--grn-l);color:#16a34a}
+.tag-grn{background:var(--grn-l);color:#34d399}
 .tag-red{background:var(--red-l);color:var(--red)}
 .tag-pur{background:var(--pur-l);color:var(--pur)}
 .tag-gold{background:var(--gold-l);color:#d97706}
 .upload-status{display:none;margin:.5rem 0 .7rem;padding:.5rem .65rem;border-radius:var(--rs);font-size:.72rem;font-weight:600;line-height:1.45}
 .upload-status.info{display:block;background:var(--blue-l);color:var(--blue);border:1px solid #bfdbfe}
-.upload-status.ok{display:block;background:var(--grn-l);color:#16a34a;border:1px solid #bbf7d0}
-.upload-status.err{display:block;background:var(--red-l);color:var(--red);border:1px solid #fecaca}
+.upload-status.ok{display:block;background:var(--grn-l);color:#34d399;border:1px solid #1e5436}
+.upload-status.err{display:block;background:var(--red-l);color:var(--red);border:1px solid #5a2326}
 .asset-meta{font-size:.66rem;color:var(--t3);word-break:break-word;margin-bottom:.5rem}
 .notify{position:fixed;bottom:1.2rem;right:1.2rem;background:var(--tx);border-radius:var(--r);padding:.55rem .9rem;font-size:.75rem;color:#fff;box-shadow:0 8px 24px rgba(0,0,0,.2);z-index:1100;max-width:280px;pointer-events:none}
-.notify.ok{background:#16a34a}
+.notify.ok{background:#34d399}
 .notify.err{background:var(--red)}
 .notify.info{background:var(--blue)}
 .ld{display:inline-flex;align-items:center;gap:.5rem;color:var(--t2);font-size:.75rem}
@@ -175,13 +175,13 @@ textarea{resize:vertical;line-height:1.6}
 .presc-tabs{display:flex;gap:.35rem;border-bottom:2px solid var(--bd);margin-bottom:.8rem}
 .presc-tabbtn{background:none;border:none;border-bottom:2px solid transparent;margin-bottom:-2px;padding:.5rem .9rem;font-size:.8rem;font-weight:600;color:var(--t2);cursor:pointer;font-family:var(--font)}
 .presc-tabbtn.on{color:var(--blue);border-bottom-color:var(--blue)}
-.presc-drop{position:absolute;top:100%;left:0;right:0;z-index:30;background:#fff;border:1px solid var(--bd2);border-radius:0 0 var(--rs) var(--rs);max-height:280px;overflow:auto;box-shadow:0 8px 22px rgba(0,0,0,.12)}
+.presc-drop{position:absolute;top:100%;left:0;right:0;z-index:30;background:var(--surface);border:1px solid var(--bd2);border-radius:0 0 var(--rs) var(--rs);max-height:280px;overflow:auto;box-shadow:0 8px 22px rgba(0,0,0,.12)}
 .presc-drop:empty{display:none}
 .presc-drop-item{padding:.45rem .7rem;font-size:.79rem;cursor:pointer;border-bottom:1px solid var(--bd)}
 .presc-drop-item:hover{background:var(--s2)}
-.presc-item{border:1px solid var(--bd);border-radius:var(--rs);padding:.7rem .8rem;margin-bottom:.6rem;background:#fff}
+.presc-item{border:1px solid var(--bd);border-radius:var(--rs);padding:.7rem .8rem;margin-bottom:.6rem;background:var(--surface)}
 .tog-row{display:flex;border:1px solid var(--bd2);border-radius:var(--rs);overflow:hidden;width:fit-content}
-.tog-btn{background:#fff;border:none;padding:.3rem .82rem;font-size:.7rem;font-weight:500;color:var(--t2);cursor:pointer;font-family:var(--font)}
+.tog-btn{background:var(--surface);border:none;padding:.3rem .82rem;font-size:.7rem;font-weight:500;color:var(--t2);cursor:pointer;font-family:var(--font)}
 .tog-btn.on{background:var(--blue);color:#fff}
 .sec-title{font-size:.68rem;font-weight:600;color:var(--t2);text-transform:uppercase;letter-spacing:.07em}
 .sec-h{display:flex;align-items:center;justify-content:space-between;margin-bottom:.55rem}
@@ -199,16 +199,16 @@ textarea{resize:vertical;line-height:1.6}
 .q-stem-prev{font-size:.77rem;color:var(--tx);line-height:1.5;flex:1}
 .q-detail{background:var(--s2);border:1px solid var(--bd);border-radius:var(--r);padding:.9rem 1.1rem;margin-top:3px}
 .q-stem{font-size:.84rem;line-height:1.7;color:var(--tx);margin-bottom:.85rem;font-weight:500}
-.qo{background:#fff;border:1.5px solid var(--bd2);border-radius:var(--rs);padding:.48rem .8rem;cursor:pointer;display:flex;gap:.5rem;align-items:flex-start;font-size:.77rem;color:var(--t2);line-height:1.5;margin-bottom:4px}
+.qo{background:var(--surface);border:1.5px solid var(--bd2);border-radius:var(--rs);padding:.48rem .8rem;cursor:pointer;display:flex;gap:.5rem;align-items:flex-start;font-size:.77rem;color:var(--t2);line-height:1.5;margin-bottom:4px}
 .qo:hover{border-color:var(--blue);color:var(--tx);background:var(--blue-l)}
-.qo.correct{border-color:var(--grn)!important;color:#16a34a!important;background:var(--grn-l)!important}
+.qo.correct{border-color:var(--grn)!important;color:#34d399!important;background:var(--grn-l)!important}
 .qo.wrong{border-color:var(--red)!important;color:var(--red)!important;background:var(--red-l)!important}
-.qo.annul{border-color:#f59e0b!important;color:#b45309!important;background:#fffbeb!important}
+.qo.annul{border-color:#f59e0b!important;color:#fbbf24!important;background:#33270c!important}
 .qo-ltr{font-weight:700;flex-shrink:0;width:14px}
 .q-fb{border-radius:var(--rs);padding:.55rem .8rem;font-size:.75rem;line-height:1.6;margin:.65rem 0}
-.q-fb.ok{background:var(--grn-l);color:#16a34a;border:1px solid #bbf7d0}
-.q-fb.er{background:var(--red-l);color:var(--red);border:1px solid #fecaca}
-.q-fb.annul{background:#fffbeb;color:#b45309;border:1px solid #fde68a}
+.q-fb.ok{background:var(--grn-l);color:#34d399;border:1px solid #1e5436}
+.q-fb.er{background:var(--red-l);color:var(--red);border:1px solid #5a2326}
+.q-fb.annul{background:#33270c;color:#fbbf24;border:1px solid #5a4a1e}
 .fc-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(195px,1fr));gap:9px}
 .fc-card{position:relative;min-height:150px;cursor:pointer;-webkit-perspective:1100px;perspective:1100px}
 .fc-inner{position:relative;width:100%;height:100%;min-height:150px;transition:-webkit-transform .55s cubic-bezier(.4,.2,.2,1);transition:transform .55s cubic-bezier(.4,.2,.2,1);-webkit-transform-style:preserve-3d;transform-style:preserve-3d}
@@ -218,7 +218,7 @@ textarea{resize:vertical;line-height:1.6}
 .fc-face-back{-webkit-transform:rotateY(180deg);transform:rotateY(180deg);background:var(--grn-l);border-color:#86efac}
 .fc-cat{font-size:.54rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--t3);margin-bottom:5px}
 .fc-front{font-size:.77rem;color:var(--tx);line-height:1.5;flex:1;font-weight:500}
-.fc-back{font-size:.74rem;color:#16a34a;line-height:1.5;flex:1}
+.fc-back{font-size:.74rem;color:#34d399;line-height:1.5;flex:1}
 .fc-hint{font-size:.56rem;color:var(--t3);margin-top:.5rem;text-align:right}
 .fc-del{position:absolute;top:5px;right:5px;z-index:3;border:none;background:rgba(255,255,255,.75);color:var(--t3);border-radius:6px;cursor:pointer;font-size:.72rem;line-height:1;padding:3px 6px}
 .fc-del:hover{color:#dc2626}
@@ -230,8 +230,8 @@ textarea{resize:vertical;line-height:1.6}
 .sr-card{background:var(--surface);border:2px solid var(--bd);border-radius:16px;min-height:190px;display:flex;flex-direction:column;align-items:center;justify-content:center;cursor:pointer;padding:1.4rem;text-align:center;margin-bottom:.7rem}
 .sr-card.flipped{border-color:#86efac;background:var(--grn-l)}
 .sr-btn{border:none;border-radius:var(--rs);padding:.48rem 1rem;font-size:.74rem;font-weight:600;cursor:pointer;font-family:var(--font)}
-.sr-easy{background:#dcfce7;color:#16a34a}
-.sr-hard{background:#fef9c3;color:#ca8a04}
+.sr-easy{background:#103726;color:#34d399}
+.sr-hard{background:#33280c;color:#ca8a04}
 .sr-again{background:var(--red-l);color:var(--red)}
 .mm-item{background:var(--surface);border:1px solid var(--bd);border-radius:var(--r);padding:.75rem .9rem;display:flex;align-items:center;justify-content:space-between;gap:.7rem}
 .mm-gen-card{padding:1rem 1.1rem}
@@ -239,7 +239,7 @@ textarea{resize:vertical;line-height:1.6}
 .mm-help{font-size:.68rem;color:var(--t3);margin-top:.65rem}
 .mm-live-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:.55rem;flex-wrap:wrap;gap:.45rem}
 .mm-live-actions{display:flex;gap:5px;align-items:center}
-.mm-map-wrap{background:#f5f6fa;border:1px solid var(--bd);border-radius:var(--r);overflow:auto;padding:.9rem;min-height:640px;touch-action:pan-x pan-y}
+.mm-map-wrap{background:#1c2a48;border:1px solid var(--bd);border-radius:var(--r);overflow:auto;padding:.9rem;min-height:640px;touch-action:pan-x pan-y}
 .mm-svg-stage{min-width:max-content;min-height:620px;position:relative}
 .mm-editor{display:flex;align-items:center;gap:0;padding:1.15rem .5rem;min-width:max-content}
 .mm-editor>*{position:relative;z-index:1}
@@ -252,26 +252,26 @@ textarea{resize:vertical;line-height:1.6}
 .mm-branch-txt:focus{filter:brightness(1.06);box-shadow:0 0 0 3px rgba(0,0,0,.14)}
 .mm-subs-block{display:flex;flex-direction:column;gap:.45rem}
 .mm-node-wrap{position:relative;display:inline-flex;align-items:center}
-.mm-sub-txt{background:#fff;border:1.5px solid var(--bd2);border-radius:9px;padding:.42rem .72rem;font-size:.76rem;color:var(--tx);min-width:120px;max-width:320px;outline:none;line-height:1.45}
+.mm-sub-txt{background:var(--surface);border:1.5px solid var(--bd2);border-radius:9px;padding:.42rem .72rem;font-size:.76rem;color:var(--tx);min-width:120px;max-width:320px;outline:none;line-height:1.45}
 .mm-sub-txt:focus{border-color:var(--blue);box-shadow:0 0 0 3px rgba(59,111,212,.12)}
 .mm-del{position:absolute;top:-7px;right:-7px;width:18px;height:18px;border:none;border-radius:50%;background:var(--red);color:#fff;font-size:.62rem;cursor:pointer;display:none;align-items:center;justify-content:center;line-height:1;font-family:var(--font);padding:0;box-shadow:0 1px 4px rgba(0,0,0,.25);z-index:5}
 .mm-node-wrap:hover .mm-del{display:inline-flex}
 .mm-add-sub{align-self:flex-start;background:none;border:1px dashed var(--bd2);border-radius:7px;padding:.24rem .65rem;font-size:.68rem;color:var(--t3);cursor:pointer;font-family:var(--font)}
-.mm-add-sub:hover{border-color:var(--blue);color:var(--blue);background:#fff}
+.mm-add-sub:hover{border-color:var(--blue);color:var(--blue);background:var(--surface)}
 .mm-add-branch{background:none;border:1.5px dashed var(--bd2);border-radius:9px;padding:.45rem .9rem;font-size:.76rem;color:var(--t2);cursor:pointer;font-family:var(--font);align-self:flex-start;margin-top:.6rem}
 .mm-add-branch:hover{border-color:var(--blue);color:var(--blue);background:var(--blue-l)}
 .mm-conn-layer{position:absolute;left:0;top:0;z-index:0;overflow:visible;pointer-events:none}
 .crono-day{background:var(--surface);border:1px solid var(--bd);border-radius:var(--r);padding:.8rem .95rem;margin-bottom:.5rem}
-.crono-day-title{font-size:.76rem;font-weight:700;color:var(--navy);margin-bottom:.5rem;text-transform:uppercase;letter-spacing:.05em}
+.crono-day-title{font-size:.76rem;font-weight:700;color:var(--tx);margin-bottom:.5rem;text-transform:uppercase;letter-spacing:.05em}
 .crono-sess{display:flex;align-items:center;gap:.6rem;padding:.42rem .65rem;background:var(--s2);border-radius:var(--rs);margin-bottom:3px;font-size:.77rem}
 .sim-bubble{border-radius:var(--r);padding:.65rem .9rem;margin-bottom:.5rem;font-size:.8rem;line-height:1.65}
 .sim-bubble.doc{background:var(--blue-l);border-left:3px solid var(--blue)}
 .sim-bubble.feed{background:var(--grn-l);border-left:3px solid var(--grn)}
 .sim-bubble.er{background:var(--red-l);border-left:3px solid var(--red)}
-.sim-opt{background:#fff;border:1.5px solid var(--bd2);border-radius:var(--rs);padding:.52rem .88rem;cursor:pointer;display:flex;gap:.55rem;align-items:flex-start;font-size:.79rem;color:var(--t2);line-height:1.5;margin-bottom:5px;font-family:var(--font);width:100%;text-align:left}
+.sim-opt{background:var(--surface);border:1.5px solid var(--bd2);border-radius:var(--rs);padding:.52rem .88rem;cursor:pointer;display:flex;gap:.55rem;align-items:flex-start;font-size:.79rem;color:var(--t2);line-height:1.5;margin-bottom:5px;font-family:var(--font);width:100%;text-align:left}
 .sim-opt:hover{border-color:var(--blue);background:var(--blue-l);color:var(--tx)}
 .sim-opt.sel{border-color:var(--blue)!important;background:var(--blue-l)!important;color:var(--blue)!important}
-.sim-opt.correct{border-color:var(--grn)!important;background:var(--grn-l)!important;color:#16a34a!important}
+.sim-opt.correct{border-color:var(--grn)!important;background:var(--grn-l)!important;color:#34d399!important}
 .sim-opt.wrong{border-color:var(--red)!important;background:var(--red-l)!important;color:var(--red)!important}
 .sim-report{padding:1.15rem}
 .sim-report-head{display:flex;align-items:center;justify-content:space-between;gap:1rem;flex-wrap:wrap;margin-bottom:1rem}
@@ -298,7 +298,7 @@ textarea{resize:vertical;line-height:1.6}
 .sf-timer.warn{color:#fbbf24}
 .sf-timer.crit{color:#f87171;animation:pulse 1s infinite}
 @keyframes pulse{0%,100%{opacity:1}50%{opacity:.4}}
-.sf-nav-btn{width:28px;height:28px;border-radius:5px;border:1px solid var(--bd2);background:#fff;font-size:.67rem;font-weight:600;cursor:pointer;font-family:var(--font);display:inline-flex;align-items:center;justify-content:center}
+.sf-nav-btn{width:28px;height:28px;border-radius:5px;border:1px solid var(--bd2);background:var(--surface);font-size:.67rem;font-weight:600;cursor:pointer;font-family:var(--font);display:inline-flex;align-items:center;justify-content:center}
 .sf-nav-btn.ans{background:var(--blue);color:#fff;border-color:var(--blue)}
 .sf-nav-btn.flag{background:var(--gold-l);border-color:var(--gold)}
 .note-item{padding:.55rem .8rem;cursor:pointer;border-bottom:1px solid var(--bd)}
@@ -321,8 +321,8 @@ textarea{resize:vertical;line-height:1.6}
 .mural-updated{font-size:.72rem;font-weight:500;color:var(--t3);letter-spacing:0}
 #panel-mural .pc{max-width:none}
 .mural-shell{display:flex;flex-direction:column;gap:1rem}
-.mural-status{display:inline-flex;align-items:center;width:max-content;border-radius:5px;background:var(--grn-l);color:#15803d;font-size:.66rem;font-weight:800;padding:.32rem .55rem}
-.mural-hero,.mural-filter-card{background:#fff;border:1px solid var(--bd);border-radius:var(--r);box-shadow:0 1px 2px rgba(26,39,68,.03)}
+.mural-status{display:inline-flex;align-items:center;width:max-content;border-radius:5px;background:var(--grn-l);color:#4ade80;font-size:.66rem;font-weight:800;padding:.32rem .55rem}
+.mural-hero,.mural-filter-card{background:var(--surface);border:1px solid var(--bd);border-radius:var(--r);box-shadow:0 1px 2px rgba(26,39,68,.03)}
 .mural-hero{padding:1.25rem 1.35rem}
 .mural-eyebrow,.mural-filter-label{font-size:.64rem;font-weight:800;letter-spacing:.1em;text-transform:uppercase;color:var(--t3)}
 .mural-hero h2{font-size:1.35rem;font-weight:800;color:var(--tx);letter-spacing:-.02em;margin:.55rem 0 .45rem}
@@ -334,16 +334,16 @@ textarea{resize:vertical;line-height:1.6}
 .mural-switch-wrap{display:flex;align-items:center;gap:.5rem;font-size:.78rem;color:var(--t2);font-weight:600;white-space:nowrap}
 .mural-switch{width:42px;height:24px;border-radius:999px;border:none;background:var(--bd2);position:relative;cursor:pointer;flex-shrink:0;transition:background .15s;padding:0}
 .mural-switch.on{background:var(--blue)}
-.mural-switch .ms-dot{position:absolute;top:3px;left:3px;width:18px;height:18px;border-radius:50%;background:#fff;transition:left .15s;box-shadow:0 1px 3px rgba(0,0,0,.25)}
+.mural-switch .ms-dot{position:absolute;top:3px;left:3px;width:18px;height:18px;border-radius:50%;background:var(--surface);transition:left .15s;box-shadow:0 1px 3px rgba(0,0,0,.25)}
 .mural-switch.on .ms-dot{left:21px}
 .mural-count-pill{display:inline-flex;align-items:center;justify-content:center;border-radius:5px;background:var(--blue-l);color:var(--blue);font-size:.66rem;font-weight:800;padding:.34rem .6rem;white-space:nowrap}
 .mural-theme-pill{display:inline-flex;align-items:center;justify-content:center;border-radius:5px;background:var(--s2);color:var(--tx);font-size:.66rem;font-weight:800;padding:.34rem .6rem;white-space:nowrap}
 .mural-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:1rem}
-.mural-card{position:relative;background:#fff;border:1px solid var(--bd);border-left:4px solid var(--blue);border-radius:var(--rs);padding:1.2rem 1.25rem;min-height:178px;box-shadow:0 1px 2px rgba(26,39,68,.035)}
+.mural-card{position:relative;background:var(--surface);border:1px solid var(--bd);border-left:4px solid var(--blue);border-radius:var(--rs);padding:1.2rem 1.25rem;min-height:178px;box-shadow:0 1px 2px rgba(26,39,68,.035)}
 .mural-card-red{border-left-color:#c0392b}
 .mural-card-purple{border-left-color:#6d3fb5}
 .mural-card-diabetes{border-left-color:#2563eb}
-.mural-card-obesidade{border-left-color:#16a34a}
+.mural-card-obesidade{border-left-color:#34d399}
 .mural-card-tireoide{border-left-color:#8b5cf6}
 .mural-card-adrenal{border-left-color:#f59e0b}
 .mural-card-neuroendocrinologia{border-left-color:#0ea5e9}
@@ -355,8 +355,8 @@ textarea{resize:vertical;line-height:1.6}
 .mural-card h3{font-size:1rem;font-weight:800;color:var(--tx);line-height:1.35;margin-bottom:.42rem}
 .mural-date{font-size:.72rem;font-weight:800;color:var(--t3);margin-bottom:.65rem}
 .mural-text{font-size:.79rem;color:var(--t2);line-height:1.7;margin-bottom:.9rem;white-space:pre-line}
-.mural-source{font-size:.75rem;font-weight:800;color:#064d8b}
-.mural-source a{color:#064d8b;text-decoration:none}
+.mural-source{font-size:.75rem;font-weight:800;color:#5cc8f5}
+.mural-source a{color:#5cc8f5;text-decoration:none}
 .mural-source a:hover{text-decoration:underline}
 .mural-empty{grid-column:1/-1}
 .mural-card-actions{display:flex;gap:.45rem;flex-wrap:wrap;margin-top:1rem}
@@ -364,16 +364,16 @@ textarea{resize:vertical;line-height:1.6}
 .mural-admin-grid .mural-card{min-height:188px}
 .mural-admin-toolbar{display:flex;align-items:flex-start;justify-content:space-between;gap:1rem;flex-wrap:wrap}
 .tag-muted{background:var(--s2);color:var(--tx)}
-.tag-sub-diabetes{background:#dbeafe;color:#1d4ed8}
-.tag-sub-obesidade{background:#dcfce7;color:#15803d}
-.tag-sub-tireoide{background:#ede9fe;color:#6d28d9}
-.tag-sub-adrenal{background:#fef3c7;color:#b45309}
-.tag-sub-neuroendocrinologia{background:#e0f2fe;color:#0369a1}
-.tag-sub-osteometabolismo{background:#d1fae5;color:#047857}
-.tag-sub-lipides{background:#fee2e2;color:#b91c1c}
-.tag-sub-reproducao{background:#fce7f3;color:#be185d}
-.tag-sub-pediatria{background:#e0e7ff;color:#4338ca}
-.adm-tab{background:#fff;border:1.5px solid var(--bd2);border-radius:99px;padding:.3rem .88rem;font-size:.74rem;font-weight:500;color:var(--t2);cursor:pointer;font-family:var(--font)}
+.tag-sub-diabetes{background:#16264f;color:#7aa0ff}
+.tag-sub-obesidade{background:#103726;color:#4ade80}
+.tag-sub-tireoide{background:#251a44;color:#b794f6}
+.tag-sub-adrenal{background:#33280c;color:#fbbf24}
+.tag-sub-neuroendocrinologia{background:#0e2c3f;color:#5cc8f5}
+.tag-sub-osteometabolismo{background:#0d3326;color:#34d399}
+.tag-sub-lipides{background:#3a1a1c;color:#f87171}
+.tag-sub-reproducao{background:#3a1226;color:#f472b6}
+.tag-sub-pediatria{background:#1c1f4a;color:#9aa6f5}
+.adm-tab{background:var(--surface);border:1.5px solid var(--bd2);border-radius:99px;padding:.3rem .88rem;font-size:.74rem;font-weight:500;color:var(--t2);cursor:pointer;font-family:var(--font)}
 .adm-tab.on{background:var(--blue);border-color:var(--blue);color:#fff;font-weight:600}
 .admin-mode{height:100%;overflow:hidden}
 .admin-mode .workspace{height:100%;display:block;overflow:hidden}
@@ -382,7 +382,7 @@ textarea{resize:vertical;line-height:1.6}
 #panel-adm .adm-content{flex:1;display:flex;flex-direction:column;overflow:hidden;background:var(--bg);min-width:0}
 #panel-adm .adm-topbar{height:56px;background:var(--surface);border-bottom:1px solid var(--bd);display:flex;align-items:center;justify-content:space-between;padding:0 1.6rem;flex-shrink:0}
 #panel-adm .adm-title-wrap{display:flex;align-items:center;gap:.75rem;min-width:0}
-.adm-menu-btn{display:none;width:38px;height:38px;border-radius:10px;border:1px solid var(--bd2);background:#fff;color:var(--navy);align-items:center;justify-content:center;font-size:1.15rem;font-weight:800;cursor:pointer}
+.adm-menu-btn{display:none;width:38px;height:38px;border-radius:10px;border:1px solid var(--bd2);background:var(--surface);color:var(--tx);align-items:center;justify-content:center;font-size:1.15rem;font-weight:800;cursor:pointer}
 .adm-backdrop{display:none;position:fixed;inset:0;border:0;background:rgba(9,19,43,.42);z-index:30}
 #panel-adm .sb-sec{color:rgba(255,255,255,.32)}
 .adm-nav{width:100%;display:flex;align-items:center;gap:8px;border:0;background:transparent;color:rgba(255,255,255,.72);font-family:var(--font);font-size:.76rem;font-weight:600;text-align:left;border-radius:var(--rs);padding:.5rem .72rem;margin-bottom:3px;cursor:pointer;line-height:1.25}
@@ -396,20 +396,20 @@ textarea{resize:vertical;line-height:1.6}
 .adm-subtab{border:0;background:transparent;color:var(--t2);font-family:var(--font);font-size:.78rem;font-weight:600;padding:.72rem 0 .66rem;border-bottom:2px solid transparent;cursor:pointer}
 .adm-subtab.on{color:var(--blue);border-bottom-color:var(--blue)}
 .pill-tab-row{display:flex;align-items:center;gap:.5rem;flex-wrap:wrap;margin:.9rem 0 1rem}
-.pill-tab{border:1px solid var(--bd2);background:#fff;color:var(--t2);font-family:var(--font);font-size:.78rem;font-weight:700;border-radius:999px;padding:.55rem 1.05rem;cursor:pointer;box-shadow:0 1px 2px rgba(26,39,68,.04)}
+.pill-tab{border:1px solid var(--bd2);background:var(--surface);color:var(--t2);font-family:var(--font);font-size:.78rem;font-weight:700;border-radius:999px;padding:.55rem 1.05rem;cursor:pointer;box-shadow:0 1px 2px rgba(26,39,68,.04)}
 .pill-tab.on{background:var(--blue);border-color:var(--blue);color:#fff;box-shadow:0 8px 20px rgba(59,111,212,.24)}
-.adm-bigstat{background:#fff;border:1px solid var(--bd);border-radius:var(--r);padding:1rem 1.25rem;min-height:100px;display:flex;flex-direction:column;justify-content:center;box-shadow:0 1px 1px rgba(26,39,68,.02)}
+.adm-bigstat{background:var(--surface);border:1px solid var(--bd);border-radius:var(--r);padding:1rem 1.25rem;min-height:100px;display:flex;flex-direction:column;justify-content:center;box-shadow:0 1px 1px rgba(26,39,68,.02)}
 .adm-bigstat-n{font-size:2rem;font-weight:800;line-height:1}
 .adm-bigstat-l{font-size:.72rem;color:var(--t2);margin-top:.55rem}
-.adm-table{background:#fff;border:1px solid var(--bd);border-radius:var(--r);overflow:hidden}
+.adm-table{background:var(--surface);border:1px solid var(--bd);border-radius:var(--r);overflow:hidden}
 .adm-table-head,.adm-table-row{display:flex;align-items:center;gap:1rem;padding:.78rem 1rem}
-.adm-table-head{font-size:.62rem;font-weight:800;text-transform:uppercase;letter-spacing:.08em;color:var(--t3);border-bottom:1px solid var(--bd);background:#fff}
+.adm-table-head{font-size:.62rem;font-weight:800;text-transform:uppercase;letter-spacing:.08em;color:var(--t3);border-bottom:1px solid var(--bd);background:var(--surface)}
 .adm-table-row{min-height:58px;border-bottom:1px solid var(--bd)}
 .adm-table-row:last-child{border-bottom:0}
-.adm-form{background:#fff;border:1px solid var(--bd);border-radius:var(--r);padding:1.1rem 1.3rem;margin-bottom:.9rem}
+.adm-form{background:var(--surface);border:1px solid var(--bd);border-radius:var(--r);padding:1.1rem 1.3rem;margin-bottom:.9rem}
 .adm-field{margin-bottom:.75rem}
 .adm-field label{display:block;font-size:.62rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--t2);margin-bottom:3px}
-.adm-row{background:#fff;border:1px solid var(--bd);border-radius:var(--rs);padding:.65rem .88rem;margin-bottom:4px;display:flex;align-items:flex-start;gap:.65rem}
+.adm-row{background:var(--surface);border:1px solid var(--bd);border-radius:var(--rs);padding:.65rem .88rem;margin-bottom:4px;display:flex;align-items:flex-start;gap:.65rem}
 .adm-row-info{flex:1;min-width:0}
 .adm-row-title{font-size:.79rem;font-weight:600;color:var(--tx);margin-bottom:2px}
 
@@ -433,14 +433,14 @@ textarea{resize:vertical;line-height:1.6}
   .adm-table-head,.adm-table-row{min-width:720px}
 }
 .adm-row-sub{font-size:.66rem;color:var(--t3)}
-.adm-stat{background:#fff;border:1px solid var(--bd);border-radius:var(--r);padding:.8rem .88rem;text-align:center}
+.adm-stat{background:var(--surface);border:1px solid var(--bd);border-radius:var(--r);padding:.8rem .88rem;text-align:center}
 .adm-stat-n{font-size:1.5rem;font-weight:700}
 .adm-stat-l{font-size:.62rem;color:var(--t3);margin-top:1px}
 .art-drop{border:2px dashed var(--bd2);border-radius:var(--r);padding:1.5rem 1rem;text-align:center;cursor:pointer;background:var(--s2)}
 .art-drop:hover,.art-drop.drag{border-color:var(--blue);background:var(--blue-l)}
 .chat-wrap{display:flex;flex-direction:column;height:100%;overflow:hidden}
 .chat-msgs{flex:1;overflow-y:auto;padding:.9rem 1.3rem;display:flex;flex-direction:column;gap:.65rem}
-.ai-md h3{font-size:.86rem;font-weight:700;margin:.55rem 0 .3rem;color:var(--navy)}
+.ai-md h3{font-size:.86rem;font-weight:700;margin:.55rem 0 .3rem;color:var(--tx)}
 .ai-md p{margin:.35rem 0}
 .ai-md ul{margin:.3rem 0 .3rem 1.1rem;padding:0}
 .ai-md li{margin:.15rem 0}
@@ -456,18 +456,18 @@ textarea{resize:vertical;line-height:1.6}
 .chat-name{font-size:.58rem;font-weight:700;color:var(--blue);text-transform:uppercase;letter-spacing:.07em;margin-bottom:3px}
 .chat-input-row{padding:.7rem 1.1rem;border-top:1px solid var(--bd);display:flex;gap:.5rem;align-items:center;background:var(--surface);flex-shrink:0}
 .chat-sugg{display:flex;flex-wrap:wrap;gap:.35rem;padding:.5rem 1.1rem .35rem;border-top:1px solid var(--bd);background:var(--s2)}
-.chat-sugg-btn{background:#fff;border:1px solid var(--bd2);border-radius:99px;padding:.2rem .65rem;font-size:.67rem;color:var(--t2);cursor:pointer;font-family:var(--font)}
+.chat-sugg-btn{background:var(--surface);border:1px solid var(--bd2);border-radius:99px;padding:.2rem .65rem;font-size:.67rem;color:var(--t2);cursor:pointer;font-family:var(--font)}
 .modal-bg{display:none;position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:900;align-items:center;justify-content:center}
-.modal-box{background:#fff;border-radius:18px;width:min(460px,94vw);box-shadow:0 16px 48px rgba(0,0,0,.2);overflow:hidden}
+.modal-box{background:var(--surface);border-radius:18px;width:min(460px,94vw);box-shadow:0 16px 48px rgba(0,0,0,.2);overflow:hidden}
 .modal-hdr{background:linear-gradient(160deg,#1a2744 60%,#2a3f6e);padding:1.1rem 1.3rem;display:flex;align-items:center;justify-content:space-between}
 .modal-hdr-title{font-size:.92rem;font-weight:700;color:#fff}
 .modal-close{background:rgba(255,255,255,.15);border:none;border-radius:8px;width:28px;height:28px;color:#fff;cursor:pointer;font-size:.9rem}
 .modal-body{padding:1.2rem 1.3rem}
 .fb-star{font-size:1.5rem;cursor:pointer;opacity:.35}
-.fb-cat-btn,.fb-tipo-btn{background:#fff;border:1.5px solid var(--bd2);border-radius:99px;padding:.26rem .7rem;font-size:.7rem;font-weight:500;color:var(--t2);cursor:pointer;font-family:var(--font)}
+.fb-cat-btn,.fb-tipo-btn{background:var(--surface);border:1.5px solid var(--bd2);border-radius:99px;padding:.26rem .7rem;font-size:.7rem;font-weight:500;color:var(--t2);cursor:pointer;font-family:var(--font)}
 .fb-cat-btn.on{background:var(--blue-l);border-color:var(--blue);color:var(--blue);font-weight:600}
 .fb-tipo-btn.on{background:var(--gold-l);border-color:var(--gold);color:#d97706;font-weight:600}
-.cat-pill{background:#fff;border:1.5px solid var(--bd2);border-radius:99px;padding:.26rem .7rem;font-size:.7rem;font-weight:500;color:var(--t2);cursor:pointer;font-family:var(--font)}
+.cat-pill{background:var(--surface);border:1.5px solid var(--bd2);border-radius:99px;padding:.26rem .7rem;font-size:.7rem;font-weight:500;color:var(--t2);cursor:pointer;font-family:var(--font)}
 .cat-pill:hover{border-color:var(--blue);color:var(--blue)}
 .cat-pill.on{background:var(--blue-l);border-color:var(--blue);color:var(--blue);font-weight:600}
 @media (max-width:820px){
@@ -488,7 +488,7 @@ textarea{resize:vertical;line-height:1.6}
   .login-link{margin-top:.5rem}
   #app-screen{height:auto;min-height:100dvh}
   .topbar{height:auto;min-height:58px;padding:0 .7rem;gap:.45rem}
-  .mobile-menu-btn{display:inline-flex;align-items:center;justify-content:center;gap:6px;width:42px;height:42px;border:1px solid var(--bd2);border-radius:11px;background:#fff;color:var(--navy);font-family:var(--font);font-size:1.2rem;font-weight:700;cursor:pointer;flex-shrink:0}
+  .mobile-menu-btn{display:inline-flex;align-items:center;justify-content:center;gap:6px;width:42px;height:42px;border:1px solid var(--bd2);border-radius:11px;background:var(--surface);color:var(--tx);font-family:var(--font);font-size:1.2rem;font-weight:700;cursor:pointer;flex-shrink:0}
   .mobile-menu-btn span{font-size:.72rem;font-weight:700;letter-spacing:.02em}
   .tb-logo{width:auto;min-width:0;background:transparent;padding:.55rem 0;gap:7px;margin-left:.5rem}
   .tb-logo span{color:var(--tx);font-size:.92rem}
@@ -610,7 +610,7 @@ textarea{resize:vertical;line-height:1.6}
         </div>
         <div style="font-size:.68rem;color:var(--t3);margin-top:.3rem">Campo obrigatório</div>
       </div>
-      <div id="ob-err" style="display:none;background:var(--red-l);border:1px solid #fecaca;border-radius:var(--rs);padding:.45rem .75rem;font-size:.73rem;color:var(--red);margin-bottom:.7rem"></div>
+      <div id="ob-err" style="display:none;background:var(--red-l);border:1px solid #5a2326;border-radius:var(--rs);padding:.45rem .75rem;font-size:.73rem;color:var(--red);margin-bottom:.7rem"></div>
       <button class="btn btn-primary" id="ob-submit" style="width:100%;justify-content:center;padding:.6rem">Começar →</button>
     </div>
   </div>
@@ -816,7 +816,7 @@ textarea{resize:vertical;line-height:1.6}
 .lp-faq summary::after{content:"+";color:#6f9bff;font-weight:800;font-size:1.15rem;flex-shrink:0}
 .lp-faq details[open] summary::after{content:"\2212"}
 .lp-faq details p{margin:0;padding:0 1.05rem 1rem;font-size:.83rem;color:#9aa3b2;line-height:1.6}
-.lp-foot{border-top:1px solid #21304d;padding:1.8rem 0;text-align:center;color:#6b7480;font-size:.8rem}
+.lp-foot{border-top:1px solid #21304d;padding:1.8rem 0;text-align:center;color:#9aa6ba;font-size:.8rem}
 .lp-foot a{color:#8a93a3;text-decoration:none}
 @media(max-width:640px){.lp-hero h1{font-size:1.95rem}.lp-hero{padding:2.6rem 0 1.8rem}.lp-hero p{font-size:.96rem}.lp-sec-title{font-size:1.4rem}.lp-section{padding:2rem 0}.lp-stage{min-height:380px}}
 @media(max-width:480px){
@@ -837,7 +837,7 @@ textarea{resize:vertical;line-height:1.6}
 #checkout-modal .ck-fld select{width:100%;background:#0e1830;border:1px solid #2a3a5c;border-radius:9px;padding:.6rem .7rem;color:#e6e9ef;font-size:.9rem;font-family:var(--font);outline:none}
 #checkout-modal .ck-seg{flex:1;background:#0e1830;border:1px solid #2a3a5c;color:#9aa3b2;border-radius:9px;padding:.5rem;font-weight:700;font-size:.82rem;cursor:pointer;font-family:var(--font)}
 #checkout-modal .ck-seg.on{background:#3b6fd4;border-color:#3b6fd4;color:#fff}
-#checkout-modal .ck-pixqr{width:190px;height:190px;background:#fff;border-radius:10px;display:block;margin:.6rem auto;padding:6px}
+#checkout-modal .ck-pixqr{width:190px;height:190px;background:var(--surface);border-radius:10px;display:block;margin:.6rem auto;padding:6px}
 #checkout-modal .ck-copy{width:100%;background:#18243f;border:1px solid #2a3a5c;color:#cbd2dd;border-radius:9px;padding:.55rem .7rem;font-size:.72rem;word-break:break-all;cursor:pointer;font-family:var(--font)}
 </style>
 <div id="landing-screen">
@@ -892,7 +892,7 @@ textarea{resize:vertical;line-height:1.6}
               <div class="lp-flip-face">
                 <div style="font-size:.6rem;font-weight:800;letter-spacing:.08em;text-transform:uppercase;color:#5b8def;margin-bottom:8px">Diabetes</div>
                 <div style="font-size:.92rem;font-weight:600;color:#fff;line-height:1.45">Critérios diagnósticos de diabetes mellitus?</div>
-                <div style="font-size:.68rem;color:#6b7480;margin-top:12px">Vira automaticamente ↻</div>
+                <div style="font-size:.68rem;color:#9aa6ba;margin-top:12px">Vira automaticamente ↻</div>
               </div>
               <div class="lp-flip-face lp-flip-back">
                 <div style="font-size:.6rem;font-weight:800;letter-spacing:.08em;text-transform:uppercase;color:#5fd39a;margin-bottom:6px">Resposta</div>
@@ -905,7 +905,7 @@ textarea{resize:vertical;line-height:1.6}
               <div class="lp-flip-face" style="border-left-color:#f59e0b">
                 <div style="font-size:.6rem;font-weight:800;letter-spacing:.08em;text-transform:uppercase;color:#f59e0b;margin-bottom:8px">Tireoide</div>
                 <div style="font-size:.88rem;font-weight:600;color:#fff;line-height:1.4">TSH normal/elevado com T4 livre e T3 altos — como investigar?</div>
-                <div style="font-size:.68rem;color:#6b7480;margin-top:10px">Vira automaticamente ↻</div>
+                <div style="font-size:.68rem;color:#9aa6ba;margin-top:10px">Vira automaticamente ↻</div>
               </div>
               <div class="lp-flip-face lp-flip-back">
                 <div style="font-size:.6rem;font-weight:800;letter-spacing:.08em;text-transform:uppercase;color:#5fd39a;margin-bottom:6px">Resposta</div>
@@ -1060,7 +1060,7 @@ textarea{resize:vertical;line-height:1.6}
         <div class="lp-plan"><div class="nm">Standard</div><div class="pr"><span class="pr-m">R$ 69<small>/mês</small></span><span class="pr-a">12× R$ 45<small>/mês no anual</small></span></div><div class="pr-note pr-a-note">R$ 540/ano · economize ~35%</div><ul><li>Banco de questões</li><li>Simulado</li><li>Flashcards</li><li>Mapas mentais</li><li>Podcasts exclusivos</li><li>Mural de atualizações</li><li>Newsletter diária</li><li>Resumidor de artigos</li><li>Simulador de Casos</li><li class="x">Prescrição Comentada</li></ul><button class="lp-cta" style="margin-top:auto;width:100%;text-align:center" data-checkout="standard">Assinar</button></div>
         <div class="lp-plan hot"><span class="badge">Completo</span><div class="nm">Gold</div><div class="pr"><span class="pr-m">R$ 99<small>/mês</small></span><span class="pr-a">12× R$ 69<small>/mês no anual</small></span></div><div class="pr-note pr-a-note">R$ 828/ano · economize ~30%</div><div class="lp-founder-ribbon">🎟️ <b>Sócio-fundador</b> · 12× R$ 45,00<span class="lp-fr-cupom">cupom FUNDADOR</span></div><ul><li>Banco de questões</li><li>Simulado</li><li>Flashcards</li><li>Mapas mentais</li><li>Podcasts exclusivos</li><li>Mural de atualizações</li><li>Newsletter diária</li><li>Resumidor de artigos</li><li>Simulador de Casos</li><li>Prescrição Comentada</li><li class="course">Curso de Endocrinologia Essencial</li></ul><button class="lp-cta" style="margin-top:auto;width:100%;text-align:center" data-checkout="gold">Assinar</button></div>
       </div>
-      <p style="text-align:center;color:#6b7480;font-size:.78rem;margin-top:1.1rem">Plano anual em até 12× sem juros. O EndoTEEM é um produto à parte. Consulte na plataforma.</p>
+      <p style="text-align:center;color:#9aa6ba;font-size:.78rem;margin-top:1.1rem">Plano anual em até 12× sem juros. O EndoTEEM é um produto à parte. Consulte na plataforma.</p>
       <script>(function(){window.__lpCycle='anual';var wrap=document.getElementById('lp-plans');var btns=document.querySelectorAll('#planos .lp-cyc');var founderOn=true;
       // Faixa/selo de Sócio-fundador: só no plano ANUAL (o cupom só vale no anual) e enquanto houver vagas.
       function applyFounder(){var an=window.__lpCycle==='anual';var show=founderOn&&an;var fb=document.querySelector('#planos .lp-founder');var rb=document.querySelector('#planos .lp-founder-ribbon');if(fb)fb.style.display=show?'':'none';if(rb)rb.style.display=show?'':'none';}
@@ -1114,7 +1114,7 @@ textarea{resize:vertical;line-height:1.6}
       </button>
       <div class="login-divider"><span>OU</span></div>
       <div id="login-err" class="login-err">E-mail ou senha incorretos.</div>
-      <div id="login-ok" style="display:none;background:#ecfdf5;border:1px solid #86efac;color:#15803d;border-radius:10px;padding:.7rem .85rem;font-size:.77rem;line-height:1.5;margin-bottom:.7rem"></div>
+      <div id="login-ok" style="display:none;background:#103726;border:1px solid #86efac;color:#4ade80;border-radius:10px;padding:.7rem .85rem;font-size:.77rem;line-height:1.5;margin-bottom:.7rem"></div>
       <div class="fld"><label>E-mail</label><input type="text" id="login-email" placeholder="nome@exemplo.com"></div>
       <div class="fld"><label>Senha</label>
         <div style="position:relative">
@@ -1144,7 +1144,7 @@ textarea{resize:vertical;line-height:1.6}
       <button class="btn" id="assine-back" style="width:auto;min-width:160px;justify-content:center;background:#3b6fd4;color:#fff;border:0;font-weight:700">← Voltar à plataforma</button>
       <button class="btn" id="assine-logout" style="width:auto;min-width:160px;justify-content:center;background:transparent;color:#9aa3b2;border:1px solid #2a3a5c">Sair</button>
     </div>
-    <div style="text-align:center;margin-top:1rem;font-size:.72rem;color:#6b7480"><a href="/privacidade" target="_blank" rel="noopener" style="color:#8a93a3;text-decoration:none">Privacidade</a> · <a href="/termos" target="_blank" rel="noopener" style="color:#8a93a3;text-decoration:none">Termos</a></div>
+    <div style="text-align:center;margin-top:1rem;font-size:.72rem;color:#9aa6ba"><a href="/privacidade" target="_blank" rel="noopener" style="color:#8a93a3;text-decoration:none">Privacidade</a> · <a href="/termos" target="_blank" rel="noopener" style="color:#8a93a3;text-decoration:none">Termos</a></div>
   </div>
 </div>
 <div id="checkout-modal" style="display:none;position:fixed;inset:0;z-index:1200;background:rgba(6,11,22,.82);align-items:flex-start;justify-content:center;overflow:auto;padding:1.2rem">
@@ -1178,7 +1178,7 @@ textarea{resize:vertical;line-height:1.6}
     <div class="ck-fld"><label>CPF</label><input id="ck-doc" type="text" inputmode="numeric" placeholder="000.000.000-00" maxlength="14"></div>
     <div class="ck-fld"><label>Celular (com DDD)</label><input id="ck-phone" type="text" inputmode="numeric" autocomplete="tel" placeholder="(00) 00000-0000" maxlength="16"></div>
     <div id="ck-addr-fields">
-      <div style="font-size:.62rem;font-weight:800;letter-spacing:.06em;text-transform:uppercase;color:#6b7480;margin:.3rem 0 .55rem;border-top:1px solid #2a3a5c;padding-top:.7rem">Endereço de cobrança</div>
+      <div style="font-size:.62rem;font-weight:800;letter-spacing:.06em;text-transform:uppercase;color:#9aa6ba;margin:.3rem 0 .55rem;border-top:1px solid #2a3a5c;padding-top:.7rem">Endereço de cobrança</div>
       <div style="display:flex;gap:.6rem">
         <div class="ck-fld" style="flex:1.2"><label>CEP</label><input id="ck-cep" type="text" inputmode="numeric" autocomplete="postal-code" placeholder="00000-000" maxlength="9"></div>
         <div class="ck-fld" style="flex:.8"><label>UF</label><input id="ck-uf" type="text" autocomplete="address-level1" placeholder="SP" maxlength="2"></div>
@@ -1191,7 +1191,7 @@ textarea{resize:vertical;line-height:1.6}
     </div>
     <button id="ck-pay" type="button" class="btn" style="width:100%;justify-content:center;background:#3b6fd4;color:#fff;border:0;font-weight:700;margin-top:.4rem">Assinar agora</button>
     <div id="ck-result" style="display:none;margin-top:.8rem"></div>
-    <div style="font-size:.68rem;color:#6b7480;text-align:center;margin-top:.7rem;line-height:1.55">🔒 Pagamento processado pelo <b style="color:#8a93a3">pagar.me</b>. Não armazenamos os dados do seu cartão.</div>
+    <div style="font-size:.68rem;color:#9aa6ba;text-align:center;margin-top:.7rem;line-height:1.55">🔒 Pagamento processado pelo <b style="color:#8a93a3">pagar.me</b>. Não armazenamos os dados do seu cartão.</div>
   </div>
 </div>
 <div id="app-screen">
@@ -1350,7 +1350,7 @@ textarea{resize:vertical;line-height:1.6}
           <div style="max-width:440px;margin:0 auto">
             <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:.65rem"><span class="sec-title">Modo estudo</span><button class="btn btn-outline btn-sm" id="fc-end-study">Sair</button></div>
             <div style="font-size:.68rem;color:var(--t3);text-align:center;margin-bottom:.55rem" id="study-prog"></div>
-            <div class="study-c" id="study-c"><div class="study-inner"><div class="study-face study-face-front"><div id="study-front" style="font-size:.93rem;font-weight:600;color:var(--tx);line-height:1.55"></div><div style="font-size:.62rem;color:var(--t3);margin-top:.65rem">Clique para virar ↻</div></div><div class="study-face study-face-back"><div id="study-back" style="font-size:.81rem;color:#16a34a;line-height:1.6"></div><div style="font-size:.62rem;color:#15803d;margin-top:.65rem">Clique para voltar ↺</div></div></div></div>
+            <div class="study-c" id="study-c"><div class="study-inner"><div class="study-face study-face-front"><div id="study-front" style="font-size:.93rem;font-weight:600;color:var(--tx);line-height:1.55"></div><div style="font-size:.62rem;color:var(--t3);margin-top:.65rem">Clique para virar ↻</div></div><div class="study-face study-face-back"><div id="study-back" style="font-size:.81rem;color:#34d399;line-height:1.6"></div><div style="font-size:.62rem;color:#4ade80;margin-top:.65rem">Clique para voltar ↺</div></div></div></div>
             <div style="display:flex;gap:.55rem;justify-content:center"><button class="btn btn-outline btn-sm" id="study-prev">← Anterior</button><button class="btn btn-outline btn-sm" id="study-next">Próximo →</button></div>
           </div>
         </div>
@@ -1448,7 +1448,7 @@ textarea{resize:vertical;line-height:1.6}
             <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:.55rem"><span class="sec-title" id="sr-prog-lbl"></span><button class="btn btn-ghost btn-sm" id="btn-sr-stop">Encerrar</button></div>
             <div class="sr-card" id="sr-card">
               <div style="font-size:.93rem;font-weight:600;color:var(--tx);line-height:1.55;text-align:center" id="sr-front"></div>
-              <div style="font-size:.83rem;color:#16a34a;line-height:1.6;text-align:center;display:none" id="sr-back"></div>
+              <div style="font-size:.83rem;color:#34d399;line-height:1.6;text-align:center;display:none" id="sr-back"></div>
               <div style="font-size:.62rem;color:var(--t3);margin-top:.65rem;text-align:center" id="sr-hint">Clique para revelar</div>
             </div>
             <div style="display:flex;gap:.5rem;justify-content:center" id="sr-ratings">
@@ -1588,7 +1588,7 @@ textarea{resize:vertical;line-height:1.6}
       <div class="breadcrumb">Dashboard <b>/ Consultório</b></div>
       <div class="ph"><h1>Consultório</h1><p>Apoio à prescrição com receituário, LME, exames e seguimento — conforme a regulamentação brasileira (ANVISA, SUS).</p></div>
       <div class="pc">
-        <div style="background:#fff7ed;border:1px solid #fed7aa;border-radius:var(--rs);padding:.7rem .9rem;margin-bottom:.85rem;font-size:.72rem;color:#9a3412;line-height:1.55">⚠️ <b>Ferramenta educacional de apoio à decisão.</b> Não substitui o julgamento clínico, a avaliação individual do paciente nem a consulta às bulas e diretrizes vigentes. Confira sempre doses, contraindicações e interações antes de prescrever.</div>
+        <div style="background:#33210e;border:1px solid #5a3a1e;border-radius:var(--rs);padding:.7rem .9rem;margin-bottom:.85rem;font-size:.72rem;color:#fdba74;line-height:1.55">⚠️ <b>Ferramenta educacional de apoio à decisão.</b> Não substitui o julgamento clínico, a avaliação individual do paciente nem a consulta às bulas e diretrizes vigentes. Confira sempre doses, contraindicações e interações antes de prescrever.</div>
         <div id="presc-tool"></div>
       </div>
     </div>
@@ -1600,7 +1600,7 @@ textarea{resize:vertical;line-height:1.6}
         <div class="gen-box">
           <div style="display:flex;border:1.5px solid var(--bd2);border-radius:var(--rs);overflow:hidden;width:fit-content;margin-bottom:.8rem">
             <button id="art-tab-text" style="background:var(--blue);color:#fff;border:none;padding:.3rem .85rem;font-size:.7rem;font-weight:600;cursor:pointer;font-family:var(--font)">📝 Colar texto</button>
-            <button id="art-tab-file" style="background:#fff;color:var(--t2);border:none;padding:.3rem .85rem;font-size:.7rem;font-weight:500;cursor:pointer;font-family:var(--font)">📎 Importar arquivo</button>
+            <button id="art-tab-file" style="background:var(--surface);color:var(--t2);border:none;padding:.3rem .85rem;font-size:.7rem;font-weight:500;cursor:pointer;font-family:var(--font)">📎 Importar arquivo</button>
           </div>
           <div id="art-text-panel">
             <div class="fld2"><label>Cole o texto do artigo</label><textarea id="art-text" rows="7" placeholder="Cole aqui o texto…"></textarea></div>
@@ -1612,7 +1612,7 @@ textarea{resize:vertical;line-height:1.6}
               <div style="font-size:.68rem;color:var(--t3)">PDF ou TXT — Máx. 10 MB</div>
             </div>
             <input type="file" id="art-file-input" accept=".pdf,.txt" style="display:none">
-            <div id="art-file-info" style="display:none;background:#fff;border:1px solid var(--bd);border-radius:var(--rs);padding:.5rem .8rem;align-items:center;gap:.55rem;margin-bottom:.65rem">
+            <div id="art-file-info" style="display:none;background:var(--surface);border:1px solid var(--bd);border-radius:var(--rs);padding:.5rem .8rem;align-items:center;gap:.55rem;margin-bottom:.65rem">
               <span id="art-file-icon" style="font-size:1.15rem">📄</span>
               <span id="art-file-name" style="flex:1;font-size:.79rem;font-weight:600;color:var(--tx)"></span>
               <span id="art-file-size" style="font-size:.66rem;color:var(--t3)"></span>
@@ -1687,7 +1687,7 @@ textarea{resize:vertical;line-height:1.6}
         <div class="card" style="display:flex;align-items:center;justify-content:space-between;gap:1rem;flex-wrap:wrap">
           <div>
             <div style="font-size:.62rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--t3)">Seu plano</div>
-            <div id="perfil-plan-name" style="font-size:1.15rem;font-weight:800;color:var(--navy)">—</div>
+            <div id="perfil-plan-name" style="font-size:1.15rem;font-weight:800;color:var(--tx)">—</div>
           </div>
           <button class="btn btn-primary" id="perfil-upgrade" type="button" style="min-width:180px;justify-content:center">⭐ Fazer upgrade</button>
         </div>
@@ -3140,7 +3140,7 @@ function renderAssinePlans(){
         : '<div><span style="font-size:1.6rem;font-weight:800;color:'+acc+'">R$ '+t.preco+'</span><span style="font-size:.72rem;color:#8a93a3">/mês</span></div>'
           +'<div style="font-size:.7rem;color:#8a93a3;margin-top:-.1rem">no plano mensal · ou 12× R$ '+(ANUAL_MES[t.key]||t.preco)+'/mês no anual</div>')
       +((assineAnnual&&t.key==='gold')?'<div style="font-size:.66rem;font-weight:700;color:#c4b5fd;background:rgba(124,58,237,.16);border:1px solid #5b3aa6;border-radius:8px;padding:.32rem .5rem;text-align:center;line-height:1.4;margin-top:.1rem">🎟️ <b style="color:#ddd6fe">Sócio-fundador</b> · 12× R$ 45,00<span style="display:block;font-size:.6rem;font-weight:800;color:#a78bfa">cupom FUNDADOR</span></div>':'')
-      +'<div style="font-size:.58rem;font-weight:700;letter-spacing:.09em;text-transform:uppercase;color:#6b7480;border-top:1px solid #2a3a5c;padding-top:.6rem">Inclui</div>'
+      +'<div style="font-size:.58rem;font-weight:700;letter-spacing:.09em;text-transform:uppercase;color:#9aa6ba;border-top:1px solid #2a3a5c;padding-top:.6rem">Inclui</div>'
       +'<div style="display:flex;flex-direction:column;gap:.32rem">'+bens+excl+'</div>'
       +cta
     +'</div>';
@@ -3655,7 +3655,7 @@ function showLockedPanel(id){
       +'<div class="ph"><h1>🔒 '+esc(label)+'</h1></div>'
       +'<div class="pc"><div class="card" style="max-width:520px;margin:1.2rem auto;text-align:center;padding:1.9rem 1.5rem">'
       +'<div style="font-size:2.3rem;margin-bottom:.5rem">🎁</div>'
-      +'<div style="font-size:1.02rem;font-weight:800;color:var(--navy);margin-bottom:.4rem">'+esc(titulo)+'</div>'
+      +'<div style="font-size:1.02rem;font-weight:800;color:var(--tx);margin-bottom:.4rem">'+esc(titulo)+'</div>'
       +'<p style="font-size:.84rem;color:var(--t2);line-height:1.6;margin:.3rem 0 1.2rem">Você usou suas <b>'+TRIAL_LIMIT+' degustações</b> de <b>'+esc(label)+'</b>. Adquira um pacote (Standard ou Gold) para uso ilimitado.</p>'
       +'<button class="btn btn-primary" id="locked-cta" style="justify-content:center">'+esc(ctaLabel)+'</button>'
       +'</div></div>';
@@ -3669,7 +3669,7 @@ function showLockedPanel(id){
       +'<div class="ph"><h1>🔒 '+esc(label)+'</h1></div>'
       +'<div class="pc"><div class="card" style="max-width:520px;margin:1.2rem auto;text-align:center;padding:1.9rem 1.5rem">'
       +'<div style="font-size:2.3rem;margin-bottom:.5rem">🎁</div>'
-      +'<div style="font-size:1.02rem;font-weight:800;color:var(--navy);margin-bottom:.4rem">Degustação do mural encerrada</div>'
+      +'<div style="font-size:1.02rem;font-weight:800;color:var(--tx);margin-bottom:.4rem">Degustação do mural encerrada</div>'
       +'<p style="font-size:.84rem;color:var(--t2);line-height:1.6;margin:.3rem 0 1.2rem">Seu acesso ao <b>Mural</b> na degustação durava <b>'+DEG_MURAL_DIAS+' dias</b> e já terminou. Adquira um pacote (Standard ou Gold) para continuar acompanhando as atualizações.</p>'
       +'<button class="btn btn-primary" id="locked-cta" style="justify-content:center">Ver planos e cursos</button>'
       +'</div></div>';
@@ -3682,7 +3682,7 @@ function showLockedPanel(id){
     +'<div class="ph"><h1>🔒 '+esc(label)+'</h1></div>'
     +'<div class="pc"><div class="card" style="max-width:520px;margin:1.2rem auto;text-align:center;padding:1.9rem 1.5rem">'
     +'<div style="font-size:2.3rem;margin-bottom:.5rem">🔒</div>'
-    +'<div style="font-size:1.02rem;font-weight:800;color:var(--navy);margin-bottom:.4rem">'+esc(titulo)+'</div>'
+    +'<div style="font-size:1.02rem;font-weight:800;color:var(--tx);margin-bottom:.4rem">'+esc(titulo)+'</div>'
     +'<p style="font-size:.84rem;color:var(--t2);line-height:1.6;margin:.3rem 0 1.2rem">Libere <b>'+esc(label)+'</b> '+esc(via)+'.</p>'
     +'<button class="btn btn-primary" id="locked-cta" style="justify-content:center">'+esc(ctaLabel)+'</button>'
     +'</div></div>';
@@ -3788,7 +3788,7 @@ function showBancoLock(show){
   if(!el){
     var ref=document.getElementById('q-panel-provas');
     el=document.createElement('div');el.id='q-banco-lock';el.className='gen-box';el.style.display='none';
-    el.innerHTML='<div style="text-align:center;padding:1.1rem .5rem"><div style="font-size:2.1rem;margin-bottom:.4rem">🔒</div><div style="font-size:.96rem;font-weight:800;color:var(--navy);margin-bottom:.35rem">Banco de Questões</div><p style="font-size:.83rem;color:var(--t2);line-height:1.6;margin:.2rem auto 1rem;max-width:400px">O acervo de questões de provas é liberado ao adquirir <b>qualquer pacote</b> (Standard ou Gold).</p><button class="btn btn-primary" id="q-banco-buy" style="justify-content:center">Ver pacotes</button></div>';
+    el.innerHTML='<div style="text-align:center;padding:1.1rem .5rem"><div style="font-size:2.1rem;margin-bottom:.4rem">🔒</div><div style="font-size:.96rem;font-weight:800;color:var(--tx);margin-bottom:.35rem">Banco de Questões</div><p style="font-size:.83rem;color:var(--t2);line-height:1.6;margin:.2rem auto 1rem;max-width:400px">O acervo de questões de provas é liberado ao adquirir <b>qualquer pacote</b> (Standard ou Gold).</p><button class="btn btn-primary" id="q-banco-buy" style="justify-content:center">Ver pacotes</button></div>';
     if(ref&&ref.parentNode)ref.parentNode.insertBefore(el,ref.nextSibling);
     var bb=el.querySelector('#q-banco-buy');if(bb)bb.addEventListener('click',function(){showAssineScreen((currentUser&&currentUser.email)||'');});
   }
@@ -3914,18 +3914,18 @@ function updateGenCounter(){
   el.textContent='Respondidas: '+respondidas+'/'+genQs.length+' · Acertos: '+acertos+' ('+pct+'%)';
 }
 function qRowHTML(q,i,src,isMC){
-  return'<div><div class="q-row" data-qi="'+i+'" data-src="'+src+'" data-mc="'+(q.type?(q.type!=='disc'):isMC)+'"><div class="q-row-top"><div class="q-stem-prev">'+esc(q.stem||'')+'</div><div style="display:flex;gap:3px;flex-shrink:0">'+(q.code?'<span style="font-family:monospace;font-size:.59rem;font-weight:700;background:#f1f0ff;color:#6d5fd8;padding:1px 6px;border-radius:99px">'+esc(q.code)+'</span>':'')+diffTag(q.dificuldade||'intermediario')+(q.inst?'<span class="tag tag-pur" style="font-size:.57rem">'+esc(q.inst)+'</span>':'')+'</div></div></div><div id="qd-'+src+'-'+i+'" style="display:none"></div></div>';
+  return'<div><div class="q-row" data-qi="'+i+'" data-src="'+src+'" data-mc="'+(q.type?(q.type!=='disc'):isMC)+'"><div class="q-row-top"><div class="q-stem-prev">'+esc(q.stem||'')+'</div><div style="display:flex;gap:3px;flex-shrink:0">'+(q.code?'<span style="font-family:monospace;font-size:.59rem;font-weight:700;background:#241a40;color:#b794f6;padding:1px 6px;border-radius:99px">'+esc(q.code)+'</span>':'')+diffTag(q.dificuldade||'intermediario')+(q.inst?'<span class="tag tag-pur" style="font-size:.57rem">'+esc(q.inst)+'</span>':'')+'</div></div></div><div id="qd-'+src+'-'+i+'" style="display:none"></div></div>';
 }
 function qFullHTML(q,i,src,isMC){
   var mc=q.type?(q.type!=='disc'):isMC;
-  var tags='<div style="display:flex;gap:3px;justify-content:flex-end;margin-bottom:.45rem">'+(q.code?'<span style="font-family:monospace;font-size:.59rem;font-weight:700;background:#f1f0ff;color:#6d5fd8;padding:1px 6px;border-radius:99px">'+esc(q.code)+'</span>':'')+diffTag(q.dificuldade||'intermediario')+(q.inst?'<span class="tag tag-pur" style="font-size:.57rem">'+esc(q.inst)+'</span>':'')+'</div>';
+  var tags='<div style="display:flex;gap:3px;justify-content:flex-end;margin-bottom:.45rem">'+(q.code?'<span style="font-family:monospace;font-size:.59rem;font-weight:700;background:#241a40;color:#b794f6;padding:1px 6px;border-radius:99px">'+esc(q.code)+'</span>':'')+diffTag(q.dificuldade||'intermediario')+(q.inst?'<span class="tag tag-pur" style="font-size:.57rem">'+esc(q.inst)+'</span>':'')+'</div>';
   var img=q.img?'<img src="'+q.img+'" alt="Figura" style="max-width:100%;display:block;border-radius:8px;margin:.55rem 0;border:1px solid var(--bd)">':'';
   var body;
   if(mc){
     var opts=Object.keys(q.options||{}).map(function(k){return'<div class="qo" id="qo-'+src+'-'+i+'-'+k+'" data-letter="'+k+'" data-answer="'+esc(q.answer||'')+'" data-exp="'+esc(q.explanation||'')+'" data-src="'+src+'" data-idx="'+i+'"><span class="qo-ltr">'+k+'</span>'+esc(q.options[k])+'</div>';}).join('');
     body=opts+'<div id="qfb-'+src+'-'+i+'"></div>'+(src==='gen'?'<div style="margin-top:.4rem"><button class="btn btn-outline btn-sm" data-save-q="'+i+'">💾 Salvar</button></div>':'');
   }else{
-    body='<div class="fld2"><label>Sua resposta</label><textarea id="disc-'+src+'-'+i+'" rows="4" placeholder="Escreva…"></textarea></div><div style="display:flex;gap:5px;flex-wrap:wrap"><button class="btn btn-primary btn-sm" data-eval-disc="'+i+'" data-eval-src="'+src+'">Avaliar</button>'+((q.expected||q.explanation)?'<button class="btn btn-outline btn-sm" data-reveal-disc="'+i+'" data-reveal-src="'+src+'">📋 Ver expectativa</button>':'')+(src==='gen'?'<button class="btn btn-outline btn-sm" data-save-q="'+i+'">💾 Salvar</button>':'')+'</div><div id="qexp-'+src+'-'+i+'" style="display:none;white-space:pre-wrap;background:var(--grn-l);border:1px solid #bbf7d0;border-radius:var(--rs);padding:.6rem .8rem;font-size:.75rem;color:var(--t2);line-height:1.6;margin-top:.55rem"></div><div id="qfb-'+src+'-'+i+'"></div>';
+    body='<div class="fld2"><label>Sua resposta</label><textarea id="disc-'+src+'-'+i+'" rows="4" placeholder="Escreva…"></textarea></div><div style="display:flex;gap:5px;flex-wrap:wrap"><button class="btn btn-primary btn-sm" data-eval-disc="'+i+'" data-eval-src="'+src+'">Avaliar</button>'+((q.expected||q.explanation)?'<button class="btn btn-outline btn-sm" data-reveal-disc="'+i+'" data-reveal-src="'+src+'">📋 Ver expectativa</button>':'')+(src==='gen'?'<button class="btn btn-outline btn-sm" data-save-q="'+i+'">💾 Salvar</button>':'')+'</div><div id="qexp-'+src+'-'+i+'" style="display:none;white-space:pre-wrap;background:var(--grn-l);border:1px solid #1e5436;border-radius:var(--rs);padding:.6rem .8rem;font-size:.75rem;color:var(--t2);line-height:1.6;margin-top:.55rem"></div><div id="qfb-'+src+'-'+i+'"></div>';
   }
   return'<div class="q-card-full" style="background:var(--surface);border:1px solid var(--bd);border-radius:var(--r);padding:.85rem 1rem">'+tags+'<div class="q-stem">'+esc(q.stem)+'</div>'+img+body+'</div>';
 }
@@ -3940,7 +3940,7 @@ function toggleQDetail(i,src,isMC){
     var opts=Object.keys(q.options||{}).map(function(k){return'<div class="qo" id="qo-'+src+'-'+i+'-'+k+'" data-letter="'+k+'" data-answer="'+esc(q.answer||'')+'" data-exp="'+esc(q.explanation||'')+'" data-src="'+src+'" data-idx="'+i+'"><span class="qo-ltr">'+k+'</span>'+esc(q.options[k])+'</div>';}).join('');
     el.innerHTML='<div class="q-detail">'+(src==='saved'?'<div class="q-stem">'+esc(q.stem)+'</div>':'')+(q.img?'<img src="'+q.img+'" alt="Figura" style="max-width:100%;display:block;border-radius:8px;margin:.55rem 0;border:1px solid var(--bd)">':'')+opts+'<div id="qfb-'+src+'-'+i+'"></div>'+(src==='gen'?'<div style="margin-top:.4rem"><button class="btn btn-outline btn-sm" data-save-q="'+i+'">💾 Salvar</button></div>':'')+'</div>';
   }else{
-    el.innerHTML='<div class="q-detail">'+(src==='saved'?'<div class="q-stem">'+esc(q.stem)+'</div>':'')+(q.img?'<img src="'+q.img+'" alt="Figura" style="max-width:100%;display:block;border-radius:8px;margin:.55rem 0;border:1px solid var(--bd)">':'')+'<div class="fld2"><label>Sua resposta</label><textarea id="disc-'+src+'-'+i+'" rows="4" placeholder="Escreva…"></textarea></div><div style="display:flex;gap:5px;flex-wrap:wrap"><button class="btn btn-primary btn-sm" data-eval-disc="'+i+'" data-eval-src="'+src+'">Avaliar</button>'+((q.expected||q.explanation)?'<button class="btn btn-outline btn-sm" data-reveal-disc="'+i+'" data-reveal-src="'+src+'">📋 Ver expectativa</button>':'')+(src==='gen'?'<button class="btn btn-outline btn-sm" data-save-q="'+i+'">💾 Salvar</button>':'')+'</div><div id="qexp-'+src+'-'+i+'" style="display:none;white-space:pre-wrap;background:var(--grn-l);border:1px solid #bbf7d0;border-radius:var(--rs);padding:.6rem .8rem;font-size:.75rem;color:var(--t2);line-height:1.6;margin-top:.55rem"></div><div id="qfb-'+src+'-'+i+'"></div></div>';
+    el.innerHTML='<div class="q-detail">'+(src==='saved'?'<div class="q-stem">'+esc(q.stem)+'</div>':'')+(q.img?'<img src="'+q.img+'" alt="Figura" style="max-width:100%;display:block;border-radius:8px;margin:.55rem 0;border:1px solid var(--bd)">':'')+'<div class="fld2"><label>Sua resposta</label><textarea id="disc-'+src+'-'+i+'" rows="4" placeholder="Escreva…"></textarea></div><div style="display:flex;gap:5px;flex-wrap:wrap"><button class="btn btn-primary btn-sm" data-eval-disc="'+i+'" data-eval-src="'+src+'">Avaliar</button>'+((q.expected||q.explanation)?'<button class="btn btn-outline btn-sm" data-reveal-disc="'+i+'" data-reveal-src="'+src+'">📋 Ver expectativa</button>':'')+(src==='gen'?'<button class="btn btn-outline btn-sm" data-save-q="'+i+'">💾 Salvar</button>':'')+'</div><div id="qexp-'+src+'-'+i+'" style="display:none;white-space:pre-wrap;background:var(--grn-l);border:1px solid #1e5436;border-radius:var(--rs);padding:.6rem .8rem;font-size:.75rem;color:var(--t2);line-height:1.6;margin-top:.55rem"></div><div id="qfb-'+src+'-'+i+'"></div></div>';
   }
 }
 function selectOpt(letter,answer,explanation,src,idx){
@@ -4005,7 +4005,7 @@ function renderSavedQ(){
   var el=document.getElementById('q-saved-list');if(!el)return;
   setText('q-saved-count','('+DB.q.length+')');
   if(!DB.q.length){el.innerHTML='<div class="empty">Nenhuma questão salva.</div>';return;}
-  el.innerHTML='<div class="q-list">'+DB.q.map(function(q,i){return'<div><div class="q-row" data-qi="'+i+'" data-src="saved" data-mc="'+(q.type!=='disc')+'"><div class="q-row-top"><div class="q-stem-prev">'+esc((q.stem||'').substring(0,140))+'…</div><div style="display:flex;gap:3px;align-items:center">'+(q.code?'<span style="font-family:monospace;font-size:.59rem;font-weight:700;background:#f1f0ff;color:#6d5fd8;padding:1px 6px;border-radius:99px">'+esc(q.code)+'</span>':'')+diffTag(q.dificuldade)+'<button class="btn btn-ghost btn-sm" data-del-q="'+i+'" style="padding:2px 4px">✕</button></div></div></div><div id="qd-saved-'+i+'" style="display:none"></div></div>';}).join('')+'</div>';
+  el.innerHTML='<div class="q-list">'+DB.q.map(function(q,i){return'<div><div class="q-row" data-qi="'+i+'" data-src="saved" data-mc="'+(q.type!=='disc')+'"><div class="q-row-top"><div class="q-stem-prev">'+esc((q.stem||'').substring(0,140))+'…</div><div style="display:flex;gap:3px;align-items:center">'+(q.code?'<span style="font-family:monospace;font-size:.59rem;font-weight:700;background:#241a40;color:#b794f6;padding:1px 6px;border-radius:99px">'+esc(q.code)+'</span>':'')+diffTag(q.dificuldade)+'<button class="btn btn-ghost btn-sm" data-del-q="'+i+'" style="padding:2px 4px">✕</button></div></div></div><div id="qd-saved-'+i+'" style="display:none"></div></div>';}).join('')+'</div>';
 }
 var INST_PADRAO=[];
 // Em DEGUSTAÇÃO o aluno só enxerga uma amostra FIXA de 50 questões da
@@ -4119,7 +4119,7 @@ function fcCatColor(cat){
   if(k.indexOf('neuro')>=0)return'#db2777';
   if(k.indexOf('osteo')>=0||k.indexOf('mineral')>=0)return'#0891b2';
   if(k.indexOf('pediatr')>=0)return'#0ea5e9';
-  if(k.indexOf('esport')>=0)return'#16a34a';
+  if(k.indexOf('esport')>=0)return'#34d399';
   if(k.indexOf('mascul')>=0)return'#4f46e5';
   if(k.indexOf('femin')>=0)return'#e11d48';
   if(k.indexOf('transgen')>=0)return'#9333ea';
@@ -5447,9 +5447,9 @@ function renderPresc(d,dx,source){
       li+='<div style="margin-top:.3rem"><b>Exames exigidos:</b>'+prescList(d.lme.exames_exigidos)+'</div>';
       if(d.lme.observacao)li+='<div style="color:var(--t3);margin-top:.3rem;font-size:.74rem">'+esc(d.lme.observacao)+'</div>';
       li+='</div>';
-      html+=prescCard('📑 LME — Componente Especializado (SUS)',li,'#16a34a');
+      html+=prescCard('📑 LME — Componente Especializado (SUS)',li,'#34d399');
     }else{
-      html+=prescCard('📑 LME — Componente Especializado (SUS)','<div style="font-size:.78rem;color:var(--t2)">Não se aplica: medicamento fora do Componente Especializado da Assistência Farmacêutica.'+(d.lme.observacao?(' '+esc(d.lme.observacao)):'')+'</div>','#16a34a');
+      html+=prescCard('📑 LME — Componente Especializado (SUS)','<div style="font-size:.78rem;color:var(--t2)">Não se aplica: medicamento fora do Componente Especializado da Assistência Farmacêutica.'+(d.lme.observacao?(' '+esc(d.lme.observacao)):'')+'</div>','#34d399');
     }
   }
   if(d.exames){
@@ -5533,7 +5533,7 @@ function resumeArt(){
     var savedMsg=[];
     if(d.questions&&d.questions.length){d.questions.forEach(function(q){DB.q.push(Object.assign({},q,{code:genCode(q.area||'Endocrinologia'),type:'mc',at:Date.now()}));});savedMsg.push(d.questions.length+' questões');}
     if(d.cards&&d.cards.length){d.cards.forEach(function(c){DB.fc.push({id:Date.now()+Math.random(),front:c.front,back:c.back,cat:'Artigos',at:Date.now()});});savedMsg.push(d.cards.length+' flashcards');}
-    if(savedMsg.length){persist();refreshDash();html+='<div style="background:var(--grn-l);border:1px solid #bbf7d0;border-radius:var(--rs);padding:.5rem .8rem;font-size:.76rem;color:#16a34a">✓ Salvos: '+savedMsg.join(' e ')+'.</div>';}
+    if(savedMsg.length){persist();refreshDash();html+='<div style="background:var(--grn-l);border:1px solid #1e5436;border-radius:var(--rs);padding:.5rem .8rem;font-size:.76rem;color:#34d399">✓ Salvos: '+savedMsg.join(' e ')+'.</div>';}
     out.innerHTML=html;
   }).catch(function(e){out.innerHTML='<div style="color:var(--red);font-size:.78rem;padding:.5rem;background:var(--red-l);border-radius:var(--rs)">❌ '+esc(e.message)+'</div>';})
   .then(function(){btn.disabled=false;btn.innerHTML='▶ Resumir';});
@@ -5833,7 +5833,7 @@ function submitSF(){
   html+='<div class="sec-title" style="margin-bottom:.5rem">Revisão das questões</div>';
   html+=sfState.qs.map(function(q,i){
     var ua=sfState.answers[i];var anulada=!q.answer;var ok=anulada||(ua===q.answer);
-    var gabHtml=anulada?'<strong style="color:#b45309">Anulada (sem gabarito)</strong>':'Gabarito: <strong>'+esc(q.answer)+'</strong>';
+    var gabHtml=anulada?'<strong style="color:#fbbf24">Anulada (sem gabarito)</strong>':'Gabarito: <strong>'+esc(q.answer)+'</strong>';
     var expImg=q.expImg?'<img src="'+esc(q.expImg)+'" alt="Figura do comentário" style="max-width:100%;display:block;border-radius:8px;margin-top:.4rem;border:1px solid var(--bd)">':'';
     return'<div class="card" style="margin-bottom:.5rem"><div style="display:flex;gap:.5rem;align-items:flex-start"><span class="tag '+(anulada?'tag-gold':(ok?'tag-grn':'tag-red'))+'">'+(i+1)+(anulada?' ⚠':(ok?' ✓':' ✗'))+'</span><div style="flex:1"><div style="font-size:.79rem;line-height:1.6;margin-bottom:.4rem">'+esc(q.stem)+'</div><div style="font-size:.74rem;color:var(--t2)">Sua resposta: <strong>'+(ua||'—')+'</strong> • '+gabHtml+'</div>'+(q.explanation?'<div style="font-size:.73rem;color:var(--t2);margin-top:.3rem;background:var(--s2);padding:.4rem .6rem;border-radius:var(--rs)">'+esc(q.explanation)+expImg+'</div>':expImg)+'</div></div></div>';
   }).join('');
@@ -6018,7 +6018,7 @@ function admBancoActiveFilter(){return!!(admBancoArea||admBancoCode||admBancoAno
 function admBancoCount(){return admBancoActiveFilter()?admProvasFilter().length:provasDB.length;}
 function admProvasFilter(){var fa=admBancoArea,fc=(admBancoCode||'').toLowerCase().trim(),fan=admBancoAno,fi=admBancoInst;var out=[];provasDB.forEach(function(q,i){if(fa&&(q.area||'')!==fa)return;if(fan&&String(q.ano||'')!==String(fan))return;if(fi&&(q.inst||'')!==fi)return;if(fc&&String(q.code||'').toLowerCase().indexOf(fc)<0)return;out.push({q:q,i:i});});return out;}
 function admProvaEditHTML(q,i){var mc=q.type!=='disc';var curImg=admBancoEditImg!==undefined?admBancoEditImg:(q.expImg||'');var ansSel=mc?'<div class="fld2" style="margin:0 0 .6rem"><label>Gabarito</label><select id="adm-bq-edit-ans"><option value=""'+(!q.answer?' selected':'')+'>— Anulada (sem gabarito) —</option>'+Object.keys(q.options||{}).map(function(k){return '<option value="'+k+'"'+(k===(q.answer||'')?' selected':'')+'>'+k+' — '+esc((q.options[k]||'').substring(0,70))+'</option>';}).join('')+'</select></div>':'';var optsEdit=mc?('<div class="fld2" style="margin:0 0 .6rem"><label>Alternativas</label>'+Object.keys(q.options||{}).map(function(k){return '<div style="display:flex;gap:.4rem;align-items:center;margin-bottom:.35rem"><span style="font-weight:700;color:var(--blue);width:16px">'+k+'</span><input type="text" id="adm-bq-edit-opt-'+k+'" value="'+esc(q.options[k]||'')+'" style="flex:1"></div>';}).join('')+'</div>'):'';var curStemImg=admBancoEditStemImg!==undefined?admBancoEditStemImg:(q.img||'');var stemImgPrev=curStemImg?'<div style="display:flex;align-items:center;gap:.6rem;background:var(--s2);border:1px solid var(--bd);border-radius:var(--rs);padding:.5rem .7rem"><img src="'+curStemImg+'" style="height:50px;border-radius:6px"><span style="flex:1;font-size:.74rem;color:var(--t2)">Imagem do enunciado</span><button class="btn btn-ghost btn-sm" id="adm-bq-edit-stemimgclear">✕</button></div>':'';var imgPrev=curImg?'<div style="display:flex;align-items:center;gap:.6rem;background:var(--s2);border:1px solid var(--bd);border-radius:var(--rs);padding:.5rem .7rem"><img src="'+curImg+'" style="height:50px;border-radius:6px"><span style="flex:1;font-size:.74rem;color:var(--t2)">Imagem do comentário</span><button class="btn btn-ghost btn-sm" id="adm-bq-edit-imgclear">✕</button></div>':'';return '<div style="background:var(--surface);border:1px solid var(--blue);border-radius:var(--r);padding:.85rem 1rem;margin-bottom:.6rem"><div style="font-size:.72rem;color:var(--t3);margin-bottom:.5rem">✏️ Editando'+(q.code?' · '+esc(q.code):'')+(q.area?' · '+esc(q.area):'')+'</div><div class="fld2" style="margin:0 0 .6rem"><label>Enunciado</label><textarea id="adm-bq-edit-stem" rows="4">'+esc(q.stem||'')+'</textarea></div><div class="fld2" style="margin:0 0 .6rem"><label>Imagem no enunciado (opcional)</label><div class="art-drop" id="adm-bq-edit-stemimgdrop" style="padding:1rem"><div style="font-size:1.3rem">🖼️</div><div style="font-size:.76rem;font-weight:600;color:var(--tx)">Clique ou arraste uma imagem</div><div style="font-size:.64rem;color:var(--t3)">JPG, PNG, GIF · Máx. 5 MB</div></div><input type="file" id="adm-bq-edit-stemimgfile" accept="image/*" style="display:none"><div id="adm-bq-edit-stemimgprev" style="margin-top:.5rem">'+stemImgPrev+'</div></div>'+optsEdit+ansSel+'<div class="fld2" style="margin:0 0 .6rem"><label>Comentário / Fundamento</label><textarea id="adm-bq-edit-exp" rows="4">'+esc(q.explanation||q.expected||'')+'</textarea></div><div class="fld2" style="margin:0 0 .6rem"><label>Imagem no comentário (opcional)</label><div class="art-drop" id="adm-bq-edit-imgdrop" style="padding:1rem"><div style="font-size:1.3rem">🖼️</div><div style="font-size:.76rem;font-weight:600;color:var(--tx)">Clique ou arraste uma imagem</div><div style="font-size:.64rem;color:var(--t3)">JPG, PNG, GIF · Máx. 5 MB</div></div><input type="file" id="adm-bq-edit-imgfile" accept="image/*" style="display:none"><div id="adm-bq-edit-imgprev" style="margin-top:.5rem">'+imgPrev+'</div></div><div style="display:flex;gap:6px"><button class="btn btn-primary btn-sm" id="adm-bq-edit-save">💾 Salvar</button><button class="btn btn-outline btn-sm" id="adm-bq-edit-cancel">Cancelar</button></div></div>';}
-function admProvaCardHTML(q,i){if(i===admBancoEditIdx)return admProvaEditHTML(q,i);var mc=q.type!=='disc';var meta=[];if(q.inst)meta.push(esc(q.inst));if(q.ano)meta.push(esc(String(q.ano)));if(q.area)meta.push(esc(q.area));var tags='<div style="display:flex;gap:4px;align-items:center;flex-wrap:wrap;margin-bottom:.5rem">'+(q.code?'<span style="font-family:monospace;font-size:.6rem;font-weight:700;background:#f1f0ff;color:#6d5fd8;padding:1px 7px;border-radius:99px">'+esc(q.code)+'</span>':'')+diffTag(q.dificuldade||'intermediario')+(meta.length?'<span style="font-size:.66rem;color:var(--t3)">'+meta.join(' · ')+'</span>':'')+'<button class="btn btn-ghost btn-sm" data-adm-bq-edit="'+i+'" style="margin-left:auto;padding:2px 7px" title="Editar gabarito e comentário">✏️</button><button class="btn btn-outline btn-sm" data-adm-delprova="'+i+'" style="padding:2px 8px;color:var(--red);border-color:var(--red)" title="Excluir">🗑 Excluir</button></div>';var img=q.img?'<img src="'+q.img+'" alt="Figura" style="max-width:100%;display:block;border-radius:8px;margin:.55rem 0;border:1px solid var(--bd)">':'';var body;if(mc){body=Object.keys(q.options||{}).map(function(k){var ok=k===(q.answer||'');return'<div style="display:flex;gap:.5rem;align-items:flex-start;padding:.4rem .6rem;border-radius:8px;margin-bottom:4px;font-size:.8rem;'+(ok?'background:var(--grn-l);border:1px solid #bbf7d0':'background:#f8f8fb;border:1px solid var(--bd)')+'"><span style="font-weight:700;color:'+(ok?'#16a34a':'var(--blue)')+'">'+k+'</span><span>'+esc(q.options[k])+'</span>'+(ok?'<span style="margin-left:auto;color:#16a34a;font-weight:700">✓</span>':'')+'</div>';}).join('')+'<div style="font-size:.74rem;color:var(--t2);margin-top:.3rem"><b>Gabarito:</b> '+esc(q.answer||'—')+'</div>';}else{body='<div style="font-size:.73rem;color:var(--t3);font-style:italic;margin-bottom:.3rem">Questão discursiva</div>';}var exp=(q.explanation||q.expected||q.expImg)?'<div style="white-space:pre-wrap;background:var(--grn-l);border:1px solid #bbf7d0;border-radius:var(--rs);padding:.55rem .8rem;font-size:.74rem;color:var(--t2);line-height:1.6;margin-top:.5rem"><b>'+(mc?'Comentário':'Expectativa')+':</b> '+esc(q.explanation||q.expected||'')+(q.expImg?'<img src="'+q.expImg+'" alt="Figura do comentário" style="max-width:100%;display:block;border-radius:8px;margin-top:.5rem;border:1px solid #bbf7d0">':'')+'</div>':'';return '<div style="background:var(--surface);border:1px solid var(--bd);border-radius:var(--r);padding:.85rem 1rem;margin-bottom:.6rem">'+tags+'<div class="q-stem" style="font-size:.85rem;line-height:1.55;margin-bottom:.5rem">'+esc(q.stem||'')+'</div>'+img+body+exp+'</div>';}
+function admProvaCardHTML(q,i){if(i===admBancoEditIdx)return admProvaEditHTML(q,i);var mc=q.type!=='disc';var meta=[];if(q.inst)meta.push(esc(q.inst));if(q.ano)meta.push(esc(String(q.ano)));if(q.area)meta.push(esc(q.area));var tags='<div style="display:flex;gap:4px;align-items:center;flex-wrap:wrap;margin-bottom:.5rem">'+(q.code?'<span style="font-family:monospace;font-size:.6rem;font-weight:700;background:#241a40;color:#b794f6;padding:1px 7px;border-radius:99px">'+esc(q.code)+'</span>':'')+diffTag(q.dificuldade||'intermediario')+(meta.length?'<span style="font-size:.66rem;color:var(--t3)">'+meta.join(' · ')+'</span>':'')+'<button class="btn btn-ghost btn-sm" data-adm-bq-edit="'+i+'" style="margin-left:auto;padding:2px 7px" title="Editar gabarito e comentário">✏️</button><button class="btn btn-outline btn-sm" data-adm-delprova="'+i+'" style="padding:2px 8px;color:var(--red);border-color:var(--red)" title="Excluir">🗑 Excluir</button></div>';var img=q.img?'<img src="'+q.img+'" alt="Figura" style="max-width:100%;display:block;border-radius:8px;margin:.55rem 0;border:1px solid var(--bd)">':'';var body;if(mc){body=Object.keys(q.options||{}).map(function(k){var ok=k===(q.answer||'');return'<div style="display:flex;gap:.5rem;align-items:flex-start;padding:.4rem .6rem;border-radius:8px;margin-bottom:4px;font-size:.8rem;'+(ok?'background:var(--grn-l);border:1px solid #1e5436':'background:#161f38;border:1px solid var(--bd)')+'"><span style="font-weight:700;color:'+(ok?'#34d399':'var(--blue)')+'">'+k+'</span><span>'+esc(q.options[k])+'</span>'+(ok?'<span style="margin-left:auto;color:#34d399;font-weight:700">✓</span>':'')+'</div>';}).join('')+'<div style="font-size:.74rem;color:var(--t2);margin-top:.3rem"><b>Gabarito:</b> '+esc(q.answer||'—')+'</div>';}else{body='<div style="font-size:.73rem;color:var(--t3);font-style:italic;margin-bottom:.3rem">Questão discursiva</div>';}var exp=(q.explanation||q.expected||q.expImg)?'<div style="white-space:pre-wrap;background:var(--grn-l);border:1px solid #1e5436;border-radius:var(--rs);padding:.55rem .8rem;font-size:.74rem;color:var(--t2);line-height:1.6;margin-top:.5rem"><b>'+(mc?'Comentário':'Expectativa')+':</b> '+esc(q.explanation||q.expected||'')+(q.expImg?'<img src="'+q.expImg+'" alt="Figura do comentário" style="max-width:100%;display:block;border-radius:8px;margin-top:.5rem;border:1px solid #1e5436">':'')+'</div>':'';return '<div style="background:var(--surface);border:1px solid var(--bd);border-radius:var(--r);padding:.85rem 1rem;margin-bottom:.6rem">'+tags+'<div class="q-stem" style="font-size:.85rem;line-height:1.55;margin-bottom:.5rem">'+esc(q.stem||'')+'</div>'+img+body+exp+'</div>';}
 function admProvasListHTML(){if(!admBancoActiveFilter())return '<div class="empty">Use os filtros acima (subespecialidade, código, ano ou instituição) para localizar as questões.</div>';var rows=admProvasFilter();if(!rows.length)return '<div class="empty">Nenhuma questão encontrada com esses filtros.</div>';var per=ADM_BANCO_PER,total=rows.length,pages=Math.max(1,Math.ceil(total/per));if(admBancoPage>=pages)admBancoPage=pages-1;if(admBancoPage<0)admBancoPage=0;var start=admBancoPage*per,end=Math.min(start+per,total);var html='';for(var k=start;k<end;k++){html+=admProvaCardHTML(rows[k].q,rows[k].i);}var nav=pages>1?'<div style="display:flex;align-items:center;justify-content:center;gap:.7rem;margin-top:.6rem;flex-wrap:wrap"><button class="btn btn-outline btn-sm" id="adm-bq-prev"'+(admBancoPage===0?' disabled':'')+'>← Anterior</button><span style="font-size:.76rem;color:var(--t2)">Página '+(admBancoPage+1)+' de '+pages+'</span><button class="btn btn-outline btn-sm" id="adm-bq-next"'+(admBancoPage>=pages-1?' disabled':'')+'>Próxima →</button></div>':'';return html+nav;}
 // ---------- ESTUDANTES ----------
 var admEstudantes=normalizeAdmEstudantes(lsGet('adm_estudantes')||[{nome:'Aluno Endodirect',email:'aluno@endodirect.com.br',cpf:'',turma:'Turma 2026',perfil:'Residente',status:'Ativo',xp:0}]);
@@ -6224,7 +6224,7 @@ function loadAdmOverview(force){
 function admAnalyticsHTML(){
   var head='<div class="adm-ph"><h1>Analytics</h1><p>Indicadores reais de uso e desempenho dos estudantes.</p></div><div class="adm-pc">';
   if(admOverviewErr){
-    return head+'<div class="card" style="text-align:center;padding:1.6rem"><div style="font-size:1.6rem">⚠️</div><div style="font-weight:700;color:var(--navy);margin:.3rem 0">Não foi possível carregar os dados</div><p style="font-size:.82rem;color:var(--t2)">'+esc(admOverviewErr)+'</p><button class="btn btn-outline" id="adm-analytics-retry" style="margin-top:.6rem">Tentar de novo</button></div></div>';
+    return head+'<div class="card" style="text-align:center;padding:1.6rem"><div style="font-size:1.6rem">⚠️</div><div style="font-weight:700;color:var(--tx);margin:.3rem 0">Não foi possível carregar os dados</div><p style="font-size:.82rem;color:var(--t2)">'+esc(admOverviewErr)+'</p><button class="btn btn-outline" id="adm-analytics-retry" style="margin-top:.6rem">Tentar de novo</button></div></div>';
   }
   if(!admOverview){
     return head+'<div class="card" style="padding:1.6rem;text-align:center">'+ldHTML('Carregando dados reais dos alunos…')+'</div></div>';
@@ -6261,7 +6261,7 @@ function admAnalyticsHTML(){
       +kpi(taxa==null?'—':(taxa+'%'),'Taxa de acerto geral','var(--pur)')
     +'</div>';
   if(semDados){
-    html+='<div class="card" style="text-align:center;padding:1.5rem"><div style="font-size:1.5rem">📊</div><div style="font-weight:700;color:var(--navy);margin:.3rem 0">Ainda sem atividade de questões/simulados</div><p style="font-size:.82rem;color:var(--t2);max-width:540px;margin:.2rem auto">Assim que os alunos começarem a responder questões e simulados, o desempenho por subespecialidade aparece aqui automaticamente.</p></div>';
+    html+='<div class="card" style="text-align:center;padding:1.5rem"><div style="font-size:1.5rem">📊</div><div style="font-weight:700;color:var(--tx);margin:.3rem 0">Ainda sem atividade de questões/simulados</div><p style="font-size:.82rem;color:var(--t2);max-width:540px;margin:.2rem auto">Assim que os alunos começarem a responder questões e simulados, o desempenho por subespecialidade aparece aqui automaticamente.</p></div>';
   }else{
     html+='<div class="g2" style="align-items:start;margin-bottom:1.1rem">'
       +'<div class="card"><div class="card-head"><span class="card-title">✅ Maior acerto</span></div>'+(perfOrd.length?perfOrd.slice(0,3).map(function(x){return '<div class="rep-area-row"><div class="rep-area-name" style="min-width:170px">'+esc(x.area)+'</div><div class="rep-area-track"><div class="rep-area-fill" style="width:'+x.pct+'%;background:var(--grn)"></div></div><div class="rep-area-pct">'+x.pct+'%</div></div>';}).join(''):'<div class="empty" style="padding:.6rem">Sem dados.</div>')+'</div>'
@@ -6375,7 +6375,7 @@ function admCursosHTML(){
       +(Array.isArray(catalogoCursos)?catalogoCursos:[]).map(function(cc){return cursoTile(cc.slug,cc.nome,cont[cc.slug]||0,'🎓');}).join('')
     +'</div>'
   +'<div id="adm-curso-player" style="display:none;margin-bottom:1.1rem"></div>'
-  +'<div id="adm-curso-list" class="g2" style="align-items:start">'+(lista.length?lista.map(function(c){var i=admCursos.indexOf(c);var meta=c.asset?'<div class="asset-meta">Supabase Storage: '+esc(c.asset.name||'video')+' · '+formatBytes(c.asset.size)+'</div>':'';return '<div class="card"><div style="display:flex;align-items:flex-start;gap:.7rem"><div style="width:48px;height:48px;border-radius:10px;background:var(--navy);display:flex;align-items:center;justify-content:center;font-size:1.3rem;flex-shrink:0">🎬</div><div style="flex:1;min-width:0"><div style="font-size:.86rem;font-weight:700;color:var(--tx);margin-bottom:.25rem">'+esc(c.title)+'</div><div style="display:flex;flex-wrap:wrap;gap:.3rem;margin-bottom:.4rem">'+(c.curso?'<span class="tag tag-grn">'+esc(cursoNomeBySlug(c.curso))+'</span>':'<span class="tag" style="background:#eef1f5;color:#7a8699">Sem curso</span>')+(c.modulo?'<span class="tag tag-pur">'+esc(c.modulo)+'</span>':'')+(c.dur?'<span class="tag tag-gold">'+esc(c.dur)+'</span>':'')+'</div>'+(c.desc?'<div style="font-size:.74rem;color:var(--t2);line-height:1.5;margin-bottom:.4rem">'+esc(c.desc)+'</div>':'')+'<div style="font-size:.66rem;color:var(--t3);word-break:break-all;margin-bottom:.5rem">'+(c.tipo==='link'?'🔗 '+esc(c.src):'🎞️ Arquivo de vídeo')+'</div>'+meta+'<div style="display:flex;gap:5px;flex-wrap:wrap"><button class="btn btn-primary btn-sm" data-adm-playcurso="'+i+'">▶ Assistir</button><button class="btn btn-outline btn-sm" data-adm-editcurso="'+i+'">✏️ Editar</button><button class="btn btn-outline btn-sm" data-adm-delcurso="'+i+'" style="color:var(--red);border-color:var(--red)">🗑 Excluir</button></div></div></div></div>';}).join(''):'<div class="empty" style="grid-column:1/-1">Nenhuma videoaula '+(admCursoFiltro?'neste curso':'cadastrada ainda')+'.</div>')+'</div>';
+  +'<div id="adm-curso-list" class="g2" style="align-items:start">'+(lista.length?lista.map(function(c){var i=admCursos.indexOf(c);var meta=c.asset?'<div class="asset-meta">Supabase Storage: '+esc(c.asset.name||'video')+' · '+formatBytes(c.asset.size)+'</div>':'';return '<div class="card"><div style="display:flex;align-items:flex-start;gap:.7rem"><div style="width:48px;height:48px;border-radius:10px;background:var(--navy);display:flex;align-items:center;justify-content:center;font-size:1.3rem;flex-shrink:0">🎬</div><div style="flex:1;min-width:0"><div style="font-size:.86rem;font-weight:700;color:var(--tx);margin-bottom:.25rem">'+esc(c.title)+'</div><div style="display:flex;flex-wrap:wrap;gap:.3rem;margin-bottom:.4rem">'+(c.curso?'<span class="tag tag-grn">'+esc(cursoNomeBySlug(c.curso))+'</span>':'<span class="tag" style="background:#1c2a48;color:#9aa6ba">Sem curso</span>')+(c.modulo?'<span class="tag tag-pur">'+esc(c.modulo)+'</span>':'')+(c.dur?'<span class="tag tag-gold">'+esc(c.dur)+'</span>':'')+'</div>'+(c.desc?'<div style="font-size:.74rem;color:var(--t2);line-height:1.5;margin-bottom:.4rem">'+esc(c.desc)+'</div>':'')+'<div style="font-size:.66rem;color:var(--t3);word-break:break-all;margin-bottom:.5rem">'+(c.tipo==='link'?'🔗 '+esc(c.src):'🎞️ Arquivo de vídeo')+'</div>'+meta+'<div style="display:flex;gap:5px;flex-wrap:wrap"><button class="btn btn-primary btn-sm" data-adm-playcurso="'+i+'">▶ Assistir</button><button class="btn btn-outline btn-sm" data-adm-editcurso="'+i+'">✏️ Editar</button><button class="btn btn-outline btn-sm" data-adm-delcurso="'+i+'" style="color:var(--red);border-color:var(--red)">🗑 Excluir</button></div></div></div></div>';}).join(''):'<div class="empty" style="grid-column:1/-1">Nenhuma videoaula '+(admCursoFiltro?'neste curso':'cadastrada ainda')+'.</div>')+'</div>';
 
   return '<div class="adm-ph"><h1>Cursos</h1><p>Importe e organize videoaulas por curso.</p></div>'
   +'<div class="adm-pc">'
@@ -6443,7 +6443,7 @@ function bindAdmSec(sec){
         var d=parseJ(raw);if(!d||!d.questions)throw new Error('Não foi possível extrair questões.');
         d.questions.forEach(function(q){provasDB.push(Object.assign({},q,{inst:inst,ano:ano,area:q.area||area}));});
         persistProvas();
-        rd.innerHTML='<div style="background:var(--grn-l);border:1px solid #bbf7d0;border-radius:var(--rs);padding:.5rem .8rem;font-size:.77rem;color:#16a34a">✓ '+d.questions.length+' questões extraídas e salvas!</div>';
+        rd.innerHTML='<div style="background:var(--grn-l);border:1px solid #1e5436;border-radius:var(--rs);padding:.5rem .8rem;font-size:.77rem;color:#34d399">✓ '+d.questions.length+' questões extraídas e salvas!</div>';
       }).catch(function(e){rd.innerHTML='<div style="color:var(--red);font-size:.77rem">❌ '+esc(e.message)+'</div>';})
       .then(function(){be.disabled=false;be.innerHTML='🤖 Extrair com IA';});
     });
@@ -6975,7 +6975,7 @@ function setupOnboardProfileChoices(){
     var el=document.getElementById(pair[0]);if(!el)return;
     var on=perfil===pair[1];
     el.style.borderColor=on?'var(--blue)':'var(--bd2)';
-    el.style.background=on?'#eff6ff':'#fff';
+    el.style.background=on?'var(--blue-l)':'var(--s2)';
   });
 }
 // ---------- PERFIL DO ALUNO ----------
@@ -7004,7 +7004,7 @@ function renderPerfil(){
     if(perfilVal==='Estudante'){instLabel='Instituição de graduação';instVal=prof.graduacao||'';}
     else if(perfilVal==='Outros'){instLabel='Especialidade / área de atuação';instVal=prof.especialidade||'';}
     else{instLabel='Instituição de residência médica';instVal=prof.residencia||'';}
-    var ro='disabled style="background:#f3f4f6;color:var(--t2)"';
+    var ro='disabled style="background:var(--s2);color:var(--t2)"';
     inner='<div class="card"><div class="card-head"><span class="card-title">Editar dados</span></div>'
       +'<div style="font-size:.72rem;color:var(--t3);margin-bottom:.85rem;line-height:1.55">Edite aqui seus dados de contato. <b>Nome, tipo de perfil e CRM</b> só são alterados pelo suporte.</div>'
       +'<div class="g2" style="margin-bottom:.7rem"><div class="fld2" style="margin:0"><label>Nome</label><input type="text" value="'+esc(nome)+'" '+ro+'></div>'
@@ -7014,7 +7014,7 @@ function renderPerfil(){
       +'<div class="g2" style="margin-bottom:.7rem"><div class="fld2" style="margin:0"><label>CPF</label><input type="text" id="pf-cpf" value="'+esc(cpfVal)+'" inputmode="numeric" placeholder="Somente números"></div>'
       +'<div class="fld2" style="margin:0"><label>Contato (telefone)</label><input type="text" id="pf-contato" value="'+esc(contatoVal)+'" inputmode="tel" placeholder="(DDD) 9..."></div></div>'
       +'<div class="fld2" style="margin-bottom:.7rem"><label>'+instLabel+'</label><input type="text" id="pf-inst" value="'+esc(instVal)+'"></div>'
-      +'<div id="pf-err" style="display:none;background:var(--red-l);border:1px solid #fecaca;border-radius:var(--rs);padding:.45rem .75rem;font-size:.73rem;color:var(--red);margin-bottom:.7rem"></div>'
+      +'<div id="pf-err" style="display:none;background:var(--red-l);border:1px solid #5a2326;border-radius:var(--rs);padding:.45rem .75rem;font-size:.73rem;color:var(--red);margin-bottom:.7rem"></div>'
       +'<div style="display:flex;gap:6px"><button class="btn btn-primary" id="btn-pf-save">💾 Salvar</button><button class="btn btn-outline" id="btn-pf-cancel">Cancelar</button></div></div>';
   }else{
     var row=function(lbl,val,last){return '<div style="display:flex;justify-content:space-between;padding:.55rem 0;'+(last?'':'border-bottom:1px solid var(--bd);')+'font-size:.8rem"><span style="color:var(--t2)">'+lbl+'</span><span style="font-weight:600">'+val+'</span></div>';};
@@ -7035,7 +7035,7 @@ function renderPerfil(){
   var nlSubs=Array.isArray(prof.newsletterSubs)?prof.newsletterSubs:[];
   var nlBoxes=MURAL_SUBSPECIALTY_FILTERS.map(function(s){
     var on=nlSubs.indexOf(s)>=0;
-    return '<label style="display:flex;align-items:center;gap:.45rem;font-size:.78rem;padding:.4rem .55rem;border:1px solid var(--bd);border-radius:var(--rs);cursor:pointer;background:'+(on?'#eff6ff':'#fff')+'"><input type="checkbox" class="pf-nl-sub" value="'+esc(s)+'"'+(on?' checked':'')+' style="margin:0;cursor:pointer"> '+esc(s)+'</label>';
+    return '<label style="display:flex;align-items:center;gap:.45rem;font-size:.78rem;padding:.4rem .55rem;border:1px solid var(--bd);border-radius:var(--rs);cursor:pointer;background:'+(on?'var(--blue-l)':'var(--s2)')+'"><input type="checkbox" class="pf-nl-sub" value="'+esc(s)+'"'+(on?' checked':'')+' style="margin:0;cursor:pointer"> '+esc(s)+'</label>';
   }).join('');
   var nlCard='<div class="card" style="margin-top:1rem"><div class="card-head"><span class="card-title">📬 Newsletter — temas de interesse</span></div>'
     +'<p style="font-size:.78rem;color:var(--t2);margin:.1rem 0 .8rem">Escolha as subespecialidades que mais te interessam e a sua newsletter diária priorizará esses temas. Sem nenhuma marcada, você recebe os destaques gerais do dia.</p>'
@@ -7116,7 +7116,7 @@ function wirePerfil(){
   // Realça visualmente o quadrado marcado
   document.querySelectorAll('.pf-nl-sub').forEach(function(c){
     c.addEventListener('change',function(){
-      var lbl=c.closest('label');if(lbl)lbl.style.background=c.checked?'#eff6ff':'#fff';
+      var lbl=c.closest('label');if(lbl)lbl.style.background=c.checked?'var(--blue-l)':'var(--s2)';
     });
   });
   // Salvar preferências de newsletter
@@ -7572,7 +7572,7 @@ document.addEventListener('DOMContentLoaded',function(){
       _lastSignupEmail=email;
       setLoginMode('entrar');
       var ok=document.getElementById('login-ok');
-      if(ok){ok.innerHTML='✅ <b>Conta criada!</b> Enviamos um link de confirmação para <b>'+esc(email)+'</b>. Clique nele para ativar o acesso — depois você entra direto na plataforma.<br><button type="button" id="btn-resend-confirm" style="margin-top:.45rem;background:none;border:none;color:#15803d;font-weight:700;cursor:pointer;font-size:.74rem;padding:0;text-decoration:underline">Reenviar e-mail de confirmação</button>';ok.style.display='block';wireResendConfirm();}
+      if(ok){ok.innerHTML='✅ <b>Conta criada!</b> Enviamos um link de confirmação para <b>'+esc(email)+'</b>. Clique nele para ativar o acesso — depois você entra direto na plataforma.<br><button type="button" id="btn-resend-confirm" style="margin-top:.45rem;background:none;border:none;color:#4ade80;font-weight:700;cursor:pointer;font-size:.74rem;padding:0;text-decoration:underline">Reenviar e-mail de confirmação</button>';ok.style.display='block';wireResendConfirm();}
     }).catch(function(e){
       var m=String((e&&e.message)||'');
       if(/registered|already|exists/i.test(m))showLoginError('Este e-mail já tem conta. Faça login ou use "Esqueci minha senha".');
