@@ -12,6 +12,12 @@
 <link rel="icon" type="image/png" href="Icone%20-%20MD%202.png">
 <link rel="shortcut icon" type="image/png" href="Icone%20-%20MD%202.png">
 <link rel="apple-touch-icon" href="Icone%20-%20MD%202.png">
+<script>
+// Tema (claro/escuro) — aplica ANTES de pintar p/ evitar flash. Default: escuro.
+try{document.documentElement.setAttribute('data-theme',localStorage.getItem('endodirect_theme')||'dark');}catch(e){try{document.documentElement.setAttribute('data-theme','dark');}catch(_){}}
+function setTheme(t){t=(t==='light')?'light':'dark';try{document.documentElement.setAttribute('data-theme',t);localStorage.setItem('endodirect_theme',t);}catch(e){}try{document.querySelectorAll('[data-theme-opt]').forEach(function(b){b.classList.toggle('on',b.dataset.themeOpt===t);});}catch(e){}}
+function currentTheme(){try{return localStorage.getItem('endodirect_theme')||'dark';}catch(e){return 'dark';}}
+</script>
 <script src="https://cdn.jsdelivr.net/npm/hls.js@1.5.13/dist/hls.min.js" defer></script>
 <script src="https://player.vimeo.com/api/player.js" defer></script>
 <script>
@@ -63,8 +69,35 @@ window.addEventListener('load',function(){initProfVideos();initVimeoClip();});
   --blue:#3b6fd4;--blue2:#5585e8;--blue-l:#1d2d54;
   --grn:#34d399;--grn-l:#10311f;--red:#f87171;--red-l:#3c1d20;
   --gold:#f5b32c;--gold-l:#352a0e;--pur:#a78bfa;--pur-l:#261c42;
+  --warn-bg:#33210e;--warn-bd:#5a3a1e;--warn-tx:#fdba74;--code-bg:#241a40;--code-tx:#b794f6;
   --r:12px;--rs:8px;--font:'Segoe UI',system-ui,sans-serif;
 }
+html[data-theme="light"]{
+  --navy:#1a2744;--bg:#f0f2f7;--surface:#fff;--s2:#f8f9fc;
+  --bd:#e4e8f0;--bd2:#d0d5e8;--tx:#1a2744;--t2:#5a6a8a;--t3:#9aaac0;
+  --blue:#3b6fd4;--blue2:#5585e8;--blue-l:#eef2ff;
+  --grn:#22c55e;--grn-l:#f0fdf4;--red:#ef4444;--red-l:#fef2f2;
+  --gold:#f59e0b;--gold-l:#fffbeb;--pur:#8b5cf6;--pur-l:#f5f3ff;
+  --warn-bg:#fff7ed;--warn-bd:#fed7aa;--warn-tx:#9a3412;--code-bg:#f1f0ff;--code-tx:#6d5fd8;
+}
+html[data-theme="light"] .qo.annul{color:#b45309!important;background:#fffbeb!important}
+html[data-theme="light"] .qo.correct{color:#16a34a!important}
+html[data-theme="light"] .q-fb.annul{background:#fffbeb;color:#b45309;border-color:#fde68a}
+html[data-theme="light"] .q-fb.ok{color:#16a34a;border-color:#bbf7d0}
+html[data-theme="light"] .q-fb.er{border-color:#fecaca}
+html[data-theme="light"] .sr-easy{background:#dcfce7;color:#16a34a}
+html[data-theme="light"] .tag-sub-diabetes{background:#dbeafe;color:#1d4ed8}
+html[data-theme="light"] .tag-sub-obesidade{background:#dcfce7;color:#15803d}
+html[data-theme="light"] .tag-sub-tireoide{background:#ede9fe;color:#6d28d9}
+html[data-theme="light"] .tag-sub-adrenal{background:#fef3c7;color:#fbbf24}
+html[data-theme="light"] .tag-sub-neuroendocrinologia{background:#e0f2fe;color:#0369a1}
+html[data-theme="light"] .tag-sub-osteometabolismo{background:#d1fae5;color:#047857}
+html[data-theme="light"] .tag-sub-lipides{background:#fee2e2;color:#b91c1c}
+html[data-theme="light"] .tag-sub-reproducao{background:#fce7f3;color:#be185d}
+html[data-theme="light"] .tag-sub-pediatria{background:#e0e7ff;color:#4338ca}
+html[data-theme="light"] .mural-source,html[data-theme="light"] .mural-source a{color:#5c8bd6}
+html[data-theme="light"] #login-screen{background:linear-gradient(135deg,#e8ecf5,#f5f7fc 60%,#e2e8f5)}
+[data-theme-opt].on{background:var(--blue);color:#fff!important}
 html,body{height:100%;overflow:hidden;font-family:var(--font)}
 body{background:var(--bg);color:var(--tx);display:flex;flex-direction:column}
 #login-screen{position:fixed;inset:0;z-index:1000;background:linear-gradient(135deg,#0c1426,#101c34 60%,#0b1325);display:flex;align-items:flex-start;justify-content:center;overflow:auto;padding:24px 16px}
@@ -1588,7 +1621,7 @@ textarea{resize:vertical;line-height:1.6}
       <div class="breadcrumb">Dashboard <b>/ Consultório</b></div>
       <div class="ph"><h1>Consultório</h1><p>Apoio à prescrição com receituário, LME, exames e seguimento — conforme a regulamentação brasileira (ANVISA, SUS).</p></div>
       <div class="pc">
-        <div style="background:#33210e;border:1px solid #5a3a1e;border-radius:var(--rs);padding:.7rem .9rem;margin-bottom:.85rem;font-size:.72rem;color:#fdba74;line-height:1.55">⚠️ <b>Ferramenta educacional de apoio à decisão.</b> Não substitui o julgamento clínico, a avaliação individual do paciente nem a consulta às bulas e diretrizes vigentes. Confira sempre doses, contraindicações e interações antes de prescrever.</div>
+        <div style="background:var(--warn-bg);border:1px solid var(--warn-bd);border-radius:var(--rs);padding:.7rem .9rem;margin-bottom:.85rem;font-size:.72rem;color:var(--warn-tx);line-height:1.55">⚠️ <b>Ferramenta educacional de apoio à decisão.</b> Não substitui o julgamento clínico, a avaliação individual do paciente nem a consulta às bulas e diretrizes vigentes. Confira sempre doses, contraindicações e interações antes de prescrever.</div>
         <div id="presc-tool"></div>
       </div>
     </div>
@@ -3914,11 +3947,11 @@ function updateGenCounter(){
   el.textContent='Respondidas: '+respondidas+'/'+genQs.length+' · Acertos: '+acertos+' ('+pct+'%)';
 }
 function qRowHTML(q,i,src,isMC){
-  return'<div><div class="q-row" data-qi="'+i+'" data-src="'+src+'" data-mc="'+(q.type?(q.type!=='disc'):isMC)+'"><div class="q-row-top"><div class="q-stem-prev">'+esc(q.stem||'')+'</div><div style="display:flex;gap:3px;flex-shrink:0">'+(q.code?'<span style="font-family:monospace;font-size:.59rem;font-weight:700;background:#241a40;color:#b794f6;padding:1px 6px;border-radius:99px">'+esc(q.code)+'</span>':'')+diffTag(q.dificuldade||'intermediario')+(q.inst?'<span class="tag tag-pur" style="font-size:.57rem">'+esc(q.inst)+'</span>':'')+'</div></div></div><div id="qd-'+src+'-'+i+'" style="display:none"></div></div>';
+  return'<div><div class="q-row" data-qi="'+i+'" data-src="'+src+'" data-mc="'+(q.type?(q.type!=='disc'):isMC)+'"><div class="q-row-top"><div class="q-stem-prev">'+esc(q.stem||'')+'</div><div style="display:flex;gap:3px;flex-shrink:0">'+(q.code?'<span style="font-family:monospace;font-size:.59rem;font-weight:700;background:var(--code-bg);color:var(--code-tx);padding:1px 6px;border-radius:99px">'+esc(q.code)+'</span>':'')+diffTag(q.dificuldade||'intermediario')+(q.inst?'<span class="tag tag-pur" style="font-size:.57rem">'+esc(q.inst)+'</span>':'')+'</div></div></div><div id="qd-'+src+'-'+i+'" style="display:none"></div></div>';
 }
 function qFullHTML(q,i,src,isMC){
   var mc=q.type?(q.type!=='disc'):isMC;
-  var tags='<div style="display:flex;gap:3px;justify-content:flex-end;margin-bottom:.45rem">'+(q.code?'<span style="font-family:monospace;font-size:.59rem;font-weight:700;background:#241a40;color:#b794f6;padding:1px 6px;border-radius:99px">'+esc(q.code)+'</span>':'')+diffTag(q.dificuldade||'intermediario')+(q.inst?'<span class="tag tag-pur" style="font-size:.57rem">'+esc(q.inst)+'</span>':'')+'</div>';
+  var tags='<div style="display:flex;gap:3px;justify-content:flex-end;margin-bottom:.45rem">'+(q.code?'<span style="font-family:monospace;font-size:.59rem;font-weight:700;background:var(--code-bg);color:var(--code-tx);padding:1px 6px;border-radius:99px">'+esc(q.code)+'</span>':'')+diffTag(q.dificuldade||'intermediario')+(q.inst?'<span class="tag tag-pur" style="font-size:.57rem">'+esc(q.inst)+'</span>':'')+'</div>';
   var img=q.img?'<img src="'+q.img+'" alt="Figura" style="max-width:100%;display:block;border-radius:8px;margin:.55rem 0;border:1px solid var(--bd)">':'';
   var body;
   if(mc){
@@ -4005,7 +4038,7 @@ function renderSavedQ(){
   var el=document.getElementById('q-saved-list');if(!el)return;
   setText('q-saved-count','('+DB.q.length+')');
   if(!DB.q.length){el.innerHTML='<div class="empty">Nenhuma questão salva.</div>';return;}
-  el.innerHTML='<div class="q-list">'+DB.q.map(function(q,i){return'<div><div class="q-row" data-qi="'+i+'" data-src="saved" data-mc="'+(q.type!=='disc')+'"><div class="q-row-top"><div class="q-stem-prev">'+esc((q.stem||'').substring(0,140))+'…</div><div style="display:flex;gap:3px;align-items:center">'+(q.code?'<span style="font-family:monospace;font-size:.59rem;font-weight:700;background:#241a40;color:#b794f6;padding:1px 6px;border-radius:99px">'+esc(q.code)+'</span>':'')+diffTag(q.dificuldade)+'<button class="btn btn-ghost btn-sm" data-del-q="'+i+'" style="padding:2px 4px">✕</button></div></div></div><div id="qd-saved-'+i+'" style="display:none"></div></div>';}).join('')+'</div>';
+  el.innerHTML='<div class="q-list">'+DB.q.map(function(q,i){return'<div><div class="q-row" data-qi="'+i+'" data-src="saved" data-mc="'+(q.type!=='disc')+'"><div class="q-row-top"><div class="q-stem-prev">'+esc((q.stem||'').substring(0,140))+'…</div><div style="display:flex;gap:3px;align-items:center">'+(q.code?'<span style="font-family:monospace;font-size:.59rem;font-weight:700;background:var(--code-bg);color:var(--code-tx);padding:1px 6px;border-radius:99px">'+esc(q.code)+'</span>':'')+diffTag(q.dificuldade)+'<button class="btn btn-ghost btn-sm" data-del-q="'+i+'" style="padding:2px 4px">✕</button></div></div></div><div id="qd-saved-'+i+'" style="display:none"></div></div>';}).join('')+'</div>';
 }
 var INST_PADRAO=[];
 // Em DEGUSTAÇÃO o aluno só enxerga uma amostra FIXA de 50 questões da
@@ -6062,6 +6095,22 @@ function admEstFormHTML(){
 var admPerfil=lsGet('adm_perfil')||{nome:'Administrador',email:'admin@endodirect.com.br',contato:'',instituicao:'',cpf:''};
 function persistPerfil(){lsSet('adm_perfil',admPerfil);queueRemoteStateSave();}
 var admPerfilEdit=false;
+// Card e fiação do seletor de tema (claro/escuro) — Perfil do aluno e do professor.
+function themeCardHTML(){
+  return '<div class="card" style="margin-top:1rem"><div class="card-head"><span class="card-title">🎨 Tema</span></div>'
+    +'<p style="font-size:.78rem;color:var(--t2);margin:.1rem 0 .75rem">Escolha a aparência da plataforma — claro ou escuro.</p>'
+    +'<div style="display:inline-flex;border:1px solid var(--bd2);border-radius:999px;overflow:hidden">'
+    +'<button type="button" data-theme-opt="light" class="pf-theme-opt" style="border:0;background:none;padding:.45rem 1.05rem;font-size:.82rem;font-weight:600;color:var(--t2);cursor:pointer;font-family:var(--font)">☀️ Claro</button>'
+    +'<button type="button" data-theme-opt="dark" class="pf-theme-opt" style="border:0;background:none;padding:.45rem 1.05rem;font-size:.82rem;font-weight:600;color:var(--t2);cursor:pointer;font-family:var(--font)">🌙 Escuro</button>'
+    +'</div></div>';
+}
+function wireThemeToggle(){
+  var t=(typeof currentTheme==='function')?currentTheme():'dark';
+  document.querySelectorAll('[data-theme-opt]').forEach(function(b){
+    b.classList.toggle('on',b.dataset.themeOpt===t);
+    if(b.dataset.wired!=='1'){b.dataset.wired='1';b.addEventListener('click',function(){setTheme(b.dataset.themeOpt);});}
+  });
+}
 function admPerfilHTML(){
   var p=admPerfil;
   var inner;
@@ -6082,7 +6131,7 @@ function admPerfilHTML(){
   }
   return '<div class="adm-ph" style="display:flex;align-items:flex-start;justify-content:space-between"><h1>Perfil do professor</h1>'+(admPerfilEdit?'':'<button class="btn btn-primary" id="btn-adm-perfil-edit">✏️ Editar perfil</button>')+'</div>'
   +'<div class="adm-pc">'
-  +'<div class="card" style="margin-bottom:1rem"><div style="display:flex;align-items:center;gap:1rem"><div class="tb-avatar" style="width:58px;height:58px;font-size:1.3rem;background:var(--navy);border-radius:14px">'+(p.nome||'A').charAt(0)+'</div><div style="flex:1"><div style="font-size:1.3rem;font-weight:800">'+esc(p.nome)+'</div><div style="font-size:.8rem;color:var(--t2)">Professor</div><div style="margin-top:.4rem"><span class="tag tag-blue">'+esc(p.email)+'</span></div></div></div></div>'
+  +'<div class="card" style="margin-bottom:1rem"><div style="display:flex;align-items:center;gap:1rem"><div class="tb-avatar" style="width:58px;height:58px;font-size:1.3rem;background:var(--navy);border-radius:14px">'+(p.nome||'A').charAt(0)+'</div><div style="flex:1"><div style="font-size:1.3rem;font-weight:800">'+esc(p.nome)+'</div><div style="font-size:.8rem;color:var(--t2)">Professor</div><div style="margin-top:.4rem"><span class="tag tag-blue">'+esc(p.email)+'</span></div></div></div></div>'+themeCardHTML()
   +inner
   +'</div>';
 }
@@ -6726,6 +6775,7 @@ function bindAdmSec(sec){
   }
 
   if(sec==='perfil'){
+    try{wireThemeToggle();}catch(e){}
     var bedit=document.getElementById('btn-adm-perfil-edit');
     if(bedit)bedit.addEventListener('click',function(){admPerfilEdit=true;renderAdmSec('perfil');});
     var bpsave=document.getElementById('btn-adm-pf-save');
@@ -7057,10 +7107,11 @@ function renderPerfil(){
     +'</div></div>';
   body.innerHTML='<div class="ph" style="display:flex;align-items:flex-start;justify-content:space-between;flex-wrap:wrap;gap:.6rem"><div><h1>Meu perfil</h1><p>Gerencie seus dados cadastrais.</p></div>'+(perfilEdit?'':'<button class="btn btn-primary" id="btn-perfil-edit">✏️ Editar perfil</button>')+'</div>'
     +'<div class="card" style="margin-bottom:1rem"><div style="display:flex;align-items:center;gap:1rem"><div class="tb-avatar" style="width:58px;height:58px;font-size:1.3rem;background:var(--navy);border-radius:14px">'+esc(nome.charAt(0))+'</div><div style="flex:1"><div style="font-size:1.3rem;font-weight:800">'+esc(nome)+'</div><div style="font-size:.8rem;color:var(--t2)">'+esc(label)+'</div><div style="margin-top:.4rem"><span class="tag tag-blue">'+esc(email)+'</span></div></div></div></div>'
-    +inner+(perfilEdit?'':assinaturaCard+nlCard);
+    +inner+(perfilEdit?'':themeCardHTML()+assinaturaCard+nlCard);
   wirePerfil();
 }
 function wirePerfil(){
+  try{wireThemeToggle();}catch(e){}
   var bedit=document.getElementById('btn-perfil-edit');
   if(bedit)bedit.addEventListener('click',function(){perfilEdit=true;renderPerfil();});
   var bcancel=document.getElementById('btn-pf-cancel');
