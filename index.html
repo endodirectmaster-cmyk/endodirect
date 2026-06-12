@@ -1304,7 +1304,7 @@ textarea{resize:vertical;line-height:1.6}
         <div class="sb-sec">Pessoal</div>
         <button class="sb-item" data-p="notas">📓 Caderno</button>
         <button class="sb-item" data-p="mural">📢 Mural</button>
-        <button class="sb-item" data-p="ref">📋 Referência</button>
+        <button class="sb-item" data-p="ref">📋 Diretrizes</button>
         <button class="sb-item" data-p="chat">💬 Chat IA</button>
         <button class="sb-item" data-p="perfil">👤 Perfil</button>
       </div>
@@ -1783,7 +1783,7 @@ textarea{resize:vertical;line-height:1.6}
           <div class="sb-sec">Gestão</div>
           <button class="adm-nav on" data-asec="analytics">📊 Analytics</button>
           <button class="adm-nav" data-asec="mural">📣 Mural</button>
-          <button class="adm-nav" data-asec="ref">📋 Referência</button>
+          <button class="adm-nav" data-asec="ref">📋 Diretrizes</button>
           <button class="adm-nav" data-asec="provas">📝 Provas &amp; Questões</button>
           <button class="adm-nav" data-asec="cursos">🎬 Cursos</button>
           <button class="adm-nav" data-asec="estudantes">👥 Estudantes</button>
@@ -3543,7 +3543,7 @@ function startGoogleOAuth(){
   });
 }
 
-var PANEL_LABELS={dash:'Dashboard',quest:'Questões',flash:'Flashcards',mmap:'Mapas Mentais',podcast:'Podcasts',cursos:'Cursos',crono:'Cronograma',sr:'Revisão',sim:'OSCE',simfull:'Simulado',calc:'Calculadoras',rx:'Prescrição Simulada',presc:'Consultório',art:'Resumidor',notas:'Caderno',mural:'Mural',ref:'Referência',chat:'Chat IA',perfil:'Perfil',support:'Suporte',adm:'Painel Admin'};
+var PANEL_LABELS={dash:'Dashboard',quest:'Questões',flash:'Flashcards',mmap:'Mapas Mentais',podcast:'Podcasts',cursos:'Cursos',crono:'Cronograma',sr:'Revisão',sim:'OSCE',simfull:'Simulado',calc:'Calculadoras',rx:'Prescrição Simulada',presc:'Consultório',art:'Resumidor',notas:'Caderno',mural:'Mural',ref:'Diretrizes',chat:'Chat IA',perfil:'Perfil',support:'Suporte',adm:'Painel Admin'};
 function closeMobileNav(){
   document.body.classList.remove('mobile-nav-open');
   var b=document.getElementById('btn-mobile-nav');
@@ -5665,7 +5665,7 @@ function muralPagerHTML(page,pages,pfx){
     +'<button class="btn btn-outline btn-sm" id="'+pfx+'-next"'+(page>=pages-1?' disabled':'')+'>Próxima ›</button>'
     +'</section>';
 }
-// ── Referência rápida: cards de diretrizes (esboço; conteúdo inicial de exemplo,
+// ── Diretrizes: cards de diretrizes (esboço; conteúdo inicial de exemplo,
 // em curadoria pela equipe). Resumos educacionais com link p/ a fonte original.
 var REF_GUIDELINES=[
   {fonte:'ADA',ano:'2024',sub:'Diabetes',titulo:'Diagnóstico de Diabetes Mellitus',pts:['Glicemia de jejum ≥126 mg/dL','HbA1c ≥6,5%','TOTG 2h ≥200 mg/dL','Glicemia casual ≥200 mg/dL + sintomas','Confirmar com 2º exame se assintomático'],url:'https://diabetesjournals.org/care'},
@@ -5681,10 +5681,10 @@ var REF_GUIDELINES=[
 var diretrizes=(function(){try{var s=lsGet('diretrizes');if(Array.isArray(s)&&s.length)return s;}catch(e){}return REF_GUIDELINES.slice();})();
 var refFonteFilter='';
 // Painel do aluno: "Em breve" até a curadoria liberar (o admin edita o conteúdo
-// em Admin › Referência; a publicação para alunos virá numa etapa seguinte).
+// em Admin › Diretrizes; a publicação para alunos virá numa etapa seguinte).
 function renderRef(){
   var el=document.getElementById('ref-body'); if(!el)return;
-  el.innerHTML='<div class="ph"><h1>📋 Referência rápida</h1><p>Resumos de diretrizes (ADA, ATA, Endocrine Society) para consulta rápida.</p></div>'
+  el.innerHTML='<div class="ph"><h1>📋 Diretrizes</h1><p>Resumos de diretrizes (ADA, ATA, Endocrine Society) para consulta rápida.</p></div>'
     +'<div class="ref-soon"><div class="ref-soon-ico">🔜</div><h2>Em breve</h2>'
     +'<p>Estamos preparando resumos das principais diretrizes de endocrinologia para você consultar rapidinho durante os estudos e a prática clínica.</p>'
     +'<p class="ref-soon-sub">Em curadoria pela equipe Endodirect — disponível em breve.</p></div>';
@@ -6036,7 +6036,7 @@ function renderAdmSec(sec){
   admCurrentSec=sec;
   try{lsSet('adm_sec',sec);}catch(e){}
   document.querySelectorAll('.adm-nav[data-asec]').forEach(function(b){b.classList.toggle('on',b.dataset.asec===sec);});
-  var titles={provas:'Provas & Questões',cursos:'Cursos',estudantes:'Estudantes',analytics:'Analytics',mural:'Mural',ref:'Referência rápida',conteudo:'Podcasts',mapas:'Mapas Mentais',chat:'Chat',perfil:'Perfil',suporte:'Suporte'};
+  var titles={provas:'Provas & Questões',cursos:'Cursos',estudantes:'Estudantes',analytics:'Analytics',mural:'Mural',ref:'Diretrizes',conteudo:'Podcasts',mapas:'Mapas Mentais',chat:'Chat',perfil:'Perfil',suporte:'Suporte'};
   setText('adm-sec-title',titles[sec]||sec);
   var m=document.getElementById('adm-main');if(!m)return;
   if(sec==='provas')m.innerHTML=admProvasSecHTML();
@@ -6219,7 +6219,7 @@ function admRefSecHTML(){
   var g=(admRefEdit!==null&&diretrizes[admRefEdit])?diretrizes[admRefEdit]:null;
   var formHTML=admRefShowForm?(
     '<div class="card" style="margin-bottom:1.1rem"><div style="font-size:1rem;font-weight:700;margin-bottom:.3rem">'+(g?'✏️ Editar diretriz':'📋 Nova diretriz')+'</div>'
-    +'<div style="font-size:.74rem;color:var(--t2);margin-bottom:.9rem">Resumos exibidos na aba Referência. Para os alunos a aba mostra “Em breve” até a curadoria liberar.</div>'
+    +'<div style="font-size:.74rem;color:var(--t2);margin-bottom:.9rem">Resumos exibidos na aba Diretrizes. Para os alunos a aba mostra “Em breve” até a curadoria liberar.</div>'
     +'<div class="g2" style="margin-bottom:.7rem"><div class="fld2" style="margin:0"><label>Fonte</label><input type="text" id="adm-ref-fonte" placeholder="Ex: ADA, ATA, Endocrine Society" value="'+esc(g?g.fonte:'')+'"></div><div class="fld2" style="margin:0"><label>Ano</label><input type="text" id="adm-ref-ano" placeholder="Ex: 2024" value="'+esc(g?g.ano:'')+'"></div></div>'
     +'<div class="g2" style="margin-bottom:.7rem"><div class="fld2" style="margin:0"><label>Subespecialidade</label><input type="text" id="adm-ref-sub" placeholder="Ex: Diabetes, Tireoide" value="'+esc(g?g.sub:'')+'"></div><div class="fld2" style="margin:0"><label>Link da diretriz (opcional)</label><input type="text" id="adm-ref-url" placeholder="https://…" value="'+esc(g?g.url:'')+'"></div></div>'
     +'<div class="fld2" style="margin-bottom:.7rem"><label>Título</label><input type="text" id="adm-ref-titulo" placeholder="Ex: Diagnóstico de Diabetes Mellitus" value="'+esc(g?g.titulo:'')+'"></div>'
@@ -6231,7 +6231,7 @@ function admRefSecHTML(){
       +'<div class="adm-ref-acts"><button class="btn btn-outline btn-sm" data-adm-refedit="'+i+'">Editar</button><button class="btn btn-outline btn-sm" data-adm-refdel="'+i+'" style="color:var(--red);border-color:var(--red)">🗑</button></div></div>'
       +'<ul>'+(d.pts||[]).map(function(p){return '<li>'+esc(p)+'</li>';}).join('')+'</ul></div>';
   }).join('');
-  return '<div class="adm-ph" style="display:flex;align-items:flex-start;justify-content:space-between;gap:.6rem;flex-wrap:wrap"><div><h1>Referência rápida</h1></div><div style="display:flex;gap:.5rem;flex-wrap:wrap"><button class="btn btn-primary" id="btn-adm-ref-new" style="padding:.55rem 1.1rem">+ Nova diretriz</button></div></div>'
+  return '<div class="adm-ph" style="display:flex;align-items:flex-start;justify-content:space-between;gap:.6rem;flex-wrap:wrap"><div><h1>Diretrizes</h1></div><div style="display:flex;gap:.5rem;flex-wrap:wrap"><button class="btn btn-primary" id="btn-adm-ref-new" style="padding:.55rem 1.1rem">+ Nova diretriz</button></div></div>'
     +'<div class="adm-pc">'
     +formHTML
     +'<div class="card" style="margin-bottom:1.1rem"><div style="font-size:.62rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--t3);margin-bottom:.3rem">Conteúdo da aba Referência</div><div style="font-size:1.15rem;font-weight:700;color:var(--tx);margin-bottom:.35rem">Resumos de diretrizes para consulta rápida</div><div style="font-size:.79rem;color:var(--t2);line-height:1.55">Edite aqui os resumos (ADA, ATA, Endocrine Society…). <b>Para os alunos a aba ainda exibe “Em breve”</b> — a publicação será liberada numa próxima etapa.</div></div>'
