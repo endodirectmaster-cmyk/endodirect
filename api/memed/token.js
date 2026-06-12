@@ -99,6 +99,10 @@ async function getMemedToken(p) {
   if (!r.ok) {
     // Diagnóstico: status HTTP + corpo cru da Memed (revela a causa real).
     console.log('[memed-resp] status=' + r.status + ' body=' + String(raw).slice(0, 500));
+    // 5xx = indisponibilidade do lado da Memed (o usuário só pode tentar de
+    // novo): mensagem amigável, sem código técnico. 4xx = erro específico e
+    // acionável (ex.: validação): mostra o detalhe que a Memed devolveu.
+    if (r.status >= 500) throw new Error('Memed temporariamente indisponível. Tente novamente em instantes.');
     const msg = (data && data.errors && data.errors[0] && (data.errors[0].detail || data.errors[0].title)) || `Erro HTTP ${r.status} da Memed`;
     throw new Error(msg);
   }
