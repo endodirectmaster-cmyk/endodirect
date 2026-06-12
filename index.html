@@ -598,6 +598,20 @@ textarea{resize:vertical;line-height:1.6}
   .ph{padding-left:.75rem;padding-right:.75rem}
   .adm-tab{font-size:.68rem;padding:.28rem .66rem}
 }
+.ref-disclaimer{background:var(--warn-bg);border:1px solid var(--warn-bd);color:var(--warn-tx);border-radius:var(--rs);padding:.6rem .85rem;font-size:.74rem;line-height:1.5;margin-bottom:1rem}
+.ref-filters{display:flex;gap:.45rem;flex-wrap:wrap;margin-bottom:1.1rem}
+.ref-chip{border:1.5px solid var(--bd2);background:var(--surface);color:var(--t2);border-radius:999px;padding:.32rem .9rem;font-size:.76rem;font-weight:600;cursor:pointer;font-family:var(--font)}
+.ref-chip.on{background:var(--blue);border-color:var(--blue);color:#fff}
+.ref-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:1rem}
+.ref-card{background:var(--surface);border:1px solid var(--bd);border-left:4px solid var(--blue);border-radius:var(--r);padding:1.1rem 1.2rem;box-shadow:0 1px 2px rgba(0,0,0,.04)}
+.ref-card-top{display:flex;align-items:center;gap:.5rem;flex-wrap:wrap;margin-bottom:.55rem}
+.ref-badge{font-size:.62rem;font-weight:800;letter-spacing:.03em;background:var(--blue-l);color:var(--blue2);padding:.22rem .55rem;border-radius:5px}
+.ref-card h3{font-size:.95rem;font-weight:800;color:var(--tx);line-height:1.35;margin-bottom:.55rem}
+.ref-card ul{list-style:none;margin:0 0 .75rem;padding:0}
+.ref-card li{font-size:.8rem;color:var(--t2);line-height:1.55;padding-left:1.05rem;position:relative;margin-bottom:.32rem}
+.ref-card li::before{content:'▸';position:absolute;left:0;color:var(--blue)}
+.ref-link{font-size:.76rem;font-weight:700;color:var(--blue);text-decoration:none}
+.ref-link:hover{text-decoration:underline}
 </style>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="https://cdn.jsdelivr.net/npm/tus-js-client@4/dist/tus.min.js"></script>
@@ -1277,6 +1291,7 @@ textarea{resize:vertical;line-height:1.6}
         <div class="sb-sec">Pessoal</div>
         <button class="sb-item" data-p="notas">📓 Caderno</button>
         <button class="sb-item" data-p="mural">📢 Mural</button>
+        <button class="sb-item" data-p="ref">📋 Referência</button>
         <button class="sb-item" data-p="chat">💬 Chat IA</button>
         <button class="sb-item" data-p="perfil">👤 Perfil</button>
       </div>
@@ -1666,6 +1681,7 @@ textarea{resize:vertical;line-height:1.6}
       </div>
     </div>
 
+    <div class="panel" id="panel-ref"><div class="pc" id="ref-body" style="max-width:none"></div></div>
     <div class="panel" id="panel-notas" style="flex-direction:row;overflow:hidden;padding:0">
       <div style="width:195px;border-right:1px solid var(--bd);display:flex;flex-direction:column;background:var(--s2);flex-shrink:0">
         <div style="padding:.6rem .72rem;border-bottom:1px solid var(--bd)"><button class="btn btn-primary btn-sm" id="btn-note-new" style="width:100%">+ Nova nota</button></div>
@@ -3512,7 +3528,7 @@ function startGoogleOAuth(){
   });
 }
 
-var PANEL_LABELS={dash:'Dashboard',quest:'Questões',flash:'Flashcards',mmap:'Mapas Mentais',podcast:'Podcasts',cursos:'Cursos',crono:'Cronograma',sr:'Revisão',sim:'OSCE',simfull:'Simulado',calc:'Calculadoras',rx:'Prescrição Simulada',presc:'Consultório',art:'Resumidor',notas:'Caderno',mural:'Mural',chat:'Chat IA',perfil:'Perfil',support:'Suporte',adm:'Painel Admin'};
+var PANEL_LABELS={dash:'Dashboard',quest:'Questões',flash:'Flashcards',mmap:'Mapas Mentais',podcast:'Podcasts',cursos:'Cursos',crono:'Cronograma',sr:'Revisão',sim:'OSCE',simfull:'Simulado',calc:'Calculadoras',rx:'Prescrição Simulada',presc:'Consultório',art:'Resumidor',notas:'Caderno',mural:'Mural',ref:'Referência',chat:'Chat IA',perfil:'Perfil',support:'Suporte',adm:'Painel Admin'};
 function closeMobileNav(){
   document.body.classList.remove('mobile-nav-open');
   var b=document.getElementById('btn-mobile-nav');
@@ -3583,7 +3599,7 @@ function hasScope(scope){return !scope||isAdminUser()||userAcessos.indexOf(scope
 // Degustacao: aluno logado, sem nenhum acesso ativo (não comprou pacote/curso).
 function isDegustacao(){return !!(currentUser&&currentUser.role==='aluno'&&!isAdminUser()&&(!userAcessos||userAcessos.length===0));}
 // Paineis liberados na degustacao (o resto fica 🔒 com upsell).
-var DEGUSTACAO_PANELS={dash:1,flash:1,mmap:1,quest:1,perfil:1,support:1,calc:1,podcast:1,crono:1,notas:1};
+var DEGUSTACAO_PANELS={dash:1,flash:1,mmap:1,quest:1,perfil:1,support:1,calc:1,podcast:1,crono:1,notas:1,ref:1};
 // Ferramentas com IA liberadas na degustação por COTA (3 usos cada): simulador
 // de casos, simulado, prescrição e chat IA. Após esgotar, vira upsell.
 var TRIAL_PANELS={sim:1,simfull:1,rx:1,chat:1};
@@ -3850,6 +3866,7 @@ function goPanel(id){
   if(id==='calc')initCalc();
   if(id==='notas')renderNoteList();
   if(id==='mural')initMural();
+  if(id==='ref')renderRef();
   if(id==='presc')initPresc();
   if(id==='simfull'){renderSFPrev();populateInst('sf-inst');}
   if(id==='art')initArtUpload();
@@ -5632,6 +5649,36 @@ function muralPagerHTML(page,pages,pfx){
     +'<span style="font-size:.78rem;color:var(--t2)">Página '+(page+1)+' de '+pages+'</span>'
     +'<button class="btn btn-outline btn-sm" id="'+pfx+'-next"'+(page>=pages-1?' disabled':'')+'>Próxima ›</button>'
     +'</section>';
+}
+// ── Referência rápida: cards de diretrizes (esboço; conteúdo inicial de exemplo,
+// em curadoria pela equipe). Resumos educacionais com link p/ a fonte original.
+var REF_GUIDELINES=[
+  {fonte:'ADA',ano:'2024',sub:'Diabetes',titulo:'Diagnóstico de Diabetes Mellitus',pts:['Glicemia de jejum ≥126 mg/dL','HbA1c ≥6,5%','TOTG 2h ≥200 mg/dL','Glicemia casual ≥200 mg/dL + sintomas','Confirmar com 2º exame se assintomático'],url:'https://diabetesjournals.org/care'},
+  {fonte:'ADA',ano:'2024',sub:'Diabetes',titulo:'Metas glicêmicas no adulto não gestante',pts:['HbA1c <7% (individualizar entre 6,5% e 8%)','Glicemia pré-prandial 80–130 mg/dL','Pico pós-prandial <180 mg/dL','Metas menos rígidas em idosos/frágeis'],url:'https://diabetesjournals.org/care'},
+  {fonte:'ATA',ano:'2017',sub:'Tireoide',titulo:'Disfunção tireoidiana na gestação',pts:['Usar faixas de TSH específicas por trimestre','Tratar hipotireoidismo com levotiroxina','Anti-TPO positivo aumenta o risco de desfechos','Reavaliar e ajustar a dose ao longo da gestação'],url:'https://www.thyroid.org/professionals/ata-professional-guidelines/'},
+  {fonte:'ATA',ano:'2015',sub:'Tireoide',titulo:'Nódulo tireoidiano — avaliação',pts:['Estratificar o risco pelo ultrassom (padrão sonográfico)','Indicar PAAF conforme categoria de risco e tamanho','Dosar TSH; cintilografia se TSH suprimido','Acompanhamento conforme citologia (Bethesda)'],url:'https://www.thyroid.org/professionals/ata-professional-guidelines/'},
+  {fonte:'Endocrine Society',ano:'2016',sub:'Adrenal',titulo:'Insuficiência adrenal primária',pts:['Cortisol matinal baixo + ACTH elevado sugerem origem primária','Teste de estímulo com cosintropina confirma','Repor glico e mineralocorticoide','Crise: hidrocortisona IV + reposição volêmica'],url:'https://www.endocrine.org/clinical-practice-guidelines'},
+  {fonte:'Endocrine Society',ano:'2018',sub:'Reprodução',titulo:'Hipogonadismo masculino',pts:['Dosar testosterona total matinal em jejum; repetir se baixa','LH/FSH ajudam a localizar (central x testicular)','Tratar apenas sintomáticos com T baixa confirmada','Monitorar hematócrito, PSA e sintomas'],url:'https://www.endocrine.org/clinical-practice-guidelines'},
+  {fonte:'Endocrine Society',ano:'2015',sub:'Obesidade',titulo:'Manejo farmacológico da obesidade',pts:['Avaliar IMC + comorbidades para indicar tratamento','Meta de perda ≥5–10% do peso','Estilo de vida + farmacoterapia (ex.: análogos de GLP-1)','Cirurgia bariátrica em casos selecionados'],url:'https://www.endocrine.org/clinical-practice-guidelines'},
+  {fonte:'Endocrine Society',ano:'2019',sub:'Osteometabolismo',titulo:'Osteoporose pós-menopausa',pts:['Diagnóstico por DXA (T-score ≤ −2,5) e/ou FRAX','Repor cálcio e vitamina D','Antirreabsortivos (bisfosfonatos) são 1ª linha na maioria','Reavaliar adesão e resposta periodicamente'],url:'https://www.endocrine.org/clinical-practice-guidelines'}
+];
+var refFonteFilter='';
+function renderRef(){
+  var el=document.getElementById('ref-body'); if(!el)return;
+  var fontes=[]; REF_GUIDELINES.forEach(function(g){if(fontes.indexOf(g.fonte)<0)fontes.push(g.fonte);});
+  var chips='<button class="ref-chip'+(refFonteFilter?'':' on')+'" data-ref-fonte="">Todas</button>'+fontes.map(function(f){return '<button class="ref-chip'+(refFonteFilter===f?' on':'')+'" data-ref-fonte="'+esc(f)+'">'+esc(f)+'</button>';}).join('');
+  var list=REF_GUIDELINES.filter(function(g){return !refFonteFilter||g.fonte===refFonteFilter;});
+  var cards=list.map(function(g){
+    return '<div class="ref-card"><div class="ref-card-top"><span class="ref-badge">'+esc(g.fonte)+' · '+esc(g.ano)+'</span><span class="tag tag-muted" style="font-size:.6rem">'+esc(g.sub)+'</span></div>'
+      +'<h3>'+esc(g.titulo)+'</h3><ul>'+g.pts.map(function(p){return '<li>'+esc(p)+'</li>';}).join('')+'</ul>'
+      +'<a href="'+esc(g.url)+'" target="_blank" rel="noopener" class="ref-link">Ver diretriz original ↗</a></div>';
+  }).join('');
+  el.innerHTML='<div class="ph"><h1>📋 Referência rápida</h1><p>Resumos de diretrizes (ADA, ATA, Endocrine Society) para consulta rápida — filtre por fonte.</p></div>'
+    +'<div class="ref-disclaimer">⚠️ <b>Resumos educacionais e simplificados.</b> Não substituem a leitura da diretriz original nem o julgamento clínico — confira sempre a fonte e a avaliação individual do paciente.</div>'
+    +'<div class="ref-filters">'+chips+'</div>'
+    +'<div class="ref-grid">'+cards+'</div>'
+    +'<p style="font-size:.72rem;color:var(--t3);margin-top:1.1rem">Conteúdo inicial (exemplo) — em curadoria pela equipe Endodirect.</p>';
+  el.querySelectorAll('[data-ref-fonte]').forEach(function(b){b.addEventListener('click',function(){refFonteFilter=b.dataset.refFonte;renderRef();});});
 }
 function initMural(){
   var el=document.getElementById('mural-pc');if(!el)return;
