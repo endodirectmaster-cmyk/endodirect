@@ -12,6 +12,30 @@
 <link rel="icon" type="image/png" href="Icone%20-%20MD%202.png">
 <link rel="shortcut icon" type="image/png" href="Icone%20-%20MD%202.png">
 <link rel="apple-touch-icon" href="Icone%20-%20MD%202.png">
+<script src="https://cdn.jsdelivr.net/npm/hls.js@1.5.13/dist/hls.min.js" defer></script>
+<script>
+// Players dos professores na landing: streams HLS (.m3u8 do Bunny) via hls.js
+// no Chrome/Firefox e HLS nativo no Safari. Lazy: só inicia ao entrar na tela.
+function initProfVideos(){
+  var vids=document.querySelectorAll('video.lp-prof-vid[data-hls]');
+  if(!vids.length)return;
+  function start(v){
+    if(v.dataset.started)return; v.dataset.started='1';
+    var src=v.getAttribute('data-hls');
+    try{
+      if(v.canPlayType('application/vnd.apple.mpegurl')){v.src=src;}
+      else if(window.Hls&&window.Hls.isSupported()){var h=new window.Hls();h.loadSource(src);h.attachMedia(v);}
+      else{v.src=src;}
+      v.muted=true; var p=v.play(); if(p&&p.catch)p.catch(function(){});
+    }catch(e){}
+  }
+  if('IntersectionObserver' in window){
+    var io=new IntersectionObserver(function(es){es.forEach(function(e){if(e.isIntersecting){start(e.target);io.unobserve(e.target);}});},{rootMargin:'300px'});
+    vids.forEach(function(v){io.observe(v);});
+  }else{vids.forEach(start);}
+}
+window.addEventListener('load',initProfVideos);
+</script>
 <style>
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 :root{
@@ -753,6 +777,10 @@ textarea{resize:vertical;line-height:1.6}
 .lp-mural-tag{font-size:.6rem;font-weight:700;padding:.12rem .5rem;border-radius:999px}
 .lp-mural-card h4{margin:.1rem 0 .35rem;font-size:.86rem;color:#fff;line-height:1.35}
 .lp-mural-meta{font-size:.68rem;color:#8a93a3}
+.lp-prof-grid{display:grid;grid-template-columns:1fr 1fr;gap:.5rem}
+.lp-prof-frame{position:relative;aspect-ratio:16/9;border-radius:9px;overflow:hidden;background:#000}
+.lp-prof-frame iframe,.lp-prof-frame video{position:absolute;inset:0;width:100%;height:100%;border:0;object-fit:cover}
+.lp-prof-name{font-size:.66rem;font-weight:700;color:#c3cee0;margin-top:.28rem;text-align:center}
 .lp-team{display:grid;grid-template-columns:repeat(auto-fit,minmax(258px,1fr));gap:1rem}
 .lp-prof{background:#14203a;border:1px solid #223052;border-radius:16px;padding:1.3rem;text-align:center}
 .lp-prof .av{position:relative;overflow:hidden;width:74px;height:74px;border-radius:50%;background:linear-gradient(135deg,#5585e8,#2f5fc0);color:#fff;font-weight:800;font-size:1.45rem;display:flex;align-items:center;justify-content:center;margin:0 auto .7rem}
@@ -898,12 +926,15 @@ textarea{resize:vertical;line-height:1.6}
         </div>
         <div class="lp-shot">
           <div class="lp-shot-tag">🎬 Cursos · Videoaulas</div>
-          <div style="border-radius:12px;overflow:hidden;background:#000;aspect-ratio:16/9">
-            <iframe id="lp-aula-vimeo" src="https://player.vimeo.com/video/1199272118?background=1&muted=1&dnt=1&title=0&byline=0&portrait=0" style="width:100%;height:100%;border:0" loading="lazy" allow="autoplay;fullscreen;picture-in-picture" allowfullscreen title="Aula 1 — Obesidade"></iframe>
+          <div class="lp-prof-grid">
+            <div><div class="lp-prof-frame"><iframe src="https://player.vimeo.com/video/1199272118?background=1&muted=1&dnt=1&title=0&byline=0&portrait=0" loading="lazy" allow="autoplay" title="Dr. Rodolpho"></iframe></div><div class="lp-prof-name">Dr. Rodolpho</div></div>
+            <div><div class="lp-prof-frame"><video class="lp-prof-vid" data-hls="https://vz-1196f9a8-6ea.b-cdn.net/77f6d123-91c7-4f8a-9888-47c17609a293/playlist.m3u8" muted loop playsinline preload="none"></video></div><div class="lp-prof-name">Dr. Eduardo</div></div>
+            <div><div class="lp-prof-frame"><video class="lp-prof-vid" data-hls="https://vz-1196f9a8-6ea.b-cdn.net/5ac14159-94a1-451f-a9da-7a4f30d6caba/playlist.m3u8" muted loop playsinline preload="none"></video></div><div class="lp-prof-name">Dr. Rafael</div></div>
+            <div><div class="lp-prof-frame"><video class="lp-prof-vid" data-hls="https://vz-1196f9a8-6ea.b-cdn.net/57aaaef7-a168-491e-99d9-92ce17705f9f/playlist.m3u8" muted loop playsinline preload="none"></video></div><div class="lp-prof-name">Dr. Bruno</div></div>
           </div>
           <div style="margin-top:.6rem"><span class="lp-mural-tag" style="background:rgba(16,185,129,.18);color:#5fd3c0;font-size:.6rem;font-weight:700;padding:.12rem .5rem;border-radius:999px">Endocrinologia Essencial</span></div>
-          <div style="font-size:.86rem;font-weight:700;color:#fff;margin-top:.45rem">Aula 1 — Introdução à Obesidade</div>
-          <div style="font-size:.74rem;color:#9aa3b2;line-height:1.45;margin-top:.2rem">Trecho da videoaula do curso Endocrinologia Essencial.</div>
+          <div style="font-size:.86rem;font-weight:700;color:#fff;margin-top:.45rem">Videoaulas com os professores</div>
+          <div style="font-size:.74rem;color:#9aa3b2;line-height:1.45;margin-top:.2rem">Trechos das aulas gravadas pelo time de endocrinologistas.</div>
         </div>
       </div>
     </section>
