@@ -3470,7 +3470,15 @@ function prescProfileOk(){var pf=userPerfil();return pf==='Residente'||pf==='End
 // Tela inicial: médicos (residente/endocrinologista/outros) abrem direto no
 // Mural de atualizações; estudantes seguem no Dashboard. Cai pro dash se o
 // mural não estiver visível (ex.: degustação depois dos 7 dias).
-function homePanel(){return (prescProfileOk()&&canSeePanel('mural'))?'mural':'dash';}
+function homePanel(){
+  if(!prescProfileOk())return 'dash';
+  // Médico não tem Dashboard no menu (applyProfileMenuLayout o esconde). Se o
+  // Mural não estiver visível (ex.: degustação após os 7 dias), cai num painel
+  // VISÍVEL — nunca no dash escondido (senão fica sem item de menu de volta).
+  if(canSeePanel('mural'))return 'mural';
+  if(canSeePanel('quest'))return 'quest';
+  return 'flash';
+}
 // Como perfil e acessos só chegam no hydrate, reforça a tela inicial do médico
 // depois que o estado remoto carrega — mas só se ele ainda estiver na tela
 // padrão (Dashboard), para não atrapalhar quem já navegou. Uma vez por sessão.
@@ -6816,8 +6824,13 @@ doLogin=function(u){
       else if(isMember){pendingOnboardCheck=true;} // confirma o perfil no remoto antes do onboarding
       else{openOnboard();return;}
     }else if(isMember){
-      // Membro real cujo estado local pode ser de OUTRA conta (ou navegador novo).
-      if(prof){clearLocalUserData();pendingOnboardCheck=true;} // descarta e decide pelo remoto após o hydrate
+      // Membro real cujo estado local pode ser de OUTRA conta (ou navegador novo):
+      // SEMPRE descarta o estado local antes de decidir. Sem isto, dados do
+      // ocupante anterior SEM perfil salvo (flashcards, notas, questões, perf)
+      // vazam para esta conta e são gravados no remoto dela no 1º save. O hydrate
+      // traz o estado correto deste usuário em seguida.
+      clearLocalUserData();
+      if(prof){pendingOnboardCheck=true;} // tinha perfil local -> confirma pelo remoto após o hydrate
       else{openOnboard();return;} // navegador limpo -> onboarding
     }else{
       // Conta demo (sem id remoto).
