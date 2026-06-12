@@ -21,10 +21,10 @@ atualizado: 2026-06-12
 
 ## Lado do código / curadoria
 - [ ] Revisar **Grupo 2** — 29 gabaritos ambíguos (`gabaritos-suspeitos.md`). Ver [[Banco de Questões]].
-- [ ] **Decisões de acesso (da varredura 2026-06-12) — aguardando o dono decidir:**
-  - **Chat IA + geração por IA liberados para quem comprou só curso avulso** (sem `plano`): hoje `chat` não tem escopo e `blockIfDegustacao()` só barra degustação, então um comprador de curso avulso tem IA ilimitada. Decidir se exige `plano` (adicionar `chat:'plano'` em `PANEL_SCOPE` e trocar os guards de geração para `hasScope('plano')`).
-  - **Webhook pagar.me fail-open** se TODAS as credenciais sumirem do Vercel (hoje mitigado — credenciais setadas). Decidir por "fail-closed".
-  - **`/api/ai` sem autenticação** (qualquer um gasta crédito Anthropic). Decidir por exigir sessão Supabase (front precisa mandar o token) ou rate-limit/origin.
+- [x] **Decisões de acesso (varredura 2026-06-12) — implementadas:**
+  - **[FEITO #243] Chat IA + geração por IA agora exigem `plano`** (`chat:'plano'` em `PANEL_SCOPE`; `blockIfDegustacao()` passou a checar `hasScope('plano')`). Fecha a brecha do comprador de curso avulso. Degustação (trial 3x) e plano inalterados; 0 usuários "só curso" hoje.
+  - **[FEITO #242] Webhook pagar.me fail-closed** (`auth!==true` rejeita; em prod não muda nada).
+  - **[PARCIAL #242] `/api/ai`** ganhou **checagem de origem** (barra abuso direto). **Auth por sessão Supabase: SEGURADA** — é mudança no caminho crítico de IA (risco de derrubar IA p/ todos se o token falhar) + quebra contas demo locais (sem sessão). Recomendado fazer pós-lançamento com teste. Reforço alternativo: `NCBI_API_KEY`/rate-limit.
 - [ ] **Remover diagnósticos temporários** quando resolver: `[radar-dbg]` (lib/radar.js), `[memed-dbg]`/`[memed-resp]` (api/memed/token.js).
 
 ## Concluídas recentes
