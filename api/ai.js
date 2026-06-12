@@ -48,6 +48,16 @@ module.exports = async function handler(req, res) {
     return json(res, 405, { error: 'Metodo nao permitido.' });
   }
 
+  // Proteção contra abuso direto do endpoint (gasta crédito Anthropic): exige
+  // que a chamada venha do próprio site. O navegador envia Origin/Referer
+  // automaticamente, então o app same-origin passa; chamadas externas de
+  // navegador são barradas. (Camada leve; autenticação por sessão é o próximo
+  // reforço — ver pendências.)
+  const bad = function (s) { return s && !(/([a-z0-9-]+\.)*endodirect\.com\.br/i.test(s) || /endodirect[a-z0-9-]*\.vercel\.app/i.test(s)); };
+  if (bad(String(req.headers.origin || '')) || bad(String(req.headers.referer || ''))) {
+    return json(res, 403, { error: 'Origem nao autorizada.' });
+  }
+
   const apiKey = process.env.ANTHROPIC_API_KEY;
   if (!apiKey) {
     return json(res, 500, {

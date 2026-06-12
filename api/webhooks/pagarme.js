@@ -303,8 +303,10 @@ module.exports = async function handler(req, res) {
   if ((!raw || !raw.length) && req.body) { try { raw = Buffer.from(JSON.stringify(req.body)); } catch (e) {} }
 
   const auth = verifyAuth(req, raw);
-  if (auth === false) return json(res, 401, { ok: false, error: 'Credencial do webhook invalida.' });
-  // auth === null => nenhuma credencial configurada (modo esqueleto): aceita, mas sinaliza no retorno.
+  // Fail-closed: só processa com credencial VÁLIDA. auth===false (inválida) e
+  // auth===null (NENHUMA credencial configurada no ambiente) são rejeitados —
+  // sem isso, se as envs sumissem, qualquer um provisionaria acesso de graça.
+  if (auth !== true) return json(res, 401, { ok: false, error: 'Webhook nao autenticado.' });
 
   let body;
   try { body = JSON.parse((raw && raw.toString('utf8')) || '{}'); } catch (e) { return json(res, 400, { ok: false, error: 'JSON invalido.' }); }
