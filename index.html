@@ -3455,7 +3455,7 @@ var catalogoCursos=[];
 // Escopo exigido para ABRIR cada painel. Ausente = livre para qualquer membro.
 // (banco de questoes = sub-aba Provas em 'quest', liberada por qualquer pacote.)
 var PANEL_SCOPE={
-  sim:'plano', simfull:'plano', flash:'plano', mmap:'plano', podcast:'plano', rx:'plano', presc:'plano', art:'plano'
+  sim:'plano', simfull:'plano', flash:'plano', mmap:'plano', podcast:'plano', rx:'plano', presc:'plano', art:'plano', chat:'plano'
 };
 // Tier mínimo por painel: Prescrição = Gold(2). Simulador e Resumidor entram já no Standard.
 // Os demais ficam em qualquer pacote (tier 1).
@@ -3545,7 +3545,11 @@ function canSeePanel(id){
 }
 // Bloqueia geração por IA na degustação (custo) — só conteúdo pré-salvo/banco.
 function blockIfDegustacao(){
-  if(isDegustacao()){notify('Geração por IA é exclusiva dos pacotes. Adquira um para liberar.','err');showAssineScreen((currentUser&&currentUser.email)||'');return true;}
+  if(isAdminUser())return false;
+  // Geração por IA exige um PACOTE (escopo 'plano'). Bloqueia degustação E quem
+  // só comprou curso avulso (sem 'plano') — ambos não têm o escopo. (Mantém o
+  // nome por compatibilidade; o efeito agora é "exige plano".)
+  if(!hasScope('plano')){notify('Geração por IA é exclusiva dos pacotes. Adquira um para liberar.','err');showAssineScreen((currentUser&&currentUser.email)||'');return true;}
   return false;
 }
 function canAccessBanco(){return isDegustacao()||hasScope('plano')||hasScope('curso:endoteem');}
