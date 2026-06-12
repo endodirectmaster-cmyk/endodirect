@@ -624,7 +624,41 @@ textarea{resize:vertical;line-height:1.6}
 .adm-ref-row .arr-meta{font-size:.7rem;color:var(--t3)}
 .adm-ref-row ul{margin:.4rem 0 0;padding-left:1.1rem}
 .adm-ref-row li{font-size:.76rem;color:var(--t2);margin:.12rem 0}
-.adm-ref-acts{display:flex;gap:.4rem;flex-shrink:0}
+.adm-ref-acts{display:flex;gap:.4rem;flex-shrink:0;flex-wrap:wrap}
+.adm-ref-gen{font-size:.62rem;color:var(--t3);margin-top:.4rem}
+.adm-ref-gen b{color:var(--grn)}
+/* Visão das Diretrizes (aluno / pré-visualização) */
+.dir-sub-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:.8rem;margin-top:1rem}
+.dir-sub-btn{text-align:left;border:1px solid var(--bd);background:var(--surface);border-radius:14px;padding:1rem 1.1rem;cursor:pointer;transition:.15s;border-left:4px solid var(--blue)}
+.dir-sub-btn:hover{border-color:var(--blue);transform:translateY(-2px)}
+.dir-sub-btn .dsb-ico{font-size:1.5rem;line-height:1}
+.dir-sub-btn h3{margin:.4rem 0 .2rem;font-size:1rem;color:var(--tx)}
+.dir-sub-btn .dsb-cnt{font-size:.72rem;color:var(--t3)}
+.dir-back{background:none;border:none;color:var(--blue2);font-weight:700;cursor:pointer;font-size:.82rem;padding:0;margin-bottom:.6rem}
+.dir-fmt{display:flex;gap:.4rem;flex-wrap:wrap;margin:.9rem 0 1.2rem}
+.dir-fmt-btn{border:1.5px solid var(--bd2);background:var(--surface);color:var(--t2);border-radius:999px;padding:.4rem .95rem;font-size:.78rem;font-weight:600;cursor:pointer}
+.dir-fmt-btn:hover{border-color:var(--blue)}
+.dir-fmt-btn.on{background:var(--blue);border-color:var(--blue);color:#fff}
+.dir-card{border:1px solid var(--bd);border-left:4px solid var(--blue);border-radius:14px;background:var(--surface);padding:1.1rem 1.25rem;margin-bottom:1rem}
+.dir-card-top{display:flex;align-items:center;gap:.5rem;flex-wrap:wrap;margin-bottom:.5rem}
+.dir-card h3{margin:.15rem 0 .6rem;font-size:1.08rem;color:var(--tx)}
+.dir-card ul{margin:.2rem 0;padding-left:1.2rem}
+.dir-card li{font-size:.86rem;color:var(--t2);margin:.25rem 0;line-height:1.5}
+.dir-card .dir-texto{font-size:.88rem;color:var(--t2);line-height:1.62}
+.dir-card .dir-texto p{margin:.4rem 0}
+.dir-flash-wrap{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:.7rem;margin-top:.3rem}
+.dir-flash{border:1px solid var(--bd2);background:var(--s2);border-radius:12px;padding:.9rem;cursor:pointer;min-height:96px;display:flex;flex-direction:column;justify-content:center;transition:.15s}
+.dir-flash:hover{border-color:var(--blue)}
+.dir-flash .dfl-q{font-size:.84rem;font-weight:700;color:var(--tx)}
+.dir-flash .dfl-a{font-size:.82rem;color:var(--grn);line-height:1.5}
+.dir-flash .dfl-hint{font-size:.66rem;color:var(--t3);margin-top:.5rem}
+.dir-mapa{margin-top:.3rem}
+.dir-mapa-central{display:inline-block;background:var(--blue);color:#fff;font-weight:700;border-radius:10px;padding:.5rem .9rem;margin-bottom:.7rem;font-size:.92rem}
+.dir-mapa-node{border-left:3px solid var(--bd2);margin:.5rem 0 .5rem .4rem;padding:.1rem 0 .1rem .8rem}
+.dir-mapa-node>.dmn-label{font-weight:700;color:var(--blue2);font-size:.86rem}
+.dir-mapa-node ul{margin:.25rem 0 0;padding-left:1.1rem}
+.dir-mapa-node li{font-size:.82rem;color:var(--t2);margin:.18rem 0}
+.dir-empty-fmt{font-size:.82rem;color:var(--t3);font-style:italic;padding:.3rem 0}
 </style>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="https://cdn.jsdelivr.net/npm/tus-js-client@4/dist/tus.min.js"></script>
@@ -5680,10 +5714,97 @@ var REF_GUIDELINES=[
 // Diretrizes editáveis pelo admin (CRUD). Semente = REF_GUIDELINES.
 var diretrizes=(function(){try{var s=lsGet('diretrizes');if(Array.isArray(s)&&s.length)return s;}catch(e){}return REF_GUIDELINES.slice();})();
 var refFonteFilter='';
-// Painel do aluno: "Em breve" até a curadoria liberar (o admin edita o conteúdo
-// em Admin › Diretrizes; a publicação para alunos virá numa etapa seguinte).
+// Quando true, os alunos veem a aba real (navegação por subespecialidade +
+// formatos). Enquanto false, veem "Em breve" — só o admin pré-visualiza.
+var DIRETRIZES_PUBLICADO=false;
+var refSubSel='';                 // subespecialidade selecionada ('' = grade)
+var refFormat='bullets';          // bullets | texto | flash | mapa
+var refFlashOpen={};              // estado de flip dos flashcards (chave "i-j")
+// Ícone por subespecialidade (fallback genérico).
+function dirSubIcon(s){
+  var k=String(s||'').toLowerCase();
+  if(k.indexOf('diabet')>=0)return '🩸';
+  if(k.indexOf('tireoid')>=0)return '🦋';
+  if(k.indexOf('adren')>=0)return '🧬';
+  if(k.indexOf('obesid')>=0)return '⚖️';
+  if(k.indexOf('osteo')>=0)return '🦴';
+  if(k.indexOf('reprod')>=0||k.indexOf('gônad')>=0||k.indexOf('gonad')>=0)return '🧫';
+  if(k.indexOf('hipófise')>=0||k.indexOf('hipofis')>=0||k.indexOf('neuro')>=0)return '🧠';
+  if(k.indexOf('pediátr')>=0||k.indexOf('pediatr')>=0)return '🧒';
+  return '📋';
+}
+function dirSubList(){
+  var seen={},out=[];
+  diretrizes.forEach(function(d){var s=String(d.sub||'Geral').trim()||'Geral';if(!seen[s]){seen[s]=0;out.push(s);}seen[s]++;});
+  return out.map(function(s){return {sub:s,count:seen[s]};});
+}
+// Renderiza um card de diretriz no formato escolhido.
+function dirCardHTML(d,i){
+  var head='<div class="dir-card-top"><span class="ref-badge">'+esc(d.fonte||'—')+(d.ano?(' · '+esc(d.ano)):'')+'</span>'
+    +(d.url?'<a href="'+esc(d.url)+'" target="_blank" rel="noopener" class="ref-link" style="margin-left:auto">Fonte ↗</a>':'')+'</div>'
+    +'<h3>'+esc(d.titulo||'')+'</h3>';
+  var body='';
+  if(refFormat==='bullets'){
+    body=(d.pts&&d.pts.length)?('<ul>'+d.pts.map(function(p){return '<li>'+esc(p)+'</li>';}).join('')+'</ul>'):'<div class="dir-empty-fmt">Sem pontos-chave cadastrados.</div>';
+  }else if(refFormat==='texto'){
+    body=d.resumo?('<div class="dir-texto">'+mdToHtml(d.resumo)+'</div>'):'<div class="dir-empty-fmt">Resumo em texto ainda não disponível.</div>';
+  }else if(refFormat==='flash'){
+    var cards=Array.isArray(d.flashcards)?d.flashcards:[];
+    body=cards.length?('<div class="dir-flash-wrap">'+cards.map(function(c,j){
+      var open=refFlashOpen[i+'-'+j];
+      return '<div class="dir-flash" data-dir-flash="'+i+'-'+j+'">'+(open
+        ?'<div class="dfl-a">'+esc(c.a||'')+'</div><div class="dfl-hint">↩︎ ver pergunta</div>'
+        :'<div class="dfl-q">'+esc(c.q||'')+'</div><div class="dfl-hint">clique para ver a resposta</div>')+'</div>';
+    }).join('')+'</div>'):'<div class="dir-empty-fmt">Flashcards ainda não disponíveis.</div>';
+  }else if(refFormat==='mapa'){
+    body=dirMapaHTML(d.mapa);
+  }
+  return '<div class="dir-card">'+head+body+'</div>';
+}
+function dirMapaHTML(mapa){
+  if(!mapa||(!mapa.central&&!(mapa.nodes&&mapa.nodes.length)))return '<div class="dir-empty-fmt">Mapa mental ainda não disponível.</div>';
+  var h='<div class="dir-mapa">';
+  if(mapa.central)h+='<div class="dir-mapa-central">'+esc(mapa.central)+'</div>';
+  (mapa.nodes||[]).forEach(function(n){
+    h+='<div class="dir-mapa-node"><div class="dmn-label">'+esc(n.label||'')+'</div>'
+      +((n.children&&n.children.length)?('<ul>'+n.children.map(function(c){return '<li>'+esc(c)+'</li>';}).join('')+'</ul>'):'')
+      +'</div>';
+  });
+  return h+'</div>';
+}
+// HTML completo da visão (grade de subespecialidades OU diretrizes de uma sub).
+function diretrizesViewHTML(){
+  var subs=dirSubList();
+  if(!diretrizes.length){
+    return '<div class="ph"><h1>📋 Diretrizes</h1></div><div class="dir-empty-fmt">Nenhuma diretriz cadastrada ainda.</div>';
+  }
+  if(!refSubSel){
+    return '<div class="ph"><h1>📋 Diretrizes</h1><p>Escolha uma subespecialidade para ver os resumos das principais diretrizes.</p></div>'
+      +'<div class="dir-sub-grid">'+subs.map(function(s){
+        return '<button class="dir-sub-btn" data-dir-sub="'+esc(s.sub)+'"><div class="dsb-ico">'+dirSubIcon(s.sub)+'</div><h3>'+esc(s.sub)+'</h3><div class="dsb-cnt">'+s.count+' diretriz'+(s.count===1?'':'es')+'</div></button>';
+      }).join('')+'</div>';
+  }
+  var list=diretrizes.map(function(d,i){return {d:d,i:i};}).filter(function(x){return (String(x.d.sub||'Geral').trim()||'Geral')===refSubSel;});
+  var fmts=[['bullets','• Bullets'],['texto','📄 Texto'],['flash','🃏 Flashcards'],['mapa','🧠 Mapa mental']];
+  return '<button class="dir-back" data-dir-back>← Todas as subespecialidades</button>'
+    +'<div class="ph" style="margin-top:0"><h1>'+dirSubIcon(refSubSel)+' '+esc(refSubSel)+'</h1></div>'
+    +'<div class="dir-fmt">'+fmts.map(function(f){return '<button class="dir-fmt-btn'+(refFormat===f[0]?' on':'')+'" data-dir-fmt="'+f[0]+'">'+f[1]+'</button>';}).join('')+'</div>'
+    +list.map(function(x){return dirCardHTML(x.d,x.i);}).join('');
+}
+// Liga os eventos da visão dentro de um container (aluno ou pré-visualização).
+function bindDiretrizesView(root){
+  if(!root)return;
+  root.querySelectorAll('[data-dir-sub]').forEach(function(b){b.addEventListener('click',function(){refSubSel=b.dataset.dirSub;refFlashOpen={};renderDiretrizesInto(root);});});
+  var back=root.querySelector('[data-dir-back]');
+  if(back)back.addEventListener('click',function(){refSubSel='';renderDiretrizesInto(root);});
+  root.querySelectorAll('[data-dir-fmt]').forEach(function(b){b.addEventListener('click',function(){refFormat=b.dataset.dirFmt;refFlashOpen={};renderDiretrizesInto(root);});});
+  root.querySelectorAll('[data-dir-flash]').forEach(function(b){b.addEventListener('click',function(){var k=b.dataset.dirFlash;refFlashOpen[k]=!refFlashOpen[k];renderDiretrizesInto(root);});});
+}
+function renderDiretrizesInto(root){root.innerHTML=diretrizesViewHTML();bindDiretrizesView(root);}
+// Painel do aluno. Enquanto DIRETRIZES_PUBLICADO=false mostra "Em breve".
 function renderRef(){
   var el=document.getElementById('ref-body'); if(!el)return;
+  if(DIRETRIZES_PUBLICADO){renderDiretrizesInto(el);return;}
   el.innerHTML='<div class="ph"><h1>📋 Diretrizes</h1><p>Resumos de diretrizes (ADA, ATA, Endocrine Society) para consulta rápida.</p></div>'
     +'<div class="ref-soon"><div class="ref-soon-ico">🔜</div><h2>Em breve</h2>'
     +'<p>Estamos preparando resumos das principais diretrizes de endocrinologia para você consultar rapidinho durante os estudos e a prática clínica.</p>'
@@ -6223,18 +6344,30 @@ function admRefSecHTML(){
     +'<div class="g2" style="margin-bottom:.7rem"><div class="fld2" style="margin:0"><label>Fonte</label><input type="text" id="adm-ref-fonte" placeholder="Ex: ADA, ATA, Endocrine Society" value="'+esc(g?g.fonte:'')+'"></div><div class="fld2" style="margin:0"><label>Ano</label><input type="text" id="adm-ref-ano" placeholder="Ex: 2024" value="'+esc(g?g.ano:'')+'"></div></div>'
     +'<div class="g2" style="margin-bottom:.7rem"><div class="fld2" style="margin:0"><label>Subespecialidade</label><input type="text" id="adm-ref-sub" placeholder="Ex: Diabetes, Tireoide" value="'+esc(g?g.sub:'')+'"></div><div class="fld2" style="margin:0"><label>Link da diretriz (opcional)</label><input type="text" id="adm-ref-url" placeholder="https://…" value="'+esc(g?g.url:'')+'"></div></div>'
     +'<div class="fld2" style="margin-bottom:.7rem"><label>Título</label><input type="text" id="adm-ref-titulo" placeholder="Ex: Diagnóstico de Diabetes Mellitus" value="'+esc(g?g.titulo:'')+'"></div>'
-    +'<div class="fld2"><label>Pontos-chave (um por linha)</label><textarea id="adm-ref-pts" rows="5" placeholder="Glicemia de jejum ≥126 mg/dL&#10;HbA1c ≥6,5%&#10;…">'+esc(g?(g.pts||[]).join('\n'):'')+'</textarea></div>'
+    +'<div class="fld2" style="margin-bottom:.7rem"><label>Pontos-chave / bullets (um por linha)</label><textarea id="adm-ref-pts" rows="5" placeholder="Glicemia de jejum ≥126 mg/dL&#10;HbA1c ≥6,5%&#10;…">'+esc(g?(g.pts||[]).join('\n'):'')+'</textarea></div>'
+    +'<div class="fld2"><label>Resumo em texto corrido</label><textarea id="adm-ref-resumo" rows="5" placeholder="Parágrafo(s) resumindo a diretriz. Aceita **negrito** e listas com - (markdown simples).">'+esc(g?(g.resumo||''):'')+'</textarea></div>'
+    +'<div style="font-size:.68rem;color:var(--t3);margin:.2rem 0 .7rem">🃏 Flashcards e 🧠 mapa mental são gerados pela IA a partir dos bullets/resumo — use os botões em cada diretriz abaixo após salvar.</div>'
     +'<div style="display:flex;gap:6px"><button class="btn btn-primary" id="btn-adm-ref-save">'+(g?'💾 Salvar alterações':'+ Adicionar diretriz')+'</button><button class="btn btn-outline" id="btn-adm-ref-cancel">Cancelar</button></div></div>'
   ):'';
   var rows=diretrizes.map(function(d,i){
+    var nFlash=Array.isArray(d.flashcards)?d.flashcards.length:0;
+    var hasMapa=!!(d.mapa&&(d.mapa.central||(d.mapa.nodes&&d.mapa.nodes.length)));
+    var status='<div class="adm-ref-gen">'
+      +'Texto: '+(d.resumo?'<b>ok</b>':'—')+' · '
+      +'Flashcards: '+(nFlash?('<b>'+nFlash+'</b>'):'—')+' · '
+      +'Mapa: '+(hasMapa?'<b>ok</b>':'—')+'</div>';
     return '<div class="adm-ref-row"><div class="arr-top"><div><span class="ref-badge">'+esc(d.fonte)+' · '+esc(d.ano)+'</span> <span class="arr-meta">'+esc(d.sub||'')+'</span><h4>'+esc(d.titulo)+'</h4></div>'
-      +'<div class="adm-ref-acts"><button class="btn btn-outline btn-sm" data-adm-refedit="'+i+'">Editar</button><button class="btn btn-outline btn-sm" data-adm-refdel="'+i+'" style="color:var(--red);border-color:var(--red)">🗑</button></div></div>'
-      +'<ul>'+(d.pts||[]).map(function(p){return '<li>'+esc(p)+'</li>';}).join('')+'</ul></div>';
+      +'<div class="adm-ref-acts">'
+      +'<button class="btn btn-outline btn-sm" data-adm-refflash="'+i+'">🃏 '+(nFlash?'Refazer':'Gerar')+'</button>'
+      +'<button class="btn btn-outline btn-sm" data-adm-refmapa="'+i+'">🧠 '+(hasMapa?'Refazer':'Gerar')+'</button>'
+      +'<button class="btn btn-outline btn-sm" data-adm-refedit="'+i+'">Editar</button>'
+      +'<button class="btn btn-outline btn-sm" data-adm-refdel="'+i+'" style="color:var(--red);border-color:var(--red)">🗑</button></div></div>'
+      +'<ul>'+(d.pts||[]).map(function(p){return '<li>'+esc(p)+'</li>';}).join('')+'</ul>'+status+'</div>';
   }).join('');
-  return '<div class="adm-ph" style="display:flex;align-items:flex-start;justify-content:space-between;gap:.6rem;flex-wrap:wrap"><div><h1>Diretrizes</h1></div><div style="display:flex;gap:.5rem;flex-wrap:wrap"><button class="btn btn-primary" id="btn-adm-ref-new" style="padding:.55rem 1.1rem">+ Nova diretriz</button></div></div>'
+  return '<div class="adm-ph" style="display:flex;align-items:flex-start;justify-content:space-between;gap:.6rem;flex-wrap:wrap"><div><h1>Diretrizes</h1></div><div style="display:flex;gap:.5rem;flex-wrap:wrap"><button class="btn btn-outline" id="btn-adm-ref-preview" style="padding:.55rem 1rem">👁 Pré-visualizar como aluno</button><button class="btn btn-primary" id="btn-adm-ref-new" style="padding:.55rem 1.1rem">+ Nova diretriz</button></div></div>'
     +'<div class="adm-pc">'
     +formHTML
-    +'<div class="card" style="margin-bottom:1.1rem"><div style="font-size:.62rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--t3);margin-bottom:.3rem">Conteúdo da aba Referência</div><div style="font-size:1.15rem;font-weight:700;color:var(--tx);margin-bottom:.35rem">Resumos de diretrizes para consulta rápida</div><div style="font-size:.79rem;color:var(--t2);line-height:1.55">Edite aqui os resumos (ADA, ATA, Endocrine Society…). <b>Para os alunos a aba ainda exibe “Em breve”</b> — a publicação será liberada numa próxima etapa.</div></div>'
+    +'<div class="card" style="margin-bottom:1.1rem"><div style="font-size:.62rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--t3);margin-bottom:.3rem">Conteúdo da aba Diretrizes</div><div style="font-size:1.15rem;font-weight:700;color:var(--tx);margin-bottom:.35rem">Resumos por subespecialidade — bullets, texto, flashcards e mapa mental</div><div style="font-size:.79rem;color:var(--t2);line-height:1.55">Cadastre os bullets e o resumo; gere flashcards e mapa mental com a IA. <b>Para os alunos a aba ainda exibe “Em breve”</b> — use “Pré-visualizar como aluno” para conferir antes de publicar.</div></div>'
     +'<div class="adm-ref-list">'+(rows||'<div class="empty">Nenhuma diretriz cadastrada. Clique em “+ Nova diretriz”.</div>')+'</div>'
     +'</div>';
 }
@@ -6741,12 +6874,50 @@ function bindAdmSec(sec){
       var titulo=val('adm-ref-titulo');
       if(!titulo){notify('Informe o título da diretriz.','err');return;}
       var pts=(document.getElementById('adm-ref-pts').value||'').split('\n').map(function(s){return s.trim();}).filter(Boolean);
-      var obj={fonte:val('adm-ref-fonte')||'—',ano:val('adm-ref-ano'),sub:val('adm-ref-sub'),titulo:titulo,pts:pts,url:val('adm-ref-url')};
+      var prev=(admRefEdit!==null&&diretrizes[admRefEdit])?diretrizes[admRefEdit]:{};
+      var obj={fonte:val('adm-ref-fonte')||'—',ano:val('adm-ref-ano'),sub:val('adm-ref-sub'),titulo:titulo,pts:pts,resumo:val('adm-ref-resumo'),url:val('adm-ref-url')};
+      // Preserva flashcards/mapa já gerados (cache IA) ao editar.
+      if(prev.flashcards)obj.flashcards=prev.flashcards;
+      if(prev.mapa)obj.mapa=prev.mapa;
       if(admRefEdit!==null&&diretrizes[admRefEdit])diretrizes[admRefEdit]=obj;else diretrizes.unshift(obj);
       persistDiretrizes();admRefShowForm=false;admRefEdit=null;renderAdmSec('ref');notify('Diretriz salva.','ok');
     });
     main.querySelectorAll('[data-adm-refedit]').forEach(function(b){b.addEventListener('click',function(){admRefEdit=parseInt(b.dataset.admRefedit);admRefShowForm=true;renderAdmSec('ref');document.getElementById('adm-main').scrollTop=0;});});
     main.querySelectorAll('[data-adm-refdel]').forEach(function(b){b.addEventListener('click',function(){var i=parseInt(b.dataset.admRefdel);var d=diretrizes[i];if(!confirm('Excluir a diretriz "'+((d&&d.titulo)||'')+'"? Esta ação não pode ser desfeita.'))return;diretrizes.splice(i,1);persistDiretrizes();renderAdmSec('ref');});});
+    function dirBaseTxt(d){return 'Diretriz: '+(d.titulo||'')+(d.fonte?(' ('+d.fonte+(d.ano?(' '+d.ano):'')+')'):'')+'.\nPontos-chave:\n'+((d.pts||[]).map(function(p){return '- '+p;}).join('\n'))+(d.resumo?('\nResumo:\n'+d.resumo):'');}
+    main.querySelectorAll('[data-adm-refflash]').forEach(function(b){b.addEventListener('click',function(){
+      var i=parseInt(b.dataset.admRefflash),d=diretrizes[i];if(!d)return;
+      if(!(d.pts&&d.pts.length)&&!d.resumo){notify('Cadastre bullets ou resumo antes de gerar.','err');return;}
+      b.disabled=true;b.innerHTML=ldHTML('Gerando...');
+      callAIJson('Você é professor de endocrinologia. Gere flashcards de estudo objetivos e clinicamente corretos em português do Brasil.',
+        'A partir do conteúdo abaixo, gere de 4 a 6 flashcards (pergunta curta + resposta direta). Retorne APENAS JSON no formato {"cards":[{"q":"...","a":"..."}]}.\n\n'+dirBaseTxt(d),1200,1)
+      .then(function(r){
+        var cards=(r&&Array.isArray(r.cards))?r.cards.filter(function(c){return c&&c.q&&c.a;}).map(function(c){return {q:String(c.q),a:String(c.a)};}):[];
+        if(!cards.length)throw new Error('IA não retornou flashcards.');
+        d.flashcards=cards;persistDiretrizes();renderAdmSec('ref');notify(cards.length+' flashcards gerados.','ok');
+      }).catch(function(e){notify('Erro ao gerar flashcards: '+(e.message||'falha'),'err');b.disabled=false;b.innerHTML='🃏 Gerar';});
+    });});
+    main.querySelectorAll('[data-adm-refmapa]').forEach(function(b){b.addEventListener('click',function(){
+      var i=parseInt(b.dataset.admRefmapa),d=diretrizes[i];if(!d)return;
+      if(!(d.pts&&d.pts.length)&&!d.resumo){notify('Cadastre bullets ou resumo antes de gerar.','err');return;}
+      b.disabled=true;b.innerHTML=ldHTML('Gerando...');
+      callAIJson('Você é professor de endocrinologia. Crie mapas mentais de estudo claros e corretos em português do Brasil.',
+        'A partir do conteúdo abaixo, gere um mapa mental. Retorne APENAS JSON no formato {"central":"tema central curto","nodes":[{"label":"ramo","children":["item","item"]}]}. Use de 3 a 5 ramos, cada um com 2 a 4 itens curtos.\n\n'+dirBaseTxt(d),1200,1)
+      .then(function(r){
+        if(!r||!r.central||!Array.isArray(r.nodes)||!r.nodes.length)throw new Error('IA não retornou um mapa válido.');
+        var mapa={central:String(r.central),nodes:r.nodes.filter(function(n){return n&&n.label;}).map(function(n){return {label:String(n.label),children:(Array.isArray(n.children)?n.children.map(String):[])};})};
+        d.mapa=mapa;persistDiretrizes();renderAdmSec('ref');notify('Mapa mental gerado.','ok');
+      }).catch(function(e){notify('Erro ao gerar mapa: '+(e.message||'falha'),'err');b.disabled=false;b.innerHTML='🧠 Gerar';});
+    });});
+    var rPrev=document.getElementById('btn-adm-ref-preview');
+    if(rPrev)rPrev.addEventListener('click',function(){
+      refSubSel='';refFlashOpen={};
+      main.innerHTML='<button class="dir-back" id="btn-adm-ref-prevback" style="margin-bottom:1rem">← Voltar ao editor</button>'
+        +'<div style="background:var(--warn-bg);border:1px solid var(--warn-bd);color:var(--warn-tx);border-radius:10px;padding:.5rem .8rem;font-size:.74rem;margin-bottom:1rem">👁 Pré-visualização — é exatamente o que o aluno verá quando a aba for publicada.</div>'
+        +'<div id="adm-ref-preview-body"></div>';
+      var pv=document.getElementById('adm-ref-preview-body');renderDiretrizesInto(pv);
+      var pb=document.getElementById('btn-adm-ref-prevback');if(pb)pb.addEventListener('click',function(){renderAdmSec('ref');});
+    });
   }
 
   if(sec==='mural'){
