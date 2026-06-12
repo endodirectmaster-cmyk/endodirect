@@ -22,11 +22,24 @@ set public = excluded.public,
     file_size_limit = excluded.file_size_limit,
     allowed_mime_types = excluded.allowed_mime_types;
 
+-- Listagem restrita aos admins. A exibição pública das imagens usa URLs
+-- públicas (getPublicUrl) servidas via /object/public/, que NÃO dependem de
+-- política SELECT no bucket público — então restringir aqui bloqueia a
+-- enumeração anônima dos arquivos sem afetar nada na exibição do site.
 drop policy if exists "endodirect_assets_public_read" on storage.objects;
-create policy "endodirect_assets_public_read"
+drop policy if exists "endodirect_assets_admin_list" on storage.objects;
+create policy "endodirect_assets_admin_list"
 on storage.objects
 for select
-using (bucket_id = 'endodirect-assets');
+to authenticated
+using (
+  bucket_id = 'endodirect-assets'
+  and exists (
+    select 1
+    from public.endodirect_admins a
+    where lower(a.email) = lower(auth.jwt() ->> 'email')
+  )
+);
 
 drop policy if exists "endodirect_assets_admin_insert" on storage.objects;
 create policy "endodirect_assets_admin_insert"

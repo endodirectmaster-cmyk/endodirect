@@ -2345,6 +2345,7 @@ function refreshAfterRemoteState(){
   try{renderSavedCrono();}catch(e){}
   try{renderNoteList();}catch(e){}
   try{markLockedNavItems();}catch(e){}
+  try{maybeLandMedicoHome();}catch(e){} // médico: tela de início = Mural (após acessos carregarem)
   try{if(currentUser&&currentUser.role==='admin'){refreshAdminIdentity();renderAdmSec(admCurrentSec||'analytics');}}catch(e){}
 }
 function canUseRemoteState(){
@@ -2695,6 +2696,7 @@ function showMMModal(){var m=document.getElementById('lp-mm-modal');if(m)m.class
 function hideMMModal(){var m=document.getElementById('lp-mm-modal');if(m)m.classList.remove('on');}
 function startApp(){
   var u=currentUser;
+  medicoHomeApplied=false; // re-avalia a tela inicial do médico a cada login/onboarding
   startSessionWatcher();
   var isAdmin=u.role==='admin';
   var app=document.getElementById('app-screen');
@@ -2725,7 +2727,7 @@ function startApp(){
     goPanel('adm');
     renderAdmSec(admRestoreSec());
   }else{
-    goPanel('dash');initAll();
+    goPanel(homePanel());initAll();
     try{markLockedNavItems();}catch(e){}
   }
 }
@@ -2749,6 +2751,7 @@ function maybeOnboardAfterHydrate(){
   if(prof&&prof.perfil){
     currentUser.profile=prof;currentUser.sub=profileDisplayLabel(prof);
     try{setText('tb-usub',profileDisplayLabel(prof));}catch(e){}
+    try{maybeLandMedicoHome();}catch(e){} // médico abre no Mural (tela de início)
     return;
   }
   openOnboard();
@@ -3222,7 +3225,7 @@ function ckGrantSuccess(msg){
   closeCheckout();hideAssineScreen();
   try{notify(msg||'Pagamento aprovado! Acesso liberado. 🎉','ok');}catch(e){}
   var ap=document.getElementById('app-screen');if(ap&&currentUser)ap.style.display=(currentUser.role==='admin')?'block':'flex';
-  try{goPanel('dash');}catch(e){}
+  try{goPanel(homePanel());}catch(e){}
   try{remoteStateLoaded=false;hydrateRemoteState();}catch(e){}
 }
 function ckVerify(){
@@ -3453,6 +3456,21 @@ var PANEL_MIN_TIER={rx:2, presc:2};
 // inclusive estudantes, sujeita apenas ao gating de plano.)
 function userPerfil(){var p=(currentUser&&currentUser.profile)||lsGet('user_profile')||{};return p.perfil||'';}
 function prescProfileOk(){var pf=userPerfil();return pf==='Residente'||pf==='Endocrinologista'||pf==='Outros';}
+// Tela inicial: médicos (residente/endocrinologista/outros) abrem direto no
+// Mural de atualizações; estudantes seguem no Dashboard. Cai pro dash se o
+// mural não estiver visível (ex.: degustação depois dos 7 dias).
+function homePanel(){return (prescProfileOk()&&canSeePanel('mural'))?'mural':'dash';}
+// Como perfil e acessos só chegam no hydrate, reforça a tela inicial do médico
+// depois que o estado remoto carrega — mas só se ele ainda estiver na tela
+// padrão (Dashboard), para não atrapalhar quem já navegou. Uma vez por sessão.
+var medicoHomeApplied=false;
+function maybeLandMedicoHome(){
+  if(medicoHomeApplied)return;
+  if(!(currentUser&&currentUser.role==='aluno')||isAdminUser())return;
+  if(!prescProfileOk()||!canSeePanel('mural'))return;
+  var dp=document.getElementById('panel-dash');
+  if(dp&&dp.classList.contains('on')){medicoHomeApplied=true;goPanel('mural');}
+}
 function planRank(){var k=currentPlanKey();return k==='gold'?2:(k==='standard'?1:0);}
 function isAdminUser(){return !!(currentUser&&currentUser.role==='admin');}
 function hasScope(scope){return !scope||isAdminUser()||userAcessos.indexOf(scope)>=0;}
@@ -6923,9 +6941,22 @@ function renderPerfil(){
     +'<p style="font-size:.78rem;color:var(--t2);margin:.1rem 0 .8rem">Escolha as subespecialidades que mais te interessam e a sua newsletter diária priorizará esses temas. Sem nenhuma marcada, você recebe os destaques gerais do dia.</p>'
     +'<div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:.5rem;margin-bottom:.85rem">'+nlBoxes+'</div>'
     +'<div style="display:flex;align-items:center;gap:.7rem"><button class="btn btn-primary" id="btn-pf-nl-save">💾 Salvar preferências</button><span id="pf-nl-msg" style="font-size:.76rem;font-weight:600"></span></div></div>';
+  // Card de assinatura — plano atual + upgrade/cancelamento.
+  var _planK=currentPlanKey();
+  var _planNames={standard:'Standard',gold:'Gold'};
+  var _planNice=_planK?_planNames[_planK]:'Degustação (gratuito)';
+  var _planDesc=_planK
+    ? 'Seu acesso atual é o pacote <b>'+esc(_planNice)+'</b>. Você pode fazer upgrade ou cancelar a renovação quando quiser — o acesso permanece até o fim do período já pago.'
+    : 'Você está no <b>modo degustação</b>. Assine um pacote para liberar todo o conteúdo.';
+  var assinaturaCard='<div class="card" style="margin-top:1rem"><div class="card-head"><span class="card-title">💳 Assinatura</span><span class="tag '+(_planK?'tag-grn':'tag-blue')+'">'+esc(_planNice)+'</span></div>'
+    +'<p style="font-size:.78rem;color:var(--t2);margin:.1rem 0 .85rem;line-height:1.55">'+_planDesc+'</p>'
+    +'<div style="display:flex;gap:6px;flex-wrap:wrap">'
+    +(_planK==='gold'?'':'<button class="btn btn-primary" id="btn-pf-upgrade">'+(_planK?'⬆️ Fazer upgrade':'✨ Assinar agora')+'</button>')
+    +(_planK?'<button class="btn btn-outline" id="btn-pf-cancel-sub">Cancelar assinatura</button>':'')
+    +'</div></div>';
   body.innerHTML='<div class="ph" style="display:flex;align-items:flex-start;justify-content:space-between;flex-wrap:wrap;gap:.6rem"><div><h1>Meu perfil</h1><p>Gerencie seus dados cadastrais.</p></div>'+(perfilEdit?'':'<button class="btn btn-primary" id="btn-perfil-edit">✏️ Editar perfil</button>')+'</div>'
     +'<div class="card" style="margin-bottom:1rem"><div style="display:flex;align-items:center;gap:1rem"><div class="tb-avatar" style="width:58px;height:58px;font-size:1.3rem;background:var(--navy);border-radius:14px">'+esc(nome.charAt(0))+'</div><div style="flex:1"><div style="font-size:1.3rem;font-weight:800">'+esc(nome)+'</div><div style="font-size:.8rem;color:var(--t2)">'+esc(label)+'</div><div style="margin-top:.4rem"><span class="tag tag-blue">'+esc(email)+'</span></div></div></div></div>'
-    +inner+(perfilEdit?'':nlCard);
+    +inner+(perfilEdit?'':assinaturaCard+nlCard);
   wirePerfil();
 }
 function wirePerfil(){
@@ -6933,6 +6964,16 @@ function wirePerfil(){
   if(bedit)bedit.addEventListener('click',function(){perfilEdit=true;renderPerfil();});
   var bcancel=document.getElementById('btn-pf-cancel');
   if(bcancel)bcancel.addEventListener('click',function(){perfilEdit=false;renderPerfil();});
+  // Assinatura: upgrade (abre os pacotes) e cancelamento (via suporte).
+  var bUp=document.getElementById('btn-pf-upgrade');
+  if(bUp)bUp.addEventListener('click',function(){showAssineScreen((currentUser&&currentUser.email)||'',{upgrade:!isDegustacao()});});
+  var bCancelSub=document.getElementById('btn-pf-cancel-sub');
+  if(bCancelSub)bCancelSub.addEventListener('click',function(){
+    var subj=encodeURIComponent('Cancelamento de assinatura — Endodirect');
+    var corpo=encodeURIComponent('Olá, gostaria de cancelar a renovação da minha assinatura Endodirect.\n\nE-mail da conta: '+((currentUser&&currentUser.email)||'')+'\nPlano atual: '+(currentPlanKey()||'—')+'\n\nObrigado(a).');
+    notify('Para cancelar, envie um e-mail para contato@endodirect.com.br. Seu acesso continua até o fim do período já pago.','ok');
+    try{window.location.href='mailto:contato@endodirect.com.br?subject='+subj+'&body='+corpo;}catch(e){}
+  });
   var bsave=document.getElementById('btn-pf-save');
   if(bsave)bsave.addEventListener('click',function(){
     var err=document.getElementById('pf-err');
@@ -7463,7 +7504,7 @@ document.addEventListener('DOMContentLoaded',function(){
     // pacotes a partir da degustação / de um recurso bloqueado).
     hideAssineScreen();
     var ap=document.getElementById('app-screen');
-    if(ap&&currentUser){ap.style.display=(currentUser.role==='admin')?'block':'flex';try{goPanel(assineReturnPanel||(currentUser.role==='admin'?'adm':'dash'));}catch(e){}}
+    if(ap&&currentUser){ap.style.display=(currentUser.role==='admin')?'block':'flex';try{goPanel(assineReturnPanel||(currentUser.role==='admin'?'adm':homePanel()));}catch(e){}}
     else{var ls=document.getElementById('login-screen');if(ls)ls.style.display='flex';}
   });
   // Checkout in-app: abre o formulário ao clicar em "Assinar <plano>".
