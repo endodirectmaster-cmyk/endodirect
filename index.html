@@ -22,11 +22,18 @@ function initProfVideos(){
   function start(v){
     if(v.dataset.started)return; v.dataset.started='1';
     var src=v.getAttribute('data-hls');
+    // Corta em um ponto ALEATÓRIO no meio da aula (15%–75% da duração), nunca no
+    // começo (evita "teaser" de intro). Troca de trecho a cada ~12–18s.
+    function seekRandom(){var d=v.duration; if(isFinite(d)&&d>14){try{v.currentTime=d*(0.15+Math.random()*0.6);}catch(e){}}}
+    function loop(){setTimeout(function(){seekRandom();loop();},12000+Math.random()*6000);}
     try{
       if(v.canPlayType('application/vnd.apple.mpegurl')){v.src=src;}
       else if(window.Hls&&window.Hls.isSupported()){var h=new window.Hls();h.loadSource(src);h.attachMedia(v);}
       else{v.src=src;}
-      v.muted=true; var p=v.play(); if(p&&p.catch)p.catch(function(){});
+      v.muted=true;
+      v.addEventListener('loadedmetadata',function(){seekRandom();},{once:true});
+      var p=v.play(); if(p&&p.catch)p.catch(function(){});
+      loop();
     }catch(e){}
   }
   if('IntersectionObserver' in window){
@@ -766,6 +773,7 @@ textarea{resize:vertical;line-height:1.6}
 .lp-mm-branch ul{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:.4rem}
 .lp-mm-branch li{font-size:.8rem;color:#cdd4df;line-height:1.4;padding-left:.6rem;border-left:2px solid #2a3a5c}
 .lp-show{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:1.1rem}
+@media(min-width:880px){.lp-shot-wide{grid-column:span 2}}
 .lp-shot{background:#14203a;border:1px solid #223052;border-radius:16px;padding:1.1rem;display:flex;flex-direction:column}
 .lp-shot-tag{font-size:.62rem;font-weight:800;letter-spacing:.07em;text-transform:uppercase;color:#6f9bff;margin-bottom:.7rem}
 .lp-q-stem{font-size:.82rem;color:#e6e9ef;line-height:1.5;margin-bottom:.7rem}
@@ -924,7 +932,7 @@ textarea{resize:vertical;line-height:1.6}
             <div class="lp-mural-meta">Atualizado pelo radar diário · Fonte: Congresso Europeu de Obesidade</div>
           </div>
         </div>
-        <div class="lp-shot">
+        <div class="lp-shot lp-shot-wide">
           <div class="lp-shot-tag">🎬 Cursos · Videoaulas</div>
           <div class="lp-prof-grid">
             <div><div class="lp-prof-frame"><iframe src="https://player.vimeo.com/video/1199272118?background=1&muted=1&dnt=1&title=0&byline=0&portrait=0" loading="lazy" allow="autoplay" title="Dr. Rodolpho"></iframe></div><div class="lp-prof-name">Dr. Rodolpho</div></div>
