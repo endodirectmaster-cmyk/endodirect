@@ -3654,9 +3654,30 @@ function updatePlanBadge(){
     }
   }
 }
+// Layout do menu por perfil: médicos (residente/endocrinologista/outros) não
+// veem o Dashboard — o Mural assume o TOPO da seção Estudo, no lugar dele.
+// Estudantes mantêm o Dashboard no topo e o Mural em "Pessoal".
+function applyProfileMenuLayout(){
+  var box=document.getElementById('sb-aluno');if(!box)return;
+  var dash=box.querySelector('.sb-item[data-p="dash"]');
+  var mural=box.querySelector('.sb-item[data-p="mural"]');
+  if(!dash||!mural)return;
+  if(prescProfileOk()){
+    dash.style.display='none';
+    if(mural.getAttribute('data-moved')!=='1'){box.insertBefore(mural,dash);mural.setAttribute('data-moved','1');}
+  }else{
+    dash.style.display='';
+    if(mural.getAttribute('data-moved')==='1'){
+      var chat=box.querySelector('.sb-item[data-p="chat"]');
+      if(chat)box.insertBefore(mural,chat); // volta o Mural pra "Pessoal" (antes do Chat IA)
+      mural.removeAttribute('data-moved');
+    }
+  }
+}
 function markLockedNavItems(){
   try{updatePlanBadge();}catch(e){}
   var sp=document.getElementById('sb-presc');if(sp)sp.style.display=prescProfileOk()?'':'none';
+  try{applyProfileMenuLayout();}catch(e){}
   document.querySelectorAll('#sb-aluno .sb-item[data-p]').forEach(function(b){
     var locked=!canSeePanel(b.dataset.p);
     var has=b.querySelector('.sb-lock');
@@ -6945,9 +6966,10 @@ function renderPerfil(){
   var _planK=currentPlanKey();
   var _planNames={standard:'Standard',gold:'Gold'};
   var _planNice=_planK?_planNames[_planK]:'Degustação (gratuito)';
-  var _planDesc=_planK
-    ? 'Seu acesso atual é o pacote <b>'+esc(_planNice)+'</b>. Você pode fazer upgrade ou cancelar a renovação quando quiser — o acesso permanece até o fim do período já pago.'
-    : 'Você está no <b>modo degustação</b>. Assine um pacote para liberar todo o conteúdo.';
+  var _planDesc;
+  if(_planK==='gold')_planDesc='Seu acesso atual é o pacote <b>Gold</b> — o mais completo. Você pode cancelar a renovação quando quiser; o acesso permanece até o fim do período já pago.';
+  else if(_planK)_planDesc='Seu acesso atual é o pacote <b>'+esc(_planNice)+'</b>. Você pode fazer upgrade ou cancelar a renovação quando quiser — o acesso permanece até o fim do período já pago.';
+  else _planDesc='Você está no <b>modo degustação</b>. Assine um pacote para liberar todo o conteúdo.';
   var assinaturaCard='<div class="card" style="margin-top:1rem"><div class="card-head"><span class="card-title">💳 Assinatura</span><span class="tag '+(_planK?'tag-grn':'tag-blue')+'">'+esc(_planNice)+'</span></div>'
     +'<p style="font-size:.78rem;color:var(--t2);margin:.1rem 0 .85rem;line-height:1.55">'+_planDesc+'</p>'
     +'<div style="display:flex;gap:6px;flex-wrap:wrap">'
