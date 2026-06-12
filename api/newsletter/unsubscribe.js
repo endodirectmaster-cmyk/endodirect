@@ -1,7 +1,16 @@
 // Descadastro da newsletter. Link assinado por token (HMAC) por destinatário.
 // GET  → registra o opt-out e mostra página de confirmação.
 // POST → one-click (RFC 8058, cabeçalho List-Unsubscribe-Post) — registra e responde 200.
+const crypto = require('crypto');
 const { addUnsubscribe, unsubToken } = require('../../lib/newsletter');
+
+// Comparação em tempo constante (o token é HMAC por destinatário; evita
+// side-channel de timing na validação do link de descadastro).
+function safeEq(a, b) {
+  const ba = Buffer.from(String(a || '')), bb = Buffer.from(String(b || ''));
+  if (ba.length !== bb.length) return false;
+  return crypto.timingSafeEqual(ba, bb);
+}
 
 function esc(s) {
   return String(s == null ? '' : s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
@@ -20,7 +29,7 @@ module.exports = async function handler(req, res) {
     const u = new URL(req.url, 'http://localhost');
     const email = String(u.searchParams.get('e') || '').trim().toLowerCase();
     const token = String(u.searchParams.get('t') || '').trim();
-    const valid = email && email.indexOf('@') > 0 && token && token === unsubToken(email);
+    const valid = email && email.indexOf('@') > 0 && token && safeEq(token, unsubToken(email));
     if (!valid) {
       res.statusCode = 400;
       return res.end(page('Link de cancelamento inválido ou expirado. Se o problema persistir, responda ao e-mail da newsletter.'));
