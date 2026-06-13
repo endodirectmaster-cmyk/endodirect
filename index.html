@@ -2443,7 +2443,7 @@ function applyStatePayload(payload){
   if(Array.isArray(payload.podcasts))podcasts=payload.podcasts;
   if(Array.isArray(payload.adm_cursos))admCursos=payload.adm_cursos;
   if(Array.isArray(payload.adm_estudantes))admEstudantes=normalizeAdmEstudantes(payload.adm_estudantes);
-  if(Array.isArray(payload.diretrizes))diretrizes=payload.diretrizes;
+  if(Array.isArray(payload.diretrizes)){diretrizes=payload.diretrizes;diretrizes.forEach(function(d){if(d&&d.sub)d.sub=dirMigrateSub(d.sub);});}
   if(payload.adm_perfil&&typeof payload.adm_perfil==='object'){
     // Segurança: só aceita o perfil salvo se o e-mail bater com o do admin
     // logado. Um perfil com e-mail de OUTRO admin (resíduo de estado antigo)
@@ -2888,7 +2888,7 @@ function startApp(){
     var al=document.getElementById('logo-adm-img');var tbLogo=document.getElementById('logo-tb-img');
     if(al&&tbLogo)al.innerHTML='<img src="'+tbLogo.src+'" alt="Endodirect" style="width:30px;height:30px;object-fit:contain">';
     goPanel('adm');
-    renderAdmSec(admRestoreSec());
+    renderAdmSec('ref'); // professores iniciam na tela de Diretrizes
   }else{
     goPanel(homePanel());initAll();
     try{markLockedNavItems();}catch(e){}
@@ -6194,9 +6194,9 @@ function admMapasHTML(){
     +'</div>';
 }
 function admRestoreSec(){
-  var ok=['analytics','mural','provas','cursos','estudantes','conteudo','mapas','chat','perfil','suporte'];
+  var ok=['analytics','mural','ref','provas','cursos','estudantes','conteudo','mapas','chat','perfil','suporte'];
   var s=lsGet('adm_sec');
-  return ok.indexOf(s)>=0?s:'analytics';
+  return ok.indexOf(s)>=0?s:'ref';
 }
 function renderAdmSec(sec){
   admCurrentSec=sec;
