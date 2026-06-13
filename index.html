@@ -2045,7 +2045,7 @@ var RESUMABLE_THRESHOLD_BYTES=20*1024*1024;
 var MAX_AUDIO_UPLOAD_BYTES=200*1024*1024;
 var supabaseClient=null;
 var remoteStateLoaded=false,remoteStateSaveTimer=null,remoteStateWarned=false;
-var REMOTE_STATE_KEYS=['q','fc','mm','notes','crono','sf_results','perf','provas','adm_avisos','adm_questoes','podcasts','adm_cursos','adm_estudantes','adm_perfil','user_profile','mm_shared','deg_trials','ck_billing','presc_emitidas','diretrizes'];
+var REMOTE_STATE_KEYS=['q','fc','mm','notes','crono','sf_results','perf','provas','adm_avisos','adm_questoes','podcasts','adm_cursos','adm_estudantes','adm_perfil','user_profile','mm_shared','deg_trials','ck_billing','presc_emitidas','diretrizes','diretrizes_temas'];
 // Base CANÔNICA para os redirects de auth (confirmação, recuperação, OAuth).
 // Sempre www em produção — evita cair no apex (endodirect.com.br) que pode não
 // responder e deixar o usuário preso após confirmar o e-mail. Em localhost usa
@@ -2418,7 +2418,7 @@ function globalStatePayload(){
   // professor grava apenas os avisos manuais em adm_avisos. A leitura
   // (member_content/public_content) mescla os dois.
   // Mescla as chaves geridas pelo servidor (newsletter_*) para NÃO apagá-las no save.
-  return Object.assign({},globalServerKeys,{provas:provasDB,adm_avisos:admAvisos.filter(function(a){return !isRadarAuto(a);}),radar_avisos:radarAvisos,radar_hidden:radarHidden,adm_questoes:admQuestoes,podcasts:podcasts,adm_cursos:admCursos,adm_estudantes:admEstudantes,mm_shared:sharedMM,diretrizes:diretrizes});
+  return Object.assign({},globalServerKeys,{provas:provasDB,adm_avisos:admAvisos.filter(function(a){return !isRadarAuto(a);}),radar_avisos:radarAvisos,radar_hidden:radarHidden,adm_questoes:admQuestoes,podcasts:podcasts,adm_cursos:admCursos,adm_estudantes:admEstudantes,mm_shared:sharedMM,diretrizes:diretrizes,diretrizes_temas:dirTemasExtra});
 }
 function currentStatePayload(){
   return Object.assign({},userStatePayload(),globalStatePayload());
@@ -2444,6 +2444,7 @@ function applyStatePayload(payload){
   if(Array.isArray(payload.adm_cursos))admCursos=payload.adm_cursos;
   if(Array.isArray(payload.adm_estudantes))admEstudantes=normalizeAdmEstudantes(payload.adm_estudantes);
   if(Array.isArray(payload.diretrizes)){diretrizes=payload.diretrizes;diretrizes.forEach(function(d){if(d&&d.sub)d.sub=dirMigrateSub(d.sub);});}
+  if(Array.isArray(payload.diretrizes_temas))dirTemasExtra=payload.diretrizes_temas;
   if(payload.adm_perfil&&typeof payload.adm_perfil==='object'){
     // Segurança: só aceita o perfil salvo se o e-mail bater com o do admin
     // logado. Um perfil com e-mail de OUTRO admin (resíduo de estado antigo)
@@ -2612,7 +2613,7 @@ function callAIJson(sys,usr,maxTok,retries,model){
     throw e;
   });
 }
-function mdInline(s){return esc(s).replace(/\*\*(.+?)\*\*/g,'<strong>$1</strong>').replace(/`([^`]+)`/g,'<code>$1</code>');}
+function mdInline(s){return esc(s).replace(/\*\*(.+?)\*\*/g,'<strong>$1</strong>').replace(/__(.+?)__/g,'<u>$1</u>').replace(/(^|[^*])\*([^*\n]+)\*(?!\*)/g,'$1<em>$2</em>').replace(/`([^`]+)`/g,'<code>$1</code>');}
 function isMarkdownTableSep(line){return /^\s*\|?[\s:-]+\|[\s|:-]*$/.test(line||'');}
 function mdToHtml(md){
   var lines=String(md||'').replace(/\r/g,'').split('\n');
@@ -5718,6 +5719,9 @@ var DIR_SUBS=['Diabetes','Tireoide','Adrenal','Obesidade','Lípides','Osteometab
 function dirMigrateSub(s){var v=String(s||'').trim();if(v==='Reprodução')return 'Endocrinologia Masculina';return v;}
 // Diretrizes editáveis pelo admin (CRUD). Semente = REF_GUIDELINES.
 var diretrizes=(function(){var arr;try{var s=lsGet('diretrizes');arr=(Array.isArray(s)&&s.length)?s:REF_GUIDELINES.slice();}catch(e){arr=REF_GUIDELINES.slice();}arr.forEach(function(d){if(d&&d.sub)d.sub=dirMigrateSub(d.sub);});return arr;})();
+// Temas criados pelo admin ainda sem diretriz ([{sub,tema}]). Aparecem só no
+// editor (o aluno vê apenas temas com conteúdo).
+var dirTemasExtra=(function(){try{var s=lsGet('diretrizes_temas');return Array.isArray(s)?s:[];}catch(e){return [];}})();
 var refFonteFilter='';
 // Quando true, os alunos veem a aba real (navegação por subespecialidade +
 // formatos). Enquanto false, veem "Em breve" — só o admin pré-visualiza.
@@ -5729,11 +5733,18 @@ var refFlashOpen={};              // estado de flip dos flashcards (chave "i-j")
 // Tema (assunto) de uma diretriz; cai no título quando não definido.
 function dirTemaOf(d){return (String((d&&d.tema)||'').trim())||(String((d&&d.titulo)||'').trim())||'Geral';}
 // Lista de temas (com contagem) dentro de uma subespecialidade.
-function dirTemaList(sub){
+// withExtras=true (editor) inclui os temas criados pelo admin ainda sem
+// diretriz; o aluno só vê temas com conteúdo.
+function dirTemaList(sub,withExtras){
   var seen={},order=[];
   diretrizes.forEach(function(d){
     if((String(d.sub||'Geral').trim()||'Geral')!==sub)return;
     var t=dirTemaOf(d);if(!(t in seen)){seen[t]=0;order.push(t);}seen[t]++;
+  });
+  if(withExtras)dirTemasExtra.forEach(function(x){
+    if(!x||x.sub!==sub)return;
+    var t=String(x.tema||'').trim();
+    if(t&&!(t in seen)){seen[t]=0;order.push(t);}
   });
   return order.map(function(t){return {tema:t,count:seen[t]};});
 }
@@ -6382,7 +6393,7 @@ function persistAdm(){lsSet('adm_avisos',admAvisos);lsSet('adm_questoes',admQues
 var admMuralShowForm=false,admMuralEdit=null,admMuralFilter='',admMuralTipoFilter='',admMuralSort='novos';
 // ---------- REFERÊNCIA RÁPIDA (admin CRUD) ----------
 var admRefShowForm=false,admRefEdit=null,admRefPdfB64=null,admRefPdfName='',admRefSub='',admRefTema='';
-function persistDiretrizes(){lsSet('diretrizes',diretrizes);queueRemoteStateSave();}
+function persistDiretrizes(){lsSet('diretrizes',diretrizes);lsSet('diretrizes_temas',dirTemasExtra);queueRemoteStateSave();}
 // Flashcards ⇄ texto ("Pergunta :: Resposta" por linha).
 function flashToText(cards){return (Array.isArray(cards)?cards:[]).map(function(c){return (c.q||'')+' :: '+(c.a||'');}).join('\n');}
 function parseFlashText(txt){
@@ -6425,8 +6436,18 @@ function admRefSecHTML(){
     +'<div class="fld2" style="margin-bottom:.7rem"><label>Tema (assunto dentro da subespecialidade)</label><input type="text" id="adm-ref-tema" list="dl-ref-temas" placeholder="Ex: Hipotireoidismo, Nódulo, Osteoporose…" value="'+esc(g?(g.tema||''):(admRefTema||''))+'"><datalist id="dl-ref-temas">'+(function(){var t={};diretrizes.forEach(function(d){if(d&&d.tema)t[d.tema]=1;});return Object.keys(t).map(function(x){return '<option value="'+esc(x)+'">';}).join('');})()+'</datalist><div style="font-size:.66rem;color:var(--t3);margin-top:.25rem">Vira uma aba dentro da subespecialidade. Se ficar vazio, usa o título.</div></div>'
     +'<div class="fld2" style="margin-bottom:.7rem"><label>Título</label><input type="text" id="adm-ref-titulo" placeholder="Ex: Diagnóstico de Diabetes Mellitus" value="'+esc(g?g.titulo:'')+'"></div>'
     +'<div class="fld2" style="margin-bottom:.7rem"><label>Pontos-chave / bullets (um por linha)</label><textarea id="adm-ref-pts" rows="5" placeholder="Glicemia de jejum ≥126 mg/dL&#10;HbA1c ≥6,5%&#10;…">'+esc(g?(g.pts||[]).join('\n'):'')+'</textarea></div>'
-    +'<div class="fld2" style="margin-bottom:.7rem"><label>Resumo em texto corrido</label><textarea id="adm-ref-resumo" rows="5" placeholder="Parágrafo(s) resumindo a diretriz. Aceita **negrito** e listas com - (markdown simples).">'+esc(g?(g.resumo||''):'')+'</textarea></div>'
-    +'<div class="fld2" style="margin-bottom:.7rem"><label>🃏 Flashcards (uma por linha: Pergunta :: Resposta)</label><textarea id="adm-ref-flash" rows="5" placeholder="Qual o alvo de HbA1c no adulto? :: &lt;7% (individualizar)">'+esc(g?flashToText(g.flashcards):'')+'</textarea></div>'
+    +'<div class="fld2" style="margin-bottom:.7rem"><label>Resumo em texto corrido</label>'
+      +'<div style="display:flex;gap:.3rem;margin-bottom:.35rem;flex-wrap:wrap">'
+        +'<button type="button" class="btn btn-outline btn-sm" data-md-wrap="**" title="Negrito"><b>B</b></button>'
+        +'<button type="button" class="btn btn-outline btn-sm" data-md-wrap="*" title="Itálico"><i>I</i></button>'
+        +'<button type="button" class="btn btn-outline btn-sm" data-md-wrap="__" title="Sublinhado"><u>S</u></button>'
+        +'<button type="button" class="btn btn-outline btn-sm" data-md-list title="Lista com marcadores">• Lista</button>'
+      +'</div>'
+      +'<textarea id="adm-ref-resumo" rows="6" placeholder="Parágrafo(s) resumindo a diretriz.">'+esc(g?(g.resumo||''):'')+'</textarea>'
+      +'<div style="font-size:.66rem;color:var(--t3);margin-top:.25rem">Selecione um trecho e use os botões: <b>**negrito**</b>, <i>*itálico*</i>, <u>__sublinhado__</u>, listas com “- ”. O aluno vê o texto já formatado.</div></div>'
+    +'<div class="fld2" style="margin-bottom:.7rem"><label>🃏 Flashcards (cartões de pergunta e resposta)</label>'
+      +'<div style="font-size:.7rem;color:var(--t2);line-height:1.5;margin-bottom:.35rem">Escreva <b>um cartão por linha</b>: primeiro a <b>pergunta</b>, depois o separador <code>::</code> (dois-pontos duplos), depois a <b>resposta</b>. O aluno vê a pergunta e clica no cartão para revelar a resposta.</div>'
+      +'<textarea id="adm-ref-flash" rows="5" placeholder="Qual o alvo de HbA1c no adulto não gestante? :: &lt;7%, individualizando entre 6,5% e 8%&#10;Quais exames diagnosticam DM? :: Glicemia de jejum ≥126, HbA1c ≥6,5% ou TOTG 2h ≥200">'+esc(g?flashToText(g.flashcards):'')+'</textarea></div>'
     +'<div class="fld2"><label>🧠 Mapa mental (texto estruturado)</label><textarea id="adm-ref-mapa" rows="6" placeholder="Central: Diagnóstico de DM&#10;Exames&#10;- Glicemia de jejum&#10;- HbA1c&#10;Confirmação&#10;- 2º exame se assintomático">'+esc(g?mapaToText(g.mapa):'')+'</textarea></div>'
     +'<div style="font-size:.68rem;color:var(--t3);margin:.4rem 0 .7rem">Dica: você também pode (re)gerar flashcards e mapa com a IA pelos botões de cada diretriz na lista abaixo.</div>'
     +'<div style="display:flex;gap:6px"><button class="btn btn-primary" id="btn-adm-ref-save">'+(g?'💾 Salvar alterações':'+ Adicionar diretriz')+'</button><button class="btn btn-outline" id="btn-adm-ref-cancel">Cancelar</button></div></div>'
@@ -6441,7 +6462,7 @@ function admRefSecHTML(){
       return '<button class="dir-sub-btn" data-admref-sub="'+esc(s.sub)+'"><div class="dsb-ico">'+dirSubIcon(s.sub)+'</div><h3>'+esc(s.sub)+'</h3><div class="dsb-cnt">'+s.count+' diretriz'+(s.count===1?'':'es')+'</div></button>';
     }).join('')+'</div>';
   }else if(!admRefTema){
-    var temas=dirTemaList(admRefSub);
+    var temas=dirTemaList(admRefSub,true);
     body='<button class="dir-back" data-admref-back>← Todas as subespecialidades</button>'
       +'<div class="ph" style="margin-top:0"><h1>'+dirSubIcon(admRefSub)+' '+esc(admRefSub)+'</h1>'+(temas.length?'<p>Escolha um tema para editar as diretrizes.</p>':'')+'</div>'
       +(temas.length
@@ -6983,7 +7004,24 @@ function bindAdmSec(sec){
     var rTBack=main.querySelector('[data-admref-tback]');
     if(rTBack)rTBack.addEventListener('click',function(){admRefTema='';renderAdmSec('ref');});
     var rNew=document.getElementById('btn-adm-ref-new');
-    if(rNew)rNew.addEventListener('click',function(){admRefShowForm=!admRefShowForm;admRefEdit=null;admRefPdfB64=null;admRefPdfName='';renderAdmSec('ref');document.getElementById('adm-main').scrollTop=0;});
+    if(rNew)rNew.addEventListener('click',function(){
+      // Na grade de temas o botão cria um tema novo (vira uma aba da
+      // subespecialidade); dentro do tema abre o formulário de diretriz.
+      if(admRefSub&&!admRefTema&&!admRefShowForm){
+        var nome=prompt('Nome do novo tema em '+admRefSub+':\n(ex.: Hipotireoidismo, Osteoporose, Nódulo tireoidiano)');
+        if(nome==null)return;
+        nome=String(nome).trim();
+        if(!nome){notify('Informe o nome do tema.','err');return;}
+        var temAssim=dirTemaList(admRefSub,true).some(function(t){return t.tema.toLowerCase()===nome.toLowerCase();});
+        if(temAssim){notify('Já existe um tema com esse nome em '+admRefSub+'.','err');return;}
+        dirTemasExtra.push({sub:admRefSub,tema:nome});
+        persistDiretrizes();
+        admRefTema=nome;renderAdmSec('ref');
+        notify('Tema "'+nome+'" criado. Adicione a primeira diretriz.','ok');
+        return;
+      }
+      admRefShowForm=!admRefShowForm;admRefEdit=null;admRefPdfB64=null;admRefPdfName='';renderAdmSec('ref');document.getElementById('adm-main').scrollTop=0;
+    });
     var rCancel=document.getElementById('btn-adm-ref-cancel');
     if(rCancel)rCancel.addEventListener('click',function(){admRefShowForm=false;admRefEdit=null;admRefPdfB64=null;admRefPdfName='';renderAdmSec('ref');});
     var rSave=document.getElementById('btn-adm-ref-save');
@@ -6999,6 +7037,24 @@ function bindAdmSec(sec){
       persistDiretrizes();admRefShowForm=false;admRefEdit=null;admRefPdfB64=null;admRefPdfName='';
       admRefSub=String(obj.sub||'Geral');admRefTema=dirTemaOf(obj); // abre onde a diretriz ficou
       renderAdmSec('ref');notify('Diretriz salva.','ok');
+    });
+    // Toolbar de formatação do resumo: envolve a seleção com os marcadores.
+    main.querySelectorAll('[data-md-wrap]').forEach(function(b){b.addEventListener('click',function(){
+      var ta=document.getElementById('adm-ref-resumo');if(!ta)return;
+      var mk=b.dataset.mdWrap,s=ta.selectionStart,e=ta.selectionEnd,v=ta.value;
+      var sel=v.slice(s,e)||'texto';
+      ta.value=v.slice(0,s)+mk+sel+mk+v.slice(e);
+      ta.focus();ta.setSelectionRange(s+mk.length,s+mk.length+sel.length);
+    });});
+    var mdList=main.querySelector('[data-md-list]');
+    if(mdList)mdList.addEventListener('click',function(){
+      var ta=document.getElementById('adm-ref-resumo');if(!ta)return;
+      var s=ta.selectionStart,e=ta.selectionEnd,v=ta.value;
+      var ini=v.lastIndexOf('\n',s-1)+1; // começo da primeira linha selecionada
+      var bloco=v.slice(ini,e);
+      var novo=bloco?bloco.split('\n').map(function(l){return /^\s*-\s/.test(l)?l:('- '+l);}).join('\n'):'- item';
+      ta.value=v.slice(0,ini)+novo+v.slice(e);
+      ta.focus();ta.setSelectionRange(ini,ini+novo.length);
     });
     var rPdf=document.getElementById('adm-ref-pdf');
     if(rPdf)rPdf.addEventListener('change',function(e){
