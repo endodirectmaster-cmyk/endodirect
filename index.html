@@ -646,18 +646,30 @@ textarea{resize:vertical;line-height:1.6}
 .dir-card li{font-size:.86rem;color:var(--t2);margin:.25rem 0;line-height:1.5}
 .dir-card .dir-texto{font-size:.88rem;color:var(--t2);line-height:1.62}
 .dir-card .dir-texto p{margin:.4rem 0}
-.dir-flash-wrap{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:.7rem;margin-top:.3rem}
-.dir-flash{border:1px solid var(--bd2);background:var(--s2);border-radius:12px;padding:.9rem;cursor:pointer;min-height:96px;display:flex;flex-direction:column;justify-content:center;transition:.15s}
-.dir-flash:hover{border-color:var(--blue)}
-.dir-flash .dfl-q{font-size:.84rem;font-weight:700;color:var(--tx)}
-.dir-flash .dfl-a{font-size:.82rem;color:var(--grn);line-height:1.5}
-.dir-flash .dfl-hint{font-size:.66rem;color:var(--t3);margin-top:.5rem}
-.dir-mapa{margin-top:.3rem}
-.dir-mapa-central{display:inline-block;background:var(--blue);color:#fff;font-weight:700;border-radius:10px;padding:.5rem .9rem;margin-bottom:.7rem;font-size:.92rem}
-.dir-mapa-node{border-left:3px solid var(--bd2);margin:.5rem 0 .5rem .4rem;padding:.1rem 0 .1rem .8rem}
-.dir-mapa-node>.dmn-label{font-weight:700;color:var(--blue2);font-size:.86rem}
-.dir-mapa-node ul{margin:.25rem 0 0;padding-left:1.1rem}
-.dir-mapa-node li{font-size:.82rem;color:var(--t2);margin:.18rem 0}
+.dir-flash-wrap{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:.8rem;margin-top:.3rem}
+/* Flashcard com flip 3D */
+.dir-flip{height:160px;cursor:pointer;perspective:1200px;outline:none}
+.dir-flip-inner{position:relative;width:100%;height:100%;transition:transform .55s cubic-bezier(.4,.2,.2,1);transform-style:preserve-3d}
+.dir-flip.flipped .dir-flip-inner{transform:rotateY(180deg)}
+.dir-flip-face{position:absolute;inset:0;backface-visibility:hidden;-webkit-backface-visibility:hidden;border:1px solid var(--bd2);border-radius:14px;padding:.95rem;display:flex;flex-direction:column;justify-content:center;overflow:auto}
+.dir-flip-front{background:var(--s2)}
+.dir-flip-back{background:var(--grn-l);border-color:var(--grn);transform:rotateY(180deg)}
+.dir-flip:hover .dir-flip-face{border-color:var(--blue)}
+.dir-flip .dfl-q{font-size:.86rem;font-weight:700;color:var(--tx);line-height:1.4}
+.dir-flip .dfl-a{font-size:.83rem;color:var(--grn);line-height:1.5}
+.dir-flip .dfl-hint{font-size:.64rem;color:var(--t3);margin-top:.55rem}
+/* Mapa mental colapsável (ramos → subramos ao clicar) */
+.dir-mm{margin-top:.4rem;display:flex;flex-direction:column;align-items:center;gap:1rem}
+.dir-mm-central{background:var(--navy);color:#fff;font-weight:800;border-radius:14px;padding:.7rem 1.15rem;font-size:.95rem;text-align:center;box-shadow:0 8px 20px rgba(0,0,0,.25);max-width:440px;line-height:1.35}
+.dir-mm-branches{display:flex;flex-direction:column;gap:.6rem;width:100%;max-width:540px}
+.dir-mm-branch{display:flex;flex-direction:column;gap:.45rem}
+.dir-mm-node{display:flex;align-items:center;justify-content:space-between;gap:.6rem;color:#fff;border:none;border-radius:10px;padding:.62rem .95rem;font-size:.86rem;font-weight:700;cursor:pointer;font-family:var(--font);box-shadow:0 3px 9px rgba(0,0,0,.15);width:100%;text-align:left;line-height:1.35}
+.dir-mm-node[disabled]{cursor:default}
+.dmm-caret{transition:transform .2s;font-size:.72rem;flex-shrink:0}
+.dir-mm-branch.open .dmm-caret{transform:rotate(90deg)}
+.dir-mm-subs{display:none;flex-direction:column;gap:.4rem;padding-left:1rem;border-left:2px dashed var(--bd2);margin-left:.7rem}
+.dir-mm-branch.open .dir-mm-subs{display:flex}
+.dir-mm-sub{background:var(--surface);border:1.5px solid var(--bd2);border-radius:9px;padding:.45rem .75rem;font-size:.8rem;color:var(--tx);line-height:1.45}
 .dir-empty-fmt{font-size:.82rem;color:var(--t3);font-style:italic;padding:.3rem 0}
 .dir-tema-card{position:relative;border:1px solid var(--bd);border-left:4px solid var(--blue);border-radius:14px;background:var(--surface);padding:1rem 1.1rem;cursor:pointer;transition:.15s;display:flex;flex-direction:column;min-height:104px}
 .dir-tema-card:hover{border-color:var(--blue);transform:translateY(-2px)}
@@ -5797,10 +5809,10 @@ function dirCardHTML(d,i){
   if(refFormat==='flash'){
     var cards=Array.isArray(d.flashcards)?d.flashcards:[];
     body=cards.length?('<div class="dir-flash-wrap">'+cards.map(function(c,j){
-      var open=refFlashOpen[i+'-'+j];
-      return '<div class="dir-flash" data-dir-flash="'+i+'-'+j+'">'+(open
-        ?'<div class="dfl-a">'+esc(c.a||'')+'</div><div class="dfl-hint">↩︎ ver pergunta</div>'
-        :'<div class="dfl-q">'+esc(c.q||'')+'</div><div class="dfl-hint">clique para ver a resposta</div>')+'</div>';
+      return '<div class="dir-flip" data-dir-flash="'+i+'-'+j+'" tabindex="0"><div class="dir-flip-inner">'
+        +'<div class="dir-flip-face dir-flip-front"><div class="dfl-q">'+esc(c.q||'')+'</div><div class="dfl-hint">clique para ver a resposta</div></div>'
+        +'<div class="dir-flip-face dir-flip-back"><div class="dfl-a">'+esc(c.a||'')+'</div><div class="dfl-hint">↩︎ clique para voltar</div></div>'
+        +'</div></div>';
     }).join('')+'</div>'):'<div class="dir-empty-fmt">Flashcards ainda não disponíveis.</div>';
   }else if(refFormat==='mapa'){
     body=dirMapaHTML(d.mapa);
@@ -5814,14 +5826,18 @@ function dirCardHTML(d,i){
 }
 function dirMapaHTML(mapa){
   if(!mapa||(!mapa.central&&!(mapa.nodes&&mapa.nodes.length)))return '<div class="dir-empty-fmt">Mapa mental ainda não disponível.</div>';
-  var h='<div class="dir-mapa">';
-  if(mapa.central)h+='<div class="dir-mapa-central">'+esc(mapa.central)+'</div>';
-  (mapa.nodes||[]).forEach(function(n){
-    h+='<div class="dir-mapa-node"><div class="dmn-label">'+esc(n.label||'')+'</div>'
-      +((n.children&&n.children.length)?('<ul>'+n.children.map(function(c){return '<li>'+esc(c)+'</li>';}).join('')+'</ul>'):'')
+  var h='<div class="dir-mm">';
+  if(mapa.central)h+='<div class="dir-mm-central">'+esc(mapa.central)+'</div>';
+  h+='<div class="dir-mm-branches">';
+  (mapa.nodes||[]).forEach(function(n,bi){
+    var col=BCOLORS[bi%BCOLORS.length],kids=(n.children&&n.children.length)?n.children:[];
+    h+='<div class="dir-mm-branch">'
+      +'<button class="dir-mm-node" data-dir-mm-branch style="background:'+col+'"'+(kids.length?'':' disabled')+'>'
+        +'<span>'+esc(n.label||'')+'</span>'+(kids.length?'<span class="dmm-caret">▸</span>':'')+'</button>'
+      +(kids.length?('<div class="dir-mm-subs">'+kids.map(function(c){return '<div class="dir-mm-sub">'+esc(c)+'</div>';}).join('')+'</div>'):'')
       +'</div>';
   });
-  return h+'</div>';
+  return h+'</div></div>';
 }
 // Visão em 3 níveis: subespecialidade → tema → diretriz (nos 4 formatos).
 function diretrizesViewHTML(){
@@ -5870,8 +5886,11 @@ function bindDiretrizesView(root){
   if(back)back.addEventListener('click',function(){refSubSel='';refTemaSel='';renderDiretrizesInto(root);});
   var tback=root.querySelector('[data-dir-temaback]');
   if(tback)tback.addEventListener('click',function(){refTemaSel='';renderDiretrizesInto(root);});
-  root.querySelectorAll('[data-dir-fmt]').forEach(function(b){b.addEventListener('click',function(){refFormat=b.dataset.dirFmt;refFlashOpen={};renderDiretrizesInto(root);});});
-  root.querySelectorAll('[data-dir-flash]').forEach(function(b){b.addEventListener('click',function(){var k=b.dataset.dirFlash;refFlashOpen[k]=!refFlashOpen[k];renderDiretrizesInto(root);});});
+  root.querySelectorAll('[data-dir-fmt]').forEach(function(b){b.addEventListener('click',function(){refFormat=b.dataset.dirFmt;renderDiretrizesInto(root);});});
+  // Flip 3D: alterna a classe direto no elemento (anima sem re-renderizar).
+  root.querySelectorAll('[data-dir-flash]').forEach(function(b){b.addEventListener('click',function(){b.classList.toggle('flipped');});});
+  // Mapa mental: abre/fecha os subramos ao clicar no ramo.
+  root.querySelectorAll('[data-dir-mm-branch]').forEach(function(b){b.addEventListener('click',function(){if(b.parentNode)b.parentNode.classList.toggle('open');});});
 }
 function renderDiretrizesInto(root){root.innerHTML=diretrizesViewHTML();bindDiretrizesView(root);}
 // Painel do aluno. Enquanto DIRETRIZES_PUBLICADO=false mostra "Em breve".
