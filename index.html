@@ -1860,6 +1860,7 @@ textarea{resize:vertical;line-height:1.6}
           <button class="adm-nav" data-asec="estudantes">👥 Estudantes</button>
           <button class="adm-nav" data-asec="conteudo">🎧 Podcasts</button>
           <button class="adm-nav" data-asec="mapas">✦ Mapas Mentais</button>
+          <button class="adm-nav" data-asec="calc">🧮 Calculadoras</button>
           <button class="adm-nav" data-asec="chat">💬 Chat</button>
           <div class="sb-sec" style="margin-top:.8rem">Conta</div>
           <button class="adm-nav" data-asec="perfil">👤 Perfil</button>
@@ -4857,21 +4858,25 @@ function finishSR(){
 }
 
 // ── CALCULADORAS ──
-var activeCalc=null;
-function initCalc(){
-  var el=document.getElementById('calc-grid');if(!el)return;
+// calcRoot permite usar a mesma calculadora no painel do aluno (#panel-calc) e
+// no do professor (adm-main), escopando as buscas por id ao container ativo.
+var activeCalc=null,calcRoot=null;
+function calcEl(sel){return (calcRoot||document.getElementById('panel-calc')||document).querySelector(sel);}
+function initCalc(root){
+  calcRoot=root||document.getElementById('panel-calc')||document;
+  var el=calcEl('#calc-grid');if(!el)return;
   el.innerHTML=CALCS.map(function(c){return'<div class="card" style="cursor:pointer" data-calc="'+c.id+'"><div style="font-size:.84rem;font-weight:700;color:var(--tx);margin-bottom:2px">'+esc(c.name)+'</div><div style="font-size:.66rem;color:var(--t3);margin-bottom:.3rem">'+esc(c.area)+'</div><div style="font-size:.71rem;color:var(--t2)">'+esc(c.desc)+'</div></div>';}).join('');
   if(activeCalc)openCalc(activeCalc);
 }
 function closeCalc(){
   activeCalc=null;
-  var det=document.getElementById('calc-detail');if(det)det.innerHTML='';
-  var grid=document.getElementById('calc-grid');if(grid)grid.scrollIntoView({behavior:'smooth',block:'nearest'});
+  var det=calcEl('#calc-detail');if(det)det.innerHTML='';
+  var grid=calcEl('#calc-grid');if(grid)grid.scrollIntoView({behavior:'smooth',block:'nearest'});
 }
 function openCalc(id){
   activeCalc=id;
   var c=CALCS.find(function(x){return x.id===id;});if(!c)return;
-  var det=document.getElementById('calc-detail');
+  var det=calcEl('#calc-detail');if(!det)return;
   var closeBtn='<button class="btn btn-outline btn-sm" id="calc-close" style="margin-left:auto" title="Minimizar">✕ Minimizar</button>';
   if(c.external){
     det.innerHTML='<div class="card" style="margin-top:.85rem"><div class="card-head"><span style="font-size:.92rem;font-weight:700">'+esc(c.name)+'</span><span class="tag tag-blue">'+esc(c.area)+'</span>'+closeBtn+'</div>'
@@ -4879,7 +4884,7 @@ function openCalc(id){
       +'<a class="btn btn-primary" href="'+esc(c.link)+'" target="_blank" rel="noopener" style="justify-content:center;text-decoration:none">'+esc(c.cta||'Abrir ferramenta oficial')+' ↗</a>'
       +(c.note?'<div style="font-size:.68rem;color:var(--t3);margin-top:.6rem;line-height:1.5;border-top:1px solid var(--bd);padding-top:.5rem">ℹ️ '+esc(c.note)+'</div>':'')
       +'</div>';
-    var cbx=document.getElementById('calc-close');if(cbx)cbx.addEventListener('click',closeCalc);
+    var cbx=det.querySelector('#calc-close');if(cbx)cbx.addEventListener('click',closeCalc);
     det.scrollIntoView({behavior:'smooth',block:'nearest'});
     return;
   }
@@ -4892,16 +4897,17 @@ function openCalc(id){
     (c.note?'<div style="font-size:.68rem;color:var(--t3);margin-top:.6rem;line-height:1.5;border-top:1px solid var(--bd);padding-top:.5rem">ℹ️ '+esc(c.note)+'</div>':'')+
   '</div>';
   det.querySelectorAll('[data-calc-field]').forEach(function(inp){inp.addEventListener('input',calcUpdate);inp.addEventListener('change',calcUpdate);});
-  var cb2=document.getElementById('calc-close');if(cb2)cb2.addEventListener('click',closeCalc);
+  var cb2=det.querySelector('#calc-close');if(cb2)cb2.addEventListener('click',closeCalc);
   calcUpdate();
   det.scrollIntoView({behavior:'smooth',block:'nearest'});
 }
 function calcUpdate(){
   var c=CALCS.find(function(x){return x.id===activeCalc;});if(!c)return;
   var v={};
-  document.querySelectorAll('[data-calc-field]').forEach(function(inp){v[inp.dataset.calcField]=inp.value;});
+  var scope=calcRoot||document.getElementById('panel-calc')||document;
+  scope.querySelectorAll('[data-calc-field]').forEach(function(inp){v[inp.dataset.calcField]=inp.value;});
   var allEmpty=c.fields.every(function(f){return f.type==='select'||!v[f.id];});
-  var res=document.getElementById('calc-result');if(!res)return;
+  var res=calcEl('#calc-result');if(!res)return;
   if(allEmpty){res.innerHTML='';return;}
   var s=c.calc(v);
   var ok=isFinite(s);
@@ -6281,7 +6287,7 @@ function admMapasHTML(){
     +'</div>';
 }
 function admRestoreSec(){
-  var ok=['analytics','mural','ref','provas','cursos','estudantes','conteudo','mapas','chat','perfil','suporte'];
+  var ok=['analytics','mural','ref','provas','cursos','estudantes','conteudo','mapas','calc','chat','perfil','suporte'];
   var s=lsGet('adm_sec');
   return ok.indexOf(s)>=0?s:'ref';
 }
@@ -6289,7 +6295,7 @@ function renderAdmSec(sec){
   admCurrentSec=sec;
   try{lsSet('adm_sec',sec);}catch(e){}
   document.querySelectorAll('.adm-nav[data-asec]').forEach(function(b){b.classList.toggle('on',b.dataset.asec===sec);});
-  var titles={provas:'Provas & Questões',cursos:'Cursos',estudantes:'Estudantes',analytics:'Analytics',mural:'Mural',ref:'Diretrizes',conteudo:'Podcasts',mapas:'Mapas Mentais',chat:'Chat',perfil:'Perfil',suporte:'Suporte'};
+  var titles={provas:'Provas & Questões',cursos:'Cursos',estudantes:'Estudantes',analytics:'Analytics',mural:'Mural',ref:'Diretrizes',conteudo:'Podcasts',mapas:'Mapas Mentais',calc:'Calculadoras',chat:'Chat',perfil:'Perfil',suporte:'Suporte'};
   setText('adm-sec-title',titles[sec]||sec);
   var m=document.getElementById('adm-main');if(!m)return;
   if(sec==='provas')m.innerHTML=admProvasSecHTML();
@@ -6299,6 +6305,7 @@ function renderAdmSec(sec){
   else if(sec==='mural')m.innerHTML=admMuralSecHTML();
   else if(sec==='ref')m.innerHTML=admRefSecHTML();
   else if(sec==='conteudo')m.innerHTML=admConteudoHTML();
+  else if(sec==='calc')m.innerHTML=admCalcHTML();
   else if(sec==='chat')m.innerHTML=admChatHTML();
   else if(sec==='perfil')m.innerHTML=admPerfilHTML();
   else if(sec==='suporte')m.innerHTML=admSuporteHTML();
@@ -6694,6 +6701,11 @@ function admConteudoHTML(){
 }
 
 // ---------- CHAT ----------
+function admCalcHTML(){
+  return '<div class="adm-ph"><div><h1>Calculadoras</h1></div></div>'
+    +'<div class="adm-pc"><div style="font-size:.8rem;color:var(--t2);line-height:1.55;margin-bottom:1rem">As mesmas calculadoras clínicas disponíveis aos alunos — escores e fórmulas de endocrinologia.</div>'
+    +'<div class="g3" id="calc-grid"></div><div id="calc-detail"></div></div>';
+}
 function admChatHTML(){
   return '<div class="adm-ph"><h1>Chat</h1><p>Assistente de endocrinologia para tirar dúvidas.</p></div>'
   +'<div class="adm-pc"><div class="card" style="padding:0;overflow:hidden;height:62vh;display:flex;flex-direction:column">'
@@ -7444,6 +7456,8 @@ function bindAdmSec(sec){
     var bPrev=document.getElementById('btn-adm-mural-preview');
     if(bPrev)bPrev.addEventListener('click',function(){notify('Pré-visualização do mural do aluno','info');});
   }
+
+  if(sec==='calc'){ activeCalc=null; initCalc(main); }
 
   if(sec==='chat'){
     var send=document.getElementById('btn-adm-chat-send');
