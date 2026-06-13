@@ -5802,9 +5802,9 @@ function dirSubList(){
 }
 // Renderiza um card de diretriz no formato escolhido.
 function dirCardHTML(d,i){
+  // Sem título por card: o tema (cabeçalho da aba) já é o título da seção.
   var head='<div class="dir-card-top"><span class="ref-badge">'+esc(d.fonte||'—')+(d.ano?(' · '+esc(d.ano)):'')+'</span>'
-    +(d.url?'<a href="'+esc(d.url)+'" target="_blank" rel="noopener" class="ref-link" style="margin-left:auto">Fonte ↗</a>':'')+'</div>'
-    +(d.titulo?('<h3>'+esc(d.titulo)+'</h3>'):'');
+    +(d.url?'<a href="'+esc(d.url)+'" target="_blank" rel="noopener" class="ref-link" style="margin-left:auto">Fonte ↗</a>':'')+'</div>';
   var body='';
   if(refFormat==='flash'){
     var cards=Array.isArray(d.flashcards)?d.flashcards:[];
@@ -6525,7 +6525,7 @@ function admRefSecHTML(){
           +'Texto: '+(d.resumo?'<b>ok</b>':'—')+' · '
           +'Flashcards: '+(nFlash?('<b>'+nFlash+'</b>'):'—')+' · '
           +'Mapa: '+(hasMapa?'<b>ok</b>':'—')+'</div>';
-        return '<div class="adm-ref-row"><div class="arr-top"><div><span class="ref-badge">'+esc(d.fonte)+' · '+esc(d.ano)+'</span> <span class="arr-meta">'+esc(d.sub||'')+'</span><h4>'+esc(d.titulo||d.tema||'Diretriz')+'</h4></div>'
+        return '<div class="adm-ref-row"><div class="arr-top"><div><span class="ref-badge">'+esc(d.fonte)+' · '+esc(d.ano)+'</span> <span class="arr-meta">'+esc(d.sub||'')+'</span><h4>'+esc(d.tema||d.titulo||'Diretriz')+'</h4></div>'
           +'<div class="adm-ref-acts">'
           +'<button class="btn btn-outline btn-sm" data-adm-refflash="'+i+'">🃏 '+(nFlash?'Refazer':'Gerar')+'</button>'
           +'<button class="btn btn-outline btn-sm" data-adm-refmapa="'+i+'">🧠 '+(hasMapa?'Refazer':'Gerar')+'</button>'
