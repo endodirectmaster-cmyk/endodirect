@@ -176,7 +176,9 @@ module.exports = async function handler(req, res) {
     await sendSetPasswordEmail(email);
     return json(res, 200, { ok: true, method: 'credit_card', status: 'paid', order_id: order.id });
   } catch (e) {
-    return json(res, (e && e.status) || 500, { ok: false, error: (e && e.message) || 'Falha ao processar o pagamento.' });
+    var st = (e && e.status) || 500;
+    if (st >= 500) { console.error('[order] erro', (e && e.message) || e); return json(res, 502, { ok: false, error: 'Pagamento temporariamente indisponível. Tente novamente em instantes.' }); }
+    return json(res, st, { ok: false, error: (e && e.message) || 'Falha ao processar o pagamento.' });
   }
 };
 module.exports.config = { maxDuration: 30 };
