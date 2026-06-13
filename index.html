@@ -6379,20 +6379,54 @@ function admSuporteHTML(){
 function persistAdm(){lsSet('adm_avisos',admAvisos);lsSet('adm_questoes',admQuestoes);queueRemoteStateSave();}
 var admMuralShowForm=false,admMuralEdit=null,admMuralFilter='',admMuralTipoFilter='',admMuralSort='novos';
 // ---------- REFERÊNCIA RÁPIDA (admin CRUD) ----------
-var admRefShowForm=false,admRefEdit=null;
+var admRefShowForm=false,admRefEdit=null,admRefPdfB64=null,admRefPdfName='';
 function persistDiretrizes(){lsSet('diretrizes',diretrizes);queueRemoteStateSave();}
+// Flashcards ⇄ texto ("Pergunta :: Resposta" por linha).
+function flashToText(cards){return (Array.isArray(cards)?cards:[]).map(function(c){return (c.q||'')+' :: '+(c.a||'');}).join('\n');}
+function parseFlashText(txt){
+  return String(txt||'').split('\n').map(function(l){return l.trim();}).filter(Boolean).map(function(l){
+    var i=l.indexOf('::');if(i<0)return null;
+    var q=l.slice(0,i).trim(),a=l.slice(i+2).trim();
+    return (q&&a)?{q:q,a:a}:null;
+  }).filter(Boolean);
+}
+// Mapa mental ⇄ texto estruturado ("Central: X" + ramos + "- itens").
+function mapaToText(mapa){
+  if(!mapa||(!mapa.central&&!(mapa.nodes&&mapa.nodes.length)))return '';
+  var out=[];if(mapa.central)out.push('Central: '+mapa.central);
+  (mapa.nodes||[]).forEach(function(n){out.push(n.label||'');(n.children||[]).forEach(function(c){out.push('- '+c);});});
+  return out.join('\n');
+}
+function parseMapaText(txt){
+  var central='',nodes=[],cur=null;
+  String(txt||'').split('\n').forEach(function(raw){
+    var l=raw.trim();if(!l)return;
+    if(/^central\s*:/i.test(l)){central=l.replace(/^central\s*:/i,'').trim();return;}
+    if(/^[-•]\s+/.test(l)){if(cur)cur.children.push(l.replace(/^[-•]\s+/,'').trim());else{cur={label:l.replace(/^[-•]\s+/,'').trim(),children:[]};nodes.push(cur);}return;}
+    cur={label:l,children:[]};nodes.push(cur);
+  });
+  if(!central&&!nodes.length)return null;
+  return {central:central,nodes:nodes};
+}
 function admRefSecHTML(){
   var g=(admRefEdit!==null&&diretrizes[admRefEdit])?diretrizes[admRefEdit]:null;
   var formHTML=admRefShowForm?(
     '<div class="card" style="margin-bottom:1.1rem"><div style="font-size:1rem;font-weight:700;margin-bottom:.3rem">'+(g?'✏️ Editar diretriz':'📋 Nova diretriz')+'</div>'
     +'<div style="font-size:.74rem;color:var(--t2);margin-bottom:.9rem">Resumos exibidos na aba Diretrizes. Para os alunos a aba mostra “Em breve” até a curadoria liberar.</div>'
+    +'<div style="border:1px dashed var(--bd2);border-radius:12px;padding:.85rem 1rem;margin-bottom:1rem;background:var(--s2)">'
+      +'<div style="font-size:.8rem;font-weight:700;color:var(--tx);margin-bottom:.3rem">📄 Importar PDF com IA</div>'
+      +'<div style="font-size:.72rem;color:var(--t2);margin-bottom:.6rem">Envie a diretriz/artigo em PDF. A IA gera resumo, bullets, flashcards e mapa mental — você revisa e edita tudo abaixo antes de salvar.</div>'
+      +'<div style="display:flex;gap:.5rem;align-items:center;flex-wrap:wrap"><input type="file" id="adm-ref-pdf" accept="application/pdf" style="font-size:.74rem"><button class="btn btn-outline btn-sm" id="btn-adm-ref-pdfgen">🤖 Gerar com IA</button><span id="adm-ref-pdf-status" style="font-size:.72rem;color:var(--t3)"></span></div>'
+    +'</div>'
     +'<div class="g2" style="margin-bottom:.7rem"><div class="fld2" style="margin:0"><label>Fonte</label><input type="text" id="adm-ref-fonte" placeholder="Ex: ADA, ATA, Endocrine Society" value="'+esc(g?g.fonte:'')+'"></div><div class="fld2" style="margin:0"><label>Ano</label><input type="text" id="adm-ref-ano" placeholder="Ex: 2024" value="'+esc(g?g.ano:'')+'"></div></div>'
     +'<div class="g2" style="margin-bottom:.7rem"><div class="fld2" style="margin:0"><label>Subespecialidade</label><select id="adm-ref-sub">'+(function(){var cur=g?String(g.sub||''):'';var opts=DIR_SUBS.slice();if(cur&&opts.indexOf(cur)<0)opts.push(cur);return opts.map(function(s){return '<option'+(s===cur?' selected':'')+'>'+esc(s)+'</option>';}).join('');})()+'</select></div><div class="fld2" style="margin:0"><label>Link da diretriz (opcional)</label><input type="text" id="adm-ref-url" placeholder="https://…" value="'+esc(g?g.url:'')+'"></div></div>'
     +'<div class="fld2" style="margin-bottom:.7rem"><label>Tema (assunto dentro da subespecialidade)</label><input type="text" id="adm-ref-tema" list="dl-ref-temas" placeholder="Ex: Hipotireoidismo, Nódulo, Osteoporose…" value="'+esc(g?(g.tema||''):'')+'"><datalist id="dl-ref-temas">'+(function(){var t={};diretrizes.forEach(function(d){if(d&&d.tema)t[d.tema]=1;});return Object.keys(t).map(function(x){return '<option value="'+esc(x)+'">';}).join('');})()+'</datalist><div style="font-size:.66rem;color:var(--t3);margin-top:.25rem">Vira uma aba dentro da subespecialidade. Se ficar vazio, usa o título.</div></div>'
     +'<div class="fld2" style="margin-bottom:.7rem"><label>Título</label><input type="text" id="adm-ref-titulo" placeholder="Ex: Diagnóstico de Diabetes Mellitus" value="'+esc(g?g.titulo:'')+'"></div>'
     +'<div class="fld2" style="margin-bottom:.7rem"><label>Pontos-chave / bullets (um por linha)</label><textarea id="adm-ref-pts" rows="5" placeholder="Glicemia de jejum ≥126 mg/dL&#10;HbA1c ≥6,5%&#10;…">'+esc(g?(g.pts||[]).join('\n'):'')+'</textarea></div>'
-    +'<div class="fld2"><label>Resumo em texto corrido</label><textarea id="adm-ref-resumo" rows="5" placeholder="Parágrafo(s) resumindo a diretriz. Aceita **negrito** e listas com - (markdown simples).">'+esc(g?(g.resumo||''):'')+'</textarea></div>'
-    +'<div style="font-size:.68rem;color:var(--t3);margin:.2rem 0 .7rem">🃏 Flashcards e 🧠 mapa mental são gerados pela IA a partir dos bullets/resumo — use os botões em cada diretriz abaixo após salvar.</div>'
+    +'<div class="fld2" style="margin-bottom:.7rem"><label>Resumo em texto corrido</label><textarea id="adm-ref-resumo" rows="5" placeholder="Parágrafo(s) resumindo a diretriz. Aceita **negrito** e listas com - (markdown simples).">'+esc(g?(g.resumo||''):'')+'</textarea></div>'
+    +'<div class="fld2" style="margin-bottom:.7rem"><label>🃏 Flashcards (uma por linha: Pergunta :: Resposta)</label><textarea id="adm-ref-flash" rows="5" placeholder="Qual o alvo de HbA1c no adulto? :: &lt;7% (individualizar)">'+esc(g?flashToText(g.flashcards):'')+'</textarea></div>'
+    +'<div class="fld2"><label>🧠 Mapa mental (texto estruturado)</label><textarea id="adm-ref-mapa" rows="6" placeholder="Central: Diagnóstico de DM&#10;Exames&#10;- Glicemia de jejum&#10;- HbA1c&#10;Confirmação&#10;- 2º exame se assintomático">'+esc(g?mapaToText(g.mapa):'')+'</textarea></div>'
+    +'<div style="font-size:.68rem;color:var(--t3);margin:.4rem 0 .7rem">Dica: você também pode (re)gerar flashcards e mapa com a IA pelos botões de cada diretriz na lista abaixo.</div>'
     +'<div style="display:flex;gap:6px"><button class="btn btn-primary" id="btn-adm-ref-save">'+(g?'💾 Salvar alterações':'+ Adicionar diretriz')+'</button><button class="btn btn-outline" id="btn-adm-ref-cancel">Cancelar</button></div></div>'
   ):'';
   var rows=diretrizes.map(function(d,i){
@@ -6911,24 +6945,56 @@ function bindAdmSec(sec){
 
   if(sec==='ref'){
     var rNew=document.getElementById('btn-adm-ref-new');
-    if(rNew)rNew.addEventListener('click',function(){admRefShowForm=!admRefShowForm;admRefEdit=null;renderAdmSec('ref');document.getElementById('adm-main').scrollTop=0;});
+    if(rNew)rNew.addEventListener('click',function(){admRefShowForm=!admRefShowForm;admRefEdit=null;admRefPdfB64=null;admRefPdfName='';renderAdmSec('ref');document.getElementById('adm-main').scrollTop=0;});
     var rCancel=document.getElementById('btn-adm-ref-cancel');
-    if(rCancel)rCancel.addEventListener('click',function(){admRefShowForm=false;admRefEdit=null;renderAdmSec('ref');});
+    if(rCancel)rCancel.addEventListener('click',function(){admRefShowForm=false;admRefEdit=null;admRefPdfB64=null;admRefPdfName='';renderAdmSec('ref');});
     var rSave=document.getElementById('btn-adm-ref-save');
     if(rSave)rSave.addEventListener('click',function(){
       function val(id){var e=document.getElementById(id);return e?e.value.trim():'';}
       var titulo=val('adm-ref-titulo');
       if(!titulo){notify('Informe o título da diretriz.','err');return;}
       var pts=(document.getElementById('adm-ref-pts').value||'').split('\n').map(function(s){return s.trim();}).filter(Boolean);
-      var prev=(admRefEdit!==null&&diretrizes[admRefEdit])?diretrizes[admRefEdit]:{};
       var obj={fonte:val('adm-ref-fonte')||'—',ano:val('adm-ref-ano'),sub:val('adm-ref-sub'),tema:val('adm-ref-tema'),titulo:titulo,pts:pts,resumo:val('adm-ref-resumo'),url:val('adm-ref-url')};
-      // Preserva flashcards/mapa já gerados (cache IA) ao editar.
-      if(prev.flashcards)obj.flashcards=prev.flashcards;
-      if(prev.mapa)obj.mapa=prev.mapa;
+      var fc=parseFlashText(val('adm-ref-flash'));if(fc.length)obj.flashcards=fc;
+      var mp=parseMapaText(val('adm-ref-mapa'));if(mp)obj.mapa=mp;
       if(admRefEdit!==null&&diretrizes[admRefEdit])diretrizes[admRefEdit]=obj;else diretrizes.unshift(obj);
-      persistDiretrizes();admRefShowForm=false;admRefEdit=null;renderAdmSec('ref');notify('Diretriz salva.','ok');
+      persistDiretrizes();admRefShowForm=false;admRefEdit=null;admRefPdfB64=null;admRefPdfName='';renderAdmSec('ref');notify('Diretriz salva.','ok');
     });
-    main.querySelectorAll('[data-adm-refedit]').forEach(function(b){b.addEventListener('click',function(){admRefEdit=parseInt(b.dataset.admRefedit);admRefShowForm=true;renderAdmSec('ref');document.getElementById('adm-main').scrollTop=0;});});
+    var rPdf=document.getElementById('adm-ref-pdf');
+    if(rPdf)rPdf.addEventListener('change',function(e){
+      var f=e.target.files&&e.target.files[0];if(!f)return;
+      if(f.type!=='application/pdf'){notify('Selecione um arquivo PDF.','err');return;}
+      if(f.size>15*1024*1024){notify('PDF muito grande (máx 15 MB).','err');return;}
+      var st=document.getElementById('adm-ref-pdf-status');
+      var rdr=new FileReader();rdr.onload=function(ev){admRefPdfB64=String(ev.target.result).split(',')[1];admRefPdfName=f.name;if(st){st.textContent='✓ '+f.name;}};rdr.readAsDataURL(f);
+    });
+    var rPdfGen=document.getElementById('btn-adm-ref-pdfgen');
+    if(rPdfGen)rPdfGen.addEventListener('click',function(){
+      if(!admRefPdfB64){notify('Selecione um PDF primeiro.','err');return;}
+      var st=document.getElementById('adm-ref-pdf-status');
+      rPdfGen.disabled=true;rPdfGen.innerHTML=ldHTML('Lendo PDF...');if(st)st.textContent='';
+      aiRequest({
+        system:'Você é professor de endocrinologia. A partir de uma diretriz/artigo em PDF, produza material de estudo claro, correto e fiel ao documento, em português do Brasil.',
+        prompt:'Leia o documento e retorne APENAS JSON, sem texto fora do JSON, no formato: {"titulo":"título curto","fonte":"sociedade/autor","ano":"ano","resumo":"resumo descritivo bem estruturado em markdown simples (parágrafos, **negrito**, listas com -)","bullets":["ponto-chave"],"flashcards":[{"q":"pergunta curta","a":"resposta direta"}],"mapa":{"central":"tema central curto","nodes":[{"label":"ramo","children":["item","item"]}]}}. Use 5 a 8 bullets, 5 a 8 flashcards e 3 a 5 ramos. Não invente dados fora do documento.',
+        documentBase64:admRefPdfB64,
+        mediaType:'application/pdf',
+        maxTokens:4000
+      }).then(function(raw){
+        var d=parseJ(raw);if(!d)throw new Error('A IA não retornou um JSON válido.');
+        function setVal(id,v){var e=document.getElementById(id);if(e&&v!=null)e.value=v;}
+        var tEl=document.getElementById('adm-ref-titulo');if(tEl&&!tEl.value.trim()&&d.titulo)tEl.value=d.titulo;
+        var fEl=document.getElementById('adm-ref-fonte');if(fEl&&!fEl.value.trim()&&d.fonte)fEl.value=d.fonte;
+        var aEl=document.getElementById('adm-ref-ano');if(aEl&&!aEl.value.trim()&&d.ano)aEl.value=String(d.ano);
+        if(d.resumo)setVal('adm-ref-resumo',String(d.resumo));
+        if(Array.isArray(d.bullets))setVal('adm-ref-pts',d.bullets.map(String).join('\n'));
+        if(Array.isArray(d.flashcards))setVal('adm-ref-flash',flashToText(d.flashcards.filter(function(c){return c&&c.q&&c.a;}).map(function(c){return {q:String(c.q),a:String(c.a)};})));
+        if(d.mapa&&(d.mapa.central||Array.isArray(d.mapa.nodes)))setVal('adm-ref-mapa',mapaToText({central:String(d.mapa.central||''),nodes:(Array.isArray(d.mapa.nodes)?d.mapa.nodes:[]).filter(function(n){return n&&n.label;}).map(function(n){return {label:String(n.label),children:(Array.isArray(n.children)?n.children.map(String):[])};})}));
+        if(st)st.textContent='✓ Gerado — revise e edite os campos.';
+        notify('Conteúdo gerado a partir do PDF. Revise e salve.','ok');
+      }).catch(function(e){notify('Erro ao ler o PDF: '+(e.message||'falha'),'err');if(st)st.textContent='';})
+      .then(function(){rPdfGen.disabled=false;rPdfGen.innerHTML='🤖 Gerar com IA';});
+    });
+    main.querySelectorAll('[data-adm-refedit]').forEach(function(b){b.addEventListener('click',function(){admRefEdit=parseInt(b.dataset.admRefedit);admRefShowForm=true;admRefPdfB64=null;admRefPdfName='';renderAdmSec('ref');document.getElementById('adm-main').scrollTop=0;});});
     main.querySelectorAll('[data-adm-refdel]').forEach(function(b){b.addEventListener('click',function(){var i=parseInt(b.dataset.admRefdel);var d=diretrizes[i];if(!confirm('Excluir a diretriz "'+((d&&d.titulo)||'')+'"? Esta ação não pode ser desfeita.'))return;diretrizes.splice(i,1);persistDiretrizes();renderAdmSec('ref');});});
     function dirBaseTxt(d){return 'Diretriz: '+(d.titulo||'')+(d.fonte?(' ('+d.fonte+(d.ano?(' '+d.ano):'')+')'):'')+'.\nPontos-chave:\n'+((d.pts||[]).map(function(p){return '- '+p;}).join('\n'))+(d.resumo?('\nResumo:\n'+d.resumo):'');}
     main.querySelectorAll('[data-adm-refflash]').forEach(function(b){b.addEventListener('click',function(){
