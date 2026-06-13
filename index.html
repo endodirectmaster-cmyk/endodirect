@@ -6379,7 +6379,7 @@ function admSuporteHTML(){
 function persistAdm(){lsSet('adm_avisos',admAvisos);lsSet('adm_questoes',admQuestoes);queueRemoteStateSave();}
 var admMuralShowForm=false,admMuralEdit=null,admMuralFilter='',admMuralTipoFilter='',admMuralSort='novos';
 // ---------- REFERÊNCIA RÁPIDA (admin CRUD) ----------
-var admRefShowForm=false,admRefEdit=null,admRefPdfB64=null,admRefPdfName='';
+var admRefShowForm=false,admRefEdit=null,admRefPdfB64=null,admRefPdfName='',admRefSub='',admRefTema='';
 function persistDiretrizes(){lsSet('diretrizes',diretrizes);queueRemoteStateSave();}
 // Flashcards ⇄ texto ("Pergunta :: Resposta" por linha).
 function flashToText(cards){return (Array.isArray(cards)?cards:[]).map(function(c){return (c.q||'')+' :: '+(c.a||'');}).join('\n');}
@@ -6419,8 +6419,8 @@ function admRefSecHTML(){
       +'<div style="display:flex;gap:.5rem;align-items:center;flex-wrap:wrap"><input type="file" id="adm-ref-pdf" accept="application/pdf" style="font-size:.74rem"><button class="btn btn-outline btn-sm" id="btn-adm-ref-pdfgen">🤖 Gerar com IA</button><span id="adm-ref-pdf-status" style="font-size:.72rem;color:var(--t3)"></span></div>'
     +'</div>'
     +'<div class="g2" style="margin-bottom:.7rem"><div class="fld2" style="margin:0"><label>Fonte</label><input type="text" id="adm-ref-fonte" placeholder="Ex: ADA, ATA, Endocrine Society" value="'+esc(g?g.fonte:'')+'"></div><div class="fld2" style="margin:0"><label>Ano</label><input type="text" id="adm-ref-ano" placeholder="Ex: 2024" value="'+esc(g?g.ano:'')+'"></div></div>'
-    +'<div class="g2" style="margin-bottom:.7rem"><div class="fld2" style="margin:0"><label>Subespecialidade</label><select id="adm-ref-sub">'+(function(){var cur=g?String(g.sub||''):'';var opts=DIR_SUBS.slice();if(cur&&opts.indexOf(cur)<0)opts.push(cur);return opts.map(function(s){return '<option'+(s===cur?' selected':'')+'>'+esc(s)+'</option>';}).join('');})()+'</select></div><div class="fld2" style="margin:0"><label>Link da diretriz (opcional)</label><input type="text" id="adm-ref-url" placeholder="https://…" value="'+esc(g?g.url:'')+'"></div></div>'
-    +'<div class="fld2" style="margin-bottom:.7rem"><label>Tema (assunto dentro da subespecialidade)</label><input type="text" id="adm-ref-tema" list="dl-ref-temas" placeholder="Ex: Hipotireoidismo, Nódulo, Osteoporose…" value="'+esc(g?(g.tema||''):'')+'"><datalist id="dl-ref-temas">'+(function(){var t={};diretrizes.forEach(function(d){if(d&&d.tema)t[d.tema]=1;});return Object.keys(t).map(function(x){return '<option value="'+esc(x)+'">';}).join('');})()+'</datalist><div style="font-size:.66rem;color:var(--t3);margin-top:.25rem">Vira uma aba dentro da subespecialidade. Se ficar vazio, usa o título.</div></div>'
+    +'<div class="g2" style="margin-bottom:.7rem"><div class="fld2" style="margin:0"><label>Subespecialidade</label><select id="adm-ref-sub">'+(function(){var cur=g?String(g.sub||''):(admRefSub||'');var opts=DIR_SUBS.slice();if(cur&&opts.indexOf(cur)<0)opts.push(cur);return opts.map(function(s){return '<option'+(s===cur?' selected':'')+'>'+esc(s)+'</option>';}).join('');})()+'</select></div><div class="fld2" style="margin:0"><label>Link da diretriz (opcional)</label><input type="text" id="adm-ref-url" placeholder="https://…" value="'+esc(g?g.url:'')+'"></div></div>'
+    +'<div class="fld2" style="margin-bottom:.7rem"><label>Tema (assunto dentro da subespecialidade)</label><input type="text" id="adm-ref-tema" list="dl-ref-temas" placeholder="Ex: Hipotireoidismo, Nódulo, Osteoporose…" value="'+esc(g?(g.tema||''):(admRefTema||''))+'"><datalist id="dl-ref-temas">'+(function(){var t={};diretrizes.forEach(function(d){if(d&&d.tema)t[d.tema]=1;});return Object.keys(t).map(function(x){return '<option value="'+esc(x)+'">';}).join('');})()+'</datalist><div style="font-size:.66rem;color:var(--t3);margin-top:.25rem">Vira uma aba dentro da subespecialidade. Se ficar vazio, usa o título.</div></div>'
     +'<div class="fld2" style="margin-bottom:.7rem"><label>Título</label><input type="text" id="adm-ref-titulo" placeholder="Ex: Diagnóstico de Diabetes Mellitus" value="'+esc(g?g.titulo:'')+'"></div>'
     +'<div class="fld2" style="margin-bottom:.7rem"><label>Pontos-chave / bullets (um por linha)</label><textarea id="adm-ref-pts" rows="5" placeholder="Glicemia de jejum ≥126 mg/dL&#10;HbA1c ≥6,5%&#10;…">'+esc(g?(g.pts||[]).join('\n'):'')+'</textarea></div>'
     +'<div class="fld2" style="margin-bottom:.7rem"><label>Resumo em texto corrido</label><textarea id="adm-ref-resumo" rows="5" placeholder="Parágrafo(s) resumindo a diretriz. Aceita **negrito** e listas com - (markdown simples).">'+esc(g?(g.resumo||''):'')+'</textarea></div>'
@@ -6429,27 +6429,49 @@ function admRefSecHTML(){
     +'<div style="font-size:.68rem;color:var(--t3);margin:.4rem 0 .7rem">Dica: você também pode (re)gerar flashcards e mapa com a IA pelos botões de cada diretriz na lista abaixo.</div>'
     +'<div style="display:flex;gap:6px"><button class="btn btn-primary" id="btn-adm-ref-save">'+(g?'💾 Salvar alterações':'+ Adicionar diretriz')+'</button><button class="btn btn-outline" id="btn-adm-ref-cancel">Cancelar</button></div></div>'
   ):'';
-  var rows=diretrizes.map(function(d,i){
-    var nFlash=Array.isArray(d.flashcards)?d.flashcards.length:0;
-    var hasMapa=!!(d.mapa&&(d.mapa.central||(d.mapa.nodes&&d.mapa.nodes.length)));
-    var status='<div class="adm-ref-gen">'
-      +'Texto: '+(d.resumo?'<b>ok</b>':'—')+' · '
-      +'Flashcards: '+(nFlash?('<b>'+nFlash+'</b>'):'—')+' · '
-      +'Mapa: '+(hasMapa?'<b>ok</b>':'—')+'</div>';
-    return '<div class="adm-ref-row"><div class="arr-top"><div><span class="ref-badge">'+esc(d.fonte)+' · '+esc(d.ano)+'</span> <span class="arr-meta">'+esc(d.sub||'')+(d.tema?(' › '+esc(d.tema)):'')+'</span><h4>'+esc(d.titulo)+'</h4></div>'
-      +'<div class="adm-ref-acts">'
-      +'<button class="btn btn-outline btn-sm" data-adm-refflash="'+i+'">🃏 '+(nFlash?'Refazer':'Gerar')+'</button>'
-      +'<button class="btn btn-outline btn-sm" data-adm-refmapa="'+i+'">🧠 '+(hasMapa?'Refazer':'Gerar')+'</button>'
-      +'<button class="btn btn-outline btn-sm" data-adm-refedit="'+i+'">Editar</button>'
-      +'<button class="btn btn-outline btn-sm" data-adm-refdel="'+i+'" style="color:var(--red);border-color:var(--red)">🗑</button></div></div>'
-      +'<ul>'+(d.pts||[]).map(function(p){return '<li>'+esc(p)+'</li>';}).join('')+'</ul>'+status+'</div>';
-  }).join('');
+  // Navegação do editor: subespecialidades → temas → diretrizes (mesma
+  // hierarquia que o aluno vê; a edição acontece dentro do tema).
+  var body='';
+  if(admRefShowForm){
+    body=formHTML;
+  }else if(!admRefSub){
+    body='<div class="dir-sub-grid">'+dirSubList().map(function(s){
+      return '<button class="dir-sub-btn" data-admref-sub="'+esc(s.sub)+'"><div class="dsb-ico">'+dirSubIcon(s.sub)+'</div><h3>'+esc(s.sub)+'</h3><div class="dsb-cnt">'+s.count+' diretriz'+(s.count===1?'':'es')+'</div></button>';
+    }).join('')+'</div>';
+  }else if(!admRefTema){
+    var temas=dirTemaList(admRefSub);
+    body='<button class="dir-back" data-admref-back>← Todas as subespecialidades</button>'
+      +'<div class="ph" style="margin-top:0"><h1>'+dirSubIcon(admRefSub)+' '+esc(admRefSub)+'</h1>'+(temas.length?'<p>Escolha um tema para editar as diretrizes.</p>':'')+'</div>'
+      +(temas.length
+        ?'<div class="dir-sub-grid">'+temas.map(function(t){
+            return '<button class="dir-sub-btn" data-admref-tema="'+esc(t.tema)+'"><div class="dsb-ico">📄</div><h3>'+esc(t.tema)+'</h3><div class="dsb-cnt">'+t.count+' diretriz'+(t.count===1?'':'es')+'</div></button>';
+          }).join('')+'</div>'
+        :'<div class="empty" style="margin-top:1rem">Nenhuma diretriz em '+esc(admRefSub)+' ainda. Clique em “+ Nova diretriz” para começar.</div>');
+  }else{
+    var rows=diretrizes.map(function(d,i){return {d:d,i:i};})
+      .filter(function(x){return (String(x.d.sub||'Geral').trim()||'Geral')===admRefSub&&dirTemaOf(x.d)===admRefTema;})
+      .map(function(x){
+        var d=x.d,i=x.i;
+        var nFlash=Array.isArray(d.flashcards)?d.flashcards.length:0;
+        var hasMapa=!!(d.mapa&&(d.mapa.central||(d.mapa.nodes&&d.mapa.nodes.length)));
+        var status='<div class="adm-ref-gen">'
+          +'Texto: '+(d.resumo?'<b>ok</b>':'—')+' · '
+          +'Flashcards: '+(nFlash?('<b>'+nFlash+'</b>'):'—')+' · '
+          +'Mapa: '+(hasMapa?'<b>ok</b>':'—')+'</div>';
+        return '<div class="adm-ref-row"><div class="arr-top"><div><span class="ref-badge">'+esc(d.fonte)+' · '+esc(d.ano)+'</span> <span class="arr-meta">'+esc(d.sub||'')+(d.tema?(' › '+esc(d.tema)):'')+'</span><h4>'+esc(d.titulo)+'</h4></div>'
+          +'<div class="adm-ref-acts">'
+          +'<button class="btn btn-outline btn-sm" data-adm-refflash="'+i+'">🃏 '+(nFlash?'Refazer':'Gerar')+'</button>'
+          +'<button class="btn btn-outline btn-sm" data-adm-refmapa="'+i+'">🧠 '+(hasMapa?'Refazer':'Gerar')+'</button>'
+          +'<button class="btn btn-outline btn-sm" data-adm-refedit="'+i+'">Editar</button>'
+          +'<button class="btn btn-outline btn-sm" data-adm-refdel="'+i+'" style="color:var(--red);border-color:var(--red)">🗑</button></div></div>'
+          +'<ul>'+(d.pts||[]).map(function(p){return '<li>'+esc(p)+'</li>';}).join('')+'</ul>'+status+'</div>';
+      }).join('');
+    body='<button class="dir-back" data-admref-tback>← '+esc(admRefSub)+'</button>'
+      +'<div class="ph" style="margin-top:0"><h1>'+esc(admRefTema)+'</h1></div>'
+      +'<div class="adm-ref-list">'+(rows||'<div class="empty">Nenhuma diretriz neste tema.</div>')+'</div>';
+  }
   return '<div class="adm-ph" style="display:flex;align-items:flex-start;justify-content:space-between;gap:.6rem;flex-wrap:wrap"><div><h1>Diretrizes</h1></div><div style="display:flex;gap:.5rem;flex-wrap:wrap"><button class="btn btn-outline" id="btn-adm-ref-preview" style="padding:.55rem 1rem">👁 Pré-visualizar como aluno</button><button class="btn btn-primary" id="btn-adm-ref-new" style="padding:.55rem 1.1rem">+ Nova diretriz</button></div></div>'
-    +'<div class="adm-pc">'
-    +formHTML
-    +'<div class="card" style="margin-bottom:1.1rem"><div style="font-size:.62rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--t3);margin-bottom:.3rem">Conteúdo da aba Diretrizes</div><div style="font-size:1.15rem;font-weight:700;color:var(--tx);margin-bottom:.35rem">Resumos por subespecialidade — bullets, texto, flashcards e mapa mental</div><div style="font-size:.79rem;color:var(--t2);line-height:1.55">Cadastre os bullets e o resumo; gere flashcards e mapa mental com a IA. <b>Para os alunos a aba ainda exibe “Em breve”</b> — use “Pré-visualizar como aluno” para conferir antes de publicar.</div></div>'
-    +'<div class="adm-ref-list">'+(rows||'<div class="empty">Nenhuma diretriz cadastrada. Clique em “+ Nova diretriz”.</div>')+'</div>'
-    +'</div>';
+    +'<div class="adm-pc">'+body+'</div>';
 }
 function admMuralSecHTML(){
   function dateBR(v){
@@ -6944,6 +6966,12 @@ function bindAdmSec(sec){
   }
 
   if(sec==='ref'){
+    main.querySelectorAll('[data-admref-sub]').forEach(function(b){b.addEventListener('click',function(){admRefSub=b.dataset.admrefSub;admRefTema='';renderAdmSec('ref');});});
+    main.querySelectorAll('[data-admref-tema]').forEach(function(b){b.addEventListener('click',function(){admRefTema=b.dataset.admrefTema;renderAdmSec('ref');});});
+    var rBack=main.querySelector('[data-admref-back]');
+    if(rBack)rBack.addEventListener('click',function(){admRefSub='';admRefTema='';renderAdmSec('ref');});
+    var rTBack=main.querySelector('[data-admref-tback]');
+    if(rTBack)rTBack.addEventListener('click',function(){admRefTema='';renderAdmSec('ref');});
     var rNew=document.getElementById('btn-adm-ref-new');
     if(rNew)rNew.addEventListener('click',function(){admRefShowForm=!admRefShowForm;admRefEdit=null;admRefPdfB64=null;admRefPdfName='';renderAdmSec('ref');document.getElementById('adm-main').scrollTop=0;});
     var rCancel=document.getElementById('btn-adm-ref-cancel');
@@ -6958,7 +6986,9 @@ function bindAdmSec(sec){
       var fc=parseFlashText(val('adm-ref-flash'));if(fc.length)obj.flashcards=fc;
       var mp=parseMapaText(val('adm-ref-mapa'));if(mp)obj.mapa=mp;
       if(admRefEdit!==null&&diretrizes[admRefEdit])diretrizes[admRefEdit]=obj;else diretrizes.unshift(obj);
-      persistDiretrizes();admRefShowForm=false;admRefEdit=null;admRefPdfB64=null;admRefPdfName='';renderAdmSec('ref');notify('Diretriz salva.','ok');
+      persistDiretrizes();admRefShowForm=false;admRefEdit=null;admRefPdfB64=null;admRefPdfName='';
+      admRefSub=String(obj.sub||'Geral');admRefTema=dirTemaOf(obj); // abre onde a diretriz ficou
+      renderAdmSec('ref');notify('Diretriz salva.','ok');
     });
     var rPdf=document.getElementById('adm-ref-pdf');
     if(rPdf)rPdf.addEventListener('change',function(e){
