@@ -5737,13 +5737,15 @@ function dirTemaList(sub){
   });
   return order.map(function(t){return {tema:t,count:seen[t]};});
 }
-// Ícone por subespecialidade (fallback genérico).
+// Ícone por subespecialidade (fallback genérico). Adrenal e Obesidade usam
+// SVG inline (glândula adrenal sobre o rim / células de tecido adiposo),
+// pois não há emoji equivalente; escalam com o font-size (1em).
 function dirSubIcon(s){
   var k=String(s||'').toLowerCase();
   if(k.indexOf('diabet')>=0)return '🩸';
   if(k.indexOf('tireoid')>=0)return '🦋';
-  if(k.indexOf('adren')>=0)return '🧬';
-  if(k.indexOf('obesid')>=0)return '⚖️';
+  if(k.indexOf('adren')>=0)return '<svg viewBox="0 0 64 64" width="1em" height="1em" style="vertical-align:-.12em" aria-label="glândula adrenal"><path d="M19 20 Q22 7 35 7 Q49 7 49 19 Q42 15 34 16.5 Q25 18 19 20Z" fill="#f5b32c"/><path d="M20 22 Q40 16 48 30 Q54 43 44 52 Q34 60 26 52 Q31 48 32 42 Q33 35 26 31 Q19 27 20 22Z" fill="#e0685a"/><path d="M26 52 Q31 48 32 42" fill="none" stroke="#b94c40" stroke-width="2.5" stroke-linecap="round"/></svg>';
+  if(k.indexOf('obesid')>=0)return '<svg viewBox="0 0 64 64" width="1em" height="1em" style="vertical-align:-.12em" aria-label="tecido adiposo"><g fill="#f7d774" stroke="#d9a93f" stroke-width="2.5"><circle cx="21" cy="21" r="11"/><circle cx="42" cy="17" r="9"/><circle cx="51" cy="35" r="9"/><circle cx="33" cy="36" r="12"/><circle cx="15" cy="42" r="8"/><circle cx="42" cy="51" r="9"/><circle cx="24" cy="54" r="7"/></g><g fill="#b98a2e"><circle cx="14" cy="16" r="2.2"/><circle cx="47" cy="12" r="2"/><circle cx="57" cy="31" r="2"/><circle cx="40" cy="30" r="2.2"/><circle cx="9" cy="39" r="1.8"/><circle cx="48" cy="57" r="2"/></g></svg>';
   if(k.indexOf('líp')>=0||k.indexOf('lip')>=0)return '🫀';
   if(k.indexOf('osteo')>=0)return '🦴';
   if(k.indexOf('hipófise')>=0||k.indexOf('hipofis')>=0||k.indexOf('neuro')>=0)return '🧠';
