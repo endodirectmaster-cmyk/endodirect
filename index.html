@@ -5741,7 +5741,7 @@ var refFonteFilter='';
 var DIRETRIZES_PUBLICADO=false;
 var refSubSel='';                 // subespecialidade selecionada ('' = grade)
 var refTemaSel='';                // tema selecionado dentro da subespecialidade
-var refFormat='bullets';          // bullets | texto | flash | mapa
+var refFormat='resumo';          // resumo | flash | mapa
 var refFlashOpen={};              // estado de flip dos flashcards (chave "i-j")
 // Tema (assunto) de uma diretriz; cai no título quando não definido.
 function dirTemaOf(d){return (String((d&&d.tema)||'').trim())||(String((d&&d.titulo)||'').trim())||'Geral';}
@@ -5794,11 +5794,7 @@ function dirCardHTML(d,i){
     +(d.url?'<a href="'+esc(d.url)+'" target="_blank" rel="noopener" class="ref-link" style="margin-left:auto">Fonte ↗</a>':'')+'</div>'
     +'<h3>'+esc(d.titulo||'')+'</h3>';
   var body='';
-  if(refFormat==='bullets'){
-    body=(d.pts&&d.pts.length)?('<ul>'+d.pts.map(function(p){return '<li>'+esc(p)+'</li>';}).join('')+'</ul>'):'<div class="dir-empty-fmt">Sem pontos-chave cadastrados.</div>';
-  }else if(refFormat==='texto'){
-    body=d.resumo?('<div class="dir-texto">'+mdToHtml(d.resumo)+'</div>'):'<div class="dir-empty-fmt">Resumo em texto ainda não disponível.</div>';
-  }else if(refFormat==='flash'){
+  if(refFormat==='flash'){
     var cards=Array.isArray(d.flashcards)?d.flashcards:[];
     body=cards.length?('<div class="dir-flash-wrap">'+cards.map(function(c,j){
       var open=refFlashOpen[i+'-'+j];
@@ -5808,6 +5804,11 @@ function dirCardHTML(d,i){
     }).join('')+'</div>'):'<div class="dir-empty-fmt">Flashcards ainda não disponíveis.</div>';
   }else if(refFormat==='mapa'){
     body=dirMapaHTML(d.mapa);
+  }else{ // 'resumo': texto corrido + pontos-chave (o que houver)
+    var parts=[];
+    if(d.resumo)parts.push('<div class="dir-texto">'+mdToHtml(d.resumo)+'</div>');
+    if(d.pts&&d.pts.length)parts.push('<ul>'+d.pts.map(function(p){return '<li>'+esc(p)+'</li>';}).join('')+'</ul>');
+    body=parts.length?parts.join(''):'<div class="dir-empty-fmt">Resumo ainda não disponível.</div>';
   }
   return '<div class="dir-card">'+head+body+'</div>';
 }
@@ -5854,9 +5855,10 @@ function diretrizesViewHTML(){
   if(!list.length){
     return head+'<div class="dir-empty-fmt">Nenhuma diretriz neste tema.</div>';
   }
-  var fmts=[['bullets','• Bullets'],['texto','📄 Texto'],['flash','🃏 Flashcards'],['mapa','🧠 Mapa mental']];
+  var fmts=[['resumo','📄 Resumo'],['flash','🃏 Flashcards'],['mapa','🧠 Mapas mentais']];
+  var fmtAtivo=(refFormat==='flash'||refFormat==='mapa')?refFormat:'resumo';
   return head
-    +'<div class="dir-fmt">'+fmts.map(function(f){return '<button class="dir-fmt-btn'+(refFormat===f[0]?' on':'')+'" data-dir-fmt="'+f[0]+'">'+f[1]+'</button>';}).join('')+'</div>'
+    +'<div class="dir-fmt">'+fmts.map(function(f){return '<button class="dir-fmt-btn'+(fmtAtivo===f[0]?' on':'')+'" data-dir-fmt="'+f[0]+'">'+f[1]+'</button>';}).join('')+'</div>'
     +list.map(function(x){return dirCardHTML(x.d,x.i);}).join('');
 }
 // Liga os eventos da visão dentro de um container (aluno ou pré-visualização).
