@@ -6479,9 +6479,11 @@ function admRefSecHTML(){
       +'</div></div>'
     +'<div class="fld2" style="margin-bottom:.7rem"><label>🃏 Flashcards (cartões de pergunta e resposta)</label>'
       +'<div style="font-size:.7rem;color:var(--t2);line-height:1.5;margin-bottom:.35rem">Escreva <b>um cartão por linha</b>: primeiro a <b>pergunta</b>, depois o separador <code>::</code> (dois-pontos duplos), depois a <b>resposta</b>. O aluno vê a pergunta e clica no cartão para revelar a resposta.</div>'
-      +'<textarea id="adm-ref-flash" rows="5" placeholder="Qual o alvo de HbA1c no adulto não gestante? :: &lt;7%, individualizando entre 6,5% e 8%&#10;Quais exames diagnosticam DM? :: Glicemia de jejum ≥126, HbA1c ≥6,5% ou TOTG 2h ≥200">'+esc(g?flashToText(g.flashcards):'')+'</textarea></div>'
-    +'<div class="fld2"><label>🧠 Mapa mental (texto estruturado)</label><textarea id="adm-ref-mapa" rows="6" placeholder="Central: Diagnóstico de DM&#10;Exames&#10;- Glicemia de jejum&#10;- HbA1c&#10;Confirmação&#10;- 2º exame se assintomático">'+esc(g?mapaToText(g.mapa):'')+'</textarea></div>'
-    +'<div style="font-size:.68rem;color:var(--t3);margin:.4rem 0 .7rem">Dica: você também pode (re)gerar flashcards e mapa com a IA pelos botões de cada diretriz na lista abaixo.</div>'
+      +'<textarea id="adm-ref-flash" rows="5" placeholder="Qual o alvo de HbA1c no adulto não gestante? :: &lt;7%, individualizando entre 6,5% e 8%&#10;Quais exames diagnosticam DM? :: Glicemia de jejum ≥126, HbA1c ≥6,5% ou TOTG 2h ≥200">'+esc(g?flashToText(g.flashcards):'')+'</textarea>'
+      +'<button type="button" class="btn btn-outline btn-sm" id="btn-ref-flash-gen" style="margin-top:.4rem">🃏 '+((g&&g.flashcards&&g.flashcards.length)?'Refazer com IA':'Gerar com IA')+'</button></div>'
+    +'<div class="fld2" style="margin-bottom:.7rem"><label>🧠 Mapa mental (texto estruturado)</label>'
+      +'<textarea id="adm-ref-mapa" rows="6" placeholder="Central: Diagnóstico de DM&#10;Exames&#10;- Glicemia de jejum&#10;- HbA1c&#10;Confirmação&#10;- 2º exame se assintomático">'+esc(g?mapaToText(g.mapa):'')+'</textarea>'
+      +'<button type="button" class="btn btn-outline btn-sm" id="btn-ref-mapa-gen" style="margin-top:.4rem">🧠 '+((g&&g.mapa&&(g.mapa.central||(g.mapa.nodes&&g.mapa.nodes.length)))?'Refazer com IA':'Gerar com IA')+'</button></div>'
     +'<div style="display:flex;gap:6px"><button class="btn btn-primary" id="btn-adm-ref-save">'+(g?'💾 Salvar alterações':'+ Adicionar diretriz')+'</button><button class="btn btn-outline" id="btn-adm-ref-cancel">Cancelar</button></div></div>'
   ):'';
   // Navegação do editor: subespecialidades → temas → diretrizes (mesma
@@ -6527,8 +6529,6 @@ function admRefSecHTML(){
           +'Mapa: '+(hasMapa?'<b>ok</b>':'—')+'</div>';
         return '<div class="adm-ref-row"><div class="arr-top"><div><span class="ref-badge">'+esc(d.fonte)+' · '+esc(d.ano)+'</span> <span class="arr-meta">'+esc(d.sub||'')+'</span><h4>'+esc(d.tema||d.titulo||'Diretriz')+'</h4></div>'
           +'<div class="adm-ref-acts">'
-          +'<button class="btn btn-outline btn-sm" data-adm-refflash="'+i+'">🃏 '+(nFlash?'Refazer':'Gerar')+'</button>'
-          +'<button class="btn btn-outline btn-sm" data-adm-refmapa="'+i+'">🧠 '+(hasMapa?'Refazer':'Gerar')+'</button>'
           +'<button class="btn btn-outline btn-sm" data-adm-refedit="'+i+'">Editar</button>'
           +'<button class="btn btn-outline btn-sm" data-adm-refdel="'+i+'" style="color:var(--red);border-color:var(--red)">🗑</button></div></div>'
           +'<ul>'+(d.pts||[]).map(function(p){return '<li>'+esc(p)+'</li>';}).join('')+'</ul>'+status+'</div>';
@@ -7164,31 +7164,46 @@ function bindAdmSec(sec){
     });
     main.querySelectorAll('[data-adm-refedit]').forEach(function(b){b.addEventListener('click',function(){admRefEdit=parseInt(b.dataset.admRefedit);admRefShowForm=true;admRefPdfB64=null;admRefPdfName='';renderAdmSec('ref');document.getElementById('adm-main').scrollTop=0;});});
     main.querySelectorAll('[data-adm-refdel]').forEach(function(b){b.addEventListener('click',function(){var i=parseInt(b.dataset.admRefdel);var d=diretrizes[i];if(!confirm('Excluir a diretriz "'+((d&&d.titulo)||'')+'"? Esta ação não pode ser desfeita.'))return;diretrizes.splice(i,1);persistDiretrizes();renderAdmSec('ref');});});
-    function dirBaseTxt(d){return 'Diretriz: '+(d.titulo||'')+(d.fonte?(' ('+d.fonte+(d.ano?(' '+d.ano):'')+')'):'')+'.\nPontos-chave:\n'+((d.pts||[]).map(function(p){return '- '+p;}).join('\n'))+(d.resumo?('\nResumo:\n'+d.resumo):'');}
-    main.querySelectorAll('[data-adm-refflash]').forEach(function(b){b.addEventListener('click',function(){
-      var i=parseInt(b.dataset.admRefflash),d=diretrizes[i];if(!d)return;
-      if(!(d.pts&&d.pts.length)&&!d.resumo){notify('Cadastre bullets ou resumo antes de gerar.','err');return;}
-      b.disabled=true;b.innerHTML=ldHTML('Gerando...');
+    // Geração por IA agora vive DENTRO do formulário, ao lado de cada campo:
+    // gera a partir dos bullets+resumo digitados e preenche o textarea (o
+    // professor revisa e salva).
+    function dirFormBaseTxt(){
+      var ptsEl=document.getElementById('adm-ref-pts'),reEl=document.getElementById('adm-ref-resumo');
+      var pts=((ptsEl&&ptsEl.value)||'').split('\n').map(function(s){return s.trim();}).filter(Boolean);
+      var resumo=((reEl&&reEl.value)||'').trim();
+      if(!pts.length&&!resumo)return '';
+      return 'Tema: '+(admRefTema||'')+'.\nPontos-chave:\n'+pts.map(function(p){return '- '+p;}).join('\n')+(resumo?('\nResumo:\n'+resumo):'');
+    }
+    var fGen=document.getElementById('btn-ref-flash-gen');
+    if(fGen)fGen.addEventListener('click',function(){
+      var base=dirFormBaseTxt();
+      if(!base){notify('Preencha bullets ou resumo antes de gerar.','err');return;}
+      var lbl=fGen.innerHTML;fGen.disabled=true;fGen.innerHTML=ldHTML('Gerando...');
       callAIJson('Você é professor de endocrinologia. Gere flashcards de estudo objetivos e clinicamente corretos em português do Brasil.',
-        'A partir do conteúdo abaixo, gere de 4 a 6 flashcards (pergunta curta + resposta direta). Retorne APENAS JSON no formato {"cards":[{"q":"...","a":"..."}]}.\n\n'+dirBaseTxt(d),1200,1)
+        'A partir do conteúdo abaixo, gere de 4 a 6 flashcards (pergunta curta + resposta direta). Retorne APENAS JSON no formato {"cards":[{"q":"...","a":"..."}]}.\n\n'+base,1200,1)
       .then(function(r){
         var cards=(r&&Array.isArray(r.cards))?r.cards.filter(function(c){return c&&c.q&&c.a;}).map(function(c){return {q:String(c.q),a:String(c.a)};}):[];
         if(!cards.length)throw new Error('IA não retornou flashcards.');
-        d.flashcards=cards;persistDiretrizes();renderAdmSec('ref');notify(cards.length+' flashcards gerados.','ok');
-      }).catch(function(e){notify('Erro ao gerar flashcards: '+(e.message||'falha'),'err');b.disabled=false;b.innerHTML='🃏 Gerar';});
-    });});
-    main.querySelectorAll('[data-adm-refmapa]').forEach(function(b){b.addEventListener('click',function(){
-      var i=parseInt(b.dataset.admRefmapa),d=diretrizes[i];if(!d)return;
-      if(!(d.pts&&d.pts.length)&&!d.resumo){notify('Cadastre bullets ou resumo antes de gerar.','err');return;}
-      b.disabled=true;b.innerHTML=ldHTML('Gerando...');
+        var ta=document.getElementById('adm-ref-flash');if(ta)ta.value=flashToText(cards);
+        notify(cards.length+' flashcards gerados — revise e salve.','ok');
+      }).catch(function(e){notify('Erro ao gerar flashcards: '+(e.message||'falha'),'err');})
+      .then(function(){fGen.disabled=false;fGen.innerHTML=lbl;});
+    });
+    var mGen=document.getElementById('btn-ref-mapa-gen');
+    if(mGen)mGen.addEventListener('click',function(){
+      var base=dirFormBaseTxt();
+      if(!base){notify('Preencha bullets ou resumo antes de gerar.','err');return;}
+      var lbl=mGen.innerHTML;mGen.disabled=true;mGen.innerHTML=ldHTML('Gerando...');
       callAIJson('Você é professor de endocrinologia. Crie mapas mentais de estudo claros e corretos em português do Brasil.',
-        'A partir do conteúdo abaixo, gere um mapa mental. Retorne APENAS JSON no formato {"central":"tema central curto","nodes":[{"label":"ramo","children":["item","item"]}]}. Use de 3 a 5 ramos, cada um com 2 a 4 itens curtos.\n\n'+dirBaseTxt(d),1200,1)
+        'A partir do conteúdo abaixo, gere um mapa mental. Retorne APENAS JSON no formato {"central":"tema central curto","nodes":[{"label":"ramo","children":["item","item"]}]}. Use de 3 a 5 ramos, cada um com 2 a 4 itens curtos.\n\n'+base,1200,1)
       .then(function(r){
         if(!r||!r.central||!Array.isArray(r.nodes)||!r.nodes.length)throw new Error('IA não retornou um mapa válido.');
         var mapa={central:String(r.central),nodes:r.nodes.filter(function(n){return n&&n.label;}).map(function(n){return {label:String(n.label),children:(Array.isArray(n.children)?n.children.map(String):[])};})};
-        d.mapa=mapa;persistDiretrizes();renderAdmSec('ref');notify('Mapa mental gerado.','ok');
-      }).catch(function(e){notify('Erro ao gerar mapa: '+(e.message||'falha'),'err');b.disabled=false;b.innerHTML='🧠 Gerar';});
-    });});
+        var ta=document.getElementById('adm-ref-mapa');if(ta)ta.value=mapaToText(mapa);
+        notify('Mapa mental gerado — revise e salve.','ok');
+      }).catch(function(e){notify('Erro ao gerar mapa: '+(e.message||'falha'),'err');})
+      .then(function(){mGen.disabled=false;mGen.innerHTML=lbl;});
+    });
     var rPrev=document.getElementById('btn-adm-ref-preview');
     if(rPrev)rPrev.addEventListener('click',function(){
       refSubSel='';refFlashOpen={};
