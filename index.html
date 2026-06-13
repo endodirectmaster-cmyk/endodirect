@@ -6446,7 +6446,7 @@ function admRefSecHTML(){
         ?'<div class="dir-sub-grid">'+temas.map(function(t){
             return '<button class="dir-sub-btn" data-admref-tema="'+esc(t.tema)+'"><div class="dsb-ico">📄</div><h3>'+esc(t.tema)+'</h3><div class="dsb-cnt">'+t.count+' diretriz'+(t.count===1?'':'es')+'</div></button>';
           }).join('')+'</div>'
-        :'<div class="empty" style="margin-top:1rem">Nenhuma diretriz em '+esc(admRefSub)+' ainda. Clique em “+ Nova diretriz” para começar.</div>');
+        :'<div class="empty" style="margin-top:1rem">Nenhuma diretriz em '+esc(admRefSub)+' ainda. Clique em “➕ Adicionar tema” para começar.</div>');
   }else{
     var rows=diretrizes.map(function(d,i){return {d:d,i:i};})
       .filter(function(x){return (String(x.d.sub||'Geral').trim()||'Geral')===admRefSub&&dirTemaOf(x.d)===admRefTema;})
@@ -6470,7 +6470,15 @@ function admRefSecHTML(){
       +'<div class="ph" style="margin-top:0"><h1>'+esc(admRefTema)+'</h1></div>'
       +'<div class="adm-ref-list">'+(rows||'<div class="empty">Nenhuma diretriz neste tema.</div>')+'</div>';
   }
-  return '<div class="adm-ph" style="display:flex;align-items:flex-start;justify-content:space-between;gap:.6rem;flex-wrap:wrap"><div><h1>Diretrizes</h1></div><div style="display:flex;gap:.5rem;flex-wrap:wrap"><button class="btn btn-outline" id="btn-adm-ref-preview" style="padding:.55rem 1rem">👁 Pré-visualizar como aluno</button><button class="btn btn-primary" id="btn-adm-ref-new" style="padding:.55rem 1.1rem">+ Nova diretriz</button></div></div>'
+  // Botão de ação contextual: dentro do tema → "Nova diretriz"; na grade de
+  // temas (subespecialidade escolhida) → "Adicionar tema"; na grade de
+  // subespecialidades não há botão (escolha uma subespecialidade primeiro).
+  var addBtn='';
+  if(!admRefShowForm){
+    if(admRefSub&&admRefTema)addBtn='<button class="btn btn-primary" id="btn-adm-ref-new" style="padding:.55rem 1.1rem">+ Nova diretriz</button>';
+    else if(admRefSub)addBtn='<button class="btn btn-primary" id="btn-adm-ref-new" style="padding:.55rem 1.1rem">➕ Adicionar tema</button>';
+  }
+  return '<div class="adm-ph" style="display:flex;align-items:flex-start;justify-content:space-between;gap:.6rem;flex-wrap:wrap"><div><h1>Diretrizes</h1></div><div style="display:flex;gap:.5rem;flex-wrap:wrap"><button class="btn btn-outline" id="btn-adm-ref-preview" style="padding:.55rem 1rem">👁 Pré-visualizar como aluno</button>'+addBtn+'</div></div>'
     +'<div class="adm-pc">'+body+'</div>';
 }
 function admMuralSecHTML(){
