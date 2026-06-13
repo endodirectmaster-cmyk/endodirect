@@ -659,6 +659,19 @@ textarea{resize:vertical;line-height:1.6}
 .dir-mapa-node ul{margin:.25rem 0 0;padding-left:1.1rem}
 .dir-mapa-node li{font-size:.82rem;color:var(--t2);margin:.18rem 0}
 .dir-empty-fmt{font-size:.82rem;color:var(--t3);font-style:italic;padding:.3rem 0}
+.dir-tema-card{position:relative;border:1px solid var(--bd);border-left:4px solid var(--blue);border-radius:14px;background:var(--surface);padding:1rem 1.1rem;cursor:pointer;transition:.15s;display:flex;flex-direction:column;min-height:104px}
+.dir-tema-card:hover{border-color:var(--blue);transform:translateY(-2px)}
+.dir-tema-card .dtc-ico{font-size:1.4rem;line-height:1}
+.dir-tema-card h3{margin:.4rem 0 .2rem;font-size:.98rem;color:var(--tx);padding-right:3.4rem}
+.dir-tema-card .dtc-cnt{font-size:.72rem;color:var(--t3)}
+.dir-tema-acts{position:absolute;top:.5rem;right:.55rem;display:flex;gap:.25rem;opacity:0;transition:.15s}
+.dir-tema-card:hover .dir-tema-acts,.dir-tema-acts:focus-within{opacity:1}
+.dir-tema-acts button{border:1px solid var(--bd2);background:var(--s2);color:var(--t2);border-radius:7px;width:27px;height:27px;font-size:.78rem;cursor:pointer;display:flex;align-items:center;justify-content:center;line-height:1}
+.dir-tema-acts button:hover{border-color:var(--blue);color:var(--tx)}
+.dir-tema-add,.dir-tema-edit{border-radius:14px;background:var(--s2);padding:1rem;display:flex;flex-direction:column;gap:.5rem;min-height:104px;justify-content:center}
+.dir-tema-add{border:1.5px dashed var(--blue)}
+.dir-tema-edit{border:1.5px solid var(--blue)}
+.dir-tema-add input,.dir-tema-edit input{width:100%}
 </style>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="https://cdn.jsdelivr.net/npm/tus-js-client@4/dist/tus.min.js"></script>
@@ -6392,7 +6405,7 @@ function admSuporteHTML(){
 function persistAdm(){lsSet('adm_avisos',admAvisos);lsSet('adm_questoes',admQuestoes);queueRemoteStateSave();}
 var admMuralShowForm=false,admMuralEdit=null,admMuralFilter='',admMuralTipoFilter='',admMuralSort='novos';
 // ---------- REFERÊNCIA RÁPIDA (admin CRUD) ----------
-var admRefShowForm=false,admRefEdit=null,admRefPdfB64=null,admRefPdfName='',admRefSub='',admRefTema='';
+var admRefShowForm=false,admRefEdit=null,admRefPdfB64=null,admRefPdfName='',admRefSub='',admRefTema='',admRefTemaAdd=false,admRefTemaEdit=null;
 function persistDiretrizes(){lsSet('diretrizes',diretrizes);lsSet('diretrizes_temas',dirTemasExtra);queueRemoteStateSave();}
 // Flashcards ⇄ texto ("Pergunta :: Resposta" por linha).
 function flashToText(cards){return (Array.isArray(cards)?cards:[]).map(function(c){return (c.q||'')+' :: '+(c.a||'');}).join('\n');}
@@ -6463,13 +6476,25 @@ function admRefSecHTML(){
     }).join('')+'</div>';
   }else if(!admRefTema){
     var temas=dirTemaList(admRefSub,true);
+    var cards='';
+    if(admRefTemaAdd){
+      cards+='<div class="dir-tema-add"><label style="font-size:.72rem;color:var(--t2);font-weight:600">Novo tema em '+esc(admRefSub)+'</label>'
+        +'<input type="text" id="adm-ref-newtema" placeholder="Ex: Hipotireoidismo, Osteoporose, Nódulo tireoidiano">'
+        +'<div style="display:flex;gap:.4rem"><button class="btn btn-primary btn-sm" id="btn-ref-tema-create">Criar tema</button><button class="btn btn-outline btn-sm" id="btn-ref-tema-addcancel">Cancelar</button></div></div>';
+    }
+    cards+=temas.map(function(t){
+      if(admRefTemaEdit===t.tema){
+        return '<div class="dir-tema-edit"><label style="font-size:.72rem;color:var(--t2);font-weight:600">Renomear tema</label>'
+          +'<input type="text" id="adm-ref-edittema" value="'+esc(t.tema)+'">'
+          +'<div style="display:flex;gap:.4rem"><button class="btn btn-primary btn-sm" data-ref-tema-saveedit="'+esc(t.tema)+'">Salvar</button><button class="btn btn-outline btn-sm" id="btn-ref-tema-editcancel">Cancelar</button></div></div>';
+      }
+      return '<div class="dir-tema-card" data-admref-tema="'+esc(t.tema)+'">'
+        +'<div class="dir-tema-acts"><button data-ref-tema-edit="'+esc(t.tema)+'" title="Renomear tema">✏️</button><button data-ref-tema-del="'+esc(t.tema)+'" title="Excluir tema">🗑</button></div>'
+        +'<div class="dtc-ico">📄</div><h3>'+esc(t.tema)+'</h3><div class="dtc-cnt">'+t.count+' diretriz'+(t.count===1?'':'es')+'</div></div>';
+    }).join('');
     body='<button class="dir-back" data-admref-back>← Todas as subespecialidades</button>'
-      +'<div class="ph" style="margin-top:0"><h1>'+dirSubIcon(admRefSub)+' '+esc(admRefSub)+'</h1>'+(temas.length?'<p>Escolha um tema para editar as diretrizes.</p>':'')+'</div>'
-      +(temas.length
-        ?'<div class="dir-sub-grid">'+temas.map(function(t){
-            return '<button class="dir-sub-btn" data-admref-tema="'+esc(t.tema)+'"><div class="dsb-ico">📄</div><h3>'+esc(t.tema)+'</h3><div class="dsb-cnt">'+t.count+' diretriz'+(t.count===1?'':'es')+'</div></button>';
-          }).join('')+'</div>'
-        :'<div class="empty" style="margin-top:1rem">Nenhuma diretriz em '+esc(admRefSub)+' ainda. Clique em “➕ Adicionar tema” para começar.</div>');
+      +'<div class="ph" style="margin-top:0"><h1>'+dirSubIcon(admRefSub)+' '+esc(admRefSub)+'</h1><p>'+((temas.length||admRefTemaAdd)?'Cada tema é uma aba dentro de '+esc(admRefSub)+'. Clique para editar as diretrizes, ou use ✏️ / 🗑 no card.':'Nenhum tema ainda — clique em “➕ Adicionar tema” para criar o primeiro.')+'</p></div>'
+      +(cards?'<div class="dir-sub-grid">'+cards+'</div>':'');
   }else{
     var rows=diretrizes.map(function(d,i){return {d:d,i:i};})
       .filter(function(x){return (String(x.d.sub||'Geral').trim()||'Geral')===admRefSub&&dirTemaOf(x.d)===admRefTema;})
@@ -6997,31 +7022,56 @@ function bindAdmSec(sec){
   }
 
   if(sec==='ref'){
-    main.querySelectorAll('[data-admref-sub]').forEach(function(b){b.addEventListener('click',function(){admRefSub=b.dataset.admrefSub;admRefTema='';renderAdmSec('ref');});});
-    main.querySelectorAll('[data-admref-tema]').forEach(function(b){b.addEventListener('click',function(){admRefTema=b.dataset.admrefTema;renderAdmSec('ref');});});
+    function refResetTemaUi(){admRefTemaAdd=false;admRefTemaEdit=null;}
+    main.querySelectorAll('[data-admref-sub]').forEach(function(b){b.addEventListener('click',function(){admRefSub=b.dataset.admrefSub;admRefTema='';refResetTemaUi();renderAdmSec('ref');});});
+    main.querySelectorAll('[data-admref-tema]').forEach(function(b){b.addEventListener('click',function(){admRefTema=b.dataset.admrefTema;refResetTemaUi();renderAdmSec('ref');});});
     var rBack=main.querySelector('[data-admref-back]');
-    if(rBack)rBack.addEventListener('click',function(){admRefSub='';admRefTema='';renderAdmSec('ref');});
+    if(rBack)rBack.addEventListener('click',function(){admRefSub='';admRefTema='';refResetTemaUi();renderAdmSec('ref');});
     var rTBack=main.querySelector('[data-admref-tback]');
-    if(rTBack)rTBack.addEventListener('click',function(){admRefTema='';renderAdmSec('ref');});
+    if(rTBack)rTBack.addEventListener('click',function(){admRefTema='';refResetTemaUi();renderAdmSec('ref');});
+    // ── Temas: criar / renomear / excluir inline ──
+    function refTemaExists(nome,exceto){return dirTemaList(admRefSub,true).some(function(t){return t.tema.toLowerCase()===nome.toLowerCase()&&t.tema!==exceto;});}
+    var tCreate=document.getElementById('btn-ref-tema-create');
+    if(tCreate)tCreate.addEventListener('click',function(){
+      var nome=String((document.getElementById('adm-ref-newtema')||{}).value||'').trim();
+      if(!nome){notify('Informe o nome do tema.','err');return;}
+      if(refTemaExists(nome)){notify('Já existe um tema com esse nome em '+admRefSub+'.','err');return;}
+      dirTemasExtra.push({sub:admRefSub,tema:nome});persistDiretrizes();
+      admRefTemaAdd=false;renderAdmSec('ref'); // fica na grade mostrando o card novo
+      notify('Tema “'+nome+'” criado.','ok');
+    });
+    var tAddCancel=document.getElementById('btn-ref-tema-addcancel');
+    if(tAddCancel)tAddCancel.addEventListener('click',function(){admRefTemaAdd=false;renderAdmSec('ref');});
+    main.querySelectorAll('[data-ref-tema-edit]').forEach(function(b){b.addEventListener('click',function(e){e.stopPropagation();admRefTemaEdit=b.dataset.refTemaEdit;admRefTemaAdd=false;renderAdmSec('ref');});});
+    var tEditCancel=document.getElementById('btn-ref-tema-editcancel');
+    if(tEditCancel)tEditCancel.addEventListener('click',function(){admRefTemaEdit=null;renderAdmSec('ref');});
+    main.querySelectorAll('[data-ref-tema-saveedit]').forEach(function(b){b.addEventListener('click',function(){
+      var old=b.dataset.refTemaSaveedit,novo=String((document.getElementById('adm-ref-edittema')||{}).value||'').trim();
+      if(!novo){notify('Informe o nome do tema.','err');return;}
+      if(novo!==old&&refTemaExists(novo,old)){notify('Já existe um tema com esse nome.','err');return;}
+      diretrizes.forEach(function(d){if((String(d.sub||'Geral').trim()||'Geral')===admRefSub&&dirTemaOf(d)===old)d.tema=novo;});
+      dirTemasExtra.forEach(function(x){if(x.sub===admRefSub&&x.tema===old)x.tema=novo;});
+      persistDiretrizes();admRefTemaEdit=null;renderAdmSec('ref');notify('Tema renomeado.','ok');
+    });});
+    main.querySelectorAll('[data-ref-tema-del]').forEach(function(b){b.addEventListener('click',function(e){
+      e.stopPropagation();
+      var tema=b.dataset.refTemaDel;
+      var n=diretrizes.filter(function(d){return (String(d.sub||'Geral').trim()||'Geral')===admRefSub&&dirTemaOf(d)===tema;}).length;
+      var msg=n?('Excluir o tema “'+tema+'” e suas '+n+' diretriz'+(n===1?'':'es')+'? Esta ação não pode ser desfeita.'):('Excluir o tema “'+tema+'”?');
+      if(!confirm(msg))return;
+      diretrizes=diretrizes.filter(function(d){return !((String(d.sub||'Geral').trim()||'Geral')===admRefSub&&dirTemaOf(d)===tema);});
+      dirTemasExtra=dirTemasExtra.filter(function(x){return !(x.sub===admRefSub&&x.tema===tema);});
+      persistDiretrizes();renderAdmSec('ref');notify('Tema excluído.','info');
+    });});
     var rNew=document.getElementById('btn-adm-ref-new');
     if(rNew)rNew.addEventListener('click',function(){
-      // Na grade de temas o botão cria um tema novo (vira uma aba da
-      // subespecialidade); dentro do tema abre o formulário de diretriz.
-      if(admRefSub&&!admRefTema&&!admRefShowForm){
-        var nome=prompt('Nome do novo tema em '+admRefSub+':\n(ex.: Hipotireoidismo, Osteoporose, Nódulo tireoidiano)');
-        if(nome==null)return;
-        nome=String(nome).trim();
-        if(!nome){notify('Informe o nome do tema.','err');return;}
-        var temAssim=dirTemaList(admRefSub,true).some(function(t){return t.tema.toLowerCase()===nome.toLowerCase();});
-        if(temAssim){notify('Já existe um tema com esse nome em '+admRefSub+'.','err');return;}
-        dirTemasExtra.push({sub:admRefSub,tema:nome});
-        persistDiretrizes();
-        admRefTema=nome;renderAdmSec('ref');
-        notify('Tema "'+nome+'" criado. Adicione a primeira diretriz.','ok');
-        return;
-      }
+      // Na grade de temas o botão abre o input inline de novo tema; dentro do
+      // tema abre o formulário de diretriz.
+      if(admRefSub&&!admRefTema&&!admRefShowForm){admRefTemaAdd=true;admRefTemaEdit=null;renderAdmSec('ref');return;}
       admRefShowForm=!admRefShowForm;admRefEdit=null;admRefPdfB64=null;admRefPdfName='';renderAdmSec('ref');document.getElementById('adm-main').scrollTop=0;
     });
+    var tFocus=document.getElementById(admRefTemaAdd?'adm-ref-newtema':(admRefTemaEdit?'adm-ref-edittema':''));
+    if(tFocus){tFocus.focus();tFocus.addEventListener('keydown',function(ev){if(ev.key==='Enter'){ev.preventDefault();var bt=admRefTemaAdd?document.getElementById('btn-ref-tema-create'):main.querySelector('[data-ref-tema-saveedit]');if(bt)bt.click();}});}
     var rCancel=document.getElementById('btn-adm-ref-cancel');
     if(rCancel)rCancel.addEventListener('click',function(){admRefShowForm=false;admRefEdit=null;admRefPdfB64=null;admRefPdfName='';renderAdmSec('ref');});
     var rSave=document.getElementById('btn-adm-ref-save');
