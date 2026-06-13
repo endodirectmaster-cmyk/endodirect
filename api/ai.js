@@ -73,7 +73,7 @@ module.exports = async function handler(req, res) {
 
   const body = parseBody(req);
   const system = String(body.system || '').slice(0, 8000);
-  const prompt = String(body.prompt || '').slice(0, 24000);
+  const prompt = String(body.prompt || '').slice(0, 200000);
   const maxTokens = clampTokens(body.maxTokens);
   const documentBase64 = body.documentBase64 ? String(body.documentBase64) : '';
   const ALLOWED_MEDIA = { 'application/pdf': 1, 'image/jpeg': 1, 'image/png': 1, 'image/gif': 1, 'image/webp': 1 };
