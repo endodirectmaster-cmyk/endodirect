@@ -206,7 +206,7 @@ module.exports = async function handler(req, res) {
     const sub = await pagarme('/subscriptions', subBody);
 
     const status = String(sub.status || '').toLowerCase();
-    console.log('[subscribe] status=' + status + ' cardId=' + (cardId || 'none') + ' sub=' + JSON.stringify(sub).slice(0, 1500));
+    console.log('[subscribe] status=' + status + ' cardId=' + (cardId || 'none') + ' subId=' + (sub.id || 'none'));
     const okStatuses = ['active', 'trialing', 'future', 'paid'];
     if (status && okStatuses.indexOf(status) < 0) {
       // Busca a cobranca da assinatura para descobrir o motivo exato da recusa.
@@ -219,7 +219,7 @@ module.exports = async function handler(req, res) {
         const gw = lt && lt.gateway_response;
         reason = (gw && Array.isArray(gw.errors) && gw.errors[0] && gw.errors[0].message)
           || (lt && lt.acquirer_message) || (charge && charge.status) || '';
-        console.log('[subscribe] charge=' + JSON.stringify(charge).slice(0, 1500));
+        console.log('[subscribe] chargeId=' + ((charge && charge.id) || 'none') + ' chargeStatus=' + ((charge && charge.status) || '') + ' reason=' + (reason || ''));
       } catch (e) { console.log('[subscribe] charges fetch err', (e && e.message) || e); }
       return json(res, 200, { ok: false, status: status, error: 'Pagamento nao aprovado.' + (reason ? ' (' + reason + ')' : ''), subscriptionId: sub.id });
     }
@@ -238,7 +238,10 @@ module.exports = async function handler(req, res) {
 
     return json(res, 200, { ok: true, status: status || 'active', subscriptionId: sub.id, email: email });
   } catch (e) {
-    return json(res, (e && e.status) || 500, { ok: false, error: (e && e.message) || 'Falha ao criar a assinatura.' });
+    var st = (e && e.status) || 500;
+    // 5xx do gateway = indisponibilidade: mensagem amigável, não vaza detalhe técnico.
+    if (st >= 500) { console.error('[subscribe] erro', (e && e.message) || e); return json(res, 502, { ok: false, error: 'Pagamento temporariamente indisponível. Tente novamente em instantes.' }); }
+    return json(res, st, { ok: false, error: (e && e.message) || 'Falha ao criar a assinatura.' });
   }
 };
 

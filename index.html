@@ -2425,7 +2425,7 @@ function persistPodcasts(){lsSet('podcasts',podcasts);queueRemoteStateSave();}
 
 function userStatePayload(){
   // adm_perfil é PESSOAL (vai no app_state do próprio admin, não no global).
-  var p={q:DB.q,fc:DB.fc,mm:DB.mm,notes:DB.notes,crono:DB.crono,sf_results:DB.sf_results,perf:DB.perf,user_profile:lsGet('user_profile'),deg_trials:degTrials,ck_billing:lsGet('ck_billing')};
+  var p={q:DB.q,fc:DB.fc,mm:DB.mm,notes:DB.notes,crono:DB.crono,sf_results:DB.sf_results,perf:DB.perf,user_profile:lsGet('user_profile'),deg_trials:degTrials,ck_billing:lsGet('ck_billing'),presc_emitidas:lsGet('presc_emitidas')||[]};
   if(currentUser&&currentUser.role==='admin'){
     // Nunca persiste o perfil de OUTRO admin: se o e-mail do perfil em memória
     // não bater com o da sessão (resíduo de localStorage antigo), reconstrói da
@@ -2622,6 +2622,8 @@ function saveRemoteState(){
 }
 
 function esc(s){return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');}
+// Só aceita http(s) em hrefs (bloqueia javascript:/data: etc.).
+function safeHttpUrl(u){return /^https?:\/\//i.test(String(u||'').trim());}
 function ldHTML(label){return'<span class="ld"><span class="ld-dots"><span></span><span></span><span></span></span><span>'+esc(label||'Gerando...')+'</span></span>';}
 function notify(msg,type){
   var el=document.createElement('div');
@@ -5816,7 +5818,7 @@ function dirSubList(){
 function dirCardHTML(d,i){
   // Sem título por card: o tema (cabeçalho da aba) já é o título da seção.
   var head='<div class="dir-card-top"><span class="ref-badge">'+esc(d.fonte||'—')+(d.ano?(' · '+esc(d.ano)):'')+'</span>'
-    +(d.url?'<a href="'+esc(d.url)+'" target="_blank" rel="noopener" class="ref-link" style="margin-left:auto">Fonte ↗</a>':'')+'</div>';
+    +(safeHttpUrl(d.url)?'<a href="'+esc(d.url)+'" target="_blank" rel="noopener" class="ref-link" style="margin-left:auto">Fonte ↗</a>':'')+'</div>';
   var body='';
   if(refFormat==='flash'){
     var cards=Array.isArray(d.flashcards)?d.flashcards:[];
@@ -5908,6 +5910,7 @@ function renderDiretrizesInto(root){root.innerHTML=diretrizesViewHTML();bindDire
 // Painel do aluno. Enquanto DIRETRIZES_PUBLICADO=false mostra "Em breve".
 function renderRef(){
   var el=document.getElementById('ref-body'); if(!el)return;
+  refSubSel='';refTemaSel='';refFlashOpen={}; // sempre abrir na grade de subespecialidades
   if(DIRETRIZES_PUBLICADO){renderDiretrizesInto(el);return;}
   el.innerHTML='<div class="ph"><h1>📋 Diretrizes</h1><p>Resumos de diretrizes (ADA, ATA, Endocrine Society) para consulta rápida.</p></div>'
     +'<div class="ref-soon"><div class="ref-soon-ico">🔜</div><h2>Em breve</h2>'
@@ -7190,7 +7193,7 @@ function bindAdmSec(sec){
       .then(function(){rPdfGen.disabled=false;rPdfGen.innerHTML='🤖 Gerar com IA';});
     });
     main.querySelectorAll('[data-adm-refedit]').forEach(function(b){b.addEventListener('click',function(){admRefEdit=parseInt(b.dataset.admRefedit);admRefShowForm=true;admRefPdfB64=null;admRefPdfName='';admRefChat=[];renderAdmSec('ref');document.getElementById('adm-main').scrollTop=0;});});
-    main.querySelectorAll('[data-adm-refdel]').forEach(function(b){b.addEventListener('click',function(){var i=parseInt(b.dataset.admRefdel);var d=diretrizes[i];if(!confirm('Excluir a diretriz "'+((d&&d.titulo)||'')+'"? Esta ação não pode ser desfeita.'))return;diretrizes.splice(i,1);persistDiretrizes();renderAdmSec('ref');});});
+    main.querySelectorAll('[data-adm-refdel]').forEach(function(b){b.addEventListener('click',function(){var i=parseInt(b.dataset.admRefdel);var d=diretrizes[i];if(!confirm('Excluir a diretriz "'+((d&&(d.tema||d.titulo))||'esta diretriz')+'"? Esta ação não pode ser desfeita.'))return;diretrizes.splice(i,1);persistDiretrizes();renderAdmSec('ref');});});
     // Geração por IA agora vive DENTRO do formulário, ao lado de cada campo:
     // gera a partir dos bullets+resumo digitados e preenche o textarea (o
     // professor revisa e salva).

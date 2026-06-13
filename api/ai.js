@@ -53,7 +53,13 @@ module.exports = async function handler(req, res) {
   // automaticamente, então o app same-origin passa; chamadas externas de
   // navegador são barradas. (Camada leve; autenticação por sessão é o próximo
   // reforço — ver pendências.)
-  const bad = function (s) { return s && !(/([a-z0-9-]+\.)*endodirect\.com\.br/i.test(s) || /endodirect[a-z0-9-]*\.vercel\.app/i.test(s)); };
+  // Valida pelo HOSTNAME (não por substring do header, que permitiria
+  // "endodirect.com.br.evil.com"). Header ausente passa (clientes não-browser).
+  const okHost = function (h) {
+    return h === 'endodirect.com.br' || h.endsWith('.endodirect.com.br') || /^endodirect[a-z0-9-]*\.vercel\.app$/.test(h);
+  };
+  const hostOf = function (s) { try { return new URL(String(s)).hostname.toLowerCase(); } catch (e) { return ''; } };
+  const bad = function (s) { if (!s) return false; const h = hostOf(s); return !(h && okHost(h)); };
   if (bad(String(req.headers.origin || '')) || bad(String(req.headers.referer || ''))) {
     return json(res, 403, { error: 'Origem nao autorizada.' });
   }
@@ -70,7 +76,9 @@ module.exports = async function handler(req, res) {
   const prompt = String(body.prompt || '').slice(0, 24000);
   const maxTokens = clampTokens(body.maxTokens);
   const documentBase64 = body.documentBase64 ? String(body.documentBase64) : '';
-  const mediaType = String(body.mediaType || 'application/pdf');
+  const ALLOWED_MEDIA = { 'application/pdf': 1, 'image/jpeg': 1, 'image/png': 1, 'image/gif': 1, 'image/webp': 1 };
+  const reqMedia = String(body.mediaType || 'application/pdf');
+  const mediaType = ALLOWED_MEDIA[reqMedia] ? reqMedia : 'application/pdf';
 
   if (!prompt && !documentBase64) {
     return json(res, 400, { error: 'Envie uma pergunta ou documento para a IA.' });
