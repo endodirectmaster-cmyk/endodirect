@@ -684,6 +684,17 @@ textarea{resize:vertical;line-height:1.6}
 .dir-tema-add{border:1.5px dashed var(--blue)}
 .dir-tema-edit{border:1.5px solid var(--blue)}
 .dir-tema-add input,.dir-tema-edit input{width:100%}
+/* Assistente de IA no editor de diretrizes */
+.ref-chat{border:1px solid var(--bd);border-radius:12px;background:var(--s2);padding:.85rem;margin-bottom:1rem}
+.ref-chat-head{font-size:.84rem;font-weight:700;color:var(--tx);margin-bottom:.5rem}
+.ref-chat-msgs{max-height:300px;overflow-y:auto;display:flex;flex-direction:column;gap:.5rem;margin-bottom:.6rem}
+.ref-chat-msg{padding:.5rem .72rem;border-radius:11px;font-size:.82rem;line-height:1.5;max-width:92%}
+.ref-chat-msg.user{align-self:flex-end;background:var(--blue);color:#fff}
+.ref-chat-msg.ai{align-self:flex-start;background:var(--surface);border:1px solid var(--bd2);color:var(--tx)}
+.ref-chat-msg.ai p{margin:.3rem 0}.ref-chat-msg.ai ul{margin:.3rem 0;padding-left:1.1rem}
+.rcm-copy{margin-top:.4rem}
+.ref-chat-form{display:flex;gap:.4rem;align-items:flex-end}
+.ref-chat-form textarea{flex:1;min-height:44px;resize:vertical}
 </style>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="https://cdn.jsdelivr.net/npm/tus-js-client@4/dist/tus.min.js"></script>
@@ -6426,7 +6437,16 @@ function admSuporteHTML(){
 function persistAdm(){lsSet('adm_avisos',admAvisos);lsSet('adm_questoes',admQuestoes);queueRemoteStateSave();}
 var admMuralShowForm=false,admMuralEdit=null,admMuralFilter='',admMuralTipoFilter='',admMuralSort='novos';
 // ---------- REFERÊNCIA RÁPIDA (admin CRUD) ----------
-var admRefShowForm=false,admRefEdit=null,admRefPdfB64=null,admRefPdfName='',admRefSub='',admRefTema='',admRefTemaAdd=false,admRefTemaEdit=null;
+var admRefShowForm=false,admRefEdit=null,admRefPdfB64=null,admRefPdfName='',admRefSub='',admRefTema='',admRefTemaAdd=false,admRefTemaEdit=null,admRefChat=[];
+// Bolhas do chat do assistente de IA no editor de diretrizes.
+function refChatMsgsHTML(){
+  if(!admRefChat.length)return '<div style="font-size:.74rem;color:var(--t3);line-height:1.5">Converse com a IA para desenvolver os textos. Ex.: “resuma os fármacos em 4 bullets”, “gere 3 flashcards sobre contraindicações”, “reescreva o resumo mais didático”. Copie a resposta para o campo desejado.</div>';
+  return admRefChat.map(function(m,idx){
+    if(m.role==='user')return '<div class="ref-chat-msg user">'+esc(m.content)+'</div>';
+    if(m.pending)return '<div class="ref-chat-msg ai">'+ldHTML('Pensando...')+'</div>';
+    return '<div class="ref-chat-msg ai">'+mdToHtml(m.content)+'<button type="button" class="rcm-copy btn btn-outline btn-sm" data-rcm-copy="'+idx+'">📋 Copiar</button></div>';
+  }).join('');
+}
 function persistDiretrizes(){lsSet('diretrizes',diretrizes);lsSet('diretrizes_temas',dirTemasExtra);queueRemoteStateSave();}
 // Flashcards ⇄ texto ("Pergunta :: Resposta" por linha).
 function flashToText(cards){return (Array.isArray(cards)?cards:[]).map(function(c){return (c.q||'')+' :: '+(c.a||'');}).join('\n');}
@@ -6468,14 +6488,17 @@ function admRefSecHTML(){
     +'<div class="g2" style="margin-bottom:.7rem"><div class="fld2" style="margin:0"><label>Fonte</label><input type="text" id="adm-ref-fonte" placeholder="Ex: ADA, ATA, Endocrine Society" value="'+esc(g?g.fonte:'')+'"></div><div class="fld2" style="margin:0"><label>Ano</label><input type="text" id="adm-ref-ano" placeholder="Ex: 2024" value="'+esc(g?g.ano:'')+'"></div></div>'
     +'<div class="g2" style="margin-bottom:.7rem"><div class="fld2" style="margin:0"><label>Subespecialidade</label><select id="adm-ref-sub">'+(function(){var cur=g?String(g.sub||''):(admRefSub||'');var opts=DIR_SUBS.slice();if(cur&&opts.indexOf(cur)<0)opts.push(cur);return opts.map(function(s){return '<option'+(s===cur?' selected':'')+'>'+esc(s)+'</option>';}).join('');})()+'</select></div><div class="fld2" style="margin:0"><label>Link da diretriz (opcional)</label><input type="text" id="adm-ref-url" placeholder="https://…" value="'+esc(g?g.url:'')+'"></div></div>'
     +'<div class="fld2" style="margin-bottom:.7rem"><label>Tema</label><div style="padding:.45rem 0;font-size:.86rem;color:var(--tx)">'+esc(admRefTema||'(geral)')+' <span style="font-size:.66rem;color:var(--t3)">— definido pela aba em que você está</span></div></div>'
-    +'<div class="fld2" style="margin-bottom:.7rem"><label>Pontos-chave / bullets (um por linha)</label><textarea id="adm-ref-pts" rows="5" placeholder="Glicemia de jejum ≥126 mg/dL&#10;HbA1c ≥6,5%&#10;…">'+esc(g?(g.pts||[]).join('\n'):'')+'</textarea></div>'
+    +'<div class="fld2" style="margin-bottom:.7rem"><label>Pontos-chave / bullets (um por linha)</label>'
+      +'<textarea id="adm-ref-pts" rows="5" placeholder="Glicemia de jejum ≥126 mg/dL&#10;HbA1c ≥6,5%&#10;…">'+esc(g?(g.pts||[]).join('\n'):'')+'</textarea>'
+      +'<button type="button" class="btn btn-outline btn-sm" id="btn-ref-bullets-gen" style="margin-top:.4rem">📝 '+((g&&g.pts&&g.pts.length)?'Refazer com IA':'Gerar com IA')+'</button></div>'
     +'<div class="fld2" style="margin-bottom:.7rem"><label>Resumo em texto corrido</label>'
       +'<textarea id="adm-ref-resumo" rows="6" placeholder="Parágrafo(s) resumindo a diretriz.">'+esc(g?(g.resumo||''):'')+'</textarea>'
-      +'<div style="display:flex;gap:.3rem;margin-top:.35rem;flex-wrap:wrap">'
+      +'<div style="display:flex;gap:.3rem;margin-top:.35rem;flex-wrap:wrap;align-items:center">'
         +'<button type="button" class="btn btn-outline btn-sm" data-md-wrap="**" title="Negrito"><b>B</b></button>'
         +'<button type="button" class="btn btn-outline btn-sm" data-md-wrap="*" title="Itálico"><i>I</i></button>'
         +'<button type="button" class="btn btn-outline btn-sm" data-md-wrap="__" title="Sublinhado"><u>S</u></button>'
         +'<button type="button" class="btn btn-outline btn-sm" data-md-list title="Lista com marcadores">• Lista</button>'
+        +'<button type="button" class="btn btn-outline btn-sm" id="btn-ref-resumo-gen" style="margin-left:auto">📄 '+((g&&g.resumo)?'Refazer com IA':'Gerar com IA')+'</button>'
       +'</div></div>'
     +'<div class="fld2" style="margin-bottom:.7rem"><label>🃏 Flashcards (cartões de pergunta e resposta)</label>'
       +'<div style="font-size:.7rem;color:var(--t2);line-height:1.5;margin-bottom:.35rem">Escreva <b>um cartão por linha</b>: primeiro a <b>pergunta</b>, depois o separador <code>::</code> (dois-pontos duplos), depois a <b>resposta</b>. O aluno vê a pergunta e clica no cartão para revelar a resposta.</div>'
@@ -6484,6 +6507,9 @@ function admRefSecHTML(){
     +'<div class="fld2" style="margin-bottom:.7rem"><label>🧠 Mapa mental (texto estruturado)</label>'
       +'<textarea id="adm-ref-mapa" rows="6" placeholder="Central: Diagnóstico de DM&#10;Exames&#10;- Glicemia de jejum&#10;- HbA1c&#10;Confirmação&#10;- 2º exame se assintomático">'+esc(g?mapaToText(g.mapa):'')+'</textarea>'
       +'<button type="button" class="btn btn-outline btn-sm" id="btn-ref-mapa-gen" style="margin-top:.4rem">🧠 '+((g&&g.mapa&&(g.mapa.central||(g.mapa.nodes&&g.mapa.nodes.length)))?'Refazer com IA':'Gerar com IA')+'</button></div>'
+    +'<div class="ref-chat"><div class="ref-chat-head">💬 Assistente de IA</div>'
+      +'<div class="ref-chat-msgs" id="adm-ref-chat-msgs">'+refChatMsgsHTML()+'</div>'
+      +'<div class="ref-chat-form"><textarea id="adm-ref-chat-input" placeholder="Peça à IA: “resuma os fármacos em 4 bullets”, “gere 3 flashcards sobre contraindicações”, “deixe o resumo mais didático”…"></textarea><button type="button" class="btn btn-primary" id="btn-ref-chat-send">Enviar</button></div></div>'
     +'<div style="display:flex;gap:6px"><button class="btn btn-primary" id="btn-adm-ref-save">'+(g?'💾 Salvar alterações':'+ Adicionar diretriz')+'</button><button class="btn btn-outline" id="btn-adm-ref-cancel">Cancelar</button></div></div>'
   ):'';
   // Navegação do editor: subespecialidades → temas → diretrizes (mesma
@@ -7087,12 +7113,12 @@ function bindAdmSec(sec){
       // Na grade de temas o botão abre o input inline de novo tema; dentro do
       // tema abre o formulário de diretriz.
       if(admRefSub&&!admRefTema&&!admRefShowForm){admRefTemaAdd=true;admRefTemaEdit=null;renderAdmSec('ref');return;}
-      admRefShowForm=!admRefShowForm;admRefEdit=null;admRefPdfB64=null;admRefPdfName='';renderAdmSec('ref');document.getElementById('adm-main').scrollTop=0;
+      admRefShowForm=!admRefShowForm;admRefEdit=null;admRefPdfB64=null;admRefPdfName='';admRefChat=[];renderAdmSec('ref');document.getElementById('adm-main').scrollTop=0;
     });
     var tFocus=document.getElementById(admRefTemaAdd?'adm-ref-newtema':(admRefTemaEdit?'adm-ref-edittema':''));
     if(tFocus){tFocus.focus();tFocus.addEventListener('keydown',function(ev){if(ev.key==='Enter'){ev.preventDefault();var bt=admRefTemaAdd?document.getElementById('btn-ref-tema-create'):main.querySelector('[data-ref-tema-saveedit]');if(bt)bt.click();}});}
     var rCancel=document.getElementById('btn-adm-ref-cancel');
-    if(rCancel)rCancel.addEventListener('click',function(){admRefShowForm=false;admRefEdit=null;admRefPdfB64=null;admRefPdfName='';renderAdmSec('ref');});
+    if(rCancel)rCancel.addEventListener('click',function(){admRefShowForm=false;admRefEdit=null;admRefPdfB64=null;admRefPdfName='';admRefChat=[];renderAdmSec('ref');});
     var rSave=document.getElementById('btn-adm-ref-save');
     if(rSave)rSave.addEventListener('click',function(){
       function val(id){var e=document.getElementById(id);return e?e.value.trim():'';}
@@ -7162,7 +7188,7 @@ function bindAdmSec(sec){
       }).catch(function(e){notify('Erro ao ler o PDF: '+(e.message||'falha'),'err');if(st)st.textContent='';})
       .then(function(){rPdfGen.disabled=false;rPdfGen.innerHTML='🤖 Gerar com IA';});
     });
-    main.querySelectorAll('[data-adm-refedit]').forEach(function(b){b.addEventListener('click',function(){admRefEdit=parseInt(b.dataset.admRefedit);admRefShowForm=true;admRefPdfB64=null;admRefPdfName='';renderAdmSec('ref');document.getElementById('adm-main').scrollTop=0;});});
+    main.querySelectorAll('[data-adm-refedit]').forEach(function(b){b.addEventListener('click',function(){admRefEdit=parseInt(b.dataset.admRefedit);admRefShowForm=true;admRefPdfB64=null;admRefPdfName='';admRefChat=[];renderAdmSec('ref');document.getElementById('adm-main').scrollTop=0;});});
     main.querySelectorAll('[data-adm-refdel]').forEach(function(b){b.addEventListener('click',function(){var i=parseInt(b.dataset.admRefdel);var d=diretrizes[i];if(!confirm('Excluir a diretriz "'+((d&&d.titulo)||'')+'"? Esta ação não pode ser desfeita.'))return;diretrizes.splice(i,1);persistDiretrizes();renderAdmSec('ref');});});
     // Geração por IA agora vive DENTRO do formulário, ao lado de cada campo:
     // gera a partir dos bullets+resumo digitados e preenche o textarea (o
@@ -7204,6 +7230,67 @@ function bindAdmSec(sec){
       }).catch(function(e){notify('Erro ao gerar mapa: '+(e.message||'falha'),'err');})
       .then(function(){mGen.disabled=false;mGen.innerHTML=lbl;});
     });
+    var bGen=document.getElementById('btn-ref-bullets-gen');
+    if(bGen)bGen.addEventListener('click',function(){
+      var base=dirFormBaseTxt();
+      if(!base){notify('Preencha o resumo (ou alguns bullets) antes de gerar.','err');return;}
+      var lbl=bGen.innerHTML;bGen.disabled=true;bGen.innerHTML=ldHTML('Gerando...');
+      callAIJson('Você é professor de endocrinologia. Gere pontos-chave (bullets) objetivos e clinicamente corretos em português do Brasil.',
+        'A partir do conteúdo abaixo, gere de 5 a 8 pontos-chave (frases curtas e diretas). Retorne APENAS JSON no formato {"bullets":["...","..."]}.\n\n'+base,1200,1)
+      .then(function(r){
+        var bs=(r&&Array.isArray(r.bullets))?r.bullets.map(String).map(function(s){return s.trim();}).filter(Boolean):[];
+        if(!bs.length)throw new Error('IA não retornou bullets.');
+        var ta=document.getElementById('adm-ref-pts');if(ta)ta.value=bs.join('\n');
+        notify(bs.length+' bullets gerados — revise e salve.','ok');
+      }).catch(function(e){notify('Erro ao gerar bullets: '+(e.message||'falha'),'err');})
+      .then(function(){bGen.disabled=false;bGen.innerHTML=lbl;});
+    });
+    var reGen=document.getElementById('btn-ref-resumo-gen');
+    if(reGen)reGen.addEventListener('click',function(){
+      var base=dirFormBaseTxt();
+      if(!base){notify('Preencha alguns bullets (ou um rascunho) antes de gerar.','err');return;}
+      var lbl=reGen.innerHTML;reGen.disabled=true;reGen.innerHTML=ldHTML('Gerando...');
+      callAI('Você é professor de endocrinologia. Escreva resumos didáticos, estruturados e clinicamente corretos em português do Brasil.',
+        'A partir do conteúdo abaixo, escreva um resumo descritivo e bem estruturado, em markdown simples (subtítulos com ###, **negrito** e listas com "- "). Retorne APENAS o texto do resumo, sem comentários.\n\n'+base,1800)
+      .then(function(t){
+        t=String(t||'').trim();if(!t)throw new Error('IA não retornou texto.');
+        var ta=document.getElementById('adm-ref-resumo');if(ta)ta.value=t;
+        notify('Resumo gerado — revise e salve.','ok');
+      }).catch(function(e){notify('Erro ao gerar resumo: '+(e.message||'falha'),'err');})
+      .then(function(){reGen.disabled=false;reGen.innerHTML=lbl;});
+    });
+    // Assistente de IA (chat). Atualiza só o container de mensagens — nunca
+    // re-renderiza o formulário (preservaria os campos editados e não salvos).
+    function renderRefChatMsgs(){
+      var box=document.getElementById('adm-ref-chat-msgs');if(!box)return;
+      box.innerHTML=refChatMsgsHTML();box.scrollTop=box.scrollHeight;
+      box.querySelectorAll('[data-rcm-copy]').forEach(function(b){b.addEventListener('click',function(){
+        var m=admRefChat[parseInt(b.dataset.rcmCopy)];if(!m)return;
+        try{navigator.clipboard.writeText(m.content);notify('Copiado.','ok');}catch(e){notify('Não foi possível copiar.','err');}
+      });});
+    }
+    function sendRefChat(){
+      var inp=document.getElementById('adm-ref-chat-input');if(!inp)return;
+      var txt=inp.value.trim();if(!txt)return;
+      inp.value='';
+      admRefChat.push({role:'user',content:txt});
+      var pts=((document.getElementById('adm-ref-pts')||{}).value||'').trim();
+      var resumo=((document.getElementById('adm-ref-resumo')||{}).value||'').trim();
+      var ctx='Tema da diretriz: '+(admRefSub||'')+' › '+(admRefTema||'')+'.'+(pts?('\n\nBullets atuais:\n'+pts):'')+(resumo?('\n\nResumo atual:\n'+resumo):'');
+      var hist=admRefChat.map(function(m){return (m.role==='user'?'Professor':'IA')+': '+m.content;}).join('\n\n');
+      admRefChat.push({role:'ai',content:'',pending:true});
+      renderRefChatMsgs();
+      callAI('Você é um assistente de endocrinologia ajudando um professor a desenvolver material de estudo de uma diretriz. Responda em português do Brasil, objetivo e clinicamente correto. Quando pedirem bullets, flashcards (formato "pergunta :: resposta", um por linha) ou resumo, entregue pronto para colar no campo.',
+        ctx+'\n\nConversa até agora:\n'+hist+'\n\nResponda à última mensagem do professor.',1500)
+      .then(function(t){admRefChat[admRefChat.length-1]={role:'ai',content:String(t||'(sem resposta)')};})
+      .catch(function(e){admRefChat[admRefChat.length-1]={role:'ai',content:'Erro: '+(e.message||'falha ao responder')};})
+      .then(function(){renderRefChatMsgs();});
+    }
+    var chatSend=document.getElementById('btn-ref-chat-send');
+    if(chatSend)chatSend.addEventListener('click',sendRefChat);
+    var chatInp=document.getElementById('adm-ref-chat-input');
+    if(chatInp)chatInp.addEventListener('keydown',function(ev){if(ev.key==='Enter'&&!ev.shiftKey){ev.preventDefault();sendRefChat();}});
+    if(admRefChat.length)renderRefChatMsgs();
     var rPrev=document.getElementById('btn-adm-ref-preview');
     if(rPrev)rPrev.addEventListener('click',function(){
       refSubSel='';refFlashOpen={};
