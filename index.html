@@ -2878,6 +2878,31 @@ function callAIwithPDF(sys,b64){
     maxTokens:2000
   });
 }
+// Carrega o pdf.js (CDN) sob demanda só quando o professor importa um PDF.
+var __pdfjsP=null;
+function ensurePdfJs(){
+  if(window.pdfjsLib)return Promise.resolve(window.pdfjsLib);
+  if(__pdfjsP)return __pdfjsP;
+  __pdfjsP=new Promise(function(resolve,reject){
+    var s=document.createElement('script');
+    s.src='https://cdn.jsdelivr.net/npm/pdfjs-dist@3.11.174/build/pdf.min.js';
+    s.onload=function(){try{if(window.pdfjsLib){window.pdfjsLib.GlobalWorkerOptions.workerSrc='https://cdn.jsdelivr.net/npm/pdfjs-dist@3.11.174/build/pdf.worker.min.js';resolve(window.pdfjsLib);}else reject(new Error('Leitor de PDF indisponível.'));}catch(e){reject(e);}};
+    s.onerror=function(){reject(new Error('Falha ao carregar o leitor de PDF.'));};
+    document.head.appendChild(s);
+  });
+  return __pdfjsP;
+}
+// Extrai o texto de um PDF (ArrayBuffer) no navegador — evita enviar o binário
+// (que estoura o limite de corpo da função serverless). Limita a 60 páginas.
+function extractPdfText(arrayBuffer){
+  return ensurePdfJs().then(function(lib){
+    return lib.getDocument({data:arrayBuffer}).promise.then(function(pdf){
+      var max=Math.min(pdf.numPages||0,60),pages=[],chain=Promise.resolve();
+      for(var i=1;i<=max;i++){(function(p){chain=chain.then(function(){return pdf.getPage(p).then(function(page){return page.getTextContent().then(function(c){pages.push((c.items||[]).map(function(it){return it.str;}).join(' '));});});});})(i);}
+      return chain.then(function(){return pages.join('\n').replace(/\s+\n/g,'\n').trim();});
+    });
+  });
+}
 
 var currentUser=null;
 // Atualiza nome/e-mail/avatar do professor no topo (botão e menu). Reaplica
@@ -6441,7 +6466,7 @@ function admSuporteHTML(){
 function persistAdm(){lsSet('adm_avisos',admAvisos);lsSet('adm_questoes',admQuestoes);queueRemoteStateSave();}
 var admMuralShowForm=false,admMuralEdit=null,admMuralFilter='',admMuralTipoFilter='',admMuralSort='novos';
 // ---------- REFERÊNCIA RÁPIDA (admin CRUD) ----------
-var admRefShowForm=false,admRefEdit=null,admRefPdfB64=null,admRefPdfName='',admRefSub='',admRefTema='',admRefTemaAdd=false,admRefTemaEdit=null,admRefChat=[];
+var admRefShowForm=false,admRefEdit=null,admRefPdfB64=null,admRefPdfName='',admRefPdfFile=null,admRefSub='',admRefTema='',admRefTemaAdd=false,admRefTemaEdit=null,admRefChat=[];
 // Bolhas do chat do assistente de IA no editor de diretrizes.
 function refChatMsgsHTML(){
   if(!admRefChat.length)return '<div style="font-size:.74rem;color:var(--t3);line-height:1.5">Converse com a IA para desenvolver os textos. Ex.: “resuma os fármacos em 4 bullets”, “gere 3 flashcards sobre contraindicações”, “reescreva o resumo mais didático”. Copie a resposta para o campo desejado.</div>';
@@ -7117,12 +7142,12 @@ function bindAdmSec(sec){
       // Na grade de temas o botão abre o input inline de novo tema; dentro do
       // tema abre o formulário de diretriz.
       if(admRefSub&&!admRefTema&&!admRefShowForm){admRefTemaAdd=true;admRefTemaEdit=null;renderAdmSec('ref');return;}
-      admRefShowForm=!admRefShowForm;admRefEdit=null;admRefPdfB64=null;admRefPdfName='';admRefChat=[];renderAdmSec('ref');document.getElementById('adm-main').scrollTop=0;
+      admRefShowForm=!admRefShowForm;admRefEdit=null;admRefPdfB64=null;admRefPdfName='';admRefPdfFile=null;admRefChat=[];renderAdmSec('ref');document.getElementById('adm-main').scrollTop=0;
     });
     var tFocus=document.getElementById(admRefTemaAdd?'adm-ref-newtema':(admRefTemaEdit?'adm-ref-edittema':''));
     if(tFocus){tFocus.focus();tFocus.addEventListener('keydown',function(ev){if(ev.key==='Enter'){ev.preventDefault();var bt=admRefTemaAdd?document.getElementById('btn-ref-tema-create'):main.querySelector('[data-ref-tema-saveedit]');if(bt)bt.click();}});}
     var rCancel=document.getElementById('btn-adm-ref-cancel');
-    if(rCancel)rCancel.addEventListener('click',function(){admRefShowForm=false;admRefEdit=null;admRefPdfB64=null;admRefPdfName='';admRefChat=[];renderAdmSec('ref');});
+    if(rCancel)rCancel.addEventListener('click',function(){admRefShowForm=false;admRefEdit=null;admRefPdfB64=null;admRefPdfName='';admRefPdfFile=null;admRefChat=[];renderAdmSec('ref');});
     var rSave=document.getElementById('btn-adm-ref-save');
     if(rSave)rSave.addEventListener('click',function(){
       function val(id){var e=document.getElementById(id);return e?e.value.trim():'';}
@@ -7137,7 +7162,7 @@ function bindAdmSec(sec){
       if(fc.length)obj.flashcards=fc;
       if(mp)obj.mapa=mp;
       if(admRefEdit!==null&&diretrizes[admRefEdit])diretrizes[admRefEdit]=obj;else diretrizes.unshift(obj);
-      persistDiretrizes();admRefShowForm=false;admRefEdit=null;admRefPdfB64=null;admRefPdfName='';
+      persistDiretrizes();admRefShowForm=false;admRefEdit=null;admRefPdfB64=null;admRefPdfName='';admRefPdfFile=null;
       admRefSub=String(obj.sub||'Geral');admRefTema=dirTemaOf(obj); // abre onde a diretriz ficou
       renderAdmSec('ref');notify('Diretriz salva.','ok');
     });
@@ -7163,22 +7188,40 @@ function bindAdmSec(sec){
     if(rPdf)rPdf.addEventListener('change',function(e){
       var f=e.target.files&&e.target.files[0];if(!f)return;
       if(f.type!=='application/pdf'){notify('Selecione um arquivo PDF.','err');return;}
-      if(f.size>15*1024*1024){notify('PDF muito grande (máx 15 MB).','err');return;}
+      if(f.size>30*1024*1024){notify('PDF muito grande (máx 30 MB).','err');return;}
       var st=document.getElementById('adm-ref-pdf-status');
+      admRefPdfFile=f; // guarda o arquivo p/ extrair texto no navegador (pdf.js)
       var rdr=new FileReader();rdr.onload=function(ev){admRefPdfB64=String(ev.target.result).split(',')[1];admRefPdfName=f.name;if(st){st.textContent='✓ '+f.name;}};rdr.readAsDataURL(f);
     });
     var rPdfGen=document.getElementById('btn-adm-ref-pdfgen');
     if(rPdfGen)rPdfGen.addEventListener('click',function(){
-      if(!admRefPdfB64){notify('Selecione um PDF primeiro.','err');return;}
+      if(!admRefPdfFile&&!admRefPdfB64){notify('Selecione um PDF primeiro.','err');return;}
       var st=document.getElementById('adm-ref-pdf-status');
       rPdfGen.disabled=true;rPdfGen.innerHTML=ldHTML('Lendo PDF...');if(st)st.textContent='';
-      aiRequest({
-        system:'Você é professor de endocrinologia. A partir de uma diretriz/artigo em PDF, produza material de estudo claro, correto e fiel ao documento, em português do Brasil.',
-        prompt:'Leia o documento e retorne APENAS JSON, sem texto fora do JSON, no formato: {"titulo":"título curto","fonte":"sociedade/autor","ano":"ano","resumo":"resumo descritivo bem estruturado em markdown simples (parágrafos, **negrito**, listas com -)","bullets":["ponto-chave"],"flashcards":[{"q":"pergunta curta","a":"resposta direta"}],"mapa":{"central":"tema central curto","nodes":[{"label":"ramo","children":["item","item"]}]}}. Use 5 a 8 bullets, 5 a 8 flashcards e 3 a 5 ramos. Não invente dados fora do documento.',
-        documentBase64:admRefPdfB64,
-        mediaType:'application/pdf',
-        maxTokens:4000
-      }).then(function(raw){
+      var SYS='Você é professor de endocrinologia. A partir de uma diretriz/artigo, produza material de estudo claro, correto e fiel ao documento, em português do Brasil.';
+      var FMT='Retorne APENAS JSON, sem texto fora do JSON, no formato: {"titulo":"título curto","fonte":"sociedade/autor","ano":"ano","resumo":"resumo descritivo bem estruturado em markdown simples (parágrafos, **negrito**, listas com -)","bullets":["ponto-chave"],"flashcards":[{"q":"pergunta curta","a":"resposta direta"}],"mapa":{"central":"tema central curto","nodes":[{"label":"ramo","children":["item","item"]}]}}. Use 5 a 8 bullets, 5 a 8 flashcards e 3 a 5 ramos. Não invente dados fora do documento.';
+      // Documento (imagem/base64) só p/ PDF pequeno: o corpo da função serverless
+      // tem limite (~4,5 MB), e o base64 infla ~33% → PDF até ~3 MB.
+      function fromBase64(){
+        if(!admRefPdfB64)throw new Error('Não consegui extrair texto deste PDF.');
+        if(admRefPdfB64.length>4000000)throw new Error('PDF muito grande para leitura por imagem. Use um PDF com texto selecionável, ou um arquivo menor (até ~3 MB), ou cole o conteúdo nos campos.');
+        if(st)st.textContent='Gerando com IA…';
+        return aiRequest({system:SYS,prompt:'Leia o documento e '+FMT,documentBase64:admRefPdfB64,mediaType:'application/pdf',maxTokens:4000});
+      }
+      var task;
+      if(admRefPdfFile&&admRefPdfFile.arrayBuffer){
+        if(st)st.textContent='Extraindo texto do PDF…';
+        task=admRefPdfFile.arrayBuffer().then(extractPdfText)
+          .then(function(t){return String(t||'').replace(/[ \t]+/g,' ').slice(0,120000);})
+          .catch(function(){return null;}) // extração falhou → tenta documento
+          .then(function(text){
+            if(text&&text.replace(/\s/g,'').length>=200){if(st)st.textContent='Gerando com IA…';return aiRequest({system:SYS,prompt:FMT+'\n\nTEXTO DO DOCUMENTO:\n'+text,maxTokens:4000});}
+            return fromBase64(); // PDF escaneado/sem texto selecionável
+          });
+      }else{
+        task=Promise.resolve().then(fromBase64);
+      }
+      task.then(function(raw){
         var d=parseJ(raw);if(!d)throw new Error('A IA não retornou um JSON válido.');
         function setVal(id,v){var e=document.getElementById(id);if(e&&v!=null)e.value=v;}
         var fEl=document.getElementById('adm-ref-fonte');if(fEl&&!fEl.value.trim()&&d.fonte)fEl.value=d.fonte;
@@ -7189,10 +7232,10 @@ function bindAdmSec(sec){
         if(d.mapa&&(d.mapa.central||Array.isArray(d.mapa.nodes)))setVal('adm-ref-mapa',mapaToText({central:String(d.mapa.central||''),nodes:(Array.isArray(d.mapa.nodes)?d.mapa.nodes:[]).filter(function(n){return n&&n.label;}).map(function(n){return {label:String(n.label),children:(Array.isArray(n.children)?n.children.map(String):[])};})}));
         if(st)st.textContent='✓ Gerado — revise e edite os campos.';
         notify('Conteúdo gerado a partir do PDF. Revise e salve.','ok');
-      }).catch(function(e){notify('Erro ao ler o PDF: '+(e.message||'falha'),'err');if(st)st.textContent='';})
+      }).catch(function(e){var msg=(e&&e.message)||'falha';if(/\b413\b/.test(msg))msg='PDF muito grande. Use um PDF com texto selecionável ou um arquivo menor (até ~3 MB).';notify('Erro ao ler o PDF: '+msg,'err');if(st)st.textContent='';})
       .then(function(){rPdfGen.disabled=false;rPdfGen.innerHTML='🤖 Gerar com IA';});
     });
-    main.querySelectorAll('[data-adm-refedit]').forEach(function(b){b.addEventListener('click',function(){admRefEdit=parseInt(b.dataset.admRefedit);admRefShowForm=true;admRefPdfB64=null;admRefPdfName='';admRefChat=[];renderAdmSec('ref');document.getElementById('adm-main').scrollTop=0;});});
+    main.querySelectorAll('[data-adm-refedit]').forEach(function(b){b.addEventListener('click',function(){admRefEdit=parseInt(b.dataset.admRefedit);admRefShowForm=true;admRefPdfB64=null;admRefPdfName='';admRefPdfFile=null;admRefChat=[];renderAdmSec('ref');document.getElementById('adm-main').scrollTop=0;});});
     main.querySelectorAll('[data-adm-refdel]').forEach(function(b){b.addEventListener('click',function(){var i=parseInt(b.dataset.admRefdel);var d=diretrizes[i];if(!confirm('Excluir a diretriz "'+((d&&(d.tema||d.titulo))||'esta diretriz')+'"? Esta ação não pode ser desfeita.'))return;diretrizes.splice(i,1);persistDiretrizes();renderAdmSec('ref');});});
     // Geração por IA agora vive DENTRO do formulário, ao lado de cada campo:
     // gera a partir dos bullets+resumo digitados e preenche o textarea (o
