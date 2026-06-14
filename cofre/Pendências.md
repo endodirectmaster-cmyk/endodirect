@@ -1,11 +1,15 @@
 ---
 tags: [cofre, pendencias]
-atualizado: 2026-06-12
+atualizado: 2026-06-14
 ---
 
 # Pendências
 
 ## Lado do usuário (fora do código)
+- [ ] **Publicar Diretrizes:** flipar `DIRETRIZES_PUBLICADO=true` no `index.html` quando a curadoria estiver pronta. Hoje os alunos veem "Em breve". Ver [[Arquitetura]].
+- [ ] **Revisão clínica dos flashcards:** ~180 flashcards da biblioteca de membro foram gerados por IA — médico deve revisar antes/depois do lançamento.
+- [ ] **Conta de teste `memed.teste@endodirect.com.br`:** ainda conta como aluno no Analytics (necessária p/ a homologação Memed via `MEMED_ALLOW`). Remover quando a Memed sair de homologação.
+- [x] **Limpeza de contas de teste no Analytics (2026-06-14):** removidas 5 contas (`dudukamura@`, `rgmedicaltda@`, `gabysfernandes@`, `eduardo.teste@`, `teste@`) de `auth.users` + `endodirect_app_state`/`acessos`/`devices`/`assinaturas` (nenhuma tinha assinatura paga). "Alunos cadastrados" caiu de 11 → 6. A contagem vem da RPC `endodirect_admin_overview` (`role='aluno'` em `endodirect_app_state`).
 - [x] **Webhook pagar.me — 401 RESOLVIDO (2026-06-11).** Diagnóstico (logs `[whdbg]`): o usuário batia, mas a senha enviada pelo webhook tinha um caractere "fantasma" (15 chars vs 14/12 no Vercel) e **as edições no painel do pagar.me não persistiam** — ele seguia mandando a senha original. **Fix em duas frentes:** (1) **código** — `verifyAuth` agora normaliza Usuário/Senha para **só ASCII visível** (`/[^!-~]/g`) antes de comparar com `timingSafeEqual` (#192→#194); fica imune a espaço/zero-width/BOM colado no painel; (2) **operação** — webhook **recriado do zero** com Usuário `endodirect` / Senha `endohook2026` (digitada na criação) e `PAGARME_WEBHOOK_BASIC_PASS=endohook2026` no Vercel. Validado ponta a ponta: **PIX real** liberou `plano:standard` (active) e o webhook respondeu **200**. Diagnóstico removido após confirmar. Ver [[Pagamentos pagar.me]].
 - [x] **PIX × duração do acesso — OK (2026-06-11).** O PIX da conta de teste cobrou **R$540,00** (= preço anual Standard, 12× R$45) e liberou **1 ano** (`tipo: avulso`, `ENDODIRECT_AVULSO_DIAS=365`). Duração e preço **batem** — PIX é sempre pagamento único anual (não há PIX recorrente). Sem ajuste necessário.
 - [x] **Checkout PIX/boleto libera sozinho (2026-06-11).** Após gerar a cobrança, o front faz polling do estado remoto a cada 5s (`ckStartAutoVerify`) e entra na plataforma automaticamente assim que o webhook provisiona — sem precisar clicar em "Já paguei — verificar" (o botão segue como fallback). Para ao liberar, ao fechar o checkout, ou após ~5 min.
