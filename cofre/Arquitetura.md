@@ -1,6 +1,6 @@
 ---
 tags: [cofre, arquitetura]
-atualizado: 2026-06-10
+atualizado: 2026-06-14
 ---
 
 # Arquitetura
@@ -16,6 +16,15 @@ atualizado: 2026-06-10
 - `persist()` grava `DB` no localStorage e chama `queueRemoteStateSave()`.
 - **Estado global** (`endodirect_global_state`, payload JSONB): `globalStatePayload()` **substitui o payload inteiro** ao salvar. Por isso há o mecanismo `globalServerKeys` + captura em `applyStatePayload` para **preservar chaves geridas pelo servidor** (`newsletter_extra`, `newsletter_unsub`, `newsletter_sent`, `newsletter`). Esquecer isso já causou apagar a newsletter (corrigido em #166).
 - **Estado por usuário** (`endodirect_app_state`): `userStatePayload` / `REMOTE_STATE_KEYS` espelham chaves para o localStorage. Inclui `user_profile`, `ck_billing`, `deg_trials`.
+
+### Navegação (tela inicial vs. reload) — #284
+- **Reload mantém a tela**; **logout+login volta ao padrão** (professor → Analytics; aluno → Mural). Mecanismo: `goPanel()` persiste `last_panel` (aluno) e `renderAdmSec()` persiste `adm_sec` (professor); `doLogout()` **limpa** `last_panel`+`adm_sec`. No `startApp`: admin chama `goPanel('adm')` (que restaura via `admRestoreSec()`, default `analytics`); aluno restaura `last_panel` se visível, senão `homePanel()` (Mural-first).
+- ⚠️ `admRestoreSec()` default passou de `ref` → `analytics`.
+
+### Diretrizes (antiga "Referência") — #276–#284
+- Hierarquia **subespecialidade → tema → diretriz**; cada diretriz tem `resumo` (texto+bullets), `flashcards`, `mapa`. Taxonomia canônica de 11 subespecialidades (`DIR_SUBS`).
+- **Aluno**: `diretrizesViewHTML()`/`renderDiretrizesInto()` com 3 botões de formato (📄 Resumo / 🃏 Flashcards / 🧠 Mapas), só leitura, flip 3D e mapas expansíveis. Gated por `DIRETRIZES_PUBLICADO=false` → mostra "Em breve" (ver [[Pendências]]).
+- **Professor** (`admRefSecHTML`/`bindAdmSec`): mesma navegação; ao abrir um **tema** vê a **mesma tela do aluno** (formatos), acrescida de ✏️ Editar / 🗑 Excluir por diretriz (#284). Editor com importação de PDF via IA (gera resumo/bullets/flashcards/mapa, todos editáveis) + chat assistente. A IA usa a conta Anthropic do servidor (`/api/ai`), **não** consome créditos de aluno.
 
 ## Backend
 
