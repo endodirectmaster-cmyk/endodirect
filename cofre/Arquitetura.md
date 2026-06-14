@@ -61,7 +61,7 @@ atualizado: 2026-06-14
 ## PWA (app instalável) — 2026-06-14
 - `manifest.webmanifest` (raiz): nome, `display:standalone`, `theme_color #1a2744`, `background_color #0b1325`, ícones 192/512 + maskable.
 - `sw.js` (raiz, registrado no `<head>`): service worker **network-first** — navegações (HTML) sempre buscam a rede (offline cai no último `/index.html` cacheado); `/api/*` **nunca** é cacheado; cross-origin (Supabase, jsDelivr, Vimeo) passa direto; estáticos do domínio em stale-while-revalidate. Conservador de propósito, para não repetir o problema de conteúdo desatualizado por cache.
-- `icons/` (192, 512, maskable-512, apple-touch-180) gerados do `Icone - MD 2.png` sobre fundo `#0b1325` (script com `sharp`). `apple-touch-icon` agora aponta para o ícone quadrado.
+- `icons/` (192, 512, maskable-512, apple-touch-180) gerados do `Icone - MD.png` (versão **dourada** do símbolo — alto contraste sobre o fundo escuro; a versão navy `Icone - MD 2.png` sumia no `#0b1325`) sobre fundo `#0b1325` (script com `sharp`). `apple-touch-icon` aponta para o ícone quadrado. Ao trocar ícones, **subir a versão do cache** no `sw.js` (`CACHE`, hoje `endodirect-v2`) para forçar atualização.
 - **App nativo (lojas):** ainda **não** feito — plano é empacotar a SPA com **Capacitor** (iOS/Android). Ver [[Pendências]] (contas dev, build com Mac/CI, e a regra de IAP da Apple para pagamentos).
 
 ## Validação
