@@ -2521,7 +2521,7 @@ function renderDegustacaoBar(){
   }else if(bar){bar.style.display='none';}
 }
 function refreshAfterRemoteState(){
-  try{if(currentUser&&currentUser.id&&!isDegustacao()){var s=(seedFlashcards()||0)+(seedMindmaps()||0);if(s>0)queueRemoteStateSave();}}catch(e){}
+  try{if(currentUser&&currentUser.id){var s=(seedFlashcards()||0)+(seedMindmaps()||0);if(s>0)queueRemoteStateSave();}}catch(e){}
   try{renderDegustacaoBar();}catch(e){}
   try{maybeResumePlanIntent();}catch(e){}
   try{refreshDash();}catch(e){}
@@ -4475,55 +4475,55 @@ var MM_SEED=[
     {label:'Hipertrigliceridemia',leaves:['Fibrato se ≥500 (pancreatite)','Ômega-3 em alta dose','Tratar causas secundárias']},
     {label:'Seguimento',leaves:['Perfil lipídico de controle','Adesão e tolerância','Reavaliar risco cardiovascular']}
   ]}},
-  {topic:'Síndrome de Cushing',sub:'Adrenal',data:{root:'Síndrome de Cushing',branches:[
+  {topic:'Síndrome de Cushing',sub:'Adrenal',member:true,data:{root:'Síndrome de Cushing',branches:[
     {label:'Causas',leaves:['Iatrogênica (corticoide) — mais comum','Doença de Cushing (adenoma hipofisário ACTH)','Tumor adrenal produtor de cortisol','ACTH ectópico (ex.: CA de pulmão)']},
     {label:'Quadro clínico',leaves:['Obesidade central e face em "lua cheia"','Estrias violáceas largas','Fraqueza muscular proximal','HAS, hiperglicemia e osteoporose']},
     {label:'Diagnóstico',leaves:['Cortisol salivar noturno','Cortisol livre urinário de 24h','Supressão com 1 mg de dexametasona','ACTH para localizar a origem']},
     {label:'Tratamento',leaves:['Cirurgia (transesfenoidal ou adrenal)','Suspender corticoide exógeno se possível','Inibidores da esteroidogênese (cetoconazol)','Radioterapia em casos selecionados']}
   ]}},
-  {topic:'Nódulo tireoidiano',sub:'Tireoide',data:{root:'Nódulo tireoidiano',branches:[
+  {topic:'Nódulo tireoidiano',sub:'Tireoide',member:true,data:{root:'Nódulo tireoidiano',branches:[
     {label:'Avaliação inicial',leaves:['Dosar TSH','Ultrassom com classificação TI-RADS','Cintilografia se TSH suprimido','Fatores de risco para malignidade']},
     {label:'PAAF',leaves:['Indicada conforme TI-RADS e tamanho','Citologia pela classificação de Bethesda','Linfonodos cervicais suspeitos','Define conduta cirúrgica']},
     {label:'Sinais de alerta',leaves:['Crescimento rápido','Microcalcificações','Margens irregulares','Irradiação cervical prévia']},
     {label:'Conduta',leaves:['Acompanhamento se benigno','Cirurgia se maligno/suspeito','Tratar nódulo hiperfuncionante (quente)','Seguimento ultrassonográfico']}
   ]}},
-  {topic:'Cetoacidose diabética',sub:'Diabetes',data:{root:'Cetoacidose diabética',branches:[
+  {topic:'Cetoacidose diabética',sub:'Diabetes',member:true,data:{root:'Cetoacidose diabética',branches:[
     {label:'Diagnóstico',leaves:['Hiperglicemia (>250 mg/dL)','Acidose metabólica (pH<7,3; HCO3 baixo)','Cetonemia/cetonúria','Ânion gap elevado']},
     {label:'Fatores precipitantes',leaves:['Infecção','Omissão de insulina','Diagnóstico inicial de DM1','Eventos agudos (IAM, AVC)']},
     {label:'Tratamento',leaves:['Hidratação com SF 0,9%','Insulina regular IV em infusão','Repor potássio (K<5,2 com diurese)','Tratar o fator precipitante']},
     {label:'Cuidados',leaves:['Bicarbonato só se pH muito baixo','Evitar queda glicêmica abrupta','Monitorar K e glicemia','Sobrepor insulina SC antes de suspender a IV']}
   ]}},
-  {topic:'Osteoporose',sub:'Osteometabolismo',data:{root:'Osteoporose',branches:[
+  {topic:'Osteoporose',sub:'Osteometabolismo',member:true,data:{root:'Osteoporose',branches:[
     {label:'Diagnóstico',leaves:['DXA: T-score ≤ −2,5','Osteopenia: −1,0 a −2,5','Fratura por fragilidade define a doença','FRAX para risco em 10 anos']},
     {label:'Fatores de risco',leaves:['Idade avançada e pós-menopausa','Corticoterapia crônica','Tabagismo e álcool','Fratura prévia / história familiar']},
     {label:'Tratamento',leaves:['Bisfosfonatos (1ª linha)','Cálcio e vitamina D','Denosumabe','Teriparatida em alto risco']},
     {label:'Prevenção',leaves:['Exercício com carga','Prevenção de quedas','Ingesta adequada de cálcio','Vitamina D / exposição solar']}
   ]}},
-  {topic:'Síndrome dos ovários policísticos',sub:'Endocrinologia Feminina',data:{root:'Síndrome dos ovários policísticos (SOP)',branches:[
+  {topic:'Síndrome dos ovários policísticos',sub:'Endocrinologia Feminina',member:true,data:{root:'Síndrome dos ovários policísticos (SOP)',branches:[
     {label:'Critérios de Rotterdam',leaves:['2 de 3 critérios','Oligo/anovulação','Hiperandrogenismo clínico ou laboratorial','Ovários policísticos ao ultrassom']},
     {label:'Manifestações',leaves:['Irregularidade menstrual','Hirsutismo e acne','Resistência insulínica','Subfertilidade']},
     {label:'Investigação',leaves:['Excluir tireoide, prolactina e HAC','Dosar androgênios','Perfil metabólico (glicemia, lipídeos)','Ultrassom pélvico']},
     {label:'Tratamento',leaves:['Mudança de estilo de vida','Anticoncepcional combinado','Metformina se alteração metabólica','Indutores de ovulação se deseja gestar']}
   ]}},
-  {topic:'Hipogonadismo masculino',sub:'Endocrinologia Masculina',data:{root:'Hipogonadismo masculino',branches:[
+  {topic:'Hipogonadismo masculino',sub:'Endocrinologia Masculina',member:true,data:{root:'Hipogonadismo masculino',branches:[
     {label:'Diagnóstico',leaves:['Testosterona total matinal baixa (2 dosagens)','Sintomas compatíveis','LH/FSH para classificar','Excluir causas reversíveis']},
     {label:'Classificação',leaves:['Primário: LH/FSH altos','Central: LH/FSH baixos ou normais','Klinefelter (causa genética comum)','Funcional no idoso/obeso']},
     {label:'Tratamento',leaves:['Reposição de testosterona','hCG/clomifeno se deseja fertilidade','Tratar a causa de base','Monitorar resposta clínica']},
     {label:'Cuidados na reposição',leaves:['Excluir CA de próstata/mama','Monitorar hematócrito (eritrocitose)','Acompanhar PSA','Suprime a espermatogênese']}
   ]}},
-  {topic:'Hiperprolactinemia',sub:'Neuroendocrinologia',data:{root:'Hiperprolactinemia / Prolactinoma',branches:[
+  {topic:'Hiperprolactinemia',sub:'Neuroendocrinologia',member:true,data:{root:'Hiperprolactinemia / Prolactinoma',branches:[
     {label:'Causas',leaves:['Prolactinoma (mais comum patológica)','Fármacos (antipsicóticos, metoclopramida)','Hipotireoidismo primário','Gestação/lactação (fisiológica)']},
     {label:'Quadro clínico',leaves:['Galactorreia','Amenorreia/irregularidade menstrual','Disfunção erétil e queda da libido','Macroadenoma: cefaleia e alteração visual']},
     {label:'Diagnóstico',leaves:['Prolactina sérica elevada','Excluir gravidez, fármacos e hipotireoidismo','RM de hipófise','Campo visual se macroadenoma']},
     {label:'Tratamento',leaves:['Agonistas dopaminérgicos (cabergolina)','Bromocriptina (alternativa)','Eficaz mesmo em macroadenomas','Cirurgia se refratário/compressivo']}
   ]}},
-  {topic:'Acromegalia',sub:'Neuroendocrinologia',data:{root:'Acromegalia',branches:[
+  {topic:'Acromegalia',sub:'Neuroendocrinologia',member:true,data:{root:'Acromegalia',branches:[
     {label:'Etiologia',leaves:['Adenoma hipofisário secretor de GH','Excesso de GH e IGF-1','Raro: secreção ectópica de GHRH']},
     {label:'Quadro clínico',leaves:['Crescimento de mãos, pés e face','Prognatismo e macroglossia','Sudorese e artralgia','Comorbidades: DM, HAS, apneia']},
     {label:'Diagnóstico',leaves:['IGF-1 elevado para idade/sexo','Sem supressão do GH no TOTG','RM de hipófise','Rastreio de complicações']},
     {label:'Tratamento',leaves:['Cirurgia transesfenoidal (1ª linha)','Análogos de somatostatina','Pegvisomanto (antagonista do GH)','Radioterapia em casos selecionados']}
   ]}},
-  {topic:'Hiperparatireoidismo primário',sub:'Osteometabolismo',data:{root:'Hiperparatireoidismo primário',branches:[
+  {topic:'Hiperparatireoidismo primário',sub:'Osteometabolismo',member:true,data:{root:'Hiperparatireoidismo primário',branches:[
     {label:'Diagnóstico',leaves:['Hipercalcemia','PTH alto ou inapropriadamente normal','Causa comum: adenoma de paratireoide','Calciúria para excluir HHF']},
     {label:'Quadro clínico',leaves:['Frequentemente assintomático','Nefrolitíase','Osteoporose / reabsorção óssea','Sintomas neuropsiquiátricos']},
     {label:'Complicações',leaves:['Litíase renal e nefrocalcinose','Perda óssea cortical','Crise hipercalcêmica','Comprometimento renal']},
@@ -4536,6 +4536,7 @@ function seedMindmaps(){
   var added=0;
   MM_SEED.forEach(function(s){
     if(topics[s.topic])return;
+    if(s.member&&isDegustacao())return; // mapas novos (member) não entram na degustação
     DB.mm.push({id:Date.now()+Math.random(),topic:s.topic,sub:s.sub,data:normalizeMMData(s.data),at:Date.now(),seed:true});added++;
   });
   if(added)lsSet('mm',DB.mm);
@@ -8325,7 +8326,7 @@ document.addEventListener('DOMContentLoaded',function(){
     }
   }catch(e){}
   setupMMPinchZoom();
-  if(!isDegustacao())seedFlashcards(); // biblioteca pré-salva é perk de membro (fora da degustação)
+  seedFlashcards();
   var mmsf=document.getElementById('mm-sub-filter');if(mmsf)mmsf.addEventListener('change',function(){mmSubFilter=this.value;renderMMList();});
   // LOGO (imagem original embutida)
   var LOGO_SRC='data:image/png;base64,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';
