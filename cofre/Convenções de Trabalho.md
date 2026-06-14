@@ -1,6 +1,6 @@
 ---
 tags: [cofre, processo]
-atualizado: 2026-06-10
+atualizado: 2026-06-14
 ---
 
 # Convenções de Trabalho
@@ -31,3 +31,4 @@ atualizado: 2026-06-10
 
 ## Manutenção do cofre
 Atualizar a nota relevante a cada mudança e registrar decisões em [[Decisões]]. Manter `atualizado:` no topo.
+- **Hook de lembrete (2026-06-14):** `.claude/settings.json` tem um hook **SessionStart** que injeta no contexto, no início de toda sessão, o lembrete de manter o cofre atualizado. Sincronizar o cofre faz parte de toda tarefa, não é opcional. (Há também um hook **Stop** que faz `git push origin HEAD`.)
