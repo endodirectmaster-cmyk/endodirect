@@ -370,7 +370,7 @@ textarea{resize:vertical;line-height:1.6}
 .mural-switch-wrap{display:flex;align-items:center;gap:.5rem;font-size:.78rem;color:var(--t2);font-weight:600;white-space:nowrap}
 .mural-switch{width:42px;height:24px;border-radius:999px;border:none;background:var(--bd2);position:relative;cursor:pointer;flex-shrink:0;transition:background .15s;padding:0}
 .mural-switch.on{background:var(--blue)}
-.mural-switch .ms-dot{position:absolute;top:3px;left:3px;width:18px;height:18px;border-radius:50%;background:var(--surface);transition:left .15s;box-shadow:0 1px 3px rgba(0,0,0,.25)}
+.mural-switch .ms-dot{position:absolute;top:3px;left:3px;width:18px;height:18px;border-radius:50%;background:#ffffff;transition:left .15s;box-shadow:0 1px 3px rgba(0,0,0,.35)}
 .mural-switch.on .ms-dot{left:21px}
 .mural-count-pill{display:inline-flex;align-items:center;justify-content:center;border-radius:5px;background:var(--blue-l);color:var(--blue);font-size:.66rem;font-weight:800;padding:.34rem .6rem;white-space:nowrap}
 .mural-theme-pill{display:inline-flex;align-items:center;justify-content:center;border-radius:5px;background:var(--s2);color:var(--tx);font-size:.66rem;font-weight:800;padding:.34rem .6rem;white-space:nowrap}
@@ -2980,7 +2980,7 @@ function startApp(){
     var al=document.getElementById('logo-adm-img');var tbLogo=document.getElementById('logo-tb-img');
     if(al&&tbLogo)al.innerHTML='<img src="'+tbLogo.src+'" alt="Endodirect" style="width:30px;height:30px;object-fit:contain">';
     goPanel('adm');
-    renderAdmSec('ref'); // professores iniciam na tela de Diretrizes
+    renderAdmSec('analytics'); // professores iniciam sempre no Analytics
   }else{
     goPanel(homePanel());initAll();
     try{markLockedNavItems();}catch(e){}
@@ -3715,11 +3715,10 @@ function prescProfileOk(){var pf=userPerfil();return pf==='Residente'||pf==='End
 // Mural de atualizações; estudantes seguem no Dashboard. Cai pro dash se o
 // mural não estiver visível (ex.: degustação depois dos 7 dias).
 function homePanel(){
-  if(!prescProfileOk())return 'dash';
-  // Médico não tem Dashboard no menu (applyProfileMenuLayout o esconde). Se o
-  // Mural não estiver visível (ex.: degustação após os 7 dias), cai num painel
-  // VISÍVEL — nunca no dash escondido (senão fica sem item de menu de volta).
+  // Tela inicial do aluno é SEMPRE o Mural quando visível. Na degustação (onde
+  // o Mural fica bloqueado) cai num painel disponível — nunca num escondido.
   if(canSeePanel('mural'))return 'mural';
+  if(!prescProfileOk()&&canSeePanel('dash'))return 'dash';
   if(canSeePanel('quest'))return 'quest';
   return 'flash';
 }
@@ -8345,9 +8344,7 @@ document.addEventListener('DOMContentLoaded',function(){
     if(__ds&&!currentUser&&!isPasswordRecoveryUrl()){
       var __u=USERS.find(function(x){return x.email===__ds;});
       if(__u){
-        doLogin(Object.assign({},__u));
-        var __lp=lsGet('last_panel');
-        if(__lp&&currentUser&&currentUser.role!=='admin'){try{if(canSeePanel(__lp))goPanel(__lp);}catch(e){}}
+        doLogin(Object.assign({},__u)); // tela inicial decidida por homePanel (Mural)
       }
     }
   }catch(e){}
