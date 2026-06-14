@@ -10,6 +10,17 @@
           }
         ]
       }
+    ],
+    "SessionStart": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "echo '{\"hookSpecificOutput\":{\"hookEventName\":\"SessionStart\",\"additionalContext\":\"Lembrete do projeto Endodirect: ao fim de CADA mudanca relevante, ATUALIZE o cofre/ (a nota correspondente + registre decisoes em cofre/Decisoes.md + atualize o campo atualizado: no topo da nota), conforme cofre/Convencoes de Trabalho.md. Sincronizar o cofre faz parte de toda tarefa, nao e opcional.\"}}'",
+            "statusMessage": "Lembrete: manter o cofre atualizado"
+          }
+        ]
+      }
     ]
   }
 }
