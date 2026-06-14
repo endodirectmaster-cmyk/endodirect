@@ -2979,10 +2979,13 @@ function startApp(){
     refreshAdminIdentity();
     var al=document.getElementById('logo-adm-img');var tbLogo=document.getElementById('logo-tb-img');
     if(al&&tbLogo)al.innerHTML='<img src="'+tbLogo.src+'" alt="Endodirect" style="width:30px;height:30px;object-fit:contain">';
+    // Reload mantém a última seção (adm_sec persiste); logout limpa adm_sec, então
+    // um login novo cai no padrão (Analytics) via admRestoreSec().
     goPanel('adm');
-    renderAdmSec('analytics'); // professores iniciam sempre no Analytics
   }else{
-    goPanel(homePanel());initAll();
+    // Reload mantém o último painel; logout limpa last_panel → cai no Mural (homePanel).
+    var lastP=lsGet('last_panel');
+    goPanel((lastP&&lastP!=='adm'&&canSeePanel(lastP))?lastP:homePanel());initAll();
     try{markLockedNavItems();}catch(e){}
   }
 }
@@ -3128,7 +3131,7 @@ var loggingOut=false; // trava: ignora SIGNED_IN automático após o "Sair" (at�
 function doLogout(){
   hideSessionWarning();
   loggingOut=true;
-  try{lsSet('demo_session',null);lsSet('last_panel',null);}catch(e){}
+  try{lsSet('demo_session',null);lsSet('last_panel',null);lsSet('adm_sec',null);}catch(e){}
   var client=getSupabaseClient();
   // Encerra a sessão do Supabase em QUALQUER login real (e-mail/senha ou Google),
   // senão o watcher reencontra a sessão e re-loga sozinho ao voltar/recarregar.
@@ -6369,7 +6372,8 @@ function admMapasHTML(){
 function admRestoreSec(){
   var ok=['analytics','mural','ref','provas','cursos','estudantes','conteudo','mapas','calc','chat','perfil','suporte'];
   var s=lsGet('adm_sec');
-  return ok.indexOf(s)>=0?s:'ref';
+  // Sem seção salva (após logout) → Analytics. Com seção salva (reload) → restaura.
+  return ok.indexOf(s)>=0?s:'analytics';
 }
 function renderAdmSec(sec){
   admCurrentSec=sec;
