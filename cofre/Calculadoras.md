@@ -1,6 +1,6 @@
 ---
 tags: [cofre, calculadoras]
-atualizado: 2026-06-10
+atualizado: 2026-06-14
 ---
 
 # Calculadoras
@@ -26,6 +26,9 @@ Renderização em `openCalc`/`calcUpdate`. Itens `external:true` apenas linkam p
 
 ## Ajuste de framework
 `calcUpdate` mostra **`—`** quando `calc()` retorna não-finito (entrada incompleta ou idade fora da faixa) em vez de `NaN`.
+
+## Também no painel do professor (#277)
+As mesmas calculadoras aparecem no admin (seção 🧮 Calculadoras, `admCalcHTML`/`data-asec="calc"`). Para conviver com o painel do aluno sem colisão de IDs, as funções de cálculo são **escopadas a um contêiner ativo** (`calcRoot` via `calcEl(sel)`): `initCalc(root)`/`openCalc`/`closeCalc`/`calcUpdate`. No `bindAdmSec`, `sec==='calc'` reseta `activeCalc` e chama `initCalc(main)`.
 
 ## Regenerar `growth-lms.js`
 Fontes (hosts permitidos no sandbox: `raw.githubusercontent.com`): CDC `statage.csv` (mirror MITRE/GrowthViz), WHO 2006 (`growthfile_who.csv.gz` do GrowthViz), WHO 2007 (`erik1066/anthstat-statistics` → `src/WHO2007.data.cs`, dicionário `WHO2007_HeightAge`). Validar com z=0 na mediana.

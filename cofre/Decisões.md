@@ -8,6 +8,11 @@ atualizado: 2026-06-14
 Log de decisões de produto e técnicas (mais recentes no topo).
 
 ## 2026-06
+- **Tema escuro como padrão (#250–#252):** a plataforma adota o visual escuro da landing (`data-theme` no `<html>`, default `dark`, reversível por usuário). Seletor Claro/Escuro no Perfil (aluno + professor) com **botões reais**. Ver [[Arquitetura]].
+- **Videoaulas na landing (#244–#246):** card com os 4 professores (HLS via hls.js, grid 2×2); cortes começam no meio; a aula do Rodolpho (Vimeo) toca trecho fixo 00:55→01:05 em loop. Ver [[Arquitetura]].
+- **Texto de apoio no Suporte (#248–#249):** mesma copy nos dois painéis (aluno + admin) antes do e-mail `contato@`.
+- **Newsletter — priorização editorial (#275) + layout (#283):** ordena por tipo (revisão/metanálise/diretriz/consenso > ensaios/originais) e periódico (NEJM>Lancet>outros), data desc no desempate; e-mail em largura total, fontes maiores, logo no cabeçalho. Ver [[Newsletter e Radar]].
+- **Importação de PDF lê texto no navegador (#276):** corrige HTTP 413 enviando texto extraído (pdf.js) em vez do binário. Ver [[Arquitetura]].
 - **Navegação determinística (#284):** reload **mantém** a tela atual (professor na seção em que estava, aluno no painel); só **logout+login** volta ao padrão (Analytics / Mural). Substitui o comportamento anterior que forçava Analytics/Mural em todo reload. Ver [[Arquitetura]].
 - **Diretrizes (renomeada de "Referência"):** seção subespecialidade→tema→diretriz com conteúdo híbrido (admin escreve resumo+bullets; IA deriva flashcards+mapa, tudo editável). Importação de PDF via IA. **Aluno vê em 3 formatos, só leitura**; no painel do professor, abrir um tema mostra a **mesma tela do aluno** + Editar/Excluir (#284). Gated por `DIRETRIZES_PUBLICADO=false` ("Em breve") até a curadoria liberar. Taxonomia de 11 subespecialidades (sem "Reprodução" → Endocrinologia Masculina).
 - **IA do professor não consome créditos de aluno:** o assistente/geração das Diretrizes usa `/api/ai` (conta Anthropic do servidor), não as cotas do aluno.

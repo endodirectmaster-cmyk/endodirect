@@ -1,11 +1,11 @@
 ---
 tags: [cofre, produto]
-atualizado: 2026-06-10
+atualizado: 2026-06-14
 ---
 
 # Visão Geral
 
-**Endodirect** é uma plataforma de **educação médica em Endocrinologia e Metabologia** (público brasileiro): banco de questões comentadas, flashcards, mapas mentais, simulador de casos, simulado, prescrição, assistente de prescrição, podcasts, cursos, mural/radar de atualizações e ferramentas com IA. Baseado nas diretrizes SBEM, SBD, ADA.
+**Endodirect** é uma plataforma de **educação médica em Endocrinologia e Metabologia** (público brasileiro): banco de questões comentadas, flashcards, mapas mentais, simulador de casos, simulado, prescrição, assistente de prescrição, podcasts, cursos, **Diretrizes** (resumos por subespecialidade→tema, ver [[Arquitetura]]), mural/radar de atualizações e ferramentas com IA. Baseado nas diretrizes SBEM, SBD, ADA.
 
 ## Stack
 
