@@ -47,5 +47,16 @@ atualizado: 2026-06-14
 - `healthcheck`: `0 11 * * 1` (segundas)
 - Crons autenticam via `Authorization: Bearer $CRON_SECRET`.
 
+## Tema claro/escuro (#250–#252)
+- **Escuro é o padrão.** `:root` define as variáveis escuras; `html[data-theme="light"]{…}` sobrescreve para o claro. O atributo `data-theme` é setado já no `<head>` a partir de `localStorage.endodirect_theme` (default `dark`), evitando flash.
+- `setTheme(t)` grava a preferência e marca os botões `[data-theme-opt]`. Seletor no Perfil (aluno e professor) usa **botões reais** (não `<select>`, que sumiam no claro — #252).
+
+## Players de vídeo na landing (#244–#246)
+- Carregados via `<script src>` com `defer`: **hls.js@1.5.13** (streams HLS `.m3u8` do Bunny dos 4 professores, grid 2×2) e **Vimeo Player API**.
+- A aula do Rodolpho é um iframe Vimeo que toca um **trecho fixo 00:55→01:05 em loop** (`initVimeoClip`). Safari usa HLS nativo; demais navegadores usam `Hls()` quando suportado.
+
+## Importação de PDF nas Diretrizes (#259, #276)
+- `pdf.js` (**pdfjs-dist@3.11.174**, UMD do jsDelivr) é **lazy-loaded** só quando o professor importa um PDF. Extrai o **texto no navegador** e envia o texto (não o binário) para `/api/ai` — corrige o **HTTP 413** (corpo > ~4,5MB no Vercel). Fallback para base64 em PDFs pequenos/escaneados; mensagem amigável no 413.
+
 ## Validação
 Ver [[Convenções de Trabalho]] para os comandos de validação (scripts inline e `node --check`).
