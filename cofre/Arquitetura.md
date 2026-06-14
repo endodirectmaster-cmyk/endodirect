@@ -58,5 +58,11 @@ atualizado: 2026-06-14
 ## Importação de PDF nas Diretrizes (#259, #276)
 - `pdf.js` (**pdfjs-dist@3.11.174**, UMD do jsDelivr) é **lazy-loaded** só quando o professor importa um PDF. Extrai o **texto no navegador** e envia o texto (não o binário) para `/api/ai` — corrige o **HTTP 413** (corpo > ~4,5MB no Vercel). Fallback para base64 em PDFs pequenos/escaneados; mensagem amigável no 413.
 
+## PWA (app instalável) — 2026-06-14
+- `manifest.webmanifest` (raiz): nome, `display:standalone`, `theme_color #1a2744`, `background_color #0b1325`, ícones 192/512 + maskable.
+- `sw.js` (raiz, registrado no `<head>`): service worker **network-first** — navegações (HTML) sempre buscam a rede (offline cai no último `/index.html` cacheado); `/api/*` **nunca** é cacheado; cross-origin (Supabase, jsDelivr, Vimeo) passa direto; estáticos do domínio em stale-while-revalidate. Conservador de propósito, para não repetir o problema de conteúdo desatualizado por cache.
+- `icons/` (192, 512, maskable-512, apple-touch-180) gerados do `Icone - MD 2.png` sobre fundo `#0b1325` (script com `sharp`). `apple-touch-icon` agora aponta para o ícone quadrado.
+- **App nativo (lojas):** ainda **não** feito — plano é empacotar a SPA com **Capacitor** (iOS/Android). Ver [[Pendências]] (contas dev, build com Mac/CI, e a regra de IAP da Apple para pagamentos).
+
 ## Validação
 Ver [[Convenções de Trabalho]] para os comandos de validação (scripts inline e `node --check`).

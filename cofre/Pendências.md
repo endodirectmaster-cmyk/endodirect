@@ -23,6 +23,10 @@ atualizado: 2026-06-14
 - [x] **Newsletter:** Eduardo e Bruno **confirmaram o recebimento** (2026-06-11). O fix do `globalServerKeys` (#166) resolveu a perda do `newsletter_extra`. Ver [[Newsletter e Radar]].
 - [x] **Supabase (e-mails de auth):** Confirm email **ON** + **Custom SMTP via Resend** (remetente `Endodirect <nao-responda@endodirect.com.br>`) + **templates branded PT** (Confirm sign up / Reset password). Validado por teste em 2026-06-11: e-mail chega do domínio próprio, com visual do Endodirect. Fontes em `supabase/email-templates/`. Ver [[Integrações]].
 
+## App nativo (iOS/Android)
+- [x] **PWA instalável (2026-06-14):** `manifest.webmanifest` + `sw.js` (network-first) + `icons/`. Site vira "instalável" na tela inicial (Android/desktop; iOS com limitações). Ver [[Arquitetura]].
+- [ ] **App nas lojas via Capacitor (pendente):** empacotar a SPA em iOS/Android. Depende do usuário: contas **Apple Developer** (US$99/ano) e **Google Play** (US$25); **build/assinatura** exige Mac+Xcode ou CI (EAS/Codemagic/Appflow) — não dá para gerar o `.ipa`/`.aab` no sandbox. **Bloqueio de produto:** regra de **IAP da Apple** (até 30%) para conteúdo digital — definir estratégia (assinatura feita no site, app só consome) antes de submeter. Eu consigo: scaffolding do Capacitor, ícones/splash, deep links e a documentação de build/submissão.
+
 ## Lado do código / curadoria
 - [ ] Revisar **Grupo 2** — 29 gabaritos ambíguos (`gabaritos-suspeitos.md`). Ver [[Banco de Questões]].
 - [x] **Decisões de acesso (varredura 2026-06-12) — implementadas:**

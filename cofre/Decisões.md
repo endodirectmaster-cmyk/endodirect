@@ -8,6 +8,7 @@ atualizado: 2026-06-14
 Log de decisões de produto e técnicas (mais recentes no topo).
 
 ## 2026-06
+- **PWA primeiro, app nativo depois (2026-06-14):** a plataforma vira **PWA instalável** (manifest + service worker network-first + ícones) como ganho imediato para o lançamento. App nas lojas (App Store/Play) será via **Capacitor** embrulhando a mesma SPA — depende de contas dev, build com Mac/CI e resolver a regra de **IAP da Apple** (pagamento de conteúdo digital; checkout pagar.me no navegador pode ser barrado). Não reescrever em React Native/Flutter. Ver [[Arquitetura]] e [[Pendências]].
 - **Tema escuro como padrão (#250–#252):** a plataforma adota o visual escuro da landing (`data-theme` no `<html>`, default `dark`, reversível por usuário). Seletor Claro/Escuro no Perfil (aluno + professor) com **botões reais**. Ver [[Arquitetura]].
 - **Videoaulas na landing (#244–#246):** card com os 4 professores (HLS via hls.js, grid 2×2); cortes começam no meio; a aula do Rodolpho (Vimeo) toca trecho fixo 00:55→01:05 em loop. Ver [[Arquitetura]].
 - **Texto de apoio no Suporte (#248–#249):** mesma copy nos dois painéis (aluno + admin) antes do e-mail `contato@`.
