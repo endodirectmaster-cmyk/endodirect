@@ -6659,25 +6659,27 @@ function admRefSecHTML(){
       +'<div class="ph" style="margin-top:0"><h1>'+dirSubIcon(admRefSub)+' '+esc(admRefSub)+'</h1><p>'+((temas.length||admRefTemaAdd)?'Cada tema é uma aba dentro de '+esc(admRefSub)+'. Clique para editar as diretrizes, ou use ✏️ / 🗑 no card.':'Nenhum tema ainda — clique em “➕ Adicionar tema” para criar o primeiro.')+'</p></div>'
       +(cards?'<div class="dir-sub-grid">'+cards+'</div>':'');
   }else{
-    var rows=diretrizes.map(function(d,i){return {d:d,i:i};})
-      .filter(function(x){return (String(x.d.sub||'Geral').trim()||'Geral')===admRefSub&&dirTemaOf(x.d)===admRefTema;})
-      .map(function(x){
-        var d=x.d,i=x.i;
-        var nFlash=Array.isArray(d.flashcards)?d.flashcards.length:0;
-        var hasMapa=!!(d.mapa&&(d.mapa.central||(d.mapa.nodes&&d.mapa.nodes.length)));
-        var status='<div class="adm-ref-gen">'
-          +'Texto: '+(d.resumo?'<b>ok</b>':'—')+' · '
-          +'Flashcards: '+(nFlash?('<b>'+nFlash+'</b>'):'—')+' · '
-          +'Mapa: '+(hasMapa?'<b>ok</b>':'—')+'</div>';
-        return '<div class="adm-ref-row"><div class="arr-top"><div><span class="ref-badge">'+esc(d.fonte)+' · '+esc(d.ano)+'</span> <span class="arr-meta">'+esc(d.sub||'')+'</span><h4>'+esc(d.tema||d.titulo||'Diretriz')+'</h4></div>'
-          +'<div class="adm-ref-acts">'
-          +'<button class="btn btn-outline btn-sm" data-adm-refedit="'+i+'">Editar</button>'
-          +'<button class="btn btn-outline btn-sm" data-adm-refdel="'+i+'" style="color:var(--red);border-color:var(--red)">🗑</button></div></div>'
-          +'<ul>'+(d.pts||[]).map(function(p){return '<li>'+esc(p)+'</li>';}).join('')+'</ul>'+status+'</div>';
-      }).join('');
-    body='<button class="dir-back" data-admref-tback>← '+esc(admRefSub)+'</button>'
-      +'<div class="ph" style="margin-top:0"><h1>'+esc(admRefTema)+'</h1></div>'
-      +'<div class="adm-ref-list">'+(rows||'<div class="empty">Nenhuma diretriz neste tema.</div>')+'</div>';
+    // Visão do tema idêntica à do aluno (Resumo / Flashcards / Mapas mentais),
+    // somente leitura — acrescida do botão Editar/Excluir por diretriz.
+    var list=diretrizes.map(function(d,i){return {d:d,i:i};})
+      .filter(function(x){return (String(x.d.sub||'Geral').trim()||'Geral')===admRefSub&&dirTemaOf(x.d)===admRefTema;});
+    var rhead='<button class="dir-back" data-admref-tback>← '+esc(admRefSub)+'</button>'
+      +'<div class="ph" style="margin-top:0"><h1>'+esc(admRefTema)+'</h1></div>';
+    if(!list.length){
+      body=rhead+'<div class="dir-empty-fmt">Nenhuma diretriz neste tema. Clique em “+ Nova diretriz” para criar a primeira.</div>';
+    }else{
+      var fmts=[['resumo','📄 Resumo'],['flash','🃏 Flashcards'],['mapa','🧠 Mapas mentais']];
+      var fmtAtivo=(refFormat==='flash'||refFormat==='mapa')?refFormat:'resumo';
+      body=rhead
+        +'<div class="dir-fmt">'+fmts.map(function(f){return '<button class="dir-fmt-btn'+(fmtAtivo===f[0]?' on':'')+'" data-admref-fmt="'+f[0]+'">'+f[1]+'</button>';}).join('')+'</div>'
+        +list.map(function(x){
+          return '<div class="adm-ref-view" style="margin-bottom:1.1rem">'
+            +'<div style="display:flex;justify-content:flex-end;gap:.4rem;margin-bottom:.4rem">'
+            +'<button class="btn btn-outline btn-sm" data-adm-refedit="'+x.i+'">✏️ Editar</button>'
+            +'<button class="btn btn-outline btn-sm" data-adm-refdel="'+x.i+'" style="color:var(--red);border-color:var(--red)">🗑 Excluir</button></div>'
+            +dirCardHTML(x.d,x.i)+'</div>';
+        }).join('');
+    }
   }
   // Botão de ação contextual: dentro do tema → "Nova diretriz"; na grade de
   // temas (subespecialidade escolhida) → "Adicionar tema"; na grade de
@@ -7195,6 +7197,11 @@ function bindAdmSec(sec){
     if(rBack)rBack.addEventListener('click',function(){admRefSub='';admRefTema='';refResetTemaUi();renderAdmSec('ref');});
     var rTBack=main.querySelector('[data-admref-tback]');
     if(rTBack)rTBack.addEventListener('click',function(){admRefTema='';refResetTemaUi();renderAdmSec('ref');});
+    // Visão do tema (idêntica ao aluno): troca de formato, flip dos flashcards e
+    // abre/fecha dos ramos do mapa mental.
+    main.querySelectorAll('[data-admref-fmt]').forEach(function(b){b.addEventListener('click',function(){refFormat=b.dataset.admrefFmt;renderAdmSec('ref');});});
+    main.querySelectorAll('[data-dir-flash]').forEach(function(b){b.addEventListener('click',function(){b.classList.toggle('flipped');});});
+    main.querySelectorAll('[data-dir-mm-branch]').forEach(function(b){b.addEventListener('click',function(){if(b.parentNode)b.parentNode.classList.toggle('open');});});
     // ── Temas: criar / renomear / excluir inline ──
     function refTemaExists(nome,exceto){return dirTemaList(admRefSub,true).some(function(t){return t.tema.toLowerCase()===nome.toLowerCase()&&t.tema!==exceto;});}
     var tCreate=document.getElementById('btn-ref-tema-create');
