@@ -2347,24 +2347,23 @@ function normalizeMuralSource(source){
 function muralPlain(v){
   return String(v||'').normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase();
 }
+var MURAL_TYPES=['Aviso','Comunicado','Diretriz','Artigo de Revisão','Ensaio Clínico','Metanálise','Perspectiva Clínica','Estudo Genético','Estudo Original','Evento','Urgente'];
 function normalizeMuralType(tipo,titulo,texto,fonte){
   var raw=String(tipo||'').trim();
   if(/breaking/i.test(raw))return'Breaking News';
+  // Tipo escolhido EXPLICITAMENTE pelo professor (rótulo conhecido) é respeitado
+  // verbatim — NÃO re-deriva pelo título/texto. Sem isto, a edição manual era
+  // sobrescrita (ex.: marcar "Artigo de Revisão" voltava a "Diretriz" porque o
+  // título cita "guidelines"). A auto-classificação abaixo só vale para itens do
+  // radar (tipo 'Artigo'/vazio) ou rótulos legados não-canônicos.
+  if(MURAL_TYPES.indexOf(raw)>=0)return raw;
   var p=muralPlain([raw,titulo,texto,fonte].join(' '));
-  // Diretriz/guideline: detectada pelo tipo ou TÍTULO (sinal forte e preciso) —
-  // ex.: "...clinical practice guideline." sairia como "Estudo Original" sem isto.
   var pt=muralPlain([raw,titulo].join(' '));
-  if(pt.indexOf('guideline')>=0||pt.indexOf('diretriz')>=0||pt.indexOf('consensus')>=0||pt.indexOf('consenso')>=0||pt.indexOf('practice guideline')>=0)return'Diretriz';
-  if(raw&&raw!=='Artigo'){
-    if(p.indexOf('meta-anal')>=0||p.indexOf('metanal')>=0)return'Metanálise';
-    if(p.indexOf('ensaio clinico')>=0||p.indexOf('clinical trial')>=0||p.indexOf('randomized')>=0||p.indexOf('randomised')>=0)return'Ensaio Clínico';
-    if(p.indexOf('artigo de revisao')>=0||p.indexOf('review')>=0)return'Artigo de Revisão';
-    if(p.indexOf('perspectiva clinica')>=0||p.indexOf('perspective')>=0)return'Perspectiva Clínica';
-    if(p.indexOf('estudo genetico')>=0||p.indexOf('genetic')>=0)return'Estudo Genético';
-    if(p.indexOf('estudo translacional')>=0||p.indexOf('translational')>=0)return'Estudo Original';
-    return raw;
-  }
+  // Metanálise/revisão sistemática ANTES de diretriz: "systematic review
+  // supporting ... guidelines" é metanálise, não a diretriz em si.
   if(p.indexOf('meta-anal')>=0||p.indexOf('metanal')>=0||p.indexOf('systematic review')>=0||p.indexOf('revisao sistematica')>=0)return'Metanálise';
+  // Diretriz/guideline: detectada pelo tipo ou TÍTULO (sinal forte e preciso).
+  if(pt.indexOf('guideline')>=0||pt.indexOf('diretriz')>=0||pt.indexOf('consensus')>=0||pt.indexOf('consenso')>=0)return'Diretriz';
   if(p.indexOf('randomized')>=0||p.indexOf('randomised')>=0||p.indexOf('controlled trial')>=0||p.indexOf('clinical trial')>=0||p.indexOf('ensaio clinico')>=0||p.indexOf('trial')>=0)return'Ensaio Clínico';
   if(p.indexOf('endocrine reviews')>=0||p.indexOf('nature reviews')>=0||p.indexOf('review')>=0||p.indexOf('revisao')>=0)return'Artigo de Revisão';
   if(p.indexOf('perspective')>=0||p.indexOf('perspectiva')>=0)return'Perspectiva Clínica';
@@ -8530,7 +8529,7 @@ admMuralSecHTML=function(){
   var admPageAvisos=avisos.slice(admMuralPage*MURAL_PER_PAGE,admMuralPage*MURAL_PER_PAGE+MURAL_PER_PAGE);
   var count=avisos.length+' '+(avisos.length===1?'aviso':'avisos');
   var tema=admMuralFilter||admMuralTipoFilter||'Todas as subespecialidades';
-  var tipoOpts=['Aviso','Comunicado','Diretriz','Artigo de Revisão','Ensaio Clínico','Metanálise','Perspectiva Clínica','Estudo Genético','Estudo Original','Evento','Urgente'].map(function(t){return'<option>'+esc(t)+'</option>';}).join('');
+  var tipoOpts=MURAL_TYPES.map(function(t){return'<option>'+esc(t)+'</option>';}).join('');
   var subOpts=MURAL_SUBSPECIALTY_FILTERS.map(function(s){return'<option>'+esc(s)+'</option>';}).join('');
   var formHTML=admMuralShowForm?(
     '<div class="card" style="margin-bottom:1.1rem"><div style="font-size:1rem;font-weight:700;margin-bottom:.3rem">'+(admMuralEdit!==null?'✏️ Editar aviso':'📣 Novo aviso')+'</div><div style="font-size:.74rem;color:var(--t2);margin-bottom:.9rem">O card aparece imediatamente no mural do estudante.</div>'
