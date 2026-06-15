@@ -81,6 +81,12 @@ async function upsertAcesso(row) {
 module.exports = async function handler(req, res) {
   if (req.method === 'GET') return json(res, 200, { ok: true, service: 'endodirect-order', ready: !!(SECRET_KEY && SERVICE_ROLE), annual: { standard: ANNUAL.standard.amount, gold: ANNUAL.gold.amount } });
   if (req.method !== 'POST') { res.setHeader('Allow', 'GET, POST'); return json(res, 405, { ok: false, error: 'Metodo nao permitido.' }); }
+  // Endpoint cria cobranças com a chave LIVE do pagar.me: exige origem do próprio
+  // site (valida pelo HOSTNAME; header ausente passa p/ clientes não-browser).
+  var okHost = function (h) { return h === 'endodirect.com.br' || h.endsWith('.endodirect.com.br') || /^endodirect[a-z0-9-]*\.vercel\.app$/.test(h); };
+  var hostOf = function (s) { try { return new URL(String(s)).hostname.toLowerCase(); } catch (e) { return ''; } };
+  var bad = function (s) { if (!s) return false; var h = hostOf(s); return !(h && okHost(h)); };
+  if (bad(String(req.headers.origin || '')) || bad(String(req.headers.referer || ''))) return json(res, 403, { ok: false, error: 'Origem nao autorizada.' });
   if (!SECRET_KEY) return json(res, 500, { ok: false, error: 'PAGARME_SECRET_KEY ausente no servidor.' });
   if (!SERVICE_ROLE) return json(res, 500, { ok: false, error: 'Chave de servico do Supabase ausente.' });
 
