@@ -4,6 +4,7 @@
 const { runRadar } = require('../../lib/radar');
 const { sendDailyNewsletter } = require('../../lib/newsletter');
 const { refreshPodcastsFromFeed } = require('../../lib/podcasts');
+const { sendAlert } = require('../../lib/alert');
 
 function json(res, status, body) {
   res.statusCode = status;
@@ -26,7 +27,10 @@ module.exports = async function handler(req, res) {
     // Fail-safe: nunca derruba o cron do radar se o envio falhar.
     let newsletter = { sent: false, reason: 'skipped' };
     try { newsletter = await sendDailyNewsletter(result.topArticles); }
-    catch (e) { console.error('[cron-radar] newsletter erro:', (e && e.stack) || e); newsletter = { sent: false, reason: 'error' }; }
+    catch (e) {
+      console.error('[cron-radar] newsletter erro:', (e && e.stack) || e); newsletter = { sent: false, reason: 'error' };
+      try { await sendAlert('Newsletter diária falhou', ['O radar atualizou o mural, mas o envio da newsletter do dia falhou.', 'Erro: ' + ((e && e.message) || e)]); } catch (_) {}
+    }
     // Atualização automática dos podcasts a partir do feed RSS. Fica acoplada
     // ao cron do radar (em vez de um cron próprio) porque o plano limita o
     // número de cron jobs; roda diariamente e só grava episódios novos (dedup).
@@ -37,6 +41,7 @@ module.exports = async function handler(req, res) {
     return json(res, 200, { ok: true, ...result, newsletter, podcasts });
   } catch (error) {
     console.error('[cron-radar] erro:', (error && error.stack) || error);
+    try { await sendAlert('Radar diário falhou', ['O cron endocrine-radar lançou erro e NÃO atualizou o mural hoje.', 'Erro: ' + ((error && error.message) || error)]); } catch (_) {}
     return json(res, 500, { ok: false, error: (error && error.message) || 'Falha ao atualizar o radar.' });
   }
 };
