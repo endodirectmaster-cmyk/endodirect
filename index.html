@@ -1938,6 +1938,21 @@ function fmtPct(p){ // rótulo de percentil amigável
   if(p<0.1)return'< P0,1';if(p>99.9)return'> P99,9';
   return'P'+(p<1||p>99?(Math.round(p*10)/10):Math.round(p));
 }
+// Idade em meses (fracionária) a partir da data de nascimento e da data da medida
+// (vazia = hoje). Usada nas calculadoras de crescimento — mais prático que digitar meses.
+function ageMonthsFromDates(dobStr,domStr){
+  if(!dobStr)return NaN;
+  var dob=new Date(dobStr+'T00:00:00');if(isNaN(dob.getTime()))return NaN;
+  var dom=domStr?new Date(domStr+'T00:00:00'):new Date();if(isNaN(dom.getTime()))return NaN;
+  var ms=dom-dob;if(ms<0)return NaN;
+  return ms/(30.4375*24*3600*1000); // mês médio (365,25/12 dias)
+}
+function ageLabelFromMonths(mo){
+  if(!isFinite(mo)||mo<0)return'—';
+  var y=Math.floor(mo/12),m=Math.round(mo-y*12);
+  if(m===12){y++;m=0;}
+  return (y>0?y+' ano'+(y>1?'s':''):'')+(y>0&&m>0?' e ':'')+(m>0?m+' mes'+(m>1?'es':''):(y>0?'':'0 mês'));
+}
 var CALCS=[
   {id:'imc',name:'IMC',area:'Antropometria',desc:'Índice de Massa Corporal',
    fields:[{id:'imc_peso',label:'Peso (kg)',type:'num'},{id:'imc_alt',label:'Altura (cm)',type:'num'}],
@@ -2015,16 +2030,19 @@ var CALCS=[
    interp:function(s){if(s<=0)return{t:'Preencha as alturas dos pais',c:'tag-gold'};var lo=Math.round((s-8.5)*10)/10,hi=Math.round((s+8.5)*10)/10;return{t:'Faixa-alvo: '+lo+'–'+hi+' cm (±8,5)',c:'tag-blue'};},
    unit:'cm',note:'Método de Tanner: menino = (pai + mãe + 13)/2; menina = (pai + mãe − 13)/2. A faixa-alvo abrange ±8,5 cm (≈ ±2 DP). Compare com o canal de crescimento atual da criança.'},
   {id:'zha',name:'Escore-z de estatura/idade',area:'Crescimento',desc:'Z-score de estatura (ou comprimento) para idade — OMS e CDC',
-   fields:[{id:'zha_alt',label:'Estatura / comprimento (cm)',type:'num'},{id:'zha_idade',label:'Idade (meses)',type:'num'},{id:'zha_sexo',label:'Sexo',type:'select',opts:['Masculino','Feminino'],vals:[0,1]},{id:'zha_base',label:'Referência',type:'select',opts:['OMS (0–19 anos)','CDC (2–20 anos)'],vals:[0,1]}],
-   calc:function(v){var alt=parseFloat(v.zha_alt),mo=parseFloat(v.zha_idade);if(isNaN(alt)||alt<=0||isNaN(mo)||mo<0)return NaN;var sex=parseInt(v.zha_sexo)===1?'F':'M';var base=parseInt(v.zha_base)===1?'cdc':'who';if(base==='cdc'&&(mo<24||mo>240))return NaN;if(base==='who'&&mo>228)return NaN;return growthZ(base,sex,mo,alt);},
-   interp:function(s,v){var alt=parseFloat(v.zha_alt),mo=parseFloat(v.zha_idade);var base=parseInt(v.zha_base)===1?'cdc':'who';
-     if(isNaN(alt)||alt<=0||isNaN(mo)||mo<0)return{t:'Informe a estatura (cm) e a idade (meses).',c:'tag-gold'};
-     if(base==='cdc'&&(mo<24||mo>240))return{t:'A referência CDC (estatura/idade) cobre 24–240 meses. Para < 2 anos, use a OMS.',c:'tag-gold'};
-     if(base==='who'&&mo>228)return{t:'A referência OMS (estatura/idade) cobre 0–228 meses (0–19 anos).',c:'tag-gold'};
-     if(!isFinite(s))return{t:'Dados insuficientes para o cálculo.',c:'tag-gold'};
+   fields:[{id:'zha_alt',label:'Estatura / comprimento (cm)',type:'num'},{id:'zha_dob',label:'Data de nascimento',type:'date'},{id:'zha_dom',label:'Data da medida (vazio = hoje)',type:'date'},{id:'zha_sexo',label:'Sexo',type:'select',opts:['Masculino','Feminino'],vals:[0,1]},{id:'zha_base',label:'Referência',type:'select',opts:['OMS (0–19 anos)','CDC (2–20 anos)'],vals:[0,1]}],
+   calc:function(v){var alt=parseFloat(v.zha_alt),mo=ageMonthsFromDates(v.zha_dob,v.zha_dom);if(isNaN(alt)||alt<=0||isNaN(mo)||mo<0)return NaN;var sex=parseInt(v.zha_sexo)===1?'F':'M';var base=parseInt(v.zha_base)===1?'cdc':'who';if(base==='cdc'&&(mo<24||mo>240))return NaN;if(base==='who'&&mo>228)return NaN;return growthZ(base,sex,mo,alt);},
+   interp:function(s,v){var alt=parseFloat(v.zha_alt),mo=ageMonthsFromDates(v.zha_dob,v.zha_dom);var base=parseInt(v.zha_base)===1?'cdc':'who';
+     if(isNaN(alt)||alt<=0)return{t:'Informe a estatura (cm) e a data de nascimento.',c:'tag-gold'};
+     if(!v.zha_dob)return{t:'Informe a data de nascimento.',c:'tag-gold'};
+     if(isNaN(mo)||mo<0)return{t:'Data inválida — a data de nascimento deve ser anterior à da medida.',c:'tag-gold'};
+     var idade=' · idade '+ageLabelFromMonths(mo);
+     if(base==='cdc'&&(mo<24||mo>240))return{t:'A referência CDC cobre 2–20 anos. Para < 2 anos, use a OMS.'+idade,c:'tag-gold'};
+     if(base==='who'&&mo>228)return{t:'A referência OMS cobre 0–19 anos.'+idade,c:'tag-gold'};
+     if(!isFinite(s))return{t:'Dados insuficientes para o cálculo.'+idade,c:'tag-gold'};
      var pct=fmtPct(zToPct(s));var px=pct?' · '+pct:'';
-     return s<-3?{t:'Baixa estatura grave (< −3 DP)'+px,c:'tag-red'}:s<-2?{t:'Baixa estatura (< −2 DP) — investigar'+px,c:'tag-gold'}:s<=2?{t:'Estatura adequada para a idade'+px,c:'tag-grn'}:s<=3?{t:'Estatura elevada (> +2 DP)'+px,c:'tag-gold'}:{t:'Estatura muito elevada (> +3 DP)'+px,c:'tag-gold'};},
-   unit:'escore-z',note:'Escore-z de estatura-para-idade (comprimento até 24 meses) calculado pelo método LMS oficial: z = [(estatura/M)^L − 1] ÷ (L × S). Bases: OMS (WHO Child Growth Standards 2006, 0–5 anos + WHO Growth Reference 2007, 5–19 anos) e CDC 2000 (2–20 anos). A OMS é a referência recomendada no Brasil (Ministério da Saúde/SBP), sobretudo até 5 anos. Baixa estatura = z < −2 (≈ P3); abaixo de −3 é grave. Interpolação linear entre meses. Idade em meses (ex.: 8 anos = 96; use a calculadora de idade corrigida se prematuro).'},
+     return s<-3?{t:'Baixa estatura grave (< −3 DP)'+px+idade,c:'tag-red'}:s<-2?{t:'Baixa estatura (< −2 DP) — investigar'+px+idade,c:'tag-gold'}:s<=2?{t:'Estatura adequada para a idade'+px+idade,c:'tag-grn'}:s<=3?{t:'Estatura elevada (> +2 DP)'+px+idade,c:'tag-gold'}:{t:'Estatura muito elevada (> +3 DP)'+px+idade,c:'tag-gold'};},
+   unit:'escore-z',note:'Escore-z de estatura-para-idade (comprimento até 24 meses) calculado pelo método LMS oficial: z = [(estatura/M)^L − 1] ÷ (L × S). A idade é obtida da data de nascimento e da data da medida (vazia = hoje), em meses fracionários (mês médio de 30,44 dias). Bases: OMS (WHO 2006, 0–5 anos + WHO 2007, 5–19 anos) e CDC 2000 (2–20 anos). A OMS é a referência recomendada no Brasil (Ministério da Saúde/SBP), sobretudo até 5 anos. Baixa estatura = z < −2 (≈ P3); abaixo de −3 é grave. Interpolação linear entre meses. Para prematuros, considere a idade corrigida.'},
   {id:'velcresc',name:'Velocidade de crescimento',area:'Crescimento',desc:'Ganho estatural anualizado',
    fields:[{id:'vc_a2',label:'Altura atual (cm)',type:'num'},{id:'vc_a1',label:'Altura anterior (cm)',type:'num'},{id:'vc_int',label:'Intervalo entre as medidas (meses)',type:'num'}],
    calc:function(v){var a2=parseFloat(v.vc_a2)||0,a1=parseFloat(v.vc_a1)||0,m=parseFloat(v.vc_int)||0;if(m<=0)return 0;return (a2-a1)/(m/12);},
@@ -4997,6 +5015,7 @@ function openCalc(id){
   det.innerHTML='<div class="card" style="margin-top:.85rem"><div class="card-head"><span style="font-size:.92rem;font-weight:700">'+esc(c.name)+'</span><span class="tag tag-blue">'+esc(c.area)+'</span>'+closeBtn+'</div>'+
     c.fields.map(function(f){
       if(f.type==='select')return'<div class="fld2"><label>'+esc(f.label)+'</label><select data-calc-field="'+f.id+'">'+f.opts.map(function(o,i){return'<option value="'+f.vals[i]+'">'+esc(o)+'</option>';}).join('')+'</select></div>';
+      if(f.type==='date')return'<div class="fld2"><label>'+esc(f.label)+'</label><input type="date" data-calc-field="'+f.id+'"></div>';
       return'<div class="fld2"><label>'+esc(f.label)+'</label><input type="number" step="any" data-calc-field="'+f.id+'" placeholder="0"></div>';
     }).join('')+
     '<div id="calc-result" style="margin-top:.5rem"></div>'+
