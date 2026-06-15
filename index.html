@@ -7381,7 +7381,7 @@ function bindAdmSec(sec){
         var link=(document.getElementById('adm-pod-link').value||'').trim();
         if(!link){notify('Cole o link do Spotify.','err');return;}
         if(!spotifyEmbedUrl(link)&&!/(?:open\.spotify\.com|spotify\.link)\//i.test(link)){notify('Link inválido. Use uma URL do Spotify (open.spotify.com) ou o atalho spotify.link.','err');return;}
-        podcasts.push({title:title,area:document.getElementById('adm-pod-area').value,desc:document.getElementById('adm-pod-desc').value,src:link,tipo:'spotify',at:Date.now()});
+        podcasts.unshift({title:title,area:document.getElementById('adm-pod-area').value,desc:document.getElementById('adm-pod-desc').value,src:link,tipo:'spotify',at:Date.now()}); // novo no topo (lista é mais-novo-primeiro)
         persistPodcasts();notify('Podcast adicionado!','ok');admPodSubtab='ouvir';renderAdmSec('conteudo');renderPodcasts();
       });
       var rssBtn=document.getElementById('btn-adm-rss-import');
@@ -7394,15 +7394,15 @@ function bindAdmSec(sec){
         fetch('/api/podcast-feed?url='+encodeURIComponent(url)).then(function(r){return r.json();}).then(function(d){
           if(!d||!d.ok)throw new Error((d&&d.error)||'Falha ao ler o feed.');
           var seen={};podcasts.forEach(function(p){seen[(p.audio||p.src||'').trim()]=1;seen[(p.title||'').trim().toLowerCase()]=1;});
-          var added=0;
+          var added=0;var novos=[];
           (d.episodes||[]).forEach(function(ep){
             var key=(ep.audio||'').trim(),tk=(ep.title||'').trim().toLowerCase();
             if(seen[key]||seen[tk])return;
             var sub=inferPodcastSub((ep.title||'')+' '+(ep.desc||''))||area;
-            podcasts.push({title:ep.title,area:sub,desc:ep.desc||'',audio:ep.audio,tipo:'rss',at:ep.at||Date.now()});
+            novos.push({title:ep.title,area:sub,desc:ep.desc||'',audio:ep.audio,tipo:'rss',at:ep.at||Date.now()});
             seen[key]=1;seen[tk]=1;added++;
           });
-          if(added)persistPodcasts();
+          if(added){podcasts=novos.concat(podcasts);persistPodcasts();} // novos episódios no topo
           setUploadStatus('adm-pod-rss-status',added+' episódio(s) importado(s)'+(d.show?' de "'+d.show+'"':'')+'. '+Math.max(0,(d.count||0)-added)+' já existiam.','ok');
           notify(added+' episódio(s) importado(s)!',added?'ok':'info');
           if(added){admPodSubtab='ouvir';renderAdmSec('conteudo');renderPodcasts();}
