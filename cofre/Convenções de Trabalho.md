@@ -16,6 +16,7 @@ atualizado: 2026-06-15
 - **Não** criar PR sem combinar (neste projeto o fluxo PR+squash já está acordado).
 
 ## Validação antes de commitar
+- **Automatizado no CI (GitHub Actions `.github/workflows/ci.yml` → `scripts/ci-validate.js`):** roda em cada PR/push p/ `main` e faz as 3 checagens abaixo + **barra se `api/` passar de 12 funções** (limite Vercel que já travou prod). Localmente: `node scripts/ci-validate.js`.
 - **Scripts inline do `index.html`:** extrair cada `<script>` sem `src` e rodar `new Function(corpo)` (deve dar 0 erros).
 - **`lib/` e `api/`:** `node --check <arquivo>`.
 - Calculadoras/IA: testar a lógica com valores de referência conhecidos quando possível.
