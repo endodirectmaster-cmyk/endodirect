@@ -2523,7 +2523,7 @@ function applyStatePayload(payload){
   if(Array.isArray(payload.sf_results))DB.sf_results=payload.sf_results;
   if(payload.perf&&typeof payload.perf==='object')DB.perf=payload.perf;
   if(Array.isArray(payload.provas))provasDB=payload.provas;
-  if(Array.isArray(payload.mm_shared)){sharedMM=payload.mm_shared;try{renderMMList();}catch(e){}}
+  if(Array.isArray(payload.mm_shared)){sharedMM=payload.mm_shared;try{lsSet('mm_shared',sharedMM);}catch(e){}try{renderMMList();}catch(e){}}
   if(Array.isArray(payload.radar_avisos))radarAvisos=payload.radar_avisos;
   if(Array.isArray(payload.radar_hidden))radarHidden=payload.radar_hidden;
   if(Array.isArray(payload.adm_avisos)||Array.isArray(payload.radar_avisos)){
