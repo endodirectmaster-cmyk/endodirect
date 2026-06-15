@@ -19,8 +19,10 @@ atualizado: 2026-06-14
 - **Personalização por subespecialidade:** `getMemberPrefs(key)` lê `app_state -> user_profile -> newsletterSubs` de cada aluno; `itemsFor(email)` filtra o pool do mural pelos temas escolhidos (fallback para destaques gerais). `sendViaResend(...)` aceita `itemsFor` (função por e-mail) ou lista fixa.
 - `muralItems(payload)` = todos os artigos não-breaking mapeados; `topFromMural` = primeiros 3.
 
-## Priorização editorial (#275) e layout (#283)
-- **Ordenação (`rankArticles`)**: 1º por **tipo** (`articleTypeTier`: tier 0 = revisão/metanálise/diretriz/consenso; tier 1 = ensaios clínicos/originais), 2º por **periódico** (`journalRank`: NEJM=0 > Lancet=1 > outros=2), 3º **data desc** como desempate. Aplicada ao pool de candidatos (`topArticles ∪ muralItems`), ao `topFromMural` e ao `pool` personalizado.
+## Priorização editorial (#275, refinada 2026-06-15) e layout (#283)
+- **Ordenação (`rankArticles`)**: 1º por **tipo** (`articleTypeTier`: **0 = revisão/diretriz/consenso**, **1 = metanálise/revisão sistemática**, **2 = original/ensaio/coorte**, 3 = demais), 2º por **periódico** (`journalRank`: **NEJM=0 > Lancet=1 > JCEM=2 > outros=3**), 3º **data desc**. Aplicada ao pool (`topArticles ∪ muralItems`), `topFromMural` e `pool` personalizado.
+- **Anti-repetição (2026-06-15)**: `sendDailyNewsletter` mantém `payload.newsletter_recent` (links enviados nos últimos 14 dias, cap 60) e `pickFresh()` prefere artigos ainda não enviados (completa com já-enviados só se faltar p/ 3). Resolve "a newsletter de hoje veio igual à de ontem". `newsletter_recent` é chave de servidor: incluída no **trigger** `endodirect_global_preserve_server_keys` e nas listas de preservação do `index.html` (capture + read-modify-write do admin).
+- **Fonte do periódico (radar)**: `journalMatches`/`jnorm` (lib/radar.js) normaliza `&`→`and` e remove `the `; substring só p/ identificadores multi-palavra — antes o nome genérico "Endocrinology" (1 palavra) capturava o JCEM (saía "Endocrinology" em vez de "Journal of Clinical Endocrinology & Metabolism"). Vale p/ artigos novos; cards antigos do mural saem conforme a janela rola.
 - **Template (`renderEmail`)**: **largura total** (sem caixa centralizada com `max-width`), fontes maiores (título ~23px, corpo ~17px), **logo do Endodirect** no cabeçalho (`publicBase()+'/Icone%20-%20MD%202.png'`, hospedado — Gmail bloqueia `data:`), `@media max-width:600px` para mobile.
 
 ## Aluno escolhe temas (Perfil)
