@@ -1,0 +1,21 @@
+name: CI
+
+# Guard-rails antes do merge: valida sintaxe (servidor + scripts inline do
+# index.html) e impede que api/ ultrapasse o limite de 12 funções serverless
+# da Vercel (estouro já travou produção em #311/#313).
+on:
+  pull_request:
+    branches: [main]
+  push:
+    branches: [main]
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+      - name: Validar JS (api/lib + scripts inline) e limite de funções Vercel
+        run: node scripts/ci-validate.js
