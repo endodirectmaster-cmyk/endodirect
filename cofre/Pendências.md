@@ -6,6 +6,11 @@ atualizado: 2026-06-15
 # Pendências
 
 ## Varredura completa (2026-06-15) — lançamento
+**INCIDENTE (2026-06-15) — perda de aulas por sobrescrita concorrente do estado global:**
+- O Eduardo subiu ~37 aulas (`endoteem`); ficaram só 6 (`endo_essencial`) no `endodirect_global_state`. **Não recuperável pelo servidor** (backup `endodirect_state_backup` só tem snapshots de 10/06). Causa: o save do admin reescreve o payload INTEIRO a partir do snapshot EM MEMÓRIA; com dois admins editando, o save de um (com cópia velha) apaga as adições do outro. Mesmo mecanismo afeta o podcast manual que "não subiu". Recuperação possível: navegador do Eduardo (localStorage `adm_cursos`) **se não recarregou**; senão, re-importar os links.
+- [ ] **CORRIGIR concorrência do estado global (admin):** hoje `saveRemoteState` só faz read-modify-write das chaves de servidor (`radar_avisos`/`newsletter_*`). As coleções editadas pelo admin (`adm_cursos`, `podcasts`, `provas`, `mm_shared`, `diretrizes`...) são sobrescritas pelo snapshot em memória → perda sob concorrência. Opções: merge por chave de conteúdo (união, risco de ressuscitar deletados) OU version-guard (`updated_at`) que detecta escrita concorrente e mescla/avisa. **Workaround imediato (100% seguro): um admin edita por vez; recarregar antes de subir conteúdo em lote.**
+
+
 **Corrigido (#299):**
 - [x] **[CRÍTICO] `findUserByEmail` provisionava conta ERRADA além de 50 usuários** (`api/webhooks/pagarme.js`, `api/checkout/order.js`, `api/checkout/subscribe.js`): o `?email=` do GoTrue admin não filtra de forma confiável e o `|| list[0]` pegava um usuário arbitrário. Agora **pagina** e casa o e-mail exato; nunca cai em `list[0]`.
 - [x] **[CRÍTICO] Re-render apagava painéis movidos** (`renderAdmSec`): Consultório (`#panel-presc`) e editor visual de Mapas (`#mm-live`) eram destruídos por `innerHTML` num re-render da MESMA seção (gatilho real: hydrate automático de estado remoto), quebrando inclusive o painel do aluno. Agora `restorePrescPanel()`/`restoreMMLive()` rodam **sempre antes** do `innerHTML`.
