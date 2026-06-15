@@ -1,6 +1,6 @@
 ---
 tags: [cofre, integracoes]
-atualizado: 2026-06-10
+atualizado: 2026-06-15
 ---
 
 # Integrações
@@ -19,6 +19,12 @@ Chat IA, simulador de casos, prescrição (treino) e o radar (`summarizeWithAI`)
 - **Onboarding** (primeiro login) coleta **CRM + UF obrigatórios** para todos os perfis → salvos em `user_profile.crm`/`.uf` (sincronizados). É o que `/api/memed/token` (exige `crm` e `uf`) e o Assistente de Prescrição (`prof.crm`/`prof.uf`) consomem. Endpoint `api/memed/token.js` já existe (gating: responde `configured:false` sem chave).
 - **Pendente:** assinatura do contrato (houve erro no fluxo de confirmação/Lexio) + configurar `MEMED_API_KEY`/`MEMED_SECRET`. Ver [[Pendências]]. Usuários que onboardaram antes da exigência preenchem CRM na tela do Assistente de Prescrição.
 - Doc: https://doc.memed.com.br/docs/primeiros-passos
+
+## Podcasts (Anchor / Spotify for Podcasters)
+- **Feed RSS do podcast:** `https://anchor.fm/s/6e257fc4/podcast/rss` (show "EndoDirect — Endocrinologia e Metabologia"). Áudio servido pelo Anchor/CloudFront.
+- **Como adicionar episódios (recomendado):** Painel do professor → Podcasts → **Importar (RSS)** com esse feed. Traz os episódios novos no **modelo de áudio nativo** (`tipo:'rss'`, `<audio>`) e agora **no topo** da lista (#308). É o jeito padrão — evita colar link do Spotify episódio a episódio.
+- **Modelo dos itens:** os episódios usam `{title, area, desc, audio, tipo:'rss', at}`. O player embute Spotify só quando `tipo:'spotify'` + `src` `open.spotify.com` válido; `spotify.link`/embed que falha cai em link "Abrir no Spotify". Por isso, **preferir RSS** (player nativo confiável). `at` controla a ordem (mais-novo-primeiro).
+- Anchor bloqueia bots (403) em fetch direto/WebFetch — para ler o feed fora do app, usar o endpoint `/api/podcast-feed?url=` da própria plataforma (tem User-Agent + guarda anti-SSRF).
 
 ## Vídeo
 Hoje Vimeo/YouTube. Avaliados como alternativas (advisory): **Bunny Stream** (custo-benefício), Mevo, Panda Video. Sem mudança implementada.
