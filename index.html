@@ -7380,7 +7380,7 @@ function bindAdmSec(sec){
         if(!title){notify('Informe o título.','err');return;}
         var link=(document.getElementById('adm-pod-link').value||'').trim();
         if(!link){notify('Cole o link do Spotify.','err');return;}
-        if(!spotifyEmbedUrl(link)){notify('Link do Spotify inválido. Use a URL de um episódio ou show (open.spotify.com).','err');return;}
+        if(!spotifyEmbedUrl(link)&&!/(?:open\.spotify\.com|spotify\.link)\//i.test(link)){notify('Link inválido. Use uma URL do Spotify (open.spotify.com) ou o atalho spotify.link.','err');return;}
         podcasts.push({title:title,area:document.getElementById('adm-pod-area').value,desc:document.getElementById('adm-pod-desc').value,src:link,tipo:'spotify',at:Date.now()});
         persistPodcasts();notify('Podcast adicionado!','ok');admPodSubtab='ouvir';renderAdmSec('conteudo');renderPodcasts();
       });
