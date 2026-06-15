@@ -2444,6 +2444,20 @@ function defaultMuralMap(){
   });
   return map;
 }
+// Converte data do PubMed ("2026 Jun 13", "2026 May", "2026", ISO) p/ dd/mm/aaaa
+// (ou mm/aaaa / aaaa quando faltam dia/mês). Idempotente: se já está dd/mm/aaaa, mantém.
+var PUBDATE_MES={jan:'01',feb:'02',mar:'03',apr:'04',may:'05',jun:'06',jul:'07',aug:'08',sep:'09',oct:'10',nov:'11',dec:'12',fev:'02',abr:'04',mai:'05',ago:'08',set:'09',out:'10',dez:'12'};
+function pubDateBR(s){
+  s=String(s||'').trim();
+  if(!s||/^\d{1,2}\/\d{1,2}\/\d{4}$/.test(s))return s;
+  var m=s.match(/^(\d{4})\s+([A-Za-zçãéíóú]{3,})\s+(\d{1,2})\b/);
+  if(m){var mo=PUBDATE_MES[m[2].slice(0,3).toLowerCase()];if(mo)return ('0'+m[3]).slice(-2)+'/'+mo+'/'+m[1];}
+  var m2=s.match(/^(\d{4})\s+([A-Za-zçãéíóú]{3,})$/);
+  if(m2){var mo2=PUBDATE_MES[m2[2].slice(0,3).toLowerCase()];if(mo2)return mo2+'/'+m2[1];}
+  var m3=s.match(/^(\d{4})-(\d{2})-(\d{2})/);if(m3)return m3[3]+'/'+m3[2]+'/'+m3[1];
+  if(/^\d{4}$/.test(s))return s;
+  return s;
+}
 function normalizeMuralAviso(a,defaults){
   var item=Object.assign({},a||{});
   item.fonte=normalizeMuralSource(item.fonte);
@@ -2458,6 +2472,8 @@ function normalizeMuralAviso(a,defaults){
   // Remove a linha "Fontes consultadas" dos cards do radar (o link da fonte já
   // aparece em "Fonte:" no rodapé do card). Vale p/ itens já gravados.
   if(item.texto)item.texto=String(item.texto).replace(/\s*(?:🔗\s*)?Fontes consultadas:[\s\S]*$/i,'').trim();
+  // Data de publicação em dd/mm/aaaa (vem do PubMed como "2026 Jun 13").
+  if(item.texto)item.texto=String(item.texto).replace(/(Data de publicacao:\s*)([^\n]+)/i,function(_,pre,d){return pre+pubDateBR(d.trim());});
   item.tipo=normalizeMuralType(item.tipo,item.titulo,item.texto,item.fonte);
   item.subespecialidade=inferMuralSubspecialty(item);
   return item;
