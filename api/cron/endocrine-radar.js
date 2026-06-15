@@ -3,6 +3,7 @@
 // Auth: a Vercel envia Authorization: Bearer $CRON_SECRET (defina essa env).
 const { runRadar } = require('../../lib/radar');
 const { sendDailyNewsletter } = require('../../lib/newsletter');
+const { refreshPodcastsFromFeed } = require('../../lib/podcasts');
 
 function json(res, status, body) {
   res.statusCode = status;
@@ -26,7 +27,14 @@ module.exports = async function handler(req, res) {
     let newsletter = { sent: false, reason: 'skipped' };
     try { newsletter = await sendDailyNewsletter(result.topArticles); }
     catch (e) { console.error('[cron-radar] newsletter erro:', (e && e.stack) || e); newsletter = { sent: false, reason: 'error' }; }
-    return json(res, 200, { ok: true, ...result, newsletter });
+    // Atualização automática dos podcasts a partir do feed RSS. Fica acoplada
+    // ao cron do radar (em vez de um cron próprio) porque o plano limita o
+    // número de cron jobs; roda diariamente e só grava episódios novos (dedup).
+    // Fail-safe: nunca derruba o cron do radar se a importação falhar.
+    let podcasts = { added: 0, reason: 'skipped' };
+    try { podcasts = await refreshPodcastsFromFeed(); }
+    catch (e) { console.error('[cron-radar] podcasts erro:', (e && e.stack) || e); podcasts = { added: 0, reason: 'error' }; }
+    return json(res, 200, { ok: true, ...result, newsletter, podcasts });
   } catch (error) {
     console.error('[cron-radar] erro:', (error && error.stack) || error);
     return json(res, 500, { ok: false, error: (error && error.message) || 'Falha ao atualizar o radar.' });

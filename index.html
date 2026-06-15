@@ -2477,10 +2477,42 @@ var globalServerKeys={};
 // último save; se o servidor mudou desde então (outro admin gravou), o save mescla
 // as coleções aditivas em vez de sobrescrever (evita perder aulas/podcasts/etc.).
 var lastGlobalUpdatedAt=null;
-function unionBy(serverArr,localArr,keyFn){
-  var out=Array.isArray(localArr)?localArr.slice():[];var seen={};
-  out.forEach(function(it){try{seen[keyFn(it)]=1;}catch(e){}});
-  (Array.isArray(serverArr)?serverArr:[]).forEach(function(it){var k;try{k=keyFn(it);}catch(e){k=null;}if(k!=null&&!seen[k]){seen[k]=1;out.push(it);}});
+// Coleções de conteúdo global geridas pelo admin e suas chaves de identidade.
+// Usadas no merge de concorrência (mergeConcurrent) e no baseline da sessão.
+var GLOBAL_MERGE_KEYS={
+  adm_cursos:function(it){return (it.src||'')+'|'+(it.title||'');},
+  podcasts:function(it){return (it.src||it.link||it.audio||'')+'|'+(it.title||'');},
+  provas:function(it){return (it.stem||'')+'|'+(it.answer||'')+'|'+(it.inst||'');},
+  mm_shared:function(it){return it.id||((it.topic||'')+'|'+(it.sub||''));},
+  diretrizes:function(it){return (it.fonte||'')+'|'+(it.tema||it.titulo||'')+'|'+(it.sub||'');},
+  diretrizes_temas:function(it){return (it.sub||'')+'|'+(it.tema||'');},
+  curso_mods_extra:function(it){return (it.curso||'')+'|'+(it.modulo||'');},
+  adm_estudantes:function(it){return (it.email||it.cpf||it.nome||'');}
+};
+// Snapshot das chaves que esta sessão tinha (por coleção) na última sincronização
+// com o servidor. É o que permite distinguir "adição de outro editor" (chave nova
+// no servidor, fora do baseline) de "item que EU apaguei" (chave que estava no
+// baseline) — ver mergeConcurrent. Capturado junto com lastGlobalUpdatedAt.
+var globalBaseline={};
+function captureGlobalBaseline(payload){
+  payload=payload||{};globalBaseline={};
+  Object.keys(GLOBAL_MERGE_KEYS).forEach(function(coll){
+    var fn=GLOBAL_MERGE_KEYS[coll],arr=Array.isArray(payload[coll])?payload[coll]:[],s={};
+    arr.forEach(function(it){try{s[fn(it)]=1;}catch(e){}});
+    globalBaseline[coll]=s;
+  });
+}
+// Merge de coleção com baseline: parte do MEU estado atual (honra minhas exclusões
+// e edições) e só ACRESCENTA itens do servidor cuja chave é nova desde o baseline
+// (i.e., adicionados por OUTRO editor/cron) — nunca ressuscita o que apaguei.
+function mergeConcurrent(serverArr,localArr,baseKeys,keyFn){
+  var out=Array.isArray(localArr)?localArr.slice():[];var localKeys={};
+  out.forEach(function(it){try{localKeys[keyFn(it)]=1;}catch(e){}});
+  baseKeys=baseKeys||{};
+  (Array.isArray(serverArr)?serverArr:[]).forEach(function(it){
+    var k;try{k=keyFn(it);}catch(e){k=null;}
+    if(k!=null&&!baseKeys[k]&&!localKeys[k])out.push(it);
+  });
   return out;
 }
 var admQuestoes=lsGet('adm_questoes')||[];
@@ -2641,7 +2673,7 @@ function hydrateRemoteState(){
   ];
   if(currentUser.role==='admin'){
     loads.push(client.from('endodirect_global_state').select('payload,updated_at').eq('id','main').maybeSingle()
-      .then(function(res){if(res.error)throw res.error;if(res.data){if(res.data.payload)applyStatePayload(res.data.payload);lastGlobalUpdatedAt=res.data.updated_at||null;}}));
+      .then(function(res){if(res.error)throw res.error;if(res.data){if(res.data.payload)applyStatePayload(res.data.payload);lastGlobalUpdatedAt=res.data.updated_at||null;captureGlobalBaseline(res.data.payload||{});}}));
     loads.push(new Promise(function(r){loadCursoCatalogo(r);}));
   }else{
     loads.push(client.rpc('endodirect_member_content')
@@ -2687,21 +2719,25 @@ function saveRemoteState(){
       var p=globalStatePayload();
       ['radar_avisos','newsletter_extra','newsletter_unsub','newsletter_sent','newsletter','newsletter_recent'].forEach(function(k){if(serverP[k]!==undefined)p[k]=serverP[k];});
       // CONCORRÊNCIA: se o estado do servidor mudou desde que esta sessão carregou/
-      // salvou (outro admin gravou), MESCLA as coleções aditivas por chave de conteúdo
-      // em vez de sobrescrever — assim adições de dois admins não se perdem.
+      // salvou (outro admin OU um cron gravou), MESCLA as coleções aditivas usando o
+      // BASELINE desta sessão (as chaves que eu tinha ao carregar). Assim:
+      //  • adições de OUTRO editor (chave nova no servidor, ausente do meu baseline)
+      //    são preservadas — não regride o conteúdo dele;
+      //  • as MINHAS exclusões são respeitadas (a chave que apaguei está no baseline,
+      //    logo não é tratada como "nova do servidor" e não volta).
+      // O union antigo ressuscitava itens excluídos (ex.: apagar um tema de Diretrizes
+      // e ele voltar no F5), inclusive quando só o cron do radar bumpava o updated_at.
       if(lastGlobalUpdatedAt&&serverUpd&&serverUpd!==lastGlobalUpdatedAt){
-        p.adm_cursos=unionBy(serverP.adm_cursos,p.adm_cursos,function(it){return (it.src||'')+'|'+(it.title||'');});
-        p.podcasts=unionBy(serverP.podcasts,p.podcasts,function(it){return (it.src||it.link||'')+'|'+(it.title||'');});
-        p.provas=unionBy(serverP.provas,p.provas,function(it){return (it.stem||'')+'|'+(it.answer||'')+'|'+(it.inst||'');});
-        p.mm_shared=unionBy(serverP.mm_shared,p.mm_shared,function(it){return it.id||((it.topic||'')+'|'+(it.sub||''));});
-        p.diretrizes=unionBy(serverP.diretrizes,p.diretrizes,function(it){return (it.fonte||'')+'|'+(it.tema||it.titulo||'')+'|'+(it.sub||'');});
-        p.diretrizes_temas=unionBy(serverP.diretrizes_temas,p.diretrizes_temas,function(it){return (it.sub||'')+'|'+(it.tema||'');});
-        p.curso_mods_extra=unionBy(serverP.curso_mods_extra,p.curso_mods_extra,function(it){return (it.curso||'')+'|'+(it.modulo||'');});
-        p.adm_estudantes=unionBy(serverP.adm_estudantes,p.adm_estudantes,function(it){return (it.email||it.cpf||it.nome||'');});
-        try{notify('Outro editor salvou em paralelo — itens mesclados para não perder conteúdo. Recarregue para ver tudo.','info');}catch(e){}
+        var resurrected=false;
+        Object.keys(GLOBAL_MERGE_KEYS).forEach(function(coll){
+          var before=Array.isArray(p[coll])?p[coll].length:0;
+          p[coll]=mergeConcurrent(serverP[coll],p[coll],globalBaseline[coll],GLOBAL_MERGE_KEYS[coll]);
+          if(p[coll].length>before)resurrected=true;
+        });
+        if(resurrected){try{notify('Outro editor salvou em paralelo — itens mesclados para não perder conteúdo. Recarregue para ver tudo.','info');}catch(e){}}
       }
       var stamp=new Date().toISOString();
-      return client.from('endodirect_global_state').upsert({id:'main',payload:p,updated_by:currentUser.id,updated_at:stamp},{onConflict:'id'}).then(function(res){if(res.error)throw res.error;lastGlobalUpdatedAt=stamp;});
+      return client.from('endodirect_global_state').upsert({id:'main',payload:p,updated_by:currentUser.id,updated_at:stamp},{onConflict:'id'}).then(function(res){if(res.error)throw res.error;lastGlobalUpdatedAt=stamp;captureGlobalBaseline(p);});
     }));
   }
   Promise.all(ops)
