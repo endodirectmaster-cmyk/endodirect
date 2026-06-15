@@ -2457,15 +2457,15 @@ function normalizeMuralAviso(a,defaults){
   return item;
 }
 function mergeRadarAvisos(list){
+  // Só normaliza a lista real (radar/servidor). NÃO injeta mais o seed
+  // hardcoded defaultMuralAvisos(): aqueles 6 itens usam at=Date.now()-X (data
+  // relativa = "hoje"), então, no render pré-hydrate (localStorage de avisos
+  // vazio), apareciam como artigos "de hoje" no topo e ~2s depois eram trocados
+  // pelos 128 reais do radar (mais novos 14/06) — o "atualiza e volta pro
+  // antigo". O radar já popula o mural; o defaultMuralMap segue só para
+  // canonicalizar o conteúdo dos itens que casam por sourceId (normalizeMuralAviso).
   var defaults=defaultMuralMap();
-  var merged=Array.isArray(list)?list.map(function(a){return normalizeMuralAviso(a,defaults);}):[];
-  var seen={};
-  merged.forEach(function(a){var k=muralNoticeKey(a);if(k)seen[k]=true;});
-  defaultMuralAvisos().forEach(function(a){
-    var k=muralNoticeKey(a);
-    if(k&&!seen[k]){merged.push(a);seen[k]=true;}
-  });
-  return merged;
+  return Array.isArray(list)?list.map(function(a){return normalizeMuralAviso(a,defaults);}):[];
 }
 var admAvisos=mergeRadarAvisos(lsGet('adm_avisos')||[]);
 var radarAvisos=[]; // avisos automaticos do radar (campo radar_avisos); preservado nos saves do admin
