@@ -2524,7 +2524,16 @@ function globalStatePayload(){
 function currentStatePayload(){
   return Object.assign({},userStatePayload(),globalStatePayload());
 }
-function applyStatePayload(payload){
+// Chaves PESSOAIS (vivem no app_state do próprio usuário). As demais são
+// CONTEÚDO GLOBAL (provas, mural/radar, podcasts, cursos, diretrizes…), que só
+// vêm do estado global/RPC de membro.
+var PERSONAL_STATE_KEYS=['q','fc','mm','notes','crono','sf_results','perf','adm_perfil','user_profile','deg_trials','ck_billing','presc_emitidas'];
+// personalOnly=true quando o payload é o app_state do PRÓPRIO usuário: aplica só
+// as chaves pessoais e NUNCA toca no conteúdo global. Sem isso, um app_state com
+// resíduo antigo de chaves globais (ex.: radar_avisos defasado) podia, ao
+// resolver depois do estado global no Promise.all do hydrate, sobrescrever os
+// artigos novos do radar — o "atualiza no F5 e 2s depois volta ao antigo".
+function applyStatePayload(payload,personalOnly){
   payload=payload||{};
   if(Array.isArray(payload.q))DB.q=payload.q;
   if(Array.isArray(payload.fc))DB.fc=payload.fc;
@@ -2533,20 +2542,26 @@ function applyStatePayload(payload){
   if(payload.crono!==undefined)DB.crono=payload.crono;
   if(Array.isArray(payload.sf_results))DB.sf_results=payload.sf_results;
   if(payload.perf&&typeof payload.perf==='object')DB.perf=payload.perf;
-  if(Array.isArray(payload.provas))provasDB=payload.provas;
-  if(Array.isArray(payload.mm_shared)){sharedMM=payload.mm_shared;try{lsSet('mm_shared',sharedMM);}catch(e){}try{renderMMList();}catch(e){}}
-  if(Array.isArray(payload.radar_avisos))radarAvisos=payload.radar_avisos;
-  if(Array.isArray(payload.radar_hidden))radarHidden=payload.radar_hidden;
-  if(Array.isArray(payload.adm_avisos)||Array.isArray(payload.radar_avisos)){
-    admAvisos=mergeRadarAvisos((Array.isArray(payload.adm_avisos)?payload.adm_avisos:[]).concat(Array.isArray(payload.radar_avisos)?payload.radar_avisos:[]));
+  if(!personalOnly){
+    if(Array.isArray(payload.provas))provasDB=payload.provas;
+    if(Array.isArray(payload.mm_shared)){sharedMM=payload.mm_shared;try{lsSet('mm_shared',sharedMM);}catch(e){}try{renderMMList();}catch(e){}}
+    if(Array.isArray(payload.radar_avisos))radarAvisos=payload.radar_avisos;
+    if(Array.isArray(payload.radar_hidden))radarHidden=payload.radar_hidden;
+    if(Array.isArray(payload.adm_avisos)||Array.isArray(payload.radar_avisos)){
+      admAvisos=mergeRadarAvisos((Array.isArray(payload.adm_avisos)?payload.adm_avisos:[]).concat(Array.isArray(payload.radar_avisos)?payload.radar_avisos:[]));
+    }
+    if(Array.isArray(payload.adm_questoes))admQuestoes=payload.adm_questoes;
+    if(Array.isArray(payload.podcasts))podcasts=payload.podcasts;
+    if(Array.isArray(payload.adm_cursos))admCursos=payload.adm_cursos;
+    if(Array.isArray(payload.adm_estudantes))admEstudantes=normalizeAdmEstudantes(payload.adm_estudantes);
+    if(Array.isArray(payload.diretrizes)){diretrizes=payload.diretrizes;diretrizes.forEach(function(d){if(d&&d.sub)d.sub=dirMigrateSub(d.sub);});}
+    if(Array.isArray(payload.diretrizes_temas))dirTemasExtra=payload.diretrizes_temas;
+    if(Array.isArray(payload.curso_mods_extra))admCursoModsExtra=payload.curso_mods_extra;
+    if(Array.isArray(payload.acessos))userAcessos=payload.acessos;
+    if(Array.isArray(payload.cursos))catalogoCursos=payload.cursos;
+    // Preserva chaves geridas pelo servidor (newsletter) para o save do admin não apagá-las.
+    ['newsletter_extra','newsletter_unsub','newsletter_sent','newsletter','newsletter_recent'].forEach(function(k){if(payload[k]!==undefined)globalServerKeys[k]=payload[k];});
   }
-  if(Array.isArray(payload.adm_questoes))admQuestoes=payload.adm_questoes;
-  if(Array.isArray(payload.podcasts))podcasts=payload.podcasts;
-  if(Array.isArray(payload.adm_cursos))admCursos=payload.adm_cursos;
-  if(Array.isArray(payload.adm_estudantes))admEstudantes=normalizeAdmEstudantes(payload.adm_estudantes);
-  if(Array.isArray(payload.diretrizes)){diretrizes=payload.diretrizes;diretrizes.forEach(function(d){if(d&&d.sub)d.sub=dirMigrateSub(d.sub);});}
-  if(Array.isArray(payload.diretrizes_temas))dirTemasExtra=payload.diretrizes_temas;
-  if(Array.isArray(payload.curso_mods_extra))admCursoModsExtra=payload.curso_mods_extra;
   if(payload.adm_perfil&&typeof payload.adm_perfil==='object'){
     // Segurança: só aceita o perfil salvo se o e-mail bater com o do admin
     // logado. Um perfil com e-mail de OUTRO admin (resíduo de estado antigo)
@@ -2556,11 +2571,8 @@ function applyStatePayload(payload){
     if(!(_pe&&_me&&_pe!==_me))admPerfil=payload.adm_perfil;
   }
   if(payload.deg_trials&&typeof payload.deg_trials==='object')degTrials=payload.deg_trials;
-  if(Array.isArray(payload.acessos))userAcessos=payload.acessos;
-  if(Array.isArray(payload.cursos))catalogoCursos=payload.cursos;
-  // Preserva chaves geridas pelo servidor (newsletter) para o save do admin não apagá-las.
-  ['newsletter_extra','newsletter_unsub','newsletter_sent','newsletter','newsletter_recent'].forEach(function(k){if(payload[k]!==undefined)globalServerKeys[k]=payload[k];});
-  REMOTE_STATE_KEYS.forEach(function(k){if(payload[k]!==undefined)lsSet(k,payload[k]);});
+  var lsKeys=personalOnly?PERSONAL_STATE_KEYS:REMOTE_STATE_KEYS;
+  lsKeys.forEach(function(k){if(payload[k]!==undefined)lsSet(k,payload[k]);});
 }
 function renderDegustacaoBar(){
   var app=document.getElementById('app-screen');if(!app)return;
@@ -2625,7 +2637,7 @@ function hydrateRemoteState(){
   if(!(currentUser&&currentUser.id)){hydratePublicContent();return;}
   var loads=[
     client.from('endodirect_app_state').select('payload').eq('user_id',currentUser.id).maybeSingle()
-      .then(function(res){if(res.error)throw res.error;if(res.data&&res.data.payload)applyStatePayload(res.data.payload);})
+      .then(function(res){if(res.error)throw res.error;if(res.data&&res.data.payload)applyStatePayload(res.data.payload,true);})
   ];
   if(currentUser.role==='admin'){
     loads.push(client.from('endodirect_global_state').select('payload,updated_at').eq('id','main').maybeSingle()
@@ -7709,27 +7721,6 @@ function bindAdmSec(sec){
         });
       }).catch(function(e){notify('Erro: '+(e&&e.message||e),'err');var b=document.getElementById('btn-adm-radar');if(b){b.disabled=false;b.textContent='🔄 Atualizar radar agora';}});
     });
-    var bNlt=document.getElementById('btn-adm-nltest');
-    if(bNlt)bNlt.addEventListener('click',function(){
-      var client=getSupabaseClient();
-      if(!client){notify('Supabase indisponível.','err');return;}
-      var myEmail=(currentUser&&currentUser.email)||'';
-      var to=prompt('Enviar uma prévia da newsletter para qual e-mail?',myEmail);
-      if(to===null)return;
-      to=String(to).trim();
-      if(!to||to.indexOf('@')<0){notify('Informe um e-mail válido.','err');return;}
-      bNlt.disabled=true;bNlt.innerHTML=ldHTML('Enviando...');
-      client.auth.getSession().then(function(res){
-        var token=res&&res.data&&res.data.session&&res.data.session.access_token;
-        if(!token)throw new Error('Sessão expirada. Entre novamente.');
-        return fetch('/api/newsletter/test?to='+encodeURIComponent(to),{method:'POST',headers:{Authorization:'Bearer '+token}});
-      }).then(function(r){return r.json().catch(function(){return{ok:false,error:'Resposta inválida do servidor.'};});})
-      .then(function(d){
-        if(!d.ok)throw new Error(d.error||'Falha ao enviar teste.');
-        notify('Prévia da newsletter enviada para '+to+'.','ok');
-      }).catch(function(e){notify('Erro: '+(e&&e.message||e),'err');})
-      .then(function(){var b=document.getElementById('btn-adm-nltest');if(b){b.disabled=false;b.innerHTML='✉️ Enviar teste da newsletter';}});
-    });
     var bCancel=document.getElementById('btn-adm-av-cancel');
     if(bCancel)bCancel.addEventListener('click',function(){admMuralShowForm=false;admMuralEdit=null;renderAdmSec('mural');});
     main.querySelectorAll('[data-adm-hideradar]').forEach(function(b){b.addEventListener('click',function(){
@@ -8506,7 +8497,7 @@ admMuralSecHTML=function(){
     +'<div class="fld2"><label>Texto</label><textarea id="adm-av-text" rows="3" placeholder="Resumo em português, mantendo apenas o título no idioma original..."></textarea></div>'
     +'<div style="display:flex;gap:6px"><button class="btn btn-primary" id="btn-adm-addav">'+(admMuralEdit!==null?'💾 Salvar alterações':'+ Publicar no mural')+'</button><button class="btn btn-outline" id="btn-adm-av-cancel">Cancelar</button></div></div>'
   ):'';
-  return '<div class="adm-ph" style="display:flex;align-items:flex-start;justify-content:space-between;gap:.6rem;flex-wrap:wrap"><div><h1>Mural</h1></div><div style="display:flex;gap:.5rem;flex-wrap:wrap"><button class="btn btn-outline" id="btn-adm-radar" style="padding:.55rem 1rem">🔄 Atualizar radar agora</button><button class="btn btn-outline" id="btn-adm-nltest" style="padding:.55rem 1rem">✉️ Enviar teste da newsletter</button><button class="btn btn-primary" id="btn-adm-newav" style="padding:.55rem 1.1rem">+ Novo aviso</button></div></div>'
+  return '<div class="adm-ph" style="display:flex;align-items:flex-start;justify-content:space-between;gap:.6rem;flex-wrap:wrap"><div><h1>Mural</h1></div><div style="display:flex;gap:.5rem;flex-wrap:wrap"><button class="btn btn-outline" id="btn-adm-radar" style="padding:.55rem 1rem">🔄 Atualizar radar agora</button><button class="btn btn-primary" id="btn-adm-newav" style="padding:.55rem 1.1rem">+ Novo aviso</button></div></div>'
   +'<div class="adm-pc">'
   +formHTML
   +'<div class="card" style="margin-bottom:1.1rem"><div style="display:flex;align-items:flex-start;justify-content:space-between;gap:1rem;flex-wrap:wrap"><div style="flex:1;min-width:240px"><div style="font-size:.62rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--t3);margin-bottom:.3rem">Gestão do mural dos alunos</div><div style="font-size:1.15rem;font-weight:700;color:var(--tx);margin-bottom:.35rem">Edite avisos, notícias e comunicados importantes</div><div style="font-size:.79rem;color:var(--t2);line-height:1.55">Os cards abaixo alimentam a aba Mural do estudante. Use etiquetas por tipo de conteúdo e subespecialidade para organizar leituras e atualizações.</div></div><button class="btn btn-outline" id="btn-adm-mural-preview">👁 Pré-visualizar como aluno</button></div></div>'
