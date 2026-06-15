@@ -33,4 +33,4 @@ atualizado: 2026-06-14
 `RESEND_API_KEY`, `NEWSLETTER_FROM`, `NEWSLETTER_REPLYTO`, `CRON_SECRET`.
 
 ## Pendência
-Confirmar entrega para Eduardo/Bruno (checar spam; botão "Enviar teste" no admin). Ver [[Pendências]].
+Confirmar entrega para Eduardo/Bruno (checar spam). O botão "✉️ Enviar teste da newsletter" no Mural do admin foi **removido** a pedido do usuário (2026-06-15); o endpoint `/api/newsletter/test` continua existindo, mas sem gatilho na UI. Ver [[Pendências]].
