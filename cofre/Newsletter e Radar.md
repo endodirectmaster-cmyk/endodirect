@@ -1,6 +1,6 @@
 ---
 tags: [cofre, newsletter, radar]
-atualizado: 2026-06-14
+atualizado: 2026-06-15
 ---
 
 # Newsletter e Radar
@@ -31,6 +31,7 @@ atualizado: 2026-06-14
 
 ## Tipo "Diretriz" e remoção de "Fontes consultadas" (2026-06-15)
 - **Tipo "Diretriz"** adicionado ao classificador do mural (`normalizeMuralType`): detecta `guideline`/`diretriz`/`consensus`/`consenso` no **tipo ou título** (sinal preciso) → retorna `'Diretriz'`; antes um "clinical practice guideline" saía como "Estudo Original". Incluído no dropdown de tipo do admin (`MURAL_TYPES`/`tipoOpts`) e no peso de relevância (`muralRelevance`: `Diretriz`=5, acima de Metanálise=4). Alinhado ao `articleTypeTier` da newsletter (revisão/diretriz/consenso = tier 0).
+- **Seed legado não re-clobbera edição na leitura (fix 2026-06-15):** `normalizeMuralAviso` casava o item por `sourceId` com `defaultMuralMap()` (os 6 artigos hardcoded de `defaultMuralAvisos()`) e fazia `Object.assign({}, item, original, …)` — o seed sobrescrevia o item a cada render. Para esses 6 cards-semente (vivos no `radar_avisos`), a edição do professor (subespecialidade/tipo/texto) revertia no F5 mesmo após #320 (que só conserta o *save*): a normalização na LEITURA desfazia. Invertido para `Object.assign({}, original, item, …)` — o item gravado vence; o seed só preenche campos ausentes. Cards não-semente (ex.: puberdade precoce) nunca foram afetados. Verificado por simulação Node do round-trip e pela consulta ao banco.
 - **Edição manual de tipo é respeitada (fix 2026-06-15):** `normalizeMuralType` agora retorna **verbatim** qualquer rótulo de `MURAL_TYPES` escolhido pelo professor — não re-deriva pelo título/texto. Sem isto, marcar "Artigo de Revisão" voltava a "Diretriz"/"Metanálise" porque o título cita "guidelines" (a auto-classificação rodava antes e sobrescrevia, inclusive no save via `normalizeMuralAviso`). A auto-classificação só vale para itens do radar (`tipo:'Artigo'`/vazio) ou rótulos legados. Além disso, na auto-classificação, **metanálise/revisão sistemática é checada ANTES de diretriz** — "A systematic review supporting ... guidelines" é Metanálise, não a diretriz em si.
 - **"Fontes consultadas" removido dos cards:** `lib/radar.js` (`buildMuralItem`) não gera mais a linha `🔗 Fontes consultadas: ...` (o link da fonte já aparece em "Fonte:" no rodapé do card). Itens já gravados foram limpos via SQL (regexp_replace no `texto` de cada `radar_avisos`) **e** o cliente faz strip defensivo em `normalizeMuralAviso` (cobre qualquer resíduo). Importante: a newsletter lê o `texto` direto do payload (não passa pelo cliente), por isso a limpeza no SQL é o que garante e-mails sem essa linha.
 
