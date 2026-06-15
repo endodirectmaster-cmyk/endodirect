@@ -26,8 +26,14 @@ atualizado: 2026-06-14
 - **Aluno**: `diretrizesViewHTML()`/`renderDiretrizesInto()` com 3 botões de formato (📄 Resumo / 🃏 Flashcards / 🧠 Mapas), só leitura, flip 3D e mapas expansíveis. Gated por `DIRETRIZES_PUBLICADO=false` → mostra "Em breve" (ver [[Pendências]]).
 - **Professor** (`admRefSecHTML`/`bindAdmSec`): mesma navegação; ao abrir um **tema** vê a **mesma tela do aluno** (formatos), acrescida de ✏️ Editar / 🗑 Excluir por diretriz (#284). Editor com importação de PDF via IA (gera resumo/bullets/flashcards/mapa, todos editáveis) + chat assistente. A IA usa a conta Anthropic do servidor (`/api/ai`), **não** consome créditos de aluno.
 
-### Mapas Mentais (admin) — grade por subespecialidade (2026-06-15)
-- `admMapasHTML`/`bindAdmSec`: mesmo padrão das Diretrizes. Estado `admMMSub`; `admMMSubList()` conta mapas por subespecialidade usando `DIR_SUBS`/`dirSubIcon`. Nível 1 = grade de cards (`data-admmm-sub`); nível 2 = form "Criar mapa mental em <sub>" (sub fixa = `admMMSub`) + lista da subespecialidade (Editar/Excluir). Editor usa `DIR_SUBS` (com fallback p/ a sub atual). Dados em `sharedMM` (`mm_shared`). Botões de voltar: `adm-mm-back` (grade) e `adm-mm-editback` (editor → sub).
+### Mapas Mentais — grade por subespecialidade (admin + aluno, 2026-06-15)
+- **Admin** (`admMapasHTML`/`bindAdmSec`): mesmo padrão das Diretrizes. Estado `admMMSub`; `admMMSubList()` conta por subespecialidade (`DIR_SUBS`/`dirSubIcon`). Nível 1 = grade (`data-admmm-sub`); nível 2 = form "Criar mapa mental em <sub>" (sub fixa = `admMMSub`) + lista (Editar/Excluir). Editor usa `DIR_SUBS` (fallback p/ a sub atual). Voltar: `adm-mm-back`, `adm-mm-editback`.
+- **Aluno** (`renderMMList`): também por grade. Estado `mmSubSel`; `mmSubGrid()`. Nível 1 = grade de subespecialidades + card "📁 Meus mapas" (`DB.mm`, mapas criados pelo aluno); nível 2 = lista de mapas do professor da subespecialidade (botão "Ver") ou os pessoais. Delegação: `data-mmsubsel`, `data-mmback`. Removido o `<select id="mm-sub-filter">`.
+- **`canonSub(s)`**: normaliza **na exibição** rótulos antigos → canônico (Dislipidemia e Aterosclerose→Lípides; Endocrinologia Feminina e Andrologia→Endocrinologia Feminina; Endocrinologia Esportiva→Endocrinologia do Esporte) para não duplicar cards na grade, **sem** alterar os dados salvos. Usado nas 4 agregações/filtros (aluno+professor).
+- Dados em `sharedMM` (`mm_shared`).
+
+### Menu lateral do aluno (ordem)
+- ESTUDO: Dashboard, Questões, Flashcards, Mapas Mentais, Podcasts, Cursos, Cronograma, Revisão, **Diretrizes** (movida de PESSOAL p/ logo após Revisão — 2026-06-15). `applyProfileMenuLayout()` (médicos) só move o Mural e esconde o Dashboard.
 
 ## Backend
 
