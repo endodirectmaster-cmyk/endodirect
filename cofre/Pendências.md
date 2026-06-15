@@ -12,7 +12,8 @@ atualizado: 2026-06-15
 - [x] **[MÉDIO] XSS em `<img src>`**: `q.img`/`q.expImg`/previews de upload e `cur*` eram injetados sem `esc()` (vetor se o banco vier de import/IA). Todos escapados. Links do Mural (`a.link`) agora passam por `safeHttpUrl()` (bloqueia `javascript:`/`data:`).
 
 **Sinalizado para depois (não-bloqueante; risco/decisão/teste):**
-- [ ] **Newsletter envio duplicado**: a trava `newsletter_sent` é gravada DEPOIS do envio (`lib/newsletter.js`) — disparo concorrente (raro) poderia enviar 2×. Ideal: claim-first (gravar antes / update condicional). `dateBR`/`todayISO` usam UTC (o "dia" da trava é UTC, não BRT).
+- [x] **Newsletter repetindo conteúdo (2026-06-15, #303):** vinha igual ao dia anterior porque pegava sempre o `top3` do pool estável. Agora `newsletter_recent` (14d) + `pickFresh()` priorizam não-enviados; ranking refinado (revisão>metanálise>original; NEJM>Lancet>JCEM>outros); JCEM deixou de sair como "Endocrinology" (`journalMatches`/`jnorm` no radar).
+- [ ] **Newsletter envio duplicado (concorrência)**: a trava `newsletter_sent` ainda é gravada DEPOIS do envio — disparo concorrente (raro) poderia enviar 2×. Ideal: claim-first. `dateBR`/`todayISO` usam UTC.
 - [ ] **Webhook pagar.me**: (a) `charge.refunded`/`subscription.canceled` sem scope revoga TODOS os acessos do e-mail; (b) renovação sem `subscriptionId` cairia em `avulso` 365d. Validar o **payload de renovação no sandbox** (1ª renovação só em ~30d) antes de ajustar.
 - [ ] **Cupom de fundador não-atômico**: pode passar de 100 vagas sob concorrência (`lib/founder.js`).
 - [x] **Checkout — checagem de origem (2026-06-15, #301):** `api/checkout/order.js` e `subscribe.js` agora validam Origin/Referer pelo hostname (igual `api/ai.js`) — bloqueia abuso externo dos endpoints que criam cobranças LIVE. Header ausente passa (clientes não-browser). Não exige sessão (não quebra checkout de quem não está logado).

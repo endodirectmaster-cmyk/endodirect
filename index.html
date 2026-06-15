@@ -2549,7 +2549,7 @@ function applyStatePayload(payload){
   if(Array.isArray(payload.acessos))userAcessos=payload.acessos;
   if(Array.isArray(payload.cursos))catalogoCursos=payload.cursos;
   // Preserva chaves geridas pelo servidor (newsletter) para o save do admin não apagá-las.
-  ['newsletter_extra','newsletter_unsub','newsletter_sent','newsletter'].forEach(function(k){if(payload[k]!==undefined)globalServerKeys[k]=payload[k];});
+  ['newsletter_extra','newsletter_unsub','newsletter_sent','newsletter','newsletter_recent'].forEach(function(k){if(payload[k]!==undefined)globalServerKeys[k]=payload[k];});
   REMOTE_STATE_KEYS.forEach(function(k){if(payload[k]!==undefined)lsSet(k,payload[k]);});
 }
 function renderDegustacaoBar(){
@@ -2662,7 +2662,7 @@ function saveRemoteState(){
     ops.push(client.from('endodirect_global_state').select('payload').eq('id','main').maybeSingle().then(function(g){
       var serverP=(g&&g.data&&g.data.payload)||{};
       var p=globalStatePayload();
-      ['radar_avisos','newsletter_extra','newsletter_unsub','newsletter_sent','newsletter'].forEach(function(k){if(serverP[k]!==undefined)p[k]=serverP[k];});
+      ['radar_avisos','newsletter_extra','newsletter_unsub','newsletter_sent','newsletter','newsletter_recent'].forEach(function(k){if(serverP[k]!==undefined)p[k]=serverP[k];});
       return client.from('endodirect_global_state').upsert({id:'main',payload:p,updated_by:currentUser.id,updated_at:new Date().toISOString()},{onConflict:'id'}).then(function(res){if(res.error)throw res.error;});
     }));
   }
