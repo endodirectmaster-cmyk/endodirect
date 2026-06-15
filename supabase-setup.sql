@@ -436,6 +436,9 @@ returns jsonb language sql security definer set search_path = public stable as $
     -- Mapas mentais (modelos do professor): pacote OU degustacao.
     'mm_shared',  case when (select scopes from a) @> array['plano'] or coalesce(array_length((select scopes from a), 1), 0) = 0
                        then coalesce((select payload->'mm_shared' from g), '[]'::jsonb) else '[]'::jsonb end,
+    -- Flashcards publicados pelo professor: pacote OU degustacao (igual mm_shared).
+    'fc_shared',  case when (select scopes from a) @> array['plano'] or coalesce(array_length((select scopes from a), 1), 0) = 0
+                       then coalesce((select payload->'fc_shared' from g), '[]'::jsonb) else '[]'::jsonb end,
     'adm_cursos', case when coalesce(array_length((select scopes from a), 1), 0) > 0 then (
                     -- so as videoaulas do(s) curso(s) que o aluno tem acesso;
                     -- aulas sem curso definido aparecem para qualquer membro.

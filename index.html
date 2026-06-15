@@ -1902,6 +1902,7 @@ textarea{resize:vertical;line-height:1.6}
           <button class="adm-nav" data-asec="estudantes">👥 Estudantes</button>
           <button class="adm-nav" data-asec="conteudo">🎧 Podcasts</button>
           <button class="adm-nav" data-asec="mapas">✦ Mapas Mentais</button>
+          <button class="adm-nav" data-asec="flashcards">🃏 Flashcards</button>
           <button class="adm-nav" data-asec="calc">🧮 Calculadoras</button>
           <button class="adm-nav" data-asec="consultorio">⚕️ Consultório</button>
           <button class="adm-nav" data-asec="chat">💬 Chat</button>
@@ -2144,7 +2145,7 @@ var RESUMABLE_THRESHOLD_BYTES=20*1024*1024;
 var MAX_AUDIO_UPLOAD_BYTES=200*1024*1024;
 var supabaseClient=null;
 var remoteStateLoaded=false,remoteStateSaveTimer=null,remoteStateWarned=false;
-var REMOTE_STATE_KEYS=['q','fc','mm','notes','crono','sf_results','perf','provas','adm_avisos','adm_questoes','podcasts','adm_cursos','adm_estudantes','adm_perfil','user_profile','mm_shared','deg_trials','ck_billing','presc_emitidas','diretrizes','diretrizes_temas'];
+var REMOTE_STATE_KEYS=['q','fc','mm','notes','crono','sf_results','perf','provas','adm_avisos','adm_questoes','podcasts','adm_cursos','adm_estudantes','adm_perfil','user_profile','mm_shared','fc_shared','deg_trials','ck_billing','presc_emitidas','diretrizes','diretrizes_temas'];
 // Base CANÔNICA para os redirects de auth (confirmação, recuperação, OAuth).
 // Sempre www em produção — evita cair no apex (endodirect.com.br) que pode não
 // responder e deixar o usuário preso após confirmar o e-mail. Em localhost usa
@@ -2340,6 +2341,22 @@ function seedFlashcards(){
       });
     });
     lsSet('fc_member_seeded',ledger);
+  }
+  // FLASHCARDS PUBLICADOS PELO PROFESSOR (fc_shared, coleção global) — vão para
+  // TODOS os alunos. Idempotente por texto do front + ledger próprio (respeita a
+  // deleção do aluno; um card novo publicado depois é semeado na próxima carga).
+  if(typeof fcShared!=='undefined'&&Array.isArray(fcShared)&&fcShared.length){
+    var haveS={};DB.fc.forEach(function(c){if(c&&c.front)haveS[String(c.front).trim().toLowerCase()]=1;});
+    var ledgerS=lsGet('fc_shared_seeded')||{};
+    fcShared.forEach(function(card){
+      if(!card||!card.front||!card.back)return;
+      var k=String(card.front).trim().toLowerCase();
+      if(ledgerS[k])return;
+      if(haveS[k]){ledgerS[k]=1;return;}
+      DB.fc.push({id:Date.now()+Math.random(),front:card.front,back:card.back,cat:card.sub||card.cat||'Geral',due:Date.now(),box:1,at:Date.now(),seed:true,shared:true});
+      haveS[k]=1;ledgerS[k]=1;added++;
+    });
+    lsSet('fc_shared_seeded',ledgerS);
   }
   // Reconcilia o conteúdo dos cards SEED já existentes com FC_SEED/FC_MEMBER
   // (propaga correções sem duplicar nem tocar cards do usuário).
@@ -2553,6 +2570,7 @@ var GLOBAL_MERGE_KEYS={
   podcasts:function(it){return (it.src||it.link||it.audio||'')+'|'+(it.title||'');},
   provas:function(it){return (it.stem||'')+'|'+(it.answer||'')+'|'+(it.inst||'');},
   mm_shared:function(it){return it.id||((it.topic||'')+'|'+(it.sub||''));},
+  fc_shared:function(it){return it.id||((it.front||'')+'|'+(it.sub||it.cat||''));},
   diretrizes:function(it){return (it.fonte||'')+'|'+(it.tema||it.titulo||'')+'|'+(it.sub||'');},
   diretrizes_temas:function(it){return (it.sub||'')+'|'+(it.tema||'');},
   curso_mods_extra:function(it){return (it.curso||'')+'|'+(it.modulo||'');},
@@ -2620,7 +2638,7 @@ function globalStatePayload(){
   // professor grava apenas os avisos manuais em adm_avisos. A leitura
   // (member_content/public_content) mescla os dois.
   // Mescla as chaves geridas pelo servidor (newsletter_*) para NÃO apagá-las no save.
-  return Object.assign({},globalServerKeys,{provas:provasDB,adm_avisos:admAvisos.filter(function(a){return !isRadarAuto(a);}),radar_avisos:radarAvisos,radar_hidden:radarHidden,adm_questoes:admQuestoes,podcasts:podcasts,adm_cursos:admCursos,curso_mods_extra:admCursoModsExtra,adm_estudantes:admEstudantes,mm_shared:sharedMM,diretrizes:diretrizes,diretrizes_temas:dirTemasExtra});
+  return Object.assign({},globalServerKeys,{provas:provasDB,adm_avisos:admAvisos.filter(function(a){return !isRadarAuto(a);}),radar_avisos:radarAvisos,radar_hidden:radarHidden,adm_questoes:admQuestoes,podcasts:podcasts,adm_cursos:admCursos,curso_mods_extra:admCursoModsExtra,adm_estudantes:admEstudantes,mm_shared:sharedMM,fc_shared:fcShared,diretrizes:diretrizes,diretrizes_temas:dirTemasExtra});
 }
 function currentStatePayload(){
   return Object.assign({},userStatePayload(),globalStatePayload());
@@ -2646,6 +2664,7 @@ function applyStatePayload(payload,personalOnly){
   if(!personalOnly){
     if(Array.isArray(payload.provas))provasDB=payload.provas;
     if(Array.isArray(payload.mm_shared)){sharedMM=payload.mm_shared;try{lsSet('mm_shared',sharedMM);}catch(e){}try{renderMMList();}catch(e){}}
+    if(Array.isArray(payload.fc_shared)){fcShared=payload.fc_shared;try{lsSet('fc_shared',fcShared);}catch(e){}}
     if(Array.isArray(payload.radar_avisos))radarAvisos=payload.radar_avisos;
     if(Array.isArray(payload.radar_hidden))radarHidden=payload.radar_hidden;
     if(Array.isArray(payload.adm_avisos)||Array.isArray(payload.radar_avisos)){
@@ -4592,6 +4611,7 @@ function flipStudy(){
 // ── MIND MAP ──
 var curMM=null;
 var sharedMM=lsGet('mm_shared')||[];
+var fcShared=lsGet('fc_shared')||[]; // flashcards publicados pelo professor (global; vão a todos os alunos)
 var mmSubFilter='';
 var mmSubSel=''; // subespecialidade selecionada na grade dos mapas do aluno ('' = grade)
 function wrapTxt(text,max){
@@ -6624,6 +6644,7 @@ function restoreMMLive(){
 }
 var ADM_MM_SUBESP=['Diabetes','Obesidade','Tireoide','Adrenal','Neuroendocrinologia','Osteometabolismo','Endocrinologia Pediátrica','Endocrinologia Feminina e Andrologia','Dislipidemia e Aterosclerose','Endocrinologia Masculina','Endocrinologia Esportiva','Transgeneridade'];
 function persistSharedMM(){lsSet('mm_shared',sharedMM);queueRemoteStateSave();try{renderMMList();}catch(e){}}
+function persistFcShared(){lsSet('fc_shared',fcShared);queueRemoteStateSave();}
 function admMMSyncDraft(){
   if(!admMMDraft)return;
   var rootEl=document.getElementById('adm-mm-root');if(rootEl)admMMDraft.data.root=(rootEl.value||'').trim()||admMMDraft.topic;
@@ -6690,8 +6711,57 @@ function admMapasHTML(){
     +'<div class="card"><div class="card-head" style="flex-wrap:wrap;gap:.5rem"><span class="card-title">Mapas publicados para os alunos</span><span class="tag tag-grn">'+rows.length+'</span></div>'+(list||'<div class="empty">Nenhum mapa nesta subespecialidade ainda.</div>')+'</div>'
     +'</div>';
 }
+// ── FLASHCARDS DO PROFESSOR (publicados para todos os alunos via fc_shared) ──
+var admFcSub='',admFcEditId=null;
+function admFcSubList(){
+  var seen={};(fcShared||[]).forEach(function(c){var s=canonSub(c.sub||c.cat);seen[s]=(seen[s]||0)+1;});
+  return MURAL_SUBSPECIALTY_FILTERS.map(function(s){return{sub:s,count:seen[s]||0};});
+}
+// Acrescenta cards (gerados pela IA ou importados) à coleção publicada.
+function admFcAddCards(cards){
+  var n=0;
+  (Array.isArray(cards)?cards:[]).forEach(function(c){
+    var front=String((c&&(c.front||c.frente||c.q||c.pergunta))||'').trim();
+    var back=String((c&&(c.back||c.verso||c.a||c.resposta))||'').trim();
+    if(!front||!back)return;
+    fcShared.push({id:'fc-'+Date.now()+'-'+Math.round(Math.random()*1e6),front:front,back:back,sub:admFcSub,at:Date.now()});n++;
+  });
+  if(n)persistFcShared();
+  return n;
+}
+function admFlashHTML(){
+  if(!admFcSub){
+    var grid='<div class="dir-sub-grid">'+admFcSubList().map(function(s){
+      return '<button class="dir-sub-btn" data-admfc-sub="'+esc(s.sub)+'"><div class="dsb-ico">'+dirSubIcon(s.sub)+'</div><h3>'+esc(s.sub)+'</h3><div class="dsb-cnt">'+s.count+' card'+(s.count===1?'':'s')+'</div></button>';
+    }).join('')+'</div>';
+    return '<div class="adm-ph"><h1>Flashcards</h1></div>'
+      +'<div class="adm-pc"><div class="ph" style="margin-top:0"><p>Crie e publique flashcards por subespecialidade. Ao salvar, eles entram no baralho de todos os alunos.</p></div>'+grid+'</div>';
+  }
+  var rows=(fcShared||[]).map(function(c,j){return{c:c,j:j};}).filter(function(o){return canonSub(o.c.sub||o.c.cat)===admFcSub;});
+  var list=rows.map(function(o){var c=o.c,j=o.j;
+    return '<div style="padding:.6rem 0;border-bottom:1px solid var(--bd)"><div style="display:flex;align-items:flex-start;justify-content:space-between;gap:.6rem"><div style="min-width:0;flex:1"><div style="font-weight:600;font-size:.82rem">'+esc(c.front)+'</div><div style="font-size:.74rem;color:var(--t2);margin-top:.2rem">'+esc(c.back)+'</div></div><div style="display:flex;gap:5px;flex-shrink:0"><button class="btn btn-outline btn-sm" data-adm-fc-edit="'+j+'">Editar</button><button class="btn btn-outline btn-sm" data-adm-fc-del="'+j+'" style="color:var(--red);border-color:var(--red)">🗑</button></div></div>'
+      +(admFcEditId===c.id?('<div style="margin-top:.5rem;display:grid;gap:.4rem"><textarea id="adm-fc-ef" rows="2" style="width:100%">'+esc(c.front)+'</textarea><textarea id="adm-fc-eb" rows="2" style="width:100%">'+esc(c.back)+'</textarea><div style="display:flex;gap:6px"><button class="btn btn-primary btn-sm" data-adm-fc-savee="'+j+'">💾 Salvar</button><button class="btn btn-ghost btn-sm" id="adm-fc-cancele">Cancelar</button></div></div>'):'')
+      +'</div>';
+  }).join('');
+  var createForm='<div class="card" style="margin-bottom:1rem"><div class="card-head"><span class="card-title">Criar flashcards em '+esc(admFcSub)+'</span></div>'
+    +'<div class="fld2" style="margin:0 0 .6rem"><label>Tema (para gerar com IA)</label><input type="text" id="adm-fc-topic" placeholder="Ex: Hipotireoidismo"></div>'
+    +'<div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:.6rem"><button class="btn btn-primary" id="adm-fc-gen">🤖 Gerar com IA</button><button class="btn btn-outline" id="adm-fc-import">📎 Importar arquivo</button></div>'
+    +'<input type="file" id="adm-fc-file" accept=".pdf,.txt,image/*" style="display:none">'
+    +'<div style="border-top:1px solid var(--bd);margin:.4rem 0 .7rem"></div>'
+    +'<div class="fld2" style="margin:0 0 .5rem"><label>Frente (pergunta)</label><textarea id="adm-fc-front" rows="2" placeholder="Pergunta do card"></textarea></div>'
+    +'<div class="fld2" style="margin:0 0 .6rem"><label>Verso (resposta)</label><textarea id="adm-fc-back" rows="2" placeholder="Resposta do card"></textarea></div>'
+    +'<button class="btn btn-outline" id="adm-fc-add">+ Adicionar card manual</button>'
+    +'<div style="margin-top:.5rem;font-size:.74rem;color:var(--t3)">A IA ou o arquivo (PDF/TXT/imagem) geram vários cards de uma vez; revise e exclua o que não quiser. Tudo fica disponível para os alunos.</div></div>';
+  return '<div class="adm-ph"><h1>Flashcards</h1></div>'
+    +'<div class="adm-pc">'
+    +'<button class="dir-back" id="adm-fc-backbtn" style="margin-bottom:1rem">← Todas as subespecialidades</button>'
+    +'<div class="ph" style="margin-top:0"><h1>'+dirSubIcon(admFcSub)+' '+esc(admFcSub)+'</h1></div>'
+    +createForm
+    +'<div class="card"><div class="card-head" style="flex-wrap:wrap;gap:.5rem"><span class="card-title">Flashcards publicados para os alunos</span><span class="tag tag-grn">'+rows.length+'</span></div>'+(list||'<div class="empty">Nenhum flashcard nesta subespecialidade ainda.</div>')+'</div>'
+    +'</div>';
+}
 function admRestoreSec(){
-  var ok=['analytics','mural','ref','provas','cursos','estudantes','conteudo','mapas','calc','consultorio','chat','perfil','suporte'];
+  var ok=['analytics','mural','ref','provas','cursos','estudantes','conteudo','mapas','flashcards','calc','consultorio','chat','perfil','suporte'];
   var s=lsGet('adm_sec');
   // Sem seção salva (após logout) → Analytics. Com seção salva (reload) → restaura.
   return ok.indexOf(s)>=0?s:'analytics';
@@ -6735,6 +6805,7 @@ function renderAdmSec(sec){
   else if(sec==='perfil')m.innerHTML=admPerfilHTML();
   else if(sec==='suporte')m.innerHTML=admSuporteHTML();
   else if(sec==='mapas')m.innerHTML=admMapasHTML();
+  else if(sec==='flashcards')m.innerHTML=admFlashHTML();
   bindAdmSec(sec);
 }
 
@@ -7501,6 +7572,46 @@ function bindAdmSec(sec){
     var fi=document.getElementById('adm-bq-inst');if(fi)fi.addEventListener('change',function(){admBancoInst=fi.value;admBancoPage=0;admBancoEditIdx=null;refreshBanco();});
     var fcl=document.getElementById('adm-bq-clear');if(fcl)fcl.addEventListener('click',function(){admBancoArea='';admBancoCode='';admBancoAno='';admBancoInst='';admBancoPage=0;admBancoEditIdx=null;renderAdmSec('provas');});
     bindProvaDel();bindBancoNav();bindBancoEdit();
+  }
+
+  if(sec==='flashcards'){
+    main.querySelectorAll('[data-admfc-sub]').forEach(function(b){b.addEventListener('click',function(){admFcSub=b.dataset.admfcSub;admFcEditId=null;renderAdmSec('flashcards');});});
+    var fcBack=document.getElementById('adm-fc-backbtn');
+    if(fcBack)fcBack.addEventListener('click',function(){admFcSub='';admFcEditId=null;renderAdmSec('flashcards');});
+    var fcGen=document.getElementById('adm-fc-gen');
+    if(fcGen)fcGen.addEventListener('click',function(){
+      var topic=(document.getElementById('adm-fc-topic').value||'').trim();
+      if(!topic){notify('Digite um tema para gerar.','err');return;}
+      fcGen.disabled=true;fcGen.innerHTML=ldHTML('Gerando...');
+      callAI('Voce e um endocrinologista educador. Gere flashcards de estudo (pergunta na frente, resposta curta e objetiva no verso). JSON APENAS: {"cards":[{"front":"pergunta","back":"resposta"}]}. 8 a 12 cards, em portugues medico claro.','Flashcards sobre: '+topic+' (subespecialidade: '+admFcSub+')',2000)
+      .then(function(raw){var d=parseJ(raw);var cards=(d&&(d.cards||d.flashcards))||(Array.isArray(d)?d:[]);var n=admFcAddCards(cards);if(!n)throw new Error('A IA nao retornou cards validos.');renderAdmSec('flashcards');notify(n+' flashcard(s) gerados e publicados.','ok');})
+      .catch(function(e){notify('Erro ao gerar: '+((e&&e.message)||e),'err');fcGen.disabled=false;fcGen.innerHTML='🤖 Gerar com IA';});
+    });
+    var fcImp=document.getElementById('adm-fc-import'),fcImpFile=document.getElementById('adm-fc-file');
+    if(fcImp&&fcImpFile){
+      fcImp.addEventListener('click',function(){fcImpFile.click();});
+      fcImpFile.addEventListener('change',function(){
+        var f=fcImpFile.files&&fcImpFile.files[0];if(!f)return;
+        var topic=(document.getElementById('adm-fc-topic').value||'').trim();
+        fcImp.disabled=true;fcImp.innerHTML=ldHTML('Lendo...');
+        var sys='Voce e um endocrinologista educador. A partir do material fornecido, gere flashcards de estudo (pergunta na frente, resposta curta no verso). JSON APENAS: {"cards":[{"front":"pergunta","back":"resposta"}]}. 8 a 15 cards, em portugues medico claro, fiel ao material.';
+        aiFromFile(f,sys,'Gere flashcards'+(topic?(' sobre "'+topic+'"'):'')+' a partir deste material:')
+        .then(function(raw){var d=parseJ(raw);var cards=(d&&(d.cards||d.flashcards))||(Array.isArray(d)?d:[]);var n=admFcAddCards(cards);if(!n)throw new Error('A IA nao retornou cards validos.');renderAdmSec('flashcards');notify(n+' flashcard(s) importados e publicados.','ok');})
+        .catch(function(e){notify('Erro ao importar: '+((e&&e.message)||e),'err');fcImp.disabled=false;fcImp.innerHTML='📎 Importar arquivo';fcImpFile.value='';});
+      });
+    }
+    var fcAdd=document.getElementById('adm-fc-add');
+    if(fcAdd)fcAdd.addEventListener('click',function(){
+      var front=(document.getElementById('adm-fc-front').value||'').trim(),back=(document.getElementById('adm-fc-back').value||'').trim();
+      if(!front||!back){notify('Preencha frente e verso.','err');return;}
+      admFcAddCards([{front:front,back:back}]);renderAdmSec('flashcards');notify('Card adicionado e publicado.','ok');
+    });
+    main.querySelectorAll('[data-adm-fc-edit]').forEach(function(b){b.addEventListener('click',function(){var c=fcShared[parseInt(b.dataset.admFcEdit,10)];if(c){admFcEditId=c.id;renderAdmSec('flashcards');}});});
+    var fcCancelE=document.getElementById('adm-fc-cancele');
+    if(fcCancelE)fcCancelE.addEventListener('click',function(){admFcEditId=null;renderAdmSec('flashcards');});
+    main.querySelectorAll('[data-adm-fc-savee]').forEach(function(b){b.addEventListener('click',function(){var c=fcShared[parseInt(b.dataset.admFcSavee,10)];if(!c)return;var nf=(document.getElementById('adm-fc-ef').value||'').trim(),nb=(document.getElementById('adm-fc-eb').value||'').trim();if(!nf||!nb){notify('Preencha frente e verso.','err');return;}c.front=nf;c.back=nb;admFcEditId=null;persistFcShared();renderAdmSec('flashcards');notify('Card atualizado.','ok');});});
+    main.querySelectorAll('[data-adm-fc-del]').forEach(function(b){b.addEventListener('click',function(){var i=parseInt(b.dataset.admFcDel,10);if(!confirm('Excluir este flashcard? (Deixa de ser publicado; quem já recebeu mantém a cópia.)'))return;fcShared.splice(i,1);persistFcShared();renderAdmSec('flashcards');notify('Flashcard removido.','ok');});});
+    return;
   }
 
   if(sec==='cursos'){
