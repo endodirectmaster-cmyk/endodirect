@@ -1905,6 +1905,7 @@ textarea{resize:vertical;line-height:1.6}
           <button class="adm-nav" data-asec="flashcards">🃏 Flashcards</button>
           <button class="adm-nav" data-asec="calc">🧮 Calculadoras</button>
           <button class="adm-nav" data-asec="consultorio">⚕️ Consultório</button>
+          <button class="adm-nav" data-asec="rx">💊 Prescrição Comentada</button>
           <button class="adm-nav" data-asec="chat">💬 Chat</button>
           <div class="sb-sec" style="margin-top:.8rem">Conta</div>
           <button class="adm-nav" data-asec="perfil">👤 Perfil</button>
@@ -6761,7 +6762,7 @@ function admFlashHTML(){
     +'</div>';
 }
 function admRestoreSec(){
-  var ok=['analytics','mural','ref','provas','cursos','estudantes','conteudo','mapas','flashcards','calc','consultorio','chat','perfil','suporte'];
+  var ok=['analytics','mural','ref','provas','cursos','estudantes','conteudo','mapas','flashcards','calc','consultorio','rx','chat','perfil','suporte'];
   var s=lsGet('adm_sec');
   // Sem seção salva (após logout) → Analytics. Com seção salva (reload) → restaura.
   return ok.indexOf(s)>=0?s:'analytics';
@@ -6774,11 +6775,18 @@ function restorePrescPanel(){
   var pp=document.getElementById('panel-presc');
   if(pp&&__prescHome&&pp.parentNode!==__prescHome){__prescHome.appendChild(pp);pp.classList.remove('on');pp.style.display='';}
 }
+// Prescrição Comentada no painel do professor: reaproveita o MESMO #panel-rx do
+// aluno (mesmo padrão do Consultório acima).
+var __rxHome=null;
+function restoreRxPanel(){
+  var rp=document.getElementById('panel-rx');
+  if(rp&&__rxHome&&rp.parentNode!==__rxHome){__rxHome.appendChild(rp);rp.classList.remove('on');rp.style.display='';}
+}
 function renderAdmSec(sec){
   admCurrentSec=sec;
   try{lsSet('adm_sec',sec);}catch(e){}
   document.querySelectorAll('.adm-nav[data-asec]').forEach(function(b){b.classList.toggle('on',b.dataset.asec===sec);});
-  var titles={provas:'Provas & Questões',cursos:'Cursos',estudantes:'Estudantes',analytics:'Analytics',mural:'Mural',ref:'Diretrizes',conteudo:'Podcasts',mapas:'Mapas Mentais',calc:'Calculadoras',consultorio:'Consultório',chat:'Chat',perfil:'Perfil',suporte:'Suporte'};
+  var titles={provas:'Provas & Questões',cursos:'Cursos',estudantes:'Estudantes',analytics:'Analytics',mural:'Mural',ref:'Diretrizes',conteudo:'Podcasts',mapas:'Mapas Mentais',calc:'Calculadoras',consultorio:'Consultório',rx:'Prescrição Comentada',chat:'Chat',perfil:'Perfil',suporte:'Suporte'};
   setText('adm-sec-title',titles[sec]||sec);
   var m=document.getElementById('adm-main');if(!m)return;
   // SEMPRE devolve os painéis movidos (#panel-presc / #mm-live) para o lugar de
@@ -6786,11 +6794,18 @@ function renderAdmSec(sec){
   // seção (ex.: hydrate automático de estado remoto) apagaria o elemento movido de
   // vez (quebrando também o painel do aluno). São reanexados logo abaixo.
   try{restorePrescPanel();}catch(e){}
+  try{restoreRxPanel();}catch(e){}
   try{restoreMMLive();}catch(e){}
   if(sec==='consultorio'){
     m.innerHTML='<div class="adm-ph"><h1>Consultório</h1></div><div class="adm-pc" id="adm-presc-host"></div>';
     var pp=document.getElementById('panel-presc'),host=document.getElementById('adm-presc-host');
     if(pp&&host){if(!__prescHome)__prescHome=pp.parentNode;host.appendChild(pp);pp.classList.add('on');pp.style.display='';try{initPresc();}catch(e){}}
+    bindAdmSec(sec);return;
+  }
+  if(sec==='rx'){
+    m.innerHTML='<div class="adm-ph"><h1>Prescrição Comentada</h1></div><div class="adm-pc" id="adm-rx-host"></div>';
+    var rp=document.getElementById('panel-rx'),rhost=document.getElementById('adm-rx-host');
+    if(rp&&rhost){if(!__rxHome)__rxHome=rp.parentNode;rhost.appendChild(rp);rp.classList.add('on');rp.style.display='';}
     bindAdmSec(sec);return;
   }
   if(sec==='provas')m.innerHTML=admProvasSecHTML();
