@@ -79,11 +79,20 @@ function sbHeaders() {
   return { apikey: SERVICE_ROLE, Authorization: 'Bearer ' + SERVICE_ROLE, 'Content-Type': 'application/json', Accept: 'application/json' };
 }
 async function findUserByEmail(email) {
-  const r = await fetch(`${SUPABASE_URL}/auth/v1/admin/users?email=${encodeURIComponent(email)}`, { headers: sbHeaders() });
-  if (!r.ok) return null;
-  const d = await r.json().catch(() => ({}));
-  const list = Array.isArray(d) ? d : (d.users || []);
-  return list.find((u) => String(u.email || '').toLowerCase() === email) || list[0] || null;
+  email = String(email || '').toLowerCase();
+  // Pagina e casa o e-mail EXATO; nunca cai em list[0] (provisionaria a conta errada
+  // além de 50 usuários, pois o ?email do GoTrue admin não filtra de forma confiável).
+  for (let page = 1; page <= 50; page++) {
+    const r = await fetch(`${SUPABASE_URL}/auth/v1/admin/users?page=${page}&per_page=200`, { headers: sbHeaders() });
+    if (!r.ok) return null;
+    const d = await r.json().catch(() => ({}));
+    const list = Array.isArray(d) ? d : (d.users || []);
+    if (!list.length) break;
+    const hit = list.find((u) => String(u.email || '').toLowerCase() === email);
+    if (hit) return hit;
+    if (list.length < 200) break;
+  }
+  return null;
 }
 async function ensureUser(email, name) {
   const r = await fetch(`${SUPABASE_URL}/auth/v1/admin/users`, {

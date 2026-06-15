@@ -111,12 +111,21 @@ function sbHeaders() {
 }
 
 async function findUserByEmail(email) {
-  const url = `${SUPABASE_URL}/auth/v1/admin/users?email=${encodeURIComponent(email)}`;
-  const r = await fetch(url, { headers: sbHeaders() });
-  if (!r.ok) return null;
-  const d = await r.json().catch(() => ({}));
-  const list = Array.isArray(d) ? d : (d.users || []);
-  return list.find((u) => String(u.email || '').toLowerCase() === email) || list[0] || null;
+  email = String(email || '').toLowerCase();
+  // GoTrue admin não filtra por ?email de forma confiável (costuma devolver a 1ª
+  // página de TODOS os usuários). Paginamos e casamos o e-mail EXATO; NUNCA caímos
+  // em list[0] — isso provisionaria/recuperaria a conta ERRADA além de 50 usuários.
+  for (let page = 1; page <= 50; page++) {
+    const r = await fetch(`${SUPABASE_URL}/auth/v1/admin/users?page=${page}&per_page=200`, { headers: sbHeaders() });
+    if (!r.ok) return null;
+    const d = await r.json().catch(() => ({}));
+    const list = Array.isArray(d) ? d : (d.users || []);
+    if (!list.length) break;
+    const hit = list.find((u) => String(u.email || '').toLowerCase() === email);
+    if (hit) return hit;
+    if (list.length < 200) break;
+  }
+  return null;
 }
 
 async function ensureUser(email, name) {

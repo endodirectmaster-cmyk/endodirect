@@ -50,9 +50,20 @@ async function pagarme(path, body, method) {
 
 function sbHeaders() { return { apikey: SERVICE_ROLE, Authorization: 'Bearer ' + SERVICE_ROLE, 'Content-Type': 'application/json', Accept: 'application/json' }; }
 async function findUserByEmail(email) {
-  const r = await fetch(SUPABASE_URL + '/auth/v1/admin/users?email=' + encodeURIComponent(email), { headers: sbHeaders() });
-  if (!r.ok) return null; const d = await r.json().catch(function () { return {}; });
-  const list = Array.isArray(d) ? d : (d.users || []); return list.find(function (u) { return String(u.email || '').toLowerCase() === email; }) || list[0] || null;
+  email = String(email || '').toLowerCase();
+  // Pagina e casa o e-mail EXATO; nunca cai em list[0] (provisionaria a conta errada
+  // além de 50 usuários, pois o ?email do GoTrue admin não filtra de forma confiável).
+  for (var page = 1; page <= 50; page++) {
+    var r = await fetch(SUPABASE_URL + '/auth/v1/admin/users?page=' + page + '&per_page=200', { headers: sbHeaders() });
+    if (!r.ok) return null;
+    var d = await r.json().catch(function () { return {}; });
+    var list = Array.isArray(d) ? d : (d.users || []);
+    if (!list.length) break;
+    var hit = list.find(function (u) { return String(u.email || '').toLowerCase() === email; });
+    if (hit) return hit;
+    if (list.length < 200) break;
+  }
+  return null;
 }
 async function ensureUser(email, name) {
   const r = await fetch(SUPABASE_URL + '/auth/v1/admin/users', { method: 'POST', headers: sbHeaders(), body: JSON.stringify({ email: email, email_confirm: true, user_metadata: name ? { nome: name } : {} }) });
