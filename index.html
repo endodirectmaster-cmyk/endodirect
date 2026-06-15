@@ -2739,7 +2739,16 @@ function saveRemoteState(){
       var serverP=(g&&g.data&&g.data.payload)||{};
       var serverUpd=(g&&g.data&&g.data.updated_at)||null;
       var p=globalStatePayload();
-      ['radar_avisos','newsletter_extra','newsletter_unsub','newsletter_sent','newsletter','newsletter_recent'].forEach(function(k){if(serverP[k]!==undefined)p[k]=serverP[k];});
+      // Chaves do servidor que o admin NÃO edita: preserva direto do servidor.
+      ['newsletter_extra','newsletter_unsub','newsletter_sent','newsletter','newsletter_recent'].forEach(function(k){if(serverP[k]!==undefined)p[k]=serverP[k];});
+      // radar_avisos: base = servidor (mantém adições do cron e a purga por TTL),
+      // mas APLICA as edições do professor (subespecialidade/tipo/texto) por chave
+      // estável (sourceId/link). Sem isto, editar um card do radar voltava no F5 —
+      // o save sobrescrevia tudo com a versão do servidor, descartando a edição.
+      if(serverP.radar_avisos!==undefined){
+        var _memRadar={};(Array.isArray(radarAvisos)?radarAvisos:[]).forEach(function(it){_memRadar[avisoKeyStr(it)]=it;});
+        p.radar_avisos=(Array.isArray(serverP.radar_avisos)?serverP.radar_avisos:[]).map(function(it){return _memRadar[avisoKeyStr(it)]||it;});
+      }
       // CONCORRÊNCIA: se o estado do servidor mudou desde que esta sessão carregou/
       // salvou (outro admin OU um cron gravou), MESCLA as coleções aditivas usando o
       // BASELINE desta sessão (as chaves que eu tinha ao carregar). Assim:
