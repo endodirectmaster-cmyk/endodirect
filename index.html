@@ -2979,6 +2979,7 @@ function hideMMModal(){var m=document.getElementById('lp-mm-modal');if(m)m.class
 function startApp(){
   var u=currentUser;
   try{restorePrescPanel();}catch(e){} // se o admin moveu o #panel-presc, devolve antes de montar a sessão
+  try{restoreMMLive();}catch(e){} // idem para o editor visual de mapas (#mm-live)
   medicoHomeApplied=false; // re-avalia a tela inicial do médico a cada login/onboarding
   startSessionWatcher();
   var isAdmin=u.role==='admin';
@@ -4622,6 +4623,21 @@ function saveMM(){
   if(!curMM)return;
   syncMMFromDOM();
   curMM.data=normalizeMMData(curMM.data);
+  // Edição visual pelo PROFESSOR: grava no mapa publicado (sharedMM), não no pessoal.
+  if(mmAdminEdit){
+    var topic=curMM.data.root||curMM.topic||'Mapa';
+    var sub=(admMMDraft&&admMMDraft.sub)||curMM.sub||admMMSub||'';
+    if(admMMEditId){
+      var k=sharedMM.findIndex(function(m){return m.id===admMMEditId;});
+      if(k>=0)sharedMM[k]={id:admMMEditId,topic:topic,sub:sub,data:curMM.data,at:sharedMM[k].at||Date.now()};
+      else sharedMM.push({id:admMMEditId,topic:topic,sub:sub,data:curMM.data,at:Date.now()});
+    }else{
+      sharedMM.push({id:'mm-'+Date.now(),topic:topic,sub:sub,data:curMM.data,at:Date.now()});
+    }
+    admMMDraft=null;admMMEditId=null;restoreMMLive();
+    persistSharedMM();renderAdmSec('mapas');notify('Mapa publicado para os alunos!','ok');
+    return;
+  }
   curMM.at=curMM.at||Date.now();
   var idx=DB.mm.findIndex(function(m){return m.id===curMM.id||(m.topic===curMM.topic&&m.at===curMM.at);});
   if(idx>=0)DB.mm[idx]=curMM;else DB.mm.push(curMM);
@@ -6389,6 +6405,19 @@ function sendChat(text){
 // ── ADMIN (layout estilo Lexia) ──
 var admCurrentSec='analytics',admProvaSubtab='importar',pdfBase64Prova=null,podAudioDataAdm=null,admBancoArea='',admBancoCode='',admBancoAno='',admBancoInst='',admBancoPage=0,ADM_BANCO_PER=4,admBancoEditIdx=null,admBancoEditImg,admBancoEditStemImg;
 var admMMDraft=null,admMMEditId=null,admMMFilterSub='',admMMSub='';
+// Edição visual de mapas no painel do professor: reaproveita o MESMO editor do
+// aluno (#mm-live), movendo-o para dentro do admin. mmAdminEdit=true enquanto o
+// professor edita; __mmLiveHome guarda o lugar original p/ devolver ao sair.
+var mmAdminEdit=false,__mmLiveHome=null;
+function restoreMMLive(){
+  var live=document.getElementById('mm-live');
+  if(live&&__mmLiveHome&&live.parentNode!==__mmLiveHome){
+    live.style.display='none';
+    var pp=document.getElementById('panel-mmap');if(pp)pp.classList.remove('mm-open');
+    __mmLiveHome.appendChild(live);
+  }
+  mmAdminEdit=false;
+}
 var ADM_MM_SUBESP=['Diabetes','Obesidade','Tireoide','Adrenal','Neuroendocrinologia','Osteometabolismo','Endocrinologia Pediátrica','Endocrinologia Feminina e Andrologia','Dislipidemia e Aterosclerose','Endocrinologia Masculina','Endocrinologia Esportiva','Transgeneridade'];
 function persistSharedMM(){lsSet('mm_shared',sharedMM);queueRemoteStateSave();try{renderMMList();}catch(e){}}
 function admMMSyncDraft(){
@@ -6425,16 +6454,12 @@ function admMMSubList(){
   return out;
 }
 function admMapasHTML(){
-  // Modo edição/criação: editor do mapa (com botão de voltar à subespecialidade).
+  // Modo edição/criação: editor VISUAL (o mesmo do aluno, montado no bindAdmSec).
   if(admMMDraft){
-    var d=admMMDraft;
-    var subOpts=(function(){var cur=String(d.sub||'');var opts=DIR_SUBS.slice();if(cur&&opts.indexOf(cur)<0)opts.push(cur);return opts.map(function(s){return'<option'+(cur===s?' selected':'')+'>'+esc(s)+'</option>';}).join('');})();
-    var editor='<button class="dir-back" id="adm-mm-editback" style="margin-bottom:1rem">← '+esc(d.sub||admMMSub||'Mapas Mentais')+'</button>'
-      +'<div class="card" style="margin-bottom:1rem"><div class="card-head"><span class="card-title">'+(admMMEditId?'Editar mapa':'Novo mapa')+'</span></div>'
-      +'<div class="g2" style="margin-bottom:.6rem"><div class="fld2" style="margin:0"><label>Subespecialidade</label><select id="adm-mm-sub">'+subOpts+'</select></div><div class="fld2" style="margin:0"><label>Tema (título)</label><input type="text" id="adm-mm-root" value="'+esc(d.data.root||d.topic||'')+'"></div></div>'
-      +'<div id="adm-mm-branches">'+(d.data.branches||[]).map(function(b,bi){return '<div class="card" style="margin-bottom:.5rem;padding:.6rem .8rem"><div style="display:flex;gap:.5rem;align-items:center;margin-bottom:.35rem"><input type="text" class="adm-mm-blabel" data-bi="'+bi+'" value="'+esc(b.label||'')+'" placeholder="Nome do ramo" style="font-weight:600;flex:1"><button class="btn btn-ghost btn-sm" data-adm-mm-delb="'+bi+'" style="padding:2px 6px">×</button></div><textarea class="adm-mm-bleaves" data-bi="'+bi+'" rows="4" placeholder="Um item por linha">'+esc((b.leaves||[]).join('\n'))+'</textarea></div>';}).join('')+'</div>'
-      +'<div style="display:flex;gap:6px;flex-wrap:wrap"><button class="btn btn-outline btn-sm" id="adm-mm-addb">+ Ramo</button><button class="btn btn-primary" id="adm-mm-save">💾 Salvar e publicar</button><button class="btn btn-outline" id="adm-mm-cancel">Cancelar</button></div></div>';
-    return '<div class="adm-ph"><h1>Mapas Mentais</h1></div><div class="adm-pc">'+editor+'</div>';
+    return '<div class="adm-ph"><h1>Mapas Mentais</h1></div><div class="adm-pc">'
+      +'<button class="dir-back" id="adm-mm-editback" style="margin-bottom:1rem">← '+esc(admMMDraft.sub||admMMSub||'Mapas Mentais')+'</button>'
+      +'<div style="font-size:.74rem;color:var(--t2);margin-bottom:.7rem">Clique nas caixas para editar o texto; use os botões para adicionar/remover ramos e subramos. A caixa central é o título. Clique em <b>💾 Salvar</b> para publicar para os alunos.</div>'
+      +'<div id="adm-mm-visual-host"></div></div>';
   }
   // Nível 1 — grade de subespecialidades (igual às Diretrizes).
   if(!admMMSub){
@@ -6481,6 +6506,7 @@ function renderAdmSec(sec){
   setText('adm-sec-title',titles[sec]||sec);
   var m=document.getElementById('adm-main');if(!m)return;
   if(sec!=='consultorio'){try{restorePrescPanel();}catch(e){}} // devolve o painel ao sair do Consultório
+  if(!(sec==='mapas'&&admMMDraft)){try{restoreMMLive();}catch(e){}} // devolve o editor visual ao sair
   if(sec==='consultorio'){
     m.innerHTML='<div class="adm-ph"><h1>Consultório</h1></div><div class="adm-pc" id="adm-presc-host"></div>';
     var pp=document.getElementById('panel-presc'),host=document.getElementById('adm-presc-host');
@@ -7094,6 +7120,23 @@ function admCursosHTML(){
 function bindAdmSec(sec){
   var main=document.getElementById('adm-main');
   if(sec==='mapas'){
+    // Edição/criação visual: move o editor do aluno (#mm-live) para dentro do admin.
+    if(admMMDraft){
+      var vhost=document.getElementById('adm-mm-visual-host');
+      var live=document.getElementById('mm-live');
+      if(vhost&&live){
+        if(!__mmLiveHome)__mmLiveHome=live.parentNode;
+        vhost.appendChild(live);
+        curMM={id:admMMEditId||('mm-'+Date.now()),topic:admMMDraft.topic,sub:admMMDraft.sub||admMMSub||'',data:normalizeMMData(admMMDraft.data),at:Date.now()};
+        mmAdminEdit=true;
+        live.style.display='block';
+        setText('mm-live-title',curMM.data.root||curMM.topic);
+        renderMMEditor();
+      }
+      var eb0=document.getElementById('adm-mm-editback');
+      if(eb0)eb0.addEventListener('click',function(){admMMDraft=null;admMMEditId=null;restoreMMLive();renderAdmSec('mapas');});
+      return;
+    }
     // Grade de subespecialidades → entra na subespecialidade.
     main.querySelectorAll('[data-admmm-sub]').forEach(function(b){b.addEventListener('click',function(){admMMSub=b.dataset.admmmSub;admMMDraft=null;admMMEditId=null;renderAdmSec('mapas');});});
     var mmBack=document.getElementById('adm-mm-back');
@@ -8686,6 +8729,7 @@ document.addEventListener('DOMContentLoaded',function(){
   document.getElementById('btn-mmblank').addEventListener('click',newBlankMM);
   document.getElementById('btn-mm-save').addEventListener('click',saveMM);
   document.getElementById('btn-mm-close').addEventListener('click',function(){
+    if(mmAdminEdit){admMMDraft=null;admMMEditId=null;restoreMMLive();try{renderAdmSec('mapas');}catch(e){}return;}
     document.getElementById('mm-live').style.display='none';
     document.getElementById('panel-mmap').classList.remove('mm-open');
     curMM=null;
