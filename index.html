@@ -2351,6 +2351,10 @@ function normalizeMuralType(tipo,titulo,texto,fonte){
   var raw=String(tipo||'').trim();
   if(/breaking/i.test(raw))return'Breaking News';
   var p=muralPlain([raw,titulo,texto,fonte].join(' '));
+  // Diretriz/guideline: detectada pelo tipo ou TÍTULO (sinal forte e preciso) —
+  // ex.: "...clinical practice guideline." sairia como "Estudo Original" sem isto.
+  var pt=muralPlain([raw,titulo].join(' '));
+  if(pt.indexOf('guideline')>=0||pt.indexOf('diretriz')>=0||pt.indexOf('consensus')>=0||pt.indexOf('consenso')>=0||pt.indexOf('practice guideline')>=0)return'Diretriz';
   if(raw&&raw!=='Artigo'){
     if(p.indexOf('meta-anal')>=0||p.indexOf('metanal')>=0)return'Metanálise';
     if(p.indexOf('ensaio clinico')>=0||p.indexOf('clinical trial')>=0||p.indexOf('randomized')>=0||p.indexOf('randomised')>=0)return'Ensaio Clínico';
@@ -2393,7 +2397,7 @@ function muralRelevance(a){
   var t=muralDisplayType(a);
   if(t==='Urgente')return 1000;
   if(t==='Breaking News')return 900;
-  var tw={'Metanálise':4,'Ensaio Clínico':3,'Artigo de Revisão':2,'Estudo Original':1,'Estudo Genético':1,'Perspectiva Clínica':1}[t]||0;
+  var tw={'Diretriz':5,'Metanálise':4,'Ensaio Clínico':3,'Artigo de Revisão':2,'Estudo Original':1,'Estudo Genético':1,'Perspectiva Clínica':1}[t]||0;
   return sw+tw;
 }
 function muralSortList(list,mode){
@@ -2452,6 +2456,9 @@ function normalizeMuralAviso(a,defaults){
   if(item.auto&&item.texto&&/(Following the|Transition between|primary outcome|trial evaluated|health care is complex|This trial|compared intrapartum)/i.test(item.texto)){
     item.texto='Artigo recente selecionado pelo radar Endodirect nas principais revistas de endocrinologia e metabolismo. Por que importa: merece leitura por possivel impacto em ensino, atualizacao clinica e pratica endocrinologica. Cautela: ler o artigo completo antes de extrapolar os achados.';
   }
+  // Remove a linha "Fontes consultadas" dos cards do radar (o link da fonte já
+  // aparece em "Fonte:" no rodapé do card). Vale p/ itens já gravados.
+  if(item.texto)item.texto=String(item.texto).replace(/\s*(?:🔗\s*)?Fontes consultadas:[\s\S]*$/i,'').trim();
   item.tipo=normalizeMuralType(item.tipo,item.titulo,item.texto,item.fonte);
   item.subespecialidade=inferMuralSubspecialty(item);
   return item;
@@ -8523,7 +8530,7 @@ admMuralSecHTML=function(){
   var admPageAvisos=avisos.slice(admMuralPage*MURAL_PER_PAGE,admMuralPage*MURAL_PER_PAGE+MURAL_PER_PAGE);
   var count=avisos.length+' '+(avisos.length===1?'aviso':'avisos');
   var tema=admMuralFilter||admMuralTipoFilter||'Todas as subespecialidades';
-  var tipoOpts=['Aviso','Comunicado','Artigo de Revisão','Ensaio Clínico','Metanálise','Perspectiva Clínica','Estudo Genético','Estudo Original','Evento','Urgente'].map(function(t){return'<option>'+esc(t)+'</option>';}).join('');
+  var tipoOpts=['Aviso','Comunicado','Diretriz','Artigo de Revisão','Ensaio Clínico','Metanálise','Perspectiva Clínica','Estudo Genético','Estudo Original','Evento','Urgente'].map(function(t){return'<option>'+esc(t)+'</option>';}).join('');
   var subOpts=MURAL_SUBSPECIALTY_FILTERS.map(function(s){return'<option>'+esc(s)+'</option>';}).join('');
   var formHTML=admMuralShowForm?(
     '<div class="card" style="margin-bottom:1.1rem"><div style="font-size:1rem;font-weight:700;margin-bottom:.3rem">'+(admMuralEdit!==null?'✏️ Editar aviso':'📣 Novo aviso')+'</div><div style="font-size:.74rem;color:var(--t2);margin-bottom:.9rem">O card aparece imediatamente no mural do estudante.</div>'

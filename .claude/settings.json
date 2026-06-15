@@ -16,8 +16,8 @@
         "hooks": [
           {
             "type": "command",
-            "command": "echo '{\"hookSpecificOutput\":{\"hookEventName\":\"SessionStart\",\"additionalContext\":\"Lembrete do projeto Endodirect: ao fim de CADA mudanca relevante, ATUALIZE o cofre/ (a nota correspondente + registre decisoes em cofre/Decisoes.md + atualize o campo atualizado: no topo da nota), conforme cofre/Convencoes de Trabalho.md. Sincronizar o cofre faz parte de toda tarefa, nao e opcional.\"}}'",
-            "statusMessage": "Lembrete: manter o cofre atualizado"
+            "command": "jq -n --rawfile conv \"${CLAUDE_PROJECT_DIR:-.}/cofre/Convenções de Trabalho.md\" --rawfile dec \"${CLAUDE_PROJECT_DIR:-.}/cofre/Decisões.md\" '{hookSpecificOutput:{hookEventName:\"SessionStart\",additionalContext:(\"Lembrete do projeto Endodirect: ATUALIZE sempre o cofre/ ao fim de cada mudanca relevante (nota correspondente + cofre/Decisoes.md + campo atualizado: no topo). Abaixo seguem as notas-chave do cofre para comecar ja ciente de convencoes, decisoes e licoes:\\n\\n===== cofre/Convencoes de Trabalho.md =====\\n\" + $conv + \"\\n\\n===== cofre/Decisoes.md =====\\n\" + $dec)}}' 2>/dev/null || echo '{\"hookSpecificOutput\":{\"hookEventName\":\"SessionStart\",\"additionalContext\":\"Lembrete do projeto Endodirect: ATUALIZE sempre o cofre/ ao fim de cada mudanca relevante. Leia cofre/Convencoes de Trabalho.md e cofre/Decisoes.md antes de agir.\"}}'",
+            "statusMessage": "Cofre: lembrete + notas-chave (Convencoes, Decisoes)"
           }
         ]
       }
