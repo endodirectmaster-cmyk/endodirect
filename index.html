@@ -2326,9 +2326,14 @@ var MURAL_SOURCE_FILTERS=[
   'Nature Reviews Endocrinology',
   'The Lancet Diabetes & Endocrinology'
 ];
+// Subespecialidades do mural = as 10 que o radar busca (SUBSPECIALTIES em
+// lib/radar.js). 'Reprodução' e 'Metabolismo' foram removidas: o radar não as
+// busca (ficavam sempre vazias) — Reprodução se sobrepõe a Feminina/Masculina e
+// Metabolismo era só o rótulo de fallback. inferMuralSubspecialty foi ajustado
+// para nunca mais retornar esses dois (senão voltariam como chip dinâmico).
 var MURAL_SUBSPECIALTY_FILTERS=[
   'Diabetes','Obesidade','Tireoide','Adrenal','Neuroendocrinologia','Osteometabolismo','Lípides',
-  'Endocrinologia Pediátrica','Endocrinologia Feminina','Endocrinologia Masculina','Reprodução','Metabolismo'
+  'Endocrinologia Pediátrica','Endocrinologia Feminina','Endocrinologia Masculina'
 ];
 function normalizeMuralSource(source){
   var s=String(source||'').trim();
@@ -2384,8 +2389,8 @@ function inferMuralSubspecialty(item){
   if(/pediatr|children|crianca|congenital/.test(p))return'Endocrinologia Pediátrica';
   if(/pregnan|gesta|postpartum|gravidez|menopaus|female/.test(p))return'Endocrinologia Feminina';
   if(/testosterone|testosterona|androgen|male/.test(p))return'Endocrinologia Masculina';
-  if(/reproduc|fertil|gonad/.test(p))return'Reprodução';
-  return'Metabolismo';
+  if(/reproduc|fertil|gonad/.test(p))return'Endocrinologia Feminina'; // 'Reprodução' removida da taxonomia
+  return'Diabetes'; // fallback (antes 'Metabolismo', removida): bucket metabólico mais comum
 }
 function muralSubspecialty(item){return inferMuralSubspecialty(item||{});}
 function muralDisplayType(item){return normalizeMuralType((item&&item.tipo)||'',(item&&item.titulo)||'',(item&&item.texto)||'',((item&&item.fonte)||''));}
