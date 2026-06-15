@@ -2464,7 +2464,15 @@ function normalizeMuralAviso(a,defaults){
   var k=muralNoticeKey(item);
   var original=defaults&&defaults[k];
   if(original&&(item.auto||original.auto)){
-    item=Object.assign({},item,original,{at:item.at||original.at});
+    // O seed legado (defaultMuralAvisos) só PREENCHE campos ausentes — nunca
+    // sobrescreve o que está gravado/editado. Antes era Object.assign({},item,
+    // original): para os 6 cards-semente (sourceId em defaultMuralMap), o seed
+    // re-clobberava subespecialidade/tipo/texto editados pelo professor a CADA
+    // render/F5, revertendo a edição — mesmo após #320 (que conserta o save,
+    // mas não este passo de normalização na leitura). O servidor já tem a cópia
+    // canônica desses itens (limpezas via SQL #317/#319) e os strips defensivos
+    // abaixo cobrem resíduos; então o item gravado deve vencer o seed.
+    item=Object.assign({},original,item,{at:item.at||original.at});
   }
   if(item.auto&&item.texto&&/(Following the|Transition between|primary outcome|trial evaluated|health care is complex|This trial|compared intrapartum)/i.test(item.texto)){
     item.texto='Artigo recente selecionado pelo radar Endodirect nas principais revistas de endocrinologia e metabolismo. Por que importa: merece leitura por possivel impacto em ensino, atualizacao clinica e pratica endocrinologica. Cautela: ler o artigo completo antes de extrapolar os achados.';
