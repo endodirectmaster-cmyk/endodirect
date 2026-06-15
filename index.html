@@ -1370,6 +1370,7 @@ textarea{resize:vertical;line-height:1.6}
         <button class="sb-item" data-p="cursos">🎬 Cursos</button>
         <button class="sb-item" data-p="crono">📅 Cronograma</button>
         <button class="sb-item" data-p="sr">🔁 Revisão</button>
+        <button class="sb-item" data-p="ref">📋 Diretrizes</button>
         <div class="sb-sec">Clínica</div>
         <button class="sb-item" data-p="calc">🧮 Calculadoras</button>
         <button class="sb-item" data-p="simfull">📝 Simulado</button>
@@ -1380,7 +1381,6 @@ textarea{resize:vertical;line-height:1.6}
         <div class="sb-sec">Pessoal</div>
         <button class="sb-item" data-p="notas">📓 Caderno</button>
         <button class="sb-item" data-p="mural">📢 Mural</button>
-        <button class="sb-item" data-p="ref">📋 Diretrizes</button>
         <button class="sb-item" data-p="chat">💬 Chat IA</button>
         <button class="sb-item" data-p="perfil">👤 Perfil</button>
       </div>
@@ -1538,8 +1538,7 @@ textarea{resize:vertical;line-height:1.6}
           <div class="mm-map-wrap" id="mm-svg-wrap"><div class="mm-svg-stage" id="mm-svg"></div></div>
         </div>
         <div class="sec-h"><span class="sec-title">Salvos <span id="mm-count" style="font-weight:400;text-transform:none;letter-spacing:0;color:var(--t3)"></span></span></div>
-        <div style="margin-bottom:.65rem"><select id="mm-sub-filter" style="max-width:340px"><option value="">Todas as subespecialidades</option></select></div>
-        <div id="mm-list" style="display:flex;flex-direction:column;gap:6px"></div>
+        <div id="mm-list"></div>
       </div>
     </div>
 
@@ -4368,6 +4367,7 @@ function flipStudy(){
 var curMM=null;
 var sharedMM=lsGet('mm_shared')||[];
 var mmSubFilter='';
+var mmSubSel=''; // subespecialidade selecionada na grade dos mapas do aluno ('' = grade)
 function wrapTxt(text,max){
   var words=String(text||'').split(/\s+/).filter(Boolean),lines=[],line='';
   words.forEach(function(w){if((line+' '+w).trim().length<=max)line=(line+' '+w).trim();else{if(line)lines.push(line);line=w;}});
@@ -4592,32 +4592,46 @@ function saveMM(){
   if(idx>=0)DB.mm[idx]=curMM;else DB.mm.push(curMM);
   persist();renderMMList();refreshDash();notify('Mapa salvo!','ok');
 }
+// Grade de subespecialidades dos mapas do aluno (mesma taxonomia das Diretrizes).
+function mmSubGrid(){
+  var seen={};(sharedMM||[]).forEach(function(m){var s=canonSub(m.sub);seen[s]=(seen[s]||0)+1;});
+  var out=DIR_SUBS.map(function(s){return {sub:s,count:seen[s]||0};});
+  Object.keys(seen).forEach(function(s){if(DIR_SUBS.indexOf(s)<0)out.push({sub:s,count:seen[s]});});
+  return out;
+}
 function renderMMList(){
   var el=document.getElementById('mm-list');if(!el)return;
   var shared=sharedMM||[];
-  var fsel=document.getElementById('mm-sub-filter');
-  if(fsel){
-    var subs={};shared.forEach(function(m){if(m.sub)subs[m.sub]=(subs[m.sub]||0)+1;});
-    var keys=Object.keys(subs).sort(function(a,b){return a.localeCompare(b,'pt-BR');});
-    if(mmSubFilter&&!subs[mmSubFilter])mmSubFilter='';
-    fsel.innerHTML='<option value="">Todas as subespecialidades ('+shared.length+')</option>'+keys.map(function(s){return '<option value="'+esc(s)+'">'+esc(s)+' ('+subs[s]+')</option>';}).join('');
-    fsel.value=mmSubFilter;
+  // Nível 1 — grade de subespecialidades (igual ao painel do professor) + "Meus mapas".
+  if(!mmSubSel){
+    var cards=mmSubGrid().map(function(s){
+      return '<button class="dir-sub-btn" data-mmsubsel="'+esc(s.sub)+'"><div class="dsb-ico">'+dirSubIcon(s.sub)+'</div><h3>'+esc(s.sub)+'</h3><div class="dsb-cnt">'+s.count+' mapa'+(s.count===1?'':'s')+'</div></button>';
+    }).join('');
+    if(DB.mm.length){
+      cards+='<button class="dir-sub-btn" data-mmsubsel="__meus__" style="border-left-color:var(--gold)"><div class="dsb-ico">📁</div><h3>Meus mapas</h3><div class="dsb-cnt">'+DB.mm.length+' mapa'+(DB.mm.length===1?'':'s')+'</div></button>';
+    }
+    setText('mm-count','('+(shared.length+DB.mm.length)+')');
+    el.innerHTML='<div class="dir-sub-grid">'+cards+'</div>';
+    return;
   }
-  var showPersonal=!mmSubFilter;
-  var fshared=mmSubFilter?shared.filter(function(m){return (m.sub||'')===mmSubFilter;}):shared;
-  var total=fshared.length+(showPersonal?DB.mm.length:0);
-  setText('mm-count','('+total+')');
-  if(!total){el.innerHTML='<div class="empty">'+(mmSubFilter?'Nenhum mapa nesta subespecialidade.':'Nenhum mapa salvo.')+'</div>';return;}
-  var html=fshared.map(function(m){
+  var back='<button class="dir-back" data-mmback style="margin-bottom:.9rem">← Todas as subespecialidades</button>';
+  // Nível 2 — "Meus mapas" (criados pelo aluno).
+  if(mmSubSel==='__meus__'){
+    setText('mm-count','('+DB.mm.length+')');
+    var ph=DB.mm.length?DB.mm.map(function(m,i){
+      return'<div class="mm-item"><div><div style="font-size:.8rem;font-weight:600">'+esc(m.topic)+'</div><div style="font-size:.63rem;color:var(--t3)">'+new Date(m.at||Date.now()).toLocaleDateString('pt-BR')+'</div></div><div style="display:flex;gap:4px"><button class="btn btn-outline btn-sm" data-mmview="'+i+'">Ver</button><button class="btn btn-ghost btn-sm" data-mmdel="'+i+'">×</button></div></div>';
+    }).join(''):'<div class="empty">Você ainda não criou mapas.</div>';
+    el.innerHTML=back+'<div style="display:flex;flex-direction:column;gap:6px">'+ph+'</div>';
+    return;
+  }
+  // Nível 2 — mapas (do professor) da subespecialidade escolhida.
+  var rows=shared.filter(function(m){return canonSub(m.sub)===mmSubSel;});
+  setText('mm-count','('+rows.length+')');
+  var list=rows.length?rows.map(function(m){
     var j=shared.indexOf(m);
     return'<div class="mm-item"><div><div style="font-size:.8rem;font-weight:600">'+esc(m.topic)+' <span class="tag tag-pur" style="font-size:.55rem">Professor</span></div><div style="font-size:.63rem;color:var(--t3)">'+esc(m.sub||'Endodirect')+'</div></div><div style="display:flex;gap:4px"><button class="btn btn-outline btn-sm" data-mmviewshared="'+j+'">Ver</button></div></div>';
-  }).join('');
-  if(showPersonal){
-    html+=DB.mm.map(function(m,i){
-      return'<div class="mm-item"><div><div style="font-size:.8rem;font-weight:600">'+esc(m.topic)+'</div><div style="font-size:.63rem;color:var(--t3)">'+new Date(m.at||Date.now()).toLocaleDateString('pt-BR')+'</div></div><div style="display:flex;gap:4px"><button class="btn btn-outline btn-sm" data-mmview="'+i+'">Ver</button><button class="btn btn-ghost btn-sm" data-mmdel="'+i+'">×</button></div></div>';
-    }).join('');
-  }
-  el.innerHTML=html;
+  }).join(''):'<div class="empty">Nenhum mapa nesta subespecialidade ainda.</div>';
+  el.innerHTML=back+'<div style="display:flex;flex-direction:column;gap:6px">'+list+'</div>';
 }
 function viewMMShared(j){
   var m=(sharedMM||[])[j];if(!m)return;
@@ -5875,6 +5889,16 @@ var REF_GUIDELINES=[
 var DIR_SUBS=['Diabetes','Tireoide','Adrenal','Obesidade','Lípides','Osteometabolismo','Neuroendocrinologia','Endocrinologia Feminina','Endocrinologia Masculina','Endocrinologia Pediátrica','Endocrinologia do Esporte'];
 // Migra rótulos antigos de subespecialidade para a taxonomia atual.
 function dirMigrateSub(s){var v=String(s||'').trim();if(v==='Reprodução')return 'Endocrinologia Masculina';return v;}
+// Normaliza (na exibição) rótulos antigos de subespecialidade dos mapas mentais
+// para a taxonomia canônica das Diretrizes — evita cards duplicados na grade,
+// sem precisar alterar os dados já salvos.
+function canonSub(s){
+  var v=String(s||'Geral').trim()||'Geral';
+  if(v==='Dislipidemia e Aterosclerose')return 'Lípides';
+  if(v==='Endocrinologia Feminina e Andrologia')return 'Endocrinologia Feminina';
+  if(v==='Endocrinologia Esportiva')return 'Endocrinologia do Esporte';
+  return v;
+}
 // Diretrizes editáveis pelo admin (CRUD). Semente = REF_GUIDELINES.
 var diretrizes=(function(){var arr;try{var s=lsGet('diretrizes');arr=(Array.isArray(s)&&s.length)?s:REF_GUIDELINES.slice();}catch(e){arr=REF_GUIDELINES.slice();}arr.forEach(function(d){if(d&&d.sub)d.sub=dirMigrateSub(d.sub);});return arr;})();
 // Temas criados pelo admin ainda sem diretriz ([{sub,tema}]). Aparecem só no
@@ -6359,7 +6383,7 @@ function admMMSave(){
 // canônica das Diretrizes (DIR_SUBS), com a contagem de mapas por subespecialidade.
 function admMMSubList(){
   var seen={};
-  (sharedMM||[]).forEach(function(m){var s=String(m.sub||'Geral').trim()||'Geral';seen[s]=(seen[s]||0)+1;});
+  (sharedMM||[]).forEach(function(m){var s=canonSub(m.sub);seen[s]=(seen[s]||0)+1;});
   var out=DIR_SUBS.map(function(s){return {sub:s,count:seen[s]||0};});
   Object.keys(seen).forEach(function(s){if(DIR_SUBS.indexOf(s)<0)out.push({sub:s,count:seen[s]});});
   return out;
@@ -6385,7 +6409,7 @@ function admMapasHTML(){
       +'<div class="adm-pc"><div class="ph" style="margin-top:0"><p>Escolha uma subespecialidade para ver e criar os mapas mentais.</p></div>'+grid+'</div>';
   }
   // Nível 2 — mapas da subespecialidade + criação contextual.
-  var rows=(sharedMM||[]).map(function(m,j){return{m:m,j:j};}).filter(function(o){return (String(o.m.sub||'Geral').trim()||'Geral')===admMMSub;});
+  var rows=(sharedMM||[]).map(function(m,j){return{m:m,j:j};}).filter(function(o){return canonSub(o.m.sub)===admMMSub;});
   var list=rows.map(function(o){var m=o.m,j=o.j;return '<div style="display:flex;align-items:center;justify-content:space-between;gap:.6rem;padding:.55rem 0;border-bottom:1px solid var(--bd)"><div style="min-width:0"><div style="font-weight:600;font-size:.82rem">'+esc(m.topic)+'</div><div style="font-size:.68rem;color:var(--t3)">'+((m.data&&m.data.branches&&m.data.branches.length)||0)+' ramos</div></div><div style="display:flex;gap:5px;flex-shrink:0"><button class="btn btn-outline btn-sm" data-adm-mm-edit="'+j+'">Editar</button><button class="btn btn-outline btn-sm" data-adm-mm-del="'+j+'" style="color:var(--red);border-color:var(--red)">🗑 Excluir</button></div></div>';}).join('');
   var createForm='<div class="card" style="margin-bottom:1rem"><div class="card-head"><span class="card-title">Criar mapa mental em '+esc(admMMSub)+'</span></div>'
     +'<div class="fld2" style="margin:0 0 .6rem"><label>Tema</label><input type="text" id="adm-mm-newtopic" placeholder="Ex: Hipotireoidismo"></div>'
@@ -7700,6 +7724,8 @@ document.addEventListener('click',function(e){
   var fcf=c('[data-fcfilter]');
   if(fcf){fcFilter=fcf.dataset.fcfilter;renderFC();return;}
   // mind map
+  var mmss=c('[data-mmsubsel]');if(mmss){mmSubSel=mmss.dataset.mmsubsel;renderMMList();return;}
+  var mmbk=c('[data-mmback]');if(mmbk){mmSubSel='';renderMMList();return;}
   var mmvs=c('[data-mmviewshared]');if(mmvs){viewMMShared(parseInt(mmvs.dataset.mmviewshared));return;}
   var mmv=c('[data-mmview]');if(mmv){viewMM(parseInt(mmv.dataset.mmview));return;}
   var mmd=c('[data-mmdel]');if(mmd){DB.mm.splice(parseInt(mmd.dataset.mmdel),1);persist();renderMMList();refreshDash();return;}
