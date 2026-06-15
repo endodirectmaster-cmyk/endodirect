@@ -84,10 +84,13 @@ module.exports = async function handler(req, res) {
     return json(res, 400, { error: 'Envie uma pergunta ou documento para a IA.' });
   }
 
+  // Imagens vão como bloco 'image'; PDF/texto como 'document'. (Antes era sempre
+  // 'document', o que a Anthropic rejeita para media_type de imagem.)
+  const isImage = /^image\//.test(mediaType);
   const content = documentBase64
     ? [
         {
-          type: 'document',
+          type: isImage ? 'image' : 'document',
           source: {
             type: 'base64',
             media_type: mediaType,

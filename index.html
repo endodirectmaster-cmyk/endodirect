@@ -3110,6 +3110,43 @@ function extractPdfText(arrayBuffer){
     });
   });
 }
+// Lê um arquivo (PDF/TXT/imagem) para alimentar a IA. PDF e TXT viram TEXTO
+// (extração no navegador — evita o limite de corpo da função serverless);
+// imagem (JPG/PNG/…) vai como documento base64. Retorna {text} OU {base64,mediaType}.
+function readFileForAI(file){
+  return new Promise(function(resolve,reject){
+    if(!file){reject(new Error('Nenhum arquivo selecionado.'));return;}
+    var name=String(file.name||'').toLowerCase(),type=String(file.type||'');
+    if(type==='application/pdf'||/\.pdf$/.test(name)){
+      file.arrayBuffer().then(extractPdfText).then(function(txt){
+        if(!txt||txt.replace(/\s/g,'').length<20)throw new Error('Não consegui extrair texto deste PDF (pode ser digitalizado). Tente um print/imagem da página.');
+        resolve({text:String(txt).slice(0,180000)});
+      }).catch(reject);
+      return;
+    }
+    if(/^image\//.test(type)||/\.(png|jpe?g|gif|webp)$/.test(name)){
+      if(file.size>5*1024*1024){reject(new Error('Imagem muito grande (máx. 5 MB).'));return;}
+      var r=new FileReader();
+      r.onload=function(){var s=String(r.result||'');var b64=s.slice(s.indexOf(',')+1);var mt=(s.match(/^data:([^;]+);/)||[])[1]||type||'image/png';if(!b64){reject(new Error('Falha ao ler a imagem.'));return;}resolve({base64:b64,mediaType:mt});};
+      r.onerror=function(){reject(new Error('Falha ao ler a imagem.'));};
+      r.readAsDataURL(file);
+      return;
+    }
+    var asText=file.text?file.text():new Response(file).text();
+    asText.then(function(txt){
+      if(!txt||!String(txt).trim())throw new Error('Arquivo vazio.');
+      resolve({text:String(txt).slice(0,180000)});
+    }).catch(function(){reject(new Error('Formato não suportado. Use PDF, TXT ou imagem (JPG/PNG).'));});
+  });
+}
+// Chama a IA a partir de um arquivo: texto vai no prompt; imagem vai como anexo.
+// system = instruções (peça JSON); userPrefix = o que fazer com o material.
+function aiFromFile(file,system,userPrefix,maxTok){
+  return readFileForAI(file).then(function(r){
+    if(r.text)return callAI(system,(userPrefix||'Use o material abaixo.')+'\n\n=== MATERIAL ===\n'+r.text,maxTok||2200);
+    return aiRequest({system:system,prompt:userPrefix||'Analise este documento e retorne o JSON solicitado.',documentBase64:r.base64,mediaType:r.mediaType,maxTokens:maxTok||2200});
+  });
+}
 
 var currentUser=null;
 // Atualiza nome/e-mail/avatar do professor no topo (botão e menu). Reaplica
@@ -6626,6 +6663,7 @@ function admMapasHTML(){
     return '<div class="adm-ph"><h1>Mapas Mentais</h1></div><div class="adm-pc">'
       +'<button class="dir-back" id="adm-mm-editback" style="margin-bottom:1rem">← '+esc(admMMDraft.sub||admMMSub||'Mapas Mentais')+'</button>'
       +'<div style="font-size:.74rem;color:var(--t2);margin-bottom:.7rem">Clique nas caixas para editar o texto; use os botões para adicionar/remover ramos e subramos. A caixa central é o título. Clique em <b>💾 Salvar</b> para publicar para os alunos.</div>'
+      +'<div style="display:flex;gap:6px;align-items:center;flex-wrap:wrap;margin-bottom:.7rem"><button class="btn btn-outline btn-sm" id="adm-mm-upd-import">📎 Atualizar a partir de arquivo</button><input type="file" id="adm-mm-upd-file" accept=".pdf,.txt,image/*" style="display:none"><span id="adm-mm-upd-status" style="font-size:.72rem;color:var(--t3)">A IA enriquece o mapa atual com o conteúdo do arquivo (PDF, TXT ou imagem).</span></div>'
       +'<div id="adm-mm-visual-host"></div></div>';
   }
   // Nível 1 — grade de subespecialidades (igual às Diretrizes).
@@ -6641,8 +6679,9 @@ function admMapasHTML(){
   var list=rows.map(function(o){var m=o.m,j=o.j;return '<div style="display:flex;align-items:center;justify-content:space-between;gap:.6rem;padding:.55rem 0;border-bottom:1px solid var(--bd)"><div style="min-width:0"><div style="font-weight:600;font-size:.82rem">'+esc(m.topic)+'</div><div style="font-size:.68rem;color:var(--t3)">'+((m.data&&m.data.branches&&m.data.branches.length)||0)+' ramos</div></div><div style="display:flex;gap:5px;flex-shrink:0"><button class="btn btn-outline btn-sm" data-adm-mm-edit="'+j+'">Editar</button><button class="btn btn-outline btn-sm" data-adm-mm-del="'+j+'" style="color:var(--red);border-color:var(--red)">🗑 Excluir</button></div></div>';}).join('');
   var createForm='<div class="card" style="margin-bottom:1rem"><div class="card-head"><span class="card-title">Criar mapa mental em '+esc(admMMSub)+'</span></div>'
     +'<div class="fld2" style="margin:0 0 .6rem"><label>Tema</label><input type="text" id="adm-mm-newtopic" placeholder="Ex: Hipotireoidismo"></div>'
-    +'<div style="display:flex;gap:6px;flex-wrap:wrap"><button class="btn btn-primary" id="adm-mm-gen">🤖 Gerar com IA</button><button class="btn btn-outline" id="adm-mm-blank">+ Criar em branco</button></div>'
-    +'<div id="adm-mm-genres" style="margin-top:.5rem;font-size:.74rem;color:var(--t3)">Ao salvar, o mapa fica disponível automaticamente no painel de todos os alunos.</div></div>';
+    +'<div style="display:flex;gap:6px;flex-wrap:wrap"><button class="btn btn-primary" id="adm-mm-gen">🤖 Gerar com IA</button><button class="btn btn-outline" id="adm-mm-import">📎 Importar arquivo</button><button class="btn btn-outline" id="adm-mm-blank">+ Criar em branco</button></div>'
+    +'<input type="file" id="adm-mm-file" accept=".pdf,.txt,image/*" style="display:none">'
+    +'<div id="adm-mm-genres" style="margin-top:.5rem;font-size:.74rem;color:var(--t3)">Gere por tema, importe um arquivo (PDF, TXT ou imagem) para a IA montar o mapa, ou crie em branco. Ao salvar, o mapa fica disponível automaticamente para todos os alunos.</div></div>';
   return '<div class="adm-ph"><h1>Mapas Mentais</h1></div>'
     +'<div class="adm-pc">'
     +'<button class="dir-back" id="adm-mm-back" style="margin-bottom:1rem">← Todas as subespecialidades</button>'
@@ -7333,6 +7372,19 @@ function bindAdmSec(sec){
       }
       var eb0=document.getElementById('adm-mm-editback');
       if(eb0)eb0.addEventListener('click',function(){admMMDraft=null;admMMEditId=null;restoreMMLive();renderAdmSec('mapas');});
+      var updImp=document.getElementById('adm-mm-upd-import'),updFile=document.getElementById('adm-mm-upd-file'),updStatus=document.getElementById('adm-mm-upd-status');
+      if(updImp&&updFile){
+        updImp.addEventListener('click',function(){updFile.click();});
+        updFile.addEventListener('change',function(){
+          var f=updFile.files&&updFile.files[0];if(!f)return;
+          var atual=JSON.stringify((typeof curMM!=='undefined'&&curMM&&curMM.data)||(admMMDraft&&admMMDraft.data)||{root:(admMMDraft&&admMMDraft.topic)||'Mapa',branches:[]});
+          updImp.disabled=true;updImp.innerHTML=ldHTML('Atualizando...');if(updStatus)updStatus.textContent='Lendo o arquivo e atualizando o mapa…';
+          var sys='Voce e um endocrinologista educador. Atualize/enriqueca o mapa mental EXISTENTE (JSON) com o material fornecido: mantenha o que esta correto, corrija o desatualizado e acrescente o que faltar. Responda JSON APENAS no MESMO formato: {"root":"...","branches":[{"label":"...","leaves":["..."]}]}. Portugues medico claro, fiel ao material.';
+          aiFromFile(f,sys,'Mapa atual (JSON): '+atual+'\n\nAtualize-o com o material a seguir:')
+          .then(function(raw){var dd=parseJ(raw);if(!dd||!dd.branches||!dd.branches.length)throw new Error('A IA nao retornou um mapa valido.');admMMDraft.data=normalizeMMData(dd);admMMDraft.topic=dd.root||admMMDraft.topic;renderAdmSec('mapas');notify('Mapa atualizado a partir do arquivo. Revise e clique em Salvar.','ok');})
+          .catch(function(e){notify('Erro ao atualizar: '+((e&&e.message)||e),'err');updImp.disabled=false;updImp.innerHTML='📎 Atualizar a partir de arquivo';if(updStatus)updStatus.textContent='';updFile.value='';});
+        });
+      }
       return;
     }
     // Grade de subespecialidades → entra na subespecialidade.
@@ -7357,6 +7409,19 @@ function bindAdmSec(sec){
       var topic=(document.getElementById('adm-mm-newtopic').value||'').trim()||'Novo mapa';
       admMMDraft={topic:topic,sub:sub,data:{root:topic,branches:[{label:'Ramo 1',leaves:['Detalhe']}]}};admMMEditId=null;renderAdmSec('mapas');
     });
+    var mmImp=document.getElementById('adm-mm-import'),mmImpFile=document.getElementById('adm-mm-file');
+    if(mmImp&&mmImpFile){
+      mmImp.addEventListener('click',function(){mmImpFile.click();});
+      mmImpFile.addEventListener('change',function(){
+        var f=mmImpFile.files&&mmImpFile.files[0];if(!f)return;
+        var sub=admMMSub,topic=(document.getElementById('adm-mm-newtopic').value||'').trim();
+        mmImp.disabled=true;mmImp.innerHTML=ldHTML('Lendo...');
+        var sys='Voce e um endocrinologista educador. A partir do material fornecido, monte UM mapa mental para estudo. Responda JSON APENAS: {"root":"Titulo do tema","branches":[{"label":"Ramo","leaves":["detalhe 1","detalhe 2"]}]}. 5 a 7 ramos com 3 a 6 folhas cada, em portugues medico claro e fiel ao material (sem inventar).';
+        aiFromFile(f,sys,'Monte o mapa mental'+(topic?(' com o tema "'+topic+'"'):'')+' a partir deste material:')
+        .then(function(raw){var dd=parseJ(raw);if(!dd||!dd.branches||!dd.branches.length)throw new Error('A IA nao retornou um mapa valido.');admMMDraft={topic:(topic||dd.root||'Mapa'),sub:sub,data:normalizeMMData(dd)};admMMEditId=null;renderAdmSec('mapas');})
+        .catch(function(e){notify('Erro ao importar: '+((e&&e.message)||e),'err');mmImp.disabled=false;mmImp.innerHTML='📎 Importar arquivo';mmImpFile.value='';});
+      });
+    }
     var addb=document.getElementById('adm-mm-addb');
     if(addb)addb.addEventListener('click',function(){admMMSyncDraft();admMMDraft.data.branches.push({label:'Novo ramo',leaves:['Detalhe']});renderAdmSec('mapas');});
     var save=document.getElementById('adm-mm-save');if(save)save.addEventListener('click',admMMSave);
