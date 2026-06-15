@@ -634,6 +634,9 @@ textarea{resize:vertical;line-height:1.6}
 .adm-ref-gen b{color:var(--grn)}
 /* Visão das Diretrizes (aluno / pré-visualização) */
 .dir-sub-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:.8rem;margin-top:1rem}
+/* Mapas Mentais do aluno: na grade de subespecialidades, esconde o form de criar
+   (a criação acontece dentro de cada subespecialidade). */
+#panel-mmap.mm-grid .mm-gen-card{display:none}
 .dir-sub-btn{text-align:left;border:1px solid var(--bd);background:var(--surface);border-radius:14px;padding:1rem 1.1rem;cursor:pointer;transition:.15s;border-left:4px solid var(--blue)}
 .dir-sub-btn:hover{border-color:var(--blue);transform:translateY(-2px)}
 .dir-sub-btn .dsb-ico{font-size:1.5rem;line-height:1}
@@ -1522,6 +1525,7 @@ textarea{resize:vertical;line-height:1.6}
       <div class="breadcrumb">Dashboard <b>/ Mapas Mentais</b></div>
       <div class="ph"><h1>Mapas Mentais</h1></div>
       <div class="pc">
+        <div id="mm-subhead"></div>
         <div class="gen-box mm-gen-card">
           <div class="mm-generate-row">
             <div style="flex:1"><label class="flbl">Tema</label><input type="text" id="mm-topic" placeholder="Ex: Hipotireoidismo…"></div>
@@ -4438,11 +4442,11 @@ function genMM(){
   .then(function(raw){
     var d=parseJ(raw);if(!d||!d.branches)throw new Error('Resposta inválida.');
     d=normalizeMMData(d);
-    curMM={id:Date.now(),topic:topic,data:d,at:Date.now()};
+    curMM={id:Date.now(),topic:topic,sub:mmSubSel||'',data:d,at:Date.now()};
     setText('mm-live-title',d.root||topic);
     renderMMEditor();
   }).catch(function(e){
-    curMM={id:Date.now(),topic:topic,data:sampleMMData(topic),at:Date.now()};
+    curMM={id:Date.now(),topic:topic,sub:mmSubSel||'',data:sampleMMData(topic),at:Date.now()};
     setText('mm-live-title',curMM.data.root||topic);
     renderMMEditor();
     notify('IA indisponível agora. Abri um mapa editável para você ajustar.','info');
@@ -4578,7 +4582,7 @@ function seedMindmaps(){
 function newBlankMM(){
   var topic=(document.getElementById('mm-topic').value||'').trim();
   if(!topic){notify('Digite um tema.','err');return;}
-  curMM={id:Date.now(),topic:topic,data:sampleMMData(topic),at:Date.now()};
+  curMM={id:Date.now(),topic:topic,sub:mmSubSel||'',data:sampleMMData(topic),at:Date.now()};
   document.getElementById('mm-live').style.display='block';
   setText('mm-live-title',curMM.data.root||topic);
   renderMMEditor();
@@ -4594,48 +4598,48 @@ function saveMM(){
 }
 // Grade de subespecialidades dos mapas do aluno (mesma taxonomia das Diretrizes).
 function mmSubGrid(){
-  var seen={};(sharedMM||[]).forEach(function(m){var s=canonSub(m.sub);seen[s]=(seen[s]||0)+1;});
+  var seen={};
+  (sharedMM||[]).forEach(function(m){var s=canonSub(m.sub);seen[s]=(seen[s]||0)+1;});
+  (DB.mm||[]).forEach(function(m){var s=canonSub(m.sub);seen[s]=(seen[s]||0)+1;});
   var out=DIR_SUBS.map(function(s){return {sub:s,count:seen[s]||0};});
   Object.keys(seen).forEach(function(s){if(DIR_SUBS.indexOf(s)<0)out.push({sub:s,count:seen[s]});});
   return out;
 }
 function renderMMList(){
   var el=document.getElementById('mm-list');if(!el)return;
+  var panel=document.getElementById('panel-mmap'),head=document.getElementById('mm-subhead');
   var shared=sharedMM||[];
-  // Nível 1 — grade de subespecialidades (igual ao painel do professor) + "Meus mapas".
+  // Nível 1 — grade de subespecialidades (form de criar fica escondido aqui).
   if(!mmSubSel){
+    if(panel)panel.classList.add('mm-grid');
+    if(head)head.innerHTML='';
     var cards=mmSubGrid().map(function(s){
       return '<button class="dir-sub-btn" data-mmsubsel="'+esc(s.sub)+'"><div class="dsb-ico">'+dirSubIcon(s.sub)+'</div><h3>'+esc(s.sub)+'</h3><div class="dsb-cnt">'+s.count+' mapa'+(s.count===1?'':'s')+'</div></button>';
     }).join('');
-    if(DB.mm.length){
-      cards+='<button class="dir-sub-btn" data-mmsubsel="__meus__" style="border-left-color:var(--gold)"><div class="dsb-ico">📁</div><h3>Meus mapas</h3><div class="dsb-cnt">'+DB.mm.length+' mapa'+(DB.mm.length===1?'':'s')+'</div></button>';
-    }
     setText('mm-count','('+(shared.length+DB.mm.length)+')');
     el.innerHTML='<div class="dir-sub-grid">'+cards+'</div>';
     return;
   }
-  var back='<button class="dir-back" data-mmback style="margin-bottom:.9rem">← Todas as subespecialidades</button>';
-  // Nível 2 — "Meus mapas" (criados pelo aluno).
-  if(mmSubSel==='__meus__'){
-    setText('mm-count','('+DB.mm.length+')');
-    var ph=DB.mm.length?DB.mm.map(function(m,i){
-      return'<div class="mm-item"><div><div style="font-size:.8rem;font-weight:600">'+esc(m.topic)+'</div><div style="font-size:.63rem;color:var(--t3)">'+new Date(m.at||Date.now()).toLocaleDateString('pt-BR')+'</div></div><div style="display:flex;gap:4px"><button class="btn btn-outline btn-sm" data-mmview="'+i+'">Ver</button><button class="btn btn-ghost btn-sm" data-mmdel="'+i+'">×</button></div></div>';
-    }).join(''):'<div class="empty">Você ainda não criou mapas.</div>';
-    el.innerHTML=back+'<div style="display:flex;flex-direction:column;gap:6px">'+ph+'</div>';
-    return;
-  }
-  // Nível 2 — mapas (do professor) da subespecialidade escolhida.
-  var rows=shared.filter(function(m){return canonSub(m.sub)===mmSubSel;});
-  setText('mm-count','('+rows.length+')');
-  var list=rows.length?rows.map(function(m){
+  // Nível 2 — dentro da subespecialidade: cabeçalho + (form de criar acima) + lista.
+  if(panel)panel.classList.remove('mm-grid');
+  if(head)head.innerHTML='<button class="dir-back" data-mmback style="margin-bottom:.7rem">← Todas as subespecialidades</button>'
+    +'<div class="ph" style="margin-top:0"><h1 style="font-size:1.05rem">'+dirSubIcon(mmSubSel)+' '+esc(mmSubSel)+'</h1></div>';
+  var sh=shared.filter(function(m){return canonSub(m.sub)===mmSubSel;});
+  var ph=(DB.mm||[]).map(function(m,i){return{m:m,i:i};}).filter(function(o){return canonSub(o.m.sub)===mmSubSel;});
+  setText('mm-count','('+(sh.length+ph.length)+')');
+  var html=sh.map(function(m){
     var j=shared.indexOf(m);
-    return'<div class="mm-item"><div><div style="font-size:.8rem;font-weight:600">'+esc(m.topic)+' <span class="tag tag-pur" style="font-size:.55rem">Professor</span></div><div style="font-size:.63rem;color:var(--t3)">'+esc(m.sub||'Endodirect')+'</div></div><div style="display:flex;gap:4px"><button class="btn btn-outline btn-sm" data-mmviewshared="'+j+'">Ver</button></div></div>';
-  }).join(''):'<div class="empty">Nenhum mapa nesta subespecialidade ainda.</div>';
-  el.innerHTML=back+'<div style="display:flex;flex-direction:column;gap:6px">'+list+'</div>';
+    return'<div class="mm-item"><div><div style="font-size:.8rem;font-weight:600">'+esc(m.topic)+' <span class="tag tag-pur" style="font-size:.55rem">Professor</span></div><div style="font-size:.63rem;color:var(--t3)">'+esc(canonSub(m.sub))+'</div></div><div style="display:flex;gap:4px"><button class="btn btn-outline btn-sm" data-mmviewshared="'+j+'">Ver</button></div></div>';
+  }).join('');
+  html+=ph.map(function(o){var m=o.m,i=o.i;
+    return'<div class="mm-item"><div><div style="font-size:.8rem;font-weight:600">'+esc(m.topic)+'</div><div style="font-size:.63rem;color:var(--t3)">'+new Date(m.at||Date.now()).toLocaleDateString('pt-BR')+'</div></div><div style="display:flex;gap:4px"><button class="btn btn-outline btn-sm" data-mmview="'+i+'">Ver</button><button class="btn btn-ghost btn-sm" data-mmdel="'+i+'">×</button></div></div>';
+  }).join('');
+  if(!html)html='<div class="empty">Nenhum mapa nesta subespecialidade ainda. Crie um acima.</div>';
+  el.innerHTML='<div style="display:flex;flex-direction:column;gap:6px">'+html+'</div>';
 }
 function viewMMShared(j){
   var m=(sharedMM||[])[j];if(!m)return;
-  curMM={id:Date.now(),topic:m.topic,data:normalizeMMData(m.data),at:Date.now()};
+  curMM={id:Date.now(),topic:m.topic,sub:m.sub||mmSubSel||'',data:normalizeMMData(m.data),at:Date.now()};
   document.getElementById('mm-live').style.display='block';
   document.getElementById('panel-mmap').classList.add('mm-open');
   setText('mm-live-title',curMM.data.root||m.topic);
@@ -4644,7 +4648,7 @@ function viewMMShared(j){
 }
 function viewMM(i){
   var m=DB.mm[i];if(!m)return;
-  curMM={id:m.id||Date.now(),topic:m.topic,data:normalizeMMData(m.data),at:m.at||Date.now()};
+  curMM={id:m.id||Date.now(),topic:m.topic,sub:m.sub||mmSubSel||'',data:normalizeMMData(m.data),at:m.at||Date.now()};
   document.getElementById('mm-live').style.display='block';
   document.getElementById('panel-mmap').classList.add('mm-open');
   setText('mm-live-title',curMM.data.root||m.topic);
