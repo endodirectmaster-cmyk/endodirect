@@ -16,6 +16,40 @@
 <script>
 // PWA: registra o service worker (instalável + offline básico). Não bloqueia o boot.
 if('serviceWorker' in navigator){window.addEventListener('load',function(){navigator.serviceWorker.register('/sw.js').catch(function(){});});}
+// Aviso de "nova versão disponível": uma aba aberta há horas pode ficar presa em
+// código antigo (cache). Detectamos um deploy novo comparando o ETag/Last-Modified
+// do index.html (muda a cada deploy) e oferecemos recarregar — sem auto-reload.
+// Autocontido (não depende do CSS/notify do app, que carregam depois).
+(function(){
+  function showUpdateBanner(){
+    if(document.getElementById('ed-update-banner'))return;
+    var b=document.createElement('div');
+    b.id='ed-update-banner';b.setAttribute('role','status');
+    b.style.cssText='position:fixed;left:50%;bottom:18px;transform:translateX(-50%);z-index:99999;display:flex;align-items:center;gap:12px;background:#0f172a;color:#fff;padding:11px 16px;border-radius:12px;box-shadow:0 8px 28px rgba(0,0,0,.28);font:600 14px/1.2 system-ui,-apple-system,Segoe UI,Roboto,sans-serif;max-width:92vw';
+    b.innerHTML='<span>🔄 Nova versão disponível</span>';
+    var btn=document.createElement('button');btn.textContent='Atualizar';
+    btn.style.cssText='background:#f5b32c;color:#1a1a1a;border:0;border-radius:8px;padding:7px 14px;font:700 14px system-ui;cursor:pointer';
+    btn.addEventListener('click',function(){location.reload();});
+    var x=document.createElement('button');x.setAttribute('aria-label','Dispensar');x.textContent='✕';
+    x.style.cssText='background:transparent;color:#cbd5e1;border:0;font-size:16px;cursor:pointer;padding:2px 4px';
+    x.addEventListener('click',function(){b.remove();});
+    b.appendChild(btn);b.appendChild(x);(document.body||document.documentElement).appendChild(b);
+  }
+  function fetchTag(){
+    return fetch('/',{method:'HEAD',cache:'no-store'}).then(function(r){
+      return r.headers.get('etag')||r.headers.get('last-modified')||null;
+    }).catch(function(){return null;});
+  }
+  var baseTag=null,lastChk=0;
+  fetchTag().then(function(t){baseTag=t;});
+  function maybeCheck(){
+    if(document.hidden||!baseTag)return;
+    var now=Date.now();if(now-lastChk<60000)return;lastChk=now; // no máx. 1x/min
+    fetchTag().then(function(t){if(t&&t!==baseTag)showUpdateBanner();});
+  }
+  document.addEventListener('visibilitychange',maybeCheck);
+  setInterval(maybeCheck,300000); // e a cada 5 min com a aba aberta
+})();
 </script>
 <script>
 // Tema (claro/escuro) — aplica ANTES de pintar p/ evitar flash. Default: escuro.
