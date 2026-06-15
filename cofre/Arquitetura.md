@@ -33,8 +33,9 @@ atualizado: 2026-06-14
 - **`canonSub(s)`**: normaliza **na exibição** rótulos antigos → canônico (Dislipidemia e Aterosclerose→Lípides; Endocrinologia Feminina e Andrologia→Endocrinologia Feminina; Endocrinologia Esportiva→Endocrinologia do Esporte) para não duplicar cards na grade, **sem** alterar os dados salvos. Usado nas 4 agregações/filtros (aluno+professor).
 - Dados em `sharedMM` (`mm_shared`).
 
-### Cursos (aluno) — por subespecialidade (2026-06-15)
-- `renderCursosAluno`: tiles de pacote (`curso-filter-row`, nome via `cursoNomeBySlug`/catálogo `catalogoCursos`); ao escolher o pacote (`cursoFilter`), o `#curso-list` mostra **grade de subespecialidades** agrupando as aulas por `c.modulo` (`dirSubIcon`), e clicar (`data-cursomod`→`cursoMod`) abre as aulas daquela subespecialidade (voltar `data-cursoback`; back/header usam `grid-column:1/-1` no grid `.g2`).
+### Cursos — por subespecialidade (aluno + professor, 2026-06-15)
+- **Aluno** (`renderCursosAluno`): tiles de pacote (`curso-filter-row`, nome via `cursoNomeBySlug`/catálogo `catalogoCursos`); ao escolher o pacote (`cursoFilter`), o `#curso-list` mostra **grade de subespecialidades** agrupando as aulas por `c.modulo` (`dirSubIcon`), e clicar (`data-cursomod`→`cursoMod`) abre as aulas daquela subespecialidade (voltar `data-cursoback`; back/header usam `grid-column:1/-1` no grid `.g2`).
+- **Professor** (`admCursosHTML`/`bindAdmSec`): mesmo padrão — tiles `data-curso-btn` (→`admCursoFiltro`, reseta `admCursoMod`), grade por `modulo` (`data-acursomod`→`admCursoMod`), aulas com Assistir/Editar/Excluir, voltar `data-acursoback`.
 - Catálogo de nomes: `member_content` já devolve `cursos`; a RPC `endodirect_public_content` passou a devolver `cursos` também (2026-06-15) para o **demo/preview** não exibir o slug ("endo_essencial" → "Endocrinologia Essencial"). `applyStatePayload` aplica `payload.cursos`→`catalogoCursos`.
 
 ### Menu lateral do aluno (ordem)
