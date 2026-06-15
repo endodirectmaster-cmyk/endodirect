@@ -31,7 +31,7 @@ atualizado: 2026-06-15
 
 ## Manutenção do cofre
 Atualizar a nota relevante a cada mudança e registrar decisões em [[Decisões]]. Manter `atualizado:` no topo.
-- **Hook de lembrete (2026-06-14):** `.claude/settings.json` tem um hook **SessionStart** que injeta no contexto, no início de toda sessão, o lembrete de manter o cofre atualizado. Sincronizar o cofre faz parte de toda tarefa, não é opcional. (Há também um hook **Stop** que faz `git push origin HEAD`.)
+- **Hook SessionStart (2026-06-14, ampliado 2026-06-15):** `.claude/settings.json` injeta no início de toda sessão o lembrete de manter o cofre atualizado **e agora também o conteúdo de `cofre/Convenções de Trabalho.md` + `cofre/Decisões.md`** (via `jq --rawfile`, com fallback se faltar `jq`/arquivo), para começar já ciente de convenções, decisões e lições. Sincronizar o cofre faz parte de toda tarefa, não é opcional. (Há também um hook **Stop** que faz `git push origin HEAD`.)
 
 ## Lições operacionais (aprendidas em campo)
 Hábitos que evitam retrabalho — ler antes de agir, especialmente em bugs e deploy:
