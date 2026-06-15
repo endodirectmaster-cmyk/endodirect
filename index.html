@@ -1869,6 +1869,7 @@ textarea{resize:vertical;line-height:1.6}
           <button class="adm-nav" data-asec="conteudo">🎧 Podcasts</button>
           <button class="adm-nav" data-asec="mapas">✦ Mapas Mentais</button>
           <button class="adm-nav" data-asec="calc">🧮 Calculadoras</button>
+          <button class="adm-nav" data-asec="consultorio">⚕️ Consultório</button>
           <button class="adm-nav" data-asec="chat">💬 Chat</button>
           <div class="sb-sec" style="margin-top:.8rem">Conta</div>
           <button class="adm-nav" data-asec="perfil">👤 Perfil</button>
@@ -2977,6 +2978,7 @@ function showMMModal(){var m=document.getElementById('lp-mm-modal');if(m)m.class
 function hideMMModal(){var m=document.getElementById('lp-mm-modal');if(m)m.classList.remove('on');}
 function startApp(){
   var u=currentUser;
+  try{restorePrescPanel();}catch(e){} // se o admin moveu o #panel-presc, devolve antes de montar a sessão
   medicoHomeApplied=false; // re-avalia a tela inicial do médico a cada login/onboarding
   startSessionWatcher();
   var isAdmin=u.role==='admin';
@@ -3740,6 +3742,17 @@ var PANEL_MIN_TIER={rx:2, presc:2};
 // inclusive estudantes, sujeita apenas ao gating de plano.)
 function userPerfil(){var p=(currentUser&&currentUser.profile)||lsGet('user_profile')||{};return p.perfil||'';}
 function prescProfileOk(){var pf=userPerfil();return pf==='Residente'||pf==='Endocrinologista'||pf==='Outros';}
+// Consultório (presc/Memed): em homologação, fica OCULTO para todos os alunos —
+// aparece SÓ na conta de teste do Memed (allowlist MEMED_ALLOW; fallback ao e-mail
+// de teste enquanto o /api/memed/token não respondeu). Quando a Memed entrar em
+// produção (sem allowlist), reabrir para médicos via prescProfileOk().
+function prescAllowed(){
+  if(isAdminUser())return false;
+  var e=String((currentUser&&currentUser.email)||'').toLowerCase();
+  var al=(prescMemed.allow||[]).map(function(x){return String(x).toLowerCase();});
+  if(al.length)return al.indexOf(e)>=0;
+  return e==='memed.teste@endodirect.com.br';
+}
 // Tela inicial: médicos (residente/endocrinologista/outros) abrem direto no
 // Mural de atualizações; estudantes seguem no Dashboard. Cai pro dash se o
 // mural não estiver visível (ex.: degustação depois dos 7 dias).
@@ -3803,7 +3816,7 @@ function consumeTrial(id){
 }
 function canSeePanel(id){
   if(isAdminUser())return true;
-  if(id==='presc'&&!prescProfileOk())return false;
+  if(id==='presc'&&!prescAllowed())return false;
   if(isDegustacao()){
     if(id==='mural')return muralTrialActive(); // degustação do mural: 7 dias
     if(DEGUSTACAO_PANELS[id])return true;
@@ -3971,7 +3984,7 @@ function applyProfileMenuLayout(){
 }
 function markLockedNavItems(){
   try{updatePlanBadge();}catch(e){}
-  var sp=document.getElementById('sb-presc');if(sp)sp.style.display=prescProfileOk()?'':'none';
+  var sp=document.getElementById('sb-presc');if(sp)sp.style.display=prescAllowed()?'':'none';
   try{applyProfileMenuLayout();}catch(e){}
   document.querySelectorAll('#sb-aluno .sb-item[data-p]').forEach(function(b){
     var locked=!canSeePanel(b.dataset.p);
@@ -6447,18 +6460,33 @@ function admMapasHTML(){
     +'</div>';
 }
 function admRestoreSec(){
-  var ok=['analytics','mural','ref','provas','cursos','estudantes','conteudo','mapas','calc','chat','perfil','suporte'];
+  var ok=['analytics','mural','ref','provas','cursos','estudantes','conteudo','mapas','calc','consultorio','chat','perfil','suporte'];
   var s=lsGet('adm_sec');
   // Sem seção salva (após logout) → Analytics. Com seção salva (reload) → restaura.
   return ok.indexOf(s)>=0?s:'analytics';
+}
+// Consultório no painel do professor: reaproveita o MESMO #panel-presc do aluno
+// (movendo-o para dentro do admin) para não duplicar os dezenas de IDs globais da
+// ferramenta. Ao sair da seção, devolve o painel ao lugar de origem (escondido).
+var __prescHome=null;
+function restorePrescPanel(){
+  var pp=document.getElementById('panel-presc');
+  if(pp&&__prescHome&&pp.parentNode!==__prescHome){__prescHome.appendChild(pp);pp.classList.remove('on');pp.style.display='';}
 }
 function renderAdmSec(sec){
   admCurrentSec=sec;
   try{lsSet('adm_sec',sec);}catch(e){}
   document.querySelectorAll('.adm-nav[data-asec]').forEach(function(b){b.classList.toggle('on',b.dataset.asec===sec);});
-  var titles={provas:'Provas & Questões',cursos:'Cursos',estudantes:'Estudantes',analytics:'Analytics',mural:'Mural',ref:'Diretrizes',conteudo:'Podcasts',mapas:'Mapas Mentais',calc:'Calculadoras',chat:'Chat',perfil:'Perfil',suporte:'Suporte'};
+  var titles={provas:'Provas & Questões',cursos:'Cursos',estudantes:'Estudantes',analytics:'Analytics',mural:'Mural',ref:'Diretrizes',conteudo:'Podcasts',mapas:'Mapas Mentais',calc:'Calculadoras',consultorio:'Consultório',chat:'Chat',perfil:'Perfil',suporte:'Suporte'};
   setText('adm-sec-title',titles[sec]||sec);
   var m=document.getElementById('adm-main');if(!m)return;
+  if(sec!=='consultorio'){try{restorePrescPanel();}catch(e){}} // devolve o painel ao sair do Consultório
+  if(sec==='consultorio'){
+    m.innerHTML='<div class="adm-ph"><h1>Consultório</h1></div><div class="adm-pc" id="adm-presc-host"></div>';
+    var pp=document.getElementById('panel-presc'),host=document.getElementById('adm-presc-host');
+    if(pp&&host){if(!__prescHome)__prescHome=pp.parentNode;host.appendChild(pp);pp.classList.add('on');pp.style.display='';try{initPresc();}catch(e){}}
+    bindAdmSec(sec);return;
+  }
   if(sec==='provas')m.innerHTML=admProvasSecHTML();
   else if(sec==='cursos')m.innerHTML=admCursosHTML();
   else if(sec==='estudantes')m.innerHTML=admEstudantesHTML();
