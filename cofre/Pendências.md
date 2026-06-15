@@ -1,9 +1,24 @@
 ---
 tags: [cofre, pendencias]
-atualizado: 2026-06-14
+atualizado: 2026-06-15
 ---
 
 # Pendências
+
+## Varredura completa (2026-06-15) — lançamento
+**Corrigido (#299):**
+- [x] **[CRÍTICO] `findUserByEmail` provisionava conta ERRADA além de 50 usuários** (`api/webhooks/pagarme.js`, `api/checkout/order.js`, `api/checkout/subscribe.js`): o `?email=` do GoTrue admin não filtra de forma confiável e o `|| list[0]` pegava um usuário arbitrário. Agora **pagina** e casa o e-mail exato; nunca cai em `list[0]`.
+- [x] **[CRÍTICO] Re-render apagava painéis movidos** (`renderAdmSec`): Consultório (`#panel-presc`) e editor visual de Mapas (`#mm-live`) eram destruídos por `innerHTML` num re-render da MESMA seção (gatilho real: hydrate automático de estado remoto), quebrando inclusive o painel do aluno. Agora `restorePrescPanel()`/`restoreMMLive()` rodam **sempre antes** do `innerHTML`.
+- [x] **[MÉDIO] XSS em `<img src>`**: `q.img`/`q.expImg`/previews de upload e `cur*` eram injetados sem `esc()` (vetor se o banco vier de import/IA). Todos escapados. Links do Mural (`a.link`) agora passam por `safeHttpUrl()` (bloqueia `javascript:`/`data:`).
+
+**Sinalizado para depois (não-bloqueante; risco/decisão/teste):**
+- [ ] **Newsletter envio duplicado**: a trava `newsletter_sent` é gravada DEPOIS do envio (`lib/newsletter.js`) — disparo concorrente (raro) poderia enviar 2×. Ideal: claim-first (gravar antes / update condicional). `dateBR`/`todayISO` usam UTC (o "dia" da trava é UTC, não BRT).
+- [ ] **Webhook pagar.me**: (a) `charge.refunded`/`subscription.canceled` sem scope revoga TODOS os acessos do e-mail; (b) renovação sem `subscriptionId` cairia em `avulso` 365d. Validar o **payload de renovação no sandbox** (1ª renovação só em ~30d) antes de ajustar.
+- [ ] **Cupom de fundador não-atômico**: pode passar de 100 vagas sob concorrência (`lib/founder.js`).
+- [ ] **Checkout sem auth de sessão/origem** (`api/checkout/*`): considerar checagem de Origin (como `api/ai.js`) pós-lançamento; não exigir sessão (quebraria checkout de quem não está logado).
+- [ ] **Passthrough de erro upstream** (`api/ai.js`, checkout) e **log de comprimento de chave Memed** (`api/memed/token.js`): limpar pós-homologação.
+- [ ] **Advisors Supabase (performance)**: RLS initplan (`auth.<fn>()`→`(select auth.<fn>())`), policies permissivas duplicadas, FK sem índice — otimizações de escala, não bugs. Os WARN de `SECURITY DEFINER` chamáveis por anon/authenticated são **por design** (checagem interna). `endodirect_state_backup` RLS sem policy = trancado (só service_role) — OK.
+- [ ] **Código morto** (`index.html`): `persistAdm` definido 2×; handlers do antigo editor de mapas (textarea) sem uso. Limpeza cosmética.
 
 ## Lado do usuário (fora do código)
 - [ ] **Publicar Diretrizes:** flipar `DIRETRIZES_PUBLICADO=true` no `index.html` quando a curadoria estiver pronta. Hoje os alunos veem "Em breve". Ver [[Arquitetura]].
