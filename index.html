@@ -2473,6 +2473,16 @@ var radarHidden=[]; // sourceIds de itens do radar ocultados pelo professor (cro
 // Chaves do payload global geridas pelo SERVIDOR (cron/newsletter): preservadas
 // nos saves do admin para não serem apagadas (newsletter_extra/unsub/sent/edição).
 var globalServerKeys={};
+// Proteção de concorrência do estado GLOBAL: guarda o updated_at lido na carga/
+// último save; se o servidor mudou desde então (outro admin gravou), o save mescla
+// as coleções aditivas em vez de sobrescrever (evita perder aulas/podcasts/etc.).
+var lastGlobalUpdatedAt=null;
+function unionBy(serverArr,localArr,keyFn){
+  var out=Array.isArray(localArr)?localArr.slice():[];var seen={};
+  out.forEach(function(it){try{seen[keyFn(it)]=1;}catch(e){}});
+  (Array.isArray(serverArr)?serverArr:[]).forEach(function(it){var k;try{k=keyFn(it);}catch(e){k=null;}if(k!=null&&!seen[k]){seen[k]=1;out.push(it);}});
+  return out;
+}
 var admQuestoes=lsGet('adm_questoes')||[];
 var podcasts=lsGet('podcasts')||[];
 function persistPodcasts(){lsSet('podcasts',podcasts);queueRemoteStateSave();}
@@ -2618,8 +2628,8 @@ function hydrateRemoteState(){
       .then(function(res){if(res.error)throw res.error;if(res.data&&res.data.payload)applyStatePayload(res.data.payload);})
   ];
   if(currentUser.role==='admin'){
-    loads.push(client.from('endodirect_global_state').select('payload').eq('id','main').maybeSingle()
-      .then(function(res){if(res.error)throw res.error;if(res.data&&res.data.payload)applyStatePayload(res.data.payload);}));
+    loads.push(client.from('endodirect_global_state').select('payload,updated_at').eq('id','main').maybeSingle()
+      .then(function(res){if(res.error)throw res.error;if(res.data){if(res.data.payload)applyStatePayload(res.data.payload);lastGlobalUpdatedAt=res.data.updated_at||null;}}));
     loads.push(new Promise(function(r){loadCursoCatalogo(r);}));
   }else{
     loads.push(client.rpc('endodirect_member_content')
@@ -2659,11 +2669,27 @@ function saveRemoteState(){
     // novos do radar, relemos o payload atual e preservamos essas chaves do
     // servidor antes do upsert (read-modify-write, igual o cron faz). As chaves
     // que o professor edita (radar_hidden, adm_avisos, provas, etc.) seguem do admin.
-    ops.push(client.from('endodirect_global_state').select('payload').eq('id','main').maybeSingle().then(function(g){
+    ops.push(client.from('endodirect_global_state').select('payload,updated_at').eq('id','main').maybeSingle().then(function(g){
       var serverP=(g&&g.data&&g.data.payload)||{};
+      var serverUpd=(g&&g.data&&g.data.updated_at)||null;
       var p=globalStatePayload();
       ['radar_avisos','newsletter_extra','newsletter_unsub','newsletter_sent','newsletter','newsletter_recent'].forEach(function(k){if(serverP[k]!==undefined)p[k]=serverP[k];});
-      return client.from('endodirect_global_state').upsert({id:'main',payload:p,updated_by:currentUser.id,updated_at:new Date().toISOString()},{onConflict:'id'}).then(function(res){if(res.error)throw res.error;});
+      // CONCORRÊNCIA: se o estado do servidor mudou desde que esta sessão carregou/
+      // salvou (outro admin gravou), MESCLA as coleções aditivas por chave de conteúdo
+      // em vez de sobrescrever — assim adições de dois admins não se perdem.
+      if(lastGlobalUpdatedAt&&serverUpd&&serverUpd!==lastGlobalUpdatedAt){
+        p.adm_cursos=unionBy(serverP.adm_cursos,p.adm_cursos,function(it){return (it.src||'')+'|'+(it.title||'');});
+        p.podcasts=unionBy(serverP.podcasts,p.podcasts,function(it){return (it.src||it.link||'')+'|'+(it.title||'');});
+        p.provas=unionBy(serverP.provas,p.provas,function(it){return (it.stem||'')+'|'+(it.answer||'')+'|'+(it.inst||'');});
+        p.mm_shared=unionBy(serverP.mm_shared,p.mm_shared,function(it){return it.id||((it.topic||'')+'|'+(it.sub||''));});
+        p.diretrizes=unionBy(serverP.diretrizes,p.diretrizes,function(it){return (it.fonte||'')+'|'+(it.tema||it.titulo||'')+'|'+(it.sub||'');});
+        p.diretrizes_temas=unionBy(serverP.diretrizes_temas,p.diretrizes_temas,function(it){return (it.sub||'')+'|'+(it.tema||'');});
+        p.curso_mods_extra=unionBy(serverP.curso_mods_extra,p.curso_mods_extra,function(it){return (it.curso||'')+'|'+(it.modulo||'');});
+        p.adm_estudantes=unionBy(serverP.adm_estudantes,p.adm_estudantes,function(it){return (it.email||it.cpf||it.nome||'');});
+        try{notify('Outro editor salvou em paralelo — itens mesclados para não perder conteúdo. Recarregue para ver tudo.','info');}catch(e){}
+      }
+      var stamp=new Date().toISOString();
+      return client.from('endodirect_global_state').upsert({id:'main',payload:p,updated_by:currentUser.id,updated_at:stamp},{onConflict:'id'}).then(function(res){if(res.error)throw res.error;lastGlobalUpdatedAt=stamp;});
     }));
   }
   Promise.all(ops)
