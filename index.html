@@ -2509,7 +2509,7 @@ function globalStatePayload(){
   // professor grava apenas os avisos manuais em adm_avisos. A leitura
   // (member_content/public_content) mescla os dois.
   // Mescla as chaves geridas pelo servidor (newsletter_*) para NÃO apagá-las no save.
-  return Object.assign({},globalServerKeys,{provas:provasDB,adm_avisos:admAvisos.filter(function(a){return !isRadarAuto(a);}),radar_avisos:radarAvisos,radar_hidden:radarHidden,adm_questoes:admQuestoes,podcasts:podcasts,adm_cursos:admCursos,adm_estudantes:admEstudantes,mm_shared:sharedMM,diretrizes:diretrizes,diretrizes_temas:dirTemasExtra});
+  return Object.assign({},globalServerKeys,{provas:provasDB,adm_avisos:admAvisos.filter(function(a){return !isRadarAuto(a);}),radar_avisos:radarAvisos,radar_hidden:radarHidden,adm_questoes:admQuestoes,podcasts:podcasts,adm_cursos:admCursos,curso_mods_extra:admCursoModsExtra,adm_estudantes:admEstudantes,mm_shared:sharedMM,diretrizes:diretrizes,diretrizes_temas:dirTemasExtra});
 }
 function currentStatePayload(){
   return Object.assign({},userStatePayload(),globalStatePayload());
@@ -2536,6 +2536,7 @@ function applyStatePayload(payload){
   if(Array.isArray(payload.adm_estudantes))admEstudantes=normalizeAdmEstudantes(payload.adm_estudantes);
   if(Array.isArray(payload.diretrizes)){diretrizes=payload.diretrizes;diretrizes.forEach(function(d){if(d&&d.sub)d.sub=dirMigrateSub(d.sub);});}
   if(Array.isArray(payload.diretrizes_temas))dirTemasExtra=payload.diretrizes_temas;
+  if(Array.isArray(payload.curso_mods_extra))admCursoModsExtra=payload.curso_mods_extra;
   if(payload.adm_perfil&&typeof payload.adm_perfil==='object'){
     // Segurança: só aceita o perfil salvo se o e-mail bater com o do admin
     // logado. Um perfil com e-mail de OUTRO admin (resíduo de estado antigo)
@@ -7031,7 +7032,15 @@ function admAnalyticsHTML(){
 
 // ---------- CURSOS ----------
 var admCursos=lsGet('adm_cursos')||[];
-function persistCursos(){lsSet('adm_cursos',admCursos);queueRemoteStateSave();}
+var admCursoModsExtra=lsGet('curso_mods_extra')||[]; // subespecialidades (módulos) criadas pelo professor que ainda não têm aula
+function persistCursos(){lsSet('adm_cursos',admCursos);lsSet('curso_mods_extra',admCursoModsExtra);queueRemoteStateSave();}
+// Subespecialidades de um curso: módulos distintos das aulas + os "vazios" criados pelo professor.
+function cursoModList(curso){
+  var seen={};
+  admCursos.forEach(function(c){if(c.curso===curso){var m=(c.modulo||'Geral').trim()||'Geral';seen[m]=(seen[m]||0)+1;}});
+  admCursoModsExtra.forEach(function(x){if(x.curso===curso&&!(x.modulo in seen))seen[x.modulo]=0;});
+  return Object.keys(seen).sort(function(a,b){return a.localeCompare(b,'pt-BR');}).map(function(m){return {mod:m,count:seen[m]};});
+}
 // ── Catálogo de cursos (endodirect_cursos) ──
 function cursoSlugOptions(selected,includeNone){
   var cat=Array.isArray(catalogoCursos)?catalogoCursos:[];
@@ -7093,15 +7102,15 @@ function playerEmbed(c){
   var v=vimeoId(c.src);if(v)return '<iframe title="'+esc(c.title||'Videoaula')+'" src="https://player.vimeo.com/video/'+v+'" style="width:100%;aspect-ratio:16/9;border:0;display:block" allowfullscreen></iframe>';
   return '<video controls style="width:100%;max-height:62vh;display:block" src="'+esc(c.src||'')+'"></video>';
 }
-var admCursoFiltro='',admCursoVideoFile=null,admCursoVideoData=null,admCursoSubtab='ver',admCursoEditIdx=null,admCursoMod='';
+var admCursoFiltro='',admCursoVideoFile=null,admCursoVideoData=null,admCursoSubtab='ver',admCursoEditIdx=null,admCursoMod='',admCursoModAdd=false,admCursoAddMod='';
 function admCursosHTML(){
   var cont={};admCursos.forEach(function(c){if(c.curso)cont[c.curso]=(cont[c.curso]||0)+1;});
   var lista=admCursoFiltro?admCursos.filter(function(c){return c.curso===admCursoFiltro;}):admCursos;
 
   var ed=(admCursoEditIdx!=null&&admCursos[admCursoEditIdx])?admCursos[admCursoEditIdx]:null;
   var formHTML='<div class="card" style="margin-bottom:1.1rem"><div style="font-size:1rem;font-weight:700;margin-bottom:.8rem">'+(ed?'✏️ Editar aula':'🎬 Importar videoaula')+'</div>'
-    +'<div class="g2" style="margin-bottom:.7rem"><div class="fld2" style="margin:0"><label>Título da aula</label><input type="text" id="adm-curso-title" value="'+(ed?esc(ed.title||''):'')+'" placeholder="Ex: Manejo da cetoacidose diabética"></div><div class="fld2" style="margin:0"><label>Curso (controla o acesso)</label><select id="adm-curso-curso">'+cursoSlugOptions(ed?(ed.curso||''):'',false)+'</select></div></div>'
-    +'<div class="g2" style="margin-bottom:.7rem"><div class="fld2" style="margin:0"><label>Módulo (opcional)</label><input type="text" id="adm-curso-modulo" value="'+(ed?esc(ed.modulo||''):'')+'" placeholder="Ex: Emergências endócrinas"></div><div class="fld2" style="margin:0"><label>Duração (opcional)</label><input type="text" id="adm-curso-dur" value="'+(ed?esc(ed.dur||''):'')+'" placeholder="Ex: 18 min"></div></div>'
+    +'<div class="g2" style="margin-bottom:.7rem"><div class="fld2" style="margin:0"><label>Título da aula</label><input type="text" id="adm-curso-title" value="'+(ed?esc(ed.title||''):'')+'" placeholder="Ex: Manejo da cetoacidose diabética"></div><div class="fld2" style="margin:0"><label>Curso (controla o acesso)</label><select id="adm-curso-curso">'+cursoSlugOptions(ed?(ed.curso||''):(admCursoFiltro||''),false)+'</select></div></div>'
+    +'<div class="g2" style="margin-bottom:.7rem"><div class="fld2" style="margin:0"><label>Subespecialidade / módulo</label><input type="text" id="adm-curso-modulo" value="'+(ed?esc(ed.modulo||''):esc(admCursoAddMod||''))+'" placeholder="Ex: Diabetes, Tireoide…"></div><div class="fld2" style="margin:0"><label>Duração (opcional)</label><input type="text" id="adm-curso-dur" value="'+(ed?esc(ed.dur||''):'')+'" placeholder="Ex: 18 min"></div></div>'
     +'<div class="fld2"><label>Descrição</label><textarea id="adm-curso-desc" rows="2" placeholder="Breve descrição da aula…">'+(ed?esc(ed.desc||''):'')+'</textarea></div>'
     +'<div class="fld2"><label>Vídeo (link YouTube / Vimeo)</label>'
       +'<input type="text" id="adm-curso-link" value="'+(ed?esc(ed.src||''):'')+'" placeholder="Cole a URL do vídeo (YouTube ou Vimeo)">'
@@ -7118,24 +7127,30 @@ function admCursosHTML(){
       +'<span style="font-size:.7rem;color:var(--t3)">'+n+' aula'+(n===1?'':'s')+'</span></button>';
   }
   function admLessonCard(c){var i=admCursos.indexOf(c);var meta=c.asset?'<div class="asset-meta">Supabase Storage: '+esc(c.asset.name||'video')+' · '+formatBytes(c.asset.size)+'</div>':'';return '<div class="card"><div style="display:flex;align-items:flex-start;gap:.7rem"><div style="width:48px;height:48px;border-radius:10px;background:var(--navy);display:flex;align-items:center;justify-content:center;font-size:1.3rem;flex-shrink:0">🎬</div><div style="flex:1;min-width:0"><div style="font-size:.86rem;font-weight:700;color:var(--tx);margin-bottom:.25rem">'+esc(c.title)+'</div><div style="display:flex;flex-wrap:wrap;gap:.3rem;margin-bottom:.4rem">'+(c.curso?'<span class="tag tag-grn">'+esc(cursoNomeBySlug(c.curso))+'</span>':'<span class="tag" style="background:#1c2a48;color:#9aa6ba">Sem curso</span>')+(c.modulo?'<span class="tag tag-pur">'+esc(c.modulo)+'</span>':'')+(c.dur?'<span class="tag tag-gold">'+esc(c.dur)+'</span>':'')+'</div>'+(c.desc?'<div style="font-size:.74rem;color:var(--t2);line-height:1.5;margin-bottom:.4rem">'+esc(c.desc)+'</div>':'')+'<div style="font-size:.66rem;color:var(--t3);word-break:break-all;margin-bottom:.5rem">'+(c.tipo==='link'?'🔗 '+esc(c.src):'🎞️ Arquivo de vídeo')+'</div>'+meta+'<div style="display:flex;gap:5px;flex-wrap:wrap"><button class="btn btn-primary btn-sm" data-adm-playcurso="'+i+'">▶ Assistir</button><button class="btn btn-outline btn-sm" data-adm-editcurso="'+i+'">✏️ Editar</button><button class="btn btn-outline btn-sm" data-adm-delcurso="'+i+'" style="color:var(--red);border-color:var(--red)">🗑 Excluir</button></div></div></div></div>';}
-  // Dentro do curso: grade de subespecialidades (por módulo) → aulas (igual ao aluno).
-  var cursoListInner;
-  if(!admCursoMod){
-    var cmods={};lista.forEach(function(c){var mm=(c.modulo||'Geral').trim()||'Geral';cmods[mm]=(cmods[mm]||0)+1;});
-    var cmodKeys=Object.keys(cmods).sort(function(a,b){return a.localeCompare(b,'pt-BR');});
-    cursoListInner=cmodKeys.length?cmodKeys.map(function(mm){return '<button class="dir-sub-btn" data-acursomod="'+esc(mm)+'"><div class="dsb-ico">'+dirSubIcon(mm)+'</div><h3>'+esc(mm)+'</h3><div class="dsb-cnt">'+cmods[mm]+' aula'+(cmods[mm]===1?'':'s')+'</div></button>';}).join(''):'<div class="empty" style="grid-column:1/-1">Nenhuma videoaula '+(admCursoFiltro?'neste curso':'cadastrada ainda')+'.</div>';
+  // Navegação igual às Diretrizes: curso → subespecialidade → aula.
+  var verHTML;
+  if(!admCursoFiltro){
+    // Nível 0 — grade de cursos (somente os cursos).
+    verHTML='<div style="font-size:.72rem;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--t3);margin-bottom:.6rem">Escolha um curso para abrir</div>'
+      +'<div class="dir-sub-grid">'+(Array.isArray(catalogoCursos)?catalogoCursos:[]).map(function(cc){var n=cont[cc.slug]||0;return '<button class="dir-sub-btn" data-curso-btn="'+esc(cc.slug)+'"><div class="dsb-ico">🎓</div><h3>'+esc(cc.nome)+'</h3><div class="dsb-cnt">'+n+' aula'+(n===1?'':'s')+'</div></button>';}).join('')+'</div>';
+  }else if(!admCursoMod){
+    // Nível 1 — subespecialidades do curso (+ adicionar subespecialidade).
+    var cnome=cursoNomeBySlug(admCursoFiltro);
+    var mods=cursoModList(admCursoFiltro);
+    var addUI=admCursoModAdd?('<div class="dir-tema-add"><label style="font-size:.72rem;color:var(--t2);font-weight:600">Nova subespecialidade em '+esc(cnome)+'</label><input type="text" id="curso-newsub" placeholder="Ex: Diabetes, Tireoide, Obesidade…"><div style="display:flex;gap:.4rem"><button class="btn btn-primary btn-sm" id="btn-curso-newsub-create">Criar</button><button class="btn btn-outline btn-sm" id="btn-curso-newsub-cancel">Cancelar</button></div></div>'):'';
+    verHTML='<button class="dir-back" data-acurso-back style="margin-bottom:1rem">← Voltar aos cursos</button>'
+      +'<div class="adm-ph" style="display:flex;align-items:flex-start;justify-content:space-between;gap:.6rem;flex-wrap:wrap;margin-top:0"><div><h1>🎓 '+esc(cnome)+'</h1></div><button class="btn btn-primary" id="btn-curso-addsub" style="padding:.55rem 1.1rem">➕ Adicionar subespecialidade</button></div>'
+      +addUI
+      +((mods.length||admCursoModAdd)?('<div class="dir-sub-grid">'+mods.map(function(o){return '<button class="dir-sub-btn" data-acursomod="'+esc(o.mod)+'"><div class="dsb-ico">'+dirSubIcon(o.mod)+'</div><h3>'+esc(o.mod)+'</h3><div class="dsb-cnt">'+o.count+' aula'+(o.count===1?'':'s')+'</div></button>';}).join('')+'</div>'):'<div class="empty">Nenhuma subespecialidade ainda — clique em “➕ Adicionar subespecialidade”.</div>');
   }else{
-    var cles=lista.filter(function(c){return (c.modulo||'Geral').trim()===admCursoMod;});
-    cursoListInner='<button class="dir-back" data-acursoback style="grid-column:1/-1;margin-bottom:.4rem">← Subespecialidades</button>'
-      +'<div class="ph" style="grid-column:1/-1;margin-top:0"><h1 style="font-size:1.05rem">'+dirSubIcon(admCursoMod)+' '+esc(admCursoMod)+'</h1></div>'
-      +(cles.length?cles.map(admLessonCard).join(''):'<div class="empty" style="grid-column:1/-1">Nenhuma aula nesta subespecialidade.</div>');
+    // Nível 2 — aulas da subespecialidade (+ adicionar aula).
+    var cnome2=cursoNomeBySlug(admCursoFiltro);
+    var cles=admCursos.filter(function(c){return c.curso===admCursoFiltro&&(c.modulo||'Geral').trim()===admCursoMod;});
+    verHTML='<button class="dir-back" data-acursomod-back style="margin-bottom:1rem">← '+esc(cnome2)+'</button>'
+      +'<div class="adm-ph" style="display:flex;align-items:flex-start;justify-content:space-between;gap:.6rem;flex-wrap:wrap;margin-top:0"><div><h1>'+dirSubIcon(admCursoMod)+' '+esc(admCursoMod)+'</h1></div><button class="btn btn-primary" id="btn-curso-addaula" style="padding:.55rem 1.1rem">+ Adicionar aula</button></div>'
+      +'<div id="adm-curso-player" style="display:none;margin-bottom:1.1rem"></div>'
+      +'<div class="g2" style="align-items:start">'+(cles.length?cles.map(admLessonCard).join(''):'<div class="empty" style="grid-column:1/-1">Nenhuma aula nesta subespecialidade. Clique em “+ Adicionar aula”.</div>')+'</div>';
   }
-  var verHTML='<div style="font-size:.72rem;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--t3);margin-bottom:.6rem">Escolha um curso para abrir</div>'
-    +'<div style="display:flex;flex-wrap:wrap;gap:.7rem;margin-bottom:1.1rem">'
-      +(Array.isArray(catalogoCursos)?catalogoCursos:[]).map(function(cc){return cursoTile(cc.slug,cc.nome,cont[cc.slug]||0,'🎓');}).join('')
-    +'</div>'
-  +'<div id="adm-curso-player" style="display:none;margin-bottom:1.1rem"></div>'
-  +'<div id="adm-curso-list" class="g2" style="align-items:start">'+cursoListInner+'</div>';
 
   return '<div class="adm-ph"><h1>Cursos</h1><p>Importe e organize videoaulas por curso.</p></div>'
   +'<div class="adm-pc">'
@@ -7272,7 +7287,7 @@ function bindAdmSec(sec){
   }
 
   if(sec==='cursos'){
-    main.querySelectorAll('[data-csub]').forEach(function(b){b.addEventListener('click',function(){admCursoSubtab=b.dataset.csub;admCursoEditIdx=null;renderAdmSec('cursos');});});
+    main.querySelectorAll('[data-csub]').forEach(function(b){b.addEventListener('click',function(){admCursoSubtab=b.dataset.csub;admCursoEditIdx=null;admCursoAddMod='';renderAdmSec('cursos');});});
     if(admCursoSubtab==='catalogo'){
       if(!(Array.isArray(catalogoCursos)&&catalogoCursos.length))loadCursoCatalogo(function(){renderAdmSec('cursos');});
       var bCatSave=document.getElementById('btn-cat-save');
@@ -7302,17 +7317,23 @@ function bindAdmSec(sec){
         admCursos.push(Object.assign({at:Date.now()},dados));
         persistCursos();notify('Videoaula adicionada!','ok');
       }
-      admCursoSubtab='ver';
+      admCursoSubtab='ver';admCursoAddMod='';
       renderAdmSec('cursos');
       renderCursosAluno();
     });
     var cCancelCurso=document.getElementById('btn-adm-cancelcurso');
-    if(cCancelCurso)cCancelCurso.addEventListener('click',function(){admCursoEditIdx=null;admCursoSubtab='ver';renderAdmSec('cursos');});
+    if(cCancelCurso)cCancelCurso.addEventListener('click',function(){admCursoEditIdx=null;admCursoSubtab='ver';admCursoAddMod='';renderAdmSec('cursos');});
     } // fim aba importar
     main.querySelectorAll('[data-adm-editcurso]').forEach(function(b){b.addEventListener('click',function(){admCursoEditIdx=parseInt(b.dataset.admEditcurso);admCursoSubtab='importar';renderAdmSec('cursos');});});
-    main.querySelectorAll('[data-curso-btn]').forEach(function(b){b.addEventListener('click',function(){var s=b.dataset.cursoBtn||'';admCursoFiltro=(admCursoFiltro===s?'':s);admCursoMod='';renderAdmSec('cursos');});});
+    main.querySelectorAll('[data-curso-btn]').forEach(function(b){b.addEventListener('click',function(){admCursoFiltro=b.dataset.cursoBtn||'';admCursoMod='';admCursoModAdd=false;renderAdmSec('cursos');});});
+    var acuBack=main.querySelector('[data-acurso-back]');if(acuBack)acuBack.addEventListener('click',function(){admCursoFiltro='';admCursoMod='';admCursoModAdd=false;renderAdmSec('cursos');});
     main.querySelectorAll('[data-acursomod]').forEach(function(b){b.addEventListener('click',function(){admCursoMod=b.dataset.acursomod;renderAdmSec('cursos');});});
-    var acb=main.querySelector('[data-acursoback]');if(acb)acb.addEventListener('click',function(){admCursoMod='';renderAdmSec('cursos');});
+    var acmBack=main.querySelector('[data-acursomod-back]');if(acmBack)acmBack.addEventListener('click',function(){admCursoMod='';renderAdmSec('cursos');});
+    var addSub=document.getElementById('btn-curso-addsub');if(addSub)addSub.addEventListener('click',function(){admCursoModAdd=true;renderAdmSec('cursos');});
+    var nsCancel=document.getElementById('btn-curso-newsub-cancel');if(nsCancel)nsCancel.addEventListener('click',function(){admCursoModAdd=false;renderAdmSec('cursos');});
+    var nsCreate=document.getElementById('btn-curso-newsub-create');if(nsCreate)nsCreate.addEventListener('click',function(){var nm=(document.getElementById('curso-newsub').value||'').trim();if(!nm){notify('Digite o nome da subespecialidade.','err');return;}if(cursoModList(admCursoFiltro).some(function(o){return o.mod.toLowerCase()===nm.toLowerCase();})){notify('Essa subespecialidade já existe neste curso.','err');return;}admCursoModsExtra.push({curso:admCursoFiltro,modulo:nm});persistCursos();admCursoModAdd=false;renderAdmSec('cursos');});
+    var addAula=document.getElementById('btn-curso-addaula');if(addAula)addAula.addEventListener('click',function(){admCursoAddMod=admCursoMod;admCursoEditIdx=null;admCursoSubtab='importar';renderAdmSec('cursos');});
+    var nsFocus=document.getElementById('curso-newsub');if(nsFocus){nsFocus.focus();nsFocus.addEventListener('keydown',function(ev){if(ev.key==='Enter'){ev.preventDefault();var bc=document.getElementById('btn-curso-newsub-create');if(bc)bc.click();}});}
     main.querySelectorAll('[data-adm-playcurso]').forEach(function(b){b.addEventListener('click',function(){
       var c=admCursos[parseInt(b.dataset.admPlaycurso)];if(!c)return;
       var box=document.getElementById('adm-curso-player');
