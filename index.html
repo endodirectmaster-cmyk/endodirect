@@ -6328,7 +6328,7 @@ function sendChat(text){
 
 // ── ADMIN (layout estilo Lexia) ──
 var admCurrentSec='analytics',admProvaSubtab='importar',pdfBase64Prova=null,podAudioDataAdm=null,admBancoArea='',admBancoCode='',admBancoAno='',admBancoInst='',admBancoPage=0,ADM_BANCO_PER=4,admBancoEditIdx=null,admBancoEditImg,admBancoEditStemImg;
-var admMMDraft=null,admMMEditId=null,admMMFilterSub='';
+var admMMDraft=null,admMMEditId=null,admMMFilterSub='',admMMSub='';
 var ADM_MM_SUBESP=['Diabetes','Obesidade','Tireoide','Adrenal','Neuroendocrinologia','Osteometabolismo','Endocrinologia Pediátrica','Endocrinologia Feminina e Andrologia','Dislipidemia e Aterosclerose','Endocrinologia Masculina','Endocrinologia Esportiva','Transgeneridade'];
 function persistSharedMM(){lsSet('mm_shared',sharedMM);queueRemoteStateSave();try{renderMMList();}catch(e){}}
 function admMMSyncDraft(){
@@ -6350,28 +6350,53 @@ function admMMSave(){
   }else{
     sharedMM.push({id:'mm-'+Date.now(),topic:admMMDraft.topic,sub:admMMDraft.sub,data:admMMDraft.data,at:Date.now()});
   }
+  admMMSub=admMMDraft.sub||admMMSub; // volta para a subespecialidade do mapa salvo
   admMMDraft=null;admMMEditId=null;
   persistSharedMM();renderAdmSec('mapas');
   notify('Mapa publicado para os alunos!','ok');
 }
+// Lista de subespecialidades para a grade dos Mapas Mentais — mesma taxonomia
+// canônica das Diretrizes (DIR_SUBS), com a contagem de mapas por subespecialidade.
+function admMMSubList(){
+  var seen={};
+  (sharedMM||[]).forEach(function(m){var s=String(m.sub||'Geral').trim()||'Geral';seen[s]=(seen[s]||0)+1;});
+  var out=DIR_SUBS.map(function(s){return {sub:s,count:seen[s]||0};});
+  Object.keys(seen).forEach(function(s){if(DIR_SUBS.indexOf(s)<0)out.push({sub:s,count:seen[s]});});
+  return out;
+}
 function admMapasHTML(){
-  var editor;
+  // Modo edição/criação: editor do mapa (com botão de voltar à subespecialidade).
   if(admMMDraft){
     var d=admMMDraft;
-    editor='<div class="card" style="margin-bottom:1rem"><div class="card-head"><span class="card-title">'+(admMMEditId?'Editar mapa':'Novo mapa')+'</span></div>'
-      +'<div class="g2" style="margin-bottom:.6rem"><div class="fld2" style="margin:0"><label>Subespecialidade</label><select id="adm-mm-sub">'+ADM_MM_SUBESP.map(function(s){return'<option'+(d.sub===s?' selected':'')+'>'+esc(s)+'</option>';}).join('')+'</select></div><div class="fld2" style="margin:0"><label>Tema (título)</label><input type="text" id="adm-mm-root" value="'+esc(d.data.root||d.topic||'')+'"></div></div>'
+    var subOpts=(function(){var cur=String(d.sub||'');var opts=DIR_SUBS.slice();if(cur&&opts.indexOf(cur)<0)opts.push(cur);return opts.map(function(s){return'<option'+(cur===s?' selected':'')+'>'+esc(s)+'</option>';}).join('');})();
+    var editor='<button class="dir-back" id="adm-mm-editback" style="margin-bottom:1rem">← '+esc(d.sub||admMMSub||'Mapas Mentais')+'</button>'
+      +'<div class="card" style="margin-bottom:1rem"><div class="card-head"><span class="card-title">'+(admMMEditId?'Editar mapa':'Novo mapa')+'</span></div>'
+      +'<div class="g2" style="margin-bottom:.6rem"><div class="fld2" style="margin:0"><label>Subespecialidade</label><select id="adm-mm-sub">'+subOpts+'</select></div><div class="fld2" style="margin:0"><label>Tema (título)</label><input type="text" id="adm-mm-root" value="'+esc(d.data.root||d.topic||'')+'"></div></div>'
       +'<div id="adm-mm-branches">'+(d.data.branches||[]).map(function(b,bi){return '<div class="card" style="margin-bottom:.5rem;padding:.6rem .8rem"><div style="display:flex;gap:.5rem;align-items:center;margin-bottom:.35rem"><input type="text" class="adm-mm-blabel" data-bi="'+bi+'" value="'+esc(b.label||'')+'" placeholder="Nome do ramo" style="font-weight:600;flex:1"><button class="btn btn-ghost btn-sm" data-adm-mm-delb="'+bi+'" style="padding:2px 6px">×</button></div><textarea class="adm-mm-bleaves" data-bi="'+bi+'" rows="4" placeholder="Um item por linha">'+esc((b.leaves||[]).join('\n'))+'</textarea></div>';}).join('')+'</div>'
       +'<div style="display:flex;gap:6px;flex-wrap:wrap"><button class="btn btn-outline btn-sm" id="adm-mm-addb">+ Ramo</button><button class="btn btn-primary" id="adm-mm-save">💾 Salvar e publicar</button><button class="btn btn-outline" id="adm-mm-cancel">Cancelar</button></div></div>';
-  }else{
-    editor='<div class="card" style="margin-bottom:1rem"><div class="card-head"><span class="card-title">Criar mapa mental</span></div>'
-      +'<div class="g2" style="margin-bottom:.6rem"><div class="fld2" style="margin:0"><label>Subespecialidade</label><select id="adm-mm-newsub">'+ADM_MM_SUBESP.map(function(s){return'<option>'+esc(s)+'</option>';}).join('')+'</select></div><div class="fld2" style="margin:0"><label>Tema</label><input type="text" id="adm-mm-newtopic" placeholder="Ex: Hipotireoidismo"></div></div>'
-      +'<div style="display:flex;gap:6px;flex-wrap:wrap"><button class="btn btn-primary" id="adm-mm-gen">🤖 Gerar com IA</button><button class="btn btn-outline" id="adm-mm-blank">+ Criar em branco</button></div>'
-      +'<div id="adm-mm-genres" style="margin-top:.5rem;font-size:.74rem;color:var(--t3)">Ao salvar, o mapa fica disponível automaticamente no painel de todos os alunos.</div></div>';
+    return '<div class="adm-ph"><h1>Mapas Mentais</h1></div><div class="adm-pc">'+editor+'</div>';
   }
-  var __sp=[];(sharedMM||[]).forEach(function(m){var s=m.sub||'';if(s&&__sp.indexOf(s)<0)__sp.push(s);});__sp.sort();var mmFilterSel='<select id="adm-mm-filter" style="width:auto;min-width:190px;font-size:.76rem"><option value="">Todas as subespecialidades</option>'+__sp.map(function(s){return'<option'+(admMMFilterSub===s?' selected':'')+'>'+esc(s)+'</option>';}).join('')+'</select>';var __rows=(sharedMM||[]).map(function(m,j){return{m:m,j:j};}).filter(function(o){return!admMMFilterSub||(o.m.sub||'')===admMMFilterSub;});var list=__rows.map(function(o){var m=o.m,j=o.j;return '<div style="display:flex;align-items:center;justify-content:space-between;gap:.6rem;padding:.55rem 0;border-bottom:1px solid var(--bd)"><div style="min-width:0"><div style="font-weight:600;font-size:.82rem">'+esc(m.topic)+'</div><div style="font-size:.68rem;color:var(--t3)">'+esc(m.sub||'')+' · '+((m.data&&m.data.branches&&m.data.branches.length)||0)+' ramos</div></div><div style="display:flex;gap:5px;flex-shrink:0"><button class="btn btn-outline btn-sm" data-adm-mm-edit="'+j+'">Editar</button><button class="btn btn-outline btn-sm" data-adm-mm-del="'+j+'" style="color:var(--red);border-color:var(--red)">🗑 Excluir</button></div></div>';}).join('');
+  // Nível 1 — grade de subespecialidades (igual às Diretrizes).
+  if(!admMMSub){
+    var grid='<div class="dir-sub-grid">'+admMMSubList().map(function(s){
+      return '<button class="dir-sub-btn" data-admmm-sub="'+esc(s.sub)+'"><div class="dsb-ico">'+dirSubIcon(s.sub)+'</div><h3>'+esc(s.sub)+'</h3><div class="dsb-cnt">'+s.count+' mapa'+(s.count===1?'':'s')+'</div></button>';
+    }).join('')+'</div>';
+    return '<div class="adm-ph"><h1>Mapas Mentais</h1></div>'
+      +'<div class="adm-pc"><div class="ph" style="margin-top:0"><p>Escolha uma subespecialidade para ver e criar os mapas mentais.</p></div>'+grid+'</div>';
+  }
+  // Nível 2 — mapas da subespecialidade + criação contextual.
+  var rows=(sharedMM||[]).map(function(m,j){return{m:m,j:j};}).filter(function(o){return (String(o.m.sub||'Geral').trim()||'Geral')===admMMSub;});
+  var list=rows.map(function(o){var m=o.m,j=o.j;return '<div style="display:flex;align-items:center;justify-content:space-between;gap:.6rem;padding:.55rem 0;border-bottom:1px solid var(--bd)"><div style="min-width:0"><div style="font-weight:600;font-size:.82rem">'+esc(m.topic)+'</div><div style="font-size:.68rem;color:var(--t3)">'+((m.data&&m.data.branches&&m.data.branches.length)||0)+' ramos</div></div><div style="display:flex;gap:5px;flex-shrink:0"><button class="btn btn-outline btn-sm" data-adm-mm-edit="'+j+'">Editar</button><button class="btn btn-outline btn-sm" data-adm-mm-del="'+j+'" style="color:var(--red);border-color:var(--red)">🗑 Excluir</button></div></div>';}).join('');
+  var createForm='<div class="card" style="margin-bottom:1rem"><div class="card-head"><span class="card-title">Criar mapa mental em '+esc(admMMSub)+'</span></div>'
+    +'<div class="fld2" style="margin:0 0 .6rem"><label>Tema</label><input type="text" id="adm-mm-newtopic" placeholder="Ex: Hipotireoidismo"></div>'
+    +'<div style="display:flex;gap:6px;flex-wrap:wrap"><button class="btn btn-primary" id="adm-mm-gen">🤖 Gerar com IA</button><button class="btn btn-outline" id="adm-mm-blank">+ Criar em branco</button></div>'
+    +'<div id="adm-mm-genres" style="margin-top:.5rem;font-size:.74rem;color:var(--t3)">Ao salvar, o mapa fica disponível automaticamente no painel de todos os alunos.</div></div>';
   return '<div class="adm-ph"><h1>Mapas Mentais</h1></div>'
-    +'<div class="adm-pc">'+editor
-    +'<div class="card"><div class="card-head" style="flex-wrap:wrap;gap:.5rem"><span class="card-title">Mapas publicados para os alunos</span><div style="display:flex;gap:.5rem;align-items:center">'+mmFilterSel+'<span class="tag tag-grn">'+__rows.length+'</span></div></div>'+(list||'<div class="empty">Nenhum mapa nesta subespecialidade.</div>')+'</div>'
+    +'<div class="adm-pc">'
+    +'<button class="dir-back" id="adm-mm-back" style="margin-bottom:1rem">← Todas as subespecialidades</button>'
+    +'<div class="ph" style="margin-top:0"><h1>'+dirSubIcon(admMMSub)+' '+esc(admMMSub)+'</h1></div>'
+    +createForm
+    +'<div class="card"><div class="card-head" style="flex-wrap:wrap;gap:.5rem"><span class="card-title">Mapas publicados para os alunos</span><span class="tag tag-grn">'+rows.length+'</span></div>'+(list||'<div class="empty">Nenhum mapa nesta subespecialidade ainda.</div>')+'</div>'
     +'</div>';
 }
 function admRestoreSec(){
@@ -6994,9 +7019,15 @@ function admCursosHTML(){
 function bindAdmSec(sec){
   var main=document.getElementById('adm-main');
   if(sec==='mapas'){
+    // Grade de subespecialidades → entra na subespecialidade.
+    main.querySelectorAll('[data-admmm-sub]').forEach(function(b){b.addEventListener('click',function(){admMMSub=b.dataset.admmmSub;admMMDraft=null;admMMEditId=null;renderAdmSec('mapas');});});
+    var mmBack=document.getElementById('adm-mm-back');
+    if(mmBack)mmBack.addEventListener('click',function(){admMMSub='';renderAdmSec('mapas');});
+    var mmEditBack=document.getElementById('adm-mm-editback');
+    if(mmEditBack)mmEditBack.addEventListener('click',function(){admMMDraft=null;admMMEditId=null;renderAdmSec('mapas');});
     var gen=document.getElementById('adm-mm-gen');
     if(gen)gen.addEventListener('click',function(){
-      var sub=document.getElementById('adm-mm-newsub').value;
+      var sub=admMMSub;
       var topic=(document.getElementById('adm-mm-newtopic').value||'').trim();
       if(!topic){notify('Digite um tema.','err');return;}
       gen.disabled=true;gen.innerHTML=ldHTML('Gerando...');
@@ -7006,7 +7037,7 @@ function bindAdmSec(sec){
     });
     var blank=document.getElementById('adm-mm-blank');
     if(blank)blank.addEventListener('click',function(){
-      var sub=document.getElementById('adm-mm-newsub').value;
+      var sub=admMMSub;
       var topic=(document.getElementById('adm-mm-newtopic').value||'').trim()||'Novo mapa';
       admMMDraft={topic:topic,sub:sub,data:{root:topic,branches:[{label:'Ramo 1',leaves:['Detalhe']}]}};admMMEditId=null;renderAdmSec('mapas');
     });
