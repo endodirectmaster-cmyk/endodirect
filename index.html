@@ -2868,14 +2868,14 @@ function parseJ(raw){
   return null;
 }
 function sleep(ms){return new Promise(function(resolve){setTimeout(resolve,ms);});}
-function callAIJson(sys,usr,maxTok,retries,model){
+function callAIJson(sys,usr,maxTok,retries,model,grounding){
   retries=retries==null?1:retries;
-  return callAI(sys,usr,maxTok,model).then(function(raw){
+  return callAI(sys,usr,maxTok,model,grounding).then(function(raw){
     var d=parseJ(raw);
     if(!d)throw new Error('Resposta invalida da IA.');
     return d;
   }).catch(function(e){
-    if(retries>0)return sleep(650).then(function(){return callAIJson(sys,usr,maxTok,retries-1,model);});
+    if(retries>0)return sleep(650).then(function(){return callAIJson(sys,usr,maxTok,retries-1,model,grounding);});
     throw e;
   });
 }
@@ -3093,8 +3093,24 @@ function aiRequest(payload){
 }
 var AI_MODEL_CLINICO='claude-opus-4-8'; // avaliação e relatório clínico (raciocínio)
 var AI_MODEL_SIM_GEN='claude-sonnet-4-6'; // geração rápida de vinhetas de caso (latência menor)
-function callAI(sys,usr,maxTok,model){
-  return aiRequest({system:sys,prompt:usr,maxTokens:maxTok||1500,model:model});
+// ============================================================
+// Padrão de autoria clínica p/ geração por IA (questões, flashcards, mapas).
+// Máxima precisão técnica + diretrizes recentes NOMEADAS + zero "linguagem de
+// IA". NUNCA inventar PMID/DOI/referências. Reaproveitado por todos os geradores
+// via authoringSys(formatoJSON). O grounding REAL por PubMed (citações
+// verificáveis) entra via o campo `grounding` do /api/ai (ver lib/pubmed.js).
+var CLINICAL_AUTHORING=[
+'Você é especialista em endocrinologia e metabologia (Brasil) preparando material para médicos e residentes.',
+'REGRAS OBRIGATÓRIAS:',
+'1. PRECISÃO TÉCNICA: use valores de corte, doses, unidades, critérios diagnósticos e nomes de exames EXATOS; prefira números a descrições vagas.',
+'2. DIRETRIZES RECENTES: baseie-se nas diretrizes vigentes mais recentes e cite-as pelo nome + ano quando pertinente (SBD, SBEM, ADA Standards of Care, Endocrine Society, ATA, AACE, KDIGO, Diretriz Brasileira de Obesidade/Dislipidemia). Na dúvida entre fontes, siga a mais recente.',
+'3. SEM LINGUAGEM DE IA: vá direto ao ponto. PROIBIDO clichês e enchimento ("é importante notar/ressaltar/lembrar", "vale destacar", "em resumo", "desempenha um papel", "no contexto de"), hedging desnecessário e meta-comentário. Escreva como um professor de endocrinologia escreve numa prova.',
+'4. HONESTIDADE: NUNCA invente PMID, DOI, títulos ou referências. Cite apenas diretrizes nomeadas e, quando houver bloco FONTES no enunciado, os artigos ali listados.',
+'5. Português do Brasil, terminologia médica correta.'
+].join('\n');
+function authoringSys(fmt){return CLINICAL_AUTHORING+'\n\n'+fmt;}
+function callAI(sys,usr,maxTok,model,grounding){
+  return aiRequest({system:sys,prompt:usr,maxTokens:maxTok||1500,model:model,grounding:grounding||''});
 }
 function callAIwithPDF(sys,b64){
   return aiRequest({
@@ -4319,9 +4335,9 @@ function genQuestions(){
   btn.disabled=true;btn.innerHTML=ldHTML();
   var res=document.getElementById('q-gen-results');res.innerHTML=ldHTML();
   var sys=isMC
-    ?'Médico endocrinologista examinador BR. JSON APENAS: {"questions":[{"stem":"vinheta clínica 3-4 linhas","options":{"A":"texto","B":"texto","C":"texto","D":"texto"},"answer":"A","explanation":"1-2 frases","area":"'+areaTag+'","dificuldade":"'+diff+'"}]}'
-    :'Médico endocrinologista examinador BR. JSON APENAS: {"questions":[{"stem":"vinheta clínica 3-4 linhas","expected":"resposta modelo","area":"'+areaTag+'","dificuldade":"'+diff+'"}]}';
-  callAI(sys,'Gere exatamente '+qty+' questão(ões) de '+spec+', nível '+diff+(topic?', tema: '+topic:'')+'.', qty<=3?1300:qty<=5?1900:2600)
+    ?authoringSys('Atue como examinador de prova de residência/título em endocrinologia. JSON APENAS: {"questions":[{"stem":"vinheta clínica de 3-4 linhas com dados objetivos (idade, sexo, quadro e exames com valores e unidades)","options":{"A":"texto","B":"texto","C":"texto","D":"texto"},"answer":"A","explanation":"justificativa técnica em 1-2 frases citando o critério/valor de corte/diretriz","area":"'+areaTag+'","dificuldade":"'+diff+'"}]}')
+    :authoringSys('Atue como examinador de prova de endocrinologia. JSON APENAS: {"questions":[{"stem":"vinheta clínica de 3-4 linhas com dados objetivos e exames com valores/unidades","expected":"resposta-modelo objetiva e correta, citando o critério/diretriz","area":"'+areaTag+'","dificuldade":"'+diff+'"}]}');
+  aiRequest({system:sys,prompt:'Gere exatamente '+qty+' questão(ões) de '+spec+', nível '+diff+(topic?', tema: '+topic:'')+'. Cada questão deve ser clinicamente precisa e alinhada às diretrizes vigentes.',maxTokens:qty<=3?1300:qty<=5?1900:2600,grounding:(topic?(spec+' '+topic):'')})
   .then(function(raw){
     var data=parseJ(raw);
     if(!data||!data.questions||!data.questions.length)throw new Error('Resposta inválida. Tente novamente.');
@@ -7485,7 +7501,7 @@ function bindAdmSec(sec){
       var topic=(document.getElementById('adm-mm-newtopic').value||'').trim();
       if(!topic){notify('Digite um tema.','err');return;}
       gen.disabled=true;gen.innerHTML=ldHTML('Gerando...');
-      callAI('Endocrinologista educador. JSON APENAS: {"root":"Tema","branches":[{"label":"Ramo","leaves":["detalhe 1","detalhe 2","detalhe 3"]}]}. Crie 5-6 ramos com 3-5 folhas cada, em portugues medico claro.','Mapa mental sobre: '+topic,1800)
+      callAI(authoringSys('Crie um mapa mental de estudo. JSON APENAS: {"root":"Tema","branches":[{"label":"Ramo","leaves":["detalhe com dado concreto"]}]}. Use 5-6 ramos com 3-5 folhas cada; cada folha com um dado concreto (critério, valor de corte, dose ou conduta).'),'Mapa mental sobre: '+topic,1800,null,topic)
       .then(function(raw){var dd=parseJ(raw);if(!dd||!dd.branches)throw new Error('Resposta inválida.');admMMDraft={topic:topic,sub:sub,data:normalizeMMData(dd)};admMMEditId=null;renderAdmSec('mapas');})
       .catch(function(e){notify('Erro ao gerar: '+e.message,'err');gen.disabled=false;gen.innerHTML='🤖 Gerar com IA';});
     });
@@ -7598,7 +7614,7 @@ function bindAdmSec(sec){
       var topic=(document.getElementById('adm-fc-topic').value||'').trim();
       if(!topic){notify('Digite um tema para gerar.','err');return;}
       fcGen.disabled=true;fcGen.innerHTML=ldHTML('Gerando...');
-      callAI('Voce e um endocrinologista educador. Gere flashcards de estudo (pergunta na frente, resposta curta e objetiva no verso). JSON APENAS: {"cards":[{"front":"pergunta","back":"resposta"}]}. 8 a 12 cards, em portugues medico claro.','Flashcards sobre: '+topic+' (subespecialidade: '+admFcSub+')',2000)
+      callAI(authoringSys('Gere flashcards de estudo (pergunta na frente, resposta curta e objetiva no verso). JSON APENAS: {"cards":[{"front":"pergunta","back":"resposta com o dado exato (valor de corte, dose, critério ou conduta)"}]}. 8 a 12 cards.'),'Flashcards sobre: '+topic+' (subespecialidade: '+admFcSub+')',2000,null,topic)
       .then(function(raw){var d=parseJ(raw);var cards=(d&&(d.cards||d.flashcards))||(Array.isArray(d)?d:[]);var n=admFcAddCards(cards);if(!n)throw new Error('A IA nao retornou cards validos.');renderAdmSec('flashcards');notify(n+' flashcard(s) gerados e publicados.','ok');})
       .catch(function(e){notify('Erro ao gerar: '+((e&&e.message)||e),'err');fcGen.disabled=false;fcGen.innerHTML='🤖 Gerar com IA';});
     });
@@ -7907,8 +7923,8 @@ function bindAdmSec(sec){
       var base=dirFormBaseTxt();
       if(!base){notify('Preencha bullets ou resumo antes de gerar.','err');return;}
       var lbl=fGen.innerHTML;fGen.disabled=true;fGen.innerHTML=ldHTML('Gerando...');
-      callAIJson('Você é professor de endocrinologia. Gere flashcards de estudo objetivos e clinicamente corretos em português do Brasil.',
-        'A partir do conteúdo abaixo, gere de 4 a 6 flashcards (pergunta curta + resposta direta). Retorne APENAS JSON no formato {"cards":[{"q":"...","a":"..."}]}.\n\n'+base,1200,1)
+      callAIJson(authoringSys('Gere flashcards de estudo objetivos e clinicamente corretos.'),
+        'A partir do conteúdo abaixo, gere de 4 a 6 flashcards (pergunta curta + resposta direta com o dado exato). Retorne APENAS JSON no formato {"cards":[{"q":"...","a":"..."}]}.\n\n'+base,1200,1,null,(admRefTema||''))
       .then(function(r){
         var cards=(r&&Array.isArray(r.cards))?r.cards.filter(function(c){return c&&c.q&&c.a;}).map(function(c){return {q:String(c.q),a:String(c.a)};}):[];
         if(!cards.length)throw new Error('IA não retornou flashcards.');
@@ -7922,8 +7938,8 @@ function bindAdmSec(sec){
       var base=dirFormBaseTxt();
       if(!base){notify('Preencha bullets ou resumo antes de gerar.','err');return;}
       var lbl=mGen.innerHTML;mGen.disabled=true;mGen.innerHTML=ldHTML('Gerando...');
-      callAIJson('Você é professor de endocrinologia. Crie mapas mentais de estudo claros e corretos em português do Brasil.',
-        'A partir do conteúdo abaixo, gere um mapa mental. Retorne APENAS JSON no formato {"central":"tema central curto","nodes":[{"label":"ramo","children":["item","item"]}]}. Use de 3 a 5 ramos, cada um com 2 a 4 itens curtos.\n\n'+base,1200,1)
+      callAIJson(authoringSys('Crie mapas mentais de estudo claros, específicos e corretos.'),
+        'A partir do conteúdo abaixo, gere um mapa mental. Retorne APENAS JSON no formato {"central":"tema central curto","nodes":[{"label":"ramo","children":["item","item"]}]}. Use de 3 a 5 ramos, cada um com 2 a 4 itens curtos, cada item com um dado concreto (critério, valor de corte, dose ou conduta).\n\n'+base,1200,1,null,(admRefTema||''))
       .then(function(r){
         if(!r||!r.central||!Array.isArray(r.nodes)||!r.nodes.length)throw new Error('IA não retornou um mapa válido.');
         var mapa={central:String(r.central),nodes:r.nodes.filter(function(n){return n&&n.label;}).map(function(n){return {label:String(n.label),children:(Array.isArray(n.children)?n.children.map(String):[])};})};
@@ -8534,7 +8550,7 @@ genFC=function(){
   var sub=document.getElementById('fc-gsub').value,topic=document.getElementById('fc-gt').value.trim(),qty=parseInt(document.getElementById('fc-gq').value)||5;
   var btn=document.getElementById('btn-fcgen');
   btn.disabled=true;btn.innerHTML=ldHTML('Gerando...');
-  callAIJson('Endocrinologista educador BR. JSON APENAS: {"cards":[{"front":"pergunta curta","back":"resposta objetiva 1-2 frases"}]}','Gere '+qty+' flashcards de '+sub+(topic?', tema '+topic:'')+'.',1800,1)
+  callAIJson(authoringSys('Gere flashcards de estudo. JSON APENAS: {"cards":[{"front":"pergunta curta e específica","back":"resposta objetiva em 1-2 frases com o dado exato (valor de corte, dose, critério ou conduta)"}]}'),'Gere '+qty+' flashcards de '+sub+(topic?', tema '+topic:'')+'.',1800,1,null,(sub+(topic?(' '+topic):'')))
   .then(function(d){
     if(!d||!d.cards)throw new Error('Resposta inválida.');
     d.cards.forEach(function(c){DB.fc.push({id:Date.now()+Math.random(),front:c.front,back:c.back,cat:sub,due:Date.now(),box:1,at:Date.now()});});
@@ -8551,7 +8567,7 @@ genMM=function(){
   setText('mm-live-title',topic);
   document.getElementById('mm-live').style.display='block';
   document.getElementById('mm-svg').innerHTML='<div class="empty">'+ldHTML('Gerando mapa...')+'</div>';
-  callAIJson('Endocrinologista educador. JSON APENAS: {"root":"Tema","branches":[{"label":"Ramo","leaves":["detalhe 1","detalhe 2","detalhe 3"]}]}. Crie 5-6 ramos com 3-5 folhas cada, em portugues medico claro.','Mapa mental sobre: '+topic,1800,1)
+  callAIJson(authoringSys('Crie um mapa mental de estudo. JSON APENAS: {"root":"Tema","branches":[{"label":"Ramo","leaves":["detalhe com dado concreto"]}]}. Use 5-6 ramos com 3-5 folhas cada; cada folha deve trazer um dado concreto (critério, valor de corte, dose ou conduta), nunca generalidades.'),'Mapa mental sobre: '+topic,1800,1,null,topic)
   .then(function(d){
     if(!d||!d.branches)throw new Error('Resposta inválida.');
     d=normalizeMMData(d);
@@ -8645,7 +8661,7 @@ startSim=function(){
   var btn=document.getElementById('btn-sim-start');
   btn.disabled=true;btn.innerHTML=ldHTML('Gerando...');
   var sys='Você é preceptor de endocrinologia conduzindo um caso clínico passo a passo (estilo OSCE), em português do Brasil, com RIGOR TÉCNICO. A vinheta (intro) deve trazer dados objetivos: idade, sexo, queixa, antecedentes, exame físico e EXAMES LABORATORIAIS com valores e unidades (ex.: TSH 8,4 mUI/L; cortisol 2,1 µg/dL). JSON APENAS: {"intro":"vinheta com dados objetivos e laboratoriais","steps":[{"pergunta":"conduta/raciocínio solicitado"'+(mode==='mc'?',"options":{"A":"","B":"","C":"","D":""},"correct":"A","feedback":"justificativa técnica curta citando alvo/critério/dose/diretriz (SBEM, SBD, ADA, Endocrine Society, AACE) quando pertinente"':',"ideal":"resposta ideal detalhada com valores de corte, doses e monitorização"')+'}]}. Use 4 a 6 passos PROGRESSIVOS (anamnese dirigida → exames complementares → diagnóstico → conduta/titulação → monitorização). Valores de corte, doses e diretrizes corretos. As distratoras devem ser plausíveis.';
-  simRetry(function(){return callAIJson(sys,'Caso de '+(sub||'endocrinologia')+', complexidade '+level+', modo '+(mode==='mc'?'múltipla escolha':'resposta aberta')+'.',2600,0,AI_MODEL_SIM_GEN);})
+  simRetry(function(){return callAIJson(sys,'Caso de '+(sub||'endocrinologia')+', complexidade '+level+', modo '+(mode==='mc'?'múltipla escolha':'resposta aberta')+'.',3200,1,AI_MODEL_SIM_GEN);})
   .then(function(d){
     if(!d||!d.steps||!d.steps.length)throw new Error('Resposta inválida.');
     simState={data:d,step:0,mode:mode,score:0,answers:[],sub:sub||'Endocrinologia',level:level};
@@ -8768,7 +8784,7 @@ evalRx=function(){
   var diag=(document.getElementById('rx-diag').value||'').trim();
   if(!txt){notify('Escreva sua prescrição.','err');return;}
   var btn=document.getElementById('btn-rx-eval'),fb=document.getElementById('rx-feedback');
-  btn.disabled=true;btn.innerHTML=ldHTML('Avaliando...');
+  btn.disabled=true;
   fb.style.display='block';
   fb.innerHTML=ldHTML('Avaliando prescrição...');
   var sys='Você é preceptor de endocrinologia avaliando a prescrição de um residente. Produza um RELATÓRIO completo e técnico em português do Brasil, em markdown, com estas seções (use ## em cada): Nota (0 a 10, com justificativa em 1 linha); Acertos; Falhas e riscos de segurança (interações, contraindicações, ajuste por função renal/hepática, dose ou titulação inadequada, duplicidade); Prescrição ideal comentada (medicamento, dose, via, posologia e duração); Monitorização e metas (exames de controle e alvos terapêuticos); Orientações ao paciente; Conclusão. Seja específico com doses, valores de corte e diretrizes (SBEM, SBD, ADA, Endocrine Society, AACE). Baseie-se apenas nos dados do caso; não invente.';
