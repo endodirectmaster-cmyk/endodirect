@@ -8671,7 +8671,7 @@ function updateSimCounter(){
 // (largada rápida ~6-10s); cada passo seguinte é gerado sob demanda com o
 // contexto acumulado. Evita o caso gigante de uma vez (que dava 504/truncava)
 // e permite 4-5 passos ricos com Sonnet sem estourar o limite da função.
-var SIM_MAX_STEPS=5; // teto de passos (a largada não depende disto)
+var SIM_MAX_STEPS=4; // teto de passos (a largada não depende disto)
 function simStepShape(mode){
   return mode==='mc'
     ? '{"pergunta":"pergunta clínica objetiva","options":{"A":"","B":"","C":"","D":""},"correct":"A","feedback":"1-2 frases citando alvo/valor de corte/dose/diretriz (SBEM, SBD, ADA, Endocrine Society, AACE)"}'
