@@ -1,6 +1,6 @@
 ---
 tags: [cofre, pendencias]
-atualizado: 2026-06-15
+atualizado: 2026-06-16
 ---
 
 # Pendências
@@ -20,7 +20,8 @@ atualizado: 2026-06-15
 - [x] **Newsletter repetindo conteúdo (2026-06-15, #303):** vinha igual ao dia anterior porque pegava sempre o `top3` do pool estável. Agora `newsletter_recent` (14d) + `pickFresh()` priorizam não-enviados; ranking refinado (revisão>metanálise>original; NEJM>Lancet>JCEM>outros); JCEM deixou de sair como "Endocrinology" (`journalMatches`/`jnorm` no radar).
 - [ ] **Newsletter envio duplicado (concorrência)**: a trava `newsletter_sent` ainda é gravada DEPOIS do envio — disparo concorrente (raro) poderia enviar 2×. Ideal: claim-first. `dateBR`/`todayISO` usam UTC.
 - [ ] **Webhook pagar.me**: (a) `charge.refunded`/`subscription.canceled` sem scope revoga TODOS os acessos do e-mail; (b) renovação sem `subscriptionId` cairia em `avulso` 365d. Validar o **payload de renovação no sandbox** (1ª renovação só em ~30d) antes de ajustar.
-- [ ] **Cupom de fundador não-atômico**: pode passar de 100 vagas sob concorrência (`lib/founder.js`).
+- [x] **[CRÍTICO] Vaga de fundador via PIX/boleto não era contada (2026-06-16):** o webhook (`api/webhooks/pagarme.js`) liberava o Gold mas **não gravava `notes`**, então nunca marcava `:fundador`. Como `lib/founder.js` conta as vagas por `notes ilike '*:fundador*'`, só compras no **cartão** (via `order.js`) entravam no limite — com PIX/boleto (meio dominante no BR) a oferta poderia **vender muito além das 100 vagas** e o auto-desativar/contador de vagas ficariam errados. **Fix:** o webhook lê `metadata.coupon` (que `order.js` já envia) e, quando é `FUNDADOR` no `plano:gold`, grava `notes='gold:anual:fundador'` (mesmo formato do cartão). Validado por teste de lógica. Reaproveita `FOUNDER_COUPON`/`FOUNDER_PLAN` de `lib/founder.js`.
+- [ ] **Cupom de fundador não-atômico**: pode passar de 100 vagas sob concorrência (`lib/founder.js`). (Distinto do item acima: aqui é a janela de corrida entre contar e gravar; a contagem em si já inclui PIX/boleto.)
 - [x] **Checkout — checagem de origem (2026-06-15, #301):** `api/checkout/order.js` e `subscribe.js` agora validam Origin/Referer pelo hostname (igual `api/ai.js`) — bloqueia abuso externo dos endpoints que criam cobranças LIVE. Header ausente passa (clientes não-browser). Não exige sessão (não quebra checkout de quem não está logado).
 - [ ] **Passthrough de erro upstream** (`api/ai.js`, checkout) e **log de comprimento de chave Memed** (`api/memed/token.js`): limpar pós-homologação.
 - [ ] **Advisors Supabase (performance)**: RLS initplan (`auth.<fn>()`→`(select auth.<fn>())`), policies permissivas duplicadas, FK sem índice — otimizações de escala, não bugs. Os WARN de `SECURITY DEFINER` chamáveis por anon/authenticated são **por design** (checagem interna). `endodirect_state_backup` RLS sem policy = trancado (só service_role) — OK.

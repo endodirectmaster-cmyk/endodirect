@@ -40,6 +40,11 @@
 
 const crypto = require('crypto');
 
+// Oferta de Sócio-fundador: usamos o código do cupom + o plano-alvo para
+// marcar ":fundador" no acesso liberado por PIX/boleto (o cartão já marca em
+// api/checkout/order.js). Sem isso, lib/founder.js não contaria essas vagas.
+const { FOUNDER_COUPON, FOUNDER_PLAN } = require('../../lib/founder');
+
 const SUPABASE_URL = process.env.SUPABASE_URL || process.env.NEXT_PUBLIC_SUPABASE_URL || 'https://auth.endodirect.com.br';
 const SERVICE_ROLE = process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.SUPABASE_SECRET_KEY || process.env.SUPABASE_SERVICE_KEY;
 const WEBHOOK_SECRET = process.env.PAGARME_WEBHOOK_SECRET || '';
@@ -229,6 +234,7 @@ function extractInfo(body, type) {
     nextBilling: (sub && sub.next_billing_at) || d.next_billing_at || d.current_period_end
       || (cycle && (cycle.end_at || cycle.billing_at)) || (inv && inv.due_at) || '',
     scopeHint: String(meta.scope || meta.escopo || meta.curso || '').toLowerCase().trim(),
+    coupon: String(meta.coupon || meta.cupom || '').trim().toUpperCase(),
     itemText: itemText.toLowerCase()
   };
 }
@@ -332,7 +338,7 @@ module.exports = async function handler(req, res) {
       const user = await ensureUser(info.email, info.name);
       for (const scope of scopes) {
         const tipo = (scope.indexOf('curso:') === 0 || !info.subscriptionId) ? 'avulso' : 'recorrente';
-        await upsertAcesso({
+        const row = {
           user_id: user.id,
           email: info.email,
           scope: scope,
@@ -344,7 +350,14 @@ module.exports = async function handler(req, res) {
           provider_subscription_id: info.subscriptionId || null,
           provider_order_id: info.orderId || null,
           updated_at: new Date().toISOString()
-        });
+        };
+        // Oferta de Sócio-fundador (PIX/boleto): marca ":fundador" no acesso
+        // para que lib/founder.js conte a vaga e a oferta desative ao esgotar.
+        // Mesmo formato do cartão em order.js (ex.: "gold:anual:fundador").
+        if (info.coupon && info.coupon === FOUNDER_COUPON && scope === ('plano:' + FOUNDER_PLAN)) {
+          row.notes = FOUNDER_PLAN + ':anual:fundador';
+        }
+        await upsertAcesso(row);
       }
       await sendSetPasswordEmail(info.email);
       return json(res, 200, { ok: true, action: 'activated', email: info.email, scopes: scopes, authConfigured: auth !== null });

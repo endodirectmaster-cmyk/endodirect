@@ -110,7 +110,7 @@ module.exports = async function handler(req, res) {
 
   if (!cfg || !(cfg.amount > 0)) return json(res, 400, { ok: false, error: 'Plano invalido ou preco anual nao configurado.' });
 
-  // Cupom Sócio-fundador: só vale para o Premium anual, e enquanto houver vaga.
+  // Cupom Sócio-fundador: só vale para o Gold anual, e enquanto houver vaga.
   let amount = cfg.amount;
   let founderApplied = false;
   if (coupon) {
