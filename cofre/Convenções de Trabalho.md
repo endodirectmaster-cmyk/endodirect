@@ -1,6 +1,6 @@
 ---
 tags: [cofre, processo]
-atualizado: 2026-06-15
+atualizado: 2026-06-16
 ---
 
 # Convenções de Trabalho
@@ -8,12 +8,13 @@ atualizado: 2026-06-15
 ## Git / deploy
 - **Branch de desenvolvimento:** `claude/funny-brahmagupta-9n8yT`.
 - Fluxo: commitar na branch → abrir PR → **squash merge** em `main` → deploy automático na Vercel.
+- **Merge + deploy AUTOMÁTICOS — autorização permanente do usuário (2026-06-16):** depois do **CI ficar verde**, fazer **squash-merge na `main` e deixar a Vercel deployar, SEM pedir confirmação a cada vez**. Esse é o fluxo padrão — não perguntar "posso mergear/deployar?". Únicas travas antes do merge: (1) CI `validate` verde; (2) quando o PR mexe em **pagamento/acesso**, revisar o diff por conta própria antes. Para acompanhar o CI sem `sleep`, usar `mcp__github__pull_request_read` (`get_check_runs`/`get_status`).
 - ⚠️ Após cada merge, a `main` avança e a branch local fica defasada. Antes do próximo PR, **rebasear** sobre a `main` nova para evitar conflito:
   - `git fetch origin main`
   - `git rebase --onto origin/main <último-commit-já-mergeado>` (ou `git reset --hard origin/main` e reaplicar só o que falta).
 - O container é efêmero e às vezes re-clona em commit antigo — **sempre** `git fetch origin main && git reset --hard origin/main` antes de começar.
-- Identidade de commit: `Claude <noreply@anthropic.com>`.
-- **Não** criar PR sem combinar (neste projeto o fluxo PR+squash já está acordado).
+- Identidade de commit: `Claude <noreply@anthropic.com>`. (O commit de squash-merge na `main` é gerado pelo GitHub e aparece como `committer: GitHub <noreply@github.com>` / "Unverified" — isso é **normal**, não reescrever.)
+- O fluxo PR → squash → deploy está **pré-autorizado** (ver acima): criar PR, esperar o CI, mergear e deployar sem pedir ok a cada vez.
 
 ## Validação antes de commitar
 - **Automatizado no CI (GitHub Actions `.github/workflows/ci.yml` → `scripts/ci-validate.js`):** roda em cada PR/push p/ `main` e faz as 3 checagens abaixo + **barra se `api/` passar de 12 funções** (limite Vercel que já travou prod). Localmente: `node scripts/ci-validate.js`.
