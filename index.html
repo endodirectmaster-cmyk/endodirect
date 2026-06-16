@@ -740,25 +740,6 @@ textarea{resize:vertical;line-height:1.6}
 .ref-chat-form textarea{flex:1;min-height:44px;resize:vertical}
 </style>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<!-- Fallback de CDN p/ o SDK do Supabase (login). Se a jsdelivr falhar/atrasar,
-     carrega da unpkg ANTES de prosseguir — senão window.supabase fica indefinido
-     e o login NÃO inicializa (lockout, sem nenhuma requisição chegar ao Supabase).
-     document.write é seguro aqui: roda no <head>, durante o parse inicial. -->
-<script>window.supabase||document.write('<script src="https://unpkg.com/@supabase/supabase-js@2/dist/umd/supabase.js"><\/script>');</script>
-<script>window.supabase||document.write('<script src="https://cdn.statically.io/npm/@supabase/supabase-js@2/dist/umd/supabase.js"><\/script>');</script>
-<script>
-// Se NENHUMA CDN carregou o SDK de login, mostra um aviso CLARO e visível em vez
-// de um login silenciosamente morto (= "não entra" sem nenhuma pista pro usuário).
-window.addEventListener('load',function(){
-  if(window.supabase&&window.supabase.createClient)return;
-  try{
-    var b=document.createElement('div');
-    b.style.cssText='position:fixed;left:0;right:0;top:0;z-index:2147483647;background:#b91c1c;color:#fff;padding:12px 16px;font:14px/1.5 system-ui,-apple-system,sans-serif;text-align:center;box-shadow:0 2px 8px rgba(0,0,0,.3)';
-    b.textContent='⚠️ Não foi possível carregar o sistema de login (provavelmente bloqueado pela sua rede ou por uma extensão do navegador). Tente: desativar o bloqueador de anúncios para este site, usar OUTRA REDE (dados móveis/4G) ou outro navegador — e recarregue a página.';
-    (document.body||document.documentElement).appendChild(b);
-  }catch(e){}
-});
-</script>
 <script src="https://cdn.jsdelivr.net/npm/tus-js-client@4/dist/tus.min.js"></script>
 <script src="growth-lms.js"></script>
 </head>
@@ -3102,11 +3083,11 @@ function genCode(area){
 // ── API (ambiente do artefato injeta autenticação) ──
 var AI_API_ENDPOINT='/api/ai';
 function aiRequest(payload){
-  // Teto global de tempo (90s) p/ NENHUMA chamada de IA pendurar o app. O
-  // servidor corta em 60s (maxDuration), então 90s nunca dispara à toa em
+  // Teto global de tempo (60s) p/ NENHUMA chamada de IA pendurar o app. O
+  // servidor já corta em 30s (maxDuration), então 60s nunca dispara à toa em
   // chamada legítima — só protege contra travamento real de rede.
   var ctrl=(typeof AbortController!=='undefined')?new AbortController():null;
-  var to=ctrl?setTimeout(function(){ctrl.abort();},90000):null;
+  var to=ctrl?setTimeout(function(){ctrl.abort();},60000):null;
   function done(){if(to){clearTimeout(to);to=null;}}
   return fetch(AI_API_ENDPOINT,{
     method:'POST',
@@ -8681,27 +8662,10 @@ function simRetry(promiseFactory){
   return promiseFactory().catch(function(){return sleep(700).then(promiseFactory);});
 }
 function updateSimCounter(){
-  var el=document.getElementById('sim-counter');if(!el||!simState)return;
-  var resp=(simState.answers||[]).length,total=simState.maxSteps||resp,ac=simState.score||0;
+  var el=document.getElementById('sim-counter');if(!el||!simState||!simState.data)return;
+  var resp=(simState.answers||[]).length,total=(simState.data.steps||[]).length,ac=simState.score||0;
   var pct=resp?Math.round(ac/resp*100):0;
   el.textContent='Passos: '+resp+'/'+total+' · Acertos: '+ac+(resp?' ('+pct+'%)':'');
-}
-// OSCE gerado PASSO A PASSO (lazy): a 1ª chamada traz só a vinheta + passo 1
-// (largada rápida ~6-10s); cada passo seguinte é gerado sob demanda com o
-// contexto acumulado. Evita o caso gigante de uma vez (que dava 504/truncava)
-// e permite 4-5 passos ricos com Sonnet sem estourar o limite da função.
-var SIM_MAX_STEPS=4; // teto de passos (a largada não depende disto)
-function simStepShape(mode){
-  return mode==='mc'
-    ? '{"pergunta":"pergunta clínica objetiva","options":{"A":"","B":"","C":"","D":""},"correct":"A","feedback":"1-2 frases citando alvo/valor de corte/dose/diretriz (SBEM, SBD, ADA, Endocrine Society, AACE)"}'
-    : '{"pergunta":"pergunta clínica objetiva","ideal":"resposta ideal objetiva com valores de corte, doses e monitorização"}';
-}
-function simContextTxt(){
-  var t='Caso ('+simState.sub+', complexidade '+simState.level+'):\n'+(simState.data.intro||'');
-  if((simState.answers||[]).length){
-    t+='\n\nPassos já realizados:\n'+simState.answers.map(function(a,i){return 'Passo '+(i+1)+' — Pergunta: '+a.question+' | Resposta do aluno: '+a.answer+' | Esperado: '+(a.correct||'')+(a.feedback?(' | '+String(a.feedback).slice(0,200)):'');}).join('\n');
-  }
-  return t;
 }
 startSim=function(){
   if(!consumeTrial('sim'))return;
@@ -8710,12 +8674,11 @@ startSim=function(){
   var mode=(document.querySelector('input[name="sim-mode"]:checked')||{}).value||'mc';
   var btn=document.getElementById('btn-sim-start');
   btn.disabled=true;btn.innerHTML=ldHTML('Gerando...');
-  var sys='Você é preceptor de endocrinologia conduzindo um caso clínico OSCE passo a passo, em português do Brasil, com RIGOR TÉCNICO. Crie o INÍCIO do caso: a vinheta (intro) com dados objetivos — idade, sexo, queixa, antecedentes, exame físico e EXAMES LABORATORIAIS com valores e unidades (ex.: TSH 8,4 mUI/L; cortisol 2,1 µg/dL) — e o PRIMEIRO passo (anamnese dirigida). JSON APENAS: {"intro":"vinheta objetiva com dados e labs","step":'+simStepShape(mode)+'}. Valores, doses e diretrizes corretos; distratoras plausíveis. Só o JSON.';
-  withTimeout(simRetry(function(){return callAIJson(sys,'Caso de '+(sub||'endocrinologia')+', complexidade '+level+', modo '+(mode==='mc'?'múltipla escolha':'resposta aberta')+'.',1100,0,AI_MODEL_SIM_GEN);}),35000,'A geração demorou demais. Tente de novo.')
+  var sys='Você é preceptor de endocrinologia conduzindo um caso clínico passo a passo (estilo OSCE), em português do Brasil, com RIGOR TÉCNICO. A vinheta (intro) deve trazer dados objetivos: idade, sexo, queixa, antecedentes, exame físico e EXAMES LABORATORIAIS com valores e unidades (ex.: TSH 8,4 mUI/L; cortisol 2,1 µg/dL). JSON APENAS: {"intro":"vinheta com dados objetivos e laboratoriais","steps":[{"pergunta":"conduta/raciocínio solicitado"'+(mode==='mc'?',"options":{"A":"","B":"","C":"","D":""},"correct":"A","feedback":"justificativa técnica curta citando alvo/critério/dose/diretriz (SBEM, SBD, ADA, Endocrine Society, AACE) quando pertinente"':',"ideal":"resposta ideal detalhada com valores de corte, doses e monitorização"')+'}]}. Use 4 a 6 passos PROGRESSIVOS (anamnese dirigida → exames complementares → diagnóstico → conduta/titulação → monitorização). Valores de corte, doses e diretrizes corretos. As distratoras devem ser plausíveis.';
+  withTimeout(simRetry(function(){return callAIJson(sys,'Caso de '+(sub||'endocrinologia')+', complexidade '+level+', modo '+(mode==='mc'?'múltipla escolha':'resposta aberta')+'.',2600,0,AI_MODEL_SIM_GEN);}),50000,'A geração demorou demais. Tente de novo.')
   .then(function(d){
-    var first=d&&(d.step||(d.steps&&d.steps[0]));
-    if(!d||!d.intro||!first||!first.pergunta)throw new Error('Resposta inválida.');
-    simState={data:{intro:d.intro,steps:[first]},step:0,mode:mode,score:0,answers:[],sub:sub||'Endocrinologia',level:level,maxSteps:SIM_MAX_STEPS};
+    if(!d||!d.steps||!d.steps.length)throw new Error('Resposta inválida.');
+    simState={data:d,step:0,mode:mode,score:0,answers:[],sub:sub||'Endocrinologia',level:level};
     document.getElementById('sim-setup').style.display='none';
     document.getElementById('sim-result').style.display='none';
     document.getElementById('sim-content').style.display='block';
@@ -8723,30 +8686,6 @@ startSim=function(){
     renderSimStep();
   }).catch(function(e){notify('Erro: '+e.message,'err');})
   .then(function(){btn.disabled=false;btn.innerHTML='▶ Iniciar simulação';});
-};
-// Gera o próximo passo sob demanda (cada chamada é pequena → sem 504/truncamento).
-advanceSim=function(){
-  if(!simState)return;
-  if(simState.step>=simState.maxSteps){finishSim();return;} // teto de passos
-  if(simState.data.steps[simState.step]){renderSimStep();return;} // já gerado
-  var wrap=document.getElementById('sim-input-wrap');
-  if(wrap)wrap.innerHTML=ldHTML('Preparando o próximo passo...');
-  var n=simState.step+1; // passo a gerar (1-based)
-  var sys='Você é preceptor de endocrinologia conduzindo um caso clínico OSCE passo a passo, com RIGOR TÉCNICO. Vou te dar a vinheta e os passos já feitos. Gere APENAS o próximo passo (passo '+n+' de '+simState.maxSteps+'), mais avançado e coerente, SEM repetir o que já foi perguntado — progressão típica: anamnese → exame físico → exames complementares → diagnóstico → conduta/titulação/monitorização. JSON APENAS: {"step":'+simStepShape(simState.mode)+'}. Valores, doses e diretrizes (SBEM, SBD, ADA, Endocrine Society, AACE) corretos; distratoras plausíveis. Só o JSON.';
-  withTimeout(simRetry(function(){return callAIJson(sys,simContextTxt()+'\n\nGere o passo '+n+'.',1100,0,AI_MODEL_SIM_GEN);}),35000,'Demorou para gerar o próximo passo.')
-  .then(function(d){
-    var st=d&&(d.step||(d.steps&&d.steps[0]));
-    if(!st||!st.pergunta){finishSim();return;}
-    simState.data.steps[simState.step]=st;
-    renderSimStep();
-  }).catch(function(e){
-    var w=document.getElementById('sim-input-wrap');
-    if(w){
-      w.innerHTML='<div class="sim-bubble er" style="margin:0 0 .4rem">Não consegui gerar o próximo passo.</div><button class="btn btn-primary btn-sm" id="btn-sim-next-retry">⟳ Tentar de novo</button> <button class="btn btn-outline btn-sm" id="btn-sim-finish-now" style="margin-left:.4rem">Finalizar agora</button>';
-      var rt=document.getElementById('btn-sim-next-retry');if(rt)rt.addEventListener('click',advanceSim);
-      var fn=document.getElementById('btn-sim-finish-now');if(fn)fn.addEventListener('click',finishSim);
-    }
-  });
 };
 renderSimStep=function(){
   updateSimCounter();
@@ -8772,7 +8711,7 @@ selectSimOpt=function(letter){
   simState.step++;
   updateSimCounter();
   document.getElementById('sim-input-wrap').innerHTML='';
-  setTimeout(advanceSim,300);
+  setTimeout(renderSimStep,400);
 };
 submitSimOpen=function(){
   var ta=document.getElementById('sim-open-input');
@@ -8785,7 +8724,7 @@ submitSimOpen=function(){
     if(ok)simState.score++;
     simState.answers.push({question:s.pergunta,answer:ans,correct:s.ideal||'',ok:ok,feedback:r});
     msgs.innerHTML+='<div class="sim-bubble feed"><strong>Sua resposta:</strong> '+esc(ans)+'</div><div class="sim-bubble doc">'+esc(r)+'</div>';
-    simState.step++;updateSimCounter();wrap.innerHTML='';advanceSim();
+    simState.step++;updateSimCounter();wrap.innerHTML='';renderSimStep();
   }).catch(function(e){notify('Erro: '+e.message,'err');wrap.innerHTML='';});
 };
 function simReportRestart(){var r=document.getElementById('sim-result');if(r)r.style.display='none';var s=document.getElementById('sim-setup');if(s)s.style.display='block';}
@@ -8819,7 +8758,7 @@ function renderSimReportFallback(pct,total){
 }
 finishSim=function(){
   document.getElementById('sim-content').style.display='none';
-  var total=(simState.answers||[]).length||simState.data.steps.length,pct=total?Math.round((simState.score/total)*100):0;
+  var total=simState.data.steps.length,pct=Math.round((simState.score/total)*100);
   var result=document.getElementById('sim-result');
   result.style.display='block';
   result.innerHTML='<div class="sim-report"><div class="sim-report-head"><div><div class="sim-report-kicker">Relatório final</div><h3>Gerando relatório do desempenho…</h3><p>'+esc(simState.sub)+' · '+esc(simState.level)+'</p></div><div class="sim-report-score"><strong>'+pct+'%</strong><span>'+simState.score+'/'+total+' passos</span></div></div><div style="margin-top:.6rem">'+ldHTML('Analisando suas condutas…')+'</div></div>';
