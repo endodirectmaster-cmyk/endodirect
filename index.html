@@ -740,6 +740,11 @@ textarea{resize:vertical;line-height:1.6}
 .ref-chat-form textarea{flex:1;min-height:44px;resize:vertical}
 </style>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<!-- Fallback de CDN p/ o SDK do Supabase (login). Se a jsdelivr falhar/atrasar,
+     carrega da unpkg ANTES de prosseguir — senão window.supabase fica indefinido
+     e o login NÃO inicializa (lockout, sem nenhuma requisição chegar ao Supabase).
+     document.write é seguro aqui: roda no <head>, durante o parse inicial. -->
+<script>window.supabase||document.write('<script src="https://unpkg.com/@supabase/supabase-js@2/dist/umd/supabase.js"><\/script>');</script>
 <script src="https://cdn.jsdelivr.net/npm/tus-js-client@4/dist/tus.min.js"></script>
 <script src="growth-lms.js"></script>
 </head>
