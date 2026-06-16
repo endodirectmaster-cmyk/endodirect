@@ -745,6 +745,20 @@ textarea{resize:vertical;line-height:1.6}
      e o login NÃO inicializa (lockout, sem nenhuma requisição chegar ao Supabase).
      document.write é seguro aqui: roda no <head>, durante o parse inicial. -->
 <script>window.supabase||document.write('<script src="https://unpkg.com/@supabase/supabase-js@2/dist/umd/supabase.js"><\/script>');</script>
+<script>window.supabase||document.write('<script src="https://cdn.statically.io/npm/@supabase/supabase-js@2/dist/umd/supabase.js"><\/script>');</script>
+<script>
+// Se NENHUMA CDN carregou o SDK de login, mostra um aviso CLARO e visível em vez
+// de um login silenciosamente morto (= "não entra" sem nenhuma pista pro usuário).
+window.addEventListener('load',function(){
+  if(window.supabase&&window.supabase.createClient)return;
+  try{
+    var b=document.createElement('div');
+    b.style.cssText='position:fixed;left:0;right:0;top:0;z-index:2147483647;background:#b91c1c;color:#fff;padding:12px 16px;font:14px/1.5 system-ui,-apple-system,sans-serif;text-align:center;box-shadow:0 2px 8px rgba(0,0,0,.3)';
+    b.textContent='⚠️ Não foi possível carregar o sistema de login (provavelmente bloqueado pela sua rede ou por uma extensão do navegador). Tente: desativar o bloqueador de anúncios para este site, usar OUTRA REDE (dados móveis/4G) ou outro navegador — e recarregue a página.';
+    (document.body||document.documentElement).appendChild(b);
+  }catch(e){}
+});
+</script>
 <script src="https://cdn.jsdelivr.net/npm/tus-js-client@4/dist/tus.min.js"></script>
 <script src="growth-lms.js"></script>
 </head>
