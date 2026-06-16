@@ -2,6 +2,8 @@ const DEFAULT_MODEL = process.env.ANTHROPIC_MODEL || 'claude-sonnet-4-6';
 // Modelos que o cliente pode solicitar por requisição (evita abuso/custo).
 // Recursos clínicos (prescrição/simulador) pedem Opus; o resto fica no default.
 const ALLOWED_MODELS = { 'claude-sonnet-4-6': 1, 'claude-opus-4-8': 1, 'claude-haiku-4-5': 1 };
+// Grounding opcional por PubMed (módulo — não conta como função serverless).
+const { pubmedGround, formatSources } = require('../lib/pubmed');
 function pickModel(requested) {
   const m = String(requested || '');
   return ALLOWED_MODELS[m] ? m : DEFAULT_MODEL;
@@ -84,6 +86,19 @@ module.exports = async function handler(req, res) {
     return json(res, 400, { error: 'Envie uma pergunta ou documento para a IA.' });
   }
 
+  // Grounding opcional por PubMed: injeta FONTES verificáveis (PMID/ano) no topo
+  // do prompt para a IA citar artigos REAIS. Best-effort — qualquer falha segue
+  // sem grounding (a geração continua ancorada nas diretrizes nomeadas).
+  let groundQuery = '';
+  if (body.grounding) groundQuery = (typeof body.grounding === 'string' ? body.grounding : String(body.grounding.query || '')).trim().slice(0, 300);
+  let groundedPrompt = prompt;
+  if (groundQuery) {
+    try {
+      const block = formatSources(await pubmedGround(groundQuery, { max: 4 }));
+      if (block) groundedPrompt = block + '\n\n' + prompt;
+    } catch (e) { /* best-effort: segue sem grounding */ }
+  }
+
   // Imagens vão como bloco 'image'; PDF/texto como 'document'. (Antes era sempre
   // 'document', o que a Anthropic rejeita para media_type de imagem.)
   const isImage = /^image\//.test(mediaType);
@@ -97,9 +112,9 @@ module.exports = async function handler(req, res) {
             data: documentBase64
           }
         },
-        { type: 'text', text: prompt || 'Analise este documento.' }
+        { type: 'text', text: groundedPrompt || 'Analise este documento.' }
       ]
-    : prompt;
+    : groundedPrompt;
 
   try {
     const upstream = await fetch('https://api.anthropic.com/v1/messages', {
@@ -128,3 +143,5 @@ module.exports = async function handler(req, res) {
     return json(res, 500, { error: error && error.message ? error.message : 'Falha ao chamar a IA.' });
   }
 };
+// Headroom p/ o passo opcional de grounding (PubMed) antes da chamada à IA.
+module.exports.config = { maxDuration: 30 };
