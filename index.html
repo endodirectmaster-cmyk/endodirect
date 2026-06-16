@@ -4573,7 +4573,7 @@ function renderProvaResults(qs){
   renderGenQ(true);
 }
 // ── FLASHCARDS ──
-var studyCards=[],studyIdx=0,fcSelectedCat='Diabetes',fcFilter='';
+var studyCards=[],studyIdx=0,fcSelectedCat='Diabetes',fcFilter=null;
 function renderFcCatPills(){
   var el=document.getElementById('fc-cat-pills');if(!el)return;
   el.innerHTML=FC_CATS.map(function(c){return'<button class="cat-pill'+(c===fcSelectedCat?' on':'')+'" data-fccat="'+esc(c)+'">'+esc(c)+'</button>';}).join('');
@@ -4591,6 +4591,7 @@ function saveFC(){
   persist();
   document.getElementById('fc-f').value='';document.getElementById('fc-b').value='';
   document.getElementById('fc-create').style.display='none';
+  fcFilter=fcSelectedCat; // mostra a categoria do card recém-criado
   renderFC();refreshDash();notify('Flashcard criado!','ok');
 }
 function genFC(){
@@ -4626,6 +4627,8 @@ function fcCatColor(cat){
 function renderFC(){
   renderFcFilter();
   var el=document.getElementById('fc-grid');if(!el)return;
+  // Entrada: cards ficam ocultos até o aluno escolher uma categoria (ou "Todos").
+  if(fcFilter==null){el.innerHTML='<div class="empty" style="grid-column:1/-1">Escolha uma categoria acima para ver os flashcards.</div>';return;}
   var list=fcFilter?DB.fc.filter(function(c){return c.cat===fcFilter;}):DB.fc;
   if(!list.length){el.innerHTML='<div class="empty" style="grid-column:1/-1">Nenhum flashcard.</div>';return;}
   el.innerHTML=list.map(function(c){var i=DB.fc.indexOf(c);var col=fcCatColor(c.cat);return'<div class="fc-card" data-fctoggle="'+i+'"><button class="fc-del" data-fcdel="'+i+'" title="Excluir">✕</button><div class="fc-inner"><div class="fc-face fc-face-front" style="border-left:5px solid '+col+'"><div class="fc-cat" style="color:'+col+'">'+esc(c.cat||'Geral')+'</div><div class="fc-front">'+esc(c.front)+'</div><div class="fc-hint">Clique para virar ↻</div></div><div class="fc-face fc-face-back" style="border-left:5px solid '+col+'"><div class="fc-cat" style="color:'+col+'">Resposta</div><div class="fc-back">'+esc(c.back)+'</div><div class="fc-hint">Clique para voltar ↺</div></div></div></div>';}).join('');
@@ -8657,6 +8660,7 @@ genFC=function(){
   .then(function(d){
     if(!d||!d.cards)throw new Error('Resposta inválida.');
     d.cards.forEach(function(c){DB.fc.push({id:Date.now()+Math.random(),front:c.front,back:c.back,cat:sub,due:Date.now(),box:1,at:Date.now()});});
+    fcFilter=sub; // mostra a categoria recém-gerada
     persist();notify('Flashcards gerados!','ok');document.getElementById('fc-gen').style.display='none';renderFC();refreshDash();
   }).catch(function(e){notify('Erro: '+e.message,'err');})
   .then(function(){btn.disabled=false;btn.innerHTML='Gerar';});
