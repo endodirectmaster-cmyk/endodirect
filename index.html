@@ -4902,7 +4902,7 @@ function saveMM(){
 function mmSubGrid(){
   var seen={};
   (sharedMM||[]).forEach(function(m){var s=canonSub(m.sub);seen[s]=(seen[s]||0)+1;});
-  (DB.mm||[]).forEach(function(m){var s=canonSub(m.sub);seen[s]=(seen[s]||0)+1;});
+  (DB.mm||[]).forEach(function(m){if(m&&m.seed)return;var s=canonSub(m.sub);seen[s]=(seen[s]||0)+1;});
   var out=DIR_SUBS.map(function(s){return {sub:s,count:seen[s]||0};});
   Object.keys(seen).forEach(function(s){if(DIR_SUBS.indexOf(s)<0)out.push({sub:s,count:seen[s]});});
   return out;
@@ -4918,7 +4918,7 @@ function renderMMList(){
     var cards=mmSubGrid().map(function(s){
       return '<button class="dir-sub-btn" data-mmsubsel="'+esc(s.sub)+'"><div class="dsb-ico">'+dirSubIcon(s.sub)+'</div><h3>'+esc(s.sub)+'</h3><div class="dsb-cnt">'+s.count+' mapa'+(s.count===1?'':'s')+'</div></button>';
     }).join('');
-    setText('mm-count','('+(shared.length+DB.mm.length)+')');
+    setText('mm-count','('+(shared.length+(DB.mm||[]).filter(function(m){return !(m&&m.seed);}).length)+')');
     el.innerHTML='<div class="dir-sub-grid">'+cards+'</div>';
     return;
   }
@@ -4927,7 +4927,10 @@ function renderMMList(){
   if(head)head.innerHTML='<button class="dir-back" data-mmback style="margin-bottom:.7rem">← Todas as subespecialidades</button>'
     +'<div class="ph" style="margin-top:0"><h1 style="font-size:1.05rem">'+dirSubIcon(mmSubSel)+' '+esc(mmSubSel)+'</h1></div>';
   var sh=shared.filter(function(m){return canonSub(m.sub)===mmSubSel;});
-  var ph=(DB.mm||[]).map(function(m,i){return{m:m,i:i};}).filter(function(o){return canonSub(o.m.sub)===mmSubSel;});
+  // Não renderiza cópias semeadas (seed:true): viram duplicatas dos mapas do
+  // professor. Cobre contas demo/local (sem id remoto, onde o prune do
+  // refreshAfterRemoteState não roda) e resíduo de localStorage de qualquer conta.
+  var ph=(DB.mm||[]).map(function(m,i){return{m:m,i:i};}).filter(function(o){return canonSub(o.m.sub)===mmSubSel&&!(o.m&&o.m.seed);});
   setText('mm-count','('+(sh.length+ph.length)+')');
   var html=sh.map(function(m){
     var j=shared.indexOf(m);
