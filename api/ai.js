@@ -143,5 +143,7 @@ module.exports = async function handler(req, res) {
     return json(res, 500, { error: error && error.message ? error.message : 'Falha ao chamar a IA.' });
   }
 };
-// Headroom p/ o passo opcional de grounding (PubMed) antes da chamada à IA.
-module.exports.config = { maxDuration: 30 };
+// Tempo p/ gerar casos clínicos ricos (OSCE/prescrição em Sonnet/Opus) sem
+// truncar/expirar + passo opcional de grounding (PubMed). Reforçado em
+// vercel.json (functions) que é a fonte autoritativa.
+module.exports.config = { maxDuration: 60 };

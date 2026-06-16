@@ -3083,11 +3083,11 @@ function genCode(area){
 // ── API (ambiente do artefato injeta autenticação) ──
 var AI_API_ENDPOINT='/api/ai';
 function aiRequest(payload){
-  // Teto global de tempo (60s) p/ NENHUMA chamada de IA pendurar o app. O
-  // servidor já corta em 30s (maxDuration), então 60s nunca dispara à toa em
+  // Teto global de tempo (90s) p/ NENHUMA chamada de IA pendurar o app. O
+  // servidor corta em 60s (maxDuration), então 90s nunca dispara à toa em
   // chamada legítima — só protege contra travamento real de rede.
   var ctrl=(typeof AbortController!=='undefined')?new AbortController():null;
-  var to=ctrl?setTimeout(function(){ctrl.abort();},60000):null;
+  var to=ctrl?setTimeout(function(){ctrl.abort();},90000):null;
   function done(){if(to){clearTimeout(to);to=null;}}
   return fetch(AI_API_ENDPOINT,{
     method:'POST',
@@ -8675,7 +8675,7 @@ startSim=function(){
   var btn=document.getElementById('btn-sim-start');
   btn.disabled=true;btn.innerHTML=ldHTML('Gerando...');
   var sys='Você é preceptor de endocrinologia conduzindo um caso clínico passo a passo (estilo OSCE), em português do Brasil, com RIGOR TÉCNICO. A vinheta (intro) deve trazer dados objetivos: idade, sexo, queixa, antecedentes, exame físico e EXAMES LABORATORIAIS com valores e unidades (ex.: TSH 8,4 mUI/L; cortisol 2,1 µg/dL). JSON APENAS: {"intro":"vinheta com dados objetivos e laboratoriais","steps":[{"pergunta":"conduta/raciocínio solicitado"'+(mode==='mc'?',"options":{"A":"","B":"","C":"","D":""},"correct":"A","feedback":"justificativa técnica curta citando alvo/critério/dose/diretriz (SBEM, SBD, ADA, Endocrine Society, AACE) quando pertinente"':',"ideal":"resposta ideal detalhada com valores de corte, doses e monitorização"')+'}]}. Use 4 a 6 passos PROGRESSIVOS (anamnese dirigida → exames complementares → diagnóstico → conduta/titulação → monitorização). Valores de corte, doses e diretrizes corretos. As distratoras devem ser plausíveis.';
-  withTimeout(simRetry(function(){return callAIJson(sys,'Caso de '+(sub||'endocrinologia')+', complexidade '+level+', modo '+(mode==='mc'?'múltipla escolha':'resposta aberta')+'.',2600,0,AI_MODEL_SIM_GEN);}),50000,'A geração demorou demais. Tente de novo.')
+  withTimeout(simRetry(function(){return callAIJson(sys,'Caso de '+(sub||'endocrinologia')+', complexidade '+level+', modo '+(mode==='mc'?'múltipla escolha':'resposta aberta')+'.',4000,0,AI_MODEL_SIM_GEN);}),70000,'A geração demorou demais. Tente de novo.')
   .then(function(d){
     if(!d||!d.steps||!d.steps.length)throw new Error('Resposta inválida.');
     simState={data:d,step:0,mode:mode,score:0,answers:[],sub:sub||'Endocrinologia',level:level};
