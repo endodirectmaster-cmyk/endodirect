@@ -3107,6 +3107,7 @@ function aiRequest(payload){
 }
 var AI_MODEL_CLINICO='claude-opus-4-8'; // avaliação e relatório clínico (raciocínio)
 var AI_MODEL_SIM_GEN='claude-sonnet-4-6'; // geração rápida de vinhetas de caso (latência menor)
+var AI_MODEL_SIM_FAST='claude-haiku-4-5'; // OSCE: caso de estudo em poucos segundos (Haiku = menor latência)
 // ============================================================
 // Padrão de autoria clínica p/ geração por IA (questões, flashcards, mapas).
 // Máxima precisão técnica + diretrizes recentes NOMEADAS + zero "linguagem de
@@ -8675,7 +8676,7 @@ startSim=function(){
   var btn=document.getElementById('btn-sim-start');
   btn.disabled=true;btn.innerHTML=ldHTML('Gerando...');
   var sys='Você é preceptor de endocrinologia montando um caso clínico passo a passo (estilo OSCE) em português do Brasil — técnico, porém CONCISO e rápido. A vinheta (intro) é curta: idade, sexo, queixa e os principais exames com valores e unidades. JSON APENAS: {"intro":"vinheta curta com dados e labs","steps":[{"pergunta":"conduta/raciocínio"'+(mode==='mc'?',"options":{"A":"","B":"","C":"","D":""},"correct":"A","feedback":"1 frase com o critério/dose/alvo"':',"ideal":"resposta ideal objetiva com valor de corte e conduta"')+'}]}. EXATAMENTE 4 passos progressivos (anamnese → exames → diagnóstico → conduta). Responda só o JSON, sem texto fora dele.';
-  withTimeout(simRetry(function(){return callAIJson(sys,'Caso de '+(sub||'endocrinologia')+', complexidade '+level+', modo '+(mode==='mc'?'múltipla escolha':'resposta aberta')+'.',2000,0,AI_MODEL_SIM_GEN);}),42000,'A geração demorou demais. Tente de novo.')
+  withTimeout(simRetry(function(){return callAIJson(sys,'Caso de '+(sub||'endocrinologia')+', complexidade '+level+', modo '+(mode==='mc'?'múltipla escolha':'resposta aberta')+'.',1600,0,AI_MODEL_SIM_FAST);}),25000,'A geração demorou demais. Tente de novo.')
   .then(function(d){
     if(!d||!d.steps||!d.steps.length)throw new Error('Resposta inválida.');
     simState={data:d,step:0,mode:mode,score:0,answers:[],sub:sub||'Endocrinologia',level:level};
