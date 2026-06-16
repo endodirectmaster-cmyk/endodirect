@@ -4841,16 +4841,13 @@ var MM_SEED=[
   ]}}
 ];
 function seedMindmaps(){
-  // Idempotente: adiciona modelos de mapa mental que ainda nao existem no deck.
-  var topics={};DB.mm.forEach(function(m){if(m&&m.topic)topics[m.topic]=1;});
-  var added=0;
-  MM_SEED.forEach(function(s){
-    if(topics[s.topic])return;
-    if(s.member&&isDegustacao())return; // mapas novos (member) não entram na degustação
-    DB.mm.push({id:Date.now()+Math.random(),topic:s.topic,sub:s.sub,data:normalizeMMData(s.data),at:Date.now(),seed:true});added++;
-  });
-  if(added)lsSet('mm',DB.mm);
-  return added;
+  // Seeding de mapas mentais DESATIVADO. O professor agora publica um conjunto
+  // curado completo via mm_shared (tag "Professor"), visível a todos — inclusive
+  // degustação. Os antigos mapas-modelo pessoais (seed:true) viravam duplicatas
+  // (apareciam com "×" ao lado do mapa do professor) e voltavam a cada login.
+  // Mantido como no-op para não reintroduzir essas duplicatas. (MM_SEED fica no
+  // código apenas como referência histórica do conteúdo.)
+  return 0;
 }
 function newBlankMM(){
   var topic=(document.getElementById('mm-topic').value||'').trim();
