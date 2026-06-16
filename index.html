@@ -1465,10 +1465,11 @@ textarea{resize:vertical;line-height:1.6}
       <div class="ph"><h1>Questões</h1></div>
       <div class="pc">
         <div class="tog-row" style="margin-bottom:.85rem" id="q-mode-row">
-          <button class="tog-btn on" data-qmode="ia">🤖 Geradas por IA</button>
-          <button class="tog-btn" data-qmode="provas">🏛️ Banco de Questões</button>
+          <button class="tog-btn on" data-qmode="provas">🏛️ Banco de Questões</button>
+          <button class="tog-btn" data-qmode="ia">🤖 Geradas por IA</button>
+          <button class="tog-btn" data-qmode="salvo">💾 Banco Salvo</button>
         </div>
-        <div class="gen-box" id="q-panel-ia">
+        <div class="gen-box" id="q-panel-ia" style="display:none">
           <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:.65rem;flex-wrap:wrap;gap:.45rem">
             <span class="sec-title">Gerar com IA</span>
             <div class="tog-row" id="qtype-row"><button class="tog-btn on" data-qt="mc">Múltipla escolha</button><button class="tog-btn" data-qt="disc">Discursiva</button></div>
@@ -1488,7 +1489,7 @@ textarea{resize:vertical;line-height:1.6}
           <div class="fld2"><label>Tema específico (opcional)</label><input type="text" id="q-topic" placeholder="Ex: Cetoacidose diabética…"></div>
           <button class="btn btn-primary" id="btn-genq">▶ Gerar questões</button>
         </div>
-        <div class="gen-box" id="q-panel-provas" style="display:none">
+        <div class="gen-box" id="q-panel-provas">
           <span class="sec-title" style="display:block;margin-bottom:.7rem">🏛️ Questões de provas anteriores</span>
           <div class="g4" style="margin-bottom:.65rem">
             <div class="fld2" style="margin:0"><label>Instituição</label><select id="q-inst"><option value="">Todas</option></select></div>
@@ -1500,9 +1501,11 @@ textarea{resize:vertical;line-height:1.6}
           <button class="btn btn-primary" id="btn-filter-provas">🔍 Buscar questões</button>
         </div>
         <div id="q-gen-results"></div>
-        <div class="divider"></div>
-        <div class="sec-h"><span class="sec-title">Banco salvo <span id="q-saved-count" style="font-weight:400;text-transform:none;letter-spacing:0;color:var(--t3)"></span></span></div>
-        <div id="q-saved-list"></div>
+        <div id="q-panel-salvo" style="display:none">
+          <div class="sec-h"><span class="sec-title">💾 Banco Salvo <span id="q-saved-count" style="font-weight:400;text-transform:none;letter-spacing:0;color:var(--t3)"></span></span></div>
+          <div style="font-size:.72rem;color:var(--t3);margin:-.3rem 0 .7rem">Questões geradas por IA que você salvou + as geradas no Resumidor de Artigos.</div>
+          <div id="q-saved-list"></div>
+        </div>
       </div>
     </div>
 
@@ -4107,6 +4110,7 @@ function applyQuestDegustacao(){
     if(provTab)provTab.classList.add('on');
     if(iaP)iaP.style.display='none';
     if(provP)provP.style.display='block';
+    var salvoP=document.getElementById('q-panel-salvo');if(salvoP)salvoP.style.display='none';
     showBancoLock(false);
   }else if(iaTab){iaTab.style.display='';}
 }
@@ -5132,6 +5136,9 @@ function renderCursosAluno(){
   if(frow)frow.innerHTML='<div style="display:flex;flex-wrap:wrap;gap:.6rem">'+catalog.map(function(cc){return aTile(cc.slug,cc.nome,cnt[cc.slug]||0,'🎓');}).join('')+'</div>';
   if(cursoFilter&&!cursoAcessivel(cursoFilter)){cursoFilter='';cursoMod='';}
   var el=document.getElementById('curso-list');if(!el)return;
+  // Primeira entrada: mostra só os cards de curso (frow). As subespecialidades
+  // (módulos) só aparecem depois de escolher um curso acima.
+  if(!cursoFilter){el.innerHTML='<div class="empty" style="grid-column:1/-1">Escolha um curso acima para ver as subespecialidades.</div>';return;}
   // Escopo: aulas do pacote selecionado (ou todas as acessíveis).
   var scope=cursoFilter?data.filter(function(c){return c.curso===cursoFilter;}):data.filter(function(c){return cursoAcessivel(c.curso);});
   if(!scope.length){el.innerHTML='<div class="empty" style="grid-column:1/-1">Nenhuma videoaula '+(cursoFilter?'neste curso':'disponível no seu plano ainda')+'.</div>';return;}
@@ -8286,7 +8293,7 @@ document.addEventListener('click',function(e){
   var c=function(sel){return t.closest(sel);};
   // questões
   var qrow=c('.q-row');
-  if(qrow){toggleQDetail(parseInt(qrow.dataset.qi),qrow.dataset.src,qrow.dataset.mc==='true');return;}
+  if(qrow&&!c('[data-del-q]')){toggleQDetail(parseInt(qrow.dataset.qi),qrow.dataset.src,qrow.dataset.mc==='true');return;}
   var qo=c('.qo');
   if(qo&&qo.dataset.answer!==undefined){selectOpt(qo.dataset.letter,qo.dataset.answer,qo.dataset.exp,qo.dataset.src,qo.dataset.idx);return;}
   var ev=c('[data-eval-disc]');
@@ -9181,17 +9188,24 @@ document.addEventListener('DOMContentLoaded',function(){
 
   // QUESTÕES
   document.querySelectorAll('[data-qmode]').forEach(function(b){b.addEventListener('click',function(){
-    var ia=b.dataset.qmode==='ia';
+    var mode=b.dataset.qmode; // 'provas' | 'ia' | 'salvo'
     document.querySelectorAll('[data-qmode]').forEach(function(x){x.classList.toggle('on',x===b);});
-    if(!ia&&!canAccessBanco()){
+    // Banco de Questões (provas) exige acesso: sem pacote, mostra o cadeado.
+    if(mode==='provas'&&!canAccessBanco()){
       document.getElementById('q-panel-ia').style.display='none';
       document.getElementById('q-panel-provas').style.display='none';
+      document.getElementById('q-panel-salvo').style.display='none';
+      document.getElementById('q-gen-results').style.display='none';
       showBancoLock(true);
       return;
     }
     showBancoLock(false);
-    document.getElementById('q-panel-ia').style.display=ia?'block':'none';
-    document.getElementById('q-panel-provas').style.display=ia?'none':'block';
+    document.getElementById('q-panel-ia').style.display=mode==='ia'?'block':'none';
+    document.getElementById('q-panel-provas').style.display=mode==='provas'?'block':'none';
+    document.getElementById('q-panel-salvo').style.display=mode==='salvo'?'block':'none';
+    // Resultados de geração/banco pertencem às abas IA/Provas, não ao Banco Salvo.
+    document.getElementById('q-gen-results').style.display=mode==='salvo'?'none':'block';
+    if(mode==='salvo')renderSavedQ();
   });});
   document.querySelectorAll('[data-qt]').forEach(function(b){b.addEventListener('click',function(){qtype=b.dataset.qt;document.querySelectorAll('[data-qt]').forEach(function(x){x.classList.toggle('on',x===b);});});});
   document.getElementById('btn-genq').addEventListener('click',genQuestions);
