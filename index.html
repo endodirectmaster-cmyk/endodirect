@@ -373,7 +373,8 @@ textarea{resize:vertical;line-height:1.6}
 .sf-timer.warn{color:#fbbf24}
 .sf-timer.crit{color:#f87171;animation:pulse 1s infinite}
 @keyframes pulse{0%,100%{opacity:1}50%{opacity:.4}}
-.sf-nav-btn{width:28px;height:28px;border-radius:5px;border:1px solid var(--bd2);background:var(--surface);font-size:.67rem;font-weight:600;cursor:pointer;font-family:var(--font);display:inline-flex;align-items:center;justify-content:center}
+.sf-nav-btn{width:28px;height:28px;border-radius:5px;border:1px solid var(--bd2);background:var(--bd);color:var(--tx);font-size:.67rem;font-weight:600;cursor:pointer;font-family:var(--font);display:inline-flex;align-items:center;justify-content:center}
+.sf-nav-btn:hover{border-color:var(--blue);background:var(--blue-l)}
 .sf-nav-btn.ans{background:var(--blue);color:#fff;border-color:var(--blue)}
 .sf-nav-btn.flag{background:var(--gold-l);border-color:var(--gold)}
 .note-item{padding:.55rem .8rem;cursor:pointer;border-bottom:1px solid var(--bd)}
@@ -689,6 +690,13 @@ textarea{resize:vertical;line-height:1.6}
 .dir-card li{font-size:.86rem;color:var(--t2);margin:.25rem 0;line-height:1.5}
 .dir-card .dir-texto{font-size:.88rem;color:var(--t2);line-height:1.62}
 .dir-card .dir-texto p{margin:.4rem 0}
+.art-md h3{font-size:.9rem;font-weight:700;color:var(--tx);margin:.75rem 0 .3rem}
+.art-md ul{margin:.3rem 0 .3rem 1.15rem;padding:0}
+.art-md li{margin:.15rem 0}
+.art-md p{margin:.4rem 0}
+.art-md strong{color:var(--tx);font-weight:700}
+.art-md table{border-collapse:collapse;margin:.5rem 0;font-size:.74rem}
+.art-md th,.art-md td{border:1px solid var(--bd2);padding:.25rem .5rem;text-align:left}
 .dir-flash-wrap{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:.8rem;margin-top:.3rem}
 /* Flashcard com flip 3D */
 .dir-flip{height:160px;cursor:pointer;perspective:1200px;outline:none}
@@ -2718,7 +2726,16 @@ function renderDegustacaoBar(){
   }else if(bar){bar.style.display='none';}
 }
 function refreshAfterRemoteState(){
-  try{if(currentUser&&currentUser.id){var s=(seedFlashcards()||0)+(seedMindmaps()||0);if(s>0)queueRemoteStateSave();}}catch(e){}
+  try{if(currentUser&&currentUser.id){
+    // Mapas mentais: remove cópias semeadas antigas (seed:true) — viraram
+    // duplicatas dos mapas do professor (mm_shared). O seeding já está desligado;
+    // isto auto-limpa resíduo em localStorage / estado de abas antigas (mesmo que
+    // tenham re-salvado no servidor). Mapas criados pelo aluno (sem seed) ficam.
+    var before=DB.mm.length;DB.mm=DB.mm.filter(function(m){return !(m&&m.seed);});
+    var mmPruned=DB.mm.length!==before;if(mmPruned)lsSet('mm',DB.mm);
+    var s=(seedFlashcards()||0)+(seedMindmaps()||0);
+    if(s>0||mmPruned)queueRemoteStateSave();
+  }}catch(e){}
   try{renderDegustacaoBar();}catch(e){}
   try{maybeResumePlanIntent();}catch(e){}
   try{refreshDash();}catch(e){}
@@ -6095,7 +6112,7 @@ function resumeArt(){
   var btn=document.getElementById('btn-art');
   var out=document.getElementById('art-result');
   var sys='Pesquisador médico. Retorne JSON APENAS: {"resumo":"resumo estruturado em markdown (objetivos, métodos, resultados, conclusão)","pontos":["ponto-chave 1","2","3"]'+(genQ?',"questions":[{"stem":"...","options":{"A":"","B":"","C":"","D":""},"answer":"A","explanation":"","area":"Endocrinologia","dificuldade":"intermediario"}]':'')+(genFCck?',"cards":[{"front":"","back":""}]':'')+'}';
-  btn.disabled=true;btn.innerHTML=ldHTML();out.innerHTML=ldHTML();
+  btn.disabled=true;btn.innerHTML='Gerando…';out.innerHTML=ldHTML();
   var p;
   if(mode==='file'&&artFileData&&artFileData.type==='pdf'){
     p=callAIwithPDF(sys+' '+(genQ?'Gere 3 questões. ':'')+(genFCck?'Gere 5 flashcards.':''),artFileData.base64);
@@ -6106,16 +6123,81 @@ function resumeArt(){
   }
   p.then(function(raw){
     var d=parseJ(raw);if(!d)throw new Error('Resposta inválida.');
-    var html='<div class="card" style="margin-bottom:.7rem"><div class="card-head"><span class="card-title">📄 Resumo</span></div><div style="font-size:.8rem;line-height:1.72;white-space:pre-wrap">'+esc(d.resumo||'')+'</div>';
+    artLastData=d;
+    var html='<div class="card" style="margin-bottom:.7rem"><div class="card-head"><span class="card-title">📄 Resumo</span></div><div class="art-md" style="font-size:.8rem;line-height:1.72">'+mdToHtml(d.resumo||'')+'</div>';
     if(d.pontos&&d.pontos.length)html+='<div style="margin-top:.7rem"><div class="card-title" style="margin-bottom:.4rem">Pontos-chave</div>'+d.pontos.map(function(p){return'<div style="font-size:.77rem;padding:.2rem 0;display:flex;gap:.4rem"><span style="color:var(--blue)">▸</span>'+esc(p)+'</div>';}).join('')+'</div>';
     html+='</div>';
-    var savedMsg=[];
-    if(d.questions&&d.questions.length){d.questions.forEach(function(q){DB.q.push(Object.assign({},q,{code:genCode(q.area||'Endocrinologia'),type:'mc',at:Date.now()}));});savedMsg.push(d.questions.length+' questões');}
-    if(d.cards&&d.cards.length){d.cards.forEach(function(c){DB.fc.push({id:Date.now()+Math.random(),front:c.front,back:c.back,cat:'Artigos',at:Date.now()});});savedMsg.push(d.cards.length+' flashcards');}
-    if(savedMsg.length){persist();refreshDash();html+='<div style="background:var(--grn-l);border:1px solid #1e5436;border-radius:var(--rs);padding:.5rem .8rem;font-size:.76rem;color:#34d399">✓ Salvos: '+savedMsg.join(' e ')+'.</div>';}
+    // Persiste no banco/baralho (também aparecem em Questões/Flashcards/Revisão)
+    // e mostra interativo aqui no resumidor (aluno responde na hora).
+    if(d.questions&&d.questions.length){d.questions.forEach(function(q){DB.q.push(Object.assign({},q,{code:genCode(q.area||'Endocrinologia'),type:'mc',at:Date.now()}));});}
+    if(d.cards&&d.cards.length){d.cards.forEach(function(c){DB.fc.push({id:Date.now()+Math.random(),front:c.front,back:c.back,cat:'Artigos',at:Date.now()});});}
+    if((d.questions&&d.questions.length)||(d.cards&&d.cards.length)){persist();refreshDash();}
+    html+=artQuizHTML(d);
     out.innerHTML=html;
+    wireArtResult(out);
   }).catch(function(e){out.innerHTML='<div style="color:var(--red);font-size:.78rem;padding:.5rem;background:var(--red-l);border-radius:var(--rs)">❌ '+esc(e.message)+'</div>';})
   .then(function(){btn.disabled=false;btn.innerHTML='▶ Resumir';});
+}
+// Render interativo das questões/flashcards gerados pelo resumidor: o aluno
+// responde no próprio painel (sem ter de caçar no Banco). artLastData guarda o
+// último resultado p/ o handler delegado (anexado uma vez em wireArtResult).
+var artLastData=null;
+function artQuizHTML(d){
+  var html='';
+  var qs=(d&&d.questions)||[];
+  if(qs.length){
+    html+='<div class="card" style="margin-bottom:.7rem"><div class="card-head"><span class="card-title">📝 Questões ('+qs.length+')</span></div>'
+      +'<div style="font-size:.7rem;color:var(--t3);margin:-.15rem 0 .6rem">Responda aqui mesmo — também salvas no Banco de Questões e na Revisão.</div>';
+    html+=qs.map(function(q,gi){
+      var opts=q.options||{};
+      return '<div style="margin-bottom:.9rem" data-aq="'+gi+'">'
+        +'<div style="font-size:.8rem;font-weight:600;margin-bottom:.45rem;line-height:1.5">'+(gi+1)+'. '+esc(q.stem||'')+'</div>'
+        +Object.keys(opts).map(function(k){return '<button class="sim-opt" data-aqopt="'+gi+':'+esc(k)+'"><span style="font-weight:700">'+esc(k)+'</span>'+esc(opts[k])+'</button>';}).join('')
+        +'<div data-aqfb="'+gi+'" style="display:none;font-size:.76rem;line-height:1.55;margin-top:.4rem;padding:.5rem .7rem;border-radius:var(--rs);background:var(--s2);border:1px solid var(--bd)"></div>'
+        +'</div>';
+    }).join('');
+    html+='</div>';
+  }
+  var cs=(d&&d.cards)||[];
+  if(cs.length){
+    html+='<div class="card" style="margin-bottom:.7rem"><div class="card-head"><span class="card-title">🃏 Flashcards ('+cs.length+')</span></div>'
+      +'<div style="font-size:.7rem;color:var(--t3);margin:-.15rem 0 .6rem">Também salvos nos Flashcards e na Revisão.</div>';
+    html+=cs.map(function(c,ci){
+      return '<div style="border:1px solid var(--bd2);border-radius:var(--rs);padding:.55rem .8rem;margin-bottom:6px">'
+        +'<div style="font-size:.8rem;font-weight:600;line-height:1.5">'+esc(c.front||'')+'</div>'
+        +'<button class="btn btn-outline btn-sm" data-afcflip="'+ci+'" style="margin-top:.45rem">Mostrar resposta</button>'
+        +'<div data-afcback="'+ci+'" style="display:none;font-size:.78rem;line-height:1.55;margin-top:.45rem;color:var(--t2)">'+esc(c.back||'')+'</div>'
+        +'</div>';
+    }).join('');
+    html+='</div>';
+  }
+  return html;
+}
+function wireArtResult(out){
+  if(out.__artWired)return;out.__artWired=1;
+  out.addEventListener('click',function(ev){
+    var ob=ev.target.closest&&ev.target.closest('[data-aqopt]');
+    if(ob){
+      var parts=ob.dataset.aqopt.split(':'),gi=parseInt(parts[0],10),k=parts[1];
+      var q=artLastData&&artLastData.questions&&artLastData.questions[gi];if(!q)return;
+      var wrap=ob.closest('[data-aq]');if(!wrap||wrap.__done)return;wrap.__done=1;
+      var ans=String(q.answer||'').trim().toUpperCase();
+      wrap.querySelectorAll('[data-aqopt]').forEach(function(b){
+        var bk=String(b.dataset.aqopt.split(':')[1]||'').toUpperCase();
+        if(bk===ans)b.classList.add('correct');else if(b===ob)b.classList.add('wrong');
+        b.style.pointerEvents='none';
+      });
+      var fb=wrap.querySelector('[data-aqfb]');
+      if(fb){var ok=String(k).toUpperCase()===ans;fb.style.display='block';
+        fb.innerHTML='<b style="color:'+(ok?'#34d399':'var(--red)')+'">'+(ok?'✓ Correta':'✗ Incorreta — resposta: '+esc(ans))+'</b>'+(q.explanation?('<div style="margin-top:.3rem;color:var(--t2)">'+esc(q.explanation)+'</div>'):'');}
+      return;
+    }
+    var fbtn=ev.target.closest&&ev.target.closest('[data-afcflip]');
+    if(fbtn){
+      var back=out.querySelector('[data-afcback="'+fbtn.dataset.afcflip+'"]');
+      if(back){back.style.display='block';fbtn.style.display='none';}
+    }
+  });
 }
 
 // ── CADERNO ──
