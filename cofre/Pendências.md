@@ -26,6 +26,7 @@ atualizado: 2026-06-16
 - [ ] **Passthrough de erro upstream** (`api/ai.js`, checkout) e **log de comprimento de chave Memed** (`api/memed/token.js`): limpar pós-homologação.
 - [ ] **Advisors Supabase (performance)**: RLS initplan (`auth.<fn>()`→`(select auth.<fn>())`), policies permissivas duplicadas, FK sem índice — otimizações de escala, não bugs. Os WARN de `SECURITY DEFINER` chamáveis por anon/authenticated são **por design** (checagem interna). `endodirect_state_backup` RLS sem policy = trancado (só service_role) — OK.
 - [ ] **Código morto** (`index.html`): `persistAdm` definido 2×; handlers do antigo editor de mapas (textarea) sem uso. Limpeza cosmética.
+- [ ] **Reaplicar melhorias do OSCE (revertidas no #342):** o `index.html` foi restaurado ao #334 para apagar o **apagão de interatividade** (causado por `document.write` no `<head>`). Logo, voltou a forma ANTIGA do OSCE (Sonnet rico, geração única → sofre 504/truncamento). Reaplicar a **geração passo-a-passo (lazy)** (`startSim` só com `{intro,step1}` + `advanceSim()` sob demanda, `SIM_MAX_STEPS=4` — ver [[Decisões]]) **testando em navegador de verdade antes de subir**. ⚠️ **NÃO** voltar com os fallbacks de CDN via `document.write` (foram a causa do apagão; a hipótese de CDN era falsa). `api/ai.js maxDuration=60` e `vercel.json functions` ficaram (não afetam UI; ajudam OSCE/prescrição).
 
 ## Lado do usuário (fora do código)
 - [ ] **Publicar Diretrizes:** flipar `DIRETRIZES_PUBLICADO=true` no `index.html` quando a curadoria estiver pronta. Hoje os alunos veem "Em breve". Ver [[Arquitetura]].
