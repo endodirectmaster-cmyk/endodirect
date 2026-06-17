@@ -159,7 +159,8 @@ body{background:var(--bg);color:var(--tx);display:flex;flex-direction:column}
 .fld{margin-bottom:.95rem}
 .fld label{font-size:.72rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--t2);display:block;margin-bottom:6px}
 .login-body .fld input{width:100%;background:var(--surface);border:1.5px solid var(--bd2);border-radius:10px;padding:.85rem 1rem;font-family:var(--font);font-size:.95rem;color:var(--tx);outline:none}
-.login-btn{width:100%;background:var(--navy);color:#fff;border:none;border-radius:10px;padding:.92rem;font-size:1.02rem;font-weight:600;cursor:pointer;font-family:var(--font);margin-top:.4rem}
+.login-btn{width:100%;background:linear-gradient(135deg,#3b6fd4,#5585e8);color:#fff;border:none;border-radius:10px;padding:.92rem;font-size:1.02rem;font-weight:700;cursor:pointer;font-family:var(--font);margin-top:.4rem;box-shadow:0 2px 12px rgba(59,111,212,.38);transition:filter .12s ease}
+.login-btn:hover{filter:brightness(1.08)}
 .login-link{width:100%;background:none;border:none;color:var(--blue);font-family:var(--font);font-size:.78rem;font-weight:600;cursor:pointer;text-align:center;margin-top:.75rem;padding:.25rem}
 .login-link:hover{text-decoration:underline}
 .login-err{background:var(--red-l);border:1px solid #5a2326;border-radius:10px;padding:.6rem .9rem;font-size:.8rem;color:var(--red);margin-bottom:.95rem;display:none}
@@ -4206,8 +4207,22 @@ function updatePlanBadge(){
     else{
       chip.textContent=label;
       chip.style.display='inline-block';
-      chip.style.background=k?'rgba(59,111,212,.14)':'rgba(154,170,192,.18)';
-      chip.style.color=k?'#3b6fd4':'#6b7a90';
+      if(k==='gold'){ // Gold dourado (premium)
+        chip.style.background='linear-gradient(135deg,#fde68a,#f5b32c)';
+        chip.style.color='#5a3e00';
+        chip.style.fontWeight='800';
+        chip.style.border='1px solid rgba(180,120,0,.35)';
+      }else if(k){ // Standard
+        chip.style.background='rgba(59,111,212,.14)';
+        chip.style.color='#3b6fd4';
+        chip.style.fontWeight='';
+        chip.style.border='';
+      }else{ // Degustação
+        chip.style.background='rgba(154,170,192,.18)';
+        chip.style.color='#6b7a90';
+        chip.style.fontWeight='';
+        chip.style.border='';
+      }
     }
   }
   // Card na aba Perfil
