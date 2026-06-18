@@ -6964,7 +6964,7 @@ function renderAdmSec(sec){
   }
   if(sec==='provas')m.innerHTML=admProvasSecHTML();
   else if(sec==='cursos')m.innerHTML=admCursosHTML();
-  else if(sec==='estudantes')m.innerHTML=admEstudantesHTML();
+  else if(sec==='estudantes'){m.innerHTML=admEstudantesHTML();loadAdmEstudantes();}
   else if(sec==='analytics'){m.innerHTML=admAnalyticsHTML();loadAdmOverview();var rtA=document.getElementById('adm-analytics-retry');if(rtA)rtA.addEventListener('click',function(){loadAdmOverview(true);});}
   else if(sec==='mural')m.innerHTML=admMuralSecHTML();
   else if(sec==='ref')m.innerHTML=admRefSecHTML();
@@ -7041,39 +7041,68 @@ function admProvasListHTML(){if(!admBancoActiveFilter())return '<div class="empt
 // ---------- ESTUDANTES ----------
 var admEstudantes=normalizeAdmEstudantes(lsGet('adm_estudantes')||[{nome:'Aluno Endodirect',email:'aluno@endodirect.com.br',cpf:'',turma:'Turma 2026',perfil:'Residente',status:'Ativo',xp:0}]);
 function persistEstudantes(){lsSet('adm_estudantes',admEstudantes);queueRemoteStateSave();}
-var admEstShowForm=false;
+// Lista de alunos REAIS vinda do backend (RPC endodirect_admin_students, admin-gated;
+// exclui professores de endodirect_admins e contas de teste). Substitui o protótipo local.
+var admEstData=null, admEstLoading=false, admEstErr='', admEstSearch='';
+function loadAdmEstudantes(force){
+  if(admEstLoading)return;
+  if(admEstData&&!force)return;
+  var client=getSupabaseClient();
+  if(!client){admEstErr='Supabase indisponível.';if(admCurrentSec==='estudantes')renderAdmSec('estudantes');return;}
+  admEstLoading=true;admEstErr='';
+  client.rpc('endodirect_admin_students').then(function(res){
+    admEstLoading=false;
+    if(res.error)admEstErr=res.error.message||'Falha ao carregar os alunos.';
+    else admEstData=res.data||{};
+    if(admCurrentSec==='estudantes')renderAdmSec('estudantes');
+  }).catch(function(e){admEstLoading=false;admEstErr=(e&&e.message)||'Falha ao carregar os alunos.';if(admCurrentSec==='estudantes')renderAdmSec('estudantes');});
+}
+function admEstFmtDate(s){if(!s)return '—';var d=new Date(s);return isNaN(d.getTime())?'—':d.toLocaleDateString('pt-BR');}
+function admEstPlanoTag(p){
+  if(p==='Gold')return '<span class="tag" style="background:linear-gradient(135deg,#fde68a,#f5b32c);color:#5a3e00;border:1px solid #e0a92a;font-weight:700">Gold</span>';
+  if(p==='Standard')return '<span class="tag tag-blue">Standard</span>';
+  return '<span class="tag" style="background:var(--bd);color:var(--t2)">Degustação</span>';
+}
 function admEstudantesHTML(){
-  var ativos=admEstudantes.filter(function(e){return e.status!=='Inativo';}).length;
-  var inativos=admEstudantes.filter(function(e){return e.status==='Inativo';}).length;
-  return '<div class="adm-ph" style="display:flex;align-items:flex-start;justify-content:space-between"><div><h1>Estudantes</h1></div><div style="display:flex;gap:.5rem;align-items:center"><input type="search" id="adm-est-search" placeholder="Buscar por nome…" style="width:200px"><button class="btn btn-primary" id="btn-adm-est-new">+ Cadastrar</button></div></div>'
-  +'<div class="adm-pc">'
-  +(admEstShowForm?admEstFormHTML():'')
-  +'<div class="g2" style="grid-template-columns:repeat(4,1fr);margin-bottom:1rem">'
-    +'<div class="adm-bigstat"><div class="adm-bigstat-n" style="color:var(--tx)">'+admEstudantes.length+'</div><div class="adm-bigstat-l">Total</div></div>'
-    +'<div class="adm-bigstat"><div class="adm-bigstat-n" style="color:var(--grn)">'+ativos+'</div><div class="adm-bigstat-l">Ativos</div></div>'
-    +'<div class="adm-bigstat"><div class="adm-bigstat-n" style="color:var(--gold)">'+inativos+'</div><div class="adm-bigstat-l">Inativos</div></div>'
-    +'<div class="adm-bigstat"><div class="adm-bigstat-n" style="color:var(--blue)">'+admEstudantes.length+'</div><div class="adm-bigstat-l">Este mês</div></div>'
-  +'</div>'
-  +'<div class="adm-table">'
-    +'<div class="adm-table-head"><span style="flex:2.2">Estudante</span><span style="flex:2.5">E-mail</span><span style="flex:1.5">Turma</span><span style="flex:1.2">Perfil</span><span style="flex:1">Status</span><span style="flex:.6;text-align:right">Ações</span></div>'
-    +'<div id="adm-est-rows">'+admEstRowsHTML()+'</div>'
-  +'</div>'
-  +'<div style="font-size:.7rem;color:var(--t3);margin-top:.7rem">ℹ️ No protótipo, os cadastros ficam salvos nesta sessão. O cadastro real com login de aluno exige backend com autenticação.</div>'
+  var head='<div class="adm-ph" style="display:flex;align-items:flex-start;justify-content:space-between;gap:.6rem;flex-wrap:wrap"><div><h1>Estudantes</h1></div><div style="display:flex;gap:.5rem;align-items:center"><input type="search" id="adm-est-search" placeholder="Buscar por nome ou e-mail…" style="width:220px" value="'+esc(admEstSearch)+'"><button class="btn btn-outline" id="adm-est-reload" style="padding:.5rem .75rem" title="Atualizar lista">↻</button></div></div><div class="adm-pc">';
+  if(admEstErr){
+    return head+'<div class="card" style="text-align:center;padding:1.6rem"><div style="font-size:1.6rem">⚠️</div><div style="font-weight:700;color:var(--tx);margin:.3rem 0">Não foi possível carregar os alunos</div><p style="font-size:.82rem;color:var(--t2)">'+esc(admEstErr)+'</p><button class="btn btn-outline" id="adm-est-retry" style="margin-top:.6rem">Tentar de novo</button></div></div>';
+  }
+  if(!admEstData){
+    return head+'<div class="card" style="padding:1.6rem;text-align:center">'+ldHTML('Carregando alunos cadastrados…')+'</div></div>';
+  }
+  var d=admEstData,n=function(v){return Number(v||0);};
+  return head
+    +'<div style="display:flex;align-items:center;gap:.5rem;margin-bottom:1rem;flex-wrap:wrap"><span class="tag tag-blue">Dados reais</span><span style="font-size:.7rem;color:var(--t3)">Alunos cadastrados na plataforma — exclui professores e contas de teste</span></div>'
+    +'<div class="g2" style="grid-template-columns:repeat(4,1fr);margin-bottom:1rem">'
+      +'<div class="adm-bigstat"><div class="adm-bigstat-n" style="color:var(--tx)">'+n(d.total)+'</div><div class="adm-bigstat-l">Total</div></div>'
+      +'<div class="adm-bigstat"><div class="adm-bigstat-n" style="color:var(--grn)">'+n(d.ativos)+'</div><div class="adm-bigstat-l">Ativos</div></div>'
+      +'<div class="adm-bigstat"><div class="adm-bigstat-n" style="color:var(--gold)">'+n(d.pagos)+'</div><div class="adm-bigstat-l">Assinantes</div></div>'
+      +'<div class="adm-bigstat"><div class="adm-bigstat-n" style="color:var(--blue)">'+n(d.este_mes)+'</div><div class="adm-bigstat-l">Este mês</div></div>'
+    +'</div>'
+    +'<div class="adm-table">'
+      +'<div class="adm-table-head"><span style="flex:2.2">Estudante</span><span style="flex:2.5">E-mail</span><span style="flex:1.2">Plano</span><span style="flex:1.1">Cadastro</span><span style="flex:1.2">Último acesso</span><span style="flex:1.1">Status</span></div>'
+      +'<div id="adm-est-rows">'+admEstRowsHTML(admEstSearch)+'</div>'
+    +'</div>'
   +'</div>';
 }
 function admEstRowsHTML(filtro){
-  var list=admEstudantes;
-  if(filtro)list=admEstudantes.filter(function(e){return(e.nome||'').toLowerCase().indexOf(filtro.toLowerCase())>=0;});
+  var list=(admEstData&&Array.isArray(admEstData.students))?admEstData.students:[];
+  filtro=(filtro||'').trim().toLowerCase();
+  if(filtro)list=list.filter(function(e){return((e.name||'')+' '+(e.email||'')).toLowerCase().indexOf(filtro)>=0;});
   if(!list.length)return '<div class="empty">Nenhum estudante encontrado.</div>';
-  return list.map(function(e){var i=admEstudantes.indexOf(e);var st=e.status==='Inativo'?'tag-red':'tag-grn';
-    return '<div class="adm-table-row"><span style="flex:2.2;display:flex;align-items:center;gap:.6rem"><span class="tb-avatar" style="background:var(--navy)">'+(e.nome||'?').charAt(0)+'</span><span style="font-size:.82rem;font-weight:600">'+esc(e.nome)+'</span></span><span style="flex:2.5;font-size:.78rem;color:var(--t2)">'+esc(e.email||'')+'</span><span style="flex:1.5;font-size:.76rem;color:var(--t2)">'+esc(e.turma||'')+'</span><span style="flex:1.2"><span class="tag tag-blue">'+esc(e.perfil||'Estudante')+'</span></span><span style="flex:1"><span class="tag '+st+'">'+esc(e.status||'Ativo')+'</span></span><span style="flex:.6;text-align:right"><button class="btn btn-outline btn-sm" data-adm-delest="'+i+'" style="padding:2px 8px;color:var(--red);border-color:var(--red)">🗑 Excluir</button></span></div>';
+  return list.map(function(e){
+    var nome=e.name||((e.email||'?').split('@')[0]);
+    var ativo=!!e.last_sign_in_at;
+    return '<div class="adm-table-row">'
+      +'<span style="flex:2.2;display:flex;align-items:center;gap:.6rem"><span class="tb-avatar" style="background:var(--navy)">'+esc(nome.charAt(0).toUpperCase())+'</span><span style="font-size:.82rem;font-weight:600">'+esc(nome)+'</span></span>'
+      +'<span style="flex:2.5;font-size:.78rem;color:var(--t2)">'+esc(e.email||'')+'</span>'
+      +'<span style="flex:1.2">'+admEstPlanoTag(e.plano)+'</span>'
+      +'<span style="flex:1.1;font-size:.76rem;color:var(--t2)">'+admEstFmtDate(e.created_at)+'</span>'
+      +'<span style="flex:1.2;font-size:.76rem;color:var(--t2)">'+(ativo?admEstFmtDate(e.last_sign_in_at):'Nunca')+'</span>'
+      +'<span style="flex:1.1"><span class="tag '+(ativo?'tag-grn':'tag-red')+'">'+(ativo?'Ativo':'Sem 1º acesso')+'</span></span>'
+    +'</div>';
   }).join('');
-}
-function admEstFormHTML(){
-  return '<div class="card" style="margin-bottom:1rem"><div style="font-size:1rem;font-weight:700;margin-bottom:.3rem">Cadastrar estudante</div><div style="font-size:.74rem;color:var(--t2);margin-bottom:.9rem">XP e trilha são calculados pelo uso da plataforma; o cadastro solicita apenas dados básicos.</div>'
-    +'<div class="g2" style="grid-template-columns:repeat(4,1fr);margin-bottom:.7rem"><div class="fld2" style="margin:0"><label>Nome</label><input type="text" id="adm-est-nome" placeholder="Nome completo"></div><div class="fld2" style="margin:0"><label>E-mail</label><input type="text" id="adm-est-email" placeholder="aluno@email.com"></div><div class="fld2" style="margin:0"><label>CPF</label><input type="text" id="adm-est-cpf" placeholder="000.000.000-00"></div><div class="fld2" style="margin:0"><label>Turma</label><input type="text" id="adm-est-turma" value="Turma 2026" ></div></div>'
-    +'<div class="g2" style="margin-bottom:.7rem"><div class="fld2" style="margin:0"><label>Perfil</label><select id="adm-est-perfil"><option>Residente</option><option>Endocrinologista</option><option>Estudante</option></select></div><div class="fld2" style="margin:0"><label>Status</label><select id="adm-est-status"><option>Ativo</option><option>Inativo</option></select></div></div>'
-    +'<div style="display:flex;gap:6px"><button class="btn btn-primary" id="btn-adm-est-save">💾 Salvar</button><button class="btn btn-outline" id="btn-adm-est-cancel">Cancelar</button></div></div>';
 }
 
 // ---------- PERFIL (editável) ----------
@@ -8253,20 +8282,12 @@ function bindAdmSec(sec){
   }
 
   if(sec==='estudantes'){
-    var bnew=document.getElementById('btn-adm-est-new');
-    if(bnew)bnew.addEventListener('click',function(){admEstShowForm=!admEstShowForm;renderAdmSec('estudantes');});
-    var bsave=document.getElementById('btn-adm-est-save');
-    if(bsave)bsave.addEventListener('click',function(){
-      var nome=(document.getElementById('adm-est-nome').value||'').trim();
-      if(!nome){notify('Informe o nome.','err');return;}
-      admEstudantes.push({nome:nome,email:(document.getElementById('adm-est-email').value||'').trim(),cpf:(document.getElementById('adm-est-cpf').value||'').trim(),turma:(document.getElementById('adm-est-turma').value||'Turma 2026').trim(),perfil:document.getElementById('adm-est-perfil').value,status:document.getElementById('adm-est-status').value,xp:0});
-      persistEstudantes();admEstShowForm=false;notify('Estudante cadastrado!','ok');renderAdmSec('estudantes');
-    });
-    var bcancel=document.getElementById('btn-adm-est-cancel');
-    if(bcancel)bcancel.addEventListener('click',function(){admEstShowForm=false;renderAdmSec('estudantes');});
     var search=document.getElementById('adm-est-search');
-    if(search)search.addEventListener('input',function(){var rows=document.getElementById('adm-est-rows');if(rows)rows.innerHTML=admEstRowsHTML(search.value);});
-    main.querySelectorAll('[data-adm-delest]').forEach(function(b){b.addEventListener('click',function(){var es=admEstudantes[parseInt(b.dataset.admDelest)];if(!confirm('Remover o estudante "'+((es&&(es.nome||es.email))||'')+'"? Esta ação não pode ser desfeita.'))return;admEstudantes.splice(parseInt(b.dataset.admDelest),1);persistEstudantes();renderAdmSec('estudantes');});});
+    if(search)search.addEventListener('input',function(){admEstSearch=search.value;var rows=document.getElementById('adm-est-rows');if(rows)rows.innerHTML=admEstRowsHTML(admEstSearch);});
+    var brel=document.getElementById('adm-est-reload');
+    if(brel)brel.addEventListener('click',function(){loadAdmEstudantes(true);});
+    var bret=document.getElementById('adm-est-retry');
+    if(bret)bret.addEventListener('click',function(){loadAdmEstudantes(true);});
   }
 
   if(sec==='perfil'){
