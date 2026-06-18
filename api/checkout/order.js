@@ -23,8 +23,10 @@ const PAGARME_API = 'https://api.pagar.me/core/v5';
 const SECRET_KEY = process.env.PAGARME_SECRET_KEY || '';
 
 const ANNUAL = {
-  standard: { amount: Number(process.env.PAGARME_ANNUAL_STANDARD_AMOUNT || 54000), label: 'Plano Standard (anual)', scope: 'plano:standard' },
-  gold:     { amount: Number(process.env.PAGARME_ANNUAL_GOLD_AMOUNT     || 82800), label: 'Plano Gold (anual)',     scope: 'plano:gold' }
+  standard: { amount: Number(process.env.PAGARME_ANNUAL_STANDARD_AMOUNT || 54000), label: 'Plano Standard (anual)', scopes: ['plano:standard'] },
+  gold:     { amount: Number(process.env.PAGARME_ANNUAL_GOLD_AMOUNT     || 82800), label: 'Plano Gold (anual)',     scopes: ['plano:gold'] },
+  // Platinum: SÓ anual (padrão R$1.997). Concede tudo do Gold + o curso EndoTEEM.
+  platinum: { amount: Number(process.env.PAGARME_ANNUAL_PLATINUM_AMOUNT || 199700), label: 'Plano Platinum (anual)', scopes: ['plano:gold', 'curso:endoteem'] }
 };
 const ANNUAL_DIAS = 365;
 
@@ -79,7 +81,7 @@ async function upsertAcesso(row) {
 }
 
 module.exports = async function handler(req, res) {
-  if (req.method === 'GET') return json(res, 200, { ok: true, service: 'endodirect-order', ready: !!(SECRET_KEY && SERVICE_ROLE), annual: { standard: ANNUAL.standard.amount, gold: ANNUAL.gold.amount } });
+  if (req.method === 'GET') return json(res, 200, { ok: true, service: 'endodirect-order', ready: !!(SECRET_KEY && SERVICE_ROLE), annual: { standard: ANNUAL.standard.amount, gold: ANNUAL.gold.amount, platinum: ANNUAL.platinum.amount } });
   if (req.method !== 'POST') { res.setHeader('Allow', 'GET, POST'); return json(res, 405, { ok: false, error: 'Metodo nao permitido.' }); }
   // Endpoint cria cobranças com a chave LIVE do pagar.me: exige origem do próprio
   // site (valida pelo HOSTNAME; header ausente passa p/ clientes não-browser).
@@ -162,7 +164,7 @@ module.exports = async function handler(req, res) {
       customer_id: customer.id,
       items: [{ amount: amount, description: 'Endodirect — ' + cfg.label + (founderApplied ? ' (Sócio-fundador)' : ''), quantity: 1 }],
       payments: [payment],
-      metadata: { scope: cfg.scope, plan: planKey, cycle: 'anual', coupon: founderApplied ? FOUNDER_COUPON : '' }
+      metadata: { scope: cfg.scopes.join(','), plan: planKey, cycle: 'anual', coupon: founderApplied ? FOUNDER_COUPON : '' }
     });
 
     const charge = (Array.isArray(order.charges) && order.charges[0]) || {};
@@ -186,10 +188,14 @@ module.exports = async function handler(req, res) {
       return json(res, 200, { ok: false, method: 'credit_card', status: status || 'failed', error: 'Pagamento nao aprovado.' + (reason ? ' (' + reason + ')' : '') });
     }
     const user = await ensureUser(email, name);
-    await upsertAcesso({ user_id: user.id, email: email, scope: cfg.scope, status: 'active', tipo: 'avulso',
-      expires_at: new Date(Date.now() + ANNUAL_DIAS * 86400000).toISOString(),
-      provider: 'pagarme', provider_customer_id: customer.id || null, provider_order_id: order.id || null,
-      notes: planKey + ':anual' + (founderApplied ? ':fundador' : ''), updated_at: new Date().toISOString() });
+    const expiresAt = new Date(Date.now() + ANNUAL_DIAS * 86400000).toISOString();
+    // Platinum concede 2 escopos (plano:gold + curso:endoteem): 1 linha cada.
+    for (const sc of cfg.scopes) {
+      await upsertAcesso({ user_id: user.id, email: email, scope: sc, status: 'active', tipo: 'avulso',
+        expires_at: expiresAt,
+        provider: 'pagarme', provider_customer_id: customer.id || null, provider_order_id: order.id || null,
+        notes: planKey + ':anual' + (founderApplied ? ':fundador' : ''), updated_at: new Date().toISOString() });
+    }
     await sendSetPasswordEmail(email);
     return json(res, 200, { ok: true, method: 'credit_card', status: 'paid', order_id: order.id });
   } catch (e) {
