@@ -1,6 +1,6 @@
 ---
 tags: [cofre, processo]
-atualizado: 2026-06-16
+atualizado: 2026-06-18
 ---
 
 # Convenções de Trabalho
@@ -8,7 +8,9 @@ atualizado: 2026-06-16
 ## Git / deploy
 - **Branch de desenvolvimento:** `claude/funny-brahmagupta-9n8yT`.
 - Fluxo: commitar na branch → abrir PR → **squash merge** em `main` → deploy automático na Vercel.
-- **Merge + deploy AUTOMÁTICOS — autorização permanente do usuário (2026-06-16):** depois do **CI ficar verde**, fazer **squash-merge na `main` e deixar a Vercel deployar, SEM pedir confirmação a cada vez**. Esse é o fluxo padrão — não perguntar "posso mergear/deployar?". Únicas travas antes do merge: (1) CI `validate` verde; (2) quando o PR mexe em **pagamento/acesso**, revisar o diff por conta própria antes. Para acompanhar o CI sem `sleep`, usar `mcp__github__pull_request_read` (`get_check_runs`/`get_status`).
+- **⚠️ REGRA ATUAL (reforçada pelo usuário 2026-06-18) — PREVIEW + APROVAÇÃO ANTES DO DEPLOY:** toda mudança que afeta **o app** (frontend `index.html`, prompts, backend `api/`/`lib/`) segue: branch → PR → **CI verde** → **enviar o link do PREVIEW da Vercel no chat** → **esperar o "ok"/"pode dar deploy" do usuário** → só então squash-merge na `main`. **NÃO mergear/deployar sem a aprovação explícita.** Isso **supersede** a antiga "merge automático" abaixo. Exceção: **docs do `cofre/`** (`.md`) não fazem deploy no app → podem ser commitadas/mergeadas direto (mantendo o campo `atualizado:` em dia).
+- ~~**Merge + deploy AUTOMÁTICOS — autorização permanente do usuário (2026-06-16):**~~ (SUPERSEDIDO pela regra acima) depois do **CI ficar verde**, fazer **squash-merge na `main` e deixar a Vercel deployar**. Travas mantidas: (1) CI `validate` verde; (2) PR que mexe em **pagamento/acesso** → revisar o diff antes. Para acompanhar o CI sem `sleep`, usar `mcp__github__pull_request_read` (`get_check_runs`/`get_status`).
+- **Cofre SEMPRE atualizado (lição 2026-06-18):** ao mexer numa nota do `cofre/`, **atualizar o campo `atualizado:` do frontmatter** (não só o conteúdo) — senão o Obsidian do usuário mostra data velha. O usuário precisa dar `git pull` no vault local p/ ver o que foi mergeado (eu trabalho no container na nuvem).
 - ⚠️ Após cada merge, a `main` avança e a branch local fica defasada. Antes do próximo PR, **rebasear** sobre a `main` nova para evitar conflito:
   - `git fetch origin main`
   - `git rebase --onto origin/main <último-commit-já-mergeado>` (ou `git reset --hard origin/main` e reaplicar só o que falta).
