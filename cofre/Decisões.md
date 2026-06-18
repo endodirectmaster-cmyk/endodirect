@@ -1,6 +1,6 @@
 ---
 tags: [cofre, decisoes]
-atualizado: 2026-06-16
+atualizado: 2026-06-18
 ---
 
 # Decisões

@@ -1,6 +1,6 @@
 ---
 tags: [cofre, pendencias]
-atualizado: 2026-06-16
+atualizado: 2026-06-18
 ---
 
 # Pendências
