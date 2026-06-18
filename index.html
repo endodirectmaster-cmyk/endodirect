@@ -2162,9 +2162,16 @@ var REMOTE_STATE_KEYS=['q','fc','mm','notes','crono','sf_results','perf','provas
 // Base CANÔNICA para os redirects de auth (confirmação, recuperação, OAuth).
 // Sempre www em produção — evita cair no apex (endodirect.com.br) que pode não
 // responder e deixar o usuário preso após confirmar o e-mail. Em localhost usa
-// a própria origem (dev). Garante que o link sempre volta para um domínio vivo.
+// a própria origem (dev). Em previews da Vercel (*.vercel.app) também usa a
+// própria origem, para que o preview seja TESTÁVEL com login (requer a URL de
+// preview na allowlist do Supabase: Authentication → URL Configuration →
+// Redirect URLs). Produção (www.endodirect.com.br) não casa com .vercel.app, então
+// segue inalterada. Garante que o link sempre volta para um domínio vivo.
 function authBaseURL(){
-  try{if(/^(localhost|127\.0\.0\.1)/.test(location.hostname))return location.origin;}catch(e){}
+  try{
+    if(/^(localhost|127\.0\.0\.1)/.test(location.hostname))return location.origin;
+    if(/\.vercel\.app$/i.test(location.hostname))return location.origin;
+  }catch(e){}
   return 'https://www.endodirect.com.br';
 }
 function getSupabaseClient(){
