@@ -2799,6 +2799,7 @@ function hydrateRemoteState(){
   Promise.all(loads)
     .then(function(){
       remoteStateLoaded=true;
+      try{prescScrubLog();}catch(e){} // remove PII de paciente de históricos legados
       refreshAfterRemoteState();
       maybeOnboardAfterHydrate();
       queueRemoteStateSave();
@@ -5921,6 +5922,30 @@ function prescMemedOpen(){
   .catch(function(e){showErr('Erro: '+(e&&e.message||e));})
   .then(function(){var b=document.getElementById('memed-open');if(b){b.disabled=false;b.innerHTML='💊 Abrir prescrição Memed';}});
 }
+// Histórico de emissões (presc_emitidas): NÃO guarda PII do paciente — só
+// data/hora + um ID opaco da receita (referência na Memed). prescRxId acha esse
+// id no payload do evento prescricaoImpressa de forma defensiva (formato é da
+// Memed); prescScrubLog normaliza entradas legadas {paciente,data} → {ts,rxId}.
+function prescRxId(d){
+  try{
+    var x=Array.isArray(d)?d[0]:d;
+    var id=(typeof x==='string'||typeof x==='number')?x:(x&&(x.id||(x.prescricao&&x.prescricao.id)||(x.prescription&&x.prescription.id)||(x.attributes&&x.attributes.id)));
+    return (typeof id==='string'||typeof id==='number')?id:null;
+  }catch(e){return null;}
+}
+function prescScrubLog(){
+  try{
+    var log=lsGet('presc_emitidas');
+    if(!Array.isArray(log)||!log.length)return;
+    var dirty=false;
+    var clean=log.map(function(e){
+      e=e||{};
+      if(e.paciente!==undefined||e.prescritor!==undefined||e.data!==undefined)dirty=true;
+      return {ts:e.ts||Date.now(),rxId:(e.rxId!=null?e.rxId:prescRxId(e.data))};
+    });
+    if(dirty)lsSet('presc_emitidas',clean);
+  }catch(e){}
+}
 function prescMemedLaunch(token,color,scriptUrl){
   return new Promise(function(resolve,reject){
     var settled=false,initTimer=null;
@@ -5946,9 +5971,10 @@ function prescMemedLaunch(token,color,scriptUrl){
             if(pnasc)pac.data_nascimento=pnasc.replace(/^(\d{4})-(\d{2})-(\d{2})$/,'$3/$2/$1'); // Memed: DD/MM/YYYY
             try{MdHub.command.send('plataforma.prescricao','setPaciente',pac);}catch(e){}
           }
-          // Evento prescricaoImpressa: registra a emissão no prontuário (Caderno).
+          // Evento prescricaoImpressa: registra a emissão SEM PII do paciente —
+          // só data/hora + um ID opaco da receita (referência na Memed).
           try{MdHub.event.add('prescricaoImpressa',function(data){
-            try{var log=lsGet('presc_emitidas')||[];log.unshift({ts:Date.now(),paciente:pn||'',prescritor:prescVal('memed-nome')||'',data:data||null});lsSet('presc_emitidas',log.slice(0,100));queueRemoteStateSave();}catch(e){}
+            try{var log=lsGet('presc_emitidas')||[];log.unshift({ts:Date.now(),rxId:prescRxId(data)});lsSet('presc_emitidas',log.slice(0,100));queueRemoteStateSave();}catch(e){}
             try{notify('Prescrição emitida e registrada no prontuário. ✅','ok');}catch(e){}
           });}catch(e){}
           showModule();

@@ -23,6 +23,7 @@ Chat IA, simulador de casos, prescrição (treino) e o radar (`summarizeWithAI`)
   - **API Domain** (`MEMED_API_BASE`): homologação `https://integrations.api.memed.com.br` · produção `https://api.memed.com.br`.
   - **Front-end Domain / SDK** (`MEMED_SCRIPT`): homologação `https://integrations.memed.com.br/modulos/plataforma.sinapse-prescricao/build/sinapse-prescricao.min.js` · **produção `https://partners.memed.com.br/integration.js`** (formato totalmente diferente!).
   - No código: `api/memed/token.js` **deriva** o SDK do ambiente do `MEMED_API_BASE` (se não for `integrations.api.memed`, usa o de produção), então **não precisa** setar `MEMED_SCRIPT` na Vercel — mas ele sobrescreve se definido. O loader de produção (`integration.js`) injeta o `MdSinapsePrescricao` de forma **assíncrona** (o front faz poll por ele).
+- **Dados/LGPD (#394):** dados do **paciente** (CPF/e‑mail/telefone) vão **direto p/ a Memed** (client-side `setPaciente`) — não passam pelo nosso backend nem ficam no banco. O `presc_emitidas` (histórico de emissões, sincronizado por usuário com RLS) guarda **só `{ts, rxId}`** (sem PII do paciente; `prescScrubLog` limpa legados no boot). `privacidade.html` cita a Memed como operador e descreve esse fluxo. **Pendência: DPA com a Memed** (lado do usuário). Ver [[Decisões]].
 - Doc: https://doc.memed.com.br/docs/primeiros-passos · URLs por ambiente: doc.memed.com.br → Front-end → Configurações → URLs
 
 ## Podcasts (Anchor / Spotify for Podcasters)
