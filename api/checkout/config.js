@@ -33,7 +33,8 @@ module.exports = async function handler(req, res) {
     },
     annual: {
       standard: Number(process.env.PAGARME_ANNUAL_STANDARD_AMOUNT || 54000),
-      gold: Number(process.env.PAGARME_ANNUAL_GOLD_AMOUNT || 82800)
+      gold: Number(process.env.PAGARME_ANNUAL_GOLD_AMOUNT || 82800),
+      platinum: Number(process.env.PAGARME_ANNUAL_PLATINUM_AMOUNT || 199700)
     },
     max_installments: Number(process.env.PAGARME_MAX_INSTALLMENTS || 12),
     founder: founder
