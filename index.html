@@ -5919,39 +5919,64 @@ function prescMemedOpen(){
 }
 function prescMemedLaunch(token,color,scriptUrl){
   return new Promise(function(resolve,reject){
-    function openModule(){
-      if(!window.MdSinapsePrescricao){reject(new Error('SDK da Memed não carregou.'));return;}
+    var settled=false,initTimer=null;
+    function finish(err){
+      if(settled)return;settled=true;
+      if(initTimer){clearTimeout(initTimer);initTimer=null;}
+      if(err)reject(err);else resolve();
+    }
+    // Mostra o módulo e conclui com SUCESSO REAL — a mensagem "Módulo Memed
+    // aberto" só aparece quando o módulo de fato renderiza (não na hora em que
+    // o listener é registrado, como antes — o que mascarava a tela travada).
+    function showModule(){try{MdHub.module.show('plataforma.prescricao');finish();}catch(e){finish(e);}}
+    function bind(){
       try{
         MdSinapsePrescricao.event.add('core:moduleInit',function(module){
-          if(module.name==='plataforma.prescricao'){
-            var pn=prescVal('memed-pac-nome'),pc=prescVal('memed-pac-cpf'),pe=prescVal('memed-pac-email'),pf=prescVal('memed-pac-fone'),pnasc=prescVal('memed-pac-nasc');
-            if(pn){
-              var pac={nome:pn};
-              if(pc)pac.cpf=(pc||'').replace(/\D/g,'');
-              if(pe)pac.email=pe;
-              if(pf)pac.telefone=(pf||'').replace(/\D/g,'');
-              if(pnasc)pac.data_nascimento=pnasc.replace(/^(\d{4})-(\d{2})-(\d{2})$/,'$3/$2/$1'); // Memed: DD/MM/YYYY
-              try{MdHub.command.send('plataforma.prescricao','setPaciente',pac);}catch(e){}
-            }
-            // Evento prescricaoImpressa: registra a emissão no prontuário (Caderno).
-            try{MdHub.event.add('prescricaoImpressa',function(data){
-              try{var log=lsGet('presc_emitidas')||[];log.unshift({ts:Date.now(),paciente:pn||'',prescritor:prescVal('memed-nome')||'',data:data||null});lsSet('presc_emitidas',log.slice(0,100));queueRemoteStateSave();}catch(e){}
-              try{notify('Prescrição emitida e registrada no prontuário. ✅','ok');}catch(e){}
-            });}catch(e){}
-            try{MdHub.module.show('plataforma.prescricao');}catch(e){}
+          if(module.name!=='plataforma.prescricao')return;
+          var pn=prescVal('memed-pac-nome'),pc=prescVal('memed-pac-cpf'),pe=prescVal('memed-pac-email'),pf=prescVal('memed-pac-fone'),pnasc=prescVal('memed-pac-nasc');
+          if(pn){
+            var pac={nome:pn};
+            if(pc)pac.cpf=(pc||'').replace(/\D/g,'');
+            if(pe)pac.email=pe;
+            if(pf)pac.telefone=(pf||'').replace(/\D/g,'');
+            if(pnasc)pac.data_nascimento=pnasc.replace(/^(\d{4})-(\d{2})-(\d{2})$/,'$3/$2/$1'); // Memed: DD/MM/YYYY
+            try{MdHub.command.send('plataforma.prescricao','setPaciente',pac);}catch(e){}
           }
+          // Evento prescricaoImpressa: registra a emissão no prontuário (Caderno).
+          try{MdHub.event.add('prescricaoImpressa',function(data){
+            try{var log=lsGet('presc_emitidas')||[];log.unshift({ts:Date.now(),paciente:pn||'',prescritor:prescVal('memed-nome')||'',data:data||null});lsSet('presc_emitidas',log.slice(0,100));queueRemoteStateSave();}catch(e){}
+            try{notify('Prescrição emitida e registrada no prontuário. ✅','ok');}catch(e){}
+          });}catch(e){}
+          showModule();
         });
-        resolve();
-      }catch(e){reject(e);}
+        // O módulo inicializa de forma assíncrona via core:moduleInit. Se não
+        // disparar em ~20s, geralmente é SDK e token de ambientes diferentes
+        // (ex.: token de produção com SDK de homologação) — erro explícito em
+        // vez da tela travada com um "aberto" mentiroso.
+        initTimer=setTimeout(function(){finish(new Error('O módulo não carregou. Confirme se o SDK (front-end) e o token são do mesmo ambiente (produção × homologação).'));},20000);
+      }catch(e){finish(e);}
     }
-    if(window.MdSinapsePrescricao){openModule();return;}
+    // O loader de produção (partners.memed.com.br/integration.js) pode injetar o
+    // SDK de forma assíncrona — então MdSinapsePrescricao pode não existir já no
+    // onload. Espera ele aparecer (até ~8s) antes de registrar o core:moduleInit.
+    function whenSDKReady(cb){
+      var waited=0;(function poll(){
+        if(settled)return;
+        if(window.MdSinapsePrescricao){cb();return;}
+        if(waited>=8000){finish(new Error('SDK da Memed não carregou.'));return;}
+        waited+=200;setTimeout(poll,200);
+      })();
+    }
+    // Reabertura: SDK já carregado → core:moduleInit não redispara; mostra direto.
+    if(window.MdSinapsePrescricao&&window.MdHub&&MdHub.module&&typeof MdHub.module.show==='function'){showModule();return;}
+    if(window.MdSinapsePrescricao){bind();return;}
     var s=document.createElement('script');
     s.type='text/javascript';
     s.src=scriptUrl||'https://integrations.memed.com.br/modulos/plataforma.sinapse-prescricao/build/sinapse-prescricao.min.js';
     s.setAttribute('data-color',color||'#0a7d68');
     s.setAttribute('data-token',token);
-    s.onload=openModule;
-    s.onerror=function(){reject(new Error('Falha ao carregar o SDK da Memed.'));};
+    s.onload=function(){whenSDKReady(bind);};
+    s.onerror=function(){finish(new Error('Falha ao carregar o SDK da Memed.'));};
     document.body.appendChild(s);
   });
 }
