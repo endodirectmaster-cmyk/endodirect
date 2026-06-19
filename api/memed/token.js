@@ -62,7 +62,9 @@ async function userFromToken(token) {
 // board_number, board_state}, data_nascimento (DD/MM/YYYY). Token em
 // data.attributes.token.
 async function getMemedToken(p) {
-  const url = `${MEMED_API_BASE}/v1/sinapse-prescricao/usuarios?api-key=${encodeURIComponent(MEMED_API_KEY)}&secret-key=${encodeURIComponent(MEMED_SECRET)}`;
+  const externalId = String(p.externalId || p.cpf || p.crm || '');
+  const qs = `api-key=${encodeURIComponent(MEMED_API_KEY)}&secret-key=${encodeURIComponent(MEMED_SECRET)}`;
+  const url = `${MEMED_API_BASE}/v1/sinapse-prescricao/usuarios?${qs}`;
   // Divide o nome completo em nome + sobrenome (a Memed exige os dois).
   let nome = (p.nome || '').trim(), sobrenome = (p.sobrenome || '').trim();
   if (!sobrenome) {
@@ -74,7 +76,7 @@ async function getMemedToken(p) {
   const mIso = nasc.match(/^(\d{4})-(\d{2})-(\d{2})$/);
   if (mIso) nasc = mIso[3] + '/' + mIso[2] + '/' + mIso[1];
   const attributes = {
-    external_id: String(p.externalId || p.cpf || p.crm || ''),
+    external_id: externalId,
     nome: nome,
     sobrenome: sobrenome || '.',
     cpf: String(p.cpf || '').replace(/\D/g, ''),
@@ -96,19 +98,47 @@ async function getMemedToken(p) {
   const raw = await r.text();
   let data = {};
   try { data = JSON.parse(raw); } catch (e) {}
-  if (!r.ok) {
-    // Diagnóstico: status HTTP + corpo cru da Memed (revela a causa real).
-    console.log('[memed-resp] status=' + r.status + ' body=' + String(raw).slice(0, 500));
-    // 5xx = indisponibilidade do lado da Memed (o usuário só pode tentar de
-    // novo): mensagem amigável, sem código técnico. 4xx = erro específico e
-    // acionável (ex.: validação): mostra o detalhe que a Memed devolveu.
-    if (r.status >= 500) throw new Error('Memed temporariamente indisponível. Tente novamente em instantes.');
-    const msg = (data && data.errors && data.errors[0] && (data.errors[0].detail || data.errors[0].title)) || `Erro HTTP ${r.status} da Memed`;
-    throw new Error(msg);
+  if (r.ok) {
+    const token = data && data.data && data.data.attributes && data.data.attributes.token;
+    if (token) return token;
+    throw new Error('Token não retornado pela Memed.');
   }
-  const token = data && data.data && data.data.attributes && data.data.attributes.token;
-  if (!token) throw new Error('Token não retornado pela Memed.');
-  return token;
+  // Prescritor JÁ cadastrado para este id externo: em PRODUÇÃO o POST não
+  // recria (na homologação era tolerante, por isso nunca víamos esse erro).
+  // Recupera o token do prescritor existente via GET por external_id.
+  const errText = String(raw || '').toLowerCase();
+  const isDuplicate = !!externalId && (r.status === 409 || r.status === 422 || /j[áa]\s*cadastrad|already\s*(registered|exists)|id\s*externo/.test(errText));
+  if (isDuplicate) {
+    const tok = await getExistingMemedToken(externalId, qs);
+    if (tok) return tok;
+  }
+  // Diagnóstico: status HTTP + corpo cru da Memed (revela a causa real).
+  console.log('[memed-resp] status=' + r.status + ' body=' + String(raw).slice(0, 500));
+  // 5xx = indisponibilidade da Memed; 4xx = erro específico e acionável.
+  if (r.status >= 500) throw new Error('Memed temporariamente indisponível. Tente novamente em instantes.');
+  const msg = (data && data.errors && data.errors[0] && (data.errors[0].detail || data.errors[0].title)) || `Erro HTTP ${r.status} da Memed`;
+  throw new Error(msg);
+}
+
+// Busca o token de um prescritor JÁ cadastrado, pelo external_id (GET).
+async function getExistingMemedToken(externalId, qs) {
+  const url = `${MEMED_API_BASE}/v1/sinapse-prescricao/usuarios/${encodeURIComponent(externalId)}?${qs}`;
+  try {
+    const r = await fetch(url, { headers: { Accept: 'application/vnd.api+json' } });
+    const raw = await r.text();
+    let data = {};
+    try { data = JSON.parse(raw); } catch (e) {}
+    if (r.ok) {
+      const d = data && data.data;
+      const node = Array.isArray(d) ? d[0] : d;
+      const token = node && node.attributes && node.attributes.token;
+      if (token) return token;
+    }
+    console.log('[memed-getexist] status=' + r.status + ' body=' + String(raw).slice(0, 400));
+  } catch (e) {
+    console.log('[memed-getexist] erro:', (e && e.message) || e);
+  }
+  return null;
 }
 
 module.exports = async function handler(req, res) {
