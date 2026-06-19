@@ -5889,6 +5889,37 @@ function renderPrescMemed(){
     +'</div>';
   var btn=document.getElementById('memed-open');
   if(btn)btn.addEventListener('click',prescMemedOpen);
+  // Pré-aquece a abertura (preconnect/preload do SDK + token antecipado) fora do
+  // caminho de render, pra reduzir a espera quando o médico clicar em abrir.
+  setTimeout(prescPrewarm,300);
+}
+// Cache do token "pré-aquecido" + assinatura do prescritor (invalida se mudar).
+var _prescWarm=null;
+function prescSig(){return [prescVal('memed-crm'),(prescVal('memed-uf')||'').toUpperCase(),(prescVal('memed-cpf')||'').replace(/\D/g,''),prescVal('memed-esp'),prescVal('memed-nasc')].join('|');}
+function prescPrewarmLinks(scriptUrl){
+  try{
+    if(!scriptUrl||document.getElementById('memed-preload'))return;
+    var origin;try{origin=new URL(scriptUrl).origin;}catch(e){origin='https://partners.memed.com.br';}
+    var pc=document.createElement('link');pc.rel='preconnect';pc.href=origin;document.head.appendChild(pc);
+    var pl=document.createElement('link');pl.rel='preload';pl.as='script';pl.href=scriptUrl;pl.id='memed-preload';document.head.appendChild(pl);
+  }catch(e){}
+}
+function prescPrewarm(){
+  try{
+    if(!prescMemed.configured)return;
+    if(prescMemed.script)prescPrewarmLinks(prescMemed.script);
+    // Token só se o prescritor já está completo (pré-preenchido) e sem cache fresco.
+    var crm=prescVal('memed-crm'),uf=prescVal('memed-uf'),cpf=(prescVal('memed-cpf')||'').replace(/\D/g,''),esp=prescVal('memed-esp'),nasc=prescVal('memed-nasc');
+    if(!crm||!uf||cpf.length!==11||!esp||!nasc)return;
+    if(_prescWarm&&_prescWarm.sig===prescSig()&&(Date.now()-_prescWarm.ts<120000))return;
+    var client=getSupabaseClient();if(!client)return;
+    var sig=prescSig();
+    client.auth.getSession().then(function(res){
+      var token=res&&res.data&&res.data.session&&res.data.session.access_token;if(!token)return;
+      return fetch('/api/memed/token',{method:'POST',headers:{'Content-Type':'application/json',Authorization:'Bearer '+token},body:JSON.stringify({nome:prescVal('memed-nome'),crm:crm,uf:uf.toUpperCase(),cpf:cpf,especialidade:esp,nascimento:nasc})})
+        .then(function(r){return r.json();}).then(function(d){if(d&&d.ok&&d.token)_prescWarm={token:d.token,color:d.color,script:d.script,sig:sig,ts:Date.now()};});
+    }).catch(function(){});
+  }catch(e){}
 }
 function prescMemedOpen(){
   var nome=prescVal('memed-nome'),crm=prescVal('memed-crm'),uf=prescVal('memed-uf').toUpperCase(),cpf=prescVal('memed-cpf');
@@ -5910,16 +5941,20 @@ function prescMemedOpen(){
   if(!client){showErr('Supabase indisponível.');return;}
   var btn=document.getElementById('memed-open');if(btn){btn.disabled=true;btn.innerHTML=ldHTML('Conectando à Memed…');}
   if(msg){msg.style.color='var(--t3)';msg.textContent='';}
-  client.auth.getSession().then(function(res){
-    var token=res&&res.data&&res.data.session&&res.data.session.access_token;
-    if(!token)throw new Error('Sessão expirada. Entre novamente.');
-    return fetch('/api/memed/token',{method:'POST',headers:{'Content-Type':'application/json',Authorization:'Bearer '+token},body:JSON.stringify({nome:nome,crm:crm,uf:uf,cpf:cpf,especialidade:esp,nascimento:nasc})});
-  }).then(function(r){return r.json().catch(function(){return{ok:false,error:'Resposta inválida do servidor.'};});})
-  .then(function(d){
+  // Usa o token pré-aquecido (mesmo prescritor, < 3 min) e pula a ida ao backend.
+  var warm=(_prescWarm&&_prescWarm.sig===prescSig()&&(Date.now()-_prescWarm.ts<180000))?_prescWarm:null;
+  var tokenP=warm?Promise.resolve({ok:true,token:warm.token,color:warm.color,script:warm.script}):
+    client.auth.getSession().then(function(res){
+      var token=res&&res.data&&res.data.session&&res.data.session.access_token;
+      if(!token)throw new Error('Sessão expirada. Entre novamente.');
+      return fetch('/api/memed/token',{method:'POST',headers:{'Content-Type':'application/json',Authorization:'Bearer '+token},body:JSON.stringify({nome:nome,crm:crm,uf:uf,cpf:cpf,especialidade:esp,nascimento:nasc})})
+        .then(function(r){return r.json().catch(function(){return{ok:false,error:'Resposta inválida do servidor.'};});});
+    });
+  tokenP.then(function(d){
     if(!d.ok||!d.token)throw new Error(d.error||'Falha ao conectar à Memed.');
     return prescMemedLaunch(d.token,d.color,d.script);
   }).then(function(){if(msg){msg.style.color='var(--grn)';msg.textContent='Módulo Memed aberto.';}})
-  .catch(function(e){showErr('Erro: '+(e&&e.message||e));})
+  .catch(function(e){_prescWarm=null;showErr('Erro: '+(e&&e.message||e));})
   .then(function(){var b=document.getElementById('memed-open');if(b){b.disabled=false;b.innerHTML='💊 Abrir prescrição Memed';}});
 }
 // Histórico de emissões (presc_emitidas): NÃO guarda PII do paciente — só
