@@ -31,7 +31,18 @@ function emailAllowed(email) { return MEMED_ALLOW.length === 0 || MEMED_ALLOW.in
 // finais — assim funciona mesmo se MEMED_API_BASE for setado com o /v1 da doc.
 const MEMED_API_BASE = (process.env.MEMED_API_BASE || 'https://integrations.api.memed.com.br').replace(/\/+$/, '').replace(/\/v1$/i, '');
 const MEMED_COLOR = process.env.MEMED_COLOR || '#0a7d68';
-const MEMED_SCRIPT = process.env.MEMED_SCRIPT || 'https://integrations.memed.com.br/modulos/plataforma.sinapse-prescricao/build/sinapse-prescricao.min.js';
+// SDK do front-end: PRECISA casar com o ambiente da API. Um token de PRODUÇÃO só
+// renderiza no SDK de produção; um de homologação só no de homologação — usar o
+// SDK errado faz o módulo "abrir" mas a tela travar (iframe não autentica). Por
+// isso o default é DERIVADO do MEMED_API_BASE, em vez de fixo no de homologação.
+// URLs oficiais (doc Memed → Front-end → Configurações → URLs):
+//   homologação: integrations.memed.com.br/.../sinapse-prescricao.min.js
+//   produção:    partners.memed.com.br/integration.js
+// MEMED_SCRIPT (env) continua sobrescrevendo, se definido.
+const MEMED_SCRIPT_HOMOLOG = 'https://integrations.memed.com.br/modulos/plataforma.sinapse-prescricao/build/sinapse-prescricao.min.js';
+const MEMED_SCRIPT_PROD = 'https://partners.memed.com.br/integration.js';
+const MEMED_IS_SANDBOX = /integrations\.api\.memed/i.test(MEMED_API_BASE);
+const MEMED_SCRIPT = process.env.MEMED_SCRIPT || (MEMED_IS_SANDBOX ? MEMED_SCRIPT_HOMOLOG : MEMED_SCRIPT_PROD);
 
 function json(res, status, body) {
   res.statusCode = status;

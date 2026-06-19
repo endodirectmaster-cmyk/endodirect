@@ -1,6 +1,6 @@
 ---
 tags: [cofre, integracoes]
-atualizado: 2026-06-15
+atualizado: 2026-06-19
 ---
 
 # Integrações
@@ -18,7 +18,11 @@ Chat IA, simulador de casos, prescrição (treino) e o radar (`summarizeWithAI`)
 - Decisão: usar a **API da Memed** para o Assistente de Prescrição (substitui o builder próprio). Recurso fica **gated**; perfil ganhou `crm`/`uf`.
 - **Onboarding** (primeiro login) coleta **CRM + UF obrigatórios** para todos os perfis → salvos em `user_profile.crm`/`.uf` (sincronizados). É o que `/api/memed/token` (exige `crm` e `uf`) e o Assistente de Prescrição (`prof.crm`/`prof.uf`) consomem. Endpoint `api/memed/token.js` já existe (gating: responde `configured:false` sem chave).
 - **Pendente:** assinatura do contrato (houve erro no fluxo de confirmação/Lexio) + configurar `MEMED_API_KEY`/`MEMED_SECRET`. Ver [[Pendências]]. Usuários que onboardaram antes da exigência preenchem CRM na tela do Assistente de Prescrição.
-- Doc: https://doc.memed.com.br/docs/primeiros-passos
+- **⚠️ Ambiente: API e SDK do front-end TÊM QUE CASAR (homologação × produção).** Um token de produção só renderiza no SDK de produção e vice-versa — usar o SDK errado faz o módulo "abrir" mas **travar a tela** (iframe não autentica; ver [[Decisões]] 2026-06-19). As 4 variáveis da Memed: `API Key`, `Secret Key`, **API Domain** e **Front-end Domain**.
+  - **API Domain** (`MEMED_API_BASE`): homologação `https://integrations.api.memed.com.br` · produção `https://api.memed.com.br`.
+  - **Front-end Domain / SDK** (`MEMED_SCRIPT`): homologação `https://integrations.memed.com.br/modulos/plataforma.sinapse-prescricao/build/sinapse-prescricao.min.js` · **produção `https://partners.memed.com.br/integration.js`** (formato totalmente diferente!).
+  - No código: `api/memed/token.js` **deriva** o SDK do ambiente do `MEMED_API_BASE` (se não for `integrations.api.memed`, usa o de produção), então **não precisa** setar `MEMED_SCRIPT` na Vercel — mas ele sobrescreve se definido. O loader de produção (`integration.js`) injeta o `MdSinapsePrescricao` de forma **assíncrona** (o front faz poll por ele).
+- Doc: https://doc.memed.com.br/docs/primeiros-passos · URLs por ambiente: doc.memed.com.br → Front-end → Configurações → URLs
 
 ## Podcasts (Anchor / Spotify for Podcasters)
 - **Feed RSS do podcast:** `https://anchor.fm/s/6e257fc4/podcast/rss` (show "EndoDirect — Endocrinologia e Metabologia"). Áudio servido pelo Anchor/CloudFront. O campo "Feed RSS" no painel já vem pré-preenchido com ele (#310).
