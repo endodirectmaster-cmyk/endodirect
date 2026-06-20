@@ -5678,16 +5678,21 @@ function renderPrescTool(){
   var pr=lsGet('presc_prescritor')||{};
   var pnome=pr.nome||(currentUser&&currentUser.name)||'';
   var pesp=pr.esp||((currentUser&&currentUser.profile&&(currentUser.profile.especialidade||currentUser.profile.displayPerfil))||'');
+  var pend=pr.endereco||'';var pfone=pr.fone||'';
   var tabBtn=function(id,lbl){return '<button class="presc-tabbtn'+(prescTab===id?' on':'')+'" data-act="tab" data-tab="'+id+'">'+lbl+'</button>';};
   tool.innerHTML=
     '<div class="card" style="margin-bottom:.7rem"><div class="g2" style="margin-bottom:.5rem">'
       +'<div class="fld2" style="margin:0"><label>Paciente</label><input type="text" id="presc-pac-nome" placeholder="Nome do paciente"></div>'
       +'<div class="fld2" style="margin:0"><label>Idade</label><input type="text" id="presc-pac-idade" placeholder="Ex: 58 anos"></div>'
-    +'</div><div class="g2" style="margin:0">'
+    +'</div>'
+    +'<div class="fld2" style="margin:0 0 .5rem"><label>Endereço do paciente</label><input type="text" id="presc-pac-end" placeholder="Rua, nº, bairro, cidade/UF"></div>'
+    +'<div class="g2" style="margin:0">'
       +'<div class="fld2" style="margin:0"><label>Prescritor</label><input type="text" id="presc-presc-nome" value="'+esc(pnome)+'" placeholder="Dr(a). Nome"></div>'
       +'<div style="display:flex;gap:.4rem"><div class="fld2" style="margin:0;flex:1"><label>CRM</label><input type="text" id="presc-presc-crm" value="'+esc(pr.crm||'')+'" placeholder="CRM"></div>'
         +'<div class="fld2" style="margin:0;width:70px"><label>UF</label><input type="text" id="presc-presc-uf" value="'+esc(pr.uf||'')+'" placeholder="UF" maxlength="2"></div></div>'
-    +'</div><div class="fld2" style="margin:.5rem 0 0"><label>Especialidade (opcional)</label><input type="text" id="presc-presc-esp" value="'+esc(pesp)+'" placeholder="Ex: Endocrinologia"></div></div>'
+    +'</div><div class="fld2" style="margin:.5rem 0 0"><label>Especialidade (opcional)</label><input type="text" id="presc-presc-esp" value="'+esc(pesp)+'" placeholder="Ex: Endocrinologia"></div>'
+    +'<div class="fld2" style="margin:.5rem 0 0"><label>Endereço do emitente (consultório/instituição)</label><input type="text" id="presc-presc-end" value="'+esc(pend)+'" placeholder="Rua, nº, sala, bairro, cidade/UF"></div>'
+    +'<div class="fld2" style="margin:.5rem 0 0"><label>Telefone do emitente</label><input type="text" id="presc-presc-fone" value="'+esc(pfone)+'" placeholder="(DDD) 00000-0000" inputmode="tel"></div></div>'
     +'<div class="presc-tabs">'+tabBtn('rx','🧾 Receituário')+tabBtn('lme','📄 LME')+tabBtn('exames','🧪 Exames')+'</div>'
     +'<div id="presc-tab-rx" class="presc-tab"></div>'
     +'<div id="presc-tab-lme" class="presc-tab"></div>'
@@ -5815,17 +5820,27 @@ function prescPrintDoc(doc){
   }
 }
 function prescPrint(titulo,inner,vias){
-  var pac=prescVal('presc-pac-nome'),idade=prescVal('presc-pac-idade');
+  var pac=prescVal('presc-pac-nome'),idade=prescVal('presc-pac-idade'),pacend=prescVal('presc-pac-end');
   var pn=prescVal('presc-presc-nome'),pc=prescVal('presc-presc-crm'),pu=prescVal('presc-presc-uf'),pe=prescVal('presc-presc-esp');
-  lsSet('presc_prescritor',{nome:pn,crm:pc,uf:pu,esp:pe});
+  var pend=prescVal('presc-presc-end'),pfone=prescVal('presc-presc-fone');
+  lsSet('presc_prescritor',Object.assign(lsGet('presc_prescritor')||{},{nome:pn,crm:pc,uf:pu,esp:pe,endereco:pend,fone:pfone}));
   var dataStr=new Date().toLocaleDateString('pt-BR');
   function via(label){
     return '<div class="doc">'
       +'<div class="dh"><div class="dt">'+esc(titulo)+'</div>'+(label?'<div class="dv">'+esc(label)+'</div>':'')+'</div>'
-      +'<div class="pac"><b>Paciente:</b> '+esc(pac||'____________________________________')+(idade?('&nbsp;&nbsp;&nbsp;<b>Idade:</b> '+esc(idade)):'')+'</div>'
+      +'<div class="emit"><div class="bxt">Identificação do emitente</div>'
+        +'<div class="bxc"><b>Dr(a). '+esc(pn||'____________________')+'</b>'+(pc?(' — CRM '+esc(pc)+(pu?('/'+esc(pu)):'')):'')+(pe?('&nbsp;&nbsp;·&nbsp;&nbsp;'+esc(pe)):'')
+        +(pend?('<br>'+esc(pend)):'')+(pfone?('&nbsp;&nbsp;·&nbsp;&nbsp;Tel.: '+esc(pfone)):'')+'</div></div>'
+      +'<div class="pac"><b>Paciente:</b> '+esc(pac||'____________________________________')+(idade?('&nbsp;&nbsp;&nbsp;<b>Idade:</b> '+esc(idade)):'')
+        +(pacend?('<br><b>Endereço:</b> '+esc(pacend)):'')+'</div>'
       +'<div class="bd">'+inner+'</div>'
       +'<div class="sg"><div class="ln"></div>Dr(a). '+esc(pn||'')+(pc?(' — CRM '+esc(pc)+(pu?('/'+esc(pu)):'')):'')+(pe?('<div class="esp">'+esc(pe)+'</div>'):'')+'</div>'
-      +'<div class="dtt">'+esc(dataStr)+'</div></div>';
+      +'<div class="dtt">'+esc(dataStr)+'</div>'
+      +(vias?('<div class="cf"><div class="cfbox"><div class="bxt">Identificação do comprador</div>'
+          +'<div class="cfl">Nome: ______________________________</div><div class="cfl">RG: _____________&nbsp;&nbsp;Tel.: _____________</div><div class="cfl">Endereço: __________________________</div></div>'
+        +'<div class="cfbox"><div class="bxt">Identificação do fornecedor (farmácia)</div>'
+          +'<div class="cfl">Data: ___/___/______</div><div class="cfsig"><div class="ln2"></div>Assinatura do farmacêutico</div></div></div>'):'')
+      +'</div>';
   }
   var content=vias?(via('1ª via — Farmácia')+'<div class="pgb"></div>'+via('2ª via — Paciente')):via('');
   var css='*{box-sizing:border-box}body{font-family:Arial,Helvetica,sans-serif;color:#111;margin:0;padding:24px;font-size:13px}'
@@ -5833,10 +5848,15 @@ function prescPrint(titulo,inner,vias){
     +'.dh{display:flex;justify-content:space-between;align-items:center;border-bottom:2px solid #1e3a5f;padding-bottom:8px;margin-bottom:14px}'
     +'.dt{font-size:16px;font-weight:bold;color:#1e3a5f;letter-spacing:.5px}.dv{font-size:11px;color:#666;font-weight:bold}'
     +'.pac{font-size:13px;margin-bottom:14px;padding-bottom:8px;border-bottom:1px dashed #bbb}'
-    +'.bd{min-height:220px}.rxln{margin-bottom:14px}.rxn{font-weight:bold;font-size:14px}.rxp{margin-left:18px;color:#222}.exln{margin-left:6px;line-height:1.9}'
+    +'.bd{min-height:150px}.rxln{margin-bottom:14px}.rxn{font-weight:bold;font-size:14px}.rxp{margin-left:18px;color:#222}.exln{margin-left:6px;line-height:1.9}'
     +'.sg{margin-top:48px;text-align:center}.ln{border-top:1px solid #333;width:300px;margin:0 auto 4px}.esp{font-size:11px;color:#555}'
     +'.dtt{text-align:right;margin-top:18px;font-size:12px;color:#555}.pgb{page-break-after:always}'
-    +'@media print{body{padding:0}.doc{border:none;margin:0 auto}}';
+    +'.emit{border:1px solid #999;border-radius:6px;padding:8px 12px;margin-bottom:12px}'
+    +'.bxt{font-size:10px;font-weight:bold;color:#1e3a5f;text-transform:uppercase;letter-spacing:.5px;margin-bottom:3px}'
+    +'.bxc{font-size:12.5px;line-height:1.5}'
+    +'.cf{display:flex;gap:12px;margin-top:22px}.cfbox{flex:1;border:1px solid #999;border-radius:6px;padding:8px 12px;min-height:92px}'
+    +'.cfl{font-size:11px;color:#333;margin-top:8px}.cfsig{text-align:center;margin-top:18px;font-size:10px;color:#555}.ln2{border-top:1px solid #333;width:90%;margin:0 auto 3px}'
+    +'@media print{body{padding:0}.doc{border:none;margin:0 auto}.emit,.cfbox{border:1px solid #999}}';
   var w=window.open('','_blank','width=860,height=1000');
   if(!w){notify('Permita pop-ups para gerar o documento de impressão.','err');return;}
   w.document.write('<!doctype html><html><head><meta charset="utf-8"><title>'+esc(titulo)+'</title><style>'+css+'</style></head><body>'+content+'</body></html>');
