@@ -1,0 +1,27 @@
+---
+tags: [cofre, integracoes, marketing]
+atualizado: 2026-06-22
+---
+
+# Instagram Stories — "Questão do Dia"
+
+## Status
+**Em planejamento.** Amostra validada visualmente pelo usuário (2026-06-22). **Ainda NÃO construído** no app — aguardando go-ahead para o MVP.
+
+## Decisões de produto (2026-06-22)
+- **Canal/formato:** **somente Stories** (9:16, **1080×1920**). Conta **@endodirect** (já é **Business** → habilita a Graph API no futuro). Postagem às **18h BRT**.
+- **Fluxo:** **rota C — híbrido com aprovação.** O sistema prepara arte + legenda + gabarito; o professor revisa/edita e **aprova**; postagem **manual** no MVP. Depois troca-se o "avisar" por publicação via API (a conta já é Business).
+- **Conteúdo:** **misto.** O banco curado (TEEM) serve de **calibragem** de estilo/dificuldade; o que vai ao ar são **casos ORIGINAIS** (IA + revisão). **Não repostar enunciados do TEEM verbatim** — prova oficial da SBEM, risco de direito autoral.
+- **Engajamento (Stories):** o sticker nativo de **quiz** aceita no máx. **4 opções** e o **poll** só 2; a questão é A–E (5). Opções: (a) manter 5 alternativas na arte e revelar o gabarito no story seguinte / no dia seguinte (usando poll ou caixa de perguntas p/ engajar); (b) reduzir a 4 alternativas e usar o **quiz nativo** (acerto/erro na hora + estatística). **Stickers de quiz/poll NÃO podem ser adicionados via API** → reforça a aprovação humana + postagem manual.
+
+## Amostra (2026-06-22)
+- Gerada **localmente** (SVG → PNG via `@resvg/resvg-js`, fonte Liberation Sans), on-brand (navy `#0b1325`/`#1a2744` + dourado). 2 slides: **pergunta** + **gabarito**. Caso original: hiperaldosteronismo primário (rastreio aldo/renina → **teste confirmatório** antes de localizar; resposta **B**).
+- **Lição técnica:** o **Canva AI** (`generate-design`) **falha** (`design_generation_error`) com texto clínico longo / caracteres especiais / `brand_kit_id` — só gera com prompt curto e genérico. E **não dá** para baixar export/thumbnail do Canva no sandbox (403). ⇒ Para produção, usar **Canva brand template com autofill** (campos fixos) **ou** render próprio HTML/SVG→PNG (controlado e reprodutível).
+
+## MVP proposto (NÃO construído — respeita o teto de 12 funções / 2 crons)
+- `lib/instagram.js` (**módulo**, não função): escolhe o item do dia, monta a legenda da pergunta e a do gabarito.
+- **Card "Questão do dia"** no painel do professor: a IA gera caso + arte; o professor edita/aprova; aprovados entram numa fila (estado em `payload`, espelhando `newsletter_*`). Ver [[Dados e Supabase]].
+- **Disparo diário pegando carona no cron do radar** (`/api/cron/endocrine-radar`, 10:30 UTC; ver [[Newsletter e Radar]]): havendo item aprovado, **avisa por e-mail** (Resend) com a arte + legenda copiável → o professor posta. Depois, migrar para publicação via Graph API (imagem do story; quiz/poll seguem manuais).
+- **Arte:** brand template no Canva (autofill) ou render SVG→PNG.
+
+Ver [[Decisões]] e [[Integrações]].

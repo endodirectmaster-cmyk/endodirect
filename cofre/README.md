@@ -1,6 +1,6 @@
 ---
 tags: [cofre, moc]
-atualizado: 2026-06-10
+atualizado: 2026-06-22
 ---
 
 # Cofre Endodirect — base de conhecimento
@@ -24,6 +24,7 @@ Este é o **cofre de conhecimento do projeto Endodirect**, mantido pelo assisten
 - [[Calculadoras]] — calculadoras clínicas (inclui z-score e TmP/GFR)
 - [[Banco de Questões]] — provas, questões, histórico de correções
 - [[Integrações]] — Resend, Anthropic, Memed, vídeo
+- [[Instagram Stories (Questão do Dia)]] — post diário de questão em Stories (planejamento)
 - [[Pendências]] — o que falta (lado do usuário e do código)
 - [[Decisões]] — log de decisões de produto/técnicas
 - [[Convenções de Trabalho]] — fluxo de git, validação, regras
