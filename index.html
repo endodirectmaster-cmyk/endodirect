@@ -1530,7 +1530,7 @@ textarea{resize:vertical;line-height:1.6}
         <div id="fc-gen" style="display:none" class="gen-box">
           <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:.65rem"><span class="sec-title">Gerar com IA</span><button class="btn btn-ghost btn-sm" id="fc-gen-cancel">✕</button></div>
           <div class="g3" style="margin-bottom:.65rem">
-            <div class="fld2" style="margin:0"><label>Subespecialidade</label><select id="fc-gsub"><option>Diabetes</option><option>Obesidade</option><option>Tireoide</option><option>Adrenal</option><option>Neuroendocrinologia</option><option>Osteometabolismo</option><option>Lípides</option><option>Endocrinologia Pediátrica</option><option>Endocrinologia Feminina</option><option>Endocrinologia Masculina</option></select></div>
+            <div class="fld2" style="margin:0"><label>Subespecialidade</label><select id="fc-gsub"><option>Diabetes</option><option>Obesidade</option><option>Tireoide</option><option>Adrenal</option><option>Neuroendocrinologia</option><option>Osteometabolismo</option><option>Lípides</option><option>Endocrinologia Pediátrica</option><option>Endocrinologia Feminina</option><option>Endocrinologia Masculina</option><option>Endocrinologia do Esporte</option><option>Transgeneridade</option></select></div>
             <div class="fld2" style="margin:0"><label>Tema (opcional)</label><input type="text" id="fc-gt" placeholder="Ex: Tireoidite de Hashimoto"></div>
             <div class="fld2" style="margin:0"><label>Quantidade</label><select id="fc-gq"><option value="5">5</option><option value="10" selected>10</option><option value="15">15</option></select></div>
           </div>
@@ -1953,10 +1953,10 @@ textarea{resize:vertical;line-height:1.6}
 
 var DEFAULT_SUBESP='<option value="">Todas</option><option>Diabetes</option><option>Obesidade</option><option>Tireoide</option><option>Adrenal</option><option>Neuroendocrinologia</option><option>Osteometabolismo</option><option>Endocrinologia Pediátrica</option><option>Endocrinologia Esportiva</option><option>Endocrinologia Masculina</option><option>Endocrinologia Feminina</option><option>Transgeneridade</option>';
 var BCOLORS=['#8b5cf6','#3b82f6','#10b981','#f59e0b','#ef4444','#ec4899'];
-// Mesma taxonomia canônica do painel do professor (MURAL_SUBSPECIALTY_FILTERS),
-// para o aluno criar cards nas mesmas subespecialidades. Cards de amostra antigos
-// em categorias legadas (Esportiva/Transgeneridade) seguem visíveis na grade.
-var FC_CATS=['Diabetes','Obesidade','Tireoide','Adrenal','Neuroendocrinologia','Osteometabolismo','Lípides','Endocrinologia Pediátrica','Endocrinologia Feminina','Endocrinologia Masculina'];
+// Subespecialidades dos flashcards (professor e aluno usam a MESMA lista, na
+// mesma ordem). = taxonomia canônica + Esporte e Transgeneridade (que têm
+// conteúdo de amostra publicado na coleção).
+var FC_CATS=['Diabetes','Obesidade','Tireoide','Adrenal','Neuroendocrinologia','Osteometabolismo','Lípides','Endocrinologia Pediátrica','Endocrinologia Feminina','Endocrinologia Masculina','Endocrinologia do Esporte','Transgeneridade'];
 var AREAS_CRONO=[
   {name:'Diabetes',color:'#3b6fd4'},{name:'Obesidade',color:'#10b981'},
   {name:'Tireoide',color:'#f59e0b'},{name:'Adrenal',color:'#ec4899'},
@@ -2825,7 +2825,7 @@ function refreshAfterRemoteState(){
   try{renderNoteList();}catch(e){}
   try{markLockedNavItems();}catch(e){}
   try{maybeLandMedicoHome();}catch(e){} // médico: tela de início = Mural (após acessos carregarem)
-  try{if(currentUser&&currentUser.role==='admin'){refreshAdminIdentity();renderAdmSec(admCurrentSec||'analytics');}}catch(e){}
+  try{if(currentUser&&currentUser.role==='admin'){try{migrateSamplesToShared();}catch(e){}refreshAdminIdentity();renderAdmSec(admCurrentSec||'analytics');}}catch(e){}
 }
 function canUseRemoteState(){
   return !!(currentUser&&currentUser.id&&getSupabaseClient());
@@ -4738,8 +4738,8 @@ function renderFcCatPills(){
 // antigos) aparecem ao final para não esconder nenhum card.
 function fcSubList(){
   var seen={};DB.fc.forEach(function(c){var s=canonSub(c.cat||c.sub);seen[s]=(seen[s]||0)+1;});
-  var out=MURAL_SUBSPECIALTY_FILTERS.map(function(s){return{sub:s,count:seen[s]||0};});
-  Object.keys(seen).forEach(function(s){if(MURAL_SUBSPECIALTY_FILTERS.indexOf(s)<0)out.push({sub:s,count:seen[s]});});
+  var out=FC_CATS.map(function(s){return{sub:s,count:seen[s]||0};});
+  Object.keys(seen).forEach(function(s){if(FC_CATS.indexOf(s)<0)out.push({sub:s,count:seen[s]});});
   return out;
 }
 // Selo de verificação: quantos flashcards publicados pelo professor já estão no
@@ -7148,6 +7148,27 @@ function restoreMMLive(){
 var ADM_MM_SUBESP=['Diabetes','Obesidade','Tireoide','Adrenal','Neuroendocrinologia','Osteometabolismo','Endocrinologia Pediátrica','Endocrinologia Feminina e Andrologia','Dislipidemia e Aterosclerose','Endocrinologia Masculina','Endocrinologia Esportiva','Transgeneridade'];
 function persistSharedMM(){lsSet('mm_shared',sharedMM);queueRemoteStateSave();try{renderMMList();}catch(e){}}
 function persistFcShared(){lsSet('fc_shared',fcShared);queueRemoteStateSave();}
+// Migração única (admin): publica os flashcards de amostra embutidos no código
+// (FC_SEED + FC_MEMBER) na coleção do professor (fc_shared), deduplicando por
+// enunciado. Assim os painéis do professor e do aluno ficam sincronizados —
+// sem perder cards e sem duplicar. Idempotente (dedup por front + ledger local).
+function migrateSamplesToShared(){
+  if(!(currentUser&&currentUser.role==='admin'))return 0;
+  if(lsGet('fc_samples_migrated'))return 0;
+  if(typeof fcShared==='undefined'||!Array.isArray(fcShared))return 0;
+  var have={};fcShared.forEach(function(c){if(c&&c.front)have[String(c.front).trim().toLowerCase()]=1;});
+  var added=0,base=Date.now();
+  function pub(obj){if(typeof obj==='undefined'||!obj)return;Object.keys(obj).forEach(function(cat){(obj[cat]||[]).forEach(function(p){
+    var front=String((p&&p[0])||'').trim(),back=String((p&&p[1])||'').trim();if(!front||!back)return;
+    var k=front.toLowerCase();if(have[k])return;have[k]=1;
+    fcShared.push({id:'fc-seed-'+base+'-'+added,front:front,back:back,sub:canonSub(cat),at:base+added});added++;
+  });});}
+  pub(typeof FC_SEED!=='undefined'?FC_SEED:null);
+  pub(typeof FC_MEMBER!=='undefined'?FC_MEMBER:null);
+  lsSet('fc_samples_migrated',1);
+  if(added)persistFcShared();
+  return added;
+}
 function admMMSyncDraft(){
   if(!admMMDraft)return;
   var rootEl=document.getElementById('adm-mm-root');if(rootEl)admMMDraft.data.root=(rootEl.value||'').trim()||admMMDraft.topic;
@@ -7218,7 +7239,9 @@ function admMapasHTML(){
 var admFcSub='',admFcEditId=null;
 function admFcSubList(){
   var seen={};(fcShared||[]).forEach(function(c){var s=canonSub(c.sub||c.cat);seen[s]=(seen[s]||0)+1;});
-  return MURAL_SUBSPECIALTY_FILTERS.map(function(s){return{sub:s,count:seen[s]||0};});
+  var out=FC_CATS.map(function(s){return{sub:s,count:seen[s]||0};});
+  Object.keys(seen).forEach(function(s){if(FC_CATS.indexOf(s)<0)out.push({sub:s,count:seen[s]});});
+  return out;
 }
 // Acrescenta cards (gerados pela IA ou importados) à coleção publicada.
 function admFcAddCards(cards){
