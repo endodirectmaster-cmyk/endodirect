@@ -5214,7 +5214,7 @@ function renderMMList(){
   var phF=mmTema?ph.filter(function(o){return temaOf(o.m,mmSubSel)===mmTema;}):ph;
   setText('mm-count','('+(shF.length+phF.length)+')');
   var html=shF.map(function(m){
-    var j=shared.indexOf(m);
+    var j=(sharedMM||[]).indexOf(m); // índice no array GLOBAL (viewMMShared lê sharedMM), não no filtrado
     return'<div class="mm-item"><div><div style="font-size:.8rem;font-weight:600">'+esc(m.topic)+' <span class="tag tag-pur" style="font-size:.55rem">Professor</span></div><div style="font-size:.63rem;color:var(--t3)">'+esc(canonSub(m.sub))+'</div></div><div style="display:flex;gap:4px"><button class="btn btn-outline btn-sm" data-mmviewshared="'+j+'">Ver</button></div></div>';
   }).join('');
   html+=phF.map(function(o){var m=o.m,i=o.i;
