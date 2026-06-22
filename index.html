@@ -2800,16 +2800,19 @@ function renderDegustacaoBar(){
   }else if(bar){bar.style.display='none';}
 }
 function refreshAfterRemoteState(){
-  try{if(currentUser&&currentUser.id){
-    // Mapas mentais: remove cópias semeadas antigas (seed:true) — viraram
-    // duplicatas dos mapas do professor (mm_shared). O seeding já está desligado;
-    // isto auto-limpa resíduo em localStorage / estado de abas antigas (mesmo que
-    // tenham re-salvado no servidor). Mapas criados pelo aluno (sem seed) ficam.
-    var before=DB.mm.length;DB.mm=DB.mm.filter(function(m){return !(m&&m.seed);});
-    var mmPruned=DB.mm.length!==before;if(mmPruned)lsSet('mm',DB.mm);
-    var s=(seedFlashcards()||0)+(seedMindmaps()||0);
-    if(s>0||mmPruned)queueRemoteStateSave();
-  }}catch(e){}
+  try{
+    // Demo premium (alunopro): completa a coleção localmente para a vitrine.
+    var _demoPremium=!!(currentUser&&currentUser.role==='aluno'&&!currentUser.id&&Array.isArray(userAcessos)&&userAcessos.indexOf('plano')>=0);
+    if((currentUser&&currentUser.role==='admin')||_demoPremium){try{migrateSamplesToShared();}catch(e){}}
+    // Semeia para alunos REAIS e para contas demo (sem id). Salva no servidor só
+    // quem tem conta real (currentUser.id); a demo fica só local.
+    if(currentUser&&(currentUser.id||currentUser.role==='aluno')){
+      var before=DB.mm.length;DB.mm=DB.mm.filter(function(m){return !(m&&m.seed);});
+      var mmPruned=DB.mm.length!==before;if(mmPruned)lsSet('mm',DB.mm);
+      var s=(seedFlashcards()||0)+(seedMindmaps()||0);
+      if((s>0||mmPruned)&&currentUser.id)queueRemoteStateSave();
+    }
+  }catch(e){}
   try{renderDegustacaoBar();}catch(e){}
   try{maybeResumePlanIntent();}catch(e){}
   try{refreshDash();}catch(e){}
@@ -2825,7 +2828,7 @@ function refreshAfterRemoteState(){
   try{renderNoteList();}catch(e){}
   try{markLockedNavItems();}catch(e){}
   try{maybeLandMedicoHome();}catch(e){} // médico: tela de início = Mural (após acessos carregarem)
-  try{if(currentUser&&currentUser.role==='admin'){try{migrateSamplesToShared();}catch(e){}refreshAdminIdentity();renderAdmSec(admCurrentSec||'analytics');}}catch(e){}
+  try{if(currentUser&&currentUser.role==='admin'){refreshAdminIdentity();renderAdmSec(admCurrentSec||'analytics');}}catch(e){}
 }
 function canUseRemoteState(){
   return !!(currentUser&&currentUser.id&&getSupabaseClient());
@@ -7153,7 +7156,12 @@ function persistFcShared(){lsSet('fc_shared',fcShared);queueRemoteStateSave();}
 // enunciado. Assim os painéis do professor e do aluno ficam sincronizados —
 // sem perder cards e sem duplicar. Idempotente (dedup por front + ledger local).
 function migrateSamplesToShared(){
-  if(!(currentUser&&currentUser.role==='admin'))return 0;
+  var isAdmin=!!(currentUser&&currentUser.role==='admin');
+  // Demo "premium" (ex.: alunopro): conta local sem sessão real, mas com acesso
+  // de plano embutido → tratamos como assinante na vitrine, recebendo a coleção
+  // completa LOCALMENTE (não grava no servidor), igual a um Gold real.
+  var isDemoPremium=!!(currentUser&&currentUser.role==='aluno'&&!currentUser.id&&Array.isArray(userAcessos)&&userAcessos.indexOf('plano')>=0);
+  if(!isAdmin&&!isDemoPremium)return 0;
   if(typeof fcShared==='undefined'||!Array.isArray(fcShared))return 0;
   // Idempotente por enunciado: só publica o que ainda não está na coleção. Sem
   // ledger, então se um save falhar, a próxima carga do admin reconcilia (não
@@ -7172,7 +7180,7 @@ function migrateSamplesToShared(){
   });});}
   pub(typeof FC_SEED!=='undefined'?FC_SEED:null,null);          // amostra: livre (degustação já tinha)
   pub(typeof FC_MEMBER!=='undefined'?FC_MEMBER:null,'member');  // biblioteca: só assinante
-  if(added)persistFcShared();
+  if(added){ if(isAdmin)persistFcShared(); else{try{lsSet('fc_shared',fcShared);}catch(e){}} } // admin publica no servidor; demo só local
   return added;
 }
 function admMMSyncDraft(){
