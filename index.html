@@ -7160,13 +7160,18 @@ function migrateSamplesToShared(){
   // fica preso) — prioriza "não perder nenhum card".
   var have={};fcShared.forEach(function(c){if(c&&c.front)have[String(c.front).trim().toLowerCase()]=1;});
   var added=0,base=Date.now();
-  function pub(obj){if(typeof obj==='undefined'||!obj)return;Object.keys(obj).forEach(function(cat){(obj[cat]||[]).forEach(function(p){
+  // tier:'member' = só para quem tem assinatura (plano). Sem tier = livre
+  // (degustação também vê, como já via). Assim a expansão da BIBLIOTECA de membro
+  // (FC_MEMBER) é benefício de assinante; a degustação mantém o combinado.
+  function pub(obj,tier){if(typeof obj==='undefined'||!obj)return;Object.keys(obj).forEach(function(cat){(obj[cat]||[]).forEach(function(p){
     var front=String((p&&p[0])||'').trim(),back=String((p&&p[1])||'').trim();if(!front||!back)return;
     var k=front.toLowerCase();if(have[k])return;have[k]=1;
-    fcShared.push({id:'fc-seed-'+base+'-'+added,front:front,back:back,sub:canonSub(cat),at:base+added});added++;
+    var card={id:'fc-seed-'+base+'-'+added,front:front,back:back,sub:canonSub(cat),at:base+added};
+    if(tier)card.tier=tier;
+    fcShared.push(card);added++;
   });});}
-  pub(typeof FC_SEED!=='undefined'?FC_SEED:null);
-  pub(typeof FC_MEMBER!=='undefined'?FC_MEMBER:null);
+  pub(typeof FC_SEED!=='undefined'?FC_SEED:null,null);          // amostra: livre (degustação já tinha)
+  pub(typeof FC_MEMBER!=='undefined'?FC_MEMBER:null,'member');  // biblioteca: só assinante
   if(added)persistFcShared();
   return added;
 }
