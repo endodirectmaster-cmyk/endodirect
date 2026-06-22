@@ -7154,8 +7154,10 @@ function persistFcShared(){lsSet('fc_shared',fcShared);queueRemoteStateSave();}
 // sem perder cards e sem duplicar. Idempotente (dedup por front + ledger local).
 function migrateSamplesToShared(){
   if(!(currentUser&&currentUser.role==='admin'))return 0;
-  if(lsGet('fc_samples_migrated'))return 0;
   if(typeof fcShared==='undefined'||!Array.isArray(fcShared))return 0;
+  // Idempotente por enunciado: só publica o que ainda não está na coleção. Sem
+  // ledger, então se um save falhar, a próxima carga do admin reconcilia (não
+  // fica preso) — prioriza "não perder nenhum card".
   var have={};fcShared.forEach(function(c){if(c&&c.front)have[String(c.front).trim().toLowerCase()]=1;});
   var added=0,base=Date.now();
   function pub(obj){if(typeof obj==='undefined'||!obj)return;Object.keys(obj).forEach(function(cat){(obj[cat]||[]).forEach(function(p){
@@ -7165,7 +7167,6 @@ function migrateSamplesToShared(){
   });});}
   pub(typeof FC_SEED!=='undefined'?FC_SEED:null);
   pub(typeof FC_MEMBER!=='undefined'?FC_MEMBER:null);
-  lsSet('fc_samples_migrated',1);
   if(added)persistFcShared();
   return added;
 }
