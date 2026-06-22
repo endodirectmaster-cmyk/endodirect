@@ -4,6 +4,7 @@
 const { runRadar } = require('../../lib/radar');
 const { sendDailyNewsletter } = require('../../lib/newsletter');
 const { refreshPodcastsFromFeed } = require('../../lib/podcasts');
+const { sendTrialEmails } = require('../../lib/trial-emails');
 const { sendAlert } = require('../../lib/alert');
 
 function json(res, status, body) {
@@ -38,7 +39,13 @@ module.exports = async function handler(req, res) {
     let podcasts = { added: 0, reason: 'skipped' };
     try { podcasts = await refreshPodcastsFromFeed(); }
     catch (e) { console.error('[cron-radar] podcasts erro:', (e && e.stack) || e); podcasts = { added: 0, reason: 'error' }; }
-    return json(res, 200, { ok: true, ...result, newsletter, podcasts });
+    // E-mails do ciclo de degustação: aviso ~48h antes do fim + win-back para quem
+    // já terminou. Acoplado ao cron do radar (plano limita o nº de crons).
+    // Fail-safe: nunca derruba o cron se o envio falhar.
+    let trialEmails = { sent: false, reason: 'skipped' };
+    try { trialEmails = await sendTrialEmails(); }
+    catch (e) { console.error('[cron-radar] trial-emails erro:', (e && e.stack) || e); trialEmails = { sent: false, reason: 'error' }; }
+    return json(res, 200, { ok: true, ...result, newsletter, podcasts, trialEmails });
   } catch (error) {
     console.error('[cron-radar] erro:', (error && error.stack) || error);
     try { await sendAlert('Radar diário falhou', ['O cron endocrine-radar lançou erro e NÃO atualizou o mural hoje.', 'Erro: ' + ((error && error.message) || error)]); } catch (_) {}
