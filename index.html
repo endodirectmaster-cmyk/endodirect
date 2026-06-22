@@ -5790,11 +5790,24 @@ function renderLme(){
   var form='';
   if(prescLmeSel){
     var ex=(prescLmeSel.exames||[]).join('\n');
-    form='<div class="presc-item"><div style="font-weight:700;font-size:.85rem;margin-bottom:.4rem">'+esc(prescLmeSel.n)+'</div>'
+    var pr=lsGet('presc_prescritor')||{};
+    form='<div class="presc-item"><div style="font-weight:700;font-size:.85rem;margin-bottom:.5rem">'+esc(prescLmeSel.n)+'</div>'
+      +'<div class="g2" style="margin-bottom:.4rem"><div class="fld2" style="margin:0"><label>Estabelecimento de saúde</label><input type="text" id="presc-lme-estab" value="'+esc(pr.estab||'')+'" placeholder="Nome do estabelecimento"></div>'
+      +'<div style="display:flex;gap:.4rem"><div class="fld2" style="margin:0;flex:1"><label>CNES</label><input type="text" id="presc-lme-cnes" value="'+esc(pr.cnes||'')+'" placeholder="CNES"></div>'
+      +'<div class="fld2" style="margin:0;flex:1"><label>CNS do médico</label><input type="text" id="presc-lme-cnsmed" value="'+esc(pr.cnsmed||'')+'" placeholder="CNS"></div></div></div>'
+      +'<div class="g2" style="margin-bottom:.4rem"><div class="fld2" style="margin:0"><label>Nome da mãe do paciente</label><input type="text" id="presc-lme-mae" placeholder="Nome completo da mãe"></div>'
+      +'<div style="display:flex;gap:.4rem"><div class="fld2" style="margin:0;flex:1"><label>Peso (kg)</label><input type="text" id="presc-lme-peso" inputmode="decimal" placeholder="kg"></div>'
+      +'<div class="fld2" style="margin:0;flex:1"><label>Altura (cm)</label><input type="text" id="presc-lme-altura" inputmode="decimal" placeholder="cm"></div>'
+      +'<div class="fld2" style="margin:0;flex:1.4"><label>CNS do paciente</label><input type="text" id="presc-lme-cnspac" placeholder="Cartão SUS"></div></div></div>'
       +'<div class="g2" style="margin-bottom:.4rem"><div class="fld2" style="margin:0"><label>CID-10</label><input type="text" id="presc-lme-cid" value="'+esc(prescLmeSel.cid||'')+'"></div>'
-      +'<div class="fld2" style="margin:0"><label>Medicamento(s)</label><input type="text" id="presc-lme-med" value="'+esc(prescLmeSel.med||prescLmeSel.n)+'"></div></div>'
-      +'<div class="fld2" style="margin-bottom:.4rem"><label>Exames / critérios exigidos (um por linha)</label><textarea id="presc-lme-exames" rows="4">'+esc(ex)+'</textarea></div>'
-      +'<div class="fld2"><label>Observações / critérios clínicos</label><textarea id="presc-lme-crit" rows="3">'+esc(prescLmeSel.criterios||'')+'</textarea></div>'
+      +'<div class="fld2" style="margin:0"><label>Diagnóstico</label><input type="text" id="presc-lme-diag" value="'+esc(prescLmeSel.diag||'')+'" placeholder="Descrição do diagnóstico (CID-10)"></div></div>'
+      +'<div class="fld2" style="margin-bottom:.4rem"><label>Medicamento(s)</label><input type="text" id="presc-lme-med" value="'+esc(prescLmeSel.med||prescLmeSel.n)+'"></div>'
+      +'<div class="g3" style="margin-bottom:.4rem"><div class="fld2" style="margin:0"><label>Qtd. 1º mês</label><input type="text" id="presc-lme-qt1" placeholder="ex: 30"></div>'
+      +'<div class="fld2" style="margin:0"><label>Qtd. 2º mês</label><input type="text" id="presc-lme-qt2"></div>'
+      +'<div class="fld2" style="margin:0"><label>Qtd. 3º mês</label><input type="text" id="presc-lme-qt3"></div></div>'
+      +'<div class="fld2" style="margin-bottom:.4rem"><label>Anamnese</label><textarea id="presc-lme-crit" rows="3">'+esc(prescLmeSel.criterios||'')+'</textarea></div>'
+      +'<div class="fld2" style="margin-bottom:.4rem"><label>Tratamento prévio / atual</label><input type="text" id="presc-lme-tratprev" placeholder="Sim/Não — qual, tempo, resposta"></div>'
+      +'<div class="fld2"><label>Exames / critérios exigidos (um por linha)</label><textarea id="presc-lme-exames" rows="3">'+esc(ex)+'</textarea></div>'
       +'<div style="margin-top:.6rem"><button class="btn btn-primary" data-act="print" data-doc="lme">🖨 Imprimir LME</button> <button class="btn btn-outline" data-act="lmeclear">Limpar</button></div></div>';
   }else{
     form='<div class="empty" style="padding:1rem">Selecione um medicamento/condição do CEAF abaixo para preencher o LME.</div>';
@@ -5854,15 +5867,7 @@ function prescPrintDoc(doc){
   }
   if(doc==='lme'){
     if(!prescLmeSel){notify('Selecione um medicamento para o LME.','err');return;}
-    var cid=prescVal('presc-lme-cid'),med=prescVal('presc-lme-med'),crit=prescVal('presc-lme-crit');
-    var exraw=document.getElementById('presc-lme-exames');var exl=exraw?(exraw.value||'').split('\n').filter(function(x){return x.trim();}):[];
-    var lb='<div class="rxln">'
-      +'<div class="rxn">CID-10: '+esc(cid||'—')+'</div>'
-      +'<div class="rxp"><b>Medicamento(s):</b> '+esc(med||'')+'</div>'
-      +'<div class="rxp" style="margin-top:.4rem"><b>Exames / critérios exigidos:</b></div>'+exl.map(function(x){return '<div class="exln">• '+esc(x)+'</div>';}).join('')
-      +(crit?('<div class="rxp" style="margin-top:.4rem"><b>Observações:</b> '+esc(crit)+'</div>'):'')
-      +'</div>';
-    prescPrint('LME — LAUDO P/ MEDICAMENTO ESPECIALIZADO (CEAF/SUS)',lb,false);
+    prescPrintLME();
     return;
   }
 }
@@ -5907,6 +5912,55 @@ function prescPrint(titulo,inner,vias){
   var w=window.open('','_blank','width=860,height=1000');
   if(!w){notify('Permita pop-ups para gerar o documento de impressão.','err');return;}
   w.document.write('<!doctype html><html><head><meta charset="utf-8"><title>'+esc(titulo)+'</title><style>'+css+'</style></head><body>'+content+'</body></html>');
+  w.document.close();w.focus();setTimeout(function(){try{w.print();}catch(e){}},400);
+}
+function prescPrintLME(){
+  var g=prescVal;
+  var pac=g('presc-pac-nome'),idade=g('presc-pac-idade');
+  var estab=g('presc-lme-estab'),cnes=g('presc-lme-cnes'),cnsmed=g('presc-lme-cnsmed');
+  var mae=g('presc-lme-mae'),cnspac=g('presc-lme-cnspac'),peso=g('presc-lme-peso'),altura=g('presc-lme-altura');
+  var cid=g('presc-lme-cid'),diag=g('presc-lme-diag'),med=g('presc-lme-med');
+  var qt1=g('presc-lme-qt1'),qt2=g('presc-lme-qt2'),qt3=g('presc-lme-qt3');
+  var anam=g('presc-lme-crit'),tratprev=g('presc-lme-tratprev');
+  var exraw=document.getElementById('presc-lme-exames');var exl=exraw?(exraw.value||'').split('\n').filter(function(x){return x.trim();}):[];
+  var pn=g('presc-presc-nome'),pc=g('presc-presc-crm'),pu=g('presc-presc-uf'),pe=g('presc-presc-esp'),pend=g('presc-presc-end'),pfone=g('presc-presc-fone');
+  lsSet('presc_prescritor',Object.assign(lsGet('presc_prescritor')||{},{nome:pn,crm:pc,uf:pu,esp:pe,endereco:pend,fone:pfone,estab:estab,cnes:cnes,cnsmed:cnsmed}));
+  var data=new Date().toLocaleDateString('pt-BR');
+  function v(x){return (x&&String(x).trim())?esc(x):'&nbsp;';}
+  function cell(label,val,opts){opts=opts||{};var st=opts.w?('flex:none;width:'+opts.w+'px'):('flex:'+(opts.flex||1));return '<div class="f" style="'+st+'"><div class="fl">'+label+'</div><div class="fv"'+(opts.tall?(' style="min-height:'+opts.tall+'px"'):'')+'>'+v(val)+'</div></div>';}
+  var rows=''
+    +'<div class="row">'+cell('1. CNES',cnes,{w:150})+cell('2. Estabelecimento de saúde solicitante',estab)+'</div>'
+    +'<div class="row">'+cell('3. Nome completo do paciente',pac)+'</div>'
+    +'<div class="row">'+cell('4. Nome completo da mãe do paciente',mae)+cell('CNS do paciente',cnspac,{w:175})+'</div>'
+    +'<div class="row">'+cell('5. Peso (kg)',peso,{w:120})+cell('6. Altura (cm)',altura,{w:120})+cell('Idade',idade)+'</div>'
+    +'<div class="row">'+cell('9. CID-10',cid,{w:150})+cell('10. Diagnóstico',diag)+'</div>'
+    +'<div class="row">'+cell('11. Anamnese',anam,{tall:64})+'</div>'
+    +'<div class="row">'+cell('12. Tratamento prévio / atual',tratprev,{tall:24})+'</div>'
+    +'<div class="mtbl"><div class="mh"><span class="mm">7. Medicamento(s) solicitado(s)</span><span>8. Qtd. 1º mês</span><span>2º mês</span><span>3º mês</span></div>'
+      +'<div class="mr"><span class="mm">'+v(med)+'</span><span>'+v(qt1)+'</span><span>'+v(qt2)+'</span><span>'+v(qt3)+'</span></div></div>'
+    +(exl.length?('<div class="row"><div class="f" style="flex:1"><div class="fl">Exames / critérios exigidos</div><div class="fv">'+exl.map(function(x){return '• '+esc(x);}).join('<br>')+'</div></div></div>'):'')
+    +'<div class="row">'+cell('14. Médico solicitante',pn)+cell('15. CNS do médico',cnsmed,{w:150})+cell('16. Data',data,{w:120})+'</div>'
+    +'<div class="sg">17. Assinatura e carimbo do médico — CRM '+esc(pc||'________')+(pu?('/'+esc(pu)):'')+'<div class="sgline"></div></div>'
+    +'<div class="pat"><b>Preenchimento exclusivo do paciente ou responsável (campos 18–23)</b><br>Nome: ______________________________________________&nbsp;&nbsp;CPF/CNS: __________________<div style="margin-top:16px">Assinatura: __________________________________&nbsp;&nbsp;&nbsp;Data: ____/____/________</div></div>';
+  var css='*{box-sizing:border-box}body{font-family:Arial,Helvetica,sans-serif;color:#000;margin:0;padding:14px;font-size:11px}'
+    +'.lme{max-width:760px;margin:0 auto;border:1.5px solid #000}'
+    +'.lme>*{border-bottom:1px solid #000}.lme>*:last-child{border-bottom:none}'
+    +'.hd{text-align:center;font-weight:bold;font-size:12px;padding:8px 10px;line-height:1.35}'
+    +'.row{display:flex}.f{flex:1;padding:4px 8px;border-right:1px solid #000}.f:last-child{border-right:none}'
+    +'.fl{font-size:8.5px;font-weight:bold;text-transform:uppercase;letter-spacing:.2px;color:#111}'
+    +'.fv{font-size:11px;margin-top:3px;min-height:15px;white-space:pre-wrap}'
+    +'.mh{display:flex;background:#eee;font-size:8.5px;font-weight:bold;text-transform:uppercase}'
+    +'.mr{display:flex;border-top:1px solid #000;font-size:11px;min-height:30px}'
+    +'.mh>span,.mr>span{padding:4px 8px;border-right:1px solid #000}.mh>span:last-child,.mr>span:last-child{border-right:none}'
+    +'.mm{flex:1}.mh>span:not(.mm),.mr>span:not(.mm){width:96px;text-align:center}'
+    +'.sg{padding:16px 10px 10px;text-align:center;font-size:9px;font-weight:bold;text-transform:uppercase}'
+    +'.sgline{border-top:1px solid #000;width:340px;margin:26px auto 4px}'
+    +'.pat{padding:8px 10px;font-size:10px;line-height:1.8}'
+    +'@media print{body{padding:0}}';
+  var html='<div class="lme"><div class="hd">LAUDO PARA SOLICITAÇÃO, AVALIAÇÃO E AUTORIZAÇÃO DE MEDICAMENTO(S)<br>DO COMPONENTE ESPECIALIZADO DA ASSISTÊNCIA FARMACÊUTICA (LME)</div>'+rows+'</div>';
+  var w=window.open('','_blank','width=900,height=1100');
+  if(!w){notify('Permita pop-ups para gerar o LME.','err');return;}
+  w.document.write('<!doctype html><html><head><meta charset="utf-8"><title>LME</title><style>'+css+'</style></head><body>'+html+'</body></html>');
   w.document.close();w.focus();setTimeout(function(){try{w.print();}catch(e){}},400);
 }
 function prescAISuggest(){
