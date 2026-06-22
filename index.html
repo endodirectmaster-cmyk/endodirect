@@ -5802,9 +5802,13 @@ function renderLme(){
       +'<div class="g2" style="margin-bottom:.4rem"><div class="fld2" style="margin:0"><label>CID-10</label><input type="text" id="presc-lme-cid" value="'+esc(prescLmeSel.cid||'')+'"></div>'
       +'<div class="fld2" style="margin:0"><label>Diagnóstico</label><input type="text" id="presc-lme-diag" value="'+esc(prescLmeSel.diag||'')+'" placeholder="Descrição do diagnóstico (CID-10)"></div></div>'
       +'<div class="fld2" style="margin-bottom:.4rem"><label>Medicamento(s)</label><input type="text" id="presc-lme-med" value="'+esc(prescLmeSel.med||prescLmeSel.n)+'"></div>'
-      +'<div class="g3" style="margin-bottom:.4rem"><div class="fld2" style="margin:0"><label>Qtd. 1º mês</label><input type="text" id="presc-lme-qt1" placeholder="ex: 30"></div>'
-      +'<div class="fld2" style="margin:0"><label>Qtd. 2º mês</label><input type="text" id="presc-lme-qt2"></div>'
-      +'<div class="fld2" style="margin:0"><label>Qtd. 3º mês</label><input type="text" id="presc-lme-qt3"></div></div>'
+      +'<div style="display:flex;gap:.4rem;flex-wrap:wrap;margin-bottom:.4rem">'
+      +'<div class="fld2" style="margin:0;flex:1;min-width:88px"><label>Qtd. 1º mês</label><input type="text" id="presc-lme-qt1" placeholder="ex: 30"></div>'
+      +'<div class="fld2" style="margin:0;flex:1;min-width:88px"><label>2º mês</label><input type="text" id="presc-lme-qt2"></div>'
+      +'<div class="fld2" style="margin:0;flex:1;min-width:88px"><label>3º mês</label><input type="text" id="presc-lme-qt3"></div>'
+      +'<div class="fld2" style="margin:0;flex:1;min-width:88px"><label>4º mês</label><input type="text" id="presc-lme-qt4"></div>'
+      +'<div class="fld2" style="margin:0;flex:1;min-width:88px"><label>5º mês</label><input type="text" id="presc-lme-qt5"></div>'
+      +'<div class="fld2" style="margin:0;flex:1;min-width:88px"><label>6º mês</label><input type="text" id="presc-lme-qt6"></div></div>'
       +'<div class="fld2" style="margin-bottom:.4rem"><label>Anamnese</label><textarea id="presc-lme-crit" rows="3">'+esc(prescLmeSel.criterios||'')+'</textarea></div>'
       +'<div class="fld2" style="margin-bottom:.4rem"><label>Tratamento prévio / atual</label><input type="text" id="presc-lme-tratprev" placeholder="Sim/Não — qual, tempo, resposta"></div>'
       +'<div class="fld2"><label>Exames / critérios exigidos (um por linha)</label><textarea id="presc-lme-exames" rows="3">'+esc(ex)+'</textarea></div>'
@@ -5916,49 +5920,75 @@ function prescPrint(titulo,inner,vias){
 }
 function prescPrintLME(){
   var g=prescVal;
-  var pac=g('presc-pac-nome'),idade=g('presc-pac-idade');
+  var pac=g('presc-pac-nome');
   var estab=g('presc-lme-estab'),cnes=g('presc-lme-cnes'),cnsmed=g('presc-lme-cnsmed');
   var mae=g('presc-lme-mae'),cnspac=g('presc-lme-cnspac'),peso=g('presc-lme-peso'),altura=g('presc-lme-altura');
   var cid=g('presc-lme-cid'),diag=g('presc-lme-diag'),med=g('presc-lme-med');
-  var qt1=g('presc-lme-qt1'),qt2=g('presc-lme-qt2'),qt3=g('presc-lme-qt3');
+  var qt=[g('presc-lme-qt1'),g('presc-lme-qt2'),g('presc-lme-qt3'),g('presc-lme-qt4'),g('presc-lme-qt5'),g('presc-lme-qt6')];
   var anam=g('presc-lme-crit'),tratprev=g('presc-lme-tratprev');
   var exraw=document.getElementById('presc-lme-exames');var exl=exraw?(exraw.value||'').split('\n').filter(function(x){return x.trim();}):[];
   var pn=g('presc-presc-nome'),pc=g('presc-presc-crm'),pu=g('presc-presc-uf'),pe=g('presc-presc-esp'),pend=g('presc-presc-end'),pfone=g('presc-presc-fone');
   lsSet('presc_prescritor',Object.assign(lsGet('presc_prescritor')||{},{nome:pn,crm:pc,uf:pu,esp:pe,endereco:pend,fone:pfone,estab:estab,cnes:cnes,cnsmed:cnsmed}));
   var data=new Date().toLocaleDateString('pt-BR');
-  function v(x){return (x&&String(x).trim())?esc(x):'&nbsp;';}
-  function cell(label,val,opts){opts=opts||{};var st=opts.w?('flex:none;width:'+opts.w+'px'):('flex:'+(opts.flex||1));return '<div class="f" style="'+st+'"><div class="fl">'+label+'</div><div class="fv"'+(opts.tall?(' style="min-height:'+opts.tall+'px"'):'')+'>'+v(val)+'</div></div>';}
-  var rows=''
-    +'<div class="row">'+cell('1. CNES',cnes,{w:150})+cell('2. Estabelecimento de saúde solicitante',estab)+'</div>'
-    +'<div class="row">'+cell('3. Nome completo do paciente',pac)+'</div>'
-    +'<div class="row">'+cell('4. Nome completo da mãe do paciente',mae)+cell('CNS do paciente',cnspac,{w:175})+'</div>'
-    +'<div class="row">'+cell('5. Peso (kg)',peso,{w:120})+cell('6. Altura (cm)',altura,{w:120})+cell('Idade',idade)+'</div>'
-    +'<div class="row">'+cell('9. CID-10',cid,{w:150})+cell('10. Diagnóstico',diag)+'</div>'
-    +'<div class="row">'+cell('11. Anamnese',anam,{tall:64})+'</div>'
-    +'<div class="row">'+cell('12. Tratamento prévio / atual',tratprev,{tall:24})+'</div>'
-    +'<div class="mtbl"><div class="mh"><span class="mm">7. Medicamento(s) solicitado(s)</span><span>8. Qtd. 1º mês</span><span>2º mês</span><span>3º mês</span></div>'
-      +'<div class="mr"><span class="mm">'+v(med)+'</span><span>'+v(qt1)+'</span><span>'+v(qt2)+'</span><span>'+v(qt3)+'</span></div></div>'
-    +(exl.length?('<div class="row"><div class="f" style="flex:1"><div class="fl">Exames / critérios exigidos</div><div class="fv">'+exl.map(function(x){return '• '+esc(x);}).join('<br>')+'</div></div></div>'):'')
-    +'<div class="row">'+cell('14. Médico solicitante',pn)+cell('15. CNS do médico',cnsmed,{w:150})+cell('16. Data',data,{w:120})+'</div>'
-    +'<div class="sg">17. Assinatura e carimbo do médico — CRM '+esc(pc||'________')+(pu?('/'+esc(pu)):'')+'<div class="sgline"></div></div>'
-    +'<div class="pat"><b>Preenchimento exclusivo do paciente ou responsável (campos 18–23)</b><br>Nome: ______________________________________________&nbsp;&nbsp;CPF/CNS: __________________<div style="margin-top:16px">Assinatura: __________________________________&nbsp;&nbsp;&nbsp;Data: ____/____/________</div></div>';
-  var css='*{box-sizing:border-box}body{font-family:Arial,Helvetica,sans-serif;color:#000;margin:0;padding:14px;font-size:11px}'
-    +'.lme{max-width:760px;margin:0 auto;border:1.5px solid #000}'
+  function v(x){return (x&&String(x).trim())?esc(x):'';}
+  var cb='<span class="cb"></span>';
+  var medRows='';
+  for(var i=1;i<=5;i++){
+    medRows+='<tr><td class="cnum">'+i+'</td><td class="cmed">'+(i===1?esc(med||''):'')+'</td>';
+    for(var m=0;m<6;m++){medRows+='<td>'+(i===1?esc(qt[m]||''):'')+'</td>';}
+    medRows+='</tr>';
+  }
+  var exHtml=exl.length?('<div class="row"><div class="f"><div class="fl">Exames / critérios exigidos</div><div class="fv">'+exl.map(function(x){return '&bull; '+esc(x);}).join('<br>')+'</div></div></div>'):'';
+  var html='<div class="lme">'
+    +'<div class="sus"><div class="susm">SUS</div><div class="sust"><b>Sistema Único de Saúde</b><br>Ministério da Saúde &middot; Secretaria de Estado da Saúde</div></div>'
+    +'<div class="t1">COMPONENTE ESPECIALIZADO DA ASSISTÊNCIA FARMACÊUTICA</div>'
+    +'<div class="t2">LAUDO DE SOLICITAÇÃO, AVALIAÇÃO E AUTORIZAÇÃO DE MEDICAMENTO(S)</div>'
+    +'<div class="t3">SOLICITAÇÃO DE MEDICAMENTO(S)</div>'
+    +'<div class="t4">CAMPOS DE PREENCHIMENTO EXCLUSIVO PELO MÉDICO SOLICITANTE</div>'
+    +'<div class="row"><div class="f" style="flex:none;width:150px"><div class="fl"><b>1.</b> Número CNES</div><div class="fv">'+v(cnes)+'</div></div>'
+      +'<div class="f"><div class="fl"><b>2.</b> Nome do estabelecimento de saúde solicitante</div><div class="fv">'+v(estab)+'</div></div></div>'
+    +'<div class="row"><div class="f"><div class="fl"><b>3.</b> Nome completo do Paciente</div><div class="fv">'+v(pac)+'</div></div>'
+      +'<div class="f" style="flex:none;width:150px"><div class="fl"><b>5.</b> Peso do paciente (kg)</div><div class="fv">'+v(peso)+'</div></div></div>'
+    +'<div class="row"><div class="f"><div class="fl"><b>4.</b> Nome da Mãe do paciente</div><div class="fv">'+v(mae)+'</div></div>'
+      +'<div class="f" style="flex:none;width:150px"><div class="fl"><b>6.</b> Altura do paciente (cm)</div><div class="fv">'+v(altura)+'</div></div></div>'
+    +'<table class="mt"><tr><th class="cnum" rowspan="2"></th><th class="cmed" rowspan="2"><b>7.</b> Medicamento(s)</th><th class="cqh" colspan="6"><b>8.</b> Quantidade solicitada</th></tr>'
+      +'<tr><th>1º mês</th><th>2º mês</th><th>3º mês</th><th>4º mês</th><th>5º mês</th><th>6º mês</th></tr>'+medRows+'</table>'
+    +'<div class="row"><div class="f" style="flex:none;width:150px"><div class="fl"><b>9.</b> CID-10</div><div class="fv">'+v(cid)+'</div></div>'
+      +'<div class="f"><div class="fl"><b>10.</b> Diagnóstico</div><div class="fv">'+v(diag)+'</div></div></div>'
+    +'<div class="row"><div class="f"><div class="fl"><b>11.</b> Anamnese</div><div class="fv" style="min-height:60px">'+v(anam).replace(/\n/g,'<br>')+'</div></div></div>'
+    +exHtml
+    +'<div class="row"><div class="f"><div class="fl"><b>12.</b> Paciente realizou tratamento prévio ou está em tratamento da doença?</div><div class="fv">'+cb+'NÃO&nbsp;&nbsp;&nbsp;'+cb+'SIM. Relatar: '+v(tratprev)+'</div></div></div>'
+    +'<div class="row"><div class="f"><div class="fl"><b>13.</b> Atestado de capacidade</div><div class="fv" style="font-size:9px;line-height:1.4">A solicitação do medicamento deverá ser realizada pelo paciente. O paciente é considerado incapaz, de acordo com os artigos 3º e 4º do Código Civil? '+cb+'NÃO&nbsp;&nbsp;&nbsp;'+cb+'SIM. Indicar o nome do responsável: ____________________________________</div></div></div>'
+    +'<div class="row"><div class="f"><div class="fl"><b>14.</b> Nome do médico solicitante</div><div class="fv">'+v(pn)+'</div></div>'
+      +'<div class="f" style="flex:none;width:170px"><div class="fl"><b>15.</b> CNS do médico</div><div class="fv">'+v(cnsmed)+'</div></div>'
+      +'<div class="f" style="flex:none;width:118px"><div class="fl"><b>16.</b> Data</div><div class="fv">'+esc(data)+'</div></div></div>'
+    +'<div class="row"><div class="f"><div class="fl"><b>17.</b> Assinatura e carimbo do médico'+(pc?(' &mdash; CRM '+esc(pc)+(pu?('/'+esc(pu)):'')):'')+'</div><div class="fv" style="min-height:50px"></div></div></div>'
+    +'<div class="row"><div class="f"><div class="fl"><b>18.</b> Campos abaixo preenchidos por</div><div class="fv">'+cb+'Paciente&nbsp;&nbsp;'+cb+'Mãe do paciente&nbsp;&nbsp;'+cb+'Responsável (item 13)&nbsp;&nbsp;'+cb+'Médico solicitante&nbsp;&nbsp;'+cb+'Outro: __________&nbsp;&nbsp;CPF: ____________</div></div></div>'
+    +'<div class="row"><div class="f"><div class="fl"><b>19.</b> Raça/Cor/Etnia</div><div class="fv">'+cb+'Branca&nbsp;&nbsp;'+cb+'Preta&nbsp;&nbsp;'+cb+'Parda&nbsp;&nbsp;'+cb+'Amarela&nbsp;&nbsp;'+cb+'Indígena (Etnia: ________)&nbsp;&nbsp;'+cb+'Sem informação</div></div></div>'
+    +'<div class="row"><div class="f"><div class="fl"><b>20.</b> Telefone(s) para contato do paciente</div><div class="fv">&nbsp;</div></div>'
+      +'<div class="f"><div class="fl"><b>21.</b> Número do cartão do paciente</div><div class="fv">'+cb+'CPF&nbsp;&nbsp;'+cb+'CNS: ____________________</div></div></div>'
+    +'<div class="row"><div class="f"><div class="fl"><b>22.</b> Assinatura do paciente</div><div class="fv" style="min-height:42px"></div></div>'
+      +'<div class="f"><div class="fl"><b>23.</b> Assinatura do responsável pelo preenchimento</div><div class="fv" style="min-height:42px"></div></div></div>'
+    +'</div>';
+  var css='*{box-sizing:border-box}body{font-family:Arial,Helvetica,sans-serif;color:#000;margin:0;padding:12px;font-size:10.5px}'
+    +'.lme{max-width:780px;margin:0 auto;border:1.5px solid #000}'
     +'.lme>*{border-bottom:1px solid #000}.lme>*:last-child{border-bottom:none}'
-    +'.hd{text-align:center;font-weight:bold;font-size:12px;padding:8px 10px;line-height:1.35}'
-    +'.row{display:flex}.f{flex:1;padding:4px 8px;border-right:1px solid #000}.f:last-child{border-right:none}'
-    +'.fl{font-size:8.5px;font-weight:bold;text-transform:uppercase;letter-spacing:.2px;color:#111}'
-    +'.fv{font-size:11px;margin-top:3px;min-height:15px;white-space:pre-wrap}'
-    +'.mh{display:flex;background:#eee;font-size:8.5px;font-weight:bold;text-transform:uppercase}'
-    +'.mr{display:flex;border-top:1px solid #000;font-size:11px;min-height:30px}'
-    +'.mh>span,.mr>span{padding:4px 8px;border-right:1px solid #000}.mh>span:last-child,.mr>span:last-child{border-right:none}'
-    +'.mm{flex:1}.mh>span:not(.mm),.mr>span:not(.mm){width:96px;text-align:center}'
-    +'.sg{padding:16px 10px 10px;text-align:center;font-size:9px;font-weight:bold;text-transform:uppercase}'
-    +'.sgline{border-top:1px solid #000;width:340px;margin:26px auto 4px}'
-    +'.pat{padding:8px 10px;font-size:10px;line-height:1.8}'
+    +'.sus{display:flex;align-items:center;gap:10px;padding:6px 10px}'
+    +'.susm{font-weight:bold;font-size:14px;border:1.5px solid #1e5aa8;color:#1e5aa8;border-radius:4px;padding:2px 7px;letter-spacing:1px}'
+    +'.sust{font-size:9px;line-height:1.35;color:#222}'
+    +'.t1{text-align:center;font-weight:bold;font-size:11px;background:#d9d9d9;padding:4px}'
+    +'.t2{text-align:center;font-weight:bold;font-size:11px;padding:4px}'
+    +'.t3{text-align:center;font-weight:bold;font-size:10px;background:#d9d9d9;padding:3px}'
+    +'.t4{text-align:center;font-weight:bold;font-size:9px;padding:3px;background:#eee}'
+    +'.row{display:flex}.f{flex:1;padding:3px 7px;border-right:1px solid #000}.f:last-child{border-right:none}'
+    +'.fl{font-size:8px;font-weight:bold;text-transform:uppercase;color:#111;line-height:1.25}'
+    +'.fv{font-size:10.5px;margin-top:2px;min-height:13px}'
+    +'.mt{width:100%;border-collapse:collapse}'
+    +'.mt th,.mt td{border:1px solid #000;font-size:9px;padding:3px 4px;text-align:center;height:19px}'
+    +'.mt .cmed{text-align:left;width:46%}.mt td.cmed{font-size:10px}.mt .cnum{width:22px}.mt .cqh{font-size:8.5px}'
+    +'.cb{display:inline-block;width:10px;height:10px;border:1px solid #000;vertical-align:-1px;margin:0 4px 0 6px}'
     +'@media print{body{padding:0}}';
-  var html='<div class="lme"><div class="hd">LAUDO PARA SOLICITAÇÃO, AVALIAÇÃO E AUTORIZAÇÃO DE MEDICAMENTO(S)<br>DO COMPONENTE ESPECIALIZADO DA ASSISTÊNCIA FARMACÊUTICA (LME)</div>'+rows+'</div>';
-  var w=window.open('','_blank','width=900,height=1100');
+  var w=window.open('','_blank','width=900,height=1200');
   if(!w){notify('Permita pop-ups para gerar o LME.','err');return;}
   w.document.write('<!doctype html><html><head><meta charset="utf-8"><title>LME</title><style>'+css+'</style></head><body>'+html+'</body></html>');
   w.document.close();w.focus();setTimeout(function(){try{w.print();}catch(e){}},400);
