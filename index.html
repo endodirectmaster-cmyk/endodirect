@@ -544,9 +544,9 @@ textarea{resize:vertical;line-height:1.6}
 .fb-cat-btn,.fb-tipo-btn{background:var(--surface);border:1.5px solid var(--bd2);border-radius:99px;padding:.26rem .7rem;font-size:.7rem;font-weight:500;color:var(--t2);cursor:pointer;font-family:var(--font)}
 .fb-cat-btn.on{background:var(--blue-l);border-color:var(--blue);color:var(--blue);font-weight:600}
 .fb-tipo-btn.on{background:var(--gold-l);border-color:var(--gold);color:#d97706;font-weight:600}
-.cat-pill{background:var(--surface);border:1.5px solid var(--bd2);border-radius:99px;padding:.26rem .7rem;font-size:.7rem;font-weight:500;color:var(--t2);cursor:pointer;font-family:var(--font)}
-.cat-pill:hover{border-color:var(--blue);color:var(--blue)}
-.cat-pill.on{background:var(--blue-l);border-color:var(--blue);color:var(--blue);font-weight:600}
+.cat-pill{background:var(--s2);border:1.5px solid var(--bd2);border-radius:99px;padding:.26rem .7rem;font-size:.7rem;font-weight:600;color:var(--tx);cursor:pointer;font-family:var(--font)}
+.cat-pill:hover{border-color:var(--blue);color:var(--blue2)}
+.cat-pill.on{background:var(--blue-l);border-color:var(--blue);color:var(--blue2);font-weight:700}
 @media (max-width:820px){
   html,body{height:auto;min-height:100%;overflow:auto}
   body{min-height:100dvh;touch-action:manipulation}
@@ -1957,6 +1957,50 @@ var BCOLORS=['#8b5cf6','#3b82f6','#10b981','#f59e0b','#ef4444','#ec4899'];
 // mesma ordem). = taxonomia canônica + Esporte e Transgeneridade (que têm
 // conteúdo de amostra publicado na coleção).
 var FC_CATS=['Diabetes','Obesidade','Tireoide','Adrenal','Neuroendocrinologia','Osteometabolismo','Lípides','Endocrinologia Pediátrica','Endocrinologia Feminina','Endocrinologia Masculina','Endocrinologia do Esporte','Transgeneridade'];
+// ── SUBTÓPICOS (temas) por subespecialidade — navegação subespecialidade → tema.
+// A ordem define a ordem das abas. Usado por flashcards e mapas mentais. O tema
+// de cada item é explícito (item.tema) ou inferido do enunciado/título (regras).
+var FC_SUBTOPICS={
+ 'Diabetes':['DM1','DM2','Pré-diabetes','Gestacional','Secundário/MODY','Diagnóstico','Tecnologia','Complicações agudas','Complicações crônicas','Hospital','Idoso'],
+ 'Tireoide':['Hipotireoidismo','Hipertireoidismo/Graves','Tireoidites','Nódulo','Câncer','Tireoide e gestação'],
+ 'Adrenal':['Insuf. adrenal','Cushing','Hiperaldosteronismo','Feocromocitoma','Incidentaloma','HAC'],
+ 'Obesidade':['Avaliação','Tratamento Farmacológico','Tratamento Cirúrgico','Comorbidades','Infantil'],
+ 'Neuroendocrinologia':['Prolactinoma','Acromegalia','Hipopituitarismo','DI/SIADH','Incidentaloma hipofisário'],
+ 'Osteometabolismo':['Osteoporose','Cálcio/PTH','Vitamina D','Paget','Osteomalácia'],
+ 'Lípides':['Hipercolesterolemia','Hipertrigliceridemia','Alfalipoproteinemias'],
+ 'Endocrinologia Pediátrica':['Baixa estatura/GH','Puberdade','HAC','Hipotireoidismo congênito','DM1'],
+ 'Endocrinologia Feminina':['SOP','Amenorreia','Menopausa','Hirsutismo','Insuf. ovariana'],
+ 'Endocrinologia Masculina':['Hipogonadismo','Infertilidade/ginecomastia','Disfunção erétil'],
+ 'Endocrinologia do Esporte':['Tríade/RED-S','Anabolizantes','Exercício e DM','Performance'],
+ 'Transgeneridade':['Homem Trans','Mulher Trans','Monitorização']
+};
+// Regras de classificação (ordem = prioridade; 1ª que casar vence). Texto minúsculo.
+var FC_TEMA_RULES={
+ 'Diabetes':[['Complicações agudas',/cetoacid|\bcad\b|hiperosmolar|\behh\b|hipoglicem|crise hipergli/],['Complicações crônicas',/retinopat|nefropat|neuropat|doença renal|renal crôn|\bdrc\b|pé diabét|microvascular|macrovascular|cardiovascular|risco cv|albumin|retina/],['Gestacional',/gestacion|gravid|grávid/],['Hospital',/hospital|internaç|internad|enfermaria|sliding/],['Idoso',/idoso|geriátr|idade avançad/],['Tecnologia',/tecnolog|\bcgm\b|bomba de insulin|sensor|sistema híbrid|monitor.*contínu/],['Diagnóstico',/diagnóstic|critério|rastrei|classificaç/],['Pré-diabetes',/pré-?diabet|pre-?diabet|intolerân|jejum alterad|prevenção/],['Secundário/MODY',/\bmody\b|secundári|pancreatogên|esteroide/],['DM2',/tipo 2|\bdm2\b|\bdm 2\b|resistência insulín|síndrome metaból|metformin|sglt2|glp-?1|\bgip\b|tirzepatid|sulfonilur|dpp-?4|pioglitaz|acarbose|antidiabét|farmacolog/],['DM1',/tipo 1|\bdm1\b|\bdm 1\b|autoimun|\blada\b|peptíde|célula beta|criança|adolescent|pediátr|insulinopen|insulinoterap|insulin|basal-bolus|análog/]],
+ 'Tireoide':[['Câncer',/câncer|carcinoma|bethesda|paaf|tireoglobulin|ti-?rads|maligno|papilífer|tireoidectomi/],['Nódulo',/nódul/],['Hipertireoidismo/Graves',/hipertireoid|graves|tireot[oó]x|\btrab\b|tempestade|tionamid|metimazol|propiltiour|\bptu\b|radioiod/],['Hipotireoidismo',/hipotireoid|hashimoto|levotiroxin|subclínic|mixedema/],['Tireoidites',/tireoidit|quervain|subagud|pós-?part/],['Tireoide e gestação',/gesta|grávid/]],
+ 'Adrenal':[['Feocromocitoma',/feocromocit|paragangli|metanefrin|catecolamin/],['Hiperaldosteronismo',/aldosteron|\bconn\b|renina/],['HAC',/hiperplasia adrenal|\bhac\b|21-?hidroxil|17-?oh|congênit/],['Incidentaloma',/incidentalom|adenoma adrenal/],['Cushing',/cushing|cortisol|hipercortisol|dexametason/],['Insuf. adrenal',/insuficiência adrenal|addison|crise adrenal|cosintropin|\bacth\b/]],
+ 'Obesidade':[['Infantil',/infantil|criança|pediátr|adolescent/],['Tratamento Cirúrgico',/bariátric|cirurgi|sleeve|bypass|gastrect/],['Tratamento Farmacológico',/farmacológic|farmacoter|semaglutid|tirzepatid|liraglutid|orlistat|naltrexon|bupropion|sibutramin|medicament|\bglp/],['Comorbidades',/comorbid|masld|mash|esteatos|apneia|\baos\b|sarcopên|cardiovascular|risco cv|metaból/],['Avaliação',/\bimc\b|classificaç|avaliaç|circunferênci|diagnóstic|abordagem/]],
+ 'Neuroendocrinologia':[['Prolactinoma',/prolactin|cabergolin|bromocriptin/],['DI/SIADH',/insipidus|\bsiadh\b|desmopressin|\badh\b|vasopressin|copeptin|hiponatrem/],['Acromegalia',/acromegal|\bigf\b|somatostatin|pegvisom/],['Incidentaloma hipofisário',/incidentalom|adenoma hipofis|não-?funcionant/],['Hipopituitarismo',/hipopituitar|sheehan|apoplexia|pan-?hipo|deficiência|cushing|\bacth\b/]],
+ 'Osteometabolismo':[['Paget',/paget/],['Osteomalácia',/osteomalác|raquitism/],['Vitamina D',/vitamina d|25-?oh|colecalcifer/],['Cálcio/PTH',/paratireoid|\bpth\b|hipercalcem|hipocalcem|cálcio|hiperpara|hipopara|\bhhf\b|pthrp/],['Osteoporose',/osteoporos|densitometr|\bdxa\b|t-?score|bisfosfonat|denosumab|teriparatid|romosozumab|fratur|osteopen/]],
+ 'Lípides':[['Hipertrigliceridemia',/triglicer|\btg\b|fibrat|quilomicron|pancreatite/],['Alfalipoproteinemias',/alfalipoprotein|hipoalfa|hiperalfa|\bhdl\b|tangier|apoa/],['Hipercolesterolemia',/colesterol|\bldl\b|familiar|\bhf\b|lp\(a\)|estatin|ezetimib|pcsk9|inclisiran|bempedoic|risco|\bmetas?\b|não-?hdl|apob|escore|prevent|dislipidemi|tratament|manejo/]],
+ 'Endocrinologia Pediátrica':[['HAC',/hiperplasia adrenal|\bhac\b|21-?hidroxil|17-?oh/],['Hipotireoidismo congênito',/hipotireoidismo congênit|congênit|pezinho/],['Puberdade',/puberdad|telarca|menarca|\bgnrh\b|precoce/],['DM1',/diabet|\bdm1\b|glicem/],['Baixa estatura/GH',/baixa estatura|estatura|crescimento|\bgh\b|\bpig\b|turner|idade óssea|\bsga\b/]],
+ 'Endocrinologia Feminina':[['SOP',/\bsop\b|ovários? policíst|rotterdam|policíst/],['Insuf. ovariana',/insuficiência ovarian|falência ovarian|\bpoi\b/],['Menopausa',/menopaus|climatér|terapia hormonal|vasomotor|fogacho/],['Hirsutismo',/hirsut|hiperandrogen|\bacne\b/],['Amenorreia',/amenorrei|oligomenorr|menstrua|anovulaç|prolactin/]],
+ 'Endocrinologia Masculina':[['Disfunção erétil',/erétil/],['Infertilidade/ginecomastia',/infertil|ginecomast|espermatog|espermogram|varicocel|fertilidad/],['Hipogonadismo',/hipogonad|testosteron|klinefelter|kallmann|\blh\b|\bfsh\b|reposição|\btrt\b|exógen|hematócrit/]],
+ 'Endocrinologia do Esporte':[['Tríade/RED-S',/tríade|red-?s|disponibilidade energét|baixa densidad/],['Anabolizantes',/anaboliz|esteroid|doping|\bepo\b|eritropoetin/],['Exercício e DM',/diabet|glicem|glut4|hipoglicem/],['Performance',/performance|cafeín|exercíci|hipertrofi|cortisol|testosteron/]],
+ 'Transgeneridade':[['Monitorização',/monitoriz|hematócrit|perfil lipíd|acompanha|rastrei|fertilidad|criopreserv|óssea|densidade/],['Mulher Trans',/feminiliz|mulher trans|estrogên|estradiol|antiandrogên|espironolacton|ciproteron|etinilestradiol/],['Homem Trans',/masculiniz|homem trans|testosteron/]]
+};
+function classifyTema(text,sub){var r=FC_TEMA_RULES[sub];if(!r)return 'Geral';var t=String(text||'').toLowerCase();for(var i=0;i<r.length;i++){if(r[i][1].test(t))return r[i][0];}return 'Geral';}
+// Índice enunciado/título → {sub,tema} EXPLÍCITOS da coleção publicada
+// (fcShared/sharedMM). Faz os flashcards já semeados no baralho do aluno (cópias
+// por valor) refletirem o que o professor renomeou/moveu. Invalidado ao publicar.
+var _sharedMeta=null;
+function sharedMeta(){if(_sharedMeta)return _sharedMeta;var m={};function add(a,k){if(Array.isArray(a))a.forEach(function(c){if(c&&c[k])m[String(c[k]).trim().toLowerCase()]={sub:c.sub||c.cat||null,tema:c.tema||null};});}if(typeof fcShared!=='undefined')add(fcShared,'front');if(typeof sharedMM!=='undefined')add(sharedMM,'topic');_sharedMeta=m;return m;}
+function invalidateSharedMeta(){_sharedMeta=null;}
+function temaOf(item,sub){if(item&&item.tema)return item.tema;var txt=String((item&&(item.front||item.topic))||'');var meta=sharedMeta()[txt.trim().toLowerCase()];if(meta&&meta.tema)return meta.tema;return classifyTema(txt,sub);}
+// Subespecialidade efetiva (respeita "mover" do professor via o índice).
+function subOf(item){if(!item)return 'Geral';var txt=String(item.front||item.topic||'');var meta=sharedMeta()[txt.trim().toLowerCase()];return canonSub((meta&&meta.sub)||item.sub||item.cat||'Geral');}
+// Lista de temas presentes (com contagem), na ordem da taxonomia; extras e "Geral" ao final.
+function temaListFor(items,sub){var seen={};(items||[]).forEach(function(it){var tm=temaOf(it,sub);seen[tm]=(seen[tm]||0)+1;});var order=FC_SUBTOPICS[sub]||[];var out=[];order.forEach(function(tm){if(seen[tm])out.push({tema:tm,count:seen[tm]});});Object.keys(seen).forEach(function(tm){if(order.indexOf(tm)<0&&tm!=='Geral')out.push({tema:tm,count:seen[tm]});});if(seen['Geral'])out.push({tema:'Geral',count:seen['Geral']});return out;}
 var AREAS_CRONO=[
   {name:'Diabetes',color:'#3b6fd4'},{name:'Obesidade',color:'#10b981'},
   {name:'Tireoide',color:'#f59e0b'},{name:'Adrenal',color:'#ec4899'},
@@ -2746,8 +2790,8 @@ function applyStatePayload(payload,personalOnly){
   if(payload.perf&&typeof payload.perf==='object')DB.perf=payload.perf;
   if(!personalOnly){
     if(Array.isArray(payload.provas))provasDB=payload.provas;
-    if(Array.isArray(payload.mm_shared)){sharedMM=payload.mm_shared;try{lsSet('mm_shared',sharedMM);}catch(e){}try{renderMMList();}catch(e){}}
-    if(Array.isArray(payload.fc_shared)){fcShared=payload.fc_shared;try{lsSet('fc_shared',fcShared);}catch(e){}}
+    if(Array.isArray(payload.mm_shared)){sharedMM=payload.mm_shared;try{lsSet('mm_shared',sharedMM);}catch(e){}try{invalidateSharedMeta();}catch(e){}try{renderMMList();}catch(e){}}
+    if(Array.isArray(payload.fc_shared)){fcShared=payload.fc_shared;try{lsSet('fc_shared',fcShared);}catch(e){}try{invalidateSharedMeta();}catch(e){}}
     if(Array.isArray(payload.radar_avisos))radarAvisos=payload.radar_avisos;
     if(Array.isArray(payload.radar_hidden))radarHidden=payload.radar_hidden;
     if(Array.isArray(payload.adm_avisos)||Array.isArray(payload.radar_avisos)){
@@ -2791,10 +2835,12 @@ function renderDegustacaoBar(){
     }
     var msg=bar.querySelector('#degustacao-msg');
     if(msg){
-      var muralTxt;
-      if(muralTrialActive()){var d=muralDegDiasRestantes();muralTxt='mural por mais '+d+' dia'+(d===1?'':'s');}
-      else{muralTxt='mural encerrado';}
-      msg.innerHTML='<span style="display:inline-flex;align-items:center;gap:.3rem;background:rgba(255,255,255,.5);border:1px solid rgba(120,80,0,.25);border-radius:999px;padding:.1rem .6rem;font-weight:800">🎁 Modo degustação</span> <span style="opacity:.92">flashcards, mapas mentais, 50 questões do banco e '+muralTxt+'</span>';
+      if(degExpired()){
+        msg.innerHTML='<span style="display:inline-flex;align-items:center;gap:.3rem;background:rgba(255,255,255,.5);border:1px solid rgba(120,80,0,.25);border-radius:999px;padding:.1rem .6rem;font-weight:800">⏳ Degustação encerrada</span> <span style="opacity:.92">seus '+DEG_DIAS+' dias gratuitos terminaram — assine para manter o acesso aos benefícios</span>';
+      }else{
+        var dd=degDiasRestantes();
+        msg.innerHTML='<span style="display:inline-flex;align-items:center;gap:.3rem;background:rgba(255,255,255,.5);border:1px solid rgba(120,80,0,.25);border-radius:999px;padding:.1rem .6rem;font-weight:800">🎁 Modo degustação</span> <span style="opacity:.92">acesso gratuito por mais <b>'+dd+' dia'+(dd===1?'':'s')+'</b> — flashcards, mapas mentais, 50 questões do banco e mural</span>';
+      }
     }
     bar.style.display='flex';
   }else if(bar){bar.style.display='none';}
@@ -4200,6 +4246,10 @@ function degStart(){
 }
 function muralDegDiasRestantes(){return Math.max(0,Math.ceil((DEG_MURAL_DIAS*86400000-(Date.now()-degStart()))/86400000));}
 function muralTrialActive(){return isDegustacao()&&(Date.now()-degStart())<DEG_MURAL_DIAS*86400000;}
+// Degustação COMPLETA: 7 dias de acesso; depois bloqueia TODAS as funcionalidades.
+var DEG_DIAS=7;
+function degDiasRestantes(){return Math.max(0,Math.ceil((DEG_DIAS*86400000-(Date.now()-degStart()))/86400000));}
+function degExpired(){return isDegustacao()&&(Date.now()-degStart())>=DEG_DIAS*86400000;}
 function trialLeft(id){return Math.max(0,TRIAL_LIMIT-trialUsed(id));}
 // Consome 1 uso da cota de degustação. Fora da degustação não há limite.
 // Retorna false (e mostra upsell) quando a cota acabou.
@@ -4222,6 +4272,8 @@ function canSeePanel(id){
   if(isAdminUser())return true;
   if(id==='presc'&&!prescAllowed())return false;
   if(isDegustacao()){
+    // Após os 7 dias, a degustação encerra: nenhuma funcionalidade (só conta/suporte → upsell).
+    if(degExpired())return id==='perfil'||id==='support';
     if(id==='mural')return muralTrialActive(); // degustação do mural: 7 dias
     if(DEGUSTACAO_PANELS[id])return true;
     if(TRIAL_PANELS[id])return trialLeft(id)>0;
@@ -4289,6 +4341,20 @@ function showLockedPanel(id){
   var via=minName
     ? (hasPlan?('fazendo upgrade para o plano '+minName):('assinando o plano '+minName))
     : (scope==='plano'?(hasPlan?'fazendo upgrade do seu plano':'adquirindo um pacote (Standard ou Gold)'):(hasPlan?'fazendo upgrade do seu plano':'adquirindo o '+nome));
+  if(isDegustacao()&&degExpired()){
+    p.innerHTML='<div class="breadcrumb">'+esc(label)+' <b>/ Bloqueado</b></div>'
+      +'<div class="ph"><h1>🔒 '+esc(label)+'</h1></div>'
+      +'<div class="pc"><div class="card" style="max-width:520px;margin:1.2rem auto;text-align:center;padding:1.9rem 1.5rem">'
+      +'<div style="font-size:2.3rem;margin-bottom:.5rem">🎁</div>'
+      +'<div style="font-size:1.02rem;font-weight:800;color:var(--tx);margin-bottom:.4rem">Degustação de '+DEG_DIAS+' dias encerrada</div>'
+      +'<p style="font-size:.84rem;color:var(--t2);line-height:1.6;margin:.3rem 0 1.2rem">Seus <b>'+DEG_DIAS+' dias de degustação gratuita</b> terminaram. Para continuar com acesso a <b>flashcards, mapas mentais, banco de questões, ferramentas de IA e o mural</b>, assine um pacote (Standard ou Gold) e garanta todos os benefícios.</p>'
+      +'<button class="btn btn-primary" id="locked-cta" style="justify-content:center">Assinar e desbloquear tudo</button>'
+      +'</div></div>';
+    var bex=document.getElementById('locked-cta');
+    if(bex)bex.addEventListener('click',function(){showAssineScreen((currentUser&&currentUser.email)||'',{upgrade:false});});
+    closeMobileNav();
+    return;
+  }
   if(trialEsgotado){
     p.innerHTML='<div class="breadcrumb">'+esc(label)+' <b>/ Bloqueado</b></div>'
       +'<div class="ph"><h1>🔒 '+esc(label)+'</h1></div>'
@@ -4730,7 +4796,7 @@ function renderProvaResults(qs){
   renderGenQ(true);
 }
 // ── FLASHCARDS ──
-var studyCards=[],studyIdx=0,fcSelectedCat='Diabetes',fcFilter=null;
+var studyCards=[],studyIdx=0,fcSelectedCat='Diabetes',fcFilter=null,fcTema='';
 function renderFcCatPills(){
   var el=document.getElementById('fc-cat-pills');if(!el)return;
   el.innerHTML=FC_CATS.map(function(c){return'<button class="cat-pill'+(c===fcSelectedCat?' on':'')+'" data-fccat="'+esc(c)+'">'+esc(c)+'</button>';}).join('');
@@ -4740,7 +4806,7 @@ function renderFcCatPills(){
 // Subespecialidades fora da taxonomia (ex.: Transgeneridade, de cards de amostra
 // antigos) aparecem ao final para não esconder nenhum card.
 function fcSubList(){
-  var seen={};DB.fc.forEach(function(c){var s=canonSub(c.cat||c.sub);seen[s]=(seen[s]||0)+1;});
+  var seen={};DB.fc.forEach(function(c){var s=subOf(c);seen[s]=(seen[s]||0)+1;});
   var out=FC_CATS.map(function(s){return{sub:s,count:seen[s]||0};});
   Object.keys(seen).forEach(function(s){if(FC_CATS.indexOf(s)<0)out.push({sub:s,count:seen[s]});});
   return out;
@@ -4813,10 +4879,17 @@ function renderFC(){
     }).join('')+'</div>';
     return;
   }
-  // DRILL-IN: cards da subespecialidade escolhida (casados por canonSub).
-  if(frow){frow.style.display='flex';frow.innerHTML='<button class="dir-back" data-fcsub="">← Todas as subespecialidades</button>';}
+  // DRILL-IN: abas de subtópico (tema) + cards do tema selecionado.
+  var subList=DB.fc.filter(function(c){return subOf(c)===fcFilter;});
+  if(frow){
+    frow.style.display='flex';
+    var tabs='<button class="dir-back" data-fcsub="">← Subespecialidades</button>';
+    tabs+='<button class="cat-pill'+(fcTema===''?' on':'')+'" data-fctema="">Todos ('+subList.length+')</button>';
+    tabs+=temaListFor(subList,fcFilter).map(function(o){return '<button class="cat-pill'+(fcTema===o.tema?' on':'')+'" data-fctema="'+esc(o.tema)+'">'+esc(o.tema)+' ('+o.count+')</button>';}).join('');
+    frow.innerHTML=tabs;
+  }
   el.className='fc-grid';
-  var list=DB.fc.filter(function(c){return canonSub(c.cat||c.sub)===fcFilter;});
+  var list=fcTema?subList.filter(function(c){return temaOf(c,fcFilter)===fcTema;}):subList;
   if(!list.length){el.innerHTML='<div class="empty" style="grid-column:1/-1">Nenhum flashcard nesta subespecialidade ainda.</div>';return;}
   el.innerHTML=list.map(function(c){var i=DB.fc.indexOf(c);var col=fcCatColor(c.cat);return'<div class="fc-card" data-fctoggle="'+i+'"><button class="fc-del" data-fcdel="'+i+'" title="Excluir">✕</button><div class="fc-inner"><div class="fc-face fc-face-front" style="border-left:5px solid '+col+'"><div class="fc-cat" style="color:'+col+'">'+esc(c.cat||'Geral')+'</div><div class="fc-front">'+esc(c.front)+'</div><div class="fc-hint">Clique para virar ↻</div></div><div class="fc-face fc-face-back" style="border-left:5px solid '+col+'"><div class="fc-cat" style="color:'+col+'">Resposta</div><div class="fc-back">'+esc(c.back)+'</div><div class="fc-hint">Clique para voltar ↺</div></div></div></div>';}).join('');
 }
@@ -4857,6 +4930,7 @@ var sharedMM=lsGet('mm_shared')||[];
 var fcShared=lsGet('fc_shared')||[]; // flashcards publicados pelo professor (global; vão a todos os alunos)
 var mmSubFilter='';
 var mmSubSel=''; // subespecialidade selecionada na grade dos mapas do aluno ('' = grade)
+var mmTema='';   // subtópico (tema) selecionado dentro da subespecialidade ('' = todos)
 function wrapTxt(text,max){
   var words=String(text||'').split(/\s+/).filter(Boolean),lines=[],line='';
   words.forEach(function(w){if((line+' '+w).trim().length<=max)line=(line+' '+w).trim();else{if(line)lines.push(line);line=w;}});
@@ -5093,10 +5167,14 @@ function saveMM(){
   if(idx>=0)DB.mm[idx]=curMM;else DB.mm.push(curMM);
   persist();renderMMList();refreshDash();notify('Mapa salvo!','ok');
 }
+// Na degustação, só os mapas LIVRES (sem tier 'member') aparecem; assinante vê
+// todos. Cobre a conta-demo de degustação (aluno@), que carrega por public_content
+// (todos os mapas); para alunos reais o filtro de tier é server-side (member_content).
+function visibleSharedMM(){var all=sharedMM||[];return isDegustacao()?all.filter(function(m){return !m||m.tier!=='member';}):all;}
 // Grade de subespecialidades dos mapas do aluno (mesma taxonomia das Diretrizes).
 function mmSubGrid(){
   var seen={};
-  (sharedMM||[]).forEach(function(m){var s=canonSub(m.sub);seen[s]=(seen[s]||0)+1;});
+  visibleSharedMM().forEach(function(m){var s=canonSub(m.sub);seen[s]=(seen[s]||0)+1;});
   (DB.mm||[]).forEach(function(m){if(m&&m.seed)return;var s=canonSub(m.sub);seen[s]=(seen[s]||0)+1;});
   var out=DIR_SUBS.map(function(s){return {sub:s,count:seen[s]||0};});
   Object.keys(seen).forEach(function(s){if(DIR_SUBS.indexOf(s)<0)out.push({sub:s,count:seen[s]});});
@@ -5105,7 +5183,7 @@ function mmSubGrid(){
 function renderMMList(){
   var el=document.getElementById('mm-list');if(!el)return;
   var panel=document.getElementById('panel-mmap'),head=document.getElementById('mm-subhead');
-  var shared=sharedMM||[];
+  var shared=visibleSharedMM();
   // Nível 1 — grade de subespecialidades (form de criar fica escondido aqui).
   if(!mmSubSel){
     if(panel)panel.classList.add('mm-grid');
@@ -5117,24 +5195,32 @@ function renderMMList(){
     el.innerHTML='<div class="dir-sub-grid">'+cards+'</div>';
     return;
   }
-  // Nível 2 — dentro da subespecialidade: cabeçalho + (form de criar acima) + lista.
+  // Nível 2 — dentro da subespecialidade: cabeçalho + abas de subtópico + lista.
   if(panel)panel.classList.remove('mm-grid');
-  if(head)head.innerHTML='<button class="dir-back" data-mmback style="margin-bottom:.7rem">← Todas as subespecialidades</button>'
-    +'<div class="ph" style="margin-top:0"><h1 style="font-size:1.05rem">'+dirSubIcon(mmSubSel)+' '+esc(mmSubSel)+'</h1></div>';
   var sh=shared.filter(function(m){return canonSub(m.sub)===mmSubSel;});
   // Não renderiza cópias semeadas (seed:true): viram duplicatas dos mapas do
   // professor. Cobre contas demo/local (sem id remoto, onde o prune do
   // refreshAfterRemoteState não roda) e resíduo de localStorage de qualquer conta.
   var ph=(DB.mm||[]).map(function(m,i){return{m:m,i:i};}).filter(function(o){return canonSub(o.m.sub)===mmSubSel&&!(o.m&&o.m.seed);});
-  setText('mm-count','('+(sh.length+ph.length)+')');
-  var html=sh.map(function(m){
-    var j=shared.indexOf(m);
+  var allMaps=sh.concat(ph.map(function(o){return o.m;}));
+  if(head){
+    var mtabs='<button class="cat-pill'+(mmTema===''?' on':'')+'" data-mmtema="">Todos ('+allMaps.length+')</button>';
+    mtabs+=temaListFor(allMaps,mmSubSel).map(function(o){return '<button class="cat-pill'+(mmTema===o.tema?' on':'')+'" data-mmtema="'+esc(o.tema)+'">'+esc(o.tema)+' ('+o.count+')</button>';}).join('');
+    head.innerHTML='<button class="dir-back" data-mmback style="margin-bottom:.7rem">← Todas as subespecialidades</button>'
+      +'<div class="ph" style="margin-top:0;margin-bottom:.5rem"><h1 style="font-size:1.05rem">'+dirSubIcon(mmSubSel)+' '+esc(mmSubSel)+'</h1></div>'
+      +'<div style="display:flex;flex-wrap:wrap;gap:.3rem;margin-bottom:.7rem">'+mtabs+'</div>';
+  }
+  var shF=mmTema?sh.filter(function(m){return temaOf(m,mmSubSel)===mmTema;}):sh;
+  var phF=mmTema?ph.filter(function(o){return temaOf(o.m,mmSubSel)===mmTema;}):ph;
+  setText('mm-count','('+(shF.length+phF.length)+')');
+  var html=shF.map(function(m){
+    var j=(sharedMM||[]).indexOf(m); // índice no array GLOBAL (viewMMShared lê sharedMM), não no filtrado
     return'<div class="mm-item"><div><div style="font-size:.8rem;font-weight:600">'+esc(m.topic)+' <span class="tag tag-pur" style="font-size:.55rem">Professor</span></div><div style="font-size:.63rem;color:var(--t3)">'+esc(canonSub(m.sub))+'</div></div><div style="display:flex;gap:4px"><button class="btn btn-outline btn-sm" data-mmviewshared="'+j+'">Ver</button></div></div>';
   }).join('');
-  html+=ph.map(function(o){var m=o.m,i=o.i;
+  html+=phF.map(function(o){var m=o.m,i=o.i;
     return'<div class="mm-item"><div><div style="font-size:.8rem;font-weight:600">'+esc(m.topic)+'</div><div style="font-size:.63rem;color:var(--t3)">'+new Date(m.at||Date.now()).toLocaleDateString('pt-BR')+'</div></div><div style="display:flex;gap:4px"><button class="btn btn-outline btn-sm" data-mmview="'+i+'">Ver</button><button class="btn btn-ghost btn-sm" data-mmdel="'+i+'">×</button></div></div>';
   }).join('');
-  if(!html)html='<div class="empty">Nenhum mapa nesta subespecialidade ainda. Crie um acima.</div>';
+  if(!html)html='<div class="empty">Nenhum mapa neste subtópico ainda.</div>';
   el.innerHTML='<div style="display:flex;flex-direction:column;gap:6px">'+html+'</div>';
 }
 function viewMMShared(j){
@@ -7134,7 +7220,22 @@ function sendChat(text){
 
 // ── ADMIN (layout estilo Lexia) ──
 var admCurrentSec='analytics',admProvaSubtab='importar',pdfBase64Prova=null,podAudioDataAdm=null,admBancoArea='',admBancoCode='',admBancoAno='',admBancoInst='',admBancoPage=0,ADM_BANCO_PER=4,admBancoEditIdx=null,admBancoEditImg,admBancoEditStemImg;
-var admMMDraft=null,admMMEditId=null,admMMFilterSub='',admMMSub='';
+var admMMDraft=null,admMMEditId=null,admMMFilterSub='',admMMSub='',admMMTema='',admMMMetaId=null;
+// Painel de edição de um mapa publicado: renomear (título), mover para
+// (subespecialidade › aba), editar conteúdo (editor visual) e excluir.
+function admMMEditPanel(m,j){
+  var msub=subOf(m);
+  var subOpts=FC_CATS.map(function(s){return '<option'+(s===msub?' selected':'')+'>'+esc(s)+'</option>';}).join('');
+  var curTema=temaOf(m,msub);
+  var temaOpts=(FC_SUBTOPICS[msub]||[]).concat(['Geral']).map(function(t){return '<option'+(t===curTema?' selected':'')+'>'+esc(t)+'</option>';}).join('');
+  return '<div style="margin-top:.5rem;display:grid;gap:.4rem;background:var(--bg-soft,rgba(127,127,127,.08));border:1px solid var(--bd);border-radius:8px;padding:.6rem">'
+    +'<div style="font-size:.66rem;color:var(--t3);text-transform:uppercase;letter-spacing:.5px">Renomear (título)</div>'
+    +'<input type="text" id="adm-mm-rename" value="'+esc(m.topic)+'" style="width:100%">'
+    +'<div style="font-size:.66rem;color:var(--t3);text-transform:uppercase;letter-spacing:.5px;margin-top:.2rem">Mover para — subespecialidade › aba</div>'
+    +'<div style="display:flex;gap:6px;flex-wrap:wrap"><select id="adm-mm-movesub" style="flex:1;min-width:150px">'+subOpts+'</select><select id="adm-mm-movetema" style="flex:1;min-width:150px">'+temaOpts+'</select></div>'
+    +'<div style="display:flex;gap:6px;flex-wrap:wrap;margin-top:.2rem"><button class="btn btn-primary btn-sm" data-adm-mm-savemeta="'+j+'">💾 Salvar</button><button class="btn btn-outline btn-sm" data-adm-mm-del="'+j+'" style="color:var(--red);border-color:var(--red)">🗑 Excluir</button><button class="btn btn-ghost btn-sm" id="adm-mm-metacancel">Cancelar</button></div>'
+    +'</div>';
+}
 // Edição visual de mapas no painel do professor: reaproveita o MESMO editor do
 // aluno (#mm-live), movendo-o para dentro do admin. mmAdminEdit=true enquanto o
 // professor edita; __mmLiveHome guarda o lugar original p/ devolver ao sair.
@@ -7149,8 +7250,8 @@ function restoreMMLive(){
   mmAdminEdit=false;
 }
 var ADM_MM_SUBESP=['Diabetes','Obesidade','Tireoide','Adrenal','Neuroendocrinologia','Osteometabolismo','Endocrinologia Pediátrica','Endocrinologia Feminina e Andrologia','Dislipidemia e Aterosclerose','Endocrinologia Masculina','Endocrinologia Esportiva','Transgeneridade'];
-function persistSharedMM(){lsSet('mm_shared',sharedMM);queueRemoteStateSave();try{renderMMList();}catch(e){}}
-function persistFcShared(){lsSet('fc_shared',fcShared);queueRemoteStateSave();}
+function persistSharedMM(){try{invalidateSharedMeta();}catch(e){}lsSet('mm_shared',sharedMM);queueRemoteStateSave();try{renderMMList();}catch(e){}}
+function persistFcShared(){try{invalidateSharedMeta();}catch(e){}lsSet('fc_shared',fcShared);queueRemoteStateSave();}
 // Migração única (admin): publica os flashcards de amostra embutidos no código
 // (FC_SEED + FC_MEMBER) na coleção do professor (fc_shared), deduplicando por
 // enunciado. Assim os painéis do professor e do aluno ficam sincronizados —
@@ -7235,7 +7336,9 @@ function admMapasHTML(){
   }
   // Nível 2 — mapas da subespecialidade + criação contextual.
   var rows=(sharedMM||[]).map(function(m,j){return{m:m,j:j};}).filter(function(o){return canonSub(o.m.sub)===admMMSub;});
-  var list=rows.map(function(o){var m=o.m,j=o.j;return '<div style="display:flex;align-items:center;justify-content:space-between;gap:.6rem;padding:.55rem 0;border-bottom:1px solid var(--bd)"><div style="min-width:0"><div style="font-weight:600;font-size:.82rem">'+esc(m.topic)+'</div><div style="font-size:.68rem;color:var(--t3)">'+((m.data&&m.data.branches&&m.data.branches.length)||0)+' ramos</div></div><div style="display:flex;gap:5px;flex-shrink:0"><button class="btn btn-outline btn-sm" data-adm-mm-edit="'+j+'">Editar</button><button class="btn btn-outline btn-sm" data-adm-mm-del="'+j+'" style="color:var(--red);border-color:var(--red)">🗑 Excluir</button></div></div>';}).join('');
+  var mmTemaTabs='<div style="display:flex;flex-wrap:wrap;gap:.3rem;margin:.2rem 0 .9rem"><button class="cat-pill'+(admMMTema===''?' on':'')+'" data-admmm-tema="">Todos ('+rows.length+')</button>'+temaListFor(rows.map(function(o){return o.m;}),admMMSub).map(function(t){return '<button class="cat-pill'+(admMMTema===t.tema?' on':'')+'" data-admmm-tema="'+esc(t.tema)+'">'+esc(t.tema)+' ('+t.count+')</button>';}).join('')+'</div>';
+  var rowsF=admMMTema?rows.filter(function(o){return temaOf(o.m,admMMSub)===admMMTema;}):rows;
+  var list=rowsF.map(function(o){var m=o.m,j=o.j;var row='<div style="display:flex;align-items:center;justify-content:space-between;gap:.6rem"><div style="min-width:0"><div style="font-weight:600;font-size:.82rem">'+esc(m.topic)+'</div><div style="font-size:.68rem;color:var(--t3)">'+((m.data&&m.data.branches&&m.data.branches.length)||0)+' ramos</div></div><div style="display:flex;gap:5px;flex-shrink:0"><button class="btn btn-outline btn-sm" data-adm-mm-edit="'+j+'">👁 Ver</button><button class="btn btn-outline btn-sm" data-adm-mm-meta="'+j+'">Editar</button></div></div>';return '<div style="padding:.55rem 0;border-bottom:1px solid var(--bd)">'+row+(admMMMetaId===m.id?admMMEditPanel(m,j):'')+'</div>';}).join('');
   var createForm='<div class="card" style="margin-bottom:1rem"><div class="card-head"><span class="card-title">Criar mapa mental em '+esc(admMMSub)+'</span></div>'
     +'<div class="fld2" style="margin:0 0 .6rem"><label>Tema</label><input type="text" id="adm-mm-newtopic" placeholder="Ex: Hipotireoidismo"></div>'
     +'<div style="display:flex;gap:6px;flex-wrap:wrap"><button class="btn btn-primary" id="adm-mm-gen">🤖 Gerar com IA</button><button class="btn btn-outline" id="adm-mm-import">📎 Importar arquivo</button><button class="btn btn-outline" id="adm-mm-blank">+ Criar em branco</button></div>'
@@ -7246,11 +7349,27 @@ function admMapasHTML(){
     +'<button class="dir-back" id="adm-mm-back" style="margin-bottom:1rem">← Todas as subespecialidades</button>'
     +'<div class="ph" style="margin-top:0"><h1>'+dirSubIcon(admMMSub)+' '+esc(admMMSub)+'</h1></div>'
     +createForm
-    +'<div class="card"><div class="card-head" style="flex-wrap:wrap;gap:.5rem"><span class="card-title">Mapas publicados para os alunos</span><span class="tag tag-grn">'+rows.length+'</span></div>'+(list||'<div class="empty">Nenhum mapa nesta subespecialidade ainda.</div>')+'</div>'
+    +'<div class="card"><div class="card-head" style="flex-wrap:wrap;gap:.5rem"><span class="card-title">Mapas publicados para os alunos</span><span class="tag tag-grn">'+rows.length+'</span></div>'+mmTemaTabs+(list||'<div class="empty">Nenhum mapa neste subtópico ainda.</div>')+'</div>'
     +'</div>';
 }
 // ── FLASHCARDS DO PROFESSOR (publicados para todos os alunos via fc_shared) ──
-var admFcSub='',admFcEditId=null;
+var admFcSub='',admFcEditId=null,admFcTema='';
+// Painel de edição de um flashcard publicado: renomear (frente/verso),
+// mover para (subespecialidade › aba) e excluir.
+function admFcEditPanel(c,j){
+  var msub=subOf(c);
+  var subOpts=FC_CATS.map(function(s){return '<option'+(s===msub?' selected':'')+'>'+esc(s)+'</option>';}).join('');
+  var curTema=temaOf(c,msub);
+  var temaOpts=(FC_SUBTOPICS[msub]||[]).concat(['Geral']).map(function(t){return '<option'+(t===curTema?' selected':'')+'>'+esc(t)+'</option>';}).join('');
+  return '<div style="margin-top:.5rem;display:grid;gap:.4rem;background:var(--bg-soft,rgba(127,127,127,.08));border:1px solid var(--bd);border-radius:8px;padding:.6rem">'
+    +'<div style="font-size:.66rem;color:var(--t3);text-transform:uppercase;letter-spacing:.5px">Renomear (frente / verso)</div>'
+    +'<textarea id="adm-fc-ef" rows="2" style="width:100%">'+esc(c.front)+'</textarea>'
+    +'<textarea id="adm-fc-eb" rows="2" style="width:100%">'+esc(c.back)+'</textarea>'
+    +'<div style="font-size:.66rem;color:var(--t3);text-transform:uppercase;letter-spacing:.5px;margin-top:.2rem">Mover para — subespecialidade › aba</div>'
+    +'<div style="display:flex;gap:6px;flex-wrap:wrap"><select id="adm-fc-movesub" style="flex:1;min-width:150px">'+subOpts+'</select><select id="adm-fc-movetema" style="flex:1;min-width:150px">'+temaOpts+'</select></div>'
+    +'<div style="display:flex;gap:6px;flex-wrap:wrap;margin-top:.2rem"><button class="btn btn-primary btn-sm" data-adm-fc-savee="'+j+'">💾 Salvar</button><button class="btn btn-outline btn-sm" data-adm-fc-del="'+j+'" style="color:var(--red);border-color:var(--red)">🗑 Excluir</button><button class="btn btn-ghost btn-sm" id="adm-fc-cancele">Cancelar</button></div>'
+    +'</div>';
+}
 function admFcSubList(){
   var seen={};(fcShared||[]).forEach(function(c){var s=canonSub(c.sub||c.cat);seen[s]=(seen[s]||0)+1;});
   var out=FC_CATS.map(function(s){return{sub:s,count:seen[s]||0};});
@@ -7278,9 +7397,11 @@ function admFlashHTML(){
       +'<div class="adm-pc"><div class="ph" style="margin-top:0"><p>Crie e publique flashcards por subespecialidade. Ao salvar, eles entram no baralho de todos os alunos.</p></div>'+grid+'</div>';
   }
   var rows=(fcShared||[]).map(function(c,j){return{c:c,j:j};}).filter(function(o){return canonSub(o.c.sub||o.c.cat)===admFcSub;});
-  var list=rows.map(function(o){var c=o.c,j=o.j;
-    return '<div style="padding:.6rem 0;border-bottom:1px solid var(--bd)"><div style="display:flex;align-items:flex-start;justify-content:space-between;gap:.6rem"><div style="min-width:0;flex:1"><div style="font-weight:600;font-size:.82rem">'+esc(c.front)+'</div><div style="font-size:.74rem;color:var(--t2);margin-top:.2rem">'+esc(c.back)+'</div></div><div style="display:flex;gap:5px;flex-shrink:0"><button class="btn btn-outline btn-sm" data-adm-fc-edit="'+j+'">Editar</button><button class="btn btn-outline btn-sm" data-adm-fc-del="'+j+'" style="color:var(--red);border-color:var(--red)">🗑</button></div></div>'
-      +(admFcEditId===c.id?('<div style="margin-top:.5rem;display:grid;gap:.4rem"><textarea id="adm-fc-ef" rows="2" style="width:100%">'+esc(c.front)+'</textarea><textarea id="adm-fc-eb" rows="2" style="width:100%">'+esc(c.back)+'</textarea><div style="display:flex;gap:6px"><button class="btn btn-primary btn-sm" data-adm-fc-savee="'+j+'">💾 Salvar</button><button class="btn btn-ghost btn-sm" id="adm-fc-cancele">Cancelar</button></div></div>'):'')
+  var fcTemaTabs='<div style="display:flex;flex-wrap:wrap;gap:.3rem;margin:.2rem 0 .9rem"><button class="cat-pill'+(admFcTema===''?' on':'')+'" data-admfc-tema="">Todos ('+rows.length+')</button>'+temaListFor(rows.map(function(o){return o.c;}),admFcSub).map(function(t){return '<button class="cat-pill'+(admFcTema===t.tema?' on':'')+'" data-admfc-tema="'+esc(t.tema)+'">'+esc(t.tema)+' ('+t.count+')</button>';}).join('')+'</div>';
+  var rowsF=admFcTema?rows.filter(function(o){return temaOf(o.c,admFcSub)===admFcTema;}):rows;
+  var list=rowsF.map(function(o){var c=o.c,j=o.j;
+    return '<div style="padding:.6rem 0;border-bottom:1px solid var(--bd)"><div style="display:flex;align-items:flex-start;justify-content:space-between;gap:.6rem"><div style="min-width:0;flex:1"><div style="font-weight:600;font-size:.82rem">'+esc(c.front)+'</div><div style="font-size:.74rem;color:var(--t2);margin-top:.2rem">'+esc(c.back)+'</div></div><div style="display:flex;gap:5px;flex-shrink:0"><button class="btn btn-outline btn-sm" data-adm-fc-edit="'+j+'">Editar</button></div></div>'
+      +(admFcEditId===c.id?admFcEditPanel(c,j):'')
       +'</div>';
   }).join('');
   var createForm='<div class="card" style="margin-bottom:1rem"><div class="card-head"><span class="card-title">Criar flashcards em '+esc(admFcSub)+'</span></div>'
@@ -7297,7 +7418,7 @@ function admFlashHTML(){
     +'<button class="dir-back" id="adm-fc-backbtn" style="margin-bottom:1rem">← Todas as subespecialidades</button>'
     +'<div class="ph" style="margin-top:0"><h1>'+dirSubIcon(admFcSub)+' '+esc(admFcSub)+'</h1></div>'
     +createForm
-    +'<div class="card"><div class="card-head" style="flex-wrap:wrap;gap:.5rem"><span class="card-title">Flashcards publicados para os alunos</span><span class="tag tag-grn">'+rows.length+'</span></div>'+(list||'<div class="empty">Nenhum flashcard nesta subespecialidade ainda.</div>')+'</div>'
+    +'<div class="card"><div class="card-head" style="flex-wrap:wrap;gap:.5rem"><span class="card-title">Flashcards publicados para os alunos</span><span class="tag tag-grn">'+rows.length+'</span></div>'+fcTemaTabs+(list||'<div class="empty">Nenhum flashcard neste subtópico ainda.</div>')+'</div>'
     +'</div>';
 }
 function admRestoreSec(){
@@ -8042,9 +8163,10 @@ function bindAdmSec(sec){
       return;
     }
     // Grade de subespecialidades → entra na subespecialidade.
-    main.querySelectorAll('[data-admmm-sub]').forEach(function(b){b.addEventListener('click',function(){admMMSub=b.dataset.admmmSub;admMMDraft=null;admMMEditId=null;renderAdmSec('mapas');});});
+    main.querySelectorAll('[data-admmm-sub]').forEach(function(b){b.addEventListener('click',function(){admMMSub=b.dataset.admmmSub;admMMTema='';admMMDraft=null;admMMEditId=null;renderAdmSec('mapas');});});
+    main.querySelectorAll('[data-admmm-tema]').forEach(function(b){b.addEventListener('click',function(){admMMTema=b.dataset.admmmTema;renderAdmSec('mapas');});});
     var mmBack=document.getElementById('adm-mm-back');
-    if(mmBack)mmBack.addEventListener('click',function(){admMMSub='';renderAdmSec('mapas');});
+    if(mmBack)mmBack.addEventListener('click',function(){admMMSub='';admMMTema='';renderAdmSec('mapas');});
     var mmEditBack=document.getElementById('adm-mm-editback');
     if(mmEditBack)mmEditBack.addEventListener('click',function(){admMMDraft=null;admMMEditId=null;renderAdmSec('mapas');});
     var gen=document.getElementById('adm-mm-gen');
@@ -8081,8 +8203,12 @@ function bindAdmSec(sec){
     var save=document.getElementById('adm-mm-save');if(save)save.addEventListener('click',admMMSave);
     var cancel=document.getElementById('adm-mm-cancel');if(cancel)cancel.addEventListener('click',function(){admMMDraft=null;admMMEditId=null;renderAdmSec('mapas');});
     main.querySelectorAll('[data-adm-mm-delb]').forEach(function(b){b.addEventListener('click',function(){admMMSyncDraft();admMMDraft.data.branches.splice(parseInt(b.dataset.admMmDelb,10),1);renderAdmSec('mapas');});});
-    main.querySelectorAll('[data-adm-mm-edit]').forEach(function(b){b.addEventListener('click',function(){var m=sharedMM[parseInt(b.dataset.admMmEdit,10)];if(!m)return;admMMDraft={topic:m.topic,sub:m.sub,data:normalizeMMData(m.data)};admMMEditId=m.id;renderAdmSec('mapas');});});
-    main.querySelectorAll('[data-adm-mm-del]').forEach(function(b){b.addEventListener('click',function(){var m=sharedMM[parseInt(b.dataset.admMmDel,10)];if(!confirm('Excluir o mapa mental "'+((m&&m.topic)||'')+'"? Esta ação não pode ser desfeita.'))return;sharedMM.splice(parseInt(b.dataset.admMmDel,10),1);persistSharedMM();renderAdmSec('mapas');notify('Mapa removido.','ok');});});
+    main.querySelectorAll('[data-adm-mm-edit]').forEach(function(b){b.addEventListener('click',function(){var m=sharedMM[parseInt(b.dataset.admMmEdit,10)];if(!m)return;admMMMetaId=null;admMMDraft={topic:m.topic,sub:m.sub,data:normalizeMMData(m.data)};admMMEditId=m.id;renderAdmSec('mapas');});});
+    main.querySelectorAll('[data-adm-mm-del]').forEach(function(b){b.addEventListener('click',function(){var m=sharedMM[parseInt(b.dataset.admMmDel,10)];if(!confirm('Excluir o mapa mental "'+((m&&m.topic)||'')+'"? Esta ação não pode ser desfeita.'))return;sharedMM.splice(parseInt(b.dataset.admMmDel,10),1);admMMMetaId=null;persistSharedMM();renderAdmSec('mapas');notify('Mapa removido.','ok');});});
+    main.querySelectorAll('[data-adm-mm-meta]').forEach(function(b){b.addEventListener('click',function(){var m=sharedMM[parseInt(b.dataset.admMmMeta,10)];if(m){admMMMetaId=m.id;renderAdmSec('mapas');}});});
+    var mmMetaCancel=document.getElementById('adm-mm-metacancel');if(mmMetaCancel)mmMetaCancel.addEventListener('click',function(){admMMMetaId=null;renderAdmSec('mapas');});
+    var mmMoveSub=document.getElementById('adm-mm-movesub');if(mmMoveSub)mmMoveSub.addEventListener('change',function(){var mt=document.getElementById('adm-mm-movetema');if(mt)mt.innerHTML=(FC_SUBTOPICS[this.value]||[]).concat(['Geral']).map(function(t){return '<option>'+esc(t)+'</option>';}).join('');});
+    main.querySelectorAll('[data-adm-mm-savemeta]').forEach(function(b){b.addEventListener('click',function(){var m=sharedMM[parseInt(b.dataset.admMmSavemeta,10)];if(!m)return;var nt=(document.getElementById('adm-mm-rename').value||'').trim();if(nt)m.topic=nt;var ms=document.getElementById('adm-mm-movesub'),mt=document.getElementById('adm-mm-movetema');if(ms&&ms.value)m.sub=ms.value;if(mt&&mt.value)m.tema=(mt.value==='Geral'?null:mt.value);admMMMetaId=null;persistSharedMM();renderAdmSec('mapas');notify('Mapa atualizado.','ok');});});
     var __mmf=document.getElementById('adm-mm-filter');if(__mmf)__mmf.addEventListener('change',function(){admMMFilterSub=__mmf.value;renderAdmSec('mapas');});
     return;
   }
@@ -8158,9 +8284,10 @@ function bindAdmSec(sec){
   }
 
   if(sec==='flashcards'){
-    main.querySelectorAll('[data-admfc-sub]').forEach(function(b){b.addEventListener('click',function(){admFcSub=b.dataset.admfcSub;admFcEditId=null;renderAdmSec('flashcards');});});
+    main.querySelectorAll('[data-admfc-sub]').forEach(function(b){b.addEventListener('click',function(){admFcSub=b.dataset.admfcSub;admFcTema='';admFcEditId=null;renderAdmSec('flashcards');});});
+    main.querySelectorAll('[data-admfc-tema]').forEach(function(b){b.addEventListener('click',function(){admFcTema=b.dataset.admfcTema;admFcEditId=null;renderAdmSec('flashcards');});});
     var fcBack=document.getElementById('adm-fc-backbtn');
-    if(fcBack)fcBack.addEventListener('click',function(){admFcSub='';admFcEditId=null;renderAdmSec('flashcards');});
+    if(fcBack)fcBack.addEventListener('click',function(){admFcSub='';admFcTema='';admFcEditId=null;renderAdmSec('flashcards');});
     var fcGen=document.getElementById('adm-fc-gen');
     if(fcGen)fcGen.addEventListener('click',function(){
       var topic=(document.getElementById('adm-fc-topic').value||'').trim();
@@ -8192,7 +8319,9 @@ function bindAdmSec(sec){
     main.querySelectorAll('[data-adm-fc-edit]').forEach(function(b){b.addEventListener('click',function(){var c=fcShared[parseInt(b.dataset.admFcEdit,10)];if(c){admFcEditId=c.id;renderAdmSec('flashcards');}});});
     var fcCancelE=document.getElementById('adm-fc-cancele');
     if(fcCancelE)fcCancelE.addEventListener('click',function(){admFcEditId=null;renderAdmSec('flashcards');});
-    main.querySelectorAll('[data-adm-fc-savee]').forEach(function(b){b.addEventListener('click',function(){var c=fcShared[parseInt(b.dataset.admFcSavee,10)];if(!c)return;var nf=(document.getElementById('adm-fc-ef').value||'').trim(),nb=(document.getElementById('adm-fc-eb').value||'').trim();if(!nf||!nb){notify('Preencha frente e verso.','err');return;}c.front=nf;c.back=nb;admFcEditId=null;persistFcShared();renderAdmSec('flashcards');notify('Card atualizado.','ok');});});
+    var fcMoveSub=document.getElementById('adm-fc-movesub');
+    if(fcMoveSub)fcMoveSub.addEventListener('change',function(){var mt=document.getElementById('adm-fc-movetema');if(mt)mt.innerHTML=(FC_SUBTOPICS[this.value]||[]).concat(['Geral']).map(function(t){return '<option>'+esc(t)+'</option>';}).join('');});
+    main.querySelectorAll('[data-adm-fc-savee]').forEach(function(b){b.addEventListener('click',function(){var c=fcShared[parseInt(b.dataset.admFcSavee,10)];if(!c)return;var nf=(document.getElementById('adm-fc-ef').value||'').trim(),nb=(document.getElementById('adm-fc-eb').value||'').trim();if(!nf||!nb){notify('Preencha frente e verso.','err');return;}c.front=nf;c.back=nb;var ms=document.getElementById('adm-fc-movesub'),mt=document.getElementById('adm-fc-movetema');if(ms&&ms.value){c.sub=ms.value;c.cat=ms.value;}if(mt&&mt.value){c.tema=(mt.value==='Geral'?null:mt.value);}admFcEditId=null;persistFcShared();renderAdmSec('flashcards');notify('Card atualizado.','ok');});});
     main.querySelectorAll('[data-adm-fc-del]').forEach(function(b){b.addEventListener('click',function(){var i=parseInt(b.dataset.admFcDel,10);if(!confirm('Excluir este flashcard? (Deixa de ser publicado; quem já recebeu mantém a cópia.)'))return;fcShared.splice(i,1);persistFcShared();renderAdmSec('flashcards');notify('Flashcard removido.','ok');});});
     return;
   }
@@ -8753,10 +8882,13 @@ document.addEventListener('click',function(e){
   var fccat=c('[data-fccat]');
   if(fccat){fcSelectedCat=fccat.dataset.fccat;renderFcCatPills();return;}
   var fcsub=c('[data-fcsub]');
-  if(fcsub){var _fv=fcsub.dataset.fcsub;fcFilter=_fv===''?null:_fv;renderFC();return;}
+  if(fcsub){var _fv=fcsub.dataset.fcsub;fcFilter=_fv===''?null:_fv;fcTema='';renderFC();return;}
+  var fctema=c('[data-fctema]');
+  if(fctema){fcTema=fctema.dataset.fctema;renderFC();return;}
   // mind map
-  var mmss=c('[data-mmsubsel]');if(mmss){mmSubSel=mmss.dataset.mmsubsel;renderMMList();return;}
-  var mmbk=c('[data-mmback]');if(mmbk){mmSubSel='';renderMMList();return;}
+  var mmss=c('[data-mmsubsel]');if(mmss){mmSubSel=mmss.dataset.mmsubsel;mmTema='';renderMMList();return;}
+  var mmtema=c('[data-mmtema]');if(mmtema){mmTema=mmtema.dataset.mmtema;renderMMList();return;}
+  var mmbk=c('[data-mmback]');if(mmbk){mmSubSel='';mmTema='';renderMMList();return;}
   var mmvs=c('[data-mmviewshared]');if(mmvs){viewMMShared(parseInt(mmvs.dataset.mmviewshared));return;}
   var mmv=c('[data-mmview]');if(mmv){viewMM(parseInt(mmv.dataset.mmview));return;}
   var mmd=c('[data-mmdel]');if(mmd){DB.mm.splice(parseInt(mmd.dataset.mmdel),1);persist();renderMMList();refreshDash();return;}
