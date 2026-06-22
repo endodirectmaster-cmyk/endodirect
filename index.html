@@ -5743,7 +5743,7 @@ var PRESC_MEDS=[
 var PRESC_EXAMS=['Hemograma completo','Glicemia de jejum','Hemoglobina glicada (HbA1c)','Curva glicêmica (TOTG 75 g)','Insulina basal','Peptídeo C','TSH','T4 livre','T3 total','Anti-TPO','Anti-tireoglobulina','TRAb','Tireoglobulina','Calcitonina','Colesterol total e frações','HDL-colesterol','LDL-colesterol','Triglicerídeos','Apolipoproteína B','Lipoproteína (a)','Creatinina','Ureia','Taxa de filtração glomerular (TFGe)','Ácido úrico','Sódio','Potássio','Cálcio total','Cálcio iônico','Fósforo','Magnésio','PTH','25-OH-vitamina D','Fosfatase alcalina','AST (TGO)','ALT (TGP)','GGT','Albumina','Cortisol sérico (8h)','Cortisol salivar noturno','Cortisol livre urinário (24h)','ACTH','Aldosterona','Atividade de renina plasmática','Relação aldosterona/renina','Testosterona total','Testosterona livre','SHBG','DHEA-S','Androstenediona','17-OH-progesterona','LH','FSH','Estradiol','Progesterona','Prolactina','IGF-1','GH','Beta-HCG','Ferritina','Saturação de transferrina','EAS (urina tipo 1)','Albuminúria','Relação albumina/creatinina urinária','VHS','PCR','USG de tireoide','USG de abdome total','USG transvaginal/pélvico','Densitometria óssea (DXA)','RM de sela túrcica (hipófise)','TC de adrenais','Cintilografia de tireoide','PAAF de nódulo tireoidiano'];
 var PRESC_LMECAT=[
   {n:'Osteoporose (alendronato/risedronato/raloxifeno/teriparatida)',cid:'M80 / M81',exames:['Densitometria óssea (T-score)','Cálcio sérico','25-OH-vitamina D','Função renal'],criterios:'T-score ≤ -2,5 (colo de fêmur/coluna) ou fratura por fragilidade. Conforme PCDT Osteoporose.'},
-  {n:'Diabetes — insulinas análogas (glargina/degludeca/lispro/asparte)',cid:'E10 / E11',exames:['HbA1c','Registro de glicemias','Função renal','Episódios de hipoglicemia documentados'],criterios:'DM com hipoglicemias de repetição/inadequação à insulina humana. Conforme PCDT Diabete Melito tipo 1/2.'},
+  {n:'Diabetes — insulinas análogas',cid:'E10 / E11',meds:['Insulina análoga de ação rápida — lispro','Insulina análoga de ação rápida — asparte','Insulina análoga de ação prolongada — glargina','Insulina análoga de ação prolongada — degludeca'],exames:['HbA1c','Registro de glicemias','Função renal','Episódios de hipoglicemia documentados'],criterios:'DM com hipoglicemias de repetição/inadequação à insulina humana. Conforme PCDT Diabete Melito tipo 1/2.'},
   {n:'Deficiência de GH — somatropina',cid:'E23.0',exames:['IGF-1','Teste de estímulo de GH','RM de sela túrcica'],criterios:'Deficiência de GH confirmada por teste de estímulo. Conforme PCDT.'},
   {n:'Acromegalia — análogos de somatostatina (octreotida/lanreotida)',cid:'E22.0',exames:['IGF-1','GH (basal/pós-TOTG)','RM de sela túrcica'],criterios:'Acromegalia com IGF-1 elevado e doença ativa. Conforme PCDT Acromegalia.'},
   {n:'Hiperprolactinemia — cabergolina/bromocriptina',cid:'E22.1',exames:['Prolactina','RM de sela túrcica'],criterios:'Prolactinoma/hiperprolactinemia sintomática. Conforme protocolo.'}
@@ -5932,14 +5932,9 @@ function renderLme(){
       +'<div class="fld2" style="margin:0;flex:1.4"><label>CNS do paciente</label><input type="text" inputmode="numeric" id="presc-lme-cnspac" placeholder="Cartão SUS"></div></div></div>'
       +'<div class="g2" style="margin-bottom:.4rem"><div class="fld2" style="margin:0"><label>CID-10</label><input type="text" id="presc-lme-cid" value="'+esc(prescLmeSel.cid||'')+'"></div>'
       +'<div class="fld2" style="margin:0"><label>Diagnóstico</label><input type="text" id="presc-lme-diag" value="'+esc(prescLmeSel.diag||'')+'" placeholder="Descrição do diagnóstico (CID-10)"></div></div>'
-      +'<div class="fld2" style="margin-bottom:.4rem"><label>Medicamento(s)</label><input type="text" id="presc-lme-med" value="'+esc(prescLmeSel.med||prescLmeSel.n)+'"></div>'
-      +'<div style="display:flex;gap:.4rem;flex-wrap:wrap;margin-bottom:.4rem">'
-      +'<div class="fld2" style="margin:0;flex:1;min-width:88px"><label>Qtd. 1º mês</label><input type="text" id="presc-lme-qt1" placeholder="ex: 30"></div>'
-      +'<div class="fld2" style="margin:0;flex:1;min-width:88px"><label>2º mês</label><input type="text" id="presc-lme-qt2"></div>'
-      +'<div class="fld2" style="margin:0;flex:1;min-width:88px"><label>3º mês</label><input type="text" id="presc-lme-qt3"></div>'
-      +'<div class="fld2" style="margin:0;flex:1;min-width:88px"><label>4º mês</label><input type="text" id="presc-lme-qt4"></div>'
-      +'<div class="fld2" style="margin:0;flex:1;min-width:88px"><label>5º mês</label><input type="text" id="presc-lme-qt5"></div>'
-      +'<div class="fld2" style="margin:0;flex:1;min-width:88px"><label>6º mês</label><input type="text" id="presc-lme-qt6"></div></div>'
+      +'<div class="fld2" style="margin-bottom:.25rem"><label>Medicamento(s) e quantidade solicitada por mês</label></div>'
+      +'<div id="presc-lme-meds">'+((prescLmeSel.meds&&prescLmeSel.meds.length?prescLmeSel.meds:[prescLmeSel.med||prescLmeSel.n||'']).map(function(nm){return lmeMedRowHTML(nm);}).join(''))+'</div>'
+      +'<button class="btn btn-outline btn-sm" type="button" data-act="lmeaddmed" style="margin-bottom:.5rem">+ Adicionar medicamento</button>'
       +'<div class="fld2" style="margin-bottom:.4rem"><label>Anamnese</label><textarea id="presc-lme-crit" rows="3">'+esc(prescLmeSel.criterios||'')+'</textarea></div>'
       +'<div class="fld2" style="margin-bottom:.4rem"><label>Tratamento prévio / atual</label><input type="text" id="presc-lme-tratprev" placeholder="Sim/Não — qual, tempo, resposta"></div>'
       +'<div class="fld2"><label>Exames / critérios exigidos (um por linha)</label><textarea id="presc-lme-exames" rows="3">'+esc(ex)+'</textarea></div>'
@@ -5971,11 +5966,22 @@ function prescClick(e){
   if(act==='delrx'){prescRx.splice(i,1);renderRxList();return;}
   if(act==='addex'){var ex=PRESC_EXAMS[i];if(ex&&prescExamsSel.indexOf(ex)<0)prescExamsSel.push(ex);var es=document.getElementById('presc-ex-search');if(es)es.value='';var ed=document.getElementById('presc-ex-drop');if(ed)ed.innerHTML='';renderExList();return;}
   if(act==='delex'){prescExamsSel.splice(i,1);renderExList();return;}
-  if(act==='addlme'){var L=PRESC_LMECAT[i];if(L){prescLmeSel={n:L.n,cid:L.cid,med:L.n,exames:(L.exames||[]).slice(),criterios:L.criterios};}var ls=document.getElementById('presc-lme-search');if(ls)ls.value='';renderLme();return;}
+  if(act==='addlme'){var L=PRESC_LMECAT[i];if(L){prescLmeSel={n:L.n,cid:L.cid,med:L.n,meds:(L.meds?L.meds.slice():null),exames:(L.exames||[]).slice(),criterios:L.criterios};}var ls=document.getElementById('presc-lme-search');if(ls)ls.value='';renderLme();return;}
   if(act==='rx2lme'){var med=prescRx[i];if(med){var found=null;for(var j=0;j<PRESC_LMECAT.length;j++){if(prescNorm(PRESC_LMECAT[j].n).indexOf(prescNorm(med.n.split(' ')[0]))>=0){found=PRESC_LMECAT[j];break;}}prescLmeSel=found?{n:found.n,cid:found.cid,med:med.n,exames:found.exames.slice(),criterios:found.criterios}:{n:med.n,cid:'',med:med.n,exames:[],criterios:''};prescSetTab('lme');renderLme();}return;}
   if(act==='lmeclear'){prescLmeSel=null;renderLme();return;}
+  if(act==='lmeaddmed'){var mc=document.getElementById('presc-lme-meds');if(mc)mc.insertAdjacentHTML('beforeend',lmeMedRowHTML(''));return;}
+  if(act==='lmedelmed'){var mr=t.closest('.lme-mrow');if(mr){var box2=mr.parentNode;mr.remove();if(box2&&!box2.querySelector('.lme-mrow'))box2.insertAdjacentHTML('beforeend',lmeMedRowHTML(''));}return;}
   if(act==='ai'){prescAISuggest();return;}
   if(act==='print'){prescPrintDoc(t.dataset.doc);return;}
+}
+// Uma linha da tabela de medicamentos do LME (nome + quantidade por mês 1..6).
+// O usuário pode adicionar/remover linhas — ex.: uma por tipo de insulina.
+function lmeMedRowHTML(name){
+  var q='';for(var k=1;k<=6;k++){q+='<div class="fld2" style="margin:0;flex:1;min-width:60px"><label>'+k+'º mês</label><input type="text" class="lme-mq" inputmode="numeric"></div>';}
+  return '<div class="lme-mrow" style="border:1px solid var(--bd);border-radius:8px;padding:.5rem;margin-bottom:.45rem">'
+    +'<div style="display:flex;gap:.4rem;align-items:flex-end"><div class="fld2" style="margin:0;flex:1"><label>Medicamento</label><input type="text" class="lme-mn" value="'+esc(name||'')+'" placeholder="ex: insulina análoga de ação rápida — lispro"></div>'
+    +'<button class="btn btn-ghost btn-sm lme-mdel" type="button" data-act="lmedelmed" title="Remover linha" style="flex-shrink:0">🗑</button></div>'
+    +'<div style="display:flex;gap:.3rem;flex-wrap:wrap;margin-top:.4rem">'+q+'</div></div>';
 }
 function prescInput(e){
   var el=e.target,id=el.id;
@@ -6055,7 +6061,13 @@ function prescPrintLME(){
   var estab=g('presc-lme-estab'),cnes=g('presc-lme-cnes'),cnsmed=g('presc-lme-cnsmed');
   var mae=g('presc-lme-mae'),cnspac=g('presc-lme-cnspac'),peso=g('presc-lme-peso'),altura=g('presc-lme-altura');
   var cid=g('presc-lme-cid'),diag=g('presc-lme-diag'),med=g('presc-lme-med');
-  var qt=[g('presc-lme-qt1'),g('presc-lme-qt2'),g('presc-lme-qt3'),g('presc-lme-qt4'),g('presc-lme-qt5'),g('presc-lme-qt6')];
+  var medLines=[];
+  document.querySelectorAll('#presc-lme-meds .lme-mrow').forEach(function(row){
+    var mn=(row.querySelector('.lme-mn')||{}).value;mn=(mn||'').trim();
+    var qs=[];row.querySelectorAll('.lme-mq').forEach(function(q){qs.push((q.value||'').trim());});
+    if(mn||qs.some(function(x){return x;}))medLines.push({n:mn,q:qs});
+  });
+  if(!medLines.length)medLines.push({n:(med||'').trim(),q:[]});
   var anam=g('presc-lme-crit'),tratprev=g('presc-lme-tratprev');
   var exraw=document.getElementById('presc-lme-exames');var exl=exraw?(exraw.value||'').split('\n').filter(function(x){return x.trim();}):[];
   var pn=g('presc-presc-nome'),pc=g('presc-presc-crm'),pu=g('presc-presc-uf'),pe=g('presc-presc-esp'),pend=g('presc-presc-end'),pfone=g('presc-presc-fone');
@@ -6064,9 +6076,11 @@ function prescPrintLME(){
   function v(x){return (x&&String(x).trim())?esc(x):'';}
   var cb='<span class="cb"></span>';
   var medRows='';
-  for(var i=1;i<=5;i++){
-    medRows+='<tr><td class="cnum">'+i+'</td><td class="cmed">'+(i===1?esc(med||''):'')+'</td>';
-    for(var m=0;m<6;m++){medRows+='<td>'+(i===1?esc(qt[m]||''):'')+'</td>';}
+  var nRows=Math.max(5,medLines.length);
+  for(var i=0;i<nRows;i++){
+    var ml=medLines[i];
+    medRows+='<tr><td class="cnum">'+(i+1)+'</td><td class="cmed">'+(ml?esc(ml.n||''):'')+'</td>';
+    for(var m=0;m<6;m++){medRows+='<td>'+((ml&&ml.q&&ml.q[m])?esc(ml.q[m]):'')+'</td>';}
     medRows+='</tr>';
   }
   var exHtml=exl.length?('<div class="row"><div class="f"><div class="fl">Exames / critérios exigidos</div><div class="fv">'+exl.map(function(x){return '&bull; '+esc(x);}).join('<br>')+'</div></div></div>'):'';
@@ -7406,13 +7420,13 @@ function admFlashHTML(){
   }).join('');
   var createForm='<div class="card" style="margin-bottom:1rem"><div class="card-head"><span class="card-title">Criar flashcards em '+esc(admFcSub)+'</span></div>'
     +'<div class="fld2" style="margin:0 0 .6rem"><label>Tema (para gerar com IA)</label><input type="text" id="adm-fc-topic" placeholder="Ex: Hipotireoidismo"></div>'
-    +'<div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:.6rem"><button class="btn btn-primary" id="adm-fc-gen">🤖 Gerar com IA</button><button class="btn btn-outline" id="adm-fc-import">📎 Importar arquivo</button></div>'
+    +'<div style="display:flex;gap:6px;flex-wrap:wrap"><button class="btn btn-primary" id="adm-fc-gen">🤖 Gerar com IA</button><button class="btn btn-outline" id="adm-fc-import">📎 Importar arquivo</button><button class="btn btn-outline" id="adm-fc-blank">+ Criar em branco</button></div>'
     +'<input type="file" id="adm-fc-file" accept=".pdf,.txt,image/*" style="display:none">'
-    +'<div style="border-top:1px solid var(--bd);margin:.4rem 0 .7rem"></div>'
+    +'<div id="adm-fc-manual" style="display:none;margin-top:.7rem;border-top:1px solid var(--bd);padding-top:.7rem">'
     +'<div class="fld2" style="margin:0 0 .5rem"><label>Frente (pergunta)</label><textarea id="adm-fc-front" rows="2" placeholder="Pergunta do card"></textarea></div>'
     +'<div class="fld2" style="margin:0 0 .6rem"><label>Verso (resposta)</label><textarea id="adm-fc-back" rows="2" placeholder="Resposta do card"></textarea></div>'
-    +'<button class="btn btn-outline" id="adm-fc-add">+ Adicionar card manual</button>'
-    +'<div style="margin-top:.5rem;font-size:.74rem;color:var(--t3)">A IA ou o arquivo (PDF/TXT/imagem) geram vários cards de uma vez; revise e exclua o que não quiser. Tudo fica disponível para os alunos.</div></div>';
+    +'<button class="btn btn-outline" id="adm-fc-add">+ Adicionar card</button></div>'
+    +'<div id="adm-fc-genres" style="margin-top:.5rem;font-size:.74rem;color:var(--t3)">Gere por tema, importe um arquivo (PDF, TXT ou imagem) para a IA criar vários cards, ou crie em branco. Ao salvar, os cards ficam disponíveis automaticamente para todos os alunos.</div></div>';
   return '<div class="adm-ph"><h1>Flashcards</h1></div>'
     +'<div class="adm-pc">'
     +'<button class="dir-back" id="adm-fc-backbtn" style="margin-bottom:1rem">← Todas as subespecialidades</button>'
@@ -8310,6 +8324,8 @@ function bindAdmSec(sec){
         .catch(function(e){notify('Erro ao importar: '+((e&&e.message)||e),'err');fcImp.disabled=false;fcImp.innerHTML='📎 Importar arquivo';fcImpFile.value='';});
       });
     }
+    var fcBlank=document.getElementById('adm-fc-blank');
+    if(fcBlank)fcBlank.addEventListener('click',function(){var mn=document.getElementById('adm-fc-manual');if(!mn)return;var show=mn.style.display==='none';mn.style.display=show?'block':'none';if(show){var f=document.getElementById('adm-fc-front');if(f)f.focus();}});
     var fcAdd=document.getElementById('adm-fc-add');
     if(fcAdd)fcAdd.addEventListener('click',function(){
       var front=(document.getElementById('adm-fc-front').value||'').trim(),back=(document.getElementById('adm-fc-back').value||'').trim();
