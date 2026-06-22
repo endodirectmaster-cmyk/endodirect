@@ -544,9 +544,9 @@ textarea{resize:vertical;line-height:1.6}
 .fb-cat-btn,.fb-tipo-btn{background:var(--surface);border:1.5px solid var(--bd2);border-radius:99px;padding:.26rem .7rem;font-size:.7rem;font-weight:500;color:var(--t2);cursor:pointer;font-family:var(--font)}
 .fb-cat-btn.on{background:var(--blue-l);border-color:var(--blue);color:var(--blue);font-weight:600}
 .fb-tipo-btn.on{background:var(--gold-l);border-color:var(--gold);color:#d97706;font-weight:600}
-.cat-pill{background:var(--surface);border:1.5px solid var(--bd2);border-radius:99px;padding:.26rem .7rem;font-size:.7rem;font-weight:500;color:var(--t2);cursor:pointer;font-family:var(--font)}
-.cat-pill:hover{border-color:var(--blue);color:var(--blue)}
-.cat-pill.on{background:var(--blue-l);border-color:var(--blue);color:var(--blue);font-weight:600}
+.cat-pill{background:var(--s2);border:1.5px solid var(--bd2);border-radius:99px;padding:.26rem .7rem;font-size:.7rem;font-weight:600;color:var(--tx);cursor:pointer;font-family:var(--font)}
+.cat-pill:hover{border-color:var(--blue);color:var(--blue2)}
+.cat-pill.on{background:var(--blue-l);border-color:var(--blue);color:var(--blue2);font-weight:700}
 @media (max-width:820px){
   html,body{height:auto;min-height:100%;overflow:auto}
   body{min-height:100dvh;touch-action:manipulation}
@@ -2835,10 +2835,12 @@ function renderDegustacaoBar(){
     }
     var msg=bar.querySelector('#degustacao-msg');
     if(msg){
-      var muralTxt;
-      if(muralTrialActive()){var d=muralDegDiasRestantes();muralTxt='mural por mais '+d+' dia'+(d===1?'':'s');}
-      else{muralTxt='mural encerrado';}
-      msg.innerHTML='<span style="display:inline-flex;align-items:center;gap:.3rem;background:rgba(255,255,255,.5);border:1px solid rgba(120,80,0,.25);border-radius:999px;padding:.1rem .6rem;font-weight:800">🎁 Modo degustação</span> <span style="opacity:.92">flashcards, mapas mentais, 50 questões do banco e '+muralTxt+'</span>';
+      if(degExpired()){
+        msg.innerHTML='<span style="display:inline-flex;align-items:center;gap:.3rem;background:rgba(255,255,255,.5);border:1px solid rgba(120,80,0,.25);border-radius:999px;padding:.1rem .6rem;font-weight:800">⏳ Degustação encerrada</span> <span style="opacity:.92">seus '+DEG_DIAS+' dias gratuitos terminaram — assine para manter o acesso aos benefícios</span>';
+      }else{
+        var dd=degDiasRestantes();
+        msg.innerHTML='<span style="display:inline-flex;align-items:center;gap:.3rem;background:rgba(255,255,255,.5);border:1px solid rgba(120,80,0,.25);border-radius:999px;padding:.1rem .6rem;font-weight:800">🎁 Modo degustação</span> <span style="opacity:.92">acesso gratuito por mais <b>'+dd+' dia'+(dd===1?'':'s')+'</b> — flashcards, mapas mentais, 50 questões do banco e mural</span>';
+      }
     }
     bar.style.display='flex';
   }else if(bar){bar.style.display='none';}
@@ -4244,6 +4246,10 @@ function degStart(){
 }
 function muralDegDiasRestantes(){return Math.max(0,Math.ceil((DEG_MURAL_DIAS*86400000-(Date.now()-degStart()))/86400000));}
 function muralTrialActive(){return isDegustacao()&&(Date.now()-degStart())<DEG_MURAL_DIAS*86400000;}
+// Degustação COMPLETA: 7 dias de acesso; depois bloqueia TODAS as funcionalidades.
+var DEG_DIAS=7;
+function degDiasRestantes(){return Math.max(0,Math.ceil((DEG_DIAS*86400000-(Date.now()-degStart()))/86400000));}
+function degExpired(){return isDegustacao()&&(Date.now()-degStart())>=DEG_DIAS*86400000;}
 function trialLeft(id){return Math.max(0,TRIAL_LIMIT-trialUsed(id));}
 // Consome 1 uso da cota de degustação. Fora da degustação não há limite.
 // Retorna false (e mostra upsell) quando a cota acabou.
@@ -4266,6 +4272,8 @@ function canSeePanel(id){
   if(isAdminUser())return true;
   if(id==='presc'&&!prescAllowed())return false;
   if(isDegustacao()){
+    // Após os 7 dias, a degustação encerra: nenhuma funcionalidade (só conta/suporte → upsell).
+    if(degExpired())return id==='perfil'||id==='support';
     if(id==='mural')return muralTrialActive(); // degustação do mural: 7 dias
     if(DEGUSTACAO_PANELS[id])return true;
     if(TRIAL_PANELS[id])return trialLeft(id)>0;
@@ -4333,6 +4341,20 @@ function showLockedPanel(id){
   var via=minName
     ? (hasPlan?('fazendo upgrade para o plano '+minName):('assinando o plano '+minName))
     : (scope==='plano'?(hasPlan?'fazendo upgrade do seu plano':'adquirindo um pacote (Standard ou Gold)'):(hasPlan?'fazendo upgrade do seu plano':'adquirindo o '+nome));
+  if(isDegustacao()&&degExpired()){
+    p.innerHTML='<div class="breadcrumb">'+esc(label)+' <b>/ Bloqueado</b></div>'
+      +'<div class="ph"><h1>🔒 '+esc(label)+'</h1></div>'
+      +'<div class="pc"><div class="card" style="max-width:520px;margin:1.2rem auto;text-align:center;padding:1.9rem 1.5rem">'
+      +'<div style="font-size:2.3rem;margin-bottom:.5rem">🎁</div>'
+      +'<div style="font-size:1.02rem;font-weight:800;color:var(--tx);margin-bottom:.4rem">Degustação de '+DEG_DIAS+' dias encerrada</div>'
+      +'<p style="font-size:.84rem;color:var(--t2);line-height:1.6;margin:.3rem 0 1.2rem">Seus <b>'+DEG_DIAS+' dias de degustação gratuita</b> terminaram. Para continuar com acesso a <b>flashcards, mapas mentais, banco de questões, ferramentas de IA e o mural</b>, assine um pacote (Standard ou Gold) e garanta todos os benefícios.</p>'
+      +'<button class="btn btn-primary" id="locked-cta" style="justify-content:center">Assinar e desbloquear tudo</button>'
+      +'</div></div>';
+    var bex=document.getElementById('locked-cta');
+    if(bex)bex.addEventListener('click',function(){showAssineScreen((currentUser&&currentUser.email)||'',{upgrade:false});});
+    closeMobileNav();
+    return;
+  }
   if(trialEsgotado){
     p.innerHTML='<div class="breadcrumb">'+esc(label)+' <b>/ Bloqueado</b></div>'
       +'<div class="ph"><h1>🔒 '+esc(label)+'</h1></div>'
@@ -5145,10 +5167,14 @@ function saveMM(){
   if(idx>=0)DB.mm[idx]=curMM;else DB.mm.push(curMM);
   persist();renderMMList();refreshDash();notify('Mapa salvo!','ok');
 }
+// Na degustação, só os mapas LIVRES (sem tier 'member') aparecem; assinante vê
+// todos. Cobre a conta-demo de degustação (aluno@), que carrega por public_content
+// (todos os mapas); para alunos reais o filtro de tier é server-side (member_content).
+function visibleSharedMM(){var all=sharedMM||[];return isDegustacao()?all.filter(function(m){return !m||m.tier!=='member';}):all;}
 // Grade de subespecialidades dos mapas do aluno (mesma taxonomia das Diretrizes).
 function mmSubGrid(){
   var seen={};
-  (sharedMM||[]).forEach(function(m){var s=canonSub(m.sub);seen[s]=(seen[s]||0)+1;});
+  visibleSharedMM().forEach(function(m){var s=canonSub(m.sub);seen[s]=(seen[s]||0)+1;});
   (DB.mm||[]).forEach(function(m){if(m&&m.seed)return;var s=canonSub(m.sub);seen[s]=(seen[s]||0)+1;});
   var out=DIR_SUBS.map(function(s){return {sub:s,count:seen[s]||0};});
   Object.keys(seen).forEach(function(s){if(DIR_SUBS.indexOf(s)<0)out.push({sub:s,count:seen[s]});});
@@ -5157,7 +5183,7 @@ function mmSubGrid(){
 function renderMMList(){
   var el=document.getElementById('mm-list');if(!el)return;
   var panel=document.getElementById('panel-mmap'),head=document.getElementById('mm-subhead');
-  var shared=sharedMM||[];
+  var shared=visibleSharedMM();
   // Nível 1 — grade de subespecialidades (form de criar fica escondido aqui).
   if(!mmSubSel){
     if(panel)panel.classList.add('mm-grid');
