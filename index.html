@@ -5989,7 +5989,7 @@ function renderPrescMemed(){
       +'<div style="display:flex;gap:.4rem"><div class="fld2" style="margin:0;flex:1"><label>Telefone (opcional)</label><input type="text" id="memed-pac-fone" placeholder="(DDD) 9..." inputmode="tel"></div>'
         +'<div class="fld2" style="margin:0;width:140px"><label>Nascimento (opcional)</label><input type="date" id="memed-pac-nasc"></div></div>'
     +'</div>'
-    +'<button class="btn btn-primary" id="memed-open">💊 Abrir prescrição Memed</button>'
+    +'<button class="btn btn-primary" id="memed-open">💊 Abrir prescrição</button>'
     +'<div id="memed-msg" style="font-size:.72rem;color:var(--t3);margin-top:.55rem"></div>'
     +'</div>';
   var btn=document.getElementById('memed-open');
@@ -6060,7 +6060,7 @@ function prescMemedOpen(){
     return prescMemedLaunch(d.token,d.color,d.script);
   }).then(function(){if(msg){msg.style.color='var(--grn)';msg.textContent='Módulo Memed aberto.';}})
   .catch(function(e){_prescWarm=null;showErr('Erro: '+(e&&e.message||e));})
-  .then(function(){var b=document.getElementById('memed-open');if(b){b.disabled=false;b.innerHTML='💊 Abrir prescrição Memed';}});
+  .then(function(){var b=document.getElementById('memed-open');if(b){b.disabled=false;b.innerHTML='💊 Abrir prescrição';}});
 }
 // Histórico de emissões (presc_emitidas): NÃO guarda PII do paciente — só
 // data/hora + um ID opaco da receita (referência na Memed). prescRxId acha esse
