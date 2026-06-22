@@ -1957,6 +1957,42 @@ var BCOLORS=['#8b5cf6','#3b82f6','#10b981','#f59e0b','#ef4444','#ec4899'];
 // mesma ordem). = taxonomia canônica + Esporte e Transgeneridade (que têm
 // conteúdo de amostra publicado na coleção).
 var FC_CATS=['Diabetes','Obesidade','Tireoide','Adrenal','Neuroendocrinologia','Osteometabolismo','Lípides','Endocrinologia Pediátrica','Endocrinologia Feminina','Endocrinologia Masculina','Endocrinologia do Esporte','Transgeneridade'];
+// ── SUBTÓPICOS (temas) por subespecialidade — navegação subespecialidade → tema.
+// A ordem define a ordem das abas. Usado por flashcards e mapas mentais. O tema
+// de cada item é explícito (item.tema) ou inferido do enunciado/título (regras).
+var FC_SUBTOPICS={
+ 'Diabetes':['DM tipo 1','DM tipo 2','Pré-diabetes','Diabetes gestacional','Diabetes secundário/MODY','Complicações agudas','Complicações crônicas','Tratamento'],
+ 'Tireoide':['Hipotireoidismo','Hipertireoidismo','Tireoidites','Nódulo tireoidiano','Câncer de tireoide','Tireoide e gestação'],
+ 'Adrenal':['Insuficiência adrenal','Síndrome de Cushing','Hiperaldosteronismo','Feocromocitoma','Incidentaloma adrenal','Hiperplasia adrenal congênita'],
+ 'Obesidade':['Avaliação e classificação','Tratamento farmacológico','Cirurgia bariátrica','Comorbidades','Obesidade infantil'],
+ 'Neuroendocrinologia':['Prolactinoma','Acromegalia','Doença de Cushing','Hipopituitarismo','Diabetes insipidus/SIADH','Incidentaloma hipofisário'],
+ 'Osteometabolismo':['Osteoporose','Cálcio e PTH','Vitamina D','Doença de Paget','Osteomalácia/raquitismo'],
+ 'Lípides':['Risco e metas','Hipercolesterolemia','Hipertrigliceridemia','Dislipidemias genéticas','Tratamento'],
+ 'Endocrinologia Pediátrica':['Baixa estatura / GH','Puberdade','Hiperplasia adrenal congênita','Hipotireoidismo congênito','Diabetes na criança'],
+ 'Endocrinologia Feminina':['SOP','Amenorreia','Menopausa','Hirsutismo','Insuficiência ovariana'],
+ 'Endocrinologia Masculina':['Hipogonadismo','Reposição de testosterona','Infertilidade / ginecomastia','Disfunção erétil'],
+ 'Endocrinologia do Esporte':['Tríade / RED-S','Anabolizantes e doping','Exercício e diabetes','Hormônios e performance'],
+ 'Transgeneridade':['Hormonização feminilizante','Hormonização masculinizante','Monitorização','Fertilidade e saúde óssea']
+};
+// Regras de classificação (ordem = prioridade; 1ª que casar vence). Texto minúsculo.
+var FC_TEMA_RULES={
+ 'Diabetes':[['Complicações agudas',/cetoacid|\bcad\b|hiperosmolar|\behh\b|hipoglicem|crise hipergli/],['Complicações crônicas',/retinopat|nefropat|neuropat|doença renal|renal crôn|\bdrc\b|pé diabét|microvascular|macrovascular|cardiovascular|risco cv|albumin|retina/],['Diabetes gestacional',/gestacion|gravid|grávid/],['Pré-diabetes',/pré-?diabet|pre-?diabet|intolerân|jejum alterad|prevenção|rastrei/],['DM tipo 1',/tipo 1|\bdm1\b|\bdm 1\b|autoimun|\blada\b|peptíde|célula beta|criança|adolescent|pediátr|insulinopen/],['DM tipo 2',/tipo 2|\bdm2\b|\bdm 2\b|resistência insulín|síndrome metaból/],['Diabetes secundário/MODY',/\bmody\b|secundári|pancreatogên|esteroide/],['Tratamento',/metformin|insulin|sglt2|glp-?1|\bgip\b|tirzepatid|sulfonilur|dpp-?4|pioglitaz|acarbose|antidiabét|tratament|meta glicêm|hba1c|\ba1c\b|bomba|tecnolog|\bcgm\b|monitor|farmacolog|hospital|idoso|diagnóstic/]],
+ 'Tireoide':[['Câncer de tireoide',/câncer|carcinoma|bethesda|paaf|tireoglobulin|ti-?rads|maligno|papilífer|tireoidectomi/],['Nódulo tireoidiano',/nódul/],['Hipertireoidismo',/hipertireoid|graves|tireot[oó]x|\btrab\b|tempestade|tionamid|metimazol|propiltiour|\bptu\b|radioiod/],['Hipotireoidismo',/hipotireoid|hashimoto|levotiroxin|subclínic|mixedema/],['Tireoidites',/tireoidit|quervain|subagud|pós-?part/],['Tireoide e gestação',/gesta|grávid/]],
+ 'Adrenal':[['Feocromocitoma',/feocromocit|paragangli|metanefrin|catecolamin/],['Hiperaldosteronismo',/aldosteron|\bconn\b|renina/],['Hiperplasia adrenal congênita',/hiperplasia adrenal|\bhac\b|21-?hidroxil|17-?oh|congênit/],['Incidentaloma adrenal',/incidentalom|adenoma adrenal/],['Síndrome de Cushing',/cushing|cortisol|hipercortisol|dexametason/],['Insuficiência adrenal',/insuficiência adrenal|addison|crise adrenal|cosintropin|\bacth\b/]],
+ 'Obesidade':[['Obesidade infantil',/infantil|criança|pediátr|adolescent/],['Cirurgia bariátrica',/bariátric|cirurgi|sleeve|bypass|gastrect/],['Tratamento farmacológico',/farmacológic|farmacoter|semaglutid|tirzepatid|liraglutid|orlistat|naltrexon|bupropion|sibutramin|medicament|\bglp/],['Comorbidades',/comorbid|masld|mash|esteatos|apneia|\baos\b|sarcopên|cardiovascular|risco cv|metaból/],['Avaliação e classificação',/\bimc\b|classificaç|avaliaç|circunferênci|diagnóstic|abordagem/]],
+ 'Neuroendocrinologia':[['Prolactinoma',/prolactin|cabergolin|bromocriptin/],['Diabetes insipidus/SIADH',/insipidus|\bsiadh\b|desmopressin|\badh\b|vasopressin|copeptin|hiponatrem/],['Acromegalia',/acromegal|\bigf\b|somatostatin|pegvisom/],['Doença de Cushing',/cushing|\bacth\b/],['Incidentaloma hipofisário',/incidentalom|adenoma hipofis|não-?funcionant/],['Hipopituitarismo',/hipopituitar|sheehan|apoplexia|pan-?hipo|deficiência/]],
+ 'Osteometabolismo':[['Doença de Paget',/paget/],['Osteomalácia/raquitismo',/osteomalác|raquitism/],['Vitamina D',/vitamina d|25-?oh|colecalcifer/],['Cálcio e PTH',/paratireoid|\bpth\b|hipercalcem|hipocalcem|cálcio|hiperpara|hipopara|\bhhf\b|pthrp/],['Osteoporose',/osteoporos|densitometr|\bdxa\b|t-?score|bisfosfonat|denosumab|teriparatid|romosozumab|fratur|osteopen/]],
+ 'Lípides':[['Dislipidemias genéticas',/familiar|\bhf\b|lp\(a\)|lipoproteína|genétic|quilomicron/],['Hipertrigliceridemia',/triglicer|\btg\b|fibrat/],['Tratamento',/estatin|ezetimib|pcsk9|inclisiran|bempedoic|tratament|manejo/],['Risco e metas',/risco|\bmetas?\b|\bldl\b|não-?hdl|\bapob\b|escore|prevent/],['Hipercolesterolemia',/colesterol|\bhdl\b/]],
+ 'Endocrinologia Pediátrica':[['Hiperplasia adrenal congênita',/hiperplasia adrenal|\bhac\b|21-?hidroxil|17-?oh/],['Hipotireoidismo congênito',/hipotireoidismo congênit|congênit|pezinho/],['Puberdade',/puberdad|telarca|menarca|\bgnrh\b|precoce/],['Diabetes na criança',/diabet|\bdm1\b|glicem/],['Baixa estatura / GH',/baixa estatura|estatura|crescimento|\bgh\b|\bpig\b|turner|idade óssea|\bsga\b/]],
+ 'Endocrinologia Feminina':[['SOP',/\bsop\b|ovários? policíst|rotterdam|policíst/],['Insuficiência ovariana',/insuficiência ovarian|falência ovarian|\bpoi\b/],['Menopausa',/menopaus|climatér|terapia hormonal|vasomotor|fogacho/],['Hirsutismo',/hirsut|hiperandrogen|\bacne\b/],['Amenorreia',/amenorrei|oligomenorr|menstrua|anovulaç|prolactin/]],
+ 'Endocrinologia Masculina':[['Disfunção erétil',/erétil/],['Infertilidade / ginecomastia',/infertil|ginecomast|espermatog|espermogram|varicocel|fertilidad/],['Reposição de testosterona',/reposição|\btrt\b|exógen|hematócrit|undecil|\bgel\b/],['Hipogonadismo',/hipogonad|testosteron|klinefelter|kallmann|\blh\b|\bfsh\b/]],
+ 'Endocrinologia do Esporte':[['Tríade / RED-S',/tríade|red-?s|disponibilidade energét|baixa densidad/],['Anabolizantes e doping',/anaboliz|esteroid|doping|\bepo\b|eritropoetin/],['Exercício e diabetes',/diabet|glicem|glut4|hipoglicem/],['Hormônios e performance',/performance|cafeín|exercíci|hipertrofi|cortisol|testosteron/]],
+ 'Transgeneridade':[['Hormonização feminilizante',/feminiliz|estrogên|estradiol|antiandrogên|espironolacton|ciproteron|mulher trans/],['Hormonização masculinizante',/masculiniz|testosteron|homem trans/],['Fertilidade e saúde óssea',/fertilidad|criopreserv|óssea|densidade/],['Monitorização',/monitoriz|hematócrit|perfil lipíd|acompanha|rastrei/]]
+};
+function classifyTema(text,sub){var r=FC_TEMA_RULES[sub];if(!r)return 'Geral';var t=String(text||'').toLowerCase();for(var i=0;i<r.length;i++){if(r[i][1].test(t))return r[i][0];}return 'Geral';}
+function temaOf(item,sub){return (item&&item.tema)?item.tema:classifyTema((item&&(item.front||item.topic))||'',sub);}
+// Lista de temas presentes (com contagem), na ordem da taxonomia; extras e "Geral" ao final.
+function temaListFor(items,sub){var seen={};(items||[]).forEach(function(it){var tm=temaOf(it,sub);seen[tm]=(seen[tm]||0)+1;});var order=FC_SUBTOPICS[sub]||[];var out=[];order.forEach(function(tm){if(seen[tm])out.push({tema:tm,count:seen[tm]});});Object.keys(seen).forEach(function(tm){if(order.indexOf(tm)<0&&tm!=='Geral')out.push({tema:tm,count:seen[tm]});});if(seen['Geral'])out.push({tema:'Geral',count:seen['Geral']});return out;}
 var AREAS_CRONO=[
   {name:'Diabetes',color:'#3b6fd4'},{name:'Obesidade',color:'#10b981'},
   {name:'Tireoide',color:'#f59e0b'},{name:'Adrenal',color:'#ec4899'},
@@ -4730,7 +4766,7 @@ function renderProvaResults(qs){
   renderGenQ(true);
 }
 // ── FLASHCARDS ──
-var studyCards=[],studyIdx=0,fcSelectedCat='Diabetes',fcFilter=null;
+var studyCards=[],studyIdx=0,fcSelectedCat='Diabetes',fcFilter=null,fcTema='';
 function renderFcCatPills(){
   var el=document.getElementById('fc-cat-pills');if(!el)return;
   el.innerHTML=FC_CATS.map(function(c){return'<button class="cat-pill'+(c===fcSelectedCat?' on':'')+'" data-fccat="'+esc(c)+'">'+esc(c)+'</button>';}).join('');
@@ -4813,10 +4849,17 @@ function renderFC(){
     }).join('')+'</div>';
     return;
   }
-  // DRILL-IN: cards da subespecialidade escolhida (casados por canonSub).
-  if(frow){frow.style.display='flex';frow.innerHTML='<button class="dir-back" data-fcsub="">← Todas as subespecialidades</button>';}
+  // DRILL-IN: abas de subtópico (tema) + cards do tema selecionado.
+  var subList=DB.fc.filter(function(c){return canonSub(c.cat||c.sub)===fcFilter;});
+  if(frow){
+    frow.style.display='flex';
+    var tabs='<button class="dir-back" data-fcsub="">← Subespecialidades</button>';
+    tabs+='<button class="cat-pill'+(fcTema===''?' on':'')+'" data-fctema="">Todos ('+subList.length+')</button>';
+    tabs+=temaListFor(subList,fcFilter).map(function(o){return '<button class="cat-pill'+(fcTema===o.tema?' on':'')+'" data-fctema="'+esc(o.tema)+'">'+esc(o.tema)+' ('+o.count+')</button>';}).join('');
+    frow.innerHTML=tabs;
+  }
   el.className='fc-grid';
-  var list=DB.fc.filter(function(c){return canonSub(c.cat||c.sub)===fcFilter;});
+  var list=fcTema?subList.filter(function(c){return temaOf(c,fcFilter)===fcTema;}):subList;
   if(!list.length){el.innerHTML='<div class="empty" style="grid-column:1/-1">Nenhum flashcard nesta subespecialidade ainda.</div>';return;}
   el.innerHTML=list.map(function(c){var i=DB.fc.indexOf(c);var col=fcCatColor(c.cat);return'<div class="fc-card" data-fctoggle="'+i+'"><button class="fc-del" data-fcdel="'+i+'" title="Excluir">✕</button><div class="fc-inner"><div class="fc-face fc-face-front" style="border-left:5px solid '+col+'"><div class="fc-cat" style="color:'+col+'">'+esc(c.cat||'Geral')+'</div><div class="fc-front">'+esc(c.front)+'</div><div class="fc-hint">Clique para virar ↻</div></div><div class="fc-face fc-face-back" style="border-left:5px solid '+col+'"><div class="fc-cat" style="color:'+col+'">Resposta</div><div class="fc-back">'+esc(c.back)+'</div><div class="fc-hint">Clique para voltar ↺</div></div></div></div>';}).join('');
 }
@@ -4857,6 +4900,7 @@ var sharedMM=lsGet('mm_shared')||[];
 var fcShared=lsGet('fc_shared')||[]; // flashcards publicados pelo professor (global; vão a todos os alunos)
 var mmSubFilter='';
 var mmSubSel=''; // subespecialidade selecionada na grade dos mapas do aluno ('' = grade)
+var mmTema='';   // subtópico (tema) selecionado dentro da subespecialidade ('' = todos)
 function wrapTxt(text,max){
   var words=String(text||'').split(/\s+/).filter(Boolean),lines=[],line='';
   words.forEach(function(w){if((line+' '+w).trim().length<=max)line=(line+' '+w).trim();else{if(line)lines.push(line);line=w;}});
@@ -5117,24 +5161,32 @@ function renderMMList(){
     el.innerHTML='<div class="dir-sub-grid">'+cards+'</div>';
     return;
   }
-  // Nível 2 — dentro da subespecialidade: cabeçalho + (form de criar acima) + lista.
+  // Nível 2 — dentro da subespecialidade: cabeçalho + abas de subtópico + lista.
   if(panel)panel.classList.remove('mm-grid');
-  if(head)head.innerHTML='<button class="dir-back" data-mmback style="margin-bottom:.7rem">← Todas as subespecialidades</button>'
-    +'<div class="ph" style="margin-top:0"><h1 style="font-size:1.05rem">'+dirSubIcon(mmSubSel)+' '+esc(mmSubSel)+'</h1></div>';
   var sh=shared.filter(function(m){return canonSub(m.sub)===mmSubSel;});
   // Não renderiza cópias semeadas (seed:true): viram duplicatas dos mapas do
   // professor. Cobre contas demo/local (sem id remoto, onde o prune do
   // refreshAfterRemoteState não roda) e resíduo de localStorage de qualquer conta.
   var ph=(DB.mm||[]).map(function(m,i){return{m:m,i:i};}).filter(function(o){return canonSub(o.m.sub)===mmSubSel&&!(o.m&&o.m.seed);});
-  setText('mm-count','('+(sh.length+ph.length)+')');
-  var html=sh.map(function(m){
+  var allMaps=sh.concat(ph.map(function(o){return o.m;}));
+  if(head){
+    var mtabs='<button class="cat-pill'+(mmTema===''?' on':'')+'" data-mmtema="">Todos ('+allMaps.length+')</button>';
+    mtabs+=temaListFor(allMaps,mmSubSel).map(function(o){return '<button class="cat-pill'+(mmTema===o.tema?' on':'')+'" data-mmtema="'+esc(o.tema)+'">'+esc(o.tema)+' ('+o.count+')</button>';}).join('');
+    head.innerHTML='<button class="dir-back" data-mmback style="margin-bottom:.7rem">← Todas as subespecialidades</button>'
+      +'<div class="ph" style="margin-top:0;margin-bottom:.5rem"><h1 style="font-size:1.05rem">'+dirSubIcon(mmSubSel)+' '+esc(mmSubSel)+'</h1></div>'
+      +'<div style="display:flex;flex-wrap:wrap;gap:.3rem;margin-bottom:.7rem">'+mtabs+'</div>';
+  }
+  var shF=mmTema?sh.filter(function(m){return temaOf(m,mmSubSel)===mmTema;}):sh;
+  var phF=mmTema?ph.filter(function(o){return temaOf(o.m,mmSubSel)===mmTema;}):ph;
+  setText('mm-count','('+(shF.length+phF.length)+')');
+  var html=shF.map(function(m){
     var j=shared.indexOf(m);
     return'<div class="mm-item"><div><div style="font-size:.8rem;font-weight:600">'+esc(m.topic)+' <span class="tag tag-pur" style="font-size:.55rem">Professor</span></div><div style="font-size:.63rem;color:var(--t3)">'+esc(canonSub(m.sub))+'</div></div><div style="display:flex;gap:4px"><button class="btn btn-outline btn-sm" data-mmviewshared="'+j+'">Ver</button></div></div>';
   }).join('');
-  html+=ph.map(function(o){var m=o.m,i=o.i;
+  html+=phF.map(function(o){var m=o.m,i=o.i;
     return'<div class="mm-item"><div><div style="font-size:.8rem;font-weight:600">'+esc(m.topic)+'</div><div style="font-size:.63rem;color:var(--t3)">'+new Date(m.at||Date.now()).toLocaleDateString('pt-BR')+'</div></div><div style="display:flex;gap:4px"><button class="btn btn-outline btn-sm" data-mmview="'+i+'">Ver</button><button class="btn btn-ghost btn-sm" data-mmdel="'+i+'">×</button></div></div>';
   }).join('');
-  if(!html)html='<div class="empty">Nenhum mapa nesta subespecialidade ainda. Crie um acima.</div>';
+  if(!html)html='<div class="empty">Nenhum mapa neste subtópico ainda.</div>';
   el.innerHTML='<div style="display:flex;flex-direction:column;gap:6px">'+html+'</div>';
 }
 function viewMMShared(j){
@@ -8753,10 +8805,13 @@ document.addEventListener('click',function(e){
   var fccat=c('[data-fccat]');
   if(fccat){fcSelectedCat=fccat.dataset.fccat;renderFcCatPills();return;}
   var fcsub=c('[data-fcsub]');
-  if(fcsub){var _fv=fcsub.dataset.fcsub;fcFilter=_fv===''?null:_fv;renderFC();return;}
+  if(fcsub){var _fv=fcsub.dataset.fcsub;fcFilter=_fv===''?null:_fv;fcTema='';renderFC();return;}
+  var fctema=c('[data-fctema]');
+  if(fctema){fcTema=fctema.dataset.fctema;renderFC();return;}
   // mind map
-  var mmss=c('[data-mmsubsel]');if(mmss){mmSubSel=mmss.dataset.mmsubsel;renderMMList();return;}
-  var mmbk=c('[data-mmback]');if(mmbk){mmSubSel='';renderMMList();return;}
+  var mmss=c('[data-mmsubsel]');if(mmss){mmSubSel=mmss.dataset.mmsubsel;mmTema='';renderMMList();return;}
+  var mmtema=c('[data-mmtema]');if(mmtema){mmTema=mmtema.dataset.mmtema;renderMMList();return;}
+  var mmbk=c('[data-mmback]');if(mmbk){mmSubSel='';mmTema='';renderMMList();return;}
   var mmvs=c('[data-mmviewshared]');if(mmvs){viewMMShared(parseInt(mmvs.dataset.mmviewshared));return;}
   var mmv=c('[data-mmview]');if(mmv){viewMM(parseInt(mmv.dataset.mmview));return;}
   var mmd=c('[data-mmdel]');if(mmd){DB.mm.splice(parseInt(mmd.dataset.mmdel),1);persist();renderMMList();refreshDash();return;}
