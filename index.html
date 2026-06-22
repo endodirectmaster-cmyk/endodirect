@@ -7186,7 +7186,7 @@ function sendChat(text){
 
 // ── ADMIN (layout estilo Lexia) ──
 var admCurrentSec='analytics',admProvaSubtab='importar',pdfBase64Prova=null,podAudioDataAdm=null,admBancoArea='',admBancoCode='',admBancoAno='',admBancoInst='',admBancoPage=0,ADM_BANCO_PER=4,admBancoEditIdx=null,admBancoEditImg,admBancoEditStemImg;
-var admMMDraft=null,admMMEditId=null,admMMFilterSub='',admMMSub='';
+var admMMDraft=null,admMMEditId=null,admMMFilterSub='',admMMSub='',admMMTema='';
 // Edição visual de mapas no painel do professor: reaproveita o MESMO editor do
 // aluno (#mm-live), movendo-o para dentro do admin. mmAdminEdit=true enquanto o
 // professor edita; __mmLiveHome guarda o lugar original p/ devolver ao sair.
@@ -7287,7 +7287,9 @@ function admMapasHTML(){
   }
   // Nível 2 — mapas da subespecialidade + criação contextual.
   var rows=(sharedMM||[]).map(function(m,j){return{m:m,j:j};}).filter(function(o){return canonSub(o.m.sub)===admMMSub;});
-  var list=rows.map(function(o){var m=o.m,j=o.j;return '<div style="display:flex;align-items:center;justify-content:space-between;gap:.6rem;padding:.55rem 0;border-bottom:1px solid var(--bd)"><div style="min-width:0"><div style="font-weight:600;font-size:.82rem">'+esc(m.topic)+'</div><div style="font-size:.68rem;color:var(--t3)">'+((m.data&&m.data.branches&&m.data.branches.length)||0)+' ramos</div></div><div style="display:flex;gap:5px;flex-shrink:0"><button class="btn btn-outline btn-sm" data-adm-mm-edit="'+j+'">Editar</button><button class="btn btn-outline btn-sm" data-adm-mm-del="'+j+'" style="color:var(--red);border-color:var(--red)">🗑 Excluir</button></div></div>';}).join('');
+  var mmTemaTabs='<div style="display:flex;flex-wrap:wrap;gap:.3rem;margin:.2rem 0 .9rem"><button class="cat-pill'+(admMMTema===''?' on':'')+'" data-admmm-tema="">Todos ('+rows.length+')</button>'+temaListFor(rows.map(function(o){return o.m;}),admMMSub).map(function(t){return '<button class="cat-pill'+(admMMTema===t.tema?' on':'')+'" data-admmm-tema="'+esc(t.tema)+'">'+esc(t.tema)+' ('+t.count+')</button>';}).join('')+'</div>';
+  var rowsF=admMMTema?rows.filter(function(o){return temaOf(o.m,admMMSub)===admMMTema;}):rows;
+  var list=rowsF.map(function(o){var m=o.m,j=o.j;return '<div style="display:flex;align-items:center;justify-content:space-between;gap:.6rem;padding:.55rem 0;border-bottom:1px solid var(--bd)"><div style="min-width:0"><div style="font-weight:600;font-size:.82rem">'+esc(m.topic)+'</div><div style="font-size:.68rem;color:var(--t3)">'+((m.data&&m.data.branches&&m.data.branches.length)||0)+' ramos</div></div><div style="display:flex;gap:5px;flex-shrink:0"><button class="btn btn-outline btn-sm" data-adm-mm-edit="'+j+'">Editar</button><button class="btn btn-outline btn-sm" data-adm-mm-del="'+j+'" style="color:var(--red);border-color:var(--red)">🗑 Excluir</button></div></div>';}).join('');
   var createForm='<div class="card" style="margin-bottom:1rem"><div class="card-head"><span class="card-title">Criar mapa mental em '+esc(admMMSub)+'</span></div>'
     +'<div class="fld2" style="margin:0 0 .6rem"><label>Tema</label><input type="text" id="adm-mm-newtopic" placeholder="Ex: Hipotireoidismo"></div>'
     +'<div style="display:flex;gap:6px;flex-wrap:wrap"><button class="btn btn-primary" id="adm-mm-gen">🤖 Gerar com IA</button><button class="btn btn-outline" id="adm-mm-import">📎 Importar arquivo</button><button class="btn btn-outline" id="adm-mm-blank">+ Criar em branco</button></div>'
@@ -7298,11 +7300,11 @@ function admMapasHTML(){
     +'<button class="dir-back" id="adm-mm-back" style="margin-bottom:1rem">← Todas as subespecialidades</button>'
     +'<div class="ph" style="margin-top:0"><h1>'+dirSubIcon(admMMSub)+' '+esc(admMMSub)+'</h1></div>'
     +createForm
-    +'<div class="card"><div class="card-head" style="flex-wrap:wrap;gap:.5rem"><span class="card-title">Mapas publicados para os alunos</span><span class="tag tag-grn">'+rows.length+'</span></div>'+(list||'<div class="empty">Nenhum mapa nesta subespecialidade ainda.</div>')+'</div>'
+    +'<div class="card"><div class="card-head" style="flex-wrap:wrap;gap:.5rem"><span class="card-title">Mapas publicados para os alunos</span><span class="tag tag-grn">'+rows.length+'</span></div>'+mmTemaTabs+(list||'<div class="empty">Nenhum mapa neste subtópico ainda.</div>')+'</div>'
     +'</div>';
 }
 // ── FLASHCARDS DO PROFESSOR (publicados para todos os alunos via fc_shared) ──
-var admFcSub='',admFcEditId=null;
+var admFcSub='',admFcEditId=null,admFcTema='';
 function admFcSubList(){
   var seen={};(fcShared||[]).forEach(function(c){var s=canonSub(c.sub||c.cat);seen[s]=(seen[s]||0)+1;});
   var out=FC_CATS.map(function(s){return{sub:s,count:seen[s]||0};});
@@ -7330,7 +7332,9 @@ function admFlashHTML(){
       +'<div class="adm-pc"><div class="ph" style="margin-top:0"><p>Crie e publique flashcards por subespecialidade. Ao salvar, eles entram no baralho de todos os alunos.</p></div>'+grid+'</div>';
   }
   var rows=(fcShared||[]).map(function(c,j){return{c:c,j:j};}).filter(function(o){return canonSub(o.c.sub||o.c.cat)===admFcSub;});
-  var list=rows.map(function(o){var c=o.c,j=o.j;
+  var fcTemaTabs='<div style="display:flex;flex-wrap:wrap;gap:.3rem;margin:.2rem 0 .9rem"><button class="cat-pill'+(admFcTema===''?' on':'')+'" data-admfc-tema="">Todos ('+rows.length+')</button>'+temaListFor(rows.map(function(o){return o.c;}),admFcSub).map(function(t){return '<button class="cat-pill'+(admFcTema===t.tema?' on':'')+'" data-admfc-tema="'+esc(t.tema)+'">'+esc(t.tema)+' ('+t.count+')</button>';}).join('')+'</div>';
+  var rowsF=admFcTema?rows.filter(function(o){return temaOf(o.c,admFcSub)===admFcTema;}):rows;
+  var list=rowsF.map(function(o){var c=o.c,j=o.j;
     return '<div style="padding:.6rem 0;border-bottom:1px solid var(--bd)"><div style="display:flex;align-items:flex-start;justify-content:space-between;gap:.6rem"><div style="min-width:0;flex:1"><div style="font-weight:600;font-size:.82rem">'+esc(c.front)+'</div><div style="font-size:.74rem;color:var(--t2);margin-top:.2rem">'+esc(c.back)+'</div></div><div style="display:flex;gap:5px;flex-shrink:0"><button class="btn btn-outline btn-sm" data-adm-fc-edit="'+j+'">Editar</button><button class="btn btn-outline btn-sm" data-adm-fc-del="'+j+'" style="color:var(--red);border-color:var(--red)">🗑</button></div></div>'
       +(admFcEditId===c.id?('<div style="margin-top:.5rem;display:grid;gap:.4rem"><textarea id="adm-fc-ef" rows="2" style="width:100%">'+esc(c.front)+'</textarea><textarea id="adm-fc-eb" rows="2" style="width:100%">'+esc(c.back)+'</textarea><div style="display:flex;gap:6px"><button class="btn btn-primary btn-sm" data-adm-fc-savee="'+j+'">💾 Salvar</button><button class="btn btn-ghost btn-sm" id="adm-fc-cancele">Cancelar</button></div></div>'):'')
       +'</div>';
@@ -7349,7 +7353,7 @@ function admFlashHTML(){
     +'<button class="dir-back" id="adm-fc-backbtn" style="margin-bottom:1rem">← Todas as subespecialidades</button>'
     +'<div class="ph" style="margin-top:0"><h1>'+dirSubIcon(admFcSub)+' '+esc(admFcSub)+'</h1></div>'
     +createForm
-    +'<div class="card"><div class="card-head" style="flex-wrap:wrap;gap:.5rem"><span class="card-title">Flashcards publicados para os alunos</span><span class="tag tag-grn">'+rows.length+'</span></div>'+(list||'<div class="empty">Nenhum flashcard nesta subespecialidade ainda.</div>')+'</div>'
+    +'<div class="card"><div class="card-head" style="flex-wrap:wrap;gap:.5rem"><span class="card-title">Flashcards publicados para os alunos</span><span class="tag tag-grn">'+rows.length+'</span></div>'+fcTemaTabs+(list||'<div class="empty">Nenhum flashcard neste subtópico ainda.</div>')+'</div>'
     +'</div>';
 }
 function admRestoreSec(){
@@ -8094,9 +8098,10 @@ function bindAdmSec(sec){
       return;
     }
     // Grade de subespecialidades → entra na subespecialidade.
-    main.querySelectorAll('[data-admmm-sub]').forEach(function(b){b.addEventListener('click',function(){admMMSub=b.dataset.admmmSub;admMMDraft=null;admMMEditId=null;renderAdmSec('mapas');});});
+    main.querySelectorAll('[data-admmm-sub]').forEach(function(b){b.addEventListener('click',function(){admMMSub=b.dataset.admmmSub;admMMTema='';admMMDraft=null;admMMEditId=null;renderAdmSec('mapas');});});
+    main.querySelectorAll('[data-admmm-tema]').forEach(function(b){b.addEventListener('click',function(){admMMTema=b.dataset.admmmTema;renderAdmSec('mapas');});});
     var mmBack=document.getElementById('adm-mm-back');
-    if(mmBack)mmBack.addEventListener('click',function(){admMMSub='';renderAdmSec('mapas');});
+    if(mmBack)mmBack.addEventListener('click',function(){admMMSub='';admMMTema='';renderAdmSec('mapas');});
     var mmEditBack=document.getElementById('adm-mm-editback');
     if(mmEditBack)mmEditBack.addEventListener('click',function(){admMMDraft=null;admMMEditId=null;renderAdmSec('mapas');});
     var gen=document.getElementById('adm-mm-gen');
@@ -8210,9 +8215,10 @@ function bindAdmSec(sec){
   }
 
   if(sec==='flashcards'){
-    main.querySelectorAll('[data-admfc-sub]').forEach(function(b){b.addEventListener('click',function(){admFcSub=b.dataset.admfcSub;admFcEditId=null;renderAdmSec('flashcards');});});
+    main.querySelectorAll('[data-admfc-sub]').forEach(function(b){b.addEventListener('click',function(){admFcSub=b.dataset.admfcSub;admFcTema='';admFcEditId=null;renderAdmSec('flashcards');});});
+    main.querySelectorAll('[data-admfc-tema]').forEach(function(b){b.addEventListener('click',function(){admFcTema=b.dataset.admfcTema;admFcEditId=null;renderAdmSec('flashcards');});});
     var fcBack=document.getElementById('adm-fc-backbtn');
-    if(fcBack)fcBack.addEventListener('click',function(){admFcSub='';admFcEditId=null;renderAdmSec('flashcards');});
+    if(fcBack)fcBack.addEventListener('click',function(){admFcSub='';admFcTema='';admFcEditId=null;renderAdmSec('flashcards');});
     var fcGen=document.getElementById('adm-fc-gen');
     if(fcGen)fcGen.addEventListener('click',function(){
       var topic=(document.getElementById('adm-fc-topic').value||'').trim();
