@@ -5470,7 +5470,7 @@ function openCalc(id){
     c.fields.map(function(f){
       if(f.type==='select')return'<div class="fld2"><label>'+esc(f.label)+'</label><select data-calc-field="'+f.id+'">'+f.opts.map(function(o,i){return'<option value="'+f.vals[i]+'">'+esc(o)+'</option>';}).join('')+'</select></div>';
       if(f.type==='date')return'<div class="fld2"><label>'+esc(f.label)+'</label><input type="date" data-calc-field="'+f.id+'"></div>';
-      return'<div class="fld2"><label>'+esc(f.label)+'</label><input type="number" step="any" data-calc-field="'+f.id+'" placeholder="0"></div>';
+      return'<div class="fld2"><label>'+esc(f.label)+'</label><input type="number" step="any" inputmode="decimal" data-calc-field="'+f.id+'" placeholder="0"></div>';
     }).join('')+
     '<div id="calc-result" style="margin-top:.5rem"></div>'+
     (c.note?'<div style="font-size:.68rem;color:var(--t3);margin-top:.6rem;line-height:1.5;border-top:1px solid var(--bd);padding-top:.5rem">ℹ️ '+esc(c.note)+'</div>':'')+
@@ -5735,7 +5735,7 @@ function renderPrescTool(){
     +'<div class="fld2" style="margin:0 0 .5rem"><label>Endereço do paciente</label><input type="text" id="presc-pac-end" placeholder="Rua, nº, bairro, cidade/UF"></div>'
     +'<div class="g2" style="margin:0">'
       +'<div class="fld2" style="margin:0"><label>Prescritor</label><input type="text" id="presc-presc-nome" value="'+esc(pnome)+'" placeholder="Dr(a). Nome"></div>'
-      +'<div style="display:flex;gap:.4rem"><div class="fld2" style="margin:0;flex:1"><label>CRM</label><input type="text" id="presc-presc-crm" value="'+esc(pr.crm||'')+'" placeholder="CRM"></div>'
+      +'<div style="display:flex;gap:.4rem"><div class="fld2" style="margin:0;flex:1"><label>CRM</label><input type="text" inputmode="numeric" id="presc-presc-crm" value="'+esc(pr.crm||'')+'" placeholder="CRM"></div>'
         +'<div class="fld2" style="margin:0;width:70px"><label>UF</label><input type="text" id="presc-presc-uf" value="'+esc(pr.uf||'')+'" placeholder="UF" maxlength="2"></div></div>'
     +'</div><div class="fld2" style="margin:.5rem 0 0"><label>Especialidade (opcional)</label><input type="text" id="presc-presc-esp" value="'+esc(pesp)+'" placeholder="Ex: Endocrinologia"></div>'
     +'<div class="fld2" style="margin:.5rem 0 0"><label>Endereço do emitente (consultório/instituição)</label><input type="text" id="presc-presc-end" value="'+esc(pend)+'" placeholder="Rua, nº, sala, bairro, cidade/UF"></div>'
@@ -5793,12 +5793,12 @@ function renderLme(){
     var pr=lsGet('presc_prescritor')||{};
     form='<div class="presc-item"><div style="font-weight:700;font-size:.85rem;margin-bottom:.5rem">'+esc(prescLmeSel.n)+'</div>'
       +'<div class="g2" style="margin-bottom:.4rem"><div class="fld2" style="margin:0"><label>Estabelecimento de saúde</label><input type="text" id="presc-lme-estab" value="'+esc(pr.estab||'')+'" placeholder="Nome do estabelecimento"></div>'
-      +'<div style="display:flex;gap:.4rem"><div class="fld2" style="margin:0;flex:1"><label>CNES</label><input type="text" id="presc-lme-cnes" value="'+esc(pr.cnes||'')+'" placeholder="CNES"></div>'
-      +'<div class="fld2" style="margin:0;flex:1"><label>CNS do médico</label><input type="text" id="presc-lme-cnsmed" value="'+esc(pr.cnsmed||'')+'" placeholder="CNS"></div></div></div>'
+      +'<div style="display:flex;gap:.4rem"><div class="fld2" style="margin:0;flex:1"><label>CNES</label><input type="text" inputmode="numeric" id="presc-lme-cnes" value="'+esc(pr.cnes||'')+'" placeholder="CNES"></div>'
+      +'<div class="fld2" style="margin:0;flex:1"><label>CNS do médico</label><input type="text" inputmode="numeric" id="presc-lme-cnsmed" value="'+esc(pr.cnsmed||'')+'" placeholder="CNS"></div></div></div>'
       +'<div class="g2" style="margin-bottom:.4rem"><div class="fld2" style="margin:0"><label>Nome da mãe do paciente</label><input type="text" id="presc-lme-mae" placeholder="Nome completo da mãe"></div>'
       +'<div style="display:flex;gap:.4rem"><div class="fld2" style="margin:0;flex:1"><label>Peso (kg)</label><input type="text" id="presc-lme-peso" inputmode="decimal" placeholder="kg"></div>'
       +'<div class="fld2" style="margin:0;flex:1"><label>Altura (cm)</label><input type="text" id="presc-lme-altura" inputmode="decimal" placeholder="cm"></div>'
-      +'<div class="fld2" style="margin:0;flex:1.4"><label>CNS do paciente</label><input type="text" id="presc-lme-cnspac" placeholder="Cartão SUS"></div></div></div>'
+      +'<div class="fld2" style="margin:0;flex:1.4"><label>CNS do paciente</label><input type="text" inputmode="numeric" id="presc-lme-cnspac" placeholder="Cartão SUS"></div></div></div>'
       +'<div class="g2" style="margin-bottom:.4rem"><div class="fld2" style="margin:0"><label>CID-10</label><input type="text" id="presc-lme-cid" value="'+esc(prescLmeSel.cid||'')+'"></div>'
       +'<div class="fld2" style="margin:0"><label>Diagnóstico</label><input type="text" id="presc-lme-diag" value="'+esc(prescLmeSel.diag||'')+'" placeholder="Descrição do diagnóstico (CID-10)"></div></div>'
       +'<div class="fld2" style="margin-bottom:.4rem"><label>Medicamento(s)</label><input type="text" id="presc-lme-med" value="'+esc(prescLmeSel.med||prescLmeSel.n)+'"></div>'
@@ -6056,9 +6056,9 @@ function renderPrescMemed(){
     +'<div style="font-size:.82rem;color:var(--t2);margin-bottom:.7rem">Prescrição digital via <b>Memed</b> — busca de medicamentos, posologia, impressão e assinatura digital, enviada ao paciente.</div>'
     +'<div class="g2" style="margin-bottom:.5rem">'
       +'<div class="fld2" style="margin:0"><label>Prescritor</label><input type="text" id="memed-nome" value="'+esc(pnome)+'" placeholder="Dr(a). Nome"></div>'
-      +'<div class="fld2" style="margin:0"><label>CPF do prescritor</label><input type="text" id="memed-cpf" value="'+esc(pcpf)+'" placeholder="000.000.000-00"></div>'
+      +'<div class="fld2" style="margin:0"><label>CPF do prescritor</label><input type="text" inputmode="numeric" id="memed-cpf" value="'+esc(pcpf)+'" placeholder="000.000.000-00"></div>'
     +'</div>'
-    +'<div style="display:flex;gap:.4rem;margin-bottom:.5rem"><div class="fld2" style="margin:0;flex:1"><label>CRM</label><input type="text" id="memed-crm" value="'+esc(pcrm)+'" placeholder="CRM"></div>'
+    +'<div style="display:flex;gap:.4rem;margin-bottom:.5rem"><div class="fld2" style="margin:0;flex:1"><label>CRM</label><input type="text" inputmode="numeric" id="memed-crm" value="'+esc(pcrm)+'" placeholder="CRM"></div>'
       +'<div class="fld2" style="margin:0;width:90px"><label>UF</label><input type="text" id="memed-uf" value="'+esc(puf)+'" placeholder="UF" maxlength="2" style="text-transform:uppercase"></div></div>'
     +'<div class="g2" style="margin-bottom:.5rem">'
       +'<div class="fld2" style="margin:0"><label>Especialidade</label><input type="text" id="memed-esp" value="'+esc(pesp)+'" placeholder="Ex: Endocrinologia e Metabologia"></div>'
@@ -6066,7 +6066,7 @@ function renderPrescMemed(){
     +'</div>'
     +'<div class="g2" style="margin-bottom:.5rem">'
       +'<div class="fld2" style="margin:0"><label>Paciente</label><input type="text" id="memed-pac-nome" placeholder="Nome do paciente"></div>'
-      +'<div class="fld2" style="margin:0"><label>CPF do paciente</label><input type="text" id="memed-pac-cpf" placeholder="000.000.000-00"></div>'
+      +'<div class="fld2" style="margin:0"><label>CPF do paciente</label><input type="text" inputmode="numeric" id="memed-pac-cpf" placeholder="000.000.000-00"></div>'
     +'</div>'
     +'<div class="g2" style="margin-bottom:.6rem">'
       +'<div class="fld2" style="margin:0"><label>E-mail do paciente (opcional)</label><input type="email" id="memed-pac-email" placeholder="paciente@email.com"></div>'
