@@ -1990,7 +1990,15 @@ var FC_TEMA_RULES={
  'Transgeneridade':[['Monitorização',/monitoriz|hematócrit|perfil lipíd|acompanha|rastrei|fertilidad|criopreserv|óssea|densidade/],['Mulher Trans',/feminiliz|mulher trans|estrogên|estradiol|antiandrogên|espironolacton|ciproteron|etinilestradiol/],['Homem Trans',/masculiniz|homem trans|testosteron/]]
 };
 function classifyTema(text,sub){var r=FC_TEMA_RULES[sub];if(!r)return 'Geral';var t=String(text||'').toLowerCase();for(var i=0;i<r.length;i++){if(r[i][1].test(t))return r[i][0];}return 'Geral';}
-function temaOf(item,sub){return (item&&item.tema)?item.tema:classifyTema((item&&(item.front||item.topic))||'',sub);}
+// Índice enunciado/título → {sub,tema} EXPLÍCITOS da coleção publicada
+// (fcShared/sharedMM). Faz os flashcards já semeados no baralho do aluno (cópias
+// por valor) refletirem o que o professor renomeou/moveu. Invalidado ao publicar.
+var _sharedMeta=null;
+function sharedMeta(){if(_sharedMeta)return _sharedMeta;var m={};function add(a,k){if(Array.isArray(a))a.forEach(function(c){if(c&&c[k])m[String(c[k]).trim().toLowerCase()]={sub:c.sub||c.cat||null,tema:c.tema||null};});}if(typeof fcShared!=='undefined')add(fcShared,'front');if(typeof sharedMM!=='undefined')add(sharedMM,'topic');_sharedMeta=m;return m;}
+function invalidateSharedMeta(){_sharedMeta=null;}
+function temaOf(item,sub){if(item&&item.tema)return item.tema;var txt=String((item&&(item.front||item.topic))||'');var meta=sharedMeta()[txt.trim().toLowerCase()];if(meta&&meta.tema)return meta.tema;return classifyTema(txt,sub);}
+// Subespecialidade efetiva (respeita "mover" do professor via o índice).
+function subOf(item){if(!item)return 'Geral';var txt=String(item.front||item.topic||'');var meta=sharedMeta()[txt.trim().toLowerCase()];return canonSub((meta&&meta.sub)||item.sub||item.cat||'Geral');}
 // Lista de temas presentes (com contagem), na ordem da taxonomia; extras e "Geral" ao final.
 function temaListFor(items,sub){var seen={};(items||[]).forEach(function(it){var tm=temaOf(it,sub);seen[tm]=(seen[tm]||0)+1;});var order=FC_SUBTOPICS[sub]||[];var out=[];order.forEach(function(tm){if(seen[tm])out.push({tema:tm,count:seen[tm]});});Object.keys(seen).forEach(function(tm){if(order.indexOf(tm)<0&&tm!=='Geral')out.push({tema:tm,count:seen[tm]});});if(seen['Geral'])out.push({tema:'Geral',count:seen['Geral']});return out;}
 var AREAS_CRONO=[
@@ -2782,8 +2790,8 @@ function applyStatePayload(payload,personalOnly){
   if(payload.perf&&typeof payload.perf==='object')DB.perf=payload.perf;
   if(!personalOnly){
     if(Array.isArray(payload.provas))provasDB=payload.provas;
-    if(Array.isArray(payload.mm_shared)){sharedMM=payload.mm_shared;try{lsSet('mm_shared',sharedMM);}catch(e){}try{renderMMList();}catch(e){}}
-    if(Array.isArray(payload.fc_shared)){fcShared=payload.fc_shared;try{lsSet('fc_shared',fcShared);}catch(e){}}
+    if(Array.isArray(payload.mm_shared)){sharedMM=payload.mm_shared;try{lsSet('mm_shared',sharedMM);}catch(e){}try{invalidateSharedMeta();}catch(e){}try{renderMMList();}catch(e){}}
+    if(Array.isArray(payload.fc_shared)){fcShared=payload.fc_shared;try{lsSet('fc_shared',fcShared);}catch(e){}try{invalidateSharedMeta();}catch(e){}}
     if(Array.isArray(payload.radar_avisos))radarAvisos=payload.radar_avisos;
     if(Array.isArray(payload.radar_hidden))radarHidden=payload.radar_hidden;
     if(Array.isArray(payload.adm_avisos)||Array.isArray(payload.radar_avisos)){
@@ -4776,7 +4784,7 @@ function renderFcCatPills(){
 // Subespecialidades fora da taxonomia (ex.: Transgeneridade, de cards de amostra
 // antigos) aparecem ao final para não esconder nenhum card.
 function fcSubList(){
-  var seen={};DB.fc.forEach(function(c){var s=canonSub(c.cat||c.sub);seen[s]=(seen[s]||0)+1;});
+  var seen={};DB.fc.forEach(function(c){var s=subOf(c);seen[s]=(seen[s]||0)+1;});
   var out=FC_CATS.map(function(s){return{sub:s,count:seen[s]||0};});
   Object.keys(seen).forEach(function(s){if(FC_CATS.indexOf(s)<0)out.push({sub:s,count:seen[s]});});
   return out;
@@ -4850,7 +4858,7 @@ function renderFC(){
     return;
   }
   // DRILL-IN: abas de subtópico (tema) + cards do tema selecionado.
-  var subList=DB.fc.filter(function(c){return canonSub(c.cat||c.sub)===fcFilter;});
+  var subList=DB.fc.filter(function(c){return subOf(c)===fcFilter;});
   if(frow){
     frow.style.display='flex';
     var tabs='<button class="dir-back" data-fcsub="">← Subespecialidades</button>';
@@ -7186,7 +7194,22 @@ function sendChat(text){
 
 // ── ADMIN (layout estilo Lexia) ──
 var admCurrentSec='analytics',admProvaSubtab='importar',pdfBase64Prova=null,podAudioDataAdm=null,admBancoArea='',admBancoCode='',admBancoAno='',admBancoInst='',admBancoPage=0,ADM_BANCO_PER=4,admBancoEditIdx=null,admBancoEditImg,admBancoEditStemImg;
-var admMMDraft=null,admMMEditId=null,admMMFilterSub='',admMMSub='',admMMTema='';
+var admMMDraft=null,admMMEditId=null,admMMFilterSub='',admMMSub='',admMMTema='',admMMMetaId=null;
+// Painel de edição de um mapa publicado: renomear (título), mover para
+// (subespecialidade › aba), editar conteúdo (editor visual) e excluir.
+function admMMEditPanel(m,j){
+  var msub=subOf(m);
+  var subOpts=FC_CATS.map(function(s){return '<option'+(s===msub?' selected':'')+'>'+esc(s)+'</option>';}).join('');
+  var curTema=temaOf(m,msub);
+  var temaOpts=(FC_SUBTOPICS[msub]||[]).concat(['Geral']).map(function(t){return '<option'+(t===curTema?' selected':'')+'>'+esc(t)+'</option>';}).join('');
+  return '<div style="margin-top:.5rem;display:grid;gap:.4rem;background:var(--bg-soft,rgba(127,127,127,.08));border:1px solid var(--bd);border-radius:8px;padding:.6rem">'
+    +'<div style="font-size:.66rem;color:var(--t3);text-transform:uppercase;letter-spacing:.5px">Renomear (título)</div>'
+    +'<input type="text" id="adm-mm-rename" value="'+esc(m.topic)+'" style="width:100%">'
+    +'<div style="font-size:.66rem;color:var(--t3);text-transform:uppercase;letter-spacing:.5px;margin-top:.2rem">Mover para — subespecialidade › aba</div>'
+    +'<div style="display:flex;gap:6px;flex-wrap:wrap"><select id="adm-mm-movesub" style="flex:1;min-width:150px">'+subOpts+'</select><select id="adm-mm-movetema" style="flex:1;min-width:150px">'+temaOpts+'</select></div>'
+    +'<div style="display:flex;gap:6px;flex-wrap:wrap;margin-top:.2rem"><button class="btn btn-primary btn-sm" data-adm-mm-savemeta="'+j+'">💾 Salvar</button><button class="btn btn-outline btn-sm" data-adm-mm-edit="'+j+'">🎨 Editar conteúdo</button><button class="btn btn-outline btn-sm" data-adm-mm-del="'+j+'" style="color:var(--red);border-color:var(--red)">🗑 Excluir</button><button class="btn btn-ghost btn-sm" id="adm-mm-metacancel">Cancelar</button></div>'
+    +'</div>';
+}
 // Edição visual de mapas no painel do professor: reaproveita o MESMO editor do
 // aluno (#mm-live), movendo-o para dentro do admin. mmAdminEdit=true enquanto o
 // professor edita; __mmLiveHome guarda o lugar original p/ devolver ao sair.
@@ -7201,8 +7224,8 @@ function restoreMMLive(){
   mmAdminEdit=false;
 }
 var ADM_MM_SUBESP=['Diabetes','Obesidade','Tireoide','Adrenal','Neuroendocrinologia','Osteometabolismo','Endocrinologia Pediátrica','Endocrinologia Feminina e Andrologia','Dislipidemia e Aterosclerose','Endocrinologia Masculina','Endocrinologia Esportiva','Transgeneridade'];
-function persistSharedMM(){lsSet('mm_shared',sharedMM);queueRemoteStateSave();try{renderMMList();}catch(e){}}
-function persistFcShared(){lsSet('fc_shared',fcShared);queueRemoteStateSave();}
+function persistSharedMM(){try{invalidateSharedMeta();}catch(e){}lsSet('mm_shared',sharedMM);queueRemoteStateSave();try{renderMMList();}catch(e){}}
+function persistFcShared(){try{invalidateSharedMeta();}catch(e){}lsSet('fc_shared',fcShared);queueRemoteStateSave();}
 // Migração única (admin): publica os flashcards de amostra embutidos no código
 // (FC_SEED + FC_MEMBER) na coleção do professor (fc_shared), deduplicando por
 // enunciado. Assim os painéis do professor e do aluno ficam sincronizados —
@@ -7289,7 +7312,7 @@ function admMapasHTML(){
   var rows=(sharedMM||[]).map(function(m,j){return{m:m,j:j};}).filter(function(o){return canonSub(o.m.sub)===admMMSub;});
   var mmTemaTabs='<div style="display:flex;flex-wrap:wrap;gap:.3rem;margin:.2rem 0 .9rem"><button class="cat-pill'+(admMMTema===''?' on':'')+'" data-admmm-tema="">Todos ('+rows.length+')</button>'+temaListFor(rows.map(function(o){return o.m;}),admMMSub).map(function(t){return '<button class="cat-pill'+(admMMTema===t.tema?' on':'')+'" data-admmm-tema="'+esc(t.tema)+'">'+esc(t.tema)+' ('+t.count+')</button>';}).join('')+'</div>';
   var rowsF=admMMTema?rows.filter(function(o){return temaOf(o.m,admMMSub)===admMMTema;}):rows;
-  var list=rowsF.map(function(o){var m=o.m,j=o.j;return '<div style="display:flex;align-items:center;justify-content:space-between;gap:.6rem;padding:.55rem 0;border-bottom:1px solid var(--bd)"><div style="min-width:0"><div style="font-weight:600;font-size:.82rem">'+esc(m.topic)+'</div><div style="font-size:.68rem;color:var(--t3)">'+((m.data&&m.data.branches&&m.data.branches.length)||0)+' ramos</div></div><div style="display:flex;gap:5px;flex-shrink:0"><button class="btn btn-outline btn-sm" data-adm-mm-edit="'+j+'">Editar</button><button class="btn btn-outline btn-sm" data-adm-mm-del="'+j+'" style="color:var(--red);border-color:var(--red)">🗑 Excluir</button></div></div>';}).join('');
+  var list=rowsF.map(function(o){var m=o.m,j=o.j;var row='<div style="display:flex;align-items:center;justify-content:space-between;gap:.6rem"><div style="min-width:0"><div style="font-weight:600;font-size:.82rem">'+esc(m.topic)+'</div><div style="font-size:.68rem;color:var(--t3)">'+((m.data&&m.data.branches&&m.data.branches.length)||0)+' ramos</div></div><div style="display:flex;gap:5px;flex-shrink:0"><button class="btn btn-outline btn-sm" data-adm-mm-meta="'+j+'">Editar</button></div></div>';return '<div style="padding:.55rem 0;border-bottom:1px solid var(--bd)">'+row+(admMMMetaId===m.id?admMMEditPanel(m,j):'')+'</div>';}).join('');
   var createForm='<div class="card" style="margin-bottom:1rem"><div class="card-head"><span class="card-title">Criar mapa mental em '+esc(admMMSub)+'</span></div>'
     +'<div class="fld2" style="margin:0 0 .6rem"><label>Tema</label><input type="text" id="adm-mm-newtopic" placeholder="Ex: Hipotireoidismo"></div>'
     +'<div style="display:flex;gap:6px;flex-wrap:wrap"><button class="btn btn-primary" id="adm-mm-gen">🤖 Gerar com IA</button><button class="btn btn-outline" id="adm-mm-import">📎 Importar arquivo</button><button class="btn btn-outline" id="adm-mm-blank">+ Criar em branco</button></div>'
@@ -7305,6 +7328,22 @@ function admMapasHTML(){
 }
 // ── FLASHCARDS DO PROFESSOR (publicados para todos os alunos via fc_shared) ──
 var admFcSub='',admFcEditId=null,admFcTema='';
+// Painel de edição de um flashcard publicado: renomear (frente/verso),
+// mover para (subespecialidade › aba) e excluir.
+function admFcEditPanel(c,j){
+  var msub=subOf(c);
+  var subOpts=FC_CATS.map(function(s){return '<option'+(s===msub?' selected':'')+'>'+esc(s)+'</option>';}).join('');
+  var curTema=temaOf(c,msub);
+  var temaOpts=(FC_SUBTOPICS[msub]||[]).concat(['Geral']).map(function(t){return '<option'+(t===curTema?' selected':'')+'>'+esc(t)+'</option>';}).join('');
+  return '<div style="margin-top:.5rem;display:grid;gap:.4rem;background:var(--bg-soft,rgba(127,127,127,.08));border:1px solid var(--bd);border-radius:8px;padding:.6rem">'
+    +'<div style="font-size:.66rem;color:var(--t3);text-transform:uppercase;letter-spacing:.5px">Renomear (frente / verso)</div>'
+    +'<textarea id="adm-fc-ef" rows="2" style="width:100%">'+esc(c.front)+'</textarea>'
+    +'<textarea id="adm-fc-eb" rows="2" style="width:100%">'+esc(c.back)+'</textarea>'
+    +'<div style="font-size:.66rem;color:var(--t3);text-transform:uppercase;letter-spacing:.5px;margin-top:.2rem">Mover para — subespecialidade › aba</div>'
+    +'<div style="display:flex;gap:6px;flex-wrap:wrap"><select id="adm-fc-movesub" style="flex:1;min-width:150px">'+subOpts+'</select><select id="adm-fc-movetema" style="flex:1;min-width:150px">'+temaOpts+'</select></div>'
+    +'<div style="display:flex;gap:6px;flex-wrap:wrap;margin-top:.2rem"><button class="btn btn-primary btn-sm" data-adm-fc-savee="'+j+'">💾 Salvar</button><button class="btn btn-outline btn-sm" data-adm-fc-del="'+j+'" style="color:var(--red);border-color:var(--red)">🗑 Excluir</button><button class="btn btn-ghost btn-sm" id="adm-fc-cancele">Cancelar</button></div>'
+    +'</div>';
+}
 function admFcSubList(){
   var seen={};(fcShared||[]).forEach(function(c){var s=canonSub(c.sub||c.cat);seen[s]=(seen[s]||0)+1;});
   var out=FC_CATS.map(function(s){return{sub:s,count:seen[s]||0};});
@@ -7336,7 +7375,7 @@ function admFlashHTML(){
   var rowsF=admFcTema?rows.filter(function(o){return temaOf(o.c,admFcSub)===admFcTema;}):rows;
   var list=rowsF.map(function(o){var c=o.c,j=o.j;
     return '<div style="padding:.6rem 0;border-bottom:1px solid var(--bd)"><div style="display:flex;align-items:flex-start;justify-content:space-between;gap:.6rem"><div style="min-width:0;flex:1"><div style="font-weight:600;font-size:.82rem">'+esc(c.front)+'</div><div style="font-size:.74rem;color:var(--t2);margin-top:.2rem">'+esc(c.back)+'</div></div><div style="display:flex;gap:5px;flex-shrink:0"><button class="btn btn-outline btn-sm" data-adm-fc-edit="'+j+'">Editar</button><button class="btn btn-outline btn-sm" data-adm-fc-del="'+j+'" style="color:var(--red);border-color:var(--red)">🗑</button></div></div>'
-      +(admFcEditId===c.id?('<div style="margin-top:.5rem;display:grid;gap:.4rem"><textarea id="adm-fc-ef" rows="2" style="width:100%">'+esc(c.front)+'</textarea><textarea id="adm-fc-eb" rows="2" style="width:100%">'+esc(c.back)+'</textarea><div style="display:flex;gap:6px"><button class="btn btn-primary btn-sm" data-adm-fc-savee="'+j+'">💾 Salvar</button><button class="btn btn-ghost btn-sm" id="adm-fc-cancele">Cancelar</button></div></div>'):'')
+      +(admFcEditId===c.id?admFcEditPanel(c,j):'')
       +'</div>';
   }).join('');
   var createForm='<div class="card" style="margin-bottom:1rem"><div class="card-head"><span class="card-title">Criar flashcards em '+esc(admFcSub)+'</span></div>'
@@ -8138,8 +8177,12 @@ function bindAdmSec(sec){
     var save=document.getElementById('adm-mm-save');if(save)save.addEventListener('click',admMMSave);
     var cancel=document.getElementById('adm-mm-cancel');if(cancel)cancel.addEventListener('click',function(){admMMDraft=null;admMMEditId=null;renderAdmSec('mapas');});
     main.querySelectorAll('[data-adm-mm-delb]').forEach(function(b){b.addEventListener('click',function(){admMMSyncDraft();admMMDraft.data.branches.splice(parseInt(b.dataset.admMmDelb,10),1);renderAdmSec('mapas');});});
-    main.querySelectorAll('[data-adm-mm-edit]').forEach(function(b){b.addEventListener('click',function(){var m=sharedMM[parseInt(b.dataset.admMmEdit,10)];if(!m)return;admMMDraft={topic:m.topic,sub:m.sub,data:normalizeMMData(m.data)};admMMEditId=m.id;renderAdmSec('mapas');});});
-    main.querySelectorAll('[data-adm-mm-del]').forEach(function(b){b.addEventListener('click',function(){var m=sharedMM[parseInt(b.dataset.admMmDel,10)];if(!confirm('Excluir o mapa mental "'+((m&&m.topic)||'')+'"? Esta ação não pode ser desfeita.'))return;sharedMM.splice(parseInt(b.dataset.admMmDel,10),1);persistSharedMM();renderAdmSec('mapas');notify('Mapa removido.','ok');});});
+    main.querySelectorAll('[data-adm-mm-edit]').forEach(function(b){b.addEventListener('click',function(){var m=sharedMM[parseInt(b.dataset.admMmEdit,10)];if(!m)return;admMMMetaId=null;admMMDraft={topic:m.topic,sub:m.sub,data:normalizeMMData(m.data)};admMMEditId=m.id;renderAdmSec('mapas');});});
+    main.querySelectorAll('[data-adm-mm-del]').forEach(function(b){b.addEventListener('click',function(){var m=sharedMM[parseInt(b.dataset.admMmDel,10)];if(!confirm('Excluir o mapa mental "'+((m&&m.topic)||'')+'"? Esta ação não pode ser desfeita.'))return;sharedMM.splice(parseInt(b.dataset.admMmDel,10),1);admMMMetaId=null;persistSharedMM();renderAdmSec('mapas');notify('Mapa removido.','ok');});});
+    main.querySelectorAll('[data-adm-mm-meta]').forEach(function(b){b.addEventListener('click',function(){var m=sharedMM[parseInt(b.dataset.admMmMeta,10)];if(m){admMMMetaId=m.id;renderAdmSec('mapas');}});});
+    var mmMetaCancel=document.getElementById('adm-mm-metacancel');if(mmMetaCancel)mmMetaCancel.addEventListener('click',function(){admMMMetaId=null;renderAdmSec('mapas');});
+    var mmMoveSub=document.getElementById('adm-mm-movesub');if(mmMoveSub)mmMoveSub.addEventListener('change',function(){var mt=document.getElementById('adm-mm-movetema');if(mt)mt.innerHTML=(FC_SUBTOPICS[this.value]||[]).concat(['Geral']).map(function(t){return '<option>'+esc(t)+'</option>';}).join('');});
+    main.querySelectorAll('[data-adm-mm-savemeta]').forEach(function(b){b.addEventListener('click',function(){var m=sharedMM[parseInt(b.dataset.admMmSavemeta,10)];if(!m)return;var nt=(document.getElementById('adm-mm-rename').value||'').trim();if(nt)m.topic=nt;var ms=document.getElementById('adm-mm-movesub'),mt=document.getElementById('adm-mm-movetema');if(ms&&ms.value)m.sub=ms.value;if(mt&&mt.value)m.tema=(mt.value==='Geral'?null:mt.value);admMMMetaId=null;persistSharedMM();renderAdmSec('mapas');notify('Mapa atualizado.','ok');});});
     var __mmf=document.getElementById('adm-mm-filter');if(__mmf)__mmf.addEventListener('change',function(){admMMFilterSub=__mmf.value;renderAdmSec('mapas');});
     return;
   }
@@ -8250,7 +8293,9 @@ function bindAdmSec(sec){
     main.querySelectorAll('[data-adm-fc-edit]').forEach(function(b){b.addEventListener('click',function(){var c=fcShared[parseInt(b.dataset.admFcEdit,10)];if(c){admFcEditId=c.id;renderAdmSec('flashcards');}});});
     var fcCancelE=document.getElementById('adm-fc-cancele');
     if(fcCancelE)fcCancelE.addEventListener('click',function(){admFcEditId=null;renderAdmSec('flashcards');});
-    main.querySelectorAll('[data-adm-fc-savee]').forEach(function(b){b.addEventListener('click',function(){var c=fcShared[parseInt(b.dataset.admFcSavee,10)];if(!c)return;var nf=(document.getElementById('adm-fc-ef').value||'').trim(),nb=(document.getElementById('adm-fc-eb').value||'').trim();if(!nf||!nb){notify('Preencha frente e verso.','err');return;}c.front=nf;c.back=nb;admFcEditId=null;persistFcShared();renderAdmSec('flashcards');notify('Card atualizado.','ok');});});
+    var fcMoveSub=document.getElementById('adm-fc-movesub');
+    if(fcMoveSub)fcMoveSub.addEventListener('change',function(){var mt=document.getElementById('adm-fc-movetema');if(mt)mt.innerHTML=(FC_SUBTOPICS[this.value]||[]).concat(['Geral']).map(function(t){return '<option>'+esc(t)+'</option>';}).join('');});
+    main.querySelectorAll('[data-adm-fc-savee]').forEach(function(b){b.addEventListener('click',function(){var c=fcShared[parseInt(b.dataset.admFcSavee,10)];if(!c)return;var nf=(document.getElementById('adm-fc-ef').value||'').trim(),nb=(document.getElementById('adm-fc-eb').value||'').trim();if(!nf||!nb){notify('Preencha frente e verso.','err');return;}c.front=nf;c.back=nb;var ms=document.getElementById('adm-fc-movesub'),mt=document.getElementById('adm-fc-movetema');if(ms&&ms.value){c.sub=ms.value;c.cat=ms.value;}if(mt&&mt.value){c.tema=(mt.value==='Geral'?null:mt.value);}admFcEditId=null;persistFcShared();renderAdmSec('flashcards');notify('Card atualizado.','ok');});});
     main.querySelectorAll('[data-adm-fc-del]').forEach(function(b){b.addEventListener('click',function(){var i=parseInt(b.dataset.admFcDel,10);if(!confirm('Excluir este flashcard? (Deixa de ser publicado; quem já recebeu mantém a cópia.)'))return;fcShared.splice(i,1);persistFcShared();renderAdmSec('flashcards');notify('Flashcard removido.','ok');});});
     return;
   }
