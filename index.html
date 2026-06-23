@@ -7740,6 +7740,14 @@ function admStoriesHTML(){
    +'<div style="text-align:center">'+igLbl('Pergunta')+'<img id="ig-prev-q" alt="" style="width:190px;border-radius:12px;border:1px solid var(--bd)"></div>'
    +'<div style="text-align:center">'+igLbl('Gabarito')+'<img id="ig-prev-a" alt="" style="width:190px;border-radius:12px;border:1px solid var(--bd)"></div></div>'
    +'</div>'
+   +'<div class="card" style="margin-bottom:1rem"><div class="card-head"><span class="card-title">🤖 Gerar em lote</span></div>'
+   +'<div style="font-size:.74rem;color:var(--t2);margin-bottom:.6rem">Gera várias questões de uma vez (modelo Sonnet) — revise e aprove uma a uma (ou todas) para a fila.</div>'
+   +'<div style="display:flex;gap:.6rem;flex-wrap:wrap;align-items:flex-end;margin-bottom:.7rem">'
+   +'<label style="width:120px">'+igLbl('Quantidade')+'<select id="ig-lote-qty"><option>3</option><option selected>5</option><option>7</option><option>10</option></select></label>'
+   +'<label style="display:flex;align-items:center;gap:.4rem;font-size:.76rem;color:var(--tx);font-weight:400;text-transform:none;letter-spacing:0"><input type="checkbox" id="ig-lote-vary" checked style="width:auto"> variar subespecialidades</label>'
+   +'<button class="btn btn-primary btn-sm" id="ig-lote-gen">🤖 Gerar lote</button>'
+   +'<span id="ig-lote-status" style="font-size:.72rem;color:var(--t3)"></span></div>'
+   +'<div id="ig-lote-results"></div></div>'
    +'<div class="card" style="margin-bottom:1rem"><div class="card-head"><span class="card-title">Fila de questões</span><span class="tag">'+(igStories?igStories.length:0)+'</span></div>'+fila+'</div>'
    +'<div class="card"><div class="card-head"><span class="card-title">Stories de divulgação (domingo)</span></div>'
    +'<div style="font-size:.74rem;color:var(--t2);margin-bottom:.6rem">Fundo branded por ferramenta — baixe e sobreponha o print real no editor de Stories do Instagram.</div>'
@@ -7750,6 +7758,49 @@ function admStoriesHTML(){
    +'</div>';
 }
 function igFnameSub(it){return String(it.sub||'questao').toLowerCase().normalize('NFD').replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,'');}
+// ---------- Geração em LOTE (gera várias, professor revisa e aprova) ----------
+var igLoteDraft=[];
+// Roda as tarefas com concorrência limitada (evita rate-limit por muitas chamadas
+// simultâneas). Cada tarefa gera 1 questão.
+function igPool(tasks,limit){
+  return new Promise(function(resolve){
+    var i=0,active=0,results=[];
+    function next(){
+      if(i>=tasks.length&&active===0){resolve(results);return;}
+      while(active<limit&&i<tasks.length){(function(idx){active++;tasks[idx]().then(function(r){results[idx]=r;},function(){results[idx]=null;}).then(function(){active--;next();});})(i++);}
+    }
+    next();
+  });
+}
+function igGenOne(sub,topic){
+  var sys=authoringSys('Atue como examinador de prova de título em endocrinologia. Gere UMA questão ORIGINAL de '+sub+', EXATAMENTE 4 alternativas (A–D), só uma correta. JSON APENAS: {"stem":"vinheta clínica curta (idade, sexo, quadro, exames com valores/unidades)","options":{"A":"","B":"","C":"","D":""},"answer":"A","explanation":"justificativa de 2-3 frases citando o critério/valor de corte/diretriz"}');
+  return aiRequest({system:sys,prompt:'Gere 1 questão de Endocrinologia — '+sub+(topic?(', tema: '+topic):'')+', nível intermediário, clinicamente precisa e alinhada às diretrizes vigentes. Responda SOMENTE com o objeto JSON.',maxTokens:1100,model:AI_MODEL_SIM_GEN,grounding:(topic?(sub+' '+topic):sub)})
+  .then(function(raw){var d=parseJ(raw);if(!d||!d.stem||!d.options)return null;return {sub:sub,teem:'',stem:String(d.stem||''),options:{A:d.options.A||'',B:d.options.B||'',C:d.options.C||'',D:d.options.D||''},answer:String(d.answer||'A').toUpperCase().slice(0,1),explanation:String(d.explanation||'')};});
+}
+function igLoteToQueue(it){igStories.push({id:'ig-'+Date.now()+'-'+Math.round(Math.random()*1e6),sub:it.sub,teem:it.teem||'',stem:it.stem,options:it.options,answer:it.answer,explanation:it.explanation,status:'queued',createdAt:Date.now()});}
+function igLoteApprove(i){var it=igLoteDraft[i];if(!it)return;igLoteToQueue(it);igLoteDraft.splice(i,1);persistIgStories();notify('Aprovada e adicionada à fila.','ok');renderAdmSec('stories');}
+function igLoteApproveAll(){if(!igLoteDraft.length)return;var n=igLoteDraft.length;igLoteDraft.forEach(igLoteToQueue);igLoteDraft=[];persistIgStories();notify(n+' questões aprovadas.','ok');renderAdmSec('stories');}
+function igLoteEdit(i){var it=igLoteDraft[i];if(!it)return;igEditId=null;igFillForm(it);igLoteDraft.splice(i,1);renderIgLote();try{document.getElementById('ig-stem').scrollIntoView({behavior:'smooth',block:'center'});}catch(e){}notify('Carregada no formulário — edite e clique em "Aprovar p/ a fila".','ok');}
+function renderIgLote(){
+  var res=document.getElementById('ig-lote-results');if(!res)return;
+  if(!igLoteDraft.length){res.innerHTML='';return;}
+  res.innerHTML='<div style="font-size:.74rem;color:var(--t2);margin:.2rem 0 .5rem">'+igLoteDraft.length+' gerada(s) — revise e aprove:</div>'+igLoteDraft.map(function(it,i){
+    return '<div style="border:1px solid var(--bd);border-radius:12px;padding:.7rem .8rem;margin-bottom:.5rem;background:var(--s2)">'
+      +'<div style="display:flex;justify-content:space-between;gap:.5rem;flex-wrap:wrap;align-items:center;margin-bottom:.35rem">'
+      +'<div style="font-size:.8rem;font-weight:700;color:var(--tx)">'+dirSubIcon(it.sub)+' '+esc(it.sub||'')+' <span class="tag tag-blue">Gab: '+esc(it.answer)+'</span></div>'
+      +'<div style="display:flex;gap:.3rem;flex-wrap:wrap">'
+      +'<button class="btn btn-primary btn-sm" data-iglote-ok="'+i+'">✓ Aprovar</button>'
+      +'<button class="btn btn-outline btn-sm" data-iglote-edit="'+i+'">✎ Editar</button>'
+      +'<button class="btn btn-outline btn-sm" data-iglote-del="'+i+'">🗑</button>'
+      +'</div></div>'
+      +'<div style="font-size:.74rem;color:var(--t2);line-height:1.5">'+esc(String(it.stem||'').slice(0,220))+(String(it.stem||'').length>220?'…':'')+'</div>'
+      +'</div>';
+  }).join('')+(igLoteDraft.length>1?'<button class="btn btn-primary btn-sm" id="ig-lote-okall">✓ Aprovar todas ('+igLoteDraft.length+')</button>':'');
+  res.querySelectorAll('[data-iglote-ok]').forEach(function(b){b.addEventListener('click',function(){igLoteApprove(parseInt(b.dataset.igloteOk,10));});});
+  res.querySelectorAll('[data-iglote-edit]').forEach(function(b){b.addEventListener('click',function(){igLoteEdit(parseInt(b.dataset.igloteEdit,10));});});
+  res.querySelectorAll('[data-iglote-del]').forEach(function(b){b.addEventListener('click',function(){igLoteDraft.splice(parseInt(b.dataset.igloteDel,10),1);renderIgLote();});});
+  var okall=document.getElementById('ig-lote-okall');if(okall)okall.addEventListener('click',igLoteApproveAll);
+}
 function bindAdmStories(){
   igEditId=null;
   var gen=document.getElementById('ig-gen');
@@ -7767,6 +7818,24 @@ function bindAdmStories(){
     })
     .catch(function(e){notify('Erro ao gerar: '+((e&&e.message)||e),'err');})
     .then(function(){gen.disabled=false;gen.innerHTML='🤖 Gerar com IA';});
+  });
+  var loteGen=document.getElementById('ig-lote-gen');
+  if(loteGen)loteGen.addEventListener('click',function(){
+    var n=parseInt((document.getElementById('ig-lote-qty')||{}).value,10)||5;
+    var vary=!!((document.getElementById('ig-lote-vary')||{}).checked);
+    var baseSub=(document.getElementById('ig-sub')||{}).value||'Endocrinologia';
+    var topic=((document.getElementById('ig-topic')||{}).value||'').trim();
+    var st=document.getElementById('ig-lote-status'),res=document.getElementById('ig-lote-results');
+    var subs=[];for(var i=0;i<n;i++)subs.push(vary?DIR_SUBS[i%DIR_SUBS.length]:baseSub);
+    loteGen.disabled=true;loteGen.innerHTML=ldHTML('Gerando '+n+'…');if(st)st.textContent='';if(res)res.innerHTML='';
+    var done=0;
+    igPool(subs.map(function(s){return function(){return igGenOne(s,topic).then(function(r){done++;if(st)st.textContent='Gerando… '+done+'/'+n;return r;});};}),3)
+    .then(function(items){
+      igLoteDraft=(items||[]).filter(function(x){return x&&x.stem;});
+      if(!igLoteDraft.length){if(res)res.innerHTML='<div style="color:var(--red);font-size:.78rem">❌ A IA não retornou questões. Tente de novo.</div>';return;}
+      if(st)st.textContent='✓ '+igLoteDraft.length+' gerada(s).';renderIgLote();
+    }).catch(function(e){if(res)res.innerHTML='<div style="color:var(--red);font-size:.78rem">❌ '+esc((e&&e.message)||e)+'</div>';})
+    .then(function(){loteGen.disabled=false;loteGen.innerHTML='🤖 Gerar lote';});
   });
   var prev=document.getElementById('ig-preview');
   if(prev)prev.addEventListener('click',function(){
@@ -7804,6 +7873,7 @@ function bindAdmStories(){
   if(pdl)pdl.addEventListener('click',function(){var t=IG_TOOLS[parseInt((document.getElementById('ig-promo-sel')||{}).value,10)||0];if(t)igDownload('promo',t,'endodireto-promo-'+igFnameSub({sub:t.nome})+'.png').catch(function(e){notify((e&&e.message)||'Falha.','err');});});
   var pcp=document.getElementById('ig-promo-copy');
   if(pcp)pcp.addEventListener('click',function(){var t=IG_TOOLS[parseInt((document.getElementById('ig-promo-sel')||{}).value,10)||0];if(t){try{navigator.clipboard.writeText(igCaptionPromo(t));notify('Legenda do promo copiada!','ok');}catch(e){notify('Não foi possível copiar.','err');}}});
+  try{renderIgLote();}catch(e){}
 }
 function admRestoreSec(){
   var ok=['analytics','mural','ref','provas','cursos','estudantes','conteudo','mapas','flashcards','stories','calc','consultorio','rx','chat','perfil','suporte'];
