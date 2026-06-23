@@ -429,16 +429,20 @@ textarea{resize:vertical;line-height:1.6}
 .mural-card-reproducao{border-left-color:#ec4899}
 .mural-card-pediatria{border-left-color:#6366f1}
 .mural-card-tags{display:flex;align-items:center;gap:.45rem;flex-wrap:wrap;margin-bottom:.75rem}
-.mural-card h3{font-size:1rem;font-weight:800;color:var(--tx);line-height:1.35;margin-bottom:.42rem}
+.mural-card h3{font-size:1rem;font-weight:800;color:var(--tx);line-height:1.35;margin-bottom:.42rem;overflow-wrap:anywhere}
 .mural-date{font-size:.72rem;font-weight:800;color:var(--t3);margin-bottom:.65rem}
-.mural-text{font-size:.79rem;color:var(--t2);line-height:1.7;margin-bottom:.9rem;white-space:pre-line}
-.mural-source{font-size:.75rem;font-weight:800;color:#5cc8f5}
+.mural-text{font-size:.79rem;color:var(--t2);line-height:1.7;margin-bottom:.9rem;white-space:pre-line;overflow-wrap:anywhere;word-break:break-word}
+.mural-source{font-size:.75rem;font-weight:800;color:#5cc8f5;overflow-wrap:anywhere;word-break:break-word}
 .mural-source a{color:#5cc8f5;text-decoration:none}
 .mural-source a:hover{text-decoration:underline}
 .mural-empty{grid-column:1/-1}
 .mural-card-actions{display:flex;gap:.45rem;flex-wrap:wrap;margin-top:1rem}
 .mural-admin-grid{margin-top:1rem}
 .mural-admin-grid .mural-card{min-height:188px}
+/* Questão do Dia — janela na frente do mural (backdrop esmaece o mural) */
+.qotd-overlay{position:fixed;inset:0;z-index:9000;display:flex;align-items:center;justify-content:center;padding:1rem}
+.qotd-backdrop{position:absolute;inset:0;background:rgba(6,12,28,.72)}
+.qotd-dialog{position:relative;z-index:1;width:100%;max-width:560px;max-height:90vh;overflow:auto}
 .mural-admin-toolbar{display:flex;align-items:flex-start;justify-content:space-between;gap:1rem;flex-wrap:wrap}
 .tag-muted{background:var(--s2);color:var(--tx)}
 .tag-sub-diabetes{background:#16264f;color:#7aa0ff}
@@ -608,7 +612,7 @@ html[data-theme="light"] .cat-pill.on{background:var(--blue);border-color:var(--
   .mural-filter-main{grid-template-columns:1fr;gap:.55rem}
   .mural-count-pill,.mural-theme-pill{width:100%}
   #mural-clear{width:100%;justify-content:center;margin-top:.65rem;min-height:40px}
-  .mural-grid{grid-template-columns:1fr;gap:.75rem}
+  .mural-grid{grid-template-columns:minmax(0,1fr);gap:.75rem}
   .mural-card{min-height:0;padding:1rem}
   .sim-report-grid{grid-template-columns:1fr}
   .sim-report-head{align-items:flex-start;flex-direction:column}
@@ -4564,7 +4568,7 @@ function goPanel(id){
   var bc=document.getElementById('tb-bc');
   if(bc)bc.textContent=PANEL_LABELS[id]||id;
   if(id==='dash')refreshDash();
-  if(id==='mural')try{renderQotd();}catch(e){}
+  try{var _qm=document.getElementById('qotd-modal');if(_qm&&id!=='mural')_qm.style.display='none';if(id==='mural')renderQotd();}catch(e){}
   if(id==='quest'){applyQuestDegustacao();renderSavedQ();populateInst('q-inst');updateProvaInfo();}
   if(id==='flash'){fcFilter=null;renderFC();} // abre na grade de subespecialidades
   if(id==='mmap')renderMMList();
@@ -4589,7 +4593,6 @@ function refreshDash(){
   var due=DB.fc.filter(srIsDue).length;
   setText('d-qn',DB.q.length);setText('d-fcn',DB.fc.length);setText('d-sr-due',due);setText('d-mmn',DB.mm.length);
   renderPerfBars();updateDashRec();renderDashCrono();renderDashNotas();
-  try{renderQotd();}catch(e){}
 }
 // ---------- QUESTÃO DO DIA (card clicável do aluno) ----------
 // Mostra a questão aprovada mais recente da fila do professor (igStories, vinda do
@@ -4624,26 +4627,45 @@ function qotdCardHTML(q,ans){
     +'<div id="qotd-fb">'+fb+'</div>'
     +'</div>';
 }
-function qotdFill(host,wrap,q,ans){
-  if(!host)return;
-  if(!q){if(wrap)wrap.style.display='none';host.style.display='none';host.innerHTML='';return;}
-  if(wrap)wrap.style.display='';host.style.display='';
-  host.innerHTML=qotdCardHTML(q,ans);
-  if(!ans)host.querySelectorAll('[data-qotd-opt]').forEach(function(b){b.addEventListener('click',function(){qotdPick(q,b.getAttribute('data-qotd-opt'));});});
+function qotdModalEl(){
+  var m=document.getElementById('qotd-modal');
+  if(!m){
+    m=document.createElement('div');m.id='qotd-modal';m.className='qotd-overlay';m.style.display='none';
+    m.innerHTML='<div class="qotd-backdrop" data-qotd-close></div><div class="qotd-dialog" role="dialog" aria-modal="true"><div id="qotd-modal-body"></div></div>';
+    document.body.appendChild(m);
+    m.querySelectorAll('[data-qotd-close]').forEach(function(b){b.addEventListener('click',qotdClose);});
+  }
+  return m;
 }
+var qotdDismissed=false; // dispensada nesta sessão (responder persiste em localStorage)
+function qotdClose(){var m=document.getElementById('qotd-modal');if(m)m.style.display='none';qotdDismissed=true;}
+function qotdRenderModal(q,ans){
+  qotdModalEl();var body=document.getElementById('qotd-modal-body');if(!body)return;
+  var footer=ans
+    ?'<button type="button" class="btn btn-primary" id="qotd-see-mural" style="width:100%;margin-top:.7rem">Ver o mural →</button>'
+    :'<button type="button" class="btn btn-outline" id="qotd-skip" style="width:100%;margin-top:.6rem">Agora não</button>';
+  body.innerHTML=qotdCardHTML(q,ans)+footer;
+  if(!ans)body.querySelectorAll('[data-qotd-opt]').forEach(function(b){b.addEventListener('click',function(){qotdPick(q,b.getAttribute('data-qotd-opt'));});});
+  var see=document.getElementById('qotd-see-mural');if(see)see.addEventListener('click',qotdClose);
+  var skip=document.getElementById('qotd-skip');if(skip)skip.addEventListener('click',qotdClose);
+}
+// Mostra a Questão do Dia como JANELA na frente do mural (o backdrop esmaece o
+// mural). Ao responder, mostra o gabarito comentado + "Ver o mural"; ao fechar, o
+// mural volta ao normal. Aparece só no Mural, 1x por sessão (ou até responder).
 function renderQotd(){
-  var q=qotdTodays();
-  var ans=q?qotdReadAns()[q.id]:null;
-  qotdFill(document.getElementById('qotd-card'),null,q,ans);
-  qotdFill(document.getElementById('qotd-card-mural'),document.getElementById('qotd-mural-wrap'),q,ans);
+  var q=qotdTodays();var m=qotdModalEl();
+  if(!q){m.style.display='none';return;}
+  var ans=qotdReadAns()[q.id];
+  if(ans||qotdDismissed){m.style.display='none';return;}
+  qotdRenderModal(q,null);m.style.display='';
 }
 function qotdPick(q,letter){
   if(!q||!letter)return;
   var ok=(letter===q.answer);
-  var m=qotdReadAns();m[q.id]={letter:letter,ok:ok,at:Date.now()};
-  try{localStorage.setItem('qotd_answered',JSON.stringify(m));}catch(e){}
+  var mm=qotdReadAns();mm[q.id]={letter:letter,ok:ok,at:Date.now()};
+  try{localStorage.setItem('qotd_answered',JSON.stringify(mm));}catch(e){}
   if(q.sub){if(!DB.perf[q.sub])DB.perf[q.sub]={correct:0,total:0};DB.perf[q.sub].total++;if(ok)DB.perf[q.sub].correct++;try{persist();}catch(e){}}
-  renderQotd();
+  qotdRenderModal(q,mm[q.id]);
   try{renderPerfBars();updateDashRec();}catch(e){}
 }
 function setText(id,v){var e=document.getElementById(id);if(e)e.textContent=v;}
@@ -6863,7 +6885,7 @@ function execNoteCmd(cmd){
 // ── MURAL ──
 var muralFilter='';
 var muralTipoFilter='';
-var muralSort='relevantes';
+var muralSort='novos';
 var muralShowBreaking=(lsGet('mural_show_breaking')!==false); // mostra Breaking News por padrão
 var MURAL_PER_PAGE=10,muralPage=0,admMuralPage=0; // paginação do mural (10/pág)
 // HTML do paginador (vazio se só houver 1 página).
@@ -8140,7 +8162,7 @@ function admSuporteHTML(){
 }
 
 function persistAdm(){lsSet('adm_avisos',admAvisos);lsSet('adm_questoes',admQuestoes);queueRemoteStateSave();}
-var admMuralShowForm=false,admMuralEdit=null,admMuralFilter='',admMuralTipoFilter='',admMuralSort='relevantes';
+var admMuralShowForm=false,admMuralEdit=null,admMuralFilter='',admMuralTipoFilter='',admMuralSort='novos';
 // ---------- REFERÊNCIA RÁPIDA (admin CRUD) ----------
 var admRefShowForm=false,admRefEdit=null,admRefPdfB64=null,admRefPdfName='',admRefPdfFile=null,admRefSub='',admRefTema='',admRefTemaAdd=false,admRefTemaEdit=null,admRefChat=[];
 // Bolhas do chat do assistente de IA no editor de diretrizes.
