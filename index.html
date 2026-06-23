@@ -3372,7 +3372,7 @@ var CLINICAL_GUIDELINES='\n\nDIRETRIZES RECENTES — quando o tema for pertinent
 // diretrizes de ~40k eram quase todas descartadas, quebrando o JSON) e a um custo
 // controlado (a 1ª chamada grava o cache a 1,25x; as seguintes leem a ~0,1x).
 // ⚠️ O sentinela tem de ser BYTE A BYTE igual ao de api/ai.js (SYS_SPLIT).
-function authoringSys(fmt){return CLINICAL_GUIDELINES+'__ENDODIRECT_SYS_SPLIT_b1f7__'+CLINICAL_AUTHORING+'\n\n'+fmt;}
+function authoringSys(fmt){return CLINICAL_GUIDELINES+'__ENDODIRECT_SYS_SPLIT_b1f7__'+CLINICAL_AUTHORING+'\n\n'+fmt+'\n\nRESPONDA SOMENTE com JSON válido no formato pedido — sem texto, comentário ou markdown fora do JSON.';}
 function callAI(sys,usr,maxTok,model,grounding){
   return aiRequest({system:sys,prompt:usr,maxTokens:maxTok||1500,model:model,grounding:grounding||''});
 }
