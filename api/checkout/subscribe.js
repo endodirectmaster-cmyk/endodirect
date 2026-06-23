@@ -215,7 +215,7 @@ module.exports = async function handler(req, res) {
       interval_count: cfg.interval_count,
       billing_type: 'prepaid',
       installments: 1,
-      items: [{ description: 'Endodirect — ' + cfg.label, quantity: 1, pricing_scheme: { scheme_type: 'unit', price: cfg.amount } }]
+      items: [{ code: 'endo-' + planKey + '-mensal', description: 'Endodirect — ' + cfg.label, quantity: 1, pricing_scheme: { scheme_type: 'unit', price: cfg.amount } }]
     };
     if (cardId) subBody.card_id = cardId; else subBody.card_token = cardToken;
     const sub = await pagarme('/subscriptions', subBody);
