@@ -160,7 +160,7 @@ module.exports = async function handler(req, res) {
 
     const order = await pagarme('/orders', {
       customer_id: customer.id,
-      items: [{ amount: amount, description: 'Endodirect — ' + cfg.label + (founderApplied ? ' (Sócio-fundador)' : ''), quantity: 1 }],
+      items: [{ code: 'endo-' + planKey + '-anual', amount: amount, description: 'Endodirect — ' + cfg.label + (founderApplied ? ' (Sócio-fundador)' : ''), quantity: 1 }],
       payments: [payment],
       metadata: { scope: cfg.scope, plan: planKey, cycle: 'anual', coupon: founderApplied ? FOUNDER_COUPON : '' }
     });
