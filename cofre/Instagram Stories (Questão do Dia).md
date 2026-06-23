@@ -23,6 +23,7 @@ Respeita o teto (12/12 funções, 2/2 crons) e o deploy **SEM `package.json`** (
 - **Calendário (ajuste do usuário):** `igTodayPlan` agora **Seg–Sáb = questão**, **Dom = 2 promos**. Sem "dia de gabarito" (a resposta vive no app).
 - **Legenda = funil:** `questionCaption` (lib) e `igCaptionQ` (painel) trocaram "gabarito amanhã" por **"A resposta COMENTADA está no app — link na bio"**. O e-mail do cron idem.
 - **Geração em lote** no painel: `igGenLote`/`igPool`/`renderIgLote` — gera N (3/5/7/10), opção **variar subespecialidades** (rotação `DIR_SUBS`), **concorrência limitada a 3** (anti rate-limit), modelo fixo **Sonnet**. Professor revisa e **Aprovar/Editar/Descartar** (ou "Aprovar todas") → entra na fila `ig_stories`.
+- **Layout do painel (ajuste do usuário 2026-06-23):** "Gerar em lote" é a **ação principal** (topo, com seletor de subespecialidade próprio `ig-lote-sub`); o formulário "Criar/editar questão" fica **recolhido** atrás de "✏️ Criar questão manualmente" (`#ig-manual-wrap`, revelado também ao clicar Editar no lote/fila); a caixa de divulgação de domingo ficou **recolhida + com explicação** do "fundo branded" (fundo pronto p/ sobrepor o print real da ferramenta).
 - **Pendente:** publicação automática via Graph API (stickers de quiz/poll seguem manuais — limite da Meta); histórico de "questões anteriores" no card; (qualidade) diretrizes truncadas no slice de 8000 do `api/ai.js` — ver [[Decisões]].
 
 ## Decisões de produto (2026-06-22)
