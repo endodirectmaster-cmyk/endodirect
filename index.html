@@ -4583,6 +4583,15 @@ function renderDashNotas(){
 var qtype='mc';
 var genQs=[];
 var genAnswered={};// idx -> {ok} das questões respondidas na busca atual (contador)
+// Extrai a lista de questões da resposta da IA tolerando variações de formato:
+// {questions:[...]}, um array puro [...] ou um único objeto-questão {stem,...}.
+function pickQuestions(data){
+  if(!data)return [];
+  if(Array.isArray(data.questions))return data.questions;
+  if(Array.isArray(data))return data;
+  if(data.stem)return [data];
+  return [];
+}
 function genQuestions(){
   if(blockIfDegustacao())return;
   var btn=document.getElementById('btn-genq');
@@ -4598,11 +4607,23 @@ function genQuestions(){
   var sys=isMC
     ?authoringSys('Atue como examinador de prova de residência/título em endocrinologia. JSON APENAS: {"questions":[{"stem":"vinheta clínica de 3-4 linhas com dados objetivos (idade, sexo, quadro e exames com valores e unidades)","options":{"A":"texto","B":"texto","C":"texto","D":"texto"},"answer":"A","explanation":"justificativa técnica em 1-2 frases citando o critério/valor de corte/diretriz","area":"'+areaTag+'","dificuldade":"'+diff+'"}]}')
     :authoringSys('Atue como examinador de prova de endocrinologia. JSON APENAS: {"questions":[{"stem":"vinheta clínica de 3-4 linhas com dados objetivos e exames com valores/unidades","expected":"resposta-modelo objetiva e correta, citando o critério/diretriz","area":"'+areaTag+'","dificuldade":"'+diff+'"}]}');
-  aiRequest({system:sys,prompt:'Gere exatamente '+qty+' questão(ões) de '+spec+', nível '+diff+(topic?', tema: '+topic:'')+'. Cada questão deve ser clinicamente precisa e alinhada às diretrizes vigentes.',maxTokens:qty<=3?1300:qty<=5?1900:2600,grounding:(topic?(spec+' '+topic):'')})
-  .then(function(raw){
-    var data=parseJ(raw);
-    if(!data||!data.questions||!data.questions.length)throw new Error('Resposta inválida. Tente novamente.');
-    genQs=data.questions;genPage=0;renderGenQ(isMC);
+  // Gera em lotes de até 5 questões por chamada. Pedir muitas de uma vez (ex.: 10)
+  // estourava o teto de tokens do modelo → JSON truncado → parseJ null → o erro
+  // "Resposta inválida". Cada lote agora cabe com folga; os lotes são unidos e
+  // deduplicados por enunciado. (maxTokens por lote = 700 + 600/questão, teto 4000.)
+  var BATCH=5;
+  function reqBatch(n){
+    return aiRequest({system:sys,prompt:'Gere exatamente '+n+' questão(ões) de '+spec+', nível '+diff+(topic?', tema: '+topic:'')+'. Questões VARIADAS entre si, clinicamente precisas e alinhadas às diretrizes vigentes.',maxTokens:Math.min(4000,700+n*600),grounding:(topic?(spec+' '+topic):'')})
+    .then(function(raw){return pickQuestions(parseJ(raw));});
+  }
+  var batches=[],rem=qty;while(rem>0){var bn=Math.min(BATCH,rem);batches.push(bn);rem-=bn;}
+  var all=[];
+  batches.reduce(function(p,n){return p.then(function(){return reqBatch(n).then(function(qs){all=all.concat(qs||[]);});});},Promise.resolve())
+  .then(function(){
+    var seen={},uniq=[];
+    all.forEach(function(q){if(!q||!q.stem)return;var k=String(q.stem).toLowerCase().replace(/\s+/g,' ').trim().slice(0,90);if(k&&!seen[k]){seen[k]=1;uniq.push(q);}});
+    if(!uniq.length)throw new Error('A IA não retornou questões válidas. Tente de novo em instantes (ou gere menos questões por vez).');
+    genQs=uniq.slice(0,qty);genPage=0;renderGenQ(isMC);
   }).catch(function(e){res.innerHTML='<div style="color:var(--red);font-size:.78rem;padding:.5rem;background:var(--red-l);border-radius:var(--rs)">❌ '+esc(e.message)+'</div>';})
   .then(function(){btn.disabled=false;btn.innerHTML='▶ Gerar questões';});
 }
