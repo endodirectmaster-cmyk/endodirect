@@ -3334,7 +3334,12 @@ var CLINICAL_GUIDELINES='\n\nDIRETRIZES RECENTES — quando o tema for pertinent
 +'• Tratamento medicamentoso da síndrome de Cushing (recomendações práticas 2026): indicado quando a cirurgia não é curativa/possível, no pré-operatório do hipercortisolismo grave, após falha/recidiva ou enquanto a radioterapia age. Classes: inibidores da esteroidogênese (cetoconazol/levocetoconazol, metirapona, osilodrostate, mitotano), moduladores da secreção de ACTH (pasireotida, cabergolina) e bloqueador do receptor de glicocorticoide (mifepristona, útil na hiperglicemia). Estratégias de titulação ou block-and-replace; monitorar cortisol, eletrólitos, QT e eixo.\n'
 +'• Obesidade — tratamento farmacológico (ADA Standards of Care em Sobrepeso e Obesidade): MUDANÇA DE PARADIGMA — oferecer medicação antiobesidade já como parte do tratamento INICIAL (junto da mudança de estilo de vida), não só após falha do estilo de vida, em adultos com obesidade que têm ou têm alto risco de doenças/complicações relacionadas (Grau A). Eficácia (perda de peso além de ~3% do estilo de vida): ALTA >10% — tirzepatida e semaglutida 2,4 mg; MODERADA 5–10% — fentermina-topiramato; MODESTA <5% — naltrexona-bupropiona, liraglutida, orlistate, fentermina. CONTINUAR a medicação após atingir a meta (suspender causa reganho e retorno do risco cardiometabólico — Grau A); dose de manutenção INDIVIDUALIZADA (qualquer dose eficaz serve, não precisa ser a máxima). Preservar massa muscular (proteína adequada + treino de força) e vigiar micronutrientes; NÃO usar manipulados não aprovados; em desabastecimento, trocar por outra droga aprovada. Seguimento: mensal nos 3 primeiros meses, depois a cada 3 meses no 1º ano e 3–6 meses a seguir.\n'
 +'• Obesidade — escolha da droga pela COMORBIDADE (ADA Standards of Care, com grau de evidência): prevenir DM2 — tirzepatida/semaglutida (A; redução relativa da progressão a DM2 de 37% [orlistate] a 93% [tirzepatida]); baixar PA — tirzepatida/semaglutida/orlistate (A); glicemia — tirzepatida/semaglutida/liraglutida (A); MACE/DCV aterosclerótica — semaglutida (A; SELECT: −20% MACE em obesidade sem DM2), liraglutida (B); insuficiência cardíaca com FE preservada — semaglutida (A; STEP-HFpEF) e tirzepatida (B; SUMMIT); MASH — semaglutida (A), tirzepatida (B); apneia obstrutiva do sono/reduzir IAH — tirzepatida (A; SURMOUNT-OSA), liraglutida (B); dor na osteoartrite — semaglutida (B). Regra prática: priorizar o agente que também trata a complicação dominante do paciente.';
-function authoringSys(fmt){return CLINICAL_AUTHORING+CLINICAL_GUIDELINES+'\n\n'+fmt;}
+// O fmt (formato JSON pedido) vai PRIMEIRO: o servidor corta o system em 8000
+// chars (api/ai.js) e o bloco AUTHORING+GUIDELINES tem ~40k, então um fmt no FIM
+// era 100% descartado — a IA não via o formato e respondia fora do JSON, e o
+// parser não achava questões ("Resposta inválida"/"não retornou questões"). Com o
+// fmt na frente, a instrução de formato + as regras sempre sobrevivem ao corte.
+function authoringSys(fmt){return fmt+'\n\n'+CLINICAL_AUTHORING+CLINICAL_GUIDELINES;}
 function callAI(sys,usr,maxTok,model,grounding){
   return aiRequest({system:sys,prompt:usr,maxTokens:maxTok||1500,model:model,grounding:grounding||''});
 }
@@ -4583,6 +4588,15 @@ function renderDashNotas(){
 var qtype='mc';
 var genQs=[];
 var genAnswered={};// idx -> {ok} das questões respondidas na busca atual (contador)
+// Extrai a lista de questões da resposta da IA tolerando variações de formato:
+// {questions:[...]}, um array puro [...] ou um único objeto-questão {stem,...}.
+function pickQuestions(data){
+  if(!data)return [];
+  if(Array.isArray(data.questions))return data.questions;
+  if(Array.isArray(data))return data;
+  if(data.stem)return [data];
+  return [];
+}
 function genQuestions(){
   if(blockIfDegustacao())return;
   var btn=document.getElementById('btn-genq');
@@ -4598,11 +4612,26 @@ function genQuestions(){
   var sys=isMC
     ?authoringSys('Atue como examinador de prova de residência/título em endocrinologia. JSON APENAS: {"questions":[{"stem":"vinheta clínica de 3-4 linhas com dados objetivos (idade, sexo, quadro e exames com valores e unidades)","options":{"A":"texto","B":"texto","C":"texto","D":"texto"},"answer":"A","explanation":"justificativa técnica em 1-2 frases citando o critério/valor de corte/diretriz","area":"'+areaTag+'","dificuldade":"'+diff+'"}]}')
     :authoringSys('Atue como examinador de prova de endocrinologia. JSON APENAS: {"questions":[{"stem":"vinheta clínica de 3-4 linhas com dados objetivos e exames com valores/unidades","expected":"resposta-modelo objetiva e correta, citando o critério/diretriz","area":"'+areaTag+'","dificuldade":"'+diff+'"}]}');
-  aiRequest({system:sys,prompt:'Gere exatamente '+qty+' questão(ões) de '+spec+', nível '+diff+(topic?', tema: '+topic:'')+'. Cada questão deve ser clinicamente precisa e alinhada às diretrizes vigentes.',maxTokens:qty<=3?1300:qty<=5?1900:2600,grounding:(topic?(spec+' '+topic):'')})
-  .then(function(raw){
-    var data=parseJ(raw);
-    if(!data||!data.questions||!data.questions.length)throw new Error('Resposta inválida. Tente novamente.');
-    genQs=data.questions;genPage=0;renderGenQ(isMC);
+  // Lotes pequenos (3) em PARALELO p/ rapidez. Com o formato JSON já corrigido, cada
+  // chamada volta JSON compacto rápido; rodar os lotes juntos derruba o tempo total
+  // (10 questões ~ tempo de 1 lote, não de 4). Modelo fixo no Sonnet; acumula +
+  // dedup por enunciado; se nada vier, mostra o ERRO REAL; falha de um lote não
+  // derruba os demais.
+  var BATCH=3;
+  var sizes=[],rem=qty;while(rem>0){var bn=Math.min(BATCH,rem);sizes.push(bn);rem-=bn;}
+  var nb=sizes.length,firstErr=null;
+  function reqBatch(n,i){
+    var vary=nb>1?' Este é o conjunto '+(i+1)+' de '+nb+': gere questões DIFERENTES dos demais, variando temas e cenários.':'';
+    return aiRequest({system:sys,prompt:'Gere exatamente '+n+' questão(ões) de '+spec+', nível '+diff+(topic?', tema: '+topic:'')+'. Clinicamente precisas e alinhadas às diretrizes vigentes, com enunciados objetivos.'+vary+' Responda SOMENTE com um objeto JSON contendo a chave "questions" (array), sem nenhum texto fora do JSON.',maxTokens:Math.min(2600,600+n*550),model:AI_MODEL_SIM_GEN,grounding:(topic?(spec+' '+topic):'')})
+    .then(function(raw){return pickQuestions(parseJ(raw));},function(e){if(!firstErr)firstErr=e;return [];});
+  }
+  Promise.all(sizes.map(function(n,i){return reqBatch(n,i);}))
+  .then(function(lists){
+    var all=[];lists.forEach(function(l){all=all.concat(l||[]);});
+    var seen={},uniq=[];
+    all.forEach(function(q){if(!q||!q.stem)return;var k=String(q.stem).toLowerCase().replace(/\s+/g,' ').trim().slice(0,90);if(k&&!seen[k]){seen[k]=1;uniq.push(q);}});
+    if(!uniq.length)throw new Error((firstErr&&firstErr.message)?firstErr.message:'A IA não retornou questões. Tente de novo em instantes.');
+    genQs=uniq.slice(0,qty);genPage=0;renderGenQ(isMC);
   }).catch(function(e){res.innerHTML='<div style="color:var(--red);font-size:.78rem;padding:.5rem;background:var(--red-l);border-radius:var(--rs)">❌ '+esc(e.message)+'</div>';})
   .then(function(){btn.disabled=false;btn.innerHTML='▶ Gerar questões';});
 }
