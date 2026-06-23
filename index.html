@@ -544,9 +544,11 @@ textarea{resize:vertical;line-height:1.6}
 .fb-cat-btn,.fb-tipo-btn{background:var(--surface);border:1.5px solid var(--bd2);border-radius:99px;padding:.26rem .7rem;font-size:.7rem;font-weight:500;color:var(--t2);cursor:pointer;font-family:var(--font)}
 .fb-cat-btn.on{background:var(--blue-l);border-color:var(--blue);color:var(--blue);font-weight:600}
 .fb-tipo-btn.on{background:var(--gold-l);border-color:var(--gold);color:#d97706;font-weight:600}
-.cat-pill{background:var(--s2);border:1.5px solid var(--bd2);border-radius:99px;padding:.26rem .7rem;font-size:.7rem;font-weight:600;color:var(--tx);cursor:pointer;font-family:var(--font)}
-.cat-pill:hover{border-color:var(--blue);color:var(--blue2)}
-.cat-pill.on{background:var(--blue-l);border-color:var(--blue);color:var(--blue2);font-weight:700}
+.cat-pill{background:#e8eefb;border:1.5px solid #c7d3ee;border-radius:99px;padding:.26rem .7rem;font-size:.7rem;font-weight:700;color:#16223f;cursor:pointer;font-family:var(--font);transition:.15s}
+.cat-pill:hover{background:#fff;border-color:var(--blue);color:var(--blue)}
+.cat-pill.on{background:var(--blue);border-color:var(--blue);color:#fff;font-weight:800}
+html[data-theme="light"] .cat-pill{background:#f8f9fc;border-color:var(--bd2);color:var(--tx)}
+html[data-theme="light"] .cat-pill.on{background:var(--blue);border-color:var(--blue);color:#fff}
 @media (max-width:820px){
   html,body{height:auto;min-height:100%;overflow:auto}
   body{min-height:100dvh;touch-action:manipulation}
@@ -678,8 +680,9 @@ textarea{resize:vertical;line-height:1.6}
 .dir-sub-btn .dsb-ico{font-size:1.5rem;line-height:1}
 .dir-sub-btn h3{margin:.4rem 0 .2rem;font-size:1rem;color:var(--tx)}
 .dir-sub-btn .dsb-cnt{font-size:.72rem;color:var(--t3)}
-.dir-back{display:inline-flex;align-items:center;gap:.35rem;background:var(--s2);border:1px solid var(--bd2);color:var(--tx);font-weight:600;cursor:pointer;font-size:.78rem;padding:.4rem .85rem;border-radius:999px;margin-bottom:.9rem;transition:.15s;font-family:var(--font)}
-.dir-back:hover{border-color:var(--blue);color:var(--blue2);background:var(--blue-l)}
+.dir-back{display:inline-flex;align-items:center;gap:.35rem;background:#e8eefb;border:1px solid #c7d3ee;color:#16223f;font-weight:700;cursor:pointer;font-size:.78rem;padding:.4rem .85rem;border-radius:999px;margin-bottom:.9rem;transition:.15s;font-family:var(--font)}
+.dir-back:hover{border-color:var(--blue);color:var(--blue);background:#fff}
+html[data-theme="light"] .dir-back{background:#f8f9fc;border-color:var(--bd2);color:var(--tx)}
 .dir-fmt{display:flex;gap:.4rem;flex-wrap:wrap;margin:.9rem 0 1.2rem}
 .dir-fmt-btn{border:1.5px solid var(--bd2);background:var(--surface);color:var(--t2);border-radius:999px;padding:.4rem .95rem;font-size:.78rem;font-weight:600;cursor:pointer}
 .dir-fmt-btn:hover{border-color:var(--blue)}
@@ -7872,7 +7875,7 @@ function admMuralSecHTML(){
   +'<div class="adm-pc">'
   +formHTML
   // banner de gestão
-  +'<div class="card" style="margin-bottom:1.1rem"><div style="display:flex;align-items:flex-start;justify-content:space-between;gap:1rem;flex-wrap:wrap"><div style="flex:1;min-width:240px"><div style="font-size:.62rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--t3);margin-bottom:.3rem">Gestão do mural dos alunos</div><div style="font-size:1.15rem;font-weight:700;color:var(--tx);margin-bottom:.35rem">Edite avisos, notícias e comunicados importantes</div><div style="font-size:.79rem;color:var(--t2);line-height:1.55">Os cards abaixo alimentam a aba Mural do estudante. Use para destacar diretrizes, atualizações de subespecialidades e comunicados internos.</div></div><button class="btn btn-outline" id="btn-adm-mural-preview">👁 Pré-visualizar como aluno</button></div></div>'
+  +'<div class="card" style="margin-bottom:1.1rem"><div style="display:flex;align-items:flex-start;justify-content:space-between;gap:1rem;flex-wrap:wrap"><div style="flex:1;min-width:240px"><div style="font-size:.62rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--t3);margin-bottom:.3rem">Gestão do mural dos alunos</div><div style="font-size:1.15rem;font-weight:700;color:var(--tx);margin-bottom:.35rem">Edite avisos, notícias e comunicados importantes</div><div style="font-size:.79rem;color:var(--t2);line-height:1.55">Os cards abaixo alimentam a aba Mural do estudante. Use para destacar diretrizes, atualizações de subespecialidades e comunicados internos.</div></div></div></div>'
   // cards em grade
   +'<section class="mural-filter-card"><div class="mural-filter-main"><label class="mural-filter-field"><span class="mural-filter-label">Subespecialidade</span><select class="mural-filter-select" id="adm-mural-filter">'+options+'</select></label><span class="mural-count-pill">'+esc(count)+'</span><span class="mural-theme-pill">'+esc(tema)+'</span></div><button class="btn btn-outline" id="adm-mural-clear" type="button">Limpar filtro</button></section>'
   +'<div class="mural-grid mural-admin-grid" id="adm-av-list">'+(avisos.length?avisos.map(cardHTML).join(''):'<div class="empty mural-empty">'+(admAvisos.length?'Nenhum aviso encontrado para este filtro.':'Nenhum aviso publicado. Clique em "+ Novo aviso" para começar.')+'</div>')+'</div>'
@@ -8788,8 +8791,6 @@ function bindAdmSec(sec){
     });
     main.querySelectorAll('[data-adm-editav]').forEach(function(b){b.addEventListener('click',function(){admMuralEdit=parseInt(b.dataset.admEditav);admMuralShowForm=true;renderAdmSec('mural');document.getElementById('adm-main').scrollTop=0;});});
     main.querySelectorAll('[data-adm-delav]').forEach(function(b){b.addEventListener('click',function(){var a=admAvisos[parseInt(b.dataset.admDelav)];if(!confirm('Excluir o aviso "'+((a&&a.titulo)||'')+'"? Esta ação não pode ser desfeita.'))return;admAvisos.splice(parseInt(b.dataset.admDelav),1);persistAdm();renderAdmSec('mural');});});
-    var bPrev=document.getElementById('btn-adm-mural-preview');
-    if(bPrev)bPrev.addEventListener('click',function(){notify('Pré-visualização do mural do aluno','info');});
   }
 
   if(sec==='calc'){ activeCalc=null; initCalc(main); }
@@ -9508,13 +9509,14 @@ admMuralSecHTML=function(){
     +'<div class="g2" style="margin-bottom:.7rem"><div class="fld2" style="margin:0"><label>Título</label><input type="text" id="adm-av-title" placeholder="Título do aviso"></div><div class="fld2" style="margin:0"><label>Tipo do conteúdo</label><select id="adm-av-tipo">'+tipoOpts+'</select></div></div>'
     +'<div class="g2" style="margin-bottom:.7rem"><div class="fld2" style="margin:0"><label>Subespecialidade</label><select id="adm-av-sub">'+subOpts+'</select></div><div class="fld2" style="margin:0"><label>Fonte / revista (opcional)</label><input type="text" id="adm-av-fonte" placeholder="Ex: NEJM, JCEM, SBEM..."></div></div>'
     +'<div class="fld2"><label>Link (opcional)</label><input type="text" id="adm-av-link" placeholder="https://..."></div>'
+    +'<div class="fld2" style="margin-bottom:.45rem"><label>Resumir com IA (a partir do link acima ou de um arquivo)</label><div style="display:flex;gap:6px;align-items:center;flex-wrap:wrap"><button type="button" class="btn btn-outline btn-sm" id="adm-av-import">📎 Anexar arquivo</button><button type="button" class="btn btn-outline btn-sm" id="adm-av-aigen">✨ Gerar texto com IA</button><span id="adm-av-fname" style="font-size:.72rem;color:var(--t3)"></span><input type="file" id="adm-av-file" accept=".pdf,.txt,image/*" style="display:none"></div></div>'
     +'<div class="fld2"><label>Texto</label><textarea id="adm-av-text" rows="3" placeholder="Resumo em português, mantendo apenas o título no idioma original..."></textarea></div>'
     +'<div style="display:flex;gap:6px"><button class="btn btn-primary" id="btn-adm-addav">'+(admMuralEdit!==null?'💾 Salvar alterações':'+ Publicar no mural')+'</button><button class="btn btn-outline" id="btn-adm-av-cancel">Cancelar</button></div></div>'
   ):'';
   return '<div class="adm-ph" style="display:flex;align-items:flex-start;justify-content:space-between;gap:.6rem;flex-wrap:wrap"><div><h1>Mural</h1></div><div style="display:flex;gap:.5rem;flex-wrap:wrap"><button class="btn btn-outline" id="btn-adm-radar" style="padding:.55rem 1rem">🔄 Atualizar radar agora</button><button class="btn btn-primary" id="btn-adm-newav" style="padding:.55rem 1.1rem">+ Novo aviso</button></div></div>'
   +'<div class="adm-pc">'
   +formHTML
-  +'<div class="card" style="margin-bottom:1.1rem"><div style="display:flex;align-items:flex-start;justify-content:space-between;gap:1rem;flex-wrap:wrap"><div style="flex:1;min-width:240px"><div style="font-size:.62rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--t3);margin-bottom:.3rem">Gestão do mural dos alunos</div><div style="font-size:1.15rem;font-weight:700;color:var(--tx);margin-bottom:.35rem">Edite avisos, notícias e comunicados importantes</div><div style="font-size:.79rem;color:var(--t2);line-height:1.55">Os cards abaixo alimentam a aba Mural do estudante. Use etiquetas por tipo de conteúdo e subespecialidade para organizar leituras e atualizações.</div></div><button class="btn btn-outline" id="btn-adm-mural-preview">👁 Pré-visualizar como aluno</button></div></div>'
+  +'<div class="card" style="margin-bottom:1.1rem"><div style="display:flex;align-items:flex-start;justify-content:space-between;gap:1rem;flex-wrap:wrap"><div style="flex:1;min-width:240px"><div style="font-size:.62rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--t3);margin-bottom:.3rem">Gestão do mural dos alunos</div><div style="font-size:1.15rem;font-weight:700;color:var(--tx);margin-bottom:.35rem">Edite avisos, notícias e comunicados importantes</div><div style="font-size:.79rem;color:var(--t2);line-height:1.55">Os cards abaixo alimentam a aba Mural do estudante. Use etiquetas por tipo de conteúdo e subespecialidade para organizar leituras e atualizações.</div></div></div></div>'
   +'<section class="mural-filter-card"><div class="mural-filter-main"><label class="mural-filter-field"><span class="mural-filter-label">Subespecialidade</span><select class="mural-filter-select" id="adm-mural-filter">'+opt.html+'</select></label><label class="mural-filter-field"><span class="mural-filter-label">Tipo de artigo</span><select class="mural-filter-select" id="adm-mural-filter-tipo">'+tipoFiltroOpts+'</select></label><label class="mural-filter-field"><span class="mural-filter-label">Ordenar</span><select class="mural-filter-select" id="adm-mural-filter-sort">'+muralSortOptions(admMuralSort)+'</select></label><div class="mural-switch-wrap"><button type="button" id="adm-mural-bn-toggle" class="mural-switch'+(muralShowBreaking?' on':'')+'" role="switch" aria-checked="'+(muralShowBreaking?'true':'false')+'" title="Mostrar Breaking News"><span class="ms-dot"></span></button><span>📣 Breaking News</span></div><span class="mural-count-pill">'+esc(count)+'</span><span class="mural-theme-pill">'+esc(tema)+'</span></div><button class="btn btn-outline" id="adm-mural-clear" type="button">Limpar filtro</button></section>'
   +'<div class="mural-grid mural-admin-grid" id="adm-av-list">'+(admPageAvisos.length?admPageAvisos.map(function(a){return muralNoticeCardHTML(a,true);}).join(''):'<div class="empty mural-empty">'+(admAvisos.length?'Nenhum aviso encontrado para este filtro.':'Nenhum aviso publicado. Clique em "+ Novo aviso" para começar.')+'</div>')+'</div>'
   +muralPagerHTML(admMuralPage,admMPages,'adm-mural')
@@ -9564,6 +9566,36 @@ bindAdmSec=function(sec){
         notify('Aviso publicado no mural.','ok');
       }
       admMuralShowForm=false;admMuralEdit=null;persistAdm();renderAdmSec('mural');
+    });
+  }
+  // IA: anexar arquivo / gerar o texto do aviso a partir do link ou do arquivo.
+  var avImp=document.getElementById('adm-av-import'),avFile=document.getElementById('adm-av-file'),avFName=document.getElementById('adm-av-fname');
+  if(avImp&&avFile){
+    avImp.addEventListener('click',function(){avFile.click();});
+    avFile.addEventListener('change',function(){var f=avFile.files&&avFile.files[0];if(avFName)avFName.textContent=f?('📄 '+f.name):'';});
+  }
+  var avGen=document.getElementById('adm-av-aigen');
+  if(avGen){
+    avGen.addEventListener('click',function(){
+      var f=avFile&&avFile.files&&avFile.files[0];
+      var link=(document.getElementById('adm-av-link').value||'').trim();
+      if(!f&&!link){notify('Anexe um arquivo ou informe um link para a IA resumir.','err');return;}
+      function optList(id){var s=document.getElementById(id),a=[];if(s){for(var i=0;i<s.options.length;i++)a.push(s.options[i].value||s.options[i].text);}return a;}
+      var sys='Voce e um endocrinologista que escreve cards para o mural medico do Endodirect, em portugues do Brasil, com rigor e SEM inventar dados — resuma APENAS o material fornecido. Responda APENAS com JSON valido, sem nada fora do JSON: {"titulo":"titulo curto","fonte":"revista ou fonte (ou vazio)","tipo":"exatamente UM de: '+optList('adm-av-tipo').join(' | ')+'","subespecialidade":"exatamente UM de: '+optList('adm-av-sub').join(' | ')+'","texto":"resumo de 3 a 5 linhas em portugues claro, mantendo o titulo original no idioma de origem"}. Se o material for insuficiente, responda {"erro":"motivo"}.';
+      var usr='Gere o card do mural a partir deste material.';
+      avGen.disabled=true;var _o=avGen.innerHTML;avGen.innerHTML=ldHTML('Gerando...');
+      var p=f?aiFromFile(f,sys,usr,1200):aiRequest({system:sys,prompt:usr,url:link,maxTokens:1200});
+      p.then(function(raw){
+        var d=parseJ(raw);if(!d)throw new Error('Resposta invalida da IA.');
+        if(d.erro)throw new Error(d.erro);
+        var T=document.getElementById('adm-av-text');if(d.texto&&T)T.value=d.texto;
+        var ti=document.getElementById('adm-av-title');if(d.titulo&&ti&&!ti.value.trim())ti.value=d.titulo;
+        var fo=document.getElementById('adm-av-fonte');if(d.fonte&&fo&&!fo.value.trim())fo.value=d.fonte;
+        function setSel(id,val){if(!val)return;var s=document.getElementById(id);if(!s)return;for(var i=0;i<s.options.length;i++){if(s.options[i].value===val||s.options[i].text===val){s.selectedIndex=i;return;}}}
+        setSel('adm-av-tipo',d.tipo);setSel('adm-av-sub',d.subespecialidade);
+        notify('Texto gerado pela IA. Revise antes de publicar.','ok');
+      }).catch(function(e){notify('Erro: '+((e&&e.message)||e),'err');})
+      .then(function(){avGen.disabled=false;avGen.innerHTML=_o;});
     });
   }
 };

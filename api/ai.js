@@ -4,6 +4,8 @@ const DEFAULT_MODEL = process.env.ANTHROPIC_MODEL || 'claude-sonnet-4-6';
 const ALLOWED_MODELS = { 'claude-sonnet-4-6': 1, 'claude-opus-4-8': 1, 'claude-haiku-4-5': 1 };
 // Grounding opcional por PubMed (módulo — não conta como função serverless).
 const { pubmedGround, formatSources } = require('../lib/pubmed');
+// Busca server-side de um link p/ resumo (módulo lib/ — não conta como função).
+const { fetchArticleText } = require('../lib/fetch-article');
 function pickModel(requested) {
   const m = String(requested || '');
   return ALLOWED_MODELS[m] ? m : DEFAULT_MODEL;
@@ -81,8 +83,9 @@ module.exports = async function handler(req, res) {
   const ALLOWED_MEDIA = { 'application/pdf': 1, 'image/jpeg': 1, 'image/png': 1, 'image/gif': 1, 'image/webp': 1 };
   const reqMedia = String(body.mediaType || 'application/pdf');
   const mediaType = ALLOWED_MEDIA[reqMedia] ? reqMedia : 'application/pdf';
+  const url = body.url ? String(body.url).slice(0, 2000) : '';
 
-  if (!prompt && !documentBase64) {
+  if (!prompt && !documentBase64 && !url) {
     return json(res, 400, { error: 'Envie uma pergunta ou documento para a IA.' });
   }
 
@@ -97,6 +100,17 @@ module.exports = async function handler(req, res) {
       const block = formatSources(await pubmedGround(groundQuery, { max: 4 }));
       if (block) groundedPrompt = block + '\n\n' + prompt;
     } catch (e) { /* best-effort: segue sem grounding */ }
+  }
+
+  // Conteúdo de um link (opcional): busca server-side com guarda anti-SSRF e
+  // injeta o texto extraído no topo do prompt p/ a IA resumir SÓ o material real.
+  if (url) {
+    let art;
+    try { art = await fetchArticleText(url); }
+    catch (e) { return json(res, 400, { error: 'Nao consegui ler o link: ' + (e && e.message ? e.message : 'falha') }); }
+    if (!art || !art.text) return json(res, 400, { error: 'O link nao retornou texto utilizavel. Cole o resumo ou anexe um arquivo.' });
+    const head = '=== CONTEUDO DO LINK (' + url + ') ===\n' + (art.title ? ('Titulo: ' + art.title + '\n') : '') + art.text + '\n\n';
+    groundedPrompt = (head + groundedPrompt).slice(0, 200000);
   }
 
   // Imagens vão como bloco 'image'; PDF/texto como 'document'. (Antes era sempre
