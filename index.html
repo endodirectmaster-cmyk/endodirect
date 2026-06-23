@@ -4607,24 +4607,27 @@ function genQuestions(){
   var sys=isMC
     ?authoringSys('Atue como examinador de prova de residência/título em endocrinologia. JSON APENAS: {"questions":[{"stem":"vinheta clínica de 3-4 linhas com dados objetivos (idade, sexo, quadro e exames com valores e unidades)","options":{"A":"texto","B":"texto","C":"texto","D":"texto"},"answer":"A","explanation":"justificativa técnica em 1-2 frases citando o critério/valor de corte/diretriz","area":"'+areaTag+'","dificuldade":"'+diff+'"}]}')
     :authoringSys('Atue como examinador de prova de endocrinologia. JSON APENAS: {"questions":[{"stem":"vinheta clínica de 3-4 linhas com dados objetivos e exames com valores/unidades","expected":"resposta-modelo objetiva e correta, citando o critério/diretriz","area":"'+areaTag+'","dificuldade":"'+diff+'"}]}');
-  // Gera em lotes PEQUENOS e em PARALELO. Uma única chamada grande (5-10 questões)
-  // ou truncava o JSON (teto de tokens → "Resposta inválida") ou passava de 60s
-  // (timeout do navegador). Agora cada chamada gera no máx. 2 questões — curta,
-  // rápida e completa — e os lotes rodam juntos; o resultado é unido e deduplicado
-  // por enunciado. Uma chamada que falhe/expire vira [] e não derruba as demais.
-  var BATCH=2;
+  // Geração ROBUSTA: lotes pequenos, UM de cada vez (sequencial). Paralelo tomava
+  // rate-limit (429 → todos vazios); chamada única grande estourava 60s. Agora cada
+  // chamada gera no máx. 3 questões (curta, rápida, sem truncar), modelo FIXO no
+  // Sonnet (independe do default do ambiente), com progresso. Acumula parciais; se
+  // nada vier, mostra o ERRO REAL da 1ª falha (em vez de mensagem genérica).
+  var BATCH=3;
   var sizes=[],rem=qty;while(rem>0){var bn=Math.min(BATCH,rem);sizes.push(bn);rem-=bn;}
-  function reqBatch(n,i,nb){
-    var vary=nb>1?' Este é o conjunto '+(i+1)+' de '+nb+': gere questões DIFERENTES dos demais conjuntos, variando temas e cenários.':'';
-    return aiRequest({system:sys,prompt:'Gere exatamente '+n+' questão(ões) de '+spec+', nível '+diff+(topic?', tema: '+topic:'')+'. Clinicamente precisas e alinhadas às diretrizes vigentes, com enunciados objetivos.'+vary,maxTokens:Math.min(2800,600+n*600),grounding:(topic?(spec+' '+topic):'')})
-    .then(function(raw){return pickQuestions(parseJ(raw));},function(){return [];});
+  var nb=sizes.length,all=[],firstErr=null;
+  function runOne(i){
+    if(i>=nb)return Promise.resolve();
+    if(res&&nb>1)res.innerHTML=ldHTML('Gerando questões… '+Math.min(i*BATCH,qty)+'/'+qty);
+    var n=sizes[i];
+    var vary=nb>1?' Este é o conjunto '+(i+1)+' de '+nb+': gere questões DIFERENTES dos demais, variando temas e cenários.':'';
+    return aiRequest({system:sys,prompt:'Gere exatamente '+n+' questão(ões) de '+spec+', nível '+diff+(topic?', tema: '+topic:'')+'. Clinicamente precisas e alinhadas às diretrizes vigentes, com enunciados objetivos.'+vary,maxTokens:Math.min(2600,600+n*550),model:AI_MODEL_SIM_GEN,grounding:(topic?(spec+' '+topic):'')})
+    .then(function(raw){var qs=pickQuestions(parseJ(raw));if(qs&&qs.length)all=all.concat(qs);},function(e){if(!firstErr)firstErr=e;})
+    .then(function(){return runOne(i+1);});
   }
-  Promise.all(sizes.map(function(n,i){return reqBatch(n,i,sizes.length);}))
-  .then(function(lists){
-    var all=[];lists.forEach(function(l){all=all.concat(l||[]);});
+  runOne(0).then(function(){
     var seen={},uniq=[];
     all.forEach(function(q){if(!q||!q.stem)return;var k=String(q.stem).toLowerCase().replace(/\s+/g,' ').trim().slice(0,90);if(k&&!seen[k]){seen[k]=1;uniq.push(q);}});
-    if(!uniq.length)throw new Error('A IA não retornou questões válidas. Tente de novo em instantes.');
+    if(!uniq.length)throw new Error((firstErr&&firstErr.message)?firstErr.message:'A IA não retornou questões. Tente de novo em instantes.');
     genQs=uniq.slice(0,qty);genPage=0;renderGenQ(isMC);
   }).catch(function(e){res.innerHTML='<div style="color:var(--red);font-size:.78rem;padding:.5rem;background:var(--red-l);border-radius:var(--rs)">❌ '+esc(e.message)+'</div>';})
   .then(function(){btn.disabled=false;btn.innerHTML='▶ Gerar questões';});
