@@ -7712,14 +7712,25 @@ function admStoriesHTML(){
   }).join(''):'<div class="empty">Nenhuma questão na fila ainda. Gere uma acima e clique em "Aprovar".</div>';
   return '<div class="adm-ph"><h1>📲 Questão do Dia — Stories</h1></div><div class="adm-pc">'
    +'<div class="card" style="margin-bottom:1rem"><div style="font-size:.78rem;color:var(--t2);line-height:1.6">'
-   +'<b style="color:var(--tx)">Como funciona:</b> gere/edite a questão → <b>pré-visualize</b> → <b>baixe a arte</b> (PNG 1080×1920) → poste o story no @endodirect às 18h com o sticker de <b>quiz</b> (4 alternativas). O sistema te <b>lembra por e-mail</b> todo dia.<br>'
+   +'<b style="color:var(--tx)">Como funciona:</b> gere as questões em <b>lote</b> → revise/edite → <b>aprove</b>. As aprovadas viram a <b>Questão do Dia no app</b> e a arte/legenda do story. O sistema te <b>lembra por e-mail</b> todo dia.<br>'
    +'<b style="color:var(--tx)">Calendário:</b> Seg–Sáb = <b>questão</b> (resposta no app) · Dom = <b>2 promos</b>.'
    +'</div></div>'
+   +'<div class="card" style="margin-bottom:1rem"><div class="card-head"><span class="card-title">🤖 Gerar em lote</span></div>'
+   +'<div style="font-size:.74rem;color:var(--t2);margin-bottom:.6rem">Gera várias questões de uma vez (modelo Sonnet). Revise cada uma e <b>edite</b>, <b>aprove</b> ou <b>descarte</b> — ou aprove todas.</div>'
+   +'<div style="display:flex;gap:.6rem;flex-wrap:wrap;align-items:flex-end;margin-bottom:.7rem">'
+   +'<label style="width:110px">'+igLbl('Quantidade')+'<select id="ig-lote-qty"><option>3</option><option selected>5</option><option>7</option><option>10</option></select></label>'
+   +'<label style="flex:1;min-width:160px">'+igLbl('Subespecialidade')+'<select id="ig-lote-sub">'+subs+'</select></label>'
+   +'<label style="display:flex;align-items:center;gap:.4rem;font-size:.76rem;color:var(--tx);font-weight:400;text-transform:none;letter-spacing:0"><input type="checkbox" id="ig-lote-vary" checked style="width:auto"> variar subespecialidades</label>'
+   +'<button class="btn btn-primary btn-sm" id="ig-lote-gen">🤖 Gerar lote</button>'
+   +'<span id="ig-lote-status" style="font-size:.72rem;color:var(--t3)"></span></div>'
+   +'<div id="ig-lote-results"></div></div>'
+   +'<div style="margin-bottom:1rem"><button class="btn btn-outline btn-sm" id="ig-manual-toggle">✏️ Criar questão manualmente</button></div>'
+   +'<div id="ig-manual-wrap" style="display:none">'
    +'<div class="card" style="margin-bottom:1rem"><div class="card-head"><span class="card-title">Criar / editar questão</span></div>'
    +'<div style="display:flex;gap:.6rem;flex-wrap:wrap;align-items:flex-end;margin-bottom:.7rem">'
    +'<label style="flex:1;min-width:170px">'+igLbl('Subespecialidade')+'<select id="ig-sub">'+subs+'</select></label>'
    +'<label style="flex:1;min-width:170px">'+igLbl('Tema (opcional)')+'<input id="ig-topic" placeholder="ex.: hiperaldosteronismo"></label>'
-   +'<button class="btn btn-primary btn-sm" id="ig-gen">🤖 Gerar com IA</button>'
+   +'<button class="btn btn-primary btn-sm" id="ig-gen">🤖 Gerar 1 com IA</button>'
    +'<span id="ig-gen-status" style="font-size:.72rem;color:var(--t3)"></span></div>'
    +igLbl('Atribuição TEEM (opcional — só se for questão do TEEM)')+'<input id="ig-teem" placeholder="(TEEM 2026)" style="margin-bottom:.6rem">'
    +igLbl('Enunciado')+'<textarea id="ig-stem" rows="4" placeholder="Vinheta clínica curta e objetiva…" style="margin-bottom:.6rem"></textarea>'
@@ -7735,26 +7746,20 @@ function admStoriesHTML(){
    +'<button class="btn btn-outline btn-sm" id="ig-copyq">📋 Legenda pergunta</button>'
    +'<button class="btn btn-outline btn-sm" id="ig-copya">📋 Legenda gabarito</button>'
    +'<button class="btn btn-primary btn-sm" id="ig-approve">✓ Aprovar p/ a fila</button>'
-   +'<button class="btn btn-outline btn-sm" id="ig-clear">Limpar</button></div>'
+   +'<button class="btn btn-outline btn-sm" id="ig-clear">Limpar / fechar</button></div>'
    +'<div id="ig-prev-wrap" style="display:none;gap:1rem;margin-top:1rem;flex-wrap:wrap;justify-content:center">'
    +'<div style="text-align:center">'+igLbl('Pergunta')+'<img id="ig-prev-q" alt="" style="width:190px;border-radius:12px;border:1px solid var(--bd)"></div>'
    +'<div style="text-align:center">'+igLbl('Gabarito')+'<img id="ig-prev-a" alt="" style="width:190px;border-radius:12px;border:1px solid var(--bd)"></div></div>'
    +'</div>'
-   +'<div class="card" style="margin-bottom:1rem"><div class="card-head"><span class="card-title">🤖 Gerar em lote</span></div>'
-   +'<div style="font-size:.74rem;color:var(--t2);margin-bottom:.6rem">Gera várias questões de uma vez (modelo Sonnet) — revise e aprove uma a uma (ou todas) para a fila.</div>'
-   +'<div style="display:flex;gap:.6rem;flex-wrap:wrap;align-items:flex-end;margin-bottom:.7rem">'
-   +'<label style="width:120px">'+igLbl('Quantidade')+'<select id="ig-lote-qty"><option>3</option><option selected>5</option><option>7</option><option>10</option></select></label>'
-   +'<label style="display:flex;align-items:center;gap:.4rem;font-size:.76rem;color:var(--tx);font-weight:400;text-transform:none;letter-spacing:0"><input type="checkbox" id="ig-lote-vary" checked style="width:auto"> variar subespecialidades</label>'
-   +'<button class="btn btn-primary btn-sm" id="ig-lote-gen">🤖 Gerar lote</button>'
-   +'<span id="ig-lote-status" style="font-size:.72rem;color:var(--t3)"></span></div>'
-   +'<div id="ig-lote-results"></div></div>'
+   +'</div>'
    +'<div class="card" style="margin-bottom:1rem"><div class="card-head"><span class="card-title">Fila de questões</span><span class="tag">'+(igStories?igStories.length:0)+'</span></div>'+fila+'</div>'
-   +'<div class="card"><div class="card-head"><span class="card-title">Stories de divulgação (domingo)</span></div>'
-   +'<div style="font-size:.74rem;color:var(--t2);margin-bottom:.6rem">Fundo branded por ferramenta — baixe e sobreponha o print real no editor de Stories do Instagram.</div>'
+   +'<div style="margin-bottom:1rem"><button class="btn btn-outline btn-sm" id="ig-promo-toggle">📣 Stories de divulgação (domingo)</button></div>'
+   +'<div id="ig-promo-wrap" style="display:none"><div class="card"><div class="card-head"><span class="card-title">Stories de divulgação (domingo)</span></div>'
+   +'<div style="font-size:.74rem;color:var(--t2);margin-bottom:.6rem;line-height:1.6">Aos <b>domingos</b> o calendário sugere <b>divulgar uma ferramenta</b> da plataforma. Aqui você baixa um <b>fundo pronto</b> (logo + nome da ferramenta + chamada + moldura tracejada) e, no Instagram, <b>sobrepõe um print real</b> da ferramenta dentro da moldura. Escolha a ferramenta, baixe o fundo e copie a legenda.</div>'
    +'<div style="display:flex;gap:.5rem;flex-wrap:wrap;align-items:flex-end">'
    +'<label style="flex:1;min-width:190px">'+igLbl('Ferramenta')+'<select id="ig-promo-sel">'+promoOpts+'</select></label>'
    +'<button class="btn btn-outline btn-sm" id="ig-promo-dl">⬇ Baixar fundo</button>'
-   +'<button class="btn btn-outline btn-sm" id="ig-promo-copy">📋 Legenda</button></div></div>'
+   +'<button class="btn btn-outline btn-sm" id="ig-promo-copy">📋 Legenda</button></div></div></div>'
    +'</div>';
 }
 function igFnameSub(it){return String(it.sub||'questao').toLowerCase().normalize('NFD').replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,'');}
@@ -7780,7 +7785,7 @@ function igGenOne(sub,topic){
 function igLoteToQueue(it){igStories.push({id:'ig-'+Date.now()+'-'+Math.round(Math.random()*1e6),sub:it.sub,teem:it.teem||'',stem:it.stem,options:it.options,answer:it.answer,explanation:it.explanation,status:'queued',createdAt:Date.now()});}
 function igLoteApprove(i){var it=igLoteDraft[i];if(!it)return;igLoteToQueue(it);igLoteDraft.splice(i,1);persistIgStories();notify('Aprovada e adicionada à fila.','ok');renderAdmSec('stories');}
 function igLoteApproveAll(){if(!igLoteDraft.length)return;var n=igLoteDraft.length;igLoteDraft.forEach(igLoteToQueue);igLoteDraft=[];persistIgStories();notify(n+' questões aprovadas.','ok');renderAdmSec('stories');}
-function igLoteEdit(i){var it=igLoteDraft[i];if(!it)return;igEditId=null;igFillForm(it);igLoteDraft.splice(i,1);renderIgLote();try{document.getElementById('ig-stem').scrollIntoView({behavior:'smooth',block:'center'});}catch(e){}notify('Carregada no formulário — edite e clique em "Aprovar p/ a fila".','ok');}
+function igLoteEdit(i){var it=igLoteDraft[i];if(!it)return;igEditId=null;var w=document.getElementById('ig-manual-wrap');if(w)w.style.display='';igFillForm(it);igLoteDraft.splice(i,1);renderIgLote();try{document.getElementById('ig-stem').scrollIntoView({behavior:'smooth',block:'center'});}catch(e){}notify('Carregada no formulário — edite e clique em "Aprovar p/ a fila".','ok');}
 function renderIgLote(){
   var res=document.getElementById('ig-lote-results');if(!res)return;
   if(!igLoteDraft.length){res.innerHTML='';return;}
@@ -7803,6 +7808,10 @@ function renderIgLote(){
 }
 function bindAdmStories(){
   igEditId=null;
+  var manToggle=document.getElementById('ig-manual-toggle');
+  if(manToggle)manToggle.addEventListener('click',function(){var w=document.getElementById('ig-manual-wrap');if(!w)return;w.style.display='';igEditId=null;['ig-teem','ig-stem','ig-a','ig-b','ig-c','ig-d','ig-exp'].forEach(function(id){var e=document.getElementById(id);if(e)e.value='';});var an=document.getElementById('ig-ans');if(an)an.value='A';var pw=document.getElementById('ig-prev-wrap');if(pw)pw.style.display='none';try{document.getElementById('ig-stem').scrollIntoView({behavior:'smooth',block:'center'});}catch(e){}});
+  var promoToggle=document.getElementById('ig-promo-toggle');
+  if(promoToggle)promoToggle.addEventListener('click',function(){var w=document.getElementById('ig-promo-wrap');if(!w)return;w.style.display=(w.style.display==='none'||!w.style.display)?'':'none';});
   var gen=document.getElementById('ig-gen');
   if(gen)gen.addEventListener('click',function(){
     var sub=(document.getElementById('ig-sub')||{}).value||'Endocrinologia',topic=((document.getElementById('ig-topic')||{}).value||'').trim();
@@ -7823,8 +7832,8 @@ function bindAdmStories(){
   if(loteGen)loteGen.addEventListener('click',function(){
     var n=parseInt((document.getElementById('ig-lote-qty')||{}).value,10)||5;
     var vary=!!((document.getElementById('ig-lote-vary')||{}).checked);
-    var baseSub=(document.getElementById('ig-sub')||{}).value||'Endocrinologia';
-    var topic=((document.getElementById('ig-topic')||{}).value||'').trim();
+    var baseSub=(document.getElementById('ig-lote-sub')||{}).value||'Endocrinologia';
+    var topic='';
     var st=document.getElementById('ig-lote-status'),res=document.getElementById('ig-lote-results');
     var subs=[];for(var i=0;i<n;i++)subs.push(vary?DIR_SUBS[i%DIR_SUBS.length]:baseSub);
     loteGen.disabled=true;loteGen.innerHTML=ldHTML('Gerando '+n+'…');if(st)st.textContent='';if(res)res.innerHTML='';
@@ -7864,7 +7873,7 @@ function bindAdmStories(){
   var clr=document.getElementById('ig-clear');
   if(clr)clr.addEventListener('click',function(){igEditId=null;renderAdmSec('stories');});
   var main=document.getElementById('adm-main');
-  main.querySelectorAll('[data-ig-load]').forEach(function(b){b.addEventListener('click',function(){var it=igStories[parseInt(b.dataset.igLoad,10)];if(!it)return;igEditId=it.id;igFillForm(it);try{document.getElementById('ig-stem').scrollIntoView({behavior:'smooth',block:'center'});}catch(e){}notify('Editando — altere e clique em "Aprovar" para salvar.','ok');});});
+  main.querySelectorAll('[data-ig-load]').forEach(function(b){b.addEventListener('click',function(){var it=igStories[parseInt(b.dataset.igLoad,10)];if(!it)return;igEditId=it.id;var w=document.getElementById('ig-manual-wrap');if(w)w.style.display='';igFillForm(it);try{document.getElementById('ig-stem').scrollIntoView({behavior:'smooth',block:'center'});}catch(e){}notify('Editando — altere e clique em "Aprovar" para salvar.','ok');});});
   main.querySelectorAll('[data-ig-dlq]').forEach(function(b){b.addEventListener('click',function(){var it=igStories[parseInt(b.dataset.igDlq,10)];if(it)igDownload('q',it,'endodireto-'+igFnameSub(it)+'-pergunta.png').catch(function(e){notify((e&&e.message)||'Falha.','err');});});});
   main.querySelectorAll('[data-ig-dla]').forEach(function(b){b.addEventListener('click',function(){var it=igStories[parseInt(b.dataset.igDla,10)];if(it)igDownload('a',it,'endodireto-'+igFnameSub(it)+'-gabarito.png').catch(function(e){notify((e&&e.message)||'Falha.','err');});});});
   main.querySelectorAll('[data-ig-toggle]').forEach(function(b){b.addEventListener('click',function(){var it=igStories[parseInt(b.dataset.igToggle,10)];if(!it)return;it.status=(it.status==='posted'?'queued':'posted');persistIgStories();renderAdmSec('stories');});});
