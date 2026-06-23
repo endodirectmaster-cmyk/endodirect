@@ -1904,7 +1904,18 @@ html[data-theme="light"] .dir-back{background:#f8f9fc;border-color:var(--bd2);co
           <div class="faq-item"><div class="faq-q">Como gerar questões por subespecialidade? <span>▾</span></div><div class="faq-a">No Banco de Questões, escolha a subespecialidade (diabetes, tireoide, etc.), o nível e clique em "Gerar questões".</div></div>
           <div class="faq-item"><div class="faq-q">Como funciona a revisão espaçada? <span>▾</span></div><div class="faq-a">Utiliza o algoritmo SM-2. Os cards com maior dificuldade aparecem com mais frequência até serem dominados.</div></div>
         </div>
-        <div style="margin-top:.9rem;font-size:.8rem;color:var(--t2);line-height:1.55">Precisa de suporte ou tem alguma sugestão? Fale com a gente:<br>✉️ <a href="mailto:contato@endodirect.com.br" style="color:var(--blue);text-decoration:none;font-weight:600">contato@endodirect.com.br</a></div>
+        <div class="card" style="margin-top:.9rem">
+          <div style="font-size:1rem;font-weight:700;margin-bottom:.2rem">Fale com a gente</div>
+          <div style="font-size:.78rem;color:var(--t2);margin-bottom:.9rem">Dúvida, problema ou sugestão? Envie pelo formulário — chega direto no nosso suporte e respondemos no seu e-mail.</div>
+          <div class="g2" style="margin-bottom:.6rem">
+            <div class="fld2" style="margin:0"><label>Nome</label><input type="text" id="sup-name" placeholder="Seu nome"></div>
+            <div class="fld2" style="margin:0"><label>E-mail para retorno</label><input type="email" id="sup-email" placeholder="voce@exemplo.com"></div>
+          </div>
+          <div class="fld2" style="margin-bottom:.6rem"><label>Assunto</label><select id="sup-cat"><option>Dúvida</option><option>Problema técnico</option><option>Sugestão</option><option>Financeiro / assinatura</option><option>Outro</option></select></div>
+          <div class="fld2" style="margin-bottom:.7rem"><label>Mensagem</label><textarea id="sup-msg" rows="4" placeholder="Descreva sua dúvida ou problema…"></textarea></div>
+          <div style="display:flex;align-items:center;gap:.6rem;flex-wrap:wrap"><button class="btn btn-primary" id="sup-send" type="button">Enviar mensagem</button><span id="sup-status" style="font-size:.8rem"></span></div>
+          <div style="margin-top:.7rem;font-size:.72rem;color:var(--t3)">Ou escreva para ✉️ <a href="mailto:contato@endodirect.com.br" style="color:var(--blue);text-decoration:none">contato@endodirect.com.br</a></div>
+        </div>
       </div>
     </div>
 
@@ -4584,6 +4595,7 @@ function goPanel(id){
   if(id==='simfull'){renderSFPrev();populateInst('sf-inst');}
   if(id==='art')initArtUpload();
   if(id==='perfil')renderPerfil();
+  if(id==='support')initSupportForm();
   if(id==='adm')renderAdmSec(admRestoreSec());
   closeMobileNav();
 }
@@ -7347,6 +7359,34 @@ function submitFeedback(){
   if(!fbState.cat){notify('Selecione uma categoria.','err');return;}
   document.getElementById('fb-body').style.display='none';
   document.getElementById('fb-success').style.display='block';
+}
+// Formulário de suporte (página Suporte do aluno): envia a mensagem para o nosso
+// suporte por e-mail (POST /api/ai kind:'support' → lib/support.js via Resend).
+function initSupportForm(){
+  var btn=document.getElementById('sup-send');
+  if(!btn||btn._wired)return; btn._wired=true;
+  var n=document.getElementById('sup-name'),e=document.getElementById('sup-email');
+  if(n&&!n.value&&currentUser&&currentUser.name)n.value=currentUser.name;
+  if(e&&!e.value&&currentUser&&currentUser.email)e.value=currentUser.email;
+  btn.addEventListener('click',submitSupport);
+}
+function submitSupport(){
+  var btn=document.getElementById('sup-send'),st=document.getElementById('sup-status');
+  var name=((document.getElementById('sup-name')||{}).value||'').trim();
+  var email=((document.getElementById('sup-email')||{}).value||'').trim();
+  var cat=(document.getElementById('sup-cat')||{}).value||'';
+  var msg=((document.getElementById('sup-msg')||{}).value||'').trim();
+  function err(m){if(st){st.textContent=m;st.style.color='var(--red)';}}
+  if(!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email))return err('Informe um e-mail válido para retorno.');
+  if(msg.length<5)return err('Escreva sua mensagem.');
+  btn.disabled=true;var old=btn.textContent;btn.textContent='Enviando…';if(st)st.textContent='';
+  var ctx=((currentUser&&currentUser.role)||'visitante')+((currentUser&&currentUser.id)?' (logado)':' (demo)');
+  fetch(AI_API_ENDPOINT,{method:'POST',headers:{'Content-Type':'application/json'},credentials:'same-origin',body:JSON.stringify({kind:'support',name:name,email:email,category:cat,message:msg,context:ctx})})
+    .then(function(r){return r.json().catch(function(){return{};}).then(function(d){if(!r.ok||!d.ok)throw new Error(d.error||'Falha ao enviar.');return d;});})
+    .then(function(){
+      var card=btn.closest('.card');
+      if(card)card.innerHTML='<div style="text-align:center;padding:1.3rem .5rem"><div style="font-size:1.7rem">✅</div><div style="font-weight:700;margin-top:.4rem">Mensagem enviada!</div><div style="font-size:.82rem;color:var(--t2);margin-top:.35rem;line-height:1.5">Recebemos sua mensagem e vamos responder no e-mail informado.</div></div>';
+    },function(e){btn.disabled=false;btn.textContent=old;err((e&&e.message)||'Falha ao enviar. Tente novamente.');});
 }
 
 // ── CHAT ──

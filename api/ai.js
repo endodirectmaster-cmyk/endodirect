@@ -6,6 +6,8 @@ const ALLOWED_MODELS = { 'claude-sonnet-4-6': 1, 'claude-opus-4-8': 1, 'claude-h
 const { pubmedGround, formatSources } = require('../lib/pubmed');
 // Busca server-side de um link p/ resumo (módulo lib/ — não conta como função).
 const { fetchArticleText } = require('../lib/fetch-article');
+// Formulário de suporte do app (e-mail via Resend; módulo lib/ — não conta como função).
+const { sendSupportEmail } = require('../lib/support');
 function pickModel(requested) {
   const m = String(requested || '');
   return ALLOWED_MODELS[m] ? m : DEFAULT_MODEL;
@@ -66,6 +68,17 @@ module.exports = async function handler(req, res) {
   const bad = function (s) { if (!s) return false; const h = hostOf(s); return !(h && okHost(h)); };
   if (bad(String(req.headers.origin || '')) || bad(String(req.headers.referer || ''))) {
     return json(res, 403, { error: 'Origem nao autorizada.' });
+  }
+
+  // Formulário de suporte: mesma proteção same-origin deste endpoint, mas envia por
+  // Resend (não Anthropic) → tratado ANTES da checagem de ANTHROPIC_API_KEY. Reuso
+  // de endpoint p/ respeitar o teto de 12 funções serverless do plano Vercel.
+  {
+    const sbody = parseBody(req);
+    if (sbody && sbody.kind === 'support') {
+      const r = await sendSupportEmail(sbody);
+      return json(res, r.sent ? 200 : (r.code || 400), r.sent ? { ok: true } : { ok: false, error: r.error });
+    }
   }
 
   const apiKey = process.env.ANTHROPIC_API_KEY;
