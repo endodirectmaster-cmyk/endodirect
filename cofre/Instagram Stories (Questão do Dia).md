@@ -1,12 +1,31 @@
 ---
 tags: [cofre, integracoes, marketing]
-atualizado: 2026-06-22
+atualizado: 2026-06-23
 ---
 
 # Instagram Stories — "Questão do Dia"
 
 ## Status
-**Em planejamento.** Amostra validada visualmente pelo usuário (2026-06-22). **Ainda NÃO construído** no app — aguardando go-ahead para o MVP.
+**MVP + CARD NO APP CONSTRUÍDOS (2026-06-23).** PR **#423** em **preview**, aguardando "pode dar deploy". Inclui: card clicável da Questão do Dia no app (Dashboard + topo do Mural), questões **diárias** (Seg–Sáb; Dom = 2 promos), legenda com CTA **"resposta no app"** (funil) e **geração em lote** no painel. O **gerador de IA** (usado aqui e no app) teve a causa-raiz corrigida e **já está em produção** (hotfix #422 — ver [[Decisões]]).
+
+## Implementação do MVP (2026-06-23) — CONSTRUÍDO
+Respeita o teto (12/12 funções, 2/2 crons) e o deploy **SEM `package.json`** (serverless = Node puro + `fetch`; o `@resvg` do sandbox NÃO existe em produção).
+- **`lib/instagram.js`** (módulo, não função): `igTodayPlan` (calendário por dia da semana BRT); `questionCaption`/`answerCaption`; **lembrete diário por e-mail** (Resend; destinatários = `endodirect_admins`/`ALERT_TO`, igual ao `alert.js`); idempotente por dia (`ig_notice_sent`, preservado como os `newsletter_*` no client e no save do admin).
+- **Carona no cron** `api/cron/endocrine-radar.js` → `sendIgDailyNotice()` (fail-safe, após os trial-emails).
+- **Painel → "📲 Questão do Dia"** (`admStoriesHTML`/`bindAdmStories`): gerar 4-alt com IA (`aiRequest`+`authoringSys`), editar, **pré-visualizar**, **baixar PNG 1080×1920** (pergunta+gabarito), **copiar legenda**, **aprovar p/ fila**, gerir fila (editar/baixar/marcar postada/excluir), **promos** de domingo (fundo branded + legenda).
+- **Arte 100% client-side**: `igQuestionSVG`/`igAnswerSVG`/`igPromoSVG` → `igRenderCanvas` (SVG→canvas; logo dourado `Icone - MD.png` same-origin desenhado por cima = sem taint) → `toBlob` PNG.
+- **Fila `ig_stories`** no estado global (`globalStatePayload`/`applyStatePayload`; professor escreve, cron só lê).
+- **Pendências (futuro):** publicação automática via **Graph API**; **texto justificado** na arte (hoje alinhado à esquerda); **imagem do caso** embutida (sairia por taint cross-origin → por ora o professor adiciona no editor do IG); **prints reais** nos promos (commit em `figuras/stories/`).
+
+## App + funil + lote (2026-06-23) — CONSTRUÍDO (PR #423, em preview)
+- **Questão do Dia = JANELA (modal) na frente do mural** (ajuste do usuário 2026-06-23): a questão **aprovada mais recente** (a mesma que vai ao Story) aparece como **modal sobre o mural esmaecido** (backdrop). O aluno toca a alternativa → acerto/erro + **explicação comentada** na hora + botão **"Ver o mural →"**; ao fechar (botão, "Agora não" ou backdrop) o mural volta ao normal. Persiste (`localStorage qotd_answered`) + conta no desempenho por área. Funções: `qotdModalEl`/`qotdRenderModal`/`qotdClose`/`renderQotd`/`qotdPick` (+ `qotdCardHTML`/`qotdTodays`/`qotdReadAns`); modal criado em runtime e anexado ao `body`; CSS `.qotd-overlay/.qotd-backdrop/.qotd-dialog` (z-index 9000). Aparece **só no Mural** (`goPanel('mural')` mostra; outros painéis escondem), **1× por sessão** ou até responder. Os divs antigos `#qotd-card` (Dashboard) e `#qotd-mural-wrap` (topo do Mural) ficaram **inertes** (display:none).
+- **Caminho de dados (migração `add_ig_stories_to_content_rpcs`, JÁ aplicada no Supabase):** `endodirect_member_content()` e `endodirect_public_content()` passam a expor **`ig_stories`** (chave ADITIVA; o gating das demais chaves é cópia verbatim → **não muda acesso**). A questão do dia é **livre** (aluno/degustação/público) — é a isca do funil. O cliente já lia `payload.ig_stories` no hydrate (`applyStatePayload`).
+- **Calendário (ajuste do usuário):** `igTodayPlan` agora **Seg–Sáb = questão**, **Dom = 2 promos**. Sem "dia de gabarito" (a resposta vive no app).
+- **Legenda = funil:** `questionCaption` (lib) e `igCaptionQ` (painel) trocaram "gabarito amanhã" por **"A resposta COMENTADA está no app — link na bio"**. O e-mail do cron idem.
+- **Geração em lote** no painel: `igGenLote`/`igPool`/`renderIgLote` — gera N (3/5/7/10), opção **variar subespecialidades** (rotação `DIR_SUBS`), **concorrência limitada a 3** (anti rate-limit), modelo fixo **Sonnet**. Professor revisa e **Aprovar/Editar/Descartar** (ou "Aprovar todas") → entra na fila `ig_stories`.
+- **Layout do painel (ajuste do usuário 2026-06-23):** "Gerar em lote" é a **ação principal** (topo, com seletor de subespecialidade próprio `ig-lote-sub`); o formulário "Criar/editar questão" fica **recolhido** atrás de "✏️ Criar questão manualmente" (`#ig-manual-wrap`, revelado também ao clicar Editar no lote/fila); a caixa de divulgação de domingo ficou **recolhida + com explicação** do "fundo branded" (fundo pronto p/ sobrepor o print real da ferramenta).
+- **Prompt caching (2026-06-23, no MESMO PR #423):** as diretrizes clínicas (`CLINICAL_GUIDELINES`, ~10,7k tokens) agora vão **inteiras** a TODO gerador (inclusive a Questão do Dia) e são **cacheadas** (`cache_control` ephemeral) — `api/ai.js` manda o `system` como blocos e `authoringSys` põe as diretrizes na frente (prefixo idêntico) separadas do formato por um sentinela. Custo controlado (1ª chamada 1,25×, depois ~0,1×). Detalhes em [[Decisões]].
+- **Pendente:** publicação automática via Graph API (stickers de quiz/poll seguem manuais — limite da Meta); histórico de "questões anteriores" no card.
 
 ## Decisões de produto (2026-06-22)
 - **Canal/formato:** **somente Stories** (9:16, **1080×1920**). Conta **@endodirect** (já é **Business** → habilita a Graph API no futuro). Postagem às **18h BRT**.
@@ -20,7 +39,7 @@ atualizado: 2026-06-22
 - Gerada **localmente** (SVG → PNG via `@resvg/resvg-js`, fonte Liberation Sans), on-brand (navy `#0b1325`/`#1a2744` + dourado). 2 slides: **pergunta** (**4 alternativas A–D**) + **gabarito**. Caso original: hiperaldosteronismo primário (rastreio aldo/renina → **teste confirmatório** antes de localizar; resposta **B**). **Layout (decidido 2026-06-22):** **logo** (ícone dourado ED, `Icone - MD.png`) no topo; **sem** @handle, **sem** etiqueta de área e **sem** disclaimer na arte (o @ já aparece na UI do story).
 - **Lição técnica:** o **Canva AI** (`generate-design`) **falha** (`design_generation_error`) com texto clínico longo / caracteres especiais / `brand_kit_id` — só gera com prompt curto e genérico. E **não dá** para baixar export/thumbnail do Canva no sandbox (403). ⇒ Para produção, usar **Canva brand template com autofill** (campos fixos) **ou** render próprio HTML/SVG→PNG (controlado e reprodutível).
 
-## MVP proposto (NÃO construído — respeita o teto de 12 funções / 2 crons)
+## MVP — proposta original (referência; já construído acima)
 - `lib/instagram.js` (**módulo**, não função): escolhe o item do dia, monta a legenda da pergunta e a do gabarito.
 - **Card "Questão do dia"** no painel do professor: a IA gera caso + arte; o professor edita/aprova; aprovados entram numa fila (estado em `payload`, espelhando `newsletter_*`). Ver [[Dados e Supabase]].
 - **Disparo diário pegando carona no cron do radar** (`/api/cron/endocrine-radar`, 10:30 UTC; ver [[Newsletter e Radar]]) com **lógica de dia da semana**: Seg/Qua/Sex → avisa a **questão** (próxima subespecialidade da fila); Ter/Qui/Sáb → avisa o **gabarito** do item anterior; Dom → as **2 promos**. **Avisa por e-mail** (Resend) com a arte + legenda copiável → o professor posta às 18h BRT. Depois, migrar para publicação via Graph API (imagem do story; quiz/poll seguem manuais).

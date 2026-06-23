@@ -59,5 +59,17 @@ if (apiFuncs.length > MAX_FUNCS) {
   ok(`api/: ${apiFuncs.length}/${MAX_FUNCS} funções serverless`);
 }
 
+// 4. Regressão do caminho de geração de IA: o `system` não pode truncar as
+//    diretrizes nem perder o formato JSON (foi a causa do bug #422 em produção),
+//    e o sentinela do prompt-cache tem de bater entre index.html e api/ai.js.
+//    Roda em subprocesso porque o handler de api/ai.js é assíncrono.
+try {
+  execFileSync(process.execPath, [path.join('scripts', 'test-ai-system.js')], { stdio: 'pipe' });
+  ok('regressão IA/system: geração não trunca diretrizes nem perde o formato JSON');
+} catch (e) {
+  const out = (e.stdout ? e.stdout.toString() : '') + (e.stderr ? e.stderr.toString() : '');
+  fail('regressão IA/system falhou (verifique api/ai.js + index.html/authoringSys):\n' + out);
+}
+
 if (errors) { console.error(`\n${errors} verificação(ões) falharam.`); process.exit(1); }
 console.log('\nTodas as verificações passaram.');

@@ -1,6 +1,6 @@
 ---
 tags: [cofre, newsletter, radar]
-atualizado: 2026-06-15
+atualizado: 2026-06-23
 ---
 
 # Newsletter e Radar
@@ -11,6 +11,7 @@ atualizado: 2026-06-15
 - **Breaking News**: linha de tipo "🏷️ Tipo: Lançamento/Aprovação de medicamento" (sem o parêntese de subespecialidade, removido).
 - Cron diário `endocrine-radar` (`30 10 * * *`).
 - Itens não-breaking ficam em `payload.radar_avisos`. Admin pode editar cada card (inclusive os automáticos).
+- **Ordem do mural por importância de TIPO (2026-06-23, pedido do usuário):** o **default** do mural passou a ser `'relevantes'` (aluno `muralSort` e professor `admMuralSort`). A ordem é dada por **`muralStudyRank(a)`**: Artigo de Revisão > Revisão Sistemática > Metanálise > Ensaio Clínico > Coorte > Caso-controle > Transversal > demais (detecta os subtipos finos no tipo+título+texto). `muralRelevance` ficou **dominada pelo tipo** (revista = leve desempate; data por último). Avisos do professor (Urgente/Breaking/Aviso/Comunicado/Evento) no topo. **A newsletter NÃO mudou** (ordena por frescor primeiro). Ver [[Decisões]].
 
 ## Newsletter diária — `lib/newsletter.js`
 - `sendDailyNewsletter`: idempotência por `payload.newsletter_sent === hoje`.

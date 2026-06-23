@@ -76,7 +76,31 @@ module.exports = async function handler(req, res) {
   }
 
   const body = parseBody(req);
-  const system = String(body.system || '').slice(0, 8000);
+  // Prompt caching (GA) das DIRETRIZES CLÍNICAS (~10,7k tokens) que vão em TODO
+  // gerador de IA. Antes o system era cortado em 8000 chars — descartava quase
+  // todas as diretrizes. Agora mandamos o bloco inteiro e o marcamos como prefixo
+  // cacheável (cache_control ephemeral): a 1ª chamada grava (1,25x) e as seguintes
+  // leem a ~0,1x. O cliente (authoringSys) separa as diretrizes ESTÁVEIS do
+  // formato/persona VARIÁVEL com um sentinela; system longo e fixo (Chat IA, OSCE,
+  // Prescrição) é cacheado inteiro. Tem de ser STRING ou ARRAY de blocos 'text'.
+  const SYS_SPLIT = '__ENDODIRECT_SYS_SPLIT_b1f7__'; // sentinela IDENTICA a de authoringSys (index.html)
+  const rawSystem = String(body.system || '');
+  let system;
+  if (rawSystem.indexOf(SYS_SPLIT) !== -1) {
+    const parts = rawSystem.split(SYS_SPLIT);
+    const head = parts[0].slice(0, 60000);        // diretrizes estáveis = prefixo cacheável (idêntico em todos os geradores)
+    const tail = parts.slice(1).join('').slice(0, 8000); // formato JSON/persona variável (não cacheia)
+    system = [];
+    if (head) system.push({ type: 'text', text: head, cache_control: { type: 'ephemeral' } });
+    if (tail) system.push({ type: 'text', text: tail });
+    if (!system.length) system = '';
+  } else {
+    const s = rawSystem.slice(0, 60000);
+    // System longo e FIXO entre chamadas (diretrizes embutidas, ~39k chars) vira
+    // prefixo cacheável; curtos seguem como string simples. O limiar garante estar
+    // bem acima do mínimo cacheável (4096 tokens no Opus) — abaixo seria no-op.
+    system = s.length >= 20000 ? [{ type: 'text', text: s, cache_control: { type: 'ephemeral' } }] : s;
+  }
   const prompt = String(body.prompt || '').slice(0, 200000);
   const maxTokens = clampTokens(body.maxTokens);
   const documentBase64 = body.documentBase64 ? String(body.documentBase64) : '';
@@ -152,7 +176,9 @@ module.exports = async function handler(req, res) {
       return json(res, upstream.status, { error: message });
     }
 
-    return json(res, 200, { text: extractText(data) });
+    // usage inclui cache_creation_input_tokens / cache_read_input_tokens —
+    // permite conferir o cache de prompt no devtools (Network) sem ler logs.
+    return json(res, 200, { text: extractText(data), usage: (data && data.usage) || null });
   } catch (error) {
     return json(res, 500, { error: error && error.message ? error.message : 'Falha ao chamar a IA.' });
   }

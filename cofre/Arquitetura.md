@@ -1,6 +1,6 @@
 ---
 tags: [cofre, arquitetura]
-atualizado: 2026-06-14
+atualizado: 2026-06-23
 ---
 
 # Arquitetura
@@ -48,6 +48,7 @@ atualizado: 2026-06-14
 - `radar.js` + `news.js` — radar/mural automático (RSS + IA).
 - `healthcheck.js` — verificação semanal da plataforma.
 - `founder.js` — regras da oferta de fundador. Ver [[Planos e Preços]].
+- `instagram.js` — lembrete diário do Story "Questão do Dia" (Resend), via carona no cron do radar (MVP 2026-06-23). Ver [[Instagram Stories (Questão do Dia)]].
 
 ### `api/`
 - `checkout/config.js` — config pública (chave pública, valores, founder).
