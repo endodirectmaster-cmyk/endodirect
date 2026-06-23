@@ -1855,6 +1855,7 @@ html[data-theme="light"] .dir-back{background:#f8f9fc;border-color:var(--bd2);co
     <div class="panel" id="panel-mural">
       <div class="breadcrumb">Dashboard <b>/ Mural</b></div>
       <div class="ph mural-ph"><h1>Mural <span class="mural-updated" id="mural-updated"></span></h1></div>
+      <div class="pc" id="qotd-mural-wrap" style="display:none;padding-bottom:0"><div id="qotd-card-mural"></div></div>
       <div class="pc" id="mural-pc"></div>
     </div>
 
@@ -4559,6 +4560,7 @@ function goPanel(id){
   var bc=document.getElementById('tb-bc');
   if(bc)bc.textContent=PANEL_LABELS[id]||id;
   if(id==='dash')refreshDash();
+  if(id==='mural')try{renderQotd();}catch(e){}
   if(id==='quest'){applyQuestDegustacao();renderSavedQ();populateInst('q-inst');updateProvaInfo();}
   if(id==='flash'){fcFilter=null;renderFC();} // abre na grade de subespecialidades
   if(id==='mmap')renderMMList();
@@ -4598,12 +4600,7 @@ function qotdTodays(){
   list=list.slice().sort(function(a,b){return (b.createdAt||0)-(a.createdAt||0);});
   return list[0]; // a mais recente aprovada = a "do dia" (a mesma que vai ao Story)
 }
-function renderQotd(){
-  var host=document.getElementById('qotd-card');if(!host)return;
-  var q=qotdTodays();
-  if(!q){host.style.display='none';host.innerHTML='';return;}
-  host.style.display='';
-  var ans=qotdReadAns()[q.id];
+function qotdCardHTML(q,ans){
   var ltrs=['A','B','C','D'].filter(function(L){return q.options[L];});
   var opts=ltrs.map(function(L){
     var bd='1px solid var(--bd)',bg='var(--s2)';
@@ -4614,7 +4611,7 @@ function renderQotd(){
   if(ans){
     fb='<div style="margin-top:.6rem;padding:.55rem .7rem;border-radius:var(--rs);font-size:.78rem;line-height:1.5;background:'+(ans.ok?'var(--grn-l)':'var(--red-l)')+';color:var(--t2)"><b style="color:'+(ans.ok?'var(--grn)':'var(--red)')+'">'+(ans.ok?'✓ Você acertou!':'✗ Resposta correta: '+esc(q.answer))+'</b>'+(q.explanation?'<div style="margin-top:.35rem">'+esc(q.explanation)+'</div>':'')+'</div>';
   }
-  host.innerHTML='<div class="card" style="border:1px solid var(--gold);margin:0">'
+  return '<div class="card" style="border:1px solid var(--gold);margin:0">'
     +'<div style="display:flex;justify-content:space-between;align-items:center;gap:.5rem;flex-wrap:wrap;margin-bottom:.5rem">'
     +'<span style="font-weight:800;color:var(--gold);font-size:.92rem">🧠 Questão do Dia</span>'
     +(q.sub?'<span class="tag tag-blue" style="font-size:.62rem">'+esc(q.sub)+'</span>':'')+'</div>'
@@ -4622,7 +4619,19 @@ function renderQotd(){
     +'<div style="display:flex;flex-direction:column;gap:.4rem">'+opts+'</div>'
     +'<div id="qotd-fb">'+fb+'</div>'
     +'</div>';
-  if(!ans){host.querySelectorAll('[data-qotd-opt]').forEach(function(b){b.addEventListener('click',function(){qotdPick(q,b.getAttribute('data-qotd-opt'));});});}
+}
+function qotdFill(host,wrap,q,ans){
+  if(!host)return;
+  if(!q){if(wrap)wrap.style.display='none';host.style.display='none';host.innerHTML='';return;}
+  if(wrap)wrap.style.display='';host.style.display='';
+  host.innerHTML=qotdCardHTML(q,ans);
+  if(!ans)host.querySelectorAll('[data-qotd-opt]').forEach(function(b){b.addEventListener('click',function(){qotdPick(q,b.getAttribute('data-qotd-opt'));});});
+}
+function renderQotd(){
+  var q=qotdTodays();
+  var ans=q?qotdReadAns()[q.id]:null;
+  qotdFill(document.getElementById('qotd-card'),null,q,ans);
+  qotdFill(document.getElementById('qotd-card-mural'),document.getElementById('qotd-mural-wrap'),q,ans);
 }
 function qotdPick(q,letter){
   if(!q||!letter)return;
@@ -7656,7 +7665,7 @@ function igDownload(kind,it,filename){
 function igCaptionQ(it){
   var op=it.options||{},out=['🧠 QUESTÃO DO DIA — '+(it.sub||'Endocrinologia'),'',(it.teem?String(it.teem).trim()+' ':'')+String(it.stem||'').trim(),''];
   ['A','B','C','D'].forEach(function(L){if(op[L])out.push(L+') '+String(op[L]).trim());});
-  out.push('','👉 Responda no quiz acima! O gabarito sai amanhã.','','Estude endocrinologia de verdade no EndoDireto — link na bio. 📲','#endocrinologia #residenciamedica #provadetitulo #endodireto #medicina');
+  out.push('','👉 Responda no quiz acima!','✅ A resposta COMENTADA está no app EndoDireto — link na bio. 📲','','#endocrinologia #residenciamedica #provadetitulo #endodireto #medicina');
   return out.join('\n');
 }
 function igCaptionA(it){
@@ -7704,7 +7713,7 @@ function admStoriesHTML(){
   return '<div class="adm-ph"><h1>📲 Questão do Dia — Stories</h1></div><div class="adm-pc">'
    +'<div class="card" style="margin-bottom:1rem"><div style="font-size:.78rem;color:var(--t2);line-height:1.6">'
    +'<b style="color:var(--tx)">Como funciona:</b> gere/edite a questão → <b>pré-visualize</b> → <b>baixe a arte</b> (PNG 1080×1920) → poste o story no @endodirect às 18h com o sticker de <b>quiz</b> (4 alternativas). O sistema te <b>lembra por e-mail</b> todo dia.<br>'
-   +'<b style="color:var(--tx)">Calendário:</b> Seg/Qua/Sex = <b>questão</b> · Ter/Qui/Sáb = <b>gabarito</b> da anterior · Dom = <b>2 promos</b>.'
+   +'<b style="color:var(--tx)">Calendário:</b> Seg–Sáb = <b>questão</b> (resposta no app) · Dom = <b>2 promos</b>.'
    +'</div></div>'
    +'<div class="card" style="margin-bottom:1rem"><div class="card-head"><span class="card-title">Criar / editar questão</span></div>'
    +'<div style="display:flex;gap:.6rem;flex-wrap:wrap;align-items:flex-end;margin-bottom:.7rem">'
