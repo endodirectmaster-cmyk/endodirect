@@ -6,7 +6,7 @@ atualizado: 2026-06-23
 # Instagram Stories — "Questão do Dia"
 
 ## Status
-**MVP CONSTRUÍDO (2026-06-23).** Em **preview**, aguardando aprovação do usuário p/ deploy. Amostra visual validada em 2026-06-22; build feito após o "Pode construir".
+**MVP + CARD NO APP CONSTRUÍDOS (2026-06-23).** PR **#423** em **preview**, aguardando "pode dar deploy". Inclui: card clicável da Questão do Dia no app (Dashboard + topo do Mural), questões **diárias** (Seg–Sáb; Dom = 2 promos), legenda com CTA **"resposta no app"** (funil) e **geração em lote** no painel. O **gerador de IA** (usado aqui e no app) teve a causa-raiz corrigida e **já está em produção** (hotfix #422 — ver [[Decisões]]).
 
 ## Implementação do MVP (2026-06-23) — CONSTRUÍDO
 Respeita o teto (12/12 funções, 2/2 crons) e o deploy **SEM `package.json`** (serverless = Node puro + `fetch`; o `@resvg` do sandbox NÃO existe em produção).
@@ -16,6 +16,14 @@ Respeita o teto (12/12 funções, 2/2 crons) e o deploy **SEM `package.json`** (
 - **Arte 100% client-side**: `igQuestionSVG`/`igAnswerSVG`/`igPromoSVG` → `igRenderCanvas` (SVG→canvas; logo dourado `Icone - MD.png` same-origin desenhado por cima = sem taint) → `toBlob` PNG.
 - **Fila `ig_stories`** no estado global (`globalStatePayload`/`applyStatePayload`; professor escreve, cron só lê).
 - **Pendências (futuro):** publicação automática via **Graph API**; **texto justificado** na arte (hoje alinhado à esquerda); **imagem do caso** embutida (sairia por taint cross-origin → por ora o professor adiciona no editor do IG); **prints reais** nos promos (commit em `figuras/stories/`).
+
+## App + funil + lote (2026-06-23) — CONSTRUÍDO (PR #423, em preview)
+- **Card "Questão do Dia" no app** (`#qotd-card` no Dashboard + `#qotd-card-mural` no topo do Mural): mostra a questão **aprovada mais recente** (a mesma que vai ao Story); o aluno toca a alternativa → acerto/erro + explicação na hora; a resposta persiste (`localStorage qotd_answered`) e conta no desempenho por área. `renderQotd`/`qotdCardHTML`/`qotdFill` (handler próprio, **não** usa o `selectOpt` compartilhado). Chamado por `refreshDash()` (dashboard + pós-hydrate) e por `goPanel('mural')`. O wrapper do Mural (`#qotd-mural-wrap`) fica FORA do `#mural-pc` (que é re-renderizado) p/ não ser apagado.
+- **Caminho de dados (migração `add_ig_stories_to_content_rpcs`, JÁ aplicada no Supabase):** `endodirect_member_content()` e `endodirect_public_content()` passam a expor **`ig_stories`** (chave ADITIVA; o gating das demais chaves é cópia verbatim → **não muda acesso**). A questão do dia é **livre** (aluno/degustação/público) — é a isca do funil. O cliente já lia `payload.ig_stories` no hydrate (`applyStatePayload`).
+- **Calendário (ajuste do usuário):** `igTodayPlan` agora **Seg–Sáb = questão**, **Dom = 2 promos**. Sem "dia de gabarito" (a resposta vive no app).
+- **Legenda = funil:** `questionCaption` (lib) e `igCaptionQ` (painel) trocaram "gabarito amanhã" por **"A resposta COMENTADA está no app — link na bio"**. O e-mail do cron idem.
+- **Geração em lote** no painel: `igGenLote`/`igPool`/`renderIgLote` — gera N (3/5/7/10), opção **variar subespecialidades** (rotação `DIR_SUBS`), **concorrência limitada a 3** (anti rate-limit), modelo fixo **Sonnet**. Professor revisa e **Aprovar/Editar/Descartar** (ou "Aprovar todas") → entra na fila `ig_stories`.
+- **Pendente:** publicação automática via Graph API (stickers de quiz/poll seguem manuais — limite da Meta); histórico de "questões anteriores" no card; (qualidade) diretrizes truncadas no slice de 8000 do `api/ai.js` — ver [[Decisões]].
 
 ## Decisões de produto (2026-06-22)
 - **Canal/formato:** **somente Stories** (9:16, **1080×1920**). Conta **@endodirect** (já é **Business** → habilita a Graph API no futuro). Postagem às **18h BRT**.
