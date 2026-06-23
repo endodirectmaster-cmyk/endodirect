@@ -5,6 +5,7 @@ const { runRadar } = require('../../lib/radar');
 const { sendDailyNewsletter } = require('../../lib/newsletter');
 const { refreshPodcastsFromFeed } = require('../../lib/podcasts');
 const { sendTrialEmails } = require('../../lib/trial-emails');
+const { sendIgDailyNotice } = require('../../lib/instagram');
 const { sendAlert } = require('../../lib/alert');
 
 function json(res, status, body) {
@@ -45,7 +46,12 @@ module.exports = async function handler(req, res) {
     let trialEmails = { sent: false, reason: 'skipped' };
     try { trialEmails = await sendTrialEmails(); }
     catch (e) { console.error('[cron-radar] trial-emails erro:', (e && e.stack) || e); trialEmails = { sent: false, reason: 'error' }; }
-    return json(res, 200, { ok: true, ...result, newsletter, podcasts, trialEmails });
+    // Lembrete diário do Story "Questão do Dia" (Instagram). Acoplado ao cron do
+    // radar (plano limita o nº de crons). Fail-safe: nunca derruba o cron.
+    let igStory = { sent: false, reason: 'skipped' };
+    try { igStory = await sendIgDailyNotice(); }
+    catch (e) { console.error('[cron-radar] instagram erro:', (e && e.stack) || e); igStory = { sent: false, reason: 'error' }; }
+    return json(res, 200, { ok: true, ...result, newsletter, podcasts, trialEmails, igStory });
   } catch (error) {
     console.error('[cron-radar] erro:', (error && error.stack) || error);
     try { await sendAlert('Radar diário falhou', ['O cron endocrine-radar lançou erro e NÃO atualizou o mural hoje.', 'Erro: ' + ((error && error.message) || error)]); } catch (_) {}

@@ -1,12 +1,21 @@
 ---
 tags: [cofre, integracoes, marketing]
-atualizado: 2026-06-22
+atualizado: 2026-06-23
 ---
 
 # Instagram Stories — "Questão do Dia"
 
 ## Status
-**Em planejamento.** Amostra validada visualmente pelo usuário (2026-06-22). **Ainda NÃO construído** no app — aguardando go-ahead para o MVP.
+**MVP CONSTRUÍDO (2026-06-23).** Em **preview**, aguardando aprovação do usuário p/ deploy. Amostra visual validada em 2026-06-22; build feito após o "Pode construir".
+
+## Implementação do MVP (2026-06-23) — CONSTRUÍDO
+Respeita o teto (12/12 funções, 2/2 crons) e o deploy **SEM `package.json`** (serverless = Node puro + `fetch`; o `@resvg` do sandbox NÃO existe em produção).
+- **`lib/instagram.js`** (módulo, não função): `igTodayPlan` (calendário por dia da semana BRT); `questionCaption`/`answerCaption`; **lembrete diário por e-mail** (Resend; destinatários = `endodirect_admins`/`ALERT_TO`, igual ao `alert.js`); idempotente por dia (`ig_notice_sent`, preservado como os `newsletter_*` no client e no save do admin).
+- **Carona no cron** `api/cron/endocrine-radar.js` → `sendIgDailyNotice()` (fail-safe, após os trial-emails).
+- **Painel → "📲 Questão do Dia"** (`admStoriesHTML`/`bindAdmStories`): gerar 4-alt com IA (`aiRequest`+`authoringSys`), editar, **pré-visualizar**, **baixar PNG 1080×1920** (pergunta+gabarito), **copiar legenda**, **aprovar p/ fila**, gerir fila (editar/baixar/marcar postada/excluir), **promos** de domingo (fundo branded + legenda).
+- **Arte 100% client-side**: `igQuestionSVG`/`igAnswerSVG`/`igPromoSVG` → `igRenderCanvas` (SVG→canvas; logo dourado `Icone - MD.png` same-origin desenhado por cima = sem taint) → `toBlob` PNG.
+- **Fila `ig_stories`** no estado global (`globalStatePayload`/`applyStatePayload`; professor escreve, cron só lê).
+- **Pendências (futuro):** publicação automática via **Graph API**; **texto justificado** na arte (hoje alinhado à esquerda); **imagem do caso** embutida (sairia por taint cross-origin → por ora o professor adiciona no editor do IG); **prints reais** nos promos (commit em `figuras/stories/`).
 
 ## Decisões de produto (2026-06-22)
 - **Canal/formato:** **somente Stories** (9:16, **1080×1920**). Conta **@endodirect** (já é **Business** → habilita a Graph API no futuro). Postagem às **18h BRT**.
@@ -20,7 +29,7 @@ atualizado: 2026-06-22
 - Gerada **localmente** (SVG → PNG via `@resvg/resvg-js`, fonte Liberation Sans), on-brand (navy `#0b1325`/`#1a2744` + dourado). 2 slides: **pergunta** (**4 alternativas A–D**) + **gabarito**. Caso original: hiperaldosteronismo primário (rastreio aldo/renina → **teste confirmatório** antes de localizar; resposta **B**). **Layout (decidido 2026-06-22):** **logo** (ícone dourado ED, `Icone - MD.png`) no topo; **sem** @handle, **sem** etiqueta de área e **sem** disclaimer na arte (o @ já aparece na UI do story).
 - **Lição técnica:** o **Canva AI** (`generate-design`) **falha** (`design_generation_error`) com texto clínico longo / caracteres especiais / `brand_kit_id` — só gera com prompt curto e genérico. E **não dá** para baixar export/thumbnail do Canva no sandbox (403). ⇒ Para produção, usar **Canva brand template com autofill** (campos fixos) **ou** render próprio HTML/SVG→PNG (controlado e reprodutível).
 
-## MVP proposto (NÃO construído — respeita o teto de 12 funções / 2 crons)
+## MVP — proposta original (referência; já construído acima)
 - `lib/instagram.js` (**módulo**, não função): escolhe o item do dia, monta a legenda da pergunta e a do gabarito.
 - **Card "Questão do dia"** no painel do professor: a IA gera caso + arte; o professor edita/aprova; aprovados entram numa fila (estado em `payload`, espelhando `newsletter_*`). Ver [[Dados e Supabase]].
 - **Disparo diário pegando carona no cron do radar** (`/api/cron/endocrine-radar`, 10:30 UTC; ver [[Newsletter e Radar]]) com **lógica de dia da semana**: Seg/Qua/Sex → avisa a **questão** (próxima subespecialidade da fila); Ter/Qui/Sáb → avisa o **gabarito** do item anterior; Dom → as **2 promos**. **Avisa por e-mail** (Resend) com a arte + legenda copiável → o professor posta às 18h BRT. Depois, migrar para publicação via Graph API (imagem do story; quiz/poll seguem manuais).

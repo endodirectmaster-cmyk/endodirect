@@ -1919,6 +1919,7 @@ html[data-theme="light"] .dir-back{background:#f8f9fc;border-color:var(--bd2);co
           <button class="adm-nav" data-asec="conteudo">🎧 Podcasts</button>
           <button class="adm-nav" data-asec="mapas">✦ Mapas Mentais</button>
           <button class="adm-nav" data-asec="flashcards">🃏 Flashcards</button>
+          <button class="adm-nav" data-asec="stories">📲 Questão do Dia</button>
           <button class="adm-nav" data-asec="calc">🧮 Calculadoras</button>
           <button class="adm-nav" data-asec="consultorio">⚕️ Consultório</button>
           <button class="adm-nav" data-asec="rx">💊 Prescrição Comentada</button>
@@ -2575,15 +2576,35 @@ function inferMuralSubspecialty(item){
 }
 function muralSubspecialty(item){return inferMuralSubspecialty(item||{});}
 function muralDisplayType(item){return normalizeMuralType((item&&item.tipo)||'',(item&&item.titulo)||'',(item&&item.texto)||'',((item&&item.fonte)||''));}
-// Relevância: peso da revista + peso do tipo de estudo (avisos urgentes no topo).
-function muralRelevance(a){
-  var src=normalizeMuralSource((a&&a.fonte)||'');
-  var sw={'The New England Journal of Medicine':10,'The Lancet Diabetes & Endocrinology':10,'Nature Reviews Endocrinology':9,'Diabetes Care':9,'Endocrine Reviews':9,'Journal of Clinical Endocrinology & Metabolism':8,'Obesity':7}[src]||5;
+// Ordem editorial do mural (pedido do usuário 2026-06-23): o TIPO de estudo é o
+// critério PRINCIPAL de importância — Artigo de Revisão > Revisão Sistemática >
+// Metanálise > Ensaio Clínico > Coorte > Caso-controle > Transversal > demais.
+// (menor = mais importante / aparece primeiro). Detecta os subtipos finos
+// (sistemática/coorte/caso-controle/transversal) no tipo+título+texto, mesmo que
+// a normalização os agrupe num rótulo mais grosso. Avisos do professor ficam no topo.
+function muralStudyRank(a){
   var t=muralDisplayType(a);
-  if(t==='Urgente')return 1000;
-  if(t==='Breaking News')return 900;
-  var tw={'Diretriz':5,'Metanálise':4,'Ensaio Clínico':3,'Artigo de Revisão':2,'Estudo Original':1,'Estudo Genético':1,'Perspectiva Clínica':1}[t]||0;
-  return sw+tw;
+  var s=muralPlain([(a&&a.tipo)||'',(a&&a.titulo)||'',(a&&a.texto)||'',(a&&a.fonte)||''].join(' '));
+  if(s.indexOf('revisao sistematica')>=0||s.indexOf('systematic review')>=0)return 1;
+  if(s.indexOf('metanalise')>=0||s.indexOf('meta-anal')>=0||s.indexOf('metaanal')>=0)return 2;
+  if(t==='Diretriz'||t==='Artigo de Revisão'||t==='Perspectiva Clínica'||s.indexOf('revisao')>=0||s.indexOf('review')>=0||s.indexOf('diretriz')>=0||s.indexOf('guideline')>=0||s.indexOf('consenso')>=0||s.indexOf('consensus')>=0)return 0;
+  if(t==='Ensaio Clínico'||s.indexOf('ensaio clinico')>=0||s.indexOf('randomized')>=0||s.indexOf('randomised')>=0||s.indexOf('controlled trial')>=0||s.indexOf('clinical trial')>=0)return 3;
+  if(s.indexOf('coorte')>=0||s.indexOf('cohort')>=0)return 4;
+  if(s.indexOf('caso-controle')>=0||s.indexOf('caso controle')>=0||s.indexOf('case-control')>=0||s.indexOf('case control')>=0)return 5;
+  if(s.indexOf('transversal')>=0||s.indexOf('cross-sectional')>=0||s.indexOf('cross sectional')>=0)return 6;
+  return 7;
+}
+// Relevância p/ ordenar o mural: o TIPO domina; a revista entra só como leve
+// desempate dentro do mesmo tipo; a data desempata por último (em muralSortList).
+// Avisos/urgentes/comunicados do professor ficam sempre acima dos artigos.
+function muralRelevance(a){
+  var t=muralDisplayType(a);
+  if(t==='Urgente')return 100000;
+  if(t==='Breaking News')return 90000;
+  if(t==='Aviso'||t==='Comunicado'||t==='Evento')return 80000;
+  var src=normalizeMuralSource((a&&a.fonte)||'');
+  var sw={'The New England Journal of Medicine':9,'The Lancet Diabetes & Endocrinology':9,'Nature Reviews Endocrinology':8,'Diabetes Care':8,'Endocrine Reviews':8,'Journal of Clinical Endocrinology & Metabolism':7,'Obesity':6}[src]||5;
+  return (100-muralStudyRank(a)*10)*100+sw;
 }
 function muralSortList(list,mode){
   var arr=(list||[]).slice();
@@ -2689,6 +2710,11 @@ var radarHidden=[]; // sourceIds de itens do radar ocultados pelo professor (cro
 // Chaves do payload global geridas pelo SERVIDOR (cron/newsletter): preservadas
 // nos saves do admin para não serem apagadas (newsletter_extra/unsub/sent/edição).
 var globalServerKeys={};
+// Stories "Questão do Dia" (Instagram): fila de questões aprovadas pelo professor.
+// É gravada pelo admin (vai no globalStatePayload); o cron do radar só LÊ (lembrete
+// diário). A trava ig_notice_sent é do SERVIDOR (preservada como as newsletter_*).
+var igStories=lsGet('ig_stories')||[];
+var igStoryDraft=null; // rascunho em edição (gerado pela IA ou manual)
 // Proteção de concorrência do estado GLOBAL: guarda o updated_at lido na carga/
 // último save; se o servidor mudou desde então (outro admin gravou), o save mescla
 // as coleções aditivas em vez de sobrescrever (evita perder aulas/podcasts/etc.).
@@ -2768,7 +2794,7 @@ function globalStatePayload(){
   // professor grava apenas os avisos manuais em adm_avisos. A leitura
   // (member_content/public_content) mescla os dois.
   // Mescla as chaves geridas pelo servidor (newsletter_*) para NÃO apagá-las no save.
-  return Object.assign({},globalServerKeys,{provas:provasDB,adm_avisos:admAvisos.filter(function(a){return !isRadarAuto(a);}),radar_avisos:radarAvisos,radar_hidden:radarHidden,adm_questoes:admQuestoes,podcasts:podcasts,adm_cursos:admCursos,curso_mods_extra:admCursoModsExtra,adm_estudantes:admEstudantes,mm_shared:sharedMM,fc_shared:fcShared,diretrizes:diretrizes,diretrizes_temas:dirTemasExtra});
+  return Object.assign({},globalServerKeys,{provas:provasDB,adm_avisos:admAvisos.filter(function(a){return !isRadarAuto(a);}),radar_avisos:radarAvisos,radar_hidden:radarHidden,adm_questoes:admQuestoes,podcasts:podcasts,adm_cursos:admCursos,curso_mods_extra:admCursoModsExtra,adm_estudantes:admEstudantes,mm_shared:sharedMM,fc_shared:fcShared,diretrizes:diretrizes,diretrizes_temas:dirTemasExtra,ig_stories:igStories});
 }
 function currentStatePayload(){
   return Object.assign({},userStatePayload(),globalStatePayload());
@@ -2809,8 +2835,9 @@ function applyStatePayload(payload,personalOnly){
     if(Array.isArray(payload.curso_mods_extra))admCursoModsExtra=payload.curso_mods_extra;
     if(Array.isArray(payload.acessos))userAcessos=payload.acessos;
     if(Array.isArray(payload.cursos))catalogoCursos=payload.cursos;
-    // Preserva chaves geridas pelo servidor (newsletter) para o save do admin não apagá-las.
-    ['newsletter_extra','newsletter_unsub','newsletter_sent','newsletter','newsletter_recent'].forEach(function(k){if(payload[k]!==undefined)globalServerKeys[k]=payload[k];});
+    if(Array.isArray(payload.ig_stories)){igStories=payload.ig_stories;try{lsSet('ig_stories',igStories);}catch(e){}}
+    // Preserva chaves geridas pelo servidor (newsletter + lembrete IG) p/ o save do admin não apagá-las.
+    ['newsletter_extra','newsletter_unsub','newsletter_sent','newsletter','newsletter_recent','ig_notice_sent'].forEach(function(k){if(payload[k]!==undefined)globalServerKeys[k]=payload[k];});
   }
   if(payload.adm_perfil&&typeof payload.adm_perfil==='object'){
     // Segurança: só aceita o perfil salvo se o e-mail bater com o do admin
@@ -2951,7 +2978,7 @@ function saveRemoteState(){
       var serverUpd=(g&&g.data&&g.data.updated_at)||null;
       var p=globalStatePayload();
       // Chaves do servidor que o admin NÃO edita: preserva direto do servidor.
-      ['newsletter_extra','newsletter_unsub','newsletter_sent','newsletter','newsletter_recent'].forEach(function(k){if(serverP[k]!==undefined)p[k]=serverP[k];});
+      ['newsletter_extra','newsletter_unsub','newsletter_sent','newsletter','newsletter_recent','ig_notice_sent'].forEach(function(k){if(serverP[k]!==undefined)p[k]=serverP[k];});
       // radar_avisos: base = servidor (mantém adições do cron e a purga por TTL),
       // mas APLICA as edições do professor (subespecialidade/tipo/texto) por chave
       // estável (sourceId/link). Sem isto, editar um card do radar voltava no F5 —
@@ -6773,7 +6800,7 @@ function execNoteCmd(cmd){
 // ── MURAL ──
 var muralFilter='';
 var muralTipoFilter='';
-var muralSort='novos';
+var muralSort='relevantes';
 var muralShowBreaking=(lsGet('mural_show_breaking')!==false); // mostra Breaking News por padrão
 var MURAL_PER_PAGE=10,muralPage=0,admMuralPage=0; // paginação do mural (10/pág)
 // HTML do paginador (vazio se só houver 1 página).
@@ -7467,8 +7494,260 @@ function admFlashHTML(){
     +'<div class="card"><div class="card-head" style="flex-wrap:wrap;gap:.5rem"><span class="card-title">Flashcards publicados para os alunos</span><span class="tag tag-grn">'+rows.length+'</span></div>'+fcTemaTabs+(list||'<div class="empty">Nenhum flashcard neste subtópico ainda.</div>')+'</div>'
     +'</div>';
 }
+// ---------- QUESTÃO DO DIA (Instagram Stories) ----------
+// Rota C (híbrido): o professor gera/edita a questão, baixa a arte (render 100%
+// client-side: SVG→canvas→PNG, 1080×1920) e posta o story manualmente às 18h. O
+// cron do radar manda o lembrete diário (lib/instagram.js). A fila de aprovadas
+// vai no estado global (ig_stories) e o cron só a LÊ.
+var IG_W=1080,IG_H=1920,IG_NAVY='#0b1325',IG_GOLD='#f5b32c',IG_TX='#ffffff',IG_T2='#aab4c8';
+var IG_TOOLS=[
+  {nome:'Banco de Questões',cta:'Milhares de questões comentadas de endocrinologia.'},
+  {nome:'Simulador de Casos',cta:'Pratique raciocínio clínico em casos guiados por IA.'},
+  {nome:'Calculadoras',cta:'Escores e fórmulas da endócrino na palma da mão.'},
+  {nome:'Flashcards',cta:'Revisão espaçada com os dados que caem na prova.'},
+  {nome:'Mapas Mentais',cta:'Veja a endocrinologia conectada, tema a tema.'},
+  {nome:'Diretrizes',cta:'Resumos das diretrizes vigentes, sempre atualizados.'},
+  {nome:'Podcasts',cta:'Estude de ouvido — episódios curtos de endócrino.'},
+  {nome:'Assistente de Prescrição',cta:'Receituário, LME e mais, com poucos cliques.'},
+  {nome:'Chat com IA',cta:'Tire dúvidas clínicas com a IA treinada em diretrizes.'},
+  {nome:'Cursos',cta:'Aulas das subespecialidades com quem é referência.'}
+];
+var igEditId=null; // id do item da fila em edição (null = criando novo)
+function persistIgStories(){try{lsSet('ig_stories',igStories);}catch(e){}queueRemoteStateSave();}
+function igSetV(id,v){var e=document.getElementById(id);if(e)e.value=(v==null?'':v);}
+function igXml(s){return String(s==null?'':s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');}
+var _igMeas=null;
+function igMeasure(t,font){if(!_igMeas)_igMeas=document.createElement('canvas').getContext('2d');_igMeas.font=font;return _igMeas.measureText(t).width;}
+function igWrap(txt,font,maxW){
+  var words=String(txt||'').replace(/\s+/g,' ').trim().split(' '),lines=[],cur='';
+  for(var i=0;i<words.length;i++){var test=cur?cur+' '+words[i]:words[i];if(!cur||igMeasure(test,font)<=maxW)cur=test;else{lines.push(cur);cur=words[i];}}
+  if(cur)lines.push(cur);return lines;
+}
+function igTspans(lines,x,y,lh){return lines.map(function(l,i){return '<tspan x="'+x+'" y="'+(y+i*lh)+'">'+igXml(l)+'</tspan>';}).join('');}
+function igDoc(inner){return '<svg xmlns="http://www.w3.org/2000/svg" width="'+IG_W+'" height="'+IG_H+'" viewBox="0 0 '+IG_W+' '+IG_H+'"><defs><linearGradient id="g" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#0b1325"/><stop offset="1" stop-color="#16233f"/></linearGradient></defs>'+inner+'</svg>';}
+function igQuestionSVG(it){
+  var op=it.options||{},pad=90,cw=IG_W-2*pad,p=[];
+  p.push('<rect width="'+IG_W+'" height="'+IG_H+'" fill="url(#g)"/>');
+  p.push('<text x="'+(IG_W/2)+'" y="300" text-anchor="middle" font-family="Arial,Helvetica,sans-serif" font-weight="800" font-size="40" fill="'+IG_GOLD+'" letter-spacing="3">QUESTÃO DO DIA</text>');
+  p.push('<text x="'+(IG_W/2)+'" y="350" text-anchor="middle" font-family="Arial,Helvetica,sans-serif" font-weight="700" font-size="30" fill="'+IG_TX+'">'+igXml(String(it.sub||'Endocrinologia').toUpperCase())+'</text>');
+  p.push('<line x1="'+pad+'" y1="392" x2="'+(IG_W-pad)+'" y2="392" stroke="rgba(245,179,44,.45)" stroke-width="3"/>');
+  var y=466,stemFont='44px Arial',lh=60;
+  var stem=(it.teem?String(it.teem).trim()+' ':'')+String(it.stem||'').trim();
+  var sl=igWrap(stem,stemFont,cw);
+  p.push('<text font-family="Arial,Helvetica,sans-serif" font-size="44" font-weight="500" fill="'+IG_TX+'">'+igTspans(sl,pad,y,lh)+'</text>');
+  y+=sl.length*lh+44;
+  ['A','B','C','D'].forEach(function(L){
+    if(!op[L])return;
+    var aFont='38px Arial',alh=50,al=igWrap(String(op[L]).trim(),aFont,cw-118),boxH=Math.max(86,al.length*alh+36),correct=(it.answer===L);
+    p.push('<rect x="'+pad+'" y="'+y+'" rx="20" width="'+cw+'" height="'+boxH+'" fill="'+(correct?'rgba(245,179,44,.14)':'rgba(255,255,255,.06)')+'" stroke="'+(correct?IG_GOLD:'rgba(255,255,255,.18)')+'" stroke-width="2"/>');
+    p.push('<circle cx="'+(pad+46)+'" cy="'+(y+44)+'" r="28" fill="'+IG_GOLD+'"/>');
+    p.push('<text x="'+(pad+46)+'" y="'+(y+56)+'" text-anchor="middle" font-family="Arial,Helvetica,sans-serif" font-weight="800" font-size="34" fill="'+IG_NAVY+'">'+L+'</text>');
+    p.push('<text font-family="Arial,Helvetica,sans-serif" font-size="38" fill="'+IG_TX+'">'+igTspans(al,pad+96,y+52,alh)+'</text>');
+    y+=boxH+22;
+  });
+  p.push('<text x="'+(IG_W/2)+'" y="'+(IG_H-92)+'" text-anchor="middle" font-family="Arial,Helvetica,sans-serif" font-weight="700" font-size="34" fill="'+IG_GOLD+'">Responda no quiz acima</text>');
+  return igDoc(p.join(''));
+}
+function igAnswerSVG(it){
+  var op=it.options||{},L=it.answer||'',pad=90,cw=IG_W-2*pad,p=[];
+  p.push('<rect width="'+IG_W+'" height="'+IG_H+'" fill="url(#g)"/>');
+  p.push('<text x="'+(IG_W/2)+'" y="300" text-anchor="middle" font-family="Arial,Helvetica,sans-serif" font-weight="800" font-size="40" fill="'+IG_GOLD+'" letter-spacing="3">GABARITO</text>');
+  p.push('<text x="'+(IG_W/2)+'" y="350" text-anchor="middle" font-family="Arial,Helvetica,sans-serif" font-weight="700" font-size="30" fill="'+IG_TX+'">'+igXml(String(it.sub||'Endocrinologia').toUpperCase())+'</text>');
+  p.push('<line x1="'+pad+'" y1="392" x2="'+(IG_W-pad)+'" y2="392" stroke="rgba(245,179,44,.45)" stroke-width="3"/>');
+  var y=470;
+  p.push('<rect x="'+pad+'" y="'+y+'" rx="24" width="'+cw+'" height="120" fill="rgba(245,179,44,.16)" stroke="'+IG_GOLD+'" stroke-width="3"/>');
+  p.push('<circle cx="'+(pad+64)+'" cy="'+(y+60)+'" r="40" fill="'+IG_GOLD+'"/>');
+  p.push('<text x="'+(pad+64)+'" y="'+(y+76)+'" text-anchor="middle" font-family="Arial,Helvetica,sans-serif" font-weight="800" font-size="48" fill="'+IG_NAVY+'">'+igXml(L)+'</text>');
+  var al=igWrap(op[L]?String(op[L]).trim():'','36px Arial',cw-170);
+  p.push('<text font-family="Arial,Helvetica,sans-serif" font-size="36" font-weight="700" fill="'+IG_TX+'">'+igTspans(al.slice(0,2),pad+128,y+54,44)+'</text>');
+  y+=170;
+  p.push('<text x="'+pad+'" y="'+y+'" font-family="Arial,Helvetica,sans-serif" font-weight="800" font-size="30" fill="'+IG_GOLD+'" letter-spacing="2">POR QUÊ?</text>');
+  y+=52;
+  var el=igWrap(String(it.explanation||'').trim(),'38px Arial',cw);
+  p.push('<text font-family="Arial,Helvetica,sans-serif" font-size="38" font-weight="400" fill="'+IG_TX+'">'+igTspans(el,pad,y,54)+'</text>');
+  p.push('<text x="'+(IG_W/2)+'" y="'+(IG_H-92)+'" text-anchor="middle" font-family="Arial,Helvetica,sans-serif" font-weight="700" font-size="32" fill="'+IG_GOLD+'">Mais questões no EndoDireto</text>');
+  return igDoc(p.join(''));
+}
+function igPromoSVG(t){
+  var pad=90,cw=IG_W-2*pad,p=[];
+  p.push('<rect width="'+IG_W+'" height="'+IG_H+'" fill="url(#g)"/>');
+  p.push('<text x="'+(IG_W/2)+'" y="430" text-anchor="middle" font-family="Arial,Helvetica,sans-serif" font-weight="800" font-size="34" fill="'+IG_GOLD+'" letter-spacing="4">ENDODIRETO</text>');
+  var tl=igWrap(t.nome,'66px Arial',cw);
+  p.push('<text text-anchor="middle" font-family="Arial,Helvetica,sans-serif" font-size="66" font-weight="800" fill="'+IG_TX+'">'+tl.map(function(l,i){return '<tspan x="'+(IG_W/2)+'" y="'+(560+i*80)+'">'+igXml(l)+'</tspan>';}).join('')+'</text>');
+  var cy=560+tl.length*80+34,cl=igWrap(t.cta,'40px Arial',cw-40);
+  p.push('<text text-anchor="middle" font-family="Arial,Helvetica,sans-serif" font-size="40" fill="'+IG_T2+'">'+cl.map(function(l,i){return '<tspan x="'+(IG_W/2)+'" y="'+(cy+i*54)+'">'+igXml(l)+'</tspan>';}).join('')+'</text>');
+  p.push('<rect x="'+pad+'" y="1040" rx="28" width="'+cw+'" height="640" fill="rgba(255,255,255,.04)" stroke="rgba(245,179,44,.6)" stroke-width="4" stroke-dasharray="18 14"/>');
+  p.push('<text x="'+(IG_W/2)+'" y="1370" text-anchor="middle" font-family="Arial,Helvetica,sans-serif" font-size="34" fill="'+IG_T2+'">Sobreponha aqui o print real da ferramenta</text>');
+  p.push('<text x="'+(IG_W/2)+'" y="'+(IG_H-110)+'" text-anchor="middle" font-family="Arial,Helvetica,sans-serif" font-weight="800" font-size="42" fill="'+IG_GOLD+'">Comece agora — link na bio</text>');
+  return igDoc(p.join(''));
+}
+// SVG→canvas (com o logo dourado desenhado por cima, same-origin = sem taint).
+function igRenderCanvas(svg){
+  return new Promise(function(res,rej){
+    var img=new Image();
+    img.onload=function(){
+      var c=document.createElement('canvas');c.width=IG_W;c.height=IG_H;
+      var ctx=c.getContext('2d');ctx.fillStyle=IG_NAVY;ctx.fillRect(0,0,IG_W,IG_H);ctx.drawImage(img,0,0,IG_W,IG_H);
+      var lg=new Image();
+      lg.onload=function(){try{ctx.drawImage(lg,IG_W/2-70,84,140,140);}catch(e){}res(c);};
+      lg.onerror=function(){res(c);};
+      lg.src='Icone%20-%20MD.png';
+    };
+    img.onerror=function(){rej(new Error('Falha ao renderizar a arte.'));};
+    img.src='data:image/svg+xml;charset=utf-8,'+encodeURIComponent(svg);
+  });
+}
+function igSvgFor(kind,it){return kind==='q'?igQuestionSVG(it):kind==='a'?igAnswerSVG(it):igPromoSVG(it);}
+function igDownload(kind,it,filename){
+  return igRenderCanvas(igSvgFor(kind,it)).then(function(c){
+    return new Promise(function(res,rej){c.toBlob(function(b){if(!b){rej(new Error('Falha ao gerar PNG.'));return;}var url=URL.createObjectURL(b),a=document.createElement('a');a.href=url;a.download=filename;document.body.appendChild(a);a.click();setTimeout(function(){URL.revokeObjectURL(url);a.remove();},1500);res();},'image/png');});
+  });
+}
+function igCaptionQ(it){
+  var op=it.options||{},out=['🧠 QUESTÃO DO DIA — '+(it.sub||'Endocrinologia'),'',(it.teem?String(it.teem).trim()+' ':'')+String(it.stem||'').trim(),''];
+  ['A','B','C','D'].forEach(function(L){if(op[L])out.push(L+') '+String(op[L]).trim());});
+  out.push('','👉 Responda no quiz acima! O gabarito sai amanhã.','','Estude endocrinologia de verdade no EndoDireto — link na bio. 📲','#endocrinologia #residenciamedica #provadetitulo #endodireto #medicina');
+  return out.join('\n');
+}
+function igCaptionA(it){
+  var op=it.options||{},L=it.answer||'',out=['🔑 GABARITO — '+(it.sub||'Endocrinologia'),'','Resposta: '+L+(op[L]?') '+String(op[L]).trim():''),''];
+  if(it.explanation)out.push(String(it.explanation).trim(),'');
+  out.push('Quer treinar com milhares de questões comentadas? EndoDireto — link na bio. 📲','#endocrinologia #residenciamedica #endodireto #medicina');
+  return out.join('\n');
+}
+function igCaptionPromo(t){return '📲 '+t.nome+' — EndoDireto\n\n'+t.cta+'\n\nA plataforma completa de endocrinologia para sua aprovação e prática. Link na bio! 🔗\n#endocrinologia #residenciamedica #endodireto #medicina';}
+function igReadDraft(){
+  function v(id){var e=document.getElementById(id);return e?String(e.value||'').trim():'';}
+  return {sub:v('ig-sub'),teem:v('ig-teem'),stem:v('ig-stem'),options:{A:v('ig-a'),B:v('ig-b'),C:v('ig-c'),D:v('ig-d')},answer:(document.getElementById('ig-ans')||{}).value||'A',explanation:v('ig-exp')};
+}
+function igFillForm(it){
+  igSetV('ig-sub',it.sub);igSetV('ig-teem',it.teem||'');igSetV('ig-stem',it.stem||'');
+  var op=it.options||{};igSetV('ig-a',op.A||'');igSetV('ig-b',op.B||'');igSetV('ig-c',op.C||'');igSetV('ig-d',op.D||'');
+  var an=document.getElementById('ig-ans');if(an)an.value=it.answer||'A';igSetV('ig-exp',it.explanation||'');
+}
+function igValidDraft(d){
+  if(!d.stem){notify('Escreva o enunciado.','err');return false;}
+  if(!d.options.A||!d.options.B){notify('Preencha pelo menos as alternativas A e B.','err');return false;}
+  return true;
+}
+function igLbl(t){return '<div style="font-size:.68rem;color:var(--t2);font-weight:600;margin:0 0 .25rem;text-transform:uppercase;letter-spacing:.04em">'+t+'</div>';}
+function admStoriesHTML(){
+  var subs=DIR_SUBS.map(function(s){return '<option>'+esc(s)+'</option>';}).join('');
+  var ansOpts=['A','B','C','D'].map(function(L){return '<option value="'+L+'">'+L+'</option>';}).join('');
+  var promoOpts=IG_TOOLS.map(function(t,i){return '<option value="'+i+'">'+esc(t.nome)+'</option>';}).join('');
+  var q=(igStories||[]).slice().sort(function(a,b){return (b.createdAt||0)-(a.createdAt||0);});
+  var fila=q.length?q.map(function(it){
+    var idx=igStories.indexOf(it),posted=it.status==='posted';
+    return '<div style="border:1px solid var(--bd);border-radius:12px;padding:.7rem .8rem;margin-bottom:.5rem;background:var(--s2)">'
+      +'<div style="display:flex;justify-content:space-between;gap:.5rem;flex-wrap:wrap;align-items:center">'
+      +'<div style="font-size:.8rem;font-weight:700;color:var(--tx)">'+dirSubIcon(it.sub)+' '+esc(it.sub||'')+' '+(posted?'<span class="tag tag-grn">postada</span>':'<span class="tag">na fila</span>')+'</div>'
+      +'<div style="display:flex;gap:.3rem;flex-wrap:wrap">'
+      +'<button class="btn btn-outline btn-sm" data-ig-load="'+idx+'">✎ Editar</button>'
+      +'<button class="btn btn-outline btn-sm" data-ig-dlq="'+idx+'">⬇ Pergunta</button>'
+      +'<button class="btn btn-outline btn-sm" data-ig-dla="'+idx+'">⬇ Gabarito</button>'
+      +'<button class="btn btn-outline btn-sm" data-ig-toggle="'+idx+'">'+(posted?'↺ Reabrir':'✓ Postada')+'</button>'
+      +'<button class="btn btn-outline btn-sm" data-ig-del="'+idx+'">🗑</button>'
+      +'</div></div>'
+      +'<div style="font-size:.72rem;color:var(--t2);margin-top:.35rem">'+esc(String(it.stem||'').slice(0,150))+(String(it.stem||'').length>150?'…':'')+'</div>'
+      +'</div>';
+  }).join(''):'<div class="empty">Nenhuma questão na fila ainda. Gere uma acima e clique em "Aprovar".</div>';
+  return '<div class="adm-ph"><h1>📲 Questão do Dia — Stories</h1></div><div class="adm-pc">'
+   +'<div class="card" style="margin-bottom:1rem"><div style="font-size:.78rem;color:var(--t2);line-height:1.6">'
+   +'<b style="color:var(--tx)">Como funciona:</b> gere/edite a questão → <b>pré-visualize</b> → <b>baixe a arte</b> (PNG 1080×1920) → poste o story no @endodirect às 18h com o sticker de <b>quiz</b> (4 alternativas). O sistema te <b>lembra por e-mail</b> todo dia.<br>'
+   +'<b style="color:var(--tx)">Calendário:</b> Seg/Qua/Sex = <b>questão</b> · Ter/Qui/Sáb = <b>gabarito</b> da anterior · Dom = <b>2 promos</b>.'
+   +'</div></div>'
+   +'<div class="card" style="margin-bottom:1rem"><div class="card-head"><span class="card-title">Criar / editar questão</span></div>'
+   +'<div style="display:flex;gap:.6rem;flex-wrap:wrap;align-items:flex-end;margin-bottom:.7rem">'
+   +'<label style="flex:1;min-width:170px">'+igLbl('Subespecialidade')+'<select id="ig-sub">'+subs+'</select></label>'
+   +'<label style="flex:1;min-width:170px">'+igLbl('Tema (opcional)')+'<input id="ig-topic" placeholder="ex.: hiperaldosteronismo"></label>'
+   +'<button class="btn btn-primary btn-sm" id="ig-gen">🤖 Gerar com IA</button>'
+   +'<span id="ig-gen-status" style="font-size:.72rem;color:var(--t3)"></span></div>'
+   +igLbl('Atribuição TEEM (opcional — só se for questão do TEEM)')+'<input id="ig-teem" placeholder="(TEEM 2026)" style="margin-bottom:.6rem">'
+   +igLbl('Enunciado')+'<textarea id="ig-stem" rows="4" placeholder="Vinheta clínica curta e objetiva…" style="margin-bottom:.6rem"></textarea>'
+   +'<div style="display:grid;grid-template-columns:1fr 1fr;gap:.5rem;margin-bottom:.6rem">'
+   +'<label>'+igLbl('A')+'<input id="ig-a"></label><label>'+igLbl('B')+'<input id="ig-b"></label>'
+   +'<label>'+igLbl('C')+'<input id="ig-c"></label><label>'+igLbl('D')+'<input id="ig-d"></label></div>'
+   +'<label style="display:block;width:150px;margin-bottom:.6rem">'+igLbl('Alternativa correta')+'<select id="ig-ans">'+ansOpts+'</select></label>'
+   +igLbl('Explicação (vai no gabarito)')+'<textarea id="ig-exp" rows="3" placeholder="Por que a resposta correta é essa, citando o critério/diretriz…"></textarea>'
+   +'<div style="display:flex;gap:.5rem;flex-wrap:wrap;margin-top:.8rem">'
+   +'<button class="btn btn-outline btn-sm" id="ig-preview">👁 Pré-visualizar</button>'
+   +'<button class="btn btn-outline btn-sm" id="ig-dlq">⬇ Baixar pergunta</button>'
+   +'<button class="btn btn-outline btn-sm" id="ig-dla">⬇ Baixar gabarito</button>'
+   +'<button class="btn btn-outline btn-sm" id="ig-copyq">📋 Legenda pergunta</button>'
+   +'<button class="btn btn-outline btn-sm" id="ig-copya">📋 Legenda gabarito</button>'
+   +'<button class="btn btn-primary btn-sm" id="ig-approve">✓ Aprovar p/ a fila</button>'
+   +'<button class="btn btn-outline btn-sm" id="ig-clear">Limpar</button></div>'
+   +'<div id="ig-prev-wrap" style="display:none;gap:1rem;margin-top:1rem;flex-wrap:wrap;justify-content:center">'
+   +'<div style="text-align:center">'+igLbl('Pergunta')+'<img id="ig-prev-q" alt="" style="width:190px;border-radius:12px;border:1px solid var(--bd)"></div>'
+   +'<div style="text-align:center">'+igLbl('Gabarito')+'<img id="ig-prev-a" alt="" style="width:190px;border-radius:12px;border:1px solid var(--bd)"></div></div>'
+   +'</div>'
+   +'<div class="card" style="margin-bottom:1rem"><div class="card-head"><span class="card-title">Fila de questões</span><span class="tag">'+(igStories?igStories.length:0)+'</span></div>'+fila+'</div>'
+   +'<div class="card"><div class="card-head"><span class="card-title">Stories de divulgação (domingo)</span></div>'
+   +'<div style="font-size:.74rem;color:var(--t2);margin-bottom:.6rem">Fundo branded por ferramenta — baixe e sobreponha o print real no editor de Stories do Instagram.</div>'
+   +'<div style="display:flex;gap:.5rem;flex-wrap:wrap;align-items:flex-end">'
+   +'<label style="flex:1;min-width:190px">'+igLbl('Ferramenta')+'<select id="ig-promo-sel">'+promoOpts+'</select></label>'
+   +'<button class="btn btn-outline btn-sm" id="ig-promo-dl">⬇ Baixar fundo</button>'
+   +'<button class="btn btn-outline btn-sm" id="ig-promo-copy">📋 Legenda</button></div></div>'
+   +'</div>';
+}
+function igFnameSub(it){return String(it.sub||'questao').toLowerCase().normalize('NFD').replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,'');}
+function bindAdmStories(){
+  igEditId=null;
+  var gen=document.getElementById('ig-gen');
+  if(gen)gen.addEventListener('click',function(){
+    var sub=(document.getElementById('ig-sub')||{}).value||'Endocrinologia',topic=((document.getElementById('ig-topic')||{}).value||'').trim();
+    var st=document.getElementById('ig-gen-status');
+    gen.disabled=true;gen.innerHTML=ldHTML('Gerando...');if(st)st.textContent='';
+    var sys=authoringSys('Atue como examinador de prova de título em endocrinologia. Gere UMA questão ORIGINAL (não copie provas existentes), de '+sub+', com EXATAMENTE 4 alternativas (A–D), só uma correta. JSON APENAS: {"stem":"vinheta clínica curta de 3-5 linhas com dados objetivos (idade, sexo, quadro, exames com valores/unidades)","options":{"A":"","B":"","C":"","D":""},"answer":"A","explanation":"justificativa de 2-3 frases citando o critério/valor de corte/diretriz"}');
+    aiRequest({system:sys,prompt:'Gere 1 questão de Endocrinologia — '+sub+(topic?(', tema: '+topic):'')+', nível intermediário, clinicamente precisa e alinhada às diretrizes vigentes. Enunciado conciso, adequado a um story do Instagram.',maxTokens:1100,grounding:(topic?(sub+' '+topic):sub)})
+    .then(function(raw){
+      var d=parseJ(raw);if(!d||!d.stem||!d.options)throw new Error('Resposta inválida. Tente de novo.');
+      igEditId=null;
+      igFillForm({sub:sub,stem:String(d.stem||''),options:{A:d.options.A||'',B:d.options.B||'',C:d.options.C||'',D:d.options.D||''},answer:String(d.answer||'A').toUpperCase().slice(0,1),explanation:String(d.explanation||'')});
+      if(st)st.textContent='✓ Gerada — revise, pré-visualize e aprove.';notify('Questão gerada. Revise antes de aprovar.','ok');
+    })
+    .catch(function(e){notify('Erro ao gerar: '+((e&&e.message)||e),'err');})
+    .then(function(){gen.disabled=false;gen.innerHTML='🤖 Gerar com IA';});
+  });
+  var prev=document.getElementById('ig-preview');
+  if(prev)prev.addEventListener('click',function(){
+    var d=igReadDraft();if(!igValidDraft(d))return;
+    prev.disabled=true;prev.innerHTML=ldHTML('Renderizando...');
+    Promise.all([igRenderCanvas(igQuestionSVG(d)),igRenderCanvas(igAnswerSVG(d))]).then(function(cs){
+      var pq=document.getElementById('ig-prev-q'),pa=document.getElementById('ig-prev-a'),w=document.getElementById('ig-prev-wrap');
+      if(pq)pq.src=cs[0].toDataURL('image/png');if(pa)pa.src=cs[1].toDataURL('image/png');if(w)w.style.display='flex';
+    }).catch(function(e){notify((e&&e.message)||'Falha ao renderizar.','err');}).then(function(){prev.disabled=false;prev.innerHTML='👁 Pré-visualizar';});
+  });
+  var dlq=document.getElementById('ig-dlq');
+  if(dlq)dlq.addEventListener('click',function(){var d=igReadDraft();if(!igValidDraft(d))return;igDownload('q',d,'endodireto-'+igFnameSub(d)+'-pergunta.png').catch(function(e){notify((e&&e.message)||'Falha.','err');});});
+  var dla=document.getElementById('ig-dla');
+  if(dla)dla.addEventListener('click',function(){var d=igReadDraft();if(!igValidDraft(d))return;igDownload('a',d,'endodireto-'+igFnameSub(d)+'-gabarito.png').catch(function(e){notify((e&&e.message)||'Falha.','err');});});
+  var cpq=document.getElementById('ig-copyq');
+  if(cpq)cpq.addEventListener('click',function(){var d=igReadDraft();if(!igValidDraft(d))return;try{navigator.clipboard.writeText(igCaptionQ(d));notify('Legenda da pergunta copiada!','ok');}catch(e){notify('Não foi possível copiar.','err');}});
+  var cpa=document.getElementById('ig-copya');
+  if(cpa)cpa.addEventListener('click',function(){var d=igReadDraft();if(!igValidDraft(d))return;try{navigator.clipboard.writeText(igCaptionA(d));notify('Legenda do gabarito copiada!','ok');}catch(e){notify('Não foi possível copiar.','err');}});
+  var appr=document.getElementById('ig-approve');
+  if(appr)appr.addEventListener('click',function(){
+    var d=igReadDraft();if(!igValidDraft(d))return;
+    if(igEditId){var it=igStories.filter(function(x){return x.id===igEditId;})[0];if(it){it.sub=d.sub;it.teem=d.teem;it.stem=d.stem;it.options=d.options;it.answer=d.answer;it.explanation=d.explanation;}notify('Questão atualizada na fila.','ok');}
+    else{igStories.push({id:'ig-'+Date.now()+'-'+Math.round(Math.random()*1e6),sub:d.sub,teem:d.teem,stem:d.stem,options:d.options,answer:d.answer,explanation:d.explanation,status:'queued',createdAt:Date.now()});notify('Questão aprovada e adicionada à fila.','ok');}
+    igEditId=null;persistIgStories();renderAdmSec('stories');
+  });
+  var clr=document.getElementById('ig-clear');
+  if(clr)clr.addEventListener('click',function(){igEditId=null;renderAdmSec('stories');});
+  var main=document.getElementById('adm-main');
+  main.querySelectorAll('[data-ig-load]').forEach(function(b){b.addEventListener('click',function(){var it=igStories[parseInt(b.dataset.igLoad,10)];if(!it)return;igEditId=it.id;igFillForm(it);try{document.getElementById('ig-stem').scrollIntoView({behavior:'smooth',block:'center'});}catch(e){}notify('Editando — altere e clique em "Aprovar" para salvar.','ok');});});
+  main.querySelectorAll('[data-ig-dlq]').forEach(function(b){b.addEventListener('click',function(){var it=igStories[parseInt(b.dataset.igDlq,10)];if(it)igDownload('q',it,'endodireto-'+igFnameSub(it)+'-pergunta.png').catch(function(e){notify((e&&e.message)||'Falha.','err');});});});
+  main.querySelectorAll('[data-ig-dla]').forEach(function(b){b.addEventListener('click',function(){var it=igStories[parseInt(b.dataset.igDla,10)];if(it)igDownload('a',it,'endodireto-'+igFnameSub(it)+'-gabarito.png').catch(function(e){notify((e&&e.message)||'Falha.','err');});});});
+  main.querySelectorAll('[data-ig-toggle]').forEach(function(b){b.addEventListener('click',function(){var it=igStories[parseInt(b.dataset.igToggle,10)];if(!it)return;it.status=(it.status==='posted'?'queued':'posted');persistIgStories();renderAdmSec('stories');});});
+  main.querySelectorAll('[data-ig-del]').forEach(function(b){b.addEventListener('click',function(){var i=parseInt(b.dataset.igDel,10);if(!confirm('Excluir esta questão da fila?'))return;igStories.splice(i,1);persistIgStories();renderAdmSec('stories');notify('Questão removida.','ok');});});
+  var pdl=document.getElementById('ig-promo-dl');
+  if(pdl)pdl.addEventListener('click',function(){var t=IG_TOOLS[parseInt((document.getElementById('ig-promo-sel')||{}).value,10)||0];if(t)igDownload('promo',t,'endodireto-promo-'+igFnameSub({sub:t.nome})+'.png').catch(function(e){notify((e&&e.message)||'Falha.','err');});});
+  var pcp=document.getElementById('ig-promo-copy');
+  if(pcp)pcp.addEventListener('click',function(){var t=IG_TOOLS[parseInt((document.getElementById('ig-promo-sel')||{}).value,10)||0];if(t){try{navigator.clipboard.writeText(igCaptionPromo(t));notify('Legenda do promo copiada!','ok');}catch(e){notify('Não foi possível copiar.','err');}}});
+}
 function admRestoreSec(){
-  var ok=['analytics','mural','ref','provas','cursos','estudantes','conteudo','mapas','flashcards','calc','consultorio','rx','chat','perfil','suporte'];
+  var ok=['analytics','mural','ref','provas','cursos','estudantes','conteudo','mapas','flashcards','stories','calc','consultorio','rx','chat','perfil','suporte'];
   var s=lsGet('adm_sec');
   // Sem seção salva (após logout) → Analytics. Com seção salva (reload) → restaura.
   return ok.indexOf(s)>=0?s:'analytics';
@@ -7492,7 +7771,7 @@ function renderAdmSec(sec){
   admCurrentSec=sec;
   try{lsSet('adm_sec',sec);}catch(e){}
   document.querySelectorAll('.adm-nav[data-asec]').forEach(function(b){b.classList.toggle('on',b.dataset.asec===sec);});
-  var titles={provas:'Provas & Questões',cursos:'Cursos',estudantes:'Estudantes',analytics:'Analytics',mural:'Mural',ref:'Diretrizes',conteudo:'Podcasts',mapas:'Mapas Mentais',calc:'Calculadoras',consultorio:'Consultório',rx:'Prescrição Comentada',chat:'Chat',perfil:'Perfil',suporte:'Suporte'};
+  var titles={provas:'Provas & Questões',cursos:'Cursos',estudantes:'Estudantes',analytics:'Analytics',mural:'Mural',ref:'Diretrizes',conteudo:'Podcasts',mapas:'Mapas Mentais',flashcards:'Flashcards',stories:'Questão do Dia (Stories)',calc:'Calculadoras',consultorio:'Consultório',rx:'Prescrição Comentada',chat:'Chat',perfil:'Perfil',suporte:'Suporte'};
   setText('adm-sec-title',titles[sec]||sec);
   var m=document.getElementById('adm-main');if(!m)return;
   // SEMPRE devolve os painéis movidos (#panel-presc / #mm-live) para o lugar de
@@ -7527,6 +7806,7 @@ function renderAdmSec(sec){
   else if(sec==='suporte')m.innerHTML=admSuporteHTML();
   else if(sec==='mapas')m.innerHTML=admMapasHTML();
   else if(sec==='flashcards')m.innerHTML=admFlashHTML();
+  else if(sec==='stories')m.innerHTML=admStoriesHTML();
   bindAdmSec(sec);
 }
 
@@ -7717,7 +7997,7 @@ function admSuporteHTML(){
 }
 
 function persistAdm(){lsSet('adm_avisos',admAvisos);lsSet('adm_questoes',admQuestoes);queueRemoteStateSave();}
-var admMuralShowForm=false,admMuralEdit=null,admMuralFilter='',admMuralTipoFilter='',admMuralSort='novos';
+var admMuralShowForm=false,admMuralEdit=null,admMuralFilter='',admMuralTipoFilter='',admMuralSort='relevantes';
 // ---------- REFERÊNCIA RÁPIDA (admin CRUD) ----------
 var admRefShowForm=false,admRefEdit=null,admRefPdfB64=null,admRefPdfName='',admRefPdfFile=null,admRefSub='',admRefTema='',admRefTemaAdd=false,admRefTemaEdit=null,admRefChat=[];
 // Bolhas do chat do assistente de IA no editor de diretrizes.
@@ -8373,6 +8653,7 @@ function bindAdmSec(sec){
     main.querySelectorAll('[data-adm-fc-del]').forEach(function(b){b.addEventListener('click',function(){var i=parseInt(b.dataset.admFcDel,10);if(!confirm('Excluir este flashcard? (Deixa de ser publicado; quem já recebeu mantém a cópia.)'))return;fcShared.splice(i,1);persistFcShared();renderAdmSec('flashcards');notify('Flashcard removido.','ok');});});
     return;
   }
+  if(sec==='stories'){bindAdmStories();return;}
 
   if(sec==='cursos'){
     main.querySelectorAll('[data-csub]').forEach(function(b){b.addEventListener('click',function(){admCursoSubtab=b.dataset.csub;admCursoEditIdx=null;admCursoAddMod='';renderAdmSec('cursos');});});
