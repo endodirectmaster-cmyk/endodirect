@@ -1447,6 +1447,7 @@ html[data-theme="light"] .dir-back{background:#f8f9fc;border-color:var(--bd2);co
       <div class="breadcrumb">Dashboard <b>/ Visão Geral</b></div>
       <div class="ph"><h1 id="dash-greeting">Bem-vindo.</h1><p>Continue seus estudos.</p></div>
       <div class="pc">
+        <div id="qotd-card" style="display:none;margin-bottom:10px"></div>
         <div class="g4" style="margin-bottom:10px">
           <div class="card" style="text-align:center;cursor:pointer" id="dc-quest"><div style="font-size:1.45rem;font-weight:700;color:var(--blue)" id="d-qn">0</div><div style="font-size:.66rem;color:var(--t3)">Questões</div></div>
           <div class="card" style="text-align:center;cursor:pointer" id="dc-flash"><div style="font-size:1.45rem;font-weight:700;color:var(--pur)" id="d-fcn">0</div><div style="font-size:.66rem;color:var(--t3)">Flashcards</div></div>
@@ -4582,6 +4583,55 @@ function refreshDash(){
   var due=DB.fc.filter(srIsDue).length;
   setText('d-qn',DB.q.length);setText('d-fcn',DB.fc.length);setText('d-sr-due',due);setText('d-mmn',DB.mm.length);
   renderPerfBars();updateDashRec();renderDashCrono();renderDashNotas();
+  try{renderQotd();}catch(e){}
+}
+// ---------- QUESTÃO DO DIA (card clicável do aluno) ----------
+// Mostra a questão aprovada mais recente da fila do professor (igStories, vinda do
+// member_content/public_content). O aluno toca a alternativa, vê na hora se acertou
+// + explicação, e a resposta fica registrada (não some no reload). É a "enquete"
+// da plataforma e o destino do funil dos Stories ("resposta no app").
+function qotdReadAns(){try{return JSON.parse(localStorage.getItem('qotd_answered')||'{}')||{};}catch(e){return {};}}
+function qotdTodays(){
+  var list=(typeof igStories!=='undefined'&&Array.isArray(igStories))?igStories:[];
+  list=list.filter(function(x){return x&&x.stem&&x.options&&(x.options.A||x.options.B)&&x.answer;});
+  if(!list.length)return null;
+  list=list.slice().sort(function(a,b){return (b.createdAt||0)-(a.createdAt||0);});
+  return list[0]; // a mais recente aprovada = a "do dia" (a mesma que vai ao Story)
+}
+function renderQotd(){
+  var host=document.getElementById('qotd-card');if(!host)return;
+  var q=qotdTodays();
+  if(!q){host.style.display='none';host.innerHTML='';return;}
+  host.style.display='';
+  var ans=qotdReadAns()[q.id];
+  var ltrs=['A','B','C','D'].filter(function(L){return q.options[L];});
+  var opts=ltrs.map(function(L){
+    var bd='1px solid var(--bd)',bg='var(--s2)';
+    if(ans){if(L===q.answer){bd='1px solid var(--grn)';bg='var(--grn-l)';}else if(L===ans.letter){bd='1px solid var(--red)';bg='var(--red-l)';}}
+    return '<button type="button" '+(ans?'disabled ':'')+'data-qotd-opt="'+L+'" style="text-align:left;display:flex;gap:.55rem;align-items:flex-start;padding:.6rem .7rem;border-radius:var(--rs);width:100%;font-size:.82rem;line-height:1.45;cursor:'+(ans?'default':'pointer')+';border:'+bd+';background:'+bg+';color:var(--tx)"><span style="font-weight:800;color:var(--blue);flex-shrink:0">'+L+'</span><span>'+esc(q.options[L])+'</span></button>';
+  }).join('');
+  var fb='';
+  if(ans){
+    fb='<div style="margin-top:.6rem;padding:.55rem .7rem;border-radius:var(--rs);font-size:.78rem;line-height:1.5;background:'+(ans.ok?'var(--grn-l)':'var(--red-l)')+';color:var(--t2)"><b style="color:'+(ans.ok?'var(--grn)':'var(--red)')+'">'+(ans.ok?'✓ Você acertou!':'✗ Resposta correta: '+esc(q.answer))+'</b>'+(q.explanation?'<div style="margin-top:.35rem">'+esc(q.explanation)+'</div>':'')+'</div>';
+  }
+  host.innerHTML='<div class="card" style="border:1px solid var(--gold);margin:0">'
+    +'<div style="display:flex;justify-content:space-between;align-items:center;gap:.5rem;flex-wrap:wrap;margin-bottom:.5rem">'
+    +'<span style="font-weight:800;color:var(--gold);font-size:.92rem">🧠 Questão do Dia</span>'
+    +(q.sub?'<span class="tag tag-blue" style="font-size:.62rem">'+esc(q.sub)+'</span>':'')+'</div>'
+    +'<div style="font-size:.86rem;line-height:1.55;color:var(--tx);margin-bottom:.7rem">'+esc((q.teem?String(q.teem).trim()+' ':'')+String(q.stem).trim())+'</div>'
+    +'<div style="display:flex;flex-direction:column;gap:.4rem">'+opts+'</div>'
+    +'<div id="qotd-fb">'+fb+'</div>'
+    +'</div>';
+  if(!ans){host.querySelectorAll('[data-qotd-opt]').forEach(function(b){b.addEventListener('click',function(){qotdPick(q,b.getAttribute('data-qotd-opt'));});});}
+}
+function qotdPick(q,letter){
+  if(!q||!letter)return;
+  var ok=(letter===q.answer);
+  var m=qotdReadAns();m[q.id]={letter:letter,ok:ok,at:Date.now()};
+  try{localStorage.setItem('qotd_answered',JSON.stringify(m));}catch(e){}
+  if(q.sub){if(!DB.perf[q.sub])DB.perf[q.sub]={correct:0,total:0};DB.perf[q.sub].total++;if(ok)DB.perf[q.sub].correct++;try{persist();}catch(e){}}
+  renderQotd();
+  try{renderPerfBars();updateDashRec();}catch(e){}
 }
 function setText(id,v){var e=document.getElementById(id);if(e)e.textContent=v;}
 function renderPerfBars(){
