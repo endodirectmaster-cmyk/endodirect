@@ -7801,6 +7801,10 @@ function igWrap(txt,font,maxW){
   if(cur)lines.push(cur);return lines;
 }
 function igTspans(lines,x,y,lh){return lines.map(function(l,i){return '<tspan x="'+x+'" y="'+(y+i*lh)+'">'+igXml(l)+'</tspan>';}).join('');}
+// Variante JUSTIFICADA: estica cada linha (menos a última) até a largura `w`
+// distribuindo o espaço entre as palavras (lengthAdjust="spacing") → texto com as
+// duas margens alinhadas, como num parágrafo justificado. A última linha fica natural.
+function igTspansJ(lines,x,y,lh,w){return lines.map(function(l,i){var last=(i===lines.length-1);return '<tspan x="'+x+'" y="'+(y+i*lh)+'"'+(last?'':' textLength="'+w+'" lengthAdjust="spacing"')+'>'+igXml(l)+'</tspan>';}).join('');}
 function igDoc(inner){return '<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="'+IG_W+'" height="'+IG_H+'" viewBox="0 0 '+IG_W+' '+IG_H+'"><defs><linearGradient id="g" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#0b1325"/><stop offset="1" stop-color="#16233f"/></linearGradient></defs>'+inner+'</svg>';}
 function igQuestionSVG(it){
   var op=it.options||{},pad=90,cw=IG_W-2*pad,p=[];
@@ -7810,7 +7814,7 @@ function igQuestionSVG(it){
   var y=466,stemFont='44px Arial',lh=60;
   var stem=(it.teem?String(it.teem).trim()+' ':'')+String(it.stem||'').trim();
   var sl=igWrap(stem,stemFont,cw);
-  p.push('<text font-family="Arial,Helvetica,sans-serif" font-size="44" font-weight="500" fill="'+IG_TX+'">'+igTspans(sl,pad,y,lh)+'</text>');
+  p.push('<text font-family="Arial,Helvetica,sans-serif" font-size="44" font-weight="500" fill="'+IG_TX+'">'+igTspansJ(sl,pad,y,lh,cw)+'</text>');
   y+=sl.length*lh+44;
   if(it.img){var imgH=360;p.push('<image xlink:href="'+esc(it.img)+'" x="'+pad+'" y="'+y+'" width="'+cw+'" height="'+imgH+'" preserveAspectRatio="xMidYMid meet"/>');y+=imgH+28;}
   ['A','B','C','D'].forEach(function(L){
@@ -7962,7 +7966,7 @@ function admStoriesHTML(){
    +'<label style="flex:1;min-width:170px">'+igLbl('Tema (opcional)')+'<input id="ig-topic" placeholder="ex.: hiperaldosteronismo"></label>'
    +'<button class="btn btn-primary btn-sm" id="ig-gen">🤖 Gerar 1 com IA</button>'
    +'<span id="ig-gen-status" style="font-size:.72rem;color:var(--t3)"></span></div>'
-   +igLbl('Atribuição TEEM (opcional — só se for questão do TEEM)')+'<input id="ig-teem" placeholder="(TEEM 2026)" style="margin-bottom:.6rem">'
+   +'<div style="margin-bottom:.6rem">'+igLbl('Atribuição TEEM (opcional — só se for questão do TEEM)')+'<input id="ig-teem" placeholder="(TEEM 2026)" style="max-width:220px">'+'</div>'
    +igLbl('Enunciado')+'<textarea id="ig-stem" rows="4" placeholder="Vinheta clínica curta e objetiva…" style="margin-bottom:.6rem"></textarea>'
    +igLbl('Imagem no enunciado (opcional)')+'<div class="art-drop" id="ig-imgdrop" style="padding:1rem;margin-bottom:.5rem"><div style="font-size:1.3rem">🖼️</div><div style="font-size:.76rem;font-weight:600;color:var(--tx)">Clique ou arraste uma imagem</div><div style="font-size:.64rem;color:var(--t3)">JPG, PNG, GIF · Máx. 5 MB</div></div><input type="file" id="ig-imgfile" accept="image/*" style="display:none"><div id="ig-imgprev" style="margin-bottom:.6rem"></div>'
    +igLbl('Alternativas')+'<div style="margin-bottom:.6rem">'
@@ -7971,7 +7975,7 @@ function admStoriesHTML(){
    +'<div style="display:flex;gap:.4rem;align-items:center;margin-bottom:.35rem"><span style="font-weight:700;color:var(--blue);width:16px;flex-shrink:0">C</span><input type="text" id="ig-c" style="flex:1"></div>'
    +'<div style="display:flex;gap:.4rem;align-items:center;margin-bottom:.35rem"><span style="font-weight:700;color:var(--blue);width:16px;flex-shrink:0">D</span><input type="text" id="ig-d" style="flex:1"></div>'
    +'</div>'
-   +'<label style="display:block;width:110px;margin-bottom:.6rem">'+igLbl('Gabarito')+'<select id="ig-ans">'+ansOpts+'</select></label>'
+   +'<label style="display:block;width:76px;margin-bottom:.6rem">'+igLbl('Gabarito')+'<select id="ig-ans">'+ansOpts+'</select></label>'
    +igLbl('Explicação (resposta comentada no app)')+'<textarea id="ig-exp" rows="3" placeholder="Por que a resposta correta é essa, citando o critério/diretriz…"></textarea>'
    +'<div style="display:flex;gap:.5rem;flex-wrap:wrap;margin-top:.8rem">'
    +'<button class="btn btn-outline btn-sm" id="ig-preview">👁 Pré-visualizar</button>'
