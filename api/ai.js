@@ -6,8 +6,10 @@ const ALLOWED_MODELS = { 'claude-sonnet-4-6': 1, 'claude-opus-4-8': 1, 'claude-h
 const { pubmedGround, formatSources } = require('../lib/pubmed');
 // Busca server-side de um link p/ resumo (módulo lib/ — não conta como função).
 const { fetchArticleText } = require('../lib/fetch-article');
-// Formulário de suporte do app (e-mail via Resend; módulo lib/ — não conta como função).
-const { sendSupportEmail } = require('../lib/support');
+// Formulário/caixa de suporte do app (e-mail via Resend + tickets no Supabase;
+// módulos lib/ — não contam como função serverless).
+const { sendSupportEmail, storeSupportTicket, listSupportTickets, replySupportTicket } = require('../lib/support');
+const { adminFromReq } = require('../lib/admin-auth');
 function pickModel(requested) {
   const m = String(requested || '');
   return ALLOWED_MODELS[m] ? m : DEFAULT_MODEL;
@@ -70,14 +72,29 @@ module.exports = async function handler(req, res) {
     return json(res, 403, { error: 'Origem nao autorizada.' });
   }
 
-  // Formulário de suporte: mesma proteção same-origin deste endpoint, mas envia por
-  // Resend (não Anthropic) → tratado ANTES da checagem de ANTHROPIC_API_KEY. Reuso
-  // de endpoint p/ respeitar o teto de 12 funções serverless do plano Vercel.
+  // Suporte: mesma proteção same-origin deste endpoint, mas usa Resend/Supabase
+  // (não Anthropic) → tratado ANTES da checagem de ANTHROPIC_API_KEY. Reuso de
+  // endpoint via "kind" p/ respeitar o teto de 12 funções serverless do plano.
   {
     const sbody = parseBody(req);
+    // (a) Aluno envia o formulário: salva o ticket (Supabase) E notifica por e-mail.
     if (sbody && sbody.kind === 'support') {
+      const stored = await storeSupportTicket(sbody);
       const r = await sendSupportEmail(sbody);
-      return json(res, r.sent ? 200 : (r.code || 400), r.sent ? { ok: true } : { ok: false, error: r.error });
+      const ok = (stored && stored.stored) || r.sent;
+      return json(res, ok ? 200 : (r.code || 400), ok ? { ok: true } : { ok: false, error: r.error });
+    }
+    // (b)/(c) Ações do PROFESSOR (caixa de suporte no painel) — exigem admin
+    // (Bearer token de sessão Supabase + e-mail em endodirect_admins).
+    if (sbody && (sbody.kind === 'support_list' || sbody.kind === 'support_reply')) {
+      const admin = await adminFromReq(req);
+      if (!admin) return json(res, 401, { ok: false, error: 'Apenas administradores.' });
+      if (sbody.kind === 'support_list') {
+        const tickets = await listSupportTickets();
+        return json(res, 200, { ok: true, tickets });
+      }
+      const rr = await replySupportTicket({ id: sbody.id, reply: sbody.reply, adminEmail: admin.email });
+      return json(res, rr.ok ? 200 : (rr.code || 400), rr.ok ? { ok: true, ticket: rr.ticket } : { ok: false, error: rr.error });
     }
   }
 

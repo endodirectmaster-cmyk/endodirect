@@ -71,5 +71,15 @@ try {
   fail('regressão IA/system falhou (verifique api/ai.js + index.html/authoringSys):\n' + out);
 }
 
+// 5. Regressão da CAIXA DE SUPORTE (lib/support.js + lib/admin-auth.js): store do
+//    ticket, listagem, gate de admin e envio da resposta ao aluno (fetch mockado).
+try {
+  execFileSync(process.execPath, [path.join('scripts', 'test-support-inbox.js')], { stdio: 'pipe' });
+  ok('regressão suporte: store + listagem + gate de admin + responder ao aluno');
+} catch (e) {
+  const out = (e.stdout ? e.stdout.toString() : '') + (e.stderr ? e.stderr.toString() : '');
+  fail('regressão da caixa de suporte falhou (verifique lib/support.js + lib/admin-auth.js):\n' + out);
+}
+
 if (errors) { console.error(`\n${errors} verificação(ões) falharam.`); process.exit(1); }
 console.log('\nTodas as verificações passaram.');

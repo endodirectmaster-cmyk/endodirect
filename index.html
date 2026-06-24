@@ -1943,7 +1943,7 @@ html[data-theme="light"] .dir-back{background:#f8f9fc;border-color:var(--bd2);co
           <button class="adm-nav" data-asec="chat">💬 Chat</button>
           <div class="sb-sec" style="margin-top:.8rem">Conta</div>
           <button class="adm-nav" data-asec="perfil">👤 Perfil</button>
-          <button class="adm-nav" data-asec="suporte">❔ Suporte</button>
+          <button class="adm-nav" data-asec="suporte">❔ Suporte <span class="tag" id="adm-support-badge" style="display:none;margin-left:.15rem"></span></button>
         </div>
         <div style="padding:.55rem;border-top:1px solid rgba(255,255,255,.1)">
           <div class="sb-sec" style="padding-top:0">Sair</div>
@@ -3516,6 +3516,7 @@ function startApp(){
     // Reload mantém a última seção (adm_sec persiste); logout limpa adm_sec, então
     // um login novo cai no padrão (Analytics) via admRestoreSec().
     goPanel('adm');
+    try{loadAdmSupport();}catch(e){} // popula o badge "(N)" do Suporte já no login
   }else{
     // Reload mantém o último painel; logout limpa last_panel → cai no Mural (homePanel).
     var lastP=lsGet('last_panel');
@@ -4635,6 +4636,7 @@ function qotdCardHTML(q,ans){
     +'<span style="font-weight:800;color:var(--gold);font-size:.92rem">🧠 Questão do Dia</span>'
     +'</div>'
     +'<div style="font-size:.86rem;line-height:1.55;color:var(--tx);margin-bottom:.7rem">'+esc((q.teem?String(q.teem).trim()+' ':'')+String(q.stem).trim())+'</div>'
+    +(q.img?'<img src="'+esc(q.img)+'" alt="Figura do caso" style="max-width:100%;display:block;border-radius:8px;margin:0 0 .7rem;border:1px solid var(--bd)">':'')
     +'<div style="display:flex;flex-direction:column;gap:.4rem">'+opts+'</div>'
     +'<div id="qotd-fb">'+fb+'</div>'
     +'</div>';
@@ -7638,6 +7640,7 @@ var IG_TOOLS=[
   {nome:'Cursos',cta:'Aulas das subespecialidades com quem é referência.'}
 ];
 var igEditId=null; // id do item da fila em edição (null = criando novo)
+var igDraftImg=''; // imagem (base64) do enunciado no formulário manual
 function persistIgStories(){try{lsSet('ig_stories',igStories);}catch(e){}queueRemoteStateSave();}
 function igSetV(id,v){var e=document.getElementById(id);if(e)e.value=(v==null?'':v);}
 function igXml(s){return String(s==null?'':s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');}
@@ -7649,7 +7652,7 @@ function igWrap(txt,font,maxW){
   if(cur)lines.push(cur);return lines;
 }
 function igTspans(lines,x,y,lh){return lines.map(function(l,i){return '<tspan x="'+x+'" y="'+(y+i*lh)+'">'+igXml(l)+'</tspan>';}).join('');}
-function igDoc(inner){return '<svg xmlns="http://www.w3.org/2000/svg" width="'+IG_W+'" height="'+IG_H+'" viewBox="0 0 '+IG_W+' '+IG_H+'"><defs><linearGradient id="g" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#0b1325"/><stop offset="1" stop-color="#16233f"/></linearGradient></defs>'+inner+'</svg>';}
+function igDoc(inner){return '<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="'+IG_W+'" height="'+IG_H+'" viewBox="0 0 '+IG_W+' '+IG_H+'"><defs><linearGradient id="g" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#0b1325"/><stop offset="1" stop-color="#16233f"/></linearGradient></defs>'+inner+'</svg>';}
 function igQuestionSVG(it){
   var op=it.options||{},pad=90,cw=IG_W-2*pad,p=[];
   p.push('<rect width="'+IG_W+'" height="'+IG_H+'" fill="url(#g)"/>');
@@ -7660,10 +7663,11 @@ function igQuestionSVG(it){
   var sl=igWrap(stem,stemFont,cw);
   p.push('<text font-family="Arial,Helvetica,sans-serif" font-size="44" font-weight="500" fill="'+IG_TX+'">'+igTspans(sl,pad,y,lh)+'</text>');
   y+=sl.length*lh+44;
+  if(it.img){var imgH=360;p.push('<image xlink:href="'+esc(it.img)+'" x="'+pad+'" y="'+y+'" width="'+cw+'" height="'+imgH+'" preserveAspectRatio="xMidYMid meet"/>');y+=imgH+28;}
   ['A','B','C','D'].forEach(function(L){
     if(!op[L])return;
-    var aFont='38px Arial',alh=50,al=igWrap(String(op[L]).trim(),aFont,cw-118),boxH=Math.max(86,al.length*alh+36),correct=(it.answer===L);
-    p.push('<rect x="'+pad+'" y="'+y+'" rx="20" width="'+cw+'" height="'+boxH+'" fill="'+(correct?'rgba(245,179,44,.14)':'rgba(255,255,255,.06)')+'" stroke="'+(correct?IG_GOLD:'rgba(255,255,255,.18)')+'" stroke-width="2"/>');
+    var aFont='38px Arial',alh=50,al=igWrap(String(op[L]).trim(),aFont,cw-118),boxH=Math.max(86,al.length*alh+36);
+    p.push('<rect x="'+pad+'" y="'+y+'" rx="20" width="'+cw+'" height="'+boxH+'" fill="rgba(255,255,255,.06)" stroke="rgba(255,255,255,.18)" stroke-width="2"/>');
     p.push('<circle cx="'+(pad+46)+'" cy="'+(y+44)+'" r="28" fill="'+IG_GOLD+'"/>');
     p.push('<text x="'+(pad+46)+'" y="'+(y+56)+'" text-anchor="middle" font-family="Arial,Helvetica,sans-serif" font-weight="800" font-size="34" fill="'+IG_NAVY+'">'+L+'</text>');
     p.push('<text font-family="Arial,Helvetica,sans-serif" font-size="38" fill="'+IG_TX+'">'+igTspans(al,pad+96,y+52,alh)+'</text>');
@@ -7690,7 +7694,7 @@ function igAnswerSVG(it){
   y+=52;
   var el=igWrap(String(it.explanation||'').trim(),'38px Arial',cw);
   p.push('<text font-family="Arial,Helvetica,sans-serif" font-size="38" font-weight="400" fill="'+IG_TX+'">'+igTspans(el,pad,y,54)+'</text>');
-  p.push('<text x="'+(IG_W/2)+'" y="'+(IG_H-92)+'" text-anchor="middle" font-family="Arial,Helvetica,sans-serif" font-weight="700" font-size="32" fill="'+IG_GOLD+'">Mais questões no EndoDireto</text>');
+  p.push('<text x="'+(IG_W/2)+'" y="'+(IG_H-92)+'" text-anchor="middle" font-family="Arial,Helvetica,sans-serif" font-weight="700" font-size="32" fill="'+IG_GOLD+'">Mais questões no Endodirect</text>');
   return igDoc(p.join(''));
 }
 function igPromoSVG(t){
@@ -7731,24 +7735,36 @@ function igDownload(kind,it,filename){
 function igCaptionQ(it){
   var op=it.options||{},out=['🧠 QUESTÃO DO DIA','',(it.teem?String(it.teem).trim()+' ':'')+String(it.stem||'').trim(),''];
   ['A','B','C','D'].forEach(function(L){if(op[L])out.push(L+') '+String(op[L]).trim());});
-  out.push('','📲 Gabarito COMENTADO na plataforma: www.endodirect.com.br','','#endocrinologia #residenciamedica #provadetitulo #endodireto #medicina');
+  out.push('','📲 Gabarito COMENTADO na plataforma: www.endodirect.com.br','','#endocrinologia #residenciamedica #provadetitulo #endodirect #medicina');
   return out.join('\n');
 }
 function igCaptionA(it){
   var op=it.options||{},L=it.answer||'',out=['🔑 GABARITO — '+(it.sub||'Endocrinologia'),'','Resposta: '+L+(op[L]?') '+String(op[L]).trim():''),''];
   if(it.explanation)out.push(String(it.explanation).trim(),'');
-  out.push('Quer treinar com milhares de questões comentadas? EndoDireto — link na bio. 📲','#endocrinologia #residenciamedica #endodireto #medicina');
+  out.push('Quer treinar com milhares de questões comentadas? Endodirect — link na bio. 📲','#endocrinologia #residenciamedica #endodirect #medicina');
   return out.join('\n');
 }
-function igCaptionPromo(t){return '📲 '+t.nome+' — EndoDireto\n\n'+t.cta+'\n\nA plataforma completa de endocrinologia para sua aprovação e prática. Link na bio! 🔗\n#endocrinologia #residenciamedica #endodireto #medicina';}
+function igCaptionPromo(t){return '📲 '+t.nome+' — Endodirect\n\n'+t.cta+'\n\nA plataforma completa de endocrinologia para sua aprovação e prática. Link na bio! 🔗\n#endocrinologia #residenciamedica #endodirect #medicina';}
 function igReadDraft(){
   function v(id){var e=document.getElementById(id);return e?String(e.value||'').trim():'';}
-  return {sub:v('ig-sub'),teem:v('ig-teem'),stem:v('ig-stem'),options:{A:v('ig-a'),B:v('ig-b'),C:v('ig-c'),D:v('ig-d')},answer:(document.getElementById('ig-ans')||{}).value||'A',explanation:v('ig-exp')};
+  return {sub:v('ig-sub'),teem:v('ig-teem'),stem:v('ig-stem'),options:{A:v('ig-a'),B:v('ig-b'),C:v('ig-c'),D:v('ig-d')},answer:(document.getElementById('ig-ans')||{}).value||'A',explanation:v('ig-exp'),img:igDraftImg};
 }
 function igFillForm(it){
   igSetV('ig-sub',it.sub);igSetV('ig-teem',it.teem||'');igSetV('ig-stem',it.stem||'');
   var op=it.options||{};igSetV('ig-a',op.A||'');igSetV('ig-b',op.B||'');igSetV('ig-c',op.C||'');igSetV('ig-d',op.D||'');
   var an=document.getElementById('ig-ans');if(an)an.value=it.answer||'A';igSetV('ig-exp',it.explanation||'');
+  igDraftImg=it.img||'';igRenderImgPrev();
+}
+// Imagem opcional do enunciado (mesmo padrão do banco de questões): base64 no draft.
+function igRenderImgPrev(){
+  var pv=document.getElementById('ig-imgprev');if(!pv)return;
+  pv.innerHTML=igDraftImg?'<div style="display:flex;align-items:center;gap:.6rem;background:var(--s2);border:1px solid var(--bd);border-radius:var(--rs);padding:.5rem .7rem"><img src="'+esc(igDraftImg)+'" style="height:54px;border-radius:6px"><span style="flex:1;font-size:.74rem;color:var(--t2)">Imagem do enunciado</span><button class="btn btn-ghost btn-sm" id="ig-imgclear">✕</button></div>':'';
+  var cl=document.getElementById('ig-imgclear');if(cl)cl.addEventListener('click',function(){igDraftImg='';igRenderImgPrev();});
+}
+function igHandleImg(f){
+  if(!/^image\//.test(f.type)){notify('Selecione uma imagem.','err');return;}
+  if(f.size>5*1024*1024){notify('Imagem muito grande (máx 5 MB).','err');return;}
+  var r=new FileReader();r.onload=function(ev){igDraftImg=ev.target.result;igRenderImgPrev();};r.readAsDataURL(f);
 }
 function igValidDraft(d){
   if(!d.stem){notify('Escreva o enunciado.','err');return false;}
@@ -7799,10 +7815,14 @@ function admStoriesHTML(){
    +'<span id="ig-gen-status" style="font-size:.72rem;color:var(--t3)"></span></div>'
    +igLbl('Atribuição TEEM (opcional — só se for questão do TEEM)')+'<input id="ig-teem" placeholder="(TEEM 2026)" style="margin-bottom:.6rem">'
    +igLbl('Enunciado')+'<textarea id="ig-stem" rows="4" placeholder="Vinheta clínica curta e objetiva…" style="margin-bottom:.6rem"></textarea>'
-   +'<div style="display:grid;grid-template-columns:1fr 1fr;gap:.5rem;margin-bottom:.6rem">'
-   +'<label>'+igLbl('A')+'<input id="ig-a"></label><label>'+igLbl('B')+'<input id="ig-b"></label>'
-   +'<label>'+igLbl('C')+'<input id="ig-c"></label><label>'+igLbl('D')+'<input id="ig-d"></label></div>'
-   +'<label style="display:block;width:150px;margin-bottom:.6rem">'+igLbl('Alternativa correta')+'<select id="ig-ans">'+ansOpts+'</select></label>'
+   +igLbl('Imagem no enunciado (opcional)')+'<div class="art-drop" id="ig-imgdrop" style="padding:1rem;margin-bottom:.5rem"><div style="font-size:1.3rem">🖼️</div><div style="font-size:.76rem;font-weight:600;color:var(--tx)">Clique ou arraste uma imagem</div><div style="font-size:.64rem;color:var(--t3)">JPG, PNG, GIF · Máx. 5 MB</div></div><input type="file" id="ig-imgfile" accept="image/*" style="display:none"><div id="ig-imgprev" style="margin-bottom:.6rem"></div>'
+   +igLbl('Alternativas')+'<div style="margin-bottom:.6rem">'
+   +'<div style="display:flex;gap:.4rem;align-items:center;margin-bottom:.35rem"><span style="font-weight:700;color:var(--blue);width:16px;flex-shrink:0">A</span><input type="text" id="ig-a" style="flex:1"></div>'
+   +'<div style="display:flex;gap:.4rem;align-items:center;margin-bottom:.35rem"><span style="font-weight:700;color:var(--blue);width:16px;flex-shrink:0">B</span><input type="text" id="ig-b" style="flex:1"></div>'
+   +'<div style="display:flex;gap:.4rem;align-items:center;margin-bottom:.35rem"><span style="font-weight:700;color:var(--blue);width:16px;flex-shrink:0">C</span><input type="text" id="ig-c" style="flex:1"></div>'
+   +'<div style="display:flex;gap:.4rem;align-items:center;margin-bottom:.35rem"><span style="font-weight:700;color:var(--blue);width:16px;flex-shrink:0">D</span><input type="text" id="ig-d" style="flex:1"></div>'
+   +'</div>'
+   +'<label style="display:block;width:110px;margin-bottom:.6rem">'+igLbl('Gabarito')+'<select id="ig-ans">'+ansOpts+'</select></label>'
    +igLbl('Explicação (resposta comentada no app)')+'<textarea id="ig-exp" rows="3" placeholder="Por que a resposta correta é essa, citando o critério/diretriz…"></textarea>'
    +'<div style="display:flex;gap:.5rem;flex-wrap:wrap;margin-top:.8rem">'
    +'<button class="btn btn-outline btn-sm" id="ig-preview">👁 Pré-visualizar</button>'
@@ -7872,7 +7892,7 @@ function renderIgLote(){
 function bindAdmStories(){
   igEditId=null;
   var manToggle=document.getElementById('ig-manual-toggle');
-  if(manToggle)manToggle.addEventListener('click',function(){var w=document.getElementById('ig-manual-wrap');if(!w)return;w.style.display='';igEditId=null;['ig-teem','ig-stem','ig-a','ig-b','ig-c','ig-d','ig-exp'].forEach(function(id){var e=document.getElementById(id);if(e)e.value='';});var an=document.getElementById('ig-ans');if(an)an.value='A';var pw=document.getElementById('ig-prev-wrap');if(pw)pw.style.display='none';try{document.getElementById('ig-stem').scrollIntoView({behavior:'smooth',block:'center'});}catch(e){}});
+  if(manToggle)manToggle.addEventListener('click',function(){var w=document.getElementById('ig-manual-wrap');if(!w)return;w.style.display='';igEditId=null;['ig-teem','ig-stem','ig-a','ig-b','ig-c','ig-d','ig-exp'].forEach(function(id){var e=document.getElementById(id);if(e)e.value='';});var an=document.getElementById('ig-ans');if(an)an.value='A';igDraftImg='';igRenderImgPrev();var pw=document.getElementById('ig-prev-wrap');if(pw)pw.style.display='none';try{document.getElementById('ig-stem').scrollIntoView({behavior:'smooth',block:'center'});}catch(e){}});
   var promoToggle=document.getElementById('ig-promo-toggle');
   if(promoToggle)promoToggle.addEventListener('click',function(){var w=document.getElementById('ig-promo-wrap');if(!w)return;w.style.display=(w.style.display==='none'||!w.style.display)?'':'none';});
   var gen=document.getElementById('ig-gen');
@@ -7929,12 +7949,15 @@ function bindAdmStories(){
   var appr=document.getElementById('ig-approve');
   if(appr)appr.addEventListener('click',function(){
     var d=igReadDraft();if(!igValidDraft(d))return;
-    if(igEditId){var it=igStories.filter(function(x){return x.id===igEditId;})[0];if(it){it.sub=d.sub;it.teem=d.teem;it.stem=d.stem;it.options=d.options;it.answer=d.answer;it.explanation=d.explanation;}notify('Questão atualizada na fila.','ok');}
-    else{igStories.push({id:'ig-'+Date.now()+'-'+Math.round(Math.random()*1e6),sub:d.sub,teem:d.teem,stem:d.stem,options:d.options,answer:d.answer,explanation:d.explanation,status:'queued',createdAt:Date.now()});notify('Questão aprovada e adicionada à fila.','ok');}
+    if(igEditId){var it=igStories.filter(function(x){return x.id===igEditId;})[0];if(it){it.sub=d.sub;it.teem=d.teem;it.stem=d.stem;it.options=d.options;it.answer=d.answer;it.explanation=d.explanation;it.img=d.img||'';}notify('Questão atualizada na fila.','ok');}
+    else{igStories.push({id:'ig-'+Date.now()+'-'+Math.round(Math.random()*1e6),sub:d.sub,teem:d.teem,stem:d.stem,options:d.options,answer:d.answer,explanation:d.explanation,img:d.img||'',status:'queued',createdAt:Date.now()});notify('Questão aprovada e adicionada à fila.','ok');}
     igEditId=null;persistIgStories();renderAdmSec('stories');
   });
   var clr=document.getElementById('ig-clear');
-  if(clr)clr.addEventListener('click',function(){igEditId=null;renderAdmSec('stories');});
+  if(clr)clr.addEventListener('click',function(){igEditId=null;igDraftImg='';renderAdmSec('stories');});
+  var idp=document.getElementById('ig-imgdrop'),ifl=document.getElementById('ig-imgfile');
+  if(idp&&ifl){idp.addEventListener('click',function(){ifl.click();});['dragenter','dragover'].forEach(function(ev){idp.addEventListener(ev,function(e){e.preventDefault();idp.classList.add('drag');});});['dragleave','drop'].forEach(function(ev){idp.addEventListener(ev,function(e){e.preventDefault();idp.classList.remove('drag');});});idp.addEventListener('drop',function(e){if(e.dataTransfer.files&&e.dataTransfer.files[0])igHandleImg(e.dataTransfer.files[0]);});ifl.addEventListener('change',function(e){if(e.target.files[0])igHandleImg(e.target.files[0]);});}
+  igRenderImgPrev();
   var main=document.getElementById('adm-main');
   main.querySelectorAll('[data-ig-load]').forEach(function(b){b.addEventListener('click',function(){var it=igStories[parseInt(b.dataset.igLoad,10)];if(!it)return;igEditId=it.id;var w=document.getElementById('ig-manual-wrap');if(w)w.style.display='';igFillForm(it);try{document.getElementById('ig-stem').scrollIntoView({behavior:'smooth',block:'center'});}catch(e){}notify('Editando — altere e clique em "Aprovar" para salvar.','ok');});});
   main.querySelectorAll('[data-ig-dlq]').forEach(function(b){b.addEventListener('click',function(){var it=igStories[parseInt(b.dataset.igDlq,10)];if(it)igDownload('q',it,'endodireto-'+igFnameSub(it)+'-pergunta.png').catch(function(e){notify((e&&e.message)||'Falha.','err');});});});
@@ -8004,7 +8027,7 @@ function renderAdmSec(sec){
   else if(sec==='calc')m.innerHTML=admCalcHTML();
   else if(sec==='chat')m.innerHTML=admChatHTML();
   else if(sec==='perfil')m.innerHTML=admPerfilHTML();
-  else if(sec==='suporte')m.innerHTML=admSuporteHTML();
+  else if(sec==='suporte'){m.innerHTML=admSuporteHTML();bindAdmSupportRefresh();loadAdmSupport();}
   else if(sec==='mapas')m.innerHTML=admMapasHTML();
   else if(sec==='flashcards')m.innerHTML=admFlashHTML();
   else if(sec==='stories')m.innerHTML=admStoriesHTML();
@@ -8186,15 +8209,116 @@ function admPerfilHTML(){
 // ---------- SUPORTE ----------
 function admSuporteHTML(){
   return '<div class="adm-ph"><h1>Suporte</h1></div>'
-  +'<div class="adm-pc"><div class="card">'
-    +'<div class="faq-item"><div class="faq-q">Como importar uma prova em PDF? <span>▾</span></div><div class="faq-a">Em Provas &amp; Questões → Importar PDF (IA), arraste o arquivo da prova, defina área/instituição/ano e clique em Extrair com IA. As questões vão para o banco do aluno.</div></div>'
-    +'<div class="faq-item"><div class="faq-q">Como inserir provas anteriores? <span>▾</span></div><div class="faq-a">Em Provas &amp; Questões, use a aba Banco de questões para revisar o acervo ou a aba Inserir manualmente para cadastrar questões avulsas com alternativas, gabarito e comentário.</div></div>'
-    +'<div class="faq-item"><div class="faq-q">Como cadastrar um estudante? <span>▾</span></div><div class="faq-a">Na seção Estudantes, clique em "+ Cadastrar", preencha os dados básicos e salve. No protótipo o cadastro fica salvo na sessão.</div></div>'
-    +'<div class="faq-item"><div class="faq-q">Como publicar um aviso no mural dos alunos? <span>▾</span></div><div class="faq-a">Em Mural, preencha título, tipo e texto e clique em "Publicar no mural". O aviso aparece no mural do estudante.</div></div>'
-    +'<div class="faq-item"><div class="faq-q">Como adicionar podcasts? <span>▾</span></div><div class="faq-a">Em Conteúdo, informe título, subespecialidade e selecione o arquivo de áudio (MP3/M4A).</div></div>'
-  +'</div>'
-  +'<div style="margin-top:.9rem;font-size:.8rem;color:var(--t2);line-height:1.55">Precisa de suporte ou tem alguma sugestão? Fale com a gente:<br>✉️ <a href="mailto:contato@endodirect.com.br">contato@endodirect.com.br</a></div>'
+  +'<div class="adm-pc">'
+    +'<div class="card" style="margin-bottom:1rem">'
+      +'<div style="display:flex;justify-content:space-between;align-items:center;gap:.6rem;margin-bottom:.7rem">'
+        +'<div style="font-weight:800;font-size:1rem">📨 Mensagens recebidas</div>'
+        +'<button id="adm-support-refresh" type="button" class="btn" style="padding:.3rem .7rem;font-size:.78rem">↻ Atualizar</button></div>'
+      +'<div id="adm-support-list"><div style="padding:1rem;color:var(--t2);font-size:.85rem">Carregando mensagens…</div></div>'
+    +'</div>'
+    +'<details class="card"><summary style="cursor:pointer;font-weight:700;font-size:.92rem">Ajuda rápida (FAQ)</summary>'
+      +'<div style="margin-top:.7rem;display:grid;gap:.45rem">'
+        +'<details><summary style="cursor:pointer;font-size:.85rem;font-weight:600">Como importar uma prova em PDF?</summary><div style="font-size:.83rem;color:var(--t2);margin-top:.25rem;line-height:1.5">Em Provas &amp; Questões → Importar PDF (IA), arraste o arquivo da prova, defina área/instituição/ano e clique em Extrair com IA. As questões vão para o banco do aluno.</div></details>'
+        +'<details><summary style="cursor:pointer;font-size:.85rem;font-weight:600">Como inserir provas anteriores?</summary><div style="font-size:.83rem;color:var(--t2);margin-top:.25rem;line-height:1.5">Em Provas &amp; Questões, use a aba Banco de questões para revisar o acervo ou a aba Inserir manualmente para cadastrar questões avulsas.</div></details>'
+        +'<details><summary style="cursor:pointer;font-size:.85rem;font-weight:600">Como publicar um aviso no mural?</summary><div style="font-size:.83rem;color:var(--t2);margin-top:.25rem;line-height:1.5">Em Mural, preencha título, tipo e texto e clique em "Publicar no mural". O aviso aparece no mural do estudante.</div></details>'
+      +'</div>'
+      +'<div style="margin-top:.8rem;font-size:.78rem;color:var(--t2);line-height:1.55">Outros canais: ✉️ <a href="mailto:contato@endodirect.com.br">contato@endodirect.com.br</a></div>'
+    +'</details>'
   +'</div>';
+}
+
+// ---------- Caixa de suporte (painel do professor): lista + responder o aluno ----------
+var admSupportTickets=null;   // cache da última listagem (null = ainda não carregou)
+var admSupportLoading=false;
+
+function admSupportToken(){
+  var client=getSupabaseClient();
+  if(!client||!client.auth||!client.auth.getSession)return Promise.resolve('');
+  return client.auth.getSession().then(function(res){return (res&&res.data&&res.data.session&&res.data.session.access_token)||'';}).catch(function(){return '';});
+}
+function admSupportNewCount(){return (admSupportTickets||[]).filter(function(t){return t&&t.status!=='answered';}).length;}
+function updateAdmSupportBadge(){
+  var b=document.getElementById('adm-support-badge');if(!b)return;
+  var n=admSupportNewCount();
+  if(n>0){b.textContent=n;b.style.display='';}else{b.textContent='';b.style.display='none';}
+}
+function bindAdmSupportRefresh(){
+  var rf=document.getElementById('adm-support-refresh');
+  if(rf&&!rf._bound){rf._bound=true;rf.addEventListener('click',function(){renderAdmSupportList('Carregando mensagens…');loadAdmSupport(true);});}
+}
+function loadAdmSupport(){
+  if(admSupportLoading)return;admSupportLoading=true;
+  admSupportToken().then(function(token){
+    if(!token){admSupportLoading=false;renderAdmSupportList('Entre como admin (Google) para ver as mensagens.');return;}
+    return fetch(AI_API_ENDPOINT,{method:'POST',headers:{'Content-Type':'application/json',Authorization:'Bearer '+token},credentials:'same-origin',body:JSON.stringify({kind:'support_list'})})
+      .then(function(r){return r.json().catch(function(){return{};});})
+      .then(function(d){
+        admSupportLoading=false;
+        if(!d||!d.ok){renderAdmSupportList((d&&d.error)||'Falha ao carregar as mensagens.');return;}
+        admSupportTickets=Array.isArray(d.tickets)?d.tickets:[];
+        updateAdmSupportBadge();renderAdmSupportList();
+      });
+  }).catch(function(){admSupportLoading=false;renderAdmSupportList('Falha ao carregar as mensagens.');});
+}
+function admSupportFmtDate(s){try{var d=new Date(s);if(isNaN(d.getTime()))return '';return d.toLocaleDateString('pt-BR')+' '+d.toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit'});}catch(e){return '';}}
+function admSupportReplyBoxHTML(id){
+  return '<div style="margin-top:.6rem" data-sup-box="'+esc(id)+'">'
+    +'<textarea id="sup-reply-'+esc(id)+'" rows="3" placeholder="Escreva a resposta ao aluno…" style="width:100%;box-sizing:border-box;font-size:.88rem;padding:.5rem .6rem;border:1px solid var(--bd);border-radius:8px;resize:vertical;font-family:inherit"></textarea>'
+    +'<div style="display:flex;align-items:center;gap:.6rem;margin-top:.4rem;flex-wrap:wrap">'
+      +'<button class="btn btn-primary" type="button" data-sup-send="'+esc(id)+'" style="padding:.35rem .8rem;font-size:.82rem">Responder por e-mail</button>'
+      +'<span data-sup-status="'+esc(id)+'" style="font-size:.78rem;color:var(--t2)"></span></div></div>';
+}
+function admSupportCardHTML(t){
+  var answered=t.status==='answered';
+  var head='<div style="display:flex;justify-content:space-between;align-items:baseline;gap:.6rem;flex-wrap:wrap">'
+    +'<div style="font-weight:700;font-size:.92rem">'+esc(t.name||t.email||'Aluno')+(t.category?' <span class="tag" style="font-weight:600">'+esc(t.category)+'</span>':'')+'</div>'
+    +'<div style="font-size:.72rem;color:var(--t3)">'+esc(admSupportFmtDate(t.created_at))+'</div></div>';
+  var who='<div style="font-size:.78rem;color:var(--t2);margin:.15rem 0 .55rem"><a href="mailto:'+esc(t.email)+'" style="color:var(--blue)">'+esc(t.email)+'</a>'+(t.context?' · '+esc(t.context):'')+'</div>';
+  var msg='<div style="font-size:.9rem;line-height:1.5;white-space:pre-wrap;background:var(--s2,#f6f8fc);border-radius:8px;padding:.6rem .7rem">'+esc(t.message||'')+'</div>';
+  var body;
+  if(answered){
+    body='<div style="margin-top:.6rem;border-left:3px solid #16a34a;padding:.15rem 0 .15rem .7rem">'
+      +'<div style="font-size:.72rem;color:var(--t3);margin-bottom:.2rem">✅ Respondido'+(t.answered_at?' em '+esc(admSupportFmtDate(t.answered_at)):'')+(t.answered_by?' · '+esc(t.answered_by):'')+'</div>'
+      +'<div style="font-size:.86rem;line-height:1.5;white-space:pre-wrap;color:var(--t2)">'+esc(t.reply||'')+'</div></div>'
+      +'<div style="margin-top:.5rem"><button class="btn" type="button" data-sup-reopen="'+esc(t.id)+'" style="padding:.25rem .6rem;font-size:.76rem">Responder de novo</button></div>';
+  }else{body=admSupportReplyBoxHTML(t.id);}
+  return '<div class="card" data-sup-card="'+esc(t.id)+'" style="margin-bottom:.7rem'+(answered?';opacity:.9':'')+'">'+head+who+msg+body+'</div>';
+}
+function bindAdmSupportTickets(){
+  var host=document.getElementById('adm-support-list');if(!host)return;
+  host.querySelectorAll('[data-sup-send]').forEach(function(b){b.addEventListener('click',function(){admSupportReply(b.dataset.supSend);});});
+  host.querySelectorAll('[data-sup-reopen]').forEach(function(b){b.addEventListener('click',function(){
+    var id=b.dataset.supReopen,wrap=document.createElement('div');wrap.innerHTML=admSupportReplyBoxHTML(id);
+    if(b.parentNode){b.parentNode.replaceWith(wrap);var sb=wrap.querySelector('[data-sup-send]');if(sb)sb.addEventListener('click',function(){admSupportReply(id);});}
+  });});
+}
+function renderAdmSupportList(msg){
+  var host=document.getElementById('adm-support-list');if(!host)return;
+  if(msg){host.innerHTML='<div style="padding:1rem;color:var(--t2);font-size:.85rem">'+esc(msg)+'</div>';return;}
+  var list=admSupportTickets||[];
+  if(!list.length){host.innerHTML='<div style="padding:1rem;color:var(--t2);font-size:.85rem">Nenhuma mensagem ainda.</div>';return;}
+  host.innerHTML=list.map(function(t){return admSupportCardHTML(t);}).join('');
+  bindAdmSupportTickets();
+}
+function admSupportReply(id){
+  var ta=document.getElementById('sup-reply-'+id);
+  var host=document.getElementById('adm-support-list');
+  var st=host?host.querySelector('[data-sup-status="'+id+'"]'):null;
+  var btn=host?host.querySelector('[data-sup-send="'+id+'"]'):null;
+  var reply=ta?String(ta.value||'').trim():'';
+  function setStatus(m,c){if(st){st.textContent=m;st.style.color=c||'var(--t2)';}}
+  if(reply.length<2){setStatus('Escreva a resposta.','var(--red)');return;}
+  if(btn)btn.disabled=true;setStatus('Enviando…');
+  admSupportToken().then(function(token){
+    if(!token){setStatus('Sessão expirada. Entre novamente.','var(--red)');if(btn)btn.disabled=false;return;}
+    return fetch(AI_API_ENDPOINT,{method:'POST',headers:{'Content-Type':'application/json',Authorization:'Bearer '+token},credentials:'same-origin',body:JSON.stringify({kind:'support_reply',id:id,reply:reply})})
+      .then(function(r){return r.json().catch(function(){return{};});})
+      .then(function(d){
+        if(!d||!d.ok){setStatus((d&&d.error)||'Falha ao enviar.','var(--red)');if(btn)btn.disabled=false;return;}
+        var arr=admSupportTickets||[];for(var i=0;i<arr.length;i++){if(arr[i].id===id){arr[i]=d.ticket||Object.assign({},arr[i],{status:'answered',reply:reply});break;}}
+        updateAdmSupportBadge();renderAdmSupportList();notify('Resposta enviada ao aluno.','ok');
+      });
+  }).catch(function(){setStatus('Falha ao enviar.','var(--red)');if(btn)btn.disabled=false;});
 }
 
 function persistAdm(){lsSet('adm_avisos',admAvisos);lsSet('adm_questoes',admQuestoes);queueRemoteStateSave();}

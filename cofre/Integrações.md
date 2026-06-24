@@ -1,6 +1,6 @@
 ---
 tags: [cofre, integracoes]
-atualizado: 2026-06-19
+atualizado: 2026-06-24
 ---
 
 # Integrações
@@ -10,6 +10,13 @@ Newsletter diária + relatório do health check. Envio em batch, List-Unsubscrib
 
 ### E-mails de autenticação (Supabase) via Resend
 Os e-mails de auth (confirmação de cadastro, redefinir senha) devem sair do Endodirect, não do remetente padrão `noreply@mail.app.supabase.io`. Solução: **Custom SMTP no Supabase apontando para o Resend** (`smtp.resend.com:465`, user `resend`, senha = API key do Resend, sender `nao-responda@endodirect.com.br`) + **templates branded em PT** versionados em `supabase/email-templates/` (`confirm-signup.html`, `reset-password.html`). Aplicação é manual no painel (Authentication → Emails). Ver [[Pendências]].
+
+## Suporte (formulário do app → caixa no painel do professor)
+- **Fluxo:** o aluno usa o formulário em `panel-support` → `submitSupport` faz `POST /api/ai {kind:'support',...}` → `lib/support.js`: **(a)** salva um **ticket** na tabela `endodirect_support` (Supabase) e **(b)** notifica o suporte por e-mail (Resend, de `Endodirect Suporte <suporte@endodirect.com.br>`, `reply_to`=e-mail do aluno; destino `SUPPORT_TO`→`contato@endodirect.com.br`).
+- **Caixa no painel (professor):** painel → **Suporte** lista os tickets (mais novos primeiro) com **badge "(N)"** das não respondidas. Responder ali envia a resposta ao aluno (de `suporte@`, citando a mensagem original) e marca o ticket como respondido. Endpoints via `kind` no `api/ai.js`: `support_list` e `support_reply` (exigem **admin** — `lib/admin-auth.js` valida Bearer token de sessão Supabase contra a tabela `endodirect_admins`).
+- **Tabela `endodirect_support`:** `id, created_at, name, email, category, context, message, status('new'|'answered'), reply, answered_at, answered_by`. **RLS ON sem policies** → só `service_role` acessa; a PII do aluno **não** é exposta a clientes (não fica no `endodirect_global_state`).
+- **Env:** `RESEND_API_KEY`, `SUPPORT_FROM` (opcional), `SUPPORT_TO` (opcional), `SUPABASE_URL`, `SUPABASE_SERVICE_ROLE_KEY`.
+- **Limitação v1:** a resposta do aluno por e-mail chega na caixa de e-mail do suporte, não no painel; thread completa in-app = v2 (precisa webhook de e-mail de entrada → +1 função, barrado pelo teto 12/12). Ver [[Decisões]] (2026-06-24).
 
 ## Anthropic (IA)
 Chat IA, simulador de casos, prescrição (treino) e o radar (`summarizeWithAI`). Env: `ANTHROPIC_API_KEY`. (Chave foi rotacionada pelo usuário após exposição anterior.) No sandbox de desenvolvimento, `api.anthropic.com` é dos poucos hosts liberados.
