@@ -39,13 +39,14 @@ global.fetch = function (url, opts) {
 };
 
 const support = require('../lib/support');
-const { adminFromReq } = require('../lib/admin-auth');
+const { adminFromReq, userFromReq } = require('../lib/admin-auth');
 
 (async () => {
   // 0) Exports presentes.
-  ['sendSupportEmail', 'storeSupportTicket', 'listSupportTickets', 'replySupportTicket'].forEach((fn) =>
+  ['sendSupportEmail', 'storeSupportTicket', 'listSupportTickets', 'listMyTickets', 'replySupportTicket'].forEach((fn) =>
     ok(typeof support[fn] === 'function', 'export support.' + fn));
   ok(typeof adminFromReq === 'function', 'export adminFromReq');
+  ok(typeof userFromReq === 'function', 'export userFromReq');
 
   // 1) adminFromReq — gate de admin.
   scenario = {};
@@ -55,6 +56,13 @@ const { adminFromReq } = require('../lib/admin-auth');
   scenario = { user: { email: 'rodolphomend@gmail.com' }, adminRows: [{ email: 'rodolphomend@gmail.com' }] };
   const adm = await adminFromReq({ headers: { authorization: 'Bearer x' } });
   ok(adm && adm.email === 'rodolphomend@gmail.com', 'adminFromReq: admin válido → { email }');
+
+  // 1b) userFromReq — só identidade (NÃO exige admin); e-mail volta minúsculo.
+  scenario = {};
+  ok((await userFromReq({ headers: {} })) === null, 'userFromReq: sem token → null');
+  scenario = { user: { email: 'Aluno@X.com', id: 'u-1' } };
+  const usr = await userFromReq({ headers: { authorization: 'Bearer x' } });
+  ok(usr && usr.email === 'aluno@x.com' && usr.id === 'u-1', 'userFromReq: token válido → { email minúsculo, id }');
 
   // 2) storeSupportTicket.
   scenario = {};
@@ -67,6 +75,19 @@ const { adminFromReq } = require('../lib/admin-auth');
   scenario = { ticket: { id: 't1', email: 'a@b.com', message: 'oi', status: 'new' } };
   const list = await support.listSupportTickets();
   ok(Array.isArray(list) && list.length === 1 && list[0].id === 't1', 'listSupportTickets: retorna o array de tickets');
+
+  // 3b) listMyTickets — tickets do PRÓPRIO aluno; filtra por e-mail e NÃO expõe
+  //     answered_by (e-mail interno do professor) no select enviado ao banco.
+  scenario = {};
+  const invalidMine = await support.listMyTickets('invalido');
+  ok(Array.isArray(invalidMine) && invalidMine.length === 0, 'listMyTickets: e-mail inválido → []');
+  scenario = { ticket: { id: 't9', email: 'aluno@x.com', message: 'oi', status: 'answered', reply: 'pronto', answered_at: 'now' } };
+  calls.length = 0;
+  const mine = await support.listMyTickets('aluno@x.com');
+  ok(Array.isArray(mine) && mine.length === 1 && mine[0].id === 't9', 'listMyTickets: retorna os tickets do aluno');
+  const myUrl = calls.find((c) => c.url.indexOf('endodirect_support') >= 0);
+  ok(myUrl && /email=eq\./.test(myUrl.url), 'listMyTickets: filtra pelo e-mail do aluno (email=eq.)');
+  ok(myUrl && myUrl.url.indexOf('answered_by') === -1, 'listMyTickets: select NÃO inclui answered_by (não vaza e-mail do professor)');
 
   // 4) replySupportTicket — validações.
   scenario = {};
