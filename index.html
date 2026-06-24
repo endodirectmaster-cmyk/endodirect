@@ -4635,6 +4635,7 @@ function qotdCardHTML(q,ans){
     +'<span style="font-weight:800;color:var(--gold);font-size:.92rem">🧠 Questão do Dia</span>'
     +'</div>'
     +'<div style="font-size:.86rem;line-height:1.55;color:var(--tx);margin-bottom:.7rem">'+esc((q.teem?String(q.teem).trim()+' ':'')+String(q.stem).trim())+'</div>'
+    +(q.img?'<img src="'+esc(q.img)+'" alt="Figura do caso" style="max-width:100%;display:block;border-radius:8px;margin:0 0 .7rem;border:1px solid var(--bd)">':'')
     +'<div style="display:flex;flex-direction:column;gap:.4rem">'+opts+'</div>'
     +'<div id="qotd-fb">'+fb+'</div>'
     +'</div>';
@@ -7638,6 +7639,7 @@ var IG_TOOLS=[
   {nome:'Cursos',cta:'Aulas das subespecialidades com quem é referência.'}
 ];
 var igEditId=null; // id do item da fila em edição (null = criando novo)
+var igDraftImg=''; // imagem (base64) do enunciado no formulário manual
 function persistIgStories(){try{lsSet('ig_stories',igStories);}catch(e){}queueRemoteStateSave();}
 function igSetV(id,v){var e=document.getElementById(id);if(e)e.value=(v==null?'':v);}
 function igXml(s){return String(s==null?'':s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');}
@@ -7649,7 +7651,7 @@ function igWrap(txt,font,maxW){
   if(cur)lines.push(cur);return lines;
 }
 function igTspans(lines,x,y,lh){return lines.map(function(l,i){return '<tspan x="'+x+'" y="'+(y+i*lh)+'">'+igXml(l)+'</tspan>';}).join('');}
-function igDoc(inner){return '<svg xmlns="http://www.w3.org/2000/svg" width="'+IG_W+'" height="'+IG_H+'" viewBox="0 0 '+IG_W+' '+IG_H+'"><defs><linearGradient id="g" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#0b1325"/><stop offset="1" stop-color="#16233f"/></linearGradient></defs>'+inner+'</svg>';}
+function igDoc(inner){return '<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="'+IG_W+'" height="'+IG_H+'" viewBox="0 0 '+IG_W+' '+IG_H+'"><defs><linearGradient id="g" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#0b1325"/><stop offset="1" stop-color="#16233f"/></linearGradient></defs>'+inner+'</svg>';}
 function igQuestionSVG(it){
   var op=it.options||{},pad=90,cw=IG_W-2*pad,p=[];
   p.push('<rect width="'+IG_W+'" height="'+IG_H+'" fill="url(#g)"/>');
@@ -7660,10 +7662,11 @@ function igQuestionSVG(it){
   var sl=igWrap(stem,stemFont,cw);
   p.push('<text font-family="Arial,Helvetica,sans-serif" font-size="44" font-weight="500" fill="'+IG_TX+'">'+igTspans(sl,pad,y,lh)+'</text>');
   y+=sl.length*lh+44;
+  if(it.img){var imgH=360;p.push('<image xlink:href="'+esc(it.img)+'" x="'+pad+'" y="'+y+'" width="'+cw+'" height="'+imgH+'" preserveAspectRatio="xMidYMid meet"/>');y+=imgH+28;}
   ['A','B','C','D'].forEach(function(L){
     if(!op[L])return;
-    var aFont='38px Arial',alh=50,al=igWrap(String(op[L]).trim(),aFont,cw-118),boxH=Math.max(86,al.length*alh+36),correct=(it.answer===L);
-    p.push('<rect x="'+pad+'" y="'+y+'" rx="20" width="'+cw+'" height="'+boxH+'" fill="'+(correct?'rgba(245,179,44,.14)':'rgba(255,255,255,.06)')+'" stroke="'+(correct?IG_GOLD:'rgba(255,255,255,.18)')+'" stroke-width="2"/>');
+    var aFont='38px Arial',alh=50,al=igWrap(String(op[L]).trim(),aFont,cw-118),boxH=Math.max(86,al.length*alh+36);
+    p.push('<rect x="'+pad+'" y="'+y+'" rx="20" width="'+cw+'" height="'+boxH+'" fill="rgba(255,255,255,.06)" stroke="rgba(255,255,255,.18)" stroke-width="2"/>');
     p.push('<circle cx="'+(pad+46)+'" cy="'+(y+44)+'" r="28" fill="'+IG_GOLD+'"/>');
     p.push('<text x="'+(pad+46)+'" y="'+(y+56)+'" text-anchor="middle" font-family="Arial,Helvetica,sans-serif" font-weight="800" font-size="34" fill="'+IG_NAVY+'">'+L+'</text>');
     p.push('<text font-family="Arial,Helvetica,sans-serif" font-size="38" fill="'+IG_TX+'">'+igTspans(al,pad+96,y+52,alh)+'</text>');
@@ -7743,12 +7746,24 @@ function igCaptionA(it){
 function igCaptionPromo(t){return '📲 '+t.nome+' — EndoDireto\n\n'+t.cta+'\n\nA plataforma completa de endocrinologia para sua aprovação e prática. Link na bio! 🔗\n#endocrinologia #residenciamedica #endodireto #medicina';}
 function igReadDraft(){
   function v(id){var e=document.getElementById(id);return e?String(e.value||'').trim():'';}
-  return {sub:v('ig-sub'),teem:v('ig-teem'),stem:v('ig-stem'),options:{A:v('ig-a'),B:v('ig-b'),C:v('ig-c'),D:v('ig-d')},answer:(document.getElementById('ig-ans')||{}).value||'A',explanation:v('ig-exp')};
+  return {sub:v('ig-sub'),teem:v('ig-teem'),stem:v('ig-stem'),options:{A:v('ig-a'),B:v('ig-b'),C:v('ig-c'),D:v('ig-d')},answer:(document.getElementById('ig-ans')||{}).value||'A',explanation:v('ig-exp'),img:igDraftImg};
 }
 function igFillForm(it){
   igSetV('ig-sub',it.sub);igSetV('ig-teem',it.teem||'');igSetV('ig-stem',it.stem||'');
   var op=it.options||{};igSetV('ig-a',op.A||'');igSetV('ig-b',op.B||'');igSetV('ig-c',op.C||'');igSetV('ig-d',op.D||'');
   var an=document.getElementById('ig-ans');if(an)an.value=it.answer||'A';igSetV('ig-exp',it.explanation||'');
+  igDraftImg=it.img||'';igRenderImgPrev();
+}
+// Imagem opcional do enunciado (mesmo padrão do banco de questões): base64 no draft.
+function igRenderImgPrev(){
+  var pv=document.getElementById('ig-imgprev');if(!pv)return;
+  pv.innerHTML=igDraftImg?'<div style="display:flex;align-items:center;gap:.6rem;background:var(--s2);border:1px solid var(--bd);border-radius:var(--rs);padding:.5rem .7rem"><img src="'+esc(igDraftImg)+'" style="height:54px;border-radius:6px"><span style="flex:1;font-size:.74rem;color:var(--t2)">Imagem do enunciado</span><button class="btn btn-ghost btn-sm" id="ig-imgclear">✕</button></div>':'';
+  var cl=document.getElementById('ig-imgclear');if(cl)cl.addEventListener('click',function(){igDraftImg='';igRenderImgPrev();});
+}
+function igHandleImg(f){
+  if(!/^image\//.test(f.type)){notify('Selecione uma imagem.','err');return;}
+  if(f.size>5*1024*1024){notify('Imagem muito grande (máx 5 MB).','err');return;}
+  var r=new FileReader();r.onload=function(ev){igDraftImg=ev.target.result;igRenderImgPrev();};r.readAsDataURL(f);
 }
 function igValidDraft(d){
   if(!d.stem){notify('Escreva o enunciado.','err');return false;}
@@ -7799,10 +7814,14 @@ function admStoriesHTML(){
    +'<span id="ig-gen-status" style="font-size:.72rem;color:var(--t3)"></span></div>'
    +igLbl('Atribuição TEEM (opcional — só se for questão do TEEM)')+'<input id="ig-teem" placeholder="(TEEM 2026)" style="margin-bottom:.6rem">'
    +igLbl('Enunciado')+'<textarea id="ig-stem" rows="4" placeholder="Vinheta clínica curta e objetiva…" style="margin-bottom:.6rem"></textarea>'
-   +'<div style="display:grid;grid-template-columns:1fr 1fr;gap:.5rem;margin-bottom:.6rem">'
-   +'<label>'+igLbl('A')+'<input id="ig-a"></label><label>'+igLbl('B')+'<input id="ig-b"></label>'
-   +'<label>'+igLbl('C')+'<input id="ig-c"></label><label>'+igLbl('D')+'<input id="ig-d"></label></div>'
-   +'<label style="display:block;width:150px;margin-bottom:.6rem">'+igLbl('Alternativa correta')+'<select id="ig-ans">'+ansOpts+'</select></label>'
+   +igLbl('Imagem no enunciado (opcional)')+'<div class="art-drop" id="ig-imgdrop" style="padding:1rem;margin-bottom:.5rem"><div style="font-size:1.3rem">🖼️</div><div style="font-size:.76rem;font-weight:600;color:var(--tx)">Clique ou arraste uma imagem</div><div style="font-size:.64rem;color:var(--t3)">JPG, PNG, GIF · Máx. 5 MB</div></div><input type="file" id="ig-imgfile" accept="image/*" style="display:none"><div id="ig-imgprev" style="margin-bottom:.6rem"></div>'
+   +igLbl('Alternativas')+'<div style="margin-bottom:.6rem">'
+   +'<div style="display:flex;gap:.4rem;align-items:center;margin-bottom:.35rem"><span style="font-weight:700;color:var(--blue);width:16px;flex-shrink:0">A</span><input type="text" id="ig-a" style="flex:1"></div>'
+   +'<div style="display:flex;gap:.4rem;align-items:center;margin-bottom:.35rem"><span style="font-weight:700;color:var(--blue);width:16px;flex-shrink:0">B</span><input type="text" id="ig-b" style="flex:1"></div>'
+   +'<div style="display:flex;gap:.4rem;align-items:center;margin-bottom:.35rem"><span style="font-weight:700;color:var(--blue);width:16px;flex-shrink:0">C</span><input type="text" id="ig-c" style="flex:1"></div>'
+   +'<div style="display:flex;gap:.4rem;align-items:center;margin-bottom:.35rem"><span style="font-weight:700;color:var(--blue);width:16px;flex-shrink:0">D</span><input type="text" id="ig-d" style="flex:1"></div>'
+   +'</div>'
+   +'<label style="display:block;width:110px;margin-bottom:.6rem">'+igLbl('Gabarito')+'<select id="ig-ans">'+ansOpts+'</select></label>'
    +igLbl('Explicação (resposta comentada no app)')+'<textarea id="ig-exp" rows="3" placeholder="Por que a resposta correta é essa, citando o critério/diretriz…"></textarea>'
    +'<div style="display:flex;gap:.5rem;flex-wrap:wrap;margin-top:.8rem">'
    +'<button class="btn btn-outline btn-sm" id="ig-preview">👁 Pré-visualizar</button>'
@@ -7872,7 +7891,7 @@ function renderIgLote(){
 function bindAdmStories(){
   igEditId=null;
   var manToggle=document.getElementById('ig-manual-toggle');
-  if(manToggle)manToggle.addEventListener('click',function(){var w=document.getElementById('ig-manual-wrap');if(!w)return;w.style.display='';igEditId=null;['ig-teem','ig-stem','ig-a','ig-b','ig-c','ig-d','ig-exp'].forEach(function(id){var e=document.getElementById(id);if(e)e.value='';});var an=document.getElementById('ig-ans');if(an)an.value='A';var pw=document.getElementById('ig-prev-wrap');if(pw)pw.style.display='none';try{document.getElementById('ig-stem').scrollIntoView({behavior:'smooth',block:'center'});}catch(e){}});
+  if(manToggle)manToggle.addEventListener('click',function(){var w=document.getElementById('ig-manual-wrap');if(!w)return;w.style.display='';igEditId=null;['ig-teem','ig-stem','ig-a','ig-b','ig-c','ig-d','ig-exp'].forEach(function(id){var e=document.getElementById(id);if(e)e.value='';});var an=document.getElementById('ig-ans');if(an)an.value='A';igDraftImg='';igRenderImgPrev();var pw=document.getElementById('ig-prev-wrap');if(pw)pw.style.display='none';try{document.getElementById('ig-stem').scrollIntoView({behavior:'smooth',block:'center'});}catch(e){}});
   var promoToggle=document.getElementById('ig-promo-toggle');
   if(promoToggle)promoToggle.addEventListener('click',function(){var w=document.getElementById('ig-promo-wrap');if(!w)return;w.style.display=(w.style.display==='none'||!w.style.display)?'':'none';});
   var gen=document.getElementById('ig-gen');
@@ -7929,12 +7948,15 @@ function bindAdmStories(){
   var appr=document.getElementById('ig-approve');
   if(appr)appr.addEventListener('click',function(){
     var d=igReadDraft();if(!igValidDraft(d))return;
-    if(igEditId){var it=igStories.filter(function(x){return x.id===igEditId;})[0];if(it){it.sub=d.sub;it.teem=d.teem;it.stem=d.stem;it.options=d.options;it.answer=d.answer;it.explanation=d.explanation;}notify('Questão atualizada na fila.','ok');}
-    else{igStories.push({id:'ig-'+Date.now()+'-'+Math.round(Math.random()*1e6),sub:d.sub,teem:d.teem,stem:d.stem,options:d.options,answer:d.answer,explanation:d.explanation,status:'queued',createdAt:Date.now()});notify('Questão aprovada e adicionada à fila.','ok');}
+    if(igEditId){var it=igStories.filter(function(x){return x.id===igEditId;})[0];if(it){it.sub=d.sub;it.teem=d.teem;it.stem=d.stem;it.options=d.options;it.answer=d.answer;it.explanation=d.explanation;it.img=d.img||'';}notify('Questão atualizada na fila.','ok');}
+    else{igStories.push({id:'ig-'+Date.now()+'-'+Math.round(Math.random()*1e6),sub:d.sub,teem:d.teem,stem:d.stem,options:d.options,answer:d.answer,explanation:d.explanation,img:d.img||'',status:'queued',createdAt:Date.now()});notify('Questão aprovada e adicionada à fila.','ok');}
     igEditId=null;persistIgStories();renderAdmSec('stories');
   });
   var clr=document.getElementById('ig-clear');
-  if(clr)clr.addEventListener('click',function(){igEditId=null;renderAdmSec('stories');});
+  if(clr)clr.addEventListener('click',function(){igEditId=null;igDraftImg='';renderAdmSec('stories');});
+  var idp=document.getElementById('ig-imgdrop'),ifl=document.getElementById('ig-imgfile');
+  if(idp&&ifl){idp.addEventListener('click',function(){ifl.click();});['dragenter','dragover'].forEach(function(ev){idp.addEventListener(ev,function(e){e.preventDefault();idp.classList.add('drag');});});['dragleave','drop'].forEach(function(ev){idp.addEventListener(ev,function(e){e.preventDefault();idp.classList.remove('drag');});});idp.addEventListener('drop',function(e){if(e.dataTransfer.files&&e.dataTransfer.files[0])igHandleImg(e.dataTransfer.files[0]);});ifl.addEventListener('change',function(e){if(e.target.files[0])igHandleImg(e.target.files[0]);});}
+  igRenderImgPrev();
   var main=document.getElementById('adm-main');
   main.querySelectorAll('[data-ig-load]').forEach(function(b){b.addEventListener('click',function(){var it=igStories[parseInt(b.dataset.igLoad,10)];if(!it)return;igEditId=it.id;var w=document.getElementById('ig-manual-wrap');if(w)w.style.display='';igFillForm(it);try{document.getElementById('ig-stem').scrollIntoView({behavior:'smooth',block:'center'});}catch(e){}notify('Editando — altere e clique em "Aprovar" para salvar.','ok');});});
   main.querySelectorAll('[data-ig-dlq]').forEach(function(b){b.addEventListener('click',function(){var it=igStories[parseInt(b.dataset.igDlq,10)];if(it)igDownload('q',it,'endodireto-'+igFnameSub(it)+'-pergunta.png').catch(function(e){notify((e&&e.message)||'Falha.','err');});});});
