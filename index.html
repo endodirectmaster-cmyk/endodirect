@@ -1979,6 +1979,7 @@ html[data-theme="light"] .dir-back{background:#f8f9fc;border-color:var(--bd2);co
           <button class="adm-nav" data-asec="mapas">✦ Mapas Mentais</button>
           <button class="adm-nav" data-asec="flashcards">🃏 Flashcards</button>
           <button class="adm-nav" data-asec="stories">📲 Questão do Dia</button>
+          <button class="adm-nav" data-asec="pendencias">📥 Pendências <span class="tag" id="adm-pend-badge" style="display:none;margin-left:.15rem"></span></button>
           <button class="adm-nav" data-asec="calc">🧮 Calculadoras</button>
           <button class="adm-nav" data-asec="consultorio">⚕️ Consultório</button>
           <button class="adm-nav" data-asec="rx">💊 Prescrição Comentada</button>
@@ -2773,6 +2774,24 @@ var globalServerKeys={};
 // É gravada pelo admin (vai no globalStatePayload); o cron do radar só LÊ (lembrete
 // diário). A trava ig_notice_sent é do SERVIDOR (preservada como as newsletter_*).
 var igStories=lsGet('ig_stories')||[];
+// Curadoria DISTRIBUÍDA da Questão do Dia (confirmado pelo usuário 2026-06-24): o
+// dono (Rodolpho) gera e DISTRIBUI; cada professor revisa/aprova só as SUAS
+// subespecialidades na aba "Pendências". igPending vive no estado GLOBAL (os outros
+// admins precisam ver) → entra no globalStatePayload e nas chaves de merge.
+var igPending=lsGet('ig_pending')||[];
+var QOTD_OWNERS=['rodolphomend@gmail.com','endodirectmaster@gmail.com']; // veem o gerador "Questão do Dia"
+var QOTD_CURATORS=[
+  {nome:'Rodolpho',emails:['rodolphomend@gmail.com','endodirectmaster@gmail.com'],subs:['Obesidade','Lípides','Neuroendocrinologia']},
+  {nome:'Rafael',emails:['drrafaelgiorgi@hotmail.com'],subs:['Adrenal','Endocrinologia do Esporte','Endocrinologia Feminina','Endocrinologia Masculina']},
+  {nome:'Eduardo',emails:['nakamura.epm79@gmail.com'],subs:['Diabetes','Tireoide','Osteometabolismo','Transgeneridade']},
+  {nome:'Bruno',emails:['brunosimiao1906@gmail.com'],subs:['Endocrinologia Pediátrica']}
+];
+function admEmail(){return String((currentUser&&currentUser.email)||(admPerfil&&admPerfil.email)||'').trim().toLowerCase();}
+function isQotdOwner(){return QOTD_OWNERS.indexOf(admEmail())>=0;}
+function qotdSubsForEmail(email){email=String(email||'').trim().toLowerCase();for(var i=0;i<QOTD_CURATORS.length;i++){if(QOTD_CURATORS[i].emails.indexOf(email)>=0)return QOTD_CURATORS[i].subs;}return [];}
+function qotdCuratorForSub(sub){for(var i=0;i<QOTD_CURATORS.length;i++){if(QOTD_CURATORS[i].subs.indexOf(sub)>=0)return QOTD_CURATORS[i];}return null;}
+function qotdMyPending(){var subs=qotdSubsForEmail(admEmail());return (igPending||[]).filter(function(it){return it&&subs.indexOf(it.sub)>=0;});}
+function persistIgPending(){try{lsSet('ig_pending',igPending);}catch(e){}queueRemoteStateSave();}
 var igStoryDraft=null; // rascunho em edição (gerado pela IA ou manual)
 // Proteção de concorrência do estado GLOBAL: guarda o updated_at lido na carga/
 // último save; se o servidor mudou desde então (outro admin gravou), o save mescla
@@ -2789,7 +2808,9 @@ var GLOBAL_MERGE_KEYS={
   diretrizes:function(it){return (it.fonte||'')+'|'+(it.tema||it.titulo||'')+'|'+(it.sub||'');},
   diretrizes_temas:function(it){return (it.sub||'')+'|'+(it.tema||'');},
   curso_mods_extra:function(it){return (it.curso||'')+'|'+(it.modulo||'');},
-  adm_estudantes:function(it){return (it.email||it.cpf||it.nome||'');}
+  adm_estudantes:function(it){return (it.email||it.cpf||it.nome||'');},
+  ig_stories:function(it){return it.id||((it.stem||'')+'|'+(it.answer||''));},
+  ig_pending:function(it){return it.id||((it.stem||'')+'|'+(it.answer||''));}
 };
 // Snapshot das chaves que esta sessão tinha (por coleção) na última sincronização
 // com o servidor. É o que permite distinguir "adição de outro editor" (chave nova
@@ -2853,7 +2874,7 @@ function globalStatePayload(){
   // professor grava apenas os avisos manuais em adm_avisos. A leitura
   // (member_content/public_content) mescla os dois.
   // Mescla as chaves geridas pelo servidor (newsletter_*) para NÃO apagá-las no save.
-  return Object.assign({},globalServerKeys,{provas:provasDB,adm_avisos:admAvisos.filter(function(a){return !isRadarAuto(a);}),radar_avisos:radarAvisos,radar_hidden:radarHidden,adm_questoes:admQuestoes,podcasts:podcasts,adm_cursos:admCursos,curso_mods_extra:admCursoModsExtra,adm_estudantes:admEstudantes,mm_shared:sharedMM,fc_shared:fcShared,diretrizes:diretrizes,diretrizes_temas:dirTemasExtra,ig_stories:igStories});
+  return Object.assign({},globalServerKeys,{provas:provasDB,adm_avisos:admAvisos.filter(function(a){return !isRadarAuto(a);}),radar_avisos:radarAvisos,radar_hidden:radarHidden,adm_questoes:admQuestoes,podcasts:podcasts,adm_cursos:admCursos,curso_mods_extra:admCursoModsExtra,adm_estudantes:admEstudantes,mm_shared:sharedMM,fc_shared:fcShared,diretrizes:diretrizes,diretrizes_temas:dirTemasExtra,ig_stories:igStories,ig_pending:igPending});
 }
 function currentStatePayload(){
   return Object.assign({},userStatePayload(),globalStatePayload());
@@ -2895,6 +2916,7 @@ function applyStatePayload(payload,personalOnly){
     if(Array.isArray(payload.acessos))userAcessos=payload.acessos;
     if(Array.isArray(payload.cursos))catalogoCursos=payload.cursos;
     if(Array.isArray(payload.ig_stories)){igStories=payload.ig_stories;try{lsSet('ig_stories',igStories);}catch(e){}}
+    if(Array.isArray(payload.ig_pending)){igPending=payload.ig_pending;try{lsSet('ig_pending',igPending);}catch(e){}try{updateAdmPendBadge();}catch(e){}}
     // Preserva chaves geridas pelo servidor (newsletter + lembrete IG) p/ o save do admin não apagá-las.
     ['newsletter_extra','newsletter_unsub','newsletter_sent','newsletter','newsletter_recent','ig_notice_sent'].forEach(function(k){if(payload[k]!==undefined)globalServerKeys[k]=payload[k];});
   }
@@ -3605,6 +3627,7 @@ function startApp(){
     // um login novo cai no padrão (Analytics) via admRestoreSec().
     goPanel('adm');
     try{loadAdmSupport();}catch(e){} // popula o badge "(N)" do Suporte já no login
+    try{applyQotdNav();}catch(e){} // esconde o gerador "Questão do Dia" p/ não-donos + badge das Pendências
   }else{
     // Reload mantém o último painel; logout limpa last_panel → cai no Mural (homePanel).
     var lastP=lsGet('last_panel');
@@ -7945,6 +7968,57 @@ function igValidDraft(d){
   return true;
 }
 function igLbl(t){return '<div style="font-size:.68rem;color:var(--t2);font-weight:600;margin:0 0 .25rem;text-transform:uppercase;letter-spacing:.04em">'+t+'</div>';}
+// ---------- Pendências: revisão/aprovação das questões DISTRIBUÍDAS (por professor) ----------
+function updateAdmPendBadge(){var b=document.getElementById('adm-pend-badge');if(!b)return;var n=qotdMyPending().length;if(n>0){b.textContent=n;b.style.display='';}else{b.textContent='';b.style.display='none';}}
+// Esconde o gerador "Questão do Dia" de quem não é dono e atualiza o badge das Pendências.
+function applyQotdNav(){var st=document.querySelector('.adm-nav[data-asec="stories"]');if(st)st.style.display=isQotdOwner()?'':'none';updateAdmPendBadge();}
+function admPendCardHTML(it){
+  var id=esc(it.id);
+  var optRows=['A','B','C','D'].map(function(L){
+    return '<div style="display:flex;gap:.4rem;align-items:center;margin-bottom:.3rem"><span style="font-weight:700;color:var(--blue);width:16px;flex-shrink:0">'+L+'</span><input type="text" id="pend-'+L+'-'+id+'" value="'+esc((it.options||{})[L]||'')+'" style="flex:1"></div>';
+  }).join('');
+  var ansOpts=['A','B','C','D'].map(function(L){return '<option value="'+L+'"'+(it.answer===L?' selected':'')+'>'+L+'</option>';}).join('');
+  var by=it.distributedBy?'<span style="font-size:.7rem;color:var(--t3)">distribuída por '+esc(it.distributedBy)+'</span>':'';
+  return '<div class="card" data-pend-card="'+id+'" style="margin-bottom:1rem">'
+    +'<div style="display:flex;justify-content:space-between;gap:.5rem;flex-wrap:wrap;align-items:center;margin-bottom:.55rem">'
+      +'<div style="font-size:.85rem;font-weight:700;color:var(--tx)">'+dirSubIcon(it.sub)+' '+esc(it.sub||'')+(it.teem?' <span class="tag">'+esc(it.teem)+'</span>':'')+'</div>'
+      +'<span class="tag tag-blue">aguardando revisão</span></div>'
+    +igLbl('Enunciado')+'<textarea id="pend-stem-'+id+'" rows="4" style="width:100%;margin-bottom:.5rem">'+esc(it.stem||'')+'</textarea>'
+    +igLbl('Alternativas')+'<div style="margin-bottom:.5rem">'+optRows+'</div>'
+    +'<label style="display:block;width:90px;margin-bottom:.5rem">'+igLbl('Gabarito')+'<select id="pend-ans-'+id+'">'+ansOpts+'</select></label>'
+    +igLbl('Comentário (resposta comentada no app)')+'<textarea id="pend-exp-'+id+'" rows="3" style="width:100%;margin-bottom:.6rem">'+esc(it.explanation||'')+'</textarea>'
+    +'<div style="display:flex;gap:.5rem;flex-wrap:wrap;align-items:center"><button class="btn btn-primary btn-sm" data-pend-ok="'+id+'">✓ Aprovar e publicar</button><button class="btn btn-outline btn-sm" data-pend-del="'+id+'">🗑 Descartar</button>'+by+'</div>'
+  +'</div>';
+}
+function admPendenciasHTML(){
+  var subs=qotdSubsForEmail(admEmail());
+  var mine=qotdMyPending();
+  var head='<div class="adm-ph"><h1>📥 Pendências</h1></div><div class="adm-pc">';
+  var intro='<div class="card" style="margin-bottom:1rem"><div style="font-size:.78rem;color:var(--t2);line-height:1.6">Questões da <b>Questão do Dia</b> distribuídas para você revisar, corrigir se preciso e <b>aprovar</b> — ao aprovar, a questão é publicada na fila da Questão do Dia. Suas subespecialidades: <b>'+(subs.length?esc(subs.join(' · ')):'nenhuma atribuída')+'</b>.</div></div>';
+  if(!subs.length)return head+intro+'<div class="card"><div class="empty">Você não tem subespecialidades atribuídas para curadoria.</div></div></div>';
+  if(!mine.length)return head+intro+'<div class="card"><div class="empty">Nenhuma pendência no momento. 🎉</div></div></div>';
+  return head+intro+mine.map(admPendCardHTML).join('')+'</div>';
+}
+function pendFindIdx(id){for(var i=0;i<igPending.length;i++){if(igPending[i].id===id)return i;}return -1;}
+function pendApprove(id){
+  var idx=pendFindIdx(id);if(idx<0)return;var it=igPending[idx];
+  function val(p){var e=document.getElementById(p+id);return e?String(e.value||'').trim():'';}
+  var stem=val('pend-stem-')||it.stem;
+  var options={A:val('pend-A-'),B:val('pend-B-'),C:val('pend-C-'),D:val('pend-D-')};
+  var answer=(document.getElementById('pend-ans-'+id)||{}).value||it.answer||'A';
+  var explanation=val('pend-exp-');
+  if(!stem||!options.A||!options.B||!options.C||!options.D){notify('Preencha o enunciado e as 4 alternativas.','err');return;}
+  igStories.push({id:'ig-'+Date.now()+'-'+Math.round(Math.random()*1e6),sub:it.sub,teem:it.teem||'',stem:stem,options:options,answer:answer,explanation:explanation,img:it.img||'',status:'queued',createdAt:Date.now()});
+  igPending.splice(idx,1);
+  persistIgStories();persistIgPending();updateAdmPendBadge();
+  notify('Aprovada e publicada na Questão do Dia.','ok');renderAdmSec('pendencias');
+}
+function pendDiscard(id){var idx=pendFindIdx(id);if(idx<0)return;if(!confirm('Descartar esta questão? Ela não será publicada.'))return;igPending.splice(idx,1);persistIgPending();updateAdmPendBadge();notify('Questão descartada.','ok');renderAdmSec('pendencias');}
+function bindAdmPendencias(){
+  var host=document.getElementById('adm-main');if(!host)return;
+  host.querySelectorAll('[data-pend-ok]').forEach(function(b){b.addEventListener('click',function(){pendApprove(b.dataset.pendOk);});});
+  host.querySelectorAll('[data-pend-del]').forEach(function(b){b.addEventListener('click',function(){pendDiscard(b.dataset.pendDel);});});
+}
 function admStoriesHTML(){
   var subs=DIR_SUBS.map(function(s){return '<option>'+esc(s)+'</option>';}).join('');
   var ansOpts=['A','B','C','D'].map(function(L){return '<option value="'+L+'">'+L+'</option>';}).join('');
@@ -8001,7 +8075,8 @@ function admStoriesHTML(){
    +'<button class="btn btn-outline btn-sm" id="ig-preview">👁 Pré-visualizar</button>'
    +'<button class="btn btn-outline btn-sm" id="ig-dlq">⬇ Baixar imagem</button>'
    +'<button class="btn btn-outline btn-sm" id="ig-copyq">📋 Copiar legenda</button>'
-   +'<button class="btn btn-primary btn-sm" id="ig-approve">✓ Aprovar p/ a fila</button>'
+   +'<button class="btn btn-primary btn-sm" id="ig-distribute">📤 Distribuir</button>'
+   +'<button class="btn btn-outline btn-sm" id="ig-approve">✓ Aprovar p/ a fila</button>'
    +'<button class="btn btn-outline btn-sm" id="ig-clear">Limpar / fechar</button></div>'
    +'<div id="ig-prev-wrap" style="display:none;gap:1rem;margin-top:1rem;flex-wrap:wrap;justify-content:center">'
    +'<div style="text-align:center">'+igLbl('Imagem do caso (story)')+'<img id="ig-prev-q" alt="" style="width:190px;border-radius:12px;border:1px solid var(--bd)"></div></div>'
@@ -8041,6 +8116,11 @@ function igGenOne(sub,topic){
 function igLoteToQueue(it){igStories.push({id:'ig-'+Date.now()+'-'+Math.round(Math.random()*1e6),sub:it.sub,teem:it.teem||'',stem:it.stem,options:it.options,answer:it.answer,explanation:it.explanation,status:'queued',createdAt:Date.now()});}
 function igLoteApprove(i){var it=igLoteDraft[i];if(!it)return;igLoteToQueue(it);igLoteDraft.splice(i,1);persistIgStories();notify('Aprovada e adicionada à fila.','ok');renderAdmSec('stories');}
 function igLoteApproveAll(){if(!igLoteDraft.length)return;var n=igLoteDraft.length;igLoteDraft.forEach(igLoteToQueue);igLoteDraft=[];persistIgStories();notify(n+' questões aprovadas.','ok');renderAdmSec('stories');}
+// DISTRIBUIR: envia a questão para a aba Pendências do professor responsável (pela
+// subespecialidade). Vive no estado global; o professor aprova/edita lá.
+function igMakePending(it){return {id:'igp-'+Date.now()+'-'+Math.round(Math.random()*1e6),sub:it.sub,teem:it.teem||'',stem:it.stem,options:it.options,answer:it.answer,explanation:it.explanation||'',img:it.img||'',status:'pending',distributedBy:admEmail(),distributedAt:Date.now()};}
+function igDistribute(i){var it=igLoteDraft[i];if(!it)return;igPending.push(igMakePending(it));igLoteDraft.splice(i,1);persistIgPending();var c=qotdCuratorForSub(it.sub);notify('Distribuída para '+(c?c.nome:'Pendências')+' ('+esc(it.sub||'')+').','ok');renderAdmSec('stories');}
+function igDistributeAll(){if(!igLoteDraft.length)return;var n=igLoteDraft.length;igLoteDraft.forEach(function(it){igPending.push(igMakePending(it));});igLoteDraft=[];persistIgPending();notify(n+' questões distribuídas.','ok');renderAdmSec('stories');}
 function igLoteEdit(i){var it=igLoteDraft[i];if(!it)return;igEditId=null;var w=document.getElementById('ig-manual-wrap');if(w)w.style.display='';igFillForm(it);igLoteDraft.splice(i,1);renderIgLote();try{document.getElementById('ig-stem').scrollIntoView({behavior:'smooth',block:'center'});}catch(e){}notify('Carregada no formulário — edite e clique em "Aprovar p/ a fila".','ok');}
 function renderIgLote(){
   var res=document.getElementById('ig-lote-results');if(!res)return;
@@ -8048,18 +8128,21 @@ function renderIgLote(){
   res.innerHTML='<div style="font-size:.74rem;color:var(--t2);margin:.2rem 0 .5rem">'+igLoteDraft.length+' gerada(s) — revise e aprove:</div>'+igLoteDraft.map(function(it,i){
     return '<div style="border:1px solid var(--bd);border-radius:12px;padding:.7rem .8rem;margin-bottom:.5rem;background:var(--s2)">'
       +'<div style="display:flex;justify-content:space-between;gap:.5rem;flex-wrap:wrap;align-items:center;margin-bottom:.35rem">'
-      +'<div style="font-size:.8rem;font-weight:700;color:var(--tx)">'+dirSubIcon(it.sub)+' '+esc(it.sub||'')+' <span class="tag tag-blue">Gab: '+esc(it.answer)+'</span></div>'
+      +'<div style="font-size:.8rem;font-weight:700;color:var(--tx)">'+dirSubIcon(it.sub)+' '+esc(it.sub||'')+' <span class="tag tag-blue">Gab: '+esc(it.answer)+'</span>'+(qotdCuratorForSub(it.sub)?' <span class="tag">→ '+esc(qotdCuratorForSub(it.sub).nome)+'</span>':'')+'</div>'
       +'<div style="display:flex;gap:.3rem;flex-wrap:wrap">'
-      +'<button class="btn btn-primary btn-sm" data-iglote-ok="'+i+'">✓ Aprovar</button>'
+      +'<button class="btn btn-primary btn-sm" data-iglote-dist="'+i+'">📤 Distribuir</button>'
+      +'<button class="btn btn-outline btn-sm" data-iglote-ok="'+i+'">✓ Aprovar</button>'
       +'<button class="btn btn-outline btn-sm" data-iglote-edit="'+i+'">✎ Editar</button>'
       +'<button class="btn btn-outline btn-sm" data-iglote-del="'+i+'">🗑</button>'
       +'</div></div>'
       +'<div style="font-size:.74rem;color:var(--t2);line-height:1.5">'+esc(String(it.stem||'').slice(0,220))+(String(it.stem||'').length>220?'…':'')+'</div>'
       +'</div>';
-  }).join('')+(igLoteDraft.length>1?'<button class="btn btn-primary btn-sm" id="ig-lote-okall">✓ Aprovar todas ('+igLoteDraft.length+')</button>':'');
+  }).join('')+(igLoteDraft.length>1?'<div style="display:flex;gap:.4rem;flex-wrap:wrap"><button class="btn btn-primary btn-sm" id="ig-lote-distall">📤 Distribuir todas ('+igLoteDraft.length+')</button><button class="btn btn-outline btn-sm" id="ig-lote-okall">✓ Aprovar todas</button></div>':'');
+  res.querySelectorAll('[data-iglote-dist]').forEach(function(b){b.addEventListener('click',function(){igDistribute(parseInt(b.dataset.igloteDist,10));});});
   res.querySelectorAll('[data-iglote-ok]').forEach(function(b){b.addEventListener('click',function(){igLoteApprove(parseInt(b.dataset.igloteOk,10));});});
   res.querySelectorAll('[data-iglote-edit]').forEach(function(b){b.addEventListener('click',function(){igLoteEdit(parseInt(b.dataset.igloteEdit,10));});});
   res.querySelectorAll('[data-iglote-del]').forEach(function(b){b.addEventListener('click',function(){igLoteDraft.splice(parseInt(b.dataset.igloteDel,10),1);renderIgLote();});});
+  var distall=document.getElementById('ig-lote-distall');if(distall)distall.addEventListener('click',igDistributeAll);
   var okall=document.getElementById('ig-lote-okall');if(okall)okall.addEventListener('click',igLoteApproveAll);
 }
 function bindAdmStories(){
@@ -8126,6 +8209,8 @@ function bindAdmStories(){
     else{igStories.push({id:'ig-'+Date.now()+'-'+Math.round(Math.random()*1e6),sub:d.sub,teem:d.teem,stem:d.stem,options:d.options,answer:d.answer,explanation:d.explanation,img:d.img||'',status:'queued',createdAt:Date.now()});notify('Questão aprovada e adicionada à fila.','ok');}
     igEditId=null;persistIgStories();renderAdmSec('stories');
   });
+  var dist=document.getElementById('ig-distribute');
+  if(dist)dist.addEventListener('click',function(){var d=igReadDraft();if(!igValidDraft(d))return;igPending.push(igMakePending(d));persistIgPending();var c=qotdCuratorForSub(d.sub);igEditId=null;igDraftImg='';notify('Distribuída para '+(c?c.nome:'Pendências')+' ('+esc(d.sub||'')+').','ok');renderAdmSec('stories');});
   var clr=document.getElementById('ig-clear');
   if(clr)clr.addEventListener('click',function(){igEditId=null;igDraftImg='';renderAdmSec('stories');});
   var idp=document.getElementById('ig-imgdrop'),ifl=document.getElementById('ig-imgfile');
@@ -8165,10 +8250,11 @@ function restoreRxPanel(){
   if(rp&&__rxHome&&rp.parentNode!==__rxHome){__rxHome.appendChild(rp);rp.classList.remove('on');rp.style.display='';}
 }
 function renderAdmSec(sec){
+  if(sec==='stories'&&!isQotdOwner())sec='pendencias'; // o gerador da Questão do Dia é só do dono; os demais caem nas Pendências
   admCurrentSec=sec;
   try{lsSet('adm_sec',sec);}catch(e){}
   document.querySelectorAll('.adm-nav[data-asec]').forEach(function(b){b.classList.toggle('on',b.dataset.asec===sec);});
-  var titles={provas:'Provas & Questões',cursos:'Cursos',estudantes:'Estudantes',analytics:'Analytics',mural:'Mural',ref:'Diretrizes',conteudo:'Podcasts',mapas:'Mapas Mentais',flashcards:'Flashcards',stories:'Questão do Dia (Stories)',calc:'Calculadoras',consultorio:'Consultório',rx:'Prescrição Comentada',chat:'Chat',perfil:'Perfil',suporte:'Suporte'};
+  var titles={provas:'Provas & Questões',cursos:'Cursos',estudantes:'Estudantes',analytics:'Analytics',mural:'Mural',ref:'Diretrizes',conteudo:'Podcasts',mapas:'Mapas Mentais',flashcards:'Flashcards',stories:'Questão do Dia (Stories)',pendencias:'Pendências',calc:'Calculadoras',consultorio:'Consultório',rx:'Prescrição Comentada',chat:'Chat',perfil:'Perfil',suporte:'Suporte'};
   setText('adm-sec-title',titles[sec]||sec);
   var m=document.getElementById('adm-main');if(!m)return;
   // SEMPRE devolve os painéis movidos (#panel-presc / #mm-live) para o lugar de
@@ -8204,6 +8290,7 @@ function renderAdmSec(sec){
   else if(sec==='mapas')m.innerHTML=admMapasHTML();
   else if(sec==='flashcards')m.innerHTML=admFlashHTML();
   else if(sec==='stories')m.innerHTML=admStoriesHTML();
+  else if(sec==='pendencias')m.innerHTML=admPendenciasHTML();
   bindAdmSec(sec);
 }
 
@@ -9176,6 +9263,7 @@ function bindAdmSec(sec){
     return;
   }
   if(sec==='stories'){bindAdmStories();return;}
+  if(sec==='pendencias'){bindAdmPendencias();return;}
 
   if(sec==='cursos'){
     main.querySelectorAll('[data-csub]').forEach(function(b){b.addEventListener('click',function(){admCursoSubtab=b.dataset.csub;admCursoEditIdx=null;admCursoAddMod='';renderAdmSec('cursos');});});
