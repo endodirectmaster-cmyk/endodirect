@@ -4633,8 +4633,8 @@ function qotdCardHTML(q,ans){
   return '<div class="card" style="border:1px solid var(--gold);margin:0">'
     +'<div style="display:flex;justify-content:space-between;align-items:center;gap:.5rem;flex-wrap:wrap;margin-bottom:.5rem">'
     +'<span style="font-weight:800;color:var(--gold);font-size:.92rem">🧠 Questão do Dia</span>'
-    +(q.sub?'<span class="tag tag-blue" style="font-size:.62rem">'+esc(q.sub)+'</span>':'')+'</div>'
-    +'<div class="ai-md" style="font-size:.86rem;line-height:1.55;color:var(--tx);margin-bottom:.7rem">'+mdToHtml((q.teem?String(q.teem).trim()+' ':'')+String(q.stem).trim())+'</div>'
+    +'</div>'
+    +'<div style="font-size:.86rem;line-height:1.55;color:var(--tx);margin-bottom:.7rem">'+esc((q.teem?String(q.teem).trim()+' ':'')+String(q.stem).trim())+'</div>'
     +'<div style="display:flex;flex-direction:column;gap:.4rem">'+opts+'</div>'
     +'<div id="qotd-fb">'+fb+'</div>'
     +'</div>';
@@ -7650,23 +7650,13 @@ function igWrap(txt,font,maxW){
 }
 function igTspans(lines,x,y,lh){return lines.map(function(l,i){return '<tspan x="'+x+'" y="'+(y+i*lh)+'">'+igXml(l)+'</tspan>';}).join('');}
 function igDoc(inner){return '<svg xmlns="http://www.w3.org/2000/svg" width="'+IG_W+'" height="'+IG_H+'" viewBox="0 0 '+IG_W+' '+IG_H+'"><defs><linearGradient id="g" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#0b1325"/><stop offset="1" stop-color="#16233f"/></linearGradient></defs>'+inner+'</svg>';}
-// A arte do Story e a legenda não renderizam markdown — converte a tabela de
-// exames (markdown) em linhas de texto alinhadas e remove a linha separadora |---|.
-function igStemText(s){
-  return String(s||'').split('\n').filter(function(l){return !isMarkdownTableSep(l);}).map(function(l){
-    var t=l.trim();
-    if(/^\|.*\|$/.test(t))return t.replace(/^\||\|$/g,'').split('|').map(function(c){return c.trim();}).filter(function(c){return c!=='';}).join(' · ');
-    return l;
-  }).join('\n').replace(/\n{3,}/g,'\n\n').trim();
-}
 function igQuestionSVG(it){
   var op=it.options||{},pad=90,cw=IG_W-2*pad,p=[];
   p.push('<rect width="'+IG_W+'" height="'+IG_H+'" fill="url(#g)"/>');
-  p.push('<text x="'+(IG_W/2)+'" y="300" text-anchor="middle" font-family="Arial,Helvetica,sans-serif" font-weight="800" font-size="40" fill="'+IG_GOLD+'" letter-spacing="3">QUESTÃO DO DIA</text>');
-  p.push('<text x="'+(IG_W/2)+'" y="350" text-anchor="middle" font-family="Arial,Helvetica,sans-serif" font-weight="700" font-size="30" fill="'+IG_TX+'">'+igXml(String(it.sub||'Endocrinologia').toUpperCase())+'</text>');
+  p.push('<text x="'+(IG_W/2)+'" y="318" text-anchor="middle" font-family="Arial,Helvetica,sans-serif" font-weight="800" font-size="40" fill="'+IG_GOLD+'" letter-spacing="3">QUESTÃO DO DIA</text>');
   p.push('<line x1="'+pad+'" y1="392" x2="'+(IG_W-pad)+'" y2="392" stroke="rgba(245,179,44,.45)" stroke-width="3"/>');
   var y=466,stemFont='44px Arial',lh=60;
-  var stem=(it.teem?String(it.teem).trim()+' ':'')+igStemText(it.stem);
+  var stem=(it.teem?String(it.teem).trim()+' ':'')+String(it.stem||'').trim();
   var sl=igWrap(stem,stemFont,cw);
   p.push('<text font-family="Arial,Helvetica,sans-serif" font-size="44" font-weight="500" fill="'+IG_TX+'">'+igTspans(sl,pad,y,lh)+'</text>');
   y+=sl.length*lh+44;
@@ -7739,7 +7729,7 @@ function igDownload(kind,it,filename){
   });
 }
 function igCaptionQ(it){
-  var op=it.options||{},out=['🧠 QUESTÃO DO DIA — '+(it.sub||'Endocrinologia'),'',(it.teem?String(it.teem).trim()+' ':'')+igStemText(it.stem),''];
+  var op=it.options||{},out=['🧠 QUESTÃO DO DIA','',(it.teem?String(it.teem).trim()+' ':'')+String(it.stem||'').trim(),''];
   ['A','B','C','D'].forEach(function(L){if(op[L])out.push(L+') '+String(op[L]).trim());});
   out.push('','📲 Gabarito COMENTADO na plataforma: www.endodirect.com.br','','#endocrinologia #residenciamedica #provadetitulo #endodireto #medicina');
   return out.join('\n');
@@ -7851,7 +7841,7 @@ function igPool(tasks,limit){
   });
 }
 function igGenOne(sub,topic){
-  var sys=authoringSys('Atue como examinador de prova de título em endocrinologia. Gere UMA questão ORIGINAL de '+sub+', EXATAMENTE 4 alternativas (A–D), só uma correta. O enunciado deve TERMINAR SEMPRE com a pergunta direta (ex.: Qual o diagnóstico mais provável? / Qual a melhor conduta?). Quando houver exames laboratoriais, apresente-os como TABELA em markdown no enunciado (colunas Exame | Valor | Referência), com valores e unidades — não resuma como exames normais. Quando pertinente, descreva o achado de imagem no enunciado em texto (ex.: USG de tireoide, ECG, RM de sela). Alternativas CURTAS e concisas (poucas palavras — também vão para o story). JSON APENAS: {"stem":"vinheta clínica curta; exames laboratoriais como TABELA markdown (Exame | Valor | Referência); achado de imagem descrito em texto quando pertinente; TERMINA com a pergunta direta","options":{"A":"alternativa curta","B":"alternativa curta","C":"alternativa curta","D":"alternativa curta"},"answer":"A","explanation":"justificativa de 2-3 frases citando o critério/valor de corte e a diretriz/fonte pelo NOME + ano (sem PMID nem DOI)"}');
+  var sys=authoringSys('Atue como examinador de prova de título em endocrinologia. Gere UMA questão ORIGINAL de '+sub+', EXATAMENTE 4 alternativas (A–D), só uma correta. O enunciado deve TERMINAR SEMPRE com a pergunta direta (ex.: Qual o diagnóstico mais provável? / Qual a melhor conduta?). Inclua os valores laboratoriais pertinentes INLINE no texto, com unidades e valores de referência (ex.: FSH 2,1 mUI/mL [VR 3,5–12,5]) — não resuma como exames normais nem use tabela. Quando pertinente, descreva o achado de imagem no enunciado em texto (ex.: USG de tireoide, ECG, RM de sela). NÃO cite a subespecialidade no enunciado. Alternativas CURTAS e concisas (poucas palavras — também vão para o story). JSON APENAS: {"stem":"vinheta clínica curta; exames laboratoriais inline com valores, unidades e referência; achado de imagem descrito em texto quando pertinente; TERMINA com a pergunta direta","options":{"A":"alternativa curta","B":"alternativa curta","C":"alternativa curta","D":"alternativa curta"},"answer":"A","explanation":"justificativa de 2-3 frases citando o critério/valor de corte e a diretriz/fonte pelo NOME + ano (sem PMID nem DOI)"}');
   return aiRequest({system:sys,prompt:'Gere 1 questão de Endocrinologia — '+sub+(topic?(', tema: '+topic):'')+', nível intermediário, clinicamente precisa e alinhada às diretrizes vigentes. Responda SOMENTE com o objeto JSON.',maxTokens:1100,model:AI_MODEL_CLINICO,grounding:(topic?(sub+' '+topic):sub)})
   .then(function(raw){var d=parseJ(raw);if(!d||!d.stem||!d.options)return null;return {sub:sub,teem:'',stem:String(d.stem||''),options:{A:d.options.A||'',B:d.options.B||'',C:d.options.C||'',D:d.options.D||''},answer:String(d.answer||'A').toUpperCase().slice(0,1),explanation:String(d.explanation||'')};});
 }
@@ -7890,7 +7880,7 @@ function bindAdmStories(){
     var sub=(document.getElementById('ig-sub')||{}).value||'Endocrinologia',topic=((document.getElementById('ig-topic')||{}).value||'').trim();
     var st=document.getElementById('ig-gen-status');
     gen.disabled=true;gen.innerHTML=ldHTML('Gerando...');if(st)st.textContent='';
-    var sys=authoringSys('Atue como examinador de prova de título em endocrinologia. Gere UMA questão ORIGINAL (não copie provas existentes), de '+sub+', com EXATAMENTE 4 alternativas (A–D), só uma correta. O enunciado deve TERMINAR SEMPRE com a pergunta direta (ex.: Qual o diagnóstico mais provável? / Qual a melhor conduta?). Quando houver exames laboratoriais, apresente-os como TABELA em markdown no enunciado (colunas Exame | Valor | Referência), com valores e unidades — não resuma como exames normais. Quando pertinente, descreva o achado de imagem no enunciado em texto (ex.: USG de tireoide, ECG, RM de sela). Alternativas CURTAS e concisas (poucas palavras — também vão para o story). JSON APENAS: {"stem":"vinheta clínica curta; exames laboratoriais como TABELA markdown (Exame | Valor | Referência); achado de imagem descrito em texto quando pertinente; TERMINA com a pergunta direta","options":{"A":"alternativa curta","B":"alternativa curta","C":"alternativa curta","D":"alternativa curta"},"answer":"A","explanation":"justificativa de 2-3 frases citando o critério/valor de corte e a diretriz/fonte pelo NOME + ano (sem PMID nem DOI)"}');
+    var sys=authoringSys('Atue como examinador de prova de título em endocrinologia. Gere UMA questão ORIGINAL (não copie provas existentes), de '+sub+', com EXATAMENTE 4 alternativas (A–D), só uma correta. O enunciado deve TERMINAR SEMPRE com a pergunta direta (ex.: Qual o diagnóstico mais provável? / Qual a melhor conduta?). Inclua os valores laboratoriais pertinentes INLINE no texto, com unidades e valores de referência (ex.: FSH 2,1 mUI/mL [VR 3,5–12,5]) — não resuma como exames normais nem use tabela. Quando pertinente, descreva o achado de imagem no enunciado em texto (ex.: USG de tireoide, ECG, RM de sela). NÃO cite a subespecialidade no enunciado. Alternativas CURTAS e concisas (poucas palavras — também vão para o story). JSON APENAS: {"stem":"vinheta clínica curta; exames laboratoriais inline com valores, unidades e referência; achado de imagem descrito em texto quando pertinente; TERMINA com a pergunta direta","options":{"A":"alternativa curta","B":"alternativa curta","C":"alternativa curta","D":"alternativa curta"},"answer":"A","explanation":"justificativa de 2-3 frases citando o critério/valor de corte e a diretriz/fonte pelo NOME + ano (sem PMID nem DOI)"}');
     aiRequest({system:sys,prompt:'Gere 1 questão de Endocrinologia — '+sub+(topic?(', tema: '+topic):'')+', nível intermediário, clinicamente precisa e alinhada às diretrizes vigentes. Enunciado conciso, adequado a um story do Instagram.',maxTokens:1100,model:AI_MODEL_CLINICO,grounding:(topic?(sub+' '+topic):sub)})
     .then(function(raw){
       var d=parseJ(raw);if(!d||!d.stem||!d.options)throw new Error('Resposta inválida. Tente de novo.');
