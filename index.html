@@ -1943,7 +1943,7 @@ html[data-theme="light"] .dir-back{background:#f8f9fc;border-color:var(--bd2);co
           <button class="adm-nav" data-asec="chat">💬 Chat</button>
           <div class="sb-sec" style="margin-top:.8rem">Conta</div>
           <button class="adm-nav" data-asec="perfil">👤 Perfil</button>
-          <button class="adm-nav" data-asec="suporte">❔ Suporte</button>
+          <button class="adm-nav" data-asec="suporte">❔ Suporte <span class="tag" id="adm-support-badge" style="display:none;margin-left:.15rem"></span></button>
         </div>
         <div style="padding:.55rem;border-top:1px solid rgba(255,255,255,.1)">
           <div class="sb-sec" style="padding-top:0">Sair</div>
@@ -3516,6 +3516,7 @@ function startApp(){
     // Reload mantém a última seção (adm_sec persiste); logout limpa adm_sec, então
     // um login novo cai no padrão (Analytics) via admRestoreSec().
     goPanel('adm');
+    try{loadAdmSupport();}catch(e){} // popula o badge "(N)" do Suporte já no login
   }else{
     // Reload mantém o último painel; logout limpa last_panel → cai no Mural (homePanel).
     var lastP=lsGet('last_panel');
@@ -8026,7 +8027,7 @@ function renderAdmSec(sec){
   else if(sec==='calc')m.innerHTML=admCalcHTML();
   else if(sec==='chat')m.innerHTML=admChatHTML();
   else if(sec==='perfil')m.innerHTML=admPerfilHTML();
-  else if(sec==='suporte')m.innerHTML=admSuporteHTML();
+  else if(sec==='suporte'){m.innerHTML=admSuporteHTML();bindAdmSupportRefresh();loadAdmSupport();}
   else if(sec==='mapas')m.innerHTML=admMapasHTML();
   else if(sec==='flashcards')m.innerHTML=admFlashHTML();
   else if(sec==='stories')m.innerHTML=admStoriesHTML();
@@ -8208,15 +8209,116 @@ function admPerfilHTML(){
 // ---------- SUPORTE ----------
 function admSuporteHTML(){
   return '<div class="adm-ph"><h1>Suporte</h1></div>'
-  +'<div class="adm-pc"><div class="card">'
-    +'<div class="faq-item"><div class="faq-q">Como importar uma prova em PDF? <span>▾</span></div><div class="faq-a">Em Provas &amp; Questões → Importar PDF (IA), arraste o arquivo da prova, defina área/instituição/ano e clique em Extrair com IA. As questões vão para o banco do aluno.</div></div>'
-    +'<div class="faq-item"><div class="faq-q">Como inserir provas anteriores? <span>▾</span></div><div class="faq-a">Em Provas &amp; Questões, use a aba Banco de questões para revisar o acervo ou a aba Inserir manualmente para cadastrar questões avulsas com alternativas, gabarito e comentário.</div></div>'
-    +'<div class="faq-item"><div class="faq-q">Como cadastrar um estudante? <span>▾</span></div><div class="faq-a">Na seção Estudantes, clique em "+ Cadastrar", preencha os dados básicos e salve. No protótipo o cadastro fica salvo na sessão.</div></div>'
-    +'<div class="faq-item"><div class="faq-q">Como publicar um aviso no mural dos alunos? <span>▾</span></div><div class="faq-a">Em Mural, preencha título, tipo e texto e clique em "Publicar no mural". O aviso aparece no mural do estudante.</div></div>'
-    +'<div class="faq-item"><div class="faq-q">Como adicionar podcasts? <span>▾</span></div><div class="faq-a">Em Conteúdo, informe título, subespecialidade e selecione o arquivo de áudio (MP3/M4A).</div></div>'
-  +'</div>'
-  +'<div style="margin-top:.9rem;font-size:.8rem;color:var(--t2);line-height:1.55">Precisa de suporte ou tem alguma sugestão? Fale com a gente:<br>✉️ <a href="mailto:contato@endodirect.com.br">contato@endodirect.com.br</a></div>'
+  +'<div class="adm-pc">'
+    +'<div class="card" style="margin-bottom:1rem">'
+      +'<div style="display:flex;justify-content:space-between;align-items:center;gap:.6rem;margin-bottom:.7rem">'
+        +'<div style="font-weight:800;font-size:1rem">📨 Mensagens recebidas</div>'
+        +'<button id="adm-support-refresh" type="button" class="btn" style="padding:.3rem .7rem;font-size:.78rem">↻ Atualizar</button></div>'
+      +'<div id="adm-support-list"><div style="padding:1rem;color:var(--t2);font-size:.85rem">Carregando mensagens…</div></div>'
+    +'</div>'
+    +'<details class="card"><summary style="cursor:pointer;font-weight:700;font-size:.92rem">Ajuda rápida (FAQ)</summary>'
+      +'<div style="margin-top:.7rem;display:grid;gap:.45rem">'
+        +'<details><summary style="cursor:pointer;font-size:.85rem;font-weight:600">Como importar uma prova em PDF?</summary><div style="font-size:.83rem;color:var(--t2);margin-top:.25rem;line-height:1.5">Em Provas &amp; Questões → Importar PDF (IA), arraste o arquivo da prova, defina área/instituição/ano e clique em Extrair com IA. As questões vão para o banco do aluno.</div></details>'
+        +'<details><summary style="cursor:pointer;font-size:.85rem;font-weight:600">Como inserir provas anteriores?</summary><div style="font-size:.83rem;color:var(--t2);margin-top:.25rem;line-height:1.5">Em Provas &amp; Questões, use a aba Banco de questões para revisar o acervo ou a aba Inserir manualmente para cadastrar questões avulsas.</div></details>'
+        +'<details><summary style="cursor:pointer;font-size:.85rem;font-weight:600">Como publicar um aviso no mural?</summary><div style="font-size:.83rem;color:var(--t2);margin-top:.25rem;line-height:1.5">Em Mural, preencha título, tipo e texto e clique em "Publicar no mural". O aviso aparece no mural do estudante.</div></details>'
+      +'</div>'
+      +'<div style="margin-top:.8rem;font-size:.78rem;color:var(--t2);line-height:1.55">Outros canais: ✉️ <a href="mailto:contato@endodirect.com.br">contato@endodirect.com.br</a></div>'
+    +'</details>'
   +'</div>';
+}
+
+// ---------- Caixa de suporte (painel do professor): lista + responder o aluno ----------
+var admSupportTickets=null;   // cache da última listagem (null = ainda não carregou)
+var admSupportLoading=false;
+
+function admSupportToken(){
+  var client=getSupabaseClient();
+  if(!client||!client.auth||!client.auth.getSession)return Promise.resolve('');
+  return client.auth.getSession().then(function(res){return (res&&res.data&&res.data.session&&res.data.session.access_token)||'';}).catch(function(){return '';});
+}
+function admSupportNewCount(){return (admSupportTickets||[]).filter(function(t){return t&&t.status!=='answered';}).length;}
+function updateAdmSupportBadge(){
+  var b=document.getElementById('adm-support-badge');if(!b)return;
+  var n=admSupportNewCount();
+  if(n>0){b.textContent=n;b.style.display='';}else{b.textContent='';b.style.display='none';}
+}
+function bindAdmSupportRefresh(){
+  var rf=document.getElementById('adm-support-refresh');
+  if(rf&&!rf._bound){rf._bound=true;rf.addEventListener('click',function(){renderAdmSupportList('Carregando mensagens…');loadAdmSupport(true);});}
+}
+function loadAdmSupport(){
+  if(admSupportLoading)return;admSupportLoading=true;
+  admSupportToken().then(function(token){
+    if(!token){admSupportLoading=false;renderAdmSupportList('Entre como admin (Google) para ver as mensagens.');return;}
+    return fetch(AI_API_ENDPOINT,{method:'POST',headers:{'Content-Type':'application/json',Authorization:'Bearer '+token},credentials:'same-origin',body:JSON.stringify({kind:'support_list'})})
+      .then(function(r){return r.json().catch(function(){return{};});})
+      .then(function(d){
+        admSupportLoading=false;
+        if(!d||!d.ok){renderAdmSupportList((d&&d.error)||'Falha ao carregar as mensagens.');return;}
+        admSupportTickets=Array.isArray(d.tickets)?d.tickets:[];
+        updateAdmSupportBadge();renderAdmSupportList();
+      });
+  }).catch(function(){admSupportLoading=false;renderAdmSupportList('Falha ao carregar as mensagens.');});
+}
+function admSupportFmtDate(s){try{var d=new Date(s);if(isNaN(d.getTime()))return '';return d.toLocaleDateString('pt-BR')+' '+d.toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit'});}catch(e){return '';}}
+function admSupportReplyBoxHTML(id){
+  return '<div style="margin-top:.6rem" data-sup-box="'+esc(id)+'">'
+    +'<textarea id="sup-reply-'+esc(id)+'" rows="3" placeholder="Escreva a resposta ao aluno…" style="width:100%;box-sizing:border-box;font-size:.88rem;padding:.5rem .6rem;border:1px solid var(--bd);border-radius:8px;resize:vertical;font-family:inherit"></textarea>'
+    +'<div style="display:flex;align-items:center;gap:.6rem;margin-top:.4rem;flex-wrap:wrap">'
+      +'<button class="btn btn-primary" type="button" data-sup-send="'+esc(id)+'" style="padding:.35rem .8rem;font-size:.82rem">Responder por e-mail</button>'
+      +'<span data-sup-status="'+esc(id)+'" style="font-size:.78rem;color:var(--t2)"></span></div></div>';
+}
+function admSupportCardHTML(t){
+  var answered=t.status==='answered';
+  var head='<div style="display:flex;justify-content:space-between;align-items:baseline;gap:.6rem;flex-wrap:wrap">'
+    +'<div style="font-weight:700;font-size:.92rem">'+esc(t.name||t.email||'Aluno')+(t.category?' <span class="tag" style="font-weight:600">'+esc(t.category)+'</span>':'')+'</div>'
+    +'<div style="font-size:.72rem;color:var(--t3)">'+esc(admSupportFmtDate(t.created_at))+'</div></div>';
+  var who='<div style="font-size:.78rem;color:var(--t2);margin:.15rem 0 .55rem"><a href="mailto:'+esc(t.email)+'" style="color:var(--blue)">'+esc(t.email)+'</a>'+(t.context?' · '+esc(t.context):'')+'</div>';
+  var msg='<div style="font-size:.9rem;line-height:1.5;white-space:pre-wrap;background:var(--s2,#f6f8fc);border-radius:8px;padding:.6rem .7rem">'+esc(t.message||'')+'</div>';
+  var body;
+  if(answered){
+    body='<div style="margin-top:.6rem;border-left:3px solid #16a34a;padding:.15rem 0 .15rem .7rem">'
+      +'<div style="font-size:.72rem;color:var(--t3);margin-bottom:.2rem">✅ Respondido'+(t.answered_at?' em '+esc(admSupportFmtDate(t.answered_at)):'')+(t.answered_by?' · '+esc(t.answered_by):'')+'</div>'
+      +'<div style="font-size:.86rem;line-height:1.5;white-space:pre-wrap;color:var(--t2)">'+esc(t.reply||'')+'</div></div>'
+      +'<div style="margin-top:.5rem"><button class="btn" type="button" data-sup-reopen="'+esc(t.id)+'" style="padding:.25rem .6rem;font-size:.76rem">Responder de novo</button></div>';
+  }else{body=admSupportReplyBoxHTML(t.id);}
+  return '<div class="card" data-sup-card="'+esc(t.id)+'" style="margin-bottom:.7rem'+(answered?';opacity:.9':'')+'">'+head+who+msg+body+'</div>';
+}
+function bindAdmSupportTickets(){
+  var host=document.getElementById('adm-support-list');if(!host)return;
+  host.querySelectorAll('[data-sup-send]').forEach(function(b){b.addEventListener('click',function(){admSupportReply(b.dataset.supSend);});});
+  host.querySelectorAll('[data-sup-reopen]').forEach(function(b){b.addEventListener('click',function(){
+    var id=b.dataset.supReopen,wrap=document.createElement('div');wrap.innerHTML=admSupportReplyBoxHTML(id);
+    if(b.parentNode){b.parentNode.replaceWith(wrap);var sb=wrap.querySelector('[data-sup-send]');if(sb)sb.addEventListener('click',function(){admSupportReply(id);});}
+  });});
+}
+function renderAdmSupportList(msg){
+  var host=document.getElementById('adm-support-list');if(!host)return;
+  if(msg){host.innerHTML='<div style="padding:1rem;color:var(--t2);font-size:.85rem">'+esc(msg)+'</div>';return;}
+  var list=admSupportTickets||[];
+  if(!list.length){host.innerHTML='<div style="padding:1rem;color:var(--t2);font-size:.85rem">Nenhuma mensagem ainda.</div>';return;}
+  host.innerHTML=list.map(function(t){return admSupportCardHTML(t);}).join('');
+  bindAdmSupportTickets();
+}
+function admSupportReply(id){
+  var ta=document.getElementById('sup-reply-'+id);
+  var host=document.getElementById('adm-support-list');
+  var st=host?host.querySelector('[data-sup-status="'+id+'"]'):null;
+  var btn=host?host.querySelector('[data-sup-send="'+id+'"]'):null;
+  var reply=ta?String(ta.value||'').trim():'';
+  function setStatus(m,c){if(st){st.textContent=m;st.style.color=c||'var(--t2)';}}
+  if(reply.length<2){setStatus('Escreva a resposta.','var(--red)');return;}
+  if(btn)btn.disabled=true;setStatus('Enviando…');
+  admSupportToken().then(function(token){
+    if(!token){setStatus('Sessão expirada. Entre novamente.','var(--red)');if(btn)btn.disabled=false;return;}
+    return fetch(AI_API_ENDPOINT,{method:'POST',headers:{'Content-Type':'application/json',Authorization:'Bearer '+token},credentials:'same-origin',body:JSON.stringify({kind:'support_reply',id:id,reply:reply})})
+      .then(function(r){return r.json().catch(function(){return{};});})
+      .then(function(d){
+        if(!d||!d.ok){setStatus((d&&d.error)||'Falha ao enviar.','var(--red)');if(btn)btn.disabled=false;return;}
+        var arr=admSupportTickets||[];for(var i=0;i<arr.length;i++){if(arr[i].id===id){arr[i]=d.ticket||Object.assign({},arr[i],{status:'answered',reply:reply});break;}}
+        updateAdmSupportBadge();renderAdmSupportList();notify('Resposta enviada ao aluno.','ok');
+      });
+  }).catch(function(){setStatus('Falha ao enviar.','var(--red)');if(btn)btn.disabled=false;});
 }
 
 function persistAdm(){lsSet('adm_avisos',admAvisos);lsSet('adm_questoes',admQuestoes);queueRemoteStateSave();}
