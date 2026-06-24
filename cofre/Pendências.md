@@ -1,6 +1,6 @@
 ---
 tags: [cofre, pendencias]
-atualizado: 2026-06-23
+atualizado: 2026-06-24
 ---
 
 # Pendências
@@ -32,7 +32,7 @@ atualizado: 2026-06-23
 - [ ] **Código morto** (`index.html`): `persistAdm` definido 2×; handlers do antigo editor de mapas (textarea) sem uso. Limpeza cosmética.
 
 ## Lado do usuário (fora do código)
-- [ ] **Publicar Diretrizes:** flipar `DIRETRIZES_PUBLICADO=true` no `index.html` quando a curadoria estiver pronta. Hoje os alunos veem "Em breve". Ver [[Arquitetura]].
+- [ ] **Publicar Diretrizes:** flipar `DIRETRIZES_PUBLICADO=true` no `index.html` quando a curadoria estiver pronta. Hoje os alunos veem "Em breve" (e a **janela de Novidades** no login anuncia Diretrizes como **"EM BREVE"** — #430). Ver [[Arquitetura]].
 - [ ] **Revisão clínica dos flashcards:** ~180 flashcards da biblioteca de membro foram gerados por IA — médico deve revisar antes/depois do lançamento.
 - [ ] **Conta de teste `memed.teste@endodirect.com.br`:** ainda conta como aluno no Analytics (necessária p/ a homologação Memed via `MEMED_ALLOW`). Remover quando a Memed sair de homologação.
 - [x] **Limpeza de contas de teste no Analytics (2026-06-14):** removidas 5 contas (`dudukamura@`, `rgmedicaltda@`, `gabysfernandes@`, `eduardo.teste@`, `teste@`) de `auth.users` + `endodirect_app_state`/`acessos`/`devices`/`assinaturas` (nenhuma tinha assinatura paga). "Alunos cadastrados" caiu de 11 → 6. A contagem vem da RPC `endodirect_admin_overview` (`role='aluno'` em `endodirect_app_state`).
