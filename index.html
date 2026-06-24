@@ -7693,7 +7693,7 @@ function igAnswerSVG(it){
   y+=52;
   var el=igWrap(String(it.explanation||'').trim(),'38px Arial',cw);
   p.push('<text font-family="Arial,Helvetica,sans-serif" font-size="38" font-weight="400" fill="'+IG_TX+'">'+igTspans(el,pad,y,54)+'</text>');
-  p.push('<text x="'+(IG_W/2)+'" y="'+(IG_H-92)+'" text-anchor="middle" font-family="Arial,Helvetica,sans-serif" font-weight="700" font-size="32" fill="'+IG_GOLD+'">Mais questões no EndoDireto</text>');
+  p.push('<text x="'+(IG_W/2)+'" y="'+(IG_H-92)+'" text-anchor="middle" font-family="Arial,Helvetica,sans-serif" font-weight="700" font-size="32" fill="'+IG_GOLD+'">Mais questões no Endodirect</text>');
   return igDoc(p.join(''));
 }
 function igPromoSVG(t){
@@ -7734,16 +7734,16 @@ function igDownload(kind,it,filename){
 function igCaptionQ(it){
   var op=it.options||{},out=['🧠 QUESTÃO DO DIA','',(it.teem?String(it.teem).trim()+' ':'')+String(it.stem||'').trim(),''];
   ['A','B','C','D'].forEach(function(L){if(op[L])out.push(L+') '+String(op[L]).trim());});
-  out.push('','📲 Gabarito COMENTADO na plataforma: www.endodirect.com.br','','#endocrinologia #residenciamedica #provadetitulo #endodireto #medicina');
+  out.push('','📲 Gabarito COMENTADO na plataforma: www.endodirect.com.br','','#endocrinologia #residenciamedica #provadetitulo #endodirect #medicina');
   return out.join('\n');
 }
 function igCaptionA(it){
   var op=it.options||{},L=it.answer||'',out=['🔑 GABARITO — '+(it.sub||'Endocrinologia'),'','Resposta: '+L+(op[L]?') '+String(op[L]).trim():''),''];
   if(it.explanation)out.push(String(it.explanation).trim(),'');
-  out.push('Quer treinar com milhares de questões comentadas? EndoDireto — link na bio. 📲','#endocrinologia #residenciamedica #endodireto #medicina');
+  out.push('Quer treinar com milhares de questões comentadas? Endodirect — link na bio. 📲','#endocrinologia #residenciamedica #endodirect #medicina');
   return out.join('\n');
 }
-function igCaptionPromo(t){return '📲 '+t.nome+' — EndoDireto\n\n'+t.cta+'\n\nA plataforma completa de endocrinologia para sua aprovação e prática. Link na bio! 🔗\n#endocrinologia #residenciamedica #endodireto #medicina';}
+function igCaptionPromo(t){return '📲 '+t.nome+' — Endodirect\n\n'+t.cta+'\n\nA plataforma completa de endocrinologia para sua aprovação e prática. Link na bio! 🔗\n#endocrinologia #residenciamedica #endodirect #medicina';}
 function igReadDraft(){
   function v(id){var e=document.getElementById(id);return e?String(e.value||'').trim():'';}
   return {sub:v('ig-sub'),teem:v('ig-teem'),stem:v('ig-stem'),options:{A:v('ig-a'),B:v('ig-b'),C:v('ig-c'),D:v('ig-d')},answer:(document.getElementById('ig-ans')||{}).value||'A',explanation:v('ig-exp'),img:igDraftImg};
