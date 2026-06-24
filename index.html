@@ -1444,7 +1444,7 @@ html[data-theme="light"] .dir-back{background:#f8f9fc;border-color:var(--bd2);co
       </div>
       <div class="sb-spacer"></div>
       <div style="border-top:1px solid rgba(255,255,255,.1);margin:.35rem 0"></div>
-      <button class="sb-item" data-p="support">❔ Suporte</button>
+      <button class="sb-item" data-p="support">❔ Suporte <span id="sup-nav-badge" style="display:none;margin-left:auto;background:#e5484d;color:#fff;font-size:.62rem;font-weight:700;min-width:16px;height:16px;line-height:16px;text-align:center;border-radius:9px;padding:0 5px"></span></button>
     </div>
 
     <div class="panel on" id="panel-dash">
@@ -1899,6 +1899,11 @@ html[data-theme="light"] .dir-back{background:#f8f9fc;border-color:var(--bd2);co
       <div class="breadcrumb">Dashboard <b>/ Suporte</b></div>
       <div class="ph"><h1>Suporte</h1></div>
       <div class="pc">
+        <div class="card" id="sup-thread-card" style="display:none;margin-bottom:.9rem">
+          <div style="font-size:1rem;font-weight:700;margin-bottom:.2rem">Minhas conversas com o suporte</div>
+          <div style="font-size:.78rem;color:var(--t2);margin-bottom:.8rem">Acompanhe aqui as respostas da nossa equipe.</div>
+          <div id="sup-thread"></div>
+        </div>
         <div class="card">
           <div class="faq-item"><div class="faq-q">Como usar o Chat IA? <span>▾</span></div><div class="faq-a">Acesse Chat IA no menu e faça perguntas sobre endocrinologia. A IA responde com base em evidências científicas.</div></div>
           <div class="faq-item"><div class="faq-q">Como gerar questões por subespecialidade? <span>▾</span></div><div class="faq-a">No Banco de Questões, escolha a subespecialidade (diabetes, tireoide, etc.), o nível e clique em "Gerar questões".</div></div>
@@ -3522,6 +3527,7 @@ function startApp(){
     var lastP=lsGet('last_panel');
     goPanel((lastP&&lastP!=='adm'&&canSeePanel(lastP))?lastP:homePanel());initAll();
     try{markLockedNavItems();}catch(e){}
+    try{loadMyTickets({});}catch(e){} // popula o badge "nova resposta" do Suporte já no login
   }
 }
 var demoOnboardToPresc=false; // demo alunopro: após a janela inicial, abre o Assistente de IA
@@ -7366,11 +7372,19 @@ function submitFeedback(){
 // suporte por e-mail (POST /api/ai kind:'support' → lib/support.js via Resend).
 function initSupportForm(){
   var btn=document.getElementById('sup-send');
-  if(!btn||btn._wired)return; btn._wired=true;
-  var n=document.getElementById('sup-name'),e=document.getElementById('sup-email');
-  if(n&&!n.value&&currentUser&&currentUser.name)n.value=currentUser.name;
-  if(e&&!e.value&&currentUser&&currentUser.email)e.value=currentUser.email;
-  btn.addEventListener('click',submitSupport);
+  if(btn&&!btn._wired){
+    btn._wired=true;
+    var n=document.getElementById('sup-name'),e=document.getElementById('sup-email');
+    if(n&&!n.value&&currentUser&&currentUser.name)n.value=currentUser.name;
+    if(e){
+      if(currentUser&&currentUser.email&&!e.value)e.value=currentUser.email;
+      // Aluno logado (sessão real): trava o e-mail de retorno na identidade da
+      // conta → o ticket fica ligado a ele e a resposta aparece na thread in-app.
+      if(currentUser&&currentUser.id){e.readOnly=true;e.style.opacity='.7';}
+    }
+    btn.addEventListener('click',submitSupport);
+  }
+  try{loadMyTickets({render:true,markSeen:true});}catch(err){}
 }
 function submitSupport(){
   var btn=document.getElementById('sup-send'),st=document.getElementById('sup-status');
@@ -7387,8 +7401,78 @@ function submitSupport(){
     .then(function(r){return r.json().catch(function(){return{};}).then(function(d){if(!r.ok||!d.ok)throw new Error(d.error||'Falha ao enviar.');return d;});})
     .then(function(){
       var card=btn.closest('.card');
-      if(card)card.innerHTML='<div style="text-align:center;padding:1.3rem .5rem"><div style="font-size:1.7rem">✅</div><div style="font-weight:700;margin-top:.4rem">Mensagem enviada!</div><div style="font-size:.82rem;color:var(--t2);margin-top:.35rem;line-height:1.5">Recebemos sua mensagem e vamos responder no e-mail informado.</div></div>';
+      if(card)card.innerHTML='<div style="text-align:center;padding:1.3rem .5rem"><div style="font-size:1.7rem">✅</div><div style="font-weight:700;margin-top:.4rem">Mensagem enviada!</div><div style="font-size:.82rem;color:var(--t2);margin-top:.35rem;line-height:1.5">Recebemos sua mensagem. A resposta aparece aqui na aba Suporte e também no seu e-mail.</div></div>';
+      try{loadMyTickets({render:true});}catch(e){}
     },function(e){btn.disabled=false;btn.textContent=old;err((e&&e.message)||'Falha ao enviar. Tente novamente.');});
+}
+
+// ── Caixa de suporte do ALUNO: ver as PRÓPRIAS mensagens + respostas no app ──
+// A identidade vem do token de sessão Supabase (o servidor resolve o e-mail);
+// demo/visitante sem sessão cai no aviso "entre para acompanhar". Um badge no
+// menu Suporte avisa de resposta nova (controle de "lido" no localStorage).
+var myTickets=null;
+function supSessionToken(){
+  var client=getSupabaseClient();
+  if(!client||!client.auth||!client.auth.getSession)return Promise.resolve('');
+  return client.auth.getSession().then(function(res){return (res&&res.data&&res.data.session&&res.data.session.access_token)||'';}).catch(function(){return '';});
+}
+function supFmtTime(s){try{var d=new Date(s);if(isNaN(d.getTime()))return '';return d.toLocaleDateString('pt-BR')+' '+d.toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit'});}catch(e){return '';}}
+function supSeenAt(){return lsGet('sup_seen_reply_at')||'';}
+function supNewReplyCount(){
+  var seen=supSeenAt();
+  return (myTickets||[]).filter(function(t){return t&&t.status==='answered'&&t.answered_at&&String(t.answered_at)>String(seen);}).length;
+}
+function updateSupNavBadge(){
+  var b=document.getElementById('sup-nav-badge');if(!b)return;
+  var n=supNewReplyCount();
+  if(n>0){b.textContent=n;b.style.display='';}else{b.textContent='';b.style.display='none';}
+}
+function markSupRepliesSeen(){
+  var ats=(myTickets||[]).filter(function(t){return t&&t.status==='answered'&&t.answered_at;}).map(function(t){return String(t.answered_at);});
+  if(ats.length){ats.sort();var latest=ats[ats.length-1];if(latest>supSeenAt())lsSet('sup_seen_reply_at',latest);}
+  updateSupNavBadge();
+}
+function supThreadItemHTML(t){
+  var answered=t.status==='answered';
+  var head='<div style="font-size:.72rem;color:var(--t3);margin-bottom:.25rem">Você'+(t.category?' · '+esc(t.category):'')+(t.created_at?' · '+esc(supFmtTime(t.created_at)):'')+'</div>';
+  var mine='<div style="font-size:.88rem;line-height:1.5;white-space:pre-wrap;background:var(--s2,#f6f8fc);border-radius:8px;padding:.55rem .7rem">'+esc(t.message||'')+'</div>';
+  var rep;
+  if(answered){
+    rep='<div style="margin-top:.5rem;border-left:3px solid #16a34a;padding:.1rem 0 .1rem .7rem">'
+      +'<div style="font-size:.72rem;color:#16a34a;font-weight:700;margin-bottom:.2rem">✅ Resposta do suporte'+(t.answered_at?' · '+esc(supFmtTime(t.answered_at)):'')+'</div>'
+      +'<div style="font-size:.88rem;line-height:1.5;white-space:pre-wrap">'+esc(t.reply||'')+'</div></div>';
+  }else{
+    rep='<div style="margin-top:.45rem;font-size:.76rem;color:var(--t3)">⏳ Aguardando resposta do suporte…</div>';
+  }
+  return '<div style="margin-bottom:.6rem;padding-bottom:.6rem;border-bottom:1px solid var(--bd)">'+head+mine+rep+'</div>';
+}
+function renderMyTickets(authed){
+  var card=document.getElementById('sup-thread-card');
+  var host=document.getElementById('sup-thread');
+  if(!card||!host)return;
+  if(!authed){
+    card.style.display='';
+    host.innerHTML='<div style="font-size:.82rem;color:var(--t2);line-height:1.55">Entre com a sua conta para acompanhar aqui as respostas do suporte. Enquanto isso, também respondemos no e-mail que você informar.</div>';
+    return;
+  }
+  var list=myTickets||[];
+  if(!list.length){card.style.display='none';host.innerHTML='';return;}
+  card.style.display='';
+  host.innerHTML=list.map(supThreadItemHTML).join('');
+}
+function loadMyTickets(opts){
+  opts=opts||{};
+  return supSessionToken().then(function(token){
+    if(!token){myTickets=[];updateSupNavBadge();if(opts.render)renderMyTickets(false);return;}
+    return fetch(AI_API_ENDPOINT,{method:'POST',headers:{'Content-Type':'application/json',Authorization:'Bearer '+token},credentials:'same-origin',body:JSON.stringify({kind:'support_mine'})})
+      .then(function(r){return r.json().catch(function(){return{};});})
+      .then(function(d){
+        myTickets=(d&&Array.isArray(d.tickets))?d.tickets:[];
+        var authed=!!(d&&d.authed);
+        if(opts.render)renderMyTickets(authed);
+        if(opts.markSeen)markSupRepliesSeen();else updateSupNavBadge();
+      });
+  }).catch(function(){if(opts.render)renderMyTickets(false);});
 }
 
 // ── CHAT ──

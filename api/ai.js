@@ -8,8 +8,8 @@ const { pubmedGround, formatSources } = require('../lib/pubmed');
 const { fetchArticleText } = require('../lib/fetch-article');
 // Formulário/caixa de suporte do app (e-mail via Resend + tickets no Supabase;
 // módulos lib/ — não contam como função serverless).
-const { sendSupportEmail, storeSupportTicket, listSupportTickets, replySupportTicket } = require('../lib/support');
-const { adminFromReq } = require('../lib/admin-auth');
+const { sendSupportEmail, storeSupportTicket, listSupportTickets, listMyTickets, replySupportTicket } = require('../lib/support');
+const { adminFromReq, userFromReq } = require('../lib/admin-auth');
 function pickModel(requested) {
   const m = String(requested || '');
   return ALLOWED_MODELS[m] ? m : DEFAULT_MODEL;
@@ -95,6 +95,16 @@ module.exports = async function handler(req, res) {
       }
       const rr = await replySupportTicket({ id: sbody.id, reply: sbody.reply, adminEmail: admin.email });
       return json(res, rr.ok ? 200 : (rr.code || 400), rr.ok ? { ok: true, ticket: rr.ticket } : { ok: false, error: rr.error });
+    }
+    // (d) ALUNO logado vê as PRÓPRIAS mensagens + respostas dentro do app. A
+    // identidade vem do token de sessão (server resolve o e-mail) — nunca de um
+    // e-mail no corpo → cada um só enxerga o que é seu. Sem sessão (demo/visitante)
+    // responde authed:false (o app mostra "entre para acompanhar"), não é erro.
+    if (sbody && sbody.kind === 'support_mine') {
+      const user = await userFromReq(req);
+      if (!user) return json(res, 200, { ok: true, authed: false, tickets: [] });
+      const tickets = await listMyTickets(user.email);
+      return json(res, 200, { ok: true, authed: true, tickets });
     }
   }
 
