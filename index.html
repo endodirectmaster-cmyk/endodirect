@@ -3433,14 +3433,34 @@ function authoringSys(fmt){return CLINICAL_GUIDELINES+'__ENDODIRECT_SYS_SPLIT_b1
 function callAI(sys,usr,maxTok,model,grounding){
   return aiRequest({system:sys,prompt:usr,maxTokens:maxTok||1500,model:model,grounding:grounding||''});
 }
-function callAIwithPDF(sys,b64){
+function callAIwithPDF(sys,b64,maxTok){
   return aiRequest({
     system:sys,
     prompt:'Analise este documento e retorne o JSON solicitado.',
     documentBase64:b64,
     mediaType:'application/pdf',
-    maxTokens:2000
+    maxTokens:maxTok||2000
   });
+}
+// Gera os COMENTÁRIOS (campo explanation) das questões importadas, em LOTES — o
+// servidor limita a resposta a 4000 tokens, então uma prova inteira não cabe numa
+// chamada só. Cada lote vai pelo authoringSys (premissas: linguagem técnica, sem
+// jargão de IA, citando a diretriz pelo nome). Best-effort: lote que falhar deixa
+// as questões sem comentário (a extração não se perde). onProgress(feitas,total).
+function igGenProvaExpls(questions,onProgress){
+  var BATCH=8,batches=[],done=0;
+  for(var i=0;i<questions.length;i+=BATCH)batches.push(questions.slice(i,i+BATCH));
+  return Promise.all(batches.map(function(group){
+    var list=group.map(function(q,j){
+      var opts=['A','B','C','D'].map(function(L){return L+') '+String((q.options||{})[L]||'');}).join('  ');
+      return (j+1)+'. '+String(q.stem||'').trim()+'\n'+opts+'\nGabarito: '+String(q.answer||'').trim();
+    }).join('\n\n');
+    var fmt='Estas são questões de uma prova de endocrinologia, com o gabarito informado. Para CADA questão, escreva o COMENTÁRIO da resposta correta: justificativa TÉCNICA em 2–3 frases, citando o critério/valor de corte/diretriz pelo nome (sem jargão de IA). NÃO reescreva a questão.\n\nQUESTÕES:\n'+list+'\n\nJSON APENAS: {"explanations":["comentário da questão 1","comentário da questão 2", ...]} — na MESMA ordem e quantidade das questões acima.';
+    return callAI(authoringSys(fmt),'Gere os comentários no formato pedido.',4000)
+      .then(function(raw){var d=parseJ(raw);return (d&&Array.isArray(d.explanations))?d.explanations:[];})
+      .catch(function(){return [];})
+      .then(function(expls){group.forEach(function(q,j){if(expls[j])q.explanation=String(expls[j]).trim();});done+=group.length;if(onProgress)onProgress(done,questions.length);});
+  })).then(function(){return questions;});
 }
 // Carrega o pdf.js (CDN) sob demanda só quando o professor importa um PDF.
 var __pdfjsP=null;
@@ -8205,7 +8225,7 @@ function admProvasSecHTML(){
 }
 function admProvaSubBody(areas,anos,insts,pendentes){
   if(admProvaSubtab==='importar'){
-    return '<div class="card"><div style="font-size:1rem;font-weight:700;margin-bottom:.3rem">Importar prova em PDF via IA</div><div style="font-size:.77rem;color:var(--t2);margin-bottom:1rem">A IA extrai questões, alternativas e gabaritos automaticamente e adiciona ao banco usado pelo aluno.</div>'
+    return '<div class="card"><div style="font-size:1rem;font-weight:700;margin-bottom:.3rem">Importar prova em PDF via IA</div><div style="font-size:.77rem;color:var(--t2);margin-bottom:1rem">A IA extrai questões, alternativas e gabaritos, gera o comentário de cada questão (linguagem técnica, baseado nas diretrizes) e adiciona ao banco usado pelo aluno.</div>'
       +'<div class="art-drop" id="adm-prova-drop" style="margin-bottom:1rem;padding:2rem 1rem"><div style="font-size:2rem;margin-bottom:.4rem">📄</div><div style="font-size:.86rem;font-weight:700;color:var(--tx)">Arraste o PDF ou clique para selecionar</div><div style="font-size:.7rem;color:var(--t3);margin-top:.2rem">Apenas .pdf · Máx. 20 MB</div></div>'
       +'<input type="file" id="adm-prova-file" accept=".pdf" style="display:none">'
       +'<div id="adm-prova-fname" style="display:none;font-size:.76rem;color:var(--grn);margin-bottom:.8rem"></div>'
@@ -9053,13 +9073,20 @@ function bindAdmSec(sec){
       var ano=parseInt(document.getElementById('adm-prova-ano').value)||new Date().getFullYear();
       var area=document.getElementById('adm-prova-area').value;
       be.disabled=true;be.innerHTML=ldHTML();
-      var rd=document.getElementById('adm-extract-result');rd.innerHTML=ldHTML();
-      callAIwithPDF('Extraia TODAS as questões de múltipla escolha desta prova de endocrinologia. JSON APENAS: {"questions":[{"stem":"","options":{"A":"","B":"","C":"","D":""},"answer":"A","explanation":"","area":"'+(area||'Diabetes')+'"}]}',pdfBase64Prova)
+      var rd=document.getElementById('adm-extract-result');rd.innerHTML=ldHTML('Extraindo questões…');
+      // Fase 1: extrai as questões FIELMENTE do PDF (sem comentário → cabe mais
+      // questão no teto de 4000 tokens). Fase 2: gera o comentário em lotes.
+      callAIwithPDF('Extraia FIELMENTE todas as questões de múltipla escolha desta prova de endocrinologia (NÃO reescreva o enunciado nem as alternativas). JSON APENAS: {"questions":[{"stem":"","options":{"A":"","B":"","C":"","D":""},"answer":"A","area":"'+(area||'Diabetes')+'"}]}',pdfBase64Prova,4000)
       .then(function(raw){
-        var d=parseJ(raw);if(!d||!d.questions)throw new Error('Não foi possível extrair questões.');
-        d.questions.forEach(function(q){provasDB.push(Object.assign({},q,{inst:inst,ano:ano,area:q.area||area}));});
+        var d=parseJ(raw);if(!d||!d.questions||!d.questions.length)throw new Error('Não foi possível extrair questões.');
+        var qs=d.questions;
+        rd.innerHTML=ldHTML('Gerando comentários (0/'+qs.length+')…');
+        return igGenProvaExpls(qs,function(f,t){rd.innerHTML=ldHTML('Gerando comentários ('+f+'/'+t+')…');});
+      }).then(function(qs){
+        qs.forEach(function(q){provasDB.push(Object.assign({},q,{inst:inst,ano:ano,area:q.area||area}));});
         persistProvas();
-        rd.innerHTML='<div style="background:var(--grn-l);border:1px solid #1e5436;border-radius:var(--rs);padding:.5rem .8rem;font-size:.77rem;color:#34d399">✓ '+d.questions.length+' questões extraídas e salvas!</div>';
+        var comQ=qs.filter(function(q){return q.explanation;}).length;
+        rd.innerHTML='<div style="background:var(--grn-l);border:1px solid #1e5436;border-radius:var(--rs);padding:.5rem .8rem;font-size:.77rem;color:#34d399">✓ '+qs.length+' questões extraídas e salvas! '+comQ+'/'+qs.length+' com comentário gerado pela IA.</div>';
       }).catch(function(e){rd.innerHTML='<div style="color:var(--red);font-size:.77rem">❌ '+esc(e.message)+'</div>';})
       .then(function(){be.disabled=false;be.innerHTML='🤖 Extrair com IA';});
     });
