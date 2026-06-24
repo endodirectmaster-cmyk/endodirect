@@ -544,6 +544,11 @@ textarea{resize:vertical;line-height:1.6}
 .modal-hdr-title{font-size:.92rem;font-weight:700;color:#fff}
 .modal-close{background:rgba(255,255,255,.15);border:none;border-radius:8px;width:28px;height:28px;color:#fff;cursor:pointer;font-size:.9rem}
 .modal-body{padding:1.2rem 1.3rem}
+/* Caixa de suporte (painel do professor): cards recolhíveis (<details>) com seta própria. */
+.sup-sum::-webkit-details-marker{display:none}
+.sup-sum{list-style:none}
+.sup-sum::before{content:'▸';color:var(--t3);font-size:.78rem;flex:none;transition:transform .15s ease}
+details.sup-card[open]>.sup-sum::before{transform:rotate(90deg)}
 .fb-star{font-size:1.5rem;cursor:pointer;opacity:.35}
 .fb-cat-btn,.fb-tipo-btn{background:var(--surface);border:1.5px solid var(--bd2);border-radius:99px;padding:.26rem .7rem;font-size:.7rem;font-weight:500;color:var(--t2);cursor:pointer;font-family:var(--font)}
 .fb-cat-btn.on{background:var(--blue-l);border-color:var(--blue);color:var(--blue);font-weight:600}
@@ -804,6 +809,38 @@ html[data-theme="light"] .dir-back{background:#f8f9fc;border-color:var(--bd2);co
       </div>
       <div id="ob-err" style="display:none;background:var(--red-l);border:1px solid #5a2326;border-radius:var(--rs);padding:.45rem .75rem;font-size:.73rem;color:var(--red);margin-bottom:.7rem"></div>
       <button class="btn btn-primary" id="ob-submit" style="width:100%;justify-content:center;padding:.6rem">Começar →</button>
+    </div>
+  </div>
+</div>
+
+<!-- Janela de NOVIDADES: aparece uma vez no login do aluno (até dar "Entendi"). -->
+<div class="modal-bg" id="whatsnew-modal">
+  <div class="modal-box">
+    <div class="modal-hdr"><span class="modal-hdr-title">✨ Novidades no Endodirect</span></div>
+    <div class="modal-body">
+      <div style="font-size:.82rem;color:var(--t2);margin-bottom:1rem;line-height:1.55">Algumas novidades chegaram para deixar seus estudos mais fáceis:</div>
+      <div style="display:flex;gap:.7rem;align-items:flex-start;background:var(--s2,#f6f8fc);border-radius:12px;padding:.8rem .85rem;margin-bottom:.7rem">
+        <div style="font-size:1.5rem;line-height:1;flex:none">💬</div>
+        <div>
+          <div style="font-weight:700;font-size:.9rem;margin-bottom:.2rem">Suporte dentro do app</div>
+          <div style="font-size:.8rem;color:var(--t2);line-height:1.5">Agora você fala direto com a equipe pela aba <b>Suporte</b>: envie sua dúvida e veja a resposta do professor aqui mesmo — com um aviso quando ela chegar.</div>
+        </div>
+      </div>
+      <div style="display:flex;gap:.7rem;align-items:flex-start;background:var(--s2,#f6f8fc);border-radius:12px;padding:.8rem .85rem;margin-bottom:.7rem">
+        <div style="font-size:1.5rem;line-height:1;flex:none">📅</div>
+        <div>
+          <div style="font-weight:700;font-size:.9rem;margin-bottom:.2rem">Questão do Dia <span style="font-size:.64rem;font-weight:700;color:#b45309;background:rgba(245,158,11,.16);padding:.06rem .42rem;border-radius:99px;vertical-align:middle;letter-spacing:.02em">EM BREVE</span></div>
+          <div style="font-size:.8rem;color:var(--t2);line-height:1.5">Todo dia uma questão nova comentada para manter seu treino afiado. Estamos finalizando os detalhes — fique de olho!</div>
+        </div>
+      </div>
+      <div style="display:flex;gap:.7rem;align-items:flex-start;background:var(--s2,#f6f8fc);border-radius:12px;padding:.8rem .85rem;margin-bottom:1.1rem">
+        <div style="font-size:1.5rem;line-height:1;flex:none">📋</div>
+        <div>
+          <div style="font-weight:700;font-size:.9rem;margin-bottom:.2rem">Diretrizes <span style="font-size:.64rem;font-weight:700;color:#b45309;background:rgba(245,158,11,.16);padding:.06rem .42rem;border-radius:99px;vertical-align:middle;letter-spacing:.02em">EM BREVE</span></div>
+          <div style="font-size:.8rem;color:var(--t2);line-height:1.5">Resumos e condutas das principais diretrizes, com flashcards e mapas mentais. A curadoria está a caminho — fique de olho!</div>
+        </div>
+      </div>
+      <button class="btn btn-primary" id="wn-ok" style="width:100%;justify-content:center;padding:.6rem">Entendi, vamos lá →</button>
     </div>
   </div>
 </div>
@@ -3486,6 +3523,32 @@ function showLoginScreen(){var l=document.getElementById('landing-screen');if(l)
 function showLandingScreen(){var l=document.getElementById('landing-screen');if(l)l.style.display='block';var ls=document.getElementById('login-screen');if(ls)ls.style.display='none';}
 function showMMModal(){var m=document.getElementById('lp-mm-modal');if(m)m.classList.add('on');}
 function hideMMModal(){var m=document.getElementById('lp-mm-modal');if(m)m.classList.remove('on');}
+// ---------- Janela de NOVIDADES (aluno) ----------
+// Mostra uma vez por versão, no login do aluno (real ou demo), SEM sobrepor o
+// onboarding. "Ciência" fica gravada em localStorage; para reexibir, é só subir
+// WHATSNEW_VER. Chamada de startApp() e de maybeOnboardAfterHydrate() — os
+// guards (perfil presente, onboarding fechado, já visto) e o flag de sessão
+// evitam exibição precoce ou dupla.
+var WHATSNEW_VER='2026-06-suporte-diretrizes';
+var whatsNewShown=false;
+function maybeShowWhatsNew(){
+  try{
+    if(whatsNewShown)return;
+    if(!currentUser||currentUser.role!=='aluno')return;
+    var prof=(currentUser&&currentUser.profile)||lsGet('user_profile');
+    if(!prof||!prof.perfil)return;                  // sem perfil = onboarding em curso; não sobrepor
+    var ob=document.getElementById('onboard-modal');
+    if(ob&&ob.style.display==='flex')return;         // onboarding aberto
+    if(lsGet('whatsnew_seen')===WHATSNEW_VER)return; // já deu ciência nesta versão
+    var m=document.getElementById('whatsnew-modal');if(!m)return;
+    whatsNewShown=true;
+    setTimeout(function(){var mm=document.getElementById('whatsnew-modal');if(mm)mm.style.display='flex';},450);
+  }catch(e){}
+}
+function dismissWhatsNew(){
+  var m=document.getElementById('whatsnew-modal');if(m)m.style.display='none';
+  try{lsSet('whatsnew_seen',WHATSNEW_VER);}catch(e){}
+}
 function startApp(){
   var u=currentUser;
   try{restorePrescPanel();}catch(e){} // se o admin moveu o #panel-presc, devolve antes de montar a sessão
@@ -3528,6 +3591,7 @@ function startApp(){
     goPanel((lastP&&lastP!=='adm'&&canSeePanel(lastP))?lastP:homePanel());initAll();
     try{markLockedNavItems();}catch(e){}
     try{loadMyTickets({});}catch(e){} // popula o badge "nova resposta" do Suporte já no login
+    try{maybeShowWhatsNew();}catch(e){} // janela de novidades (1x por versão), exceto durante o onboarding
   }
 }
 var demoOnboardToPresc=false; // demo alunopro: após a janela inicial, abre o Assistente de IA
@@ -3551,6 +3615,7 @@ function maybeOnboardAfterHydrate(){
     currentUser.profile=prof;currentUser.sub=profileDisplayLabel(prof);
     try{setText('tb-usub',profileDisplayLabel(prof));}catch(e){}
     try{maybeLandMedicoHome();}catch(e){} // médico abre no Mural (tela de início)
+    try{maybeShowWhatsNew();}catch(e){} // novidades 1x por versão (perfil veio do remoto)
     return;
   }
   openOnboard();
@@ -8354,10 +8419,18 @@ function admSupportReplyBoxHTML(id){
 }
 function admSupportCardHTML(t){
   var answered=t.status==='answered';
-  var head='<div style="display:flex;justify-content:space-between;align-items:baseline;gap:.6rem;flex-wrap:wrap">'
-    +'<div style="font-weight:700;font-size:.92rem">'+esc(t.name||t.email||'Aluno')+(t.category?' <span class="tag" style="font-weight:600">'+esc(t.category)+'</span>':'')+'</div>'
-    +'<div style="font-size:.72rem;color:var(--t3)">'+esc(admSupportFmtDate(t.created_at))+'</div></div>';
-  var who='<div style="font-size:.78rem;color:var(--t2);margin:.15rem 0 .55rem"><a href="mailto:'+esc(t.email)+'" style="color:var(--blue)">'+esc(t.email)+'</a>'+(t.context?' · '+esc(t.context):'')+'</div>';
+  var accent=answered?'#16a34a':'#e11d48';
+  // Resumo recolhível (clique abre/fecha). Respondidas começam FECHADAS (minimizadas);
+  // novas começam ABERTAS (têm ação pendente do professor).
+  var badge=answered
+    ?'<span style="flex:none;font-size:.66rem;font-weight:700;color:#16a34a;background:rgba(22,163,74,.13);padding:.06rem .42rem;border-radius:99px">✅ Respondida</span>'
+    :'<span style="flex:none;font-size:.66rem;font-weight:700;color:#e11d48;background:rgba(225,29,72,.13);padding:.06rem .42rem;border-radius:99px">🔴 Nova</span>';
+  var nm='<span style="font-weight:700;font-size:.9rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:46%">'+esc(t.name||t.email||'Aluno')+'</span>';
+  var cat=t.category?'<span class="tag" style="font-weight:600;flex:none">'+esc(t.category)+'</span>':'';
+  var date='<span style="font-size:.71rem;color:var(--t3);flex:none;margin-left:auto">'+esc(admSupportFmtDate(t.created_at))+'</span>';
+  var prev='<span style="flex:1 1 100%;font-size:.77rem;color:var(--t2);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin-top:.1rem">'+esc(String(t.message||'').replace(/\s+/g,' ').slice(0,90))+'</span>';
+  var summary='<summary class="sup-sum" style="cursor:pointer;display:flex;align-items:center;gap:.4rem;flex-wrap:wrap">'+badge+nm+cat+date+prev+'</summary>';
+  var who='<div style="font-size:.78rem;color:var(--t2);margin:.55rem 0 .55rem"><a href="mailto:'+esc(t.email)+'" style="color:var(--blue)">'+esc(t.email)+'</a>'+(t.context?' · '+esc(t.context):'')+'</div>';
   var msg='<div style="font-size:.9rem;line-height:1.5;white-space:pre-wrap;background:var(--s2,#f6f8fc);border-radius:8px;padding:.6rem .7rem">'+esc(t.message||'')+'</div>';
   var body;
   if(answered){
@@ -8366,7 +8439,7 @@ function admSupportCardHTML(t){
       +'<div style="font-size:.86rem;line-height:1.5;white-space:pre-wrap;color:var(--t2)">'+esc(t.reply||'')+'</div></div>'
       +'<div style="margin-top:.5rem"><button class="btn" type="button" data-sup-reopen="'+esc(t.id)+'" style="padding:.25rem .6rem;font-size:.76rem">Responder de novo</button></div>';
   }else{body=admSupportReplyBoxHTML(t.id);}
-  return '<div class="card" data-sup-card="'+esc(t.id)+'" style="margin-bottom:.7rem'+(answered?';opacity:.9':'')+'">'+head+who+msg+body+'</div>';
+  return '<details class="sup-card" data-sup-card="'+esc(t.id)+'"'+(answered?'':' open')+' style="margin-bottom:.55rem;border:1px solid var(--bd);border-left:3px solid '+accent+';border-radius:10px;padding:.5rem .7rem;background:var(--surface)">'+summary+'<div style="padding-top:.45rem">'+who+msg+body+'</div></details>';
 }
 function bindAdmSupportTickets(){
   var host=document.getElementById('adm-support-list');if(!host)return;
@@ -8381,7 +8454,16 @@ function renderAdmSupportList(msg){
   if(msg){host.innerHTML='<div style="padding:1rem;color:var(--t2);font-size:.85rem">'+esc(msg)+'</div>';return;}
   var list=admSupportTickets||[];
   if(!list.length){host.innerHTML='<div style="padding:1rem;color:var(--t2);font-size:.85rem">Nenhuma mensagem ainda.</div>';return;}
-  host.innerHTML=list.map(function(t){return admSupportCardHTML(t);}).join('');
+  // Dois grupos para diferenciar de relance: novas (ação pendente) x respondidas.
+  var news=list.filter(function(t){return t&&t.status!=='answered';});
+  var done=list.filter(function(t){return t&&t.status==='answered';});
+  function sec(title,color,arr,empty){
+    var h='<div style="display:flex;align-items:center;gap:.4rem;margin:.1rem 0 .55rem"><span style="font-weight:800;font-size:.85rem;color:'+color+'">'+title+'</span><span style="font-size:.73rem;color:var(--t3)">('+arr.length+')</span></div>';
+    return h+(arr.length?arr.map(function(t){return admSupportCardHTML(t);}).join(''):'<div style="font-size:.79rem;color:var(--t3);padding:.1rem 0 .5rem">'+empty+'</div>');
+  }
+  host.innerHTML=sec('🔴 Novas','#e11d48',news,'Nenhuma mensagem nova. 🎉')
+    +'<div style="height:.8rem"></div>'
+    +sec('✅ Respondidas','#16a34a',done,'Nenhuma resposta enviada ainda.');
   bindAdmSupportTickets();
 }
 function admSupportReply(id){
@@ -10488,6 +10570,7 @@ document.addEventListener('DOMContentLoaded',function(){
     r.addEventListener('change',setupOnboardProfileChoices);
   });
   document.getElementById('ob-submit').addEventListener('click',submitOnboard);
+  var wnOk=document.getElementById('wn-ok');if(wnOk)wnOk.addEventListener('click',dismissWhatsNew);
 
   // USER MENU
   document.getElementById('tb-user-btn').addEventListener('click',function(e){e.stopPropagation();var m=document.getElementById('user-menu');m.style.display=m.style.display==='block'?'none':'block';});
