@@ -3433,14 +3433,34 @@ function authoringSys(fmt){return CLINICAL_GUIDELINES+'__ENDODIRECT_SYS_SPLIT_b1
 function callAI(sys,usr,maxTok,model,grounding){
   return aiRequest({system:sys,prompt:usr,maxTokens:maxTok||1500,model:model,grounding:grounding||''});
 }
-function callAIwithPDF(sys,b64){
+function callAIwithPDF(sys,b64,maxTok){
   return aiRequest({
     system:sys,
     prompt:'Analise este documento e retorne o JSON solicitado.',
     documentBase64:b64,
     mediaType:'application/pdf',
-    maxTokens:2000
+    maxTokens:maxTok||2000
   });
+}
+// Gera os COMENTÁRIOS (campo explanation) das questões importadas, em LOTES — o
+// servidor limita a resposta a 4000 tokens, então uma prova inteira não cabe numa
+// chamada só. Cada lote vai pelo authoringSys (premissas: linguagem técnica, sem
+// jargão de IA, citando a diretriz pelo nome). Best-effort: lote que falhar deixa
+// as questões sem comentário (a extração não se perde). onProgress(feitas,total).
+function igGenProvaExpls(questions,onProgress){
+  var BATCH=8,batches=[],done=0;
+  for(var i=0;i<questions.length;i+=BATCH)batches.push(questions.slice(i,i+BATCH));
+  return Promise.all(batches.map(function(group){
+    var list=group.map(function(q,j){
+      var opts=['A','B','C','D'].map(function(L){return L+') '+String((q.options||{})[L]||'');}).join('  ');
+      return (j+1)+'. '+String(q.stem||'').trim()+'\n'+opts+'\nGabarito: '+String(q.answer||'').trim();
+    }).join('\n\n');
+    var fmt='Estas são questões de uma prova de endocrinologia, com o gabarito informado. Para CADA questão, escreva o COMENTÁRIO da resposta correta: justificativa TÉCNICA em 2–3 frases, citando o critério/valor de corte/diretriz pelo nome (sem jargão de IA). NÃO reescreva a questão.\n\nQUESTÕES:\n'+list+'\n\nJSON APENAS: {"explanations":["comentário da questão 1","comentário da questão 2", ...]} — na MESMA ordem e quantidade das questões acima.';
+    return callAI(authoringSys(fmt),'Gere os comentários no formato pedido.',4000)
+      .then(function(raw){var d=parseJ(raw);return (d&&Array.isArray(d.explanations))?d.explanations:[];})
+      .catch(function(){return [];})
+      .then(function(expls){group.forEach(function(q,j){if(expls[j])q.explanation=String(expls[j]).trim();});done+=group.length;if(onProgress)onProgress(done,questions.length);});
+  })).then(function(){return questions;});
 }
 // Carrega o pdf.js (CDN) sob demanda só quando o professor importa um PDF.
 var __pdfjsP=null;
@@ -7801,6 +7821,10 @@ function igWrap(txt,font,maxW){
   if(cur)lines.push(cur);return lines;
 }
 function igTspans(lines,x,y,lh){return lines.map(function(l,i){return '<tspan x="'+x+'" y="'+(y+i*lh)+'">'+igXml(l)+'</tspan>';}).join('');}
+// Variante JUSTIFICADA: estica cada linha (menos a última) até a largura `w`
+// distribuindo o espaço entre as palavras (lengthAdjust="spacing") → texto com as
+// duas margens alinhadas, como num parágrafo justificado. A última linha fica natural.
+function igTspansJ(lines,x,y,lh,w){return lines.map(function(l,i){var last=(i===lines.length-1);return '<tspan x="'+x+'" y="'+(y+i*lh)+'"'+(last?'':' textLength="'+w+'" lengthAdjust="spacing"')+'>'+igXml(l)+'</tspan>';}).join('');}
 function igDoc(inner){return '<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="'+IG_W+'" height="'+IG_H+'" viewBox="0 0 '+IG_W+' '+IG_H+'"><defs><linearGradient id="g" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#0b1325"/><stop offset="1" stop-color="#16233f"/></linearGradient></defs>'+inner+'</svg>';}
 function igQuestionSVG(it){
   var op=it.options||{},pad=90,cw=IG_W-2*pad,p=[];
@@ -7810,7 +7834,7 @@ function igQuestionSVG(it){
   var y=466,stemFont='44px Arial',lh=60;
   var stem=(it.teem?String(it.teem).trim()+' ':'')+String(it.stem||'').trim();
   var sl=igWrap(stem,stemFont,cw);
-  p.push('<text font-family="Arial,Helvetica,sans-serif" font-size="44" font-weight="500" fill="'+IG_TX+'">'+igTspans(sl,pad,y,lh)+'</text>');
+  p.push('<text font-family="Arial,Helvetica,sans-serif" font-size="44" font-weight="500" fill="'+IG_TX+'">'+igTspansJ(sl,pad,y,lh,cw)+'</text>');
   y+=sl.length*lh+44;
   if(it.img){var imgH=360;p.push('<image xlink:href="'+esc(it.img)+'" x="'+pad+'" y="'+y+'" width="'+cw+'" height="'+imgH+'" preserveAspectRatio="xMidYMid meet"/>');y+=imgH+28;}
   ['A','B','C','D'].forEach(function(L){
@@ -7959,10 +7983,10 @@ function admStoriesHTML(){
    +'<div class="card" style="margin-bottom:1rem"><div class="card-head"><span class="card-title">Criar / editar questão</span></div>'
    +'<div style="display:flex;gap:.6rem;flex-wrap:wrap;align-items:flex-end;margin-bottom:.7rem">'
    +'<label style="flex:1;min-width:170px">'+igLbl('Subespecialidade')+'<select id="ig-sub">'+subs+'</select></label>'
-   +'<label style="flex:1;min-width:170px">'+igLbl('Tema (opcional)')+'<input id="ig-topic" placeholder="ex.: hiperaldosteronismo"></label>'
+   +'<label style="flex:1;min-width:170px">'+igLbl('Tema (opcional)')+'<input type="text" id="ig-topic" placeholder="ex.: hiperaldosteronismo"></label>'
    +'<button class="btn btn-primary btn-sm" id="ig-gen">🤖 Gerar 1 com IA</button>'
    +'<span id="ig-gen-status" style="font-size:.72rem;color:var(--t3)"></span></div>'
-   +igLbl('Atribuição TEEM (opcional — só se for questão do TEEM)')+'<input id="ig-teem" placeholder="(TEEM 2026)" style="margin-bottom:.6rem">'
+   +'<div style="margin-bottom:.6rem">'+igLbl('Atribuição TEEM (opcional — só se for questão do TEEM)')+'<input type="text" id="ig-teem" placeholder="(TEEM 2026)" style="max-width:220px">'+'</div>'
    +igLbl('Enunciado')+'<textarea id="ig-stem" rows="4" placeholder="Vinheta clínica curta e objetiva…" style="margin-bottom:.6rem"></textarea>'
    +igLbl('Imagem no enunciado (opcional)')+'<div class="art-drop" id="ig-imgdrop" style="padding:1rem;margin-bottom:.5rem"><div style="font-size:1.3rem">🖼️</div><div style="font-size:.76rem;font-weight:600;color:var(--tx)">Clique ou arraste uma imagem</div><div style="font-size:.64rem;color:var(--t3)">JPG, PNG, GIF · Máx. 5 MB</div></div><input type="file" id="ig-imgfile" accept="image/*" style="display:none"><div id="ig-imgprev" style="margin-bottom:.6rem"></div>'
    +igLbl('Alternativas')+'<div style="margin-bottom:.6rem">'
@@ -7971,7 +7995,7 @@ function admStoriesHTML(){
    +'<div style="display:flex;gap:.4rem;align-items:center;margin-bottom:.35rem"><span style="font-weight:700;color:var(--blue);width:16px;flex-shrink:0">C</span><input type="text" id="ig-c" style="flex:1"></div>'
    +'<div style="display:flex;gap:.4rem;align-items:center;margin-bottom:.35rem"><span style="font-weight:700;color:var(--blue);width:16px;flex-shrink:0">D</span><input type="text" id="ig-d" style="flex:1"></div>'
    +'</div>'
-   +'<label style="display:block;width:110px;margin-bottom:.6rem">'+igLbl('Gabarito')+'<select id="ig-ans">'+ansOpts+'</select></label>'
+   +'<label style="display:block;width:76px;margin-bottom:.6rem">'+igLbl('Gabarito')+'<select id="ig-ans">'+ansOpts+'</select></label>'
    +igLbl('Explicação (resposta comentada no app)')+'<textarea id="ig-exp" rows="3" placeholder="Por que a resposta correta é essa, citando o critério/diretriz…"></textarea>'
    +'<div style="display:flex;gap:.5rem;flex-wrap:wrap;margin-top:.8rem">'
    +'<button class="btn btn-outline btn-sm" id="ig-preview">👁 Pré-visualizar</button>'
@@ -8201,7 +8225,7 @@ function admProvasSecHTML(){
 }
 function admProvaSubBody(areas,anos,insts,pendentes){
   if(admProvaSubtab==='importar'){
-    return '<div class="card"><div style="font-size:1rem;font-weight:700;margin-bottom:.3rem">Importar prova em PDF via IA</div><div style="font-size:.77rem;color:var(--t2);margin-bottom:1rem">A IA extrai questões, alternativas e gabaritos automaticamente e adiciona ao banco usado pelo aluno.</div>'
+    return '<div class="card"><div style="font-size:1rem;font-weight:700;margin-bottom:.3rem">Importar prova em PDF via IA</div><div style="font-size:.77rem;color:var(--t2);margin-bottom:1rem">A IA extrai questões, alternativas e gabaritos, gera o comentário de cada questão (linguagem técnica, baseado nas diretrizes) e adiciona ao banco usado pelo aluno.</div>'
       +'<div class="art-drop" id="adm-prova-drop" style="margin-bottom:1rem;padding:2rem 1rem"><div style="font-size:2rem;margin-bottom:.4rem">📄</div><div style="font-size:.86rem;font-weight:700;color:var(--tx)">Arraste o PDF ou clique para selecionar</div><div style="font-size:.7rem;color:var(--t3);margin-top:.2rem">Apenas .pdf · Máx. 20 MB</div></div>'
       +'<input type="file" id="adm-prova-file" accept=".pdf" style="display:none">'
       +'<div id="adm-prova-fname" style="display:none;font-size:.76rem;color:var(--grn);margin-bottom:.8rem"></div>'
@@ -9049,13 +9073,20 @@ function bindAdmSec(sec){
       var ano=parseInt(document.getElementById('adm-prova-ano').value)||new Date().getFullYear();
       var area=document.getElementById('adm-prova-area').value;
       be.disabled=true;be.innerHTML=ldHTML();
-      var rd=document.getElementById('adm-extract-result');rd.innerHTML=ldHTML();
-      callAIwithPDF('Extraia TODAS as questões de múltipla escolha desta prova de endocrinologia. JSON APENAS: {"questions":[{"stem":"","options":{"A":"","B":"","C":"","D":""},"answer":"A","explanation":"","area":"'+(area||'Diabetes')+'"}]}',pdfBase64Prova)
+      var rd=document.getElementById('adm-extract-result');rd.innerHTML=ldHTML('Extraindo questões…');
+      // Fase 1: extrai as questões FIELMENTE do PDF (sem comentário → cabe mais
+      // questão no teto de 4000 tokens). Fase 2: gera o comentário em lotes.
+      callAIwithPDF('Extraia FIELMENTE todas as questões de múltipla escolha desta prova de endocrinologia (NÃO reescreva o enunciado nem as alternativas). JSON APENAS: {"questions":[{"stem":"","options":{"A":"","B":"","C":"","D":""},"answer":"A","area":"'+(area||'Diabetes')+'"}]}',pdfBase64Prova,4000)
       .then(function(raw){
-        var d=parseJ(raw);if(!d||!d.questions)throw new Error('Não foi possível extrair questões.');
-        d.questions.forEach(function(q){provasDB.push(Object.assign({},q,{inst:inst,ano:ano,area:q.area||area}));});
+        var d=parseJ(raw);if(!d||!d.questions||!d.questions.length)throw new Error('Não foi possível extrair questões.');
+        var qs=d.questions;
+        rd.innerHTML=ldHTML('Gerando comentários (0/'+qs.length+')…');
+        return igGenProvaExpls(qs,function(f,t){rd.innerHTML=ldHTML('Gerando comentários ('+f+'/'+t+')…');});
+      }).then(function(qs){
+        qs.forEach(function(q){provasDB.push(Object.assign({},q,{inst:inst,ano:ano,area:q.area||area}));});
         persistProvas();
-        rd.innerHTML='<div style="background:var(--grn-l);border:1px solid #1e5436;border-radius:var(--rs);padding:.5rem .8rem;font-size:.77rem;color:#34d399">✓ '+d.questions.length+' questões extraídas e salvas!</div>';
+        var comQ=qs.filter(function(q){return q.explanation;}).length;
+        rd.innerHTML='<div style="background:var(--grn-l);border:1px solid #1e5436;border-radius:var(--rs);padding:.5rem .8rem;font-size:.77rem;color:#34d399">✓ '+qs.length+' questões extraídas e salvas! '+comQ+'/'+qs.length+' com comentário gerado pela IA.</div>';
       }).catch(function(e){rd.innerHTML='<div style="color:var(--red);font-size:.77rem">❌ '+esc(e.message)+'</div>';})
       .then(function(){be.disabled=false;be.innerHTML='🤖 Extrair com IA';});
     });
