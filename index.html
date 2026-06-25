@@ -2498,10 +2498,12 @@ var DB={
   notes:lsGet('notes')||[],
   crono:lsGet('crono')||null,
   sf_results:lsGet('sf_results')||[],
-  perf:lsGet('perf')||{}
+  perf:lsGet('perf')||{},
+  qotd:(function(){try{return JSON.parse(localStorage.getItem('qotd_answered')||'{}')||{};}catch(e){return {};}})()
 };
 function persist(){
   ['q','fc','mm','notes','crono','sf_results','perf'].forEach(function(k){lsSet(k,DB[k]);});
+  try{localStorage.setItem('qotd_answered',JSON.stringify(DB.qotd||{}));}catch(e){}
   queueRemoteStateSave();
 }
 var provasDB=lsGet('provas')||[];
@@ -2893,7 +2895,7 @@ function persistPodcasts(){lsSet('podcasts',podcasts);queueRemoteStateSave();}
 
 function userStatePayload(){
   // adm_perfil é PESSOAL (vai no app_state do próprio admin, não no global).
-  var p={q:DB.q,fc:DB.fc,mm:DB.mm,notes:DB.notes,crono:DB.crono,sf_results:DB.sf_results,perf:DB.perf,user_profile:lsGet('user_profile'),deg_trials:degTrials,ck_billing:lsGet('ck_billing'),presc_emitidas:lsGet('presc_emitidas')||[]};
+  var p={q:DB.q,fc:DB.fc,mm:DB.mm,notes:DB.notes,crono:DB.crono,sf_results:DB.sf_results,perf:DB.perf,qotd:DB.qotd,user_profile:lsGet('user_profile'),deg_trials:degTrials,ck_billing:lsGet('ck_billing'),presc_emitidas:lsGet('presc_emitidas')||[]};
   if(currentUser&&currentUser.role==='admin'){
     // Nunca persiste o perfil de OUTRO admin: se o e-mail do perfil em memória
     // não bater com o da sessão (resíduo de localStorage antigo), reconstrói da
@@ -2946,6 +2948,7 @@ function applyStatePayload(payload,personalOnly){
   if(payload.crono!==undefined)DB.crono=payload.crono;
   if(Array.isArray(payload.sf_results))DB.sf_results=payload.sf_results;
   if(payload.perf&&typeof payload.perf==='object')DB.perf=payload.perf;
+  if(payload.qotd&&typeof payload.qotd==='object'){DB.qotd=Object.assign({},payload.qotd,DB.qotd||{});try{localStorage.setItem('qotd_answered',JSON.stringify(DB.qotd));}catch(e){}try{var _qp=document.getElementById('panel-qotd');if(_qp&&_qp.classList.contains('on'))renderQotdArchive();}catch(e){}}
   if(!personalOnly){
     if(Array.isArray(payload.provas))provasDB=payload.provas;
     if(Array.isArray(payload.mm_shared)){sharedMM=payload.mm_shared;try{lsSet('mm_shared',sharedMM);}catch(e){}try{invalidateSharedMeta();}catch(e){}try{renderMMList();}catch(e){}}
@@ -4779,7 +4782,15 @@ function refreshDash(){
 // member_content/public_content). O aluno toca a alternativa, vê na hora se acertou
 // + explicação, e a resposta fica registrada (não some no reload). É a "enquete"
 // da plataforma e o destino do funil dos Stories ("resposta no app").
-function qotdReadAns(){try{return JSON.parse(localStorage.getItem('qotd_answered')||'{}')||{};}catch(e){return {};}}
+// Mapa de respostas da Questão do Dia. Fonte = DB.qotd (sincroniza entre
+// aparelhos via app_state); inicia do localStorage e funde com o servidor no hydrate.
+function qotdReadAns(){if(!DB.qotd||typeof DB.qotd!=='object')DB.qotd={};return DB.qotd;}
+// Persiste a resposta: DB.qotd (já mutado por referência) + espelho local + perf + sync.
+function qotdSaveAns(mm,q,ok){
+  try{if(mm&&mm!==DB.qotd)DB.qotd=mm;}catch(e){}
+  if(q&&q.sub){if(!DB.perf[q.sub])DB.perf[q.sub]={correct:0,total:0};DB.perf[q.sub].total++;if(ok)DB.perf[q.sub].correct++;}
+  try{persist();}catch(e){}
+}
 function qotdTodays(){
   var arr=(typeof igStories!=='undefined'&&Array.isArray(igStories))?igStories:[];
   var valid=arr.filter(function(x){return x&&x.stem&&x.options&&(x.options.A||x.options.B)&&x.answer;});
@@ -4845,8 +4856,7 @@ function qotdPick(q,letter){
   if(!q||!letter)return;
   var ok=(letter===q.answer);
   var mm=qotdReadAns();mm[q.id]={letter:letter,ok:ok,at:Date.now()};
-  try{localStorage.setItem('qotd_answered',JSON.stringify(mm));}catch(e){}
-  if(q.sub){if(!DB.perf[q.sub])DB.perf[q.sub]={correct:0,total:0};DB.perf[q.sub].total++;if(ok)DB.perf[q.sub].correct++;try{persist();}catch(e){}}
+  qotdSaveAns(mm,q,ok);
   qotdRenderModal(q,mm[q.id]);
   try{renderPerfBars();updateDashRec();}catch(e){}
 }
@@ -4854,16 +4864,16 @@ function qotdPick(q,letter){
 var qotdArchOpen=null;     // id aberto no arquivo do aluno
 var admQotdArchOpen=null;  // id aberto no arquivo do professor
 function qotdPublished(){
+  // SÓ as já postadas/publicadas (status 'posted') — as que ainda estão na fila não aparecem.
   var arr=(typeof igStories!=='undefined'&&Array.isArray(igStories))?igStories:[];
-  return arr.filter(function(x){return x&&x.stem&&x.options&&(x.options.A||x.options.B)&&x.answer;});
+  return arr.filter(function(x){return x&&x.stem&&x.options&&(x.options.A||x.options.B)&&x.answer&&x.status==='posted';});
 }
 // Registra a resposta no arquivo (mesma persistência do modal, sem abrir o modal).
 function qotdArchAnswer(q,letter){
   if(!q||!letter)return;
   var ok=(letter===q.answer);
   var mm=qotdReadAns();mm[q.id]={letter:letter,ok:ok,at:Date.now()};
-  try{localStorage.setItem('qotd_answered',JSON.stringify(mm));}catch(e){}
-  if(q.sub){if(!DB.perf[q.sub])DB.perf[q.sub]={correct:0,total:0};DB.perf[q.sub].total++;if(ok)DB.perf[q.sub].correct++;try{persist();}catch(e){}}
+  qotdSaveAns(mm,q,ok);
   try{renderPerfBars();updateDashRec();}catch(e){}
 }
 function renderQotdArchive(){
