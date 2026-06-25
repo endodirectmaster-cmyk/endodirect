@@ -404,6 +404,9 @@ textarea{resize:vertical;line-height:1.6}
 .mural-eyebrow,.mural-filter-label{font-size:.64rem;font-weight:800;letter-spacing:.1em;text-transform:uppercase;color:var(--t3)}
 .mural-hero h2{font-size:1.35rem;font-weight:800;color:var(--tx);letter-spacing:-.02em;margin:.55rem 0 .45rem}
 .mural-hero p{font-size:.8rem;color:var(--t2);line-height:1.55}
+.mural-push-cta{display:flex;align-items:center;gap:.85rem;flex-wrap:wrap;justify-content:space-between;background:linear-gradient(180deg,rgba(245,179,44,.08),rgba(245,179,44,.03));border:1px solid rgba(245,179,44,.35);border-radius:var(--r);padding:.8rem 1.1rem;font-size:.82rem;color:var(--t2);line-height:1.5}
+.mural-push-cta b{color:var(--tx)}
+.mural-push-cta .btn{flex-shrink:0}
 .mural-filter-card{padding:1.05rem 1.25rem;display:flex;align-items:end;gap:.9rem;justify-content:space-between;flex-wrap:wrap}
 .mural-filter-main{display:grid;grid-template-columns:minmax(170px,1fr) minmax(170px,1fr) max-content max-content;align-items:end;justify-content:start;gap:.7rem;flex:1;min-width:0}
 .mural-filter-field{display:flex;flex-direction:column;gap:.35rem;min-width:0}
@@ -2387,6 +2390,75 @@ function getSupabaseClient(){
     console.warn('Supabase init failed',e);
   }
   return supabaseClient;
+}
+
+// ── WEB PUSH (avisos/breaking news no celular) ──
+// Chave PÚBLICA do VAPID (não é segredo; o par privado vive só no servidor).
+var PUSH_VAPID_PUBLIC='BEyscFEW1gPewjFPkzpmEzl12i8cKij79AWvbZ8horMbbaWCHlGrJUMGyGVJczJvaSe3e6SqyiORvFbPsKRle-Q';
+function pushSupported(){return ('serviceWorker' in navigator)&&('PushManager' in window)&&('Notification' in window);}
+function pushIsIOS(){return /iphone|ipad|ipod/i.test(navigator.userAgent||'')||(navigator.platform==='MacIntel'&&navigator.maxTouchPoints>1);}
+function pushStandalone(){return (window.matchMedia&&window.matchMedia('(display-mode: standalone)').matches)||(navigator.standalone===true);}
+function pushB64ToU8(b64){var pad='='.repeat((4-b64.length%4)%4);var s=(b64+pad).replace(/-/g,'+').replace(/_/g,'/');var raw=atob(s);var arr=new Uint8Array(raw.length);for(var i=0;i<raw.length;i++)arr[i]=raw.charCodeAt(i);return arr;}
+function pushReg(){return (navigator.serviceWorker&&navigator.serviceWorker.ready)?navigator.serviceWorker.ready:Promise.reject(new Error('Service worker indisponível.'));}
+function pushGetSubscription(){return pushReg().then(function(reg){return reg.pushManager.getSubscription();});}
+function pushSaveSub(sub){
+  var client=getSupabaseClient();if(!client||!sub)return Promise.resolve();
+  var j=sub.toJSON();var keys=j.keys||{};
+  if(!j.endpoint||!keys.p256dh||!keys.auth)return Promise.resolve();
+  var row={endpoint:j.endpoint,p256dh:keys.p256dh,auth:keys.auth,ua:(navigator.userAgent||'').slice(0,300),updated_at:new Date().toISOString()};
+  if(currentUser&&currentUser.id)row.user_id=currentUser.id;
+  if(currentUser&&currentUser.email)row.email=currentUser.email;
+  return client.from('endodirect_push_subs').upsert(row,{onConflict:'endpoint'}).then(function(res){if(res.error)throw res.error;});
+}
+function pushEnable(){
+  if(!pushSupported())return Promise.reject(new Error('Seu navegador não suporta notificações.'));
+  if(pushIsIOS()&&!pushStandalone())return Promise.reject(new Error('No iPhone/iPad, instale o app na tela inicial e abra pelo ícone para ativar os avisos.'));
+  return Notification.requestPermission().then(function(perm){
+    if(perm!=='granted')throw new Error(perm==='denied'?'Notificações bloqueadas. Habilite nas configurações do navegador.':'Permissão não concedida.');
+    return pushReg();
+  }).then(function(reg){
+    return reg.pushManager.getSubscription().then(function(existing){
+      if(existing)return existing;
+      return reg.pushManager.subscribe({userVisibleOnly:true,applicationServerKey:pushB64ToU8(PUSH_VAPID_PUBLIC)});
+    });
+  }).then(function(sub){return pushSaveSub(sub).then(function(){return sub;});});
+}
+function pushDisable(){
+  return pushGetSubscription().then(function(sub){
+    if(!sub)return;
+    var ep=sub.endpoint;
+    return sub.unsubscribe().then(function(){
+      var client=getSupabaseClient();
+      if(client&&ep)return client.from('endodirect_push_subs').delete().eq('endpoint',ep).then(function(){});
+    });
+  });
+}
+// CTA do mural (estado inicial síncrono; refinado por JS após checar a inscrição).
+function muralPushCtaHTML(){
+  if(!pushSupported()){
+    if(pushIsIOS())return '<section class="mural-push-cta"><span>🔔 Para receber <b>avisos e breaking news</b> no iPhone, instale o app na tela inicial (Compartilhar → Adicionar à Tela de Início) e abra pelo ícone.</span></section>';
+    return '';
+  }
+  if(pushIsIOS()&&!pushStandalone())return '<section class="mural-push-cta"><span>🔔 Para receber <b>avisos e breaking news</b> no iPhone, instale o app na tela inicial (Compartilhar → Adicionar à Tela de Início) e abra pelo ícone.</span></section>';
+  if(Notification.permission==='denied')return '<section class="mural-push-cta"><span>🔕 Notificações bloqueadas neste navegador. Habilite nas configurações do site para receber avisos.</span></section>';
+  return '<section class="mural-push-cta"><span id="mural-push-txt">🔔 Receba <b>avisos e breaking news</b> direto no seu celular.</span><button class="btn btn-primary btn-sm" id="mural-push-btn">Ativar avisos</button></section>';
+}
+function bindMuralPushCta(){
+  var btn=document.getElementById('mural-push-btn');if(!btn)return;
+  var txt=document.getElementById('mural-push-txt');
+  if(pushSupported()&&Notification.permission==='granted'){
+    pushGetSubscription().then(function(sub){
+      if(sub){if(txt)txt.innerHTML='✅ <b>Avisos ativados</b> neste aparelho.';btn.textContent='Desativar';btn.classList.remove('btn-primary');btn.classList.add('btn-outline');btn.setAttribute('data-on','1');pushSaveSub(sub).catch(function(){});}
+    }).catch(function(){});
+  }
+  btn.addEventListener('click',function(){
+    if(btn.getAttribute('data-on')==='1'){
+      btn.disabled=true;pushDisable().then(function(){notify('Avisos desativados neste aparelho.','ok');initMural();}).catch(function(e){notify((e&&e.message)||'Erro ao desativar.','err');btn.disabled=false;});
+      return;
+    }
+    btn.disabled=true;var o=btn.textContent;btn.textContent='Ativando...';
+    pushEnable().then(function(){notify('Pronto! Você vai receber avisos e breaking news. 🔔','ok');initMural();}).catch(function(e){notify((e&&e.message)||'Não foi possível ativar.','err');btn.disabled=false;btn.textContent=o;});
+  });
 }
 function formatBytes(n){
   n=Number(n)||0;
@@ -8649,6 +8721,13 @@ function admSupportToken(){
   if(!client||!client.auth||!client.auth.getSession)return Promise.resolve('');
   return client.auth.getSession().then(function(res){return (res&&res.data&&res.data.session&&res.data.session.access_token)||'';}).catch(function(){return '';});
 }
+// Dispara a notificação push (avisos/breaking news) via endpoint admin (gated).
+function admSendPush(payload){
+  return admSupportToken().then(function(token){
+    if(!token)throw new Error('Sessão de admin ausente.');
+    return fetch('/api/admin/refresh-radar',{method:'POST',headers:{Authorization:'Bearer '+token,'Content-Type':'application/json'},body:JSON.stringify(Object.assign({action:'push'},payload||{}))});
+  }).then(function(r){return r.json().catch(function(){return{ok:false,error:'Resposta inválida do servidor.'};});});
+}
 function admSupportNewCount(){return (admSupportTickets||[]).filter(function(t){return t&&t.status!=='answered';}).length;}
 function updateAdmSupportBadge(){
   var b=document.getElementById('adm-support-badge');if(!b)return;
@@ -10400,6 +10479,7 @@ initMural=function(){
   var tema=muralFilter||(muralTipoFilter||'Todas as subespecialidades');
   el.innerHTML='<div class="mural-shell">'
     +'<section class="mural-hero"><div class="mural-eyebrow">Avisos para alunos</div><h2>Calendário, notícias e leituras essenciais</h2><p>Acompanhe prazos, artigos recentes, atualizações do curso e temas úteis para estudo dirigido. Os links abrem as fontes oficiais.</p></section>'
+    +muralPushCtaHTML()
     +'<section class="mural-filter-card"><div class="mural-filter-main"><label class="mural-filter-field"><span class="mural-filter-label">Subespecialidade</span><select class="mural-filter-select" id="mural-filter">'+opt.html+'</select></label><label class="mural-filter-field"><span class="mural-filter-label">Tipo de artigo</span><select class="mural-filter-select" id="mural-filter-tipo">'+tipoOpts+'</select></label><label class="mural-filter-field"><span class="mural-filter-label">Ordenar</span><select class="mural-filter-select" id="mural-filter-sort">'+muralSortOptions(muralSort)+'</select></label><div class="mural-switch-wrap"><button type="button" id="mural-bn-toggle" class="mural-switch'+(muralShowBreaking?' on':'')+'" role="switch" aria-checked="'+(muralShowBreaking?'true':'false')+'" title="Mostrar Breaking News"><span class="ms-dot"></span></button><span>📣 Breaking News</span></div><span class="mural-count-pill">'+esc(count)+'</span><span class="mural-theme-pill">'+esc(tema)+'</span></div><button class="btn btn-outline" id="mural-clear" type="button">Limpar filtro</button></section>'
     +'<section class="mural-grid">'+(pageAvisos.length?pageAvisos.map(function(a){return muralNoticeCardHTML(a,false);}).join(''):'<div class="empty mural-empty">Nenhum aviso encontrado para este filtro.</div>')+'</section>'
     +muralPagerHTML(muralPage,mPages,'mural')
@@ -10411,6 +10491,7 @@ initMural=function(){
   var clear=document.getElementById('mural-clear');if(clear)clear.addEventListener('click',function(){muralFilter='';muralTipoFilter='';muralPage=0;initMural();});
   var mp=document.getElementById('mural-prev');if(mp)mp.addEventListener('click',function(){if(muralPage>0){muralPage--;initMural();}});
   var mn=document.getElementById('mural-next');if(mn)mn.addEventListener('click',function(){if(muralPage<mPages-1){muralPage++;initMural();}});
+  bindMuralPushCta();
 };
 function simRetry(promiseFactory){
   return promiseFactory().catch(function(){return sleep(700).then(promiseFactory);});
@@ -10585,6 +10666,7 @@ admMuralSecHTML=function(){
     +'<div class="fld2"><label>Link (opcional)</label><input type="text" id="adm-av-link" placeholder="https://..."></div>'
     +'<div class="fld2" style="margin-bottom:.45rem"><label>Resumir com IA (a partir do link acima ou de um arquivo)</label><div style="display:flex;gap:6px;align-items:center;flex-wrap:wrap"><button type="button" class="btn btn-outline btn-sm" id="adm-av-import">📎 Anexar arquivo</button><button type="button" class="btn btn-outline btn-sm" id="adm-av-aigen">✨ Gerar texto com IA</button><span id="adm-av-fname" style="font-size:.72rem;color:var(--t3)"></span><input type="file" id="adm-av-file" accept=".pdf,.txt,image/*" style="display:none"></div></div>'
     +'<div class="fld2"><label>Texto</label><textarea id="adm-av-text" rows="3" placeholder="Resumo em português, mantendo apenas o título no idioma original..."></textarea></div>'
+    +(admMuralEdit===null?'<label class="adm-push-opt" style="display:flex;align-items:center;gap:.5rem;margin:.1rem 0 .8rem;font-size:.83rem;color:var(--t2);cursor:pointer"><input type="checkbox" id="adm-av-push" checked style="width:16px;height:16px;flex-shrink:0"><span>📲 Notificar os alunos no celular (push) ao publicar — use só para avisos e breaking news.</span></label>':'')
     +'<div style="display:flex;gap:6px"><button class="btn btn-primary" id="btn-adm-addav">'+(admMuralEdit!==null?'💾 Salvar alterações':'+ Publicar no mural')+'</button><button class="btn btn-outline" id="btn-adm-av-cancel">Cancelar</button></div></div>'
   ):'';
   return '<div class="adm-ph" style="display:flex;align-items:flex-start;justify-content:space-between;gap:.6rem;flex-wrap:wrap"><div><h1>Mural</h1></div><div style="display:flex;gap:.5rem;flex-wrap:wrap"><button class="btn btn-outline" id="btn-adm-radar" style="padding:.55rem 1rem">🔄 Atualizar radar agora</button><button class="btn btn-primary" id="btn-adm-newav" style="padding:.55rem 1.1rem">+ Novo aviso</button></div></div>'
@@ -10614,6 +10696,7 @@ bindAdmSec=function(sec){
     btn.addEventListener('click',function(){
       var t=(document.getElementById('adm-av-title').value||'').trim();
       if(!t){notify('Preencha o título.','err');return;}
+      var wantPush=(admMuralEdit===null)&&!!(document.getElementById('adm-av-push')&&document.getElementById('adm-av-push').checked);
       var dados={
         titulo:t,
         tipo:(document.getElementById('adm-av-tipo').value||'Aviso'),
@@ -10638,6 +10721,13 @@ bindAdmSec=function(sec){
         dados.at=Date.now();
         admAvisos.push(dados);
         notify('Aviso publicado no mural.','ok');
+        if(wantPush){
+          var _isBn=/breaking/i.test(dados.tipo||'');
+          admSendPush({title:_isBn?'🚨 Breaking News':'📣 Novo aviso no Endodirect',body:t,url:'https://www.endodirect.com.br/'}).then(function(res){
+            if(res&&res.ok&&res.push){notify('🔔 Notificação enviada para '+res.push.sent+' aparelho(s)'+(res.push.failed?(' ('+res.push.failed+' falha[s])'):'')+'.','ok');}
+            else{notify('Aviso publicado, mas a notificação falhou'+((res&&res.error)?(': '+res.error):'.'),'err');}
+          }).catch(function(e){notify('Aviso publicado; falha ao notificar: '+((e&&e.message)||e),'err');});
+        }
       }
       admMuralShowForm=false;admMuralEdit=null;persistAdm();renderAdmSec('mural');
     });

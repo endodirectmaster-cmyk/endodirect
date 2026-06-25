@@ -7,7 +7,7 @@
    - /api/*: NUNCA cacheado (sempre rede).
    - Cross-origin (Supabase, jsDelivr, Vimeo, etc.): passa direto, sem interceptar.
    - Estáticos do próprio domínio: stale-while-revalidate. */
-var CACHE = 'endodirect-v3';
+var CACHE = 'endodirect-v4';
 var ASSETS = [
   '/icons/icon-192.png',
   '/icons/icon-512.png',
@@ -63,6 +63,42 @@ self.addEventListener('fetch', function (e) {
         return r;
       }).catch(function () { return cached; });
       return cached || net;
+    })
+  );
+});
+
+/* ── Web Push (avisos/breaking news do mural no celular) ──
+   O servidor (lib/push.js) envia um payload JSON {title, body, url}. Mostramos a
+   notificação; ao tocar, focamos uma aba aberta do app (ou abrimos uma nova) na url. */
+self.addEventListener('push', function (e) {
+  var data = {};
+  try { data = e.data ? e.data.json() : {}; }
+  catch (err) { try { data = { body: e.data && e.data.text() }; } catch (e2) { data = {}; } }
+  var title = data.title || 'Endodirect';
+  var opts = {
+    body: data.body || '',
+    icon: data.icon || '/icons/icon-192.png',
+    badge: data.badge || '/icons/icon-192.png',
+    tag: data.tag || 'endodirect-aviso',
+    renotify: true,
+    data: { url: data.url || '/' }
+  };
+  e.waitUntil(self.registration.showNotification(title, opts));
+});
+
+self.addEventListener('notificationclick', function (e) {
+  e.notification.close();
+  var target = (e.notification.data && e.notification.data.url) || '/';
+  e.waitUntil(
+    self.clients.matchAll({ type: 'window', includeUncontrolled: true }).then(function (list) {
+      for (var i = 0; i < list.length; i++) {
+        var c = list[i];
+        if (c && 'focus' in c) {
+          try { if (c.navigate && target) c.navigate(target); } catch (err) {}
+          return c.focus();
+        }
+      }
+      if (self.clients.openWindow) return self.clients.openWindow(target);
     })
   );
 });
