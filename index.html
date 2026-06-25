@@ -10685,7 +10685,7 @@ admMuralSecHTML=function(){
     +'<div class="fld2"><label>Link (opcional)</label><input type="text" id="adm-av-link" placeholder="https://..."></div>'
     +'<div class="fld2" style="margin-bottom:.45rem"><label>Resumir com IA (a partir do link acima ou de um arquivo)</label><div style="display:flex;gap:6px;align-items:center;flex-wrap:wrap"><button type="button" class="btn btn-outline btn-sm" id="adm-av-import">📎 Anexar arquivo</button><button type="button" class="btn btn-outline btn-sm" id="adm-av-aigen">✨ Gerar texto com IA</button><span id="adm-av-fname" style="font-size:.72rem;color:var(--t3)"></span><input type="file" id="adm-av-file" accept=".pdf,.txt,image/*" style="display:none"></div></div>'
     +'<div class="fld2"><label>Texto</label><textarea id="adm-av-text" rows="3" placeholder="Resumo em português, mantendo apenas o título no idioma original..."></textarea></div>'
-    +(admMuralEdit===null?'<label class="adm-push-opt" style="display:flex;align-items:center;gap:.5rem;margin:.1rem 0 .8rem;font-size:.83rem;color:var(--t2);cursor:pointer"><input type="checkbox" id="adm-av-push" checked style="width:16px;height:16px;flex-shrink:0"><span>📲 Notificar os alunos no celular (push) ao publicar — use só para avisos e breaking news.</span></label>':'')
+    +'<label class="adm-push-opt" style="display:flex;align-items:center;gap:.5rem;margin:.1rem 0 .8rem;font-size:.83rem;color:var(--t2);cursor:pointer"><input type="checkbox" id="adm-av-push"'+(admMuralEdit===null?' checked':'')+' style="width:16px;height:16px;flex-shrink:0"><span>📲 Notificar os alunos no celular (push)'+(admMuralEdit!==null?' — reenviar este aviso ao salvar':' ao publicar')+'. Use só para avisos e breaking news.</span></label>'
     +'<div style="display:flex;gap:6px"><button class="btn btn-primary" id="btn-adm-addav">'+(admMuralEdit!==null?'💾 Salvar alterações':'+ Publicar no mural')+'</button><button class="btn btn-outline" id="btn-adm-av-cancel">Cancelar</button></div></div>'
   ):'';
   return '<div class="adm-ph" style="display:flex;align-items:flex-start;justify-content:space-between;gap:.6rem;flex-wrap:wrap"><div><h1>Mural</h1></div><div style="display:flex;gap:.5rem;flex-wrap:wrap"><button class="btn btn-outline" id="btn-adm-radar" style="padding:.55rem 1rem">🔄 Atualizar radar agora</button><button class="btn btn-outline" id="btn-adm-pushtest" style="padding:.55rem 1rem">🔔 Ativar avisos (teste)</button><button class="btn btn-primary" id="btn-adm-newav" style="padding:.55rem 1.1rem">+ Novo aviso</button></div></div>'
@@ -10715,7 +10715,7 @@ bindAdmSec=function(sec){
     btn.addEventListener('click',function(){
       var t=(document.getElementById('adm-av-title').value||'').trim();
       if(!t){notify('Preencha o título.','err');return;}
-      var wantPush=(admMuralEdit===null)&&!!(document.getElementById('adm-av-push')&&document.getElementById('adm-av-push').checked);
+      var wantPush=!!(document.getElementById('adm-av-push')&&document.getElementById('adm-av-push').checked);
       var dados={
         titulo:t,
         tipo:(document.getElementById('adm-av-tipo').value||'Aviso'),
@@ -10740,16 +10740,16 @@ bindAdmSec=function(sec){
         dados.at=Date.now();
         admAvisos.push(dados);
         notify('Aviso publicado no mural.','ok');
-        if(wantPush){
-          var _isBn=/breaking/i.test(dados.tipo||'');
-          admSendPush({title:_isBn?'🚨 Breaking News':'📣 Novo aviso no Endodirect',body:t,url:'https://www.endodirect.com.br/'}).then(function(res){
-            if(res&&res.ok&&res.push){
-              var pp=res.push;var det=(pp.failed&&pp.errors&&pp.errors.length)?(' — '+pp.errors.join('; ')):'';
-              notify((pp.sent>0?'🔔 Notificação enviada para '+pp.sent+' aparelho(s)':'Nenhum aparelho recebeu')+(pp.failed?(' ('+pp.failed+' falha[s])'+det):'')+'.',pp.sent>0?'ok':'err');
-            }
-            else{notify('Aviso publicado, mas a notificação falhou'+((res&&res.error)?(': '+res.error):'.'),'err');}
-          }).catch(function(e){notify('Aviso publicado; falha ao notificar: '+((e&&e.message)||e),'err');});
-        }
+      }
+      if(wantPush){
+        var _isBn=/breaking/i.test(dados.tipo||'');
+        admSendPush({title:_isBn?'🚨 Breaking News':'📣 Novo aviso no Endodirect',body:t,url:'https://www.endodirect.com.br/'}).then(function(res){
+          if(res&&res.ok&&res.push){
+            var pp=res.push;var det=(pp.failed&&pp.errors&&pp.errors.length)?(' — '+pp.errors.join('; ')):'';
+            notify((pp.sent>0?'🔔 Notificação enviada para '+pp.sent+' aparelho(s)':'Nenhum aparelho inscrito recebeu')+(pp.failed?(' ('+pp.failed+' falha[s])'+det):'')+'.',pp.sent>0?'ok':'err');
+          }
+          else{notify('A notificação falhou'+((res&&res.error)?(': '+res.error):'.'),'err');}
+        }).catch(function(e){notify('Falha ao notificar: '+((e&&e.message)||e),'err');});
       }
       admMuralShowForm=false;admMuralEdit=null;persistAdm();renderAdmSec('mural');
     });
