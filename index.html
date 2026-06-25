@@ -2049,7 +2049,7 @@ var FC_SUBTOPICS={
  'Osteometabolismo':['Osteoporose','Cálcio/PTH','Vitamina D','Paget','Osteomalácia'],
  'Lípides':['Hipercolesterolemia','Hipertrigliceridemia','Alfalipoproteinemias'],
  'Endocrinologia Pediátrica':['Baixa estatura/GH','Puberdade','HAC','Hipotireoidismo congênito','DM1'],
- 'Endocrinologia Feminina':['SOP','Amenorreia','Menopausa','Hirsutismo','Insuf. ovariana'],
+ 'Endocrinologia Feminina':['SOMP','Amenorreia','Menopausa','Hirsutismo','Insuf. ovariana'],
  'Endocrinologia Masculina':['Hipogonadismo','Infertilidade/ginecomastia','Disfunção erétil'],
  'Endocrinologia do Esporte':['Tríade/RED-S','Anabolizantes','Exercício e DM','Performance'],
  'Transgeneridade':['Homem Trans','Mulher Trans','Monitorização']
@@ -2064,7 +2064,7 @@ var FC_TEMA_RULES={
  'Osteometabolismo':[['Paget',/paget/],['Osteomalácia',/osteomalác|raquitism/],['Vitamina D',/vitamina d|25-?oh|colecalcifer/],['Cálcio/PTH',/paratireoid|\bpth\b|hipercalcem|hipocalcem|cálcio|hiperpara|hipopara|\bhhf\b|pthrp/],['Osteoporose',/osteoporos|densitometr|\bdxa\b|t-?score|bisfosfonat|denosumab|teriparatid|romosozumab|fratur|osteopen/]],
  'Lípides':[['Hipertrigliceridemia',/triglicer|\btg\b|fibrat|quilomicron|pancreatite/],['Alfalipoproteinemias',/alfalipoprotein|hipoalfa|hiperalfa|\bhdl\b|tangier|apoa/],['Hipercolesterolemia',/colesterol|\bldl\b|familiar|\bhf\b|lp\(a\)|estatin|ezetimib|pcsk9|inclisiran|bempedoic|risco|\bmetas?\b|não-?hdl|apob|escore|prevent|dislipidemi|tratament|manejo/]],
  'Endocrinologia Pediátrica':[['HAC',/hiperplasia adrenal|\bhac\b|21-?hidroxil|17-?oh/],['Hipotireoidismo congênito',/hipotireoidismo congênit|congênit|pezinho/],['Puberdade',/puberdad|telarca|menarca|\bgnrh\b|precoce/],['DM1',/diabet|\bdm1\b|glicem/],['Baixa estatura/GH',/baixa estatura|estatura|crescimento|\bgh\b|\bpig\b|turner|idade óssea|\bsga\b/]],
- 'Endocrinologia Feminina':[['SOP',/\bsop\b|ovários? policíst|rotterdam|policíst/],['Insuf. ovariana',/insuficiência ovarian|falência ovarian|\bpoi\b/],['Menopausa',/menopaus|climatér|terapia hormonal|vasomotor|fogacho/],['Hirsutismo',/hirsut|hiperandrogen|\bacne\b/],['Amenorreia',/amenorrei|oligomenorr|menstrua|anovulaç|prolactin/]],
+ 'Endocrinologia Feminina':[['SOMP',/\bsop\b|\bsomp\b|ovários? policíst|rotterdam|policíst/],['Insuf. ovariana',/insuficiência ovarian|falência ovarian|\bpoi\b/],['Menopausa',/menopaus|climatér|terapia hormonal|vasomotor|fogacho/],['Hirsutismo',/hirsut|hiperandrogen|\bacne\b/],['Amenorreia',/amenorrei|oligomenorr|menstrua|anovulaç|prolactin/]],
  'Endocrinologia Masculina':[['Disfunção erétil',/erétil/],['Infertilidade/ginecomastia',/infertil|ginecomast|espermatog|espermogram|varicocel|fertilidad/],['Hipogonadismo',/hipogonad|testosteron|klinefelter|kallmann|\blh\b|\bfsh\b|reposição|\btrt\b|exógen|hematócrit/]],
  'Endocrinologia do Esporte':[['Tríade/RED-S',/tríade|red-?s|disponibilidade energét|baixa densidad/],['Anabolizantes',/anaboliz|esteroid|doping|\bepo\b|eritropoetin/],['Exercício e DM',/diabet|glicem|glut4|hipoglicem/],['Performance',/performance|cafeín|exercíci|hipertrofi|cortisol|testosteron/]],
  'Transgeneridade':[['Monitorização',/monitoriz|hematócrit|perfil lipíd|acompanha|rastrei|fertilidad|criopreserv|óssea|densidade/],['Mulher Trans',/feminiliz|mulher trans|estrogên|estradiol|antiandrogên|espironolacton|ciproteron|etinilestradiol/],['Homem Trans',/masculiniz|homem trans|testosteron/]]
@@ -3401,7 +3401,8 @@ var CLINICAL_AUTHORING=[
 '3. SEM LINGUAGEM DE IA: vá direto ao ponto. PROIBIDO clichês e enchimento ("é importante notar/ressaltar/lembrar", "vale destacar", "em resumo", "desempenha um papel", "no contexto de"), hedging desnecessário e meta-comentário. Escreva como um professor de endocrinologia escreve numa prova.',
 '4. HONESTIDADE E CITAÇÃO: cite a diretriz/fonte pelo NOME + ano (ex.: Pituitary Society 2025, ADA 2026, SBEM, Endocrine Society); NÃO exiba PMID, DOI nem links no texto; NUNCA invente referências — na dúvida, cite só o nome da sociedade/diretriz.',
 '5. Português do Brasil, terminologia médica ATUAL e correta.',
-'6. LINGUAGEM CENTRADA NA PESSOA: NUNCA escreva "obeso"/"obesa" (estigmatizante) — use SEMPRE "pessoa com obesidade", "paciente com obesidade" ou "portador(a) de obesidade". A condição não define a pessoa (vale também p/ "diabético" → "pessoa com diabetes").'
+'6. LINGUAGEM CENTRADA NA PESSOA: NUNCA escreva "obeso"/"obesa" (estigmatizante) — use SEMPRE "pessoa com obesidade", "paciente com obesidade" ou "portador(a) de obesidade". A condição não define a pessoa (vale também p/ "diabético" → "pessoa com diabetes").',
+'7. NOMENCLATURA (SOMP): chame a antiga "síndrome dos ovários policísticos (SOP)" de "Síndrome Ovariana Metabólica Poliendócrina (SOMP)"; na 1ª menção pode citar "(antiga SOP)" para reconhecimento. Não use "SOP" isolado. (O achado de imagem segue "ovários policísticos ao US".)'
 ].join('\n');
 // Bloco ÚNICO de diretrizes recentes — injetado em TODOS os geradores de IA
 // (questões/flashcards/mapas via authoringSys, Chat IA, OSCE e Prescrição
