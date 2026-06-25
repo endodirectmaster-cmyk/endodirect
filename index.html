@@ -2399,7 +2399,13 @@ function pushSupported(){return ('serviceWorker' in navigator)&&('PushManager' i
 function pushIsIOS(){return /iphone|ipad|ipod/i.test(navigator.userAgent||'')||(navigator.platform==='MacIntel'&&navigator.maxTouchPoints>1);}
 function pushStandalone(){return (window.matchMedia&&window.matchMedia('(display-mode: standalone)').matches)||(navigator.standalone===true);}
 function pushB64ToU8(b64){var pad='='.repeat((4-b64.length%4)%4);var s=(b64+pad).replace(/-/g,'+').replace(/_/g,'/');var raw=atob(s);var arr=new Uint8Array(raw.length);for(var i=0;i<raw.length;i++)arr[i]=raw.charCodeAt(i);return arr;}
-function pushReg(){return (navigator.serviceWorker&&navigator.serviceWorker.ready)?navigator.serviceWorker.ready:Promise.reject(new Error('Service worker indisponível.'));}
+function pushTimeout(p,ms,msg){return Promise.race([Promise.resolve(p),new Promise(function(_,rej){setTimeout(function(){rej(new Error(msg));},ms);})]);}
+function pushReg(){
+  if(!navigator.serviceWorker)return Promise.reject(new Error('Service worker indisponível.'));
+  // Garante o registro (idempotente) e espera ativar — com timeout p/ nunca travar.
+  var p=navigator.serviceWorker.register('/sw.js').then(function(){return navigator.serviceWorker.ready;});
+  return pushTimeout(p,15000,'Não foi possível preparar o app para notificações. Recarregue a página (Ctrl+Shift+R) e tente de novo.');
+}
 function pushGetSubscription(){return pushReg().then(function(reg){return reg.pushManager.getSubscription();});}
 function pushSaveSub(sub){
   var client=getSupabaseClient();if(!client||!sub)return Promise.resolve();
@@ -2410,18 +2416,26 @@ function pushSaveSub(sub){
   if(currentUser&&currentUser.email)row.email=currentUser.email;
   return client.from('endodirect_push_subs').upsert(row,{onConflict:'endpoint'}).then(function(res){if(res.error)throw res.error;});
 }
+function pushAskPermission(){
+  try{
+    if(typeof Notification==='undefined')return Promise.reject(new Error('Seu navegador não suporta notificações.'));
+    if(Notification.permission==='granted')return Promise.resolve('granted');
+    if(Notification.permission==='denied')return Promise.resolve('denied');
+    return Promise.resolve(Notification.requestPermission());
+  }catch(e){return Promise.reject(e);}
+}
 function pushEnable(){
   if(!pushSupported())return Promise.reject(new Error('Seu navegador não suporta notificações.'));
   if(pushIsIOS()&&!pushStandalone())return Promise.reject(new Error('No iPhone/iPad, instale o app na tela inicial e abra pelo ícone para ativar os avisos.'));
-  return Notification.requestPermission().then(function(perm){
-    if(perm!=='granted')throw new Error(perm==='denied'?'Notificações bloqueadas. Habilite nas configurações do navegador.':'Permissão não concedida.');
+  return pushAskPermission().then(function(perm){
+    if(perm!=='granted')throw new Error(perm==='denied'?'Notificações bloqueadas neste navegador. Clique no cadeado da barra de endereço → Notificações → Permitir, e tente de novo.':'Permissão não concedida.');
     return pushReg();
   }).then(function(reg){
     return reg.pushManager.getSubscription().then(function(existing){
       if(existing)return existing;
-      return reg.pushManager.subscribe({userVisibleOnly:true,applicationServerKey:pushB64ToU8(PUSH_VAPID_PUBLIC)});
+      return pushTimeout(reg.pushManager.subscribe({userVisibleOnly:true,applicationServerKey:pushB64ToU8(PUSH_VAPID_PUBLIC)}),20000,'Tempo esgotado ao registrar a inscrição. Tente de novo.');
     });
-  }).then(function(sub){return pushSaveSub(sub).then(function(){return sub;});});
+  }).then(function(sub){return pushTimeout(pushSaveSub(sub),15000,'Tempo esgotado ao salvar a inscrição.').then(function(){return sub;});});
 }
 function pushDisable(){
   return pushGetSubscription().then(function(sub){
