@@ -1,11 +1,12 @@
 ---
 tags: [cofre, processo]
-atualizado: 2026-06-18
+atualizado: 2026-06-25
 ---
 
 # Convenções de Trabalho
 
 ## Git / deploy
+- **⚠️ LIÇÃO (2026-06-25) — NÃO empilhar 2 pushes em `main` em segundos:** dois commits enviados em sequência rápida (`672c2a7` filtros, depois `7935cc2` remove ✓) geraram builds concorrentes na Vercel e a **promoção saiu fora de ordem** — o deploy do commit **mais antigo** virou produção ~24s depois, e o site ficou servindo a versão SEM a última correção (o usuário via o ✓ que eu já havia removido). **Correção:** subir **um commit por vez** e, em caso de mudanças rápidas, **agrupar num único commit** ou confirmar via `list_deployments` que o deploy de produção aponta para o SHA mais novo antes de avisar o usuário. Hotfix usado: um commit novo (bump do cache do `sw.js` v4→v5) força um deploy limpo (mais recente, sem corrida) **e** busta o cache do service worker dos clientes. **Webhook GitHub→Vercel pode atrasar ~2–3 min** — não confiar em "deve estar pronto"; checar o estado real.
 - **Branch de desenvolvimento:** `claude/funny-brahmagupta-9n8yT`.
 - Fluxo: commitar na branch → abrir PR → **squash merge** em `main` → deploy automático na Vercel.
 - **⚠️ REGRA ATUAL (reforçada pelo usuário 2026-06-18) — PREVIEW + APROVAÇÃO ANTES DO DEPLOY:** toda mudança que afeta **o app** (frontend `index.html`, prompts, backend `api/`/`lib/`) segue: branch → PR → **CI verde** → **enviar o link do PREVIEW da Vercel no chat** → **esperar o "ok"/"pode dar deploy" do usuário** → só então squash-merge na `main`. **NÃO mergear/deployar sem a aprovação explícita.** Isso **supersede** a antiga "merge automático" abaixo. Exceção: **docs do `cofre/`** (`.md`) não fazem deploy no app → podem ser commitadas/mergeadas direto (mantendo o campo `atualizado:` em dia).
