@@ -845,6 +845,20 @@ html[data-theme="light"] .dir-back{background:#f8f9fc;border-color:var(--bd2);co
   </div>
 </div>
 
+<!-- Alerta de questões pendentes (professor): aparece no login quando há pendências das suas subespecialidades. -->
+<div class="modal-bg" id="pend-alert-modal">
+  <div class="modal-box" style="max-width:420px">
+    <div class="modal-hdr"><span class="modal-hdr-title">📥 Questões pendentes</span></div>
+    <div class="modal-body">
+      <div style="font-size:.9rem;color:var(--t2);line-height:1.6;margin-bottom:1.1rem">Você tem <b id="pend-alert-n" style="color:var(--blue)">0</b> questão(ões) da Questão do Dia <b>aguardando sua revisão</b> na aba Pendências.</div>
+      <div style="display:flex;gap:.5rem">
+        <button class="btn btn-primary" id="pend-alert-go" style="flex:1;justify-content:center;padding:.6rem">Ver Pendências →</button>
+        <button class="btn btn-outline" id="pend-alert-close" style="justify-content:center">Depois</button>
+      </div>
+    </div>
+  </div>
+</div>
+
 <div class="modal-bg" id="session-modal">
   <div class="modal-box" style="max-width:400px">
     <div class="modal-hdr"><span class="modal-hdr-title">⏰ Sessão inativa</span></div>
@@ -2792,6 +2806,18 @@ function qotdSubsForEmail(email){email=String(email||'').trim().toLowerCase();fo
 function qotdCuratorForSub(sub){for(var i=0;i<QOTD_CURATORS.length;i++){if(QOTD_CURATORS[i].subs.indexOf(sub)>=0)return QOTD_CURATORS[i];}return null;}
 function qotdMyPending(){var subs=qotdSubsForEmail(admEmail());return (igPending||[]).filter(function(it){return it&&subs.indexOf(it.sub)>=0;});}
 function persistIgPending(){try{lsSet('ig_pending',igPending);}catch(e){}queueRemoteStateSave();}
+// Alerta (1x por login) quando o professor entra e tem questões pendentes de revisão.
+var pendAlertShown=false;
+function maybePendAlert(){
+  if(pendAlertShown)return;
+  if(!(currentUser&&currentUser.role==='admin'))return;
+  var n=qotdMyPending().length;if(!n)return;
+  pendAlertShown=true;
+  var m=document.getElementById('pend-alert-modal');if(!m)return;
+  var ne=document.getElementById('pend-alert-n');if(ne)ne.textContent=n;
+  m.style.display='flex';
+}
+function closePendAlert(){var m=document.getElementById('pend-alert-modal');if(m)m.style.display='none';}
 var igStoryDraft=null; // rascunho em edição (gerado pela IA ou manual)
 // Proteção de concorrência do estado GLOBAL: guarda o updated_at lido na carga/
 // último save; se o servidor mudou desde então (outro admin gravou), o save mescla
@@ -2916,7 +2942,7 @@ function applyStatePayload(payload,personalOnly){
     if(Array.isArray(payload.acessos))userAcessos=payload.acessos;
     if(Array.isArray(payload.cursos))catalogoCursos=payload.cursos;
     if(Array.isArray(payload.ig_stories)){igStories=payload.ig_stories;try{lsSet('ig_stories',igStories);}catch(e){}}
-    if(Array.isArray(payload.ig_pending)){igPending=payload.ig_pending;try{lsSet('ig_pending',igPending);}catch(e){}try{updateAdmPendBadge();}catch(e){}}
+    if(Array.isArray(payload.ig_pending)){igPending=payload.ig_pending;try{lsSet('ig_pending',igPending);}catch(e){}try{updateAdmPendBadge();}catch(e){}try{maybePendAlert();}catch(e){}}
     // Preserva chaves geridas pelo servidor (newsletter + lembrete IG) p/ o save do admin não apagá-las.
     ['newsletter_extra','newsletter_unsub','newsletter_sent','newsletter','newsletter_recent','ig_notice_sent'].forEach(function(k){if(payload[k]!==undefined)globalServerKeys[k]=payload[k];});
   }
@@ -3627,6 +3653,7 @@ function startApp(){
     // um login novo cai no padrão (Analytics) via admRestoreSec().
     goPanel('adm');
     try{loadAdmSupport();}catch(e){} // popula o badge "(N)" do Suporte já no login
+    pendAlertShown=false; // re-arma o alerta de pendências a cada login (dispara após o hydrate)
     try{applyQotdNav();}catch(e){} // esconde o gerador "Questão do Dia" p/ não-donos + badge das Pendências
   }else{
     // Reload mantém o último painel; logout limpa last_panel → cai no Mural (homePanel).
@@ -8126,6 +8153,9 @@ function renderIgLote(){
   var res=document.getElementById('ig-lote-results');if(!res)return;
   if(!igLoteDraft.length){res.innerHTML='';return;}
   res.innerHTML='<div style="font-size:.74rem;color:var(--t2);margin:.2rem 0 .5rem">'+igLoteDraft.length+' gerada(s) — revise e aprove:</div>'+igLoteDraft.map(function(it,i){
+    var _stem=String(it.stem||'');
+    var _prev=esc(_stem.slice(0,220))+(_stem.length>220?'…':'');
+    var _full='<div style="font-size:.74rem;color:var(--t2);line-height:1.55;white-space:pre-wrap">▾ '+esc(_stem)+'</div><div style="margin-top:.35rem;display:grid;gap:.18rem">'+['A','B','C','D'].map(function(L){var ok=(it.answer===L);return '<div style="font-size:.74rem;line-height:1.45;color:'+(ok?'#16a34a':'var(--t2)')+';font-weight:'+(ok?'700':'400')+'"><b>'+L+')</b> '+esc((it.options||{})[L]||'')+(ok?' ✓':'')+'</div>';}).join('')+'</div>'+(it.explanation?'<div style="margin-top:.35rem;font-size:.72rem;color:var(--t3);line-height:1.5"><b>Comentário:</b> '+esc(it.explanation)+'</div>':'');
     return '<div style="border:1px solid var(--bd);border-radius:12px;padding:.7rem .8rem;margin-bottom:.5rem;background:var(--s2)">'
       +'<div style="display:flex;justify-content:space-between;gap:.5rem;flex-wrap:wrap;align-items:center;margin-bottom:.35rem">'
       +'<div style="font-size:.8rem;font-weight:700;color:var(--tx)">'+dirSubIcon(it.sub)+' '+esc(it.sub||'')+' <span class="tag tag-blue">Gab: '+esc(it.answer)+'</span>'+(qotdCuratorForSub(it.sub)?' <span class="tag">→ '+esc(qotdCuratorForSub(it.sub).nome)+'</span>':'')+'</div>'
@@ -8135,13 +8165,17 @@ function renderIgLote(){
       +'<button class="btn btn-outline btn-sm" data-iglote-edit="'+i+'">✎ Editar</button>'
       +'<button class="btn btn-outline btn-sm" data-iglote-del="'+i+'">🗑</button>'
       +'</div></div>'
-      +'<div style="font-size:.74rem;color:var(--t2);line-height:1.5">'+esc(String(it.stem||'').slice(0,220))+(String(it.stem||'').length>220?'…':'')+'</div>'
+      +'<div data-iglote-toggle="'+i+'" style="cursor:pointer" title="Clique para expandir/recolher">'
+      +'<div data-iglote-prev="'+i+'" style="font-size:.74rem;color:var(--t2);line-height:1.5">▸ '+_prev+'</div>'
+      +'<div data-iglote-full="'+i+'" style="display:none">'+_full+'</div>'
+      +'</div>'
       +'</div>';
   }).join('')+(igLoteDraft.length>1?'<div style="display:flex;gap:.4rem;flex-wrap:wrap"><button class="btn btn-primary btn-sm" id="ig-lote-distall">📤 Distribuir todas ('+igLoteDraft.length+')</button><button class="btn btn-outline btn-sm" id="ig-lote-okall">✓ Aprovar todas</button></div>':'');
   res.querySelectorAll('[data-iglote-dist]').forEach(function(b){b.addEventListener('click',function(){igDistribute(parseInt(b.dataset.igloteDist,10));});});
   res.querySelectorAll('[data-iglote-ok]').forEach(function(b){b.addEventListener('click',function(){igLoteApprove(parseInt(b.dataset.igloteOk,10));});});
   res.querySelectorAll('[data-iglote-edit]').forEach(function(b){b.addEventListener('click',function(){igLoteEdit(parseInt(b.dataset.igloteEdit,10));});});
   res.querySelectorAll('[data-iglote-del]').forEach(function(b){b.addEventListener('click',function(){igLoteDraft.splice(parseInt(b.dataset.igloteDel,10),1);renderIgLote();});});
+  res.querySelectorAll('[data-iglote-toggle]').forEach(function(el){el.addEventListener('click',function(){var i=el.getAttribute('data-iglote-toggle');var p=res.querySelector('[data-iglote-prev="'+i+'"]'),f=res.querySelector('[data-iglote-full="'+i+'"]');if(!p||!f)return;var op=f.style.display!=='none';f.style.display=op?'none':'';p.style.display=op?'':'none';});});
   var distall=document.getElementById('ig-lote-distall');if(distall)distall.addEventListener('click',igDistributeAll);
   var okall=document.getElementById('ig-lote-okall');if(okall)okall.addEventListener('click',igLoteApproveAll);
 }
@@ -10690,6 +10724,8 @@ document.addEventListener('DOMContentLoaded',function(){
   });
   document.getElementById('ob-submit').addEventListener('click',submitOnboard);
   var wnOk=document.getElementById('wn-ok');if(wnOk)wnOk.addEventListener('click',dismissWhatsNew);
+  var paGo=document.getElementById('pend-alert-go');if(paGo)paGo.addEventListener('click',function(){closePendAlert();try{renderAdmSec('pendencias');}catch(e){}});
+  var paCl=document.getElementById('pend-alert-close');if(paCl)paCl.addEventListener('click',closePendAlert);
 
   // USER MENU
   document.getElementById('tb-user-btn').addEventListener('click',function(e){e.stopPropagation();var m=document.getElementById('user-menu');m.style.display=m.style.display==='block'?'none':'block';});
