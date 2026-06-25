@@ -4803,7 +4803,7 @@ function qotdRenderModal(q,ans){
   qotdModalEl();var body=document.getElementById('qotd-modal-body');if(!body)return;
   var footer=ans
     ?'<button type="button" class="btn btn-primary" id="qotd-see-mural" style="width:100%;margin-top:.7rem">Ver o mural →</button>'
-    :'<button type="button" class="btn btn-outline" id="qotd-skip" style="width:100%;margin-top:.6rem;background:var(--surface);border-color:var(--bd2);color:var(--tx);font-weight:600">Agora não</button>';
+    :'<div style="text-align:center;margin-top:.7rem"><button type="button" class="btn" id="qotd-skip" style="background:var(--gold);color:#0b1325;font-weight:700;padding:.5rem 1.5rem">Agora não</button></div>';
   body.innerHTML=qotdCardHTML(q,ans)+footer;
   if(!ans)body.querySelectorAll('[data-qotd-opt]').forEach(function(b){b.addEventListener('click',function(){qotdPick(q,b.getAttribute('data-qotd-opt'));});});
   var see=document.getElementById('qotd-see-mural');if(see)see.addEventListener('click',qotdClose);
