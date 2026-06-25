@@ -5053,10 +5053,9 @@ var genAnswered={};// idx -> {ok} das questões respondidas na busca atual (cont
 // {questions:[...]}, um array puro [...] ou um único objeto-questão {stem,...}.
 function pickQuestions(data){
   if(!data)return [];
-  if(Array.isArray(data.questions))return data.questions;
-  if(Array.isArray(data))return data;
-  if(data.stem)return [data];
-  return [];
+  var arr=Array.isArray(data.questions)?data.questions:(Array.isArray(data)?data:(data.stem?[data]:[]));
+  // Embaralha as alternativas das questões de múltipla escolha (distribui o gabarito).
+  return arr.map(function(q){return (q&&q.options&&q.answer)?igShuffleMCQ(q):q;});
 }
 function genQuestions(){
   if(blockIfDegustacao())return;
@@ -5071,7 +5070,7 @@ function genQuestions(){
   btn.disabled=true;btn.innerHTML=ldHTML();
   var res=document.getElementById('q-gen-results');res.innerHTML=ldHTML();
   var sys=isMC
-    ?authoringSys('Atue como examinador de prova de residência/título em endocrinologia. JSON APENAS: {"questions":[{"stem":"vinheta clínica de 3-4 linhas com dados objetivos (idade, sexo, quadro e exames com valores e unidades)","options":{"A":"texto","B":"texto","C":"texto","D":"texto"},"answer":"A","explanation":"justificativa técnica em 1-2 frases citando o critério/valor de corte/diretriz","area":"'+areaTag+'","dificuldade":"'+diff+'"}]}')
+    ?authoringSys('Atue como examinador de prova de residência/título em endocrinologia. JSON APENAS: {"questions":[{"stem":"vinheta clínica de 3-4 linhas com dados objetivos (idade, sexo, quadro e exames com valores e unidades)","options":{"A":"texto","B":"texto","C":"texto","D":"texto"},"answer":"A","explanation":"justificativa técnica em 1-2 frases citando o critério/valor de corte/diretriz (refira-se ao CONTEÚDO das alternativas, não às letras A/B/C/D)","area":"'+areaTag+'","dificuldade":"'+diff+'"}]}')
     :authoringSys('Atue como examinador de prova de endocrinologia. JSON APENAS: {"questions":[{"stem":"vinheta clínica de 3-4 linhas com dados objetivos e exames com valores/unidades","expected":"resposta-modelo objetiva e correta, citando o critério/diretriz","area":"'+areaTag+'","dificuldade":"'+diff+'"}]}');
   // Lotes pequenos (3) em PARALELO p/ rapidez. Com o formato JSON já corrigido, cada
   // chamada volta JSON compacto rápido; rodar os lotes juntos derruba o tempo total
@@ -8335,10 +8334,27 @@ function igPool(tasks,limit){
     next();
   });
 }
+// Embaralha as alternativas (Fisher-Yates) e reatribui o gabarito → distribui a
+// correta entre A/B/C/D (a IA tende a pôr o gabarito em A/B). Como a ordem muda,
+// os comentários referem o CONTEÚDO das alternativas, não as letras.
+function igShuffleMCQ(q){
+  try{
+    if(!q||!q.options||!q.answer)return q;
+    var letters=['A','B','C','D'].filter(function(L){return q.options[L]!=null&&String(q.options[L]).trim()!=='';});
+    if(letters.length<2)return q;
+    var arr=letters.map(function(L){return {t:q.options[L],ok:(L===q.answer)};});
+    for(var i=arr.length-1;i>0;i--){var j=Math.floor(Math.random()*(i+1));var tmp=arr[i];arr[i]=arr[j];arr[j]=tmp;}
+    var no={},na=letters[0];
+    arr.forEach(function(o,idx){var L=letters[idx];no[L]=o.t;if(o.ok)na=L;});
+    ['A','B','C','D'].forEach(function(L){if(no[L]==null)no[L]=(q.options[L]!=null?q.options[L]:'');});
+    q.options=no;q.answer=na;
+  }catch(e){}
+  return q;
+}
 function igGenOne(sub,topic){
-  var sys=authoringSys('Atue como examinador de prova de título em endocrinologia. Gere UMA questão ORIGINAL de '+sub+', EXATAMENTE 4 alternativas (A–D), só uma correta. O enunciado deve TERMINAR SEMPRE com a pergunta direta (ex.: Qual o diagnóstico mais provável? / Qual a melhor conduta?). Inclua os valores laboratoriais pertinentes INLINE no texto, com unidades e valores de referência (ex.: FSH 2,1 mUI/mL [VR 3,5–12,5]) — não resuma como exames normais nem use tabela. Quando pertinente, descreva o achado de imagem no enunciado em texto (ex.: USG de tireoide, ECG, RM de sela). NÃO cite a subespecialidade no enunciado. Alternativas CURTAS e concisas (poucas palavras — também vão para o story). JSON APENAS: {"stem":"vinheta clínica curta; exames laboratoriais inline com valores, unidades e referência; achado de imagem descrito em texto quando pertinente; TERMINA com a pergunta direta","options":{"A":"alternativa curta","B":"alternativa curta","C":"alternativa curta","D":"alternativa curta"},"answer":"A","explanation":"comentário COMPLETO em 1-2 parágrafos (cerca de 4-8 linhas no total): explique por que a alternativa correta está certa E por que as principais erradas estão erradas, com o critério/valor de corte e citando a diretriz/fonte pelo NOME + ano (sem PMID nem DOI)"}');
+  var sys=authoringSys('Atue como examinador de prova de título em endocrinologia. Gere UMA questão ORIGINAL de '+sub+', EXATAMENTE 4 alternativas (A–D), só uma correta. O enunciado deve TERMINAR SEMPRE com a pergunta direta (ex.: Qual o diagnóstico mais provável? / Qual a melhor conduta?). Inclua os valores laboratoriais pertinentes INLINE no texto, com unidades e valores de referência (ex.: FSH 2,1 mUI/mL [VR 3,5–12,5]) — não resuma como exames normais nem use tabela. Quando pertinente, descreva o achado de imagem no enunciado em texto (ex.: USG de tireoide, ECG, RM de sela). NÃO cite a subespecialidade no enunciado. Alternativas CURTAS e concisas (poucas palavras — também vão para o story). JSON APENAS: {"stem":"vinheta clínica curta; exames laboratoriais inline com valores, unidades e referência; achado de imagem descrito em texto quando pertinente; TERMINA com a pergunta direta","options":{"A":"alternativa curta","B":"alternativa curta","C":"alternativa curta","D":"alternativa curta"},"answer":"A","explanation":"comentário COMPLETO em 1-2 parágrafos (cerca de 4-8 linhas no total): explique por que a alternativa correta está certa E por que as principais erradas estão erradas, com o critério/valor de corte e citando a diretriz/fonte pelo NOME + ano (sem PMID nem DOI); refira-se ao CONTEÚDO das alternativas, NÃO às letras (A/B/C/D), pois a ordem é embaralhada"}');
   return aiRequest({system:sys,prompt:'Gere 1 questão de Endocrinologia — '+sub+(topic?(', tema: '+topic):'')+', nível intermediário, clinicamente precisa e alinhada às diretrizes vigentes. Responda SOMENTE com o objeto JSON.',maxTokens:1100,model:AI_MODEL_CLINICO,grounding:(topic?(sub+' '+topic):sub)})
-  .then(function(raw){var d=parseJ(raw);if(!d||!d.stem||!d.options)return null;return {sub:sub,teem:'',stem:String(d.stem||''),options:{A:d.options.A||'',B:d.options.B||'',C:d.options.C||'',D:d.options.D||''},answer:String(d.answer||'A').toUpperCase().slice(0,1),explanation:String(d.explanation||'')};});
+  .then(function(raw){var d=parseJ(raw);if(!d||!d.stem||!d.options)return null;return igShuffleMCQ({sub:sub,teem:'',stem:String(d.stem||''),options:{A:d.options.A||'',B:d.options.B||'',C:d.options.C||'',D:d.options.D||''},answer:String(d.answer||'A').toUpperCase().slice(0,1),explanation:String(d.explanation||'')});});
 }
 function igLoteToQueue(it){igStories.push({id:'ig-'+Date.now()+'-'+Math.round(Math.random()*1e6),sub:it.sub,teem:it.teem||'',stem:it.stem,options:it.options,answer:it.answer,explanation:it.explanation,status:'queued',createdAt:Date.now()});}
 function igLoteApprove(i){var it=igLoteDraft[i];if(!it)return;igLoteToQueue(it);igLoteDraft.splice(i,1);persistIgStories();notify('Aprovada e adicionada à fila.','ok');renderAdmSec('stories');}
@@ -8392,12 +8408,12 @@ function bindAdmStories(){
     var sub=(document.getElementById('ig-sub')||{}).value||'Endocrinologia',topic=((document.getElementById('ig-topic')||{}).value||'').trim();
     var st=document.getElementById('ig-gen-status');
     gen.disabled=true;gen.innerHTML=ldHTML('Gerando...');if(st)st.textContent='';
-    var sys=authoringSys('Atue como examinador de prova de título em endocrinologia. Gere UMA questão ORIGINAL (não copie provas existentes), de '+sub+', com EXATAMENTE 4 alternativas (A–D), só uma correta. O enunciado deve TERMINAR SEMPRE com a pergunta direta (ex.: Qual o diagnóstico mais provável? / Qual a melhor conduta?). Inclua os valores laboratoriais pertinentes INLINE no texto, com unidades e valores de referência (ex.: FSH 2,1 mUI/mL [VR 3,5–12,5]) — não resuma como exames normais nem use tabela. Quando pertinente, descreva o achado de imagem no enunciado em texto (ex.: USG de tireoide, ECG, RM de sela). NÃO cite a subespecialidade no enunciado. Alternativas CURTAS e concisas (poucas palavras — também vão para o story). JSON APENAS: {"stem":"vinheta clínica curta; exames laboratoriais inline com valores, unidades e referência; achado de imagem descrito em texto quando pertinente; TERMINA com a pergunta direta","options":{"A":"alternativa curta","B":"alternativa curta","C":"alternativa curta","D":"alternativa curta"},"answer":"A","explanation":"comentário COMPLETO em 1-2 parágrafos (cerca de 4-8 linhas no total): explique por que a alternativa correta está certa E por que as principais erradas estão erradas, com o critério/valor de corte e citando a diretriz/fonte pelo NOME + ano (sem PMID nem DOI)"}');
+    var sys=authoringSys('Atue como examinador de prova de título em endocrinologia. Gere UMA questão ORIGINAL (não copie provas existentes), de '+sub+', com EXATAMENTE 4 alternativas (A–D), só uma correta. O enunciado deve TERMINAR SEMPRE com a pergunta direta (ex.: Qual o diagnóstico mais provável? / Qual a melhor conduta?). Inclua os valores laboratoriais pertinentes INLINE no texto, com unidades e valores de referência (ex.: FSH 2,1 mUI/mL [VR 3,5–12,5]) — não resuma como exames normais nem use tabela. Quando pertinente, descreva o achado de imagem no enunciado em texto (ex.: USG de tireoide, ECG, RM de sela). NÃO cite a subespecialidade no enunciado. Alternativas CURTAS e concisas (poucas palavras — também vão para o story). JSON APENAS: {"stem":"vinheta clínica curta; exames laboratoriais inline com valores, unidades e referência; achado de imagem descrito em texto quando pertinente; TERMINA com a pergunta direta","options":{"A":"alternativa curta","B":"alternativa curta","C":"alternativa curta","D":"alternativa curta"},"answer":"A","explanation":"comentário COMPLETO em 1-2 parágrafos (cerca de 4-8 linhas no total): explique por que a alternativa correta está certa E por que as principais erradas estão erradas, com o critério/valor de corte e citando a diretriz/fonte pelo NOME + ano (sem PMID nem DOI); refira-se ao CONTEÚDO das alternativas, NÃO às letras (A/B/C/D), pois a ordem é embaralhada"}');
     aiRequest({system:sys,prompt:'Gere 1 questão de Endocrinologia — '+sub+(topic?(', tema: '+topic):'')+', nível intermediário, clinicamente precisa e alinhada às diretrizes vigentes. Enunciado conciso, adequado a um story do Instagram.',maxTokens:1100,model:AI_MODEL_CLINICO,grounding:(topic?(sub+' '+topic):sub)})
     .then(function(raw){
       var d=parseJ(raw);if(!d||!d.stem||!d.options)throw new Error('Resposta inválida. Tente de novo.');
       igEditId=null;
-      igFillForm({sub:sub,stem:String(d.stem||''),options:{A:d.options.A||'',B:d.options.B||'',C:d.options.C||'',D:d.options.D||''},answer:String(d.answer||'A').toUpperCase().slice(0,1),explanation:String(d.explanation||'')});
+      igFillForm(igShuffleMCQ({sub:sub,stem:String(d.stem||''),options:{A:d.options.A||'',B:d.options.B||'',C:d.options.C||'',D:d.options.D||''},answer:String(d.answer||'A').toUpperCase().slice(0,1),explanation:String(d.explanation||'')}));
       if(st)st.textContent='✓ Gerada — revise, pré-visualize e aprove.';notify('Questão gerada. Revise antes de aprovar.','ok');
     })
     .catch(function(e){notify('Erro ao gerar: '+((e&&e.message)||e),'err');})
