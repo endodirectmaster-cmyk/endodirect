@@ -4795,9 +4795,10 @@ function qotdTodays(){
   var arr=(typeof igStories!=='undefined'&&Array.isArray(igStories))?igStories:[];
   var valid=arr.filter(function(x){return x&&x.stem&&x.options&&(x.options.A||x.options.B)&&x.answer;});
   if(!valid.length)return null;
-  // ORDEM DA FILA = ordem de publicação: a 1ª ainda não postada (topo) é a do dia.
-  var pend=valid.filter(function(x){return x.status!=='posted';});
-  return pend.length?pend[0]:valid[valid.length-1];
+  // A "do dia" = a ÚLTIMA já postada (a publicada mais recente). As que ainda
+  // estão na fila (não postadas) NÃO aparecem no modal — só quando forem postadas.
+  var posted=valid.filter(function(x){return x.status==='posted';});
+  return posted.length?posted[posted.length-1]:null;
 }
 function qotdCardHTML(q,ans){
   var ltrs=['A','B','C','D'].filter(function(L){return q.options[L];});
