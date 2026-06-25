@@ -4969,6 +4969,8 @@ function qotdPick(q,letter){
 // ── ARQUIVO DA QUESTÃO DO DIA (aluno responde/revê; profs revisam) ──
 var qotdArchOpen=null;     // id aberto no arquivo do aluno
 var admQotdArchOpen=null;  // id aberto no arquivo do professor
+var admQotdArchSub='';     // filtro de subespecialidade no arquivo do professor ('' = todas)
+var admQotdArchSort='recent'; // ordenação por data ('recent' = mais recente; 'old' = mais antiga)
 function qotdPublished(){
   // SÓ as já postadas/publicadas (status 'posted') — as que ainda estão na fila não aparecem.
   var arr=(typeof igStories!=='undefined'&&Array.isArray(igStories))?igStories:[];
@@ -5018,22 +5020,39 @@ function qotdReviewCardHTML(q){
     +(q.img?'<img src="'+esc(q.img)+'" alt="Figura" style="max-width:100%;display:block;border-radius:8px;margin:0 0 .6rem;border:1px solid var(--bd)">':'')
     +'<div style="display:flex;flex-direction:column;gap:.4rem">'+opts+'</div>'+cm;
 }
+function qotdArchDate(q){return (q&&(q.postedAt||q.createdAt||q.at))||0;}
 function admQotdArchiveHTML(){
-  var list=qotdPublished();
+  var all=qotdPublished();
+  // Subespecialidades presentes (para o filtro), em ordem alfabética.
+  var subsPresent=[];all.forEach(function(q){if(q.sub&&subsPresent.indexOf(q.sub)<0)subsPresent.push(q.sub);});
+  subsPresent.sort(function(a,b){return a.localeCompare(b,'pt-BR');});
+  if(admQotdArchSub&&subsPresent.indexOf(admQotdArchSub)<0)admQotdArchSub=''; // filtro some se a sub não existe mais
+  // Filtra + ordena por data.
+  var list=all.filter(function(q){return !admQotdArchSub||q.sub===admQotdArchSub;});
+  list.sort(function(a,b){var da=qotdArchDate(a),db=qotdArchDate(b);return admQotdArchSort==='old'?(da-db):(db-da);});
+  var subOpts='<option value="">Todas as subespecialidades</option>'+subsPresent.map(function(s){return '<option value="'+esc(s)+'"'+(admQotdArchSub===s?' selected':'')+'>'+esc(s)+'</option>';}).join('');
+  var sortOpts='<option value="recent"'+(admQotdArchSort!=='old'?' selected':'')+'>Mais recentes primeiro</option><option value="old"'+(admQotdArchSort==='old'?' selected':'')+'>Mais antigas primeiro</option>';
+  var filters='<div style="display:flex;gap:.6rem;flex-wrap:wrap;align-items:flex-end;margin-bottom:1rem">'
+    +'<label style="flex:1;min-width:200px">'+igLbl('Subespecialidade')+'<select id="adm-qa-sub">'+subOpts+'</select></label>'
+    +'<label style="flex:1;min-width:170px">'+igLbl('Ordenar por data')+'<select id="adm-qa-sort">'+sortOpts+'</select></label>'
+    +'<span style="font-size:.72rem;color:var(--t3);padding-bottom:.55rem">'+list.length+' de '+all.length+'</span></div>';
   var body=list.length?list.map(function(q){
     var open=(admQotdArchOpen===q.id);
     var sub=q.sub?'<span style="font-size:.64rem;font-weight:700;color:var(--gold);text-transform:uppercase;letter-spacing:.04em;margin-right:.5rem;flex-shrink:0">'+esc(q.sub)+'</span>':'';
-    var st=String((q.teem?q.teem+' ':'')+q.stem).trim();
-    var snip=esc(st.slice(0,130))+(st.length>130?'…':'');
-    var head='<button type="button" class="qa-head" data-admqa-toggle="'+esc(q.id)+'">'+sub+'<span class="qa-snip">'+snip+'</span><span class="qa-caret">'+(open?'▴':'▾')+'</span></button>';
+    var pd=qotdArchDate(q);
+    var dstr=pd?new Date(pd).toLocaleDateString('pt-BR'):'—';
+    var head='<button type="button" class="qa-head" data-admqa-toggle="'+esc(q.id)+'">'+sub+'<span class="qa-snip">'+esc(dstr)+'</span><span class="qa-caret">'+(open?'▴':'▾')+'</span></button>';
     var bd=open?'<div class="qa-body">'+qotdReviewCardHTML(q)+'</div>':'';
     return '<div class="qa-item'+(open?' open':'')+'">'+head+bd+'</div>';
-  }).join(''):'<div class="empty">Nenhuma questão publicada ainda.</div>';
+  }).join(''):'<div class="empty">'+(all.length?'Nenhuma questão nesta subespecialidade.':'Nenhuma questão publicada ainda.')+'</div>';
   return '<div class="adm-ph"><h1>Questão do Dia</h1></div><div class="adm-pc">'
     +'<div class="card" style="margin-bottom:1.1rem"><div style="font-size:.79rem;color:var(--t2);line-height:1.55">Arquivo das questões do dia já publicadas — enunciado, alternativa correta (✓) e comentário. Para consulta e revisão.</div></div>'
+    +(all.length?filters:'')
     +'<div id="adm-qotd-arch">'+body+'</div></div>';
 }
 function bindAdmQotdArchive(){
+  var fs=document.getElementById('adm-qa-sub');if(fs)fs.addEventListener('change',function(){admQotdArchSub=fs.value;admQotdArchOpen=null;renderAdmSec('qotdarq');});
+  var so=document.getElementById('adm-qa-sort');if(so)so.addEventListener('change',function(){admQotdArchSort=so.value;renderAdmSec('qotdarq');});
   document.querySelectorAll('[data-admqa-toggle]').forEach(function(h){h.addEventListener('click',function(){var id=h.getAttribute('data-admqa-toggle');admQotdArchOpen=(admQotdArchOpen===id)?null:id;renderAdmSec('qotdarq');});});
 }
 function setText(id,v){var e=document.getElementById(id);if(e)e.textContent=v;}
@@ -8556,7 +8575,7 @@ function bindAdmStories(){
   main.querySelectorAll('[data-ig-load]').forEach(function(b){b.addEventListener('click',function(){var it=igStories[parseInt(b.dataset.igLoad,10)];if(!it)return;igEditId=it.id;stShowView('manual');igFillForm(it);try{document.getElementById('ig-stem').scrollIntoView({behavior:'smooth',block:'center'});}catch(e){}notify('Editando — altere e clique em "Aprovar" para salvar.','ok');});});
   main.querySelectorAll('[data-ig-dlq]').forEach(function(b){b.addEventListener('click',function(){var it=igStories[parseInt(b.dataset.igDlq,10)];if(it)igDownload('q',it,'endodireto-'+igFnameSub(it)+'-pergunta.png').catch(function(e){notify((e&&e.message)||'Falha.','err');});});});
   main.querySelectorAll('[data-ig-dla]').forEach(function(b){b.addEventListener('click',function(){var it=igStories[parseInt(b.dataset.igDla,10)];if(it)igDownload('a',it,'endodireto-'+igFnameSub(it)+'-gabarito.png').catch(function(e){notify((e&&e.message)||'Falha.','err');});});});
-  main.querySelectorAll('[data-ig-toggle]').forEach(function(b){b.addEventListener('click',function(){var it=igStories[parseInt(b.dataset.igToggle,10)];if(!it)return;it.status=(it.status==='posted'?'queued':'posted');persistIgStories();renderAdmSec('stories');});});
+  main.querySelectorAll('[data-ig-toggle]').forEach(function(b){b.addEventListener('click',function(){var it=igStories[parseInt(b.dataset.igToggle,10)];if(!it)return;var post=(it.status!=='posted');it.status=post?'posted':'queued';if(post)it.postedAt=Date.now();persistIgStories();renderAdmSec('stories');});});
   main.querySelectorAll('[data-ig-up]').forEach(function(b){b.addEventListener('click',function(){igMoveQueued(parseInt(b.dataset.igUp,10),-1);});});
   main.querySelectorAll('[data-ig-down]').forEach(function(b){b.addEventListener('click',function(){igMoveQueued(parseInt(b.dataset.igDown,10),1);});});
   main.querySelectorAll('[data-ig-del]').forEach(function(b){b.addEventListener('click',function(){var i=parseInt(b.dataset.igDel,10);if(!confirm('Excluir esta questão da fila?'))return;igStories.splice(i,1);persistIgStories();renderAdmSec('stories');notify('Questão removida.','ok');});});
