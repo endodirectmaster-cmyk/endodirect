@@ -2719,10 +2719,11 @@ function normalizeMuralSource(source){
 function muralPlain(v){
   return String(v||'').normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase();
 }
-var MURAL_TYPES=['Aviso','Comunicado','Diretriz','Artigo de Revisão','Ensaio Clínico','Metanálise','Perspectiva Clínica','Estudo Genético','Estudo Original','Evento','Urgente'];
+var MURAL_TYPES=['Comunicado','Diretriz','Artigo de Revisão','Ensaio Clínico','Metanálise','Perspectiva Clínica','Estudo Genético','Estudo Original','Evento','Breaking News'];
 function normalizeMuralType(tipo,titulo,texto,fonte){
   var raw=String(tipo||'').trim();
-  if(/breaking/i.test(raw))return'Breaking News';
+  if(/breaking/i.test(raw)||raw==='Urgente')return'Breaking News'; // 'Urgente' (legado) virou Breaking News
+  if(raw==='Aviso')return'Comunicado'; // 'Aviso' (legado) foi fundido em Comunicado
   // Tipo escolhido EXPLICITAMENTE pelo professor (rótulo conhecido) é respeitado
   // verbatim — NÃO re-deriva pelo título/texto. Sem isto, a edição manual era
   // sobrescrita (ex.: marcar "Artigo de Revisão" voltava a "Diretriz" porque o
@@ -2781,12 +2782,11 @@ function muralStudyRank(a){
 }
 // Relevância p/ ordenar o mural: o TIPO domina; a revista entra só como leve
 // desempate dentro do mesmo tipo; a data desempata por último (em muralSortList).
-// Avisos/urgentes/comunicados do professor ficam sempre acima dos artigos.
+// Breaking News/comunicados do professor ficam sempre acima dos artigos.
 function muralRelevance(a){
   var t=muralDisplayType(a);
-  if(t==='Urgente')return 100000;
-  if(t==='Breaking News')return 90000;
-  if(t==='Aviso'||t==='Comunicado'||t==='Evento')return 80000;
+  if(t==='Breaking News')return 100000;
+  if(t==='Comunicado'||t==='Evento')return 80000;
   var src=normalizeMuralSource((a&&a.fonte)||'');
   var sw={'The New England Journal of Medicine':9,'The Lancet Diabetes & Endocrinology':9,'Nature Reviews Endocrinology':8,'Diabetes Care':8,'Endocrine Reviews':8,'Journal of Clinical Endocrinology & Metabolism':7,'Obesity':6}[src]||5;
   return (100-muralStudyRank(a)*10)*100+sw;
@@ -10723,7 +10723,7 @@ admMuralSecHTML=function(){
     +'<div class="g2" style="margin-bottom:.7rem"><div class="fld2" style="margin:0"><label>Título</label><input type="text" id="adm-av-title" placeholder="Título do aviso"></div><div class="fld2" style="margin:0"><label>Tipo do conteúdo</label><select id="adm-av-tipo">'+tipoOpts+'</select></div></div>'
     +'<div class="g2" style="margin-bottom:.7rem"><div class="fld2" style="margin:0"><label>Subespecialidade</label><select id="adm-av-sub">'+subOpts+'</select></div><div class="fld2" style="margin:0"><label>Fonte / revista (opcional)</label><input type="text" id="adm-av-fonte" placeholder="Ex: NEJM, JCEM, SBEM..."></div></div>'
     +'<div class="fld2"><label>Link (opcional)</label><input type="text" id="adm-av-link" placeholder="https://..."></div>'
-    +'<div class="fld2" style="margin-bottom:.45rem"><label>Resumir com IA (a partir do link acima ou de um arquivo)</label><div style="display:flex;gap:6px;align-items:center;flex-wrap:wrap"><button type="button" class="btn btn-outline btn-sm" id="adm-av-import">📎 Anexar arquivo</button><button type="button" class="btn btn-outline btn-sm" id="adm-av-aigen">✨ Gerar texto com IA</button><span id="adm-av-fname" style="font-size:.72rem;color:var(--t3)"></span><input type="file" id="adm-av-file" accept=".pdf,.txt,image/*" style="display:none"></div></div>'
+    +'<div class="fld2" style="margin-bottom:.45rem"><label>Resumir com IA (cole a URL do artigo ou anexe um arquivo)</label><div style="display:flex;gap:6px;align-items:center;flex-wrap:wrap"><input type="text" id="adm-av-aiurl" placeholder="https://… URL para a IA resumir" style="flex:1;min-width:190px"><button type="button" class="btn btn-outline btn-sm" id="adm-av-import">📎 Anexar arquivo</button><button type="button" class="btn btn-outline btn-sm" id="adm-av-aigen">✨ Gerar texto com IA</button><span id="adm-av-fname" style="font-size:.72rem;color:var(--t3)"></span><input type="file" id="adm-av-file" accept=".pdf,.txt,image/*" style="display:none"></div></div>'
     +'<div class="fld2"><label>Texto</label><textarea id="adm-av-text" rows="3" placeholder="Resumo em português, mantendo apenas o título no idioma original..."></textarea></div>'
     +'<label class="adm-push-opt" style="display:flex;align-items:center;gap:.5rem;margin:.1rem 0 .8rem;font-size:.83rem;color:var(--t2);cursor:pointer"><input type="checkbox" id="adm-av-push"'+(admMuralEdit===null?' checked':'')+' style="width:16px;height:16px;flex-shrink:0"><span>📲 Notificar os alunos no celular (push)'+(admMuralEdit!==null?' — reenviar este aviso ao salvar':' ao publicar')+'. Use só para avisos e breaking news.</span></label>'
     +'<div style="display:flex;gap:6px"><button class="btn btn-primary" id="btn-adm-addav">'+(admMuralEdit!==null?'💾 Salvar alterações':'+ Publicar no mural')+'</button><button class="btn btn-outline" id="btn-adm-av-cancel">Cancelar</button></div></div>'
@@ -10758,7 +10758,7 @@ bindAdmSec=function(sec){
       var wantPush=!!(document.getElementById('adm-av-push')&&document.getElementById('adm-av-push').checked);
       var dados={
         titulo:t,
-        tipo:(document.getElementById('adm-av-tipo').value||'Aviso'),
+        tipo:(document.getElementById('adm-av-tipo').value||'Comunicado'),
         subespecialidade:(document.getElementById('adm-av-sub').value||'Endocrinologia Geral'),
         fonte:(document.getElementById('adm-av-fonte').value||'').trim(),
         link:(document.getElementById('adm-av-link').value||'').trim(),
@@ -10804,8 +10804,9 @@ bindAdmSec=function(sec){
   if(avGen){
     avGen.addEventListener('click',function(){
       var f=avFile&&avFile.files&&avFile.files[0];
-      var link=(document.getElementById('adm-av-link').value||'').trim();
-      if(!f&&!link){notify('Anexe um arquivo ou informe um link para a IA resumir.','err');return;}
+      var aiurl=((document.getElementById('adm-av-aiurl')||{}).value||'').trim();
+      var link=aiurl||(document.getElementById('adm-av-link').value||'').trim();
+      if(!f&&!link){notify('Cole uma URL ou anexe um arquivo para a IA resumir.','err');return;}
       function optList(id){var s=document.getElementById(id),a=[];if(s){for(var i=0;i<s.options.length;i++)a.push(s.options[i].value||s.options[i].text);}return a;}
       var sys='Voce e um endocrinologista que escreve cards para o mural medico do Endodirect, em portugues do Brasil, com rigor e SEM inventar dados — resuma APENAS o material fornecido. Responda APENAS com JSON valido, sem nada fora do JSON: {"titulo":"titulo curto","fonte":"revista ou fonte (ou vazio)","tipo":"exatamente UM de: '+optList('adm-av-tipo').join(' | ')+'","subespecialidade":"exatamente UM de: '+optList('adm-av-sub').join(' | ')+'","texto":"resumo de 3 a 5 linhas em portugues claro, mantendo o titulo original no idioma de origem"}. Se o material for insuficiente, responda {"erro":"motivo"}.';
       var usr='Gere o card do mural a partir deste material.';
@@ -10817,6 +10818,7 @@ bindAdmSec=function(sec){
         var T=document.getElementById('adm-av-text');if(d.texto&&T)T.value=d.texto;
         var ti=document.getElementById('adm-av-title');if(d.titulo&&ti&&!ti.value.trim())ti.value=d.titulo;
         var fo=document.getElementById('adm-av-fonte');if(d.fonte&&fo&&!fo.value.trim())fo.value=d.fonte;
+        var lk=document.getElementById('adm-av-link');if(aiurl&&lk&&!lk.value.trim())lk.value=aiurl; // URL da IA também vira o link do card
         function setSel(id,val){if(!val)return;var s=document.getElementById(id);if(!s)return;for(var i=0;i<s.options.length;i++){if(s.options[i].value===val||s.options[i].text===val){s.selectedIndex=i;return;}}}
         setSel('adm-av-tipo',d.tipo);setSel('adm-av-sub',d.subespecialidade);
         notify('Texto gerado pela IA. Revise antes de publicar.','ok');
