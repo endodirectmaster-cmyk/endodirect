@@ -831,26 +831,27 @@ html[data-theme="light"] .dir-back{background:#f8f9fc;border-color:var(--bd2);co
   <div class="modal-box">
     <div class="modal-hdr"><span class="modal-hdr-title">✨ Novidades no Endodirect</span></div>
     <div class="modal-body">
-      <div style="font-size:.82rem;color:var(--t2);margin-bottom:1rem;line-height:1.55">Algumas novidades chegaram para deixar seus estudos mais fáceis:</div>
-      <div style="display:flex;gap:.7rem;align-items:flex-start;background:var(--s2,#f6f8fc);border-radius:12px;padding:.8rem .85rem;margin-bottom:.7rem">
-        <div style="font-size:1.5rem;line-height:1;flex:none">💬</div>
+      <div style="font-size:.82rem;color:var(--t2);margin-bottom:1rem;line-height:1.55">Novidades para deixar sua experiência ainda melhor:</div>
+      <div id="wn-consultorio" style="display:none;gap:.7rem;align-items:flex-start;background:var(--s2,#f6f8fc);border-radius:12px;padding:.8rem .85rem;margin-bottom:.7rem">
+        <div style="font-size:1.5rem;line-height:1;flex:none">⚕️</div>
         <div>
-          <div style="font-weight:700;font-size:.9rem;margin-bottom:.2rem">Suporte dentro do app</div>
-          <div style="font-size:.8rem;color:var(--t2);line-height:1.5">Agora você fala direto com a equipe pela aba <b>Suporte</b>: envie sua dúvida e veja a resposta do professor aqui mesmo — com um aviso quando ela chegar.</div>
+          <div style="font-weight:700;font-size:.9rem;margin-bottom:.2rem">Consultório <span style="font-size:.64rem;font-weight:700;color:#15803d;background:rgba(34,197,94,.16);padding:.06rem .42rem;border-radius:99px;vertical-align:middle;letter-spacing:.02em">NOVO</span></div>
+          <div style="font-size:.8rem;color:var(--t2);line-height:1.5">Agora você pode <b>prescrever de verdade</b> direto no app, com a <b>Memed</b> integrada. Abra o menu <b>⚕️ Consultório</b> e comece a atender.</div>
         </div>
       </div>
       <div style="display:flex;gap:.7rem;align-items:flex-start;background:var(--s2,#f6f8fc);border-radius:12px;padding:.8rem .85rem;margin-bottom:.7rem">
-        <div style="font-size:1.5rem;line-height:1;flex:none">📅</div>
+        <div style="font-size:1.5rem;line-height:1;flex:none">📲</div>
         <div>
-          <div style="font-weight:700;font-size:.9rem;margin-bottom:.2rem">Questão do Dia <span style="font-size:.64rem;font-weight:700;color:#b45309;background:rgba(245,158,11,.16);padding:.06rem .42rem;border-radius:99px;vertical-align:middle;letter-spacing:.02em">EM BREVE</span></div>
-          <div style="font-size:.8rem;color:var(--t2);line-height:1.5">Todo dia uma questão nova comentada para manter seu treino afiado. Estamos finalizando os detalhes — fique de olho!</div>
+          <div style="font-weight:700;font-size:.9rem;margin-bottom:.2rem">Tenha o app no celular</div>
+          <div style="font-size:.8rem;color:var(--t2);line-height:1.5">Adicione o Endodirect à <b>tela inicial</b> e abra como um app. <b>iPhone:</b> Compartilhar <span style="white-space:nowrap">→ Adicionar à Tela de Início</span>. <b>Android:</b> menu ⋮ → Instalar app.</div>
         </div>
       </div>
       <div style="display:flex;gap:.7rem;align-items:flex-start;background:var(--s2,#f6f8fc);border-radius:12px;padding:.8rem .85rem;margin-bottom:1.1rem">
-        <div style="font-size:1.5rem;line-height:1;flex:none">📋</div>
-        <div>
-          <div style="font-weight:700;font-size:.9rem;margin-bottom:.2rem">Diretrizes <span style="font-size:.64rem;font-weight:700;color:#b45309;background:rgba(245,158,11,.16);padding:.06rem .42rem;border-radius:99px;vertical-align:middle;letter-spacing:.02em">EM BREVE</span></div>
-          <div style="font-size:.8rem;color:var(--t2);line-height:1.5">Resumos e condutas das principais diretrizes, com flashcards e mapas mentais. A curadoria está a caminho — fique de olho!</div>
+        <div style="font-size:1.5rem;line-height:1;flex:none">🔔</div>
+        <div style="flex:1">
+          <div style="font-weight:700;font-size:.9rem;margin-bottom:.2rem">Ative as notificações</div>
+          <div style="font-size:.8rem;color:var(--t2);line-height:1.5">Receba um aviso no celular quando sair um <b>comunicado</b> ou <b>breaking news</b> importante.</div>
+          <button class="btn btn-outline btn-sm" id="wn-push" style="margin-top:.55rem">🔔 Ativar notificações</button>
         </div>
       </div>
       <button class="btn btn-primary" id="wn-ok" style="width:100%;justify-content:center;padding:.6rem">Entendi, vamos lá →</button>
@@ -3719,7 +3720,7 @@ function hideMMModal(){var m=document.getElementById('lp-mm-modal');if(m)m.class
 // WHATSNEW_VER. Chamada de startApp() e de maybeOnboardAfterHydrate() — os
 // guards (perfil presente, onboarding fechado, já visto) e o flag de sessão
 // evitam exibição precoce ou dupla.
-var WHATSNEW_VER='2026-06-suporte-diretrizes';
+var WHATSNEW_VER='2026-06-consultorio-app-push';
 var whatsNewShown=false;
 function maybeShowWhatsNew(){
   try{
@@ -3731,6 +3732,12 @@ function maybeShowWhatsNew(){
     if(ob&&ob.style.display==='flex')return;         // onboarding aberto
     if(lsGet('whatsnew_seen')===WHATSNEW_VER)return; // já deu ciência nesta versão
     var m=document.getElementById('whatsnew-modal');if(!m)return;
+    // Consultório: só aparece nas novidades para MÉDICOS (residente/endo/outros).
+    var wc=document.getElementById('wn-consultorio');
+    if(wc)wc.style.display=(typeof prescProfileOk==='function'&&prescProfileOk())?'flex':'none';
+    // Botão de push: reflete se já está concedido (não re-pede à toa).
+    var wp=document.getElementById('wn-push');
+    if(wp&&pushSupported()&&typeof Notification!=='undefined'&&Notification.permission==='granted'){wp.textContent='✓ Notificações ativas';wp.disabled=true;}
     whatsNewShown=true;
     setTimeout(function(){var mm=document.getElementById('whatsnew-modal');if(mm)mm.style.display='flex';},450);
   }catch(e){}
@@ -11046,6 +11053,12 @@ document.addEventListener('DOMContentLoaded',function(){
   });
   document.getElementById('ob-submit').addEventListener('click',submitOnboard);
   var wnOk=document.getElementById('wn-ok');if(wnOk)wnOk.addEventListener('click',dismissWhatsNew);
+  var wnPush=document.getElementById('wn-push');
+  if(wnPush)wnPush.addEventListener('click',function(){
+    var _o=wnPush.innerHTML;wnPush.disabled=true;wnPush.innerHTML='Ativando...';
+    pushEnable().then(function(){notify('🔔 Notificações ativadas!','ok');wnPush.innerHTML='✓ Notificações ativas';})
+    .catch(function(e){notify((e&&e.message)||'Não foi possível ativar as notificações.','err');wnPush.disabled=false;wnPush.innerHTML=_o;});
+  });
   var paGo=document.getElementById('pend-alert-go');if(paGo)paGo.addEventListener('click',function(){closePendAlert();try{renderAdmSec('pendencias');}catch(e){}});
   var paCl=document.getElementById('pend-alert-close');if(paCl)paCl.addEventListener('click',closePendAlert);
 
