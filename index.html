@@ -4993,9 +4993,9 @@ function renderQotdArchive(){
     +list.map(function(q){
       var ans=mm[q.id]||null,open=(qotdArchOpen===q.id);
       var badge=ans?(ans.ok?'<span class="qa-badge ok">✓ Acertou</span>':'<span class="qa-badge err">✗ Errou</span>'):'<span class="qa-badge new">Responder</span>';
-      var st=String((q.teem?q.teem+' ':'')+q.stem).trim();
-      var snip=esc(st.slice(0,120))+(st.length>120?'…':'');
-      var head='<button type="button" class="qa-head" data-qa-toggle="'+esc(q.id)+'"><span class="qa-snip">'+snip+'</span>'+badge+'<span class="qa-caret">'+(open?'▴':'▾')+'</span></button>';
+      var pd=qotdArchDate(q);
+      var dstr=pd?new Date(pd).toLocaleDateString('pt-BR'):'—';
+      var head='<button type="button" class="qa-head" data-qa-toggle="'+esc(q.id)+'"><span class="qa-snip">'+esc(dstr)+'</span>'+badge+'<span class="qa-caret">'+(open?'▴':'▾')+'</span></button>';
       var body=open?'<div class="qa-body">'+qotdCardHTML(q,ans)+'</div>':'';
       return '<div class="qa-item'+(open?' open':'')+'">'+head+body+'</div>';
     }).join('');
