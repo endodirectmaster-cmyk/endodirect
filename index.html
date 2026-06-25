@@ -1112,7 +1112,7 @@ html[data-theme="light"] .dir-back{background:#f8f9fc;border-color:var(--bd2);co
     </section>
     <section class="lp-section">
       <h2 class="lp-sec-title">Tudo o que você precisa para estudar</h2>
-      <p class="lp-sec-sub">Ferramentas integradas para teoria, prática clínica e revisão — com inteligência artificial.</p>
+      <p class="lp-sec-sub">Ferramentas integradas para teoria, prática clínica e revisão.</p>
       <div class="lp-grid">
         <div class="lp-card"><div class="lp-ico">📝</div><h3>Banco de Questões</h3><p><b style="color:#f5b32c">Mais de 2.000 questões</b> de provas comentadas, filtráveis por subespecialidade, ano e tipo.</p></div>
         <div class="lp-card"><div class="lp-ico">🤖</div><h3>Questões por IA</h3><p>Gere questões inéditas sobre qualquer tema de endocrinologia, no nível que quiser.</p></div>
@@ -4506,12 +4506,16 @@ var PANEL_MIN_TIER={rx:2, presc:2};
 // inclusive estudantes, sujeita apenas ao gating de plano.)
 function userPerfil(){var p=(currentUser&&currentUser.profile)||lsGet('user_profile')||{};return p.perfil||'';}
 function prescProfileOk(){var pf=userPerfil();return pf==='Residente'||pf==='Endocrinologista'||pf==='Outros';}
-// Consultório (presc/Memed): em homologação, fica OCULTO para todos os alunos —
-// aparece SÓ na conta de teste do Memed (allowlist MEMED_ALLOW; fallback ao e-mail
-// de teste enquanto o /api/memed/token não respondeu). Quando a Memed entrar em
-// produção (sem allowlist), reabrir para médicos via prescProfileOk().
+// Consultório (presc/Memed): LIBERADO para MÉDICOS (residente / endocrinologista /
+// outros) via prescProfileOk(); fica OCULTO para o estudante de medicina. A conta de
+// teste e a allowlist (prescMemed.allow, vinda do env MEMED_ALLOW) seguem como acesso
+// extra (ex.: QA). ⚠️ Para a prescrição Memed FUNCIONAR p/ todos os médicos, o env
+// MEMED_ALLOW deve ficar VAZIO em produção — com allowlist, o backend (api/memed/token.js)
+// só emite token p/ os e-mails listados (responde "não-configurado" para os demais).
 function prescAllowed(){
   if(isAdminUser())return false;
+  if(prescProfileOk())return true; // médicos: residente / endocrinologista / outros
+  // Acesso extra (homologação/QA): allowlist ou conta de teste da Memed.
   var e=String((currentUser&&currentUser.email)||'').toLowerCase();
   var al=(prescMemed.allow||[]).map(function(x){return String(x).toLowerCase();});
   if(al.length)return al.indexOf(e)>=0;
