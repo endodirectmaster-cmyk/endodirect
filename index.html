@@ -8302,7 +8302,7 @@ function admStoriesHTML(){
    +'<div class="card" style="margin-bottom:1rem"><div class="card-head"><span class="card-title">✏️ Criar / editar questão</span></div>'
    +'<div style="display:flex;gap:.6rem;flex-wrap:wrap;align-items:flex-end;margin-bottom:.7rem">'
    +'<label style="flex:1;min-width:170px">'+igLbl('Subespecialidade')+'<select id="ig-sub">'+subs+'</select></label>'
-   +'<label style="flex:1;min-width:170px">'+igLbl('Tema (opcional)')+'<input type="text" id="ig-topic" placeholder="ex.: hiperaldosteronismo"></label>'
+   +'<label style="flex:1;min-width:170px">'+igLbl('Tema (opcional)')+'<select id="ig-topic"><option value="">Todos os temas</option></select></label>'
    +'<button class="btn btn-primary btn-sm" id="ig-gen">🤖 Gerar 1 com IA</button>'
    +'<span id="ig-gen-status" style="font-size:.72rem;color:var(--t3)"></span></div>'
    +'<div style="margin-bottom:.6rem">'+igLbl('Atribuição TEEM (opcional — só se for questão do TEEM)')+'<input type="text" id="ig-teem" placeholder="(TEEM 2026)" style="max-width:220px">'+'</div>'
@@ -8423,6 +8423,10 @@ function bindAdmStories(){
   var loteSubSel=document.getElementById('ig-lote-sub'),loteTemaSel=document.getElementById('ig-lote-tema');
   function syncLoteTemas(){if(loteTemaSel)loteTemaSel.innerHTML=igLoteTemas((loteSubSel&&loteSubSel.value)||'__random__');}
   if(loteSubSel){loteSubSel.addEventListener('change',syncLoteTemas);syncLoteTemas();}
+  // Tema da geração MANUAL: mesmo seletor, pela subespecialidade escolhida.
+  var manSubSel=document.getElementById('ig-sub'),manTemaSel=document.getElementById('ig-topic');
+  function syncManTemas(){if(manTemaSel)manTemaSel.innerHTML=igLoteTemas((manSubSel&&manSubSel.value)||(typeof DIR_SUBS!=='undefined'?DIR_SUBS[0]:''));}
+  if(manSubSel){manSubSel.addEventListener('change',syncManTemas);syncManTemas();}
   var manToggle=document.getElementById('ig-manual-toggle');
   if(manToggle)manToggle.addEventListener('click',function(){var w=document.getElementById('ig-manual-wrap');if(!w)return;w.style.display='';igEditId=null;['ig-teem','ig-stem','ig-a','ig-b','ig-c','ig-d','ig-exp'].forEach(function(id){var e=document.getElementById(id);if(e)e.value='';});var an=document.getElementById('ig-ans');if(an)an.value='A';igDraftImg='';igRenderImgPrev();var pw=document.getElementById('ig-prev-wrap');if(pw)pw.style.display='none';try{document.getElementById('ig-stem').scrollIntoView({behavior:'smooth',block:'center'});}catch(e){}});
   var promoToggle=document.getElementById('ig-promo-toggle');
