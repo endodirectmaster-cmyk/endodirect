@@ -10743,7 +10743,7 @@ bindAdmSec=function(sec){
       }
       if(wantPush){
         var _isBn=/breaking/i.test(dados.tipo||'');
-        admSendPush({title:_isBn?'🚨 Breaking News':'📣 Novo aviso no Endodirect',body:t,url:'https://www.endodirect.com.br/'}).then(function(res){
+        admSendPush({title:_isBn?'🚨 Breaking News':'📣 Novo aviso',body:t,url:'https://www.endodirect.com.br/'}).then(function(res){
           if(res&&res.ok&&res.push){
             var pp=res.push;var det=(pp.failed&&pp.errors&&pp.errors.length)?(' — '+pp.errors.join('; ')):'';
             notify((pp.sent>0?'🔔 Notificação enviada para '+pp.sent+' aparelho(s)':'Nenhum aparelho inscrito recebeu')+(pp.failed?(' ('+pp.failed+' falha[s])'+det):'')+'.',pp.sent>0?'ok':'err');
