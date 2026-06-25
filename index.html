@@ -2943,7 +2943,7 @@ function applyStatePayload(payload,personalOnly){
     if(Array.isArray(payload.curso_mods_extra))admCursoModsExtra=payload.curso_mods_extra;
     if(Array.isArray(payload.acessos))userAcessos=payload.acessos;
     if(Array.isArray(payload.cursos))catalogoCursos=payload.cursos;
-    if(Array.isArray(payload.ig_stories)){igStories=payload.ig_stories;try{lsSet('ig_stories',igStories);}catch(e){}}
+    if(Array.isArray(payload.ig_stories)){igStories=payload.ig_stories;try{lsSet('ig_stories',igStories);}catch(e){}try{var _mp=document.getElementById('panel-mural'),_qm=document.getElementById('qotd-modal');if(_mp&&_mp.classList.contains('on')&&(!_qm||_qm.style.display==='none'))renderQotd();}catch(e){}}
     if(Array.isArray(payload.ig_pending)){igPending=payload.ig_pending;try{lsSet('ig_pending',igPending);}catch(e){}try{updateAdmPendBadge();}catch(e){}try{maybePendAlert();}catch(e){}}
     // Preserva chaves geridas pelo servidor (newsletter + lembrete IG) p/ o save do admin não apagá-las.
     ['newsletter_extra','newsletter_unsub','newsletter_sent','newsletter','newsletter_recent','ig_notice_sent'].forEach(function(k){if(payload[k]!==undefined)globalServerKeys[k]=payload[k];});
