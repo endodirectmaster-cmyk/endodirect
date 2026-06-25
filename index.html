@@ -9014,7 +9014,7 @@ function admMuralSecHTML(){
     +'<div style="display:flex;gap:6px"><button class="btn btn-primary" id="btn-adm-addav">'+(admMuralEdit!==null?'💾 Salvar alterações':'+ Publicar no mural')+'</button><button class="btn btn-outline" id="btn-adm-av-cancel">Cancelar</button></div></div>'
   ):'';
 
-  return '<div class="adm-ph" style="display:flex;align-items:flex-start;justify-content:space-between;gap:.6rem;flex-wrap:wrap"><div><h1>Mural</h1></div><div style="display:flex;gap:.5rem;flex-wrap:wrap"><button class="btn btn-outline" id="btn-adm-radar" style="padding:.55rem 1rem">🔄 Atualizar radar agora</button><button class="btn btn-primary" id="btn-adm-newav" style="padding:.55rem 1.1rem">+ Novo aviso</button></div></div>'
+  return '<div class="adm-ph" style="display:flex;align-items:flex-start;justify-content:space-between;gap:.6rem;flex-wrap:wrap"><div><h1>Mural</h1></div><div style="display:flex;gap:.5rem;flex-wrap:wrap"><button class="btn btn-outline" id="btn-adm-radar" style="padding:.55rem 1rem">🔄 Atualizar radar agora</button><button class="btn btn-outline" id="btn-adm-pushtest" style="padding:.55rem 1rem">🔔 Ativar avisos (teste)</button><button class="btn btn-primary" id="btn-adm-newav" style="padding:.55rem 1.1rem">+ Novo aviso</button></div></div>'
   +'<div class="adm-pc">'
   +formHTML
   // banner de gestão
@@ -9895,6 +9895,11 @@ function bindAdmSec(sec){
         });
       }).catch(function(e){notify('Erro: '+(e&&e.message||e),'err');var b=document.getElementById('btn-adm-radar');if(b){b.disabled=false;b.textContent='🔄 Atualizar radar agora';}});
     });
+    var bPushTest=document.getElementById('btn-adm-pushtest');
+    if(bPushTest)bPushTest.addEventListener('click',function(){
+      var _o=bPushTest.textContent;bPushTest.disabled=true;bPushTest.textContent='Ativando...';
+      pushEnable().then(function(){notify('🔔 Avisos ativados neste aparelho! Agora publique um aviso com o 📲 marcado para testar.','ok');}).catch(function(e){notify((e&&e.message)||'Não foi possível ativar.','err');}).then(function(){bPushTest.disabled=false;bPushTest.textContent=_o;});
+    });
     var bCancel=document.getElementById('btn-adm-av-cancel');
     if(bCancel)bCancel.addEventListener('click',function(){admMuralShowForm=false;admMuralEdit=null;renderAdmSec('mural');});
     main.querySelectorAll('[data-adm-hideradar]').forEach(function(b){b.addEventListener('click',function(){
@@ -10669,7 +10674,7 @@ admMuralSecHTML=function(){
     +(admMuralEdit===null?'<label class="adm-push-opt" style="display:flex;align-items:center;gap:.5rem;margin:.1rem 0 .8rem;font-size:.83rem;color:var(--t2);cursor:pointer"><input type="checkbox" id="adm-av-push" checked style="width:16px;height:16px;flex-shrink:0"><span>📲 Notificar os alunos no celular (push) ao publicar — use só para avisos e breaking news.</span></label>':'')
     +'<div style="display:flex;gap:6px"><button class="btn btn-primary" id="btn-adm-addav">'+(admMuralEdit!==null?'💾 Salvar alterações':'+ Publicar no mural')+'</button><button class="btn btn-outline" id="btn-adm-av-cancel">Cancelar</button></div></div>'
   ):'';
-  return '<div class="adm-ph" style="display:flex;align-items:flex-start;justify-content:space-between;gap:.6rem;flex-wrap:wrap"><div><h1>Mural</h1></div><div style="display:flex;gap:.5rem;flex-wrap:wrap"><button class="btn btn-outline" id="btn-adm-radar" style="padding:.55rem 1rem">🔄 Atualizar radar agora</button><button class="btn btn-primary" id="btn-adm-newav" style="padding:.55rem 1.1rem">+ Novo aviso</button></div></div>'
+  return '<div class="adm-ph" style="display:flex;align-items:flex-start;justify-content:space-between;gap:.6rem;flex-wrap:wrap"><div><h1>Mural</h1></div><div style="display:flex;gap:.5rem;flex-wrap:wrap"><button class="btn btn-outline" id="btn-adm-radar" style="padding:.55rem 1rem">🔄 Atualizar radar agora</button><button class="btn btn-outline" id="btn-adm-pushtest" style="padding:.55rem 1rem">🔔 Ativar avisos (teste)</button><button class="btn btn-primary" id="btn-adm-newav" style="padding:.55rem 1.1rem">+ Novo aviso</button></div></div>'
   +'<div class="adm-pc">'
   +formHTML
   +'<div class="card" style="margin-bottom:1.1rem"><div style="display:flex;align-items:flex-start;justify-content:space-between;gap:1rem;flex-wrap:wrap"><div style="flex:1;min-width:240px"><div style="font-size:.62rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--t3);margin-bottom:.3rem">Gestão do mural dos alunos</div><div style="font-size:1.15rem;font-weight:700;color:var(--tx);margin-bottom:.35rem">Edite avisos, notícias e comunicados importantes</div><div style="font-size:.79rem;color:var(--t2);line-height:1.55">Os cards abaixo alimentam a aba Mural do estudante. Use etiquetas por tipo de conteúdo e subespecialidade para organizar leituras e atualizações.</div></div></div></div>'
