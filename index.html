@@ -8239,6 +8239,19 @@ function bindAdmPendencias(){
   host.querySelectorAll('[data-pend-ok]').forEach(function(b){b.addEventListener('click',function(){pendApprove(b.dataset.pendOk);});});
   host.querySelectorAll('[data-pend-del]').forEach(function(b){b.addEventListener('click',function(){pendDiscard(b.dataset.pendDel);});});
 }
+var admStoriesView='lote'; // aba ativa da seção Questão do Dia (lote/manual/fila/promo)
+function igLoteTemas(sub){
+  var temas=(typeof FC_SUBTOPICS!=='undefined'&&FC_SUBTOPICS[sub])?FC_SUBTOPICS[sub]:[];
+  return '<option value="">Todos os temas</option>'+temas.map(function(t){return '<option>'+esc(t)+'</option>';}).join('');
+}
+// Alterna a aba visível (sem re-render — preserva o estado dos formulários).
+function stShowView(v){
+  admStoriesView=v;
+  ['lote','manual','fila','promo'].forEach(function(id){
+    var el=document.getElementById('stview-'+id);if(el)el.style.display=(id===v?'block':'none');
+    var b=document.querySelector('[data-stview="'+id+'"]');if(b){b.classList.toggle('btn-primary',id===v);b.classList.toggle('btn-outline',id!==v);}
+  });
+}
 function admStoriesHTML(){
   var subs=DIR_SUBS.map(function(s){return '<option>'+esc(s)+'</option>';}).join('');
   var ansOpts=['A','B','C','D'].map(function(L){return '<option value="'+L+'">'+L+'</option>';}).join('');
@@ -8265,7 +8278,12 @@ function admStoriesHTML(){
       +'<div style="font-size:.72rem;color:var(--t2);margin-top:.35rem">'+esc(String(it.stem||'').slice(0,150))+(String(it.stem||'').length>150?'…':'')+'</div>'
       +'</div>';
   }).join('')):'<div class="empty">Nenhuma questão na fila ainda. Gere uma acima e clique em "Aprovar".</div>';
-  return '<div class="adm-ph"><h1>📲 Questão do Dia — Stories</h1></div><div class="adm-pc">'
+  var view=admStoriesView||'lote';
+  function nb(id,label){return '<button class="btn '+(view===id?'btn-primary':'btn-outline')+' btn-sm" data-stview="'+id+'" style="padding:.52rem 1.05rem">'+label+'</button>';}
+  function vs(id){return (view===id)?'':'display:none';}
+  return '<div class="adm-ph"><h1>📲 Questão do Dia</h1></div><div class="adm-pc">'
+   +'<div style="display:flex;gap:.5rem;flex-wrap:wrap;margin-bottom:1.1rem">'+nb('lote','🤖 Gerar lote')+nb('manual','✏️ Manual')+nb('fila','📋 Fila ('+(igStories?igStories.length:0)+')')+nb('promo','📣 Divulgação')+'</div>'
+   +'<div id="stview-lote" style="'+vs('lote')+'">'
    +'<div class="card" style="margin-bottom:1rem"><div style="font-size:.78rem;color:var(--t2);line-height:1.6">'
    +'<b style="color:var(--tx)">Como funciona:</b> gere as questões em <b>lote</b> → revise/edite → <b>aprove</b>. As aprovadas viram a <b>Questão do Dia no app</b> e a arte/legenda do story. O sistema te <b>lembra por e-mail</b> todo dia.<br>'
    +'<b style="color:var(--tx)">Calendário:</b> Seg–Sáb = <b>questão</b> (resposta no app) · Dom = <b>2 promos</b>.'
@@ -8274,13 +8292,14 @@ function admStoriesHTML(){
    +'<div style="font-size:.74rem;color:var(--t2);margin-bottom:.6rem">Gera várias questões de uma vez (modelo Opus). Revise cada uma e <b>edite</b>, <b>aprove</b> ou <b>descarte</b> — ou aprove todas.</div>'
    +'<div style="display:flex;gap:.6rem;flex-wrap:wrap;align-items:flex-end;margin-bottom:.7rem">'
    +'<label style="width:110px">'+igLbl('Quantidade')+'<select id="ig-lote-qty"><option>3</option><option selected>5</option><option>7</option><option>10</option></select></label>'
-   +'<label style="flex:1;min-width:180px">'+igLbl('Subespecialidade')+'<select id="ig-lote-sub">'+loteSubs+'</select></label>'
+   +'<label style="flex:1;min-width:160px">'+igLbl('Subespecialidade')+'<select id="ig-lote-sub">'+loteSubs+'</select></label>'
+   +'<label style="flex:1;min-width:150px">'+igLbl('Tema (opcional)')+'<select id="ig-lote-tema"><option value="">Todos os temas</option></select></label>'
    +'<button class="btn btn-primary btn-sm" id="ig-lote-gen">🤖 Gerar lote</button>'
    +'<span id="ig-lote-status" style="font-size:.72rem;color:var(--t3)"></span></div>'
    +'<div id="ig-lote-results"></div></div>'
-   +'<div style="margin-bottom:1rem"><button class="btn btn-outline btn-sm" id="ig-manual-toggle">✏️ Criar questão manualmente</button></div>'
-   +'<div id="ig-manual-wrap" style="display:none">'
-   +'<div class="card" style="margin-bottom:1rem"><div class="card-head"><span class="card-title">Criar / editar questão</span></div>'
+   +'</div>'
+   +'<div id="stview-manual" style="'+vs('manual')+'">'
+   +'<div class="card" style="margin-bottom:1rem"><div class="card-head"><span class="card-title">✏️ Criar / editar questão</span></div>'
    +'<div style="display:flex;gap:.6rem;flex-wrap:wrap;align-items:flex-end;margin-bottom:.7rem">'
    +'<label style="flex:1;min-width:170px">'+igLbl('Subespecialidade')+'<select id="ig-sub">'+subs+'</select></label>'
    +'<label style="flex:1;min-width:170px">'+igLbl('Tema (opcional)')+'<input type="text" id="ig-topic" placeholder="ex.: hiperaldosteronismo"></label>'
@@ -8303,14 +8322,13 @@ function admStoriesHTML(){
    +'<button class="btn btn-outline btn-sm" id="ig-copyq">📋 Copiar legenda</button>'
    +'<button class="btn btn-primary btn-sm" id="ig-distribute">📤 Distribuir</button>'
    +'<button class="btn btn-outline btn-sm" id="ig-approve">✓ Aprovar p/ a fila</button>'
-   +'<button class="btn btn-outline btn-sm" id="ig-clear">Limpar / fechar</button></div>'
+   +'<button class="btn btn-outline btn-sm" id="ig-clear">Limpar</button></div>'
    +'<div id="ig-prev-wrap" style="display:none;gap:1rem;margin-top:1rem;flex-wrap:wrap;justify-content:center">'
    +'<div style="text-align:center">'+igLbl('Imagem do caso (story)')+'<img id="ig-prev-q" alt="" style="width:190px;border-radius:12px;border:1px solid var(--bd)"></div></div>'
    +'</div>'
    +'</div>'
-   +'<div class="card" style="margin-bottom:1rem"><div class="card-head"><span class="card-title">Fila de questões</span><span class="tag">'+(igStories?igStories.length:0)+'</span></div>'+fila+'</div>'
-   +'<div style="margin-bottom:1rem"><button class="btn btn-outline btn-sm" id="ig-promo-toggle">📣 Stories de divulgação (domingo)</button></div>'
-   +'<div id="ig-promo-wrap" style="display:none"><div class="card"><div class="card-head"><span class="card-title">Stories de divulgação (domingo)</span></div>'
+   +'<div id="stview-fila" style="'+vs('fila')+'"><div class="card"><div class="card-head"><span class="card-title">📋 Fila de questões</span><span class="tag">'+(igStories?igStories.length:0)+'</span></div>'+fila+'</div></div>'
+   +'<div id="stview-promo" style="'+vs('promo')+'"><div class="card"><div class="card-head"><span class="card-title">📣 Stories de divulgação (domingo)</span></div>'
    +'<div style="font-size:.74rem;color:var(--t2);margin-bottom:.6rem;line-height:1.6">Aos <b>domingos</b> o calendário sugere <b>divulgar uma ferramenta</b> da plataforma. Aqui você baixa um <b>fundo pronto</b> (logo + nome da ferramenta + chamada + moldura tracejada) e, no Instagram, <b>sobrepõe um print real</b> da ferramenta dentro da moldura. Escolha a ferramenta, baixe o fundo e copie a legenda.</div>'
    +'<div style="display:flex;gap:.5rem;flex-wrap:wrap;align-items:flex-end">'
    +'<label style="flex:1;min-width:190px">'+igLbl('Ferramenta')+'<select id="ig-promo-sel">'+promoOpts+'</select></label>'
@@ -8366,7 +8384,7 @@ function igDistribute(i){var it=igLoteDraft[i];if(!it)return;igPending.push(igMa
 function igDistributeAll(){if(!igLoteDraft.length)return;var n=igLoteDraft.length;igLoteDraft.forEach(function(it){igPending.push(igMakePending(it));});igLoteDraft=[];persistIgPending();notify(n+' questões distribuídas.','ok');renderAdmSec('stories');}
 // Reordena a fila (ordem = ordem de publicação; topo = próxima). dir: -1 sobe, +1 desce.
 function igMoveQueued(idx,dir){var j=idx+dir;if(idx<0||idx>=igStories.length||j<0||j>=igStories.length)return;var t=igStories[idx];igStories[idx]=igStories[j];igStories[j]=t;persistIgStories();renderAdmSec('stories');}
-function igLoteEdit(i){var it=igLoteDraft[i];if(!it)return;igEditId=null;var w=document.getElementById('ig-manual-wrap');if(w)w.style.display='';igFillForm(it);igLoteDraft.splice(i,1);renderIgLote();try{document.getElementById('ig-stem').scrollIntoView({behavior:'smooth',block:'center'});}catch(e){}notify('Carregada no formulário — edite e clique em "Aprovar p/ a fila".','ok');}
+function igLoteEdit(i){var it=igLoteDraft[i];if(!it)return;igEditId=null;stShowView('manual');igFillForm(it);igLoteDraft.splice(i,1);renderIgLote();try{document.getElementById('ig-stem').scrollIntoView({behavior:'smooth',block:'center'});}catch(e){}notify('Carregada no formulário — edite e clique em "Aprovar p/ a fila".','ok');}
 function renderIgLote(){
   var res=document.getElementById('ig-lote-results');if(!res)return;
   if(!igLoteDraft.length){res.innerHTML='';return;}
@@ -8399,6 +8417,12 @@ function renderIgLote(){
 }
 function bindAdmStories(){
   igEditId=null;
+  // Navegação por abas (Gerar lote / Manual / Fila / Divulgação).
+  document.querySelectorAll('[data-stview]').forEach(function(b){b.addEventListener('click',function(){stShowView(b.dataset.stview);});});
+  // Tema do lote: popula conforme a subespecialidade (FC_SUBTOPICS).
+  var loteSubSel=document.getElementById('ig-lote-sub'),loteTemaSel=document.getElementById('ig-lote-tema');
+  function syncLoteTemas(){if(loteTemaSel)loteTemaSel.innerHTML=igLoteTemas((loteSubSel&&loteSubSel.value)||'__random__');}
+  if(loteSubSel){loteSubSel.addEventListener('change',syncLoteTemas);syncLoteTemas();}
   var manToggle=document.getElementById('ig-manual-toggle');
   if(manToggle)manToggle.addEventListener('click',function(){var w=document.getElementById('ig-manual-wrap');if(!w)return;w.style.display='';igEditId=null;['ig-teem','ig-stem','ig-a','ig-b','ig-c','ig-d','ig-exp'].forEach(function(id){var e=document.getElementById(id);if(e)e.value='';});var an=document.getElementById('ig-ans');if(an)an.value='A';igDraftImg='';igRenderImgPrev();var pw=document.getElementById('ig-prev-wrap');if(pw)pw.style.display='none';try{document.getElementById('ig-stem').scrollIntoView({behavior:'smooth',block:'center'});}catch(e){}});
   var promoToggle=document.getElementById('ig-promo-toggle');
@@ -8424,7 +8448,7 @@ function bindAdmStories(){
     var n=parseInt((document.getElementById('ig-lote-qty')||{}).value,10)||5;
     var selSub=(document.getElementById('ig-lote-sub')||{}).value||'__random__';
     var pool=igShuffle(DIR_SUBS.concat(['Transgeneridade']));
-    var topic='';
+    var topic=(selSub==='__random__')?'':((document.getElementById('ig-lote-tema')||{}).value||'');
     var st=document.getElementById('ig-lote-status'),res=document.getElementById('ig-lote-results');
     var subs=[];for(var i=0;i<n;i++)subs.push(selSub==='__random__'?pool[i%pool.length]:selSub);
     loteGen.disabled=true;loteGen.innerHTML=ldHTML('Gerando '+n+'…');if(st)st.textContent='';if(res)res.innerHTML='';
@@ -8469,7 +8493,7 @@ function bindAdmStories(){
   if(idp&&ifl){idp.addEventListener('click',function(){ifl.click();});['dragenter','dragover'].forEach(function(ev){idp.addEventListener(ev,function(e){e.preventDefault();idp.classList.add('drag');});});['dragleave','drop'].forEach(function(ev){idp.addEventListener(ev,function(e){e.preventDefault();idp.classList.remove('drag');});});idp.addEventListener('drop',function(e){if(e.dataTransfer.files&&e.dataTransfer.files[0])igHandleImg(e.dataTransfer.files[0]);});ifl.addEventListener('change',function(e){if(e.target.files[0])igHandleImg(e.target.files[0]);});}
   igRenderImgPrev();
   var main=document.getElementById('adm-main');
-  main.querySelectorAll('[data-ig-load]').forEach(function(b){b.addEventListener('click',function(){var it=igStories[parseInt(b.dataset.igLoad,10)];if(!it)return;igEditId=it.id;var w=document.getElementById('ig-manual-wrap');if(w)w.style.display='';igFillForm(it);try{document.getElementById('ig-stem').scrollIntoView({behavior:'smooth',block:'center'});}catch(e){}notify('Editando — altere e clique em "Aprovar" para salvar.','ok');});});
+  main.querySelectorAll('[data-ig-load]').forEach(function(b){b.addEventListener('click',function(){var it=igStories[parseInt(b.dataset.igLoad,10)];if(!it)return;igEditId=it.id;stShowView('manual');igFillForm(it);try{document.getElementById('ig-stem').scrollIntoView({behavior:'smooth',block:'center'});}catch(e){}notify('Editando — altere e clique em "Aprovar" para salvar.','ok');});});
   main.querySelectorAll('[data-ig-dlq]').forEach(function(b){b.addEventListener('click',function(){var it=igStories[parseInt(b.dataset.igDlq,10)];if(it)igDownload('q',it,'endodireto-'+igFnameSub(it)+'-pergunta.png').catch(function(e){notify((e&&e.message)||'Falha.','err');});});});
   main.querySelectorAll('[data-ig-dla]').forEach(function(b){b.addEventListener('click',function(){var it=igStories[parseInt(b.dataset.igDla,10)];if(it)igDownload('a',it,'endodireto-'+igFnameSub(it)+'-gabarito.png').catch(function(e){notify((e&&e.message)||'Falha.','err');});});});
   main.querySelectorAll('[data-ig-toggle]').forEach(function(b){b.addEventListener('click',function(){var it=igStories[parseInt(b.dataset.igToggle,10)];if(!it)return;it.status=(it.status==='posted'?'queued':'posted');persistIgStories();renderAdmSec('stories');});});
