@@ -8248,10 +8248,45 @@ function igLoteTemas(sub){
 // Alterna a aba visível (sem re-render — preserva o estado dos formulários).
 function stShowView(v){
   admStoriesView=v;
-  ['lote','manual','fila','promo'].forEach(function(id){
+  ['lote','manual','fila','postados','promo'].forEach(function(id){
     var el=document.getElementById('stview-'+id);if(el)el.style.display=(id===v?'block':'none');
     var b=document.querySelector('[data-stview="'+id+'"]');if(b){b.classList.toggle('btn-primary',id===v);b.classList.toggle('btn-outline',id!==v);}
   });
+}
+// Painel "Postados": contagem total + distribuição por subespecialidade e tema
+// (tema derivado por classifyTema), p/ o dono equilibrar o que está sub-representado.
+function admPostadosHTML(){
+  var posted=(igStories||[]).filter(function(q){return q&&q.status==='posted';});
+  var total=posted.length;
+  if(!total)return '<div class="card"><div class="empty">Nenhuma questão postada ainda. Marque questões como "✓ Postada" na aba Fila.</div></div>';
+  var bySub={};
+  posted.forEach(function(q){
+    var sub=q.sub||'(sem subespecialidade)';
+    var tema=classifyTema(((q.stem||'')+' '+(q.explanation||'')),sub)||'Geral';
+    if(!bySub[sub])bySub[sub]={total:0,temas:{}};
+    bySub[sub].total++;bySub[sub].temas[tema]=(bySub[sub].temas[tema]||0)+1;
+  });
+  var subsOrdered=Object.keys(bySub).sort(function(a,b){return bySub[b].total-bySub[a].total;});
+  var bar=function(c,base){var w=base?Math.round(c/base*100):0;return '<span style="flex:1;min-width:60px;height:8px;background:var(--bd);border-radius:5px;overflow:hidden;display:inline-block"><span style="display:block;height:100%;width:'+w+'%;background:var(--blue)"></span></span>';};
+  var cards=subsOrdered.map(function(sub){
+    var d=bySub[sub],pct=Math.round(d.total/total*100);
+    var temasOrdered=Object.keys(d.temas).sort(function(a,b){return d.temas[b]-d.temas[a];});
+    var rows=temasOrdered.map(function(t){
+      return '<div style="display:flex;align-items:center;gap:.55rem;margin:.2rem 0">'
+        +'<span style="flex:0 0 148px;font-size:.74rem;color:var(--t2);overflow:hidden;text-overflow:ellipsis;white-space:nowrap">'+esc(t)+'</span>'
+        +bar(d.temas[t],d.total)
+        +'<span style="flex:0 0 26px;text-align:right;font-size:.76rem;font-weight:700;color:var(--tx)">'+d.temas[t]+'</span></div>';
+    }).join('');
+    return '<div class="card" style="margin-bottom:.7rem"><div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:.45rem">'
+      +'<span style="font-weight:700;color:var(--tx)">'+dirSubIcon(sub)+' '+esc(sub)+'</span>'
+      +'<span class="tag tag-blue">'+d.total+' · '+pct+'%</span></div>'+rows+'</div>';
+  }).join('');
+  var allSubs=DIR_SUBS.concat(['Transgeneridade']);
+  var gaps=allSubs.filter(function(s){return !bySub[s];});
+  var gapsHTML=gaps.length?'<div class="card" style="margin-bottom:.7rem"><div style="font-size:.78rem;color:var(--t2);line-height:1.6"><b style="color:var(--tx)">🕳️ Ainda sem nenhuma postada:</b> '+gaps.map(function(s){return esc(s);}).join(' · ')+'</div></div>':'';
+  return '<div class="card" style="margin-bottom:.7rem"><div style="display:flex;justify-content:space-between;align-items:center"><span class="card-title">✅ Total postadas</span><span class="tag tag-grn" style="font-size:.95rem;padding:.25rem .6rem">'+total+'</span></div>'
+    +'<div style="font-size:.74rem;color:var(--t2);margin-top:.35rem;line-height:1.55">Distribuição por <b>subespecialidade</b> e <b>tema</b> — use para equilibrar o que está sub-representado.</div></div>'
+    +cards+gapsHTML;
 }
 function admStoriesHTML(){
   var subs=DIR_SUBS.map(function(s){return '<option>'+esc(s)+'</option>';}).join('');
@@ -8280,10 +8315,11 @@ function admStoriesHTML(){
       +'</div>';
   }).join('')):'<div class="empty">Nenhuma questão na fila ainda. Gere uma acima e clique em "Aprovar".</div>';
   var view=admStoriesView||'lote';
+  var nPosted=(igStories||[]).filter(function(q){return q&&q.status==='posted';}).length;
   function nb(id,label){return '<button class="btn '+(view===id?'btn-primary':'btn-outline')+' btn-sm" data-stview="'+id+'" style="padding:.52rem 1.05rem">'+label+'</button>';}
   function vs(id){return (view===id)?'':'display:none';}
   return '<div class="adm-ph"><h1>📲 Questão do Dia</h1></div><div class="adm-pc">'
-   +'<div style="display:flex;gap:.5rem;flex-wrap:wrap;margin-bottom:1.1rem">'+nb('lote','🤖 Gerar lote')+nb('manual','✏️ Manual')+nb('fila','📋 Fila ('+(igStories?igStories.length:0)+')')+nb('promo','📣 Divulgação')+'</div>'
+   +'<div style="display:flex;gap:.5rem;flex-wrap:wrap;margin-bottom:1.1rem">'+nb('lote','🤖 Gerar lote')+nb('manual','✏️ Manual')+nb('fila','📋 Fila ('+(igStories?igStories.length:0)+')')+nb('postados','✅ Postados ('+nPosted+')')+nb('promo','📣 Divulgação')+'</div>'
    +'<div id="stview-lote" style="'+vs('lote')+'">'
    +'<div class="card" style="margin-bottom:1rem"><div style="font-size:.78rem;color:var(--t2);line-height:1.6">'
    +'<b style="color:var(--tx)">Como funciona:</b> gere as questões em <b>lote</b> → revise/edite → <b>aprove</b>. As aprovadas viram a <b>Questão do Dia no app</b> e a arte/legenda do story. O sistema te <b>lembra por e-mail</b> todo dia.<br>'
@@ -8329,6 +8365,7 @@ function admStoriesHTML(){
    +'</div>'
    +'</div>'
    +'<div id="stview-fila" style="'+vs('fila')+'"><div class="card"><div class="card-head"><span class="card-title">📋 Fila de questões</span><span class="tag">'+(igStories?igStories.length:0)+'</span></div>'+fila+'</div></div>'
+   +'<div id="stview-postados" style="'+vs('postados')+'">'+admPostadosHTML()+'</div>'
    +'<div id="stview-promo" style="'+vs('promo')+'"><div class="card"><div class="card-head"><span class="card-title">📣 Stories de divulgação (domingo)</span></div>'
    +'<div style="font-size:.74rem;color:var(--t2);margin-bottom:.6rem;line-height:1.6">Aos <b>domingos</b> o calendário sugere <b>divulgar uma ferramenta</b> da plataforma. Aqui você baixa um <b>fundo pronto</b> (logo + nome da ferramenta + chamada + moldura tracejada) e, no Instagram, <b>sobrepõe um print real</b> da ferramenta dentro da moldura. Escolha a ferramenta, baixe o fundo e copie a legenda.</div>'
    +'<div style="display:flex;gap:.5rem;flex-wrap:wrap;align-items:flex-end">'
