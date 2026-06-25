@@ -443,6 +443,16 @@ textarea{resize:vertical;line-height:1.6}
 .qotd-overlay{position:fixed;inset:0;z-index:9000;display:flex;align-items:center;justify-content:center;padding:1rem}
 .qotd-backdrop{position:absolute;inset:0;background:rgba(6,12,28,.72)}
 .qotd-dialog{position:relative;z-index:1;width:100%;max-width:560px;max-height:90vh;overflow:auto}
+.qa-item{border:1px solid var(--bd);border-radius:var(--rs);margin-bottom:.5rem;overflow:hidden;background:var(--surface)}
+.qa-item.open{border-color:var(--gold)}
+.qa-head{display:flex;align-items:center;gap:.6rem;width:100%;text-align:left;background:transparent;border:none;cursor:pointer;padding:.7rem .85rem;color:var(--tx);font-family:var(--font)}
+.qa-snip{flex:1;min-width:0;font-size:.82rem;line-height:1.4;color:var(--t2);overflow:hidden}
+.qa-caret{color:var(--t3);font-size:.8rem;flex-shrink:0}
+.qa-badge{flex-shrink:0;font-size:.66rem;font-weight:800;padding:.22rem .5rem;border-radius:6px;white-space:nowrap}
+.qa-badge.ok{background:var(--grn-l);color:var(--grn)}
+.qa-badge.err{background:var(--red-l);color:var(--red)}
+.qa-badge.new{background:var(--gold-l);color:var(--gold)}
+.qa-body{padding:0 .85rem .85rem}
 .mural-admin-toolbar{display:flex;align-items:flex-start;justify-content:space-between;gap:1rem;flex-wrap:wrap}
 .tag-muted{background:var(--s2);color:var(--tx)}
 .tag-sub-diabetes{background:#16264f;color:#7aa0ff}
@@ -1470,6 +1480,7 @@ html[data-theme="light"] .dir-back{background:#f8f9fc;border-color:var(--bd2);co
         <div class="sb-sec">Estudo</div>
         <button class="sb-item on" data-p="dash">📊 Dashboard</button>
         <button class="sb-item" data-p="quest">📝 Questões</button>
+        <button class="sb-item" data-p="qotd">🧠 Questão do Dia</button>
         <button class="sb-item" data-p="flash">🃏 Flashcards</button>
         <button class="sb-item" data-p="mmap">✦ Mapas Mentais</button>
         <button class="sb-item" data-p="podcast">🎧 Podcasts</button>
@@ -1908,6 +1919,15 @@ html[data-theme="light"] .dir-back{background:#f8f9fc;border-color:var(--bd2);co
       </div>
     </div>
 
+    <div class="panel" id="panel-qotd">
+      <div class="breadcrumb">Dashboard <b>/ Questão do Dia</b></div>
+      <div class="ph"><h1>🧠 Questão do Dia</h1></div>
+      <div class="pc">
+        <p style="font-size:.83rem;color:var(--t2);line-height:1.55;margin:.2rem 0 1rem">Responda as questões do dia já publicadas. As que você já respondeu mostram o gabarito comentado; as demais ficam disponíveis para responder quando quiser.</p>
+        <div id="panel-qotd-body"></div>
+      </div>
+    </div>
+
     <div class="panel" id="panel-mural">
       <div class="breadcrumb">Dashboard <b>/ Mural</b></div>
       <div class="ph mural-ph"><h1>Mural <span class="mural-updated" id="mural-updated"></span></h1></div>
@@ -1996,6 +2016,7 @@ html[data-theme="light"] .dir-back{background:#f8f9fc;border-color:var(--bd2);co
           <button class="adm-nav" data-asec="mapas">✦ Mapas Mentais</button>
           <button class="adm-nav" data-asec="flashcards">🃏 Flashcards</button>
           <button class="adm-nav" data-asec="stories">📲 Questão do Dia</button>
+          <button class="adm-nav" data-asec="qotdarq" style="display:none">🧠 Questão do Dia</button>
           <button class="adm-nav" data-asec="calc">🧮 Calculadoras</button>
           <button class="adm-nav" data-asec="consultorio">⚕️ Consultório</button>
           <button class="adm-nav" data-asec="rx">💊 Prescrição Comentada</button>
@@ -4352,7 +4373,7 @@ function startGoogleOAuth(){
   });
 }
 
-var PANEL_LABELS={dash:'Dashboard',quest:'Questões',flash:'Flashcards',mmap:'Mapas Mentais',podcast:'Podcasts',cursos:'Cursos',crono:'Cronograma',sr:'Revisão',sim:'OSCE',simfull:'Simulado',calc:'Calculadoras',rx:'Prescrição Simulada',presc:'Consultório',art:'Resumidor',notas:'Caderno',mural:'Mural',ref:'Diretrizes',chat:'Chat IA',perfil:'Perfil',support:'Suporte',adm:'Painel Admin'};
+var PANEL_LABELS={dash:'Dashboard',quest:'Questões',qotd:'Questão do Dia',flash:'Flashcards',mmap:'Mapas Mentais',podcast:'Podcasts',cursos:'Cursos',crono:'Cronograma',sr:'Revisão',sim:'OSCE',simfull:'Simulado',calc:'Calculadoras',rx:'Prescrição Simulada',presc:'Consultório',art:'Resumidor',notas:'Caderno',mural:'Mural',ref:'Diretrizes',chat:'Chat IA',perfil:'Perfil',support:'Suporte',adm:'Painel Admin'};
 function closeMobileNav(){
   document.body.classList.remove('mobile-nav-open');
   var b=document.getElementById('btn-mobile-nav');
@@ -4433,7 +4454,7 @@ function hasScope(scope){return !scope||isAdminUser()||userAcessos.indexOf(scope
 // Degustacao: aluno logado, sem nenhum acesso ativo (não comprou pacote/curso).
 function isDegustacao(){return !!(currentUser&&currentUser.role==='aluno'&&!isAdminUser()&&(!userAcessos||userAcessos.length===0));}
 // Paineis liberados na degustacao (o resto fica 🔒 com upsell).
-var DEGUSTACAO_PANELS={dash:1,flash:1,mmap:1,quest:1,perfil:1,support:1,calc:1,podcast:1,crono:1,notas:1,ref:1};
+var DEGUSTACAO_PANELS={dash:1,flash:1,mmap:1,quest:1,qotd:1,perfil:1,support:1,calc:1,podcast:1,crono:1,notas:1,ref:1};
 // Ferramentas com IA liberadas na degustação por COTA (3 usos cada): simulador
 // de casos, simulado, prescrição e chat IA. Após esgotar, vira upsell.
 var TRIAL_PANELS={sim:1,simfull:1,rx:1,chat:1};
@@ -4726,6 +4747,7 @@ function goPanel(id){
   if(bc)bc.textContent=PANEL_LABELS[id]||id;
   if(id==='dash')refreshDash();
   try{var _qm=document.getElementById('qotd-modal');if(_qm&&id!=='mural')_qm.style.display='none';if(id==='mural')renderQotd();}catch(e){}
+  if(id==='qotd'){try{renderQotdArchive();}catch(e){}}
   if(id==='quest'){applyQuestDegustacao();renderSavedQ();populateInst('q-inst');updateProvaInfo();}
   if(id==='flash'){fcFilter=null;renderFC();} // abre na grade de subespecialidades
   if(id==='mmap')renderMMList();
@@ -4827,6 +4849,76 @@ function qotdPick(q,letter){
   if(q.sub){if(!DB.perf[q.sub])DB.perf[q.sub]={correct:0,total:0};DB.perf[q.sub].total++;if(ok)DB.perf[q.sub].correct++;try{persist();}catch(e){}}
   qotdRenderModal(q,mm[q.id]);
   try{renderPerfBars();updateDashRec();}catch(e){}
+}
+// ── ARQUIVO DA QUESTÃO DO DIA (aluno responde/revê; profs revisam) ──
+var qotdArchOpen=null;     // id aberto no arquivo do aluno
+var admQotdArchOpen=null;  // id aberto no arquivo do professor
+function qotdPublished(){
+  var arr=(typeof igStories!=='undefined'&&Array.isArray(igStories))?igStories:[];
+  return arr.filter(function(x){return x&&x.stem&&x.options&&(x.options.A||x.options.B)&&x.answer;});
+}
+// Registra a resposta no arquivo (mesma persistência do modal, sem abrir o modal).
+function qotdArchAnswer(q,letter){
+  if(!q||!letter)return;
+  var ok=(letter===q.answer);
+  var mm=qotdReadAns();mm[q.id]={letter:letter,ok:ok,at:Date.now()};
+  try{localStorage.setItem('qotd_answered',JSON.stringify(mm));}catch(e){}
+  if(q.sub){if(!DB.perf[q.sub])DB.perf[q.sub]={correct:0,total:0};DB.perf[q.sub].total++;if(ok)DB.perf[q.sub].correct++;try{persist();}catch(e){}}
+  try{renderPerfBars();updateDashRec();}catch(e){}
+}
+function renderQotdArchive(){
+  var el=document.getElementById('panel-qotd-body');if(!el)return;
+  var list=qotdPublished(),mm=qotdReadAns();
+  if(!list.length){el.innerHTML='<div class="empty">Nenhuma questão publicada ainda. Volte em breve. 🧠</div>';return;}
+  var done=0;list.forEach(function(q){if(mm[q.id])done++;});
+  el.innerHTML='<div style="font-size:.74rem;color:var(--t3);margin-bottom:.7rem">'+done+' de '+list.length+' respondida'+(list.length===1?'':'s')+'</div>'
+    +list.map(function(q){
+      var ans=mm[q.id]||null,open=(qotdArchOpen===q.id);
+      var badge=ans?(ans.ok?'<span class="qa-badge ok">✓ Acertou</span>':'<span class="qa-badge err">✗ Errou</span>'):'<span class="qa-badge new">Responder</span>';
+      var st=String((q.teem?q.teem+' ':'')+q.stem).trim();
+      var snip=esc(st.slice(0,120))+(st.length>120?'…':'');
+      var head='<button type="button" class="qa-head" data-qa-toggle="'+esc(q.id)+'"><span class="qa-snip">'+snip+'</span>'+badge+'<span class="qa-caret">'+(open?'▴':'▾')+'</span></button>';
+      var body=open?'<div class="qa-body">'+qotdCardHTML(q,ans)+'</div>':'';
+      return '<div class="qa-item'+(open?' open':'')+'">'+head+body+'</div>';
+    }).join('');
+  el.querySelectorAll('[data-qa-toggle]').forEach(function(h){h.addEventListener('click',function(){var id=h.getAttribute('data-qa-toggle');qotdArchOpen=(qotdArchOpen===id)?null:id;renderQotdArchive();});});
+  if(qotdArchOpen){
+    el.querySelectorAll('[data-qotd-opt]').forEach(function(b){b.addEventListener('click',function(){
+      if(b.disabled)return;
+      var q=null,l=qotdPublished();for(var i=0;i<l.length;i++){if(l[i].id===qotdArchOpen){q=l[i];break;}}
+      if(!q)return;qotdArchAnswer(q,b.getAttribute('data-qotd-opt'));renderQotdArchive();
+    });});
+  }
+}
+// Card de REVISÃO (professores Rafa/Edu/Bruno): alternativa correta (✓) + comentário.
+function qotdReviewCardHTML(q){
+  var ltrs=['A','B','C','D'].filter(function(L){return q.options[L];});
+  var opts=ltrs.map(function(L){
+    var c=(L===q.answer),bd=c?'1px solid var(--grn)':'1px solid var(--bd)',bg=c?'var(--grn-l)':'var(--s2)';
+    return '<div style="display:flex;gap:.55rem;align-items:flex-start;padding:.55rem .7rem;border-radius:var(--rs);font-size:.82rem;line-height:1.45;border:'+bd+';background:'+bg+';color:var(--tx)"><span style="font-weight:800;color:'+(c?'var(--grn)':'var(--blue)')+';flex-shrink:0">'+L+(c?' ✓':'')+'</span><span>'+esc(q.options[L])+'</span></div>';
+  }).join('');
+  var cm=q.explanation?'<div style="margin-top:.55rem;padding:.55rem .7rem;border-radius:var(--rs);background:var(--s2);font-size:.8rem;line-height:1.5;color:var(--t2)"><b style="color:var(--tx)">Comentário:</b> '+esc(q.explanation)+'</div>':'';
+  return '<div style="font-size:.86rem;line-height:1.55;color:var(--tx);margin-bottom:.6rem">'+esc((q.teem?String(q.teem).trim()+' ':'')+String(q.stem).trim())+'</div>'
+    +(q.img?'<img src="'+esc(q.img)+'" alt="Figura" style="max-width:100%;display:block;border-radius:8px;margin:0 0 .6rem;border:1px solid var(--bd)">':'')
+    +'<div style="display:flex;flex-direction:column;gap:.4rem">'+opts+'</div>'+cm;
+}
+function admQotdArchiveHTML(){
+  var list=qotdPublished();
+  var body=list.length?list.map(function(q){
+    var open=(admQotdArchOpen===q.id);
+    var sub=q.sub?'<span style="font-size:.64rem;font-weight:700;color:var(--gold);text-transform:uppercase;letter-spacing:.04em;margin-right:.5rem;flex-shrink:0">'+esc(q.sub)+'</span>':'';
+    var st=String((q.teem?q.teem+' ':'')+q.stem).trim();
+    var snip=esc(st.slice(0,130))+(st.length>130?'…':'');
+    var head='<button type="button" class="qa-head" data-admqa-toggle="'+esc(q.id)+'">'+sub+'<span class="qa-snip">'+snip+'</span><span class="qa-caret">'+(open?'▴':'▾')+'</span></button>';
+    var bd=open?'<div class="qa-body">'+qotdReviewCardHTML(q)+'</div>':'';
+    return '<div class="qa-item'+(open?' open':'')+'">'+head+bd+'</div>';
+  }).join(''):'<div class="empty">Nenhuma questão publicada ainda.</div>';
+  return '<div class="adm-ph"><h1>Questão do Dia</h1></div><div class="adm-pc">'
+    +'<div class="card" style="margin-bottom:1.1rem"><div style="font-size:.79rem;color:var(--t2);line-height:1.55">Arquivo das questões do dia já publicadas — enunciado, alternativa correta (✓) e comentário. Para consulta e revisão.</div></div>'
+    +'<div id="adm-qotd-arch">'+body+'</div></div>';
+}
+function bindAdmQotdArchive(){
+  document.querySelectorAll('[data-admqa-toggle]').forEach(function(h){h.addEventListener('click',function(){var id=h.getAttribute('data-admqa-toggle');admQotdArchOpen=(admQotdArchOpen===id)?null:id;renderAdmSec('qotdarq');});});
 }
 function setText(id,v){var e=document.getElementById(id);if(e)e.textContent=v;}
 function renderPerfBars(){
@@ -8003,7 +8095,7 @@ function igLbl(t){return '<div style="font-size:.68rem;color:var(--t2);font-weig
 // ---------- Pendências: revisão/aprovação das questões DISTRIBUÍDAS (por professor) ----------
 function updateAdmPendBadge(){var b=document.getElementById('adm-pend-badge');if(!b)return;var n=qotdMyPending().length;if(n>0){b.textContent=n;b.style.display='';}else{b.textContent='';b.style.display='none';}}
 // Esconde o gerador "Questão do Dia" de quem não é dono e atualiza o badge das Pendências.
-function applyQotdNav(){var st=document.querySelector('.adm-nav[data-asec="stories"]');if(st)st.style.display=isQotdOwner()?'':'none';updateAdmPendBadge();}
+function applyQotdNav(){var own=isQotdOwner();var st=document.querySelector('.adm-nav[data-asec="stories"]');if(st)st.style.display=own?'':'none';var aq=document.querySelector('.adm-nav[data-asec="qotdarq"]');if(aq)aq.style.display=own?'none':'';updateAdmPendBadge();}
 function admPendCardHTML(it){
   var id=esc(it.id);
   var optRows=['A','B','C','D'].map(function(L){
@@ -8303,7 +8395,7 @@ function renderAdmSec(sec){
   admCurrentSec=sec;
   try{lsSet('adm_sec',sec);}catch(e){}
   document.querySelectorAll('.adm-nav[data-asec]').forEach(function(b){b.classList.toggle('on',b.dataset.asec===sec);});
-  var titles={provas:'Provas & Questões',cursos:'Cursos',estudantes:'Estudantes',analytics:'Analytics',mural:'Mural',ref:'Diretrizes',conteudo:'Podcasts',mapas:'Mapas Mentais',flashcards:'Flashcards',stories:'Questão do Dia (Stories)',pendencias:'Pendências',calc:'Calculadoras',consultorio:'Consultório',rx:'Prescrição Comentada',chat:'Chat',perfil:'Perfil',suporte:'Suporte'};
+  var titles={provas:'Provas & Questões',cursos:'Cursos',estudantes:'Estudantes',analytics:'Analytics',mural:'Mural',ref:'Diretrizes',conteudo:'Podcasts',mapas:'Mapas Mentais',flashcards:'Flashcards',stories:'Questão do Dia (Stories)',qotdarq:'Questão do Dia',pendencias:'Pendências',calc:'Calculadoras',consultorio:'Consultório',rx:'Prescrição Comentada',chat:'Chat',perfil:'Perfil',suporte:'Suporte'};
   setText('adm-sec-title',titles[sec]||sec);
   var m=document.getElementById('adm-main');if(!m)return;
   // SEMPRE devolve os painéis movidos (#panel-presc / #mm-live) para o lugar de
@@ -8339,6 +8431,7 @@ function renderAdmSec(sec){
   else if(sec==='mapas')m.innerHTML=admMapasHTML();
   else if(sec==='flashcards')m.innerHTML=admFlashHTML();
   else if(sec==='stories')m.innerHTML=admStoriesHTML();
+  else if(sec==='qotdarq')m.innerHTML=admQotdArchiveHTML();
   else if(sec==='pendencias')m.innerHTML=admPendenciasHTML();
   bindAdmSec(sec);
 }
@@ -9312,6 +9405,7 @@ function bindAdmSec(sec){
     return;
   }
   if(sec==='stories'){bindAdmStories();return;}
+  if(sec==='qotdarq'){bindAdmQotdArchive();return;}
   if(sec==='pendencias'){bindAdmPendencias();return;}
 
   if(sec==='cursos'){
