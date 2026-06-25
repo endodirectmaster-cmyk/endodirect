@@ -5008,12 +5008,12 @@ function renderQotdArchive(){
     });});
   }
 }
-// Card de REVISÃO (professores Rafa/Edu/Bruno): alternativa correta (✓) + comentário.
+// Card de REVISÃO (professores Rafa/Edu/Bruno): alternativa correta em destaque (verde) + comentário.
 function qotdReviewCardHTML(q){
   var ltrs=['A','B','C','D'].filter(function(L){return q.options[L];});
   var opts=ltrs.map(function(L){
     var c=(L===q.answer),bd=c?'1px solid var(--grn)':'1px solid var(--bd)',bg=c?'var(--grn-l)':'var(--s2)';
-    return '<div style="display:flex;gap:.55rem;align-items:flex-start;padding:.55rem .7rem;border-radius:var(--rs);font-size:.82rem;line-height:1.45;border:'+bd+';background:'+bg+';color:var(--tx)"><span style="font-weight:800;color:'+(c?'var(--grn)':'var(--blue)')+';flex-shrink:0">'+L+(c?' ✓':'')+'</span><span>'+esc(q.options[L])+'</span></div>';
+    return '<div style="display:flex;gap:.55rem;align-items:flex-start;padding:.55rem .7rem;border-radius:var(--rs);font-size:.82rem;line-height:1.45;border:'+bd+';background:'+bg+';color:var(--tx)"><span style="font-weight:800;color:'+(c?'var(--grn)':'var(--blue)')+';flex-shrink:0">'+L+'</span><span>'+esc(q.options[L])+'</span></div>';
   }).join('');
   var cm=q.explanation?'<div style="margin-top:.55rem;padding:.55rem .7rem;border-radius:var(--rs);background:var(--s2);font-size:.8rem;line-height:1.5;color:var(--t2)"><b style="color:var(--tx)">Comentário:</b> '+esc(q.explanation)+'</div>':'';
   return '<div style="font-size:.86rem;line-height:1.55;color:var(--tx);margin-bottom:.6rem">'+esc((q.teem?String(q.teem).trim()+' ':'')+String(q.stem).trim())+'</div>'
@@ -5046,7 +5046,7 @@ function admQotdArchiveHTML(){
     return '<div class="qa-item'+(open?' open':'')+'">'+head+bd+'</div>';
   }).join(''):'<div class="empty">'+(all.length?'Nenhuma questão nesta subespecialidade.':'Nenhuma questão publicada ainda.')+'</div>';
   return '<div class="adm-ph"><h1>Questão do Dia</h1></div><div class="adm-pc">'
-    +'<div class="card" style="margin-bottom:1.1rem"><div style="font-size:.79rem;color:var(--t2);line-height:1.55">Arquivo das questões do dia já publicadas — enunciado, alternativa correta (✓) e comentário. Para consulta e revisão.</div></div>'
+    +'<div class="card" style="margin-bottom:1.1rem"><div style="font-size:.79rem;color:var(--t2);line-height:1.55">Arquivo das questões do dia já publicadas — enunciado, alternativa correta (em destaque) e comentário. Para consulta e revisão.</div></div>'
     +(all.length?filters:'')
     +'<div id="adm-qotd-arch">'+body+'</div></div>';
 }
