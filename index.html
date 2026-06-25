@@ -2009,6 +2009,8 @@ html[data-theme="light"] .dir-back{background:#f8f9fc;border-color:var(--bd2);co
         <div style="padding:.7rem .55rem;flex:1">
           <div class="sb-sec">Gestão</div>
           <button class="adm-nav on" data-asec="analytics">📊 Analytics</button>
+          <button class="adm-nav" data-asec="stories">📲 Questão do Dia</button>
+          <button class="adm-nav" data-asec="qotdarq" style="display:none">🧠 Questão do Dia</button>
           <button class="adm-nav" data-asec="pendencias">📥 Pendências <span class="tag" id="adm-pend-badge" style="display:none;margin-left:.15rem"></span></button>
           <button class="adm-nav" data-asec="mural">📣 Mural</button>
           <button class="adm-nav" data-asec="ref">📋 Diretrizes</button>
@@ -2018,8 +2020,6 @@ html[data-theme="light"] .dir-back{background:#f8f9fc;border-color:var(--bd2);co
           <button class="adm-nav" data-asec="conteudo">🎧 Podcasts</button>
           <button class="adm-nav" data-asec="mapas">✦ Mapas Mentais</button>
           <button class="adm-nav" data-asec="flashcards">🃏 Flashcards</button>
-          <button class="adm-nav" data-asec="stories">📲 Questão do Dia</button>
-          <button class="adm-nav" data-asec="qotdarq" style="display:none">🧠 Questão do Dia</button>
           <button class="adm-nav" data-asec="calc">🧮 Calculadoras</button>
           <button class="adm-nav" data-asec="consultorio">⚕️ Consultório</button>
           <button class="adm-nav" data-asec="rx">💊 Prescrição Comentada</button>
@@ -3163,6 +3163,7 @@ function hydrateRemoteState(){
       try{prescScrubLog();}catch(e){} // remove PII de paciente de históricos legados
       refreshAfterRemoteState();
       maybeOnboardAfterHydrate();
+      try{maybePendAlert();}catch(e){} // garante o alerta de pendências mesmo se ig_pending não veio no payload (rede/cache)
       queueRemoteStateSave();
     }).catch(function(e){
       if(!remoteStateWarned){remoteStateWarned=true;console.warn('Supabase state unavailable',e);}
