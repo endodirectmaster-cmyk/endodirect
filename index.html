@@ -3183,19 +3183,21 @@ function hydrateRemoteState(){
       try{maybeOnboardAfterHydrate();}catch(_e){}
     });
 }
-function queueRemoteStateSave(){
-  if(!canUseRemoteState())return;
+function queueRemoteStateSave(immediate){
+  if(!canUseRemoteState())return null;
   clearTimeout(remoteStateSaveTimer);
+  if(immediate)return saveRemoteState();          // ações discretas (ex.: marcar "Postada") salvam JÁ
   remoteStateSaveTimer=setTimeout(saveRemoteState,600);
+  return null;
 }
 function saveRemoteState(){
-  if(!canUseRemoteState())return;
+  if(!canUseRemoteState())return Promise.resolve(false);
   // Guarda crítica: nunca gravar antes do hydrate concluir. Sem isso, uma
   // edição/ação precoce sobrescreveria o estado remoto (global e do usuário)
   // com o localStorage — possivelmente vazio (máquina nova) ou com as provas
   // FILTRADAS de uma sessão de aluno — apagando o banco para todos. O próprio
   // hydrateRemoteState dispara um save ao terminar, então nada se perde.
-  if(!remoteStateLoaded)return;
+  if(!remoteStateLoaded)return Promise.resolve(false);
   var client=getSupabaseClient();
   var row={user_id:currentUser.id,email:currentUser.email,role:currentUser.role,payload:userStatePayload(),updated_at:new Date().toISOString()};
   var ops=[client.from('endodirect_app_state').upsert(row,{onConflict:'user_id'}).then(function(res){if(res.error)throw res.error;})];
@@ -3242,13 +3244,15 @@ function saveRemoteState(){
       return client.from('endodirect_global_state').upsert({id:'main',payload:p,updated_by:currentUser.id,updated_at:stamp},{onConflict:'id'}).then(function(res){if(res.error)throw res.error;lastGlobalUpdatedAt=stamp;captureGlobalBaseline(p);});
     }));
   }
-  Promise.all(ops)
+  return Promise.all(ops)
+    .then(function(){return true;})
     .catch(function(e){
       if(!remoteStateWarned){
         remoteStateWarned=true;
         console.warn('Supabase save failed',e);
         notify('Não foi possível salvar no Supabase ainda. Verifique o setup SQL.','err');
       }
+      return false;
     });
 }
 
@@ -7414,9 +7418,12 @@ function dirSubIcon(s){
   if(k.indexOf('osteo')>=0)return '🦴';
   if(k.indexOf('hipófise')>=0||k.indexOf('hipofis')>=0||k.indexOf('neuro')>=0)return '🧠';
   if(k.indexOf('feminin')>=0)return '♀️';
-  if(k.indexOf('masculin')>=0||k.indexOf('gônad')>=0||k.indexOf('gonad')>=0||k.indexOf('reprod')>=0)return '♂️';
+  if(k.indexOf('masculin')>=0||k.indexOf('gônad')>=0||k.indexOf('gonad')>=0||k.indexOf('reprod')>=0||k.indexOf('androl')>=0)return '♂️';
   if(k.indexOf('pediátr')>=0||k.indexOf('pediatr')>=0)return '🧒';
   if(k.indexOf('esport')>=0)return '🏃';
+  if(k.indexOf('transgener')>=0||k.indexOf('transex')>=0)return '⚧️';
+  if(k.indexOf('inaugural')>=0)return '🎓';
+  if(k.indexOf('básic')>=0||k.indexOf('basic')>=0)return '📚';
   return '📋';
 }
 function dirSubList(){
@@ -8150,7 +8157,7 @@ var IG_TOOLS=[
 ];
 var igEditId=null; // id do item da fila em edição (null = criando novo)
 var igDraftImg=''; // imagem (base64) do enunciado no formulário manual
-function persistIgStories(){try{lsSet('ig_stories',igStories);}catch(e){}queueRemoteStateSave();}
+function persistIgStories(immediate){try{lsSet('ig_stories',igStories);}catch(e){}return queueRemoteStateSave(immediate);}
 function igSetV(id,v){var e=document.getElementById(id);if(e)e.value=(v==null?'':v);}
 function igXml(s){return String(s==null?'':s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');}
 var _igMeas=null;
@@ -8634,7 +8641,7 @@ function bindAdmStories(){
   main.querySelectorAll('[data-ig-load]').forEach(function(b){b.addEventListener('click',function(){var it=igStories[parseInt(b.dataset.igLoad,10)];if(!it)return;igEditId=it.id;stShowView('manual');igFillForm(it);try{document.getElementById('ig-stem').scrollIntoView({behavior:'smooth',block:'center'});}catch(e){}notify('Editando — altere e clique em "Aprovar" para salvar.','ok');});});
   main.querySelectorAll('[data-ig-dlq]').forEach(function(b){b.addEventListener('click',function(){var it=igStories[parseInt(b.dataset.igDlq,10)];if(it)igDownload('q',it,'endodireto-'+igFnameSub(it)+'-pergunta.png').catch(function(e){notify((e&&e.message)||'Falha.','err');});});});
   main.querySelectorAll('[data-ig-dla]').forEach(function(b){b.addEventListener('click',function(){var it=igStories[parseInt(b.dataset.igDla,10)];if(it)igDownload('a',it,'endodireto-'+igFnameSub(it)+'-gabarito.png').catch(function(e){notify((e&&e.message)||'Falha.','err');});});});
-  main.querySelectorAll('[data-ig-toggle]').forEach(function(b){b.addEventListener('click',function(){var it=igStories[parseInt(b.dataset.igToggle,10)];if(!it)return;var post=(it.status!=='posted');it.status=post?'posted':'queued';if(post)it.postedAt=Date.now();persistIgStories();renderAdmSec('stories');});});
+  main.querySelectorAll('[data-ig-toggle]').forEach(function(b){b.addEventListener('click',function(){var it=igStories[parseInt(b.dataset.igToggle,10)];if(!it)return;var post=(it.status!=='posted');it.status=post?'posted':'queued';if(post)it.postedAt=Date.now();var pr=persistIgStories(true);renderAdmSec('stories');var okMsg=post?'✅ Publicada para os alunos!':'↺ Voltou para a fila.';if(pr&&pr.then){pr.then(function(ok){notify(ok?okMsg:'⚠️ Não consegui salvar agora — verifique a conexão e tente de novo.',ok?'ok':'err');});}else{notify(okMsg,'ok');}});});
   main.querySelectorAll('[data-ig-up]').forEach(function(b){b.addEventListener('click',function(){igMoveQueued(parseInt(b.dataset.igUp,10),-1);});});
   main.querySelectorAll('[data-ig-down]').forEach(function(b){b.addEventListener('click',function(){igMoveQueued(parseInt(b.dataset.igDown,10),1);});});
   main.querySelectorAll('[data-ig-del]').forEach(function(b){b.addEventListener('click',function(){var i=parseInt(b.dataset.igDel,10);if(!confirm('Excluir esta questão da fila?'))return;igStories.splice(i,1);persistIgStories();renderAdmSec('stories');notify('Questão removida.','ok');});});
