@@ -334,6 +334,10 @@ textarea{resize:vertical;line-height:1.6}
 .mm-node-wrap:hover .mm-del{display:inline-flex}
 .mm-add-sub{align-self:flex-start;background:none;border:1px dashed var(--bd2);border-radius:7px;padding:.24rem .65rem;font-size:.68rem;color:var(--t3);cursor:pointer;font-family:var(--font)}
 .mm-add-sub:hover{border-color:var(--blue);color:var(--blue);background:var(--surface)}
+.mm-leaf-row{display:flex;align-items:center;gap:0}
+.mm-children{display:flex;flex-direction:column;gap:.45rem}
+.mm-add-child{position:absolute;top:-7px;right:15px;width:18px;height:18px;border:none;border-radius:50%;background:var(--blue);color:#fff;font-size:.84rem;cursor:pointer;display:none;align-items:center;justify-content:center;line-height:1;font-family:var(--font);padding:0;box-shadow:0 1px 4px rgba(0,0,0,.25);z-index:5}
+.mm-node-wrap:hover .mm-add-child{display:inline-flex}
 .mm-add-branch{background:none;border:1.5px dashed var(--bd2);border-radius:9px;padding:.45rem .9rem;font-size:.76rem;color:var(--t2);cursor:pointer;font-family:var(--font);align-self:flex-start;margin-top:.6rem}
 .mm-add-branch:hover{border-color:var(--blue);color:var(--blue);background:var(--blue-l)}
 .mm-conn-layer{position:absolute;left:0;top:0;z-index:0;overflow:visible;pointer-events:none}
@@ -1662,7 +1666,7 @@ html[data-theme="light"] .dir-back{background:#f8f9fc;border-color:var(--bd2);co
             <button class="btn btn-primary" id="btn-mmgen">🤖 Gerar com IA</button>
             <button class="btn btn-outline" id="btn-mmblank">✏️ Manual</button>
           </div>
-          <div class="mm-help">💡 Clique em qualquer caixa para editar o texto. Use os botões para adicionar ou remover ramos e subramos.</div>
+          <div class="mm-help">💡 Clique em qualquer caixa para editar o texto. Passe o mouse sobre uma caixa e clique em <b>+</b> para criar um subramo a partir dela (em qualquer nível) ou em <b>×</b> para remover.</div>
         </div>
         <div id="mm-live" style="display:none;margin-bottom:.85rem">
           <div class="mm-live-head">
@@ -5472,12 +5476,22 @@ function svgTxt(lines,x,y,sz,fill,fw){
   var lh=sz*1.35,sy=y-(lines.length-1)*lh/2;
   return lines.map(function(l,i){return'<text x="'+x+'" y="'+(sy+i*lh)+'" text-anchor="middle" font-size="'+sz+'" fill="'+fill+'" font-weight="'+(fw||'normal')+'" font-family="Segoe UI,sans-serif">'+esc(l)+'</text>';}).join('');
 }
+// Normaliza uma folha, PRESERVANDO subramos (children) em qualquer profundidade.
+// Folha sem filhos vira string; folha com filhos vira {label,children:[...]}.
+function normMMLeaf(lf){
+  if(typeof lf==='string')return lf;
+  if(!lf||typeof lf!=='object')return '';
+  var label=lf.label||lf.title||lf.name||lf.text||'';
+  var kidsRaw=lf.children||lf.leaves||lf.subtopics||[];
+  var kids=(Array.isArray(kidsRaw)?kidsRaw:[]).map(normMMLeaf).filter(function(x){return typeof x==='string'?!!x.trim():!!x;});
+  return kids.length?{label:label||'Detalhe',children:kids}:label;
+}
 function normalizeMMData(data){
   data=data||{};
   var root=data.root||data.central||data.title||'Tema';
   var branches=(data.branches||[]).map(function(b){
-    var leaves=b.leaves||b.children||b.subtopics||[];
-    leaves=leaves.map(function(lf){return typeof lf==='string'?lf:(lf.title||lf.name||lf.label||'');}).filter(Boolean);
+    var leavesRaw=b.leaves||b.children||b.subtopics||[];
+    var leaves=(Array.isArray(leavesRaw)?leavesRaw:[]).map(normMMLeaf).filter(function(x){return typeof x==='string'?!!x.trim():!!x;});
     return {label:b.label||b.title||b.name||'Ramo',leaves:leaves.length?leaves:['Detalhe']};
   });
   return {root:root,branches:branches};
@@ -5775,6 +5789,19 @@ function viewMM(i){
 function mmRedraw(){
   if(curMM)renderMMEditor();
 }
+// Renderiza uma folha (recursivamente, com seus subramos) no editor visual.
+function mmLeafHTML(lf,path){
+  var label=typeof lf==='string'?lf:((lf&&lf.label)||'');
+  var kids=(lf&&typeof lf==='object'&&Array.isArray(lf.children))?lf.children:[];
+  var h='<div class="mm-leaf-row"><div class="mm-node-wrap">'
+    +'<div class="mm-sub-txt" contenteditable="true" spellcheck="false" data-mm-leaf="'+path+'">'+esc(label)+'</div>'
+    +'<button class="mm-del" data-mmdelleaf="'+path+'" title="Remover">×</button>'
+    +'<button class="mm-add-child" data-mmaddchild="'+path+'" title="Adicionar subramo a partir desta caixa">+</button></div>';
+  if(kids.length){
+    h+='<div class="mm-gap"></div><div class="mm-children">'+kids.map(function(c,ci){return mmLeafHTML(c,path+'-'+ci);}).join('')+'</div>';
+  }
+  return h+'</div>';
+}
 function renderMMEditor(){
   if(!curMM)return;
   curMM.data=normalizeMMData(curMM.data);
@@ -5788,7 +5815,7 @@ function renderMMEditor(){
       +'<div class="mm-node-wrap"><div class="mm-branch-txt" contenteditable="true" spellcheck="false" data-mm-branch="'+bi+'" style="background:'+col+'">'+esc(b.label||'Ramo')+'</div><button class="mm-del" data-mmdelbranch="'+bi+'" title="Remover ramo">×</button></div>'
       +'<div class="mm-gap"></div>'
       +'<div class="mm-subs-block">'
-      +leaves.map(function(lf,li){return'<div class="mm-node-wrap"><div class="mm-sub-txt" contenteditable="true" spellcheck="false" data-mm-sub="'+bi+'-'+li+'">'+esc(lf)+'</div><button class="mm-del" data-mmdelsub="'+bi+'-'+li+'" title="Remover subramo">×</button></div>';}).join('')
+      +leaves.map(function(lf,li){return mmLeafHTML(lf,bi+'-'+li);}).join('')
       +'<button class="mm-add-sub" data-mmaddsub="'+bi+'">+ subramo</button>'
       +'</div></div>';
   }).join('');
@@ -5829,18 +5856,41 @@ function setupMMPinchZoom(){
   },{passive:false});
   wrap.addEventListener('touchend',function(ev){if(ev.touches.length<2)startDist=0;});
 }
+// Lê uma folha (e seus subramos, recursivamente) a partir de um .mm-leaf-row.
+function mmReadLeaf(row){
+  var box=row.querySelector(':scope > .mm-node-wrap > [data-mm-leaf]');
+  var label=box?(box.innerText||box.textContent||'').trim():'';
+  var kids=[],kc=row.querySelector(':scope > .mm-children');
+  if(kc)kc.querySelectorAll(':scope > .mm-leaf-row').forEach(function(r){var k=mmReadLeaf(r);if(k!=null)kids.push(k);});
+  if(!label&&!kids.length)return null;
+  return kids.length?{label:label||'Detalhe',children:kids}:label;
+}
+// Resolve um path "b-l-c…" para {arr,idx} em curMM.data (cria containers de filhos quando preciso).
+function mmResolvePath(path){
+  if(!curMM)return null;
+  var parts=String(path).split('-').map(Number),br=curMM.data.branches[parts[0]];
+  if(!br)return null;
+  var arr=br.leaves;
+  for(var i=1;i<parts.length-1;i++){
+    var n=arr[parts[i]];
+    if(typeof n==='string'){n={label:n,children:[]};arr[parts[i]]=n;}
+    if(!n.children)n.children=[];
+    arr=n.children;
+  }
+  return {arr:arr,idx:parts[parts.length-1]};
+}
 function syncMMFromDOM(){
   if(!curMM)return;
   var rootEl=document.querySelector('[data-mm-root]');
   var branches=[];
   document.querySelectorAll('[data-mm-branch-row]').forEach(function(row){
-    var bEl=row.querySelector('[data-mm-branch]');
-    var leaves=[];
-    row.querySelectorAll('[data-mm-sub]').forEach(function(s){var txt=(s.innerText||s.textContent||'').trim();if(txt)leaves.push(txt);});
-    var label=(bEl?bEl.innerText:bEl&&bEl.textContent||'').trim();
+    var bEl=row.querySelector(':scope > .mm-node-wrap > [data-mm-branch]');
+    var sb=row.querySelector(':scope > .mm-subs-block'),leaves=[];
+    if(sb)sb.querySelectorAll(':scope > .mm-leaf-row').forEach(function(r){var k=mmReadLeaf(r);if(k!=null)leaves.push(k);});
+    var label=(bEl?(bEl.innerText||bEl.textContent||''):'').trim();
     branches.push({label:label||'Ramo',leaves:leaves.length?leaves:['Detalhe']});
   });
-  var root=(rootEl?rootEl.innerText:curMM.topic||'Tema').trim()||curMM.topic||'Tema';
+  var root=(rootEl?(rootEl.innerText||rootEl.textContent||''):'').trim()||curMM.topic||'Tema';
   curMM.data=normalizeMMData({root:root,branches:branches});
   curMM.topic=root;
   setText('mm-live-title',root);
@@ -5854,17 +5904,25 @@ function drawMMConnections(){
   svg.style.width=w+'px';svg.style.height=h+'px';
   var cr=central.getBoundingClientRect();
   var sx=cr.right-er.left,sy=cr.top-er.top+cr.height/2,paths='';
-  document.querySelectorAll('[data-mm-branch-row]').forEach(function(row,bi){
-    var col=BCOLORS[bi%BCOLORS.length],br=row.querySelector('[data-mm-branch]');
-    if(!br)return;
-    var rr=br.getBoundingClientRect();
-    var bx=rr.left-er.left,by=rr.top-er.top+rr.height/2;
-    paths+='<path d="M'+sx+' '+sy+' C'+(sx+22)+' '+sy+' '+(bx-24)+' '+by+' '+bx+' '+by+'" fill="none" stroke="#1a2744" stroke-width="2.2" opacity=".88"/>';
-    var bsx=rr.right-er.left,bsy=by;
-    row.querySelectorAll('[data-mm-sub]').forEach(function(sub){
-      var sr=sub.getBoundingClientRect(),ex=sr.left-er.left,ey=sr.top-er.top+sr.height/2;
-      paths+='<path d="M'+bsx+' '+bsy+' C'+(bsx+18)+' '+bsy+' '+(ex-18)+' '+ey+' '+ex+' '+ey+'" fill="none" stroke="'+col+'" stroke-width="2" opacity=".74"/>';
+  function rc(el){var r=el.getBoundingClientRect();return {l:r.left-er.left,r:r.right-er.left,m:r.top-er.top+r.height/2};}
+  function curve(x1,y1,x2,y2,col,sw,op){return '<path d="M'+x1+' '+y1+' C'+(x1+18)+' '+y1+' '+(x2-18)+' '+y2+' '+x2+' '+y2+'" fill="none" stroke="'+col+'" stroke-width="'+sw+'" opacity="'+op+'"/>';}
+  // Conecta um nó-pai a cada folha direta do container e desce recursivamente nos subramos.
+  function connect(parentBox,container,col,depth){
+    if(!container)return;
+    var p=rc(parentBox),sw=depth<=1?2:1.55,op=depth<=1?.72:.5;
+    container.querySelectorAll(':scope > .mm-leaf-row').forEach(function(lr){
+      var box=lr.querySelector(':scope > .mm-node-wrap > [data-mm-leaf]');if(!box)return;
+      var c=rc(box);
+      paths+=curve(p.r,p.m,c.l,c.m,col,sw,op);
+      connect(box,lr.querySelector(':scope > .mm-children'),col,depth+1);
     });
+  }
+  document.querySelectorAll('[data-mm-branch-row]').forEach(function(row,bi){
+    var col=BCOLORS[bi%BCOLORS.length],br=row.querySelector(':scope > .mm-node-wrap > [data-mm-branch]');
+    if(!br)return;
+    var b=rc(br);
+    paths+='<path d="M'+sx+' '+sy+' C'+(sx+22)+' '+sy+' '+(b.l-24)+' '+b.m+' '+b.l+' '+b.m+'" fill="none" stroke="#1a2744" stroke-width="2.2" opacity=".88"/>';
+    connect(br,row.querySelector(':scope > .mm-subs-block'),col,1);
   });
   svg.innerHTML=paths;
 }
@@ -10198,8 +10256,9 @@ document.addEventListener('click',function(e){
   var mmd=c('[data-mmdel]');if(mmd){DB.mm.splice(parseInt(mmd.dataset.mmdel),1);persist();renderMMList();refreshDash();return;}
   var mmab=c('[data-mmaddbranch]');if(mmab&&curMM){syncMMFromDOM();curMM.data.branches.push({label:'Novo ramo',leaves:['Novo subramo']});renderMMEditor();return;}
   var mmas=c('[data-mmaddsub]');if(mmas&&curMM){syncMMFromDOM();var bi=parseInt(mmas.dataset.mmaddsub,10);if(curMM.data.branches[bi]){curMM.data.branches[bi].leaves.push('Novo subramo');renderMMEditor();}return;}
+  var mmac=c('[data-mmaddchild]');if(mmac&&curMM){syncMMFromDOM();var rA=mmResolvePath(mmac.dataset.mmaddchild);if(rA&&rA.arr&&rA.arr[rA.idx]!=null){var nA=rA.arr[rA.idx];if(typeof nA==='string')nA={label:nA,children:[]};if(!nA.children)nA.children=[];nA.children.push('Novo subramo');rA.arr[rA.idx]=nA;renderMMEditor();}return;}
   var mmdb=c('[data-mmdelbranch]');if(mmdb&&curMM){syncMMFromDOM();curMM.data.branches.splice(parseInt(mmdb.dataset.mmdelbranch,10),1);renderMMEditor();return;}
-  var mmds=c('[data-mmdelsub]');if(mmds&&curMM){syncMMFromDOM();var p=mmds.dataset.mmdelsub.split('-');var b=curMM.data.branches[parseInt(p[0],10)];if(b){b.leaves.splice(parseInt(p[1],10),1);renderMMEditor();}return;}
+  var mmdl=c('[data-mmdelleaf]');if(mmdl&&curMM){syncMMFromDOM();var rD=mmResolvePath(mmdl.dataset.mmdelleaf);if(rD&&rD.arr)rD.arr.splice(rD.idx,1);renderMMEditor();return;}
   // podcasts
   var pf=c('[data-podfilter]');if(pf){podFilter=pf.dataset.podfilter;renderPodcasts();return;}
   // cursos
