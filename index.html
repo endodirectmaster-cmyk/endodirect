@@ -4917,9 +4917,9 @@ function qotdTodays(){
 function qotdCardHTML(q,ans){
   var ltrs=['A','B','C','D'].filter(function(L){return q.options[L];});
   var opts=ltrs.map(function(L){
-    var bd='1px solid var(--bd)',bg='var(--s2)';
-    if(ans){if(L===q.answer){bd='1px solid var(--grn)';bg='var(--grn-l)';}else if(L===ans.letter){bd='1px solid var(--red)';bg='var(--red-l)';}}
-    return '<button type="button" '+(ans?'disabled ':'')+'data-qotd-opt="'+L+'" style="text-align:left;display:flex;gap:.55rem;align-items:flex-start;padding:.6rem .7rem;border-radius:var(--rs);width:100%;font-size:.82rem;line-height:1.45;cursor:'+(ans?'default':'pointer')+';border:'+bd+';background:'+bg+';color:var(--tx)"><span style="font-weight:800;color:var(--blue);flex-shrink:0">'+L+'</span><span>'+esc(q.options[L])+'</span></button>';
+    var bd='1px solid #cdd6e6',bg='#ffffff',fg='#16233f';
+    if(ans){if(L===q.answer){bd='1px solid var(--grn)';bg='#e7f7ee';fg='#14512f';}else if(L===ans.letter){bd='1px solid var(--red)';bg='#fdeaea';fg='#7a1f1f';}}
+    return '<button type="button" '+(ans?'disabled ':'')+'data-qotd-opt="'+L+'" style="text-align:left;display:flex;gap:.55rem;align-items:flex-start;padding:.6rem .7rem;border-radius:var(--rs);width:100%;font-size:.82rem;line-height:1.45;cursor:'+(ans?'default':'pointer')+';border:'+bd+';background:'+bg+';color:'+fg+'"><span style="font-weight:800;color:#2c5fc4;flex-shrink:0">'+L+'</span><span>'+esc(q.options[L])+'</span></button>';
   }).join('');
   var fb='';
   if(ans){
