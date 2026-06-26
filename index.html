@@ -4923,13 +4923,13 @@ function qotdCardHTML(q,ans){
   }).join('');
   var fb='';
   if(ans){
-    fb='<div style="margin-top:.6rem;padding:.55rem .7rem;border-radius:var(--rs);font-size:.78rem;line-height:1.5;background:'+(ans.ok?'var(--grn-l)':'var(--red-l)')+';color:var(--t2)"><b style="color:'+(ans.ok?'var(--grn)':'var(--red)')+'">'+(ans.ok?'✓ Você acertou!':'✗ Resposta correta: '+esc(q.answer))+'</b>'+(q.explanation?'<div style="margin-top:.35rem">'+esc(q.explanation)+'</div>':'')+'</div>';
+    fb='<div style="margin-top:.6rem;padding:.55rem .7rem;border-radius:var(--rs);font-size:.78rem;line-height:1.5;text-align:justify;background:'+(ans.ok?'var(--grn-l)':'var(--red-l)')+';color:var(--t2)"><b style="color:'+(ans.ok?'var(--grn)':'var(--red)')+'">'+(ans.ok?'✓ Você acertou!':'✗ Resposta correta: '+esc(q.answer))+'</b>'+(q.explanation?'<div style="margin-top:.35rem">'+esc(q.explanation)+'</div>':'')+'</div>';
   }
   return '<div class="card" style="border:1px solid var(--gold);margin:0">'
     +'<div style="display:flex;justify-content:space-between;align-items:center;gap:.5rem;flex-wrap:wrap;margin-bottom:.5rem">'
     +'<span style="font-weight:800;color:var(--gold);font-size:.92rem">🧠 Questão do Dia</span>'
     +'</div>'
-    +'<div style="font-size:.86rem;line-height:1.55;color:var(--tx);margin-bottom:.7rem">'+esc((q.teem?String(q.teem).trim()+' ':'')+String(q.stem).trim())+'</div>'
+    +'<div style="font-size:.86rem;line-height:1.55;color:var(--tx);opacity:.82;text-align:justify;margin-bottom:.7rem">'+esc((q.teem?String(q.teem).trim()+' ':'')+String(q.stem).trim())+'</div>'
     +(q.img?'<img src="'+esc(q.img)+'" alt="Figura do caso" style="max-width:100%;display:block;border-radius:8px;margin:0 0 .7rem;border:1px solid var(--bd)">':'')
     +'<div style="display:flex;flex-direction:column;gap:.4rem">'+opts+'</div>'
     +'<div id="qotd-fb">'+fb+'</div>'
