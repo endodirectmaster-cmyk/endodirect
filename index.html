@@ -3065,7 +3065,7 @@ function applyStatePayload(payload,personalOnly){
     if(Array.isArray(payload.ig_stories)){igStories=payload.ig_stories;try{lsSet('ig_stories',igStories);}catch(e){}try{var _mp=document.getElementById('panel-mural'),_qm=document.getElementById('qotd-modal');if(_mp&&_mp.classList.contains('on')&&(!_qm||_qm.style.display==='none'))renderQotd();}catch(e){}}
     if(Array.isArray(payload.ig_pending)){igPending=payload.ig_pending;try{lsSet('ig_pending',igPending);}catch(e){}try{updateAdmPendBadge();}catch(e){}try{maybePendAlert();}catch(e){}}
     // Preserva chaves geridas pelo servidor (newsletter + lembrete IG) p/ o save do admin não apagá-las.
-    ['newsletter_extra','newsletter_unsub','newsletter_sent','newsletter','newsletter_recent','ig_notice_sent'].forEach(function(k){if(payload[k]!==undefined)globalServerKeys[k]=payload[k];});
+    ['newsletter_extra','newsletter_unsub','newsletter_sent','newsletter','newsletter_recent','newsletter_qotd_id','ig_notice_sent'].forEach(function(k){if(payload[k]!==undefined)globalServerKeys[k]=payload[k];});
   }
   if(payload.adm_perfil&&typeof payload.adm_perfil==='object'){
     // Segurança: só aceita o perfil salvo se o e-mail bater com o do admin
@@ -3207,7 +3207,7 @@ function saveRemoteState(){
       var serverUpd=(g&&g.data&&g.data.updated_at)||null;
       var p=globalStatePayload();
       // Chaves do servidor que o admin NÃO edita: preserva direto do servidor.
-      ['newsletter_extra','newsletter_unsub','newsletter_sent','newsletter','newsletter_recent','ig_notice_sent'].forEach(function(k){if(serverP[k]!==undefined)p[k]=serverP[k];});
+      ['newsletter_extra','newsletter_unsub','newsletter_sent','newsletter','newsletter_recent','newsletter_qotd_id','ig_notice_sent'].forEach(function(k){if(serverP[k]!==undefined)p[k]=serverP[k];});
       // radar_avisos: base = servidor (mantém adições do cron e a purga por TTL),
       // mas APLICA as edições do professor (subespecialidade/tipo/texto) por chave
       // estável (sourceId/link). Sem isto, editar um card do radar voltava no F5 —
@@ -8111,14 +8111,14 @@ function igDoc(inner){return '<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlin
 function igQuestionSVG(it){
   var op=it.options||{},pad=90,cw=IG_W-2*pad,p=[];
   p.push('<rect width="'+IG_W+'" height="'+IG_H+'" fill="url(#g)"/>');
-  p.push('<text x="'+(IG_W/2)+'" y="176" text-anchor="middle" font-family="Arial,Helvetica,sans-serif" font-weight="800" font-size="40" fill="'+IG_GOLD+'" letter-spacing="3">QUESTÃO DO DIA</text>');
-  p.push('<line x1="'+pad+'" y1="232" x2="'+(IG_W-pad)+'" y2="232" stroke="rgba(245,179,44,.45)" stroke-width="3"/>');
-  var y=292,stemFont='44px Arial',lh=60;
+  p.push('<text x="'+(IG_W/2)+'" y="158" text-anchor="middle" font-family="Arial,Helvetica,sans-serif" font-weight="800" font-size="40" fill="'+IG_GOLD+'" letter-spacing="3">QUESTÃO DO DIA</text>');
+  p.push('<line x1="'+pad+'" y1="210" x2="'+(IG_W-pad)+'" y2="210" stroke="rgba(245,179,44,.45)" stroke-width="3"/>');
+  var y=262,stemFont='44px Arial',lh=60;
   var stem=(it.teem?String(it.teem).trim()+' ':'')+String(it.stem||'').trim();
   var sl=igWrap(stem,stemFont,cw);
   p.push('<text font-family="Arial,Helvetica,sans-serif" font-size="44" font-weight="500" fill="'+IG_TX+'">'+igTspansJ(sl,pad,y,lh,cw)+'</text>');
-  y+=sl.length*lh+44;
-  if(it.img){var imgH=360;p.push('<image xlink:href="'+esc(it.img)+'" x="'+pad+'" y="'+y+'" width="'+cw+'" height="'+imgH+'" preserveAspectRatio="xMidYMid meet"/>');y+=imgH+28;}
+  y+=sl.length*lh+36;
+  if(it.img){var imgH=288;p.push('<image xlink:href="'+esc(it.img)+'" x="'+pad+'" y="'+y+'" width="'+cw+'" height="'+imgH+'" preserveAspectRatio="xMidYMid meet"/>');y+=imgH+26;}
   ['A','B','C','D'].forEach(function(L){
     if(!op[L])return;
     var aFont='38px Arial',alh=50,al=igWrap(String(op[L]).trim(),aFont,cw-118),boxH=Math.max(86,al.length*alh+36);
