@@ -4055,12 +4055,13 @@ function enterAsMember(session){
 function getDeviceId(){
   var id=lsGet('device_id');
   if(!id||String(id).length<12){
-    id='dev_'+Math.random().toString(36).slice(2)+Math.random().toString(36).slice(2)+Date.now().toString(36);
+    try{if(window.crypto&&crypto.randomUUID)id='dev_'+crypto.randomUUID();}catch(e){}
+    if(!id||String(id).length<12)id='dev_'+Math.random().toString(36).slice(2)+Math.random().toString(36).slice(2)+Date.now().toString(36);
     lsSet('device_id',id);
   }
   return id;
 }
-var deviceWatcher=null;
+var deviceWatcher=null,lastDeviceTickAt=0;
 function claimDeviceSlot(){
   var client=getSupabaseClient();
   if(!client||!(currentUser&&currentUser.id)||currentUser.role!=='aluno')return;
@@ -4069,14 +4070,23 @@ function claimDeviceSlot(){
 function deviceTick(){
   var client=getSupabaseClient();
   if(!client||!(currentUser&&currentUser.id)||currentUser.role!=='aluno')return;
+  lastDeviceTickAt=Date.now();
   try{client.rpc('endodirect_session_check',{p_device_id:getDeviceId()}).then(function(res){
     if(res&&res.data===false)onSessionEvicted();
   },function(){});}catch(e){}
 }
+// Checagem disparada por atividade (navegação/foco), no máximo 1× a cada 15s.
+function deviceTickThrottled(){
+  if(!(currentUser&&currentUser.id)||currentUser.role!=='aluno')return;
+  if(Date.now()-lastDeviceTickAt<15000)return;
+  deviceTick();
+}
 function startDeviceWatcher(){
   if(deviceWatcher)return;
-  deviceWatcher=setInterval(deviceTick,60000);
-  try{document.addEventListener('visibilitychange',function(){if(!document.hidden)deviceTick();});}catch(e){}
+  deviceWatcher=setInterval(deviceTick,30000); // heartbeat mais curto (era 60s)
+  try{document.addEventListener('visibilitychange',function(){if(!document.hidden)deviceTickThrottled();});}catch(e){}
+  try{window.addEventListener('focus',function(){deviceTickThrottled();});}catch(e){}
+  try{window.addEventListener('online',function(){deviceTick();});}catch(e){} // reconectou: checa na hora
 }
 function onSessionEvicted(){
   if(deviceWatcher){clearInterval(deviceWatcher);deviceWatcher=null;}
@@ -4855,6 +4865,7 @@ function showBancoLock(show){
 }
 function goPanel(id){
   if(!canSeePanel(id)){showLockedPanel(id);return;}
+  try{deviceTickThrottled();}catch(e){} // valida o limite de dispositivos a cada navegação (throttle 15s)
   try{if(currentUser&&currentUser.role!=='admin')lsSet('last_panel',id);}catch(e){} // lembra o painel p/ restaurar no reload
   document.querySelectorAll('.panel').forEach(function(p){p.classList.remove('on');});
   var el=document.getElementById('panel-'+id);
