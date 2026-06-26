@@ -4075,15 +4075,15 @@ function deviceTick(){
     if(res&&res.data===false)onSessionEvicted();
   },function(){});}catch(e){}
 }
-// Checagem disparada por atividade (navegação/foco), no máximo 1× a cada 15s.
+// Checagem disparada por atividade (navegação/foco), no máximo 1× a cada 4s.
 function deviceTickThrottled(){
   if(!(currentUser&&currentUser.id)||currentUser.role!=='aluno')return;
-  if(Date.now()-lastDeviceTickAt<15000)return;
+  if(Date.now()-lastDeviceTickAt<4000)return;
   deviceTick();
 }
 function startDeviceWatcher(){
   if(deviceWatcher)return;
-  deviceWatcher=setInterval(deviceTick,30000); // heartbeat mais curto (era 60s)
+  deviceWatcher=setInterval(deviceTick,5000); // heartbeat curto: derruba o excedente em ~5s (era 60s)
   try{document.addEventListener('visibilitychange',function(){if(!document.hidden)deviceTickThrottled();});}catch(e){}
   try{window.addEventListener('focus',function(){deviceTickThrottled();});}catch(e){}
   try{window.addEventListener('online',function(){deviceTick();});}catch(e){} // reconectou: checa na hora
@@ -4865,7 +4865,7 @@ function showBancoLock(show){
 }
 function goPanel(id){
   if(!canSeePanel(id)){showLockedPanel(id);return;}
-  try{deviceTickThrottled();}catch(e){} // valida o limite de dispositivos a cada navegação (throttle 15s)
+  try{deviceTickThrottled();}catch(e){} // valida o limite de dispositivos a cada navegação (throttle 4s)
   try{if(currentUser&&currentUser.role!=='admin')lsSet('last_panel',id);}catch(e){} // lembra o painel p/ restaurar no reload
   document.querySelectorAll('.panel').forEach(function(p){p.classList.remove('on');});
   var el=document.getElementById('panel-'+id);
