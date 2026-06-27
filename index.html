@@ -7954,7 +7954,7 @@ function startSFTimer(){
 }
 function submitSF(){
   if(sfTimer)clearInterval(sfTimer);
-  var correct=0,byArea={};
+  var correct=0,byArea={},byTema={};
   sfState.qs.forEach(function(q,i){
     var anulada=!q.answer; // anulada pela banca: creditada a todos, fora do perf
     var ok=anulada||(sfState.answers[i]===q.answer);
@@ -7962,7 +7962,9 @@ function submitSF(){
     var a=q.area||'Geral';
     if(!byArea[a])byArea[a]={c:0,t:0};
     byArea[a].t++;if(ok)byArea[a].c++;
+    if(!anulada){var tm=q.tema||(typeof classifyTema==='function'?classifyTema(((q.stem||'')+' '+(q.explanation||'')),a):'Geral')||'Geral';var tk=a+' › '+tm;if(!byTema[tk])byTema[tk]={c:0,t:0};byTema[tk].t++;if(ok)byTema[tk].c++;}
     if(!anulada&&q.area){if(!DB.perf[q.area])DB.perf[q.area]={correct:0,total:0};DB.perf[q.area].total++;if(ok)DB.perf[q.area].correct++;}
+    if(!anulada&&sfState.answers[i]!=null){try{studyEvent(q,ok);}catch(e){}} // alimenta perfTema/atividade/caderno de erros (só respondidas)
   });
   DB.sf_results.push({correct:correct,total:sfState.total,area:sfState.area,at:Date.now()});
   persist();
@@ -7971,6 +7973,12 @@ function submitSF(){
   var pct=Math.round(correct/sfState.total*100);
   var html='<div class="card" style="text-align:center;margin-bottom:.85rem"><div style="font-size:2.2rem">'+(pct>=70?'🎉':'📚')+'</div><div style="font-size:1.4rem;font-weight:700;margin:.3rem 0">'+correct+'/'+sfState.total+' ('+pct+'%)</div><div style="font-size:.78rem;color:var(--t2)">Tempo usado: '+Math.round((Date.now()-sfState.startedAt)/60000)+' min</div></div>';
   html+='<div class="card" style="margin-bottom:.85rem"><div class="card-head"><span class="card-title">Desempenho por área</span></div>'+Object.keys(byArea).map(function(a){var d=byArea[a];var p=Math.round(d.c/d.t*100);var col=p>=70?'var(--grn)':p>=50?'var(--gold)':'var(--red)';return'<div class="rep-area-row"><div class="rep-area-name">'+esc(a)+'</div><div class="rep-area-track"><div class="rep-area-fill" style="width:'+p+'%;background:'+col+'"></div></div><div class="rep-area-pct">'+d.c+'/'+d.t+'</div></div>';}).join('')+'</div>';
+  var temaKeys=Object.keys(byTema);
+  if(temaKeys.length>1){
+    temaKeys.sort(function(a,b){return (byTema[a].c/byTema[a].t)-(byTema[b].c/byTema[b].t);});
+    html+='<div class="card" style="margin-bottom:.85rem"><div class="card-head"><span class="card-title">Desempenho por tema (foque os mais fracos)</span></div>'+temaKeys.map(function(a){var d=byTema[a];var p=Math.round(d.c/d.t*100);var col=p>=70?'var(--grn)':p>=50?'var(--gold)':'var(--red)';return'<div class="rep-area-row"><div class="rep-area-name">'+esc(a)+'</div><div class="rep-area-track"><div class="rep-area-fill" style="width:'+p+'%;background:'+col+'"></div></div><div class="rep-area-pct">'+d.c+'/'+d.t+'</div></div>';}).join('')+'</div>';
+  }
+  if(sfState.total-correct>0)html+='<div class="card" style="margin-bottom:.85rem;display:flex;align-items:center;justify-content:space-between;gap:.7rem;flex-wrap:wrap"><span style="font-size:.78rem;color:var(--t2)">📕 As questões que você errou entraram no seu <b>Caderno de erros</b> para revisão espaçada.</span><button class="btn btn-primary btn-sm" id="sf-go-erros">Revisar erros →</button></div>';
   html+='<div class="sec-title" style="margin-bottom:.5rem">Revisão das questões</div>';
   html+=sfState.qs.map(function(q,i){
     var ua=sfState.answers[i];var anulada=!q.answer;var ok=anulada||(ua===q.answer);
@@ -7979,6 +7987,7 @@ function submitSF(){
     return'<div class="card" style="margin-bottom:.5rem"><div style="display:flex;gap:.5rem;align-items:flex-start"><span class="tag '+(anulada?'tag-gold':(ok?'tag-grn':'tag-red'))+'">'+(i+1)+(anulada?' ⚠':(ok?' ✓':' ✗'))+'</span><div style="flex:1"><div style="font-size:.79rem;line-height:1.6;margin-bottom:.4rem">'+esc(q.stem)+'</div><div style="font-size:.74rem;color:var(--t2)">Sua resposta: <strong>'+(ua||'—')+'</strong> • '+gabHtml+'</div>'+(q.explanation?'<div style="font-size:.73rem;color:var(--t2);margin-top:.3rem;background:var(--s2);padding:.4rem .6rem;border-radius:var(--rs)">'+esc(q.explanation)+expImg+'</div>':expImg)+'</div></div></div>';
   }).join('');
   document.getElementById('sf-report-content').innerHTML=html;
+  var ge=document.getElementById('sf-go-erros');if(ge)ge.addEventListener('click',function(){goPanel('erros');});
   refreshDash();
 }
 
