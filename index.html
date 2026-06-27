@@ -2024,7 +2024,7 @@ html[data-theme="light"] .dir-back{background:#f8f9fc;border-color:var(--bd2);co
           <button class="adm-nav on" data-asec="analytics">📊 Analytics</button>
           <button class="adm-nav" data-asec="stories">📲 Questão do Dia</button>
           <button class="adm-nav" data-asec="qotdarq" style="display:none">🧠 Questão do Dia</button>
-          <button class="adm-nav" data-asec="pendencias">📥 Pendências <span class="tag" id="adm-pend-badge" style="display:none;margin-left:.15rem"></span></button>
+          <button class="adm-nav" data-asec="pendencias">📥 Pendências <span id="adm-pend-badge" style="display:none;margin-left:.2rem;font-weight:700"></span></button>
           <button class="adm-nav" data-asec="mural">📣 Mural</button>
           <button class="adm-nav" data-asec="ref">📋 Diretrizes</button>
           <button class="adm-nav" data-asec="provas">📝 Provas &amp; Questões</button>
@@ -2039,7 +2039,7 @@ html[data-theme="light"] .dir-back{background:#f8f9fc;border-color:var(--bd2);co
           <button class="adm-nav" data-asec="chat">💬 Chat</button>
           <div class="sb-sec" style="margin-top:.8rem">Conta</div>
           <button class="adm-nav" data-asec="perfil">👤 Perfil</button>
-          <button class="adm-nav" data-asec="suporte">❔ Suporte <span class="tag" id="adm-support-badge" style="display:none;margin-left:.15rem"></span></button>
+          <button class="adm-nav" data-asec="suporte">❔ Suporte <span id="adm-support-badge" style="display:none;margin-left:.2rem;font-weight:700"></span></button>
         </div>
         <div style="padding:.55rem;border-top:1px solid rgba(255,255,255,.1)">
           <div class="sb-sec" style="padding-top:0">Sair</div>
@@ -8317,7 +8317,7 @@ function igValidDraft(d){
 }
 function igLbl(t){return '<div style="font-size:.68rem;color:var(--t2);font-weight:600;margin:0 0 .25rem;text-transform:uppercase;letter-spacing:.04em">'+t+'</div>';}
 // ---------- Pendências: revisão/aprovação das questões DISTRIBUÍDAS (por professor) ----------
-function updateAdmPendBadge(){var b=document.getElementById('adm-pend-badge');if(!b)return;var n=qotdMyPending().length;if(n>0){b.textContent=n;b.style.display='';}else{b.textContent='';b.style.display='none';}}
+function updateAdmPendBadge(){var b=document.getElementById('adm-pend-badge');if(!b)return;var n=qotdMyPending().length;if(n>0){b.textContent='('+n+')';b.style.display='';}else{b.textContent='';b.style.display='none';}}
 // Esconde o gerador "Questão do Dia" de quem não é dono e atualiza o badge das Pendências.
 function applyQotdNav(){var own=isQotdOwner();var st=document.querySelector('.adm-nav[data-asec="stories"]');if(st)st.style.display=own?'':'none';var aq=document.querySelector('.adm-nav[data-asec="qotdarq"]');if(aq)aq.style.display=own?'none':'';updateAdmPendBadge();}
 function admPendCardHTML(it){
@@ -8956,13 +8956,37 @@ function admSupportNewCount(){return (admSupportTickets||[]).filter(function(t){
 function updateAdmSupportBadge(){
   var b=document.getElementById('adm-support-badge');if(!b)return;
   var n=admSupportNewCount();
-  if(n>0){b.textContent=n;b.style.display='';}else{b.textContent='';b.style.display='none';}
+  if(n>0){b.textContent='('+n+')';b.style.display='';}else{b.textContent='';b.style.display='none';}
 }
 function bindAdmSupportRefresh(){
   var rf=document.getElementById('adm-support-refresh');
   if(rf&&!rf._bound){rf._bound=true;rf.addEventListener('click',function(){renderAdmSupportList('Carregando mensagens…');loadAdmSupport(true);});}
   var pon=document.getElementById('adm-support-pushon');
-  if(pon&&!pon._bound){pon._bound=true;pon.addEventListener('click',function(){if(typeof pushEnable==='function'){try{pushEnable();}catch(e){}}else{notify('Ative as notificações pelo app no celular.','info');}});}
+  if(pon&&!pon._bound){
+    pon._bound=true;
+    pon.addEventListener('click',function(){
+      if(typeof pushEnable!=='function'){notify('Ative as notificações pelo app no celular.','info');return;}
+      pon.disabled=true;
+      pushEnable().then(function(){notify('✅ Avisos ativados neste aparelho.','ok');})
+        .catch(function(e){notify((e&&e.message)||'Não consegui ativar os avisos.','err');})
+        .then(function(){admSupportSyncPushBtn();});
+    });
+  }
+  admSupportSyncPushBtn();
+}
+// Botão "Ativar avisos": fica opaco/desabilitado quando ESTE aparelho já está inscrito no push.
+function admSupportSyncPushBtn(){
+  var pon=document.getElementById('adm-support-pushon');if(!pon)return;
+  if(typeof pushSupported!=='function'||!pushSupported()){pon.style.display='none';return;}
+  function dim(txt){pon.textContent=txt;pon.style.opacity='.55';pon.style.cursor='default';pon.disabled=true;}
+  function on(){pon.textContent='🔔 Ativar avisos no celular';pon.style.opacity='';pon.style.cursor='';pon.disabled=false;}
+  try{
+    if(typeof Notification!=='undefined'&&Notification.permission==='denied'){dim('🔕 Avisos bloqueados');return;}
+    pushGetSubscription().then(function(sub){
+      if(sub&&typeof Notification!=='undefined'&&Notification.permission==='granted')dim('✅ Avisos ativados');
+      else on();
+    }).catch(function(){on();});
+  }catch(e){on();}
 }
 // Nome do professor responsável a partir do e-mail roteado (p/ exibição na caixa de suporte).
 function supAssignedName(email){email=String(email||'').trim().toLowerCase();for(var i=0;i<QOTD_CURATORS.length;i++){if(QOTD_CURATORS[i].emails.indexOf(email)>=0)return QOTD_CURATORS[i].nome;}return '';}
