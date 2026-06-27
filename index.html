@@ -2005,6 +2005,7 @@ html[data-theme="light"] .dir-back{background:#f8f9fc;border-color:var(--bd2);co
             <div class="fld2" style="margin:0"><label>E-mail para retorno</label><input type="email" id="sup-email" placeholder="voce@exemplo.com"></div>
           </div>
           <div class="fld2" style="margin-bottom:.6rem"><label>Assunto</label><select id="sup-cat"><option>Dúvida</option><option>Problema técnico</option><option>Sugestão</option><option>Financeiro / assinatura</option><option>Outro</option></select></div>
+          <div class="fld2" id="sup-sub-wrap" style="margin-bottom:.6rem;display:none"><label>Subespecialidade da dúvida</label><select id="sup-sub"></select><div style="font-size:.7rem;color:var(--t3);margin-top:.25rem">Direcionamos sua dúvida ao professor responsável pela área.</div></div>
           <div class="fld2" style="margin-bottom:.7rem"><label>Mensagem</label><textarea id="sup-msg" rows="4" placeholder="Descreva sua dúvida ou problema…"></textarea></div>
           <div style="display:flex;align-items:center;gap:.6rem;flex-wrap:wrap"><button class="btn btn-primary" id="sup-send" type="button">Enviar mensagem</button><span id="sup-status" style="font-size:.8rem"></span></div>
           <div style="margin-top:.7rem;font-size:.72rem;color:var(--t3)">Ou escreva para ✉️ <a href="mailto:contato@endodirect.com.br" style="color:var(--blue);text-decoration:none">contato@endodirect.com.br</a></div>
@@ -7825,6 +7826,17 @@ function initSupportForm(){
       // conta → o ticket fica ligado a ele e a resposta aparece na thread in-app.
       if(currentUser&&currentUser.id){e.readOnly=true;e.style.opacity='.7';}
     }
+    // Subespecialidade: aparece só em "Dúvida"; opções vêm dos curadores (mesma distribuição da QdD).
+    var catSel=document.getElementById('sup-cat'),subSel=document.getElementById('sup-sub'),subWrap=document.getElementById('sup-sub-wrap');
+    if(subSel&&!subSel._filled){
+      subSel._filled=true;
+      var subs=[];QOTD_CURATORS.forEach(function(c){c.subs.forEach(function(s){if(subs.indexOf(s)<0)subs.push(s);});});
+      subs.sort(function(a,b){return a.localeCompare(b,'pt-BR');});
+      subSel.innerHTML=subs.map(function(s){return '<option>'+esc(s)+'</option>';}).join('')+'<option>Outra / não tenho certeza</option>';
+    }
+    function syncSubVis(){if(subWrap)subWrap.style.display=(catSel&&catSel.value==='Dúvida')?'':'none';}
+    if(catSel&&!catSel._subwired){catSel._subwired=true;catSel.addEventListener('change',syncSubVis);}
+    syncSubVis();
     btn.addEventListener('click',submitSupport);
   }
   try{loadMyTickets({render:true,markSeen:true});}catch(err){}
@@ -7834,13 +7846,14 @@ function submitSupport(){
   var name=((document.getElementById('sup-name')||{}).value||'').trim();
   var email=((document.getElementById('sup-email')||{}).value||'').trim();
   var cat=(document.getElementById('sup-cat')||{}).value||'';
+  var sub=(cat==='Dúvida')?(((document.getElementById('sup-sub')||{}).value)||''):'';
   var msg=((document.getElementById('sup-msg')||{}).value||'').trim();
   function err(m){if(st){st.textContent=m;st.style.color='var(--red)';}}
   if(!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email))return err('Informe um e-mail válido para retorno.');
   if(msg.length<5)return err('Escreva sua mensagem.');
   btn.disabled=true;var old=btn.textContent;btn.textContent='Enviando…';if(st)st.textContent='';
   var ctx=((currentUser&&currentUser.role)||'visitante')+((currentUser&&currentUser.id)?' (logado)':' (demo)');
-  fetch(AI_API_ENDPOINT,{method:'POST',headers:{'Content-Type':'application/json'},credentials:'same-origin',body:JSON.stringify({kind:'support',name:name,email:email,category:cat,message:msg,context:ctx})})
+  fetch(AI_API_ENDPOINT,{method:'POST',headers:{'Content-Type':'application/json'},credentials:'same-origin',body:JSON.stringify({kind:'support',name:name,email:email,category:cat,subspecialty:sub,message:msg,context:ctx})})
     .then(function(r){return r.json().catch(function(){return{};}).then(function(d){if(!r.ok||!d.ok)throw new Error(d.error||'Falha ao enviar.');return d;});})
     .then(function(){
       var card=btn.closest('.card');
@@ -8906,9 +8919,10 @@ function admSuporteHTML(){
   return '<div class="adm-ph"><h1>Suporte</h1></div>'
   +'<div class="adm-pc">'
     +'<div class="card" style="margin-bottom:1rem">'
-      +'<div style="display:flex;justify-content:space-between;align-items:center;gap:.6rem;margin-bottom:.7rem">'
+      +'<div style="display:flex;justify-content:space-between;align-items:center;gap:.6rem;margin-bottom:.4rem;flex-wrap:wrap">'
         +'<div style="font-weight:800;font-size:1rem">📨 Mensagens recebidas</div>'
-        +'<button id="adm-support-refresh" type="button" class="btn" style="padding:.3rem .7rem;font-size:.78rem">↻ Atualizar</button></div>'
+        +'<div style="display:flex;gap:.4rem;flex-wrap:wrap"><button id="adm-support-pushon" type="button" class="btn" style="padding:.3rem .7rem;font-size:.78rem">🔔 Ativar avisos no celular</button><button id="adm-support-refresh" type="button" class="btn" style="padding:.3rem .7rem;font-size:.78rem">↻ Atualizar</button></div></div>'
+      +'<div style="font-size:.74rem;color:var(--t3);margin-bottom:.7rem">Você recebe push das dúvidas encaminhadas a você. Toque em “Ativar avisos” uma vez no celular (iPhone: app instalado na tela inicial).</div>'
       +'<div id="adm-support-list"><div style="padding:1rem;color:var(--t2);font-size:.85rem">Carregando mensagens…</div></div>'
     +'</div>'
     +'<details class="card"><summary style="cursor:pointer;font-weight:700;font-size:.92rem">Ajuda rápida (FAQ)</summary>'
@@ -8947,7 +8961,11 @@ function updateAdmSupportBadge(){
 function bindAdmSupportRefresh(){
   var rf=document.getElementById('adm-support-refresh');
   if(rf&&!rf._bound){rf._bound=true;rf.addEventListener('click',function(){renderAdmSupportList('Carregando mensagens…');loadAdmSupport(true);});}
+  var pon=document.getElementById('adm-support-pushon');
+  if(pon&&!pon._bound){pon._bound=true;pon.addEventListener('click',function(){if(typeof pushEnable==='function'){try{pushEnable();}catch(e){}}else{notify('Ative as notificações pelo app no celular.','info');}});}
 }
+// Nome do professor responsável a partir do e-mail roteado (p/ exibição na caixa de suporte).
+function supAssignedName(email){email=String(email||'').trim().toLowerCase();for(var i=0;i<QOTD_CURATORS.length;i++){if(QOTD_CURATORS[i].emails.indexOf(email)>=0)return QOTD_CURATORS[i].nome;}return '';}
 function loadAdmSupport(){
   if(admSupportLoading)return;admSupportLoading=true;
   admSupportToken().then(function(token){
@@ -8980,10 +8998,11 @@ function admSupportCardHTML(t){
     :'<span style="flex:none;font-size:.66rem;font-weight:700;color:#e11d48;background:rgba(225,29,72,.13);padding:.06rem .42rem;border-radius:99px">🔴 Nova</span>';
   var nm='<span style="font-weight:700;font-size:.9rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:46%">'+esc(t.name||t.email||'Aluno')+'</span>';
   var cat=t.category?'<span class="tag" style="font-weight:600;flex:none">'+esc(t.category)+'</span>':'';
+  var sub=t.subspecialty?'<span class="tag" style="font-weight:600;flex:none;background:rgba(59,111,212,.14);color:#5585e8">'+esc(t.subspecialty)+'</span>':'';
   var date='<span style="font-size:.71rem;color:var(--t3);flex:none;margin-left:auto">'+esc(admSupportFmtDate(t.created_at))+'</span>';
   var prev='<span style="flex:1 1 100%;font-size:.77rem;color:var(--t2);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin-top:.1rem">'+esc(String(t.message||'').replace(/\s+/g,' ').slice(0,90))+'</span>';
-  var summary='<summary class="sup-sum" style="cursor:pointer;display:flex;align-items:center;gap:.4rem;flex-wrap:wrap">'+badge+nm+cat+date+prev+'</summary>';
-  var who='<div style="font-size:.78rem;color:var(--t2);margin:.55rem 0 .55rem"><a href="mailto:'+esc(t.email)+'" style="color:var(--blue)">'+esc(t.email)+'</a>'+(t.context?' · '+esc(t.context):'')+'</div>';
+  var summary='<summary class="sup-sum" style="cursor:pointer;display:flex;align-items:center;gap:.4rem;flex-wrap:wrap">'+badge+nm+cat+sub+date+prev+'</summary>';
+  var who='<div style="font-size:.78rem;color:var(--t2);margin:.55rem 0 .55rem"><a href="mailto:'+esc(t.email)+'" style="color:var(--blue)">'+esc(t.email)+'</a>'+(t.subspecialty?' · '+esc(t.subspecialty):'')+(t.assigned_email?' · 👨‍⚕️ '+esc(supAssignedName(t.assigned_email)||t.assigned_email):'')+(t.context?' · '+esc(t.context):'')+'</div>';
   var msg='<div style="font-size:.9rem;line-height:1.5;white-space:pre-wrap;background:var(--s2,#f6f8fc);border-radius:8px;padding:.6rem .7rem">'+esc(t.message||'')+'</div>';
   var body;
   if(answered){

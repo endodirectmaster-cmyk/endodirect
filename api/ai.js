@@ -9,6 +9,7 @@ const { fetchArticleText } = require('../lib/fetch-article');
 // Formulário/caixa de suporte do app (e-mail via Resend + tickets no Supabase;
 // módulos lib/ — não contam como função serverless).
 const { sendSupportEmail, storeSupportTicket, listSupportTickets, listMyTickets, replySupportTicket } = require('../lib/support');
+const { sendToEmail } = require('../lib/push');
 const { adminFromReq, userFromReq } = require('../lib/admin-auth');
 function pickModel(requested) {
   const m = String(requested || '');
@@ -81,6 +82,17 @@ module.exports = async function handler(req, res) {
     if (sbody && sbody.kind === 'support') {
       const stored = await storeSupportTicket(sbody);
       const r = await sendSupportEmail(sbody);
+      // Push para o professor responsável (só dúvidas roteadas). Best-effort: nunca derruba a resposta.
+      try {
+        if (stored && stored.assigned_email) {
+          await sendToEmail(stored.assigned_email, {
+            title: '🩺 Nova dúvida de aluno',
+            body: (stored.subspecialty ? stored.subspecialty + ' · ' : '') + (stored.name || 'Aluno'),
+            url: 'https://www.endodirect.com.br/',
+            tag: 'endodirect-duvida'
+          });
+        }
+      } catch (e) { console.error('[support] push falha:', (e && e.message) || e); }
       const ok = (stored && stored.stored) || r.sent;
       return json(res, ok ? 200 : (r.code || 400), ok ? { ok: true } : { ok: false, error: r.error });
     }
@@ -90,7 +102,7 @@ module.exports = async function handler(req, res) {
       const admin = await adminFromReq(req);
       if (!admin) return json(res, 401, { ok: false, error: 'Apenas administradores.' });
       if (sbody.kind === 'support_list') {
-        const tickets = await listSupportTickets();
+        const tickets = await listSupportTickets(admin.email);
         return json(res, 200, { ok: true, tickets });
       }
       const rr = await replySupportTicket({ id: sbody.id, reply: sbody.reply, adminEmail: admin.email });
