@@ -1503,6 +1503,7 @@ html[data-theme="light"] .dir-back{background:#f8f9fc;border-color:var(--bd2);co
         <button class="sb-item" data-p="cursos">🎬 Cursos</button>
         <button class="sb-item" data-p="crono">📅 Cronograma</button>
         <button class="sb-item" data-p="sr">🔁 Revisão</button>
+        <button class="sb-item" data-p="erros">📕 Caderno de erros</button>
         <button class="sb-item" data-p="ref">📋 Diretrizes</button>
         <div class="sb-sec">Clínica</div>
         <button class="sb-item" data-p="calc">🧮 Calculadoras</button>
@@ -1748,6 +1749,32 @@ html[data-theme="light"] .dir-back{background:#f8f9fc;border-color:var(--bd2);co
       </div>
     </div>
 
+    <div class="panel" id="panel-erros">
+      <div class="breadcrumb">Dashboard <b>/ Caderno de erros</b></div>
+      <div class="ph"><h1>📕 Caderno de erros</h1><p>As questões que você erra voltam aqui em revisão espaçada, até você dominar.</p></div>
+      <div class="pc">
+        <div class="g3" style="margin-bottom:.85rem">
+          <div class="card" style="text-align:center"><div style="font-size:1.45rem;font-weight:700;color:var(--red)" id="err-due">0</div><div style="font-size:.66rem;color:var(--t3)">Para revisar hoje</div></div>
+          <div class="card" style="text-align:center"><div style="font-size:1.45rem;font-weight:700;color:var(--blue)" id="err-total">0</div><div style="font-size:.66rem;color:var(--t3)">No caderno</div></div>
+          <div class="card" style="text-align:center"><div style="font-size:1.45rem;font-weight:700;color:var(--grn)" id="err-mastered">0</div><div style="font-size:.66rem;color:var(--t3)">Dominados (≥7d)</div></div>
+        </div>
+        <div id="err-session" style="display:none">
+          <div style="max-width:600px;margin:0 auto">
+            <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:.55rem"><span class="sec-title" id="err-prog"></span><button class="btn btn-ghost btn-sm" id="btn-err-stop">Encerrar</button></div>
+            <div id="err-card"></div>
+            <div id="err-next" style="text-align:center;margin-top:.7rem;display:none"><button class="btn btn-primary" id="btn-err-next">Próxima →</button></div>
+          </div>
+        </div>
+        <div id="err-idle">
+          <div style="display:flex;gap:7px;margin-bottom:.85rem;flex-wrap:wrap">
+            <button class="btn btn-primary" id="btn-err-start">▶ Revisar erros de hoje</button>
+            <button class="btn btn-outline btn-sm" id="btn-err-all">Revisar todos</button>
+          </div>
+          <div class="sec-h"><span class="sec-title">No caderno <span id="err-list-count" style="font-weight:400;text-transform:none;letter-spacing:0;color:var(--t3)"></span></span></div>
+          <div id="err-card-list"></div>
+        </div>
+      </div>
+    </div>
     <div class="panel" id="panel-sim">
       <div class="breadcrumb">Dashboard <b>/ OSCE</b></div>
       <div class="ph"><h1>OSCE — Caso Clínico</h1><p>Conduza um caso clínico no estilo OSCE, passo a passo (anamnese, exame, conduta), e receba nota e feedback ao final.</p></div>
@@ -2603,16 +2630,27 @@ var DB={
   perf:lsGet('perf')||{},
   perfTema:lsGet('perfTema')||{},
   act:lsGet('act')||{},
+  srs:lsGet('srs')||[],
   qotd:(function(){try{return JSON.parse(localStorage.getItem('qotd_answered')||'{}')||{};}catch(e){return {};}})()
 };
 function persist(){
-  ['q','fc','mm','notes','crono','sf_results','perf','perfTema','act'].forEach(function(k){lsSet(k,DB[k]);});
+  ['q','fc','mm','notes','crono','sf_results','perf','perfTema','act','srs'].forEach(function(k){lsSet(k,DB[k]);});
   try{localStorage.setItem('qotd_answered',JSON.stringify(DB.qotd||{}));}catch(e){}
   queueRemoteStateSave();
 }
 // Chave de dia LOCAL (YYYY-MM-DD) e ofensiva (dias consecutivos de estudo).
 function todayKey(d){d=d||new Date();return d.getFullYear()+'-'+('0'+(d.getMonth()+1)).slice(-2)+'-'+('0'+d.getDate()).slice(-2);}
 function computeStreak(act){act=act||{};var d=new Date();if(!(act[todayKey(d)]>0))d.setDate(d.getDate()-1);var s=0,g=0;while(act[todayKey(d)]>0&&g<4000){s++;d.setDate(d.getDate()-1);g++;}return s;}
+// Caderno de erros (revisão espaçada SM-2): toda questão de múltipla escolha
+// ERRADA entra em DB.srs e volta em intervalos crescentes até ser dominada.
+function srsKey(q){return String((q&&(q.code||q.id||q.stem))||'').trim().toLowerCase().slice(0,180);}
+function srsAdd(q){
+  if(!q||!q.options||!q.answer)return; // só múltipla escolha
+  if(!Array.isArray(DB.srs))DB.srs=[];
+  var k=srsKey(q);if(!k)return;
+  if(DB.srs.some(function(it){return srsKey(it.q)===k;}))return; // já no caderno
+  DB.srs.push({q:{stem:q.stem,teem:q.teem||'',options:q.options,answer:q.answer,explanation:q.explanation||'',sub:q.area||q.sub||'',tema:q.tema||'',img:q.img||''},ef:2.5,interval:0,reps:0,due:Date.now(),addedAt:Date.now()});
+}
 // Hook central de estudo: alimenta desempenho por TEMA (DB.perfTema) e ATIVIDADE
 // diária (DB.act) — reusado pelo painel de Desempenho, pela Ofensiva e pela
 // Revisão de erros. NÃO substitui DB.perf (por subespecialidade), só adiciona.
@@ -2628,6 +2666,7 @@ function studyEvent(q,ok){
     DB.perfTema[sub][tema].total++;if(ok)DB.perfTema[sub][tema].correct++;
     if(!DB.act||typeof DB.act!=='object')DB.act={};
     var k=todayKey();DB.act[k]=(DB.act[k]||0)+1;
+    if(!ok)srsAdd(q);
   }catch(e){}
 }
 var provasDB=lsGet('provas')||[];
@@ -3019,7 +3058,7 @@ function persistPodcasts(){lsSet('podcasts',podcasts);queueRemoteStateSave();}
 
 function userStatePayload(){
   // adm_perfil é PESSOAL (vai no app_state do próprio admin, não no global).
-  var p={q:DB.q,fc:DB.fc,mm:DB.mm,notes:DB.notes,crono:DB.crono,sf_results:DB.sf_results,perf:DB.perf,perfTema:DB.perfTema,act:DB.act,qotd:DB.qotd,user_profile:lsGet('user_profile'),deg_trials:degTrials,ck_billing:lsGet('ck_billing'),presc_emitidas:lsGet('presc_emitidas')||[]};
+  var p={q:DB.q,fc:DB.fc,mm:DB.mm,notes:DB.notes,crono:DB.crono,sf_results:DB.sf_results,perf:DB.perf,perfTema:DB.perfTema,act:DB.act,srs:DB.srs,qotd:DB.qotd,user_profile:lsGet('user_profile'),deg_trials:degTrials,ck_billing:lsGet('ck_billing'),presc_emitidas:lsGet('presc_emitidas')||[]};
   if(currentUser&&currentUser.role==='admin'){
     // Nunca persiste o perfil de OUTRO admin: se o e-mail do perfil em memória
     // não bater com o da sessão (resíduo de localStorage antigo), reconstrói da
@@ -3057,7 +3096,7 @@ function currentStatePayload(){
 // Chaves PESSOAIS (vivem no app_state do próprio usuário). As demais são
 // CONTEÚDO GLOBAL (provas, mural/radar, podcasts, cursos, diretrizes…), que só
 // vêm do estado global/RPC de membro.
-var PERSONAL_STATE_KEYS=['q','fc','mm','notes','crono','sf_results','perf','perfTema','act','adm_perfil','user_profile','deg_trials','ck_billing','presc_emitidas'];
+var PERSONAL_STATE_KEYS=['q','fc','mm','notes','crono','sf_results','perf','perfTema','act','srs','adm_perfil','user_profile','deg_trials','ck_billing','presc_emitidas'];
 // personalOnly=true quando o payload é o app_state do PRÓPRIO usuário: aplica só
 // as chaves pessoais e NUNCA toca no conteúdo global. Sem isso, um app_state com
 // resíduo antigo de chaves globais (ex.: radar_avisos defasado) podia, ao
@@ -3074,6 +3113,7 @@ function applyStatePayload(payload,personalOnly){
   if(payload.perf&&typeof payload.perf==='object')DB.perf=payload.perf;
   if(payload.perfTema&&typeof payload.perfTema==='object')DB.perfTema=payload.perfTema;
   if(payload.act&&typeof payload.act==='object')DB.act=payload.act;
+  if(Array.isArray(payload.srs))DB.srs=payload.srs;
   if(payload.qotd&&typeof payload.qotd==='object'){DB.qotd=Object.assign({},payload.qotd,DB.qotd||{});try{localStorage.setItem('qotd_answered',JSON.stringify(DB.qotd));}catch(e){}try{var _qp=document.getElementById('panel-qotd');if(_qp&&_qp.classList.contains('on'))renderQotdArchive();}catch(e){}}
   if(!personalOnly){
     if(Array.isArray(payload.provas))provasDB=payload.provas;
@@ -4525,7 +4565,7 @@ function startGoogleOAuth(){
   });
 }
 
-var PANEL_LABELS={dash:'Dashboard',desemp:'Desempenho',quest:'Questões',qotd:'Questão do Dia',flash:'Flashcards',mmap:'Mapas Mentais',podcast:'Podcasts',cursos:'Cursos',crono:'Cronograma',sr:'Revisão',sim:'OSCE',simfull:'Simulado',calc:'Calculadoras',rx:'Prescrição Simulada',presc:'Consultório',art:'Resumidor',notas:'Caderno',mural:'Mural',ref:'Diretrizes',chat:'Chat IA',perfil:'Perfil',support:'Suporte',adm:'Painel Admin'};
+var PANEL_LABELS={dash:'Dashboard',desemp:'Desempenho',quest:'Questões',qotd:'Questão do Dia',flash:'Flashcards',mmap:'Mapas Mentais',podcast:'Podcasts',cursos:'Cursos',crono:'Cronograma',sr:'Revisão',erros:'Caderno de erros',sim:'OSCE',simfull:'Simulado',calc:'Calculadoras',rx:'Prescrição Simulada',presc:'Consultório',art:'Resumidor',notas:'Caderno',mural:'Mural',ref:'Diretrizes',chat:'Chat IA',perfil:'Perfil',support:'Suporte',adm:'Painel Admin'};
 function closeMobileNav(){
   document.body.classList.remove('mobile-nav-open');
   var b=document.getElementById('btn-mobile-nav');
@@ -4610,7 +4650,7 @@ function hasScope(scope){return !scope||isAdminUser()||userAcessos.indexOf(scope
 // Degustacao: aluno logado, sem nenhum acesso ativo (não comprou pacote/curso).
 function isDegustacao(){return !!(currentUser&&currentUser.role==='aluno'&&!isAdminUser()&&(!userAcessos||userAcessos.length===0));}
 // Paineis liberados na degustacao (o resto fica 🔒 com upsell).
-var DEGUSTACAO_PANELS={dash:1,desemp:1,flash:1,mmap:1,quest:1,qotd:1,perfil:1,support:1,calc:1,podcast:1,crono:1,notas:1,ref:1};
+var DEGUSTACAO_PANELS={dash:1,desemp:1,flash:1,mmap:1,quest:1,qotd:1,perfil:1,support:1,calc:1,podcast:1,crono:1,notas:1,ref:1,erros:1};
 // Ferramentas com IA liberadas na degustação por COTA (3 usos cada): simulador
 // de casos, simulado, prescrição e chat IA. Após esgotar, vira upsell.
 var TRIAL_PANELS={sim:1,simfull:1,rx:1,chat:1};
@@ -4911,6 +4951,7 @@ function goPanel(id){
   if(id==='podcast')renderPodcasts();
   if(id==='cursos')renderCursosAluno();
   if(id==='desemp')renderDesempenho();
+  if(id==='erros')renderErros();
   if(id==='crono')initCrono();
   if(id==='sr')renderSR();
   if(id==='calc')initCalc();
@@ -4956,7 +4997,7 @@ function qotdTodays(){
   var posted=valid.filter(function(x){return x.status==='posted';});
   return posted.length?posted[posted.length-1]:null;
 }
-function qotdCardHTML(q,ans){
+function qotdCardHTML(q,ans,title){
   var ltrs=['A','B','C','D'].filter(function(L){return q.options[L];});
   var opts=ltrs.map(function(L){
     var bd='1px solid #cdd6e6',bg='#ffffff',fg='#16233f';
@@ -4969,7 +5010,7 @@ function qotdCardHTML(q,ans){
   }
   return '<div class="card" style="border:1px solid var(--gold);margin:0">'
     +'<div style="display:flex;justify-content:space-between;align-items:center;gap:.5rem;flex-wrap:wrap;margin-bottom:.5rem">'
-    +'<span style="font-weight:800;color:var(--gold);font-size:.92rem">🧠 Questão do Dia</span>'
+    +'<span style="font-weight:800;color:var(--gold);font-size:.92rem">'+(title||'🧠 Questão do Dia')+'</span>'
     +'</div>'
     +'<div style="font-size:.86rem;line-height:1.55;color:var(--tx);opacity:.82;text-align:justify;margin-bottom:.7rem">'+esc((q.teem?String(q.teem).trim()+' ':'')+String(q.stem).trim())+'</div>'
     +(q.img?'<img src="'+esc(q.img)+'" alt="Figura do caso" style="max-width:100%;display:block;border-radius:8px;margin:0 0 .7rem;border:1px solid var(--bd)">':'')
@@ -6244,6 +6285,52 @@ function finishSR(){
   renderSR();refreshDash();notify('Revisão concluída!','ok');
 }
 
+// ── CADERNO DE ERROS (revisão espaçada das questões erradas, reusa SM-2) ──
+var errQueue=[],errIdx=0,errAnswered=false;
+function renderErros(){
+  if(!Array.isArray(DB.srs))DB.srs=[];
+  DB.srs.forEach(srInit);
+  var due=DB.srs.filter(srIsDue).length;
+  var mastered=DB.srs.filter(function(it){return (it.interval||0)>=7;}).length;
+  setText('err-due',due);setText('err-total',DB.srs.length);setText('err-mastered',mastered);
+  setText('err-list-count','('+DB.srs.length+')');
+  var el=document.getElementById('err-card-list');
+  if(el){
+    if(!DB.srs.length)el.innerHTML='<div class="empty">Nenhum erro registrado ainda. Responda questões (Banco, Questão do Dia, Simulado) — as que você errar entram aqui automaticamente para revisão.</div>';
+    else el.innerHTML=DB.srs.slice().sort(function(a,b){return (a.due||0)-(b.due||0);}).map(function(it){var d=srIsDue(it);var sub=(it.q&&it.q.sub)||'Geral';var st=String((it.q&&it.q.stem)||'');return '<div class="adm-row"><div class="adm-row-info"><div class="adm-row-title">'+esc(st.slice(0,84))+(st.length>84?'…':'')+'</div><div class="adm-row-sub">'+esc(sub)+' • intervalo '+(it.interval||0)+'d</div></div>'+(d?'<span class="tag tag-red">Devido</span>':'<span class="tag tag-grn">'+Math.max(0,Math.ceil((it.due-Date.now())/86400000))+'d</span>')+'</div>';}).join('');
+  }
+}
+function startErr(all){
+  if(!Array.isArray(DB.srs))DB.srs=[];DB.srs.forEach(srInit);
+  errQueue=all?DB.srs.slice():DB.srs.filter(srIsDue);
+  if(!errQueue.length){notify(all?'Caderno vazio.':'Nenhum erro para revisar agora! 🎉','info');return;}
+  errIdx=0;
+  document.getElementById('err-idle').style.display='none';
+  document.getElementById('err-session').style.display='block';
+  renderErrCard();
+}
+function renderErrCard(){
+  var it=errQueue[errIdx];if(!it){finishErr();return;}
+  errAnswered=false;
+  setText('err-prog','Erro '+(errIdx+1)+' de '+errQueue.length);
+  var box=document.getElementById('err-card');if(!box)return;
+  box.innerHTML=qotdCardHTML(it.q,null,'📕 Revisão de erro');
+  document.getElementById('err-next').style.display='none';
+  box.querySelectorAll('[data-qotd-opt]').forEach(function(b){b.addEventListener('click',function(){errAnswer(it,b.getAttribute('data-qotd-opt'));});});
+}
+function errAnswer(it,letter){
+  if(errAnswered)return;errAnswered=true;
+  var ok=letter===it.q.answer;
+  document.getElementById('err-card').innerHTML=qotdCardHTML(it.q,{ok:ok,letter:letter},'📕 Revisão de erro');
+  try{srUpdate(it,ok?4:1);}catch(e){} // acerto=bom(4), erro=repetir(1)
+  document.getElementById('err-next').style.display='block';
+}
+function errNext(){errIdx++;if(errIdx>=errQueue.length)finishErr();else renderErrCard();}
+function finishErr(){
+  var s=document.getElementById('err-session');if(s)s.style.display='none';
+  var i=document.getElementById('err-idle');if(i)i.style.display='block';
+  renderErros();try{refreshDash();}catch(e){}notify('Revisão de erros concluída!','ok');
+}
 // ── CALCULADORAS ──
 // calcRoot permite usar a mesma calculadora no painel do aluno (#panel-calc) e
 // no do professor (adm-main), escopando as buscas por id ao container ativo.
@@ -11392,6 +11479,13 @@ document.addEventListener('DOMContentLoaded',function(){
   document.getElementById('sr-again').addEventListener('click',function(){rateSR(1);});
   document.getElementById('sr-hard').addEventListener('click',function(){rateSR(3);});
   document.getElementById('sr-easy').addEventListener('click',function(){rateSR(5);});
+
+  // CADERNO DE ERROS
+  var _be;
+  if(_be=document.getElementById('btn-err-start'))_be.addEventListener('click',function(){startErr(false);});
+  if(_be=document.getElementById('btn-err-all'))_be.addEventListener('click',function(){startErr(true);});
+  if(_be=document.getElementById('btn-err-stop'))_be.addEventListener('click',finishErr);
+  if(_be=document.getElementById('btn-err-next'))_be.addEventListener('click',errNext);
 
   // SIMULADOR
   document.getElementById('btn-sim-start').addEventListener('click',startSim);
