@@ -2633,10 +2633,11 @@ var DB={
   act:lsGet('act')||{},
   srs:lsGet('srs')||[],
   goal:lsGet('goal')||{weekly:50},
+  cursoProg:lsGet('cursoProg')||{},
   qotd:(function(){try{return JSON.parse(localStorage.getItem('qotd_answered')||'{}')||{};}catch(e){return {};}})()
 };
 function persist(){
-  ['q','fc','mm','notes','crono','sf_results','perf','perfTema','act','srs','goal'].forEach(function(k){lsSet(k,DB[k]);});
+  ['q','fc','mm','notes','crono','sf_results','perf','perfTema','act','srs','goal','cursoProg'].forEach(function(k){lsSet(k,DB[k]);});
   try{localStorage.setItem('qotd_answered',JSON.stringify(DB.qotd||{}));}catch(e){}
   queueRemoteStateSave();
 }
@@ -3060,7 +3061,7 @@ function persistPodcasts(){lsSet('podcasts',podcasts);queueRemoteStateSave();}
 
 function userStatePayload(){
   // adm_perfil é PESSOAL (vai no app_state do próprio admin, não no global).
-  var p={q:DB.q,fc:DB.fc,mm:DB.mm,notes:DB.notes,crono:DB.crono,sf_results:DB.sf_results,perf:DB.perf,perfTema:DB.perfTema,act:DB.act,srs:DB.srs,goal:DB.goal,qotd:DB.qotd,user_profile:lsGet('user_profile'),deg_trials:degTrials,ck_billing:lsGet('ck_billing'),presc_emitidas:lsGet('presc_emitidas')||[]};
+  var p={q:DB.q,fc:DB.fc,mm:DB.mm,notes:DB.notes,crono:DB.crono,sf_results:DB.sf_results,perf:DB.perf,perfTema:DB.perfTema,act:DB.act,srs:DB.srs,goal:DB.goal,cursoProg:DB.cursoProg,qotd:DB.qotd,user_profile:lsGet('user_profile'),deg_trials:degTrials,ck_billing:lsGet('ck_billing'),presc_emitidas:lsGet('presc_emitidas')||[]};
   if(currentUser&&currentUser.role==='admin'){
     // Nunca persiste o perfil de OUTRO admin: se o e-mail do perfil em memória
     // não bater com o da sessão (resíduo de localStorage antigo), reconstrói da
@@ -3098,7 +3099,7 @@ function currentStatePayload(){
 // Chaves PESSOAIS (vivem no app_state do próprio usuário). As demais são
 // CONTEÚDO GLOBAL (provas, mural/radar, podcasts, cursos, diretrizes…), que só
 // vêm do estado global/RPC de membro.
-var PERSONAL_STATE_KEYS=['q','fc','mm','notes','crono','sf_results','perf','perfTema','act','srs','goal','adm_perfil','user_profile','deg_trials','ck_billing','presc_emitidas'];
+var PERSONAL_STATE_KEYS=['q','fc','mm','notes','crono','sf_results','perf','perfTema','act','srs','goal','cursoProg','adm_perfil','user_profile','deg_trials','ck_billing','presc_emitidas'];
 // personalOnly=true quando o payload é o app_state do PRÓPRIO usuário: aplica só
 // as chaves pessoais e NUNCA toca no conteúdo global. Sem isso, um app_state com
 // resíduo antigo de chaves globais (ex.: radar_avisos defasado) podia, ao
@@ -3117,6 +3118,7 @@ function applyStatePayload(payload,personalOnly){
   if(payload.act&&typeof payload.act==='object')DB.act=payload.act;
   if(Array.isArray(payload.srs))DB.srs=payload.srs;
   if(payload.goal&&typeof payload.goal==='object')DB.goal=payload.goal;
+  if(payload.cursoProg&&typeof payload.cursoProg==='object')DB.cursoProg=payload.cursoProg;
   if(payload.qotd&&typeof payload.qotd==='object'){DB.qotd=Object.assign({},payload.qotd,DB.qotd||{});try{localStorage.setItem('qotd_answered',JSON.stringify(DB.qotd));}catch(e){}try{var _qp=document.getElementById('panel-qotd');if(_qp&&_qp.classList.contains('on'))renderQotdArchive();}catch(e){}}
   if(!personalOnly){
     if(Array.isArray(payload.provas))provasDB=payload.provas;
@@ -6168,7 +6170,7 @@ function renderCursosAluno(){
   if(!scope.length){el.innerHTML='<div class="empty" style="grid-column:1/-1">Nenhuma videoaula '+(cursoFilter?'neste curso':'disponível no seu plano ainda')+'.</div>';return;}
   function lessonCard(c){
     var i=data.indexOf(c);
-    return '<div class="card"><div style="display:flex;align-items:flex-start;gap:.8rem"><div style="width:46px;height:46px;border-radius:10px;background:var(--navy);display:flex;align-items:center;justify-content:center;font-size:1.25rem;flex-shrink:0">🎬</div><div style="flex:1;min-width:0"><div style="font-size:.85rem;font-weight:700;color:var(--tx);margin-bottom:2px">'+esc(c.title||'Videoaula')+'</div><div style="display:flex;flex-wrap:wrap;gap:.3rem;margin:.25rem 0 .45rem">'+(c.curso?'<span class="tag tag-grn">'+esc(cursoNomeBySlug(c.curso))+'</span>':'')+(c.modulo?'<span class="tag tag-pur">'+esc(c.modulo)+'</span>':'')+(c.dur?'<span class="tag tag-gold">'+esc(c.dur)+'</span>':'')+'</div>'+(c.desc?'<div style="font-size:.73rem;color:var(--t2);line-height:1.55;margin-bottom:.55rem">'+esc(c.desc)+'</div>':'')+'<button class="btn btn-primary btn-sm" data-curso-play="'+i+'">▶ Assistir</button></div></div></div>';
+    return '<div class="card"><div style="display:flex;align-items:flex-start;gap:.8rem"><div style="width:46px;height:46px;border-radius:10px;background:var(--navy);display:flex;align-items:center;justify-content:center;font-size:1.25rem;flex-shrink:0">🎬</div><div style="flex:1;min-width:0"><div style="font-size:.85rem;font-weight:700;color:var(--tx);margin-bottom:2px">'+esc(c.title||'Videoaula')+'</div><div style="display:flex;flex-wrap:wrap;gap:.3rem;margin:.25rem 0 .45rem">'+(c.curso?'<span class="tag tag-grn">'+esc(cursoNomeBySlug(c.curso))+'</span>':'')+(c.modulo?'<span class="tag tag-pur">'+esc(c.modulo)+'</span>':'')+(c.dur?'<span class="tag tag-gold">'+esc(c.dur)+'</span>':'')+'</div>'+(c.desc?'<div style="font-size:.73rem;color:var(--t2);line-height:1.55;margin-bottom:.55rem">'+esc(c.desc)+'</div>':'')+(cursoAulaDone(c)?'<span class="tag tag-grn" style="margin-right:.4rem">✓ concluída</span>':'')+'<button class="btn btn-primary btn-sm" data-curso-play="'+i+'">'+(cursoAulaDone(c)?'▶ Rever':'▶ Assistir')+'</button></div></div></div>';
   }
   // Nível 1 — grade de subespecialidades (módulos) do escopo.
   if(!cursoMod){
@@ -6183,13 +6185,81 @@ function renderCursosAluno(){
     +'<div class="ph" style="grid-column:1/-1;margin-top:0"><h1 style="font-size:1.05rem">'+dirSubIcon(cursoMod)+' '+esc(cursoMod)+'</h1></div>'
     +(lessons.length?lessons.map(lessonCard).join(''):'<div class="empty" style="grid-column:1/-1">Nenhuma aula nesta subespecialidade.</div>');
 }
+var curAulaIdx=null,curAulaTab='aula',aulaQ=[],aulaQAns={};
+function aulaKey(c){return String((c&&c.id)||(((c&&c.curso)||'')+'|'+((c&&c.modulo)||'')+'|'+((c&&c.title)||'')));}
+function cursoAulaDone(c){return !!(DB.cursoProg&&DB.cursoProg[aulaKey(c)]);}
 function playCursoAluno(i){
-  var data=Array.isArray(admCursos)?admCursos:[];
-  var c=data[i];if(!c)return;
+  var data=Array.isArray(admCursos)?admCursos:[];if(!data[i])return;
+  curAulaIdx=i;curAulaTab='aula';
   var box=document.getElementById('curso-player');if(!box)return;
-  box.style.display='block';
-  box.innerHTML='<div class="card"><div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:.55rem;gap:.7rem"><span style="font-size:.9rem;font-weight:700">'+esc(c.title||'Videoaula')+'</span><button class="btn btn-ghost btn-sm" id="curso-player-close">✕ Fechar</button></div><div style="background:#000;border-radius:var(--r);overflow:hidden">'+playerEmbed(c)+'</div>'+(c.desc?'<div style="font-size:.76rem;color:var(--t2);line-height:1.6;margin-top:.55rem">'+esc(c.desc)+'</div>':'')+'</div>';
+  box.style.display='block';renderAulaPlayer();
   var panel=document.getElementById('panel-cursos');if(panel)panel.scrollTop=0;
+}
+// Player da aula em ABAS: ▶ Aula (vídeo) · 📝 Resumo (ler + Baixar PDF) · 🧠 Questões (trilha por tema).
+function renderAulaPlayer(){
+  var data=Array.isArray(admCursos)?admCursos:[];var c=data[curAulaIdx];if(!c)return;
+  var box=document.getElementById('curso-player');if(!box)return;
+  var done=cursoAulaDone(c);
+  var tabs='<div style="display:flex;gap:.4rem;flex-wrap:wrap;margin:.2rem 0 .8rem">'+[['aula','▶ Aula'],['resumo','📝 Resumo'],['quest','🧠 Questões']].map(function(t){var on=curAulaTab===t[0];return '<button class="btn btn-sm '+(on?'btn-primary':'btn-outline')+'" data-aulatab="'+t[0]+'">'+t[1]+'</button>';}).join('')+'</div>';
+  var head='<div style="display:flex;align-items:center;justify-content:space-between;gap:.7rem;margin-bottom:.4rem"><span style="font-size:.95rem;font-weight:700">'+esc(c.title||'Videoaula')+'</span><button class="btn btn-ghost btn-sm" id="curso-player-close">✕ Fechar</button></div>'+(done?'<div style="margin-bottom:.4rem"><span class="tag tag-grn">✓ Aula concluída</span></div>':'');
+  var body;
+  if(curAulaTab==='resumo')body=aulaResumoHTML(c);
+  else if(curAulaTab==='quest')body='<div id="aula-quest-box"></div>';
+  else body='<div style="background:#000;border-radius:var(--r);overflow:hidden">'+playerEmbed(c)+'</div>'+(c.desc?'<div style="font-size:.78rem;color:var(--t2);line-height:1.6;margin-top:.6rem">'+esc(c.desc)+'</div>':'')+'<div style="margin-top:.8rem"><button class="btn '+(done?'btn-outline':'btn-primary')+' btn-sm" id="aula-done">'+(done?'✓ Concluída (desfazer)':'Marcar como concluída')+'</button></div>';
+  box.innerHTML='<div class="card">'+head+tabs+'<div id="aula-tab-body">'+body+'</div></div>';
+  box.querySelectorAll('[data-aulatab]').forEach(function(b){b.addEventListener('click',function(){curAulaTab=b.getAttribute('data-aulatab');renderAulaPlayer();});});
+  var cl=document.getElementById('curso-player-close');if(cl)cl.addEventListener('click',function(){box.style.display='none';});
+  var dn=document.getElementById('aula-done');if(dn)dn.addEventListener('click',function(){toggleAulaDone(c);});
+  var pb=document.getElementById('aula-pdf');if(pb)pb.addEventListener('click',function(){exportAulaPDF(c);});
+  if(curAulaTab==='quest')renderAulaQuest(c);
+}
+function toggleAulaDone(c){
+  if(!DB.cursoProg||typeof DB.cursoProg!=='object')DB.cursoProg={};
+  var k=aulaKey(c),was=!!DB.cursoProg[k];
+  if(was)delete DB.cursoProg[k];else DB.cursoProg[k]=Date.now();
+  try{persist();}catch(e){}renderAulaPlayer();try{renderCursosAluno();}catch(e){}
+  notify(was?'Marcada como não concluída.':'Aula concluída! ✓','ok');
+}
+function aulaResumoHTML(c){
+  var r=String(c.resumo||'').trim();
+  if(r){
+    var safe='<p>'+esc(r).replace(/\n{2,}/g,'</p><p>').replace(/\n/g,'<br>')+'</p>';
+    return '<div style="font-size:.82rem;line-height:1.7;color:var(--tx)">'+safe+'</div><div style="margin-top:.85rem;display:flex;gap:.5rem;flex-wrap:wrap"><button class="btn btn-primary btn-sm" id="aula-pdf">📄 Baixar PDF</button>'+(c.pdfUrl?'<a class="btn btn-outline btn-sm" href="'+esc(c.pdfUrl)+'" target="_blank" rel="noopener">📎 PDF anexado</a>':'')+'</div>';
+  }
+  if(c.pdfUrl)return '<div style="font-size:.82rem;color:var(--t2);margin-bottom:.7rem">O resumo desta aula está disponível em PDF.</div><a class="btn btn-primary btn-sm" href="'+esc(c.pdfUrl)+'" target="_blank" rel="noopener">📄 Abrir PDF</a>';
+  return '<div class="empty">O resumo desta aula ainda não foi publicado.</div>';
+}
+function exportAulaPDF(c){
+  var r=String(c.resumo||'').trim();if(!r){notify('Sem resumo para exportar.','err');return;}
+  var safe='<p>'+esc(r).replace(/\n{2,}/g,'</p><p>').replace(/\n/g,'<br>')+'</p>';
+  var css='body{font-family:Arial,Helvetica,sans-serif;color:#222;line-height:1.65;max-width:720px;margin:0 auto;padding:26px}h1{font-size:20px;color:#0b1325;margin:0 0 2px}.sub{color:#667;font-size:12px;margin-bottom:18px}p{margin:0 0 10px;font-size:13.5px}@media print{body{padding:0}}';
+  var doc='<!doctype html><html><head><meta charset="utf-8"><title>'+esc(c.title||'Resumo')+'</title><style>'+css+'</style></head><body><h1>'+esc(c.title||'Resumo da aula')+'</h1><div class="sub">'+esc(cursoNomeBySlug(c.curso))+(c.modulo?' · '+esc(c.modulo):'')+' — Endodirect</div>'+safe+'</body></html>';
+  var w=window.open('','_blank','width=820,height=1000');
+  if(!w){notify('Permita pop-ups para baixar o PDF.','err');return;}
+  w.document.write(doc);w.document.close();w.focus();setTimeout(function(){try{w.print();}catch(e){}},400);
+}
+function aulaQuestions(c){
+  var area=(c.modulo||'').trim();var tema=(c.tema||'').trim();
+  var pool=(Array.isArray(provasDB)?provasDB:[]).filter(function(q){return q&&q.options&&q.answer&&String(q.area||q.sub||'').trim()===area;});
+  if(tema)pool=pool.filter(function(q){var tm=q.tema||(typeof classifyTema==='function'?classifyTema(((q.stem||'')+' '+(q.explanation||'')),area):'');return tm===tema;});
+  pool=pool.slice();for(var i=pool.length-1;i>0;i--){var j=Math.floor(Math.random()*(i+1));var t=pool[i];pool[i]=pool[j];pool[j]=t;}
+  return pool.slice(0,8);
+}
+function renderAulaQuest(c){
+  var box=document.getElementById('aula-quest-box');if(!box)return;
+  aulaQ=aulaQuestions(c);aulaQAns={};
+  if(!aulaQ.length){box.innerHTML='<div class="empty">Ainda não há questões deste tema no banco. Pratique no <a href="#" id="aula-go-quest" style="color:var(--blue)">Banco de Questões</a>.</div>';var g=document.getElementById('aula-go-quest');if(g)g.addEventListener('click',function(e){e.preventDefault();goPanel('quest');});return;}
+  box.innerHTML='<div style="font-size:.72rem;color:var(--t3);margin-bottom:.5rem">'+aulaQ.length+' questões sobre '+esc(c.tema||c.modulo||'esta aula')+' — responda para fixar (conta no seu Desempenho).</div><div id="aula-q-list"></div><div id="aula-q-score" style="margin-top:.55rem;font-size:.78rem;color:var(--t2)"></div>';
+  var list=document.getElementById('aula-q-list');
+  list.innerHTML=aulaQ.map(function(q,i){return '<div style="margin-bottom:.7rem" id="aula-q-'+i+'">'+qotdCardHTML(q,null,'🧠 Questão '+(i+1))+'</div>';}).join('');
+  aulaQ.forEach(function(q,i){var cont=document.getElementById('aula-q-'+i);if(!cont)return;cont.querySelectorAll('[data-qotd-opt]').forEach(function(b){b.addEventListener('click',function(){aulaAnswer(i,b.getAttribute('data-qotd-opt'));});});});
+}
+function aulaAnswer(i,letter){
+  if(aulaQAns[i])return;var q=aulaQ[i];if(!q)return;var ok=letter===q.answer;aulaQAns[i]={ok:ok};
+  var cont=document.getElementById('aula-q-'+i);if(cont)cont.innerHTML=qotdCardHTML(q,{ok:ok,letter:letter},'🧠 Questão '+(i+1));
+  try{studyEvent(q,ok);persist();}catch(e){}
+  var n=0,acc=0;Object.keys(aulaQAns).forEach(function(k){n++;if(aulaQAns[k].ok)acc++;});
+  var sc=document.getElementById('aula-q-score');if(sc)sc.textContent='Respondidas: '+n+'/'+aulaQ.length+' • Acertos: '+acc;
 }
 
 // ── CRONOGRAMA ──
@@ -9702,6 +9772,8 @@ function admCursosHTML(){
       +'<input type="text" id="adm-curso-link" value="'+(ed?esc(ed.src||''):'')+'" placeholder="Cole a URL do vídeo (YouTube ou Vimeo)">'
       +'<div style="font-size:.66rem;color:var(--t3);margin-top:.3rem">Use links do YouTube ou Vimeo — o vídeo é reproduzido direto da fonte (sem ocupar armazenamento).</div>'
     +'</div>'
+    +'<div class="g2" style="margin-bottom:.7rem"><div class="fld2" style="margin:0"><label>Tema da aula (p/ a trilha de questões — opcional)</label><input type="text" id="adm-curso-tema" value="'+(ed?esc(ed.tema||''):'')+'" placeholder="Ex: Cetoacidose, Hipotireoidismo…"></div><div class="fld2" style="margin:0"><label>PDF do resumo (link opcional)</label><input type="text" id="adm-curso-pdf" value="'+(ed?esc(ed.pdfUrl||''):'')+'" placeholder="URL de um PDF (opcional)"></div></div>'
+    +'<div class="fld2"><label>Resumo da aula (o aluno lê e pode baixar em PDF)</label><textarea id="adm-curso-resumo" rows="5" placeholder="Resumo em tópicos da aula…">'+(ed?esc(ed.resumo||''):'')+'</textarea><div style="margin-top:.4rem"><button class="btn btn-outline btn-sm" id="btn-adm-curso-airesumo" type="button">✨ Gerar resumo com IA</button> <span style="font-size:.66rem;color:var(--t3)">A IA rascunha a partir do título/descrição/módulo — revise antes de salvar.</span></div></div>'
     +'<div class="upload-status" id="adm-curso-upload-status"></div>'
     +'<div style="display:flex;gap:.5rem;flex-wrap:wrap"><button class="btn btn-primary" id="btn-adm-addcurso">'+(ed?'💾 Salvar alterações':'+ Adicionar aula')+'</button>'+(ed?'<button class="btn btn-ghost" id="btn-adm-cancelcurso">Cancelar</button>':'')+'</div></div>';
 
@@ -9980,7 +10052,7 @@ function bindAdmSec(sec){
       var link=(document.getElementById('adm-curso-link').value||'').trim();
       if(!link){notify('Cole a URL do vídeo (YouTube ou Vimeo).','err');return;}
       var cursoSelEl=document.getElementById('adm-curso-curso');
-      var dados={title:title,curso:cursoSelEl?cursoSelEl.value:'',modulo:(document.getElementById('adm-curso-modulo').value||'').trim(),dur:(document.getElementById('adm-curso-dur').value||'').trim(),desc:(document.getElementById('adm-curso-desc').value||'').trim(),tipo:'link',src:link};
+      var dados={title:title,curso:cursoSelEl?cursoSelEl.value:'',modulo:(document.getElementById('adm-curso-modulo').value||'').trim(),dur:(document.getElementById('adm-curso-dur').value||'').trim(),desc:(document.getElementById('adm-curso-desc').value||'').trim(),tema:((document.getElementById('adm-curso-tema')||{}).value||'').trim(),resumo:((document.getElementById('adm-curso-resumo')||{}).value||'').trim(),pdfUrl:((document.getElementById('adm-curso-pdf')||{}).value||'').trim(),tipo:'link',src:link};
       if(admCursoEditIdx!=null&&admCursos[admCursoEditIdx]){
         admCursos[admCursoEditIdx]=Object.assign({},admCursos[admCursoEditIdx],dados);
         admCursoEditIdx=null;
@@ -9995,6 +10067,18 @@ function bindAdmSec(sec){
     });
     var cCancelCurso=document.getElementById('btn-adm-cancelcurso');
     if(cCancelCurso)cCancelCurso.addEventListener('click',function(){admCursoEditIdx=null;admCursoSubtab='ver';admCursoAddMod='';renderAdmSec('cursos');});
+    var aiResumoBtn=document.getElementById('btn-adm-curso-airesumo');
+    if(aiResumoBtn)aiResumoBtn.addEventListener('click',function(){
+      var ti=(document.getElementById('adm-curso-title').value||'').trim();
+      var mo=(document.getElementById('adm-curso-modulo').value||'').trim();
+      var de=(document.getElementById('adm-curso-desc').value||'').trim();
+      if(!ti){notify('Informe o título da aula primeiro.','err');return;}
+      var ta=document.getElementById('adm-curso-resumo');var ob=aiResumoBtn.textContent;aiResumoBtn.disabled=true;aiResumoBtn.textContent='Gerando…';
+      callAI('Você é endocrinologista e professor. Escreva um RESUMO didático da aula para o aluno estudar, em português, em tópicos curtos (use "- " nos marcadores), cobrindo definição, quadro, diagnóstico e tratamento quando fizer sentido. Baseie-se em diretrizes vigentes; NÃO invente dados. 200–350 palavras.','Aula: "'+ti+'"'+(mo?' (módulo: '+mo+')':'')+(de?'. Descrição: '+de:'')+'.',1200)
+      .then(function(r){if(ta)ta.value=String(r||'').trim();notify('Resumo gerado — revise e salve.','ok');})
+      .catch(function(e){notify('Erro ao gerar: '+((e&&e.message)||e),'err');})
+      .then(function(){aiResumoBtn.disabled=false;aiResumoBtn.textContent=ob;});
+    });
     } // fim aba importar
     main.querySelectorAll('[data-adm-editcurso]').forEach(function(b){b.addEventListener('click',function(){admCursoEditIdx=parseInt(b.dataset.admEditcurso);admCursoSubtab='importar';renderAdmSec('cursos');});});
     main.querySelectorAll('[data-curso-btn]').forEach(function(b){b.addEventListener('click',function(){admCursoFiltro=b.dataset.cursoBtn||'';admCursoMod='';admCursoModAdd=false;renderAdmSec('cursos');});});
