@@ -1495,6 +1495,7 @@ html[data-theme="light"] .dir-back{background:#f8f9fc;border-color:var(--bd2);co
         <div class="sb-sec">Estudo</div>
         <button class="sb-item on" data-p="dash">📊 Dashboard</button>
         <button class="sb-item" data-p="desemp">📈 Desempenho</button>
+        <button class="sb-item" data-p="plano">🎯 Plano de estudo</button>
         <button class="sb-item" data-p="quest">📝 Questões</button>
         <button class="sb-item" data-p="qotd">🧠 Questão do Dia</button>
         <button class="sb-item" data-p="flash">🃏 Flashcards</button>
@@ -1998,6 +1999,7 @@ html[data-theme="light"] .dir-back{background:#f8f9fc;border-color:var(--bd2);co
     </div>
 
     <div class="panel" id="panel-desemp"><div class="pc" id="desemp-body" style="max-width:none"></div></div>
+    <div class="panel" id="panel-plano"><div class="breadcrumb">Dashboard <b>/ Plano de estudo</b></div><div class="ph"><h1>🎯 Plano de estudo</h1><p>Defina sua prova-alvo e siga um plano diário até lá.</p></div><div class="pc" id="plano-body" style="max-width:none"></div></div>
     <div class="panel" id="panel-perfil">
       <div class="breadcrumb">Dashboard <b>/ Perfil</b></div>
       <div id="perfil-plan-card" class="pc" style="display:none">
@@ -2634,10 +2636,11 @@ var DB={
   srs:lsGet('srs')||[],
   goal:lsGet('goal')||{weekly:50},
   cursoProg:lsGet('cursoProg')||{},
+  plan:lsGet('plan')||null,
   qotd:(function(){try{return JSON.parse(localStorage.getItem('qotd_answered')||'{}')||{};}catch(e){return {};}})()
 };
 function persist(){
-  ['q','fc','mm','notes','crono','sf_results','perf','perfTema','act','srs','goal','cursoProg'].forEach(function(k){lsSet(k,DB[k]);});
+  ['q','fc','mm','notes','crono','sf_results','perf','perfTema','act','srs','goal','cursoProg','plan'].forEach(function(k){lsSet(k,DB[k]);});
   try{localStorage.setItem('qotd_answered',JSON.stringify(DB.qotd||{}));}catch(e){}
   queueRemoteStateSave();
 }
@@ -3061,7 +3064,7 @@ function persistPodcasts(){lsSet('podcasts',podcasts);queueRemoteStateSave();}
 
 function userStatePayload(){
   // adm_perfil é PESSOAL (vai no app_state do próprio admin, não no global).
-  var p={q:DB.q,fc:DB.fc,mm:DB.mm,notes:DB.notes,crono:DB.crono,sf_results:DB.sf_results,perf:DB.perf,perfTema:DB.perfTema,act:DB.act,srs:DB.srs,goal:DB.goal,cursoProg:DB.cursoProg,qotd:DB.qotd,user_profile:lsGet('user_profile'),deg_trials:degTrials,ck_billing:lsGet('ck_billing'),presc_emitidas:lsGet('presc_emitidas')||[]};
+  var p={q:DB.q,fc:DB.fc,mm:DB.mm,notes:DB.notes,crono:DB.crono,sf_results:DB.sf_results,perf:DB.perf,perfTema:DB.perfTema,act:DB.act,srs:DB.srs,goal:DB.goal,cursoProg:DB.cursoProg,plan:DB.plan,qotd:DB.qotd,user_profile:lsGet('user_profile'),deg_trials:degTrials,ck_billing:lsGet('ck_billing'),presc_emitidas:lsGet('presc_emitidas')||[]};
   if(currentUser&&currentUser.role==='admin'){
     // Nunca persiste o perfil de OUTRO admin: se o e-mail do perfil em memória
     // não bater com o da sessão (resíduo de localStorage antigo), reconstrói da
@@ -3099,7 +3102,7 @@ function currentStatePayload(){
 // Chaves PESSOAIS (vivem no app_state do próprio usuário). As demais são
 // CONTEÚDO GLOBAL (provas, mural/radar, podcasts, cursos, diretrizes…), que só
 // vêm do estado global/RPC de membro.
-var PERSONAL_STATE_KEYS=['q','fc','mm','notes','crono','sf_results','perf','perfTema','act','srs','goal','cursoProg','adm_perfil','user_profile','deg_trials','ck_billing','presc_emitidas'];
+var PERSONAL_STATE_KEYS=['q','fc','mm','notes','crono','sf_results','perf','perfTema','act','srs','goal','cursoProg','plan','adm_perfil','user_profile','deg_trials','ck_billing','presc_emitidas'];
 // personalOnly=true quando o payload é o app_state do PRÓPRIO usuário: aplica só
 // as chaves pessoais e NUNCA toca no conteúdo global. Sem isso, um app_state com
 // resíduo antigo de chaves globais (ex.: radar_avisos defasado) podia, ao
@@ -3119,6 +3122,7 @@ function applyStatePayload(payload,personalOnly){
   if(Array.isArray(payload.srs))DB.srs=payload.srs;
   if(payload.goal&&typeof payload.goal==='object')DB.goal=payload.goal;
   if(payload.cursoProg&&typeof payload.cursoProg==='object')DB.cursoProg=payload.cursoProg;
+  if(payload.plan!==undefined)DB.plan=payload.plan;
   if(payload.qotd&&typeof payload.qotd==='object'){DB.qotd=Object.assign({},payload.qotd,DB.qotd||{});try{localStorage.setItem('qotd_answered',JSON.stringify(DB.qotd));}catch(e){}try{var _qp=document.getElementById('panel-qotd');if(_qp&&_qp.classList.contains('on'))renderQotdArchive();}catch(e){}}
   if(!personalOnly){
     if(Array.isArray(payload.provas))provasDB=payload.provas;
@@ -4570,7 +4574,7 @@ function startGoogleOAuth(){
   });
 }
 
-var PANEL_LABELS={dash:'Dashboard',desemp:'Desempenho',quest:'Questões',qotd:'Questão do Dia',flash:'Flashcards',mmap:'Mapas Mentais',podcast:'Podcasts',cursos:'Cursos',crono:'Cronograma',sr:'Revisão',erros:'Caderno de erros',sim:'OSCE',simfull:'Simulado',calc:'Calculadoras',rx:'Prescrição Simulada',presc:'Consultório',art:'Resumidor',notas:'Caderno',mural:'Mural',ref:'Diretrizes',chat:'Chat IA',perfil:'Perfil',support:'Suporte',adm:'Painel Admin'};
+var PANEL_LABELS={dash:'Dashboard',desemp:'Desempenho',plano:'Plano de estudo',quest:'Questões',qotd:'Questão do Dia',flash:'Flashcards',mmap:'Mapas Mentais',podcast:'Podcasts',cursos:'Cursos',crono:'Cronograma',sr:'Revisão',erros:'Caderno de erros',sim:'OSCE',simfull:'Simulado',calc:'Calculadoras',rx:'Prescrição Simulada',presc:'Consultório',art:'Resumidor',notas:'Caderno',mural:'Mural',ref:'Diretrizes',chat:'Chat IA',perfil:'Perfil',support:'Suporte',adm:'Painel Admin'};
 function closeMobileNav(){
   document.body.classList.remove('mobile-nav-open');
   var b=document.getElementById('btn-mobile-nav');
@@ -4655,7 +4659,7 @@ function hasScope(scope){return !scope||isAdminUser()||userAcessos.indexOf(scope
 // Degustacao: aluno logado, sem nenhum acesso ativo (não comprou pacote/curso).
 function isDegustacao(){return !!(currentUser&&currentUser.role==='aluno'&&!isAdminUser()&&(!userAcessos||userAcessos.length===0));}
 // Paineis liberados na degustacao (o resto fica 🔒 com upsell).
-var DEGUSTACAO_PANELS={dash:1,desemp:1,flash:1,mmap:1,quest:1,qotd:1,perfil:1,support:1,calc:1,podcast:1,crono:1,notas:1,ref:1,erros:1};
+var DEGUSTACAO_PANELS={dash:1,desemp:1,plano:1,flash:1,mmap:1,quest:1,qotd:1,perfil:1,support:1,calc:1,podcast:1,crono:1,notas:1,ref:1,erros:1};
 // Ferramentas com IA liberadas na degustação por COTA (3 usos cada): simulador
 // de casos, simulado, prescrição e chat IA. Após esgotar, vira upsell.
 var TRIAL_PANELS={sim:1,simfull:1,rx:1,chat:1};
@@ -4956,6 +4960,7 @@ function goPanel(id){
   if(id==='podcast')renderPodcasts();
   if(id==='cursos')renderCursosAluno();
   if(id==='desemp')renderDesempenho();
+  if(id==='plano')renderPlano();
   if(id==='erros')renderErros();
   if(id==='crono')initCrono();
   if(id==='sr')renderSR();
@@ -5228,8 +5233,47 @@ function renderStreakCard(){
       +'<div style="margin-top:.5rem"><select id="streak-goal" style="font-size:.7rem;padding:.3rem .5rem;border-radius:8px;background:var(--surface);color:var(--tx);border:1px solid var(--bd)">'+opts+'</select></div>'
     +'</div>'
     +((!hoje&&streak>0)?'<div style="width:100%;font-size:.68rem;color:var(--gold)">⏰ Estude hoje para manter sua ofensiva de '+streak+(streak===1?' dia':' dias')+'!</div>':'')
+    +(function(){var d=planDaysLeft();if(d==null)return '';return '<div style="width:100%;font-size:.68rem;color:var(--blue2)">🎯 '+(d>0?('Faltam '+d+(d===1?' dia':' dias')+' para '+esc((DB.plan&&DB.plan.exam)||'sua prova')):(d===0?'Sua prova é hoje! 🍀':'Prova-alvo já passou — atualize no Plano de estudo'))+'</div>';})()
   +'</div>';
   var sel=document.getElementById('streak-goal');if(sel)sel.addEventListener('change',function(){DB.goal=DB.goal||{};DB.goal.weekly=parseInt(this.value)||50;persist();renderStreakCard();});
+}
+// ── PLANO DE ESTUDO ATÉ A PROVA (amarra desempenho + erros + ofensiva + simulado) ──
+function planDaysLeft(){if(!DB.plan||!DB.plan.date)return null;return Math.ceil((new Date(DB.plan.date+'T23:59:59')-new Date())/86400000);}
+function renderPlano(edit){
+  var el=document.getElementById('plano-body');if(!el)return;
+  var p=DB.plan;
+  if(!p||!p.date||edit){
+    el.innerHTML='<div class="card" style="max-width:520px"><div style="font-weight:700;margin-bottom:.6rem">'+(p&&p.date?'Editar plano':'Criar meu plano de estudo')+'</div>'
+      +'<div class="fld2"><label>Prova-alvo</label><input id="plano-exam" value="'+(p?esc(p.exam||''):'')+'" placeholder="Ex: Prova de Título SBEM 2026"></div>'
+      +'<div class="g2"><div class="fld2" style="margin:0"><label>Data da prova</label><input type="date" id="plano-date" value="'+(p?esc(p.date||''):'')+'"></div><div class="fld2" style="margin:0"><label>Meta diária (questões)</label><input type="number" id="plano-daily" value="'+(p&&p.dailyQ?p.dailyQ:20)+'" min="5" max="200"></div></div>'
+      +'<button class="btn btn-primary" id="plano-save" style="margin-top:.7rem">🎯 Salvar plano</button>'+(p&&p.date?' <button class="btn btn-ghost" id="plano-cancel">Cancelar</button>':'')+'</div>';
+    var sv=document.getElementById('plano-save');if(sv)sv.addEventListener('click',function(){
+      var exam=(document.getElementById('plano-exam').value||'').trim()||'Minha prova';
+      var date=(document.getElementById('plano-date').value||'').trim();
+      var daily=parseInt(document.getElementById('plano-daily').value)||20;
+      if(!date){notify('Escolha a data da prova.','err');return;}
+      DB.plan={exam:exam,date:date,dailyQ:Math.max(5,daily),createdAt:(p&&p.createdAt)||Date.now()};try{persist();}catch(e){}renderPlano();try{refreshDash();}catch(e){}notify('Plano salvo! 🎯','ok');
+    });
+    var cc=document.getElementById('plano-cancel');if(cc)cc.addEventListener('click',function(){renderPlano();});
+    return;
+  }
+  var dleft=planDaysLeft();
+  var act=DB.act||{};var hoje=act[todayKey()]||0;var daily=p.dailyQ||20;var dpct=Math.min(100,Math.round(hoje/daily*100));
+  var dueErr=(Array.isArray(DB.srs)?DB.srs:[]).filter(srIsDue).length;
+  var weak=[];var pt=DB.perfTema||{};Object.keys(pt).forEach(function(s){Object.keys(pt[s]||{}).forEach(function(t){var d=pt[s][t];if((d.total||0)>=4)weak.push({tema:t,pct:perfPct(d)});});});weak.sort(function(a,b){return a.pct-b.pct;});var foco=weak[0];
+  var head='<div class="card" style="margin-bottom:1rem;background:linear-gradient(135deg,var(--blue),#2a4d8f);color:#fff"><div style="font-size:.66rem;text-transform:uppercase;letter-spacing:.08em;opacity:.85">Prova-alvo</div><div style="font-size:1.15rem;font-weight:800;margin:.15rem 0">'+esc(p.exam||'Minha prova')+'</div><div style="font-size:.8rem;opacity:.92">'+(dleft>0?('⏳ Faltam '+dleft+(dleft===1?' dia':' dias')):(dleft===0?'É hoje! 🍀 Boa prova!':'Prova já passou'))+' · '+(new Date(p.date+'T12:00:00').toLocaleDateString('pt-BR'))+'</div></div>';
+  function task(done,label,btn,pid){return '<div style="display:flex;align-items:center;gap:.6rem;padding:.5rem 0;border-bottom:1px solid var(--bd)"><span style="font-size:1.1rem">'+(done?'✅':'⬜')+'</span><span style="flex:1;font-size:.82rem;color:var(--tx)">'+label+'</span><button class="btn btn-sm '+(done?'btn-outline':'btn-primary')+'" data-plano-go="'+pid+'">'+btn+'</button></div>';}
+  var tasks='<div class="card" style="margin-bottom:1rem"><div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:.4rem"><span style="font-weight:700">Tarefas de hoje</span><span style="font-size:.74rem;color:var(--t2)">'+hoje+'/'+daily+' questões</span></div>'
+    +'<div style="height:8px;background:var(--bd);border-radius:6px;overflow:hidden;margin-bottom:.6rem"><div style="height:100%;width:'+dpct+'%;background:'+(hoje>=daily?'var(--grn)':'var(--blue)')+';border-radius:6px"></div></div>'
+    +task(hoje>=daily,'Responder '+daily+' questões hoje','Praticar','quest')
+    +task(dueErr===0,'Revisar erros devidos'+(dueErr?' ('+dueErr+')':''),'Revisar','erros')
+    +(foco?task(false,'Reforçar ponto fraco: <b>'+esc(foco.tema)+'</b> ('+foco.pct+'%)','Treinar','quest'):'')
+    +task(false,'Fazer um simulado cronometrado','Simulado','simfull')
+    +'</div>';
+  el.innerHTML=head+tasks+'<div style="display:flex;gap:.5rem;flex-wrap:wrap"><button class="btn btn-outline btn-sm" id="plano-edit">✏️ Editar plano</button><button class="btn btn-ghost btn-sm" id="plano-del" style="color:var(--red)">🗑 Excluir plano</button></div>';
+  el.querySelectorAll('[data-plano-go]').forEach(function(b){b.addEventListener('click',function(){goPanel(b.getAttribute('data-plano-go'));});});
+  var ed=document.getElementById('plano-edit');if(ed)ed.addEventListener('click',function(){renderPlano(true);});
+  var dl=document.getElementById('plano-del');if(dl)dl.addEventListener('click',function(){if(confirm('Excluir o plano de estudo?')){DB.plan=null;try{persist();}catch(e){}renderPlano();try{refreshDash();}catch(e){}}});
 }
 function updateDashRec(){
   var el=document.getElementById('d-rec');if(!el)return;
