@@ -1,7 +1,14 @@
-// Cron SEMANAL de health check da plataforma.
-// A lógica fica em lib/healthcheck.js. Auth: Vercel envia
-// Authorization: Bearer $CRON_SECRET. Também aceita GET manual com o mesmo header.
+// Cron DIÁRIO da plataforma (13:00 UTC = 10h BRT):
+//  1) Health check (lib/healthcheck.js) — resumo semanal às segundas; alerta sempre
+//     que houver falha (qualquer dia); silêncio caso contrário.
+//  2) Publica a Questão do Dia NA PLATAFORMA (lib/instagram.js autoPostDailyQotd):
+//     promove o 1º item da fila a "postada", às 10h. Acoplado aqui porque o plano
+//     limita o nº de cron jobs (2 no teto) — a newsletter/radar seguem no cron das
+//     07:30 BRT (/api/cron/endocrine-radar), sem mudança.
+// Auth: Vercel envia Authorization: Bearer $CRON_SECRET. Também aceita GET manual
+// com o mesmo header.
 const { runHealthcheck } = require('../../lib/healthcheck');
+const { autoPostDailyQotd } = require('../../lib/instagram');
 
 function json(res, status, body) {
   res.statusCode = status;
@@ -18,13 +25,20 @@ module.exports = async function handler(req, res) {
   if (!cronSecret || req.headers.authorization !== `Bearer ${cronSecret}`) {
     return json(res, 401, { ok: false, error: 'Nao autorizado.' });
   }
+  // Health check e auto-post são independentes: publica a Questão do Dia mesmo que
+  // o health check falhe.
+  let result, status = 200;
   try {
-    const result = await runHealthcheck();
-    return json(res, 200, result);
+    result = await runHealthcheck();
   } catch (error) {
     console.error('[cron-healthcheck] erro:', (error && error.stack) || error);
-    return json(res, 500, { ok: false, error: (error && error.message) || 'Falha no health check.' });
+    result = { ok: false, error: (error && error.message) || 'Falha no health check.' };
+    status = 500;
   }
+  let qotd = { posted: false, reason: 'skipped' };
+  try { qotd = await autoPostDailyQotd(); }
+  catch (e) { console.error('[cron-healthcheck] auto-post QotD erro:', (e && e.stack) || e); qotd = { posted: false, reason: 'error' }; }
+  return json(res, status, { ...result, qotd });
 };
 
 module.exports.config = { maxDuration: 60 };

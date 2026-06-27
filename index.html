@@ -3070,7 +3070,7 @@ function applyStatePayload(payload,personalOnly){
     if(Array.isArray(payload.ig_stories)){igStories=payload.ig_stories;try{lsSet('ig_stories',igStories);}catch(e){}try{var _mp=document.getElementById('panel-mural'),_qm=document.getElementById('qotd-modal');if(_mp&&_mp.classList.contains('on')&&(!_qm||_qm.style.display==='none'))renderQotd();}catch(e){}}
     if(Array.isArray(payload.ig_pending)){igPending=payload.ig_pending;try{lsSet('ig_pending',igPending);}catch(e){}try{updateAdmPendBadge();}catch(e){}try{maybePendAlert();}catch(e){}}
     // Preserva chaves geridas pelo servidor (newsletter + lembrete IG) p/ o save do admin não apagá-las.
-    ['newsletter_extra','newsletter_unsub','newsletter_sent','newsletter','newsletter_recent','newsletter_qotd_id','ig_notice_sent'].forEach(function(k){if(payload[k]!==undefined)globalServerKeys[k]=payload[k];});
+    ['newsletter_extra','newsletter_unsub','newsletter_sent','newsletter','newsletter_recent','newsletter_qotd_id','ig_notice_sent','qotd_autopost_date'].forEach(function(k){if(payload[k]!==undefined)globalServerKeys[k]=payload[k];});
   }
   if(payload.adm_perfil&&typeof payload.adm_perfil==='object'){
     // Segurança: só aceita o perfil salvo se o e-mail bater com o do admin
@@ -3214,7 +3214,7 @@ function saveRemoteState(){
       var serverUpd=(g&&g.data&&g.data.updated_at)||null;
       var p=globalStatePayload();
       // Chaves do servidor que o admin NÃO edita: preserva direto do servidor.
-      ['newsletter_extra','newsletter_unsub','newsletter_sent','newsletter','newsletter_recent','newsletter_qotd_id','ig_notice_sent'].forEach(function(k){if(serverP[k]!==undefined)p[k]=serverP[k];});
+      ['newsletter_extra','newsletter_unsub','newsletter_sent','newsletter','newsletter_recent','newsletter_qotd_id','ig_notice_sent','qotd_autopost_date'].forEach(function(k){if(serverP[k]!==undefined)p[k]=serverP[k];});
       // radar_avisos: base = servidor (mantém adições do cron e a purga por TTL),
       // mas APLICA as edições do professor (subespecialidade/tipo/texto) por chave
       // estável (sourceId/link). Sem isto, editar um card do radar voltava no F5 —
