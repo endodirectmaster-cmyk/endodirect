@@ -9,6 +9,7 @@
 // com o mesmo header.
 const { runHealthcheck } = require('../../lib/healthcheck');
 const { autoPostDailyQotd } = require('../../lib/instagram');
+const { sendStreakReminders } = require('../../lib/push');
 
 function json(res, status, body) {
   res.statusCode = status;
@@ -38,7 +39,12 @@ module.exports = async function handler(req, res) {
   let qotd = { posted: false, reason: 'skipped' };
   try { qotd = await autoPostDailyQotd(); }
   catch (e) { console.error('[cron-healthcheck] auto-post QotD erro:', (e && e.stack) || e); qotd = { posted: false, reason: 'error' }; }
-  return json(res, status, { ...result, qotd });
+  // Lembrete diário de ofensiva (streak em risco) — push só p/ quem tem sequência
+  // ativa e não estudou hoje. Fail-safe: nunca derruba o cron.
+  let streak = { sent: 0, reason: 'skipped' };
+  try { streak = await sendStreakReminders(); }
+  catch (e) { console.error('[cron-healthcheck] streak push erro:', (e && e.stack) || e); streak = { ok: false, reason: 'error' }; }
+  return json(res, status, { ...result, qotd, streak });
 };
 
 module.exports.config = { maxDuration: 60 };

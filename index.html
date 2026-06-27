@@ -6289,14 +6289,28 @@ function aulaQuestions(c){
   pool=pool.slice();for(var i=pool.length-1;i>0;i--){var j=Math.floor(Math.random()*(i+1));var t=pool[i];pool[i]=pool[j];pool[j]=t;}
   return pool.slice(0,8);
 }
-function renderAulaQuest(c){
+function renderAulaQuest(c){aulaQ=aulaQuestions(c);aulaQAns={};renderAulaQuestBody(c);}
+function renderAulaQuestBody(c){
   var box=document.getElementById('aula-quest-box');if(!box)return;
-  aulaQ=aulaQuestions(c);aulaQAns={};
-  if(!aulaQ.length){box.innerHTML='<div class="empty">Ainda não há questões deste tema no banco. Pratique no <a href="#" id="aula-go-quest" style="color:var(--blue)">Banco de Questões</a>.</div>';var g=document.getElementById('aula-go-quest');if(g)g.addEventListener('click',function(e){e.preventDefault();goPanel('quest');});return;}
-  box.innerHTML='<div style="font-size:.72rem;color:var(--t3);margin-bottom:.5rem">'+aulaQ.length+' questões sobre '+esc(c.tema||c.modulo||'esta aula')+' — responda para fixar (conta no seu Desempenho).</div><div id="aula-q-list"></div><div id="aula-q-score" style="margin-top:.55rem;font-size:.78rem;color:var(--t2)"></div>';
-  var list=document.getElementById('aula-q-list');
-  list.innerHTML=aulaQ.map(function(q,i){return '<div style="margin-bottom:.7rem" id="aula-q-'+i+'">'+qotdCardHTML(q,null,'🧠 Questão '+(i+1))+'</div>';}).join('');
-  aulaQ.forEach(function(q,i){var cont=document.getElementById('aula-q-'+i);if(!cont)return;cont.querySelectorAll('[data-qotd-opt]').forEach(function(b){b.addEventListener('click',function(){aulaAnswer(i,b.getAttribute('data-qotd-opt'));});});});
+  var gerar='<button class="btn btn-outline btn-sm" id="aula-gen-ia">✨ Gerar '+(aulaQ.length?'novas ':'')+'questões com IA</button>';
+  if(!aulaQ.length){
+    box.innerHTML='<div class="empty" style="margin-bottom:.6rem">Ainda não há questões deste tema no banco — gere com IA ou pratique no Banco.</div><div style="display:flex;gap:.6rem;flex-wrap:wrap;align-items:center">'+gerar+'<a href="#" id="aula-go-quest" style="color:var(--blue);font-size:.78rem">ir ao Banco de Questões</a></div>';
+  }else{
+    box.innerHTML='<div style="font-size:.72rem;color:var(--t3);margin-bottom:.5rem">'+aulaQ.length+' questões sobre '+esc(c.tema||c.modulo||'esta aula')+' — responda para fixar (conta no seu Desempenho).</div><div id="aula-q-list"></div><div id="aula-q-score" style="margin-top:.55rem;font-size:.78rem;color:var(--t2)"></div><div style="margin-top:.75rem">'+gerar+'</div>';
+    var list=document.getElementById('aula-q-list');
+    list.innerHTML=aulaQ.map(function(q,i){return '<div style="margin-bottom:.7rem" id="aula-q-'+i+'">'+qotdCardHTML(q,null,'🧠 Questão '+(i+1))+'</div>';}).join('');
+    aulaQ.forEach(function(q,i){var cont=document.getElementById('aula-q-'+i);if(!cont)return;cont.querySelectorAll('[data-qotd-opt]').forEach(function(b){b.addEventListener('click',function(){aulaAnswer(i,b.getAttribute('data-qotd-opt'));});});});
+  }
+  var gi=document.getElementById('aula-gen-ia');if(gi)gi.addEventListener('click',function(){genAulaQuestions(c,gi);});
+  var gq=document.getElementById('aula-go-quest');if(gq)gq.addEventListener('click',function(e){e.preventDefault();goPanel('quest');});
+}
+function genAulaQuestions(c,btn){
+  var area=(c.modulo||'Endocrinologia');var tema=(c.tema||'').trim();var topic=tema?(tema+' (em '+area+')'):area;
+  var ob=btn.textContent;btn.disabled=true;btn.textContent='Gerando…';
+  var sys='Examinador de endocrinologia BR. Responda APENAS com JSON: {"questions":[{"stem":"vinheta clínica curta","options":{"A":"","B":"","C":"","D":""},"answer":"A","explanation":"comentário objetivo","area":"'+String(area).replace(/"/g,'')+'","tema":"'+String(tema||'').replace(/"/g,'')+'"}]}';
+  callAI(sys,'Gere 5 questões de múltipla escolha sobre '+topic+', nível prova de título/residência, variadas, com explicação. Baseie-se em diretrizes vigentes; não invente dados.',2800,(typeof AI_MODEL_SIM_GEN!=='undefined'?AI_MODEL_SIM_GEN:undefined))
+  .then(function(raw){var d=parseJ(raw);var qs=(((d&&d.questions))||[]).map(function(q){return (q&&q.options&&q.answer)?igShuffleMCQ(q):q;}).filter(function(q){return q&&q.options&&q.answer&&q.stem;});if(!qs.length)throw new Error('Não consegui gerar questões agora.');aulaQ=qs;aulaQAns={};renderAulaQuestBody(c);notify('Questões geradas! ✨','ok');})
+  .catch(function(e){notify('Erro: '+((e&&e.message)||e),'err');btn.disabled=false;btn.textContent=ob;});
 }
 function aulaAnswer(i,letter){
   if(aulaQAns[i])return;var q=aulaQ[i];if(!q)return;var ok=letter===q.answer;aulaQAns[i]={ok:ok};
