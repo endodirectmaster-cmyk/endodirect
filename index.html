@@ -1532,6 +1532,7 @@ html[data-theme="light"] .dir-back{background:#f8f9fc;border-color:var(--bd2);co
       <div class="ph"><h1 id="dash-greeting">Bem-vindo.</h1><p>Continue seus estudos.</p></div>
       <div class="pc">
         <div id="qotd-card" style="display:none;margin-bottom:10px"></div>
+        <div id="streak-card" style="margin-bottom:10px"></div>
         <div class="g4" style="margin-bottom:10px">
           <div class="card" style="text-align:center;cursor:pointer" id="dc-quest"><div style="font-size:1.45rem;font-weight:700;color:var(--blue)" id="d-qn">0</div><div style="font-size:.66rem;color:var(--t3)">Questões</div></div>
           <div class="card" style="text-align:center;cursor:pointer" id="dc-flash"><div style="font-size:1.45rem;font-weight:700;color:var(--pur)" id="d-fcn">0</div><div style="font-size:.66rem;color:var(--t3)">Flashcards</div></div>
@@ -2631,10 +2632,11 @@ var DB={
   perfTema:lsGet('perfTema')||{},
   act:lsGet('act')||{},
   srs:lsGet('srs')||[],
+  goal:lsGet('goal')||{weekly:50},
   qotd:(function(){try{return JSON.parse(localStorage.getItem('qotd_answered')||'{}')||{};}catch(e){return {};}})()
 };
 function persist(){
-  ['q','fc','mm','notes','crono','sf_results','perf','perfTema','act','srs'].forEach(function(k){lsSet(k,DB[k]);});
+  ['q','fc','mm','notes','crono','sf_results','perf','perfTema','act','srs','goal'].forEach(function(k){lsSet(k,DB[k]);});
   try{localStorage.setItem('qotd_answered',JSON.stringify(DB.qotd||{}));}catch(e){}
   queueRemoteStateSave();
 }
@@ -3058,7 +3060,7 @@ function persistPodcasts(){lsSet('podcasts',podcasts);queueRemoteStateSave();}
 
 function userStatePayload(){
   // adm_perfil é PESSOAL (vai no app_state do próprio admin, não no global).
-  var p={q:DB.q,fc:DB.fc,mm:DB.mm,notes:DB.notes,crono:DB.crono,sf_results:DB.sf_results,perf:DB.perf,perfTema:DB.perfTema,act:DB.act,srs:DB.srs,qotd:DB.qotd,user_profile:lsGet('user_profile'),deg_trials:degTrials,ck_billing:lsGet('ck_billing'),presc_emitidas:lsGet('presc_emitidas')||[]};
+  var p={q:DB.q,fc:DB.fc,mm:DB.mm,notes:DB.notes,crono:DB.crono,sf_results:DB.sf_results,perf:DB.perf,perfTema:DB.perfTema,act:DB.act,srs:DB.srs,goal:DB.goal,qotd:DB.qotd,user_profile:lsGet('user_profile'),deg_trials:degTrials,ck_billing:lsGet('ck_billing'),presc_emitidas:lsGet('presc_emitidas')||[]};
   if(currentUser&&currentUser.role==='admin'){
     // Nunca persiste o perfil de OUTRO admin: se o e-mail do perfil em memória
     // não bater com o da sessão (resíduo de localStorage antigo), reconstrói da
@@ -3096,7 +3098,7 @@ function currentStatePayload(){
 // Chaves PESSOAIS (vivem no app_state do próprio usuário). As demais são
 // CONTEÚDO GLOBAL (provas, mural/radar, podcasts, cursos, diretrizes…), que só
 // vêm do estado global/RPC de membro.
-var PERSONAL_STATE_KEYS=['q','fc','mm','notes','crono','sf_results','perf','perfTema','act','srs','adm_perfil','user_profile','deg_trials','ck_billing','presc_emitidas'];
+var PERSONAL_STATE_KEYS=['q','fc','mm','notes','crono','sf_results','perf','perfTema','act','srs','goal','adm_perfil','user_profile','deg_trials','ck_billing','presc_emitidas'];
 // personalOnly=true quando o payload é o app_state do PRÓPRIO usuário: aplica só
 // as chaves pessoais e NUNCA toca no conteúdo global. Sem isso, um app_state com
 // resíduo antigo de chaves globais (ex.: radar_avisos defasado) podia, ao
@@ -3114,6 +3116,7 @@ function applyStatePayload(payload,personalOnly){
   if(payload.perfTema&&typeof payload.perfTema==='object')DB.perfTema=payload.perfTema;
   if(payload.act&&typeof payload.act==='object')DB.act=payload.act;
   if(Array.isArray(payload.srs))DB.srs=payload.srs;
+  if(payload.goal&&typeof payload.goal==='object')DB.goal=payload.goal;
   if(payload.qotd&&typeof payload.qotd==='object'){DB.qotd=Object.assign({},payload.qotd,DB.qotd||{});try{localStorage.setItem('qotd_answered',JSON.stringify(DB.qotd));}catch(e){}try{var _qp=document.getElementById('panel-qotd');if(_qp&&_qp.classList.contains('on'))renderQotdArchive();}catch(e){}}
   if(!personalOnly){
     if(Array.isArray(payload.provas))provasDB=payload.provas;
@@ -4971,6 +4974,7 @@ function refreshDash(){
   DB.fc.forEach(function(c){srInit(c);});
   var due=DB.fc.filter(srIsDue).length;
   setText('d-qn',DB.q.length);setText('d-fcn',DB.fc.length);setText('d-sr-due',due);setText('d-mmn',DB.mm.length);
+  try{renderStreakCard();}catch(e){}
   renderPerfBars();updateDashRec();renderDashCrono();renderDashNotas();
 }
 // ---------- QUESTÃO DO DIA (card clicável do aluno) ----------
@@ -5200,6 +5204,30 @@ function renderDesempenho(){
     +days.map(function(d){var h=d.n?Math.max(8,Math.round(d.n/maxN*64)):3;var c=d.n?'var(--blue)':'var(--bd)';return '<div title="'+d.k+': '+d.n+' questões" style="flex:1;height:'+h+'px;background:'+c+';border-radius:3px 3px 0 0"></div>';}).join('')
     +'</div><div style="display:flex;justify-content:space-between;font-size:.62rem;color:var(--t3);margin-top:.3rem"><span>14 dias atrás</span><span>hoje</span></div></div>';
   el.innerHTML='<div class="ph"><h1>📈 Desempenho</h1><p>Sua evolução por subespecialidade e tema — e onde focar.</p></div>'+kpis+foco+bars+actHtml;
+}
+// ── OFENSIVA (streak) + META SEMANAL ──
+function weekKeys(){var d=new Date();var dow=(d.getDay()+6)%7;var mon=new Date(d);mon.setDate(d.getDate()-dow);var ks=[];for(var i=0;i<7;i++){var x=new Date(mon);x.setDate(mon.getDate()+i);ks.push(todayKey(x));}return ks;}
+function weekCount(act){act=act||{};return weekKeys().reduce(function(s,k){return s+(act[k]||0);},0);}
+function bestStreak(act){act=act||{};var keys=Object.keys(act).filter(function(k){return act[k]>0;}).sort();if(!keys.length)return 0;var best=1,run=1;for(var i=1;i<keys.length;i++){var diff=Math.round((new Date(keys[i]+'T00:00:00')-new Date(keys[i-1]+'T00:00:00'))/86400000);if(diff===1){run++;if(run>best)best=run;}else run=1;}return best;}
+function renderStreakCard(){
+  var el=document.getElementById('streak-card');if(!el)return;
+  var act=DB.act||{};var streak=computeStreak(act);var best=Math.max(bestStreak(act),streak);
+  var goal=(DB.goal&&DB.goal.weekly)||50;var wc=weekCount(act);var hoje=act[todayKey()]||0;
+  var pct=Math.min(100,Math.round(wc/goal*100));var met=wc>=goal;
+  var opts=[20,35,50,75,100,150].map(function(n){return '<option value="'+n+'"'+(n===goal?' selected':'')+'>'+n+' questões/sem</option>';}).join('');
+  el.innerHTML='<div class="card" style="display:flex;flex-wrap:wrap;align-items:center;gap:1rem;background:linear-gradient(135deg,var(--surface),var(--s2))">'
+    +'<div style="display:flex;align-items:center;gap:.6rem;min-width:140px">'
+      +'<div style="font-size:2rem;filter:'+(streak>0?'none':'grayscale(1);opacity:.5')+'">🔥</div>'
+      +'<div><div style="font-size:1.6rem;font-weight:800;color:var(--gold);line-height:1">'+streak+'</div><div style="font-size:.66rem;color:var(--t3)">'+(streak===1?'dia de ofensiva':'dias de ofensiva')+'</div><div style="font-size:.6rem;color:var(--t3);margin-top:2px">recorde: '+best+'</div></div>'
+    +'</div>'
+    +'<div style="flex:1;min-width:210px">'
+      +'<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:.3rem"><span style="font-size:.74rem;font-weight:700;color:var(--tx)">'+(met?'✅ Meta da semana batida! 🎉':'Meta da semana')+'</span><span style="font-size:.72rem;color:var(--t2)">'+wc+' / '+goal+'</span></div>'
+      +'<div style="height:9px;background:var(--bd);border-radius:6px;overflow:hidden"><div style="height:100%;width:'+pct+'%;background:'+(met?'var(--grn)':'var(--blue)')+';border-radius:6px"></div></div>'
+      +'<div style="margin-top:.5rem"><select id="streak-goal" style="font-size:.7rem;padding:.3rem .5rem;border-radius:8px;background:var(--surface);color:var(--tx);border:1px solid var(--bd)">'+opts+'</select></div>'
+    +'</div>'
+    +((!hoje&&streak>0)?'<div style="width:100%;font-size:.68rem;color:var(--gold)">⏰ Estude hoje para manter sua ofensiva de '+streak+(streak===1?' dia':' dias')+'!</div>':'')
+  +'</div>';
+  var sel=document.getElementById('streak-goal');if(sel)sel.addEventListener('change',function(){DB.goal=DB.goal||{};DB.goal.weekly=parseInt(this.value)||50;persist();renderStreakCard();});
 }
 function updateDashRec(){
   var el=document.getElementById('d-rec');if(!el)return;
