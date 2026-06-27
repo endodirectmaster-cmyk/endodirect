@@ -1494,6 +1494,7 @@ html[data-theme="light"] .dir-back{background:#f8f9fc;border-color:var(--bd2);co
       <div id="sb-aluno">
         <div class="sb-sec">Estudo</div>
         <button class="sb-item on" data-p="dash">📊 Dashboard</button>
+        <button class="sb-item" data-p="desemp">📈 Desempenho</button>
         <button class="sb-item" data-p="quest">📝 Questões</button>
         <button class="sb-item" data-p="qotd">🧠 Questão do Dia</button>
         <button class="sb-item" data-p="flash">🃏 Flashcards</button>
@@ -1968,6 +1969,7 @@ html[data-theme="light"] .dir-back{background:#f8f9fc;border-color:var(--bd2);co
       </div>
     </div>
 
+    <div class="panel" id="panel-desemp"><div class="pc" id="desemp-body" style="max-width:none"></div></div>
     <div class="panel" id="panel-perfil">
       <div class="breadcrumb">Dashboard <b>/ Perfil</b></div>
       <div id="perfil-plan-card" class="pc" style="display:none">
@@ -2599,12 +2601,34 @@ var DB={
   crono:lsGet('crono')||null,
   sf_results:lsGet('sf_results')||[],
   perf:lsGet('perf')||{},
+  perfTema:lsGet('perfTema')||{},
+  act:lsGet('act')||{},
   qotd:(function(){try{return JSON.parse(localStorage.getItem('qotd_answered')||'{}')||{};}catch(e){return {};}})()
 };
 function persist(){
-  ['q','fc','mm','notes','crono','sf_results','perf'].forEach(function(k){lsSet(k,DB[k]);});
+  ['q','fc','mm','notes','crono','sf_results','perf','perfTema','act'].forEach(function(k){lsSet(k,DB[k]);});
   try{localStorage.setItem('qotd_answered',JSON.stringify(DB.qotd||{}));}catch(e){}
   queueRemoteStateSave();
+}
+// Chave de dia LOCAL (YYYY-MM-DD) e ofensiva (dias consecutivos de estudo).
+function todayKey(d){d=d||new Date();return d.getFullYear()+'-'+('0'+(d.getMonth()+1)).slice(-2)+'-'+('0'+d.getDate()).slice(-2);}
+function computeStreak(act){act=act||{};var d=new Date();if(!(act[todayKey(d)]>0))d.setDate(d.getDate()-1);var s=0,g=0;while(act[todayKey(d)]>0&&g<4000){s++;d.setDate(d.getDate()-1);g++;}return s;}
+// Hook central de estudo: alimenta desempenho por TEMA (DB.perfTema) e ATIVIDADE
+// diária (DB.act) — reusado pelo painel de Desempenho, pela Ofensiva e pela
+// Revisão de erros. NÃO substitui DB.perf (por subespecialidade), só adiciona.
+// Os callers (recordAnswer/qotdSaveAns) chamam persist() logo em seguida.
+function studyEvent(q,ok){
+  try{
+    if(!q)return;
+    var sub=q.area||q.sub||'Geral';
+    var tema=q.tema||(typeof classifyTema==='function'?classifyTema(((q.stem||'')+' '+(q.explanation||'')),sub):'Geral')||'Geral';
+    if(!DB.perfTema||typeof DB.perfTema!=='object')DB.perfTema={};
+    if(!DB.perfTema[sub])DB.perfTema[sub]={};
+    if(!DB.perfTema[sub][tema])DB.perfTema[sub][tema]={correct:0,total:0};
+    DB.perfTema[sub][tema].total++;if(ok)DB.perfTema[sub][tema].correct++;
+    if(!DB.act||typeof DB.act!=='object')DB.act={};
+    var k=todayKey();DB.act[k]=(DB.act[k]||0)+1;
+  }catch(e){}
 }
 var provasDB=lsGet('provas')||[];
 // Degustação: contagem de usos das ferramentas com cota (3 usos cada).
@@ -2995,7 +3019,7 @@ function persistPodcasts(){lsSet('podcasts',podcasts);queueRemoteStateSave();}
 
 function userStatePayload(){
   // adm_perfil é PESSOAL (vai no app_state do próprio admin, não no global).
-  var p={q:DB.q,fc:DB.fc,mm:DB.mm,notes:DB.notes,crono:DB.crono,sf_results:DB.sf_results,perf:DB.perf,qotd:DB.qotd,user_profile:lsGet('user_profile'),deg_trials:degTrials,ck_billing:lsGet('ck_billing'),presc_emitidas:lsGet('presc_emitidas')||[]};
+  var p={q:DB.q,fc:DB.fc,mm:DB.mm,notes:DB.notes,crono:DB.crono,sf_results:DB.sf_results,perf:DB.perf,perfTema:DB.perfTema,act:DB.act,qotd:DB.qotd,user_profile:lsGet('user_profile'),deg_trials:degTrials,ck_billing:lsGet('ck_billing'),presc_emitidas:lsGet('presc_emitidas')||[]};
   if(currentUser&&currentUser.role==='admin'){
     // Nunca persiste o perfil de OUTRO admin: se o e-mail do perfil em memória
     // não bater com o da sessão (resíduo de localStorage antigo), reconstrói da
@@ -3033,7 +3057,7 @@ function currentStatePayload(){
 // Chaves PESSOAIS (vivem no app_state do próprio usuário). As demais são
 // CONTEÚDO GLOBAL (provas, mural/radar, podcasts, cursos, diretrizes…), que só
 // vêm do estado global/RPC de membro.
-var PERSONAL_STATE_KEYS=['q','fc','mm','notes','crono','sf_results','perf','adm_perfil','user_profile','deg_trials','ck_billing','presc_emitidas'];
+var PERSONAL_STATE_KEYS=['q','fc','mm','notes','crono','sf_results','perf','perfTema','act','adm_perfil','user_profile','deg_trials','ck_billing','presc_emitidas'];
 // personalOnly=true quando o payload é o app_state do PRÓPRIO usuário: aplica só
 // as chaves pessoais e NUNCA toca no conteúdo global. Sem isso, um app_state com
 // resíduo antigo de chaves globais (ex.: radar_avisos defasado) podia, ao
@@ -3048,6 +3072,8 @@ function applyStatePayload(payload,personalOnly){
   if(payload.crono!==undefined)DB.crono=payload.crono;
   if(Array.isArray(payload.sf_results))DB.sf_results=payload.sf_results;
   if(payload.perf&&typeof payload.perf==='object')DB.perf=payload.perf;
+  if(payload.perfTema&&typeof payload.perfTema==='object')DB.perfTema=payload.perfTema;
+  if(payload.act&&typeof payload.act==='object')DB.act=payload.act;
   if(payload.qotd&&typeof payload.qotd==='object'){DB.qotd=Object.assign({},payload.qotd,DB.qotd||{});try{localStorage.setItem('qotd_answered',JSON.stringify(DB.qotd));}catch(e){}try{var _qp=document.getElementById('panel-qotd');if(_qp&&_qp.classList.contains('on'))renderQotdArchive();}catch(e){}}
   if(!personalOnly){
     if(Array.isArray(payload.provas))provasDB=payload.provas;
@@ -4499,7 +4525,7 @@ function startGoogleOAuth(){
   });
 }
 
-var PANEL_LABELS={dash:'Dashboard',quest:'Questões',qotd:'Questão do Dia',flash:'Flashcards',mmap:'Mapas Mentais',podcast:'Podcasts',cursos:'Cursos',crono:'Cronograma',sr:'Revisão',sim:'OSCE',simfull:'Simulado',calc:'Calculadoras',rx:'Prescrição Simulada',presc:'Consultório',art:'Resumidor',notas:'Caderno',mural:'Mural',ref:'Diretrizes',chat:'Chat IA',perfil:'Perfil',support:'Suporte',adm:'Painel Admin'};
+var PANEL_LABELS={dash:'Dashboard',desemp:'Desempenho',quest:'Questões',qotd:'Questão do Dia',flash:'Flashcards',mmap:'Mapas Mentais',podcast:'Podcasts',cursos:'Cursos',crono:'Cronograma',sr:'Revisão',sim:'OSCE',simfull:'Simulado',calc:'Calculadoras',rx:'Prescrição Simulada',presc:'Consultório',art:'Resumidor',notas:'Caderno',mural:'Mural',ref:'Diretrizes',chat:'Chat IA',perfil:'Perfil',support:'Suporte',adm:'Painel Admin'};
 function closeMobileNav(){
   document.body.classList.remove('mobile-nav-open');
   var b=document.getElementById('btn-mobile-nav');
@@ -4584,7 +4610,7 @@ function hasScope(scope){return !scope||isAdminUser()||userAcessos.indexOf(scope
 // Degustacao: aluno logado, sem nenhum acesso ativo (não comprou pacote/curso).
 function isDegustacao(){return !!(currentUser&&currentUser.role==='aluno'&&!isAdminUser()&&(!userAcessos||userAcessos.length===0));}
 // Paineis liberados na degustacao (o resto fica 🔒 com upsell).
-var DEGUSTACAO_PANELS={dash:1,flash:1,mmap:1,quest:1,qotd:1,perfil:1,support:1,calc:1,podcast:1,crono:1,notas:1,ref:1};
+var DEGUSTACAO_PANELS={dash:1,desemp:1,flash:1,mmap:1,quest:1,qotd:1,perfil:1,support:1,calc:1,podcast:1,crono:1,notas:1,ref:1};
 // Ferramentas com IA liberadas na degustação por COTA (3 usos cada): simulador
 // de casos, simulado, prescrição e chat IA. Após esgotar, vira upsell.
 var TRIAL_PANELS={sim:1,simfull:1,rx:1,chat:1};
@@ -4884,6 +4910,7 @@ function goPanel(id){
   if(id==='mmap')renderMMList();
   if(id==='podcast')renderPodcasts();
   if(id==='cursos')renderCursosAluno();
+  if(id==='desemp')renderDesempenho();
   if(id==='crono')initCrono();
   if(id==='sr')renderSR();
   if(id==='calc')initCalc();
@@ -4917,6 +4944,7 @@ function qotdReadAns(){if(!DB.qotd||typeof DB.qotd!=='object')DB.qotd={};return 
 function qotdSaveAns(mm,q,ok){
   try{if(mm&&mm!==DB.qotd)DB.qotd=mm;}catch(e){}
   if(q&&q.sub){if(!DB.perf[q.sub])DB.perf[q.sub]={correct:0,total:0};DB.perf[q.sub].total++;if(ok)DB.perf[q.sub].correct++;}
+  try{studyEvent(q,ok);}catch(e){}
   try{persist();}catch(e){}
 }
 function qotdTodays(){
@@ -5089,6 +5117,49 @@ function renderPerfBars(){
     return'<div class="perf-bar"><div class="perf-bar-label">'+esc(a.substring(0,20))+'</div><div class="perf-bar-track"><div class="perf-bar-fill" style="width:'+pct+'%;background:'+col+'"></div></div><div class="perf-bar-pct">'+pct+'%</div></div>';
   }).join('');
 }
+function perfPct(d){return d&&d.total?Math.round(d.correct/d.total*100):0;}
+function kpiCard(label,val,col){
+  return '<div class="card" style="flex:1;min-width:130px;padding:.8rem"><div style="font-size:.66rem;text-transform:uppercase;letter-spacing:.06em;color:var(--t3)">'+esc(label)+'</div><div style="font-size:1.4rem;font-weight:800;color:'+(col||'var(--tx)')+';margin-top:.2rem">'+val+'</div></div>';
+}
+// Painel de Desempenho do aluno: KPIs (acerto geral, respondidas, ofensiva, hoje),
+// "Onde focar" (temas mais fracos por DB.perfTema), barras por subespecialidade
+// (DB.perf, histórico completo) e atividade dos últimos 14 dias (DB.act).
+function renderDesempenho(){
+  var el=document.getElementById('desemp-body');if(!el)return;
+  var perf=DB.perf||{};var subs=Object.keys(perf);
+  var totT=0,totC=0;subs.forEach(function(s){totT+=perf[s].total||0;totC+=perf[s].correct||0;});
+  var act=DB.act||{};var streak=computeStreak(act);var hoje=act[todayKey()]||0;
+  if(!totT){
+    el.innerHTML='<div class="ph"><h1>📈 Desempenho</h1><p>Acompanhe sua evolução por subespecialidade e tema.</p></div><div class="card"><div class="empty">Responda questões (no Banco, na Questão do Dia ou no Simulado) para ver seu desempenho aqui.</div></div>';
+    return;
+  }
+  var ov=Math.round(totC/totT*100);
+  var kpis='<div style="display:flex;flex-wrap:wrap;gap:.7rem;margin-bottom:1rem">'
+    +kpiCard('Acerto geral',ov+'%',ov>=70?'var(--grn)':ov>=50?'var(--gold)':'var(--red)')
+    +kpiCard('Respondidas',String(totT),'var(--blue)')
+    +kpiCard('Ofensiva',streak+(streak===1?' dia':' dias')+' 🔥','var(--gold)')
+    +kpiCard('Hoje',String(hoje),'var(--pur)')
+    +'</div>';
+  var weak=[];var pt=DB.perfTema||{};
+  Object.keys(pt).forEach(function(s){Object.keys(pt[s]||{}).forEach(function(t){var d=pt[s][t];if((d.total||0)>=4)weak.push({sub:s,tema:t,pct:perfPct(d),total:d.total});});});
+  weak.sort(function(a,b){return a.pct-b.pct;});
+  var foco='';
+  if(weak.length){
+    foco='<div class="card" style="margin-bottom:1rem"><div style="font-weight:700;margin-bottom:.5rem">🎯 Onde focar</div>'
+      +weak.slice(0,5).map(function(w){var col=w.pct>=70?'var(--grn)':w.pct>=50?'var(--gold)':'var(--red)';return '<div style="display:flex;align-items:center;gap:.6rem;margin:.32rem 0"><span style="flex:1;font-size:.8rem;color:var(--tx)">'+esc(w.tema)+' <span style="color:var(--t3)">· '+esc(w.sub)+'</span></span><span style="font-size:.72rem;color:var(--t3)">'+w.total+'q</span><span style="font-weight:700;color:'+col+';min-width:40px;text-align:right">'+w.pct+'%</span></div>';}).join('')
+      +'<div style="font-size:.68rem;color:var(--t3);margin-top:.5rem">Temas com mais erros (mín. 4 questões). Comece por eles.</div></div>';
+  }
+  var rows=subs.map(function(s){return {sub:s,pct:perfPct(perf[s])};}).sort(function(a,b){return b.pct-a.pct;});
+  var bars='<div class="card" style="margin-bottom:1rem"><div style="font-weight:700;margin-bottom:.6rem">Acerto por subespecialidade</div>'
+    +rows.map(function(r){var col=r.pct>=80?'var(--grn)':r.pct>=60?'var(--blue)':'var(--red)';return '<div class="perf-bar"><div class="perf-bar-label">'+esc(r.sub.substring(0,22))+'</div><div class="perf-bar-track"><div class="perf-bar-fill" style="width:'+r.pct+'%;background:'+col+'"></div></div><div class="perf-bar-pct">'+r.pct+'%</div></div>';}).join('')
+    +'</div>';
+  var days=[];var dd=new Date();for(var i=13;i>=0;i--){var x=new Date(dd);x.setDate(dd.getDate()-i);var k=todayKey(x);days.push({k:k,n:act[k]||0});}
+  var maxN=days.reduce(function(m,d){return Math.max(m,d.n);},0)||1;
+  var actHtml='<div class="card"><div style="font-weight:700;margin-bottom:.6rem">Atividade (14 dias)</div><div style="display:flex;align-items:flex-end;gap:4px;height:70px">'
+    +days.map(function(d){var h=d.n?Math.max(8,Math.round(d.n/maxN*64)):3;var c=d.n?'var(--blue)':'var(--bd)';return '<div title="'+d.k+': '+d.n+' questões" style="flex:1;height:'+h+'px;background:'+c+';border-radius:3px 3px 0 0"></div>';}).join('')
+    +'</div><div style="display:flex;justify-content:space-between;font-size:.62rem;color:var(--t3);margin-top:.3rem"><span>14 dias atrás</span><span>hoje</span></div></div>';
+  el.innerHTML='<div class="ph"><h1>📈 Desempenho</h1><p>Sua evolução por subespecialidade e tema — e onde focar.</p></div>'+kpis+foco+bars+actHtml;
+}
 function updateDashRec(){
   var el=document.getElementById('d-rec');if(!el)return;
   var entries=Object.keys(DB.perf);if(!entries.length)return;
@@ -5239,7 +5310,7 @@ function selectOpt(letter,answer,explanation,src,idx){
     }
   }
   if(src==='gen'){genAnswered[parseInt(idx)]={ok:ok,anulada:anulada};updateGenCounter();}
-  if(!anulada&&q&&q.area){if(!DB.perf[q.area])DB.perf[q.area]={correct:0,total:0};DB.perf[q.area].total++;if(ok)DB.perf[q.area].correct++;persist();try{refreshDash();}catch(e){}}
+  if(!anulada&&q&&q.area){if(!DB.perf[q.area])DB.perf[q.area]={correct:0,total:0};DB.perf[q.area].total++;if(ok)DB.perf[q.area].correct++;try{studyEvent(q,ok);}catch(e){}persist();try{refreshDash();}catch(e){}}
 }
 function revealDisc(i,src){
   var q=src==='gen'?genQs[i]:DB.q[i];if(!q)return;
