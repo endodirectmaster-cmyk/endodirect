@@ -8974,17 +8974,27 @@ function bindAdmSupportRefresh(){
   }
   admSupportSyncPushBtn();
 }
-// Botão "Ativar avisos": fica opaco/desabilitado quando ESTE aparelho já está inscrito no push.
+// Botão "Ativar avisos": apaga quando ESTE aparelho já está inscrito (desabilitado) ou
+// quando a CONTA já tem push em outro aparelho — ex.: o celular (apagado, mas ainda clicável).
 function admSupportSyncPushBtn(){
   var pon=document.getElementById('adm-support-pushon');if(!pon)return;
   if(typeof pushSupported!=='function'||!pushSupported()){pon.style.display='none';return;}
-  function dim(txt){pon.textContent=txt;pon.style.opacity='.55';pon.style.cursor='default';pon.disabled=true;}
+  function dim(txt,disable){pon.textContent=txt;pon.style.opacity='.5';pon.style.cursor=disable?'default':'pointer';pon.disabled=!!disable;}
   function on(){pon.textContent='🔔 Ativar avisos no celular';pon.style.opacity='';pon.style.cursor='';pon.disabled=false;}
   try{
-    if(typeof Notification!=='undefined'&&Notification.permission==='denied'){dim('🔕 Avisos bloqueados');return;}
+    if(typeof Notification!=='undefined'&&Notification.permission==='denied'){dim('🔕 Avisos bloqueados',true);return;}
     pushGetSubscription().then(function(sub){
-      if(sub&&typeof Notification!=='undefined'&&Notification.permission==='granted')dim('✅ Avisos ativados');
-      else on();
+      if(sub&&typeof Notification!=='undefined'&&Notification.permission==='granted'){dim('✅ Avisos ativados',true);return;}
+      // Este aparelho não está inscrito: a CONTA já recebe push em outro aparelho (ex.: celular)?
+      try{
+        var client=getSupabaseClient();
+        if(client&&currentUser&&currentUser.id){
+          client.from('endodirect_push_subs').select('endpoint').eq('user_id',currentUser.id).limit(1).then(function(res){
+            if(res&&!res.error&&res.data&&res.data.length)dim('✅ Avisos ativados no seu celular',false); // apagado, mas ainda dá p/ ativar tb aqui
+            else on();
+          },function(){on();});
+        }else on();
+      }catch(e2){on();}
     }).catch(function(){on();});
   }catch(e){on();}
 }
