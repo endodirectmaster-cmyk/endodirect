@@ -3943,6 +3943,8 @@ function hideSessionWarning(){
 function keepSessionAlive(){hideSessionWarning();sessionLastActivity=Date.now();}
 ['mousemove','mousedown','keydown','touchstart','scroll'].forEach(function(ev){document.addEventListener(ev,markSessionActivity,true);});
 var loggingOut=false; // trava: ignora SIGNED_IN automático após o "Sair" (até um login deliberado)
+// Confirmação no logout iniciado pelo usuário (o auto-logout por inatividade chama doLogout direto, sem prompt).
+function confirmLogout(){ if(confirm('Deseja realmente encerrar a sessão?'))doLogout(); }
 function doLogout(){
   hideSessionWarning();
   loggingOut=true;
@@ -11215,9 +11217,9 @@ document.addEventListener('DOMContentLoaded',function(){
   // USER MENU
   document.getElementById('tb-user-btn').addEventListener('click',function(e){e.stopPropagation();var m=document.getElementById('user-menu');m.style.display=m.style.display==='block'?'none':'block';});
   var admUB=document.getElementById('adm-user-btn');if(admUB)admUB.addEventListener('click',function(e){e.stopPropagation();var m=document.getElementById('adm-user-menu');m.style.display=m.style.display==='block'?'none':'block';});
-  var admLogoutTop=document.getElementById('adm-logout-top');if(admLogoutTop)admLogoutTop.addEventListener('click',doLogout);
+  var admLogoutTop=document.getElementById('adm-logout-top');if(admLogoutTop)admLogoutTop.addEventListener('click',confirmLogout);
   document.addEventListener('click',function(){document.getElementById('user-menu').style.display='none';var am=document.getElementById('adm-user-menu');if(am)am.style.display='none';});
-  document.getElementById('btn-logout').addEventListener('click',doLogout);
+  document.getElementById('btn-logout').addEventListener('click',confirmLogout);
 
   // MOBILE NAV
   var mobileNavBtn=document.getElementById('btn-mobile-nav');
@@ -11248,7 +11250,7 @@ document.addEventListener('DOMContentLoaded',function(){
   var admMenuBtn=document.getElementById('adm-menu-btn');if(admMenuBtn)admMenuBtn.addEventListener('click',function(e){e.stopPropagation();toggleAdminNav();});
   var admBackdrop=document.getElementById('adm-backdrop');if(admBackdrop)admBackdrop.addEventListener('click',closeAdminNav);
   document.querySelectorAll('.adm-nav[data-asec]').forEach(function(b){b.addEventListener('click',function(){renderAdmSec(b.dataset.asec);closeAdminNav();});});
-  var admLogout=document.getElementById('adm-logout');if(admLogout)admLogout.addEventListener('click',doLogout);
+  var admLogout=document.getElementById('adm-logout');if(admLogout)admLogout.addEventListener('click',confirmLogout);
 
   // QUESTÕES
   document.querySelectorAll('[data-qmode]').forEach(function(b){b.addEventListener('click',function(){
