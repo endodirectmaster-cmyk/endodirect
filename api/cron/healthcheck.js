@@ -1,10 +1,11 @@
 // Cron DIÁRIO da plataforma (13:00 UTC = 10h BRT):
 //  1) Health check (lib/healthcheck.js) — resumo semanal às segundas; alerta sempre
 //     que houver falha (qualquer dia); silêncio caso contrário.
-//  2) Publica a Questão do Dia NA PLATAFORMA (lib/instagram.js autoPostDailyQotd):
-//     promove o 1º item da fila a "postada", às 10h. Acoplado aqui porque o plano
-//     limita o nº de cron jobs (2 no teto) — a newsletter/radar seguem no cron das
-//     07:30 BRT (/api/cron/endocrine-radar), sem mudança.
+//  2) BACKUP da Questão do Dia (lib/instagram.js autoPostDailyQotd): a postagem
+//     PRIMÁRIA agora ocorre às 07:30 BRT no cron endocrine-radar, ANTES da newsletter,
+//     para o e-mail do dia trazer a MESMA questão que está no ar (sincronizadas). Esta
+//     chamada às 10h é idempotente (qotd_autopost_date) — só posta se o cron das 07:30
+//     tiver falhado. Acoplado aqui porque o plano limita o nº de cron jobs (2 no teto).
 // Auth: Vercel envia Authorization: Bearer $CRON_SECRET. Também aceita GET manual
 // com o mesmo header.
 const { runHealthcheck } = require('../../lib/healthcheck');

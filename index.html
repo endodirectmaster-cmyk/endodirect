@@ -8741,7 +8741,28 @@ function admPostadosHTML(){
   var allSubs=DIR_SUBS.concat(['Transgeneridade']);
   var gaps=allSubs.filter(function(s){return !bySub[s];});
   var gapsHTML=gaps.length?'<div class="card" style="margin-bottom:.7rem"><div style="font-size:.78rem;color:var(--t2);line-height:1.6"><b style="color:var(--tx)">🕳️ Ainda sem nenhuma postada:</b> '+gaps.map(function(s){return esc(s);}).join(' · ')+'</div></div>':'';
-  return '<div class="card" style="margin-bottom:.7rem"><div style="display:flex;justify-content:space-between;align-items:center"><span class="card-title">✅ Total postadas</span><span class="tag tag-grn" style="font-size:.95rem;padding:.25rem .6rem">'+total+'</span></div>'
+  // Lista gerenciável das questões já postadas (mais recentes primeiro) — saíram da
+  // fila e podem ser reabertas (↺ Reabrir) ou editadas aqui.
+  var postedSorted=posted.slice().sort(function(a,b){return (b.postedAt||0)-(a.postedAt||0);});
+  var listHTML=postedSorted.map(function(it){
+    var idx=igStories.indexOf(it);
+    var when=it.postedAt?new Date(it.postedAt).toLocaleDateString('pt-BR'):'';
+    return '<div style="border:1px solid var(--bd);border-radius:12px;padding:.6rem .8rem;margin-bottom:.45rem;background:var(--s2)">'
+      +'<div style="display:flex;justify-content:space-between;gap:.5rem;flex-wrap:wrap;align-items:center">'
+      +'<div style="font-size:.8rem;font-weight:700;color:var(--tx)">'+dirSubIcon(it.sub)+' '+esc(it.sub||'')+' <span class="tag tag-grn">postada'+(when?' · '+when:'')+'</span></div>'
+      +'<div style="display:flex;gap:.3rem;flex-wrap:wrap">'
+      +'<button class="btn btn-outline btn-sm" data-ig-load="'+idx+'">✎ Editar</button>'
+      +'<button class="btn btn-outline btn-sm" data-ig-dlq="'+idx+'">⬇ Imagem</button>'
+      +'<button class="btn btn-outline btn-sm" data-ig-toggle="'+idx+'">↺ Reabrir</button>'
+      +'<button class="btn btn-outline btn-sm" data-ig-del="'+idx+'">🗑</button>'
+      +'</div></div>'
+      +'<div style="font-size:.72rem;color:var(--t2);margin-top:.35rem">'+esc(String(it.stem||'').slice(0,150))+(String(it.stem||'').length>150?'…':'')+'</div>'
+      +'</div>';
+  }).join('');
+  var listCard='<div class="card" style="margin-bottom:.7rem"><div class="card-head"><span class="card-title">✅ Questões postadas</span><span class="tag tag-grn">'+total+'</span></div>'
+    +'<div style="font-size:.72rem;color:var(--t2);margin-bottom:.55rem;line-height:1.5">Já publicadas — saíram da fila. A mais recente é a Questão do Dia atual. Use <b>↺ Reabrir</b> para devolver à fila.</div>'+listHTML+'</div>';
+  return listCard
+    +'<div class="card" style="margin-bottom:.7rem"><div style="display:flex;justify-content:space-between;align-items:center"><span class="card-title">📊 Distribuição</span><span class="tag tag-grn" style="font-size:.95rem;padding:.25rem .6rem">'+total+'</span></div>'
     +'<div style="font-size:.74rem;color:var(--t2);margin-top:.35rem;line-height:1.55">Distribuição por <b>subespecialidade</b> e <b>tema</b> — use para equilibrar o que está sub-representado.</div></div>'
     +cards+gapsHTML;
 }
@@ -8751,12 +8772,13 @@ function admStoriesHTML(){
   var promoOpts=IG_TOOLS.map(function(t,i){return '<option value="'+i+'">'+esc(t.nome)+'</option>';}).join('');
   var loteSubs='<option value="__random__" selected>Aleatório</option>'+DIR_SUBS.map(function(s){return '<option>'+esc(s)+'</option>';}).join('')+'<option>Transgeneridade</option>';
   // ORDEM DA FILA = ordem de publicação (topo = próxima); reordenável com ↑/↓.
-  var q=(igStories||[]).slice();
-  var nextIdx=-1;for(var _n=0;_n<q.length;_n++){if(q[_n]&&q[_n].status!=='posted'){nextIdx=_n;break;}}
-  var filaHint='<div style="font-size:.72rem;color:var(--t2);margin-bottom:.55rem;line-height:1.5">A ordem abaixo é a <b>ordem de publicação</b> (o topo é a próxima a ir ao ar/Story). Use <b>↑ / ↓</b> para reordenar.</div>';
+  // A FILA mostra só as NÃO postadas. Ao marcar "✓ Postada" (manual ou cron), a
+  // questão SAI da fila e passa a aparecer na aba "Postados".
+  var q=(igStories||[]).filter(function(it){return it&&it.status!=='posted';});
+  var filaHint='<div style="font-size:.72rem;color:var(--t2);margin-bottom:.55rem;line-height:1.5">A ordem abaixo é a <b>ordem de publicação</b> (o topo é a próxima a ir ao ar/Story). Use <b>↑ / ↓</b> para reordenar. Ao marcar <b>✓ Postada</b>, a questão sai da fila e vai para <b>Postados</b>.</div>';
   var fila=q.length?(filaHint+q.map(function(it,i){
-    var idx=igStories.indexOf(it),posted=it.status==='posted';
-    var tag=posted?'<span class="tag tag-grn">postada</span>':(i===nextIdx?'<span class="tag tag-blue">🔜 próxima</span>':'<span class="tag">na fila</span>');
+    var idx=igStories.indexOf(it);
+    var tag=(i===0)?'<span class="tag tag-blue">🔜 próxima</span>':'<span class="tag">na fila</span>';
     return '<div style="border:1px solid var(--bd);border-radius:12px;padding:.7rem .8rem;margin-bottom:.5rem;background:var(--s2)">'
       +'<div style="display:flex;justify-content:space-between;gap:.5rem;flex-wrap:wrap;align-items:center">'
       +'<div style="font-size:.8rem;font-weight:700;color:var(--tx)">'+dirSubIcon(it.sub)+' '+esc(it.sub||'')+' '+tag+'</div>'
@@ -8765,18 +8787,18 @@ function admStoriesHTML(){
       +'<button class="btn btn-outline btn-sm" data-ig-down="'+idx+'"'+(i===q.length-1?' disabled':'')+' title="Descer">↓</button>'
       +'<button class="btn btn-outline btn-sm" data-ig-load="'+idx+'">✎ Editar</button>'
       +'<button class="btn btn-outline btn-sm" data-ig-dlq="'+idx+'">⬇ Imagem</button>'
-      +'<button class="btn btn-outline btn-sm" data-ig-toggle="'+idx+'">'+(posted?'↺ Reabrir':'✓ Postada')+'</button>'
+      +'<button class="btn btn-outline btn-sm" data-ig-toggle="'+idx+'">✓ Postada</button>'
       +'<button class="btn btn-outline btn-sm" data-ig-del="'+idx+'">🗑</button>'
       +'</div></div>'
       +'<div style="font-size:.72rem;color:var(--t2);margin-top:.35rem">'+esc(String(it.stem||'').slice(0,150))+(String(it.stem||'').length>150?'…':'')+'</div>'
       +'</div>';
-  }).join('')):'<div class="empty">Nenhuma questão na fila ainda. Gere uma acima e clique em "Aprovar".</div>';
+  }).join('')):'<div class="empty">Nenhuma questão na fila. As postadas ficam na aba "Postados" — gere/aprove novas para reabastecer.</div>';
   var view=admStoriesView||'lote';
   var nPosted=(igStories||[]).filter(function(q){return q&&q.status==='posted';}).length;
   function nb(id,label){return '<button class="btn '+(view===id?'btn-primary':'btn-outline')+' btn-sm" data-stview="'+id+'" style="padding:.52rem 1.05rem">'+label+'</button>';}
   function vs(id){return (view===id)?'':'display:none';}
   return '<div class="adm-ph"><h1>📲 Questão do Dia</h1></div><div class="adm-pc">'
-   +'<div style="display:flex;gap:.5rem;flex-wrap:wrap;margin-bottom:1.1rem">'+nb('lote','🤖 Gerar lote')+nb('manual','✏️ Manual')+nb('fila','📋 Fila ('+(igStories?igStories.length:0)+')')+nb('postados','✅ Postados ('+nPosted+')')+nb('promo','📣 Divulgação')+'</div>'
+   +'<div style="display:flex;gap:.5rem;flex-wrap:wrap;margin-bottom:1.1rem">'+nb('lote','🤖 Gerar lote')+nb('manual','✏️ Manual')+nb('fila','📋 Fila ('+q.length+')')+nb('postados','✅ Postados ('+nPosted+')')+nb('promo','📣 Divulgação')+'</div>'
    +'<div id="stview-lote" style="'+vs('lote')+'">'
    +'<div class="card" style="margin-bottom:1rem"><div style="font-size:.78rem;color:var(--t2);line-height:1.6">'
    +'<b style="color:var(--tx)">Como funciona:</b> gere as questões em <b>lote</b> → revise/edite → <b>aprove</b>. As aprovadas viram a <b>Questão do Dia no app</b> e a arte/legenda do story. O sistema te <b>lembra por e-mail</b> todo dia.<br>'
@@ -8821,7 +8843,7 @@ function admStoriesHTML(){
    +'<div style="text-align:center">'+igLbl('Imagem do caso (story)')+'<img id="ig-prev-q" alt="" style="width:190px;border-radius:12px;border:1px solid var(--bd)"></div></div>'
    +'</div>'
    +'</div>'
-   +'<div id="stview-fila" style="'+vs('fila')+'"><div class="card"><div class="card-head"><span class="card-title">📋 Fila de questões</span><span class="tag">'+(igStories?igStories.length:0)+'</span></div>'+fila+'</div></div>'
+   +'<div id="stview-fila" style="'+vs('fila')+'"><div class="card"><div class="card-head"><span class="card-title">📋 Fila de questões</span><span class="tag">'+q.length+'</span></div>'+fila+'</div></div>'
    +'<div id="stview-postados" style="'+vs('postados')+'">'+admPostadosHTML()+'</div>'
    +'<div id="stview-promo" style="'+vs('promo')+'"><div class="card"><div class="card-head"><span class="card-title">📣 Stories de divulgação (domingo)</span></div>'
    +'<div style="font-size:.74rem;color:var(--t2);margin-bottom:.6rem;line-height:1.6">Aos <b>domingos</b> o calendário sugere <b>divulgar uma ferramenta</b> da plataforma. Aqui você baixa um <b>fundo pronto</b> (logo + nome da ferramenta + chamada + moldura tracejada) e, no Instagram, <b>sobrepõe um print real</b> da ferramenta dentro da moldura. Escolha a ferramenta, baixe o fundo e copie a legenda.</div>'
@@ -8878,7 +8900,7 @@ function igMakePending(it){return {id:'igp-'+Date.now()+'-'+Math.round(Math.rand
 function igDistribute(i){var it=igLoteDraft[i];if(!it)return;igPending.push(igMakePending(it));igLoteDraft.splice(i,1);persistIgPending();var c=qotdCuratorForSub(it.sub);notify('Distribuída para '+(c?c.nome:'Pendências')+' ('+esc(it.sub||'')+').','ok');renderAdmSec('stories');}
 function igDistributeAll(){if(!igLoteDraft.length)return;var n=igLoteDraft.length;igLoteDraft.forEach(function(it){igPending.push(igMakePending(it));});igLoteDraft=[];persistIgPending();notify(n+' questões distribuídas.','ok');renderAdmSec('stories');}
 // Reordena a fila (ordem = ordem de publicação; topo = próxima). dir: -1 sobe, +1 desce.
-function igMoveQueued(idx,dir){var j=idx+dir;if(idx<0||idx>=igStories.length||j<0||j>=igStories.length)return;var t=igStories[idx];igStories[idx]=igStories[j];igStories[j]=t;persistIgStories();renderAdmSec('stories');}
+function igMoveQueued(idx,dir){if(idx<0||idx>=igStories.length)return;var j=idx+dir;while(j>=0&&j<igStories.length&&igStories[j]&&igStories[j].status==='posted')j+=dir;if(j<0||j>=igStories.length)return;var t=igStories[idx];igStories[idx]=igStories[j];igStories[j]=t;persistIgStories();renderAdmSec('stories');}
 function igLoteEdit(i){var it=igLoteDraft[i];if(!it)return;igEditId=null;stShowView('manual');igFillForm(it);igLoteDraft.splice(i,1);renderIgLote();try{document.getElementById('ig-stem').scrollIntoView({behavior:'smooth',block:'center'});}catch(e){}notify('Carregada no formulário — edite e clique em "Aprovar p/ a fila".','ok');}
 function renderIgLote(){
   var res=document.getElementById('ig-lote-results');if(!res)return;

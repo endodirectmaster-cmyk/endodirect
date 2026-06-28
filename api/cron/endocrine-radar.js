@@ -5,7 +5,7 @@ const { runRadar } = require('../../lib/radar');
 const { sendDailyNewsletter } = require('../../lib/newsletter');
 const { refreshPodcastsFromFeed } = require('../../lib/podcasts');
 const { sendTrialEmails } = require('../../lib/trial-emails');
-const { sendIgDailyNotice } = require('../../lib/instagram');
+const { sendIgDailyNotice, autoPostDailyQotd } = require('../../lib/instagram');
 const { sendAlert } = require('../../lib/alert');
 
 function json(res, status, body) {
@@ -25,6 +25,13 @@ module.exports = async function handler(req, res) {
   }
   try {
     const result = await runRadar();
+    // Publica a Questão do Dia ANTES da newsletter, para que o e-mail do dia traga a
+    // MESMA questão que vai ao ar na plataforma (sincronizadas). Idempotente por dia
+    // (qotd_autopost_date) — o cron healthcheck (10h BRT) só confirma, sem repostar.
+    // Fail-safe: nunca derruba o cron.
+    let qotd = { posted: false, reason: 'skipped' };
+    try { qotd = await autoPostDailyQotd(); }
+    catch (e) { console.error('[cron-radar] auto-post QdD erro:', (e && e.stack) || e); qotd = { posted: false, reason: 'error' }; }
     // Newsletter diária (só no cron): envia os 3 mais relevantes do dia.
     // Fail-safe: nunca derruba o cron do radar se o envio falhar.
     let newsletter = { sent: false, reason: 'skipped' };
@@ -51,7 +58,7 @@ module.exports = async function handler(req, res) {
     let igStory = { sent: false, reason: 'skipped' };
     try { igStory = await sendIgDailyNotice(); }
     catch (e) { console.error('[cron-radar] instagram erro:', (e && e.stack) || e); igStory = { sent: false, reason: 'error' }; }
-    return json(res, 200, { ok: true, ...result, newsletter, podcasts, trialEmails, igStory });
+    return json(res, 200, { ok: true, ...result, qotd, newsletter, podcasts, trialEmails, igStory });
   } catch (error) {
     console.error('[cron-radar] erro:', (error && error.stack) || error);
     try { await sendAlert('Radar diário falhou', ['O cron endocrine-radar lançou erro e NÃO atualizou o mural hoje.', 'Erro: ' + ((error && error.message) || error)]); } catch (_) {}
