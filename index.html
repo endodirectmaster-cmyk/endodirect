@@ -6283,6 +6283,11 @@ function exportAulaPDF(c){
   w.document.write(doc);w.document.close();w.focus();setTimeout(function(){try{w.print();}catch(e){}},400);
 }
 function aulaQuestions(c){
+  // Questões próprias da aula, geradas/curadas por IA — NÃO puxam do Banco. Quando a
+  // aula tem seu conjunto (c.aulaQ), usa-o; senão, cai no banco (provasDB) por área/tema.
+  if(c&&Array.isArray(c.aulaQ)&&c.aulaQ.length){
+    return c.aulaQ.filter(function(q){return q&&q.options&&q.answer&&q.stem;}).slice(0,8);
+  }
   var area=(c.modulo||'').trim();var tema=(c.tema||'').trim();
   var pool=(Array.isArray(provasDB)?provasDB:[]).filter(function(q){return q&&q.options&&q.answer&&String(q.area||q.sub||'').trim()===area;});
   if(tema)pool=pool.filter(function(q){var tm=q.tema||(typeof classifyTema==='function'?classifyTema(((q.stem||'')+' '+(q.explanation||'')),area):'');return tm===tema;});
