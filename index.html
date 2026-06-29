@@ -2842,6 +2842,7 @@ function muralPlain(v){
   return String(v||'').normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase();
 }
 var MURAL_TYPES=['Comunicado','Diretriz','Artigo de Revisão','Ensaio Clínico','Metanálise','Perspectiva Clínica','Discussão Clínica','Estudo Genético','Estudo Original','Evento','Breaking News'];
+var MURAL_EMOJIS=['🧬','💊','🩺','🔬','🧪','🧠','🫀','🩸','🦴','📊','📈','📉','⚖️','💡','⚠️','✅','❌','📌','👉','➡️','⭐','🔥','🚨','📣','📝','✨','🎯','❓','❤️','🍬'];
 function normalizeMuralType(tipo,titulo,texto,fonte){
   var raw=String(tipo||'').trim();
   if(/breaking/i.test(raw)||raw==='Urgente')return'Breaking News'; // 'Urgente' (legado) virou Breaking News
@@ -11162,14 +11163,20 @@ function muralFilterOptions(list,current){
 // ![alt](url) (apenas http/https) em <img> inline. O resto do texto é escapado
 // normalmente (com white-space:pre-line preservando as quebras de linha).
 function muralTextHTML(txt){
-  var s=String(txt||''),re=/!\[([^\]]*)\]\((https?:\/\/[^\s)]+)\)/g,out='',last=0,m;
-  while((m=re.exec(s))){
-    out+=esc(s.slice(last,m.index));
-    out+=safeHttpUrl(m[2])?'<img class="mural-inline-img" src="'+esc(m[2])+'" alt="'+esc(m[1]||'')+'" loading="lazy" referrerpolicy="no-referrer" onerror="this.remove()">':esc(m[0]);
-    last=m.index+m[0].length;
-  }
-  out+=esc(s.slice(last));
-  return out;
+  // Escapa TUDO primeiro (XSS-safe) e só então converte uma marcação simples:
+  // imagens ![alt](url), **negrito**, __sublinhado__ e *itálico*. As imagens viram
+  // placeholders antes da formatação para proteger as URLs das regex de negrito/itálico.
+  var s=esc(String(txt||'')),imgs=[];
+  s=s.replace(/!\[([^\]]*)\]\((https?:\/\/[^\s)]+)\)/g,function(whole,alt,url){
+    if(!safeHttpUrl(url))return whole;
+    imgs.push('<img class="mural-inline-img" src="'+url+'" alt="'+alt+'" loading="lazy" referrerpolicy="no-referrer" onerror="this.remove()">');
+    return 'I'+(imgs.length-1)+'';
+  });
+  s=s.replace(/\*\*([^*\n]+)\*\*/g,'<strong>$1</strong>')
+     .replace(/__([^_\n]+)__/g,'<u>$1</u>')
+     .replace(/\*([^*\n]+)\*/g,'<em>$1</em>');
+  s=s.replace(/I(\d+)/g,function(whole,i){return imgs[+i]||'';});
+  return s;
 }
 function muralNoticeCardHTML(a,admin){
   function dateBR(v){var d=new Date(v||Date.now());if(isNaN(d.getTime()))d=new Date();return d.toLocaleDateString('pt-BR');}
@@ -11404,7 +11411,17 @@ admMuralSecHTML=function(){
     +'<div class="fld2"><label>Link (opcional)</label><input type="text" id="adm-av-link" placeholder="https://..."></div>'
     +'<div class="fld2"><label>Imagem ilustrativa (opcional)</label><div style="display:flex;gap:6px;align-items:center;flex-wrap:wrap"><input type="text" id="adm-av-img" placeholder="https://… cole a URL ou anexe um arquivo" style="flex:1;min-width:190px"><button type="button" class="btn btn-outline btn-sm" id="adm-av-imgbtn">📎 Anexar imagem</button><input type="file" id="adm-av-imgfile" accept="image/*" style="display:none"><span id="adm-av-imgstatus" style="font-size:.72rem;color:var(--t3)"></span></div><div id="adm-av-imgprev" style="margin-top:.5rem"></div></div>'
     +'<div class="fld2" style="margin-bottom:.45rem"><label>Resumir com IA (cole a URL do artigo ou anexe um arquivo)</label><div style="display:flex;gap:6px;align-items:center;flex-wrap:wrap"><input type="text" id="adm-av-aiurl" placeholder="https://… URL para a IA resumir" style="flex:1;min-width:190px"><button type="button" class="btn btn-outline btn-sm" id="adm-av-import">📎 Anexar arquivo</button><button type="button" class="btn btn-outline btn-sm" id="adm-av-aigen">✨ Gerar texto com IA</button><span id="adm-av-fname" style="font-size:.72rem;color:var(--t3)"></span><input type="file" id="adm-av-file" accept=".pdf,.txt,image/*" style="display:none"></div></div>'
-    +'<div class="fld2"><label>Texto <button type="button" class="btn btn-outline btn-sm" id="adm-av-txtimg" style="margin-left:8px;padding:2px 9px;font-size:.68rem">🖼️ Inserir imagem no texto</button> <span id="adm-av-txtimgstatus" style="font-size:.7rem;color:var(--t3)"></span></label><textarea id="adm-av-text" rows="3" placeholder="Resumo em português, mantendo apenas o título no idioma original... Use o botão acima para inserir imagens no meio do texto."></textarea><input type="file" id="adm-av-txtimgfile" accept="image/*" style="display:none"></div>'
+    +'<div class="fld2"><label>Texto</label><textarea id="adm-av-text" rows="4" placeholder="Resumo em português, mantendo apenas o título no idioma original. Selecione um trecho e use B / I / U; use os botões abaixo para emoji e imagens."></textarea>'
+    +'<div style="display:flex;gap:5px;align-items:center;flex-wrap:wrap;margin-top:.45rem">'
+    +'<button type="button" class="btn btn-outline btn-sm" id="adm-av-bold" style="font-weight:800;min-width:34px;padding:3px 0" title="Negrito (selecione o texto)">B</button>'
+    +'<button type="button" class="btn btn-outline btn-sm" id="adm-av-italic" style="font-style:italic;min-width:34px;padding:3px 0" title="Itálico (selecione o texto)">I</button>'
+    +'<button type="button" class="btn btn-outline btn-sm" id="adm-av-underline" style="text-decoration:underline;min-width:34px;padding:3px 0" title="Sublinhado (selecione o texto)">U</button>'
+    +'<button type="button" class="btn btn-outline btn-sm" id="adm-av-emojibtn" style="padding:3px 9px" title="Inserir emoji">😀</button>'
+    +'<button type="button" class="btn btn-outline btn-sm" id="adm-av-txtimg" style="padding:3px 9px">🖼️ Inserir imagem no texto</button>'
+    +'<span id="adm-av-txtimgstatus" style="font-size:.7rem;color:var(--t3)"></span>'
+    +'</div>'
+    +'<div id="adm-av-emojipanel" style="display:none;flex-wrap:wrap;gap:4px;margin-top:.45rem;padding:.45rem;border:1px solid var(--bd);border-radius:8px;background:var(--s2)">'+MURAL_EMOJIS.map(function(em){return '<button type="button" class="adm-av-emoji" data-emoji="'+esc(em)+'" style="background:none;border:0;font-size:1.15rem;line-height:1;cursor:pointer;padding:3px 4px;border-radius:6px">'+em+'</button>';}).join('')+'</div>'
+    +'<input type="file" id="adm-av-txtimgfile" accept="image/*" style="display:none"></div>'
     +'<label class="adm-push-opt" style="display:flex;align-items:center;gap:.5rem;margin:.1rem 0 .8rem;font-size:.83rem;color:var(--t2);cursor:pointer"><input type="checkbox" id="adm-av-push"'+(admMuralEdit===null?' checked':'')+' style="width:16px;height:16px;flex-shrink:0"><span>📲 Notificar os alunos no celular (push)'+(admMuralEdit!==null?' — reenviar este aviso ao salvar':' ao publicar')+'. Use só para avisos e breaking news.</span></label>'
     +'<div style="display:flex;gap:6px"><button class="btn btn-primary" id="btn-adm-addav">'+(admMuralEdit!==null?'💾 Salvar alterações':'+ Publicar no mural')+'</button><button class="btn btn-outline" id="btn-adm-av-cancel">Cancelar</button></div></div>'
   ):'';
@@ -11459,6 +11476,13 @@ bindAdmSec=function(sec){
         }).then(function(){txtImgBtn.disabled=false;});
       });
     }
+    function wrapSel(pre,post){var ta=document.getElementById('adm-av-text');if(!ta)return;var st=ta.selectionStart||0,en=ta.selectionEnd||0,v=ta.value,sel=v.slice(st,en),ins=pre+sel+post;ta.value=v.slice(0,st)+ins+v.slice(en);if(sel){ta.selectionStart=st;ta.selectionEnd=st+ins.length;}else{ta.selectionStart=ta.selectionEnd=st+pre.length;}ta.focus();}
+    var fmtB=document.getElementById('adm-av-bold');if(fmtB)fmtB.addEventListener('click',function(){wrapSel('**','**');});
+    var fmtI=document.getElementById('adm-av-italic');if(fmtI)fmtI.addEventListener('click',function(){wrapSel('*','*');});
+    var fmtU=document.getElementById('adm-av-underline');if(fmtU)fmtU.addEventListener('click',function(){wrapSel('__','__');});
+    var emBtn=document.getElementById('adm-av-emojibtn'),emPanel=document.getElementById('adm-av-emojipanel');
+    if(emBtn&&emPanel)emBtn.addEventListener('click',function(){emPanel.style.display=(emPanel.style.display==='flex')?'none':'flex';});
+    document.querySelectorAll('.adm-av-emoji').forEach(function(b){b.addEventListener('click',function(){var ta=document.getElementById('adm-av-text');if(!ta)return;var st=ta.selectionStart||0,en=ta.selectionEnd||0,em=b.getAttribute('data-emoji')||'';ta.value=ta.value.slice(0,st)+em+ta.value.slice(en);ta.selectionStart=ta.selectionEnd=st+em.length;ta.focus();if(emPanel)emPanel.style.display='none';});});
   })();
   var av=admMuralEdit!==null?admAvisos[admMuralEdit]:null;
   if(av){
