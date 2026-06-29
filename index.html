@@ -341,6 +341,15 @@ textarea{resize:vertical;line-height:1.6}
 .mm-add-branch{background:none;border:1.5px dashed var(--bd2);border-radius:9px;padding:.45rem .9rem;font-size:.76rem;color:var(--t2);cursor:pointer;font-family:var(--font);align-self:flex-start;margin-top:.6rem}
 .mm-add-branch:hover{border-color:var(--blue);color:var(--blue);background:var(--blue-l)}
 .mm-conn-layer{position:absolute;left:0;top:0;z-index:0;overflow:visible;pointer-events:none}
+.rsm{font-size:.83rem;line-height:1.66;color:var(--tx)}
+.rsm-h{display:flex;align-items:center;gap:.5rem;font-size:.72rem;font-weight:800;letter-spacing:.04em;text-transform:uppercase;color:var(--blue2);margin:1.15rem 0 .55rem;padding-left:.62rem;border-left:3px solid var(--blue)}
+.rsm-h:first-child{margin-top:.1rem}
+.rsm-sub{font-size:.84rem;font-weight:700;color:var(--tx);margin:.8rem 0 .35rem}
+.rsm ul{list-style:none;margin:0 0 .25rem;padding:0;display:flex;flex-direction:column;gap:.34rem}
+.rsm li{position:relative;padding-left:1.05rem;color:var(--t2);line-height:1.56}
+.rsm li:before{content:"•";position:absolute;left:.2rem;top:-.02rem;color:var(--blue2);font-weight:800}
+.rsm li b,.rsm li strong{color:var(--tx)}
+.rsm p{margin:.3rem 0 .55rem;color:var(--t2)}
 .crono-day{background:var(--surface);border:1px solid var(--bd);border-radius:var(--r);padding:.8rem .95rem;margin-bottom:.5rem}
 .crono-day-title{font-size:.76rem;font-weight:700;color:var(--tx);margin-bottom:.5rem;text-transform:uppercase;letter-spacing:.05em}
 .crono-sess{display:flex;align-items:center;gap:.6rem;padding:.42rem .65rem;background:var(--s2);border-radius:var(--rs);margin-bottom:3px;font-size:.77rem}
@@ -5243,10 +5252,14 @@ function renderPlano(edit){
   var el=document.getElementById('plano-body');if(!el)return;
   var p=DB.plan;
   if(!p||!p.date||edit){
-    el.innerHTML='<div class="card" style="max-width:520px"><div style="font-weight:700;margin-bottom:.6rem">'+(p&&p.date?'Editar plano':'Criar meu plano de estudo')+'</div>'
+    el.innerHTML='<div class="card" style="max-width:560px;overflow:hidden;padding:0">'
+      +'<div style="background:linear-gradient(135deg,var(--blue),#2a4d8f);color:#fff;padding:1.05rem 1.2rem;display:flex;align-items:center;gap:.7rem"><span style="font-size:1.7rem;line-height:1">🎯</span><div><div style="font-weight:800;font-size:1.05rem">'+(p&&p.date?'Editar plano de estudo':'Criar meu plano de estudo')+'</div><div style="font-size:.76rem;opacity:.9;margin-top:1px">Defina a prova-alvo e a meta diária — montamos seu checklist de cada dia.</div></div></div>'
+      +'<div style="padding:1.1rem 1.2rem">'
       +'<div class="fld2"><label>Prova-alvo</label><input id="plano-exam" value="'+(p?esc(p.exam||''):'')+'" placeholder="Ex: Prova de Título SBEM 2026"></div>'
       +'<div class="g2"><div class="fld2" style="margin:0"><label>Data da prova</label><input type="date" id="plano-date" value="'+(p?esc(p.date||''):'')+'"></div><div class="fld2" style="margin:0"><label>Meta diária (questões)</label><input type="number" id="plano-daily" value="'+(p&&p.dailyQ?p.dailyQ:20)+'" min="5" max="200"></div></div>'
-      +'<button class="btn btn-primary" id="plano-save" style="margin-top:.7rem">🎯 Salvar plano</button>'+(p&&p.date?' <button class="btn btn-ghost" id="plano-cancel">Cancelar</button>':'')+'</div>';
+      +'<div style="display:flex;gap:.55rem;align-items:flex-start;background:var(--s2);border:1px solid var(--bd);border-radius:10px;padding:.6rem .75rem;margin-top:.4rem"><span style="font-size:.95rem;line-height:1.2">💡</span><div style="font-size:.72rem;color:var(--t2);line-height:1.5">Com o plano você ganha <b style="color:var(--tx)">contagem regressiva</b>, <b style="color:var(--tx)">progresso do dia</b> e um <b style="color:var(--tx)">checklist</b> que liga Banco, Caderno de erros, ponto fraco e Simulado.</div></div>'
+      +'<div style="display:flex;gap:.5rem;flex-wrap:wrap;margin-top:.95rem"><button class="btn btn-primary" id="plano-save">🎯 Salvar plano</button>'+(p&&p.date?'<button class="btn btn-ghost" id="plano-cancel">Cancelar</button>':'')+'</div>'
+      +'</div></div>';
     var sv=document.getElementById('plano-save');if(sv)sv.addEventListener('click',function(){
       var exam=(document.getElementById('plano-exam').value||'').trim()||'Minha prova';
       var date=(document.getElementById('plano-date').value||'').trim();
@@ -5994,15 +6007,26 @@ function mmRedraw(){
   if(curMM)renderMMEditor();
 }
 // Renderiza uma folha (recursivamente, com seus subramos) no editor visual.
-function mmLeafHTML(lf,path){
+// Tinta as caixas de subramo com a cor do RAMO (chip claro + texto escuro): destaca
+// do fundo escuro do canvas e dá hierarquia visual por ramo. Cor calculada em JS
+// (mistura com branco) p/ funcionar em qualquer navegador, sem depender de color-mix.
+function mmHex2(c){c=String(c).replace('#','');return [parseInt(c.slice(0,2),16),parseInt(c.slice(2,4),16),parseInt(c.slice(4,6),16)];}
+function mmMix(col,br,bg,bb,t){var a=mmHex2(col);if(a.some(isNaN))return '';return 'rgb('+Math.round(a[0]*t+br*(1-t))+','+Math.round(a[1]*t+bg*(1-t))+','+Math.round(a[2]*t+bb*(1-t))+')';}
+function mmLeafStyle(col){
+  if(!col)return '';
+  var bg=mmMix(col,255,255,255,.15),bd=mmMix(col,255,255,255,.45);
+  return bg?('background:'+bg+';border-color:'+bd+';color:#16233f'):'';
+}
+function mmLeafHTML(lf,path,col){
   var label=typeof lf==='string'?lf:((lf&&lf.label)||'');
   var kids=(lf&&typeof lf==='object'&&Array.isArray(lf.children))?lf.children:[];
+  var st=mmLeafStyle(col);
   var h='<div class="mm-leaf-row"><div class="mm-node-wrap">'
-    +'<div class="mm-sub-txt" contenteditable="true" spellcheck="false" data-mm-leaf="'+path+'">'+esc(label)+'</div>'
+    +'<div class="mm-sub-txt" contenteditable="true" spellcheck="false" data-mm-leaf="'+path+'"'+(st?' style="'+st+'"':'')+'>'+esc(label)+'</div>'
     +'<button class="mm-del" data-mmdelleaf="'+path+'" title="Remover">×</button>'
     +'<button class="mm-add-child" data-mmaddchild="'+path+'" title="Adicionar subramo a partir desta caixa">+</button></div>';
   if(kids.length){
-    h+='<div class="mm-gap"></div><div class="mm-children">'+kids.map(function(c,ci){return mmLeafHTML(c,path+'-'+ci);}).join('')+'</div>';
+    h+='<div class="mm-gap"></div><div class="mm-children">'+kids.map(function(c,ci){return mmLeafHTML(c,path+'-'+ci,col);}).join('')+'</div>';
   }
   return h+'</div>';
 }
@@ -6019,7 +6043,7 @@ function renderMMEditor(){
       +'<div class="mm-node-wrap"><div class="mm-branch-txt" contenteditable="true" spellcheck="false" data-mm-branch="'+bi+'" style="background:'+col+'">'+esc(b.label||'Ramo')+'</div><button class="mm-del" data-mmdelbranch="'+bi+'" title="Remover ramo">×</button></div>'
       +'<div class="mm-gap"></div>'
       +'<div class="mm-subs-block">'
-      +leaves.map(function(lf,li){return mmLeafHTML(lf,bi+'-'+li);}).join('')
+      +leaves.map(function(lf,li){return mmLeafHTML(lf,bi+'-'+li,col);}).join('')
       +'<button class="mm-add-sub" data-mmaddsub="'+bi+'">+ subramo</button>'
       +'</div></div>';
   }).join('');
@@ -6264,20 +6288,40 @@ function toggleAulaDone(c){
   try{persist();}catch(e){}renderAulaPlayer();try{renderCursosAluno();}catch(e){}
   notify(was?'Marcada como não concluída.':'Aula concluída! ✓','ok');
 }
+// Converte o texto puro do resumo (cabeçalhos em CAIXA ALTA, subtítulos Title Case,
+// itens com "• ") em HTML didático: seções com acento de cor, subtítulos e listas.
+// Suporta **negrito** simples. Usado no app (classe .rsm) e na exportação em PDF.
+function resumoInline(s){return esc(s).replace(/\*\*([^*]+)\*\*/g,'<b>$1</b>');}
+function resumoBlocksHTML(r){
+  var lines=String(r||'').split('\n'),out=[],ul=[];
+  function flush(){if(ul.length){out.push('<ul>'+ul.join('')+'</ul>');ul=[];}}
+  lines.forEach(function(ln){
+    var t=ln.trim();
+    if(!t){flush();return;}
+    if(t.charAt(0)==='•'){ul.push('<li>'+resumoInline(t.replace(/^•\s*/,''))+'</li>');return;}
+    if(t.charAt(0)==='-'&&t.charAt(1)===' '){ul.push('<li>'+resumoInline(t.slice(2))+'</li>');return;}
+    flush();
+    var letters=t.replace(/[^A-Za-zÀ-ÿ]/g,'');
+    if(letters.length&&t===t.toUpperCase())out.push('<h3 class="rsm-h">'+resumoInline(t)+'</h3>');
+    else out.push('<h4 class="rsm-sub">'+resumoInline(t)+'</h4>');
+  });
+  flush();
+  return out.join('');
+}
 function aulaResumoHTML(c){
   var r=String(c.resumo||'').trim();
   if(r){
-    var safe='<p>'+esc(r).replace(/\n{2,}/g,'</p><p>').replace(/\n/g,'<br>')+'</p>';
-    return '<div style="font-size:.82rem;line-height:1.7;color:var(--tx)">'+safe+'</div><div style="margin-top:.85rem;display:flex;gap:.5rem;flex-wrap:wrap"><button class="btn btn-primary btn-sm" id="aula-pdf">📄 Baixar PDF</button>'+(c.pdfUrl?'<a class="btn btn-outline btn-sm" href="'+esc(c.pdfUrl)+'" target="_blank" rel="noopener">📎 PDF anexado</a>':'')+'</div>';
+    return '<div class="rsm">'+resumoBlocksHTML(r)+'</div>'
+      +'<div style="margin-top:1.05rem;display:flex;gap:.5rem;flex-wrap:wrap"><button class="btn btn-primary btn-sm" id="aula-pdf">📄 Baixar PDF</button>'+(c.pdfUrl?'<a class="btn btn-outline btn-sm" href="'+esc(c.pdfUrl)+'" target="_blank" rel="noopener">📎 PDF anexado</a>':'')+'</div>';
   }
   if(c.pdfUrl)return '<div style="font-size:.82rem;color:var(--t2);margin-bottom:.7rem">O resumo desta aula está disponível em PDF.</div><a class="btn btn-primary btn-sm" href="'+esc(c.pdfUrl)+'" target="_blank" rel="noopener">📄 Abrir PDF</a>';
   return '<div class="empty">O resumo desta aula ainda não foi publicado.</div>';
 }
 function exportAulaPDF(c){
   var r=String(c.resumo||'').trim();if(!r){notify('Sem resumo para exportar.','err');return;}
-  var safe='<p>'+esc(r).replace(/\n{2,}/g,'</p><p>').replace(/\n/g,'<br>')+'</p>';
-  var css='body{font-family:Arial,Helvetica,sans-serif;color:#222;line-height:1.65;max-width:720px;margin:0 auto;padding:26px}h1{font-size:20px;color:#0b1325;margin:0 0 2px}.sub{color:#667;font-size:12px;margin-bottom:18px}p{margin:0 0 10px;font-size:13.5px}@media print{body{padding:0}}';
-  var doc='<!doctype html><html><head><meta charset="utf-8"><title>'+esc(c.title||'Resumo')+'</title><style>'+css+'</style></head><body><h1>'+esc(c.title||'Resumo da aula')+'</h1><div class="sub">'+esc(cursoNomeBySlug(c.curso))+(c.modulo?' · '+esc(c.modulo):'')+' — Endodirect</div>'+safe+'</body></html>';
+  var body=resumoBlocksHTML(r);
+  var css='*{box-sizing:border-box}body{font-family:Arial,Helvetica,sans-serif;color:#222d44;line-height:1.6;max-width:720px;margin:0 auto;padding:32px}h1{font-size:21px;color:#0b1325;margin:0 0 3px}.sub{color:#6a7690;font-size:12px;margin-bottom:18px;padding-bottom:13px;border-bottom:1px solid #e4e9f2}h3{font-size:12px;font-weight:800;letter-spacing:.05em;text-transform:uppercase;color:#2c5fc4;margin:18px 0 7px;padding-left:9px;border-left:3px solid #2c5fc4}h4{font-size:13.5px;font-weight:700;color:#16233f;margin:13px 0 5px}ul{list-style:none;margin:0 0 6px;padding:0}li{position:relative;padding-left:16px;font-size:13px;margin-bottom:5px;color:#33405a}li:before{content:"•";position:absolute;left:3px;color:#2c5fc4;font-weight:800}b{color:#16233f}@media print{body{padding:6px}}';
+  var doc='<!doctype html><html><head><meta charset="utf-8"><title>'+esc(c.title||'Resumo')+'</title><style>'+css+'</style></head><body><h1>'+esc(c.title||'Resumo da aula')+'</h1><div class="sub">'+esc(cursoNomeBySlug(c.curso))+(c.modulo?' · '+esc(c.modulo):'')+' — Endodirect</div>'+body+'</body></html>';
   var w=window.open('','_blank','width=820,height=1000');
   if(!w){notify('Permita pop-ups para baixar o PDF.','err');return;}
   w.document.write(doc);w.document.close();w.focus();setTimeout(function(){try{w.print();}catch(e){}},400);
@@ -6297,16 +6341,14 @@ function aulaQuestions(c){
 function renderAulaQuest(c){aulaQ=aulaQuestions(c);aulaQAns={};renderAulaQuestBody(c);}
 function renderAulaQuestBody(c){
   var box=document.getElementById('aula-quest-box');if(!box)return;
-  var gerar='<button class="btn btn-outline btn-sm" id="aula-gen-ia">✨ Gerar '+(aulaQ.length?'novas ':'')+'questões com IA</button>';
   if(!aulaQ.length){
-    box.innerHTML='<div class="empty" style="margin-bottom:.6rem">Ainda não há questões deste tema no banco — gere com IA ou pratique no Banco.</div><div style="display:flex;gap:.6rem;flex-wrap:wrap;align-items:center">'+gerar+'<a href="#" id="aula-go-quest" style="color:var(--blue);font-size:.78rem">ir ao Banco de Questões</a></div>';
+    box.innerHTML='<div class="empty" style="margin-bottom:.6rem">Esta aula ainda não tem questões.</div><div style="display:flex;gap:.6rem;flex-wrap:wrap;align-items:center"><a href="#" id="aula-go-quest" style="color:var(--blue);font-size:.78rem">ir ao Banco de Questões →</a></div>';
   }else{
-    box.innerHTML='<div style="font-size:.72rem;color:var(--t3);margin-bottom:.5rem">'+aulaQ.length+' questões sobre '+esc(c.tema||c.modulo||'esta aula')+' — responda para fixar (conta no seu Desempenho).</div><div id="aula-q-list"></div><div id="aula-q-score" style="margin-top:.55rem;font-size:.78rem;color:var(--t2)"></div><div style="margin-top:.75rem">'+gerar+'</div>';
+    box.innerHTML='<div style="font-size:.72rem;color:var(--t3);margin-bottom:.5rem">'+aulaQ.length+' questões sobre '+esc(c.tema||c.modulo||'esta aula')+' — responda para fixar (conta no seu Desempenho).</div><div id="aula-q-list"></div><div id="aula-q-score" style="margin-top:.55rem;font-size:.78rem;color:var(--t2)"></div>';
     var list=document.getElementById('aula-q-list');
     list.innerHTML=aulaQ.map(function(q,i){return '<div style="margin-bottom:.7rem" id="aula-q-'+i+'">'+qotdCardHTML(q,null,'🧠 Questão '+(i+1))+'</div>';}).join('');
     aulaQ.forEach(function(q,i){var cont=document.getElementById('aula-q-'+i);if(!cont)return;cont.querySelectorAll('[data-qotd-opt]').forEach(function(b){b.addEventListener('click',function(){aulaAnswer(i,b.getAttribute('data-qotd-opt'));});});});
   }
-  var gi=document.getElementById('aula-gen-ia');if(gi)gi.addEventListener('click',function(){genAulaQuestions(c,gi);});
   var gq=document.getElementById('aula-go-quest');if(gq)gq.addEventListener('click',function(e){e.preventDefault();goPanel('quest');});
 }
 function genAulaQuestions(c,btn){
