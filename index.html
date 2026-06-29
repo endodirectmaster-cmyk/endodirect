@@ -2715,13 +2715,39 @@ var FC_MEMBER={
  "Transgeneridade":[["Objetivo dos níveis na hormonização feminilizante?","Estradiol em faixa fisiológica feminina e testosterona em faixa feminina."],["Por que evitar etinilestradiol em mulheres trans?","Maior risco tromboembólico; preferir estradiol (oral ou transdérmico)."],["Vantagem do estrogênio transdérmico?","Menor risco trombótico; preferível em ≥40 anos ou com fatores de risco."],["Antiandrógenos usados na feminização?","Espironolactona ou acetato de ciproterona (atenção à dose/hepatotoxicidade)."],["Efeitos esperados da feminização?","Crescimento mamário, redistribuição de gordura, pele mais macia e redução de pelos e da libido."],["O crescimento mamário na feminização é reversível?","Parcialmente irreversível após desenvolvido."],["Monitorização na feminização?","Estradiol, testosterona, potássio (se espironolactona) e função hepática."],["Efeitos irreversíveis da testosterona em homens trans?","Engrossamento da voz e crescimento de pelos faciais/corporais."],["Principal efeito adverso laboratorial da testosterona em homens trans?","Eritrocitose (monitorar hematócrito)."],["A amenorreia é esperada na masculinização?","Sim, em geral nos primeiros meses de testosterona."],["Orientação sobre preservação de fertilidade?","Oferecer antes de iniciar a hormonização (criopreservação de gametas), pois ela pode reduzir a fertilidade."],["Cuidado com a saúde óssea em pessoas trans?","Manter hormonização adequada, sobretudo após gonadectomia, para preservar a densidade óssea."],["Rastreios a manter conforme os órgãos presentes?","Ex.: colo do útero/mama se presentes; próstata se presente — individualizar."],["Relevância do tabagismo na feminização?","Aumenta o risco tromboembólico do estrogênio; estimular a cessação."],["Tempo para os efeitos da hormonização?","Mudanças graduais ao longo de meses a 2–3 anos, variando por indivíduo."]],
  "Lípides":[["Perfil lipídico em jejum x sem jejum?","Pode ser sem jejum na maioria; jejum se triglicerídeos muito elevados ou para avaliar TG com precisão."],["Fórmula de Friedewald e sua limitação?","LDL = CT − HDL − TG/5; imprecisa com TG ≥400 mg/dL."],["O que é colesterol não-HDL e quando usar?","CT − HDL; meta secundária útil, sobretudo na hipertrigliceridemia."],["Efeitos adversos das estatinas?","Mialgia, elevação de transaminases e, raramente, miopatia/rabdomiólise; pequeno aumento do risco de DM."],["Conduta na mialgia atribuída à estatina?","Avaliar CK, suspender e reintroduzir ou trocar; tentar dose menor ou dias alternados."],["Relevância da lipoproteína(a)?","Fator de risco cardiovascular genético e independente; dosar ao menos uma vez em risco aumentado."],["Mecanismo do ácido bempedoico?","Inibe a ATP-citrato liase, reduzindo o LDL; útil na intolerância a estatina."],["Inclisirana: mecanismo e vantagem?","siRNA que reduz a produção de PCSK9; aplicação semestral."],["Quando suspeitar de hipercolesterolemia familiar?","LDL muito elevado, história familiar de DCV precoce e xantomas; usar critérios clínicos e rastrear familiares."],["Causas secundárias de dislipidemia?","Hipotireoidismo, DM descompensado, doença renal/hepática, álcool e fármacos."],["Estatina de alta intensidade: exemplos e meta de redução?","Atorvastatina 40–80 mg, rosuvastatina 20–40 mg; redução do LDL ≥50%."],["Mecanismo da ezetimiba?","Inibe a absorção intestinal de colesterol."],["Papel do ômega-3 (EPA) em alta dose?","Reduz triglicerídeos; o icosapento de etila reduziu eventos em pacientes selecionados."],["Risco da hipertrigliceridemia muito alta (≥500–1000)?","Pancreatite aguda."],["Mudanças de estilo de vida na dislipidemia?","Dieta, perda de peso, atividade física, cessação do tabagismo e moderação do álcool."]]
 };
+// Auto-cura de duplicatas: mantém 1 flashcard por enunciado (frente), fundindo
+// flags (shared/member) e priorizando o card editado pelo aluno. Corrige o acúmulo
+// histórico em que a AMOSTRA de 'Esportiva'/'Pediatria' era re-semeada a cada carga
+// (o bloco de publicados renomeava a categoria, quebrando o guard por categoria).
+function dedupFcDeck(){
+  if(!Array.isArray(DB.fc)||!DB.fc.length)return 0;
+  var seen={},out=[],removed=0;
+  DB.fc.forEach(function(c){
+    if(!c){removed++;return;}
+    var f=(c.front!=null)?String(c.front).trim().toLowerCase():'';
+    if(!f){out.push(c);return;}
+    var ex=seen[f];
+    if(!ex){seen[f]=c;out.push(c);return;}
+    if(c.shared)ex.shared=true;
+    if(c.member)ex.member=true;
+    if(!c.seed&&ex.seed){ex.id=c.id;ex.front=c.front;ex.back=c.back;ex.cat=c.cat;ex.seed=false;}
+    removed++;
+  });
+  if(removed)DB.fc=out;
+  return removed;
+}
 function seedFlashcards(){
+  // Auto-cura ANTES de semear: remove duplicatas por enunciado (ver dedupFcDeck).
+  var deduped=dedupFcDeck();
   // AMOSTRA (FC_SEED): ~5 cards/subespecialidade — disponível p/ TODOS
-  // (inclusive degustação). Idempotente por categoria (respeita decks do usuário).
-  var catsPresent={};DB.fc.forEach(function(c){if(c&&c.cat)catsPresent[c.cat]=1;});
+  // (inclusive degustação). Idempotente por categoria — considerando também o nome
+  // CANÔNICO (canonSub): o bloco de publicados renomeia a categoria do card-amostra
+  // (ex.: 'Esportiva'→'Endocrinologia do Esporte'); sem checar o canônico, a amostra
+  // dessas categorias era re-semeada a cada carga (bug de duplicação).
+  var catsPresent={};DB.fc.forEach(function(c){if(c&&c.cat){catsPresent[c.cat]=1;catsPresent[canonSub(c.cat)]=1;}});
   var added=0;
   Object.keys(FC_SEED).forEach(function(cat){
-    if(catsPresent[cat])return;
+    if(catsPresent[cat]||catsPresent[canonSub(cat)])return;
     FC_SEED[cat].forEach(function(pair){
       DB.fc.push({id:Date.now()+Math.random(),front:pair[0],back:pair[1],cat:cat,due:Date.now(),box:1,at:Date.now(),seed:true});added++;
     });
@@ -2772,8 +2798,8 @@ function seedFlashcards(){
   function reconcile(setObj){Object.keys(setObj).forEach(function(cat){setObj[cat].forEach(function(pair){DB.fc.forEach(function(c){if(c&&c.seed&&c.cat===cat&&c.front===pair[0]&&c.back!==pair[1]){c.back=pair[1];fixed++;}});});});}
   reconcile(FC_SEED);
   if(typeof FC_MEMBER!=='undefined')reconcile(FC_MEMBER);
-  if(added||fixed){lsSet('fc_seeded',1);lsSet('fc',DB.fc);}
-  return added+fixed;
+  if(added||fixed||deduped){lsSet('fc_seeded',1);lsSet('fc',DB.fc);}
+  return added+fixed+deduped;
 }
 function persistProvas(){lsSet('provas',provasDB);queueRemoteStateSave();}
 var MURAL_SOURCE_FILTERS=[
@@ -2811,7 +2837,7 @@ function normalizeMuralSource(source){
 function muralPlain(v){
   return String(v||'').normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase();
 }
-var MURAL_TYPES=['Comunicado','Diretriz','Artigo de Revisão','Ensaio Clínico','Metanálise','Perspectiva Clínica','Estudo Genético','Estudo Original','Evento','Breaking News'];
+var MURAL_TYPES=['Comunicado','Diretriz','Artigo de Revisão','Ensaio Clínico','Metanálise','Perspectiva Clínica','Discussão Clínica','Estudo Genético','Estudo Original','Evento','Breaking News'];
 function normalizeMuralType(tipo,titulo,texto,fonte){
   var raw=String(tipo||'').trim();
   if(/breaking/i.test(raw)||raw==='Urgente')return'Breaking News'; // 'Urgente' (legado) virou Breaking News
@@ -6209,7 +6235,25 @@ function renderPodcasts(){
 // ── CURSOS (aluno) ──
 var cursoFilter='';
 var cursoMod=''; // subespecialidade (módulo) selecionada dentro do curso
-function cursoAcessivel(slug){return !slug||isAdminUser()||(Array.isArray(userAcessos)&&userAcessos.indexOf('curso:'+slug)>=0);}
+// Conta de demonstração (vitrine): vê todos os cursos, mesmo os ocultos ao público.
+function isTestShowcase(){return String((currentUser&&currentUser.email)||'').toLowerCase()==='alunopro@endodirect.com.br';}
+// Cursos visíveis SÓ para admin/demonstração (não aparecem para nenhum aluno real).
+var SHOWCASE_ONLY_CURSOS={endoteem:1,hiperglicemia:1,lipides:1};
+// Se o CARD do curso aparece no catálogo do aluno. 'endo_essencial' aparece para
+// todos (bloqueado p/ não-Gold, com upsell); os demais só admin/demonstração.
+function cursoVisivel(slug){
+  if(!slug)return true;
+  if(isAdminUser()||isTestShowcase())return true;
+  return !SHOWCASE_ONLY_CURSOS[slug];
+}
+// Se o curso está LIBERADO (desbloqueado) para o usuário atual.
+function cursoAcessivel(slug){
+  if(!slug)return true;
+  if(isAdminUser()||isTestShowcase())return true;
+  if(SHOWCASE_ONLY_CURSOS[slug])return false;               // demais cursos: ninguém acessa
+  if(slug==='endo_essencial')return planRank()>=2||(Array.isArray(userAcessos)&&userAcessos.indexOf('curso:'+slug)>=0); // só Gold (ou quem já tem o curso)
+  return (Array.isArray(userAcessos)&&userAcessos.indexOf('curso:'+slug)>=0);
+}
 function renderCursosAluno(){
   var data=Array.isArray(admCursos)?admCursos:[];
   var frow=document.getElementById('curso-filter-row');
@@ -6227,7 +6271,8 @@ function renderCursosAluno(){
     return '<button type="button" data-cursofilter="'+esc(slug)+'" style="display:flex;flex-direction:column;align-items:flex-start;gap:.2rem;border:1.5px solid '+(active?'var(--blue)':'var(--bd2)')+';background:'+(active?'var(--blue-l)':'var(--surface)')+';border-radius:14px;padding:.7rem .9rem;cursor:pointer;min-width:155px;text-align:left"><span style="font-size:1.45rem">'+icon+'</span><span style="font-size:.83rem;font-weight:700;color:var(--tx)">'+esc(nome)+'</span><span style="font-size:.68rem;color:var(--t3)">'+n+' aula'+(n===1?'':'s')+'</span></button>';
   }
   var allCount=data.filter(function(c){return cursoAcessivel(c.curso);}).length;
-  if(frow)frow.innerHTML='<div style="display:flex;flex-wrap:wrap;gap:.6rem">'+catalog.map(function(cc){return aTile(cc.slug,cc.nome,cnt[cc.slug]||0,'🎓');}).join('')+'</div>';
+  var catVis=catalog.filter(function(cc){return cursoVisivel(cc.slug);});
+  if(frow)frow.innerHTML='<div style="display:flex;flex-wrap:wrap;gap:.6rem">'+catVis.map(function(cc){return aTile(cc.slug,cc.nome,cnt[cc.slug]||0,'🎓');}).join('')+'</div>';
   if(cursoFilter&&!cursoAcessivel(cursoFilter)){cursoFilter='';cursoMod='';}
   var el=document.getElementById('curso-list');if(!el)return;
   // Primeira entrada: mostra só os cards de curso (frow). As subespecialidades
