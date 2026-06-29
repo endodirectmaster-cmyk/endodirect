@@ -431,7 +431,7 @@ textarea{resize:vertical;line-height:1.6}
 .mural-switch.on .ms-dot{left:21px}
 .mural-count-pill{display:inline-flex;align-items:center;justify-content:center;border-radius:5px;background:var(--blue-l);color:var(--blue);font-size:.66rem;font-weight:800;padding:.34rem .6rem;white-space:nowrap}
 .mural-theme-pill{display:inline-flex;align-items:center;justify-content:center;border-radius:5px;background:var(--s2);color:var(--tx);font-size:.66rem;font-weight:800;padding:.34rem .6rem;white-space:nowrap}
-.mural-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:1rem}
+.mural-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:1rem;grid-auto-flow:dense}
 .mural-card{position:relative;background:var(--surface);border:1px solid var(--bd);border-left:4px solid var(--blue);border-radius:var(--rs);padding:1.2rem 1.25rem;min-height:178px;box-shadow:0 1px 2px rgba(26,39,68,.035)}
 .mural-card-red{border-left-color:#c0392b}
 .mural-card-purple{border-left-color:#6d3fb5}
@@ -451,6 +451,8 @@ textarea{resize:vertical;line-height:1.6}
 .mural-source{font-size:.75rem;font-weight:800;color:#5cc8f5;overflow-wrap:anywhere;word-break:break-word}
 .mural-figure{margin:.1rem 0 .85rem;border:1px solid var(--bd);border-radius:12px;overflow:hidden;background:#fff;line-height:0}
 .mural-figure img{display:block;width:100%;max-height:260px;object-fit:contain;background:#fff}
+.mural-card-wide{grid-column:1/-1}
+.mural-inline-img{display:block;max-width:100%;max-height:340px;object-fit:contain;border:1px solid var(--bd);border-radius:10px;background:#fff;margin:.65rem 0}
 .mural-source a{color:#5cc8f5;text-decoration:none}
 .mural-source a:hover{text-decoration:underline}
 .mural-empty{grid-column:1/-1}
@@ -11156,6 +11158,19 @@ function muralFilterOptions(list,current){
   if(current&&subs.indexOf(current)<0)current='';
   return{current:current,html:'<option value="">Todos</option>'+subs.map(function(s){return'<option value="'+esc(s)+'">'+esc(s)+'</option>';}).join('')};
 }
+// Renderiza o texto do card escapando tudo, mas convertendo imagens em markdown
+// ![alt](url) (apenas http/https) em <img> inline. O resto do texto é escapado
+// normalmente (com white-space:pre-line preservando as quebras de linha).
+function muralTextHTML(txt){
+  var s=String(txt||''),re=/!\[([^\]]*)\]\((https?:\/\/[^\s)]+)\)/g,out='',last=0,m;
+  while((m=re.exec(s))){
+    out+=esc(s.slice(last,m.index));
+    out+=safeHttpUrl(m[2])?'<img class="mural-inline-img" src="'+esc(m[2])+'" alt="'+esc(m[1]||'')+'" loading="lazy" referrerpolicy="no-referrer" onerror="this.remove()">':esc(m[0]);
+    last=m.index+m[0].length;
+  }
+  out+=esc(s.slice(last));
+  return out;
+}
 function muralNoticeCardHTML(a,admin){
   function dateBR(v){var d=new Date(v||Date.now());if(isNaN(d.getTime()))d=new Date();return d.toLocaleDateString('pt-BR');}
   var sub=muralSubspecialty(a),meta=muralSubMeta(sub),tipo=muralDisplayType(a);
@@ -11163,12 +11178,14 @@ function muralNoticeCardHTML(a,admin){
   var source=(a.link&&safeHttpUrl(a.link))?'<a href="'+esc(a.link)+'" target="_blank" rel="noopener">'+esc(fonte)+'</a>':esc(fonte);
   var i=admAvisos.indexOf(a);
   var imgHTML=(a.img&&safeHttpUrl(a.img))?'<div class="mural-figure"><img src="'+esc(a.img)+'" alt="" loading="lazy" referrerpolicy="no-referrer" onerror="this.closest(\'.mural-figure\').remove()"></div>':'';
-  return'<article class="mural-card '+meta.card+'" data-mural-card>'
+  var _txt=String(a.texto||'');
+  var _wide=/!\[[^\]]*\]\(https?:\/\//.test(_txt)||tipo==='Discussão Clínica'||_txt.length>1100;
+  return'<article class="mural-card '+meta.card+(_wide?' mural-card-wide':'')+'" data-mural-card>'
     +'<div class="mural-card-tags"><span class="tag tag-blue">'+esc(tipo)+'</span><span class="tag '+meta.tag+'">'+esc(sub)+'</span></div>'
     +'<h3>'+esc(a.titulo||'Aviso aos alunos')+'</h3>'
     +'<div class="mural-date">'+dateBR(a.at)+'</div>'
     +imgHTML
-    +'<div class="mural-text">'+esc(a.texto||'Comunicado publicado pela equipe Endodirect.')+'</div>'
+    +'<div class="mural-text">'+muralTextHTML(a.texto||'Comunicado publicado pela equipe Endodirect.')+'</div>'
     +'<div class="mural-source">Fonte: '+source+'</div>'
     +(admin?'<div class="mural-card-actions">'+(isRadarAuto(a)?'<button class="btn btn-outline btn-sm" data-adm-editav="'+i+'">✏️ Editar</button><button class="btn btn-outline btn-sm" data-adm-hideradar="'+esc(avisoKeyStr(a))+'">🙈 Ocultar</button>':'<button class="btn btn-outline btn-sm" data-adm-editav="'+i+'">Editar</button><button class="btn btn-outline btn-sm" data-adm-delav="'+i+'" style="color:var(--red);border-color:var(--red)">🗑 Excluir</button>')+'</div>':'')
     +'</article>';
@@ -11387,7 +11404,7 @@ admMuralSecHTML=function(){
     +'<div class="fld2"><label>Link (opcional)</label><input type="text" id="adm-av-link" placeholder="https://..."></div>'
     +'<div class="fld2"><label>Imagem ilustrativa (opcional)</label><div style="display:flex;gap:6px;align-items:center;flex-wrap:wrap"><input type="text" id="adm-av-img" placeholder="https://… cole a URL ou anexe um arquivo" style="flex:1;min-width:190px"><button type="button" class="btn btn-outline btn-sm" id="adm-av-imgbtn">📎 Anexar imagem</button><input type="file" id="adm-av-imgfile" accept="image/*" style="display:none"><span id="adm-av-imgstatus" style="font-size:.72rem;color:var(--t3)"></span></div><div id="adm-av-imgprev" style="margin-top:.5rem"></div></div>'
     +'<div class="fld2" style="margin-bottom:.45rem"><label>Resumir com IA (cole a URL do artigo ou anexe um arquivo)</label><div style="display:flex;gap:6px;align-items:center;flex-wrap:wrap"><input type="text" id="adm-av-aiurl" placeholder="https://… URL para a IA resumir" style="flex:1;min-width:190px"><button type="button" class="btn btn-outline btn-sm" id="adm-av-import">📎 Anexar arquivo</button><button type="button" class="btn btn-outline btn-sm" id="adm-av-aigen">✨ Gerar texto com IA</button><span id="adm-av-fname" style="font-size:.72rem;color:var(--t3)"></span><input type="file" id="adm-av-file" accept=".pdf,.txt,image/*" style="display:none"></div></div>'
-    +'<div class="fld2"><label>Texto</label><textarea id="adm-av-text" rows="3" placeholder="Resumo em português, mantendo apenas o título no idioma original..."></textarea></div>'
+    +'<div class="fld2"><label>Texto <button type="button" class="btn btn-outline btn-sm" id="adm-av-txtimg" style="margin-left:8px;padding:2px 9px;font-size:.68rem">🖼️ Inserir imagem no texto</button> <span id="adm-av-txtimgstatus" style="font-size:.7rem;color:var(--t3)"></span></label><textarea id="adm-av-text" rows="3" placeholder="Resumo em português, mantendo apenas o título no idioma original... Use o botão acima para inserir imagens no meio do texto."></textarea><input type="file" id="adm-av-txtimgfile" accept="image/*" style="display:none"></div>'
     +'<label class="adm-push-opt" style="display:flex;align-items:center;gap:.5rem;margin:.1rem 0 .8rem;font-size:.83rem;color:var(--t2);cursor:pointer"><input type="checkbox" id="adm-av-push"'+(admMuralEdit===null?' checked':'')+' style="width:16px;height:16px;flex-shrink:0"><span>📲 Notificar os alunos no celular (push)'+(admMuralEdit!==null?' — reenviar este aviso ao salvar':' ao publicar')+'. Use só para avisos e breaking news.</span></label>'
     +'<div style="display:flex;gap:6px"><button class="btn btn-primary" id="btn-adm-addav">'+(admMuralEdit!==null?'💾 Salvar alterações':'+ Publicar no mural')+'</button><button class="btn btn-outline" id="btn-adm-av-cancel">Cancelar</button></div></div>'
   ):'';
@@ -11423,6 +11440,23 @@ bindAdmSec=function(sec){
           if(imgStatus)imgStatus.textContent='';
           notify(uploadErrorMessage(e),'err');
         }).then(function(){imgBtn.disabled=false;});
+      });
+    }
+    var txtImgBtn=document.getElementById('adm-av-txtimg'),txtImgFile=document.getElementById('adm-av-txtimgfile'),txtImgStatus=document.getElementById('adm-av-txtimgstatus');
+    if(txtImgBtn&&txtImgFile){
+      txtImgBtn.addEventListener('click',function(){txtImgFile.click();});
+      txtImgFile.addEventListener('change',function(){
+        var f=txtImgFile.files&&txtImgFile.files[0];if(!f)return;
+        if(!/^image\//.test(f.type)){notify('Selecione uma imagem.','err');return;}
+        if(f.size>8*1024*1024){notify('Imagem muito grande (máx 8 MB).','err');return;}
+        if(txtImgStatus)txtImgStatus.textContent='Enviando…';txtImgBtn.disabled=true;
+        uploadAdminAsset(f,'mural').then(function(res){
+          var ta=document.getElementById('adm-av-text');var token='\n![]('+res.url+')\n';
+          if(ta){var s=ta.selectionStart,e=ta.selectionEnd;if(typeof s==='number'){ta.value=ta.value.slice(0,s)+token+ta.value.slice(e);ta.selectionStart=ta.selectionEnd=s+token.length;}else{ta.value+=token;}ta.focus();}
+          if(txtImgStatus)txtImgStatus.textContent='✓ inserida';
+        }).catch(function(e){
+          if(txtImgStatus)txtImgStatus.textContent='';notify(uploadErrorMessage(e),'err');
+        }).then(function(){txtImgBtn.disabled=false;});
       });
     }
   })();
