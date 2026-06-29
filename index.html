@@ -449,6 +449,8 @@ textarea{resize:vertical;line-height:1.6}
 .mural-date{font-size:.72rem;font-weight:800;color:var(--t3);margin-bottom:.65rem}
 .mural-text{font-size:.79rem;color:var(--t2);line-height:1.7;margin-bottom:.9rem;white-space:pre-line;overflow-wrap:anywhere;word-break:break-word}
 .mural-source{font-size:.75rem;font-weight:800;color:#5cc8f5;overflow-wrap:anywhere;word-break:break-word}
+.mural-figure{margin:.1rem 0 .85rem;border:1px solid var(--bd);border-radius:12px;overflow:hidden;background:#fff;line-height:0}
+.mural-figure img{display:block;width:100%;max-height:260px;object-fit:contain;background:#fff}
 .mural-source a{color:#5cc8f5;text-decoration:none}
 .mural-source a:hover{text-decoration:underline}
 .mural-empty{grid-column:1/-1}
@@ -11160,10 +11162,12 @@ function muralNoticeCardHTML(a,admin){
   var fonte=normalizeMuralSource(String((a&&a.fonte)||'Endodirect').trim()||'Endodirect');
   var source=(a.link&&safeHttpUrl(a.link))?'<a href="'+esc(a.link)+'" target="_blank" rel="noopener">'+esc(fonte)+'</a>':esc(fonte);
   var i=admAvisos.indexOf(a);
+  var imgHTML=(a.img&&safeHttpUrl(a.img))?'<div class="mural-figure"><img src="'+esc(a.img)+'" alt="" loading="lazy" referrerpolicy="no-referrer" onerror="this.closest(\'.mural-figure\').remove()"></div>':'';
   return'<article class="mural-card '+meta.card+'" data-mural-card>'
     +'<div class="mural-card-tags"><span class="tag tag-blue">'+esc(tipo)+'</span><span class="tag '+meta.tag+'">'+esc(sub)+'</span></div>'
     +'<h3>'+esc(a.titulo||'Aviso aos alunos')+'</h3>'
     +'<div class="mural-date">'+dateBR(a.at)+'</div>'
+    +imgHTML
     +'<div class="mural-text">'+esc(a.texto||'Comunicado publicado pela equipe Endodirect.')+'</div>'
     +'<div class="mural-source">Fonte: '+source+'</div>'
     +(admin?'<div class="mural-card-actions">'+(isRadarAuto(a)?'<button class="btn btn-outline btn-sm" data-adm-editav="'+i+'">✏️ Editar</button><button class="btn btn-outline btn-sm" data-adm-hideradar="'+esc(avisoKeyStr(a))+'">🙈 Ocultar</button>':'<button class="btn btn-outline btn-sm" data-adm-editav="'+i+'">Editar</button><button class="btn btn-outline btn-sm" data-adm-delav="'+i+'" style="color:var(--red);border-color:var(--red)">🗑 Excluir</button>')+'</div>':'')
@@ -11381,6 +11385,7 @@ admMuralSecHTML=function(){
     +'<div class="g2" style="margin-bottom:.7rem"><div class="fld2" style="margin:0"><label>Título</label><input type="text" id="adm-av-title" placeholder="Título do aviso"></div><div class="fld2" style="margin:0"><label>Tipo do conteúdo</label><select id="adm-av-tipo">'+tipoOpts+'</select></div></div>'
     +'<div class="g2" style="margin-bottom:.7rem"><div class="fld2" style="margin:0"><label>Subespecialidade</label><select id="adm-av-sub">'+subOpts+'</select></div><div class="fld2" style="margin:0"><label>Fonte / revista (opcional)</label><input type="text" id="adm-av-fonte" placeholder="Ex: NEJM, JCEM, SBEM..."></div></div>'
     +'<div class="fld2"><label>Link (opcional)</label><input type="text" id="adm-av-link" placeholder="https://..."></div>'
+    +'<div class="fld2"><label>Imagem ilustrativa (URL, opcional)</label><input type="text" id="adm-av-img" placeholder="https://… link direto de uma imagem (.png, .jpg, .svg)"></div>'
     +'<div class="fld2" style="margin-bottom:.45rem"><label>Resumir com IA (cole a URL do artigo ou anexe um arquivo)</label><div style="display:flex;gap:6px;align-items:center;flex-wrap:wrap"><input type="text" id="adm-av-aiurl" placeholder="https://… URL para a IA resumir" style="flex:1;min-width:190px"><button type="button" class="btn btn-outline btn-sm" id="adm-av-import">📎 Anexar arquivo</button><button type="button" class="btn btn-outline btn-sm" id="adm-av-aigen">✨ Gerar texto com IA</button><span id="adm-av-fname" style="font-size:.72rem;color:var(--t3)"></span><input type="file" id="adm-av-file" accept=".pdf,.txt,image/*" style="display:none"></div></div>'
     +'<div class="fld2"><label>Texto</label><textarea id="adm-av-text" rows="3" placeholder="Resumo em português, mantendo apenas o título no idioma original..."></textarea></div>'
     +'<label class="adm-push-opt" style="display:flex;align-items:center;gap:.5rem;margin:.1rem 0 .8rem;font-size:.83rem;color:var(--t2);cursor:pointer"><input type="checkbox" id="adm-av-push"'+(admMuralEdit===null?' checked':'')+' style="width:16px;height:16px;flex-shrink:0"><span>📲 Notificar os alunos no celular (push)'+(admMuralEdit!==null?' — reenviar este aviso ao salvar':' ao publicar')+'. Use só para avisos e breaking news.</span></label>'
@@ -11405,6 +11410,8 @@ bindAdmSec=function(sec){
     if(sub)sub.value=muralSubspecialty(av);
     var tipo=document.getElementById('adm-av-tipo');
     if(tipo)tipo.value=muralDisplayType(av);
+    var fimg=document.getElementById('adm-av-img');
+    if(fimg)fimg.value=av.img||'';
   }
   var old=document.getElementById('btn-adm-addav');
   if(old){
@@ -11420,7 +11427,8 @@ bindAdmSec=function(sec){
         subespecialidade:(document.getElementById('adm-av-sub').value||'Endocrinologia Geral'),
         fonte:(document.getElementById('adm-av-fonte').value||'').trim(),
         link:(document.getElementById('adm-av-link').value||'').trim(),
-        texto:(document.getElementById('adm-av-text').value||'').trim()
+        texto:(document.getElementById('adm-av-text').value||'').trim(),
+        img:((document.getElementById('adm-av-img')||{}).value||'').trim()
       };
       dados=normalizeMuralAviso(dados,defaultMuralMap());
       if(admMuralEdit!==null){
