@@ -222,7 +222,7 @@ body{background:var(--bg);color:var(--tx);display:flex;flex-direction:column}
 .btn-sm{padding:.26rem .6rem;font-size:.68rem}
 .fld2{margin-bottom:.65rem}
 .flbl,.fld2 label{font-size:.62rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--t2);display:block;margin-bottom:3px}
-input[type=text],input[type=search],input[type=number],input[type=email],input[type=date],input[type=tel],input[type=url],select,textarea{background:var(--surface);border:1px solid var(--bd2);border-radius:var(--rs);padding:.44rem .72rem;font-family:var(--font);font-size:.79rem;color:var(--tx);outline:none;width:100%;color-scheme:dark}
+input:not([type]),input[type=text],input[type=search],input[type=number],input[type=email],input[type=date],input[type=password],input[type=tel],input[type=url],select,textarea{background:var(--surface);border:1px solid var(--bd2);border-radius:var(--rs);padding:.44rem .72rem;font-family:var(--font);font-size:.79rem;color:var(--tx);outline:none;width:100%;color-scheme:dark}
 input:focus,select:focus,textarea:focus{border-color:var(--blue);box-shadow:0 0 0 3px rgba(59,111,212,.1)}
 textarea{resize:vertical;line-height:1.6}
 .tag{display:inline-flex;align-items:center;padding:2px 7px;border-radius:99px;font-size:.6rem;font-weight:600;white-space:nowrap}
