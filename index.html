@@ -11385,7 +11385,7 @@ admMuralSecHTML=function(){
     +'<div class="g2" style="margin-bottom:.7rem"><div class="fld2" style="margin:0"><label>Título</label><input type="text" id="adm-av-title" placeholder="Título do aviso"></div><div class="fld2" style="margin:0"><label>Tipo do conteúdo</label><select id="adm-av-tipo">'+tipoOpts+'</select></div></div>'
     +'<div class="g2" style="margin-bottom:.7rem"><div class="fld2" style="margin:0"><label>Subespecialidade</label><select id="adm-av-sub">'+subOpts+'</select></div><div class="fld2" style="margin:0"><label>Fonte / revista (opcional)</label><input type="text" id="adm-av-fonte" placeholder="Ex: NEJM, JCEM, SBEM..."></div></div>'
     +'<div class="fld2"><label>Link (opcional)</label><input type="text" id="adm-av-link" placeholder="https://..."></div>'
-    +'<div class="fld2"><label>Imagem ilustrativa (URL, opcional)</label><input type="text" id="adm-av-img" placeholder="https://… link direto de uma imagem (.png, .jpg, .svg)"></div>'
+    +'<div class="fld2"><label>Imagem ilustrativa (opcional)</label><div style="display:flex;gap:6px;align-items:center;flex-wrap:wrap"><input type="text" id="adm-av-img" placeholder="https://… cole a URL ou anexe um arquivo" style="flex:1;min-width:190px"><button type="button" class="btn btn-outline btn-sm" id="adm-av-imgbtn">📎 Anexar imagem</button><input type="file" id="adm-av-imgfile" accept="image/*" style="display:none"><span id="adm-av-imgstatus" style="font-size:.72rem;color:var(--t3)"></span></div><div id="adm-av-imgprev" style="margin-top:.5rem"></div></div>'
     +'<div class="fld2" style="margin-bottom:.45rem"><label>Resumir com IA (cole a URL do artigo ou anexe um arquivo)</label><div style="display:flex;gap:6px;align-items:center;flex-wrap:wrap"><input type="text" id="adm-av-aiurl" placeholder="https://… URL para a IA resumir" style="flex:1;min-width:190px"><button type="button" class="btn btn-outline btn-sm" id="adm-av-import">📎 Anexar arquivo</button><button type="button" class="btn btn-outline btn-sm" id="adm-av-aigen">✨ Gerar texto com IA</button><span id="adm-av-fname" style="font-size:.72rem;color:var(--t3)"></span><input type="file" id="adm-av-file" accept=".pdf,.txt,image/*" style="display:none"></div></div>'
     +'<div class="fld2"><label>Texto</label><textarea id="adm-av-text" rows="3" placeholder="Resumo em português, mantendo apenas o título no idioma original..."></textarea></div>'
     +'<label class="adm-push-opt" style="display:flex;align-items:center;gap:.5rem;margin:.1rem 0 .8rem;font-size:.83rem;color:var(--t2);cursor:pointer"><input type="checkbox" id="adm-av-push"'+(admMuralEdit===null?' checked':'')+' style="width:16px;height:16px;flex-shrink:0"><span>📲 Notificar os alunos no celular (push)'+(admMuralEdit!==null?' — reenviar este aviso ao salvar':' ao publicar')+'. Use só para avisos e breaking news.</span></label>'
@@ -11404,6 +11404,28 @@ var __bindAdmSecBase=bindAdmSec;
 bindAdmSec=function(sec){
   __bindAdmSecBase(sec);
   if(sec!=='mural')return;
+  function avRenderImgPrev(){var u=((document.getElementById('adm-av-img')||{}).value||'').trim();var box=document.getElementById('adm-av-imgprev');if(!box)return;box.innerHTML=(u&&safeHttpUrl(u))?'<img src="'+esc(u)+'" alt="" style="max-height:130px;max-width:100%;border:1px solid var(--bd);border-radius:8px;background:#fff" onerror="this.style.display=\'none\'">':'';}
+  (function(){
+    var imgBtn=document.getElementById('adm-av-imgbtn'),imgFile=document.getElementById('adm-av-imgfile'),imgStatus=document.getElementById('adm-av-imgstatus'),imgInp=document.getElementById('adm-av-img');
+    if(imgInp)imgInp.addEventListener('input',avRenderImgPrev);
+    if(imgBtn&&imgFile){
+      imgBtn.addEventListener('click',function(){imgFile.click();});
+      imgFile.addEventListener('change',function(){
+        var f=imgFile.files&&imgFile.files[0];if(!f)return;
+        if(!/^image\//.test(f.type)){notify('Selecione uma imagem.','err');return;}
+        if(f.size>8*1024*1024){notify('Imagem muito grande (máx 8 MB).','err');return;}
+        if(imgStatus)imgStatus.textContent='Enviando…';imgBtn.disabled=true;
+        uploadAdminAsset(f,'mural').then(function(res){
+          if(imgInp)imgInp.value=res.url;
+          if(imgStatus)imgStatus.textContent='✓ enviada';
+          avRenderImgPrev();
+        }).catch(function(e){
+          if(imgStatus)imgStatus.textContent='';
+          notify(uploadErrorMessage(e),'err');
+        }).then(function(){imgBtn.disabled=false;});
+      });
+    }
+  })();
   var av=admMuralEdit!==null?admAvisos[admMuralEdit]:null;
   if(av){
     var sub=document.getElementById('adm-av-sub');
@@ -11412,6 +11434,7 @@ bindAdmSec=function(sec){
     if(tipo)tipo.value=muralDisplayType(av);
     var fimg=document.getElementById('adm-av-img');
     if(fimg)fimg.value=av.img||'';
+    avRenderImgPrev();
   }
   var old=document.getElementById('btn-adm-addav');
   if(old){
