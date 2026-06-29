@@ -449,10 +449,10 @@ textarea{resize:vertical;line-height:1.6}
 .mural-date{font-size:.72rem;font-weight:800;color:var(--t3);margin-bottom:.65rem}
 .mural-text{font-size:.79rem;color:var(--t2);line-height:1.7;margin-bottom:.9rem;white-space:pre-line;overflow-wrap:anywhere;word-break:break-word}
 .mural-source{font-size:.75rem;font-weight:800;color:#5cc8f5;overflow-wrap:anywhere;word-break:break-word}
-.mural-figure{margin:.1rem 0 .85rem;border:1px solid var(--bd);border-radius:12px;overflow:hidden;background:#fff;line-height:0}
-.mural-figure img{display:block;width:100%;max-height:260px;object-fit:contain;background:#fff}
+.mural-figure{margin:.1rem 0 .85rem;border:1px solid var(--bd);border-radius:12px;overflow:hidden;background:#fff;line-height:0;text-align:center}
+.mural-figure img{display:inline-block;width:auto;max-width:100%;max-height:185px;object-fit:contain;background:#fff;cursor:zoom-in}
 .mural-card-wide{grid-column:1/-1}
-.mural-inline-img{display:block;max-width:100%;max-height:340px;object-fit:contain;border:1px solid var(--bd);border-radius:10px;background:#fff;margin:.65rem 0}
+.mural-inline-img{display:block;max-width:100%;max-height:340px;object-fit:contain;border:1px solid var(--bd);border-radius:10px;background:#fff;margin:.65rem 0;cursor:zoom-in}
 .mural-source a{color:#5cc8f5;text-decoration:none}
 .mural-source a:hover{text-decoration:underline}
 .mural-empty{grid-column:1/-1}
@@ -11159,6 +11159,25 @@ function muralFilterOptions(list,current){
   if(current&&subs.indexOf(current)<0)current='';
   return{current:current,html:'<option value="">Todos</option>'+subs.map(function(s){return'<option value="'+esc(s)+'">'+esc(s)+'</option>';}).join('')};
 }
+// Lightbox do mural: clicar em qualquer imagem (capa .mural-figure ou inline
+// .mural-inline-img) abre ampliada num overlay. Criado uma única vez; usa
+// delegação de clique no document, então funciona após qualquer re-render.
+function ensureMuralLightbox(){
+  if(window.__muralLbInit)return;window.__muralLbInit=true;
+  var ov=document.createElement('div');
+  ov.id='mural-lightbox';
+  ov.style.cssText='position:fixed;inset:0;z-index:99999;background:rgba(8,12,24,.92);display:none;align-items:center;justify-content:center;padding:20px;cursor:zoom-out';
+  ov.innerHTML='<img alt="" style="max-width:96vw;max-height:92vh;border-radius:10px;background:#fff;box-shadow:0 12px 50px rgba(0,0,0,.55)"><button type="button" aria-label="Fechar" style="position:absolute;top:12px;right:16px;width:42px;height:42px;border:0;border-radius:50%;background:rgba(255,255,255,.18);color:#fff;font-size:1.5rem;line-height:1;cursor:pointer">✕</button>';
+  document.body.appendChild(ov);
+  function closeLb(){ov.style.display='none';var im=ov.firstChild;if(im&&im.tagName==='IMG')im.src='';}
+  ov.addEventListener('click',closeLb);
+  document.addEventListener('keydown',function(e){if((e.key==='Escape'||e.keyCode===27)&&ov.style.display==='flex')closeLb();});
+  document.addEventListener('click',function(e){
+    var t=e.target;if(!t||t.tagName!=='IMG'||!t.src)return;
+    if(!(t.classList.contains('mural-inline-img')||(t.closest&&t.closest('.mural-figure'))))return;
+    ov.firstChild.src=t.src;ov.style.display='flex';
+  });
+}
 // Renderiza o texto do card escapando tudo, mas convertendo imagens em markdown
 // ![alt](url) (apenas http/https) em <img> inline. O resto do texto é escapado
 // normalmente (com white-space:pre-line preservando as quebras de linha).
@@ -11198,6 +11217,7 @@ function muralNoticeCardHTML(a,admin){
     +'</article>';
 }
 initMural=function(){
+  try{ensureMuralLightbox();}catch(e){}
   var el=document.getElementById('mural-pc');if(!el)return;
   function dateBR(v){var d=new Date(v||Date.now());if(isNaN(d.getTime()))d=new Date();return d.toLocaleDateString('pt-BR');}
   admAvisos=admAvisos.map(function(a){return normalizeMuralAviso(a,defaultMuralMap());});
@@ -11438,6 +11458,7 @@ var __bindAdmSecBase=bindAdmSec;
 bindAdmSec=function(sec){
   __bindAdmSecBase(sec);
   if(sec!=='mural')return;
+  try{ensureMuralLightbox();}catch(e){}
   function avRenderImgPrev(){var u=((document.getElementById('adm-av-img')||{}).value||'').trim();var box=document.getElementById('adm-av-imgprev');if(!box)return;box.innerHTML=(u&&safeHttpUrl(u))?'<img src="'+esc(u)+'" alt="" style="max-height:130px;max-width:100%;border:1px solid var(--bd);border-radius:8px;background:#fff" onerror="this.style.display=\'none\'">':'';}
   (function(){
     var imgBtn=document.getElementById('adm-av-imgbtn'),imgFile=document.getElementById('adm-av-imgfile'),imgStatus=document.getElementById('adm-av-imgstatus'),imgInp=document.getElementById('adm-av-img');
