@@ -5,7 +5,7 @@ atualizado: 2026-06-30
 
 # Diretrizes Clínicas — Fontes de Verdade
 
-Biblioteca de **diretrizes clínicas** (guidelines) que servem de **fonte de verdade** para TODO conteúdo médico do Endodirect — flashcards, discussões/Mural, resumos de aula, questões (Banco / Questão do Dia), newsletter e posts. Pedido do Rodolpho (2026-06-30): *"incorpore nas suas diretrizes"*.
+Biblioteca de **diretrizes e revisões clínicas** que servem de **fonte de verdade** para TODO conteúdo médico do Endodirect — flashcards, discussões/Mural, resumos de aula, questões (Banco / Questão do Dia), newsletter e posts. Pedido do Rodolpho (2026-06-30): *"incorpore nas suas diretrizes"*.
 
 ## Como usar
 - Ao **criar ou revisar** conteúdo de um tema coberto aqui, seguir **os cortes, doses, alvos e critérios da diretriz citada** — e citá-la como âncora na explicação (ex.: "ESE/ES 2024").
@@ -18,6 +18,14 @@ Biblioteca de **diretrizes clínicas** (guidelines) que servem de **fonte de ver
 3. Linkar abaixo, registrar em [[Decisões]] e manter o `atualizado:`.
 
 ## Acervo
+
+### Diretrizes (guidelines)
 - [[Insuficiência Adrenal Induzida por Glicocorticoides (ESE-ES 2024)]] — prevenção/diagnóstico/tratamento da IA por corticoide; doses de estresse; crise adrenal.
 - [[Vitamina D para Prevenção de Doenças (Endocrine Society 2024)]] — suplementação empírica por faixa; fim do alvo de 30 ng/mL; contra dosagem de rotina.
 - [[Tratamento Endócrino de Pessoas Transgênero (Endocrine Society 2017)]] — terapia hormonal de afirmação, alvos, monitorização, cirurgia (⚠️ ver WPATH SOC-8 2022 p/ atualização).
+
+### Revisões (mini-reviews JCEM)
+- [[Incretinas, Massa Magra e Fitness Cardiorrespiratória (revisão, JCEM 2025)]] — GLP-1/GIP perdem ~25–40% do peso como massa magra; sem melhora clara de VO₂pico; exercício mitiga.
+- [[Hiperparatireoidismo Primário e Sistema Cardiovascular (revisão, JCEM 2026)]] — HPP × HAS/IR/massa de VE/mortalidade CV; PTx melhora; DCV ainda não é critério cirúrgico.
+- [[Deficiência de AVP e de Ocitocina (revisão, JCEM 2026)]] — renomeação do DI central; copeptina + salina hipertônica; desmopressina e hiponatremia; deficiência de OXT emergente.
+- [[Medida do Cortisol na Síndrome de Cushing (revisão, JCEM 2026)]] — UFC/LNSC/DST (≤1,8 µg/dL), ACTH p/ subtipo, MACS, remissão; restauração do ritmo circadiano.
