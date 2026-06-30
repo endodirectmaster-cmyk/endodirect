@@ -43,3 +43,4 @@ Biblioteca de **diretrizes e revisões clínicas** que servem de **fonte de verd
 - [[Complicações Endócrinas da Fibrose Cística (revisão, Nat Rev Endocrinol 2026)]] — CFRD (mais comum, piora pulmão), CFBD, atraso puberal, hipogonadismo, IA iatrogênica.
 - [[Hipotireoidismo, Aterosclerose e Risco Cardiovascular (revisão, Nat Rev Endocrinol 2026)]] — overt ↑DCV (dislipidemia/HAS/pró-trombótico); subclínico controverso.
 - [[Hipofisite — Atualização (revisão, Nat Rev Endocrinol 2026)]] — hipopituitarismo + cefaleia; inibidores de checkpoint; RM homogênea + haste; corticoide alta dose ± imunossupressor.
+- [[Síndrome de Retirada de Glicocorticoide — Mecanismos (revisão, Eur J Endocrinol 2026)]] — GWS imita IA/recidiva; 40–66% pós-Cushing; piora ~30 mg HC/dia; desmame lento (complementa a diretriz ESE/ES 2024).
