@@ -46,3 +46,8 @@ Biblioteca de **diretrizes e revisões clínicas** que servem de **fonte de verd
 - [[Síndrome de Retirada de Glicocorticoide — Mecanismos (revisão, Eur J Endocrinol 2026)]] — GWS imita IA/recidiva; 40–66% pós-Cushing; piora ~30 mg HC/dia; desmame lento (complementa a diretriz ESE/ES 2024).
 - [[Endocrinologia Ambiental e Disruptores Endócrinos (revisão, Eur J Endocrinol 2025)]] — roadmap de pesquisa; EDCs, poluição, clima; tendências seculares (puberdade precoce, sêmen).
 - [[Tumores Hipofisários Não Funcionantes (revisão, Eur J Endocrinol 2026)]] — ~1/3 dos PitNETs, gonadotróficos; cirurgia é o único curativo; DRD2/SST como alvos em estudo.
+- [[Neuropatia Autonômica Diabética (revisão, Arch Endocrinol Metab 2025)]] — DAN subdiagnosticada; CAN (arritmia/IM silenciosa/IC/mortalidade); GI/GU/sudomotor; HRV.
+- [[Disruptores Endócrinos, Célula β e Diabetes Tipo 2 (revisão, Clin Endocrinol 2026)]] — EDCs (BPA/ftalatos/PFAS/PM2.5) lesam célula β; sinergia com dieta gordurosa.
+- [[Vias Ocitocinérgicas na Obesidade (revisão, Clin Endocrinol 2026)]] — OXT ↓apetite/↑gasto/↑lipólise; pré-clínico promissor, clínica heterogênea.
+- [[Doença de Cushing ao Longo da Vida (revisão, Arch Endocrinol Metab 2026)]] — apresentação idade-específica; idade muda testes/RM/IPSS; cirurgia 1ª linha.
+- [[Raquitismo Hipofosfatêmico (revisão, Arch Endocrinol Metab 2026)]] — perda renal de fosfato; FGF23; XLH (PHEX); burosumabe (anti-FGF23); HHRH (calcitriol alto).
