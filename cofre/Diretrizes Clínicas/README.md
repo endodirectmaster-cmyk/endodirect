@@ -34,3 +34,7 @@ Biblioteca de **diretrizes e revisões clínicas** que servem de **fonte de verd
 - [[Obesidade e Exercício (revisão, Endocrine Reviews 2025)]] — exercício × tecido adiposo/fígado/músculo; sinergia com bariátrica/incretinas; preserva massa magra.
 - [[Tratamento Medicamentoso da Síndrome de Cushing (revisão, Endocrine Reviews 2026)]] — inibidores de esteroidogênese (osilodrostat/metirapona/cetoconazol) × moduladores de ACTH × antagonista GC; doses; titração × block-and-replace.
 - [[SOP-PMOS na Gravidez (revisão, Nat Rev Endocrinol 2026)]] — renomeação SOP→PMOS; critérios 2023 (2 de 3); gravidez de "maior risco" (DMG, pré-eclâmpsia, prematuridade).
+- [[Hiperinsulinemia como Causa de Obesidade (revisão, Nat Rev Endocrinol 2026)]] — hiperinsulinemia basal crônica como possível causa (não só efeito) da obesidade; insulina de jejum como proxy.
+- [[Sintomas Vasomotores Graves da Menopausa (revisão, Nat Rev Endocrinol 2026)]] — SVM ~70% (graves 1/3); TRH é o mais eficaz (não p/ prevenir doença crônica); NK3/fezolinetante (não hormonal).
+- [[Retinopatia Diabética — Avanços (revisão, Nat Rev Endocrinol 2026)]] — RD como doença neurovascular (DRD); imagem multimodal + IA; anti-VEGF; prevenção (controle glicêmico/PA).
+- [[Descontinuação de GLP-1RA e Tirzepatida (revisão, Nat Rev Endocrinol 2026)]] — parar reverte ganhos (reganho de peso, piora glicêmica/CV); é terapia crônica.
