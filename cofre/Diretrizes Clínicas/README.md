@@ -56,3 +56,6 @@ Biblioteca de **diretrizes e revisões clínicas** que servem de **fonte de verd
 - [[Hiponatremia e Distúrbios do Equilíbrio de Água (série Best Practice 2026)]] — consolida o número especial (editorial + 12 caps): fisiopatologia, algoritmo diagnóstico, idoso, encefalopatia, tiazídico, câncer, tratamento agudo/crônico + ODS, SIAD, hipernatremia.
 - [[Paradoxo da Obesidade nos Desfechos CV no Diabetes (revisão, Curr Diab Rep 2025)]] — paradoxo (sobrepeso/obesidade leve × melhor desfecho); confundidores (causalidade reversa, gordura visceral); IMC limitado.
 - [[Asma Associada à Obesidade — Eosinofilia das Vias Aéreas (revisão, J Asthma 2025)]] — asma obesa mais grave/refratária; leptina/eotaxina ↑ eosinofilia + neutrofilia; manejo do peso.
+- [[MASLD — Doença Hepática Esteatótica Metabólica (primer, Nat Rev Dis Primers 2025)]] — nomenclatura 2023 (NAFLD→MASLD/MASH); FIB-4/elastografia; resmetirom (FDA 2024) p/ MASH F2–F3.
+- [[Doença Retiniana Diabética (primer, Nat Rev Dis Primers 2025)]] — DRD (retina inteira); RDP + EMD; anti-VEGF/laser; rastreio com IA.
+- [[Diabetes Mellitus Tipo 2 (primer, Nat Rev Dis Primers 2026)]] — doença progressiva; início precoce (<40a) mais agressivo; manejo centrado na pessoa (glicose+peso+comorbidades+24h+psicossocial).
