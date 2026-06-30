@@ -5,12 +5,16 @@ atualizado: 2026-06-30
 
 # Prolactinoma — Diagnóstico, Tratamento e Complicações — Série de Revisões (Best Pract Res Clin Endocrinol Metab 2026)
 
-> **Fonte:** número especial sobre prolactinoma da *Best Practice & Research Clinical Endocrinology & Metabolism*, vol. 40 (2026). Esta nota **consolida 5 artigos**:
+> **Fonte:** número especial sobre prolactinoma da *Best Practice & Research Clinical Endocrinology & Metabolism*, vol. 40 (2026). Esta nota **consolida 9 artigos**:
 > - Petersenn S. *Prolactinoma diagnosis: clinical, biochemical, and radiological considerations.* (102103) — **DOI:** 10.1016/j.beem.2026.102103.
 > - Rudman Y, Shimon I. *Efficacy and long-term outcomes of dopamine agonist treatment in prolactinomas.* (102095) — **DOI:** 10.1016/j.beem.2026.102095.
 > - Castle-Kirszbaum M, McCormack A. *Surgery for prolactinoma.* (102083) — **DOI:** 10.1016/j.beem.2026.102083.
 > - Campana C, Patelli I, Arecco A, et al. *Hypopituitarism in patients with prolactinomas.* (102082) — **DOI:** 10.1016/j.beem.2026.102082.
 > - Hamblin R, Ntali G, Karavitaki N. *Impulse control disorders and dopamine agonists.* (102104) — **DOI:** 10.1016/j.beem.2026.102104.
+> - Constantinescu SM, Alexopoulou O, Maiter D. *Dopamine agonist withdrawal in patients with prolactinoma.* (102085) — **DOI:** 10.1016/j.beem.2026.102085.
+> - Stumpf MAM, Queiroz NL, Glezer A. *Fertility and pregnancy in patients with prolactinoma.* (102081) — **DOI:** 10.1016/j.beem.2026.102081.
+> - Samson SL. *Resistant prolactinomas.* (102100) — **DOI:** 10.1016/j.beem.2026.102100.
+> - Giraldi EA, McCord M, Ioachimescu AG. *The cross-talk between prolactin and growth hormone in pituitary adenomas.* (102101) — **DOI:** 10.1016/j.beem.2026.102101.
 
 **Tema:** epidemiologia, diagnóstico, tratamento (clínico × cirúrgico) e complicações do prolactinoma.
 
@@ -40,5 +44,20 @@ atualizado: 2026-06-30
 ## Transtornos do controle de impulso / ICDs (Hamblin et al)
 - DAs associam-se a **ICDs**: **jogo patológico, hipersexualidade, compras e alimentação compulsivas**. Prevalência muito variável (0–60% nos tratados — heterogeneidade metodológica).
 - **Conduta:** **alertar e perguntar ativamente** (paciente e familiares) sobre comportamentos; monitorar; se surgir ICD, **reduzir/suspender** o DA (e considerar cirurgia).
+
+## Retirada do agonista dopaminérgico (Constantinescu et al)
+- A dualidade benefício × dano do DA (náusea/tontura, ICDs/transtornos emocionais, **monitorização de valva cardíaca em doses altas**) motiva tentativas mais frequentes de **redução/retirada**.
+- Estratégias variam por população (mulheres **pré/pós-menopausa**, homens, crianças/adolescentes); **vigilância pós-retirada** (PRL seriada ± RM) e reintrodução do DA na recidiva. **Remissão sustentada continua inalcançável na maioria.**
+
+## Prolactinomas resistentes (Samson)
+- Minoria refratária a doses convencionais de DA. **Preditores de resistência:** **sexo masculino**, achados radiológicos (tamanho grande, invasão de seio cavernoso), alta proliferação (Ki-67), variantes germinativas (**MEN1, AIP**).
+- **Manejo multimodal:** **titular DA acima da dose usual**, cirurgia (ressecção/debulking), radioterapia dirigida. Adjuvantes não aprovados (inibidores de aromatase, SERMs) com evidência fraca; **pasireotida** (ligante de SST) pode ter potencial em casos selecionados.
+
+## Fertilidade e gravidez (Stumpf, Queiroz, Glezer)
+- Prolactinoma é causa importante de **infertilidade**; **cabergolina** restaura normoprolactinemia e o eixo gonadal em **6–12 meses** na maioria. Cirurgia em casos selecionados (micro/macro não invasivo). Se o eixo não recuperar e há desejo de gestar: **citrato de clomifeno** e reprodução assistida.
+- **Gravidez:** risco de crescimento sintomático **muito baixo** em microprolactinomas e macro **intrasselares**; acompanhamento próximo; **cabergolina pode precisar ser reintroduzida/mantida** em alguns casos. Reavaliar **pós-parto** (pode haver remissão). **Amamentação geralmente sem intercorrências.**
+
+## Co-secreção prolactina–GH (Giraldi et al)
+- Hiperprolactinemia + excesso de GH coexistem em vários cenários: **co-secreção tumoral** de PRL e GH, **efeito haste**, hiperprolactinemia induzida por medicação, problemas analíticos. Diagnóstico desafiador (avaliação clínica + bioquímica + radiológica); faltam critérios padronizados → **investigar acromegalia no prolactinoma (e vice-versa)** quando houver discordância clínica/laboratorial.
 
 **Uso no conteúdo:** prolactinoma = adenoma funcionante mais comum; **cabergolina** é 1ª linha (mas cirurgia ganha espaço, com remissão maior em micro/macro não invasivo); diagnóstico atento a **macroprolactina, hook effect e stalk effect**; rastrear **ICDs** em quem usa DA; tratar hiperprolactinemia recupera o eixo gonadal.
