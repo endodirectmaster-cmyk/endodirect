@@ -38,3 +38,8 @@ Biblioteca de **diretrizes e revisões clínicas** que servem de **fonte de verd
 - [[Sintomas Vasomotores Graves da Menopausa (revisão, Nat Rev Endocrinol 2026)]] — SVM ~70% (graves 1/3); TRH é o mais eficaz (não p/ prevenir doença crônica); NK3/fezolinetante (não hormonal).
 - [[Retinopatia Diabética — Avanços (revisão, Nat Rev Endocrinol 2026)]] — RD como doença neurovascular (DRD); imagem multimodal + IA; anti-VEGF; prevenção (controle glicêmico/PA).
 - [[Descontinuação de GLP-1RA e Tirzepatida (revisão, Nat Rev Endocrinol 2026)]] — parar reverte ganhos (reganho de peso, piora glicêmica/CV); é terapia crônica.
+- [[Benefícios Cardiometabólicos e Renais dos iSGLT2 (revisão, Nat Rev Endocrinol 2025)]] — iSGLT2 cardiorrenal (↓mortalidade/IC/DRC); mecanismos; cetoacidose euglicêmica.
+- [[Doença Tireoidiana e Peso Corporal (revisão, Nat Rev Endocrinol 2026)]] — hipo = ganho modesto (tratar não emagrece muito); hiper = perda (↓músculo/osso); T4/T3 não é emagrecedor.
+- [[Complicações Endócrinas da Fibrose Cística (revisão, Nat Rev Endocrinol 2026)]] — CFRD (mais comum, piora pulmão), CFBD, atraso puberal, hipogonadismo, IA iatrogênica.
+- [[Hipotireoidismo, Aterosclerose e Risco Cardiovascular (revisão, Nat Rev Endocrinol 2026)]] — overt ↑DCV (dislipidemia/HAS/pró-trombótico); subclínico controverso.
+- [[Hipofisite — Atualização (revisão, Nat Rev Endocrinol 2026)]] — hipopituitarismo + cefaleia; inibidores de checkpoint; RM homogênea + haste; corticoide alta dose ± imunossupressor.
