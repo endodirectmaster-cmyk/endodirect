@@ -1,9 +1,13 @@
 ---
 tags: [cofre, integracoes, marketing]
-atualizado: 2026-06-23
+atualizado: 2026-06-30
 ---
 
 # Instagram Stories — "Questão do Dia"
+
+## Ajustes do usuário (2026-06-30)
+- **LDL-c sem meta/VR no enunciado (regra #10 do `CLINICAL_AUTHORING`):** a IA NÃO inclui mais o valor de referência nem a META de LDL-c (nem demais alvos lipídicos) no enunciado — o aluno deduz a meta pelo risco CV. A regra também impõe COERÊNCIA: não afirmar "no alvo/na meta" sem conferir o valor contra a meta do risco (origem: questão gerada com "LDL-c 62 (meta <55)… já no alvo" — contradição, 62 > 55). Vale para todos os geradores (via `authoringSys`).
+- **Botão "👥 Pendências por professor" na aba Gerar lote:** mostra quantas questões cada curador tem para aprovar (agrupado por subespecialidade), p/ o Rodolpho equilibrar a distribuição dos temas. Funções: `qotdPendingByCurator()` (dados, agrupa `igPending` por `qotdCuratorForSub`) + `admPendByProfHTML()` (render) + toggle `#ig-pendprof-toggle`/`#ig-pendprof-panel` em `bindAdmStories`. Recalcula ao abrir; counts já refletem o estado pós-distribuição (a aba re-renderiza).
 
 ## Status
 **MVP + CARD NO APP CONSTRUÍDOS (2026-06-23).** PR **#423** em **preview**, aguardando "pode dar deploy". Inclui: card clicável da Questão do Dia no app (Dashboard + topo do Mural), questões **diárias** (Seg–Sáb; Dom = 2 promos), legenda com CTA **"resposta no app"** (funil) e **geração em lote** no painel. O **gerador de IA** (usado aqui e no app) teve a causa-raiz corrigida e **já está em produção** (hotfix #422 — ver [[Decisões]]).

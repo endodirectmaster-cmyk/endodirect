@@ -3039,6 +3039,22 @@ function isQotdOwner(){return QOTD_OWNERS.indexOf(admEmail())>=0;}
 function qotdSubsForEmail(email){email=String(email||'').trim().toLowerCase();for(var i=0;i<QOTD_CURATORS.length;i++){if(QOTD_CURATORS[i].emails.indexOf(email)>=0)return QOTD_CURATORS[i].subs;}return [];}
 function qotdCuratorForSub(sub){for(var i=0;i<QOTD_CURATORS.length;i++){if(QOTD_CURATORS[i].subs.indexOf(sub)>=0)return QOTD_CURATORS[i];}return null;}
 function qotdMyPending(){var subs=qotdSubsForEmail(admEmail());return (igPending||[]).filter(function(it){return it&&subs.indexOf(it.sub)>=0;});}
+// Quantas pendências cada professor (curador) tem para aprovar — agrupa igPending
+// pelo responsável da subespecialidade. Usado pelo Rodolpho p/ equilibrar a
+// distribuição dos temas. Retorna [{nome, total, subs:{sub:count}}], + "(sem responsável)".
+function qotdPendingByCurator(){
+  var map={},order=[];
+  QOTD_CURATORS.forEach(function(c){map[c.nome]={nome:c.nome,total:0,subs:{}};order.push(c.nome);});
+  var orphan={nome:'(sem responsável)',total:0,subs:{}};
+  (igPending||[]).forEach(function(it){
+    if(!it)return;
+    var c=qotdCuratorForSub(it.sub),b=c?map[c.nome]:orphan;
+    b.total++;var s=it.sub||'(sem subespecialidade)';b.subs[s]=(b.subs[s]||0)+1;
+  });
+  var arr=order.map(function(n){return map[n];});
+  if(orphan.total)arr.push(orphan);
+  return arr;
+}
 function persistIgPending(){try{lsSet('ig_pending',igPending);}catch(e){}queueRemoteStateSave();}
 // Alerta (1x por login) quando o professor entra e tem questões pendentes de revisão.
 var pendAlertShown=false;
@@ -3648,7 +3664,8 @@ var CLINICAL_AUTHORING=[
 '6. LINGUAGEM CENTRADA NA PESSOA: NUNCA escreva "obeso"/"obesa" (estigmatizante) — use SEMPRE "pessoa com obesidade", "paciente com obesidade" ou "portador(a) de obesidade". A condição não define a pessoa (vale também p/ "diabético" → "pessoa com diabetes").',
 '7. NOMENCLATURA (SOP): use sempre "síndrome dos ovários policísticos (SOP)" — termo OFICIAL das diretrizes e provas. APENAS nos COMENTÁRIOS/explicações de questões e nas respostas do Chat IA, acrescente uma nota curta de que existe uma TENDÊNCIA (ainda NÃO oficial) de renomear a condição para refletir melhor a fisiopatologia metabólica/endócrina (ex.: "Síndrome Ovariana Metabólica Poliendócrina, SOMP"). Nos enunciados, alternativas, flashcards e mapas, use só "SOP" (sem a nota).',
 '8. HbA1c (hemoglobina glicada): ao apresentar um valor de HbA1c no enunciado/vinheta clínica, NÃO inclua o valor nem o intervalo de referência — escreva apenas "HbA1c 8,2%", nunca "HbA1c 8,2% (VR <5,7%)", "(referência ...)" ou similar.',
-'9. ADERÊNCIA AO SUBTEMA: quando o pedido indicar um subtema específico, a questão/flashcard/mapa deve ser ESPECIFICAMENTE sobre ele — NÃO o substitua pelo assunto mais comum/"default" da subespecialidade. Ex. em Lípides: "Alfalipoproteinemias" são dislipidemias PRIMÁRIAS do HDL (deficiência de CETP → HDL muito alto/hiperalfalipoproteinemia; doença de Tangier por deficiência de ABCA1, e deficiência de apoA-I/LCAT → HDL baixo) e NÃO devem virar questão de hipercolesterolemia (LDL); "Hipertrigliceridemia" não deve virar questão de LDL; e assim por diante.'
+'9. ADERÊNCIA AO SUBTEMA: quando o pedido indicar um subtema específico, a questão/flashcard/mapa deve ser ESPECIFICAMENTE sobre ele — NÃO o substitua pelo assunto mais comum/"default" da subespecialidade. Ex. em Lípides: "Alfalipoproteinemias" são dislipidemias PRIMÁRIAS do HDL (deficiência de CETP → HDL muito alto/hiperalfalipoproteinemia; doença de Tangier por deficiência de ABCA1, e deficiência de apoA-I/LCAT → HDL baixo) e NÃO devem virar questão de hipercolesterolemia (LDL); "Hipertrigliceridemia" não deve virar questão de LDL; e assim por diante.',
+'10. LÍPIDES / LDL-c (e demais alvos lipídicos): ao apresentar valores lipídicos no enunciado/vinheta clínica, NÃO inclua o valor de referência NEM a META — escreva apenas "LDL-c 62 mg/dL", nunca "LDL-c 62 mg/dL (meta <55)", "[VR <70]", "(alvo ...)" ou similar; o aluno deve DEDUZIR a meta a partir do risco cardiovascular do paciente. COERÊNCIA OBRIGATÓRIA: a meta de LDL-c depende do risco (SBC 2025: risco extremo <40, muito alto <50, alto <70, intermediário <100, baixo <115 mg/dL) — NÃO afirme que o paciente "está no alvo/na meta" sem conferir o valor contra a meta do risco dele (ex.: LDL-c 62 mg/dL num paciente de muito alto risco, meta <55, NÃO está no alvo).'
 ].join('\n');
 // Bloco ÚNICO de diretrizes recentes — injetado em TODOS os geradores de IA
 // (questões/flashcards/mapas via authoringSys, Chat IA, OSCE e Prescrição
@@ -8807,6 +8824,21 @@ function stShowView(v){
     var b=document.querySelector('[data-stview="'+id+'"]');if(b){b.classList.toggle('btn-primary',id===v);b.classList.toggle('btn-outline',id!==v);}
   });
 }
+// Painel "Pendências por professor": quantas questões cada curador tem para aprovar.
+function admPendByProfHTML(){
+  var rows=qotdPendingByCurator();
+  var total=rows.reduce(function(a,r){return a+r.total;},0);
+  var body=rows.map(function(r){
+    var temas=Object.keys(r.subs).sort(function(a,b){return r.subs[b]-r.subs[a];})
+      .map(function(s){return esc(s)+' ('+r.subs[s]+')';}).join(' · ');
+    var tagCls=r.total>0?'tag-gold':'tag-grn';
+    return '<div style="display:flex;justify-content:space-between;align-items:center;gap:.6rem;padding:.5rem 0;border-bottom:1px solid var(--bd)">'
+      +'<div style="min-width:0"><div style="font-weight:700;color:var(--tx)">👤 '+esc(r.nome)+'</div>'
+      +'<div style="font-size:.72rem;color:var(--t2);line-height:1.5">'+(temas||'—')+'</div></div>'
+      +'<span class="tag '+tagCls+'" style="flex:0 0 auto;font-size:.9rem;padding:.25rem .65rem">'+r.total+'</span></div>';
+  }).join('');
+  return '<div style="font-size:.74rem;color:var(--t2);margin-bottom:.4rem;line-height:1.55">Questões aguardando aprovação de cada professor — use para equilibrar a distribuição dos temas. Total pendente: <b>'+total+'</b>.</div>'+body;
+}
 // Painel "Postados": contagem total + distribuição por subespecialidade e tema
 // (tema derivado por classifyTema), p/ o dono equilibrar o que está sub-representado.
 function admPostadosHTML(){
@@ -8906,6 +8938,10 @@ function admStoriesHTML(){
    +'<button class="btn btn-primary btn-sm" id="ig-lote-gen">🤖 Gerar lote</button>'
    +'<span id="ig-lote-status" style="font-size:.72rem;color:var(--t3)"></span></div>'
    +'<div id="ig-lote-results"></div></div>'
+   +'<div class="card" style="margin-bottom:1rem"><div style="display:flex;gap:.6rem;flex-wrap:wrap;align-items:center;justify-content:space-between">'
+   +'<span class="card-title">👥 Pendências por professor</span>'
+   +'<button class="btn btn-outline btn-sm" id="ig-pendprof-toggle">👁 Ver quanto cada professor tem para aprovar</button></div>'
+   +'<div id="ig-pendprof-panel" style="display:none;margin-top:.7rem">'+admPendByProfHTML()+'</div></div>'
    +'</div>'
    +'<div id="stview-manual" style="'+vs('manual')+'">'
    +'<div class="card" style="margin-bottom:1rem"><div class="card-head"><span class="card-title">✏️ Criar / editar questão</span></div>'
@@ -9041,6 +9077,8 @@ function bindAdmStories(){
   if(manToggle)manToggle.addEventListener('click',function(){var w=document.getElementById('ig-manual-wrap');if(!w)return;w.style.display='';igEditId=null;['ig-teem','ig-stem','ig-a','ig-b','ig-c','ig-d','ig-exp'].forEach(function(id){var e=document.getElementById(id);if(e)e.value='';});var an=document.getElementById('ig-ans');if(an)an.value='A';igDraftImg='';igRenderImgPrev();var pw=document.getElementById('ig-prev-wrap');if(pw)pw.style.display='none';try{document.getElementById('ig-stem').scrollIntoView({behavior:'smooth',block:'center'});}catch(e){}});
   var promoToggle=document.getElementById('ig-promo-toggle');
   if(promoToggle)promoToggle.addEventListener('click',function(){var w=document.getElementById('ig-promo-wrap');if(!w)return;w.style.display=(w.style.display==='none'||!w.style.display)?'':'none';});
+  var pendProfToggle=document.getElementById('ig-pendprof-toggle');
+  if(pendProfToggle)pendProfToggle.addEventListener('click',function(){var w=document.getElementById('ig-pendprof-panel');if(!w)return;if(w.style.display!=='none'){w.style.display='none';pendProfToggle.innerHTML='👁 Ver quanto cada professor tem para aprovar';}else{w.innerHTML=admPendByProfHTML();w.style.display='block';pendProfToggle.innerHTML='🙈 Ocultar';}});
   var gen=document.getElementById('ig-gen');
   if(gen)gen.addEventListener('click',function(){
     var sub=(document.getElementById('ig-sub')||{}).value||'Endocrinologia',topic=((document.getElementById('ig-topic')||{}).value||'').trim();
