@@ -3647,7 +3647,8 @@ var CLINICAL_AUTHORING=[
 '5. Português do Brasil, terminologia médica ATUAL e correta.',
 '6. LINGUAGEM CENTRADA NA PESSOA: NUNCA escreva "obeso"/"obesa" (estigmatizante) — use SEMPRE "pessoa com obesidade", "paciente com obesidade" ou "portador(a) de obesidade". A condição não define a pessoa (vale também p/ "diabético" → "pessoa com diabetes").',
 '7. NOMENCLATURA (SOP): use sempre "síndrome dos ovários policísticos (SOP)" — termo OFICIAL das diretrizes e provas. APENAS nos COMENTÁRIOS/explicações de questões e nas respostas do Chat IA, acrescente uma nota curta de que existe uma TENDÊNCIA (ainda NÃO oficial) de renomear a condição para refletir melhor a fisiopatologia metabólica/endócrina (ex.: "Síndrome Ovariana Metabólica Poliendócrina, SOMP"). Nos enunciados, alternativas, flashcards e mapas, use só "SOP" (sem a nota).',
-'8. HbA1c (hemoglobina glicada): ao apresentar um valor de HbA1c no enunciado/vinheta clínica, NÃO inclua o valor nem o intervalo de referência — escreva apenas "HbA1c 8,2%", nunca "HbA1c 8,2% (VR <5,7%)", "(referência ...)" ou similar.'
+'8. HbA1c (hemoglobina glicada): ao apresentar um valor de HbA1c no enunciado/vinheta clínica, NÃO inclua o valor nem o intervalo de referência — escreva apenas "HbA1c 8,2%", nunca "HbA1c 8,2% (VR <5,7%)", "(referência ...)" ou similar.',
+'9. ADERÊNCIA AO SUBTEMA: quando o pedido indicar um subtema específico, a questão/flashcard/mapa deve ser ESPECIFICAMENTE sobre ele — NÃO o substitua pelo assunto mais comum/"default" da subespecialidade. Ex. em Lípides: "Alfalipoproteinemias" são dislipidemias PRIMÁRIAS do HDL (deficiência de CETP → HDL muito alto/hiperalfalipoproteinemia; doença de Tangier por deficiência de ABCA1, e deficiência de apoA-I/LCAT → HDL baixo) e NÃO devem virar questão de hipercolesterolemia (LDL); "Hipertrigliceridemia" não deve virar questão de LDL; e assim por diante.'
 ].join('\n');
 // Bloco ÚNICO de diretrizes recentes — injetado em TODOS os geradores de IA
 // (questões/flashcards/mapas via authoringSys, Chat IA, OSCE e Prescrição
@@ -8980,7 +8981,7 @@ function igShuffleMCQ(q){
 }
 function igGenOne(sub,topic){
   var sys=authoringSys('Atue como examinador de prova de título em endocrinologia. Gere UMA questão ORIGINAL de '+sub+', EXATAMENTE 4 alternativas (A–D), só uma correta. O enunciado deve TERMINAR SEMPRE com a pergunta direta (ex.: Qual o diagnóstico mais provável? / Qual a melhor conduta?). Inclua os valores laboratoriais pertinentes INLINE no texto, com unidades e valores de referência (ex.: FSH 2,1 mUI/mL [VR 3,5–12,5]) — não resuma como exames normais nem use tabela. Quando pertinente, descreva o achado de imagem no enunciado em texto (ex.: USG de tireoide, ECG, RM de sela). NÃO cite a subespecialidade no enunciado. Alternativas CURTAS e concisas (poucas palavras — também vão para o story). JSON APENAS: {"stem":"vinheta clínica curta; exames laboratoriais inline com valores, unidades e referência; achado de imagem descrito em texto quando pertinente; TERMINA com a pergunta direta","options":{"A":"alternativa curta","B":"alternativa curta","C":"alternativa curta","D":"alternativa curta"},"answer":"A","explanation":"comentário COMPLETO em 1-2 parágrafos (cerca de 4-8 linhas no total): explique por que a alternativa correta está certa E por que as principais erradas estão erradas, com o critério/valor de corte e citando a diretriz/fonte pelo NOME + ano (sem PMID nem DOI); refira-se ao CONTEÚDO das alternativas, NÃO às letras (A/B/C/D), pois a ordem é embaralhada"}');
-  return aiRequest({system:sys,prompt:'Gere 1 questão de Endocrinologia — '+sub+(topic?(', tema: '+topic):'')+', nível intermediário, clinicamente precisa e alinhada às diretrizes vigentes. Responda SOMENTE com o objeto JSON.',maxTokens:1100,model:AI_MODEL_CLINICO,grounding:(topic?(sub+' '+topic):sub)})
+  return aiRequest({system:sys,prompt:'Gere 1 questão de Endocrinologia — '+sub+(topic?(', subtema OBRIGATÓRIO (não troque por outro assunto da área): '+topic):'')+', nível intermediário, clinicamente precisa e alinhada às diretrizes vigentes. Responda SOMENTE com o objeto JSON.',maxTokens:1100,model:AI_MODEL_CLINICO,grounding:(topic?(sub+' '+topic):sub)})
   .then(function(raw){var d=parseJ(raw);if(!d||!d.stem||!d.options)return null;return igShuffleMCQ({sub:sub,teem:'',stem:String(d.stem||''),options:{A:d.options.A||'',B:d.options.B||'',C:d.options.C||'',D:d.options.D||''},answer:String(d.answer||'A').toUpperCase().slice(0,1),explanation:String(d.explanation||'')});});
 }
 function igLoteToQueue(it){igStories.push({id:'ig-'+Date.now()+'-'+Math.round(Math.random()*1e6),sub:it.sub,teem:it.teem||'',stem:it.stem,options:it.options,answer:it.answer,explanation:it.explanation,status:'queued',createdAt:Date.now()});}
@@ -9046,7 +9047,7 @@ function bindAdmStories(){
     var st=document.getElementById('ig-gen-status');
     gen.disabled=true;gen.innerHTML=ldHTML('Gerando...');if(st)st.textContent='';
     var sys=authoringSys('Atue como examinador de prova de título em endocrinologia. Gere UMA questão ORIGINAL (não copie provas existentes), de '+sub+', com EXATAMENTE 4 alternativas (A–D), só uma correta. O enunciado deve TERMINAR SEMPRE com a pergunta direta (ex.: Qual o diagnóstico mais provável? / Qual a melhor conduta?). Inclua os valores laboratoriais pertinentes INLINE no texto, com unidades e valores de referência (ex.: FSH 2,1 mUI/mL [VR 3,5–12,5]) — não resuma como exames normais nem use tabela. Quando pertinente, descreva o achado de imagem no enunciado em texto (ex.: USG de tireoide, ECG, RM de sela). NÃO cite a subespecialidade no enunciado. Alternativas CURTAS e concisas (poucas palavras — também vão para o story). JSON APENAS: {"stem":"vinheta clínica curta; exames laboratoriais inline com valores, unidades e referência; achado de imagem descrito em texto quando pertinente; TERMINA com a pergunta direta","options":{"A":"alternativa curta","B":"alternativa curta","C":"alternativa curta","D":"alternativa curta"},"answer":"A","explanation":"comentário COMPLETO em 1-2 parágrafos (cerca de 4-8 linhas no total): explique por que a alternativa correta está certa E por que as principais erradas estão erradas, com o critério/valor de corte e citando a diretriz/fonte pelo NOME + ano (sem PMID nem DOI); refira-se ao CONTEÚDO das alternativas, NÃO às letras (A/B/C/D), pois a ordem é embaralhada"}');
-    aiRequest({system:sys,prompt:'Gere 1 questão de Endocrinologia — '+sub+(topic?(', tema: '+topic):'')+', nível intermediário, clinicamente precisa e alinhada às diretrizes vigentes. Enunciado conciso, adequado a um story do Instagram.',maxTokens:1100,model:AI_MODEL_CLINICO,grounding:(topic?(sub+' '+topic):sub)})
+    aiRequest({system:sys,prompt:'Gere 1 questão de Endocrinologia — '+sub+(topic?(', subtema OBRIGATÓRIO (não troque por outro assunto da área): '+topic):'')+', nível intermediário, clinicamente precisa e alinhada às diretrizes vigentes. Enunciado conciso, adequado a um story do Instagram.',maxTokens:1100,model:AI_MODEL_CLINICO,grounding:(topic?(sub+' '+topic):sub)})
     .then(function(raw){
       var d=parseJ(raw);if(!d||!d.stem||!d.options)throw new Error('Resposta inválida. Tente de novo.');
       igEditId=null;
@@ -9061,12 +9062,24 @@ function bindAdmStories(){
     var n=parseInt((document.getElementById('ig-lote-qty')||{}).value,10)||5;
     var selSub=(document.getElementById('ig-lote-sub')||{}).value||'__random__';
     var pool=igShuffle(DIR_SUBS.concat(['Transgeneridade']));
-    var topic=(selSub==='__random__')?'':((document.getElementById('ig-lote-tema')||{}).value||'');
+    var userTopic=(selSub==='__random__')?'':((document.getElementById('ig-lote-tema')||{}).value||'');
     var st=document.getElementById('ig-lote-status'),res=document.getElementById('ig-lote-results');
-    var subs=[];for(var i=0;i<n;i++)subs.push(selSub==='__random__'?pool[i%pool.length]:selSub);
+    // Subtemas VARIADOS entre as N questões (evita repetição — pedido do Rodolpho):
+    // se o usuário fixou um tema, usa-o em todas; senão, sorteia subtemas DISTINTOS de
+    // FC_SUBTOPICS por subespecialidade (round-robin embaralhado por sub).
+    var temaBag={},temaIdx={};
+    function pickTema(s){
+      if(userTopic)return userTopic;
+      var list=(typeof FC_SUBTOPICS!=='undefined'&&FC_SUBTOPICS[s])?FC_SUBTOPICS[s]:[];
+      if(!list.length)return '';
+      if(!temaBag[s]){temaBag[s]=igShuffle(list);temaIdx[s]=0;}
+      var t=temaBag[s][temaIdx[s]%temaBag[s].length];temaIdx[s]++;return t;
+    }
+    var subs=[],topics=[];
+    for(var i=0;i<n;i++){var s=(selSub==='__random__')?pool[i%pool.length]:selSub;subs.push(s);topics.push(pickTema(s));}
     loteGen.disabled=true;loteGen.innerHTML=ldHTML('Gerando '+n+'…');if(st)st.textContent='';if(res)res.innerHTML='';
     var done=0;
-    igPool(subs.map(function(s){return function(){return igGenOne(s,topic).then(function(r){done++;if(st)st.textContent='Gerando… '+done+'/'+n;return r;});};}),3)
+    igPool(subs.map(function(s,idx){return function(){return igGenOne(s,topics[idx]).then(function(r){done++;if(st)st.textContent='Gerando… '+done+'/'+n;return r;});};}),3)
     .then(function(items){
       igLoteDraft=(items||[]).filter(function(x){return x&&x.stem;});
       if(!igLoteDraft.length){if(res)res.innerHTML='<div style="color:var(--red);font-size:.78rem">❌ A IA não retornou questões. Tente de novo.</div>';return;}
