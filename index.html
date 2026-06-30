@@ -3646,7 +3646,8 @@ var CLINICAL_AUTHORING=[
 '4. HONESTIDADE E CITAÇÃO: cite a diretriz/fonte pelo NOME + ano (ex.: Pituitary Society 2025, ADA 2026, SBEM, Endocrine Society); NÃO exiba PMID, DOI nem links no texto; NUNCA invente referências — na dúvida, cite só o nome da sociedade/diretriz.',
 '5. Português do Brasil, terminologia médica ATUAL e correta.',
 '6. LINGUAGEM CENTRADA NA PESSOA: NUNCA escreva "obeso"/"obesa" (estigmatizante) — use SEMPRE "pessoa com obesidade", "paciente com obesidade" ou "portador(a) de obesidade". A condição não define a pessoa (vale também p/ "diabético" → "pessoa com diabetes").',
-'7. NOMENCLATURA (SOP): use sempre "síndrome dos ovários policísticos (SOP)" — termo OFICIAL das diretrizes e provas. APENAS nos COMENTÁRIOS/explicações de questões e nas respostas do Chat IA, acrescente uma nota curta de que existe uma TENDÊNCIA (ainda NÃO oficial) de renomear a condição para refletir melhor a fisiopatologia metabólica/endócrina (ex.: "Síndrome Ovariana Metabólica Poliendócrina, SOMP"). Nos enunciados, alternativas, flashcards e mapas, use só "SOP" (sem a nota).'
+'7. NOMENCLATURA (SOP): use sempre "síndrome dos ovários policísticos (SOP)" — termo OFICIAL das diretrizes e provas. APENAS nos COMENTÁRIOS/explicações de questões e nas respostas do Chat IA, acrescente uma nota curta de que existe uma TENDÊNCIA (ainda NÃO oficial) de renomear a condição para refletir melhor a fisiopatologia metabólica/endócrina (ex.: "Síndrome Ovariana Metabólica Poliendócrina, SOMP"). Nos enunciados, alternativas, flashcards e mapas, use só "SOP" (sem a nota).',
+'8. HbA1c (hemoglobina glicada): ao apresentar um valor de HbA1c no enunciado/vinheta clínica, NÃO inclua o valor nem o intervalo de referência — escreva apenas "HbA1c 8,2%", nunca "HbA1c 8,2% (VR <5,7%)", "(referência ...)" ou similar.'
 ].join('\n');
 // Bloco ÚNICO de diretrizes recentes — injetado em TODOS os geradores de IA
 // (questões/flashcards/mapas via authoringSys, Chat IA, OSCE e Prescrição
@@ -8893,12 +8894,8 @@ function admStoriesHTML(){
   function nb(id,label){return '<button class="btn '+(view===id?'btn-primary':'btn-outline')+' btn-sm" data-stview="'+id+'" style="padding:.52rem 1.05rem">'+label+'</button>';}
   function vs(id){return (view===id)?'':'display:none';}
   return '<div class="adm-ph"><h1>📲 Questão do Dia</h1></div><div class="adm-pc">'
-   +'<div style="display:flex;gap:.5rem;flex-wrap:wrap;margin-bottom:1.1rem">'+nb('lote','🤖 Gerar lote')+nb('manual','✏️ Manual')+nb('fila','📋 Fila ('+q.length+')')+nb('postados','✅ Postados ('+nPosted+')')+nb('promo','📣 Divulgação')+'</div>'
+   +'<div style="display:flex;gap:.5rem;flex-wrap:wrap;margin-bottom:1.1rem">'+nb('lote','🤖 Gerar lote')+nb('manual','✏️ Manual')+nb('fila','📋 Fila ('+q.length+')')+nb('postados','✅ Postados ('+nPosted+')')+'</div>'
    +'<div id="stview-lote" style="'+vs('lote')+'">'
-   +'<div class="card" style="margin-bottom:1rem"><div style="font-size:.78rem;color:var(--t2);line-height:1.6">'
-   +'<b style="color:var(--tx)">Como funciona:</b> gere as questões em <b>lote</b> → revise/edite → <b>aprove</b>. As aprovadas viram a <b>Questão do Dia no app</b> e a arte/legenda do story. O sistema te <b>lembra por e-mail</b> todo dia.<br>'
-   +'<b style="color:var(--tx)">Calendário:</b> Seg–Sáb = <b>questão</b> (resposta no app) · Dom = <b>2 promos</b>.'
-   +'</div></div>'
    +'<div class="card" style="margin-bottom:1rem"><div class="card-head"><span class="card-title">🤖 Gerar em lote</span></div>'
    +'<div style="font-size:.74rem;color:var(--t2);margin-bottom:.6rem">Gera várias questões de uma vez (modelo Opus). Revise cada uma e <b>edite</b>, <b>aprove</b> ou <b>descarte</b> — ou aprove todas.</div>'
    +'<div style="display:flex;gap:.6rem;flex-wrap:wrap;align-items:flex-end;margin-bottom:.7rem">'
