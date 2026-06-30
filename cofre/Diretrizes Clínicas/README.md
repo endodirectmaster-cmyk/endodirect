@@ -23,6 +23,7 @@ Biblioteca de **diretrizes e revisões clínicas** que servem de **fonte de verd
 - [[Insuficiência Adrenal Induzida por Glicocorticoides (ESE-ES 2024)]] — prevenção/diagnóstico/tratamento da IA por corticoide; doses de estresse; crise adrenal.
 - [[Vitamina D para Prevenção de Doenças (Endocrine Society 2024)]] — suplementação empírica por faixa; fim do alvo de 30 ng/mL; contra dosagem de rotina.
 - [[Tratamento Endócrino de Pessoas Transgênero (Endocrine Society 2017)]] — terapia hormonal de afirmação, alvos, monitorização, cirurgia (⚠️ ver WPATH SOC-8 2022 p/ atualização).
+- [[Diabetes na Gestação — Diagnóstico, Metas e Tratamento (SBD)]] — ⭐ **fonte PREFERENCIAL p/ diagnóstico de DMG**; critérios SBD (1ª consulta jejum ≥92; TOTG 75 g 92/180/153), metas (jejum <95, 1h <140, 2h <120), insulina 1ª linha.
 
 ### Revisões (mini-reviews JCEM, Endocrine Reviews, Nat Rev Endocrinol)
 - [[Incretinas, Massa Magra e Fitness Cardiorrespiratória (revisão, JCEM 2025)]] — GLP-1/GIP perdem ~25–40% do peso como massa magra; sem melhora clara de VO₂pico; exercício mitiga.
