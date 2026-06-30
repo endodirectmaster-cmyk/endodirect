@@ -52,3 +52,4 @@ Biblioteca de **diretrizes e revisões clínicas** que servem de **fonte de verd
 - [[Doença de Cushing ao Longo da Vida (revisão, Arch Endocrinol Metab 2026)]] — apresentação idade-específica; idade muda testes/RM/IPSS; cirurgia 1ª linha.
 - [[Raquitismo Hipofosfatêmico (revisão, Arch Endocrinol Metab 2026)]] — perda renal de fosfato; FGF23; XLH (PHEX); burosumabe (anti-FGF23); HHRH (calcitriol alto).
 - [[Prolactinoma — Diagnóstico, Tratamento e Complicações (série Best Practice 2026)]] — consolida 9 artigos (diagnóstico/macroprolactina/hook/stalk, cabergolina, cirurgia, hipopituitarismo, ICDs, retirada do DA, resistentes, fertilidade/gravidez, co-secreção PRL–GH).
+- [[Hiponatremia e Distúrbios do Equilíbrio de Água (série Best Practice 2026)]] — consolida o número especial (editorial + 12 caps): fisiopatologia, algoritmo diagnóstico, idoso, encefalopatia, tiazídico, câncer, tratamento agudo/crônico + ODS, SIAD, hipernatremia.
