@@ -770,33 +770,27 @@ html[data-theme="light"] .dir-back{background:#f8f9fc;border-color:var(--bd2);co
 .dfx-src{font-size:.72rem;color:var(--t3);font-weight:600;margin-bottom:.55rem}
 .dfx-flow{display:flex;flex-direction:column;align-items:center;gap:0}
 .dfx-node{border-radius:11px;padding:.55rem .9rem;font-size:.82rem;line-height:1.42;max-width:540px;width:100%;text-align:center;box-sizing:border-box}
-.dfx-inicio{background:var(--navy);color:#fff;font-weight:700}
-.dfx-acao{background:var(--surface);border:1.5px solid var(--bd2);color:var(--tx)}
-.dfx-decisao{background:var(--blue);color:#fff;font-weight:700}
-.dfx-fim{background:var(--grn-l);border:1.5px solid var(--grn);color:var(--tx);font-weight:700}
+/* Paleta com variedade (cores fixas p/ funcionar no tema claro e escuro):
+   início = navy escuro; ação = caixa CLARA c/ texto escuro; decisão = azul;
+   fim (conduta) = verde claro c/ texto verde-escuro. Alterna claro/escuro. */
+.dfx-inicio{background:#1a2744;color:#fff;font-weight:700}
+.dfx-acao{background:#eef2fb;border:1.5px solid #c9d5ee;color:#1b2942}
+.dfx-decisao{background:#3b6fd4;color:#fff;font-weight:700}
+.dfx-fim{background:#dcfce7;border:1.5px solid #4ade80;color:#14532d;font-weight:700}
 .dfx-arrow{color:var(--t3);font-size:1.05rem;line-height:1;margin:.26rem 0}
 .dfx-branches{display:flex;gap:.7rem;width:100%;max-width:680px;justify-content:center;flex-wrap:wrap;margin-top:.1rem}
 .dfx-branch{flex:1 1 210px;display:flex;flex-direction:column;align-items:center;gap:.3rem;min-width:190px}
 .dfx-branch-label{font-size:.7rem;font-weight:800;letter-spacing:.03em;padding:.12rem .62rem;border-radius:999px;background:var(--s2);color:var(--tx);border:1px solid var(--bd2)}
 .dfx-branch .dfx-node{font-size:.78rem;padding:.5rem .7rem}
-/* Dica "toque para ampliar" — só no mobile (ver media query) */
-.dfx-zoom-hint{display:none}
-/* Lightbox do fluxograma (overlay full-screen, rolável) */
-#fluxo-lightbox{position:fixed;inset:0;z-index:99999;background:rgba(8,12,24,.96);display:none;overflow:auto;-webkit-overflow-scrolling:touch;padding:16px}
-#fluxo-lightbox .fluxo-lb-inner{max-width:560px;margin:44px auto 28px}
-#fluxo-lightbox .dfx-node{font-size:.9rem}
-#fluxo-lightbox .dfx-zoom-hint{display:none}
 @media(max-width:760px){
   /* Resumo das diretrizes justificado no mobile (só os parágrafos de texto) */
   .dir-card .dir-texto p{text-align:justify;text-align-last:left}
-  /* Fluxograma compacto no mobile; toque abre em tela cheia (ampliado) */
-  .dir-card .dir-fluxo{cursor:zoom-in}
+  /* Fluxograma compacto no mobile; ramos (SIM/NÃO) lado a lado */
   .dir-card .dfx-title{font-size:.85rem}
   .dir-card .dfx-node{font-size:.74rem;padding:.46rem .58rem}
   .dir-card .dfx-branches{gap:.4rem}
   .dir-card .dfx-branch{min-width:0;flex-basis:44%}
   .dir-card .dfx-branch .dfx-node{font-size:.67rem;padding:.4rem .5rem}
-  .dfx-zoom-hint{display:flex;align-items:center;justify-content:center;gap:.35rem;font-size:.72rem;font-weight:700;color:var(--blue);background:var(--s2);border:1px dashed var(--blue);border-radius:999px;padding:.26rem .72rem;margin:.1rem auto .55rem;width:-webkit-fit-content;width:fit-content;cursor:zoom-in}
 }
 .dir-empty-fmt{font-size:.82rem;color:var(--t3);font-style:italic;padding:.3rem 0}
 .dir-tema-card{position:relative;border:1px solid var(--bd);border-left:4px solid var(--blue);border-radius:14px;background:var(--surface);padding:1rem 1.1rem;cursor:pointer;transition:.15s;display:flex;flex-direction:column;min-height:104px}
@@ -8003,7 +7997,7 @@ function dirMapaHTML(mapa){
 function dirFluxoHTML(flx){
   if(!flx||!flx.length)return '';
   var arrow='<div class="dfx-arrow">▼</div>';
-  var html='<div class="dir-fluxo"><div class="dfx-zoom-hint">🔍 toque para ampliar</div>';
+  var html='<div class="dir-fluxo">';
   flx.forEach(function(f){
     var nos=(f&&f.nos)||[];
     if(!nos.length)return;
@@ -8025,25 +8019,6 @@ function dirFluxoHTML(flx){
     html+='</div>';
   });
   return html+'</div>';
-}
-// Lightbox do fluxograma: no mobile, tocar num .dir-fluxo abre o mesmo fluxograma
-// em tela cheia e rolável (fonte maior). Clona o HTML (é puro HTML/CSS, sem canvas).
-function ensureFluxoLightbox(){
-  if(window.__fluxoLbInit)return;window.__fluxoLbInit=true;
-  var ov=document.createElement('div');ov.id='fluxo-lightbox';
-  ov.innerHTML='<button type="button" aria-label="Fechar" style="position:fixed;top:10px;right:14px;width:42px;height:42px;border:0;border-radius:50%;background:rgba(255,255,255,.18);color:#fff;font-size:1.5rem;line-height:1;cursor:pointer;z-index:2">✕</button><div class="fluxo-lb-inner"></div>';
-  document.body.appendChild(ov);
-  function closeLb(){ov.style.display='none';var inner=ov.querySelector('.fluxo-lb-inner');if(inner)inner.innerHTML='';}
-  ov.addEventListener('click',function(e){var t=e.target;if(t===ov||(t.getAttribute&&t.getAttribute('aria-label')==='Fechar'))closeLb();});
-  document.addEventListener('keydown',function(e){if((e.key==='Escape'||e.keyCode===27)&&ov.style.display==='block')closeLb();});
-  document.addEventListener('click',function(e){
-    if(!e.target||!e.target.closest)return;
-    if(e.target.closest('#fluxo-lightbox'))return;      // clique já dentro do lightbox
-    var fx=e.target.closest('.dir-fluxo');if(!fx)return;
-    if(window.innerWidth>760)return;                    // ampliar só no mobile
-    ov.querySelector('.fluxo-lb-inner').innerHTML='<div class="dir-fluxo">'+fx.innerHTML+'</div>';
-    ov.style.display='block';ov.scrollTop=0;
-  });
 }
 // Visão em 3 níveis: subespecialidade → tema → diretriz (nos 4 formatos).
 function diretrizesViewHTML(){
@@ -8086,7 +8061,6 @@ function diretrizesViewHTML(){
 // Liga os eventos da visão dentro de um container (aluno ou pré-visualização).
 function bindDiretrizesView(root){
   if(!root)return;
-  try{ensureFluxoLightbox();}catch(e){}
   root.querySelectorAll('[data-dir-sub]').forEach(function(b){b.addEventListener('click',function(){refSubSel=b.dataset.dirSub;refTemaSel='';refFlashOpen={};renderDiretrizesInto(root);});});
   root.querySelectorAll('[data-dir-tema]').forEach(function(b){b.addEventListener('click',function(){refTemaSel=b.dataset.dirTema;refFlashOpen={};renderDiretrizesInto(root);});});
   var back=root.querySelector('[data-dir-back]');
@@ -9904,7 +9878,7 @@ function admRefSecHTML(){
     if(admRefSub&&admRefTema)addBtn='<button class="btn btn-primary" id="btn-adm-ref-new" style="padding:.55rem 1.1rem">+ Nova diretriz</button>';
     else if(admRefSub)addBtn='<button class="btn btn-primary" id="btn-adm-ref-new" style="padding:.55rem 1.1rem">➕ Adicionar tema</button>';
   }
-  return '<div class="adm-ph" style="display:flex;align-items:flex-start;justify-content:space-between;gap:.6rem;flex-wrap:wrap"><div><h1>Diretrizes</h1></div><div style="display:flex;gap:.5rem;flex-wrap:wrap"><button class="btn btn-outline" id="btn-adm-ref-preview" style="padding:.55rem 1rem">👁 Pré-visualizar como aluno</button>'+addBtn+'</div></div>'
+  return '<div class="adm-ph" style="display:flex;align-items:flex-start;justify-content:space-between;gap:.6rem;flex-wrap:wrap"><div><h1>Diretrizes</h1></div><div style="display:flex;gap:.5rem;flex-wrap:wrap">'+addBtn+'</div></div>'
     +'<div class="adm-pc">'+body+'</div>';
 }
 function admMuralSecHTML(){
@@ -10811,15 +10785,6 @@ function bindAdmSec(sec){
     var chatInp=document.getElementById('adm-ref-chat-input');
     if(chatInp)chatInp.addEventListener('keydown',function(ev){if(ev.key==='Enter'&&!ev.shiftKey){ev.preventDefault();sendRefChat();}});
     if(admRefChat.length)renderRefChatMsgs();
-    var rPrev=document.getElementById('btn-adm-ref-preview');
-    if(rPrev)rPrev.addEventListener('click',function(){
-      refSubSel='';refFlashOpen={};
-      main.innerHTML='<button class="dir-back" id="btn-adm-ref-prevback" style="margin-bottom:1rem">← Voltar ao editor</button>'
-        +'<div style="background:var(--warn-bg);border:1px solid var(--warn-bd);color:var(--warn-tx);border-radius:10px;padding:.5rem .8rem;font-size:.74rem;margin-bottom:1rem">👁 Pré-visualização — é exatamente o que o aluno verá quando a aba for publicada.</div>'
-        +'<div id="adm-ref-preview-body"></div>';
-      var pv=document.getElementById('adm-ref-preview-body');renderDiretrizesInto(pv);
-      var pb=document.getElementById('btn-adm-ref-prevback');if(pb)pb.addEventListener('click',function(){renderAdmSec('ref');});
-    });
   }
 
   if(sec==='mural'){
