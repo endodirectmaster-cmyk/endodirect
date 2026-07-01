@@ -1,9 +1,14 @@
 ---
 tags: [cofre, integracoes]
-atualizado: 2026-06-24
+atualizado: 2026-07-01
 ---
 
 # Integrações
+
+## Google Drive — entrada de diretrizes/artigos (conector MCP)
+- **Pasta oficial:** **"Plataforma ED"** — `folderId = 1wmtsV-RLkVo11ANSaOzOfPEaNSe3c8fZ` (My Drive, dono `endodirectmaster@gmail.com`). O Rodolpho passou a **jogar os PDFs de diretrizes/artigos aí** em vez de subir cada um no chat (2026-07-01).
+- **Permissão:** o Rodolpho **autorizou acesso permanente** ao Drive — posso ler/buscar sem pedir a cada vez.
+- **Fluxo:** `search_files` (`parentId = '1wmtsV-RLkVo11ANSaOzOfPEaNSe3c8fZ'`) → `read_file_content` (aceita `application/pdf`) → extrair cortes/condutas → atualizar **diretriz do painel** (dado), **`CLINICAL_GUIDELINES`** (IA, index.html) e a **biblioteca [[Diretrizes Clínicas/README]]**, e rodar a **varredura** do conteúdo antigo. ⚠️ Não misturar **provas oficiais** (TEEM) com diretrizes; só incorporar quando o Rodolpho pedir ("incorpora o X") — mudanças na plataforma pedem aviso.
 
 ## Resend (e-mail)
 Newsletter diária + relatório do health check. Envio em batch, List-Unsubscribe. Env: `RESEND_API_KEY`, `NEWSLETTER_FROM`, `NEWSLETTER_REPLYTO`. Ver [[Newsletter e Radar]].
