@@ -3201,7 +3201,7 @@ function applyStatePayload(payload,personalOnly){
     if(Array.isArray(payload.ig_stories)){igStories=payload.ig_stories;try{lsSet('ig_stories',igStories);}catch(e){}try{var _mp=document.getElementById('panel-mural'),_qm=document.getElementById('qotd-modal');if(_mp&&_mp.classList.contains('on')&&(!_qm||_qm.style.display==='none'))renderQotd();}catch(e){}}
     if(Array.isArray(payload.ig_pending)){igPending=payload.ig_pending;try{lsSet('ig_pending',igPending);}catch(e){}try{updateAdmPendBadge();}catch(e){}try{maybePendAlert();}catch(e){}}
     // Preserva chaves geridas pelo servidor (newsletter + lembrete IG) p/ o save do admin não apagá-las.
-    ['newsletter_extra','newsletter_unsub','newsletter_sent','newsletter','newsletter_recent','newsletter_qotd_id','ig_notice_sent','qotd_autopost_date'].forEach(function(k){if(payload[k]!==undefined)globalServerKeys[k]=payload[k];});
+    ['newsletter_extra','newsletter_unsub','newsletter_sent','newsletter','newsletter_recent','newsletter_qotd_id','ig_notice_sent','qotd_autopost_date','trial_emails'].forEach(function(k){if(payload[k]!==undefined)globalServerKeys[k]=payload[k];});
   }
   if(payload.adm_perfil&&typeof payload.adm_perfil==='object'){
     // Segurança: só aceita o perfil salvo se o e-mail bater com o do admin
@@ -3239,6 +3239,47 @@ function renderDegustacaoBar(){
     bar.style.display='flex';
   }else if(bar){bar.style.display='none';}
 }
+// Janela (modal) de aviso da degustação ao ENTRAR no app — reforça o e-mail
+// (que pode cair no spam) e a barra do topo. Aparece só na reta final (≤2 dias)
+// ou quando já encerrou; 1x por sessão (não a cada navegação). Reusa o overlay da
+// Questão do Dia (.qotd-overlay). CTA leva à tela de planos.
+var trialModalSeen=false;
+function trialModalClose(){var m=document.getElementById('trial-modal');if(m)m.style.display='none';}
+function trialModalEl(){
+  var m=document.getElementById('trial-modal');
+  if(!m){
+    m=document.createElement('div');m.id='trial-modal';m.className='qotd-overlay';m.style.display='none';
+    m.innerHTML='<div class="qotd-backdrop" data-trial-close></div><div class="qotd-dialog" role="dialog" aria-modal="true" style="max-width:440px"><div id="trial-modal-body"></div></div>';
+    document.body.appendChild(m);
+    m.querySelectorAll('[data-trial-close]').forEach(function(b){b.addEventListener('click',trialModalClose);});
+  }
+  return m;
+}
+function maybeTrialModal(){
+  if(trialModalSeen||!isDegustacao())return;
+  var expired=degExpired(),dd=degDiasRestantes();
+  if(!expired&&dd>2)return; // só avisa na reta final (≤2 dias) ou já encerrada
+  trialModalSeen=true;
+  trialModalEl();var body=document.getElementById('trial-modal-body');if(!body)return;
+  var title,lead;
+  if(expired){
+    title='⏳ Sua degustação terminou';
+    lead='Seus <b>'+DEG_DIAS+' dias gratuitos</b> chegaram ao fim. Assine um plano para voltar a usar tudo: flashcards, mapas mentais, banco de questões, ferramentas de IA e o mural de atualizações.';
+  }else{
+    title='⏳ Sua degustação termina em '+dd+' dia'+(dd===1?'':'s');
+    lead='Você está no <b>modo degustação</b> — faltam <b>'+dd+' dia'+(dd===1?'':'s')+'</b> para o acesso encerrar. Assine um plano e continue com flashcards, mapas mentais, banco de questões, ferramentas de IA e o mural.';
+  }
+  body.innerHTML='<div class="card" style="border:1px solid var(--gold);margin:0">'
+    +'<div style="font-size:2rem;text-align:center;margin-bottom:.1rem">🎁</div>'
+    +'<div style="font-weight:800;color:var(--gold);font-size:1.02rem;text-align:center;margin-bottom:.55rem">'+title+'</div>'
+    +'<div style="font-size:.85rem;line-height:1.6;color:var(--tx);opacity:.9;margin-bottom:1rem">'+lead+'</div>'
+    +'<button type="button" class="btn btn-primary" id="trial-modal-cta" style="width:100%">Ver pacotes e assinar</button>'
+    +'<div style="text-align:center;margin-top:.55rem"><button type="button" id="trial-modal-skip" style="background:none;border:0;color:var(--t3);font-size:.8rem;cursor:pointer;text-decoration:underline">Agora não</button></div>'
+    +'</div>';
+  var cta=document.getElementById('trial-modal-cta');if(cta)cta.addEventListener('click',function(){trialModalClose();showAssineScreen((currentUser&&currentUser.email)||'');});
+  var skip=document.getElementById('trial-modal-skip');if(skip)skip.addEventListener('click',trialModalClose);
+  trialModalEl().style.display='';
+}
 function refreshAfterRemoteState(){
   try{
     // Demo premium (alunopro): completa a coleção localmente para a vitrine.
@@ -3254,6 +3295,7 @@ function refreshAfterRemoteState(){
     }
   }catch(e){}
   try{renderDegustacaoBar();}catch(e){}
+  try{maybeTrialModal();}catch(e){}
   try{maybeResumePlanIntent();}catch(e){}
   try{refreshDash();}catch(e){}
   try{renderSavedQ();}catch(e){}
@@ -3345,7 +3387,7 @@ function saveRemoteState(){
       var serverUpd=(g&&g.data&&g.data.updated_at)||null;
       var p=globalStatePayload();
       // Chaves do servidor que o admin NÃO edita: preserva direto do servidor.
-      ['newsletter_extra','newsletter_unsub','newsletter_sent','newsletter','newsletter_recent','newsletter_qotd_id','ig_notice_sent','qotd_autopost_date'].forEach(function(k){if(serverP[k]!==undefined)p[k]=serverP[k];});
+      ['newsletter_extra','newsletter_unsub','newsletter_sent','newsletter','newsletter_recent','newsletter_qotd_id','ig_notice_sent','qotd_autopost_date','trial_emails'].forEach(function(k){if(serverP[k]!==undefined)p[k]=serverP[k];});
       // radar_avisos: base = servidor (mantém adições do cron e a purga por TTL),
       // mas APLICA as edições do professor (subespecialidade/tipo/texto) por chave
       // estável (sourceId/link). Sem isto, editar um card do radar voltava no F5 —
