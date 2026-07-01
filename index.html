@@ -779,6 +779,25 @@ html[data-theme="light"] .dir-back{background:#f8f9fc;border-color:var(--bd2);co
 .dfx-branch{flex:1 1 210px;display:flex;flex-direction:column;align-items:center;gap:.3rem;min-width:190px}
 .dfx-branch-label{font-size:.7rem;font-weight:800;letter-spacing:.03em;padding:.12rem .62rem;border-radius:999px;background:var(--s2);color:var(--tx);border:1px solid var(--bd2)}
 .dfx-branch .dfx-node{font-size:.78rem;padding:.5rem .7rem}
+/* Dica "toque para ampliar" — só no mobile (ver media query) */
+.dfx-zoom-hint{display:none}
+/* Lightbox do fluxograma (overlay full-screen, rolável) */
+#fluxo-lightbox{position:fixed;inset:0;z-index:99999;background:rgba(8,12,24,.96);display:none;overflow:auto;-webkit-overflow-scrolling:touch;padding:16px}
+#fluxo-lightbox .fluxo-lb-inner{max-width:560px;margin:44px auto 28px}
+#fluxo-lightbox .dfx-node{font-size:.9rem}
+#fluxo-lightbox .dfx-zoom-hint{display:none}
+@media(max-width:760px){
+  /* Resumo das diretrizes justificado no mobile (só os parágrafos de texto) */
+  .dir-card .dir-texto p{text-align:justify;text-align-last:left}
+  /* Fluxograma compacto no mobile; toque abre em tela cheia (ampliado) */
+  .dir-card .dir-fluxo{cursor:zoom-in}
+  .dir-card .dfx-title{font-size:.85rem}
+  .dir-card .dfx-node{font-size:.74rem;padding:.46rem .58rem}
+  .dir-card .dfx-branches{gap:.4rem}
+  .dir-card .dfx-branch{min-width:0;flex-basis:44%}
+  .dir-card .dfx-branch .dfx-node{font-size:.67rem;padding:.4rem .5rem}
+  .dfx-zoom-hint{display:flex;align-items:center;justify-content:center;gap:.35rem;font-size:.72rem;font-weight:700;color:var(--blue);background:var(--s2);border:1px dashed var(--blue);border-radius:999px;padding:.26rem .72rem;margin:.1rem auto .55rem;width:-webkit-fit-content;width:fit-content;cursor:zoom-in}
+}
 .dir-empty-fmt{font-size:.82rem;color:var(--t3);font-style:italic;padding:.3rem 0}
 .dir-tema-card{position:relative;border:1px solid var(--bd);border-left:4px solid var(--blue);border-radius:14px;background:var(--surface);padding:1rem 1.1rem;cursor:pointer;transition:.15s;display:flex;flex-direction:column;min-height:104px}
 .dir-tema-card:hover{border-color:var(--blue);transform:translateY(-2px)}
@@ -7984,7 +8003,7 @@ function dirMapaHTML(mapa){
 function dirFluxoHTML(flx){
   if(!flx||!flx.length)return '';
   var arrow='<div class="dfx-arrow">▼</div>';
-  var html='<div class="dir-fluxo">';
+  var html='<div class="dir-fluxo"><div class="dfx-zoom-hint">🔍 toque para ampliar</div>';
   flx.forEach(function(f){
     var nos=(f&&f.nos)||[];
     if(!nos.length)return;
@@ -8006,6 +8025,25 @@ function dirFluxoHTML(flx){
     html+='</div>';
   });
   return html+'</div>';
+}
+// Lightbox do fluxograma: no mobile, tocar num .dir-fluxo abre o mesmo fluxograma
+// em tela cheia e rolável (fonte maior). Clona o HTML (é puro HTML/CSS, sem canvas).
+function ensureFluxoLightbox(){
+  if(window.__fluxoLbInit)return;window.__fluxoLbInit=true;
+  var ov=document.createElement('div');ov.id='fluxo-lightbox';
+  ov.innerHTML='<button type="button" aria-label="Fechar" style="position:fixed;top:10px;right:14px;width:42px;height:42px;border:0;border-radius:50%;background:rgba(255,255,255,.18);color:#fff;font-size:1.5rem;line-height:1;cursor:pointer;z-index:2">✕</button><div class="fluxo-lb-inner"></div>';
+  document.body.appendChild(ov);
+  function closeLb(){ov.style.display='none';var inner=ov.querySelector('.fluxo-lb-inner');if(inner)inner.innerHTML='';}
+  ov.addEventListener('click',function(e){var t=e.target;if(t===ov||(t.getAttribute&&t.getAttribute('aria-label')==='Fechar'))closeLb();});
+  document.addEventListener('keydown',function(e){if((e.key==='Escape'||e.keyCode===27)&&ov.style.display==='block')closeLb();});
+  document.addEventListener('click',function(e){
+    if(!e.target||!e.target.closest)return;
+    if(e.target.closest('#fluxo-lightbox'))return;      // clique já dentro do lightbox
+    var fx=e.target.closest('.dir-fluxo');if(!fx)return;
+    if(window.innerWidth>760)return;                    // ampliar só no mobile
+    ov.querySelector('.fluxo-lb-inner').innerHTML='<div class="dir-fluxo">'+fx.innerHTML+'</div>';
+    ov.style.display='block';ov.scrollTop=0;
+  });
 }
 // Visão em 3 níveis: subespecialidade → tema → diretriz (nos 4 formatos).
 function diretrizesViewHTML(){
@@ -8048,6 +8086,7 @@ function diretrizesViewHTML(){
 // Liga os eventos da visão dentro de um container (aluno ou pré-visualização).
 function bindDiretrizesView(root){
   if(!root)return;
+  try{ensureFluxoLightbox();}catch(e){}
   root.querySelectorAll('[data-dir-sub]').forEach(function(b){b.addEventListener('click',function(){refSubSel=b.dataset.dirSub;refTemaSel='';refFlashOpen={};renderDiretrizesInto(root);});});
   root.querySelectorAll('[data-dir-tema]').forEach(function(b){b.addEventListener('click',function(){refTemaSel=b.dataset.dirTema;refFlashOpen={};renderDiretrizesInto(root);});});
   var back=root.querySelector('[data-dir-back]');
