@@ -8046,7 +8046,7 @@ function initMural(){
     var tipo=a.tipo||'Aviso';
     var cls=tipoClass(tipo);
     var fonte=fonteOf(a);
-    var source=(a.link&&safeHttpUrl(a.link))?'<a href="'+esc(a.link)+'" target="_blank" rel="noopener">'+esc(fonte)+'</a>':esc(fonte);
+    var source=(a.link&&safeHttpUrl(a.link))?'<a href="'+esc(a.link)+'" target="_blank" rel="noopener">'+esc(fonte)+'</a>'+(a.oa?' <span style="font-size:.66rem;font-weight:700;color:#16a34a;white-space:nowrap" title="Texto completo aberto ao público (PubMed Central)">· acesso livre 📖</span>':''):esc(fonte);
     return'<article class="mural-card'+cls.card+'" data-mural-card>'
       +'<div class="mural-card-tags"><span class="tag '+cls.tag+'">'+esc(tipo)+'</span><span class="tag tag-muted">'+esc(fonte)+'</span></div>'
       +'<h3>'+esc(a.titulo||'Aviso aos alunos')+'</h3>'
@@ -9848,7 +9848,7 @@ function admMuralSecHTML(){
   var options='<option value="">Todos</option>'+fontes.map(function(f){return'<option value="'+esc(f)+'">'+esc(f)+'</option>';}).join('');
   function cardHTML(a){
     var i=admAvisos.indexOf(a),tipo=a.tipo||'Aviso',fonte=fonteOf(a),cls=tipoClass(tipo);
-    var source=(a.link&&safeHttpUrl(a.link))?'<a href="'+esc(a.link)+'" target="_blank" rel="noopener">'+esc(fonte)+'</a>':esc(fonte);
+    var source=(a.link&&safeHttpUrl(a.link))?'<a href="'+esc(a.link)+'" target="_blank" rel="noopener">'+esc(fonte)+'</a>'+(a.oa?' <span style="font-size:.66rem;font-weight:700;color:#16a34a;white-space:nowrap" title="Texto completo aberto ao público (PubMed Central)">· acesso livre 📖</span>':''):esc(fonte);
     return '<article class="mural-card'+cls.card+'" data-mural-card>'
       +'<div class="mural-card-tags"><span class="tag '+cls.tag+'">'+esc(tipo)+'</span><span class="tag tag-muted">'+esc(fonte)+'</span></div>'
       +'<h3>'+esc(a.titulo||'Aviso aos alunos')+'</h3>'
