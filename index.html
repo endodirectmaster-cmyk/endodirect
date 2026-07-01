@@ -8770,7 +8770,6 @@ function admPendCardHTML(it){
     return '<div style="display:flex;gap:.4rem;align-items:center;margin-bottom:.3rem"><span style="font-weight:700;color:var(--blue);width:16px;flex-shrink:0">'+L+'</span><input type="text" id="pend-'+L+'-'+id+'" value="'+esc((it.options||{})[L]||'')+'" style="flex:1"></div>';
   }).join('');
   var ansOpts=['A','B','C','D'].map(function(L){return '<option value="'+L+'"'+(it.answer===L?' selected':'')+'>'+L+'</option>';}).join('');
-  var by=it.distributedBy?'<span style="font-size:.7rem;color:var(--t3)">distribuída por '+esc(it.distributedBy)+'</span>':'';
   return '<div class="card" data-pend-card="'+id+'" style="margin-bottom:1rem">'
     +'<div style="display:flex;justify-content:space-between;gap:.5rem;flex-wrap:wrap;align-items:center;margin-bottom:.55rem">'
       +'<div style="font-size:.85rem;font-weight:700;color:var(--tx)">'+dirSubIcon(it.sub)+' '+esc(it.sub||'')+(it.teem?' <span class="tag">'+esc(it.teem)+'</span>':'')+'</div>'
@@ -8779,7 +8778,7 @@ function admPendCardHTML(it){
     +igLbl('Alternativas')+'<div style="margin-bottom:.5rem">'+optRows+'</div>'
     +'<label style="display:block;width:90px;margin-bottom:.5rem">'+igLbl('Gabarito')+'<select id="pend-ans-'+id+'">'+ansOpts+'</select></label>'
     +igLbl('Comentário (resposta comentada no app)')+'<textarea id="pend-exp-'+id+'" rows="3" style="width:100%;margin-bottom:.6rem">'+esc(it.explanation||'')+'</textarea>'
-    +'<div style="display:flex;gap:.5rem;flex-wrap:wrap;align-items:center"><button class="btn btn-primary btn-sm" data-pend-ok="'+id+'">✓ Aprovar e publicar</button><button class="btn btn-outline btn-sm" data-pend-del="'+id+'">🗑 Descartar</button>'+by+'</div>'
+    +'<div style="display:flex;gap:.5rem;flex-wrap:wrap;align-items:center"><button class="btn btn-primary btn-sm" data-pend-ok="'+id+'">✓ Aprovar e publicar</button><button class="btn btn-outline btn-sm" data-pend-del="'+id+'">🗑 Descartar</button></div>'
   +'</div>';
 }
 function admPendenciasHTML(){
