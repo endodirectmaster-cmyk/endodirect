@@ -1,9 +1,19 @@
 ---
 tags: [cofre, integracoes, marketing]
-atualizado: 2026-06-30
+atualizado: 2026-07-01
 ---
 
 # Instagram Stories — "Questão do Dia"
+
+## Imagem de exame do PubMed/Open-i + remover atribuição (2026-07-01)
+- **Remove "distribuída por &lt;email&gt;"** do card de Pendências (`admPendCardHTML`) — professor não precisa ver quem distribuiu (o campo `distributedBy` continua no dado, só não é exibido).
+- **Sugestão AUTOMÁTICA de imagem de exame complementar ao gerar** (decisão do usuário: automático + qualquer figura do PMC com referência): a IA, ao gerar a questão, devolve um campo opcional **`imageQuery`** (termos EM INGLÊS para achar a imagem, ex.: "pituitary MRI microadenoma") quando a vinheta envolve exame de imagem; senão vazio. Regra injetada via `IG_IMAGEQUERY_RULE` nos prompts do `igGenOne` (lote) e do gerador manual.
+  - **Fonte:** **Open-i** (NLM/NIH) = figuras do **PubMed Central**. Proxy **server-side** em `api/ai.js` via `kind:'openi'` (reusa o endpoint p/ respeitar o teto 12/12 funções; mesma proteção same-origin; não usa Anthropic). Helper `openiSearch()` normaliza `imgLarge/imgThumb/imgGrid150` (URLs relativas → prefixa `https://openi.nlm.nih.gov`), `journal_title/journal_date/authors/pmid/pmcid/image.caption`. Best-effort: falha → lista vazia → questão sem imagem.
+  - **Cliente:** `igFetchExamImage(query)` → POST `{kind:'openi'}`; `igFormatImgRef(it)` monta a minirreferência ("1º autor et al. Revista. Ano. Fonte: PubMed Central/Open-i · PMID"); `igAttachExamImage(q,d)` anexa `img`+`imgRef` ao objeto da questão (nunca falha a geração).
+  - **Modelo de dados:** novo campo **`imgRef`** ao lado de `img`, carregado em `igReadDraft`/`igFillForm`/`igLoteToQueue`/`igMakePending`/`pendApprove` + pushes de aprovação/edição.
+  - **Exibição:** helper **`qFigHTML(q)`** (imagem + legenda da referência) nas telas da Questão do Dia (`qotdCardHTML`, `qotdReviewCardHTML`); preview no editor (`igRenderImgPrev`), no lote (`renderIgLote`, com chip "🖼️ imagem") e no card de Pendências (com checkbox **"remover imagem ao aprovar"** — `pend-rmimg-<id>`, honrado em `pendApprove`) para o professor vetar imagem ruim.
+  - **⚠️ CORS/PNG:** `igQuestionSVG` só embute imagem **`data:`** (upload) no PNG do Story — URL externa tornaria o canvas *tainted* e quebraria o `toBlob`. A imagem do PubMed **ilustra dentro do app**; no Story o professor adiciona pelo editor do Instagram (consistente com a limitação já anotada). `<img>` de exibição usa `referrerpolicy="no-referrer"` + `onerror` (some se o hotlink falhar).
+  - **Ressalvas registradas ao usuário:** copyright (nem toda figura do PMC é reutilizável comercialmente — usuário optou por "qualquer figura + referência", com atribuição sempre visível p/ vetar); correção clínica (por isso o professor revisa/remove). Não testável no sandbox (proxy bloqueia `openi.nlm.nih.gov` por política) — validar em produção.
 
 ## Ajustes do usuário (2026-06-30)
 - **LDL-c sem meta/VR no enunciado (regra #10 do `CLINICAL_AUTHORING`):** a IA NÃO inclui mais o valor de referência nem a META de LDL-c (nem demais alvos lipídicos) no enunciado — o aluno deduz a meta pelo risco CV. A regra também impõe COERÊNCIA: não afirmar "no alvo/na meta" sem conferir o valor contra a meta do risco (origem: questão gerada com "LDL-c 62 (meta <55)… já no alvo" — contradição, 62 > 55). Vale para todos os geradores (via `authoringSys`).

@@ -5086,7 +5086,7 @@ function qotdCardHTML(q,ans,title){
     +'<span style="font-weight:800;color:var(--gold);font-size:.92rem">'+(title||'🧠 Questão do Dia')+'</span>'
     +'</div>'
     +'<div style="font-size:.86rem;line-height:1.55;color:var(--tx);opacity:.82;text-align:justify;margin-bottom:.7rem">'+esc((q.teem?String(q.teem).trim()+' ':'')+String(q.stem).trim())+'</div>'
-    +(q.img?'<img src="'+esc(q.img)+'" alt="Figura do caso" style="max-width:100%;display:block;border-radius:8px;margin:0 0 .7rem;border:1px solid var(--bd)">':'')
+    +qFigHTML(q)
     +'<div style="display:flex;flex-direction:column;gap:.4rem">'+opts+'</div>'
     +'<div id="qotd-fb">'+fb+'</div>'
     +'</div>';
@@ -5182,7 +5182,7 @@ function qotdReviewCardHTML(q){
   }).join('');
   var cm=q.explanation?'<div style="margin-top:.55rem;padding:.55rem .7rem;border-radius:var(--rs);background:var(--s2);font-size:.8rem;line-height:1.5;color:var(--t2)"><b style="color:var(--tx)">Comentário:</b> '+esc(q.explanation)+'</div>':'';
   return '<div style="font-size:.86rem;line-height:1.55;color:var(--tx);margin-bottom:.6rem">'+esc((q.teem?String(q.teem).trim()+' ':'')+String(q.stem).trim())+'</div>'
-    +(q.img?'<img src="'+esc(q.img)+'" alt="Figura" style="max-width:100%;display:block;border-radius:8px;margin:0 0 .6rem;border:1px solid var(--bd)">':'')
+    +qFigHTML(q)
     +'<div style="display:flex;flex-direction:column;gap:.4rem">'+opts+'</div>'+cm;
 }
 function qotdArchDate(q){return (q&&(q.postedAt||q.createdAt||q.at))||0;}
@@ -8624,7 +8624,32 @@ var IG_TOOLS=[
   {nome:'Cursos',cta:'Aulas das subespecialidades com quem é referência.'}
 ];
 var igEditId=null; // id do item da fila em edição (null = criando novo)
-var igDraftImg=''; // imagem (base64) do enunciado no formulário manual
+var igDraftImg=''; // imagem (base64 ou URL) do enunciado no formulário manual
+var igDraftImgRef=''; // atribuição/minirreferência da imagem (quando vinda do PubMed/Open-i)
+// Busca uma imagem de exame complementar (PubMed Central via Open-i) p/ ilustrar a
+// questão. Best-effort: qualquer falha devolve null (a questão fica sem imagem).
+function igFetchExamImage(query){
+  query=String(query||'').trim();if(!query)return Promise.resolve(null);
+  return fetch('/api/ai',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({kind:'openi',query:query,n:1})})
+    .then(function(r){return r.ok?r.json():null;})
+    .then(function(d){if(!d||!d.ok||!d.items||!d.items.length)return null;var it=d.items[0];if(!it.img)return null;return {img:it.img,imgRef:igFormatImgRef(it)};})
+    .catch(function(){return null;});
+}
+// Monta a minirreferência exibida abaixo da imagem: "1º autor et al. Revista. Ano. Fonte: PubMed Central/Open-i · PMID".
+function igFormatImgRef(it){
+  var raw=String(it.authors||''),first=raw.split(/[,;]/)[0].trim();
+  var au=first?(first+(/[,;]/.test(raw)?' et al.':'')):'';
+  var parts=[];if(au)parts.push(au);if(it.journal)parts.push(it.journal);
+  var yr=(String(it.date||'').match(/\d{4}/)||[])[0];if(yr)parts.push(yr);
+  var id=it.pmid?('PMID '+it.pmid):(it.pmcid||'');
+  return (parts.length?parts.join('. ')+'. ':'')+'Fonte: PubMed Central/Open-i'+(id?' · '+id:'');
+}
+// Figura da questão (imagem + minirreferência) usada nas telas do app (Questão do Dia).
+function qFigHTML(q){
+  if(!q||!q.img)return '';
+  var cap=q.imgRef?'<div style="font-size:.66rem;color:var(--t3);line-height:1.4;margin:-.35rem 0 .7rem;font-style:italic">'+esc(q.imgRef)+'</div>':'';
+  return '<img src="'+esc(q.img)+'" alt="Figura do caso" referrerpolicy="no-referrer" onerror="this.style.display=\'none\'" style="max-width:100%;display:block;border-radius:8px;margin:0 0 '+(q.imgRef?'.35rem':'.7rem')+';border:1px solid var(--bd)">'+cap;
+}
 function persistIgStories(immediate){try{lsSet('ig_stories',igStories);}catch(e){}return queueRemoteStateSave(immediate);}
 function igSetV(id,v){var e=document.getElementById(id);if(e)e.value=(v==null?'':v);}
 function igXml(s){return String(s==null?'':s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');}
@@ -8651,7 +8676,10 @@ function igQuestionSVG(it){
   var sl=igWrap(stem,stemFont,cw);
   p.push('<text font-family="Arial,Helvetica,sans-serif" font-size="44" font-weight="500" fill="'+IG_TX+'">'+igTspansJ(sl,pad,y,lh,cw)+'</text>');
   y+=sl.length*lh+36;
-  if(it.img){var imgH=288;p.push('<image xlink:href="'+esc(it.img)+'" x="'+pad+'" y="'+y+'" width="'+cw+'" height="'+imgH+'" preserveAspectRatio="xMidYMid meet"/>');y+=imgH+26;}
+  // Só embute imagem base64 (data:) no PNG — URL externa (PubMed/Open-i) tornaria o
+  // canvas "tainted" e quebraria o toBlob. A imagem externa ilustra dentro do app;
+  // no Story o professor a adiciona pelo editor do Instagram.
+  if(it.img&&/^data:/.test(String(it.img))){var imgH=288;p.push('<image xlink:href="'+esc(it.img)+'" x="'+pad+'" y="'+y+'" width="'+cw+'" height="'+imgH+'" preserveAspectRatio="xMidYMid meet"/>');y+=imgH+26;}
   ['A','B','C','D'].forEach(function(L){
     if(!op[L])return;
     var aFont='38px Arial',alh=50,al=igWrap(String(op[L]).trim(),aFont,cw-118),boxH=Math.max(86,al.length*alh+36);
@@ -8735,24 +8763,25 @@ function igCaptionA(it){
 function igCaptionPromo(t){return '📲 '+t.nome+' — Endodirect\n\n'+t.cta+'\n\nA plataforma completa de endocrinologia para sua aprovação e prática. Link na bio! 🔗\n#endocrinologia #residenciamedica #endodirect #medicina';}
 function igReadDraft(){
   function v(id){var e=document.getElementById(id);return e?String(e.value||'').trim():'';}
-  return {sub:v('ig-sub'),teem:v('ig-teem'),stem:v('ig-stem'),options:{A:v('ig-a'),B:v('ig-b'),C:v('ig-c'),D:v('ig-d')},answer:(document.getElementById('ig-ans')||{}).value||'A',explanation:v('ig-exp'),img:igDraftImg};
+  return {sub:v('ig-sub'),teem:v('ig-teem'),stem:v('ig-stem'),options:{A:v('ig-a'),B:v('ig-b'),C:v('ig-c'),D:v('ig-d')},answer:(document.getElementById('ig-ans')||{}).value||'A',explanation:v('ig-exp'),img:igDraftImg,imgRef:igDraftImgRef};
 }
 function igFillForm(it){
   igSetV('ig-sub',it.sub);igSetV('ig-teem',it.teem||'');igSetV('ig-stem',it.stem||'');
   var op=it.options||{};igSetV('ig-a',op.A||'');igSetV('ig-b',op.B||'');igSetV('ig-c',op.C||'');igSetV('ig-d',op.D||'');
   var an=document.getElementById('ig-ans');if(an)an.value=it.answer||'A';igSetV('ig-exp',it.explanation||'');
-  igDraftImg=it.img||'';igRenderImgPrev();
+  igDraftImg=it.img||'';igDraftImgRef=it.imgRef||'';igRenderImgPrev();
 }
-// Imagem opcional do enunciado (mesmo padrão do banco de questões): base64 no draft.
+// Imagem opcional do enunciado (upload base64 OU sugestão do PubMed/Open-i por URL).
 function igRenderImgPrev(){
   var pv=document.getElementById('ig-imgprev');if(!pv)return;
-  pv.innerHTML=igDraftImg?'<div style="display:flex;align-items:center;gap:.6rem;background:var(--s2);border:1px solid var(--bd);border-radius:var(--rs);padding:.5rem .7rem"><img src="'+esc(igDraftImg)+'" style="height:54px;border-radius:6px"><span style="flex:1;font-size:.74rem;color:var(--t2)">Imagem do enunciado</span><button class="btn btn-ghost btn-sm" id="ig-imgclear">✕</button></div>':'';
-  var cl=document.getElementById('ig-imgclear');if(cl)cl.addEventListener('click',function(){igDraftImg='';igRenderImgPrev();});
+  var ref=igDraftImgRef?'<div style="font-size:.66rem;color:var(--t3);line-height:1.4;font-style:italic;margin-top:.2rem">'+esc(igDraftImgRef)+'</div>':'';
+  pv.innerHTML=igDraftImg?'<div style="background:var(--s2);border:1px solid var(--bd);border-radius:var(--rs);padding:.5rem .7rem"><div style="display:flex;align-items:center;gap:.6rem"><img src="'+esc(igDraftImg)+'" referrerpolicy="no-referrer" style="height:54px;border-radius:6px" onerror="this.style.display=\'none\'"><span style="flex:1;font-size:.74rem;color:var(--t2)">Imagem do enunciado'+(igDraftImgRef?' · PubMed/Open-i':'')+'</span><button class="btn btn-ghost btn-sm" id="ig-imgclear">✕</button></div>'+ref+'</div>':'';
+  var cl=document.getElementById('ig-imgclear');if(cl)cl.addEventListener('click',function(){igDraftImg='';igDraftImgRef='';igRenderImgPrev();});
 }
 function igHandleImg(f){
   if(!/^image\//.test(f.type)){notify('Selecione uma imagem.','err');return;}
   if(f.size>5*1024*1024){notify('Imagem muito grande (máx 5 MB).','err');return;}
-  var r=new FileReader();r.onload=function(ev){igDraftImg=ev.target.result;igRenderImgPrev();};r.readAsDataURL(f);
+  var r=new FileReader();r.onload=function(ev){igDraftImg=ev.target.result;igDraftImgRef='';igRenderImgPrev();};r.readAsDataURL(f);
 }
 function igValidDraft(d){
   if(!d.stem){notify('Escreva o enunciado.','err');return false;}
@@ -8770,11 +8799,20 @@ function admPendCardHTML(it){
     return '<div style="display:flex;gap:.4rem;align-items:center;margin-bottom:.3rem"><span style="font-weight:700;color:var(--blue);width:16px;flex-shrink:0">'+L+'</span><input type="text" id="pend-'+L+'-'+id+'" value="'+esc((it.options||{})[L]||'')+'" style="flex:1"></div>';
   }).join('');
   var ansOpts=['A','B','C','D'].map(function(L){return '<option value="'+L+'"'+(it.answer===L?' selected':'')+'>'+L+'</option>';}).join('');
+  // Imagem sugerida (PubMed/Open-i) ou anexada — o professor confere e pode remover
+  // (marcar "remover imagem") caso não ilustre bem a questão.
+  var imgBlock=it.img?(igLbl('Imagem do enunciado (sugerida do PubMed — confira)')
+    +'<div style="background:var(--s2);border:1px solid var(--bd);border-radius:var(--rs);padding:.55rem .7rem;margin-bottom:.6rem">'
+    +'<img src="'+esc(it.img)+'" alt="Figura do caso" referrerpolicy="no-referrer" onerror="this.style.display=\'none\'" style="max-width:100%;max-height:220px;display:block;border-radius:6px;border:1px solid var(--bd)">'
+    +(it.imgRef?'<div style="font-size:.66rem;color:var(--t3);line-height:1.4;font-style:italic;margin-top:.35rem">'+esc(it.imgRef)+'</div>':'')
+    +'<label style="display:flex;gap:.4rem;align-items:center;font-size:.72rem;color:var(--t2);margin-top:.45rem;cursor:pointer"><input type="checkbox" id="pend-rmimg-'+id+'" style="width:auto"> remover imagem ao aprovar</label>'
+    +'</div>'):'';
   return '<div class="card" data-pend-card="'+id+'" style="margin-bottom:1rem">'
     +'<div style="display:flex;justify-content:space-between;gap:.5rem;flex-wrap:wrap;align-items:center;margin-bottom:.55rem">'
       +'<div style="font-size:.85rem;font-weight:700;color:var(--tx)">'+dirSubIcon(it.sub)+' '+esc(it.sub||'')+(it.teem?' <span class="tag">'+esc(it.teem)+'</span>':'')+'</div>'
       +'<span class="tag tag-blue">aguardando revisão</span></div>'
     +igLbl('Enunciado')+'<textarea id="pend-stem-'+id+'" rows="4" style="width:100%;margin-bottom:.5rem">'+esc(it.stem||'')+'</textarea>'
+    +imgBlock
     +igLbl('Alternativas')+'<div style="margin-bottom:.5rem">'+optRows+'</div>'
     +'<label style="display:block;width:90px;margin-bottom:.5rem">'+igLbl('Gabarito')+'<select id="pend-ans-'+id+'">'+ansOpts+'</select></label>'
     +igLbl('Comentário (resposta comentada no app)')+'<textarea id="pend-exp-'+id+'" rows="3" style="width:100%;margin-bottom:.6rem">'+esc(it.explanation||'')+'</textarea>'
@@ -8799,7 +8837,9 @@ function pendApprove(id){
   var answer=(document.getElementById('pend-ans-'+id)||{}).value||it.answer||'A';
   var explanation=val('pend-exp-');
   if(!stem||!options.A||!options.B||!options.C||!options.D){notify('Preencha o enunciado e as 4 alternativas.','err');return;}
-  igStories.push({id:'ig-'+Date.now()+'-'+Math.round(Math.random()*1e6),sub:it.sub,teem:it.teem||'',stem:stem,options:options,answer:answer,explanation:explanation,img:it.img||'',status:'queued',createdAt:Date.now()});
+  var rm=(document.getElementById('pend-rmimg-'+id)||{}).checked;
+  var pImg=rm?'':(it.img||''),pRef=rm?'':(it.imgRef||'');
+  igStories.push({id:'ig-'+Date.now()+'-'+Math.round(Math.random()*1e6),sub:it.sub,teem:it.teem||'',stem:stem,options:options,answer:answer,explanation:explanation,img:pImg,imgRef:pRef,status:'queued',createdAt:Date.now()});
   igPending.splice(idx,1);
   persistIgStories();persistIgPending();updateAdmPendBadge();
   notify('Aprovada e publicada na Questão do Dia.','ok');renderAdmSec('pendencias');
@@ -9014,17 +9054,25 @@ function igShuffleMCQ(q){
   }catch(e){}
   return q;
 }
-function igGenOne(sub,topic){
-  var sys=authoringSys('Atue como examinador de prova de título em endocrinologia. Gere UMA questão ORIGINAL de '+sub+', EXATAMENTE 4 alternativas (A–D), só uma correta. O enunciado deve TERMINAR SEMPRE com a pergunta direta (ex.: Qual o diagnóstico mais provável? / Qual a melhor conduta?). Inclua os valores laboratoriais pertinentes INLINE no texto, com unidades e valores de referência (ex.: FSH 2,1 mUI/mL [VR 3,5–12,5]) — não resuma como exames normais nem use tabela. Quando pertinente, descreva o achado de imagem no enunciado em texto (ex.: USG de tireoide, ECG, RM de sela). NÃO cite a subespecialidade no enunciado. Alternativas CURTAS e concisas (poucas palavras — também vão para o story). JSON APENAS: {"stem":"vinheta clínica curta; exames laboratoriais inline com valores, unidades e referência; achado de imagem descrito em texto quando pertinente; TERMINA com a pergunta direta","options":{"A":"alternativa curta","B":"alternativa curta","C":"alternativa curta","D":"alternativa curta"},"answer":"A","explanation":"comentário COMPLETO em 1-2 parágrafos (cerca de 4-8 linhas no total): explique por que a alternativa correta está certa E por que as principais erradas estão erradas, com o critério/valor de corte e citando a diretriz/fonte pelo NOME + ano (sem PMID nem DOI); refira-se ao CONTEÚDO das alternativas, NÃO às letras (A/B/C/D), pois a ordem é embaralhada"}');
-  return aiRequest({system:sys,prompt:'Gere 1 questão de Endocrinologia — '+sub+(topic?(', subtema OBRIGATÓRIO (não troque por outro assunto da área): '+topic):'')+', nível intermediário, clinicamente precisa e alinhada às diretrizes vigentes. Responda SOMENTE com o objeto JSON.',maxTokens:1100,model:AI_MODEL_CLINICO,grounding:(topic?(sub+' '+topic):sub)})
-  .then(function(raw){var d=parseJ(raw);if(!d||!d.stem||!d.options)return null;return igShuffleMCQ({sub:sub,teem:'',stem:String(d.stem||''),options:{A:d.options.A||'',B:d.options.B||'',C:d.options.C||'',D:d.options.D||''},answer:String(d.answer||'A').toUpperCase().slice(0,1),explanation:String(d.explanation||'')});});
+// Se a questão descreve um exame de imagem, anexa (best-effort) uma figura real do
+// PubMed Central (Open-i) a partir de d.imageQuery. Nunca falha a geração.
+function igAttachExamImage(q,d){
+  var iq=d&&d.imageQuery?String(d.imageQuery).trim():'';
+  if(!iq)return Promise.resolve(q);
+  return igFetchExamImage(iq).then(function(im){if(im){q.img=im.img;q.imgRef=im.imgRef;}return q;}).catch(function(){return q;});
 }
-function igLoteToQueue(it){igStories.push({id:'ig-'+Date.now()+'-'+Math.round(Math.random()*1e6),sub:it.sub,teem:it.teem||'',stem:it.stem,options:it.options,answer:it.answer,explanation:it.explanation,status:'queued',createdAt:Date.now()});}
+var IG_IMAGEQUERY_RULE=' Se — e SOMENTE se — a vinheta envolver um exame de IMAGEM/complementar que valha ilustrar (ex.: RM de sela, USG de tireoide, TC de adrenal, cintilografia, densitometria, ECG, radiografia), inclua no JSON o campo "imageQuery" com TERMOS DE BUSCA EM INGLÊS para achar essa imagem no PubMed (ex.: "pituitary MRI microadenoma", "thyroid ultrasound nodule", "adrenal CT adenoma"); se não houver imagem pertinente, use "imageQuery":"" (string vazia).';
+function igGenOne(sub,topic){
+  var sys=authoringSys('Atue como examinador de prova de título em endocrinologia. Gere UMA questão ORIGINAL de '+sub+', EXATAMENTE 4 alternativas (A–D), só uma correta. O enunciado deve TERMINAR SEMPRE com a pergunta direta (ex.: Qual o diagnóstico mais provável? / Qual a melhor conduta?). Inclua os valores laboratoriais pertinentes INLINE no texto, com unidades e valores de referência (ex.: FSH 2,1 mUI/mL [VR 3,5–12,5]) — não resuma como exames normais nem use tabela. Quando pertinente, descreva o achado de imagem no enunciado em texto (ex.: USG de tireoide, ECG, RM de sela). NÃO cite a subespecialidade no enunciado. Alternativas CURTAS e concisas (poucas palavras — também vão para o story).'+IG_IMAGEQUERY_RULE+' JSON APENAS: {"stem":"vinheta clínica curta; exames laboratoriais inline com valores, unidades e referência; achado de imagem descrito em texto quando pertinente; TERMINA com a pergunta direta","options":{"A":"alternativa curta","B":"alternativa curta","C":"alternativa curta","D":"alternativa curta"},"answer":"A","explanation":"comentário COMPLETO em 1-2 parágrafos (cerca de 4-8 linhas no total): explique por que a alternativa correta está certa E por que as principais erradas estão erradas, com o critério/valor de corte e citando a diretriz/fonte pelo NOME + ano (sem PMID nem DOI); refira-se ao CONTEÚDO das alternativas, NÃO às letras (A/B/C/D), pois a ordem é embaralhada","imageQuery":"termos em inglês p/ imagem de exame OU string vazia"}');
+  return aiRequest({system:sys,prompt:'Gere 1 questão de Endocrinologia — '+sub+(topic?(', subtema OBRIGATÓRIO (não troque por outro assunto da área): '+topic):'')+', nível intermediário, clinicamente precisa e alinhada às diretrizes vigentes. Responda SOMENTE com o objeto JSON.',maxTokens:1100,model:AI_MODEL_CLINICO,grounding:(topic?(sub+' '+topic):sub)})
+  .then(function(raw){var d=parseJ(raw);if(!d||!d.stem||!d.options)return null;var q=igShuffleMCQ({sub:sub,teem:'',stem:String(d.stem||''),options:{A:d.options.A||'',B:d.options.B||'',C:d.options.C||'',D:d.options.D||''},answer:String(d.answer||'A').toUpperCase().slice(0,1),explanation:String(d.explanation||'')});return igAttachExamImage(q,d);});
+}
+function igLoteToQueue(it){igStories.push({id:'ig-'+Date.now()+'-'+Math.round(Math.random()*1e6),sub:it.sub,teem:it.teem||'',stem:it.stem,options:it.options,answer:it.answer,explanation:it.explanation,img:it.img||'',imgRef:it.imgRef||'',status:'queued',createdAt:Date.now()});}
 function igLoteApprove(i){var it=igLoteDraft[i];if(!it)return;igLoteToQueue(it);igLoteDraft.splice(i,1);persistIgStories();notify('Aprovada e adicionada à fila.','ok');renderAdmSec('stories');}
 function igLoteApproveAll(){if(!igLoteDraft.length)return;var n=igLoteDraft.length;igLoteDraft.forEach(igLoteToQueue);igLoteDraft=[];persistIgStories();notify(n+' questões aprovadas.','ok');renderAdmSec('stories');}
 // DISTRIBUIR: envia a questão para a aba Pendências do professor responsável (pela
 // subespecialidade). Vive no estado global; o professor aprova/edita lá.
-function igMakePending(it){return {id:'igp-'+Date.now()+'-'+Math.round(Math.random()*1e6),sub:it.sub,teem:it.teem||'',stem:it.stem,options:it.options,answer:it.answer,explanation:it.explanation||'',img:it.img||'',status:'pending',distributedBy:admEmail(),distributedAt:Date.now()};}
+function igMakePending(it){return {id:'igp-'+Date.now()+'-'+Math.round(Math.random()*1e6),sub:it.sub,teem:it.teem||'',stem:it.stem,options:it.options,answer:it.answer,explanation:it.explanation||'',img:it.img||'',imgRef:it.imgRef||'',status:'pending',distributedBy:admEmail(),distributedAt:Date.now()};}
 function igDistribute(i){var it=igLoteDraft[i];if(!it)return;igPending.push(igMakePending(it));igLoteDraft.splice(i,1);persistIgPending();var c=qotdCuratorForSub(it.sub);notify('Distribuída para '+(c?c.nome:'Pendências')+' ('+esc(it.sub||'')+').','ok');renderAdmSec('stories');}
 function igDistributeAll(){if(!igLoteDraft.length)return;var n=igLoteDraft.length;igLoteDraft.forEach(function(it){igPending.push(igMakePending(it));});igLoteDraft=[];persistIgPending();notify(n+' questões distribuídas.','ok');renderAdmSec('stories');}
 // Reordena a fila (ordem = ordem de publicação; topo = próxima). dir: -1 sobe, +1 desce.
@@ -9036,10 +9084,11 @@ function renderIgLote(){
   res.innerHTML='<div style="font-size:.74rem;color:var(--t2);margin:.2rem 0 .5rem">'+igLoteDraft.length+' gerada(s) — revise e aprove:</div>'+igLoteDraft.map(function(it,i){
     var _stem=String(it.stem||'');
     var _prev=esc(_stem.slice(0,220))+(_stem.length>220?'…':'');
-    var _full='<div style="font-size:.74rem;color:var(--t2);line-height:1.55;white-space:pre-wrap">▾ '+esc(_stem)+'</div><div style="margin-top:.35rem;display:grid;gap:.18rem">'+['A','B','C','D'].map(function(L){var ok=(it.answer===L);return '<div style="font-size:.74rem;line-height:1.45;color:'+(ok?'#16a34a':'var(--t2)')+';font-weight:'+(ok?'700':'400')+'"><b>'+L+')</b> '+esc((it.options||{})[L]||'')+(ok?' ✓':'')+'</div>';}).join('')+'</div>'+(it.explanation?'<div style="margin-top:.35rem;font-size:.72rem;color:var(--t3);line-height:1.5"><b>Comentário:</b> '+esc(it.explanation)+'</div>':'');
+    var _fig=it.img?'<div style="margin-top:.4rem"><img src="'+esc(it.img)+'" alt="Figura do caso" referrerpolicy="no-referrer" onerror="this.style.display=\'none\'" style="max-width:100%;max-height:200px;border-radius:6px;border:1px solid var(--bd)">'+(it.imgRef?'<div style="font-size:.66rem;color:var(--t3);font-style:italic;line-height:1.4;margin-top:.25rem">'+esc(it.imgRef)+'</div>':'')+'</div>':'';
+    var _full='<div style="font-size:.74rem;color:var(--t2);line-height:1.55;white-space:pre-wrap">▾ '+esc(_stem)+'</div>'+_fig+'<div style="margin-top:.35rem;display:grid;gap:.18rem">'+['A','B','C','D'].map(function(L){var ok=(it.answer===L);return '<div style="font-size:.74rem;line-height:1.45;color:'+(ok?'#16a34a':'var(--t2)')+';font-weight:'+(ok?'700':'400')+'"><b>'+L+')</b> '+esc((it.options||{})[L]||'')+(ok?' ✓':'')+'</div>';}).join('')+'</div>'+(it.explanation?'<div style="margin-top:.35rem;font-size:.72rem;color:var(--t3);line-height:1.5"><b>Comentário:</b> '+esc(it.explanation)+'</div>':'');
     return '<div style="border:1px solid var(--bd);border-radius:12px;padding:.7rem .8rem;margin-bottom:.5rem;background:var(--s2)">'
       +'<div style="display:flex;justify-content:space-between;gap:.5rem;flex-wrap:wrap;align-items:center;margin-bottom:.35rem">'
-      +'<div style="font-size:.8rem;font-weight:700;color:var(--tx)">'+dirSubIcon(it.sub)+' '+esc(it.sub||'')+' <span class="tag tag-blue">Gab: '+esc(it.answer)+'</span>'+(qotdCuratorForSub(it.sub)?' <span class="tag">→ '+esc(qotdCuratorForSub(it.sub).nome)+'</span>':'')+'</div>'
+      +'<div style="font-size:.8rem;font-weight:700;color:var(--tx)">'+dirSubIcon(it.sub)+' '+esc(it.sub||'')+' <span class="tag tag-blue">Gab: '+esc(it.answer)+'</span>'+(it.img?' <span class="tag">🖼️ imagem</span>':'')+(qotdCuratorForSub(it.sub)?' <span class="tag">→ '+esc(qotdCuratorForSub(it.sub).nome)+'</span>':'')+'</div>'
       +'<div style="display:flex;gap:.3rem;flex-wrap:wrap">'
       +'<button class="btn btn-primary btn-sm" data-iglote-dist="'+i+'">📤 Distribuir</button>'
       +'<button class="btn btn-outline btn-sm" data-iglote-ok="'+i+'">✓ Aprovar</button>'
@@ -9073,7 +9122,7 @@ function bindAdmStories(){
   function syncManTemas(){if(manTemaSel)manTemaSel.innerHTML=igLoteTemas((manSubSel&&manSubSel.value)||(typeof DIR_SUBS!=='undefined'?DIR_SUBS[0]:''));}
   if(manSubSel){manSubSel.addEventListener('change',syncManTemas);syncManTemas();}
   var manToggle=document.getElementById('ig-manual-toggle');
-  if(manToggle)manToggle.addEventListener('click',function(){var w=document.getElementById('ig-manual-wrap');if(!w)return;w.style.display='';igEditId=null;['ig-teem','ig-stem','ig-a','ig-b','ig-c','ig-d','ig-exp'].forEach(function(id){var e=document.getElementById(id);if(e)e.value='';});var an=document.getElementById('ig-ans');if(an)an.value='A';igDraftImg='';igRenderImgPrev();var pw=document.getElementById('ig-prev-wrap');if(pw)pw.style.display='none';try{document.getElementById('ig-stem').scrollIntoView({behavior:'smooth',block:'center'});}catch(e){}});
+  if(manToggle)manToggle.addEventListener('click',function(){var w=document.getElementById('ig-manual-wrap');if(!w)return;w.style.display='';igEditId=null;['ig-teem','ig-stem','ig-a','ig-b','ig-c','ig-d','ig-exp'].forEach(function(id){var e=document.getElementById(id);if(e)e.value='';});var an=document.getElementById('ig-ans');if(an)an.value='A';igDraftImg='';igDraftImgRef='';igRenderImgPrev();var pw=document.getElementById('ig-prev-wrap');if(pw)pw.style.display='none';try{document.getElementById('ig-stem').scrollIntoView({behavior:'smooth',block:'center'});}catch(e){}});
   var promoToggle=document.getElementById('ig-promo-toggle');
   if(promoToggle)promoToggle.addEventListener('click',function(){var w=document.getElementById('ig-promo-wrap');if(!w)return;w.style.display=(w.style.display==='none'||!w.style.display)?'':'none';});
   var pendProfToggle=document.getElementById('ig-pendprof-toggle');
@@ -9083,13 +9132,17 @@ function bindAdmStories(){
     var sub=(document.getElementById('ig-sub')||{}).value||'Endocrinologia',topic=((document.getElementById('ig-topic')||{}).value||'').trim();
     var st=document.getElementById('ig-gen-status');
     gen.disabled=true;gen.innerHTML=ldHTML('Gerando...');if(st)st.textContent='';
-    var sys=authoringSys('Atue como examinador de prova de título em endocrinologia. Gere UMA questão ORIGINAL (não copie provas existentes), de '+sub+', com EXATAMENTE 4 alternativas (A–D), só uma correta. O enunciado deve TERMINAR SEMPRE com a pergunta direta (ex.: Qual o diagnóstico mais provável? / Qual a melhor conduta?). Inclua os valores laboratoriais pertinentes INLINE no texto, com unidades e valores de referência (ex.: FSH 2,1 mUI/mL [VR 3,5–12,5]) — não resuma como exames normais nem use tabela. Quando pertinente, descreva o achado de imagem no enunciado em texto (ex.: USG de tireoide, ECG, RM de sela). NÃO cite a subespecialidade no enunciado. Alternativas CURTAS e concisas (poucas palavras — também vão para o story). JSON APENAS: {"stem":"vinheta clínica curta; exames laboratoriais inline com valores, unidades e referência; achado de imagem descrito em texto quando pertinente; TERMINA com a pergunta direta","options":{"A":"alternativa curta","B":"alternativa curta","C":"alternativa curta","D":"alternativa curta"},"answer":"A","explanation":"comentário COMPLETO em 1-2 parágrafos (cerca de 4-8 linhas no total): explique por que a alternativa correta está certa E por que as principais erradas estão erradas, com o critério/valor de corte e citando a diretriz/fonte pelo NOME + ano (sem PMID nem DOI); refira-se ao CONTEÚDO das alternativas, NÃO às letras (A/B/C/D), pois a ordem é embaralhada"}');
+    var sys=authoringSys('Atue como examinador de prova de título em endocrinologia. Gere UMA questão ORIGINAL (não copie provas existentes), de '+sub+', com EXATAMENTE 4 alternativas (A–D), só uma correta. O enunciado deve TERMINAR SEMPRE com a pergunta direta (ex.: Qual o diagnóstico mais provável? / Qual a melhor conduta?). Inclua os valores laboratoriais pertinentes INLINE no texto, com unidades e valores de referência (ex.: FSH 2,1 mUI/mL [VR 3,5–12,5]) — não resuma como exames normais nem use tabela. Quando pertinente, descreva o achado de imagem no enunciado em texto (ex.: USG de tireoide, ECG, RM de sela). NÃO cite a subespecialidade no enunciado. Alternativas CURTAS e concisas (poucas palavras — também vão para o story).'+IG_IMAGEQUERY_RULE+' JSON APENAS: {"stem":"vinheta clínica curta; exames laboratoriais inline com valores, unidades e referência; achado de imagem descrito em texto quando pertinente; TERMINA com a pergunta direta","options":{"A":"alternativa curta","B":"alternativa curta","C":"alternativa curta","D":"alternativa curta"},"answer":"A","explanation":"comentário COMPLETO em 1-2 parágrafos (cerca de 4-8 linhas no total): explique por que a alternativa correta está certa E por que as principais erradas estão erradas, com o critério/valor de corte e citando a diretriz/fonte pelo NOME + ano (sem PMID nem DOI); refira-se ao CONTEÚDO das alternativas, NÃO às letras (A/B/C/D), pois a ordem é embaralhada","imageQuery":"termos em inglês p/ imagem de exame OU string vazia"}');
     aiRequest({system:sys,prompt:'Gere 1 questão de Endocrinologia — '+sub+(topic?(', subtema OBRIGATÓRIO (não troque por outro assunto da área): '+topic):'')+', nível intermediário, clinicamente precisa e alinhada às diretrizes vigentes. Enunciado conciso, adequado a um story do Instagram.',maxTokens:1100,model:AI_MODEL_CLINICO,grounding:(topic?(sub+' '+topic):sub)})
     .then(function(raw){
       var d=parseJ(raw);if(!d||!d.stem||!d.options)throw new Error('Resposta inválida. Tente de novo.');
       igEditId=null;
-      igFillForm(igShuffleMCQ({sub:sub,stem:String(d.stem||''),options:{A:d.options.A||'',B:d.options.B||'',C:d.options.C||'',D:d.options.D||''},answer:String(d.answer||'A').toUpperCase().slice(0,1),explanation:String(d.explanation||'')}));
-      if(st)st.textContent='✓ Gerada — revise, pré-visualize e aprove.';notify('Questão gerada. Revise antes de aprovar.','ok');
+      var q=igShuffleMCQ({sub:sub,stem:String(d.stem||''),options:{A:d.options.A||'',B:d.options.B||'',C:d.options.C||'',D:d.options.D||''},answer:String(d.answer||'A').toUpperCase().slice(0,1),explanation:String(d.explanation||'')});
+      if(d.imageQuery&&String(d.imageQuery).trim()&&st)st.textContent='🔎 Buscando imagem do exame…';
+      return igAttachExamImage(q,d).then(function(qq){
+        igFillForm(qq);
+        if(st)st.textContent='✓ Gerada — revise, pré-visualize e aprove.';notify('Questão gerada. Revise antes de aprovar.','ok');
+      });
     })
     .catch(function(e){notify('Erro ao gerar: '+((e&&e.message)||e),'err');})
     .then(function(){gen.disabled=false;gen.innerHTML='🤖 Gerar com IA';});
@@ -9144,14 +9197,14 @@ function bindAdmStories(){
   var appr=document.getElementById('ig-approve');
   if(appr)appr.addEventListener('click',function(){
     var d=igReadDraft();if(!igValidDraft(d))return;
-    if(igEditId){var it=igStories.filter(function(x){return x.id===igEditId;})[0];if(it){it.sub=d.sub;it.teem=d.teem;it.stem=d.stem;it.options=d.options;it.answer=d.answer;it.explanation=d.explanation;it.img=d.img||'';}notify('Questão atualizada na fila.','ok');}
-    else{igStories.push({id:'ig-'+Date.now()+'-'+Math.round(Math.random()*1e6),sub:d.sub,teem:d.teem,stem:d.stem,options:d.options,answer:d.answer,explanation:d.explanation,img:d.img||'',status:'queued',createdAt:Date.now()});notify('Questão aprovada e adicionada à fila.','ok');}
+    if(igEditId){var it=igStories.filter(function(x){return x.id===igEditId;})[0];if(it){it.sub=d.sub;it.teem=d.teem;it.stem=d.stem;it.options=d.options;it.answer=d.answer;it.explanation=d.explanation;it.img=d.img||'';it.imgRef=d.imgRef||'';}notify('Questão atualizada na fila.','ok');}
+    else{igStories.push({id:'ig-'+Date.now()+'-'+Math.round(Math.random()*1e6),sub:d.sub,teem:d.teem,stem:d.stem,options:d.options,answer:d.answer,explanation:d.explanation,img:d.img||'',imgRef:d.imgRef||'',status:'queued',createdAt:Date.now()});notify('Questão aprovada e adicionada à fila.','ok');}
     igEditId=null;persistIgStories();renderAdmSec('stories');
   });
   var dist=document.getElementById('ig-distribute');
-  if(dist)dist.addEventListener('click',function(){var d=igReadDraft();if(!igValidDraft(d))return;igPending.push(igMakePending(d));persistIgPending();var c=qotdCuratorForSub(d.sub);igEditId=null;igDraftImg='';notify('Distribuída para '+(c?c.nome:'Pendências')+' ('+esc(d.sub||'')+').','ok');renderAdmSec('stories');});
+  if(dist)dist.addEventListener('click',function(){var d=igReadDraft();if(!igValidDraft(d))return;igPending.push(igMakePending(d));persistIgPending();var c=qotdCuratorForSub(d.sub);igEditId=null;igDraftImg='';igDraftImgRef='';notify('Distribuída para '+(c?c.nome:'Pendências')+' ('+esc(d.sub||'')+').','ok');renderAdmSec('stories');});
   var clr=document.getElementById('ig-clear');
-  if(clr)clr.addEventListener('click',function(){igEditId=null;igDraftImg='';renderAdmSec('stories');});
+  if(clr)clr.addEventListener('click',function(){igEditId=null;igDraftImg='';igDraftImgRef='';renderAdmSec('stories');});
   var idp=document.getElementById('ig-imgdrop'),ifl=document.getElementById('ig-imgfile');
   if(idp&&ifl){idp.addEventListener('click',function(){ifl.click();});['dragenter','dragover'].forEach(function(ev){idp.addEventListener(ev,function(e){e.preventDefault();idp.classList.add('drag');});});['dragleave','drop'].forEach(function(ev){idp.addEventListener(ev,function(e){e.preventDefault();idp.classList.remove('drag');});});idp.addEventListener('drop',function(e){if(e.dataTransfer.files&&e.dataTransfer.files[0])igHandleImg(e.dataTransfer.files[0]);});ifl.addEventListener('change',function(e){if(e.target.files[0])igHandleImg(e.target.files[0]);});}
   igRenderImgPrev();

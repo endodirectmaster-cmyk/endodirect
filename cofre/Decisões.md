@@ -1,11 +1,14 @@
 ---
 tags: [cofre, decisoes]
-atualizado: 2026-06-30
+atualizado: 2026-07-01
 ---
 
 # Decisões
 
 Log de decisões de produto e técnicas (mais recentes no topo).
+
+## 2026-07
+- **🖼️ Questão do Dia: imagem de exame do PubMed/Open-i (automática) + remove "distribuída por" (2026-07-01, pedidos do Rodolpho):** (1) Removida a atribuição **"distribuída por &lt;email&gt;"** do card de Pendências (`admPendCardHTML`). (2) **Sugestão AUTOMÁTICA de imagem de exame complementar** ao gerar a Questão do Dia (RM de sela, USG de tireoide, TC de adrenal, cintilografia, etc.). Decisão do usuário: **automático** (a IA sugere sozinha) + **qualquer figura do PMC** com a referência visível. Como: a geração devolve `imageQuery` (termos em inglês); proxy **server-side** em `api/ai.js` (`kind:'openi'`, reusa endpoint p/ manter 12/12 funções) busca no **Open-i** (figuras do **PubMed Central**); o cliente anexa `img`+`imgRef` (novo campo) e exibe com minirreferência via `qFigHTML`. Professor **revisa e pode remover** a imagem em Pendências (checkbox). PNG do Story só embute imagem `data:` (URL externa → *taint* de canvas); imagem do PubMed ilustra **dentro do app**. Ressalvas de copyright/correção clínica registradas ao usuário (optou por "qualquer figura + referência"). ⚠️ Open-i não testável no sandbox (proxy bloqueia por política) — validar em produção; código é best-effort (falha → questão sem imagem, nunca quebra). Verificado: `ci-validate` OK. Ver [[Instagram Stories (Questão do Dia)]] e [[Arquitetura]].
 
 ## 2026-06
 - **🩸 Questão do Dia: LDL-c sem meta no enunciado + contagem de pendências por professor (2026-06-30, pedidos do Rodolpho):** (1) **`CLINICAL_AUTHORING` regra 10** — ao gerar questões por IA, **NÃO incluir valor de referência NEM a META de LDL-c** (nem demais alvos lipídicos) no enunciado (escrever só "LDL-c 62 mg/dL", nunca "(meta <55)"/"[VR <70]") → o aluno **deduz** a meta pelo risco CV. A regra impõe ainda **COERÊNCIA**: não afirmar "no alvo/na meta" sem conferir o valor contra a meta do risco (origem: questão gerada dizia "LDL-c 62 (meta <55)… já no alvo (<55)" — **contradição**, 62 > 55). (2) **Botão "👥 Pendências por professor"** na aba **Gerar lote** (toggle `#ig-pendprof-toggle`) → mostra **quantas questões cada curador tem para aprovar**, agrupadas por subespecialidade, p/ o Rodolpho equilibrar a distribuição dos temas. Novas funções: `qotdPendingByCurator()` (agrupa `igPending` por `qotdCuratorForSub`) + `admPendByProfHTML()`; recalcula ao abrir. Verificado: `ci-validate` (6 scripts inline; regressão IA não trunca diretrizes/JSON). Ver [[Arquitetura]] e [[Instagram Stories (Questão do Dia)]].

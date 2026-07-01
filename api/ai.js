@@ -45,6 +45,33 @@ function extractText(payload) {
   return item && item.text ? item.text : '';
 }
 
+// Busca de imagem de exame complementar no Open-i (NLM/NIH) — figuras do PubMed
+// Central p/ ilustrar as Questões do Dia. Server-side (evita CORS na busca do JSON)
+// e best-effort: qualquer falha devolve lista vazia (a questão fica sem imagem).
+async function openiSearch(query, n) {
+  const OPENI = 'https://openi.nlm.nih.gov';
+  const qs = new URLSearchParams({ query: String(query || '').slice(0, 300), m: '1', n: String(Math.max(1, Math.min(n || 4, 8))) });
+  const abs = function (p) { p = String(p || ''); return p && p.charAt(0) === '/' ? OPENI + p : p; };
+  const r = await fetch(OPENI + '/api/search?' + qs.toString(), { headers: { Accept: 'application/json' } });
+  if (!r.ok) return [];
+  const d = await r.json().catch(() => null);
+  const list = d && Array.isArray(d.list) ? d.list : [];
+  return list.map(function (it) {
+    return {
+      img: abs(it.imgLarge || it.imgGrid150 || it.imgThumb || ''),
+      thumb: abs(it.imgThumb || it.imgGrid150 || it.imgLarge || ''),
+      title: String(it.title || '').slice(0, 400),
+      authors: String(it.authors || '').slice(0, 300),
+      journal: String(it.journal_title || '').slice(0, 200),
+      date: String(it.journal_date || it.pubDate || '').slice(0, 40),
+      pmid: String(it.pmid || '').slice(0, 20),
+      pmcid: String(it.pmcid || '').slice(0, 30),
+      articleUrl: String(it.article_URL || '').slice(0, 500),
+      caption: String((it.image && it.image.caption) || '').slice(0, 600)
+    };
+  }).filter(function (x) { return x.img; });
+}
+
 module.exports = async function handler(req, res) {
   if (req.method === 'OPTIONS') {
     res.setHeader('Allow', 'POST, OPTIONS');
@@ -117,6 +144,18 @@ module.exports = async function handler(req, res) {
       if (!user) return json(res, 200, { ok: true, authed: false, tickets: [] });
       const tickets = await listMyTickets(user.email);
       return json(res, 200, { ok: true, authed: true, tickets });
+    }
+    // (e) Busca de imagem de exame no Open-i (PubMed Central) p/ ilustrar a Questão
+    // do Dia. Não usa Anthropic → tratado aqui. Best-effort: falha vira lista vazia.
+    if (sbody && sbody.kind === 'openi') {
+      const q = String(sbody.query || '').trim().slice(0, 300);
+      if (!q) return json(res, 400, { ok: false, error: 'query vazia' });
+      try {
+        const items = await openiSearch(q, sbody.n);
+        return json(res, 200, { ok: true, items });
+      } catch (e) {
+        return json(res, 200, { ok: true, items: [] });
+      }
     }
   }
 
