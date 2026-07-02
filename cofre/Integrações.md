@@ -1,13 +1,14 @@
 ---
 tags: [cofre, integracoes]
-atualizado: 2026-07-01
+atualizado: 2026-07-02
 ---
 
 # Integrações
 
 ## Google Drive — entrada de diretrizes/artigos (conector MCP)
 - **Pasta oficial:** **"Plataforma ED"** — `folderId = 1wmtsV-RLkVo11ANSaOzOfPEaNSe3c8fZ` (My Drive, dono `endodirectmaster@gmail.com`). O Rodolpho passou a **jogar os PDFs de diretrizes/artigos aí** em vez de subir cada um no chat (2026-07-01).
-- **Permissão:** o Rodolpho **autorizou acesso permanente** ao Drive — posso ler/buscar sem pedir a cada vez.
+- **Permissão:** o Rodolpho deu **permissão TOTAL e permanente** ao Google Drive (reforçado 2026-07-02: *"permissão total no google drive, não precisa ficar pedindo permissão"*) — ler/buscar/incorporar **sem pedir** a cada vez.
+- **Organização (2026-07-02):** o Rodolpho passou a estruturar a "Plataforma ED" em **subpastas subespecialidade → tema**. Ex.: **Adrenal/** (`folderId 1ya1Ea6QmKD2hZQ8_G6HrYKFUmhOhE6ts`) com 10 subtemas (Carcinoma de Adrenal, Feo/Paraganglioma, Hiperaldosteronismo, HAC congênita, HAC macronodular, Hirsutismo, Incidentaloma, Insuficiência Adrenal, Cushing, SOP), cada uma com os PDFs de guideline/review. Fluxo por subtema: comparar com a diretriz do painel → **incorporar as lacunas** (os PDFs costumam ser guidelines-base 2015–2022; a plataforma já pode estar mais nova).
 - **Fluxo:** `search_files` (`parentId = '1wmtsV-RLkVo11ANSaOzOfPEaNSe3c8fZ'`) → `read_file_content` (aceita `application/pdf`) → extrair cortes/condutas → atualizar **diretriz do painel** (dado), **`CLINICAL_GUIDELINES`** (IA, index.html) e a **biblioteca [[Diretrizes Clínicas/README]]**, e rodar a **varredura** do conteúdo antigo. ⚠️ Não misturar **provas oficiais** (TEEM) com diretrizes; só incorporar quando o Rodolpho pedir ("incorpora o X") — mudanças na plataforma pedem aviso.
 
 ## Resend (e-mail)
