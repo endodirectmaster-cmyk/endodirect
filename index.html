@@ -10032,11 +10032,23 @@ function admRefSecHTML(){
 // Só no admin (admRefSecHTML). O aluno segue vendo dirCardHTML (somente leitura).
 // Flashcards editáveis DIRETO NA CAIXINHA (como o mapa): sem botão ✏️ de modo —
 // cada card já mostra Pergunta/Resposta em campos editáveis + 💾 Salvar e 🗑.
+// Um seletor Editar/Prévia alterna para o card com animação de virada (como o aluno vê).
+var admRefFlashMode='edit'; // 'edit' (caixinhas) | 'view' (flip animado, prévia do aluno)
 function admRefFlashHTML(d,i){
   var cards=Array.isArray(d.flashcards)?d.flashcards:[];
   var badge='<div class="dir-card-top"><span class="ref-badge">'+esc(d.fonte||'—')+(d.ano?(' · '+esc(d.ano)):'')+'</span></div>';
+  var toggle='<div class="dir-fmt" style="margin:.1rem 0 .7rem"><button class="dir-fmt-btn'+(admRefFlashMode==='edit'?' on':'')+'" data-reffc-mode="edit">✏️ Editar</button><button class="dir-fmt-btn'+(admRefFlashMode==='view'?' on':'')+'" data-reffc-mode="view">👁️ Prévia (animação)</button></div>';
+  if(admRefFlashMode==='view'){
+    var flips=cards.length?('<div class="dir-flash-wrap">'+cards.map(function(c,j){
+      return '<div class="dir-flip" data-dir-flash="'+i+'-'+j+'" tabindex="0"><div class="dir-flip-inner">'
+        +'<div class="dir-flip-face dir-flip-front"><div class="dfl-q">'+esc(c.q||'')+'</div><div class="dfl-hint">clique para ver a resposta</div></div>'
+        +'<div class="dir-flip-face dir-flip-back"><div class="dfl-a">'+esc(c.a||'')+'</div><div class="dfl-hint">↩︎ clique para voltar</div></div>'
+        +'</div></div>';
+    }).join('')+'</div>'):'<div class="dir-empty-fmt">Nenhum flashcard ainda.</div>';
+    return '<div class="dir-card">'+badge+toggle+'<div style="font-size:.72rem;color:var(--t2);margin-bottom:.6rem">Prévia do card como o aluno vê — clique para virar (animação 3D). Volte em <b>✏️ Editar</b> para alterar.</div>'+flips+'</div>';
+  }
   var body=cards.map(function(c,j){return admRefFlashCard(i,j,c);}).join('');
-  return '<div class="dir-card">'+badge+'<div style="font-size:.72rem;color:var(--t2);margin-bottom:.6rem">Edite direto na caixinha (pergunta = frente, resposta = verso). 💾 <b>Salvar</b> publica para os alunos.</div>'+(body||'<div class="dir-empty-fmt">Nenhum flashcard ainda.</div>')+'<button class="btn btn-outline btn-sm" data-reffc-add="'+i+'" style="margin-top:.4rem">➕ Adicionar flashcard</button></div>';
+  return '<div class="dir-card">'+badge+toggle+'<div style="font-size:.72rem;color:var(--t2);margin-bottom:.6rem">Edite direto na caixinha (pergunta = frente, resposta = verso). 💾 <b>Salvar</b> publica para os alunos.</div>'+(body||'<div class="dir-empty-fmt">Nenhum flashcard ainda.</div>')+'<button class="btn btn-outline btn-sm" data-reffc-add="'+i+'" style="margin-top:.4rem">➕ Adicionar flashcard</button></div>';
 }
 function admRefFlashCard(i,j,c){
   return '<div class="dfl-edit" id="adm-reffc-'+i+'-'+j+'">'
@@ -10958,6 +10970,7 @@ function bindAdmSec(sec){
     main.querySelectorAll('[data-reffc-save]').forEach(function(b){b.addEventListener('click',function(){var p=b.dataset.reffcSave.split('-');admSaveRefFlash(parseInt(p[0]),parseInt(p[1]));});});
     main.querySelectorAll('[data-reffc-del]').forEach(function(b){b.addEventListener('click',function(){var p=b.dataset.reffcDel.split('-');admDelRefFlash(parseInt(p[0]),parseInt(p[1]));});});
     main.querySelectorAll('[data-reffc-add]').forEach(function(b){b.addEventListener('click',function(){admAddRefFlash(parseInt(b.dataset.reffcAdd));});});
+    main.querySelectorAll('[data-reffc-mode]').forEach(function(b){b.addEventListener('click',function(){admRefFlashMode=b.dataset.reffcMode;renderAdmSec('ref');});});
     main.querySelectorAll('[data-refmapa-save]').forEach(function(b){b.addEventListener('click',function(){admSaveRefMapa(parseInt(b.dataset.refmapaSave));});});
     main.querySelectorAll('[data-refmapa-addnode]').forEach(function(b){b.addEventListener('click',function(){admRefMapaAddNode(parseInt(b.dataset.refmapaAddnode));});});
     main.querySelectorAll('[data-refmapa-addchild]').forEach(function(b){b.addEventListener('click',function(){var p=b.dataset.refmapaAddchild.split('-');admRefMapaAddChild(parseInt(p[0]),parseInt(p[1]));});});
