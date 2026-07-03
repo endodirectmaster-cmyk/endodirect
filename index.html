@@ -6575,6 +6575,7 @@ function aulaAnswer(i,letter){
 // vêm com GABARITO ✓ e comentário REVELADOS (revisão, não quiz) e não gravam
 // no Desempenho. Reusa aulaResumoHTML/aulaQuestions/exportAulaPDF.
 var admAulaTab='aula';
+var admAulaResumoEditing=false; // edição inline do resumo na aba Resumo do player admin
 var admTrilhaQs=[];
 function admTrilhaQCard(q,i){
   var opts=['A','B','C','D'].map(function(L){var isAns=q.answer===L;return '<div style="font-size:.8rem;line-height:1.5;color:'+(isAns?'#16a34a':'var(--t2)')+';font-weight:'+(isAns?'700':'400')+'">'+L+') '+esc((q.options||{})[L]||'')+(isAns?' ✓':'')+'</div>';}).join('');
@@ -6617,21 +6618,32 @@ function admSaveTrilhaQ(c,i){
 function admRenderAulaPlayer(c){
   var box=document.getElementById('adm-curso-player');if(!box)return;
   var tabs='<div style="display:flex;gap:.4rem;flex-wrap:wrap;margin:.2rem 0 .8rem">'+[['aula','▶ Aula'],['resumo','📝 Resumo'],['quest','🧠 Questões']].map(function(t){var on=admAulaTab===t[0];return '<button class="btn btn-sm '+(on?'btn-primary':'btn-outline')+'" data-admaulatab="'+t[0]+'">'+t[1]+'</button>';}).join('')+'</div>';
-  var head='<div style="display:flex;align-items:center;justify-content:space-between;gap:.7rem;margin-bottom:.4rem"><span style="font-size:.92rem;font-weight:700">'+esc(c.title||'Videoaula')+' <span class="tag" style="background:#1c2a48;color:#9aa6ba">revisão da trilha</span></span><div style="display:flex;gap:.4rem;flex-shrink:0"><button class="btn btn-outline btn-sm" id="adm-aula-edit">✏️ Editar</button><button class="btn btn-ghost btn-sm" id="adm-curso-player-close">✕ Fechar</button></div></div>';
+  var head='<div style="display:flex;align-items:center;justify-content:space-between;gap:.7rem;margin-bottom:.4rem"><span style="font-size:.92rem;font-weight:700">'+esc(c.title||'Videoaula')+' <span class="tag" style="background:#1c2a48;color:#9aa6ba">revisão da trilha</span></span><div style="display:flex;gap:.4rem;flex-shrink:0"><button class="btn btn-outline btn-sm" id="adm-aula-edit">✏️ Editar aula</button><button class="btn btn-ghost btn-sm" id="adm-curso-player-close">✕ Fechar</button></div></div>';
   var body;
-  if(admAulaTab==='resumo')body=aulaResumoHTML(c);
+  if(admAulaTab==='resumo'){
+    if(admAulaResumoEditing){
+      body='<div style="font-size:.72rem;color:var(--t2);margin-bottom:.5rem">Edite o resumo aqui mesmo — é o que o aluno lê na aba Resumo e baixa em PDF. 💾 <b>Salvar</b> publica na hora.</div>'
+        +'<textarea id="adm-aularesumo-ta" rows="16" style="width:100%;font-family:var(--font);font-size:.82rem;line-height:1.6">'+esc(c.resumo||'')+'</textarea>'
+        +'<div style="display:flex;gap:.5rem;margin-top:.6rem"><button class="btn btn-primary btn-sm" id="adm-aularesumo-save">💾 Salvar resumo</button><button class="btn btn-outline btn-sm" id="adm-aularesumo-cancel">Cancelar</button></div>';
+    }else{
+      body='<div style="display:flex;justify-content:flex-end;margin-bottom:.4rem"><button class="btn btn-outline btn-sm" id="adm-aularesumo-edit">✏️ Editar resumo</button></div>'+aulaResumoHTML(c);
+    }
+  }
   else if(admAulaTab==='quest')body='<div id="aula-quest-box"></div>';
   else body='<div style="background:#000;border-radius:var(--r);overflow:hidden">'+playerEmbed(c)+'</div>'+(c.desc?'<div style="font-size:.78rem;color:var(--t2);line-height:1.6;margin-top:.6rem">'+esc(c.desc)+'</div>':'');
   box.innerHTML='<div class="card">'+head+tabs+'<div id="adm-aula-tab-body">'+body+'</div></div>';
-  box.querySelectorAll('[data-admaulatab]').forEach(function(b){b.addEventListener('click',function(){admAulaTab=b.getAttribute('data-admaulatab');admRenderAulaPlayer(c);});});
-  var cl=document.getElementById('adm-curso-player-close');if(cl)cl.addEventListener('click',function(){box.style.display='none';box.innerHTML='';});
+  box.querySelectorAll('[data-admaulatab]').forEach(function(b){b.addEventListener('click',function(){admAulaTab=b.getAttribute('data-admaulatab');admAulaResumoEditing=false;admRenderAulaPlayer(c);});});
+  var cl=document.getElementById('adm-curso-player-close');if(cl)cl.addEventListener('click',function(){box.style.display='none';box.innerHTML='';admAulaResumoEditing=false;});
   var eb=document.getElementById('adm-aula-edit');if(eb)eb.addEventListener('click',function(){admCursoEditIdx=admCursos.indexOf(c);admCursoSubtab='importar';renderAdmSec('cursos');});
+  var re=document.getElementById('adm-aularesumo-edit');if(re)re.addEventListener('click',function(){admAulaResumoEditing=true;admRenderAulaPlayer(c);});
+  var rs=document.getElementById('adm-aularesumo-save');if(rs)rs.addEventListener('click',function(){var ta=document.getElementById('adm-aularesumo-ta');if(ta)c.resumo=ta.value;admAulaResumoEditing=false;try{persistCursos();}catch(e){}admRenderAulaPlayer(c);try{renderCursosAluno();}catch(e){}notify('Resumo salvo. ✓','ok');});
+  var rc=document.getElementById('adm-aularesumo-cancel');if(rc)rc.addEventListener('click',function(){admAulaResumoEditing=false;admRenderAulaPlayer(c);});
   var pb=document.getElementById('aula-pdf');if(pb)pb.addEventListener('click',function(){exportAulaPDF(c);});
   if(admAulaTab==='quest')admRenderAulaQuestReview(c);
 }
 function admPlayCursoAula(i){
   var c=admCursos[i];if(!c)return;
-  admAulaTab='aula';
+  admAulaTab='aula';admAulaResumoEditing=false;
   var box=document.getElementById('adm-curso-player');if(!box)return;
   box.style.display='block';admRenderAulaPlayer(c);
   box.scrollIntoView({behavior:'smooth',block:'start'});
