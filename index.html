@@ -6403,36 +6403,44 @@ function cursoAcessivel(slug){
   if(slug==='endo_essencial')return planRank()>=2||(Array.isArray(userAcessos)&&userAcessos.indexOf('curso:'+slug)>=0); // só Gold (ou quem já tem o curso)
   return (Array.isArray(userAcessos)&&userAcessos.indexOf('curso:'+slug)>=0);
 }
+// Uma aula está liberada se o curso está acessível OU se foi marcada como amostra grátis
+// (c.free) — a amostra é liberada inclusive na degustação (sem pacote).
+function aulaLiberada(c){return !!(c&&(cursoAcessivel(c.curso)||c.free));}
+// Curso alcançável só por amostra grátis (professor liberou ≥1 aula, mas o curso não é acessível).
+function cursoTemLiberada(slug){return (Array.isArray(admCursos)?admCursos:[]).some(function(c){return c&&c.curso===slug&&aulaLiberada(c);});}
 function renderCursosAluno(){
   var data=Array.isArray(admCursos)?admCursos:[];
   var frow=document.getElementById('curso-filter-row');
-  var cnt={};data.forEach(function(c){if(c.curso)cnt[c.curso]=(cnt[c.curso]||0)+1;});
+  var cnt={};data.forEach(function(c){if(c.curso&&aulaLiberada(c))cnt[c.curso]=(cnt[c.curso]||0)+1;});
   // Catálogo completo (igual ao admin); fallback p/ cursos que têm aula.
   var catalog=(Array.isArray(catalogoCursos)&&catalogoCursos.length)
     ? catalogoCursos.map(function(cc){return {slug:cc.slug,nome:cc.nome||cursoNomeBySlug(cc.slug)};})
     : Object.keys(cnt).map(function(s){return {slug:s,nome:cursoNomeBySlug(s)};});
   function aTile(slug,nome,n,icon){
     var active=cursoFilter===slug;
-    if(!cursoAcessivel(slug)){
+    var acc=cursoAcessivel(slug);
+    var sample=!acc&&cursoTemLiberada(slug); // acessível só via amostra grátis
+    if(!acc&&!sample){
       // Não incluído no plano: opaco; ao clicar, abre o upgrade.
       return '<button type="button" data-curso-upsell="1" title="Não incluído no seu plano — clique para fazer upgrade" style="display:flex;flex-direction:column;align-items:flex-start;gap:.2rem;border:1.5px dashed var(--bd2);background:var(--s2);border-radius:14px;padding:.7rem .9rem;min-width:155px;text-align:left;opacity:.5;cursor:pointer"><span style="font-size:1.45rem;filter:grayscale(1)">'+icon+'</span><span style="font-size:.83rem;font-weight:700;color:var(--t2)">'+esc(nome)+'</span><span style="font-size:.68rem;color:var(--t3)">🔒 Fazer upgrade</span></button>';
     }
-    return '<button type="button" data-cursofilter="'+esc(slug)+'" style="display:flex;flex-direction:column;align-items:flex-start;gap:.2rem;border:1.5px solid '+(active?'var(--blue)':'var(--bd2)')+';background:'+(active?'var(--blue-l)':'var(--surface)')+';border-radius:14px;padding:.7rem .9rem;cursor:pointer;min-width:155px;text-align:left"><span style="font-size:1.45rem">'+icon+'</span><span style="font-size:.83rem;font-weight:700;color:var(--tx)">'+esc(nome)+'</span><span style="font-size:.68rem;color:var(--t3)">'+n+' aula'+(n===1?'':'s')+'</span></button>';
+    var subline=sample?'<span style="font-size:.68rem;color:var(--gold);font-weight:700">🎁 amostra grátis</span>':'<span style="font-size:.68rem;color:var(--t3)">'+n+' aula'+(n===1?'':'s')+'</span>';
+    return '<button type="button" data-cursofilter="'+esc(slug)+'" style="display:flex;flex-direction:column;align-items:flex-start;gap:.2rem;border:1.5px solid '+(active?'var(--blue)':'var(--bd2)')+';background:'+(active?'var(--blue-l)':'var(--surface)')+';border-radius:14px;padding:.7rem .9rem;cursor:pointer;min-width:155px;text-align:left"><span style="font-size:1.45rem">'+icon+'</span><span style="font-size:.83rem;font-weight:700;color:var(--tx)">'+esc(nome)+'</span>'+subline+'</button>';
   }
   var allCount=data.filter(function(c){return cursoAcessivel(c.curso);}).length;
   var catVis=catalog.filter(function(cc){return cursoVisivel(cc.slug);});
   if(frow)frow.innerHTML='<div style="display:flex;flex-wrap:wrap;gap:.6rem">'+catVis.map(function(cc){return aTile(cc.slug,cc.nome,cnt[cc.slug]||0,'🎓');}).join('')+'</div>';
-  if(cursoFilter&&!cursoAcessivel(cursoFilter)){cursoFilter='';cursoMod='';}
+  if(cursoFilter&&!cursoAcessivel(cursoFilter)&&!cursoTemLiberada(cursoFilter)){cursoFilter='';cursoMod='';}
   var el=document.getElementById('curso-list');if(!el)return;
   // Primeira entrada: mostra só os cards de curso (frow). As subespecialidades
   // (módulos) só aparecem depois de escolher um curso acima.
   if(!cursoFilter){el.innerHTML='<div class="empty" style="grid-column:1/-1">Escolha um curso acima para ver as subespecialidades.</div>';return;}
   // Escopo: aulas do pacote selecionado (ou todas as acessíveis).
-  var scope=cursoFilter?data.filter(function(c){return c.curso===cursoFilter;}):data.filter(function(c){return cursoAcessivel(c.curso);});
+  var scope=cursoFilter?data.filter(function(c){return c.curso===cursoFilter&&aulaLiberada(c);}):data.filter(function(c){return aulaLiberada(c);});
   if(!scope.length){el.innerHTML='<div class="empty" style="grid-column:1/-1">Nenhuma videoaula '+(cursoFilter?'neste curso':'disponível no seu plano ainda')+'.</div>';return;}
   function lessonCard(c){
     var i=data.indexOf(c);
-    return '<div class="card"><div style="display:flex;align-items:flex-start;gap:.8rem"><div style="width:46px;height:46px;border-radius:10px;background:var(--navy);display:flex;align-items:center;justify-content:center;font-size:1.25rem;flex-shrink:0">🎬</div><div style="flex:1;min-width:0"><div style="font-size:.85rem;font-weight:700;color:var(--tx);margin-bottom:2px">'+esc(c.title||'Videoaula')+'</div><div style="display:flex;flex-wrap:wrap;gap:.3rem;margin:.25rem 0 .45rem">'+(c.curso?'<span class="tag tag-grn">'+esc(cursoNomeBySlug(c.curso))+'</span>':'')+(c.modulo?'<span class="tag tag-pur">'+esc(c.modulo)+'</span>':'')+(c.dur?'<span class="tag tag-gold">'+esc(c.dur)+'</span>':'')+'</div>'+(c.desc?'<div style="font-size:.73rem;color:var(--t2);line-height:1.55;margin-bottom:.55rem">'+esc(c.desc)+'</div>':'')+(cursoAulaDone(c)?'<span class="tag tag-grn" style="margin-right:.4rem">✓ concluída</span>':'')+'<button class="btn btn-primary btn-sm" data-curso-play="'+i+'">'+(cursoAulaDone(c)?'▶ Rever':'▶ Assistir')+'</button></div></div></div>';
+    return '<div class="card"><div style="display:flex;align-items:flex-start;gap:.8rem"><div style="width:46px;height:46px;border-radius:10px;background:var(--navy);display:flex;align-items:center;justify-content:center;font-size:1.25rem;flex-shrink:0">🎬</div><div style="flex:1;min-width:0"><div style="font-size:.85rem;font-weight:700;color:var(--tx);margin-bottom:2px">'+esc(c.title||'Videoaula')+'</div><div style="display:flex;flex-wrap:wrap;gap:.3rem;margin:.25rem 0 .45rem">'+(c.curso?'<span class="tag tag-grn">'+esc(cursoNomeBySlug(c.curso))+'</span>':'')+(c.modulo?'<span class="tag tag-pur">'+esc(c.modulo)+'</span>':'')+(c.dur?'<span class="tag tag-gold">'+esc(c.dur)+'</span>':'')+((c.free&&!cursoAcessivel(c.curso))?'<span class="tag tag-gold">🎁 Amostra grátis</span>':'')+'</div>'+(c.desc?'<div style="font-size:.73rem;color:var(--t2);line-height:1.55;margin-bottom:.55rem">'+esc(c.desc)+'</div>':'')+(cursoAulaDone(c)?'<span class="tag tag-grn" style="margin-right:.4rem">✓ concluída</span>':'')+'<button class="btn btn-primary btn-sm" data-curso-play="'+i+'">'+(cursoAulaDone(c)?'▶ Rever':'▶ Assistir')+'</button></div></div></div>';
   }
   // Nível 1 — grade de subespecialidades (módulos) do escopo.
   if(!cursoMod){
@@ -6452,6 +6460,7 @@ function aulaKey(c){return String((c&&c.id)||(((c&&c.curso)||'')+'|'+((c&&c.modu
 function cursoAulaDone(c){return !!(DB.cursoProg&&DB.cursoProg[aulaKey(c)]);}
 function playCursoAluno(i){
   var data=Array.isArray(admCursos)?admCursos:[];if(!data[i])return;
+  if(!aulaLiberada(data[i])){showAssineScreen((currentUser&&currentUser.email)||'',{upgrade:!isDegustacao()});return;}
   curAulaIdx=i;curAulaTab='aula';
   var box=document.getElementById('curso-player');if(!box)return;
   box.style.display='block';renderAulaPlayer();
@@ -10459,7 +10468,7 @@ function admCursosHTML(){
       +'<span style="font-size:.84rem;font-weight:700;color:var(--tx)">'+esc(nome)+'</span>'
       +'<span style="font-size:.7rem;color:var(--t3)">'+n+' aula'+(n===1?'':'s')+'</span></button>';
   }
-  function admLessonCard(c){var i=admCursos.indexOf(c);var meta=c.asset?'<div class="asset-meta">Supabase Storage: '+esc(c.asset.name||'video')+' · '+formatBytes(c.asset.size)+'</div>':'';return '<div class="card curso-aula-card" data-adm-openaula="'+i+'" style="cursor:pointer" title="Abrir a trilha da aula (Aula · Resumo · Questões)"><div style="display:flex;align-items:flex-start;gap:.7rem"><div style="width:48px;height:48px;border-radius:10px;background:var(--navy);display:flex;align-items:center;justify-content:center;font-size:1.3rem;flex-shrink:0">🎬</div><div style="flex:1;min-width:0"><div style="font-size:.86rem;font-weight:700;color:var(--tx);margin-bottom:.25rem">'+esc(c.title)+'</div><div style="display:flex;flex-wrap:wrap;gap:.3rem;margin-bottom:.4rem">'+(c.curso?'<span class="tag tag-grn">'+esc(cursoNomeBySlug(c.curso))+'</span>':'<span class="tag" style="background:#1c2a48;color:#9aa6ba">Sem curso</span>')+(c.modulo?'<span class="tag tag-pur">'+esc(c.modulo)+'</span>':'')+(c.dur?'<span class="tag tag-gold">'+esc(c.dur)+'</span>':'')+'</div>'+(c.desc?'<div style="font-size:.74rem;color:var(--t2);line-height:1.5;margin-bottom:.4rem">'+esc(c.desc)+'</div>':'')+meta+'<div style="display:flex;gap:5px;flex-wrap:wrap;align-items:center;margin-top:.15rem"><span style="font-size:.72rem;color:var(--blue);font-weight:700">▶ Abrir trilha</span><span style="flex:1"></span><button class="btn btn-outline btn-sm" data-adm-delcurso="'+i+'" style="color:var(--red);border-color:var(--red)">🗑 Excluir</button></div></div></div></div>';}
+  function admLessonCard(c){var i=admCursos.indexOf(c);var meta=c.asset?'<div class="asset-meta">Supabase Storage: '+esc(c.asset.name||'video')+' · '+formatBytes(c.asset.size)+'</div>':'';return '<div class="card curso-aula-card" data-adm-openaula="'+i+'" style="cursor:pointer" title="Abrir a trilha da aula (Aula · Resumo · Questões)"><div style="display:flex;align-items:flex-start;gap:.7rem"><div style="width:48px;height:48px;border-radius:10px;background:var(--navy);display:flex;align-items:center;justify-content:center;font-size:1.3rem;flex-shrink:0">🎬</div><div style="flex:1;min-width:0"><div style="font-size:.86rem;font-weight:700;color:var(--tx);margin-bottom:.25rem">'+esc(c.title)+'</div><div style="display:flex;flex-wrap:wrap;gap:.3rem;margin-bottom:.4rem">'+(c.curso?'<span class="tag tag-grn">'+esc(cursoNomeBySlug(c.curso))+'</span>':'<span class="tag" style="background:#1c2a48;color:#9aa6ba">Sem curso</span>')+(c.modulo?'<span class="tag tag-pur">'+esc(c.modulo)+'</span>':'')+(c.dur?'<span class="tag tag-gold">'+esc(c.dur)+'</span>':'')+(c.free?'<span class="tag tag-gold">🎁 Amostra grátis</span>':'')+'</div>'+(c.desc?'<div style="font-size:.74rem;color:var(--t2);line-height:1.5;margin-bottom:.4rem">'+esc(c.desc)+'</div>':'')+meta+'<div style="display:flex;gap:5px;flex-wrap:wrap;align-items:center;margin-top:.15rem"><span style="font-size:.72rem;color:var(--blue);font-weight:700">▶ Abrir trilha</span><span style="flex:1"></span><button class="btn btn-outline btn-sm" data-adm-freecurso="'+i+'" title="Liberar/retirar como amostra grátis para a degustação"'+(c.free?' style="color:var(--gold);border-color:var(--gold)"':'')+'>'+(c.free?'🎁 Amostra ✓':'🎁 Tornar amostra')+'</button><button class="btn btn-outline btn-sm" data-adm-delcurso="'+i+'" style="color:var(--red);border-color:var(--red)">🗑 Excluir</button></div></div></div></div>';}
   // Navegação igual às Diretrizes: curso → subespecialidade → aula.
   var verHTML;
   if(!admCursoFiltro){
@@ -10766,6 +10775,7 @@ function bindAdmSec(sec){
     var addAula=document.getElementById('btn-curso-addaula');if(addAula)addAula.addEventListener('click',function(){admCursoAddMod=admCursoMod;admCursoEditIdx=null;admCursoSubtab='importar';renderAdmSec('cursos');});
     var nsFocus=document.getElementById('curso-newsub');if(nsFocus){nsFocus.focus();nsFocus.addEventListener('keydown',function(ev){if(ev.key==='Enter'){ev.preventDefault();var bc=document.getElementById('btn-curso-newsub-create');if(bc)bc.click();}});}
     main.querySelectorAll('[data-adm-openaula]').forEach(function(el){el.addEventListener('click',function(ev){if(ev.target.closest('button'))return;admPlayCursoAula(parseInt(el.dataset.admOpenaula));});});
+    main.querySelectorAll('[data-adm-freecurso]').forEach(function(b){b.addEventListener('click',function(){var i=parseInt(b.dataset.admFreecurso);var c=admCursos[i];if(!c)return;c.free=!c.free;persistCursos();renderAdmSec('cursos');try{renderCursosAluno();}catch(e){}notify(c.free?('Aula liberada como amostra grátis (degustação). ✓'):('Aula não é mais amostra grátis.'),'ok');});});
     main.querySelectorAll('[data-adm-delcurso]').forEach(function(b){b.addEventListener('click',function(){var c=admCursos[parseInt(b.dataset.admDelcurso)];if(!confirm('Excluir a videoaula "'+((c&&c.title)||'')+'"? Esta ação não pode ser desfeita.'))return;admCursos.splice(parseInt(b.dataset.admDelcurso),1);persistCursos();renderAdmSec('cursos');renderCursosAluno();});});
   }
 
