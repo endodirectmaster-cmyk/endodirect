@@ -10009,10 +10009,14 @@ function admRefSecHTML(){
       body=rhead
         +'<div class="dir-fmt">'+fmts.map(function(f){return '<button class="dir-fmt-btn'+(fmtAtivo===f[0]?' on':'')+'" data-admref-fmt="'+f[0]+'">'+f[1]+'</button>';}).join('')+'</div>'
         +list.map(function(x){
+          // Flashcards e Mapas editam in-loco (não precisam de "Editar tudo").
+          // O Resumo é só-leitura → ganha um botão ✏️ Editar no canto superior.
+          var isResumo=(fmtAtivo!=='flash'&&fmtAtivo!=='mapa');
+          var editHead=isResumo
+            ? '<div style="display:flex;justify-content:flex-end;margin-bottom:.4rem"><button class="btn btn-outline btn-sm" data-adm-refedit="'+x.i+'">✏️ Editar</button></div>'
+            : '';
           return '<div class="adm-ref-view" style="margin-bottom:1.1rem">'
-            +'<div style="display:flex;justify-content:flex-end;gap:.4rem;margin-bottom:.4rem">'
-            +'<button class="btn btn-outline btn-sm" data-adm-refedit="'+x.i+'">✏️ Editar tudo</button>'
-            +'<button class="btn btn-outline btn-sm" data-adm-refdel="'+x.i+'" style="color:var(--red);border-color:var(--red)">🗑 Excluir</button></div>'
+            +editHead
             +(fmtAtivo==='flash'?admRefFlashHTML(x.d,x.i):fmtAtivo==='mapa'?admRefMapaHTML(x.d,x.i):dirCardHTML(x.d,x.i))+'</div>';
         }).join('');
     }
