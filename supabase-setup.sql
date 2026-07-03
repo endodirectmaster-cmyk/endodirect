@@ -258,7 +258,7 @@ insert into public.endodirect_cursos (slug, nome, tier, ordem) values
   ('hiperglicemia',  'Hiperglicemia Hospitalar',  'standard', 1),
   ('lipides',        'Lípides',                   'gold',     2),
   ('endo_essencial', 'Endocrinologia Essencial',  'premium',  3),
-  ('endoteem',       'EndoTEEM',                  null,       4)
+  ('endoteem',       'EndoTEEM 2026',             null,       4)
 on conflict (slug) do nothing;
 
 -- Garante os tiers mesmo se os cursos ja existiam (migracao do modelo antigo).
