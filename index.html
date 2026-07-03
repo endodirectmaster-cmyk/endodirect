@@ -764,6 +764,18 @@ html[data-theme="light"] .dir-back{background:#f8f9fc;border-color:var(--bd2);co
 .dir-mm-subs{display:none;flex-direction:column;gap:.4rem;padding-left:1rem;border-left:2px dashed var(--bd2);margin-left:.7rem}
 .dir-mm-branch.open .dir-mm-subs{display:flex}
 .dir-mm-sub{background:var(--surface);border:1.5px solid var(--bd2);border-radius:9px;padding:.45rem .75rem;font-size:.8rem;color:var(--tx);line-height:1.45}
+/* Edição in-loco do mapa da diretriz: MESMO layout em caixas, só que as caixas viram campos editáveis. */
+.dir-mm-edit .dir-mm-subs{display:flex}
+.dir-mm-central-edit{display:flex;align-items:center;gap:.5rem;width:100%;max-width:440px}
+input.dmm-inp-central{flex:1;min-width:0;background:var(--navy);color:#fff;font-weight:800;border:2px solid rgba(255,255,255,.25);border-radius:14px;padding:.7rem 1.15rem;font-size:.95rem;text-align:center;font-family:var(--font);box-shadow:0 8px 20px rgba(0,0,0,.25);line-height:1.35;outline:none}
+input.dmm-inp-central::placeholder{color:rgba(255,255,255,.6)}
+.dmm-node-edit{display:flex;align-items:center;gap:.4rem;color:#fff;border-radius:10px;padding:.5rem .7rem;box-shadow:0 3px 9px rgba(0,0,0,.15)}
+input.dmm-inp-node{flex:1;min-width:0;background:rgba(255,255,255,.14);color:#fff;font-weight:700;font-size:.86rem;border:1px solid rgba(255,255,255,.35);border-radius:7px;padding:.35rem .55rem;font-family:var(--font);outline:none;line-height:1.35}
+input.dmm-inp-node::placeholder{color:rgba(255,255,255,.75)}
+.dmm-sub-edit{display:flex;align-items:center;gap:.4rem;background:var(--surface);border:1.5px solid var(--bd2);border-radius:9px;padding:.3rem .45rem}
+input.dmm-inp-sub{flex:1;min-width:0;background:transparent;color:var(--tx);font-size:.8rem;border:none;padding:.15rem .3rem;font-family:var(--font);outline:none;line-height:1.45}
+.dmm-mini{border:none;background:rgba(255,255,255,.22);color:#fff;border-radius:6px;width:26px;height:26px;font-size:.95rem;cursor:pointer;flex-shrink:0;line-height:1;display:inline-flex;align-items:center;justify-content:center;font-family:var(--font);padding:0}
+.dmm-sub-edit .dmm-mini{background:var(--bd2);color:var(--red);font-size:1rem}
 /* Fluxograma (algoritmo) recriado em português */
 .dir-fluxo{margin:.5rem 0 .2rem}
 .dfx-title{font-size:.92rem;font-weight:800;color:var(--tx);margin:1rem 0 .1rem;display:flex;align-items:center;gap:.4rem}
@@ -6050,14 +6062,6 @@ function saveMM(){
   if(!curMM)return;
   syncMMFromDOM();
   curMM.data=normalizeMMData(curMM.data);
-  // Edição visual do mapa de uma DIRETRIZ (painel Diretrizes): grava em diretriz.mapa.
-  if(admRefMapaVisual!==null){
-    var dz=diretrizes[admRefMapaVisual];
-    if(dz)dz.mapa=editorToDiretrizMapa(curMM.data);
-    admRefMapaVisual=null;restoreMMLive();
-    try{persistDiretrizes();}catch(e){}renderAdmSec('ref');notify('Mapa mental salvo. ✓','ok');
-    return;
-  }
   // Edição visual pelo PROFESSOR: grava no mapa publicado (sharedMM), não no pessoal.
   if(mmAdminEdit){
     var topic=curMM.data.root||curMM.topic||'Mapa';
@@ -10035,24 +10039,40 @@ function admDelRefFlash(i,j){
   if(!confirm('Excluir este flashcard?'))return;
   d.flashcards.splice(j,1);persistDiretrizes();notify('Flashcard excluído.','info');renderAdmSec('ref');
 }
-var admRefMapaVisual=null; // índice da diretriz com o mapa aberto no editor visual (#mm-live)
-function diretrizMapaToEditor(mapa){
-  var m=(mapa&&typeof mapa==='object')?mapa:{};
-  return {root:m.central||'',branches:(Array.isArray(m.nodes)?m.nodes:[]).map(function(n){return {label:(n&&n.label)||'',leaves:(n&&Array.isArray(n.children)?n.children.slice():[])};})};
-}
-function editorToDiretrizMapa(data){
-  var d=normalizeMMData(data);
-  return {central:d.root||'',nodes:(d.branches||[]).map(function(b){return {label:b.label||'',children:(b.leaves||[]).map(function(l){return typeof l==='string'?l:((l&&l.label)||'');}).filter(function(s){return (s||'').trim();})};})};
-}
-// Mapa da diretriz editado no MESMO editor visual dos Mapas Mentais (#mm-live).
-// Fora do modo de edição: preview só-leitura + botão. No modo: host onde o
-// bindAdmSec injeta o #mm-live (as caixas contenteditable + conectores).
+// Mapa da diretriz editável DIRETO NAS CAIXAS: o MESMO layout em caixas do aluno
+// (dirMapaHTML), só que cada caixa vira um campo editável. Sem alternar formato,
+// sem botão de "modo edição" — já aparece editável. +/🗑 add/remove ramo e subramo.
 function admRefMapaHTML(d,i){
-  if(admRefMapaVisual===i){
-    return '<div class="dir-card"><div style="font-size:.72rem;color:var(--t2);margin-bottom:.4rem">Clique nas caixas para editar o texto; use +/× para adicionar/remover ramos e subramos. 💾 Salvar publica para os alunos.</div><div id="adm-ref-mm-host"></div></div>';
-  }
+  var m=(d.mapa&&typeof d.mapa==='object')?d.mapa:{central:'',nodes:[]};
+  if(!Array.isArray(m.nodes))m.nodes=[];
   var badge='<div class="dir-card-top"><span class="ref-badge">'+esc(d.fonte||'—')+(d.ano?(' · '+esc(d.ano)):'')+'</span></div>';
-  return '<div class="dir-card">'+badge+dirMapaHTML(d.mapa)+'<div style="margin-top:.6rem"><button class="btn btn-primary btn-sm" data-refmapa-visual="'+i+'">🧠 Editar nas caixas</button></div></div>';
+  var h='<div class="dir-card">'+badge
+    +'<div style="font-size:.72rem;color:var(--t2);margin-bottom:.6rem">Edite direto nas caixas. Use ➕/🗑 para adicionar ou remover ramos e subramos. 💾 <b>Salvar</b> publica para os alunos.</div>'
+    +'<div class="dir-mm dir-mm-edit">'
+    +'<div class="dir-mm-central-edit"><input class="dmm-inp-central" id="rmapa-'+i+'-central" value="'+esc(m.central||'')+'" placeholder="Tema central do mapa"></div>'
+    +'<div class="dir-mm-branches">';
+  m.nodes.forEach(function(n,ni){
+    var col=BCOLORS[ni%BCOLORS.length];
+    var kids=Array.isArray(n.children)?n.children:[];
+    h+='<div class="dir-mm-branch open">'
+      +'<div class="dmm-node-edit" style="background:'+col+'">'
+        +'<input class="dmm-inp-node" id="rmapa-'+i+'-n'+ni+'" value="'+esc(n.label||'')+'" placeholder="Ramo">'
+        +'<button class="dmm-mini" data-refmapa-addchild="'+i+'-'+ni+'" title="Adicionar subramo">＋</button>'
+        +'<button class="dmm-mini" data-refmapa-delnode="'+i+'-'+ni+'" title="Remover ramo" style="background:rgba(0,0,0,.18)">🗑</button>'
+      +'</div>'
+      +'<div class="dir-mm-subs">'
+        +kids.map(function(c,ci){
+          return '<div class="dmm-sub-edit"><input class="dmm-inp-sub" id="rmapa-'+i+'-n'+ni+'-c'+ci+'" value="'+esc(c||'')+'" placeholder="Subramo"><button class="dmm-mini" data-refmapa-delchild="'+i+'-'+ni+'-'+ci+'" title="Remover subramo">×</button></div>';
+        }).join('')
+      +'</div>'
+    +'</div>';
+  });
+  h+='</div></div>'
+    +'<div style="display:flex;gap:.5rem;margin-top:.8rem;flex-wrap:wrap">'
+      +'<button class="btn btn-outline btn-sm" data-refmapa-addnode="'+i+'">➕ Adicionar ramo</button>'
+      +'<button class="btn btn-primary btn-sm" data-refmapa-save="'+i+'">💾 Salvar mapa</button>'
+    +'</div></div>';
+  return h;
 }
 function admReadRefMapa(i){
   var d=diretrizes[i];if(!d)return;var m=(d.mapa&&typeof d.mapa==='object')?d.mapa:{central:'',nodes:[]};if(!Array.isArray(m.nodes))m.nodes=[];
@@ -10720,23 +10740,12 @@ function bindAdmSec(sec){
 
   if(sec==='ref'){
     function refResetTemaUi(){admRefTemaAdd=false;admRefTemaEdit=null;}
-    // Mapa de uma diretriz no MESMO editor visual dos Mapas Mentais: move o #mm-live
-    // para o host desta seção e carrega o mapa convertido ({central,nodes}→{root,branches}).
-    if(admRefMapaVisual!==null){
-      var vhostR=document.getElementById('adm-ref-mm-host');
-      var liveR=document.getElementById('mm-live');
-      if(vhostR&&liveR){
-        if(!__mmLiveHome)__mmLiveHome=liveR.parentNode;
-        vhostR.appendChild(liveR);
-        var dzR=diretrizes[admRefMapaVisual]||{};
-        curMM={id:'refmm-'+admRefMapaVisual,topic:(dzR.tema||'Mapa'),sub:dzR.sub||'',data:normalizeMMData(diretrizMapaToEditor(dzR.mapa)),at:Date.now()};
-        mmAdminEdit=false;
-        liveR.style.display='block';
-        setText('mm-live-title',(dzR.tema||'Mapa mental')+' — mapa da diretriz');
-        renderMMEditor();
-      }
-    }
-    main.querySelectorAll('[data-refmapa-visual]').forEach(function(b){b.addEventListener('click',function(){admRefMapaVisual=parseInt(b.dataset.refmapaVisual);renderAdmSec('ref');});});
+    // Mapa da diretriz: caixas editáveis in-loco (mesmo layout do aluno).
+    main.querySelectorAll('[data-refmapa-save]').forEach(function(b){b.addEventListener('click',function(){admSaveRefMapa(parseInt(b.dataset.refmapaSave));});});
+    main.querySelectorAll('[data-refmapa-addnode]').forEach(function(b){b.addEventListener('click',function(){admRefMapaAddNode(parseInt(b.dataset.refmapaAddnode));});});
+    main.querySelectorAll('[data-refmapa-addchild]').forEach(function(b){b.addEventListener('click',function(){var p=b.dataset.refmapaAddchild.split('-');admRefMapaAddChild(parseInt(p[0]),parseInt(p[1]));});});
+    main.querySelectorAll('[data-refmapa-delnode]').forEach(function(b){b.addEventListener('click',function(){var p=b.dataset.refmapaDelnode.split('-');if(confirm('Remover este ramo e seus subramos?'))admRefMapaDelNode(parseInt(p[0]),parseInt(p[1]));});});
+    main.querySelectorAll('[data-refmapa-delchild]').forEach(function(b){b.addEventListener('click',function(){var p=b.dataset.refmapaDelchild.split('-');admRefMapaDelChild(parseInt(p[0]),parseInt(p[1]),parseInt(p[2]));});});
     main.querySelectorAll('[data-admref-sub]').forEach(function(b){b.addEventListener('click',function(){admRefSub=b.dataset.admrefSub;admRefTema='';refResetTemaUi();renderAdmSec('ref');});});
     main.querySelectorAll('[data-admref-tema]').forEach(function(b){b.addEventListener('click',function(){admRefTema=b.dataset.admrefTema;refResetTemaUi();renderAdmSec('ref');});});
     var rBack=main.querySelector('[data-admref-back]');
@@ -12261,7 +12270,6 @@ document.addEventListener('DOMContentLoaded',function(){
   document.getElementById('btn-mmblank').addEventListener('click',newBlankMM);
   document.getElementById('btn-mm-save').addEventListener('click',saveMM);
   document.getElementById('btn-mm-close').addEventListener('click',function(){
-    if(admRefMapaVisual!==null){admRefMapaVisual=null;restoreMMLive();try{renderAdmSec('ref');}catch(e){}return;}
     if(mmAdminEdit){admMMDraft=null;admMMEditId=null;restoreMMLive();try{renderAdmSec('mapas');}catch(e){}return;}
     document.getElementById('mm-live').style.display='none';
     document.getElementById('panel-mmap').classList.remove('mm-open');
