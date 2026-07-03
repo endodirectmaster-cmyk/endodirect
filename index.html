@@ -764,6 +764,10 @@ html[data-theme="light"] .dir-back{background:#f8f9fc;border-color:var(--bd2);co
 .dir-mm-subs{display:none;flex-direction:column;gap:.4rem;padding-left:1rem;border-left:2px dashed var(--bd2);margin-left:.7rem}
 .dir-mm-branch.open .dir-mm-subs{display:flex}
 .dir-mm-sub{background:var(--surface);border:1.5px solid var(--bd2);border-radius:9px;padding:.45rem .75rem;font-size:.8rem;color:var(--tx);line-height:1.45}
+/* 3º nível: sub-subramos (aluno) */
+.dir-mm-subsubs{display:flex;flex-direction:column;gap:.3rem;margin-top:.4rem;padding-left:.8rem;border-left:2px dotted var(--bd2)}
+.dir-mm-subsub{font-size:.76rem;color:var(--t2);line-height:1.4;position:relative;padding-left:.7rem}
+.dir-mm-subsub::before{content:'•';position:absolute;left:0;color:var(--t3)}
 /* Flashcard da diretriz editável dentro da própria caixinha (admin). */
 .dfl-edit{background:var(--surface);border:1.5px solid var(--bd2);border-radius:12px;padding:.7rem .8rem;margin-bottom:.7rem;box-shadow:0 3px 10px rgba(20,30,60,.05)}
 .dfl-edit-row{display:flex;align-items:center;justify-content:space-between;gap:.5rem;margin-bottom:.25rem}
@@ -784,6 +788,13 @@ input.dmm-inp-node::placeholder{color:rgba(255,255,255,.75)}
 input.dmm-inp-sub{flex:1;min-width:0;background:transparent;color:var(--tx);font-size:.8rem;border:none;padding:.15rem .3rem;font-family:var(--font);outline:none;line-height:1.45}
 .dmm-mini{border:none;background:rgba(255,255,255,.22);color:#fff;border-radius:6px;width:26px;height:26px;font-size:.95rem;cursor:pointer;flex-shrink:0;line-height:1;display:inline-flex;align-items:center;justify-content:center;font-family:var(--font);padding:0}
 .dmm-sub-edit .dmm-mini{background:var(--bd2);color:var(--red);font-size:1rem}
+.dmm-sub-edit .dmm-mini-add{color:var(--tx);font-size:.95rem}
+/* 3º nível editável: sub-subramos */
+.dmm-sub-wrap{display:flex;flex-direction:column;gap:.3rem}
+.dmm-subsubs{display:flex;flex-direction:column;gap:.3rem;margin:.1rem 0 .2rem 1rem;padding-left:.6rem;border-left:2px dotted var(--bd2)}
+.dmm-subsub-edit{display:flex;align-items:center;gap:.4rem;background:var(--s2);border:1px solid var(--bd2);border-radius:8px;padding:.25rem .4rem}
+input.dmm-inp-subsub{flex:1;min-width:0;background:transparent;color:var(--t2);font-size:.76rem;border:none;padding:.1rem .25rem;font-family:var(--font);outline:none;line-height:1.4}
+.dmm-subsub-edit .dmm-mini{background:var(--bd2);color:var(--red);font-size:.95rem;width:22px;height:22px}
 /* Fluxograma (algoritmo) recriado em português */
 .dir-fluxo{margin:.5rem 0 .2rem}
 .dfx-title{font-size:.92rem;font-weight:800;color:var(--tx);margin:1rem 0 .1rem;display:flex;align-items:center;gap:.4rem}
@@ -8093,7 +8104,13 @@ function dirMapaHTML(mapa){
     h+='<div class="dir-mm-branch">'
       +'<button class="dir-mm-node" data-dir-mm-branch style="background:'+col+'"'+(kids.length?'':' disabled')+'>'
         +'<span>'+esc(n.label||'')+'</span>'+(kids.length?'<span class="dmm-caret">▸</span>':'')+'</button>'
-      +(kids.length?('<div class="dir-mm-subs">'+kids.map(function(c){return '<div class="dir-mm-sub">'+esc(c)+'</div>';}).join('')+'</div>'):'')
+      +(kids.length?('<div class="dir-mm-subs">'+kids.map(function(c){
+          var lab=(typeof c==='string')?c:((c&&c.label)||'');
+          var gk=(c&&typeof c==='object'&&Array.isArray(c.children))?c.children:[];
+          return '<div class="dir-mm-sub">'+esc(lab)
+            +(gk.length?('<div class="dir-mm-subsubs">'+gk.map(function(g){return '<div class="dir-mm-subsub">'+esc(typeof g==='string'?g:((g&&g.label)||''))+'</div>';}).join('')+'</div>'):'')
+            +'</div>';
+        }).join('')+'</div>'):'')
       +'</div>';
   });
   return h+'</div></div>';
@@ -10065,7 +10082,7 @@ function admRefMapaHTML(d,i){
   if(!Array.isArray(m.nodes))m.nodes=[];
   var badge='<div class="dir-card-top"><span class="ref-badge">'+esc(d.fonte||'—')+(d.ano?(' · '+esc(d.ano)):'')+'</span></div>';
   var h='<div class="dir-card">'+badge
-    +'<div style="font-size:.72rem;color:var(--t2);margin-bottom:.6rem">Edite direto nas caixas. Use ➕/🗑 para adicionar ou remover ramos e subramos. 💾 <b>Salvar</b> publica para os alunos.</div>'
+    +'<div style="font-size:.72rem;color:var(--t2);margin-bottom:.6rem">Edite direto nas caixas. ➕ no ramo adiciona subramo; ➕ no subramo adiciona um nível a mais (sub-subramo). 🗑/× remove. 💾 <b>Salvar</b> publica para os alunos.</div>'
     +'<div class="dir-mm dir-mm-edit">'
     +'<div class="dir-mm-central-edit"><input class="dmm-inp-central" id="rmapa-'+i+'-central" value="'+esc(m.central||'')+'" placeholder="Tema central do mapa"></div>'
     +'<div class="dir-mm-branches">';
@@ -10080,7 +10097,16 @@ function admRefMapaHTML(d,i){
       +'</div>'
       +'<div class="dir-mm-subs">'
         +kids.map(function(c,ci){
-          return '<div class="dmm-sub-edit"><input class="dmm-inp-sub" id="rmapa-'+i+'-n'+ni+'-c'+ci+'" value="'+esc(c||'')+'" placeholder="Subramo"><button class="dmm-mini" data-refmapa-delchild="'+i+'-'+ni+'-'+ci+'" title="Remover subramo">×</button></div>';
+          var lab=(typeof c==='string')?c:((c&&c.label)||'');
+          var gk=(c&&typeof c==='object'&&Array.isArray(c.children))?c.children:[];
+          return '<div class="dmm-sub-wrap">'
+            +'<div class="dmm-sub-edit"><input class="dmm-inp-sub" id="rmapa-'+i+'-n'+ni+'-c'+ci+'" value="'+esc(lab)+'" placeholder="Subramo">'
+              +'<button class="dmm-mini dmm-mini-add" data-refmapa-addgc="'+i+'-'+ni+'-'+ci+'" title="Adicionar sub-subramo">＋</button>'
+              +'<button class="dmm-mini" data-refmapa-delchild="'+i+'-'+ni+'-'+ci+'" title="Remover subramo">×</button></div>'
+            +(gk.length?('<div class="dmm-subsubs">'+gk.map(function(g,gi){
+                return '<div class="dmm-subsub-edit"><input class="dmm-inp-subsub" id="rmapa-'+i+'-n'+ni+'-c'+ci+'-g'+gi+'" value="'+esc(typeof g==='string'?g:((g&&g.label)||''))+'" placeholder="Sub-subramo"><button class="dmm-mini" data-refmapa-delgc="'+i+'-'+ni+'-'+ci+'-'+gi+'" title="Remover sub-subramo">×</button></div>';
+              }).join('')+'</div>'):'')
+            +'</div>';
         }).join('')
       +'</div>'
     +'</div>';
@@ -10095,18 +10121,43 @@ function admRefMapaHTML(d,i){
 function admReadRefMapa(i){
   var d=diretrizes[i];if(!d)return;var m=(d.mapa&&typeof d.mapa==='object')?d.mapa:{central:'',nodes:[]};if(!Array.isArray(m.nodes))m.nodes=[];
   var cen=document.getElementById('rmapa-'+i+'-central');if(cen)m.central=cen.value.trim();
-  m.nodes.forEach(function(n,ni){var lab=document.getElementById('rmapa-'+i+'-n'+ni);if(lab)n.label=lab.value.trim();if(!Array.isArray(n.children))n.children=[];n.children.forEach(function(c,ci){var inp=document.getElementById('rmapa-'+i+'-n'+ni+'-c'+ci);if(inp)n.children[ci]=inp.value.trim();});});
+  m.nodes.forEach(function(n,ni){
+    var lab=document.getElementById('rmapa-'+i+'-n'+ni);if(lab)n.label=lab.value.trim();
+    if(!Array.isArray(n.children))n.children=[];
+    n.children.forEach(function(c,ci){
+      var inp=document.getElementById('rmapa-'+i+'-n'+ni+'-c'+ci);
+      var clab=inp?inp.value.trim():((typeof c==='string')?c:((c&&c.label)||''));
+      if(c&&typeof c==='object'&&Array.isArray(c.children)){
+        var gs=c.children.map(function(g,gi){var gInp=document.getElementById('rmapa-'+i+'-n'+ni+'-c'+ci+'-g'+gi);return gInp?gInp.value.trim():((typeof g==='string')?g:((g&&g.label)||''));});
+        n.children[ci]={label:clab,children:gs};
+      }else{n.children[ci]=clab;}
+    });
+  });
   d.mapa=m;
+}
+// Limpa vazios em 2 níveis: sub-subramos vazios saem; subramo sem sub-subramos volta a string.
+function admCleanRefChildren(children){
+  return (children||[]).map(function(c){
+    if(c&&typeof c==='object'){
+      var gs=(c.children||[]).map(function(g){return (typeof g==='string'?g:((g&&g.label)||'')).trim();}).filter(function(g){return g;});
+      var lab=(c.label||'').trim();
+      return gs.length?{label:lab,children:gs}:lab;
+    }
+    return (c||'').trim();
+  }).filter(function(c){return (typeof c==='object')?((c.label||'').trim()||(c.children&&c.children.length)):c;});
 }
 function admSaveRefMapa(i){
   admReadRefMapa(i);var d=diretrizes[i];
-  if(d&&d.mapa)d.mapa.nodes=(d.mapa.nodes||[]).map(function(n){n.children=(n.children||[]).filter(function(c){return (c||'').trim();});return n;}).filter(function(n){return (n.label||'').trim()||(n.children||[]).length;});
+  if(d&&d.mapa)d.mapa.nodes=(d.mapa.nodes||[]).map(function(n){n.children=admCleanRefChildren(n.children);return n;}).filter(function(n){return (n.label||'').trim()||(n.children||[]).length;});
   persistDiretrizes();notify('Mapa mental salvo. ✓','ok');renderAdmSec('ref');
 }
 function admRefMapaAddNode(i){admReadRefMapa(i);var d=diretrizes[i];if(!d)return;if(!d.mapa||typeof d.mapa!=='object')d.mapa={central:'',nodes:[]};if(!Array.isArray(d.mapa.nodes))d.mapa.nodes=[];d.mapa.nodes.push({label:'',children:[]});persistDiretrizes();renderAdmSec('ref');}
 function admRefMapaAddChild(i,ni){admReadRefMapa(i);var d=diretrizes[i];if(!d||!d.mapa||!d.mapa.nodes[ni])return;if(!Array.isArray(d.mapa.nodes[ni].children))d.mapa.nodes[ni].children=[];d.mapa.nodes[ni].children.push('');persistDiretrizes();renderAdmSec('ref');}
 function admRefMapaDelNode(i,ni){admReadRefMapa(i);var d=diretrizes[i];if(!d||!d.mapa||!Array.isArray(d.mapa.nodes))return;d.mapa.nodes.splice(ni,1);persistDiretrizes();renderAdmSec('ref');}
 function admRefMapaDelChild(i,ni,ci){admReadRefMapa(i);var d=diretrizes[i];if(!d||!d.mapa||!d.mapa.nodes[ni]||!Array.isArray(d.mapa.nodes[ni].children))return;d.mapa.nodes[ni].children.splice(ci,1);persistDiretrizes();renderAdmSec('ref');}
+// 3º nível: adiciona sub-subramo (promove o subramo de string p/ {label,children}) e remove.
+function admRefMapaAddGrandchild(i,ni,ci){admReadRefMapa(i);var d=diretrizes[i];if(!d||!d.mapa||!d.mapa.nodes[ni])return;var arr=d.mapa.nodes[ni].children;if(!Array.isArray(arr)){arr=d.mapa.nodes[ni].children=[];}var c=arr[ci];if(!c||typeof c!=='object'){c={label:(typeof c==='string'?c:''),children:[]};arr[ci]=c;}if(!Array.isArray(c.children))c.children=[];c.children.push('');persistDiretrizes();renderAdmSec('ref');}
+function admRefMapaDelGrandchild(i,ni,ci,gi){admReadRefMapa(i);var d=diretrizes[i];if(!d||!d.mapa||!d.mapa.nodes[ni])return;var c=d.mapa.nodes[ni].children[ci];if(!c||typeof c!=='object'||!Array.isArray(c.children))return;c.children.splice(gi,1);if(!c.children.length)d.mapa.nodes[ni].children[ci]=(c.label||'');persistDiretrizes();renderAdmSec('ref');}
 function admMuralSecHTML(){
   function dateBR(v){
     var d=new Date(v||Date.now());
@@ -10758,12 +10809,6 @@ function bindAdmSec(sec){
 
   if(sec==='ref'){
     function refResetTemaUi(){admRefTemaAdd=false;admRefTemaEdit=null;}
-    // Mapa da diretriz: caixas editáveis in-loco (mesmo layout do aluno).
-    main.querySelectorAll('[data-refmapa-save]').forEach(function(b){b.addEventListener('click',function(){admSaveRefMapa(parseInt(b.dataset.refmapaSave));});});
-    main.querySelectorAll('[data-refmapa-addnode]').forEach(function(b){b.addEventListener('click',function(){admRefMapaAddNode(parseInt(b.dataset.refmapaAddnode));});});
-    main.querySelectorAll('[data-refmapa-addchild]').forEach(function(b){b.addEventListener('click',function(){var p=b.dataset.refmapaAddchild.split('-');admRefMapaAddChild(parseInt(p[0]),parseInt(p[1]));});});
-    main.querySelectorAll('[data-refmapa-delnode]').forEach(function(b){b.addEventListener('click',function(){var p=b.dataset.refmapaDelnode.split('-');if(confirm('Remover este ramo e seus subramos?'))admRefMapaDelNode(parseInt(p[0]),parseInt(p[1]));});});
-    main.querySelectorAll('[data-refmapa-delchild]').forEach(function(b){b.addEventListener('click',function(){var p=b.dataset.refmapaDelchild.split('-');admRefMapaDelChild(parseInt(p[0]),parseInt(p[1]),parseInt(p[2]));});});
     main.querySelectorAll('[data-admref-sub]').forEach(function(b){b.addEventListener('click',function(){admRefSub=b.dataset.admrefSub;admRefTema='';refResetTemaUi();renderAdmSec('ref');});});
     main.querySelectorAll('[data-admref-tema]').forEach(function(b){b.addEventListener('click',function(){admRefTema=b.dataset.admrefTema;refResetTemaUi();renderAdmSec('ref');});});
     var rBack=main.querySelector('[data-admref-back]');
@@ -10916,8 +10961,10 @@ function bindAdmSec(sec){
     main.querySelectorAll('[data-refmapa-save]').forEach(function(b){b.addEventListener('click',function(){admSaveRefMapa(parseInt(b.dataset.refmapaSave));});});
     main.querySelectorAll('[data-refmapa-addnode]').forEach(function(b){b.addEventListener('click',function(){admRefMapaAddNode(parseInt(b.dataset.refmapaAddnode));});});
     main.querySelectorAll('[data-refmapa-addchild]').forEach(function(b){b.addEventListener('click',function(){var p=b.dataset.refmapaAddchild.split('-');admRefMapaAddChild(parseInt(p[0]),parseInt(p[1]));});});
-    main.querySelectorAll('[data-refmapa-delnode]').forEach(function(b){b.addEventListener('click',function(){var p=b.dataset.refmapaDelnode.split('-');admRefMapaDelNode(parseInt(p[0]),parseInt(p[1]));});});
+    main.querySelectorAll('[data-refmapa-addgc]').forEach(function(b){b.addEventListener('click',function(){var p=b.dataset.refmapaAddgc.split('-');admRefMapaAddGrandchild(parseInt(p[0]),parseInt(p[1]),parseInt(p[2]));});});
+    main.querySelectorAll('[data-refmapa-delnode]').forEach(function(b){b.addEventListener('click',function(){var p=b.dataset.refmapaDelnode.split('-');if(confirm('Remover este ramo e seus subramos?'))admRefMapaDelNode(parseInt(p[0]),parseInt(p[1]));});});
     main.querySelectorAll('[data-refmapa-delchild]').forEach(function(b){b.addEventListener('click',function(){var p=b.dataset.refmapaDelchild.split('-');admRefMapaDelChild(parseInt(p[0]),parseInt(p[1]),parseInt(p[2]));});});
+    main.querySelectorAll('[data-refmapa-delgc]').forEach(function(b){b.addEventListener('click',function(){var p=b.dataset.refmapaDelgc.split('-');admRefMapaDelGrandchild(parseInt(p[0]),parseInt(p[1]),parseInt(p[2]),parseInt(p[3]));});});
     // Geração por IA agora vive DENTRO do formulário, ao lado de cada campo:
     // gera a partir dos bullets+resumo digitados e preenche o textarea (o
     // professor revisa e salva).
