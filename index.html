@@ -3362,6 +3362,9 @@ function refreshAfterRemoteState(){
   try{renderMMList();}catch(e){}
   try{renderPodcasts();}catch(e){}
   try{renderCursosAluno();}catch(e){}
+  // Se o aluno já está na aba Diretrizes quando o estado remoto chega (RPC member/public),
+  // re-renderiza para refletir a lista sincronizada (preserva a subespecialidade/tema aberto).
+  try{var _rp=document.getElementById('panel-ref');if(_rp&&_rp.classList.contains('on')){var _rb=document.getElementById('ref-body');if(_rb&&DIRETRIZES_PUBLICADO)renderDiretrizesInto(_rb);}}catch(e){}
   try{initMural();}catch(e){}
   try{populateInst('q-inst');}catch(e){}
   try{updateProvaInfo();}catch(e){}
