@@ -153,6 +153,9 @@ as $$
   select jsonb_build_object(
     'provas',     coalesce(payload->'provas',     '[]'::jsonb),
     'adm_avisos', coalesce(payload->'adm_avisos', '[]'::jsonb) || coalesce(payload->'radar_avisos', '[]'::jsonb),
+    -- Diretrizes: nao sao gated por plano (PANEL_SCOPE nao tem 'ref') -> lista completa.
+    'diretrizes',       coalesce(payload->'diretrizes',       '[]'::jsonb),
+    'diretrizes_temas', coalesce(payload->'diretrizes_temas', '[]'::jsonb),
     'podcasts',   coalesce(payload->'podcasts',   '[]'::jsonb),
     'adm_cursos', coalesce(payload->'adm_cursos', '[]'::jsonb)
   )
@@ -414,6 +417,9 @@ returns jsonb language sql security definer set search_path = public stable as $
                   'incluso_no_plano', incluso_no_plano, 'ativo', ativo, 'ordem', ordem
                 ) order by ordem, nome) from public.endodirect_cursos where ativo), '[]'::jsonb),
     'adm_avisos', coalesce((select payload->'adm_avisos' from g), '[]'::jsonb) || coalesce((select payload->'radar_avisos' from g), '[]'::jsonb),
+    -- Diretrizes: nao sao gated por plano (PANEL_SCOPE nao tem 'ref') -> lista completa p/ todo membro.
+    'diretrizes',       coalesce((select payload->'diretrizes' from g),       '[]'::jsonb),
+    'diretrizes_temas', coalesce((select payload->'diretrizes_temas' from g), '[]'::jsonb),
     -- Banco de questoes por instituicao:
     --   Endodirect (geral): liberado por qualquer pacote (plano); DEGUSTACAO
     --     (sem acesso) recebe amostra FIXA de 50 (ordem deterministica md5).
