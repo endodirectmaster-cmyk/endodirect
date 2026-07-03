@@ -6527,6 +6527,42 @@ function aulaAnswer(i,letter){
   var sc=document.getElementById('aula-q-score');if(sc)sc.textContent='Respondidas: '+n+'/'+aulaQ.length+' • Acertos: '+acc;
 }
 
+// ── REVISÃO DA TRILHA PELO PROFESSOR (painel Cursos) ──
+// Mesmas 3 abas do aluno (▶ Aula · 📝 Resumo · 🧠 Questões), mas as questões
+// vêm com GABARITO ✓ e comentário REVELADOS (revisão, não quiz) e não gravam
+// no Desempenho. Reusa aulaResumoHTML/aulaQuestions/exportAulaPDF.
+var admAulaTab='aula';
+function admRenderAulaQuestReview(c){
+  var box=document.getElementById('aula-quest-box');if(!box)return;
+  var qs=aulaQuestions(c);
+  if(!qs.length){box.innerHTML='<div class="empty">Esta aula ainda não tem questões próprias, nem há questões no Banco para este módulo/tema. Defina o “Tema da aula” em Editar ou publique questões no Banco.</div>';return;}
+  box.innerHTML='<div style="font-size:.72rem;color:var(--t3);margin-bottom:.5rem">'+qs.length+' questão(ões) da trilha — gabarito ✓ e comentário revelados para revisão.</div>'+qs.map(function(q,i){
+    var opts=['A','B','C','D'].map(function(L){var isAns=q.answer===L;return '<div style="font-size:.8rem;line-height:1.5;color:'+(isAns?'#16a34a':'var(--t2)')+';font-weight:'+(isAns?'700':'400')+'">'+L+') '+esc((q.options||{})[L]||'')+(isAns?' ✓':'')+'</div>';}).join('');
+    return '<div class="card" style="margin-bottom:.7rem"><div style="font-size:.8rem;font-weight:700;margin-bottom:.4rem">🧠 Questão '+(i+1)+'</div><div style="font-size:.82rem;line-height:1.55;margin-bottom:.5rem;white-space:pre-wrap">'+esc(q.stem||'')+'</div><div style="display:grid;gap:.2rem;margin-bottom:.5rem">'+opts+'</div>'+(q.explanation?'<div style="font-size:.76rem;color:var(--t2);line-height:1.55;border-top:1px solid var(--bd);padding-top:.45rem"><b>Comentário:</b> '+esc(q.explanation)+'</div>':'')+'</div>';
+  }).join('');
+}
+function admRenderAulaPlayer(c){
+  var box=document.getElementById('adm-curso-player');if(!box)return;
+  var tabs='<div style="display:flex;gap:.4rem;flex-wrap:wrap;margin:.2rem 0 .8rem">'+[['aula','▶ Aula'],['resumo','📝 Resumo'],['quest','🧠 Questões']].map(function(t){var on=admAulaTab===t[0];return '<button class="btn btn-sm '+(on?'btn-primary':'btn-outline')+'" data-admaulatab="'+t[0]+'">'+t[1]+'</button>';}).join('')+'</div>';
+  var head='<div style="display:flex;align-items:center;justify-content:space-between;gap:.7rem;margin-bottom:.4rem"><span style="font-size:.92rem;font-weight:700">'+esc(c.title||'Videoaula')+' <span class="tag" style="background:#1c2a48;color:#9aa6ba">revisão da trilha</span></span><button class="btn btn-ghost btn-sm" id="adm-curso-player-close">✕ Fechar</button></div>';
+  var body;
+  if(admAulaTab==='resumo')body=aulaResumoHTML(c);
+  else if(admAulaTab==='quest')body='<div id="aula-quest-box"></div>';
+  else body='<div style="background:#000;border-radius:var(--r);overflow:hidden">'+playerEmbed(c)+'</div>'+(c.desc?'<div style="font-size:.78rem;color:var(--t2);line-height:1.6;margin-top:.6rem">'+esc(c.desc)+'</div>':'');
+  box.innerHTML='<div class="card">'+head+tabs+'<div id="adm-aula-tab-body">'+body+'</div></div>';
+  box.querySelectorAll('[data-admaulatab]').forEach(function(b){b.addEventListener('click',function(){admAulaTab=b.getAttribute('data-admaulatab');admRenderAulaPlayer(c);});});
+  var cl=document.getElementById('adm-curso-player-close');if(cl)cl.addEventListener('click',function(){box.style.display='none';box.innerHTML='';});
+  var pb=document.getElementById('aula-pdf');if(pb)pb.addEventListener('click',function(){exportAulaPDF(c);});
+  if(admAulaTab==='quest')admRenderAulaQuestReview(c);
+}
+function admPlayCursoAula(i){
+  var c=admCursos[i];if(!c)return;
+  admAulaTab='aula';
+  var box=document.getElementById('adm-curso-player');if(!box)return;
+  box.style.display='block';admRenderAulaPlayer(c);
+  box.scrollIntoView({behavior:'smooth',block:'start'});
+}
+
 // ── CRONOGRAMA ──
 var pendingCrono=null;
 function initCrono(){
@@ -10513,12 +10549,7 @@ function bindAdmSec(sec){
     var addAula=document.getElementById('btn-curso-addaula');if(addAula)addAula.addEventListener('click',function(){admCursoAddMod=admCursoMod;admCursoEditIdx=null;admCursoSubtab='importar';renderAdmSec('cursos');});
     var nsFocus=document.getElementById('curso-newsub');if(nsFocus){nsFocus.focus();nsFocus.addEventListener('keydown',function(ev){if(ev.key==='Enter'){ev.preventDefault();var bc=document.getElementById('btn-curso-newsub-create');if(bc)bc.click();}});}
     main.querySelectorAll('[data-adm-playcurso]').forEach(function(b){b.addEventListener('click',function(){
-      var c=admCursos[parseInt(b.dataset.admPlaycurso)];if(!c)return;
-      var box=document.getElementById('adm-curso-player');
-      box.style.display='block';
-      box.innerHTML='<div class="card"><div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:.55rem"><span style="font-size:.9rem;font-weight:700">'+esc(c.title)+'</span><button class="btn btn-ghost btn-sm" id="adm-curso-player-close">✕ Fechar</button></div><div style="background:#000;border-radius:var(--r);overflow:hidden">'+playerEmbed(c)+'</div>'+(c.desc?'<div style="font-size:.76rem;color:var(--t2);line-height:1.6;margin-top:.55rem">'+esc(c.desc)+'</div>':'')+'</div>';
-      var cl=document.getElementById('adm-curso-player-close');if(cl)cl.addEventListener('click',function(){box.style.display='none';box.innerHTML='';});
-      box.scrollIntoView({behavior:'smooth',block:'start'});
+      admPlayCursoAula(parseInt(b.dataset.admPlaycurso));
     });});
     main.querySelectorAll('[data-adm-delcurso]').forEach(function(b){b.addEventListener('click',function(){var c=admCursos[parseInt(b.dataset.admDelcurso)];if(!confirm('Excluir a videoaula "'+((c&&c.title)||'')+'"? Esta ação não pode ser desfeita.'))return;admCursos.splice(parseInt(b.dataset.admDelcurso),1);persistCursos();renderAdmSec('cursos');renderCursosAluno();});});
   }
