@@ -6050,6 +6050,14 @@ function saveMM(){
   if(!curMM)return;
   syncMMFromDOM();
   curMM.data=normalizeMMData(curMM.data);
+  // Edição visual do mapa de uma DIRETRIZ (painel Diretrizes): grava em diretriz.mapa.
+  if(admRefMapaVisual!==null){
+    var dz=diretrizes[admRefMapaVisual];
+    if(dz)dz.mapa=editorToDiretrizMapa(curMM.data);
+    admRefMapaVisual=null;restoreMMLive();
+    try{persistDiretrizes();}catch(e){}renderAdmSec('ref');notify('Mapa mental salvo. ✓','ok');
+    return;
+  }
   // Edição visual pelo PROFESSOR: grava no mapa publicado (sharedMM), não no pessoal.
   if(mmAdminEdit){
     var topic=curMM.data.root||curMM.topic||'Mapa';
@@ -10027,22 +10035,24 @@ function admDelRefFlash(i,j){
   if(!confirm('Excluir este flashcard?'))return;
   d.flashcards.splice(j,1);persistDiretrizes();notify('Flashcard excluído.','info');renderAdmSec('ref');
 }
+var admRefMapaVisual=null; // índice da diretriz com o mapa aberto no editor visual (#mm-live)
+function diretrizMapaToEditor(mapa){
+  var m=(mapa&&typeof mapa==='object')?mapa:{};
+  return {root:m.central||'',branches:(Array.isArray(m.nodes)?m.nodes:[]).map(function(n){return {label:(n&&n.label)||'',leaves:(n&&Array.isArray(n.children)?n.children.slice():[])};})};
+}
+function editorToDiretrizMapa(data){
+  var d=normalizeMMData(data);
+  return {central:d.root||'',nodes:(d.branches||[]).map(function(b){return {label:b.label||'',children:(b.leaves||[]).map(function(l){return typeof l==='string'?l:((l&&l.label)||'');}).filter(function(s){return (s||'').trim();})};})};
+}
+// Mapa da diretriz editado no MESMO editor visual dos Mapas Mentais (#mm-live).
+// Fora do modo de edição: preview só-leitura + botão. No modo: host onde o
+// bindAdmSec injeta o #mm-live (as caixas contenteditable + conectores).
 function admRefMapaHTML(d,i){
-  var m=(d.mapa&&typeof d.mapa==='object')?d.mapa:{central:'',nodes:[]};var nodes=Array.isArray(m.nodes)?m.nodes:[];
+  if(admRefMapaVisual===i){
+    return '<div class="dir-card"><div style="font-size:.72rem;color:var(--t2);margin-bottom:.4rem">Clique nas caixas para editar o texto; use +/× para adicionar/remover ramos e subramos. 💾 Salvar publica para os alunos.</div><div id="adm-ref-mm-host"></div></div>';
+  }
   var badge='<div class="dir-card-top"><span class="ref-badge">'+esc(d.fonte||'—')+(d.ano?(' · '+esc(d.ano)):'')+'</span></div>';
-  var h=badge+'<div style="font-size:.72rem;color:var(--t2);margin-bottom:.5rem">Edite cada linha direto no campo; use ＋/🗑 para adicionar/remover e 💾 para salvar.</div>';
-  h+='<label style="display:block;font-size:.7rem;font-weight:600;color:var(--t2);margin-bottom:.2rem">Tema central</label><input type="text" id="rmapa-'+i+'-central" value="'+esc(m.central||'')+'" style="width:100%;margin-bottom:.6rem;font-weight:700" placeholder="Tema central do mapa">';
-  nodes.forEach(function(n,ni){
-    var kids=Array.isArray(n.children)?n.children:[];
-    h+='<div style="border-left:3px solid var(--bd2);padding-left:.6rem;margin-bottom:.55rem">'
-      +'<div style="display:flex;gap:.35rem;align-items:center;margin-bottom:.3rem"><input type="text" id="rmapa-'+i+'-n'+ni+'" value="'+esc(n.label||'')+'" style="flex:1;font-weight:600" placeholder="Ramo"><button class="btn btn-outline btn-sm" data-refmapa-delnode="'+i+'-'+ni+'" style="color:var(--red);border-color:var(--red)" title="Excluir ramo">🗑</button></div>';
-    kids.forEach(function(c,ci){
-      h+='<div style="display:flex;gap:.35rem;align-items:center;margin:.2rem 0 .2rem .6rem"><span style="color:var(--t3)">•</span><input type="text" id="rmapa-'+i+'-n'+ni+'-c'+ci+'" value="'+esc(c||'')+'" style="flex:1" placeholder="Linha"><button class="btn btn-outline btn-sm" data-refmapa-delchild="'+i+'-'+ni+'-'+ci+'" style="color:var(--red);border-color:var(--red)" title="Excluir linha">🗑</button></div>';
-    });
-    h+='<button class="btn btn-outline btn-sm" data-refmapa-addchild="'+i+'-'+ni+'" style="margin:.15rem 0 0 .6rem">＋ linha</button></div>';
-  });
-  h+='<div style="display:flex;gap:.5rem;flex-wrap:wrap;margin-top:.4rem"><button class="btn btn-outline btn-sm" data-refmapa-addnode="'+i+'">＋ ramo</button><button class="btn btn-primary btn-sm" data-refmapa-save="'+i+'">💾 Salvar mapa</button></div>';
-  return '<div class="dir-card">'+h+'</div>';
+  return '<div class="dir-card">'+badge+dirMapaHTML(d.mapa)+'<div style="margin-top:.6rem"><button class="btn btn-primary btn-sm" data-refmapa-visual="'+i+'">🧠 Editar nas caixas</button></div></div>';
 }
 function admReadRefMapa(i){
   var d=diretrizes[i];if(!d)return;var m=(d.mapa&&typeof d.mapa==='object')?d.mapa:{central:'',nodes:[]};if(!Array.isArray(m.nodes))m.nodes=[];
@@ -10710,6 +10720,23 @@ function bindAdmSec(sec){
 
   if(sec==='ref'){
     function refResetTemaUi(){admRefTemaAdd=false;admRefTemaEdit=null;}
+    // Mapa de uma diretriz no MESMO editor visual dos Mapas Mentais: move o #mm-live
+    // para o host desta seção e carrega o mapa convertido ({central,nodes}→{root,branches}).
+    if(admRefMapaVisual!==null){
+      var vhostR=document.getElementById('adm-ref-mm-host');
+      var liveR=document.getElementById('mm-live');
+      if(vhostR&&liveR){
+        if(!__mmLiveHome)__mmLiveHome=liveR.parentNode;
+        vhostR.appendChild(liveR);
+        var dzR=diretrizes[admRefMapaVisual]||{};
+        curMM={id:'refmm-'+admRefMapaVisual,topic:(dzR.tema||'Mapa'),sub:dzR.sub||'',data:normalizeMMData(diretrizMapaToEditor(dzR.mapa)),at:Date.now()};
+        mmAdminEdit=false;
+        liveR.style.display='block';
+        setText('mm-live-title',(dzR.tema||'Mapa mental')+' — mapa da diretriz');
+        renderMMEditor();
+      }
+    }
+    main.querySelectorAll('[data-refmapa-visual]').forEach(function(b){b.addEventListener('click',function(){admRefMapaVisual=parseInt(b.dataset.refmapaVisual);renderAdmSec('ref');});});
     main.querySelectorAll('[data-admref-sub]').forEach(function(b){b.addEventListener('click',function(){admRefSub=b.dataset.admrefSub;admRefTema='';refResetTemaUi();renderAdmSec('ref');});});
     main.querySelectorAll('[data-admref-tema]').forEach(function(b){b.addEventListener('click',function(){admRefTema=b.dataset.admrefTema;refResetTemaUi();renderAdmSec('ref');});});
     var rBack=main.querySelector('[data-admref-back]');
@@ -12234,6 +12261,7 @@ document.addEventListener('DOMContentLoaded',function(){
   document.getElementById('btn-mmblank').addEventListener('click',newBlankMM);
   document.getElementById('btn-mm-save').addEventListener('click',saveMM);
   document.getElementById('btn-mm-close').addEventListener('click',function(){
+    if(admRefMapaVisual!==null){admRefMapaVisual=null;restoreMMLive();try{renderAdmSec('ref');}catch(e){}return;}
     if(mmAdminEdit){admMMDraft=null;admMMEditId=null;restoreMMLive();try{renderAdmSec('mapas');}catch(e){}return;}
     document.getElementById('mm-live').style.display='none';
     document.getElementById('panel-mmap').classList.remove('mm-open');
