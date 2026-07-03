@@ -187,9 +187,9 @@ body{background:var(--bg);color:var(--tx);display:flex;flex-direction:column}
 .um-email{font-size:.65rem;color:var(--t3)}
 .um-btn{display:block;width:100%;background:none;border:none;font-family:var(--font);font-size:.78rem;color:var(--red);text-align:left;padding:.45rem .9rem;cursor:pointer}
 .workspace{flex:1;display:flex;overflow:hidden}
-.sidebar{width:210px;background:var(--navy);display:flex;flex-direction:column;padding:.6rem .5rem;flex-shrink:0;overflow-y:auto}
+.sidebar{width:240px;background:var(--navy);display:flex;flex-direction:column;padding:.6rem .5rem;flex-shrink:0;overflow-y:auto}
 .sb-sec{font-size:.54rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:rgba(255,255,255,.3);padding:.55rem .82rem .22rem;margin-top:.3rem}
-.sb-item{display:flex;align-items:center;gap:8px;padding:.46rem .8rem;border-radius:var(--rs);font-size:.76rem;font-weight:500;color:rgba(255,255,255,.65);cursor:pointer;transition:all .13s;border:none;background:none;font-family:var(--font);width:100%;text-align:left}
+.sb-item{display:flex;align-items:center;gap:8px;padding:.46rem .8rem;border-radius:var(--rs);font-size:.87rem;font-weight:500;color:rgba(255,255,255,.65);cursor:pointer;transition:all .13s;border:none;background:none;font-family:var(--font);width:100%;text-align:left}
 .sb-item:hover{background:rgba(255,255,255,.08);color:#fff}
 .sb-item.on{background:rgba(255,255,255,.16);color:#fff;font-weight:600}
 .sb-spacer{flex:1}
@@ -489,14 +489,14 @@ textarea{resize:vertical;line-height:1.6}
 .admin-mode{height:100%;overflow:hidden}
 .admin-mode .workspace{height:100%;display:block;overflow:hidden}
 #panel-adm.on{display:flex;height:100%;width:100%;background:var(--bg)}
-#panel-adm .adm-sidebar{width:210px;background:var(--navy);display:flex;flex-direction:column;flex-shrink:0;overflow-y:auto}
+#panel-adm .adm-sidebar{width:240px;background:var(--navy);display:flex;flex-direction:column;flex-shrink:0;overflow-y:auto}
 #panel-adm .adm-content{flex:1;display:flex;flex-direction:column;overflow:hidden;background:var(--bg);min-width:0}
 #panel-adm .adm-topbar{height:56px;background:var(--surface);border-bottom:1px solid var(--bd);display:flex;align-items:center;justify-content:space-between;padding:0 1.6rem;flex-shrink:0}
 #panel-adm .adm-title-wrap{display:flex;align-items:center;gap:.75rem;min-width:0}
 .adm-menu-btn{display:none;width:38px;height:38px;border-radius:10px;border:1px solid var(--bd2);background:var(--surface);color:var(--tx);align-items:center;justify-content:center;font-size:1.15rem;font-weight:800;cursor:pointer}
 .adm-backdrop{display:none;position:fixed;inset:0;border:0;background:rgba(9,19,43,.42);z-index:30}
 #panel-adm .sb-sec{color:rgba(255,255,255,.32)}
-.adm-nav{width:100%;display:flex;align-items:center;gap:8px;border:0;background:transparent;color:rgba(255,255,255,.72);font-family:var(--font);font-size:.76rem;font-weight:600;text-align:left;border-radius:var(--rs);padding:.5rem .72rem;margin-bottom:3px;cursor:pointer;line-height:1.25}
+.adm-nav{width:100%;display:flex;align-items:center;gap:8px;border:0;background:transparent;color:rgba(255,255,255,.72);font-family:var(--font);font-size:.87rem;font-weight:600;text-align:left;border-radius:var(--rs);padding:.5rem .72rem;margin-bottom:3px;cursor:pointer;line-height:1.25}
 .adm-nav:hover{background:rgba(255,255,255,.08);color:#fff}
 .adm-nav.on{background:rgba(255,255,255,.18);color:#fff}
 .adm-ph{padding:1.45rem 1.55rem .75rem}
@@ -7917,7 +7917,7 @@ var dirTemasExtra=(function(){try{var s=lsGet('diretrizes_temas');return Array.i
 var refFonteFilter='';
 // Quando true, os alunos veem a aba real (navegação por subespecialidade +
 // formatos). Enquanto false, veem "Em breve" — só o admin pré-visualiza.
-var DIRETRIZES_PUBLICADO=false;
+var DIRETRIZES_PUBLICADO=true;
 var refSubSel='';                 // subespecialidade selecionada ('' = grade)
 var refTemaSel='';                // tema selecionado dentro da subespecialidade
 var refFormat='resumo';          // resumo | flash | mapa
@@ -8937,14 +8937,37 @@ function admPendCardHTML(it){
     +'<div style="display:flex;gap:.5rem;flex-wrap:wrap;align-items:center"><button class="btn btn-primary btn-sm" data-pend-ok="'+id+'">✓ Aprovar e publicar</button><button class="btn btn-outline btn-sm" data-pend-del="'+id+'">🗑 Descartar</button></div>'
   +'</div>';
 }
+// Subtítulo de seção dentro das Pendências.
+function admPendSubhead(t){return '<div style="font-size:.72rem;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--t3);margin:1.3rem 0 .65rem">'+esc(t)+'</div>';}
+// Tarefas de revisão CONTÍNUA do professor (sempre presentes p/ curadores), além
+// das Questões do Dia: (1) diretrizes das suas subespecialidades; (2) trilha de
+// estudo (resumo + questões) do Endocrinologia Essencial. Cada card leva à seção.
+function admRevTasksHTML(subs){
+  var subLbl=subs.length?esc(subs.join(' · ')):'suas subespecialidades';
+  function task(icon,titulo,desc,btnLabel,act){
+    return '<div class="card" style="margin-bottom:1rem"><div style="display:flex;justify-content:space-between;gap:.5rem;flex-wrap:wrap;align-items:center;margin-bottom:.45rem">'
+      +'<div style="font-size:.85rem;font-weight:700;color:var(--tx)">'+icon+' '+esc(titulo)+'</div>'
+      +'<span class="tag tag-gold">revisão contínua</span></div>'
+      +'<div style="font-size:.76rem;color:var(--t2);line-height:1.55;margin-bottom:.65rem">'+desc+'</div>'
+      +'<button class="btn btn-outline btn-sm" data-pend-goto="'+esc(act)+'">'+esc(btnLabel)+' →</button></div>';
+  }
+  return task('📋','Revisar a seção de Diretrizes',
+      'Confira e mantenha atualizadas as diretrizes das suas subespecialidades: <b>'+subLbl+'</b>.',
+      '📋 Ir para Diretrizes','ref')
+    +task('🎓','Revisar a trilha do Endocrinologia Essencial',
+      'Revise o <b>resumo</b> e as <b>questões</b> da trilha de estudo do curso Endocrinologia Essencial'+(subs.length?' — foque nas suas subespecialidades: <b>'+subLbl+'</b>':'')+'.',
+      '🎓 Ir para Cursos','cursos');
+}
 function admPendenciasHTML(){
   var subs=qotdSubsForEmail(admEmail());
   var mine=qotdMyPending();
   var head='<div class="adm-ph"><h1>📥 Pendências</h1></div><div class="adm-pc">';
-  var intro='<div class="card" style="margin-bottom:1rem"><div style="font-size:.78rem;color:var(--t2);line-height:1.6">Questões da <b>Questão do Dia</b> distribuídas para você revisar, corrigir se preciso e <b>aprovar</b> — ao aprovar, a questão é publicada na fila da Questão do Dia. Suas subespecialidades: <b>'+(subs.length?esc(subs.join(' · ')):'nenhuma atribuída')+'</b>.</div></div>';
+  var intro='<div class="card" style="margin-bottom:1rem"><div style="font-size:.78rem;color:var(--t2);line-height:1.6">Sua central de revisão: <b>tarefas de revisão contínua</b> (diretrizes e a trilha do Endocrinologia Essencial) e as <b>questões da Questão do Dia</b> distribuídas para você revisar e <b>aprovar</b>. Suas subespecialidades: <b>'+(subs.length?esc(subs.join(' · ')):'nenhuma atribuída')+'</b>.</div></div>';
   if(!subs.length)return head+intro+'<div class="card"><div class="empty">Você não tem subespecialidades atribuídas para curadoria.</div></div></div>';
-  if(!mine.length)return head+intro+'<div class="card"><div class="empty">Nenhuma pendência no momento. 🎉</div></div></div>';
-  return head+intro+mine.map(admPendCardHTML).join('')+'</div>';
+  var tasks=admPendSubhead('Tarefas de revisão')+admRevTasksHTML(subs);
+  var qHead=admPendSubhead('Questão do Dia · aguardando aprovação'+(mine.length?' ('+mine.length+')':''));
+  var qBody=mine.length?mine.map(admPendCardHTML).join(''):'<div class="card"><div class="empty">Nenhuma questão aguardando revisão no momento. 🎉</div></div>';
+  return head+intro+tasks+qHead+qBody+'</div>';
 }
 function pendFindIdx(id){for(var i=0;i<igPending.length;i++){if(igPending[i].id===id)return i;}return -1;}
 function pendApprove(id){
@@ -8967,6 +8990,7 @@ function bindAdmPendencias(){
   var host=document.getElementById('adm-main');if(!host)return;
   host.querySelectorAll('[data-pend-ok]').forEach(function(b){b.addEventListener('click',function(){pendApprove(b.dataset.pendOk);});});
   host.querySelectorAll('[data-pend-del]').forEach(function(b){b.addEventListener('click',function(){pendDiscard(b.dataset.pendDel);});});
+  host.querySelectorAll('[data-pend-goto]').forEach(function(b){b.addEventListener('click',function(){renderAdmSec(b.dataset.pendGoto);});});
 }
 var admStoriesView='lote'; // aba ativa da seção Questão do Dia (lote/manual/fila/promo)
 function igLoteTemas(sub){
@@ -9182,7 +9206,7 @@ function igAttachExamImage(q,d){
 var IG_IMAGEQUERY_RULE=' Se — e SOMENTE se — a vinheta envolver um exame de IMAGEM/complementar que valha ilustrar (ex.: RM de sela, USG de tireoide, TC de adrenal, cintilografia, densitometria, ECG, radiografia), inclua no JSON o campo "imageQuery" com TERMOS DE BUSCA EM INGLÊS para achar essa imagem no PubMed (ex.: "pituitary MRI microadenoma", "thyroid ultrasound nodule", "adrenal CT adenoma"); se não houver imagem pertinente, use "imageQuery":"" (string vazia).';
 function igGenOne(sub,topic){
   var sys=authoringSys('Atue como examinador de prova de título em endocrinologia. Gere UMA questão ORIGINAL de '+sub+', EXATAMENTE 4 alternativas (A–D), só uma correta. O enunciado deve TERMINAR SEMPRE com a pergunta direta (ex.: Qual o diagnóstico mais provável? / Qual a melhor conduta?). Inclua os valores laboratoriais pertinentes INLINE no texto, com unidades e valores de referência (ex.: FSH 2,1 mUI/mL [VR 3,5–12,5]) — não resuma como exames normais nem use tabela. Quando pertinente, descreva o achado de imagem no enunciado em texto (ex.: USG de tireoide, ECG, RM de sela). NÃO cite a subespecialidade no enunciado. Alternativas CURTAS e concisas (poucas palavras — também vão para o story).'+IG_IMAGEQUERY_RULE+' JSON APENAS: {"stem":"vinheta clínica curta; exames laboratoriais inline com valores, unidades e referência; achado de imagem descrito em texto quando pertinente; TERMINA com a pergunta direta","options":{"A":"alternativa curta","B":"alternativa curta","C":"alternativa curta","D":"alternativa curta"},"answer":"A","explanation":"comentário COMPLETO em 1-2 parágrafos (cerca de 4-8 linhas no total): explique por que a alternativa correta está certa E por que as principais erradas estão erradas, com o critério/valor de corte e citando a diretriz/fonte pelo NOME + ano (sem PMID nem DOI); refira-se ao CONTEÚDO das alternativas, NÃO às letras (A/B/C/D), pois a ordem é embaralhada","imageQuery":"termos em inglês p/ imagem de exame OU string vazia"}');
-  return aiRequest({system:sys,prompt:'Gere 1 questão de Endocrinologia — '+sub+(topic?(', subtema OBRIGATÓRIO (não troque por outro assunto da área): '+topic):'')+', nível intermediário, clinicamente precisa e alinhada às diretrizes vigentes. Responda SOMENTE com o objeto JSON.',maxTokens:1100,model:AI_MODEL_CLINICO,grounding:(topic?(sub+' '+topic):sub)})
+  return aiRequest({system:sys,prompt:'Gere 1 questão de Endocrinologia — '+sub+(topic?(', subtema OBRIGATÓRIO (não troque por outro assunto da área): '+topic):'')+', nível AVANÇADO (padrão prova de título/especialista) — raciocínio clínico exigente, com nuance clínica e distratores plausíveis (erros conceituais comuns), evitando questões óbvias/diretas; clinicamente precisa e alinhada às diretrizes vigentes. Responda SOMENTE com o objeto JSON.',maxTokens:1100,model:AI_MODEL_CLINICO,grounding:(topic?(sub+' '+topic):sub)})
   .then(function(raw){var d=parseJ(raw);if(!d||!d.stem||!d.options)return null;var q=igShuffleMCQ({sub:sub,teem:'',stem:String(d.stem||''),options:{A:d.options.A||'',B:d.options.B||'',C:d.options.C||'',D:d.options.D||''},answer:String(d.answer||'A').toUpperCase().slice(0,1),explanation:String(d.explanation||'')});return igAttachExamImage(q,d);});
 }
 function igLoteToQueue(it){igStories.push({id:'ig-'+Date.now()+'-'+Math.round(Math.random()*1e6),sub:it.sub,teem:it.teem||'',stem:it.stem,options:it.options,answer:it.answer,explanation:it.explanation,img:it.img||'',imgRef:it.imgRef||'',status:'queued',createdAt:Date.now()});}
@@ -9251,7 +9275,7 @@ function bindAdmStories(){
     var st=document.getElementById('ig-gen-status');
     gen.disabled=true;gen.innerHTML=ldHTML('Gerando...');if(st)st.textContent='';
     var sys=authoringSys('Atue como examinador de prova de título em endocrinologia. Gere UMA questão ORIGINAL (não copie provas existentes), de '+sub+', com EXATAMENTE 4 alternativas (A–D), só uma correta. O enunciado deve TERMINAR SEMPRE com a pergunta direta (ex.: Qual o diagnóstico mais provável? / Qual a melhor conduta?). Inclua os valores laboratoriais pertinentes INLINE no texto, com unidades e valores de referência (ex.: FSH 2,1 mUI/mL [VR 3,5–12,5]) — não resuma como exames normais nem use tabela. Quando pertinente, descreva o achado de imagem no enunciado em texto (ex.: USG de tireoide, ECG, RM de sela). NÃO cite a subespecialidade no enunciado. Alternativas CURTAS e concisas (poucas palavras — também vão para o story).'+IG_IMAGEQUERY_RULE+' JSON APENAS: {"stem":"vinheta clínica curta; exames laboratoriais inline com valores, unidades e referência; achado de imagem descrito em texto quando pertinente; TERMINA com a pergunta direta","options":{"A":"alternativa curta","B":"alternativa curta","C":"alternativa curta","D":"alternativa curta"},"answer":"A","explanation":"comentário COMPLETO em 1-2 parágrafos (cerca de 4-8 linhas no total): explique por que a alternativa correta está certa E por que as principais erradas estão erradas, com o critério/valor de corte e citando a diretriz/fonte pelo NOME + ano (sem PMID nem DOI); refira-se ao CONTEÚDO das alternativas, NÃO às letras (A/B/C/D), pois a ordem é embaralhada","imageQuery":"termos em inglês p/ imagem de exame OU string vazia"}');
-    aiRequest({system:sys,prompt:'Gere 1 questão de Endocrinologia — '+sub+(topic?(', subtema OBRIGATÓRIO (não troque por outro assunto da área): '+topic):'')+', nível intermediário, clinicamente precisa e alinhada às diretrizes vigentes. Enunciado conciso, adequado a um story do Instagram.',maxTokens:1100,model:AI_MODEL_CLINICO,grounding:(topic?(sub+' '+topic):sub)})
+    aiRequest({system:sys,prompt:'Gere 1 questão de Endocrinologia — '+sub+(topic?(', subtema OBRIGATÓRIO (não troque por outro assunto da área): '+topic):'')+', nível AVANÇADO (padrão prova de título/especialista) — raciocínio clínico exigente, com nuance clínica e distratores plausíveis (erros conceituais comuns), evitando questões óbvias/diretas; clinicamente precisa e alinhada às diretrizes vigentes. Enunciado conciso, adequado a um story do Instagram.',maxTokens:1100,model:AI_MODEL_CLINICO,grounding:(topic?(sub+' '+topic):sub)})
     .then(function(raw){
       var d=parseJ(raw);if(!d||!d.stem||!d.options)throw new Error('Resposta inválida. Tente de novo.');
       igEditId=null;
