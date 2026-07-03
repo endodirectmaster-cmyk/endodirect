@@ -6532,19 +6532,49 @@ function aulaAnswer(i,letter){
 // vêm com GABARITO ✓ e comentário REVELADOS (revisão, não quiz) e não gravam
 // no Desempenho. Reusa aulaResumoHTML/aulaQuestions/exportAulaPDF.
 var admAulaTab='aula';
+var admTrilhaQs=[];
+function admTrilhaQCard(q,i){
+  var opts=['A','B','C','D'].map(function(L){var isAns=q.answer===L;return '<div style="font-size:.8rem;line-height:1.5;color:'+(isAns?'#16a34a':'var(--t2)')+';font-weight:'+(isAns?'700':'400')+'">'+L+') '+esc((q.options||{})[L]||'')+(isAns?' ✓':'')+'</div>';}).join('');
+  return '<div class="card" style="margin-bottom:.7rem" id="adm-trilhaq-'+i+'"><div style="display:flex;align-items:center;justify-content:space-between;gap:.5rem;margin-bottom:.4rem"><span style="font-size:.8rem;font-weight:700">🧠 Questão '+(i+1)+'</span><button class="btn btn-outline btn-sm" data-trilhaq-edit="'+i+'">✏️ Editar</button></div><div style="font-size:.82rem;line-height:1.55;margin-bottom:.5rem;white-space:pre-wrap">'+esc(q.stem||'')+'</div><div style="display:grid;gap:.2rem;margin-bottom:.5rem">'+opts+'</div>'+(q.explanation?'<div style="font-size:.76rem;color:var(--t2);line-height:1.55;border-top:1px solid var(--bd);padding-top:.45rem"><b>Comentário:</b> '+esc(q.explanation)+'</div>':'')+'</div>';
+}
 function admRenderAulaQuestReview(c){
   var box=document.getElementById('aula-quest-box');if(!box)return;
-  var qs=aulaQuestions(c);
-  if(!qs.length){box.innerHTML='<div class="empty">Esta aula ainda não tem questões próprias, nem há questões no Banco para este módulo/tema. Defina o “Tema da aula” em Editar ou publique questões no Banco.</div>';return;}
-  box.innerHTML='<div style="font-size:.72rem;color:var(--t3);margin-bottom:.5rem">'+qs.length+' questão(ões) da trilha — gabarito ✓ e comentário revelados para revisão.</div>'+qs.map(function(q,i){
-    var opts=['A','B','C','D'].map(function(L){var isAns=q.answer===L;return '<div style="font-size:.8rem;line-height:1.5;color:'+(isAns?'#16a34a':'var(--t2)')+';font-weight:'+(isAns?'700':'400')+'">'+L+') '+esc((q.options||{})[L]||'')+(isAns?' ✓':'')+'</div>';}).join('');
-    return '<div class="card" style="margin-bottom:.7rem"><div style="font-size:.8rem;font-weight:700;margin-bottom:.4rem">🧠 Questão '+(i+1)+'</div><div style="font-size:.82rem;line-height:1.55;margin-bottom:.5rem;white-space:pre-wrap">'+esc(q.stem||'')+'</div><div style="display:grid;gap:.2rem;margin-bottom:.5rem">'+opts+'</div>'+(q.explanation?'<div style="font-size:.76rem;color:var(--t2);line-height:1.55;border-top:1px solid var(--bd);padding-top:.45rem"><b>Comentário:</b> '+esc(q.explanation)+'</div>':'')+'</div>';
-  }).join('');
+  admTrilhaQs=aulaQuestions(c);
+  if(!admTrilhaQs.length){box.innerHTML='<div class="empty">Esta aula ainda não tem questões próprias, nem há questões no Banco para este módulo/tema. Defina o “Tema da aula” em Editar ou publique questões no Banco.</div>';return;}
+  box.innerHTML='<div style="font-size:.72rem;color:var(--t3);margin-bottom:.5rem">'+admTrilhaQs.length+' questão(ões) da trilha — gabarito ✓ e comentário revelados. Clique em ✏️ Editar para corrigir uma questão.</div><div id="adm-trilha-qs">'+admTrilhaQs.map(admTrilhaQCard).join('')+'</div>';
+  var host=document.getElementById('adm-trilha-qs');if(host)host.querySelectorAll('[data-trilhaq-edit]').forEach(function(b){b.addEventListener('click',function(){admEditTrilhaQ(c,parseInt(b.dataset.trilhaqEdit));});});
+}
+function admEditTrilhaQ(c,i){
+  var q=admTrilhaQs[i];if(!q)return;var cont=document.getElementById('adm-trilhaq-'+i);if(!cont)return;
+  function lbl(t){return '<label style="display:block;font-size:.7rem;font-weight:600;color:var(--t2);margin-bottom:.2rem">'+t+'</label>';}
+  var optInputs=['A','B','C','D'].map(function(L){return '<div style="display:flex;gap:.4rem;align-items:center;margin-bottom:.3rem"><span style="font-weight:700;color:var(--blue);width:16px;flex-shrink:0">'+L+'</span><input type="text" id="tq-'+i+'-'+L+'" value="'+esc((q.options||{})[L]||'')+'" style="flex:1"></div>';}).join('');
+  var ansOpts=['A','B','C','D'].map(function(L){return '<option value="'+L+'"'+(q.answer===L?' selected':'')+'>'+L+'</option>';}).join('');
+  cont.innerHTML='<div style="font-size:.8rem;font-weight:700;margin-bottom:.55rem">✏️ Editando a questão '+(i+1)+'</div>'
+    +lbl('Enunciado')+'<textarea id="tq-'+i+'-stem" rows="4" style="width:100%;margin-bottom:.5rem">'+esc(q.stem||'')+'</textarea>'
+    +lbl('Alternativas')+'<div style="margin-bottom:.5rem">'+optInputs+'</div>'
+    +'<div style="max-width:110px;margin-bottom:.5rem">'+lbl('Gabarito')+'<select id="tq-'+i+'-ans" style="width:100%">'+ansOpts+'</select></div>'
+    +lbl('Comentário')+'<textarea id="tq-'+i+'-exp" rows="3" style="width:100%;margin-bottom:.6rem">'+esc(q.explanation||'')+'</textarea>'
+    +'<div style="display:flex;gap:.5rem;flex-wrap:wrap"><button class="btn btn-primary btn-sm" id="tq-save-'+i+'">💾 Salvar</button><button class="btn btn-outline btn-sm" id="tq-cancel-'+i+'">Cancelar</button></div>';
+  var sb=document.getElementById('tq-save-'+i);if(sb)sb.addEventListener('click',function(){admSaveTrilhaQ(c,i);});
+  var cb=document.getElementById('tq-cancel-'+i);if(cb)cb.addEventListener('click',function(){admRenderAulaQuestReview(c);});
+}
+function admSaveTrilhaQ(c,i){
+  function v(id){var e=document.getElementById(id);return e?String(e.value||'').trim():'';}
+  var q=admTrilhaQs[i]||{};
+  var stem=v('tq-'+i+'-stem'),A=v('tq-'+i+'-A'),B=v('tq-'+i+'-B'),C2=v('tq-'+i+'-C'),D=v('tq-'+i+'-D');
+  var answer=(document.getElementById('tq-'+i+'-ans')||{}).value||'A',exp=v('tq-'+i+'-exp');
+  if(!stem||!A||!B||!C2||!D){notify('Preencha o enunciado e as 4 alternativas.','err');return;}
+  admTrilhaQs[i]=Object.assign({},q,{stem:stem,options:{A:A,B:B,C:C2,D:D},answer:answer,explanation:exp});
+  // Grava como conjunto PRÓPRIO da aula (a partir de agora a trilha usa estas questões curadas em vez de sortear do Banco).
+  c.aulaQ=admTrilhaQs.slice();
+  try{persistCursos();}catch(e){}try{renderCursosAluno();}catch(e){}
+  notify('Questão salva na trilha desta aula. ✓','ok');
+  admRenderAulaQuestReview(c);
 }
 function admRenderAulaPlayer(c){
   var box=document.getElementById('adm-curso-player');if(!box)return;
   var tabs='<div style="display:flex;gap:.4rem;flex-wrap:wrap;margin:.2rem 0 .8rem">'+[['aula','▶ Aula'],['resumo','📝 Resumo'],['quest','🧠 Questões']].map(function(t){var on=admAulaTab===t[0];return '<button class="btn btn-sm '+(on?'btn-primary':'btn-outline')+'" data-admaulatab="'+t[0]+'">'+t[1]+'</button>';}).join('')+'</div>';
-  var head='<div style="display:flex;align-items:center;justify-content:space-between;gap:.7rem;margin-bottom:.4rem"><span style="font-size:.92rem;font-weight:700">'+esc(c.title||'Videoaula')+' <span class="tag" style="background:#1c2a48;color:#9aa6ba">revisão da trilha</span></span><button class="btn btn-ghost btn-sm" id="adm-curso-player-close">✕ Fechar</button></div>';
+  var head='<div style="display:flex;align-items:center;justify-content:space-between;gap:.7rem;margin-bottom:.4rem"><span style="font-size:.92rem;font-weight:700">'+esc(c.title||'Videoaula')+' <span class="tag" style="background:#1c2a48;color:#9aa6ba">revisão da trilha</span></span><div style="display:flex;gap:.4rem;flex-shrink:0"><button class="btn btn-outline btn-sm" id="adm-aula-edit">✏️ Editar</button><button class="btn btn-ghost btn-sm" id="adm-curso-player-close">✕ Fechar</button></div></div>';
   var body;
   if(admAulaTab==='resumo')body=aulaResumoHTML(c);
   else if(admAulaTab==='quest')body='<div id="aula-quest-box"></div>';
@@ -6552,6 +6582,7 @@ function admRenderAulaPlayer(c){
   box.innerHTML='<div class="card">'+head+tabs+'<div id="adm-aula-tab-body">'+body+'</div></div>';
   box.querySelectorAll('[data-admaulatab]').forEach(function(b){b.addEventListener('click',function(){admAulaTab=b.getAttribute('data-admaulatab');admRenderAulaPlayer(c);});});
   var cl=document.getElementById('adm-curso-player-close');if(cl)cl.addEventListener('click',function(){box.style.display='none';box.innerHTML='';});
+  var eb=document.getElementById('adm-aula-edit');if(eb)eb.addEventListener('click',function(){admCursoEditIdx=admCursos.indexOf(c);admCursoSubtab='importar';renderAdmSec('cursos');});
   var pb=document.getElementById('aula-pdf');if(pb)pb.addEventListener('click',function(){exportAulaPDF(c);});
   if(admAulaTab==='quest')admRenderAulaQuestReview(c);
 }
@@ -10242,7 +10273,7 @@ function admCursosHTML(){
       +'<span style="font-size:.84rem;font-weight:700;color:var(--tx)">'+esc(nome)+'</span>'
       +'<span style="font-size:.7rem;color:var(--t3)">'+n+' aula'+(n===1?'':'s')+'</span></button>';
   }
-  function admLessonCard(c){var i=admCursos.indexOf(c);var meta=c.asset?'<div class="asset-meta">Supabase Storage: '+esc(c.asset.name||'video')+' · '+formatBytes(c.asset.size)+'</div>':'';return '<div class="card"><div style="display:flex;align-items:flex-start;gap:.7rem"><div style="width:48px;height:48px;border-radius:10px;background:var(--navy);display:flex;align-items:center;justify-content:center;font-size:1.3rem;flex-shrink:0">🎬</div><div style="flex:1;min-width:0"><div style="font-size:.86rem;font-weight:700;color:var(--tx);margin-bottom:.25rem">'+esc(c.title)+'</div><div style="display:flex;flex-wrap:wrap;gap:.3rem;margin-bottom:.4rem">'+(c.curso?'<span class="tag tag-grn">'+esc(cursoNomeBySlug(c.curso))+'</span>':'<span class="tag" style="background:#1c2a48;color:#9aa6ba">Sem curso</span>')+(c.modulo?'<span class="tag tag-pur">'+esc(c.modulo)+'</span>':'')+(c.dur?'<span class="tag tag-gold">'+esc(c.dur)+'</span>':'')+'</div>'+(c.desc?'<div style="font-size:.74rem;color:var(--t2);line-height:1.5;margin-bottom:.4rem">'+esc(c.desc)+'</div>':'')+'<div style="font-size:.66rem;color:var(--t3);word-break:break-all;margin-bottom:.5rem">'+(c.tipo==='link'?'🔗 '+esc(c.src):'🎞️ Arquivo de vídeo')+'</div>'+meta+'<div style="display:flex;gap:5px;flex-wrap:wrap"><button class="btn btn-primary btn-sm" data-adm-playcurso="'+i+'">▶ Assistir</button><button class="btn btn-outline btn-sm" data-adm-editcurso="'+i+'">✏️ Editar</button><button class="btn btn-outline btn-sm" data-adm-delcurso="'+i+'" style="color:var(--red);border-color:var(--red)">🗑 Excluir</button></div></div></div></div>';}
+  function admLessonCard(c){var i=admCursos.indexOf(c);var meta=c.asset?'<div class="asset-meta">Supabase Storage: '+esc(c.asset.name||'video')+' · '+formatBytes(c.asset.size)+'</div>':'';return '<div class="card curso-aula-card" data-adm-openaula="'+i+'" style="cursor:pointer" title="Abrir a trilha da aula (Aula · Resumo · Questões)"><div style="display:flex;align-items:flex-start;gap:.7rem"><div style="width:48px;height:48px;border-radius:10px;background:var(--navy);display:flex;align-items:center;justify-content:center;font-size:1.3rem;flex-shrink:0">🎬</div><div style="flex:1;min-width:0"><div style="font-size:.86rem;font-weight:700;color:var(--tx);margin-bottom:.25rem">'+esc(c.title)+'</div><div style="display:flex;flex-wrap:wrap;gap:.3rem;margin-bottom:.4rem">'+(c.curso?'<span class="tag tag-grn">'+esc(cursoNomeBySlug(c.curso))+'</span>':'<span class="tag" style="background:#1c2a48;color:#9aa6ba">Sem curso</span>')+(c.modulo?'<span class="tag tag-pur">'+esc(c.modulo)+'</span>':'')+(c.dur?'<span class="tag tag-gold">'+esc(c.dur)+'</span>':'')+'</div>'+(c.desc?'<div style="font-size:.74rem;color:var(--t2);line-height:1.5;margin-bottom:.4rem">'+esc(c.desc)+'</div>':'')+meta+'<div style="display:flex;gap:5px;flex-wrap:wrap;align-items:center;margin-top:.15rem"><span style="font-size:.72rem;color:var(--blue);font-weight:700">▶ Abrir trilha</span><span style="flex:1"></span><button class="btn btn-outline btn-sm" data-adm-delcurso="'+i+'" style="color:var(--red);border-color:var(--red)">🗑 Excluir</button></div></div></div></div>';}
   // Navegação igual às Diretrizes: curso → subespecialidade → aula.
   var verHTML;
   if(!admCursoFiltro){
@@ -10548,9 +10579,7 @@ function bindAdmSec(sec){
     var nsCreate=document.getElementById('btn-curso-newsub-create');if(nsCreate)nsCreate.addEventListener('click',function(){var nm=(document.getElementById('curso-newsub').value||'').trim();if(!nm){notify('Digite o nome da subespecialidade.','err');return;}if(cursoModList(admCursoFiltro).some(function(o){return o.mod.toLowerCase()===nm.toLowerCase();})){notify('Essa subespecialidade já existe neste curso.','err');return;}admCursoModsExtra.push({curso:admCursoFiltro,modulo:nm});persistCursos();admCursoModAdd=false;renderAdmSec('cursos');});
     var addAula=document.getElementById('btn-curso-addaula');if(addAula)addAula.addEventListener('click',function(){admCursoAddMod=admCursoMod;admCursoEditIdx=null;admCursoSubtab='importar';renderAdmSec('cursos');});
     var nsFocus=document.getElementById('curso-newsub');if(nsFocus){nsFocus.focus();nsFocus.addEventListener('keydown',function(ev){if(ev.key==='Enter'){ev.preventDefault();var bc=document.getElementById('btn-curso-newsub-create');if(bc)bc.click();}});}
-    main.querySelectorAll('[data-adm-playcurso]').forEach(function(b){b.addEventListener('click',function(){
-      admPlayCursoAula(parseInt(b.dataset.admPlaycurso));
-    });});
+    main.querySelectorAll('[data-adm-openaula]').forEach(function(el){el.addEventListener('click',function(ev){if(ev.target.closest('button'))return;admPlayCursoAula(parseInt(el.dataset.admOpenaula));});});
     main.querySelectorAll('[data-adm-delcurso]').forEach(function(b){b.addEventListener('click',function(){var c=admCursos[parseInt(b.dataset.admDelcurso)];if(!confirm('Excluir a videoaula "'+((c&&c.title)||'')+'"? Esta ação não pode ser desfeita.'))return;admCursos.splice(parseInt(b.dataset.admDelcurso),1);persistCursos();renderAdmSec('cursos');renderCursosAluno();});});
   }
 
