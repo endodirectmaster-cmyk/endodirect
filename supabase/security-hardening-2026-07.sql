@@ -15,6 +15,14 @@ drop table if exists public._aulaq_stage;
 --    (o service role IGNORA grants, então o cron continua funcionando).
 revoke execute on function public.endodirect_trial_email_targets() from anon, authenticated, public;
 
+-- 3) (2026-07-06) Backup do estado global `_endodirect_gs_backup_20260703`
+--    (snapshot de 03/07, criado APÓS o hardening acima) ficou com RLS DESABILITADO
+--    → exposto pela anon key (advisor rls_disabled_in_public, ERROR; e-mail do
+--    Supabase "Table publicly accessible"). Não é referenciado por nenhum código.
+--    Liga RLS sem policy = deny-all p/ anon/authenticated; service_role bypassa
+--    (o backup segue acessível ao backend). Não destrói o backup.
+alter table if exists public._endodirect_gs_backup_20260703 enable row level security;
+
 -- Observações (itens do linter que são POR DESIGN — sem ação):
 -- • `endodirect_state_backup` e `endodirect_support`: RLS ON sem policy = só
 --   service_role acessa (padrão seguro, intencional).
