@@ -2909,7 +2909,7 @@ function normalizeMuralSource(source){
 function muralPlain(v){
   return String(v||'').normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase();
 }
-var MURAL_TYPES=['Comunicado','Diretriz','Artigo de Revisão','Ensaio Clínico','Metanálise','Perspectiva Clínica','Discussão Clínica','Estudo Genético','Estudo Original','Evento','Breaking News'];
+var MURAL_TYPES=['Comunicado','Diretriz','Consenso','Artigo de Revisão','Ensaio Clínico','Metanálise','Perspectiva Clínica','Discussão Clínica','Estudo Genético','Estudo Original','Evento','Breaking News'];
 var MURAL_EMOJIS=['🧬','💊','🩺','🔬','🧪','🧠','🫀','🩸','🦴','📊','📈','📉','⚖️','💡','⚠️','✅','❌','📌','👉','➡️','⭐','🔥','🚨','📣','📝','✨','🎯','❓','❤️','🍬'];
 function normalizeMuralType(tipo,titulo,texto,fonte){
   var raw=String(tipo||'').trim();
