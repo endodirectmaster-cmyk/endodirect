@@ -2140,6 +2140,7 @@ input.dmm-inp-subsub{flex:1;min-width:0;background:transparent;color:var(--t2);f
           <button class="adm-nav" data-asec="pendencias">📥 Pendências <span id="adm-pend-badge" style="display:none;margin-left:.2rem;font-weight:700"></span></button>
           <button class="adm-nav" data-asec="mural">📣 Mural</button>
           <button class="adm-nav" data-asec="ref">📋 Diretrizes</button>
+          <button class="adm-nav" data-asec="resumos">📄 Resumos</button>
           <button class="adm-nav" data-asec="provas">📝 Provas &amp; Questões</button>
           <button class="adm-nav" data-asec="cursos">🎬 Cursos</button>
           <button class="adm-nav" data-asec="estudantes">👥 Estudantes</button>
@@ -8059,9 +8060,11 @@ function dirTemaOf(d){return (String((d&&d.tema)||'').trim())||(String((d&&d.tit
 // Lista de temas (com contagem) dentro de uma subespecialidade.
 // withExtras=true (editor) inclui os temas criados pelo admin ainda sem
 // diretriz; o aluno só vê temas com conteúdo.
-function dirTemaList(sub,withExtras){
+function dirTemaList(sub,withExtras,pred){
+  pred=pred||function(d){return !d.privado;}; // padrão: só itens públicos (aluno)
   var seen={},order=[];
   diretrizes.forEach(function(d){
+    if(!pred(d))return;
     if((String(d.sub||'Geral').trim()||'Geral')!==sub)return;
     var t=dirTemaOf(d);if(!(t in seen)){seen[t]=0;order.push(t);}seen[t]++;
   });
@@ -8094,9 +8097,10 @@ function dirSubIcon(s){
   if(k.indexOf('básic')>=0||k.indexOf('basic')>=0)return '📚';
   return '📋';
 }
-function dirSubList(){
+function dirSubList(pred){
+  pred=pred||function(d){return !d.privado;}; // padrão: só itens públicos (aluno)
   var seen={};
-  diretrizes.forEach(function(d){var s=String(d.sub||'Geral').trim()||'Geral';seen[s]=(seen[s]||0)+1;});
+  diretrizes.forEach(function(d){if(!pred(d))return;var s=String(d.sub||'Geral').trim()||'Geral';seen[s]=(seen[s]||0)+1;});
   // Todas as subespecialidades canônicas (mesmo com 0), na ordem definida…
   var out=DIR_SUBS.map(function(s){return {sub:s,count:seen[s]||0};});
   // …mais qualquer subespecialidade extra já cadastrada fora da taxonomia.
@@ -8216,7 +8220,7 @@ function diretrizesViewHTML(){
     }).join('')+'</div>';
   }
   // Nível 3 — diretrizes do tema, no formato escolhido.
-  var list=diretrizes.map(function(d,i){return {d:d,i:i};}).filter(function(x){return (String(x.d.sub||'Geral').trim()||'Geral')===refSubSel&&dirTemaOf(x.d)===refTemaSel;});
+  var list=diretrizes.map(function(d,i){return {d:d,i:i};}).filter(function(x){return !x.d.privado&&(String(x.d.sub||'Geral').trim()||'Geral')===refSubSel&&dirTemaOf(x.d)===refTemaSel;});
   var head='<button class="dir-back" data-dir-temaback>← '+esc(refSubSel)+'</button>'
     +'<div class="ph" style="margin-top:0"><h1>'+esc(refTemaSel)+'</h1></div>';
   if(!list.length){
@@ -9573,7 +9577,7 @@ function renderAdmSec(sec){
   admCurrentSec=sec;
   try{lsSet('adm_sec',sec);}catch(e){}
   document.querySelectorAll('.adm-nav[data-asec]').forEach(function(b){b.classList.toggle('on',b.dataset.asec===sec);});
-  var titles={provas:'Provas & Questões',cursos:'Cursos',estudantes:'Estudantes',analytics:'Analytics',mural:'Mural',ref:'Diretrizes',conteudo:'Podcasts',mapas:'Mapas Mentais',flashcards:'Flashcards',stories:'Questão do Dia (Stories)',qotdarq:'Questão do Dia',pendencias:'Pendências',calc:'Calculadoras',consultorio:'Consultório',rx:'Prescrição Comentada',chat:'Chat',perfil:'Perfil',suporte:'Suporte'};
+  var titles={provas:'Provas & Questões',cursos:'Cursos',estudantes:'Estudantes',analytics:'Analytics',mural:'Mural',ref:'Diretrizes',resumos:'Resumos',conteudo:'Podcasts',mapas:'Mapas Mentais',flashcards:'Flashcards',stories:'Questão do Dia (Stories)',qotdarq:'Questão do Dia',pendencias:'Pendências',calc:'Calculadoras',consultorio:'Consultório',rx:'Prescrição Comentada',chat:'Chat',perfil:'Perfil',suporte:'Suporte'};
   setText('adm-sec-title',titles[sec]||sec);
   var m=document.getElementById('adm-main');if(!m)return;
   // SEMPRE devolve os painéis movidos (#panel-presc / #mm-live) para o lugar de
@@ -9600,7 +9604,11 @@ function renderAdmSec(sec){
   else if(sec==='estudantes'){m.innerHTML=admEstudantesHTML();loadAdmEstudantes();}
   else if(sec==='analytics'){m.innerHTML=admAnalyticsHTML();loadAdmOverview();var rtA=document.getElementById('adm-analytics-retry');if(rtA)rtA.addEventListener('click',function(){loadAdmOverview(true);});}
   else if(sec==='mural')m.innerHTML=admMuralSecHTML();
-  else if(sec==='ref')m.innerHTML=admRefSecHTML();
+  else if(sec==='ref'||sec==='resumos'){
+    var _nm=(sec==='resumos')?'res':'dir';
+    if(admRefMode!==_nm){admRefMode=_nm;admRefSub='';admRefTema='';admRefShowForm=false;admRefEdit=null;admRefTemaAdd=false;admRefTemaEdit=null;}
+    m.innerHTML=admRefSecHTML();
+  }
   else if(sec==='conteudo')m.innerHTML=admConteudoHTML();
   else if(sec==='calc')m.innerHTML=admCalcHTML();
   else if(sec==='chat')m.innerHTML=admChatHTML();
@@ -9969,6 +9977,18 @@ function persistAdm(){lsSet('adm_avisos',admAvisos);lsSet('adm_questoes',admQues
 var admMuralShowForm=false,admMuralEdit=null,admMuralFilter='',admMuralTipoFilter='',admMuralSort='novos';
 // ---------- REFERÊNCIA RÁPIDA (admin CRUD) ----------
 var admRefShowForm=false,admRefEdit=null,admRefPdfB64=null,admRefPdfName='',admRefPdfFile=null,admRefSub='',admRefTema='',admRefTemaAdd=false,admRefTemaEdit=null,admRefChat=[];
+// Modo do painel de diretrizes: 'dir' = Diretrizes (publicadas p/ alunos) |
+// 'res' = Resumos (privados, só no painel do professor). A flag por item é
+// d.privado; os alunos nunca recebem itens privados (filtrados na RPC e na view).
+var admRefMode='dir';
+function dirIsPrivate(d){return !!(d&&d.privado);}
+function dirModeMatch(d){return admRefMode==='res'?dirIsPrivate(d):!dirIsPrivate(d);}
+// Rótulos por modo (usados no admin).
+function refLabels(){return admRefMode==='res'
+  ?{h1:'Resumos',one:'resumo',many:'resumos',nova:'Novo resumo',subhint:'Resumos privados de estudo — visíveis só para você, não publicados para os alunos.'}
+  :{h1:'Diretrizes',one:'diretriz',many:'diretrizes',nova:'Nova diretriz',subhint:'Resumos exibidos na aba Diretrizes. Para os alunos a aba mostra “Em breve” até a curadoria liberar.'};}
+// Re-render do painel de diretrizes/resumos respeitando o modo atual.
+function rerenderRef(){renderAdmSec(admRefMode==='res'?'resumos':'ref');}
 // Bolhas do chat do assistente de IA no editor de diretrizes.
 function refChatMsgsHTML(){
   if(!admRefChat.length)return '<div style="font-size:.74rem;color:var(--t3);line-height:1.5">Converse com a IA para desenvolver os textos. Ex.: “resuma os fármacos em 4 bullets”, “gere 3 flashcards sobre contraindicações”, “reescreva o resumo mais didático”. Copie a resposta para o campo desejado.</div>';
@@ -10007,10 +10027,11 @@ function parseMapaText(txt){
   return {central:central,nodes:nodes};
 }
 function admRefSecHTML(){
+  var L=refLabels();
   var g=(admRefEdit!==null&&diretrizes[admRefEdit])?diretrizes[admRefEdit]:null;
   var formHTML=admRefShowForm?(
-    '<div class="card" style="margin-bottom:1.1rem"><div style="font-size:1rem;font-weight:700;margin-bottom:.3rem">'+(g?'✏️ Editar diretriz':'📋 Nova diretriz')+'</div>'
-    +'<div style="font-size:.74rem;color:var(--t2);margin-bottom:.9rem">Resumos exibidos na aba Diretrizes. Para os alunos a aba mostra “Em breve” até a curadoria liberar.</div>'
+    '<div class="card" style="margin-bottom:1.1rem"><div style="font-size:1rem;font-weight:700;margin-bottom:.3rem">'+(g?('✏️ Editar '+L.one):('📄 '+L.nova))+'</div>'
+    +'<div style="font-size:.74rem;color:var(--t2);margin-bottom:.9rem">'+L.subhint+'</div>'
     +'<div style="border:1px dashed var(--bd2);border-radius:12px;padding:.85rem 1rem;margin-bottom:1rem;background:var(--s2)">'
       +'<div style="font-size:.8rem;font-weight:700;color:var(--tx);margin-bottom:.3rem">📄 Importar PDF com IA</div>'
       +'<div style="font-size:.72rem;color:var(--t2);margin-bottom:.6rem">Envie a diretriz/artigo em PDF. A IA gera resumo, bullets, flashcards e mapa mental — você revisa e edita tudo abaixo antes de salvar.</div>'
@@ -10049,11 +10070,12 @@ function admRefSecHTML(){
   if(admRefShowForm){
     body=formHTML;
   }else if(!admRefSub){
-    body='<div class="dir-sub-grid">'+dirSubList().map(function(s){
-      return '<button class="dir-sub-btn" data-admref-sub="'+esc(s.sub)+'"><div class="dsb-ico">'+dirSubIcon(s.sub)+'</div><h3>'+esc(s.sub)+'</h3><div class="dsb-cnt">'+s.count+' diretriz'+(s.count===1?'':'es')+'</div></button>';
+    body=(admRefMode==='res'?'<div style="font-size:.78rem;color:var(--t2);margin-bottom:.9rem">'+L.subhint+'</div>':'')
+      +'<div class="dir-sub-grid">'+dirSubList(dirModeMatch).map(function(s){
+      return '<button class="dir-sub-btn" data-admref-sub="'+esc(s.sub)+'"><div class="dsb-ico">'+dirSubIcon(s.sub)+'</div><h3>'+esc(s.sub)+'</h3><div class="dsb-cnt">'+s.count+' '+(s.count===1?L.one:L.many)+'</div></button>';
     }).join('')+'</div>';
   }else if(!admRefTema){
-    var temas=dirTemaList(admRefSub,true);
+    var temas=dirTemaList(admRefSub,true,dirModeMatch);
     var cards='';
     if(admRefTemaAdd){
       cards+='<div class="dir-tema-add"><label style="font-size:.72rem;color:var(--t2);font-weight:600">Novo tema em '+esc(admRefSub)+'</label>'
@@ -10068,20 +10090,20 @@ function admRefSecHTML(){
       }
       return '<div class="dir-tema-card" data-admref-tema="'+esc(t.tema)+'">'
         +'<div class="dir-tema-acts"><button data-ref-tema-edit="'+esc(t.tema)+'" title="Renomear tema">✏️</button><button data-ref-tema-del="'+esc(t.tema)+'" title="Excluir tema">🗑</button></div>'
-        +'<div class="dtc-ico">📄</div><h3>'+esc(t.tema)+'</h3><div class="dtc-cnt">'+t.count+' diretriz'+(t.count===1?'':'es')+'</div></div>';
+        +'<div class="dtc-ico">📄</div><h3>'+esc(t.tema)+'</h3><div class="dtc-cnt">'+t.count+' '+(t.count===1?L.one:L.many)+'</div></div>';
     }).join('');
     body='<button class="dir-back" data-admref-back>← Todas as subespecialidades</button>'
-      +'<div class="ph" style="margin-top:0"><h1>'+dirSubIcon(admRefSub)+' '+esc(admRefSub)+'</h1><p>'+((temas.length||admRefTemaAdd)?'Cada tema é uma aba dentro de '+esc(admRefSub)+'. Clique para editar as diretrizes, ou use ✏️ / 🗑 no card.':'Nenhum tema ainda — clique em “➕ Adicionar tema” para criar o primeiro.')+'</p></div>'
+      +'<div class="ph" style="margin-top:0"><h1>'+dirSubIcon(admRefSub)+' '+esc(admRefSub)+'</h1><p>'+((temas.length||admRefTemaAdd)?'Cada tema é uma aba dentro de '+esc(admRefSub)+'. Clique para editar, ou use ✏️ / 🗑 no card.':'Nenhum tema ainda — clique em “➕ Adicionar tema” para criar o primeiro.')+'</p></div>'
       +(cards?'<div class="dir-sub-grid">'+cards+'</div>':'');
   }else{
     // Visão do tema idêntica à do aluno (Resumo / Flashcards / Mapas mentais),
     // somente leitura — acrescida do botão Editar/Excluir por diretriz.
     var list=diretrizes.map(function(d,i){return {d:d,i:i};})
-      .filter(function(x){return (String(x.d.sub||'Geral').trim()||'Geral')===admRefSub&&dirTemaOf(x.d)===admRefTema;});
+      .filter(function(x){return dirModeMatch(x.d)&&(String(x.d.sub||'Geral').trim()||'Geral')===admRefSub&&dirTemaOf(x.d)===admRefTema;});
     var rhead='<button class="dir-back" data-admref-tback>← '+esc(admRefSub)+'</button>'
       +'<div class="ph" style="margin-top:0"><h1>'+esc(admRefTema)+'</h1></div>';
     if(!list.length){
-      body=rhead+'<div class="dir-empty-fmt">Nenhuma diretriz neste tema. Clique em “+ Nova diretriz” para criar a primeira.</div>';
+      body=rhead+'<div class="dir-empty-fmt">Nenhum '+L.one+' neste tema. Clique em “+ '+L.nova+'” para criar o primeiro.</div>';
     }else{
       var fmts=[['resumo','📄 Resumo'],['flash','🃏 Flashcards'],['mapa','🧠 Mapas mentais']];
       var fmtAtivo=(refFormat==='flash'||refFormat==='mapa')?refFormat:'resumo';
@@ -10091,11 +10113,19 @@ function admRefSecHTML(){
           // Flashcards e Mapas editam in-loco (não precisam de "Editar tudo").
           // O Resumo é só-leitura → ganha um botão ✏️ Editar no canto superior.
           var isResumo=(fmtAtivo!=='flash'&&fmtAtivo!=='mapa');
-          var editHead=isResumo
-            ? '<div style="display:flex;justify-content:flex-end;margin-bottom:.4rem"><button class="btn btn-outline btn-sm" data-adm-refedit="'+x.i+'">✏️ Editar</button></div>'
-            : '';
+          // Barra de status/visibilidade: mostra se o item é público (Diretriz)
+          // ou privado (Resumo) e permite alternar (publicar / tornar privado).
+          var priv=dirIsPrivate(x.d);
+          var statusTag=priv
+            ? '<span style="font-size:.68rem;font-weight:700;color:var(--gold,#c9a227);background:rgba(201,162,39,.12);padding:.15rem .5rem;border-radius:999px">🔒 Resumo privado</span>'
+            : '<span style="font-size:.68rem;font-weight:700;color:var(--grn);background:rgba(46,160,90,.12);padding:.15rem .5rem;border-radius:999px">✅ Publicado</span>';
+          var toggleBtn=priv
+            ? '<button class="btn btn-outline btn-sm" data-adm-reftoggle="'+x.i+'" title="Publicar para os alunos (move para Diretrizes)">📢 Publicar</button>'
+            : '<button class="btn btn-outline btn-sm" data-adm-reftoggle="'+x.i+'" title="Tornar privado (move para Resumos)">🔒 Tornar resumo</button>';
+          var editBtn=isResumo?'<button class="btn btn-outline btn-sm" data-adm-refedit="'+x.i+'">✏️ Editar</button>':'';
+          var head='<div style="display:flex;align-items:center;justify-content:space-between;gap:.5rem;flex-wrap:wrap;margin-bottom:.4rem">'+statusTag+'<div style="display:flex;gap:.4rem;flex-wrap:wrap">'+toggleBtn+editBtn+'</div></div>';
           return '<div class="adm-ref-view" style="margin-bottom:1.1rem">'
-            +editHead
+            +head
             +(fmtAtivo==='flash'?admRefFlashHTML(x.d,x.i):fmtAtivo==='mapa'?admRefMapaHTML(x.d,x.i):dirCardHTML(x.d,x.i))+'</div>';
         }).join('');
     }
@@ -10105,10 +10135,10 @@ function admRefSecHTML(){
   // subespecialidades não há botão (escolha uma subespecialidade primeiro).
   var addBtn='';
   if(!admRefShowForm){
-    if(admRefSub&&admRefTema)addBtn='<button class="btn btn-primary" id="btn-adm-ref-new" style="padding:.55rem 1.1rem">+ Nova diretriz</button>';
+    if(admRefSub&&admRefTema)addBtn='<button class="btn btn-primary" id="btn-adm-ref-new" style="padding:.55rem 1.1rem">+ '+L.nova+'</button>';
     else if(admRefSub)addBtn='<button class="btn btn-primary" id="btn-adm-ref-new" style="padding:.55rem 1.1rem">➕ Adicionar tema</button>';
   }
-  return '<div class="adm-ph" style="display:flex;align-items:flex-start;justify-content:space-between;gap:.6rem;flex-wrap:wrap"><div><h1>Diretrizes</h1></div><div style="display:flex;gap:.5rem;flex-wrap:wrap">'+addBtn+'</div></div>'
+  return '<div class="adm-ph" style="display:flex;align-items:flex-start;justify-content:space-between;gap:.6rem;flex-wrap:wrap"><div><h1>'+L.h1+'</h1></div><div style="display:flex;gap:.5rem;flex-wrap:wrap">'+addBtn+'</div></div>'
     +'<div class="adm-pc">'+body+'</div>';
 }
 // ── EDIÇÃO INLINE (painel Diretrizes): cada flashcard e cada linha do mapa ──
@@ -10155,19 +10185,19 @@ function admSaveRefFlash(i,j){
   var q=((d.flashcards[j]||{}).q||'').trim();
   var a=((d.flashcards[j]||{}).a||'').trim();
   if(!q||!a){notify('Preencha a pergunta e a resposta.','err');return;}
-  d.flashcards[j]={q:q,a:a};persistDiretrizes();notify('Flashcard salvo. ✓','ok');renderAdmSec('ref');
+  d.flashcards[j]={q:q,a:a};persistDiretrizes();notify('Flashcard salvo. ✓','ok');rerenderRef();
 }
 function admAddRefFlash(i){
   var d=diretrizes[i];if(!d)return;if(!Array.isArray(d.flashcards))d.flashcards=[];
   admReadRefFlashes(i);
-  d.flashcards.push({q:'',a:''});persistDiretrizes();renderAdmSec('ref');
+  d.flashcards.push({q:'',a:''});persistDiretrizes();rerenderRef();
   var nj=d.flashcards.length-1;setTimeout(function(){try{var el=document.getElementById('adm-reffc-'+i+'-'+nj);if(el)el.scrollIntoView({behavior:'smooth',block:'center'});var q=document.getElementById('reffc-q-'+i+'-'+nj);if(q)q.focus();}catch(e){}},60);
 }
 function admDelRefFlash(i,j){
   var d=diretrizes[i];if(!d||!Array.isArray(d.flashcards))return;
   if(!confirm('Excluir este flashcard?'))return;
   admReadRefFlashes(i);
-  d.flashcards.splice(j,1);persistDiretrizes();notify('Flashcard excluído.','info');renderAdmSec('ref');
+  d.flashcards.splice(j,1);persistDiretrizes();notify('Flashcard excluído.','info');rerenderRef();
 }
 // Mapa da diretriz editável DIRETO NAS CAIXAS: o MESMO layout em caixas do aluno
 // (dirMapaHTML), só que cada caixa vira um campo editável. Sem alternar formato,
@@ -10244,15 +10274,15 @@ function admCleanRefChildren(children){
 function admSaveRefMapa(i){
   admReadRefMapa(i);var d=diretrizes[i];
   if(d&&d.mapa)d.mapa.nodes=(d.mapa.nodes||[]).map(function(n){n.children=admCleanRefChildren(n.children);return n;}).filter(function(n){return (n.label||'').trim()||(n.children||[]).length;});
-  persistDiretrizes();notify('Mapa mental salvo. ✓','ok');renderAdmSec('ref');
+  persistDiretrizes();notify('Mapa mental salvo. ✓','ok');rerenderRef();
 }
-function admRefMapaAddNode(i){admReadRefMapa(i);var d=diretrizes[i];if(!d)return;if(!d.mapa||typeof d.mapa!=='object')d.mapa={central:'',nodes:[]};if(!Array.isArray(d.mapa.nodes))d.mapa.nodes=[];d.mapa.nodes.push({label:'',children:[]});persistDiretrizes();renderAdmSec('ref');}
-function admRefMapaAddChild(i,ni){admReadRefMapa(i);var d=diretrizes[i];if(!d||!d.mapa||!d.mapa.nodes[ni])return;if(!Array.isArray(d.mapa.nodes[ni].children))d.mapa.nodes[ni].children=[];d.mapa.nodes[ni].children.push('');persistDiretrizes();renderAdmSec('ref');}
-function admRefMapaDelNode(i,ni){admReadRefMapa(i);var d=diretrizes[i];if(!d||!d.mapa||!Array.isArray(d.mapa.nodes))return;d.mapa.nodes.splice(ni,1);persistDiretrizes();renderAdmSec('ref');}
-function admRefMapaDelChild(i,ni,ci){admReadRefMapa(i);var d=diretrizes[i];if(!d||!d.mapa||!d.mapa.nodes[ni]||!Array.isArray(d.mapa.nodes[ni].children))return;d.mapa.nodes[ni].children.splice(ci,1);persistDiretrizes();renderAdmSec('ref');}
+function admRefMapaAddNode(i){admReadRefMapa(i);var d=diretrizes[i];if(!d)return;if(!d.mapa||typeof d.mapa!=='object')d.mapa={central:'',nodes:[]};if(!Array.isArray(d.mapa.nodes))d.mapa.nodes=[];d.mapa.nodes.push({label:'',children:[]});persistDiretrizes();rerenderRef();}
+function admRefMapaAddChild(i,ni){admReadRefMapa(i);var d=diretrizes[i];if(!d||!d.mapa||!d.mapa.nodes[ni])return;if(!Array.isArray(d.mapa.nodes[ni].children))d.mapa.nodes[ni].children=[];d.mapa.nodes[ni].children.push('');persistDiretrizes();rerenderRef();}
+function admRefMapaDelNode(i,ni){admReadRefMapa(i);var d=diretrizes[i];if(!d||!d.mapa||!Array.isArray(d.mapa.nodes))return;d.mapa.nodes.splice(ni,1);persistDiretrizes();rerenderRef();}
+function admRefMapaDelChild(i,ni,ci){admReadRefMapa(i);var d=diretrizes[i];if(!d||!d.mapa||!d.mapa.nodes[ni]||!Array.isArray(d.mapa.nodes[ni].children))return;d.mapa.nodes[ni].children.splice(ci,1);persistDiretrizes();rerenderRef();}
 // 3º nível: adiciona sub-subramo (promove o subramo de string p/ {label,children}) e remove.
-function admRefMapaAddGrandchild(i,ni,ci){admReadRefMapa(i);var d=diretrizes[i];if(!d||!d.mapa||!d.mapa.nodes[ni])return;var arr=d.mapa.nodes[ni].children;if(!Array.isArray(arr)){arr=d.mapa.nodes[ni].children=[];}var c=arr[ci];if(!c||typeof c!=='object'){c={label:(typeof c==='string'?c:''),children:[]};arr[ci]=c;}if(!Array.isArray(c.children))c.children=[];c.children.push('');persistDiretrizes();renderAdmSec('ref');}
-function admRefMapaDelGrandchild(i,ni,ci,gi){admReadRefMapa(i);var d=diretrizes[i];if(!d||!d.mapa||!d.mapa.nodes[ni])return;var c=d.mapa.nodes[ni].children[ci];if(!c||typeof c!=='object'||!Array.isArray(c.children))return;c.children.splice(gi,1);if(!c.children.length)d.mapa.nodes[ni].children[ci]=(c.label||'');persistDiretrizes();renderAdmSec('ref');}
+function admRefMapaAddGrandchild(i,ni,ci){admReadRefMapa(i);var d=diretrizes[i];if(!d||!d.mapa||!d.mapa.nodes[ni])return;var arr=d.mapa.nodes[ni].children;if(!Array.isArray(arr)){arr=d.mapa.nodes[ni].children=[];}var c=arr[ci];if(!c||typeof c!=='object'){c={label:(typeof c==='string'?c:''),children:[]};arr[ci]=c;}if(!Array.isArray(c.children))c.children=[];c.children.push('');persistDiretrizes();rerenderRef();}
+function admRefMapaDelGrandchild(i,ni,ci,gi){admReadRefMapa(i);var d=diretrizes[i];if(!d||!d.mapa||!d.mapa.nodes[ni])return;var c=d.mapa.nodes[ni].children[ci];if(!c||typeof c!=='object'||!Array.isArray(c.children))return;c.children.splice(gi,1);if(!c.children.length)d.mapa.nodes[ni].children[ci]=(c.label||'');persistDiretrizes();rerenderRef();}
 function admMuralSecHTML(){
   function dateBR(v){
     var d=new Date(v||Date.now());
@@ -10903,17 +10933,24 @@ function bindAdmSec(sec){
     main.querySelectorAll('[data-adm-delpod]').forEach(function(b){b.addEventListener('click',function(){var p=podcasts[parseInt(b.dataset.admDelpod)];if(!confirm('Excluir o podcast "'+((p&&p.title)||'')+'"? Esta ação não pode ser desfeita.'))return;podcasts.splice(parseInt(b.dataset.admDelpod),1);persistPodcasts();renderAdmSec('conteudo');});});
   }
 
-  if(sec==='ref'){
+  if(sec==='ref'||sec==='resumos'){
     function refResetTemaUi(){admRefTemaAdd=false;admRefTemaEdit=null;}
-    main.querySelectorAll('[data-admref-sub]').forEach(function(b){b.addEventListener('click',function(){admRefSub=b.dataset.admrefSub;admRefTema='';refResetTemaUi();renderAdmSec('ref');});});
-    main.querySelectorAll('[data-admref-tema]').forEach(function(b){b.addEventListener('click',function(){admRefTema=b.dataset.admrefTema;refResetTemaUi();renderAdmSec('ref');});});
+    main.querySelectorAll('[data-adm-reftoggle]').forEach(function(b){b.addEventListener('click',function(){
+      var i=parseInt(b.dataset.admReftoggle);var d=diretrizes[i];if(!d)return;
+      var toPriv=!dirIsPrivate(d);
+      if(!confirm(toPriv?'Tornar “'+((d.tema||d.titulo)||'este item')+'” um resumo privado? Ele sairá da aba Diretrizes dos alunos.':'Publicar “'+((d.tema||d.titulo)||'este item')+'” para os alunos? Ele passará a aparecer nas Diretrizes.'))return;
+      d.privado=toPriv;persistDiretrizes();rerenderRef();
+      notify(toPriv?'Movido para Resumos (privado). 🔒':'Publicado nas Diretrizes. ✅','ok');
+    });});
+    main.querySelectorAll('[data-admref-sub]').forEach(function(b){b.addEventListener('click',function(){admRefSub=b.dataset.admrefSub;admRefTema='';refResetTemaUi();rerenderRef();});});
+    main.querySelectorAll('[data-admref-tema]').forEach(function(b){b.addEventListener('click',function(){admRefTema=b.dataset.admrefTema;refResetTemaUi();rerenderRef();});});
     var rBack=main.querySelector('[data-admref-back]');
-    if(rBack)rBack.addEventListener('click',function(){admRefSub='';admRefTema='';refResetTemaUi();renderAdmSec('ref');});
+    if(rBack)rBack.addEventListener('click',function(){admRefSub='';admRefTema='';refResetTemaUi();rerenderRef();});
     var rTBack=main.querySelector('[data-admref-tback]');
-    if(rTBack)rTBack.addEventListener('click',function(){admRefTema='';refResetTemaUi();renderAdmSec('ref');});
+    if(rTBack)rTBack.addEventListener('click',function(){admRefTema='';refResetTemaUi();rerenderRef();});
     // Visão do tema (idêntica ao aluno): troca de formato, flip dos flashcards e
     // abre/fecha dos ramos do mapa mental.
-    main.querySelectorAll('[data-admref-fmt]').forEach(function(b){b.addEventListener('click',function(){refFormat=b.dataset.admrefFmt;renderAdmSec('ref');});});
+    main.querySelectorAll('[data-admref-fmt]').forEach(function(b){b.addEventListener('click',function(){refFormat=b.dataset.admrefFmt;rerenderRef();});});
     main.querySelectorAll('[data-dir-flash]').forEach(function(b){b.addEventListener('click',function(){b.classList.toggle('flipped');});});
     main.querySelectorAll('[data-dir-mm-branch]').forEach(function(b){b.addEventListener('click',function(){if(b.parentNode)b.parentNode.classList.toggle('open');});});
     // ── Temas: criar / renomear / excluir inline ──
@@ -10924,21 +10961,21 @@ function bindAdmSec(sec){
       if(!nome){notify('Informe o nome do tema.','err');return;}
       if(refTemaExists(nome)){notify('Já existe um tema com esse nome em '+admRefSub+'.','err');return;}
       dirTemasExtra.push({sub:admRefSub,tema:nome});persistDiretrizes();
-      admRefTemaAdd=false;renderAdmSec('ref'); // fica na grade mostrando o card novo
+      admRefTemaAdd=false;rerenderRef(); // fica na grade mostrando o card novo
       notify('Tema “'+nome+'” criado.','ok');
     });
     var tAddCancel=document.getElementById('btn-ref-tema-addcancel');
-    if(tAddCancel)tAddCancel.addEventListener('click',function(){admRefTemaAdd=false;renderAdmSec('ref');});
-    main.querySelectorAll('[data-ref-tema-edit]').forEach(function(b){b.addEventListener('click',function(e){e.stopPropagation();admRefTemaEdit=b.dataset.refTemaEdit;admRefTemaAdd=false;renderAdmSec('ref');});});
+    if(tAddCancel)tAddCancel.addEventListener('click',function(){admRefTemaAdd=false;rerenderRef();});
+    main.querySelectorAll('[data-ref-tema-edit]').forEach(function(b){b.addEventListener('click',function(e){e.stopPropagation();admRefTemaEdit=b.dataset.refTemaEdit;admRefTemaAdd=false;rerenderRef();});});
     var tEditCancel=document.getElementById('btn-ref-tema-editcancel');
-    if(tEditCancel)tEditCancel.addEventListener('click',function(){admRefTemaEdit=null;renderAdmSec('ref');});
+    if(tEditCancel)tEditCancel.addEventListener('click',function(){admRefTemaEdit=null;rerenderRef();});
     main.querySelectorAll('[data-ref-tema-saveedit]').forEach(function(b){b.addEventListener('click',function(){
       var old=b.dataset.refTemaSaveedit,novo=String((document.getElementById('adm-ref-edittema')||{}).value||'').trim();
       if(!novo){notify('Informe o nome do tema.','err');return;}
       if(novo!==old&&refTemaExists(novo,old)){notify('Já existe um tema com esse nome.','err');return;}
       diretrizes.forEach(function(d){if((String(d.sub||'Geral').trim()||'Geral')===admRefSub&&dirTemaOf(d)===old)d.tema=novo;});
       dirTemasExtra.forEach(function(x){if(x.sub===admRefSub&&x.tema===old)x.tema=novo;});
-      persistDiretrizes();admRefTemaEdit=null;renderAdmSec('ref');notify('Tema renomeado.','ok');
+      persistDiretrizes();admRefTemaEdit=null;rerenderRef();notify('Tema renomeado.','ok');
     });});
     main.querySelectorAll('[data-ref-tema-del]').forEach(function(b){b.addEventListener('click',function(e){
       e.stopPropagation();
@@ -10948,19 +10985,19 @@ function bindAdmSec(sec){
       if(!confirm(msg))return;
       diretrizes=diretrizes.filter(function(d){return !((String(d.sub||'Geral').trim()||'Geral')===admRefSub&&dirTemaOf(d)===tema);});
       dirTemasExtra=dirTemasExtra.filter(function(x){return !(x.sub===admRefSub&&x.tema===tema);});
-      persistDiretrizes();renderAdmSec('ref');notify('Tema excluído.','info');
+      persistDiretrizes();rerenderRef();notify('Tema excluído.','info');
     });});
     var rNew=document.getElementById('btn-adm-ref-new');
     if(rNew)rNew.addEventListener('click',function(){
       // Na grade de temas o botão abre o input inline de novo tema; dentro do
       // tema abre o formulário de diretriz.
-      if(admRefSub&&!admRefTema&&!admRefShowForm){admRefTemaAdd=true;admRefTemaEdit=null;renderAdmSec('ref');return;}
-      admRefShowForm=!admRefShowForm;admRefEdit=null;admRefPdfB64=null;admRefPdfName='';admRefPdfFile=null;admRefChat=[];renderAdmSec('ref');document.getElementById('adm-main').scrollTop=0;
+      if(admRefSub&&!admRefTema&&!admRefShowForm){admRefTemaAdd=true;admRefTemaEdit=null;rerenderRef();return;}
+      admRefShowForm=!admRefShowForm;admRefEdit=null;admRefPdfB64=null;admRefPdfName='';admRefPdfFile=null;admRefChat=[];rerenderRef();document.getElementById('adm-main').scrollTop=0;
     });
     var tFocus=document.getElementById(admRefTemaAdd?'adm-ref-newtema':(admRefTemaEdit?'adm-ref-edittema':''));
     if(tFocus){tFocus.focus();tFocus.addEventListener('keydown',function(ev){if(ev.key==='Enter'){ev.preventDefault();var bt=admRefTemaAdd?document.getElementById('btn-ref-tema-create'):main.querySelector('[data-ref-tema-saveedit]');if(bt)bt.click();}});}
     var rCancel=document.getElementById('btn-adm-ref-cancel');
-    if(rCancel)rCancel.addEventListener('click',function(){admRefShowForm=false;admRefEdit=null;admRefPdfB64=null;admRefPdfName='';admRefPdfFile=null;admRefChat=[];renderAdmSec('ref');});
+    if(rCancel)rCancel.addEventListener('click',function(){admRefShowForm=false;admRefEdit=null;admRefPdfB64=null;admRefPdfName='';admRefPdfFile=null;admRefChat=[];rerenderRef();});
     var rSave=document.getElementById('btn-adm-ref-save');
     if(rSave)rSave.addEventListener('click',function(){
       function val(id){var e=document.getElementById(id);return e?e.value.trim():'';}
@@ -10974,10 +11011,13 @@ function bindAdmSec(sec){
       var obj=Object.assign({},prev,{fonte:val('adm-ref-fonte')||'—',ano:val('adm-ref-ano'),sub:val('adm-ref-sub')||admRefSub,tema:admRefTema||prev.tema||'',titulo:prev.titulo||'',pts:pts,resumo:resumo,url:val('adm-ref-url')}); // preserva fluxogramas/tier e demais campos fora do formulário
       if(fc.length)obj.flashcards=fc;
       if(mp)obj.mapa=mp;
+      // Item novo herda a visibilidade do modo atual: Resumos → privado; Diretrizes → público.
+      // Ao editar, preserva a flag existente (via Object.assign de prev).
+      if(admRefEdit===null||!diretrizes[admRefEdit])obj.privado=(admRefMode==='res');
       if(admRefEdit!==null&&diretrizes[admRefEdit])diretrizes[admRefEdit]=obj;else diretrizes.unshift(obj);
       persistDiretrizes();admRefShowForm=false;admRefEdit=null;admRefPdfB64=null;admRefPdfName='';admRefPdfFile=null;
-      admRefSub=String(obj.sub||'Geral');admRefTema=dirTemaOf(obj); // abre onde a diretriz ficou
-      renderAdmSec('ref');notify('Diretriz salva.','ok');
+      admRefSub=String(obj.sub||'Geral');admRefTema=dirTemaOf(obj); // abre onde o item ficou
+      rerenderRef();notify((admRefMode==='res'?'Resumo':'Diretriz')+' salvo.','ok');
     });
     // Toolbar de formatação do resumo: envolve a seleção com os marcadores.
     main.querySelectorAll('[data-md-wrap]').forEach(function(b){b.addEventListener('click',function(){
@@ -11048,13 +11088,13 @@ function bindAdmSec(sec){
       }).catch(function(e){var msg=(e&&e.message)||'falha';if(/\b413\b/.test(msg))msg='PDF muito grande. Use um PDF com texto selecionável ou um arquivo menor (até ~3 MB).';notify('Erro ao ler o PDF: '+msg,'err');if(st)st.textContent='';})
       .then(function(){rPdfGen.disabled=false;rPdfGen.innerHTML='🤖 Gerar com IA';});
     });
-    main.querySelectorAll('[data-adm-refedit]').forEach(function(b){b.addEventListener('click',function(){admRefEdit=parseInt(b.dataset.admRefedit);admRefShowForm=true;admRefPdfB64=null;admRefPdfName='';admRefPdfFile=null;admRefChat=[];renderAdmSec('ref');document.getElementById('adm-main').scrollTop=0;});});
-    main.querySelectorAll('[data-adm-refdel]').forEach(function(b){b.addEventListener('click',function(){var i=parseInt(b.dataset.admRefdel);var d=diretrizes[i];if(!confirm('Excluir a diretriz "'+((d&&(d.tema||d.titulo))||'esta diretriz')+'"? Esta ação não pode ser desfeita.'))return;diretrizes.splice(i,1);persistDiretrizes();renderAdmSec('ref');});});
+    main.querySelectorAll('[data-adm-refedit]').forEach(function(b){b.addEventListener('click',function(){admRefEdit=parseInt(b.dataset.admRefedit);admRefShowForm=true;admRefPdfB64=null;admRefPdfName='';admRefPdfFile=null;admRefChat=[];rerenderRef();document.getElementById('adm-main').scrollTop=0;});});
+    main.querySelectorAll('[data-adm-refdel]').forEach(function(b){b.addEventListener('click',function(){var i=parseInt(b.dataset.admRefdel);var d=diretrizes[i];if(!confirm('Excluir a diretriz "'+((d&&(d.tema||d.titulo))||'esta diretriz')+'"? Esta ação não pode ser desfeita.'))return;diretrizes.splice(i,1);persistDiretrizes();rerenderRef();});});
     // Edição inline por flashcard e por linha do mapa (visão do tema).
     main.querySelectorAll('[data-reffc-save]').forEach(function(b){b.addEventListener('click',function(){var p=b.dataset.reffcSave.split('-');admSaveRefFlash(parseInt(p[0]),parseInt(p[1]));});});
     main.querySelectorAll('[data-reffc-del]').forEach(function(b){b.addEventListener('click',function(){var p=b.dataset.reffcDel.split('-');admDelRefFlash(parseInt(p[0]),parseInt(p[1]));});});
     main.querySelectorAll('[data-reffc-add]').forEach(function(b){b.addEventListener('click',function(){admAddRefFlash(parseInt(b.dataset.reffcAdd));});});
-    main.querySelectorAll('[data-reffc-mode]').forEach(function(b){b.addEventListener('click',function(){admRefFlashMode=b.dataset.reffcMode;renderAdmSec('ref');});});
+    main.querySelectorAll('[data-reffc-mode]').forEach(function(b){b.addEventListener('click',function(){admRefFlashMode=b.dataset.reffcMode;rerenderRef();});});
     main.querySelectorAll('[data-refmapa-save]').forEach(function(b){b.addEventListener('click',function(){admSaveRefMapa(parseInt(b.dataset.refmapaSave));});});
     main.querySelectorAll('[data-refmapa-addnode]').forEach(function(b){b.addEventListener('click',function(){admRefMapaAddNode(parseInt(b.dataset.refmapaAddnode));});});
     main.querySelectorAll('[data-refmapa-addchild]').forEach(function(b){b.addEventListener('click',function(){var p=b.dataset.refmapaAddchild.split('-');admRefMapaAddChild(parseInt(p[0]),parseInt(p[1]));});});
