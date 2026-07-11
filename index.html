@@ -777,6 +777,29 @@ html[data-theme="light"] .dir-back{background:#f8f9fc;border-color:var(--bd2);co
 .dir-mm-subsubs{display:flex;flex-direction:column;gap:.3rem;margin-top:.4rem;padding-left:.8rem;border-left:2px dotted var(--bd2)}
 .dir-mm-subsub{font-size:.76rem;color:var(--t2);line-height:1.4;position:relative;padding-left:.7rem}
 .dir-mm-subsub::before{content:'•';position:absolute;left:0;color:var(--t3)}
+/* Mapa mental — árvore horizontal (ramos coloridos → subramos → sub-subramos),
+   estilo do editor de Mapas Mentais. Conectores em ângulo via pseudo-elementos. */
+.dmap-wrap{margin-top:.5rem;overflow-x:auto;-webkit-overflow-scrolling:touch;padding:.4rem 0}
+.dmap{display:inline-flex;align-items:center;gap:0;padding:.4rem .3rem;min-width:min-content}
+.dmap-root{background:var(--navy);color:#fff;font-weight:800;border-radius:12px;padding:.6rem 1rem;font-size:.9rem;line-height:1.3;box-shadow:0 6px 16px rgba(0,0,0,.22);max-width:240px;flex-shrink:0}
+.dmap-branches{position:relative;display:flex;flex-direction:column;gap:.5rem;padding-left:30px}
+.dmap-root + .dmap-branches::before{content:'';position:absolute;left:0;top:50%;width:14px;height:2px;background:var(--nds,#94a3b8);opacity:.55}
+.dmap-branch{position:relative}
+.dmap-branch::before{content:'';position:absolute;left:-30px;top:16px;width:30px;height:2px;background:var(--nds,#94a3b8);opacity:.55}
+.dmap-branch::after{content:'';position:absolute;left:-30px;top:0;bottom:0;width:2px;background:var(--nds,#94a3b8);opacity:.55}
+.dmap-branch:first-child::after{top:16px}
+.dmap-branch:last-child::after{height:16px;bottom:auto}
+.dmap-branch:only-child::after{display:none}
+.dmap-row{display:flex;align-items:center;gap:0}
+.dmap-b{color:#fff;font-weight:700;border-radius:10px;padding:.5rem .85rem;font-size:.82rem;line-height:1.3;min-width:120px;max-width:230px;box-shadow:0 3px 9px rgba(0,0,0,.16);flex-shrink:0}
+.dmap-kids{position:relative;display:flex;flex-direction:column;gap:.4rem;padding-left:26px}
+.dmap-kid{position:relative}
+.dmap-kid::before{content:'';position:absolute;left:-26px;top:15px;width:26px;height:2px;background:var(--conn,#94a3b8);opacity:.5}
+.dmap-kid::after{content:'';position:absolute;left:-26px;top:0;bottom:0;width:2px;background:var(--conn,#94a3b8);opacity:.5}
+.dmap-kid:first-child::after{top:15px}
+.dmap-kid:last-child::after{height:15px;bottom:auto}
+.dmap-kid:only-child::after{display:none}
+.dmap-c{border:1.5px solid var(--bd2);border-radius:9px;padding:.42rem .7rem;font-size:.78rem;line-height:1.35;min-width:110px;max-width:230px;box-shadow:0 2px 6px rgba(20,30,60,.06);flex-shrink:0}
 /* Flashcard da diretriz editável dentro da própria caixinha (admin). */
 .dfl-edit{background:var(--surface);border:1.5px solid var(--bd2);border-radius:12px;padding:.7rem .8rem;margin-bottom:.7rem;box-shadow:0 3px 10px rgba(20,30,60,.05)}
 .dfl-edit-row{display:flex;align-items:center;justify-content:space-between;gap:.5rem;margin-bottom:.25rem}
@@ -8145,26 +8168,31 @@ function dirCardHTML(d,i){
   }
   return '<div class="dir-card">'+head+body+'</div>';
 }
+// Mapa mental em árvore horizontal (estilo do editor de Mapas Mentais):
+// central → ramos coloridos → subramos (tinta do ramo) → sub-subramos, com
+// conectores em ângulo. Somente leitura; a edição segue no formulário/admRefMapaHTML.
 function dirMapaHTML(mapa){
   if(!mapa||(!mapa.central&&!(mapa.nodes&&mapa.nodes.length)))return '<div class="dir-empty-fmt">Mapa mental ainda não disponível.</div>';
-  var h='<div class="dir-mm">';
-  if(mapa.central)h+='<div class="dir-mm-central">'+esc(mapa.central)+'</div>';
-  h+='<div class="dir-mm-branches">';
+  function kid(c,col){
+    var lab=(typeof c==='string')?c:((c&&c.label)||'');
+    var gk=(c&&typeof c==='object'&&Array.isArray(c.children))?c.children:[];
+    var st=mmLeafStyle(col);
+    return '<div class="dmap-kid"><div class="dmap-row">'
+      +'<div class="dmap-c"'+(st?' style="'+st+'"':'')+'>'+esc(lab)+'</div>'
+      +(gk.length?('<div class="dmap-kids" style="--conn:'+col+'">'+gk.map(function(g){return kid(g,col);}).join('')+'</div>'):'')
+      +'</div></div>';
+  }
+  var h='<div class="dmap-wrap"><div class="dmap">';
+  if(mapa.central)h+='<div class="dmap-root">'+esc(mapa.central)+'</div>';
+  h+='<div class="dmap-branches">';
   (mapa.nodes||[]).forEach(function(n,bi){
     var col=BCOLORS[bi%BCOLORS.length],kids=(n.children&&n.children.length)?n.children:[];
-    h+='<div class="dir-mm-branch">'
-      +'<button class="dir-mm-node" data-dir-mm-branch style="background:'+col+'"'+(kids.length?'':' disabled')+'>'
-        +'<span>'+esc(n.label||'')+'</span>'+(kids.length?'<span class="dmm-caret">▸</span>':'')+'</button>'
-      +(kids.length?('<div class="dir-mm-subs">'+kids.map(function(c){
-          var lab=(typeof c==='string')?c:((c&&c.label)||'');
-          var gk=(c&&typeof c==='object'&&Array.isArray(c.children))?c.children:[];
-          return '<div class="dir-mm-sub">'+esc(lab)
-            +(gk.length?('<div class="dir-mm-subsubs">'+gk.map(function(g){return '<div class="dir-mm-subsub">'+esc(typeof g==='string'?g:((g&&g.label)||''))+'</div>';}).join('')+'</div>'):'')
-            +'</div>';
-        }).join('')+'</div>'):'')
-      +'</div>';
+    h+='<div class="dmap-branch"><div class="dmap-row">'
+      +'<div class="dmap-b" style="background:'+col+'">'+esc(n.label||'')+'</div>'
+      +(kids.length?('<div class="dmap-kids" style="--conn:'+col+'">'+kids.map(function(c){return kid(c,col);}).join('')+'</div>'):'')
+      +'</div></div>';
   });
-  return h+'</div></div>';
+  return h+'</div></div></div>';
 }
 // Fluxograma(s) recriado(s) em português: lista de {titulo, fonte?, nos:[{tipo,texto,ramos?}]}.
 // tipo: 'inicio' | 'acao' | 'decisao' | 'fim'. Decisão mostra ramos [{rotulo,texto,tipo?}] lado a lado.
@@ -10122,11 +10150,14 @@ function admRefSecHTML(){
           var toggleBtn=priv
             ? '<button class="btn btn-outline btn-sm" data-adm-reftoggle="'+x.i+'" title="Publicar para os alunos (move para Diretrizes)">📢 Publicar</button>'
             : '<button class="btn btn-outline btn-sm" data-adm-reftoggle="'+x.i+'" title="Tornar privado (move para Resumos)">🔒 Tornar resumo</button>';
-          var editBtn=isResumo?'<button class="btn btn-outline btn-sm" data-adm-refedit="'+x.i+'">✏️ Editar</button>':'';
+          // Nos Resumos, o mapa aparece na árvore horizontal (só leitura) + botão Editar
+          // que abre o formulário; nas Diretrizes segue a edição in-loco em caixas.
+          var mapaPretty=(admRefMode==='res'&&fmtAtivo==='mapa');
+          var editBtn=(isResumo||mapaPretty)?'<button class="btn btn-outline btn-sm" data-adm-refedit="'+x.i+'">✏️ Editar</button>':'';
           var head='<div style="display:flex;align-items:center;justify-content:space-between;gap:.5rem;flex-wrap:wrap;margin-bottom:.4rem">'+statusTag+'<div style="display:flex;gap:.4rem;flex-wrap:wrap">'+toggleBtn+editBtn+'</div></div>';
           return '<div class="adm-ref-view" style="margin-bottom:1.1rem">'
             +head
-            +(fmtAtivo==='flash'?admRefFlashHTML(x.d,x.i):fmtAtivo==='mapa'?admRefMapaHTML(x.d,x.i):dirCardHTML(x.d,x.i))+'</div>';
+            +(fmtAtivo==='flash'?admRefFlashHTML(x.d,x.i):fmtAtivo==='mapa'?(mapaPretty?dirMapaHTML(x.d.mapa):admRefMapaHTML(x.d,x.i)):dirCardHTML(x.d,x.i))+'</div>';
         }).join('');
     }
   }
