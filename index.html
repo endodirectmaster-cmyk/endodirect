@@ -790,6 +790,18 @@ html[data-theme="light"] .dir-back{background:#f8f9fc;border-color:var(--bd2);co
 .dmap-root{background:var(--navy);color:#fff;font-weight:800;border-radius:12px;padding:.6rem 1rem;font-size:.9rem;line-height:1.3;box-shadow:0 6px 16px rgba(0,0,0,.22);max-width:230px;flex-shrink:0}
 .dmap-b{color:#fff;font-weight:700;border-radius:10px;padding:.5rem .85rem;font-size:.82rem;line-height:1.3;min-width:118px;max-width:225px;box-shadow:0 3px 9px rgba(0,0,0,.16);flex-shrink:0}
 .dmap-c{border:1.5px solid var(--bd2);border-radius:9px;padding:.42rem .7rem;font-size:.78rem;line-height:1.35;min-width:108px;max-width:225px;box-shadow:0 2px 6px rgba(20,30,60,.06);flex-shrink:0}
+/* Mapa editável (Resumos): caixa contenteditable + botões ＋/× no hover */
+.dmap-box{position:relative;display:inline-flex}
+.dmap-edit{outline:none;cursor:text;min-height:1.2em}
+.dmap-edit:empty::before{content:'…';opacity:.5}
+.dmap-edit:focus{box-shadow:0 0 0 3px rgba(59,130,246,.35)}
+.dmap-c.dmap-edit:focus{box-shadow:0 0 0 3px rgba(59,130,246,.35),0 2px 6px rgba(20,30,60,.06)}
+.dmap-mini-wrap{position:absolute;top:-9px;right:-9px;display:none;gap:3px;z-index:3}
+.dmap-box:hover .dmap-mini-wrap{display:inline-flex}
+.dmap-mini{width:20px;height:20px;border-radius:50%;border:1.5px solid #fff;cursor:pointer;font-size:13px;line-height:1;display:inline-flex;align-items:center;justify-content:center;background:#334155;color:#fff;box-shadow:0 1px 4px rgba(0,0,0,.35);font-family:var(--font);padding:0}
+.dmap-mini-del{background:var(--red,#ef4444)}
+.dmap-addbranch{align-self:flex-start;margin-top:2px;border:1.5px dashed var(--bd2);background:transparent;color:var(--t2);border-radius:8px;padding:.32rem .65rem;font-size:.74rem;font-weight:600;cursor:pointer;font-family:var(--font)}
+.dmap-addbranch:hover{color:var(--tx);border-color:var(--t3)}
 /* Flashcard da diretriz editável dentro da própria caixinha (admin). */
 .dfl-edit{background:var(--surface);border:1.5px solid var(--bd2);border-radius:12px;padding:.7rem .8rem;margin-bottom:.7rem;box-shadow:0 3px 10px rgba(20,30,60,.05)}
 .dfl-edit-row{display:flex;align-items:center;justify-content:space-between;gap:.5rem;margin-bottom:.25rem}
@@ -8180,25 +8192,107 @@ function dirMapaHTML(mapa){
   return h+'</div></div></div>';
 }
 // Desenha os conectores curvos (bézier) de um .dmap medindo as caixas já no DOM.
+// Funciona na versão só-leitura (pill direto no .dmap-node) e na editável
+// (pill dentro de um wrapper .dmap-box com os botões ＋/×).
 function drawDmap(dmap){
   var svg=dmap.querySelector('.dmap-svg');if(!svg)return;
   var w=dmap.scrollWidth,ht=dmap.scrollHeight;
   svg.setAttribute('width',w);svg.setAttribute('height',ht);svg.style.width=w+'px';svg.style.height=ht+'px';
   var dr=dmap.getBoundingClientRect();
   function m(el){var b=el.getBoundingClientRect();return {l:b.left-dr.left,r:b.right-dr.left,y:b.top-dr.top+b.height/2};}
+  function pillOf(nd){var d=nd.firstElementChild;if(!d)return null;if(d.hasAttribute&&d.hasAttribute('data-dmap-node'))return d;if(d.classList&&d.classList.contains('dmap-box'))return d.querySelector('[data-dmap-node]');return null;}
   var paths='';
   dmap.querySelectorAll('[data-dmap-node]').forEach(function(pill){
-    var col=pill.nextElementSibling;
+    var wrap=pill.closest('.dmap-box'),col=(wrap||pill).nextElementSibling;
     if(!col||!col.classList||!col.classList.contains('dmap-col'))return;
     var p=m(pill);
     Array.prototype.forEach.call(col.children,function(nd){
-      var cp=nd.firstElementChild;
-      if(!cp||!cp.hasAttribute('data-dmap-node'))return;
+      if(!nd.classList||!nd.classList.contains('dmap-node'))return;
+      var cp=pillOf(nd);if(!cp)return;
       var c=m(cp),color=cp.getAttribute('data-col')||'#94a3b8',mx=(p.r+c.l)/2;
       paths+='<path d="M'+p.r+' '+p.y+' C'+mx+' '+p.y+' '+mx+' '+c.y+' '+c.l+' '+c.y+'" fill="none" stroke="'+color+'" stroke-width="2" opacity=".55"/>';
     });
   });
   svg.innerHTML=paths;
+}
+// Versão EDITÁVEL do mapa (Resumos): cada caixa é contenteditable, com ＋ (subramo)
+// e × (remover) ao passar o mouse, e um botão "＋ Ramo". Salva ao sair da caixa.
+function dirMapaEditHTML(d,i){
+  var mapa=(d&&d.mapa&&typeof d.mapa==='object')?d.mapa:{central:'',nodes:[]};
+  function boxHTML(ps,lab,cls,style,col,withDel){
+    var mini='';
+    if(ps!=null){
+      mini='<div class="dmap-mini-wrap"><button type="button" class="dmap-mini" data-rmadd="'+ps+'" title="Adicionar subramo">＋</button>'
+        +(withDel?('<button type="button" class="dmap-mini dmap-mini-del" data-rmdel="'+ps+'" title="Remover">×</button>'):'')
+        +'</div>';
+    }
+    return '<div class="dmap-box">'
+      +'<div class="'+cls+' dmap-edit" contenteditable="true" spellcheck="false" data-dmap-node data-col="'+esc(col)+'"'+(ps!=null?(' data-rmpath="'+ps+'"'):' data-rmroot')+(style?(' style="'+style+'"'):'')+'>'+esc(lab)+'</div>'
+      +mini+'</div>';
+  }
+  function node(item,col,path){
+    var lab,kids;
+    if(typeof item==='string'){lab=item;kids=[];}
+    else{lab=(item&&item.label)||'';kids=(item&&Array.isArray(item.children))?item.children:[];}
+    var ps=path.join('-'),isBranch=(path.length===1);
+    var cls=isBranch?'dmap-b':'dmap-c',style=isBranch?('background:'+col):mmLeafStyle(col);
+    var h='<div class="dmap-node">'+boxHTML(ps,lab,cls,style,col,true);
+    if(kids.length)h+='<div class="dmap-col">'+kids.map(function(k,ci){return node(k,col,path.concat(ci));}).join('')+'</div>';
+    return h+'</div>';
+  }
+  var nodes=Array.isArray(mapa.nodes)?mapa.nodes:[];
+  var h='<div style="font-size:.7rem;color:var(--t2);margin-bottom:.5rem">✏️ Clique numa caixa para editar. Passe o mouse e use <b>＋</b> (subramo) ou <b>×</b> (remover). As alterações salvam sozinhas.</div>'
+    +'<div class="dmap-wrap"><div class="dmap dmap-editable" data-rmi="'+i+'"><svg class="dmap-svg"></svg><div class="dmap-tree">'
+    +boxHTML(null,mapa.central||'','dmap-root','','#334155',false)
+    +'<div class="dmap-col">'
+      +nodes.map(function(n,bi){return node(n,BCOLORS[bi%BCOLORS.length],[bi]);}).join('')
+      +'<button type="button" class="dmap-addbranch" data-rmaddbranch>＋ Ramo</button>'
+    +'</div></div></div></div>';
+  return h;
+}
+// Lê a árvore editável do DOM de volta para diretrizes[i].mapa e persiste.
+function admResMapaReadNode(nodeEl){
+  var box=nodeEl.querySelector(':scope > .dmap-box'),pill=box?box.querySelector('[data-dmap-node]'):null;
+  var label=pill?(pill.textContent||'').trim():'';
+  var col=nodeEl.querySelector(':scope > .dmap-col'),kids=[];
+  if(col)Array.prototype.forEach.call(col.children,function(cn){if(cn.classList&&cn.classList.contains('dmap-node'))kids.push(admResMapaReadNode(cn));});
+  return kids.length?{label:label,children:kids}:label;
+}
+function admResMapaSave(i){
+  var dmap=document.querySelector('.dmap[data-rmi="'+i+'"]');if(!dmap)return;
+  var d=diretrizes[i];if(!d)return;
+  var rootEl=dmap.querySelector('[data-rmroot]');
+  var central=rootEl?(rootEl.textContent||'').trim():'';
+  var col=dmap.querySelector('.dmap-tree > .dmap-col'),nodes=[];
+  if(col)Array.prototype.forEach.call(col.children,function(cn){
+    if(!cn.classList||!cn.classList.contains('dmap-node'))return;
+    var r=admResMapaReadNode(cn);
+    nodes.push((typeof r==='string')?{label:r,children:[]}:{label:r.label,children:r.children});
+  });
+  d.mapa={central:central,nodes:nodes};persistDiretrizes();
+}
+// Localiza o array/índice de um caminho "bi-ci-gi" dentro de mapa.
+function admResMapaContainer(mapa,path){
+  if(path.length===1)return {arr:mapa.nodes,idx:path[0]};
+  var cur=mapa.nodes[path[0]];
+  for(var k=1;k<path.length-1;k++){cur=cur.children[path[k]];}
+  return {arr:cur.children,idx:path[path.length-1]};
+}
+function admResMapaMut(i,action,pathStr){
+  admResMapaSave(i); // captura o texto atual antes de mexer na estrutura
+  var d=diretrizes[i];if(!d||!d.mapa)return;
+  if(action==='addbranch'){d.mapa.nodes.push({label:'Novo ramo',children:[]});}
+  else{
+    var path=String(pathStr).split('-').map(Number);
+    var c=admResMapaContainer(d.mapa,path);
+    if(action==='add'){
+      var el=c.arr[c.idx];
+      if(typeof el==='string')c.arr[c.idx]=el={label:el,children:[]};
+      if(!Array.isArray(el.children))el.children=[];
+      el.children.push('');
+    }else if(action==='del'){c.arr.splice(c.idx,1);}
+  }
+  persistDiretrizes();rerenderRef();
 }
 function drawAllDmaps(){try{document.querySelectorAll('.dmap').forEach(function(d){drawDmap(d);});}catch(e){}}
 var __dmapRaf=0;
@@ -10161,14 +10255,14 @@ function admRefSecHTML(){
           var toggleBtn=priv
             ? '<button class="btn btn-outline btn-sm" data-adm-reftoggle="'+x.i+'" title="Publicar para os alunos (move para Diretrizes)">📢 Publicar</button>'
             : '<button class="btn btn-outline btn-sm" data-adm-reftoggle="'+x.i+'" title="Tornar privado (move para Resumos)">🔒 Tornar resumo</button>';
-          // Nos Resumos, o mapa aparece na árvore horizontal (só leitura) + botão Editar
-          // que abre o formulário; nas Diretrizes segue a edição in-loco em caixas.
-          var mapaPretty=(admRefMode==='res'&&fmtAtivo==='mapa');
-          var editBtn=(isResumo||mapaPretty)?'<button class="btn btn-outline btn-sm" data-adm-refedit="'+x.i+'">✏️ Editar</button>':'';
+          // Nos Resumos, o mapa é editável IN-LOCO na própria árvore (contenteditable +
+          // ＋/×); nas Diretrizes segue a edição em caixas (admRefMapaHTML).
+          var mapaEdit=(admRefMode==='res'&&fmtAtivo==='mapa');
+          var editBtn=isResumo?'<button class="btn btn-outline btn-sm" data-adm-refedit="'+x.i+'">✏️ Editar</button>':'';
           var head='<div style="display:flex;align-items:center;justify-content:space-between;gap:.5rem;flex-wrap:wrap;margin-bottom:.4rem">'+statusTag+'<div style="display:flex;gap:.4rem;flex-wrap:wrap">'+toggleBtn+editBtn+'</div></div>';
           return '<div class="adm-ref-view" style="margin-bottom:1.1rem">'
             +head
-            +(fmtAtivo==='flash'?admRefFlashHTML(x.d,x.i):fmtAtivo==='mapa'?(mapaPretty?dirMapaHTML(x.d.mapa):admRefMapaHTML(x.d,x.i)):dirCardHTML(x.d,x.i))+'</div>';
+            +(fmtAtivo==='flash'?admRefFlashHTML(x.d,x.i):fmtAtivo==='mapa'?(mapaEdit?dirMapaEditHTML(x.d,x.i):admRefMapaHTML(x.d,x.i)):dirCardHTML(x.d,x.i))+'</div>';
         }).join('');
     }
   }
@@ -10977,6 +11071,15 @@ function bindAdmSec(sec){
 
   if(sec==='ref'||sec==='resumos'){
     function refResetTemaUi(){admRefTemaAdd=false;admRefTemaEdit=null;}
+    // Mapa editável in-loco (Resumos): texto salva ao sair da caixa; ＋/× mudam a estrutura.
+    main.querySelectorAll('.dmap-edit').forEach(function(el){
+      el.addEventListener('input',function(){scheduleDmap();});
+      el.addEventListener('blur',function(){var dm=el.closest('.dmap');if(dm)admResMapaSave(parseInt(dm.dataset.rmi));});
+      el.addEventListener('keydown',function(ev){if(ev.key==='Enter'){ev.preventDefault();el.blur();}});
+    });
+    main.querySelectorAll('[data-rmadd]').forEach(function(b){b.addEventListener('click',function(){var dm=b.closest('.dmap');if(dm)admResMapaMut(parseInt(dm.dataset.rmi),'add',b.dataset.rmadd);});});
+    main.querySelectorAll('[data-rmdel]').forEach(function(b){b.addEventListener('click',function(){var dm=b.closest('.dmap');if(dm)admResMapaMut(parseInt(dm.dataset.rmi),'del',b.dataset.rmdel);});});
+    main.querySelectorAll('[data-rmaddbranch]').forEach(function(b){b.addEventListener('click',function(){var dm=b.closest('.dmap');if(dm)admResMapaMut(parseInt(dm.dataset.rmi),'addbranch');});});
     main.querySelectorAll('[data-adm-reftoggle]').forEach(function(b){b.addEventListener('click',function(){
       var i=parseInt(b.dataset.admReftoggle);var d=diretrizes[i];if(!d)return;
       var toPriv=!dirIsPrivate(d);
