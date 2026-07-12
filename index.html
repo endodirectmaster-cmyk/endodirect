@@ -778,28 +778,18 @@ html[data-theme="light"] .dir-back{background:#f8f9fc;border-color:var(--bd2);co
 .dir-mm-subsub{font-size:.76rem;color:var(--t2);line-height:1.4;position:relative;padding-left:.7rem}
 .dir-mm-subsub::before{content:'•';position:absolute;left:0;color:var(--t3)}
 /* Mapa mental — árvore horizontal (ramos coloridos → subramos → sub-subramos),
-   estilo do editor de Mapas Mentais. Conectores em ângulo via pseudo-elementos. */
-.dmap-wrap{margin-top:.5rem;overflow-x:auto;-webkit-overflow-scrolling:touch;padding:.4rem 0}
-.dmap{display:inline-flex;align-items:center;gap:0;padding:.4rem .3rem;min-width:min-content}
-.dmap-root{background:var(--navy);color:#fff;font-weight:800;border-radius:12px;padding:.6rem 1rem;font-size:.9rem;line-height:1.3;box-shadow:0 6px 16px rgba(0,0,0,.22);max-width:240px;flex-shrink:0}
-.dmap-branches{position:relative;display:flex;flex-direction:column;gap:.5rem;padding-left:30px}
-.dmap-root + .dmap-branches::before{content:'';position:absolute;left:0;top:50%;width:14px;height:2px;background:var(--nds,#94a3b8);opacity:.55}
-.dmap-branch{position:relative}
-.dmap-branch::before{content:'';position:absolute;left:-30px;top:16px;width:30px;height:2px;background:var(--nds,#94a3b8);opacity:.55}
-.dmap-branch::after{content:'';position:absolute;left:-30px;top:0;bottom:0;width:2px;background:var(--nds,#94a3b8);opacity:.55}
-.dmap-branch:first-child::after{top:16px}
-.dmap-branch:last-child::after{height:16px;bottom:auto}
-.dmap-branch:only-child::after{display:none}
-.dmap-row{display:flex;align-items:center;gap:0}
-.dmap-b{color:#fff;font-weight:700;border-radius:10px;padding:.5rem .85rem;font-size:.82rem;line-height:1.3;min-width:120px;max-width:230px;box-shadow:0 3px 9px rgba(0,0,0,.16);flex-shrink:0}
-.dmap-kids{position:relative;display:flex;flex-direction:column;gap:.4rem;padding-left:26px}
-.dmap-kid{position:relative}
-.dmap-kid::before{content:'';position:absolute;left:-26px;top:15px;width:26px;height:2px;background:var(--conn,#94a3b8);opacity:.5}
-.dmap-kid::after{content:'';position:absolute;left:-26px;top:0;bottom:0;width:2px;background:var(--conn,#94a3b8);opacity:.5}
-.dmap-kid:first-child::after{top:15px}
-.dmap-kid:last-child::after{height:15px;bottom:auto}
-.dmap-kid:only-child::after{display:none}
-.dmap-c{border:1.5px solid var(--bd2);border-radius:9px;padding:.42rem .7rem;font-size:.78rem;line-height:1.35;min-width:110px;max-width:230px;box-shadow:0 2px 6px rgba(20,30,60,.06);flex-shrink:0}
+   estilo do editor de Mapas Mentais. Conectores curvos desenhados em SVG (drawDmap),
+   ancorados no centro real de cada caixa (funciona mesmo com texto em 2 linhas). */
+.dmap-wrap{margin-top:.5rem;overflow-x:auto;-webkit-overflow-scrolling:touch;padding:.5rem 0}
+.dmap{position:relative;display:inline-block;padding:.5rem .6rem;min-width:min-content}
+.dmap-svg{position:absolute;top:0;left:0;pointer-events:none;z-index:0;overflow:visible}
+.dmap-tree{position:relative;z-index:1;display:flex;align-items:center}
+.dmap-col{display:flex;flex-direction:column;gap:.5rem}
+.dmap-tree>.dmap-col,.dmap-node>.dmap-col{margin-left:40px}
+.dmap-node{display:flex;align-items:center}
+.dmap-root{background:var(--navy);color:#fff;font-weight:800;border-radius:12px;padding:.6rem 1rem;font-size:.9rem;line-height:1.3;box-shadow:0 6px 16px rgba(0,0,0,.22);max-width:230px;flex-shrink:0}
+.dmap-b{color:#fff;font-weight:700;border-radius:10px;padding:.5rem .85rem;font-size:.82rem;line-height:1.3;min-width:118px;max-width:225px;box-shadow:0 3px 9px rgba(0,0,0,.16);flex-shrink:0}
+.dmap-c{border:1.5px solid var(--bd2);border-radius:9px;padding:.42rem .7rem;font-size:.78rem;line-height:1.35;min-width:108px;max-width:225px;box-shadow:0 2px 6px rgba(20,30,60,.06);flex-shrink:0}
 /* Flashcard da diretriz editável dentro da própria caixinha (admin). */
 .dfl-edit{background:var(--surface);border:1.5px solid var(--bd2);border-radius:12px;padding:.7rem .8rem;margin-bottom:.7rem;box-shadow:0 3px 10px rgba(20,30,60,.05)}
 .dfl-edit-row{display:flex;align-items:center;justify-content:space-between;gap:.5rem;margin-bottom:.25rem}
@@ -8169,31 +8159,51 @@ function dirCardHTML(d,i){
   return '<div class="dir-card">'+head+body+'</div>';
 }
 // Mapa mental em árvore horizontal (estilo do editor de Mapas Mentais):
-// central → ramos coloridos → subramos (tinta do ramo) → sub-subramos, com
-// conectores em ângulo. Somente leitura; a edição segue no formulário/admRefMapaHTML.
+// central → ramos coloridos → subramos (tinta do ramo) → sub-subramos. Os
+// conectores curvos são desenhados em SVG por drawDmap() (ancorados no centro
+// real de cada caixa). Somente leitura; a edição segue no formulário.
 function dirMapaHTML(mapa){
   if(!mapa||(!mapa.central&&!(mapa.nodes&&mapa.nodes.length)))return '<div class="dir-empty-fmt">Mapa mental ainda não disponível.</div>';
-  function kid(c,col){
-    var lab=(typeof c==='string')?c:((c&&c.label)||'');
-    var gk=(c&&typeof c==='object'&&Array.isArray(c.children))?c.children:[];
-    var st=mmLeafStyle(col);
-    return '<div class="dmap-kid"><div class="dmap-row">'
-      +'<div class="dmap-c"'+(st?' style="'+st+'"':'')+'>'+esc(lab)+'</div>'
-      +(gk.length?('<div class="dmap-kids" style="--conn:'+col+'">'+gk.map(function(g){return kid(g,col);}).join('')+'</div>'):'')
-      +'</div></div>';
+  function node(item,col,isBranch){
+    var lab,kids;
+    if(isBranch){lab=item.label||'';kids=(item.children&&item.children.length)?item.children:[];}
+    else{lab=(typeof item==='string')?item:((item&&item.label)||'');kids=(item&&typeof item==='object'&&Array.isArray(item.children))?item.children:[];}
+    var st=isBranch?('background:'+col):mmLeafStyle(col);
+    var h='<div class="dmap-node"><div class="'+(isBranch?'dmap-b':'dmap-c')+'" data-dmap-node data-col="'+esc(col)+'"'+(st?' style="'+st+'"':'')+'>'+esc(lab)+'</div>';
+    if(kids.length)h+='<div class="dmap-col">'+kids.map(function(k){return node(k,col,false);}).join('')+'</div>';
+    return h+'</div>';
   }
-  var h='<div class="dmap-wrap"><div class="dmap">';
-  if(mapa.central)h+='<div class="dmap-root">'+esc(mapa.central)+'</div>';
-  h+='<div class="dmap-branches">';
-  (mapa.nodes||[]).forEach(function(n,bi){
-    var col=BCOLORS[bi%BCOLORS.length],kids=(n.children&&n.children.length)?n.children:[];
-    h+='<div class="dmap-branch"><div class="dmap-row">'
-      +'<div class="dmap-b" style="background:'+col+'">'+esc(n.label||'')+'</div>'
-      +(kids.length?('<div class="dmap-kids" style="--conn:'+col+'">'+kids.map(function(c){return kid(c,col);}).join('')+'</div>'):'')
-      +'</div></div>';
-  });
+  var h='<div class="dmap-wrap"><div class="dmap"><svg class="dmap-svg"></svg><div class="dmap-tree">';
+  if(mapa.central)h+='<div class="dmap-root" data-dmap-node data-col="#334155">'+esc(mapa.central)+'</div>';
+  var nodes=mapa.nodes||[];
+  if(nodes.length)h+='<div class="dmap-col">'+nodes.map(function(n,bi){return node(n,BCOLORS[bi%BCOLORS.length],true);}).join('')+'</div>';
   return h+'</div></div></div>';
 }
+// Desenha os conectores curvos (bézier) de um .dmap medindo as caixas já no DOM.
+function drawDmap(dmap){
+  var svg=dmap.querySelector('.dmap-svg');if(!svg)return;
+  var w=dmap.scrollWidth,ht=dmap.scrollHeight;
+  svg.setAttribute('width',w);svg.setAttribute('height',ht);svg.style.width=w+'px';svg.style.height=ht+'px';
+  var dr=dmap.getBoundingClientRect();
+  function m(el){var b=el.getBoundingClientRect();return {l:b.left-dr.left,r:b.right-dr.left,y:b.top-dr.top+b.height/2};}
+  var paths='';
+  dmap.querySelectorAll('[data-dmap-node]').forEach(function(pill){
+    var col=pill.nextElementSibling;
+    if(!col||!col.classList||!col.classList.contains('dmap-col'))return;
+    var p=m(pill);
+    Array.prototype.forEach.call(col.children,function(nd){
+      var cp=nd.firstElementChild;
+      if(!cp||!cp.hasAttribute('data-dmap-node'))return;
+      var c=m(cp),color=cp.getAttribute('data-col')||'#94a3b8',mx=(p.r+c.l)/2;
+      paths+='<path d="M'+p.r+' '+p.y+' C'+mx+' '+p.y+' '+mx+' '+c.y+' '+c.l+' '+c.y+'" fill="none" stroke="'+color+'" stroke-width="2" opacity=".55"/>';
+    });
+  });
+  svg.innerHTML=paths;
+}
+function drawAllDmaps(){try{document.querySelectorAll('.dmap').forEach(function(d){drawDmap(d);});}catch(e){}}
+var __dmapRaf=0;
+function scheduleDmap(){if(__dmapRaf)return;__dmapRaf=requestAnimationFrame(function(){__dmapRaf=0;drawAllDmaps();});}
+try{window.addEventListener('resize',function(){scheduleDmap();});}catch(e){}
 // Fluxograma(s) recriado(s) em português: lista de {titulo, fonte?, nos:[{tipo,texto,ramos?}]}.
 // tipo: 'inicio' | 'acao' | 'decisao' | 'fim'. Decisão mostra ramos [{rotulo,texto,tipo?}] lado a lado.
 function dirFluxoHTML(flx){
@@ -8285,7 +8295,7 @@ function bindDiretrizesView(root){
   // Mapa mental: abre/fecha os subramos ao clicar no ramo.
   root.querySelectorAll('[data-dir-mm-branch]').forEach(function(b){b.addEventListener('click',function(){if(b.parentNode)b.parentNode.classList.toggle('open');});});
 }
-function renderDiretrizesInto(root){root.innerHTML=diretrizesViewHTML();bindDiretrizesView(root);}
+function renderDiretrizesInto(root){root.innerHTML=diretrizesViewHTML();bindDiretrizesView(root);scheduleDmap();}
 // Painel do aluno. Enquanto DIRETRIZES_PUBLICADO=false mostra "Em breve".
 function renderRef(){
   var el=document.getElementById('ref-body'); if(!el)return;
@@ -9648,6 +9658,7 @@ function renderAdmSec(sec){
   else if(sec==='qotdarq')m.innerHTML=admQotdArchiveHTML();
   else if(sec==='pendencias')m.innerHTML=admPendenciasHTML();
   bindAdmSec(sec);
+  scheduleDmap();
 }
 
 // ---------- PROVAS & QUESTÕES ----------
