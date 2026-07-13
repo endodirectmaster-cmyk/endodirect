@@ -8247,6 +8247,7 @@ function dirMapaEditHTML(d,i){
   }
   var nodes=Array.isArray(mapa.nodes)?mapa.nodes:[];
   var h='<div style="font-size:.7rem;color:var(--t2);margin-bottom:.5rem">✏️ Clique numa caixa para editar. Passe o mouse e use <b>＋</b> (subramo) ou <b>×</b> (remover). As alterações salvam sozinhas.</div>'
+    +'<div style="margin-bottom:.6rem"><button type="button" class="btn btn-outline btn-sm" data-refmapa-genai="'+i+'">🧠 Refazer com IA (3 níveis)</button></div>'
     +'<div class="dmap-wrap"><div class="dmap dmap-editable" data-rmi="'+i+'"><svg class="dmap-svg"></svg><div class="dmap-tree">'
     +boxHTML(null,mapa.central||'','dmap-root','','#334155',false)
     +'<div class="dmap-col">'
