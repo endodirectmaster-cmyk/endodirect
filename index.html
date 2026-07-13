@@ -9093,19 +9093,32 @@ function igFetchExamImage(query){
     .then(function(d){if(!d||!d.ok||!d.items||!d.items.length)return null;var it=d.items[0];if(!it.img)return null;return {img:it.img,imgRef:igFormatImgRef(it)};})
     .catch(function(){return null;});
 }
-// Monta a minirreferência exibida abaixo da imagem: "1º autor et al. Revista. Ano. Fonte: PubMed Central/Open-i · PMID".
+// Monta a minirreferência (ABREVIADA) exibida abaixo da imagem:
+// "1º autor et al. · Revista(sigla) · Ano · Open-i · PMID". A revista usa só a
+// sigla/1ª parte (antes de " : " ou " / ") e a fonte fica curta ("Open-i").
 function igFormatImgRef(it){
   var raw=String(it.authors||''),first=raw.split(/[,;]/)[0].trim();
   var au=first?(first+(/[,;]/.test(raw)?' et al.':'')):'';
-  var parts=[];if(au)parts.push(au);if(it.journal)parts.push(it.journal);
-  var yr=(String(it.date||'').match(/\d{4}/)||[])[0];if(yr)parts.push(yr);
+  var jn=it.journal?String(it.journal).split(/\s*:\s*|\s+\/\s+/)[0].trim():'';
+  var yr=(String(it.date||'').match(/\d{4}/)||[])[0]||'';
   var id=it.pmid?('PMID '+it.pmid):(it.pmcid||'');
-  return (parts.length?parts.join('. ')+'. ':'')+'Fonte: PubMed Central/Open-i'+(id?' · '+id:'');
+  var parts=[];if(au)parts.push(au);if(jn)parts.push(jn);if(yr)parts.push(yr);
+  return (parts.length?parts.join(' · ')+' · ':'')+'Open-i'+(id?' · '+id:'');
+}
+// Encurta uma minirreferência JÁ GRAVADA (formato antigo, longo) na leitura —
+// idempotente sobre o formato novo. Aplicada em todo render de imgRef p/ que as
+// questões antigas também apareçam com a fonte abreviada, sem regravar o banco.
+function igShortRef(s){
+  s=String(s||'');if(!s)return s;
+  s=s.replace(/\set al\.\./g,' et al.');              // ponto duplo "et al.."
+  s=s.replace(/\s*:\s*[^.·]*(?=\.)/,'');               // remove o nome longo da revista após " : "
+  s=s.replace(/Fonte:\s*PubMed Central\/Open-i/gi,'Open-i').replace(/PubMed Central\/Open-i/gi,'Open-i');
+  return s.replace(/\.\s*\./g,'.').replace(/\s{2,}/g,' ').trim();
 }
 // Figura da questão (imagem + minirreferência) usada nas telas do app (Questão do Dia).
 function qFigHTML(q){
   if(!q||!q.img)return '';
-  var cap=q.imgRef?'<div style="font-size:.66rem;color:var(--t3);line-height:1.4;margin:-.35rem 0 .7rem;font-style:italic">'+esc(q.imgRef)+'</div>':'';
+  var cap=q.imgRef?'<div style="font-size:.66rem;color:var(--t3);line-height:1.4;margin:-.35rem 0 .7rem;font-style:italic">'+esc(igShortRef(q.imgRef))+'</div>':'';
   return '<img src="'+esc(q.img)+'" alt="Figura do caso" referrerpolicy="no-referrer" onerror="this.style.display=\'none\'" style="max-width:100%;display:block;border-radius:8px;margin:0 0 '+(q.imgRef?'.35rem':'.7rem')+';border:1px solid var(--bd)">'+cap;
 }
 function persistIgStories(immediate){try{lsSet('ig_stories',igStories);}catch(e){}return queueRemoteStateSave(immediate);}
@@ -9262,7 +9275,7 @@ function admPendCardHTML(it){
   var imgBlock=it.img?(igLbl('Imagem do enunciado (sugerida do PubMed — confira)')
     +'<div style="background:var(--s2);border:1px solid var(--bd);border-radius:var(--rs);padding:.55rem .7rem;margin-bottom:.6rem">'
     +'<img src="'+esc(it.img)+'" alt="Figura do caso" referrerpolicy="no-referrer" onerror="this.style.display=\'none\'" style="max-width:100%;max-height:220px;display:block;border-radius:6px;border:1px solid var(--bd)">'
-    +(it.imgRef?'<div style="font-size:.66rem;color:var(--t3);line-height:1.4;font-style:italic;margin-top:.35rem">'+esc(it.imgRef)+'</div>':'')
+    +(it.imgRef?'<div style="font-size:.66rem;color:var(--t3);line-height:1.4;font-style:italic;margin-top:.35rem">'+esc(igShortRef(it.imgRef))+'</div>':'')
     +'<label style="display:flex;gap:.4rem;align-items:center;font-size:.72rem;color:var(--t2);margin-top:.45rem;cursor:pointer"><input type="checkbox" id="pend-rmimg-'+id+'" style="width:auto"> remover imagem ao aprovar</label>'
     +'</div>'):'';
   return '<div class="card" data-pend-card="'+id+'" style="margin-bottom:1rem">'
@@ -9566,7 +9579,7 @@ function renderIgLote(){
   res.innerHTML='<div style="font-size:.74rem;color:var(--t2);margin:.2rem 0 .5rem">'+igLoteDraft.length+' gerada(s) — revise e aprove:</div>'+igLoteDraft.map(function(it,i){
     var _stem=String(it.stem||'');
     var _prev=esc(_stem.slice(0,220))+(_stem.length>220?'…':'');
-    var _fig=it.img?'<div style="margin-top:.4rem"><img src="'+esc(it.img)+'" alt="Figura do caso" referrerpolicy="no-referrer" onerror="this.style.display=\'none\'" style="max-width:100%;max-height:200px;border-radius:6px;border:1px solid var(--bd)">'+(it.imgRef?'<div style="font-size:.66rem;color:var(--t3);font-style:italic;line-height:1.4;margin-top:.25rem">'+esc(it.imgRef)+'</div>':'')+'</div>':'';
+    var _fig=it.img?'<div style="margin-top:.4rem"><img src="'+esc(it.img)+'" alt="Figura do caso" referrerpolicy="no-referrer" onerror="this.style.display=\'none\'" style="max-width:100%;max-height:200px;border-radius:6px;border:1px solid var(--bd)">'+(it.imgRef?'<div style="font-size:.66rem;color:var(--t3);font-style:italic;line-height:1.4;margin-top:.25rem">'+esc(igShortRef(it.imgRef))+'</div>':'')+'</div>':'';
     var _full='<div style="font-size:.74rem;color:var(--t2);line-height:1.55;white-space:pre-wrap">▾ '+esc(_stem)+'</div>'+_fig+'<div style="margin-top:.35rem;display:grid;gap:.18rem">'+['A','B','C','D'].map(function(L){var ok=(it.answer===L);return '<div style="font-size:.74rem;line-height:1.45;color:'+(ok?'#16a34a':'var(--t2)')+';font-weight:'+(ok?'700':'400')+'"><b>'+L+')</b> '+esc((it.options||{})[L]||'')+(ok?' ✓':'')+'</div>';}).join('')+'</div>'+(it.explanation?'<div style="margin-top:.35rem;font-size:.72rem;color:var(--t3);line-height:1.5"><b>Comentário:</b> '+esc(it.explanation)+'</div>':'');
     return '<div style="border:1px solid var(--bd);border-radius:12px;padding:.7rem .8rem;margin-bottom:.5rem;background:var(--s2)">'
       +'<div style="display:flex;justify-content:space-between;gap:.5rem;flex-wrap:wrap;align-items:center;margin-bottom:.35rem">'
