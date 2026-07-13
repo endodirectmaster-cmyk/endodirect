@@ -3098,6 +3098,13 @@ function normalizeMuralAviso(a,defaults){
   if(item.texto)item.texto=String(item.texto).replace(/\s*(?:🔗\s*)?Fontes consultadas:[\s\S]*$/i,'').trim();
   // Data de publicação em dd/mm/aaaa (vem do PubMed como "2026 Jun 13").
   if(item.texto)item.texto=String(item.texto).replace(/(Data de publicacao:\s*)([^\n]+)/i,function(_,pre,d){return pre+pubDateBR(d.trim());});
+  // Itens de sociedades (SBEM, SBD…) são SEMPRE "Comunicado" e sem subespecialidade,
+  // independente do tipo gravado. Os primeiros itens de sociedade colhidos pelo radar
+  // foram classificados pela IA (ex.: "Perspectiva Clínica") ANTES de fixarmos
+  // tipo='Comunicado' na origem (#517); este override corrige os já gravados na leitura,
+  // sem depender de limpeza no servidor.
+  var _isSoc=!!item.society||/^society:/i.test(String(item.sourceId||''))||['SBEM','SBD'].indexOf(String(item.fonte||'').trim())>=0;
+  if(_isSoc){item.society=item.society||String(item.fonte||'').trim();item.tipo='Comunicado';item.subespecialidade='';return item;}
   item.tipo=normalizeMuralType(item.tipo,item.titulo,item.texto,item.fonte);
   item.subespecialidade=inferMuralSubspecialty(item);
   return item;
