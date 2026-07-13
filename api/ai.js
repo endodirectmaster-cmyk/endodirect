@@ -265,7 +265,14 @@ module.exports = async function handler(req, res) {
     // o raciocínio consome o teto de max_tokens e TRUNCARIA o JSON dos geradores
     // (OSCE, resumidor, flashcards, mapas…). Estes recursos não usam thinking;
     // desligamos explicitamente para preservar o comportamento do Sonnet 4.6.
-    if (model === 'claude-sonnet-5') upstreamBody.thinking = { type: 'disabled' };
+    // Além disso, `effort` no Sonnet 5 usa `high` por padrão, o que deixou a
+    // geração LENTA (o OSCE, com system de ~40k chars + 3200 tokens, estourava o
+    // teto de 56s do cliente → "A geração demorou demais"). Sem thinking, `low`
+    // é o modo rápido recomendado para geração de JSON e corta a latência.
+    if (model === 'claude-sonnet-5') {
+      upstreamBody.thinking = { type: 'disabled' };
+      upstreamBody.output_config = { effort: 'low' };
+    }
     const upstream = await fetch('https://api.anthropic.com/v1/messages', {
       method: 'POST',
       headers: {
