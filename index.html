@@ -733,7 +733,7 @@ html[data-theme="light"] .dir-back{background:#f8f9fc;border-color:var(--bd2);co
 .dir-card li{font-size:.86rem;color:var(--t2);margin:.25rem 0;line-height:1.5}
 .dir-card .dir-texto{font-size:.88rem;color:var(--t2);line-height:1.62}
 .dir-card .dir-texto p{margin:.4rem 0}
-.dir-card .dir-texto table{border-collapse:collapse;width:100%;margin:.7rem 0;font-size:.8rem;display:block;overflow-x:auto;-webkit-overflow-scrolling:touch}
+.dir-card .dir-texto table{border-collapse:collapse;width:fit-content;max-width:100%;margin:.7rem auto;font-size:.8rem;display:block;overflow-x:auto;-webkit-overflow-scrolling:touch}
 .dir-card .dir-texto th,.dir-card .dir-texto td{border:1px solid var(--bd2);padding:.42rem .6rem;text-align:left;vertical-align:top;line-height:1.45}
 .dir-card .dir-texto th{background:var(--s2);color:var(--tx);font-weight:700;white-space:nowrap}
 .art-md h3{font-size:.9rem;font-weight:700;color:var(--tx);margin:.75rem 0 .3rem}
@@ -8139,7 +8139,9 @@ function dirSubList(pred){
 function dirCardHTML(d,i){
   // Sem título por card: o tema (cabeçalho da aba) já é o título da seção.
   // Cabeçalho com a fonte só nos formatos Resumo/Mapa; nos Flashcards ele é omitido.
-  var head=(refFormat==='flash')?'':('<div class="dir-card-top"><span class="ref-badge">'+esc(d.fonte||'—')+(d.ano?(' · '+esc(d.ano)):'')+'</span>'
+  // Nos Resumos privados o cabeçalho de fonte é omitido (só polui); nas Diretrizes
+  // publicadas ele é mantido, pois a fonte real é relevante. Flashcards nunca mostram.
+  var head=(refFormat==='flash'||d.privado)?'':('<div class="dir-card-top"><span class="ref-badge">'+esc(d.fonte||'—')+(d.ano?(' · '+esc(d.ano)):'')+'</span>'
     +(safeHttpUrl(d.url)?'<a href="'+esc(d.url)+'" target="_blank" rel="noopener" class="ref-link" style="margin-left:auto">Fonte ↗</a>':'')+'</div>');
   var body='';
   if(refFormat==='flash'){
