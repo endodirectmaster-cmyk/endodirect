@@ -4774,36 +4774,24 @@ function startSupabaseAuthWatcher(){
 function startGoogleOAuth(){
   var client=getSupabaseClient();
   if(!client){
-    showLoginError('Supabase ainda nao carregou. Usando acesso temporario por e-mail.');
-    legacyGooglePromptLogin();
+    showLoginError('Supabase ainda nao carregou. Atualize a pagina (F5) e tente novamente.');
     return;
   }
-  fetch(SUPABASE_URL+'/auth/v1/settings',{headers:{apikey:SUPABASE_PUBLISHABLE_KEY}})
-    .then(function(r){
-      if(!r.ok)throw new Error('Project URL invalido ou Auth indisponivel.');
-      return client.auth.signInWithOAuth({
-        provider:'google',
-        options:{redirectTo:authBaseURL()+'/',queryParams:{prompt:'select_account'}}
-      });
-    })
-    .then(function(res){if(res&&res.error)throw res.error;})
-    .catch(function(e){
-      showLoginError('Confirme o Project URL do Supabase para ativar login Google real. Usando acesso temporario por e-mail.');
-      console.warn('Supabase OAuth unavailable',e);
-      legacyGooglePromptLogin();
-    });
-  return;
-  if(!client){
-    showLoginError('Supabase ainda não carregou. Atualize a página e tente novamente.');
-    return;
-  }
+  // Login Google REAL via Supabase, chamado direto. Antes havia um "preflight"
+  // GET /auth/v1/settings que, ao falhar (endpoint instavel ou a chave publishable
+  // recusada nesse endpoint), LANCAVA erro e BLOQUEAVA o OAuth, caindo num acesso
+  // falso por e-mail (legacyGooglePromptLogin) — deixando o botao "Continuar com o
+  // Google" sem funcionar mesmo quando o OAuth em si estava OK. signInWithOAuth so
+  // monta o redirect para o Google e ja trata os proprios erros; nao precisa do
+  // preflight. Removido o guard (e o codigo morto que existia abaixo do return).
   client.auth.signInWithOAuth({
     provider:'google',
-    options:{redirectTo:authBaseURL()+'/'}
+    options:{redirectTo:authBaseURL()+'/',queryParams:{prompt:'select_account'}}
   }).then(function(res){
-    if(res.error)showLoginError('Erro no login Google: '+res.error.message);
+    if(res&&res.error)showLoginError('Nao foi possivel iniciar o login com o Google: '+(res.error.message||'tente novamente')+'. Voce tambem pode entrar com e-mail e senha.');
   }).catch(function(e){
-    showLoginError('Erro no login Google: '+e.message);
+    showLoginError('Nao foi possivel iniciar o login com o Google. Tente novamente ou entre com e-mail e senha.');
+    console.warn('Supabase OAuth error',e);
   });
 }
 
