@@ -10147,20 +10147,75 @@ function parseFlashText(txt){
   }).filter(Boolean);
 }
 // Mapa mental ⇄ texto estruturado ("Central: X" + ramos + "- itens").
+// Serialização do mapa em texto. Suporta 3 níveis (ramo → subramo → sub-subramo):
+// ramo = linha sem traço; subramo = "- x"; sub-subramo = "  - y" (2 espaços + traço).
+// Retrocompatível: mapas de 2 níveis (sem indentação) continuam idênticos.
+function mapaChildLines(children,depth){
+  var out=[],pad=new Array(depth-1).join('  '); // depth2 → '', depth3 → '  '
+  (children||[]).forEach(function(c){
+    var lab=(typeof c==='string')?c:((c&&c.label)||'');
+    out.push(pad+'- '+lab);
+    if(c&&typeof c==='object'&&Array.isArray(c.children)&&c.children.length&&depth<3)
+      out=out.concat(mapaChildLines(c.children,depth+1));
+  });
+  return out;
+}
 function mapaToText(mapa){
   if(!mapa||(!mapa.central&&!(mapa.nodes&&mapa.nodes.length)))return '';
   var out=[];if(mapa.central)out.push('Central: '+mapa.central);
-  (mapa.nodes||[]).forEach(function(n){out.push(n.label||'');(n.children||[]).forEach(function(c){out.push('- '+c);});});
+  (mapa.nodes||[]).forEach(function(n){out.push(n.label||'');out=out.concat(mapaChildLines(n.children,2));});
   return out.join('\n');
 }
 function parseMapaText(txt){
-  var central='',nodes=[],cur=null;
+  var central='',nodes=[],stack=[]; // stack[1]=ramo, stack[2]=subramo, stack[3]=sub-subramo
   String(txt||'').split('\n').forEach(function(raw){
-    var l=raw.trim();if(!l)return;
-    if(/^central\s*:/i.test(l)){central=l.replace(/^central\s*:/i,'').trim();return;}
-    if(/^[-•]\s+/.test(l)){if(cur)cur.children.push(l.replace(/^[-•]\s+/,'').trim());else{cur={label:l.replace(/^[-•]\s+/,'').trim(),children:[]};nodes.push(cur);}return;}
-    cur={label:l,children:[]};nodes.push(cur);
+    if(!raw.trim())return;
+    if(/^\s*central\s*:/i.test(raw)){central=raw.replace(/^\s*central\s*:/i,'').trim();return;}
+    var m=raw.match(/^(\s*)[-•]\s+(.*)$/);
+    if(m){
+      var indent=m[1].replace(/\t/g,'  ').length;
+      var level=Math.min(3,2+Math.floor(indent/2)); // indent0→2, ≥2→3 (teto 3)
+      var text=m[2].trim();if(!text)return;
+      var parent=null;
+      for(var L=level-1;L>=1&&!parent;L--)parent=stack[L]; // acha o ancestral mais próximo
+      if(!parent)return; // traço antes de qualquer ramo → ignora
+      if(!Array.isArray(parent.children))parent.children=[];
+      var child={label:text,children:[]};parent.children.push(child);
+      stack[level]=child;stack.length=level+1;
+    }else{
+      var n={label:raw.trim(),children:[]};nodes.push(n);stack=[];stack[1]=n;
+    }
   });
+  // Folhas (sem filhos) viram string; nós com filhos ficam objeto — mesma convenção
+  // dos editores em caixa (admReadRefMapa) e do renderizador (dirMapaHTML).
+  function flat(children){
+    return (children||[]).map(function(c){var gk=flat(c.children);return gk.length?{label:c.label,children:gk}:c.label;});
+  }
+  nodes=nodes.map(function(n){return {label:n.label,children:flat(n.children)};});
+  if(!central&&!nodes.length)return null;
+  return {central:central,nodes:nodes};
+}
+// Normaliza o mapa vindo da IA p/ {central, nodes:[{label, children}]} preservando
+// ATÉ 3 níveis (ramo → subramo → sub-subramo). Aceita children/leaves/items e
+// item string OU objeto {label, children}. Nível 4+ é achatado (o editor em caixa
+// e o renderizador cobrem 3 níveis). Tolerante a chaves alternativas da IA.
+function normDirMapaChildren(arr,depth){
+  return (Array.isArray(arr)?arr:[]).map(function(c){
+    if(c&&typeof c==='object'){
+      var lab=String(c.label||c.text||c.title||'').trim();
+      var gk=(depth<3)?normDirMapaChildren(c.children||c.leaves||c.items||c.subtopics,depth+1):[];
+      return gk.length?{label:lab,children:gk}:lab;
+    }
+    return String(c==null?'':c).trim();
+  }).filter(function(c){return (typeof c==='object')?((c.label||'').trim()||c.children.length):c;});
+}
+function normDirMapa(r){
+  if(!r||typeof r!=='object')return null;
+  var central=String(r.central||r.root||r.tema||'').trim();
+  var rawNodes=Array.isArray(r.nodes)?r.nodes:(Array.isArray(r.branches)?r.branches:[]);
+  var nodes=rawNodes.filter(function(n){return n&&n.label;})
+    .map(function(n){return {label:String(n.label).trim(),children:normDirMapaChildren(n.children||n.leaves||n.items,2)};})
+    .filter(function(n){return n.label||n.children.length;});
   if(!central&&!nodes.length)return null;
   return {central:central,nodes:nodes};
 }
@@ -10194,8 +10249,8 @@ function admRefSecHTML(){
       +'<div style="font-size:.7rem;color:var(--t2);line-height:1.5;margin-bottom:.35rem">Escreva <b>um cartão por linha</b>: primeiro a <b>pergunta</b>, depois o separador <code>::</code> (dois-pontos duplos), depois a <b>resposta</b>. O aluno vê a pergunta e clica no cartão para revelar a resposta.</div>'
       +'<textarea id="adm-ref-flash" rows="5" placeholder="Qual o alvo de HbA1c no adulto não gestante? :: &lt;7%, individualizando entre 6,5% e 8%&#10;Quais exames diagnosticam DM? :: Glicemia de jejum ≥126, HbA1c ≥6,5% ou TOTG 2h ≥200">'+esc(g?flashToText(g.flashcards):'')+'</textarea>'
       +'<button type="button" class="btn btn-outline btn-sm" id="btn-ref-flash-gen" style="margin-top:.4rem">🃏 '+((g&&g.flashcards&&g.flashcards.length)?'Refazer com IA':'Gerar com IA')+'</button></div>'
-    +'<div class="fld2" style="margin-bottom:.7rem"><label>🧠 Mapa mental (texto estruturado)</label>'
-      +'<textarea id="adm-ref-mapa" rows="6" placeholder="Central: Diagnóstico de DM&#10;Exames&#10;- Glicemia de jejum&#10;- HbA1c&#10;Confirmação&#10;- 2º exame se assintomático">'+esc(g?mapaToText(g.mapa):'')+'</textarea>'
+    +'<div class="fld2" style="margin-bottom:.7rem"><label>🧠 Mapa mental (texto estruturado)</label><div style="font-size:.7rem;color:var(--t2);line-height:1.5;margin-bottom:.35rem">Um <b>ramo</b> por linha; <code>- subramo</code>; e <code>&nbsp;&nbsp;- detalhe</code> (2 espaços antes do traço) para o <b>3º nível</b>. A geração por IA já cria os 3 níveis.</div>'
+      +'<textarea id="adm-ref-mapa" rows="6" placeholder="Central: Diagnóstico de DM&#10;Exames&#10;- Glicemia de jejum&#10;  - ≥126 mg/dL (jejum ≥8h)&#10;  - repetir se assintomático&#10;- HbA1c&#10;  - ≥6,5%&#10;Confirmação&#10;- 2º exame se assintomático">'+esc(g?mapaToText(g.mapa):'')+'</textarea>'
       +'<button type="button" class="btn btn-outline btn-sm" id="btn-ref-mapa-gen" style="margin-top:.4rem">🧠 '+((g&&g.mapa&&(g.mapa.central||(g.mapa.nodes&&g.mapa.nodes.length)))?'Refazer com IA':'Gerar com IA')+'</button></div>'
     +'<div class="ref-chat"><div class="ref-chat-head">💬 Assistente de IA</div>'
       +'<div class="ref-chat-msgs" id="adm-ref-chat-msgs">'+refChatMsgsHTML()+'</div>'
@@ -11202,7 +11257,7 @@ function bindAdmSec(sec){
       var st=document.getElementById('adm-ref-pdf-status');
       rPdfGen.disabled=true;rPdfGen.innerHTML=ldHTML('Lendo PDF...');if(st)st.textContent='';
       var SYS='Você é professor de endocrinologia. A partir de uma diretriz/artigo, produza material de estudo claro, correto e fiel ao documento, em português do Brasil.';
-      var FMT='Retorne APENAS JSON, sem texto fora do JSON, no formato: {"titulo":"título curto","fonte":"sociedade/autor","ano":"ano","resumo":"resumo descritivo bem estruturado em markdown simples (parágrafos, **negrito**, listas com -)","bullets":["ponto-chave"],"flashcards":[{"q":"pergunta curta","a":"resposta direta"}],"mapa":{"central":"tema central curto","nodes":[{"label":"ramo","children":["item","item"]}]}}. Use 5 a 8 bullets, 5 a 8 flashcards e 3 a 5 ramos. Não invente dados fora do documento.';
+      var FMT='Retorne APENAS JSON, sem texto fora do JSON, no formato: {"titulo":"título curto","fonte":"sociedade/autor","ano":"ano","resumo":"resumo descritivo bem estruturado em markdown simples (parágrafos, **negrito**, listas com -)","bullets":["ponto-chave"],"flashcards":[{"q":"pergunta curta","a":"resposta direta"}],"mapa":{"central":"tema central curto","nodes":[{"label":"ramo","children":[{"label":"subramo","children":["detalhe concreto"]}]}]}}. Use 5 a 8 bullets, 5 a 8 flashcards e um mapa COMPLETO em 3 níveis (5 a 7 ramos; cada ramo com 3 a 5 subramos; onde couber, cada subramo com 2 a 4 sub-subramos, cada um com um dado concreto). Não invente dados fora do documento.';
       // Documento (imagem/base64) só p/ PDF pequeno: o corpo da função serverless
       // tem limite (~4,5 MB), e o base64 infla ~33% → PDF até ~3 MB.
       function fromBase64(){
@@ -11232,7 +11287,7 @@ function bindAdmSec(sec){
         if(d.resumo)setVal('adm-ref-resumo',String(d.resumo));
         if(Array.isArray(d.bullets))setVal('adm-ref-pts',d.bullets.map(String).join('\n'));
         if(Array.isArray(d.flashcards))setVal('adm-ref-flash',flashToText(d.flashcards.filter(function(c){return c&&c.q&&c.a;}).map(function(c){return {q:String(c.q),a:String(c.a)};})));
-        if(d.mapa&&(d.mapa.central||Array.isArray(d.mapa.nodes)))setVal('adm-ref-mapa',mapaToText({central:String(d.mapa.central||''),nodes:(Array.isArray(d.mapa.nodes)?d.mapa.nodes:[]).filter(function(n){return n&&n.label;}).map(function(n){return {label:String(n.label),children:(Array.isArray(n.children)?n.children.map(String):[])};})}));
+        var pdfMapa=normDirMapa(d.mapa);if(pdfMapa)setVal('adm-ref-mapa',mapaToText(pdfMapa));
         if(st)st.textContent='✓ Gerado — revise e edite os campos.';
         notify('Conteúdo gerado a partir do PDF. Revise e salve.','ok');
       }).catch(function(e){var msg=(e&&e.message)||'falha';if(/\b413\b/.test(msg))msg='PDF muito grande. Use um PDF com texto selecionável ou um arquivo menor (até ~3 MB).';notify('Erro ao ler o PDF: '+msg,'err');if(st)st.textContent='';})
@@ -11282,11 +11337,11 @@ function bindAdmSec(sec){
       var base=dirFormBaseTxt();
       if(!base){notify('Preencha bullets ou resumo antes de gerar.','err');return;}
       var lbl=mGen.innerHTML;mGen.disabled=true;mGen.innerHTML=ldHTML('Gerando...');
-      callAIJson(authoringSys('Crie mapas mentais de estudo claros, específicos e corretos.'),
-        'A partir do conteúdo abaixo, gere um mapa mental. Retorne APENAS JSON no formato {"central":"tema central curto","nodes":[{"label":"ramo","children":["item","item"]}]}. Use de 3 a 5 ramos, cada um com 2 a 4 itens curtos, cada item com um dado concreto (critério, valor de corte, dose ou conduta).\n\n'+base,1200,1,null,(admRefTema||''))
+      callAIJson(authoringSys('Crie mapas mentais de estudo COMPLETOS, específicos e clinicamente corretos.'),
+        'A partir do conteúdo abaixo, gere um mapa mental COMPLETO em 3 níveis. Retorne APENAS JSON no formato {"central":"tema central curto","nodes":[{"label":"ramo","children":[{"label":"subramo","children":["detalhe concreto","detalhe concreto"]}]}]}. Use de 5 a 7 ramos; cada ramo com 3 a 5 subramos; e, onde fizer sentido clínico, cada subramo com 2 a 4 sub-subramos (detalhes). CADA item do nível mais baixo deve trazer um DADO CONCRETO (critério, valor de corte, dose, meta ou conduta) — nunca generalidades. Um subramo pode ser uma string simples quando não tiver detalhes.\n\n'+base,2600,1,null,(admRefTema||''))
       .then(function(r){
-        if(!r||!r.central||!Array.isArray(r.nodes)||!r.nodes.length)throw new Error('IA não retornou um mapa válido.');
-        var mapa={central:String(r.central),nodes:r.nodes.filter(function(n){return n&&n.label;}).map(function(n){return {label:String(n.label),children:(Array.isArray(n.children)?n.children.map(String):[])};})};
+        var mapa=normDirMapa(r);
+        if(!mapa||!mapa.nodes.length)throw new Error('IA não retornou um mapa válido.');
         var ta=document.getElementById('adm-ref-mapa');if(ta)ta.value=mapaToText(mapa);
         notify('Mapa mental gerado — revise e salve.','ok');
       }).catch(function(e){notify('Erro ao gerar mapa: '+(e.message||'falha'),'err');})
