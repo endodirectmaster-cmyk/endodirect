@@ -1,7 +1,14 @@
-const DEFAULT_MODEL = process.env.ANTHROPIC_MODEL || 'claude-sonnet-4-6';
+const DEFAULT_MODEL = process.env.ANTHROPIC_MODEL || 'claude-sonnet-5';
 // Modelos que o cliente pode solicitar por requisição (evita abuso/custo).
 // Recursos clínicos (prescrição/simulador) pedem Opus; o resto fica no default.
-const ALLOWED_MODELS = { 'claude-sonnet-4-6': 1, 'claude-opus-4-8': 1, 'claude-haiku-4-5': 1 };
+const ALLOWED_MODELS = { 'claude-sonnet-5': 1, 'claude-opus-4-8': 1, 'claude-haiku-4-5': 1 };
+// ⚠️ 2026-07-13 — `claude-sonnet-4-6` parou de responder para esta conta: como
+// era o DEFAULT (e o AI_MODEL_SIM_GEN do OSCE), derrubou TODOS os geradores que
+// não pedem Opus — OSCE, Resumidor, flashcards, mapas, cronograma, simulado,
+// Chat IA. Migrado para `claude-sonnet-5` (Sonnet atual). O remapeamento abaixo
+// conserta também clientes que ainda tenham o index.html antigo em cache (SW),
+// pois eles continuam mandando o id legado no corpo da requisição.
+const LEGACY_MODEL_MAP = { 'claude-sonnet-4-6': 'claude-sonnet-5' };
 // Grounding opcional por PubMed (módulo — não conta como função serverless).
 const { pubmedGround, formatSources } = require('../lib/pubmed');
 // Busca server-side de um link p/ resumo (módulo lib/ — não conta como função).
@@ -12,7 +19,8 @@ const { sendSupportEmail, storeSupportTicket, listSupportTickets, listMyTickets,
 const { sendToEmail } = require('../lib/push');
 const { adminFromReq, userFromReq } = require('../lib/admin-auth');
 function pickModel(requested) {
-  const m = String(requested || '');
+  const raw = String(requested || '');
+  const m = LEGACY_MODEL_MAP[raw] || raw;
   return ALLOWED_MODELS[m] ? m : DEFAULT_MODEL;
 }
 
@@ -246,6 +254,18 @@ module.exports = async function handler(req, res) {
     : groundedPrompt;
 
   try {
+    const model = pickModel(body.model);
+    const upstreamBody = {
+      model,
+      max_tokens: maxTokens,
+      system,
+      messages: [{ role: 'user', content }]
+    };
+    // Sonnet 5 liga "adaptive thinking" por padrão quando `thinking` é omitido —
+    // o raciocínio consome o teto de max_tokens e TRUNCARIA o JSON dos geradores
+    // (OSCE, resumidor, flashcards, mapas…). Estes recursos não usam thinking;
+    // desligamos explicitamente para preservar o comportamento do Sonnet 4.6.
+    if (model === 'claude-sonnet-5') upstreamBody.thinking = { type: 'disabled' };
     const upstream = await fetch('https://api.anthropic.com/v1/messages', {
       method: 'POST',
       headers: {
@@ -253,12 +273,7 @@ module.exports = async function handler(req, res) {
         'x-api-key': apiKey,
         'anthropic-version': '2023-06-01'
       },
-      body: JSON.stringify({
-        model: pickModel(body.model),
-        max_tokens: maxTokens,
-        system,
-        messages: [{ role: 'user', content }]
-      })
+      body: JSON.stringify(upstreamBody)
     });
 
     const data = await upstream.json().catch(() => ({}));
