@@ -10234,11 +10234,19 @@ function genDirMapa(base,tema){
 // próprios pontos-chave + resumo do item (o editor em caixa não tem os campos do
 // formulário à mão).
 function dirItemBaseTxt(d){
-  var pts=(d&&Array.isArray(d.pts))?d.pts.map(function(s){return String(s).trim();}).filter(Boolean):[];
-  var resumo=(d&&d.resumo)?String(d.resumo).trim():'';
-  var tema=(d&&(d.tema||d.titulo||d.topic))||(typeof admRefTema!=='undefined'?admRefTema:'')||'';
-  if(!pts.length&&!resumo)return '';
-  return 'Tema: '+tema+'.\nPontos-chave:\n'+pts.map(function(p){return '- '+p;}).join('\n')+(resumo?('\nResumo:\n'+resumo):'');
+  if(!d)return '';
+  var pts=Array.isArray(d.pts)?d.pts.map(function(s){return String(s).trim();}).filter(Boolean):[];
+  var resumo=d.resumo?String(d.resumo).trim():'';
+  var tema=(d.tema||d.titulo||d.topic)||(typeof admRefTema!=='undefined'?admRefTema:'')||'';
+  var mapaTxt='';try{mapaTxt=(mapaToText(d.mapa)||'').trim();}catch(e){}
+  var fc='';try{if(Array.isArray(d.flashcards)&&d.flashcards.length)fc=d.flashcards.map(function(c){return '- '+((c&&(c.q||c.front))||'')+': '+((c&&(c.a||c.back))||'');}).join('\n').trim();}catch(e){}
+  var parts=[];
+  if(tema)parts.push('Tema: '+tema+'.');
+  if(pts.length)parts.push('Pontos-chave:\n'+pts.map(function(p){return '- '+p;}).join('\n'));
+  if(resumo)parts.push('Resumo:\n'+resumo);
+  if(mapaTxt)parts.push('Mapa atual (enriqueça/expanda este conteúdo para 3 níveis, corrigindo e acrescentando o que faltar):\n'+mapaTxt);
+  if(fc)parts.push('Flashcards de apoio:\n'+fc);
+  return parts.join('\n\n');
 }
 // "Refazer com IA" DENTRO do editor em caixa (aba Mapas mentais do resumo).
 function admRefMapaGenAI(i){
@@ -11174,6 +11182,10 @@ function bindAdmSec(sec){
     main.querySelectorAll('[data-rmadd]').forEach(function(b){b.addEventListener('click',function(){var dm=b.closest('.dmap');if(dm)admResMapaMut(parseInt(dm.dataset.rmi),'add',b.dataset.rmadd);});});
     main.querySelectorAll('[data-rmdel]').forEach(function(b){b.addEventListener('click',function(){var dm=b.closest('.dmap');if(dm)admResMapaMut(parseInt(dm.dataset.rmi),'del',b.dataset.rmdel);});});
     main.querySelectorAll('[data-rmaddbranch]').forEach(function(b){b.addEventListener('click',function(){var dm=b.closest('.dmap');if(dm)admResMapaMut(parseInt(dm.dataset.rmi),'addbranch');});});
+    // "Refazer com IA" — ligado JUNTO das ações do mapa em caixa (rodam tanto nos
+    // Resumos/dirMapaEditHTML quanto nas Diretrizes/admRefMapaHTML); o querySelectorAll
+    // acha o botão em qualquer um dos dois editores.
+    main.querySelectorAll('[data-refmapa-genai]').forEach(function(b){b.addEventListener('click',function(){admRefMapaGenAI(parseInt(b.dataset.refmapaGenai));});});
     main.querySelectorAll('[data-adm-reftoggle]').forEach(function(b){b.addEventListener('click',function(){
       var i=parseInt(b.dataset.admReftoggle);var d=diretrizes[i];if(!d)return;
       var toPriv=!dirIsPrivate(d);
@@ -11334,7 +11346,6 @@ function bindAdmSec(sec){
     main.querySelectorAll('[data-reffc-del]').forEach(function(b){b.addEventListener('click',function(){var p=b.dataset.reffcDel.split('-');admDelRefFlash(parseInt(p[0]),parseInt(p[1]));});});
     main.querySelectorAll('[data-reffc-add]').forEach(function(b){b.addEventListener('click',function(){admAddRefFlash(parseInt(b.dataset.reffcAdd));});});
     main.querySelectorAll('[data-reffc-mode]').forEach(function(b){b.addEventListener('click',function(){admRefFlashMode=b.dataset.reffcMode;rerenderRef();});});
-    main.querySelectorAll('[data-refmapa-genai]').forEach(function(b){b.addEventListener('click',function(){admRefMapaGenAI(parseInt(b.dataset.refmapaGenai));});});
     main.querySelectorAll('[data-refmapa-save]').forEach(function(b){b.addEventListener('click',function(){admSaveRefMapa(parseInt(b.dataset.refmapaSave));});});
     main.querySelectorAll('[data-refmapa-addnode]').forEach(function(b){b.addEventListener('click',function(){admRefMapaAddNode(parseInt(b.dataset.refmapaAddnode));});});
     main.querySelectorAll('[data-refmapa-addchild]').forEach(function(b){b.addEventListener('click',function(){var p=b.dataset.refmapaAddchild.split('-');admRefMapaAddChild(parseInt(p[0]),parseInt(p[1]));});});
