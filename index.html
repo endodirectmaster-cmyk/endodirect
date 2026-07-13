@@ -10223,11 +10223,11 @@ function normDirMapa(r){
 // Prompt ÚNICO da geração de mapa 3 níveis (evita divergência entre os botões
 // "Gerar/Refazer com IA" do formulário e do editor em caixa).
 function dirMapaGenUsr(base){
-  return 'A partir do conteúdo abaixo, gere um mapa mental COMPLETO em 3 níveis. Retorne APENAS JSON no formato {"central":"tema central curto","nodes":[{"label":"ramo","children":[{"label":"subramo","children":["detalhe concreto","detalhe concreto"]}]}]}. Use de 5 a 7 ramos; cada ramo com 3 a 5 subramos; e, onde fizer sentido clínico, cada subramo com 2 a 4 sub-subramos (detalhes). CADA item do nível mais baixo deve trazer um DADO CONCRETO (critério, valor de corte, dose, meta ou conduta) — nunca generalidades. Um subramo pode ser uma string simples quando não tiver detalhes.\n\n'+base;
+  return 'A partir do conteúdo abaixo, gere um mapa mental COMPLETO em 3 níveis. Retorne APENAS JSON válido e FECHADO (todas as chaves e colchetes fechados) no formato {"central":"tema central curto","nodes":[{"label":"ramo","children":[{"label":"subramo","children":["detalhe concreto","detalhe concreto"]}]}]}. Use de 5 a 6 ramos; cada ramo com 3 a 4 subramos; e, onde agregar clinicamente, alguns subramos com 2 a 3 sub-subramos (detalhes). Rótulos CURTOS (poucas palavras). CADA item do nível mais baixo traz um DADO CONCRETO (critério, valor de corte, dose, meta ou conduta) — nunca generalidades. Um subramo pode ser uma string simples quando não tiver detalhes. Não é obrigatório preencher todos os níveis em todo ramo — priorize clareza e mantenha o JSON compacto para caber na resposta.\n\n'+base;
 }
 function genDirMapa(base,tema){
   return callAIJson(authoringSys('Crie mapas mentais de estudo COMPLETOS, específicos e clinicamente corretos.'),
-    dirMapaGenUsr(base),2600,1,null,(tema||(typeof admRefTema!=='undefined'?admRefTema:'')||''))
+    dirMapaGenUsr(base),4000,1,null,(tema||(typeof admRefTema!=='undefined'?admRefTema:'')||''))
     .then(function(r){var mapa=normDirMapa(r);if(!mapa||!mapa.nodes.length)throw new Error('IA não retornou um mapa válido.');return mapa;});
 }
 // Texto-base p/ gerar a partir de um item JÁ salvo (resumo/diretriz): usa os
