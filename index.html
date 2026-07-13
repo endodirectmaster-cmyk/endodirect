@@ -8469,7 +8469,7 @@ function initMural(){
       +'<div class="mural-card-tags"><span class="tag '+cls.tag+'">'+esc(tipo)+'</span><span class="tag tag-muted">'+esc(fonte)+'</span></div>'
       +'<h3>'+esc(a.titulo||'Aviso aos alunos')+'</h3>'
       +'<div class="mural-date">'+dateBR(a.at)+'</div>'
-      +'<div class="mural-text">'+esc(a.texto||'Comunicado publicado pela equipe Endodirect.')+'</div>'
+      +'<div class="mural-text">'+esc(muralBodyText(a)||'Comunicado publicado pela equipe Endodirect.')+'</div>'
       +'<div class="mural-source">Fonte: '+source+'</div>'
       +'</article>';
   }
@@ -10581,7 +10581,7 @@ function admMuralSecHTML(){
       +'<div class="mural-card-tags"><span class="tag '+cls.tag+'">'+esc(tipo)+'</span><span class="tag tag-muted">'+esc(fonte)+'</span></div>'
       +'<h3>'+esc(a.titulo||'Aviso aos alunos')+'</h3>'
       +'<div class="mural-date">'+dateBR(a.at)+'</div>'
-      +'<div class="mural-text">'+esc(a.texto||'Comunicado publicado pela equipe Endodirect.')+'</div>'
+      +'<div class="mural-text">'+esc(muralBodyText(a)||'Comunicado publicado pela equipe Endodirect.')+'</div>'
       +'<div class="mural-source">Fonte: '+source+'</div>'
       +'<div class="mural-card-actions">'+(isRadarAuto(a)?'<button class="btn btn-outline btn-sm" data-adm-hideradar="'+esc(avisoKeyStr(a))+'">🙈 Ocultar</button>':'<button class="btn btn-outline btn-sm" data-adm-editav="'+i+'">Editar</button><button class="btn btn-outline btn-sm" data-adm-delav="'+i+'" style="color:var(--red);border-color:var(--red)">🗑 Excluir</button>')+'</div>'
       +'</article>';
@@ -11607,7 +11607,19 @@ function bindAdmSec(sec){
       persistAdm();admMuralShowForm=false;admMuralEdit=null;renderAdmSec('mural');
     });
     main.querySelectorAll('[data-adm-editav]').forEach(function(b){b.addEventListener('click',function(){admMuralEdit=parseInt(b.dataset.admEditav);admMuralShowForm=true;renderAdmSec('mural');document.getElementById('adm-main').scrollTop=0;});});
-    main.querySelectorAll('[data-adm-delav]').forEach(function(b){b.addEventListener('click',function(){var a=admAvisos[parseInt(b.dataset.admDelav)];if(!confirm('Excluir o aviso "'+((a&&a.titulo)||'')+'"? Esta ação não pode ser desfeita.'))return;admAvisos.splice(parseInt(b.dataset.admDelav),1);persistAdm();renderAdmSec('mural');});});
+    main.querySelectorAll('[data-adm-delav]').forEach(function(b){b.addEventListener('click',function(){var a=admAvisos[parseInt(b.dataset.admDelav)];if(!confirm('Excluir o aviso "'+((a&&a.titulo)||'')+'"? Esta ação não pode ser desfeita.'))return;
+      // Exclusão PERMANENTE: itens vindos do radar/sociedade também vivem em
+      // radar_avisos e seriam RE-INJETADOS no F5 (mergeRadarAvisos) e pelo cron.
+      // Então removo dos dois arrays E registro a chave em radar_hidden (o cron
+      // consulta radar_hidden em existingMuralKeys e nunca re-adiciona). saveRemoteState
+      // persiste adm_avisos + radar_avisos + radar_hidden de uma vez.
+      var key=avisoKeyStr(a);
+      admAvisos.splice(parseInt(b.dataset.admDelav),1);
+      radarAvisos=radarAvisos.filter(function(x){return avisoKeyStr(x)!==key;});
+      if(key&&radarHidden.indexOf(key)<0)radarHidden.push(key);
+      try{lsSet('adm_avisos',admAvisos);}catch(e){}
+      saveRemoteState();
+      renderAdmSec('mural');});});
   }
 
   if(sec==='calc'){ activeCalc=null; initCalc(main); }
@@ -12124,6 +12136,26 @@ function ensureMuralLightbox(){
 // Renderiza o texto do card escapando tudo, mas convertendo imagens em markdown
 // ![alt](url) (apenas http/https) em <img> inline. O resto do texto é escapado
 // normalmente (com white-space:pre-line preservando as quebras de linha).
+// Tipos "formais" (documentos oficiais/estruturados). O professor pediu que
+// esses cards sejam apresentados como texto corrido, completo e FORMAL — sem o
+// modelo "📝 Resumo / 💡 Por que importa na prática / ⚠️ Cautela". A limpeza é
+// feita no RENDER (cobre itens já gravados no radar E os futuros): remove os
+// emojis/rótulos do modelo, mas preserva todo o conteúdo (nada é descartado).
+var MURAL_FORMAL_TYPES={'Comunicado':1,'Diretriz':1,'Consenso':1,'Discussão Clínica':1,'Artigo de Revisão':1};
+function isFormalMuralType(t){return !!MURAL_FORMAL_TYPES[String(t||'').trim()];}
+function formalizeMuralText(txt){
+  return String(txt||'').split('\n').map(function(ln){
+    var s=ln.replace(/^[^\p{L}\p{N}]+/u,''); // tira emoji/símbolo inicial (📝 💡 ⚠️ 📅 🏛️ 🔬)
+    s=s.replace(/^(Resumo|Por que importa[^:]*|Cautela[^:]*)\s*:\s*/i,''); // tira os rótulos do modelo, mantém o texto
+    return s;
+  }).join('\n').replace(/[ \t]+\n/g,'\n').replace(/\n{3,}/g,'\n\n').trim();
+}
+// Texto do corpo do card, já formalizado quando o tipo é um documento formal.
+function muralBodyText(a){
+  var t=(a&&a.texto)||'';
+  var tipo=(typeof muralDisplayType==='function')?muralDisplayType(a):(a&&a.tipo);
+  return isFormalMuralType(tipo)?formalizeMuralText(t):t;
+}
 function muralTextHTML(txt){
   // Escapa TUDO primeiro (XSS-safe) e só então converte uma marcação simples:
   // imagens ![alt](url), **negrito**, __sublinhado__ e *itálico*. As imagens viram
@@ -12154,7 +12186,7 @@ function muralNoticeCardHTML(a,admin){
     +'<h3>'+esc(a.titulo||'Aviso aos alunos')+'</h3>'
     +'<div class="mural-date">'+dateBR(a.at)+'</div>'
     +imgHTML
-    +'<div class="mural-text">'+muralTextHTML(a.texto||'Comunicado publicado pela equipe Endodirect.')+'</div>'
+    +'<div class="mural-text">'+muralTextHTML(muralBodyText(a)||'Comunicado publicado pela equipe Endodirect.')+'</div>'
     +'<div class="mural-source">Fonte: '+source+'</div>'
     +(admin?'<div class="mural-card-actions">'+(isRadarAuto(a)?'<button class="btn btn-outline btn-sm" data-adm-editav="'+i+'">✏️ Editar</button><button class="btn btn-outline btn-sm" data-adm-hideradar="'+esc(avisoKeyStr(a))+'">🙈 Ocultar</button>':'<button class="btn btn-outline btn-sm" data-adm-editav="'+i+'">Editar</button><button class="btn btn-outline btn-sm" data-adm-delav="'+i+'" style="color:var(--red);border-color:var(--red)">🗑 Excluir</button>')+'</div>':'')
     +'</article>';
