@@ -4774,36 +4774,24 @@ function startSupabaseAuthWatcher(){
 function startGoogleOAuth(){
   var client=getSupabaseClient();
   if(!client){
-    showLoginError('Supabase ainda nao carregou. Usando acesso temporario por e-mail.');
-    legacyGooglePromptLogin();
+    showLoginError('Supabase ainda nao carregou. Atualize a pagina (F5) e tente novamente.');
     return;
   }
-  fetch(SUPABASE_URL+'/auth/v1/settings',{headers:{apikey:SUPABASE_PUBLISHABLE_KEY}})
-    .then(function(r){
-      if(!r.ok)throw new Error('Project URL invalido ou Auth indisponivel.');
-      return client.auth.signInWithOAuth({
-        provider:'google',
-        options:{redirectTo:authBaseURL()+'/',queryParams:{prompt:'select_account'}}
-      });
-    })
-    .then(function(res){if(res&&res.error)throw res.error;})
-    .catch(function(e){
-      showLoginError('Confirme o Project URL do Supabase para ativar login Google real. Usando acesso temporario por e-mail.');
-      console.warn('Supabase OAuth unavailable',e);
-      legacyGooglePromptLogin();
-    });
-  return;
-  if(!client){
-    showLoginError('Supabase ainda não carregou. Atualize a página e tente novamente.');
-    return;
-  }
+  // Login Google REAL via Supabase, chamado direto. Antes havia um "preflight"
+  // GET /auth/v1/settings que, ao falhar (endpoint instavel ou a chave publishable
+  // recusada nesse endpoint), LANCAVA erro e BLOQUEAVA o OAuth, caindo num acesso
+  // falso por e-mail (legacyGooglePromptLogin) — deixando o botao "Continuar com o
+  // Google" sem funcionar mesmo quando o OAuth em si estava OK. signInWithOAuth so
+  // monta o redirect para o Google e ja trata os proprios erros; nao precisa do
+  // preflight. Removido o guard (e o codigo morto que existia abaixo do return).
   client.auth.signInWithOAuth({
     provider:'google',
-    options:{redirectTo:authBaseURL()+'/'}
+    options:{redirectTo:authBaseURL()+'/',queryParams:{prompt:'select_account'}}
   }).then(function(res){
-    if(res.error)showLoginError('Erro no login Google: '+res.error.message);
+    if(res&&res.error)showLoginError('Nao foi possivel iniciar o login com o Google: '+(res.error.message||'tente novamente')+'. Voce tambem pode entrar com e-mail e senha.');
   }).catch(function(e){
-    showLoginError('Erro no login Google: '+e.message);
+    showLoginError('Nao foi possivel iniciar o login com o Google. Tente novamente ou entre com e-mail e senha.');
+    console.warn('Supabase OAuth error',e);
   });
 }
 
@@ -9751,7 +9739,7 @@ function renderAdmSec(sec){
   if(sec==='provas')m.innerHTML=admProvasSecHTML();
   else if(sec==='cursos')m.innerHTML=admCursosHTML();
   else if(sec==='estudantes'){m.innerHTML=admEstudantesHTML();loadAdmEstudantes();}
-  else if(sec==='analytics'){m.innerHTML=admAnalyticsHTML();loadAdmOverview();var rtA=document.getElementById('adm-analytics-retry');if(rtA)rtA.addEventListener('click',function(){loadAdmOverview(true);});}
+  else if(sec==='analytics'){m.innerHTML=admAnalyticsHTML();loadAdmOverview();loadAdmEstudantes();var rtA=document.getElementById('adm-analytics-retry');if(rtA)rtA.addEventListener('click',function(){loadAdmOverview(true);});}
   else if(sec==='mural')m.innerHTML=admMuralSecHTML();
   else if(sec==='ref'||sec==='resumos'){
     var _nm=(sec==='resumos')?'res':'dir';
@@ -9848,8 +9836,9 @@ function loadAdmEstudantes(force){
     admEstLoading=false;
     if(res.error)admEstErr=res.error.message||'Falha ao carregar os alunos.';
     else admEstData=res.data||{};
-    if(admCurrentSec==='estudantes')renderAdmSec('estudantes');
-  }).catch(function(e){admEstLoading=false;admEstErr=(e&&e.message)||'Falha ao carregar os alunos.';if(admCurrentSec==='estudantes')renderAdmSec('estudantes');});
+    // Estudantes e Analytics (o card de conversão consome admEstData) reagem à carga.
+    if(admCurrentSec==='estudantes'||admCurrentSec==='analytics')renderAdmSec(admCurrentSec);
+  }).catch(function(e){admEstLoading=false;admEstErr=(e&&e.message)||'Falha ao carregar os alunos.';if(admCurrentSec==='estudantes'||admCurrentSec==='analytics')renderAdmSec(admCurrentSec);});
 }
 function admEstFmtDate(s){if(!s)return '—';var d=new Date(s);return isNaN(d.getTime())?'—':d.toLocaleDateString('pt-BR');}
 function admEstPlanoTag(p){
@@ -10655,6 +10644,58 @@ function loadAdmOverview(force){
     if(admCurrentSec==='analytics')renderAdmSec('analytics');
   }).catch(function(e){admOverviewLoading=false;admOverviewErr=(e&&e.message)||'Falha ao carregar os dados.';if(admCurrentSec==='analytics')renderAdmSec('analytics');});
 }
+// Card de conversão degustação → assinante. Calculado no cliente a partir da
+// mesma lista real de alunos da aba Estudantes (RPC endodirect_admin_students):
+// cada aluno traz created_at (cadastro) e plano (Gold/Standard = assinante;
+// caso contrário = degustação). Assim o professor acompanha a conversão sem
+// depender de novo backend. "tempo médio até assinar" só aparece se a RPC vier
+// enriquecida com esse dado (d.tempo_medio_pagar_dias) — senão é omitido.
+function admConvIsPaying(e){return !!e&&(e.plano==='Gold'||e.plano==='Standard');}
+function admConversionCardHTML(){
+  var d=admEstData,n=function(v){return Number(v||0);};
+  var wrap=function(inner){return '<div class="card" style="margin-bottom:1.1rem"><div class="card-head"><span class="card-title">💳 Conversão degustação → assinante</span>'+(d?'<span class="tag tag-blue">Dados reais</span>':'')+'</div>'+inner+'</div>';};
+  if(admEstErr)return wrap('<div class="empty" style="padding:.6rem;font-size:.78rem;color:var(--t3)">Não foi possível carregar a lista de alunos para calcular a conversão.</div>');
+  if(!d)return wrap(ldHTML('Calculando conversão…'));
+  var students=Array.isArray(d.students)?d.students:[];
+  var total=n(d.total)||students.length;
+  var pagos=n(d.pagos)||students.filter(admConvIsPaying).length;
+  var degust=Math.max(0,total-pagos);
+  var conv=total?Math.round(pagos/total*100):0;
+  // Coortes por data de cadastro: últimos 30 dias × antes disso. Recentes tendem
+  // a converter menos (menos tempo para decidir) — a comparação mostra a tendência.
+  var now=Date.now(),MS30=30*864e5,hasDate=false;
+  var recent=[],older=[];
+  students.forEach(function(e){var t=e&&e.created_at?new Date(e.created_at).getTime():NaN;if(isNaN(t))return;hasDate=true;((now-t)<=MS30?recent:older).push(e);});
+  var rPay=recent.filter(admConvIsPaying).length,oPay=older.filter(admConvIsPaying).length;
+  var convR=recent.length?Math.round(rPay/recent.length*100):null;
+  var convO=older.length?Math.round(oPay/older.length*100):null;
+  var esteMes=n(d.este_mes);
+  var kpi=function(val,lbl,cor){return '<div class="adm-bigstat"><div class="adm-bigstat-n" style="color:'+cor+'">'+val+'</div><div class="adm-bigstat-l">'+lbl+'</div></div>';};
+  var inner='<div class="g2" style="grid-template-columns:repeat(4,1fr);margin:.2rem 0 1rem">'
+    +kpi(conv+'%','Conversão geral','var(--grn)')
+    +kpi(pagos,'Assinantes','var(--gold)')
+    +kpi(degust,'Em degustação','var(--blue)')
+    +kpi(esteMes,'Novos este mês','var(--pur)')
+  +'</div>';
+  // Funil visual cadastros → assinantes.
+  inner+='<div class="rep-area-row"><div class="rep-area-name" style="min-width:150px">Cadastros</div><div class="rep-area-track"><div class="rep-area-fill" style="width:100%;background:var(--blue)"></div></div><div class="rep-area-pct">'+total+'</div></div>'
+    +'<div class="rep-area-row"><div class="rep-area-name" style="min-width:150px">Assinantes</div><div class="rep-area-track"><div class="rep-area-fill" style="width:'+conv+'%;background:var(--gold)"></div></div><div class="rep-area-pct">'+pagos+' · '+conv+'%</div></div>';
+  // Tempo médio até assinar (só se a RPC fornecer).
+  var tMed=d.tempo_medio_pagar_dias!=null?Number(d.tempo_medio_pagar_dias):null;
+  if(tMed!=null&&!isNaN(tMed)){
+    inner+='<div style="margin-top:.7rem;padding:.55rem .7rem;background:var(--s2);border-radius:10px;font-size:.82rem"><b>⏱️ Tempo médio até assinar:</b> '+(tMed<1?'menos de 1 dia':(Math.round(tMed*10)/10)+' dia'+(Math.round(tMed)===1?'':'s'))+' <span style="color:var(--t3)">(do cadastro ao 1º pagamento)</span></div>';
+  }
+  // Comparação por período (coorte).
+  if(hasDate){
+    inner+='<div class="sec-title" style="margin:1rem 0 .5rem;font-size:.82rem">Conversão por período de cadastro</div>'
+      +'<div class="g2" style="align-items:start">'
+        +'<div style="padding:.6rem .75rem;background:var(--s2);border-radius:10px"><div style="font-size:.72rem;color:var(--t2);margin-bottom:.2rem">Entraram nos últimos 30 dias</div><div style="font-weight:800;font-size:1.1rem;color:var(--tx)">'+(convR==null?'—':convR+'%')+' <span style="font-size:.72rem;font-weight:600;color:var(--t3)">'+rPay+'/'+recent.length+'</span></div></div>'
+        +'<div style="padding:.6rem .75rem;background:var(--s2);border-radius:10px"><div style="font-size:.72rem;color:var(--t2);margin-bottom:.2rem">Entraram há mais de 30 dias</div><div style="font-weight:800;font-size:1.1rem;color:var(--tx)">'+(convO==null?'—':convO+'%')+' <span style="font-size:.72rem;font-weight:600;color:var(--t3)">'+oPay+'/'+older.length+'</span></div></div>'
+      +'</div>';
+  }
+  inner+='<div style="font-size:.7rem;color:var(--t3);margin-top:.6rem">ℹ️ Assinante = plano Standard ou Gold ativo; degustação = conta gratuita ainda sem plano. As coortes usam a data de cadastro de cada aluno.</div>';
+  return wrap(inner);
+}
 function admAnalyticsHTML(){
   var head='<div class="adm-ph"><h1>Analytics</h1><p>Indicadores reais de uso e desempenho dos estudantes.</p></div><div class="adm-pc">';
   if(admOverviewErr){
@@ -10694,6 +10735,7 @@ function admAnalyticsHTML(){
       +kpi(n(ov.simulados),'Simulados realizados','var(--gold)')
       +kpi(taxa==null?'—':(taxa+'%'),'Taxa de acerto geral','var(--pur)')
     +'</div>';
+  html+=admConversionCardHTML();
   if(semDados){
     html+='<div class="card" style="text-align:center;padding:1.5rem"><div style="font-size:1.5rem">📊</div><div style="font-weight:700;color:var(--tx);margin:.3rem 0">Ainda sem atividade de questões/simulados</div><p style="font-size:.82rem;color:var(--t2);max-width:540px;margin:.2rem auto">Assim que os alunos começarem a responder questões e simulados, o desempenho por subespecialidade aparece aqui automaticamente.</p></div>';
   }else{
