@@ -10219,6 +10219,38 @@ function normDirMapa(r){
   if(!central&&!nodes.length)return null;
   return {central:central,nodes:nodes};
 }
+// Prompt ÚNICO da geração de mapa 3 níveis (evita divergência entre os botões
+// "Gerar/Refazer com IA" do formulário e do editor em caixa).
+function dirMapaGenUsr(base){
+  return 'A partir do conteúdo abaixo, gere um mapa mental COMPLETO em 3 níveis. Retorne APENAS JSON no formato {"central":"tema central curto","nodes":[{"label":"ramo","children":[{"label":"subramo","children":["detalhe concreto","detalhe concreto"]}]}]}. Use de 5 a 7 ramos; cada ramo com 3 a 5 subramos; e, onde fizer sentido clínico, cada subramo com 2 a 4 sub-subramos (detalhes). CADA item do nível mais baixo deve trazer um DADO CONCRETO (critério, valor de corte, dose, meta ou conduta) — nunca generalidades. Um subramo pode ser uma string simples quando não tiver detalhes.\n\n'+base;
+}
+function genDirMapa(base,tema){
+  return callAIJson(authoringSys('Crie mapas mentais de estudo COMPLETOS, específicos e clinicamente corretos.'),
+    dirMapaGenUsr(base),2600,1,null,(tema||(typeof admRefTema!=='undefined'?admRefTema:'')||''))
+    .then(function(r){var mapa=normDirMapa(r);if(!mapa||!mapa.nodes.length)throw new Error('IA não retornou um mapa válido.');return mapa;});
+}
+// Texto-base p/ gerar a partir de um item JÁ salvo (resumo/diretriz): usa os
+// próprios pontos-chave + resumo do item (o editor em caixa não tem os campos do
+// formulário à mão).
+function dirItemBaseTxt(d){
+  var pts=(d&&Array.isArray(d.pts))?d.pts.map(function(s){return String(s).trim();}).filter(Boolean):[];
+  var resumo=(d&&d.resumo)?String(d.resumo).trim():'';
+  var tema=(d&&(d.tema||d.titulo||d.topic))||(typeof admRefTema!=='undefined'?admRefTema:'')||'';
+  if(!pts.length&&!resumo)return '';
+  return 'Tema: '+tema+'.\nPontos-chave:\n'+pts.map(function(p){return '- '+p;}).join('\n')+(resumo?('\nResumo:\n'+resumo):'');
+}
+// "Refazer com IA" DENTRO do editor em caixa (aba Mapas mentais do resumo).
+function admRefMapaGenAI(i){
+  var d=diretrizes[i];if(!d)return;
+  var base=dirItemBaseTxt(d);
+  if(!base){notify('Este resumo não tem pontos-chave nem texto para basear o mapa. Preencha o Resumo primeiro.','err');return;}
+  if(d.mapa&&d.mapa.nodes&&d.mapa.nodes.length&&!confirm('Isso substitui o mapa atual por um novo gerado pela IA (3 níveis). Continuar?'))return;
+  var btn=document.querySelector('[data-refmapa-genai="'+i+'"]');
+  var lbl=btn?btn.innerHTML:'';if(btn){btn.disabled=true;btn.innerHTML=ldHTML('Gerando...');}
+  genDirMapa(base,(d.tema||d.titulo||d.topic))
+  .then(function(mapa){d.mapa=mapa;persistDiretrizes();notify('Mapa gerado em 3 níveis — revise e publique.','ok');rerenderRef();})
+  .catch(function(e){notify('Erro ao gerar mapa: '+((e&&e.message)||'falha'),'err');if(btn){btn.disabled=false;btn.innerHTML=lbl;}});
+}
 function admRefSecHTML(){
   var L=refLabels();
   var g=(admRefEdit!==null&&diretrizes[admRefEdit])?diretrizes[admRefEdit]:null;
@@ -10434,6 +10466,7 @@ function admRefMapaHTML(d,i){
   });
   h+='</div></div>'
     +'<div style="display:flex;gap:.5rem;margin-top:.8rem;flex-wrap:wrap">'
+      +'<button class="btn btn-outline btn-sm" data-refmapa-genai="'+i+'">🧠 Refazer com IA (3 níveis)</button>'
       +'<button class="btn btn-outline btn-sm" data-refmapa-addnode="'+i+'">➕ Adicionar ramo</button>'
       +'<button class="btn btn-primary btn-sm" data-refmapa-save="'+i+'">💾 Salvar mapa</button>'
     +'</div></div>';
@@ -11300,6 +11333,7 @@ function bindAdmSec(sec){
     main.querySelectorAll('[data-reffc-del]').forEach(function(b){b.addEventListener('click',function(){var p=b.dataset.reffcDel.split('-');admDelRefFlash(parseInt(p[0]),parseInt(p[1]));});});
     main.querySelectorAll('[data-reffc-add]').forEach(function(b){b.addEventListener('click',function(){admAddRefFlash(parseInt(b.dataset.reffcAdd));});});
     main.querySelectorAll('[data-reffc-mode]').forEach(function(b){b.addEventListener('click',function(){admRefFlashMode=b.dataset.reffcMode;rerenderRef();});});
+    main.querySelectorAll('[data-refmapa-genai]').forEach(function(b){b.addEventListener('click',function(){admRefMapaGenAI(parseInt(b.dataset.refmapaGenai));});});
     main.querySelectorAll('[data-refmapa-save]').forEach(function(b){b.addEventListener('click',function(){admSaveRefMapa(parseInt(b.dataset.refmapaSave));});});
     main.querySelectorAll('[data-refmapa-addnode]').forEach(function(b){b.addEventListener('click',function(){admRefMapaAddNode(parseInt(b.dataset.refmapaAddnode));});});
     main.querySelectorAll('[data-refmapa-addchild]').forEach(function(b){b.addEventListener('click',function(){var p=b.dataset.refmapaAddchild.split('-');admRefMapaAddChild(parseInt(p[0]),parseInt(p[1]));});});
@@ -11337,11 +11371,8 @@ function bindAdmSec(sec){
       var base=dirFormBaseTxt();
       if(!base){notify('Preencha bullets ou resumo antes de gerar.','err');return;}
       var lbl=mGen.innerHTML;mGen.disabled=true;mGen.innerHTML=ldHTML('Gerando...');
-      callAIJson(authoringSys('Crie mapas mentais de estudo COMPLETOS, específicos e clinicamente corretos.'),
-        'A partir do conteúdo abaixo, gere um mapa mental COMPLETO em 3 níveis. Retorne APENAS JSON no formato {"central":"tema central curto","nodes":[{"label":"ramo","children":[{"label":"subramo","children":["detalhe concreto","detalhe concreto"]}]}]}. Use de 5 a 7 ramos; cada ramo com 3 a 5 subramos; e, onde fizer sentido clínico, cada subramo com 2 a 4 sub-subramos (detalhes). CADA item do nível mais baixo deve trazer um DADO CONCRETO (critério, valor de corte, dose, meta ou conduta) — nunca generalidades. Um subramo pode ser uma string simples quando não tiver detalhes.\n\n'+base,2600,1,null,(admRefTema||''))
-      .then(function(r){
-        var mapa=normDirMapa(r);
-        if(!mapa||!mapa.nodes.length)throw new Error('IA não retornou um mapa válido.');
+      genDirMapa(base,admRefTema)
+      .then(function(mapa){
         var ta=document.getElementById('adm-ref-mapa');if(ta)ta.value=mapaToText(mapa);
         notify('Mapa mental gerado — revise e salve.','ok');
       }).catch(function(e){notify('Erro ao gerar mapa: '+(e.message||'falha'),'err');})
