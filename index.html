@@ -3118,7 +3118,23 @@ function mergeRadarAvisos(list){
   // antigo". O radar já popula o mural; o defaultMuralMap segue só para
   // canonicalizar o conteúdo dos itens que casam por sourceId (normalizeMuralAviso).
   var defaults=defaultMuralMap();
-  return Array.isArray(list)?list.map(function(a){return normalizeMuralAviso(a,defaults);}):[];
+  return dedupeMuralList(Array.isArray(list)?list.map(function(a){return normalizeMuralAviso(a,defaults);}):[]);
+}
+// Remove duplicatas VISUAIS do mural: a mesma notícia colhida 2x (ex.: cópia em
+// cache no localStorage com sourceId ANTIGO + cópia fresca do servidor com
+// sourceId NOVO após um redeploy → o dedup por sourceId não pega). Chave estável
+// = título+fonte normalizados (mesma revista/sociedade + mesmo título = mesma
+// notícia). Mantém a cópia mais recente (maior 'at') e preserva a referência do
+// objeto (para admAvisos.indexOf(a) seguir achando o card na edição/exclusão).
+function dedupeMuralList(list){
+  var idx={},out=[];
+  (list||[]).forEach(function(a){
+    var key=muralPlain((a&&a.titulo)||'').trim()+'|'+muralPlain((a&&a.fonte)||'').trim();
+    if(key==='|'){out.push(a);return;} // sem identidade → não arrisca fundir
+    if(idx[key]===undefined){idx[key]=out.length;out.push(a);}
+    else if((Number(a&&a.at)||0)>(Number(out[idx[key]]&&out[idx[key]].at)||0)){out[idx[key]]=a;}
+  });
+  return out;
 }
 var admAvisos=mergeRadarAvisos(lsGet('adm_avisos')||[]);
 var radarAvisos=[]; // avisos automaticos do radar (campo radar_avisos); preservado nos saves do admin
@@ -12132,7 +12148,7 @@ initMural=function(){
   try{ensureMuralLightbox();}catch(e){}
   var el=document.getElementById('mural-pc');if(!el)return;
   function dateBR(v){var d=new Date(v||Date.now());if(isNaN(d.getTime()))d=new Date();return d.toLocaleDateString('pt-BR');}
-  admAvisos=admAvisos.map(function(a){return normalizeMuralAviso(a,defaultMuralMap());});
+  admAvisos=dedupeMuralList(admAvisos.map(function(a){return normalizeMuralAviso(a,defaultMuralMap());}));
   var opt=muralFilterOptions(admAvisos,muralFilter);
   muralFilter=opt.current;
   var tiposSet={};admAvisos.forEach(function(a){tiposSet[muralDisplayType(a)]=1;});
@@ -12321,7 +12337,7 @@ evalRx=function(){
 };
 admMuralSecHTML=function(){
   function dateBR(v){var d=new Date(v||Date.now());if(isNaN(d.getTime()))d=new Date();return d.toLocaleDateString('pt-BR');}
-  admAvisos=admAvisos.map(function(a){return normalizeMuralAviso(a,defaultMuralMap());});
+  admAvisos=dedupeMuralList(admAvisos.map(function(a){return normalizeMuralAviso(a,defaultMuralMap());}));
   var opt=muralFilterOptions(admAvisos,admMuralFilter);
   admMuralFilter=opt.current;
   var tiposSet={};admAvisos.forEach(function(a){tiposSet[muralDisplayType(a)]=1;});
