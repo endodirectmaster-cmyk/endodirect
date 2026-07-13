@@ -2965,6 +2965,10 @@ function normalizeMuralType(tipo,titulo,texto,fonte){
 }
 function inferMuralSubspecialty(item){
   item=item||{};
+  // Comunicados/eventos (inclui os Informes de sociedades: SBEM, SBD…) NÃO têm
+  // subespecialidade específica — não recebem chip nem entram nos filtros por área.
+  var _rt=String(item.tipo||'');
+  if(item.society||_rt==='Comunicado'||_rt==='Aviso'||_rt==='Evento')return '';
   if(item.subespecialidade)return item.subespecialidade;
   var p=muralPlain([item.titulo,item.texto,item.fonte,item.tipo].join(' '));
   if(/diabet|insulin|glicemi|glucose|glp-?1|hba1c|glycemic/.test(p))return'Diabetes';
@@ -12066,7 +12070,7 @@ function muralNoticeCardHTML(a,admin){
   var _txt=String(a.texto||'');
   var _wide=/!\[[^\]]*\]\(https?:\/\//.test(_txt)||tipo==='Discussão Clínica'||_txt.length>1100;
   return'<article class="mural-card '+meta.card+(_wide?' mural-card-wide':'')+'" data-mural-card>'
-    +'<div class="mural-card-tags"><span class="tag tag-blue">'+esc(tipo)+'</span><span class="tag '+meta.tag+'">'+esc(sub)+'</span></div>'
+    +'<div class="mural-card-tags"><span class="tag tag-blue">'+esc(tipo)+'</span>'+(sub?('<span class="tag '+meta.tag+'">'+esc(sub)+'</span>'):'')+'</div>'
     +'<h3>'+esc(a.titulo||'Aviso aos alunos')+'</h3>'
     +'<div class="mural-date">'+dateBR(a.at)+'</div>'
     +imgHTML
@@ -12091,7 +12095,7 @@ initMural=function(){
   });
   if(!muralFilter){
     var per={},capped=[];
-    avisos.forEach(function(a){var s=muralSubspecialty(a);per[s]=per[s]||0;if(per[s]<2){capped.push(a);per[s]++;}});
+    avisos.forEach(function(a){var s=muralSubspecialty(a);if(!s){capped.push(a);return;}per[s]=per[s]||0;if(per[s]<2){capped.push(a);per[s]++;}});
     avisos=capped;
   }
   var mPages=Math.max(1,Math.ceil(avisos.length/MURAL_PER_PAGE));
