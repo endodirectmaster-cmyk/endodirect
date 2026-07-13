@@ -51,15 +51,7 @@ const TABELAS = {
 | Diagnóstico | Citologia (núcleos típicos) | Histologia (invasão capsular/vascular) |
 | Fatores/mutações | Radiação, BRAF | RAS; variante Hürthle |`,
 
-'Carcinoma Medular e Anaplásico de Tireoide':
-`## 📊 Diferenciado × Medular × Anaplásico
-| Característica | Diferenciado | Medular | Anaplásico |
-| --- | --- | --- | --- |
-| Célula de origem | Folicular | Parafolicular (C) | Indiferenciada |
-| Marcador | Tireoglobulina | Calcitonina / CEA | Nenhum útil |
-| Capta iodo | Sim | Não | Não |
-| Genética | BRAF/RAS | RET (NEM 2) | BRAF em subgrupo |
-| Prognóstico | Bom | Intermediário | Muito ruim |`,
+// CA medular já ganhou a tabela no build4 (resumo reescrito) — não re-anexar aqui.
 
 'Tireoide e Gestação':
 `## 📊 Manejo por situação na gestação

@@ -2231,7 +2231,8 @@ var FC_SUBTOPICS={
  'Endocrinologia Feminina':['SOP','Amenorreia','Menopausa','Hirsutismo','Insuf. ovariana'],
  'Endocrinologia Masculina':['Hipogonadismo','Infertilidade/ginecomastia','Disfunção erétil'],
  'Endocrinologia do Esporte':['Tríade/RED-S','Anabolizantes','Exercício e DM','Performance'],
- 'Transgeneridade':['Homem Trans','Mulher Trans','Monitorização']
+ 'Transgeneridade':['Homem Trans','Mulher Trans','Monitorização'],
+ 'Endocrinopatias':['Lítio','Amiodarona','Corticoide','Estatinas','Imunoterapia (checkpoint)','Antipsicóticos','Fármaco-induzida (outras)']
 };
 // Regras de classificação (ordem = prioridade; 1ª que casar vence). Texto minúsculo.
 var FC_TEMA_RULES={
@@ -2246,7 +2247,8 @@ var FC_TEMA_RULES={
  'Endocrinologia Feminina':[['SOP',/\bsop\b|\bsomp\b|ovários? policíst|rotterdam|policíst/],['Insuf. ovariana',/insuficiência ovarian|falência ovarian|\bpoi\b/],['Menopausa',/menopaus|climatér|terapia hormonal|vasomotor|fogacho/],['Hirsutismo',/hirsut|hiperandrogen|\bacne\b/],['Amenorreia',/amenorrei|oligomenorr|menstrua|anovulaç|prolactin/]],
  'Endocrinologia Masculina':[['Disfunção erétil',/erétil/],['Infertilidade/ginecomastia',/infertil|ginecomast|espermatog|espermogram|varicocel|fertilidad/],['Hipogonadismo',/hipogonad|testosteron|klinefelter|kallmann|\blh\b|\bfsh\b|reposição|\btrt\b|exógen|hematócrit/]],
  'Endocrinologia do Esporte':[['Tríade/RED-S',/tríade|red-?s|disponibilidade energét|baixa densidad/],['Anabolizantes',/anaboliz|esteroid|doping|\bepo\b|eritropoetin/],['Exercício e DM',/diabet|glicem|glut4|hipoglicem/],['Performance',/performance|cafeín|exercíci|hipertrofi|cortisol|testosteron/]],
- 'Transgeneridade':[['Monitorização',/monitoriz|hematócrit|perfil lipíd|acompanha|rastrei|fertilidad|criopreserv|óssea|densidade/],['Mulher Trans',/feminiliz|mulher trans|estrogên|estradiol|antiandrogên|espironolacton|ciproteron|etinilestradiol/],['Homem Trans',/masculiniz|homem trans|testosteron/]]
+ 'Transgeneridade':[['Monitorização',/monitoriz|hematócrit|perfil lipíd|acompanha|rastrei|fertilidad|criopreserv|óssea|densidade/],['Mulher Trans',/feminiliz|mulher trans|estrogên|estradiol|antiandrogên|espironolacton|ciproteron|etinilestradiol/],['Homem Trans',/masculiniz|homem trans|testosteron/]],
+ 'Endocrinopatias':[['Lítio',/lítio|litio|lithium/],['Amiodarona',/amiodaron|\bait\b|\baih\b/],['Imunoterapia (checkpoint)',/checkpoint|imunoterap|nivolumab|pembrolizumab|ipilimumab|\bici\b|imunomediad|hipofisite/],['Estatinas',/estatin|statin|sinvastatin|atorvastatin|rosuvastatin/],['Antipsicóticos',/antipsicót|neuroléptic|risperidon|haloperidol|prolactin.*fármac/],['Corticoide',/corticoid|glicocorticoid|glucocorticoid|prednison|prednisolon|dexametason|cushing iatrog|supressão adrenal|desmame de corticoid/],['Fármaco-induzida (outras)',/fármac|medicament|induzid|iatrogên|droga/]]
 };
 function classifyTema(text,sub){var r=FC_TEMA_RULES[sub];if(!r)return 'Geral';var t=String(text||'').toLowerCase();for(var i=0;i<r.length;i++){if(r[i][1].test(t))return r[i][0];}return 'Geral';}
 // Índice enunciado/título → {sub,tema} EXPLÍCITOS da coleção publicada
