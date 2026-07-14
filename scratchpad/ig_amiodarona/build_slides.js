@@ -81,6 +81,41 @@ td.k{font-weight:800;color:var(--navy)}
 `;
 
 function brand(){return `<div class="brand"><div class="badge"><img src="${LOGO}"></div><div class="wm">Endo<b>direct</b></div></div>`;}
+
+// Ilustração vetorial: amiodarona (cápsula) liberando iodo (I) sobre a tireoide.
+const ILLUS=`<svg viewBox="120 86 602 486" xmlns="http://www.w3.org/2000/svg" style="width:892px;height:auto">
+  <defs>
+    <radialGradient id="halo" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" stop-color="#e7cd7e" stop-opacity=".40"/><stop offset="70%" stop-color="#e7cd7e" stop-opacity=".10"/><stop offset="100%" stop-color="#e7cd7e" stop-opacity="0"/>
+    </radialGradient>
+    <linearGradient id="gnavy" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#204a7d"/><stop offset="100%" stop-color="#0b2545"/></linearGradient>
+    <linearGradient id="ggold" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stop-color="#eed595"/><stop offset="100%" stop-color="#d9b652"/></linearGradient>
+  </defs>
+  <circle cx="575" cy="330" r="240" fill="url(#halo)"/>
+  <g>
+    <rect x="566" y="392" width="18" height="74" rx="9" fill="#9aa7b4" opacity=".40"/>
+    <path d="M0,-96 C50,-98 70,-50 60,10 C53,58 30,104 4,116 C-4,116 -12,96 -20,66 C-30,26 -34,-40 -12,-84 C-8,-92 -4,-96 0,-96 Z" transform="translate(592 300) rotate(13)" fill="url(#gnavy)"/>
+    <path d="M0,-96 C-50,-98 -70,-50 -60,10 C-53,58 -30,104 -4,116 C4,116 12,96 20,66 C30,26 34,-40 12,-84 C8,-92 4,-96 0,-96 Z" transform="translate(528 300) rotate(-13)" fill="url(#gnavy)"/>
+    <rect x="530" y="356" width="60" height="46" rx="20" fill="url(#gnavy)"/>
+    <path d="M0,-96 C50,-98 70,-50 60,10" transform="translate(592 300) rotate(13)" fill="none" stroke="#e7cd7e" stroke-width="6" opacity=".55" stroke-linecap="round"/>
+    <path d="M0,-96 C-50,-98 -70,-50 -60,10" transform="translate(528 300) rotate(-13)" fill="none" stroke="#e7cd7e" stroke-width="6" opacity=".55" stroke-linecap="round"/>
+  </g>
+  <g transform="rotate(-24 230 165)">
+    <rect x="150" y="140" width="170" height="62" rx="31" fill="#0b2545"/>
+    <rect x="235" y="140" width="85" height="62" rx="31" fill="url(#ggold)"/>
+    <ellipse cx="186" cy="160" rx="20" ry="8" fill="#ffffff" opacity=".18"/>
+  </g>
+  <path d="M300 236 C372 252 404 250 452 288" fill="none" stroke="#d9b652" stroke-width="5" stroke-dasharray="3 14" stroke-linecap="round"/>
+  <g font-family="'Segoe UI',Arial,sans-serif" font-weight="800" text-anchor="middle">
+    <g><circle cx="332" cy="250" r="26" fill="url(#ggold)" stroke="#0b2545" stroke-width="3"/><text x="332" y="260" font-size="26" fill="#0b2545">I</text></g>
+    <g><circle cx="396" cy="238" r="22" fill="url(#ggold)" stroke="#0b2545" stroke-width="3"/><text x="396" y="247" font-size="22" fill="#0b2545">I</text></g>
+    <g><circle cx="456" cy="266" r="24" fill="url(#ggold)" stroke="#0b2545" stroke-width="3"/><text x="456" y="275" font-size="23" fill="#0b2545">I</text></g>
+    <g opacity=".95"><circle cx="512" cy="304" r="18" fill="url(#ggold)" stroke="#0b2545" stroke-width="3"/><text x="512" y="312" font-size="18" fill="#0b2545">I</text></g>
+  </g>
+  <text x="196" y="120" font-family="'Segoe UI',Arial,sans-serif" font-size="24" font-weight="800" fill="#0b2545" text-anchor="middle" transform="rotate(-24 196 120)">Amiodarona</text>
+  <text x="392" y="198" font-family="'Segoe UI',Arial,sans-serif" font-size="21" font-weight="700" fill="#8a6d1e" text-anchor="middle">sobrecarga de iodo</text>
+  <text x="560" y="520" font-family="'Segoe UI',Arial,sans-serif" font-size="24" font-weight="800" fill="#0b2545" text-anchor="middle">Tireoide</text>
+</svg>`;
 function page(inner){return `<!doctype html><html><head><meta charset="utf-8"><style>${CSS}</style></head><body><div class="slide">${inner}</div></body></html>`;}
 
 const slides=[];
@@ -88,9 +123,10 @@ const slides=[];
 // SLIDE 1 — capa
 slides.push(page(`
   ${brand()}
-  <div class="kicker"><span class="n">●</span>Endocrinologia · Atualização clínica</div>
-  <h1>Disfunção<br>tireoidiana<br>induzida por<br>amiodarona</h1>
-  <div class="sub">Farmacologia do iodo, hipotireoidismo e tireotoxicose — AIT tipo 1 × tipo 2.</div>
+  <div class="kicker" style="margin-top:44px"><span class="n">●</span>Endocrinologia · Atualização clínica</div>
+  <h1 style="margin-top:18px;font-size:62px">Disfunção tireoidiana<br>induzida por amiodarona</h1>
+  <div class="sub" style="margin-top:18px">Farmacologia do iodo, hipotireoidismo e tireotoxicose — AIT tipo 1 × tipo 2.</div>
+  <div style="margin-top:14px;text-align:center">${ILLUS}</div>
   <div class="foot"><span class="hd">@endodirect</span><span class="swipe">arraste →</span></div>
 `));
 
