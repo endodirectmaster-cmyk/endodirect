@@ -3120,7 +3120,12 @@ function mergeRadarAvisos(list){
   // antigo". O radar já popula o mural; o defaultMuralMap segue só para
   // canonicalizar o conteúdo dos itens que casam por sourceId (normalizeMuralAviso).
   var defaults=defaultMuralMap();
-  return dedupeMuralList(Array.isArray(list)?list.map(function(a){return normalizeMuralAviso(a,defaults);}):[]);
+  // Filtra o que o professor ocultou/excluiu (radar_hidden), para o item não
+  // reaparecer na leitura mesmo que uma cópia defasada ainda o traga. radarHidden
+  // pode estar indefinido no 1º uso (pré-hydrate) — tratado como vazio.
+  var hid={};(Array.isArray(radarHidden)?radarHidden:[]).forEach(function(k){hid[String(k)]=1;});
+  var arr=(Array.isArray(list)?list:[]).filter(function(a){return !hid[avisoKeyStr(a)];});
+  return dedupeMuralList(arr.map(function(a){return normalizeMuralAviso(a,defaults);}));
 }
 // Remove duplicatas VISUAIS do mural: a mesma notícia colhida 2x (ex.: cópia em
 // cache no localStorage com sourceId ANTIGO + cópia fresca do servidor com
@@ -3523,7 +3528,14 @@ function saveRemoteState(){
       // o save sobrescrevia tudo com a versão do servidor, descartando a edição.
       if(serverP.radar_avisos!==undefined){
         var _memRadar={};(Array.isArray(radarAvisos)?radarAvisos:[]).forEach(function(it){_memRadar[avisoKeyStr(it)]=it;});
-        p.radar_avisos=(Array.isArray(serverP.radar_avisos)?serverP.radar_avisos:[]).map(function(it){return _memRadar[avisoKeyStr(it)]||it;});
+        // ⚠️🐛 FIX: aplicar radar_hidden ao reconstruir da base do servidor. Antes, um
+        // item OCULTADO/EXCLUÍDO (que segue na cópia do servidor até este save) era
+        // remapeado de volta por chave → "apaguei a notícia e ela voltou no F5".
+        // Agora os itens em radar_hidden são FILTRADOS fora da base antes do remap.
+        var _hid={};(Array.isArray(radarHidden)?radarHidden:[]).forEach(function(k){_hid[String(k)]=1;});
+        p.radar_avisos=(Array.isArray(serverP.radar_avisos)?serverP.radar_avisos:[])
+          .filter(function(it){return !_hid[avisoKeyStr(it)];})
+          .map(function(it){return _memRadar[avisoKeyStr(it)]||it;});
       }
       // CONCORRÊNCIA: se o estado do servidor mudou desde que esta sessão carregou/
       // salvou (outro admin OU um cron gravou), MESCLA as coleções aditivas usando o
