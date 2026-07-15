@@ -10167,7 +10167,7 @@ function dirIsPrivate(d){return !!(d&&d.privado);}
 function dirModeMatch(d){return admRefMode==='res'?dirIsPrivate(d):!dirIsPrivate(d);}
 // Rótulos por modo (usados no admin).
 function refLabels(){return admRefMode==='res'
-  ?{h1:'Resumos',one:'resumo',many:'resumos',nova:'Novo resumo',subhint:'Resumos privados de estudo — visíveis só para você, não publicados para os alunos.'}
+  ?{h1:'Resumos',one:'resumo',many:'resumos',nova:'Novo resumo',subhint:'Resumos de estudo da equipe — visíveis para todos os professores, não publicados para os alunos.'}
   :{h1:'Diretrizes',one:'diretriz',many:'diretrizes',nova:'Nova diretriz',subhint:'Resumos exibidos na aba Diretrizes. Para os alunos a aba mostra “Em breve” até a curadoria liberar.'};}
 // Re-render do painel de diretrizes/resumos respeitando o modo atual.
 function rerenderRef(){renderAdmSec(admRefMode==='res'?'resumos':'ref');}
