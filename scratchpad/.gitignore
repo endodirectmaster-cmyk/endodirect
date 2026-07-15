@@ -1,2 +1,5 @@
 **/*.sql
 expand/
+# Artefatos transitórios de verificação de figuras (regeneráveis pelos build*.js)
+**/*.png
+**/test*.html
