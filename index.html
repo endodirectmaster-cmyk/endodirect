@@ -8199,6 +8199,7 @@ function dirCardHTML(d,i){
     var parts=[];
     if(d.resumo)parts.push('<div class="dir-texto">'+mdToHtml(d.resumo)+'</div>');
     if(d.pts&&d.pts.length)parts.push('<ul>'+d.pts.map(function(p){return '<li>'+esc(p)+'</li>';}).join('')+'</ul>');
+    if(d.figuras&&d.figuras.length)parts.push(dirFigurasHTML(d.figuras));
     if(d.fluxogramas&&d.fluxogramas.length)parts.push(dirFluxoHTML(d.fluxogramas));
     body=parts.length?parts.join(''):'<div class="dir-empty-fmt">Resumo ainda não disponível.</div>';
   }
@@ -8358,6 +8359,26 @@ function dirFluxoHTML(flx){
       if(i<nos.length-1)html+=arrow;
     });
     html+='</div>';
+  });
+  return html+'</div>';
+}
+// Figuras ilustrativas dos resumos: esquema SVG PRÓPRIO (fisiopatologia/tratamento)
+// ou imagem aberta (url) com mini-referência abaixo. O SVG é conteúdo autoral —
+// só admin escreve o payload; não contém script. Renderizado como no fluxograma.
+function dirFigurasHTML(figs){
+  if(!figs||!figs.length)return '';
+  var html='<div class="dir-figs">';
+  figs.forEach(function(f){
+    if(!f)return;
+    var media='';
+    if(f.svg){media='<div style="text-align:center;overflow-x:auto;margin:.35rem 0">'+f.svg+'</div>';}
+    else if(safeHttpUrl(f.url)){media='<div style="text-align:center;overflow-x:auto;margin:.35rem 0"><img src="'+esc(f.url)+'" alt="'+esc(f.alt||f.titulo||'Figura')+'" loading="lazy" referrerpolicy="no-referrer" style="max-width:100%;border-radius:8px"></div>';}
+    if(!media)return;
+    html+='<figure class="dir-fig" style="margin:.7rem 0">'
+      +(f.titulo?'<div class="dfx-title">🖼️ '+esc(f.titulo)+'</div>':'')
+      +media
+      +(f.fonte?'<figcaption class="dfx-src">'+esc(f.fonte)+'</figcaption>':'')
+    +'</figure>';
   });
   return html+'</div>';
 }
