@@ -1,9 +1,17 @@
 ---
 tags: [cofre, pagamentos, area/pagamentos]
-atualizado: 2026-06-10
+atualizado: 2026-07-14
 ---
 
 # Pagamentos pagar.me
+
+## ⚠️ Mudanças de API do pagar.me — vigência 28/08/2026 (auditado 2026-07-14)
+E-mail "Atualização importante na API" + guia https://docs.pagar.me/docs/mudanças-de-apis. São 3 mudanças, com janela de 45 dias (comportamento antigo disponível até ~28/08/26). **Auditoria: nossa integração já é compatível — nenhuma quebra prevista.** Detalhe:
+1. **Paginação: dois modelos (`page` OU cursor) → só `forward_cursor`** (offset `page` deixa de funcionar; cursor via headers `x-cursor-nextpage`/`x-cursor-previouspage`). **Impacto: nenhum.** Nossa ÚNICA listagem no pagar.me é `GET /charges?subscription_id=X&size=1` (`subscribe.js`) — só a **1ª página**, com filtro + `size`, **sem `page`** → continua válida no modelo cursor. ⚠️ Não confundir: os `?page=&per_page=` do código (`findUserByEmail` em order.js/subscribe.js/webhook) são do **GoTrue/Supabase Admin**, NÃO do pagar.me — fora do escopo dessa mudança.
+2. **Códigos de retorno no padrão ABECS.** **Impacto: mínimo.** Só *exibimos* a string de motivo da recusa (`gateway_response.errors[0].message` / `acquirer_message`), não mapeamos códigos. Hardening feito (2026-07-14): adicionado `acquirer_return_code` como fallback final ao montar o motivo em `order.js` e `subscribe.js` — se o pagar.me remapear os códigos, ainda mostramos algo. Aditivo, sem risco ao fluxo de sucesso.
+3. **Cobrança reprocessada após falha de antifraude ganha NOVO `charge_id`** (afeta webhooks de atualização de status). **Impacto: nenhum.** Nosso webhook é **idempotente por e-mail+escopo** (upsert em `endodirect_acessos`), **não** por `charge_id` — não guardamos `charge_id` em lugar nenhum. Um charge reprocessado com id novo ativa o mesmo acesso. (Risco teórico de ordenação: se `charge.payment_failed` do id antigo chegasse DEPOIS do `charge.paid` do id novo, cairia em `past_due` indevido — edge raro, pré-existente; não priorizado.)
+**Ação recomendada ao professor:** testar no **sandbox** antes do go-live; nenhuma mudança é forçada. Commit de robustez na branch (não deployado — código de pagamento, aguarda OK p/ subir). Ver [[Integrações]].
+
 
 API **v5**. Cartão **tokenizado no navegador** (`POST /core/v5/tokens?appId=PUBLIC_KEY`); o número do cartão **nunca** passa pelo backend nem é armazenado.
 

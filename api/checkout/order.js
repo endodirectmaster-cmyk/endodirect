@@ -182,7 +182,10 @@ module.exports = async function handler(req, res) {
     // Cartao: precisa estar pago para liberar.
     const ok = ['paid', 'captured'].indexOf(status) >= 0 || ['paid', 'captured'].indexOf(String(charge.status || '').toLowerCase()) >= 0;
     if (!ok) {
-      let reason = (lt.gateway_response && Array.isArray(lt.gateway_response.errors) && lt.gateway_response.errors[0] && lt.gateway_response.errors[0].message) || lt.acquirer_message || '';
+      // Motivo da recusa: mensagem do gateway → mensagem do adquirente → código
+      // de retorno (padrão ABECS a partir de 28/08/26). O último fallback garante
+      // que, se o pagar.me remapear os códigos de retorno, ainda mostremos algo.
+      let reason = (lt.gateway_response && Array.isArray(lt.gateway_response.errors) && lt.gateway_response.errors[0] && lt.gateway_response.errors[0].message) || lt.acquirer_message || lt.acquirer_return_code || '';
       return json(res, 200, { ok: false, method: 'credit_card', status: status || 'failed', error: 'Pagamento nao aprovado.' + (reason ? ' (' + reason + ')' : '') });
     }
     const user = await ensureUser(email, name);

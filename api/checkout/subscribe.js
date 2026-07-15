@@ -232,8 +232,11 @@ module.exports = async function handler(req, res) {
         const charge = (cd && Array.isArray(cd.data) && cd.data[0]) || null;
         const lt = charge && charge.last_transaction;
         const gw = lt && lt.gateway_response;
+        // Motivo: mensagem do gateway → do adquirente → código de retorno (padrão
+        // ABECS a partir de 28/08/26) → status da cobrança. O fallback de código
+        // garante uma razão mesmo se o pagar.me remapear os códigos de retorno.
         reason = (gw && Array.isArray(gw.errors) && gw.errors[0] && gw.errors[0].message)
-          || (lt && lt.acquirer_message) || (charge && charge.status) || '';
+          || (lt && lt.acquirer_message) || (lt && lt.acquirer_return_code) || (charge && charge.status) || '';
         console.log('[subscribe] chargeId=' + ((charge && charge.id) || 'none') + ' chargeStatus=' + ((charge && charge.status) || '') + ' reason=' + (reason || ''));
       } catch (e) { console.log('[subscribe] charges fetch err', (e && e.message) || e); }
       return json(res, 200, { ok: false, status: status, error: 'Pagamento nao aprovado.' + (reason ? ' (' + reason + ')' : ''), subscriptionId: sub.id });
