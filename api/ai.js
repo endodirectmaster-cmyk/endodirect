@@ -75,6 +75,7 @@ async function openiSearch(query, n) {
       pmid: String(it.pmid || '').slice(0, 20),
       pmcid: String(it.pmcid || '').slice(0, 30),
       articleUrl: String(it.article_URL || '').slice(0, 500),
+      license: String(it.license || it.Rights || it.rights || (it.image && it.image.license) || '').slice(0, 80),
       caption: String((it.image && it.image.caption) || '').slice(0, 600)
     };
   }).filter(function (x) { return x.img; });
