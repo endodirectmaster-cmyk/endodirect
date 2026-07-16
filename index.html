@@ -10225,6 +10225,77 @@ function refChatMsgsHTML(){
   }).join('');
 }
 function persistDiretrizes(){lsSet('diretrizes',diretrizes);lsSet('diretrizes_temas',dirTemasExtra);queueRemoteStateSave();}
+// ── Imagem aberta do capítulo (PubMed Central via Open-i) ──
+// Só o app (servidor) alcança o Open-i; aqui buscamos candidatas, mostramos
+// crédito + link do artigo + licença, e anexamos {titulo,url,fonte} ao resumo.
+// ⚠️ Uso legal: anexar apenas imagens de licença aberta que permita reuso
+// (CC BY / CC0 / domínio público) — a licença é exibida p/ conferência.
+var admOpenImgResults=[], admOpenImgBusy=false, admOpenImgTema='';
+function admOpenImgSuggestQuery(){
+  var M={'Hipertrigliceridemias Primárias':'eruptive xanthoma severe hypertriglyceridemia',
+    'Hipertrigliceridemias Secundárias':'lipemic serum hypertriglyceridemia',
+    'Hipercolesterolemias Primárias':'tendon xanthoma familial hypercholesterolemia',
+    'Hipercolesterolemias Secundárias':'xanthelasma hypercholesterolemia',
+    'Alfalipoproteinemias (Distúrbios do HDL)':'Tangier disease tonsils'};
+  return M[admRefTema]||((admRefTema||'')+' '+(admRefSub||''));
+}
+function admOpenImgTargetIdx(){
+  for(var i=0;i<diretrizes.length;i++){var d=diretrizes[i];
+    if(dirModeMatch(d)&&(String(d.sub||'Geral').trim()||'Geral')===admRefSub&&dirTemaOf(d)===admRefTema)return i;}
+  return -1;
+}
+function admOiFonte(it){var ref=(typeof igFormatImgRef==='function')?igFormatImgRef(it):'';return ref||'PubMed Central · Open-i';}
+function admOpenImgPanelHTML(list){
+  var tgt=(list&&list.length)?list[0]:null;
+  var f=(tgt&&tgt.d&&Array.isArray(tgt.d.figuras)&&tgt.d.figuras.length)?tgt.d.figuras[0]:null;
+  var cur='';
+  if(f){
+    var thumb=f.url?'<img src="'+esc(f.url)+'" referrerpolicy="no-referrer" onerror="this.style.display=\'none\'" style="height:60px;border-radius:6px;border:1px solid var(--bd)">':(f.svg?'<span style="font-size:.7rem;color:var(--t2)">figura própria (SVG)</span>':'');
+    cur='<div style="display:flex;align-items:center;gap:.6rem;margin-bottom:.55rem">'+thumb+'<div style="flex:1;font-size:.7rem;color:var(--t2)"><b>'+esc(f.titulo||'Figura')+'</b><div style="color:var(--t3);font-size:.64rem;line-height:1.4">'+esc(f.fonte||'')+'</div></div><button class="btn btn-outline btn-sm" data-adm-oi-remove>🗑 Remover</button></div>';
+  }
+  return '<div class="card" style="margin:.2rem 0 1rem;padding:.7rem .8rem">'
+    +'<div style="font-size:.8rem;font-weight:700;margin-bottom:.4rem">🖼️ Imagem do capítulo <span style="font-weight:400;color:var(--t3)">(PubMed Central · Open-i)</span></div>'
+    +cur
+    +'<div style="display:flex;gap:.4rem;flex-wrap:wrap;align-items:center"><input type="text" id="adm-oi-q" value="'+esc(admOpenImgSuggestQuery())+'" style="flex:1;min-width:200px" placeholder="palavras-chave (inglês encontra mais)"><button class="btn btn-primary btn-sm" data-adm-oi-search>🔎 Buscar</button></div>'
+    +'<div style="font-size:.64rem;color:var(--t3);margin-top:.35rem;line-height:1.5">⚠️ Anexe apenas imagens de <b>licença aberta (CC BY / CC0 / domínio público)</b> — confira no link do artigo. O crédito fica abaixo da figura.</div>'
+    +'<div id="adm-oi-results" style="margin-top:.6rem"></div></div>';
+}
+function admOpenImgRenderResults(){
+  var el=document.getElementById('adm-oi-results');if(!el)return;
+  if(admOpenImgBusy){el.innerHTML='<div style="font-size:.72rem;color:var(--t3)">Buscando no PubMed Central…</div>';return;}
+  if(!admOpenImgResults.length){el.innerHTML='<div style="font-size:.68rem;color:var(--t3)">Nenhuma imagem carregada — clique em Buscar.</div>';return;}
+  el.innerHTML='<div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:.5rem">'+admOpenImgResults.map(function(it,i){
+    var meta=[it.authors?String(it.authors).split(/[;,]/)[0].trim()+' et al.':'',it.journal||'',(it.date||'').slice(0,4)].filter(Boolean).join(' · ');
+    var art=it.articleUrl?'<a href="'+esc(it.articleUrl)+'" target="_blank" rel="noopener" style="font-size:.62rem">artigo ↗</a>':'';
+    var lic=it.license?'<div style="font-size:.6rem;color:var(--grn)">licença: '+esc(it.license)+'</div>':'<div style="font-size:.6rem;color:#b45309">licença: verificar no artigo</div>';
+    return '<div style="border:1px solid var(--bd);border-radius:8px;padding:.4rem;font-size:.66rem;color:var(--t2)">'
+      +'<img src="'+esc(it.thumb||it.img)+'" referrerpolicy="no-referrer" onerror="this.style.opacity=.3" style="width:100%;height:88px;object-fit:cover;border-radius:5px;margin-bottom:.3rem;background:var(--s2)">'
+      +'<div style="line-height:1.35;min-height:2.4em">'+esc(meta||'—')+'</div>'+lic
+      +'<div style="display:flex;gap:.3rem;align-items:center;margin-top:.35rem">'+art+'<button class="btn btn-primary btn-sm" style="margin-left:auto;padding:.2rem .55rem" data-adm-oi-use="'+i+'">Usar</button></div>'
+      +'</div>';
+  }).join('')+'</div>';
+  el.querySelectorAll('[data-adm-oi-use]').forEach(function(b){b.addEventListener('click',function(){admOpenImgUse(parseInt(b.dataset.admOiUse));});});
+}
+function admOpenImgSearch(){
+  var inp=document.getElementById('adm-oi-q');var q=(inp&&inp.value||'').trim()||admOpenImgSuggestQuery();
+  admOpenImgBusy=true;admOpenImgResults=[];admOpenImgRenderResults();
+  fetch('/api/ai',{method:'POST',headers:{'Content-Type':'application/json'},credentials:'same-origin',body:JSON.stringify({kind:'openi',query:q,n:8})})
+    .then(function(r){return r.json().catch(function(){return{};});})
+    .then(function(d){admOpenImgResults=(d&&d.items)?d.items:[];})
+    .catch(function(){admOpenImgResults=[];})
+    .then(function(){admOpenImgBusy=false;admOpenImgRenderResults();});
+}
+function admOpenImgUse(idx){
+  var it=admOpenImgResults[idx];if(!it||!it.img){notify('Imagem sem URL.','err');return;}
+  var ti=admOpenImgTargetIdx();if(ti<0){notify('Crie o resumo deste capítulo antes de anexar a imagem.','err');return;}
+  diretrizes[ti].figuras=[{titulo:admRefTema,url:it.img,fonte:admOiFonte(it)}];
+  persistDiretrizes();notify('Imagem anexada. Confirme a licença no artigo. 🖼️','ok');rerenderRef();
+}
+function admOpenImgRemove(){
+  var ti=admOpenImgTargetIdx();if(ti<0)return;
+  if(diretrizes[ti].figuras)delete diretrizes[ti].figuras;
+  persistDiretrizes();notify('Imagem removida.','info');rerenderRef();
+}
 // Flashcards ⇄ texto ("Pergunta :: Resposta" por linha).
 function flashToText(cards){return (Array.isArray(cards)?cards:[]).map(function(c){return (c.q||'')+' :: '+(c.a||'');}).join('\n');}
 function parseFlashText(txt){
@@ -10429,6 +10500,7 @@ function admRefSecHTML(){
       var fmts=[['resumo','📄 Resumo'],['flash','🃏 Flashcards'],['mapa','🧠 Mapas mentais']];
       var fmtAtivo=(refFormat==='flash'||refFormat==='mapa')?refFormat:'resumo';
       body=rhead
+        +(admRefMode==='res'?admOpenImgPanelHTML(list):'')
         +'<div class="dir-fmt">'+fmts.map(function(f){return '<button class="dir-fmt-btn'+(fmtAtivo===f[0]?' on':'')+'" data-admref-fmt="'+f[0]+'">'+f[1]+'</button>';}).join('')+'</div>'
         +list.map(function(x){
           // Flashcards e Mapas editam in-loco (não precisam de "Editar tudo").
@@ -11342,6 +11414,11 @@ function bindAdmSec(sec){
     // Visão do tema (idêntica ao aluno): troca de formato, flip dos flashcards e
     // abre/fecha dos ramos do mapa mental.
     main.querySelectorAll('[data-admref-fmt]').forEach(function(b){b.addEventListener('click',function(){refFormat=b.dataset.admrefFmt;rerenderRef();});});
+    // Buscador de imagem aberta (PMC/Open-i) no editor de Resumos
+    if(admOpenImgTema!==admRefTema){admOpenImgTema=admRefTema;admOpenImgResults=[];}
+    var oiS=main.querySelector('[data-adm-oi-search]');if(oiS)oiS.addEventListener('click',admOpenImgSearch);
+    var oiR=main.querySelector('[data-adm-oi-remove]');if(oiR)oiR.addEventListener('click',admOpenImgRemove);
+    if(document.getElementById('adm-oi-results'))admOpenImgRenderResults();
     main.querySelectorAll('[data-dir-flash]').forEach(function(b){b.addEventListener('click',function(){b.classList.toggle('flipped');});});
     main.querySelectorAll('[data-dir-mm-branch]').forEach(function(b){b.addEventListener('click',function(){if(b.parentNode)b.parentNode.classList.toggle('open');});});
     // ── Temas: criar / renomear / excluir inline ──
