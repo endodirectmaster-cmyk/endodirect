@@ -10202,7 +10202,7 @@ function admSupportReply(id){
 function persistAdm(){lsSet('adm_avisos',admAvisos);lsSet('adm_questoes',admQuestoes);queueRemoteStateSave();}
 var admMuralShowForm=false,admMuralEdit=null,admMuralFilter='',admMuralTipoFilter='',admMuralSort='novos';
 // ---------- REFERÊNCIA RÁPIDA (admin CRUD) ----------
-var admRefShowForm=false,admRefEdit=null,admRefPdfB64=null,admRefPdfName='',admRefPdfFile=null,admRefSub='',admRefTema='',admRefTemaAdd=false,admRefTemaEdit=null,admRefChat=[];
+var admRefShowForm=false,admRefEdit=null,admRefInline=null,admRefPdfB64=null,admRefPdfName='',admRefPdfFile=null,admRefSub='',admRefTema='',admRefTemaAdd=false,admRefTemaEdit=null,admRefChat=[];
 // Modo do painel de diretrizes: 'dir' = Diretrizes (publicadas p/ alunos) |
 // 'res' = Resumos (privados, só no painel do professor). A flag por item é
 // d.privado; os alunos nunca recebem itens privados (filtrados na RPC e na view).
@@ -10437,7 +10437,7 @@ function admRefMapaGenAI(i){
 function admRefSecHTML(){
   var L=refLabels();
   var g=(admRefEdit!==null&&diretrizes[admRefEdit])?diretrizes[admRefEdit]:null;
-  var formHTML=admRefShowForm?(
+  var formHTML=(admRefShowForm||admRefInline!==null)?(
     '<div class="card" style="margin-bottom:1.1rem"><div style="font-size:1rem;font-weight:700;margin-bottom:.3rem">'+(g?('✏️ Editar '+L.one):('📄 '+L.nova))+'</div>'
     +'<div style="font-size:.74rem;color:var(--t2);margin-bottom:.9rem">'+L.subhint+'</div>'
     +'<div style="border:1px dashed var(--bd2);border-radius:12px;padding:.85rem 1rem;margin-bottom:1rem;background:var(--s2)">'
@@ -10539,11 +10539,11 @@ function admRefSecHTML(){
           // Nos Resumos, o mapa é editável IN-LOCO na própria árvore (contenteditable +
           // ＋/×); nas Diretrizes segue a edição em caixas (admRefMapaHTML).
           var mapaEdit=(admRefMode==='res'&&fmtAtivo==='mapa');
-          var editBtn=isResumo?'<button class="btn btn-outline btn-sm" data-adm-refedit="'+x.i+'">✏️ Editar</button>':'';
+          var editBtn=(isResumo&&admRefInline!==x.i)?'<button class="btn btn-outline btn-sm" data-adm-refedit="'+x.i+'">✏️ Editar</button>':'';
           var head='<div style="display:flex;align-items:center;justify-content:space-between;gap:.5rem;flex-wrap:wrap;margin-bottom:.4rem">'+statusTag+'<div style="display:flex;gap:.4rem;flex-wrap:wrap">'+toggleBtn+editBtn+'</div></div>';
           return '<div class="adm-ref-view" style="margin-bottom:1.1rem">'
             +head
-            +(fmtAtivo==='flash'?admRefFlashHTML(x.d,x.i):fmtAtivo==='mapa'?(mapaEdit?dirMapaEditHTML(x.d,x.i):admRefMapaHTML(x.d,x.i)):dirCardHTML(x.d,x.i))+'</div>';
+            +((admRefInline===x.i&&isResumo)?formHTML:(fmtAtivo==='flash'?admRefFlashHTML(x.d,x.i):fmtAtivo==='mapa'?(mapaEdit?dirMapaEditHTML(x.d,x.i):admRefMapaHTML(x.d,x.i)):dirCardHTML(x.d,x.i)))+'</div>';
         }).join('');
     }
   }
@@ -11481,12 +11481,12 @@ function bindAdmSec(sec){
       // Na grade de temas o botão abre o input inline de novo tema; dentro do
       // tema abre o formulário de diretriz.
       if(admRefSub&&!admRefTema&&!admRefShowForm){admRefTemaAdd=true;admRefTemaEdit=null;rerenderRef();return;}
-      admRefShowForm=!admRefShowForm;admRefEdit=null;admRefPdfB64=null;admRefPdfName='';admRefPdfFile=null;admRefChat=[];rerenderRef();document.getElementById('adm-main').scrollTop=0;
+      admRefShowForm=!admRefShowForm;admRefInline=null;admRefEdit=null;admRefPdfB64=null;admRefPdfName='';admRefPdfFile=null;admRefChat=[];rerenderRef();document.getElementById('adm-main').scrollTop=0;
     });
     var tFocus=document.getElementById(admRefTemaAdd?'adm-ref-newtema':(admRefTemaEdit?'adm-ref-edittema':''));
     if(tFocus){tFocus.focus();tFocus.addEventListener('keydown',function(ev){if(ev.key==='Enter'){ev.preventDefault();var bt=admRefTemaAdd?document.getElementById('btn-ref-tema-create'):main.querySelector('[data-ref-tema-saveedit]');if(bt)bt.click();}});}
     var rCancel=document.getElementById('btn-adm-ref-cancel');
-    if(rCancel)rCancel.addEventListener('click',function(){admRefShowForm=false;admRefEdit=null;admRefPdfB64=null;admRefPdfName='';admRefPdfFile=null;admRefChat=[];rerenderRef();});
+    if(rCancel)rCancel.addEventListener('click',function(){admRefShowForm=false;admRefInline=null;admRefEdit=null;admRefPdfB64=null;admRefPdfName='';admRefPdfFile=null;admRefChat=[];rerenderRef();});
     var rSave=document.getElementById('btn-adm-ref-save');
     if(rSave)rSave.addEventListener('click',function(){
       function val(id){var e=document.getElementById(id);return e?e.value.trim():'';}
@@ -11504,7 +11504,7 @@ function bindAdmSec(sec){
       // Ao editar, preserva a flag existente (via Object.assign de prev).
       if(admRefEdit===null||!diretrizes[admRefEdit])obj.privado=(admRefMode==='res');
       if(admRefEdit!==null&&diretrizes[admRefEdit])diretrizes[admRefEdit]=obj;else diretrizes.unshift(obj);
-      persistDiretrizes();admRefShowForm=false;admRefEdit=null;admRefPdfB64=null;admRefPdfName='';admRefPdfFile=null;
+      persistDiretrizes();admRefShowForm=false;admRefInline=null;admRefEdit=null;admRefPdfB64=null;admRefPdfName='';admRefPdfFile=null;
       admRefSub=String(obj.sub||'Geral');admRefTema=dirTemaOf(obj); // abre onde o item ficou
       rerenderRef();notify((admRefMode==='res'?'Resumo':'Diretriz')+' salvo.','ok');
     });
@@ -11577,7 +11577,8 @@ function bindAdmSec(sec){
       }).catch(function(e){var msg=(e&&e.message)||'falha';if(/\b413\b/.test(msg))msg='PDF muito grande. Use um PDF com texto selecionável ou um arquivo menor (até ~3 MB).';notify('Erro ao ler o PDF: '+msg,'err');if(st)st.textContent='';})
       .then(function(){rPdfGen.disabled=false;rPdfGen.innerHTML='🤖 Gerar com IA';});
     });
-    main.querySelectorAll('[data-adm-refedit]').forEach(function(b){b.addEventListener('click',function(){admRefEdit=parseInt(b.dataset.admRefedit);admRefShowForm=true;admRefPdfB64=null;admRefPdfName='';admRefPdfFile=null;admRefChat=[];rerenderRef();document.getElementById('adm-main').scrollTop=0;});});
+    // Editar: edição INLINE (na própria tela), sem trocar para o formulário cheio.
+    main.querySelectorAll('[data-adm-refedit]').forEach(function(b){b.addEventListener('click',function(){admRefEdit=admRefInline=parseInt(b.dataset.admRefedit);admRefShowForm=false;admRefPdfB64=null;admRefPdfName='';admRefPdfFile=null;admRefChat=[];rerenderRef();});});
     main.querySelectorAll('[data-adm-refdel]').forEach(function(b){b.addEventListener('click',function(){var i=parseInt(b.dataset.admRefdel);var d=diretrizes[i];if(!confirm('Excluir a diretriz "'+((d&&(d.tema||d.titulo))||'esta diretriz')+'"? Esta ação não pode ser desfeita.'))return;diretrizes.splice(i,1);persistDiretrizes();rerenderRef();});});
     // Edição inline por flashcard e por linha do mapa (visão do tema).
     main.querySelectorAll('[data-reffc-save]').forEach(function(b){b.addEventListener('click',function(){var p=b.dataset.reffcSave.split('-');admSaveRefFlash(parseInt(p[0]),parseInt(p[1]));});});
