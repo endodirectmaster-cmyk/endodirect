@@ -125,6 +125,7 @@ html[data-theme="light"] .q-fb.annul{background:#fffbeb;color:#b45309;border-col
 html[data-theme="light"] .q-fb.ok{color:#16a34a;border-color:#bbf7d0}
 html[data-theme="light"] .q-fb.er{border-color:#fecaca}
 html[data-theme="light"] .sr-easy{background:#dcfce7;color:#16a34a}
+html[data-theme="light"] .sr-good{background:#dbeafe;color:#2563eb}
 html[data-theme="light"] .tag-sub-diabetes{background:#dbeafe;color:#1d4ed8}
 html[data-theme="light"] .tag-sub-obesidade{background:#dcfce7;color:#15803d}
 html[data-theme="light"] .tag-sub-tireoide{background:#ede9fe;color:#6d28d9}
@@ -307,6 +308,7 @@ textarea{resize:vertical;line-height:1.6}
 .sr-card.flipped{border-color:#86efac;background:var(--grn-l)}
 .sr-btn{border:none;border-radius:var(--rs);padding:.48rem 1rem;font-size:.74rem;font-weight:600;cursor:pointer;font-family:var(--font)}
 .sr-easy{background:#103726;color:#34d399}
+.sr-good{background:#0e2a3f;color:#38bdf8}
 .sr-hard{background:#33280c;color:#ca8a04}
 .sr-again{background:var(--red-l);color:var(--red)}
 .mm-item{background:var(--surface);border:1px solid var(--bd);border-radius:var(--r);padding:.75rem .9rem;display:flex;align-items:center;justify-content:space-between;gap:.7rem}
@@ -1844,11 +1846,13 @@ input.dmm-inp-subsub{flex:1;min-width:0;background:transparent;color:var(--t2);f
             <div style="display:flex;gap:.5rem;justify-content:center" id="sr-ratings">
               <button class="sr-btn sr-again" id="sr-again">🔁 Repetir</button>
               <button class="sr-btn sr-hard" id="sr-hard">😅 Difícil</button>
+              <button class="sr-btn sr-good" id="sr-good">🙂 Bom</button>
               <button class="sr-btn sr-easy" id="sr-easy">✓ Fácil</button>
             </div>
           </div>
         </div>
         <div id="sr-idle">
+          <div id="sr-today-note" style="font-size:.78rem;color:var(--t2);margin-bottom:.7rem"></div>
           <div style="display:flex;gap:7px;margin-bottom:.85rem">
             <button class="btn btn-primary" id="btn-sr-start">▶ Iniciar revisão</button>
             <button class="btn btn-outline btn-sm" id="btn-sr-all">Todos os cards</button>
@@ -2746,13 +2750,14 @@ var DB={
   perfTema:lsGet('perfTema')||{},
   act:lsGet('act')||{},
   srs:lsGet('srs')||[],
+  srNew:lsGet('srNew')||{},
   goal:lsGet('goal')||{weekly:50},
   cursoProg:lsGet('cursoProg')||{},
   plan:lsGet('plan')||null,
   qotd:(function(){try{return JSON.parse(localStorage.getItem('qotd_answered')||'{}')||{};}catch(e){return {};}})()
 };
 function persist(){
-  ['q','fc','mm','notes','crono','sf_results','perf','perfTema','act','srs','goal','cursoProg','plan'].forEach(function(k){lsSet(k,DB[k]);});
+  ['q','fc','mm','notes','crono','sf_results','perf','perfTema','act','srs','srNew','goal','cursoProg','plan'].forEach(function(k){lsSet(k,DB[k]);});
   try{localStorage.setItem('qotd_answered',JSON.stringify(DB.qotd||{}));}catch(e){}
   queueRemoteStateSave();
 }
@@ -5230,7 +5235,7 @@ function goPanel(id){
 
 function refreshDash(){
   DB.fc.forEach(function(c){srInit(c);});
-  var due=DB.fc.filter(srIsDue).length;
+  var due=srSessionCount();
   setText('d-qn',DB.q.length);setText('d-fcn',DB.fc.length);setText('d-sr-due',due);setText('d-mmn',DB.mm.length);
   try{renderStreakCard();}catch(e){}
   renderPerfBars();updateDashRec();renderDashCrono();renderDashNotas();
@@ -6784,13 +6789,30 @@ function srUpdate(c,q){
     else c.interval=Math.round(c.interval*c.ef);
   }
   c.due=Date.now()+c.interval*86400000;
+  c.lastRev=Date.now();
   persist();
 }
+// Ritmo de cards NOVOS por dia — evita que um baralho grande vire "tudo devido"
+// de uma vez. Card é "novo" enquanto nunca foi revisado (sem lastRev). A fila do
+// dia = revisões devidas + até SR_NEW_PER_DAY cards novos.
+var SR_NEW_PER_DAY=20;
+function srIsNew(c){srInit(c);return c.lastRev===undefined;}
+function srNewRemaining(){
+  var t=todayKey();
+  if(!DB.srNew||DB.srNew.d!==t)DB.srNew={d:t,n:0};
+  return Math.max(0,SR_NEW_PER_DAY-(DB.srNew.n||0));
+}
+function srDueReviews(){return DB.fc.filter(function(c){return !srIsNew(c)&&srIsDue(c);});}
+function srNewAvail(){return DB.fc.filter(srIsNew);}
+function srBuildQueue(){DB.fc.forEach(srInit);return srDueReviews().concat(srNewAvail().slice(0,srNewRemaining()));}
+function srSessionCount(){DB.fc.forEach(srInit);return srDueReviews().length+Math.min(srNewRemaining(),srNewAvail().length);}
 function renderSR(){
   DB.fc.forEach(srInit);
-  var due=DB.fc.filter(srIsDue).length;
+  var revN=srDueReviews().length, newN=Math.min(srNewRemaining(),srNewAvail().length);
   var mastered=DB.fc.filter(function(c){return c.interval>=7;}).length;
-  setText('sr-due',due);setText('sr-total',DB.fc.length);setText('sr-mastered',mastered);
+  setText('sr-due',revN+newN);setText('sr-total',DB.fc.length);setText('sr-mastered',mastered);
+  var note=document.getElementById('sr-today-note');
+  if(note)note.innerHTML=(revN+newN)?('Hoje: <b>'+revN+'</b> revisõe'+(revN===1?'':'s')+' + <b>'+newN+'</b> card'+(newN===1?'':'s')+' novo'+(newN===1?'':'s')+' <span style="color:var(--t3)">(limite '+SR_NEW_PER_DAY+' novos/dia)</span>'):'Tudo em dia! Nenhum card para revisar agora. 🎉';
   var el=document.getElementById('sr-card-list');
   setText('sr-list-count','('+DB.fc.length+')');
   if(el){
@@ -6800,7 +6822,7 @@ function renderSR(){
 }
 function startSR(all){
   DB.fc.forEach(srInit);
-  srQueue=all?DB.fc.slice():DB.fc.filter(srIsDue);
+  srQueue=all?DB.fc.slice():srBuildQueue();
   if(!srQueue.length){notify(all?'Nenhum card.':'Nenhum card para revisar agora!','info');return;}
   srIdx=0;srFlipped=false;
   document.getElementById('sr-idle').style.display='none';
@@ -6827,6 +6849,7 @@ function flipSR(){
 }
 function rateSR(q){
   var c=srQueue[srIdx];if(!c)return;
+  if(srIsNew(c)){var t=todayKey();if(!DB.srNew||DB.srNew.d!==t)DB.srNew={d:t,n:0};DB.srNew.n++;}
   srUpdate(c,q);
   srIdx++;
   if(srIdx>=srQueue.length)finishSR();else renderSRCard();
@@ -12885,10 +12908,11 @@ document.addEventListener('DOMContentLoaded',function(){
   document.getElementById('btn-sr-start').addEventListener('click',function(){startSR(false);});
   document.getElementById('btn-sr-all').addEventListener('click',function(){startSR(true);});
   document.getElementById('btn-sr-stop').addEventListener('click',finishSR);
-  document.getElementById('btn-sr-reset').addEventListener('click',function(){DB.fc.forEach(function(c){c.ef=2.5;c.interval=0;c.reps=0;c.due=Date.now();});persist();renderSR();notify('Progresso resetado.','info');});
+  document.getElementById('btn-sr-reset').addEventListener('click',function(){DB.fc.forEach(function(c){c.ef=2.5;c.interval=0;c.reps=0;c.due=Date.now();delete c.lastRev;});DB.srNew={};persist();renderSR();notify('Progresso resetado.','info');});
   document.getElementById('sr-card').addEventListener('click',flipSR);
   document.getElementById('sr-again').addEventListener('click',function(){rateSR(1);});
   document.getElementById('sr-hard').addEventListener('click',function(){rateSR(3);});
+  document.getElementById('sr-good').addEventListener('click',function(){rateSR(4);});
   document.getElementById('sr-easy').addEventListener('click',function(){rateSR(5);});
 
   // CADERNO DE ERROS

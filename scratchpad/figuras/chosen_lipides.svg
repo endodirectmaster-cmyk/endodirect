@@ -1,0 +1,136 @@
+<svg viewBox="0 0 640 560" xmlns="http://www.w3.org/2000/svg" style="width:100%;max-width:640px;height:auto;font-family:Segoe UI,Arial,sans-serif">
+  <defs>
+    <radialGradient id="gChylo" cx="38%" cy="32%" r="72%"><stop offset="0" stop-color="#f9e9a6"/><stop offset="1" stop-color="#ecc94b"/></radialGradient>
+    <radialGradient id="gRem" cx="38%" cy="32%" r="72%"><stop offset="0" stop-color="#f0d873"/><stop offset="1" stop-color="#d9b23f"/></radialGradient>
+    <radialGradient id="gVLDL" cx="38%" cy="32%" r="72%"><stop offset="0" stop-color="#d99f5b"/><stop offset="1" stop-color="#b06e2f"/></radialGradient>
+    <radialGradient id="gIDL" cx="38%" cy="32%" r="72%"><stop offset="0" stop-color="#c08749"/><stop offset="1" stop-color="#985a26"/></radialGradient>
+    <radialGradient id="gLDL" cx="38%" cy="32%" r="72%"><stop offset="0" stop-color="#a86c33"/><stop offset="1" stop-color="#7d4a1f"/></radialGradient>
+    <radialGradient id="gHDL" cx="38%" cy="32%" r="72%"><stop offset="0" stop-color="#4d8ca3"/><stop offset="1" stop-color="#2c5f75"/></radialGradient>
+    <marker id="arw" markerWidth="9" markerHeight="9" refX="6.6" refY="3" orient="auto"><path d="M0,0 L7,3 L0,6 Z" fill="#20364e"/></marker>
+    <marker id="arwG" markerWidth="9" markerHeight="9" refX="6.6" refY="3" orient="auto"><path d="M0,0 L7,3 L0,6 Z" fill="#b06e2f"/></marker>
+    <marker id="arwT" markerWidth="9" markerHeight="9" refX="6.6" refY="3" orient="auto"><path d="M0,0 L7,3 L0,6 Z" fill="#2c5f75"/></marker>
+  </defs>
+
+  <rect x="18" y="80" width="604" height="100" rx="10" fill="#fdf8ea"/>
+  <rect x="18" y="205" width="604" height="95" rx="10" fill="#faf4e6"/>
+  <rect x="18" y="350" width="604" height="90" rx="10" fill="#edf4f4"/>
+  <rect x="18" y="80" width="5" height="100" rx="2.5" fill="#d9b652"/>
+  <rect x="18" y="205" width="5" height="95" rx="2.5" fill="#c0803a"/>
+  <rect x="18" y="350" width="5" height="90" rx="2.5" fill="#35708a"/>
+
+  <text x="320" y="28" text-anchor="middle" font-size="19" font-weight="700" fill="#0b2545">Metabolismo das Lipoproteínas</text>
+  <line x1="188" y1="38" x2="452" y2="38" stroke="#d9b652" stroke-width="1.5"/>
+
+  <line x1="238" y1="62" x2="342" y2="62" stroke="#33506e" stroke-width="1" marker-end="url(#arw)"/>
+  <circle cx="250" cy="62" r="11" fill="#f2d675"/>
+  <circle cx="278" cy="62" r="8" fill="#c0803a"/>
+  <circle cx="300" cy="62" r="6" fill="#8f5624"/>
+  <circle cx="317" cy="62" r="4" fill="#35708a"/>
+  <circle cx="330" cy="62" r="2.5" fill="#20364e"/>
+  <text x="232" y="65" text-anchor="end" font-size="9" fill="#33506e">maior · menos denso</text>
+  <text x="352" y="65" text-anchor="start" font-size="9" fill="#33506e">menor · mais denso</text>
+
+  <text x="30" y="94" font-size="10" font-weight="700" fill="#b8892f">1 · VIA EXÓGENA (dieta)</text>
+
+  <rect x="30" y="101" width="64" height="38" rx="8" fill="#0b2545"/>
+  <text x="62" y="124" text-anchor="middle" font-size="12" font-weight="700" fill="#ffffff">Intestino</text>
+
+  <line x1="98" y1="120" x2="141" y2="120" stroke="#33506e" stroke-width="1.6" marker-end="url(#arw)"/>
+  <text x="119" y="112" text-anchor="middle" font-size="9" fill="#33506e">dieta</text>
+
+  <circle cx="178" cy="120" r="33" fill="url(#gChylo)" stroke="#ffffff" stroke-opacity="0.4" stroke-width="1.5"/>
+  <text x="178" y="118" text-anchor="middle" font-size="10.5" font-weight="700" fill="#20364e">Quilo-</text>
+  <text x="178" y="130" text-anchor="middle" font-size="10.5" font-weight="700" fill="#20364e">mícron</text>
+  <text x="178" y="164" text-anchor="middle" font-size="8" fill="#33506e">apoB-48</text>
+
+  <line x1="215" y1="120" x2="295" y2="120" stroke="#33506e" stroke-width="1.6" marker-end="url(#arw)"/>
+  <text x="255" y="112" text-anchor="middle" font-size="10" font-weight="700" fill="#20364e">LPL</text>
+  <line x1="255" y1="122" x2="255" y2="156" stroke="#b06e2f" stroke-width="1.6" marker-end="url(#arwG)"/>
+  <text x="250" y="171" text-anchor="middle" font-size="9" fill="#b06e2f">AGL → tecidos</text>
+
+  <circle cx="322" cy="120" r="23" fill="url(#gRem)" stroke="#ffffff" stroke-opacity="0.4" stroke-width="1.5"/>
+  <text x="322" y="124" text-anchor="middle" font-size="10" font-weight="700" fill="#20364e">QM-R</text>
+  <text x="322" y="160" text-anchor="middle" font-size="10" font-weight="700" fill="#20364e">Remanescente</text>
+
+  <line x1="349" y1="120" x2="466" y2="120" stroke="#33506e" stroke-width="1.6" marker-end="url(#arw)"/>
+  <text x="407" y="112" text-anchor="middle" font-size="9" fill="#33506e">captação (apoE)</text>
+
+  <rect x="470" y="101" width="88" height="38" rx="8" fill="#0b2545"/>
+  <text x="514" y="124" text-anchor="middle" font-size="12" font-weight="700" fill="#ffffff">Fígado</text>
+
+  <text x="30" y="219" font-size="10" font-weight="700" fill="#a9662a">2 · VIA ENDÓGENA</text>
+
+  <rect x="30" y="231" width="68" height="38" rx="8" fill="#0b2545"/>
+  <text x="64" y="254" text-anchor="middle" font-size="12" font-weight="700" fill="#ffffff">Fígado</text>
+
+  <line x1="102" y1="250" x2="145" y2="250" stroke="#33506e" stroke-width="1.6" marker-end="url(#arw)"/>
+  <text x="123" y="242" text-anchor="middle" font-size="9" fill="#33506e">síntese</text>
+
+  <circle cx="175" cy="250" r="26" fill="url(#gVLDL)" stroke="#ffffff" stroke-opacity="0.4" stroke-width="1.5"/>
+  <text x="175" y="254" text-anchor="middle" font-size="11" font-weight="700" fill="#ffffff">VLDL</text>
+  <text x="175" y="286" text-anchor="middle" font-size="8" fill="#33506e">apoB-100</text>
+
+  <line x1="205" y1="250" x2="288" y2="250" stroke="#33506e" stroke-width="1.6" marker-end="url(#arw)"/>
+  <text x="247" y="242" text-anchor="middle" font-size="10" font-weight="700" fill="#20364e">LPL</text>
+
+  <circle cx="312" cy="250" r="20" fill="url(#gIDL)" stroke="#ffffff" stroke-opacity="0.4" stroke-width="1.5"/>
+  <text x="312" y="254" text-anchor="middle" font-size="11" font-weight="700" fill="#ffffff">IDL</text>
+
+  <line x1="336" y1="250" x2="402" y2="250" stroke="#33506e" stroke-width="1.6" marker-end="url(#arw)"/>
+  <text x="369" y="242" text-anchor="middle" font-size="10" font-weight="700" fill="#20364e">HPL</text>
+
+  <circle cx="422" cy="250" r="16" fill="url(#gLDL)" stroke="#ffffff" stroke-opacity="0.4" stroke-width="1.5"/>
+  <text x="422" y="254" text-anchor="middle" font-size="11" font-weight="700" fill="#ffffff">LDL</text>
+
+  <line x1="442" y1="250" x2="501" y2="250" stroke="#33506e" stroke-width="1.6" marker-end="url(#arw)"/>
+  <text x="472" y="242" text-anchor="middle" font-size="10" font-weight="700" fill="#20364e">LDLR</text>
+
+  <rect x="505" y="227" width="102" height="46" rx="8" fill="#0b2545"/>
+  <text x="556" y="247" text-anchor="middle" font-size="10.5" font-weight="700" fill="#ffffff">Captação LDL</text>
+  <text x="556" y="261" text-anchor="middle" font-size="8.5" fill="#e7cd7e">fígado / periferia</text>
+
+  <line x1="352" y1="381" x2="418" y2="268" stroke="#2c5f75" stroke-width="1.5" stroke-dasharray="5 3" marker-end="url(#arwT)"/>
+  <text x="398" y="320" text-anchor="start" font-size="10" font-weight="700" fill="#2c5f75">CETP</text>
+  <text x="398" y="332" text-anchor="start" font-size="8" fill="#2c5f75">éster de col. → VLDL/LDL</text>
+
+  <text x="30" y="366" font-size="10" font-weight="700" fill="#2c5f75">3 · VIA REVERSA (transporte reverso do colesterol)</text>
+
+  <rect x="30" y="373" width="112" height="44" rx="8" fill="#0b2545"/>
+  <text x="86" y="390" text-anchor="middle" font-size="9.5" font-weight="700" fill="#ffffff">Tecidos perif.</text>
+  <text x="86" y="403" text-anchor="middle" font-size="9.5" font-weight="700" fill="#ffffff">e macrófagos</text>
+
+  <line x1="146" y1="395" x2="219" y2="395" stroke="#33506e" stroke-width="1.6" marker-end="url(#arw)"/>
+  <text x="183" y="387" text-anchor="middle" font-size="10" font-weight="700" fill="#2c5f75">ABCA1</text>
+
+  <circle cx="235" cy="395" r="12" fill="url(#gHDL)" stroke="#ffffff" stroke-opacity="0.4" stroke-width="1.5"/>
+  <text x="235" y="398" text-anchor="middle" font-size="8.5" font-weight="700" fill="#ffffff">HDL</text>
+  <text x="235" y="416" text-anchor="middle" font-size="8" fill="#33506e">nascente</text>
+
+  <line x1="249" y1="395" x2="326" y2="395" stroke="#33506e" stroke-width="1.6" marker-end="url(#arw)"/>
+  <text x="288" y="379" text-anchor="middle" font-size="8" fill="#33506e">maturação do HDL</text>
+  <text x="288" y="389" text-anchor="middle" font-size="10" font-weight="700" fill="#2c5f75">LCAT</text>
+
+  <circle cx="345" cy="395" r="15" fill="url(#gHDL)" stroke="#ffffff" stroke-opacity="0.4" stroke-width="1.5"/>
+  <text x="345" y="399" text-anchor="middle" font-size="10" font-weight="700" fill="#ffffff">HDL</text>
+  <text x="345" y="419" text-anchor="middle" font-size="8" fill="#33506e">apoA-I</text>
+
+  <line x1="364" y1="395" x2="501" y2="395" stroke="#33506e" stroke-width="1.6" marker-end="url(#arw)"/>
+  <text x="432" y="387" text-anchor="middle" font-size="9.5" fill="#2c5f75">transporte reverso do colesterol</text>
+
+  <rect x="505" y="373" width="92" height="44" rx="8" fill="#0b2545"/>
+  <text x="551" y="399" text-anchor="middle" font-size="12" font-weight="700" fill="#ffffff">Fígado</text>
+
+  <rect x="30" y="448" width="580" height="98" rx="10" fill="#f2ede0" stroke="#0b2545" stroke-width="1.2"/>
+  <text x="45" y="469" font-size="12.5" font-weight="700" fill="#0b2545">Alvos terapêuticos</text>
+  <line x1="45" y1="475" x2="595" y2="475" stroke="#d9b652" stroke-width="1"/>
+
+  <circle cx="50" cy="497" r="3" fill="#c0803a"/>
+  <text x="60" y="500" font-size="10"><tspan font-weight="700" fill="#0b2545">Estatina</tspan><tspan fill="#33506e"> — ↑ LDLR (síntese hepática)</tspan></text>
+  <circle cx="330" cy="497" r="3" fill="#c0803a"/>
+  <text x="340" y="500" font-size="10"><tspan font-weight="700" fill="#0b2545">Ezetimiba</tspan><tspan fill="#33506e"> — absorção intestinal (NPC1L1)</tspan></text>
+
+  <circle cx="50" cy="526" r="3" fill="#c0803a"/>
+  <text x="60" y="529" font-size="10"><tspan font-weight="700" fill="#0b2545">iPCSK9 / inclisirana</tspan><tspan fill="#33506e"> — preservam o LDLR</tspan></text>
+  <circle cx="330" cy="526" r="3" fill="#c0803a"/>
+  <text x="340" y="529" font-size="10"><tspan font-weight="700" fill="#0b2545">Fibrato / ômega-3</tspan><tspan fill="#33506e"> — ↑ LPL, ↓ TG</tspan></text>
+</svg>
