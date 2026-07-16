@@ -10461,13 +10461,18 @@ function admRefSecHTML(){
         +'<button type="button" class="btn btn-outline btn-sm" id="btn-ref-resumo-gen" style="margin-left:auto">📄 '+((g&&g.resumo)?'Refazer com IA':'Gerar com IA')+'</button>'
       +'</div></div>'
     +((admRefMode==='res'&&g)?admOpenImgPanelHTML():'')
-    +'<div class="fld2" style="margin-bottom:.7rem"><label>🃏 Flashcards (cartões de pergunta e resposta)</label>'
+    // Nos Resumos, flashcards e mapa mental são editados nas próprias abas
+    // (Flashcards / Mapas mentais) → não repetir os campos aqui. Ao salvar sem
+    // esses campos, os valores existentes são preservados (guardas if(fc.length)/if(mp)).
+    +((admRefMode==='res')?'':(
+      '<div class="fld2" style="margin-bottom:.7rem"><label>🃏 Flashcards (cartões de pergunta e resposta)</label>'
       +'<div style="font-size:.7rem;color:var(--t2);line-height:1.5;margin-bottom:.35rem">Escreva <b>um cartão por linha</b>: primeiro a <b>pergunta</b>, depois o separador <code>::</code> (dois-pontos duplos), depois a <b>resposta</b>. O aluno vê a pergunta e clica no cartão para revelar a resposta.</div>'
       +'<textarea id="adm-ref-flash" rows="5" placeholder="Qual o alvo de HbA1c no adulto não gestante? :: &lt;7%, individualizando entre 6,5% e 8%&#10;Quais exames diagnosticam DM? :: Glicemia de jejum ≥126, HbA1c ≥6,5% ou TOTG 2h ≥200">'+esc(g?flashToText(g.flashcards):'')+'</textarea>'
       +'<button type="button" class="btn btn-outline btn-sm" id="btn-ref-flash-gen" style="margin-top:.4rem">🃏 '+((g&&g.flashcards&&g.flashcards.length)?'Refazer com IA':'Gerar com IA')+'</button></div>'
     +'<div class="fld2" style="margin-bottom:.7rem"><label>🧠 Mapa mental (texto estruturado)</label><div style="font-size:.7rem;color:var(--t2);line-height:1.5;margin-bottom:.35rem">Um <b>ramo</b> por linha; <code>- subramo</code>; e <code>&nbsp;&nbsp;- detalhe</code> (2 espaços antes do traço) para o <b>3º nível</b>. A geração por IA já cria os 3 níveis.</div>'
       +'<textarea id="adm-ref-mapa" rows="6" placeholder="Central: Diagnóstico de DM&#10;Exames&#10;- Glicemia de jejum&#10;  - ≥126 mg/dL (jejum ≥8h)&#10;  - repetir se assintomático&#10;- HbA1c&#10;  - ≥6,5%&#10;Confirmação&#10;- 2º exame se assintomático">'+esc(g?mapaToText(g.mapa):'')+'</textarea>'
       +'<button type="button" class="btn btn-outline btn-sm" id="btn-ref-mapa-gen" style="margin-top:.4rem">🧠 '+((g&&g.mapa&&(g.mapa.central||(g.mapa.nodes&&g.mapa.nodes.length)))?'Refazer com IA':'Gerar com IA')+'</button></div>'
+    ))
     +'<div class="ref-chat"><div class="ref-chat-head">💬 Assistente de IA</div>'
       +'<div class="ref-chat-msgs" id="adm-ref-chat-msgs">'+refChatMsgsHTML()+'</div>'
       +'<div class="ref-chat-form"><textarea id="adm-ref-chat-input" placeholder="Peça à IA: “resuma os fármacos em 4 bullets”, “gere 3 flashcards sobre contraindicações”, “deixe o resumo mais didático”…"></textarea><button type="button" class="btn btn-primary" id="btn-ref-chat-send">Enviar</button></div></div>'
