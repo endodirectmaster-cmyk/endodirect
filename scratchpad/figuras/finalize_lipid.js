@@ -12,7 +12,7 @@ const miss=need.filter(t=>svg.indexOf(t)<0);
 if(miss.length) throw new Error('faltam tokens: '+miss.join(', '));
 fs.writeFileSync(__dirname+'/chosen_lipides.svg',svg);
 const FIG={titulo:'Vias das lipoproteínas e alvos terapêuticos', svg:svg,
-  fonte:'Esquema Endodirect das vias das lipoproteínas — o fígado como centro (conceito conforme a Atualização da Diretriz Brasileira de Dislipidemias e Prevenção da Aterosclerose, SBC, 2017). Ilustração original.'};
+  fonte:'Esquema Endodirect das vias das lipoproteínas — exógena, endógena e transporte reverso do colesterol (conceito conforme a Atualização da Diretriz Brasileira de Dislipidemias e Prevenção da Aterosclerose, SBC, 2017). Ilustração original.'};
 const j=JSON.stringify([FIG]);
 if(j.indexOf('$j$')>=0)throw new Error('$j$');
 const sql='UPDATE endodirect_global_state\nSET payload = jsonb_set(payload, \'{diretrizes}\', (\n'
