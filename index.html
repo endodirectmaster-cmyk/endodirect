@@ -10249,14 +10249,16 @@ function admOiFetch(q,n){
     .then(function(d){return (d&&d.items)?d.items:[];});
 }
 function admOpenImgTargetIdx(){
+  // No formulário de edição, o alvo é o item que está sendo editado.
+  if(admRefEdit!=null&&diretrizes[admRefEdit]&&dirModeMatch(diretrizes[admRefEdit]))return admRefEdit;
   for(var i=0;i<diretrizes.length;i++){var d=diretrizes[i];
     if(dirModeMatch(d)&&(String(d.sub||'Geral').trim()||'Geral')===admRefSub&&dirTemaOf(d)===admRefTema)return i;}
   return -1;
 }
 function admOiFonte(it){var ref=(typeof igFormatImgRef==='function')?igFormatImgRef(it):'';return ref||'PubMed Central · Open-i';}
-function admOpenImgPanelHTML(list){
-  var tgt=(list&&list.length)?list[0]:null;
-  var f=(tgt&&tgt.d&&Array.isArray(tgt.d.figuras)&&tgt.d.figuras.length)?tgt.d.figuras[0]:null;
+function admOpenImgPanelHTML(){
+  var ti=admOpenImgTargetIdx();
+  var f=(ti>=0&&diretrizes[ti]&&Array.isArray(diretrizes[ti].figuras)&&diretrizes[ti].figuras.length)?diretrizes[ti].figuras[0]:null;
   var cur='';
   if(f){
     var thumb=f.url?'<img src="'+esc(f.url)+'" referrerpolicy="no-referrer" onerror="this.style.display=\'none\'" style="height:60px;border-radius:6px;border:1px solid var(--bd)">':(f.svg?'<span style="font-size:.7rem;color:var(--t2)">figura própria (SVG)</span>':'');
@@ -10458,6 +10460,7 @@ function admRefSecHTML(){
         +'<button type="button" class="btn btn-outline btn-sm" data-md-list title="Lista com marcadores">• Lista</button>'
         +'<button type="button" class="btn btn-outline btn-sm" id="btn-ref-resumo-gen" style="margin-left:auto">📄 '+((g&&g.resumo)?'Refazer com IA':'Gerar com IA')+'</button>'
       +'</div></div>'
+    +((admRefMode==='res'&&g)?admOpenImgPanelHTML():'')
     +'<div class="fld2" style="margin-bottom:.7rem"><label>🃏 Flashcards (cartões de pergunta e resposta)</label>'
       +'<div style="font-size:.7rem;color:var(--t2);line-height:1.5;margin-bottom:.35rem">Escreva <b>um cartão por linha</b>: primeiro a <b>pergunta</b>, depois o separador <code>::</code> (dois-pontos duplos), depois a <b>resposta</b>. O aluno vê a pergunta e clica no cartão para revelar a resposta.</div>'
       +'<textarea id="adm-ref-flash" rows="5" placeholder="Qual o alvo de HbA1c no adulto não gestante? :: &lt;7%, individualizando entre 6,5% e 8%&#10;Quais exames diagnosticam DM? :: Glicemia de jejum ≥126, HbA1c ≥6,5% ou TOTG 2h ≥200">'+esc(g?flashToText(g.flashcards):'')+'</textarea>'
@@ -10514,7 +10517,6 @@ function admRefSecHTML(){
       var fmts=[['resumo','📄 Resumo'],['flash','🃏 Flashcards'],['mapa','🧠 Mapas mentais']];
       var fmtAtivo=(refFormat==='flash'||refFormat==='mapa')?refFormat:'resumo';
       body=rhead
-        +(admRefMode==='res'?admOpenImgPanelHTML(list):'')
         +'<div class="dir-fmt">'+fmts.map(function(f){return '<button class="dir-fmt-btn'+(fmtAtivo===f[0]?' on':'')+'" data-admref-fmt="'+f[0]+'">'+f[1]+'</button>';}).join('')+'</div>'
         +list.map(function(x){
           // Flashcards e Mapas editam in-loco (não precisam de "Editar tudo").
