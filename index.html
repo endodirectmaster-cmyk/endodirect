@@ -241,6 +241,7 @@ textarea{resize:vertical;line-height:1.6}
 .notify.ok{background:#34d399}
 .notify.err{background:var(--red)}
 .notify.info{background:var(--blue)}
+.notify.warn{background:#d97706}
 .ld{display:inline-flex;align-items:center;gap:.5rem;color:var(--t2);font-size:.75rem}
 .ld-dots{display:flex;gap:3px}
 .ld-dots span{width:4px;height:4px;border-radius:50%;background:var(--blue);animation:ldp 1.2s infinite}
@@ -3594,6 +3595,29 @@ function parseJ(raw){
   var m=c.match(/(\{[\s\S]*\})/)||c.match(/(\[[\s\S]*\])/);
   if(m){try{return JSON.parse(m[1]);}catch(e){}}
   return null;
+}
+// Recupera JSON TRUNCADO (resposta cortada pelo teto de tokens): fecha a string
+// aberta e os colchetes/chaves pendentes e revalida com JSON.parse. Seguro por
+// construção — só devolve JSON que o parser aceita (conteúdo parcial) OU null;
+// nunca fabrica dado. Último recurso, após parseJ falhar (ver importação de PDF).
+function parseJLoose(raw){
+  if(!raw)return null;
+  var c=String(raw).replace(/```json[\s]*/gi,'').replace(/```[\s]*/g,'').trim();
+  var start=c.search(/[\{\[]/);if(start<0)return null;c=c.slice(start);
+  var stack=[],inStr=false,esc=false;
+  for(var i=0;i<c.length;i++){var ch=c.charAt(i);
+    if(inStr){if(esc)esc=false;else if(ch==='\\')esc=true;else if(ch==='"')inStr=false;continue;}
+    if(ch==='"')inStr=true;
+    else if(ch==='{')stack.push('}');
+    else if(ch==='[')stack.push(']');
+    else if(ch==='}'||ch===']')stack.pop();
+  }
+  if(!inStr&&!stack.length)return null; // não estava truncado — parseJ já teria pego
+  var out=c;
+  if(inStr)out+='"';            // fecha string aberta (valor cortado no meio)
+  out=out.replace(/,\s*$/,'');  // remove vírgula pendurada
+  for(var j=stack.length-1;j>=0;j--)out+=stack[j];
+  try{return JSON.parse(out);}catch(e){return null;}
 }
 function sleep(ms){return new Promise(function(resolve){setTimeout(resolve,ms);});}
 // Corrida contra um teto de tempo: evita que uma geração trave o botão em
@@ -11612,7 +11636,7 @@ function bindAdmSec(sec){
         if(!admRefPdfB64)throw new Error('Não consegui extrair texto deste PDF.');
         if(admRefPdfB64.length>4000000)throw new Error('PDF muito grande para leitura por imagem. Use um PDF com texto selecionável, ou um arquivo menor (até ~3 MB), ou cole o conteúdo nos campos.');
         if(st)st.textContent='Gerando com IA…';
-        return aiRequest({system:SYS,prompt:'Leia o documento e '+FMT,documentBase64:admRefPdfB64,mediaType:'application/pdf',maxTokens:4000});
+        return aiRequest({system:SYS,prompt:'Leia o documento e '+FMT,documentBase64:admRefPdfB64,mediaType:'application/pdf',maxTokens:8000});
       }
       var task;
       if(admRefPdfFile&&admRefPdfFile.arrayBuffer){
@@ -11621,14 +11645,16 @@ function bindAdmSec(sec){
           .then(function(t){return String(t||'').replace(/[ \t]+/g,' ').slice(0,120000);})
           .catch(function(){return null;}) // extração falhou → tenta documento
           .then(function(text){
-            if(text&&text.replace(/\s/g,'').length>=200){if(st)st.textContent='Gerando com IA…';return aiRequest({system:SYS,prompt:FMT+'\n\nTEXTO DO DOCUMENTO:\n'+text,maxTokens:4000});}
+            if(text&&text.replace(/\s/g,'').length>=200){if(st)st.textContent='Gerando com IA…';return aiRequest({system:SYS,prompt:FMT+'\n\nTEXTO DO DOCUMENTO:\n'+text,maxTokens:8000});}
             return fromBase64(); // PDF escaneado/sem texto selecionável
           });
       }else{
         task=Promise.resolve().then(fromBase64);
       }
       task.then(function(raw){
-        var d=parseJ(raw);if(!d)throw new Error('A IA não retornou um JSON válido.');
+        var d=parseJ(raw),partial=false;
+        if(!d){d=parseJLoose(raw);partial=!!d;} // resposta cortada pelo teto de tokens → recupera o que der
+        if(!d){var tail=String(raw||'').trim();throw new Error(tail?'A IA retornou um conteúdo muito longo e foi cortado. Tente um PDF mais curto (ou capítulo por capítulo).':'A IA não retornou conteúdo. Tente novamente.');}
         function setVal(id,v){var e=document.getElementById(id);if(e&&v!=null)e.value=v;}
         var fEl=document.getElementById('adm-ref-fonte');if(fEl&&!fEl.value.trim()&&d.fonte)fEl.value=d.fonte;
         var aEl=document.getElementById('adm-ref-ano');if(aEl&&!aEl.value.trim()&&d.ano)aEl.value=String(d.ano);
@@ -11636,8 +11662,8 @@ function bindAdmSec(sec){
         if(Array.isArray(d.bullets))setVal('adm-ref-pts',d.bullets.map(String).join('\n'));
         if(Array.isArray(d.flashcards))setVal('adm-ref-flash',flashToText(d.flashcards.filter(function(c){return c&&c.q&&c.a;}).map(function(c){return {q:String(c.q),a:String(c.a)};})));
         var pdfMapa=normDirMapa(d.mapa);if(pdfMapa)setVal('adm-ref-mapa',mapaToText(pdfMapa));
-        if(st)st.textContent='✓ Gerado — revise e edite os campos.';
-        notify('Conteúdo gerado a partir do PDF. Revise e salve.','ok');
+        if(st)st.textContent=partial?'✓ Gerado (parcial — resposta longa foi cortada). Revise e complete.':'✓ Gerado — revise e edite os campos.';
+        notify(partial?'Conteúdo gerado (parcial: a resposta foi longa e parte foi cortada). Revise e complete antes de salvar.':'Conteúdo gerado a partir do PDF. Revise e salve.',partial?'warn':'ok');
       }).catch(function(e){var msg=(e&&e.message)||'falha';if(/\b413\b/.test(msg))msg='PDF muito grande. Use um PDF com texto selecionável ou um arquivo menor (até ~3 MB).';notify('Erro ao ler o PDF: '+msg,'err');if(st)st.textContent='';})
       .then(function(){rPdfGen.disabled=false;rPdfGen.innerHTML='🤖 Gerar com IA';});
     });

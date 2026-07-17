@@ -45,7 +45,11 @@ function parseBody(req) {
 function clampTokens(value) {
   const parsed = Number.parseInt(value, 10);
   if (!Number.isFinite(parsed)) return 1500;
-  return Math.max(200, Math.min(parsed, 4000));
+  // Teto de 8000: material rico de estudo (resumo + bullets + flashcards + mapa
+  // mental de 3 níveis, ex.: importação de diretriz em PDF) chega a ~4–5k tokens
+  // de saída — com o teto antigo de 4000 o JSON TRUNCAVA e a importação falhava
+  // ("A IA não retornou um JSON válido"). Nenhum gerador pede mais que isto.
+  return Math.max(200, Math.min(parsed, 8000));
 }
 
 function extractText(payload) {
