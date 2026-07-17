@@ -9,3 +9,7 @@ scratchpad/**/*.b64.part.*
 scratchpad/**/chunk.*
 scratchpad/basica/apply/
 scratchpad/basica/expanded/
+# WYSIWYG: harness de teste transitório (regenerável por gen_test.js)
+scratchpad/wysiwyg/*.html
+scratchpad/wysiwyg/*dom*.html
+scratchpad/wysiwyg/index_converter.js

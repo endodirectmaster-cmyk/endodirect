@@ -739,6 +739,18 @@ html[data-theme="light"] .dir-back{background:#f8f9fc;border-color:var(--bd2);co
 .dir-card .dir-texto table{border-collapse:collapse;width:fit-content;max-width:100%;margin:.7rem auto;font-size:.8rem;display:block;overflow-x:auto;-webkit-overflow-scrolling:touch}
 .dir-card .dir-texto th,.dir-card .dir-texto td{border:1px solid var(--bd2);padding:.42rem .6rem;text-align:left;vertical-align:top;line-height:1.45}
 .dir-card .dir-texto th{background:var(--s2);color:var(--tx);font-weight:700;white-space:nowrap}
+/* Edição WYSIWYG do resumo (edita direto no texto formatado) */
+.wys-bar{position:sticky;top:0;z-index:6;display:flex;gap:.3rem;flex-wrap:wrap;align-items:center;padding:.45rem .5rem;margin-bottom:.6rem;background:var(--surface);border:1px solid var(--bd);border-radius:10px;box-shadow:0 2px 8px rgba(0,0,0,.06)}
+.wys-bar .wys-tool{font-size:.8rem;min-width:1.9rem;padding:.28rem .5rem;line-height:1;border:1px solid var(--bd2);background:var(--s2);color:var(--t1);border-radius:7px;cursor:pointer}
+.wys-bar .wys-tool:hover{background:var(--bd2)}
+.wys-bar .wys-sep{width:1px;align-self:stretch;background:var(--bd2);margin:.1rem .15rem}
+.wys-bar .wys-spacer{flex:1}
+.wys-edit{border:1px dashed var(--blue);border-radius:10px;padding:.7rem .9rem;background:var(--surface);outline:none;min-height:6rem}
+.wys-edit:focus{border-style:solid;box-shadow:0 0 0 3px rgba(37,99,235,.12)}
+.wys-edit table{width:fit-content;max-width:100%}
+.wys-details{margin-top:.8rem;border:1px solid var(--bd);border-radius:10px;background:var(--s2);padding:0 .8rem}
+.wys-details>summary{cursor:pointer;padding:.6rem .1rem;font-size:.78rem;font-weight:600;color:var(--t1)}
+.wys-details[open]{padding-bottom:.8rem}
 .art-md h3{font-size:.9rem;font-weight:700;color:var(--tx);margin:.75rem 0 .3rem}
 .art-md ul{margin:.3rem 0 .3rem 1.15rem;padding:0}
 .art-md li{margin:.15rem 0}
@@ -3671,6 +3683,81 @@ function mdToHtml(md){
   }
   flushList();
   return out.join('');
+}
+// Inverso do mdToHtml: HTML (inclusive o "sujo" do contenteditable) → markdown.
+// Escrito para reproduzir a MESMA saída visual (round-trip estável) e tolerar
+// os artefatos do navegador (<div>/<br>/<b>/<span style>/&nbsp;). Verificado em
+// Chromium contra os resumos reais (mdToHtml(htmlToMd(mdToHtml(x)))===mdToHtml(x)).
+// Usado na edição WYSIWYG do resumo (edição direta no texto formatado).
+function htmlToMd(root){
+  var out=[];
+  function styleWrap(el,inner){
+    var st=((el.getAttribute&&el.getAttribute('style'))||'').toLowerCase();
+    if(/font-weight:\s*(bold|[6-9]00)/.test(st))inner='**'+inner+'**';
+    if(/font-style:\s*italic/.test(st))inner='*'+inner+'*';
+    if(/text-decoration:[^;]*underline/.test(st))inner='__'+inner+'__';
+    return inner;
+  }
+  function inline(node){
+    var s='',kids=node.childNodes;
+    for(var i=0;i<kids.length;i++){
+      var ch=kids[i];
+      if(ch.nodeType===3){s+=ch.nodeValue;continue;}
+      if(ch.nodeType!==1)continue;
+      var tag=ch.tagName.toLowerCase(),inner=inline(ch);
+      if(tag==='strong'||tag==='b')s+='**'+inner+'**';
+      else if(tag==='em'||tag==='i')s+='*'+inner+'*';
+      else if(tag==='u'||tag==='ins')s+='__'+inner+'__';
+      else if(tag==='code'||tag==='tt'||tag==='kbd')s+='`'+inner+'`';
+      else if(tag==='br')s+='\n';
+      else if(tag==='span'||tag==='font')s+=styleWrap(ch,inner);
+      else s+=inner;
+    }
+    return s;
+  }
+  function cellText(node){return inline(node).replace(/\s+/g,' ').replace(/\|/g,'\\|').trim();}
+  function pushLine(t){if(t!=='')out.push(t);}
+  function block(node){
+    if(node.nodeType===3){var t=(node.nodeValue||'').trim();if(t)pushLine(t);return;}
+    if(node.nodeType!==1)return;
+    var tag=node.tagName.toLowerCase();
+    if(/^h[1-6]$/.test(tag)){pushLine('## '+inline(node).replace(/\s+/g,' ').trim());return;}
+    if(tag==='hr'){out.push('---');return;}
+    if(tag==='blockquote'){pushLine('> '+inline(node).replace(/\s+/g,' ').trim());return;}
+    if(tag==='ul'||tag==='ol'){
+      var items=[],lis=node.children;
+      for(var i=0;i<lis.length;i++){if(lis[i].tagName&&lis[i].tagName.toLowerCase()==='li'){var it=inline(lis[i]).replace(/\s+/g,' ').trim();if(it)items.push('- '+it);}}
+      if(items.length)out.push(items.join('\n'));
+      return;
+    }
+    if(tag==='table'){
+      var trs=node.querySelectorAll('tr'),allRows=[];
+      for(var r=0;r<trs.length;r++){var cs=trs[r].querySelectorAll('th,td'),row=[];for(var cI=0;cI<cs.length;cI++)row.push(cellText(cs[cI]));if(row.length)allRows.push(row);}
+      if(allRows.length){
+        var header=allRows[0],w=header.length;
+        var tl=['| '+header.join(' | ')+' |','| '+header.map(function(){return '---';}).join(' | ')+' |'];
+        for(var b=1;b<allRows.length;b++){var rr=allRows[b].slice(0,w);while(rr.length<w)rr.push('');tl.push('| '+rr.join(' | ')+' |');}
+        out.push(tl.join('\n'));
+      }
+      return;
+    }
+    if(tag==='p'||tag==='div'){
+      // contenteditable pode aninhar blocos (ex.: <p><ul>…</ul></p> gerado por
+      // insertUnorderedList): se houver filho de bloco, recursa; senão é linha.
+      var hasBlock=false,kids=node.childNodes;
+      for(var k=0;k<kids.length;k++){var c=kids[k];if(c.nodeType===1&&/^(h[1-6]|p|ul|ol|table|hr|blockquote|div)$/.test(c.tagName.toLowerCase())){hasBlock=true;break;}}
+      if(hasBlock){for(var k2=0;k2<kids.length;k2++)block(kids[k2]);}
+      else{pushLine(inline(node).replace(/\s+/g,' ').trim());}
+      return;
+    }
+    var kids2=node.childNodes,handled=false;
+    for(var k3=0;k3<kids2.length;k3++){if(kids2[k3].nodeType===1)handled=true;}
+    if(handled){for(var k4=0;k4<kids2.length;k4++)block(kids2[k4]);}
+    else{pushLine(inline(node).replace(/\s+/g,' ').trim());}
+  }
+  var top=root.childNodes;
+  for(var i=0;i<top.length;i++)block(top[i]);
+  return out.join('\n\n').replace(/\n{3,}/g,'\n\n').trim();
 }
 function formatAIReport(md){
   return '<div class="card ai-report-card"><div class="ai-report">'+mdToHtml(md)+'</div></div>';
@@ -8268,6 +8355,38 @@ function dirCardHTML(d,i){
   }
   return '<div class="dir-card">'+head+body+'</div>';
 }
+// Editor WYSIWYG do resumo — edição DIRETA no texto formatado, na própria tela.
+// O corpo é um contenteditable com o resumo já renderizado (mdToHtml); ao Salvar,
+// htmlToMd converte de volta para markdown. Fonte/ano/pontos-chave/imagem ficam
+// num <details> recolhido, reaproveitando os IDs do formulário clássico → o mesmo
+// handler de Salvar/Cancelar e o painel de imagem funcionam sem alteração.
+function admRefWysHTML(d){
+  var bodyHTML=mdToHtml(String((d&&d.resumo)||'')); // sem troca de [[figura]] → o marcador fica como texto editável/móvel
+  if(!bodyHTML)bodyHTML='<p><br></p>';
+  var fonte=esc(d?(d.fonte||''):''),ano=esc(d?(d.ano||''):'');
+  var ptsTxt=esc(d?((d.pts||[]).join('\n')):'');
+  return '<div class="wys">'
+    +'<div class="wys-bar">'
+      +'<button type="button" class="wys-tool" data-wys="bold" title="Negrito"><b>B</b></button>'
+      +'<button type="button" class="wys-tool" data-wys="italic" title="Itálico"><i>I</i></button>'
+      +'<button type="button" class="wys-tool" data-wys="underline" title="Sublinhado"><u>S</u></button>'
+      +'<span class="wys-sep"></span>'
+      +'<button type="button" class="wys-tool" data-wys="h" title="Título de seção">H</button>'
+      +'<button type="button" class="wys-tool" data-wys="ul" title="Lista com marcadores">•</button>'
+      +'<button type="button" class="wys-tool" data-wys="p" title="Parágrafo normal">¶</button>'
+      +'<span class="wys-spacer"></span>'
+      +'<button type="button" class="btn btn-outline btn-sm" id="btn-adm-ref-cancel">Cancelar</button>'
+      +'<button type="button" class="btn btn-primary btn-sm" id="btn-adm-ref-save">💾 Salvar</button>'
+    +'</div>'
+    +'<div class="wys-edit dir-texto" id="adm-ref-wys" contenteditable="true" spellcheck="true">'+bodyHTML+'</div>'
+    +'<details class="wys-details">'
+      +'<summary>⚙️ Fonte, ano, pontos-chave e imagem</summary>'
+      +'<div class="g2" style="margin:.4rem 0 .7rem"><div class="fld2" style="margin:0"><label>Fonte</label><input type="text" id="adm-ref-fonte" value="'+fonte+'"></div><div class="fld2" style="margin:0"><label>Ano</label><input type="text" id="adm-ref-ano" value="'+ano+'"></div></div>'
+      +'<div class="fld2" style="margin-bottom:.7rem"><label>Pontos-chave / bullets (um por linha)</label><textarea id="adm-ref-pts" rows="4">'+ptsTxt+'</textarea></div>'
+      +((admRefMode==='res'&&d)?admOpenImgPanelHTML():'')
+    +'</details>'
+  +'</div>';
+}
 // Mapa mental em árvore horizontal (estilo do editor de Mapas Mentais):
 // central → ramos coloridos → subramos (tinta do ramo) → sub-subramos. Os
 // conectores curvos são desenhados em SVG por drawDmap() (ancorados no centro
@@ -10387,11 +10506,25 @@ function admOpenImgUpload(file){
 }
 // Insere o marcador [[figura]] na posição do cursor do textarea do resumo.
 function admOpenImgInsertMarker(){
-  var ta=document.getElementById('adm-ref-resumo');if(!ta){notify('Abra o Editar do resumo primeiro.','err');return;}
-  var s=ta.selectionStart||0,e=ta.selectionEnd||0,v=ta.value||'';
-  var pre=v.slice(0,s),post=v.slice(e);
-  var ins=(pre&&!/\n\s*$/.test(pre)?'\n\n':'')+'[[figura]]'+(post&&!/^\s*\n/.test(post)?'\n\n':'');
-  ta.value=pre+ins+post;ta.focus();var pos=(pre+ins).length;try{ta.setSelectionRange(pos,pos);}catch(_){}
+  var ta=document.getElementById('adm-ref-resumo');
+  if(ta){
+    var s=ta.selectionStart||0,e=ta.selectionEnd||0,v=ta.value||'';
+    var pre=v.slice(0,s),post=v.slice(e);
+    var ins=(pre&&!/\n\s*$/.test(pre)?'\n\n':'')+'[[figura]]'+(post&&!/^\s*\n/.test(post)?'\n\n':'');
+    ta.value=pre+ins+post;ta.focus();var pos=(pre+ins).length;try{ta.setSelectionRange(pos,pos);}catch(_){}
+    notify('Marcador [[figura]] inserido — a imagem aparece aqui ao salvar.','ok');return;
+  }
+  // Edição WYSIWYG: insere um parágrafo [[figura]] no ponto do cursor (se estiver
+  // no editor) ou ao final. htmlToMd o preserva como texto → vira o marcador.
+  var ed=document.getElementById('adm-ref-wys');if(!ed){notify('Abra o Editar do resumo primeiro.','err');return;}
+  ed.focus();
+  var p=document.createElement('p');p.textContent='[[figura]]';
+  var sel=window.getSelection&&window.getSelection();
+  var inEd=sel&&sel.rangeCount&&ed.contains(sel.anchorNode);
+  if(inEd){
+    var node=sel.getRangeAt(0).startContainer;while(node&&node.parentNode!==ed)node=node.parentNode;
+    if(node&&node.nextSibling)ed.insertBefore(p,node.nextSibling);else ed.appendChild(p);
+  }else ed.appendChild(p);
   notify('Marcador [[figura]] inserido — a imagem aparece aqui ao salvar.','ok');
 }
 // Re-pinta só o painel de imagem (sem tocar no restante do formulário).
@@ -10640,7 +10773,7 @@ function admRefSecHTML(){
           var head='<div style="display:flex;align-items:center;justify-content:space-between;gap:.5rem;flex-wrap:wrap;margin-bottom:.4rem">'+statusTag+'<div style="display:flex;gap:.4rem;flex-wrap:wrap">'+toggleBtn+editBtn+'</div></div>';
           return '<div class="adm-ref-view" style="margin-bottom:1.1rem">'
             +head
-            +((admRefInline===x.i&&isResumo)?formHTML:(fmtAtivo==='flash'?admRefFlashHTML(x.d,x.i):fmtAtivo==='mapa'?(mapaEdit?dirMapaEditHTML(x.d,x.i):admRefMapaHTML(x.d,x.i)):dirCardHTML(x.d,x.i)))+'</div>';
+            +((admRefInline===x.i&&isResumo)?(admRefMode==='res'?admRefWysHTML(x.d):formHTML):(fmtAtivo==='flash'?admRefFlashHTML(x.d,x.i):fmtAtivo==='mapa'?(mapaEdit?dirMapaEditHTML(x.d,x.i):admRefMapaHTML(x.d,x.i)):dirCardHTML(x.d,x.i)))+'</div>';
         }).join('');
     }
   }
@@ -11585,14 +11718,19 @@ function bindAdmSec(sec){
     var rSave=document.getElementById('btn-adm-ref-save');
     if(rSave)rSave.addEventListener('click',function(){
       function val(id){var e=document.getElementById(id);return e?e.value.trim():'';}
-      var pts=(document.getElementById('adm-ref-pts').value||'').split('\n').map(function(s){return s.trim();}).filter(Boolean);
-      var resumo=val('adm-ref-resumo');
+      function valOr(id,fb){var e=document.getElementById(id);return e?e.value.trim():fb;}
+      var pts=(((document.getElementById('adm-ref-pts')||{}).value)||'').split('\n').map(function(s){return s.trim();}).filter(Boolean);
+      // Edição WYSIWYG (edita direto no texto formatado): o resumo vem do
+      // contenteditable convertido para markdown; senão, do textarea clássico.
+      var wys=document.getElementById('adm-ref-wys');
+      var resumo=wys?htmlToMd(wys):val('adm-ref-resumo');
       var fc=parseFlashText(val('adm-ref-flash'));
       var mp=parseMapaText(val('adm-ref-mapa'));
       if(!pts.length&&!resumo&&!fc.length&&!mp){notify('Adicione algum conteúdo (resumo, bullets, flashcards ou mapa).','err');return;}
       // Tema vem do contexto da aba; sem título separado (o tema identifica a diretriz).
       var prev=(admRefEdit!==null&&diretrizes[admRefEdit])?diretrizes[admRefEdit]:{};
-      var obj=Object.assign({},prev,{fonte:val('adm-ref-fonte')||'—',ano:val('adm-ref-ano'),sub:val('adm-ref-sub')||admRefSub,tema:admRefTema||prev.tema||'',titulo:prev.titulo||'',pts:pts,resumo:resumo,url:val('adm-ref-url')}); // preserva fluxogramas/tier e demais campos fora do formulário
+      // sub/url podem não estar no DOM (edição WYSIWYG enxuta) → preserva o valor atual.
+      var obj=Object.assign({},prev,{fonte:val('adm-ref-fonte')||'—',ano:val('adm-ref-ano'),sub:valOr('adm-ref-sub',prev.sub||admRefSub)||admRefSub,tema:admRefTema||prev.tema||'',titulo:prev.titulo||'',pts:pts,resumo:resumo,url:valOr('adm-ref-url',prev.url||'')}); // preserva fluxogramas/tier e demais campos fora do formulário
       if(fc.length)obj.flashcards=fc;
       if(mp)obj.mapa=mp;
       // Item novo herda a visibilidade do modo atual: Resumos → privado; Diretrizes → público.
@@ -11620,6 +11758,23 @@ function bindAdmSec(sec){
       var novo=bloco?bloco.split('\n').map(function(l){return /^\s*-\s/.test(l)?l:('- '+l);}).join('\n'):'- item';
       ta.value=v.slice(0,ini)+novo+v.slice(e);
       ta.focus();ta.setSelectionRange(ini,ini+novo.length);
+    });
+    // Toolbar do editor WYSIWYG (edição direta no texto formatado do resumo).
+    // mousedown preventDefault preserva a seleção do contenteditable ao clicar.
+    main.querySelectorAll('[data-wys]').forEach(function(b){
+      b.addEventListener('mousedown',function(e){e.preventDefault();});
+      b.addEventListener('click',function(){
+        var ed=document.getElementById('adm-ref-wys');if(!ed)return;ed.focus();
+        var cmd=b.dataset.wys;
+        try{
+          if(cmd==='bold')document.execCommand('bold',false,null);
+          else if(cmd==='italic')document.execCommand('italic',false,null);
+          else if(cmd==='underline')document.execCommand('underline',false,null);
+          else if(cmd==='ul')document.execCommand('insertUnorderedList',false,null);
+          else if(cmd==='h')document.execCommand('formatBlock',false,'H3');
+          else if(cmd==='p')document.execCommand('formatBlock',false,'P');
+        }catch(err){}
+      });
     });
     var rPdf=document.getElementById('adm-ref-pdf');
     if(rPdf)rPdf.addEventListener('change',function(e){
