@@ -8383,12 +8383,9 @@ function admRefWysHTML(d){
     +'<div style="font-size:.8rem;font-weight:700;color:var(--tx);margin-bottom:.3rem">📄 Importar PDF com IA</div>'
     +'<div style="font-size:.72rem;color:var(--t2);margin-bottom:.6rem">A IA gera resumo, bullets, flashcards e mapa a partir da diretriz — revise aqui antes de salvar.</div>'
     +'<div style="display:flex;gap:.5rem;align-items:center;flex-wrap:wrap"><input type="file" id="adm-ref-pdf" accept="application/pdf,.pdf" style="font-size:.74rem"><button class="btn btn-outline btn-sm" id="btn-adm-ref-pdfgen">🤖 Gerar com IA</button><span id="adm-ref-pdf-status" style="font-size:.72rem;color:var(--t3)"></span></div></div>');
-  var flashMapa=isRes?'':('<div class="fld2" style="margin-bottom:.7rem"><label>🃏 Flashcards (um por linha: pergunta :: resposta)</label>'
-    +'<textarea id="adm-ref-flash" rows="5" placeholder="Qual o alvo de HbA1c no adulto? :: 7%, individualizando entre 6,5 e 8%">'+esc(d?flashToText(d.flashcards):'')+'</textarea>'
-    +'<button type="button" class="btn btn-outline btn-sm" id="btn-ref-flash-gen" style="margin-top:.4rem">🃏 '+((d&&d.flashcards&&d.flashcards.length)?'Refazer com IA':'Gerar com IA')+'</button></div>'
-    +'<div class="fld2" style="margin-bottom:.7rem"><label>🧠 Mapa mental (texto estruturado)</label>'
-    +'<textarea id="adm-ref-mapa" rows="6" placeholder="Central: tema&#10;Ramo&#10;- subramo&#10;  - detalhe">'+esc(d?mapaToText(d.mapa):'')+'</textarea>'
-    +'<button type="button" class="btn btn-outline btn-sm" id="btn-ref-mapa-gen" style="margin-top:.4rem">🧠 '+((d&&d.mapa&&(d.mapa.central||(d.mapa.nodes&&d.mapa.nodes.length)))?'Refazer com IA':'Gerar com IA')+'</button></div>');
+  // Flashcards e mapa NÃO são editados aqui — cada um tem sua aba (Flashcards /
+  // Mapas mentais). O import de PDF aplica flashcards/mapa direto no item (ver
+  // handler btn-adm-ref-pdfgen), que ficam editáveis nas respectivas abas.
   return '<div class="wys">'
     +'<div class="wys-bar">'
       +'<button type="button" class="wys-tool" data-wys="bold" title="Negrito"><b>B</b></button>'
@@ -8404,11 +8401,10 @@ function admRefWysHTML(d){
     +'</div>'
     +'<div class="wys-edit dir-texto" id="adm-ref-wys" contenteditable="true" spellcheck="true">'+bodyHTML+'</div>'
     +'<details class="wys-details">'
-      +'<summary>'+(isRes?'⚙️ Fonte, ano, pontos-chave e imagem':'⚙️ Fonte, ano, pontos-chave, flashcards, mapa e importar PDF')+'</summary>'
+      +'<summary>'+(isRes?'⚙️ Fonte, ano, pontos-chave e imagem':'⚙️ Fonte, ano, pontos-chave e importar PDF')+'</summary>'
       +pdfBlock
       +'<div class="g2" style="margin:.4rem 0 .7rem"><div class="fld2" style="margin:0"><label>Fonte</label><input type="text" id="adm-ref-fonte" value="'+fonte+'"></div><div class="fld2" style="margin:0"><label>Ano</label><input type="text" id="adm-ref-ano" value="'+ano+'"></div></div>'
       +'<div class="fld2" style="margin-bottom:.7rem"><label>Pontos-chave / bullets (um por linha)</label><textarea id="adm-ref-pts" rows="4">'+ptsTxt+'</textarea></div>'
-      +flashMapa
       +((isRes&&d)?admOpenImgPanelHTML():'')
     +'</details>'
   +'</div>';
@@ -11854,8 +11850,17 @@ function bindAdmSec(sec){
         // no formulário clássico, para o textarea.
         if(d.resumo){var wysB=document.getElementById('adm-ref-wys');if(wysB)wysB.innerHTML=mdToHtml(String(d.resumo));else setVal('adm-ref-resumo',String(d.resumo));}
         if(Array.isArray(d.bullets))setVal('adm-ref-pts',d.bullets.map(String).join('\n'));
-        if(Array.isArray(d.flashcards))setVal('adm-ref-flash',flashToText(d.flashcards.filter(function(c){return c&&c.q&&c.a;}).map(function(c){return {q:String(c.q),a:String(c.a)};})));
-        var pdfMapa=normDirMapa(d.mapa);if(pdfMapa)setVal('adm-ref-mapa',mapaToText(pdfMapa));
+        // Flashcards/mapa: no formulário clássico vão para os textareas; no editor
+        // WYSIWYG (que não tem esses campos) aplicam DIRETO no item — ficam
+        // editáveis nas abas Flashcards/Mapas e são preservados ao salvar.
+        if(Array.isArray(d.flashcards)){
+          var fcs=d.flashcards.filter(function(c){return c&&c.q&&c.a;}).map(function(c){return {q:String(c.q),a:String(c.a)};});
+          var flEl=document.getElementById('adm-ref-flash');
+          if(flEl)flEl.value=flashToText(fcs);
+          else if(fcs.length&&admRefEdit!==null&&diretrizes[admRefEdit])diretrizes[admRefEdit].flashcards=fcs;
+        }
+        var pdfMapa=normDirMapa(d.mapa);
+        if(pdfMapa){var mpEl=document.getElementById('adm-ref-mapa');if(mpEl)mpEl.value=mapaToText(pdfMapa);else if(admRefEdit!==null&&diretrizes[admRefEdit])diretrizes[admRefEdit].mapa=pdfMapa;}
         if(st)st.textContent=partial?'✓ Gerado (parcial — resposta longa foi cortada). Revise e complete.':'✓ Gerado — revise e edite os campos.';
         notify(partial?'Conteúdo gerado (parcial: a resposta foi longa e parte foi cortada). Revise e complete antes de salvar.':'Conteúdo gerado a partir do PDF. Revise e salve.',partial?'warn':'ok');
       }).catch(function(e){var msg=(e&&e.message)||'falha';if(/\b413\b/.test(msg))msg='PDF muito grande. Use um PDF com texto selecionável ou um arquivo menor (até ~3 MB).';notify('Erro ao ler o PDF: '+msg,'err');if(st)st.textContent='';})
