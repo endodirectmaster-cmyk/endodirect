@@ -8220,9 +8220,18 @@ function dirCardHTML(d,i){
     body=dirMapaHTML(d.mapa);
   }else{ // 'resumo': texto corrido + pontos-chave + fluxograma(s) (o que houver)
     var parts=[];
-    if(d.resumo)parts.push('<div class="dir-texto">'+mdToHtml(d.resumo)+'</div>');
+    var figHTML=(d.figuras&&d.figuras.length)?dirFigurasHTML(d.figuras):'';
+    var figInText=false;
+    if(d.resumo){
+      var rz=String(d.resumo);
+      // Marcador [[figura]] no texto → a figura aparece exatamente nesse ponto.
+      if(figHTML&&/\[\[\s*figura\s*\]\]/i.test(rz)){rz=rz.replace(/\[\[\s*figura\s*\]\]/ig,'\n\n%%ENDOFIG%%\n\n');figInText=true;}
+      var htmlrz=mdToHtml(rz);
+      if(figInText)htmlrz=htmlrz.replace(/(?:<p>\s*)?%%ENDOFIG%%(?:\s*<\/p>)?/g,figHTML);
+      parts.push('<div class="dir-texto">'+htmlrz+'</div>');
+    }
     if(d.pts&&d.pts.length)parts.push('<ul>'+d.pts.map(function(p){return '<li>'+esc(p)+'</li>';}).join('')+'</ul>');
-    if(d.figuras&&d.figuras.length)parts.push(dirFigurasHTML(d.figuras));
+    if(figHTML&&!figInText)parts.push(figHTML); // sem marcador → após os pontos-chave (padrão)
     if(d.fluxogramas&&d.fluxogramas.length)parts.push(dirFluxoHTML(d.fluxogramas));
     body=parts.length?parts.join(''):'<div class="dir-empty-fmt">Resumo ainda não disponível.</div>';
   }
@@ -10264,11 +10273,14 @@ function admOpenImgPanelHTML(){
     var thumb=f.url?'<img src="'+esc(f.url)+'" referrerpolicy="no-referrer" onerror="this.style.display=\'none\'" style="height:60px;border-radius:6px;border:1px solid var(--bd)">':(f.svg?'<span style="font-size:.7rem;color:var(--t2)">figura própria (SVG)</span>':'');
     cur='<div style="display:flex;align-items:center;gap:.6rem;margin-bottom:.55rem">'+thumb+'<div style="flex:1;font-size:.7rem;color:var(--t2)"><b>'+esc(f.titulo||'Figura')+'</b><div style="color:var(--t3);font-size:.64rem;line-height:1.4">'+esc(f.fonte||'')+'</div></div><button class="btn btn-outline btn-sm" data-adm-oi-remove>🗑 Remover</button></div>';
   }
-  return '<div class="card" style="margin:.2rem 0 1rem;padding:.7rem .8rem">'
-    +'<div style="font-size:.8rem;font-weight:700;margin-bottom:.4rem">🖼️ Imagem do capítulo <span style="font-weight:400;color:var(--t3)">(PubMed Central · Open-i)</span></div>'
+  // Marcador de posição — só faz sentido quando há figura anexada.
+  var marker=f?('<div style="font-size:.64rem;color:var(--t3);margin:.1rem 0 .5rem;line-height:1.6">📍 Posição no texto: escreva <code>[[figura]]</code> onde quiser que ela apareça no resumo. <button class="btn btn-outline btn-sm" data-adm-oi-marker style="padding:.08rem .45rem">Inserir aqui</button> <span style="color:var(--t3)">— sem o marcador, a figura fica após os pontos-chave.</span></div>'):'';
+  return '<div class="card" id="adm-oi-panel" style="margin:.2rem 0 1rem;padding:.7rem .8rem">'
+    +'<div style="font-size:.8rem;font-weight:700;margin-bottom:.4rem">🖼️ Imagem do capítulo <span style="font-weight:400;color:var(--t3)">(PubMed Central · Open-i · ou anexar)</span></div>'
     +cur
-    +'<div style="display:flex;gap:.4rem;flex-wrap:wrap;align-items:center"><input type="text" id="adm-oi-q" value="'+esc(admOpenImgSuggestQuery())+'" style="flex:1;min-width:200px" placeholder="palavras-chave (inglês encontra mais)"><button class="btn btn-primary btn-sm" data-adm-oi-search>🔎 Buscar</button></div>'
-    +'<div style="font-size:.64rem;color:var(--t3);margin-top:.35rem;line-height:1.5">⚠️ Anexe apenas imagens de <b>licença aberta (CC BY / CC0 / domínio público)</b> — confira no link do artigo. O crédito fica abaixo da figura.</div>'
+    +marker
+    +'<div style="display:flex;gap:.4rem;flex-wrap:wrap;align-items:center"><input type="text" id="adm-oi-q" value="'+esc(admOpenImgSuggestQuery())+'" style="flex:1;min-width:170px" placeholder="palavras-chave (inglês encontra mais)"><button class="btn btn-primary btn-sm" data-adm-oi-search>🔎 Buscar</button><label class="btn btn-outline btn-sm" style="cursor:pointer;margin:0">📎 Anexar<input type="file" accept="image/*" data-adm-oi-file style="display:none"></label></div>'
+    +'<div style="font-size:.64rem;color:var(--t3);margin-top:.35rem;line-height:1.5">⚠️ Use apenas imagens de <b>licença aberta (CC BY / CC0 / domínio público)</b> ou <b>próprias/autorizadas</b> — o crédito fica abaixo da figura.</div>'
     +'<div id="adm-oi-results" style="margin-top:.6rem"></div></div>';
 }
 function admOpenImgRenderResults(){
@@ -10301,16 +10313,70 @@ function admOpenImgSearch(){
   .catch(function(){admOpenImgErr=true;admOpenImgResults=[];})
   .then(function(){admOpenImgBusy=false;admOpenImgRenderResults();});
 }
+// Anexa a figura ao item e RE-PINTA só o painel (preserva o texto em edição no
+// textarea — nada de rerenderRef, que reconstruiria o formulário inline).
+function admOpenImgAttach(ti,fig,msg){
+  diretrizes[ti].figuras=[fig];persistDiretrizes();
+  admOpenImgResults=[];if(msg)notify(msg,'ok');admOpenImgRepaint();
+}
 function admOpenImgUse(idx){
   var it=admOpenImgResults[idx];if(!it||!it.img){notify('Imagem sem URL.','err');return;}
   var ti=admOpenImgTargetIdx();if(ti<0){notify('Crie o resumo deste capítulo antes de anexar a imagem.','err');return;}
-  diretrizes[ti].figuras=[{titulo:admRefTema,url:it.img,fonte:admOiFonte(it)}];
-  persistDiretrizes();notify('Imagem anexada. Confirme a licença no artigo. 🖼️','ok');rerenderRef();
+  admOpenImgAttach(ti,{titulo:admRefTema,url:it.img,fonte:admOiFonte(it)},'Imagem anexada. Confirme a licença no artigo. 🖼️');
 }
 function admOpenImgRemove(){
   var ti=admOpenImgTargetIdx();if(ti<0)return;
   if(diretrizes[ti].figuras)delete diretrizes[ti].figuras;
-  persistDiretrizes();notify('Imagem removida.','info');rerenderRef();
+  persistDiretrizes();notify('Imagem removida.','info');admOpenImgRepaint();
+}
+// Upload de imagem do computador: reduz (canvas, máx. 1000px, JPEG 0.85) e guarda
+// como data:URL no campo figuras.url (o app já armazena imagens base64 no payload).
+function admOpenImgUpload(file){
+  if(!file||!/^image\//.test(file.type||'')){notify('Selecione um arquivo de imagem.','err');return;}
+  var ti=admOpenImgTargetIdx();if(ti<0){notify('Crie o resumo deste capítulo antes de anexar a imagem.','err');return;}
+  var reader=new FileReader();
+  reader.onload=function(){
+    var raw=reader.result;var img=new Image();
+    img.onload=function(){
+      var dataURL=raw;
+      try{
+        var maxW=1000,sc=Math.min(1,maxW/(img.naturalWidth||maxW));
+        var w=Math.max(1,Math.round((img.naturalWidth||maxW)*sc)),h=Math.max(1,Math.round((img.naturalHeight||maxW)*sc));
+        var cv=document.createElement('canvas');cv.width=w;cv.height=h;cv.getContext('2d').drawImage(img,0,0,w,h);
+        var out=cv.toDataURL('image/jpeg',0.85);
+        if(out&&out.length<raw.length)dataURL=out; // usa o menor (mantém PNG pequeno se já era)
+      }catch(e){}
+      admOpenImgAttach(ti,{titulo:admRefTema,url:dataURL,fonte:'Imagem anexada pelo professor'},'Imagem anexada. 🖼️');
+    };
+    img.onerror=function(){notify('Não consegui ler essa imagem.','err');};
+    img.src=raw;
+  };
+  reader.onerror=function(){notify('Falha ao ler o arquivo.','err');};
+  reader.readAsDataURL(file);
+}
+// Insere o marcador [[figura]] na posição do cursor do textarea do resumo.
+function admOpenImgInsertMarker(){
+  var ta=document.getElementById('adm-ref-resumo');if(!ta){notify('Abra o Editar do resumo primeiro.','err');return;}
+  var s=ta.selectionStart||0,e=ta.selectionEnd||0,v=ta.value||'';
+  var pre=v.slice(0,s),post=v.slice(e);
+  var ins=(pre&&!/\n\s*$/.test(pre)?'\n\n':'')+'[[figura]]'+(post&&!/^\s*\n/.test(post)?'\n\n':'');
+  ta.value=pre+ins+post;ta.focus();var pos=(pre+ins).length;try{ta.setSelectionRange(pos,pos);}catch(_){}
+  notify('Marcador [[figura]] inserido — a imagem aparece aqui ao salvar.','ok');
+}
+// Re-pinta só o painel de imagem (sem tocar no restante do formulário).
+function admOpenImgRepaint(){
+  var p=document.getElementById('adm-oi-panel');if(!p||!p.parentNode)return;
+  var wrap=document.createElement('div');wrap.innerHTML=admOpenImgPanelHTML();
+  var nw=wrap.firstChild;p.parentNode.replaceChild(nw,p);admOpenImgBind(nw);
+}
+// Liga os botões do painel (usado no render e após cada repaint).
+function admOpenImgBind(root){
+  root=root||document.getElementById('adm-oi-panel');if(!root)return;
+  var s=root.querySelector('[data-adm-oi-search]');if(s)s.addEventListener('click',admOpenImgSearch);
+  var r=root.querySelector('[data-adm-oi-remove]');if(r)r.addEventListener('click',admOpenImgRemove);
+  var mk=root.querySelector('[data-adm-oi-marker]');if(mk)mk.addEventListener('click',admOpenImgInsertMarker);
+  var fi=root.querySelector('[data-adm-oi-file]');if(fi)fi.addEventListener('change',function(){var f=fi.files&&fi.files[0];if(f)admOpenImgUpload(f);fi.value='';});
+  admOpenImgRenderResults();
 }
 // Flashcards ⇄ texto ("Pergunta :: Resposta" por linha).
 function flashToText(cards){return (Array.isArray(cards)?cards:[]).map(function(c){return (c.q||'')+' :: '+(c.a||'');}).join('\n');}
@@ -11437,9 +11503,7 @@ function bindAdmSec(sec){
     main.querySelectorAll('[data-admref-fmt]').forEach(function(b){b.addEventListener('click',function(){refFormat=b.dataset.admrefFmt;rerenderRef();});});
     // Buscador de imagem aberta (PMC/Open-i) no editor de Resumos
     if(admOpenImgTema!==admRefTema){admOpenImgTema=admRefTema;admOpenImgResults=[];}
-    var oiS=main.querySelector('[data-adm-oi-search]');if(oiS)oiS.addEventListener('click',admOpenImgSearch);
-    var oiR=main.querySelector('[data-adm-oi-remove]');if(oiR)oiR.addEventListener('click',admOpenImgRemove);
-    if(document.getElementById('adm-oi-results'))admOpenImgRenderResults();
+    if(document.getElementById('adm-oi-panel'))admOpenImgBind(document.getElementById('adm-oi-panel'));
     main.querySelectorAll('[data-dir-flash]').forEach(function(b){b.addEventListener('click',function(){b.classList.toggle('flipped');});});
     main.querySelectorAll('[data-dir-mm-branch]').forEach(function(b){b.addEventListener('click',function(){if(b.parentNode)b.parentNode.classList.toggle('open');});});
     // ── Temas: criar / renomear / excluir inline ──
