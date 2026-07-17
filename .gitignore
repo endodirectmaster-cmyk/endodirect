@@ -1,2 +1,15 @@
 # Artefatos locais de revisão (gerados por agentes; aplicados ao Supabase, não versionados)
 .review/
+
+# Artefatos transitórios de expansão de resumos (multi-agente; regeneráveis pelos
+# build*.js e aplicados ao Supabase — o registro durável é o banco + cofre/Decisões.md).
+scratchpad/**/*.sql
+scratchpad/**/*.b64
+scratchpad/**/*.b64.part.*
+scratchpad/**/chunk.*
+scratchpad/basica/apply/
+scratchpad/basica/expanded/
+# WYSIWYG: harness de teste transitório (regenerável por gen_test.js)
+scratchpad/wysiwyg/*.html
+scratchpad/wysiwyg/*dom*.html
+scratchpad/wysiwyg/index_converter.js
