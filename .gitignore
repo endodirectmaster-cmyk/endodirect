@@ -1,2 +1,11 @@
 # Artefatos locais de revisão (gerados por agentes; aplicados ao Supabase, não versionados)
 .review/
+
+# Artefatos transitórios de expansão de resumos (multi-agente; regeneráveis pelos
+# build*.js e aplicados ao Supabase — o registro durável é o banco + cofre/Decisões.md).
+scratchpad/**/*.sql
+scratchpad/**/*.b64
+scratchpad/**/*.b64.part.*
+scratchpad/**/chunk.*
+scratchpad/basica/apply/
+scratchpad/basica/expanded/
