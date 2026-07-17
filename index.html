@@ -8132,6 +8132,11 @@ var REF_GUIDELINES=[
 // Taxonomia canônica das subespecialidades (ordem dos cards na aba Diretrizes).
 // Sempre aparecem todas — mesmo sem diretriz ainda (em curadoria).
 var DIR_SUBS=['Endocrinologia Básica','Diabetes','Tireoide','Adrenal','Obesidade','Lípides','Osteometabolismo','Neuroendocrinologia','Endocrinologia Feminina','Endocrinologia Masculina','Endocrinologia Pediátrica','Endocrinologia do Esporte','Endocrinopatias'];
+// Subespecialidades que existem SÓ nos Resumos (conteúdo de base do professor) —
+// não devem aparecer como card VAZIO na aba Diretrizes (pública). Ficam ocultas
+// da grade quando não há item correspondente ao predicado ativo (0 diretrizes);
+// nos Resumos, onde têm capítulos privados, continuam aparecendo normalmente.
+var RESUMOS_ONLY_SUBS=['Endocrinologia Básica'];
 // Migra rótulos antigos de subespecialidade para a taxonomia atual.
 function dirMigrateSub(s){var v=String(s||'').trim();if(v==='Reprodução')return 'Endocrinologia Masculina';return v;}
 // Normaliza (na exibição) rótulos antigos de subespecialidade dos mapas mentais
@@ -8206,7 +8211,9 @@ function dirSubList(pred){
   var seen={};
   diretrizes.forEach(function(d){if(!pred(d))return;var s=String(d.sub||'Geral').trim()||'Geral';seen[s]=(seen[s]||0)+1;});
   // Todas as subespecialidades canônicas (mesmo com 0), na ordem definida…
-  var out=DIR_SUBS.map(function(s){return {sub:s,count:seen[s]||0};});
+  // …exceto as "só de Resumos" quando não têm item no predicado ativo (não
+  // poluem a aba Diretrizes com um card de 0 diretrizes).
+  var out=DIR_SUBS.map(function(s){return {sub:s,count:seen[s]||0};}).filter(function(o){return !(RESUMOS_ONLY_SUBS.indexOf(o.sub)>=0&&o.count===0);});
   // …mais qualquer subespecialidade extra já cadastrada fora da taxonomia.
   Object.keys(seen).forEach(function(s){if(DIR_SUBS.indexOf(s)<0)out.push({sub:s,count:seen[s]});});
   return out;
