@@ -759,7 +759,11 @@ html[data-theme="light"] .dir-back{background:#f8f9fc;border-color:var(--bd2);co
 .wys-edit th{background:var(--s2);color:var(--tx);font-weight:700;white-space:nowrap}
 .wys-edit hr{border:none;border-top:1px solid var(--bd2);margin:.9rem 0}
 .wys-edit blockquote{margin:.6rem 0;padding:.3rem .8rem;border-left:3px solid var(--bd2);color:var(--t2)}
-.wys-details{margin-top:.8rem;border:1px solid var(--bd);border-radius:10px;background:var(--s2);padding:0 .8rem}
+.wys-pts-label{margin:.9rem 0 .3rem;font-size:.8rem;font-weight:700;color:var(--tx)}
+.wys-pts-label span{font-weight:400;font-size:.72rem;color:var(--t3)}
+.wys-pts-edit{min-height:2.6rem}
+.wys-pts-edit ul{margin:.1rem 0}
+.wys-details{margin:0 0 .7rem;border:1px solid var(--bd);border-radius:10px;background:var(--s2);padding:0 .8rem}
 .wys-details>summary{cursor:pointer;padding:.6rem .1rem;font-size:.78rem;font-weight:600;color:var(--tx)}
 .wys-details[open]{padding-bottom:.8rem}
 .art-md h3{font-size:.9rem;font-weight:700;color:var(--tx);margin:.75rem 0 .3rem}
@@ -8375,7 +8379,8 @@ function admRefWysHTML(d){
   var bodyHTML=mdToHtml(String((d&&d.resumo)||'')); // sem troca de [[figura]] → o marcador fica como texto editável/móvel
   if(!bodyHTML)bodyHTML='<p><br></p>';
   var fonte=esc(d?(d.fonte||''):''),ano=esc(d?(d.ano||''):'');
-  var ptsTxt=esc(d?((d.pts||[]).join('\n')):'');
+  var ptsArr=(d&&Array.isArray(d.pts))?d.pts:[];
+  var ptsListHTML='<ul>'+(ptsArr.length?ptsArr.map(function(p){return '<li>'+esc(String(p))+'</li>';}).join(''):'<li><br></li>')+'</ul>';
   var isRes=(admRefMode==='res');
   // Diretrizes editam flashcards/mapa e importam PDF no próprio editor; Resumos
   // usam as abas Flashcards/Mapas e o painel de imagem.
@@ -8399,14 +8404,18 @@ function admRefWysHTML(d){
       +'<button type="button" class="btn btn-outline btn-sm" id="btn-adm-ref-cancel">Cancelar</button>'
       +'<button type="button" class="btn btn-primary btn-sm" id="btn-adm-ref-save">💾 Salvar</button>'
     +'</div>'
-    +'<div class="wys-edit dir-texto" id="adm-ref-wys" contenteditable="true" spellcheck="true">'+bodyHTML+'</div>'
+    // Painel de metadados PRA CIMA (logo abaixo da toolbar), recolhido.
     +'<details class="wys-details">'
-      +'<summary>'+(isRes?'⚙️ Fonte, ano, pontos-chave e imagem':'⚙️ Fonte, ano, pontos-chave e importar PDF')+'</summary>'
+      +'<summary>'+(isRes?'⚙️ Fonte, ano e imagem':'⚙️ Fonte, ano e importar PDF')+'</summary>'
       +pdfBlock
-      +'<div class="g2" style="margin:.4rem 0 .7rem"><div class="fld2" style="margin:0"><label>Fonte</label><input type="text" id="adm-ref-fonte" value="'+fonte+'"></div><div class="fld2" style="margin:0"><label>Ano</label><input type="text" id="adm-ref-ano" value="'+ano+'"></div></div>'
-      +'<div class="fld2" style="margin-bottom:.7rem"><label>Pontos-chave / bullets (um por linha)</label><textarea id="adm-ref-pts" rows="4">'+ptsTxt+'</textarea></div>'
+      +'<div class="g2" style="margin:.4rem 0 .3rem"><div class="fld2" style="margin:0"><label>Fonte</label><input type="text" id="adm-ref-fonte" value="'+fonte+'"></div><div class="fld2" style="margin:0"><label>Ano</label><input type="text" id="adm-ref-ano" value="'+ano+'"></div></div>'
       +((isRes&&d)?admOpenImgPanelHTML():'')
     +'</details>'
+    // Corpo do resumo (edição direta no texto formatado).
+    +'<div class="wys-edit dir-texto" id="adm-ref-wys" contenteditable="true" spellcheck="true">'+bodyHTML+'</div>'
+    // Pontos-chave editáveis INLINE (lista), logo abaixo do texto.
+    +'<div class="wys-pts-label">🔑 Pontos-chave <span>(um por linha; Enter cria outro)</span></div>'
+    +'<div class="wys-edit wys-pts-edit dir-texto" id="adm-ref-wys-pts" contenteditable="true" spellcheck="true">'+ptsListHTML+'</div>'
   +'</div>';
 }
 // Mapa mental em árvore horizontal (estilo do editor de Mapas Mentais):
@@ -11741,7 +11750,16 @@ function bindAdmSec(sec){
     if(rSave)rSave.addEventListener('click',function(){
       function val(id){var e=document.getElementById(id);return e?e.value.trim():'';}
       function valOr(id,fb){var e=document.getElementById(id);return e?e.value.trim():fb;}
-      var pts=(((document.getElementById('adm-ref-pts')||{}).value)||'').split('\n').map(function(s){return s.trim();}).filter(Boolean);
+      // Pontos-chave: editor inline (lista) no WYSIWYG; senão, textarea clássico.
+      var ptsEd=document.getElementById('adm-ref-wys-pts');
+      var pts;
+      if(ptsEd){
+        pts=[];var lis=ptsEd.querySelectorAll('li');
+        if(lis.length)lis.forEach(function(li){var t=(li.textContent||'').replace(/\s+/g,' ').trim();if(t)pts.push(t);});
+        else (ptsEd.innerText||ptsEd.textContent||'').split('\n').forEach(function(l){var t=l.replace(/^[-•*]\s*/,'').trim();if(t)pts.push(t);});
+      }else{
+        pts=(((document.getElementById('adm-ref-pts')||{}).value)||'').split('\n').map(function(s){return s.trim();}).filter(Boolean);
+      }
       // Edição WYSIWYG (edita direto no texto formatado): o resumo vem do
       // contenteditable convertido para markdown; senão, do textarea clássico.
       var wys=document.getElementById('adm-ref-wys');
@@ -11786,7 +11804,11 @@ function bindAdmSec(sec){
     main.querySelectorAll('[data-wys]').forEach(function(b){
       b.addEventListener('mousedown',function(e){e.preventDefault();});
       b.addEventListener('click',function(){
-        var ed=document.getElementById('adm-ref-wys');if(!ed)return;ed.focus();
+        // Opera no editor .wys-edit que estava focado (corpo ou pontos-chave);
+        // o mousedown preventDefault preservou o foco/seleção.
+        var ed=document.activeElement;
+        if(!ed||!ed.classList||!ed.classList.contains('wys-edit'))ed=document.getElementById('adm-ref-wys');
+        if(!ed)return;ed.focus();
         var cmd=b.dataset.wys;
         try{
           if(cmd==='bold')document.execCommand('bold',false,null);
@@ -11849,7 +11871,11 @@ function bindAdmSec(sec){
         // No editor WYSIWYG o resumo vai para o contenteditable (render formatado);
         // no formulário clássico, para o textarea.
         if(d.resumo){var wysB=document.getElementById('adm-ref-wys');if(wysB)wysB.innerHTML=mdToHtml(String(d.resumo));else setVal('adm-ref-resumo',String(d.resumo));}
-        if(Array.isArray(d.bullets))setVal('adm-ref-pts',d.bullets.map(String).join('\n'));
+        if(Array.isArray(d.bullets)){
+          var ptsEd2=document.getElementById('adm-ref-wys-pts');
+          if(ptsEd2)ptsEd2.innerHTML='<ul>'+(d.bullets.length?d.bullets.map(function(b){return '<li>'+esc(String(b))+'</li>';}).join(''):'<li><br></li>')+'</ul>';
+          else setVal('adm-ref-pts',d.bullets.map(String).join('\n'));
+        }
         // Flashcards/mapa: no formulário clássico vão para os textareas; no editor
         // WYSIWYG (que não tem esses campos) aplicam DIRETO no item — ficam
         // editáveis nas abas Flashcards/Mapas e são preservados ao salvar.
