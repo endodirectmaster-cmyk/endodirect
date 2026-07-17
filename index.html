@@ -8376,6 +8376,19 @@ function admRefWysHTML(d){
   if(!bodyHTML)bodyHTML='<p><br></p>';
   var fonte=esc(d?(d.fonte||''):''),ano=esc(d?(d.ano||''):'');
   var ptsTxt=esc(d?((d.pts||[]).join('\n')):'');
+  var isRes=(admRefMode==='res');
+  // Diretrizes editam flashcards/mapa e importam PDF no próprio editor; Resumos
+  // usam as abas Flashcards/Mapas e o painel de imagem.
+  var pdfBlock=isRes?'':('<div style="border:1px dashed var(--bd2);border-radius:12px;padding:.85rem 1rem;margin:.4rem 0 .9rem;background:var(--s2)">'
+    +'<div style="font-size:.8rem;font-weight:700;color:var(--tx);margin-bottom:.3rem">📄 Importar PDF com IA</div>'
+    +'<div style="font-size:.72rem;color:var(--t2);margin-bottom:.6rem">A IA gera resumo, bullets, flashcards e mapa a partir da diretriz — revise aqui antes de salvar.</div>'
+    +'<div style="display:flex;gap:.5rem;align-items:center;flex-wrap:wrap"><input type="file" id="adm-ref-pdf" accept="application/pdf,.pdf" style="font-size:.74rem"><button class="btn btn-outline btn-sm" id="btn-adm-ref-pdfgen">🤖 Gerar com IA</button><span id="adm-ref-pdf-status" style="font-size:.72rem;color:var(--t3)"></span></div></div>');
+  var flashMapa=isRes?'':('<div class="fld2" style="margin-bottom:.7rem"><label>🃏 Flashcards (um por linha: pergunta :: resposta)</label>'
+    +'<textarea id="adm-ref-flash" rows="5" placeholder="Qual o alvo de HbA1c no adulto? :: 7%, individualizando entre 6,5 e 8%">'+esc(d?flashToText(d.flashcards):'')+'</textarea>'
+    +'<button type="button" class="btn btn-outline btn-sm" id="btn-ref-flash-gen" style="margin-top:.4rem">🃏 '+((d&&d.flashcards&&d.flashcards.length)?'Refazer com IA':'Gerar com IA')+'</button></div>'
+    +'<div class="fld2" style="margin-bottom:.7rem"><label>🧠 Mapa mental (texto estruturado)</label>'
+    +'<textarea id="adm-ref-mapa" rows="6" placeholder="Central: tema&#10;Ramo&#10;- subramo&#10;  - detalhe">'+esc(d?mapaToText(d.mapa):'')+'</textarea>'
+    +'<button type="button" class="btn btn-outline btn-sm" id="btn-ref-mapa-gen" style="margin-top:.4rem">🧠 '+((d&&d.mapa&&(d.mapa.central||(d.mapa.nodes&&d.mapa.nodes.length)))?'Refazer com IA':'Gerar com IA')+'</button></div>');
   return '<div class="wys">'
     +'<div class="wys-bar">'
       +'<button type="button" class="wys-tool" data-wys="bold" title="Negrito"><b>B</b></button>'
@@ -8391,10 +8404,12 @@ function admRefWysHTML(d){
     +'</div>'
     +'<div class="wys-edit dir-texto" id="adm-ref-wys" contenteditable="true" spellcheck="true">'+bodyHTML+'</div>'
     +'<details class="wys-details">'
-      +'<summary>⚙️ Fonte, ano, pontos-chave e imagem</summary>'
+      +'<summary>'+(isRes?'⚙️ Fonte, ano, pontos-chave e imagem':'⚙️ Fonte, ano, pontos-chave, flashcards, mapa e importar PDF')+'</summary>'
+      +pdfBlock
       +'<div class="g2" style="margin:.4rem 0 .7rem"><div class="fld2" style="margin:0"><label>Fonte</label><input type="text" id="adm-ref-fonte" value="'+fonte+'"></div><div class="fld2" style="margin:0"><label>Ano</label><input type="text" id="adm-ref-ano" value="'+ano+'"></div></div>'
       +'<div class="fld2" style="margin-bottom:.7rem"><label>Pontos-chave / bullets (um por linha)</label><textarea id="adm-ref-pts" rows="4">'+ptsTxt+'</textarea></div>'
-      +((admRefMode==='res'&&d)?admOpenImgPanelHTML():'')
+      +flashMapa
+      +((isRes&&d)?admOpenImgPanelHTML():'')
     +'</details>'
   +'</div>';
 }
@@ -10784,7 +10799,7 @@ function admRefSecHTML(){
           var head='<div style="display:flex;align-items:center;justify-content:space-between;gap:.5rem;flex-wrap:wrap;margin-bottom:.4rem">'+statusTag+'<div style="display:flex;gap:.4rem;flex-wrap:wrap">'+toggleBtn+editBtn+'</div></div>';
           return '<div class="adm-ref-view" style="margin-bottom:1.1rem">'
             +head
-            +((admRefInline===x.i&&isResumo)?(admRefMode==='res'?admRefWysHTML(x.d):formHTML):(fmtAtivo==='flash'?admRefFlashHTML(x.d,x.i):fmtAtivo==='mapa'?(mapaEdit?dirMapaEditHTML(x.d,x.i):admRefMapaHTML(x.d,x.i)):dirCardHTML(x.d,x.i)))+'</div>';
+            +((admRefInline===x.i&&isResumo)?admRefWysHTML(x.d):(fmtAtivo==='flash'?admRefFlashHTML(x.d,x.i):fmtAtivo==='mapa'?(mapaEdit?dirMapaEditHTML(x.d,x.i):admRefMapaHTML(x.d,x.i)):dirCardHTML(x.d,x.i)))+'</div>';
         }).join('');
     }
   }
@@ -11790,7 +11805,11 @@ function bindAdmSec(sec){
     var rPdf=document.getElementById('adm-ref-pdf');
     if(rPdf)rPdf.addEventListener('change',function(e){
       var f=e.target.files&&e.target.files[0];if(!f)return;
-      if(f.type!=='application/pdf'){notify('Selecione um arquivo PDF.','err');return;}
+      // Vários navegadores/SOs reportam MIME vazio ou octet-stream p/ PDF →
+      // aceita também por EXTENSÃO (senão o arquivo era rejeitado em silêncio e
+      // o "Gerar com IA" ficava sem arquivo = "não acontece nada").
+      var isPdf=(f.type==='application/pdf')||/\.pdf$/i.test(f.name||'');
+      if(!isPdf){notify('Selecione um arquivo PDF.','err');return;}
       if(f.size>30*1024*1024){notify('PDF muito grande (máx 30 MB).','err');return;}
       var st=document.getElementById('adm-ref-pdf-status');
       admRefPdfFile=f; // guarda o arquivo p/ extrair texto no navegador (pdf.js)
@@ -11831,7 +11850,9 @@ function bindAdmSec(sec){
         function setVal(id,v){var e=document.getElementById(id);if(e&&v!=null)e.value=v;}
         var fEl=document.getElementById('adm-ref-fonte');if(fEl&&!fEl.value.trim()&&d.fonte)fEl.value=d.fonte;
         var aEl=document.getElementById('adm-ref-ano');if(aEl&&!aEl.value.trim()&&d.ano)aEl.value=String(d.ano);
-        if(d.resumo)setVal('adm-ref-resumo',String(d.resumo));
+        // No editor WYSIWYG o resumo vai para o contenteditable (render formatado);
+        // no formulário clássico, para o textarea.
+        if(d.resumo){var wysB=document.getElementById('adm-ref-wys');if(wysB)wysB.innerHTML=mdToHtml(String(d.resumo));else setVal('adm-ref-resumo',String(d.resumo));}
         if(Array.isArray(d.bullets))setVal('adm-ref-pts',d.bullets.map(String).join('\n'));
         if(Array.isArray(d.flashcards))setVal('adm-ref-flash',flashToText(d.flashcards.filter(function(c){return c&&c.q&&c.a;}).map(function(c){return {q:String(c.q),a:String(c.a)};})));
         var pdfMapa=normDirMapa(d.mapa);if(pdfMapa)setVal('adm-ref-mapa',mapaToText(pdfMapa));
