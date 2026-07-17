@@ -10794,9 +10794,11 @@ function admRefSecHTML(){
           var statusTag=priv
             ? '<span style="font-size:.68rem;font-weight:700;color:var(--gold,#c9a227);background:rgba(201,162,39,.12);padding:.15rem .5rem;border-radius:999px">🔒 Resumo privado</span>'
             : '<span style="font-size:.68rem;font-weight:700;color:var(--grn);background:rgba(46,160,90,.12);padding:.15rem .5rem;border-radius:999px">✅ Publicado</span>';
+          // Só "Publicar" (resumo privado → Diretrizes). O inverso ("Tornar
+          // resumo", diretriz publicada → privado) foi removido a pedido.
           var toggleBtn=priv
             ? '<button class="btn btn-outline btn-sm" data-adm-reftoggle="'+x.i+'" title="Publicar para os alunos (move para Diretrizes)">📢 Publicar</button>'
-            : '<button class="btn btn-outline btn-sm" data-adm-reftoggle="'+x.i+'" title="Tornar privado (move para Resumos)">🔒 Tornar resumo</button>';
+            : '';
           // Nos Resumos, o mapa é editável IN-LOCO na própria árvore (contenteditable +
           // ＋/×); nas Diretrizes segue a edição em caixas (admRefMapaHTML).
           var mapaEdit=(admRefMode==='res'&&fmtAtivo==='mapa');
