@@ -12084,7 +12084,15 @@ function bindAdmSec(sec){
       }
       persistAdm();admMuralShowForm=false;admMuralEdit=null;renderAdmSec('mural');
     });
-    main.querySelectorAll('[data-adm-editav]').forEach(function(b){b.addEventListener('click',function(){admMuralEdit=parseInt(b.dataset.admEditav);admMuralShowForm=true;renderAdmSec('mural');document.getElementById('adm-main').scrollTop=0;});});
+    main.querySelectorAll('[data-adm-editav]').forEach(function(b){b.addEventListener('click',function(){
+      admMuralEdit=parseInt(b.dataset.admEditav);admMuralShowForm=true;renderAdmSec('mural');
+      // Traz o formulário (no topo da seção) para a vista — no mobile o container
+      // de rolagem costuma ser a janela, então scrollTop do adm-main não basta.
+      var _am=document.getElementById('adm-main');if(_am)_am.scrollTop=0;
+      try{window.scrollTo(0,0);}catch(e){}
+      var _f=document.getElementById('adm-av-title');
+      if(_f){try{_f.scrollIntoView({behavior:'smooth',block:'center'});}catch(e){try{_f.scrollIntoView();}catch(e2){}}try{_f.focus({preventScroll:true});}catch(e){}}
+    });});
     main.querySelectorAll('[data-adm-delav]').forEach(function(b){b.addEventListener('click',function(){var a=admAvisos[parseInt(b.dataset.admDelav)];if(!confirm('Excluir o aviso "'+((a&&a.titulo)||'')+'"? Esta ação não pode ser desfeita.'))return;
       // Exclusão PERMANENTE: itens vindos do radar/sociedade também vivem em
       // radar_avisos e seriam RE-INJETADOS no F5 (mergeRadarAvisos) e pelo cron.
