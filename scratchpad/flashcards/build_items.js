@@ -39,6 +39,7 @@ for (const r of results) {
   const sql =
 `do $$
 declare raw text := ${jTag}${fcJson}${jTag};
+declare matched int;
 begin
   if md5(raw) <> '${md5}' then
     raise exception 'md5 mismatch item ${idx} (%): got %', ${sTag}${r.tema}${sTag}, md5(raw);
@@ -52,6 +53,14 @@ begin
            then jsonb_set(d, '{flashcards}', raw::jsonb)
            else d end)
     from jsonb_array_elements(gs.payload->'diretrizes') d));
+  -- guarda anti no-op silencioso: confirma (por CONTEÚDO, imune a corrupção da
+  -- chave sub/tema no WHERE) que a atualização de fato pegou algum diretriz.
+  select count(*) into matched from endodirect_global_state gs2
+    cross join lateral jsonb_array_elements(gs2.payload->'diretrizes') d
+    where d->'flashcards' = raw::jsonb;
+  if matched = 0 then
+    raise exception 'NO-MATCH item ${idx} (%): WHERE nao casou nenhum diretriz', ${sTag}${r.tema}${sTag};
+  end if;
 end $$;
 `;
   const fn = 'item' + String(idx).padStart(2, '0') + '.sql';
