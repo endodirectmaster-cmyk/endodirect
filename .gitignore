@@ -14,3 +14,14 @@ scratchpad/wysiwyg/*.html
 scratchpad/wysiwyg/*dom*.html
 scratchpad/wysiwyg/index_converter.js
 scratchpad/wysiwyg/theme.css
+# Esporte/Endocrinopatias: SQL/base64/chunks transitórios (regeneráveis por build_insert.js)
+scratchpad/esporte_endopat/*.sql
+scratchpad/esporte_endopat/*.b64
+scratchpad/esporte_endopat/chunk.*
+scratchpad/esporte_endopat/part.*
+# Revisão de flashcards: staging base64/chunks e saídas de workflow transitórias
+# (regeneráveis por build_apply.js; o registro durável é o banco + cofre/Decisões.md).
+scratchpad/flashcards/stage/
+scratchpad/flashcards/items/
+scratchpad/flashcards/*.output
+scratchpad/flashcards/missing*.json

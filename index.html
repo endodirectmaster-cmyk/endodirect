@@ -456,6 +456,11 @@ textarea{resize:vertical;line-height:1.6}
 .mural-figure img{display:block;width:auto;max-width:100%;max-height:185px;object-fit:contain;background:#fff;cursor:zoom-in}
 .mural-card-wide{grid-column:1/-1}
 .mural-inline-img{display:block;width:-webkit-fit-content;width:fit-content;max-width:100%;max-height:340px;object-fit:contain;border:1px solid var(--bd);border-radius:10px;background:#fff;margin:.65rem auto;cursor:zoom-in}
+.mural-table-wrap{overflow-x:auto;margin:.7rem 0;-webkit-overflow-scrolling:touch}
+.mural-table{border-collapse:collapse;width:100%;font-size:.82rem;color:var(--tx);white-space:normal}
+.mural-table th,.mural-table td{border:1px solid var(--bd2);padding:.4rem .55rem;text-align:left;vertical-align:top;line-height:1.45}
+.mural-table thead th{background:var(--s2);color:var(--tx);font-weight:700}
+.mural-table tbody tr:nth-child(even){background:rgba(255,255,255,.03)}
 .mural-source a{color:#5cc8f5;text-decoration:none}
 .mural-source a:hover{text-decoration:underline}
 .mural-empty{grid-column:1/-1}
@@ -12628,21 +12633,49 @@ function muralBodyText(a){
   var tipo=(typeof muralDisplayType==='function')?muralDisplayType(a):(a&&a.tipo);
   return isFormalMuralType(tipo)?formalizeMuralText(t):t;
 }
-function muralTextHTML(txt){
-  // Escapa TUDO primeiro (XSS-safe) e só então converte uma marcação simples:
-  // imagens ![alt](url), **negrito**, __sublinhado__ e *itálico*. As imagens viram
-  // placeholders antes da formatação para proteger as URLs das regex de negrito/itálico.
-  var s=esc(String(txt||'')),imgs=[];
-  s=s.replace(/!\[([^\]]*)\]\((https?:\/\/[^\s)]+)\)/g,function(whole,alt,url){
-    if(!safeHttpUrl(url))return whole;
-    imgs.push('<img class="mural-inline-img" src="'+url+'" alt="'+alt+'" loading="lazy" referrerpolicy="no-referrer" onerror="this.remove()">');
-    return 'I'+(imgs.length-1)+'';
+// Marcação inline de uma linha JÁ ESCAPADA (XSS-safe): imagens ![alt](url), URLs
+// de imagem "cruas" (…png/.jpg/…, inclusive do bucket do Endodirect coladas
+// direto), **negrito**, __sublinhado__ e *itálico*. As imagens viram placeholders
+// numéricos antes da formatação para proteger as URLs das regex de negrito/itálico.
+function muralInlineHTML(escLine){
+  var imgs=[];
+  function pushImg(url,alt){imgs.push('<img class="mural-inline-img" src="'+url+'" alt="'+(alt||'')+'" loading="lazy" referrerpolicy="no-referrer" onerror="this.remove()">');return ''+(imgs.length-1)+'';}
+  escLine=escLine.replace(/!\[([^\]]*)\]\((https?:\/\/[^\s)]+)\)/g,function(whole,alt,url){
+    if(!safeHttpUrl(url))return whole; return pushImg(url,alt);
   });
-  s=s.replace(/\*\*([^*\n]+)\*\*/g,'<strong>$1</strong>')
+  escLine=escLine.replace(/(^|[\s(])(https?:\/\/[^\s<>()]+\.(?:png|jpe?g|gif|webp|svg))(?=$|[\s)])/gi,function(whole,pre,url){
+    if(!safeHttpUrl(url))return whole; return pre+pushImg(url,'');
+  });
+  escLine=escLine.replace(/\*\*([^*\n]+)\*\*/g,'<strong>$1</strong>')
      .replace(/__([^_\n]+)__/g,'<u>$1</u>')
      .replace(/\*([^*\n]+)\*/g,'<em>$1</em>');
-  s=s.replace(/I(\d+)/g,function(whole,i){return imgs[+i]||'';});
-  return s;
+  escLine=escLine.replace(/(\d+)/g,function(whole,i){return imgs[+i]||'';});
+  return escLine;
+}
+function muralTextHTML(txt){
+  // Renderiza por linhas: detecta tabelas markdown (linha com | seguida de linha
+  // separadora ---) e as converte em <table>; as demais linhas passam pela
+  // marcação inline preservando as quebras (container usa white-space:pre-line).
+  var lines=String(txt||'').replace(/\r/g,'').split('\n');
+  function isRow(l){return l.indexOf('|')>=0 && l.replace(/\\\|/g,'').split('|').filter(function(c){return c.trim();}).length>=2;}
+  function isSep(l){return l.indexOf('|')>=0 && /^\s*\|?[\s:]*-{2,}[\s:|-]*$/.test(l);}
+  function cells(l){var t=l.trim().replace(/^\|/,'').replace(/\|$/,'');return t.split('|').map(function(c){return muralInlineHTML(esc(c.trim()));});}
+  var out=[],i=0;
+  while(i<lines.length){
+    var line=lines[i];
+    if(isRow(line)&&i+1<lines.length&&isSep(lines[i+1])){
+      var h=cells(line),rows=[];i+=2;
+      while(i<lines.length&&isRow(lines[i])&&!isSep(lines[i])){rows.push(cells(lines[i]));i++;}
+      out.push('<div class="mural-table-wrap"><table class="mural-table"><thead><tr>'
+        +h.map(function(c){return'<th>'+c+'</th>';}).join('')+'</tr></thead><tbody>'
+        +rows.map(function(r){while(r.length<h.length)r.push('');return'<tr>'+r.slice(0,h.length).map(function(c){return'<td>'+c+'</td>';}).join('')+'</tr>';}).join('')
+        +'</tbody></table></div>');
+      continue;
+    }
+    out.push(muralInlineHTML(esc(line)));
+    i++;
+  }
+  return out.join('\n');
 }
 function muralNoticeCardHTML(a,admin){
   function dateBR(v){var d=new Date(v||Date.now());if(isNaN(d.getTime()))d=new Date();return d.toLocaleDateString('pt-BR');}
