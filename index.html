@@ -12622,6 +12622,7 @@ var MURAL_FORMAL_TYPES={'Comunicado':1,'Diretriz':1,'Consenso':1,'Discussão Cl�
 function isFormalMuralType(t){return !!MURAL_FORMAL_TYPES[String(t||'').trim()];}
 function formalizeMuralText(txt){
   return String(txt||'').split('\n').map(function(ln){
+    if(/^\s*\|/.test(ln))return ln; // linha de tabela markdown (| … | e separador ---): preserva intacta
     var s=ln.replace(/^[^\p{L}\p{N}]+/u,''); // tira emoji/símbolo inicial (📝 💡 ⚠️ 📅 🏛️ 🔬)
     s=s.replace(/^(Resumo|Por que importa[^:]*|Cautela[^:]*)\s*:\s*/i,''); // tira os rótulos do modelo, mantém o texto
     return s;
