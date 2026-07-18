@@ -8720,7 +8720,7 @@ function initMural(){
       +'<div class="mural-card-tags"><span class="tag '+cls.tag+'">'+esc(tipo)+'</span><span class="tag tag-muted">'+esc(fonte)+'</span></div>'
       +'<h3>'+esc(a.titulo||'Aviso aos alunos')+'</h3>'
       +'<div class="mural-date">'+dateBR(a.at)+'</div>'
-      +'<div class="mural-text">'+esc(muralBodyText(a)||'Comunicado publicado pela equipe Endodirect.')+'</div>'
+      +'<div class="mural-text">'+muralTextHTML(muralBodyText(a)||'Comunicado publicado pela equipe Endodirect.')+'</div>'
       +'<div class="mural-source">Fonte: '+source+'</div>'
       +'</article>';
   }
@@ -10998,7 +10998,7 @@ function admMuralSecHTML(){
       +'<div class="mural-card-tags"><span class="tag '+cls.tag+'">'+esc(tipo)+'</span><span class="tag tag-muted">'+esc(fonte)+'</span></div>'
       +'<h3>'+esc(a.titulo||'Aviso aos alunos')+'</h3>'
       +'<div class="mural-date">'+dateBR(a.at)+'</div>'
-      +'<div class="mural-text">'+esc(muralBodyText(a)||'Comunicado publicado pela equipe Endodirect.')+'</div>'
+      +'<div class="mural-text">'+muralTextHTML(muralBodyText(a)||'Comunicado publicado pela equipe Endodirect.')+'</div>'
       +'<div class="mural-source">Fonte: '+source+'</div>'
       +'<div class="mural-card-actions">'+(isRadarAuto(a)?'<button class="btn btn-outline btn-sm" data-adm-hideradar="'+esc(avisoKeyStr(a))+'">🙈 Ocultar</button>':'<button class="btn btn-outline btn-sm" data-adm-editav="'+i+'">Editar</button><button class="btn btn-outline btn-sm" data-adm-delav="'+i+'" style="color:var(--red);border-color:var(--red)">🗑 Excluir</button>')+'</div>'
       +'</article>';
