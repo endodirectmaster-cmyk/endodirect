@@ -465,6 +465,12 @@ textarea{resize:vertical;line-height:1.6}
 .mural-cap{font-size:.76rem;color:var(--t3);font-style:italic;line-height:1.45;margin:-.35rem auto .7rem;max-width:640px;text-align:center}
 .mural-inline-edit{grid-column:1/-1}
 .mural-inline-edit>.card{border:1px solid var(--blue);margin-bottom:0}
+.mural-inline-edit>.wys{border:1px solid var(--blue);border-radius:14px;background:var(--surface);padding:1rem 1.1rem}
+.mural-inline-titlewrap{margin:.15rem 0 .6rem}
+.mural-inline-titlewrap>label{display:block;font-size:.72rem;font-weight:700;color:var(--t2);margin-bottom:.25rem}
+.mural-inline-titleinput{width:100%;font-size:1rem;font-weight:700;padding:.5rem .7rem;border:1px solid var(--bd2);border-radius:9px;background:var(--surface);color:var(--tx);outline:none}
+.mural-inline-titleinput:focus{border-color:var(--blue);box-shadow:0 0 0 3px rgba(37,99,235,.12)}
+.wys-edit .wys-img,.wys-img{display:block;max-width:100%;height:auto;border-radius:8px;margin:.5rem 0;border:1px solid var(--bd2)}
 .mural-source a{color:#5cc8f5;text-decoration:none}
 .mural-source a:hover{text-decoration:underline}
 .mural-empty{grid-column:1/-1}
@@ -3671,7 +3677,13 @@ function callAIJson(sys,usr,maxTok,retries,model,grounding){
     throw e;
   });
 }
-function mdInline(s){return esc(s).replace(/\*\*(.+?)\*\*/g,'<strong>$1</strong>').replace(/__(.+?)__/g,'<u>$1</u>').replace(/(^|[^*])\*([^*\n]+)\*(?!\*)/g,'$1<em>$2</em>').replace(/`([^`]+)`/g,'<code>$1</code>');}
+function mdInline(s){
+  var imgs=[];
+  s=esc(s).replace(/!\[([^\]]*)\]\((https?:\/\/[^\s)]+)\)/g,function(w,alt,url){imgs.push('<img class="wys-img" src="'+url+'" alt="'+alt+'" referrerpolicy="no-referrer" onerror="this.style.display=\'none\'">');return ''+(imgs.length-1)+'';});
+  s=s.replace(/\*\*(.+?)\*\*/g,'<strong>$1</strong>').replace(/__(.+?)__/g,'<u>$1</u>').replace(/(^|[^*])\*([^*\n]+)\*(?!\*)/g,'$1<em>$2</em>').replace(/`([^`]+)`/g,'<code>$1</code>');
+  s=s.replace(/(\d+)/g,function(w,i){return imgs[+i]||'';});
+  return s;
+}
 function isMarkdownTableSep(line){return /^\s*\|?[\s:-]+\|[\s|:-]*$/.test(line||'');}
 function mdToHtml(md){
   var lines=String(md||'').replace(/\r/g,'').split('\n');
@@ -3728,7 +3740,9 @@ function htmlToMd(root){
       var ch=kids[i];
       if(ch.nodeType===3){s+=ch.nodeValue;continue;}
       if(ch.nodeType!==1)continue;
-      var tag=ch.tagName.toLowerCase(),inner=inline(ch);
+      var tag=ch.tagName.toLowerCase();
+      if(tag==='img'){var isrc=ch.getAttribute('src')||'';var ialt=ch.getAttribute('alt')||'';if(isrc)s+='!['+ialt+']('+isrc+')';continue;}
+      var inner=inline(ch);
       if(tag==='strong'||tag==='b')s+='**'+inner+'**';
       else if(tag==='em'||tag==='i')s+='*'+inner+'*';
       else if(tag==='u'||tag==='ins')s+='__'+inner+'__';
@@ -10400,6 +10414,7 @@ function admSupportReply(id){
 
 function persistAdm(){lsSet('adm_avisos',admAvisos);lsSet('adm_questoes',admQuestoes);queueRemoteStateSave();}
 var admMuralShowForm=false,admMuralEdit=null,admMuralFilter='',admMuralTipoFilter='',admMuralSort='novos';
+var muralInlineEdit=null; // índice do aviso em edição WYSIWYG inline (dentro do próprio card), estilo Resumos/Diretrizes
 // ---------- REFERÊNCIA RÁPIDA (admin CRUD) ----------
 var admRefShowForm=false,admRefEdit=null,admRefInline=null,admRefPdfB64=null,admRefPdfName='',admRefPdfFile=null,admRefSub='',admRefTema='',admRefTemaAdd=false,admRefTemaEdit=null,admRefChat=[];
 // Modo do painel de diretrizes: 'dir' = Diretrizes (publicadas p/ alunos) |
@@ -12020,7 +12035,7 @@ function bindAdmSec(sec){
 
   if(sec==='mural'){
     var bNew=document.getElementById('btn-adm-newav');
-    if(bNew)bNew.addEventListener('click',function(){admMuralShowForm=!admMuralShowForm;admMuralEdit=null;renderAdmSec('mural');});
+    if(bNew)bNew.addEventListener('click',function(){admMuralShowForm=!admMuralShowForm;admMuralEdit=null;muralInlineEdit=null;renderAdmSec('mural');});
     var bRadar=document.getElementById('btn-adm-radar');
     if(bRadar)bRadar.addEventListener('click',function(){
       var client=getSupabaseClient();
@@ -12088,13 +12103,12 @@ function bindAdmSec(sec){
       persistAdm();admMuralShowForm=false;admMuralEdit=null;renderAdmSec('mural');
     });
     main.querySelectorAll('[data-adm-editav]').forEach(function(b){b.addEventListener('click',function(){
-      admMuralEdit=parseInt(b.dataset.admEditav);admMuralShowForm=true;renderAdmSec('mural');
-      // Traz o formulário (no topo da seção) para a vista — no mobile o container
-      // de rolagem costuma ser a janela, então scrollTop do adm-main não basta.
-      var _am=document.getElementById('adm-main');if(_am)_am.scrollTop=0;
-      try{window.scrollTo(0,0);}catch(e){}
-      var _f=document.getElementById('adm-av-title');
-      if(_f){try{_f.scrollIntoView({behavior:'smooth',block:'center'});}catch(e){try{_f.scrollIntoView();}catch(e2){}}try{_f.focus({preventScroll:true});}catch(e){}}
+      // Edição INLINE no próprio card (WYSIWYG, estilo Resumos/Diretrizes): fecha o
+      // formulário clássico do topo e transforma o card clicado no editor.
+      muralInlineEdit=parseInt(b.dataset.admEditav);admMuralShowForm=false;admMuralEdit=null;renderAdmSec('mural');
+      // Traz o card em edição para a vista (o editor abre no lugar do próprio card).
+      var _f=document.getElementById('mural-inline-title');
+      if(_f){try{_f.scrollIntoView({behavior:'smooth',block:'center'});}catch(e){try{_f.scrollIntoView();}catch(e2){}}}
     });});
     main.querySelectorAll('[data-adm-delav]').forEach(function(b){b.addEventListener('click',function(){var a=admAvisos[parseInt(b.dataset.admDelav)];if(!confirm('Excluir o aviso "'+((a&&a.titulo)||'')+'"? Esta ação não pode ser desfeita.'))return;
       // Exclusão PERMANENTE: itens vindos do radar/sociedade também vivem em
@@ -12696,6 +12710,43 @@ function muralTextHTML(txt){
   }
   return out.join('\n');
 }
+// Editor WYSIWYG do aviso do mural — edição DIRETA no próprio card (como nos
+// Resumos/Diretrizes). O corpo é um contenteditable com o texto já renderizado
+// (mdToHtml); ao Salvar, htmlToMd converte de volta para o markdown do mural —
+// tabelas, imagens ![](url), **negrito**/*itálico*/__sublinhado__ e legendas
+// "Legenda:" fazem round-trip fiel (o card volta a renderizar via muralTextHTML).
+// Tipo, subespecialidade, fonte, link e imagem de capa ficam num <details> recolhido.
+function muralInlineEditHTML(a){
+  var bodyHTML=mdToHtml(String((a&&a.texto)||''));
+  if(!bodyHTML)bodyHTML='<p><br></p>';
+  var titulo=esc((a&&a.titulo)||''),fonte=esc((a&&a.fonte)||''),link=esc((a&&a.link)||''),img=esc((a&&a.img)||'');
+  var curSub=muralSubspecialty(a),curTipo=muralDisplayType(a);
+  var tipoOpts=MURAL_TYPES.map(function(t){return'<option'+(t===curTipo?' selected':'')+'>'+esc(t)+'</option>';}).join('');
+  var subOpts=MURAL_SUBSPECIALTY_FILTERS.map(function(s){return'<option'+(s===curSub?' selected':'')+'>'+esc(s)+'</option>';}).join('');
+  return '<div class="wys mural-inline-wys">'
+    +'<div class="wys-bar">'
+      +'<button type="button" class="wys-tool" data-wys="bold" title="Negrito"><b>B</b></button>'
+      +'<button type="button" class="wys-tool" data-wys="italic" title="Itálico"><i>I</i></button>'
+      +'<button type="button" class="wys-tool" data-wys="underline" title="Sublinhado"><u>S</u></button>'
+      +'<span class="wys-sep"></span>'
+      +'<button type="button" class="wys-tool" data-wys="ul" title="Lista com marcadores">•</button>'
+      +'<button type="button" class="wys-tool" data-wys="p" title="Parágrafo normal">¶</button>'
+      +'<button type="button" class="wys-tool" id="mural-inline-imgbtn" title="Inserir imagem no texto">🖼️</button>'
+      +'<span class="wys-spacer"></span>'
+      +'<button type="button" class="btn btn-outline btn-sm" id="btn-mural-inline-cancel">Cancelar</button>'
+      +'<button type="button" class="btn btn-primary btn-sm" id="btn-mural-inline-save">💾 Salvar</button>'
+    +'</div>'
+    +'<div class="mural-inline-titlewrap"><label>Título</label><input type="text" id="mural-inline-title" class="mural-inline-titleinput" value="'+titulo+'"></div>'
+    +'<details class="wys-details">'
+      +'<summary>⚙️ Tipo, subespecialidade, fonte, link e imagem de capa</summary>'
+      +'<div class="g2" style="margin:.4rem 0 .3rem"><div class="fld2" style="margin:0"><label>Tipo</label><select id="mural-inline-tipo">'+tipoOpts+'</select></div><div class="fld2" style="margin:0"><label>Subespecialidade</label><select id="mural-inline-sub">'+subOpts+'</select></div></div>'
+      +'<div class="g2" style="margin:.1rem 0 .3rem"><div class="fld2" style="margin:0"><label>Fonte / revista</label><input type="text" id="mural-inline-fonte" value="'+fonte+'" placeholder="Ex: NEJM, JCEM, SBEM…"></div><div class="fld2" style="margin:0"><label>Link</label><input type="text" id="mural-inline-link" value="'+link+'" placeholder="https://…"></div></div>'
+      +'<div class="fld2" style="margin:0"><label>Imagem de capa (opcional)</label><div style="display:flex;gap:6px;align-items:center;flex-wrap:wrap"><input type="text" id="mural-inline-img-url" value="'+img+'" placeholder="https://… cole a URL ou anexe" style="flex:1;min-width:180px"><button type="button" class="btn btn-outline btn-sm" id="mural-inline-coverbtn">📎 Anexar</button><input type="file" id="mural-inline-coverfile" accept="image/*" style="display:none"><span id="mural-inline-coverstatus" style="font-size:.72rem;color:var(--t3)"></span></div></div>'
+    +'</details>'
+    +'<div class="wys-edit" id="mural-inline-body" contenteditable="true" spellcheck="true">'+bodyHTML+'</div>'
+    +'<input type="file" id="mural-inline-txtimgfile" accept="image/*" style="display:none">'
+  +'</div>';
+}
 function muralNoticeCardHTML(a,admin){
   function dateBR(v){var d=new Date(v||Date.now());if(isNaN(d.getTime()))d=new Date();return d.toLocaleDateString('pt-BR');}
   var sub=muralSubspecialty(a),meta=muralSubMeta(sub),tipo=muralDisplayType(a);
@@ -12949,7 +13000,7 @@ admMuralSecHTML=function(){
   +(admMuralEdit===null?formHTML:'') // "Novo aviso" abre no topo; edição abre INLINE no próprio card (ver grid abaixo)
   +'<div class="card" style="margin-bottom:1.1rem"><div style="display:flex;align-items:flex-start;justify-content:space-between;gap:1rem;flex-wrap:wrap"><div style="flex:1;min-width:240px"><div style="font-size:.62rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--t3);margin-bottom:.3rem">Gestão do mural dos alunos</div><div style="font-size:1.15rem;font-weight:700;color:var(--tx);margin-bottom:.35rem">Edite avisos, notícias e comunicados importantes</div><div style="font-size:.79rem;color:var(--t2);line-height:1.55">Os cards abaixo alimentam a aba Mural do estudante. Use etiquetas por tipo de conteúdo e subespecialidade para organizar leituras e atualizações.</div></div></div></div>'
   +'<section class="mural-filter-card"><div class="mural-filter-main"><label class="mural-filter-field"><span class="mural-filter-label">Subespecialidade</span><select class="mural-filter-select" id="adm-mural-filter">'+opt.html+'</select></label><label class="mural-filter-field"><span class="mural-filter-label">Tipo de artigo</span><select class="mural-filter-select" id="adm-mural-filter-tipo">'+tipoFiltroOpts+'</select></label><label class="mural-filter-field"><span class="mural-filter-label">Ordenar</span><select class="mural-filter-select" id="adm-mural-filter-sort">'+muralSortOptions(admMuralSort)+'</select></label><div class="mural-switch-wrap"><button type="button" id="adm-mural-bn-toggle" class="mural-switch'+(muralShowBreaking?' on':'')+'" role="switch" aria-checked="'+(muralShowBreaking?'true':'false')+'" title="Mostrar Breaking News"><span class="ms-dot"></span></button><span>📣 Breaking News</span></div><span class="mural-count-pill">'+esc(count)+'</span><span class="mural-theme-pill">'+esc(tema)+'</span></div><button class="btn btn-outline" id="adm-mural-clear" type="button">Limpar filtro</button></section>'
-  +'<div class="mural-grid mural-admin-grid" id="adm-av-list">'+(admPageAvisos.length?admPageAvisos.map(function(a){return (admMuralShowForm&&admMuralEdit!==null&&admAvisos.indexOf(a)===admMuralEdit)?('<div class="mural-inline-edit">'+formHTML+'</div>'):muralNoticeCardHTML(a,true);}).join(''):'<div class="empty mural-empty">'+(admAvisos.length?'Nenhum aviso encontrado para este filtro.':'Nenhum aviso publicado. Clique em "+ Novo aviso" para começar.')+'</div>')+'</div>'
+  +'<div class="mural-grid mural-admin-grid" id="adm-av-list">'+(admPageAvisos.length?admPageAvisos.map(function(a){return (muralInlineEdit!==null&&admAvisos.indexOf(a)===muralInlineEdit)?('<div class="mural-inline-edit">'+muralInlineEditHTML(a)+'</div>'):muralNoticeCardHTML(a,true);}).join(''):'<div class="empty mural-empty">'+(admAvisos.length?'Nenhum aviso encontrado para este filtro.':'Nenhum aviso publicado. Clique em "+ Novo aviso" para começar.')+'</div>')+'</div>'
   +muralPagerHTML(admMuralPage,admMPages,'adm-mural')
   +'</div>';
 };
@@ -13091,6 +13142,91 @@ bindAdmSec=function(sec){
         notify('Texto gerado pela IA. Revise antes de publicar.','ok');
       }).catch(function(e){notify('Erro: '+((e&&e.message)||e),'err');})
       .then(function(){avGen.disabled=false;avGen.innerHTML=_o;});
+    });
+  }
+  // ── Editor WYSIWYG inline do aviso (edição direta NO PRÓPRIO card) ──
+  if(muralInlineEdit!==null){
+    var mBody=document.getElementById('mural-inline-body');
+    // Toolbar: opera no corpo em foco; mousedown preventDefault preserva a seleção.
+    document.querySelectorAll('.mural-inline-wys [data-wys]').forEach(function(b){
+      b.addEventListener('mousedown',function(e){e.preventDefault();});
+      b.addEventListener('click',function(){
+        var ed=document.activeElement;
+        if(!ed||!ed.classList||!ed.classList.contains('wys-edit'))ed=mBody;
+        if(!ed)return;ed.focus();
+        var cmd=b.dataset.wys;
+        try{
+          if(cmd==='bold')document.execCommand('bold',false,null);
+          else if(cmd==='italic')document.execCommand('italic',false,null);
+          else if(cmd==='underline')document.execCommand('underline',false,null);
+          else if(cmd==='ul')document.execCommand('insertUnorderedList',false,null);
+          else if(cmd==='p')document.execCommand('formatBlock',false,'P');
+        }catch(err){}
+      });
+    });
+    // Inserir imagem NO TEXTO: upload → <img> no ponto do cursor (htmlToMd → ![](url)).
+    var miImgBtn=document.getElementById('mural-inline-imgbtn'),miImgFile=document.getElementById('mural-inline-txtimgfile');
+    if(miImgBtn&&miImgFile){
+      miImgBtn.addEventListener('mousedown',function(e){e.preventDefault();});
+      miImgBtn.addEventListener('click',function(){miImgFile.click();});
+      miImgFile.addEventListener('change',function(){
+        var f=miImgFile.files&&miImgFile.files[0];if(!f)return;
+        if(!/^image\//.test(f.type)){notify('Selecione uma imagem.','err');return;}
+        if(f.size>8*1024*1024){notify('Imagem muito grande (máx 8 MB).','err');return;}
+        miImgBtn.disabled=true;
+        uploadAdminAsset(f,'mural').then(function(res){
+          if(mBody){mBody.focus();
+            var tag='<img class="wys-img" src="'+esc(res.url)+'" alt="">';
+            try{document.execCommand('insertHTML',false,tag);}catch(e){mBody.innerHTML+=tag;}
+          }
+        }).catch(function(e){notify(uploadErrorMessage(e),'err');}).then(function(){miImgBtn.disabled=false;miImgFile.value='';});
+      });
+    }
+    // Imagem de CAPA (anexar arquivo → URL no campo).
+    var miCovBtn=document.getElementById('mural-inline-coverbtn'),miCovFile=document.getElementById('mural-inline-coverfile'),miCovStatus=document.getElementById('mural-inline-coverstatus'),miCovUrl=document.getElementById('mural-inline-img-url');
+    if(miCovBtn&&miCovFile){
+      miCovBtn.addEventListener('click',function(){miCovFile.click();});
+      miCovFile.addEventListener('change',function(){
+        var f=miCovFile.files&&miCovFile.files[0];if(!f)return;
+        if(!/^image\//.test(f.type)){notify('Selecione uma imagem.','err');return;}
+        if(f.size>8*1024*1024){notify('Imagem muito grande (máx 8 MB).','err');return;}
+        if(miCovStatus)miCovStatus.textContent='Enviando…';miCovBtn.disabled=true;
+        uploadAdminAsset(f,'mural').then(function(res){
+          if(miCovUrl)miCovUrl.value=res.url;
+          if(miCovStatus)miCovStatus.textContent='✓ enviada';
+        }).catch(function(e){if(miCovStatus)miCovStatus.textContent='';notify(uploadErrorMessage(e),'err');}).then(function(){miCovBtn.disabled=false;});
+      });
+    }
+    var miCancel=document.getElementById('btn-mural-inline-cancel');
+    if(miCancel)miCancel.addEventListener('click',function(){muralInlineEdit=null;renderAdmSec('mural');});
+    // Salvar: título + corpo (htmlToMd) + metadados; preserva 'at' e sincroniza o radar.
+    var miSave=document.getElementById('btn-mural-inline-save');
+    if(miSave)miSave.addEventListener('click',function(){
+      if(muralInlineEdit===null)return;
+      var orig=admAvisos[muralInlineEdit];if(!orig)return;
+      var t=((document.getElementById('mural-inline-title')||{}).value||'').trim();
+      if(!t){notify('Preencha o título.','err');return;}
+      var bodyEl=document.getElementById('mural-inline-body');
+      var texto=bodyEl?htmlToMd(bodyEl):(orig.texto||'');
+      var dados={
+        titulo:t,
+        tipo:((document.getElementById('mural-inline-tipo')||{}).value||orig.tipo||'Comunicado'),
+        subespecialidade:((document.getElementById('mural-inline-sub')||{}).value||'Endocrinologia Geral'),
+        fonte:((document.getElementById('mural-inline-fonte')||{}).value||'').trim(),
+        link:((document.getElementById('mural-inline-link')||{}).value||'').trim(),
+        texto:texto,
+        img:((document.getElementById('mural-inline-img-url')||{}).value||'').trim()
+      };
+      dados=normalizeMuralAviso(dados,defaultMuralMap());
+      dados.at=(orig&&orig.at)||Date.now();
+      var updatedAv=Object.assign({},orig,dados);
+      admAvisos[muralInlineEdit]=updatedAv;
+      // Card automático (radar/breaking): sincroniza no radarAvisos pela chave original.
+      if(isRadarAuto(updatedAv)){
+        var _rk=avisoKeyStr(orig);
+        for(var _ri=0;_ri<radarAvisos.length;_ri++){if(avisoKeyStr(radarAvisos[_ri])===_rk){radarAvisos[_ri]=updatedAv;break;}}
+      }
+      muralInlineEdit=null;persistAdm();renderAdmSec('mural');notify('Aviso atualizado.','ok');
     });
   }
 };
