@@ -462,6 +462,7 @@ textarea{resize:vertical;line-height:1.6}
 @media (max-width:520px){.mural-table{font-size:.66rem;min-width:420px}.mural-table th,.mural-table td{padding:.26rem .34rem}}
 .mural-table thead th{background:var(--s2);color:var(--tx);font-weight:700}
 .mural-table tbody tr:nth-child(even){background:rgba(255,255,255,.03)}
+.mural-cap{font-size:.76rem;color:var(--t3);font-style:italic;line-height:1.45;margin:-.35rem auto .7rem;max-width:640px;text-align:center}
 .mural-source a{color:#5cc8f5;text-decoration:none}
 .mural-source a:hover{text-decoration:underline}
 .mural-empty{grid-column:1/-1}
@@ -12681,6 +12682,12 @@ function muralTextHTML(txt){
         +rows.map(function(r){while(r.length<h.length)r.push('');return'<tr>'+r.slice(0,h.length).map(function(c){return'<td>'+c+'</td>';}).join('')+'</tr>';}).join('')
         +'</tbody></table></div>');
       continue;
+    }
+    // Legenda de figura: linha começando com "Legenda:/Figura:/Fig." vira uma
+    // legenda menor e discreta (começa com letra → sobrevive ao formalizeMuralText).
+    if(/^\s*(Legenda|Figura|Fig\.)\s*[:.–—-]/i.test(line)){
+      out.push('<div class="mural-cap">'+muralInlineHTML(esc(line.trim()))+'</div>');
+      i++;continue;
     }
     out.push(muralInlineHTML(esc(line)));
     i++;
