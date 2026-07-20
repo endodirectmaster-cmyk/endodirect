@@ -12762,6 +12762,7 @@ function muralInlineEditHTML(a){
       +'<button type="button" class="wys-tool" data-wys="italic" title="Itálico"><i>I</i></button>'
       +'<button type="button" class="wys-tool" data-wys="underline" title="Sublinhado"><u>S</u></button>'
       +'<span class="wys-sep"></span>'
+      +'<button type="button" class="wys-tool" data-wys="h" title="Título de seção">H</button>'
       +'<button type="button" class="wys-tool" data-wys="ul" title="Lista com marcadores">•</button>'
       +'<button type="button" class="wys-tool" data-wys="p" title="Parágrafo normal">¶</button>'
       +'<button type="button" class="wys-tool" id="mural-inline-imgbtn" title="Inserir imagem no texto">🖼️</button>'
@@ -13192,6 +13193,7 @@ bindAdmSec=function(sec){
           if(cmd==='bold')document.execCommand('bold',false,null);
           else if(cmd==='italic')document.execCommand('italic',false,null);
           else if(cmd==='underline')document.execCommand('underline',false,null);
+          else if(cmd==='h')document.execCommand('formatBlock',false,'H3');
           else if(cmd==='ul')document.execCommand('insertUnorderedList',false,null);
           else if(cmd==='p')document.execCommand('formatBlock',false,'P');
         }catch(err){}
@@ -13253,12 +13255,18 @@ bindAdmSec=function(sec){
       dados=normalizeMuralAviso(dados,defaultMuralMap());
       dados.at=(orig&&orig.at)||Date.now();
       var updatedAv=Object.assign({},orig,dados);
-      admAvisos[muralInlineEdit]=updatedAv;
-      // Card automático (radar/breaking): sincroniza no radarAvisos pela chave original.
-      if(isRadarAuto(updatedAv)){
-        var _rk=avisoKeyStr(orig);
-        for(var _ri=0;_ri<radarAvisos.length;_ri++){if(avisoKeyStr(radarAvisos[_ri])===_rk){radarAvisos[_ri]=updatedAv;break;}}
+      // Edição de card do RADAR (auto): a persistência de radar_avisos é frágil — o
+      // cron/servidor é dono dessa chave e a reconstrói a cada save/F5, então a
+      // edição do professor não “stickava”. Convertendo o item num aviso MANUAL
+      // (adm_avisos, 100% controlado pelo admin) a edição SEMPRE persiste; o original
+      // do radar é ocultado (radar_hidden) para não duplicar nem reverter.
+      if(isRadarAuto(orig)){
+        var _origKey=avisoKeyStr(orig);
+        if(radarHidden.indexOf(_origKey)<0)radarHidden.push(_origKey);
+        radarAvisos=radarAvisos.filter(function(x){return avisoKeyStr(x)!==_origKey;});
+        delete updatedAv.auto;delete updatedAv.sourceId;delete updatedAv.breaking;delete updatedAv.society;
       }
+      admAvisos[muralInlineEdit]=updatedAv;
       muralInlineEdit=null;persistAdm();renderAdmSec('mural');notify('Aviso atualizado.','ok');
     });
   }
