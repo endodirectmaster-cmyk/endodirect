@@ -13181,6 +13181,25 @@ bindAdmSec=function(sec){
   // ── Editor WYSIWYG inline do aviso (edição direta NO PRÓPRIO card) ──
   if(muralInlineEdit!==null){
     var mBody=document.getElementById('mural-inline-body');
+    // Colar PRESERVANDO a formatação: "lava" o HTML colado pelo conversor markdown
+    // (htmlToMd → mdToHtml), mapeando títulos <h1-6>, listas <ul>/<ol>, negrito/itálico
+    // e tabelas para a estrutura limpa que grava certo (## , - , **). Assim, texto
+    // copiado de Word/Google Docs/página web cai formatado no editor — sem remarcar à
+    // mão. Também converte linhas iniciadas por bullet (•‣▪◦·) em item de lista.
+    if(mBody)mBody.addEventListener('paste',function(e){
+      var cd=e.clipboardData||window.clipboardData;if(!cd||!cd.getData)return;
+      var html='';try{html=cd.getData('text/html');}catch(_){}
+      var text='';try{text=cd.getData('text/plain');}catch(_){}
+      var md;
+      if(html&&html.trim()){var tmp=document.createElement('div');tmp.innerHTML=html;md=htmlToMd(tmp);}
+      else if(text){md=String(text);}
+      else return;
+      md=md.replace(/\r/g,'').split('\n').map(function(l){return l.replace(/^\s*[•‣▪◦·∙▸►]\s+/,'- ');}).join('\n');
+      e.preventDefault();
+      var cleanHTML=mdToHtml(md)||'';
+      try{document.execCommand('insertHTML',false,cleanHTML);}
+      catch(err){try{document.execCommand('insertText',false,md);}catch(e2){}}
+    });
     // Toolbar: opera no corpo em foco; mousedown preventDefault preserva a seleção.
     document.querySelectorAll('.mural-inline-wys [data-wys]').forEach(function(b){
       b.addEventListener('mousedown',function(e){e.preventDefault();});
