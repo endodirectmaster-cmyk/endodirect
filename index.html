@@ -12646,24 +12646,39 @@ function muralFilterOptions(list,current){
   if(current&&subs.indexOf(current)<0)current='';
   return{current:current,html:'<option value="">Todos</option>'+subs.map(function(s){return'<option value="'+esc(s)+'">'+esc(s)+'</option>';}).join('')};
 }
-// Nome do periódico/revista de um aviso (já normalizado). Comunicados/eventos/
-// Breaking News e itens de sociedade não têm periódico → retornam ''.
-function muralPeriodico(a){
+// Nome do periódico/revista de um aviso (display, já normalizado). Comunicados/
+// eventos/Breaking News e itens de sociedade não têm periódico → retornam ''.
+function muralPeriodicoDisplay(a){
   var t=muralDisplayType(a);
   if(t==='Comunicado'||t==='Evento'||t==='Breaking News')return '';
   if(a&&a.society)return '';
   var f=normalizeMuralSource(String((a&&a.fonte)||'').trim());
   return (!f||f==='Endodirect')?'':f;
 }
-// Opções do filtro "Periódico" derivadas dos avisos presentes (auto-mantido:
-// conforme o radar traz artigos de NEJM, JCEM, Endocrine Reviews, Diabetes Care,
-// Frontiers, etc., cada revista aparece automaticamente na lista).
+// "Impressão digital" do periódico p/ AGRUPAR variantes que só diferem em
+// maiúsculas/pontuação/"&"vs"and" — o PubMed devolve a mesma revista em grafias
+// diferentes ("The Lancet Diabetes & Endocrinology" vs "The lancet. Diabetes &
+// endocrinology", "Nature reviews. Endocrinology"). Mesma fingerprint = mesma
+// opção no filtro (some a duplicata, e se auto-mantém p/ variantes futuras).
+function muralPeriodicoKey(a){
+  var f=muralPeriodicoDisplay(a);
+  return f?f.toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g,'').replace(/&/g,'and').replace(/[^a-z0-9]+/g,''):'';
+}
+// Opções do filtro "Periódico": agrupa por fingerprint, escolhe o melhor rótulo
+// de cada grupo (mais capitalizado = título próprio; empate → mais longo). O
+// VALUE da <option> é a fingerprint (usada no filtro), o texto é o rótulo bonito.
 function muralPeriodicoOptions(list,current){
-  var seen={},out=[];
-  (list||[]).forEach(function(a){var f=muralPeriodico(a);if(f&&!seen[f]){seen[f]=1;out.push(f);}});
-  out.sort(function(a,b){return a.localeCompare(b,'pt-BR');});
-  if(current&&out.indexOf(current)<0)current='';
-  return{current:current,html:'<option value="">Todos os periódicos</option>'+out.map(function(f){return'<option value="'+esc(f)+'"'+(current===f?' selected':'')+'>'+esc(f)+'</option>';}).join('')};
+  var groups={};
+  (list||[]).forEach(function(a){
+    var k=muralPeriodicoKey(a);if(!k)return;
+    var d=muralPeriodicoDisplay(a),sc=(d.match(/[A-Z]/g)||[]).length*1000+d.length;
+    if(!groups[k]||sc>groups[k].score)groups[k]={best:d,score:sc};
+  });
+  var keys=Object.keys(groups);
+  keys.sort(function(a,b){return groups[a].best.localeCompare(groups[b].best,'pt-BR');});
+  if(current&&keys.indexOf(current)<0)current='';
+  return{current:current,currentLabel:current&&groups[current]?groups[current].best:'',
+    html:'<option value="">Todos os periódicos</option>'+keys.map(function(k){return'<option value="'+esc(k)+'"'+(current===k?' selected':'')+'>'+esc(groups[k].best)+'</option>';}).join('')};
 }
 // Lightbox do mural: clicar em qualquer imagem (capa .mural-figure ou inline
 // .mural-inline-img) abre ampliada num overlay. Criado uma única vez; usa
@@ -12852,7 +12867,7 @@ initMural=function(){
   var tipoOpts='<option value="">Todos os tipos</option>'+tipoList.map(function(t){return'<option value="'+esc(t)+'">'+esc(t)+'</option>';}).join('');
   var perOpt=muralPeriodicoOptions(admAvisos,muralPeriodicoFilter);muralPeriodicoFilter=perOpt.current;
   var avisos=muralSortList(admAvisos,muralSort).filter(function(a){
-    return (!muralFilter||muralSubspecialty(a)===muralFilter)&&(!muralTipoFilter||muralDisplayType(a)===muralTipoFilter)&&(!muralPeriodicoFilter||muralPeriodico(a)===muralPeriodicoFilter)&&(muralShowBreaking||muralDisplayType(a)!=='Breaking News');
+    return (!muralFilter||muralSubspecialty(a)===muralFilter)&&(!muralTipoFilter||muralDisplayType(a)===muralTipoFilter)&&(!muralPeriodicoFilter||muralPeriodicoKey(a)===muralPeriodicoFilter)&&(muralShowBreaking||muralDisplayType(a)!=='Breaking News');
   });
   if(!muralFilter){
     var per={},capped=[];
@@ -12865,7 +12880,7 @@ initMural=function(){
   var latest=admAvisos.reduce(function(max,a){return Math.max(max,Number(a.at)||0);},0);
   var updated=document.getElementById('mural-updated');if(updated)updated.textContent='Atualizado em '+dateBR(latest||Date.now());
   var count=avisos.length+' '+(avisos.length===1?'aviso':'avisos');
-  var tema=muralFilter||muralTipoFilter||muralPeriodicoFilter||'Todas as subespecialidades';
+  var tema=muralFilter||muralTipoFilter||perOpt.currentLabel||'Todas as subespecialidades';
   el.innerHTML='<div class="mural-shell">'
     +'<section class="mural-hero"><div class="mural-eyebrow">Avisos para alunos</div><h2>Calendário, notícias e leituras essenciais</h2><p>Acompanhe prazos, artigos recentes, atualizações do curso e temas úteis para estudo dirigido. Os links abrem as fontes oficiais.</p></section>'
     +muralPushCtaHTML()
@@ -13042,12 +13057,12 @@ admMuralSecHTML=function(){
   if(admMuralTipoFilter&&tipoList.indexOf(admMuralTipoFilter)<0)admMuralTipoFilter='';
   var tipoFiltroOpts='<option value="">Todos os tipos</option>'+tipoList.map(function(t){return'<option value="'+esc(t)+'"'+(admMuralTipoFilter===t?' selected':'')+'>'+esc(t)+'</option>';}).join('');
   var perOpt=muralPeriodicoOptions(admAvisos,admMuralPeriodicoFilter);admMuralPeriodicoFilter=perOpt.current;
-  var avisos=muralSortList(admAvisos,admMuralSort).filter(function(a){return (!admMuralFilter||muralSubspecialty(a)===admMuralFilter)&&(!admMuralTipoFilter||muralDisplayType(a)===admMuralTipoFilter)&&(!admMuralPeriodicoFilter||muralPeriodico(a)===admMuralPeriodicoFilter)&&(muralShowBreaking||muralDisplayType(a)!=='Breaking News');});
+  var avisos=muralSortList(admAvisos,admMuralSort).filter(function(a){return (!admMuralFilter||muralSubspecialty(a)===admMuralFilter)&&(!admMuralTipoFilter||muralDisplayType(a)===admMuralTipoFilter)&&(!admMuralPeriodicoFilter||muralPeriodicoKey(a)===admMuralPeriodicoFilter)&&(muralShowBreaking||muralDisplayType(a)!=='Breaking News');});
   var admMPages=Math.max(1,Math.ceil(avisos.length/MURAL_PER_PAGE));
   if(admMuralPage>=admMPages)admMuralPage=admMPages-1;if(admMuralPage<0)admMuralPage=0;
   var admPageAvisos=avisos.slice(admMuralPage*MURAL_PER_PAGE,admMuralPage*MURAL_PER_PAGE+MURAL_PER_PAGE);
   var count=avisos.length+' '+(avisos.length===1?'aviso':'avisos');
-  var tema=admMuralFilter||admMuralTipoFilter||admMuralPeriodicoFilter||'Todas as subespecialidades';
+  var tema=admMuralFilter||admMuralTipoFilter||perOpt.currentLabel||'Todas as subespecialidades';
   var tipoOpts=MURAL_TYPES.map(function(t){return'<option>'+esc(t)+'</option>';}).join('');
   var subOpts=MURAL_SUBSPECIALTY_FILTERS.map(function(s){return'<option>'+esc(s)+'</option>';}).join('');
   var formHTML=admMuralShowForm?(
