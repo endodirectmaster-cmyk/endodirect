@@ -12134,7 +12134,7 @@ function bindAdmSec(sec){
       admAvisos=admAvisos.filter(function(x){return avisoKeyStr(x)!==key;});
       if(key&&radarHidden.indexOf(key)<0)radarHidden.push(key);
       saveRemoteState();
-      notify('Artigo ocultado do mural.','ok');
+      notify('Artigo excluído do mural.','ok');
       renderAdmSec('mural');
     });});
     var admMF=document.getElementById('adm-mural-filter');
@@ -12899,7 +12899,7 @@ function muralNoticeCardHTML(a,admin){
     +imgHTML
     +'<div class="mural-text">'+muralTextHTML(muralBodyText(a)||'Comunicado publicado pela equipe Endodirect.')+'</div>'
     +'<div class="mural-source">Fonte: '+source+'</div>'
-    +(admin?'<div class="mural-card-actions">'+(isRadarAuto(a)?'<button class="btn btn-outline btn-sm" data-adm-editav="'+i+'">✏️ Editar</button><button class="btn btn-outline btn-sm" data-adm-hideradar="'+esc(avisoKeyStr(a))+'">🙈 Ocultar</button>':'<button class="btn btn-outline btn-sm" data-adm-editav="'+i+'">Editar</button><button class="btn btn-outline btn-sm" data-adm-delav="'+i+'" style="color:var(--red);border-color:var(--red)">🗑 Excluir</button>')+'</div>':'')
+    +(admin?'<div class="mural-card-actions"><button class="btn btn-outline btn-sm" data-adm-editav="'+i+'">✏️ Editar</button>'+(isRadarAuto(a)?'<button class="btn btn-outline btn-sm" data-adm-hideradar="'+esc(avisoKeyStr(a))+'" style="color:var(--red);border-color:var(--red)">🗑 Excluir</button>':'<button class="btn btn-outline btn-sm" data-adm-delav="'+i+'" style="color:var(--red);border-color:var(--red)">🗑 Excluir</button>')+'</div>':'')
     +'</article>';
 }
 initMural=function(){
