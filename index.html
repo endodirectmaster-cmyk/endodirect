@@ -1669,6 +1669,7 @@ input.dmm-inp-subsub{flex:1;min-width:0;background:transparent;color:var(--t2);f
         <button class="sb-item" data-p="sr">🔁 Revisão</button>
         <button class="sb-item" data-p="erros">📕 Caderno de erros</button>
         <button class="sb-item" data-p="ref">📋 Diretrizes</button>
+        <button class="sb-item" data-p="resu">📚 Resumos</button>
         <div class="sb-sec">Clínica</div>
         <button class="sb-item" data-p="calc">🧮 Calculadoras</button>
         <button class="sb-item" data-p="simfull">📝 Simulado</button>
@@ -2102,6 +2103,7 @@ input.dmm-inp-subsub{flex:1;min-width:0;background:transparent;color:var(--t2);f
     </div>
 
     <div class="panel" id="panel-ref"><div class="pc" id="ref-body" style="max-width:none"></div></div>
+    <div class="panel" id="panel-resu"><div class="pc" id="resu-body" style="max-width:none"></div></div>
     <div class="panel" id="panel-notas" style="flex-direction:row;overflow:hidden;padding:0">
       <div style="width:195px;border-right:1px solid var(--bd);display:flex;flex-direction:column;background:var(--s2);flex-shrink:0">
         <div style="padding:.6rem .72rem;border-bottom:1px solid var(--bd)"><button class="btn btn-primary btn-sm" id="btn-note-new" style="width:100%">+ Nova nota</button></div>
@@ -3539,7 +3541,8 @@ function refreshAfterRemoteState(){
   try{renderCursosAluno();}catch(e){}
   // Se o aluno já está na aba Diretrizes quando o estado remoto chega (RPC member/public),
   // re-renderiza para refletir a lista sincronizada (preserva a subespecialidade/tema aberto).
-  try{var _rp=document.getElementById('panel-ref');if(_rp&&_rp.classList.contains('on')){var _rb=document.getElementById('ref-body');if(_rb&&DIRETRIZES_PUBLICADO)renderDiretrizesInto(_rb);}}catch(e){}
+  try{var _rp=document.getElementById('panel-ref');if(_rp&&_rp.classList.contains('on')){var _rb=document.getElementById('ref-body');if(_rb&&DIRETRIZES_PUBLICADO){refPrivadoMode=false;renderDiretrizesInto(_rb);}}}catch(e){}
+  try{var _rsp=document.getElementById('panel-resu');if(_rsp&&_rsp.classList.contains('on')){var _rsb=document.getElementById('resu-body');if(_rsb){refPrivadoMode=true;renderDiretrizesInto(_rsb);}}}catch(e){}
   try{initMural();}catch(e){}
   try{populateInst('q-inst');}catch(e){}
   try{updateProvaInfo();}catch(e){}
@@ -5041,7 +5044,7 @@ function startGoogleOAuth(){
   });
 }
 
-var PANEL_LABELS={dash:'Dashboard',desemp:'Desempenho',plano:'Plano de estudo',quest:'Questões',qotd:'Questão do Dia',flash:'Flashcards',mmap:'Mapas Mentais',podcast:'Podcasts',cursos:'Cursos',crono:'Cronograma',sr:'Revisão',erros:'Caderno de erros',sim:'OSCE',simfull:'Simulado',calc:'Calculadoras',rx:'Prescrição Simulada',presc:'Consultório',art:'Resumidor',notas:'Caderno',mural:'Mural',ref:'Diretrizes',chat:'Chat IA',perfil:'Perfil',support:'Suporte',adm:'Painel Admin'};
+var PANEL_LABELS={dash:'Dashboard',desemp:'Desempenho',plano:'Plano de estudo',quest:'Questões',qotd:'Questão do Dia',flash:'Flashcards',mmap:'Mapas Mentais',podcast:'Podcasts',cursos:'Cursos',crono:'Cronograma',sr:'Revisão',erros:'Caderno de erros',sim:'OSCE',simfull:'Simulado',calc:'Calculadoras',rx:'Prescrição Simulada',presc:'Consultório',art:'Resumidor',notas:'Caderno',mural:'Mural',ref:'Diretrizes',resu:'Resumos',chat:'Chat IA',perfil:'Perfil',support:'Suporte',adm:'Painel Admin'};
 function closeMobileNav(){
   document.body.classList.remove('mobile-nav-open');
   var b=document.getElementById('btn-mobile-nav');
@@ -5071,7 +5074,8 @@ var catalogoCursos=[];
 // Escopo exigido para ABRIR cada painel. Ausente = livre para qualquer membro.
 // (banco de questoes = sub-aba Provas em 'quest', liberada por qualquer pacote.)
 var PANEL_SCOPE={
-  sim:'plano', simfull:'plano', flash:'plano', mmap:'plano', podcast:'plano', rx:'plano', presc:'plano', art:'plano', chat:'plano'
+  sim:'plano', simfull:'plano', flash:'plano', mmap:'plano', podcast:'plano', rx:'plano', presc:'plano', art:'plano', chat:'plano',
+  resu:'plano' // Resumos: só assinantes (não entra em DEGUSTACAO_PANELS)
 };
 // Tier mínimo por painel: Prescrição = Gold(2). Simulador e Resumidor entram já no Standard.
 // Os demais ficam em qualquer pacote (tier 1).
@@ -5435,6 +5439,7 @@ function goPanel(id){
   if(id==='notas')renderNoteList();
   if(id==='mural')initMural();
   if(id==='ref')renderRef();
+  if(id==='resu')renderResu();
   if(id==='presc')initPresc();
   if(id==='simfull'){renderSFPrev();populateInst('sf-inst');}
   if(id==='art')initArtUpload();
@@ -8352,6 +8357,9 @@ var refTemaSel='';                // tema selecionado dentro da subespecialidade
 var refFormat='resumo';          // resumo | flash | mapa
 var refFlashOpen={};              // estado de flip dos flashcards (chave "i-j")
 var refFlashIdx={};               // card atual por diretriz (um flashcard por vez), chave "i"
+var refPrivadoMode=false;         // false = aba Diretrizes (públicas); true = aba Resumos (privados/assinantes)
+// Predicado de visibilidade conforme a aba ativa: Diretrizes mostra !privado; Resumos mostra privado===true.
+function dirIsVisible(d){return refPrivadoMode?((d&&d.privado)===true):!(d&&d.privado);}
 // Tema (assunto) de uma diretriz; cai no título quando não definido.
 function dirTemaOf(d){return (String((d&&d.tema)||'').trim())||(String((d&&d.titulo)||'').trim())||'Geral';}
 // Lista de temas (com contagem) dentro de uma subespecialidade.
@@ -8401,7 +8409,7 @@ function dirSubList(pred){
   // Todas as subespecialidades canônicas (mesmo com 0), na ordem definida…
   // …exceto as "só de Resumos" quando não têm item no predicado ativo (não
   // poluem a aba Diretrizes com um card de 0 diretrizes).
-  var out=DIR_SUBS.map(function(s){return {sub:s,count:seen[s]||0};}).filter(function(o){return !(RESUMOS_ONLY_SUBS.indexOf(o.sub)>=0&&o.count===0);});
+  var out=DIR_SUBS.map(function(s){return {sub:s,count:seen[s]||0};}).filter(function(o){return !(RESUMOS_ONLY_SUBS.indexOf(o.sub)>=0&&o.count===0)&&!(refPrivadoMode&&o.count===0);});
   // …mais qualquer subespecialidade extra já cadastrada fora da taxonomia.
   Object.keys(seen).forEach(function(s){if(DIR_SUBS.indexOf(s)<0)out.push({sub:s,count:seen[s]});});
   return out;
@@ -8683,35 +8691,38 @@ function dirFigurasHTML(figs){
 }
 // Visão em 3 níveis: subespecialidade → tema → diretriz (nos 4 formatos).
 function diretrizesViewHTML(){
+  var _T=refPrivadoMode?'📚 Resumos':'📋 Diretrizes';
+  function _cnt(n){return n+' '+(refPrivadoMode?(n===1?'capítulo':'capítulos'):(n===1?'diretriz':'diretrizes'));}
   if(!diretrizes.length){
-    return '<div class="ph"><h1>📋 Diretrizes</h1></div><div class="dir-empty-fmt">Nenhuma diretriz cadastrada ainda.</div>';
+    return '<div class="ph"><h1>'+_T+'</h1></div><div class="dir-empty-fmt">Nenhum conteúdo cadastrado ainda.</div>';
   }
   // Nível 1 — grade de subespecialidades.
   if(!refSubSel){
-    var subs=dirSubList();
-    return '<div class="ph"><h1>📋 Diretrizes</h1><p>Escolha uma subespecialidade para ver os resumos das principais diretrizes.</p></div>'
+    var subs=dirSubList(dirIsVisible);
+    var _sub1=refPrivadoMode?'Escolha uma subespecialidade para ver os resumos de estudo, com pontos-chave, flashcards e mapas mentais.':'Escolha uma subespecialidade para ver os resumos das principais diretrizes.';
+    return '<div class="ph"><h1>'+_T+'</h1><p>'+_sub1+'</p></div>'
       +'<div class="dir-sub-grid">'+subs.map(function(s){
-        return '<button class="dir-sub-btn" data-dir-sub="'+esc(s.sub)+'"><div class="dsb-ico">'+dirSubIcon(s.sub)+'</div><h3>'+esc(s.sub)+'</h3><div class="dsb-cnt">'+s.count+' diretriz'+(s.count===1?'':'es')+'</div></button>';
+        return '<button class="dir-sub-btn" data-dir-sub="'+esc(s.sub)+'"><div class="dsb-ico">'+dirSubIcon(s.sub)+'</div><h3>'+esc(s.sub)+'</h3><div class="dsb-cnt">'+_cnt(s.count)+'</div></button>';
       }).join('')+'</div>';
   }
   // Nível 2 — grade de temas dentro da subespecialidade.
   if(!refTemaSel){
-    var temas=dirTemaList(refSubSel);
+    var temas=dirTemaList(refSubSel,false,dirIsVisible);
     var head2='<button class="dir-back" data-dir-back>← Todas as subespecialidades</button>'
       +'<div class="ph" style="margin-top:0"><h1>'+dirSubIcon(refSubSel)+' '+esc(refSubSel)+'</h1>'+(temas.length?'<p>Escolha um tema.</p>':'')+'</div>';
     if(!temas.length){
       return head2+'<div class="ref-soon" style="margin-top:1rem"><div class="ref-soon-ico">🔜</div><h2>Em breve</h2><p>Os resumos de '+esc(refSubSel)+' estão em curadoria pela equipe Endodirect.</p></div>';
     }
     return head2+'<div class="dir-sub-grid">'+temas.map(function(t){
-      return '<button class="dir-sub-btn" data-dir-tema="'+esc(t.tema)+'"><div class="dsb-ico">📄</div><h3>'+esc(t.tema)+'</h3><div class="dsb-cnt">'+t.count+' diretriz'+(t.count===1?'':'es')+'</div></button>';
+      return '<button class="dir-sub-btn" data-dir-tema="'+esc(t.tema)+'"><div class="dsb-ico">📄</div><h3>'+esc(t.tema)+'</h3><div class="dsb-cnt">'+_cnt(t.count)+'</div></button>';
     }).join('')+'</div>';
   }
-  // Nível 3 — diretrizes do tema, no formato escolhido.
-  var list=diretrizes.map(function(d,i){return {d:d,i:i};}).filter(function(x){return !x.d.privado&&(String(x.d.sub||'Geral').trim()||'Geral')===refSubSel&&dirTemaOf(x.d)===refTemaSel;});
+  // Nível 3 — itens do tema, no formato escolhido.
+  var list=diretrizes.map(function(d,i){return {d:d,i:i};}).filter(function(x){return dirIsVisible(x.d)&&(String(x.d.sub||'Geral').trim()||'Geral')===refSubSel&&dirTemaOf(x.d)===refTemaSel;});
   var head='<button class="dir-back" data-dir-temaback>← '+esc(refSubSel)+'</button>'
     +'<div class="ph" style="margin-top:0"><h1>'+esc(refTemaSel)+'</h1></div>';
   if(!list.length){
-    return head+'<div class="dir-empty-fmt">Nenhuma diretriz neste tema.</div>';
+    return head+'<div class="dir-empty-fmt">Nenhum conteúdo neste tema.</div>';
   }
   var fmts=[['resumo','📄 Resumo'],['flash','🃏 Flashcards'],['mapa','🧠 Mapas mentais']];
   var fmtAtivo=(refFormat==='flash'||refFormat==='mapa')?refFormat:'resumo';
@@ -8748,12 +8759,21 @@ function renderDiretrizesInto(root){root.innerHTML=diretrizesViewHTML();bindDire
 // Painel do aluno. Enquanto DIRETRIZES_PUBLICADO=false mostra "Em breve".
 function renderRef(){
   var el=document.getElementById('ref-body'); if(!el)return;
+  refPrivadoMode=false; // aba Diretrizes = itens públicos
   refSubSel='';refTemaSel='';refFlashOpen={}; // sempre abrir na grade de subespecialidades
   if(DIRETRIZES_PUBLICADO){renderDiretrizesInto(el);return;}
   el.innerHTML='<div class="ph"><h1>📋 Diretrizes</h1><p>Resumos de diretrizes (ADA, ATA, Endocrine Society) para consulta rápida.</p></div>'
     +'<div class="ref-soon"><div class="ref-soon-ico">🔜</div><h2>Em breve</h2>'
     +'<p>Estamos preparando resumos das principais diretrizes de endocrinologia para você consultar rapidinho durante os estudos e a prática clínica.</p>'
     +'<p class="ref-soon-sub">Em curadoria pela equipe Endodirect — disponível em breve.</p></div>';
+}
+// Aba Resumos (assinantes): mesmo motor da visão de diretrizes, mas filtrando os
+// itens privados (capítulos de estudo) via refPrivadoMode. Renderiza em #resu-body.
+function renderResu(){
+  var el=document.getElementById('resu-body'); if(!el)return;
+  refPrivadoMode=true;
+  refSubSel='';refTemaSel='';refFlashOpen={};
+  renderDiretrizesInto(el);
 }
 // Ordem de prioridade dos periódicos no mural (pedido do Rodolpho, 2026-07-04):
 // New England Journal of Medicine > The Lancet > Nature Reviews Endocrinology > JCEM > demais.
