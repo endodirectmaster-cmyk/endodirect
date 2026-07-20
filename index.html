@@ -450,9 +450,13 @@ textarea{resize:vertical;line-height:1.6}
 .mural-card-tags{display:flex;align-items:center;gap:.45rem;flex-wrap:wrap;margin-bottom:.75rem}
 .mural-card h3{font-size:1.12rem;font-weight:800;color:var(--tx);line-height:1.35;margin-bottom:.42rem;overflow-wrap:anywhere}
 .mural-date{font-size:.78rem;font-weight:800;color:var(--t3);margin-bottom:.65rem}
-.mural-text{font-size:.9rem;color:var(--t2);line-height:1.7;margin-bottom:.9rem;white-space:pre-line;overflow-wrap:anywhere;word-break:break-word;text-align:justify;text-align-last:left}
-.mural-text .mural-h{white-space:normal;font-weight:700;color:var(--tx);font-size:.98rem;line-height:1.4;margin:.6rem 0 .1rem;text-align:left}
-.mural-text .mural-ul{white-space:normal;margin:.1rem 0 .3rem;padding-left:1.2rem;text-align:left;text-align-last:left}
+.mural-text{font-size:.9rem;color:var(--t2);line-height:1.7;margin-bottom:.9rem;overflow-wrap:anywhere;word-break:break-word;text-align:justify;text-align-last:left}
+.mural-text .mural-p{margin:.55rem 0}
+.mural-text .mural-p:first-child{margin-top:0}
+.mural-text .mural-p:last-child{margin-bottom:0}
+.mural-text .mural-h{font-weight:700;color:var(--tx);font-size:.98rem;line-height:1.4;margin:.85rem 0 .2rem;text-align:left}
+.mural-text .mural-h:first-child{margin-top:0}
+.mural-text .mural-ul{margin:.35rem 0;padding-left:1.2rem;text-align:left;text-align-last:left}
 .mural-text .mural-ul li{margin:.15rem 0;line-height:1.55;overflow-wrap:anywhere}
 .mural-source{font-size:.84rem;font-weight:800;color:#5cc8f5;overflow-wrap:anywhere;word-break:break-word}
 .mural-figure{display:block;width:-webkit-fit-content;width:fit-content;max-width:100%;margin:.1rem auto .85rem;border:1px solid var(--bd);border-radius:12px;overflow:hidden;background:#fff;line-height:0}
@@ -12690,17 +12694,21 @@ function muralInlineHTML(escLine){
   return escLine;
 }
 function muralTextHTML(txt){
-  // Renderiza por linhas: detecta tabelas markdown (linha com | seguida de linha
-  // separadora ---) e as converte em <table>; as demais linhas passam pela
-  // marcação inline preservando as quebras (container usa white-space:pre-line).
+  // Renderiza por blocos separados por linha em branco: cada bloco de texto vira
+  // um <p class="mural-p"> (espaçamento controlado por CSS — antes o container era
+  // white-space:pre-line e cada linha em branco virava um vão gigante). Detecta
+  // tabelas markdown, títulos ##, listas -, legendas e imagens.
   var lines=String(txt||'').replace(/\r/g,'').split('\n');
   function isRow(l){return l.indexOf('|')>=0 && l.replace(/\\\|/g,'').split('|').filter(function(c){return c.trim();}).length>=2;}
   function isSep(l){return l.indexOf('|')>=0 && /^\s*\|?[\s:]*-{2,}[\s:|-]*$/.test(l);}
   function cells(l){var t=l.trim().replace(/^\|/,'').replace(/\|$/,'');return t.split('|').map(function(c){return muralInlineHTML(esc(c.trim()));});}
-  var out=[],i=0;
+  var out=[],i=0,para=[];
+  function flush(){if(para.length){out.push('<p class="mural-p">'+para.join('<br>')+'</p>');para=[];}}
   while(i<lines.length){
     var line=lines[i];
+    if(!line.trim()){flush();i++;continue;} // linha em branco: fecha o parágrafo
     if(isRow(line)&&i+1<lines.length&&isSep(lines[i+1])){
+      flush();
       var h=cells(line),rows=[];i+=2;
       while(i<lines.length&&isRow(lines[i])&&!isSep(lines[i])){rows.push(cells(lines[i]));i++;}
       out.push('<div class="mural-table-wrap"><table class="mural-table"><thead><tr>'
@@ -12712,14 +12720,16 @@ function muralTextHTML(txt){
     // Legenda de figura: linha começando com "Legenda:/Figura:/Fig." vira uma
     // legenda menor e discreta (começa com letra → sobrevive ao formalizeMuralText).
     if(/^\s*(Legenda|Figura|Fig\.)\s*[:.–—-]/i.test(line)){
+      flush();
       out.push('<div class="mural-cap">'+muralInlineHTML(esc(line.trim()))+'</div>');
       i++;continue;
     }
     // Título de seção (## …): destaque em negrito, igual ao editor WYSIWYG.
     var hm=/^\s*#{1,4}\s+(.+?)\s*$/.exec(line);
-    if(hm){out.push('<div class="mural-h">'+muralInlineHTML(esc(hm[1]))+'</div>');i++;continue;}
+    if(hm){flush();out.push('<div class="mural-h">'+muralInlineHTML(esc(hm[1]))+'</div>');i++;continue;}
     // Lista com marcadores (- / * / +): agrupa linhas consecutivas num <ul>.
     if(/^\s*[-*+]\s+/.test(line)){
+      flush();
       var items=[];
       while(i<lines.length&&/^\s*[-*+]\s+/.test(lines[i])){
         items.push('<li>'+muralInlineHTML(esc(lines[i].replace(/^\s*[-*+]\s+/,'').trim()))+'</li>');i++;
@@ -12727,10 +12737,11 @@ function muralTextHTML(txt){
       out.push('<ul class="mural-ul">'+items.join('')+'</ul>');
       continue;
     }
-    out.push(muralInlineHTML(esc(line)));
+    para.push(muralInlineHTML(esc(line))); // linha normal: acumula no parágrafo
     i++;
   }
-  return out.join('\n');
+  flush();
+  return out.join('');
 }
 // Editor WYSIWYG do aviso do mural — edição DIRETA no próprio card (como nos
 // Resumos/Diretrizes). O corpo é um contenteditable com o texto já renderizado
