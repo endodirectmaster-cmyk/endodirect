@@ -2981,6 +2981,21 @@ var MURAL_SUBSPECIALTY_FILTERS=[
   'Endocrinologia Pediátrica','Endocrinologia Feminina','Endocrinologia Masculina',
   'Endocrinologia do Esporte','Transgeneridade'
 ];
+// Lista-base de periódicos SEMPRE visível no filtro do mural (mesmo sem artigo
+// ainda). As revistas que o radar realmente trouxer são mescladas a esta base
+// por fingerprint (ver muralPeriodicoOptions) — então nada duplica. Cobre as
+// principais fontes clínicas (radar JOURNALS) + NEJM/Lancet/JAMA + Archives of
+// Endocrinology and Metabolism (SBEM/ABE&M).
+var MURAL_PERIODICO_FILTERS=[
+  'The New England Journal of Medicine','The Lancet','The Lancet Diabetes & Endocrinology','JAMA',
+  'Nature Medicine','Nature Reviews Endocrinology','Cell Metabolism',
+  'Journal of Clinical Endocrinology & Metabolism','Endocrine Reviews','Journal of the Endocrine Society',
+  'Diabetes Care','Diabetes','Diabetologia','Diabetes, Obesity and Metabolism','Metabolism','Obesity',
+  'Thyroid','European Thyroid Journal','European Journal of Endocrinology','Clinical Endocrinology',
+  'Pituitary','Frontiers in Endocrinology','Endocrinology','Endocrine Practice',
+  'Journal of Bone and Mineral Research','Osteoporosis International','Bone','Fertility and Sterility',
+  'Archives of Endocrinology and Metabolism','Hormone Research in Paediatrics'
+];
 function normalizeMuralSource(source){
   var s=String(source||'').trim();
   var map={
@@ -12660,20 +12675,23 @@ function muralPeriodicoDisplay(a){
 // diferentes ("The Lancet Diabetes & Endocrinology" vs "The lancet. Diabetes &
 // endocrinology", "Nature reviews. Endocrinology"). Mesma fingerprint = mesma
 // opção no filtro (some a duplicata, e se auto-mantém p/ variantes futuras).
+function muralPeriodicoFp(s){
+  return String(s||'').toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g,'').replace(/&/g,'and').replace(/[^a-z0-9]+/g,'');
+}
 function muralPeriodicoKey(a){
   var f=muralPeriodicoDisplay(a);
-  return f?f.toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g,'').replace(/&/g,'and').replace(/[^a-z0-9]+/g,''):'';
+  return f?muralPeriodicoFp(f):'';
 }
-// Opções do filtro "Periódico": agrupa por fingerprint, escolhe o melhor rótulo
-// de cada grupo (mais capitalizado = título próprio; empate → mais longo). O
-// VALUE da <option> é a fingerprint (usada no filtro), o texto é o rótulo bonito.
+// Opções do filtro "Periódico": começa da lista-base fixa (sempre visível) e
+// mescla os periódicos realmente presentes nos avisos — tudo agrupado por
+// fingerprint (variantes de grafia colapsam). O melhor rótulo de cada grupo
+// vence (mais capitalizado = título próprio; empate → mais longo). O VALUE da
+// <option> é a fingerprint (usada no filtro); o texto é o rótulo bonito.
 function muralPeriodicoOptions(list,current){
   var groups={};
-  (list||[]).forEach(function(a){
-    var k=muralPeriodicoKey(a);if(!k)return;
-    var d=muralPeriodicoDisplay(a),sc=(d.match(/[A-Z]/g)||[]).length*1000+d.length;
-    if(!groups[k]||sc>groups[k].score)groups[k]={best:d,score:sc};
-  });
+  function consider(d){if(!d)return;var k=muralPeriodicoFp(d);if(!k)return;var sc=(d.match(/[A-Z]/g)||[]).length*1000+d.length;if(!groups[k]||sc>groups[k].score)groups[k]={best:d,score:sc};}
+  MURAL_PERIODICO_FILTERS.forEach(consider);
+  (list||[]).forEach(function(a){consider(muralPeriodicoDisplay(a));});
   var keys=Object.keys(groups);
   keys.sort(function(a,b){return groups[a].best.localeCompare(groups[b].best,'pt-BR');});
   if(current&&keys.indexOf(current)<0)current='';
