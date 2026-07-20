@@ -3108,10 +3108,20 @@ function muralTypeRank(a){
 function muralRelevance(a){
   return 10000-muralTypeRank(a)*100;
 }
+// Chave de dia (local) a partir do at — p/ agrupar itens do mesmo dia antes de
+// aplicar a hierarquia de tipo (pedido do professor: "artigos de hoje na frente").
+function muralDayKey(a){var d=new Date(Number(a&&a.at)||0);return d.getFullYear()*10000+(d.getMonth()+1)*100+d.getDate();}
 function muralSortList(list,mode){
   var arr=(list||[]).slice();
   if(mode==='antigos')return arr.sort(function(a,b){return (Number(a.at)||0)-(Number(b.at)||0);});
-  if(mode==='relevantes')return arr.sort(function(a,b){var d=muralRelevance(b)-muralRelevance(a);return d!==0?d:(Number(b.at)||0)-(Number(a.at)||0);});
+  // "Mais relevantes" = DIA mais recente primeiro → dentro do dia, hierarquia de
+  // tipo (Breaking>Comunicado>…>Ensaio) → mais novo primeiro no mesmo dia/tipo.
+  // Assim os artigos de HOJE ficam na frente, sem uma notícia antiga liderar.
+  if(mode==='relevantes')return arr.sort(function(a,b){
+    var dk=muralDayKey(b)-muralDayKey(a);if(dk!==0)return dk;
+    var r=muralTypeRank(a)-muralTypeRank(b);if(r!==0)return r;
+    return (Number(b.at)||0)-(Number(a.at)||0);
+  });
   return arr.sort(function(a,b){return (Number(b.at)||0)-(Number(a.at)||0);});
 }
 function muralSortOptions(sel){
