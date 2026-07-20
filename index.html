@@ -451,6 +451,9 @@ textarea{resize:vertical;line-height:1.6}
 .mural-card h3{font-size:1.12rem;font-weight:800;color:var(--tx);line-height:1.35;margin-bottom:.42rem;overflow-wrap:anywhere}
 .mural-date{font-size:.78rem;font-weight:800;color:var(--t3);margin-bottom:.65rem}
 .mural-text{font-size:.9rem;color:var(--t2);line-height:1.7;margin-bottom:.9rem;white-space:pre-line;overflow-wrap:anywhere;word-break:break-word;text-align:justify;text-align-last:left}
+.mural-text .mural-h{white-space:normal;font-weight:700;color:var(--tx);font-size:.98rem;line-height:1.4;margin:.6rem 0 .1rem;text-align:left}
+.mural-text .mural-ul{white-space:normal;margin:.1rem 0 .3rem;padding-left:1.2rem;text-align:left;text-align-last:left}
+.mural-text .mural-ul li{margin:.15rem 0;line-height:1.55;overflow-wrap:anywhere}
 .mural-source{font-size:.84rem;font-weight:800;color:#5cc8f5;overflow-wrap:anywhere;word-break:break-word}
 .mural-figure{display:block;width:-webkit-fit-content;width:fit-content;max-width:100%;margin:.1rem auto .85rem;border:1px solid var(--bd);border-radius:12px;overflow:hidden;background:#fff;line-height:0}
 .mural-figure img{display:block;width:auto;max-width:100%;max-height:185px;object-fit:contain;background:#fff;cursor:zoom-in}
@@ -3755,6 +3758,13 @@ function htmlToMd(root){
   }
   function cellText(node){return inline(node).replace(/\s+/g,' ').replace(/\|/g,'\\|').trim();}
   function pushLine(t){if(t!=='')out.push(t);}
+  // <br> vira \n em inline(): preserva as quebras como linhas/parágrafos separados.
+  // Sem isso, um <div>/<p> com <br> (texto colado de outra fonte) colapsa tudo num
+  // parágrafo só (o .replace(/\s+/g,' ') engolia os \n dos <br>).
+  function pushInlineLines(node){
+    var parts=inline(node).split('\n');
+    for(var pi=0;pi<parts.length;pi++){var seg=parts[pi].replace(/\s+/g,' ').trim();if(seg)pushLine(seg);}
+  }
   function block(node){
     if(node.nodeType===3){var t=(node.nodeValue||'').trim();if(t)pushLine(t);return;}
     if(node.nodeType!==1)return;
@@ -3785,7 +3795,7 @@ function htmlToMd(root){
       var hasBlock=false,kids=node.childNodes;
       for(var k=0;k<kids.length;k++){var c=kids[k];if(c.nodeType===1&&/^(h[1-6]|p|ul|ol|table|hr|blockquote|div)$/.test(c.tagName.toLowerCase())){hasBlock=true;break;}}
       if(hasBlock){for(var k2=0;k2<kids.length;k2++)block(kids[k2]);}
-      else{pushLine(inline(node).replace(/\s+/g,' ').trim());}
+      else{pushInlineLines(node);}
       return;
     }
     var kids2=node.childNodes,handled=false;
@@ -12648,7 +12658,7 @@ var MURAL_FORMAL_TYPES={'Comunicado':1,'Diretriz':1,'Consenso':1,'Discussão Cl�
 function isFormalMuralType(t){return !!MURAL_FORMAL_TYPES[String(t||'').trim()];}
 function formalizeMuralText(txt){
   return String(txt||'').split('\n').map(function(ln){
-    if(/^\s*(\||!\[|https?:\/\/)/.test(ln))return ln; // tabela markdown (| … |), imagem ![](url) ou URL crua: preserva intacta (senão o strip inicial quebra a sintaxe e sobra ")")
+    if(/^\s*(#{1,4}\s|[-*+]\s|>\s|\||!\[|https?:\/\/)/.test(ln))return ln; // estrutura markdown (título ##, lista - •, citação >, tabela | … |, imagem ![](url), URL crua): preserva intacta (senão o strip inicial quebra a sintaxe / apaga o marcador)
     var s=ln.replace(/^[^\p{L}\p{N}]+/u,''); // tira emoji/símbolo inicial (📝 💡 ⚠️ 📅 🏛️ 🔬)
     s=s.replace(/^(Resumo|Por que importa[^:]*|Cautela[^:]*)\s*:\s*/i,''); // tira os rótulos do modelo, mantém o texto
     return s;
@@ -12704,6 +12714,18 @@ function muralTextHTML(txt){
     if(/^\s*(Legenda|Figura|Fig\.)\s*[:.–—-]/i.test(line)){
       out.push('<div class="mural-cap">'+muralInlineHTML(esc(line.trim()))+'</div>');
       i++;continue;
+    }
+    // Título de seção (## …): destaque em negrito, igual ao editor WYSIWYG.
+    var hm=/^\s*#{1,4}\s+(.+?)\s*$/.exec(line);
+    if(hm){out.push('<div class="mural-h">'+muralInlineHTML(esc(hm[1]))+'</div>');i++;continue;}
+    // Lista com marcadores (- / * / +): agrupa linhas consecutivas num <ul>.
+    if(/^\s*[-*+]\s+/.test(line)){
+      var items=[];
+      while(i<lines.length&&/^\s*[-*+]\s+/.test(lines[i])){
+        items.push('<li>'+muralInlineHTML(esc(lines[i].replace(/^\s*[-*+]\s+/,'').trim()))+'</li>');i++;
+      }
+      out.push('<ul class="mural-ul">'+items.join('')+'</ul>');
+      continue;
     }
     out.push(muralInlineHTML(esc(line)));
     i++;
