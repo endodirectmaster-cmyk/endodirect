@@ -767,6 +767,8 @@ html[data-theme="light"] .dir-back{background:#f8f9fc;border-color:var(--bd2);co
 .wys-bar .wys-tool:hover{background:var(--bd2)}
 .wys-bar .wys-sep{width:1px;align-self:stretch;background:var(--bd2);margin:.1rem .15rem}
 .wys-bar .wys-spacer{flex:1}
+.wys-bar .wys-imglabel{font-size:.72rem;color:var(--t3);align-self:center;padding:0 .1rem}
+.wys-img-sel{outline:2px solid var(--blue);outline-offset:2px}
 .wys-edit{border:1px solid var(--bd2);border-radius:12px;padding:1rem 1.15rem;background:var(--surface);outline:none;min-height:6rem;font-size:.88rem;color:var(--tx);line-height:1.62;-webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility}
 .wys-edit:focus{border-color:var(--blue);box-shadow:0 0 0 3px rgba(37,99,235,.12)}
 /* Mesmo visual do modo leitura (o editor não fica dentro de .dir-card) */
@@ -3686,7 +3688,7 @@ function callAIJson(sys,usr,maxTok,retries,model,grounding){
 }
 function mdInline(s){
   var imgs=[];
-  s=esc(s).replace(/!\[([^\]]*)\]\((https?:\/\/[^\s)]+)\)/g,function(w,alt,url){imgs.push('<img class="wys-img" src="'+url+'" alt="'+alt+'" referrerpolicy="no-referrer" onerror="this.style.display=\'none\'">');return ''+(imgs.length-1)+'';});
+  s=esc(s).replace(/!\[([^\]]*)\]\((https?:\/\/[^\s)]+)\)(?:\{(\d{1,3})\})?/g,function(w,alt,url,ww){var _st=ww?(' style="width:'+ww+'%"'):'';imgs.push('<img class="wys-img" src="'+url+'" alt="'+alt+'"'+_st+' referrerpolicy="no-referrer" onerror="this.style.display=\'none\'">');return ''+(imgs.length-1)+'';});
   s=s.replace(/\*\*(.+?)\*\*/g,'<strong>$1</strong>').replace(/__(.+?)__/g,'<u>$1</u>').replace(/(^|[^*])\*([^*\n]+)\*(?!\*)/g,'$1<em>$2</em>').replace(/`([^`]+)`/g,'<code>$1</code>');
   s=s.replace(/(\d+)/g,function(w,i){return imgs[+i]||'';});
   return s;
@@ -3748,7 +3750,7 @@ function htmlToMd(root){
       if(ch.nodeType===3){s+=ch.nodeValue;continue;}
       if(ch.nodeType!==1)continue;
       var tag=ch.tagName.toLowerCase();
-      if(tag==='img'){var isrc=ch.getAttribute('src')||'';var ialt=ch.getAttribute('alt')||'';if(isrc)s+='!['+ialt+']('+isrc+')';continue;}
+      if(tag==='img'){var isrc=ch.getAttribute('src')||'';var ialt=ch.getAttribute('alt')||'';if(isrc){var _wm=/width:\s*(\d{1,3})%/.exec(ch.getAttribute('style')||'');s+='!['+ialt+']('+isrc+')'+(_wm?('{'+_wm[1]+'}'):'');}continue;}
       var inner=inline(ch);
       if(tag==='strong'||tag==='b')s+='**'+inner+'**';
       else if(tag==='em'||tag==='i')s+='*'+inner+'*';
@@ -12680,9 +12682,9 @@ function muralBodyText(a){
 // numéricos antes da formatação para proteger as URLs das regex de negrito/itálico.
 function muralInlineHTML(escLine){
   var imgs=[];
-  function pushImg(url,alt){imgs.push('<img class="mural-inline-img" src="'+url+'" alt="'+(alt||'')+'" loading="lazy" referrerpolicy="no-referrer" onerror="this.remove()">');return ''+(imgs.length-1)+'';}
-  escLine=escLine.replace(/!\[([^\]]*)\]\((https?:\/\/[^\s)]+)\)/g,function(whole,alt,url){
-    if(!safeHttpUrl(url))return whole; return pushImg(url,alt);
+  function pushImg(url,alt,ww){var _st=ww?(' style="width:'+ww+'%"'):'';imgs.push('<img class="mural-inline-img"'+_st+' src="'+url+'" alt="'+(alt||'')+'" loading="lazy" referrerpolicy="no-referrer" onerror="this.remove()">');return ''+(imgs.length-1)+'';}
+  escLine=escLine.replace(/!\[([^\]]*)\]\((https?:\/\/[^\s)]+)\)(?:\{(\d{1,3})\})?/g,function(whole,alt,url,ww){
+    if(!safeHttpUrl(url))return whole; return pushImg(url,alt,ww);
   });
   escLine=escLine.replace(/(^|[\s(])(https?:\/\/[^\s<>()]+\.(?:png|jpe?g|gif|webp|svg))(?=$|[\s)])/gi,function(whole,pre,url){
     if(!safeHttpUrl(url))return whole; return pre+pushImg(url,'');
@@ -12766,6 +12768,11 @@ function muralInlineEditHTML(a){
       +'<button type="button" class="wys-tool" data-wys="ul" title="Lista com marcadores">•</button>'
       +'<button type="button" class="wys-tool" data-wys="p" title="Parágrafo normal">¶</button>'
       +'<button type="button" class="wys-tool" id="mural-inline-imgbtn" title="Inserir imagem no texto">🖼️</button>'
+      +'<span class="wys-sep"></span>'
+      +'<span class="wys-imglabel">Imagem:</span>'
+      +'<button type="button" class="wys-tool" data-imgw="40" title="Imagem pequena (clique na imagem antes)">P</button>'
+      +'<button type="button" class="wys-tool" data-imgw="65" title="Imagem média (clique na imagem antes)">M</button>'
+      +'<button type="button" class="wys-tool" data-imgw="100" title="Imagem grande (clique na imagem antes)">G</button>'
       +'<span class="wys-spacer"></span>'
       +'<button type="button" class="btn btn-outline btn-sm" id="btn-mural-inline-cancel">Cancelar</button>'
       +'<button type="button" class="btn btn-primary btn-sm" id="btn-mural-inline-save">💾 Salvar</button>'
@@ -13216,6 +13223,29 @@ bindAdmSec=function(sec){
           else if(cmd==='ul')document.execCommand('insertUnorderedList',false,null);
           else if(cmd==='p')document.execCommand('formatBlock',false,'P');
         }catch(err){}
+      });
+    });
+    // Redimensionar imagem: clicar numa imagem a SELECIONA (contorno azul); os botões
+    // P/M/G ajustam a largura (style width:%). htmlToMd grava ![](url){NN} e o card
+    // renderiza no mesmo tamanho (mdInline/muralInlineHTML leem {NN}).
+    var muralSelImg=null;
+    if(mBody){
+      mBody.addEventListener('click',function(e){
+        var t=e.target;
+        if(t&&t.tagName==='IMG'){
+          if(muralSelImg&&muralSelImg!==t)muralSelImg.classList.remove('wys-img-sel');
+          muralSelImg=t;t.classList.add('wys-img-sel');
+        }else if(muralSelImg){muralSelImg.classList.remove('wys-img-sel');muralSelImg=null;}
+      });
+    }
+    document.querySelectorAll('.mural-inline-wys [data-imgw]').forEach(function(b){
+      b.addEventListener('mousedown',function(e){e.preventDefault();});
+      b.addEventListener('click',function(){
+        var img=muralSelImg||(mBody?mBody.querySelector('img'):null);
+        if(!img){notify('Clique primeiro na imagem que quer redimensionar.','info');return;}
+        var w=parseInt(b.dataset.imgw,10)||100;
+        img.style.width=w+'%';img.style.height='auto';
+        if(!muralSelImg){muralSelImg=img;img.classList.add('wys-img-sel');}
       });
     });
     // Inserir imagem NO TEXTO: upload → <img> no ponto do cursor (htmlToMd → ![](url)).
