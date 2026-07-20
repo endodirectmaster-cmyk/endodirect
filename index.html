@@ -12141,7 +12141,7 @@ function bindAdmSec(sec){
     if(admMC)admMC.addEventListener('click',function(){admMuralFilter='';admMuralTipoFilter='';admMuralPeriodicoFilter='';admMuralPage=0;renderAdmSec('mural');});
     function admMuralScrollTop(){try{var m=document.getElementById('adm-main');if(m)m.scrollTop=0;}catch(e){}try{window.scrollTo(0,0);}catch(e){}}
     var admMp=document.getElementById('adm-mural-prev');if(admMp)admMp.addEventListener('click',function(){if(admMuralPage>0){admMuralPage--;renderAdmSec('mural');admMuralScrollTop();}});
-    var admMn=document.getElementById('adm-mural-next');if(admMn)admMn.addEventListener('click',function(){admMuralPage++;renderAdmSec('mural');admMuralScrollTop();}});
+    var admMn=document.getElementById('adm-mural-next');if(admMn)admMn.addEventListener('click',function(){admMuralPage++;renderAdmSec('mural');admMuralScrollTop();});
     // preenche o form quando estiver editando
     if(admMuralShowForm&&admMuralEdit!==null){
       var av=admAvisos[admMuralEdit];
