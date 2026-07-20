@@ -2978,7 +2978,8 @@ var MURAL_SOURCE_FILTERS=[
 // para nunca mais retornar esses dois (senão voltariam como chip dinâmico).
 var MURAL_SUBSPECIALTY_FILTERS=[
   'Diabetes','Obesidade','Tireoide','Adrenal','Neuroendocrinologia','Osteometabolismo','Lípides',
-  'Endocrinologia Pediátrica','Endocrinologia Feminina','Endocrinologia Masculina'
+  'Endocrinologia Pediátrica','Endocrinologia Feminina','Endocrinologia Masculina',
+  'Endocrinologia do Esporte','Transgeneridade'
 ];
 function normalizeMuralSource(source){
   var s=String(source||'').trim();
@@ -12637,7 +12638,7 @@ genMM=function(){
 };
 function muralFilterOptions(list,current){
   var subs=MURAL_SUBSPECIALTY_FILTERS.slice();
-  list.forEach(function(a){var s=muralSubspecialty(a);if(subs.indexOf(s)<0)subs.push(s);});
+  list.forEach(function(a){var s=muralSubspecialty(a);if(s&&subs.indexOf(s)<0)subs.push(s);}); // ignora sub vazia (senão vira <option> em branco no seletor)
   subs.sort(function(a,b){return a.localeCompare(b,'pt-BR');});
   if(current&&subs.indexOf(current)<0)current='';
   return{current:current,html:'<option value="">Todos</option>'+subs.map(function(s){return'<option value="'+esc(s)+'">'+esc(s)+'</option>';}).join('')};
