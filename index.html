@@ -3087,6 +3087,7 @@ function muralStudyRank(a){
 // no tipo+título+texto mesmo quando a normalização usa um rótulo mais grosso.
 function muralTypeRank(a){
   var t=muralDisplayType(a);
+  if(a&&a.breaking)return 0; // aprovações/lançamentos de medicação (FDA/indústria): topo, mesmo tipados "Comunicado"
   if(t==='Breaking News')return 0;
   if(t==='Comunicado')return 1;
   if(t==='Evento')return 2;
@@ -12915,7 +12916,7 @@ initMural=function(){
   var tipoOpts='<option value="">Todos os tipos</option>'+tipoList.map(function(t){return'<option value="'+esc(t)+'">'+esc(t)+'</option>';}).join('');
   var perOpt=muralPeriodicoOptions(admAvisos,muralPeriodicoFilter);muralPeriodicoFilter=perOpt.current;
   var avisos=muralSortList(admAvisos,muralSort).filter(function(a){
-    return (!muralFilter||muralSubspecialty(a)===muralFilter)&&(!muralTipoFilter||muralDisplayType(a)===muralTipoFilter)&&(!muralPeriodicoFilter||muralPeriodicoKey(a)===muralPeriodicoFilter)&&(muralShowBreaking||muralDisplayType(a)!=='Breaking News');
+    return (!muralFilter||muralSubspecialty(a)===muralFilter)&&(!muralTipoFilter||muralDisplayType(a)===muralTipoFilter)&&(!muralPeriodicoFilter||muralPeriodicoKey(a)===muralPeriodicoFilter)&&(muralShowBreaking||!a.breaking);
   });
   if(!muralFilter){
     var per={},capped=[];
@@ -13106,7 +13107,7 @@ admMuralSecHTML=function(){
   if(admMuralTipoFilter&&tipoList.indexOf(admMuralTipoFilter)<0)admMuralTipoFilter='';
   var tipoFiltroOpts='<option value="">Todos os tipos</option>'+tipoList.map(function(t){return'<option value="'+esc(t)+'"'+(admMuralTipoFilter===t?' selected':'')+'>'+esc(t)+'</option>';}).join('');
   var perOpt=muralPeriodicoOptions(admAvisos,admMuralPeriodicoFilter);admMuralPeriodicoFilter=perOpt.current;
-  var avisos=muralSortList(admAvisos,admMuralSort).filter(function(a){return (!admMuralFilter||muralSubspecialty(a)===admMuralFilter)&&(!admMuralTipoFilter||muralDisplayType(a)===admMuralTipoFilter)&&(!admMuralPeriodicoFilter||muralPeriodicoKey(a)===admMuralPeriodicoFilter)&&(muralShowBreaking||muralDisplayType(a)!=='Breaking News');});
+  var avisos=muralSortList(admAvisos,admMuralSort).filter(function(a){return (!admMuralFilter||muralSubspecialty(a)===admMuralFilter)&&(!admMuralTipoFilter||muralDisplayType(a)===admMuralTipoFilter)&&(!admMuralPeriodicoFilter||muralPeriodicoKey(a)===admMuralPeriodicoFilter)&&(muralShowBreaking||!a.breaking);});
   var admMPages=Math.max(1,Math.ceil(avisos.length/MURAL_PER_PAGE));
   if(admMuralPage>=admMPages)admMuralPage=admMPages-1;if(admMuralPage<0)admMuralPage=0;
   var admPageAvisos=avisos.slice(admMuralPage*MURAL_PER_PAGE,admMuralPage*MURAL_PER_PAGE+MURAL_PER_PAGE);
