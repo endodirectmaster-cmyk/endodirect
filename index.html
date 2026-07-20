@@ -3340,13 +3340,14 @@ function userStatePayload(){
   }
   return p;
 }
-// Item automático do radar: artigos do PubMed (sourceId 'pubmed:') OU
-// Breaking News (sourceId 'news:' / tipo 'Breaking News' / flag breaking).
-// Esses NUNCA entram em adm_avisos (manuais) — vivem só em radar_avisos.
+// Item automático do radar: artigos do PubMed (sourceId 'pubmed:'), artigos de
+// revista via RSS ('journalrss:') OU Breaking News (sourceId 'news:' / tipo
+// 'Breaking News' / flag breaking). Esses NUNCA entram em adm_avisos (manuais)
+// — vivem só em radar_avisos.
 function isRadarAuto(a){
   if(!a||!a.auto)return false;
   var sid=String(a.sourceId||'');
-  return sid.indexOf('pubmed:')===0||sid.indexOf('news:')===0||a.breaking===true||String(a.tipo||'').toLowerCase().indexOf('breaking')>=0;
+  return sid.indexOf('pubmed:')===0||sid.indexOf('journalrss:')===0||sid.indexOf('news:')===0||a.breaking===true||String(a.tipo||'').toLowerCase().indexOf('breaking')>=0;
 }
 function avisoKeyStr(a){return String((a&&(a.sourceId||a.link||a.titulo))||'');}
 function globalStatePayload(){
