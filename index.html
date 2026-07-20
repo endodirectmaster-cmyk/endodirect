@@ -3079,16 +3079,34 @@ function muralStudyRank(a){
   if(s.indexOf('transversal')>=0||s.indexOf('cross-sectional')>=0||s.indexOf('cross sectional')>=0)return 6;
   return 7;
 }
-// Relevância p/ ordenar o mural: o TIPO domina; a revista entra só como leve
-// desempate dentro do mesmo tipo; a data desempata por último (em muralSortList).
-// Breaking News/comunicados do professor ficam sempre acima dos artigos.
-function muralRelevance(a){
+// Hierarquia editorial do mural (pedido do professor 2026-07-20): a ordem de
+// importância por TIPO é (menor = mais alto / aparece primeiro):
+// Breaking News > Comunicado > Evento > Diretriz/Consenso > Discussão Clínica >
+// Artigo de Revisão > Metanálise > Ensaio Clínico > Perspectiva > Coorte >
+// Caso-controle > Transversal > Estudo Genético > demais. Detecta subtipos finos
+// no tipo+título+texto mesmo quando a normalização usa um rótulo mais grosso.
+function muralTypeRank(a){
   var t=muralDisplayType(a);
-  if(t==='Breaking News')return 100000;
-  if(t==='Comunicado'||t==='Evento')return 80000;
-  var src=normalizeMuralSource((a&&a.fonte)||'');
-  var sw={'The New England Journal of Medicine':9,'The Lancet Diabetes & Endocrinology':9,'Nature Reviews Endocrinology':8,'Diabetes Care':8,'Endocrine Reviews':8,'Journal of Clinical Endocrinology & Metabolism':7,'Obesity':6}[src]||5;
-  return (100-muralStudyRank(a)*10)*100+sw;
+  if(t==='Breaking News')return 0;
+  if(t==='Comunicado')return 1;
+  if(t==='Evento')return 2;
+  var s=muralPlain([(a&&a.tipo)||'',(a&&a.titulo)||'',(a&&a.texto)||'',(a&&a.fonte)||''].join(' '));
+  if(t==='Diretriz'||s.indexOf('diretriz')>=0||s.indexOf('guideline')>=0||s.indexOf('consenso')>=0||s.indexOf('consensus')>=0)return 3;
+  if(t==='Discussão Clínica')return 4;
+  if(t==='Artigo de Revisão'||s.indexOf('revisao sistematica')>=0||s.indexOf('systematic review')>=0||s.indexOf('revisao')>=0||s.indexOf('review')>=0)return 5;
+  if(s.indexOf('metanalise')>=0||s.indexOf('meta-anal')>=0||s.indexOf('metaanal')>=0)return 6;
+  if(t==='Ensaio Clínico'||s.indexOf('ensaio clinico')>=0||s.indexOf('randomized')>=0||s.indexOf('randomised')>=0||s.indexOf('controlled trial')>=0||s.indexOf('clinical trial')>=0)return 7;
+  if(t==='Perspectiva Clínica')return 8;
+  if(s.indexOf('coorte')>=0||s.indexOf('cohort')>=0)return 9;
+  if(s.indexOf('caso-controle')>=0||s.indexOf('caso controle')>=0||s.indexOf('case-control')>=0||s.indexOf('case control')>=0)return 10;
+  if(s.indexOf('transversal')>=0||s.indexOf('cross-sectional')>=0||s.indexOf('cross sectional')>=0)return 11;
+  if(t==='Estudo Genético')return 12;
+  return 13;
+}
+// Relevância p/ ordenar o mural: o TIPO (hierarquia acima) domina; a data
+// desempata por último (em muralSortList). Maior número = mais importante.
+function muralRelevance(a){
+  return 10000-muralTypeRank(a)*100;
 }
 function muralSortList(list,mode){
   var arr=(list||[]).slice();
@@ -8264,7 +8282,7 @@ function execNoteCmd(cmd){
 var muralFilter='';
 var muralTipoFilter='';
 var muralPeriodicoFilter='';
-var muralSort='novos';
+var muralSort='relevantes'; // padrão: hierarquia por tipo (Breaking>Comunicado>…>Ensaio>…), data desempata
 var muralShowBreaking=(lsGet('mural_show_breaking')!==false); // mostra Breaking News por padrão
 var MURAL_PER_PAGE=10,muralPage=0,admMuralPage=0; // paginação do mural (10/pág)
 // HTML do paginador (vazio se só houver 1 página).
@@ -10447,7 +10465,7 @@ function admSupportReply(id){
 }
 
 function persistAdm(){lsSet('adm_avisos',admAvisos);lsSet('adm_questoes',admQuestoes);queueRemoteStateSave();}
-var admMuralShowForm=false,admMuralEdit=null,admMuralFilter='',admMuralTipoFilter='',admMuralPeriodicoFilter='',admMuralSort='novos';
+var admMuralShowForm=false,admMuralEdit=null,admMuralFilter='',admMuralTipoFilter='',admMuralPeriodicoFilter='',admMuralSort='relevantes';
 var muralInlineEdit=null; // índice do aviso em edição WYSIWYG inline (dentro do próprio card), estilo Resumos/Diretrizes
 // ---------- REFERÊNCIA RÁPIDA (admin CRUD) ----------
 var admRefShowForm=false,admRefEdit=null,admRefInline=null,admRefPdfB64=null,admRefPdfName='',admRefPdfFile=null,admRefSub='',admRefTema='',admRefTemaAdd=false,admRefTemaEdit=null,admRefChat=[];
@@ -12121,8 +12139,9 @@ function bindAdmSec(sec){
     if(admBn)admBn.addEventListener('click',function(){muralShowBreaking=!muralShowBreaking;lsSet('mural_show_breaking',muralShowBreaking);admMuralPage=0;renderAdmSec('mural');});
     var admMC=document.getElementById('adm-mural-clear');
     if(admMC)admMC.addEventListener('click',function(){admMuralFilter='';admMuralTipoFilter='';admMuralPeriodicoFilter='';admMuralPage=0;renderAdmSec('mural');});
-    var admMp=document.getElementById('adm-mural-prev');if(admMp)admMp.addEventListener('click',function(){if(admMuralPage>0){admMuralPage--;renderAdmSec('mural');}});
-    var admMn=document.getElementById('adm-mural-next');if(admMn)admMn.addEventListener('click',function(){admMuralPage++;renderAdmSec('mural');});
+    function admMuralScrollTop(){try{var m=document.getElementById('adm-main');if(m)m.scrollTop=0;}catch(e){}try{window.scrollTo(0,0);}catch(e){}}
+    var admMp=document.getElementById('adm-mural-prev');if(admMp)admMp.addEventListener('click',function(){if(admMuralPage>0){admMuralPage--;renderAdmSec('mural');admMuralScrollTop();}});
+    var admMn=document.getElementById('adm-mural-next');if(admMn)admMn.addEventListener('click',function(){admMuralPage++;renderAdmSec('mural');admMuralScrollTop();}});
     // preenche o form quando estiver editando
     if(admMuralShowForm&&admMuralEdit!==null){
       var av=admAvisos[admMuralEdit];
@@ -12913,8 +12932,9 @@ initMural=function(){
   var sels=document.getElementById('mural-filter-sort');if(sels){sels.value=muralSort;sels.addEventListener('change',function(){muralSort=this.value;muralPage=0;initMural();});}
   var bn=document.getElementById('mural-bn-toggle');if(bn)bn.addEventListener('click',function(){muralShowBreaking=!muralShowBreaking;lsSet('mural_show_breaking',muralShowBreaking);muralPage=0;initMural();});
   var clear=document.getElementById('mural-clear');if(clear)clear.addEventListener('click',function(){muralFilter='';muralTipoFilter='';muralPeriodicoFilter='';muralPage=0;initMural();});
-  var mp=document.getElementById('mural-prev');if(mp)mp.addEventListener('click',function(){if(muralPage>0){muralPage--;initMural();}});
-  var mn=document.getElementById('mural-next');if(mn)mn.addEventListener('click',function(){if(muralPage<mPages-1){muralPage++;initMural();}});
+  function muralScrollTop(){try{var p=document.getElementById('panel-mural');if(p)p.scrollTop=0;}catch(e){}try{window.scrollTo(0,0);}catch(e){}}
+  var mp=document.getElementById('mural-prev');if(mp)mp.addEventListener('click',function(){if(muralPage>0){muralPage--;initMural();muralScrollTop();}});
+  var mn=document.getElementById('mural-next');if(mn)mn.addEventListener('click',function(){if(muralPage<mPages-1){muralPage++;initMural();muralScrollTop();}});
   bindMuralPushCta();
 };
 function simRetry(promiseFactory){
