@@ -11877,7 +11877,16 @@ function bindAdmSec(sec){
     });
     var rPdfGen=document.getElementById('btn-adm-ref-pdfgen');
     if(rPdfGen)rPdfGen.addEventListener('click',function(){
-      if(!admRefPdfFile&&!admRefPdfB64){notify('Selecione um PDF primeiro.','err');return;}
+      if(!admRefPdfFile&&!admRefPdfB64){
+        // Sem PDF anexado: feedback PERSISTENTE ao lado do botão (o toast some rápido
+        // e dava a sensação de "nada acontece"). O gerar exige um PDF-fonte de propósito
+        // (a IA resume o documento, não inventa dados).
+        var stn=document.getElementById('adm-ref-pdf-status');
+        if(stn){stn.textContent='⚠️ Anexe um PDF em "Escolher arquivo" antes de gerar.';stn.style.color='var(--red)';}
+        var fInp=document.getElementById('adm-ref-pdf');if(fInp){try{fInp.focus();}catch(_){}try{fInp.click();}catch(_){}}
+        notify('Anexe o PDF da diretriz antes de gerar com IA.','err');
+        return;
+      }
       var st=document.getElementById('adm-ref-pdf-status');
       rPdfGen.disabled=true;rPdfGen.innerHTML=ldHTML('Lendo PDF...');if(st)st.textContent='';
       var SYS='Você é professor de endocrinologia. A partir de uma diretriz/artigo, produza material de estudo claro, correto e fiel ao documento, em português do Brasil.';
