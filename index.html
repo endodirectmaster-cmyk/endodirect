@@ -5987,10 +5987,12 @@ function populateInst(selId){
 }
 function populateAno(selId,inst){
   var sel=document.getElementById(selId);if(!sel)return;
+  var cur=sel.value; // preserva o ano escolhido ao repopular (senão o filtro "reseta" a cada mudança)
   var base=provasPool();
   var pool=inst?base.filter(function(q){return q.inst===inst;}):base;
   var anos=pool.map(function(q){return q.ano;}).filter(function(v,i,a){return a.indexOf(v)===i;}).sort(function(a,b){return b-a;});
   sel.innerHTML='<option value="">Todos</option>'+anos.map(function(a){return'<option value="'+a+'">'+a+'</option>';}).join('');
+  if(cur)sel.value=cur; // se o ano não existir nesta instituição, o select cai para "Todos" sozinho
 }
 function filterProvas(inst,ano,area,type){
   return provasPool().filter(function(q){
@@ -6005,6 +6007,7 @@ function updateProvaInfo(){
   var area=(document.getElementById('q-parea')||{}).value||'';
   var type=(document.getElementById('q-ptype')||{}).value||'';
   populateAno('q-ano',inst);
+  ano=(document.getElementById('q-ano')||{}).value||''; // re-lê após repopular (mantém contagem e dropdown coerentes)
   // O banco Endodirect não é organizado por ano de prova (anos são genéricos),
   // então o filtro de Ano só faz sentido para instituições com provas datadas
   // (ex.: TEEM). Esconde o filtro para Endodirect / degustação.
