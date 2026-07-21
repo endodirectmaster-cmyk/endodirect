@@ -4025,11 +4025,13 @@ function genCode(area){
 // ── API (ambiente do artefato injeta autenticação) ──
 var AI_API_ENDPOINT='/api/ai';
 function aiRequest(payload){
-  // Teto global de tempo (60s) p/ NENHUMA chamada de IA pendurar o app. O
-  // servidor já corta em 30s (maxDuration), então 60s nunca dispara à toa em
-  // chamada legítima — só protege contra travamento real de rede.
+  // Teto global de tempo (130s) p/ NENHUMA chamada de IA pendurar o app. O
+  // servidor corta em 120s (maxDuration, plano Pro) — o cliente espera um pouco
+  // mais para receber a resposta/erro do servidor antes de abortar. Importar PDF
+  // de artigo LONGO (resumo+bullets+flashcards+mapa) pode levar ~1–2 min; geradores
+  // com teto próprio (withTimeout, ex.: OSCE 59s) não são afetados por este limite.
   var ctrl=(typeof AbortController!=='undefined')?new AbortController():null;
-  var to=ctrl?setTimeout(function(){ctrl.abort();},60000):null;
+  var to=ctrl?setTimeout(function(){ctrl.abort();},130000):null;
   function done(){if(to){clearTimeout(to);to=null;}}
   return fetch(AI_API_ENDPOINT,{
     method:'POST',
@@ -11963,17 +11965,17 @@ function bindAdmSec(sec){
       function fromBase64(){
         if(!admRefPdfB64)throw new Error('Não consegui extrair texto deste PDF.');
         if(admRefPdfB64.length>4000000)throw new Error('PDF muito grande para leitura por imagem. Use um PDF com texto selecionável, ou um arquivo menor (até ~3 MB), ou cole o conteúdo nos campos.');
-        if(st)st.textContent='Gerando com IA…';
+        if(st)st.textContent='Gerando com IA… (artigos longos podem levar até ~2 min)';
         return aiRequest({system:SYS,prompt:'Leia o documento e '+FMT,documentBase64:admRefPdfB64,mediaType:'application/pdf',maxTokens:8000});
       }
       var task;
       if(admRefPdfFile&&admRefPdfFile.arrayBuffer){
         if(st)st.textContent='Extraindo texto do PDF…';
         task=admRefPdfFile.arrayBuffer().then(extractPdfText)
-          .then(function(t){return String(t||'').replace(/[ \t]+/g,' ').slice(0,120000);})
+          .then(function(t){return String(t||'').replace(/[ \t]+/g,' ').slice(0,90000);}) // 90k chars ≈ ~22k tokens: cobre o essencial de um artigo/diretriz e reduz o tempo de leitura da IA
           .catch(function(){return null;}) // extração falhou → tenta documento
           .then(function(text){
-            if(text&&text.replace(/\s/g,'').length>=200){if(st)st.textContent='Gerando com IA…';return aiRequest({system:SYS,prompt:FMT+'\n\nTEXTO DO DOCUMENTO:\n'+text,maxTokens:8000});}
+            if(text&&text.replace(/\s/g,'').length>=200){if(st)st.textContent='Gerando com IA… (artigos longos podem levar até ~2 min)';return aiRequest({system:SYS,prompt:FMT+'\n\nTEXTO DO DOCUMENTO:\n'+text,maxTokens:8000});}
             return fromBase64(); // PDF escaneado/sem texto selecionável
           });
       }else{
