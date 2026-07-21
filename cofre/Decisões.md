@@ -393,6 +393,7 @@ Log de decisões de produto e técnicas (mais recentes no topo).
 - **Oferta de fundador** direcionada ao **Gold** (era Premium antes da simplificação para 2 pacotes); só no ciclo anual.
 - **Assistente de Prescrição via API Memed** (substitui builder próprio). Ver [[Integrações]].
 - **Automação semanal de health check** da plataforma.
+- **Provas de residência no banco de questões (2026-07-21):** 124 questões de endócrino extraídas das provas do Drive ("Provas de residência"), com comentário de gabarito próprio, inseridas em `payload.provas` (member-only). 8 instituições novas no filtro Instituição (Einstein, Enamed, ENARE, IAMSPE, Santa Casa-SP, SUS-SP, USP-RP, USP-SP). Inserção idempotente por `sourceId`. Ver [[Banco de Questões]].
 
 ## Regras permanentes
 - **Nunca** armazenar dados de cartão (só tokenizar no pagar.me).
