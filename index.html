@@ -432,7 +432,7 @@ textarea{resize:vertical;line-height:1.6}
 .mural-dd-btn:focus{border-color:var(--blue);box-shadow:0 0 0 3px rgba(59,111,212,.1)}
 .mural-dd-cur{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .mural-dd-arrow{flex-shrink:0;opacity:.7;font-size:.7rem}
-.mural-dd-panel{position:absolute;top:calc(100% + 4px);left:0;right:0;z-index:60;max-height:300px;overflow-y:auto;background:var(--surface);border:1px solid var(--bd);border-radius:10px;box-shadow:0 12px 34px rgba(0,0,0,.4);padding:.3rem;display:none}
+.mural-dd-panel{position:absolute;top:calc(100% + 4px);left:0;min-width:100%;width:max-content;max-width:min(380px,88vw);z-index:60;max-height:300px;overflow-y:auto;background:var(--surface);border:1px solid var(--bd);border-radius:10px;box-shadow:0 12px 34px rgba(0,0,0,.4);padding:.3rem;display:none}
 .mural-dd.open .mural-dd-panel{display:block}
 .mural-dd-opt{display:block;width:100%;text-align:left;background:none;border:0;color:var(--tx);padding:.42rem .6rem;border-radius:7px;font-size:.8rem;cursor:pointer;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .mural-dd-opt:hover{background:var(--s2)}
