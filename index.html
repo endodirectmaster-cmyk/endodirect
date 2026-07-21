@@ -2461,6 +2461,11 @@ var CALCS=[
    calc:function(v){var g=parseFloat(v.homa_gli)||0;var ins=parseFloat(v.homa_ins)||0;return(g*ins)/405;},
    interp:function(s){return s<2.5?{t:'Sem resistência insulínica',c:'tag-grn'}:s<3.8?{t:'Resistência limítrofe',c:'tag-gold'}:{t:'Resistência à insulina',c:'tag-red'};},
    unit:'',note:'Ponto de corte varia conforme população (referência: ~2,5-3,8).'},
+  {id:'fib4',name:'FIB-4',area:'Fígado (MASLD)',desc:'Triagem de fibrose hepática avançada',
+   fields:[{id:'fib_age',label:'Idade (anos)',type:'num'},{id:'fib_ast',label:'AST/TGO (U/L)',type:'num'},{id:'fib_alt',label:'ALT/TGP (U/L)',type:'num'},{id:'fib_plt',label:'Plaquetas (×10⁹/L, ex.: 200)',type:'num'}],
+   calc:function(v){var age=parseFloat(v.fib_age)||0,ast=parseFloat(v.fib_ast)||0,alt=parseFloat(v.fib_alt)||0,plt=parseFloat(v.fib_plt)||0;if(plt>1000)plt=plt/1000;if(plt<=0||alt<=0)return 0;return (age*ast)/(plt*Math.sqrt(alt));},
+   interp:function(s,v){var age=parseFloat(v.fib_age)||0;if(s<=0)return{t:'Preencha idade, AST, ALT e plaquetas.',c:'tag-gold'};var low=age>65?2.0:1.3;if(s<low)return{t:'Baixo risco de fibrose avançada (F3–F4 improvável)',c:'tag-grn'};if(s<=2.67)return{t:'Indeterminado — avaliar com elastografia (FibroScan) ou ELF',c:'tag-gold'};return{t:'Alto risco de fibrose avançada — encaminhar/investigar',c:'tag-red'};},
+   unit:'',note:'FIB-4 = (idade × AST) ÷ (plaquetas × √ALT). Plaquetas em ×10⁹/L (ex.: 200; se digitar a contagem absoluta 200000 o app converte). Triagem não invasiva de fibrose hepática avançada na doença hepática esteatótica metabólica (MASLD/DHGM), comum em diabetes e obesidade. Corte inferior <1,30 (use <2,0 se idade >65 anos); ≥2,67 = alto risco; entre eles, zona indeterminada → prosseguir com elastografia/ELF. Não usar na hepatite aguda.'},
   {id:'trp',name:'Reabsorção tubular de fósforo (TRP)',area:'Osteometabolismo',desc:'Fração de reabsorção tubular de fosfato',
    fields:[{id:'trp_sp',label:'Fósforo sérico (mg/dL)',type:'num'},{id:'trp_up',label:'Fósforo urinário (mg/dL)',type:'num'},{id:'trp_scr',label:'Creatinina sérica (mg/dL)',type:'num'},{id:'trp_ucr',label:'Creatinina urinária (mg/dL)',type:'num'}],
    calc:function(v){var sp=parseFloat(v.trp_sp)||0,up=parseFloat(v.trp_up)||0,scr=parseFloat(v.trp_scr)||0,ucr=parseFloat(v.trp_ucr)||0;if(sp<=0||ucr<=0)return 0;return (1-((up*scr)/(sp*ucr)))*100;},
@@ -8699,9 +8704,12 @@ function dirFigurasHTML(figs){
 function diretrizesViewHTML(){
   var _T=refPrivadoMode?'📚 Resumos':'📋 Diretrizes';
   function _cnt(n){return n+' '+(refPrivadoMode?(n===1?'capítulo':'capítulos'):(n===1?'diretriz':'diretrizes'));}
-  // Degustação nos Resumos: aluno sem pacote vê só 1 capítulo por área (o 1º), e
-  // dentro dele só o Resumo (Flashcards/Mapas travados). Assinante/admin vê tudo.
-  var _deg=refPrivadoMode&&!isAdminUser()&&!hasScope('plano')&&isDegustacao();
+  // Degustação (aluno sem pacote): limita a 1 item por área em AMBAS as abas
+  // (Diretrizes e Resumos) — o 1º; os demais ficam 🔒 (upsell). Além disso, nos
+  // RESUMOS trava Flashcards/Mapas (só o Resumo). Assinante/admin veem tudo.
+  var _degU=!isAdminUser()&&!hasScope('plano')&&isDegustacao();
+  var _deg1=_degU;                    // limite de 1 item por sub (Diretrizes + Resumos)
+  var _degFmt=_degU&&refPrivadoMode;  // travar Flashcards/Mapas: só nos Resumos
   if(!diretrizes.length){
     return '<div class="ph"><h1>'+_T+'</h1></div><div class="dir-empty-fmt">Nenhum conteúdo cadastrado ainda.</div>';
   }
@@ -8723,10 +8731,10 @@ function diretrizesViewHTML(){
       return head2+'<div class="ref-soon" style="margin-top:1rem"><div class="ref-soon-ico">🔜</div><h2>Em breve</h2><p>Os resumos de '+esc(refSubSel)+' estão em curadoria pela equipe Endodirect.</p></div>';
     }
     return head2+'<div class="dir-sub-grid">'+temas.map(function(t,ti){
-      var lk=_deg&&ti>0;
+      var lk=_deg1&&ti>0;
       return '<button class="dir-sub-btn'+(lk?' dir-locked':'')+'" data-dir-'+(lk?'lockedtema':'tema')+'="'+esc(t.tema)+'"><div class="dsb-ico">'+(lk?'🔒':'📄')+'</div><h3>'+esc(t.tema)+'</h3><div class="dsb-cnt">'+(lk?'Exclusivo p/ assinantes':_cnt(t.count))+'</div></button>';
     }).join('')+'</div>'
-    +(_deg?'<div class="dir-deg-note">🔒 Na degustação você abre <b>1 capítulo</b> de cada área (só o resumo). Assine para liberar os <b>'+temas.length+' capítulos</b> de '+esc(refSubSel)+', com <b>flashcards</b> e <b>mapas mentais</b>.</div>':'');
+    +(_deg1?'<div class="dir-deg-note">🔒 Na degustação você abre <b>1 '+(refPrivadoMode?'capítulo':'diretriz')+'</b> de cada área'+(_degFmt?' (só o resumo — flashcards e mapas para assinantes)':'')+'. Assine para liberar '+(temas.length>1?('<b>'+temas.length+'</b> de '+esc(refSubSel)):('todo o conteúdo de '+esc(refSubSel)))+'.</div>':'');
   }
   // Nível 3 — itens do tema, no formato escolhido.
   var list=diretrizes.map(function(d,i){return {d:d,i:i};}).filter(function(x){return dirIsVisible(x.d)&&(String(x.d.sub||'Geral').trim()||'Geral')===refSubSel&&dirTemaOf(x.d)===refTemaSel;});
@@ -8735,19 +8743,19 @@ function diretrizesViewHTML(){
   if(!list.length){
     return head+'<div class="dir-empty-fmt">Nenhum conteúdo neste tema.</div>';
   }
-  // Degustação: só o 1º capítulo da área é acessível (guarda contra estado antigo).
-  if(_deg){
+  // Degustação: só o 1º item da área é acessível (guarda contra estado antigo).
+  if(_deg1){
     var _tl=dirTemaList(refSubSel,false,dirIsVisible);
     if(_tl.length&&refTemaSel!==_tl[0].tema){
-      return head+'<div class="dir-deg-note" style="margin-top:1rem">🔒 Este capítulo é <b>exclusivo para assinantes</b>. Na degustação, abra o 1º capítulo de cada área. <button class="btn btn-primary btn-sm" data-dir-assine style="margin-top:.6rem">Ver planos</button></div>';
+      return head+'<div class="dir-deg-note" style="margin-top:1rem">🔒 Este '+(refPrivadoMode?'capítulo':'conteúdo')+' é <b>exclusivo para assinantes</b>. Na degustação, abra o 1º item de cada área. <button class="btn btn-primary btn-sm" data-dir-assine style="margin-top:.6rem">Ver planos</button></div>';
     }
   }
-  if(_deg)refFormat='resumo'; // degustação: força o render do resumo (dirCardHTML usa refFormat global; flashcards/mapas travados)
+  if(_degFmt)refFormat='resumo'; // Resumos na degustação: força o render do resumo (dirCardHTML usa refFormat global; flashcards/mapas travados)
   var fmts=[['resumo','📄 Resumo'],['flash','🃏 Flashcards'],['mapa','🧠 Mapas mentais']];
   var fmtAtivo=(refFormat==='flash'||refFormat==='mapa')?refFormat:'resumo';
   return head
-    +'<div class="dir-fmt">'+fmts.map(function(f){var lk=_deg&&f[0]!=='resumo';return '<button class="dir-fmt-btn'+(fmtAtivo===f[0]?' on':'')+(lk?' dir-fmt-locked':'')+'" data-dir-'+(lk?'fmtlock':'fmt')+'="'+f[0]+'">'+f[1]+(lk?' 🔒':'')+'</button>';}).join('')+'</div>'
-    +(_deg?'<div class="dir-deg-note">🔒 <b>Flashcards</b> e <b>mapas mentais</b> deste capítulo são exclusivos para assinantes.</div>':'')
+    +'<div class="dir-fmt">'+fmts.map(function(f){var lk=_degFmt&&f[0]!=='resumo';return '<button class="dir-fmt-btn'+(fmtAtivo===f[0]?' on':'')+(lk?' dir-fmt-locked':'')+'" data-dir-'+(lk?'fmtlock':'fmt')+'="'+f[0]+'">'+f[1]+(lk?' 🔒':'')+'</button>';}).join('')+'</div>'
+    +(_degFmt?'<div class="dir-deg-note">🔒 <b>Flashcards</b> e <b>mapas mentais</b> deste capítulo são exclusivos para assinantes.</div>':'')
     +list.map(function(x){return dirCardHTML(x.d,x.i);}).join('');
 }
 // Liga os eventos da visão dentro de um container (aluno ou pré-visualização).
