@@ -751,6 +751,9 @@ html[data-theme="light"] .dir-back{background:#f8f9fc;border-color:var(--bd2);co
 .dir-fmt-btn{border:1.5px solid var(--bd2);background:var(--surface);color:var(--t2);border-radius:999px;padding:.4rem .95rem;font-size:.78rem;font-weight:600;cursor:pointer}
 .dir-fmt-btn:hover{border-color:var(--blue)}
 .dir-fmt-btn.on{background:var(--blue);border-color:var(--blue);color:#fff}
+.dir-locked{opacity:.6;border-left-color:var(--bd2)!important}
+.dir-fmt-btn.dir-fmt-locked{opacity:.65;border-style:dashed}
+.dir-deg-note{margin:.6rem 0 1.1rem;padding:.7rem .9rem;border:1px dashed var(--bd2);border-radius:12px;background:var(--s2);font-size:.82rem;color:var(--t2);line-height:1.55}
 .dir-card{border:1px solid var(--bd);border-left:4px solid var(--blue);border-radius:14px;background:var(--surface);padding:1.1rem 1.25rem;margin-bottom:1rem}
 .dir-card-top{display:flex;align-items:center;gap:.5rem;flex-wrap:wrap;margin-bottom:.5rem}
 .dir-card h3{margin:.15rem 0 .6rem;font-size:1.08rem;color:var(--tx)}
@@ -5133,7 +5136,7 @@ function hasScope(scope){return !scope||isAdminUser()||userAcessos.indexOf(scope
 // Degustacao: aluno logado, sem nenhum acesso ativo (não comprou pacote/curso).
 function isDegustacao(){return !!(currentUser&&currentUser.role==='aluno'&&!isAdminUser()&&(!userAcessos||userAcessos.length===0));}
 // Paineis liberados na degustacao (o resto fica 🔒 com upsell).
-var DEGUSTACAO_PANELS={dash:1,desemp:1,plano:1,flash:1,mmap:1,quest:1,qotd:1,perfil:1,support:1,calc:1,podcast:1,crono:1,notas:1,ref:1,erros:1};
+var DEGUSTACAO_PANELS={dash:1,desemp:1,plano:1,flash:1,mmap:1,quest:1,qotd:1,perfil:1,support:1,calc:1,podcast:1,crono:1,notas:1,ref:1,resu:1,erros:1};
 // Ferramentas com IA liberadas na degustação por COTA (3 usos cada): simulador
 // de casos, simulado, prescrição e chat IA. Após esgotar, vira upsell.
 var TRIAL_PANELS={sim:1,simfull:1,rx:1,chat:1};
@@ -8696,6 +8699,9 @@ function dirFigurasHTML(figs){
 function diretrizesViewHTML(){
   var _T=refPrivadoMode?'📚 Resumos':'📋 Diretrizes';
   function _cnt(n){return n+' '+(refPrivadoMode?(n===1?'capítulo':'capítulos'):(n===1?'diretriz':'diretrizes'));}
+  // Degustação nos Resumos: aluno sem pacote vê só 1 capítulo por área (o 1º), e
+  // dentro dele só o Resumo (Flashcards/Mapas travados). Assinante/admin vê tudo.
+  var _deg=refPrivadoMode&&!isAdminUser()&&!hasScope('plano')&&isDegustacao();
   if(!diretrizes.length){
     return '<div class="ph"><h1>'+_T+'</h1></div><div class="dir-empty-fmt">Nenhum conteúdo cadastrado ainda.</div>';
   }
@@ -8716,9 +8722,11 @@ function diretrizesViewHTML(){
     if(!temas.length){
       return head2+'<div class="ref-soon" style="margin-top:1rem"><div class="ref-soon-ico">🔜</div><h2>Em breve</h2><p>Os resumos de '+esc(refSubSel)+' estão em curadoria pela equipe Endodirect.</p></div>';
     }
-    return head2+'<div class="dir-sub-grid">'+temas.map(function(t){
-      return '<button class="dir-sub-btn" data-dir-tema="'+esc(t.tema)+'"><div class="dsb-ico">📄</div><h3>'+esc(t.tema)+'</h3><div class="dsb-cnt">'+_cnt(t.count)+'</div></button>';
-    }).join('')+'</div>';
+    return head2+'<div class="dir-sub-grid">'+temas.map(function(t,ti){
+      var lk=_deg&&ti>0;
+      return '<button class="dir-sub-btn'+(lk?' dir-locked':'')+'" data-dir-'+(lk?'lockedtema':'tema')+'="'+esc(t.tema)+'"><div class="dsb-ico">'+(lk?'🔒':'📄')+'</div><h3>'+esc(t.tema)+'</h3><div class="dsb-cnt">'+(lk?'Exclusivo p/ assinantes':_cnt(t.count))+'</div></button>';
+    }).join('')+'</div>'
+    +(_deg?'<div class="dir-deg-note">🔒 Na degustação você abre <b>1 capítulo</b> de cada área (só o resumo). Assine para liberar os <b>'+temas.length+' capítulos</b> de '+esc(refSubSel)+', com <b>flashcards</b> e <b>mapas mentais</b>.</div>':'');
   }
   // Nível 3 — itens do tema, no formato escolhido.
   var list=diretrizes.map(function(d,i){return {d:d,i:i};}).filter(function(x){return dirIsVisible(x.d)&&(String(x.d.sub||'Geral').trim()||'Geral')===refSubSel&&dirTemaOf(x.d)===refTemaSel;});
@@ -8727,15 +8735,28 @@ function diretrizesViewHTML(){
   if(!list.length){
     return head+'<div class="dir-empty-fmt">Nenhum conteúdo neste tema.</div>';
   }
+  // Degustação: só o 1º capítulo da área é acessível (guarda contra estado antigo).
+  if(_deg){
+    var _tl=dirTemaList(refSubSel,false,dirIsVisible);
+    if(_tl.length&&refTemaSel!==_tl[0].tema){
+      return head+'<div class="dir-deg-note" style="margin-top:1rem">🔒 Este capítulo é <b>exclusivo para assinantes</b>. Na degustação, abra o 1º capítulo de cada área. <button class="btn btn-primary btn-sm" data-dir-assine style="margin-top:.6rem">Ver planos</button></div>';
+    }
+  }
+  if(_deg)refFormat='resumo'; // degustação: força o render do resumo (dirCardHTML usa refFormat global; flashcards/mapas travados)
   var fmts=[['resumo','📄 Resumo'],['flash','🃏 Flashcards'],['mapa','🧠 Mapas mentais']];
   var fmtAtivo=(refFormat==='flash'||refFormat==='mapa')?refFormat:'resumo';
   return head
-    +'<div class="dir-fmt">'+fmts.map(function(f){return '<button class="dir-fmt-btn'+(fmtAtivo===f[0]?' on':'')+'" data-dir-fmt="'+f[0]+'">'+f[1]+'</button>';}).join('')+'</div>'
+    +'<div class="dir-fmt">'+fmts.map(function(f){var lk=_deg&&f[0]!=='resumo';return '<button class="dir-fmt-btn'+(fmtAtivo===f[0]?' on':'')+(lk?' dir-fmt-locked':'')+'" data-dir-'+(lk?'fmtlock':'fmt')+'="'+f[0]+'">'+f[1]+(lk?' 🔒':'')+'</button>';}).join('')+'</div>'
+    +(_deg?'<div class="dir-deg-note">🔒 <b>Flashcards</b> e <b>mapas mentais</b> deste capítulo são exclusivos para assinantes.</div>':'')
     +list.map(function(x){return dirCardHTML(x.d,x.i);}).join('');
 }
 // Liga os eventos da visão dentro de um container (aluno ou pré-visualização).
 function bindDiretrizesView(root){
   if(!root)return;
+  function _resuUpsell(){try{notify('Recurso exclusivo para assinantes.','err');}catch(e){}try{showAssineScreen((currentUser&&currentUser.email)||'');}catch(e){}}
+  root.querySelectorAll('[data-dir-lockedtema]').forEach(function(b){b.addEventListener('click',_resuUpsell);});
+  root.querySelectorAll('[data-dir-fmtlock]').forEach(function(b){b.addEventListener('click',_resuUpsell);});
+  var _assb=root.querySelector('[data-dir-assine]');if(_assb)_assb.addEventListener('click',_resuUpsell);
   root.querySelectorAll('[data-dir-sub]').forEach(function(b){b.addEventListener('click',function(){refSubSel=b.dataset.dirSub;refTemaSel='';refFlashOpen={};renderDiretrizesInto(root);});});
   root.querySelectorAll('[data-dir-tema]').forEach(function(b){b.addEventListener('click',function(){refTemaSel=b.dataset.dirTema;refFlashOpen={};renderDiretrizesInto(root);});});
   var back=root.querySelector('[data-dir-back]');
