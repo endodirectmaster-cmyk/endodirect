@@ -301,7 +301,8 @@ module.exports = async function handler(req, res) {
     return json(res, 500, { error: error && error.message ? error.message : 'Falha ao chamar a IA.' });
   }
 };
-// Tempo p/ gerar casos clínicos ricos (OSCE/prescrição em Sonnet/Opus) sem
-// truncar/expirar + passo opcional de grounding (PubMed). Reforçado em
-// vercel.json (functions) que é a fonte autoritativa.
-module.exports.config = { maxDuration: 60 };
+// Tempo p/ gerar casos clínicos ricos (OSCE/prescrição em Sonnet/Opus) e
+// importar PDF de diretriz/artigo LONGO (resumo+bullets+flashcards+mapa 3
+// níveis) sem truncar/expirar + passo opcional de grounding (PubMed). 120s
+// (plano Pro permite até 300s). Reforçado em vercel.json, fonte autoritativa.
+module.exports.config = { maxDuration: 120 };
