@@ -13006,7 +13006,7 @@ initMural=function(){
   var pageAvisos=avisos.slice(muralPage*MURAL_PER_PAGE,muralPage*MURAL_PER_PAGE+MURAL_PER_PAGE);
   var latest=admAvisos.reduce(function(max,a){return Math.max(max,Number(a.at)||0);},0);
   var updated=document.getElementById('mural-updated');if(updated)updated.textContent='Atualizado em '+dateBR(latest||Date.now());
-  var count=avisos.length+' '+(avisos.length===1?'aviso':'avisos');
+  var count=avisos.length+' '+(avisos.length===1?'artigo':'artigos');
   var tema=muralFilter||muralTipoFilter||perOpt.currentLabel||'Todas as subespecialidades';
   el.innerHTML='<div class="mural-shell">'
     +'<section class="mural-hero"><div class="mural-eyebrow">Avisos para alunos</div><h2>Calendário, notícias e leituras essenciais</h2><p>Acompanhe prazos, artigos recentes, atualizações do curso e temas úteis para estudo dirigido. Os links abrem as fontes oficiais.</p></section>'
@@ -13189,7 +13189,7 @@ admMuralSecHTML=function(){
   var admMPages=Math.max(1,Math.ceil(avisos.length/MURAL_PER_PAGE));
   if(admMuralPage>=admMPages)admMuralPage=admMPages-1;if(admMuralPage<0)admMuralPage=0;
   var admPageAvisos=avisos.slice(admMuralPage*MURAL_PER_PAGE,admMuralPage*MURAL_PER_PAGE+MURAL_PER_PAGE);
-  var count=avisos.length+' '+(avisos.length===1?'aviso':'avisos');
+  var count=avisos.length+' '+(avisos.length===1?'artigo':'artigos');
   var tema=admMuralFilter||admMuralTipoFilter||perOpt.currentLabel||'Todas as subespecialidades';
   var tipoOpts=MURAL_TYPES.map(function(t){return'<option>'+esc(t)+'</option>';}).join('');
   var subOpts=MURAL_SUBSPECIALTY_FILTERS.map(function(s){return'<option>'+esc(s)+'</option>';}).join('');
