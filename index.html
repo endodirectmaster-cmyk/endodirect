@@ -427,6 +427,16 @@ textarea{resize:vertical;line-height:1.6}
 .mural-filter-main{display:grid;grid-template-columns:minmax(170px,1fr) minmax(170px,1fr) max-content max-content;align-items:end;justify-content:start;gap:.7rem;flex:1;min-width:0}
 .mural-filter-field{display:flex;flex-direction:column;gap:.35rem;min-width:0}
 .mural-filter-select{height:40px}
+.mural-dd{position:relative}
+.mural-dd-btn{display:flex;align-items:center;justify-content:space-between;gap:.4rem;width:100%;background:var(--surface);border:1px solid var(--bd2);border-radius:var(--rs);padding:.44rem .72rem;font-family:var(--font);font-size:.79rem;color:var(--tx);cursor:pointer;text-align:left}
+.mural-dd-btn:focus{border-color:var(--blue);box-shadow:0 0 0 3px rgba(59,111,212,.1)}
+.mural-dd-cur{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.mural-dd-arrow{flex-shrink:0;opacity:.7;font-size:.7rem}
+.mural-dd-panel{position:absolute;top:calc(100% + 4px);left:0;right:0;z-index:60;max-height:300px;overflow-y:auto;background:var(--surface);border:1px solid var(--bd);border-radius:10px;box-shadow:0 12px 34px rgba(0,0,0,.4);padding:.3rem;display:none}
+.mural-dd.open .mural-dd-panel{display:block}
+.mural-dd-opt{display:block;width:100%;text-align:left;background:none;border:0;color:var(--tx);padding:.42rem .6rem;border-radius:7px;font-size:.8rem;cursor:pointer;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.mural-dd-opt:hover{background:var(--s2)}
+.mural-dd-opt.on{background:var(--blue);color:#fff}
 .mural-switch-wrap{display:flex;align-items:center;gap:.5rem;font-size:.78rem;color:var(--t2);font-weight:600;white-space:nowrap}
 .mural-switch{width:42px;height:24px;border-radius:999px;border:none;background:var(--bd2);position:relative;cursor:pointer;flex-shrink:0;transition:background .15s;padding:0}
 .mural-switch.on{background:var(--blue)}
@@ -10540,7 +10550,7 @@ function dirIsPrivate(d){return !!(d&&d.privado);}
 function dirModeMatch(d){return admRefMode==='res'?dirIsPrivate(d):!dirIsPrivate(d);}
 // Rótulos por modo (usados no admin).
 function refLabels(){return admRefMode==='res'
-  ?{h1:'Resumos',one:'resumo',many:'resumos',nova:'Novo resumo',subhint:'Resumos de estudo da equipe — visíveis para todos os professores, não publicados para os alunos.'}
+  ?{h1:'Resumos',one:'resumo',many:'resumos',nova:'Novo resumo',subhint:'Capítulos de estudo publicados na aba Resumos do aluno (assinantes; na degustação, 1 por área).'}
   :{h1:'Diretrizes',one:'diretriz',many:'diretrizes',nova:'Nova diretriz',subhint:'Resumos exibidos na aba Diretrizes. Para os alunos a aba mostra “Em breve” até a curadoria liberar.'};}
 // Re-render do painel de diretrizes/resumos respeitando o modo atual.
 function rerenderRef(){renderAdmSec(admRefMode==='res'?'resumos':'ref');}
@@ -12194,8 +12204,7 @@ function bindAdmSec(sec){
     if(admMF){admMF.value=admMuralFilter;admMF.addEventListener('change',function(){admMuralFilter=this.value;admMuralPage=0;renderAdmSec('mural');});}
     var admMFt=document.getElementById('adm-mural-filter-tipo');
     if(admMFt){admMFt.value=admMuralTipoFilter;admMFt.addEventListener('change',function(){admMuralTipoFilter=this.value;admMuralPage=0;renderAdmSec('mural');});}
-    var admMFp=document.getElementById('adm-mural-filter-per');
-    if(admMFp){admMFp.value=admMuralPeriodicoFilter;admMFp.addEventListener('change',function(){admMuralPeriodicoFilter=this.value;admMuralPage=0;renderAdmSec('mural');});}
+    bindMuralPerDropdown('adm-mural-filter-per',function(v){admMuralPeriodicoFilter=v;admMuralPage=0;renderAdmSec('mural');});
     var admMFs=document.getElementById('adm-mural-filter-sort');
     if(admMFs){admMFs.value=admMuralSort;admMFs.addEventListener('change',function(){admMuralSort=this.value;admMuralPage=0;renderAdmSec('mural');});}
     var admBn=document.getElementById('adm-mural-bn-toggle');
@@ -12779,7 +12788,24 @@ function muralPeriodicoOptions(list,current){
   keys.sort(function(a,b){return groups[a].best.localeCompare(groups[b].best,'pt-BR');});
   if(current&&keys.indexOf(current)<0)current='';
   return{current:current,currentLabel:current&&groups[current]?groups[current].best:'',
+    items:keys.map(function(k){return{k:k,label:groups[k].best};}),
     html:'<option value="">Todos os periódicos</option>'+keys.map(function(k){return'<option value="'+esc(k)+'"'+(current===k?' selected':'')+'>'+esc(groups[k].best)+'</option>';}).join('')};
+}
+// Dropdown ROLÁVEL do filtro Periódico (a lista cresce muito com o radar; o
+// <select> nativo não permite limitar a altura/rolagem). Botão + painel absoluto
+// com max-height e overflow. HTML abaixo; bind em bindMuralPerDropdown.
+function muralPerDropdownHTML(id,perOpt){
+  var cur=perOpt.current,curLabel=cur?(perOpt.currentLabel||'Periódico'):'Todos os periódicos';
+  var opts='<button type="button" class="mural-dd-opt'+(!cur?' on':'')+'" data-perval="">Todos os periódicos</button>'
+    +(perOpt.items||[]).map(function(it){return '<button type="button" class="mural-dd-opt'+(it.k===cur?' on':'')+'" data-perval="'+esc(it.k)+'">'+esc(it.label)+'</button>';}).join('');
+  return '<div class="mural-dd" id="'+id+'"><button type="button" class="mural-filter-select mural-dd-btn" aria-haspopup="listbox"><span class="mural-dd-cur">'+esc(curLabel)+'</span><span class="mural-dd-arrow">▾</span></button><div class="mural-dd-panel" role="listbox">'+opts+'</div></div>';
+}
+function bindMuralPerDropdown(id,onPick){
+  var dd=document.getElementById(id);if(!dd)return;
+  if(!window.__muralDdInit){window.__muralDdInit=true;document.addEventListener('click',function(){document.querySelectorAll('.mural-dd.open').forEach(function(x){x.classList.remove('open');});});}
+  var btn=dd.querySelector('.mural-dd-btn');
+  if(btn)btn.addEventListener('click',function(e){e.stopPropagation();var was=dd.classList.contains('open');document.querySelectorAll('.mural-dd.open').forEach(function(x){x.classList.remove('open');});if(!was)dd.classList.add('open');});
+  dd.querySelectorAll('.mural-dd-opt').forEach(function(o){o.addEventListener('click',function(e){e.stopPropagation();dd.classList.remove('open');onPick(o.getAttribute('data-perval')||'');});});
 }
 // Lightbox do mural: clicar em qualquer imagem (capa .mural-figure ou inline
 // .mural-inline-img) abre ampliada num overlay. Criado uma única vez; usa
@@ -12985,13 +13011,13 @@ initMural=function(){
   el.innerHTML='<div class="mural-shell">'
     +'<section class="mural-hero"><div class="mural-eyebrow">Avisos para alunos</div><h2>Calendário, notícias e leituras essenciais</h2><p>Acompanhe prazos, artigos recentes, atualizações do curso e temas úteis para estudo dirigido. Os links abrem as fontes oficiais.</p></section>'
     +muralPushCtaHTML()
-    +'<section class="mural-filter-card"><div class="mural-filter-main"><label class="mural-filter-field"><span class="mural-filter-label">Subespecialidade</span><select class="mural-filter-select" id="mural-filter">'+opt.html+'</select></label><label class="mural-filter-field"><span class="mural-filter-label">Tipo de artigo</span><select class="mural-filter-select" id="mural-filter-tipo">'+tipoOpts+'</select></label><label class="mural-filter-field"><span class="mural-filter-label">Periódico</span><select class="mural-filter-select" id="mural-filter-per">'+perOpt.html+'</select></label><label class="mural-filter-field"><span class="mural-filter-label">Ordenar</span><select class="mural-filter-select" id="mural-filter-sort">'+muralSortOptions(muralSort)+'</select></label><div class="mural-switch-wrap"><button type="button" id="mural-bn-toggle" class="mural-switch'+(muralShowBreaking?' on':'')+'" role="switch" aria-checked="'+(muralShowBreaking?'true':'false')+'" title="Mostrar Breaking News"><span class="ms-dot"></span></button><span>📣 Breaking News</span></div><span class="mural-count-pill">'+esc(count)+'</span><span class="mural-theme-pill">'+esc(tema)+'</span></div><button class="btn btn-outline" id="mural-clear" type="button">Limpar filtro</button></section>'
+    +'<section class="mural-filter-card"><div class="mural-filter-main"><label class="mural-filter-field"><span class="mural-filter-label">Subespecialidade</span><select class="mural-filter-select" id="mural-filter">'+opt.html+'</select></label><label class="mural-filter-field"><span class="mural-filter-label">Tipo de artigo</span><select class="mural-filter-select" id="mural-filter-tipo">'+tipoOpts+'</select></label><div class="mural-filter-field"><span class="mural-filter-label">Periódico</span>'+muralPerDropdownHTML('mural-filter-per',perOpt)+'</div><label class="mural-filter-field"><span class="mural-filter-label">Ordenar</span><select class="mural-filter-select" id="mural-filter-sort">'+muralSortOptions(muralSort)+'</select></label><div class="mural-switch-wrap"><button type="button" id="mural-bn-toggle" class="mural-switch'+(muralShowBreaking?' on':'')+'" role="switch" aria-checked="'+(muralShowBreaking?'true':'false')+'" title="Mostrar Breaking News"><span class="ms-dot"></span></button><span>📣 Breaking News</span></div><span class="mural-count-pill">'+esc(count)+'</span><span class="mural-theme-pill">'+esc(tema)+'</span></div><button class="btn btn-outline" id="mural-clear" type="button">Limpar filtro</button></section>'
     +'<section class="mural-grid">'+(pageAvisos.length?pageAvisos.map(function(a){return muralNoticeCardHTML(a,false);}).join(''):'<div class="empty mural-empty">Nenhum aviso encontrado para este filtro.</div>')+'</section>'
     +muralPagerHTML(muralPage,mPages,'mural')
     +'</div>';
   var sel=document.getElementById('mural-filter');if(sel){sel.value=muralFilter;sel.addEventListener('change',function(){muralFilter=this.value;muralPage=0;initMural();});}
   var selt=document.getElementById('mural-filter-tipo');if(selt){selt.value=muralTipoFilter;selt.addEventListener('change',function(){muralTipoFilter=this.value;muralPage=0;initMural();});}
-  var selp=document.getElementById('mural-filter-per');if(selp){selp.value=muralPeriodicoFilter;selp.addEventListener('change',function(){muralPeriodicoFilter=this.value;muralPage=0;initMural();});}
+  bindMuralPerDropdown('mural-filter-per',function(v){muralPeriodicoFilter=v;muralPage=0;initMural();});
   var sels=document.getElementById('mural-filter-sort');if(sels){sels.value=muralSort;sels.addEventListener('change',function(){muralSort=this.value;muralPage=0;initMural();});}
   var bn=document.getElementById('mural-bn-toggle');if(bn)bn.addEventListener('click',function(){muralShowBreaking=!muralShowBreaking;lsSet('mural_show_breaking',muralShowBreaking);muralPage=0;initMural();});
   var clear=document.getElementById('mural-clear');if(clear)clear.addEventListener('click',function(){muralFilter='';muralTipoFilter='';muralPeriodicoFilter='';muralPage=0;initMural();});
@@ -13192,7 +13218,7 @@ admMuralSecHTML=function(){
   +'<div class="adm-pc">'
   +(admMuralEdit===null?formHTML:'') // "Novo aviso" abre no topo; edição abre INLINE no próprio card (ver grid abaixo)
   +'<div class="card" style="margin-bottom:1.1rem"><div style="display:flex;align-items:flex-start;justify-content:space-between;gap:1rem;flex-wrap:wrap"><div style="flex:1;min-width:240px"><div style="font-size:.62rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--t3);margin-bottom:.3rem">Gestão do mural dos alunos</div><div style="font-size:1.15rem;font-weight:700;color:var(--tx);margin-bottom:.35rem">Edite avisos, notícias e comunicados importantes</div><div style="font-size:.79rem;color:var(--t2);line-height:1.55">Os cards abaixo alimentam a aba Mural do estudante. Use etiquetas por tipo de conteúdo e subespecialidade para organizar leituras e atualizações.</div></div></div></div>'
-  +'<section class="mural-filter-card"><div class="mural-filter-main"><label class="mural-filter-field"><span class="mural-filter-label">Subespecialidade</span><select class="mural-filter-select" id="adm-mural-filter">'+opt.html+'</select></label><label class="mural-filter-field"><span class="mural-filter-label">Tipo de artigo</span><select class="mural-filter-select" id="adm-mural-filter-tipo">'+tipoFiltroOpts+'</select></label><label class="mural-filter-field"><span class="mural-filter-label">Periódico</span><select class="mural-filter-select" id="adm-mural-filter-per">'+perOpt.html+'</select></label><label class="mural-filter-field"><span class="mural-filter-label">Ordenar</span><select class="mural-filter-select" id="adm-mural-filter-sort">'+muralSortOptions(admMuralSort)+'</select></label><div class="mural-switch-wrap"><button type="button" id="adm-mural-bn-toggle" class="mural-switch'+(muralShowBreaking?' on':'')+'" role="switch" aria-checked="'+(muralShowBreaking?'true':'false')+'" title="Mostrar Breaking News"><span class="ms-dot"></span></button><span>📣 Breaking News</span></div><span class="mural-count-pill">'+esc(count)+'</span><span class="mural-theme-pill">'+esc(tema)+'</span></div><button class="btn btn-outline" id="adm-mural-clear" type="button">Limpar filtro</button></section>'
+  +'<section class="mural-filter-card"><div class="mural-filter-main"><label class="mural-filter-field"><span class="mural-filter-label">Subespecialidade</span><select class="mural-filter-select" id="adm-mural-filter">'+opt.html+'</select></label><label class="mural-filter-field"><span class="mural-filter-label">Tipo de artigo</span><select class="mural-filter-select" id="adm-mural-filter-tipo">'+tipoFiltroOpts+'</select></label><div class="mural-filter-field"><span class="mural-filter-label">Periódico</span>'+muralPerDropdownHTML('adm-mural-filter-per',perOpt)+'</div><label class="mural-filter-field"><span class="mural-filter-label">Ordenar</span><select class="mural-filter-select" id="adm-mural-filter-sort">'+muralSortOptions(admMuralSort)+'</select></label><div class="mural-switch-wrap"><button type="button" id="adm-mural-bn-toggle" class="mural-switch'+(muralShowBreaking?' on':'')+'" role="switch" aria-checked="'+(muralShowBreaking?'true':'false')+'" title="Mostrar Breaking News"><span class="ms-dot"></span></button><span>📣 Breaking News</span></div><span class="mural-count-pill">'+esc(count)+'</span><span class="mural-theme-pill">'+esc(tema)+'</span></div><button class="btn btn-outline" id="adm-mural-clear" type="button">Limpar filtro</button></section>'
   +'<div class="mural-grid mural-admin-grid" id="adm-av-list">'+(admPageAvisos.length?admPageAvisos.map(function(a){return (muralInlineEdit!==null&&admAvisos.indexOf(a)===muralInlineEdit)?('<div class="mural-inline-edit">'+muralInlineEditHTML(a)+'</div>'):muralNoticeCardHTML(a,true);}).join(''):'<div class="empty mural-empty">'+(admAvisos.length?'Nenhum aviso encontrado para este filtro.':'Nenhum aviso publicado. Clique em "+ Novo aviso" para começar.')+'</div>')+'</div>'
   +muralPagerHTML(admMuralPage,admMPages,'adm-mural')
   +'</div>';
