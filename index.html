@@ -3605,7 +3605,19 @@ function hydrateRemoteState(){
     loads.push(new Promise(function(r){loadCursoCatalogo(r);}));
   }else{
     loads.push(client.rpc('endodirect_member_content')
-      .then(function(res){if(res.error)throw res.error;if(res.data)applyStatePayload(res.data);}));
+      .then(function(res){if(res.error)throw res.error;if(res.data)applyStatePayload(res.data);})
+      // As diretrizes/Resumos vêm de um RPC próprio e leve (endodirect_member_resumos):
+      // separá-las do member_content mantém a resposta principal pequena e evita que o
+      // payload grande (provas) impeça a chegada dos capítulos privados (Resumos). Encadeado
+      // após o member_content para ordem determinística; se falhar, mantém as públicas.
+      .then(function(){return client.rpc('endodirect_member_resumos').then(function(r2){
+        if(r2.error)throw r2.error;
+        if(r2.data&&Array.isArray(r2.data.diretrizes)&&r2.data.diretrizes.length){
+          diretrizes=r2.data.diretrizes;
+          diretrizes.forEach(function(d){if(d&&d.sub)d.sub=dirMigrateSub(d.sub);});
+          try{lsSet('diretrizes',diretrizes);}catch(e){}
+        }
+      }).catch(function(e){if(!remoteStateWarned){console.warn('Resumos (member_resumos) indisponível',e);}});}));
   }
   Promise.all(loads)
     .then(function(){
