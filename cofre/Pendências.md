@@ -1,9 +1,16 @@
 ---
 tags: [cofre, pendencias]
-atualizado: 2026-06-25
+atualizado: 2026-07-21
 ---
 
 # Pendências
+
+## Provas de residência (2026-07-21)
+- [ ] **Subir 29 questões USP-FMUSP/FUVEST 2023** (autorizadas): **sem gabarito oficial** nos PDFs (respostas por raciocínio clínico) — subir marcando "gabarito a confirmar"; acentuação sendo corrigida. Fonte em `scratchpad/provas2/rm2023.json`.
+- [ ] **Pasta "Ano adicional"** (nova em 'Provas de residência' no Drive): extrair só endócrino + comentário e inserir. Pedido do professor.
+- [ ] **USP-SP 2024 #76 (US ovário) e #104 (painel CAD):** não recuperáveis (PDF 20 MB > teto 10 MB do download Drive/MCP; hosts Google bloqueados no proxy). Precisa PDF menor ou figuras avulsas.
+- [x] **Resumos vazios p/ aluno — CORRIGIDO:** era o `member_content` não enviar diretrizes privadas; agora via RPC dedicado `endodirect_member_resumos` (+ demo/degustação via `hydratePublicContent`). Ver [[Decisões]]/[[Dados e Supabase]]. **Nota:** a conta `alunopro` é DEMO (só conteúdo público) — não serve p/ testar experiência de assinante.
+
 
 ## Varredura completa (2026-06-15) — lançamento
 **INCIDENTE (2026-06-15) — perda de aulas por sobrescrita concorrente do estado global:**
