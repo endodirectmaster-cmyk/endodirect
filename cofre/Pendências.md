@@ -6,8 +6,8 @@ atualizado: 2026-07-21
 # Pendências
 
 ## Provas de residência (2026-07-21)
-- [ ] **Subir 29 questões USP-FMUSP/FUVEST 2023** (autorizadas): **sem gabarito oficial** nos PDFs (respostas por raciocínio clínico) — subir marcando "gabarito a confirmar"; acentuação sendo corrigida. Fonte em `scratchpad/provas2/rm2023.json`.
-- [ ] **Pasta "Ano adicional"** (nova em 'Provas de residência' no Drive): extrair só endócrino + comentário e inserir. Pedido do professor.
+- [x] **29 USP-FMUSP/FUVEST 2023 — SUBIDAS** com `revisar_gabarito:true` (não havia gabarito oficial). **AÇÃO PENDENTE: revisar/confirmar o gabarito dessas 29.**
+- [x] **Pasta "Ano adicional" — SUBIDA:** 90 questões USP R3 Endócrino (2023/24/25) com gabarito oficial + comentário.
 - [ ] **USP-SP 2024 #76 (US ovário) e #104 (painel CAD):** não recuperáveis (PDF 20 MB > teto 10 MB do download Drive/MCP; hosts Google bloqueados no proxy). Precisa PDF menor ou figuras avulsas.
 - [x] **Resumos vazios p/ aluno — CORRIGIDO:** era o `member_content` não enviar diretrizes privadas; agora via RPC dedicado `endodirect_member_resumos` (+ demo/degustação via `hydratePublicContent`). Ver [[Decisões]]/[[Dados e Supabase]]. **Nota:** a conta `alunopro` é DEMO (só conteúdo público) — não serve p/ testar experiência de assinante.
 
