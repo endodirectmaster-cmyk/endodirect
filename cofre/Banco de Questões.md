@@ -13,10 +13,16 @@ atualizado: 2026-07-21
 - O aluno **não** lê o `global_state`; recebe as provas via **`endodirect_member_content()`**. Regra (2026-07-21): **assinante (plano) recebe todas as questões que NÃO são do TEEM** — ou seja, banco **Endodirect + todas as de residência**. EndoTEEM (sem plano) = só Endodirect (+TEEM). Degustação = 50 do Endodirect. Ver [[Dados e Supabase]].
 - ⚠️ Consequência: para o aluno ver questões novas de residência, elas só precisam ter `inst` ≠ 'TEEM' (não precisam ser 'Endodirect'). Não esquecer: inserir no `global_state` **e** garantir que o member_content as inclui.
 
+## Estado do banco de residência (2026-07-21) — total 254 questões
+Banco geral: **2401** questões (`payload.provas`). Das quais **254 de residência** (`origem='provas_residencia_drive'`), sourceIds distintos, 0 answer-fora, 0 sem-comentário.
+- **Lote 1 (124):** Einstein 2023/24/25, Enamed 2025, ENARE 2023/24, IAMSPE 2023/25, Santa Casa-SP 2025, SUS-SP 2023/25, USP-RP 2023/24/25, USP-SP 2023/24/25.
+- **Lote 2 (11):** UNIFESP-EPM R3 2023 (7) + recuperadas Einstein 2024 Q12/13/40 (3, tabelas/gasometrias lidas por imagem) + Santa Casa-SP 2025 #64 (1).
+- **FUVEST (29):** USP-FMUSP/FUVEST 2023 (prova E19 Endocrinologia + endócrino da Clínica Médica prova B). ⚠️ **`revisar_gabarito:true`** — os PDFs **não tinham gabarito oficial**; respostas deduzidas por raciocínio clínico + aviso no início do comentário. **A revisar.**
+- **USP R3 Ano Adicional (90):** USP-R3 Endocrinologia 2023 (30), 2024 (40), 2025 (20) — provas de acesso R3 de Endócrino, com gabarito oficial. Obs: gabaritos oficiais controversos sinalizados no próprio comentário (ex.: USP R3 2025 Q19, nódulo subcentimétrico).
+
 ## Pendências de provas (Drive)
-- **29 questões USP-FMUSP/FUVEST 2023** (pasta antiga; prova E19 de Endocrinologia + endócrino da Clínica Médica prova B): **sem gabarito oficial nos PDFs** — respostas deduzidas por raciocínio clínico. Autorizadas pelo professor; acentuação sendo corrigida antes de subir. Marcar como "gabarito a confirmar" na revisão.
-- **Pasta "Ano adicional"** (nova subpasta em 'Provas de residência'): provas de acesso ao ano adicional (R3) a serem extraídas (só endócrino, com comentário). Pendente.
-- **USP-SP 2024 #76 (US de ovário) e #104 (painel de CAD):** não recuperáveis — PDF de 20 MB acima do teto de 10 MB do download do Drive via MCP; hosts do Google bloqueados no proxy. Precisam de PDF menor ou das figuras avulsas.
+- [ ] **Revisar as 29 FUVEST 2023** (`revisar_gabarito:true`) — confirmar/corrigir gabarito (não havia oficial).
+- [ ] **USP-SP 2024 #76 (US de ovário) e #104 (painel de CAD):** não recuperáveis — PDF de 20 MB acima do teto de 10 MB do download do Drive via MCP; hosts do Google bloqueados no proxy. Precisam de PDF menor ou das figuras avulsas.
 
 ## Provas de residência (Drive → banco) — 2026-07-21
 - **124 questões de endocrinologia** extraídas das provas de residência da pasta "Provas de residência" do Google Drive e inseridas em `endodirect_global_state.payload.provas` (total 2147 → 2271). Conteúdo **member-only** (`free:false`).
