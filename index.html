@@ -3586,10 +3586,11 @@ function hydratePublicContent(){
     if(res.data)applyStatePayload(res.data);
   }).then(function(){
     // Visitantes/degustação e a conta demo (alunopro, sem id) não passam pelo
-    // member_content; ainda assim buscam as diretrizes/Resumos pelo RPC dedicado
-    // (endodirect_member_resumos → públicas + 1 capítulo por área na degustação),
-    // para a aba Resumos não ficar vazia na vitrine. Se falhar, mantém as públicas.
-    return client.rpc('endodirect_member_resumos').then(function(r2){
+    // member_content; ainda assim buscam as diretrizes/Resumos pelo RPC dedicado.
+    // A conta de vitrine (alunopro) recebe TODOS os capítulos (showcase_resumos);
+    // os demais recebem públicas + 1 por área (member_resumos). Se falhar, mantém as públicas.
+    var _resuRpc=(typeof isTestShowcase==='function'&&isTestShowcase())?'endodirect_showcase_resumos':'endodirect_member_resumos';
+    return client.rpc(_resuRpc).then(function(r2){
       if(r2.error)throw r2.error;
       if(r2.data&&Array.isArray(r2.data.diretrizes)&&r2.data.diretrizes.length){
         diretrizes=r2.data.diretrizes;
