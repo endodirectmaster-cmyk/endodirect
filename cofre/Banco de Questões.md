@@ -9,6 +9,15 @@ atualizado: 2026-07-21
 - **`DB.q`** — questões **salvas pelo aluno** (ex.: geradas por IA e mantidas).
 - Shape normalizado: `{stem, options:{A..E}, answer, explanation, area, inst, ano?, code, type, at}` (ver `normalizeImportedQuestion`). Ver [[Dados e Supabase]].
 
+## Entrega das provas ao aluno (member_content)
+- O aluno **não** lê o `global_state`; recebe as provas via **`endodirect_member_content()`**. Regra (2026-07-21): **assinante (plano) recebe todas as questões que NÃO são do TEEM** — ou seja, banco **Endodirect + todas as de residência**. EndoTEEM (sem plano) = só Endodirect (+TEEM). Degustação = 50 do Endodirect. Ver [[Dados e Supabase]].
+- ⚠️ Consequência: para o aluno ver questões novas de residência, elas só precisam ter `inst` ≠ 'TEEM' (não precisam ser 'Endodirect'). Não esquecer: inserir no `global_state` **e** garantir que o member_content as inclui.
+
+## Pendências de provas (Drive)
+- **29 questões USP-FMUSP/FUVEST 2023** (pasta antiga; prova E19 de Endocrinologia + endócrino da Clínica Médica prova B): **sem gabarito oficial nos PDFs** — respostas deduzidas por raciocínio clínico. Autorizadas pelo professor; acentuação sendo corrigida antes de subir. Marcar como "gabarito a confirmar" na revisão.
+- **Pasta "Ano adicional"** (nova subpasta em 'Provas de residência'): provas de acesso ao ano adicional (R3) a serem extraídas (só endócrino, com comentário). Pendente.
+- **USP-SP 2024 #76 (US de ovário) e #104 (painel de CAD):** não recuperáveis — PDF de 20 MB acima do teto de 10 MB do download do Drive via MCP; hosts do Google bloqueados no proxy. Precisam de PDF menor ou das figuras avulsas.
+
 ## Provas de residência (Drive → banco) — 2026-07-21
 - **124 questões de endocrinologia** extraídas das provas de residência da pasta "Provas de residência" do Google Drive e inseridas em `endodirect_global_state.payload.provas` (total 2147 → 2271). Conteúdo **member-only** (`free:false`).
 - **17 provas / 8 instituições novas** no filtro Instituição: Einstein (2023/24/25), Enamed (2025), ENARE (2023/24), IAMSPE (2023/25), Santa Casa-SP (2025), SUS-SP (2023/25), USP-RP (2023/24/25), USP-SP (2023/24/25).
