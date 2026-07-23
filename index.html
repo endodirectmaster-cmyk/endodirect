@@ -471,6 +471,11 @@ textarea{resize:vertical;line-height:1.6}
 .mural-text .mural-h:first-child{margin-top:0}
 .mural-text .mural-ul{margin:.35rem 0;padding-left:1.2rem;text-align:left;text-align-last:left}
 .mural-text .mural-ul li{margin:.15rem 0;line-height:1.55;overflow-wrap:anywhere}
+/* Alinhamento explícito por bloco (botões L/C/D): a última linha acompanha o
+   alinhamento (senão o text-align-last:left do container puxaria p/ esquerda). */
+.mural-text [style*="text-align:center"],.dir-texto [style*="text-align:center"]{text-align-last:center}
+.mural-text [style*="text-align:right"],.dir-texto [style*="text-align:right"]{text-align-last:right}
+.mural-text [style*="text-align:left"],.dir-texto [style*="text-align:left"]{text-align-last:left}
 .mural-source{font-size:.84rem;font-weight:800;color:#5cc8f5;overflow-wrap:anywhere;word-break:break-word}
 .mural-figure{display:block;width:-webkit-fit-content;width:fit-content;max-width:100%;margin:.1rem auto .85rem;border:1px solid var(--bd);border-radius:12px;overflow:hidden;background:#fff;line-height:0}
 .mural-figure img{display:block;width:auto;max-width:100%;max-height:185px;object-fit:contain;background:#fff;cursor:zoom-in}
@@ -791,6 +796,16 @@ html[data-theme="light"] .dir-back{background:#f8f9fc;border-color:var(--bd2);co
 .wys-edit h3{margin:.9rem 0 .45rem;font-size:1.06rem;font-weight:700;color:var(--tx)}
 .wys-edit h3:first-child{margin-top:.1rem}
 .wys-edit p{margin:.45rem 0}
+/* Texto SEMPRE justificado por padrão no editor (igual ao render do card/diretriz);
+   títulos, listas e tabelas ficam à esquerda. Alinhamentos explícitos (style inline
+   via botões L/C/D/J) sobrescrevem e o text-align-last acompanha. */
+.wys-edit{text-align:justify}
+.wys-edit p,.wys-edit div{text-align-last:left}
+.wys-edit h3,.wys-edit ul,.wys-edit ol,.wys-edit table,.wys-edit th,.wys-edit td{text-align:left;text-align-last:left}
+.wys-edit [style*="text-align:center"]{text-align-last:center}
+.wys-edit [style*="text-align:right"]{text-align-last:right}
+.wys-edit [style*="text-align:left"]{text-align-last:left}
+.wys-pts-edit,.wys-pts-edit p,.wys-pts-edit div{text-align:left;text-align-last:left}
 .wys-edit ul{margin:.35rem 0;padding-left:1.2rem}
 .wys-edit li{margin:.28rem 0;line-height:1.55}
 .wys-edit strong{color:var(--tx);font-weight:700}
@@ -3793,6 +3808,34 @@ function mdInline(s){
   return s;
 }
 function isMarkdownTableSep(line){return /^\s*\|?[\s:-]+\|[\s|:-]*$/.test(line||'');}
+// Botões de alinhamento (esquerda/centro/direita/justificado) para os toolbars
+// WYSIWYG (Mural e Diretrizes/Resumos). Ícones em SVG inline (sem fonte de ícones).
+function wysAlignBar(){
+  function ic(lines){return '<svg width="15" height="11" viewBox="0 0 15 11" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" style="pointer-events:none">'+lines+'</svg>';}
+  var L=ic('<line x1="1" y1="2" x2="14" y2="2"/><line x1="1" y1="5.5" x2="9" y2="5.5"/><line x1="1" y1="9" x2="12" y2="9"/>');
+  var C=ic('<line x1="1" y1="2" x2="14" y2="2"/><line x1="3.5" y1="5.5" x2="11.5" y2="5.5"/><line x1="2" y1="9" x2="13" y2="9"/>');
+  var R=ic('<line x1="1" y1="2" x2="14" y2="2"/><line x1="6" y1="5.5" x2="14" y2="5.5"/><line x1="3" y1="9" x2="14" y2="9"/>');
+  var J=ic('<line x1="1" y1="2" x2="14" y2="2"/><line x1="1" y1="5.5" x2="14" y2="5.5"/><line x1="1" y1="9" x2="14" y2="9"/>');
+  return '<span class="wys-sep"></span>'
+    +'<button type="button" class="wys-tool" data-wys="alignleft" title="Alinhar à esquerda">'+L+'</button>'
+    +'<button type="button" class="wys-tool" data-wys="aligncenter" title="Centralizar">'+C+'</button>'
+    +'<button type="button" class="wys-tool" data-wys="alignright" title="Alinhar à direita">'+R+'</button>'
+    +'<button type="button" class="wys-tool" data-wys="alignjustify" title="Justificar">'+J+'</button>';
+}
+// Lê o alinhamento explícito de um bloco (style/attr) → marcador markdown {:x}.
+// Justificado é o PADRÃO (via CSS), então não emite marcador (mantém o md limpo).
+function wysAlignMark(node){
+  var st=((node&&node.getAttribute&&node.getAttribute('style'))||'').toLowerCase();
+  var m=/text-align:\s*(left|right|center|justify)/.exec(st);
+  var a=m?m[1]:'';
+  if(!a&&node&&node.getAttribute){var al=(node.getAttribute('align')||'').toLowerCase();if(/^(left|right|center|justify)$/.test(al))a=al;}
+  return (a&&a!=='justify')?('{:'+a+'}'):'';
+}
+// Extrai o marcador {:left|center|right} do início de uma linha markdown.
+function wysAlignRead(line){
+  var m=/^\{:(left|center|right)\}\s?/.exec(line||'');
+  return m?{align:m[1],rest:line.slice(m[0].length)}:{align:'',rest:line};
+}
 function mdToHtml(md){
   var lines=String(md||'').replace(/\r/g,'').split('\n');
   var out=[],list=[];
@@ -3801,6 +3844,8 @@ function mdToHtml(md){
   }
   for(var i=0;i<lines.length;i++){
     var line=lines[i].trim();
+    if(!line){flushList();continue;}
+    var _a=wysAlignRead(line);var _al=_a.align;line=_a.rest.trim();var _als=_al?(' style="text-align:'+_al+'"'):'';
     if(!line){flushList();continue;}
     if(line==='---'){flushList();out.push('<hr>');continue;}
     if(isMarkdownTableSep(line))continue;
@@ -3819,11 +3864,11 @@ function mdToHtml(md){
       continue;
     }
     if(/^>\s?/.test(line)){flushList();out.push('<blockquote>'+mdInline(line.replace(/^>\s?/,''))+'</blockquote>');continue;}
-    if(/^#{1,4}\s+/.test(line)){flushList();out.push('<h3>'+mdInline(line.replace(/^#{1,4}\s+/,''))+'</h3>');continue;}
+    if(/^#{1,4}\s+/.test(line)){flushList();out.push('<h3'+_als+'>'+mdInline(line.replace(/^#{1,4}\s+/,''))+'</h3>');continue;}
     if(/^[-*]\s+/.test(line)){list.push(line.replace(/^[-*]\s+/,''));continue;}
     if(/^\d+\.\s+/.test(line)){list.push(line.replace(/^\d+\.\s+/,''));continue;}
     flushList();
-    out.push('<p>'+mdInline(line)+'</p>');
+    out.push('<p'+_als+'>'+mdInline(line)+'</p>');
   }
   flushList();
   return out.join('');
@@ -3866,15 +3911,16 @@ function htmlToMd(root){
   // <br> vira \n em inline(): preserva as quebras como linhas/parágrafos separados.
   // Sem isso, um <div>/<p> com <br> (texto colado de outra fonte) colapsa tudo num
   // parágrafo só (o .replace(/\s+/g,' ') engolia os \n dos <br>).
-  function pushInlineLines(node){
+  function pushInlineLines(node,prefix){
+    prefix=prefix||'';
     var parts=inline(node).split('\n');
-    for(var pi=0;pi<parts.length;pi++){var seg=parts[pi].replace(/\s+/g,' ').trim();if(seg)pushLine(seg);}
+    for(var pi=0;pi<parts.length;pi++){var seg=parts[pi].replace(/\s+/g,' ').trim();if(seg)pushLine(prefix+seg);}
   }
   function block(node){
     if(node.nodeType===3){var t=(node.nodeValue||'').trim();if(t)pushLine(t);return;}
     if(node.nodeType!==1)return;
     var tag=node.tagName.toLowerCase();
-    if(/^h[1-6]$/.test(tag)){pushLine('## '+inline(node).replace(/\s+/g,' ').trim());return;}
+    if(/^h[1-6]$/.test(tag)){pushLine(wysAlignMark(node)+'## '+inline(node).replace(/\s+/g,' ').trim());return;}
     if(tag==='hr'){out.push('---');return;}
     if(tag==='blockquote'){pushLine('> '+inline(node).replace(/\s+/g,' ').trim());return;}
     if(tag==='ul'||tag==='ol'){
@@ -3900,7 +3946,7 @@ function htmlToMd(root){
       var hasBlock=false,kids=node.childNodes;
       for(var k=0;k<kids.length;k++){var c=kids[k];if(c.nodeType===1&&/^(h[1-6]|p|ul|ol|table|hr|blockquote|div)$/.test(c.tagName.toLowerCase())){hasBlock=true;break;}}
       if(hasBlock){for(var k2=0;k2<kids.length;k2++)block(kids[k2]);}
-      else{pushInlineLines(node);}
+      else{pushInlineLines(node,wysAlignMark(node));}
       return;
     }
     var kids2=node.childNodes,handled=false;
@@ -8549,6 +8595,7 @@ function admRefWysHTML(d){
       +'<button type="button" class="wys-tool" data-wys="h" title="Título de seção">H</button>'
       +'<button type="button" class="wys-tool" data-wys="ul" title="Lista com marcadores">•</button>'
       +'<button type="button" class="wys-tool" data-wys="p" title="Parágrafo normal">¶</button>'
+      +wysAlignBar()
       +'<span class="wys-spacer"></span>'
       +'<button type="button" class="btn btn-outline btn-sm" id="btn-adm-ref-cancel">Cancelar</button>'
       +'<button type="button" class="btn btn-primary btn-sm" id="btn-adm-ref-save">💾 Salvar</button>'
@@ -9987,9 +10034,15 @@ function igAttachExamImage(q,d){
   return igFetchExamImage(iq).then(function(im){if(im){q.img=im.img;q.imgRef=im.imgRef;}return q;}).catch(function(){return q;});
 }
 var IG_IMAGEQUERY_RULE=' Se — e SOMENTE se — a vinheta envolver um exame de IMAGEM/complementar que valha ilustrar (ex.: RM de sela, USG de tireoide, TC de adrenal, cintilografia, densitometria, ECG, radiografia), inclua no JSON o campo "imageQuery" com TERMOS DE BUSCA EM INGLÊS para achar essa imagem no PubMed (ex.: "pituitary MRI microadenoma", "thyroid ultrasound nodule", "adrenal CT adenoma"); se não houver imagem pertinente, use "imageQuery":"" (string vazia).';
-function igGenOne(sub,topic){
+// Dois níveis de dificuldade, alternados no lote (pedido do Rodolpho 2026-07-23):
+// 'titulo' = padrão prova de título/especialista; 'muito_avancado' = banca difícil.
+function igNivelDesc(level){
+  if(level==='titulo')return 'nível PROVA DE TÍTULO (padrão especialista) — raciocínio clínico exigente, com nuance clínica e distratores plausíveis (erros conceituais comuns), evitando questões óbvias/diretas';
+  return 'nível MUITO AVANÇADO / DIFÍCIL (banca difícil, questão discriminativa acima do padrão prova de título) — exija raciocínio clínico de MÚLTIPLAS ETAPAS (integrar história + laboratório + imagem para chegar ao diagnóstico ou à melhor conduta), com nuance clínica fina, exceções e armadilhas de diretriz (cutoffs, casos-limite, quando NÃO tratar) e distratores muito plausíveis — erros conceituais sutis que até o especialista comete; PROÍBA questões óbvias, diretas ou de mera memorização de definição';
+}
+function igGenOne(sub,topic,level){
   var sys=authoringSys('Atue como examinador de prova de título em endocrinologia. Gere UMA questão ORIGINAL de '+sub+', EXATAMENTE 4 alternativas (A–D), só uma correta. O enunciado deve TERMINAR SEMPRE com a pergunta direta (ex.: Qual o diagnóstico mais provável? / Qual a melhor conduta?). Inclua os valores laboratoriais pertinentes INLINE no texto, com unidades e valores de referência (ex.: FSH 2,1 mUI/mL [VR 3,5–12,5]) — não resuma como exames normais nem use tabela. Quando pertinente, descreva o achado de imagem no enunciado em texto (ex.: USG de tireoide, ECG, RM de sela). NÃO cite a subespecialidade no enunciado. Alternativas CURTAS e concisas (poucas palavras — também vão para o story).'+IG_IMAGEQUERY_RULE+' JSON APENAS: {"stem":"vinheta clínica curta; exames laboratoriais inline com valores, unidades e referência; achado de imagem descrito em texto quando pertinente; TERMINA com a pergunta direta","options":{"A":"alternativa curta","B":"alternativa curta","C":"alternativa curta","D":"alternativa curta"},"answer":"A","explanation":"comentário COMPLETO em 1-2 parágrafos (cerca de 4-8 linhas no total): explique por que a alternativa correta está certa E por que as principais erradas estão erradas, com o critério/valor de corte e citando a diretriz/fonte pelo NOME + ano (sem PMID nem DOI); refira-se ao CONTEÚDO das alternativas, NÃO às letras (A/B/C/D), pois a ordem é embaralhada","imageQuery":"termos em inglês p/ imagem de exame OU string vazia"}');
-  return aiRequest({system:sys,prompt:'Gere 1 questão de Endocrinologia — '+sub+(topic?(', subtema OBRIGATÓRIO (não troque por outro assunto da área): '+topic):'')+', nível AVANÇADO (padrão prova de título/especialista) — raciocínio clínico exigente, com nuance clínica e distratores plausíveis (erros conceituais comuns), evitando questões óbvias/diretas; clinicamente precisa e alinhada às diretrizes vigentes. Responda SOMENTE com o objeto JSON.',maxTokens:1100,model:AI_MODEL_CLINICO,grounding:(topic?(sub+' '+topic):sub)})
+  return aiRequest({system:sys,prompt:'Gere 1 questão de Endocrinologia — '+sub+(topic?(', subtema OBRIGATÓRIO (não troque por outro assunto da área): '+topic):'')+', '+igNivelDesc(level)+'; clinicamente precisa e alinhada às diretrizes vigentes. Responda SOMENTE com o objeto JSON.',maxTokens:1100,model:AI_MODEL_CLINICO,grounding:(topic?(sub+' '+topic):sub)})
   .then(function(raw){var d=parseJ(raw);if(!d||!d.stem||!d.options)return null;var q=igShuffleMCQ({sub:sub,teem:'',stem:String(d.stem||''),options:{A:d.options.A||'',B:d.options.B||'',C:d.options.C||'',D:d.options.D||''},answer:String(d.answer||'A').toUpperCase().slice(0,1),explanation:String(d.explanation||'')});return igAttachExamImage(q,d);});
 }
 function igLoteToQueue(it){igStories.push({id:'ig-'+Date.now()+'-'+Math.round(Math.random()*1e6),sub:it.sub,teem:it.teem||'',stem:it.stem,options:it.options,answer:it.answer,explanation:it.explanation,img:it.img||'',imgRef:it.imgRef||'',status:'queued',createdAt:Date.now()});}
@@ -10092,9 +10145,14 @@ function bindAdmStories(){
     }
     var subs=[],topics=[];
     for(var i=0;i<n;i++){var s=(selSub==='__random__')?pool[i%pool.length]:selSub;subs.push(s);topics.push(pickTema(s));}
+    // Dificuldade 60/40 (pedido do Rodolpho): 60% prova de título, 40% muito
+    // avançado. Monta o array na proporção e embaralha (não agrupa os difíceis).
+    var nHard=Math.round(n*0.4),levels=[];
+    for(var li=0;li<n;li++)levels.push(li<nHard?'muito_avancado':'titulo');
+    levels=igShuffle(levels);
     loteGen.disabled=true;loteGen.innerHTML=ldHTML('Gerando '+n+'…');if(st)st.textContent='';if(res)res.innerHTML='';
     var done=0;
-    igPool(subs.map(function(s,idx){return function(){return igGenOne(s,topics[idx]).then(function(r){done++;if(st)st.textContent='Gerando… '+done+'/'+n;return r;});};}),3)
+    igPool(subs.map(function(s,idx){var lvl=levels[idx]||'titulo';return function(){return igGenOne(s,topics[idx],lvl).then(function(r){done++;if(st)st.textContent='Gerando… '+done+'/'+n;return r;});};}),3)
     .then(function(items){
       igLoteDraft=(items||[]).filter(function(x){return x&&x.stem;});
       if(!igLoteDraft.length){if(res)res.innerHTML='<div style="color:var(--red);font-size:.78rem">❌ A IA não retornou questões. Tente de novo.</div>';return;}
@@ -12003,6 +12061,10 @@ function bindAdmSec(sec){
           else if(cmd==='ul')document.execCommand('insertUnorderedList',false,null);
           else if(cmd==='h')document.execCommand('formatBlock',false,'H3');
           else if(cmd==='p')document.execCommand('formatBlock',false,'P');
+          else if(cmd==='alignleft')document.execCommand('justifyLeft',false,null);
+          else if(cmd==='aligncenter')document.execCommand('justifyCenter',false,null);
+          else if(cmd==='alignright')document.execCommand('justifyRight',false,null);
+          else if(cmd==='alignjustify')document.execCommand('justifyFull',false,null);
         }catch(err){}
       });
     });
@@ -12873,7 +12935,7 @@ var MURAL_FORMAL_TYPES={'Comunicado':1,'Diretriz':1,'Consenso':1,'Discussão Cl�
 function isFormalMuralType(t){return !!MURAL_FORMAL_TYPES[String(t||'').trim()];}
 function formalizeMuralText(txt){
   return String(txt||'').split('\n').map(function(ln){
-    if(/^\s*(#{1,4}\s|[-*+]\s|>\s|\||!\[|https?:\/\/)/.test(ln))return ln; // estrutura markdown (título ##, lista - •, citação >, tabela | … |, imagem ![](url), URL crua): preserva intacta (senão o strip inicial quebra a sintaxe / apaga o marcador)
+    if(/^\s*(\{:(?:left|center|right)\}|#{1,4}\s|[-*+]\s|>\s|\||!\[|https?:\/\/)/.test(ln))return ln; // estrutura markdown (marcador de alinhamento {:x}, título ##, lista - •, citação >, tabela | … |, imagem ![](url), URL crua): preserva intacta (senão o strip inicial quebra a sintaxe / apaga o marcador)
     var s=ln.replace(/^[^\p{L}\p{N}]+/u,''); // tira emoji/símbolo inicial (📝 💡 ⚠️ 📅 🏛️ 🔬)
     s=s.replace(/^(Resumo|Por que importa[^:]*|Cautela[^:]*)\s*:\s*/i,''); // tira os rótulos do modelo, mantém o texto
     return s;
@@ -12913,10 +12975,13 @@ function muralTextHTML(txt){
   function isRow(l){return l.indexOf('|')>=0 && l.replace(/\\\|/g,'').split('|').filter(function(c){return c.trim();}).length>=2;}
   function isSep(l){return l.indexOf('|')>=0 && /^\s*\|?[\s:]*-{2,}[\s:|-]*$/.test(l);}
   function cells(l){var t=l.trim().replace(/^\|/,'').replace(/\|$/,'');return t.split('|').map(function(c){return muralInlineHTML(esc(c.trim()));});}
-  var out=[],i=0,para=[];
-  function flush(){if(para.length){out.push('<p class="mural-p">'+para.join('<br>')+'</p>');para=[];}}
+  var out=[],i=0,para=[],paraAlign='';
+  function flush(){if(para.length){out.push('<p class="mural-p"'+(paraAlign?' style="text-align:'+paraAlign+'"':'')+'>'+para.join('<br>')+'</p>');para=[];paraAlign='';}}
   while(i<lines.length){
     var line=lines[i];
+    // Alinhamento por bloco: marcador {:left|center|right} no início da linha (gravado
+    // pelo htmlToMd). Justificado é o padrão (via CSS), então não tem marcador.
+    var _ma=wysAlignRead(line);var _mal=_ma.align;line=_ma.rest;
     if(!line.trim()){flush();i++;continue;} // linha em branco: fecha o parágrafo
     if(isRow(line)&&i+1<lines.length&&isSep(lines[i+1])){
       flush();
@@ -12937,7 +13002,7 @@ function muralTextHTML(txt){
     }
     // Título de seção (## …): destaque em negrito, igual ao editor WYSIWYG.
     var hm=/^\s*#{1,4}\s+(.+?)\s*$/.exec(line);
-    if(hm){flush();out.push('<div class="mural-h">'+muralInlineHTML(esc(hm[1]))+'</div>');i++;continue;}
+    if(hm){flush();out.push('<div class="mural-h"'+(_mal?' style="text-align:'+_mal+'"':'')+'>'+muralInlineHTML(esc(hm[1]))+'</div>');i++;continue;}
     // Lista com marcadores (- / * / +): agrupa linhas consecutivas num <ul>.
     if(/^\s*[-*+]\s+/.test(line)){
       flush();
@@ -12948,6 +13013,7 @@ function muralTextHTML(txt){
       out.push('<ul class="mural-ul">'+items.join('')+'</ul>');
       continue;
     }
+    if(_mal)paraAlign=_mal; // alinhamento explícito do bloco (senão: justificado padrão)
     para.push(muralInlineHTML(esc(line))); // linha normal: acumula no parágrafo
     i++;
   }
@@ -12976,6 +13042,7 @@ function muralInlineEditHTML(a){
       +'<button type="button" class="wys-tool" data-wys="h" title="Título de seção">H</button>'
       +'<button type="button" class="wys-tool" data-wys="ul" title="Lista com marcadores">•</button>'
       +'<button type="button" class="wys-tool" data-wys="p" title="Parágrafo normal">¶</button>'
+      +wysAlignBar()
       +'<button type="button" class="wys-tool" id="mural-inline-imgbtn" title="Inserir imagem no texto">🖼️</button>'
       +'<span class="wys-sep"></span>'
       +'<span class="wys-imglabel">Imagem:</span>'
@@ -13435,6 +13502,10 @@ bindAdmSec=function(sec){
           else if(cmd==='h')document.execCommand('formatBlock',false,'H3');
           else if(cmd==='ul')document.execCommand('insertUnorderedList',false,null);
           else if(cmd==='p')document.execCommand('formatBlock',false,'P');
+          else if(cmd==='alignleft')document.execCommand('justifyLeft',false,null);
+          else if(cmd==='aligncenter')document.execCommand('justifyCenter',false,null);
+          else if(cmd==='alignright')document.execCommand('justifyRight',false,null);
+          else if(cmd==='alignjustify')document.execCommand('justifyFull',false,null);
         }catch(err){}
       });
     });
