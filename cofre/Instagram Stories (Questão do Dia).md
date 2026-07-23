@@ -1,11 +1,14 @@
 ---
 tags: [cofre, integracoes, marketing]
-atualizado: 2026-07-01
+atualizado: 2026-07-23
 ---
 
 # Instagram Stories — "Questão do Dia"
 
-## Imagem de exame do PubMed/Open-i + remover atribuição (2026-07-01)
+## Nível de dificuldade elevado no gerador de lote (2026-07-23)
+- **Pedido do usuário:** "aumenta um pouco mais o nível de dificuldade" na geração das questões do dia.
+- **Onde:** `igGenOne(sub,topic)` — prompt do `aiRequest` (o gerador em lote e o card diário partem daqui). O nível antes era "AVANÇADO (padrão prova de título/especialista)".
+- **Agora:** "nível MUITO AVANÇADO / DIFÍCIL (banca difícil, questão discriminativa acima do padrão prova de título)" — exige **raciocínio clínico de MÚLTIPLAS ETAPAS** (integrar história + laboratório + imagem), **nuance clínica fina**, **exceções e armadilhas de diretriz** (cutoffs, casos-limite, quando NÃO tratar) e **distratores muito plausíveis** (erros conceituais sutis que o especialista comete); PROÍBE questões óbvias/diretas/de memorização de definição. `sys` (examinador de prova de título, via `authoringSys`) mantido igual. Bump `sw.js` v116→v117.
 - **Remove "distribuída por &lt;email&gt;"** do card de Pendências (`admPendCardHTML`) — professor não precisa ver quem distribuiu (o campo `distributedBy` continua no dado, só não é exibido).
 - **Sugestão AUTOMÁTICA de imagem de exame complementar ao gerar** (decisão do usuário: automático + qualquer figura do PMC com referência): a IA, ao gerar a questão, devolve um campo opcional **`imageQuery`** (termos EM INGLÊS para achar a imagem, ex.: "pituitary MRI microadenoma") quando a vinheta envolve exame de imagem; senão vazio. Regra injetada via `IG_IMAGEQUERY_RULE` nos prompts do `igGenOne` (lote) e do gerador manual.
   - **Fonte:** **Open-i** (NLM/NIH) = figuras do **PubMed Central**. Proxy **server-side** em `api/ai.js` via `kind:'openi'` (reusa o endpoint p/ respeitar o teto 12/12 funções; mesma proteção same-origin; não usa Anthropic). Helper `openiSearch()` normaliza `imgLarge/imgThumb/imgGrid150` (URLs relativas → prefixa `https://openi.nlm.nih.gov`), `journal_title/journal_date/authors/pmid/pmcid/image.caption`. Best-effort: falha → lista vazia → questão sem imagem.
