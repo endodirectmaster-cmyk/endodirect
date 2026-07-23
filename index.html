@@ -8402,6 +8402,30 @@ var muralPeriodicoFilter='';
 var muralSort='relevantes'; // padrão: hierarquia por tipo (Breaking>Comunicado>…>Ensaio>…), data desempata
 var muralShowBreaking=(lsGet('mural_show_breaking')!==false); // mostra Breaking News por padrão
 var MURAL_PER_PAGE=10,muralPage=0,admMuralPage=0; // paginação do mural (10/pág)
+// "Carregar mais" do Mural do aluno: a entrega inicial traz só os ~200 artigos de
+// radar mais recentes (RPCs janeladas); os antigos (até ~90 dias) vêm sob demanda
+// via endodirect_mural_radar_more. muralHasMore=false quando o servidor não tem mais.
+var MURAL_RADAR_WINDOW=200,MURAL_RADAR_BATCH=200,muralHasMore=true,muralLoadingMore=false;
+// Busca o próximo lote de artigos do radar MAIS ANTIGOS que o já carregado e os
+// anexa a admAvisos (dedup por chave). Resolve com a quantidade retornada pelo servidor.
+function muralLoadMore(){
+  var client=getSupabaseClient&&getSupabaseClient();
+  if(!client)return Promise.reject(new Error('sem conexão'));
+  var autos=admAvisos.filter(function(a){return isRadarAuto(a);});
+  var oldest=autos.reduce(function(m,a){var t=Number(a.at)||0;return (m===null||(t>0&&t<m))?t:m;},null);
+  if(oldest===null)oldest=Date.now();
+  return client.rpc('endodirect_mural_radar_more',{p_before:oldest,p_limit:MURAL_RADAR_BATCH}).then(function(res){
+    if(res.error)throw res.error;
+    var arr=Array.isArray(res.data)?res.data:[];
+    if(arr.length<MURAL_RADAR_BATCH)muralHasMore=false;
+    if(arr.length){
+      var seen={};admAvisos.forEach(function(a){seen[avisoKeyStr(a)]=1;});
+      var add=arr.map(function(a){return normalizeMuralAviso(a,defaultMuralMap());}).filter(function(a){return !seen[avisoKeyStr(a)];});
+      admAvisos=admAvisos.concat(add);
+    }
+    return arr.length;
+  });
+}
 // HTML do paginador (vazio se só houver 1 página).
 function muralPagerHTML(page,pages,pfx){
   if(pages<=1)return '';
@@ -13116,6 +13140,7 @@ initMural=function(){
     +'<section class="mural-filter-card"><div class="mural-filter-main"><label class="mural-filter-field"><span class="mural-filter-label">Subespecialidade</span><select class="mural-filter-select" id="mural-filter">'+opt.html+'</select></label><label class="mural-filter-field"><span class="mural-filter-label">Tipo de artigo</span><select class="mural-filter-select" id="mural-filter-tipo">'+tipoOpts+'</select></label><div class="mural-filter-field"><span class="mural-filter-label">Periódico</span>'+muralPerDropdownHTML('mural-filter-per',perOpt)+'</div><label class="mural-filter-field"><span class="mural-filter-label">Ordenar</span><select class="mural-filter-select" id="mural-filter-sort">'+muralSortOptions(muralSort)+'</select></label><div class="mural-switch-wrap"><button type="button" id="mural-bn-toggle" class="mural-switch'+(muralShowBreaking?' on':'')+'" role="switch" aria-checked="'+(muralShowBreaking?'true':'false')+'" title="Mostrar Breaking News"><span class="ms-dot"></span></button><span>📣 Breaking News</span></div><span class="mural-count-pill">'+esc(count)+'</span><span class="mural-theme-pill">'+esc(tema)+'</span></div><button class="btn btn-outline" id="mural-clear" type="button">Limpar filtro</button></section>'
     +'<section class="mural-grid">'+(pageAvisos.length?pageAvisos.map(function(a){return muralNoticeCardHTML(a,false);}).join(''):'<div class="empty mural-empty">Nenhum aviso encontrado para este filtro.</div>')+'</section>'
     +muralPagerHTML(muralPage,mPages,'mural')
+    +((muralHasMore&&admAvisos.filter(function(a){return isRadarAuto(a);}).length>=MURAL_RADAR_WINDOW)?'<section style="text-align:center;margin-top:.8rem"><button type="button" class="btn btn-outline" id="mural-loadmore"'+(muralLoadingMore?' disabled':'')+'>'+(muralLoadingMore?ldHTML('Carregando…'):'⤓ Carregar artigos mais antigos')+'</button><div style="font-size:.72rem;color:var(--t3);margin-top:.4rem">Mostrando os mais recentes — carregue o histórico dos últimos ~90 dias.</div></section>':'')
     +'</div>';
   var sel=document.getElementById('mural-filter');if(sel){sel.value=muralFilter;sel.addEventListener('change',function(){muralFilter=this.value;muralPage=0;initMural();});}
   var selt=document.getElementById('mural-filter-tipo');if(selt){selt.value=muralTipoFilter;selt.addEventListener('change',function(){muralTipoFilter=this.value;muralPage=0;initMural();});}
@@ -13126,6 +13151,11 @@ initMural=function(){
   function muralScrollTop(){try{var p=document.getElementById('panel-mural');if(p)p.scrollTop=0;}catch(e){}try{window.scrollTo(0,0);}catch(e){}}
   var mp=document.getElementById('mural-prev');if(mp)mp.addEventListener('click',function(){if(muralPage>0){muralPage--;initMural();muralScrollTop();}});
   var mn=document.getElementById('mural-next');if(mn)mn.addEventListener('click',function(){if(muralPage<mPages-1){muralPage++;initMural();muralScrollTop();}});
+  var mlm=document.getElementById('mural-loadmore');if(mlm)mlm.addEventListener('click',function(){
+    if(muralLoadingMore)return;muralLoadingMore=true;mlm.disabled=true;mlm.innerHTML=ldHTML('Carregando…');
+    muralLoadMore().then(function(n){muralLoadingMore=false;initMural();if(!n)notify('Não há mais artigos antigos.','info');})
+      .catch(function(e){muralLoadingMore=false;initMural();notify('Não foi possível carregar mais agora.','err');});
+  });
   bindMuralPushCta();
 };
 function simRetry(promiseFactory){

@@ -1,9 +1,14 @@
 ---
 tags: [cofre, newsletter, radar]
-atualizado: 2026-06-23
+atualizado: 2026-07-23
 ---
 
 # Newsletter e Radar
+
+## Retenção 90 dias + "Carregar mais" (2026-07-23)
+- **`MAX_MURAL_ITEMS=3200`** e **`AUTO_ITEM_TTL_MS=90 dias`** (antes 160 / 45d). O radar traz ~35/dia, então o teto de 160 cortava em ~6 dias; agora guarda ~90 dias.
+- **Entrega janelada:** `endodirect_public_content` e `endodirect_member_content` mesclam em `adm_avisos` só os **200 artigos de radar mais recentes** (não o `radar_avisos` inteiro — evita estourar o payload do aluno).
+- **Paginação:** RPC `endodirect_mural_radar_more(p_before, p_limit)` + botão "Carregar artigos mais antigos" no `initMural`. O **admin** lê tudo direto (90 dias completos). Ver [[Decisões]].
 
 ## Radar / Mural (automático)
 - `lib/radar.js` + `lib/news.js`: lê feeds RSS de revistas, resume com IA (`summarizeWithAI`), monta itens do mural.
