@@ -10098,9 +10098,14 @@ function bindAdmStories(){
     }
     var subs=[],topics=[];
     for(var i=0;i<n;i++){var s=(selSub==='__random__')?pool[i%pool.length]:selSub;subs.push(s);topics.push(pickTema(s));}
+    // Dificuldade 60/40 (pedido do Rodolpho): 60% prova de título, 40% muito
+    // avançado. Monta o array na proporção e embaralha (não agrupa os difíceis).
+    var nHard=Math.round(n*0.4),levels=[];
+    for(var li=0;li<n;li++)levels.push(li<nHard?'muito_avancado':'titulo');
+    levels=igShuffle(levels);
     loteGen.disabled=true;loteGen.innerHTML=ldHTML('Gerando '+n+'…');if(st)st.textContent='';if(res)res.innerHTML='';
     var done=0;
-    igPool(subs.map(function(s,idx){var lvl=(idx%2===0)?'titulo':'muito_avancado';return function(){return igGenOne(s,topics[idx],lvl).then(function(r){done++;if(st)st.textContent='Gerando… '+done+'/'+n;return r;});};}),3)
+    igPool(subs.map(function(s,idx){var lvl=levels[idx]||'titulo';return function(){return igGenOne(s,topics[idx],lvl).then(function(r){done++;if(st)st.textContent='Gerando… '+done+'/'+n;return r;});};}),3)
     .then(function(items){
       igLoteDraft=(items||[]).filter(function(x){return x&&x.stem;});
       if(!igLoteDraft.length){if(res)res.innerHTML='<div style="color:var(--red);font-size:.78rem">❌ A IA não retornou questões. Tente de novo.</div>';return;}
