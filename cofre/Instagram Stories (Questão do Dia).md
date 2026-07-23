@@ -5,10 +5,11 @@ atualizado: 2026-07-23
 
 # Instagram Stories — "Questão do Dia"
 
-## Nível de dificuldade elevado no gerador de lote (2026-07-23)
-- **Pedido do usuário:** "aumenta um pouco mais o nível de dificuldade" na geração das questões do dia.
-- **Onde:** `igGenOne(sub,topic)` — prompt do `aiRequest` (o gerador em lote e o card diário partem daqui). O nível antes era "AVANÇADO (padrão prova de título/especialista)".
-- **Agora:** "nível MUITO AVANÇADO / DIFÍCIL (banca difícil, questão discriminativa acima do padrão prova de título)" — exige **raciocínio clínico de MÚLTIPLAS ETAPAS** (integrar história + laboratório + imagem), **nuance clínica fina**, **exceções e armadilhas de diretriz** (cutoffs, casos-limite, quando NÃO tratar) e **distratores muito plausíveis** (erros conceituais sutis que o especialista comete); PROÍBE questões óbvias/diretas/de memorização de definição. `sys` (examinador de prova de título, via `authoringSys`) mantido igual. Bump `sw.js` v116→v117.
+## Dificuldade ALTERNADA prova de título ↔ muito avançado (2026-07-23)
+- **Pedido do usuário:** "vá alternando entre nível prova de título e muito avançado" (refinando o pedido anterior de subir a dificuldade).
+- **Onde:** `igGenOne(sub,topic,level)` ganhou o 3º parâmetro `level`; helper novo **`igNivelDesc(level)`** devolve o trecho do prompt: `'titulo'` = "nível PROVA DE TÍTULO (padrão especialista)…" · qualquer outro valor (default `'muito_avancado'`) = "nível MUITO AVANÇADO / DIFÍCIL (banca difícil…)" com raciocínio de múltiplas etapas, nuance fina, exceções/armadilhas de diretriz e distratores muito plausíveis.
+- **Alternância:** no laço do lote (`ig-lote-gen`), `var lvl=(idx%2===0)?'titulo':'muito_avancado'` — questões pares saem no padrão prova de título, ímpares no muito avançado. Num lote de 5: 3 título + 2 muito avançado. `sys` (examinador, via `authoringSys`) intacto. Bump `sw.js` v117→v118.
+- **Histórico:** v116→v117 tinha fixado TODAS em "muito avançado"; este ajuste volta a intercalar com o nível prova de título.
 - **Remove "distribuída por &lt;email&gt;"** do card de Pendências (`admPendCardHTML`) — professor não precisa ver quem distribuiu (o campo `distributedBy` continua no dado, só não é exibido).
 - **Sugestão AUTOMÁTICA de imagem de exame complementar ao gerar** (decisão do usuário: automático + qualquer figura do PMC com referência): a IA, ao gerar a questão, devolve um campo opcional **`imageQuery`** (termos EM INGLÊS para achar a imagem, ex.: "pituitary MRI microadenoma") quando a vinheta envolve exame de imagem; senão vazio. Regra injetada via `IG_IMAGEQUERY_RULE` nos prompts do `igGenOne` (lote) e do gerador manual.
   - **Fonte:** **Open-i** (NLM/NIH) = figuras do **PubMed Central**. Proxy **server-side** em `api/ai.js` via `kind:'openi'` (reusa o endpoint p/ respeitar o teto 12/12 funções; mesma proteção same-origin; não usa Anthropic). Helper `openiSearch()` normaliza `imgLarge/imgThumb/imgGrid150` (URLs relativas → prefixa `https://openi.nlm.nih.gov`), `journal_title/journal_date/authors/pmid/pmcid/image.caption`. Best-effort: falha → lista vazia → questão sem imagem.
