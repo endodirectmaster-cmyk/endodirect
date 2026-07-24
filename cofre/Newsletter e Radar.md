@@ -5,6 +5,11 @@ atualizado: 2026-07-23
 
 # Newsletter e Radar
 
+## Remoção das sociedades ATA e Endocrine Society (2026-07-23)
+- **Pedido:** "tirar os comunicados da ATA e endocrine society". Removidas do `SOCIETY_SOURCES` (`lib/radar.js`) — o radar **não puxa mais** esses comunicados. Sobraram **SBEM** e **SBD**.
+- **Limpeza dos já gravados:** 22 itens (11 ATA + 11 Endocrine Society) apagados de `radar_avisos` (199→177) e seus `sourceId` adicionados a `radar_hidden` (rede de segurança contra re-add pelo cron antigo até o deploy + o cliente esconde qualquer cópia em aba cacheada).
+- **NÃO afeta:** as revistas científicas via PubMed (Thyroid, J Endocr Soc, Endocrine Reviews etc.) seguem no `JOURNALS`; e o texto do card **Diretrizes** (que resume ADA/ATA/Endocrine Society) é conteúdo de estudo, não "comunicado" — intocado. `sw` v121→v122.
+
 ## Retenção 90 dias + "Carregar mais" (2026-07-23)
 - **`MAX_MURAL_ITEMS=3200`** e **`AUTO_ITEM_TTL_MS=90 dias`** (antes 160 / 45d). O radar traz ~35/dia, então o teto de 160 cortava em ~6 dias; agora guarda ~90 dias.
 - **Entrega janelada:** `endodirect_public_content` e `endodirect_member_content` mesclam em `adm_avisos` só os **200 artigos de radar mais recentes** (não o `radar_avisos` inteiro — evita estourar o payload do aluno).
