@@ -1,6 +1,6 @@
 ---
 tags: [cofre, processo]
-atualizado: 2026-06-30
+atualizado: 2026-07-25
 ---
 
 # Convenções de Trabalho
@@ -56,3 +56,7 @@ Hábitos que evitam retrabalho — ler antes de agir, especialmente em bugs e de
 - **Limites do plano Vercel (Hobby):** **12 serverless functions** em `api/` (projeto no teto) e **2 cron jobs**. Não criar função nova em `api/` sem remover outra; lógica reusável vai em `lib/` (módulo, não conta). Ver [[Decisões]] e [[Integrações]].
 - **Aviso "Unverified" do hook Stop é benigno:** ele acusa o commit de **squash-merge do próprio GitHub** (committer `noreply@github.com`) no tip da `main`. NÃO reescrever (é histórico já mergeado). Meus commits usam `Claude <noreply@anthropic.com>`.
 - **Validar sempre antes de commitar** (scripts inline + `node --check`), conforme a seção acima — barato e evita deploy quebrado.
+- **⚠️ LIÇÃO (2026-07-25) — INSERT grande de conteúdo: nunca confiar na transcrição; conferir por hash.** Ao inserir os 16 artigos no `payload.diretrizes`, colei o SQL em lotes de 4 e **truncei um item no meio** (FLOW 2024): ele perdeu o array `flashcards` **e** o flag `rascunho:true`. O JSON truncado continuou **sintaticamente válido** (cortou campos antes da chave de fechamento), então o Postgres aceitou sem erro — e o artigo incompleto ficou visível aos assinantes por alguns segundos até eu corrigir. Regras que ficam:
+  1. **Lotes de no máximo 2 itens** por `execute_sql` (~9 KB). Truncagem escala com o tamanho do bloco.
+  2. **Conferir por md5, não por olho.** Depois de inserir, comparar banco × fonte local campo a campo: `md5(v->>'resumo')`, `md5(string_agg)` dos `pts`/`flashcards`, `md5(concat_ws)` dos metadados — e diferenciar por script, não visualmente. Contagem de itens não pega nada: o item truncado **está lá**.
+  3. **Se o lote carrega um flag de segurança** (`rascunho`, `privado`), reaplicá-lo em um `update` separado depois do insert — idempotente e imune à truncagem: `set payload = jsonb_set(..., jsonb_agg(case when v->>'tipo'='artigo' then v || '{"rascunho":true}'::jsonb else v end order by ord))`. Flag correto não pode depender de o insert ter saído inteiro.

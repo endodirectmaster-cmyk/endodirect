@@ -8509,13 +8509,18 @@ var refPrivadoMode=false;         // false = aba Diretrizes (públicas); true = 
 // 'artigo' (resumo estruturado de um trial). Itens antigos não têm o campo →
 // contam como capítulo, então nada muda para o que já está publicado.
 function dirTipoOf(d){return (d&&d.tipo==='artigo')?'artigo':'capitulo';}
+// RASCUNHO: item em curadoria, visível SÓ no painel do professor. Não confundir
+// com `privado`, que significa "aba Resumos, para assinantes" — um item privado
+// JÁ está no ar. As RPCs também filtram rascunho (member_resumos/showcase), então
+// ele nem chega ao cliente do aluno; o filtro aqui é a segunda barreira.
+function dirIsRascunho(d){return !!(d&&d.rascunho);}
 var refTipoSel='capitulo';        // aba Capítulos/Artigos ativa dentro dos Resumos
 // Predicado de visibilidade conforme a aba ativa: Diretrizes mostra !privado; Resumos mostra privado===true.
 // Nos Resumos filtra também pelo tipo (Capítulos × Artigos); nas Diretrizes o tipo é ignorado.
-function dirIsVisible(d){return refPrivadoMode?(((d&&d.privado)===true)&&dirTipoOf(d)===refTipoSel):!(d&&d.privado);}
+function dirIsVisible(d){return !dirIsRascunho(d)&&(refPrivadoMode?(((d&&d.privado)===true)&&dirTipoOf(d)===refTipoSel):!(d&&d.privado));}
 // Mesma visibilidade, SEM o filtro de tipo — usada na grade de subespecialidades
 // (nível 1), que conta capítulos e artigos juntos.
-function dirIsVisibleAnyTipo(d){return refPrivadoMode?((d&&d.privado)===true):!(d&&d.privado);}
+function dirIsVisibleAnyTipo(d){return !dirIsRascunho(d)&&(refPrivadoMode?((d&&d.privado)===true):!(d&&d.privado));}
 // Quantos artigos (trials) existem numa subespecialidade, na aba ativa.
 function dirArtigoCount(sub){
   var n=0;
@@ -10748,6 +10753,18 @@ function dirIsPrivate(d){return !!(d&&d.privado);}
 function dirModeMatch(d){return admRefMode==='res'?(dirIsPrivate(d)&&dirTipoOf(d)===admRefTipo):!dirIsPrivate(d);}
 // Sem o filtro de tipo — grade de subespecialidades do admin (conta os dois juntos).
 function dirModeMatchAnyTipo(d){return admRefMode==='res'?dirIsPrivate(d):!dirIsPrivate(d);}
+// Quantos itens de um tema ainda estão em rascunho (só o professor vê). Usado
+// para marcar o card na grade — sem isso ele teria de abrir tema por tema.
+function admRascunhoCount(sub,tema){
+  var n=0;
+  diretrizes.forEach(function(d){
+    if(!dirModeMatch(d))return;
+    if((String(d.sub||'Geral').trim()||'Geral')!==sub)return;
+    if(dirTemaOf(d)!==tema)return;
+    if(dirIsRascunho(d))n++;
+  });
+  return n;
+}
 // Quantos artigos privados existem numa subespecialidade (admin).
 function admArtigoCount(sub){
   var n=0;
@@ -11138,7 +11155,7 @@ function admRefSecHTML(){
       }
       return '<div class="dir-tema-card" data-admref-tema="'+esc(t.tema)+'">'
         +'<div class="dir-tema-acts"><button data-ref-tema-edit="'+esc(t.tema)+'" title="Renomear tema">✏️</button><button data-ref-tema-del="'+esc(t.tema)+'" title="Excluir tema">🗑</button></div>'
-        +'<div class="dtc-ico">'+(_aArt?'🔬':'📄')+'</div><h3>'+esc(t.tema)+'</h3><div class="dtc-cnt">'+t.count+' '+(t.count===1?L.one:L.many)+'</div></div>';
+        +'<div class="dtc-ico">'+(_aArt?'🔬':'📄')+'</div><h3>'+esc(t.tema)+'</h3><div class="dtc-cnt">'+t.count+' '+(t.count===1?L.one:L.many)+(admRascunhoCount(admRefSub,t.tema)?' · <b style="color:#b4690e">🚧 rascunho</b>':'')+'</div></div>';
     }).join('');
     // Alternador Capítulos × Artigos — só nos Resumos; aqui aparece sempre
     // (diferente do aluno), pois é por ele que o professor cadastra o 1º trial.
@@ -11175,15 +11192,21 @@ function admRefSecHTML(){
           var isResumo=(fmtAtivo!=='flash'&&fmtAtivo!=='mapa');
           // Barra de status/visibilidade: mostra se o item é público (Diretriz)
           // ou privado (Resumo) e permite alternar (publicar / tornar privado).
-          var priv=dirIsPrivate(x.d);
-          var statusTag=priv
-            ? '<span style="font-size:.68rem;font-weight:700;color:var(--gold,#c9a227);background:rgba(201,162,39,.12);padding:.15rem .5rem;border-radius:999px">🔒 Resumo privado</span>'
-            : '<span style="font-size:.68rem;font-weight:700;color:var(--grn);background:rgba(46,160,90,.12);padding:.15rem .5rem;border-radius:999px">✅ Publicado</span>';
-          // Só "Publicar" (resumo privado → Diretrizes). O inverso ("Tornar
-          // resumo", diretriz publicada → privado) foi removido a pedido.
-          var toggleBtn=priv
-            ? '<button class="btn btn-outline btn-sm" data-adm-reftoggle="'+x.i+'" title="Publicar para os alunos (move para Diretrizes)">📢 Publicar</button>'
-            : '';
+          var priv=dirIsPrivate(x.d),rasc=dirIsRascunho(x.d);
+          var statusTag=rasc
+            ? '<span style="font-size:.68rem;font-weight:700;color:#b4690e;background:rgba(180,105,14,.14);padding:.15rem .5rem;border-radius:999px">🚧 Rascunho — só você vê</span>'
+            : (priv
+              ? '<span style="font-size:.68rem;font-weight:700;color:var(--gold,#c9a227);background:rgba(201,162,39,.12);padding:.15rem .5rem;border-radius:999px">🔒 Resumo privado</span>'
+              : '<span style="font-size:.68rem;font-weight:700;color:var(--grn);background:rgba(46,160,90,.12);padding:.15rem .5rem;border-radius:999px">✅ Publicado</span>');
+          // Rascunho: o passo é LIBERAR (sai da curadoria e entra na aba Resumos
+          // dos assinantes). O "📢 Publicar" (privado → Diretrizes, público) só
+          // aparece depois — publicar direto de rascunho pularia a liberação.
+          // O inverso ("Tornar resumo") foi removido a pedido.
+          var toggleBtn=rasc
+            ? '<button class="btn btn-primary btn-sm" data-adm-refliberar="'+x.i+'" title="Sai do rascunho e passa a aparecer na aba Resumos dos assinantes">👁 Liberar para os alunos</button>'
+            : (priv
+              ? '<button class="btn btn-outline btn-sm" data-adm-reftoggle="'+x.i+'" title="Publicar para os alunos (move para Diretrizes)">📢 Publicar</button>'
+              : '');
           // Nos Resumos, o mapa é editável IN-LOCO na própria árvore (contenteditable +
           // ＋/×); nas Diretrizes segue a edição em caixas (admRefMapaHTML).
           var mapaEdit=(admRefMode==='res'&&fmtAtivo==='mapa');
@@ -12074,6 +12097,13 @@ function bindAdmSec(sec){
       if(!confirm(toPriv?'Tornar “'+((d.tema||d.titulo)||'este item')+'” um resumo privado? Ele sairá da aba Diretrizes dos alunos.':'Publicar “'+((d.tema||d.titulo)||'este item')+'” para os alunos? Ele passará a aparecer nas Diretrizes.'))return;
       d.privado=toPriv;persistDiretrizes();rerenderRef();
       notify(toPriv?'Movido para Resumos (privado). 🔒':'Publicado nas Diretrizes. ✅','ok');
+    });});
+    // Rascunho → aba Resumos dos assinantes (só tira a flag; segue privado).
+    main.querySelectorAll('[data-adm-refliberar]').forEach(function(b){b.addEventListener('click',function(){
+      var i=parseInt(b.dataset.admRefliberar);var d=diretrizes[i];if(!d)return;
+      if(!confirm('Liberar “'+((d.tema||d.titulo)||'este item')+'” para os alunos? Ele sai do rascunho e passa a aparecer na aba Resumos dos assinantes.'))return;
+      delete d.rascunho;persistDiretrizes();rerenderRef();
+      notify('Liberado para os alunos. ✓','ok');
     });});
     // Alternador Capítulos × Artigos (Resumos): troca o tipo e volta para a grade.
     main.querySelectorAll('[data-admref-tipo]').forEach(function(b){b.addEventListener('click',function(){admRefTipo=b.dataset.admrefTipo;admRefTema='';refResetTemaUi();rerenderRef();});});
