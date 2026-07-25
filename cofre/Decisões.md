@@ -8,6 +8,13 @@ atualizado: 2026-07-25
 Log de decisões de produto e técnicas (mais recentes no topo).
 
 ## 2026-07
+- **🧠 Todos os geradores de IA passam a usar Opus 4.8 (2026-07-25, "deixa os geradores de IA com modelo opus 4.8"):** duas linhas, uma de cada lado.
+  - `api/ai.js`: `DEFAULT_MODEL` `claude-sonnet-5` → **`claude-opus-4-8`** — pega tudo que não manda modelo explícito (Resumidor, flashcards, mapas, cronograma, simulado, Chat IA, comentários de questões, resumo de aula).
+  - `index.html`: `AI_MODEL_SIM_GEN` `claude-sonnet-5` → **`claude-opus-4-8`** — OSCE, prescrição simulada e questões do simulado. `AI_MODEL_CLINICO` já era Opus 4.8; as duas constantes ficaram iguais, mantidas separadas para poder voltar a diferenciar sem caçar chamada por chamada.
+  - **`claude-sonnet-5` segue na `ALLOWED_MODELS` de propósito:** clientes com o index.html velho no cache do SW ainda mandam esse id; tirá-lo os jogaria no padrão sem aviso. `sw` v125→v126 para forçar a atualização.
+  - **Custo:** Opus 4.8 é US$ 5/25 por milhão de tokens contra US$ 3/15 do Sonnet 5 (~1,7x). O cache de prompt das diretrizes (~10,7k tokens, `cache_control` ephemeral) continua valendo e amortece a diferença.
+  - **Latência a vigiar:** o Opus não liga thinking por omissão (só o Sonnet 5/Opus 5 ligam — daí o `THINKING_ON_BY_DEFAULT`), mas o `effort` fica no padrão `high`. O OSCE tem teto de 59s no cliente; se voltar "A geração demorou demais", a correção é acrescentar `claude-opus-4-8` ao bloco que já manda `effort: 'low'`.
+  - **Fora do escopo (seguem no Sonnet 5):** `lib/radar.js` e `lib/news.js` — resumos curtos (500–700 tokens) de ~35 artigos/dia no cron do Mural/newsletter, onde Opus multiplicaria o custo sem ganho claro.
 - **🔑 Resumos: pontos-chave com rótulo no card + formatação preservada (2026-07-25, print do professor "só está aparecendo os pontos-chave no editor, quando salva não aparece"):** dois problemas no mesmo bloco.
   1. **Card sem rótulo:** `dirCardHTML` renderizava `d.pts` como uma `<ul>` solta logo após o resumo. Quando o resumo termina numa lista — caso dos capítulos que fecham com "**Armadilhas de prova**" (ex.: *Respostas e Adaptações Endócrinas ao Exercício*) — os pontos-chave viravam **continuação visual** dessa lista, e o bloco que no editor tem o título "🔑 Pontos-chave" sumia depois de salvo. Agora saem em `.dir-pts` com o mesmo rótulo do editor.
   2. **Formatação descartada no save:** o handler lia os bullets com `textContent` → negrito/itálico aplicados pela toolbar dentro de um ponto-chave eram **perdidos silenciosamente** (por isso nenhum dos 1.696 pontos-chave do acervo tem `**`). Passou a usar `htmlToMd(ptsEd)`; o card renderiza com `mdInline` (que escapa o HTML antes — XSS coberto por teste).

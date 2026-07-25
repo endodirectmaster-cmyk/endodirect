@@ -4163,7 +4163,12 @@ function aiRequest(payload){
   });
 }
 var AI_MODEL_CLINICO='claude-opus-4-8'; // avaliação e relatório clínico (raciocínio)
-var AI_MODEL_SIM_GEN='claude-sonnet-5'; // geração de vinhetas de caso (Sonnet atual; sonnet-4-6 saiu de operação em 07/2026)
+// Geração de vinhetas de caso (OSCE, prescrição simulada, questões do simulado).
+// 2026-07-25: passou de Sonnet 5 para Opus 4.8 — todos os geradores usam o mesmo
+// modelo agora, então este id ficou igual ao AI_MODEL_CLINICO e ao padrão do
+// servidor. Mantido como constante separada para permitir voltar a diferenciar
+// (custo/latência) sem caçar chamada por chamada.
+var AI_MODEL_SIM_GEN='claude-opus-4-8';
 // ============================================================
 // Padrão de autoria clínica p/ geração por IA (questões, flashcards, mapas).
 // Máxima precisão técnica + diretrizes recentes NOMEADAS + zero "linguagem de
