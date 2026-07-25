@@ -1,4 +1,3 @@
-const DEFAULT_MODEL = process.env.ANTHROPIC_MODEL || 'claude-sonnet-5';
 // Modelos que o cliente pode solicitar por requisição (evita abuso/custo).
 // Recursos clínicos (prescrição/simulador) pedem Opus; o resto fica no default.
 const ALLOWED_MODELS = { 'claude-sonnet-5': 1, 'claude-opus-4-8': 1, 'claude-haiku-4-5': 1 };
@@ -9,6 +8,25 @@ const ALLOWED_MODELS = { 'claude-sonnet-5': 1, 'claude-opus-4-8': 1, 'claude-hai
 // conserta também clientes que ainda tenham o index.html antigo em cache (SW),
 // pois eles continuam mandando o id legado no corpo da requisição.
 const LEGACY_MODEL_MAP = { 'claude-sonnet-4-6': 'claude-sonnet-5' };
+// Normaliza um id (remapeia legados) e só aceita o que está na allowlist.
+function normModel(raw) {
+  const m = LEGACY_MODEL_MAP[String(raw || '')] || String(raw || '');
+  return ALLOWED_MODELS[m] ? m : '';
+}
+// A env ANTHROPIC_MODEL passa pela MESMA normalização do que vem do cliente.
+// Antes ela era usada crua: uma env apontando para um id retirado (exatamente o
+// caso `claude-sonnet-4-6` de 2026-07-13) virava o DEFAULT e derrubava todos os
+// geradores — e o LEGACY_MODEL_MAP não a alcançava, pois só tratava o id do
+// corpo da requisição. Valor inválido agora cai no padrão em vez de quebrar.
+const DEFAULT_MODEL = normModel(process.env.ANTHROPIC_MODEL) || 'claude-sonnet-5';
+// Modelos que ligam "adaptive thinking" QUANDO O CAMPO `thinking` É OMITIDO.
+// Neles o raciocínio consome o teto de max_tokens e trunca o JSON dos geradores,
+// então desligamos explicitamente (ver comentário no ponto de uso). Opus 4.8 e
+// Haiku 4.5 NÃO entram: omitir `thinking` neles já significa sem raciocínio.
+// ⚠️ Ao adicionar um modelo novo ao ALLOWED_MODELS, verifique este mapa — no
+// Opus 5, por exemplo, thinking passou a ser ligado por padrão (ao contrário do
+// 4.8), e sem esta trava os geradores voltariam a truncar.
+const THINKING_ON_BY_DEFAULT = { 'claude-sonnet-5': 1, 'claude-opus-5': 1 };
 // Grounding opcional por PubMed (módulo — não conta como função serverless).
 const { pubmedGround, formatSources } = require('../lib/pubmed');
 // Busca server-side de um link p/ resumo (módulo lib/ — não conta como função).
@@ -19,9 +37,7 @@ const { sendSupportEmail, storeSupportTicket, listSupportTickets, listMyTickets,
 const { sendToEmail } = require('../lib/push');
 const { adminFromReq, userFromReq } = require('../lib/admin-auth');
 function pickModel(requested) {
-  const raw = String(requested || '');
-  const m = LEGACY_MODEL_MAP[raw] || raw;
-  return ALLOWED_MODELS[m] ? m : DEFAULT_MODEL;
+  return normModel(requested) || DEFAULT_MODEL;
 }
 
 function json(res, status, body) {
@@ -274,7 +290,7 @@ module.exports = async function handler(req, res) {
     // geração LENTA (o OSCE, com system de ~40k chars + 3200 tokens, estourava o
     // teto de 56s do cliente → "A geração demorou demais"). Sem thinking, `low`
     // é o modo rápido recomendado para geração de JSON e corta a latência.
-    if (model === 'claude-sonnet-5') {
+    if (THINKING_ON_BY_DEFAULT[model]) {
       upstreamBody.thinking = { type: 'disabled' };
       upstreamBody.output_config = { effort: 'low' };
     }
