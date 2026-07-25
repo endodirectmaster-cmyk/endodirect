@@ -205,6 +205,12 @@ body{background:var(--bg);color:var(--tx);display:flex;flex-direction:column}
 .card{background:var(--surface);border:1px solid var(--bd);border-radius:var(--r);padding:1rem 1.1rem}
 .card-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:.65rem}
 .card-title{font-size:.7rem;font-weight:600;color:var(--t2);text-transform:uppercase;letter-spacing:.07em}
+/* Card recolhível (ex.: "Por cidade" no Analytics) — recolhido por padrão */
+.cid-details>summary.cid-summary{cursor:pointer;list-style:none;margin:0;user-select:none}
+.cid-details>summary.cid-summary::-webkit-details-marker{display:none}
+.cid-caret{display:inline-block;transition:transform .15s ease;color:var(--t3);font-size:.72rem;margin-right:.15rem}
+.cid-details[open]>summary .cid-caret{transform:rotate(90deg)}
+.cid-details[open]>summary.cid-summary{margin-bottom:0}
 .g2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
 .g3{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
 .g4{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}
@@ -11429,9 +11435,9 @@ function admAnalyticsHTML(){
       +'<div class="card"><div class="card-head"><span class="card-title">Por estado (UF)</span><span class="tag tag-blue">'+comUf+' com UF</span></div>'
         +(porUf.length?porUf.map(function(x){var w=Math.round(n(x.n)/maxUf*100);var p2=comUf?Math.round(n(x.n)/comUf*100):0;return '<div class="rep-area-row"><div class="rep-area-name" style="min-width:44px">'+esc(x.uf)+'</div><div class="rep-area-track"><div class="rep-area-fill" style="width:'+w+'%;background:var(--blue)"></div></div><div class="rep-area-pct">'+n(x.n)+' · '+p2+'%</div></div>';}).join(''):'<div class="empty" style="padding:.6rem;font-size:.78rem;color:var(--t3)">Ainda sem UF cadastrada. Aparece conforme os alunos completam o cadastro (CRM/UF no primeiro acesso).</div>')
       +'</div>'
-      +'<div class="card"><div class="card-head"><span class="card-title">Por cidade</span><span class="tag tag-blue">'+comCidade+' com cidade</span></div>'
-        +(porCidade.length?'<div class="adm-table"><div class="adm-table-head"><span style="flex:3">Cidade</span><span style="flex:1;text-align:right">Alunos</span></div>'+porCidade.map(function(x){return '<div class="adm-table-row"><span style="flex:3;font-size:.8rem;font-weight:600">'+esc(x.cidade||'—')+(x.uf?' <span style="color:var(--t3);font-weight:400">/ '+esc(x.uf)+'</span>':'')+'</span><span style="flex:1;text-align:right;font-weight:700">'+n(x.n)+'</span></div>';}).join('')+'</div>':'<div class="empty" style="padding:.6rem;font-size:.78rem;color:var(--t3)">As cidades aparecem quando os alunos concluem uma compra (endereço de cobrança).</div>')
-      +'</div>'
+      +'<div class="card"><details class="cid-details"><summary class="card-head cid-summary"><span class="card-title"><span class="cid-caret">▸</span> Por cidade</span><span class="tag tag-blue">'+comCidade+' com cidade</span></summary>'
+        +'<div style="margin-top:.7rem">'+(porCidade.length?'<div class="adm-table"><div class="adm-table-head"><span style="flex:3">Cidade</span><span style="flex:1;text-align:right">Alunos</span></div>'+porCidade.map(function(x){return '<div class="adm-table-row"><span style="flex:3;font-size:.8rem;font-weight:600">'+esc(x.cidade||'—')+(x.uf?' <span style="color:var(--t3);font-weight:400">/ '+esc(x.uf)+'</span>':'')+'</span><span style="flex:1;text-align:right;font-weight:700">'+n(x.n)+'</span></div>';}).join('')+'</div>':'<div class="empty" style="padding:.6rem;font-size:.78rem;color:var(--t3)">As cidades aparecem quando os alunos concluem uma compra (endereço de cobrança).</div>')+'</div>'
+      +'</details></div>'
     +'</div>';
   var semDados=n(ov.respostas)===0&&n(ov.simulados)===0;
   var kpi=function(val,lbl,cor){return '<div class="adm-bigstat"><div class="adm-bigstat-n" style="color:'+cor+'">'+val+'</div><div class="adm-bigstat-l">'+lbl+'</div></div>';};
