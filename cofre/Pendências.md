@@ -1,9 +1,16 @@
 ---
 tags: [cofre, pendencias]
-atualizado: 2026-07-21
+atualizado: 2026-07-25
 ---
 
 # Pendências
+
+## Artigos / trials nos Resumos (2026-07-25)
+- [ ] **AGUARDANDO REVISÃO DO RODOLPHO — 16 artigos piloto (9 Diabetes + 7 Obesidade) NÃO publicados.** O conteúdo está autorado em `scratchpad/artigos/trials.js` e **não foi inserido no banco** (itens privados já ficam visíveis aos assinantes, então inserir = publicar). Página de revisão gerada por `scratchpad/artigos/build_revisao.js` → artifact "Artigos (trials) — revisão antes de publicar". **Ação:** após o OK dele, inserir em `endodirect_global_state.payload.diretrizes` com `tipo:'artigo'`, `privado:true`.
+  - Diabetes: UKPDS 33, EMPA-REG, LEADER, SUSTAIN-6, DECLARE-TIMI 58, CREDENCE, SURPASS-2, FLOW, SOUL.
+  - Obesidade: STEP-1, SURMOUNT-1, SELECT, STEP-HFpEF, SURMOUNT-OSA, SURMOUNT-5, ESSENCE.
+- [ ] **Mapas mentais dos artigos:** ficaram fora do lote piloto de propósito (só resumo + flashcards). Entram depois, se o formato for aprovado.
+- [ ] **Demais subespecialidades:** o piloto cobre só Diabetes e Obesidade. Tireoide, Osteometabolismo, Lípides e Neuroendocrinologia são os próximos candidatos naturais.
 
 ## Provas de residência (2026-07-21)
 - [x] **29 USP-FMUSP/FUVEST 2023 — SUBIDAS** com `revisar_gabarito:true` (não havia gabarito oficial). **AÇÃO PENDENTE: revisar/confirmar o gabarito dessas 29.**

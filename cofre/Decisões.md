@@ -1,6 +1,6 @@
 ---
 tags: [cofre, decisoes]
-atualizado: 2026-07-21
+atualizado: 2026-07-25
 ---
 
 # Decisões
@@ -8,6 +8,12 @@ atualizado: 2026-07-21
 Log de decisões de produto e técnicas (mais recentes no topo).
 
 ## 2026-07
+- **🔬 Resumos: nova aba "Artigos" (resumos de estudos/trials) ao lado de "Capítulos" (2026-07-25, "quero colocar os grandes trials nos resumos"):** cada item de `diretrizes` ganhou o campo **`tipo`**: `'artigo'` ou ausente/`'capitulo'` (padrão implícito — **todo o acervo atual segue capítulo, sem migração de dados**). Dentro de uma subespecialidade, um alternador **📚 Capítulos | 🔬 Artigos** separa os dois; cada trial é um "tema", então a lista de artigos já é a lista de estudos (1 clique a menos).
+  - **Aluno:** `refTipoSel` filtra os níveis 2 e 3; a **grade de subespecialidades conta os dois juntos** ("12 capítulos · 5 artigos") via `dirIsVisibleAnyTipo`/`dirArtigoCount`. O toggle **só aparece se a área tiver artigos**. Nos artigos o cabeçalho com **periódico/ano + link do estudo fica visível** (nos capítulos privados segue omitido). Degustação: o limite de 1 item por área vale **por aba**.
+  - **Admin (painel Resumos):** mesmo alternador, **sempre visível** (é por ele que se cadastra o 1º trial). Temas vazios gravam o `tipo` em `dirTemasExtra` para nascerem na aba certa. Item novo herda `tipo` da aba; ao salvar, o painel reabre na aba do item (`admRefTipo=dirTipoOf(obj)`). Rótulos/placeholders mudam (Periódico, Link do estudo, "Novo artigo").
+  - **⚠️ Bug corrigido de quebra:** renomear/excluir tema casava por `sub+tema` em **todo** o acervo, sem filtrar modo/tipo — com duas abas, um artigo e um capítulo homônimos na mesma área se apagariam mutuamente **sem aviso**. Agora as três operações (criar/renomear/excluir) usam `refTemaScope`/`refExtraScope`, restritos ao que está visível (modo + tipo).
+  - **Sem migração de schema:** o campo vive no JSON de `diretrizes`; as RPCs devolvem o objeto inteiro (`jsonb_agg(v)`). Só a `member_resumos` mudou, pela degustação — ver [[Dados e Supabase]].
+  - `sw` v123→v124. Motor de navegação testado com acervo sintético (capítulo legado sem `tipo` não vaza para Artigos; extras respeitam o tipo; aba Diretrizes intocada).
 - **📍 Analytics: card "Por cidade" recolhido por padrão (2026-07-25, "deixa esse por cidade minimizado"):** no painel "Origem dos alunos" (`admAnalyticsHTML`, geoHtml), o card **Por cidade** virou um `<details class="cid-details">` recolhido (summary = card-head com seta `.cid-caret` que gira ao abrir); o "Por estado (UF)" segue aberto. Só CSS + wrapper. `sw` v122→v123.
 - **🚫 Mural: removidos comunicados da ATA e Endocrine Society (2026-07-23, "tirar os comunicados da ATA e endocrine society"):** as duas sociedades saíram do `SOCIETY_SOURCES` (`lib/radar.js`) — o radar não puxa mais; sobraram SBEM e SBD. Os 22 itens já no mural (11+11) foram apagados de `radar_avisos` (199→177) e seus sourceIds adicionados a `radar_hidden`. Revistas científicas via PubMed e o card Diretrizes (conteúdo de estudo) não afetados. `sw` v121→v122. Ver [[Newsletter e Radar]].
 - **🗂️ Mural: retenção de 90 dias + "Carregar mais" (2026-07-23, "deixa salvo dos últimos 90 dias no mural e também os editáveis"):** os artigos automáticos do radar eram cortados em ~6 dias — não pelo TTL (45d), mas pelo **teto de 160 itens** (o radar traz ~35/dia). Diagnóstico: 160 itens = só 17–23/07; entregar 90 dias (~2.700 itens ≈ 5,8 MB) no payload **quebraria** o carregamento (member_content falha perto de 5,3 MB) — as RPCs mandam o `radar_avisos` inteiro dentro de `adm_avisos`. **Solução escolhida (opção "90 dias + carregar mais"):** servidor guarda 90 dias; app entrega só os 200 mais recentes e busca o resto sob demanda.
