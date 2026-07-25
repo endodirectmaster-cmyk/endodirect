@@ -788,6 +788,12 @@ html[data-theme="light"] .dir-back{background:#f8f9fc;border-color:var(--bd2);co
 .dir-card h3{margin:.15rem 0 .6rem;font-size:1.08rem;color:var(--tx)}
 .dir-card ul{margin:.2rem 0;padding-left:1.2rem}
 .dir-card li{font-size:.86rem;color:var(--t2);margin:.25rem 0;line-height:1.5}
+/* Pontos-chave do card: bloco destacado com rótulo, para não se confundir com
+   uma lista do próprio resumo (o resumo às vezes termina numa lista). */
+.dir-pts{margin-top:.9rem;padding:.75rem .9rem;border:1px solid var(--bd2);border-radius:12px;background:var(--s2)}
+.dir-pts-h{font-size:.72rem;font-weight:700;letter-spacing:.04em;text-transform:uppercase;color:var(--t2);margin-bottom:.35rem}
+.dir-card .dir-pts ul{margin:0;padding-left:1.15rem}
+.dir-card .dir-pts li{font-size:.88rem;line-height:1.55;margin:.22rem 0}
 .dir-card .dir-texto{font-size:.88rem;color:var(--t2);line-height:1.62}
 .dir-card .dir-texto p{margin:.4rem 0}
 .dir-card .dir-texto table{border-collapse:collapse;width:fit-content;max-width:100%;margin:.7rem auto;font-size:.8rem;display:block;overflow-x:auto;-webkit-overflow-scrolling:touch}
@@ -8617,7 +8623,11 @@ function dirCardHTML(d,i){
       if(figInText)htmlrz=htmlrz.replace(/(?:<p>\s*)?%%ENDOFIG%%(?:\s*<\/p>)?/g,figHTML);
       parts.push('<div class="dir-texto">'+htmlrz+'</div>');
     }
-    if(d.pts&&d.pts.length)parts.push('<ul>'+d.pts.map(function(p){return '<li>'+esc(p)+'</li>';}).join('')+'</ul>');
+    // Pontos-chave com cabeçalho próprio: sem ele a lista saía colada ao fim do
+    // resumo e, quando o resumo termina numa lista (ex.: "Armadilhas de prova"),
+    // virava visualmente uma continuação dela. mdInline (que já escapa) permite
+    // **negrito** nos bullets, como no resto do conteúdo.
+    if(d.pts&&d.pts.length)parts.push('<div class="dir-pts"><div class="dir-pts-h">🔑 Pontos-chave</div><ul>'+d.pts.map(function(p){return '<li>'+mdInline(String(p))+'</li>';}).join('')+'</ul></div>');
     if(figHTML&&!figInText)parts.push(figHTML); // sem marcador → após os pontos-chave (padrão)
     if(d.fluxogramas&&d.fluxogramas.length)parts.push(dirFluxoHTML(d.fluxogramas));
     body=parts.length?parts.join(''):'<div class="dir-empty-fmt">Resumo ainda não disponível.</div>';
@@ -12139,9 +12149,10 @@ function bindAdmSec(sec){
       var ptsEd=document.getElementById('adm-ref-wys-pts');
       var pts;
       if(ptsEd){
-        pts=[];var lis=ptsEd.querySelectorAll('li');
-        if(lis.length)lis.forEach(function(li){var t=(li.textContent||'').replace(/\s+/g,' ').trim();if(t)pts.push(t);});
-        else (ptsEd.innerText||ptsEd.textContent||'').split('\n').forEach(function(l){var t=l.replace(/^[-•*]\s*/,'').trim();if(t)pts.push(t);});
+        // htmlToMd (e não textContent) para preservar a formatação aplicada pela
+        // toolbar dentro do bullet: com textContent, negrito/itálico posto num
+        // ponto-chave era descartado silenciosamente ao salvar.
+        pts=htmlToMd(ptsEd).split('\n').map(function(l){return l.replace(/^[-•*]\s*/,'').trim();}).filter(Boolean);
       }else{
         pts=(((document.getElementById('adm-ref-pts')||{}).value)||'').split('\n').map(function(s){return s.trim();}).filter(Boolean);
       }
