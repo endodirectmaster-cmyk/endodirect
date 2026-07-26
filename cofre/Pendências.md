@@ -11,6 +11,10 @@ atualizado: 2026-07-25
   - Diabetes: UKPDS 33, EMPA-REG, LEADER, SUSTAIN-6, DECLARE-TIMI 58, CREDENCE, SURPASS-2, FLOW, SOUL.
   - Obesidade: STEP-1, SURMOUNT-1, SELECT, STEP-HFpEF, SURMOUNT-OSA, SURMOUNT-5, ESSENCE.
 - [ ] **Liberar em lote:** hoje é um clique por artigo. Se os 16 forem aprovados de uma vez, vale um "liberar todos os rascunhos desta área" no painel.
+- [ ] **🎨 Artigos como INFOGRÁFICO (pedido do Rodolpho, 2026-07-25, "tem como deixar o resumo dos artigos em formato de infográfico?"):** proposta desenhada e aprovada visualmente → artifact "Artigos como infográfico — proposta" (3 exemplos reais: SELECT, SURMOUNT-5, ESSENCE). A ficha é **gerada por código** a partir de um campo estruturado novo por artigo (população, braços, desfecho, valores dos 2 grupos, efeito + IC, segurança, prática) — não são 16 imagens. Os 3 formatos de resultado do acervo: (1) eventos com HR → **mini forest plot** em CSS; (2) contínuo head-to-head → barras; (3) dois co-primários → dois pares de barras.
+  - **⚠️ Exige reautorar os 16**: os números hoje só existem soltos dentro do texto. Conteúdo novo → precisa de nova revisão do professor.
+  - **Decisões pendentes do Rodolpho:** (a) o texto longo fica recolhido abaixo da ficha ou o infográfico substitui o resumo? (b) forest plot em todos que têm HR ou só nos cardiovasculares?
+- [ ] **Artigos NÃO levam flashcards nem mapas mentais (decisão do Rodolpho, 2026-07-25):** "os artigos sendo em infográfico não precisam de mapas mentais e flashcards". A ficha visual já é o material de revisão. Os **64 flashcards** escritos para o lote piloto ficam gravados no JSON (reversível, custo zero) mas **deixam de ser renderizados** quando `tipo==='artigo'` — ver `dirCardHTML` (~l.8604). Capítulos seguem com os seus normalmente.
 - [ ] **Mapas mentais dos artigos:** ficaram fora do lote piloto de propósito (só resumo + flashcards). Entram depois, se o formato for aprovado.
 - [ ] **Demais subespecialidades:** o piloto cobre só Diabetes e Obesidade. Tireoide, Osteometabolismo, Lípides e Neuroendocrinologia são os próximos candidatos naturais.
 
