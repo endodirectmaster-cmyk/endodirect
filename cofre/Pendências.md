@@ -15,7 +15,7 @@ atualizado: 2026-07-25
   - **⚠️ Exige reautorar os 16**: os números hoje só existem soltos dentro do texto. Conteúdo novo → precisa de nova revisão do professor.
   - **Decisões pendentes do Rodolpho:** (a) o texto longo fica recolhido abaixo da ficha ou o infográfico substitui o resumo? (b) forest plot em todos que têm HR ou só nos cardiovasculares?
 - [ ] **Artigos NÃO levam flashcards nem mapas mentais (decisão do Rodolpho, 2026-07-25):** "os artigos sendo em infográfico não precisam de mapas mentais e flashcards". A ficha visual já é o material de revisão. Os **64 flashcards** escritos para o lote piloto ficam gravados no JSON (reversível, custo zero) mas **deixam de ser renderizados** quando `tipo==='artigo'` — ver `dirCardHTML` (~l.8604). Capítulos seguem com os seus normalmente.
-- [ ] **Mapas mentais dos artigos:** ficaram fora do lote piloto de propósito (só resumo + flashcards). Entram depois, se o formato for aprovado.
+- [x] ~~**Mapas mentais dos artigos:** ficaram fora do lote piloto de propósito.~~ **DECIDIDO (2026-07-25): artigos não levam mapas mentais nem flashcards** — ver o item acima.
 - [ ] **Demais subespecialidades:** o piloto cobre só Diabetes e Obesidade. Tireoide, Osteometabolismo, Lípides e Neuroendocrinologia são os próximos candidatos naturais.
 
 ## Provas de residência (2026-07-21)
