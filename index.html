@@ -11365,10 +11365,15 @@ function admRefSecHTML(){
     if(!list.length){
       body=rhead+'<div class="dir-empty-fmt">Nenhum '+L.one+' neste tema. Clique em “+ '+L.nova+'” para criar o primeiro.</div>';
     }else{
+      // ARTIGOS não têm flashcards nem mapas mentais (a ficha visual já é o
+      // material de revisão): o seletor some também no painel, senão o professor
+      // veria abas que o aluno não tem.
+      var _fmtArt=(admRefMode==='res'&&admRefTipo==='artigo');
+      if(_fmtArt)refFormat='resumo';
       var fmts=[['resumo','📄 Resumo'],['flash','🃏 Flashcards'],['mapa','🧠 Mapas mentais']];
       var fmtAtivo=(refFormat==='flash'||refFormat==='mapa')?refFormat:'resumo';
       body=rhead
-        +'<div class="dir-fmt">'+fmts.map(function(f){return '<button class="dir-fmt-btn'+(fmtAtivo===f[0]?' on':'')+'" data-admref-fmt="'+f[0]+'">'+f[1]+'</button>';}).join('')+'</div>'
+        +(_fmtArt?'':('<div class="dir-fmt">'+fmts.map(function(f){return '<button class="dir-fmt-btn'+(fmtAtivo===f[0]?' on':'')+'" data-admref-fmt="'+f[0]+'">'+f[1]+'</button>';}).join('')+'</div>'))
         +list.map(function(x){
           // Flashcards e Mapas editam in-loco (não precisam de "Editar tudo").
           // O Resumo é só-leitura → ganha um botão ✏️ Editar no canto superior.
