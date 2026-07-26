@@ -11,7 +11,9 @@ atualizado: 2026-07-25
   - Diabetes: UKPDS 33, EMPA-REG, LEADER, SUSTAIN-6, DECLARE-TIMI 58, CREDENCE, SURPASS-2, FLOW, SOUL.
   - Obesidade: STEP-1, SURMOUNT-1, SELECT, STEP-HFpEF, SURMOUNT-OSA, SURMOUNT-5, ESSENCE.
 - [ ] **Liberar em lote:** hoje é um clique por artigo. Se os 16 forem aprovados de uma vez, vale um "liberar todos os rascunhos desta área" no painel.
-- [ ] **Mapas mentais dos artigos:** ficaram fora do lote piloto de propósito (só resumo + flashcards). Entram depois, se o formato for aprovado.
+- [x] **🎨 Artigos como INFOGRÁFICO — FEITO (2026-07-25).** Ficha visual gerada por código a partir do campo `info` (fonte: `scratchpad/artigos/info.js`); as 16 estão gravadas e conferidas por md5 contra a fonte local. Decisões tomadas: o texto corrido fica **recolhido** abaixo da ficha (as limitações não se perdem) e o **forest plot entra em todos os que têm HR** (10 dos 16). Ver [[Decisões]].
+- [x] **Artigos NÃO levam flashcards nem mapas mentais (decisão do Rodolpho, 2026-07-25):** "os artigos sendo em infográfico não precisam de mapas mentais e flashcards". A ficha visual já é o material de revisão. Os **64 flashcards** escritos para o lote piloto ficam gravados no JSON (reversível, custo zero) mas **deixam de ser renderizados** quando `tipo==='artigo'` — ver `dirCardHTML` (~l.8604). Capítulos seguem com os seus normalmente.
+- [x] ~~**Mapas mentais dos artigos:** ficaram fora do lote piloto de propósito.~~ **DECIDIDO (2026-07-25): artigos não levam mapas mentais nem flashcards** — ver o item acima.
 - [ ] **Demais subespecialidades:** o piloto cobre só Diabetes e Obesidade. Tireoide, Osteometabolismo, Lípides e Neuroendocrinologia são os próximos candidatos naturais.
 
 ## Provas de residência (2026-07-21)
