@@ -794,6 +794,87 @@ html[data-theme="light"] .dir-back{background:#f8f9fc;border-color:var(--bd2);co
 .dir-pts-h{font-size:.72rem;font-weight:700;letter-spacing:.04em;text-transform:uppercase;color:var(--t2);margin-bottom:.35rem}
 .dir-card .dir-pts ul{margin:0;padding-left:1.15rem}
 .dir-card .dir-pts li{font-size:.88rem;line-height:1.55;margin:.22rem 0}
+/* --- Ficha visual do artigo (infográfico) --------------------------------- */
+.dir-ficha{margin:-1.1rem -1.25rem 0;font-variant-numeric:tabular-nums}
+.dir-ficha .fx-sec{padding:1rem 1.25rem;border-top:1px solid var(--bd)}
+.dir-ficha .fx-lab{font-size:.63rem;letter-spacing:.13em;text-transform:uppercase;color:var(--t3);margin-bottom:.6rem;font-weight:600}
+.dir-ficha .fx-head{padding:1.05rem 1.25rem .95rem}
+.dir-ficha .fx-srcrow{display:flex;align-items:baseline;gap:.75rem;flex-wrap:wrap}
+.dir-ficha .fx-src{font-size:.68rem;letter-spacing:.05em;color:var(--blue2);font-weight:600}
+.dir-ficha .fx-fonte{margin-left:auto;white-space:nowrap}
+.dir-ficha .fx-title{font-size:1.45rem;font-weight:800;letter-spacing:-.02em;line-height:1.15;margin:.2rem 0 .35rem;color:var(--tx)}
+.dir-ficha .fx-q{font-size:.87rem;color:var(--t2);line-height:1.5;max-width:52ch}
+.dir-ficha .fx-chips{display:flex;flex-wrap:wrap;gap:.4rem;margin-top:.8rem}
+.dir-ficha .fx-chip{font-size:.7rem;background:var(--s2);border:1px solid var(--bd);border-radius:999px;padding:.2rem .6rem;color:var(--t2)}
+.dir-ficha .fx-chip b{color:var(--tx);font-weight:700}
+.dir-ficha .fx-arms{display:grid;grid-template-columns:1fr auto 1fr;gap:.6rem;align-items:stretch}
+.dir-ficha .fx-arm{border:1px solid var(--bd);border-radius:var(--rs);padding:.65rem .75rem;background:var(--s2);display:flex;flex-direction:column;gap:.15rem;min-width:0}
+.dir-ficha .fx-arm.int{border-color:var(--blue);background:var(--blue-l)}
+.dir-ficha .fx-arm-n{font-size:.64rem;color:var(--t3);letter-spacing:.08em;text-transform:uppercase;font-weight:600}
+.dir-ficha .fx-arm-d{font-size:.86rem;font-weight:600;line-height:1.35;color:var(--tx);overflow-wrap:anywhere}
+.dir-ficha .fx-arm-s{font-size:.72rem;color:var(--t2);line-height:1.4}
+.dir-ficha .fx-vs{align-self:center;font-size:.68rem;color:var(--t3);letter-spacing:.08em}
+.dir-ficha .fx-out-name{font-size:.9rem;font-weight:600;color:var(--tx);margin-bottom:.15rem;line-height:1.4}
+.dir-ficha .fx-out-dir{font-size:.68rem;color:var(--t3);margin-bottom:.75rem}
+.dir-ficha .fx-bars{display:flex;flex-direction:column;gap:.5rem}
+.dir-ficha .fx-bar-row{display:grid;grid-template-columns:minmax(6rem,auto) 1fr;gap:.7rem;align-items:center}
+.dir-ficha .fx-bar-lab{font-size:.72rem;color:var(--t2);text-align:right;overflow-wrap:anywhere;line-height:1.3}
+.dir-ficha .fx-bar-track{position:relative;height:1.9rem;background:var(--s2);border-radius:5px}
+.dir-ficha .fx-bar-fill{position:absolute;top:0;bottom:0;left:0;border-radius:5px;display:flex;align-items:center;justify-content:flex-end;padding-right:.55rem;min-width:2px}
+.dir-ficha .fx-bar-fill.int{background:linear-gradient(90deg,var(--blue),var(--blue2))}
+.dir-ficha .fx-bar-fill.ctl{background:var(--bd2)}
+.dir-ficha .fx-bar-val{font-size:.84rem;font-weight:700;color:#fff;white-space:nowrap}
+.dir-ficha .fx-bar-val.fora{position:absolute;top:50%;transform:translateY(-50%);color:var(--tx)}
+.dir-ficha .fx-delta{margin-top:.85rem;display:flex;align-items:baseline;gap:.5rem;flex-wrap:wrap;border-top:1px dashed var(--bd);padding-top:.75rem}
+.dir-ficha .fx-delta-k{font-size:.66rem;letter-spacing:.1em;text-transform:uppercase;color:var(--t3);font-weight:600}
+.dir-ficha .fx-delta-v{font-size:1.3rem;font-weight:800;color:var(--grn);letter-spacing:-.02em;line-height:1.1}
+.dir-ficha .fx-delta-p{font-size:.74rem;color:var(--t2)}
+.dir-ficha .fx-forest{margin-top:.9rem;border-top:1px dashed var(--bd);padding-top:.85rem}
+.dir-ficha .fx-forest-plot{position:relative;height:2.5rem;margin:.2rem .6rem 0}
+.dir-ficha .fx-forest-axis{position:absolute;left:0;right:0;top:1.1rem;height:1px;background:var(--bd2)}
+.dir-ficha .fx-forest-null{position:absolute;top:.1rem;bottom:.95rem;width:1px;background:var(--t3);left:50%}
+.dir-ficha .fx-forest-ci{position:absolute;top:1.1rem;height:1px;background:var(--grn)}
+.dir-ficha .fx-forest-ci::before,.dir-ficha .fx-forest-ci::after{content:"";position:absolute;top:-4px;width:1px;height:9px;background:var(--grn)}
+.dir-ficha .fx-forest-ci::before{left:0}
+.dir-ficha .fx-forest-ci::after{right:0}
+.dir-ficha .fx-forest-pt{position:absolute;top:.55rem;width:12px;height:12px;background:var(--grn);border-radius:2px;transform:translateX(-6px) rotate(45deg)}
+.dir-ficha .fx-forest-tick{position:absolute;top:1.45rem;font-size:.63rem;color:var(--t3);transform:translateX(-50%)}
+.dir-ficha .fx-forest-ends{display:flex;justify-content:space-between;gap:1rem;font-size:.64rem;color:var(--t3);margin-top:.15rem}
+.dir-ficha .fx-tiles{display:grid;grid-template-columns:repeat(auto-fit,minmax(8.5rem,1fr));gap:.55rem}
+.dir-ficha .fx-tile{border:1px solid var(--bd);border-radius:var(--rs);padding:.6rem .7rem;background:var(--s2);display:flex;flex-direction:column;gap:.1rem;min-width:0}
+.dir-ficha .fx-tile-v{font-size:1.02rem;font-weight:800;letter-spacing:-.02em;color:var(--tx)}
+.dir-ficha .fx-tile-v.good{color:var(--grn)}
+.dir-ficha .fx-tile-v.bad{color:var(--red)}
+.dir-ficha .fx-tile-v.warn{color:var(--gold)}
+.dir-ficha .fx-tile-k{font-size:.72rem;color:var(--t2);line-height:1.35}
+.dir-ficha .fx-band{border-radius:var(--rs);padding:.7rem .85rem;font-size:.84rem;line-height:1.55;display:flex;gap:.6rem;align-items:flex-start}
+.dir-ficha .fx-band-ico{line-height:1.4}
+.dir-ficha .fx-band.safe{background:var(--warn-bg);border:1px solid var(--warn-bd);color:var(--warn-tx)}
+.dir-ficha .fx-band.prat{background:var(--grn-l);border:1px solid var(--grn);color:var(--tx)}
+.dir-ficha .fx-band b{font-weight:700}
+.dir-mais{border-top:1px solid var(--bd);margin:0 -1.25rem -1.1rem}
+.dir-mais>summary{cursor:pointer;list-style:none;padding:.8rem 1.25rem;font-size:.8rem;color:var(--t2);background:var(--s2);display:flex;align-items:center;gap:.45rem}
+.dir-mais>summary::-webkit-details-marker{display:none}
+.dir-mais>summary::before{content:"▸";color:var(--t3);transition:transform .15s}
+.dir-mais[open]>summary::before{transform:rotate(90deg)}
+/* Recolhido, a barra é o último elemento do card: acompanha o arredondamento. */
+.dir-mais:not([open])>summary{border-radius:0 0 10px 10px}
+.dir-mais>summary:hover{color:var(--tx)}
+.dir-mais>summary:focus-visible{outline:2px solid var(--blue2);outline-offset:-2px}
+.dir-mais-body{padding:1rem 1.25rem}
+.dir-mais-body .dir-pts{margin-top:.9rem}
+@media (prefers-reduced-motion:reduce){.dir-mais>summary::before{transition:none}}
+@media (max-width:560px){
+  .dir-ficha .fx-head,.dir-ficha .fx-sec,.dir-mais-body{padding-left:.9rem;padding-right:.9rem}
+  .dir-mais>summary{padding-left:.9rem;padding-right:.9rem}
+  .dir-ficha .fx-title{font-size:1.2rem}
+  .dir-ficha .fx-arms{grid-template-columns:1fr;gap:.4rem}
+  .dir-ficha .fx-vs{justify-self:center}
+  .dir-ficha .fx-bar-row{grid-template-columns:1fr;gap:.2rem}
+  .dir-ficha .fx-bar-lab{text-align:left}
+  .dir-ficha .fx-bar-track{height:1.7rem}
+  .dir-ficha .fx-forest-ends{font-size:.6rem}
+}
 .dir-card .dir-texto{font-size:.88rem;color:var(--t2);line-height:1.62}
 .dir-card .dir-texto p{margin:.4rem 0}
 .dir-card .dir-texto table{border-collapse:collapse;width:fit-content;max-width:100%;margin:.7rem auto;font-size:.8rem;display:block;overflow-x:auto;-webkit-overflow-scrolling:touch}
@@ -8588,6 +8669,95 @@ function dirSubList(pred){
   Object.keys(seen).forEach(function(s){if(DIR_SUBS.indexOf(s)<0)out.push({sub:s,count:seen[s]});});
   return out;
 }
+// ---------------------------------------------------------------------------
+// FICHA VISUAL DO ARTIGO (infográfico)
+// Um trial tem sempre a mesma anatomia — população, dois braços, desfecho com
+// número, segurança, o que muda na prática. Em vez de 16 imagens, a ficha é
+// montada por código a partir de d.info (ver scratchpad/artigos/info.js para o
+// schema). Sem info, o artigo cai no texto corrido de sempre.
+// Posição no eixo log do forest plot (0,5 a 2,0; 1,0 = linha da unidade em 50%).
+function dirForestPos(x){
+  var v=Math.min(2,Math.max(.5,Number(x)||1));
+  return ((Math.log(v)/Math.LN10+0.30103)/0.60206)*100;
+}
+// "n = |17.604" → o trecho entre pipes sai em negrito (é o número que importa).
+function dirChipHTML(s){
+  return String(s||'').split('|').map(function(p,k){
+    return k%2?('<b>'+esc(p)+'</b>'):esc(p);
+  }).join('');
+}
+function dirFichaBarrasHTML(df){
+  if(!df.barras||!df.barras.length)return '';
+  var esc_=Number(df.escala)||100;
+  return '<div class="fx-bars">'+df.barras.map(function(b){
+    var pct=Math.max(0,Math.min(100,(Number(b.v)||0)/esc_*100));
+    // Barra estreita não comporta o número dentro: joga para fora, senão o
+    // valor fica ilegível ou vaza por cima do trilho.
+    var fora=pct<30;
+    return '<div class="fx-bar-row"><div class="fx-bar-lab">'+esc(b.n||'')+'</div>'
+      +'<div class="fx-bar-track"><div class="fx-bar-fill'+(b.i?' int':' ctl')+'" style="width:'+pct.toFixed(1)+'%">'
+      +(fora?'':'<span class="fx-bar-val">'+esc(b.t||'')+'</span>')+'</div>'
+      +(fora?'<span class="fx-bar-val fora" style="left:calc('+pct.toFixed(1)+'% + .5rem)">'+esc(b.t||'')+'</span>':'')
+      +'</div></div>';
+  }).join('')+'</div>';
+}
+function dirFichaForestHTML(g){
+  if(!g)return '';
+  var lo=dirForestPos(g.lo),hi=dirForestPos(g.hi),pt=dirForestPos(g.e);
+  var ticks=[[.5,'0,5'],[.7,'0,7'],[1,'1,0'],[1.5,'1,5'],[2,'2,0']];
+  return '<div class="fx-forest"><div class="fx-lab">Efeito e precisão</div>'
+    +'<div class="fx-forest-plot">'
+    +'<div class="fx-forest-axis"></div><div class="fx-forest-null"></div>'
+    +'<div class="fx-forest-ci" style="left:'+lo.toFixed(1)+'%;right:'+(100-hi).toFixed(1)+'%"></div>'
+    +'<div class="fx-forest-pt" style="left:'+pt.toFixed(1)+'%"></div>'
+    +ticks.map(function(t){return '<div class="fx-forest-tick" style="left:'+dirForestPos(t[0]).toFixed(1)+'%">'+t[1]+'</div>';}).join('')
+    +'</div>'
+    +'<div class="fx-forest-ends"><span>← favorece '+esc(g.fav||'a intervenção')+'</span><span>favorece '+esc(g.des||'o comparador')+' →</span></div>'
+  +'</div>';
+}
+function dirFichaHTML(info,d){
+  if(!info||typeof info!=='object')return '';
+  var p=[];
+  // Cabeçalho: periódico · ano · desenho, o nome do estudo e a pergunta.
+  // O link da fonte entra aqui — quando há ficha, ela SUBSTITUI o dir-card-top,
+  // que mostraria o mesmo periódico/ano duas vezes.
+  var lnk=(d&&safeHttpUrl(d.url))?('<a href="'+esc(d.url)+'" target="_blank" rel="noopener" class="ref-link fx-fonte">Fonte ↗</a>'):'';
+  p.push('<div class="fx-head">'
+    +'<div class="fx-srcrow"><div class="fx-src">'+esc([d&&d.fonte,d&&d.ano,info.desenho].filter(Boolean).join(' · '))+'</div>'+lnk+'</div>'
+    +'<h3 class="fx-title">'+esc(String((d&&d.tema)||'').replace(/\s*\(\d{4}\)\s*$/,''))+'</h3>'
+    +(info.pergunta?'<p class="fx-q">'+mdInline(String(info.pergunta))+'</p>':'')
+    +((info.chips&&info.chips.length)?('<div class="fx-chips">'+info.chips.map(function(c){return '<span class="fx-chip">'+dirChipHTML(c)+'</span>';}).join('')+'</div>'):'')
+  +'</div>');
+  // Braços.
+  if(info.bracos&&info.bracos.int&&info.bracos.ctl){
+    var A=info.bracos;
+    p.push('<div class="fx-sec"><div class="fx-lab">Braços</div><div class="fx-arms">'
+      +'<div class="fx-arm int"><div class="fx-arm-n">Intervenção</div><div class="fx-arm-d">'+esc(A.int.n||'')+'</div>'+(A.int.s?'<div class="fx-arm-s">'+esc(A.int.s)+'</div>':'')+'</div>'
+      +'<div class="fx-vs">vs</div>'
+      +'<div class="fx-arm"><div class="fx-arm-n">Comparador</div><div class="fx-arm-d">'+esc(A.ctl.n||'')+'</div>'+(A.ctl.s?'<div class="fx-arm-s">'+esc(A.ctl.s)+'</div>':'')+'</div>'
+    +'</div></div>');
+  }
+  // Desfechos: barras + medida de efeito + forest.
+  (info.desfechos||[]).forEach(function(df){
+    var ef=df.efeito?('<div class="fx-delta"><span class="fx-delta-k">'+esc(df.efeito.k||'')+'</span>'
+      +'<span class="fx-delta-v">'+esc(df.efeito.v||'')+'</span>'
+      +(df.efeito.p?'<span class="fx-delta-p">'+esc(df.efeito.p)+'</span>':'')+'</div>'):'';
+    p.push('<div class="fx-sec"><div class="fx-lab">'+esc(df.lab||'Desfecho')+'</div>'
+      +'<div class="fx-out-name">'+mdInline(String(df.nome||''))+'</div>'
+      +(df.dir?('<div class="fx-out-dir">'+(df.dir==='maior'?'↑ maior é melhor':'↓ menor é melhor')+'</div>'):'')
+      +dirFichaBarrasHTML(df)+ef+dirFichaForestHTML(df.forest)
+    +'</div>');
+  });
+  // Números secundários.
+  if(info.tiles&&info.tiles.length){
+    p.push('<div class="fx-sec"><div class="fx-lab">Outros achados</div><div class="fx-tiles">'
+      +info.tiles.map(function(t){return '<div class="fx-tile"><span class="fx-tile-v'+(t.t?(' '+esc(t.t)):'')+'">'+esc(t.v||'')+'</span><span class="fx-tile-k">'+mdInline(String(t.k||''))+'</span></div>';}).join('')
+    +'</div></div>');
+  }
+  if(info.seg)p.push('<div class="fx-sec"><div class="fx-band safe"><span class="fx-band-ico">'+esc(info.segIco||'⚠️')+'</span><span><b>Segurança —</b> '+mdInline(String(info.seg))+'</span></div></div>');
+  if(info.prat)p.push('<div class="fx-sec"><div class="fx-band prat"><span class="fx-band-ico">💡</span><span><b>O que muda na prática —</b> '+mdInline(String(info.prat))+'</span></div></div>');
+  return '<div class="dir-ficha">'+p.join('')+'</div>';
+}
 // Renderiza um card de diretriz no formato escolhido.
 function dirCardHTML(d,i){
   // Sem título por card: o tema (cabeçalho da aba) já é o título da seção.
@@ -8640,7 +8810,16 @@ function dirCardHTML(d,i){
     if(d.pts&&d.pts.length)parts.push('<div class="dir-pts"><div class="dir-pts-h">🔑 Pontos-chave</div><ul>'+d.pts.map(function(p){return '<li>'+mdInline(String(p))+'</li>';}).join('')+'</ul></div>');
     if(figHTML&&!figInText)parts.push(figHTML); // sem marcador → após os pontos-chave (padrão)
     if(d.fluxogramas&&d.fluxogramas.length)parts.push(dirFluxoHTML(d.fluxogramas));
-    body=parts.length?parts.join(''):'<div class="dir-empty-fmt">Resumo ainda não disponível.</div>';
+    // ARTIGO com ficha: o infográfico vem primeiro e o texto corrido desce para
+    // um <details>. As limitações de cada estudo são valiosas demais para sumir,
+    // mas quem só quer os números resolve na ficha, sem rolar.
+    var ficha=(dirTipoOf(d)==='artigo')?dirFichaHTML(d.info,d):'';
+    if(ficha){
+      head=''; // a ficha já traz periódico · ano · desenho e o link da fonte
+      body=ficha+(parts.length?('<details class="dir-mais"><summary>Ler o resumo completo e as limitações</summary><div class="dir-mais-body">'+parts.join('')+'</div></details>'):'');
+    }else{
+      body=parts.length?parts.join(''):'<div class="dir-empty-fmt">Resumo ainda não disponível.</div>';
+    }
   }
   return '<div class="dir-card">'+head+body+'</div>';
 }
@@ -8947,11 +9126,15 @@ function diretrizesViewHTML(){
     }
   }
   if(_degFmt)refFormat='resumo'; // Resumos na degustação: força o render do resumo (dirCardHTML usa refFormat global; flashcards/mapas travados)
+  // ARTIGOS não têm flashcards nem mapas mentais: a ficha visual já é o material
+  // de revisão. Sem seletor de formato, e o render é sempre o da ficha.
+  var _ehArtigo=(refPrivadoMode&&refTipoSel==='artigo');
+  if(_ehArtigo)refFormat='resumo';
   var fmts=[['resumo','📄 Resumo'],['flash','🃏 Flashcards'],['mapa','🧠 Mapas mentais']];
   var fmtAtivo=(refFormat==='flash'||refFormat==='mapa')?refFormat:'resumo';
   return head
-    +'<div class="dir-fmt">'+fmts.map(function(f){var lk=_degFmt&&f[0]!=='resumo';return '<button class="dir-fmt-btn'+(fmtAtivo===f[0]?' on':'')+(lk?' dir-fmt-locked':'')+'" data-dir-'+(lk?'fmtlock':'fmt')+'="'+f[0]+'">'+f[1]+(lk?' 🔒':'')+'</button>';}).join('')+'</div>'
-    +(_degFmt?'<div class="dir-deg-note">🔒 <b>Flashcards</b> e <b>mapas mentais</b> deste '+(refTipoSel==='artigo'?'artigo':'capítulo')+' são exclusivos para assinantes.</div>':'')
+    +(_ehArtigo?'':('<div class="dir-fmt">'+fmts.map(function(f){var lk=_degFmt&&f[0]!=='resumo';return '<button class="dir-fmt-btn'+(fmtAtivo===f[0]?' on':'')+(lk?' dir-fmt-locked':'')+'" data-dir-'+(lk?'fmtlock':'fmt')+'="'+f[0]+'">'+f[1]+(lk?' 🔒':'')+'</button>';}).join('')+'</div>'))
+    +((_degFmt&&!_ehArtigo)?'<div class="dir-deg-note">🔒 <b>Flashcards</b> e <b>mapas mentais</b> deste capítulo são exclusivos para assinantes.</div>':'')
     +list.map(function(x){return dirCardHTML(x.d,x.i);}).join('');
 }
 // Liga os eventos da visão dentro de um container (aluno ou pré-visualização).
