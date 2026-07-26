@@ -1,9 +1,18 @@
 ---
 tags: [cofre, pendencias]
-atualizado: 2026-07-21
+atualizado: 2026-07-25
 ---
 
 # Pendências
+
+## Artigos / trials nos Resumos (2026-07-25)
+- [ ] **AGUARDANDO REVISÃO DO RODOLPHO — 16 artigos piloto (9 Diabetes + 7 Obesidade) gravados como RASCUNHO.** Estão em `endodirect_global_state.payload.diretrizes` com `tipo:'artigo'`, `privado:true`, **`rascunho:true`** → aparecem **só no painel do professor**, em Resumos › Artigos. Nenhum aluno (assinante ou degustação) os vê — filtro no servidor, ver [[Dados e Supabase]]. Fonte de verdade do conteúdo: `scratchpad/artigos/trials.js` (conferido por md5, 16/16 idênticos ao banco). Revisão em página: `scratchpad/artigos/build_revisao.js` → artifact "Artigos (trials) — revisão antes de publicar".
+  - **Ação do professor:** conferir os números e clicar **👁 Liberar para os alunos** em cada artigo aprovado (o botão só remove o `rascunho`; o item já está com `privado:true` e cai na aba Resumos › Artigos).
+  - Diabetes: UKPDS 33, EMPA-REG, LEADER, SUSTAIN-6, DECLARE-TIMI 58, CREDENCE, SURPASS-2, FLOW, SOUL.
+  - Obesidade: STEP-1, SURMOUNT-1, SELECT, STEP-HFpEF, SURMOUNT-OSA, SURMOUNT-5, ESSENCE.
+- [ ] **Liberar em lote:** hoje é um clique por artigo. Se os 16 forem aprovados de uma vez, vale um "liberar todos os rascunhos desta área" no painel.
+- [ ] **Mapas mentais dos artigos:** ficaram fora do lote piloto de propósito (só resumo + flashcards). Entram depois, se o formato for aprovado.
+- [ ] **Demais subespecialidades:** o piloto cobre só Diabetes e Obesidade. Tireoide, Osteometabolismo, Lípides e Neuroendocrinologia são os próximos candidatos naturais.
 
 ## Provas de residência (2026-07-21)
 - [x] **29 USP-FMUSP/FUVEST 2023 — SUBIDAS** com `revisar_gabarito:true` (não havia gabarito oficial). **AÇÃO PENDENTE: revisar/confirmar o gabarito dessas 29.**

@@ -1,0 +1,627 @@
+<title>Artigos (trials) — revisão antes de publicar</title>
+<style>
+:root{
+  --ground:#f6f8f7; --surface:#ffffff; --ink:#12201d; --muted:#5b6b68;
+  --line:#dde5e3; --accent:#0f6e63; --accent-soft:#e6f2f0; --warn:#8d5c0f; --warn-soft:#fbf1de;
+  --serif:ui-serif,Georgia,"Iowan Old Style","Times New Roman",serif;
+  --sans:ui-sans-serif,system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;
+  --mono:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;
+}
+@media (prefers-color-scheme:dark){
+  :root{--ground:#0d1514;--surface:#15201e;--ink:#e4ecea;--muted:#93a5a1;
+        --line:#24322f;--accent:#57c4b2;--accent-soft:#122b28;--warn:#d9a852;--warn-soft:#2a2214;}
+}
+:root[data-theme="dark"]{--ground:#0d1514;--surface:#15201e;--ink:#e4ecea;--muted:#93a5a1;
+  --line:#24322f;--accent:#57c4b2;--accent-soft:#122b28;--warn:#d9a852;--warn-soft:#2a2214;}
+:root[data-theme="light"]{--ground:#f6f8f7;--surface:#ffffff;--ink:#12201d;--muted:#5b6b68;
+  --line:#dde5e3;--accent:#0f6e63;--accent-soft:#e6f2f0;--warn:#8d5c0f;--warn-soft:#fbf1de;}
+
+*{box-sizing:border-box}
+body{margin:0;background:var(--ground);color:var(--ink);font-family:var(--sans);
+  font-size:16px;line-height:1.6;-webkit-text-size-adjust:100%}
+.wrap{max-width:64rem;margin:0 auto;padding:2.5rem 1.25rem 5rem;display:flex;flex-direction:column;gap:2.5rem}
+
+/* ── cabeçalho ── */
+.top{display:flex;flex-direction:column;gap:.9rem;border-bottom:2px solid var(--ink);padding-bottom:1.6rem}
+.eyebrow{font-family:var(--mono);font-size:.72rem;letter-spacing:.14em;text-transform:uppercase;color:var(--accent);margin:0}
+h1{font-family:var(--serif);font-size:clamp(1.9rem,4.6vw,2.9rem);line-height:1.12;margin:0;text-wrap:balance;font-weight:600}
+.lede{margin:0;max-width:42rem;color:var(--muted);font-size:1.03rem}
+.stats{display:flex;flex-wrap:wrap;gap:.5rem 2rem;font-family:var(--mono);font-size:.8rem;
+  font-variant-numeric:tabular-nums;color:var(--muted);margin-top:.3rem}
+.stats b{color:var(--ink);font-weight:600}
+
+.aviso{background:var(--warn-soft);border-left:3px solid var(--warn);border-radius:0 8px 8px 0;
+  padding:1rem 1.15rem;display:flex;flex-direction:column;gap:.45rem}
+.aviso h2{margin:0;font-family:var(--sans);font-size:.92rem;font-weight:700;letter-spacing:.01em}
+.aviso p{margin:0;font-size:.9rem;color:var(--ink)}
+
+/* ── índice ── */
+.indices{display:grid;grid-template-columns:repeat(auto-fit,minmax(17rem,1fr));gap:1.75rem}
+.gt{font-family:var(--mono);font-size:.74rem;letter-spacing:.13em;text-transform:uppercase;
+  color:var(--muted);margin:0 0 .7rem;display:flex;align-items:center;gap:.5rem}
+.gc{background:var(--accent-soft);color:var(--accent);border-radius:99px;padding:.05rem .5rem;
+  font-variant-numeric:tabular-nums}
+.ix{list-style:none;margin:0;padding:0;display:flex;flex-direction:column}
+.ix li{display:flex;justify-content:space-between;align-items:baseline;gap:1rem;
+  padding:.4rem 0;border-bottom:1px solid var(--line)}
+.ix a{font-family:var(--serif);font-size:1rem;color:var(--ink);text-decoration:none;border-bottom:1px solid transparent}
+.ix a:hover,.ix a:focus-visible{color:var(--accent);border-bottom-color:var(--accent)}
+.ixr{font-family:var(--mono);font-size:.7rem;color:var(--muted);white-space:nowrap}
+
+/* ── fichas ── */
+.fichas{display:flex;flex-direction:column;gap:1.5rem}
+.ficha{background:var(--surface);border:1px solid var(--line);border-radius:12px;
+  padding:1.5rem 1.6rem;display:flex;flex-direction:column;gap:1.1rem;scroll-margin-top:1.5rem}
+.fh{display:flex;justify-content:space-between;align-items:flex-start;gap:1rem;flex-wrap:wrap}
+.fh h2{font-family:var(--serif);font-size:1.42rem;margin:0 0 .35rem;font-weight:600;letter-spacing:-.01em}
+.meta{margin:0;display:flex;align-items:center;gap:.55rem;flex-wrap:wrap}
+.chip{font-family:var(--mono);font-size:.68rem;text-transform:uppercase;letter-spacing:.08em;
+  padding:.15rem .55rem;border-radius:99px;background:var(--accent-soft);color:var(--accent);font-weight:600}
+.ref{font-family:var(--mono);font-size:.76rem;color:var(--muted);font-variant-numeric:tabular-nums}
+.doi{font-family:var(--mono);font-size:.75rem;color:var(--accent);text-decoration:none;
+  border:1px solid var(--line);border-radius:99px;padding:.35rem .8rem;white-space:nowrap}
+.doi:hover,.doi:focus-visible{border-color:var(--accent);background:var(--accent-soft)}
+
+.campos{display:flex;flex-direction:column;gap:.1rem}
+.campo{display:grid;grid-template-columns:9.5rem 1fr;gap:1rem;padding:.6rem 0;border-top:1px solid var(--line)}
+.campo:first-child{border-top:0;padding-top:0}
+.rot{font-family:var(--mono);font-size:.7rem;letter-spacing:.08em;text-transform:uppercase;
+  color:var(--muted);padding-top:.22rem}
+.val{font-size:.95rem}
+.campo.key{background:var(--accent-soft);border-radius:8px;padding:.75rem .9rem;margin:.35rem 0;border-top:0}
+.campo.key .rot{color:var(--accent);font-weight:700}
+.campo.key .val strong{font-family:var(--mono);font-size:.93em;font-variant-numeric:tabular-nums}
+.campo.pratica .rot{color:var(--ink)}
+.campo.pratica .val{font-style:italic}
+@media (max-width:36rem){
+  .campo{grid-template-columns:1fr;gap:.15rem}
+  .rot{padding-top:0}
+}
+
+/* ── blocos recolhíveis ── */
+details{border-top:1px solid var(--line);padding-top:.85rem}
+summary{cursor:pointer;font-family:var(--mono);font-size:.75rem;letter-spacing:.07em;
+  text-transform:uppercase;color:var(--accent);list-style:none;display:flex;align-items:center;gap:.45rem}
+summary::-webkit-details-marker{display:none}
+summary::before{content:"+";font-size:1rem;line-height:1;width:1rem;text-align:center}
+details[open] summary::before{content:"–"}
+summary:focus-visible{outline:2px solid var(--accent);outline-offset:3px;border-radius:4px}
+.hint{text-transform:none;letter-spacing:0;color:var(--muted)}
+.corpo{padding-top:.6rem;max-width:44rem}
+.corpo h3{font-family:var(--serif);font-size:1.08rem;margin:1.3rem 0 .35rem;font-weight:600}
+.corpo h3:first-child{margin-top:.4rem}
+.corpo h4{font-size:.9rem;margin:1rem 0 .3rem;font-weight:700}
+.corpo p{margin:.5rem 0}
+.corpo ul{margin:.5rem 0;padding-left:1.15rem}
+.corpo li{margin:.25rem 0}
+.corpo code{font-family:var(--mono);font-size:.88em;background:var(--accent-soft);padding:.1rem .3rem;border-radius:4px}
+.tw{overflow-x:auto;margin:.8rem 0}
+table{border-collapse:collapse;width:100%;font-size:.88rem;font-variant-numeric:tabular-nums}
+th,td{text-align:left;padding:.45rem .8rem;border-bottom:1px solid var(--line);white-space:nowrap}
+th{font-family:var(--mono);font-size:.7rem;text-transform:uppercase;letter-spacing:.06em;color:var(--muted)}
+
+.flashes{display:grid;grid-template-columns:repeat(auto-fit,minmax(17rem,1fr));gap:.8rem;padding-top:.7rem}
+.fc{border:1px solid var(--line);border-radius:8px;padding:.8rem .9rem;background:var(--ground)}
+.fc .q{margin:0 0 .4rem;font-weight:650;font-size:.88rem}
+.fc .a{margin:0;font-size:.86rem;color:var(--muted)}
+
+footer{border-top:1px solid var(--line);padding-top:1.25rem;color:var(--muted);font-size:.84rem}
+footer p{margin:.3rem 0;max-width:44rem}
+a{color:var(--accent)}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+</style>
+
+<div class="wrap">
+  <header class="top">
+    <p class="eyebrow">Endodirect · Resumos › Artigos</p>
+    <h1>16 estudos de Diabetes e Obesidade, prontos para sua revisão</h1>
+    <p class="lede">Lote piloto da nova aba <strong>Artigos</strong>. Cada ficha segue o mesmo formato que o aluno verá no app. Confira principalmente o campo <strong>Resultado-chave</strong> — é onde estão os números.</p>
+    <p class="stats"><span><b>16</b> artigos</span><span><b>9</b> Diabetes</span><span><b>7</b> Obesidade</span><span><b>64</b> flashcards</span><span>anos <b>1998–2025</b></span></p>
+  </header>
+
+  <div class="aviso">
+    <h2>Ainda não está publicado</h2>
+    <p>Nada disto foi gravado no banco — nenhum aluno vê este conteúdo por enquanto. A estrutura da aba já está no ar (vazia); assim que você aprovar, eu insiro os artigos e eles aparecem em Resumos → Artigos.</p>
+    <p>Se algum número estiver errado ou algum estudo faltar, me diga qual e eu corrijo antes de subir.</p>
+  </div>
+
+  <div class="indices">
+    <section class="grupo">
+  <h3 class="gt">Diabetes <span class="gc">9</span></h3>
+  <ol class="ix"><li><a href="#ukpds-33-1998">UKPDS 33 (1998)</a><span class="ixr">The Lancet · 1998</span></li><li><a href="#empa-reg-outcome-2015">EMPA-REG OUTCOME (2015)</a><span class="ixr">NEJM · 2015</span></li><li><a href="#leader-2016">LEADER (2016)</a><span class="ixr">NEJM · 2016</span></li><li><a href="#sustain-6-2016">SUSTAIN-6 (2016)</a><span class="ixr">NEJM · 2016</span></li><li><a href="#declare-timi-58-2019">DECLARE-TIMI 58 (2019)</a><span class="ixr">NEJM · 2019</span></li><li><a href="#credence-2019">CREDENCE (2019)</a><span class="ixr">NEJM · 2019</span></li><li><a href="#surpass-2-2021">SURPASS-2 (2021)</a><span class="ixr">NEJM · 2021</span></li><li><a href="#flow-2024">FLOW (2024)</a><span class="ixr">NEJM · 2024</span></li><li><a href="#soul-2025">SOUL (2025)</a><span class="ixr">NEJM · 2025</span></li></ol>
+</section>
+    <section class="grupo">
+  <h3 class="gt">Obesidade <span class="gc">7</span></h3>
+  <ol class="ix"><li><a href="#step-1-2021">STEP-1 (2021)</a><span class="ixr">NEJM · 2021</span></li><li><a href="#surmount-1-2022">SURMOUNT-1 (2022)</a><span class="ixr">NEJM · 2022</span></li><li><a href="#select-2023">SELECT (2023)</a><span class="ixr">NEJM · 2023</span></li><li><a href="#step-hfpef-2023">STEP-HFpEF (2023)</a><span class="ixr">NEJM · 2023</span></li><li><a href="#surmount-osa-2024">SURMOUNT-OSA (2024)</a><span class="ixr">NEJM · 2024</span></li><li><a href="#surmount-5-2025">SURMOUNT-5 (2025)</a><span class="ixr">NEJM · 2025</span></li><li><a href="#essence-2025">ESSENCE (2025)</a><span class="ixr">NEJM · 2025</span></li></ol>
+</section>
+  </div>
+
+  <main class="fichas">
+    <article class="ficha" id="ukpds-33-1998">
+  <header class="fh">
+    <div>
+      <h2>UKPDS 33 (1998)</h2>
+      <p class="meta"><span class="chip diabetes">Diabetes</span><span class="ref">The Lancet · 1998</span></p>
+    </div>
+    <a class="doi" href="https://doi.org/10.1016/S0140-6736(98)07019-6" target="_blank" rel="noopener">Conferir publicação ↗</a>
+  </header>
+  <div class="campos"><div class="campo"><div class="rot">População</div><div class="val">Em DM2 <strong>recém-diagnosticado</strong> (n=3.867), o controle glicêmico intensivo reduz complicações?</div></div><div class="campo"><div class="rot">Intervenção</div><div class="val">Intensivo com <strong>sulfonilureia ou insulina</strong> (alvo glicemia de jejum &lt;108 mg/dL) vs <strong>convencional</strong> (dieta, medicação só se sintomas/glicemia &gt;270 mg/dL). Mediana de 10 anos.</div></div><div class="campo"><div class="rot">Desfecho primário</div><div class="val">Três compostos: qualquer desfecho relacionado ao diabetes, mortes relacionadas ao diabetes e morte por qualquer causa.</div></div><div class="campo key"><div class="rot">Resultado-chave</div><div class="val">HbA1c média <strong>7,0% vs 7,9%</strong>. Qualquer desfecho relacionado ao diabetes <strong>RR 0,88</strong> (IC95% 0,79–0,99; p=0,029) — redução de 12%, <strong>dirigida pelo componente microvascular</strong> (RR 0,75; p=0,0099, sobretudo fotocoagulação retiniana). IAM RR 0,84 (p=0,052) — <strong>não significativo</strong> no estudo original.</div></div><div class="campo"><div class="rot">Segurança</div><div class="val">Mais <strong>hipoglicemia</strong> e <strong>ganho de peso</strong> no braço intensivo (maior com insulina). Sem excesso de mortalidade.</div></div><div class="campo pratica"><div class="rot">Na prática</div><div class="val">Fundou a ideia de que <em>controle glicêmico protege a microvasculatura</em>. O benefício macrovascular só apareceu no <strong>seguimento pós-estudo de 10 anos (UKPDS 80, 2008)</strong> — o <strong>efeito legado/memória metabólica</strong> —, base para tratar o DM2 de forma agressiva <strong>desde o diagnóstico</strong>.</div></div></div>
+  <details>
+    <summary>Resumo completo <span class="hint">(o texto que o aluno lê)</span></summary>
+    <div class="corpo"><h3>Por que este estudo importa</h3>
+<p>O UKPDS é o <strong>estudo fundador do tratamento do DM2</strong>. Antes dele não havia prova randomizada de que baixar a glicemia mudasse desfechos clínicos nesse tipo de diabetes (o DCCT havia respondido isso para o DM1, em 1993).</p>
+<h3>Desenho</h3>
+<ul><li><strong>3.867 adultos</strong> com DM2 <strong>recém-diagnosticado</strong>, após 3 meses de dieta.</li><li>Randomizados para <strong>controle intensivo</strong> (sulfonilureia — clorpropamida, glibenclamida — ou insulina) ou <strong>convencional</strong> (dieta isolada, com fármaco apenas se hiperglicemia sintomática).</li><li>Mediana de seguimento de <strong>10 anos</strong>.</li></ul>
+<h3>Resultados</h3>
+<ul><li>Separação glicêmica modesta e realista: <strong>HbA1c 7,0% no intensivo vs 7,9% no convencional</strong>.</li><li><strong>Qualquer desfecho relacionado ao diabetes: RR 0,88</strong> (IC95% 0,79–0,99; p=0,029).</li><li>O ganho concentrou-se no <strong>desfecho microvascular: RR 0,75</strong> (p=0,0099) — em boa parte menos necessidade de <strong>fotocoagulação retiniana</strong>.</li><li><strong>IAM: RR 0,84 (p=0,052)</strong> — a famosa &quot;quase significância&quot;, que na época alimentou o debate sobre haver ou não proteção macrovascular.</li><li>Sem diferença em mortalidade <strong>durante</strong> o estudo.</li></ul>
+<h3>Segurança</h3>
+<p><strong>Hipoglicemia</strong> e <strong>ganho de peso</strong> foram maiores no braço intensivo — mais pronunciados com insulina do que com sulfonilureia. É a contrapartida clássica das terapias glicocêntricas antigas.</p>
+<h3>O legado (UKPDS 80, 2008)</h3>
+<p>Dez anos após o fim da randomização — com as curvas de HbA1c já <strong>sobrepostas</strong> entre os grupos — o braço originalmente intensivo manteve redução de <strong>IAM (15%)</strong> e <strong>morte por qualquer causa (13%)</strong>. É o <strong>efeito legado</strong> (ou <em>memória metabólica</em>): o controle precoce deixa um benefício que persiste mesmo quando o controle posterior se iguala.</p>
+<h3>O que muda na prática</h3>
+<ul><li>Justifica <strong>tratar bem desde o diagnóstico</strong>, e não &quot;esperar piorar&quot;.</li><li>Explica por que as diretrizes recomendam <strong>metas mais rígidas em quem tem doença curta e pouca comorbidade</strong>, e mais frouxas em idosos frágeis com longa duração — nesse grupo, os estudos posteriores (ACCORD, ADVANCE, VADT) não repetiram o benefício e o ACCORD mostrou <strong>dano</strong> com metas muito agressivas.</li><li>Atenção ao interpretar: o UKPDS <strong>não</strong> prova benefício macrovascular imediato. Esse é um erro clássico de prova.</li></ul></div>
+  </details>
+  <details>
+    <summary>4 flashcards</summary>
+    <div class="flashes"><div class="fc"><p class="q">Qual foi a diferença de HbA1c entre os braços do UKPDS 33 e o principal desfecho beneficiado?</p><p class="a">HbA1c 7,0% (intensivo) vs 7,9% (convencional). O benefício foi <strong>microvascular</strong> (RR 0,75), principalmente menos fotocoagulação retiniana; o desfecho composto &quot;qualquer evento relacionado ao diabetes&quot; caiu 12% (RR 0,88).</p></div><div class="fc"><p class="q">O UKPDS 33 demonstrou redução significativa de infarto durante o estudo?</p><p class="a">Não. IAM teve RR 0,84 com p=0,052 — não significativo. A redução de IAM (15%) só apareceu no seguimento observacional de 10 anos (UKPDS 80, 2008).</p></div><div class="fc"><p class="q">O que é &quot;efeito legado&quot; (memória metabólica) no UKPDS?</p><p class="a">A persistência do benefício do controle glicêmico precoce mesmo depois que as HbA1c dos grupos se igualaram — sustenta tratar o DM2 de forma intensiva desde o diagnóstico.</p></div><div class="fc"><p class="q">Quais os efeitos adversos mais frequentes no braço intensivo do UKPDS?</p><p class="a">Hipoglicemia e ganho de peso, mais acentuados com insulina do que com sulfonilureia.</p></div></div>
+  </details>
+</article>
+<article class="ficha" id="empa-reg-outcome-2015">
+  <header class="fh">
+    <div>
+      <h2>EMPA-REG OUTCOME (2015)</h2>
+      <p class="meta"><span class="chip diabetes">Diabetes</span><span class="ref">NEJM · 2015</span></p>
+    </div>
+    <a class="doi" href="https://doi.org/10.1056/NEJMoa1504720" target="_blank" rel="noopener">Conferir publicação ↗</a>
+  </header>
+  <div class="campos"><div class="campo"><div class="rot">População</div><div class="val">Em DM2 com <strong>doença cardiovascular estabelecida</strong> (n=7.020), a empagliflozina é segura — e talvez benéfica — do ponto de vista cardiovascular?</div></div><div class="campo"><div class="rot">Intervenção</div><div class="val"><strong>Empagliflozina 10 mg ou 25 mg</strong> vs <strong>placebo</strong>, somadas ao tratamento padrão. Mediana de 3,1 anos.</div></div><div class="campo"><div class="rot">Desfecho primário</div><div class="val"><strong>MACE-3</strong>: morte cardiovascular, IAM não fatal ou AVC não fatal.</div></div><div class="campo key"><div class="rot">Resultado-chave</div><div class="val">MACE <strong>10,5% vs 12,1%</strong> — <strong>HR 0,86</strong> (IC95% 0,74–0,99; p=0,04 para superioridade). O ganho veio quase todo da <strong>morte cardiovascular: 3,7% vs 5,9% (HR 0,62)</strong>. <strong>Hospitalização por insuficiência cardíaca HR 0,65</strong> e <strong>morte por qualquer causa HR 0,68</strong>.</div></div><div class="campo"><div class="rot">Segurança</div><div class="val">Aumento de <strong>infecção genital micótica</strong> (6,4% vs 1,8%). Sem excesso de cetoacidose, fratura ou amputação nesta coorte.</div></div><div class="campo pratica"><div class="rot">Na prática</div><div class="val">Primeiro antidiabético a <strong>reduzir mortalidade cardiovascular</strong>. Inaugurou a era dos iSGLT2 e deslocou a escolha do 2º fármaco de &quot;quanto baixa a A1c&quot; para &quot;qual protege o coração e o rim&quot;.</div></div></div>
+  <details>
+    <summary>Resumo completo <span class="hint">(o texto que o aluno lê)</span></summary>
+    <div class="corpo"><h3>Contexto</h3>
+<p>Depois da rosiglitazona, a FDA passou a exigir <strong>estudos de segurança cardiovascular</strong> para todo antidiabético novo. O EMPA-REG nasceu para provar <strong>não inferioridade</strong> — e acabou provando superioridade, com um resultado que reorganizou a diabetologia.</p>
+<h3>Desenho</h3>
+<ul><li><strong>7.020 adultos</strong> com DM2 e <strong>doença cardiovascular aterosclerótica estabelecida</strong>.</li><li><strong>Empagliflozina 10 mg ou 25 mg</strong> (agrupadas na análise primária) vs <strong>placebo</strong>, sobre terapia padrão.</li><li>Mediana de seguimento: <strong>3,1 anos</strong>.</li></ul>
+<h3>Resultados</h3>
+<ul><li><strong>MACE-3: 10,5% vs 12,1% — HR 0,86</strong> (IC95% 0,74–0,99); p=0,04 para superioridade.</li><li><strong>Morte cardiovascular: 3,7% vs 5,9% — HR 0,62</strong> (IC95% 0,49–0,77). É o componente que carrega o resultado.</li><li><strong>Morte por qualquer causa: HR 0,68</strong>.</li><li><strong>Hospitalização por insuficiência cardíaca: HR 0,65</strong>.</li><li><strong>IAM não fatal e AVC não fatal</strong>: sem redução significativa — o AVC chegou a ter tendência numérica desfavorável (HR 1,18; IC cruzando 1).</li></ul>
+<h3>O padrão do achado</h3>
+<p>O benefício apareceu <strong>cedo</strong> (curvas separam em semanas) e <strong>não</strong> no território aterotrombótico clássico. Isso aponta para mecanismos <strong>hemodinâmicos e metabólicos</strong> — natriurese, redução de pré e pós-carga, queda da pressão arterial e do peso, mudança do substrato energético miocárdico — e não para regressão de placa. É a origem do conceito de que <strong>iSGLT2 é fármaco cardiorrenal</strong> que também baixa glicemia.</p>
+<h3>Segurança</h3>
+<ul><li><strong>Infecção genital micótica</strong>: 6,4% vs 1,8% — o evento adverso característico da classe.</li><li>Sem aumento de infecção urinária grave, fratura ou amputação nesta coorte (a sinalização de amputação veio depois, no CANVAS, com canagliflozina, e não se confirmou em estudos subsequentes).</li><li><strong>Cetoacidose euglicêmica</strong> é rara, mas é o evento que exige atenção: suspender em jejum prolongado, cirurgia ou doença aguda.</li></ul>
+<h3>O que muda na prática</h3>
+<ul><li>Em <strong>DM2 com doença aterosclerótica estabelecida</strong>, iSGLT2 passou a ser escolha preferencial <strong>independentemente da HbA1c</strong>.</li><li>Junto com o DAPA-HF e o EMPEROR, abriu caminho para os iSGLT2 na <strong>insuficiência cardíaca com ou sem diabetes</strong>.</li><li>Ponto de prova frequente: o desfecho que sustenta o EMPA-REG é <strong>morte cardiovascular</strong>, não infarto.</li></ul></div>
+  </details>
+  <details>
+    <summary>4 flashcards</summary>
+    <div class="flashes"><div class="fc"><p class="q">Qual componente do MACE explicou o resultado do EMPA-REG OUTCOME?</p><p class="a">Morte cardiovascular (3,7% vs 5,9%; HR 0,62). IAM e AVC não fatais não foram significativamente reduzidos.</p></div><div class="fc"><p class="q">Quais os HR de hospitalização por IC e de morte por qualquer causa no EMPA-REG?</p><p class="a">Hospitalização por insuficiência cardíaca HR 0,65; morte por qualquer causa HR 0,68.</p></div><div class="fc"><p class="q">Qual o evento adverso mais característico observado com empagliflozina no EMPA-REG?</p><p class="a">Infecção genital micótica (6,4% vs 1,8% com placebo).</p></div><div class="fc"><p class="q">Por que se atribui o benefício do EMPA-REG a mecanismos hemodinâmicos e não antiateroscleróticos?</p><p class="a">Porque as curvas separaram precocemente (semanas) e o ganho foi em morte CV e insuficiência cardíaca, não em eventos aterotrombóticos (IAM/AVC).</p></div></div>
+  </details>
+</article>
+<article class="ficha" id="leader-2016">
+  <header class="fh">
+    <div>
+      <h2>LEADER (2016)</h2>
+      <p class="meta"><span class="chip diabetes">Diabetes</span><span class="ref">NEJM · 2016</span></p>
+    </div>
+    <a class="doi" href="https://doi.org/10.1056/NEJMoa1603827" target="_blank" rel="noopener">Conferir publicação ↗</a>
+  </header>
+  <div class="campos"><div class="campo"><div class="rot">População</div><div class="val">Em DM2 com <strong>alto risco cardiovascular</strong> (n=9.340; ~81% com doença CV estabelecida), a liraglutida reduz eventos cardiovasculares?</div></div><div class="campo"><div class="rot">Intervenção</div><div class="val"><strong>Liraglutida até 1,8 mg/dia SC</strong> vs <strong>placebo</strong>, sobre terapia padrão. Mediana de 3,8 anos.</div></div><div class="campo"><div class="rot">Desfecho primário</div><div class="val"><strong>MACE-3</strong>: morte cardiovascular, IAM não fatal ou AVC não fatal.</div></div><div class="campo key"><div class="rot">Resultado-chave</div><div class="val">MACE <strong>13,0% vs 14,9%</strong> — <strong>HR 0,87</strong> (IC95% 0,78–0,97; p=0,01 para superioridade). <strong>Morte cardiovascular HR 0,78</strong> e <strong>morte por qualquer causa HR 0,85</strong>. Desfecho renal composto <strong>HR 0,78</strong>, dirigido por <strong>macroalbuminúria nova</strong>.</div></div><div class="campo"><div class="rot">Segurança</div><div class="val"><strong>Eventos gastrointestinais</strong> (náusea) foram a causa mais comum de descontinuação. Mais <strong>colelitíase</strong>. <strong>Sem</strong> aumento de pancreatite ou de carcinoma medular de tireoide.</div></div><div class="campo pratica"><div class="rot">Na prática</div><div class="val">Primeiro GLP-1 a demonstrar benefício cardiovascular. Estabeleceu os GLP-1 como opção preferencial na <strong>doença aterosclerótica</strong>, com padrão de benefício diferente do dos iSGLT2 (aterosclerótico e mais tardio).</div></div></div>
+  <details>
+    <summary>Resumo completo <span class="hint">(o texto que o aluno lê)</span></summary>
+    <div class="corpo"><h3>Desenho</h3>
+<ul><li><strong>9.340 adultos</strong> com DM2 e alto risco cardiovascular: idade ≥50 anos com <strong>doença CV, cerebrovascular, arterial periférica, DRC ≥3 ou IC</strong> (≈81% em prevenção secundária), ou ≥60 anos com fatores de risco.</li><li><strong>Liraglutida titulada até 1,8 mg/dia</strong> vs <strong>placebo</strong>, sobre o tratamento padrão.</li><li>Mediana de seguimento: <strong>3,8 anos</strong>.</li></ul>
+<h3>Resultados</h3>
+<ul><li><strong>MACE-3: 13,0% vs 14,9% — HR 0,87</strong> (IC95% 0,78–0,97); p=0,01 para superioridade e p&lt;0,001 para não inferioridade.</li><li><strong>Morte cardiovascular: 4,7% vs 6,0% — HR 0,78</strong> (IC95% 0,66–0,93).</li><li><strong>Morte por qualquer causa: HR 0,85</strong> (IC95% 0,74–0,97).</li><li>IAM não fatal (HR 0,88) e AVC não fatal (HR 0,89): reduções numéricas <strong>sem significância isolada</strong>.</li><li><strong>Desfecho renal composto: HR 0,78</strong> — quase todo explicado por <strong>surgimento de macroalbuminúria</strong>, sem efeito claro sobre queda de TFG ou diálise.</li></ul>
+<h3>O padrão do achado</h3>
+<p>Diferentemente do EMPA-REG, as curvas do LEADER <strong>separaram tardiamente</strong> (após ~12–18 meses) e o benefício distribuiu-se pelos componentes <strong>ateroscleróticos</strong>. Isso sustenta o modelo de que <strong>GLP-1 age sobre a placa</strong> (efeito anti-inflamatório e antiaterogênico, além de peso, pressão e glicemia), enquanto <strong>iSGLT2 age sobre a hemodinâmica</strong>. Daí a lógica clínica de que as classes são <strong>complementares</strong>, não intercambiáveis.</p>
+<h3>Segurança</h3>
+<ul><li><strong>Náusea e outros eventos gastrointestinais</strong>: causa mais frequente de descontinuação.</li><li><strong>Colelitíase</strong> mais frequente — efeito de classe, ligado à perda de peso e à redução da motilidade da vesícula.</li><li><strong>Pancreatite aguda</strong>: sem excesso (na verdade numericamente menor).</li><li><strong>Carcinoma medular de tireoide</strong>: sem sinal em humanos; a contraindicação em NEM2/CMT familiar vem de roedores.</li></ul>
+<h3>O que muda na prática</h3>
+<ul><li>Em <strong>DM2 com doença aterosclerótica estabelecida</strong>, GLP-1 e iSGLT2 são as classes com desfecho comprovado — a escolha se orienta pelo fenótipo: <strong>IC ou DRC → iSGLT2</strong>; <strong>aterosclerose predominante, obesidade → GLP-1</strong>.</li><li>O benefício renal dos GLP-1 no LEADER é <strong>de albuminúria</strong>; a prova de proteção renal &quot;dura&quot; só veio com o <strong>FLOW (2024)</strong>.</li></ul></div>
+  </details>
+  <details>
+    <summary>4 flashcards</summary>
+    <div class="flashes"><div class="fc"><p class="q">Qual o resultado primário do LEADER e o HR de morte cardiovascular?</p><p class="a">MACE-3 13,0% vs 14,9% (HR 0,87; p=0,01 para superioridade); morte cardiovascular HR 0,78 e morte por qualquer causa HR 0,85.</p></div><div class="fc"><p class="q">Como difere o padrão temporal do benefício entre LEADER (GLP-1) e EMPA-REG (iSGLT2)?</p><p class="a">No LEADER as curvas separam tardiamente (~12–18 meses) com benefício aterosclerótico; no EMPA-REG separam em semanas com benefício em morte CV e insuficiência cardíaca (hemodinâmico).</p></div><div class="fc"><p class="q">O desfecho renal do LEADER foi dirigido por qual componente?</p><p class="a">Pelo surgimento de macroalbuminúria — sem efeito claro sobre queda de TFG ou terapia renal substitutiva.</p></div><div class="fc"><p class="q">A liraglutida aumentou pancreatite ou câncer medular de tireoide no LEADER?</p><p class="a">Não. Houve aumento de colelitíase e de eventos gastrointestinais; pancreatite não foi mais frequente e não houve sinal de CMT em humanos.</p></div></div>
+  </details>
+</article>
+<article class="ficha" id="sustain-6-2016">
+  <header class="fh">
+    <div>
+      <h2>SUSTAIN-6 (2016)</h2>
+      <p class="meta"><span class="chip diabetes">Diabetes</span><span class="ref">NEJM · 2016</span></p>
+    </div>
+    <a class="doi" href="https://doi.org/10.1056/NEJMoa1607141" target="_blank" rel="noopener">Conferir publicação ↗</a>
+  </header>
+  <div class="campos"><div class="campo"><div class="rot">População</div><div class="val">Em DM2 de alto risco cardiovascular (n=3.297), a semaglutida subcutânea é <strong>cardiovascularmente segura</strong>?</div></div><div class="campo"><div class="rot">Intervenção</div><div class="val"><strong>Semaglutida SC 0,5 mg ou 1,0 mg/semana</strong> vs <strong>placebo</strong>. Seguimento de <strong>104 semanas</strong>.</div></div><div class="campo"><div class="rot">Desfecho primário</div><div class="val"><strong>MACE-3</strong> (morte cardiovascular, IAM não fatal, AVC não fatal), com desenho de <strong>não inferioridade</strong>.</div></div><div class="campo key"><div class="rot">Resultado-chave</div><div class="val">MACE <strong>6,6% vs 8,9%</strong> — <strong>HR 0,74</strong> (IC95% 0,58–0,95); p&lt;0,001 para não inferioridade. A redução foi dirigida por <strong>AVC não fatal (HR 0,61)</strong>. ⚠️ Estudo <strong>de segurança, com poder limitado</strong>: a superioridade é <em>nominal</em>.</div></div><div class="campo"><div class="rot">Segurança</div><div class="val">⚠️ <strong>Complicações de retinopatia diabética aumentaram: 3,0% vs 1,8% — HR 1,76</strong> (IC95% 1,11–2,78). Mais eventos gastrointestinais e descontinuação por náusea.</div></div><div class="campo pratica"><div class="rot">Na prática</div><div class="val">Consolidou o benefício CV dos GLP-1, mas trouxe o alerta da retinopatia: em quem tem <strong>retinopatia proliferativa ou muito avançada e HbA1c muito alta</strong>, avaliar o fundo de olho e evitar quedas glicêmicas abruptas.</div></div></div>
+  <details>
+    <summary>Resumo completo <span class="hint">(o texto que o aluno lê)</span></summary>
+    <div class="corpo"><h3>Desenho</h3>
+<ul><li><strong>3.297 adultos</strong> com DM2 e alto risco cardiovascular (≥50 anos com doença CV/DRC estabelecida, ou ≥60 anos com fatores de risco).</li><li><strong>Semaglutida SC 0,5 mg ou 1,0 mg por semana</strong> vs <strong>placebo</strong>.</li><li>Seguimento de <strong>104 semanas</strong>. Desenho <strong>pré-aprovação, de não inferioridade</strong>, com número relativamente pequeno de eventos.</li></ul>
+<h3>Resultados</h3>
+<ul><li><strong>MACE-3: 6,6% vs 8,9% — HR 0,74</strong> (IC95% 0,58–0,95); p&lt;0,001 para não inferioridade.</li><li><strong>AVC não fatal: HR 0,61</strong> — o componente que dirige o resultado.</li><li><strong>IAM não fatal: HR 0,74</strong> (não significativo isoladamente).</li><li><strong>Morte cardiovascular: HR 0,98</strong> — praticamente neutra, ao contrário de LEADER e EMPA-REG.</li><li>Redução de nova ou piora de <strong>nefropatia: HR 0,64</strong>, novamente à custa de <strong>macroalbuminúria</strong>.</li></ul>
+<p>⚠️ <strong>Como interpretar</strong>: o SUSTAIN-6 foi desenhado para <em>segurança</em>, não para provar superioridade. O IC95% de 0,58–0,95 é largo e o número de eventos, pequeno. A confirmação robusta do benefício CV da semaglutida veio depois — no <strong>SELECT</strong> (obesidade sem diabetes) e no <strong>SOUL</strong> (semaglutida oral).</p>
+<h3>O achado da retinopatia</h3>
+<p><strong>Complicações de retinopatia diabética</strong> (hemorragia vítrea, cegueira, necessidade de fotocoagulação ou anti-VEGF): <strong>3,0% vs 1,8% — HR 1,76</strong> (IC95% 1,11–2,78).</p>
+<p>A leitura mais aceita é a de <strong>piora precoce por melhora glicêmica rápida</strong> — o mesmo fenômeno já descrito no DCCT com insulinização intensiva — e não de um efeito tóxico direto da droga: o risco concentrou-se em quem tinha <strong>retinopatia preexistente</strong> e <strong>HbA1c basal alta com queda acentuada</strong> nas primeiras 16 semanas.</p>
+<h3>Segurança geral</h3>
+<p>Eventos <strong>gastrointestinais</strong> (náusea, vômito, diarreia) foram a principal causa de descontinuação — padrão de classe.</p>
+<h3>O que muda na prática</h3>
+<ul><li>Antes de iniciar GLP-1 potente em paciente com <strong>HbA1c muito elevada</strong>, vale documentar o <strong>fundo de olho</strong>; havendo <strong>retinopatia proliferativa</strong>, tratar a retina e evitar redução glicêmica abrupta.</li><li>Não é contraindicação — é vigilância.</li></ul></div>
+  </details>
+  <details>
+    <summary>4 flashcards</summary>
+    <div class="flashes"><div class="fc"><p class="q">Qual o achado de segurança mais importante do SUSTAIN-6?</p><p class="a">Aumento de complicações de retinopatia diabética: 3,0% vs 1,8% (HR 1,76; IC95% 1,11–2,78).</p></div><div class="fc"><p class="q">Qual componente do MACE dirigiu o resultado do SUSTAIN-6?</p><p class="a">AVC não fatal (HR 0,61). A morte cardiovascular foi neutra (HR 0,98).</p></div><div class="fc"><p class="q">Por que a &quot;superioridade&quot; do SUSTAIN-6 deve ser lida com cautela?</p><p class="a">Porque era um estudo de não inferioridade, pré-aprovação, com poucos eventos e IC largo (0,58–0,95) — a superioridade é nominal. A confirmação veio com SELECT e SOUL.</p></div><div class="fc"><p class="q">Qual a explicação mais aceita para a piora de retinopatia com semaglutida?</p><p class="a">Piora precoce induzida por queda glicêmica rápida em quem já tinha retinopatia e HbA1c alta — o mesmo fenômeno do DCCT — e não toxicidade direta.</p></div></div>
+  </details>
+</article>
+<article class="ficha" id="declare-timi-58-2019">
+  <header class="fh">
+    <div>
+      <h2>DECLARE-TIMI 58 (2019)</h2>
+      <p class="meta"><span class="chip diabetes">Diabetes</span><span class="ref">NEJM · 2019</span></p>
+    </div>
+    <a class="doi" href="https://doi.org/10.1056/NEJMoa1812389" target="_blank" rel="noopener">Conferir publicação ↗</a>
+  </header>
+  <div class="campos"><div class="campo"><div class="rot">População</div><div class="val">Em DM2 de amplo espectro (n=17.160) — <strong>59% em prevenção primária</strong>, apenas 41% com doença CV estabelecida —, a dapagliflozina reduz eventos?</div></div><div class="campo"><div class="rot">Intervenção</div><div class="val"><strong>Dapagliflozina 10 mg/dia</strong> vs <strong>placebo</strong>. Mediana de 4,2 anos.</div></div><div class="campo"><div class="rot">Desfecho primário</div><div class="val"><strong>Dois co-primários</strong>: MACE-3 e o composto <strong>morte cardiovascular ou hospitalização por insuficiência cardíaca</strong>.</div></div><div class="campo key"><div class="rot">Resultado-chave</div><div class="val"><strong>MACE: HR 0,93</strong> (IC95% 0,84–1,03) — <strong>não significativo</strong>. <strong>Morte CV/hospitalização por IC: 4,9% vs 5,8% — HR 0,83</strong> (IC95% 0,73–0,95), <strong>dirigido pela hospitalização por IC (HR 0,73)</strong>, sem efeito sobre morte CV (HR 0,98).</div></div><div class="campo"><div class="rot">Segurança</div><div class="val"><strong>Cetoacidose diabética mais frequente: 0,3% vs 0,1%</strong> (p=0,02). Mais infecção genital. <strong>Gangrena de Fournier</strong>: rara, numericamente menor com dapagliflozina.</div></div><div class="campo pratica"><div class="rot">Na prática</div><div class="val">Mostrou que, fora da prevenção secundária, o ganho dos iSGLT2 está na <strong>insuficiência cardíaca e no rim</strong>, não na aterosclerose. Sustenta indicar iSGLT2 por <strong>fenótipo de IC/DRC</strong>, mesmo sem doença coronariana.</div></div></div>
+  <details>
+    <summary>Resumo completo <span class="hint">(o texto que o aluno lê)</span></summary>
+    <div class="corpo"><h3>Por que este estudo é diferente</h3>
+<p>EMPA-REG e CANVAS recrutaram sobretudo <strong>prevenção secundária</strong>. O DECLARE foi o maior estudo da classe e incluiu a maioria (<strong>59%</strong>) apenas com <strong>fatores de risco</strong> — mais parecido com o paciente de ambulatório.</p>
+<h3>Desenho</h3>
+<ul><li><strong>17.160 adultos</strong> com DM2 e doença CV estabelecida (41%) <strong>ou</strong> múltiplos fatores de risco (59%).</li><li><strong>Dapagliflozina 10 mg/dia</strong> vs <strong>placebo</strong>. Mediana de <strong>4,2 anos</strong>.</li><li><strong>Dois desfechos co-primários</strong>: MACE-3 e o composto <strong>morte CV ou hospitalização por IC</strong>.</li></ul>
+<h3>Resultados</h3>
+<ul><li><strong>MACE-3: 8,8% vs 9,4% — HR 0,93</strong> (IC95% 0,84–1,03); <strong>p=0,17 — negativo</strong>.</li><li><strong>Morte CV ou hospitalização por IC: 4,9% vs 5,8% — HR 0,83</strong> (IC95% 0,73–0,95); p=0,005.</li><li><strong>Hospitalização por IC: HR 0,73</strong> (IC95% 0,61–0,88) — é o que carrega o composto.</li><li><strong>Morte cardiovascular: HR 0,98</strong> — neutra.</li><li><strong>Desfecho renal</strong> (queda ≥40% da TFG, doença renal terminal ou morte renal): <strong>HR 0,53</strong> — benefício robusto e consistente com o resto da classe.</li><li>Morte por qualquer causa: HR 0,93 (IC95% 0,82–1,04) — não significativa.</li></ul>
+<h3>Como conciliar com o EMPA-REG</h3>
+<p>Não é contradição, é <strong>população diferente</strong>. Em prevenção primária há pouco evento aterotrombótico para prevenir, e o efeito da classe — que é <strong>hemodinâmico e renal</strong> — se manifesta onde ele de fato atua: <strong>insuficiência cardíaca e função renal</strong>. As metanálises da classe mostram exatamente isso: benefício de <strong>IC e rim consistente em todo o espectro</strong>, e benefício de MACE concentrado em quem já tem aterosclerose.</p>
+<h3>Segurança</h3>
+<ul><li><strong>Cetoacidose diabética: 0,3% vs 0,1%</strong> (p=0,02) — pequeno em termos absolutos, mas real. Lembrar da forma <strong>euglicêmica</strong> e suspender o fármaco em jejum prolongado, cirurgia, doença aguda ou dieta cetogênica.</li><li><strong>Infecção genital</strong> mais frequente (efeito de classe).</li><li><strong>Gangrena de Fournier</strong>: 0,6/1.000 vs 1,0/1.000 — eventos raríssimos, numericamente <strong>menos</strong> com dapagliflozina.</li><li>Sem excesso de amputação ou fratura.</li></ul>
+<h3>O que muda na prática</h3>
+<ul><li>iSGLT2 para <strong>proteção de IC e rim</strong> vale mesmo <strong>sem doença aterosclerótica</strong>.</li><li>Em prevenção primária, não prometer redução de infarto — a prova não existe.</li><li>Este estudo pavimentou o <strong>DAPA-HF</strong> e o <strong>DAPA-CKD</strong>, que levaram a classe para além do diabetes.</li></ul></div>
+  </details>
+  <details>
+    <summary>4 flashcards</summary>
+    <div class="flashes"><div class="fc"><p class="q">O DECLARE-TIMI 58 atingiu seu desfecho de MACE?</p><p class="a">Não. MACE-3 HR 0,93 (IC95% 0,84–1,03), não significativo. O co-primário positivo foi morte CV/hospitalização por IC (HR 0,83).</p></div><div class="fc"><p class="q">Qual componente carregou o co-primário positivo do DECLARE?</p><p class="a">A hospitalização por insuficiência cardíaca (HR 0,73). A morte cardiovascular foi neutra (HR 0,98).</p></div><div class="fc"><p class="q">Qual o principal achado de segurança do DECLARE?</p><p class="a">Aumento de cetoacidose diabética (0,3% vs 0,1%; p=0,02), além de infecção genital. Gangrena de Fournier foi rara e numericamente menor com dapagliflozina.</p></div><div class="fc"><p class="q">Por que o DECLARE foi &quot;negativo&quot; para MACE se o EMPA-REG foi positivo?</p><p class="a">Porque 59% do DECLARE era prevenção primária. O efeito dos iSGLT2 é hemodinâmico/renal — consistente em IC e rim em todo o espectro — enquanto o ganho de MACE se concentra em quem já tem aterosclerose.</p></div></div>
+  </details>
+</article>
+<article class="ficha" id="credence-2019">
+  <header class="fh">
+    <div>
+      <h2>CREDENCE (2019)</h2>
+      <p class="meta"><span class="chip diabetes">Diabetes</span><span class="ref">NEJM · 2019</span></p>
+    </div>
+    <a class="doi" href="https://doi.org/10.1056/NEJMoa1811744" target="_blank" rel="noopener">Conferir publicação ↗</a>
+  </header>
+  <div class="campos"><div class="campo"><div class="rot">População</div><div class="val">Em DM2 com <strong>doença renal crônica albuminúrica</strong> (n=4.401; TFG 30–90 mL/min/1,73m² e RAC 300–5.000 mg/g), a canagliflozina protege o rim?</div></div><div class="campo"><div class="rot">Intervenção</div><div class="val"><strong>Canagliflozina 100 mg/dia</strong> vs <strong>placebo</strong>, <strong>todos com IECA ou BRA em dose máxima tolerada</strong>. Mediana de 2,6 anos.</div></div><div class="campo"><div class="rot">Desfecho primário</div><div class="val">Composto <strong>renal</strong>: doença renal terminal, duplicação da creatinina sérica, ou morte de causa renal ou cardiovascular.</div></div><div class="campo key"><div class="rot">Resultado-chave</div><div class="val"><strong>HR 0,70</strong> (IC95% 0,59–0,82; p=0,00001) — <strong>redução de 30%</strong>. O estudo foi <strong>interrompido precocemente por eficácia</strong>. Desfecho renal &quot;puro&quot; (DRT, duplicação de creatinina, morte renal) <strong>HR 0,66</strong>; <strong>doença renal terminal HR 0,68</strong>; hospitalização por IC <strong>HR 0,61</strong>.</div></div><div class="campo"><div class="rot">Segurança</div><div class="val"><strong>Sem</strong> aumento de <strong>amputação</strong> (HR 1,11) ou <strong>fratura</strong> (HR 0,98) — ao contrário do sinal do CANVAS. Cetoacidose mais frequente, porém rara (2,2 vs 0,2 por 1.000 pacientes-ano).</div></div><div class="campo pratica"><div class="rot">Na prática</div><div class="val">Primeiro estudo com <strong>desfecho renal primário</strong> positivo desde o RENAAL/IDNT. Tornou o iSGLT2 <strong>terapia de base da nefropatia diabética</strong>, somado ao bloqueio do SRAA.</div></div></div>
+  <details>
+    <summary>Resumo completo <span class="hint">(o texto que o aluno lê)</span></summary>
+    <div class="corpo"><h3>Contexto</h3>
+<p>Até 2019, a proteção renal no DM2 apoiava-se no bloqueio do sistema renina-angiotensina (RENAAL e IDNT, 2001). Os desfechos renais de EMPA-REG, CANVAS e DECLARE eram <strong>secundários e exploratórios</strong>. O CREDENCE foi o primeiro desenhado <strong>para o rim</strong>.</p>
+<h3>Desenho</h3>
+<ul><li><strong>4.401 adultos</strong> com DM2 e <strong>DRC albuminúrica</strong>: TFGe <strong>30–90 mL/min/1,73m²</strong> e <strong>relação albumina/creatinina 300–5.000 mg/g</strong>.</li><li><strong>Todos</strong> em <strong>IECA ou BRA</strong> na maior dose tolerada — ou seja, o benefício é <strong>incremental ao padrão-ouro</strong>.</li><li><strong>Canagliflozina 100 mg/dia</strong> vs <strong>placebo</strong>. Mediana de <strong>2,6 anos</strong> (interrompido precocemente).</li></ul>
+<h3>Resultados</h3>
+<ul><li><strong>Primário composto: HR 0,70</strong> (IC95% 0,59–0,82); p=0,00001 — <strong>NNT ≈ 22</strong> em 2,5 anos.</li><li><strong>Componente renal isolado</strong> (DRT, duplicação de creatinina, morte renal): <strong>HR 0,66</strong>.</li><li><strong>Doença renal terminal: HR 0,68</strong>.</li><li><strong>Morte CV ou hospitalização por IC: HR 0,69</strong>; <strong>hospitalização por IC isolada: HR 0,61</strong>.</li><li><strong>MACE: HR 0,80</strong> — também positivo nesta população de altíssimo risco.</li></ul>
+<h3>Segurança — o ponto do CANVAS</h3>
+<p>O CANVAS (2017), com a mesma droga, havia mostrado <strong>dobro de amputações de membros inferiores</strong> (6,3 vs 3,4/1.000 pacientes-ano) e mais <strong>fraturas</strong>. No CREDENCE, com monitoramento dirigido:</p>
+<ul><li><strong>Amputação: HR 1,11</strong> (IC95% 0,79–1,56) — sem excesso.</li><li><strong>Fratura: HR 0,98</strong> — sem excesso.</li><li><strong>Cetoacidose</strong>: 2,2 vs 0,2 por 1.000 pacientes-ano — mais frequente, mas rara.</li></ul>
+<p>O consenso atual é que o sinal do CANVAS <strong>não se confirmou</strong>; ainda assim, cuidado com pé diabético ativo e depleção de volume é conduta prudente.</p>
+<h3>O que muda na prática</h3>
+<ul><li>Em <strong>DM2 com albuminúria e TFG ≥30</strong>, iSGLT2 entra <strong>junto</strong> com IECA/BRA — não como alternativa.</li><li>A queda inicial da TFG (&quot;<em>dip</em>&quot; hemodinâmico de até ~30%) nas primeiras semanas é <strong>esperada e reversível</strong>; não é motivo para suspender.</li><li>Completa o tripé da nefroproteção moderna: <strong>bloqueio do SRAA + iSGLT2 + finerenona</strong> (FIDELIO/FIGARO), com os GLP-1 somando-se depois pelo FLOW.</li></ul></div>
+  </details>
+  <details>
+    <summary>4 flashcards</summary>
+    <div class="flashes"><div class="fc"><p class="q">Qual a população e o desfecho primário do CREDENCE?</p><p class="a">DM2 com DRC albuminúrica (TFG 30–90 e RAC 300–5.000 mg/g), todos em IECA/BRA. Primário: composto de doença renal terminal, duplicação da creatinina ou morte renal/cardiovascular — HR 0,70 (p=0,00001).</p></div><div class="fc"><p class="q">O CREDENCE confirmou o sinal de amputação do CANVAS?</p><p class="a">Não. Amputação HR 1,11 e fratura HR 0,98 — sem excesso, com monitoramento dirigido.</p></div><div class="fc"><p class="q">A queda de TFG nas primeiras semanas de iSGLT2 indica suspensão?</p><p class="a">Não. O &quot;dip&quot; hemodinâmico inicial (até ~30%) é esperado e reversível, e precede a preservação da função renal a longo prazo.</p></div><div class="fc"><p class="q">Por que o CREDENCE é considerado um marco?</p><p class="a">Foi o primeiro estudo com desfecho renal primário positivo no DM2 desde RENAAL/IDNT (2001), e mostrou benefício incremental ao bloqueio do SRAA já otimizado.</p></div></div>
+  </details>
+</article>
+<article class="ficha" id="surpass-2-2021">
+  <header class="fh">
+    <div>
+      <h2>SURPASS-2 (2021)</h2>
+      <p class="meta"><span class="chip diabetes">Diabetes</span><span class="ref">NEJM · 2021</span></p>
+    </div>
+    <a class="doi" href="https://doi.org/10.1056/NEJMoa2107519" target="_blank" rel="noopener">Conferir publicação ↗</a>
+  </header>
+  <div class="campos"><div class="campo"><div class="rot">População</div><div class="val">Em DM2 <strong>não controlado com metformina</strong> (n=1.879; HbA1c basal ~8,3%; IMC ~34), a tirzepatida é superior à semaglutida?</div></div><div class="campo"><div class="rot">Intervenção</div><div class="val"><strong>Tirzepatida 5, 10 ou 15 mg/semana</strong> vs <strong>semaglutida 1,0 mg/semana</strong> (comparador ativo). <strong>40 semanas</strong>, aberto para o injetável e cego para a dose.</div></div><div class="campo"><div class="rot">Desfecho primário</div><div class="val">Variação da <strong>HbA1c</strong> em 40 semanas (não inferioridade da tirzepatida 5 mg, seguida de teste de superioridade).</div></div><div class="campo key"><div class="rot">Resultado-chave</div><div class="val"><strong>HbA1c: −2,01 / −2,24 / −2,30 pontos</strong> (5/10/15 mg) vs <strong>−1,86</strong> com semaglutida — <strong>superioridade em todas as doses</strong>. <strong>Peso: −7,6 / −9,3 / −11,2 kg</strong> vs <strong>−5,7 kg</strong>. Alvo composto (HbA1c ≤6,5% + perda ≥10% sem hipoglicemia): <strong>32% / 51% / 60%</strong> vs <strong>22%</strong>.</div></div><div class="campo"><div class="rot">Segurança</div><div class="val">Eventos <strong>gastrointestinais</strong> semelhantes entre os grupos (náusea, diarreia, vômito), predominantes na titulação. <strong>Hipoglicemia grave rara</strong> em ambos.</div></div><div class="campo pratica"><div class="rot">Na prática</div><div class="val">Primeira demonstração head-to-head de que o <strong>agonismo duplo GIP/GLP-1</strong> supera o GLP-1 isolado em glicemia e peso. Note que o comparador foi <strong>semaglutida 1,0 mg</strong>, não 2,0 mg.</div></div></div>
+  <details>
+    <summary>Resumo completo <span class="hint">(o texto que o aluno lê)</span></summary>
+    <div class="corpo"><h3>Desenho</h3>
+<ul><li><strong>1.879 adultos</strong> com DM2 <strong>inadequadamente controlado com metformina</strong> (≥1.500 mg/dia).</li><li>HbA1c basal média <strong>8,28%</strong>; IMC médio ~34 kg/m²; duração média do diabetes ~8,6 anos.</li><li><strong>Tirzepatida 5, 10 ou 15 mg/semana</strong> vs <strong>semaglutida 1,0 mg/semana</strong>, por <strong>40 semanas</strong>.</li></ul>
+<h3>Resultados</h3>
+<p><strong>HbA1c (variação estimada do basal):</strong></p>
+<div class="tw"><table><thead><tr><th>Grupo</th><th>Δ HbA1c</th></tr></thead><tbody><tr><td>Tirzepatida 5 mg</td><td><strong>−2,01 pontos</strong></td></tr><tr><td>Tirzepatida 10 mg</td><td><strong>−2,24 pontos</strong></td></tr><tr><td>Tirzepatida 15 mg</td><td><strong>−2,30 pontos</strong></td></tr><tr><td>Semaglutida 1,0 mg</td><td>−1,86 pontos</td></tr></tbody></table></div>
+<p>Todas as doses de tirzepatida foram <strong>superiores</strong> (p&lt;0,001).</p>
+<p><strong>Peso corporal:</strong> <strong>−7,6 kg / −9,3 kg / −11,2 kg</strong> vs <strong>−5,7 kg</strong> com semaglutida. A dose de 15 mg produziu praticamente <strong>o dobro</strong> da perda de peso do comparador.</p>
+<p><strong>Alvo composto</strong> (HbA1c ≤6,5% <strong>e</strong> perda ≥10% do peso <strong>sem</strong> hipoglicemia &lt;54 mg/dL): <strong>32%, 51% e 60%</strong> com tirzepatida vs <strong>22%</strong> com semaglutida.</p>
+<p>Importante: <strong>a perda de peso não havia atingido platô</strong> em nenhum braço às 40 semanas.</p>
+<h3>Segurança</h3>
+<ul><li><strong>Eventos gastrointestinais</strong> foram os mais comuns e <strong>semelhantes entre os grupos</strong> — náusea, diarreia e vômito, concentrados na fase de escalonamento de dose.</li><li>Descontinuação por eventos adversos: comparável entre tirzepatida e semaglutida.</li><li><strong>Hipoglicemia grave</strong>: rara em ambos (efeito glicose-dependente das incretinas).</li></ul>
+<h3>Limitações que caem em prova</h3>
+<p>1. O comparador foi <strong>semaglutida 1,0 mg</strong> — a dose máxima aprovada para diabetes <strong>à época</strong>. Depois vieram a dose de 2,0 mg (SUSTAIN FORTE) e a de 2,4 mg para obesidade, o que torna a comparação <strong>não definitiva</strong> para a molécula.</p>
+<p>2. Desfecho <strong>substituto</strong> (HbA1c e peso), não desfecho duro. A prova cardiovascular da tirzepatida ficou para o <strong>SURPASS-CVOT</strong>.</p>
+<p>3. Apenas <strong>40 semanas</strong>.</p>
+<h3>O que muda na prática</h3>
+<ul><li>Quando o objetivo é <strong>HbA1c e peso simultaneamente</strong>, a tirzepatida tem a maior eficácia demonstrada em comparação direta.</li><li>A escolha entre as classes deve considerar também <strong>desfecho cardiovascular comprovado</strong>, custo e disponibilidade — não só potência.</li></ul></div>
+  </details>
+  <details>
+    <summary>4 flashcards</summary>
+    <div class="flashes"><div class="fc"><p class="q">Quais as reduções de HbA1c da tirzepatida 5/10/15 mg vs semaglutida 1 mg no SURPASS-2?</p><p class="a">−2,01 / −2,24 / −2,30 pontos com tirzepatida vs −1,86 ponto com semaglutida 1,0 mg (superioridade em todas as doses), em 40 semanas.</p></div><div class="fc"><p class="q">Qual a perda de peso no SURPASS-2?</p><p class="a">−7,6 kg (5 mg), −9,3 kg (10 mg) e −11,2 kg (15 mg) vs −5,7 kg com semaglutida 1,0 mg — sem platô às 40 semanas.</p></div><div class="fc"><p class="q">Qual a principal limitação do SURPASS-2 ao comparar as duas moléculas?</p><p class="a">O comparador foi semaglutida 1,0 mg (máxima aprovada para diabetes à época), não 2,0 mg; além disso o desfecho é substituto e o seguimento, de apenas 40 semanas.</p></div><div class="fc"><p class="q">Os eventos gastrointestinais foram mais frequentes com tirzepatida no SURPASS-2?</p><p class="a">Não — foram semelhantes entre os grupos, concentrados na fase de titulação.</p></div></div>
+  </details>
+</article>
+<article class="ficha" id="flow-2024">
+  <header class="fh">
+    <div>
+      <h2>FLOW (2024)</h2>
+      <p class="meta"><span class="chip diabetes">Diabetes</span><span class="ref">NEJM · 2024</span></p>
+    </div>
+    <a class="doi" href="https://doi.org/10.1056/NEJMoa2403347" target="_blank" rel="noopener">Conferir publicação ↗</a>
+  </header>
+  <div class="campos"><div class="campo"><div class="rot">População</div><div class="val">Em DM2 com <strong>doença renal crônica</strong> (n=3.533), a semaglutida protege o rim?</div></div><div class="campo"><div class="rot">Intervenção</div><div class="val"><strong>Semaglutida SC 1,0 mg/semana</strong> vs <strong>placebo</strong>, sobre terapia padrão (a maioria com IECA/BRA). Mediana de <strong>3,4 anos</strong>.</div></div><div class="campo"><div class="rot">Desfecho primário</div><div class="val">Composto renal: <strong>queda persistente ≥50% da TFGe</strong>, doença renal terminal (TFGe &lt;15 ou terapia renal substitutiva), <strong>morte renal</strong> ou <strong>morte cardiovascular</strong>.</div></div><div class="campo key"><div class="rot">Resultado-chave</div><div class="val"><strong>5,8 vs 7,5 eventos por 100 pessoas-ano — HR 0,76</strong> (IC95% 0,66–0,88; p=0,0003): <strong>redução de 24%</strong>. O estudo foi <strong>interrompido precocemente por eficácia</strong>. <strong>Morte cardiovascular HR 0,71</strong>; <strong>morte por qualquer causa HR 0,80</strong>.</div></div><div class="campo"><div class="rot">Segurança</div><div class="val">Perfil conhecido da classe: eventos <strong>gastrointestinais</strong> e mais descontinuações por eles. Sem sinal de segurança novo.</div></div><div class="campo pratica"><div class="rot">Na prática</div><div class="val">Primeiro GLP-1 com <strong>desfecho renal primário</strong> positivo. Coloca a semaglutida ao lado dos iSGLT2 e da finerenona na proteção renal do DM2 — e sustenta a <strong>terapia combinada</strong> na nefropatia diabética.</div></div></div>
+  <details>
+    <summary>Resumo completo <span class="hint">(o texto que o aluno lê)</span></summary>
+    <div class="corpo"><h3>Por que este estudo importa</h3>
+<p>Os GLP-1 já haviam mostrado redução de <strong>albuminúria</strong> (LEADER, SUSTAIN-6), mas isso é um marcador — não prova preservação de função. O FLOW foi o primeiro a testar <strong>desfecho renal duro como primário</strong> para a classe.</p>
+<h3>Desenho</h3>
+<ul><li><strong>3.533 adultos</strong> com DM2 e DRC — TFGe <strong>50–75 com RAC &gt;300</strong>, ou TFGe <strong>25–50 com RAC &gt;100</strong>.</li><li><strong>Semaglutida SC 1,0 mg/semana</strong> vs <strong>placebo</strong>, sobre o tratamento padrão (a grande maioria já em <strong>IECA/BRA</strong>).</li><li>Mediana de seguimento: <strong>3,4 anos</strong>. <strong>Interrompido precocemente por eficácia</strong> em análise interina.</li></ul>
+<h3>Resultados</h3>
+<ul><li><strong>Primário: 331 vs 410 eventos — 5,8 vs 7,5 por 100 pessoas-ano — HR 0,76</strong> (IC95% 0,66–0,88); p=0,0003.</li><li><strong>Componente renal isolado: HR 0,79</strong>.</li><li><strong>Declínio anual da TFGe</strong>: mais lento com semaglutida (diferença de ~1,16 mL/min/1,73m²/ano).</li><li><strong>Morte cardiovascular: HR 0,71</strong> (IC95% 0,56–0,89).</li><li><strong>MACE: HR 0,82</strong>.</li><li><strong>Morte por qualquer causa: HR 0,80</strong> (IC95% 0,67–0,95).</li></ul>
+<p>Ou seja: o benefício foi simultaneamente <strong>renal, cardiovascular e de mortalidade</strong> — um resultado incomum em nefrologia.</p>
+<h3>Interação com iSGLT2</h3>
+<p>Cerca de <strong>15,6%</strong> dos participantes usavam iSGLT2 no início. A análise de subgrupo <strong>não mostrou heterogeneidade</strong> significativa: o benefício da semaglutida apareceu <strong>com e sem</strong> iSGLT2 concomitante, o que apoia — sem provar definitivamente — o uso <strong>combinado</strong> das duas classes.</p>
+<h3>Segurança</h3>
+<p>Perfil já conhecido: <strong>eventos gastrointestinais</strong> foram a causa mais frequente de descontinuação. Nenhum sinal novo. Vale lembrar que a população tinha TFG reduzida e ainda assim tolerou bem a droga — <strong>GLP-1 não exige ajuste de dose por função renal</strong>.</p>
+<h3>O que muda na prática</h3>
+<ul><li>Em <strong>DM2 com DRC</strong>, a semaglutida passa a ter indicação com <strong>desfecho renal comprovado</strong>, e não apenas efeito sobre albuminúria.</li><li>Reforça o modelo de <strong>terapia de quatro pilares</strong> na nefropatia diabética: <strong>IECA/BRA + iSGLT2 + finerenona + GLP-1</strong>, cada um com prova própria.</li><li>Ponto de prova: o FLOW é o <strong>primeiro GLP-1 com primário renal</strong>; CREDENCE é o equivalente para iSGLT2.</li></ul></div>
+  </details>
+  <details>
+    <summary>4 flashcards</summary>
+    <div class="flashes"><div class="fc"><p class="q">Qual o desfecho primário e o resultado do FLOW?</p><p class="a">Composto renal (queda ≥50% da TFGe, doença renal terminal, morte renal ou morte CV): 5,8 vs 7,5 por 100 pessoas-ano — HR 0,76 (redução de 24%; p=0,0003). O estudo foi interrompido precocemente por eficácia.</p></div><div class="fc"><p class="q">O FLOW mostrou benefício além do rim?</p><p class="a">Sim: morte cardiovascular HR 0,71, MACE HR 0,82 e morte por qualquer causa HR 0,80.</p></div><div class="fc"><p class="q">O benefício da semaglutida no FLOW depende do uso de iSGLT2?</p><p class="a">Não houve heterogeneidade significativa entre quem usava (≈15,6%) e quem não usava iSGLT2 — o que apoia o uso combinado das classes.</p></div><div class="fc"><p class="q">Qual a importância histórica do FLOW?</p><p class="a">É o primeiro GLP-1 com desfecho renal primário positivo — antes havia apenas redução de albuminúria (marcador) em LEADER e SUSTAIN-6.</p></div></div>
+  </details>
+</article>
+<article class="ficha" id="soul-2025">
+  <header class="fh">
+    <div>
+      <h2>SOUL (2025)</h2>
+      <p class="meta"><span class="chip diabetes">Diabetes</span><span class="ref">NEJM · 2025</span></p>
+    </div>
+    <a class="doi" href="https://doi.org/10.1056/NEJMoa2501006" target="_blank" rel="noopener">Conferir publicação ↗</a>
+  </header>
+  <div class="campos"><div class="campo"><div class="rot">População</div><div class="val">Em DM2 de alto risco (n=9.650; ≥50 anos, HbA1c 6,5–10%, com <strong>doença aterosclerótica, DRC ou ambas</strong>), a <strong>semaglutida oral</strong> reduz eventos cardiovasculares?</div></div><div class="campo"><div class="rot">Intervenção</div><div class="val"><strong>Semaglutida oral até 14 mg/dia</strong> vs <strong>placebo</strong>, sobre terapia padrão. Seguimento médio de <strong>47,5 meses</strong>.</div></div><div class="campo"><div class="rot">Desfecho primário</div><div class="val"><strong>MACE-3</strong>: morte cardiovascular, IAM não fatal ou AVC não fatal (tempo até o primeiro evento), com desenho de <strong>superioridade</strong>.</div></div><div class="campo key"><div class="rot">Resultado-chave</div><div class="val">MACE <strong>12,0% vs 13,8% — HR 0,86</strong> (IC95% 0,77–0,96; p=0,006): <strong>redução de 14%</strong>.</div></div><div class="campo"><div class="rot">Segurança</div><div class="val">Perfil de classe: eventos <strong>gastrointestinais</strong>. Sem sinal novo de segurança.</div></div><div class="campo pratica"><div class="rot">Na prática</div><div class="val">Estende o benefício cardiovascular comprovado à <strong>formulação oral</strong> da semaglutida — opção para quem não aceita ou não pode usar injetável. Confirma, com desenho adequado de superioridade, o que o SUSTAIN-6 só sugeriu.</div></div></div>
+  <details>
+    <summary>Resumo completo <span class="hint">(o texto que o aluno lê)</span></summary>
+    <div class="corpo"><h3>Contexto</h3>
+<p>O <strong>PIONEER 6</strong> (2019) testou a semaglutida oral em DM2 de alto risco, mas era um estudo de <strong>não inferioridade</strong>, com poucos eventos e seguimento curto (~16 meses): HR 0,79, com IC cruzando 1 para superioridade. Ficou a dúvida se a via oral entregaria o mesmo benefício da subcutânea. O SOUL foi desenhado para responder isso.</p>
+<h3>Desenho</h3>
+<ul><li><strong>9.650 adultos</strong>, <strong>≥50 anos</strong>, DM2 com <strong>HbA1c 6,5–10,0%</strong> e <strong>doença aterosclerótica estabelecida, DRC, ou ambas</strong>.</li><li><strong>Semaglutida oral, dose máxima de 14 mg/dia</strong> vs <strong>placebo</strong> (1:1), somada ao tratamento padrão.</li><li>Estudo <strong>duplo-cego, dirigido por eventos, de superioridade</strong>.</li><li>Seguimento médio <strong>47,5 ± 10,9 meses</strong> (mediana 49,5 meses) — cerca de <strong>4 anos</strong>.</li></ul>
+<h3>Resultados</h3>
+<ul><li><strong>MACE-3: 12,0% vs 13,8% — HR 0,86</strong> (IC95% 0,77–0,96); <strong>p=0,006</strong>.</li><li>Redução relativa de <strong>14%</strong>, consistente com o observado para a classe em prevenção secundária.</li><li>O tamanho amostral e a duração dão ao SOUL o poder que faltava ao PIONEER 6.</li></ul>
+<h3>Por que a via oral é um detalhe relevante</h3>
+<p>A semaglutida oral depende do <strong>SNAC</strong> (salcaprozato de sódio) para absorção gástrica, o que impõe condições de uso rígidas: <strong>em jejum, com no máximo 120 mL de água, aguardando 30 minutos</strong> antes de qualquer alimento, líquido ou outro medicamento. A biodisponibilidade é baixa e variável — por isso a dúvida legítima sobre se o efeito clínico se manteria. O SOUL mostra que <strong>sim</strong>, desde que a adesão ao ritual de tomada seja respeitada.</p>
+<h3>Segurança</h3>
+<p>Perfil consistente com a classe: <strong>eventos gastrointestinais</strong> (náusea, vômito, diarreia), sobretudo na titulação. Sem sinal de segurança novo.</p>
+<h3>O que muda na prática</h3>
+<ul><li>Em DM2 com doença aterosclerótica ou DRC, a <strong>semaglutida oral</strong> é alternativa com <strong>benefício cardiovascular comprovado</strong> — útil para quem recusa injeção.</li><li>Não substitui a discussão de potência: para <strong>perda de peso</strong>, as doses injetáveis (2,4 mg) e a tirzepatida seguem superiores.</li><li>A adesão às instruções de administração <strong>não é detalhe</strong> — é condição para o efeito.</li></ul></div>
+  </details>
+  <details>
+    <summary>4 flashcards</summary>
+    <div class="flashes"><div class="fc"><p class="q">Qual o desfecho primário e o resultado do SOUL?</p><p class="a">MACE-3 (morte CV, IAM não fatal ou AVC não fatal): 12,0% vs 13,8% — HR 0,86 (IC95% 0,77–0,96; p=0,006), redução de 14%, em ~4 anos de seguimento.</p></div><div class="fc"><p class="q">Qual a diferença entre PIONEER 6 e SOUL?</p><p class="a">PIONEER 6 era de não inferioridade, curto (~16 meses) e sem poder para superioridade; o SOUL foi desenhado para superioridade, com 9.650 pacientes e ~4 anos, confirmando o benefício da semaglutida oral.</p></div><div class="fc"><p class="q">Como deve ser tomada a semaglutida oral e por quê?</p><p class="a">Em jejum, com no máximo 120 mL de água, aguardando 30 minutos antes de alimentos, líquidos ou outros medicamentos — a absorção depende do SNAC e é baixa e variável.</p></div><div class="fc"><p class="q">Qual a população do SOUL?</p><p class="a">DM2 com ≥50 anos, HbA1c 6,5–10,0% e doença aterosclerótica estabelecida, doença renal crônica, ou ambas.</p></div></div>
+  </details>
+</article>
+<article class="ficha" id="step-1-2021">
+  <header class="fh">
+    <div>
+      <h2>STEP-1 (2021)</h2>
+      <p class="meta"><span class="chip obesidade">Obesidade</span><span class="ref">NEJM · 2021</span></p>
+    </div>
+    <a class="doi" href="https://doi.org/10.1056/NEJMoa2032183" target="_blank" rel="noopener">Conferir publicação ↗</a>
+  </header>
+  <div class="campos"><div class="campo"><div class="rot">População</div><div class="val">Em adultos <strong>com obesidade e sem diabetes</strong> (n=1.961; IMC ≥30, ou ≥27 com comorbidade), qual a eficácia da semaglutida 2,4 mg na perda de peso?</div></div><div class="campo"><div class="rot">Intervenção</div><div class="val"><strong>Semaglutida 2,4 mg/semana SC</strong> vs <strong>placebo</strong>, ambos com aconselhamento de estilo de vida. <strong>68 semanas</strong>.</div></div><div class="campo"><div class="rot">Desfecho primário</div><div class="val">Variação percentual do <strong>peso corporal</strong> e proporção com perda <strong>≥5%</strong>.</div></div><div class="campo key"><div class="rot">Resultado-chave</div><div class="val"><strong>−14,9% vs −2,4%</strong> — diferença de <strong>−12,4 pontos percentuais</strong> (≈ <strong>−15,3 kg</strong>). Perda <strong>≥5%: 86,4% vs 31,5%</strong>; <strong>≥10%: 69,1% vs 12,0%</strong>; <strong>≥15%: 50,5% vs 4,9%</strong>.</div></div><div class="campo"><div class="rot">Segurança</div><div class="val"><strong>Náusea e diarreia</strong> foram os eventos mais comuns (transitórios, na titulação); descontinuação por eventos adversos <strong>7,0% vs 3,1%</strong>. Mais <strong>colelitíase</strong>.</div></div><div class="campo pratica"><div class="rot">Na prática</div><div class="val">Marcou a entrada da farmacoterapia da obesidade em um patamar antes só alcançado por cirurgia. Perda de ~15% passou a ser meta realista com medicamento.</div></div></div>
+  <details>
+    <summary>Resumo completo <span class="hint">(o texto que o aluno lê)</span></summary>
+    <div class="corpo"><h3>Por que este estudo é um divisor de águas</h3>
+<p>Antes do STEP-1, os fármacos antiobesidade entregavam <strong>5–10%</strong> de perda de peso. O STEP-1 dobrou esse teto e reposicionou a obesidade como <strong>doença crônica farmacologicamente tratável</strong>, não como falha de força de vontade.</p>
+<h3>Desenho</h3>
+<ul><li><strong>1.961 adultos</strong> com <strong>IMC ≥30</strong>, ou <strong>≥27 com pelo menos uma comorbidade</strong> relacionada ao peso.</li><li><strong>Excluídos os que tinham diabetes tipo 2</strong> — ponto essencial: a eficácia é maior em quem não tem diabetes.</li><li><strong>Semaglutida 2,4 mg/semana SC</strong> vs <strong>placebo</strong>, ambos com intervenção de estilo de vida (déficit de 500 kcal/dia e 150 min/semana de atividade física).</li><li><strong>68 semanas</strong>.</li></ul>
+<h3>Resultados</h3>
+<ul><li><strong>Peso: −14,9% vs −2,4%</strong> — diferença de <strong>−12,4 pontos percentuais</strong> (IC95% −13,4 a −11,5); em valor absoluto, <strong>−15,3 kg vs −2,6 kg</strong>.</li><li><strong>Perda ≥5%: 86,4% vs 31,5%</strong></li><li><strong>Perda ≥10%: 69,1% vs 12,0%</strong></li><li><strong>Perda ≥15%: 50,5% vs 4,9%</strong> — metade dos pacientes atingiu o patamar antes reservado à cirurgia bariátrica.</li><li>Melhora de <strong>circunferência abdominal, pressão arterial sistólica, HbA1c, PCR e perfil lipídico</strong>.</li><li>Melhora significativa em escores de <strong>função física</strong>.</li></ul>
+<h3>Segurança</h3>
+<ul><li><strong>Eventos gastrointestinais</strong> (náusea, diarreia, vômito, constipação): mais frequentes, em geral <strong>leves a moderados e transitórios</strong>, concentrados na titulação.</li><li><strong>Descontinuação por eventos adversos: 7,0% vs 3,1%</strong>.</li><li><strong>Colelitíase</strong> mais frequente — relacionada à magnitude e à velocidade da perda de peso.</li></ul>
+<h3>O que o estudo não responde</h3>
+<p>1. <strong>Manutenção</strong>: o <strong>STEP-4</strong> mostrou que suspender a droga leva a <strong>reganho progressivo</strong> — a obesidade se comporta como hipertensão, exigindo tratamento continuado.</p>
+<p>2. <strong>Desfechos duros</strong>: ficou para o <strong>SELECT</strong> (2023), que provou redução de eventos cardiovasculares.</p>
+<p>3. <strong>Composição corporal</strong>: parte da perda é de <strong>massa magra</strong> — daí a ênfase atual em proteína e treino resistido durante o tratamento.</p>
+<h3>O que muda na prática</h3>
+<ul><li>Meta de <strong>10–15% de perda</strong> passa a ser realista com farmacoterapia, o que altera o limiar de indicação cirúrgica em muitos pacientes.</li><li>Tratar obesidade <strong>cronicamente</strong>: retirar a droga é reintroduzir a doença.</li></ul></div>
+  </details>
+  <details>
+    <summary>4 flashcards</summary>
+    <div class="flashes"><div class="fc"><p class="q">Qual a perda de peso da semaglutida 2,4 mg no STEP-1?</p><p class="a">−14,9% vs −2,4% com placebo em 68 semanas (diferença de −12,4 pontos percentuais, ≈ −15,3 kg), em adultos com obesidade SEM diabetes.</p></div><div class="fc"><p class="q">Que proporção alcançou perda ≥10% e ≥15% no STEP-1?</p><p class="a">≥10%: 69,1% vs 12,0%. ≥15%: 50,5% vs 4,9%.</p></div><div class="fc"><p class="q">O que acontece ao suspender a semaglutida (STEP-4)?</p><p class="a">Há reganho progressivo do peso — a obesidade exige tratamento continuado, como a hipertensão.</p></div><div class="fc"><p class="q">Por que a eficácia do STEP-1 não se aplica diretamente a quem tem diabetes tipo 2?</p><p class="a">Porque pacientes com DM2 foram excluídos; nessa população (STEP-2) a perda de peso é consistentemente menor.</p></div></div>
+  </details>
+</article>
+<article class="ficha" id="surmount-1-2022">
+  <header class="fh">
+    <div>
+      <h2>SURMOUNT-1 (2022)</h2>
+      <p class="meta"><span class="chip obesidade">Obesidade</span><span class="ref">NEJM · 2022</span></p>
+    </div>
+    <a class="doi" href="https://doi.org/10.1056/NEJMoa2206038" target="_blank" rel="noopener">Conferir publicação ↗</a>
+  </header>
+  <div class="campos"><div class="campo"><div class="rot">População</div><div class="val">Em adultos <strong>com obesidade e sem diabetes</strong> (n=2.539; IMC ≥30, ou ≥27 com comorbidade), qual a eficácia da tirzepatida?</div></div><div class="campo"><div class="rot">Intervenção</div><div class="val"><strong>Tirzepatida 5, 10 ou 15 mg/semana SC</strong> vs <strong>placebo</strong>, com estilo de vida. <strong>72 semanas</strong>.</div></div><div class="campo"><div class="rot">Desfecho primário</div><div class="val">Variação percentual do <strong>peso</strong> e proporção com perda <strong>≥5%</strong>.</div></div><div class="campo key"><div class="rot">Resultado-chave</div><div class="val"><strong>−15,0% / −19,5% / −20,9%</strong> (5/10/15 mg) vs <strong>−3,1%</strong> com placebo. Perda <strong>≥5%: 85–91% vs 35%</strong>; <strong>≥20%: 50% e 57%</strong> nas doses de 10 e 15 mg. Perda absoluta de até <strong>−23,6 kg</strong>.</div></div><div class="campo"><div class="rot">Segurança</div><div class="val"><strong>Gastrointestinais</strong> predominantes (náusea, diarreia, constipação), em geral leves a moderados e ligados à titulação; descontinuação por eventos adversos <strong>4,3–7,1%</strong> vs 2,6%.</div></div><div class="campo pratica"><div class="rot">Na prática</div><div class="val">O agonismo duplo <strong>GIP/GLP-1</strong> aproximou a farmacoterapia dos resultados da <strong>cirurgia bariátrica</strong> (gastrectomia vertical), com perda média superior a 20%.</div></div></div>
+  <details>
+    <summary>Resumo completo <span class="hint">(o texto que o aluno lê)</span></summary>
+    <div class="corpo"><h3>Desenho</h3>
+<ul><li><strong>2.539 adultos</strong> com <strong>IMC ≥30</strong>, ou <strong>≥27 com pelo menos uma comorbidade</strong> relacionada ao peso.</li><li><strong>Sem diabetes tipo 2</strong> (o equivalente em DM2 é o SURMOUNT-2).</li><li><strong>Tirzepatida 5, 10 ou 15 mg/semana</strong> vs <strong>placebo</strong>, com aconselhamento de estilo de vida.</li><li><strong>72 semanas</strong>.</li></ul>
+<h3>Resultados</h3>
+<div class="tw"><table><thead><tr><th>Grupo</th><th>Perda de peso</th></tr></thead><tbody><tr><td>Tirzepatida 5 mg</td><td><strong>−15,0%</strong></td></tr><tr><td>Tirzepatida 10 mg</td><td><strong>−19,5%</strong></td></tr><tr><td>Tirzepatida 15 mg</td><td><strong>−20,9%</strong></td></tr><tr><td>Placebo</td><td>−3,1%</td></tr></tbody></table></div>
+<ul><li><strong>Perda ≥5%: 85%, 89% e 91%</strong> vs <strong>35%</strong>.</li><li><strong>Perda ≥20%: 30%, 50% e 57%</strong> vs <strong>3%</strong>.</li><li>Perda absoluta de até <strong>−23,6 kg</strong> na dose de 15 mg.</li><li>Melhora de <strong>circunferência abdominal, pressão arterial, lipídios e insulinemia de jejum</strong>.</li><li>Entre os participantes com <strong>pré-diabetes</strong>, a maioria <strong>reverteu para normoglicemia</strong>.</li></ul>
+<h3>Comparação com o STEP-1</h3>
+<p>As comparações entre estudos são <strong>indiretas</strong> e devem ser feitas com cautela (populações e durações diferentes: 72 vs 68 semanas). Ainda assim, a magnitude — <strong>~21% vs ~15%</strong> — antecipava o que o <strong>SURMOUNT-5</strong> viria a confirmar em comparação <strong>direta</strong> (2025).</p>
+<h3>Segurança</h3>
+<ul><li><strong>Eventos gastrointestinais</strong> foram os mais comuns: náusea (até ~31%), diarreia, constipação e vômito — em geral <strong>leves a moderados</strong>, na fase de escalonamento.</li><li><strong>Descontinuação por eventos adversos: 4,3% a 7,1%</strong> conforme a dose, vs <strong>2,6%</strong> com placebo.</li><li>Sem sinal de pancreatite; colelitíase relacionada à perda de peso, como na classe.</li></ul>
+<h3>O que muda na prática</h3>
+<ul><li>Perda média <strong>&gt;20%</strong> coloca a tirzepatida em faixa antes atribuída à <strong>gastrectomia vertical</strong> — o que muda a conversa sobre indicação cirúrgica em parte dos pacientes.</li><li>Como no STEP-1, o tratamento é <strong>crônico</strong>: o <strong>SURMOUNT-4</strong> mostrou reganho após a suspensão.</li><li>Atenção à <strong>perda de massa magra</strong>: recomendar aporte proteico adequado e treino resistido durante o tratamento.</li></ul></div>
+  </details>
+  <details>
+    <summary>4 flashcards</summary>
+    <div class="flashes"><div class="fc"><p class="q">Qual a perda de peso com tirzepatida no SURMOUNT-1?</p><p class="a">−15,0% (5 mg), −19,5% (10 mg) e −20,9% (15 mg) vs −3,1% com placebo, em 72 semanas, em adultos com obesidade sem diabetes.</p></div><div class="fc"><p class="q">Que proporção atingiu perda ≥20% no SURMOUNT-1?</p><p class="a">50% com 10 mg e 57% com 15 mg (vs 3% com placebo) — faixa antes atribuída à cirurgia bariátrica.</p></div><div class="fc"><p class="q">Pode-se afirmar que a tirzepatida é superior à semaglutida com base em SURMOUNT-1 e STEP-1?</p><p class="a">Não diretamente — são estudos distintos (comparação indireta). A superioridade foi demonstrada em comparação direta pelo SURMOUNT-5 (2025).</p></div><div class="fc"><p class="q">Qual o principal grupo de eventos adversos da tirzepatida no SURMOUNT-1?</p><p class="a">Gastrointestinais (náusea, diarreia, constipação, vômito), em geral leves a moderados e concentrados na titulação; descontinuação por EA de 4,3–7,1%.</p></div></div>
+  </details>
+</article>
+<article class="ficha" id="select-2023">
+  <header class="fh">
+    <div>
+      <h2>SELECT (2023)</h2>
+      <p class="meta"><span class="chip obesidade">Obesidade</span><span class="ref">NEJM · 2023</span></p>
+    </div>
+    <a class="doi" href="https://doi.org/10.1056/NEJMoa2307563" target="_blank" rel="noopener">Conferir publicação ↗</a>
+  </header>
+  <div class="campos"><div class="campo"><div class="rot">População</div><div class="val">Em adultos <strong>com sobrepeso/obesidade e doença cardiovascular estabelecida, mas SEM diabetes</strong> (n=17.604; ≥45 anos, IMC ≥27), a semaglutida reduz eventos cardiovasculares?</div></div><div class="campo"><div class="rot">Intervenção</div><div class="val"><strong>Semaglutida 2,4 mg/semana SC</strong> vs <strong>placebo</strong>, sobre terapia padrão. Seguimento médio de <strong>39,8 meses</strong> (~3,3 anos).</div></div><div class="campo"><div class="rot">Desfecho primário</div><div class="val"><strong>MACE-3</strong>: morte cardiovascular, IAM não fatal ou AVC não fatal.</div></div><div class="campo key"><div class="rot">Resultado-chave</div><div class="val"><strong>6,5% vs 8,0% — HR 0,80</strong> (IC95% 0,72–0,90; p&lt;0,001): <strong>redução de 20%</strong>. Perda de peso de <strong>−9,4% vs −0,9%</strong>. As curvas separaram <strong>precocemente</strong>, antes da perda máxima de peso.</div></div><div class="campo"><div class="rot">Segurança</div><div class="val"><strong>Descontinuação por eventos adversos: 16,6% vs 8,2%</strong>, majoritariamente <strong>gastrointestinais</strong>. Sem aumento de pancreatite ou de neoplasia.</div></div><div class="campo pratica"><div class="rot">Na prática</div><div class="val">Primeira prova de que <strong>tratar a obesidade reduz eventos cardiovasculares</strong>, independentemente do diabetes. Reposiciona a semaglutida como <strong>cardioprotetora</strong>, e não apenas como redutora de peso.</div></div></div>
+  <details>
+    <summary>Resumo completo <span class="hint">(o texto que o aluno lê)</span></summary>
+    <div class="corpo"><h3>Por que é um marco</h3>
+<p>Até 2023, nenhum tratamento farmacológico da obesidade havia demonstrado <strong>redução de desfechos cardiovasculares duros</strong>. O histórico da área era ruim: sibutramina foi retirada após o <strong>SCOUT</strong> mostrar <strong>aumento</strong> de eventos; rimonabanto saiu por efeitos psiquiátricos. O SELECT quebrou esse padrão.</p>
+<h3>Desenho</h3>
+<ul><li><strong>17.604 adultos</strong>, <strong>≥45 anos</strong>, com <strong>IMC ≥27</strong> e <strong>doença cardiovascular estabelecida</strong> (IAM prévio, AVC prévio ou doença arterial periférica sintomática).</li><li><strong>Critério de exclusão essencial: diabetes</strong> (HbA1c ≥6,5% ou diagnóstico prévio) — o desfecho não pode ser atribuído ao controle glicêmico.</li><li><strong>Semaglutida 2,4 mg/semana</strong> vs <strong>placebo</strong>, sobre terapia cardiovascular otimizada (estatina, antiagregante etc.).</li><li>Seguimento médio de <strong>39,8 meses</strong>.</li></ul>
+<h3>Resultados</h3>
+<ul><li><strong>MACE-3: 6,5% vs 8,0% — HR 0,80</strong> (IC95% 0,72–0,90); p&lt;0,001. <strong>NNT ≈ 67</strong> em ~3 anos.</li><li><strong>Morte cardiovascular: HR 0,85</strong> (IC95% 0,71–1,01) — não significativa isoladamente.</li><li><strong>IAM não fatal: HR 0,72</strong> — o componente mais claramente reduzido.</li><li><strong>Morte por qualquer causa: HR 0,81</strong>.</li><li><strong>Peso: −9,4% vs −0,9%</strong>; também melhoraram PCR, pressão arterial, cintura e lipídios.</li></ul>
+<h3>O detalhe mecanístico que cai em prova</h3>
+<p><strong>As curvas de eventos separaram antes de a perda de peso atingir o máximo.</strong> Isso sugere que o benefício <strong>não é apenas consequência do emagrecimento</strong>: efeitos anti-inflamatórios (queda expressiva de PCR), sobre a função endotelial, a pressão arterial e diretamente sobre a placa parecem contribuir. É o mesmo raciocínio do LEADER, agora em população sem diabetes.</p>
+<h3>Segurança</h3>
+<ul><li><strong>Descontinuação por eventos adversos: 16,6% vs 8,2%</strong> — quase o dobro, quase toda por <strong>eventos gastrointestinais</strong>. É um número alto e relevante para a conversa com o paciente.</li><li><strong>Sem</strong> aumento de pancreatite, neoplasia pancreática ou câncer de tireoide.</li><li>Colelitíase, como esperado da classe.</li></ul>
+<h3>O que muda na prática</h3>
+<ul><li>Em <strong>obesidade + doença cardiovascular estabelecida sem diabetes</strong>, a semaglutida 2,4 mg passa a ter indicação <strong>cardiovascular</strong>, não apenas estética ou metabólica.</li><li>Fortalece o argumento de <strong>cobertura por planos e sistemas de saúde</strong>: o desfecho agora é evento cardiovascular evitado.</li><li>Ponto de prova: no SELECT, o componente mais reduzido foi <strong>IAM não fatal</strong>; a morte CV isolada <strong>não</strong> alcançou significância.</li></ul></div>
+  </details>
+  <details>
+    <summary>4 flashcards</summary>
+    <div class="flashes"><div class="fc"><p class="q">Qual a população e o resultado primário do SELECT?</p><p class="a">Adultos ≥45 anos com IMC ≥27 e doença CV estabelecida, SEM diabetes (n=17.604). MACE-3: 6,5% vs 8,0% — HR 0,80 (redução de 20%; p&lt;0,001).</p></div><div class="fc"><p class="q">Por que o SELECT sugere benefício além da perda de peso?</p><p class="a">Porque as curvas de eventos separaram precocemente, antes da perda máxima de peso — apontando efeitos anti-inflamatórios (queda de PCR), endoteliais e diretos sobre a placa.</p></div><div class="fc"><p class="q">Qual componente do MACE foi mais claramente reduzido no SELECT?</p><p class="a">IAM não fatal (HR 0,72). Morte cardiovascular isolada não atingiu significância (HR 0,85; IC 0,71–1,01).</p></div><div class="fc"><p class="q">Qual a taxa de descontinuação por eventos adversos no SELECT?</p><p class="a">16,6% com semaglutida vs 8,2% com placebo, majoritariamente por eventos gastrointestinais.</p></div></div>
+  </details>
+</article>
+<article class="ficha" id="step-hfpef-2023">
+  <header class="fh">
+    <div>
+      <h2>STEP-HFpEF (2023)</h2>
+      <p class="meta"><span class="chip obesidade">Obesidade</span><span class="ref">NEJM · 2023</span></p>
+    </div>
+    <a class="doi" href="https://doi.org/10.1056/NEJMoa2306963" target="_blank" rel="noopener">Conferir publicação ↗</a>
+  </header>
+  <div class="campos"><div class="campo"><div class="rot">População</div><div class="val">Em <strong>insuficiência cardíaca com fração de ejeção preservada relacionada à obesidade</strong> (n=529; FE ≥45%, IMC ≥30), <strong>sem diabetes</strong>, a semaglutida melhora sintomas?</div></div><div class="campo"><div class="rot">Intervenção</div><div class="val"><strong>Semaglutida 2,4 mg/semana SC</strong> vs <strong>placebo</strong>. <strong>52 semanas</strong>.</div></div><div class="campo"><div class="rot">Desfecho primário</div><div class="val"><strong>Dois co-primários</strong>: variação do <strong>KCCQ-CSS</strong> (escore de sintomas e limitação física) e <strong>variação percentual do peso</strong>.</div></div><div class="campo key"><div class="rot">Resultado-chave</div><div class="val"><strong>KCCQ-CSS: +16,6 vs +8,7 pontos</strong> — diferença de <strong>+7,8 pontos</strong> (IC95% 4,8–10,9). <strong>Peso: −13,3% vs −2,6%</strong> — diferença de <strong>−10,7 pontos percentuais</strong>. Ambos <strong>p&lt;0,001</strong>. <strong>Teste de caminhada de 6 minutos: +21,5 m</strong> de diferença; <strong>PCR −43,5%</strong>.</div></div><div class="campo"><div class="rot">Segurança</div><div class="val">Menos eventos adversos graves com semaglutida (<strong>13,3% vs 26,7%</strong>), à custa de menos eventos cardíacos. Gastrointestinais mais frequentes.</div></div><div class="campo pratica"><div class="rot">Na prática</div><div class="val">Definiu a <strong>ICFEp da obesidade</strong> como fenótipo próprio, tratável com perda de peso farmacológica. Ganho sintomático <strong>maior do que o de qualquer outra terapia</strong> já testada nessa população.</div></div></div>
+  <details>
+    <summary>Resumo completo <span class="hint">(o texto que o aluno lê)</span></summary>
+    <div class="corpo"><h3>O problema clínico</h3>
+<p>A <strong>ICFEp</strong> responde por metade dos casos de insuficiência cardíaca e, por muito tempo, não teve tratamento modificador. A obesidade não é apenas comorbidade nesse cenário — o fenótipo <strong>obesidade-ICFEp</strong> tem fisiopatologia própria: expansão de volume plasmático, inflamação sistêmica, gordura epicárdica e restrição pericárdica.</p>
+<h3>Desenho</h3>
+<ul><li><strong>529 pacientes</strong> com <strong>IC sintomática (classe II–IV), FE ≥45%</strong> e <strong>IMC ≥30</strong>.</li><li><strong>Sem diabetes</strong> (o STEP-HFpEF DM, publicado depois, respondeu para quem tem DM2, com resultados concordantes).</li><li><strong>Semaglutida 2,4 mg/semana</strong> vs <strong>placebo</strong>, por <strong>52 semanas</strong>.</li></ul>
+<h3>Resultados</h3>
+<p><strong>Co-primário 1 — KCCQ-CSS</strong> (0–100; quanto maior, melhor):</p>
+<ul><li><strong>+16,6 vs +8,7 pontos</strong> — diferença estimada de <strong>+7,8 pontos</strong> (IC95% 4,8–10,9); p&lt;0,001.</li><li>Para calibrar: uma diferença de <strong>5 pontos</strong> já é considerada clinicamente relevante. O efeito aqui é <strong>maior que o de espironolactona, sacubitril-valsartana ou iSGLT2</strong> nessa população.</li></ul>
+<p><strong>Co-primário 2 — Peso:</strong></p>
+<ul><li><strong>−13,3% vs −2,6%</strong> — diferença de <strong>−10,7 pontos percentuais</strong>; p&lt;0,001.</li></ul>
+<p><strong>Secundários:</strong></p>
+<ul><li><strong>Teste de caminhada de 6 minutos: +21,5 m</strong> de diferença (p&lt;0,001).</li><li><strong>PCR: −43,5%</strong> em relação ao placebo — magnitude que reforça o componente inflamatório.</li><li>Desfecho hierárquico composto (morte, eventos de IC, KCCQ, 6MWD) <strong>favoreceu semaglutida</strong>.</li></ul>
+<h3>Segurança</h3>
+<p>Contraintuitivamente, <strong>eventos adversos graves foram menos frequentes</strong> com semaglutida: <strong>13,3% vs 26,7%</strong> — diferença explicada por <strong>menos eventos cardíacos</strong> no braço ativo. Eventos gastrointestinais foram mais comuns, como esperado.</p>
+<h3>Limitações</h3>
+<ul><li><strong>Sintomas e peso são desfechos co-primários</strong> — não há poder para <strong>mortalidade ou hospitalização</strong>.</li><li>Amostra pequena (n=529) e seguimento de apenas 1 ano.</li><li>Parte do ganho no KCCQ pode refletir simplesmente <strong>carregar menos peso</strong>, e não melhora cardíaca direta — embora a queda de PCR e o ganho no 6MWD sugiram algo além disso.</li></ul>
+<h3>O que muda na prática</h3>
+<ul><li>Em <strong>ICFEp com obesidade</strong>, perda de peso farmacológica passa a ser estratégia terapêutica legítima, e não apenas &quot;orientação geral&quot;.</li><li>Combina com o arsenal já estabelecido de iSGLT2 na ICFEp (EMPEROR-Preserved, DELIVER).</li></ul></div>
+  </details>
+  <details>
+    <summary>4 flashcards</summary>
+    <div class="flashes"><div class="fc"><p class="q">Quais os desfechos co-primários e resultados do STEP-HFpEF?</p><p class="a">KCCQ-CSS: +16,6 vs +8,7 pontos (diferença +7,8; IC95% 4,8–10,9) e peso −13,3% vs −2,6% (diferença −10,7 pp); ambos p&lt;0,001, em 52 semanas.</p></div><div class="fc"><p class="q">Qual a população do STEP-HFpEF?</p><p class="a">529 pacientes com IC sintomática, FE ≥45% e IMC ≥30, SEM diabetes (o STEP-HFpEF DM avaliou os com DM2).</p></div><div class="fc"><p class="q">Como interpretar a magnitude do ganho no KCCQ-CSS do STEP-HFpEF?</p><p class="a">Uma diferença de 5 pontos já é clinicamente relevante; os 7,8 pontos observados superam o efeito de espironolactona, sacubitril-valsartana ou iSGLT2 nessa população.</p></div><div class="fc"><p class="q">Qual a principal limitação do STEP-HFpEF?</p><p class="a">Os co-primários são sintomas e peso — não há poder para mortalidade ou hospitalização; amostra pequena (n=529) e apenas 52 semanas.</p></div></div>
+  </details>
+</article>
+<article class="ficha" id="surmount-osa-2024">
+  <header class="fh">
+    <div>
+      <h2>SURMOUNT-OSA (2024)</h2>
+      <p class="meta"><span class="chip obesidade">Obesidade</span><span class="ref">NEJM · 2024</span></p>
+    </div>
+    <a class="doi" href="https://doi.org/10.1056/NEJMoa2404881" target="_blank" rel="noopener">Conferir publicação ↗</a>
+  </header>
+  <div class="campos"><div class="campo"><div class="rot">População</div><div class="val">Em adultos com <strong>apneia obstrutiva do sono moderada a grave e obesidade</strong> (n=469, em dois estudos paralelos: <strong>sem CPAP</strong> e <strong>em uso de CPAP</strong>), a tirzepatida reduz a gravidade da apneia?</div></div><div class="campo"><div class="rot">Intervenção</div><div class="val"><strong>Tirzepatida até 15 mg/semana SC</strong> vs <strong>placebo</strong>. <strong>52 semanas</strong>.</div></div><div class="campo"><div class="rot">Desfecho primário</div><div class="val">Variação do <strong>IAH (índice de apneia-hipopneia)</strong> em 52 semanas.</div></div><div class="campo key"><div class="rot">Resultado-chave</div><div class="val"><strong>Estudo 1 (sem CPAP): −27,4 vs −4,8 eventos/hora</strong>. <strong>Estudo 2 (com CPAP): −30,4 vs −6,0 eventos/hora</strong>. Em termos relativos, <strong>−55,0%</strong> e <strong>−62,8%</strong> vs ~5–6% no placebo. Até <strong>51,5%</strong> atingiram critério de remissão da doença.</div></div><div class="campo"><div class="rot">Segurança</div><div class="val">Perfil da classe: <strong>eventos gastrointestinais</strong> (diarreia, náusea, vômito), em geral leves e na titulação.</div></div><div class="campo pratica"><div class="rot">Na prática</div><div class="val">Primeiro fármaco aprovado para <strong>AOS associada à obesidade</strong>. Oferece alternativa (ou complemento) ao CPAP, cuja adesão é notoriamente baixa — tratando a <strong>causa</strong> e não só a consequência mecânica.</div></div></div>
+  <details>
+    <summary>Resumo completo <span class="hint">(o texto que o aluno lê)</span></summary>
+    <div class="corpo"><h3>O problema clínico</h3>
+<p>A <strong>AOS</strong> afeta a maioria dos pacientes com obesidade grave e associa-se a hipertensão resistente, fibrilação atrial, eventos cardiovasculares e sonolência diurna. O <strong>CPAP</strong> é eficaz, mas a <strong>adesão a longo prazo é baixa</strong> (frequentemente &lt;50%) e ele <strong>não trata a causa</strong>. Até 2024 não havia farmacoterapia aprovada.</p>
+<h3>Desenho</h3>
+<ul><li><strong>469 adultos</strong> com <strong>AOS moderada a grave</strong> (IAH ≥15) e <strong>obesidade</strong>, sem diabetes.</li><li><strong>Dois estudos paralelos</strong>, conduzidos sob o mesmo protocolo:</li><li><strong>Estudo 1</strong>: participantes <strong>que não usavam</strong> terapia com pressão positiva (PAP).</li><li><strong>Estudo 2</strong>: participantes <strong>em uso</strong> de PAP, que o mantiveram.</li><li><strong>Tirzepatida titulada até 15 mg/semana</strong> vs <strong>placebo</strong>, por <strong>52 semanas</strong>.</li><li>Desfecho medido por <strong>polissonografia</strong>.</li></ul>
+<h3>Resultados</h3>
+<div class="tw"><table><thead><tr><th>Δ do IAH em 52 semanas</th><th>Tirzepatida</th><th>Placebo</th></tr></thead><tbody><tr><td><strong>Estudo 1 — sem PAP</strong></td><td><strong>−27,4 eventos/h</strong></td><td>−4,8 eventos/h</td></tr><tr><td><strong>Estudo 2 — em uso de PAP</strong></td><td><strong>−30,4 eventos/h</strong></td><td>−6,0 eventos/h</td></tr></tbody></table></div>
+<ul><li>Redução <strong>percentual</strong> do IAH: <strong>−55,0%</strong> (Estudo 1) e <strong>−62,8%</strong> (Estudo 2), vs <strong>−5,0%</strong> e <strong>−6,4%</strong> com placebo.</li><li>Até <strong>51,5%</strong> dos participantes atingiram critérios de <strong>remissão ou doença leve</strong> (IAH &lt;5, ou IAH 5–14 sem sonolência diurna significativa).</li><li>Também melhoraram <strong>peso, pressão arterial sistólica, hsPCR</strong> e <strong>sonolência</strong> relatada.</li></ul>
+<h3>Segurança</h3>
+<p>Perfil típico da classe: <strong>diarreia, náusea e vômito</strong>, em geral leves a moderados e concentrados na fase de escalonamento. Sem sinal novo.</p>
+<h3>Limitações</h3>
+<ul><li>Desfecho <strong>fisiológico</strong> (IAH), não desfecho clínico duro — não há dados sobre eventos cardiovasculares ou mortalidade.</li><li><strong>52 semanas</strong> de seguimento.</li><li>Não é comparação direta com CPAP; no Estudo 2 a tirzepatida foi <strong>somada</strong> ao PAP.</li></ul>
+<h3>O que muda na prática</h3>
+<ul><li>Em <strong>AOS + obesidade</strong>, a tirzepatida é opção terapêutica com prova de eficácia — especialmente para quem <strong>não tolera ou não adere ao CPAP</strong>.</li><li>Reforça o modelo de tratar a obesidade como <strong>causa comum</strong> de múltiplas comorbidades, e não cada uma isoladamente.</li><li>Não substitui o CPAP em doença grave sintomática sem antes reavaliar a polissonografia após a perda de peso.</li></ul></div>
+  </details>
+  <details>
+    <summary>4 flashcards</summary>
+    <div class="flashes"><div class="fc"><p class="q">Qual o desfecho primário e o resultado do SURMOUNT-OSA?</p><p class="a">Variação do IAH em 52 semanas: −27,4 vs −4,8 eventos/h (sem PAP) e −30,4 vs −6,0 eventos/h (com PAP) — reduções relativas de 55,0% e 62,8%.</p></div><div class="fc"><p class="q">Como foram organizados os dois estudos do SURMOUNT-OSA?</p><p class="a">Estudo 1 com participantes que não usavam terapia com pressão positiva (PAP) e Estudo 2 com participantes em uso de PAP, que o mantiveram durante o estudo.</p></div><div class="fc"><p class="q">Qual a principal limitação do SURMOUNT-OSA?</p><p class="a">O desfecho é fisiológico (IAH), não clínico duro — sem dados de eventos cardiovasculares ou mortalidade — e o seguimento foi de 52 semanas.</p></div><div class="fc"><p class="q">Que proporção atingiu remissão ou doença leve com tirzepatida no SURMOUNT-OSA?</p><p class="a">Até 51,5% dos participantes.</p></div></div>
+  </details>
+</article>
+<article class="ficha" id="surmount-5-2025">
+  <header class="fh">
+    <div>
+      <h2>SURMOUNT-5 (2025)</h2>
+      <p class="meta"><span class="chip obesidade">Obesidade</span><span class="ref">NEJM · 2025</span></p>
+    </div>
+    <a class="doi" href="https://doi.org/10.1056/NEJMoa2416394" target="_blank" rel="noopener">Conferir publicação ↗</a>
+  </header>
+  <div class="campos"><div class="campo"><div class="rot">População</div><div class="val">Em adultos <strong>com obesidade e sem diabetes</strong> (n=751), a tirzepatida é superior à semaglutida <strong>em comparação direta</strong>?</div></div><div class="campo"><div class="rot">Intervenção</div><div class="val"><strong>Tirzepatida</strong> (dose máxima tolerada, 10 ou 15 mg) vs <strong>semaglutida 2,4 mg</strong> (dose máxima tolerada) — estudo <strong>aberto, com comparador ativo</strong>. <strong>72 semanas</strong>.</div></div><div class="campo"><div class="rot">Desfecho primário</div><div class="val">Variação percentual do <strong>peso corporal</strong> em 72 semanas.</div></div><div class="campo key"><div class="rot">Resultado-chave</div><div class="val"><strong>−20,2% vs −13,7%</strong> — ou seja, <strong>−22,8 kg vs −15,0 kg</strong>. Tirzepatida também superior em <strong>circunferência abdominal</strong>, pressão arterial sistólica e diastólica, HbA1c, insulina de jejum, triglicerídeos e HDL.</div></div><div class="campo"><div class="rot">Segurança</div><div class="val">Perfil semelhante entre os grupos. <strong>Descontinuação por eventos gastrointestinais foi MENOR com tirzepatida: 2,7% vs 5,6%</strong>.</div></div><div class="campo pratica"><div class="rot">Na prática</div><div class="val">Encerra a comparação indireta entre STEP-1 e SURMOUNT-1: na <strong>dose máxima de ambos</strong>, a tirzepatida entrega <strong>~6,5 pontos percentuais a mais</strong> de perda de peso.</div></div></div>
+  <details>
+    <summary>Resumo completo <span class="hint">(o texto que o aluno lê)</span></summary>
+    <div class="corpo"><h3>Por que este estudo era necessário</h3>
+<p>A comparação entre tirzepatida (~21% no SURMOUNT-1) e semaglutida (~15% no STEP-1) circulava amplamente, mas era <strong>indireta</strong> — estudos diferentes, populações diferentes, durações diferentes. O SURMOUNT-5 fez o teste <strong>head-to-head</strong>, com a dose de obesidade de ambos.</p>
+<h3>Desenho</h3>
+<ul><li><strong>751 adultos</strong> com <strong>obesidade e sem diabetes</strong>.</li><li><strong>Tirzepatida</strong> na <strong>dose máxima tolerada</strong> (10 ou 15 mg/semana) vs <strong>semaglutida 2,4 mg/semana</strong> — a dose aprovada para obesidade, e não a de 1,0 mg usada no SURPASS-2.</li><li><strong>Aberto</strong> (open-label), com comparador ativo. <strong>72 semanas</strong>.</li></ul>
+<h3>Resultados</h3>
+<ul><li><strong>Peso: −20,2% com tirzepatida vs −13,7% com semaglutida</strong> — diferença de <strong>~6,5 pontos percentuais</strong>.</li><li>Em valor absoluto: <strong>−22,8 kg vs −15,0 kg</strong>.</li><li><strong>Circunferência abdominal</strong>, <strong>pressão arterial sistólica e diastólica</strong>, <strong>HbA1c</strong>, <strong>insulina de jejum</strong>, <strong>triglicerídeos</strong> e <strong>HDL</strong>: todos favoreceram tirzepatida de forma significativa.</li></ul>
+<h3>Segurança — o achado que surpreende</h3>
+<p>Apesar da maior perda de peso, a <strong>descontinuação por eventos gastrointestinais foi menor com tirzepatida: 2,7% vs 5,6%</strong>. Os perfis de eventos adversos foram, no geral, semelhantes — predominantemente gastrointestinais e ligados à titulação em ambos.</p>
+<h3>Limitações</h3>
+<ul><li><strong>Desenho aberto</strong>: sem cegamento, com desfecho parcialmente influenciável por expectativa (embora peso seja medida objetiva).</li><li>Desfecho <strong>substituto</strong>: perda de peso, não evento clínico. A semaglutida tem prova cardiovascular (<strong>SELECT</strong>); a tirzepatida aguardava o <strong>SURPASS-CVOT</strong> e equivalentes na obesidade.</li><li><strong>72 semanas</strong> — não informa sobre manutenção a longo prazo.</li></ul>
+<h3>O que muda na prática</h3>
+<ul><li>Quando o objetivo principal é <strong>magnitude de perda de peso</strong>, a tirzepatida é a escolha com melhor evidência direta.</li><li>Quando o objetivo é <strong>redução comprovada de eventos cardiovasculares em obesidade com doença CV estabelecida</strong>, a semaglutida tem o SELECT — argumento que a potência isolada não substitui.</li><li>Tolerabilidade <strong>não</strong> é motivo para preferir semaglutida: neste estudo, a descontinuação por eventos GI foi menor com tirzepatida.</li></ul></div>
+  </details>
+  <details>
+    <summary>4 flashcards</summary>
+    <div class="flashes"><div class="fc"><p class="q">Qual o resultado primário do SURMOUNT-5?</p><p class="a">Perda de peso em 72 semanas: −20,2% com tirzepatida vs −13,7% com semaglutida 2,4 mg (−22,8 kg vs −15,0 kg), em adultos com obesidade sem diabetes.</p></div><div class="fc"><p class="q">Qual a diferença de comparador entre SURPASS-2 e SURMOUNT-5?</p><p class="a">No SURPASS-2 o comparador foi semaglutida 1,0 mg (dose de diabetes); no SURMOUNT-5 foi semaglutida 2,4 mg (dose de obesidade) — comparação mais justa.</p></div><div class="fc"><p class="q">A maior perda de peso da tirzepatida no SURMOUNT-5 veio com pior tolerabilidade?</p><p class="a">Não. A descontinuação por eventos gastrointestinais foi menor com tirzepatida (2,7%) do que com semaglutida (5,6%).</p></div><div class="fc"><p class="q">Qual a principal limitação do SURMOUNT-5?</p><p class="a">Desenho aberto (open-label) e desfecho substituto (peso), sem eventos clínicos — e apenas 72 semanas.</p></div></div>
+  </details>
+</article>
+<article class="ficha" id="essence-2025">
+  <header class="fh">
+    <div>
+      <h2>ESSENCE (2025)</h2>
+      <p class="meta"><span class="chip obesidade">Obesidade</span><span class="ref">NEJM · 2025</span></p>
+    </div>
+    <a class="doi" href="https://doi.org/10.1056/NEJMoa2413258" target="_blank" rel="noopener">Conferir publicação ↗</a>
+  </header>
+  <div class="campos"><div class="campo"><div class="rot">População</div><div class="val">Em <strong>MASH (esteato-hepatite associada à disfunção metabólica) com fibrose F2–F3</strong> confirmada por biópsia (n=1.197 randomizados; análise interina dos primeiros <strong>800</strong>), a semaglutida melhora a histologia hepática?</div></div><div class="campo"><div class="rot">Intervenção</div><div class="val"><strong>Semaglutida 2,4 mg/semana SC</strong> vs <strong>placebo</strong>, randomização <strong>2:1</strong>. Análise planejada em <strong>72 semanas</strong> (estudo segue até 240 semanas).</div></div><div class="campo"><div class="rot">Desfecho primário</div><div class="val"><strong>Dois co-primários</strong>: (1) <strong>resolução da esteato-hepatite sem piora da fibrose</strong>; (2) <strong>melhora da fibrose (≥1 estágio) sem piora da esteato-hepatite</strong>.</div></div><div class="campo key"><div class="rot">Resultado-chave</div><div class="val"><strong>Resolução da MASH: 62,9% vs 34,3%</strong> — diferença de <strong>+28,7 pontos percentuais</strong> (IC95% 21,1–36,2). <strong>Melhora da fibrose: 36,8% vs 22,4%</strong> — diferença de <strong>+14,4 pontos</strong> (IC95% 7,5–21,3). Ambos <strong>p&lt;0,001</strong>. Desfecho combinado (resolução <strong>e</strong> melhora da fibrose): <strong>32,7% vs 16,1%</strong>.</div></div><div class="campo"><div class="rot">Segurança</div><div class="val">Perfil de classe: <strong>eventos gastrointestinais</strong> mais frequentes. Sem sinal hepático novo.</div></div><div class="campo pratica"><div class="rot">Na prática</div><div class="val">Coloca a semaglutida como opção com <strong>prova histológica</strong> na MASH com fibrose significativa — doença até então praticamente órfã de tratamento farmacológico.</div></div></div>
+  <details>
+    <summary>Resumo completo <span class="hint">(o texto que o aluno lê)</span></summary>
+    <div class="corpo"><h3>O problema clínico</h3>
+<p>A <strong>MASLD</strong> (antiga DHGNA) é a hepatopatia mais prevalente do mundo e sua forma inflamatória, a <strong>MASH</strong>, é a que progride para cirrose e carcinoma hepatocelular. O que determina prognóstico é o <strong>estágio de fibrose</strong> — não a esteatose. Até recentemente, o tratamento se resumia a perda de peso e controle metabólico; o <strong>resmetirom</strong> foi o primeiro fármaco aprovado (MAESTRO-NASH, 2024), e o ESSENCE trouxe a semaglutida para o mesmo território.</p>
+<h3>Desenho</h3>
+<ul><li><strong>1.197 adultos randomizados</strong> com <strong>MASH confirmada por biópsia</strong> e <strong>fibrose estágio F2 ou F3</strong> (classificação NASH CRN).</li><li><strong>Semaglutida 2,4 mg/semana</strong> vs <strong>placebo</strong>, randomização <strong>2:1</strong>.</li><li>Estudo planejado para <strong>240 semanas</strong>; a publicação de 2025 é a <strong>análise interina pré-especificada de 72 semanas</strong>, nos <strong>primeiros 800 randomizados</strong>.</li></ul>
+<h3>Resultados (72 semanas)</h3>
+<p><strong>Co-primário 1 — Resolução da esteato-hepatite sem piora da fibrose:</strong></p>
+<ul><li><strong>62,9% vs 34,3%</strong> — diferença estimada de <strong>+28,7 pontos percentuais</strong> (IC95% 21,1–36,2); p&lt;0,001.</li></ul>
+<p><strong>Co-primário 2 — Melhora da fibrose (≥1 estágio) sem piora da esteato-hepatite:</strong></p>
+<ul><li><strong>36,8% vs 22,4%</strong> — diferença de <strong>+14,4 pontos</strong> (IC95% 7,5–21,3); p&lt;0,001.</li></ul>
+<p><strong>Secundário confirmatório — ambos simultaneamente:</strong></p>
+<ul><li><strong>32,7% vs 16,1%</strong> — diferença de <strong>+16,5 pontos</strong> (IC95% 10,2–22,8); p&lt;0,001.</li></ul>
+<p>Note a <strong>alta taxa de resposta no placebo</strong> (34,3% de resolução): é um fenômeno conhecido nos estudos de MASH, ligado à variabilidade da leitura histológica e às mudanças de estilo de vida induzidas pela participação no estudo. Por isso o que importa é a <strong>diferença entre grupos</strong>, não o número absoluto.</p>
+<h3>Segurança</h3>
+<p>Perfil esperado da classe: <strong>eventos gastrointestinais</strong> (náusea, diarreia, vômito, constipação) mais frequentes com semaglutida. Sem sinal de hepatotoxicidade.</p>
+<h3>Limitações</h3>
+<ul><li><strong>Análise interina</strong> — o desfecho clínico (cirrose, descompensação, transplante, morte) virá com o seguimento de <strong>240 semanas</strong>.</li><li>Exclui <strong>cirrose (F4)</strong>, onde a necessidade terapêutica é maior.</li><li>Histologia depende de <strong>biópsia</strong>, com variabilidade inter-observador.</li></ul>
+<h3>O que muda na prática</h3>
+<ul><li>Em paciente com <strong>obesidade/DM2 e MASH F2–F3</strong>, a semaglutida trata simultaneamente peso, glicemia, risco cardiovascular e <strong>agora também a histologia hepática</strong>.</li><li>Reforça a lógica de <strong>rastrear fibrose</strong> (FIB-4, elastografia) em quem tem diabetes e obesidade — porque agora existe conduta a oferecer.</li></ul></div>
+  </details>
+  <details>
+    <summary>4 flashcards</summary>
+    <div class="flashes"><div class="fc"><p class="q">Quais os desfechos co-primários e resultados do ESSENCE em 72 semanas?</p><p class="a">Resolução da esteato-hepatite sem piora da fibrose: 62,9% vs 34,3% (+28,7 pp). Melhora da fibrose ≥1 estágio sem piora da esteato-hepatite: 36,8% vs 22,4% (+14,4 pp). Ambos p&lt;0,001.</p></div><div class="fc"><p class="q">Qual a população do ESSENCE?</p><p class="a">Adultos com MASH confirmada por biópsia e fibrose F2–F3 (NASH CRN); a cirrose F4 foi excluída.</p></div><div class="fc"><p class="q">Por que a taxa de resposta no placebo do ESSENCE foi alta (34,3%)?</p><p class="a">É um fenômeno conhecido nos estudos de MASH — variabilidade da leitura histológica e mudanças de estilo de vida induzidas pela participação. Por isso importa a diferença entre grupos.</p></div><div class="fc"><p class="q">O ESSENCE já demonstrou redução de desfechos clínicos hepáticos?</p><p class="a">Não. A publicação de 2025 é análise interina de 72 semanas com desfecho histológico; os desfechos clínicos virão no seguimento de 240 semanas.</p></div></div>
+  </details>
+</article>
+  </main>
+
+  <footer>
+    <p>Cada artigo entra como item privado da subespecialidade correspondente, na aba Artigos — os capítulos existentes não se misturam nem mudam de lugar.</p>
+    <p>Os mapas mentais ficaram de fora deste lote, conforme combinado: entram depois, se você gostar do formato.</p>
+  </footer>
+</div>

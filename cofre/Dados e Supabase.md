@@ -1,6 +1,6 @@
 ---
 tags: [cofre, dados, supabase]
-atualizado: 2026-07-21
+atualizado: 2026-07-25
 ---
 
 # Dados e Supabase
@@ -11,7 +11,21 @@ Quem lê o quê no hydrate (`hydrateRemoteState`, index.html ~l.3593):
 - **Aluno real** (tem `currentUser.id`): NÃO lê o global direto. Chama **`endodirect_member_content()`** (curado por acesso) **+ `endodirect_member_resumos()`** (diretrizes/Resumos). SECURITY DEFINER; gate por `endodirect_acessos_ativos()` (retorna `'plano'` p/ qualquer assinante ativo standard/gold/premium).
 - **Demo/visitante** (sem `id` — inclui a conta demo **`alunopro`**): chama **`endodirect_public_content()`** + (desde 2026-07-21) **`endodirect_member_resumos()`** para os Resumos aparecerem na vitrine/degustação.
 - **`endodirect_member_content()`** entrega: `acessos`, `cursos`, `adm_avisos`+`radar_avisos`, `ig_stories`, **diretrizes públicas** (privado≠true), `diretrizes_temas`, **provas** (assinante = tudo que **não é TEEM** → Endodirect + residências; EndoTEEM = Endodirect+TEEM; degustação = 50 do Endodirect), `podcasts`/`mm_shared`/`fc_shared`/`adm_cursos` gated por plano/tier. ~4,6 MB p/ assinante.
-- **`endodirect_member_resumos()`** (criado 2026-07-21, RPC leve ~1,5 MB) entrega só `diretrizes` (públicas **+ privadas/Resumos**: assinante recebe todas; degustação recebe **1 por subespecialidade**) + `diretrizes_temas`. **Por que separado:** juntar os 106 resumos no member_content levava a resposta a ~5,3 MB e ela **deixava de chegar** ao cliente (Resumos vazio). Separar mantém cada resposta pequena e robusta.
+- **`endodirect_member_resumos()`** (criado 2026-07-21, RPC leve ~1,5 MB) entrega só `diretrizes` (públicas **+ privadas/Resumos**: assinante recebe todas; degustação recebe **1 por subespecialidade *e por tipo*** — ver abaixo) + `diretrizes_temas`. **Por que separado:** juntar os 106 resumos no member_content levava a resposta a ~5,3 MB e ela **deixava de chegar** ao cliente (Resumos vazio). Separar mantém cada resposta pequena e robusta.
+  - **Degustação por tipo (2026-07-25):** o `distinct on` do ramo de degustação passou de `(sub)` para `(sub, coalesce(tipo,'capitulo'))` (migração `member_resumos_degustacao_por_tipo`). Sem isso, com a aba **Artigos**, um trial podia ocupar a vaga única da área e deixar a aba **Capítulos** vazia na degustação. Itens sem `tipo` contam como `capitulo` → nada mudou para o acervo existente (14 áreas × 1 capítulo, conferido).
+
+### Estado `rascunho` — item gravado que só o professor vê (2026-07-25)
+Um item de `diretrizes` com **`rascunho:true`** é filtrado **no servidor**, não só no cliente. Migração `diretrizes_rascunho_so_no_painel_do_professor`:
+- **`endodirect_member_resumos()`** — `and coalesce(v->>'rascunho','') <> 'true'` nos **3 ramos** (público, assinante `@> array['plano']`, degustação). Os três, senão o filtro vaza pelo ramo esquecido.
+- **`endodirect_showcase_resumos()`** — mesmo predicado.
+- **`endodirect_member_content()` / `endodirect_public_content()`** — **não** precisaram: já entregam só `privado <> 'true'`, e todo rascunho nasce privado. (Se algum dia existir rascunho público, aí sim precisam do filtro.)
+- **Admin não é afetado:** lê o `payload` direto, então vê o rascunho — que é o objetivo.
+- **Como conferir depois de mexer nisso** (deve dar 0 em todos os cenários):
+  ```sql
+  select 'showcase' r, (select count(*) from jsonb_array_elements(endodirect_showcase_resumos()->'diretrizes') v where v->>'tipo'='artigo')
+  union all select 'public', (select count(*) from jsonb_array_elements(endodirect_public_content()->'diretrizes') v where v->>'tipo'='artigo');
+  ```
+- **Estado atual:** 16 artigos (9 Diabetes + 7 Obesidade) gravados com `tipo:'artigo'`, `privado:true`, `rascunho:true`. Conferidos por **md5 de `resumo`, `pts`, `flashcards` e metadados** contra `scratchpad/artigos/trials.js` — 16/16 idênticos.
 
 
 
