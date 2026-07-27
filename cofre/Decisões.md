@@ -1,6 +1,6 @@
 ---
 tags: [cofre, decisoes]
-atualizado: 2026-07-25
+atualizado: 2026-07-27
 ---
 
 # Decisões
@@ -17,6 +17,16 @@ Log de decisões de produto e técnicas (mais recentes no topo).
   - **Degrada sozinho:** artigo sem `info` cai no texto corrido de sempre — `dirFichaHTML` devolve `''`.
   - **Conferência dos números (o risco real aqui):** a ficha é lida como *o* resumo do estudo, então um número errado nela é pior do que no meio do texto. `check_info.js` valida que **cada número citado na ficha existe no texto original** do trial — **277 conferidos, todos batem**. E `check_info_db.js` reproduz em JS o `concat_ws/md5` do Postgres para provar que as **16 fichas gravadas são idênticas à fonte local**.
   - `sw` v127→v128.
+- **📚 2º lote de artigos: +8 trials e +3 COMPARATIVOS em tabela (2026-07-27, "insere também outros estudos importantes (surmount maintain), step 9, etc" + "um comparativo dos trials de cada estudo… em formato de tabela"):** o acervo de artigos foi de **16 para 27** — todos como **rascunho**.
+  - **8 trials novos** (fonte: `scratchpad/artigos/trials2.js` + `info2.js`): **Diabetes** — DCCT (1993), ACCORD (2008), REWIND (2019); **Obesidade** — STEP-2, STEP-4, STEP-9, SURMOUNT-2, SURMOUNT-4.
+  - **⚠️ "SURMOUNT MAINTAIN" não existe com esse nome.** O estudo de manutenção da tirzepatida é o **SURMOUNT-4** (JAMA 2024, retirada randomizada após 36 semanas de lead-in). Foi o que entrou; **avisado ao professor para corrigir se ele tinha outro em mente**.
+  - **3 artigos-comparativo, um por PROGRAMA** (`comparativos.js`): **Programa STEP**, **Programa SURMOUNT** (Obesidade) e **Programa SURPASS** (Diabetes). Cada um é uma **tabela** com todos os estudos da família.
+    - **Não têm `info` de propósito:** sem ficha, o card cai no texto corrido e renderiza a tabela em markdown. O caminho de degradação já construído serviu exatamente para isso, sem código novo.
+    - Cada tabela abre com "**como NÃO usar**": comparação entre ensaios é **indireta**, serve para escolher qual citar, não para ranquear.
+  - **Sem flashcards** nos novos (a decisão de 25/07 vale daqui pra frente). Os 16 do 1º lote seguem com os deles gravados, apenas não renderizados.
+  - **Conferência:** `check_info2.js` validou **125 números** da ficha contra o texto de cada trial. Pegou **5 diferenças que eu havia calculado e não estavam escritas na prosa** (ex.: −9,6 − (−3,4) = −6,2 pp no STEP-2) — conferi a aritmética e **escrevi cada uma no texto**, em vez de removê-las da ficha. O validador de estrutura pegou também **uma tabela com 1ª célula de cabeçalho vazia**, a armadilha do `mdToHtml` já documentada.
+  - **⚠️ LIMITE DA VERIFICAÇÃO, a dizer com clareza:** o checador compara a ficha com a **prosa que eu mesmo escrevi** — pega inconsistência interna, **não erro factual**. Os números vêm da minha memória e **precisam da revisão do professor**. Os conectores **PubMed** e **Clinical Trials** estão listados na sessão mas **não autorizados**; com eles ligados, dá para conferir contra a fonte.
+- **📐 Gráfico da curva centralizado (2026-07-27, "deixa o gráfico sempre centralizado"):** `margin-inline:auto` no SVG e `justify-content:center` na legenda. `sw` v132→v133.
 - **🎯 Rótulo "Objetivo" na pergunta do estudo (2026-07-27):** a pergunta do trial saía solta embaixo do nome, sem dizer o que era. Ganhou o rótulo **Objetivo** no mesmo estilo dos outros (`fx-lab` — versalete, espaçado, apagado), e o `max-width:52ch` saiu para o texto **ocupar a linha inteira** como o resto da ficha. `sw` v131→v132.
 - **✂️ Fora o forest plot; curva com teto de largura (2026-07-27, "pode retirar esse efeito e precisão" + "reduz o tamanho"):** duas correções de leitura na ficha do artigo, vistas em produção.
   - **Bloco "Efeito e precisão" REMOVIDO.** Eu tinha decidido pôr forest plot em todos os que têm HR (consistência p/ comparar estudos); na tela ficou redundante — o IC já aparece por extenso na linha do efeito, logo acima. Removidos o renderizador, o CSS e os testes. O campo `forest` **fica no dado** (`info.js` e banco): se voltar, é só reintroduzir o renderizador, sem refazer número.
