@@ -887,6 +887,21 @@ html[data-theme="light"] .dir-back{background:#f8f9fc;border-color:var(--bd2);co
   .dir-ficha .fx-bar-lab{text-align:left}
   .dir-ficha .fx-bar-track{height:1.7rem}
 }
+/* --- Cores de letra e de fundo (paleta presa ao tema) --------------------- */
+.wc-azul{color:var(--blue2)}.wc-verde{color:var(--grn)}.wc-vermelho{color:var(--red)}
+.wc-dourado{color:var(--gold)}.wc-roxo{color:var(--pur)}.wc-cinza{color:var(--t2)}
+.wh-azul,.wh-verde,.wh-vermelho,.wh-dourado,.wh-roxo,.wh-cinza{color:var(--tx);padding:.05em .25em;border-radius:4px}
+.wh-azul{background:var(--blue-l)}.wh-verde{background:var(--grn-l)}.wh-vermelho{background:var(--red-l)}
+.wh-dourado{background:var(--gold-l)}.wh-roxo{background:var(--pur-l)}.wh-cinza{background:var(--s2)}
+/* seletor de cor no toolbar: abre no hover/foco, sem JS de abrir e fechar */
+.wys-cor-wrap{position:relative;display:inline-flex}
+.wys-cor-pop{position:absolute;top:calc(100% + 4px);left:0;z-index:30;display:none;gap:3px;
+  background:var(--surface);border:1px solid var(--bd2);border-radius:9px;padding:5px;box-shadow:0 6px 18px rgba(0,0,0,.35)}
+.wys-cor-wrap:hover .wys-cor-pop,.wys-cor-wrap:focus-within .wys-cor-pop{display:flex}
+.wys-cor-op{width:24px;height:24px;border:1px solid var(--bd2);border-radius:6px;cursor:pointer;
+  font-size:.8rem;font-weight:800;line-height:1;display:flex;align-items:center;justify-content:center;padding:0}
+.wys-cor-op:hover{border-color:var(--blue)}
+.wys-cor-lim{background:var(--s2);color:var(--t2);font-weight:600}
 .dir-card .dir-texto{font-size:.88rem;color:var(--t2);line-height:1.62}
 .dir-card .dir-texto p{margin:.4rem 0}
 .dir-card .dir-texto table{border-collapse:collapse;width:fit-content;max-width:100%;margin:.7rem auto;font-size:.8rem;display:block;overflow-x:auto;-webkit-overflow-scrolling:touch}
@@ -3923,6 +3938,12 @@ function mdInline(s){
   var imgs=[];
   s=esc(s).replace(/!\[([^\]]*)\]\((https?:\/\/[^\s)]+)\)(?:\{(\d{1,3})\})?/g,function(w,alt,url,ww){var _st=ww?(' style="width:'+ww+'%"'):'';imgs.push('<img class="wys-img" src="'+url+'" alt="'+alt+'"'+_st+' referrerpolicy="no-referrer" onerror="this.style.display=\'none\'">');return ''+(imgs.length-1)+'';});
   s=s.replace(/\*\*(.+?)\*\*/g,'<strong>$1</strong>').replace(/__(.+?)__/g,'<u>$1</u>').replace(/(^|[^*])\*([^*\n]+)\*(?!\*)/g,'$1<em>$2</em>').replace(/`([^`]+)`/g,'<code>$1</code>');
+  // Cor de letra {c:nome|texto} e de fundo {h:nome|texto}. Vem DEPOIS do negrito
+  // e do itálico, para que a formatação de dentro continue valendo. O nome sai de
+  // uma allowlist fechada (WYS_CORES) — nada de CSS arbitrário vindo do conteúdo.
+  s=s.replace(new RegExp('\\{(c|h):('+WYS_CORES_RE+')\\|([^}]*)\\}','g'),function(w,t,nome,txt){
+    return '<span class="'+(t==='c'?'wc-':'wh-')+nome+'">'+txt+'</span>';
+  });
   s=s.replace(/(\d+)/g,function(w,i){return imgs[+i]||'';});
   return s;
 }
@@ -3940,6 +3961,73 @@ function wysAlignBar(){
     +'<button type="button" class="wys-tool" data-wys="aligncenter" title="Centralizar">'+C+'</button>'
     +'<button type="button" class="wys-tool" data-wys="alignright" title="Alinhar à direita">'+R+'</button>'
     +'<button type="button" class="wys-tool" data-wys="alignjustify" title="Justificar">'+J+'</button>';
+}
+// ---------------------------------------------------------------------------
+// COR DE TEXTO E DE FUNDO no editor
+// Paleta FIXA, presa às variáveis do tema — não é seletor de cor livre.
+// Motivo: o app tem tema claro e escuro; um hexadecimal escolhido no escuro
+// fica ilegível no claro (e vice-versa). Amarrando às variáveis, a mesma marcação
+// se adapta sozinha nos dois temas.
+// A lista de nomes também é a allowlist do markdown: só estes entram no HTML,
+// então não há como injetar CSS pelo marcador.
+var WYS_CORES=[
+  {k:'azul',    rot:'Azul',     tx:'var(--blue2)', bg:'var(--blue-l)'},
+  {k:'verde',   rot:'Verde',    tx:'var(--grn)',   bg:'var(--grn-l)'},
+  {k:'vermelho',rot:'Vermelho', tx:'var(--red)',   bg:'var(--red-l)'},
+  {k:'dourado', rot:'Dourado',  tx:'var(--gold)',  bg:'var(--gold-l)'},
+  {k:'roxo',    rot:'Roxo',     tx:'var(--pur)',   bg:'var(--pur-l)'},
+  {k:'cinza',   rot:'Cinza',    tx:'var(--t2)',    bg:'var(--s2)'}
+];
+var WYS_CORES_RE=WYS_CORES.map(function(c){return c.k;}).join('|');
+// Barra com os dois seletores (cor da letra / cor do fundo) + limpar.
+function wysCorBar(){
+  function amostras(tipo){
+    return WYS_CORES.map(function(c){
+      return '<button type="button" class="wys-cor-op" data-wys-cor="'+tipo+':'+c.k+'" title="'+c.rot+'"'
+        +' style="'+(tipo==='c'?('color:'+c.tx+';background:var(--surface)'):('background:'+c.bg+';color:var(--tx)'))+'">A</button>';
+    }).join('');
+  }
+  return '<span class="wys-sep"></span>'
+    +'<span class="wys-cor-wrap"><button type="button" class="wys-tool wys-cor-btn" title="Cor da letra"><span style="color:var(--blue2);font-weight:800">A</span></button>'
+      +'<span class="wys-cor-pop">'+amostras('c')+'<button type="button" class="wys-cor-op wys-cor-lim" data-wys-cor="x:x" title="Remover cor">⌫</button></span></span>'
+    +'<span class="wys-cor-wrap"><button type="button" class="wys-tool wys-cor-btn" title="Cor do fundo"><span style="background:var(--gold-l);color:var(--tx);padding:0 3px;border-radius:3px;font-weight:800">A</span></button>'
+      +'<span class="wys-cor-pop">'+amostras('h')+'<button type="button" class="wys-cor-op wys-cor-lim" data-wys-cor="x:x" title="Remover cor">⌫</button></span></span>';
+}
+// Aplica/remove a cor envolvendo a seleção num <span class="wc-*|wh-*">.
+// NÃO uso execCommand('foreColor'): ele grava cor literal (rgb/<font>), o que
+// quebraria a adaptação ao tema e o caminho de volta para markdown.
+function wysAplicarCor(spec){
+  var sel=window.getSelection&&window.getSelection();
+  if(!sel||!sel.rangeCount||sel.isCollapsed){try{notify('Selecione o texto primeiro.','info');}catch(e){}return;}
+  var r=sel.getRangeAt(0);
+  if(spec==='x:x'){ // limpar: desembrulha os spans de cor dentro da seleção
+    var alvo=r.commonAncestorContainer;
+    alvo=(alvo.nodeType===1?alvo:alvo.parentNode);
+    var raiz=alvo.closest?(alvo.closest('.wys-edit')||alvo):alvo;
+    raiz.querySelectorAll('span[class^="wc-"],span[class^="wh-"]').forEach(function(sp){
+      if(!r.intersectsNode||r.intersectsNode(sp)){
+        var pai=sp.parentNode;
+        while(sp.firstChild)pai.insertBefore(sp.firstChild,sp);
+        pai.removeChild(sp);
+      }
+    });
+    return;
+  }
+  var p=spec.split(':'),cls=(p[0]==='c'?'wc-':'wh-')+p[1];
+  if(!WYS_CORES.some(function(c){return c.k===p[1];}))return;
+  var span=document.createElement('span');span.className=cls;
+  try{r.surroundContents(span);}
+  catch(_){ // seleção atravessa elementos: extrai e reinsere
+    try{span.appendChild(r.extractContents());r.insertNode(span);}catch(__){return;}
+  }
+  try{sel.removeAllRanges();}catch(__){}
+}
+// Classe do span de cor → marcador markdown. Nome fora da paleta é ignorado
+// (devolve o texto cru), então lixo colado de fora não vira marcador quebrado.
+function wysCorMark(cls,inner){
+  var m=/(?:^|\s)(wc|wh)-([a-zà-ú]+)/.exec(String(cls||''));
+  if(!m||!WYS_CORES.some(function(c){return c.k===m[2];}))return inner;
+  return '{'+(m[1]==='wc'?'c':'h')+':'+m[2]+'|'+inner+'}';
 }
 // Lê o alinhamento explícito de um bloco (style/attr) → marcador markdown {:x}.
 // Justificado é o PADRÃO (via CSS), então não emite marcador (mantém o md limpo).
@@ -4020,6 +4108,7 @@ function htmlToMd(root){
       else if(tag==='u'||tag==='ins')s+='__'+inner+'__';
       else if(tag==='code'||tag==='tt'||tag==='kbd')s+='`'+inner+'`';
       else if(tag==='br')s+='\n';
+      else if(tag==='span'&&/^(wc|wh)-/.test(ch.className||''))s+=wysCorMark(ch.className,styleWrap(ch,inner));
       else if(tag==='span'||tag==='font')s+=styleWrap(ch,inner);
       else s+=inner;
     }
@@ -9016,7 +9105,7 @@ function admRefWysHTML(d){
       +'<button type="button" class="wys-tool" data-wys="h" title="Título de seção">H</button>'
       +'<button type="button" class="wys-tool" data-wys="ul" title="Lista com marcadores">•</button>'
       +'<button type="button" class="wys-tool" data-wys="p" title="Parágrafo normal">¶</button>'
-      +wysAlignBar()
+      +wysAlignBar()+wysCorBar()
       +'<span class="wys-spacer"></span>'
       +'<button type="button" class="btn btn-outline btn-sm" id="btn-adm-ref-cancel">Cancelar</button>'
       +'<button type="button" class="btn btn-primary btn-sm" id="btn-adm-ref-save">💾 Salvar</button>'
@@ -12591,6 +12680,16 @@ function bindAdmSec(sec){
     });
     // Toolbar do editor WYSIWYG (edição direta no texto formatado do resumo).
     // mousedown preventDefault preserva a seleção do contenteditable ao clicar.
+    // Cor da letra / do fundo: não usa execCommand (ver wysAplicarCor).
+    main.querySelectorAll('[data-wys-cor]').forEach(function(b){
+      b.addEventListener('mousedown',function(e){e.preventDefault();});
+      b.addEventListener('click',function(){
+        var ed=document.activeElement;
+        if(!ed||!ed.classList||!ed.classList.contains('wys-edit'))ed=document.getElementById('adm-ref-wys');
+        if(!ed)return;ed.focus();
+        wysAplicarCor(b.dataset.wysCor);
+      });
+    });
     main.querySelectorAll('[data-wys]').forEach(function(b){
       b.addEventListener('mousedown',function(e){e.preventDefault();});
       b.addEventListener('click',function(){
@@ -13588,7 +13687,7 @@ function muralInlineEditHTML(a){
       +'<button type="button" class="wys-tool" data-wys="h" title="Título de seção">H</button>'
       +'<button type="button" class="wys-tool" data-wys="ul" title="Lista com marcadores">•</button>'
       +'<button type="button" class="wys-tool" data-wys="p" title="Parágrafo normal">¶</button>'
-      +wysAlignBar()
+      +wysAlignBar()+wysCorBar()
       +'<button type="button" class="wys-tool" id="mural-inline-imgbtn" title="Inserir imagem no texto">🖼️</button>'
       +'<span class="wys-sep"></span>'
       +'<span class="wys-imglabel">Imagem:</span>'
