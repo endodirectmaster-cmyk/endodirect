@@ -825,6 +825,26 @@ html[data-theme="light"] .dir-back{background:#f8f9fc;border-color:var(--bd2);co
 .dir-ficha .fx-bar-fill.ctl{background:var(--bd2)}
 .dir-ficha .fx-bar-val{font-size:.84rem;font-weight:700;color:#fff;white-space:nowrap}
 .dir-ficha .fx-bar-val.fora{position:absolute;top:50%;transform:translateY(-50%);color:var(--tx)}
+.dir-ficha .fx-km-svg{display:block;width:100%;height:auto;overflow:visible}
+.dir-ficha .fx-km-grid{stroke:var(--bd);stroke-width:1}
+.dir-ficha .fx-km-ay,.dir-ficha .fx-km-ax{fill:var(--t3);font-size:9px}
+.dir-ficha .fx-km-ay{text-anchor:end}
+.dir-ficha .fx-km-ax{text-anchor:middle}
+.dir-ficha .fx-km-line{fill:none;stroke-width:2.2;stroke-linecap:round;stroke-linejoin:round}
+.dir-ficha .fx-km-line.int{stroke:var(--blue2)}
+.dir-ficha .fx-km-line.ctl{stroke:var(--t3)}
+.dir-ficha .fx-km-pt.int{fill:var(--blue2)}
+.dir-ficha .fx-km-pt.ctl{fill:var(--t3)}
+.dir-ficha .fx-km-end{font-size:10.5px;font-weight:700}
+.dir-ficha .fx-km-end.int{fill:var(--blue2)}
+.dir-ficha .fx-km-end.ctl{fill:var(--t2)}
+.dir-ficha .fx-km-leg{display:flex;align-items:center;gap:.35rem;flex-wrap:wrap;font-size:.72rem;color:var(--t2);margin-top:.1rem}
+.dir-ficha .fx-km-key{width:14px;height:2.5px;border-radius:2px;display:inline-block}
+.dir-ficha .fx-km-key+.fx-km-key,.dir-ficha .fx-km-leg .fx-km-key:not(:first-child){margin-left:.75rem}
+.dir-ficha .fx-km-key.int{background:var(--blue2)}
+.dir-ficha .fx-km-key.ctl{background:var(--t3)}
+.dir-ficha .fx-km-nota{font-size:.7rem;color:var(--t3);line-height:1.5;margin-top:.5rem;padding-top:.5rem;border-top:1px dashed var(--bd)}
+.dir-ficha .fx-km-nota b{color:var(--t2);font-weight:700}
 .dir-ficha .fx-delta{margin-top:.85rem;display:flex;align-items:baseline;gap:.5rem;flex-wrap:wrap;border-top:1px dashed var(--bd);padding-top:.75rem}
 .dir-ficha .fx-delta-k{font-size:.66rem;letter-spacing:.1em;text-transform:uppercase;color:var(--t3);font-weight:600}
 .dir-ficha .fx-delta-v{font-size:1.3rem;font-weight:800;color:var(--grn);letter-spacing:-.02em;line-height:1.1}
@@ -8701,6 +8721,64 @@ function dirFichaBarrasHTML(df){
       +'</div></div>';
   }).join('')+'</div>';
 }
+// Curva de incidência cumulativa — o formato em que os trials publicam o
+// desfecho primário (Kaplan-Meier).
+// ⚠️ HONESTIDADE: não temos os dados da curva original (degraus, números em
+// risco). O que temos é a taxa final de cada braço e o seguimento. A curva aqui
+// é PROJETADA sob risco constante: λ = −ln(1−p)/T, F(t) = 1−e^(−λt). Ela passa
+// EXATAMENTE pelos dois pontos publicados, então o fim da curva é dado real; o
+// caminho até lá é modelo. O card diz isso embaixo do gráfico — aluno que vê
+// curva assume que está vendo o dado do estudo.
+function dirFichaCurvaHTML(df){
+  var c=df&&df.curva,b=df&&df.barras;
+  if(!c||!b||b.length!==2)return '';
+  var pi=Number(b[0].v),pc=Number(b[1].v),T=Number(c.dur);
+  var reais=(c.real&&Array.isArray(c.pts)&&c.pts.length>1)?c.pts:null;
+  if(reais){pi=Number(reais[reais.length-1][1]);pc=Number(reais[reais.length-1][2]);}
+  if(!(pi>0&&pc>0&&T>0)||pi>=100||pc>=100)return '';
+  var W=360,H=176,L=40,R=298,TOP=12,BOT=124; // área do gráfico; 298→360 = rótulos
+  var yMax=Math.ceil(Math.max(pi,pc)*1.28);
+  var lam=function(p){return -Math.log(1-p/100)/T;};
+  var li=lam(pi),lc=lam(pc);
+  var X=function(t){return L+(t/T)*(R-L);};
+  var Y=function(p){return BOT-(p/yMax)*(BOT-TOP);};
+  // Com pontos reais, o traçado é a própria curva do artigo; sem eles, a projeção.
+  var caminho=function(l,col){
+    var d='',k;
+    if(reais){
+      for(k=0;k<reais.length;k++)d+=(k?'L':'M')+X(reais[k][0]).toFixed(1)+','+Y(reais[k][col]).toFixed(1);
+      return d;
+    }
+    for(k=0;k<=48;k++){
+      var t=T*k/48,p=(1-Math.exp(-l*t))*100;
+      d+=(k?'L':'M')+X(t).toFixed(1)+','+Y(p).toFixed(1);
+    }
+    return d;
+  };
+  // Marcas do eixo do tempo: inteiros que couberem, sem poluir.
+  var passo=T<=6?1:(T<=24?6:(T<=60?12:24)),ticks=[];
+  for(var t=0;t<=T+0.001;t+=passo)ticks.push(t);
+  var gy=[0,yMax/2,yMax];
+  var svg='<svg viewBox="0 0 '+W+' '+H+'" class="fx-km-svg" role="img" aria-label="Curva de incidência cumulativa projetada: '+esc(b[0].n)+' '+esc(b[0].t)+' contra '+esc(b[1].n)+' '+esc(b[1].t)+' em '+esc(String(c.dur))+' '+esc(c.un)+'">'
+    +gy.map(function(v){return '<line class="fx-km-grid" x1="'+L+'" y1="'+Y(v).toFixed(1)+'" x2="'+R+'" y2="'+Y(v).toFixed(1)+'"/>'
+      +'<text class="fx-km-ay" x="'+(L-6)+'" y="'+(Y(v)+3.5).toFixed(1)+'">'+String(Math.round(v*10)/10).replace('.',',')+'%</text>';}).join('')
+    +ticks.map(function(t){return '<text class="fx-km-ax" x="'+X(t).toFixed(1)+'" y="'+(BOT+14)+'">'+String(Math.round(t*10)/10).replace('.',',')+'</text>';}).join('')
+    +'<path class="fx-km-line ctl" d="'+caminho(lc,2)+'"/>'
+    +'<path class="fx-km-line int" d="'+caminho(li,1)+'"/>'
+    +'<circle class="fx-km-pt ctl" cx="'+X(T).toFixed(1)+'" cy="'+Y(pc).toFixed(1)+'" r="3.2"/>'
+    +'<circle class="fx-km-pt int" cx="'+X(T).toFixed(1)+'" cy="'+Y(pi).toFixed(1)+'" r="3.2"/>'
+    +'<text class="fx-km-end ctl" x="'+(R+7)+'" y="'+(Y(pc)+3.5).toFixed(1)+'">'+esc(reais?(String(pc).replace('.',',')+'%'):b[1].t)+'</text>'
+    +'<text class="fx-km-end int" x="'+(R+7)+'" y="'+(Y(pi)+3.5).toFixed(1)+'">'+esc(reais?(String(pi).replace('.',',')+'%'):b[0].t)+'</text>'
+    +'<text class="fx-km-ax" x="'+((L+R)/2).toFixed(1)+'" y="'+(BOT+32)+'" text-anchor="middle">'+esc(c.un)+' de seguimento</text>'
+  +'</svg>';
+  return '<div class="fx-km">'+svg
+    +'<div class="fx-km-leg"><span class="fx-km-key int"></span>'+esc(b[0].n)
+      +'<span class="fx-km-key ctl"></span>'+esc(b[1].n)+'</div>'
+    +'<div class="fx-km-nota">'+(reais
+      ?('Curva <b>reproduzida da '+esc(c.fig||'figura do artigo')+'</b>, ponto a ponto. Por ser Kaplan-Meier, os valores no fim do seguimento são <b>maiores</b> que as proporções brutas citadas no texto — que dividem os eventos por todos os randomizados.')
+      :'Curva <b>projetada</b> a partir das taxas publicadas e do seguimento, assumindo risco constante. Os pontos finais são os do estudo; o traçado entre eles é modelo — <b>não</b> é a curva de Kaplan-Meier original.')+'</div>'
+  +'</div>';
+}
 function dirFichaForestHTML(g){
   if(!g)return '';
   var lo=dirForestPos(g.lo),hi=dirForestPos(g.hi),pt=dirForestPos(g.e);
@@ -8745,7 +8823,9 @@ function dirFichaHTML(info,d){
     p.push('<div class="fx-sec"><div class="fx-lab">'+esc(df.lab||'Desfecho')+'</div>'
       +'<div class="fx-out-name">'+mdInline(String(df.nome||''))+'</div>'
       +(df.dir?('<div class="fx-out-dir">'+(df.dir==='maior'?'↑ maior é melhor':'↓ menor é melhor')+'</div>'):'')
-      +dirFichaBarrasHTML(df)+ef+dirFichaForestHTML(df.forest)
+      // Havendo curva, ela SUBSTITUI as barras: mostra os mesmos dois números
+      // nas pontas e ainda diz quando os braços se separaram.
+      +(dirFichaCurvaHTML(df)||dirFichaBarrasHTML(df))+ef+dirFichaForestHTML(df.forest)
     +'</div>');
   });
   // Números secundários.

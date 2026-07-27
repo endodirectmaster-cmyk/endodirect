@@ -13,6 +13,13 @@
 //     escala number — teto do eixo das barras (mesma escala p/ os dois braços)
 //     barras[] {n,t,v,i} — n=rótulo, t=texto exibido, v=valor p/ largura, i=1 se intervenção
 //     efeito {k,v,p}     — k=medida (HR/RR/Diferença), v=valor, p=IC/p/NNT
+//     curva  {dur,un}    — desenha a curva de incidência cumulativa no lugar das
+//                          barras. dur = duração do seguimento, un = 'anos' |
+//                          'meses' | 'semanas'. Os pontos finais vêm das próprias
+//                          `barras` (têm de ser % cumulativa nos DOIS braços).
+//                          ⚠️ A curva é PROJETADA (risco constante) a partir das
+//                          taxas publicadas — NÃO é a Kaplan-Meier do artigo. Só
+//                          usar onde o trial reporta taxa cumulativa + seguimento.
 //     forest {e,lo,hi,fav,des} — ponto e IC p/ o forest plot; fav/des = legendas dos lados
 //   }
 //   tiles[]  {v,k,t}  — v=número, k=rótulo, t='good'|'bad'|'warn'|undefined
@@ -77,6 +84,7 @@ const INFO = {
           { n: 'Placebo', t: '12,1%', v: 12.1 }
         ],
         efeito: { k: 'HR', v: '0,86', p: 'IC95% 0,74–0,99 · p=0,04 para superioridade' },
+        curva: { dur: 3.1, un: 'anos' },
         forest: { e: 0.86, lo: 0.74, hi: 0.99, fav: 'empagliflozina', des: 'placebo' }
       }
     ],
@@ -107,6 +115,7 @@ const INFO = {
           { n: 'Placebo', t: '14,9%', v: 14.9 }
         ],
         efeito: { k: 'HR', v: '0,87', p: 'IC95% 0,78–0,97 · p=0,01 para superioridade' },
+        curva: { dur: 3.8, un: 'anos' },
         forest: { e: 0.87, lo: 0.78, hi: 0.97, fav: 'liraglutida', des: 'placebo' }
       }
     ],
@@ -137,6 +146,7 @@ const INFO = {
           { n: 'Placebo', t: '8,9%', v: 8.9 }
         ],
         efeito: { k: 'HR', v: '0,74', p: 'IC95% 0,58–0,95 · p<0,001 para não inferioridade — a superioridade é NOMINAL' },
+        curva: { dur: 104, un: 'semanas' },
         forest: { e: 0.74, lo: 0.58, hi: 0.95, fav: 'semaglutida', des: 'placebo' }
       }
     ],
@@ -173,6 +183,7 @@ const INFO = {
           { n: 'Placebo', t: '5,8%', v: 5.8 }
         ],
         efeito: { k: 'HR', v: '0,83', p: 'IC95% 0,73–0,95' },
+        curva: { dur: 4.2, un: 'anos' },
         forest: { e: 0.83, lo: 0.73, hi: 0.95, fav: 'dapagliflozina', des: 'placebo' }
       }
     ],
@@ -300,6 +311,7 @@ const INFO = {
           { n: 'Placebo', t: '13,8%', v: 13.8 }
         ],
         efeito: { k: 'HR', v: '0,86', p: 'IC95% 0,77–0,96 · p=0,006 — redução de 14%' },
+        curva: { dur: 47.5, un: 'meses' },
         forest: { e: 0.86, lo: 0.77, hi: 0.96, fav: 'semaglutida oral', des: 'placebo' }
       }
     ],
@@ -387,6 +399,21 @@ const INFO = {
           { n: 'Placebo', t: '8,0%', v: 8.0 }
         ],
         efeito: { k: 'HR', v: '0,80', p: 'IC95% 0,72–0,90 · p<0,001 · NNT ≈ 67 em ~3 anos' },
+        // Curva REAL, extraída da Figura 1A do artigo (o professor mandou o PDF).
+        // Método em [[Convenções de Trabalho]]: pdftocairo -svg → calibrar pelos
+        // ticks dos eixos → converter os pontos do traçado para (mês, %).
+        // Os 7,7% e 9,6% aos 48 meses são de Kaplan-Meier e por isso MAIORES que
+        // os 6,5% e 8,0% do texto, que são proporções brutas no seguimento todo.
+        curva: {
+          dur: 48, un: 'meses', real: 1, fig: 'Figura 1A',
+          pts: [[0,0,0],[1.5,0.2,0.4],[3,0.4,0.7],[4.5,0.6,1],[6,0.8,1.3],[7.5,1.1,1.6],
+                [9,1.3,1.8],[10.5,1.6,2.2],[12,1.8,2.6],[13.5,1.9,2.7],[15,2.2,3],
+                [16.5,2.4,3.3],[18,2.6,3.6],[19.5,3,3.8],[21,3.3,4.1],[22.5,3.5,4.3],
+                [24,3.8,4.7],[25.5,4.1,4.9],[27,4.3,5.2],[28.5,4.6,5.5],[30,4.8,5.8],
+                [31.5,5,6.1],[33,5.2,6.4],[34.5,5.5,6.7],[36,5.8,7],[37.5,6,7.4],
+                [39,6.2,7.8],[40.5,6.4,8.1],[42,6.6,8.4],[43.5,6.8,8.6],[45,7,8.8],
+                [46.5,7.4,9],[48,7.7,9.6]]
+        },
         forest: { e: 0.80, lo: 0.72, hi: 0.90, fav: 'semaglutida', des: 'placebo' }
       }
     ],
