@@ -825,7 +825,9 @@ html[data-theme="light"] .dir-back{background:#f8f9fc;border-color:var(--bd2);co
 .dir-ficha .fx-bar-fill.ctl{background:var(--bd2)}
 .dir-ficha .fx-bar-val{font-size:.84rem;font-weight:700;color:#fff;white-space:nowrap}
 .dir-ficha .fx-bar-val.fora{position:absolute;top:50%;transform:translateY(-50%);color:var(--tx)}
-.dir-ficha .fx-km-svg{display:block;width:100%;height:auto;overflow:visible}
+/* O SVG escala junto com a largura do card — sem teto, numa tela larga o gráfico
+   (e a tipografia dentro dele) fica gigante. */
+.dir-ficha .fx-km-svg{display:block;width:100%;max-width:430px;height:auto;overflow:visible}
 .dir-ficha .fx-km-grid{stroke:var(--bd);stroke-width:1}
 .dir-ficha .fx-km-ay,.dir-ficha .fx-km-ax{fill:var(--t3);font-size:9px}
 .dir-ficha .fx-km-ay{text-anchor:end}
@@ -849,17 +851,6 @@ html[data-theme="light"] .dir-back{background:#f8f9fc;border-color:var(--bd2);co
 .dir-ficha .fx-delta-k{font-size:.66rem;letter-spacing:.1em;text-transform:uppercase;color:var(--t3);font-weight:600}
 .dir-ficha .fx-delta-v{font-size:1.3rem;font-weight:800;color:var(--grn);letter-spacing:-.02em;line-height:1.1}
 .dir-ficha .fx-delta-p{font-size:.74rem;color:var(--t2)}
-.dir-ficha .fx-forest{margin-top:.9rem;border-top:1px dashed var(--bd);padding-top:.85rem}
-.dir-ficha .fx-forest-plot{position:relative;height:2.5rem;margin:.2rem .6rem 0}
-.dir-ficha .fx-forest-axis{position:absolute;left:0;right:0;top:1.1rem;height:1px;background:var(--bd2)}
-.dir-ficha .fx-forest-null{position:absolute;top:.1rem;bottom:.95rem;width:1px;background:var(--t3);left:50%}
-.dir-ficha .fx-forest-ci{position:absolute;top:1.1rem;height:1px;background:var(--grn)}
-.dir-ficha .fx-forest-ci::before,.dir-ficha .fx-forest-ci::after{content:"";position:absolute;top:-4px;width:1px;height:9px;background:var(--grn)}
-.dir-ficha .fx-forest-ci::before{left:0}
-.dir-ficha .fx-forest-ci::after{right:0}
-.dir-ficha .fx-forest-pt{position:absolute;top:.55rem;width:12px;height:12px;background:var(--grn);border-radius:2px;transform:translateX(-6px) rotate(45deg)}
-.dir-ficha .fx-forest-tick{position:absolute;top:1.45rem;font-size:.63rem;color:var(--t3);transform:translateX(-50%)}
-.dir-ficha .fx-forest-ends{display:flex;justify-content:space-between;gap:1rem;font-size:.64rem;color:var(--t3);margin-top:.15rem}
 .dir-ficha .fx-tiles{display:grid;grid-template-columns:repeat(auto-fit,minmax(8.5rem,1fr));gap:.55rem}
 .dir-ficha .fx-tile{border:1px solid var(--bd);border-radius:var(--rs);padding:.6rem .7rem;background:var(--s2);display:flex;flex-direction:column;gap:.1rem;min-width:0}
 .dir-ficha .fx-tile-v{font-size:1.02rem;font-weight:800;letter-spacing:-.02em;color:var(--tx)}
@@ -893,7 +884,6 @@ html[data-theme="light"] .dir-back{background:#f8f9fc;border-color:var(--bd2);co
   .dir-ficha .fx-bar-row{grid-template-columns:1fr;gap:.2rem}
   .dir-ficha .fx-bar-lab{text-align:left}
   .dir-ficha .fx-bar-track{height:1.7rem}
-  .dir-ficha .fx-forest-ends{font-size:.6rem}
 }
 .dir-card .dir-texto{font-size:.88rem;color:var(--t2);line-height:1.62}
 .dir-card .dir-texto p{margin:.4rem 0}
@@ -8689,17 +8679,6 @@ function dirSubList(pred){
   Object.keys(seen).forEach(function(s){if(DIR_SUBS.indexOf(s)<0)out.push({sub:s,count:seen[s]});});
   return out;
 }
-// ---------------------------------------------------------------------------
-// FICHA VISUAL DO ARTIGO (infográfico)
-// Um trial tem sempre a mesma anatomia — população, dois braços, desfecho com
-// número, segurança, o que muda na prática. Em vez de 16 imagens, a ficha é
-// montada por código a partir de d.info (ver scratchpad/artigos/info.js para o
-// schema). Sem info, o artigo cai no texto corrido de sempre.
-// Posição no eixo log do forest plot (0,5 a 2,0; 1,0 = linha da unidade em 50%).
-function dirForestPos(x){
-  var v=Math.min(2,Math.max(.5,Number(x)||1));
-  return ((Math.log(v)/Math.LN10+0.30103)/0.60206)*100;
-}
 // "n = |17.604" → o trecho entre pipes sai em negrito (é o número que importa).
 function dirChipHTML(s){
   return String(s||'').split('|').map(function(p,k){
@@ -8779,20 +8758,6 @@ function dirFichaCurvaHTML(df){
       :'Curva <b>projetada</b> a partir das taxas publicadas e do seguimento, assumindo risco constante. Os pontos finais são os do estudo; o traçado entre eles é modelo — <b>não</b> é a curva de Kaplan-Meier original.')+'</div>'
   +'</div>';
 }
-function dirFichaForestHTML(g){
-  if(!g)return '';
-  var lo=dirForestPos(g.lo),hi=dirForestPos(g.hi),pt=dirForestPos(g.e);
-  var ticks=[[.5,'0,5'],[.7,'0,7'],[1,'1,0'],[1.5,'1,5'],[2,'2,0']];
-  return '<div class="fx-forest"><div class="fx-lab">Efeito e precisão</div>'
-    +'<div class="fx-forest-plot">'
-    +'<div class="fx-forest-axis"></div><div class="fx-forest-null"></div>'
-    +'<div class="fx-forest-ci" style="left:'+lo.toFixed(1)+'%;right:'+(100-hi).toFixed(1)+'%"></div>'
-    +'<div class="fx-forest-pt" style="left:'+pt.toFixed(1)+'%"></div>'
-    +ticks.map(function(t){return '<div class="fx-forest-tick" style="left:'+dirForestPos(t[0]).toFixed(1)+'%">'+t[1]+'</div>';}).join('')
-    +'</div>'
-    +'<div class="fx-forest-ends"><span>← favorece '+esc(g.fav||'a intervenção')+'</span><span>favorece '+esc(g.des||'o comparador')+' →</span></div>'
-  +'</div>';
-}
 function dirFichaHTML(info,d){
   if(!info||typeof info!=='object')return '';
   var p=[];
@@ -8825,7 +8790,7 @@ function dirFichaHTML(info,d){
       +(df.dir?('<div class="fx-out-dir">'+(df.dir==='maior'?'↑ maior é melhor':'↓ menor é melhor')+'</div>'):'')
       // Havendo curva, ela SUBSTITUI as barras: mostra os mesmos dois números
       // nas pontas e ainda diz quando os braços se separaram.
-      +(dirFichaCurvaHTML(df)||dirFichaBarrasHTML(df))+ef+dirFichaForestHTML(df.forest)
+      +(dirFichaCurvaHTML(df)||dirFichaBarrasHTML(df))+ef
     +'</div>');
   });
   // Números secundários.
