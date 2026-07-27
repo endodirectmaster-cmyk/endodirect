@@ -5,6 +5,16 @@ atualizado: 2026-07-27
 
 # Convenções de Trabalho
 
+## ⚠️ Ler o cofre ANTES de escrever código — não só depois, para registrar
+
+Instrução direta do Rodolpho (2026-07-27): *"Sempre, sempre cheque o cofre para não dar bobeira."*
+
+O cofre não é só o lugar onde eu **anoto** o que fiz; é onde descubro o que **já existe**. Buscar aqui pelos nomes que vou tocar (constante, função, campo, tabela) **antes** de editar leva segundos e evita reconstruir algo já resolvido de outro jeito.
+
+- **Caso concreto (2026-07-27):** ia mergear o PR #539, que criava a constante `RESUMO_ONLY_SUBS`. Um `grep` no cofre mostrou que a `main` já tinha **`RESUMOS_ONLY_SUBS`** (com S), resolvendo o mesmo problema por outro mecanismo, desde 17/07. Sem essa checagem eu teria deixado **duas constantes quase homônimas** no mesmo arquivo — o tipo de coisa em que alguém edita uma e esquece a outra. Detalhe: `grep` no `index.html` pelo nome do #539 dava **zero**, porque o nome real diferia por uma letra. **Foi a prosa do cofre que pegou, não o código.**
+- **Como buscar:** `grep -rn "<termo>" cofre/` com o **conceito** (ex.: "Endocrinologia Básica", "rascunho", "clobber"), não só com o identificador exato — o nome no código pode diferir do que estou prestes a escrever, e é justamente aí que mora o erro.
+- **Vale em dobro para PR antigo:** um PR parado por dias pode ter sido resolvido por outro caminho enquanto isso. Antes de mergear, conferir no cofre **e** no código se o problema ainda existe.
+
 ## Git / deploy
 
 - **⚠️ LIÇÃO (2026-07-27) — NÃO cortar a saída do `git merge` com `tail`:** ao resolver conflitos, rodei `git merge … 2>&1 | tail -4`. O `tail` **escondeu a linha do `index.html`**, que também havia conflitado — resolvi só os arquivos que apareceram e **commitei com marcadores `<<<<<<<` dentro do `index.html`**. Quem pegou foi o `scripts/ci-validate.js` (`Unexpected token '<<'`), não eu. **Correção obrigatória:** depois de QUALQUER merge, auditar o repositório inteiro antes de commitar — `grep -rln "^<<<<<<< \|^>>>>>>> " --include="*.js" --include="*.html" --include="*.md"` — e só então `git add`. Nunca confiar na lista de conflitos vista por uma saída truncada.
