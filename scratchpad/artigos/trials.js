@@ -671,8 +671,8 @@ A comparação entre tirzepatida (~21% no SURMOUNT-1) e semaglutida (~15% no STE
 
 ## Resultados
 - **Peso: −20,2% com tirzepatida vs −13,7% com semaglutida** — diferença de **~6,5 pontos percentuais**.
-- Em valor absoluto: **−22,8 kg vs −15,0 kg**.\n- **Proporção que atinge cada meta de perda** (Figura 1B e Tabela 2): **≥10%: 81,6% vs 60,5%**; **≥15%: 64,6% vs 40,1%**; **≥20%: 48,4% vs 27,3%**; **≥25%: 31,6% vs 16,1%**. Como desfecho exploratório, **≥30%: 19,7% vs 6,9%**. A vantagem relativa **cresce com a exigência da meta**: 1,3 vez na mais branda, 2,8 vezes na mais dura.
-- **Circunferência abdominal**, **pressão arterial sistólica e diastólica**, **HbA1c**, **insulina de jejum**, **triglicerídeos** e **HDL**: todos favoreceram tirzepatida de forma significativa.
+- Em valor absoluto: **−22,8 kg vs −15,0 kg**.\n- **Proporção que atinge cada meta de perda** (Figura 1B e Tabela 2): **≥10%: 81,6% vs 60,5%**; **≥15%: 64,6% vs 40,1%**; **≥20%: 48,4% vs 27,3%**; **≥25%: 31,6% vs 16,1%**. Como desfecho exploratório, **≥30%: 19,7% vs 6,9%**. A vantagem relativa **cresce com a exigência da meta** (razão de risco da Tabela 2): **1,3** em ≥10%, **1,6** em ≥15%, **1,8** em ≥20%, **2,0** em ≥25% e **2,8** em ≥30%.
+- **Circunferência abdominal: −18,4 cm vs −13,0 cm** (diferença de **5,4 cm**; IC 95% −7,1 a −3,6).\n- **Pressão arterial sistólica e diastólica**, **HbA1c**, **insulina de jejum**, **triglicerídeos** e **HDL**: todos favoreceram tirzepatida de forma significativa.
 
 ## Segurança — o achado que surpreende
 Apesar da maior perda de peso, a **descontinuação por eventos gastrointestinais foi menor com tirzepatida: 2,7% vs 5,6%**. Os perfis de eventos adversos foram, no geral, semelhantes — predominantemente gastrointestinais e ligados à titulação em ambos.

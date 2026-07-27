@@ -854,9 +854,12 @@ html[data-theme="light"] .dir-back{background:#f8f9fc;border-color:var(--bd2);co
 .dir-ficha .fx-km-key.ctl{background:var(--t3)}
 .dir-ficha .fx-km-nota{font-size:.7rem;color:var(--t3);line-height:1.5;margin-top:.5rem;padding-top:.5rem;border-top:1px dashed var(--bd)}
 .dir-ficha .fx-km-nota b{color:var(--t2);font-weight:700}
-.dir-ficha .fx-resp-v{font-size:8.5px;font-weight:700}
-.dir-ficha .fx-resp-v.int{fill:var(--blue2)}
-.dir-ficha .fx-resp-v.ctl{fill:var(--t2)}
+.dir-ficha .fx-gb-bar{rx:2}
+.dir-ficha .fx-gb-bar.int{fill:var(--blue2)}
+.dir-ficha .fx-gb-bar.ctl{fill:var(--t3)}
+.dir-ficha .fx-gb-val{font-size:8.5px;font-weight:700;text-anchor:middle}
+.dir-ficha .fx-gb-val.int{fill:var(--blue2)}
+.dir-ficha .fx-gb-val.ctl{fill:var(--t2)}
 .dir-ficha .fx-resp{margin-top:.7rem}
 /* usa a largura toda da ficha: sem rótulos de fim de linha, não há o que reservar */
 .dir-ficha .fx-resp .fx-km-svg{max-width:620px}
@@ -9022,56 +9025,42 @@ function dirFichaCurvaHTML(df){
       :'Curva <b>projetada</b> a partir das taxas publicadas e do seguimento, assumindo risco constante. Os pontos finais são os do estudo; o traçado entre eles é modelo — <b>não</b> é a curva de Kaplan-Meier original.')+'</div>'
   +'</div>';
 }
-// Curva de RESPOSTA: quantos por cento dos participantes atingiram cada meta.
-// Existe porque nem todo trial tem desfecho de tempo-até-evento — num head-to-head
-// de perda de peso a média esconde a distribuição, e é justamente a distribuição
-// que o artigo publica (a proporção que bate ≥10%, ≥15%, ≥20%…).
-// Sempre dado REAL do artigo: aqui não há o que projetar.
-function dirFichaRespostaHTML(df){
-  var r=df&&df.resposta;
-  if(!r||!Array.isArray(r.pts)||r.pts.length<2||!Array.isArray(r.bracos)||r.bracos.length!==2)return '';
-  var pts=r.pts.filter(function(p){return Array.isArray(p)&&p.length>=3&&isFinite(p[0])&&isFinite(p[1])&&isFinite(p[2]);});
-  if(pts.length<2)return '';
-  // Geometria PRÓPRIA, não a da curva de Kaplan-Meier: lá o R para em 298 para
-  // sobrar margem aos rótulos de fim de linha, que aqui não existem — herdar
-  // aquilo desperdiçava 17% da largura. E os pontos ficam AFASTADOS das bordas
-  // (PAD), senão o primeiro cai em cima do rótulo do eixo y (saía "50%60,5").
-  var W=360,H=168,L=46,R=350,TOP=16,BOT=126,PAD=16; // H justo: sobra abaixo do título do eixo virava vão até a legenda
-  var xs=pts.map(function(p){return Number(p[0]);});
-  var x0=Math.min.apply(null,xs),x1=Math.max.apply(null,xs);
-  if(!(x1>x0))return '';
-  var X=function(v){return L+PAD+((v-x0)/(x1-x0))*(R-L-2*PAD);};
-  var Y=function(p){return BOT-(p/100)*(BOT-TOP);};
+// Barras agrupadas — o painel B da figura do artigo: quantos por cento de cada
+// braço atingiram cada meta. Reproduz a FORMA do artigo de propósito: é assim
+// que o leitor viu o dado na fonte, e a média sozinha esconde a distribuição.
+// Sempre dado REAL: aqui não há o que projetar.
+function dirFichaGruposHTML(df){
+  var g=df&&df.grupos;
+  if(!g||!Array.isArray(g.cats)||!g.cats.length||!Array.isArray(g.bracos)||g.bracos.length!==2)return '';
+  var cats=g.cats.filter(function(c){return c&&isFinite(c.a)&&isFinite(c.b);});
+  if(!cats.length)return '';
+  var W=360,H=168,L=46,R=350,TOP=16,BOT=126;
+  var faixa=(R-L)/cats.length, larg=Math.min(20,faixa*0.3), vao=3;
+  var Y=function(v){return BOT-(Math.max(0,Math.min(100,v))/100)*(BOT-TOP);};
   var num=function(v){return String(Math.round(Number(v)*10)/10).replace('.',',');};
-  var caminho=function(col){
-    return pts.map(function(p,k){return (k?'L':'M')+X(p[0]).toFixed(1)+','+Y(p[col]).toFixed(1);}).join('');
+  var barra=function(x,v,cls){
+    var y=Y(v);
+    return '<rect class="fx-gb-bar '+cls+'" x="'+x.toFixed(1)+'" y="'+y.toFixed(1)+'" width="'+larg.toFixed(1)+'" height="'+(BOT-y).toFixed(1)+'"/>'
+      +'<text class="fx-gb-val '+cls+'" x="'+(x+larg/2).toFixed(1)+'" y="'+(y-4).toFixed(1)+'">'+num(v)+'</text>';
   };
-  var bolas=function(col,cls){
-    return pts.map(function(p){return '<circle class="fx-km-pt '+cls+'" cx="'+X(p[0]).toFixed(1)+'" cy="'+Y(p[col]).toFixed(1)+'" r="3"/>';}).join('');
-  };
-  // Rótulos: os do braço de cima acima do ponto, os de baixo abaixo — nunca colidem.
-  var rotulos=function(col,cls,dy){
-    return pts.map(function(p){return '<text class="fx-km-ax fx-resp-v '+cls+'" x="'+X(p[0]).toFixed(1)+'" y="'+(Y(p[col])+dy).toFixed(1)+'">'+num(p[col])+'</text>';}).join('');
-  };
-  var ultimo=pts[pts.length-1];
-  var svg='<svg viewBox="0 0 '+W+' '+H+'" class="fx-km-svg" role="img" aria-label="Proporção de participantes que atingiu cada meta de perda de peso: '
-      +esc(r.bracos[0])+' contra '+esc(r.bracos[1])+'">'
+  var corpo=cats.map(function(c,k){
+    var meio=L+faixa*k+faixa/2;
+    var xa=meio-larg-vao/2, xb=meio+vao/2;
+    return barra(xa,c.a,'int')+barra(xb,c.b,'ctl')
+      +'<text class="fx-km-ax" x="'+meio.toFixed(1)+'" y="'+(BOT+15)+'">'+esc(String(c.k||''))+'</text>';
+  }).join('');
+  var svg='<svg viewBox="0 0 '+W+' '+H+'" class="fx-km-svg" role="img" aria-label="Proporção de participantes que atingiu cada meta: '
+      +esc(g.bracos[0])+' contra '+esc(g.bracos[1])+'">'
     +[0,25,50,75,100].map(function(v){return '<line class="fx-km-grid'+(v%50?' fina':'')+'" x1="'+L+'" y1="'+Y(v).toFixed(1)+'" x2="'+R+'" y2="'+Y(v).toFixed(1)+'"/>'
       +(v%50?'':'<text class="fx-km-ay" x="'+(L-8)+'" y="'+(Y(v)+3.5).toFixed(1)+'">'+v+'%</text>');}).join('')
-    +pts.map(function(p){return '<text class="fx-km-ax" x="'+X(p[0]).toFixed(1)+'" y="'+(BOT+15)+'">≥'+num(p[0])+'%</text>';}).join('')
-    +'<path class="fx-km-line ctl" d="'+caminho(2)+'"/>'
-    +'<path class="fx-km-line int" d="'+caminho(1)+'"/>'
-    +bolas(2,'ctl')+bolas(1,'int')
-    +rotulos(1,'int',-8)+rotulos(2,'ctl',13)
-    +'<text class="fx-km-ax fx-resp-eixo" x="'+((L+R)/2).toFixed(1)+'" y="'+(BOT+33)+'" text-anchor="middle">meta de perda de peso em '+esc(String(r.prazo||''))+'</text>'
+    +corpo
+    +'<text class="fx-km-ax fx-resp-eixo" x="'+((L+R)/2).toFixed(1)+'" y="'+(BOT+33)+'" text-anchor="middle">'+esc(String(g.eixo||''))+'</text>'
   +'</svg>';
   return '<div class="fx-km fx-resp">'+svg
-    +'<div class="fx-km-leg"><span class="fx-km-key int"></span>'+esc(r.bracos[0])
-      +'<span class="fx-km-key ctl"></span>'+esc(r.bracos[1])+'</div>'
-    +'<div class="fx-km-nota">Proporções <b>do próprio artigo</b> ('+esc(r.fig||'figura do artigo')+'), não projetadas. '
-      +'A média de perda esconde a distribuição: quanto mais exigente a meta, <b>maior a distância relativa</b> entre os braços — '
-      +num(ultimo[1])+'% contra '+num(ultimo[2])+'% na meta de ≥'+num(ultimo[0])+'%.'
-      +(r.nota?(' '+mdInline(String(r.nota))):'')+'</div>'
+    +'<div class="fx-km-leg"><span class="fx-km-key int"></span>'+esc(g.bracos[0])
+      +'<span class="fx-km-key ctl"></span>'+esc(g.bracos[1])+'</div>'
+    +'<div class="fx-km-nota">Proporções <b>do próprio artigo</b> ('+esc(g.fig||'figura do artigo')+'), não projetadas.'
+      +(g.nota?(' '+mdInline(String(g.nota))):'')+'</div>'
   +'</div>';
 }
 function dirFichaHTML(info,d){
@@ -9108,7 +9097,7 @@ function dirFichaHTML(info,d){
       // nas pontas e ainda diz quando os braços se separaram.
       // A curva de resposta é ADITIVA: as barras dão o número-manchete, ela mostra
       // como a resposta se distribui. Só aparece onde o artigo publica os limiares.
-      +(dirFichaCurvaHTML(df)||dirFichaBarrasHTML(df))+dirFichaRespostaHTML(df)+ef
+      +(dirFichaCurvaHTML(df)||dirFichaBarrasHTML(df))+dirFichaGruposHTML(df)+ef
     +'</div>');
   });
   // Números secundários.

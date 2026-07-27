@@ -526,20 +526,36 @@ const INFO = {
           { n: 'Semaglutida', t: '−13,7%', v: 13.7 }
         ],
         efeito: { k: 'Diferença', v: '6,5 pp', p: 'a favor da tirzepatida · −22,8 kg vs −15,0 kg' },
-        // Curva de resposta — dado REAL (Fig. 1B + Tabela 2). Este artigo não tem
-        // curva temporal na figura principal; o que ele publica é a distribuição
-        // da resposta, que a média de −20,2% vs −13,7% esconde.
-        resposta: {
+        // Painel B da Figura 1, na mesma forma do artigo: as 4 metas que a figura
+        // plota. A ≥30% existe (19,7% vs 6,9%) mas é exploratória e sai só na
+        // Tabela 2 — fica na nota, como no artigo, e não vira barra.
+        grupos: {
           bracos: ['Tirzepatida', 'Semaglutida'],
-          prazo: '72 semanas',
-          fig: 'Figura 1B e Tabela 2',
-          pts: [[10, 81.6, 60.5], [15, 64.6, 40.1], [20, 48.4, 27.3], [25, 31.6, 16.1], [30, 19.7, 6.9]],
-          nota: 'A meta de **≥30%** é desfecho exploratório.'
+          eixo: 'meta de redução do peso em 72 semanas',
+          fig: 'Figura 1B',
+          cats: [
+            { k: '≥10%', a: 81.6, b: 60.5 },
+            { k: '≥15%', a: 64.6, b: 40.1 },
+            { k: '≥20%', a: 48.4, b: 27.3 },
+            { k: '≥25%', a: 31.6, b: 16.1 }
+          ],
+          nota: 'Quanto mais exigente a meta, **maior a distância relativa** entre os braços: 1,3 vez em ≥10% e 2,0 vezes em ≥25%. Como desfecho **exploratório**, a meta de ≥30% foi atingida por **19,7% vs 6,9%** (2,8 vezes).'
         }
+      },
+      {
+        // Painel C da Figura 1 — era só um ícone nos "outros achados"; virou
+        // desfecho com número, porque o artigo publica a magnitude.
+        lab: 'Desfecho secundário principal',
+        nome: 'Variação da circunferência abdominal em 72 semanas',
+        dir: 'maior', escala: 25,
+        barras: [
+          { n: 'Tirzepatida', t: '−18,4 cm', v: 18.4, i: 1 },
+          { n: 'Semaglutida', t: '−13,0 cm', v: 13.0 }
+        ],
+        efeito: { k: 'Diferença', v: '5,4 cm', p: 'a favor da tirzepatida · IC 95% −7,1 a −3,6' }
       }
     ],
     tiles: [
-      { v: '↓', k: 'Circunferência abdominal', t: 'good' },
       { v: '↓', k: 'PA sistólica e diastólica', t: 'good' },
       { v: '↓', k: 'HbA1c e insulina de jejum', t: 'good' },
       { v: '↓', k: 'Triglicerídeos · ↑ HDL', t: 'good' }
