@@ -888,11 +888,23 @@ html[data-theme="light"] .dir-back{background:#f8f9fc;border-color:var(--bd2);co
   .dir-ficha .fx-bar-track{height:1.7rem}
 }
 /* --- Cores de letra e de fundo (paleta presa ao tema) --------------------- */
-.wc-azul{color:var(--blue2)}.wc-verde{color:var(--grn)}.wc-vermelho{color:var(--red)}
-.wc-dourado{color:var(--gold)}.wc-roxo{color:var(--pur)}.wc-cinza{color:var(--t2)}
-.wh-azul,.wh-verde,.wh-vermelho,.wh-dourado,.wh-roxo,.wh-cinza{color:var(--tx);padding:.05em .25em;border-radius:4px}
-.wh-azul{background:var(--blue-l)}.wh-verde{background:var(--grn-l)}.wh-vermelho{background:var(--red-l)}
-.wh-dourado{background:var(--gold-l)}.wh-roxo{background:var(--pur-l)}.wh-cinza{background:var(--s2)}
+/* A cor vai numa custom property para poder ser reaplicada em th/td, que têm
+   fundo e cor próprios com seletor mais específico e venceriam a classe. */
+.wc-azul{--wc:var(--blue2)}.wc-verde{--wc:var(--grn)}.wc-vermelho{--wc:var(--red)}
+.wc-dourado{--wc:var(--gold)}.wc-roxo{--wc:var(--pur)}.wc-cinza{--wc:var(--t2)}
+.wc-azul,.wc-verde,.wc-vermelho,.wc-dourado,.wc-roxo,.wc-cinza{color:var(--wc)}
+.wh-azul{--wh:var(--blue-l)}.wh-verde{--wh:var(--grn-l)}.wh-vermelho{--wh:var(--red-l)}
+.wh-dourado{--wh:var(--gold-l)}.wh-roxo{--wh:var(--pur-l)}.wh-cinza{--wh:var(--s2)}
+.wh-azul,.wh-verde,.wh-vermelho,.wh-dourado,.wh-roxo,.wh-cinza{background:var(--wh);color:var(--tx)}
+/* o respiro só vale no trecho de texto; na célula o padding já é o da tabela */
+span.wh-azul,span.wh-verde,span.wh-vermelho,span.wh-dourado,span.wh-roxo,span.wh-cinza{padding:.05em .25em;border-radius:4px}
+/* célula pintada por inteiro: precisa vencer o fundo/cor próprios de th e td */
+.dir-card .dir-texto th[class*="wh-"],.dir-card .dir-texto td[class*="wh-"],
+.wys-edit th[class*="wh-"],.wys-edit td[class*="wh-"],
+.mural-table thead th[class*="wh-"],.mural-table td[class*="wh-"]{background:var(--wh)}
+.dir-card .dir-texto th[class*="wc-"],.dir-card .dir-texto td[class*="wc-"],
+.wys-edit th[class*="wc-"],.wys-edit td[class*="wc-"],
+.mural-table thead th[class*="wc-"],.mural-table td[class*="wc-"]{color:var(--wc)}
 /* seletor de cor no toolbar: abre no hover/foco, sem JS de abrir e fechar */
 .wys-cor-wrap{position:relative;display:inline-flex}
 .wys-cor-pop{position:absolute;top:calc(100% + 4px);left:0;z-index:30;display:none;gap:3px;
@@ -3941,13 +3953,47 @@ function mdInline(s){
   // Cor de letra {c:nome|texto} e de fundo {h:nome|texto}. Vem DEPOIS do negrito
   // e do itálico, para que a formatação de dentro continue valendo. O nome sai de
   // uma allowlist fechada (WYS_CORES) — nada de CSS arbitrário vindo do conteúdo.
-  s=s.replace(new RegExp('\\{(c|h):('+WYS_CORES_RE+')\\|([^}]*)\\}','g'),function(w,t,nome,txt){
-    return '<span class="'+(t==='c'?'wc-':'wh-')+nome+'">'+txt+'</span>';
-  });
+  // Repete: [^}] só casa o marcador MAIS INTERNO, então letra+fundo no mesmo
+  // trecho ({c:azul|{h:dourado|x}}) precisa de uma passada por camada.
+  var _cre=new RegExp('\\{(c|h):('+WYS_CORES_RE+')\\|([^}]*)\\}','g');
+  for(var _cv=0;_cv<3;_cv++){
+    var _antes=s;
+    s=s.replace(_cre,function(w,t,nome,txt){
+      return '<span class="'+(t==='c'?'wc-':'wh-')+nome+'">'+txt+'</span>';
+    });
+    if(s===_antes)break;
+  }
   s=s.replace(/(\d+)/g,function(w,i){return imgs[+i]||'';});
   return s;
 }
 function isMarkdownTableSep(line){return /^\s*\|?[\s:-]+\|[\s|:-]*$/.test(line||'');}
+// Divide a linha da tabela tirando SÓ os vazios das pontas (os pipes de borda).
+// ⚠️ Antes isto era .filter(Boolean), que também comia célula vazia do MEIO: uma
+// única célula em branco encurtava a linha e desalinhava a tabela inteira daí em
+// diante. Célula vazia é conteúdo legítimo — o que não é conteúdo são as bordas.
+// Respeita \| (pipe escapado por htmlToMd). Sem isso o marcador de cor de uma
+// célula — que usa | como separador — era partido ao meio na volta e vazava como
+// texto cru. O escape só existia na ida; agora existe dos dois lados.
+function mdSplitRow(line){
+  var s=String(line),cs=[],cur='';
+  for(var i=0;i<s.length;i++){
+    if(s[i]==='\\'&&s[i+1]==='|'){cur+='|';i++;continue;}
+    if(s[i]==='|'){cs.push(cur.trim());cur='';continue;}
+    cur+=s[i];
+  }
+  cs.push(cur.trim());
+  if(cs.length&&cs[0]==='')cs.shift();
+  if(cs.length&&cs[cs.length-1]==='')cs.pop();
+  return cs;
+}
+// Célula da tabela. Se TODO o conteúdo é um marcador de cor, a classe volta para
+// o <td>/<th> em vez de virar um span interno — assim a cor de fundo preenche a
+// célula inteira, que é como se pinta uma tabela.
+function mdCelHTML(tag,txt){
+  var re=new RegExp('^\\{(c|h):('+WYS_CORES_RE+')\\|([^}]*)\\}$'),cls=[],m;
+  while((m=re.exec(txt))){cls.push((m[1]==='c'?'wc-':'wh-')+m[2]);txt=m[3];}
+  return '<'+tag+(cls.length?' class="'+cls.join(' ')+'"':'')+'>'+mdInline(txt)+'</'+tag+'>';
+}
 // Botões de alinhamento (esquerda/centro/direita/justificado) para os toolbars
 // WYSIWYG (Mural e Diretrizes/Resumos). Ícones em SVG inline (sem fonte de ícones).
 function wysAlignBar(){
@@ -3993,41 +4039,132 @@ function wysCorBar(){
     +'<span class="wys-cor-wrap"><button type="button" class="wys-tool wys-cor-btn" title="Cor do fundo"><span style="background:var(--gold-l);color:var(--tx);padding:0 3px;border-radius:3px;font-weight:800">A</span></button>'
       +'<span class="wys-cor-pop">'+amostras('h')+'<button type="button" class="wys-cor-op wys-cor-lim" data-wys-cor="x:x" title="Remover cor">⌫</button></span></span>';
 }
-// Aplica/remove a cor envolvendo a seleção num <span class="wc-*|wh-*">.
+// Aplica/remove a cor SEM remontar a árvore: envolve cada trecho de texto no
+// lugar onde ele já está.
+// ⚠️ LIÇÃO: a 1ª versão usava surroundContents e, no catch,
+// extractContents+insertNode. Numa seleção que atravessa CÉLULAS isso arranca as
+// bordas de <td>/<th> e as reinsere dentro de um único span — a linha ganha
+// célula fantasma e o cabeçalho desalinha do corpo (visto em produção, na tabela
+// comparativa do programa STEP). extractContents nunca pode tocar numa seleção
+// que cruza blocos.
 // NÃO uso execCommand('foreColor'): ele grava cor literal (rgb/<font>), o que
 // quebraria a adaptação ao tema e o caminho de volta para markdown.
+function wysCorRaiz(r){
+  var raiz=r.commonAncestorContainer;
+  if(raiz.nodeType!==1)raiz=raiz.parentNode;
+  return (raiz&&raiz.closest&&raiz.closest('.wys-edit'))||raiz;
+}
+// Células cujo conteúdo INTEIRO está dentro da seleção — essas recebem a classe
+// nelas mesmas, então a cor de fundo preenche a célula toda (e não só as letras),
+// que é o que se espera ao pintar uma tabela.
+// "Coberta" = não sobra texto visível da célula fora da seleção. Comparar pontos
+// de fronteira com compareBoundaryPoints NÃO serve: selecionar do começo do texto
+// dá (nóDeTexto,0), que é uma posição depois de (célula,0), então a célula toda
+// selecionada apareceria como parcial.
+function wysCorCelCoberta(r,cel){
+  var w=cel.ownerDocument.createTreeWalker(cel,4,null,false),n,tem=false;
+  while((n=w.nextNode())){
+    var v=n.nodeValue||'';
+    if(!/\S/.test(v))continue;
+    if(r.intersectsNode&&!r.intersectsNode(n))return false;
+    var ini=(n===r.startContainer&&r.startContainer.nodeType===3)?r.startOffset:0;
+    var fim=(n===r.endContainer&&r.endContainer.nodeType===3)?r.endOffset:v.length;
+    if(v.slice(0,ini).trim()||v.slice(fim).trim())return false;
+    tem=true;
+  }
+  return tem;
+}
+function wysCorCelulas(r){
+  var raiz=wysCorRaiz(r),out=[];
+  if(!raiz.querySelectorAll)return out;
+  var cels=raiz.querySelectorAll('td,th');
+  for(var i=0;i<cels.length;i++){
+    if(r.intersectsNode&&!r.intersectsNode(cels[i]))continue;
+    if(wysCorCelCoberta(r,cels[i]))out.push(cels[i]);
+  }
+  return out;
+}
+// Nós de texto tocados pela seleção, ignorando os que estão dentro de células já
+// pintadas por inteiro (senão a cor sairia duas vezes).
+function wysCorTextos(r,pintadas){
+  var raiz=wysCorRaiz(r),out=[];
+  if(!raiz.ownerDocument||!raiz.ownerDocument.createTreeWalker)return out;
+  var w=raiz.ownerDocument.createTreeWalker(raiz,4,null,false),n;
+  while((n=w.nextNode())){
+    if(!/\S/.test(n.nodeValue||''))continue;
+    if(r.intersectsNode&&!r.intersectsNode(n))continue;
+    var dentro=false;
+    for(var i=0;i<pintadas.length;i++){if(pintadas[i].contains(n)){dentro=true;break;}}
+    if(!dentro)out.push(n);
+  }
+  return out;
+}
+function wysCorLimpar(el,fam){
+  var cs=String(el.className||'').split(/\s+/),fica=[];
+  for(var i=0;i<cs.length;i++){if(cs[i]&&cs[i].indexOf(fam)!==0)fica.push(cs[i]);}
+  el.className=fica.join(' ');
+}
 function wysAplicarCor(spec){
   var sel=window.getSelection&&window.getSelection();
   if(!sel||!sel.rangeCount||sel.isCollapsed){try{notify('Selecione o texto primeiro.','info');}catch(e){}return;}
-  var r=sel.getRangeAt(0);
-  if(spec==='x:x'){ // limpar: desembrulha os spans de cor dentro da seleção
-    var alvo=r.commonAncestorContainer;
-    alvo=(alvo.nodeType===1?alvo:alvo.parentNode);
-    var raiz=alvo.closest?(alvo.closest('.wys-edit')||alvo):alvo;
-    raiz.querySelectorAll('span[class^="wc-"],span[class^="wh-"]').forEach(function(sp){
-      if(!r.intersectsNode||r.intersectsNode(sp)){
-        var pai=sp.parentNode;
-        while(sp.firstChild)pai.insertBefore(sp.firstChild,sp);
-        pai.removeChild(sp);
-      }
-    });
+  var r=sel.getRangeAt(0),limpar=(spec==='x:x');
+  var p=limpar?null:spec.split(':'),fam=limpar?null:(p[0]==='c'?'wc-':'wh-');
+  if(!limpar&&!WYS_CORES.some(function(c){return c.k===p[1];}))return;
+  var cls=limpar?null:fam+p[1];
+  var raiz=wysCorRaiz(r);
+  var celulas=wysCorCelulas(r);
+  if(limpar){
+    // desembrulha os spans de cor e despinta as células tocadas
+    var sps=raiz.querySelectorAll?raiz.querySelectorAll('span[class*="wc-"],span[class*="wh-"]'):[];
+    for(var s=0;s<sps.length;s++){
+      var sp=sps[s];
+      if(r.intersectsNode&&!r.intersectsNode(sp))continue;
+      var pai=sp.parentNode;if(!pai)continue;
+      while(sp.firstChild)pai.insertBefore(sp.firstChild,sp);
+      pai.removeChild(sp);
+    }
+    var todas=raiz.querySelectorAll?raiz.querySelectorAll('td,th'):[];
+    for(var t=0;t<todas.length;t++){
+      if(r.intersectsNode&&!r.intersectsNode(todas[t]))continue;
+      wysCorLimpar(todas[t],'wc-');wysCorLimpar(todas[t],'wh-');
+    }
     return;
   }
-  var p=spec.split(':'),cls=(p[0]==='c'?'wc-':'wh-')+p[1];
-  if(!WYS_CORES.some(function(c){return c.k===p[1];}))return;
-  var span=document.createElement('span');span.className=cls;
-  try{r.surroundContents(span);}
-  catch(_){ // seleção atravessa elementos: extrai e reinsere
-    try{span.appendChild(r.extractContents());r.insertNode(span);}catch(__){return;}
+  for(var ci=0;ci<celulas.length;ci++){
+    wysCorLimpar(celulas[ci],fam);
+    celulas[ci].className=(celulas[ci].className?celulas[ci].className+' ':'')+cls;
   }
-  try{sel.removeAllRanges();}catch(__){}
+  var textos=wysCorTextos(r,celulas);
+  for(var ti=0;ti<textos.length;ti++){
+    var n=textos[ti];
+    var ini=(n===r.startContainer&&r.startContainer.nodeType===3)?r.startOffset:0;
+    var fim=(n===r.endContainer&&r.endContainer.nodeType===3)?r.endOffset:(n.nodeValue||'').length;
+    if(fim<=ini)continue;
+    // já está sozinho dentro de um span da mesma família? só troca a classe
+    var pai2=n.parentNode;
+    if(pai2&&pai2.tagName&&pai2.tagName.toLowerCase()==='span'
+      &&new RegExp('(?:^|\\s)'+fam).test(pai2.className||'')
+      &&pai2.childNodes.length===1&&ini===0&&fim===(n.nodeValue||'').length){
+      wysCorLimpar(pai2,fam);
+      pai2.className=(pai2.className?pai2.className+' ':'')+cls;
+      continue;
+    }
+    var alvo=n;
+    if(fim<(alvo.nodeValue||'').length)alvo.splitText(fim);
+    if(ini>0)alvo=alvo.splitText(ini);
+    var span=alvo.ownerDocument.createElement('span');span.className=cls;
+    alvo.parentNode.insertBefore(span,alvo);span.appendChild(alvo);
+  }
 }
 // Classe do span de cor → marcador markdown. Nome fora da paleta é ignorado
 // (devolve o texto cru), então lixo colado de fora não vira marcador quebrado.
 function wysCorMark(cls,inner){
-  var m=/(?:^|\s)(wc|wh)-([a-zà-ú]+)/.exec(String(cls||''));
-  if(!m||!WYS_CORES.some(function(c){return c.k===m[2];}))return inner;
-  return '{'+(m[1]==='wc'?'c':'h')+':'+m[2]+'|'+inner+'}';
+  var re=/(?:^|\s)(wc|wh)-([a-zà-ú]+)/g,s=String(cls||''),m,achou=[];
+  while((m=re.exec(s))){
+    if(WYS_CORES.some(function(c){return c.k===m[2];}))achou.push((m[1]==='wc'?'c':'h')+':'+m[2]);
+  }
+  for(var i=0;i<achou.length;i++)inner='{'+achou[i]+'|'+inner+'}';
+  return inner;
 }
 // Lê o alinhamento explícito de um bloco (style/attr) → marcador markdown {:x}.
 // Justificado é o PADRÃO (via CSS), então não emite marcador (mantém o md limpo).
@@ -4060,13 +4197,13 @@ function mdToHtml(md){
       flushList();
       var rows=[];
       while(i<lines.length&&lines[i].indexOf('|')>=0){
-        if(!isMarkdownTableSep(lines[i]))rows.push(lines[i].split('|').map(function(c){return c.trim();}).filter(Boolean));
+        if(!isMarkdownTableSep(lines[i]))rows.push(mdSplitRow(lines[i]));
         i++;
       }
       i--;
       if(rows.length){
         var head=rows[0],body=rows.slice(1);
-        out.push('<table><thead><tr>'+head.map(function(c){return'<th>'+mdInline(c)+'</th>';}).join('')+'</tr></thead><tbody>'+body.map(function(r){return'<tr>'+r.map(function(c){return'<td>'+mdInline(c)+'</td>';}).join('')+'</tr>';}).join('')+'</tbody></table>');
+        out.push('<table><thead><tr>'+head.map(function(c){return mdCelHTML('th',c);}).join('')+'</tr></thead><tbody>'+body.map(function(r){return'<tr>'+r.map(function(c){return mdCelHTML('td',c);}).join('')+'</tr>';}).join('')+'</tbody></table>');
       }
       continue;
     }
@@ -4114,7 +4251,14 @@ function htmlToMd(root){
     }
     return s;
   }
-  function cellText(node){return inline(node).replace(/\s+/g,' ').replace(/\|/g,'\\|').trim();}
+  // A cor pode estar na CÉLULA (pintada por inteiro) e não num span interno —
+  // aí o marcador envolve o conteúdo todo, e mdToHtml devolve a classe ao <td>.
+  function cellText(node){
+    var t=inline(node).replace(/\s+/g,' ').trim();
+    if(!t)return t;
+    t=wysCorMark(node.className,t);
+    return t.replace(/\|/g,'\\|'); // escapa DEPOIS, para o | do marcador também sair escapado
+  }
   function pushLine(t){if(t!=='')out.push(t);}
   // <br> vira \n em inline(): preserva as quebras como linhas/parágrafos separados.
   // Sem isso, um <div>/<p> com <br> (texto colado de outra fonte) colapsa tudo num
@@ -13608,6 +13752,16 @@ function muralInlineHTML(escLine){
   escLine=escLine.replace(/\*\*([^*\n]+)\*\*/g,'<strong>$1</strong>')
      .replace(/__([^_\n]+)__/g,'<u>$1</u>')
      .replace(/\*([^*\n]+)\*/g,'<em>$1</em>');
+  // O card do mural tem renderizador próprio (não passa por mdInline), então o
+  // marcador de cor precisa ser lido aqui também — senão sairia como texto cru.
+  var _cre=new RegExp('\\{(c|h):('+WYS_CORES_RE+')\\|([^}]*)\\}','g');
+  for(var _cv=0;_cv<3;_cv++){
+    var _antes=escLine;
+    escLine=escLine.replace(_cre,function(w,t,nome,txt){
+      return '<span class="'+(t==='c'?'wc-':'wh-')+nome+'">'+txt+'</span>';
+    });
+    if(escLine===_antes)break;
+  }
   escLine=escLine.replace(/(\d+)/g,function(whole,i){return imgs[+i]||'';});
   return escLine;
 }
@@ -13619,7 +13773,16 @@ function muralTextHTML(txt){
   var lines=String(txt||'').replace(/\r/g,'').split('\n');
   function isRow(l){return l.indexOf('|')>=0 && l.replace(/\\\|/g,'').split('|').filter(function(c){return c.trim();}).length>=2;}
   function isSep(l){return l.indexOf('|')>=0 && /^\s*\|?[\s:]*-{2,}[\s:|-]*$/.test(l);}
-  function cells(l){var t=l.trim().replace(/^\|/,'').replace(/\|$/,'');return t.split('|').map(function(c){return muralInlineHTML(esc(c.trim()));});}
+  // Mesma regra do resumo: se a célula inteira é um marcador de cor, a classe vai
+  // para o <th>/<td> e o fundo preenche a célula toda.
+  function cells(l){
+    return mdSplitRow(l).map(function(c){
+      var re=new RegExp('^\\{(c|h):('+WYS_CORES_RE+')\\|([^}]*)\\}$'),cls=[],m;
+      while((m=re.exec(c))){cls.push((m[1]==='c'?'wc-':'wh-')+m[2]);c=m[3];}
+      return {cls:cls.join(' '),html:muralInlineHTML(esc(c))};
+    });
+  }
+  function celTag(tag,c){return '<'+tag+(c.cls?' class="'+c.cls+'"':'')+'>'+c.html+'</'+tag+'>';}
   var out=[],i=0,para=[],paraAlign='';
   function flush(){if(para.length){out.push('<p class="mural-p"'+(paraAlign?' style="text-align:'+paraAlign+'"':'')+'>'+para.join('<br>')+'</p>');para=[];paraAlign='';}}
   while(i<lines.length){
@@ -13633,8 +13796,8 @@ function muralTextHTML(txt){
       var h=cells(line),rows=[];i+=2;
       while(i<lines.length&&isRow(lines[i])&&!isSep(lines[i])){rows.push(cells(lines[i]));i++;}
       out.push('<div class="mural-table-wrap"><table class="mural-table"><thead><tr>'
-        +h.map(function(c){return'<th>'+c+'</th>';}).join('')+'</tr></thead><tbody>'
-        +rows.map(function(r){while(r.length<h.length)r.push('');return'<tr>'+r.slice(0,h.length).map(function(c){return'<td>'+c+'</td>';}).join('')+'</tr>';}).join('')
+        +h.map(function(c){return celTag('th',c);}).join('')+'</tr></thead><tbody>'
+        +rows.map(function(r){while(r.length<h.length)r.push({cls:'',html:''});return'<tr>'+r.slice(0,h.length).map(function(c){return celTag('td',c);}).join('')+'</tr>';}).join('')
         +'</tbody></table></div>');
       continue;
     }
