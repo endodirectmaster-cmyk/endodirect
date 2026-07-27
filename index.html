@@ -1063,6 +1063,15 @@ input.dmm-inp-subsub{flex:1;min-width:0;background:transparent;color:var(--t2);f
 .dir-tema-card .dtc-cnt{font-size:.72rem;color:var(--t3)}
 .dir-tema-acts{position:absolute;top:.5rem;right:.55rem;display:flex;gap:.25rem;opacity:0;transition:.15s}
 .dir-tema-card:hover .dir-tema-acts,.dir-tema-acts:focus-within{opacity:1}
+/* A alça de arrastar fica SEMPRE visível: escondida atrás do hover, ninguém
+   descobre que dá para reordenar — e em toque não existe hover. */
+.dir-tema-card .dtc-drag{position:absolute;top:.45rem;left:.5rem;width:26px;height:26px;border:1px solid var(--bd2);background:var(--s2);color:var(--t3);border-radius:7px;font-size:.9rem;line-height:1;display:flex;align-items:center;justify-content:center;cursor:grab;touch-action:none}
+.dir-tema-card .dtc-drag:hover{color:var(--tx);border-color:var(--blue)}
+.dir-tema-card .dtc-drag:active{cursor:grabbing}
+.dir-tema-card .dtc-ico{margin-left:1.9rem} /* abre espaço para a alça */
+.dir-tema-card.dtc-dragging{opacity:.55;outline:2px dashed var(--blue2);outline-offset:2px}
+.dir-sub-grid.dtc-reordenando .dir-tema-card{transition:transform .12s}
+.dir-sub-grid.dtc-reordenando{user-select:none}
 .dir-tema-acts button{border:1px solid var(--bd2);background:var(--s2);color:var(--t2);border-radius:7px;width:27px;height:27px;font-size:.78rem;cursor:pointer;display:flex;align-items:center;justify-content:center;line-height:1}
 .dir-tema-acts button:hover{border-color:var(--blue);color:var(--tx)}
 .dir-tema-add,.dir-tema-edit{border-radius:14px;background:var(--s2);padding:1rem;display:flex;flex-direction:column;gap:.5rem;min-height:104px;justify-content:center}
@@ -8805,6 +8814,106 @@ function dirFichaHTML(info,d){
   if(info.prat)p.push('<div class="fx-sec"><div class="fx-band prat"><span class="fx-band-ico">💡</span><span><b>O que muda na prática —</b> '+mdInline(String(info.prat))+'</span></div></div>');
   return '<div class="dir-ficha">'+p.join('')+'</div>';
 }
+// ---------------------------------------------------------------------------
+// REORDENAR TEMAS ARRASTANDO (painel do professor)
+// A ordem da grade sai da ordem de PRIMEIRA APARIÇÃO de cada tema em
+// `diretrizes` (ver dirTemaList). Então reordenar = permutar os itens dentro do
+// array, sem campo novo no schema.
+// Permuta só o que está no escopo visível (subespecialidade + modo + tipo),
+// reaproveitando exatamente os mesmos índices do array — nada fora do escopo
+// muda de lugar.
+// ⚠️ Limite conhecido: temas VAZIOS (sem item, vindos de `dirTemasExtra`) são
+// listados sempre depois dos que têm item, então não podem ser arrastados para
+// antes deles. Some assim que o tema ganha o primeiro artigo.
+function refAplicarOrdemTemas(novaOrdem){
+  var idx=[],itens=[];
+  diretrizes.forEach(function(d,i){
+    if(!dirModeMatch(d))return;
+    if((String(d.sub||'Geral').trim()||'Geral')!==admRefSub)return;
+    idx.push(i);itens.push(d);
+  });
+  if(!idx.length)return false;
+  var porTema={};
+  itens.forEach(function(d){var t=dirTemaOf(d);(porTema[t]=porTema[t]||[]).push(d);});
+  var ordenados=[];
+  novaOrdem.forEach(function(t){
+    if(porTema[t]){porTema[t].forEach(function(d){ordenados.push(d);});delete porTema[t];}
+  });
+  // qualquer tema que não veio na lista (não deveria acontecer) vai para o fim,
+  // preservado — melhor manter do que perder por um bug de leitura do DOM
+  Object.keys(porTema).forEach(function(t){porTema[t].forEach(function(d){ordenados.push(d);});});
+  if(ordenados.length!==itens.length)return false; // nunca gravar com perda
+  idx.forEach(function(pos,k){diretrizes[pos]=ordenados[k];});
+  // temas vazios: reordena entre si, respeitando a posição relativa pedida
+  var extrasDoEscopo=[],extrasIdx=[];
+  dirTemasExtra.forEach(function(x,i){
+    if(!x||x.sub!==admRefSub)return;
+    if(admRefMode==='res'&&((x.tipo==='artigo'?'artigo':'capitulo')!==admRefTipo))return;
+    extrasDoEscopo.push(x);extrasIdx.push(i);
+  });
+  if(extrasDoEscopo.length>1){
+    var ord=extrasDoEscopo.slice().sort(function(a,b){
+      var ia=novaOrdem.indexOf(String(a.tema||'').trim()),ib=novaOrdem.indexOf(String(b.tema||'').trim());
+      return (ia<0?1e9:ia)-(ib<0?1e9:ib);
+    });
+    extrasIdx.forEach(function(pos,k){dirTemasExtra[pos]=ord[k];});
+  }
+  return true;
+}
+// Pointer Events cobrem mouse e toque com o mesmo código; o drag-and-drop
+// nativo do HTML5 não funciona em toque, e o professor usa iPhone.
+function bindTemaDrag(root){
+  var grid=root.querySelector('.dir-sub-grid');
+  if(!grid||!grid.querySelector('[data-ref-tema-drag]'))return;
+  grid.querySelectorAll('[data-ref-tema-drag]').forEach(function(h){
+    h.addEventListener('pointerdown',function(ev){
+      ev.preventDefault();ev.stopPropagation();
+      var card=h.closest('.dir-tema-card');if(!card)return;
+      var moveu=false;
+      card.classList.add('dtc-dragging');
+      grid.classList.add('dtc-reordenando');
+      try{h.setPointerCapture(ev.pointerId);}catch(_){}
+      function alvoEm(x,y){
+        var achado=null;
+        grid.querySelectorAll('.dir-tema-card').forEach(function(c){
+          if(c===card)return;
+          var r=c.getBoundingClientRect();
+          if(x>=r.left&&x<=r.right&&y>=r.top&&y<=r.bottom)achado=c;
+        });
+        return achado;
+      }
+      function onMove(e){
+        var alvo=alvoEm(e.clientX,e.clientY);
+        if(!alvo)return;
+        moveu=true;
+        // antes ou depois, pelo lado em que o ponteiro entrou
+        var r=alvo.getBoundingClientRect();
+        var depois=(e.clientX-r.left)>r.width/2;
+        grid.insertBefore(card,depois?alvo.nextSibling:alvo);
+      }
+      function onUp(){
+        h.removeEventListener('pointermove',onMove);
+        h.removeEventListener('pointerup',onUp);
+        h.removeEventListener('pointercancel',onUp);
+        card.classList.remove('dtc-dragging');
+        grid.classList.remove('dtc-reordenando');
+        if(!moveu)return;
+        var ordem=[];
+        grid.querySelectorAll('[data-admref-tema]').forEach(function(c){ordem.push(c.dataset.admrefTema);});
+        if(refAplicarOrdemTemas(ordem)){
+          persistDiretrizes();
+          notify('Ordem salva. ✓','ok');
+        }else{
+          notify('Não consegui salvar a ordem — nada foi alterado.','err');
+        }
+        rerenderRef();
+      }
+      h.addEventListener('pointermove',onMove);
+      h.addEventListener('pointerup',onUp);
+      h.addEventListener('pointercancel',onUp);
+    });
+  });
+}
 // Renderiza um card de diretriz no formato escolhido.
 function dirCardHTML(d,i){
   // Sem título por card: o tema (cabeçalho da aba) já é o título da seção.
@@ -11384,6 +11493,7 @@ function admRefSecHTML(){
           +'<div style="display:flex;gap:.4rem"><button class="btn btn-primary btn-sm" data-ref-tema-saveedit="'+esc(t.tema)+'">Salvar</button><button class="btn btn-outline btn-sm" id="btn-ref-tema-editcancel">Cancelar</button></div></div>';
       }
       return '<div class="dir-tema-card" data-admref-tema="'+esc(t.tema)+'">'
+        +'<button class="dtc-drag" data-ref-tema-drag="'+esc(t.tema)+'" title="Arraste para reordenar" aria-label="Arraste para reordenar '+esc(t.tema)+'">⠿</button>'
         +'<div class="dir-tema-acts"><button data-ref-tema-edit="'+esc(t.tema)+'" title="Renomear tema">✏️</button><button data-ref-tema-del="'+esc(t.tema)+'" title="Excluir tema">🗑</button></div>'
         +'<div class="dtc-ico">'+(_aArt?'🔬':'📄')+'</div><h3>'+esc(t.tema)+'</h3><div class="dtc-cnt">'+t.count+' '+(t.count===1?L.one:L.many)+(admRascunhoCount(admRefSub,t.tema)?' · <b style="color:#b4690e">🚧 rascunho</b>':'')+'</div></div>';
     }).join('');
@@ -12345,6 +12455,7 @@ function bindAdmSec(sec){
     // Entrar numa subespecialidade sempre começa pelos capítulos.
     main.querySelectorAll('[data-admref-sub]').forEach(function(b){b.addEventListener('click',function(){admRefSub=b.dataset.admrefSub;admRefTema='';admRefTipo='capitulo';refResetTemaUi();rerenderRef();});});
     main.querySelectorAll('[data-admref-tema]').forEach(function(b){b.addEventListener('click',function(){admRefTema=b.dataset.admrefTema;refResetTemaUi();rerenderRef();});});
+    bindTemaDrag(main);
     var rBack=main.querySelector('[data-admref-back]');
     if(rBack)rBack.addEventListener('click',function(){admRefSub='';admRefTema='';admRefTipo='capitulo';refResetTemaUi();rerenderRef();});
     var rTBack=main.querySelector('[data-admref-tback]');
