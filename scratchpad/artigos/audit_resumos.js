@@ -4,7 +4,10 @@
 const crypto=require('crypto'), fs=require('fs');
 const P='/home/user/endodirect/scratchpad/artigos/';
 const locais={};
-for(const [mod,chave] of [['trials.js','TODOS'],['trials2.js','TODOS2'],['comparativos.js','COMPARATIVOS']]){
+// ⚠️ Ao criar um lote novo (trials4.js…), acrescente-o AQUI. Um lote fora desta
+// lista não é auditado e o script ainda assim imprime ✓ — foi exatamente assim
+// que o 2º lote ficou sem conferência no check_info_db.js.
+for(const [mod,chave] of [['trials.js','TODOS'],['trials2.js','TODOS2'],['trials3.js','TODOS3'],['comparativos.js','COMPARATIVOS']]){
   const m=require(P+mod);
   for(const t of m[chave]) locais[t.tema]=t.resumo;
 }

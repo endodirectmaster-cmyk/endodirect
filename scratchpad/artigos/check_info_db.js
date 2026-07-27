@@ -10,7 +10,8 @@
 const crypto = require('crypto');
 const { INFO } = require('/home/user/endodirect/scratchpad/artigos/info.js');
 const { INFO2 } = require('/home/user/endodirect/scratchpad/artigos/info2.js');
-const LOCAIS = Object.assign({}, INFO, INFO2);
+const { INFO3 } = require('/home/user/endodirect/scratchpad/artigos/info3.js');
+const LOCAIS = Object.assign({}, INFO, INFO2, INFO3);
 
 // concat_ws ignora NULL, mas mantém string vazia. Campo ausente no jsonb -> NULL.
 const cw = (sep, ...xs) => xs.filter((x) => x !== null && x !== undefined).join(sep);
@@ -76,7 +77,12 @@ const DB = {
   'STEP-9 (2024)': 'b2cfc8da9039372009ab02a1ad33659a',
   'SURMOUNT-2 (2023)': '6bff2c1c6f35183e25f1fc413bbaf12b',
   'SURMOUNT-4 (2024)': '20265e542c7998bdfad933c51f97a10c',
-  'SURMOUNT-MAINTAIN (2026)': '3ca804a7e993541d8f69fa7967eb588d'
+  'SURMOUNT-MAINTAIN (2026)': '3ca804a7e993541d8f69fa7967eb588d',
+  // ---- 3º lote (info3.js) ----
+  'SCOUT (2010)': 'e2633d711fa4dd6aea6c3e6f352863e5',
+  'XENDOS (2004)': '504179f97115a81e0e2aa3e2c3907b89',
+  'COR-I (2010)': 'c42d5365209cb1f6adb32d71df3e57ad',
+  'SCALE Obesidade e Pré-diabetes (2015)': 'e934a4a0862571babc88b413bfd10bac'
 };
 
 let bad = 0;
