@@ -854,12 +854,16 @@ html[data-theme="light"] .dir-back{background:#f8f9fc;border-color:var(--bd2);co
 .dir-ficha .fx-km-key.ctl{background:var(--t3)}
 .dir-ficha .fx-km-nota{font-size:.7rem;color:var(--t3);line-height:1.5;margin-top:.5rem;padding-top:.5rem;border-top:1px dashed var(--bd)}
 .dir-ficha .fx-km-nota b{color:var(--t2);font-weight:700}
-.dir-ficha .fx-gb-bar{rx:2}
-.dir-ficha .fx-gb-bar.int{fill:var(--blue2)}
-.dir-ficha .fx-gb-bar.ctl{fill:var(--t3)}
-.dir-ficha .fx-gb-val{font-size:8.5px;font-weight:700;text-anchor:middle}
-.dir-ficha .fx-gb-val.int{fill:var(--blue2)}
-.dir-ficha .fx-gb-val.ctl{fill:var(--t2)}
+/* cor por POSIÇÃO do braço: há trials de 3 braços, o par int/ctl não bastava */
+.dir-ficha .fx-s0{--sc:var(--blue2)}
+.dir-ficha .fx-s1{--sc:var(--t3)}
+.dir-ficha .fx-s2{--sc:var(--gold)}
+.dir-ficha .fx-gb-bar{rx:2;fill:var(--sc)}
+.dir-ficha .fx-gb-val{font-size:8.5px;font-weight:700;text-anchor:middle;fill:var(--sc)}
+.dir-ficha .fx-km-line.fx-s0,.dir-ficha .fx-km-line.fx-s1,.dir-ficha .fx-km-line.fx-s2{stroke:var(--sc)}
+.dir-ficha .fx-km-pt.fx-s0,.dir-ficha .fx-km-pt.fx-s1,.dir-ficha .fx-km-pt.fx-s2{fill:var(--sc)}
+.dir-ficha .fx-km-key.fx-s0,.dir-ficha .fx-km-key.fx-s1,.dir-ficha .fx-km-key.fx-s2{background:var(--sc)}
+.dir-ficha .fx-serie-tit{font-size:.74rem;font-weight:700;color:var(--t2);text-align:center;margin-bottom:.15rem}
 .dir-ficha .fx-resp{margin-top:.7rem}
 /* usa a largura toda da ficha: sem rótulos de fim de linha, não há o que reservar */
 .dir-ficha .fx-resp .fx-km-svg{max-width:620px}
@@ -9025,43 +9029,88 @@ function dirFichaCurvaHTML(df){
       :'Curva <b>projetada</b> a partir das taxas publicadas e do seguimento, assumindo risco constante. Os pontos finais são os do estudo; o traçado entre eles é modelo — <b>não</b> é a curva de Kaplan-Meier original.')+'</div>'
   +'</div>';
 }
-// Barras agrupadas — o painel B da figura do artigo: quantos por cento de cada
-// braço atingiram cada meta. Reproduz a FORMA do artigo de propósito: é assim
-// que o leitor viu o dado na fonte, e a média sozinha esconde a distribuição.
-// Sempre dado REAL: aqui não há o que projetar.
+// Cores por posição do braço (0 = intervenção). Substituem o par int/ctl porque
+// há trials de 3 braços (STEP-2: 2,4 mg · 1,0 mg · placebo).
+function dirFichaCorCls(i){return 'fx-s'+(i>2?2:i);}
+// Barras agrupadas — o painel "quantos atingiram cada meta" das figuras.
+// Reproduz a FORMA do artigo de propósito: é assim que o leitor viu o dado na
+// fonte, e a média sozinha esconde a distribuição. Sempre dado REAL.
 function dirFichaGruposHTML(df){
   var g=df&&df.grupos;
-  if(!g||!Array.isArray(g.cats)||!g.cats.length||!Array.isArray(g.bracos)||g.bracos.length!==2)return '';
-  var cats=g.cats.filter(function(c){return c&&isFinite(c.a)&&isFinite(c.b);});
+  if(!g||!Array.isArray(g.cats)||!g.cats.length||!Array.isArray(g.bracos)||g.bracos.length<2)return '';
+  var nb=g.bracos.length;
+  var cats=g.cats.filter(function(c){return c&&Array.isArray(c.vs)&&c.vs.length===nb&&c.vs.every(isFinite);});
   if(!cats.length)return '';
   var W=360,H=168,L=46,R=350,TOP=16,BOT=126;
-  var faixa=(R-L)/cats.length, larg=Math.min(20,faixa*0.3), vao=3;
+  var faixa=(R-L)/cats.length, vao=2.5;
+  var larg=Math.min(20,(faixa*0.72-vao*(nb-1))/nb);
   var Y=function(v){return BOT-(Math.max(0,Math.min(100,v))/100)*(BOT-TOP);};
   var num=function(v){return String(Math.round(Number(v)*10)/10).replace('.',',');};
-  var barra=function(x,v,cls){
-    var y=Y(v);
-    return '<rect class="fx-gb-bar '+cls+'" x="'+x.toFixed(1)+'" y="'+y.toFixed(1)+'" width="'+larg.toFixed(1)+'" height="'+(BOT-y).toFixed(1)+'"/>'
-      +'<text class="fx-gb-val '+cls+'" x="'+(x+larg/2).toFixed(1)+'" y="'+(y-4).toFixed(1)+'">'+num(v)+'</text>';
-  };
   var corpo=cats.map(function(c,k){
-    var meio=L+faixa*k+faixa/2;
-    var xa=meio-larg-vao/2, xb=meio+vao/2;
-    return barra(xa,c.a,'int')+barra(xb,c.b,'ctl')
-      +'<text class="fx-km-ax" x="'+meio.toFixed(1)+'" y="'+(BOT+15)+'">'+esc(String(c.k||''))+'</text>';
+    var meio=L+faixa*k+faixa/2, total=nb*larg+(nb-1)*vao, x0=meio-total/2;
+    return c.vs.map(function(v,j){
+      var x=x0+j*(larg+vao), y=Y(v), cls=dirFichaCorCls(j);
+      return '<rect class="fx-gb-bar '+cls+'" x="'+x.toFixed(1)+'" y="'+y.toFixed(1)+'" width="'+larg.toFixed(1)+'" height="'+(BOT-y).toFixed(1)+'"/>'
+        +'<text class="fx-gb-val '+cls+'" x="'+(x+larg/2).toFixed(1)+'" y="'+(y-4).toFixed(1)+'">'+num(v)+'</text>';
+    }).join('')+'<text class="fx-km-ax" x="'+meio.toFixed(1)+'" y="'+(BOT+15)+'">'+esc(String(c.k||''))+'</text>';
   }).join('');
-  var svg='<svg viewBox="0 0 '+W+' '+H+'" class="fx-km-svg" role="img" aria-label="Proporção de participantes que atingiu cada meta: '
-      +esc(g.bracos[0])+' contra '+esc(g.bracos[1])+'">'
+  var svg='<svg viewBox="0 0 '+W+' '+H+'" class="fx-km-svg" role="img" aria-label="Proporção que atingiu cada meta: '+esc(g.bracos.join(', '))+'">'
     +[0,25,50,75,100].map(function(v){return '<line class="fx-km-grid'+(v%50?' fina':'')+'" x1="'+L+'" y1="'+Y(v).toFixed(1)+'" x2="'+R+'" y2="'+Y(v).toFixed(1)+'"/>'
       +(v%50?'':'<text class="fx-km-ay" x="'+(L-8)+'" y="'+(Y(v)+3.5).toFixed(1)+'">'+v+'%</text>');}).join('')
     +corpo
     +'<text class="fx-km-ax fx-resp-eixo" x="'+((L+R)/2).toFixed(1)+'" y="'+(BOT+33)+'" text-anchor="middle">'+esc(String(g.eixo||''))+'</text>'
   +'</svg>';
-  return '<div class="fx-km fx-resp">'+svg
-    +'<div class="fx-km-leg"><span class="fx-km-key int"></span>'+esc(g.bracos[0])
-      +'<span class="fx-km-key ctl"></span>'+esc(g.bracos[1])+'</div>'
+  return '<div class="fx-km fx-resp fx-gb">'+svg
+    +'<div class="fx-km-leg">'+g.bracos.map(function(b,j){return '<span class="fx-km-key '+dirFichaCorCls(j)+'"></span>'+esc(b);}).join('')+'</div>'
     +'<div class="fx-km-nota">Proporções <b>do próprio artigo</b> ('+esc(g.fig||'figura do artigo')+'), não projetadas.'
       +(g.nota?(' '+mdInline(String(g.nota))):'')+'</div>'
   +'</div>';
+}
+// Série ao longo do tempo com escala LIVRE — para desfecho contínuo (escore,
+// kPa, peso), que não cabe no eixo 0–100% da curva de incidência.
+// ⚠️ Os pontos são extraídos da figura do artigo (calibrados pelas marcas do
+// eixo), não estimados a olho — e o rodapé diz de qual figura vieram.
+function dirFichaSerieHTML(df){
+  var lista=(df&&df.series)||(df&&df.serie?[df.serie]:null);
+  if(!Array.isArray(lista)||!lista.length)return '';
+  return lista.map(function(s){
+    if(!s||!Array.isArray(s.linhas)||s.linhas.length<2)return '';
+    var linhas=s.linhas.filter(function(l){return l&&Array.isArray(l.pts)&&l.pts.length>1;});
+    if(linhas.length<2)return '';
+    var todos=[];linhas.forEach(function(l){l.pts.forEach(function(p){todos.push(Number(p[1]));});});
+    var vmin=isFinite(s.min)?Number(s.min):Math.min.apply(null,todos);
+    var vmax=isFinite(s.max)?Number(s.max):Math.max.apply(null,todos);
+    if(!(vmax>vmin))return '';
+    var xs=[];linhas.forEach(function(l){l.pts.forEach(function(p){xs.push(Number(p[0]));});});
+    var t0=Math.min.apply(null,xs),t1=Math.max.apply(null,xs);
+    if(!(t1>t0))return '';
+    var W=360,H=168,L=52,R=350,TOP=16,BOT=126;
+    var X=function(t){return L+((t-t0)/(t1-t0))*(R-L);};
+    var Y=function(v){return BOT-((v-vmin)/(vmax-vmin))*(BOT-TOP);};
+    var dec=(s.dec===undefined?1:Number(s.dec));
+    var num=function(v){return Number(v).toFixed(dec).replace('.',',');};
+    var marcas=(s.ticks&&s.ticks.length)?s.ticks:[vmin,(vmin+vmax)/2,vmax];
+    var tempos=s.tempos||linhas[0].pts.map(function(p){return p[0];});
+    var traco=linhas.map(function(l,j){
+      var cls=dirFichaCorCls(j);
+      return '<path class="fx-km-line '+cls+'" d="'+l.pts.map(function(p,k){return (k?'L':'M')+X(p[0]).toFixed(1)+','+Y(p[1]).toFixed(1);}).join('')+'"/>'
+        +l.pts.map(function(p){return '<circle class="fx-km-pt '+cls+'" cx="'+X(p[0]).toFixed(1)+'" cy="'+Y(p[1]).toFixed(1)+'" r="2.6"/>';}).join('')
+        +'<text class="fx-gb-val '+cls+'" x="'+(X(l.pts[l.pts.length-1][0])-1).toFixed(1)+'" y="'+(Y(l.pts[l.pts.length-1][1])+(j?13:-6)).toFixed(1)+'" text-anchor="end">'+num(l.pts[l.pts.length-1][1])+'</text>';
+    }).join('');
+    return '<div class="fx-km fx-resp fx-se">'
+      +'<div class="fx-serie-tit">'+esc(String(s.tit||''))+'</div>'
+      +'<svg viewBox="0 0 '+W+' '+H+'" class="fx-km-svg" role="img" aria-label="'+esc(String(s.tit||'série ao longo do tempo'))+'">'
+      +marcas.map(function(v){return '<line class="fx-km-grid'+(v===vmin||v===vmax?'':' fina')+'" x1="'+L+'" y1="'+Y(v).toFixed(1)+'" x2="'+R+'" y2="'+Y(v).toFixed(1)+'"/>'
+        +'<text class="fx-km-ay" x="'+(L-8)+'" y="'+(Y(v)+3.5).toFixed(1)+'">'+num(v)+'</text>';}).join('')
+      +tempos.map(function(t){return '<text class="fx-km-ax" x="'+X(t).toFixed(1)+'" y="'+(BOT+15)+'">'+String(t)+'</text>';}).join('')
+      +traco
+      +'<text class="fx-km-ax fx-resp-eixo" x="'+((L+R)/2).toFixed(1)+'" y="'+(BOT+33)+'" text-anchor="middle">'+esc(String(s.eixo||''))+'</text>'
+      +'</svg>'
+      +'<div class="fx-km-leg">'+linhas.map(function(l,j){return '<span class="fx-km-key '+dirFichaCorCls(j)+'"></span>'+esc(l.n||'');}).join('')+'</div>'
+      +'<div class="fx-km-nota">Pontos <b>extraídos da '+esc(s.fig||'figura do artigo')+'</b>, calibrados pelas marcas do eixo.'
+        +(s.nota?(' '+mdInline(String(s.nota))):'')+'</div>'
+    +'</div>';
+  }).join('');
 }
 function dirFichaHTML(info,d){
   if(!info||typeof info!=='object')return '';
@@ -9097,7 +9146,7 @@ function dirFichaHTML(info,d){
       // nas pontas e ainda diz quando os braços se separaram.
       // A curva de resposta é ADITIVA: as barras dão o número-manchete, ela mostra
       // como a resposta se distribui. Só aparece onde o artigo publica os limiares.
-      +(dirFichaCurvaHTML(df)||dirFichaBarrasHTML(df))+dirFichaGruposHTML(df)+ef
+      +(dirFichaCurvaHTML(df)||dirFichaBarrasHTML(df))+dirFichaGruposHTML(df)+dirFichaSerieHTML(df)+ef
     +'</div>');
   });
   // Números secundários.

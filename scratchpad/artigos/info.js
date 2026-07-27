@@ -534,10 +534,10 @@ const INFO = {
           eixo: 'meta de redução do peso em 72 semanas',
           fig: 'Figura 1B',
           cats: [
-            { k: '≥10%', a: 81.6, b: 60.5 },
-            { k: '≥15%', a: 64.6, b: 40.1 },
-            { k: '≥20%', a: 48.4, b: 27.3 },
-            { k: '≥25%', a: 31.6, b: 16.1 }
+            { k: '≥10%', vs: [81.6, 60.5] },
+            { k: '≥15%', vs: [64.6, 40.1] },
+            { k: '≥20%', vs: [48.4, 27.3] },
+            { k: '≥25%', vs: [31.6, 16.1] }
           ],
           nota: 'Quanto mais exigente a meta, **maior a distância relativa** entre os braços: 1,3 vez em ≥10% e 2,0 vezes em ≥25%. Como desfecho **exploratório**, a meta de ≥30% foi atingida por **19,7% vs 6,9%** (2,8 vezes).'
         }
@@ -593,6 +593,36 @@ const INFO = {
           { n: 'Placebo', t: '22,4%', v: 22.4 }
         ],
         efeito: { k: 'Diferença', v: '+14,4 pp', p: 'IC95% 7,5–21,3 · p<0,001' }
+      },
+      {
+        // Figura 2 do artigo: marcadores NÃO invasivos ao longo do tempo. Importa
+        // porque biópsia não é rotina — é por estes exames que a resposta será
+        // acompanhada na prática. Pontos extraídos do vetor do PDF, calibrados
+        // pelas marcas dos eixos (não lidos a olho).
+        lab: 'Marcadores não invasivos (Figura 2)',
+        nome: 'Escore ELF e rigidez hepática até a semana 72',
+        series: [
+          {
+            tit: 'Escore ELF (média observada)',
+            eixo: 'semanas desde a randomização', fig: 'Figura 2A',
+            min: 9.2, max: 10.0, ticks: [9.2, 9.6, 10.0], dec: 2, tempos: [0, 24, 48, 72],
+            linhas: [
+              { n: 'Semaglutida 2,4 mg', pts: [[0, 9.95], [24, 9.38], [48, 9.34], [72, 9.33]] },
+              { n: 'Placebo', pts: [[0, 9.95], [24, 9.90], [48, 9.90], [72, 9.92]] }
+            ],
+            nota: 'Queda média de **0,62** com semaglutida — coerente com os **55,8% vs 25,5%** que atingiram redução ≥0,5 no texto.'
+          },
+          {
+            tit: 'Rigidez hepática — elastografia (kPa, média geométrica)',
+            eixo: 'semanas desde a randomização', fig: 'Figura 2B',
+            min: 7, max: 12, ticks: [7, 9, 11], dec: 1, tempos: [0, 48, 72],
+            linhas: [
+              { n: 'Semaglutida 2,4 mg', pts: [[0, 11.45], [48, 8.12], [72, 7.63]] },
+              { n: 'Placebo', pts: [[0, 11.57], [48, 10.63], [72, 10.0]] }
+            ],
+            nota: 'Queda de **33%** com semaglutida contra **14%** com placebo — coerente com os **52,0% vs 30,3%** que atingiram redução ≥30%.'
+          }
+        ]
       }
     ],
     tiles: [
