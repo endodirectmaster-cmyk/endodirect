@@ -1,6 +1,6 @@
 ---
 tags: [cofre, processo]
-atualizado: 2026-07-25
+atualizado: 2026-07-27
 ---
 
 # Convenções de Trabalho

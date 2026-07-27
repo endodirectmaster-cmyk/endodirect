@@ -1,6 +1,6 @@
 ---
 tags: [cofre, pendencias]
-atualizado: 2026-07-25
+atualizado: 2026-07-27
 ---
 
 # Pendências
@@ -10,6 +10,10 @@ atualizado: 2026-07-25
   - **Ação do professor:** conferir os números e clicar **👁 Liberar para os alunos** em cada artigo aprovado (o botão só remove o `rascunho`; o item já está com `privado:true` e cai na aba Resumos › Artigos).
   - Diabetes: UKPDS 33, EMPA-REG, LEADER, SUSTAIN-6, DECLARE-TIMI 58, CREDENCE, SURPASS-2, FLOW, SOUL.
   - Obesidade: STEP-1, SURMOUNT-1, SELECT, STEP-HFpEF, SURMOUNT-OSA, SURMOUNT-5, ESSENCE.
+- [ ] **REVISAR o 2º lote — 11 artigos novos (2026-07-27); total de 27 em rascunho.** 8 trials (DCCT, ACCORD, REWIND, STEP-2, STEP-4, STEP-9, SURMOUNT-2, SURMOUNT-4) + 3 comparativos em tabela (Programa STEP, SURMOUNT, SURPASS). **Os números vêm da memória do modelo** — o checador só garante coerência interna, não veracidade. Prioridade de conferência: as **faixas do SURPASS** (o próprio artigo avisa para conferir na publicação) e o **SURPASS-CVOT**, cujos valores exatos ficaram em branco de propósito.
+- [ ] **Confirmar "SURMOUNT MAINTAIN":** entrou como **SURMOUNT-4**. Se o Rodolpho tinha outro estudo em mente, trocar.
+- [ ] **Ligar os conectores PubMed e Clinical Trials** — hoje aparecem na sessão como não autorizados. Com eles, dá para conferir os números dos artigos contra a fonte em vez de depender só de revisão manual.
+- [ ] **Curvas reais dos outros 5** (EMPA-REG, LEADER, SUSTAIN-6, DECLARE, SOUL): hoje são **projetadas**. Basta o professor mandar os PDFs — técnica de extração em [[Convenções de Trabalho]], poucos minutos por artigo.
 - [ ] **Liberar em lote:** hoje é um clique por artigo. Se os 16 forem aprovados de uma vez, vale um "liberar todos os rascunhos desta área" no painel.
 - [x] **🎨 Artigos como INFOGRÁFICO — FEITO (2026-07-25).** Ficha visual gerada por código a partir do campo `info` (fonte: `scratchpad/artigos/info.js`); as 16 estão gravadas e conferidas por md5 contra a fonte local. Decisões tomadas: o texto corrido fica **recolhido** abaixo da ficha (as limitações não se perdem) e o **forest plot entra em todos os que têm HR** (10 dos 16). Ver [[Decisões]].
 - [x] **Artigos NÃO levam flashcards nem mapas mentais (decisão do Rodolpho, 2026-07-25):** "os artigos sendo em infográfico não precisam de mapas mentais e flashcards". A ficha visual já é o material de revisão. Os **64 flashcards** escritos para o lote piloto ficam gravados no JSON (reversível, custo zero) mas **deixam de ser renderizados** quando `tipo==='artigo'` — ver `dirCardHTML` (~l.8604). Capítulos seguem com os seus normalmente.

@@ -1,0 +1,132 @@
+// Artigos (trials) — 2º lote. Mesmo formato do trials.js.
+// ⚠️ Conteúdo para REVISÃO do professor antes de liberar (entra como rascunho).
+// Sem flashcards: desde 2026-07-25 os artigos não levam flashcards nem mapas —
+// a ficha visual é o material de revisão.
+'use strict';
+
+const art = (o) => Object.assign({ tipo: 'artigo', privado: true, titulo: '', rascunho: true }, o);
+
+const DIABETES2 = [
+
+  art({
+    sub: 'Diabetes', tema: 'DCCT (1993)', fonte: 'NEJM', ano: '1993',
+    url: 'https://doi.org/10.1056/NEJM199309303291401',
+    pts: [
+      '**Pergunta / população** — Em **diabetes tipo 1** (n=1.441; 13–39 anos, sem doença cardiovascular), o controle glicêmico intensivo previne complicações microvasculares?',
+      '**Intervenção vs comparador** — **Intensivo** (3+ aplicações/dia ou bomba, automonitorização, alvo quase normal) vs **convencional** (1–2 aplicações/dia). Média de **6,5 anos**.',
+      '**Desfecho primário** — **Retinopatia**, em duas coortes: *prevenção primária* (sem retinopatia ao entrar) e *intervenção secundária* (retinopatia leve ao entrar).',
+      '**Resultado-chave** — **HbA1c ~7,2% vs ~9,1%**. Prevenção primária: **redução de 76%** no aparecimento de retinopatia. Intervenção secundária: **redução de 54%** na progressão. Microalbuminúria **−39%**, albuminúria **−54%**, neuropatia clínica **−60%**.',
+      '**Segurança** — **Hipoglicemia grave cerca de 3× mais frequente** no braço intensivo. Também mais ganho de peso.',
+      '💡 **O que muda na prática** — É a prova fundadora de que **glicemia causa complicação microvascular**, não apenas se associa a ela. O seguimento observacional (EDIC) mostrou depois que o benefício persistiu por décadas — a **memória metabólica**.'
+    ],
+    resumo: '## Por que é o estudo fundador\nAntes do DCCT havia a *hipótese da glicose*: complicações microvasculares seriam consequência da hiperglicemia. Era plausível, mas não provada — e havia quem defendesse que retinopatia e nefropatia fossem determinadas geneticamente, independentes do controle. O DCCT resolveu a questão.\n\n## Desenho\n- **1.441 pacientes com DM1**, 13 a 39 anos, sem doença cardiovascular, divididos em **duas coortes**:\n  - **Prevenção primária** (n=726): sem retinopatia, DM de 1 a 5 anos.\n  - **Intervenção secundária** (n=715): retinopatia não proliferativa leve, DM de 1 a 15 anos.\n- **Intensivo**: três ou mais aplicações diárias ou bomba de infusão, automonitorização ≥4×/dia, ajuste frequente, alvo de glicemia quase normal.\n- **Convencional**: uma ou duas aplicações diárias, sem ajuste por glicemia — o padrão da época.\n- Seguimento médio de **6,5 anos**.\n\n## Resultados\n**Separação glicêmica alcançada: HbA1c ~7,2% no intensivo vs ~9,1% no convencional** — diferença de **~1,9 ponto**. Quase 2 pontos — muito maior do que qualquer estudo moderno consegue, e é isso que dá ao DCCT o poder que ele tem.\n\n| Desfecho | Redução com intensivo |\n|---|---|\n| Retinopatia — aparecimento (prevenção primária) | **−76%** |\n| Retinopatia — progressão (intervenção secundária) | **−54%** |\n| Microalbuminúria | **−39%** |\n| Albuminúria | **−54%** |\n| Neuropatia clínica | **−60%** |\n\n## O preço\n- **Hipoglicemia grave cerca de 3 vezes mais frequente** no braço intensivo — o efeito adverso que define o limite da estratégia.\n- Ganho de peso maior.\n\n## Limitações\n- **DM1, adultos jovens, sem doença cardiovascular** — não extrapola direto para idosos, DM2 ou quem tem hipoglicemia assintomática.\n- O braço convencional é hoje inaceitável: nenhum estudo desse tipo se repetiria.\n- Sem poder para desfechos macrovasculares no período do estudo.\n\n## O desdobramento que importa\nO seguimento observacional (**EDIC**) acompanhou as duas coortes depois que a HbA1c se igualou entre elas. Mesmo com o controle convergindo, **quem tinha sido intensivo manteve menos complicações microvasculares por décadas** — e o benefício cardiovascular apareceu no longo prazo. É a **memória metabólica**: o controle precoce deixa marca duradoura.\n\n## O que muda na prática\n- Justifica ser agressivo com o controle **desde o diagnóstico** no DM1, e não esperar a complicação aparecer.\n- Ao mesmo tempo, define o contrapeso: **hipoglicemia grave é o limite**, e o alvo se individualiza em quem tem hipoglicemia despercebida.'
+  }),
+
+  art({
+    sub: 'Diabetes', tema: 'ACCORD (2008)', fonte: 'NEJM', ano: '2008',
+    url: 'https://doi.org/10.1056/NEJMoa0802743',
+    pts: [
+      '**Pergunta / população** — Em **DM2 de alto risco cardiovascular** (n=10.251; HbA1c média 8,1%, com doença CV estabelecida ou múltiplos fatores de risco), levar a HbA1c a **menos de 6,0%** reduz eventos?',
+      '**Intervenção vs comparador** — **Intensivo (alvo HbA1c <6,0%)** vs **padrão (alvo 7,0–7,9%)**. Previsto para 5,6 anos; **interrompido em 3,5 anos**.',
+      '**Desfecho primário** — Composto de **IAM não fatal, AVC não fatal ou morte cardiovascular**.',
+      '**Resultado-chave** — ⚠️ **O braço intensivo teve MAIS morte por qualquer causa: 5,0% vs 4,0% — HR 1,22** (IC95% 1,01–1,46). O desfecho primário **não** diferiu: HR 0,90 (IC95% 0,78–1,04). HbA1c alcançada: **6,4% vs 7,5%**.',
+      '**Segurança** — **Hipoglicemia grave com necessidade de assistência: 16,2% vs 5,1%.** Ganho de peso >10 kg em 27,8% vs 14,1%.',
+      '💡 **O que muda na prática** — Encerrou a lógica do "quanto menor, melhor". Fundou a **individualização do alvo**: em idoso, doença CV estabelecida, DM longo ou risco de hipoglicemia, alvo menos rígido é mais seguro.'
+    ],
+    resumo: '## O estudo que mudou a direção da área\nDepois do DCCT e do UKPDS, a leitura dominante era que quanto menor a HbA1c, melhor. O ACCORD testou isso levando ao extremo — e encontrou o oposto do esperado.\n\n## Desenho\n- **10.251 pacientes com DM2**, HbA1c média de **8,1%**, idade média 62 anos, **com doença cardiovascular estabelecida ou pelo menos dois fatores de risco adicionais**.\n- **Intensivo**: alvo de **HbA1c <6,0%**, com combinação agressiva de fármacos, sem restrição de classe.\n- **Padrão**: alvo de **7,0–7,9%**.\n- Previsto para 5,6 anos. **Interrompido precocemente aos 3,5 anos** pelo comitê de segurança.\n\n## Resultados\n**Separação alcançada: HbA1c 6,4% vs 7,5%.**\n\n- **Morte por qualquer causa: 5,0% vs 4,0% — HR 1,22** (IC95% 1,01–1,46). Foi o achado que parou o estudo: **257 mortes no intensivo contra 203 no padrão**.\n- **Morte cardiovascular: HR 1,35** (IC95% 1,04–1,76).\n- **Desfecho primário (MACE): HR 0,90** (IC95% 0,78–1,04) — não significativo.\n- **IAM não fatal isolado: HR 0,76** — reduzido. Ou seja, houve **menos infarto e mais morte**.\n\n## Segurança\n- **Hipoglicemia grave exigindo assistência: 16,2% vs 5,1%** — mais que o triplo.\n- **Ganho de peso acima de 10 kg: 27,8% vs 14,1%**.\n\n## Por que morreram mais — e o que não se sabe\nA causa nunca foi estabelecida com certeza. As hipóteses discutidas:\n- **Hipoglicemia grave**, direta ou por arritmia — mas análises post hoc não confirmaram relação simples, e paradoxalmente a mortalidade se associou mais a HbA1c *alta* dentro do braço intensivo.\n- **Velocidade da queda** da HbA1c e polifarmácia agressiva.\n- **Ganho de peso** e as combinações usadas.\n\nÉ importante dizer com honestidade: **o mecanismo permanece incerto**. O que o estudo estabelece é o dano, não a explicação.\n\n## Como se encaixa com ADVANCE e VADT\nOs outros dois estudos de controle intensivo em DM2 do mesmo período **não** mostraram aumento de mortalidade — mas também não mostraram benefício macrovascular. A leitura conjunta é que, em DM2 de longa data e alto risco, **apertar a HbA1c não reduz evento cardiovascular**, e no ACCORD chegou a fazer mal.\n\n## O que muda na prática\n- **Alvo individualizado**, não universal: perto de 6,5% em quem é jovem, tem DM recente e nenhuma doença CV; **7,5–8,0% ou mais** em idoso frágil, DM longo, doença CV estabelecida ou hipoglicemia despercebida.\n- Reposiciona a pergunta: o que reduz evento cardiovascular no DM2 **não é a intensidade do controle**, e sim **qual fármaco** — o que os estudos de iSGLT2 e GLP-1 mostrariam depois.'
+  }),
+
+  art({
+    sub: 'Diabetes', tema: 'REWIND (2019)', fonte: 'Lancet', ano: '2019',
+    url: 'https://doi.org/10.1016/S0140-6736(19)31149-3',
+    pts: [
+      '**Pergunta / população** — Em **DM2 de amplo espectro** (n=9.901; ≥50 anos), com **apenas 31% em prevenção secundária**, a dulaglutida reduz eventos cardiovasculares?',
+      '**Intervenção vs comparador** — **Dulaglutida 1,5 mg/semana SC** vs **placebo**, sobre terapia padrão. Mediana de **5,4 anos** — o seguimento mais longo entre os estudos de GLP-1.',
+      '**Desfecho primário** — **MACE-3**: morte cardiovascular, IAM não fatal ou AVC não fatal.',
+      '**Resultado-chave** — **12,0% vs 13,4% — HR 0,88** (IC95% 0,79–0,99; p=0,026). O benefício foi **consistente** entre quem tinha e quem não tinha doença CV estabelecida (p de interação não significativo).',
+      '**Segurança** — **Gastrointestinais** foram os eventos mais comuns. Sem excesso de pancreatite ou de neoplasia.',
+      '💡 **O que muda na prática** — É o estudo que sustenta o GLP-1 em **prevenção primária** no DM2, e não só em quem já teve evento. HbA1c basal era baixa (7,3%): o benefício não veio de corrigir descontrole.'
+    ],
+    resumo: '## O que o REWIND acrescenta\nLEADER, SUSTAIN-6 e EMPA-REG recrutaram populações majoritariamente com **doença cardiovascular estabelecida**. O REWIND fez o contrário: **69% dos participantes estavam em prevenção primária**, apenas com fatores de risco. É por isso que ele ocupa um lugar próprio.\n\n## Desenho\n- **9.901 pacientes com DM2**, **≥50 anos**, HbA1c ≤9,5%.\n- Elegíveis por **doença CV prévia** *ou* apenas por **fatores de risco** com idade ≥55–60 anos — o que abriu a porta para a prevenção primária.\n- **Dulaglutida 1,5 mg/semana** vs **placebo**, sobre terapia padrão.\n- Mediana de **5,4 anos** de seguimento.\n\n## Resultados\n- **MACE-3: 12,0% vs 13,4% — HR 0,88** (IC95% 0,79–0,99); p=0,026.\n- **AVC não fatal: HR 0,76** — o componente que mais contribuiu.\n- **Desfecho renal composto** (macroalbuminúria nova, queda ≥30% da TFGe ou terapia renal substitutiva): **HR 0,85**, dirigido pela albuminúria.\n- **Morte por qualquer causa: HR 0,90** — não significativa.\n- Redução modesta de HbA1c (**−0,61 ponto**) e de peso (**−1,46 kg**): o benefício não se explica pelo controle glicêmico.\n\n## O detalhe que muda a leitura\nA **HbA1c basal era de 7,3%** — população razoavelmente controlada. E o efeito foi **homogêneo** entre o subgrupo com e sem doença CV estabelecida. Junto, isso sustenta que o benefício do GLP-1 é **do fármaco**, não da correção do descontrole glicêmico.\n\n## Limitações\n- Redução relativa **modesta** (12%) e limite superior do IC muito perto de 1,00 — o resultado é positivo, mas não robusto como o do LEADER ou do SELECT.\n- O ganho concentrou-se no **AVC**, não no infarto — padrão diferente do dos iSGLT2.\n- Estudo longo, com descontinuação relevante ao longo dos 5,4 anos.\n\n## O que muda na prática\n- Sustenta considerar GLP-1 em DM2 de **alto risco sem evento prévio**, e não apenas em prevenção secundária.\n- Reforça a escolha do 2º fármaco por **fenótipo de risco**: GLP-1 quando o risco dominante é aterosclerótico (sobretudo AVC); iSGLT2 quando é insuficiência cardíaca ou doença renal.'
+  })
+
+];
+
+const OBESIDADE2 = [
+
+  art({
+    sub: 'Obesidade', tema: 'STEP-2 (2021)', fonte: 'Lancet', ano: '2021',
+    url: 'https://doi.org/10.1016/S0140-6736(21)00213-0',
+    pts: [
+      '**Pergunta / população** — Em adultos **com obesidade E diabetes tipo 2** (n=1.210; IMC ≥27, HbA1c 7–10%), qual a eficácia da semaglutida 2,4 mg?',
+      '**Intervenção vs comparador** — **Semaglutida 2,4 mg/semana** vs **semaglutida 1,0 mg/semana** vs **placebo**, com estilo de vida. **68 semanas**.',
+      '**Desfecho primário** — Variação percentual do **peso** e proporção com perda **≥5%**.',
+      '**Resultado-chave** — **−9,6% (2,4 mg) vs −7,0% (1,0 mg) vs −3,4% (placebo)**. Perda **≥5%: 68,8% vs 57,1% vs 28,5%**. HbA1c caiu **−1,6 ponto** com 2,4 mg.',
+      '**Segurança** — **Gastrointestinais** predominantes; descontinuação por eventos adversos maior que no placebo. Hipoglicemia rara, mas atenção a quem usa sulfonilureia ou insulina.',
+      '💡 **O que muda na prática** — Mostra que **quem tem diabetes emagrece menos** com a mesma dose: **−9,6% aqui contra −14,9% no STEP-1**. É a expectativa correta a alinhar com o paciente com DM2.'
+    ],
+    resumo: '## Por que ele existe separado do STEP-1\nO STEP-1 excluiu diabetes. O STEP-2 foi desenhado exatamente para a população que o STEP-1 deixou de fora — e o achado central é que **a resposta é menor**.\n\n## Desenho\n- **1.210 adultos** com **IMC ≥27** e **DM2** com HbA1c entre 7% e 10%.\n- Três braços: **semaglutida 2,4 mg/semana**, **semaglutida 1,0 mg/semana** (a dose de diabetes) e **placebo**, todos com aconselhamento de estilo de vida.\n- **68 semanas**.\n\n## Resultados\n| Grupo | Perda de peso |\n|---|---|\n| Semaglutida 2,4 mg | **−9,6%** |\n| Semaglutida 1,0 mg | **−7,0%** |\n| Placebo | −3,4% |\n\n- Diferença da dose de 2,4 mg contra placebo: **−6,2 pontos percentuais**.\n- **Perda ≥5%: 68,8% / 57,1% / 28,5%.**\n- **HbA1c: −1,6 ponto** com 2,4 mg.\n- Melhora de circunferência abdominal, pressão arterial e lipídios.\n\n## O achado que mais importa na consulta\nA mesma dose de 2,4 mg que produziu **−14,9%** no STEP-1 produziu **−9,6%** aqui. **Ter diabetes reduz a magnitude da perda** — fenômeno consistente em toda a classe, também visto entre SURMOUNT-1 e SURMOUNT-2. As explicações discutidas incluem o efeito de fármacos concomitantes que favorecem ganho de peso (insulina, sulfonilureia), a menor reserva de perda em quem já tem alteração metabólica avançada, e diferenças na resposta incretínica.\n\n## Segurança\nPerfil da classe: **náusea, diarreia, vômito**, na titulação. **Hipoglicemia** é rara com semaglutida isolada, mas o risco existe em combinação com **sulfonilureia ou insulina** — reduzir a dose desses ao iniciar.\n\n## Limitações\n- Comparação com o STEP-1 é **indireta**: populações diferentes.\n- 68 semanas — sem dado de manutenção a longo prazo (ver STEP-4).\n\n## O que muda na prática\n- **Alinhar expectativa**: no paciente com DM2, prometer 15% é prometer o que o estudo não mostrou.\n- Ao iniciar, **revisar sulfonilureia e insulina** para evitar hipoglicemia.'
+  }),
+
+  art({
+    sub: 'Obesidade', tema: 'SURMOUNT-2 (2023)', fonte: 'Lancet', ano: '2023',
+    url: 'https://doi.org/10.1016/S0140-6736(23)01200-X',
+    pts: [
+      '**Pergunta / população** — Em adultos **com obesidade E diabetes tipo 2** (n=938; IMC ≥27, HbA1c 7–10%), qual a eficácia da tirzepatida?',
+      '**Intervenção vs comparador** — **Tirzepatida 10 ou 15 mg/semana SC** vs **placebo**, com estilo de vida. **72 semanas**.',
+      '**Desfecho primário** — Variação percentual do **peso corporal**.',
+      '**Resultado-chave** — **−12,8% (10 mg) e −14,7% (15 mg) vs −3,2%** com placebo. Perda **≥5%: 79–83% vs 32%**. HbA1c caiu cerca de **−2,1 pontos**.',
+      '**Segurança** — **Gastrointestinais** leves a moderados, na titulação. Hipoglicemia rara sem sulfonilureia ou insulina.',
+      '💡 **O que muda na prática** — Mesma lição do STEP-2, do outro lado da classe: **com diabetes, a perda é menor** — cerca de **−14,7% aqui contra −20,9% no SURMOUNT-1**. Ainda assim, é a maior magnitude disponível nessa população.'
+    ],
+    resumo: '## Desenho\n- **938 adultos** com **obesidade e DM2**, IMC ≥27, HbA1c entre 7% e 10%.\n- **Tirzepatida 10 ou 15 mg/semana** vs **placebo**, com aconselhamento de estilo de vida.\n- **72 semanas**.\n\n## Resultados\n| Grupo | Perda de peso |\n|---|---|\n| Tirzepatida 15 mg | **−14,7%** |\n| Tirzepatida 10 mg | **−12,8%** |\n| Placebo | −3,2% |\n\n- Diferença da dose de 15 mg contra placebo: **−11,5 pontos percentuais**.\n- **Perda ≥5%: 79% a 83%** conforme a dose, vs **32%**.\n- **HbA1c: cerca de −2,1 pontos**.\n- Melhora de pressão arterial, lipídios e circunferência abdominal.\n\n## O paralelo com o STEP-2\nOs dois estudos contam a mesma história em fármacos diferentes: **a presença de diabetes reduz a perda de peso**.\n\n| Fármaco | Sem diabetes | Com diabetes |\n|---|---|---|\n| Semaglutida 2,4 mg | −14,9% (STEP-1) | −9,6% (STEP-2) |\n| Tirzepatida 15 mg | −20,9% (SURMOUNT-1) | −14,7% (SURMOUNT-2) |\n\nComparações **entre estudos são indiretas** e devem ser lidas com cautela — mas o padrão é consistente demais para ser acaso.\n\n## Segurança\nPerfil da classe: **náusea, diarreia, vômito, constipação**, concentrados no escalonamento. **Hipoglicemia** é rara com tirzepatida isolada; o risco aparece em combinação com **sulfonilureia ou insulina**.\n\n## Limitações\n- Desfecho **substituto** (peso e HbA1c), não evento clínico.\n- **72 semanas**, sem dado de manutenção — ver SURMOUNT-4.\n\n## O que muda na prática\n- No paciente com **obesidade e DM2**, a tirzepatida entrega a maior perda de peso disponível — mas a expectativa a alinhar é de **~15%**, não de 20%.\n- O ganho glicêmico simultâneo (−2 pontos de HbA1c) frequentemente permite **desescalonar insulina ou sulfonilureia**.'
+  }),
+
+  art({
+    sub: 'Obesidade', tema: 'STEP-4 (2021)', fonte: 'JAMA', ano: '2021',
+    url: 'https://doi.org/10.1001/jama.2021.3224',
+    pts: [
+      '**Pergunta / população** — Depois de emagrecer com semaglutida, o que acontece ao **suspender**? (n=803 randomizados após 20 semanas de escalonamento aberto; obesidade sem diabetes).',
+      '**Intervenção vs comparador** — **Retirada randomizada 2:1** na semana 20: **continuar semaglutida 2,4 mg** vs **trocar por placebo**, até a semana 68.',
+      '**Desfecho primário** — Variação percentual do peso **da semana 20 até a 68**.',
+      '**Resultado-chave** — Quem continuou perdeu **mais −7,9%**; quem trocou por placebo **REGANHOU +6,9%** — diferença de **−14,8 pontos percentuais** (p<0,001). No total (semana 0 a 68): **−17,4% vs −5,0%**.',
+      '**Segurança** — Perfil da classe no braço que continuou; **gastrointestinais** predominantes.',
+      '💡 **O que muda na prática** — É a prova de que a obesidade se comporta como **doença crônica**: retirar o tratamento devolve o peso. Muda a conversa da consulta de "quando eu paro?" para "como eu mantenho?".'
+    ],
+    resumo: '## A pergunta que o STEP-1 não respondeu\nO STEP-1 mostrou quanto se perde. O STEP-4 responde ao que todo paciente pergunta em seguida: **e se eu parar?**\n\n## Desenho — o detalhe que define o estudo\n- **Fase aberta de 20 semanas**: todos receberam semaglutida com escalonamento até 2,4 mg. Perda média nesse período: **cerca de −10,6%**.\n- Na **semana 20**, os **803 participantes que chegaram à dose plena** foram **randomizados 2:1**: continuar semaglutida ou passar a placebo.\n- Seguimento até a **semana 68**.\n- É um desenho de **retirada randomizada** — todos responderam antes de randomizar, então a comparação é entre manter e interromper, não entre tratar e não tratar.\n\n## Resultados\n**Da semana 20 à 68:**\n- Continuou semaglutida: **−7,9% adicionais**.\n- Trocou por placebo: **+6,9% de reganho**.\n- **Diferença: −14,8 pontos percentuais** (IC95% −16,0 a −13,5); p<0,001.\n\n**Total, da semana 0 à 68:** **−17,4% vs −5,0%**.\n\nOs marcadores cardiometabólicos que haviam melhorado — pressão arterial, lipídios, PCR — **também regrediram** no braço que suspendeu.\n\n## Limitações\n- Só entraram os que **toleraram e chegaram à dose plena** em 20 semanas: a população randomizada é enriquecida de respondedores.\n- Não há braço de retirada gradual nem de estratégia de manutenção com dose menor.\n- 48 semanas após a randomização — não informa sobre anos.\n\n## O que muda na prática\n- **Tratamento contínuo**, como se faz em hipertensão ou dislipidemia. Suspender por ter atingido a meta devolve o peso.\n- Isso precisa entrar **na primeira conversa**, junto com custo e acesso — não na hora de suspender.\n- O mesmo padrão foi depois confirmado com tirzepatida no **SURMOUNT-4**.'
+  }),
+
+  art({
+    sub: 'Obesidade', tema: 'SURMOUNT-4 (2024)', fonte: 'JAMA', ano: '2024',
+    url: 'https://doi.org/10.1001/jama.2023.24945',
+    pts: [
+      '**Pergunta / população** — Depois de emagrecer com tirzepatida, manter ou suspender? (n=670 randomizados após **36 semanas** de tratamento aberto; obesidade sem diabetes).',
+      '**Intervenção vs comparador** — **Retirada randomizada** na semana 36: **continuar tirzepatida** (dose máxima tolerada, 10 ou 15 mg) vs **placebo**, por mais **52 semanas**.',
+      '**Desfecho primário** — Variação percentual do peso **da semana 36 até a 88**.',
+      '**Resultado-chave** — Perda no período aberto: **−20,9%**. Depois da randomização, quem continuou perdeu **mais −5,5%**; quem passou a placebo **REGANHOU +14,0%**. No total (semana 0 a 88): **−25,3% vs −9,9%**.',
+      '**Segurança** — Perfil da classe: **gastrointestinais**, leves a moderados.',
+      '💡 **O que muda na prática** — Confirma com a tirzepatida o que o STEP-4 mostrou com a semaglutida, e com números ainda mais marcantes: **manter 89,5% dos participantes com ≥80% da perda**, contra **16,6%** de quem suspendeu.'
+    ],
+    resumo: '## O mesmo experimento, com o fármaco mais potente\nO STEP-4 respondeu à pergunta da suspensão para a semaglutida. O SURMOUNT-4 repetiu o desenho com a tirzepatida — e o reganho foi ainda maior, porque havia mais peso perdido a recuperar.\n\n## Desenho\n- **Fase aberta de 36 semanas**: todos receberam tirzepatida escalonada até a dose máxima tolerada (10 ou 15 mg/semana). Perda média nesse período: **−20,9%**.\n- Na **semana 36**, **670 participantes** foram randomizados a **continuar tirzepatida** ou **passar a placebo**.\n- Seguimento até a **semana 88** — ou seja, **52 semanas** após a randomização, o dobro do STEP-4.\n\n## Resultados\n**Da semana 36 à 88:**\n- Continuou tirzepatida: **−5,5% adicionais**.\n- Passou a placebo: **+14,0% de reganho**.\n\nDiferença entre os braços no período: **−19,5 pontos percentuais**.\n\n**Total, da semana 0 à 88:** **−25,3% vs −9,9%**.\n\n**Manutenção de pelo menos 80% da perda obtida na fase aberta: 89,5% vs 16,6%.** É a forma mais direta de ler o resultado — quase todo mundo que continua mantém, quase ninguém que para consegue.\n\nOs ganhos em pressão arterial, lipídios e circunferência abdominal também regrediram no braço que suspendeu.\n\n## Limitações\n- Como no STEP-4, a população randomizada é **enriquecida de respondedores**: só entrou quem tolerou 36 semanas até a dose máxima.\n- Sem braço de **desescalonamento** ou dose de manutenção reduzida — a pergunta clínica "dá para manter com menos?" segue aberta.\n- Desfecho é **peso**, não evento clínico.\n\n## O que muda na prática\n- Junto com o STEP-4, estabelece que a farmacoterapia da obesidade é **crônica** em toda a classe — não é ciclo de tratamento.\n- Dá o número para a conversa: **suspender devolve cerca de dois terços do que se perdeu** em um ano.\n- Reforça a necessidade de planejar **acesso e custo de longo prazo** antes de iniciar, e não depois.'
+  }),
+
+  art({
+    sub: 'Obesidade', tema: 'STEP-9 (2024)', fonte: 'NEJM', ano: '2024',
+    url: 'https://doi.org/10.1056/NEJMoa2403664',
+    pts: [
+      '**Pergunta / população** — Em adultos com **obesidade e osteoartrite de joelho** moderada, sintomática (n=407; IMC ≥30), a semaglutida reduz a **dor**?',
+      '**Intervenção vs comparador** — **Semaglutida 2,4 mg/semana SC** vs **placebo**, com estilo de vida. **68 semanas**.',
+      '**Desfecho primário** — **Dois co-primários**: variação percentual do **peso** e variação do **escore de dor WOMAC** (0–100; quanto menor, melhor).',
+      '**Resultado-chave** — **Peso: −13,7% vs −3,2%.** **Dor WOMAC: −41,7 vs −27,5 pontos** — diferença de **−14,1 pontos** (IC95% −20,3 a −7,8; p<0,001). Também melhorou a função física (SF-36).',
+      '**Segurança** — Perfil da classe: **gastrointestinais**. Descontinuação por eventos adversos maior que no placebo.',
+      '💡 **O que muda na prática** — Dá desfecho **centrado no sintoma** para indicar tratamento da obesidade em quem tem gonartrose — a queixa que leva o paciente ao consultório, e um argumento concreto diante de quem só enxerga o peso.'
+    ],
+    resumo: '## O problema clínico\nA **osteoartrite de joelho** é uma das consequências mais incapacitantes da obesidade, e a relação é de mão dupla: a dor limita a atividade física, que dificulta emagrecer. O tratamento habitual — analgesia, fisioterapia, eventualmente artroplastia — não age sobre a causa mecânica e inflamatória. O STEP-9 testou agir sobre o peso.\n\n## Desenho\n- **407 adultos** com **IMC ≥30** e **osteoartrite de joelho** clinicamente e radiologicamente confirmada, de intensidade moderada, com dor.\n- **Semaglutida 2,4 mg/semana** vs **placebo**, ambos com aconselhamento de estilo de vida.\n- **68 semanas**.\n\n## Resultados\n**Co-primário 1 — Peso:**\n- **−13,7% vs −3,2%** — diferença de **−10,5 pontos percentuais**.\n\n**Co-primário 2 — Dor (WOMAC, escala 0–100; menor é melhor):**\n- **−41,7 vs −27,5 pontos** — diferença estimada de **−14,1 pontos** (IC95% −20,3 a −7,8); p<0,001.\n\n**Secundário — função física (SF-36):** melhora significativa a favor da semaglutida.\n\nNote a **resposta expressiva no placebo** (−27,5 pontos): dor é desfecho subjetivo e o efeito placebo em osteoartrite é grande e bem documentado. É mais uma razão para ler a **diferença entre grupos**, e não o número absoluto.\n\n## Limitações\n- **Desfecho relatado pelo paciente**, sem cegamento perfeito — quem perde 14% do peso percebe, o que pode inflar a resposta no braço ativo.\n- Não avalia **estrutura articular** (progressão radiográfica ou necessidade de artroplastia).\n- **68 semanas**: não informa se o ganho se mantém ou se adia a cirurgia.\n- Osteoartrite **moderada** — não extrapola para doença grave com indicação cirúrgica estabelecida.\n\n## O que muda na prática\n- Em **obesidade com gonartrose sintomática**, tratar o peso passa a ter suporte de estudo para a queixa que o paciente traz: a dor.\n- Útil na conversa com quem resiste ao tratamento da obesidade em si, mas quer resolver o joelho.\n- Não substitui fisioterapia nem avaliação ortopédica; soma-se a elas.'
+  })
+
+];
+
+module.exports = {
+  DIABETES2, OBESIDADE2,
+  TODOS2: DIABETES2.concat(OBESIDADE2)
+};
