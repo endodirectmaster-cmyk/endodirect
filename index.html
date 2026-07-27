@@ -8862,55 +8862,62 @@ function refAplicarOrdemTemas(novaOrdem){
 }
 // Pointer Events cobrem mouse e toque com o mesmo código; o drag-and-drop
 // nativo do HTML5 não funciona em toque, e o professor usa iPhone.
+// ⚠️ Os ouvintes ficam no DOCUMENTO, não na alça — e sem setPointerCapture.
+// A alça vive DENTRO do card; ao reposicionar o card com insertBefore o
+// navegador o destaca e reanexa, o que LIBERA a captura e corta o
+// pointermove. Era exatamente por isso que o card entrava em modo de
+// arraste (contorno tracejado) mas não saía do lugar.
 function bindTemaDrag(root){
-  var grid=root.querySelector('.dir-sub-grid');
+  var grid=root&&root.querySelector('.dir-sub-grid');
   if(!grid||!grid.querySelector('[data-ref-tema-drag]'))return;
+  var ativo=null;
+  function alvoSob(x,y,card){
+    var achado=null;
+    grid.querySelectorAll('.dir-tema-card').forEach(function(c){
+      if(c===card)return;
+      var r=c.getBoundingClientRect();
+      if(x>=r.left&&x<=r.right&&y>=r.top&&y<=r.bottom)achado=c;
+    });
+    return achado;
+  }
+  function onMove(e){
+    if(!ativo)return;
+    if(e.cancelable)e.preventDefault();
+    var alvo=alvoSob(e.clientX,e.clientY,ativo.card);
+    if(!alvo)return;
+    var r=alvo.getBoundingClientRect();
+    // metade esquerda solta antes; metade direita, depois
+    var ref=((e.clientX-r.left)>r.width/2)?alvo.nextSibling:alvo;
+    if(ref===ativo.card)return;              // já está nessa posição
+    grid.insertBefore(ativo.card,ref);
+    ativo.moveu=true;
+  }
+  function onUp(){
+    if(!ativo)return;
+    var st=ativo;ativo=null;
+    document.removeEventListener('pointermove',onMove,true);
+    document.removeEventListener('pointerup',onUp,true);
+    document.removeEventListener('pointercancel',onUp,true);
+    st.card.classList.remove('dtc-dragging');
+    grid.classList.remove('dtc-reordenando');
+    if(!st.moveu)return;                      // arrastou e voltou: nada a gravar
+    var ordem=[];
+    grid.querySelectorAll('[data-admref-tema]').forEach(function(c){ordem.push(c.dataset.admrefTema);});
+    if(refAplicarOrdemTemas(ordem)){persistDiretrizes();notify('Ordem salva. \u2713','ok');}
+    else notify('Nao consegui salvar a ordem \u2014 nada foi alterado.','err');
+    rerenderRef();
+  }
   grid.querySelectorAll('[data-ref-tema-drag]').forEach(function(h){
     h.addEventListener('pointerdown',function(ev){
+      if(ativo)return;
       ev.preventDefault();ev.stopPropagation();
       var card=h.closest('.dir-tema-card');if(!card)return;
-      var moveu=false;
+      ativo={card:card,moveu:false};
       card.classList.add('dtc-dragging');
       grid.classList.add('dtc-reordenando');
-      try{h.setPointerCapture(ev.pointerId);}catch(_){}
-      function alvoEm(x,y){
-        var achado=null;
-        grid.querySelectorAll('.dir-tema-card').forEach(function(c){
-          if(c===card)return;
-          var r=c.getBoundingClientRect();
-          if(x>=r.left&&x<=r.right&&y>=r.top&&y<=r.bottom)achado=c;
-        });
-        return achado;
-      }
-      function onMove(e){
-        var alvo=alvoEm(e.clientX,e.clientY);
-        if(!alvo)return;
-        moveu=true;
-        // antes ou depois, pelo lado em que o ponteiro entrou
-        var r=alvo.getBoundingClientRect();
-        var depois=(e.clientX-r.left)>r.width/2;
-        grid.insertBefore(card,depois?alvo.nextSibling:alvo);
-      }
-      function onUp(){
-        h.removeEventListener('pointermove',onMove);
-        h.removeEventListener('pointerup',onUp);
-        h.removeEventListener('pointercancel',onUp);
-        card.classList.remove('dtc-dragging');
-        grid.classList.remove('dtc-reordenando');
-        if(!moveu)return;
-        var ordem=[];
-        grid.querySelectorAll('[data-admref-tema]').forEach(function(c){ordem.push(c.dataset.admrefTema);});
-        if(refAplicarOrdemTemas(ordem)){
-          persistDiretrizes();
-          notify('Ordem salva. ✓','ok');
-        }else{
-          notify('Não consegui salvar a ordem — nada foi alterado.','err');
-        }
-        rerenderRef();
-      }
-      h.addEventListener('pointermove',onMove);
-      h.addEventListener('pointerup',onUp);
-      h.addEventListener('pointercancel',onUp);
+      document.addEventListener('pointermove',onMove,{passive:false,capture:true});
+      document.addEventListener('pointerup',onUp,true);
+      document.addEventListener('pointercancel',onUp,true);
     });
   });
 }
