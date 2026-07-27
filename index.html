@@ -857,7 +857,11 @@ html[data-theme="light"] .dir-back{background:#f8f9fc;border-color:var(--bd2);co
 .dir-ficha .fx-resp-v{font-size:8.5px;font-weight:700}
 .dir-ficha .fx-resp-v.int{fill:var(--blue2)}
 .dir-ficha .fx-resp-v.ctl{fill:var(--t2)}
-.dir-ficha .fx-resp{margin-top:.55rem}
+.dir-ficha .fx-resp{margin-top:.7rem}
+/* usa a largura toda da ficha: sem rótulos de fim de linha, não há o que reservar */
+.dir-ficha .fx-resp .fx-km-svg{max-width:620px}
+.dir-ficha .fx-km-grid.fina{stroke:var(--bd);opacity:.45}
+.dir-ficha .fx-resp-eixo{font-size:9.5px}
 .dir-ficha .fx-delta{margin-top:.85rem;display:flex;align-items:baseline;gap:.5rem;flex-wrap:wrap;border-top:1px dashed var(--bd);padding-top:.75rem}
 .dir-ficha .fx-delta-k{font-size:.66rem;letter-spacing:.1em;text-transform:uppercase;color:var(--t3);font-weight:600}
 .dir-ficha .fx-delta-v{font-size:1.3rem;font-weight:800;color:var(--grn);letter-spacing:-.02em;line-height:1.1}
@@ -9028,11 +9032,15 @@ function dirFichaRespostaHTML(df){
   if(!r||!Array.isArray(r.pts)||r.pts.length<2||!Array.isArray(r.bracos)||r.bracos.length!==2)return '';
   var pts=r.pts.filter(function(p){return Array.isArray(p)&&p.length>=3&&isFinite(p[0])&&isFinite(p[1])&&isFinite(p[2]);});
   if(pts.length<2)return '';
-  var W=360,H=176,L=40,R=298,TOP=12,BOT=124;
+  // Geometria PRÓPRIA, não a da curva de Kaplan-Meier: lá o R para em 298 para
+  // sobrar margem aos rótulos de fim de linha, que aqui não existem — herdar
+  // aquilo desperdiçava 17% da largura. E os pontos ficam AFASTADOS das bordas
+  // (PAD), senão o primeiro cai em cima do rótulo do eixo y (saía "50%60,5").
+  var W=360,H=168,L=46,R=350,TOP=16,BOT=126,PAD=16; // H justo: sobra abaixo do título do eixo virava vão até a legenda
   var xs=pts.map(function(p){return Number(p[0]);});
   var x0=Math.min.apply(null,xs),x1=Math.max.apply(null,xs);
   if(!(x1>x0))return '';
-  var X=function(v){return L+((v-x0)/(x1-x0))*(R-L);};
+  var X=function(v){return L+PAD+((v-x0)/(x1-x0))*(R-L-2*PAD);};
   var Y=function(p){return BOT-(p/100)*(BOT-TOP);};
   var num=function(v){return String(Math.round(Number(v)*10)/10).replace('.',',');};
   var caminho=function(col){
@@ -9048,14 +9056,14 @@ function dirFichaRespostaHTML(df){
   var ultimo=pts[pts.length-1];
   var svg='<svg viewBox="0 0 '+W+' '+H+'" class="fx-km-svg" role="img" aria-label="Proporção de participantes que atingiu cada meta de perda de peso: '
       +esc(r.bracos[0])+' contra '+esc(r.bracos[1])+'">'
-    +[0,50,100].map(function(v){return '<line class="fx-km-grid" x1="'+L+'" y1="'+Y(v).toFixed(1)+'" x2="'+R+'" y2="'+Y(v).toFixed(1)+'"/>'
-      +'<text class="fx-km-ay" x="'+(L-6)+'" y="'+(Y(v)+3.5).toFixed(1)+'">'+v+'%</text>';}).join('')
-    +pts.map(function(p){return '<text class="fx-km-ax" x="'+X(p[0]).toFixed(1)+'" y="'+(BOT+14)+'">≥'+num(p[0])+'%</text>';}).join('')
+    +[0,25,50,75,100].map(function(v){return '<line class="fx-km-grid'+(v%50?' fina':'')+'" x1="'+L+'" y1="'+Y(v).toFixed(1)+'" x2="'+R+'" y2="'+Y(v).toFixed(1)+'"/>'
+      +(v%50?'':'<text class="fx-km-ay" x="'+(L-8)+'" y="'+(Y(v)+3.5).toFixed(1)+'">'+v+'%</text>');}).join('')
+    +pts.map(function(p){return '<text class="fx-km-ax" x="'+X(p[0]).toFixed(1)+'" y="'+(BOT+15)+'">≥'+num(p[0])+'%</text>';}).join('')
     +'<path class="fx-km-line ctl" d="'+caminho(2)+'"/>'
     +'<path class="fx-km-line int" d="'+caminho(1)+'"/>'
     +bolas(2,'ctl')+bolas(1,'int')
-    +rotulos(1,'int',-7)+rotulos(2,'ctl',12)
-    +'<text class="fx-km-ax" x="'+((L+R)/2).toFixed(1)+'" y="'+(BOT+32)+'" text-anchor="middle">meta de perda de peso em '+esc(String(r.prazo||''))+'</text>'
+    +rotulos(1,'int',-8)+rotulos(2,'ctl',13)
+    +'<text class="fx-km-ax fx-resp-eixo" x="'+((L+R)/2).toFixed(1)+'" y="'+(BOT+33)+'" text-anchor="middle">meta de perda de peso em '+esc(String(r.prazo||''))+'</text>'
   +'</svg>';
   return '<div class="fx-km fx-resp">'+svg
     +'<div class="fx-km-leg"><span class="fx-km-key int"></span>'+esc(r.bracos[0])
