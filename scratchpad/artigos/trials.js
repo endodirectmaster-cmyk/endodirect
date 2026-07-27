@@ -671,7 +671,7 @@ A comparação entre tirzepatida (~21% no SURMOUNT-1) e semaglutida (~15% no STE
 
 ## Resultados
 - **Peso: −20,2% com tirzepatida vs −13,7% com semaglutida** — diferença de **~6,5 pontos percentuais**.
-- Em valor absoluto: **−22,8 kg vs −15,0 kg**.
+- Em valor absoluto: **−22,8 kg vs −15,0 kg**.\n- **Proporção que atinge cada meta de perda** (Figura 1B e Tabela 2): **≥10%: 81,6% vs 60,5%**; **≥15%: 64,6% vs 40,1%**; **≥20%: 48,4% vs 27,3%**; **≥25%: 31,6% vs 16,1%**. Como desfecho exploratório, **≥30%: 19,7% vs 6,9%**. A vantagem relativa **cresce com a exigência da meta**: 1,3 vez na mais branda, 2,8 vezes na mais dura.
 - **Circunferência abdominal**, **pressão arterial sistólica e diastólica**, **HbA1c**, **insulina de jejum**, **triglicerídeos** e **HDL**: todos favoreceram tirzepatida de forma significativa.
 
 ## Segurança — o achado que surpreende
