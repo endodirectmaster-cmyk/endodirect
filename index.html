@@ -108,6 +108,10 @@ window.addEventListener('load',function(){initProfVideos();initVimeoClip();});
   --blue:#3b6fd4;--blue2:#5585e8;--blue-l:#1d2d54;
   --grn:#34d399;--grn-l:#10311f;--red:#f87171;--red-l:#3c1d20;
   --gold:#f5b32c;--gold-l:#352a0e;--pur:#a78bfa;--pur-l:#261c42;
+  /* amarelo da landing (.lp-hero h1 span) — o destaque é o tom EXATO nos dois temas,
+     com letra quase preta por cima; só a cor de LETRA escurece no claro, senão
+     amarelo puro sobre fundo branco fica ilegível. */
+  --yel:#f5b32c;--yel-h:#f5b32c;--yel-ht:#1a1408;
   --warn-bg:#33210e;--warn-bd:#5a3a1e;--warn-tx:#fdba74;--code-bg:#241a40;--code-tx:#b794f6;
   --r:12px;--rs:8px;--font:'Segoe UI',system-ui,sans-serif;
 }
@@ -117,6 +121,7 @@ html[data-theme="light"]{
   --blue:#3b6fd4;--blue2:#5585e8;--blue-l:#eef2ff;
   --grn:#22c55e;--grn-l:#f0fdf4;--red:#ef4444;--red-l:#fef2f2;
   --gold:#f59e0b;--gold-l:#fffbeb;--pur:#8b5cf6;--pur-l:#f5f3ff;
+  --yel:#946200;--yel-h:#f5b32c;--yel-ht:#1a1408;
   --warn-bg:#fff7ed;--warn-bd:#fed7aa;--warn-tx:#9a3412;--code-bg:#f1f0ff;--code-tx:#6d5fd8;
 }
 html[data-theme="light"] .qo.annul{color:#b45309!important;background:#fffbeb!important}
@@ -892,12 +897,14 @@ html[data-theme="light"] .dir-back{background:#f8f9fc;border-color:var(--bd2);co
    fundo e cor próprios com seletor mais específico e venceriam a classe. */
 .wc-azul{--wc:var(--blue2)}.wc-verde{--wc:var(--grn)}.wc-vermelho{--wc:var(--red)}
 .wc-dourado{--wc:var(--gold)}.wc-roxo{--wc:var(--pur)}.wc-cinza{--wc:var(--t2)}
-.wc-azul,.wc-verde,.wc-vermelho,.wc-dourado,.wc-roxo,.wc-cinza{color:var(--wc)}
+.wc-amarelo{--wc:var(--yel)}
+.wc-azul,.wc-verde,.wc-vermelho,.wc-dourado,.wc-roxo,.wc-cinza,.wc-amarelo{color:var(--wc)}
 .wh-azul{--wh:var(--blue-l)}.wh-verde{--wh:var(--grn-l)}.wh-vermelho{--wh:var(--red-l)}
 .wh-dourado{--wh:var(--gold-l)}.wh-roxo{--wh:var(--pur-l)}.wh-cinza{--wh:var(--s2)}
-.wh-azul,.wh-verde,.wh-vermelho,.wh-dourado,.wh-roxo,.wh-cinza{background:var(--wh);color:var(--tx)}
+.wh-amarelo{--wh:var(--yel-h);--wht:var(--yel-ht)}
+.wh-azul,.wh-verde,.wh-vermelho,.wh-dourado,.wh-roxo,.wh-cinza,.wh-amarelo{background:var(--wh);color:var(--wht,var(--tx))}
 /* o respiro só vale no trecho de texto; na célula o padding já é o da tabela */
-span.wh-azul,span.wh-verde,span.wh-vermelho,span.wh-dourado,span.wh-roxo,span.wh-cinza{padding:.05em .25em;border-radius:4px}
+span.wh-azul,span.wh-verde,span.wh-vermelho,span.wh-dourado,span.wh-roxo,span.wh-cinza,span.wh-amarelo{padding:.05em .25em;border-radius:4px}
 /* célula pintada por inteiro: precisa vencer o fundo/cor próprios de th e td */
 .dir-card .dir-texto th[class*="wh-"],.dir-card .dir-texto td[class*="wh-"],
 .wys-edit th[class*="wh-"],.wys-edit td[class*="wh-"],
@@ -905,6 +912,10 @@ span.wh-azul,span.wh-verde,span.wh-vermelho,span.wh-dourado,span.wh-roxo,span.wh
 .dir-card .dir-texto th[class*="wc-"],.dir-card .dir-texto td[class*="wc-"],
 .wys-edit th[class*="wc-"],.wys-edit td[class*="wc-"],
 .mural-table thead th[class*="wc-"],.mural-table td[class*="wc-"]{color:var(--wc)}
+/* célula com destaque amarelo: a letra tem de escurecer, senão some no fundo */
+.dir-card .dir-texto th.wh-amarelo,.dir-card .dir-texto td.wh-amarelo,
+.wys-edit th.wh-amarelo,.wys-edit td.wh-amarelo,
+.mural-table thead th.wh-amarelo,.mural-table td.wh-amarelo{color:var(--yel-ht)}
 /* seletor de cor no toolbar: abre no hover/foco, sem JS de abrir e fechar */
 .wys-cor-wrap{position:relative;display:inline-flex}
 .wys-cor-pop{position:absolute;top:calc(100% + 4px);left:0;z-index:30;display:none;gap:3px;
@@ -4022,7 +4033,8 @@ var WYS_CORES=[
   {k:'vermelho',rot:'Vermelho', tx:'var(--red)',   bg:'var(--red-l)'},
   {k:'dourado', rot:'Dourado',  tx:'var(--gold)',  bg:'var(--gold-l)'},
   {k:'roxo',    rot:'Roxo',     tx:'var(--pur)',   bg:'var(--pur-l)'},
-  {k:'cinza',   rot:'Cinza',    tx:'var(--t2)',    bg:'var(--s2)'}
+  {k:'cinza',   rot:'Cinza',    tx:'var(--t2)',    bg:'var(--s2)'},
+  {k:'amarelo', rot:'Amarelo',  tx:'var(--yel)',   bg:'var(--yel-h)', bt:'var(--yel-ht)'}
 ];
 var WYS_CORES_RE=WYS_CORES.map(function(c){return c.k;}).join('|');
 // Barra com os dois seletores (cor da letra / cor do fundo) + limpar.
@@ -4030,7 +4042,7 @@ function wysCorBar(){
   function amostras(tipo){
     return WYS_CORES.map(function(c){
       return '<button type="button" class="wys-cor-op" data-wys-cor="'+tipo+':'+c.k+'" title="'+c.rot+'"'
-        +' style="'+(tipo==='c'?('color:'+c.tx+';background:var(--surface)'):('background:'+c.bg+';color:var(--tx)'))+'">A</button>';
+        +' style="'+(tipo==='c'?('color:'+c.tx+';background:var(--surface)'):('background:'+c.bg+';color:'+(c.bt||'var(--tx)')))+'">A</button>';
     }).join('');
   }
   return '<span class="wys-sep"></span>'
