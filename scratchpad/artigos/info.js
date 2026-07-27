@@ -525,7 +525,17 @@ const INFO = {
           { n: 'Tirzepatida', t: '−20,2%', v: 20.2, i: 1 },
           { n: 'Semaglutida', t: '−13,7%', v: 13.7 }
         ],
-        efeito: { k: 'Diferença', v: '6,5 pp', p: 'a favor da tirzepatida · −22,8 kg vs −15,0 kg' }
+        efeito: { k: 'Diferença', v: '6,5 pp', p: 'a favor da tirzepatida · −22,8 kg vs −15,0 kg' },
+        // Curva de resposta — dado REAL (Fig. 1B + Tabela 2). Este artigo não tem
+        // curva temporal na figura principal; o que ele publica é a distribuição
+        // da resposta, que a média de −20,2% vs −13,7% esconde.
+        resposta: {
+          bracos: ['Tirzepatida', 'Semaglutida'],
+          prazo: '72 semanas',
+          fig: 'Figura 1B e Tabela 2',
+          pts: [[10, 81.6, 60.5], [15, 64.6, 40.1], [20, 48.4, 27.3], [25, 31.6, 16.1], [30, 19.7, 6.9]],
+          nota: 'A meta de **≥30%** é desfecho exploratório.'
+        }
       }
     ],
     tiles: [
