@@ -1,6 +1,6 @@
 ---
 tags: [cofre, dados, supabase]
-atualizado: 2026-07-25
+atualizado: 2026-07-27
 ---
 
 # Dados e Supabase
@@ -41,6 +41,28 @@ Um item de `diretrizes` com **`rascunho:true`** é filtrado **no servidor**, nã
 
 ## Save do estado global (admin) e concorrência
 O save do admin (`saveRemoteState`, role=admin) faz read-modify-write do `endodirect_global_state`: relê o payload, **preserva as chaves de servidor** (`radar_avisos`, `newsletter_*` — escritas só pelo cron) e, **se `updated_at` mudou desde o load** (`lastGlobalUpdatedAt`), MESCLA as coleções aditivas (`GLOBAL_MERGE_KEYS`: adm_cursos, podcasts, provas, mm_shared, diretrizes, diretrizes_temas, curso_mods_extra, adm_estudantes). A mescla é **baseada em baseline** (`mergeConcurrent`): parte do estado local atual (honra minhas exclusões/edições) e só acrescenta itens do servidor cuja chave é **nova desde o baseline da sessão** (`captureGlobalBaseline`, capturado junto com `lastGlobalUpdatedAt` no load e em cada save). Assim adições de outro editor/cron são preservadas e exclusões não voltam. **Histórico:** o #305 usava `unionBy` (server∪local), que ressuscitava exclusões — bug "apago tema de Diretrizes e volta no F5", disparado até pelo cron do radar bumpando `updated_at`. Substituído pelo merge com baseline em 2026-06-15.
+
+### ⚠️ Como gravar `diretrizes` pelo SQL sem ser atropelado (2026-07-27)
+O merge com baseline vale **entre saves do cliente**. Uma gravação minha, feita direto no Postgres, **não entra nesse baseline**: a aba que já estava aberta segue com o payload antigo em memória e, no save seguinte, reescreve o blob inteiro por cima. Foi assim que **três gravações minhas sumiram** (STEP-2 e os dois comparativos) — e o rastro é sempre o mesmo: `updated_at` recente com um UUID de usuário.
+
+Três regras que ficaram:
+1. **Peça o F5 antes.** É o único jeito de a aba do professor passar a carregar o meu estado. Só gravo depois de ele confirmar.
+2. **Uma gravação só.** Juntar todas as mudanças num único `UPDATE` encurta a janela de risco de minutos para segundos.
+3. **Trava otimista + merge de topo.** O padrão:
+   ```sql
+   with ops(tema, novo) as (values ('Tema no banco','{...}'::jsonb), ...)
+   update endodirect_global_state g
+   set payload = jsonb_set(g.payload,'{diretrizes}',
+         (select jsonb_agg(case when o.novo is null then d else d || o.novo end order by i)
+            from jsonb_array_elements(g.payload->'diretrizes') with ordinality t(d,i)
+            left join ops o on o.tema = d->>'tema')),
+       updated_at = now()
+   where g.id='main' and g.updated_at = '<lido segundos antes>'::timestamptz
+   returning jsonb_array_length(payload->'diretrizes') as n;
+   ```
+   - **`d || o.novo` (merge de chaves de topo), nunca substituir o item inteiro:** preserva `rascunho`, `privado`, `ordem`, `id` e qualquer campo editorial que o professor tenha mexido. Substituir o objeto desfaria uma publicação feita entre a minha leitura e a minha escrita.
+   - **`where updated_at = <lido antes>`:** se alguém gravou no meio, o `UPDATE` afeta **0 linhas** e eu fico sabendo. Sem isso, eu sobrescreveria em silêncio — sendo exatamente o problema de que estou me defendendo.
+   - **`returning` sempre**, e conferir hash/tamanho logo depois. "Não deu erro" não é verificação.
 
 ## Endurecimento de segurança (2026-07-01)
 Após o linter do Supabase (`get_advisors`), aplicados via MCP (ref. versionada em `supabase/security-hardening-2026-07.sql`):
