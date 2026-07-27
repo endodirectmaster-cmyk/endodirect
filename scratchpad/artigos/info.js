@@ -20,7 +20,11 @@
 //                          ⚠️ A curva é PROJETADA (risco constante) a partir das
 //                          taxas publicadas — NÃO é a Kaplan-Meier do artigo. Só
 //                          usar onde o trial reporta taxa cumulativa + seguimento.
-//     forest {e,lo,hi,fav,des} — ponto e IC p/ o forest plot; fav/des = legendas dos lados
+//     forest {e,lo,hi,fav,des} — ⚠️ NÃO É MAIS RENDERIZADO (o professor pediu para
+//                          tirar o bloco "Efeito e precisão" em 2026-07-27). O
+//                          campo fica no dado porque o IC já aparece por extenso
+//                          em `efeito.p`; se um dia voltar, é só reintroduzir o
+//                          renderizador — os números não precisam ser refeitos.
 //   }
 //   tiles[]  {v,k,t}  — v=número, k=rótulo, t='good'|'bad'|'warn'|undefined
 //   seg      string   — faixa de segurança
