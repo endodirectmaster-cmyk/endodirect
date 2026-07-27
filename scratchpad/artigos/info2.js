@@ -136,7 +136,22 @@ const INFO2 = {
           { n: 'Semaglutida 1,0 mg', t: '−7,0%', v: 7.0, i: 1 },
           { n: 'Placebo', t: '−3,4%', v: 3.4 }
         ],
-        efeito: { k: 'Diferença', v: '−6,2 pp', p: 'da dose de 2,4 mg contra placebo' }
+        efeito: { k: 'Diferença', v: '−6,2 pp', p: 'da dose de 2,4 mg contra placebo' },
+        // Painel C da Figura 2 (período in-trial): proporção que atinge cada meta
+        // nos TRÊS braços. É o painel que mostra a dose de 1,0 mg no meio do
+        // caminho — a resposta é dose-dependente no eixo inteiro, não só na média.
+        grupos: {
+          bracos: ['Semaglutida 2,4 mg', 'Semaglutida 1,0 mg', 'Placebo'],
+          eixo: 'meta de redução do peso em 68 semanas',
+          fig: 'Figura 2C',
+          cats: [
+            { k: '≥5%',  vs: [68.8, 57.1, 28.5] },
+            { k: '≥10%', vs: [45.6, 28.7, 8.2] },
+            { k: '≥15%', vs: [25.8, 13.7, 3.2] },
+            { k: '≥20%', vs: [13.1, 4.7, 1.6] }
+          ],
+          nota: 'A dose de **1,0 mg** fica sistematicamente entre as outras duas.'
+        }
       }
     ],
     tiles: [

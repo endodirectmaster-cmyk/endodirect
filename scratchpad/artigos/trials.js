@@ -723,7 +723,7 @@ A **MASLD** (antiga DHGNA) é a hepatopatia mais prevalente do mundo e sua forma
 
 Note a **alta taxa de resposta no placebo** (34,3% de resolução): é um fenômeno conhecido nos estudos de MASH, ligado à variabilidade da leitura histológica e às mudanças de estilo de vida induzidas pela participação no estudo. Por isso o que importa é a **diferença entre grupos**, não o número absoluto.
 
-## Segurança
+## Marcadores não invasivos (Figura 2)\n- **Escore ELF** (semanas 0 · 24 · 48 · 72): semaglutida **9,95 → 9,38 → 9,34 → 9,33**; placebo **9,95 → 9,9 → 9,9 → 9,92**. Queda média de **0,62** com semaglutida, e o efeito já está posto na semana 24. Redução ≥0,5 em **55,8% vs 25,5%**.\n- **Rigidez hepática por elastografia**, em kPa (semanas 0 · 48 · 72): semaglutida **11,45 → 8,12 → 7,63**; placebo **11,57 → 10,63 → 10**. Quedas de **33%** e **14%**. Redução ≥30% em **52,0% vs 30,3%**.\n- São médias observadas lidas da figura; a rigidez é **média geométrica**, por isso menor que os 12,8 e 12,9 kPa da tabela basal, que são médias aritméticas.\n- Importam porque **biópsia não é rotina**: é por estes exames que a resposta será acompanhada no consultório.\n\n## Segurança
 Perfil esperado da classe: **eventos gastrointestinais** (náusea, diarreia, vômito, constipação) mais frequentes com semaglutida. Sem sinal de hepatotoxicidade.
 
 ## Limitações
