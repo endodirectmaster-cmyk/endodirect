@@ -151,7 +151,23 @@ const INFO2 = {
             { k: '≥20%', vs: [13.1, 4.7, 1.6] }
           ],
           nota: 'A dose de **1,0 mg** fica sistematicamente entre as outras duas.'
-        }
+        },
+        // Painel A da Figura 2: peso ao longo das 68 semanas, nos três braços.
+        // Pontos extraídos do vetor do PDF e calibrados pelas marcas do eixo.
+        // ⚠️ São médias OBSERVADAS (o que a figura publica). Os números-manchete
+        // −9,6 / −7,0 / −3,4 são ESTIMADOS pelo estimando — daí a pequena
+        // diferença nas pontas. A nota do gráfico diz isso.
+        series: [{
+          tit: 'Peso ao longo do tempo (média observada, in-trial)',
+          eixo: 'semanas desde a randomização', fig: 'Figura 2A',
+          min: -11, max: 0, ticks: [0, -5, -10], dec: 1, tempos: [0, 20, 36, 52, 68],
+          linhas: [
+            { n: 'Semaglutida 2,4 mg', pts: [[0,0],[4,-1.8],[8,-3.2],[12,-4.8],[16,-6.1],[20,-7.4],[28,-8.7],[36,-9.4],[44,-9.8],[52,-10.1],[60,-10.1],[68,-9.9]] },
+            { n: 'Semaglutida 1,0 mg', pts: [[0,0],[4,-1.6],[8,-2.9],[12,-4.2],[16,-5.1],[20,-5.8],[28,-6.5],[36,-7.1],[44,-7.5],[52,-7.6],[60,-7.3],[68,-7.2]] },
+            { n: 'Placebo', pts: [[0,0],[4,-0.8],[8,-1.5],[12,-1.8],[16,-2.1],[20,-2.6],[28,-2.7],[36,-3.0],[44,-3.0],[52,-3.3],[60,-3.1],[68,-3.2]] }
+          ],
+          nota: 'A curva é de médias **observadas**; os números do desfecho (−9,6 / −7,0 / −3,4) são **estimados** pelo estimando, por isso as pontas não coincidem exatamente. O platô vem por volta da **semana 52**.'
+        }]
       }
     ],
     tiles: [
