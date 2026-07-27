@@ -151,7 +151,23 @@ const INFO2 = {
             { k: '≥20%', vs: [13.1, 4.7, 1.6] }
           ],
           nota: 'A dose de **1,0 mg** fica sistematicamente entre as outras duas.'
-        }
+        },
+        // Painel A da Figura 2: peso ao longo das 68 semanas, nos três braços.
+        // Pontos extraídos do vetor do PDF e calibrados pelas marcas do eixo.
+        // ⚠️ São médias OBSERVADAS (o que a figura publica). Os números-manchete
+        // −9,6 / −7,0 / −3,4 são ESTIMADOS pelo estimando — daí a pequena
+        // diferença nas pontas. A nota do gráfico diz isso.
+        series: [{
+          tit: 'Peso ao longo do tempo (média observada, in-trial)',
+          eixo: 'semanas desde a randomização', fig: 'Figura 2A',
+          min: -11, max: 0, ticks: [0, -5, -10], dec: 1, tempos: [0, 20, 36, 52, 68],
+          linhas: [
+            { n: 'Semaglutida 2,4 mg', pts: [[0,0],[4,-1.8],[8,-3.2],[12,-4.8],[16,-6.1],[20,-7.4],[28,-8.7],[36,-9.4],[44,-9.8],[52,-10.1],[60,-10.1],[68,-9.9]] },
+            { n: 'Semaglutida 1,0 mg', pts: [[0,0],[4,-1.6],[8,-2.9],[12,-4.2],[16,-5.1],[20,-5.8],[28,-6.5],[36,-7.1],[44,-7.5],[52,-7.6],[60,-7.3],[68,-7.2]] },
+            { n: 'Placebo', pts: [[0,0],[4,-0.8],[8,-1.5],[12,-1.8],[16,-2.1],[20,-2.6],[28,-2.7],[36,-3.0],[44,-3.0],[52,-3.3],[60,-3.1],[68,-3.2]] }
+          ],
+          nota: 'A curva é de médias **observadas**; os números do desfecho (−9,6 / −7,0 / −3,4) são **estimados** pelo estimando, por isso as pontas não coincidem exatamente. O platô vem por volta da **semana 52**.'
+        }]
       }
     ],
     tiles: [
@@ -234,7 +250,9 @@ const INFO2 = {
       {
         lab: 'Desfecho primário',
         nome: 'Variação do peso da semana 36 à 88 — o período APÓS a randomização',
-        dir: 'maior', escala: 16,
+        // SEM `dir`: mesma razão do SURMOUNT-MAINTAIN — a barra maior (+14,0%)
+        // é a pior, então "↑ maior é melhor" inverteria a leitura.
+        escala: 16,
         barras: [
           { n: 'Continuou', t: '−5,5%', v: 5.5, i: 1 },
           { n: 'Suspendeu', t: '+14,0%', v: 14.0 }
@@ -289,6 +307,63 @@ const INFO2 = {
     segIco: '🔍',
     seg: 'Perfil da classe: **gastrointestinais**. Leia com cuidado o desfecho: **dor é relatada pelo paciente** e quem perde 14% do peso percebe — o cegamento é imperfeito, e a resposta no placebo foi expressiva (−27,5 pontos).',
     prat: 'Dá desfecho **centrado no sintoma** para tratar a obesidade em quem tem gonartrose — a queixa que traz o paciente ao consultório. Não avalia estrutura articular nem necessidade de artroplastia, e não substitui fisioterapia.'
+  },
+
+  'SURMOUNT-MAINTAIN (2026)': {
+    desenho: 'Retirada e redução randomizadas',
+    pergunta: 'Depois de emagrecer com tirzepatida na dose máxima, manter a dose, reduzir para 5 mg ou parar?',
+    chips: ['n = |378| randomizados', 'semana |60| à |112', 'lead-in aberto de 60 semanas'],
+    bracos: {
+      int: { n: 'Manter a dose máxima tolerada', s: '10 ou 15 mg/semana' },
+      ctl: { n: 'Placebo', s: 'houve também braço de redução para 5 mg' }
+    },
+    desfechos: [
+      {
+        lab: 'Desfecho primário',
+        nome: 'Variação percentual do peso da semana 0 à 112 — inclui a fase aberta',
+        dir: 'maior', escala: 25,
+        barras: [
+          { n: 'Tirzepatida MTD', t: '−21,9%', v: 21.9, i: 1 },
+          { n: 'Tirzepatida 5 mg', t: '−16,6%', v: 16.6, i: 1 },
+          { n: 'Placebo', t: '−9,9%', v: 9.9 }
+        ],
+        efeito: { k: 'Diferença', v: '−12,0 pp', p: 'da MTD contra placebo; −6,6 pp com 5 mg — p<0,0001 nos dois' }
+      },
+      {
+        lab: 'O período que responde à pergunta',
+        nome: 'Variação do peso da semana 60 à 112 — depois da randomização',
+        // SEM `dir` de propósito: as barras aqui misturam perda (−0,2%) e reganho
+        // (+15,2%) na mesma escala de magnitude. O rótulo "↑ maior é melhor"
+        // leria a maior barra — a do placebo — como a melhor, que é o oposto.
+        escala: 17,
+        barras: [
+          { n: 'Manteve a MTD', t: '−0,2%', v: 0.2, i: 1 },
+          { n: 'Reduziu para 5 mg', t: '+7,0%', v: 7.0, i: 1 },
+          { n: 'Trocou por placebo', t: '+15,2%', v: 15.2 }
+        ],
+        efeito: { k: 'Diferença', v: '−15,4 pp', p: 'manter contra parar; reduzir para 5 mg contra parar dá −8,2 pp' },
+        // Duas proporções do mesmo sentido (maior é melhor), nos três braços.
+        // A de resgate (8% · 25% · 67%) fica FORA daqui de propósito: é o único
+        // número em que maior é pior, e misturá-lo inverteria a leitura do gráfico.
+        grupos: {
+          bracos: ['Tirzepatida MTD', 'Tirzepatida 5 mg', 'Placebo'],
+          eixo: 'proporção de participantes na semana 112',
+          cats: [
+            { k: 'Manteve ≥80% da perda', vs: [77.5, 42.4, 10.4] },
+            { k: 'Pré-diabetes com HbA1c <5,7%', vs: [92.7, 84.4, 51.0] }
+          ],
+          nota: 'A dose de **5 mg** fica entre as outras duas nas duas medidas — reduzir preserva parte do resultado, mas não tudo.'
+        }
+      }
+    ],
+    tiles: [
+      { v: '−0,2%', k: 'Peso na manutenção, mantendo a dose máxima', t: 'good' },
+      { v: '+7,0%', k: 'Reganho ao reduzir para 5 mg', t: 'warn' },
+      { v: '+15,2%', k: 'Reganho ao trocar por placebo', t: 'bad' },
+      { v: '67%', k: 'Precisaram de resgate tendo parado — contra 8% mantendo', t: 'bad' }
+    ],
+    seg: 'Perfil da classe: **eventos gastrointestinais**, em geral **leves a moderados** e concentrados na fase de escalonamento.',
+    prat: 'É o **STEP-4 da tirzepatida com um terceiro braço que importa**: reduzir não é o mesmo que parar. **Manter a dose máxima mantém o peso**; **5 mg** preserva boa parte do resultado; **parar devolve cerca de metade** do que se perdeu.'
   }
 
 };
