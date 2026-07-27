@@ -8,6 +8,10 @@ atualizado: 2026-07-27
 Log de decisões de produto e técnicas (mais recentes no topo).
 
 ## 2026-07
+- **💸 Pacote Platinum CANCELADO (2026-07-27, "cancela"):** o **PR #390** (Gold + curso EndoTEEM, só anual, R$ 1.997/ano) estava aberto desde 18/06 e foi **fechado sem merge**. Nunca chegou a produção — nenhum aluno viu, nenhuma cobrança existiu, e nada precisou ser revertido no banco nem na pagar.me. A branch `claude/modest-wozniak-yhytlv` fica no repositório caso a ideia volte.
+  - **O que o PR fazia, para quem reabrir a discussão:** o Platinum concedia o **combo de escopos `plano:gold` + `curso:endoteem`**, reaproveitando todo o gating existente em vez de criar um tier novo — o rótulo "Platinum" era **derivado** de ter os dois escopos. Também **tirava o EndoTEEM da venda avulsa**.
+  - **Consequência prática de cancelar:** o **EndoTEEM continua sendo vendido avulso** (`ENDO_CURSOS_AVULSOS` fica como está) e o **Gold segue sem EndoTEEM**. Nenhuma env var nova é necessária.
+  - **Não reabrir sem pedido explícito.** Ver [[Planos e Preços]].
 - **📄 SURMOUNT-MAINTAIN entra no acervo, e as 3 gravações atropeladas voltam — TUDO numa gravação só (2026-07-27, "Incluir nos resumos dos artigos" + "Carregado, pode continuar"):** o acervo foi de **27 para 28 artigos**. O novo é o **SURMOUNT-MAINTAIN** (Lancet 2026), que responde a pergunta que o SURMOUNT-4 não respondia: além de *manter ou parar*, existe a opção do meio — **reduzir a dose**.
   - **Os números** (semana 0→112): **−21,9%** (dose máxima) · **−16,6%** (5 mg) · **−9,9%** (placebo). Da randomização em diante: **−0,2% · +7,0% · +15,2%** — manter a dose mantém o peso, reduzir devolve parte, parar devolve metade. **Precisou de resgate: 8% · 25% · 67%.**
   - **A ficha tem 2 desfechos + gráfico de barras agrupadas** (manteve ≥80% da perda; pré-diabetes que chegou a HbA1c <5,7%), com os 3 braços.
