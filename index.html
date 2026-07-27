@@ -803,7 +803,9 @@ html[data-theme="light"] .dir-back{background:#f8f9fc;border-color:var(--bd2);co
 .dir-ficha .fx-src{font-size:.68rem;letter-spacing:.05em;color:var(--blue2);font-weight:600}
 .dir-ficha .fx-fonte{margin-left:auto;white-space:nowrap}
 .dir-ficha .fx-title{font-size:1.45rem;font-weight:800;letter-spacing:-.02em;line-height:1.15;margin:.2rem 0 .35rem;color:var(--tx)}
-.dir-ficha .fx-q{font-size:.87rem;color:var(--t2);line-height:1.5;max-width:52ch}
+/* Sem max-width: o objetivo ocupa a linha inteira, como o resto da ficha. */
+.dir-ficha .fx-obj-lab{margin:.7rem 0 .25rem}
+.dir-ficha .fx-q{font-size:.87rem;color:var(--t2);line-height:1.5}
 .dir-ficha .fx-chips{display:flex;flex-wrap:wrap;gap:.4rem;margin-top:.8rem}
 .dir-ficha .fx-chip{font-size:.7rem;background:var(--s2);border:1px solid var(--bd);border-radius:999px;padding:.2rem .6rem;color:var(--t2)}
 .dir-ficha .fx-chip b{color:var(--tx);font-weight:700}
@@ -8768,7 +8770,7 @@ function dirFichaHTML(info,d){
   p.push('<div class="fx-head">'
     +'<div class="fx-srcrow"><div class="fx-src">'+esc([d&&d.fonte,d&&d.ano,info.desenho].filter(Boolean).join(' · '))+'</div>'+lnk+'</div>'
     +'<h3 class="fx-title">'+esc(String((d&&d.tema)||'').replace(/\s*\(\d{4}\)\s*$/,''))+'</h3>'
-    +(info.pergunta?'<p class="fx-q">'+mdInline(String(info.pergunta))+'</p>':'')
+    +(info.pergunta?('<div class="fx-lab fx-obj-lab">Objetivo</div><p class="fx-q">'+mdInline(String(info.pergunta))+'</p>'):'')
     +((info.chips&&info.chips.length)?('<div class="fx-chips">'+info.chips.map(function(c){return '<span class="fx-chip">'+dirChipHTML(c)+'</span>';}).join('')+'</div>'):'')
   +'</div>');
   // Braços.
