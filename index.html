@@ -11203,7 +11203,12 @@ function admEstudantesHTML(){
     +'<div class="g2" style="grid-template-columns:repeat(4,1fr);margin-bottom:1rem">'
       +'<div class="adm-bigstat"><div class="adm-bigstat-n" style="color:var(--tx)">'+n(d.total)+'</div><div class="adm-bigstat-l">Total</div></div>'
       +'<div class="adm-bigstat"><div class="adm-bigstat-n" style="color:var(--grn)">'+n(d.ativos)+'</div><div class="adm-bigstat-l">Ativos</div></div>'
-      +'<div class="adm-bigstat"><div class="adm-bigstat-n" style="color:var(--gold)">'+n(d.pagos)+'</div><div class="adm-bigstat-l">Assinantes</div></div>'
+      // "Assinantes" = quem PAGOU. Cortesia liberada à mão pelo professor
+      // (provider='manual') aparece separada — contá-la aqui inflaria o número
+      // e poluiria qualquer métrica de retenção construída em cima dele.
+      +'<div class="adm-bigstat"><div class="adm-bigstat-n" style="color:var(--gold)">'+n(d.pagos)+'</div><div class="adm-bigstat-l">Assinantes'
+        +(n(d.cortesias)?'<div style="font-size:.63rem;color:var(--t3);margin-top:.15rem">+'+n(d.cortesias)+' cortesia'+(n(d.cortesias)>1?'s':'')+'</div>':'')
+      +'</div></div>'
       +'<div class="adm-bigstat"><div class="adm-bigstat-n" style="color:var(--blue)">'+n(d.este_mes)+'</div><div class="adm-bigstat-l">Este mês</div></div>'
     +'</div>'
     +'<div class="adm-table">'
@@ -12234,8 +12239,11 @@ function admConversionCardHTML(){
   var students=Array.isArray(d.students)?d.students:[];
   var total=n(d.total)||students.length;
   var pagos=n(d.pagos)||students.filter(admConvIsPaying).length;
-  var degust=Math.max(0,total-pagos);
-  var conv=total?Math.round(pagos/total*100):0;
+  // Cortesia não é degustação (não há o que converter) nem pagante.
+  var cortesias=n(d.cortesias)||students.filter(function(e){return e&&e.plano==='Cortesia';}).length;
+  var degust=Math.max(0,total-pagos-cortesias);
+  var baseConv=Math.max(0,total-cortesias);
+  var conv=baseConv?Math.round(pagos/baseConv*100):0;
   // Coortes por data de cadastro: últimos 30 dias × antes disso. Recentes tendem
   // a converter menos (menos tempo para decidir) — a comparação mostra a tendência.
   var now=Date.now(),MS30=30*864e5,hasDate=false;
