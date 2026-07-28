@@ -1,6 +1,6 @@
 ---
 tags: [cofre, newsletter, radar]
-atualizado: 2026-07-23
+atualizado: 2026-07-28
 ---
 
 # Newsletter e Radar
@@ -14,6 +14,29 @@ atualizado: 2026-07-23
 - **`MAX_MURAL_ITEMS=3200`** e **`AUTO_ITEM_TTL_MS=90 dias`** (antes 160 / 45d). O radar traz ~35/dia, então o teto de 160 cortava em ~6 dias; agora guarda ~90 dias.
 - **Entrega janelada:** `endodirect_public_content` e `endodirect_member_content` mesclam em `adm_avisos` só os **200 artigos de radar mais recentes** (não o `radar_avisos` inteiro — evita estourar o payload do aluno).
 - **Paginação:** RPC `endodirect_mural_radar_more(p_before, p_limit)` + botão "Carregar artigos mais antigos" no `initMural`. O **admin** lê tudo direto (90 dias completos). Ver [[Decisões]].
+
+## Discussão completa do artigo no Mural (2026-07-28)
+
+Pedido do Rodolpho: *"ao invés de somente fazer um resumo como o atual, deixa uma discussão completa do artigo, incluindo as figuras/tabelas dentro da discussão"*.
+
+### ⚠️ O limite que define o recurso: discussão exige TEXTO INTEGRAL
+O radar trabalha com o **abstract** (~250 palavras, sem figura e sem tabela). Escrever uma "discussão completa" a partir dele **é inventar** — é literalmente o erro de 28/07 nos artigos de Obesidade, em que afirmações verdadeiras *para a classe* não eram o que o ensaio mediu. Por isso a discussão só existe onde há **PMC (acesso aberto)**: em 28/07, **76 dos 253 itens do mural (30%)**. Nos outros 177 o card segue com o resumo, e o botão nem aparece.
+
+### Figuras e tabelas: tratamento diferente, de propósito
+- **Tabelas** — reproduzidas do artigo, convertidas de JATS para **markdown**, que o `muralTextHTML` já renderiza (não precisou de nada novo no cliente). São elas que carregam os números que a discussão cita.
+- **Figuras** — **referenciadas pela legenda, não reproduzidas**. Duas razões: estar no PMC não implica licença de redistribuição (boa parte é "free to read", não CC), e a imagem viria de servidor do NIH. O rodapé da discussão diz isso ao aluno, com a licença detectada.
+
+### Onde o texto mora — e por que NÃO no payload
+Tabela própria **`endodirect_mural_discussoes`** (migração `mural_discussao_fora_do_payload`), com `endodirect_mural_discussoes_ids()` (só os ids, viaja no carregamento) e `endodirect_mural_discussao(source_id)` (o texto, buscado ao **abrir** o bloco).
+- **A conta que decidiu isso:** ~12 KB por discussão × os **200** artigos que as RPCs entregam = **~2,3 MB** somados a um payload já em **~4,6 MB**. O limite empírico deste projeto é **~5,3 MB** — acima dele a resposta **deixa de chegar** e a tela fica vazia. Foi exatamente o que obrigou a separar o `endodirect_member_resumos`. Guardar dentro de `radar_avisos` teria reproduzido a falha assim que o acervo de discussões crescesse.
+
+### Fluxo
+Botão **📄 Gerar discussão completa** no card do admin (só nos que têm PMC) → `POST /api/admin/refresh-radar` com `{action:'discussao', sourceId}` → `lib/fulltext.js` busca e faz o parse do JATS → `lib/discussao.js` gera → grava na tabela.
+- **⚠️ O endpoint está DENTRO do refresh-radar** e não em arquivo próprio porque `api/` está em **12/12 funções serverless** — o teto que o `scripts/ci-validate.js` barra. Criar `api/admin/discussao.js` quebraria o build.
+- O prompt proíbe explicitamente o **jargão de IA** (regra de 28/07), número fora do texto fornecido e citar figura/tabela que não exista na lista.
+
+### O que ainda não foi validado
+O parser de JATS foi exercitado contra **fixture** (`scratchpad/test_jats.js`), não contra artigo real: desta sessão o proxy bloqueia `eutils.ncbi.nlm.nih.gov` e `ebi.ac.uk` (403 no CONNECT). **A produção alcança** — é de lá que o radar puxa os abstracts todo dia. A primeira validação contra artigo de verdade é clicar o botão em produção e ler o resultado.
 
 ## Radar / Mural (automático)
 - `lib/radar.js` + `lib/news.js`: lê feeds RSS de revistas, resume com IA (`summarizeWithAI`), monta itens do mural.
