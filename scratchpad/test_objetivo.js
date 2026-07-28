@@ -20,7 +20,10 @@ ok('tem opção vazia (placeholder)', opcoes[0] === '');
 ok('inclui "Passar no TEEM"', opcoes.indexOf('Passar no TEEM') > 0, JSON.stringify(opcoes));
 ok('inclui "Atualização em endocrinologia"', opcoes.indexOf('Atualização em endocrinologia') > 0);
 ok('inclui "Outro"', opcoes.indexOf('Outro') > 0);
-ok('tem pelo menos 5 opções reais', opcoes.filter((o) => o).length >= 5, String(opcoes.length));
+ok('tem 5 opções reais (TEEM, residência, atualização, consultório, Outro)',
+   opcoes.filter((o) => o).length === 5, JSON.stringify(opcoes));
+ok('"Acompanhar a residência" foi removida (pedido de 28/07)',
+   opcoes.indexOf('Acompanhar a residência') < 0);
 ok('campo livre para "Outro" existe', SRC.indexOf('id="ob-objetivo-outro"') > 0);
 
 // ---- 2. a leitura acontece ANTES do early-return do Estudante ---------------
