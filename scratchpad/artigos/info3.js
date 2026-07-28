@@ -33,7 +33,10 @@ const INFO3 = {
       { v: '1,36', k: 'AVC não fatal (HR) — IC 1,04–1,77', t: 'bad' },
       { v: 'B2', k: 'No Brasil: receituário B2 + termo de responsabilidade', t: 'warn' }
     ],
-    seg: 'Efeito de classe: **elevação de pressão arterial e de frequência cardíaca** — medir os dois em toda consulta e suspender se houver elevação sustentada.',
+    // ⚠️ Conferido contra o PDF (2026-07-28): a pressão CAIU nos dois braços; o
+    // que a sibutramina faz é deixá-la mais alta que no placebo. Dizer
+    // "eleva a pressão" é impreciso — e era o que esta faixa dizia antes.
+    seg: 'A pressão **caiu nos dois grupos** e ficou abaixo do inicial, mas foi **consistentemente mais alta com sibutramina** (até **1,2 mmHg** sistólica e **1,4** diastólica de diferença): o fármaco **rouba parte do benefício pressórico** do emagrecimento. **Pulso 2,2 a 3,7 bpm acima** do placebo. Medir os dois em toda consulta.',
     prat: 'É a razão de a sibutramina ser **contraindicada em doença cardiovascular estabelecida**. Retirada na Europa e nos EUA; no Brasil segue autorizada — permanecer disponível **não** é o mesmo que ser indicada, e a seleção do paciente passa a ser inteiramente de quem prescreve.'
   },
 
@@ -106,11 +109,14 @@ const INFO3 = {
       }
     ],
     tiles: [
-      { v: '~30%', k: 'Náusea (vs ~5% no placebo) — principal causa de abandono', t: 'bad' },
-      { v: '↑', k: 'Pressão arterial e frequência cardíaca', t: 'bad' },
+      { v: '29,8%', k: 'Náusea (vs 5,3% no placebo) — principal causa de abandono', t: 'bad' },
+      { v: '50%', k: 'Completaram as 56 semanas', t: 'warn' },
       { v: '?', k: 'Segurança cardiovascular NÃO estabelecida — o LIGHT foi interrompido', t: 'warn' }
     ],
-    seg: 'Além da náusea: constipação, cefaleia, insônia. **Risco de convulsão** pela bupropiona e **advertência de ideação suicida** de classe. Contraindicada em **hipertensão não controlada, epilepsia, uso de opioides, transtorno alimentar e IMAO**.',
+    // ⚠️ Conferido contra o PDF (2026-07-28): o estudo NÃO mostra elevação
+    // sustentada de pressão, e não houve convulsão nem sinal de suicidalidade.
+    // A versão anterior desta faixa afirmava as três coisas.
+    seg: 'Além da náusea: constipação, cefaleia, insônia. **A pressão não subiu de forma sustentada** — alta transitória nas primeiras 8 semanas e depois **1,5 a 3 mmHg abaixo do basal**, mas caindo menos que no placebo; **pulso 1,5–2,5 bpm acima do basal**. **Nenhuma convulsão** no estudo (história de convulsão era exclusão) e **sem aumento de suicidalidade** — esses dois riscos são **de bula, da bupropiona**, não achados daqui. Contraindicada em **hipertensão não controlada, epilepsia, uso de opioides, transtorno alimentar e IMAO**.',
     prat: 'Eficácia **intermediária** — mais que o orlistate, muito menos que os incretínicos — com nicho próprio: **compulsão e desejo por comida**, e quem também quer parar de fumar. O ponto fraco não é a eficácia: é a **segurança cardiovascular nunca demonstrada**.'
   },
 

@@ -1,6 +1,6 @@
 ---
 tags: [cofre, pendencias]
-atualizado: 2026-07-27
+atualizado: 2026-07-28
 ---
 
 # Pendências
@@ -11,7 +11,8 @@ atualizado: 2026-07-27
   - Diabetes: UKPDS 33, EMPA-REG, LEADER, SUSTAIN-6, DECLARE-TIMI 58, CREDENCE, SURPASS-2, FLOW, SOUL.
   - Obesidade: STEP-1, SURMOUNT-1, SELECT, STEP-HFpEF, SURMOUNT-OSA, SURMOUNT-5, ESSENCE.
 - [ ] **REVISAR o 2º lote — 11 artigos novos (2026-07-27); total de 27 em rascunho.** 8 trials (DCCT, ACCORD, REWIND, STEP-2, STEP-4, STEP-9, SURMOUNT-2, SURMOUNT-4) + 3 comparativos em tabela (Programa STEP, SURMOUNT, SURPASS). **Os números vêm da memória do modelo** — o checador só garante coerência interna, não veracidade. Prioridade de conferência: as **faixas do SURPASS** (o próprio artigo avisa para conferir na publicação) e o **SURPASS-CVOT**, cujos valores exatos ficaram em branco de propósito.
-- [ ] **REVISAR o 3º lote — 4 artigos (2026-07-27); total de 32 em rascunho.** Os ensaios pivotais dos antiobesidade não incretínicos + o da liraglutida: **SCOUT** (sibutramina), **XENDOS** (orlistate), **COR-I** (naltrexona-bupropiona) e **SCALE Obesidade e Pré-diabetes** (liraglutida 3,0 mg). **Números da memória do modelo** — prioridade de conferência: os HR dos componentes do SCOUT (1,28 e 1,36) e as proporções do COR-I (48/39/16), que são as que eu daria menos garantia.
+- [x] ~~**Conferir o 3º lote contra os PDFs.**~~ **FEITO (2026-07-28)** — o professor mandou os 4. SCALE e XENDOS bateram inteiros; SCOUT e COR-I tiveram **a segurança corrigida** (ver [[Decisões]]). Continua valendo a revisão clínica dele, mas os números agora vêm da fonte.
+- [ ] **REVISAR o 3º lote — 4 artigos; total de 32 em rascunho.** Os ensaios pivotais dos antiobesidade não incretínicos + o da liraglutida: **SCOUT** (sibutramina), **XENDOS** (orlistate), **COR-I** (naltrexona-bupropiona) e **SCALE Obesidade e Pré-diabetes** (liraglutida 3,0 mg). **Os números já foram conferidos contra os PDFs em 28/07** — os HR do SCOUT (1,28 e 1,36) e as proporções do COR-I (48/39/16), que eram os de menor garantia, **bateram**. Falta a revisão **clínica/editorial** do professor: se o recorte, o tom e as ênfases são os que ele quer ensinar.
 - [ ] **REVISAR o SURMOUNT-MAINTAIN (2026-07-27).** Único artigo cujos números **NÃO** vêm da memória do modelo: foram lidos do PDF que o Rodolpho mandou (Lancet 2026;407:2305-18). Ainda assim vale conferir, porque a transcrição é minha.
 - [x] ~~**Confirmar "SURMOUNT MAINTAIN":** entrou como **SURMOUNT-4**.~~ **RESOLVIDO (2026-07-27) — eu é que estava errado.** Eu havia afirmado que o estudo "não existe com esse nome"; ele existe (Lancet 2026;407:2305-18, NCT06047548) e o professor mandou o PDF. Entrou como artigo próprio. **Lição:** sem conector de busca autorizado, o que eu podia dizer era "não encontrei", nunca "não existe".
 - [ ] **Ligar os conectores PubMed e Clinical Trials** — hoje aparecem na sessão como não autorizados. Com eles, dá para conferir os números dos artigos contra a fonte em vez de depender só de revisão manual.

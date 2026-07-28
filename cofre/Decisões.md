@@ -1,6 +1,6 @@
 ---
 tags: [cofre, decisoes]
-atualizado: 2026-07-27
+atualizado: 2026-07-28
 ---
 
 # Decisões
@@ -8,6 +8,12 @@ atualizado: 2026-07-27
 Log de decisões de produto e técnicas (mais recentes no topo).
 
 ## 2026-07
+- **🔍 4 PDFs conferidos contra o 3º lote — e 3 afirmações minhas caíram (2026-07-28, o professor mandou SCOUT, XENDOS, COR-I e SCALE):** primeira vez que um lote inteiro foi validado contra a fonte. **SCALE e XENDOS bateram inteiros.** **SCOUT bateu em tudo que era eficácia e dano**; **COR-I bateu em eficácia e náusea**. O que caiu foi **segurança**, e nos dois casos por eu ter escrito o que "todo mundo sabe" em vez do que o ensaio mediu.
+  - **⚠️ "Eleva a pressão arterial" estava errado nos DOIS.** No **SCOUT** a pressão **caiu nos dois braços** e ficou abaixo do inicial; a sibutramina apenas a deixou **consistentemente mais alta que o placebo** (até 1,2 mmHg sistólica, 1,4 diastólica), com pulso 2,2–3,7 bpm acima. No **COR-I** houve alta **transitória de ~1,5 mmHg nas 8 primeiras semanas** e depois a sistólica ficou **1,5–3 mmHg ABAIXO do basal**, caindo menos que no placebo; pulso 1,5–2,5 bpm acima. **A formulação correta é "rouba parte do benefício pressórico do emagrecimento"** — não "eleva a pressão". A conduta (medir PA e FC) não muda; a frase, sim.
+  - **⚠️ Convulsão e ideação suicida atribuídas ao COR-I sem que o COR-I as mostrasse.** **Nenhuma convulsão** ocorreu no ensaio — e **história de convulsão era critério de exclusão**. E o estudo **não** encontrou aumento de depressão ou suicidalidade contra placebo, sem nenhuma tentativa de suicídio. Os dois riscos são **de bula, da bupropiona como classe**: continuam valendo para prescrever, mas **não são achados deste ensaio**, e o texto agora diz isso explicitamente.
+  - **A lição, que é sobre método e não sobre farmacologia:** o `check_numeros.js` garante que todo número da ficha existe na prosa — mas **prosa e ficha eram ambas minhas**. Coerência interna não pega o erro de origem. **Só o PDF pega.** Enquanto os conectores de busca não estiverem autorizados, "conferido" só pode significar "conferido contra o PDF que o professor mandou".
+  - **Ganhos de precisão além das correções:** SCOUT ganhou os números exatos de PA/pulso; COR-I ganhou náusea **29,8% vs 5,3%** (era "~30% vs ~5%") e **50% completaram as 56 semanas**; SCALE ganhou a meta de **>15% (14,4% vs 3,5%)** e um aviso explícito de que o **−79% em 3 anos vem de publicação separada**, não do ensaio de 56 semanas.
+  - Regravado com trava otimista; snapshots dos 3 checadores atualizados. **560 números** conferidos, **29/29** fichas, **32/32** resumos.
 - **💊 3º lote de artigos: os ensaios pivotais dos antiobesidade "antigos" + o da liraglutida (2026-07-27, "Deixa o resumos dos artigos também das medicações orais antiobesidade (sibutramina, orlistat, bup/naltrexona) e da liraglutida"):** acervo de artigos vai de **28 para 32**, todos rascunho. Um artigo por fármaco, cada um no **ensaio que define a molécula**:
   - **SCOUT (NEJM 2010)** — sibutramina. Desfecho composto **11,4% vs 10,0%, HR 1,16**. **A nuance que a ficha faz questão de dizer:** o excesso foi de eventos **NÃO fatais** (IAM HR 1,28, AVC HR 1,36); **mortalidade não aumentou** (HR 0,99 e 1,04). E o *lead-in* aberto de 6 semanas — em que **todos** tomaram sibutramina — é a peça mais esquecida do desenho: enriquece a amostra com respondedores e **atenua a diferença de peso** no período randomizado.
   - **XENDOS (Diabetes Care 2004)** — orlistate. **DM2 em 4 anos: 6,2% vs 9,0% (−37,3%)**, peso −5,8 vs −3,0 kg. O benefício está **quase todo no subgrupo com intolerância à glicose** (18,8% vs 28,8%); em quem tinha glicemia normal, nada. Limitação registrada: **52% vs 34% completaram** — perda de seguimento assimétrica.

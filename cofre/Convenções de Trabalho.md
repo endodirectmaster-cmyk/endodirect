@@ -1,6 +1,6 @@
 ---
 tags: [cofre, processo]
-atualizado: 2026-07-27
+atualizado: 2026-07-28
 ---
 
 # Convenções de Trabalho
@@ -14,6 +14,15 @@ O cofre não é só o lugar onde eu **anoto** o que fiz; é onde descubro o que 
 - **Caso concreto (2026-07-27):** ia mergear o PR #539, que criava a constante `RESUMO_ONLY_SUBS`. Um `grep` no cofre mostrou que a `main` já tinha **`RESUMOS_ONLY_SUBS`** (com S), resolvendo o mesmo problema por outro mecanismo, desde 17/07. Sem essa checagem eu teria deixado **duas constantes quase homônimas** no mesmo arquivo — o tipo de coisa em que alguém edita uma e esquece a outra. Detalhe: `grep` no `index.html` pelo nome do #539 dava **zero**, porque o nome real diferia por uma letra. **Foi a prosa do cofre que pegou, não o código.**
 - **Como buscar:** `grep -rn "<termo>" cofre/` com o **conceito** (ex.: "Endocrinologia Básica", "rascunho", "clobber"), não só com o identificador exato — o nome no código pode diferir do que estou prestes a escrever, e é justamente aí que mora o erro.
 - **Vale em dobro para PR antigo:** um PR parado por dias pode ter sido resolvido por outro caminho enquanto isso. Antes de mergear, conferir no cofre **e** no código se o problema ainda existe.
+
+## Números de artigo: "conferido" só vale contra o PDF
+
+**⚠️ LIÇÃO (2026-07-28).** O `check_numeros.js` prova que **todo número da ficha existe na prosa do resumo**. Isso pega inconsistência interna — mas **prosa e ficha são ambas escritas por mim**, então um número errado na origem passa nos dois lados sem alarme nenhum. Foi o que aconteceu no 3º lote: os quatro artigos passaram em todos os checadores e, quando o professor mandou os PDFs, **três afirmações caíram** (pressão arterial no SCOUT e no COR-I; convulsão e suicidalidade atribuídas ao COR-I).
+
+- **Vocabulário honesto:** enquanto não houver conector de busca autorizado, dizer "conferido" só é legítimo para o que foi lido **no PDF**. Para o resto, a frase é "coerente internamente, **pendente de revisão**".
+- **Onde o erro nasce:** não nos números de eficácia — esses eu costumo lembrar bem. Nasce na **segurança**, ao escrever o que "todo mundo sabe da classe" em vez do que aquele ensaio mediu. Efeito adverso de bula ≠ achado do estudo; os dois podem ser verdadeiros e **não são a mesma afirmação**.
+- **Armadilha específica, que apareceu duas vezes no mesmo lote:** "o fármaco eleva a pressão". Em estudos de emagrecimento a pressão em geral **cai nos dois braços**, e o fármaco apenas **atenua a queda**. Antes de escrever que algo eleva a PA, procurar no artigo se a comparação é **contra o basal** ou **contra o placebo** — quase sempre é a segunda.
+- **Ao conferir um PDF, ir direto a:** n randomizado (≠ n incluído), desfecho primário com IC e p, componentes do composto, mortalidade separada, PA/FC com a base de comparação explícita, critérios de exclusão (eles explicam ausências de eventos) e % que completou o estudo.
 
 ## Git / deploy
 

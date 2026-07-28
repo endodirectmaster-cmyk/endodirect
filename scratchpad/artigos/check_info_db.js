@@ -79,9 +79,9 @@ const DB = {
   'SURMOUNT-4 (2024)': '20265e542c7998bdfad933c51f97a10c',
   'SURMOUNT-MAINTAIN (2026)': '3ca804a7e993541d8f69fa7967eb588d',
   // ---- 3º lote (info3.js) ----
-  'SCOUT (2010)': 'e2633d711fa4dd6aea6c3e6f352863e5',
+  'SCOUT (2010)': '873f4a871c2b5be7a0059270a465948f',
   'XENDOS (2004)': '504179f97115a81e0e2aa3e2c3907b89',
-  'COR-I (2010)': 'c42d5365209cb1f6adb32d71df3e57ad',
+  'COR-I (2010)': 'f37685430d3cc5ca8f5790bc175abc66',
   'SCALE Obesidade e Pré-diabetes (2015)': 'e934a4a0862571babc88b413bfd10bac'
 };
 
