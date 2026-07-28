@@ -90,6 +90,25 @@ Figura de NEJM/Lancet costuma ser **vetorial**: dá para recuperar os pontos rea
 - **`lib/` e `api/`:** `node --check <arquivo>`.
 - Calculadoras/IA: testar a lógica com valores de referência conhecidos quando possível.
 
+### ⚠️ Verificador que sai com código 0 quando falha é pior que verificador nenhum
+Achado em 2026-07-28: o `audit_resumos.js` imprimia **"DIVERGENTES: 1"** e ainda assim terminava com **exit 0**. Faltava o `process.exit`. Qualquer hook, CI ou `&&` na linha de comando olharia o código e daria tudo por certo. É a mesma família do `git push … | tail -1`, que na véspera imprimiu "PUSH OK" sobre um push rejeitado — **o código de saída da pipeline é o do `tail`**.
+- **Regra:** todo verificador termina com `process.exit(falhas ? 1 : 0)`, e nunca se decide sucesso pelo **texto** da saída.
+- **Como se prova que um verificador verifica:** sabotar um valor e exigir que ele acuse. Foi assim que se descobriu que o `check_info_db.js` passou meses imprimindo "16/16" sem nunca ter lido o 2º lote.
+
+### O que os verificadores de artigo cobrem hoje (2026-07-28)
+| Campo | Quem confere | Contra o quê |
+|---|---|---|
+| `resumo` | `audit_resumos.js` | md5 do banco vs fonte local (tolera normalização cosmética do editor) |
+| `pts` | `audit_resumos.js` | md5 do banco vs fonte local — **entrou só em 28/07**; antes ninguém olhava |
+| `info` (ficha) | `check_info_db.js` + `check_info_db.sql` | hash concat_ws espelhado nos dois lados, **incluindo `curva`** desde 28/07 |
+| números da ficha | `check_numeros.js` | todo número da ficha existe na prosa — **coerência interna, não veracidade** |
+
+- **O espelho SQL agora mora no repositório** (`scratchpad/artigos/check_info_db.sql`). Antes era reescrito de cabeça a cada lote, o que tornava a prova irreproduzível. **Ele se valida reproduzindo os hashes dos lotes anteriores byte a byte** — se um hash antigo mudar sem que o dado tenha mudado, o errado é o espelho.
+- **Armadilha de número no espelho:** `->>` devolve a forma textual do jsonb, que preserva zero à direita (`8.0` continua `"8.0"`), enquanto `String(8.0)` em JS dá `"8"`. Os dois lados usam `::float8::text` / `String(Number(x))` para normalizar. Sem isso, um `2.0` digitado num INSERT diverge de um `2.0` escrito em JS **sem nenhuma diferença real**.
+
+### Renderizar a ficha de um lote antes de gravar
+`node scratchpad/artigos/render_fichas.js info4.js INFO4 trials4.js TODOS4 > fichas.html` monta a página usando **os renderizadores recortados do `index.html` de verdade** (não uma cópia — cópia diverge) e o CSS `.fx-*` do próprio arquivo. Depois, screenshot por ficha com o Chromium de `/opt/pw-browsers`. Foi assim que se decidiu tirar a `curva` do IMPROVE-IT: com 7 anos o eixo do tempo cai no passo de 6 e sairia com marcas só em 0 e 6.
+
 ## Sandbox / rede
 - Egress restrito a uma allowlist. Confirmados acessíveis: `raw.githubusercontent.com`, `github.com`, `api.anthropic.com`. Bloqueados: `who.int`, `cdc.gov` (usar mirrors no GitHub).
 - Não há ferramenta para gravar variáveis de ambiente na Vercel — isso é feito pelo usuário no painel.

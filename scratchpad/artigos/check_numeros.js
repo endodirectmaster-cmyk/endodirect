@@ -17,7 +17,8 @@ const B = '/home/user/endodirect/scratchpad/artigos/';
 const LOTES = [
   { trials: 'trials.js', chaveT: 'TODOS', info: 'info.js', chaveI: 'INFO', nome: '1º lote' },
   { trials: 'trials2.js', chaveT: 'TODOS2', info: 'info2.js', chaveI: 'INFO2', nome: '2º lote' },
-  { trials: 'trials3.js', chaveT: 'TODOS3', info: 'info3.js', chaveI: 'INFO3', nome: '3º lote' }
+  { trials: 'trials3.js', chaveT: 'TODOS3', info: 'info3.js', chaveI: 'INFO3', nome: '3º lote' },
+  { trials: 'trials4.js', chaveT: 'TODOS4', info: 'info4.js', chaveI: 'INFO4', nome: '4º lote' }
 ];
 
 const norm = (s) => String(s).replace(/[–—−]/g, '-').replace(/\s+/g, ' ');
