@@ -38,6 +38,17 @@ Botão **📄 Gerar discussão completa** no card do admin (só nos que têm PMC
 ### O que ainda não foi validado
 O parser de JATS foi exercitado contra **fixture** (`scratchpad/test_jats.js`), não contra artigo real: desta sessão o proxy bloqueia `eutils.ncbi.nlm.nih.gov` e `ebi.ac.uk` (403 no CONNECT). **A produção alcança** — é de lá que o radar puxa os abstracts todo dia. A primeira validação contra artigo de verdade é clicar o botão em produção e ler o resultado.
 
+## Discussão completa: geração AUTOMÁTICA só nos tipos que rendem (2026-07-28)
+O botão por card continua; o que mudou é que **metanálise, diretriz, consenso e ensaio clínico** de acesso aberto passam a ganhar a discussão sozinhos, no cron do radar (`lib/discussao-auto.js`, chamado por `api/cron/endocrine-radar.js`).
+
+- **Por que não todos os abertos.** Medido em produção: uma discussão sai com **~5.000 palavras**. Dos **81 artigos abertos** do mural, **56 são "Estudo Original"** e 10 revisão narrativa — em observacional pequeno, o resumo de 4 linhas já diz o que há. Gerar os 81 seria ~400.000 palavras que ninguém leu indo ao aluno. **O custo em dólar é baixo** (~US$ 0,19 por artigo no Opus 4.8; ~US$ 15 pelos 81); o que não é baixo é o custo de revisão.
+- **⚠️ "Consenso" precisa do reconhecimento por TÍTULO, senão o pedido não tem efeito.** O `MURAL_TYPE_NAMES` do `lib/radar.js` **não inclui Consenso** — o prompt manda classificar consenso como "Diretriz", e o rótulo "Consenso" (que existe em `MURAL_TYPES`) só aparece quando o professor escolhe à mão. Por isso a seleção também lê o título (`consensus|consenso|guideline|position statement|standards of care`), e o mesmo vale para ensaio randomizado escondido em "Estudo Original". **Filtrar só pelo campo `tipo` atenderia o pedido no papel e não no efeito.**
+- **Volume real em 28/07:** 10 por tipo (todas metanálises) + 1 consenso por título + 2 ensaios por título = **13 dos 81**.
+- **Ritmo:** 2 por execução do cron, com orçamento de tempo — a etapa roda **por último**, para não roubar tempo da Questão do Dia nem da newsletter, que têm hora marcada. O que não couber sai no dia seguinte.
+- **Modelo: Opus 4.8**, fixo. A primeira versão lia `process.env.ANTHROPIC_MODEL` **cru** e mandou `claude-sonnet-4-6` — id retirado em 13/07 — reintroduzindo a armadilha que o cofre já documentava para o `api/ai.js`. Agora usa `DISCUSSAO_MODEL` (env própria, com allowlist) e cai em `claude-opus-4-8`.
+- **Teste:** `scripts/test-discussao-auto.js`, no CI. Cobertura provada tirando "Consenso" da lista e quebrando o regex de título — os dois reprovam.
+- **⚠️ Continua sem etapa de liberação:** a discussão vai ao aluno assim que grava, para assinante e degustação igualmente (as RPCs `endodirect_mural_discussoes_ids`/`endodirect_mural_discussao` não filtram plano nem rascunho). Diferente dos Artigos dos Resumos, que nascem `rascunho:true`. Levantado ao professor em 28/07; ele seguiu para o modelo e os tipos sem pedir a trava. Ver [[Pendências]].
+
 ## Radar / Mural (automático)
 - `lib/radar.js` + `lib/news.js`: lê feeds RSS de revistas, resume com IA (`summarizeWithAI`), monta itens do mural.
 - Filtro de qualidade: descarta artigos com `abstract` curto (`length < 200`) → `buildMuralItem` retorna null; `runRadar` filtra nulos.

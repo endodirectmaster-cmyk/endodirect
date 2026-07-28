@@ -81,5 +81,16 @@ try {
   fail('regressão da caixa de suporte falhou (verifique lib/support.js + lib/admin-auth.js):\n' + out);
 }
 
+// 6. Seleção da DISCUSSÃO AUTOMÁTICA do Mural (lib/discussao-auto.js): quais
+//    artigos abertos qualificam, o reconhecimento de consenso pelo TÍTULO (o
+//    classificador do radar não emite esse rótulo) e o modelo fixado em Opus 4.8.
+try {
+  execFileSync(process.execPath, [path.join('scripts', 'test-discussao-auto.js')], { stdio: 'pipe' });
+  ok('regressão discussão automática: tipos que rendem + consenso por título + Opus 4.8');
+} catch (e) {
+  const out = (e.stdout ? e.stdout.toString() : '') + (e.stderr ? e.stderr.toString() : '');
+  fail('regressão da discussão automática falhou (verifique lib/discussao-auto.js + lib/discussao.js):\n' + out);
+}
+
 if (errors) { console.error(`\n${errors} verificação(ões) falharam.`); process.exit(1); }
 console.log('\nTodas as verificações passaram.');

@@ -6,6 +6,7 @@ const { sendDailyNewsletter } = require('../../lib/newsletter');
 const { refreshPodcastsFromFeed } = require('../../lib/podcasts');
 const { sendTrialEmails } = require('../../lib/trial-emails');
 const { sendIgDailyNotice, autoPostDailyQotd } = require('../../lib/instagram');
+const { gerarDiscussoesPendentes } = require('../../lib/discussao-auto');
 const { sendAlert } = require('../../lib/alert');
 
 function json(res, status, body) {
@@ -23,6 +24,7 @@ module.exports = async function handler(req, res) {
   if (!cronSecret || req.headers.authorization !== `Bearer ${cronSecret}`) {
     return json(res, 401, { ok: false, error: 'Nao autorizado.' });
   }
+  const t0 = Date.now(); // marca o início: o orçamento da etapa lenta sai daqui
   try {
     const result = await runRadar();
     // Publica a Questão do Dia ANTES da newsletter, para que o e-mail do dia traga a
@@ -58,7 +60,20 @@ module.exports = async function handler(req, res) {
     let igStory = { sent: false, reason: 'skipped' };
     try { igStory = await sendIgDailyNotice(); }
     catch (e) { console.error('[cron-radar] instagram erro:', (e && e.stack) || e); igStory = { sent: false, reason: 'error' }; }
-    return json(res, 200, { ok: true, ...result, qotd, newsletter, podcasts, trialEmails, igStory });
+    // Discussão completa dos artigos abertos que RENDEM (metanálise, diretriz,
+    // consenso, ensaio clínico) — ver lib/discussao-auto.js para por que não é
+    // "todos os abertos". Vai POR ÚLTIMO de propósito: é a etapa lenta (dezenas
+    // de segundos por artigo) e não pode roubar tempo da Questão do Dia nem da
+    // newsletter, que são as que têm hora marcada. Recebe o tempo que sobrou,
+    // com folga, e o que não couber hoje sai amanhã.
+    // Fail-safe: nunca derruba o cron.
+    let discussoes = { geradas: 0, motivo: 'skipped' };
+    try {
+      const restante = 300000 - (Date.now() - t0) - 30000; // 300s do maxDuration, 30s de folga
+      if (restante > 40000) discussoes = await gerarDiscussoesPendentes({ limite: 2, orcamentoMs: restante });
+      else discussoes = { geradas: 0, motivo: 'sem_tempo' };
+    } catch (e) { console.error('[cron-radar] discussoes erro:', (e && e.stack) || e); discussoes = { geradas: 0, motivo: 'error' }; }
+    return json(res, 200, { ok: true, ...result, qotd, newsletter, podcasts, trialEmails, igStory, discussoes });
   } catch (error) {
     console.error('[cron-radar] erro:', (error && error.stack) || error);
     try { await sendAlert('Radar diário falhou', ['O cron endocrine-radar lançou erro e NÃO atualizou o mural hoje.', 'Erro: ' + ((error && error.message) || error)]); } catch (_) {}
