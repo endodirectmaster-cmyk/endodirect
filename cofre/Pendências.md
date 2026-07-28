@@ -5,6 +5,17 @@ atualizado: 2026-07-28
 
 # Pendências
 
+## Retenção e ativação (2026-07-28, a partir do material de EdTech)
+**Contexto que orienta tudo abaixo:** 7 semanas de operação, **28 pagantes** (24 anuais à vista + 4 mensais) + 1 cortesia. Como quase todo mundo pagou **anual adiantado**, o churn só apareceria em **junho/2027** — quem parar de usar em agosto não gera sinal nenhum. Por isso o indicador que importa agora é **uso**, não receita. **Não montar dashboard de MRR/LTV/CAC neste estágio:** com n=28 e sem 12 meses de histórico, o LTV teria barra de erro maior que ele mesmo.
+
+- [x] **"Qual seu objetivo?" no onboarding — FEITO (2026-07-28).** Obrigatório, com opções + "Outro". Destrava a segmentação por persona.
+- [ ] **Card "sem acesso há 14+ dias" no Analytics.** O único item que gera ação no mesmo dia: mostra os nomes e o professor manda mensagem. É o antídoto contra os 12 meses cegos do plano anual. Dados já existem (`endodirect_devices.last_seen`). **⚠️ Separar cortesia de pagante** (`provider='manual'` = cortesia — hoje Walid e Raphael) para não cobrar engajamento de quem não paga nem poluir a métrica.
+- [ ] **Momento Aha: definir e medir.** Hipótese: **responder a Questão do Dia em 3 dias diferentes na 1ª semana**. Registro já existe (`payload.qotd`). Medir: quem fez isso ainda está ativo em 30/60 dias?
+- [ ] **Onboarding de 7 dias** — só DEPOIS dos dois itens acima (decisão do Rodolpho em 28/07).
+- [ ] **"Como conheceu?" no cadastro** — adiado a pedido (28/07). É o CAC por canal, e também não dá para reconstruir depois.
+- [ ] **⚠️ Higiene de dados:** `endodirect_acessos` tem linha com `status='active'` e `expires_at` **no passado** (`aluno@endodirect.com.br`, expirou 08/07). Qualquer consulta que filtre só por `status='active'` **superconta**. Conferir sempre `expires_at > now()` — foi o que explicou a diferença entre o meu "31" e os 29 do painel.
+
+
 ## Artigos / trials nos Resumos (2026-07-25)
 - [ ] **AGUARDANDO REVISÃO DO RODOLPHO — 16 artigos piloto (9 Diabetes + 7 Obesidade) gravados como RASCUNHO.** Estão em `endodirect_global_state.payload.diretrizes` com `tipo:'artigo'`, `privado:true`, **`rascunho:true`** → aparecem **só no painel do professor**, em Resumos › Artigos. Nenhum aluno (assinante ou degustação) os vê — filtro no servidor, ver [[Dados e Supabase]]. Fonte de verdade do conteúdo: `scratchpad/artigos/trials.js` (conferido por md5, 16/16 idênticos ao banco). Revisão em página: `scratchpad/artigos/build_revisao.js` → artifact "Artigos (trials) — revisão antes de publicar".
   - **Ação do professor:** conferir os números e clicar **👁 Liberar para os alunos** em cada artigo aprovado (o botão só remove o `rascunho`; o item já está com `privado:true` e cai na aba Resumos › Artigos).

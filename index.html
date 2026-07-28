@@ -1190,6 +1190,23 @@ input.dmm-inp-subsub{flex:1;min-width:0;background:transparent;color:var(--t2);f
         </div>
         <div style="font-size:.68rem;color:var(--t3);margin-top:.3rem">Campo obrigatório</div>
       </div>
+      <!-- OBJETIVO: segmenta a persona (residente que quer passar no TEEM ≠
+           endocrinologista que quer se atualizar ≠ generalista). Vale para
+           TODOS os perfis, inclusive Estudante — por isso fica fora dos blocos
+           condicionais acima. É o dado que não dá para reconstruir depois. -->
+      <div id="ob-obj-wrap" style="margin-bottom:.85rem">
+        <div class="flbl" style="margin-bottom:.3rem">Qual seu objetivo aqui? <span style="color:var(--red)">*</span></div>
+        <select id="ob-objetivo" style="width:100%">
+          <option value="">Selecione…</option>
+          <option value="Passar no TEEM">Passar no TEEM (título de especialista)</option>
+          <option value="Passar na residência">Passar na prova de residência</option>
+          <option value="Atualização em endocrinologia">Atualização em endocrinologia</option>
+          <option value="Tratar melhor meus pacientes">Tratar melhor meus pacientes no consultório</option>
+          <option value="Acompanhar a residência">Acompanhar a residência / o ambulatório</option>
+          <option value="Outro">Outro</option>
+        </select>
+        <input type="text" id="ob-objetivo-outro" placeholder="Qual?" style="width:100%;margin-top:.4rem;display:none">
+      </div>
       <div id="ob-err" style="display:none;background:var(--red-l);border:1px solid #5a2326;border-radius:var(--rs);padding:.45rem .75rem;font-size:.73rem;color:var(--red);margin-bottom:.7rem"></div>
       <button class="btn btn-primary" id="ob-submit" style="width:100%;justify-content:center;padding:.6rem">Começar →</button>
     </div>
@@ -13486,14 +13503,41 @@ openOnboard=function(){
   document.getElementById('onboard-modal').style.display='flex';
   document.getElementById('ob-err').style.display='none';
   document.querySelectorAll('input[name="ob-perfil"]').forEach(function(r){r.checked=false;});
-  ['ob-grad','ob-resid','ob-outros','ob-crm','ob-uf','ob-ano'].forEach(function(id){var e=document.getElementById(id);if(e)e.value='';});
+  ['ob-grad','ob-resid','ob-outros','ob-crm','ob-uf','ob-ano','ob-objetivo-outro'].forEach(function(id){var e=document.getElementById(id);if(e)e.value='';});
+  var _obj=document.getElementById('ob-objetivo');if(_obj)_obj.value='';
+  var _objO=document.getElementById('ob-objetivo-outro');if(_objO)_objO.style.display='none';
   setupOnboardProfileChoices();
+  setupOnboardObjetivo();
 };
+// Mostra o campo livre só quando a opção é "Outro".
+function setupOnboardObjetivo(){
+  var sel=document.getElementById('ob-objetivo'),outro=document.getElementById('ob-objetivo-outro');
+  if(!sel||!outro||sel._objBound)return;
+  sel._objBound=true;
+  sel.addEventListener('change',function(){
+    outro.style.display=(sel.value==='Outro')?'':'none';
+    if(sel.value!=='Outro')outro.value='';
+  });
+}
+// null = nada selecionado; '' = escolheu "Outro" e não descreveu; senão o texto.
+function obLerObjetivo(){
+  var sel=document.getElementById('ob-objetivo');
+  if(!sel)return 'nao_informado'; // campo ausente (build antigo em cache): não trava o cadastro
+  var v=(sel.value||'').trim();
+  if(!v)return null;
+  if(v!=='Outro')return v;
+  return ((document.getElementById('ob-objetivo-outro')||{}).value||'').trim();
+}
 submitOnboard=function(){
   var perfil=(document.querySelector('input[name="ob-perfil"]:checked')||{}).value;
   var err=document.getElementById('ob-err');
   if(!perfil){err.textContent='Selecione uma opção de perfil.';err.style.display='block';return;}
-  var prof={perfil:perfil};
+  // Objetivo vale para TODOS os perfis — capturado aqui, antes do early-return
+  // do Estudante, senão o campo se perderia justamente na persona mais jovem.
+  var objetivo=obLerObjetivo();
+  if(objetivo===null){err.textContent='Selecione seu objetivo.';err.style.display='block';return;}
+  if(objetivo===''){err.textContent='Descreva seu objetivo.';err.style.display='block';return;}
+  var prof={perfil:perfil,objetivo:objetivo};
   if(perfil==='Estudante'){
     // Estudante de medicina: instituição + ano. Sem CRM (não prescreve).
     var gradE=(document.getElementById('ob-grad').value||'').trim();
