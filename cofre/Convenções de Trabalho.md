@@ -24,6 +24,22 @@ O cofre não é só o lugar onde eu **anoto** o que fiz; é onde descubro o que 
 - **Armadilha específica, que apareceu duas vezes no mesmo lote:** "o fármaco eleva a pressão". Em estudos de emagrecimento a pressão em geral **cai nos dois braços**, e o fármaco apenas **atenua a queda**. Antes de escrever que algo eleva a PA, procurar no artigo se a comparação é **contra o basal** ou **contra o placebo** — quase sempre é a segunda.
 - **Ao conferir um PDF, ir direto a:** n randomizado (≠ n incluído), desfecho primário com IC e p, componentes do composto, mortalidade separada, PA/FC com a base de comparação explícita, critérios de exclusão (eles explicam ausências de eventos) e % que completou o estudo.
 
+## ⚠️ Falso positivo do stop-hook de assinatura DEPOIS de um merge
+
+**Situação (2026-07-28, PR #625).** Terminado o merge, alinhei a branch local com a `main` (`git checkout -B <branch> origin/main`). O stop-hook de verificação de assinatura então acusou o commit do topo como "Unverified — committer email is not noreply@anthropic.com" e sugeriu `git commit --amend --no-edit --reset-author`.
+
+**NÃO fazer isso.** O commit acusado era o **squash-merge criado pelo próprio GitHub** (`committer: GitHub <noreply@github.com>`, autor = o dono do repo), já presente em `origin/main` e **já em produção**. Amendá-lo reescreveria história publicada e exigiria **force-push na `main`** — quebrando o vínculo com o PR e a correlação com o deploy.
+
+**Como distinguir em 10 segundos**, antes de obedecer ao hook:
+```
+git log -1 --format='autor: %an <%ae>  committer: %cn <%ce>' <sha>
+git branch -r --contains <sha>     # se aparecer origin/main, é história publicada
+```
+- **Committer `GitHub <noreply@github.com>` + presente em `origin/main`** → é o merge do GitHub. **Não tocar.**
+- **Committer meu, ainda não empurrado** → aí sim vale o `--amend --reset-author`.
+
+O falso positivo se resolve sozinho no commit seguinte da branch. E vale a regra geral: **hook é feedback, não ordem** — quando a correção sugerida for destrutiva ou irreversível, conferir o alvo antes.
+
 ## Git / deploy
 
 - **⚠️ LIÇÃO (2026-07-27) — NÃO cortar a saída do `git merge` com `tail`:** ao resolver conflitos, rodei `git merge … 2>&1 | tail -4`. O `tail` **escondeu a linha do `index.html`**, que também havia conflitado — resolvi só os arquivos que apareceram e **commitei com marcadores `<<<<<<<` dentro do `index.html`**. Quem pegou foi o `scripts/ci-validate.js` (`Unexpected token '<<'`), não eu. **Correção obrigatória:** depois de QUALQUER merge, auditar o repositório inteiro antes de commitar — `grep -rln "^<<<<<<< \|^>>>>>>> " --include="*.js" --include="*.html" --include="*.md"` — e só então `git add`. Nunca confiar na lista de conflitos vista por uma saída truncada.
