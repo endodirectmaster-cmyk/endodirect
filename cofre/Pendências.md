@@ -1,9 +1,20 @@
 ---
 tags: [cofre, pendencias]
-atualizado: 2026-07-27
+atualizado: 2026-07-28
 ---
 
 # Pendências
+
+## Retenção e ativação (2026-07-28, a partir do material de EdTech)
+**Contexto que orienta tudo abaixo:** 7 semanas de operação, **28 pagantes** (24 anuais à vista + 4 mensais) + 1 cortesia. Como quase todo mundo pagou **anual adiantado**, o churn só apareceria em **junho/2027** — quem parar de usar em agosto não gera sinal nenhum. Por isso o indicador que importa agora é **uso**, não receita. **Não montar dashboard de MRR/LTV/CAC neste estágio:** com n=28 e sem 12 meses de histórico, o LTV teria barra de erro maior que ele mesmo.
+
+- [x] **"Qual seu objetivo?" no onboarding — FEITO (2026-07-28).** Obrigatório, com opções + "Outro". Destrava a segmentação por persona.
+- [ ] **Card "sem acesso há 14+ dias" no Analytics.** O único item que gera ação no mesmo dia: mostra os nomes e o professor manda mensagem. É o antídoto contra os 12 meses cegos do plano anual. Dados já existem (`endodirect_devices.last_seen`). **⚠️ Separar cortesia de pagante** (`provider='manual'` = cortesia — hoje Walid e Raphael) para não cobrar engajamento de quem não paga nem poluir a métrica.
+- [ ] **Momento Aha: definir e medir.** Hipótese: **responder a Questão do Dia em 3 dias diferentes na 1ª semana**. Registro já existe (`payload.qotd`). Medir: quem fez isso ainda está ativo em 30/60 dias?
+- [ ] **Onboarding de 7 dias** — só DEPOIS dos dois itens acima (decisão do Rodolpho em 28/07).
+- [ ] **"Como conheceu?" no cadastro** — adiado a pedido (28/07). É o CAC por canal, e também não dá para reconstruir depois.
+- [ ] **⚠️ Higiene de dados:** `endodirect_acessos` tem linha com `status='active'` e `expires_at` **no passado** (`aluno@endodirect.com.br`, expirou 08/07). Qualquer consulta que filtre só por `status='active'` **superconta**. Conferir sempre `expires_at > now()` — foi o que explicou a diferença entre o meu "31" e os 29 do painel.
+
 
 ## Artigos / trials nos Resumos (2026-07-25)
 - [ ] **AGUARDANDO REVISÃO DO RODOLPHO — 16 artigos piloto (9 Diabetes + 7 Obesidade) gravados como RASCUNHO.** Estão em `endodirect_global_state.payload.diretrizes` com `tipo:'artigo'`, `privado:true`, **`rascunho:true`** → aparecem **só no painel do professor**, em Resumos › Artigos. Nenhum aluno (assinante ou degustação) os vê — filtro no servidor, ver [[Dados e Supabase]]. Fonte de verdade do conteúdo: `scratchpad/artigos/trials.js` (conferido por md5, 16/16 idênticos ao banco). Revisão em página: `scratchpad/artigos/build_revisao.js` → artifact "Artigos (trials) — revisão antes de publicar".
@@ -11,7 +22,9 @@ atualizado: 2026-07-27
   - Diabetes: UKPDS 33, EMPA-REG, LEADER, SUSTAIN-6, DECLARE-TIMI 58, CREDENCE, SURPASS-2, FLOW, SOUL.
   - Obesidade: STEP-1, SURMOUNT-1, SELECT, STEP-HFpEF, SURMOUNT-OSA, SURMOUNT-5, ESSENCE.
 - [ ] **REVISAR o 2º lote — 11 artigos novos (2026-07-27); total de 27 em rascunho.** 8 trials (DCCT, ACCORD, REWIND, STEP-2, STEP-4, STEP-9, SURMOUNT-2, SURMOUNT-4) + 3 comparativos em tabela (Programa STEP, SURMOUNT, SURPASS). **Os números vêm da memória do modelo** — o checador só garante coerência interna, não veracidade. Prioridade de conferência: as **faixas do SURPASS** (o próprio artigo avisa para conferir na publicação) e o **SURPASS-CVOT**, cujos valores exatos ficaram em branco de propósito.
-- [ ] **REVISAR o SURMOUNT-MAINTAIN (2026-07-27); total de 28 em rascunho.** Único artigo cujos números **NÃO** vêm da memória do modelo: foram lidos do PDF que o Rodolpho mandou (Lancet 2026;407:2305-18). Ainda assim vale conferir, porque a transcrição é minha.
+- [x] ~~**Conferir o 3º lote contra os PDFs.**~~ **FEITO (2026-07-28)** — o professor mandou os 4. SCALE e XENDOS bateram inteiros; SCOUT e COR-I tiveram **a segurança corrigida** (ver [[Decisões]]). Continua valendo a revisão clínica dele, mas os números agora vêm da fonte.
+- [ ] **REVISAR o 3º lote — 4 artigos; total de 32 em rascunho.** Os ensaios pivotais dos antiobesidade não incretínicos + o da liraglutida: **SCOUT** (sibutramina), **XENDOS** (orlistate), **COR-I** (naltrexona-bupropiona) e **SCALE Obesidade e Pré-diabetes** (liraglutida 3,0 mg). **Os números já foram conferidos contra os PDFs em 28/07** — os HR do SCOUT (1,28 e 1,36) e as proporções do COR-I (48/39/16), que eram os de menor garantia, **bateram**. Falta a revisão **clínica/editorial** do professor: se o recorte, o tom e as ênfases são os que ele quer ensinar.
+- [ ] **REVISAR o SURMOUNT-MAINTAIN (2026-07-27).** Único artigo cujos números **NÃO** vêm da memória do modelo: foram lidos do PDF que o Rodolpho mandou (Lancet 2026;407:2305-18). Ainda assim vale conferir, porque a transcrição é minha.
 - [x] ~~**Confirmar "SURMOUNT MAINTAIN":** entrou como **SURMOUNT-4**.~~ **RESOLVIDO (2026-07-27) — eu é que estava errado.** Eu havia afirmado que o estudo "não existe com esse nome"; ele existe (Lancet 2026;407:2305-18, NCT06047548) e o professor mandou o PDF. Entrou como artigo próprio. **Lição:** sem conector de busca autorizado, o que eu podia dizer era "não encontrei", nunca "não existe".
 - [ ] **Ligar os conectores PubMed e Clinical Trials** — hoje aparecem na sessão como não autorizados. Com eles, dá para conferir os números dos artigos contra a fonte em vez de depender só de revisão manual.
 - [ ] **Curvas reais dos outros 5** (EMPA-REG, LEADER, SUSTAIN-6, DECLARE, SOUL): hoje são **projetadas**. O professor já mandou os PDFs de **LEADER, SUSTAIN-6, DECLARE e SOUL**; falta o do EMPA-REG. Estado: **LEADER extraído e validado** (3 âncoras, incluindo HR implícito 0,874 vs 0,87 publicado), **ainda não aplicado**; DECLARE e SOUL têm a mesma estrutura de figura e são diretos; o **SUSTAIN-6 desenha a curva como centenas de segmentos soltos** e precisa da abordagem de nuvem agrupada (`scratchpad/cvot/extrai2.py`). Técnica em [[Convenções de Trabalho]].
