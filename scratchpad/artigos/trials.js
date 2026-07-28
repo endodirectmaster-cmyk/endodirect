@@ -421,7 +421,7 @@ A({ sub:'Obesidade', tema:'STEP-1 (2021)', fonte:'NEJM', ano:'2021',
     '**Segurança** — **Náusea e diarreia** foram os eventos mais comuns (transitórios, na titulação); descontinuação por eventos adversos **7,0% vs 3,1%**. Mais **colelitíase**.',
     '💡 **O que muda na prática** — Marcou a entrada da farmacoterapia da obesidade em um patamar antes só alcançado por cirurgia. Perda de ~15% passou a ser meta realista com medicamento.'
   ],
-  resumo:`## Por que este estudo é um divisor de águas
+  resumo:`## Por que este estudo redefiniu a eficácia esperada
 Antes do STEP-1, os fármacos antiobesidade entregavam **5–10%** de perda de peso. O STEP-1 dobrou esse teto e reposicionou a obesidade como **doença crônica farmacologicamente tratável**, não como falha de força de vontade.
 
 ## Desenho
