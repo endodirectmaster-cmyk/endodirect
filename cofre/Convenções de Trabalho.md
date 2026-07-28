@@ -62,6 +62,15 @@ O falso positivo se resolve sozinho no commit seguinte da branch. E vale a regra
 - Identidade de commit: `Claude <noreply@anthropic.com>`. (O commit de squash-merge na `main` é gerado pelo GitHub e aparece como `committer: GitHub <noreply@github.com>` / "Unverified" — isso é **normal**, não reescrever.)
 - O fluxo PR → squash → deploy está **pré-autorizado** (ver acima): criar PR, esperar o CI, mergear e deployar sem pedir ok a cada vez.
 
+## Linguagem do conteúdo — formal e técnica, sem marcas de texto gerado (2026-07-28)
+
+Instrução direta do Rodolpho: *"Evite termos genéricos de IA. Deixe linguagem sempre formal e técnica."* Vale para **todo texto que o aluno lê** — artigos, capítulos, fichas, Questão do Dia, newsletter, Mural.
+
+- **Preferir o termo técnico à construção derivada.** O gatilho foi a pergunta do SUSTAIN-6: *"é cardiovascularmente segura?"* → **"é segura do ponto de vista cardiovascular?"**. Advérbio em `-mente` fabricado a partir do adjetivo soa a tradução automática; a forma preposicionada é a que se escreve em português médico.
+- **O que evitar,** por serem tiques reconhecíveis de texto gerado: metáfora de efeito ("divisor de águas", "cemitério de estudos negativos", "mergulhar em"), superlativo vago ("robusto", "impressiona", "extremamente"), autoelogio de método ("com honestidade", "vale dizer em voz alta"), e a fórmula "não é apenas X, é Y".
+- **O que manter:** o texto continua **didático e direto** — frase curta, dado antes do adjetivo, e a limitação dita por extenso. Formal não quer dizer empolado nem impessoal; quer dizer **preciso**.
+- **Escopo já revisado:** SUSTAIN-6 corrigido em 28/07 (ficha + tópicos + banco). O restante do acervo de artigos ainda **não** passou por essa varredura — ver [[Pendências]].
+
 ## Conteúdo / marketing
 - **Posts de feed do Instagram: SEMPRE com a logo do Endodirect (pedido do Rodolpho, 2026-06-29).** Usar a marca real **`logo.png.png`** (marca "ED" dourada, fundo transparente — fica bem sobre fundo escuro) no cabeçalho de toda arte. Gerar os slides com **HTML→PNG via Playwright** (1080×1350, identidade Endodirect: fundo navy `#0b1325`, azul `#3b6fd4`/`#5585e8`, verde `#34d399`, vermelho `#fb7185`; logo embutida em base64). **NÃO** reaproveitar como arte de carrossel as mesmas figuras que já estão no texto do post.
 - **Textos de leitura SEMPRE justificados (pedido do Rodolpho, 2026-06-29):** newsletter (`lib/newsletter.js` — `text-align:justify` inline nos blocos `.art-body`) e cards do Mural (`.mural-text` → `text-align:justify;text-align-last:left`; o `text-align-last:left` evita esticar cabeçalhos/última linha de bullet com `white-space:pre-line`). Ao criar novos blocos de texto corrido, manter justificado.

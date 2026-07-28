@@ -134,7 +134,7 @@ const INFO = {
 
   'SUSTAIN-6 (2016)': {
     desenho: 'ECR duplo-cego, não inferioridade',
-    pergunta: 'Em DM2 de alto risco cardiovascular, a semaglutida subcutânea é cardiovascularmente segura?',
+    pergunta: 'Em DM2 de alto risco cardiovascular, a semaglutida subcutânea é segura do ponto de vista cardiovascular?',
     chips: ['n = |3.297', '|104 semanas', 'alto risco CV'],
     bracos: {
       int: { n: 'Semaglutida SC 0,5 ou 1,0 mg/semana', s: 'sobre terapia padrão' },

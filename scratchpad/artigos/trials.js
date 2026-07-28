@@ -139,7 +139,7 @@ Diferentemente do EMPA-REG, as curvas do LEADER **separaram tardiamente** (após
 A({ sub:'Diabetes', tema:'SUSTAIN-6 (2016)', fonte:'NEJM', ano:'2016',
   url:'https://doi.org/10.1056/NEJMoa1607141',
   pts:[
-    '**Pergunta / população** — Em DM2 de alto risco cardiovascular (n=3.297), a semaglutida subcutânea é **cardiovascularmente segura**?',
+    '**Pergunta / população** — Em DM2 de alto risco cardiovascular (n=3.297), a semaglutida subcutânea é **segura do ponto de vista cardiovascular**?',
     '**Intervenção vs comparador** — **Semaglutida SC 0,5 mg ou 1,0 mg/semana** vs **placebo**. Seguimento de **104 semanas**.',
     '**Desfecho primário** — **MACE-3** (morte cardiovascular, IAM não fatal, AVC não fatal), com desenho de **não inferioridade**.',
     '**Resultado-chave** — MACE **6,6% vs 8,9%** — **HR 0,74** (IC95% 0,58–0,95); p<0,001 para não inferioridade. A redução foi dirigida por **AVC não fatal (HR 0,61)**. ⚠️ Estudo **de segurança, com poder limitado**: a superioridade é *nominal*.',

@@ -80,7 +80,7 @@ const DB = {
   'SURMOUNT-5 (2025)': '91e56b48f641c40033d934ee049a093b',
   'SURMOUNT-OSA (2024)': '3066146695a7765fe4cdc4dcb7e7d11f',
   'SURPASS-2 (2021)': '522efc4baa04624d3e569e9f5998851a',
-  'SUSTAIN-6 (2016)': '59898bae3df669e5a4c71b712177fa88',
+  'SUSTAIN-6 (2016)': '1fb90f18c8ef48aa5dd0621b2eb7feb2',
   'UKPDS 33 (1998)': 'daeaf0e2d4f951a8a9d1d75102f66691',
   // ---- 2º lote (info2.js) ----
   'ACCORD (2008)': 'c180d0e777e164ca8099785ad9b3e2d8',
