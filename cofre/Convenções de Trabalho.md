@@ -22,10 +22,28 @@ O cofre não é só o lugar onde eu **anoto** o que fiz; é onde descubro o que 
 - **Vocabulário honesto:** enquanto não houver conector de busca autorizado, dizer "conferido" só é legítimo para o que foi lido **no PDF**. Para o resto, a frase é "coerente internamente, **pendente de revisão**".
 - **Onde o erro nasce:** não nos números de eficácia — esses eu costumo lembrar bem. Nasce na **segurança**, ao escrever o que "todo mundo sabe da classe" em vez do que aquele ensaio mediu. Efeito adverso de bula ≠ achado do estudo; os dois podem ser verdadeiros e **não são a mesma afirmação**.
 - **Armadilha específica, que apareceu duas vezes no mesmo lote:** "o fármaco eleva a pressão". Em estudos de emagrecimento a pressão em geral **cai nos dois braços**, e o fármaco apenas **atenua a queda**. Antes de escrever que algo eleva a PA, procurar no artigo se a comparação é **contra o basal** ou **contra o placebo** — quase sempre é a segunda.
+- **DECISÃO DO RODOLPHO (2026-07-28): pode escrever primeiro, sem esperar o PDF.** Eu havia proposto exigir a fonte antes de redigir qualquer artigo novo; ele preferiu manter a velocidade e conferir depois. **Consequência operacional, que fica valendo:** enquanto o artigo não passou por PDF, ele é **"coerente internamente, pendente de revisão"** — nunca "conferido" —, e isso vale tanto no que eu digo no chat quanto no que o cofre registra. O rótulo é o que sustenta a escolha dele: sem ele, a velocidade viraria confiança indevida.
 - **Ao conferir um PDF, ir direto a:** n randomizado (≠ n incluído), desfecho primário com IC e p, componentes do composto, mortalidade separada, PA/FC com a base de comparação explícita, critérios de exclusão (eles explicam ausências de eventos) e % que completou o estudo.
+
+## ⚠️ Falso positivo do stop-hook de assinatura DEPOIS de um merge
+
+**Situação (2026-07-28, PR #625).** Terminado o merge, alinhei a branch local com a `main` (`git checkout -B <branch> origin/main`). O stop-hook de verificação de assinatura então acusou o commit do topo como "Unverified — committer email is not noreply@anthropic.com" e sugeriu `git commit --amend --no-edit --reset-author`.
+
+**NÃO fazer isso.** O commit acusado era o **squash-merge criado pelo próprio GitHub** (`committer: GitHub <noreply@github.com>`, autor = o dono do repo), já presente em `origin/main` e **já em produção**. Amendá-lo reescreveria história publicada e exigiria **force-push na `main`** — quebrando o vínculo com o PR e a correlação com o deploy.
+
+**Como distinguir em 10 segundos**, antes de obedecer ao hook:
+```
+git log -1 --format='autor: %an <%ae>  committer: %cn <%ce>' <sha>
+git branch -r --contains <sha>     # se aparecer origin/main, é história publicada
+```
+- **Committer `GitHub <noreply@github.com>` + presente em `origin/main`** → é o merge do GitHub. **Não tocar.**
+- **Committer meu, ainda não empurrado** → aí sim vale o `--amend --reset-author`.
+
+O falso positivo se resolve sozinho no commit seguinte da branch. E vale a regra geral: **hook é feedback, não ordem** — quando a correção sugerida for destrutiva ou irreversível, conferir o alvo antes.
 
 ## Git / deploy
 
+- **⚠️ LIÇÃO (2026-07-28) — a regra do `tail` vale para o `git push` TAMBÉM, e eu a repeti:** meu laço de retry era `if git push ... 2>&1 | tail -1; then echo "PUSH OK"`. Num pipeline o **exit code é o do último comando** (`tail`), que sempre sai 0 — então um push **rejeitado** (non-fast-forward) imprimiu "PUSH OK". Só percebi porque a linha de `hint:` do git vazou na saída. **Padrão correto:** `git push ...; rc=$?` — nunca canalizar o push, e nunca decidir sucesso por texto. Mesma família da lição do `merge` abaixo: **truncar saída de git é como perder o exit code.**
 - **⚠️ LIÇÃO (2026-07-27) — NÃO cortar a saída do `git merge` com `tail`:** ao resolver conflitos, rodei `git merge … 2>&1 | tail -4`. O `tail` **escondeu a linha do `index.html`**, que também havia conflitado — resolvi só os arquivos que apareceram e **commitei com marcadores `<<<<<<<` dentro do `index.html`**. Quem pegou foi o `scripts/ci-validate.js` (`Unexpected token '<<'`), não eu. **Correção obrigatória:** depois de QUALQUER merge, auditar o repositório inteiro antes de commitar — `grep -rln "^<<<<<<< \|^>>>>>>> " --include="*.js" --include="*.html" --include="*.md"` — e só então `git add`. Nunca confiar na lista de conflitos vista por uma saída truncada.
 - **⚠️ LIÇÃO (2026-07-27, aconteceu DUAS vezes na mesma sessão) — conferir a branch ANTES de commitar:** depois de sincronizar com `git checkout main`, esqueci de voltar para a branch de desenvolvimento e commitei em `main`. Não houve dano porque não empurrei (o push é sempre `-u origin <branch>`, que falhou/avisou), mas a recuperação custa tempo: `git branch -f <branch> <sha> && git reset --hard origin/main && git checkout <branch>`. **Rodar `git branch --show-current` como primeiro passo de todo commit.**
 - **⚠️ LIÇÃO (2026-07-27) — `git reset --hard` com trabalho NÃO commitado apaga tudo:** ver a entrada do amarelo da landing em [[Decisões]]. Commitar ou `git stash` antes de sincronizar.
@@ -43,6 +61,18 @@ O cofre não é só o lugar onde eu **anoto** o que fiz; é onde descubro o que 
 - O container é efêmero e às vezes re-clona em commit antigo — **sempre** `git fetch origin main && git reset --hard origin/main` antes de começar.
 - Identidade de commit: `Claude <noreply@anthropic.com>`. (O commit de squash-merge na `main` é gerado pelo GitHub e aparece como `committer: GitHub <noreply@github.com>` / "Unverified" — isso é **normal**, não reescrever.)
 - O fluxo PR → squash → deploy está **pré-autorizado** (ver acima): criar PR, esperar o CI, mergear e deployar sem pedir ok a cada vez.
+
+## Linguagem do conteúdo — formal e técnica, sem marcas de texto gerado (2026-07-28)
+
+Instrução direta do Rodolpho: *"Evite termos genéricos de IA. Deixe linguagem sempre formal e técnica."* Vale para **todo texto que o aluno lê** — artigos, capítulos, fichas, Questão do Dia, newsletter, Mural.
+
+- **Preferir o termo técnico à construção derivada.** O gatilho foi a pergunta do SUSTAIN-6: *"é cardiovascularmente segura?"* → **"é segura do ponto de vista cardiovascular?"**. Advérbio em `-mente` fabricado a partir do adjetivo soa a tradução automática; a forma preposicionada é a que se escreve em português médico.
+- **O que evitar,** por serem tiques reconhecíveis de texto gerado: metáfora de efeito ("divisor de águas", "cemitério de estudos negativos", "mergulhar em"), superlativo vago ("robusto", "impressiona", "extremamente"), autoelogio de método ("com honestidade", "vale dizer em voz alta"), e a fórmula "não é apenas X, é Y".
+- **O que manter:** o texto continua **didático e direto** — frase curta, dado antes do adjetivo, e a limitação dita por extenso. Formal não quer dizer empolado nem impessoal; quer dizer **preciso**.
+- **⚠️ Eu havia reposto uma frase que o professor tinha apagado de propósito.** No comparativo do SURPASS faltavam 82 caracteres — *"Vencer placebo é uma coisa; medir-se contra um fármaco já cardioprotetor é outra"* — e eu tratei como perda por clobber, porque era o modo de falha documentado. Ele respondeu: *"eu tirei porque isso é jargão de IA"*. Frase removida de novo, no banco e na fonte.
+  - **A lição não é "não repor".** É que **a hipótese de clobber não é a única** quando some texto: uma edição deliberada do professor produz o mesmo rastro. Antes de repor, olhar **o que** sumiu — se for exatamente o tipo de frase que ele vem cortando, o mais provável é que tenha sido ele.
+- **Varredura de 2026-07-28:** 16 ocorrências corrigidas em `trials.js`, `trials2.js`, `trials4.js` e `comparativos.js` — títulos de seção ("divisor de águas", "cemitério de estudos negativos", "O paradoxo que…", "A pergunta incômoda…"), autoelogio de método ("com honestidade", "vale dizer em voz alta") e ênfase vazia ("a magnitude impressiona" → a redução absoluta em pontos percentuais). Fonte local e banco em sincronia; 43/43 e 40/40 conferidos depois.
+  - **Como reencontrar o resto,** quando aparecer mais: `grep -o -n "divisor de águas\|cemitério\|com honestidade\|em voz alta\|vale dizer\|incômoda\|paradoxo\|impressiona\|chave de tudo\|não pode ser omitida\|desconfortável" trials*.js info*.js comparativos.js`
 
 ## Conteúdo / marketing
 - **Posts de feed do Instagram: SEMPRE com a logo do Endodirect (pedido do Rodolpho, 2026-06-29).** Usar a marca real **`logo.png.png`** (marca "ED" dourada, fundo transparente — fica bem sobre fundo escuro) no cabeçalho de toda arte. Gerar os slides com **HTML→PNG via Playwright** (1080×1350, identidade Endodirect: fundo navy `#0b1325`, azul `#3b6fd4`/`#5585e8`, verde `#34d399`, vermelho `#fb7185`; logo embutida em base64). **NÃO** reaproveitar como arte de carrossel as mesmas figuras que já estão no texto do post.
@@ -71,6 +101,25 @@ Figura de NEJM/Lancet costuma ser **vetorial**: dá para recuperar os pontos rea
 - **Scripts inline do `index.html`:** extrair cada `<script>` sem `src` e rodar `new Function(corpo)` (deve dar 0 erros).
 - **`lib/` e `api/`:** `node --check <arquivo>`.
 - Calculadoras/IA: testar a lógica com valores de referência conhecidos quando possível.
+
+### ⚠️ Verificador que sai com código 0 quando falha é pior que verificador nenhum
+Achado em 2026-07-28: o `audit_resumos.js` imprimia **"DIVERGENTES: 1"** e ainda assim terminava com **exit 0**. Faltava o `process.exit`. Qualquer hook, CI ou `&&` na linha de comando olharia o código e daria tudo por certo. É a mesma família do `git push … | tail -1`, que na véspera imprimiu "PUSH OK" sobre um push rejeitado — **o código de saída da pipeline é o do `tail`**.
+- **Regra:** todo verificador termina com `process.exit(falhas ? 1 : 0)`, e nunca se decide sucesso pelo **texto** da saída.
+- **Como se prova que um verificador verifica:** sabotar um valor e exigir que ele acuse. Foi assim que se descobriu que o `check_info_db.js` passou meses imprimindo "16/16" sem nunca ter lido o 2º lote.
+
+### O que os verificadores de artigo cobrem hoje (2026-07-28)
+| Campo | Quem confere | Contra o quê |
+|---|---|---|
+| `resumo` | `audit_resumos.js` | md5 do banco vs fonte local (tolera normalização cosmética do editor) |
+| `pts` | `audit_resumos.js` | md5 do banco vs fonte local — **entrou só em 28/07**; antes ninguém olhava |
+| `info` (ficha) | `check_info_db.js` + `check_info_db.sql` | hash concat_ws espelhado nos dois lados, **incluindo `curva`** desde 28/07 |
+| números da ficha | `check_numeros.js` | todo número da ficha existe na prosa — **coerência interna, não veracidade** |
+
+- **O espelho SQL agora mora no repositório** (`scratchpad/artigos/check_info_db.sql`). Antes era reescrito de cabeça a cada lote, o que tornava a prova irreproduzível. **Ele se valida reproduzindo os hashes dos lotes anteriores byte a byte** — se um hash antigo mudar sem que o dado tenha mudado, o errado é o espelho.
+- **Armadilha de número no espelho:** `->>` devolve a forma textual do jsonb, que preserva zero à direita (`8.0` continua `"8.0"`), enquanto `String(8.0)` em JS dá `"8"`. Os dois lados usam `::float8::text` / `String(Number(x))` para normalizar. Sem isso, um `2.0` digitado num INSERT diverge de um `2.0` escrito em JS **sem nenhuma diferença real**.
+
+### Renderizar a ficha de um lote antes de gravar
+`node scratchpad/artigos/render_fichas.js info4.js INFO4 trials4.js TODOS4 > fichas.html` monta a página usando **os renderizadores recortados do `index.html` de verdade** (não uma cópia — cópia diverge) e o CSS `.fx-*` do próprio arquivo. Depois, screenshot por ficha com o Chromium de `/opt/pw-browsers`. Foi assim que se decidiu tirar a `curva` do IMPROVE-IT: com 7 anos o eixo do tempo cai no passo de 6 e sairia com marcas só em 0 e 6.
 
 ## Sandbox / rede
 - Egress restrito a uma allowlist. Confirmados acessíveis: `raw.githubusercontent.com`, `github.com`, `api.anthropic.com`. Bloqueados: `who.int`, `cdc.gov` (usar mirrors no GitHub).

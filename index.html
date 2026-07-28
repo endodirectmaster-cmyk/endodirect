@@ -479,6 +479,19 @@ textarea{resize:vertical;line-height:1.6}
 .mural-text .mural-p:first-child{margin-top:0}
 .mural-text .mural-p:last-child{margin-bottom:0}
 .mural-text .mural-h{font-weight:700;color:var(--tx);font-size:1.12rem;line-height:1.35;margin:1.1rem 0 .35rem;text-align:left}
+/* Discussão completa (texto integral do PMC): recolhida por padrão — são ~2.000
+   palavras, e aberta destruiria a rolagem da lista do mural. */
+.mural-disc{margin:.2rem 0 .9rem;border:1px solid var(--bd);border-radius:10px;background:var(--s2)}
+.mural-disc>summary{cursor:pointer;list-style:none;padding:.6rem .85rem;font-weight:650;font-size:.88rem;
+  color:var(--blue2);display:flex;align-items:center;gap:.5rem;flex-wrap:wrap}
+.mural-disc>summary::-webkit-details-marker{display:none}
+.mural-disc>summary::after{content:'▾';margin-left:auto;transition:transform .15s}
+.mural-disc[open]>summary::after{transform:rotate(180deg)}
+.mural-disc>summary:hover{background:var(--s3,rgba(127,127,127,.06));border-radius:10px}
+.mural-disc>summary:focus-visible{outline:2px solid var(--blue2);outline-offset:2px}
+.mural-disc-meta{font-weight:500;font-size:.74rem;color:var(--t2)}
+.mural-disc-body{padding:.2rem .85rem .85rem;margin-bottom:0}
+@media (prefers-reduced-motion:reduce){.mural-disc>summary::after{transition:none}}
 .mural-text .mural-h:first-child{margin-top:0}
 .mural-text .mural-ul{margin:.35rem 0;padding-left:1.2rem;text-align:left;text-align-last:left}
 .mural-text .mural-ul li{margin:.15rem 0;line-height:1.55;overflow-wrap:anywhere}
@@ -3815,7 +3828,11 @@ function hydrateRemoteState(){
   if(!(currentUser&&currentUser.id)){hydratePublicContent();return;}
   var loads=[
     client.from('endodirect_app_state').select('payload').eq('user_id',currentUser.id).maybeSingle()
-      .then(function(res){if(res.error)throw res.error;if(res.data&&res.data.payload)applyStatePayload(res.data.payload,true);})
+      .then(function(res){if(res.error)throw res.error;if(res.data&&res.data.payload)applyStatePayload(res.data.payload,true);}),
+    // Só a LISTA de quais artigos têm discussão completa (uns poucos KB). O texto
+    // em si é buscado ao abrir — ver muralDiscussaoHTML. Falha aqui não quebra
+    // nada: sem a lista, o bloco simplesmente não aparece.
+    carregarMuralDiscIds(client)
   ];
   if(currentUser.role==='admin'){
     loads.push(client.from('endodirect_global_state').select('payload,updated_at').eq('id','main').maybeSingle()
@@ -9771,6 +9788,7 @@ function initMural(){
       +'<h3>'+esc(a.titulo||'Aviso aos alunos')+'</h3>'
       +'<div class="mural-date">'+dateBR(a.at)+'</div>'
       +'<div class="mural-text">'+muralTextHTML(muralBodyText(a)||'Comunicado publicado pela equipe Endodirect.')+'</div>'
+      +muralDiscussaoHTML(a)
       +'<div class="mural-source">Fonte: '+source+'</div>'
       +'</article>';
   }
@@ -12131,6 +12149,7 @@ function admMuralSecHTML(){
       +'<h3>'+esc(a.titulo||'Aviso aos alunos')+'</h3>'
       +'<div class="mural-date">'+dateBR(a.at)+'</div>'
       +'<div class="mural-text">'+muralTextHTML(muralBodyText(a)||'Comunicado publicado pela equipe Endodirect.')+'</div>'
+      +muralDiscussaoHTML(a)
       +'<div class="mural-source">Fonte: '+source+'</div>'
       +'<div class="mural-card-actions">'+(isRadarAuto(a)?'<button class="btn btn-outline btn-sm" data-adm-hideradar="'+esc(avisoKeyStr(a))+'">🙈 Ocultar</button>':'<button class="btn btn-outline btn-sm" data-adm-editav="'+i+'">Editar</button><button class="btn btn-outline btn-sm" data-adm-delav="'+i+'" style="color:var(--red);border-color:var(--red)">🗑 Excluir</button>')+'</div>'
       +'</article>';
@@ -13224,6 +13243,38 @@ function bindAdmSec(sec){
     });
     var bCancel=document.getElementById('btn-adm-av-cancel');
     if(bCancel)bCancel.addEventListener('click',function(){admMuralShowForm=false;admMuralEdit=null;renderAdmSec('mural');});
+    // Gerar a discussão completa de um artigo do mural. A geração roda no
+    // SERVIDOR (api/admin/refresh-radar, action:'discussao'): é lá que existe a
+    // chave da IA e o acesso ao PMC, e é lá que a gravação é pontual — o
+    // cliente reescreveria o payload inteiro e atropelaria o resto do mural.
+    main.querySelectorAll('[data-adm-disc]').forEach(function(b){b.addEventListener('click',function(){
+      var sid=b.dataset.admDisc;if(!sid)return;
+      var client=getSupabaseClient();
+      if(!client){notify('Supabase indisponível.','err');return;}
+      var rot=b.textContent;b.disabled=true;b.innerHTML=ldHTML('Lendo o artigo...');
+      client.auth.getSession().then(function(r){
+        var tok=r&&r.data&&r.data.session&&r.data.session.access_token;
+        if(!tok)throw new Error('Sessão expirada. Entre novamente.');
+        return fetch('/api/admin/refresh-radar',{method:'POST',
+          headers:{'Content-Type':'application/json',Authorization:'Bearer '+tok},
+          body:JSON.stringify({action:'discussao',sourceId:sid})});
+      }).then(function(r){return r.json().catch(function(){return{ok:false,error:'Resposta inválida do servidor.'};});})
+      .then(function(d){
+        if(!d.ok)throw new Error(d.error||'Falha ao gerar a discussão.');
+        var m=d.meta||{};
+        notify('Discussão gerada — '+(m.palavras||'?')+' palavras de texto integral, '
+          +(m.tabelas||0)+' tabela(s), '+(m.figuras||0)+' figura(s).','ok');
+        // Relê do servidor: a discussão foi gravada lá, não aqui. Mesmo caminho
+        // do botão "Atualizar radar" — não reescreve o payload pelo cliente.
+        return client.from('endodirect_global_state').select('payload').eq('id','main').maybeSingle().then(function(g){
+          if(g&&g.data&&g.data.payload)applyStatePayload(g.data.payload);
+          renderAdmSec('mural');
+        });
+      }).catch(function(e){
+        notify('Erro: '+(e&&e.message||e),'err');
+        b.disabled=false;b.textContent=rot;
+      });
+    });});
     main.querySelectorAll('[data-adm-hideradar]').forEach(function(b){b.addEventListener('click',function(){
       var key=b.dataset.admHideradar;
       radarAvisos=radarAvisos.filter(function(x){return avisoKeyStr(x)!==key;});
@@ -13910,6 +13961,63 @@ function muralBodyText(a){
   var tipo=(typeof muralDisplayType==='function')?muralDisplayType(a):(a&&a.tipo);
   return isFormalMuralType(tipo)?formalizeMuralText(t):t;
 }
+// Discussão completa do artigo, escrita a partir do TEXTO INTEGRAL (PMC) —
+// não do abstract. Fica RECOLHIDA: o card do mural é uma lista de varredura, e
+// abrir 2.000 palavras por item destruiria a rolagem. Mesma decisão do resumo
+// dos artigos/trials, que também fica atrás de um clique.
+// ⚠️ Só existe para artigo de acesso aberto (~30% do mural). Nos demais só há o
+// abstract, e discussão escrita em cima de abstract é texto inventado.
+// Espelha `pmcIdFromLink` de lib/fulltext.js: só o link do PubMed Central
+// garante texto integral. DOI da editora costuma bater em paywall.
+function muralTemFullText(a){
+  return !!(a&&a.sourceId&&/\/pmc\/articles\/PMC\d+/i.test(String(a.link||'')));
+}
+// Quais artigos TÊM discussão. Só os ids — o texto (~12 KB cada) fica fora de
+// qualquer payload de carregamento, senão o Mural repetiria a falha de entrega
+// que obrigou a separar o endodirect_member_resumos.
+var muralDiscIds={};
+function carregarMuralDiscIds(client){
+  if(!client)return Promise.resolve();
+  return client.rpc('endodirect_mural_discussoes_ids').then(function(r){
+    if(r.error||!Array.isArray(r.data))return;
+    var m={};r.data.forEach(function(id){if(id)m[id]=1;});
+    muralDiscIds=m;
+  }).catch(function(){});
+}
+function muralDiscussaoHTML(a){
+  var sid=(a&&a.sourceId)||'';
+  if(!sid||!muralDiscIds[sid])return '';
+  return '<details class="mural-disc" data-disc="'+esc(sid)+'">'
+    +'<summary>📄 Discussão completa do artigo<span class="mural-disc-meta">texto integral</span></summary>'
+    +'<div class="mural-text mural-disc-body" data-disc-body>Carregando…</div></details>';
+}
+// Busca o texto ao ABRIR, uma vez por card. `toggle` borbulha? Não — por isso o
+// listener é registrado no próprio <details>, e a delegação usa captura.
+document.addEventListener('toggle',function(ev){
+  var d=ev.target;
+  if(!d||d.tagName!=='DETAILS'||!d.classList.contains('mural-disc')||!d.open)return;
+  if(d.dataset.discLoaded)return;
+  d.dataset.discLoaded='1';
+  var body=d.querySelector('[data-disc-body]');
+  var client=getSupabaseClient();
+  if(!client||!body){if(body)body.textContent='Indisponível agora.';return;}
+  client.rpc('endodirect_mural_discussao',{p_source_id:d.dataset.disc}).then(function(r){
+    if(r.error||!r.data||!r.data.markdown){
+      body.textContent='Não consegui carregar a discussão. Tente de novo daqui a pouco.';
+      d.dataset.discLoaded='';   // permite nova tentativa ao fechar e abrir
+      return;
+    }
+    body.innerHTML=muralTextHTML(r.data.markdown);
+    var m=r.data.meta||{};
+    var sel=[m.tabelas?(m.tabelas+' tabela'+(m.tabelas>1?'s':'')):'',
+             m.figuras?(m.figuras+' figura'+(m.figuras>1?'s':'')):''].filter(Boolean).join(' · ');
+    var tag=d.querySelector('.mural-disc-meta');
+    if(tag&&sel)tag.textContent=sel;
+  }).catch(function(){
+    body.textContent='Não consegui carregar a discussão.';
+    d.dataset.discLoaded='';
+  });
+},true);
 // Marcação inline de uma linha JÁ ESCAPADA (XSS-safe): imagens ![alt](url), URLs
 // de imagem "cruas" (…png/.jpg/…, inclusive do bucket do Endodirect coladas
 // direto), **negrito**, __sublinhado__ e *itálico*. As imagens viram placeholders
@@ -14061,8 +14169,14 @@ function muralNoticeCardHTML(a,admin){
     +'<div class="mural-date">'+dateBR(a.at)+'</div>'
     +imgHTML
     +'<div class="mural-text">'+muralTextHTML(muralBodyText(a)||'Comunicado publicado pela equipe Endodirect.')+'</div>'
+      +muralDiscussaoHTML(a)
     +'<div class="mural-source">Fonte: '+source+'</div>'
-    +(admin?'<div class="mural-card-actions"><button class="btn btn-outline btn-sm" data-adm-editav="'+i+'">✏️ Editar</button>'+(isRadarAuto(a)?'<button class="btn btn-outline btn-sm" data-adm-hideradar="'+esc(avisoKeyStr(a))+'" style="color:var(--red);border-color:var(--red)">🗑 Excluir</button>':'<button class="btn btn-outline btn-sm" data-adm-delav="'+i+'" style="color:var(--red);border-color:var(--red)">🗑 Excluir</button>')+'</div>':'')
+    // O botão da discussão só aparece onde ela é POSSÍVEL: link do PMC (texto
+    // integral aberto). Mostrá-lo nos outros seria oferecer algo que só pode
+    // ser entregue inventando o conteúdo a partir do resumo.
+    +(admin?'<div class="mural-card-actions"><button class="btn btn-outline btn-sm" data-adm-editav="'+i+'">✏️ Editar</button>'
+      +(muralTemFullText(a)?('<button class="btn btn-outline btn-sm" data-adm-disc="'+esc(String(a.sourceId||''))+'">'+(muralDiscIds[a.sourceId]?'🔁 Refazer discussão':'📄 Gerar discussão completa')+'</button>'):'')
+      +(isRadarAuto(a)?'<button class="btn btn-outline btn-sm" data-adm-hideradar="'+esc(avisoKeyStr(a))+'" style="color:var(--red);border-color:var(--red)">🗑 Excluir</button>':'<button class="btn btn-outline btn-sm" data-adm-delav="'+i+'" style="color:var(--red);border-color:var(--red)">🗑 Excluir</button>')+'</div>':'')
     +'</article>';
 }
 initMural=function(){

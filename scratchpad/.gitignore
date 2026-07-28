@@ -5,3 +5,8 @@ expand/
 **/test*.html
 figuras/cand_*.html
 figuras/lipo*.svg
+
+# Exceção: o espelho SQL do verificador de fichas NÃO é transitório — ele é a
+# prova de que o banco bate com a fonte local, e ficava fora do repositório
+# (reescrito de cabeça a cada lote) até 2026-07-28.
+!artigos/check_info_db.sql

@@ -1,6 +1,6 @@
 ---
 tags: [cofre, dados, supabase]
-atualizado: 2026-07-27
+atualizado: 2026-07-28
 ---
 
 # Dados e Supabase
@@ -25,7 +25,8 @@ Um item de `diretrizes` com **`rascunho:true`** é filtrado **no servidor**, nã
   select 'showcase' r, (select count(*) from jsonb_array_elements(endodirect_showcase_resumos()->'diretrizes') v where v->>'tipo'='artigo')
   union all select 'public', (select count(*) from jsonb_array_elements(endodirect_public_content()->'diretrizes') v where v->>'tipo'='artigo');
   ```
-- **Estado atual:** 16 artigos (9 Diabetes + 7 Obesidade) gravados com `tipo:'artigo'`, `privado:true`, `rascunho:true`. Conferidos por **md5 de `resumo`, `pts`, `flashcards` e metadados** contra `scratchpad/artigos/trials.js` — 16/16 idênticos.
+- **Estado atual (2026-07-28):** **43 artigos** gravados com `tipo:'artigo'`, `privado:true`, `rascunho:true` — 13 Diabetes, 19 Obesidade (inclui os 3 comparativos em tabela), **6 Lípides** e **5 Osteometabolismo**. **40 têm ficha (`info`)**; os 3 comparativos não têm, de propósito.
+  - Conferência: `resumo` e `pts` por md5 (`audit_resumos.js`, 43/43) e a ficha por hash espelhado em SQL (`check_info_db.js` + `check_info_db.sql`, 40/40). Fonte de verdade do conteúdo: `scratchpad/artigos/trials*.js` + `info*.js` + `comparativos.js`.
 
 
 
@@ -63,6 +64,25 @@ Três regras que ficaram:
    - **`d || o.novo` (merge de chaves de topo), nunca substituir o item inteiro:** preserva `rascunho`, `privado`, `ordem`, `id` e qualquer campo editorial que o professor tenha mexido. Substituir o objeto desfaria uma publicação feita entre a minha leitura e a minha escrita.
    - **`where updated_at = <lido antes>`:** se alguém gravou no meio, o `UPDATE` afeta **0 linhas** e eu fico sabendo. Sem isso, eu sobrescreveria em silêncio — sendo exatamente o problema de que estou me defendendo.
    - **`returning` sempre**, e conferir hash/tamanho logo depois. "Não deu erro" não é verificação.
+
+### ACRESCENTAR itens novos: guarda de idempotência em vez de trava otimista (2026-07-28)
+Para **inserir** artigos/capítulos (em vez de editar os existentes), a trava por `updated_at` tem um efeito ruim: se ela falhar no meio de uma sequência de inserções, metade do lote entrou e a outra metade não, e reexecutar duplica. Para *append*, a guarda certa é **pelo `tema`**:
+```sql
+with novos(j) as (values ($a$ {...} $a$::jsonb), ($b$ {...} $b$::jsonb))
+update endodirect_global_state g
+set payload = jsonb_set(g.payload,'{diretrizes}',
+      (g.payload->'diretrizes') || coalesce((
+        select jsonb_agg(n.j) from novos n
+        where not exists (select 1 from jsonb_array_elements(g.payload->'diretrizes') d
+                          where d->>'tema' = n.j->>'tema')), '[]'::jsonb)),
+    updated_at = now()
+where g.id='main'
+returning jsonb_array_length(payload->'diretrizes') as n_total;
+```
+- **Reexecutar é seguro:** quem já está lá não entra de novo, então dá para quebrar um lote grande em várias chamadas sem medo de duplicar nem de perder o meio.
+- **`coalesce(..., '[]')` importa:** sem ele, se *todos* os itens já existissem, o `jsonb_agg` devolveria NULL e o `||` **apagaria o array inteiro**.
+- **O `$a$…$a$` é obrigatório** porque o conteúdo tem aspas simples e barras invertidas por todo lado. Escolher um delimitador que comprovadamente não aparece no texto.
+- Continua valendo pedir o F5 antes e **conferir depois** (md5 do `resumo` e do `pts`, hash do `info`) — ver `scratchpad/artigos/check_info_db.sql`.
 
 ## Endurecimento de segurança (2026-07-01)
 Após o linter do Supabase (`get_advisors`), aplicados via MCP (ref. versionada em `supabase/security-hardening-2026-07.sql`):

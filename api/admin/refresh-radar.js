@@ -3,6 +3,8 @@
 // Supabase do admin>. Validamos o token, conferimos que o e-mail esta em
 // endodirect_admins e so entao rodamos o radar (lib/radar.js).
 const { runRadar } = require('../../lib/radar');
+const { gerarDiscussao } = require('../../lib/discussao');
+const { pmcIdFromLink } = require('../../lib/fulltext');
 const push = require('../../lib/push');
 
 const SUPABASE_URL = process.env.SUPABASE_URL || process.env.NEXT_PUBLIC_SUPABASE_URL || 'https://auth.endodirect.com.br';
@@ -78,6 +80,24 @@ module.exports = async function handler(req, res) {
     }
   }
 
+  // { action: 'discussao', sourceId } → gera a DISCUSSÃO COMPLETA do artigo a
+  // partir do texto integral (PMC) e grava em radar_avisos[i].discussao.
+  //
+  // ⚠️ Está aqui dentro, e não num arquivo próprio em api/, porque o projeto
+  // está em 12/12 funções serverless — o teto do plano da Vercel, que o
+  // scripts/ci-validate.js barra. Criar api/admin/discussao.js quebraria o build.
+  if (payload && payload.action === 'discussao') {
+    const sourceId = String(payload.sourceId || '').trim();
+    if (!sourceId) return json(res, 400, { ok: false, error: 'sourceId ausente.' });
+    try {
+      const out = await gerarDiscussaoDoMural(sourceId);
+      return json(res, out.ok ? 200 : 422, out);
+    } catch (error) {
+      console.error('[refresh-radar:discussao] erro:', (error && error.stack) || error);
+      return json(res, 500, { ok: false, error: (error && error.message) || 'Falha ao gerar a discussao.' });
+    }
+  }
+
   try {
     const result = await runRadar();
     return json(res, 200, { ok: true, ...result });
@@ -86,5 +106,53 @@ module.exports = async function handler(req, res) {
     return json(res, 500, { ok: false, error: (error && error.message) || 'Falha ao atualizar o radar.' });
   }
 };
+
+// Lê o item do mural, gera a discussão e grava em endodirect_mural_discussoes.
+//
+// ⚠️ NÃO grava dentro de payload.radar_avisos, por dois motivos independentes:
+//  1. ENTREGA — as RPCs mandam ao aluno os 200 artigos mais recentes. A ~12 KB
+//     por discussão, 200 delas somariam ~2,3 MB a um payload já em ~4,6 MB, e o
+//     limite empírico deste projeto (~5,3 MB) é o ponto em que a resposta DEIXA
+//     de chegar e a tela fica vazia.
+//  2. CLOBBER — reescrever o payload aqui atropelaria a aba aberta do professor,
+//     como documentado em cofre/Dados e Supabase.
+async function gerarDiscussaoDoMural(sourceId) {
+  const base = { apikey: SERVICE_ROLE, Authorization: 'Bearer ' + SERVICE_ROLE };
+  const r = await fetch(`${SUPABASE_URL}/rest/v1/endodirect_global_state?id=eq.main&select=payload`, { headers: base });
+  if (!r.ok) return { ok: false, error: 'Nao consegui ler o estado global.' };
+  const rows = await r.json().catch(() => []);
+  const pay = (rows && rows[0] && rows[0].payload) || {};
+  const lista = Array.isArray(pay.radar_avisos) ? pay.radar_avisos : [];
+  const idx = lista.findIndex((a) => a && a.sourceId === sourceId);
+  if (idx < 0) return { ok: false, error: 'Artigo nao encontrado no mural.' };
+
+  const item = lista[idx];
+  if (!pmcIdFromLink(item.link)) {
+    return { ok: false, error: 'Este artigo nao tem texto integral aberto (PMC). Sem ele, uma discussao completa seria inventada a partir do resumo.' };
+  }
+
+  const out = await gerarDiscussao(process.env.ANTHROPIC_API_KEY, item);
+  if (!out.ok) {
+    const motivos = {
+      sem_chave_ia: 'Chave da IA ausente no servidor.',
+      sem_texto_integral: 'O PMC nao devolveu o texto integral deste artigo (pode ser so o resumo depositado).',
+      resposta_curta: 'A IA devolveu texto curto demais para ser uma discussao.',
+      erro_rede: 'Falha de rede ao falar com a IA.'
+    };
+    return { ok: false, error: motivos[out.motivo] || ('Falha: ' + out.motivo) };
+  }
+
+  const up = await fetch(`${SUPABASE_URL}/rest/v1/endodirect_mural_discussoes?on_conflict=source_id`, {
+    method: 'POST',
+    headers: Object.assign({}, base, { 'Content-Type': 'application/json', Prefer: 'resolution=merge-duplicates,return=minimal' }),
+    body: JSON.stringify({ source_id: sourceId, markdown: out.markdown, meta: out.meta, updated_at: new Date().toISOString() })
+  });
+  if (!up.ok) {
+    const det = await up.text().catch(() => '');
+    console.error('[refresh-radar:discussao] gravacao falhou:', up.status, det.slice(0, 300));
+    return { ok: false, error: 'Discussao gerada, mas falhou ao gravar.' };
+  }
+  return { ok: true, meta: out.meta, chars: out.markdown.length };
+}
 
 module.exports.config = { maxDuration: 300 };
