@@ -102,5 +102,15 @@ try {
   fail('regressão do render do mural falhou (verifique muralTextHTML no index.html):\n' + out);
 }
 
+// 8. FAVORITOS: chave estável por tipo (nem todo item tem id confiável), a
+//    alternância e a presença da estrela nos 5 cards.
+try {
+  execFileSync(process.execPath, [path.join('scripts', 'test-favoritos.js')], { stdio: 'pipe' });
+  ok('regressão favoritos: chave nos 5 tipos + estrela nos 5 cards');
+} catch (e) {
+  const out = (e.stdout ? e.stdout.toString() : '') + (e.stderr ? e.stderr.toString() : '');
+  fail('regressão dos favoritos falhou (verifique favKey/favStarHTML no index.html):\n' + out);
+}
+
 if (errors) { console.error(`\n${errors} verificação(ões) falharam.`); process.exit(1); }
 console.log('\nTodas as verificações passaram.');
