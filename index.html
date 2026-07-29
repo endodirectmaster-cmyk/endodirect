@@ -489,7 +489,6 @@ textarea{resize:vertical;line-height:1.6}
 .mural-disc[open]>summary::after{transform:rotate(180deg)}
 .mural-disc>summary:hover{background:var(--s3,rgba(127,127,127,.06));border-radius:10px}
 .mural-disc>summary:focus-visible{outline:2px solid var(--blue2);outline-offset:2px}
-.mural-disc-meta{font-weight:500;font-size:.74rem;color:var(--t2)}
 .mural-disc-body{padding:.2rem .85rem .85rem;margin-bottom:0}
 .mural-text .mural-hr{border:0;border-top:1px solid var(--bd);margin:1.1rem 0}
 /* Favoritos: estrela nos cards + lista do painel */
@@ -13381,8 +13380,7 @@ function bindAdmSec(sec){
       .then(function(d){
         if(!d.ok)throw new Error(d.error||'Falha ao gerar a discussão.');
         var m=d.meta||{};
-        notify('Discussão gerada — '+(m.palavras||'?')+' palavras de texto integral, '
-          +(m.tabelas||0)+' tabela(s), '+(m.figuras||0)+' figura(s).','ok');
+        notify('Discussão gerada — '+(m.palavras||'?')+' palavras de texto integral.','ok');
         // Relê do servidor: a discussão foi gravada lá, não aqui. Mesmo caminho
         // do botão "Atualizar radar" — não reescreve o payload pelo cliente.
         // ⚠️ Recarregar a LISTA de quais artigos tem discussao e obrigatorio aqui.
@@ -14116,7 +14114,7 @@ function muralDiscussaoHTML(a){
   var sid=(a&&a.sourceId)||'';
   if(!sid||!muralDiscIds[sid])return '';
   return '<details class="mural-disc" data-disc="'+esc(sid)+'">'
-    +'<summary>📄 Discussão completa do artigo<span class="mural-disc-meta">texto integral</span></summary>'
+    +'<summary>📄 Discussão completa do artigo</summary>'
     +'<div class="mural-text mural-disc-body" data-disc-body>Carregando…</div></details>';
 }
 // ─────────────────────────────── FAVORITOS ────────────────────────────────
@@ -14253,12 +14251,11 @@ document.addEventListener('toggle',function(ev){
       d.dataset.discLoaded='';   // permite nova tentativa ao fechar e abrir
       return;
     }
+    // ⚠️ NÃO anunciar contagem de tabelas/figuras no cabeçalho. O `meta` conta o
+    // que o artigo TEM, não o que a discussão trouxe — e o professor abriu um
+    // card que dizia "4 tabelas · 2 figuras" com zero tabelas no texto. Rótulo
+    // que promete o que não está ali é pior do que rótulo nenhum.
     body.innerHTML=muralTextHTML(r.data.markdown);
-    var m=r.data.meta||{};
-    var sel=[m.tabelas?(m.tabelas+' tabela'+(m.tabelas>1?'s':'')):'',
-             m.figuras?(m.figuras+' figura'+(m.figuras>1?'s':'')):''].filter(Boolean).join(' · ');
-    var tag=d.querySelector('.mural-disc-meta');
-    if(tag&&sel)tag.textContent=sel;
   }).catch(function(){
     body.textContent='Não consegui carregar a discussão.';
     d.dataset.discLoaded='';

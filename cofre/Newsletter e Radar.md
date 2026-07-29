@@ -113,6 +113,19 @@ Corrente de N saltos tem **N pontos de falha em série**, e qualquer um deles en
 - **A espera do disparo subiu de 2s para 6s.** O lote inteiro sobe junto e quem chega por último pode pegar partida a frio; 2s não davam. Como os disparos saem em paralelo, os 6s são pagos **uma vez**, não por artigo.
 - `LOTE_CADEIA = 6` é o teto de gerações simultâneas — cabe nos limites de taxa da IA e custa ~US$ 1,20 por partida.
 
+### ⚠️ As tabelas nunca chegavam ao modelo — o corte do prompt comia justamente elas (2026-07-29)
+O professor abriu uma discussão cujo cabeçalho anunciava **"4 tabelas · 2 figuras"** e cujo rodapé dizia **"4 tabela(s) reproduzida(s) do artigo"**. No texto não havia tabela nenhuma: só prosa do tipo *"A Tabela 1 (referida no artigo) sintetiza…"*. Ele resumiu em uma linha: *"Não gerou as tabelas e figuras"*.
+
+**A causa não estava no prompt nem no modelo.** `fullTextForPrompt` montava corpo → figuras → tabelas e cortava o resultado em 60.000 caracteres. Como os anexos iam **por último**, num artigo de 8.100 palavras o bloco inteiro das tabelas ficava **fora** do prompt. O modelo via a menção "Table 1" no corpo do texto e nunca a tabela; a instrução mandava reproduzir um material que não tinha sido enviado. Hoje figuras e tabelas são montadas primeiro e **quem cede espaço é o corpo** (com piso de 20% do teto, para o caso de anexos gigantescos).
+
+**Os dois rótulos saíram**, a pedido dele:
+- O selo `mural-disc-meta` no cabeçalho do card. Ele contava o que o **artigo** tinha, não o que a **discussão** trouxe.
+- O rodapé de procedência (`*Discussão elaborada sobre o texto integral (PMC …)*`). Removido da geração **e das 21 discussões já gravadas**, com `regexp_replace` ancorado no fim do texto — 21 de 21 atingidas, nenhuma sobrou terminando em régua solta. O `updated_at` ficou intacto de propósito: é ele que o estrangulamento do gatilho lê como "tem cadeia rodando".
+
+A lição que vale além deste recurso: **rótulo que promete o que não está no texto é pior do que rótulo nenhum**. Os dois foram escritos por mim para dar procedência ao aluno e acabaram atestando conteúdo inexistente.
+
+`scripts/test-discussao-prompt.js` reprova se os anexos voltarem para depois do corte (sabotagem verificada: restaurar o truncamento antigo derruba 6 asserções), se o rodapé voltar ou se o selo reaparecer.
+
 ### ⚠️ `module.exports.config = { maxDuration }` NÃO vale neste runtime
 É convenção de Next.js; o runtime Node puro a ignora. Quem manda é a chave `functions` do **`vercel.json`** — `api/ai.js` está lá com 120s há tempos, e `api/admin/refresh-radar.js` entrou com 120s em 29/07. Foi acreditando no `300` declarado no código que eu calculei um orçamento de tempo inexistente e a geração automática morria antes de acontecer. **Conferir o `vercel.json`, não o topo do arquivo.**
 
