@@ -70,6 +70,18 @@ Depois de ligar o recurso, o professor voltou: *"Não gerou a discussão do arti
 - **No cron ficou só a carona:** `limite: 1` e orçamento calculado sobre **60 s**, não sobre 300. Quase nunca vai sobrar tempo, e tudo bem — quem gera em volume é o botão.
 - **A lição, que vale para qualquer etapa nova:** ao pendurar trabalho no fim de um handler que já faz muita coisa, o orçamento tem de sair do **teto real do plano**, não do `maxDuration` pedido. E etapa que "não roda" precisa **dizer** que não rodou — silêncio vira "o recurso está quebrado".
 
+### ✅ A forma que finalmente é automática: CADEIA DE INVOCAÇÕES (2026-07-29)
+Três tentativas até acertar, e as duas primeiras erraram pelo mesmo motivo — eu insistia em caber tudo numa invocação só.
+
+1. **Pendurar no fim do cron** → nunca alcançada (o orçamento saía do `maxDuration:300`, que no Hobby não vale).
+2. **Botão que percorre a fila pelo cliente** → funciona, mas **exige o professor clicar e manter a aba aberta**. Ele pediu automático três vezes; eu entreguei mecanismo manual duas.
+3. **Cadeia de invocações** — a que presta. `action:'discussao_cadeia'` gera **UMA** discussão e, antes de responder, dispara a **próxima invocação** para o próximo da fila. Cada artigo tem os seus 60s; a cadeia anda até esvaziar, sem cliente e sem aba aberta.
+
+- **Autenticação servidor-a-servidor:** o endpoint aceita `Bearer <CRON_SECRET>` além da sessão de admin. Esse segredo nunca chega ao navegador.
+- **⚠️ Disparar ANTES de responder.** Depois do `res.end()` a Vercel pode congelar a função e a requisição nem sai. O disparo usa `AbortController` com 2s: a conexão abre, a invocação do outro lado começa, e o abort é esperado — não é erro.
+- **Quem dá a partida:** o cron do radar (todo dia) e o botão "📄 Gerar discussões pendentes" (quando o professor quiser adiantar). O botão agora só dá a partida e avisa quantos estão na fila; não prende a aba.
+- **Se um elo falhar, a cadeia para** — e o cron do dia seguinte recomeça. Aceitável, e melhor que travar tentando ser esperto.
+
 ### ✅ O feed da ANVISA funciona
 No mesmo dia o professor perguntou por que o Mural não pegou a notícia *"Anvisa registra cinco novas canetas de semaglutida"*. **Pegou:** entrou em `adm_avisos` às 13h05, com fonte "Agência Nacional de Vigilância Sanitária (Anvisa)" e o link oficial do gov.br. O que ele tinha visto antes era o card **G1** da mesma notícia, criado à mão pelo "Gerar texto com IA" a partir de uma URL — G1 **não é fonte do radar** (a allowlist do Breaking News só tem regulador e farmacêutica). Card do G1 removido a pedido.
 
