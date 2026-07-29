@@ -490,6 +490,7 @@ textarea{resize:vertical;line-height:1.6}
 .mural-disc>summary:hover{background:var(--s3,rgba(127,127,127,.06));border-radius:10px}
 .mural-disc>summary:focus-visible{outline:2px solid var(--blue2);outline-offset:2px}
 .mural-disc-body{padding:.2rem .85rem .85rem;margin-bottom:0}
+.mural-disc-previa{margin-top:.7rem;padding-left:.7rem;border-left:2px solid var(--bd)}
 .mural-text .mural-hr{border:0;border-top:1px solid var(--bd);margin:1.1rem 0}
 /* Favoritos: estrela nos cards + lista do painel */
 .fav-star{background:none;border:0;cursor:pointer;font-size:1.05rem;line-height:1;padding:.15rem .3rem;
@@ -14082,9 +14083,33 @@ function formalizeMuralText(txt){
   }).join('\n').replace(/[ \t]+\n/g,'\n').replace(/\n{3,}/g,'\n\n').trim();
 }
 // Texto do corpo do card, já formalizado quando o tipo é um documento formal.
+// Rótulos que a DISCUSSÃO cobre por extenso. Quando ela existe, o resumo de
+// quatro linhas do radar vira repetição: "📝 Resumo" diz em um parágrafo o que
+// "## Pergunta e contexto" desenvolve, e "⚠️ Cautela" o que "## Limitações"
+// detalha. Pedido do professor (29/07), que descreveu o card que quer: as duas
+// linhas de cabeçalho e, em seguida, a discussão.
+var MURAL_ROTULOS_COBERTOS_PELA_DISCUSSAO=['📝 Resumo:','💡 Por que importa na prática:','⚠️ Cautela/limitação:'];
+// Data de publicação e Tipo de estudo FICAM: são identificação do artigo, não
+// conteúdo, e a discussão não os repete.
+function muralTextSemRepetido(t){
+  var linhas=String(t||'').split('\n');
+  var fora=[];
+  for(var i=0;i<linhas.length;i++){
+    var l=linhas[i];
+    var cobre=MURAL_ROTULOS_COBERTOS_PELA_DISCUSSAO.some(function(r){return l.indexOf(r)===0;});
+    if(cobre)break;   // do primeiro rótulo coberto em diante, é tudo repetição
+    fora.push(l);
+  }
+  var out=fora.join('\n').replace(/\s+$/,'');
+  return out||String(t||'');   // se nada sobrar, é melhor o texto antigo que um card vazio
+}
 function muralBodyText(a){
   var t=(a&&a.texto)||'';
   var tipo=(typeof muralDisplayType==='function')?muralDisplayType(a):(a&&a.tipo);
+  var sid=(a&&a.sourceId)||'';
+  // Só corta onde há prévia para pôr no lugar. Sem prévia (RPC falhou, ou
+  // discussão sem texto), cortar deixaria o card mais pobre do que era.
+  if(sid&&muralDiscIds[sid]&&muralDiscPrev[sid])t=muralTextSemRepetido(t);
   return isFormalMuralType(tipo)?formalizeMuralText(t):t;
 }
 // Discussão completa do artigo, escrita a partir do TEXTO INTEGRAL (PMC) —
@@ -14098,23 +14123,43 @@ function muralBodyText(a){
 function muralTemFullText(a){
   return !!(a&&a.sourceId&&/\/pmc\/articles\/PMC\d+/i.test(String(a.link||'')));
 }
-// Quais artigos TÊM discussão. Só os ids — o texto (~12 KB cada) fica fora de
-// qualquer payload de carregamento, senão o Mural repetiria a falha de entrega
-// que obrigou a separar o endodirect_member_resumos.
+// Quais artigos TÊM discussão, e a PRÉVIA de cada uma (as duas primeiras
+// seções). O texto inteiro (~12 KB por artigo) continua fora de qualquer payload
+// de carregamento — foi o que obrigou a separar o endodirect_member_resumos.
+// A prévia cabe: 23 artigos somam ~44 KB, e a RPC corta em 2.000 caracteres.
 var muralDiscIds={};
+var muralDiscPrev={};
 function carregarMuralDiscIds(client){
   if(!client)return Promise.resolve();
+  return client.rpc('endodirect_mural_discussoes_previas').then(function(r){
+    if(r.error||!r.data||typeof r.data!=='object')return carregarMuralDiscIdsLegado(client);
+    var m={},p={};
+    Object.keys(r.data).forEach(function(id){if(id){m[id]=1;p[id]=String(r.data[id]||'');}});
+    muralDiscIds=m;muralDiscPrev=p;
+  }).catch(function(){return carregarMuralDiscIdsLegado(client);});
+}
+// Rede de segurança: se a RPC da prévia falhar, o card volta ao comportamento
+// antigo (só o botão) em vez de perder a discussão inteira.
+function carregarMuralDiscIdsLegado(client){
   return client.rpc('endodirect_mural_discussoes_ids').then(function(r){
     if(r.error||!Array.isArray(r.data))return;
     var m={};r.data.forEach(function(id){if(id)m[id]=1;});
-    muralDiscIds=m;
+    muralDiscIds=m;muralDiscPrev={};
   }).catch(function(){});
 }
+// ⚠️ A PRÉVIA FICA FORA DO <details>, não dentro do <summary>. Pedido do
+// professor (29/07): as duas primeiras seções à vista, "o resto aparece quando
+// clicar no maximizar". Dentro do summary, o navegador trataria os parágrafos
+// como parte do controle de clique; fora, o texto é texto e o botão é botão.
+// Ao abrir, a prévia é escondida e o corpo mostra a discussão inteira — a prévia
+// é um recorte do mesmo texto, então repeti-la seria ler duas vezes o começo.
 function muralDiscussaoHTML(a){
   var sid=(a&&a.sourceId)||'';
   if(!sid||!muralDiscIds[sid])return '';
-  return '<details class="mural-disc" data-disc="'+esc(sid)+'">'
-    +'<summary>📄 Discussão completa do artigo</summary>'
+  var prev=muralDiscPrev[sid]||'';
+  return (prev?'<div class="mural-text mural-disc-previa" data-disc-previa>'+muralTextHTML(prev)+'</div>':'')
+    +'<details class="mural-disc" data-disc="'+esc(sid)+'">'
+    +'<summary>📄 '+(prev?'Ver a discussão completa':'Discussão completa do artigo')+'</summary>'
     +'<div class="mural-text mural-disc-body" data-disc-body>Carregando…</div></details>';
 }
 // ─────────────────────────────── FAVORITOS ────────────────────────────────
@@ -14239,7 +14284,11 @@ function renderFavoritos(){
 // listener é registrado no próprio <details>, e a delegação usa captura.
 document.addEventListener('toggle',function(ev){
   var d=ev.target;
-  if(!d||d.tagName!=='DETAILS'||!d.classList.contains('mural-disc')||!d.open)return;
+  if(!d||d.tagName!=='DETAILS'||!d.classList.contains('mural-disc'))return;
+  // A prévia é o começo da mesma discussão: com o bloco aberto, some.
+  var previa=d.previousElementSibling;
+  if(previa&&previa.hasAttribute&&previa.hasAttribute('data-disc-previa'))previa.style.display=d.open?'none':'';
+  if(!d.open)return;
   if(d.dataset.discLoaded)return;
   d.dataset.discLoaded='1';
   var body=d.querySelector('[data-disc-body]');
