@@ -1,6 +1,6 @@
 ---
 tags: [cofre, decisoes]
-atualizado: 2026-07-28
+atualizado: 2026-07-29
 ---
 
 # Decisões
@@ -8,6 +8,10 @@ atualizado: 2026-07-28
 Log de decisões de produto e técnicas (mais recentes no topo).
 
 ## 2026-07
+- **⚠️ "Automático" tem de sobreviver ao cache do navegador do usuário (2026-07-29):** a discussão do Mural voltou **cinco vezes** como "não gerou". Nas duas últimas, o código estava certo e em produção — os logs mostraram que a cadeia **nunca tinha sido invocada**. Motivo: os dois crons do dia já haviam passado e o terceiro gatilho vivia no `index.html`, que o service worker do professor ainda servia na versão antiga.
+  - **A regra que fica:** um recurso que se anuncia como automático não pode ter *nenhum* gatilho que dependa do cliente ter atualizado. Pendurar a partida numa rota que o **pacote antigo também chama** (`/api/checkout/config`, no IIFE do topo do `index.html`) resolve, porque o servidor é sempre o novo.
+  - **Como eu deveria ter percebido antes:** a pergunta certa depois de publicar não é "o código está certo?", é *"o que, exatamente, vai chamar isto hoje?"*. Nas duas vezes a resposta era "nada até amanhã de manhã", e dava para ver isso nos logs em um minuto.
+  - **Segundo defeito, do mesmo dia:** a cadeia disparava o elo seguinte **depois** de gerar (~40s), então a continuidade da fila dependia da invocação caber nos 60s do plano. Agora dispara antes, com a lista do que falta no corpo. Detalhes em [[Newsletter e Radar]].
 - **⭐ FAVORITOS — estrela nos 5 tipos de conteúdo e um painel só (2026-07-28, pedido do Rodolpho):** artigo do Mural, resumo, questão, mapa mental e flashcard ganham uma estrela; o que for salvo aparece em **Favoritos**, agrupado por tipo, com atalho para o painel de origem.
   - **Onde mora:** `DB.favs`, chave **pessoal** (entra em `PERSONAL_STATE_KEYS`) → sincroniza entre aparelhos como questões e flashcards. Cada item guarda `{t,k,tit,sub,at}`.
   - **⚠️ A decisão que sustenta tudo é a CHAVE, e ela é feia de propósito.** Nem todo item tem id confiável: artigo do radar tem `sourceId`, **aviso escrito à mão pelo professor não tem**; resumo às vezes só tem `sub|tema`; questão do banco tem `code`, a gerada por IA nem sempre. `favKey` desce uma **cascata de fallback** até o texto do item, e **nunca devolve vazio** — se devolvesse, a estrela sumiria em silêncio naquele card. O preço assumido: renomear um item sem id estável "perde" o favorito. É melhor do que não deixar favoritar.

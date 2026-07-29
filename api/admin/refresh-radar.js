@@ -5,6 +5,7 @@
 const { runRadar } = require('../../lib/radar');
 const { gerarDiscussao } = require('../../lib/discussao');
 const { selecionar } = require('../../lib/discussao-auto');
+const { dispararCadeia } = require('../../lib/discussao-kick');
 const { pmcIdFromLink } = require('../../lib/fulltext');
 const push = require('../../lib/push');
 
@@ -115,15 +116,27 @@ module.exports = async function handler(req, res) {
   // seus proprios 60s, e a cadeia anda sozinha ate a fila esvaziar.
   if (payload && payload.action === 'discussao_cadeia') {
     try {
-      const fila = await filaDeDiscussoes();
-      if (!fila.length) return json(res, 200, { ok: true, fim: true, geradas: 0 });
-      const alvo = fila[0];
-      const out = await gerarDiscussaoDoMural(alvo.sourceId);
-      // Dispara a proxima ANTES de responder: depois do res.end() a Vercel pode
-      // congelar a funcao e a requisicao nem sair. Nao esperamos a resposta —
-      // so que a conexao seja aberta; a invocacao seguinte roda por conta dela.
-      if (fila.length > 1) await dispararProxima();
-      return json(res, 200, { ok: true, sourceId: alvo.sourceId, gerou: !!out.ok, erro: out.ok ? null : out.error, restam: fila.length - 1 });
+      // Quem dá a partida manda a cadeia sem `ids` e recebe o lote calculado
+      // aqui; cada invocação seguinte recebe a lista explícita do que falta.
+      // Passar a lista adiante evita recalcular a fila — o cálculo lê o payload
+      // inteiro (~4,6 MB) e, pior, a invocação seguinte veria a fila ANTES da
+      // gravação desta e escolheria o MESMO artigo.
+      let ids = Array.isArray(payload.ids) ? payload.ids.map(String).filter(Boolean) : null;
+      if (!ids) ids = (await filaDeDiscussoes()).slice(0, LOTE_CADEIA).map((f) => f.sourceId);
+      if (!ids.length) return json(res, 200, { ok: true, fim: true, geradas: 0 });
+      const alvo = ids[0];
+      const resto = ids.slice(1);
+      // ⚠️ A PRÓXIMA SAI ANTES DA GERAÇÃO, não depois. Disparar no fim amarrava a
+      // continuidade da cadeia a esta invocação caber nos 60s do plano: a geração
+      // leva ~40s e, se estourasse, a função morria com a próxima nunca disparada
+      // e a fila parava sem erro nenhum. Saindo antes, o elo seguinte já está de
+      // pé em ~2s e a cadeia anda mesmo que esta geração falhe ou seja morta.
+      if (resto.length) await dispararCadeia({ ids: resto });
+      // Outra invocação pode ter gerado este mesmo artigo (duas partidas
+      // simultâneas). Conferir custa uma consulta; regerar custa uma chamada de IA.
+      if (await jaTemDiscussao(alvo)) return json(res, 200, { ok: true, sourceId: alvo, gerou: false, pulado: 'ja_existe', restam: resto.length });
+      const out = await gerarDiscussaoDoMural(alvo);
+      return json(res, 200, { ok: true, sourceId: alvo, gerou: !!out.ok, erro: out.ok ? null : out.error, restam: resto.length });
     } catch (error) {
       console.error('[refresh-radar:cadeia] erro:', (error && error.stack) || error);
       return json(res, 500, { ok: false, error: (error && error.message) || 'Falha na cadeia.' });
@@ -159,22 +172,11 @@ module.exports = async function handler(req, res) {
   }
 };
 
-// Dispara a proxima invocacao da cadeia. NAO espera a resposta: aborta em 2s,
-// tempo de sobra para a requisicao sair. O que importa e a invocacao do outro
-// lado ter comecado — ela roda ate o fim por conta propria.
-async function dispararProxima() {
-  const base = process.env.PUBLIC_BASE_URL || 'https://www.endodirect.com.br';
-  const ctrl = new AbortController();
-  const t = setTimeout(() => ctrl.abort(), 2000);
-  try {
-    await fetch(`${base}/api/admin/refresh-radar`, {
-      method: 'POST', signal: ctrl.signal,
-      headers: { 'Content-Type': 'application/json', Authorization: 'Bearer ' + process.env.CRON_SECRET },
-      body: JSON.stringify({ action: 'discussao_cadeia' })
-    });
-  } catch (e) { /* abort esperado: a requisicao ja saiu */ }
-  finally { clearTimeout(t); }
-}
+// Quantos artigos uma partida põe na cadeia. Como cada elo dispara o seguinte
+// ANTES de gerar, os do lote sobem quase juntos — daí o teto: 6 gerações
+// simultâneas cabem no plano e nos limites de taxa da IA. O que ficar de fora
+// sai na próxima partida (carga de página, cron ou abertura do Mural).
+const LOTE_CADEIA = 6;
 
 // Fila de discussões pendentes: qualifica, ainda não tem, mais novos primeiro.
 // Sem IA e sem rede externa além do Supabase — responde em menos de um segundo.
@@ -187,6 +189,17 @@ async function filaDeDiscussoes() {
   const d = await fetch(`${SUPABASE_URL}/rest/v1/endodirect_mural_discussoes?select=source_id`, { headers: base });
   const jaTem = new Set(((await d.json().catch(() => [])) || []).map((x) => x && x.source_id).filter(Boolean));
   return selecionar(avisos, jaTem, 200).map((a) => ({ sourceId: a.sourceId, titulo: a.titulo || '', tipo: a.tipo || '' }));
+}
+
+// Este artigo já tem discussão gravada? Consulta de uma linha, uma coluna.
+async function jaTemDiscussao(sourceId) {
+  try {
+    const url = `${SUPABASE_URL}/rest/v1/endodirect_mural_discussoes?source_id=eq.${encodeURIComponent(sourceId)}&select=source_id&limit=1`;
+    const r = await fetch(url, { headers: { apikey: SERVICE_ROLE, Authorization: 'Bearer ' + SERVICE_ROLE, Accept: 'application/json' } });
+    if (!r.ok) return false;
+    const rows = await r.json().catch(() => []);
+    return Array.isArray(rows) && rows.length > 0;
+  } catch (e) { return false; }
 }
 
 // Lê o item do mural, gera a discussão e grava em endodirect_mural_discussoes.

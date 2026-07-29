@@ -112,5 +112,17 @@ try {
   fail('regressão dos favoritos falhou (verifique favKey/favStarHTML no index.html):\n' + out);
 }
 
+// 9. CADEIA de discussões: a próxima invocação tem de ser disparada ANTES da
+//    geração (senão o teto de 60s mata a cadeia em silêncio) e a partida tem de
+//    continuar pendurada no /api/checkout/config, que o pacote antigo do
+//    navegador também chama.
+try {
+  execFileSync(process.execPath, [path.join('scripts', 'test-discussao-cadeia.js')], { stdio: 'pipe' });
+  ok('regressão cadeia de discussões: disparo antes da geração + carona no config + estrangulamento');
+} catch (e) {
+  const out = (e.stdout ? e.stdout.toString() : '') + (e.stderr ? e.stderr.toString() : '');
+  fail('regressão da cadeia de discussões falhou (verifique lib/discussao-kick.js + api/admin/refresh-radar.js):\n' + out);
+}
+
 if (errors) { console.error(`\n${errors} verificação(ões) falharam.`); process.exit(1); }
 console.log('\nTodas as verificações passaram.');

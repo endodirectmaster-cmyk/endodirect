@@ -14,21 +14,7 @@ const { sendStreakReminders } = require('../../lib/push');
 
 // Dá a partida na cadeia de discussões do Mural (uma invocação por artigo).
 // Não espera a resposta: o que importa é a primeira invocação ter começado.
-async function dispararCadeiaDiscussoes() {
-  if (!process.env.CRON_SECRET) return false;
-  const base = process.env.PUBLIC_BASE_URL || 'https://www.endodirect.com.br';
-  const ctrl = new AbortController();
-  const t = setTimeout(() => ctrl.abort(), 2000);
-  try {
-    await fetch(`${base}/api/admin/refresh-radar`, {
-      method: 'POST', signal: ctrl.signal,
-      headers: { 'Content-Type': 'application/json', Authorization: 'Bearer ' + process.env.CRON_SECRET },
-      body: JSON.stringify({ action: 'discussao_cadeia' })
-    });
-  } catch (e) { /* abort esperado */ }
-  finally { clearTimeout(t); }
-  return true;
-}
+const { dispararCadeia } = require('../../lib/discussao-kick');
 
 function json(res, status, body) {
   res.statusCode = status;
@@ -67,7 +53,7 @@ module.exports = async function handler(req, res) {
   // radar, 07h30). Duas chances por dia: se a do radar falhar, esta cobre.
   // Fail-safe: nunca derruba o healthcheck.
   let discussoes = { partida: false };
-  try { discussoes = { partida: await dispararCadeiaDiscussoes() }; }
+  try { discussoes = { partida: await dispararCadeia() }; }
   catch (e) { console.error('[cron-health] cadeia discussoes erro:', (e && e.stack) || e); }
   return json(res, status, { ...result, qotd, streak, discussoes });
 };
