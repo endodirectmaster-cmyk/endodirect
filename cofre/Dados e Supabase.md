@@ -1,6 +1,6 @@
 ---
 tags: [cofre, dados, supabase]
-atualizado: 2026-07-28
+atualizado: 2026-07-29
 ---
 
 # Dados e Supabase
@@ -89,6 +89,28 @@ Após o linter do Supabase (`get_advisors`), aplicados via MCP (ref. versionada 
 - **Dropada `public._aulaq_stage`** (colunas `seq/b64`): tabela de STAGING órfã de um upload base64 de um script SQL grande (99 KB, começava com `update endodirect…`, já executado). **RLS estava DESABILITADO** (único caso `critical`) → exposta pela anon key; não referenciada por nada. Removida (sem dado vivo).
 - **Revogado EXECUTE público de `endodirect_trial_email_targets()`** (de `anon, authenticated, public`): é SECURITY DEFINER e retorna e-mails de alunos em degustação; devia ser só do cron (service role, `lib/trial-emails.js`), mas o grant público nunca fora revogado → a anon key podia listar e-mails. O service role **ignora grants**, então o cron segue funcionando.
 - **Sem ação (por design):** os demais RPCs SECURITY DEFINER executáveis por anon/authenticated são o modelo do app (conteúdo público/membro por `auth.uid()`, sessão de dispositivo, e as de admin que fazem `raise 'forbidden'` internamente). `endodirect_support`/`endodirect_state_backup` com RLS ON sem policy = só service_role (seguro).
+
+## ⚠️ Alerta do Supabase de 26/07 — e a repetição da MESMA falha (2026-07-29)
+O Rodolpho recebeu o e-mail *"These issues require your immediate attention — Table publicly accessible (`rls_disabled_in_public`)"*. Duas tabelas com **RLS desligado**, ou seja, legíveis e graváveis por qualquer um com a URL do projeto e a chave anon:
+
+1. **`_fc_stage`** (colunas `i`, `c`; 1 linha) — resto de importação de flashcards: um pedaço de SQL em **base64**, 8.000 caracteres. Sem dado pessoal, não referenciada por nada.
+2. **`endodirect_mural_discussoes_bkp_20260729`** — a cópia de segurança das discussões que **eu mesmo criei** uma hora antes, no mesmo dia.
+
+**Correção:** `alter table … enable row level security` nas duas. Sem policy = só `service_role` enxerga, que é o padrão já usado em `endodirect_mural_discussoes`, `endodirect_support` e `endodirect_state_backup`. O linter voltou com **zero item ERROR**.
+
+### ⚠️ A regra que eu deveria ter aplicado sozinho
+**`create table … as select …` no schema `public` nasce com RLS DESLIGADO** e o PostgREST expõe o schema inteiro. Toda tabela nova de trabalho — backup, staging, rascunho — nasce pública até alguém ligar o RLS.
+
+É a **terceira** ocorrência da mesma coisa: `_aulaq_stage` (dropada em 01/07), `_fc_stage` e agora uma criada por mim. Passa a valer: **ligar o RLS na mesma transação em que a tabela é criada**, sem exceção para "é só um backup temporário".
+
+```sql
+create table public.minha_tabela_bkp as select * from origem;
+alter table public.minha_tabela_bkp enable row level security;  -- na MESMA leva
+```
+
+**Pendente de decisão do professor:** `_fc_stage` e as tabelas `*_bkp_*`/`*_backup*` antigas são lixo de operação e podem ser dropadas. Ligar o RLS resolveu a exposição; dropar resolveria a bagunça. Não dropei nada por conta própria.
+
+**Os itens WARN não são achado novo:** os RPCs SECURITY DEFINER executáveis por `anon`/`authenticated` são o modelo do app. Reconferidos hoje — `endodirect_admin_overview` e `endodirect_admin_students` começam com `if not public.endodirect_is_admin() then raise exception 'forbidden'`, então o gate está **dentro** da função. Os itens INFO (RLS ligado sem policy) são o padrão "só service_role", que é o desejado.
 
 ## RLS e RPCs (security-definer)
 - `endodirect_member_content` — conteúdo do membro.
