@@ -82,6 +82,18 @@ Três tentativas até acertar, e as duas primeiras erraram pelo mesmo motivo —
 - **Quem dá a partida:** o cron do radar (todo dia) e o botão "📄 Gerar discussões pendentes" (quando o professor quiser adiantar). O botão agora só dá a partida e avisa quantos estão na fila; não prende a aba.
 - **Se um elo falhar, a cadeia para** — e o cron do dia seguinte recomeça. Aceitável, e melhor que travar tentando ser esperto.
 
+### Três gatilhos, porque um só nunca bastou (2026-07-29)
+O professor voltou **quatro vezes** dizendo que a discussão não saía sozinha. Cada resposta minha dependia de algo que ele não ia fazer: primeiro do cron (1x/dia), depois de um botão. A leitura correta do pedido é *"não quero clicar em nada"*.
+
+Quem dá a partida na cadeia, hoje:
+1. **Cron do radar (07h30)** — a partida principal.
+2. **Cron do healthcheck (10h)** — segunda chance no mesmo dia, cobre falha do primeiro.
+3. **⭐ Abrir o Mural no painel do professor** — `kickDiscussaoCadeia()` em `goPanel('mural')`, estrangulado a **1x por hora** por `localStorage`. Como ele abre o Mural o tempo todo, este é o gatilho que na prática resolve o acervo represado, sem clique nenhum.
+
+- **Não é caminho crítico:** não bloqueia o render, não mostra nada e falha em silêncio. Se gerar alguma, recarrega a lista de ids e redesenha para o bloco aparecer sem F5.
+- **A marca de horário é gravada ANTES do disparo** — falha não vira retentativa em laço a cada re-render.
+- **O botão continua existindo** para quem quiser adiantar, mas deixou de ser o mecanismo principal.
+
 ### ✅ O feed da ANVISA funciona
 No mesmo dia o professor perguntou por que o Mural não pegou a notícia *"Anvisa registra cinco novas canetas de semaglutida"*. **Pegou:** entrou em `adm_avisos` às 13h05, com fonte "Agência Nacional de Vigilância Sanitária (Anvisa)" e o link oficial do gov.br. O que ele tinha visto antes era o card **G1** da mesma notícia, criado à mão pelo "Gerar texto com IA" a partir de uma URL — G1 **não é fonte do radar** (a allowlist do Breaking News só tem regulador e farmacêutica). Card do G1 removido a pedido.
 
