@@ -4,6 +4,7 @@
 // endodirect_admins e so entao rodamos o radar (lib/radar.js).
 const { runRadar } = require('../../lib/radar');
 const { gerarDiscussao } = require('../../lib/discussao');
+const { gerarDiscussoesPendentes } = require('../../lib/discussao-auto');
 const { pmcIdFromLink } = require('../../lib/fulltext');
 const push = require('../../lib/push');
 
@@ -99,8 +100,28 @@ module.exports = async function handler(req, res) {
   }
 
   try {
+    const t0 = Date.now();
     const result = await runRadar();
-    return json(res, 200, { ok: true, ...result });
+    // Discussao completa dos tipos que rendem (metanalise, diretriz, consenso,
+    // ensaio clinico, artigo de revisao) — os mesmos do cron do radar.
+    //
+    // POR QUE TAMBEM AQUI: a geracao automatica so acontecia no cron das 7h30.
+    // O professor, ao ligar o recurso, esperava ver as discussoes aparecerem —
+    // e nao havia gatilho nenhum sob o controle dele. Este botao passa a ser
+    // esse gatilho: cada clique adianta algumas, e o cron cuida do resto.
+    //
+    // Fail-safe: nunca derruba a atualizacao do radar, que e a funcao principal
+    // do botao. Se a geracao falhar, o professor ainda ganha os artigos novos.
+    let discussoes = { geradas: 0, motivo: 'skipped' };
+    try {
+      const restante = 300000 - (Date.now() - t0) - 30000;
+      if (restante > 40000) discussoes = await gerarDiscussoesPendentes({ limite: 2, orcamentoMs: restante });
+      else discussoes = { geradas: 0, motivo: 'sem_tempo' };
+    } catch (e) {
+      console.error('[refresh-radar] discussoes erro:', (e && e.stack) || e);
+      discussoes = { geradas: 0, motivo: 'error' };
+    }
+    return json(res, 200, { ok: true, ...result, discussoes });
   } catch (error) {
     console.error('[refresh-radar] erro:', (error && error.stack) || error);
     return json(res, 500, { ok: false, error: (error && error.message) || 'Falha ao atualizar o radar.' });
