@@ -13276,10 +13276,21 @@ function bindAdmSec(sec){
       }).then(function(r){return r.json().catch(function(){return{ok:false,error:'Resposta inválida do servidor.'};});})
       .then(function(d){
         if(!d.ok)throw new Error(d.error||'Falha ao atualizar.');
-        notify(d.inserted>0?('Radar atualizado: '+d.inserted+' novo(s) artigo(s)!'):'Radar atualizado — nenhum artigo novo hoje.','ok');
-        return client.from('endodirect_global_state').select('payload').eq('id','main').maybeSingle().then(function(g){
-          if(g&&g.data&&g.data.payload)applyStatePayload(g.data.payload);
-          renderAdmSec('mural');
+        var _dg=(d.discussoes&&d.discussoes.geradas)||0;
+        notify((d.inserted>0?('Radar atualizado: '+d.inserted+' novo(s) artigo(s)'):'Radar atualizado — nenhum artigo novo hoje')
+          +(_dg?(' · '+_dg+' discussão(ões) completa(s) gerada(s)'):'')+'.','ok');
+        // ⚠️ Recarregar a LISTA de quais artigos tem discussao e obrigatorio aqui.
+        // O texto nao vive no payload (fica em tabela propria), entao reler o
+        // estado global nao traz noticia nenhuma da discussao recem-gravada:
+        // `muralDiscIds` so era populado no hydrate do login. Sem esta linha o
+        // bloco nao aparecia e o botao continuava dizendo "Gerar discussao
+        // completa" — o professor via "nao deu certo" depois de 40s de geracao
+        // que tinha funcionado e sido paga (bug de 2026-07-29).
+        return carregarMuralDiscIds(client).then(function(){
+          return client.from('endodirect_global_state').select('payload').eq('id','main').maybeSingle().then(function(g){
+            if(g&&g.data&&g.data.payload)applyStatePayload(g.data.payload);
+            renderAdmSec('mural');
+          });
         });
       }).catch(function(e){notify('Erro: '+(e&&e.message||e),'err');var b=document.getElementById('btn-adm-radar');if(b){b.disabled=false;b.textContent='🔄 Atualizar radar agora';}});
     });
@@ -13308,9 +13319,18 @@ function bindAdmSec(sec){
           +(m.tabelas||0)+' tabela(s), '+(m.figuras||0)+' figura(s).','ok');
         // Relê do servidor: a discussão foi gravada lá, não aqui. Mesmo caminho
         // do botão "Atualizar radar" — não reescreve o payload pelo cliente.
-        return client.from('endodirect_global_state').select('payload').eq('id','main').maybeSingle().then(function(g){
-          if(g&&g.data&&g.data.payload)applyStatePayload(g.data.payload);
-          renderAdmSec('mural');
+        // ⚠️ Recarregar a LISTA de quais artigos tem discussao e obrigatorio aqui.
+        // O texto nao vive no payload (fica em tabela propria), entao reler o
+        // estado global nao traz noticia nenhuma da discussao recem-gravada:
+        // `muralDiscIds` so era populado no hydrate do login. Sem esta linha o
+        // bloco nao aparecia e o botao continuava dizendo "Gerar discussao
+        // completa" — o professor via "nao deu certo" depois de 40s de geracao
+        // que tinha funcionado e sido paga (bug de 2026-07-29).
+        return carregarMuralDiscIds(client).then(function(){
+          return client.from('endodirect_global_state').select('payload').eq('id','main').maybeSingle().then(function(g){
+            if(g&&g.data&&g.data.payload)applyStatePayload(g.data.payload);
+            renderAdmSec('mural');
+          });
         });
       }).catch(function(e){
         notify('Erro: '+(e&&e.message||e),'err');

@@ -49,6 +49,15 @@ O botão por card continua; o que mudou é que **metanálise, diretriz, consenso
 - **Teste:** `scripts/test-discussao-auto.js`, no CI. Cobertura provada tirando "Consenso" da lista e quebrando o regex de título — os dois reprovam.
 - **⚠️ Continua sem etapa de liberação:** a discussão vai ao aluno assim que grava, para assinante e degustação igualmente (as RPCs `endodirect_mural_discussoes_ids`/`endodirect_mural_discussao` não filtram plano nem rascunho). Diferente dos Artigos dos Resumos, que nascem `rascunho:true`. Levantado ao professor em 28/07; ele seguiu para o modelo e os tipos sem pedir a trava. Ver [[Pendências]].
 
+### ⚠️ "Gerei a discussão e não deu certo" — tinha dado (2026-07-29)
+O professor clicou em "Gerar discussão completa", esperou, e a tela não mudou: o bloco não apareceu e o botão continuou dizendo "Gerar discussão completa". **A discussão tinha sido gerada e gravada** (6.479 caracteres, Opus 4.8, HTTP 200, ~40 s). Um F5 mostraria.
+
+- **A causa:** o texto **não vive no payload** — fica em `endodirect_mural_discussoes`. O cliente, depois de gerar, relia o `endodirect_global_state` e redesenhava; só que **quem decide se o bloco aparece é `muralDiscIds`**, e esse mapa só era populado no hydrate do login. Reler o payload não traz notícia nenhuma da tabela nova.
+- **A lição, que é geral:** quando o dado sai do payload por um bom motivo (tamanho, clobber), **todo caminho que "atualiza a tela" precisa saber disso**. Reler a fonte antiga passa a ser um no-op silencioso — e silencioso é o pior, porque parece falha do recurso caro que acabou de rodar.
+- **Correção:** `carregarMuralDiscIds(client)` antes de redesenhar, nos **dois** caminhos (botão da discussão e botão "Atualizar radar").
+- **Gatilho manual da geração automática:** ela só rodava no cron das 7h30, sem nada sob o controle do professor. O botão **"Atualizar radar"** passa a gerar também as pendentes (2 por clique, com orçamento de tempo), e o aviso diz quantas saíram.
+- **Dado útil:** a geração levou **~40 s** e passou no Opus 4.8 — o teto de 60 s do plano Hobby aguentou neste artigo. Continua sendo o limite a vigiar em artigo longo.
+
 ## Radar / Mural (automático)
 - `lib/radar.js` + `lib/news.js`: lê feeds RSS de revistas, resume com IA (`summarizeWithAI`), monta itens do mural.
 - Filtro de qualidade: descarta artigos com `abstract` curto (`length < 200`) → `buildMuralItem` retorna null; `runRadar` filtra nulos.
