@@ -12,6 +12,24 @@ const { runHealthcheck } = require('../../lib/healthcheck');
 const { autoPostDailyQotd } = require('../../lib/instagram');
 const { sendStreakReminders } = require('../../lib/push');
 
+// Dá a partida na cadeia de discussões do Mural (uma invocação por artigo).
+// Não espera a resposta: o que importa é a primeira invocação ter começado.
+async function dispararCadeiaDiscussoes() {
+  if (!process.env.CRON_SECRET) return false;
+  const base = process.env.PUBLIC_BASE_URL || 'https://www.endodirect.com.br';
+  const ctrl = new AbortController();
+  const t = setTimeout(() => ctrl.abort(), 2000);
+  try {
+    await fetch(`${base}/api/admin/refresh-radar`, {
+      method: 'POST', signal: ctrl.signal,
+      headers: { 'Content-Type': 'application/json', Authorization: 'Bearer ' + process.env.CRON_SECRET },
+      body: JSON.stringify({ action: 'discussao_cadeia' })
+    });
+  } catch (e) { /* abort esperado */ }
+  finally { clearTimeout(t); }
+  return true;
+}
+
 function json(res, status, body) {
   res.statusCode = status;
   res.setHeader('Content-Type', 'application/json; charset=utf-8');
@@ -45,7 +63,13 @@ module.exports = async function handler(req, res) {
   let streak = { sent: 0, reason: 'skipped' };
   try { streak = await sendStreakReminders(); }
   catch (e) { console.error('[cron-healthcheck] streak push erro:', (e && e.stack) || e); streak = { ok: false, reason: 'error' }; }
-  return json(res, status, { ...result, qotd, streak });
+  // Segunda partida diária da cadeia de discussões (a primeira é no cron do
+  // radar, 07h30). Duas chances por dia: se a do radar falhar, esta cobre.
+  // Fail-safe: nunca derruba o healthcheck.
+  let discussoes = { partida: false };
+  try { discussoes = { partida: await dispararCadeiaDiscussoes() }; }
+  catch (e) { console.error('[cron-health] cadeia discussoes erro:', (e && e.stack) || e); }
+  return json(res, status, { ...result, qotd, streak, discussoes });
 };
 
 module.exports.config = { maxDuration: 60 };

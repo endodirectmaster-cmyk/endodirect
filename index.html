@@ -5964,6 +5964,7 @@ function goPanel(id){
   if(bc)bc.textContent=PANEL_LABELS[id]||id;
   if(id==='dash')refreshDash();
   try{var _qm=document.getElementById('qotd-modal');if(_qm&&id!=='mural')_qm.style.display='none';if(id==='mural')renderQotd();}catch(e){}
+  if(id==='mural')try{kickDiscussaoCadeia();}catch(e){}
   if(id==='qotd'){try{renderQotdArchive();}catch(e){}}
   if(id==='quest'){applyQuestDegustacao();renderSavedQ();populateInst('q-inst');updateProvaInfo();}
   if(id==='flash'){fcFilter=null;renderFC();} // abre na grade de subespecialidades
@@ -11108,6 +11109,38 @@ var __rxHome=null;
 function restoreRxPanel(){
   var rp=document.getElementById('panel-rx');
   if(rp&&__rxHome&&rp.parentNode!==__rxHome){__rxHome.appendChild(rp);rp.classList.remove('on');rp.style.display='';}
+}
+// Dá a partida na cadeia de discussões quando o PROFESSOR abre o Mural.
+//
+// ⚠️ POR QUE AQUI, e não só no cron nem só num botão: o professor pediu quatro
+// vezes que saísse sozinho, e as minhas duas primeiras soluções dependiam de um
+// clique dele (botão) ou de um cron que só roda 1x/dia. Ele abre o Mural o tempo
+// todo — então abrir o Mural é o gatilho natural. Não bloqueia o render, não
+// mostra nada na tela e falha em silêncio: é oportunismo, não caminho crítico.
+//
+// Estrangulado a 1x por hora (localStorage) para não disparar a cada re-render,
+// e a cadeia já é idempotente: quem tem discussão não volta para a fila.
+var DISC_KICK_MS=60*60*1000;
+function kickDiscussaoCadeia(){
+  try{
+    if(!currentUser||currentUser.role!=='admin')return;
+    var ult=Number(lsGet('disc_kick_at')||0);
+    if(Date.now()-ult<DISC_KICK_MS)return;
+    var client=getSupabaseClient();if(!client)return;
+    lsSet('disc_kick_at',Date.now()); // marca ANTES: falha não vira retentativa em laço
+    client.auth.getSession().then(function(r){
+      var tok=r&&r.data&&r.data.session&&r.data.session.access_token;
+      if(!tok)return;
+      return fetch('/api/admin/refresh-radar',{method:'POST',
+        headers:{'Content-Type':'application/json',Authorization:'Bearer '+tok},
+        body:JSON.stringify({action:'discussao_cadeia'})})
+        .then(function(x){return x.json().catch(function(){return null;});})
+        .then(function(d){
+          // Se gerou alguma, atualiza a lista para o bloco aparecer sem F5.
+          if(d&&d.ok&&d.gerou)return carregarMuralDiscIds(client).then(function(){renderAdmSec('mural');});
+        });
+    }).catch(function(){});
+  }catch(e){}
 }
 function renderAdmSec(sec){
   if(sec==='stories'&&!isQotdOwner())sec='pendencias'; // o gerador da Questão do Dia é só do dono; os demais caem nas Pendências

@@ -48,6 +48,8 @@ git branch -r --contains <sha>     # se aparecer origin/main, é história publi
 - **Committer `GitHub <noreply@github.com>` + presente em `origin/main`** → é o merge do GitHub. **Não tocar.**
 - **Committer meu, ainda não empurrado** → aí sim vale o `--amend --reset-author`.
 
+**⚠️ A partir de 29/07 esse aviso passou a ser ESPERADO, e com frequência.** Desde que a branch é reiniciada da `main` logo após cada merge (ver Git / deploy), o topo dela fica sendo justamente o squash-merge do GitHub até eu fazer o próximo commit. Ou seja: **o hook vai acusar depois de todo deploy**. Não é sinal de nada — é o preço de manter a branch alinhada. Aconteceu duas vezes seguidas (#629 e #630) com a mesma resposta.
+
 O falso positivo se resolve sozinho no commit seguinte da branch. E vale a regra geral: **hook é feedback, não ordem** — quando a correção sugerida for destrutiva ou irreversível, conferir o alvo antes.
 
 ## Git / deploy
