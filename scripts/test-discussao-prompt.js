@@ -111,5 +111,38 @@ const ft = {
   ok('sem tabela, diz que não há', /não tem tabelas extraíveis/.test(semTabela));
 }
 
-console.log(bad ? '\nFALHOU: ' + bad : '\n✓ prompt da discussão: figuras e tabelas sobrevivem ao corte; tabela em português; sem rodapé e sem selo');
+// ---- 7. ⚠️ A COLUNA DE REFERÊNCIAS NÃO CHEGA À IA -------------------------
+// Pedido do professor (29/07): a coluna com os números da bibliografia do artigo
+// — "(122, 124, 126)" — é ruído para o aluno, porque a discussão não publica a
+// lista de referências. Cortada na conversão da tabela, não no prompt: se a IA
+// nunca vê a coluna, não tem como reproduzi-la nem copiar os números.
+{
+  const { tableToMarkdown } = require('../lib/fulltext');
+  const tab = (cabecalhos) => '<table><thead><tr>' +
+    cabecalhos.map((h) => '<th>' + h + '</th>').join('') +
+    '</tr></thead><tbody><tr>' +
+    cabecalhos.map((h, i) => '<td>' + (i === cabecalhos.length - 1 ? '(122, 124, 126)' : 'valor-' + i) + '</td>').join('') +
+    '</tr></tbody></table>';
+
+  ['Reference', 'References', 'Referência', 'Referencias', 'Ref.', 'Refs', 'Ref No.', 'Citations'].forEach((h) => {
+    const md = tableToMarkdown(tab(['Domínio', 'Determinantes', h]));
+    ok('coluna "' + h + '" é descartada', md.indexOf(h) < 0 && md.indexOf('(122, 124, 126)') < 0, md);
+    ok('o resto da tabela "' + h + '" sobrevive', md.indexOf('Domínio') > 0 && md.indexOf('valor-0') > 0);
+    ok('o separador acompanha a largura nova ("' + h + '")', md.indexOf('|---|---|\n') > 0, md);
+  });
+
+  // "Study"/"Estudo" NÃO sai: ali o número é o rótulo da linha.
+  ['Study', 'Estudo'].forEach((h) => {
+    const md = tableToMarkdown('<table><thead><tr><th>' + h + '</th><th>Achado</th></tr></thead>' +
+      '<tbody><tr><td>(37)</td><td>substituição metformin-liraglutide</td></tr></tbody></table>');
+    ok('coluna "' + h + '" é preservada', md.indexOf(h) > 0 && md.indexOf('(37)') > 0, md);
+  });
+
+  // Tabela de 2 colunas em que uma é referência deixa de ser tabela.
+  ok('sobrar 1 coluna não vira tabela',
+     tableToMarkdown('<table><thead><tr><th>Achado</th><th>Reference</th></tr></thead>' +
+       '<tbody><tr><td>x</td><td>(9)</td></tr></tbody></table>') === '');
+}
+
+console.log(bad ? '\nFALHOU: ' + bad : '\n✓ prompt da discussão: anexos sobrevivem ao corte; tabela em português e sem coluna de referências; sem rodapé e sem selo');
 process.exit(bad ? 1 : 0);

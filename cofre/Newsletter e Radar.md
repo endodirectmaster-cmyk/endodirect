@@ -132,6 +132,16 @@ A lição que vale além deste recurso: **rótulo que promete o que não está n
 - **A tabela sai em português.** Ela veio com os cabeçalhos em inglês, copiados do artigo (`Study | Population | GLP-1 RA | …`), no meio de um texto em português. Traduzir rótulo e célula; **número, unidade, sigla, fármaco, táxon e nome de estudo ficam como estão**. Traduzir o rótulo não altera o dado.
 - **"Reproduzir" é colar, não descrever.** Dito explicitamente: escrever "a Tabela 1 mostra…" sem a tabela em markdown logo em seguida não conta como reproduzir. Era exatamente por aí que o modelo escapava.
 
+### A coluna de referências sai na origem (2026-07-29)
+Com as tabelas finalmente aparecendo, o professor apontou a coluna **Referência** — `(122, 124, 126, 127, 129)`: são os números da bibliografia do artigo, e a discussão não publica a lista de referências. *"Essa coluna de referências pode sempre tirar dos artigos."*
+
+**Cortada em `tableToMarkdown` (lib/fulltext.js), não no prompt.** Se a IA nunca vê a coluna, não tem como reproduzi-la nem copiar os números para outra célula. Instrução no prompt seria pedido; corte na conversão é garantia.
+
+- `RE_COL_REFERENCIA` casa `Reference(s)`, `Referência(s)`, `Ref.`, `Refs`, `Ref No.`, `Citations`. **NÃO casa `Study`/`Estudo`**: ali o número `(37)` é o rótulo da linha, e sem ele a tabela perde a identificação.
+- Se o descarte deixar **menos de 2 colunas**, a tabela não é enviada — o que sobra não é tabela.
+- O separador `|---|---|` é montado depois do corte, com a largura nova.
+- Coberto em `scripts/test-discussao-prompt.js`; desligar o corte derruba **9 asserções**.
+
 **As discussões anteriores foram regeradas em massa** (o acervo inteiro), porque tinham sido escritas com o prompt sem as tabelas. Como a fila só considera artigo **sem** discussão, regerar = apagar a linha e deixar a cadeia refazer. A cópia de segurança ficou em `endodirect_mural_discussoes_bkp_20260729`.
 
 ### ⚠️ `module.exports.config = { maxDuration }` NÃO vale neste runtime
