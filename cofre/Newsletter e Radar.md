@@ -102,9 +102,19 @@ A primeira versão da cadeia gerava (~40s) e **só então** disparava o elo segu
 
 Hoje o elo seguinte sai em ~2s, antes da geração, e **a lista do que falta vai no corpo da requisição** (`{action:'discussao_cadeia', ids:[...]}`). Passar a lista adiante não é detalhe: recalcular a fila na invocação seguinte a faria ver o estado **anterior** à gravação desta e escolher o **mesmo artigo**.
 
-- Como cada elo dispara o próximo antes de gerar, o lote sobe quase junto — daí `LOTE_CADEIA = 6`, teto de gerações simultâneas. O que sobrar sai na próxima partida.
 - Antes de gerar, confere se o artigo **já** tem discussão (`jaTemDiscussao`): duas partidas simultâneas custariam uma chamada de IA repetida.
 - `scripts/test-discussao-cadeia.js` reprova se as duas linhas trocarem de lugar, se a carona no `/api/checkout/config` sumir ou se alguma rota voltar a ter cópia própria do disparo.
+
+### ⚠️ Leque, não corrente — e isso foi MEDIDO (2026-07-29)
+Primeira versão do disparo antecipado: cada invocação disparava **a seguinte**. Rodei ao vivo com `LOTE_CADEIA = 6` e o resultado foi inequívoco — **saíram 3 discussões e o 4º elo nunca foi invocado**. Sem erro, sem 5xx, sem requisição nenhuma nos logs; a tabela simplesmente parou de crescer.
+
+Corrente de N saltos tem **N pontos de falha em série**, e qualquer um deles engole o resto da fila em silêncio. Hoje quem recebe a partida (`discussao_cadeia` **sem** `sourceId`) calcula o lote, dispara **todos os outros de uma vez** com `Promise.all` e só então gera o seu. Quem recebe `{sourceId}` é folha: gera e não dispara nada. Um ponto de falha só, e o que não subir volta na partida seguinte.
+
+- **A espera do disparo subiu de 2s para 6s.** O lote inteiro sobe junto e quem chega por último pode pegar partida a frio; 2s não davam. Como os disparos saem em paralelo, os 6s são pagos **uma vez**, não por artigo.
+- `LOTE_CADEIA = 6` é o teto de gerações simultâneas — cabe nos limites de taxa da IA e custa ~US$ 1,20 por partida.
+
+### ⚠️ `module.exports.config = { maxDuration }` NÃO vale neste runtime
+É convenção de Next.js; o runtime Node puro a ignora. Quem manda é a chave `functions` do **`vercel.json`** — `api/ai.js` está lá com 120s há tempos, e `api/admin/refresh-radar.js` entrou com 120s em 29/07. Foi acreditando no `300` declarado no código que eu calculei um orçamento de tempo inexistente e a geração automática morria antes de acontecer. **Conferir o `vercel.json`, não o topo do arquivo.**
 
 ### ✅ O feed da ANVISA funciona
 No mesmo dia o professor perguntou por que o Mural não pegou a notícia *"Anvisa registra cinco novas canetas de semaglutida"*. **Pegou:** entrou em `adm_avisos` às 13h05, com fonte "Agência Nacional de Vigilância Sanitária (Anvisa)" e o link oficial do gov.br. O que ele tinha visto antes era o card **G1** da mesma notícia, criado à mão pelo "Gerar texto com IA" a partir de uma URL — G1 **não é fonte do radar** (a allowlist do Breaking News só tem regulador e farmacêutica). Card do G1 removido a pedido.
