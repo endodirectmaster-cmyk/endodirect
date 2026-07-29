@@ -132,6 +132,25 @@ A lição que vale além deste recurso: **rótulo que promete o que não está n
 - **A tabela sai em português.** Ela veio com os cabeçalhos em inglês, copiados do artigo (`Study | Population | GLP-1 RA | …`), no meio de um texto em português. Traduzir rótulo e célula; **número, unidade, sigla, fármaco, táxon e nome de estudo ficam como estão**. Traduzir o rótulo não altera o dado.
 - **"Reproduzir" é colar, não descrever.** Dito explicitamente: escrever "a Tabela 1 mostra…" sem a tabela em markdown logo em seguida não conta como reproduzir. Era exatamente por aí que o modelo escapava.
 
+### Prévia da discussão no card, no lugar do resumo repetido (2026-07-29)
+Com a discussão pronta, o professor colou **o card que quer**: as duas linhas de cabeçalho (`📅 Data de publicação`, `🔬 Tipo de estudo`), depois **"Pergunta e contexto"** e **"Métodos"** à vista, e *"o resto aparece quando clicar no maximizar"*.
+
+O que ele **não** colou foi o resumo de quatro linhas do radar — e faz sentido: `📝 Resumo` diz em um parágrafo o que `## Pergunta e contexto` desenvolve, e `⚠️ Cautela/limitação` o que `## Limitações` detalha. Com a discussão presente, aquele resumo é releitura.
+
+- **`muralTextSemRepetido`** corta do primeiro rótulo coberto em diante (`📝 Resumo:`, `💡 Por que importa na prática:`, `⚠️ Cautela/limitação:`). **Data e tipo de estudo ficam**: são identificação do artigo, não conteúdo, e a discussão não os traz.
+- **Só corta onde há prévia para pôr no lugar.** Sem discussão, ou com a RPC da prévia falhando, o card fica exatamente como era — cortar deixaria duas linhas de cabeçalho e nada.
+- Se o corte não deixar nada, devolve o texto original: card vazio é pior que card repetitivo.
+- **A prévia fica FORA do `<details>`**, não dentro do `<summary>`: dentro, o navegador trataria os parágrafos como parte do controle de clique. Ao abrir, a prévia é escondida e o corpo mostra a discussão inteira — a prévia é recorte do mesmo texto.
+
+**RPC nova `endodirect_mural_discussoes_previas()`** (migração `mural_discussoes_previas`), porque o cliente não tem o markdown na hora de renderizar. Devolve `{source_id: previa}`, onde a prévia são as duas primeiras seções:
+
+```sql
+array_to_string((string_to_array(ltrim(markdown, E'\n'), E'\n## '))[1:2], E'\n## ')
+```
+
+- **Limite de 200 linhas e corte em 2.000 caracteres** são o que impede esta RPC de virar o problema que ela evita. Hoje: 23 prévias, **44 KB**. Com o acervo em 200, teto de ~400 KB — se passar disso, trocar por busca só dos ids em tela.
+- A RPC antiga `endodirect_mural_discussoes_ids()` **continua existindo** e o cliente cai nela se a nova falhar; sem isso um cliente em cache perderia a discussão inteira.
+
 ### A coluna de referências sai na origem (2026-07-29)
 Com as tabelas finalmente aparecendo, o professor apontou a coluna **Referência** — `(122, 124, 126, 127, 129)`: são os números da bibliografia do artigo, e a discussão não publica a lista de referências. *"Essa coluna de referências pode sempre tirar dos artigos."*
 

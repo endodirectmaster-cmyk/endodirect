@@ -68,5 +68,65 @@ const rodape = R('Fim da discussão.\n\n---\n\n*Discussão elaborada sobre o tex
 ok('rodapé: régua + texto, sem "---" visível', rodape.indexOf('mural-hr') >= 0 && rodape.indexOf('>---<') < 0);
 ok('rodapé mantém o texto da origem', rodape.indexOf('PMC 123') >= 0);
 
-console.log(bad ? '\nFALHOU: ' + bad : '\n✓ mural: régua horizontal renderizada, tabela e lista intactas');
+// ---- 6. ⚠️ PRÉVIA DA DISCUSSÃO NO CARD --------------------------------------
+// Pedido do professor (29/07): ele colou o card que quer — as duas linhas de
+// cabeçalho e, em seguida, "Pergunta e contexto" e "Métodos" à vista; "o resto
+// aparece quando clicar no maximizar". O que ele NÃO colou foi o resumo de
+// quatro linhas do radar, que a discussão cobre por extenso.
+//
+// Dois defeitos que este bloco existe para pegar:
+//  1. cortar o resumo de artigo SEM discussão — o card ficaria só com duas
+//     linhas de cabeçalho e nada de conteúdo;
+//  2. cortar as linhas de identificação (data, tipo de estudo) junto com o
+//     resumo: elas não são repetição, e a discussão não as traz.
+{
+  vm.runInContext([
+    'var muralDiscIds={}, muralDiscPrev={};',
+    'function isFormalMuralType(){return false;}',
+    'function muralDisplayType(a){return (a&&a.tipo)||"";}',
+    SRC.slice(SRC.indexOf('var MURAL_ROTULOS_COBERTOS_PELA_DISCUSSAO='), SRC.indexOf('\nfunction muralTemFullText(')),
+    trecho('muralDiscussaoHTML')
+  ].join('\n'), ctx);
+
+  const TXT = '📅 Data de publicação: 2026\n🔬 Tipo de estudo: Revisão narrativa\n'
+    + '📝 Resumo: Esta revisão narrativa sintetiza evidências.\n'
+    + '💡 Por que importa na prática: modula a resposta.\n'
+    + '⚠️ Cautela/limitação: confirmar critérios.';
+  const art = { sourceId: 'pubmed:1', texto: TXT, tipo: 'Artigo de Revisão' };
+
+  // Sem discussão: nada muda.
+  ctx.muralDiscIds = {}; ctx.muralDiscPrev = {};
+  const semDisc = ctx.muralBodyText(art);
+  ok('sem discussão, o resumo do radar FICA', semDisc.indexOf('📝 Resumo:') > 0);
+  ok('sem discussão, não há prévia nem bloco', ctx.muralDiscussaoHTML(art) === '');
+
+  // Com discussão, mas sem prévia (RPC legado): o resumo fica, e o bloco existe.
+  ctx.muralDiscIds = { 'pubmed:1': 1 }; ctx.muralDiscPrev = {};
+  ok('sem prévia, o resumo do radar FICA', ctx.muralBodyText(art).indexOf('📝 Resumo:') > 0);
+  const soBotao = ctx.muralDiscussaoHTML(art);
+  ok('sem prévia, ainda há o bloco recolhido', soBotao.indexOf('<details') === 0 || soBotao.indexOf('<details') > 0);
+  ok('sem prévia, nenhum bloco de prévia', soBotao.indexOf('data-disc-previa') < 0);
+
+  // Com prévia: o resumo sai, o cabeçalho fica.
+  ctx.muralDiscPrev = { 'pubmed:1': '## Pergunta e contexto\n\nOs agonistas reduzem HbA1c.\n## Métodos\n\nRevisão narrativa.' };
+  const corpo = ctx.muralBodyText(art);
+  ok('com prévia, o resumo do radar SAI', corpo.indexOf('📝 Resumo:') < 0, corpo);
+  ok('com prévia, "Por que importa" SAI', corpo.indexOf('💡 Por que importa') < 0);
+  ok('com prévia, "Cautela" SAI', corpo.indexOf('⚠️ Cautela') < 0);
+  ok('com prévia, a data FICA', corpo.indexOf('Data de publicação: 2026') > 0);
+  ok('com prévia, o tipo de estudo FICA', corpo.indexOf('Tipo de estudo: Revisão narrativa') > 0);
+
+  const html = ctx.muralDiscussaoHTML(art);
+  ok('a prévia é renderizada fora do <details>', html.indexOf('data-disc-previa') < html.indexOf('<details'));
+  ok('a prévia traz as duas seções', html.indexOf('Pergunta e contexto') > 0 && html.indexOf('Métodos') > 0);
+  ok('a prévia é markdown renderizado, não texto cru', html.indexOf('>## ') < 0 && /<div class="mural-h"/.test(html));
+  ok('o controle continua existindo', /<summary>.*Ver a discussão completa/.test(html), html.slice(0, 200));
+  ok('o corpo lazy continua lá', html.indexOf('data-disc-body') > 0);
+
+  // Texto que é SÓ resumo (sem cabeçalho) não pode virar card vazio.
+  const soResumo = { sourceId: 'pubmed:1', texto: '📝 Resumo: só isto.', tipo: 'Artigo de Revisão' };
+  ok('texto sem cabeçalho não vira card vazio', ctx.muralBodyText(soResumo).indexOf('só isto') > 0);
+}
+
+console.log(bad ? '\nFALHOU: ' + bad : '\n✓ mural: régua horizontal, tabela e lista intactas, prévia da discussão no lugar do resumo repetido');
 process.exit(bad ? 1 : 0);
