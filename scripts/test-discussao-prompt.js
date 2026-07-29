@@ -92,5 +92,24 @@ const ft = {
   ok('nenhum código preenche o selo', html.indexOf("querySelector('.mural-disc-meta')") < 0);
 }
 
-console.log(bad ? '\nFALHOU: ' + bad : '\n✓ prompt da discussão: figuras e tabelas sobrevivem ao corte; sem rodapé e sem selo de contagem');
+// ---- 6. as instruções sobre tabela dizem o que precisam dizer ---------------
+// A primeira regeneração com as tabelas no prompt saiu com a tabela reproduzida,
+// mas com os cabeçalhos em inglês, copiados do artigo — no meio de um texto em
+// português. E "reproduzir" precisa estar dito como colar, não como descrever:
+// era exatamente descrevendo que o modelo fugia da tabela.
+{
+  const { montarPrompt } = require('../lib/discussao');
+  const artigo = { titulo: 'T', fonte: 'F', tipo: 'Artigo de Revisão' };
+  const comTabela = montarPrompt(artigo, ft);
+  ok('manda reproduzir em markdown', /\*\*Reproduza no corpo da discussão, em markdown\*\*/.test(comTabela));
+  ok('manda traduzir a tabela', /A tabela sai em português/.test(comTabela));
+  ok('preserva número, sigla, fármaco e táxon', /números, unidades, siglas, nomes de fármacos/.test(comTabela));
+  ok('diz que reproduzir é colar, não descrever', /Reproduzir é colar a tabela, não descrevê-la/.test(comTabela));
+
+  const semTabela = montarPrompt(artigo, Object.assign({}, ft, { tabelas: [] }));
+  ok('sem tabela, não manda reproduzir nada', semTabela.indexOf('Reproduza no corpo') < 0);
+  ok('sem tabela, diz que não há', /não tem tabelas extraíveis/.test(semTabela));
+}
+
+console.log(bad ? '\nFALHOU: ' + bad : '\n✓ prompt da discussão: figuras e tabelas sobrevivem ao corte; tabela em português; sem rodapé e sem selo');
 process.exit(bad ? 1 : 0);
