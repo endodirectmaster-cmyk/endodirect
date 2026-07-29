@@ -32,9 +32,14 @@ const lerSemComentarios = (p) => fs.readFileSync(path.join(raiz, p), 'utf8').rep
   const iGeracao = bloco.indexOf('gerarDiscussaoDoMural(');
   ok('a cadeia dispara a próxima', iDisparo > 0);
   ok('a cadeia gera a discussão', iGeracao > 0);
-  ok('o disparo da próxima vem ANTES da geração', iDisparo > 0 && iGeracao > 0 && iDisparo < iGeracao,
+  ok('o disparo do resto do lote vem ANTES da geração', iDisparo > 0 && iGeracao > 0 && iDisparo < iGeracao,
      'disparo em ' + iDisparo + ', geração em ' + iGeracao);
-  ok('a lista do que falta é passada adiante (não recalculada)', /dispararCadeia\(\s*\{\s*ids:/.test(bloco));
+  // ⚠️ LEQUE, NÃO CORRENTE: quem recebe a partida dispara TODOS os outros. Na
+  // versão em corrente, cada invocação disparava só a seguinte e o 4º elo de um
+  // lote de 6 nunca subiu — sem erro, sem 5xx, sem requisição nos logs.
+  ok('dispara o resto do lote em paralelo', /Promise\.all\(\s*resto\.map\(/.test(bloco));
+  ok('cada disparo leva UM artigo', /dispararCadeia\(\s*\{\s*sourceId:/.test(bloco));
+  ok('quem recebe um sourceId não dispara mais nada', /if\s*\(\s*!folha\s*\)/.test(bloco));
   ok('o lote da partida tem teto', /LOTE_CADEIA\s*=\s*[1-9]/.test(src));
   ok('não regera artigo que já tem discussão', /jaTemDiscussao\(/.test(bloco));
 }
@@ -94,13 +99,13 @@ async function testeDoDisparo() {
   const posts = () => chamadas.filter((c) => c.url.indexOf('/api/admin/refresh-radar') >= 0);
 
   try {
-    await kick.dispararCadeia({ ids: ['a', 'b'] });
+    await kick.dispararCadeia({ sourceId: 'pubmed:1' });
     const p = posts()[0];
     ok('dispara por POST', !!p && p.opts.method === 'POST');
     ok('autentica com o CRON_SECRET', !!p && p.opts.headers.Authorization === 'Bearer segredo-de-teste');
     const body = p ? JSON.parse(p.opts.body) : {};
     ok('manda a action da cadeia', body.action === 'discussao_cadeia');
-    ok('manda a lista do que falta', JSON.stringify(body.ids) === '["a","b"]');
+    ok('manda o artigo alvo', body.sourceId === 'pubmed:1');
 
     chamadas.length = 0;
     const r1 = await kick.kickSeNecessario();

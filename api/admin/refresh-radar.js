@@ -106,37 +106,43 @@ module.exports = async function handler(req, res) {
       return json(res, 500, { ok: false, error: (error && error.message) || 'Falha ao ler a fila.' });
     }
   }
-  // { action: 'discussao_cadeia' } → gera UMA discussao pendente e, ao terminar,
-  // dispara a PROXIMA invocacao para o proximo artigo.
+  // { action: 'discussao_cadeia' } → uma invocação, uma discussão.
   //
-  // ⚠️ ESTE E O UNICO JEITO DE SER AUTOMATICO DENTRO DO TETO DE 60s. Uma
-  // discussao leva ~40s; encadear N delas numa funcao so e impossivel por
-  // construcao — foi a falha de 29/07, em que a etapa no fim do cron nunca era
-  // alcancada e sumia sem erro. Aqui cada artigo tem a SUA invocacao, com os
-  // seus proprios 60s, e a cadeia anda sozinha ate a fila esvaziar.
+  // ⚠️ UMA INVOCAÇÃO POR ARTIGO É O ÚNICO JEITO DE SER AUTOMÁTICO. Uma discussão
+  // leva ~40s; encadear N delas numa função só é impossível por construção — foi
+  // a falha de 29/07, em que a etapa pendurada no fim do cron nunca era alcançada
+  // e sumia sem erro nenhum.
+  //
+  // ⚠️ E É LEQUE, NÃO CORRENTE — aprendido medindo, no mesmo dia. A primeira
+  // versão fazia cada invocação disparar a seguinte: com um lote de 6, três
+  // discussões saíram e o 4º elo simplesmente nunca foi invocado (sem erro, sem
+  // 5xx, sem requisição nos logs). Corrente de N saltos tem N pontos de falha e
+  // qualquer um deles engole o resto da fila em silêncio. Agora QUEM RECEBE A
+  // PARTIDA dispara todos os outros de uma vez e depois gera o seu: um único
+  // ponto de falha, e o que não subir volta na próxima partida.
   if (payload && payload.action === 'discussao_cadeia') {
     try {
-      // Quem dá a partida manda a cadeia sem `ids` e recebe o lote calculado
-      // aqui; cada invocação seguinte recebe a lista explícita do que falta.
-      // Passar a lista adiante evita recalcular a fila — o cálculo lê o payload
-      // inteiro (~4,6 MB) e, pior, a invocação seguinte veria a fila ANTES da
-      // gravação desta e escolheria o MESMO artigo.
-      let ids = Array.isArray(payload.ids) ? payload.ids.map(String).filter(Boolean) : null;
-      if (!ids) ids = (await filaDeDiscussoes()).slice(0, LOTE_CADEIA).map((f) => f.sourceId);
-      if (!ids.length) return json(res, 200, { ok: true, fim: true, geradas: 0 });
-      const alvo = ids[0];
-      const resto = ids.slice(1);
-      // ⚠️ A PRÓXIMA SAI ANTES DA GERAÇÃO, não depois. Disparar no fim amarrava a
-      // continuidade da cadeia a esta invocação caber nos 60s do plano: a geração
-      // leva ~40s e, se estourasse, a função morria com a próxima nunca disparada
-      // e a fila parava sem erro nenhum. Saindo antes, o elo seguinte já está de
-      // pé em ~2s e a cadeia anda mesmo que esta geração falhe ou seja morta.
-      if (resto.length) await dispararCadeia({ ids: resto });
-      // Outra invocação pode ter gerado este mesmo artigo (duas partidas
-      // simultâneas). Conferir custa uma consulta; regerar custa uma chamada de IA.
-      if (await jaTemDiscussao(alvo)) return json(res, 200, { ok: true, sourceId: alvo, gerou: false, pulado: 'ja_existe', restam: resto.length });
+      // Com `sourceId` no corpo, esta invocação é uma folha do leque: gera o que
+      // mandaram e não dispara nada.
+      const folha = String(payload.sourceId || '').trim();
+      let alvo = folha;
+      let disparados = 0;
+      if (!folha) {
+        const ids = (await filaDeDiscussoes()).slice(0, LOTE_CADEIA).map((f) => f.sourceId);
+        if (!ids.length) return json(res, 200, { ok: true, fim: true, geradas: 0 });
+        alvo = ids[0];
+        // Em paralelo: são só requisições de abertura, com abort próprio. Sai
+        // ANTES da geração — a geração de ~40s não pode ser pré-requisito de
+        // ninguém subir.
+        const resto = ids.slice(1);
+        if (resto.length) await Promise.all(resto.map((id) => dispararCadeia({ sourceId: id })));
+        disparados = resto.length;
+      }
+      // Outra partida pode ter gerado este mesmo artigo. Conferir custa uma
+      // consulta; regerar custa uma chamada de IA.
+      if (await jaTemDiscussao(alvo)) return json(res, 200, { ok: true, sourceId: alvo, gerou: false, pulado: 'ja_existe', disparados });
       const out = await gerarDiscussaoDoMural(alvo);
-      return json(res, 200, { ok: true, sourceId: alvo, gerou: !!out.ok, erro: out.ok ? null : out.error, restam: resto.length });
+      return json(res, 200, { ok: true, sourceId: alvo, gerou: !!out.ok, erro: out.ok ? null : out.error, disparados });
     } catch (error) {
       console.error('[refresh-radar:cadeia] erro:', (error && error.stack) || error);
       return json(res, 500, { ok: false, error: (error && error.message) || 'Falha na cadeia.' });
@@ -250,4 +256,8 @@ async function gerarDiscussaoDoMural(sourceId) {
   return { ok: true, meta: out.meta, chars: out.markdown.length };
 }
 
-module.exports.config = { maxDuration: 300 };
+// ⚠️ Quem manda no tempo desta função é o `functions` do vercel.json (120s), NÃO
+// esta linha: `module.exports.config` é convenção de Next.js e o runtime Node
+// puro a ignora. Foi acreditando neste 300 que eu calculei um orçamento de tempo
+// que não existia, em 29/07, e a geração automática morria antes de acontecer.
+module.exports.config = { maxDuration: 120 };
