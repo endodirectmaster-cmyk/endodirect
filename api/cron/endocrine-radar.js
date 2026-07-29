@@ -6,7 +6,24 @@ const { sendDailyNewsletter } = require('../../lib/newsletter');
 const { refreshPodcastsFromFeed } = require('../../lib/podcasts');
 const { sendTrialEmails } = require('../../lib/trial-emails');
 const { sendIgDailyNotice, autoPostDailyQotd } = require('../../lib/instagram');
-const { gerarDiscussoesPendentes } = require('../../lib/discussao-auto');
+// Dá a partida na cadeia de discussões: uma requisição ao próprio backend, que
+// gera um artigo por invocação e chama a próxima. Não espera a resposta — o que
+// importa é a primeira invocação ter começado.
+async function dispararCadeiaDiscussoes() {
+  if (!process.env.CRON_SECRET) return false;
+  const base = process.env.PUBLIC_BASE_URL || 'https://www.endodirect.com.br';
+  const ctrl = new AbortController();
+  const t = setTimeout(() => ctrl.abort(), 2000);
+  try {
+    await fetch(`${base}/api/admin/refresh-radar`, {
+      method: 'POST', signal: ctrl.signal,
+      headers: { 'Content-Type': 'application/json', Authorization: 'Bearer ' + process.env.CRON_SECRET },
+      body: JSON.stringify({ action: 'discussao_cadeia' })
+    });
+  } catch (e) { /* abort esperado */ }
+  finally { clearTimeout(t); }
+  return true;
+}
 const { sendAlert } = require('../../lib/alert');
 
 function json(res, status, body) {
@@ -67,19 +84,19 @@ module.exports = async function handler(req, res) {
     // newsletter, que são as que têm hora marcada. Recebe o tempo que sobrou,
     // com folga, e o que não couber hoje sai amanhã.
     // Fail-safe: nunca derruba o cron.
-    let discussoes = { geradas: 0, motivo: 'skipped' };
-    try {
-      // ⚠️ O orçamento sai do teto REAL do plano (60s), não do maxDuration:300
-      // declarado — no Hobby esse pedido não tem efeito. Com a conta errada, a
-      // etapa "cabia" no papel, a função era morta antes e a discussão sumia sem
-      // erro nenhum (2026-07-29). Na prática, aqui quase nunca vai sobrar tempo:
-      // quem gera em volume é o botão "Gerar discussões pendentes", que usa uma
-      // invocação por artigo. Isto aqui é só o oportunismo de pegar uma carona
-      // quando o dia estiver leve.
-      const restante = 60000 - (Date.now() - t0) - 5000;
-      if (restante > 45000) discussoes = await gerarDiscussoesPendentes({ limite: 1, orcamentoMs: restante });
-      else discussoes = { geradas: 0, motivo: 'sem_tempo' };
-    } catch (e) { console.error('[cron-radar] discussoes erro:', (e && e.stack) || e); discussoes = { geradas: 0, motivo: 'error' }; }
+    // Discussão completa dos tipos que rendem: o cron apenas DÁ A PARTIDA na
+    // cadeia — não gera nada aqui dentro.
+    //
+    // ⚠️ Gerar aqui é impossível e já custou caro (29/07): uma discussão leva
+    // ~40s e o teto real do plano é 60s, que radar, Questão do Dia, newsletter,
+    // podcasts e e-mails já consumiram. A etapa "cabia" no papel, a função
+    // morria antes e a discussão sumia sem erro nenhum. Cada artigo precisa da
+    // SUA invocação — é o que `discussao_cadeia` faz, encadeando sozinho até a
+    // fila esvaziar.
+    // Fail-safe: nunca derruba o cron.
+    let discussoes = { partida: false };
+    try { discussoes = { partida: await dispararCadeiaDiscussoes() }; }
+    catch (e) { console.error('[cron-radar] cadeia discussoes erro:', (e && e.stack) || e); discussoes = { partida: false }; }
     return json(res, 200, { ok: true, ...result, qotd, newsletter, podcasts, trialEmails, igStory, discussoes });
   } catch (error) {
     console.error('[cron-radar] erro:', (error && error.stack) || error);

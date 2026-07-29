@@ -13321,23 +13321,15 @@ function bindAdmSec(sec){
         if(!d.ok)throw new Error(d.error||'Não consegui ler a fila.');
         var fila=d.fila||[];
         if(!fila.length){notify('Nenhuma discussão pendente — todos os artigos elegíveis já têm.','ok');return null;}
-        var feitas=0,falhas=0;
-        // Sequencial de proposito: em paralelo, N requisicoes de 40s competiriam
-        // pelo mesmo limite de execucao e derrubariam uma a outra.
-        return fila.reduce(function(p,item,idx){
-          return p.then(function(){
-            bFila.innerHTML=ldHTML('Gerando '+(idx+1)+'/'+fila.length+'...');
-            return fetch('/api/admin/refresh-radar',{method:'POST',
-              headers:{'Content-Type':'application/json',Authorization:'Bearer '+tok},
-              body:JSON.stringify({action:'discussao',sourceId:item.sourceId})})
-              .then(function(r3){return r3.json().catch(function(){return{ok:false};});})
-              .then(function(d3){if(d3&&d3.ok)feitas++;else falhas++;})
-              .catch(function(){falhas++;});
+        // Dá a PARTIDA na cadeia no servidor e sai. Cada artigo ganha a sua
+        // invocação e chama a próxima; ~40s cada. Não prende a aba, e continua
+        // rodando mesmo se o professor fechar o navegador.
+        return fetch('/api/admin/refresh-radar',{method:'POST',
+          headers:{'Content-Type':'application/json',Authorization:'Bearer '+tok},
+          body:JSON.stringify({action:'discussao_cadeia'})})
+          .then(function(){
+            notify(fila.length+' artigo(s) na fila. Gerando em segundo plano (~40s cada) — recarregue a página daqui a alguns minutos.','ok');
           });
-        },Promise.resolve()).then(function(){
-          notify(feitas+' discussão(ões) gerada(s)'+(falhas?(' · '+falhas+' falhou/falharam'):'')+'.',falhas?'err':'ok');
-          return carregarMuralDiscIds(client).then(function(){renderAdmSec('mural');});
-        });
       }).catch(function(e){notify('Erro: '+((e&&e.message)||e),'err');})
       .then(function(){var bb=document.getElementById('btn-adm-disc-fila');if(bb){bb.disabled=false;bb.innerHTML=rot;}});
     });

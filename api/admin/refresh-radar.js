@@ -53,10 +53,16 @@ module.exports = async function handler(req, res) {
   const token = auth.indexOf('Bearer ') === 0 ? auth.slice(7).trim() : '';
   if (!token) return json(res, 401, { ok: false, error: 'Sessao ausente.' });
 
-  const user = await userFromToken(token);
-  const email = user && String(user.email || '').toLowerCase();
-  if (!email) return json(res, 401, { ok: false, error: 'Sessao invalida.' });
-  if (!(await isAdminEmail(email))) return json(res, 403, { ok: false, error: 'Apenas administradores podem usar este recurso.' });
+  // Identidade SERVIDOR-A-SERVIDOR: o proprio backend chama este endpoint para
+  // gerar as discussoes em cadeia (uma invocacao por artigo). Usa o CRON_SECRET,
+  // o mesmo segredo dos crons — nunca chega ao navegador.
+  const doServidor = !!process.env.CRON_SECRET && token === process.env.CRON_SECRET;
+  if (!doServidor) {
+    const user = await userFromToken(token);
+    const email = user && String(user.email || '').toLowerCase();
+    if (!email) return json(res, 401, { ok: false, error: 'Sessao invalida.' });
+    if (!(await isAdminEmail(email))) return json(res, 403, { ok: false, error: 'Apenas administradores podem usar este recurso.' });
+  }
 
   // Corpo opcional. { action: 'push', title, body, url } → dispara a notificação
   // no celular dos alunos inscritos (avisos/breaking news). Sem action → radar.
@@ -99,6 +105,30 @@ module.exports = async function handler(req, res) {
       return json(res, 500, { ok: false, error: (error && error.message) || 'Falha ao ler a fila.' });
     }
   }
+  // { action: 'discussao_cadeia' } → gera UMA discussao pendente e, ao terminar,
+  // dispara a PROXIMA invocacao para o proximo artigo.
+  //
+  // ⚠️ ESTE E O UNICO JEITO DE SER AUTOMATICO DENTRO DO TETO DE 60s. Uma
+  // discussao leva ~40s; encadear N delas numa funcao so e impossivel por
+  // construcao — foi a falha de 29/07, em que a etapa no fim do cron nunca era
+  // alcancada e sumia sem erro. Aqui cada artigo tem a SUA invocacao, com os
+  // seus proprios 60s, e a cadeia anda sozinha ate a fila esvaziar.
+  if (payload && payload.action === 'discussao_cadeia') {
+    try {
+      const fila = await filaDeDiscussoes();
+      if (!fila.length) return json(res, 200, { ok: true, fim: true, geradas: 0 });
+      const alvo = fila[0];
+      const out = await gerarDiscussaoDoMural(alvo.sourceId);
+      // Dispara a proxima ANTES de responder: depois do res.end() a Vercel pode
+      // congelar a funcao e a requisicao nem sair. Nao esperamos a resposta —
+      // so que a conexao seja aberta; a invocacao seguinte roda por conta dela.
+      if (fila.length > 1) await dispararProxima();
+      return json(res, 200, { ok: true, sourceId: alvo.sourceId, gerou: !!out.ok, erro: out.ok ? null : out.error, restam: fila.length - 1 });
+    } catch (error) {
+      console.error('[refresh-radar:cadeia] erro:', (error && error.stack) || error);
+      return json(res, 500, { ok: false, error: (error && error.message) || 'Falha na cadeia.' });
+    }
+  }
   if (payload && payload.action === 'discussao') {
     const sourceId = String(payload.sourceId || '').trim();
     if (!sourceId) return json(res, 400, { ok: false, error: 'sourceId ausente.' });
@@ -128,6 +158,23 @@ module.exports = async function handler(req, res) {
     return json(res, 500, { ok: false, error: (error && error.message) || 'Falha ao atualizar o radar.' });
   }
 };
+
+// Dispara a proxima invocacao da cadeia. NAO espera a resposta: aborta em 2s,
+// tempo de sobra para a requisicao sair. O que importa e a invocacao do outro
+// lado ter comecado — ela roda ate o fim por conta propria.
+async function dispararProxima() {
+  const base = process.env.PUBLIC_BASE_URL || 'https://www.endodirect.com.br';
+  const ctrl = new AbortController();
+  const t = setTimeout(() => ctrl.abort(), 2000);
+  try {
+    await fetch(`${base}/api/admin/refresh-radar`, {
+      method: 'POST', signal: ctrl.signal,
+      headers: { 'Content-Type': 'application/json', Authorization: 'Bearer ' + process.env.CRON_SECRET },
+      body: JSON.stringify({ action: 'discussao_cadeia' })
+    });
+  } catch (e) { /* abort esperado: a requisicao ja saiu */ }
+  finally { clearTimeout(t); }
+}
 
 // Fila de discussões pendentes: qualifica, ainda não tem, mais novos primeiro.
 // Sem IA e sem rede externa além do Supabase — responde em menos de um segundo.
