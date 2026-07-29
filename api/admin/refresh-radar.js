@@ -4,7 +4,7 @@
 // endodirect_admins e so entao rodamos o radar (lib/radar.js).
 const { runRadar } = require('../../lib/radar');
 const { gerarDiscussao } = require('../../lib/discussao');
-const { gerarDiscussoesPendentes } = require('../../lib/discussao-auto');
+const { selecionar } = require('../../lib/discussao-auto');
 const { pmcIdFromLink } = require('../../lib/fulltext');
 const push = require('../../lib/push');
 
@@ -87,6 +87,18 @@ module.exports = async function handler(req, res) {
   // ⚠️ Está aqui dentro, e não num arquivo próprio em api/, porque o projeto
   // está em 12/12 funções serverless — o teto do plano da Vercel, que o
   // scripts/ci-validate.js barra. Criar api/admin/discussao.js quebraria o build.
+  // { action: 'discussao_fila' } → só a LISTA de quem falta, sem gerar nada.
+  // É barata (lê o estado e a tabela) e cabe folgado no teto de execução; quem
+  // gera é o cliente, chamando `discussao` uma vez por artigo.
+  if (payload && payload.action === 'discussao_fila') {
+    try {
+      const fila = await filaDeDiscussoes();
+      return json(res, 200, { ok: true, fila });
+    } catch (error) {
+      console.error('[refresh-radar:fila] erro:', (error && error.stack) || error);
+      return json(res, 500, { ok: false, error: (error && error.message) || 'Falha ao ler a fila.' });
+    }
+  }
   if (payload && payload.action === 'discussao') {
     const sourceId = String(payload.sourceId || '').trim();
     if (!sourceId) return json(res, 400, { ok: false, error: 'sourceId ausente.' });
@@ -100,33 +112,35 @@ module.exports = async function handler(req, res) {
   }
 
   try {
-    const t0 = Date.now();
     const result = await runRadar();
-    // Discussao completa dos tipos que rendem (metanalise, diretriz, consenso,
-    // ensaio clinico, artigo de revisao) — os mesmos do cron do radar.
+    // ⚠️ A geracao de discussao NAO fica pendurada aqui, e isso foi aprendido
+    // caro (2026-07-29): uma discussao leva ~40s e o teto de execucao do plano
+    // e de 60s. Radar + newsletter + podcasts + e-mails de degustacao consomem
+    // o tempo antes, e a etapa no fim simplesmente NAO ERA ALCANCADA — sem erro,
+    // sem log, sem discussao. O professor clicou duas vezes e nada saiu.
     //
-    // POR QUE TAMBEM AQUI: a geracao automatica so acontecia no cron das 7h30.
-    // O professor, ao ligar o recurso, esperava ver as discussoes aparecerem —
-    // e nao havia gatilho nenhum sob o controle dele. Este botao passa a ser
-    // esse gatilho: cada clique adianta algumas, e o cron cuida do resto.
-    //
-    // Fail-safe: nunca derruba a atualizacao do radar, que e a funcao principal
-    // do botao. Se a geracao falhar, o professor ainda ganha os artigos novos.
-    let discussoes = { geradas: 0, motivo: 'skipped' };
-    try {
-      const restante = 300000 - (Date.now() - t0) - 30000;
-      if (restante > 40000) discussoes = await gerarDiscussoesPendentes({ limite: 2, orcamentoMs: restante });
-      else discussoes = { geradas: 0, motivo: 'sem_tempo' };
-    } catch (e) {
-      console.error('[refresh-radar] discussoes erro:', (e && e.stack) || e);
-      discussoes = { geradas: 0, motivo: 'error' };
-    }
-    return json(res, 200, { ok: true, ...result, discussoes });
+    // O caminho certo e UMA INVOCACAO POR DISCUSSAO: o cliente pede a fila aqui
+    // (barato) e depois chama `action:'discussao'` um artigo de cada vez, cada
+    // chamada com seus proprios 60s. Ver o botao "Gerar discussoes pendentes".
+    return json(res, 200, { ok: true, ...result });
   } catch (error) {
     console.error('[refresh-radar] erro:', (error && error.stack) || error);
     return json(res, 500, { ok: false, error: (error && error.message) || 'Falha ao atualizar o radar.' });
   }
 };
+
+// Fila de discussões pendentes: qualifica, ainda não tem, mais novos primeiro.
+// Sem IA e sem rede externa além do Supabase — responde em menos de um segundo.
+async function filaDeDiscussoes() {
+  const base = { apikey: SERVICE_ROLE, Authorization: 'Bearer ' + SERVICE_ROLE };
+  const r = await fetch(`${SUPABASE_URL}/rest/v1/endodirect_global_state?id=eq.main&select=payload`, { headers: base });
+  if (!r.ok) throw new Error('Nao consegui ler o estado global.');
+  const rows = await r.json().catch(() => []);
+  const avisos = ((rows && rows[0] && rows[0].payload) || {}).radar_avisos || [];
+  const d = await fetch(`${SUPABASE_URL}/rest/v1/endodirect_mural_discussoes?select=source_id`, { headers: base });
+  const jaTem = new Set(((await d.json().catch(() => [])) || []).map((x) => x && x.source_id).filter(Boolean));
+  return selecionar(avisos, jaTem, 200).map((a) => ({ sourceId: a.sourceId, titulo: a.titulo || '', tipo: a.tipo || '' }));
+}
 
 // Lê o item do mural, gera a discussão e grava em endodirect_mural_discussoes.
 //

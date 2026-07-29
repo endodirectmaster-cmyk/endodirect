@@ -69,8 +69,15 @@ module.exports = async function handler(req, res) {
     // Fail-safe: nunca derruba o cron.
     let discussoes = { geradas: 0, motivo: 'skipped' };
     try {
-      const restante = 300000 - (Date.now() - t0) - 30000; // 300s do maxDuration, 30s de folga
-      if (restante > 40000) discussoes = await gerarDiscussoesPendentes({ limite: 2, orcamentoMs: restante });
+      // ⚠️ O orçamento sai do teto REAL do plano (60s), não do maxDuration:300
+      // declarado — no Hobby esse pedido não tem efeito. Com a conta errada, a
+      // etapa "cabia" no papel, a função era morta antes e a discussão sumia sem
+      // erro nenhum (2026-07-29). Na prática, aqui quase nunca vai sobrar tempo:
+      // quem gera em volume é o botão "Gerar discussões pendentes", que usa uma
+      // invocação por artigo. Isto aqui é só o oportunismo de pegar uma carona
+      // quando o dia estiver leve.
+      const restante = 60000 - (Date.now() - t0) - 5000;
+      if (restante > 45000) discussoes = await gerarDiscussoesPendentes({ limite: 1, orcamentoMs: restante });
       else discussoes = { geradas: 0, motivo: 'sem_tempo' };
     } catch (e) { console.error('[cron-radar] discussoes erro:', (e && e.stack) || e); discussoes = { geradas: 0, motivo: 'error' }; }
     return json(res, 200, { ok: true, ...result, qotd, newsletter, podcasts, trialEmails, igStory, discussoes });

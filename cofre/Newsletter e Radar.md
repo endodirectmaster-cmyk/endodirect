@@ -1,6 +1,6 @@
 ---
 tags: [cofre, newsletter, radar]
-atualizado: 2026-07-28
+atualizado: 2026-07-29
 ---
 
 # Newsletter e Radar
@@ -57,6 +57,21 @@ O professor clicou em "Gerar discussão completa", esperou, e a tela não mudou:
 - **Correção:** `carregarMuralDiscIds(client)` antes de redesenhar, nos **dois** caminhos (botão da discussão e botão "Atualizar radar").
 - **Gatilho manual da geração automática:** ela só rodava no cron das 7h30, sem nada sob o controle do professor. O botão **"Atualizar radar"** passa a gerar também as pendentes (2 por clique, com orçamento de tempo), e o aviso diz quantas saíram.
 - **Dado útil:** a geração levou **~40 s** e passou no Opus 4.8 — o teto de 60 s do plano Hobby aguentou neste artigo. Continua sendo o limite a vigiar em artigo longo.
+
+### ⚠️ A geração automática NUNCA rodou — e o motivo é o teto de 60s (2026-07-29)
+Depois de ligar o recurso, o professor voltou: *"Não gerou a discussão do artigo automaticamente"*. Estava certo — e o motivo não era seleção, era **tempo**.
+
+- **Evidência:** 20 artigos qualificados na fila, o cron das 7h30 rodou, o professor clicou duas vezes em "Atualizar radar" (13h05 e 13h11) — e a tabela continuava com **2 discussões**, ambas geradas à mão na véspera.
+- **A conta que estava errada:** o handler calculava o orçamento a partir de `maxDuration: 300`, mas **no Hobby esse pedido não tem efeito** — o teto real é **60 s**. Uma discussão leva **~40 s**, e antes dela rodam radar, Questão do Dia, newsletter, podcasts, e-mails de degustação e aviso do Instagram. A etapa "cabia" no papel; na prática a função era morta antes de chegar nela. **Sumia sem erro, sem log e sem discussão** — o pior tipo de falha, porque o botão dizia "Radar atualizado" e parecia que o recurso não servia.
+- **A correção estrutural: UMA INVOCAÇÃO POR DISCUSSÃO.** Encadear N gerações de 40 s dentro de uma função de 60 s é impossível por construção, e nenhum ajuste de orçamento conserta isso.
+  - `action:'discussao_fila'` devolve só a lista de pendentes (rápida, sem IA).
+  - O botão **"📄 Gerar discussões pendentes"** no Mural do admin percorre a fila **sequencialmente, um `fetch` por artigo** — cada um com os seus próprios 60 s — e mostra "Gerando 3/20…".
+  - **Sequencial, não paralelo:** N requisições de 40 s em paralelo competiriam pelo mesmo limite de execução.
+- **No cron ficou só a carona:** `limite: 1` e orçamento calculado sobre **60 s**, não sobre 300. Quase nunca vai sobrar tempo, e tudo bem — quem gera em volume é o botão.
+- **A lição, que vale para qualquer etapa nova:** ao pendurar trabalho no fim de um handler que já faz muita coisa, o orçamento tem de sair do **teto real do plano**, não do `maxDuration` pedido. E etapa que "não roda" precisa **dizer** que não rodou — silêncio vira "o recurso está quebrado".
+
+### ✅ O feed da ANVISA funciona
+No mesmo dia o professor perguntou por que o Mural não pegou a notícia *"Anvisa registra cinco novas canetas de semaglutida"*. **Pegou:** entrou em `adm_avisos` às 13h05, com fonte "Agência Nacional de Vigilância Sanitária (Anvisa)" e o link oficial do gov.br. O que ele tinha visto antes era o card **G1** da mesma notícia, criado à mão pelo "Gerar texto com IA" a partir de uma URL — G1 **não é fonte do radar** (a allowlist do Breaking News só tem regulador e farmacêutica). Card do G1 removido a pedido.
 
 ## Radar / Mural (automático)
 - `lib/radar.js` + `lib/news.js`: lê feeds RSS de revistas, resume com IA (`summarizeWithAI`), monta itens do mural.
