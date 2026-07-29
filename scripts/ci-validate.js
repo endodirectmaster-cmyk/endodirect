@@ -92,5 +92,15 @@ try {
   fail('regressão da discussão automática falhou (verifique lib/discussao-auto.js + lib/discussao.js):\n' + out);
 }
 
+// 7. Renderização do corpo do card do Mural: régua horizontal (`---`, usada pela
+//    discussão completa entre seções) sem quebrar tabela nem lista.
+try {
+  execFileSync(process.execPath, [path.join('scripts', 'test-mural-render.js')], { stdio: 'pipe' });
+  ok('regressão mural: régua horizontal + tabela e lista intactas');
+} catch (e) {
+  const out = (e.stdout ? e.stdout.toString() : '') + (e.stderr ? e.stderr.toString() : '');
+  fail('regressão do render do mural falhou (verifique muralTextHTML no index.html):\n' + out);
+}
+
 if (errors) { console.error(`\n${errors} verificação(ões) falharam.`); process.exit(1); }
 console.log('\nTodas as verificações passaram.');

@@ -491,6 +491,7 @@ textarea{resize:vertical;line-height:1.6}
 .mural-disc>summary:focus-visible{outline:2px solid var(--blue2);outline-offset:2px}
 .mural-disc-meta{font-weight:500;font-size:.74rem;color:var(--t2)}
 .mural-disc-body{padding:.2rem .85rem .85rem;margin-bottom:0}
+.mural-text .mural-hr{border:0;border-top:1px solid var(--bd);margin:1.1rem 0}
 @media (prefers-reduced-motion:reduce){.mural-disc>summary::after{transition:none}}
 .mural-text .mural-h:first-child{margin-top:0}
 .mural-text .mural-ul{margin:.35rem 0;padding-left:1.2rem;text-align:left;text-align-last:left}
@@ -14083,6 +14084,12 @@ function muralTextHTML(txt){
         +'</tbody></table></div>');
       continue;
     }
+    // Régua horizontal (--- / *** / ___): a discussão completa do artigo separa
+    // as seções assim, e o rodapé de origem vem depois de uma. Sem este caso a
+    // linha caía no parágrafo comum e o aluno via "---" escrito na tela — foi o
+    // que o professor viu em 28/07 ("ficou esquisito assim"). O separador de
+    // TABELA é tratado acima e exige "|", então não conflita.
+    if(/^\s*([-*_])(\s*\1){2,}\s*$/.test(line)){flush();out.push('<hr class="mural-hr">');i++;continue;}
     // Legenda de figura: linha começando com "Legenda:/Figura:/Fig." vira uma
     // legenda menor e discreta (começa com letra → sobrevive ao formalizeMuralText).
     if(/^\s*(Legenda|Figura|Fig\.)\s*[:.–—-]/i.test(line)){

@@ -21,13 +21,14 @@ const art = (o) => Object.assign({ sourceId: 'pubmed:1', titulo: '', tipo: 'Estu
 
 // ---- 1. os quatro tipos pedidos passam ---------------------------------------
 TIPOS_QUE_RENDEM.forEach((t) => ok('tipo "' + t + '" qualifica', qualifica(art({ tipo: t })) === true));
-ok('os 4 tipos pedidos estão na lista',
-   ['Metanálise', 'Diretriz', 'Consenso', 'Ensaio Clínico'].every((t) => TIPOS_QUE_RENDEM.indexOf(t) >= 0),
+ok('os 5 tipos pedidos estão na lista',
+   ['Metanálise', 'Diretriz', 'Consenso', 'Ensaio Clínico', 'Artigo de Revisão'].every((t) => TIPOS_QUE_RENDEM.indexOf(t) >= 0),
    TIPOS_QUE_RENDEM.join(', '));
 
 // ---- 2. o que NÃO rende fica de fora ----------------------------------------
 ok('Estudo Original comum NÃO qualifica', qualifica(art({ titulo: 'Serum irisin in obese adults: a cross-sectional study' })) === false);
-ok('Artigo de Revisão narrativa NÃO qualifica', qualifica(art({ tipo: 'Artigo de Revisão', titulo: 'Obesity and bone health: a narrative review' })) === false);
+// Revisão narrativa PASSOU a qualificar em 28/07, a pedido do professor.
+ok('Artigo de Revisão qualifica', qualifica(art({ tipo: 'Artigo de Revisão', titulo: 'Obesity and bone health: a narrative review' })) === true);
 ok('Estudo Genético NÃO qualifica', qualifica(art({ tipo: 'Estudo Genético', titulo: 'Notch biallelic variants in congenital hypothyroidism' })) === false);
 
 // ---- 3. sem texto integral aberto, nunca ------------------------------------
@@ -88,5 +89,5 @@ delete process.env.DISCUSSAO_MODEL;
   ok('a env própria passa por allowlist', /LEGACY_MODEL_MAP/.test(src) && /ALLOWED_MODELS/.test(src));
 }
 
-console.log(bad ? '\nFALHOU: ' + bad : '\n✓ seleção da discussão automática: 4 tipos + consenso/ensaio por título, Opus 4.8 fixo');
+console.log(bad ? '\nFALHOU: ' + bad : '\n✓ seleção da discussão automática: 5 tipos + consenso/ensaio por título, Opus 4.8 fixo');
 process.exit(bad ? 1 : 0);
