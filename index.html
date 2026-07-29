@@ -2682,6 +2682,35 @@ var CALCS=[
    calc:function(v){var p=parseFloat(v.imc_peso)||0;var a=(parseFloat(v.imc_alt)||0)/100;return a>0?p/(a*a):0;},
    interp:function(s){return s<18.5?{t:'Baixo peso',c:'tag-gold'}:s<25?{t:'Eutrófico',c:'tag-grn'}:s<30?{t:'Sobrepeso',c:'tag-gold'}:s<35?{t:'Obesidade grau I',c:'tag-red'}:s<40?{t:'Obesidade grau II',c:'tag-red'}:{t:'Obesidade grau III',c:'tag-red'};},
    unit:'kg/m²'},
+  // %PEP e %PPT pós-bariátrica. Os dois juntos de propósito: o %PEP é o número
+  // que o paciente conhece e cobra, mas depende de onde se coloca o "peso ideal"
+  // e infla em quem operou com IMC mais baixo; o %PPT não tem esse arbítrio e é
+  // o que as sociedades passaram a preferir. Mostrar só um dos dois é o que gera
+  // a conversa errada no consultório.
+  {id:'pep',name:'%PEP e %PPT pós-bariátrica',area:'Antropometria',desc:'Perda do excesso de peso e perda de peso total após cirurgia bariátrica',
+   fields:[{id:'pep_p0',label:'Peso no dia da cirurgia (kg)',type:'num'},{id:'pep_alt',label:'Altura (cm)',type:'num'},{id:'pep_pat',label:'Peso atual (kg)',type:'num'}],
+   calc:function(v){
+     var p0=parseFloat(v.pep_p0)||0,a=(parseFloat(v.pep_alt)||0)/100,pa=parseFloat(v.pep_pat)||0;
+     if(!(p0>0&&a>0&&pa>0))return NaN;
+     var ideal=25*a*a;              // teto da eutrofia — a referência usada na literatura bariátrica
+     var excesso=p0-ideal;
+     if(excesso<=0)return NaN;      // operado já abaixo de IMC 25: %PEP não tem denominador
+     return (p0-pa)/excesso*100;
+   },
+   interp:function(s,v){
+     var p0=parseFloat(v.pep_p0)||0,a=(parseFloat(v.pep_alt)||0)/100,pa=parseFloat(v.pep_pat)||0;
+     if(!(p0>0&&a>0&&pa>0))return{t:'Preencha peso da cirurgia, altura e peso atual.',c:'tag-gold'};
+     var ideal=25*a*a;
+     if(p0-ideal<=0)return{t:'Peso da cirurgia já abaixo de IMC 25 — sem excesso de peso, o %PEP não é calculável. Use o %PPT: '+((p0-pa)/p0*100).toFixed(1)+'%.',c:'tag-gold'};
+     var ppt=(p0-pa)/p0*100, imc=pa/(a*a);
+     var det=' · %PPT '+ppt.toFixed(1)+'% · IMC atual '+imc.toFixed(1)+' kg/m² · peso de IMC 25: '+ideal.toFixed(1)+' kg';
+     if(s<0)return{t:'Ganho de peso em relação ao dia da cirurgia'+det,c:'tag-red'};
+     if(s<50)return{t:'Abaixo de 50% do excesso — resposta insuficiente se já passado 12–18 meses'+det,c:'tag-gold'};
+     if(s<100)return{t:'Perda adequada do excesso de peso'+det,c:'tag-grn'};
+     return{t:'Excesso de peso todo perdido (IMC já abaixo de 25)'+det,c:'tag-grn'};
+   },
+   unit:'% do excesso',
+   note:'%PEP = (peso da cirurgia − peso atual) ÷ (peso da cirurgia − peso de IMC 25) × 100. O denominador é o EXCESSO sobre o teto da eutrofia, convenção da literatura bariátrica — por isso o valor passa de 100% quando o IMC cai abaixo de 25. %PPT = (peso da cirurgia − peso atual) ÷ peso da cirurgia × 100. Valores médios esperados de %PEP: sleeve ~33% em 3 meses, ~50% em 6, ~65% em 12 e ~70% em 18; bypass 25–35% em 3 meses, 45–55% em 6, 60–70% em 12 e 75–85% em 18 (Brolin 1989; Deitel 2003; Buchwald 2004; Shah 2006; Xavier 2010; O’Brien 2013; Aydoğan 2016; Zilberstein 2019). Abaixo de 50% do excesso após 12–18 meses é o limiar clássico de resposta insuficiente, que pede investigação antes de rotular o paciente — adesão, complicação anatômica, uso de medicação que favorece ganho de peso.'},
   {id:'nacorr',name:'Na⁺ corrigido',area:'Distúrbios hidroeletrolíticos',desc:'Sódio corrigido pela glicemia',
    fields:[{id:'na_med',label:'Sódio medido (mEq/L)',type:'num'},{id:'na_gli',label:'Glicemia (mg/dL)',type:'num'}],
    calc:function(v){var na=parseFloat(v.na_med)||0;var g=parseFloat(v.na_gli)||0;return g>100?na+1.6*((g-100)/100):na;},

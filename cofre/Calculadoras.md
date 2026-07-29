@@ -1,6 +1,6 @@
 ---
 tags: [cofre, calculadoras]
-atualizado: 2026-06-22
+atualizado: 2026-07-29
 ---
 
 # Calculadoras
@@ -23,6 +23,24 @@ Renderização em `openCalc`/`calcUpdate`. Itens `external:true` apenas linkam p
 - Bases: **OMS** (WHO 2006 0–5a + WHO 2007 5–19a) e **CDC 2000** (2–20a), por sexo. OMS é o padrão (recomendado no Brasil).
 - Dados em **`growth-lms.js`** (raiz do repo), gerado das fontes oficiais. Estrutura: `window.GROWTH_LMS.<cdc|who>.<M|F> = [[idadeMeses, L, M, S], ...]`. Helpers em `index.html`: `_gLMSrow` (interpolação linear), `growthZ`, `zToPct`, `fmtPct`.
 - Classifica baixa estatura (z<−2 ≈ P3) e grave (z<−3).
+
+## %PEP e %PPT pós-bariátrica (2026-07-29)
+Pedido do Rodolpho a partir da calculadora de Fernanda Mattos. Entrada `id:'pep'` em `CALCS`, área **Antropometria**: peso no dia da cirurgia, altura, peso atual.
+
+- **%PEP = (peso da cirurgia − peso atual) ÷ (peso da cirurgia − peso de IMC 25) × 100.** O denominador é o **excesso sobre o teto da eutrofia** — convenção da literatura bariátrica, e é por isso que o valor **passa de 100%** quando o IMC cai abaixo de 25. Não é bug; é a natureza da métrica.
+- **⚠️ O denominador do %PEP é ESCOLHA, não medida.** Trocar IMC 25 por IMC 22 muda o resultado sem mudar o paciente. Por isso o teste confere valores **à mão** (120→96 kg em 1,70 m = 50,3%; chegar a 72,25 kg = exatamente 100%) e a sabotagem do denominador derruba 6 asserções.
+- **%PPT sai junto**, na linha de interpretação, com IMC atual e o peso de IMC 25. Os dois juntos de propósito: o %PEP é o número que o operado acompanha, mas infla em quem operou com IMC mais baixo; o %PPT não tem esse arbítrio e é o que as sociedades passaram a preferir. Mostrar só um gera a conversa errada no consultório.
+- **Quem operou já abaixo de IMC 25 não tem excesso de peso:** `calc` devolve `NaN` e a interpretação explica, oferecendo o %PPT. Sem essa guarda a divisão daria negativo ou infinito com cara de resultado.
+- **Leitura:** <50% do excesso após 12–18 meses é o limiar clássico de resposta insuficiente — que pede investigação (adesão, complicação anatômica, medicação que favorece ganho de peso) antes de rotular o paciente.
+- Valores esperados na `note`, com as fontes que a página original cita (Brolin 1989 → Zilberstein 2019).
+- Teste `scripts/test-calc-pep.js`, passo 11 do CI. `sw` v155→v156.
+
+## ❌ SOPHIA (trajetória de peso pós-bariátrica) — NÃO implementada, e por quê
+O Rodolpho pediu junto a calculadora [SOPHIA / Univ. Lille](https://bariatric-weight-trajectory-prediction.univ-lille.fr/), publicada em Lancet Digital Health 2023 (Saux et al., PMID 37652841).
+
+**Não dá para transcrever.** Não é uma equação: é um **modelo de árvore treinado por aprendizado de máquina** sobre 9.861 pacientes e 385 variáveis candidatas, reduzidas a 7 preditores (idade, peso, altura, tabagismo, diabetes tipo 2 e duração, tipo de intervenção). Reproduzir exige o **artefato treinado**, não a leitura do artigo. Implementar "por aproximação" produziria curvas plausíveis e erradas numa ferramenta usada para aconselhar paciente antes de operar — o oposto do que a calculadora serve.
+
+**O que falta para fazer certo:** o modelo em si (material suplementar do artigo ou o repositório do Inria, `gitlab.inria.fr/weight-trajectory-prediction/...` — mas o que está público ali é o **cliente**, não o modelo). Deste ambiente nenhum desses endereços é alcançável (403 no proxy).
 
 ## Ajuste de framework
 `calcUpdate` mostra **`—`** quando `calc()` retorna não-finito (entrada incompleta ou idade fora da faixa) em vez de `NaN`.

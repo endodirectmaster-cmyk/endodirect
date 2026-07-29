@@ -135,5 +135,16 @@ try {
   fail('regressão do prompt da discussão falhou (verifique lib/fulltext.js + lib/discussao.js):\n' + out);
 }
 
+// 11. %PEP pós-bariátrica: o denominador é o peso de IMC 25, e quem já operou
+//     abaixo disso não tem excesso de peso — a calculadora tem de recusar em vez
+//     de devolver número. Valores conferidos à mão no teste.
+try {
+  execFileSync(process.execPath, [path.join('scripts', 'test-calc-pep.js')], { stdio: 'pipe' });
+  ok('regressão %PEP: denominador em IMC 25 + recusa sem excesso de peso');
+} catch (e) {
+  const out = (e.stdout ? e.stdout.toString() : '') + (e.stderr ? e.stderr.toString() : '');
+  fail("regressão do %PEP falhou (verifique a entrada id:'pep' de CALCS no index.html):\n" + out);
+}
+
 if (errors) { console.error(`\n${errors} verificação(ões) falharam.`); process.exit(1); }
 console.log('\nTodas as verificações passaram.');
