@@ -53,6 +53,14 @@ O falso positivo se resolve sozinho no commit seguinte da branch. E vale a regra
 ## Git / deploy
 
 ### ✅ Deploy AUTORIZADO em pé — não perguntar (2026-07-28)
+
+**⚠️ Reiniciar a branch LOGO APÓS o merge, não na próxima entrega.** Aconteceu duas vezes em 29/07 (#628 e #629): mergeei por squash, continuei commitando na branch antiga e o PR seguinte abriu com conflito. O squash cria um commit novo na `main` que não é ancestral da branch, então tudo que estava no PR anterior volta a aparecer como diferença.
+```
+# imediatamente depois de mergear:
+git fetch origin main && git checkout -B <branch> origin/main
+```
+Se já houver commit novo em cima da branch velha, o conserto é `git checkout -B <branch> origin/main && git cherry-pick <sha do commit novo>` — barato, mas evitável.
+
 Instrução direta do Rodolpho: *"Sempre pode gerar deploy sem perguntar."*
 
 Vale para o fluxo normal do projeto: branch → PR → squash-merge na `main` → a Vercel publica. **Não** esperar aprovação a cada entrega; o que se espera é o **relato depois**, com o que foi ao ar e o estado do deploy.
