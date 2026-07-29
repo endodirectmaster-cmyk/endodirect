@@ -52,6 +52,16 @@ O falso positivo se resolve sozinho no commit seguinte da branch. E vale a regra
 
 ## Git / deploy
 
+### ✅ Deploy AUTORIZADO em pé — não perguntar (2026-07-28)
+Instrução direta do Rodolpho: *"Sempre pode gerar deploy sem perguntar."*
+
+Vale para o fluxo normal do projeto: branch → PR → squash-merge na `main` → a Vercel publica. **Não** esperar aprovação a cada entrega; o que se espera é o **relato depois**, com o que foi ao ar e o estado do deploy.
+
+O que a autorização **não** dispensa:
+- **CI verde antes de mergear** (`node scripts/ci-validate.js`) — a autorização é para não perguntar, não para pular verificação.
+- **Confirmar `state:READY` no `target:production`** depois do merge. Um PR mergeado pode ficar fora do ar (já aconteceu em #311/#313, deploy ERROR pelo teto de funções) e o professor veria o bug "corrigido" continuar.
+- **Gravação em banco** e **ação irreversível** continuam fora deste escopo: aqui a autorização é de *publicar código*, não de apagar ou reescrever dado do professor.
+
 - **⚠️ LIÇÃO (2026-07-28) — a regra do `tail` vale para o `git push` TAMBÉM, e eu a repeti:** meu laço de retry era `if git push ... 2>&1 | tail -1; then echo "PUSH OK"`. Num pipeline o **exit code é o do último comando** (`tail`), que sempre sai 0 — então um push **rejeitado** (non-fast-forward) imprimiu "PUSH OK". Só percebi porque a linha de `hint:` do git vazou na saída. **Padrão correto:** `git push ...; rc=$?` — nunca canalizar o push, e nunca decidir sucesso por texto. Mesma família da lição do `merge` abaixo: **truncar saída de git é como perder o exit code.**
 - **⚠️ LIÇÃO (2026-07-27) — NÃO cortar a saída do `git merge` com `tail`:** ao resolver conflitos, rodei `git merge … 2>&1 | tail -4`. O `tail` **escondeu a linha do `index.html`**, que também havia conflitado — resolvi só os arquivos que apareceram e **commitei com marcadores `<<<<<<<` dentro do `index.html`**. Quem pegou foi o `scripts/ci-validate.js` (`Unexpected token '<<'`), não eu. **Correção obrigatória:** depois de QUALQUER merge, auditar o repositório inteiro antes de commitar — `grep -rln "^<<<<<<< \|^>>>>>>> " --include="*.js" --include="*.html" --include="*.md"` — e só então `git add`. Nunca confiar na lista de conflitos vista por uma saída truncada.
 - **⚠️ LIÇÃO (2026-07-27, aconteceu DUAS vezes na mesma sessão) — conferir a branch ANTES de commitar:** depois de sincronizar com `git checkout main`, esqueci de voltar para a branch de desenvolvimento e commitei em `main`. Não houve dano porque não empurrei (o push é sempre `-u origin <branch>`, que falhou/avisou), mas a recuperação custa tempo: `git branch -f <branch> <sha> && git reset --hard origin/main && git checkout <branch>`. **Rodar `git branch --show-current` como primeiro passo de todo commit.**
