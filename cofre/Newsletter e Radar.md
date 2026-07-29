@@ -126,6 +126,14 @@ A lição que vale além deste recurso: **rótulo que promete o que não está n
 
 `scripts/test-discussao-prompt.js` reprova se os anexos voltarem para depois do corte (sabotagem verificada: restaurar o truncamento antigo derruba 6 asserções), se o rodapé voltar ou se o selo reaparecer.
 
+**Confirmado em produção, regerando um artigo:** a mesma revisão que antes saía com 7.446 caracteres e zero tabela voltou com **11.730 caracteres, 170 barras e linha separadora de tabela markdown** — e sem nenhuma ocorrência de "(referida no artigo)".
+
+**Duas regras a mais no prompt, escritas a partir dessa primeira regeneração:**
+- **A tabela sai em português.** Ela veio com os cabeçalhos em inglês, copiados do artigo (`Study | Population | GLP-1 RA | …`), no meio de um texto em português. Traduzir rótulo e célula; **número, unidade, sigla, fármaco, táxon e nome de estudo ficam como estão**. Traduzir o rótulo não altera o dado.
+- **"Reproduzir" é colar, não descrever.** Dito explicitamente: escrever "a Tabela 1 mostra…" sem a tabela em markdown logo em seguida não conta como reproduzir. Era exatamente por aí que o modelo escapava.
+
+**As discussões anteriores foram regeradas em massa** (o acervo inteiro), porque tinham sido escritas com o prompt sem as tabelas. Como a fila só considera artigo **sem** discussão, regerar = apagar a linha e deixar a cadeia refazer. A cópia de segurança ficou em `endodirect_mural_discussoes_bkp_20260729`.
+
 ### ⚠️ `module.exports.config = { maxDuration }` NÃO vale neste runtime
 É convenção de Next.js; o runtime Node puro a ignora. Quem manda é a chave `functions` do **`vercel.json`** — `api/ai.js` está lá com 120s há tempos, e `api/admin/refresh-radar.js` entrou com 120s em 29/07. Foi acreditando no `300` declarado no código que eu calculei um orçamento de tempo inexistente e a geração automática morria antes de acontecer. **Conferir o `vercel.json`, não o topo do arquivo.**
 
