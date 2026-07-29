@@ -81,5 +81,36 @@ try {
   fail('regressão da caixa de suporte falhou (verifique lib/support.js + lib/admin-auth.js):\n' + out);
 }
 
+// 6. Seleção da DISCUSSÃO AUTOMÁTICA do Mural (lib/discussao-auto.js): quais
+//    artigos abertos qualificam, o reconhecimento de consenso pelo TÍTULO (o
+//    classificador do radar não emite esse rótulo) e o modelo fixado em Opus 4.8.
+try {
+  execFileSync(process.execPath, [path.join('scripts', 'test-discussao-auto.js')], { stdio: 'pipe' });
+  ok('regressão discussão automática: tipos que rendem + consenso por título + Opus 4.8');
+} catch (e) {
+  const out = (e.stdout ? e.stdout.toString() : '') + (e.stderr ? e.stderr.toString() : '');
+  fail('regressão da discussão automática falhou (verifique lib/discussao-auto.js + lib/discussao.js):\n' + out);
+}
+
+// 7. Renderização do corpo do card do Mural: régua horizontal (`---`, usada pela
+//    discussão completa entre seções) sem quebrar tabela nem lista.
+try {
+  execFileSync(process.execPath, [path.join('scripts', 'test-mural-render.js')], { stdio: 'pipe' });
+  ok('regressão mural: régua horizontal + tabela e lista intactas');
+} catch (e) {
+  const out = (e.stdout ? e.stdout.toString() : '') + (e.stderr ? e.stderr.toString() : '');
+  fail('regressão do render do mural falhou (verifique muralTextHTML no index.html):\n' + out);
+}
+
+// 8. FAVORITOS: chave estável por tipo (nem todo item tem id confiável), a
+//    alternância e a presença da estrela nos 5 cards.
+try {
+  execFileSync(process.execPath, [path.join('scripts', 'test-favoritos.js')], { stdio: 'pipe' });
+  ok('regressão favoritos: chave nos 5 tipos + estrela nos 5 cards');
+} catch (e) {
+  const out = (e.stdout ? e.stdout.toString() : '') + (e.stderr ? e.stderr.toString() : '');
+  fail('regressão dos favoritos falhou (verifique favKey/favStarHTML no index.html):\n' + out);
+}
+
 if (errors) { console.error(`\n${errors} verificação(ões) falharam.`); process.exit(1); }
 console.log('\nTodas as verificações passaram.');

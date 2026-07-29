@@ -491,6 +491,18 @@ textarea{resize:vertical;line-height:1.6}
 .mural-disc>summary:focus-visible{outline:2px solid var(--blue2);outline-offset:2px}
 .mural-disc-meta{font-weight:500;font-size:.74rem;color:var(--t2)}
 .mural-disc-body{padding:.2rem .85rem .85rem;margin-bottom:0}
+.mural-text .mural-hr{border:0;border-top:1px solid var(--bd);margin:1.1rem 0}
+/* Favoritos: estrela nos cards + lista do painel */
+.fav-star{background:none;border:0;cursor:pointer;font-size:1.05rem;line-height:1;padding:.15rem .3rem;
+  border-radius:6px;color:var(--t3);transition:color .12s,transform .12s;flex:none}
+.fav-star:hover{color:var(--gold,#e0a92a);transform:scale(1.15)}
+.fav-star.on{color:var(--gold,#e0a92a)}
+.fav-star:focus-visible{outline:2px solid var(--blue2);outline-offset:2px}
+.fav-list{list-style:none;margin:0;padding:0;display:flex;flex-direction:column}
+.fav-list li{display:flex;align-items:center;gap:.6rem;padding:.5rem 0;border-top:1px solid var(--bd)}
+.fav-list li:first-child{border-top:0}
+.fav-li-tit{flex:1;font-size:.88rem;line-height:1.4;overflow-wrap:anywhere}
+.fav-li-sub{font-size:.7rem;color:var(--t3);white-space:nowrap;flex:none}
 @media (prefers-reduced-motion:reduce){.mural-disc>summary::after{transition:none}}
 .mural-text .mural-h:first-child{margin-top:0}
 .mural-text .mural-ul{margin:.35rem 0;padding-left:1.2rem;text-align:left;text-align-last:left}
@@ -1897,6 +1909,7 @@ input.dmm-inp-subsub{flex:1;min-width:0;background:transparent;color:var(--t2);f
         <button class="sb-item" data-p="qotd">🧠 Questão do Dia</button>
         <button class="sb-item" data-p="flash">🃏 Flashcards</button>
         <button class="sb-item" data-p="mmap">✦ Mapas Mentais</button>
+        <button class="sb-item" data-p="favs">⭐ Favoritos</button>
         <button class="sb-item" data-p="podcast">🎧 Podcasts</button>
         <button class="sb-item" data-p="cursos">🎬 Cursos</button>
         <button class="sb-item" data-p="crono">📅 Cronograma</button>
@@ -1999,6 +2012,14 @@ input.dmm-inp-subsub{flex:1;min-width:0;background:transparent;color:var(--t2);f
       </div>
     </div>
 
+    <div class="panel" id="panel-favs">
+      <div class="breadcrumb">Dashboard <b>/ Favoritos</b></div>
+      <div class="ph"><h1>Favoritos</h1></div>
+      <div class="pc">
+        <p style="font-size:.86rem;color:var(--t2);margin:0 0 .9rem">Tudo o que você salvou — artigos do Mural, resumos, questões, mapas mentais e flashcards. Clique na estrela para tirar da lista.</p>
+        <div id="favs-body"></div>
+      </div>
+    </div>
     <div class="panel" id="panel-flash">
       <div class="breadcrumb">Dashboard <b>/ Flashcards</b></div>
       <div class="ph"><h1>Flashcards</h1></div>
@@ -3033,6 +3054,10 @@ function lsSet(k,v){
 }
 
 var DB={
+  // Favoritos do aluno: uma lista só para os 5 tipos (artigo do mural, resumo,
+  // questão, mapa mental, flashcard). Chave PESSOAL — entra em
+  // PERSONAL_STATE_KEYS e sincroniza entre dispositivos como o resto.
+  favs:lsGet('favs')||[],
   q:lsGet('q')||[],
   fc:lsGet('fc')||[],
   mm:lsGet('mm')||[],
@@ -3633,7 +3658,7 @@ function currentStatePayload(){
 // Chaves PESSOAIS (vivem no app_state do próprio usuário). As demais são
 // CONTEÚDO GLOBAL (provas, mural/radar, podcasts, cursos, diretrizes…), que só
 // vêm do estado global/RPC de membro.
-var PERSONAL_STATE_KEYS=['q','fc','mm','notes','crono','sf_results','perf','perfTema','act','srs','goal','cursoProg','plan','adm_perfil','user_profile','deg_trials','ck_billing','presc_emitidas'];
+var PERSONAL_STATE_KEYS=['q','fc','mm','notes','crono','sf_results','perf','perfTema','act','srs','goal','cursoProg','plan','adm_perfil','user_profile','deg_trials','ck_billing','presc_emitidas','favs'];
 // personalOnly=true quando o payload é o app_state do PRÓPRIO usuário: aplica só
 // as chaves pessoais e NUNCA toca no conteúdo global. Sem isso, um app_state com
 // resíduo antigo de chaves globais (ex.: radar_avisos defasado) podia, ao
@@ -5559,7 +5584,7 @@ function startGoogleOAuth(){
   });
 }
 
-var PANEL_LABELS={dash:'Dashboard',desemp:'Desempenho',plano:'Plano de estudo',quest:'Questões',qotd:'Questão do Dia',flash:'Flashcards',mmap:'Mapas Mentais',podcast:'Podcasts',cursos:'Cursos',crono:'Cronograma',sr:'Revisão',erros:'Caderno de erros',sim:'OSCE',simfull:'Simulado',calc:'Calculadoras',rx:'Prescrição Simulada',presc:'Consultório',art:'Resumidor',notas:'Caderno',mural:'Mural',ref:'Diretrizes',resu:'Resumos',chat:'Chat IA',perfil:'Perfil',support:'Suporte',adm:'Painel Admin'};
+var PANEL_LABELS={dash:'Dashboard',desemp:'Desempenho',plano:'Plano de estudo',quest:'Questões',qotd:'Questão do Dia',flash:'Flashcards',mmap:'Mapas Mentais',podcast:'Podcasts',cursos:'Cursos',crono:'Cronograma',sr:'Revisão',erros:'Caderno de erros',sim:'OSCE',simfull:'Simulado',calc:'Calculadoras',rx:'Prescrição Simulada',presc:'Consultório',art:'Resumidor',notas:'Caderno',favs:'Favoritos',mural:'Mural',ref:'Diretrizes',resu:'Resumos',chat:'Chat IA',perfil:'Perfil',support:'Suporte',adm:'Painel Admin'};
 function closeMobileNav(){
   document.body.classList.remove('mobile-nav-open');
   var b=document.getElementById('btn-mobile-nav');
@@ -5942,6 +5967,7 @@ function goPanel(id){
   if(id==='qotd'){try{renderQotdArchive();}catch(e){}}
   if(id==='quest'){applyQuestDegustacao();renderSavedQ();populateInst('q-inst');updateProvaInfo();}
   if(id==='flash'){fcFilter=null;renderFC();} // abre na grade de subespecialidades
+  if(id==='favs')renderFavoritos();
   if(id==='mmap')renderMMList();
   if(id==='podcast')renderPodcasts();
   if(id==='cursos')renderCursosAluno();
@@ -6006,9 +6032,10 @@ function qotdCardHTML(q,ans,title){
   if(ans){
     fb='<div style="margin-top:.6rem;padding:.55rem .7rem;border-radius:var(--rs);font-size:.78rem;line-height:1.5;text-align:justify;background:'+(ans.ok?'var(--grn-l)':'var(--red-l)')+';color:var(--t2)"><b style="color:'+(ans.ok?'var(--grn)':'var(--red)')+'">'+(ans.ok?'✓ Você acertou!':'✗ Resposta correta: '+esc(q.answer))+'</b>'+(q.explanation?'<div style="margin-top:.35rem">'+esc(q.explanation)+'</div>':'')+'</div>';
   }
-  return '<div class="card" style="border:1px solid var(--gold);margin:0">'
+  return '<div class="card" style="border:1px solid var(--gold);margin:0" data-fav-tit="'+esc(String(q.stem||'').slice(0,180))+'" data-fav-sub="'+esc(q.area||q.sub||'')+'">'
     +'<div style="display:flex;justify-content:space-between;align-items:center;gap:.5rem;flex-wrap:wrap;margin-bottom:.5rem">'
     +'<span style="font-weight:800;color:var(--gold);font-size:.92rem">'+(title||'🧠 Questão do Dia')+'</span>'
+    +'<span style="margin-left:auto">'+favStarHTML('questao',q)+'</span>'
     +'</div>'
     +'<div style="font-size:.86rem;line-height:1.55;color:var(--tx);opacity:.82;text-align:justify;margin-bottom:.7rem">'+esc((q.teem?String(q.teem).trim()+' ':'')+String(q.stem).trim())+'</div>'
     +qFigHTML(q)
@@ -6624,7 +6651,10 @@ function renderFC(){
   el.className='fc-grid';
   var list=fcTema?subList.filter(function(c){return temaOf(c,fcFilter)===fcTema;}):subList;
   if(!list.length){el.innerHTML='<div class="empty" style="grid-column:1/-1">Nenhum flashcard nesta subespecialidade ainda.</div>';return;}
-  el.innerHTML=list.map(function(c){var i=DB.fc.indexOf(c);var col=fcCatColor(c.cat);return'<div class="fc-card" data-fctoggle="'+i+'"><button class="fc-del" data-fcdel="'+i+'" title="Excluir">✕</button><div class="fc-inner"><div class="fc-face fc-face-front" style="border-left:5px solid '+col+'"><div class="fc-cat" style="color:'+col+'">'+esc(c.cat||'Geral')+'</div><div class="fc-front">'+esc(c.front)+'</div><div class="fc-hint">Clique para virar ↻</div></div><div class="fc-face fc-face-back" style="border-left:5px solid '+col+'"><div class="fc-cat" style="color:'+col+'">Resposta</div><div class="fc-back">'+esc(c.back)+'</div><div class="fc-hint">Clique para voltar ↺</div></div></div></div>';}).join('');
+  el.innerHTML=list.map(function(c){var i=DB.fc.indexOf(c);var col=fcCatColor(c.cat);return'<div class="fc-card" data-fctoggle="'+i+'" data-fav-tit="'+esc(c.front||'')+'" data-fav-sub="'+esc(c.cat||'')+'"><button class="fc-del" data-fcdel="'+i+'" title="Excluir">✕</button>'
+      // A estrela fica FORA do .fc-inner que gira: dentro, ela viraria de cabeca
+      // para baixo junto com o card ao ser revelado.
+      +'<span style="position:absolute;top:.4rem;right:2rem;z-index:3">'+favStarHTML('flashcard',c)+'</span>'+'<div class="fc-inner"><div class="fc-face fc-face-front" style="border-left:5px solid '+col+'"><div class="fc-cat" style="color:'+col+'">'+esc(c.cat||'Geral')+'</div><div class="fc-front">'+esc(c.front)+'</div><div class="fc-hint">Clique para virar ↻</div></div><div class="fc-face fc-face-back" style="border-left:5px solid '+col+'"><div class="fc-cat" style="color:'+col+'">Resposta</div><div class="fc-back">'+esc(c.back)+'</div><div class="fc-hint">Clique para voltar ↺</div></div></div></div>';}).join('');
 }
 function toggleFC(i){
   var cards=document.querySelectorAll('[data-fctoggle]');
@@ -6958,10 +6988,10 @@ function renderMMList(){
   setText('mm-count','('+(shF.length+phF.length)+')');
   var html=shF.map(function(m){
     var j=(sharedMM||[]).indexOf(m); // índice no array GLOBAL (viewMMShared lê sharedMM), não no filtrado
-    return'<div class="mm-item"><div><div style="font-size:.8rem;font-weight:600">'+esc(m.topic)+' <span class="tag tag-pur" style="font-size:.55rem">Professor</span></div><div style="font-size:.63rem;color:var(--t3)">'+esc(canonSub(m.sub))+'</div></div><div style="display:flex;gap:4px"><button class="btn btn-outline btn-sm" data-mmviewshared="'+j+'">Ver</button></div></div>';
+    return'<div class="mm-item" data-fav-tit="'+esc(m.topic||'')+'" data-fav-sub="'+esc(canonSub(m.sub)||'')+'"><div><div style="font-size:.8rem;font-weight:600">'+esc(m.topic)+' <span class="tag tag-pur" style="font-size:.55rem">Professor</span></div><div style="font-size:.63rem;color:var(--t3)">'+esc(canonSub(m.sub))+'</div></div><div style="display:flex;gap:4px;align-items:center">'+favStarHTML('mapa',m)+'<button class="btn btn-outline btn-sm" data-mmviewshared="'+j+'">Ver</button></div></div>';
   }).join('');
   html+=phF.map(function(o){var m=o.m,i=o.i;
-    return'<div class="mm-item"><div><div style="font-size:.8rem;font-weight:600">'+esc(m.topic)+'</div><div style="font-size:.63rem;color:var(--t3)">'+new Date(m.at||Date.now()).toLocaleDateString('pt-BR')+'</div></div><div style="display:flex;gap:4px"><button class="btn btn-outline btn-sm" data-mmview="'+i+'">Ver</button><button class="btn btn-ghost btn-sm" data-mmdel="'+i+'">×</button></div></div>';
+    return'<div class="mm-item" data-fav-tit="'+esc(m.topic||'')+'" data-fav-sub="'+esc(canonSub(m.sub)||'')+'"><div><div style="font-size:.8rem;font-weight:600">'+esc(m.topic)+'</div><div style="font-size:.63rem;color:var(--t3)">'+new Date(m.at||Date.now()).toLocaleDateString('pt-BR')+'</div></div><div style="display:flex;gap:4px;align-items:center">'+favStarHTML('mapa',m)+'<button class="btn btn-outline btn-sm" data-mmview="'+i+'">Ver</button><button class="btn btn-ghost btn-sm" data-mmdel="'+i+'">×</button></div></div>';
   }).join('');
   if(!html)html='<div class="empty">Nenhum mapa neste subtópico ainda.</div>';
   el.innerHTML='<div style="display:flex;flex-direction:column;gap:6px">'+html+'</div>';
@@ -9371,7 +9401,12 @@ function dirCardHTML(d,i){
       body=parts.length?parts.join(''):'<div class="dir-empty-fmt">Resumo ainda não disponível.</div>';
     }
   }
-  return '<div class="dir-card">'+head+body+'</div>';
+  // A estrela flutua no canto superior direito do card: o cabecalho de fonte e
+  // opcional (some nos resumos privados), entao ancorar nele deixaria metade dos
+  // cards sem favorito.
+  return '<div class="dir-card" style="position:relative" data-fav-tit="'+esc(d.titulo||d.tema||'')+'" data-fav-sub="'+esc(d.sub||'')+'">'
+    +'<span style="position:absolute;top:.7rem;right:.8rem">'+favStarHTML('resumo',d)+'</span>'
+    +head+body+'</div>';
 }
 // Editor WYSIWYG do resumo — edição DIRETA no texto formatado, na própria tela.
 // O corpo é um contenteditable com o resumo já renderizado (mdToHtml); ao Salvar,
@@ -9783,8 +9818,12 @@ function initMural(){
     var cls=tipoClass(tipo);
     var fonte=fonteOf(a);
     var source=(a.link&&safeHttpUrl(a.link))?'<a href="'+esc(a.link)+'" target="_blank" rel="noopener">'+esc(fonte)+'</a>'+(a.oa?' <span style="font-size:.66rem;font-weight:700;color:#16a34a;white-space:nowrap" title="Texto completo aberto ao público (PubMed Central)">· acesso livre 📖</span>':''):esc(fonte);
-    return'<article class="mural-card'+cls.card+'" data-mural-card>'
-      +'<div class="mural-card-tags"><span class="tag '+cls.tag+'">'+esc(tipo)+'</span><span class="tag tag-muted">'+esc(fonte)+'</span></div>'
+    return'<article class="mural-card'+cls.card+'" data-mural-card'
+      +' data-fav-tit="'+esc(a.titulo||'')+'" data-fav-sub="'+esc(a.subespecialidade||'')+'">'
+      +'<div class="mural-card-tags"><span class="tag '+cls.tag+'">'+esc(tipo)+'</span><span class="tag tag-muted">'+esc(fonte)+'</span>'
+        // A estrela vai na linha das tags (e nao junto do <h3>) para nao empurrar
+        // o titulo nem quebrar a linha em telas estreitas.
+        +'<span style="margin-left:auto">'+favStarHTML('mural',a)+'</span></div>'
       +'<h3>'+esc(a.titulo||'Aviso aos alunos')+'</h3>'
       +'<div class="mural-date">'+dateBR(a.at)+'</div>'
       +'<div class="mural-text">'+muralTextHTML(muralBodyText(a)||'Comunicado publicado pela equipe Endodirect.')+'</div>'
@@ -12145,7 +12184,10 @@ function admMuralSecHTML(){
     var i=admAvisos.indexOf(a),tipo=a.tipo||'Aviso',fonte=fonteOf(a),cls=tipoClass(tipo);
     var source=(a.link&&safeHttpUrl(a.link))?'<a href="'+esc(a.link)+'" target="_blank" rel="noopener">'+esc(fonte)+'</a>'+(a.oa?' <span style="font-size:.66rem;font-weight:700;color:#16a34a;white-space:nowrap" title="Texto completo aberto ao público (PubMed Central)">· acesso livre 📖</span>':''):esc(fonte);
     return '<article class="mural-card'+cls.card+'" data-mural-card>'
-      +'<div class="mural-card-tags"><span class="tag '+cls.tag+'">'+esc(tipo)+'</span><span class="tag tag-muted">'+esc(fonte)+'</span></div>'
+      +'<div class="mural-card-tags"><span class="tag '+cls.tag+'">'+esc(tipo)+'</span><span class="tag tag-muted">'+esc(fonte)+'</span>'
+        // A estrela vai na linha das tags (e nao junto do <h3>) para nao empurrar
+        // o titulo nem quebrar a linha em telas estreitas.
+        +'<span style="margin-left:auto">'+favStarHTML('mural',a)+'</span></div>'
       +'<h3>'+esc(a.titulo||'Aviso aos alunos')+'</h3>'
       +'<div class="mural-date">'+dateBR(a.at)+'</div>'
       +'<div class="mural-text">'+muralTextHTML(muralBodyText(a)||'Comunicado publicado pela equipe Endodirect.')+'</div>'
@@ -13991,6 +14033,124 @@ function muralDiscussaoHTML(a){
     +'<summary>📄 Discussão completa do artigo<span class="mural-disc-meta">texto integral</span></summary>'
     +'<div class="mural-text mural-disc-body" data-disc-body>Carregando…</div></details>';
 }
+// ─────────────────────────────── FAVORITOS ────────────────────────────────
+// Uma estrela em cada card (artigo do mural, resumo, questão, mapa mental,
+// flashcard) e um painel único com o que foi salvo.
+//
+// DECISÃO DE CHAVE: cada tipo tem um identificador próprio e nem todos são
+// confiáveis. Artigo do radar tem `sourceId`; aviso escrito à mão pelo professor
+// não tem. Resumo às vezes tem `id`, às vezes só sub+tema. Questão do banco tem
+// `code`; a gerada por IA nem sempre. Por isso a chave é derivada com FALLBACK em
+// cascata, e nunca vazia — favoritar um item sem id estável ainda funciona,
+// ancorado no texto. O preço é que editar o título de um item sem id "perde" o
+// favorito; é melhor do que não deixar favoritar.
+function favKey(t,o){
+  if(!o)return '';
+  var f=function(v){return String(v==null?'':v).trim();};
+  if(t==='mural')     return f(o.sourceId)||f(o.id)||f(o.titulo).slice(0,140);
+  if(t==='resumo')    return f(o.id)||(f(o.sub)+'|'+f(o.tema)+'|'+f(o.titulo)).slice(0,180);
+  if(t==='questao')   return f(o.code)||f(o.id)||f(o.stem).slice(0,140);
+  if(t==='mapa')      return f(o.id)||(f(o.topic)+'|'+f(o.at));
+  if(t==='flashcard') return f(o.id)||f(o.front).slice(0,140);
+  return '';
+}
+// Rótulo guardado JUNTO com a chave. Sem ele, um favorito de item que saiu do ar
+// (artigo fora da janela de 90 dias do mural, questão removida) viraria uma linha
+// vazia na lista. Com ele, o aluno ao menos vê o que era.
+function favLabel(t,o){
+  if(!o)return '';
+  if(t==='mural')     return String(o.titulo||'');
+  if(t==='resumo')    return String(o.titulo||o.tema||'');
+  if(t==='questao')   return String(o.stem||'').slice(0,180);
+  if(t==='mapa')      return String(o.topic||o.central||'');
+  if(t==='flashcard') return String(o.front||'');
+  return '';
+}
+function favSub(t,o){return String((o&&(o.sub||o.subespecialidade||o.cat||o.area))||'');}
+function favList(){return Array.isArray(DB.favs)?DB.favs:(DB.favs=[]);}
+function favIdx(t,k){return favList().findIndex(function(x){return x&&x.t===t&&x.k===k;});}
+function favHas(t,o){var k=favKey(t,o);return !!k&&favIdx(t,k)>=0;}
+function favToggle(t,o){
+  var k=favKey(t,o);if(!k)return false;
+  var i=favIdx(t,k),lista=favList();
+  if(i>=0){lista.splice(i,1);}
+  else{lista.unshift({t:t,k:k,tit:favLabel(t,o),sub:favSub(t,o),at:Date.now()});}
+  lsSet('favs',lista);try{queueRemoteStateSave();}catch(e){}
+  return i<0;
+}
+var FAV_TIPOS={mural:{ico:'📄',nome:'Artigos do Mural',painel:'mural'},
+               resumo:{ico:'📘',nome:'Resumos',painel:'resu'},
+               questao:{ico:'📝',nome:'Questões',painel:'quest'},
+               mapa:{ico:'✦',nome:'Mapas Mentais',painel:'mmap'},
+               flashcard:{ico:'🗂️',nome:'Flashcards',painel:'flash'}};
+// A estrela é SEMPRE o mesmo HTML; quem clica é um handler delegado único, no
+// documento. Assim nenhum dos 5 renderizadores precisa registrar listener — e
+// re-renderizar a lista não deixa listener órfão para trás.
+function favStarHTML(t,o){
+  var k=favKey(t,o);if(!k)return '';
+  var on=favIdx(t,k)>=0;
+  return '<button type="button" class="fav-star'+(on?' on':'')+'" data-fav-t="'+esc(t)+'" data-fav-k="'+esc(k)+'"'
+    +' title="'+(on?'Remover dos favoritos':'Salvar nos favoritos')+'"'
+    +' aria-pressed="'+(on?'true':'false')+'" aria-label="'+(on?'Remover dos favoritos':'Salvar nos favoritos')+'">'
+    +(on?'★':'☆')+'</button>';
+}
+document.addEventListener('click',function(ev){
+  var b=ev.target&&ev.target.closest&&ev.target.closest('[data-fav-t]');
+  if(!b)return;
+  ev.preventDefault();ev.stopPropagation(); // não abrir o card ao clicar na estrela
+  var t=b.dataset.favT,k=b.dataset.favK,i=favIdx(t,k),lista=favList();
+  if(i>=0){lista.splice(i,1);}
+  else{
+    // Reconstrói o rótulo a partir do próprio card: é o que sobra se o item sumir.
+    var card=b.closest('[data-fav-tit]');
+    lista.unshift({t:t,k:k,tit:(card&&card.dataset.favTit)||b.getAttribute('data-fav-tit')||'',
+                   sub:(card&&card.dataset.favSub)||'',at:Date.now()});
+  }
+  lsSet('favs',lista);try{queueRemoteStateSave();}catch(e){}
+  var on=i<0;
+  b.classList.toggle('on',on);b.textContent=on?'★':'☆';
+  b.setAttribute('aria-pressed',on?'true':'false');
+  b.title=on?'Remover dos favoritos':'Salvar nos favoritos';
+  b.setAttribute('aria-label',b.title);
+  try{notify(on?'Salvo nos favoritos.':'Removido dos favoritos.','ok');}catch(e){}
+  try{if(document.getElementById('panel-favs').classList.contains('on'))renderFavoritos();}catch(e){}
+},true);
+function renderFavoritos(){
+  var el=document.getElementById('favs-body');if(!el)return;
+  var lista=favList().slice().sort(function(a,b){return (b.at||0)-(a.at||0);});
+  if(!lista.length){
+    el.innerHTML='<div class="card" style="text-align:center;padding:2.2rem 1rem">'
+      +'<div style="font-size:2rem;margin-bottom:.5rem">⭐</div>'
+      +'<div style="font-weight:600;margin-bottom:.3rem">Nada salvo ainda</div>'
+      +'<div style="font-size:.86rem;color:var(--t2);max-width:32rem;margin:0 auto">'
+      +'Clique na estrela de um artigo do Mural, resumo, questão, mapa mental ou flashcard '
+      +'para guardá-lo aqui e voltar depois.</div></div>';
+    return;
+  }
+  var html='';
+  Object.keys(FAV_TIPOS).forEach(function(t){
+    var itens=lista.filter(function(x){return x&&x.t===t;});
+    if(!itens.length)return;
+    var m=FAV_TIPOS[t];
+    html+='<div class="card" style="margin-bottom:.9rem">'
+      +'<div style="display:flex;align-items:center;gap:.5rem;margin-bottom:.7rem">'
+      +'<span style="font-size:1.05rem">'+m.ico+'</span>'
+      +'<strong style="font-size:.95rem">'+esc(m.nome)+'</strong>'
+      +'<span class="tag tag-blue">'+itens.length+'</span>'
+      +'<button class="btn btn-outline btn-sm" style="margin-left:auto" data-fav-go="'+esc(m.painel)+'">Abrir '+esc(m.nome)+' →</button>'
+      +'</div><ul class="fav-list">'
+      +itens.map(function(x){
+        return '<li><span class="fav-li-tit">'+esc(x.tit||'(sem título)')+'</span>'
+          +(x.sub?'<span class="fav-li-sub">'+esc(x.sub)+'</span>':'')
+          +'<button type="button" class="fav-star on" data-fav-t="'+esc(x.t)+'" data-fav-k="'+esc(x.k)+'" title="Remover dos favoritos" aria-pressed="true" aria-label="Remover dos favoritos">★</button></li>';
+      }).join('')
+      +'</ul></div>';
+  });
+  el.innerHTML=html;
+  el.querySelectorAll('[data-fav-go]').forEach(function(b){
+    b.addEventListener('click',function(){goPanel(b.dataset.favGo);});
+  });
+}
 // Busca o texto ao ABRIR, uma vez por card. `toggle` borbulha? Não — por isso o
 // listener é registrado no próprio <details>, e a delegação usa captura.
 document.addEventListener('toggle',function(ev){
@@ -14083,6 +14243,12 @@ function muralTextHTML(txt){
         +'</tbody></table></div>');
       continue;
     }
+    // Régua horizontal (--- / *** / ___): a discussão completa do artigo separa
+    // as seções assim, e o rodapé de origem vem depois de uma. Sem este caso a
+    // linha caía no parágrafo comum e o aluno via "---" escrito na tela — foi o
+    // que o professor viu em 28/07 ("ficou esquisito assim"). O separador de
+    // TABELA é tratado acima e exige "|", então não conflita.
+    if(/^\s*([-*_])(\s*\1){2,}\s*$/.test(line)){flush();out.push('<hr class="mural-hr">');i++;continue;}
     // Legenda de figura: linha começando com "Legenda:/Figura:/Fig." vira uma
     // legenda menor e discreta (começa com letra → sobrevive ao formalizeMuralText).
     if(/^\s*(Legenda|Figura|Fig\.)\s*[:.–—-]/i.test(line)){

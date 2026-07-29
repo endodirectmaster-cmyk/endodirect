@@ -15,6 +15,15 @@ O cofre não é só o lugar onde eu **anoto** o que fiz; é onde descubro o que 
 - **Como buscar:** `grep -rn "<termo>" cofre/` com o **conceito** (ex.: "Endocrinologia Básica", "rascunho", "clobber"), não só com o identificador exato — o nome no código pode diferir do que estou prestes a escrever, e é justamente aí que mora o erro.
 - **Vale em dobro para PR antigo:** um PR parado por dias pode ter sido resolvido por outro caminho enquanto isso. Antes de mergear, conferir no cofre **e** no código se o problema ainda existe.
 
+### ⚠️ `git fetch origin main` também faz parte de "checar antes" (2026-07-28)
+O professor pediu a discussão completa dos artigos do Mural. Eu li o cofre, li o `lib/radar.js`, medi 76/253 open-access, descobri que o `api/` estava em 12/12 e **propus construir a funcionalidade** — que **já estava pronta e em produção**, mergeada no **PR #626** minutos antes, com `lib/fulltext.js`, `lib/discussao.js` e o botão no card.
+
+O detalhe que dói: cheguei sozinho exatamente ao mesmo desenho (abstract não sustenta discussão; só PMC tem texto integral; tabela sim, figura não; endpoint dentro de um handler existente por causa do teto de 12). Não foi análise perdida — foi **trabalho refeito**, e uma pergunta ao professor que não precisava existir.
+
+- **A causa:** a branch estava em `c46558b`, e a `main` já tinha `c392dd8`. Ler o cofre não bastou porque **o cofre ainda não tinha sido atualizado** com o #626 — o registro chega junto com o merge, não antes dele.
+- **A regra:** antes de propor ou escrever qualquer coisa nova, `git fetch origin main && git log --oneline origin/main -5` e, se o assunto tiver nome, `git log --oneline -S"<termo>" origin/main`. São dois comandos.
+- **Sinal secundário que eu tinha na mão e ignorei:** o `get_deployment` da Vercel trazia a mensagem do commit de produção, e ela dizia *"Discussão completa do artigo no Mural"*. **Metadado de deploy é fonte sobre o que está no ar** — vale ler, não só olhar o `readyState`.
+
 ## Números de artigo: "conferido" só vale contra o PDF
 
 **⚠️ LIÇÃO (2026-07-28).** O `check_numeros.js` prova que **todo número da ficha existe na prosa do resumo**. Isso pega inconsistência interna — mas **prosa e ficha são ambas escritas por mim**, então um número errado na origem passa nos dois lados sem alarme nenhum. Foi o que aconteceu no 3º lote: os quatro artigos passaram em todos os checadores e, quando o professor mandou os PDFs, **três afirmações caíram** (pressão arterial no SCOUT e no COR-I; convulsão e suicidalidade atribuídas ao COR-I).
@@ -42,6 +51,16 @@ git branch -r --contains <sha>     # se aparecer origin/main, é história publi
 O falso positivo se resolve sozinho no commit seguinte da branch. E vale a regra geral: **hook é feedback, não ordem** — quando a correção sugerida for destrutiva ou irreversível, conferir o alvo antes.
 
 ## Git / deploy
+
+### ✅ Deploy AUTORIZADO em pé — não perguntar (2026-07-28)
+Instrução direta do Rodolpho: *"Sempre pode gerar deploy sem perguntar."*
+
+Vale para o fluxo normal do projeto: branch → PR → squash-merge na `main` → a Vercel publica. **Não** esperar aprovação a cada entrega; o que se espera é o **relato depois**, com o que foi ao ar e o estado do deploy.
+
+O que a autorização **não** dispensa:
+- **CI verde antes de mergear** (`node scripts/ci-validate.js`) — a autorização é para não perguntar, não para pular verificação.
+- **Confirmar `state:READY` no `target:production`** depois do merge. Um PR mergeado pode ficar fora do ar (já aconteceu em #311/#313, deploy ERROR pelo teto de funções) e o professor veria o bug "corrigido" continuar.
+- **Gravação em banco** e **ação irreversível** continuam fora deste escopo: aqui a autorização é de *publicar código*, não de apagar ou reescrever dado do professor.
 
 - **⚠️ LIÇÃO (2026-07-28) — a regra do `tail` vale para o `git push` TAMBÉM, e eu a repeti:** meu laço de retry era `if git push ... 2>&1 | tail -1; then echo "PUSH OK"`. Num pipeline o **exit code é o do último comando** (`tail`), que sempre sai 0 — então um push **rejeitado** (non-fast-forward) imprimiu "PUSH OK". Só percebi porque a linha de `hint:` do git vazou na saída. **Padrão correto:** `git push ...; rc=$?` — nunca canalizar o push, e nunca decidir sucesso por texto. Mesma família da lição do `merge` abaixo: **truncar saída de git é como perder o exit code.**
 - **⚠️ LIÇÃO (2026-07-27) — NÃO cortar a saída do `git merge` com `tail`:** ao resolver conflitos, rodei `git merge … 2>&1 | tail -4`. O `tail` **escondeu a linha do `index.html`**, que também havia conflitado — resolvi só os arquivos que apareceram e **commitei com marcadores `<<<<<<<` dentro do `index.html`**. Quem pegou foi o `scripts/ci-validate.js` (`Unexpected token '<<'`), não eu. **Correção obrigatória:** depois de QUALQUER merge, auditar o repositório inteiro antes de commitar — `grep -rln "^<<<<<<< \|^>>>>>>> " --include="*.js" --include="*.html" --include="*.md"` — e só então `git add`. Nunca confiar na lista de conflitos vista por uma saída truncada.
@@ -139,6 +158,16 @@ Hábitos que evitam retrabalho — ler antes de agir, especialmente em bugs e de
 - **Bug de estado/sync? Conferir o dado REAL antes de propor fix.** Usar `mcp execute_sql` no Supabase (`endodirect_global_state.payload`, `endodirect_app_state`, definições de RPC/trigger via `pg_get_functiondef`) para ver o estado de verdade. Lição cara (2026-06-15): empurrei o #312 (`applyStatePayload personalOnly`) como palpite para o "radar volta no F5" e estava errado; a causa real (seed `defaultMuralAvisos` com `at` relativo) só apareceu ao olhar o banco. Diagnóstico empírico > teoria; um fix especulativo custa um ciclo de deploy.
 - **Depois de mergear, confirmar que o deploy de produção ficou READY.** Um PR mergeado pode estar **fora do ar**: usar `mcp list_deployments`/`get_deployment` (team `team_fufkQHFICWnQDbeIKmAKo6a8`, project `endodirect`) e checar `state:READY` no `target:production`. Lição (2026-06-15): #311/#312/#313 ficaram em **ERROR** (limite de 12 funções) e o último READY no ar era o #310 — o usuário via o bug "corrigido" persistir. Build pode concluir e ainda dar ERROR em "Deploying outputs" (limites de plano). Logs: `get_deployment_build_logs`.
 - **Limites do plano Vercel (Hobby):** **12 serverless functions** em `api/` (projeto no teto) e **2 cron jobs**. Não criar função nova em `api/` sem remover outra; lógica reusável vai em `lib/` (módulo, não conta). Ver [[Decisões]] e [[Integrações]].
+
+### Teto de 12 funções: por que NÃO subir de plano (2026-07-28)
+Pergunta do Rodolpho: *"resolva pendência do vercel. qual a melhor recomendação?"*
+
+**A contagem não é o gargalo, e já está resolvida por arquitetura.** A Vercel conta **arquivos** em `api/`, não rotas — então um handler que roteia por ação vale por muitos endpoints. O projeto já faz isso em dois lugares: `api/ai.js` roteia por `kind` (`support`, `support_list`, `support_reply`, `support_mine`, `openi`) e o `api/admin/refresh-radar.js` roteia por `action` (`discussao`, no #626). Endpoint novo entra assim; arquivo novo, não.
+
+**Quando faltar espaço de verdade,** a folga mais barata é juntar os **dois crons num handler só** — dois agendamentos podem apontar para o mesmo caminho com query diferente (`?job=radar` / `?job=health`), o que devolve 1 slot sem tocar em `checkout/` nem no `newsletter/unsubscribe` (esse tem URL já enviada em e-mails; mudar o caminho quebra o List-Unsubscribe de quem já recebeu).
+- **⚠️ Mas não fazer isso preventivamente:** é o cron do healthcheck que posta a **Questão do Dia** às 10h BRT. Ele falhou silenciosamente em 27/07. Operar nele para liberar um slot que ninguém está pedindo é risco sem retorno — fazer só quando o 13º endpoint existir.
+
+**O Pro (US$ 20/mês) só se compra tempo, não contagem.** O Hobby limita a execução a **60s**; o `vercel.json` pede `maxDuration: 120` para o `api/ai.js` e **esse pedido não tem efeito no Hobby**. O candidato natural a estourar é a **discussão completa do Mural**, que manda o texto integral do artigo e pede ~12 KB de volta. **Como decidir sem chutar:** clicar o botão num artigo longo em produção; se der timeout, o Pro (300s) compra algo real — e antes disso ainda cabe cortar o texto enviado (só métodos, resultados, discussão e tabelas) e limitar o `max_tokens`.
 - **Aviso "Unverified" do hook Stop é benigno:** ele acusa o commit de **squash-merge do próprio GitHub** (committer `noreply@github.com`) no tip da `main`. NÃO reescrever (é histórico já mergeado). Meus commits usam `Claude <noreply@anthropic.com>`.
 - **Validar sempre antes de commitar** (scripts inline + `node --check`), conforme a seção acima — barato e evita deploy quebrado.
 - **⚠️ O check `validate` pode simplesmente NÃO APARECER no PR — ausência não é aprovação.** No **#606 (2026-07-25)** o `pull_request` do `ci.yml` não gerou run nenhum: o `get_status` do PR trazia só o **Vercel**, e a lista de runs da branch parava no commit anterior. "Sem check vermelho" leu como verde e quase passou batido. **Conferir que o run existe**, não só que nada falhou — `actions_list` (`list_workflow_runs`, filtrando pela branch) e comparar o `head_sha` com o tip do PR. Rede de segurança que funcionou: rodar **`node scripts/ci-validate.js` localmente** (é exatamente o que o workflow executa) antes de mergear; o `push:` em `main` também dispara o mesmo workflow **depois** do merge (rodou e passou em `779d6575`) — mas aí já está em produção.
