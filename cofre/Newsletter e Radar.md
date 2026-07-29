@@ -82,17 +82,29 @@ Três tentativas até acertar, e as duas primeiras erraram pelo mesmo motivo —
 - **Quem dá a partida:** o cron do radar (todo dia) e o botão "📄 Gerar discussões pendentes" (quando o professor quiser adiantar). O botão agora só dá a partida e avisa quantos estão na fila; não prende a aba.
 - **Se um elo falhar, a cadeia para** — e o cron do dia seguinte recomeça. Aceitável, e melhor que travar tentando ser esperto.
 
-### Três gatilhos, porque um só nunca bastou (2026-07-29)
-O professor voltou **quatro vezes** dizendo que a discussão não saía sozinha. Cada resposta minha dependia de algo que ele não ia fazer: primeiro do cron (1x/dia), depois de um botão. A leitura correta do pedido é *"não quero clicar em nada"*.
+### Quatro gatilhos, porque um só nunca bastou (2026-07-29)
+O professor voltou **cinco vezes** dizendo que a discussão não saía sozinha. Cada resposta minha dependia de algo que ele não ia fazer: primeiro do cron (1x/dia), depois de um botão, depois de o navegador dele já ter o JavaScript novo. A leitura correta do pedido é *"não quero clicar em nada"*.
 
-Quem dá a partida na cadeia, hoje:
+Quem dá a partida na cadeia, hoje (`lib/discussao-kick.js` é o **único** lugar que sabe como disparar):
 1. **Cron do radar (07h30)** — a partida principal.
 2. **Cron do healthcheck (10h)** — segunda chance no mesmo dia, cobre falha do primeiro.
-3. **⭐ Abrir o Mural no painel do professor** — `kickDiscussaoCadeia()` em `goPanel('mural')`, estrangulado a **1x por hora** por `localStorage`. Como ele abre o Mural o tempo todo, este é o gatilho que na prática resolve o acervo represado, sem clique nenhum.
+3. **Abrir o Mural no painel do professor** — `kickDiscussaoCadeia()` em `goPanel('mural')`, estrangulado a 1x/hora por `localStorage`.
+4. **⭐ Qualquer carga de página** — `kickSeNecessario()` pega carona no `/api/checkout/config`, rota que o `index.html` chama em toda abertura, no IIFE do topo. Estrangulado a **1 partida por 10 min**.
 
-- **Não é caminho crítico:** não bloqueia o render, não mostra nada e falha em silêncio. Se gerar alguma, recarrega a lista de ids e redesenha para o bloco aparecer sem F5.
-- **A marca de horário é gravada ANTES do disparo** — falha não vira retentativa em laço a cada re-render.
-- **O botão continua existindo** para quem quiser adiantar, mas deixou de ser o mecanismo principal.
+**Por que o gatilho 4 existe, e por que ele é o que importa.** Os três primeiros dependiam da hora do dia ou de o cliente estar atualizado. Na tarde em que a cadeia entrou, os logs mostraram que ela **nunca havia sido invocada**: os crons do dia já tinham passado e o service worker do professor ainda servia o pacote antigo, sem o gatilho 3. O `/api/checkout/config` é chamado **pelo pacote antigo também** — pendurar a partida ali tira o recurso da dependência de cache de navegador.
+
+- **Estrangulamento em duas camadas** (`deveKickar`): uma variável de módulo evita consultar o banco a cada requisição; a decisão que vale é a **escrita mais recente** em `endodirect_mural_discussoes`. Enquanto uma cadeia anda, ela grava a cada ~40s — escrita recente significa "já tem cadeia rodando", e nenhuma partida nova sai.
+- **Nunca é caminho crítico:** não bloqueia render nem resposta, corre em paralelo com o `founderStatus` e falha em silêncio.
+- **A marca de horário é gravada ANTES do disparo** — falha não vira retentativa em laço.
+
+### ⚠️ O disparo da próxima vem ANTES da geração (2026-07-29)
+A primeira versão da cadeia gerava (~40s) e **só então** disparava o elo seguinte. Isso amarrava a continuidade da fila a esta invocação caber nos 60s do plano: se estourasse, a função morria com a próxima nunca disparada e a fila parava **sem erro, sem log e sem discussão** — o mesmo sintoma que o recurso já tinha tido por outro motivo.
+
+Hoje o elo seguinte sai em ~2s, antes da geração, e **a lista do que falta vai no corpo da requisição** (`{action:'discussao_cadeia', ids:[...]}`). Passar a lista adiante não é detalhe: recalcular a fila na invocação seguinte a faria ver o estado **anterior** à gravação desta e escolher o **mesmo artigo**.
+
+- Como cada elo dispara o próximo antes de gerar, o lote sobe quase junto — daí `LOTE_CADEIA = 6`, teto de gerações simultâneas. O que sobrar sai na próxima partida.
+- Antes de gerar, confere se o artigo **já** tem discussão (`jaTemDiscussao`): duas partidas simultâneas custariam uma chamada de IA repetida.
+- `scripts/test-discussao-cadeia.js` reprova se as duas linhas trocarem de lugar, se a carona no `/api/checkout/config` sumir ou se alguma rota voltar a ter cópia própria do disparo.
 
 ### ✅ O feed da ANVISA funciona
 No mesmo dia o professor perguntou por que o Mural não pegou a notícia *"Anvisa registra cinco novas canetas de semaglutida"*. **Pegou:** entrou em `adm_avisos` às 13h05, com fonte "Agência Nacional de Vigilância Sanitária (Anvisa)" e o link oficial do gov.br. O que ele tinha visto antes era o card **G1** da mesma notícia, criado à mão pelo "Gerar texto com IA" a partir de uma URL — G1 **não é fonte do radar** (a allowlist do Breaking News só tem regulador e farmacêutica). Card do G1 removido a pedido.

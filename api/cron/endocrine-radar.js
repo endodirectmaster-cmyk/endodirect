@@ -9,21 +9,7 @@ const { sendIgDailyNotice, autoPostDailyQotd } = require('../../lib/instagram');
 // Dá a partida na cadeia de discussões: uma requisição ao próprio backend, que
 // gera um artigo por invocação e chama a próxima. Não espera a resposta — o que
 // importa é a primeira invocação ter começado.
-async function dispararCadeiaDiscussoes() {
-  if (!process.env.CRON_SECRET) return false;
-  const base = process.env.PUBLIC_BASE_URL || 'https://www.endodirect.com.br';
-  const ctrl = new AbortController();
-  const t = setTimeout(() => ctrl.abort(), 2000);
-  try {
-    await fetch(`${base}/api/admin/refresh-radar`, {
-      method: 'POST', signal: ctrl.signal,
-      headers: { 'Content-Type': 'application/json', Authorization: 'Bearer ' + process.env.CRON_SECRET },
-      body: JSON.stringify({ action: 'discussao_cadeia' })
-    });
-  } catch (e) { /* abort esperado */ }
-  finally { clearTimeout(t); }
-  return true;
-}
+const { dispararCadeia } = require('../../lib/discussao-kick');
 const { sendAlert } = require('../../lib/alert');
 
 function json(res, status, body) {
@@ -95,7 +81,7 @@ module.exports = async function handler(req, res) {
     // fila esvaziar.
     // Fail-safe: nunca derruba o cron.
     let discussoes = { partida: false };
-    try { discussoes = { partida: await dispararCadeiaDiscussoes() }; }
+    try { discussoes = { partida: await dispararCadeia() }; }
     catch (e) { console.error('[cron-radar] cadeia discussoes erro:', (e && e.stack) || e); discussoes = { partida: false }; }
     return json(res, 200, { ok: true, ...result, qotd, newsletter, podcasts, trialEmails, igStory, discussoes });
   } catch (error) {
