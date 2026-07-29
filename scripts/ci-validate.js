@@ -124,5 +124,16 @@ try {
   fail('regressão da cadeia de discussões falhou (verifique lib/discussao-kick.js + api/admin/refresh-radar.js):\n' + out);
 }
 
+// 10. PROMPT da discussão: figuras e tabelas são anexadas ANTES do corte (iam
+//     no fim e o truncamento as descartava inteiras), e nada de rodapé de
+//     procedência nem selo de contagem no card.
+try {
+  execFileSync(process.execPath, [path.join('scripts', 'test-discussao-prompt.js')], { stdio: 'pipe' });
+  ok('regressão prompt da discussão: tabelas sobrevivem ao corte + sem rodapé/selo');
+} catch (e) {
+  const out = (e.stdout ? e.stdout.toString() : '') + (e.stderr ? e.stderr.toString() : '');
+  fail('regressão do prompt da discussão falhou (verifique lib/fulltext.js + lib/discussao.js):\n' + out);
+}
+
 if (errors) { console.error(`\n${errors} verificação(ões) falharam.`); process.exit(1); }
 console.log('\nTodas as verificações passaram.');

@@ -8,6 +8,9 @@ atualizado: 2026-07-29
 Log de decisões de produto e técnicas (mais recentes no topo).
 
 ## 2026-07
+- **⚠️ Rótulo que promete o que não está no texto é pior do que rótulo nenhum (2026-07-29):** o card da discussão anunciava "4 tabelas · 2 figuras" e fechava com "4 tabela(s) reproduzida(s) do artigo". Não havia tabela nenhuma no texto. Os dois rótulos eram meus, escritos para dar procedência ao aluno, e passaram a atestar conteúdo inexistente. Saíram — da geração, do card e das 21 discussões já gravadas.
+  - **A causa real era de ordem, não de prompt:** o corte de 60.000 caracteres do prompt descartava o bloco de tabelas, que ia por último. O modelo nunca as recebeu. Agora anexos são montados primeiro e o corpo é que cede espaço. Detalhes em [[Newsletter e Radar]].
+  - **O que aprender daqui:** contagem tirada da FONTE (o que o artigo tem) não descreve o PRODUTO (o que a discussão trouxe). Se um rótulo não é lido do próprio texto entregue, ele é uma promessa, não um dado.
 - **⚠️ "Automático" tem de sobreviver ao cache do navegador do usuário (2026-07-29):** a discussão do Mural voltou **cinco vezes** como "não gerou". Nas duas últimas, o código estava certo e em produção — os logs mostraram que a cadeia **nunca tinha sido invocada**. Motivo: os dois crons do dia já haviam passado e o terceiro gatilho vivia no `index.html`, que o service worker do professor ainda servia na versão antiga.
   - **A regra que fica:** um recurso que se anuncia como automático não pode ter *nenhum* gatilho que dependa do cliente ter atualizado. Pendurar a partida numa rota que o **pacote antigo também chama** (`/api/checkout/config`, no IIFE do topo do `index.html`) resolve, porque o servidor é sempre o novo.
   - **Como eu deveria ter percebido antes:** a pergunta certa depois de publicar não é "o código está certo?", é *"o que, exatamente, vai chamar isto hoje?"*. Nas duas vezes a resposta era "nada até amanhã de manhã", e dava para ver isso nos logs em um minuto.
