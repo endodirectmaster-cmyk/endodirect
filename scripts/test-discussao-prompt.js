@@ -144,5 +144,83 @@ const ft = {
        '<tbody><tr><td>x</td><td>(9)</td></tr></tbody></table>') === '');
 }
 
-console.log(bad ? '\nFALHOU: ' + bad : '\n✓ prompt da discussão: anexos sobrevivem ao corte; tabela em português e sem coluna de referências; sem rodapé e sem selo');
+// ---- 8. ⚠️ A TABELA DE ESTUDOS INCLUÍDOS NÃO CHEGA À IA --------------------
+// Pedido do professor (30/07): "exclui essas tabelas assim dos estudos de
+// metanálises". Numa metanálise de HIIT vs MICT, a discussão reproduziu a tabela
+// de 8 colunas × 20 estudos, com o protocolo de cada braço por extenso. No card
+// vira um bloco com rolagem horizontal que ninguém lê.
+//
+// ⚠️ O QUE ESTE BLOCO PROTEGE DOS DOIS LADOS: as tabelas de RESULTADO da
+// metanálise (efeito combinado, subgrupo, heterogeneidade) são o ponto da
+// discussão e TÊM de passar — inclusive quando trazem coluna de estudo. Uma regra
+// que corte "toda tabela com coluna Study" mata justamente o que interessa.
+{
+  const { tableToMarkdown, ehTabelaDeEstudosIncluidos } = require('../lib/fulltext');
+  const mk = (cabecalhos, linhas) => '<table><thead><tr>' +
+    cabecalhos.map((h) => '<th>' + h + '</th>').join('') + '</tr></thead><tbody>' +
+    linhas.map((l) => '<tr>' + l.map((c) => '<td>' + c + '</td>').join('') + '</tr>').join('') +
+    '</tbody></table>';
+
+  // A tabela exata do artigo que o professor mostrou (cabeçalhos do JATS, em inglês).
+  const caracteristicas = ['Study', 'Sample size', 'Age', 'Sex/BMI', 'Duration/frequency', 'HIIT protocol', 'MICT protocol', 'Outcomes'];
+  const linhasEstudo = Array.from({ length: 20 }, (_, i) =>
+    ['Ru X (' + (52 + i) + ')', '13/13', '18-22', 'Male; BMI 28.72/29.42', '8 weeks; 5 sessions/week',
+     'Body-weight circuit, 4 x 30 s; 85%-95% HRmax', 'Running, 60%-70% HRmax, 30-35 min', 'MARCA-CARACT']);
+  ok('a tabela de características dos estudos é descartada',
+     tableToMarkdown(mk(caracteristicas, linhasEstudo)) === '',
+     tableToMarkdown(mk(caracteristicas, linhasEstudo)).slice(0, 150));
+  ok('o conteúdo dela não vaza por outro caminho',
+     tableToMarkdown(mk(caracteristicas, linhasEstudo)).indexOf('MARCA-CARACT') < 0);
+
+  // ⚠️ Variações reais — inclusive as que NENHUM vocabulário prevê. As três
+  // últimas são as tabelas de verdade que estavam gravadas no banco: elas dizem
+  // "População", "Nº de pacientes", "Metodologia", e não "sample size"/"age".
+  // A primeira versão desta regra exigia 3 palavras de uma lista de
+  // características e deixava passar justamente essas.
+  const linhas7 = (n) => Array.from({ length: n }, (_, i) => Array.from({ length: 7 }, (_, j) => 'v' + i + j));
+  [
+    ['Study', 'Country', 'Design', 'Participants', 'Intervention', 'Comparator', 'Outcomes'],
+    ['First author', 'n', 'Age', 'Female (%)', 'Follow-up', 'Dose', 'Primary outcome'],
+    ['Estudo', 'Amostra', 'Idade', 'Sexo', 'Duração', 'Intervenção', 'Desfechos'],
+    ['Study', 'Random sequence', 'Allocation concealment', 'Blinding', 'Incomplete data', 'Selective reporting', 'Overall'],
+    ['Estudo', 'População', 'GLP-1 RA', 'Método de microbioma', 'Principais achados', 'Associação com resposta', 'Limitações'],
+    ['Autor', 'Ano', 'Nº de pacientes', 'Condição patológica', 'Metodologia', 'Transportadores', 'Resultados']
+  ].forEach((c) => {
+    ok('descarta "' + c.slice(0, 3).join('/') + '…"', tableToMarkdown(mk(c, linhas7(6))) === '', c.join('|'));
+  });
+
+  // ⚠️ O QUE TEM DE SOBREVIVER.
+  const resultado = mk(['Outcome', 'Studies', 'SMD', '95% CI', 'I²'],
+    [['VO2max', '12', '0.42', '0.21 to 0.63', '48%']]);
+  ok('tabela de efeito combinado sobrevive', tableToMarkdown(resultado).indexOf('SMD') > 0, tableToMarkdown(resultado));
+  const porEstudo = mk(['Study', 'Effect', '95% CI', 'Weight'], [['Ru X', '0.51', '0.10 to 0.92', '8.1%']]);
+  ok('tabela de resultado COM coluna de estudo sobrevive (só 4 colunas)',
+     tableToMarkdown(porEstudo).indexOf('0.51') > 0, tableToMarkdown(porEstudo));
+  const subgrupo = mk(['Subgroup', 'Studies', 'SMD', '95% CI', 'p interaction'],
+    [['Supervised', '7', '0.55', '0.30 to 0.80', '0.04']]);
+  ok('tabela de subgrupo sobrevive', tableToMarkdown(subgrupo).indexOf('p interaction') > 0);
+  // Tabela clínica larga SEM coluna de estudo (ex.: doses por fármaco) sobrevive.
+  const doses = mk(['Fármaco', 'Dose inicial', 'Dose máxima', 'Ajuste renal', 'Efeito adverso'],
+    [['Semaglutida', '0,25 mg', '2,4 mg', 'Não', 'Náusea']]);
+  ok('tabela clínica larga, sem coluna de estudo, sobrevive', tableToMarkdown(doses).indexOf('Semaglutida') > 0);
+
+  // ⚠️ A FRONTEIRA, medida nas tabelas reais do banco. De um lado a tabela
+  // compacta de definições que FICA (5 col × 5 lin, 677 caracteres); do outro a
+  // menor das que saem (7 col × 7 lin). Mexer em MIN_COL_ESTUDOS para 5 apaga a
+  // tabela boa; subir para 8 deixa passar duas das quatro.
+  const compacta = ['Estudo', 'Definição', 'PTx pré-transplante', 'PTx pós-transplante', 'Observações'];
+  ok('a tabela compacta de 5 colunas SOBREVIVE',
+     tableToMarkdown(mk(compacta, Array.from({ length: 5 }, (_, i) => compacta.map((_, j) => 'v' + i + j)))).indexOf('Definição') > 0);
+
+  // A função de decisão, isolada — é ela que fica fácil de auditar depois.
+  ok('exige coluna de estudo na PRIMEIRA posição',
+     ehTabelaDeEstudosIncluidos(['Outcome', 'Study', 'Age', 'Sex', 'Duration', 'BMI'], 20) === false);
+  ok('exige pelo menos 6 colunas', ehTabelaDeEstudosIncluidos(['Study', 'a', 'b', 'c', 'd'], 20) === false);
+  ok('exige pelo menos 5 linhas de dados', ehTabelaDeEstudosIncluidos(['Study', 'a', 'b', 'c', 'd', 'e'], 4) === false);
+  ok('com os três critérios, descarta', ehTabelaDeEstudosIncluidos(['Study', 'a', 'b', 'c', 'd', 'e'], 5) === true);
+  ok('não depende do vocabulário dos cabeçalhos',
+     ehTabelaDeEstudosIncluidos(['Autor', 'x1', 'x2', 'x3', 'x4', 'x5'], 9) === true);
+}
+
+console.log(bad ? '\nFALHOU: ' + bad : '\n✓ prompt da discussão: anexos sobrevivem ao corte; sem coluna de referências e sem tabela de estudos incluídos; resultado da metanálise preservado');
 process.exit(bad ? 1 : 0);
