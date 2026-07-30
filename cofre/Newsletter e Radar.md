@@ -24,7 +24,15 @@ Cortada em `tableToMarkdown` (`lib/fulltext.js`), na origem — mesmo lugar da c
 
 - **O que continua passando:** efeito combinado, subgrupo, heterogeneidade — o que interessa de uma metanálise. Tabela de resultado *com* coluna de estudo (`Estudo | Efeito | IC 95% | Peso`) tem 4 colunas e sobrevive. Regra que cortasse "toda tabela com coluna Study" mataria justamente o ponto da discussão.
 - **Sai junto a tabela de risco de viés por estudo** (mesma forma: um estudo por linha, 6+ domínios).
-- **As 3 discussões já gravadas com essas tabelas não foram corrigidas pelo deploy** — a prosa das três **cita** a tabela ("a tabela abaixo resume…"), então recortar o bloco deixaria referência órfã. Conserto = regeneração. Decisão do professor pendente.
+- **⚠️ A legenda decide o que a forma não resolve.** Duas tabelas reais de 5 colunas começam com "Estudo" e a contagem não as separa: `Estudo | Definição | PTx pré | PTx pós | Observações` traz **1/23 (4,3%), P = 0,36** — é desfecho por estudo, o dado da revisão, e **fica**; `Estudo | Perda de peso | Dieta | Metformina | Comentários` traz "sem ajuste formal" — é característica metodológica, e **sai**. Quem distingue é o `<caption>` do JATS, escrito pelo autor. Contar número nas células **não** funciona: a de resultado tem número, mas a de características também (n, idade, IMC). Daí `RE_LEGENDA_ESTUDOS` (characteristics / included studies / risk of bias / quality assessment / confounding) valer para tabelas de 5 colunas; de 6 em diante a forma basta.
+- **As já gravadas foram corrigidas por RECORTE, não por regeneração.** Eu havia dito que recortar deixaria referência órfã; ao ler o texto integral das três, as frases que anunciam a tabela são localizadas e identificáveis ("A tabela abaixo resume o conjunto incluído…"), imediatamente antes dela. Removi frase + legenda + tabela, com trava por `md5` e conferência de que nenhuma referência sobrou. Preserva as tabelas de resultado da metanálise, que é o que interessa.
+
+### ⚠️ A tabela gigante estava TRUNCANDO a discussão (descoberto em 30/07)
+Ao conferir o resultado do recorte, dois dos textos **terminavam no meio de uma frase** e não tinham as seções "O que isto muda na prática" e "Limitações" — e **já estavam assim antes do recorte**. No banco: **3 de 29 discussões sem `## Limitações`, 4 de 29 terminando sem pontuação final**.
+
+O teto de saída é **`max_tokens: 6000`** (`lib/discussao.js`). Tabela em markdown é cara em token (pipes, traços, números, siglas): a de HIIT tinha 4.961 caracteres e consumia perto de metade do orçamento, e a geração acabava antes do fim do texto. **Retirar a tabela devolve esse espaço** — é o efeito colateral mais valioso desta mudança.
+
+**Não corrigido ainda (decisão do professor):** (1) as 4 discussões truncadas continuam truncadas — recorte não recria texto que nunca foi escrito, só regeneração resolve; (2) não há **guarda de truncamento** na gravação: hoje uma saída cortada no meio da frase é gravada como se estivesse pronta. A guarda óbvia (recusar e devolver à fila) precisa de teto de tentativas, senão um artigo que sempre trunca fica em laço.
 
 
 ## Remoção das sociedades ATA e Endocrine Society (2026-07-23)

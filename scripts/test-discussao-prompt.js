@@ -204,22 +204,54 @@ const ft = {
     [['Semaglutida', '0,25 mg', '2,4 mg', 'Não', 'Náusea']]);
   ok('tabela clínica larga, sem coluna de estudo, sobrevive', tableToMarkdown(doses).indexOf('Semaglutida') > 0);
 
-  // ⚠️ A FRONTEIRA, medida nas tabelas reais do banco. De um lado a tabela
-  // compacta de definições que FICA (5 col × 5 lin, 677 caracteres); do outro a
-  // menor das que saem (7 col × 7 lin). Mexer em MIN_COL_ESTUDOS para 5 apaga a
-  // tabela boa; subir para 8 deixa passar duas das quatro.
-  const compacta = ['Estudo', 'Definição', 'PTx pré-transplante', 'PTx pós-transplante', 'Observações'];
-  ok('a tabela compacta de 5 colunas SOBREVIVE',
-     tableToMarkdown(mk(compacta, Array.from({ length: 5 }, (_, i) => compacta.map((_, j) => 'v' + i + j)))).indexOf('Definição') > 0);
+  // ⚠️ AS DUAS TABELAS DE 5 COLUNAS QUE A FORMA NÃO SEPARA — e é por isso que a
+  // legenda entra na decisão. As duas são reais, do banco, e começam com
+  // "Estudo": uma traz DESFECHO por estudo (1/23, P = 0,36) e é o dado da
+  // revisão; a outra traz característica metodológica ("sem ajuste formal").
+  // Contar coluna, contar linha ou contar números nas células não distingue as
+  // duas — só o <caption> escrito pelo autor distingue.
+  const resultadoPorEstudo = ['Estudo', 'Definição', 'PTx pré-transplante', 'PTx pós-transplante', 'Observações'];
+  const linhasPTx = [
+    ['Wang 2023 (27)', 'HPT persistente (>6 meses)', '1/23 (4,3%)', '4/75 (5,3%)', 'Sem diferença estatística'],
+    ['Jeon 2012 (23)', 'iPTH >65 pg/mL em 1 ano', '12/37 (36%)', 'Não reportado', 'Ainda elevado'],
+    ['Okada 2019 (26)', 'Não reportado', '–', '–', 'Ca mais alto'],
+    ['van der Plas 2019 (25)', 'Recidiva pós-transplante', '3,7%', '2,3%', 'P = 0,36'],
+    ['Callender 2017 (5)', 'HPT persistente', '–', '–', 'PTH ≥6×LSN']
+  ];
+  ok('tabela de RESULTADO por estudo sobrevive (legenda de desfecho)',
+     tableToMarkdown(mk(resultadoPorEstudo, linhasPTx), 'Definitions and rates of persistent hyperparathyroidism after transplantation').indexOf('4,3%') > 0);
+  ok('e sobrevive também sem legenda nenhuma',
+     tableToMarkdown(mk(resultadoPorEstudo, linhasPTx), '').indexOf('4,3%') > 0);
+
+  const confundidores = ['Estudo', 'Perda de peso relatada/ajustada', 'Avaliação/ajuste dietético', 'Ajuste para metformina', 'Comentários'];
+  const linhasConf = Array.from({ length: 7 }, () =>
+    ['(37)', 'Relatada por variações de IMC, sem ajuste formal', 'Não relatada', 'Controlada por desenho', 'MARCA-CONF']);
+  ok('mesma forma, mas a legenda diz que é dos estudos → SAI',
+     tableToMarkdown(mk(confundidores, linhasConf),
+       'Assessment of main confounding factors in the human studies on GLP-1 receptor agonists') === '',
+     tableToMarkdown(mk(confundidores, linhasConf), 'Assessment of main confounding factors in the human studies').slice(0, 120));
+  ok('sem a legenda declarando, a de 5 colunas fica (a forma não basta)',
+     tableToMarkdown(mk(confundidores, linhasConf), '').indexOf('MARCA-CONF') > 0);
 
   // A função de decisão, isolada — é ela que fica fácil de auditar depois.
   ok('exige coluna de estudo na PRIMEIRA posição',
-     ehTabelaDeEstudosIncluidos(['Outcome', 'Study', 'Age', 'Sex', 'Duration', 'BMI'], 20) === false);
-  ok('exige pelo menos 6 colunas', ehTabelaDeEstudosIncluidos(['Study', 'a', 'b', 'c', 'd'], 20) === false);
-  ok('exige pelo menos 5 linhas de dados', ehTabelaDeEstudosIncluidos(['Study', 'a', 'b', 'c', 'd', 'e'], 4) === false);
-  ok('com os três critérios, descarta', ehTabelaDeEstudosIncluidos(['Study', 'a', 'b', 'c', 'd', 'e'], 5) === true);
+     ehTabelaDeEstudosIncluidos(['Outcome', 'Study', 'Age', 'Sex', 'Duration', 'BMI'], 20, '') === false);
+  ok('6 colunas dispensam a legenda', ehTabelaDeEstudosIncluidos(['Study', 'a', 'b', 'c', 'd', 'e'], 5, '') === true);
+  ok('exige pelo menos 5 linhas de dados', ehTabelaDeEstudosIncluidos(['Study', 'a', 'b', 'c', 'd', 'e'], 4, '') === false);
+  ok('4 colunas nunca saem, mesmo com legenda de características',
+     ehTabelaDeEstudosIncluidos(['Study', 'a', 'b', 'c'], 20, 'Characteristics of included studies') === false);
+  ok('5 colunas + legenda de características → sai',
+     ehTabelaDeEstudosIncluidos(['Study', 'a', 'b', 'c', 'd'], 5, 'Characteristics of included studies') === true);
+  ['Baseline characteristics of the included trials', 'Risk of bias assessment',
+   'Summary of included studies', 'Quality assessment of the studies',
+   'Características dos estudos incluídos'].forEach((leg) => {
+    ok('legenda "' + leg.slice(0, 30) + '…" declara tabela dos estudos',
+       ehTabelaDeEstudosIncluidos(['Study', 'a', 'b', 'c', 'd'], 6, leg) === true);
+  });
+  ok('legenda de desfecho NÃO declara',
+     ehTabelaDeEstudosIncluidos(['Study', 'a', 'b', 'c', 'd'], 6, 'Pooled effect on fasting glucose') === false);
   ok('não depende do vocabulário dos cabeçalhos',
-     ehTabelaDeEstudosIncluidos(['Autor', 'x1', 'x2', 'x3', 'x4', 'x5'], 9) === true);
+     ehTabelaDeEstudosIncluidos(['Autor', 'x1', 'x2', 'x3', 'x4', 'x5'], 9, '') === true);
 }
 
 console.log(bad ? '\nFALHOU: ' + bad : '\n✓ prompt da discussão: anexos sobrevivem ao corte; sem coluna de referências e sem tabela de estudos incluídos; resultado da metanálise preservado');
