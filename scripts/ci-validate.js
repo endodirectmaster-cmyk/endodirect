@@ -149,14 +149,27 @@ try {
 // 12. SOPHIA: as árvores foram transcritas de FIGURAS do apêndice do artigo, e
 //     transcrição de figura erra trocando o lado de um ramo ou o valor de uma
 //     folha — nenhum dos dois aparece como erro de execução. O teste confere as
-//     15 folhas, o fechamento dos n com a raiz e o caso rodado na ferramenta
-//     oficial. Também barra a volta de M1/M3/M12, que não são reproduzíveis.
+//     22 folhas, o fechamento dos n com a raiz (948, 755, 578) e os SEIS valores
+//     da tabela de valores da ferramenta oficial. Também barra a volta de M1/M3,
+//     que não constam do artigo.
 try {
   execFileSync(process.execPath, [path.join('scripts', 'test-calc-sophia.js')], { stdio: 'pipe' });
-  ok('regressão SOPHIA: 15 folhas + n fechando + caso oficial + M1/M3/M12 fora');
+  ok('regressão SOPHIA: 22 folhas + n fechando + 6 valores da tabela oficial + M1/M3 fora');
 } catch (e) {
   const out = (e.stdout ? e.stdout.toString() : '') + (e.stderr ? e.stderr.toString() : '');
   fail('regressão do SOPHIA falhou (verifique sophiaM24/sophiaM60 no index.html):\n' + out);
+}
+
+// 13. Acréscimos ao painel do professor: Favoritos (container com id PRÓPRIO,
+//     senão a lista do aluno escondida é que seria alvo do getElementById),
+//     calculadoras agrupadas por área (títulos precisam de grid-column:1/-1) e o
+//     perfil profissional no Analytics (percentual sobre quem INFORMOU).
+try {
+  execFileSync(process.execPath, [path.join('scripts', 'test-painel-professor.js')], { stdio: 'pipe' });
+  ok('regressão painel do professor: favoritos + calculadoras por área + perfil profissional');
+} catch (e) {
+  const out = (e.stdout ? e.stdout.toString() : '') + (e.stderr ? e.stderr.toString() : '');
+  fail('regressão do painel do professor falhou (verifique renderFavoritos/initCalc/admAnalyticsHTML no index.html):\n' + out);
 }
 
 if (errors) { console.error(`\n${errors} verificação(ões) falharam.`); process.exit(1); }
