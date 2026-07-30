@@ -2770,8 +2770,11 @@ function sophiaM60(p){
 // que é falso — a perda real é concentrada nos primeiros meses.
 function sophiaGraficoHTML(r,pesoPre){
   var W=480,H=240,x0=44,x1=464,y0=22,y1=196;
-  var pts=[[0,pesoPre,'pré-op'],[12,r.peso12,'1 ano'],[24,r.peso24,'2 anos'],[60,r.peso60,'5 anos']];
-  var pesos=pts.map(function(p){return p[1];});
+  var pts=[[0,pesoPre,'pré-op',null],[12,r.peso12,'1 ano',r.faixa12],[24,r.peso24,'2 anos',r.faixa24],[60,r.peso60,'5 anos',r.faixa60]];
+  // A escala tem de caber a FAIXA, não só a linha central — senão a área sai
+  // cortada pela borda do gráfico.
+  var pesos=[pesoPre];
+  pts.forEach(function(p){if(p[3]){pesos.push(p[3].lo,p[3].hi);}else{pesos.push(p[1]);}});
   var wmin=Math.min.apply(null,pesos),wmax=Math.max.apply(null,pesos);
   // ⚠️ MARCAS "REDONDAS", não os extremos crus. Antes o eixo saía com 125/95/66,
   // que é ruído: são os limites do intervalo, não valores que alguém leria.
@@ -2798,12 +2801,29 @@ function sophiaGraficoHTML(r,pesoPre){
     g.push('<text x="'+xf(p[0]).toFixed(1)+'" y="'+(y1+15)+'" text-anchor="'+(p[0]===0?'start':(p[0]===60?'end':'middle'))+'" font-size="9" fill="currentColor" fill-opacity=".62">'+p[2]+'</text>');
   });
   g.push('<text x="'+((x0+x1)/2).toFixed(1)+'" y="'+(H-4)+'" text-anchor="middle" font-size="8.5" fill="currentColor" fill-opacity=".45">meses após a cirurgia</text>');
+  // ⚠️ A FAIXA COMEÇA EM 12 MESES, não no pré-operatório: antes disso não há
+  // modelo, então não há incerteza publicada para sombrear.
+  var comFaixa=pts.filter(function(p){return !!p[3];});
+  if(comFaixa.length){
+    var topo=comFaixa.map(function(p){return xf(p[0]).toFixed(1)+' '+yf(p[3].hi).toFixed(1);}).join(' L');
+    var base=comFaixa.slice().reverse().map(function(p){return xf(p[0]).toFixed(1)+' '+yf(p[3].lo).toFixed(1);}).join(' L');
+    g.push('<path d="M'+topo+' L'+base+' Z" fill="#60a5fa" fill-opacity=".14"/>');
+  }
   // Trecho não modelado (pré-op → 1 ano) pontilhado; o modelado, cheio.
   g.push('<path d="M'+xf(0).toFixed(1)+' '+yf(pesoPre).toFixed(1)+' L'+xf(12).toFixed(1)+' '+yf(r.peso12).toFixed(1)+'" fill="none" stroke="#60a5fa" stroke-width="2" stroke-dasharray="5 4" stroke-opacity=".45"/>');
   g.push('<path d="M'+xf(12).toFixed(1)+' '+yf(r.peso12).toFixed(1)+' L'+xf(24).toFixed(1)+' '+yf(r.peso24).toFixed(1)+' L'+xf(60).toFixed(1)+' '+yf(r.peso60).toFixed(1)+'" fill="none" stroke="#60a5fa" stroke-width="2.4" stroke-linejoin="round"/>');
   pts.forEach(function(p,i){
     var cy=yf(p[1]);
-    g.push('<circle cx="'+xf(p[0]).toFixed(1)+'" cy="'+cy.toFixed(1)+'" r="'+(i===0?3:4)+'" fill="#60a5fa"'+(i===0?' fill-opacity=".5"':'')+' stroke="var(--surface)" stroke-width="1.4"/>');
+    // <title> dá tooltip nativo (mês, peso e faixa) sem uma linha de JS, e
+    // funciona no toque também. Só nos três tempos que o modelo cobre — hover em
+    // mês intermediário exigiria interpolar valores que não existem.
+    var dica=p[2]+': '+p[1].toFixed(1)+' kg'+(p[3]?' · faixa provável '+p[3].lo.toFixed(1)+'–'+p[3].hi.toFixed(1)+' kg':' (peso informado)');
+    g.push('<circle cx="'+xf(p[0]).toFixed(1)+'" cy="'+cy.toFixed(1)+'" r="'+(i===0?3:4)+'" fill="#60a5fa"'+(i===0?' fill-opacity=".5"':'')+' stroke="var(--surface)" stroke-width="1.4"><title>'+esc(dica)+'</title></circle>');
+    if(p[3]){
+      // Alvo de toque generoso e invisível: um círculo de raio 4 é pequeno demais
+      // para o dedo encostar e ver a dica.
+      g.push('<circle cx="'+xf(p[0]).toFixed(1)+'" cy="'+cy.toFixed(1)+'" r="14" fill="transparent"><title>'+esc(dica)+'</title></circle>');
+    }
     // O rótulo do nadir vai ABAIXO do ponto; acima colidiria com a linha que sobe.
     var acima=!(i===2);
     g.push('<text x="'+xf(p[0]).toFixed(1)+'" y="'+(acima?cy-9:cy+13).toFixed(1)+'" text-anchor="'+(p[0]===0?'start':(p[0]===60?'end':'middle'))+'" font-size="10.5" font-weight="700" fill="currentColor" fill-opacity=".9">'+p[1].toFixed(1)+' kg</text>');
@@ -2812,21 +2832,22 @@ function sophiaGraficoHTML(r,pesoPre){
 }
 function sophiaTabelaHTML(r,pesoPre,alturaCm){
   var m=alturaCm/100,ideal=25*m*m,exc=pesoPre-ideal;
-  var linha=function(rot,peso,twl,imc){
+  var linha=function(rot,peso,twl,imc,fx){
     var pep=exc>0?((pesoPre-peso)/exc*100).toFixed(0)+'%':'—';
     return '<tr><td style="padding:.3rem .45rem;font-weight:600">'+rot+'</td>'
       +'<td style="padding:.3rem .45rem;text-align:right">'+peso.toFixed(1)+'</td>'
+      +'<td style="padding:.3rem .45rem;text-align:right;color:var(--t2);white-space:nowrap">'+(fx?fx.lo.toFixed(1)+'–'+fx.hi.toFixed(1):'—')+'</td>'
       +'<td style="padding:.3rem .45rem;text-align:right">'+twl.toFixed(0)+'%</td>'
       +'<td style="padding:.3rem .45rem;text-align:right">'+imc.toFixed(1)+'</td>'
       +'<td style="padding:.3rem .45rem;text-align:right">'+pep+'</td></tr>';
   };
   return '<div style="overflow-x:auto"><table style="width:100%;border-collapse:collapse;font-size:.72rem;margin-top:.2rem">'
     +'<thead><tr style="color:var(--t2)"><th style="padding:.3rem .45rem;text-align:left">Previsão</th>'
-    +'<th style="padding:.3rem .45rem;text-align:right">Peso (kg)</th><th style="padding:.3rem .45rem;text-align:right">%PPT</th>'
+    +'<th style="padding:.3rem .45rem;text-align:right">Peso (kg)</th><th style="padding:.3rem .45rem;text-align:right">Faixa (kg)</th><th style="padding:.3rem .45rem;text-align:right">%PPT</th>'
     +'<th style="padding:.3rem .45rem;text-align:right">IMC</th><th style="padding:.3rem .45rem;text-align:right">%PEP</th></tr></thead><tbody>'
-    +linha('1 ano',r.peso12,r.twl12,r.imc12)
-    +linha('2 anos',r.peso24,r.twl24,r.imc24)
-    +linha('5 anos',r.peso60,r.twl60,r.imc60)
+    +linha('1 ano',r.peso12,r.twl12,r.imc12,r.faixa12)
+    +linha('2 anos',r.peso24,r.twl24,r.imc24,r.faixa24)
+    +linha('5 anos',r.peso60,r.twl60,r.imc60,r.faixa60)
     +'</tbody></table></div>';
 }
 function sophiaTrajetoria(v){
@@ -2836,10 +2857,34 @@ function sophiaTrajetoria(v){
          dm:parseFloat(v.sph_dm)||0,dmDur:parseFloat(v.sph_dmdur)||0,
          fumo:(parseFloat(v.sph_fumo)||0)===1};
   var z=sophiaM12(p),a=sophiaM24(p),b=sophiaM60(p),m=altura/100;
+  // FAIXA INTERQUARTIL — a mesma grandeza que a ferramenta oficial sombreia. O
+  // artigo diz que a calculadora exibe "prediction intervals corresponding to IQR
+  // of prediction errors" (Figura 3: "Predicted trajectory and IQR of BMI").
+  //
+  // ⚠️ Os percentis empíricos NÃO são publicados; o que a Tabela 3 dá é o DESVIO
+  // do erro de IMC por operação e por tempo, nas coortes de validação. Daí a
+  // meia-largura interquartil sai por aproximação normal: 0,6745 × DP.
+  // Conferido contra a tela deles: no caso de referência (bypass, 2 anos) isso dá
+  // ~15,2 kg de largura, contra ~16 kg da faixa verde. A largura bate; o CENTRO
+  // deles é deslocado para cima, porque usam o percentil do erro (que tem viés) e
+  // eu centro na previsão. Está dito na legenda — é aproximação, não a faixa deles.
+  //
+  // ⚠️ Antes eu tinha usado os limites de Bland-Altman (±1,96 DP: 6,8/8,1/9,4
+  // kg/m²). É dado publicado também, mas é intervalo de ~95%: dava 51–98 kg aos
+  // 2 anos, engolia o gráfico e não é o que a ferramenta mostra.
+  var DP_IMC={0:{12:3.2,24:3.9,60:4.5},1:{12:4.3,24:4.8,60:5.6},2:{12:3.9,24:4.1,60:4.3}};
+  var IQR=0.6745;   // meia-largura interquartil de uma normal, em desvios
+  var dpOp=DP_IMC[p.interv]||DP_IMC[0];
+  var faixa=function(pesoPrev,mes){
+    var dpImc=dpOp[mes],d=IQR*dpImc*m*m;
+    return{lo:Math.max(0,pesoPrev-d),hi:pesoPrev+d,dp:dpImc};
+  };
+  var p12=peso*(1-z.twl),p24=peso*(1-a.twl),p60=peso*(1-b.twl);
   return{
     twl12:z.twl*100,twl24:a.twl*100,twl60:b.twl*100,
-    peso12:peso*(1-z.twl),peso24:peso*(1-a.twl),peso60:peso*(1-b.twl),
-    imc12:peso*(1-z.twl)/(m*m),imc24:peso*(1-a.twl)/(m*m),imc60:peso*(1-b.twl)/(m*m),
+    peso12:p12,peso24:p24,peso60:p60,
+    imc12:p12/(m*m),imc24:p24/(m*m),imc60:p60/(m*m),
+    faixa12:faixa(p12,12),faixa24:faixa(p24,24),faixa60:faixa(p60,60),
     caminho12:z.caminho,caminho24:a.caminho,caminho60:b.caminho
   };
 }
@@ -2906,7 +2951,7 @@ var CALCS=[
      return '<div style="margin-top:.7rem;border:1px solid var(--bd);border-radius:var(--r);padding:.6rem .7rem">'
        +sophiaGraficoHTML(r,peso)
        +sophiaTabelaHTML(r,peso,alt)
-       +'<div style="font-size:.66rem;color:var(--t3);line-height:1.5;margin-top:.4rem">O trecho até 12 meses está pontilhado porque as árvores de 1 e 3 meses não constam do artigo: a queda real é concentrada nos primeiros meses, e reta cheia ali sugeriria perda linear no primeiro ano.</div>'
+       +'<div style="font-size:.66rem;color:var(--t3);line-height:1.5;margin-top:.4rem">A área sombreada é a <b>faixa interquartil</b> — dentro dela caiu metade dos pacientes da validação. Vem do desvio do erro de IMC publicado <b>por operação e por tempo</b> (Tabela 3 do artigo), por aproximação normal, porque os percentis empíricos não são publicados: a largura bate com a da ferramenta oficial (~15 kg contra ~16 kg aos 2 anos no caso de referência), mas aqui ela é simétrica em torno da previsão, enquanto a deles é deslocada. Toque nos pontos para ver peso e faixa. O trecho até 1 ano está pontilhado e sem faixa porque as árvores de 1 e 3 meses não constam do artigo.</div>'
        +'</div>';
    },
    unit:'% de perda de peso total em 2 anos',

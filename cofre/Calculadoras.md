@@ -92,6 +92,22 @@ Pedido do professor. A lista corrida passou de 30 itens e virava varredura visua
 - Com uma área filtrada, o título do grupo é omitido — repetiria a aba selecionada.
 - Área que deixe de existir em `CALCS` cai de volta em "Todas" em vez de mostrar lista vazia.
 
+## Faixa de incerteza no gráfico do SOPHIA (2026-07-29)
+O professor pediu a área sombreada que a ferramenta oficial mostra, com o tooltip de mês, peso e faixa.
+
+**O que a faixa deles é:** o artigo diz que a calculadora exibe *"prediction intervals corresponding to IQR of prediction errors"*, e a Figura 3 se chama *"Predicted trajectory and IQR of BMI"*. É **interquartil** — metade dos pacientes.
+
+**Os percentis empíricos não são publicados.** O que a **Tabela 3** dá é o **desvio do erro de IMC por operação e por tempo** nas coortes de validação: bypass 3,2 / 3,9 / 4,5 · sleeve 4,3 / 4,8 / 5,6 · banda 3,9 / 4,1 / 4,3 (12/24/60 meses). Daí a meia-largura interquartil sai por aproximação normal, **0,6745 × DP**.
+
+**Conferência:** no caso de referência (bypass, 2 anos) isso dá largura de **15,2 kg**, contra **~16 kg** da faixa verde deles. A largura bate. O **centro** difere: a deles é deslocada para cima (usam o percentil do erro, que carrega viés), a nossa é simétrica em torno da previsão. Está declarado na legenda — é aproximação da mesma grandeza, não a faixa deles.
+
+### ⚠️ O caminho errado que eu tomei primeiro
+Usei os **limites de concordância de Bland-Altman** do apêndice (±1,96 DP: 6,8 / 8,1 / 9,4 kg/m²). É dado publicado, mas é intervalo de **~95%**: dava **51–98 kg** aos 2 anos, engolia o gráfico e não correspondia ao que a ferramenta mostra. Dado publicado não basta — tem de ser **a mesma grandeza** que se está reproduzindo.
+
+- A faixa **começa em 1 ano**: antes disso não há modelo, logo não há incerteza para sombrear.
+- Tooltip por `<title>` em cada ponto (mês, peso, faixa), com um círculo transparente de raio 14 por cima para o dedo alcançar. Sem JS. **Só nos três tempos do modelo** — hover em mês intermediário exigiria interpolar valores que não existem.
+- Coluna "Faixa (kg)" na tabela de valores.
+
 ## Gráfico do SOPHIA: o que estava errado (2026-07-29)
 Primeira versão saía **gigante**: `viewBox` de 320×200 com `width:100%;height:auto` numa tela larga vira um bloco de mais de mil pixels de altura, e as fontes de 8 unidades escalam junto — números enormes, gráfico ilegível.
 
