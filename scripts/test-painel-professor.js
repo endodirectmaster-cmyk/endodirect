@@ -74,6 +74,29 @@ const semComentarios = SRC.replace(/^\s*\/\/.*$/gm, '');
   ok('a faixa de abas não passa da largura do container', /\.calc-pills\{margin:0 0 \.35rem;max-width:100%\}/.test(SRC));
   ok('as abas rolam na horizontal no celular', /\.pill-tab-row\{overflow-x:auto;flex-wrap:nowrap/.test(SRC));
 
+  // ---- ⚠️ A COR VEM DO MURAL, não de uma paleta nova ------------------------
+  // Agora que as áreas são as subespecialidades, inventar cor aqui faria Lípides
+  // ser vermelho no Mural e outra coisa nas Calculadoras. `muralSubMeta` é a
+  // fonte única — se alguém trocar por um mapa local, a leitura de cor deixa de
+  // valer entre as telas e nada quebra visivelmente para avisar.
+  ok('o card usa muralSubMeta', /var meta=muralSubMeta\(a\);/.test(semComentarios));
+  ok('não há paleta local nas calculadoras',
+     (function(){
+       const i = semComentarios.indexOf('function renderCalcGrid()');
+       const j = semComentarios.indexOf('\nfunction ', i + 1);
+       const b = semComentarios.slice(i, j);
+       // Cor hexadecimal literal — `'#calc-grid'` é seletor, não cor.
+       return !/#[0-9a-f]{3}\b|#[0-9a-f]{6}\b/i.test(b) && b.indexOf('CORES') < 0;
+     })());
+  ok('o card recebe a classe de cor', /class="card calc-card'\+meta\.card\+'"/.test(semComentarios));
+  ok('a aba e o título têm o ponto colorido',
+     /<i class="calc-dot '\+muralSubMeta\(a\)\.tag\+'"><\/i>/.test(semComentarios)
+     && /<i class="calc-dot '\+meta\.tag\+'"><\/i>/.test(semComentarios));
+  // A borda existe SEMPRE, mesmo sem cor mapeada: sem ela os grupos ficariam
+  // com alinhamento diferente entre si.
+  ok('a borda do card é declarada com fallback neutro', /\.calc-card\{border-left:3px solid var\(--bd2\)\}/.test(SRC));
+  ok('o ponto herda a cor da classe de subespecialidade', /\.calc-dot\{display:inline-block/.test(SRC));
+
   // ---- ⚠️ AS ÁREAS SÃO AS SUBESPECIALIDADES, não rótulos de disciplina -------
   // Reatribuição ditada pelo professor (29/07), calculadora a calculadora. As
   // áreas antigas ("Risco cardiovascular", "Antropometria", "Lipidologia",

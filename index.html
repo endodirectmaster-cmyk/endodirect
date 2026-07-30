@@ -234,6 +234,14 @@ body{background:var(--bg);color:var(--tx);display:flex;flex-direction:column}
 .calc-pills-wrap{grid-column:1/-1;min-width:0}
 .calc-area-grid{min-width:0}
 .calc-pills{margin:0 0 .35rem;max-width:100%}
+/* A cor do card vem das classes `mural-card-*`, que só definem
+   `border-left-color` — por isso a borda em si é declarada aqui. Card de área
+   sem cor mapeada fica com a borda neutra, e não sem borda: alinhamento
+   diferente entre os grupos seria pior que a falta de cor. */
+.calc-card{border-left:3px solid var(--bd2)}
+/* O ponto herda a cor de fundo da classe `tag-sub-*` da subespecialidade. */
+.calc-dot{display:inline-block;width:.5rem;height:.5rem;border-radius:50%;flex:none;margin-right:.1rem;vertical-align:baseline}
+.pill-tab .calc-dot{margin-right:.35rem}
 .calc-pills .pill-tab{padding:.4rem .8rem;font-size:.73rem}
 .calc-pill-n{opacity:.6;font-weight:600;font-size:.68rem}
 .g4{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}
@@ -7988,14 +7996,19 @@ function renderCalcGrid(){
   var pills='<div class="pill-tab-row calc-pills">'
     +'<button class="pill-tab'+(calcAreaFiltro?'':' on')+'" data-calcarea="">Todas <span class="calc-pill-n">'+CALCS.length+'</span></button>'
     +ix.areas.map(function(a){
-      return '<button class="pill-tab'+(calcAreaFiltro===a?' on':'')+'" data-calcarea="'+esc(a)+'">'+esc(a)+' <span class="calc-pill-n">'+ix.porArea[a].length+'</span></button>';
+      return '<button class="pill-tab'+(calcAreaFiltro===a?' on':'')+'" data-calcarea="'+esc(a)+'"><i class="calc-dot '+muralSubMeta(a).tag+'"></i>'+esc(a)+' <span class="calc-pill-n">'+ix.porArea[a].length+'</span></button>';
     }).join('')
     +'</div>';
   var grupos=visiveis.map(function(a){
+    // ⚠️ A COR VEM DE `muralSubMeta`, a MESMA do Mural. Agora que as áreas são as
+    // subespecialidades, inventar uma paleta aqui faria Lípides ser vermelho no
+    // Mural e outra coisa nas Calculadoras. Reusar é o que mantém a leitura de
+    // cor válida em toda a plataforma.
+    var meta=muralSubMeta(a);
     // Com uma área só na tela, o título do grupo repetiria a aba selecionada.
-    return (calcAreaFiltro?'':'<div class="calc-area-tit">'+esc(a)+' <span>'+ix.porArea[a].length+'</span></div>')
+    return (calcAreaFiltro?'':'<div class="calc-area-tit"><i class="calc-dot '+meta.tag+'"></i>'+esc(a)+' <span>'+ix.porArea[a].length+'</span></div>')
       +'<div class="calc-area-grid">'+ix.porArea[a].map(function(c){
-        return'<div class="card" style="cursor:pointer" data-calc="'+c.id+'"><div style="font-size:.84rem;font-weight:700;color:var(--tx);margin-bottom:2px">'+esc(c.name)+'</div><div style="font-size:.71rem;color:var(--t2)">'+esc(c.desc)+'</div></div>';
+        return'<div class="card calc-card'+meta.card+'" style="cursor:pointer" data-calc="'+c.id+'"><div style="font-size:.84rem;font-weight:700;color:var(--tx);margin-bottom:2px">'+esc(c.name)+'</div><div style="font-size:.71rem;color:var(--t2)">'+esc(c.desc)+'</div></div>';
       }).join('')+'</div>';
   }).join('');
   el.innerHTML='<div class="calc-pills-wrap">'+pills+'</div>'+grupos;

@@ -71,6 +71,16 @@ Não foram publicados (o pipeline tem cinco árvores, a figura traz três), ent�
 - O IMC da tabela oficial (25,9 aos 2 anos) sai do peso **já arredondado** (75 kg); aqui sai do peso exato (74,4 kg → 25,7). Diferença de arredondamento da tela deles, não de modelo.
 - `scripts/test-calc-sophia.js` (passo 12 do CI) confere as **22 folhas**, os três fechamentos de `n` e os seis valores oficiais. Trocar o lado de um ramo derruba 6 asserções. `sw` v157→v158.
 
+## Cores por subespecialidade nas calculadoras (2026-07-30)
+Pedido do professor: cards divididos por cor. **A cor NÃO é nova** — vem de `muralSubMeta(sub)`, a mesma função que colore os cards do Mural.
+
+**Por que reusar em vez de criar uma paleta:** agora que as áreas são as subespecialidades, uma paleta local faria Lípides ser vermelho no Mural e outra coisa nas Calculadoras. A leitura de cor só vale se for a mesma em toda a plataforma. `scripts/test-painel-professor.js` reprova se aparecer **cor hexadecimal literal** dentro de `renderCalcGrid`.
+
+Onde a cor aparece: **borda esquerda do card** (classes `mural-card-*`, que só definem `border-left-color` — a borda em si é declarada em `.calc-card`), **ponto colorido na aba** e **ponto no título do grupo** (classes `tag-sub-*`, das quais o ponto herda o fundo).
+
+- **A borda existe sempre**, mesmo sem cor mapeada: sem ela os grupos ficariam com alinhamento diferente entre si.
+- **"Distúrbios hidroeletrolíticos" fica neutro** — é a única área que não é subespecialidade da plataforma, então `muralSubMeta` cai no `tag-muted`. Foi mantido assim de propósito: dar a ele a cor de outra subespecialidade seria mentir sobre a categoria.
+
 ## ⚠️ `min-width:0` — a faixa de abas estourava a página no iPhone (2026-07-29)
 O professor mandou a tela do celular: cards enormes e as **descrições cortadas à direita**. Não era zoom nem fonte grande — era **estouro de largura**.
 
