@@ -63,6 +63,37 @@ const semComentarios = SRC.replace(/^\s*\/\/.*$/gm, '');
   ok('com uma área filtrada o título do grupo não repete a aba', /calcAreaFiltro\?'':'<div class="calc-area-tit">/.test(semComentarios));
   ok('área inexistente cai em "Todas"', /ix\.areas\.indexOf\(calcAreaFiltro\)<0\)calcAreaFiltro=''/.test(semComentarios));
   ok('a faixa de abas ocupa a linha inteira', /\.calc-pills-wrap\{grid-column:1\/-1\}/.test(SRC));
+
+  // ---- ⚠️ AS ÁREAS SÃO AS SUBESPECIALIDADES, não rótulos de disciplina -------
+  // Reatribuição ditada pelo professor (29/07), calculadora a calculadora. As
+  // áreas antigas ("Risco cardiovascular", "Antropometria", "Lipidologia",
+  // "Função renal", "Fígado (MASLD)", "Crescimento") eram nomes de assunto e não
+  // batiam com as subespecialidades do resto da plataforma — o aluno procurava
+  // FIB-4 em Obesidade e não achava.
+  const bloco = SRC.slice(SRC.indexOf('var CALCS=['), SRC.indexOf('\n];', SRC.indexOf('var CALCS=[')));
+  const areaDe = {};
+  const re = /\{id:'([^']+)',name:'[^']*',area:'([^']*)'/g;
+  let m;
+  while ((m = re.exec(bloco))) areaDe[m[1]] = m[2];
+
+  const esperado = {
+    prevent: 'Lípides', prevent30: 'Lípides', ldl: 'Lípides',
+    imc: 'Obesidade', pep: 'Obesidade', sophia: 'Obesidade', fib4: 'Obesidade',
+    bsa: 'Endocrinologia Pediátrica', alvo: 'Endocrinologia Pediátrica', zha: 'Endocrinologia Pediátrica',
+    velcresc: 'Endocrinologia Pediátrica', idcorr: 'Endocrinologia Pediátrica',
+    ckdepi: 'Diabetes', drc: 'Diabetes', homa: 'Diabetes',
+    nacorr: 'Distúrbios hidroeletrolíticos', osmol: 'Distúrbios hidroeletrolíticos',
+    cacorr: 'Osteometabolismo', trp: 'Osteometabolismo', tmpgfr: 'Osteometabolismo', frax: 'Osteometabolismo',
+    cortic: 'Adrenal', lt4: 'Tireoide'
+  };
+  Object.keys(esperado).forEach(function (id) {
+    ok('"' + id + '" está em ' + esperado[id], areaDe[id] === esperado[id], String(areaDe[id]));
+  });
+  ok('as 23 calculadoras estão mapeadas', Object.keys(areaDe).length === 23, String(Object.keys(areaDe).length));
+  ['Risco cardiovascular', 'Antropometria', 'Lipidologia', 'Função renal', 'Fígado (MASLD)', 'Crescimento'].forEach(function (velha) {
+    ok('nenhuma calculadora ficou em "' + velha + '"',
+       Object.keys(areaDe).every(function (id) { return areaDe[id] !== velha; }));
+  });
 }
 
 // ---- 3. ⚠️ PERFIL PROFISSIONAL NO ANALYTICS --------------------------------

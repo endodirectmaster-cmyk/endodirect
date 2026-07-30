@@ -71,6 +71,24 @@ Não foram publicados (o pipeline tem cinco árvores, a figura traz três), ent�
 - O IMC da tabela oficial (25,9 aos 2 anos) sai do peso **já arredondado** (75 kg); aqui sai do peso exato (74,4 kg → 25,7). Diferença de arredondamento da tela deles, não de modelo.
 - `scripts/test-calc-sophia.js` (passo 12 do CI) confere as **22 folhas**, os três fechamentos de `n` e os seis valores oficiais. Trocar o lado de um ramo derruba 6 asserções. `sw` v157→v158.
 
+## ⚠️ As áreas das calculadoras são as SUBESPECIALIDADES (2026-07-29)
+Reatribuição ditada pelo Rodolpho, calculadora a calculadora:
+
+| Antes | Agora |
+|---|---|
+| Risco cardiovascular · Lipidologia | **Lípides** (PREVENT, PREVENT 30 anos, LDL Friedewald) |
+| Antropometria (IMC, %PEP, SOPHIA) · Fígado (MASLD) | **Obesidade** (+ FIB-4) |
+| Antropometria (superfície corporal) · Crescimento | **Endocrinologia Pediátrica** |
+| Função renal | **Diabetes** (+ HOMA-IR, que já estava lá) |
+
+Inalteradas: Distúrbios hidroeletrolíticos, Osteometabolismo, Adrenal, Tireoide.
+
+**O porquê:** as áreas antigas eram nomes de **assunto**, não as subespecialidades usadas no resto da plataforma (Resumos, Questões, Flashcards, Mural). Quem procurava FIB-4 pensando em Obesidade não achava, porque estava em "Fígado (MASLD)". Agora as abas das calculadoras falam a mesma língua do resto.
+
+Ficaram **8 áreas para 23 calculadoras**: Lípides 3 · Obesidade 4 · Distúrbios hidroeletrolíticos 2 · Osteometabolismo 4 · Adrenal 1 · Diabetes 3 · Tireoide 1 · Endocrinologia Pediátrica 5.
+
+`scripts/test-painel-professor.js` trava o mapa **id → área** das 23 e reprova se alguma voltar para um dos rótulos antigos.
+
 ## Gráfico e tabela de valores nas calculadoras (2026-07-29)
 O framework de `CALCS` só renderizava **número + tag**. Ganhou um ponto de extensão: `extra:function(s,v){return html}`, anexado depois da caixa de resultado. Erro dentro do `extra` é engolido — o número, que é o principal, não pode cair por causa de um gráfico.
 
