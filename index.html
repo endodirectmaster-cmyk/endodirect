@@ -225,8 +225,15 @@ body{background:var(--bg);color:var(--tx);display:flex;flex-direction:column}
 .calc-area-tit span{font-size:.62rem;font-weight:600;letter-spacing:0;color:var(--t3);background:var(--s3,rgba(127,127,127,.12));border-radius:999px;padding:.05rem .4rem}
 .calc-area-tit:first-child{margin-top:0}
 .calc-area-grid{grid-column:1/-1;display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
-.calc-pills-wrap{grid-column:1/-1}
-.calc-pills{margin:0 0 .35rem}
+/* ⚠️ `min-width:0` é o que impede a faixa de abas de ESTOURAR A PÁGINA no
+   celular. Em telas estreitas o .pill-tab-row vira nowrap + overflow-x:auto;
+   como item de grade, o padrão `min-width:auto` faz o item se recusar a encolher
+   abaixo do conteúdo, então as 9 abas em linha única empurravam a grade inteira
+   para além da largura da tela — e as descrições dos cards saíam cortadas à
+   direita. Com min-width:0 o item encolhe e o overflow-x interno é que rola. */
+.calc-pills-wrap{grid-column:1/-1;min-width:0}
+.calc-area-grid{min-width:0}
+.calc-pills{margin:0 0 .35rem;max-width:100%}
 .calc-pills .pill-tab{padding:.4rem .8rem;font-size:.73rem}
 .calc-pill-n{opacity:.6;font-weight:600;font-size:.68rem}
 .g4{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}

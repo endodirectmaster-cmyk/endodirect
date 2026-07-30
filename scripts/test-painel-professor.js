@@ -62,7 +62,17 @@ const semComentarios = SRC.replace(/^\s*\/\/.*$/gm, '');
      })());
   ok('com uma área filtrada o título do grupo não repete a aba', /calcAreaFiltro\?'':'<div class="calc-area-tit">/.test(semComentarios));
   ok('área inexistente cai em "Todas"', /ix\.areas\.indexOf\(calcAreaFiltro\)<0\)calcAreaFiltro=''/.test(semComentarios));
-  ok('a faixa de abas ocupa a linha inteira', /\.calc-pills-wrap\{grid-column:1\/-1\}/.test(SRC));
+  // ⚠️ `min-width:0` na faixa de abas. Em tela estreita o .pill-tab-row vira
+  // nowrap + overflow-x:auto; como item de grade, o padrão `min-width:auto` faz
+  // o item se recusar a encolher abaixo do conteúdo, e as 9 abas em linha única
+  // empurravam a GRADE INTEIRA para além da largura da tela — descrições dos
+  // cards cortadas à direita no iPhone. Sem esta regra o defeito volta, e volta
+  // sem erro nenhum: só quebra o layout no celular.
+  ok('a faixa de abas ocupa a linha inteira E pode encolher',
+     /\.calc-pills-wrap\{grid-column:1\/-1;min-width:0\}/.test(SRC));
+  ok('a sub-grade também pode encolher', /\.calc-area-grid\{min-width:0\}/.test(SRC));
+  ok('a faixa de abas não passa da largura do container', /\.calc-pills\{margin:0 0 \.35rem;max-width:100%\}/.test(SRC));
+  ok('as abas rolam na horizontal no celular', /\.pill-tab-row\{overflow-x:auto;flex-wrap:nowrap/.test(SRC));
 
   // ---- ⚠️ AS ÁREAS SÃO AS SUBESPECIALIDADES, não rótulos de disciplina -------
   // Reatribuição ditada pelo professor (29/07), calculadora a calculadora. As
