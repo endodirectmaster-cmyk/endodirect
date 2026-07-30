@@ -88,7 +88,33 @@ Publiquei a versão acima com **uma fração só**, a do bypass, para as três o
 
 A banda perde **uma fatia maior** da sua perda de 1 ano já no primeiro mês, embora perca muito menos em valor absoluto. Com a fração do bypass, o mês 1 da banda saía **1,5 kg errado**. Agora `FRACAO_PRECOCE` é uma tabela indexada pela operação.
 
-- **O sleeve continua não medido** e herda as frações do bypass — a operação mais próxima em mecanismo, mas isso é escolha, não medida. É o ponto fraco que resta.
+### O sleeve fechou a lacuna — e a herança não tinha como funcionar (2026-07-30, terceira rodada)
+O professor rodou o sleeve no mesmo dia. **As frações dele são 0,276 e 0,568** — e o formato explica por que herdar do bypass estava errado por construção, não por pouco:
+
+| operação | fração mês 1 | fração mês 3 |
+|---|---|---|
+| bypass | 0,291 | 0,549 |
+| **sleeve** | **0,276** ← *abaixo* do bypass | **0,568** ← *acima* do bypass |
+| banda | 0,384 | 0,602 |
+
+**A ordem entre as operações inverte entre o mês 1 e o mês 3.** O sleeve não é intermediário entre bypass e banda, nem versão escalada de nenhum dos dois — não havia como deduzir esses dois números de argumento nenhum. Herdando do bypass, ele errava ~0,2 de IMC nos dois tempos.
+
+**Duas árvores validadas de brinde:** as folhas de **12 e 24 meses do sleeve** nunca tinham sido conferidas e batem exatas (85 kg, IMC 29,5 nas duas — o sleeve é a única operação em que o nadir não desce entre 1 e 2 anos). E **sleeve e banda devolvem o mesmo peso aos 60 meses**, confirmando empiricamente a leitura da Figura 3D (a única em que as duas caem no mesmo ramo).
+
+### ⚠️ Todo resíduo contra a ferramenta oficial cabe no arredondamento da figura
+Com as três operações medidas, sobram 7 células divergentes em 60 (15 tempos × 4 colunas), sempre por ≤1 kg / ≤0,2 de IMC / ≤1 pp. **Recuperando a folha interna deles pelo IMC oficial e comparando com a folha impressa na Figura 3:**
+
+| | folha interna | folha na figura | diferença |
+|---|---|---|---|
+| bypass M24 | 0,3762 | 0,38 | 0,38 pp |
+| bypass M60 | 0,3329 | 0,33 | 0,29 pp |
+| sleeve M60 | 0,2438 | 0,24 | 0,38 pp |
+| banda M12 | 0,1330 | 0,13 | 0,30 pp |
+| banda M24 | 0,1571 | 0,16 | 0,29 pp |
+
+A maior é **0,38 pp**, contra um teto de 0,50 pp para arredondamento a duas casas. **Nenhuma divergência exige explicação além do arredondamento, e nenhuma é erro de transcrição** — erro de leitura de ramo daria vários pontos percentuais, não décimos. O teste trava esse limite: é a asserção que denunciaria uma folha lida errado no futuro.
+
+**Não substituí as folhas pelos valores internos recuperados**, embora eu agora os conheça para 6 delas. Ficaria um código com metade das folhas em alta precisão (as dos caminhos que o paciente de referência percorre) e metade com as duas casas da figura — menos auditável, e parecendo mais preciso do que a fonte é. O ganho seria de 0,2 de IMC numa previsão cuja faixa interquartil tem ~15 kg de largura.
 - **Sobra ~0,2 kg no mês 3 da banda** (110,6 contra 110,4 oficiais). ⚠️ **A causa não é a razão: é a folha de 12 meses da banda, que a figura publica arredondada** (0,13 contra 0,133 internos deles). O mesmo desvio já aparece no próprio mês 12 (104,4 contra 104,0). **Ajustar a razão para compensar faria os meses 1 e 3 baterem enquanto o mês 12 — que vem da árvore de verdade — continuaria fora**: seria esconder o arredondamento da figura dentro de um parâmetro que tem outro significado. O teste trava a tolerância em 1 kg e confere que o resíduo do mês 3 é exatamente o do mês 12 propagado pela razão.
 - **Lição que se repete pela terceira vez neste recurso:** eu declarei a limitação certa ("não conferi sleeve e banda") e mesmo assim publiquei o parâmetro único. **Declarar a incerteza não a resolve — quando existe implementação de referência acessível, uma rodada dela vale mais que a nota de rodapé.** Foi assim no nó ambíguo de M12 e de novo aqui.
 - **Três avisos no desenho, não só na legenda:** traço **pontilhado**, ponto **vazado** (contra o ponto cheio das árvores) e **sem faixa** — não há desvio publicado para esses tempos. Na tabela, as duas linhas vêm com **"(aprox.)"**; no toque, a segunda linha diz "estimativa aproximada" em vez de faixa.

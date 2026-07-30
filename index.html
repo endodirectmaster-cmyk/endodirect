@@ -2983,13 +2983,18 @@ function sophiaTrajetoria(v){
   // coluna do IMC (dois algarismos a mais que a do %PPT inteiro), no caso de
   // referência 120 kg / 1,70 m / 30 anos / não fumante / sem diabetes:
   //   bypass  IMC 37,9 / 34,7 / 29,1 → 8,72% / 16,43% / 29,92% → 0,291 e 0,549
+  //   sleeve  IMC 38,2 / 34,7 / 29,5 → 8,00% / 16,43% / 28,95% → 0,276 e 0,568
   //   banda   IMC 39,4 / 38,2 / 36,0 → 5,11% /  8,00% / 13,30% → 0,384 e 0,602
-  // ⚠️ O SLEEVE AINDA NÃO FOI MEDIDO e herda as frações do bypass — é a operação
-  // mais próxima dele em mecanismo, mas isso é escolha, não medida. Uma rodada da
-  // ferramenta oficial com sleeve fecha a lacuna; até lá, é o ponto fraco daqui.
+  //
+  // ⚠️ AS TRÊS FORAM MEDIDAS — nenhuma é herdada. Enquanto o sleeve herdava as do
+  // bypass ("operação mais próxima em mecanismo"), errava os dois tempos por
+  // ~0,2 de IMC. E a medição mostra por que a herança não tinha como funcionar:
+  // o sleeve fica ABAIXO do bypass no mês 1 (0,276 < 0,291) e ACIMA no mês 3
+  // (0,568 > 0,549). Não é "intermediário" entre bypass e banda, nem uma versão
+  // escalada de nenhum dos dois — não havia como deduzir estes dois números.
   var FRACAO_PRECOCE={
     0:{m1:0.291,m3:0.549},   // bypass — medido
-    1:{m1:0.291,m3:0.549},   // sleeve — NÃO medido, herda do bypass
+    1:{m1:0.276,m3:0.568},   // sleeve — medido
     2:{m1:0.384,m3:0.602}    // banda  — medido
   };
   var fr=FRACAO_PRECOCE[p.interv]||FRACAO_PRECOCE[0];
@@ -3066,11 +3071,11 @@ var CALCS=[
      return '<div style="margin-top:.7rem;border:1px solid var(--bd);border-radius:var(--r);padding:.6rem .7rem">'
        +sophiaGraficoHTML(r,peso)
        +sophiaTabelaHTML(r,peso,alt)
-       +'<div style="font-size:.66rem;color:var(--t3);line-height:1.5;margin-top:.4rem">A área sombreada é a <b>faixa interquartil</b> — dentro dela caiu metade dos pacientes da validação. Vem do desvio do erro de IMC publicado <b>por operação e por tempo</b> (Tabela 3 do artigo), por aproximação normal, porque os percentis empíricos não são publicados: a largura bate com a da ferramenta oficial (~15 kg contra ~16 kg aos 2 anos no caso de referência), mas aqui ela é simétrica em torno da previsão, enquanto a deles é deslocada. Toque nos pontos para ver peso e faixa. <b>Os meses 1 e 3 são aproximação</b>, não previsão do artigo: as árvores desses dois tempos não foram publicadas (o pipeline tem cinco, a figura traz três), então a perda precoce é calculada como <b>fração da perda de 1 ano, medida por operação</b> na tabela da ferramenta oficial: 0,291 e 0,549 no bypass, 0,384 e 0,602 na banda. Por isso eles aparecem pontilhados, com ponto vazado e sem faixa. <b>O sleeve ainda não foi medido</b> e usa as frações do bypass.</div>'
+       +'<div style="font-size:.66rem;color:var(--t3);line-height:1.5;margin-top:.4rem">A área sombreada é a <b>faixa interquartil</b> — dentro dela caiu metade dos pacientes da validação. Vem do desvio do erro de IMC publicado <b>por operação e por tempo</b> (Tabela 3 do artigo), por aproximação normal, porque os percentis empíricos não são publicados: a largura bate com a da ferramenta oficial (~15 kg contra ~16 kg aos 2 anos no caso de referência), mas aqui ela é simétrica em torno da previsão, enquanto a deles é deslocada. Toque nos pontos para ver peso e faixa. <b>Os meses 1 e 3 são aproximação</b>, não previsão do artigo: as árvores desses dois tempos não foram publicadas (o pipeline tem cinco, a figura traz três), então a perda precoce é calculada como <b>fração da perda de 1 ano, medida nas três operações</b> na tabela da ferramenta oficial: 0,291 e 0,549 no bypass, 0,276 e 0,568 no sleeve, 0,384 e 0,602 na banda. Por isso eles aparecem pontilhados, com ponto vazado e sem faixa — a calibração vem de um paciente de referência por operação, não do artigo.</div>'
        +'</div>';
    },
    unit:'% de perda de peso total em 2 anos',
-   note:'Modelo SOPHIA (Saux et al., Lancet Digit Health 2023;5:e692-702) — árvores de decisão CART sobre 7 variáveis pré-operatórias, treinadas em 9.861 pacientes e validadas em 12 coortes de 10 países. O número grande é a perda de peso TOTAL (%PPT) prevista aos 2 anos, que é o nadir habitual; a linha abaixo traz peso e IMC previstos em 1, 2 e 5 anos, e o caminho percorrido na árvore — o modelo é interpretável de propósito, e o caminho é o que permite conferir a previsão em vez de acreditar nela. Reproduz os valores da ferramenta oficial nos três tempos. O tabagismo só entra no 1º ano, e a favor: fumante perde mais nesse período, efeito que desaparece depois. As árvores de 1 e 3 meses NÃO constam do artigo (o pipeline tem cinco e a figura publica três): esses dois tempos são estimados como fração da perda de 1 ano, medida por operação na tabela da ferramenta oficial (bypass e banda conferidos; o sleeve usa as frações do bypass), e vêm marcados como aproximação no gráfico e na tabela. O erro do modelo aos 5 anos foi de 2,8 kg/m² de IMC (desvio absoluto mediano). Previsão populacional: informa a conversa pré-operatória, não substitui o acompanhamento.'},
+   note:'Modelo SOPHIA (Saux et al., Lancet Digit Health 2023;5:e692-702) — árvores de decisão CART sobre 7 variáveis pré-operatórias, treinadas em 9.861 pacientes e validadas em 12 coortes de 10 países. O número grande é a perda de peso TOTAL (%PPT) prevista aos 2 anos, que é o nadir habitual; a linha abaixo traz peso e IMC previstos em 1, 2 e 5 anos, e o caminho percorrido na árvore — o modelo é interpretável de propósito, e o caminho é o que permite conferir a previsão em vez de acreditar nela. Reproduz os valores da ferramenta oficial nos três tempos. O tabagismo só entra no 1º ano, e a favor: fumante perde mais nesse período, efeito que desaparece depois. As árvores de 1 e 3 meses NÃO constam do artigo (o pipeline tem cinco e a figura publica três): esses dois tempos são estimados como fração da perda de 1 ano, medida nas três operações na tabela da ferramenta oficial, e vêm marcados como aproximação no gráfico e na tabela. Confere com a ferramenta oficial em todos os cinco tempos das três operações, com diferenças no limite do arredondamento das folhas publicadas. O erro do modelo aos 5 anos foi de 2,8 kg/m² de IMC (desvio absoluto mediano). Previsão populacional: informa a conversa pré-operatória, não substitui o acompanhamento.'},
   {id:'nacorr',name:'Na⁺ corrigido',area:'Distúrbios hidroeletrolíticos',desc:'Sódio corrigido pela glicemia',
    fields:[{id:'na_med',label:'Sódio medido (mEq/L)',type:'num'},{id:'na_gli',label:'Glicemia (mg/dL)',type:'num'}],
    calc:function(v){var na=parseFloat(v.na_med)||0;var g=parseFloat(v.na_gli)||0;return g>100?na+1.6*((g-100)/100):na;},

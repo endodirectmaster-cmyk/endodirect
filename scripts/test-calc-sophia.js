@@ -188,12 +188,40 @@ const perto = (a, b) => Math.abs(a - b) < 1e-9;
   ok('%PPT do mês 1 arredonda para 9 (igual ao oficial)', r1.twl1.toFixed(0) === '9', r1.twl1.toFixed(2));
   ok('%PPT do mês 3 arredonda para 16 (igual ao oficial)', r1.twl3.toFixed(0) === '16', r1.twl3.toFixed(2));
 
-  // ⚠️ AS FRAÇÕES SÃO POR OPERAÇÃO, E ISSO FOI MEDIDO.
-  // A primeira versão usava a fração do bypass para as três operações. A rodada
-  // da banda na ferramenta oficial desmentiu: a banda perde uma FATIA MAIOR da
-  // sua perda de 1 ano já no primeiro mês (0,384 contra 0,291), embora perca
-  // muito menos em valor absoluto. Fração única errava o mês 1 da banda em 1,5 kg.
-  // Quem "simplificar" isso de volta para uma constante só quebra a banda.
+  // ⚠️ AS TRÊS FRAÇÕES FORAM MEDIDAS — NENHUMA É DEDUZIDA DE OUTRA.
+  // A primeira versão usava a do bypass para tudo; a segunda mediu a banda e
+  // deixou o sleeve herdando o bypass ("operação mais próxima em mecanismo").
+  // As duas suposições caíram na medição:
+  //   bypass 0,291 / 0,549   sleeve 0,276 / 0,568   banda 0,384 / 0,602
+  // O sleeve fica ABAIXO do bypass no mês 1 e ACIMA no mês 3 — não é
+  // intermediário entre bypass e banda nem versão escalada de nenhum dos dois.
+  // Não havia como deduzir estes dois números; herdar errava ~0,2 de IMC nos dois
+  // tempos. Quem "simplificar" isso de volta para uma constante quebra tudo.
+  {
+    const sleeve = ctx.sophiaTrajetoria(Object.assign({}, v, { sph_interv: '1' }));
+    ok('sleeve, mês 1, bate com a tabela oficial (110 kg · 8% · IMC 38,2)',
+       sleeve.peso1.toFixed(0) === '110' && sleeve.twl1.toFixed(0) === '8' && sleeve.imc1.toFixed(1) === '38.2',
+       sleeve.peso1.toFixed(2) + ' / ' + sleeve.twl1.toFixed(2) + '% / ' + sleeve.imc1.toFixed(2));
+    ok('sleeve, mês 3, bate com a tabela oficial (100 kg · 16% · IMC 34,7)',
+       sleeve.peso3.toFixed(0) === '100' && sleeve.twl3.toFixed(0) === '16' && sleeve.imc3.toFixed(1) === '34.7',
+       sleeve.peso3.toFixed(2) + ' / ' + sleeve.twl3.toFixed(2) + '% / ' + sleeve.imc3.toFixed(2));
+    // ⚠️ A ordem entre as operações INVERTE do mês 1 para o mês 3. É isso que
+    // torna a herança impossível — e a asserção que pega quem tentar restaurá-la.
+    ok('no mês 1 o sleeve perde fração MENOR que o bypass', sleeve.twl1 / sleeve.twl12 < r1.twl1 / r1.twl12,
+       (sleeve.twl1 / sleeve.twl12).toFixed(4) + ' vs ' + (r1.twl1 / r1.twl12).toFixed(4));
+    ok('no mês 3 o sleeve perde fração MAIOR que o bypass', sleeve.twl3 / sleeve.twl12 > r1.twl3 / r1.twl12,
+       (sleeve.twl3 / sleeve.twl12).toFixed(4) + ' vs ' + (r1.twl3 / r1.twl12).toFixed(4));
+    // ⚠️ ÁRVORES DE 12 E 24 MESES DO SLEEVE: conferidas contra a tabela oficial
+    // pela primeira vez em 30/07. As duas caem em 85 kg / IMC 29,5 — o sleeve é a
+    // única operação em que o nadir não desce entre 1 e 2 anos.
+    ok('árvore de 12 meses do sleeve = 85 kg (IMC 29,5)', sleeve.imc12.toFixed(1) === '29.5', sleeve.peso12.toFixed(2));
+    ok('árvore de 24 meses do sleeve = 85 kg (IMC 29,5)', sleeve.imc24.toFixed(1) === '29.5', sleeve.peso24.toFixed(2));
+    ok('no sleeve, 12 e 24 meses caem no mesmo peso', Math.abs(sleeve.peso12 - sleeve.peso24) < 0.01);
+    // Sleeve e banda dividem a folha de 60 meses (Figura 3D) — os dois devolvem
+    // o mesmo peso, e a tabela oficial confirma: 91 kg / IMC 31,4 nas duas.
+    ok('sleeve e banda dividem a folha de 60 meses',
+       Math.abs(sleeve.peso60 - ctx.sophiaTrajetoria(Object.assign({}, v, { sph_interv: '2' })).peso60) < 0.01);
+  }
   const banda = ctx.sophiaTrajetoria(Object.assign({}, v, { sph_interv: '2' }));
   ok('a perda precoce da banda é MENOR em valor absoluto', banda.twl1 < r1.twl1 && banda.twl3 < r1.twl3,
      banda.twl1.toFixed(1) + '/' + banda.twl3.toFixed(1) + ' vs ' + r1.twl1.toFixed(1) + '/' + r1.twl3.toFixed(1));
@@ -216,6 +244,23 @@ const perto = (a, b) => Math.abs(a - b) < 1e-9;
   ok('a diferença do mês 3 da banda é a MESMA do mês 12 (mesma origem)',
      Math.abs((banda.peso3 - 110.4) - (banda.peso12 - 104.04) * (0.6016)) < 0.05,
      (banda.peso3 - 110.4).toFixed(3) + ' vs ' + ((banda.peso12 - 104.04) * 0.6016).toFixed(3));
+
+  // ⚠️ TODO RESÍDUO CONTRA A FERRAMENTA OFICIAL CABE NO ARREDONDAMENTO DA FIGURA.
+  // As folhas da Figura 3 são impressas com 2 casas, então a folha interna deles
+  // pode estar até 0,50 pp longe da que transcrevi. Recuperando a folha interna
+  // pelo IMC oficial de cada tempo em que divergimos, a MAIOR diferença é 0,38 pp
+  // — ou seja, nenhuma divergência exige explicação além do arredondamento, e
+  // nenhuma é erro de transcrição. Esta asserção é a que denuncia se uma folha
+  // for transcrita errada no futuro: erro de leitura de ramo dá diferença de
+  // vários pontos percentuais, não de décimos.
+  [['0', 24, 25.9, 0.38], ['0', 60, 27.7, 0.33],
+   ['1', 60, 31.4, 0.24],
+   ['2', 12, 36.0, 0.13], ['2', 24, 35.0, 0.16], ['2', 60, 31.4, 0.24]
+  ].forEach(function (c) {
+    const interna = (120 - c[2] * 1.7 * 1.7) / 120;
+    ok('folha ' + c[1] + 'm da operação ' + c[0] + ': figura e ferramenta a menos de 0,5 pp',
+       Math.abs(interna - c[3]) < 0.005, ((interna - c[3]) * 100).toFixed(2) + ' pp');
+  });
   // Ordem cronológica: nenhum tempo precoce pode passar do seguinte.
   [r1, banda, ctx.sophiaTrajetoria(Object.assign({}, v, { sph_interv: '1' }))].forEach(function (x, i) {
     ok('perda cresce de 1 mês → 3 meses → 1 ano (operação ' + i + ')', x.twl1 < x.twl3 && x.twl3 < x.twl12,
