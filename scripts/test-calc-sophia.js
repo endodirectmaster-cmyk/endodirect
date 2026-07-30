@@ -29,7 +29,9 @@ const i1 = SRC.indexOf('var CALCS=[');
 if (i0 < 0 || i1 < 0 || i1 < i0) { console.log('  ✗ não achei o bloco do SOPHIA antes de CALCS'); process.exit(1); }
 const ctx = { console };
 vm.createContext(ctx);
-vm.runInContext(SRC.slice(i0, i1), ctx);
+// `esc` vem junto porque o gráfico escapa o texto do tooltip com ela.
+const iEsc = SRC.indexOf('function esc(');
+vm.runInContext(SRC.slice(iEsc, SRC.indexOf('\nfunction ', iEsc + 1)) + '\n' + SRC.slice(i0, i1), ctx);
 
 // Recorta também a entrada de CALCS, para conferir o que vai à tela.
 const iC = SRC.indexOf("{id:'sophia',name:");
@@ -209,6 +211,45 @@ const perto = (a, b) => Math.abs(a - b) < 1e-9;
   const ex = C.extra(C.calc(v), v);
   ok('o extra traz gráfico e tabela', ex.indexOf('<svg') > 0 && ex.indexOf('%PEP') > 0);
   ok('o extra explica o pontilhado', /pontilhado/.test(ex));
+
+  // ---- faixa interquartil --------------------------------------------------
+  // ⚠️ É a MESMA GRANDEZA que a ferramenta oficial sombreia (IQR do erro), mas
+  // obtida por aproximação normal a partir do DESVIO publicado por operação e
+  // tempo (Tabela 3) — os percentis empíricos não constam do artigo. Se alguém
+  // trocar por outra medida de erro (ex.: os limites de Bland-Altman, ±1,96 DP),
+  // a faixa quadruplica de largura, engole o gráfico e deixa de corresponder à
+  // faixa da ferramenta. É isso que estas asserções travam.
+  ok('o desvio usado é o do BYPASS por tempo (3,2 / 3,9 / 4,5)',
+     r.faixa12.dp === 3.2 && r.faixa24.dp === 3.9 && r.faixa60.dp === 4.5,
+     [r.faixa12.dp, r.faixa24.dp, r.faixa60.dp].join('/'));
+  // 0,6745 × 3,9 × 1,70² = 7,60 kg em torno de 74,4.
+  ok('faixa de 2 anos = 66,8–82,0 kg', Math.abs(r.faixa24.lo - 66.8) < 0.1 && Math.abs(r.faixa24.hi - 82.0) < 0.1,
+     r.faixa24.lo.toFixed(1) + '–' + r.faixa24.hi.toFixed(1));
+  // A largura tem de bater com a da ferramenta oficial (~16 kg aos 2 anos).
+  ok('a largura aos 2 anos fica entre 14 e 17 kg', (r.faixa24.hi - r.faixa24.lo) > 14 && (r.faixa24.hi - r.faixa24.lo) < 17,
+     (r.faixa24.hi - r.faixa24.lo).toFixed(1));
+  ok('a faixa alarga com o tempo',
+     (r.faixa60.hi - r.faixa60.lo) > (r.faixa24.hi - r.faixa24.lo) && (r.faixa24.hi - r.faixa24.lo) > (r.faixa12.hi - r.faixa12.lo));
+  // O sleeve tem desvio maior que o bypass em todos os tempos — a faixa acompanha.
+  {
+    const sl = ctx.sophiaTrajetoria(Object.assign({}, v, { sph_interv: '1' }));
+    ok('o desvio do sleeve é o dele, não o do bypass', sl.faixa24.dp === 4.8, String(sl.faixa24.dp));
+    ok('faixa do sleeve mais larga que a do bypass aos 2 anos',
+       (sl.faixa24.hi - sl.faixa24.lo) > (r.faixa24.hi - r.faixa24.lo));
+  }
+  ok('a faixa nunca fica negativa', ctx.sophiaTrajetoria(Object.assign({}, v, { sph_peso: '60' })).faixa60.lo >= 0);
+  ok('o gráfico desenha a área', /fill="#60a5fa" fill-opacity="\.14"/.test(g), g.slice(0, 300));
+  // ⚠️ A área NÃO pode começar no pré-op: ali não há modelo nem incerteza.
+  ok('a área começa em 1 ano, não no pré-op',
+     (function(){ const m = g.match(/<path d="M([\d.]+) /); return m && Math.abs(Number(m[1]) - 128) < 1; })(), g.slice(0, 400));
+  ok('cada ponto do modelo tem tooltip com peso e faixa',
+     (g.match(/<title>/g) || []).length >= 4 && /faixa provável 66\.8–82\.0 kg/.test(g), g);
+  ok('o pré-op não promete faixa', /pré-op: 120\.0 kg \(peso informado\)/.test(g));
+  ok('a tabela tem a coluna da faixa', t.indexOf('Faixa (kg)') > 0);
+  ok('a tabela mostra a faixa calculada', t.indexOf('66.8–82.0') > 0, t);
+  ok('a legenda diz que é interquartil e como foi obtida',
+     /faixa interquartil/.test(ex) && /Tabela 3/.test(ex) && /aproximação normal/.test(ex));
+  ok('a legenda declara a diferença em relação à ferramenta oficial', /simétrica em torno da previsão/.test(ex));
 }
 
 console.log(bad ? '\nFALHOU: ' + bad : '\n✓ SOPHIA: 22 folhas, n fechando (948/755/578), 6 valores da tabela oficial, gráfico com trecho não modelado pontilhado, M1/M3 fora');
