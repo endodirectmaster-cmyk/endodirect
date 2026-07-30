@@ -47,6 +47,22 @@ const semComentarios = SRC.replace(/^\s*\/\/.*$/gm, '');
   ok('a sub-grade ocupa a linha inteira', /\.calc-area-grid\{grid-column:1\/-1/.test(SRC));
   ok('a sub-grade colapsa em 1 coluna no celular', /\.g2,\.g3,\.g4,\.calc-area-grid\{grid-template-columns:1fr\}/.test(SRC));
   ok('o grupo mostra a contagem', /porArea\[a\]\.length\+'<\/span>/.test(semComentarios));
+
+  // ---- abas de área acima da lista -----------------------------------------
+  ok('há uma aba por área mais a de "Todas"', /data-calcarea=""/.test(semComentarios) && /data-calcarea="'\+esc\(a\)\+'"/.test(semComentarios));
+  ok('a aba mostra a contagem', /calc-pill-n">'\+ix\.porArea\[a\]\.length/.test(semComentarios));
+  ok('clicar na aba filtra e redesenha', /calcAreaFiltro=b\.getAttribute\('data-calcarea'\)\|\|'';renderCalcGrid\(\)/.test(semComentarios));
+  // ⚠️ Trocar de aba NÃO pode fechar a calculadora aberta: apagaria o resultado
+  // que a pessoa está lendo. renderCalcGrid só mexe no grid, nunca em activeCalc.
+  ok('o filtro não mexe em activeCalc',
+     (function(){
+       const i = semComentarios.indexOf('function renderCalcGrid()');
+       const j = semComentarios.indexOf('\nfunction ', i + 1);   // até o fim DESTA função
+       return i > 0 && j > i && semComentarios.slice(i, j).indexOf('activeCalc=') < 0;
+     })());
+  ok('com uma área filtrada o título do grupo não repete a aba', /calcAreaFiltro\?'':'<div class="calc-area-tit">/.test(semComentarios));
+  ok('área inexistente cai em "Todas"', /ix\.areas\.indexOf\(calcAreaFiltro\)<0\)calcAreaFiltro=''/.test(semComentarios));
+  ok('a faixa de abas ocupa a linha inteira', /\.calc-pills-wrap\{grid-column:1\/-1\}/.test(SRC));
 }
 
 // ---- 3. ⚠️ PERFIL PROFISSIONAL NO ANALYTICS --------------------------------
