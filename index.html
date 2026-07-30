@@ -2666,6 +2666,82 @@ function preventRisk(v){
   var ra=function(time,out){var t=PREVENT_AUG[model+'_'+time];var co=t[sx][out];var k=t.k;var s=0;for(var i=0;i<k.length;i++)s+=co[i]*tv[k[i]];return Math.exp(s)/(1+Math.exp(s))*100;};
   return {ascvd:ra('10yr','ascvd'),cvd:ra('10yr','cvd'),hf:ra('10yr','hf'),ascvd30:ra('30yr','ascvd'),cvd30:ra('30yr','cvd'),hf30:ra('30yr','hf'),model:model};
 }
+// ── SOPHIA — trajetória de peso pós-bariátrica (Saux, Lancet Digit Health 2023)
+// Árvores de decisão CART transcritas do apêndice do artigo (Appendix Figure 3),
+// que publica as árvores de M12, M24 e M60. As folhas devolvem %TWL (perda de
+// peso TOTAL, fração), e o peso previsto = peso pré × (1 − %TWL).
+//
+// ⚠️ SÓ M24 E M60 ESTÃO AQUI, e a ausência do M12 é deliberada. No nó de M12
+// (bypass, <51 anos, não fumante) o ramo é "duração do DM2 ≷ 19 anos", e a
+// figura não diz para onde vai QUEM NÃO TEM DIABETES. As duas leituras possíveis
+// dão 0,30 e 0,34 de %TWL — 5 kg de diferença num paciente de 120 kg. Os tamanhos
+// dos grupos (n=129 vs n=215) e a prosa do artigo ("diabetes sempre associado a
+// menor perda") apontam para um lado; a curva da ferramenta oficial parece
+// apontar para o outro. Publicar um dos dois seria escolher no escuro.
+//
+// ⚠️ M1 e M3 NÃO EXISTEM no apêndice: o diagrama do pipeline mostra cinco
+// árvores, e a figura publica três. Por isso aqui não há curva, e sim os dois
+// pontos que dá para reproduzir com fidelidade.
+//
+// Conferência contra a ferramenta oficial (120 kg, 170 cm, 30 anos, sem
+// diabetes, bypass): M24 = 0,38 → 74,4 kg e M60 = 0,33 → 80,4 kg. O gráfico
+// oficial mostra o nadir em ~74 kg e ~80 kg em 5 anos. Bate nos dois pontos.
+var SOPHIA_INTERV={0:'Bypass gástrico (RYGB)',1:'Sleeve',2:'Banda gástrica'};
+// Árvore de M24 (Appendix Figure 3C; n=755 na raiz, folhas somam 755).
+function sophiaM24(p){
+  var c=[];
+  if(p.interv===2){c.push('banda gástrica');return{twl:0.16,caminho:c};}
+  if(p.interv===1){
+    c.push('sleeve');
+    if(p.idade>51){c.push('idade > 51 anos');return{twl:0.19,caminho:c};}
+    c.push('idade < 51 anos');return{twl:0.29,caminho:c};
+  }
+  c.push('bypass');
+  if(p.dm===2){
+    c.push('diabetes tipo 2');
+    if(p.dmDur>2.5){c.push('duração > 2,5 anos');return{twl:0.27,caminho:c};}
+    c.push('duração < 2,5 anos');return{twl:0.33,caminho:c};
+  }
+  c.push(p.dm===1?'pré-diabetes (IGT)':'sem diabetes');
+  if(p.idade>49){c.push('idade > 49 anos');return{twl:0.32,caminho:c};}
+  c.push('idade < 49 anos');return{twl:0.38,caminho:c};
+}
+// Árvore de M60 (Appendix Figure 3D; n=578 na raiz, folhas somam 578).
+// Nesta, banda e sleeve caem no MESMO ramo — e é a única em que a altura entra.
+function sophiaM60(p){
+  var c=[];
+  if(p.interv!==0){
+    c.push(p.interv===2?'banda gástrica':'sleeve');
+    if(p.idade<35){c.push('idade < 35 anos');return{twl:0.24,caminho:c};}
+    c.push('idade > 35 anos');
+    if(p.dm===0){c.push('sem diabetes');return{twl:0.23,caminho:c};}
+    c.push(p.dm===2?'diabetes tipo 2':'pré-diabetes (IGT)');
+    if(p.altura>161){c.push('altura > 161 cm');return{twl:0.16,caminho:c};}
+    c.push('altura < 161 cm');return{twl:0.22,caminho:c};
+  }
+  c.push('bypass');
+  if(p.dm===2){
+    c.push('diabetes tipo 2');
+    if(p.dmDur>2.5){c.push('duração > 2,5 anos');return{twl:0.24,caminho:c};}
+    c.push('duração < 2,5 anos');return{twl:0.30,caminho:c};
+  }
+  c.push(p.dm===1?'pré-diabetes (IGT)':'sem diabetes');
+  if(p.idade>49){c.push('idade > 49 anos');return{twl:0.27,caminho:c};}
+  c.push('idade < 49 anos');return{twl:0.33,caminho:c};
+}
+function sophiaTrajetoria(v){
+  var peso=parseFloat(v.sph_peso)||0,altura=parseFloat(v.sph_alt)||0,idade=parseFloat(v.sph_idade)||0;
+  if(!(peso>0&&altura>0&&idade>0))return null;
+  var p={interv:parseFloat(v.sph_interv)||0,idade:idade,altura:altura,
+         dm:parseFloat(v.sph_dm)||0,dmDur:parseFloat(v.sph_dmdur)||0};
+  var a=sophiaM24(p),b=sophiaM60(p),m=altura/100;
+  return{
+    twl24:a.twl*100,twl60:b.twl*100,
+    peso24:peso*(1-a.twl),peso60:peso*(1-b.twl),
+    imc24:peso*(1-a.twl)/(m*m),imc60:peso*(1-b.twl)/(m*m),
+    caminho24:a.caminho,caminho60:b.caminho
+  };
+}
 var CALCS=[
   {id:'prevent',name:'Risco CV — PREVENT (AHA)',area:'Risco cardiovascular',desc:'Risco de DASCV, DCV total e IC em 10 anos (AHA PREVENT 2024; opcional: UACR/HbA1c)',
    fields:[{id:'pv_sexo',label:'Sexo',type:'select',opts:['Feminino','Masculino'],vals:[0,1]},{id:'pv_idade',label:'Idade (anos)',type:'num'},{id:'pv_ct',label:'Colesterol total (mg/dL)',type:'num'},{id:'pv_hdl',label:'HDL (mg/dL)',type:'num'},{id:'pv_pas',label:'PA sistólica (mmHg)',type:'num'},{id:'pv_egfr',label:'TFGe (mL/min/1,73m²)',type:'num'},{id:'pv_imc',label:'IMC (kg/m²)',type:'num'},{id:'pv_dm',label:'Diabetes',type:'select',opts:['Não','Sim'],vals:[0,1]},{id:'pv_fum',label:'Tabagismo atual',type:'select',opts:['Não','Sim'],vals:[0,1]},{id:'pv_ahas',label:'Uso de anti-hipertensivo',type:'select',opts:['Não','Sim'],vals:[0,1]},{id:'pv_est',label:'Uso de estatina',type:'select',opts:['Não','Sim'],vals:[0,1]},{id:'pv_uacr',label:'RAC urinária / UACR (mg/g) — opcional',type:'num'},{id:'pv_hba1c',label:'HbA1c (%) — opcional',type:'num'}],
@@ -2711,6 +2787,19 @@ var CALCS=[
    },
    unit:'% do excesso',
    note:'%PEP = (peso da cirurgia − peso atual) ÷ (peso da cirurgia − peso de IMC 25) × 100. O denominador é o EXCESSO sobre o teto da eutrofia, convenção da literatura bariátrica — por isso o valor passa de 100% quando o IMC cai abaixo de 25. %PPT = (peso da cirurgia − peso atual) ÷ peso da cirurgia × 100. Valores médios esperados de %PEP: sleeve ~33% em 3 meses, ~50% em 6, ~65% em 12 e ~70% em 18; bypass 25–35% em 3 meses, 45–55% em 6, 60–70% em 12 e 75–85% em 18 (Brolin 1989; Deitel 2003; Buchwald 2004; Shah 2006; Xavier 2010; O’Brien 2013; Aydoğan 2016; Zilberstein 2019). Abaixo de 50% do excesso após 12–18 meses é o limiar clássico de resposta insuficiente, que pede investigação antes de rotular o paciente — adesão, complicação anatômica, uso de medicação que favorece ganho de peso.'},
+  {id:'sophia',name:'Trajetória de peso pós-bariátrica (SOPHIA)',area:'Antropometria',desc:'Perda de peso total prevista em 2 e 5 anos após bypass, sleeve ou banda (SOPHIA, Lancet Digit Health 2023)',
+   fields:[{id:'sph_peso',label:'Peso pré-operatório (kg)',type:'num'},{id:'sph_alt',label:'Altura (cm)',type:'num'},{id:'sph_idade',label:'Idade na cirurgia (anos)',type:'num'},
+           {id:'sph_interv',label:'Intervenção',type:'select',opts:['Bypass gástrico (RYGB)','Sleeve (gastrectomia vertical)','Banda gástrica ajustável'],vals:[0,1,2]},
+           {id:'sph_dm',label:'Status glicêmico',type:'select',opts:['Sem diabetes','Pré-diabetes / intolerância (IGT)','Diabetes tipo 2'],vals:[0,1,2]},
+           {id:'sph_dmdur',label:'Duração do diabetes tipo 2 (anos)',type:'num'}],
+   calc:function(v){var r=sophiaTrajetoria(v);return r?r.twl24:NaN;},
+   interp:function(s,v){
+     var r=sophiaTrajetoria(v);
+     if(!r)return{t:'Preencha peso, altura e idade.',c:'tag-gold'};
+     return{t:'2 anos: '+r.peso24.toFixed(1)+' kg (IMC '+r.imc24.toFixed(1)+') · 5 anos: '+r.peso60.toFixed(1)+' kg (IMC '+r.imc60.toFixed(1)+'), com '+r.twl60.toFixed(0)+'% de perda · caminho aos 2 anos: '+r.caminho24.join(' → '),c:'tag-blue'};
+   },
+   unit:'% de perda de peso total em 2 anos',
+   note:'Modelo SOPHIA (Saux et al., Lancet Digit Health 2023;5:e692-702) — árvores de decisão CART sobre 7 variáveis pré-operatórias, treinadas em 9.861 pacientes e validadas em 12 coortes de 10 países. O número grande é a perda de peso TOTAL (%PPT) prevista aos 2 anos, que é o nadir habitual; a linha abaixo traz o peso e o IMC previstos aos 2 e aos 5 anos, e o caminho percorrido na árvore — o modelo é interpretável de propósito, e o caminho é o que permite conferir a previsão. ⚠️ Aqui estão os dois tempos que o artigo publica com a árvore completa (24 e 60 meses). Os tempos de 1 e 3 meses NÃO foram publicados, e no 12º mês há um ramo cuja leitura é ambígua para quem não tem diabetes — por isso nenhum dos três aparece, em vez de aparecer com número inventado. O erro médio do modelo aos 5 anos foi de 2,8 kg/m² de IMC (desvio absoluto mediano). Previsão populacional: informa a conversa pré-operatória, não substitui o acompanhamento.'},
   {id:'nacorr',name:'Na⁺ corrigido',area:'Distúrbios hidroeletrolíticos',desc:'Sódio corrigido pela glicemia',
    fields:[{id:'na_med',label:'Sódio medido (mEq/L)',type:'num'},{id:'na_gli',label:'Glicemia (mg/dL)',type:'num'}],
    calc:function(v){var na=parseFloat(v.na_med)||0;var g=parseFloat(v.na_gli)||0;return g>100?na+1.6*((g-100)/100):na;},

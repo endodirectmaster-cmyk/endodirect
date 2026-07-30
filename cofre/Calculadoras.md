@@ -35,12 +35,25 @@ Pedido do Rodolpho a partir da calculadora de Fernanda Mattos. Entrada `id:'pep'
 - Valores esperados na `note`, com as fontes que a página original cita (Brolin 1989 → Zilberstein 2019).
 - Teste `scripts/test-calc-pep.js`, passo 11 do CI. `sw` v155→v156.
 
-## ❌ SOPHIA (trajetória de peso pós-bariátrica) — NÃO implementada, e por quê
-O Rodolpho pediu junto a calculadora [SOPHIA / Univ. Lille](https://bariatric-weight-trajectory-prediction.univ-lille.fr/), publicada em Lancet Digital Health 2023 (Saux et al., PMID 37652841).
+## SOPHIA — trajetória de peso pós-bariátrica (2026-07-29)
+Entrada `id:'sophia'`. O professor mandou o artigo e o **apêndice**, e isso muda o que era possível: o apêndice (Appendix Figure 3) **publica as árvores CART** de M12, M24 e M60. Deixa de ser "modelo treinado inacessível" e passa a ser transcrição — que é legítima e verificável.
 
-**Não dá para transcrever.** Não é uma equação: é um **modelo de árvore treinado por aprendizado de máquina** sobre 9.861 pacientes e 385 variáveis candidatas, reduzidas a 7 preditores (idade, peso, altura, tabagismo, diabetes tipo 2 e duração, tipo de intervenção). Reproduzir exige o **artefato treinado**, não a leitura do artigo. Implementar "por aproximação" produziria curvas plausíveis e erradas numa ferramenta usada para aconselhar paciente antes de operar — o oposto do que a calculadora serve.
+**Fonte:** Saux et al., Lancet Digit Health 2023;5:e692-702. Sete variáveis pré-operatórias por LASSO; uma árvore CART por tempo pós-operatório; %TWL na folha; peso previsto = peso pré × (1 − %TWL).
 
-**O que falta para fazer certo:** o modelo em si (material suplementar do artigo ou o repositório do Inria, `gitlab.inria.fr/weight-trajectory-prediction/...` — mas o que está público ali é o **cliente**, não o modelo). Deste ambiente nenhum desses endereços é alcançável (403 no proxy).
+### O que foi implementado: M24 e M60, e só
+- **M24** (Figura 3C, raiz n=755): 7 folhas, de 0,16 (banda) a 0,38 (bypass, sem diabetes, <49 anos).
+- **M60** (Figura 3D, raiz n=578): 8 folhas. **É a única em que banda e sleeve caem no MESMO ramo**, e a única em que a **altura** entra (corte em 161 cm).
+- **O que provou a leitura antes de qualquer código:** os `n` das folhas de cada figura **somam exatamente o n da raiz** — 146+42+80+140+71+68+208 = 755 e 72+36+81+104+78+46+42+119 = 578. Estrutura lida errada não fecha.
+- **Conferência contra a ferramenta oficial**, no caso que o professor rodou (120 kg, 170 cm, 30 anos, sem diabetes, bypass): M24 = 0,38 → **74,4 kg**, M60 = 0,33 → **80,4 kg**. O gráfico oficial mostra nadir em ~74 kg e ~80 kg aos 5 anos. Bate nos dois pontos.
+- **A tela mostra o caminho percorrido na árvore.** O modelo é interpretável de propósito; expor o caminho é o que permite ao professor auditar a previsão em vez de acreditar nela.
+
+### ⚠️ M1, M3 e M12 ficaram FORA, e o motivo é diferente em cada caso
+- **M1 e M3 não foram publicados.** O diagrama do pipeline (Figura 3A) mostra cinco árvores; a figura publica três. Sem elas não há a parte inicial da curva — por isso a calculadora entrega **dois pontos, não uma curva**.
+- **M12 tem um ramo ambíguo.** No nó (bypass, <51 anos, não fumante, n=344) o corte é "duração do DM2 ≷ 19 anos", e a figura **não diz para onde vai quem NÃO tem diabetes**. As duas leituras dão 0,30 e 0,34 de %TWL — **5 kg num paciente de 120 kg**.
+  - **Argumento para 0,34:** os tamanhos dos grupos. n=215 no lado ">19 anos" só fecha se os não diabéticos estiverem nele (duração ausente, roteada por variável substituta — o artigo diz que a árvore usa surrogates). E a prosa do artigo diz que diabetes está **sempre** associado a menor perda, o que combina com diabéticos em 0,30.
+  - **Argumento para 0,30:** a curva da ferramenta oficial no caso de referência passa mais perto de 84 kg (0,30) do que de 79,2 kg (0,34) no 12º mês.
+  - **Não resolvi, e por isso não publiquei.** Resolve-se com uma comparação na ferramenta oficial: mesmo paciente, uma vez sem diabetes e uma vez com DM2 de 5 anos, lendo o 12º mês. Se o sem-diabetes perder MAIS, a leitura 0,34 está certa.
+- `scripts/test-calc-sophia.js` (passo 12 do CI) **barra a volta dos três**: reprova se aparecer `sophiaM12` ou se a tela mencionar 12 meses. Sabotar o lado de um ramo derruba 6 asserções.
 
 ## Ajuste de framework
 `calcUpdate` mostra **`—`** quando `calc()` retorna não-finito (entrada incompleta ou idade fora da faixa) em vez de `NaN`.
