@@ -71,6 +71,15 @@ Não foram publicados (o pipeline tem cinco árvores, a figura traz três), ent�
 - O IMC da tabela oficial (25,9 aos 2 anos) sai do peso **já arredondado** (75 kg); aqui sai do peso exato (74,4 kg → 25,7). Diferença de arredondamento da tela deles, não de modelo.
 - `scripts/test-calc-sophia.js` (passo 12 do CI) confere as **22 folhas**, os três fechamentos de `n` e os seis valores oficiais. Trocar o lado de um ramo derruba 6 asserções. `sw` v157→v158.
 
+## ⚠️ `min-width:0` — a faixa de abas estourava a página no iPhone (2026-07-29)
+O professor mandou a tela do celular: cards enormes e as **descrições cortadas à direita**. Não era zoom nem fonte grande — era **estouro de largura**.
+
+**A causa:** em tela estreita (`max-width:760px`) o `.pill-tab-row` vira `flex-wrap:nowrap; overflow-x:auto`. Só que a faixa é **item de uma grade**, e o padrão `min-width:auto` de item de grade faz o item **se recusar a encolher abaixo do conteúdo**. As 9 abas em linha única viravam a largura mínima da grade inteira, e a página passava da tela.
+
+**A correção é uma declaração:** `min-width:0` no `.calc-pills-wrap` (e no `.calc-area-grid`, pelo mesmo motivo). Com ela o item encolhe e o `overflow-x` interno é que rola.
+
+**A regra geral, que vale para qualquer grade deste projeto:** filho de grade ou flex que contenha algo com `nowrap`/`overflow-x` precisa de `min-width:0`, senão o filho impõe a própria largura ao pai. O sintoma é sempre o mesmo — layout quebrado só no celular, sem erro nenhum no console.
+
 ## ⚠️ As áreas das calculadoras são as SUBESPECIALIDADES (2026-07-29)
 Reatribuição ditada pelo Rodolpho, calculadora a calculadora:
 
