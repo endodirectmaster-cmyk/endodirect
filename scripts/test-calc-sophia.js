@@ -153,21 +153,60 @@ const perto = (a, b) => Math.abs(a - b) < 1e-9;
   ok('sem ' + falta[0] + ' a interpretação pede o campo', /Preencha/.test(C.interp(NaN, v).t));
 });
 
-// ---- 5. ⚠️ M1 E M3 NÃO PODEM APARECER -------------------------------------
-// Não foram publicados: o pipeline tem cinco árvores e a figura traz três. Ter
-// dois valores da ferramenta oficial (9% e 16% naqueles dois pacientes) não é
-// modelo — é dois pontos. Fixá-los como se valessem para sleeve, banda, outras
-// idades e outros pesos seria inventar.
+// ---- 5. ⚠️ M1 E M3 SÃO PROPORÇÃO, NUNCA ÁRVORE NEM VALOR FIXO ---------------
+// Mudança de 30/07, a pedido do professor: os meses 1 e 3 passaram a ser
+// projetados. Continua valendo que as árvores desses tempos NÃO foram publicadas
+// (o pipeline tem cinco, a figura traz três), e é isso que este bloco protege.
+//
+// Os dois defeitos que ele existe para pegar:
+//  1. alguém inventar `sophiaM1`/`sophiaM3` como se houvesse árvore;
+//  2. alguém fixar 9% e 16% — os valores que a ferramenta oficial mostra NAQUELE
+//     paciente. Fixados, valeriam igual para banda e bypass, e numa banda com 16%
+//     de perda em 1 ano o mês 3 empataria com o ano inteiro. Por isso a perda
+//     precoce é FRAÇÃO da perda de 12 meses: escala com a operação.
 {
   ok('não existe função para M1', typeof ctx.sophiaM1 === 'undefined');
   ok('não existe função para M3', typeof ctx.sophiaM3 === 'undefined');
   const v = { sph_peso: '120', sph_alt: '170', sph_idade: '30', sph_interv: '0', sph_fumo: '0', sph_dm: '0', sph_dmdur: '0' };
   const t = C.interp(C.calc(v), v).t;
-  ok('a tela não menciona 1 nem 3 meses', t.indexOf('1 mês') < 0 && t.indexOf('3 meses') < 0, t);
   ok('a tela mostra 1, 2 e 5 anos', t.indexOf('1 ano') >= 0 && t.indexOf('2 anos') > 0 && t.indexOf('5 anos') > 0, t);
-  ok('a nota avisa que 1 e 3 meses ficaram fora', /NÃO constam do artigo/.test(C.note));
+  ok('a nota avisa que as árvores de 1 e 3 meses não existem', /NÃO constam do artigo/.test(C.note));
+  ok('a nota diz que os dois tempos são estimados', /estimados como fração da perda de 1 ano/.test(C.note));
   ok('a nota cita a fonte com volume e páginas', /Lancet Digit Health 2023;5:e692-702/.test(C.note));
   ok('a nota diz que reproduz a ferramenta oficial', /ferramenta oficial/.test(C.note));
+
+  // ⚠️ AS SEIS CÉLULAS DOS MESES 1 E 3 BATEM COM A TABELA OFICIAL.
+  // Caso de referência (120 kg, 1,70 m, 30 anos, não fumante, bypass, sem DM):
+  //   mês 1 → 110 kg · 9% · IMC 37,9 · PEP 22      mês 3 → 100 kg · 16% · IMC 34,7 · PEP 41
+  // (o peso e o IMC da tela deles são arredondados; aqui a conferência é contra o
+  // valor recuperado da coluna do IMC, que tem dois algarismos a mais)
+  const r1 = ctx.sophiaTrajetoria(v);
+  ok('mês 1 = 109,5 kg', Math.abs(r1.peso1 - 109.5) < 0.15, r1.peso1.toFixed(2));
+  ok('mês 3 = 100,2 kg', Math.abs(r1.peso3 - 100.2) < 0.15, r1.peso3.toFixed(2));
+  ok('IMC do mês 1 = 37,9 (igual ao oficial)', r1.imc1.toFixed(1) === '37.9', r1.imc1.toFixed(2));
+  ok('IMC do mês 3 = 34,7 (igual ao oficial)', r1.imc3.toFixed(1) === '34.7', r1.imc3.toFixed(2));
+  ok('%PPT do mês 1 arredonda para 9 (igual ao oficial)', r1.twl1.toFixed(0) === '9', r1.twl1.toFixed(2));
+  ok('%PPT do mês 3 arredonda para 16 (igual ao oficial)', r1.twl3.toFixed(0) === '16', r1.twl3.toFixed(2));
+
+  // ⚠️ ESCALA COM A OPERAÇÃO — a trava contra fixar 9% e 16%.
+  const banda = ctx.sophiaTrajetoria(Object.assign({}, v, { sph_interv: '2' }));
+  ok('a perda precoce da banda é MENOR que a do bypass', banda.twl1 < r1.twl1 && banda.twl3 < r1.twl3,
+     banda.twl1.toFixed(1) + '/' + banda.twl3.toFixed(1) + ' vs ' + r1.twl1.toFixed(1) + '/' + r1.twl3.toFixed(1));
+  ok('a razão mês1/1 ano é a mesma em qualquer operação',
+     Math.abs(banda.twl1 / banda.twl12 - r1.twl1 / r1.twl12) < 1e-9);
+  // Ordem cronológica: nenhum tempo precoce pode passar do seguinte.
+  [r1, banda, ctx.sophiaTrajetoria(Object.assign({}, v, { sph_interv: '1' }))].forEach(function (x, i) {
+    ok('perda cresce de 1 mês → 3 meses → 1 ano (operação ' + i + ')', x.twl1 < x.twl3 && x.twl3 < x.twl12,
+       [x.twl1, x.twl3, x.twl12].map(function (n) { return n.toFixed(1); }).join('/'));
+  });
+
+  // A tabela traz os dois tempos novos, marcados como aproximação e SEM faixa —
+  // não há desvio publicado para eles, então prometer faixa ali seria inventar.
+  const tb = ctx.sophiaTabelaHTML(r1, 120, 170);
+  ok('a tabela tem as cinco linhas', ['1 mês', '3 meses', '1 ano', '2 anos', '5 anos'].every(function (h) { return tb.indexOf('>' + h) > 0; }), tb);
+  ok('os tempos precoces vêm marcados como aproximação', (tb.match(/\(aprox\.\)/g) || []).length === 2, tb);
+  ok('a tabela reproduz o IMC oficial dos dois tempos', tb.indexOf('>37.9<') > 0 && tb.indexOf('>34.7<') > 0, tb);
+  ok('a tabela reproduz o %PEP oficial dos dois tempos', tb.indexOf('>22%<') > 0 && tb.indexOf('>41%<') > 0, tb);
 }
 
 // ---- 6. gráfico e tabela de valores ---------------------------------------
@@ -250,22 +289,61 @@ const perto = (a, b) => Math.abs(a - b) < 1e-9;
   // gestos. Se alguém "simplificar" de volta para <title>, o toque quebra outra
   // vez e ninguém percebe, porque no desktop com mouse continua funcionando.
   ok('cada ponto é um grupo focável, não um <title>',
-     (g.match(/<g class="sph-pt" tabindex="0"/g) || []).length === 4 && g.indexOf('<title>') < 0, g);
+     (g.match(/<g class="sph-pt" tabindex="0"/g) || []).length === 6 && g.indexOf('<title>') < 0, g);
   ok('o tooltip traz peso e faixa', /<g class="sph-tip">/.test(g) && /faixa 66\.8–82\.0 kg/.test(g), g);
   ok('o ponto tem alvo de toque maior que o círculo desenhado', /r="16" fill="transparent"/.test(g));
   ok('o tooltip também é lido por leitor de tela', /aria-label="1 ano: 84\.0 kg · faixa/.test(g), g);
   ok('o pré-op não promete faixa', g.indexOf('>pré-op: 120.0 kg<') > 0 && g.indexOf('>peso informado<') > 0, g);
-  // ⚠️ O trecho MODELADO é curva de Bézier (a projeção oficial é suave); o trecho
-  // pré-op→1 ano continua RETA pontilhada, porque ali não há previsão e curvar
-  // sugeriria uma forma de queda que o artigo não publica.
+  // ⚠️ OS DOIS TRAÇOS SÃO UMA CURVA SÓ, PARTIDA NO MÊS 12. Pontilhado até lá
+  // (pré-op medido + os dois meses aproximados), cheio dali em diante (as três
+  // árvores). Se alguém calcular cada traço sobre a sua própria lista de pontos,
+  // as tangentes deixam de bater e aparece um bico na emenda — o defeito é sutil
+  // no desenho e invisível em qualquer asserção que só conte comandos "C".
   {
     const pontilhado = g.match(/<path d="([^"]+)"[^>]*stroke-dasharray/);
-    ok('o trecho não modelado continua reta', !!pontilhado && pontilhado[1].indexOf('C') < 0 && /^M[\d.]+ [\d.]+ L[\d.]+ [\d.]+$/.test(pontilhado[1]), pontilhado && pontilhado[1]);
+    ok('o trecho aproximado é curva, não reta', !!pontilhado && (pontilhado[1].match(/C/g) || []).length === 3, pontilhado && pontilhado[1]);
     const modelado = g.match(/<path d="([^"]+)"[^>]*stroke-width="2\.4"/);
-    ok('o trecho modelado é curva suave (Bézier)', !!modelado && (modelado[1].match(/C/g) || []).length >= 2, modelado && modelado[1]);
+    ok('o trecho das árvores é curva suave (Bézier)', !!modelado && (modelado[1].match(/C/g) || []).length === 2, modelado && modelado[1]);
+    ok('o traço cheio começa exatamente onde o pontilhado termina',
+       (function () {
+         if (!pontilhado || !modelado) return false;
+         const fim = pontilhado[1].split('C').pop().split(',').pop().trim();
+         const ini = modelado[1].slice(1).split(' C')[0].trim();
+         return fim === ini;
+       })(), pontilhado && modelado && (pontilhado[1] + ' || ' + modelado[1]));
+    // Continuidade de tangente na emenda: o último ponto de controle do trecho
+    // pontilhado e o primeiro do trecho cheio têm de ser colineares com o mês 12.
+    ok('não há bico no mês 12 (tangentes batem)',
+       (function () {
+         const c2 = pontilhado[1].split('C').pop().split(',');            // ...,c2x c2y,px py
+         const a = c2[1].trim().split(' ').map(Number);                    // controle que CHEGA
+         const j = c2[2].trim().split(' ').map(Number);                    // o mês 12
+         const b = modelado[1].split('C')[1].split(',')[0].trim().split(' ').map(Number); // controle que SAI
+         const cross = (j[0] - a[0]) * (b[1] - j[1]) - (j[1] - a[1]) * (b[0] - j[0]);
+         return Math.abs(cross) < 0.5;
+       })(), modelado && modelado[1]);
     const area = g.match(/<path d="([^"]+)"[^>]*fill-opacity="\.14"/);
     ok('a área acompanha a mesma curva, sem bicos', !!area && (area[1].match(/C/g) || []).length >= 4, area && area[1]);
   }
+
+  // ---- os dois marcos precoces no desenho -----------------------------------
+  // ⚠️ Eles NÃO podem ganhar rótulo impresso: a 14 px um do outro, dois textos de
+  // ~45 px se sobrepõem e ilegibilizam os dois. O número sai no toque e na tabela.
+  // ⚠️ Conta pela opacidade do rótulo impresso, NÃO por " kg</text>": a primeira
+  // linha de cada tooltip também termina em " kg</text>" e a contagem daria 10.
+  ok('só quatro pontos têm rótulo impresso', (g.match(/fill-opacity="\.9">/g) || []).length === 4, g);
+  ok('os meses 1 e 3 têm marca curta no eixo', g.indexOf('>1m<') > 0 && g.indexOf('>3m<') > 0, g);
+  ok('a marca curta vai numa segunda altura', /y="222"[^>]*>1m</.test(g) || /y="222"[^>]*>3m</.test(g), g);
+  ok('o ponto aproximado é vazado, o da árvore é cheio',
+     (g.match(/fill="var\(--surface\)" stroke="#60a5fa"/g) || []).length === 3
+     && (g.match(/fill="#60a5fa" stroke="var\(--surface\)"/g) || []).length === 3, g);
+  ok('o toque nos meses precoces diz que é estimativa', (g.match(/>estimativa aproximada</g) || []).length === 2, g);
+  ok('o pré-op continua dizendo que é peso informado', g.indexOf('>peso informado<') > 0);
+  // O peso sai no toque (não há rótulo impresso) e o rótulo acessível do ponto
+  // não pode prometer faixa — não há desvio publicado para 1 e 3 meses.
+  ok('o peso do mês 1 sai no toque', g.indexOf('1 mês: 109.5 kg') > 0, g);
+  ok('nenhum mês precoce promete faixa',
+     (g.match(/aria-label="(1 mês|3 meses)[^"]*"/g) || []).every(function (a) { return a.indexOf('faixa') < 0; }), g);
   ok('a tabela tem a coluna da faixa', t.indexOf('Faixa (kg)') > 0);
   ok('a tabela mostra a faixa calculada', t.indexOf('66.8–82.0') > 0, t);
   ok('a legenda diz que é interquartil e como foi obtida',
@@ -273,5 +351,5 @@ const perto = (a, b) => Math.abs(a - b) < 1e-9;
   ok('a legenda declara a diferença em relação à ferramenta oficial', /simétrica em torno da previsão/.test(ex));
 }
 
-console.log(bad ? '\nFALHOU: ' + bad : '\n✓ SOPHIA: 22 folhas, n fechando (948/755/578), 6 valores da tabela oficial, gráfico com trecho não modelado pontilhado, M1/M3 fora');
+console.log(bad ? '\nFALHOU: ' + bad : '\n✓ SOPHIA: 22 folhas, n fechando (948/755/578), 10 valores da tabela oficial (M1/M3 por proporção, M12/M24/M60 por árvore), curva sem bico na emenda');
 process.exit(bad ? 1 : 0);

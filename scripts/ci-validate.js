@@ -154,7 +154,7 @@ try {
 //     que não constam do artigo.
 try {
   execFileSync(process.execPath, [path.join('scripts', 'test-calc-sophia.js')], { stdio: 'pipe' });
-  ok('regressão SOPHIA: 22 folhas + n fechando + 6 valores da tabela oficial + M1/M3 fora');
+  ok('regressão SOPHIA: 22 folhas + n fechando + 10 valores da tabela oficial + M1/M3 por proporção');
 } catch (e) {
   const out = (e.stdout ? e.stdout.toString() : '') + (e.stderr ? e.stderr.toString() : '');
   fail('regressão do SOPHIA falhou (verifique sophiaM24/sophiaM60 no index.html):\n' + out);
