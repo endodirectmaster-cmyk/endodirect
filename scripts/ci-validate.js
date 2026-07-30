@@ -146,5 +146,18 @@ try {
   fail("regressão do %PEP falhou (verifique a entrada id:'pep' de CALCS no index.html):\n" + out);
 }
 
+// 12. SOPHIA: as árvores foram transcritas de FIGURAS do apêndice do artigo, e
+//     transcrição de figura erra trocando o lado de um ramo ou o valor de uma
+//     folha — nenhum dos dois aparece como erro de execução. O teste confere as
+//     15 folhas, o fechamento dos n com a raiz e o caso rodado na ferramenta
+//     oficial. Também barra a volta de M1/M3/M12, que não são reproduzíveis.
+try {
+  execFileSync(process.execPath, [path.join('scripts', 'test-calc-sophia.js')], { stdio: 'pipe' });
+  ok('regressão SOPHIA: 15 folhas + n fechando + caso oficial + M1/M3/M12 fora');
+} catch (e) {
+  const out = (e.stdout ? e.stdout.toString() : '') + (e.stderr ? e.stderr.toString() : '');
+  fail('regressão do SOPHIA falhou (verifique sophiaM24/sophiaM60 no index.html):\n' + out);
+}
+
 if (errors) { console.error(`\n${errors} verificação(ões) falharam.`); process.exit(1); }
 console.log('\nTodas as verificações passaram.');
