@@ -1,6 +1,6 @@
 ---
 tags: [cofre, calculadoras]
-atualizado: 2026-07-29
+atualizado: 2026-07-30
 ---
 
 # Calculadoras
@@ -153,6 +153,18 @@ Primeira versão saía **gigante**: `viewBox` de 320×200 com `width:100%;height
 - **Eixo do tempo por extenso** (pré-op · 1 ano · 2 anos · 5 anos) em vez de números de mês.
 - **Faixa sombreada** sobre o trecho pré-op→1 ano, além do pontilhado, para o olho ver onde o modelo começa.
 - **O rótulo do nadir (2 anos) vai ABAIXO do ponto**; acima colidiria com a linha que sobe para os 5 anos.
+
+## Curva suave e tooltip que responde ao toque (2026-07-30)
+O professor comparou lado a lado com a ferramenta oficial: *"A projeção da curva na nossa plataforma está diferente da original e não está aparecendo esses pontos quando clica em cima"*. Dois defeitos distintos no mesmo gráfico.
+
+**1. A curva era uma poligonal.** Os três pontos modelados (1, 2 e 5 anos) eram ligados por retas, com um bico no nadir; a projeção oficial é suave. Entrou `sophiaCurva(pts)` — **Catmull-Rom convertido para Bézier cúbica** (pontos de controle a ±1/6 da diferença dos vizinhos) — aplicada à linha central **e às duas bordas da faixa**. Se só a linha central fosse suavizada, a área sombreada descolaria dela e ficaria com bicos onde a linha não tem.
+- **O trecho pré-op→1 ano continua RETA pontilhada.** Ali não há previsão (não há árvore de 1 e 3 meses no artigo) e curvar sugeriria uma forma de queda que o artigo não publica. A curvatura é uma afirmação sobre os dados, não enfeite.
+
+**2. ⚠️ O `<title>` de SVG não é tooltip de toque.** Era o que eu tinha usado. Ele só abre com o **mouse parado por ~1s**: clique não abre, toque não abre. No desktop com mouse funciona, e é por isso que o defeito passa despercebido de quem escreveu — o professor viu no iPhone. Trocado por uma caixa em SVG dentro de `<g class="sph-pt" tabindex="0">`, revelada por CSS em `:hover`, `:focus` e `:focus-within`: clique e toque **dão foco**, então os três gestos funcionam, sem uma linha de JS e sem re-registrar listener a cada re-render.
+- Alvo de toque é um `<circle r="16" fill="transparent">`, bem maior que o ponto desenhado (r=4).
+- A caixa é **grampeada dentro da área do desenho** (`Math.min/Math.max` contra `x0`/`x1`), senão sairia cortada nos pontos das bordas; e vai acima ou abaixo conforme o ponto esteja na metade de baixo ou de cima.
+- O mesmo texto vai no `aria-label` do grupo, para leitor de tela.
+- **`viewBox` 240→250 de altura** para caber a caixa do ponto mais baixo.
 
 ## Ajuste de framework
 `calcUpdate` mostra **`—`** quando `calc()` retorna não-finito (entrada incompleta ou idade fora da faixa) em vez de `NaN`.

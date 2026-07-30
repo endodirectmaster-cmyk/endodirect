@@ -242,9 +242,30 @@ const perto = (a, b) => Math.abs(a - b) < 1e-9;
   // ⚠️ A área NÃO pode começar no pré-op: ali não há modelo nem incerteza.
   ok('a área começa em 1 ano, não no pré-op',
      (function(){ const m = g.match(/<path d="M([\d.]+) /); return m && Math.abs(Number(m[1]) - 128) < 1; })(), g.slice(0, 400));
-  ok('cada ponto do modelo tem tooltip com peso e faixa',
-     (g.match(/<title>/g) || []).length >= 4 && /faixa provável 66\.8–82\.0 kg/.test(g), g);
-  ok('o pré-op não promete faixa', /pré-op: 120\.0 kg \(peso informado\)/.test(g));
+  // ---- tooltip e forma da curva ---------------------------------------------
+  // ⚠️ O TOOLTIP NÃO PODE VOLTAR A SER <title>. O <title> de SVG só abre com o
+  // mouse parado por ~1s: no clique e no toque não acontece nada — foi o que o
+  // professor relatou em 30/07 ("não está aparecendo esses pontos quando clica
+  // em cima"). O <g tabindex="0"> com caixa em :hover/:focus atende os três
+  // gestos. Se alguém "simplificar" de volta para <title>, o toque quebra outra
+  // vez e ninguém percebe, porque no desktop com mouse continua funcionando.
+  ok('cada ponto é um grupo focável, não um <title>',
+     (g.match(/<g class="sph-pt" tabindex="0"/g) || []).length === 4 && g.indexOf('<title>') < 0, g);
+  ok('o tooltip traz peso e faixa', /<g class="sph-tip">/.test(g) && /faixa 66\.8–82\.0 kg/.test(g), g);
+  ok('o ponto tem alvo de toque maior que o círculo desenhado', /r="16" fill="transparent"/.test(g));
+  ok('o tooltip também é lido por leitor de tela', /aria-label="1 ano: 84\.0 kg · faixa/.test(g), g);
+  ok('o pré-op não promete faixa', g.indexOf('>pré-op: 120.0 kg<') > 0 && g.indexOf('>peso informado<') > 0, g);
+  // ⚠️ O trecho MODELADO é curva de Bézier (a projeção oficial é suave); o trecho
+  // pré-op→1 ano continua RETA pontilhada, porque ali não há previsão e curvar
+  // sugeriria uma forma de queda que o artigo não publica.
+  {
+    const pontilhado = g.match(/<path d="([^"]+)"[^>]*stroke-dasharray/);
+    ok('o trecho não modelado continua reta', !!pontilhado && pontilhado[1].indexOf('C') < 0 && /^M[\d.]+ [\d.]+ L[\d.]+ [\d.]+$/.test(pontilhado[1]), pontilhado && pontilhado[1]);
+    const modelado = g.match(/<path d="([^"]+)"[^>]*stroke-width="2\.4"/);
+    ok('o trecho modelado é curva suave (Bézier)', !!modelado && (modelado[1].match(/C/g) || []).length >= 2, modelado && modelado[1]);
+    const area = g.match(/<path d="([^"]+)"[^>]*fill-opacity="\.14"/);
+    ok('a área acompanha a mesma curva, sem bicos', !!area && (area[1].match(/C/g) || []).length >= 4, area && area[1]);
+  }
   ok('a tabela tem a coluna da faixa', t.indexOf('Faixa (kg)') > 0);
   ok('a tabela mostra a faixa calculada', t.indexOf('66.8–82.0') > 0, t);
   ok('a legenda diz que é interquartil e como foi obtida',
