@@ -63,8 +63,33 @@ Eu tinha um argumento forte para 0,34: os tamanhos dos grupos (n=215 no lado ">1
 
 Lição além deste caso: quando existe uma implementação de referência acessível, **duas consultas a ela valem mais que qualquer dedução a partir do texto** — inclusive a partir de argumentos que parecem fechar.
 
-### O que continua fora: M1 e M3
-Não foram publicados (o pipeline tem cinco árvores, a figura traz três), então a **queda inicial não é reproduzida** e a calculadora entrega três pontos, não uma curva. A tabela oficial mostra 9% e 16% naqueles dois pacientes, mas **dois pontos não são um modelo**: fixá-los valeria para sleeve, banda, outras idades e outros pesos sem base nenhuma. `scripts/test-calc-sophia.js` reprova se aparecer `sophiaM1`/`sophiaM3` ou se a tela mencionar 1 ou 3 meses.
+### Meses 1 e 3 passaram a ser projetados — por proporção (2026-07-30)
+O professor pediu: *"Tanto na curva como na tabela, projeta esses outros meses também"*, com a tabela oficial à vista. **Reverte parcialmente a decisão registrada logo abaixo** — e o motivo dela continua verdadeiro: **as árvores de M1 e M3 não foram publicadas**. O que mudou foi o que se faz com essa limitação.
+
+**O que NÃO fiz: fixar 9% e 16%.** São os valores da ferramenta oficial *naquele paciente*. Fixados, valeriam igual para banda e bypass — e numa banda com 13% de perda em 1 ano, o mês 3 empataria com o ano inteiro. Número fixo aqui produz absurdo aritmético, não só imprecisão.
+
+**O que fiz: fração da perda de 12 meses**, que escala com a operação e preserva a ordem cronológica. As duas frações saem da tabela oficial, recuperadas pela **coluna do IMC** (dois algarismos a mais que a do %PPT inteiro), no caso de referência 120 kg / 1,70 m / 30 anos / não fumante / bypass:
+
+| | IMC oficial | peso recuperado | %PPT | fração da perda de 1 ano |
+|---|---|---|---|---|
+| mês 1 | 37,9 | 109,5 kg | 8,72% | **0,291** |
+| mês 3 | 34,7 | 100,3 kg | 16,43% | **0,549** |
+| mês 12 | 29,1 | 84,1 kg | 29,92% | — |
+
+Com elas, **as seis células dos meses 1 e 3 reproduzem a tabela oficial exatamente** (110/9/37,9/22 e 100/16/34,7/41). Somadas às seis de M12/M24/M60, são **10 valores oficiais conferidos**.
+
+- **⚠️ A calibração é de UM paciente, e todos os pontos que a sustentam são de BYPASS.** A forma da queda precoce no sleeve e na banda não foi conferida contra nada. Os números saem plausíveis (banda 3,8% no mês 1 contra 8,7% do bypass — banda perde devagar mesmo), mas plausível não é verificado. **Duas rodadas da ferramenta oficial — um sleeve e uma banda — fecham isso**, do mesmo jeito que a medição fechou o nó ambíguo de M12.
+- **Três avisos no desenho, não só na legenda:** traço **pontilhado**, ponto **vazado** (contra o ponto cheio das árvores) e **sem faixa** — não há desvio publicado para esses tempos. Na tabela, as duas linhas vêm com **"(aprox.)"**; no toque, a segunda linha diz "estimativa aproximada" em vez de faixa.
+- **A curva é uma só, partida no mês 12.** `sophiaSegmentos` calcula os pontos de controle sobre a lista **inteira** e devolve um comando por segmento; o gráfico junta 0→1→3→12 num traço e 12→24→60 noutro. Calculando cada traço sobre a sua própria lista, as tangentes não bateriam e apareceria **um bico no mês 12** — o teste checa a colinearidade dos controles na emenda (produto vetorial ≈ 0).
+- **O eixo do tempo ganhou uma segunda altura.** A escala é linear em meses (a da ferramenta oficial — mexer nela mudaria a forma da curva, que é o que se quer reproduzir), e nela o mês 1 fica a 7 px do pré-op. Nenhum texto cabe ali na mesma linha: "1m" e "3m" vão numa segunda altura, abreviados. Pelo mesmo motivo os dois **não têm rótulo de peso impresso** — a 14 px um do outro, dois textos de ~45 px se ilegibilizariam. O número sai no toque e na tabela, que é onde a ferramenta oficial também põe.
+- `viewBox` 250→262 de altura. `sw` v165→v166.
+
+### O contexto original da exclusão: M1 e M3
+*(29/07, superado em 30/07 pela seção acima — fica registrado porque metade do raciocínio continua valendo.)* Não foram publicados (o pipeline tem cinco árvores, a figura traz três), então a queda inicial não sai de modelo nenhum e a calculadora entregava três pontos. A tabela oficial mostra 9% e 16% naqueles dois pacientes, mas **dois pontos não são um modelo**: fixá-los valeria para sleeve, banda, outras idades e outros pesos sem base nenhuma.
+
+**O que eu errei aqui foi o salto**, não a premissa: de "não posso fixar dois números" concluí "não posso projetar nada". Havia um caminho intermediário — projetar a **razão** em vez do valor — que preserva a objeção (o número deixa de ser fixo e passa a escalar com a operação) e ainda assim entrega o que o professor precisava. **Lição: quando um dado publicado não basta para a forma direta, testar se ele basta para uma forma derivada antes de descartar o recurso inteiro.**
+
+`scripts/test-calc-sophia.js` continua reprovando se aparecer `sophiaM1`/`sophiaM3` — árvore inventada segue proibida — e agora reprova também se a perda precoce deixar de escalar com a operação.
 
 ### Detalhes de implementação
 - A tela mostra o **caminho percorrido na árvore**. O modelo é interpretável de propósito; expor o caminho é o que permite auditar a previsão em vez de acreditar nela.

@@ -2792,20 +2792,37 @@ function sophiaM60(p){
 // ⚠️ Só suaviza o trecho MODELADO. O pedaço pré-op → 1 ano continua reta
 // pontilhada: ali não há previsão, e curvar sugeriria uma forma de queda que o
 // artigo não publica.
-function sophiaCurva(pts){
-  if(pts.length<2)return '';
-  var d='M'+pts[0][0].toFixed(1)+' '+pts[0][1].toFixed(1);
+// ⚠️ Os pontos de controle saem da lista INTEIRA, e por isso a curva é devolvida
+// em SEGMENTOS separados em vez de um path só. O gráfico desenha o trecho
+// aproximado (0→1→3→12) pontilhado e o trecho das árvores (12→24→60) cheio; se
+// cada um fosse calculado sobre a sua própria lista, as tangentes não bateriam e
+// apareceria um bico no mês 12, justamente onde os dois se encontram.
+function sophiaSegmentos(pts){
+  var segs=[];
   for(var i=0;i<pts.length-1;i++){
     var p0=pts[i-1]||pts[i],p1=pts[i],p2=pts[i+1],p3=pts[i+2]||pts[i+1];
     var c1x=p1[0]+(p2[0]-p0[0])/6,c1y=p1[1]+(p2[1]-p0[1])/6;
     var c2x=p2[0]-(p3[0]-p1[0])/6,c2y=p2[1]-(p3[1]-p1[1])/6;
-    d+=' C'+c1x.toFixed(1)+' '+c1y.toFixed(1)+','+c2x.toFixed(1)+' '+c2y.toFixed(1)+','+p2[0].toFixed(1)+' '+p2[1].toFixed(1);
+    segs.push('C'+c1x.toFixed(1)+' '+c1y.toFixed(1)+','+c2x.toFixed(1)+' '+c2y.toFixed(1)+','+p2[0].toFixed(1)+' '+p2[1].toFixed(1));
   }
-  return d;
+  return segs;
+}
+function sophiaCurva(pts){
+  if(pts.length<2)return '';
+  return 'M'+pts[0][0].toFixed(1)+' '+pts[0][1].toFixed(1)+' '+sophiaSegmentos(pts).join(' ');
 }
 function sophiaGraficoHTML(r,pesoPre){
-  var W=480,H=250,x0=44,x1=464,y0=22,y1=196;
-  var pts=[[0,pesoPre,'pré-op',null],[12,r.peso12,'1 ano',r.faixa12],[24,r.peso24,'2 anos',r.faixa24],[60,r.peso60,'5 anos',r.faixa60]];
+  var W=480,H=262,x0=44,x1=464,y0=22,y1=196;
+  // [mês, peso, rótulo, faixa, veio de árvore publicada, rótulo curto do eixo]
+  // Os meses 1 e 3 entram com `false` em "veio de árvore": é o que decide o
+  // pontilhado, o ponto vazado e a ausência de faixa — os três avisos de que
+  // aquele trecho é aproximação, não previsão do artigo.
+  var pts=[[0,pesoPre,'pré-op',null,false,''],
+           [1,r.peso1,'1 mês',null,false,'1m'],
+           [3,r.peso3,'3 meses',null,false,'3m'],
+           [12,r.peso12,'1 ano',r.faixa12,true,''],
+           [24,r.peso24,'2 anos',r.faixa24,true,''],
+           [60,r.peso60,'5 anos',r.faixa60,true,'']];
   var pesos=[pesoPre];
   pts.forEach(function(p){if(p[3]){pesos.push(p[3].lo,p[3].hi);}else{pesos.push(p[1]);}});
   var wmin=Math.min.apply(null,pesos),wmax=Math.max.apply(null,pesos);
@@ -2825,9 +2842,15 @@ function sophiaGraficoHTML(r,pesoPre){
   g.push('<text x="12" y="'+((y0+y1)/2).toFixed(1)+'" font-size="9" fill="currentColor" fill-opacity=".5" text-anchor="middle" transform="rotate(-90 12 '+((y0+y1)/2).toFixed(1)+')">peso (kg)</text>');
   g.push('<line x1="'+x0+'" y1="'+y1+'" x2="'+x1+'" y2="'+y1+'" stroke="currentColor" stroke-opacity=".3"/>');
   g.push('<rect x="'+x0+'" y="'+y0+'" width="'+(xf(12)-x0).toFixed(1)+'" height="'+(y1-y0)+'" fill="currentColor" fill-opacity=".04"/>');
+  // ⚠️ O EIXO DO TEMPO TEM DUAS ALTURAS. A escala é linear em meses (a mesma da
+  // ferramenta oficial — mexer nela mudaria a forma da curva, que é o que se quer
+  // reproduzir), e nela o mês 1 fica a 7 px do pré-op e o mês 3 a 21 px. Nenhum
+  // texto cabe ali na mesma linha sem encavalar. Os dois marcos precoces vão numa
+  // segunda altura, abreviados; os outros quatro ficam onde sempre estiveram.
   pts.forEach(function(p){
     g.push('<line x1="'+xf(p[0]).toFixed(1)+'" y1="'+y1+'" x2="'+xf(p[0]).toFixed(1)+'" y2="'+(y1+4)+'" stroke="currentColor" stroke-opacity=".3"/>');
-    g.push('<text x="'+xf(p[0]).toFixed(1)+'" y="'+(y1+15)+'" text-anchor="'+(p[0]===0?'start':(p[0]===60?'end':'middle'))+'" font-size="9" fill="currentColor" fill-opacity=".62">'+p[2]+'</text>');
+    var curto=p[5];
+    g.push('<text x="'+xf(p[0]).toFixed(1)+'" y="'+(curto?y1+26:y1+15)+'" text-anchor="'+(p[0]===0?'start':(p[0]===60?'end':'middle'))+'" font-size="'+(curto?8.5:9)+'" fill="currentColor" fill-opacity="'+(curto?'.5':'.62')+'">'+(curto||p[2])+'</text>');
   });
   g.push('<text x="'+((x0+x1)/2).toFixed(1)+'" y="'+(H-4)+'" text-anchor="middle" font-size="8.5" fill="currentColor" fill-opacity=".45">meses após a cirurgia</text>');
   // A faixa acompanha a MESMA curva suave, por cima e por baixo — com retas ela
@@ -2838,12 +2861,26 @@ function sophiaGraficoHTML(r,pesoPre){
     var base=comFaixa.slice().reverse().map(function(p){return [xf(p[0]),yf(p[3].lo)];});
     g.push('<path d="'+sophiaCurva(topo)+' L'+base[0][0].toFixed(1)+' '+base[0][1].toFixed(1)+' '+sophiaCurva(base).slice(1)+' Z" fill="#60a5fa" fill-opacity=".14"/>');
   }
-  g.push('<path d="M'+xf(0).toFixed(1)+' '+yf(pesoPre).toFixed(1)+' L'+xf(12).toFixed(1)+' '+yf(r.peso12).toFixed(1)+'" fill="none" stroke="#60a5fa" stroke-width="2" stroke-dasharray="5 4" stroke-opacity=".45"/>');
-  g.push('<path d="'+sophiaCurva(comFaixa.map(function(p){return [xf(p[0]),yf(p[1])];}))+'" fill="none" stroke="#60a5fa" stroke-width="2.4" stroke-linecap="round"/>');
+  // A linha é UMA curva só, partida em dois traços no mês 12: pontilhado até lá
+  // (pré-op medido + os dois meses aproximados), cheio dali em diante (as três
+  // árvores). Os segmentos saem de `sophiaSegmentos` sobre a lista inteira, então
+  // as tangentes batem e não há bico na emenda.
+  var xy=pts.map(function(p){return [xf(p[0]),yf(p[1])];});
+  var segs=sophiaSegmentos(xy);
+  var iArv=0;while(iArv<pts.length&&!pts[iArv][4])iArv++;   // primeiro ponto de árvore = mês 12
+  g.push('<path d="M'+xy[0][0].toFixed(1)+' '+xy[0][1].toFixed(1)+' '+segs.slice(0,iArv).join(' ')+'" fill="none" stroke="#60a5fa" stroke-width="2" stroke-dasharray="5 4" stroke-opacity=".45"/>');
+  g.push('<path d="M'+xy[iArv][0].toFixed(1)+' '+xy[iArv][1].toFixed(1)+' '+segs.slice(iArv).join(' ')+'" fill="none" stroke="#60a5fa" stroke-width="2.4" stroke-linecap="round"/>');
   pts.forEach(function(p,i){
     var cx=xf(p[0]),cy=yf(p[1]);
-    g.push('<circle cx="'+cx.toFixed(1)+'" cy="'+cy.toFixed(1)+'" r="'+(i===0?3:4)+'" fill="#60a5fa"'+(i===0?' fill-opacity=".5"':'')+' stroke="var(--surface)" stroke-width="1.4"/>');
-    var acima=!(i===2);
+    // Ponto cheio = árvore publicada. Vazado = pré-op medido e os dois meses
+    // aproximados — a diferença entre o que o artigo prevê e o que eu interpolei
+    // tem de estar visível no desenho, não só na legenda.
+    g.push('<circle cx="'+cx.toFixed(1)+'" cy="'+cy.toFixed(1)+'" r="'+(p[4]?4:3.2)+'" fill="'+(p[4]?'#60a5fa':'var(--surface)')+'" stroke="'+(p[4]?'var(--surface)':'#60a5fa')+'" stroke-width="1.4"'+(p[4]?'':' stroke-opacity=".7"')+'/>');
+    // ⚠️ Os meses 1 e 3 NÃO recebem rótulo impresso: a 14 px um do outro, dois
+    // textos de ~45 px se sobrepõem e ilegibilizam os dois. O número deles sai no
+    // toque e na tabela — que é onde a ferramenta oficial também põe.
+    if(p[5])return;
+    var acima=p[0]!==24;
     g.push('<text x="'+cx.toFixed(1)+'" y="'+(acima?cy-9:cy+13).toFixed(1)+'" text-anchor="'+(p[0]===0?'start':(p[0]===60?'end':'middle'))+'" font-size="10.5" font-weight="700" fill="currentColor" fill-opacity=".9">'+p[1].toFixed(1)+' kg</text>');
   });
   // ⚠️ O TOOLTIP É CSS, NÃO <title>. O <title> de SVG só responde a mouse parado
@@ -2854,7 +2891,11 @@ function sophiaGraficoHTML(r,pesoPre){
   pts.forEach(function(p){
     var cx=xf(p[0]),cy=yf(p[1]);
     var l1=p[2]+': '+p[1].toFixed(1)+' kg';
-    var l2=p[3]?('faixa '+p[3].lo.toFixed(1)+'–'+p[3].hi.toFixed(1)+' kg'):'peso informado';
+    // A segunda linha diz DE ONDE veio o número — e nos meses 1 e 3 ela não pode
+    // dizer "peso informado" (não é) nem oferecer faixa (não há desvio publicado
+    // para esses tempos). Diz que é estimativa, que é o que é.
+    var l2=p[3]?('faixa '+p[3].lo.toFixed(1)+'–'+p[3].hi.toFixed(1)+' kg')
+               :(p[0]===0?'peso informado':'estimativa aproximada');
     var larg=Math.max(l1.length,l2.length)*5.2+16,alt=32;
     // Mantém a caixa dentro do desenho: encostada na borda ela sairia cortada.
     var bx=Math.min(Math.max(cx-larg/2,x0),x1-larg),by=cy>((y0+y1)/2)?cy-alt-12:cy+12;
@@ -2870,9 +2911,12 @@ function sophiaGraficoHTML(r,pesoPre){
 }
 function sophiaTabelaHTML(r,pesoPre,alturaCm){
   var m=alturaCm/100,ideal=25*m*m,exc=pesoPre-ideal;
-  var linha=function(rot,peso,twl,imc,fx){
+  var linha=function(rot,peso,twl,imc,fx,aprox){
     var pep=exc>0?((pesoPre-peso)/exc*100).toFixed(0)+'%':'—';
-    return '<tr><td style="padding:.3rem .45rem;font-weight:600">'+rot+'</td>'
+    // A marca de aproximação fica na LINHA, não só na legenda: quem lê a tabela
+    // de cima para baixo não volta para conferir de onde veio cada tempo.
+    return '<tr><td style="padding:.3rem .45rem;font-weight:600">'+rot
+      +(aprox?'<span style="font-weight:400;color:var(--t3)"> (aprox.)</span>':'')+'</td>'
       +'<td style="padding:.3rem .45rem;text-align:right">'+peso.toFixed(1)+'</td>'
       +'<td style="padding:.3rem .45rem;text-align:right;color:var(--t2);white-space:nowrap">'+(fx?fx.lo.toFixed(1)+'–'+fx.hi.toFixed(1):'—')+'</td>'
       +'<td style="padding:.3rem .45rem;text-align:right">'+twl.toFixed(0)+'%</td>'
@@ -2883,6 +2927,8 @@ function sophiaTabelaHTML(r,pesoPre,alturaCm){
     +'<thead><tr style="color:var(--t2)"><th style="padding:.3rem .45rem;text-align:left">Previsão</th>'
     +'<th style="padding:.3rem .45rem;text-align:right">Peso (kg)</th><th style="padding:.3rem .45rem;text-align:right">Faixa (kg)</th><th style="padding:.3rem .45rem;text-align:right">%PPT</th>'
     +'<th style="padding:.3rem .45rem;text-align:right">IMC</th><th style="padding:.3rem .45rem;text-align:right">%PEP</th></tr></thead><tbody>'
+    +linha('1 mês',r.peso1,r.twl1,r.imc1,null,true)
+    +linha('3 meses',r.peso3,r.twl3,r.imc3,null,true)
     +linha('1 ano',r.peso12,r.twl12,r.imc12,r.faixa12)
     +linha('2 anos',r.peso24,r.twl24,r.imc24,r.faixa24)
     +linha('5 anos',r.peso60,r.twl60,r.imc60,r.faixa60)
@@ -2918,10 +2964,30 @@ function sophiaTrajetoria(v){
     return{lo:Math.max(0,pesoPrev-d),hi:pesoPrev+d,dp:dpImc};
   };
   var p12=peso*(1-z.twl),p24=peso*(1-a.twl),p60=peso*(1-b.twl);
+  // ⚠️ MESES 1 E 3: NÃO SAEM DE ÁRVORE — SÃO PROPORÇÃO DA PERDA DE 1 ANO.
+  // O pipeline do artigo tem cinco árvores e a Figura 3 publica três (M12, M24,
+  // M60). As de 1 e 3 meses não estão em lugar nenhum do artigo nem do apêndice,
+  // então aqui a perda precoce é escrita como FRAÇÃO da perda de 12 meses, e não
+  // como valor fixo. Fixar 9% e 16% (os números que a ferramenta oficial mostra
+  // no caso de referência) daria a mesma perda precoce para banda e bypass, e
+  // numa banda com 16% de perda em 1 ano o mês 3 empataria com o ano inteiro.
+  //
+  // As duas frações vêm da tabela de valores da ferramenta oficial, recuperadas
+  // pela coluna do IMC (dois algarismos a mais que a do %PPT inteiro), no caso de
+  // referência 120 kg / 1,70 m / 30 anos / não fumante / bypass:
+  //   mês 1  IMC 37,9 → 109,5 kg → 8,72% ÷ 29,92% = 0,291
+  //   mês 3  IMC 34,7 → 100,3 kg → 16,43% ÷ 29,92% = 0,549
+  // Com elas, as seis células dos meses 1 e 3 (peso, %PPT, IMC, %PEP) reproduzem
+  // a tabela oficial exatamente. ⚠️ MAS A CALIBRAÇÃO É DE UM PACIENTE SÓ, e todos
+  // os pontos publicados que a sustentam são de BYPASS: a forma da queda precoce
+  // do sleeve e da banda não foi conferida contra nada.
+  var FRACAO_M1=0.291,FRACAO_M3=0.549;
+  var t1=z.twl*FRACAO_M1,t3=z.twl*FRACAO_M3;
+  var p1=peso*(1-t1),p3=peso*(1-t3);
   return{
-    twl12:z.twl*100,twl24:a.twl*100,twl60:b.twl*100,
-    peso12:p12,peso24:p24,peso60:p60,
-    imc12:p12/(m*m),imc24:p24/(m*m),imc60:p60/(m*m),
+    twl1:t1*100,twl3:t3*100,twl12:z.twl*100,twl24:a.twl*100,twl60:b.twl*100,
+    peso1:p1,peso3:p3,peso12:p12,peso24:p24,peso60:p60,
+    imc1:p1/(m*m),imc3:p3/(m*m),imc12:p12/(m*m),imc24:p24/(m*m),imc60:p60/(m*m),
     faixa12:faixa(p12,12),faixa24:faixa(p24,24),faixa60:faixa(p60,60),
     caminho12:z.caminho,caminho24:a.caminho,caminho60:b.caminho
   };
@@ -2989,11 +3055,11 @@ var CALCS=[
      return '<div style="margin-top:.7rem;border:1px solid var(--bd);border-radius:var(--r);padding:.6rem .7rem">'
        +sophiaGraficoHTML(r,peso)
        +sophiaTabelaHTML(r,peso,alt)
-       +'<div style="font-size:.66rem;color:var(--t3);line-height:1.5;margin-top:.4rem">A área sombreada é a <b>faixa interquartil</b> — dentro dela caiu metade dos pacientes da validação. Vem do desvio do erro de IMC publicado <b>por operação e por tempo</b> (Tabela 3 do artigo), por aproximação normal, porque os percentis empíricos não são publicados: a largura bate com a da ferramenta oficial (~15 kg contra ~16 kg aos 2 anos no caso de referência), mas aqui ela é simétrica em torno da previsão, enquanto a deles é deslocada. Toque nos pontos para ver peso e faixa. O trecho até 1 ano está pontilhado e sem faixa porque as árvores de 1 e 3 meses não constam do artigo.</div>'
+       +'<div style="font-size:.66rem;color:var(--t3);line-height:1.5;margin-top:.4rem">A área sombreada é a <b>faixa interquartil</b> — dentro dela caiu metade dos pacientes da validação. Vem do desvio do erro de IMC publicado <b>por operação e por tempo</b> (Tabela 3 do artigo), por aproximação normal, porque os percentis empíricos não são publicados: a largura bate com a da ferramenta oficial (~15 kg contra ~16 kg aos 2 anos no caso de referência), mas aqui ela é simétrica em torno da previsão, enquanto a deles é deslocada. Toque nos pontos para ver peso e faixa. <b>Os meses 1 e 3 são aproximação</b>, não previsão do artigo: as árvores desses dois tempos não foram publicadas (o pipeline tem cinco, a figura traz três), então a perda precoce é calculada como fração da perda de 1 ano (0,291 e 0,549), calibrada na tabela da ferramenta oficial. Por isso eles aparecem pontilhados, com ponto vazado e sem faixa — a calibração vem de um caso de bypass, e a forma da queda precoce no sleeve e na banda não foi conferida.</div>'
        +'</div>';
    },
    unit:'% de perda de peso total em 2 anos',
-   note:'Modelo SOPHIA (Saux et al., Lancet Digit Health 2023;5:e692-702) — árvores de decisão CART sobre 7 variáveis pré-operatórias, treinadas em 9.861 pacientes e validadas em 12 coortes de 10 países. O número grande é a perda de peso TOTAL (%PPT) prevista aos 2 anos, que é o nadir habitual; a linha abaixo traz peso e IMC previstos em 1, 2 e 5 anos, e o caminho percorrido na árvore — o modelo é interpretável de propósito, e o caminho é o que permite conferir a previsão em vez de acreditar nela. Reproduz os valores da ferramenta oficial nos três tempos. O tabagismo só entra no 1º ano, e a favor: fumante perde mais nesse período, efeito que desaparece depois. Os tempos de 1 e 3 meses NÃO constam do artigo (o pipeline tem cinco árvores e a figura publica três), então a queda inicial não é reproduzida aqui. O erro do modelo aos 5 anos foi de 2,8 kg/m² de IMC (desvio absoluto mediano). Previsão populacional: informa a conversa pré-operatória, não substitui o acompanhamento.'},
+   note:'Modelo SOPHIA (Saux et al., Lancet Digit Health 2023;5:e692-702) — árvores de decisão CART sobre 7 variáveis pré-operatórias, treinadas em 9.861 pacientes e validadas em 12 coortes de 10 países. O número grande é a perda de peso TOTAL (%PPT) prevista aos 2 anos, que é o nadir habitual; a linha abaixo traz peso e IMC previstos em 1, 2 e 5 anos, e o caminho percorrido na árvore — o modelo é interpretável de propósito, e o caminho é o que permite conferir a previsão em vez de acreditar nela. Reproduz os valores da ferramenta oficial nos três tempos. O tabagismo só entra no 1º ano, e a favor: fumante perde mais nesse período, efeito que desaparece depois. As árvores de 1 e 3 meses NÃO constam do artigo (o pipeline tem cinco e a figura publica três): esses dois tempos são estimados como fração da perda de 1 ano, calibrada na tabela da ferramenta oficial, e vêm marcados como aproximação no gráfico e na tabela. O erro do modelo aos 5 anos foi de 2,8 kg/m² de IMC (desvio absoluto mediano). Previsão populacional: informa a conversa pré-operatória, não substitui o acompanhamento.'},
   {id:'nacorr',name:'Na⁺ corrigido',area:'Distúrbios hidroeletrolíticos',desc:'Sódio corrigido pela glicemia',
    fields:[{id:'na_med',label:'Sódio medido (mEq/L)',type:'num'},{id:'na_gli',label:'Glicemia (mg/dL)',type:'num'}],
    calc:function(v){var na=parseFloat(v.na_med)||0;var g=parseFloat(v.na_gli)||0;return g>100?na+1.6*((g-100)/100):na;},
