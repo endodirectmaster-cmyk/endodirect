@@ -78,7 +78,19 @@ O professor pediu: *"Tanto na curva como na tabela, projeta esses outros meses t
 
 Com elas, **as seis células dos meses 1 e 3 reproduzem a tabela oficial exatamente** (110/9/37,9/22 e 100/16/34,7/41). Somadas às seis de M12/M24/M60, são **10 valores oficiais conferidos**.
 
-- **⚠️ A calibração é de UM paciente, e todos os pontos que a sustentam são de BYPASS.** A forma da queda precoce no sleeve e na banda não foi conferida contra nada. Os números saem plausíveis (banda 3,8% no mês 1 contra 8,7% do bypass — banda perde devagar mesmo), mas plausível não é verificado. **Duas rodadas da ferramenta oficial — um sleeve e uma banda — fecham isso**, do mesmo jeito que a medição fechou o nó ambíguo de M12.
+### ⚠️ As frações são POR OPERAÇÃO — e a medição da banda desmentiu a fração única (2026-07-30, mesmo dia)
+Publiquei a versão acima com **uma fração só**, a do bypass, para as três operações, e registrei como limitação que a queda precoce do sleeve e da banda não tinha sido conferida. O professor rodou a banda na ferramenta oficial no mesmo dia. **A fração única não vale:**
+
+| | mês 1 | mês 3 | mês 12 | fração m1 | fração m3 |
+|---|---|---|---|---|---|
+| bypass (IMC oficial) | 37,9 → 8,72% | 34,7 → 16,43% | 29,1 → 29,92% | **0,291** | **0,549** |
+| banda (IMC oficial) | 39,4 → 5,11% | 38,2 → 8,00% | 36,0 → 13,30% | **0,384** | **0,602** |
+
+A banda perde **uma fatia maior** da sua perda de 1 ano já no primeiro mês, embora perca muito menos em valor absoluto. Com a fração do bypass, o mês 1 da banda saía **1,5 kg errado**. Agora `FRACAO_PRECOCE` é uma tabela indexada pela operação.
+
+- **O sleeve continua não medido** e herda as frações do bypass — a operação mais próxima em mecanismo, mas isso é escolha, não medida. É o ponto fraco que resta.
+- **Sobra ~0,2 kg no mês 3 da banda** (110,6 contra 110,4 oficiais). ⚠️ **A causa não é a razão: é a folha de 12 meses da banda, que a figura publica arredondada** (0,13 contra 0,133 internos deles). O mesmo desvio já aparece no próprio mês 12 (104,4 contra 104,0). **Ajustar a razão para compensar faria os meses 1 e 3 baterem enquanto o mês 12 — que vem da árvore de verdade — continuaria fora**: seria esconder o arredondamento da figura dentro de um parâmetro que tem outro significado. O teste trava a tolerância em 1 kg e confere que o resíduo do mês 3 é exatamente o do mês 12 propagado pela razão.
+- **Lição que se repete pela terceira vez neste recurso:** eu declarei a limitação certa ("não conferi sleeve e banda") e mesmo assim publiquei o parâmetro único. **Declarar a incerteza não a resolve — quando existe implementação de referência acessível, uma rodada dela vale mais que a nota de rodapé.** Foi assim no nó ambíguo de M12 e de novo aqui.
 - **Três avisos no desenho, não só na legenda:** traço **pontilhado**, ponto **vazado** (contra o ponto cheio das árvores) e **sem faixa** — não há desvio publicado para esses tempos. Na tabela, as duas linhas vêm com **"(aprox.)"**; no toque, a segunda linha diz "estimativa aproximada" em vez de faixa.
 - **A curva é uma só, partida no mês 12.** `sophiaSegmentos` calcula os pontos de controle sobre a lista **inteira** e devolve um comando por segmento; o gráfico junta 0→1→3→12 num traço e 12→24→60 noutro. Calculando cada traço sobre a sua própria lista, as tangentes não bateriam e apareceria **um bico no mês 12** — o teste checa a colinearidade dos controles na emenda (produto vetorial ≈ 0).
 - **O eixo do tempo ganhou uma segunda altura.** A escala é linear em meses (a da ferramenta oficial — mexer nela mudaria a forma da curva, que é o que se quer reproduzir), e nela o mês 1 fica a 7 px do pré-op. Nenhum texto cabe ali na mesma linha: "1m" e "3m" vão numa segunda altura, abreviados. Pelo mesmo motivo os dois **não têm rótulo de peso impresso** — a 14 px um do outro, dois textos de ~45 px se ilegibilizariam. O número sai no toque e na tabela, que é onde a ferramenta oficial também põe.
