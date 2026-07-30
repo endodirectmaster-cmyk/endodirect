@@ -36,24 +36,56 @@ Pedido do Rodolpho a partir da calculadora de Fernanda Mattos. Entrada `id:'pep'
 - Teste `scripts/test-calc-pep.js`, passo 11 do CI. `sw` v155→v156.
 
 ## SOPHIA — trajetória de peso pós-bariátrica (2026-07-29)
-Entrada `id:'sophia'`. O professor mandou o artigo e o **apêndice**, e isso muda o que era possível: o apêndice (Appendix Figure 3) **publica as árvores CART** de M12, M24 e M60. Deixa de ser "modelo treinado inacessível" e passa a ser transcrição — que é legítima e verificável.
+Entrada `id:'sophia'`. O professor mandou o artigo **e o apêndice**, e isso mudou o que era possível: o apêndice (Appendix Figure 3) **publica as árvores CART** de M12, M24 e M60. Deixou de ser "modelo treinado inacessível" e passou a ser transcrição — legítima e verificável.
 
 **Fonte:** Saux et al., Lancet Digit Health 2023;5:e692-702. Sete variáveis pré-operatórias por LASSO; uma árvore CART por tempo pós-operatório; %TWL na folha; peso previsto = peso pré × (1 − %TWL).
 
-### O que foi implementado: M24 e M60, e só
+### As três árvores, e o que cada uma usa
+- **M12** (Figura 3B, raiz n=948): 7 folhas. **É a única em que TABAGISMO entra** — e a favor: fumante perde mais no primeiro ano (0,36), efeito que o artigo descreve e que desaparece depois.
 - **M24** (Figura 3C, raiz n=755): 7 folhas, de 0,16 (banda) a 0,38 (bypass, sem diabetes, <49 anos).
-- **M60** (Figura 3D, raiz n=578): 8 folhas. **É a única em que banda e sleeve caem no MESMO ramo**, e a única em que a **altura** entra (corte em 161 cm).
-- **O que provou a leitura antes de qualquer código:** os `n` das folhas de cada figura **somam exatamente o n da raiz** — 146+42+80+140+71+68+208 = 755 e 72+36+81+104+78+46+42+119 = 578. Estrutura lida errada não fecha.
-- **Conferência contra a ferramenta oficial**, no caso que o professor rodou (120 kg, 170 cm, 30 anos, sem diabetes, bypass): M24 = 0,38 → **74,4 kg**, M60 = 0,33 → **80,4 kg**. O gráfico oficial mostra nadir em ~74 kg e ~80 kg aos 5 anos. Bate nos dois pontos.
-- **A tela mostra o caminho percorrido na árvore.** O modelo é interpretável de propósito; expor o caminho é o que permite ao professor auditar a previsão em vez de acreditar nela.
+- **M60** (Figura 3D, raiz n=578): 8 folhas. **A única em que banda e sleeve caem no MESMO ramo**, e a única em que a **altura** entra (corte em 161 cm).
 
-### ⚠️ M1, M3 e M12 ficaram FORA, e o motivo é diferente em cada caso
-- **M1 e M3 não foram publicados.** O diagrama do pipeline (Figura 3A) mostra cinco árvores; a figura publica três. Sem elas não há a parte inicial da curva — por isso a calculadora entrega **dois pontos, não uma curva**.
-- **M12 tem um ramo ambíguo.** No nó (bypass, <51 anos, não fumante, n=344) o corte é "duração do DM2 ≷ 19 anos", e a figura **não diz para onde vai quem NÃO tem diabetes**. As duas leituras dão 0,30 e 0,34 de %TWL — **5 kg num paciente de 120 kg**.
-  - **Argumento para 0,34:** os tamanhos dos grupos. n=215 no lado ">19 anos" só fecha se os não diabéticos estiverem nele (duração ausente, roteada por variável substituta — o artigo diz que a árvore usa surrogates). E a prosa do artigo diz que diabetes está **sempre** associado a menor perda, o que combina com diabéticos em 0,30.
-  - **Argumento para 0,30:** a curva da ferramenta oficial no caso de referência passa mais perto de 84 kg (0,30) do que de 79,2 kg (0,34) no 12º mês.
-  - **Não resolvi, e por isso não publiquei.** Resolve-se com uma comparação na ferramenta oficial: mesmo paciente, uma vez sem diabetes e uma vez com DM2 de 5 anos, lendo o 12º mês. Se o sem-diabetes perder MAIS, a leitura 0,34 está certa.
-- `scripts/test-calc-sophia.js` (passo 12 do CI) **barra a volta dos três**: reprova se aparecer `sophiaM12` ou se a tela mencionar 12 meses. Sabotar o lado de um ramo derruba 6 asserções.
+### ⚠️ Como a leitura das figuras foi validada — duas travas, e uma que valeu mais
+1. **Os `n` das folhas somam o `n` da raiz** em cada figura: 948, 755 e 578. Estrutura lida errada não fecha essa conta. Foi o que autorizou escrever o código.
+2. **A tabela de valores da ferramenta oficial.** O professor rodou dois pacientes (120 kg, 170 cm, 30 anos, não fumantes, bypass) e mandou os números **exatos**, não leitura de gráfico:
+
+| | M12 | M24 | M60 |
+|---|---|---|---|
+| sem diabetes | 84 kg / 30% | 75 kg / 38% | 80 kg / 33% |
+| DM2 de 5 anos | 84 kg / 30% | 87 kg / 27% | 91 kg / 24% |
+
+As três árvores reproduzem os **seis** valores.
+
+### ⚠️ Foi a medição que resolveu o nó ambíguo de M12 — e desmentiu o texto do artigo
+No nó (bypass, <51 anos, não fumante, n=344) o corte é "duração do DM2 ≷ 19 anos", e a figura **não diz para onde vai quem NÃO tem diabetes**. As duas leituras davam 0,30 e 0,34 — **5 kg num paciente de 120 kg**.
+
+Eu tinha um argumento forte para 0,34: os tamanhos dos grupos (n=215 no lado ">19 anos" só fecharia com os não diabéticos nele, roteados por variável substituta) **e a prosa do artigo**, que afirma que diabetes está *sempre* associado a menor perda. **Estava errado.** Os dois pacientes dão 30% em M12, então o não diabético (duração 0) cai no mesmo ramo do diabético de curta duração, e a folha de 0,34 é só de quem tem mais de 19 anos de doença. **Neste nó, a prosa do artigo não vale.**
+
+Lição além deste caso: quando existe uma implementação de referência acessível, **duas consultas a ela valem mais que qualquer dedução a partir do texto** — inclusive a partir de argumentos que parecem fechar.
+
+### O que continua fora: M1 e M3
+Não foram publicados (o pipeline tem cinco árvores, a figura traz três), então a **queda inicial não é reproduzida** e a calculadora entrega três pontos, não uma curva. A tabela oficial mostra 9% e 16% naqueles dois pacientes, mas **dois pontos não são um modelo**: fixá-los valeria para sleeve, banda, outras idades e outros pesos sem base nenhuma. `scripts/test-calc-sophia.js` reprova se aparecer `sophiaM1`/`sophiaM3` ou se a tela mencionar 1 ou 3 meses.
+
+### Detalhes de implementação
+- A tela mostra o **caminho percorrido na árvore**. O modelo é interpretável de propósito; expor o caminho é o que permite auditar a previsão em vez de acreditar nela.
+- O IMC da tabela oficial (25,9 aos 2 anos) sai do peso **já arredondado** (75 kg); aqui sai do peso exato (74,4 kg → 25,7). Diferença de arredondamento da tela deles, não de modelo.
+- `scripts/test-calc-sophia.js` (passo 12 do CI) confere as **22 folhas**, os três fechamentos de `n` e os seis valores oficiais. Trocar o lado de um ramo derruba 6 asserções. `sw` v157→v158.
+
+## Gráfico e tabela de valores nas calculadoras (2026-07-29)
+O framework de `CALCS` só renderizava **número + tag**. Ganhou um ponto de extensão: `extra:function(s,v){return html}`, anexado depois da caixa de resultado. Erro dentro do `extra` é engolido — o número, que é o principal, não pode cair por causa de um gráfico.
+
+Primeiro uso: o SOPHIA, com gráfico SVG (gerado por código, como as fichas dos artigos) e tabela de peso/%PPT/IMC/%PEP em 1, 2 e 5 anos.
+
+- **⚠️ O trecho 0→12 meses do gráfico é PONTILHADO.** As árvores de 1 e 3 meses não constam do artigo, então a forma da queda inicial é desconhecida. Reta cheia ali afirmaria perda linear no primeiro ano, o que é falso — a perda real é concentrada nos primeiros meses.
+- **O %PEP da tabela usa a mesma definição da ferramenta oficial** (excesso sobre IMC 25): no 12º mês do caso de referência dá 75%, exatamente o que a tabela deles mostra. Confirmação a mais de que a definição é a mesma.
+- Sem excesso de peso, o %PEP sai como travessão em vez de número.
+
+## Calculadoras agrupadas por área (2026-07-29)
+Pedido do professor. A lista corrida passou de 30 itens e virava varredura visual. Agora `initCalc` agrupa por `c.area`, com contagem por grupo.
+
+- **A ordem dos grupos segue a PRIMEIRA aparição em `CALCS`, não alfabética.** A ordem do array já expressa prioridade (risco cardiovascular e antropometria primeiro), e ordenar por nome jogaria "Adrenal" para o topo sem motivo.
+- **⚠️ `grid-column:1/-1` no título e na sub-grade.** O container é `.g3` (3 colunas); sem isso cada título ocuparia uma célula de um terço e a lista sairia intercalada com os cards.
+- O card deixou de repetir a área — ela já é o título do grupo.
 
 ## Ajuste de framework
 `calcUpdate` mostra **`—`** quando `calc()` retorna não-finito (entrada incompleta ou idade fora da faixa) em vez de `NaN`.
