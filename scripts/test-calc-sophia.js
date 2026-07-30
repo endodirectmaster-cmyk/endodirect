@@ -188,12 +188,34 @@ const perto = (a, b) => Math.abs(a - b) < 1e-9;
   ok('%PPT do mês 1 arredonda para 9 (igual ao oficial)', r1.twl1.toFixed(0) === '9', r1.twl1.toFixed(2));
   ok('%PPT do mês 3 arredonda para 16 (igual ao oficial)', r1.twl3.toFixed(0) === '16', r1.twl3.toFixed(2));
 
-  // ⚠️ ESCALA COM A OPERAÇÃO — a trava contra fixar 9% e 16%.
+  // ⚠️ AS FRAÇÕES SÃO POR OPERAÇÃO, E ISSO FOI MEDIDO.
+  // A primeira versão usava a fração do bypass para as três operações. A rodada
+  // da banda na ferramenta oficial desmentiu: a banda perde uma FATIA MAIOR da
+  // sua perda de 1 ano já no primeiro mês (0,384 contra 0,291), embora perca
+  // muito menos em valor absoluto. Fração única errava o mês 1 da banda em 1,5 kg.
+  // Quem "simplificar" isso de volta para uma constante só quebra a banda.
   const banda = ctx.sophiaTrajetoria(Object.assign({}, v, { sph_interv: '2' }));
-  ok('a perda precoce da banda é MENOR que a do bypass', banda.twl1 < r1.twl1 && banda.twl3 < r1.twl3,
+  ok('a perda precoce da banda é MENOR em valor absoluto', banda.twl1 < r1.twl1 && banda.twl3 < r1.twl3,
      banda.twl1.toFixed(1) + '/' + banda.twl3.toFixed(1) + ' vs ' + r1.twl1.toFixed(1) + '/' + r1.twl3.toFixed(1));
-  ok('a razão mês1/1 ano é a mesma em qualquer operação',
-     Math.abs(banda.twl1 / banda.twl12 - r1.twl1 / r1.twl12) < 1e-9);
+  ok('mas a FRAÇÃO da perda de 1 ano é MAIOR na banda que no bypass',
+     banda.twl1 / banda.twl12 > r1.twl1 / r1.twl12 + 0.05,
+     (banda.twl1 / banda.twl12).toFixed(3) + ' vs ' + (r1.twl1 / r1.twl12).toFixed(3));
+  // Banda contra a tabela oficial: 114 kg / 5% / IMC 39,4 / PEP 13 no mês 1.
+  ok('banda, mês 1, bate com a tabela oficial',
+     banda.peso1.toFixed(0) === '114' && banda.twl1.toFixed(0) === '5' && banda.imc1.toFixed(1) === '39.4',
+     banda.peso1.toFixed(2) + ' / ' + banda.twl1.toFixed(2) + '% / ' + banda.imc1.toFixed(2));
+  // ⚠️ No mês 3 sobra ~0,2 kg contra os 110,4 kg oficiais, e a causa NÃO é a
+  // razão: é a folha de 12 meses da banda, que a Figura 3B publica arredondada
+  // (0,13 contra 0,133 internos deles). O mesmo desvio já aparece no próprio mês
+  // 12 (104,4 contra 104,0). Ajustar a razão para compensar faria os meses 1 e 3
+  // baterem enquanto o mês 12, que vem da árvore de verdade, continuaria fora —
+  // seria esconder o arredondamento da figura dentro de um parâmetro que tem
+  // outro significado. Por isso a tolerância aqui é de 1 kg, e não zero.
+  ok('banda, mês 3, dentro de 1 kg do oficial (folha de 12m arredondada na figura)',
+     Math.abs(banda.peso3 - 110.4) < 1.0, banda.peso3.toFixed(2));
+  ok('a diferença do mês 3 da banda é a MESMA do mês 12 (mesma origem)',
+     Math.abs((banda.peso3 - 110.4) - (banda.peso12 - 104.04) * (0.6016)) < 0.05,
+     (banda.peso3 - 110.4).toFixed(3) + ' vs ' + ((banda.peso12 - 104.04) * 0.6016).toFixed(3));
   // Ordem cronológica: nenhum tempo precoce pode passar do seguinte.
   [r1, banda, ctx.sophiaTrajetoria(Object.assign({}, v, { sph_interv: '1' }))].forEach(function (x, i) {
     ok('perda cresce de 1 mês → 3 meses → 1 ano (operação ' + i + ')', x.twl1 < x.twl3 && x.twl3 < x.twl12,
