@@ -1,9 +1,31 @@
 ---
 tags: [cofre, newsletter, radar]
-atualizado: 2026-07-29
+atualizado: 2026-07-30
 ---
 
 # Newsletter e Radar
+
+## ⚠️ Tabela de estudos incluídos não vai para o card (2026-07-30)
+Pedido do professor a partir de uma metanálise de HIIT vs MICT: *"exclui essas tabelas assim dos estudos de metanálises"*. A discussão tinha reproduzido a tabela de **8 colunas × 20 estudos**, com o protocolo de cada braço por extenso — no card vira um bloco com rolagem horizontal que ninguém lê, e o aluno não tira dali nenhuma conduta.
+
+Cortada em `tableToMarkdown` (`lib/fulltext.js`), na origem — mesmo lugar da coluna de referências, e pelo mesmo motivo: **se a IA nunca vê a tabela, não tem como reproduzi-la nem parafraseá-la**.
+
+### O critério é ESTRUTURAL, e foi calibrado nas tabelas reais do banco
+`ehTabelaDeEstudosIncluidos(cabecalhos, nLinhas)`: coluna de estudo/autor **na primeira posição**, **≥6 colunas** e **≥5 linhas de dados**.
+
+| tabela gravada | forma | decisão |
+|---|---|---|
+| transportadores de aminoácidos | 7 col × 17 lin | sai |
+| HIIT vs MICT (a do print) | 8 col × 20 lin | sai |
+| microbioma e GLP-1 | 7 col × 7 lin | sai |
+| definições de PTx | 5 col × 5 lin | **fica** — compacta e legível |
+
+**A primeira versão que escrevi era por vocabulário** — exigia 3 cabeçalhos de uma lista ("sample size", "age", "duration"…) — e pegava **uma das quatro**. As outras diziam "População", "Nº de pacientes", "Metodologia": nenhuma lista de palavras prevê o vocabulário de todo autor. **Contar coluna e linha não depende de adivinhar.** A fronteira em 6 colunas cai exatamente entre a tabela compacta que vale a pena e as três que não.
+
+- **O que continua passando:** efeito combinado, subgrupo, heterogeneidade — o que interessa de uma metanálise. Tabela de resultado *com* coluna de estudo (`Estudo | Efeito | IC 95% | Peso`) tem 4 colunas e sobrevive. Regra que cortasse "toda tabela com coluna Study" mataria justamente o ponto da discussão.
+- **Sai junto a tabela de risco de viés por estudo** (mesma forma: um estudo por linha, 6+ domínios).
+- **As 3 discussões já gravadas com essas tabelas não foram corrigidas pelo deploy** — a prosa das três **cita** a tabela ("a tabela abaixo resume…"), então recortar o bloco deixaria referência órfã. Conserto = regeneração. Decisão do professor pendente.
+
 
 ## Remoção das sociedades ATA e Endocrine Society (2026-07-23)
 - **Pedido:** "tirar os comunicados da ATA e endocrine society". Removidas do `SOCIETY_SOURCES` (`lib/radar.js`) — o radar **não puxa mais** esses comunicados. Sobraram **SBEM** e **SBD**.
