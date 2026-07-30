@@ -179,12 +179,20 @@ const perto = (a, b) => Math.abs(a - b) < 1e-9;
   const r = ctx.sophiaTrajetoria(v);
   const g = ctx.sophiaGraficoHTML(r, 120);
   ok('o gráfico é SVG', g.indexOf('<svg') === 0 && g.indexOf('</svg>') > 0);
-  ok('há um traço pontilhado (trecho não modelado)', /stroke-dasharray="4 3"/.test(g), g.slice(0, 200));
-  ok('e um traço cheio (12→24→60)', /stroke-width="2"\/>/.test(g));
-  ok('os quatro pontos aparecem rotulados',
-     ['120.0', '84.0', '74.4', '80.4'].every(function (t) { return g.indexOf('>' + t + '<') > 0; }), g);
-  ok('os marcos de tempo estão no eixo',
-     ['>0<', '>12<', '>24<', '>60<'].every(function (t) { return g.indexOf(t) > 0; }));
+  ok('há um traço pontilhado (trecho não modelado)', /stroke-dasharray="5 4"/.test(g), g.slice(0, 200));
+  ok('e um traço cheio no trecho modelado', /stroke-width="2\.4"/.test(g));
+  ok('a faixa sombreada marca onde o modelo começa', /<rect x="44"/.test(g));
+  ok('os quatro pontos aparecem rotulados com unidade',
+     ['120.0 kg', '84.0 kg', '74.4 kg', '80.4 kg'].every(function (t) { return g.indexOf('>' + t + '<') > 0; }), g);
+  ok('os marcos de tempo estão no eixo, por extenso',
+     ['>pré-op<', '>1 ano<', '>2 anos<', '>5 anos<'].every(function (t) { return g.indexOf(t) > 0; }));
+  // ⚠️ As marcas do eixo do peso são REDONDAS (múltiplos de 5). Antes saíam os
+  // extremos crus do intervalo — 125/95/66 — que ninguém lê.
+  ok('as marcas do eixo do peso são múltiplos de 5',
+     (g.match(/fill-opacity="\.55">(\d+)</g) || []).every(function (t) { return Number(t.replace(/\D/g, '')) % 5 === 0; }), g);
+  // ⚠️ NÃO pode escalar sem limite: com width:100% e height:auto num viewBox
+  // pequeno, o gráfico virava um bloco de mil pixels de altura na tela larga.
+  ok('o gráfico tem largura máxima', /max-width:480px/.test(g));
 
   const t = ctx.sophiaTabelaHTML(r, 120, 170);
   ok('a tabela tem as cinco colunas', ['Peso (kg)', '%PPT', 'IMC', '%PEP'].every(function (h) { return t.indexOf(h) > 0; }));

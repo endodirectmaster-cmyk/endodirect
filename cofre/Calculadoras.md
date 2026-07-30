@@ -87,6 +87,20 @@ Pedido do professor. A lista corrida passou de 30 itens e virava varredura visua
 - **⚠️ `grid-column:1/-1` no título e na sub-grade.** O container é `.g3` (3 colunas); sem isso cada título ocuparia uma célula de um terço e a lista sairia intercalada com os cards.
 - O card deixou de repetir a área — ela já é o título do grupo.
 
+**Abas de área acima da lista (mesmo dia, segundo pedido).** Agrupar resolveu a leitura, mas com 30 itens ainda era preciso rolar até o grupo. Agora há uma faixa de `pill-tab` — "Todas" + uma por área, com contagem — que filtra o grid.
+- **⚠️ Trocar de aba NÃO fecha a calculadora aberta.** `renderCalcGrid` só mexe no grid e nunca toca `activeCalc`; fechar apagaria o resultado que a pessoa está lendo. O teste verifica isso lendo o corpo da função.
+- Com uma área filtrada, o título do grupo é omitido — repetiria a aba selecionada.
+- Área que deixe de existir em `CALCS` cai de volta em "Todas" em vez de mostrar lista vazia.
+
+## Gráfico do SOPHIA: o que estava errado (2026-07-29)
+Primeira versão saía **gigante**: `viewBox` de 320×200 com `width:100%;height:auto` numa tela larga vira um bloco de mais de mil pixels de altura, e as fontes de 8 unidades escalam junto — números enormes, gráfico ilegível.
+
+- **`max-width:480px` e centralizado.** É o teto que faz o texto sair no tamanho pretendido.
+- **Marcas do eixo do peso arredondadas para múltiplos de 5**, com o eixo terminando *em cima* das marcas. Antes saíam os extremos crus do intervalo (125 / 95 / 66), que ninguém lê.
+- **Eixo do tempo por extenso** (pré-op · 1 ano · 2 anos · 5 anos) em vez de números de mês.
+- **Faixa sombreada** sobre o trecho pré-op→1 ano, além do pontilhado, para o olho ver onde o modelo começa.
+- **O rótulo do nadir (2 anos) vai ABAIXO do ponto**; acima colidiria com a linha que sobe para os 5 anos.
+
 ## Ajuste de framework
 `calcUpdate` mostra **`—`** quando `calc()` retorna não-finito (entrada incompleta ou idade fora da faixa) em vez de `NaN`.
 - **Campo `type:'date'`** (2026-06-15): o framework de calculadoras agora renderiza `<input type="date">` além de `num`/`select`. Helpers `ageMonthsFromDates(dobStr,domStr)` (idade em meses fracionários; `dom` vazio = hoje; mês médio 30,44 dias) e `ageLabelFromMonths(mo)`.

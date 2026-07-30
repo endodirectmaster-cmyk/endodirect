@@ -225,6 +225,10 @@ body{background:var(--bg);color:var(--tx);display:flex;flex-direction:column}
 .calc-area-tit span{font-size:.62rem;font-weight:600;letter-spacing:0;color:var(--t3);background:var(--s3,rgba(127,127,127,.12));border-radius:999px;padding:.05rem .4rem}
 .calc-area-tit:first-child{margin-top:0}
 .calc-area-grid{grid-column:1/-1;display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+.calc-pills-wrap{grid-column:1/-1}
+.calc-pills{margin:0 0 .35rem}
+.calc-pills .pill-tab{padding:.4rem .8rem;font-size:.73rem}
+.calc-pill-n{opacity:.6;font-weight:600;font-size:.68rem}
 .g4{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}
 .btn{border:none;border-radius:var(--rs);padding:.42rem .88rem;font-family:var(--font);font-size:.75rem;font-weight:500;cursor:pointer;display:inline-flex;align-items:center;gap:5px;line-height:1}
 .btn-primary{background:var(--blue);color:#fff}
@@ -2765,33 +2769,46 @@ function sophiaM60(p){
 // não é conhecida. Reta cheia ali daria a entender perda linear no primeiro ano,
 // que é falso — a perda real é concentrada nos primeiros meses.
 function sophiaGraficoHTML(r,pesoPre){
-  var W=320,H=200,x0=36,x1=310,y0=14,y1=172;
-  var pts=[[0,pesoPre],[12,r.peso12],[24,r.peso24],[60,r.peso60]];
+  var W=480,H=240,x0=44,x1=464,y0=22,y1=196;
+  var pts=[[0,pesoPre,'pré-op'],[12,r.peso12,'1 ano'],[24,r.peso24,'2 anos'],[60,r.peso60,'5 anos']];
   var pesos=pts.map(function(p){return p[1];});
   var wmin=Math.min.apply(null,pesos),wmax=Math.max.apply(null,pesos);
-  var span=Math.max(wmax-wmin,1);
-  var lo=wmin-span*0.18,hi=wmax+span*0.10;
+  // ⚠️ MARCAS "REDONDAS", não os extremos crus. Antes o eixo saía com 125/95/66,
+  // que é ruído: são os limites do intervalo, não valores que alguém leria.
+  // Passo múltiplo de 5, e o eixo termina EM cima das marcas.
+  var passo=Math.max(5,Math.ceil((wmax-wmin)/3/5)*5);
+  var lo=Math.floor((wmin-passo*0.35)/passo)*passo;
+  var marcas=[];for(var w=lo;w<wmax+passo*0.35;w+=passo)marcas.push(w);
+  if(marcas.length<2)marcas.push(lo+passo);
+  var hi=marcas[marcas.length-1];
   var xf=function(m){return x0+(m/60)*(x1-x0);};
-  var yf=function(w){return y1-((w-lo)/(hi-lo))*(y1-y0);};
+  var yf=function(v){return y1-((v-lo)/(hi-lo))*(y1-y0);};
   var g=[];
-  // Grade e rótulos do eixo do peso.
-  [0,0.5,1].forEach(function(f){
-    var w=lo+(hi-lo)*f,y=yf(w);
-    g.push('<line x1="'+x0+'" y1="'+y.toFixed(1)+'" x2="'+x1+'" y2="'+y.toFixed(1)+'" stroke="currentColor" stroke-opacity=".18" stroke-dasharray="3 3"/>');
-    g.push('<text x="'+(x0-5)+'" y="'+(y+3).toFixed(1)+'" text-anchor="end" font-size="8" fill="currentColor" fill-opacity=".6">'+Math.round(w)+'</text>');
+  marcas.forEach(function(v){
+    var y=yf(v);
+    g.push('<line x1="'+x0+'" y1="'+y.toFixed(1)+'" x2="'+x1+'" y2="'+y.toFixed(1)+'" stroke="currentColor" stroke-opacity=".13"/>');
+    g.push('<text x="'+(x0-8)+'" y="'+(y+3.2).toFixed(1)+'" text-anchor="end" font-size="9.5" fill="currentColor" fill-opacity=".55">'+v+'</text>');
   });
-  [0,12,24,60].forEach(function(m){
-    g.push('<text x="'+xf(m).toFixed(1)+'" y="'+(y1+13)+'" text-anchor="middle" font-size="8" fill="currentColor" fill-opacity=".6">'+m+'</text>');
+  g.push('<text x="12" y="'+((y0+y1)/2).toFixed(1)+'" font-size="9" fill="currentColor" fill-opacity=".5" text-anchor="middle" transform="rotate(-90 12 '+((y0+y1)/2).toFixed(1)+')">peso (kg)</text>');
+  g.push('<line x1="'+x0+'" y1="'+y1+'" x2="'+x1+'" y2="'+y1+'" stroke="currentColor" stroke-opacity=".3"/>');
+  // Faixa sombreada do trecho não modelado, para o olho ver onde o modelo começa.
+  g.push('<rect x="'+x0+'" y="'+y0+'" width="'+(xf(12)-x0).toFixed(1)+'" height="'+(y1-y0)+'" fill="currentColor" fill-opacity=".04"/>');
+  pts.forEach(function(p){
+    g.push('<line x1="'+xf(p[0]).toFixed(1)+'" y1="'+y1+'" x2="'+xf(p[0]).toFixed(1)+'" y2="'+(y1+4)+'" stroke="currentColor" stroke-opacity=".3"/>');
+    g.push('<text x="'+xf(p[0]).toFixed(1)+'" y="'+(y1+15)+'" text-anchor="'+(p[0]===0?'start':(p[0]===60?'end':'middle'))+'" font-size="9" fill="currentColor" fill-opacity=".62">'+p[2]+'</text>');
   });
-  g.push('<text x="'+((x0+x1)/2).toFixed(1)+'" y="'+(H-2)+'" text-anchor="middle" font-size="7.5" fill="currentColor" fill-opacity=".5">meses após a cirurgia</text>');
-  // Trecho não modelado (0→12) e trecho modelado (12→24→60).
-  g.push('<path d="M'+xf(0).toFixed(1)+' '+yf(pesoPre).toFixed(1)+' L'+xf(12).toFixed(1)+' '+yf(r.peso12).toFixed(1)+'" fill="none" stroke="#60a5fa" stroke-width="1.6" stroke-dasharray="4 3" stroke-opacity=".5"/>');
-  g.push('<path d="M'+xf(12).toFixed(1)+' '+yf(r.peso12).toFixed(1)+' L'+xf(24).toFixed(1)+' '+yf(r.peso24).toFixed(1)+' L'+xf(60).toFixed(1)+' '+yf(r.peso60).toFixed(1)+'" fill="none" stroke="#60a5fa" stroke-width="2"/>');
+  g.push('<text x="'+((x0+x1)/2).toFixed(1)+'" y="'+(H-4)+'" text-anchor="middle" font-size="8.5" fill="currentColor" fill-opacity=".45">meses após a cirurgia</text>');
+  // Trecho não modelado (pré-op → 1 ano) pontilhado; o modelado, cheio.
+  g.push('<path d="M'+xf(0).toFixed(1)+' '+yf(pesoPre).toFixed(1)+' L'+xf(12).toFixed(1)+' '+yf(r.peso12).toFixed(1)+'" fill="none" stroke="#60a5fa" stroke-width="2" stroke-dasharray="5 4" stroke-opacity=".45"/>');
+  g.push('<path d="M'+xf(12).toFixed(1)+' '+yf(r.peso12).toFixed(1)+' L'+xf(24).toFixed(1)+' '+yf(r.peso24).toFixed(1)+' L'+xf(60).toFixed(1)+' '+yf(r.peso60).toFixed(1)+'" fill="none" stroke="#60a5fa" stroke-width="2.4" stroke-linejoin="round"/>');
   pts.forEach(function(p,i){
-    g.push('<circle cx="'+xf(p[0]).toFixed(1)+'" cy="'+yf(p[1]).toFixed(1)+'" r="'+(i===0?2.4:3.2)+'" fill="#60a5fa"'+(i===0?' fill-opacity=".55"':'')+'/>');
-    g.push('<text x="'+xf(p[0]).toFixed(1)+'" y="'+(yf(p[1])-7).toFixed(1)+'" text-anchor="'+(p[0]===0?'start':(p[0]===60?'end':'middle'))+'" font-size="8.5" font-weight="700" fill="currentColor" fill-opacity=".85">'+p[1].toFixed(1)+'</text>');
+    var cy=yf(p[1]);
+    g.push('<circle cx="'+xf(p[0]).toFixed(1)+'" cy="'+cy.toFixed(1)+'" r="'+(i===0?3:4)+'" fill="#60a5fa"'+(i===0?' fill-opacity=".5"':'')+' stroke="var(--surface)" stroke-width="1.4"/>');
+    // O rótulo do nadir vai ABAIXO do ponto; acima colidiria com a linha que sobe.
+    var acima=!(i===2);
+    g.push('<text x="'+xf(p[0]).toFixed(1)+'" y="'+(acima?cy-9:cy+13).toFixed(1)+'" text-anchor="'+(p[0]===0?'start':(p[0]===60?'end':'middle'))+'" font-size="10.5" font-weight="700" fill="currentColor" fill-opacity=".9">'+p[1].toFixed(1)+' kg</text>');
   });
-  return '<svg viewBox="0 0 '+W+' '+H+'" style="width:100%;height:auto;color:var(--tx)" role="img" aria-label="Trajetória de peso prevista">'+g.join('')+'</svg>';
+  return '<svg viewBox="0 0 '+W+' '+H+'" style="display:block;width:100%;max-width:480px;height:auto;margin:0 auto;color:var(--tx)" role="img" aria-label="Trajetória de peso prevista">'+g.join('')+'</svg>';
 }
 function sophiaTabelaHTML(r,pesoPre,alturaCm){
   var m=alturaCm/100,ideal=25*m*m,exc=pesoPre-ideal;
@@ -7891,24 +7908,48 @@ function calcEl(sel){return (calcRoot||document.getElementById('panel-calc')||do
 function initCalc(root){
   calcRoot=root||document.getElementById('panel-calc')||document;
   var el=calcEl('#calc-grid');if(!el)return;
-  // Agrupado por ÁREA (pedido do professor, 29/07). A lista corrida passou de 30
-  // calculadoras e virava varredura visual; por área, quem procura "cálcio
-  // corrigido" olha em Osteometabolismo e não no meio de risco cardiovascular.
-  // A ordem das áreas segue a PRIMEIRA aparição em CALCS, não alfabética: a
-  // ordem do array já expressa prioridade (risco CV e antropometria primeiro).
+  renderCalcGrid();
+  if(activeCalc)openCalc(activeCalc);
+}
+// Índice por ÁREA. A ordem das áreas segue a PRIMEIRA aparição em CALCS, não
+// alfabética: a ordem do array já expressa prioridade (risco CV e antropometria
+// primeiro), e ordenar por nome jogaria "Adrenal" para o topo sem motivo.
+function calcAreasIndex(){
   var areas=[],porArea={};
   CALCS.forEach(function(c){
     var a=c.area||'Outras';
     if(!porArea[a]){porArea[a]=[];areas.push(a);}
     porArea[a].push(c);
   });
-  el.innerHTML=areas.map(function(a){
-    return '<div class="calc-area-tit">'+esc(a)+' <span>'+porArea[a].length+'</span></div>'
-      +'<div class="calc-area-grid">'+porArea[a].map(function(c){
+  return{areas:areas,porArea:porArea};
+}
+// Abas de área ACIMA da lista (pedido do professor, 29/07). Com 30 calculadoras,
+// mesmo agrupada a lista exige rolar até achar o grupo; a aba leva direto.
+// O filtro NÃO fecha a calculadora aberta — trocar de aba com um resultado na
+// tela não pode apagar o que a pessoa estava lendo.
+var calcAreaFiltro='';
+function renderCalcGrid(){
+  var el=calcEl('#calc-grid');if(!el)return;
+  var ix=calcAreasIndex();
+  if(calcAreaFiltro&&ix.areas.indexOf(calcAreaFiltro)<0)calcAreaFiltro='';   // área que deixou de existir
+  var visiveis=calcAreaFiltro?[calcAreaFiltro]:ix.areas;
+  var pills='<div class="pill-tab-row calc-pills">'
+    +'<button class="pill-tab'+(calcAreaFiltro?'':' on')+'" data-calcarea="">Todas <span class="calc-pill-n">'+CALCS.length+'</span></button>'
+    +ix.areas.map(function(a){
+      return '<button class="pill-tab'+(calcAreaFiltro===a?' on':'')+'" data-calcarea="'+esc(a)+'">'+esc(a)+' <span class="calc-pill-n">'+ix.porArea[a].length+'</span></button>';
+    }).join('')
+    +'</div>';
+  var grupos=visiveis.map(function(a){
+    // Com uma área só na tela, o título do grupo repetiria a aba selecionada.
+    return (calcAreaFiltro?'':'<div class="calc-area-tit">'+esc(a)+' <span>'+ix.porArea[a].length+'</span></div>')
+      +'<div class="calc-area-grid">'+ix.porArea[a].map(function(c){
         return'<div class="card" style="cursor:pointer" data-calc="'+c.id+'"><div style="font-size:.84rem;font-weight:700;color:var(--tx);margin-bottom:2px">'+esc(c.name)+'</div><div style="font-size:.71rem;color:var(--t2)">'+esc(c.desc)+'</div></div>';
       }).join('')+'</div>';
   }).join('');
-  if(activeCalc)openCalc(activeCalc);
+  el.innerHTML='<div class="calc-pills-wrap">'+pills+'</div>'+grupos;
+  el.querySelectorAll('[data-calcarea]').forEach(function(b){
+    b.addEventListener('click',function(){calcAreaFiltro=b.getAttribute('data-calcarea')||'';renderCalcGrid();});
+  });
 }
 function closeCalc(){
   activeCalc=null;
