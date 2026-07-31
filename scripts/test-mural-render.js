@@ -63,6 +63,25 @@ ok('## vira título de seção', /<div class="mural-h"/.test(R('## Achados')));
 ok('parágrafo comum vira <p>', /<p class="mural-p"/.test(R('Texto simples.')));
 ok('**negrito** é interpretado', /<(b|strong)>/.test(R('valor **6,2%** aqui')));
 
+// ---- 4b. ⚠️ ITÁLICO COM UNDERSCORE ------------------------------------------
+// O professor viu `_D_` escrito na tela (30/07), no cabeçalho de uma league
+// table de metanálise em rede. O JATS traz os códigos dos tratamentos em
+// itálico; a IA reproduziu com underscore, a única marca de ênfase que este
+// renderizador não conhecia.
+//
+// ⚠️ O QUE ESTE BLOCO TRAVA JUNTO: `__x__` é SUBLINHADO nesta plataforma (marca
+// do editor WYSIWYG), não itálico duplo. Se a regra do underscore simples rodar
+// antes, ela come a marca dupla e o sublinhado do professor vira itálico. E
+// identificador com underscore no meio de palavra não pode virar ênfase.
+ok('_itálico_ é interpretado', /<em>D<\/em>/.test(R('cabeçalho _D_ aqui')), R('cabeçalho _D_ aqui'));
+ok('_itálico_ não deixa underscore visível', R('cabeçalho _D_ aqui').indexOf('_D_') < 0);
+ok('na célula da tabela também', ctx.muralTextHTML('| _D_ | _A_ |\n|---|---|\n| D | 57,02 |').indexOf('<em>D</em>') > 0,
+   ctx.muralTextHTML('| _D_ | _A_ |\n|---|---|\n| D | 57,02 |'));
+ok('__sublinhado__ continua sublinhado', /<u>x<\/u>/.test(R('marca __x__ aqui')), R('marca __x__ aqui'));
+ok('identificador com underscore no meio fica intacto',
+   R('a chave user_profile e o gene SLC38A1_v2').indexOf('<em>') < 0, R('a chave user_profile e o gene SLC38A1_v2'));
+ok('underscore solto não vira ênfase', R('faixa de 5 _ 10 mg').indexOf('<em>') < 0);
+
 // ---- 5. o rodapé de origem da discussão, que vem depois de uma régua --------
 const rodape = R('Fim da discussão.\n\n---\n\n*Discussão elaborada sobre o texto integral (PMC 123).*');
 ok('rodapé: régua + texto, sem "---" visível', rodape.indexOf('mural-hr') >= 0 && rodape.indexOf('>---<') < 0);

@@ -5,6 +5,17 @@ atualizado: 2026-07-30
 
 # Newsletter e Radar
 
+### ⚠️ `_itálico_` não era interpretado — e o aluno via `_D_` na tela (2026-07-30)
+O professor mostrou uma league table de metanálise em rede cujo cabeçalho saía como `| _D_ | _A_ | _C_ | _B_ |`. O JATS traz os códigos dos tratamentos em itálico; a IA reproduziu com **underscore**, e essa era a única marca de ênfase que o renderizador do card não conhecia.
+
+**O erro que quase cometi:** corrigi primeiro em `mdInline` e o teste continuou reprovando. O card do Mural tem renderizador **próprio** — `muralInlineHTML` (~l.14816) — e não passa por `mdInline`. O comentário no código já avisava; eu não li antes de editar.
+
+- A regra vai **depois** de `__sublinhado__`: nesta plataforma a marca dupla é sublinhado (convenção do editor WYSIWYG), e a regra do underscore simples rodando antes comeria a dupla.
+- Guardas de borda `(^|[^\w_])` e `(?![\w_])` para não transformar `user_profile` nem `SLC38A1_v2` em ênfase.
+- **A mesma regra existe nos dois renderizadores, de propósito.** São dois por razões históricas, mas as marcas de ênfase têm de bater: marca que funciona num e não no outro é defeito que só aparece para o aluno.
+- Teste em `scripts/test-mural-render.js`, incluindo a célula de tabela e a preservação de `__sublinhado__`.
+
+
 ## ⚠️ Tabela de estudos incluídos não vai para o card (2026-07-30)
 Pedido do professor a partir de uma metanálise de HIIT vs MICT: *"exclui essas tabelas assim dos estudos de metanálises"*. A discussão tinha reproduzido a tabela de **8 colunas × 20 estudos**, com o protocolo de cada braço por extenso — no card vira um bloco com rolagem horizontal que ninguém lê, e o aluno não tira dali nenhuma conduta.
 
