@@ -316,7 +316,10 @@ const perto = (a, b) => Math.abs(a - b) < 1e-9;
   ok('a entrada de CALCS expõe o extra', typeof C.extra === 'function');
   const ex = C.extra(C.calc(v), v);
   ok('o extra traz gráfico e tabela', ex.indexOf('<svg') > 0 && ex.indexOf('%PEP') > 0);
-  ok('o extra explica o pontilhado', /pontilhado/.test(ex));
+  // ⚠️ O PARÁGRAFO DE LEGENDA SAIU (pedido do professor, 30/07: era longo demais
+  // e dominava a tela abaixo do gráfico). O extra é gráfico + tabela, e nada mais.
+  // A procedência dos números migrou para a `note`, conferida no bloco abaixo.
+  ok('o extra não tem mais parágrafo de legenda', ex.indexOf('A área sombreada') < 0, ex.slice(-300));
 
   // ---- faixa interquartil --------------------------------------------------
   // ⚠️ É a MESMA GRANDEZA que a ferramenta oficial sombreia (IQR do erro), mas
@@ -413,9 +416,15 @@ const perto = (a, b) => Math.abs(a - b) < 1e-9;
      (g.match(/aria-label="(1 mês|3 meses)[^"]*"/g) || []).every(function (a) { return a.indexOf('faixa') < 0; }), g);
   ok('a tabela tem a coluna da faixa', t.indexOf('Faixa (kg)') > 0);
   ok('a tabela mostra a faixa calculada', t.indexOf('66.8–82.0') > 0, t);
-  ok('a legenda diz que é interquartil e como foi obtida',
-     /faixa interquartil/.test(ex) && /Tabela 3/.test(ex) && /aproximação normal/.test(ex));
-  ok('a legenda declara a diferença em relação à ferramenta oficial', /simétrica em torno da previsão/.test(ex));
+  // ⚠️ A IDENTIFICAÇÃO DA FAIXA MIGROU PARA A `note`, MAS NÃO PODE SUMIR.
+  // Faixa sombreada sem rótulo é lida como IC 95% — e ela é INTERQUARTIL, metade
+  // dos pacientes. Confundir as duas dobraria a incerteza percebida numa conversa
+  // pré-operatória. Por isso a nota tem de dizer o que é, de onde vem e em que
+  // difere da faixa da ferramenta oficial.
+  ok('a nota diz que a faixa é interquartil, não 95%',
+     /faixa INTERQUARTIL/.test(C.note) && /e não 95%/.test(C.note), C.note.slice(-400));
+  ok('a nota diz de onde a faixa vem', /Tabela 3/.test(C.note) && /aproximação normal/.test(C.note));
+  ok('a nota declara a diferença em relação à ferramenta oficial', /simétrica em torno da previsão/.test(C.note));
 }
 
 console.log(bad ? '\nFALHOU: ' + bad : '\n✓ SOPHIA: 22 folhas, n fechando (948/755/578), 10 valores da tabela oficial (M1/M3 por proporção, M12/M24/M60 por árvore), curva sem bico na emenda');
