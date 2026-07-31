@@ -12717,7 +12717,7 @@ function admMuralSecHTML(){
     +'<div style="display:flex;gap:6px"><button class="btn btn-primary" id="btn-adm-addav">'+(admMuralEdit!==null?'💾 Salvar alterações':'+ Publicar no mural')+'</button><button class="btn btn-outline" id="btn-adm-av-cancel">Cancelar</button></div></div>'
   ):'';
 
-  return '<div class="adm-ph" style="display:flex;align-items:flex-start;justify-content:space-between;gap:.6rem;flex-wrap:wrap"><div><h1>Mural</h1></div><div style="display:flex;gap:.5rem;flex-wrap:wrap"><button class="btn btn-outline" id="btn-adm-radar" style="padding:.55rem 1rem">🔄 Atualizar radar agora</button><button class="btn btn-outline" id="btn-adm-disc-fila" style="padding:.55rem 1rem" title="Gera a discussao completa dos artigos de acesso aberto que ainda nao tem">📄 Gerar discussões pendentes</button><button class="btn btn-primary" id="btn-adm-newav" style="padding:.55rem 1.1rem">+ Novo aviso</button></div></div>'
+  return '<div class="adm-ph" style="display:flex;align-items:flex-start;justify-content:space-between;gap:.6rem;flex-wrap:wrap"><div><h1>Mural</h1></div><div style="display:flex;gap:.5rem;flex-wrap:wrap"><button class="btn btn-outline" id="btn-adm-radar" style="padding:.55rem 1rem">🔄 Atualizar radar agora</button><button class="btn btn-primary" id="btn-adm-newav" style="padding:.55rem 1.1rem">+ Novo aviso</button></div></div>'
   +'<div class="adm-pc">'
   +formHTML
   // banner de gestão
@@ -13829,7 +13829,13 @@ function bindAdmSec(sec){
       }).then(function(r){return r.json().catch(function(){return{ok:false,error:'Resposta inválida do servidor.'};});})
       .then(function(d){
         if(!d.ok)throw new Error(d.error||'Falha ao atualizar.');
-        notify(d.inserted>0?('Radar atualizado: '+d.inserted+' novo(s) artigo(s)!'):'Radar atualizado — nenhum artigo novo hoje.','ok');
+        // Repescagem de acesso aberto: artigos ANTIGOS cujo PMC so apareceu depois
+        // de entrarem no mural. Vale dizer quantos foram porque e o que os torna
+        // elegiveis a discussao completa — ate 31/07 essa resposta era calculada
+        // uma unica vez, na entrada, e o artigo ficava fora para sempre.
+        var repesc=Number(d.openAccessRepescados||0);
+        var msgOA=repesc>0?(' · '+repesc+' viraram acesso livre 📖'):'';
+        notify((d.inserted>0?('Radar atualizado: '+d.inserted+' novo(s) artigo(s)!'):'Radar atualizado — nenhum artigo novo hoje.')+msgOA,'ok');
         // ⚠️ Recarregar a LISTA de quais artigos tem discussao e obrigatorio aqui.
         // O texto nao vive no payload (fica em tabela propria), entao reler o
         // estado global nao traz noticia nenhuma da discussao recem-gravada:
@@ -13851,41 +13857,11 @@ function bindAdmSec(sec){
     // SERVIDOR (api/admin/refresh-radar, action:'discussao'): é lá que existe a
     // chave da IA e o acesso ao PMC, e é lá que a gravação é pontual — o
     // cliente reescreveria o payload inteiro e atropelaria o resto do mural.
-    // Gera a fila inteira, UMA REQUISICAO POR ARTIGO.
-    //
-    // ⚠️ POR QUE UM POR VEZ, e nao um laco no servidor: cada discussao leva ~40s
-    // e o teto de execucao do plano e 60s. A primeira tentativa pendurava a
-    // geracao no fim do "Atualizar radar" — e a etapa NUNCA era alcancada,
-    // porque radar, newsletter, podcasts e e-mails ja tinham gasto o tempo.
-    // Sumia sem erro e sem log (2026-07-29). Aqui cada artigo tem os seus 60s.
-    var bFila=document.getElementById('btn-adm-disc-fila');
-    if(bFila)bFila.addEventListener('click',function(){
-      var client=getSupabaseClient();
-      if(!client){notify('Supabase indisponível.','err');return;}
-      var rot=bFila.innerHTML;bFila.disabled=true;bFila.innerHTML=ldHTML('Lendo a fila...');
-      var tok='';
-      client.auth.getSession().then(function(r){
-        tok=r&&r.data&&r.data.session&&r.data.session.access_token;
-        if(!tok)throw new Error('Sessão expirada. Entre novamente.');
-        return fetch('/api/admin/refresh-radar',{method:'POST',
-          headers:{'Content-Type':'application/json',Authorization:'Bearer '+tok},
-          body:JSON.stringify({action:'discussao_fila'})}).then(function(r2){return r2.json();});
-      }).then(function(d){
-        if(!d.ok)throw new Error(d.error||'Não consegui ler a fila.');
-        var fila=d.fila||[];
-        if(!fila.length){notify('Nenhuma discussão pendente — todos os artigos elegíveis já têm.','ok');return null;}
-        // Dá a PARTIDA na cadeia no servidor e sai. Cada artigo ganha a sua
-        // invocação e chama a próxima; ~40s cada. Não prende a aba, e continua
-        // rodando mesmo se o professor fechar o navegador.
-        return fetch('/api/admin/refresh-radar',{method:'POST',
-          headers:{'Content-Type':'application/json',Authorization:'Bearer '+tok},
-          body:JSON.stringify({action:'discussao_cadeia'})})
-          .then(function(){
-            notify(fila.length+' artigo(s) na fila. Gerando em segundo plano (~40s cada) — recarregue a página daqui a alguns minutos.','ok');
-          });
-      }).catch(function(e){notify('Erro: '+((e&&e.message)||e),'err');})
-      .then(function(){var bb=document.getElementById('btn-adm-disc-fila');if(bb){bb.disabled=false;bb.innerHTML=rot;}});
-    });
+    // ⚠️ NÃO EXISTE MAIS BOTÃO "Gerar discussões pendentes" (retirado em 31/07, a
+    // pedido do professor). A fila não precisa dele: a cadeia tem quatro partidas
+    // automáticas (cron do radar, cron do healthcheck, abrir o Mural no painel e
+    // a carona no /api/checkout/config em qualquer carga de página) — ver
+    // lib/discussao-kick.js. O botão era só o atalho para adiantar a fila.
     main.querySelectorAll('[data-adm-disc]').forEach(function(b){b.addEventListener('click',function(){
       var sid=b.dataset.admDisc;if(!sid)return;
       var client=getSupabaseClient();
@@ -15251,7 +15227,7 @@ admMuralSecHTML=function(){
     +'<label class="adm-push-opt" style="display:flex;align-items:center;gap:.5rem;margin:.1rem 0 .8rem;font-size:.83rem;color:var(--t2);cursor:pointer"><input type="checkbox" id="adm-av-push"'+(admMuralEdit===null?' checked':'')+' style="width:16px;height:16px;flex-shrink:0"><span>📲 Notificar os alunos no celular (push)'+(admMuralEdit!==null?' — reenviar este aviso ao salvar':' ao publicar')+'. Use só para avisos e breaking news.</span></label>'
     +'<div style="display:flex;gap:6px"><button class="btn btn-primary" id="btn-adm-addav">'+(admMuralEdit!==null?'💾 Salvar alterações':'+ Publicar no mural')+'</button><button class="btn btn-outline" id="btn-adm-av-cancel">Cancelar</button></div></div>'
   ):'';
-  return '<div class="adm-ph" style="display:flex;align-items:flex-start;justify-content:space-between;gap:.6rem;flex-wrap:wrap"><div><h1>Mural</h1></div><div style="display:flex;gap:.5rem;flex-wrap:wrap"><button class="btn btn-outline" id="btn-adm-radar" style="padding:.55rem 1rem">🔄 Atualizar radar agora</button><button class="btn btn-outline" id="btn-adm-disc-fila" style="padding:.55rem 1rem" title="Gera a discussao completa dos artigos de acesso aberto que ainda nao tem">📄 Gerar discussões pendentes</button><button class="btn btn-primary" id="btn-adm-newav" style="padding:.55rem 1.1rem">+ Novo aviso</button></div></div>'
+  return '<div class="adm-ph" style="display:flex;align-items:flex-start;justify-content:space-between;gap:.6rem;flex-wrap:wrap"><div><h1>Mural</h1></div><div style="display:flex;gap:.5rem;flex-wrap:wrap"><button class="btn btn-outline" id="btn-adm-radar" style="padding:.55rem 1rem">🔄 Atualizar radar agora</button><button class="btn btn-primary" id="btn-adm-newav" style="padding:.55rem 1.1rem">+ Novo aviso</button></div></div>'
   +'<div class="adm-pc">'
   +(admMuralEdit===null?formHTML:'') // "Novo aviso" abre no topo; edição abre INLINE no próprio card (ver grid abaixo)
   +'<div class="card" style="margin-bottom:1.1rem"><div style="display:flex;align-items:flex-start;justify-content:space-between;gap:1rem;flex-wrap:wrap"><div style="flex:1;min-width:240px"><div style="font-size:.62rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--t3);margin-bottom:.3rem">Gestão do mural dos alunos</div><div style="font-size:1.15rem;font-weight:700;color:var(--tx);margin-bottom:.35rem">Edite avisos, notícias e comunicados importantes</div><div style="font-size:.79rem;color:var(--t2);line-height:1.55">Os cards abaixo alimentam a aba Mural do estudante. Use etiquetas por tipo de conteúdo e subespecialidade para organizar leituras e atualizações.</div></div></div></div>'

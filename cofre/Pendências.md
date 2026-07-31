@@ -1,9 +1,14 @@
 ---
 tags: [cofre, pendencias]
-atualizado: 2026-07-28
+atualizado: 2026-07-31
 ---
 
 # Pendências
+
+## Discussão do Mural: texto integral fora do PMC (2026-07-31)
+- [ ] **Artigo aberto na EDITORA mas nunca depositado no PMC continua sem discussão.** A repescagem de 31/07 (`lib/pmc-repescagem.js`) resolveu o **atraso** do depósito — o PMC que chega dias depois da entrada do artigo agora é reperguntado todo dia. O que ela **não** resolve: revista que publica sob CC BY e não vai ao PMC. `lib/fulltext.js` só sabe ler **JATS do PMC**, então nesses casos não há texto integral e o card fica só com o resumo — que é o limite correto do recurso, não um defeito.
+  - **Se o professor voltar a apontar artigos abertos sem discussão**, o caminho é uma **segunda fonte de texto integral**, não afrouxar a seleção: Europe PMC (`/europepmc/webservices/rest/{source}/{id}/fullTextXML`, JATS quase igual — o parser atual aproveitaria) e/ou Unpaywall/OpenAlex para descobrir o PDF/HTML aberto na editora. ⚠️ Gerar discussão a partir de **abstract** está descartado desde 28/07: é literalmente o erro dos artigos de Obesidade, em que afirmações verdadeiras para a classe não eram o que o ensaio mediu.
+  - **Primeiro medir, depois construir:** quantos dos itens não-abertos do mural o Europe PMC alcança? Só a produção responde — deste ambiente o proxy devolve 403 para `eutils`/`www.ncbi.nlm.nih.gov`/`ebi.ac.uk`.
 
 ## Retenção e ativação (2026-07-28, a partir do material de EdTech)
 **Contexto que orienta tudo abaixo:** 7 semanas de operação, **28 pagantes** (24 anuais à vista + 4 mensais) + 1 cortesia. Como quase todo mundo pagou **anual adiantado**, o churn só apareceria em **junho/2027** — quem parar de usar em agosto não gera sinal nenhum. Por isso o indicador que importa agora é **uso**, não receita. **Não montar dashboard de MRR/LTV/CAC neste estágio:** com n=28 e sem 12 meses de histórico, o LTV teria barra de erro maior que ele mesmo.

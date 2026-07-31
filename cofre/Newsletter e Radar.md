@@ -1,9 +1,32 @@
 ---
 tags: [cofre, newsletter, radar]
-atualizado: 2026-07-30
+atualizado: 2026-07-31
 ---
 
 # Newsletter e Radar
+
+### ⚠️ O PMC chega DEPOIS — e a pergunta só era feita uma vez (2026-07-31)
+O professor apontou uma revisão de acesso aberto que não ganhou discussão sozinha: *"Artigo de revisão de revista open access e não gerou discussão automaticamente"* — **"Is Hypercortisolism Treatable?"** (Diabetes, Obesity and Metabolism, `pubmed:42533758`, entrou em 31/07 às 08h16).
+
+**O tipo não era o problema.** "Artigo de Revisão" está em `TIPOS_QUE_RENDEM` desde 28/07. O item entrou com `link: https://doi.org/10.1111/dom.71163` e **`oa:false`**, e `qualifica()` (`lib/discussao-auto.js`) exige `pmcIdFromLink(item.link)`. Sem PMC não há texto integral, e sem texto integral não há discussão — isso é o limite que **define** o recurso.
+
+**O que era defeito:** `articleLink()` calcula o link **uma vez**, na entrada do artigo, a partir dos `articleids` do esummary — e nunca mais. Só que a editora deposita no PMC **dias ou semanas depois** da publicação online, e o radar é diário: ele pega o artigo **no primeiro dia** em que aparece no PubMed, que é exatamente quando o PMC ainda não existe. O artigo virava acesso aberto no dia seguinte e **ninguém reperguntava**.
+
+- **A escala, medida em 31/07:** dos **251** itens de PubMed no mural, **146** tinham link de DOI sem PMC — e **44 desses eram de um tipo que renderia discussão**. Não era um artigo; era um vazamento contínuo.
+- **O sinal já estava no cofre e eu não tinha lido como sintoma:** o backfill manual de 01/07 registrou *"2 PMIDs muito novos deram erro/sem PMC = pulados"*. Aquilo não era ruído do backfill — era o defeito aparecendo pela primeira vez, e o backfill foi feito **à mão, uma vez só**.
+
+**A correção — `lib/pmc-repescagem.js`:** todo run do radar repergunta ao conversor de ids da NCBI (`idconv`, PMID→PMCID) quais dos itens não-abertos ganharam PMC, e reescreve `link` + `oa` de quem ganhou. A partir daí o artigo entra na fila da discussão pelos gatilhos que já existem, sem nada novo.
+
+- **Corre EM PARALELO com a busca de artigos**, não pendurada no fim. São 1–2 requisições contra um bloco de 30–45s: custo de relógio ~zero. Pendurar no fim é como a geração automática ficou dois dias sem rodar em 29/07 — o teto real do plano é 60s e etapa no fim não é alcançada.
+- **Reusa o `fetchJson` paceado do radar.** O limite de req/s da NCBI é **por IP** e vale para o conversor também; solta em paralelo com o E-utilities, a dupla levaria 429.
+- **`aplicar()` é pura e roda entre o merge e o save.** A consulta à rede acontece **antes** da releitura do estado — a janela do read-modify-write curto continua de milissegundos, que é o que impede um run concorrente de sumir com itens.
+- **⚠️ Não sobrescreve link editado à mão.** Só troca o que o próprio `articleLink()` teria posto (`doi.org/…` ou `pubmed.ncbi.nlm.nih.gov/…`). Qualquer outro endereço foi o professor que digitou no card, e apagá-lo em silêncio seria pior que não repescar.
+- **`live:"false"` do conversor é descartado** (artigo retirado do PMC) — senão o card ganharia um link quebrado.
+- **Fail-safe:** NCBI fora do ar devolve mapa vazio e o radar do dia grava normalmente. Trocar um artigo antigo por nenhum artigo novo seria péssimo negócio.
+- **Diz quanto fez:** `openAccessRepescados` volta no `runRadar` e aparece no aviso do botão "Atualizar radar" (*"· 3 viraram acesso livre 📖"*). Etapa silenciosa vira "o recurso está quebrado" — já aconteceu duas vezes neste mesmo recurso.
+- **Teste:** `scripts/test-pmc-repescagem.js`, no CI. A asserção que importa é a **cadeia**: depois de repescar, `qualifica()` tem de passar a dizer **sim** para o mesmo artigo. Cobertura provada quebrando três coisas (guarda do link manual, `live:false`, aplicar no snapshot velho) — as três reprovam.
+
+**⚠️ O que isto NÃO resolve, e é bom não confundir com o pedido do professor:** *aberto na editora* ≠ *depositado no PMC*. Uma revista pode publicar sob CC BY e nunca ir ao PMC; `lib/fulltext.js` só sabe ler JATS do PMC. Se `pubmed:42533758` for esse caso, ele continua sem discussão — por falta de texto integral, não por seleção. Daqui **não dá para verificar** (o proxy deste ambiente devolve 403 no CONNECT para `eutils.ncbi.nlm.nih.gov`, `www.ncbi.nlm.nih.gov` e `ebi.ac.uk`); quem responde é o primeiro run em produção. Suportar texto integral fora do PMC (Europe PMC, Unpaywall, JATS da editora) é outro recurso, não um ajuste deste. Ver [[Pendências]].
 
 ### ⚠️ `_itálico_` não era interpretado — e o aluno via `_D_` na tela (2026-07-30)
 O professor mostrou uma league table de metanálise em rede cujo cabeçalho saía como `| _D_ | _A_ | _C_ | _B_ |`. O JATS traz os códigos dos tratamentos em itálico; a IA reproduziu com **underscore**, e essa era a única marca de ênfase que o renderizador do card não conhecia.
@@ -139,8 +162,16 @@ Três tentativas até acertar, e as duas primeiras erraram pelo mesmo motivo —
 
 - **Autenticação servidor-a-servidor:** o endpoint aceita `Bearer <CRON_SECRET>` além da sessão de admin. Esse segredo nunca chega ao navegador.
 - **⚠️ Disparar ANTES de responder.** Depois do `res.end()` a Vercel pode congelar a função e a requisição nem sai. O disparo usa `AbortController` com 2s: a conexão abre, a invocação do outro lado começa, e o abort é esperado — não é erro.
-- **Quem dá a partida:** o cron do radar (todo dia) e o botão "📄 Gerar discussões pendentes" (quando o professor quiser adiantar). O botão agora só dá a partida e avisa quantos estão na fila; não prende a aba.
+- **Quem dá a partida:** os quatro gatilhos da seção seguinte. (Até 31/07 havia também um botão "📄 Gerar discussões pendentes"; foi retirado a pedido do professor — ver acima.)
 - **Se um elo falhar, a cadeia para** — e o cron do dia seguinte recomeça. Aceitável, e melhor que travar tentando ser esperto.
+
+### ✂️ O botão "Gerar discussões pendentes" foi RETIRADO (2026-07-31)
+Pedido do professor: *"tira o botão de fazer as discussões pendentes"*. Era o último resquício manual de um recurso cujo pedido original sempre foi *"não quero clicar em nada"* — e, com os quatro gatilhos abaixo funcionando, ele não tinha mais função: a fila drena sozinha.
+
+- **Nada da automação depende dele.** ⚠️ O gatilho 3 da lista abaixo é **abrir o Mural** (`kickDiscussaoCadeia()` em `goPanel('mural')`), **não** o botão — são coisas diferentes, e é por isso que retirar o botão não tira nenhum dos quatro. Conferido antes de apagar.
+- **Saiu do `index.html`:** o `<button id="btn-adm-disc-fila">` (aparecia nas **duas** renderizações do cabeçalho do Mural) e o handler inteiro. Ficou comentário no lugar dizendo por que não existe mais — senão o próximo a ler o código acha que faltou ligar alguma coisa.
+- **`action:'discussao_fila'` continua no `api/admin/refresh-radar.js`**, agora sem cliente. É leitura pura, autenticada de admin, e serve para inspecionar a fila quando ela parecer parada — o que já foi preciso duas vezes. `filaDeDiscussoes()` segue em uso pela `discussao_cadeia`.
+- **Estado ao retirar:** 33 artigos qualificam, 30 já tinham discussão, **3 na fila** — drenados pela cadeia, sem clique.
 
 ### Quatro gatilhos, porque um só nunca bastou (2026-07-29)
 O professor voltou **cinco vezes** dizendo que a discussão não saía sozinha. Cada resposta minha dependia de algo que ele não ia fazer: primeiro do cron (1x/dia), depois de um botão, depois de o navegador dele já ter o JavaScript novo. A leitura correta do pedido é *"não quero clicar em nada"*.
