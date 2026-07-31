@@ -1,9 +1,37 @@
 ---
 tags: [cofre, processo]
-atualizado: 2026-07-28
+atualizado: 2026-07-31
 ---
 
 # Convenções de Trabalho
+
+## 🖥️ Mudança de JS no `index.html` — testar em NAVEGADOR REAL antes de mergear
+
+O cofre já registrava a regra ([[Pendências]], item do OSCE lazy): **dois apagões**
+em 2026-06 derrubaram toda a interatividade da plataforma com o `ci-validate`
+(parse) **e** um sandbox `vm` **passando**. O ferramental de parse não detecta o
+que quebra a execução desse `index.html` de 1,4 MB.
+
+Desde 31/07 existe o harness: **`scratchpad/boot-navegador/check.js`** — sobe
+Chromium de verdade (já vem no ambiente, `/opt/pw-browsers/chromium-1194/`) e roda
+o **mesmo teste contra a `main` e contra o branch**. Diferença entre os dois é
+culpa do diff. É o substituto do preview da Vercel quando o proxy não alcança
+`vercel.app` (que é o caso deste ambiente).
+
+**A sonda que presta:** a **última linha** do bloco grande liga um listener em
+`#fb-submit`. Se ele existe (lido por CDP `DOMDebugger.getEventListeners`), as
+13.398 linhas rodaram até o fim — que é exatamente o que o apagão quebrava.
+
+### ⚠️ Duas armadilhas que me fizeram ler um falso apagão (31/07)
+1. **Os `<script src>` de CDN são bloqueantes e o proxy os PENDURA** em vez de
+   recusar. Sem interceptar, o parser trava no primeiro e **nenhum bloco inline
+   executa** — os dois lados medem zero e parece que o app morreu.
+2. **O app inteiro é uma IIFE** (`l.2552–15950`, `'use strict'`). As funções
+   **não** viram propriedades de `window`: `typeof goPanel` é `'undefined'` com
+   tudo funcionando. Minha primeira versão sondava `window[...]` e "reprovou" um
+   branch que estava perfeito. **Sonda errada é pior que teste nenhum** — ela
+   produz um veredito com cara de evidência.
+
 
 ## ⚠️ Ler o cofre ANTES de escrever código — não só depois, para registrar
 
