@@ -79,7 +79,14 @@ const ft = {
   const codigo = src.replace(/^\s*\/\/.*$/gm, '');
   ok('lib/discussao.js não monta rodapé', codigo.indexOf('Discussão elaborada sobre') < 0);
   ok('lib/discussao.js não conta tabelas para o texto', !/tabela\(s\) reproduzida\(s\)/.test(codigo));
-  ok('o markdown gravado é o da IA, sem apêndice', /markdown:\s*md\s*,/.test(codigo));
+  // O gravado é o texto da IA com as tabelas do ARTIGO coladas no lugar dos
+  // marcadores — e nada além disso. Nenhum rodapé, nenhum selo, nenhum apêndice.
+  ok('o markdown gravado é o da IA com as tabelas do artigo', /markdown:\s*comTabelas\.markdown\s*,/.test(codigo));
+  // ⚠️ A tabela do artigo não pode servir de enchimento para uma discussão curta:
+  // a checagem de tamanho mínimo roda no texto da IA, ANTES da colagem.
+  // (procura a CHAMADA, não a declaração da função, que vem antes no arquivo)
+  ok('a colagem acontece depois da checagem de tamanho',
+     codigo.indexOf("motivo: 'resposta_curta'") < codigo.indexOf('= inserirTabelas(md'));
 }
 
 // ---- 5. ⚠️ O CABEÇALHO DO CARD NÃO ANUNCIA TABELA NEM FIGURA ---------------
@@ -92,23 +99,64 @@ const ft = {
   ok('nenhum código preenche o selo', html.indexOf("querySelector('.mural-disc-meta')") < 0);
 }
 
-// ---- 6. as instruções sobre tabela dizem o que precisam dizer ---------------
-// A primeira regeneração com as tabelas no prompt saiu com a tabela reproduzida,
-// mas com os cabeçalhos em inglês, copiados do artigo — no meio de um texto em
-// português. E "reproduzir" precisa estar dito como colar, não como descrever:
-// era exatamente descrevendo que o modelo fugia da tabela.
+// ---- 6. ⚠️ A TABELA VEM DO ARTIGO, NÃO DA IA -------------------------------
+// Decisão do professor (30/07): "reproduzir fiel ao artigo". Ele viu uma league
+// table de metanálise em rede sair deformada — a IA reescreveu a comparação par
+// a par como tabela comum e INVENTOU um cabeçalho (`| _D_ | _A_ | _C_ | _B_ |`)
+// que o artigo não tem: ali o rótulo dos tratamentos vive na DIAGONAL.
+//
+// A instrução antiga mandava "reproduzir em markdown" e "traduzir os cabeçalhos"
+// — ou seja, mandava o modelo REESCREVER, que é justamente onde ele erra. Agora
+// a IA só marca o LUGAR e a colagem é do servidor.
 {
   const { montarPrompt } = require('../lib/discussao');
   const artigo = { titulo: 'T', fonte: 'F', tipo: 'Artigo de Revisão' };
   const comTabela = montarPrompt(artigo, ft);
-  ok('manda reproduzir em markdown', /\*\*Reproduza no corpo da discussão, em markdown\*\*/.test(comTabela));
-  ok('manda traduzir a tabela', /A tabela sai em português/.test(comTabela));
-  ok('preserva número, sigla, fármaco e táxon', /números, unidades, siglas, nomes de fármacos/.test(comTabela));
-  ok('diz que reproduzir é colar, não descrever', /Reproduzir é colar a tabela, não descrevê-la/.test(comTabela));
+  ok('manda marcar o lugar, não copiar', /escreva o marcador sozinho numa linha/.test(comTabela));
+  ok('proíbe copiar, traduzir e reescrever', /NÃO copie, não traduza e não reescreva a tabela/.test(comTabela));
+  ok('explica por que copiar à mão dá errado', /vive na diagonal/i.test(comTabela));
+  ok('cada tabela chega numerada', /\[\[TABELA:1\]\]/.test(comTabela) && /\[\[TABELA:4\]\]/.test(comTabela));
+  // ⚠️ A instrução de TRADUZIR não pode voltar: traduzir é reescrever.
+  ok('não manda mais traduzir a tabela', comTabela.indexOf('A tabela sai em português') < 0);
 
   const semTabela = montarPrompt(artigo, Object.assign({}, ft, { tabelas: [] }));
-  ok('sem tabela, não manda reproduzir nada', semTabela.indexOf('Reproduza no corpo') < 0);
+  ok('sem tabela, não fala em marcador', semTabela.indexOf('[[TABELA:') < 0);
   ok('sem tabela, diz que não há', /não tem tabelas extraíveis/.test(semTabela));
+}
+
+// ---- 6b. ⚠️ A SUBSTITUIÇÃO DO MARCADOR --------------------------------------
+{
+  const { inserirTabelas } = require('../lib/discussao');
+  // A league table exata que o professor mostrou: rótulos na diagonal.
+  const league = {
+    rotulo: 'Table 8',
+    legenda: 'Pairwise relative effects on TPOAb: mean difference (MD, IU/mL).',
+    markdown: '| D | 57,02 (50,05;63,99) | 72,71 (27,89;117,53) |\n|---|---|---|\n| -57,02 (-63,99;-50,05) | A | 15,69 (-28,65;60,03) |',
+    nota: 'A = MMI; B = Xiaoyao + MMI; C = Huagan + MMI; D = Huotan Jiangni + MMI.'
+  };
+  const r = inserirTabelas('## Achados\n\nA tabela abaixo traz as comparações.\n\n[[TABELA:1]]\n\nLê-se nela que…', [league]);
+  ok('o marcador vira a tabela do artigo', r.markdown.indexOf('57,02 (50,05;63,99)') > 0, r.markdown);
+  ok('nenhum marcador sobra na tela', r.markdown.indexOf('[[TABELA') < 0, r.markdown);
+  ok('a legenda original acompanha', r.markdown.indexOf('Table 8. Pairwise relative effects') > 0, r.markdown);
+  // ⚠️ A NOTA É O QUE DÁ SENTIDO ÀS LETRAS DA DIAGONAL. Sem ela, "A", "B", "C" e
+  // "D" não significam nada — foi metade da estranheza que o professor relatou.
+  ok('a nota de rodapé acompanha', r.markdown.indexOf('A = MMI; B = Xiaoyao') > 0, r.markdown);
+  ok('a prosa em volta é preservada', r.markdown.indexOf('A tabela abaixo traz') > 0 && r.markdown.indexOf('Lê-se nela') > 0);
+  ok('registra qual tabela entrou', r.usadas.length === 1 && r.usadas[0] === 1, JSON.stringify(r.usadas));
+
+  // Marcador para tabela que não existe não pode virar texto na tela.
+  const inval = inserirTabelas('Texto.\n\n[[TABELA:9]]\n\nMais texto.', [league]);
+  ok('marcador inválido some', inval.markdown.indexOf('[[TABELA') < 0 && inval.usadas.length === 0, inval.markdown);
+  ok('e o texto em volta sobrevive', inval.markdown.indexOf('Texto.') === 0 && inval.markdown.indexOf('Mais texto.') > 0);
+
+  // Marcador no meio de uma frase: não vira tabela, mas também não fica à vista.
+  const meio = inserirTabelas('Como se vê em [[TABELA:1]] adiante.', [league]);
+  ok('marcador no meio da frase não fica visível', meio.markdown.indexOf('[[TABELA') < 0, meio.markdown);
+
+  // Sem marcador nenhum, o texto passa intacto.
+  const semMarca = inserirTabelas('## Achados\n\nSó prosa aqui.', [league]);
+  ok('sem marcador, o texto não é tocado', semMarca.markdown === '## Achados\n\nSó prosa aqui.' && semMarca.usadas.length === 0);
+  ok('lista de tabelas vazia não quebra', inserirTabelas('a\n\n[[TABELA:1]]\n\nb', []).markdown.indexOf('[[TABELA') < 0);
 }
 
 // ---- 7. ⚠️ A COLUNA DE REFERÊNCIAS NÃO CHEGA À IA -------------------------
