@@ -210,5 +210,18 @@ try {
   fail('regressão da liberação em lote falhou (verifique _admRascunhosDaSub/btn-ref-liberar-lote no index.html):\n' + out);
 }
 
+// 17. CURADORIA da Questão do Dia: toda subespecialidade de DIR_SUBS precisa ter
+//     UM curador. "Endocrinologia Básica" estava sem nenhum — questão gerada com
+//     esse rótulo caía em "(sem responsável)" e não entrava na fila de professor
+//     algum, sem erro e sem log. Cobre também sub com dois donos e item solto no
+//     seletor do gerador (foi assim que "Transgeneridade" saía duplicada).
+try {
+  execFileSync(process.execPath, [path.join('scripts', 'test-curadoria-qotd.js')], { stdio: 'pipe' });
+  ok('regressão curadoria QdD: nenhuma sub órfã nem com dois donos + seletor sem duplicata');
+} catch (e) {
+  const out = (e.stdout ? e.stdout.toString() : '') + (e.stderr ? e.stderr.toString() : '');
+  fail('regressão da curadoria da Questão do Dia falhou (verifique QOTD_CURATORS/DIR_SUBS/loteSubs no index.html):\n' + out);
+}
+
 if (errors) { console.error(`\n${errors} verificação(ões) falharam.`); process.exit(1); }
 console.log('\nTodas as verificações passaram.');

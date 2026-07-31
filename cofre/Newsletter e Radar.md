@@ -14,6 +14,15 @@ Depois de retirar o botão, a cadeia drenou 3 pendentes e **parou em 1**: `pubme
 - **O efeito colateral que importa:** como esse item nunca grava, a marca de "cadeia andando" (`deveKickar` olha a escrita mais recente em `endodirect_mural_discussoes`) nunca se renova por causa dele — cada carga de página ≥10 min dispara uma partida que tenta o mesmo artigo. Barato, mas eterno.
 - **Se incomodar,** a saída é um teto de tentativas por `sourceId` (coluna de falhas ou lista de descartados), não afrouxar o piso de 600 palavras — discussão a partir de resumo é exatamente o erro de 28/07.
 
+### ✅ Artigo aberto FORA do PMC: o professor manda o PDF e a discussão entra à mão (2026-07-31)
+O caso previsto na pendência aconteceu no mesmo dia. `pubmed:42533758` ("Is Hypercortisolism Treatable?", Diabetes, Obesity and Metabolism) é **acesso aberto na editora e não está no PMC** — a repescagem não o alcança e nunca vai alcançar. O professor mandou o **PDF do texto integral** e pediu a revisão no mural.
+
+- **Caminho usado:** extração do texto do PDF (16 páginas, 14.007 palavras) → discussão redigida no **mesmo formato das automáticas** (as 5 seções `## `, registro formal, sem jargão de IA) → `insert … on conflict (source_id) do update` em `endodirect_mural_discussoes`. Verificado pelas RPCs: aparece em `endodirect_mural_discussoes_ids()` e `endodirect_mural_discussao()` entrega 24.217 caracteres.
+- **⚠️ Escrever nessa tabela por fora do app é SEGURO**, ao contrário de `endodirect_global_state.payload`: o cliente só a **lê** (por RPC), nunca a regrava inteira. Foi o payload que me clobberou duas vezes hoje; aqui não há corrida.
+- **⚠️ LICENÇA CC BY-NC-ND — e por isso as 3 tabelas do artigo NÃO foram reproduzidas.** `NC` proíbe uso comercial e a plataforma é paga; `ND` proíbe derivado, e traduzir/reformatar uma tabela é derivado. A discussão cita os **números** (fato não é protegido) com redação própria. Registrado em `meta.nota_licenca`.
+  - ⚠️ **Isto expõe uma lacuna do caminho automático:** `parseLicense` calcula `redistribuivel` (só CC BY/CC0) mas o `lib/fulltext.js` usa esse campo **só para figuras** — as tabelas do JATS são reproduzidas independentemente da licença. Num artigo CC BY-NC-ND vindo do PMC, hoje, a tabela seria colada. Ver [[Pendências]].
+- **O que a discussão priorizou**, e vale como modelo: os números que separam **rastreio positivo de doença** (14,3% de DST anormal × 2,1% de Cushing confirmado), os **três passos que mudam conduta** (pedir o DST antes de somar droga; medir dexametasona sérica junto; desescalar insulina/anti-hipertensivo quando o cortisol cai) e o **conflito de interesse** — a edição temática foi financiada pela **Corcept**, que fabrica mifepristona e desenvolve relacorilante, as duas drogas com mais espaço no texto.
+
 ### ⚠️ O PMC chega DEPOIS — e a pergunta só era feita uma vez (2026-07-31)
 O professor apontou uma revisão de acesso aberto que não ganhou discussão sozinha: *"Artigo de revisão de revista open access e não gerou discussão automaticamente"* — **"Is Hypercortisolism Treatable?"** (Diabetes, Obesity and Metabolism, `pubmed:42533758`, entrou em 31/07 às 08h16).
 
