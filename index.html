@@ -3925,7 +3925,12 @@ var igStories=lsGet('ig_stories')||[];
 var igPending=lsGet('ig_pending')||[];
 var QOTD_OWNERS=['rodolphomend@gmail.com']; // só a conta principal do Rodolpho vê o GERADOR "Questão do Dia"; os demais (incl. Endodirect Master) veem o arquivo, como Edu/Bruno/Rafa
 var QOTD_CURATORS=[
-  {nome:'Rodolpho',emails:['rodolphomend@gmail.com','endodirectmaster@gmail.com'],subs:['Obesidade','Lípides','Neuroendocrinologia','Endocrinopatias']},
+  // "Endocrinologia Básica" entrou aqui em 31/07, a pedido do Rodolpho. Ela era a
+  // ÚNICA subespecialidade de DIR_SUBS sem curador: questão gerada com esse rótulo
+  // caía em "(sem responsável)" no painel de pendências e não entrava na fila de
+  // ninguém — some sem erro, que é o pior tipo de falha. O teste
+  // scripts/test-curadoria-qotd.js agora reprova se qualquer sub ficar órfã.
+  {nome:'Rodolpho',emails:['rodolphomend@gmail.com','endodirectmaster@gmail.com'],subs:['Obesidade','Lípides','Neuroendocrinologia','Endocrinopatias','Endocrinologia Básica']},
   {nome:'Rafael',emails:['drrafaelgiorgi@hotmail.com','drrafaelgiorgi@gmail.com'],subs:['Adrenal','Endocrinologia do Esporte','Endocrinologia Feminina','Endocrinologia Masculina']},
   {nome:'Eduardo',emails:['nakamura.epm79@gmail.com'],subs:['Diabetes','Tireoide','Osteometabolismo','Transgeneridade']},
   {nome:'Bruno',emails:['brunosimiao1906@gmail.com'],subs:['Endocrinologia Pediátrica']}
@@ -11273,7 +11278,11 @@ function admStoriesHTML(){
   var subs=DIR_SUBS.map(function(s){return '<option>'+esc(s)+'</option>';}).join('');
   var ansOpts=['A','B','C','D'].map(function(L){return '<option value="'+L+'">'+L+'</option>';}).join('');
   var promoOpts=IG_TOOLS.map(function(t,i){return '<option value="'+i+'">'+esc(t.nome)+'</option>';}).join('');
-  var loteSubs='<option value="__random__" selected>Aleatório</option>'+DIR_SUBS.map(function(s){return '<option>'+esc(s)+'</option>';}).join('')+'<option>Transgeneridade</option>';
+  // ⚠️ SEM `<option>Transgeneridade</option>` pendurado no fim: DIR_SUBS já a
+  // contém, e o extra fazia a subespecialidade aparecer DUAS VEZES no seletor
+  // (retirado em 31/07, apontado pelo professor no print). A lista sai só de
+  // DIR_SUBS — acrescentar item solto aqui é como o duplicado nasceu.
+  var loteSubs='<option value="__random__" selected>Aleatório</option>'+DIR_SUBS.map(function(s){return '<option>'+esc(s)+'</option>';}).join('');
   // ORDEM DA FILA = ordem de publicação (topo = próxima); reordenável com ↑/↓.
   // A FILA mostra só as NÃO postadas. Ao marcar "✓ Postada" (manual ou cron), a
   // questão SAI da fila e passa a aparecer na aba "Postados".
