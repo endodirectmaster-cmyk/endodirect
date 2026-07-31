@@ -198,5 +198,17 @@ try {
   fail('regressão do card de sumidos falhou (verifique admSumidosCardHTML/admDiasSemUso no index.html):\n' + out);
 }
 
+// 16. LIBERAR EM LOTE nos Resumos. O lote não pode alcançar item fora do recorte
+//     que a grade mostra (outra sub, outro modo, outro tipo) — o professor
+//     publicaria sem saber o quê — e a gravação tem de ser UMA, fora do laço:
+//     o payload tem ~8,5 MB e uma escrita por item seriam N uploads inteiros.
+try {
+  execFileSync(process.execPath, [path.join('scripts', 'test-liberar-lote.js')], { stdio: 'pipe' });
+  ok('regressão liberar em lote: recorte da grade + uma gravação só');
+} catch (e) {
+  const out = (e.stdout ? e.stdout.toString() : '') + (e.stderr ? e.stderr.toString() : '');
+  fail('regressão da liberação em lote falhou (verifique _admRascunhosDaSub/btn-ref-liberar-lote no index.html):\n' + out);
+}
+
 if (errors) { console.error(`\n${errors} verificação(ões) falharam.`); process.exit(1); }
 console.log('\nTodas as verificações passaram.');

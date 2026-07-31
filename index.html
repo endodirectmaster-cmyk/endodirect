@@ -12046,6 +12046,17 @@ function dirIsPrivate(d){return !!(d&&d.privado);}
 function dirModeMatch(d){return admRefMode==='res'?(dirIsPrivate(d)&&dirTipoOf(d)===admRefTipo):!dirIsPrivate(d);}
 // Sem o filtro de tipo — grade de subespecialidades do admin (conta os dois juntos).
 function dirModeMatchAnyTipo(d){return admRefMode==='res'?dirIsPrivate(d):!dirIsPrivate(d);}
+// Todos os itens em rascunho da subespecialidade aberta, no MODO ATUAL
+// (Diretrizes × Resumos) e no TIPO atual (capítulo × artigo). O recorte é o
+// mesmo que a grade mostra: liberar em lote não pode alcançar o que não está
+// à vista, senão o professor publica sem saber o quê.
+function _admRascunhosDaSub(sub){
+  return diretrizes.map(function(d,i){return {d:d,i:i};}).filter(function(x){
+    return dirModeMatch(x.d)
+      && (String(x.d.sub||'Geral').trim()||'Geral')===sub
+      && dirIsRascunho(x.d);
+  });
+}
 // Quantos itens de um tema ainda estão em rascunho (só o professor vê). Usado
 // para marcar o card na grade — sem isso ele teria de abrir tema por tema.
 function admRascunhoCount(sub,tema){
@@ -12462,9 +12473,23 @@ function admRefSecHTML(){
              :('Cada tema é uma aba dentro de '+esc(admRefSub)+'. Clique para editar, ou use ✏️ / 🗑 no card.'))
       :(_aArt?'Nenhum artigo ainda — clique em “➕ Adicionar artigo” para cadastrar o primeiro trial.'
              :'Nenhum tema ainda — clique em “➕ Adicionar tema” para criar o primeiro.');
+    // LIBERAR EM LOTE. Antes era um clique POR item, e com 43 artigos em rascunho
+    // isso era o suficiente para a liberação nunca acontecer.
+    //
+    // ⚠️ POR QUE TEM DE SER DAQUI, e não um UPDATE no banco: em 31/07 eu liberei
+    // os 43 por SQL e a gravação foi desfeita DUAS VEZES, em segundos, por uma
+    // aba do app que ainda tinha o payload antigo em memória — o cliente grava o
+    // payload INTEIRO (8,5 MB) e atropela qualquer escrita externa. Passando pelo
+    // `persistDiretrizes()`, a liberação sai do mesmo lugar que todo o resto e
+    // não tem com quem correr.
+    var _rasc=_admRascunhosDaSub(admRefSub);
+    var _btnLote=_rasc.length
+      ? '<button class="btn btn-primary btn-sm" id="btn-ref-liberar-lote" style="margin-bottom:.8rem" title="Sai do rascunho e passa a aparecer na aba Resumos dos assinantes">👁 Liberar todos os rascunhos ('+_rasc.length+')</button>'
+      : '';
     body='<button class="dir-back" data-admref-back>← Todas as subespecialidades</button>'
       +'<div class="ph" style="margin-top:0"><h1>'+dirSubIcon(admRefSub)+' '+esc(admRefSub)+'</h1><p>'+_atxt+'</p></div>'
       +_atog
+      +_btnLote
       +(cards?'<div class="dir-sub-grid">'+cards+'</div>':'');
   }else{
     // Visão do tema idêntica à do aluno (Resumo / Flashcards / Mapas mentais),
@@ -13524,6 +13549,19 @@ function bindAdmSec(sec){
       delete d.rascunho;persistDiretrizes();rerenderRef();
       notify('Liberado para os alunos. ✓','ok');
     });});
+    // Liberar TODOS os rascunhos da subespecialidade aberta, de uma vez.
+    // ⚠️ Uma gravação só (`persistDiretrizes` no fim, não dentro do laço): o
+    // payload tem ~8,5 MB e uma escrita por item seria N uploads inteiros.
+    var bLote=document.getElementById('btn-ref-liberar-lote');
+    if(bLote)bLote.addEventListener('click',function(){
+      var alvo=_admRascunhosDaSub(admRefSub);
+      if(!alvo.length){notify('Nenhum rascunho aqui.','ok');return;}
+      var nomes=alvo.slice(0,6).map(function(x){return '• '+((x.d.tema||x.d.titulo)||'(sem título)');}).join('\n');
+      if(!confirm('Liberar '+alvo.length+' rascunho(s) de '+admRefSub+' para os alunos?\n\n'+nomes+(alvo.length>6?'\n• …e mais '+(alvo.length-6):'')+'\n\nEles saem do rascunho e passam a aparecer na aba Resumos dos assinantes.'))return;
+      alvo.forEach(function(x){delete x.d.rascunho;});
+      persistDiretrizes();rerenderRef();
+      notify(alvo.length+' liberado(s) para os alunos. ✓','ok');
+    });
     // Alternador Capítulos × Artigos (Resumos): troca o tipo e volta para a grade.
     main.querySelectorAll('[data-admref-tipo]').forEach(function(b){b.addEventListener('click',function(){admRefTipo=b.dataset.admrefTipo;admRefTema='';refResetTemaUi();rerenderRef();});});
     // Entrar numa subespecialidade sempre começa pelos capítulos.
