@@ -8129,31 +8129,54 @@ function renderCalcGrid(){
       }).join('')+'</div>';
   }).join('');
   el.innerHTML='<div class="calc-pills-wrap">'+pills+'</div>'+grupos;
+  // ⚠️ A grade é ESCONDIDA por `openCalc`, e quem redesenha tem de devolvê-la.
+  // Sem esta linha, sair da aba com uma calculadora aberta e voltar depois de o
+  // `activeCalc` ter sido zerado (o painel do professor zera em `bindAdmSec`)
+  // deixaria a tela vazia: grade escondida e nenhuma calculadora para mostrar.
+  el.style.display='';
   el.querySelectorAll('[data-calcarea]').forEach(function(b){
     b.addEventListener('click',function(){calcAreaFiltro=b.getAttribute('data-calcarea')||'';renderCalcGrid();});
   });
 }
+// ⚠️ A CALCULADORA OCUPA A TELA SOZINHA (pedido do professor, 31/07). Antes ela
+// abria ABAIXO da grade, e com 30 cartões em 8 áreas o resultado nascia fora da
+// área visível: era preciso rolar para achar o que se acabou de abrir. Agora o
+// clique esconde a grade e a calculadora vira a tela, com "← Voltar" no topo.
+//
+// Ao voltar, a rolagem vai para o CARTÃO que estava aberto, não para o topo da
+// grade: quem estava em Endocrinologia Pediátrica, lá embaixo, voltaria ao começo
+// da lista e teria de procurar tudo de novo.
 function closeCalc(){
+  var anterior=activeCalc;
   activeCalc=null;
   var det=calcEl('#calc-detail');if(det)det.innerHTML='';
-  var grid=calcEl('#calc-grid');if(grid)grid.scrollIntoView({behavior:'smooth',block:'nearest'});
+  var grid=calcEl('#calc-grid');if(!grid)return;
+  grid.style.display='';
+  var cartao=anterior&&grid.querySelector('[data-calc="'+anterior+'"]');
+  (cartao||grid).scrollIntoView({behavior:'smooth',block:cartao?'center':'start'});
 }
 function openCalc(id){
   activeCalc=id;
   var c=CALCS.find(function(x){return x.id===id;});if(!c)return;
   var det=calcEl('#calc-detail');if(!det)return;
-  var closeBtn='<button class="btn btn-outline btn-sm" id="calc-close" style="margin-left:auto" title="Minimizar">✕ Minimizar</button>';
+  var grid=calcEl('#calc-grid');if(grid)grid.style.display='none';
+  // Fora do cartão e à esquerda: é navegação de tela, não ação do cartão. Dentro
+  // do `card-head`, ao lado do título, ele lê como "fechar este bloco".
+  var closeBtn='<button class="btn btn-outline btn-sm" id="calc-close" style="margin:.2rem 0 .7rem" title="Voltar para a lista">← Voltar</button>';
   if(c.external){
-    det.innerHTML='<div class="card" style="margin-top:.85rem"><div class="card-head"><span style="font-size:.92rem;font-weight:700">'+esc(c.name)+'</span><span class="tag tag-blue">'+esc(c.area)+'</span>'+closeBtn+'</div>'
+    det.innerHTML=closeBtn+'<div class="card"><div class="card-head"><span style="font-size:.92rem;font-weight:700">'+esc(c.name)+'</span><span class="tag tag-blue">'+esc(c.area)+'</span></div>'
       +(c.desc2?'<div style="font-size:.78rem;color:var(--t2);line-height:1.6;margin:.5rem 0 .8rem">'+c.desc2+'</div>':'')
       +'<a class="btn btn-primary" href="'+esc(c.link)+'" target="_blank" rel="noopener" style="justify-content:center;text-decoration:none">'+esc(c.cta||'Abrir ferramenta oficial')+' ↗</a>'
       +(c.note?'<div style="font-size:.68rem;color:var(--t3);margin-top:.6rem;line-height:1.5;border-top:1px solid var(--bd);padding-top:.5rem">ℹ️ '+esc(c.note)+'</div>':'')
       +'</div>';
     var cbx=det.querySelector('#calc-close');if(cbx)cbx.addEventListener('click',closeCalc);
-    det.scrollIntoView({behavior:'smooth',block:'nearest'});
+    // `start`, não `nearest`: agora a calculadora é a tela inteira, e o botão de
+    // voltar tem de nascer visível. Com `nearest` a página não rolava, e quem
+    // abria um cartão lá embaixo continuava vendo o meio do formulário.
+    det.scrollIntoView({behavior:'smooth',block:'start'});
     return;
   }
-  det.innerHTML='<div class="card" style="margin-top:.85rem"><div class="card-head"><span style="font-size:.92rem;font-weight:700">'+esc(c.name)+'</span><span class="tag tag-blue">'+esc(c.area)+'</span>'+closeBtn+'</div>'+
+  det.innerHTML=closeBtn+'<div class="card"><div class="card-head"><span style="font-size:.92rem;font-weight:700">'+esc(c.name)+'</span><span class="tag tag-blue">'+esc(c.area)+'</span></div>'+
     c.fields.map(function(f){
       if(f.type==='select')return'<div class="fld2"><label>'+esc(f.label)+'</label><select data-calc-field="'+f.id+'">'+f.opts.map(function(o,i){return'<option value="'+f.vals[i]+'">'+esc(o)+'</option>';}).join('')+'</select></div>';
       if(f.type==='date')return'<div class="fld2"><label>'+esc(f.label)+'</label><input type="date" data-calc-field="'+f.id+'"></div>';
@@ -8165,7 +8188,7 @@ function openCalc(id){
   det.querySelectorAll('[data-calc-field]').forEach(function(inp){inp.addEventListener('input',calcUpdate);inp.addEventListener('change',calcUpdate);});
   var cb2=det.querySelector('#calc-close');if(cb2)cb2.addEventListener('click',closeCalc);
   calcUpdate();
-  det.scrollIntoView({behavior:'smooth',block:'nearest'});
+  det.scrollIntoView({behavior:'smooth',block:'start'});
 }
 function calcUpdate(){
   var c=CALCS.find(function(x){return x.id===activeCalc;});if(!c)return;

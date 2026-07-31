@@ -1,6 +1,6 @@
 ---
 tags: [cofre, calculadoras]
-atualizado: 2026-07-30
+atualizado: 2026-07-31
 ---
 
 # Calculadoras
@@ -235,6 +235,17 @@ Pedido do professor: *"pode retirar esse parágrafo 'A área sombreada é a faix
 **O que NÃO podia sair junto:** a identificação da faixa. Faixa sombreada sem rótulo é lida como **IC 95%**, e ela é **interquartil** — metade dos pacientes. Confundir as duas dobra a incerteza percebida numa conversa pré-operatória. Movi a identificação para a `note` da calculadora (o bloco ℹ️ logo abaixo, que ele manteve), em uma frase: o que é, de onde vem (Tabela 3, aproximação normal) e em que difere da faixa da ferramenta oficial.
 
 O resto do parágrafo — as frações por operação, o motivo do pontilhado — já estava duplicado na `note`, então não se perdeu nada. O teste passou a conferir a `note` no lugar do `extra`, e reprova se o parágrafo voltar ao gráfico.
+
+## A calculadora abre em tela própria, com "← Voltar" (2026-07-31)
+Pedido do professor: *"ao invés de clicar na calculadora e ela aparecer lá embaixo, abrir em nova tela sozinha com botão no canto superior de voltar"*. Com 30 calculadoras em 8 áreas, o formulário nascia **abaixo** de toda a grade — abrir um cartão de Endocrinologia Pediátrica e ter de rolar para achar o próprio resultado.
+
+- `openCalc` esconde `#calc-grid`; `closeCalc` devolve.
+- **Botão FORA do cartão e à esquerda.** Dentro do `card-head`, ao lado do título, ele lê como "fechar este bloco" — que é o que ele era (`✕ Minimizar`). Voltar é navegação de tela.
+- **`scrollIntoView` passou de `nearest` para `start`:** com `nearest` a página não rolava, e quem abria um cartão lá embaixo continuava vendo o meio do formulário.
+- **Ao voltar, a rolagem vai para o CARTÃO de origem**, não para o topo da grade — senão quem estava lá embaixo recomeça a procura.
+
+### ⚠️ A grade escondida é um estado que precisa de três donos
+`renderCalcGrid` **também** faz `el.style.display=''`. Sem isso existe um caminho para a aba ficar **em branco**: abrir uma calculadora (grade escondida), sair da aba, e voltar depois de o `activeCalc` ter sido zerado — o painel do professor zera em `bindAdmSec`. Aí `initCalc` redesenha a grade mas ela continua `display:none`, e não há calculadora aberta para mostrar. O teste trava os três lugares (`openCalc` esconde, `closeCalc` mostra, `renderCalcGrid` mostra), porque o defeito só aparece depois de navegar para fora e voltar — o caminho que ninguém testa à mão.
 
 ## Ajuste de framework
 `calcUpdate` mostra **`—`** quando `calc()` retorna não-finito (entrada incompleta ou idade fora da faixa) em vez de `NaN`.
