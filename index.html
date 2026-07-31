@@ -13829,7 +13829,13 @@ function bindAdmSec(sec){
       }).then(function(r){return r.json().catch(function(){return{ok:false,error:'Resposta inválida do servidor.'};});})
       .then(function(d){
         if(!d.ok)throw new Error(d.error||'Falha ao atualizar.');
-        notify(d.inserted>0?('Radar atualizado: '+d.inserted+' novo(s) artigo(s)!'):'Radar atualizado — nenhum artigo novo hoje.','ok');
+        // Repescagem de acesso aberto: artigos ANTIGOS cujo PMC so apareceu depois
+        // de entrarem no mural. Vale dizer quantos foram porque e o que os torna
+        // elegiveis a discussao completa — ate 31/07 essa resposta era calculada
+        // uma unica vez, na entrada, e o artigo ficava fora para sempre.
+        var repesc=Number(d.openAccessRepescados||0);
+        var msgOA=repesc>0?(' · '+repesc+' viraram acesso livre 📖'):'';
+        notify((d.inserted>0?('Radar atualizado: '+d.inserted+' novo(s) artigo(s)!'):'Radar atualizado — nenhum artigo novo hoje.')+msgOA,'ok');
         // ⚠️ Recarregar a LISTA de quais artigos tem discussao e obrigatorio aqui.
         // O texto nao vive no payload (fica em tabela propria), entao reler o
         // estado global nao traz noticia nenhuma da discussao recem-gravada:

@@ -172,5 +172,18 @@ try {
   fail('regressão do painel do professor falhou (verifique renderFavoritos/initCalc/admAnalyticsHTML no index.html):\n' + out);
 }
 
+// 14. REPESCAGEM DE ACESSO ABERTO: o PMC de um artigo aparece dias DEPOIS da
+//     publicação e o radar pega o artigo no primeiro dia — a resposta "não tem
+//     PMC" era calculada uma vez e valia para sempre, deixando o artigo fora da
+//     discussão completa. O teste cobre a cadeia (repescar → `qualifica()` passa
+//     a dizer sim), a guarda do link editado à mão e a ordem dentro do runRadar.
+try {
+  execFileSync(process.execPath, [path.join('scripts', 'test-pmc-repescagem.js')], { stdio: 'pipe' });
+  ok('regressão repescagem de acesso aberto: destrava a discussão + não sobrescreve link manual');
+} catch (e) {
+  const out = (e.stdout ? e.stdout.toString() : '') + (e.stderr ? e.stderr.toString() : '');
+  fail('regressão da repescagem de acesso aberto falhou (verifique lib/pmc-repescagem.js + runRadar em lib/radar.js):\n' + out);
+}
+
 if (errors) { console.error(`\n${errors} verificação(ões) falharam.`); process.exit(1); }
 console.log('\nTodas as verificações passaram.');
