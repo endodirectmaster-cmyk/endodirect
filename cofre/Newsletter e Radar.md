@@ -162,8 +162,16 @@ Três tentativas até acertar, e as duas primeiras erraram pelo mesmo motivo —
 
 - **Autenticação servidor-a-servidor:** o endpoint aceita `Bearer <CRON_SECRET>` além da sessão de admin. Esse segredo nunca chega ao navegador.
 - **⚠️ Disparar ANTES de responder.** Depois do `res.end()` a Vercel pode congelar a função e a requisição nem sai. O disparo usa `AbortController` com 2s: a conexão abre, a invocação do outro lado começa, e o abort é esperado — não é erro.
-- **Quem dá a partida:** o cron do radar (todo dia) e o botão "📄 Gerar discussões pendentes" (quando o professor quiser adiantar). O botão agora só dá a partida e avisa quantos estão na fila; não prende a aba.
+- **Quem dá a partida:** os quatro gatilhos da seção seguinte. (Até 31/07 havia também um botão "📄 Gerar discussões pendentes"; foi retirado a pedido do professor — ver acima.)
 - **Se um elo falhar, a cadeia para** — e o cron do dia seguinte recomeça. Aceitável, e melhor que travar tentando ser esperto.
+
+### ✂️ O botão "Gerar discussões pendentes" foi RETIRADO (2026-07-31)
+Pedido do professor: *"tira o botão de fazer as discussões pendentes"*. Era o último resquício manual de um recurso cujo pedido original sempre foi *"não quero clicar em nada"* — e, com os quatro gatilhos abaixo funcionando, ele não tinha mais função: a fila drena sozinha.
+
+- **Nada da automação depende dele.** ⚠️ O gatilho 3 da lista abaixo é **abrir o Mural** (`kickDiscussaoCadeia()` em `goPanel('mural')`), **não** o botão — são coisas diferentes, e é por isso que retirar o botão não tira nenhum dos quatro. Conferido antes de apagar.
+- **Saiu do `index.html`:** o `<button id="btn-adm-disc-fila">` (aparecia nas **duas** renderizações do cabeçalho do Mural) e o handler inteiro. Ficou comentário no lugar dizendo por que não existe mais — senão o próximo a ler o código acha que faltou ligar alguma coisa.
+- **`action:'discussao_fila'` continua no `api/admin/refresh-radar.js`**, agora sem cliente. É leitura pura, autenticada de admin, e serve para inspecionar a fila quando ela parecer parada — o que já foi preciso duas vezes. `filaDeDiscussoes()` segue em uso pela `discussao_cadeia`.
+- **Estado ao retirar:** 33 artigos qualificam, 30 já tinham discussão, **3 na fila** — drenados pela cadeia, sem clique.
 
 ### Quatro gatilhos, porque um só nunca bastou (2026-07-29)
 O professor voltou **cinco vezes** dizendo que a discussão não saía sozinha. Cada resposta minha dependia de algo que ele não ia fazer: primeiro do cron (1x/dia), depois de um botão, depois de o navegador dele já ter o JavaScript novo. A leitura correta do pedido é *"não quero clicar em nada"*.
