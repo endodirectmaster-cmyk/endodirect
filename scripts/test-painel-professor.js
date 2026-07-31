@@ -60,6 +60,35 @@ const semComentarios = SRC.replace(/^\s*\/\/.*$/gm, '');
        const j = semComentarios.indexOf('\nfunction ', i + 1);   // até o fim DESTA função
        return i > 0 && j > i && semComentarios.slice(i, j).indexOf('activeCalc=') < 0;
      })());
+
+  // ---- a calculadora ocupa a tela sozinha (pedido do professor, 31/07) -------
+  // ⚠️ O QUE ESTE BLOCO EXISTE PARA PEGAR: a grade é escondida ao abrir. Se
+  // alguém remover o `display=''` de `renderCalcGrid` ou de `closeCalc`, a aba
+  // Calculadoras fica em BRANCO — grade escondida e nenhuma calculadora aberta —
+  // e o defeito só aparece depois de navegar para fora e voltar, que é
+  // exatamente o caminho que ninguém testa à mão.
+  ok('abrir esconde a grade',
+     /function openCalc\(id\)\{[\s\S]{0,400}?calcEl\('#calc-grid'\);if\(grid\)grid\.style\.display='none'/.test(semComentarios));
+  ok('voltar mostra a grade de novo',
+     (function(){
+       const i = semComentarios.indexOf('function closeCalc()');
+       const j = semComentarios.indexOf('\nfunction ', i + 1);
+       return i > 0 && semComentarios.slice(i, j).indexOf("grid.style.display=''") > 0;
+     })());
+  ok('redesenhar a grade também a torna visível',
+     (function(){
+       const i = semComentarios.indexOf('function renderCalcGrid()');
+       const j = semComentarios.indexOf('\nfunction ', i + 1);
+       return i > 0 && semComentarios.slice(i, j).indexOf("el.style.display=''") > 0;
+     })());
+  // O botão é de VOLTAR e fica FORA do cartão — dentro do card-head ele lê como
+  // "fechar este bloco", que é o que ele era antes ("✕ Minimizar").
+  ok('o botão diz Voltar, não Minimizar',
+     semComentarios.indexOf('← Voltar') > 0 && semComentarios.indexOf('✕ Minimizar') < 0);
+  ok('o botão de voltar vem antes do cartão',
+     (semComentarios.match(/det\.innerHTML=closeBtn\+'<div class="card">/g) || []).length === 2, 'esperava 2 (comum e external)');
+  // Voltar recoloca a rolagem no CARTÃO que estava aberto, não no topo da lista.
+  ok('voltar volta para o cartão de origem', /querySelector\('\[data-calc="'\+anterior\+'"\]'\)/.test(semComentarios));
   ok('com uma área filtrada o título do grupo não repete a aba', /calcAreaFiltro\?'':'<div class="calc-area-tit">/.test(semComentarios));
   ok('área inexistente cai em "Todas"', /ix\.areas\.indexOf\(calcAreaFiltro\)<0\)calcAreaFiltro=''/.test(semComentarios));
   // ⚠️ `min-width:0` na faixa de abas. Em tela estreita o .pill-tab-row vira
