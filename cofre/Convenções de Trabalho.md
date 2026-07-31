@@ -5,6 +5,18 @@ atualizado: 2026-07-31
 
 # Convenções de Trabalho
 
+## ⚠️ Branch depois de um squash-merge: rebase ANTES de abrir o próximo PR (2026-07-31)
+
+Abri o PR #659 no mesmo branch que já tinha sido **squash-mergeado** duas vezes. Dois sintomas, os dois com cara de outra coisa:
+- **O CI não disparava.** Nenhum run de `validate` aparecia — só o check da Vercel. Cheguei a suspeitar de Actions desligado e a inventar teoria sobre eventos de app.
+- **O merge deu 405 "merge conflicts"**, sem conflito nenhum no `git merge-tree` local.
+
+**A causa é a mesma:** o squash faz `main` ganhar UM commit novo que não é nenhum dos commits do branch. O branch fica divergido, o GitHub vê os patches já aplicados como conflito e o PR entra num estado em que o evento não gera run.
+
+**A correção é uma linha,** e é a mesma dos dois casos: `git fetch origin main && git rebase origin/main` — o rebase **descarta sozinho** os patches já upstream (`dropping … -- patch contents already upstream`) — depois `push --force-with-lease`. Feito isso, o CI disparou e o merge passou na hora.
+
+**Ficou também:** `workflow_dispatch` no `.github/workflows/ci.yml`, para dar como pedir a validação sem empurrar commit vazio.
+
 ## 🖥️ Mudança de JS no `index.html` — testar em NAVEGADOR REAL antes de mergear
 
 O cofre já registrava a regra ([[Pendências]], item do OSCE lazy): **dois apagões**
