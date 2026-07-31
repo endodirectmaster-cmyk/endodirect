@@ -8,6 +8,12 @@ on:
     branches: [main]
   push:
     branches: [main]
+  # Disparo manual. Em 31/07 um PR foi aberto e o evento `pull_request` NÃO
+  # gerou run (só o check da Vercel apareceu), e sem `workflow_dispatch` não
+  # havia como pedir a validação — o jeito era empurrar commit vazio. Mergear
+  # sem o gate não é opção: é ele que barra o estouro de 12 funções serverless,
+  # que já travou produção (#311/#313).
+  workflow_dispatch:
 
 jobs:
   validate:
