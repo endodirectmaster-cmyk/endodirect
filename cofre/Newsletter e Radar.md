@@ -5,6 +5,15 @@ atualizado: 2026-07-31
 
 # Newsletter e Radar
 
+### A fila de discussões não chega a zero — e isso é o limite, não defeito (2026-07-31)
+Depois de retirar o botão, a cadeia drenou 3 pendentes e **parou em 1**: `pubmed:42475087` ("Cardiovascular Risk Reclassification With the 2026 Dyslipidemia Guidelines"). Ele tem link de PMC e entra na fila pelo **título** (o regex pega "Guidelines" mesmo com `tipo:'Estudo Original'`), mas nenhuma gravação sai.
+
+**Causa mais provável, NÃO confirmada daqui** (o proxy bloqueia o PMC): o PMC tem só o **resumo depositado**, então `parseJats` devolve `null` pelo piso de **600 palavras** e `gerarDiscussao` volta `sem_texto_integral`. Confirmar é abrir `https://www.ncbi.nlm.nih.gov/pmc/articles/PMC…/` do item e ver se há corpo de texto.
+
+- **Não há vazamento de custo:** `fetchFullText` roda **antes** da chamada de IA, então a retentativa custa um GET ao PMC e nada de tokens. O que fica é a fila permanentemente em 1.
+- **O efeito colateral que importa:** como esse item nunca grava, a marca de "cadeia andando" (`deveKickar` olha a escrita mais recente em `endodirect_mural_discussoes`) nunca se renova por causa dele — cada carga de página ≥10 min dispara uma partida que tenta o mesmo artigo. Barato, mas eterno.
+- **Se incomodar,** a saída é um teto de tentativas por `sourceId` (coluna de falhas ou lista de descartados), não afrouxar o piso de 600 palavras — discussão a partir de resumo é exatamente o erro de 28/07.
+
 ### ⚠️ O PMC chega DEPOIS — e a pergunta só era feita uma vez (2026-07-31)
 O professor apontou uma revisão de acesso aberto que não ganhou discussão sozinha: *"Artigo de revisão de revista open access e não gerou discussão automaticamente"* — **"Is Hypercortisolism Treatable?"** (Diabetes, Obesity and Metabolism, `pubmed:42533758`, entrou em 31/07 às 08h16).
 
