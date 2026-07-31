@@ -229,6 +229,13 @@ O professor comparou lado a lado com a ferramenta oficial: *"A projeção da cur
 - O mesmo texto vai no `aria-label` do grupo, para leitor de tela.
 - **`viewBox` 240→250 de altura** para caber a caixa do ponto mais baixo.
 
+## A legenda longa saiu do gráfico do SOPHIA (2026-07-30)
+Pedido do professor: *"pode retirar esse parágrafo 'A área sombreada é a faixa…'"*. Eram ~10 linhas de texto miúdo abaixo do gráfico, e dominavam a tela.
+
+**O que NÃO podia sair junto:** a identificação da faixa. Faixa sombreada sem rótulo é lida como **IC 95%**, e ela é **interquartil** — metade dos pacientes. Confundir as duas dobra a incerteza percebida numa conversa pré-operatória. Movi a identificação para a `note` da calculadora (o bloco ℹ️ logo abaixo, que ele manteve), em uma frase: o que é, de onde vem (Tabela 3, aproximação normal) e em que difere da faixa da ferramenta oficial.
+
+O resto do parágrafo — as frações por operação, o motivo do pontilhado — já estava duplicado na `note`, então não se perdeu nada. O teste passou a conferir a `note` no lugar do `extra`, e reprova se o parágrafo voltar ao gráfico.
+
 ## Ajuste de framework
 `calcUpdate` mostra **`—`** quando `calc()` retorna não-finito (entrada incompleta ou idade fora da faixa) em vez de `NaN`.
 - **Campo `type:'date'`** (2026-06-15): o framework de calculadoras agora renderiza `<input type="date">` além de `num`/`select`. Helpers `ageMonthsFromDates(dobStr,domStr)` (idade em meses fracionários; `dom` vazio = hoje; mês médio 30,44 dias) e `ageLabelFromMonths(mo)`.
