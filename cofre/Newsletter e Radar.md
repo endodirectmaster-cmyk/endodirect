@@ -16,6 +16,25 @@ O professor mostrou uma league table de metanálise em rede cujo cabeçalho saí
 - Teste em `scripts/test-mural-render.js`, incluindo a célula de tabela e a preservação de `__sublinhado__`.
 
 
+### ⚠️ A tabela que o aluno vê é a DO ARTIGO, não a que a IA escreveu (2026-07-30)
+Decisão do professor: *"reproduzir fiel ao artigo"*. Veio depois de ele ver uma **league table** de metanálise em rede sair deformada: a IA reescreveu a comparação par a par como tabela comum e **inventou um cabeçalho** (`| _D_ | _A_ | _C_ | _B_ |`) que o artigo não tem — ali o rótulo dos tratamentos vive na **diagonal**.
+
+**A instrução antiga era a causa.** Ela mandava "reproduzir em markdown" e "traduzir os cabeçalhos" — ou seja, mandava o modelo **reescrever**, que é exatamente onde ele erra. Traduzir uma tabela é reescrevê-la.
+
+**Mecanismo novo — marcador + substituição no servidor:**
+1. `fullTextForPrompt` numera cada tabela no anexo: `[[TABELA:n]] — Table 8: …`.
+2. O prompt manda escrever **só o marcador, sozinho numa linha**, no ponto em que a tabela entra. Proíbe copiar, traduzir e reescrever.
+3. `inserirTabelas(md, tabelas)` (`lib/discussao.js`) troca cada marcador pelo markdown extraído do JATS, com **legenda e nota de rodapé originais**.
+
+Troca uma instrução que o modelo pode desobedecer por uma substituição que ele não tem como errar.
+
+- **A nota de rodapé resolve metade do problema relatado:** é ela que define A, B, C e D. Sem ela as letras da diagonal não significam nada.
+- **Marcador inválido ou no meio de frase é apagado**, nunca chega à tela — mesma regra do `---` de 28/07 e do `_D_` de 30/07: marcação crua na tela é sempre defeito.
+- **A colagem roda DEPOIS da checagem de tamanho mínimo:** a tabela do artigo não pode servir de enchimento para uma discussão que saiu curta.
+- **Efeito colateral aceito pelo professor:** os cabeçalhos ficam **no idioma do artigo** (inglês, quase sempre). Foi dito antes da decisão e ele escolheu fidelidade.
+- **Risco residual:** nada impede o modelo de colar uma tabela à mão em vez de usar o marcador. Não bloqueei isso — bloquear exigiria apagar tabelas do texto, e aí uma frase "a tabela abaixo mostra" ficaria órfã. `meta.tabelas_inseridas` registra quais marcadores foram de fato usados, que é por onde se detecta se o modelo está desobedecendo.
+
+
 ## ⚠️ Tabela de estudos incluídos não vai para o card (2026-07-30)
 Pedido do professor a partir de uma metanálise de HIIT vs MICT: *"exclui essas tabelas assim dos estudos de metanálises"*. A discussão tinha reproduzido a tabela de **8 colunas × 20 estudos**, com o protocolo de cada braço por extenso — no card vira um bloco com rolagem horizontal que ninguém lê, e o aluno não tira dali nenhuma conduta.
 
