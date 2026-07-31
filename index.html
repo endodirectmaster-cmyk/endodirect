@@ -12872,6 +12872,76 @@ function admConversionCardHTML(){
   inner+='<div style="font-size:.7rem;color:var(--t3);margin-top:.6rem">ℹ️ Assinante = plano Standard ou Gold ativo; degustação = conta gratuita ainda sem plano. As coortes usam a data de cadastro de cada aluno.</div>';
   return wrap(inner);
 }
+// ---------- Card "sem acesso há N dias": o antídoto contra os 12 meses cegos ----------
+//
+// POR QUE ESTE CARD EXISTE (pendencia de 28/07, material de EdTech): quase todo
+// mundo pagou ANUAL ADIANTADO. Quem parar de usar em agosto so geraria sinal de
+// churn em junho/2027 — ou seja, a receita nao avisa nada, e o unico indicador
+// util neste estagio e USO. Este e o unico item da lista que gera acao no MESMO
+// DIA: mostra os nomes e o professor manda mensagem.
+//
+// ⚠️ O SINAL E `last_seen`, NAO `last_sign_in_at`. O sign-in so muda quando a
+// pessoa faz login de novo, e a sessao do Supabase aqui e persistente: um aluno
+// que entra todo dia pode ter o ultimo sign-in de dois meses atras. Montar a
+// lista sobre esse campo apontaria justamente os ATIVOS e o professor mandaria
+// mensagem para quem nao sumiu. A RPC devolve `ultimo_uso` = maior entre
+// last_seen (carimbado pelo app a cada uso) e last_sign_in_at (rede de seguranca
+// para quem e anterior a tabela de devices, de 11/06).
+//
+// ⚠️ SO PAGANTE. Cortesia (provider='manual') nao paga e nao deve ser cobrada de
+// engajamento; degustacao sumir e esperado, nao e perda. Misturar os tres faria
+// a lista crescer com nomes sobre os quais nao ha nada a fazer.
+var ADM_SUMIDO_DIAS = 14;
+function admDiasSemUso(e){
+  var t = e && (e.ultimo_uso || e.last_seen || e.last_sign_in_at);
+  var ms = t ? new Date(t).getTime() : NaN;
+  if (isNaN(ms)) return null;              // nunca acessou: contado a parte
+  return Math.floor((Date.now() - ms) / 864e5);
+}
+function admSumidosLista(){
+  var list = (admEstData && Array.isArray(admEstData.students)) ? admEstData.students : [];
+  return list
+    .filter(admConvIsPaying)
+    .map(function(e){ return { e: e, dias: admDiasSemUso(e) }; })
+    .filter(function(x){ return x.dias == null || x.dias >= ADM_SUMIDO_DIAS; })
+    .sort(function(a,b){ return (b.dias == null ? 1e9 : b.dias) - (a.dias == null ? 1e9 : a.dias); });
+}
+function admSumidosCardHTML(){
+  var wrap=function(inner,tag){return '<div class="card" style="margin-bottom:1.1rem"><div class="card-head"><span class="card-title">🔔 Assinantes sem acesso há '+ADM_SUMIDO_DIAS+'+ dias'+'</span>'+(tag||'')+'</div>'+inner+'</div>';};
+  if(admEstErr)return wrap('<div class="empty" style="padding:.6rem;font-size:.78rem;color:var(--t3)">Não foi possível carregar a lista de alunos.</div>');
+  if(!admEstData)return wrap(ldHTML('Verificando quem não acessa há um tempo…'));
+  var sumidos=admSumidosLista();
+  var pagantes=((admEstData.students||[]).filter(admConvIsPaying)).length;
+  if(!sumidos.length){
+    return wrap('<div class="empty" style="padding:.8rem;font-size:.82rem;color:var(--t2)">✅ Nenhum assinante parado há '+ADM_SUMIDO_DIAS+' dias ou mais. Os '+pagantes+' estão usando a plataforma.</div>','<span class="tag tag-blue">Dados reais</span>');
+  }
+  var pct=pagantes?Math.round(sumidos.length/pagantes*100):0;
+  var linhas=sumidos.map(function(x){
+    var e=x.e,nome=e.name||((e.email||'?').split('@')[0]);
+    var quanto=x.dias==null?'nunca acessou':(x.dias+' dias');
+    // 30+ dias e outro patamar: nesse ponto a pessoa provavelmente ja desistiu.
+    var cor=(x.dias==null||x.dias>=30)?'var(--red)':'var(--gold)';
+    return '<div class="adm-table-row">'
+      +'<span style="flex:2.2;display:flex;align-items:center;gap:.6rem"><span class="tb-avatar" style="background:var(--navy)">'+esc(nome.charAt(0).toUpperCase())+'</span><span style="font-size:.82rem;font-weight:600">'+esc(nome)+'</span></span>'
+      +'<span style="flex:2.5;font-size:.78rem;color:var(--t2)">'+esc(e.email||'')+'</span>'
+      +'<span style="flex:1.2">'+admEstPlanoTag(e.plano)+'</span>'
+      +'<span style="flex:1.3;font-size:.8rem;font-weight:700;color:'+cor+'">'+quanto+'</span>'
+    +'</div>';
+  }).join('');
+  return wrap(
+    '<div class="g2" style="grid-template-columns:repeat(3,1fr);margin:.2rem 0 .9rem">'
+      +'<div class="adm-bigstat"><div class="adm-bigstat-n" style="color:var(--gold)">'+sumidos.length+'</div><div class="adm-bigstat-l">Sem acesso há '+ADM_SUMIDO_DIAS+'+ dias'+'</div></div>'
+      +'<div class="adm-bigstat"><div class="adm-bigstat-n" style="color:var(--red)">'+sumidos.filter(function(x){return x.dias==null||x.dias>=30;}).length+'</div><div class="adm-bigstat-l">Há 30 dias ou mais</div></div>'
+      +'<div class="adm-bigstat"><div class="adm-bigstat-n" style="color:var(--tx)">'+pct+'%</div><div class="adm-bigstat-l">dos '+pagantes+' assinantes</div></div>'
+    +'</div>'
+    +'<div class="adm-table">'
+      +'<div class="adm-table-head"><span style="flex:2.2">Estudante</span><span style="flex:2.5">E-mail</span><span style="flex:1.2">Plano</span><span style="flex:1.3">Sem acessar</span></div>'
+      +linhas
+    +'</div>'
+    +'<div style="font-size:.7rem;color:var(--t3);margin-top:.6rem">ℹ️ Só assinantes pagantes — cortesia e degustação ficam de fora de propósito. A contagem usa o último uso do app (não o último login, que não muda em sessão longa). Quase todo mundo pagou anual: sem este card, um aluno que parar de usar agora só apareceria como churn em junho/2027.</div>',
+    '<span class="tag tag-blue">Dados reais</span>'
+  );
+}
 function admAnalyticsHTML(){
   var head='<div class="adm-ph"><h1>Analytics</h1><p>Indicadores reais de uso e desempenho dos estudantes.</p></div><div class="adm-pc">';
   if(admOverviewErr){
@@ -12931,6 +13001,9 @@ function admAnalyticsHTML(){
       +kpi(n(ov.simulados),'Simulados realizados','var(--gold)')
       +kpi(taxa==null?'—':(taxa+'%'),'Taxa de acerto geral','var(--pur)')
     +'</div>';
+  // ⚠️ ANTES do card de conversão, de propósito: é o único indicador desta tela
+  // que gera ação no MESMO DIA (os nomes estão ali, o professor manda mensagem).
+  html+=admSumidosCardHTML();
   html+=admConversionCardHTML();
   if(semDados){
     html+='<div class="card" style="text-align:center;padding:1.5rem"><div style="font-size:1.5rem">📊</div><div style="font-weight:700;color:var(--tx);margin:.3rem 0">Ainda sem atividade de questões/simulados</div><p style="font-size:.82rem;color:var(--t2);max-width:540px;margin:.2rem auto">Assim que os alunos começarem a responder questões e simulados, o desempenho por subespecialidade aparece aqui automaticamente.</p></div>';

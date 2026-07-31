@@ -185,5 +185,18 @@ try {
   fail('regressão da repescagem de acesso aberto falhou (verifique lib/pmc-repescagem.js + runRadar em lib/radar.js):\n' + out);
 }
 
+// 15. CARD "sem acesso há 14+ dias" no Analytics. O defeito que o teste pega é a
+//     escolha do campo de data: `last_sign_in_at` não muda em sessão persistente,
+//     então a lista de "sumidos" montada sobre ele apontaria os alunos ATIVOS — e
+//     o professor manda mensagem para os nomes dessa lista. Também cobre a
+//     exclusão de cortesia e degustação.
+try {
+  execFileSync(process.execPath, [path.join('scripts', 'test-analytics-sumidos.js')], { stdio: 'pipe' });
+  ok('regressão card de sumidos: último USO (não último login) + só pagante');
+} catch (e) {
+  const out = (e.stdout ? e.stdout.toString() : '') + (e.stderr ? e.stderr.toString() : '');
+  fail('regressão do card de sumidos falhou (verifique admSumidosCardHTML/admDiasSemUso no index.html):\n' + out);
+}
+
 if (errors) { console.error(`\n${errors} verificação(ões) falharam.`); process.exit(1); }
 console.log('\nTodas as verificações passaram.');
