@@ -4428,6 +4428,15 @@ function mdInline(s){
   var imgs=[];
   s=esc(s).replace(/!\[([^\]]*)\]\((https?:\/\/[^\s)]+)\)(?:\{(\d{1,3})\})?/g,function(w,alt,url,ww){var _st=ww?(' style="width:'+ww+'%"'):'';imgs.push('<img class="wys-img" src="'+url+'" alt="'+alt+'"'+_st+' referrerpolicy="no-referrer" onerror="this.style.display=\'none\'">');return ''+(imgs.length-1)+'';});
   s=s.replace(/\*\*(.+?)\*\*/g,'<strong>$1</strong>').replace(/__(.+?)__/g,'<u>$1</u>').replace(/(^|[^*])\*([^*\n]+)\*(?!\*)/g,'$1<em>$2</em>').replace(/`([^`]+)`/g,'<code>$1</code>');
+  // ⚠️ ITÁLICO COM UNDERSCORE — vem DEPOIS de `__sublinhado__`, senão comeria a
+  // marca dupla. O professor viu `_D_` escrito na tela (30/07), no cabeçalho de
+  // uma league table de metanálise em rede: o JATS traz os códigos dos
+  // tratamentos em itálico e a IA reproduziu com underscore, que era a única
+  // marca de ênfase que este renderizador não conhecia.
+  // As duas guardas de borda existem para não estragar identificador com
+  // underscore no meio (`user_profile`, `SLC38A1_v2`): exige caractere não-
+  // -palavra antes da abertura e depois do fechamento.
+  s=s.replace(/(^|[^\w_])_([^_\n]+)_(?![\w_])/g,'$1<em>$2</em>');
   // Cor de letra {c:nome|texto} e de fundo {h:nome|texto}. Vem DEPOIS do negrito
   // e do itálico, para que a formatação de dentro continue valendo. O nome sai de
   // uma allowlist fechada (WYS_CORES) — nada de CSS arbitrário vindo do conteúdo.
@@ -14815,7 +14824,17 @@ function muralInlineHTML(escLine){
   });
   escLine=escLine.replace(/\*\*([^*\n]+)\*\*/g,'<strong>$1</strong>')
      .replace(/__([^_\n]+)__/g,'<u>$1</u>')
-     .replace(/\*([^*\n]+)\*/g,'<em>$1</em>');
+     .replace(/\*([^*\n]+)\*/g,'<em>$1</em>')
+     // ⚠️ ITÁLICO COM UNDERSCORE — DEPOIS de `__sublinhado__`, senão come a marca
+     // dupla. O professor viu `_D_` escrito na tela (30/07), no cabeçalho de uma
+     // league table de metanálise em rede: o JATS traz os códigos dos tratamentos
+     // em itálico e a IA reproduziu com underscore, a única marca de ênfase que
+     // este renderizador não conhecia. As guardas de borda evitam estragar
+     // identificador com underscore no meio (`user_profile`, `SLC38A1_v2`).
+     // ⚠️ A MESMA REGRA EXISTE EM `mdInline` (renderizador do WYSIWYG). São dois
+     // renderizadores de propósito, mas as marcas de ênfase têm de bater: marca
+     // que funciona num e não no outro é defeito que só aparece para o aluno.
+     .replace(/(^|[^\w_])_([^_\n]+)_(?![\w_])/g,'$1<em>$2</em>');
   // O card do mural tem renderizador próprio (não passa por mdInline), então o
   // marcador de cor precisa ser lido aqui também — senão sairia como texto cru.
   var _cre=new RegExp('\\{(c|h):('+WYS_CORES_RE+')\\|([^}]*)\\}','g');
