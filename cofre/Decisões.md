@@ -1,11 +1,14 @@
 ---
 tags: [cofre, decisoes]
-atualizado: 2026-07-31
+atualizado: 2026-08-01
 ---
 
 # Decisões
 
 Log de decisões de produto e técnicas (mais recentes no topo).
+
+## 2026-08
+- **🔒 AUDITORIA de funcionalidade e segurança (2026-08-01, "Faça uma auditoria completa").** Método: papel `anon` simulado dentro do banco (`set local role anon`), com cada achado **medido**. **Dois vazamentos críticos de conteúdo pago, os dois pela mesma causa — RPC `SECURITY DEFINER` sem o gate que a irmã tem:** (1) **`endodirect_public_content()`** devolve `payload->'provas'` **cru** — **2.401 questões** para anônimo, onde `member_content()` daria 50; e ainda 195 podcasts (deveria: 0), 41 mapas `tier:member` (0) e 105 aulas (3). É chamada em **toda carga sem sessão** por `hydratePublicContent()`. (2) **`endodirect_showcase_resumos()`** filtra `rascunho` e **não filtra `privado`** → **138 capítulos pagos, 542.878 caracteres**. **Alto:** as RPCs de discussão do Mural não exigem nem login (35 ids + markdown inteiro), e **`/api/ai` é proxy Anthropic aberto** (o gate de Origin passa quando o header está ausente — `curl` entra). **Correção do crítico 1 é quase gratuita:** `member_content()` **já devolve o payload certo para anônimo** (medido), então é trocar a chamada no cliente e revogar `execute` de `public_content` — e a carga anônima cai de **6.676 kB para 1.700 kB**, o que de quebra resolve o estouro do teto empírico de ~5,3 MB. **O que passou no teste:** escrita como anon bloqueada em tudo (inclusive auto-liberar plano e virar admin), leitura direta de tabela 0/15, RPCs de admin com `forbidden`, webhook do pagar.me **fail-closed** mesmo sem env, nenhum segredo versionado, produção sem erro em 24h. Detalhe completo em [[Auditoria 2026-08-01]].
 
 ## 2026-07
 - **✅ Os 43 artigos dos Resumos foram liberados (2026-07-31, "Libera os rascunhos") — e o clobber virou MECANISMO, não palpite.** Assinante passa a receber **43 artigos** (149 itens privados); degustação recebe **4**, um por sub, pelo `distinct on (sub, tipo)` da RPC. Ressalva dos números não conferidos levantada por mim e reafirmada pelo professor. Snapshot em `endodirect_state_backup` id=7. **A causa das duas reversões da tarde está em `mergeConcurrent`:** ele parte do array **da memória do navegador** e só acrescenta do servidor as chaves ausentes do baseline E da memória — para item presente nos dois lados, **a memória sempre vence**. Logo, edição minha por SQL num item já existente de `diretrizes` é perdida no próximo save da aba do professor, sempre; não é janela de corrida, é o algoritmo. A 3ª tentativa segurou só porque a aba não salvou depois. **Regra:** se o efeito precisa durar e não dá para garantir F5 antes do próximo save, usar o botão **👁 Liberar todos os rascunhos** (passa pelo `persistDiretrizes()`). Ver [[Pendências]].
