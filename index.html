@@ -9436,10 +9436,20 @@ function dirIsRascunho(d){return !!(d&&d.rascunho);}
 var refTipoSel='capitulo';        // aba Capítulos/Artigos ativa dentro dos Resumos
 // Predicado de visibilidade conforme a aba ativa: Diretrizes mostra !privado; Resumos mostra privado===true.
 // Nos Resumos filtra também pelo tipo (Capítulos × Artigos); nas Diretrizes o tipo é ignorado.
-function dirIsVisible(d){return !dirIsRascunho(d)&&(refPrivadoMode?(((d&&d.privado)===true)&&dirTipoOf(d)===refTipoSel):!(d&&d.privado));}
+// ⚠️ ARTIGO É CONTEÚDO SÓ DE RESUMOS — nunca da aba Diretrizes (2026-08-01,
+// "esses resumos artigos não é para aparecerem nas diretrizes").
+// Diretriz e artigo (trial) são coisas diferentes: a Diretriz é recomendação de
+// sociedade; o artigo é a leitura crítica de UM estudo, e vive em Resumos ›
+// Artigos. Um artigo com `privado:false` cairia na aba Diretrizes de todo mundo,
+// que é o que o professor não quer — e era um clique de distância, porque o card
+// do artigo trazia o botão "📢 Publicar" (removido junto com esta regra).
+// A regra fica NUM LUGAR SÓ e é aplicada nos quatro filtros (aluno e professor,
+// com e sem filtro de tipo); é o mesmo padrão do RESUMOS_ONLY_SUBS.
+function dirSoNosResumos(d){return dirTipoOf(d)==='artigo';}
+function dirIsVisible(d){return !dirIsRascunho(d)&&(refPrivadoMode?(((d&&d.privado)===true)&&dirTipoOf(d)===refTipoSel):(!(d&&d.privado)&&!dirSoNosResumos(d)));}
 // Mesma visibilidade, SEM o filtro de tipo — usada na grade de subespecialidades
 // (nível 1), que conta capítulos e artigos juntos.
-function dirIsVisibleAnyTipo(d){return !dirIsRascunho(d)&&(refPrivadoMode?((d&&d.privado)===true):!(d&&d.privado));}
+function dirIsVisibleAnyTipo(d){return !dirIsRascunho(d)&&(refPrivadoMode?((d&&d.privado)===true):(!(d&&d.privado)&&!dirSoNosResumos(d)));}
 // Quantos artigos (trials) existem numa subespecialidade, na aba ativa.
 function dirArtigoCount(sub){
   var n=0;
@@ -12052,9 +12062,11 @@ var admRefMode='dir';
 // 'artigo' (resumo estruturado de um trial). Espelha refTipoSel do aluno.
 var admRefTipo='capitulo';
 function dirIsPrivate(d){return !!(d&&d.privado);}
-function dirModeMatch(d){return admRefMode==='res'?(dirIsPrivate(d)&&dirTipoOf(d)===admRefTipo):!dirIsPrivate(d);}
+// Mesma regra do aluno (ver dirSoNosResumos): artigo não aparece em Diretrizes,
+// nem no painel do professor — senão ele veria ali um item que o aluno não vê.
+function dirModeMatch(d){return admRefMode==='res'?(dirIsPrivate(d)&&dirTipoOf(d)===admRefTipo):(!dirIsPrivate(d)&&!dirSoNosResumos(d));}
 // Sem o filtro de tipo — grade de subespecialidades do admin (conta os dois juntos).
-function dirModeMatchAnyTipo(d){return admRefMode==='res'?dirIsPrivate(d):!dirIsPrivate(d);}
+function dirModeMatchAnyTipo(d){return admRefMode==='res'?dirIsPrivate(d):(!dirIsPrivate(d)&&!dirSoNosResumos(d));}
 // Todos os itens em rascunho da subespecialidade aberta, no MODO ATUAL
 // (Diretrizes × Resumos) e no TIPO atual (capítulo × artigo). O recorte é o
 // mesmo que a grade mostra: liberar em lote não pode alcançar o que não está
@@ -12535,9 +12547,17 @@ function admRefSecHTML(){
           // dos assinantes). O "📢 Publicar" (privado → Diretrizes, público) só
           // aparece depois — publicar direto de rascunho pularia a liberação.
           // O inverso ("Tornar resumo") foi removido a pedido.
+          //
+          // ⚠️ ARTIGO NÃO TEM "📢 Publicar" (2026-08-01, "esses resumos artigos não
+          // é para aparecerem nas diretrizes"). Esse botão move o item para a aba
+          // Diretrizes, que é destino de DIRETRIZ, não de leitura crítica de um
+          // trial. Ele ficava ao lado de "Editar" no card do artigo, com o texto
+          // "Ele passará a aparecer nas Diretrizes" — um clique de distância do
+          // estado errado. A regra também é filtrada em dirSoNosResumos(), para o
+          // caso de algum artigo já estar público por edição antiga.
           var toggleBtn=rasc
             ? '<button class="btn btn-primary btn-sm" data-adm-refliberar="'+x.i+'" title="Sai do rascunho e passa a aparecer na aba Resumos dos assinantes">👁 Liberar para os alunos</button>'
-            : (priv
+            : ((priv&&!dirSoNosResumos(x.d))
               ? '<button class="btn btn-outline btn-sm" data-adm-reftoggle="'+x.i+'" title="Publicar para os alunos (move para Diretrizes)">📢 Publicar</button>'
               : '');
           // Nos Resumos, o mapa é editável IN-LOCO na própria árvore (contenteditable +

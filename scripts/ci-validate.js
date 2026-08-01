@@ -223,5 +223,18 @@ try {
   fail('regressão da curadoria da Questão do Dia falhou (verifique QOTD_CURATORS/DIR_SUBS/loteSubs no index.html):\n' + out);
 }
 
+// 18. ARTIGO é conteúdo só de Resumos, nunca da aba Diretrizes. O card do artigo
+//     trazia "📢 Publicar", que move o item para as Diretrizes — leitura crítica
+//     de um trial no meio das recomendações de sociedade, e para todo mundo.
+//     Cobre as DUAS camadas: o botão sumiu para artigo e o filtro exclui artigo
+//     da aba Diretrizes (aluno e professor, com e sem filtro de tipo).
+try {
+  execFileSync(process.execPath, [path.join('scripts', 'test-artigo-so-nos-resumos.js')], { stdio: 'pipe' });
+  ok('regressão artigo só nos Resumos: fora das Diretrizes + sem botão Publicar');
+} catch (e) {
+  const out = (e.stdout ? e.stdout.toString() : '') + (e.stderr ? e.stderr.toString() : '');
+  fail('regressão de "artigo só nos Resumos" falhou (verifique dirSoNosResumos/dirIsVisible/toggleBtn no index.html):\n' + out);
+}
+
 if (errors) { console.error(`\n${errors} verificação(ões) falharam.`); process.exit(1); }
 console.log('\nTodas as verificações passaram.');
