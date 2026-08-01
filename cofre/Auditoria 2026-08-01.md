@@ -5,6 +5,27 @@ atualizado: 2026-08-01
 
 # Auditoria de funcionalidade e segurança — 2026-08-01
 
+## ✅ STATUS: TUDO CORRIGIDO (2026-08-01, "Corrija tudo")
+
+| # | Achado | Antes | Depois |
+|---|---|---|---|
+| 🔴 1 | `public_content` sem gate | 2.401 provas / 195 podcasts / 41 mapas pagos / 105 aulas | **50 / 0 / 0 / 3** |
+| 🔴 2 | `showcase_resumos` sem filtro de `privado` | 138 capítulos pagos a anon | **0** (só a conta vitrine) |
+| 🟠 3 | Discussões do Mural sem login | 35 ids + markdown inteiro | **0 / null** |
+| 🟠 4 | `/api/ai` proxy aberto | qualquer `curl` gastava crédito | **401 sem sessão** |
+| 🟡 5 | 11 rascunhos | Lípides 6 + Osteo 5 | **0** (professor clicou) |
+| 🟡 6 | `.gitignore` sem `.env` | — | coberto |
+| 🟡 7 | acesso vencido com `status='active'` | 1 linha | `status='expired'` |
+
+**Não regrediu nada** (medido depois): aluno logado segue recebendo as 35 discussões e
+os 24.921 caracteres do artigo; a conta vitrine segue recebendo os 215 capítulos;
+`member_content`/`member_resumos` não foram tocadas. Carga anônima caiu de
+**6.676 kB para 1.700 kB**, tirando o payload público de cima do teto de ~5,3 MB.
+
+⚠️ **`endodirect_acessos_ativos()` já conferia `expires_at`** — o acesso vencido nunca
+concedeu nada. A pendência era de **contagem**, não de direito de acesso.
+
+
 Método: papel `anon` simulado **dentro do banco** (`set local role anon`) — o proxy deste
 ambiente bloqueia `supabase.co`, mas a simulação exercita exatamente as regras que o
 PostgREST aplica. Cada achado foi **medido**, não inferido. O linter do Supabase confirma,

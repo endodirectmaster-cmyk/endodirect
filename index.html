@@ -4968,6 +4968,23 @@ function genCode(area){
 
 // ── API (ambiente do artefato injeta autenticação) ──
 var AI_API_ENDPOINT='/api/ai';
+// Token de sessão para o /api/ai. O endpoint passou a EXIGIR sessão (01/08/2026):
+// antes dele, a única proteção era Origin/Referer, que por desenho deixa passar
+// quando o header está ausente — `curl` entrava e gastava o crédito Anthropic.
+// Resolve sempre, nunca lança: sem sessão vai sem o header e o servidor responde
+// 401 com mensagem clara, em vez de o app travar esperando um token que não vem.
+function aiAuthHeaders(){
+  var base={'Content-Type':'application/json'};
+  try{
+    var client=getSupabaseClient();
+    if(!client||!client.auth||!client.auth.getSession)return Promise.resolve(base);
+    return client.auth.getSession().then(function(r){
+      var t=r&&r.data&&r.data.session&&r.data.session.access_token;
+      if(t)base.Authorization='Bearer '+t;
+      return base;
+    }).catch(function(){return base;});
+  }catch(e){return Promise.resolve(base);}
+}
 function aiRequest(payload){
   // Teto global de tempo (130s) p/ NENHUMA chamada de IA pendurar o app. O
   // servidor corta em 120s (maxDuration, plano Pro) — o cliente espera um pouco
@@ -4977,12 +4994,14 @@ function aiRequest(payload){
   var ctrl=(typeof AbortController!=='undefined')?new AbortController():null;
   var to=ctrl?setTimeout(function(){ctrl.abort();},130000):null;
   function done(){if(to){clearTimeout(to);to=null;}}
-  return fetch(AI_API_ENDPOINT,{
+  return aiAuthHeaders().then(function(hdrs){
+    return fetch(AI_API_ENDPOINT,{
     method:'POST',
-    headers:{'Content-Type':'application/json'},
+    headers:hdrs,
     credentials:'same-origin',
     body:JSON.stringify(payload||{}),
     signal:ctrl?ctrl.signal:undefined
+  });
   }).then(function(r){
     return r.json().catch(function(){return{};}).then(function(d){
       if(!r.ok)throw new Error(d.error||d.message||('Erro HTTP '+r.status));
