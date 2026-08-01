@@ -1,3 +1,12 @@
+# Segredos: NUNCA versionar. Hoje não há nenhum no repo (conferido na auditoria
+# de 01/08/2026), e esta regra existe para que continue assim — um `.env` local
+# criado por engano não vira commit.
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+
 # Artefatos locais de revisão (gerados por agentes; aplicados ao Supabase, não versionados)
 .review/
 

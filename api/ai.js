@@ -196,6 +196,24 @@ module.exports = async function handler(req, res) {
     }
   }
 
+  // ⚠️ DAQUI PARA BAIXO É A CHAMADA GENÉRICA À ANTHROPIC — EXIGE SESSÃO.
+  //
+  // Até 01/08/2026 a única proteção era a checagem de Origin/Referer acima, que
+  // por desenho DEIXA PASSAR quando o header está AUSENTE ("clientes
+  // não-browser"). Navegador sempre manda; `curl` não manda. Ou seja: qualquer
+  // um rodava um script contra este endpoint e gastava o crédito Anthropic do
+  // professor, com `system` até 60k chars, `prompt` até 200k e PDF/imagem em
+  // base64. A auditoria de 01/08 chamou isso de proxy aberto e estava certa.
+  //
+  // O gate é ESTAR LOGADO, não ter plano: os geradores de IA são usados por
+  // aluno de degustação, assinante e professor, e apertar para `plano` aqui
+  // seria mudança de produto, não de segurança. A checagem de origem continua
+  // como primeira camada (barra o navegador de outro site).
+  const aiUser = await userFromReq(req);
+  if (!aiUser) {
+    return json(res, 401, { error: 'Entre na sua conta para usar os recursos de IA.' });
+  }
+
   const apiKey = process.env.ANTHROPIC_API_KEY;
   if (!apiKey) {
     return json(res, 500, {
