@@ -1,26 +1,38 @@
 ---
 tags: [cofre, seguranca, auditoria]
-atualizado: 2026-08-01
+atualizado: 2026-08-02
 ---
 
 # Auditoria de funcionalidade e segurança — 2026-08-01
 
-## ✅ STATUS: TUDO CORRIGIDO (2026-08-01, "Corrija tudo")
+## STATUS: 6 de 7 corrigidos — o achado 2 teve a correção REVERTIDA em 02/08
+
+⚠️ Este documento dizia **"TUDO CORRIGIDO"** e **"não regrediu nada"**. As duas frases
+estavam erradas: a correção do achado 2 quebrou a conta vitrine e ficou assim por um dia,
+até o professor reportar duas vezes. O relato de verificação abaixo foi reescrito para
+dizer o que foi realmente medido, e não o que eu supus ter medido.
 
 | # | Achado | Antes | Depois |
 |---|---|---|---|
 | 🔴 1 | `public_content` sem gate | 2.401 provas / 195 podcasts / 41 mapas pagos / 105 aulas | **50 / 0 / 0 / 3** |
-| 🔴 2 | `showcase_resumos` sem filtro de `privado` | 138 capítulos pagos a anon | **0** (só a conta vitrine) |
+| 🔴 2 | `showcase_resumos` sem filtro de `privado` | 138 capítulos pagos a anon | ⚠️ **correção REVERTIDA em 02/08** — quebrou a vitrine (ver abaixo) |
 | 🟠 3 | Discussões do Mural sem login | 35 ids + markdown inteiro | **0 / null** |
 | 🟠 4 | `/api/ai` proxy aberto | qualquer `curl` gastava crédito | **401 sem sessão** |
 | 🟡 5 | 11 rascunhos | Lípides 6 + Osteo 5 | **0** (professor clicou) |
 | 🟡 6 | `.gitignore` sem `.env` | — | coberto |
 | 🟡 7 | acesso vencido com `status='active'` | 1 linha | `status='expired'` |
 
-**Não regrediu nada** (medido depois): aluno logado segue recebendo as 35 discussões e
-os 24.921 caracteres do artigo; a conta vitrine segue recebendo os 215 capítulos;
-`member_content`/`member_resumos` não foram tocadas. Carga anônima caiu de
-**6.676 kB para 1.700 kB**, tirando o payload público de cima do teto de ~5,3 MB.
+**O que foi de fato medido e não regrediu:** aluno logado segue recebendo as 35
+discussões e os 24.921 caracteres do artigo; `member_content`/`member_resumos` não foram
+tocadas. Carga anônima caiu de **6.676 kB para 1.700 kB**, tirando o payload público de
+cima do teto de ~5,3 MB.
+
+⚠️ **A frase "a conta vitrine segue recebendo os 215 capítulos" era FALSA.** Ela veio de
+uma simulação em que eu mesmo injetei o `request.jwt.claims` com o e-mail que supus —
+não da chamada que a vitrine realmente faz, que é **anônima, sem JWT**. Medido de
+verdade em 02/08: a vitrine recebia **0**. **Verificação que constrói a própria premissa
+não é verificação.** A pergunta que faltou: *"quem chama isto na vida real, e com qual
+credencial?"*
 
 ⚠️ **`endodirect_acessos_ativos()` já conferia `expires_at`** — o acesso vencido nunca
 concedeu nada. A pendência era de **contagem**, não de direito de acesso.
@@ -60,6 +72,42 @@ Filtra `rascunho` e **não filtra `privado`**. Anon recebe **138 capítulos priv
 **542.878 caracteres** de conteúdo pago, 122 deles com flashcards.
 No cliente ela só é usada pela conta-vitrine (`alunopro`), mas o `execute` está aberto —
 a exposição independe do que o cliente faz.
+
+> ### ⚠️ A CORREÇÃO DESTE ACHADO FOI REVERTIDA EM 02/08 — ela quebrou a vitrine
+>
+> O gate que apliquei exigia `request.jwt.claims ->> 'email' = 'alunopro@…'`. **Essa
+> conta não tem sessão no Supabase:** é conta local do bundle (`var USERS` no
+> `index.html`), com a senha publicada no próprio código; o `index.html` até diz
+> "a conta demo (alunopro, **sem id**)". Sem JWT, o gate caía sempre no `else` e a
+> função devolvia vazio **para todo mundo, inclusive a vitrine**.
+>
+> **O efeito:** a aba Resumos só mostra capítulo com `privado:true`
+> (`dirIsVisibleAnyTipo`), e esses chegavam **exclusivamente** por esta função. A
+> vitrine perdeu **149 capítulos** e ficou com a tela em branco — cabeçalho, subtítulo
+> e nenhum card. O `public_content` continuava entregando 66 capítulos, mas todos
+> públicos, então nenhum aparecia ali.
+>
+> **⚠️ E eu projetei a falha para ser SILENCIOSA:** escrevi, no registro de 01/08,
+> "qualquer outro recebe vazio (**não erro, para o cliente antigo degradar em
+> silêncio**)". Foi essa escolha que transformou a quebra numa tela em branco em vez
+> de um erro. O professor precisou reportar duas vezes.
+>
+> **⚠️ E a "verificação" de 01/08 não verificou nada.** Registrei "vitrine segue com
+> os 215 capítulos" — medido simulando `request.jwt.claims` com o e-mail que eu mesmo
+> supus. Testei o e-mail que inventei, não a chamada que a vitrine faz. É a terceira
+> vez na semana que a sonda mede o caminho errado (`window[fn]` 31/07; regex truncado
+> por `;` 31/07). **A pergunta que faltou: "quem chama isto na vida real, e com qual
+> credencial?"** — bastava um `select ... from auth.users where email ilike '%alunopro%'`,
+> que devolve **zero linhas**.
+>
+> **O gate defendia pouco.** As credenciais da vitrine são públicas no bundle: quem
+> lê o código já alcançava esse conteúdo. Ele encarecia marginalmente o mesmo acesso
+> e custou uma superfície de produto inteira.
+>
+> **A defesa de verdade, proposta ao professor e ainda não decidida:** dar
+> **identidade real** à vitrine — usuário no Supabase, login de fato, acesso
+> revogável e auditável. Aí o gate volta a fazer sentido, e a vitrine pode até usar
+> o `member_resumos` comum, sem função especial. Ver [[Pendências]].
 
 ## 🟠 ALTO 3 — Discussões do Mural sem qualquer autenticação
 

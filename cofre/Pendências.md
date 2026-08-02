@@ -1,9 +1,16 @@
 ---
 tags: [cofre, pendencias]
-atualizado: 2026-07-31
+atualizado: 2026-08-02
 ---
 
 # Pendências
+
+## ⚠️ Vitrine (`alunopro`) sem identidade no servidor — decisão do professor (2026-08-02)
+- [ ] **Dar conta REAL no Supabase à vitrine.** Hoje `alunopro` é conta **local do bundle** (`var USERS` no `index.html`), com a senha publicada no código e **sem sessão no Supabase**. Consequência estrutural: **nenhum gate de servidor consegue distinguir a vitrine de um visitante qualquer** — qualquer regra que ela passe, um `curl` também passa. Foi isso que fez o gate de 01/08 devolver vazio e deixar a aba Resumos em branco por um dia (revertido; ver [[Auditoria 2026-08-01]]).
+  - **O que fazer:** criar o usuário `alunopro@endodirect.com.br` no Supabase, conceder o acesso de plano e fazer o cliente **logar de fato**. Aí a vitrine pode usar o **`member_resumos` comum** — a função especial `endodirect_showcase_resumos()` deixa de existir, e some junto a superfície aberta que a auditoria apontou. Acesso passa a ser revogável, auditável e com limite de taxa.
+  - **⚠️ Mexe no fluxo de login**, que é compartilhado com as contas de admin — exige teste em navegador real antes de mergear, pela regra de [[Convenções de Trabalho]].
+  - **Não aumenta exposição:** a senha da vitrine já está pública no bundle. O que muda é que o conteúdo deixa de ser alcançável por quem apenas chama a RPC, sem nem saber que a demo existe.
+  - **Alternativa recusada:** token no parâmetro da RPC. Restaura a vitrine e barra o raspador anônimo, mas quem lê o bundle continua conseguindo tudo — é segurança por obscuridade, e não vale gravar como solução.
 
 ## Discussão do Mural: texto integral fora do PMC (2026-07-31)
 - [ ] **⚠️ Tabela de artigo CC BY-NC(-ND) é reproduzida mesmo assim (descoberto em 31/07).** `parseLicense` (lib/fulltext.js) já calcula `redistribuivel` — verdadeiro só em CC BY e CC0 — mas esse campo é usado **só para decidir sobre FIGURAS**. As tabelas do JATS entram na discussão **independentemente da licença**. A plataforma é paga (uso comercial) e `ND` proíbe derivado, então num artigo CC BY-NC-ND vindo do PMC a tabela colada hoje é reprodução que a licença não permite. **Correção pequena:** passar `ft.licenca.redistribuivel` para o prompt e, quando falso, não anexar `[[TABELA:n]]` — a discussão descreve os números em prosa, como foi feito à mão no artigo de hipercortisolismo. **Vale medir antes:** quantas das discussões já gravadas vieram de artigo não-CC BY (`meta.licenca` está gravado em todas).
