@@ -39,6 +39,13 @@ Ele **filtra as células vazias** e exige **duas com conteúdo**. A linha de agr
 - **⚠️ 3 discussões afetadas, 23 linhas** — inclusive a do coma mixedematoso, que eu tinha acabado de escrever com exatamente esse formato de agrupamento. Como o defeito era de **renderização**, corrigir o cliente conserta as três de uma vez: **nenhuma precisou ser regerada**.
 - Teste em `scripts/test-mural-render.js` com a tabela real do artigo; cobertura provada devolvendo o `isRow` ao laço — a tabela volta a 2 linhas e o teste reprova.
 
+### 📊 Tabela longa fica dobrada; 😀 e os emojis voltaram (2026-08-02)
+Duas correções de render no mesmo dia, as duas apontadas pelo professor olhando a tela.
+
+**A tabela dobra.** Consertar o vazamento acima fez a tabela do escore aparecer **inteira** — e aí ela ocupava **duas telas no meio da discussão**. Acima de `MURAL_TABELA_LINHAS_INLINE` (**9**) linhas de corpo, `muralTextHTML` embrulha a tabela num `<details class="mural-tab">` com `Ver a tabela (N linhas)`. **A legenda fica fora, à vista** — dobrar junto esconderia o que a tabela é. `<details>` é **dobra, não corte**: os 31 `<tr>` continuam lá dentro, e o teste conta.
+
+**Os emojis voltaram, e o motivo é mais velho que o pedido.** `formalizeMuralText` (25/07) arrancava o símbolo inicial de cada linha nos tipos "formais". Isso comia **o emoji que o professor escolhe no seletor do editor**, nos tipos que ele mesmo escreve — silenciosamente, desde então. O que tornou o defeito visível foi a renomeação do rótulo: o strip conhecia `Por que importa…` e não `Na prática:`, e o card passou a mostrar **a lâmpada removida com o rótulo nu**. A função foi removida; o texto vai à tela como está gravado. **O banco nunca esteve errado** — 376 itens com `💡` e 376 com `⚠️`, conferidos antes de tocar em código. Detalhe e a lição do stub de teste em [[Decisões]].
+
 ### ✅ Discussão do consenso de coma mixedematoso, e a licença que MUDA o que se pode fazer (2026-08-02)
 Segundo artigo entregue por PDF do professor: o consenso de coma mixedematoso (ETJ, `journalrss:ETJ:…`, 12.531 caracteres gravados, confirmado pelas RPCs — 36 discussões no total).
 
@@ -50,10 +57,12 @@ Segundo artigo entregue por PDF do professor: o consenso de coma mixedematoso (E
 | Uso comercial | proibido | permitido |
 | Derivado | proibido | permitido |
 | Tabelas do artigo | **NÃO reproduzidas** | **Tabela 1 reproduzida** |
+| Figuras do artigo | **NÃO reproduzidas** | **Figura 1 reproduzida** |
 
 "Acesso aberto" não é um regime só. `NC` proíbe uso comercial e a plataforma é paga; `ND` proíbe derivado, e traduzir/reformatar tabela é derivado. Em CC BY, com atribuição, a reprodução é legítima — e o escore de Popoveniuc é justamente o tipo de material que o aluno quer ter à mão. **Conferir a licença no PDF é passo obrigatório, não formalidade:** as duas revistas são "abertas" e o que se pode fazer com elas é diferente.
 
-- **A Figura 1 (algoritmo de tratamento) NÃO foi reproduzida**, mesmo sob CC BY — é imagem, e a regra do recurso desde 28/07 é referenciar figura pela legenda. Fica citada, com o conteúdo descrito em prosa.
+- **A Figura 1 (algoritmo de tratamento) FOI reproduzida** — corrigido no mesmo dia, a pedido do professor ("colocar a figura 1 original do artigo"). **⚠️ Eu havia escrito aqui que ela não seria reproduzida "mesmo sob CC BY", invocando a regra de 28/07 de referenciar figura pela legenda. A regra estava sendo aplicada fora do contexto em que nasceu:** ela veio de artigo **NC/ND**, onde a imagem realmente não pode ser copiada. Sob **CC BY 4.0 a imagem é tão redistribuível quanto a tabela** — e eu tinha acabado de escrever, dois parágrafos acima, que "acesso aberto não é um regime só". Apliquei ao texto o raciocínio que não apliquei à figura.
+  - Extraída do PDF (`xref 65`, 998×1545), quantizada para 256 cores (**980 kB → 367 kB**, sem perda visível) e versionada em **`figuras/etj-26-0044-fig1.png`**. **Servida do próprio domínio**, não do Storage — o proxy do ambiente bloqueia `supabase.co` e o repo já serve `/figuras/` estático pela Vercel. Entra como `![…](https://endodirect.com.br/figuras/…)`; `muralInlineHTML` a converte em `<img class="mural-inline-img">`, e **é essa classe que o `ensureMuralLightbox` escuta** — sem ela a figura sairia em 336×520 sem ampliar, o que num algoritmo em letra miúda equivale a não ter figura. Legenda traduzida + atribuição CC BY ao lado.
 - **O que a discussão priorizou:** os quatro pontos em que o reflexo comum está errado (aquecimento passivo — ativo periférico pode causar colapso; antibiótico profilático porque febre/taquicardia/leucocitose podem faltar; TSH não guia resposta; hidrocortisona em todos com desescalada precoce) e uma recomendação que se cumpre **antes** do paciente chegar: **conferir se o hospital tem levotiroxina IV**, que os autores levantam explicitamente.
 - **Honestidade do documento registrada na discussão:** consenso sem Delphi e sem graduação de evidência, mortalidade de até 50% apoiada em séries de **oito** e **onze** casos, papel da liotironina declarado controverso com duas estratégias não comparadas. E, ao contrário do artigo de 31/07, **sem conflito de interesse e sem financiamento**.
 
