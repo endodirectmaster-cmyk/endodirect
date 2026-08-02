@@ -14744,7 +14744,14 @@ function formalizeMuralText(txt){
 // "## Pergunta e contexto" desenvolve, e "⚠️ Cautela" o que "## Limitações"
 // detalha. Pedido do professor (29/07), que descreveu o card que quer: as duas
 // linhas de cabeçalho e, em seguida, a discussão.
-var MURAL_ROTULOS_COBERTOS_PELA_DISCUSSAO=['📝 Resumo:','💡 Por que importa na prática:','⚠️ Cautela/limitação:'];
+// ⚠️ O RÓTULO ANTIGO FICA NA LISTA. Em 02/08 o professor trocou "Por que importa
+// na prática" por "Na prática" (lib/radar.js), mas o rótulo é gravado DENTRO do
+// `texto` de cada item — os que já estavam no mural seguem com o texto antigo até
+// a migração alcançá-los, e um item que escape dela continuaria com o rótulo
+// velho para sempre. Se a lista conhecesse só o novo, esses cards voltariam a
+// mostrar o resumo repetido embaixo da discussão, que é o que ela existe para
+// evitar. Conhecer os dois não custa nada.
+var MURAL_ROTULOS_COBERTOS_PELA_DISCUSSAO=['📝 Resumo:','💡 Na prática:','💡 Por que importa na prática:','⚠️ Cautela/limitação:'];
 // Data de publicação e Tipo de estudo FICAM: são identificação do artigo, não
 // conteúdo, e a discussão não os repete.
 function muralTextSemRepetido(t){
