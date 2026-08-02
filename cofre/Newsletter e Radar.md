@@ -39,6 +39,23 @@ Ele **filtra as células vazias** e exige **duas com conteúdo**. A linha de agr
 - **⚠️ 3 discussões afetadas, 23 linhas** — inclusive a do coma mixedematoso, que eu tinha acabado de escrever com exatamente esse formato de agrupamento. Como o defeito era de **renderização**, corrigir o cliente conserta as três de uma vez: **nenhuma precisou ser regerada**.
 - Teste em `scripts/test-mural-render.js` com a tabela real do artigo; cobertura provada devolvendo o `isRow` ao laço — a tabela volta a 2 linhas e o teste reprova.
 
+### 📧 A caixa "Na prática" tinha SUMIDO do e-mail — e ninguém veria (2026-08-02)
+O professor pediu para alinhar o rótulo na newsletter. O rótulo era o menor dos problemas.
+
+**`muralItems` monta o `porque` só por regex sobre o `texto` do item**, e a regex conhecia apenas `💡 Por que importa…:`. Com a renomeação e a migração dos 376 itens, o `porque` passou a sair **vazio** — e o template monta a caixa dentro de um `${a.porque ? … : ''}`.
+
+```
+Medido, sobre os 395 artigos elegíveis:
+  regra de ontem (só o rótulo antigo no texto) → caixa em    0
+  regra nova (campo do radar + os dois rótulos) → caixa em  391
+```
+
+O e-mail de 02/08 saiu com a caixa em **1 de 3** artigos, sem erro em log nenhum.
+
+- **A correção é a fonte, não o rótulo.** O `porque` vem **primeiro do campo estruturado** que o `runRadar` já grava no item (391 de 395 o têm) — sem rótulo dentro. A regex vira reserva e conhece **os dois** rótulos, pelo mesmo motivo da lista de rótulos cobertos no `index.html`.
+- **⚠️ Dado que alimenta bloco OPCIONAL degrada sem sintoma.** Campo obrigatório vazio estoura; campo que só decide *renderiza ou não* some calado. A newsletter era o único módulo que mudei sem teste — e foi exatamente onde a perda passou. `scripts/test-newsletter-porque.js` no CI.
+- **Falta decidir:** reenviar a edição de hoje. É envio para toda a lista; não faço sem o professor mandar.
+
 ### 📊 Tabela longa fica dobrada; 😀 e os emojis voltaram (2026-08-02)
 Duas correções de render no mesmo dia, as duas apontadas pelo professor olhando a tela.
 
