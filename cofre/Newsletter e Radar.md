@@ -23,6 +23,22 @@ O caso previsto na pendência aconteceu no mesmo dia. `pubmed:42533758` ("Is Hyp
   - ⚠️ **Isto expõe uma lacuna do caminho automático:** `parseLicense` calcula `redistribuivel` (só CC BY/CC0) mas o `lib/fulltext.js` usa esse campo **só para figuras** — as tabelas do JATS são reproduzidas independentemente da licença. Num artigo CC BY-NC-ND vindo do PMC, hoje, a tabela seria colada. Ver [[Pendências]].
 - **O que a discussão priorizou**, e vale como modelo: os números que separam **rastreio positivo de doença** (14,3% de DST anormal × 2,1% de Cushing confirmado), os **três passos que mudam conduta** (pedir o DST antes de somar droga; medir dexametasona sérica junto; desescalar insulina/anti-hipertensivo quando o cortisol cai) e o **conflito de interesse** — a edição temática foi financiada pela **Corcept**, que fabrica mifepristona e desenvolve relacorilante, as duas drogas com mais espaço no texto.
 
+### ⚠️ Tabela quebrava na LINHA DE AGRUPAMENTO e o resto virava markdown cru (2026-08-02)
+O professor mandou o print de um card e disse *"ficou estranho"*: a tabela de características de base renderizava **as 4 primeiras linhas** e, dali em diante, **dezenas de linhas de `| a | b | c |`** apareciam como texto na tela do aluno.
+
+**A linha que quebrava:** `| DM history and complication | | | | |` — uma **linha de agrupamento**, com uma célula preenchida e o resto vazio. É assim que o JATS separa seções dentro de uma tabela (`DM history and complication`, `Other medical history`, `Laboratory data`).
+
+**A causa, em `muralTextHTML`:**
+```js
+function isRow(l){ … .split('|').filter(c => c.trim()).length >= 2; }
+```
+Ele **filtra as células vazias** e exige **duas com conteúdo**. A linha de agrupamento tem **uma**, então `isRow` dava falso, o laço do corpo da tabela **parava ali**, e todo o resto caía no renderizador de parágrafo.
+
+- **Célula vazia é markdown válido** — o erro era exigir conteúdo onde a pergunta é de forma.
+- **A correção separa as duas perguntas:** `isRow` (estrito) continua decidindo se uma tabela **começa** ali, e o novo `isRowCont` (estrutural: dois `|`) decide se ela **continua**. A guarda contra prosa não se perde, porque o início de tabela ainda exige o separador na linha seguinte.
+- **⚠️ 3 discussões afetadas, 23 linhas** — inclusive a do coma mixedematoso, que eu tinha acabado de escrever com exatamente esse formato de agrupamento. Como o defeito era de **renderização**, corrigir o cliente conserta as três de uma vez: **nenhuma precisou ser regerada**.
+- Teste em `scripts/test-mural-render.js` com a tabela real do artigo; cobertura provada devolvendo o `isRow` ao laço — a tabela volta a 2 linhas e o teste reprova.
+
 ### ✅ Discussão do consenso de coma mixedematoso, e a licença que MUDA o que se pode fazer (2026-08-02)
 Segundo artigo entregue por PDF do professor: o consenso de coma mixedematoso (ETJ, `journalrss:ETJ:…`, 12.531 caracteres gravados, confirmado pelas RPCs — 36 discussões no total).
 

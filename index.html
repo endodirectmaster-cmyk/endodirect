@@ -15016,6 +15016,21 @@ function muralTextHTML(txt){
   // tabelas markdown, títulos ##, listas -, legendas e imagens.
   var lines=String(txt||'').replace(/\r/g,'').split('\n');
   function isRow(l){return l.indexOf('|')>=0 && l.replace(/\\\|/g,'').split('|').filter(function(c){return c.trim();}).length>=2;}
+  // ⚠️ DENTRO da tabela, "é linha?" é pergunta ESTRUTURAL, não de conteúdo.
+  //
+  // O defeito (02/08/2026, "ficou estranho"): tabela de características de base
+  // tem LINHAS DE AGRUPAMENTO — `| DM history and complication | | | | |` —, com
+  // uma célula preenchida e o resto vazio. O `isRow` acima filtra as vazias e
+  // exige DUAS com conteúdo, então essa linha não passava: o laço do corpo
+  // PARAVA nela e todo o resto da tabela caía no renderizador de parágrafo,
+  // aparecendo como markdown cru na tela — dezenas de linhas de `| a | b |`.
+  // Renderizava as 4 primeiras linhas e vazava as outras 30.
+  //
+  // Célula vazia é markdown válido e é assim que o JATS do artigo agrupa seções
+  // da tabela. Uma vez DENTRO da tabela (já houve cabeçalho + separador), basta
+  // a linha ter a forma de linha: dois delimitadores `|`. A guarda contra prosa
+  // continua no INÍCIO da tabela, que exige o separador na linha seguinte.
+  function isRowCont(l){return l.replace(/\\\|/g,'').split('|').length>=3;}
   function isSep(l){return l.indexOf('|')>=0 && /^\s*\|?[\s:]*-{2,}[\s:|-]*$/.test(l);}
   // Mesma regra do resumo: se a célula inteira é um marcador de cor, a classe vai
   // para o <th>/<td> e o fundo preenche a célula toda.
@@ -15038,7 +15053,7 @@ function muralTextHTML(txt){
     if(isRow(line)&&i+1<lines.length&&isSep(lines[i+1])){
       flush();
       var h=cells(line),rows=[];i+=2;
-      while(i<lines.length&&isRow(lines[i])&&!isSep(lines[i])){rows.push(cells(lines[i]));i++;}
+      while(i<lines.length&&isRowCont(lines[i])&&!isSep(lines[i])){rows.push(cells(lines[i]));i++;}
       out.push('<div class="mural-table-wrap"><table class="mural-table"><thead><tr>'
         +h.map(function(c){return celTag('th',c);}).join('')+'</tr></thead><tbody>'
         +rows.map(function(r){while(r.length<h.length)r.push({cls:'',html:''});return'<tr>'+r.slice(0,h.length).map(function(c){return celTag('td',c);}).join('')+'</tr>';}).join('')
