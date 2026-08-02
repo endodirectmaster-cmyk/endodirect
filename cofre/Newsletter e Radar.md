@@ -54,7 +54,7 @@ O e-mail de 02/08 saiu com a caixa em **1 de 3** artigos, sem erro em log nenhum
 
 - **A correção é a fonte, não o rótulo.** O `porque` vem **primeiro do campo estruturado** que o `runRadar` já grava no item (391 de 395 o têm) — sem rótulo dentro. A regex vira reserva e conhece **os dois** rótulos, pelo mesmo motivo da lista de rótulos cobertos no `index.html`.
 - **⚠️ Dado que alimenta bloco OPCIONAL degrada sem sintoma.** Campo obrigatório vazio estoura; campo que só decide *renderiza ou não* some calado. A newsletter era o único módulo que mudei sem teste — e foi exatamente onde a perda passou. `scripts/test-newsletter-porque.js` no CI.
-- **Falta decidir:** reenviar a edição de hoje. É envio para toda a lista; não faço sem o professor mandar.
+- **A edição de 02/08 NÃO foi reenviada** — decisão do professor no mesmo dia ("não precisa reenviar a newsletter hoje"). Um segundo e-mail com a mesma data custaria mais em incômodo do que a caixa faltante em dois artigos; a edição seguinte já sai correta.
 
 ### 📊 Tabela longa fica dobrada; 😀 e os emojis voltaram (2026-08-02)
 Duas correções de render no mesmo dia, as duas apontadas pelo professor olhando a tela.
