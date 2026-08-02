@@ -139,8 +139,17 @@ const av = (o) => Object.assign({ sourceId: 'pubmed:1', pmid: '1', tipo: 'Estudo
      iConsulta > 0 && iBusca > 0 && iConsulta < iBusca, 'consulta em ' + iConsulta + ', busca em ' + iBusca);
   ok('o resultado é aplicado DEPOIS do merge', iAplica > iMerge && iMerge > 0);
   ok('e ANTES da gravação', iAplica > 0 && iSave > 0 && iAplica < iSave);
-  ok('aplica sobre a lista MESCLADA, não sobre o snapshot velho',
-     /aplicarPmc\(\s*merged\.payload\.radar_avisos/.test(bloco));
+  // ⚠️ A asserção é sobre a INTENÇÃO, não sobre a expressão literal: a cadeia
+  // tem de começar na lista MESCLADA (a que vai ao banco) e nunca no snapshot
+  // velho lido no início do run. Desde 01/08 a ponte RSS→PubMed entra antes,
+  // então o `aplicarPmc` recebe a saída dela — o que continua sendo a lista
+  // mesclada, só que já com os pmids resolvidos.
+  ok('a cadeia começa na lista MESCLADA',
+     /aplicarTitulos\(\s*merged\.payload\.radar_avisos/.test(bloco)
+     || /aplicarPmc\(\s*merged\.payload\.radar_avisos/.test(bloco));
+  ok('nunca aplica sobre o snapshot velho',
+     !/aplicar(Pmc|Titulos)\(\s*(latestPayload|payload)\.radar_avisos/.test(bloco),
+     'payload/latestPayload sao anteriores ao merge');
   ok('a promessa nasce com .catch (senão vira unhandled rejection)',
      /consultarPmcids\([^)]*\)[\s\S]{0,40}\.catch\(/.test(bloco));
   ok('reusa o fetch paceado do radar (o limite da NCBI é por IP)',

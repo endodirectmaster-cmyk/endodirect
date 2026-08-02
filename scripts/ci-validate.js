@@ -236,5 +236,18 @@ try {
   fail('regressão de "artigo só nos Resumos" falhou (verifique dirSoNosResumos/dirIsVisible/toggleBtn no index.html):\n' + out);
 }
 
+// 19. PONTE RSS → PUBMED: item vindo de RSS de revista entra sem PMID e com o
+//     link da editora, então a repescagem de acesso aberto nem o enxergava (97
+//     itens, 23 de tipo que renderia discussão, travados). O teste cobre acima
+//     de tudo a GUARDA DE TÍTULO: casar um "parecido" reescreve o link do card
+//     para OUTRO artigo — errar aqui é pior que não fazer nada.
+try {
+  execFileSync(process.execPath, [path.join('scripts', 'test-ponte-rss-pubmed.js')], { stdio: 'pipe' });
+  ok('regressão ponte RSS→PubMed: guarda de título exata + marca de tentativa + ordem no runRadar');
+} catch (e) {
+  const out = (e.stdout ? e.stdout.toString() : '') + (e.stderr ? e.stderr.toString() : '');
+  fail('regressão da ponte RSS→PubMed falhou (verifique lib/pmc-repescagem.js + runRadar):\n' + out);
+}
+
 if (errors) { console.error(`\n${errors} verificação(ões) falharam.`); process.exit(1); }
 console.log('\nTodas as verificações passaram.');

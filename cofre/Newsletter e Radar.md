@@ -1,6 +1,6 @@
 ---
 tags: [cofre, newsletter, radar]
-atualizado: 2026-07-31
+atualizado: 2026-08-01
 ---
 
 # Newsletter e Radar
@@ -22,6 +22,30 @@ O caso previsto na pendência aconteceu no mesmo dia. `pubmed:42533758` ("Is Hyp
 - **⚠️ LICENÇA CC BY-NC-ND — e por isso as 3 tabelas do artigo NÃO foram reproduzidas.** `NC` proíbe uso comercial e a plataforma é paga; `ND` proíbe derivado, e traduzir/reformatar uma tabela é derivado. A discussão cita os **números** (fato não é protegido) com redação própria. Registrado em `meta.nota_licenca`.
   - ⚠️ **Isto expõe uma lacuna do caminho automático:** `parseLicense` calcula `redistribuivel` (só CC BY/CC0) mas o `lib/fulltext.js` usa esse campo **só para figuras** — as tabelas do JATS são reproduzidas independentemente da licença. Num artigo CC BY-NC-ND vindo do PMC, hoje, a tabela seria colada. Ver [[Pendências]].
 - **O que a discussão priorizou**, e vale como modelo: os números que separam **rastreio positivo de doença** (14,3% de DST anormal × 2,1% de Cushing confirmado), os **três passos que mudam conduta** (pedir o DST antes de somar droga; medir dexametasona sérica junto; desescalar insulina/anti-hipertensivo quando o cortisol cai) e o **conflito de interesse** — a edição temática foi financiada pela **Corcept**, que fabrica mifepristona e desenvolve relacorilante, as duas drogas com mais espaço no texto.
+
+### ⚠️ O RADAR TEM DOIS CAMINHOS, e a repescagem só cobria um (2026-08-01)
+O professor apontou o consenso de **coma mixedematoso** (European Thyroid Journal, revista **inteiramente aberta**) sem discussão. O tipo estava certo — "Diretriz", e o título ainda casa o `RE_TITULO` por "consensus statement". O que faltava era, de novo, o PMC — mas por um motivo diferente do de 31/07.
+
+**O item veio por RSS**, não pelo PubMed: `journalrss:ETJ:…`, com o **link da editora** e **`pmid: null`**. A repescagem que construí no dia anterior identifica candidato por `pmidDoAviso()`, que exige `pmid` ou `sourceId` no formato `pubmed:<n>` — então ela **nunca enxergou** nenhum item de RSS.
+
+**A escala do ponto cego, medida em 01/08:**
+
+| origem | itens | com PMC | com PMID | tipo que rende | travados |
+|---|---|---|---|---|---|
+| `pubmed` | 280 | 121 | 280 | 80 | 48 (reperguntados todo dia) |
+| `journalrss` | **97** | **0** | **0** | **23** | **23 (para sempre)** |
+
+Os 23 não estavam travados por falta de texto aberto — estavam por **falta de caminho até ele**. E o RSS traz justamente as revistas que o professor pediu por nome (NEJM, Endocrine Practice, EJE, ETJ, Metabolism, DOM).
+
+**A ponte:** achar o **PMID pelo TÍTULO** (`esearch` + `esummary`) e gravá-lo no item. Dali em diante ele entra no mesmo caminho dos outros — e, quando o `esummary` já traz o PMC, o link é reescrito no mesmo run.
+
+- **⚠️ A guarda de título é o coração disso.** Busca por título no PubMed devolve **parecidos**, e casar um parecido não deixa o card como está: **reescreve o link para OUTRO artigo**, e o aluno leria a discussão de um estudo diferente do que o card anuncia. Errar aqui é **pior que não fazer nada**. Por isso a exigência é **igualdade exata do título normalizado** (minúsculas, sem acento, sem pontuação). O teste cobre os três parecidos perigosos: outro artigo da mesma série ("thyroid storm"), título com sufixo a mais e título truncado — os três têm de **não** casar.
+- **O `pmid` é GRAVADO no item** → custo de duas chamadas **uma vez por artigo**, não por dia.
+- **Marca de tentativa (`pmidTent`), retestada só depois de 7 dias.** Sem ela, os 97 sem PMID seriam reperguntados todo dia para sempre; com ela, o artigo publicado hoje e indexado semana que vem ainda é alcançado.
+- **`aplicarTitulos` roda ANTES de `aplicarPmc`**, porque é ele que grava o `pmid` que faz o item existir para a repescagem por id. Invertido, o artigo de RSS resolvido hoje só seria repescado amanhã. O teste reprova se a ordem trocar.
+- **8 por execução**, em paralelo com a busca de artigos, com o `fetchJson` paceado do radar. Fail-safe: NCBI fora do ar devolve vazio e o radar grava normalmente.
+
+⚠️ **O que continua sem garantia:** ETJ é aberta na editora, mas isso não implica depósito no PMC. Se o consenso não estiver lá, a ponte acha o PMID e o artigo segue sem discussão — por falta de texto integral, que é o limite legítimo do recurso. Daqui **não dá para verificar** (o proxy bloqueia a NCBI); quem responde é o primeiro run em produção.
 
 ### ⚠️ O PMC chega DEPOIS — e a pergunta só era feita uma vez (2026-07-31)
 O professor apontou uma revisão de acesso aberto que não ganhou discussão sozinha: *"Artigo de revisão de revista open access e não gerou discussão automaticamente"* — **"Is Hypercortisolism Treatable?"** (Diabetes, Obesity and Metabolism, `pubmed:42533758`, entrou em 31/07 às 08h16).
