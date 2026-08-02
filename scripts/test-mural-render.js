@@ -34,7 +34,7 @@ const ctx = { console };
 vm.createContext(ctx);
 vm.runInContext([
   SRC.slice(iCores, fCores),
-  trecho('esc'), trecho('mdSplitRow'), trecho('wysAlignRead'),
+  trecho('esc'), trecho('mdSplitRow'), trecho('wysAlignRead'), trecho('safeHttpUrl'),
   trecho('mdInline'), trecho('muralInlineHTML'), trecho('muralTextHTML')
 ].join('\n'), ctx);
 
@@ -99,10 +99,15 @@ ok('rodapé mantém o texto da origem', rodape.indexOf('PMC 123') >= 0);
 //  2. cortar as linhas de identificação (data, tipo de estudo) junto com o
 //     resumo: elas não são repetição, e a discussão não as traz.
 {
+  // ⚠️ AQUI HAVIA UM STUB — `function isFormalMuralType(){return false;}` — e ele
+  // é a razão de este arquivo ter passado verde enquanto o professor via o card
+  // errado. As asserções abaixo dizem "o emoji FICA"; o stub desligava exatamente
+  // o código que o tirava (`formalizeMuralText`, removido em 02/08). O teste
+  // media um caminho que a tela não usava. Mesma família do `window[fn]` de 31/07:
+  // sonda errada é pior que teste nenhum, porque compra confiança.
+  // Sem stub: o que roda aqui é o que roda no navegador.
   vm.runInContext([
     'var muralDiscIds={}, muralDiscPrev={};',
-    'function isFormalMuralType(){return false;}',
-    'function muralDisplayType(a){return (a&&a.tipo)||"";}',
     SRC.slice(SRC.indexOf('var MURAL_ROTULOS_COBERTOS_PELA_DISCUSSAO='), SRC.indexOf('\nfunction muralTemFullText(')),
     trecho('muralDiscussaoHTML')
   ].join('\n'), ctx);
@@ -145,6 +150,33 @@ ok('rodapé mantém o texto da origem', rodape.indexOf('PMC 123') >= 0);
   // Texto que é SÓ resumo (sem cabeçalho) não pode virar card vazio.
   const soResumo = { sourceId: 'pubmed:1', texto: '📝 Resumo: só isto.', tipo: 'Artigo de Revisão' };
   ok('texto sem cabeçalho não vira card vazio', ctx.muralBodyText(soResumo).indexOf('só isto') > 0);
+
+  // ---- ⚠️ OS EMOJIS CHEGAM À TELA ("sumiram os emojis", 02/08/2026) ----------
+  // Até 02/08 os tipos "formais" passavam por uma limpeza que arrancava o símbolo
+  // inicial de cada linha. Dois estragos: (a) comia o emoji que o PROFESSOR
+  // escolhe no seletor do editor, nos tipos que ele escreve à mão; (b) depois da
+  // renomeação do rótulo, deixava a linha pela metade — sem a lâmpada, com o
+  // rótulo nu ("Na prática: …"), diferente do mesmo card num tipo não-formal.
+  ctx.muralDiscIds = {}; ctx.muralDiscPrev = {};
+  const NOVO = '📅 Data de publicação: 2026\n🔬 Tipo de estudo: Revisão narrativa\n'
+    + '📝 Resumo: Esta revisão sintetiza evidências.\n'
+    + '💡 Na prática: o fenótipo ficou mais heterogêneo.\n'
+    + '⚠️ Cautela/limitação: sujeita a viés de seleção.';
+  // Todo tipo formal de antes — é neles que a limpeza agia.
+  ['Artigo de Revisão', 'Comunicado', 'Diretriz', 'Consenso', 'Discussão Clínica'].forEach(function (tipo) {
+    const c = ctx.muralBodyText({ sourceId: 'pubmed:9', texto: NOVO, tipo: tipo });
+    ok('💡 sobrevive em "' + tipo + '"', c.indexOf('💡 Na prática:') > 0, c.split('\n')[3]);
+    ok('⚠️ sobrevive em "' + tipo + '"', c.indexOf('⚠️ Cautela') > 0);
+    ok('📝 sobrevive em "' + tipo + '"', c.indexOf('📝 Resumo:') > 0);
+    ok('nunca sai o rótulo NU, sem o emoji, em "' + tipo + '"', !/(^|\n)Na prática:/.test(c),
+       'era o que o professor via no card: a lâmpada some e o rótulo fica');
+  });
+  // Emoji escolhido à mão no seletor do editor (MURAL_EMOJIS) — o caso silencioso.
+  const aviso = { sourceId: '', texto: '🚨 Prova na sexta.\n✅ Inscrições abertas.', tipo: 'Comunicado' };
+  ok('emoji digitado pelo professor no aviso chega à tela',
+     ctx.muralBodyText(aviso).indexOf('🚨 Prova na sexta.') === 0
+     && ctx.muralBodyText(aviso).indexOf('✅ Inscrições') > 0,
+     ctx.muralBodyText(aviso));
 }
 
 // ---- ⚠️ LINHA DE AGRUPAMENTO COM CÉLULAS VAZIAS (02/08/2026, "ficou estranho")
@@ -174,6 +206,79 @@ ok('rodapé mantém o texto da origem', rodape.indexOf('PMC 123') >= 0);
      (h.match(/<td[^>]*><\/td>/g) || []).length >= 8);
   const prosa = ctx.muralTextHTML('O custo | beneficio foi discutido.\nOutra linha.');
   ok('prosa com uma barra NAO vira tabela', prosa.indexOf('<table') < 0, prosa.slice(0, 120));
+}
+
+// ---- TABELA LONGA RECOLHIDA AO CLIQUE (pedido do professor, 02/08/2026) ------
+// "Ampliável ao clique para não ficar muito extensa a discussão": o escore de
+// Popoveniuc do consenso de coma mixedematoso tem 30 linhas e ocupava duas telas
+// NO MEIO do texto. O que este bloco trava é o par: recolher as longas SEM
+// recolher as curtas (trocar três linhas de dado por um clique não economiza
+// rolagem) e sem perder nenhuma linha dentro do <details>.
+{
+  const linhasDe = (n) => {
+    const l = ['| Marcador | Pontos |', '| --- | --- |'];
+    for (let k = 1; k <= n; k++) l.push('| Item ' + k + ' | ' + (k * 5) + ' |');
+    return l.join('\n');
+  };
+  const LIM = /var MURAL_TABELA_LINHAS_INLINE=(\d+)/.exec(SRC);
+  ok('o limite está declarado no index.html', !!LIM);
+  const lim = LIM ? +LIM[1] : 0;
+  ok('o limite é de poucas linhas, não de dezenas', lim >= 4 && lim <= 15, String(lim));
+
+  const curta = ctx.muralTextHTML(linhasDe(lim));
+  ok('tabela curta continua ABERTA, sem clique', curta.indexOf('<details') < 0, curta.slice(0, 120));
+  ok('tabela curta continua sendo uma tabela', /<table class="mural-table">/.test(curta));
+
+  const longa = ctx.muralTextHTML(linhasDe(lim + 1));
+  ok('uma linha acima do limite já recolhe', /<details class="mural-tab">/.test(longa), longa.slice(0, 160));
+  ok('o controle diz quantas linhas estão escondidas',
+     longa.indexOf('Ver a tabela (' + (lim + 1) + ' linhas)') > 0, longa.slice(0, 220));
+
+  // ⚠️ ASSERÇÃO ABSOLUTA, não derivada da constante. As duas de cima calculam a
+  // entrada a partir de `lim`, então continuariam verdes com lim=999 — mediriam a
+  // coerência do código consigo mesmo, não o que o professor pediu. O caso real é
+  // este: a tabela do escore de Popoveniuc tem 30 linhas e TEM de vir dobrada.
+  const trinta = ctx.muralTextHTML(linhasDe(30));
+  ok('⚠️ a tabela de 30 linhas do consenso vem RECOLHIDA', /<details class="mural-tab">/.test(trinta),
+     'é a tabela que ocupava duas telas no meio da discussão');
+  // ⚠️ Recolher não pode PERDER linha: o <details> é dobra, não corte.
+  ok('a tabela de 30 linhas tem as 30 dentro do <details>', (trinta.match(/<tr>/g) || []).length === 31,
+     (trinta.match(/<tr>/g) || []).length + ' <tr> (esperado 31 = 1 cabeçalho + 30)');
+  ok('a última linha continua lá', trinta.indexOf('Item 30') > 0);
+  ok('a tabela fica DENTRO do details', trinta.indexOf('<details') < trinta.indexOf('<table'));
+  ok('o details fecha depois da tabela', trinta.indexOf('</table>') < trinta.indexOf('</details>'));
+  ok('nada de markdown cru vazando', trinta.indexOf('| Item 30') < 0);
+
+  // A legenda fica FORA, à vista: o aluno precisa saber o que está dobrado.
+  const comLegenda = ctx.muralTextHTML('**Tabela 1. Escore de Popoveniuc.**\n\n' + linhasDe(30));
+  ok('a legenda fica fora do details', comLegenda.indexOf('Escore de Popoveniuc') < comLegenda.indexOf('<details'),
+     'dobrar a legenda junto esconderia o que a tabela é');
+}
+
+// ---- FIGURA DO ARTIGO: imagem inline + clique para ampliar ------------------
+// 02/08/2026, "colocar a figura 1 original do artigo": a discussão do consenso do
+// ETJ (CC BY 4.0, reprodução permitida com atribuição) descrevia a Figura 1 em
+// prosa. O renderizador já sabia converter ![alt](url); o que este bloco trava é
+// que ela saia com a classe que o LIGHTBOX escuta — sem ela a imagem aparece mas
+// não amplia, e num algoritmo de tratamento em letra miúda isso é o mesmo que não
+// ter figura.
+{
+  const url = 'https://endodirect.com.br/figuras/etj-26-0044-fig1.png';
+  const h = ctx.muralTextHTML('![Figura 1 — algoritmo](' + url + ')\n\n*Figura 1. Algoritmo. Reproduzida do artigo (European Thyroid Journal, licença CC BY 4.0).*');
+  ok('a figura vira <img>', h.indexOf('<img') >= 0, h.slice(0, 160));
+  ok('com a classe que o lightbox escuta', h.indexOf('class="mural-inline-img"') > 0,
+     'sem mural-inline-img o clique não amplia (ensureMuralLightbox)');
+  ok('apontando para o arquivo do repo', h.indexOf('src="' + url + '"') > 0);
+  ok('o texto alternativo é preservado', h.indexOf('alt="Figura 1 — algoritmo"') > 0);
+  ok('a atribuição CC BY fica visível ao lado', h.indexOf('CC BY 4.0') > 0);
+  ok('o markdown da imagem não sobra como texto', h.indexOf('![Figura') < 0);
+  // O arquivo tem de existir no repo, senão o card mostra um vão (onerror remove).
+  const fig = path.join(__dirname, '..', 'figuras', 'etj-26-0044-fig1.png');
+  ok('o PNG da Figura 1 está no repo', fs.existsSync(fig), fig);
+  if (fs.existsSync(fig)) {
+    const kb = fs.statSync(fig).size / 1024;
+    ok('e num tamanho que carrega no celular', kb < 600, Math.round(kb) + ' KB');
+  }
 }
 
 console.log(bad ? '\nFALHOU: ' + bad : '\n✓ mural: régua horizontal, tabela e lista intactas, prévia da discussão no lugar do resumo repetido');

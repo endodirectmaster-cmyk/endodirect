@@ -520,6 +520,19 @@ textarea{resize:vertical;line-height:1.6}
 .mural-disc>summary:focus-visible{outline:2px solid var(--blue2);outline-offset:2px}
 .mural-disc-body{padding:.2rem .85rem .85rem;margin-bottom:0}
 .mural-disc-previa{margin-top:.7rem;padding-left:.7rem;border-left:2px solid var(--bd)}
+/* Tabela longa recolhida (muralTextHTML): mesmo controle do <details> da
+   discussão, em escala menor — é um bloco DENTRO do texto, não uma seção. */
+.mural-tab{margin:.7rem 0;border:1px solid var(--bd);border-radius:10px;background:var(--s2)}
+.mural-tab>summary{cursor:pointer;list-style:none;padding:.5rem .75rem;font-weight:600;font-size:.82rem;
+  color:var(--blue2);display:flex;align-items:center;gap:.45rem;flex-wrap:wrap}
+.mural-tab>summary::before{content:'📊'}
+.mural-tab>summary::-webkit-details-marker{display:none}
+.mural-tab>summary::after{content:'▾';margin-left:auto;transition:transform .15s}
+.mural-tab[open]>summary::after{transform:rotate(180deg)}
+.mural-tab>summary:hover{background:var(--s3,rgba(127,127,127,.06));border-radius:10px}
+.mural-tab>summary:focus-visible{outline:2px solid var(--blue2);outline-offset:2px}
+.mural-tab .mural-table-wrap{margin:0 0 .1rem;padding:0 .35rem .35rem}
+@media (prefers-reduced-motion:reduce){.mural-tab>summary::after{transition:none}}
 .mural-text .mural-hr{border:0;border-top:1px solid var(--bd);margin:1.1rem 0}
 /* Favoritos: estrela nos cards + lista do painel */
 .fav-star{background:none;border:0;cursor:pointer;font-size:1.05rem;line-height:1;padding:.15rem .3rem;
@@ -14723,22 +14736,28 @@ function ensureMuralLightbox(){
 // Renderiza o texto do card escapando tudo, mas convertendo imagens em markdown
 // ![alt](url) (apenas http/https) em <img> inline. O resto do texto é escapado
 // normalmente (com white-space:pre-line preservando as quebras de linha).
-// Tipos "formais" (documentos oficiais/estruturados). O professor pediu que
-// esses cards sejam apresentados como texto corrido, completo e FORMAL — sem o
-// modelo "📝 Resumo / 💡 Por que importa na prática / ⚠️ Cautela". A limpeza é
-// feita no RENDER (cobre itens já gravados no radar E os futuros): remove os
-// emojis/rótulos do modelo, mas preserva todo o conteúdo (nada é descartado).
-var MURAL_FORMAL_TYPES={'Comunicado':1,'Diretriz':1,'Consenso':1,'Discussão Clínica':1,'Artigo de Revisão':1};
-function isFormalMuralType(t){return !!MURAL_FORMAL_TYPES[String(t||'').trim()];}
-function formalizeMuralText(txt){
-  return String(txt||'').split('\n').map(function(ln){
-    if(/^\s*(\{:(?:left|center|right)\}|#{1,4}\s|[-*+]\s|>\s|\||!\[|https?:\/\/)/.test(ln))return ln; // estrutura markdown (marcador de alinhamento {:x}, título ##, lista - •, citação >, tabela | … |, imagem ![](url), URL crua): preserva intacta (senão o strip inicial quebra a sintaxe / apaga o marcador)
-    var s=ln.replace(/^[^\p{L}\p{N}]+/u,''); // tira emoji/símbolo inicial (📝 💡 ⚠️ 📅 🏛️ 🔬)
-    s=s.replace(/^(Resumo|Por que importa[^:]*|Cautela[^:]*)\s*:\s*/i,''); // tira os rótulos do modelo, mantém o texto
-    return s;
-  }).join('\n').replace(/[ \t]+\n/g,'\n').replace(/\n{3,}/g,'\n\n').trim();
-}
-// Texto do corpo do card, já formalizado quando o tipo é um documento formal.
+// ⚠️ 02/08/2026 — A "FORMALIZAÇÃO" DOS CARDS FOI REMOVIDA: "sumiram os emojis".
+//
+// Existia desde 25/07 uma limpeza no render para os tipos ditos formais
+// (Comunicado, Diretriz, Consenso, Discussão Clínica, Artigo de Revisão): cada
+// linha perdia o símbolo inicial (`^[^\p{L}\p{N}]+`) e os rótulos do modelo
+// ("Resumo:", "Por que importa…:", "Cautela…:"), para o card sair como texto
+// corrido. Dois defeitos, um deles antigo e invisível:
+//
+//  1. O STRIP COMIA OS EMOJIS DO PRÓPRIO PROFESSOR. O editor do aviso tem um
+//     seletor de emoji (MURAL_EMOJIS); num Comunicado ou numa Diretriz — os tipos
+//     que ele escreve à mão — qualquer linha começada por emoji era publicada sem
+//     ele. Escolha silenciosamente descartada no caminho entre salvar e ver.
+//  2. A renomeação do rótulo em 02/08 partiu a linha ao meio. O strip conhecia
+//     "Por que importa na prática:" e não "Na prática:", então o card passou a
+//     mostrar a lâmpada removida e o rótulo NU — "Na prática: O fenótipo…" —,
+//     diferente do que o mesmo conteúdo mostra num tipo não-formal.
+//
+// Entre ensinar o rótulo novo ao strip e devolver os emojis, o professor pediu os
+// emojis. É a leitura que fecha: o rótulo curto que ele acabara de escolher só
+// faz sentido se aparecer, e aparecer igual em todo tipo de card. O texto agora
+// vai à tela como está gravado — que é como ele foi escrito.
+// Texto do corpo do card.
 // Rótulos que a DISCUSSÃO cobre por extenso. Quando ela existe, o resumo de
 // quatro linhas do radar vira repetição: "📝 Resumo" diz em um parágrafo o que
 // "## Pergunta e contexto" desenvolve, e "⚠️ Cautela" o que "## Limitações"
@@ -14768,12 +14787,11 @@ function muralTextSemRepetido(t){
 }
 function muralBodyText(a){
   var t=(a&&a.texto)||'';
-  var tipo=(typeof muralDisplayType==='function')?muralDisplayType(a):(a&&a.tipo);
   var sid=(a&&a.sourceId)||'';
   // Só corta onde há prévia para pôr no lugar. Sem prévia (RPC falhou, ou
   // discussão sem texto), cortar deixaria o card mais pobre do que era.
   if(sid&&muralDiscIds[sid]&&muralDiscPrev[sid])t=muralTextSemRepetido(t);
-  return isFormalMuralType(tipo)?formalizeMuralText(t):t;
+  return t;
 }
 // Discussão completa do artigo, escrita a partir do TEXTO INTEGRAL (PMC) —
 // não do abstract. Fica RECOLHIDA: o card do mural é uma lista de varredura, e
@@ -15016,6 +15034,9 @@ function muralInlineHTML(escLine){
   escLine=escLine.replace(/(\d+)/g,function(whole,i){return imgs[+i]||'';});
   return escLine;
 }
+// Acima de quantas linhas de CORPO a tabela entra recolhida atrás de um clique.
+// Nove cabem numa tela de celular sem empurrar o texto seguinte para longe.
+var MURAL_TABELA_LINHAS_INLINE=9;
 function muralTextHTML(txt){
   // Renderiza por blocos separados por linha em branco: cada bloco de texto vira
   // um <p class="mural-p"> (espaçamento controlado por CSS — antes o container era
@@ -15061,10 +15082,21 @@ function muralTextHTML(txt){
       flush();
       var h=cells(line),rows=[];i+=2;
       while(i<lines.length&&isRowCont(lines[i])&&!isSep(lines[i])){rows.push(cells(lines[i]));i++;}
-      out.push('<div class="mural-table-wrap"><table class="mural-table"><thead><tr>'
+      var _tab='<div class="mural-table-wrap"><table class="mural-table"><thead><tr>'
         +h.map(function(c){return celTag('th',c);}).join('')+'</tr></thead><tbody>'
         +rows.map(function(r){while(r.length<h.length)r.push({cls:'',html:''});return'<tr>'+r.slice(0,h.length).map(function(c){return celTag('td',c);}).join('')+'</tr>';}).join('')
-        +'</tbody></table></div>');
+        +'</tbody></table></div>';
+      // ⚠️ TABELA LONGA FICA RECOLHIDA (pedido do professor, 02/08/2026:
+      // "ampliável ao clique para não ficar muito extensa a discussão"). O escore
+      // de Popoveniuc do consenso de coma mixedematoso tem 30 linhas e ocupava
+      // duas telas inteiras NO MEIO do texto — quem lia a discussão tinha de
+      // rolar a tabela toda para achar o parágrafo seguinte.
+      // Só as longas: recolher uma tabela de três linhas trocaria o dado por um
+      // clique sem economizar rolagem nenhuma. A LEGENDA fica fora, à vista, para
+      // o aluno saber o que está recolhido antes de decidir abrir.
+      out.push(rows.length>MURAL_TABELA_LINHAS_INLINE
+        ? '<details class="mural-tab"><summary>Ver a tabela ('+rows.length+' linhas)</summary>'+_tab+'</details>'
+        : _tab);
       continue;
     }
     // Régua horizontal (--- / *** / ___): a discussão completa do artigo separa
