@@ -249,5 +249,19 @@ try {
   fail('regressão da ponte RSS→PubMed falhou (verifique lib/pmc-repescagem.js + runRadar):\n' + out);
 }
 
+// ⚠️ A caixa "Na prática" da newsletter — o dado que alimenta um bloco OPCIONAL.
+//     Em 02/08/2026 o rótulo do mural mudou e `extractFromTexto` ficou só com o
+//     antigo: `porque` virou string vazia e o template pula a caixa quando ela é
+//     falsy. O e-mail do dia saiu com a caixa em 1 de 3 artigos, SEM erro em log
+//     nenhum. Perder dado que alimenta bloco condicional é invisível em produção
+//     — o teste é o único lugar onde "veio vazio" faz barulho.
+try {
+  execFileSync(process.execPath, [path.join('scripts', 'test-newsletter-porque.js')], { stdio: 'pipe' });
+  ok('regressão newsletter: a caixa "Na prática" sobrevive aos dois rótulos + campo do radar primeiro');
+} catch (e) {
+  const out = (e.stdout ? e.stdout.toString() : '') + (e.stderr ? e.stderr.toString() : '');
+  fail('regressão da caixa "Na prática" da newsletter falhou (verifique lib/newsletter.js):\n' + out);
+}
+
 if (errors) { console.error(`\n${errors} verificação(ões) falharam.`); process.exit(1); }
 console.log('\nTodas as verificações passaram.');
