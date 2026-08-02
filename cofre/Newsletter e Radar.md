@@ -1,6 +1,6 @@
 ---
 tags: [cofre, newsletter, radar]
-atualizado: 2026-08-01
+atualizado: 2026-08-02
 ---
 
 # Newsletter e Radar
@@ -22,6 +22,40 @@ O caso previsto na pendência aconteceu no mesmo dia. `pubmed:42533758` ("Is Hyp
 - **⚠️ LICENÇA CC BY-NC-ND — e por isso as 3 tabelas do artigo NÃO foram reproduzidas.** `NC` proíbe uso comercial e a plataforma é paga; `ND` proíbe derivado, e traduzir/reformatar uma tabela é derivado. A discussão cita os **números** (fato não é protegido) com redação própria. Registrado em `meta.nota_licenca`.
   - ⚠️ **Isto expõe uma lacuna do caminho automático:** `parseLicense` calcula `redistribuivel` (só CC BY/CC0) mas o `lib/fulltext.js` usa esse campo **só para figuras** — as tabelas do JATS são reproduzidas independentemente da licença. Num artigo CC BY-NC-ND vindo do PMC, hoje, a tabela seria colada. Ver [[Pendências]].
 - **O que a discussão priorizou**, e vale como modelo: os números que separam **rastreio positivo de doença** (14,3% de DST anormal × 2,1% de Cushing confirmado), os **três passos que mudam conduta** (pedir o DST antes de somar droga; medir dexametasona sérica junto; desescalar insulina/anti-hipertensivo quando o cortisol cai) e o **conflito de interesse** — a edição temática foi financiada pela **Corcept**, que fabrica mifepristona e desenvolve relacorilante, as duas drogas com mais espaço no texto.
+
+### ⚠️ Tabela quebrava na LINHA DE AGRUPAMENTO e o resto virava markdown cru (2026-08-02)
+O professor mandou o print de um card e disse *"ficou estranho"*: a tabela de características de base renderizava **as 4 primeiras linhas** e, dali em diante, **dezenas de linhas de `| a | b | c |`** apareciam como texto na tela do aluno.
+
+**A linha que quebrava:** `| DM history and complication | | | | |` — uma **linha de agrupamento**, com uma célula preenchida e o resto vazio. É assim que o JATS separa seções dentro de uma tabela (`DM history and complication`, `Other medical history`, `Laboratory data`).
+
+**A causa, em `muralTextHTML`:**
+```js
+function isRow(l){ … .split('|').filter(c => c.trim()).length >= 2; }
+```
+Ele **filtra as células vazias** e exige **duas com conteúdo**. A linha de agrupamento tem **uma**, então `isRow` dava falso, o laço do corpo da tabela **parava ali**, e todo o resto caía no renderizador de parágrafo.
+
+- **Célula vazia é markdown válido** — o erro era exigir conteúdo onde a pergunta é de forma.
+- **A correção separa as duas perguntas:** `isRow` (estrito) continua decidindo se uma tabela **começa** ali, e o novo `isRowCont` (estrutural: dois `|`) decide se ela **continua**. A guarda contra prosa não se perde, porque o início de tabela ainda exige o separador na linha seguinte.
+- **⚠️ 3 discussões afetadas, 23 linhas** — inclusive a do coma mixedematoso, que eu tinha acabado de escrever com exatamente esse formato de agrupamento. Como o defeito era de **renderização**, corrigir o cliente conserta as três de uma vez: **nenhuma precisou ser regerada**.
+- Teste em `scripts/test-mural-render.js` com a tabela real do artigo; cobertura provada devolvendo o `isRow` ao laço — a tabela volta a 2 linhas e o teste reprova.
+
+### ✅ Discussão do consenso de coma mixedematoso, e a licença que MUDA o que se pode fazer (2026-08-02)
+Segundo artigo entregue por PDF do professor: o consenso de coma mixedematoso (ETJ, `journalrss:ETJ:…`, 12.531 caracteres gravados, confirmado pelas RPCs — 36 discussões no total).
+
+**⚠️ A diferença que importa em relação ao de 31/07 é a LICENÇA, e ela é lida no PDF, não presumida da revista.**
+
+| | Hipercortisolismo (DOM, 31/07) | Coma mixedematoso (ETJ, 02/08) |
+|---|---|---|
+| Licença | **CC BY-NC-ND** | **CC BY 4.0** |
+| Uso comercial | proibido | permitido |
+| Derivado | proibido | permitido |
+| Tabelas do artigo | **NÃO reproduzidas** | **Tabela 1 reproduzida** |
+
+"Acesso aberto" não é um regime só. `NC` proíbe uso comercial e a plataforma é paga; `ND` proíbe derivado, e traduzir/reformatar tabela é derivado. Em CC BY, com atribuição, a reprodução é legítima — e o escore de Popoveniuc é justamente o tipo de material que o aluno quer ter à mão. **Conferir a licença no PDF é passo obrigatório, não formalidade:** as duas revistas são "abertas" e o que se pode fazer com elas é diferente.
+
+- **A Figura 1 (algoritmo de tratamento) NÃO foi reproduzida**, mesmo sob CC BY — é imagem, e a regra do recurso desde 28/07 é referenciar figura pela legenda. Fica citada, com o conteúdo descrito em prosa.
+- **O que a discussão priorizou:** os quatro pontos em que o reflexo comum está errado (aquecimento passivo — ativo periférico pode causar colapso; antibiótico profilático porque febre/taquicardia/leucocitose podem faltar; TSH não guia resposta; hidrocortisona em todos com desescalada precoce) e uma recomendação que se cumpre **antes** do paciente chegar: **conferir se o hospital tem levotiroxina IV**, que os autores levantam explicitamente.
+- **Honestidade do documento registrada na discussão:** consenso sem Delphi e sem graduação de evidência, mortalidade de até 50% apoiada em séries de **oito** e **onze** casos, papel da liotironina declarado controverso com duas estratégias não comparadas. E, ao contrário do artigo de 31/07, **sem conflito de interesse e sem financiamento**.
 
 ### ⚠️ O RADAR TEM DOIS CAMINHOS, e a repescagem só cobria um (2026-08-01)
 O professor apontou o consenso de **coma mixedematoso** (European Thyroid Journal, revista **inteiramente aberta**) sem discussão. O tipo estava certo — "Diretriz", e o título ainda casa o `RE_TITULO` por "consensus statement". O que faltava era, de novo, o PMC — mas por um motivo diferente do de 31/07.

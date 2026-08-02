@@ -147,5 +147,34 @@ ok('rodapé mantém o texto da origem', rodape.indexOf('PMC 123') >= 0);
   ok('texto sem cabeçalho não vira card vazio', ctx.muralBodyText(soResumo).indexOf('só isto') > 0);
 }
 
+// ---- ⚠️ LINHA DE AGRUPAMENTO COM CÉLULAS VAZIAS (02/08/2026, "ficou estranho")
+// Tabela de características de base tem linhas que só agrupam seções — uma
+// célula preenchida, o resto vazio. O `isRow` original filtrava as vazias e
+// exigia DUAS com conteúdo, então o laço do corpo PARAVA na primeira dessas: as
+// 4 primeiras linhas viravam tabela e as outras 30 vazavam como markdown cru na
+// tela do aluno. Célula vazia é markdown válido e é como o JATS agrupa seções.
+{
+  const tab = [
+    '| Characteristic | Total | Placebo | Mg-oxide | p |',
+    '| --- | --- | --- | --- | --- |',
+    '| Females | 131 (53.04) | 72 (55.81) | 59 (50.00) | 0.360 |',
+    '| **DM history and complication** | | | | |',
+    '| Duration of DM | 16 (10-22) | 16 (10-21) | 18 (10-23) | 0.597 |',
+    '| **Laboratory data** | | | | |',
+    '| LDL | 2.2 | 2.4 | 2.2 | 0.280 |'
+  ].join('\n');
+  const h = ctx.muralTextHTML(tab);
+  const linhas = (h.match(/<tr>/g) || []).length;
+  ok('a tabela inteira vira UMA tabela (1 cabecalho + 5 do corpo, nao 2)', linhas === 6, linhas + ' <tr>');
+  ok('a linha de agrupamento vira linha da tabela', h.indexOf('DM history and complication') > 0);
+  ok('nada de markdown cru sobrando na tela', h.indexOf('| Duration of DM') < 0 && h.indexOf('| LDL') < 0,
+     'era isto que o aluno via: dezenas de linhas de pipes');
+  ok('as linhas depois do agrupamento continuam na tabela', h.indexOf('Duration of DM') > 0 && h.indexOf('LDL') > 0);
+  ok('a celula vazia vira <td> vazio, mantendo o alinhamento das colunas',
+     (h.match(/<td[^>]*><\/td>/g) || []).length >= 8);
+  const prosa = ctx.muralTextHTML('O custo | beneficio foi discutido.\nOutra linha.');
+  ok('prosa com uma barra NAO vira tabela', prosa.indexOf('<table') < 0, prosa.slice(0, 120));
+}
+
 console.log(bad ? '\nFALHOU: ' + bad : '\n✓ mural: régua horizontal, tabela e lista intactas, prévia da discussão no lugar do resumo repetido');
 process.exit(bad ? 1 : 0);
