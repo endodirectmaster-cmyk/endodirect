@@ -272,13 +272,23 @@ ok('rodapé mantém o texto da origem', rodape.indexOf('PMC 123') >= 0);
   ok('o texto alternativo é preservado', h.indexOf('alt="Figura 1 — algoritmo"') > 0);
   ok('a atribuição CC BY fica visível ao lado', h.indexOf('CC BY 4.0') > 0);
   ok('o markdown da imagem não sobra como texto', h.indexOf('![Figura') < 0);
-  // O arquivo tem de existir no repo, senão o card mostra um vão (onerror remove).
-  const fig = path.join(__dirname, '..', 'figuras', 'etj-26-0044-fig1.png');
-  ok('o PNG da Figura 1 está no repo', fs.existsSync(fig), fig);
-  if (fs.existsSync(fig)) {
-    const kb = fs.statSync(fig).size / 1024;
-    ok('e num tamanho que carrega no celular', kb < 600, Math.round(kb) + ' KB');
-  }
+  // ⚠️ O ARQUIVO TEM DE EXISTIR NO REPO. `muralInlineHTML` põe
+  // `onerror="this.remove()"` na tag: imagem que não carrega não deixa ícone
+  // quebrado nem erro em log — ela simplesmente SOME. Renomear ou esquecer de
+  // versionar um destes tira a figura da discussão em silêncio, e o professor
+  // veria só o texto, sem nada indicando que faltou algo.
+  [
+    ['etj-26-0044-fig1.png', 'Figura 1 do artigo (algoritmo, CC BY 4.0)'],
+    ['etj-26-0044-quando-suspeitar.jpg', 'infográfico Endodirect: elementos clínicos'],
+    ['etj-26-0044-escore-popoveniuc.jpg', 'infográfico Endodirect: escore de Popoveniuc']
+  ].forEach(function (par) {
+    const arq = path.join(__dirname, '..', 'figuras', par[0]);
+    ok('está no repo — ' + par[1], fs.existsSync(arq), arq);
+    if (fs.existsSync(arq)) {
+      const kb = fs.statSync(arq).size / 1024;
+      ok('e num tamanho que carrega no celular — ' + par[0], kb < 600, Math.round(kb) + ' KB');
+    }
+  });
 }
 
 console.log(bad ? '\nFALHOU: ' + bad : '\n✓ mural: régua horizontal, tabela e lista intactas, prévia da discussão no lugar do resumo repetido');
