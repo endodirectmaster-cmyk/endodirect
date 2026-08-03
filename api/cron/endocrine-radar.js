@@ -4,7 +4,7 @@
 const { runRadar } = require('../../lib/radar');
 const { sendDailyNewsletter } = require('../../lib/newsletter');
 const { refreshPodcastsFromFeed } = require('../../lib/podcasts');
-const { sendTrialEmails } = require('../../lib/trial-emails');
+const { sendTrialEmails, sendWinbackNovidades } = require('../../lib/trial-emails');
 const { sendIgDailyNotice, autoPostDailyQotd } = require('../../lib/instagram');
 // Dá a partida na cadeia de discussões: uma requisição ao próprio backend, que
 // gera um artigo por invocação e chama a próxima. Não espera a resposta — o que
@@ -58,6 +58,13 @@ module.exports = async function handler(req, res) {
     let trialEmails = { sent: false, reason: 'skipped' };
     try { trialEmails = await sendTrialEmails(); }
     catch (e) { console.error('[cron-radar] trial-emails erro:', (e && e.stack) || e); trialEmails = { sent: false, reason: 'error' }; }
+    // Campanha de recuperação "o que mudou desde a sua degustação". Idempotente
+    // pela chave da campanha no ledger: roda todo dia e só manda para quem ainda
+    // não recebeu — quando a lista zera, vira no-op silencioso.
+    // Fail-safe: nunca derruba o cron se o envio falhar.
+    let novidades = { sent: false, reason: 'skipped' };
+    try { novidades = await sendWinbackNovidades(); }
+    catch (e) { console.error('[cron-radar] novidades erro:', (e && e.stack) || e); novidades = { sent: false, reason: 'error' }; }
     // Lembrete diário do Story "Questão do Dia" (Instagram). Acoplado ao cron do
     // radar (plano limita o nº de crons). Fail-safe: nunca derruba o cron.
     let igStory = { sent: false, reason: 'skipped' };
@@ -83,7 +90,7 @@ module.exports = async function handler(req, res) {
     let discussoes = { partida: false };
     try { discussoes = { partida: await dispararCadeia() }; }
     catch (e) { console.error('[cron-radar] cadeia discussoes erro:', (e && e.stack) || e); discussoes = { partida: false }; }
-    return json(res, 200, { ok: true, ...result, qotd, newsletter, podcasts, trialEmails, igStory, discussoes });
+    return json(res, 200, { ok: true, ...result, qotd, newsletter, podcasts, trialEmails, novidades, igStory, discussoes });
   } catch (error) {
     console.error('[cron-radar] erro:', (error && error.stack) || error);
     try { await sendAlert('Radar diário falhou', ['O cron endocrine-radar lançou erro e NÃO atualizou o mural hoje.', 'Erro: ' + ((error && error.message) || error)]); } catch (_) {}

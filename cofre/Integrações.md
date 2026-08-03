@@ -1,6 +1,6 @@
 ---
 tags: [cofre, integracoes]
-atualizado: 2026-07-02
+atualizado: 2026-08-03
 ---
 
 # Integrações
@@ -13,6 +13,25 @@ atualizado: 2026-07-02
 
 ## Resend (e-mail)
 Newsletter diária + relatório do health check. Envio em batch, List-Unsubscribe. Env: `RESEND_API_KEY`, `NEWSLETTER_FROM`, `NEWSLETTER_REPLYTO`. Ver [[Newsletter e Radar]].
+
+### 💳 Plano PAGO desde 2026-08-03 (~US$ 20/mês, 50 mil e-mails/mês)
+O professor recebeu do Resend um aviso de **"80% da cota diária"** e estranhou — ele não usa o Resend. **Não era ele: era a plataforma.**
+
+| origem | e-mails/dia (medido em 03/08) |
+|---|---|
+| Newsletter diária | **87** |
+| E-mails de degustação | 0 (os 44 alvos já constavam no ledger) |
+| Suporte | 0 |
+
+**⚠️ UM DESTINATÁRIO = UM E-MAIL.** O conteúdo é personalizado por subespecialidade (`itemsFor(email)` em `lib/newsletter.js`), então o `/emails/batch` é só transporte: a cota conta 87. No plano gratuito (100/dia), **uma edição consumia ~87%**.
+
+**⚠️ O RISCO NÃO ERA A NEWSLETTER PARAR — ERA O CADASTRO.** Os e-mails de auth do Supabase saem pelo **mesmo Resend** (Custom SMTP, seção abaixo). Com 87 de 100 gastos às 8h, sobravam ~13 para o dia inteiro: numa manhã com algumas inscrições e alguns "esqueci a senha", **a confirmação de cadastro falharia em silêncio** — o aluno se inscreve e nunca recebe o e-mail, sem erro em tela nenhuma.
+
+**Verificado que NÃO havia envio duplicado:** `newsletter_recent` registra os 3 artigos num único carimbo por edição — 03/08 às 08:23:33 (um só) e 02/08 às 08:08:54. A trava claim-first do mesmo dia não teve efeito nisso (o retorno antecipado por `newsletter_sent === today` acontece antes dela).
+
+**Composição da lista na época:** 87 destinatários = **34 com acesso ativo** + **53 com acesso vencido** (61% do envio ia para não-assinantes). Ficou como está: é justamente o público de recuperação.
+
+**Folga agora:** 87/dia ≈ 2.600/mês contra 50.000 — sobra de ~19×. **A separação entre e-mail transacional (auth) e de marketing (newsletter) deixou de ser urgente, mas continua sendo o certo estruturalmente**; com o teto atual não há pressa. Ver [[Pendências]].
 
 ### E-mails de autenticação (Supabase) via Resend
 Os e-mails de auth (confirmação de cadastro, redefinir senha) devem sair do Endodirect, não do remetente padrão `noreply@mail.app.supabase.io`. Solução: **Custom SMTP no Supabase apontando para o Resend** (`smtp.resend.com:465`, user `resend`, senha = API key do Resend, sender `nao-responda@endodirect.com.br`) + **templates branded em PT** versionados em `supabase/email-templates/` (`confirm-signup.html`, `reset-password.html`). Aplicação é manual no painel (Authentication → Emails). Ver [[Pendências]].
