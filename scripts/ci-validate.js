@@ -263,5 +263,19 @@ try {
   fail('regressão da caixa "Na prática" da newsletter falhou (verifique lib/newsletter.js):\n' + out);
 }
 
+// ⚠️ Allowlist de fontes do Breaking News. Em 03/08/2026 dois cards de
+//     "aprovação do FDA" entraram no mural publicados por **FC Bayern** — um site
+//     de futebol — porque a checagem era `nome.indexOf('bayer') >= 0` e
+//     `'fc bayern'.indexOf('bayer') === 3`. O card afirma que um medicamento foi
+//     aprovado e diz "Fonte: FDA": fonte errada aqui é informação clínica sem
+//     procedência, não ruído de curadoria.
+try {
+  execFileSync(process.execPath, [path.join('scripts', 'test-news-fonte-confiavel.js')], { stdio: 'pipe' });
+  ok('regressão fontes do Breaking News: nome por palavra inteira + domínio por hostname');
+} catch (e) {
+  const out = (e.stdout ? e.stdout.toString() : '') + (e.stderr ? e.stderr.toString() : '');
+  fail('regressão da allowlist de notícias falhou (verifique lib/news.js):\n' + out);
+}
+
 if (errors) { console.error(`\n${errors} verificação(ões) falharam.`); process.exit(1); }
 console.log('\nTodas as verificações passaram.');
