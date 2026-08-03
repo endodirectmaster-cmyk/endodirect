@@ -290,6 +290,18 @@ try {
   fail('regressão da campanha de recuperação falhou (verifique lib/trial-emails.js):\n' + out);
 }
 
+// ⚠️ "Apaguei do mural" tem de valer para o ALUNO. O item apagado sumia da tela
+//     do professor e continuava publicado: o gatilho do banco restaurava
+//     radar_avisos e as RPCs de conteúdo ignoravam radar_hidden. Ficaram 4 itens
+//     apagados no ar, entre eles duas notícias falsas.
+try {
+  execFileSync(process.execPath, [path.join('scripts', 'test-mural-apagado.js')], { stdio: 'pipe' });
+  ok('regressão mural apagado: o cron não mantém nem recolhe o que o professor excluiu');
+} catch (e) {
+  const out = (e.stdout ? e.stdout.toString() : '') + (e.stderr ? e.stderr.toString() : '');
+  fail('regressão do mural apagado falhou (verifique lib/radar.js e supabase/mural-apagado-vale-para-o-aluno.sql):\n' + out);
+}
+
 // ⚠️ Feedback do aluno. O botão "Enviar" ficou meses trocando a tela pelo
 //     "Obrigado pelo feedback!" e DESCARTANDO o texto — sem erro em log nenhum.
 //     Como a plataforma agora CONVIDA quem assina há mais de 30 dias, voltar

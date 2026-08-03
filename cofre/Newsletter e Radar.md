@@ -193,6 +193,19 @@ O teto de saída é **`max_tokens: 6000`** (`lib/discussao.js`). Tabela em markd
 **Não corrigido ainda (decisão do professor):** (1) as 4 discussões truncadas continuam truncadas — recorte não recria texto que nunca foi escrito, só regeneração resolve; (2) não há **guarda de truncamento** na gravação: hoje uma saída cortada no meio da frase é gravada como se estivesse pronta. A guarda óbvia (recusar e devolver à fila) precisa de teto de tentativas, senão um artigo que sempre trunca fica em laço.
 
 
+## ⚠️ `radar_hidden` — o que o professor apaga do Mural (e o buraco de 03/08/2026)
+`radar_hidden` guarda a **chave** (`sourceId || link || titulo`) de cada card que o professor excluiu. Ela precisa ser respeitada em **quatro** lugares, e até 03/08 dois deles ignoravam:
+- **cliente do professor** (`mergeRadarAvisos`, index.html) — filtra na leitura. ✅ sempre funcionou, e era exatamente por isso que o defeito não dava sintoma: na tela de quem apagava, o item sumia.
+- **gatilho do banco** (`endodirect_global_preserve_server_keys`) — restaurava `radar_avisos` do valor antigo em **todo** save do professor, desfazendo a exclusão no mesmo UPDATE. ❌ → hoje preserva **menos** o que está em `radar_hidden`.
+- **RPCs de conteúdo** (`endodirect_public_content` / `endodirect_member_content`) — juntavam `adm_avisos + radar_avisos` sem olhar `radar_hidden`, e entregavam o item apagado a todo aluno. ❌ → hoje filtram nas duas metades.
+- **cron** (`mergeMuralItems`, lib/radar.js) — `existingMuralKeys` já impedia a **re-entrada**, mas o ramo `retained` **mantinha** vivo o que já estava gravado; e o cron grava como service_role, sem passar pelo gatilho. ❌ → hoje descarta oculto nos dois ramos.
+
+**Se a regra da chave mudar em um lugar, tem de mudar nos três** (index.html, lib/radar.js, SQL) — senão o apagado volta por onde ficou. Registro da correção: `supabase/mural-apagado-vale-para-o-aluno.sql`; regressão: `scripts/test-mural-apagado.js`. Conferência que tem de dar **0**:
+```sql
+select count(*) from endodirect_global_state g, lateral jsonb_array_elements(g.payload->'radar_avisos') it
+ where g.id='main' and (coalesce(g.payload->'radar_hidden','[]'::jsonb) ? coalesce(it->>'sourceId', it->>'link', it->>'titulo',''));
+```
+
 ## Remoção das sociedades ATA e Endocrine Society (2026-07-23)
 - **Pedido:** "tirar os comunicados da ATA e endocrine society". Removidas do `SOCIETY_SOURCES` (`lib/radar.js`) — o radar **não puxa mais** esses comunicados. Sobraram **SBEM** e **SBD**.
 - **Limpeza dos já gravados:** 22 itens (11 ATA + 11 Endocrine Society) apagados de `radar_avisos` (199→177) e seus `sourceId` adicionados a `radar_hidden` (rede de segurança contra re-add pelo cron antigo até o deploy + o cliente esconde qualquer cópia em aba cacheada).
