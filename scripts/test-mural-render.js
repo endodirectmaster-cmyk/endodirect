@@ -59,7 +59,7 @@ ok('separador da tabela não virou régua', tab.indexOf('mural-hr') < 0);
 ok('conteúdo da tabela preservado', tab.indexOf('6,2%') >= 0);
 
 // ---- 4. o resto do formato da discussão continua de pé ----------------------
-ok('## vira título de seção', /<div class="mural-h"/.test(R('## Achados')));
+ok('## vira título de seção', /<div class="mural-h mural-h2"/.test(R('## Achados')));
 ok('parágrafo comum vira <p>', /<p class="mural-p"/.test(R('Texto simples.')));
 ok('**negrito** é interpretado', /<(b|strong)>/.test(R('valor **6,2%** aqui')));
 
@@ -143,7 +143,7 @@ ok('rodapé mantém o texto da origem', rodape.indexOf('PMC 123') >= 0);
   const html = ctx.muralDiscussaoHTML(art);
   ok('a prévia é renderizada fora do <details>', html.indexOf('data-disc-previa') < html.indexOf('<details'));
   ok('a prévia traz as duas seções', html.indexOf('Pergunta e contexto') > 0 && html.indexOf('Métodos') > 0);
-  ok('a prévia é markdown renderizado, não texto cru', html.indexOf('>## ') < 0 && /<div class="mural-h"/.test(html));
+  ok('a prévia é markdown renderizado, não texto cru', html.indexOf('>## ') < 0 && /<div class="mural-h mural-h\d"/.test(html));
   ok('o controle continua existindo', /<summary>.*Ver a discussão completa/.test(html), html.slice(0, 200));
   ok('o corpo lazy continua lá', html.indexOf('data-disc-body') > 0);
 
@@ -253,6 +253,35 @@ ok('rodapé mantém o texto da origem', rodape.indexOf('PMC 123') >= 0);
   const comLegenda = ctx.muralTextHTML('**Tabela 1. Escore de Popoveniuc.**\n\n' + linhasDe(30));
   ok('a legenda fica fora do details', comLegenda.indexOf('Escore de Popoveniuc') < comLegenda.indexOf('<details'),
      'dobrar a legenda junto esconderia o que a tabela é');
+}
+
+// ---- AMARELO DA MARCA NO TEMA ESCURO (pedido do professor, 03/08) -----------
+// "No painel escuro, utilize também o amarelo para não ficar tão monocromático."
+// A cor entra por CSS, mas depende de o RENDER marcar o NÍVEL do título — sem a
+// classe, a regra não teria onde pegar. As duas metades vivem em arquivos
+// diferentes (JS e CSS, no mesmo index.html) e é fácil mexer numa e esquecer a
+// outra; por isso o teste cobre as duas juntas.
+{
+  const h = ctx.muralTextHTML('## Achados\n\n### Quando suspeitar\n\ntexto\n\n# Topo\n\n#### Fundo');
+  ok('o nível do título vai para a classe', /class="mural-h mural-h2"/.test(h), h.slice(0, 130));
+  ok('subtítulo sai como h3', /class="mural-h mural-h3"/.test(h));
+  ok('os quatro níveis são marcados', /mural-h1"/.test(h) && /mural-h4"/.test(h));
+  ok('a classe base continua, para o resto do estilo não sumir', (h.match(/class="mural-h /g) || []).length === 4);
+  ok('o texto do título não perde o primeiro caractere', h.indexOf('>Achados<') > 0 && h.indexOf('>Quando suspeitar<') > 0,
+     'o grupo do regex mudou de posição: hm[1] virou hm[2]');
+  ok('o "#" não vaza para a tela', h.indexOf('>#') < 0 && h.indexOf('# Achados') < 0, h.slice(0, 160));
+
+  const css = SRC.slice(0, SRC.indexOf('</style>'));
+  ok('o CSS doura o título de SEÇÃO', /\.mural-text \.mural-h2\{[^}]*var\(--gold\)/.test(css.replace(/\s*,\s*/g, ',').replace(/\.mural-text \.mural-h1,/, '')) || /mural-h2\{color:var\(--gold\)\}/.test(css.replace(/\.mural-text \.mural-h1,/, '')));
+  // ⚠️ A EXCEÇÃO DO TEMA CLARO É A ASSERÇÃO QUE MAIS IMPORTA AQUI.
+  // --gold no claro é #f59e0b: sobre fundo branco dá 2,2:1, reprova em qualquer
+  // critério. Sem esta regra, atender ao pedido do escuro quebraria o claro.
+  ok('⚠️ e o tema CLARO volta ao texto normal (amarelo em fundo branco dá 2,2:1)',
+     /html\[data-theme="light"\][^{]*\.mural-h2\{color:var\(--tx\)\}/.test(css),
+     'sem isto o título fica ilegível no tema claro');
+  // ⚠️ h3 dourado devolveria o "monocromático" com outra cor.
+  ok('subtítulo (###) NÃO é dourado', !/\.mural-h3\{color:var\(--gold\)/.test(css.replace(/\s/g, '')),
+     'dourar todo título apaga a hierarquia entre seção e subseção');
 }
 
 // ---- FIGURA DO ARTIGO: imagem inline + clique para ampliar ------------------
