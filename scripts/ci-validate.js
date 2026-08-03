@@ -277,5 +277,18 @@ try {
   fail('regressão da allowlist de notícias falhou (verifique lib/news.js):\n' + out);
 }
 
+// ⚠️ Campanha de recuperação por e-mail. É o único caminho do repositório que
+//     dispara mensagem para PESSOAS REAIS, e e-mail enviado não tem desfazer.
+//     As guardas: idempotência por chave de campanha (o cron roda todo dia),
+//     opt-out respeitado, números contados na hora do envio e aborto quando não
+//     há conteúdo para anunciar.
+try {
+  execFileSync(process.execPath, [path.join('scripts', 'test-winback-novidades.js')], { stdio: 'pipe' });
+  ok('regressão campanha de recuperação: idempotente + opt-out + números contados na hora');
+} catch (e) {
+  const out = (e.stdout ? e.stdout.toString() : '') + (e.stderr ? e.stderr.toString() : '');
+  fail('regressão da campanha de recuperação falhou (verifique lib/trial-emails.js):\n' + out);
+}
+
 if (errors) { console.error(`\n${errors} verificação(ões) falharam.`); process.exit(1); }
 console.log('\nTodas as verificações passaram.');
