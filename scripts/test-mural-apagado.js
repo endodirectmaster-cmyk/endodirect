@@ -118,13 +118,35 @@ const item = (sourceId, extra) => Object.assign({ sourceId, titulo: 'Artigo ' + 
   }
 }
 
-// ---- 6. o app do aluno também filtra na leitura -------------------------------
+// ---- 6. ⚠️ A CÓPIA NO APARELHO DO ALUNO TAMBÉM TEM DE SER LIMPA ---------------
+// Depois de o banco já estar correto, os dois cards falsos CONTINUARAM na tela.
+// O app semeia o mural com a cópia do localStorage
+// (`admAvisos = mergeRadarAvisos(lsGet('adm_avisos'))`) e essa semente só é
+// filtrada por `radarHidden`. Duas falhas somadas: `radarHidden` era declarado
+// DEPOIS (logo, vazio na hora da semente) e nenhuma RPC de conteúdo devolvia
+// `radar_hidden` — o filtro existia e nunca recebia a lista.
 {
   const app = fs.readFileSync(path.join(RAIZ, 'index.html'), 'utf8');
   ok('mergeRadarAvisos filtra o que foi apagado', /var hid=\{\};\(Array\.isArray\(radarHidden\)/.test(app));
   ok('a chave do app é a mesma dos outros dois lugares',
      /function avisoKeyStr\(a\)\{return String\(\(a&&\(a\.sourceId\|\|a\.link\|\|a\.titulo\)\)\|\|''\);\}/.test(app),
      'se a regra da chave divergir, o apagado volta em um dos lados');
+
+  const iHidden = app.indexOf('var radarHidden=');
+  const iAvisos = app.indexOf('var admAvisos=');
+  ok('⚠️ radarHidden é declarado ANTES de admAvisos', iHidden > 0 && iAvisos > 0 && iHidden < iAvisos,
+     'declarado depois, a semente do localStorage passa por um filtro VAZIO');
+  ok('⚠️ e a lista de apagados vem do aparelho, não de uma lista vazia',
+     /var radarHidden=lsGet\('radar_hidden'\)/.test(app),
+     'sem isso o filtro da semente não tem o que filtrar antes de o servidor responder');
+  ok('⚠️ o que o servidor manda é guardado no aparelho',
+     /radarHidden=payload\.radar_hidden;try\{lsSet\('radar_hidden'/.test(app),
+     'sem guardar, a próxima abertura recomeça sem saber o que foi apagado');
+
+  const sql = fs.readFileSync(path.join(RAIZ, 'supabase', 'mural-apagado-vale-para-o-aluno.sql'), 'utf8');
+  ok('⚠️ e as RPCs de conteúdo ENTREGAM radar_hidden ao cliente',
+     /'radar_hidden',\s*coalesce\(payload->'radar_hidden'/.test(sql),
+     'o filtro do app roda com lista vazia se o servidor não mandar');
 }
 
 if (bad) { console.error('\n' + bad + ' verificação(ões) do mural apagado falharam.'); process.exit(1); }
