@@ -98,5 +98,42 @@ const um = (o) => ctx.muralItems({ radar_avisos: [item(o)] })[0];
   ok('lista vazia/torta não quebra', ctx.muralItems({}).length === 0);
 }
 
+// ---- ⚠️ TRAVA CLAIM-FIRST CONTRA ENVIO DUPLICADO ---------------------------
+// A trava `newsletter_sent` era lida no INÍCIO e gravada só DEPOIS do envio, que
+// leva vários segundos (um POST à Resend por destinatário). Dois disparos
+// concorrentes liam ambos "ainda não enviada" e mandavam a edição DUAS VEZES
+// para a lista inteira.
+//
+// ⚠️ ESTAS ASSERÇÕES SÃO DE ORDEM, e ordem é o defeito inteiro aqui. Reservar
+// depois de enviar é literalmente o código antigo — o mesmo texto, na linha
+// errada, não protege nada.
+{
+  const src = SRC.replace(/^\s*\/\/.*$/gm, '');
+  const i0 = src.indexOf('async function sendDailyNewsletter');
+  const bloco = src.slice(i0);
+  const iClaim = bloco.indexOf('claimNewsletterDay(');
+  const iEnvio = bloco.indexOf('sendViaResend(');
+  const iGrava = bloco.indexOf('newsletter_sent = today');
+  const iSolta = bloco.indexOf('releaseNewsletterDay(');
+
+  ok('a reserva do dia existe', iClaim > 0);
+  ok('⚠️ a reserva vem ANTES do envio', iClaim > 0 && iEnvio > 0 && iClaim < iEnvio,
+     'reservar depois de enviar é o código antigo: não protege de nada');
+  ok('e antes de gravar a trava no payload', iClaim < iGrava);
+  ok('a reserva usa a RPC atômica, não um select+update',
+     /rpc\/\$\{fn\}/.test(src) && /endodirect_newsletter_claim/.test(src));
+
+  // ⚠️ Reservar antes cria um risco novo: falha da Resend queimaria o dia.
+  ok('há devolução da reserva', iSolta > 0);
+  ok('⚠️ a devolução vem DEPOIS do envio (só faz sentido sabendo o resultado)', iSolta > iEnvio);
+  ok('⚠️ e só quando ZERO destinatários receberam', /claim === true && sent === 0/.test(bloco),
+     'devolver com 1 entregue faria o reprocesso duplicar para esse destinatário');
+
+  // ⚠️ RPC ausente (deploy anterior à migração) não pode travar o envio.
+  ok('claim === false pula o envio', /claim === false/.test(bloco));
+  ok('⚠️ claim === null NÃO pula o envio', /claim === null/.test(bloco) && !/claim !== true/.test(bloco),
+     'entre não enviar e um risco raro de duplicata, o comportamento antigo é o menos ruim');
+}
+
 if (bad) { console.error('\n' + bad + ' verificação(ões) da caixa "Na prática" da newsletter falharam.'); process.exit(1); }
 console.log('Newsletter (caixa "Na prática"): OK');

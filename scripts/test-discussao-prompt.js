@@ -13,7 +13,7 @@
 'use strict';
 const fs = require('fs');
 const path = require('path');
-const { fullTextForPrompt } = require('../lib/fulltext');
+const { fullTextForPrompt, parseLicense } = require('../lib/fulltext');
 
 let bad = 0;
 const ok = (nome, cond, det) => { if (cond) return; bad++; console.log('  ✗ ' + nome + (det ? ' — ' + det : '')); };
@@ -23,7 +23,10 @@ const paragrafo = 'Lorem ipsum dolor sit amet consectetur adipiscing elit sed do
 const ft = {
   pmcid: 'PMC13381830',
   palavras: 8109,
-  licenca: { cc: 'CC BY' },
+  // ⚠️ ESPELHA O RETORNO REAL de parseLicense: { url, texto, cc, redistribuivel }.
+  // Faltava `redistribuivel` aqui, e o fixture incompleto só apareceu quando o
+  // gate de licença passou a consumir o campo — até então nada o lia.
+  licenca: { cc: 'CC BY', redistribuivel: true },
   secoes: Array.from({ length: 12 }, (_, i) => ({
     titulo: 'Seção ' + (i + 1),
     paragrafos: Array.from({ length: 40 }, () => paragrafo.repeat(3))
@@ -302,6 +305,97 @@ const ft = {
      ehTabelaDeEstudosIncluidos(['Autor', 'x1', 'x2', 'x3', 'x4', 'x5'], 9, '') === true);
 }
 
+
+// ---- ⚠️ GATE DE LICENÇA DAS TABELAS ----------------------------------------
+// `parseLicense` calculava `redistribuivel` (só CC BY/CC0) desde sempre e NINGUÉM
+// consumia — nem para figuras, ao contrário do que o cofre afirmava. A tabela do
+// JATS era colada palavra por palavra qualquer que fosse a licença. A plataforma
+// é paga (uso comercial, que `NC` proíbe) e reformatar/traduzir tabela é derivado
+// (que `ND` proíbe).
+//
+// Medido em 03/08, antes de corrigir: das 38 discussões gravadas, 37 são CC BY e
+// 1 é CC BY-NC-ND — e essa inseriu ZERO tabelas. O risco era real no código e
+// nunca se materializou; a correção é preventiva.
+//
+// ⚠️ A ASSERÇÃO QUE MAIS IMPORTA É A DE QUE O CONTEÚDO CONTINUA INDO. Número é
+// FATO, e fato não é protegido; o que a licença barra é a REPRODUÇÃO. Cortar a
+// tabela do prompt "para ficar seguro" empobreceria a discussão sem necessidade
+// — a IA precisa dos dados para escrever os números em prosa.
+{
+  const semDireito = Object.assign({}, ft, { licenca: { cc: 'CC BY-NC-ND', redistribuivel: false } });
+  const comDireito = Object.assign({}, ft, { licenca: { cc: 'CC BY', redistribuivel: true } });
+  const pSem = fullTextForPrompt(semDireito, 60000);
+  const pCom = fullTextForPrompt(comDireito, 60000);
+
+  ok('⚠️ sem direito de reproduzir, os DADOS da tabela continuam no prompt',
+     pSem.indexOf('MARCA-T1') > 0 && pSem.indexOf('β-diversidade divergiu') > 0,
+     'número é fato; sem os dados a IA não teria como citar valor nenhum');
+  ok('⚠️ mas o MARCADOR não é oferecido', pSem.indexOf('[[TABELA:1]]') < 0,
+     'com marcador, inserirTabelas colaria a tabela e a licença seria violada');
+  ok('e a licença é dita no prompt, com o nome dela', pSem.indexOf('CC BY-NC-ND') > 0);
+  ok('com direito, o marcador volta', pCom.indexOf('[[TABELA:1]]') > 0);
+  ok('com direito, nenhum aviso de licença sobra', pCom.indexOf('NÃO permite reproduzir') < 0, pCom.slice(0, 200));
+  ok('a legenda vai nos dois casos', pSem.indexOf('Composição da microbiota') > 0 && pCom.indexOf('Composição da microbiota') > 0);
+
+  // ⚠️ Licença ausente é tratada como SEM direito. `parseLicense` devolve
+  // redistribuivel:false quando não acha CC — o padrão tem de ser o restritivo.
+  const semLicenca = Object.assign({}, ft, { licenca: { cc: '', redistribuivel: false } });
+  ok('⚠️ licença ausente/desconhecida NÃO libera reprodução',
+     fullTextForPrompt(semLicenca, 60000).indexOf('[[TABELA:') < 0,
+     'o padrão tem de ser o restritivo, não o permissivo');
+  // ⚠️ TESTA A FUNÇÃO, não uma cópia da regra dela. A 1ª versão desta asserção
+  // reescrevia o regex dentro do teste e comparava consigo mesma — passaria com
+  // parseLicense devolvendo qualquer coisa. E o 1º fixture esqueceu o wrapper
+  // <permissions>, então TUDO saía cc='' e os casos "false" passavam pelo motivo
+  // errado: davam false por não terem licença nenhuma, não por serem restritivos.
+  //
+  // ⚠️ ESTE BLOCO É O QUE PEGOU O DEFEITO REAL (03/08). O teste era
+  // `/^CC (BY|0)/`, que ancora só o INÍCIO: "CC BY-NC", "CC BY-NC-ND", "CC BY-ND"
+  // e "CC BY-SA" começam com "CC BY" e saíam TODAS como redistribuíveis —
+  // exatamente as quatro que a função existe para barrar. E "CC0", sem espaço,
+  // saía como restrito. O gate de tabelas construído em cima disso teria sido
+  // inócuo justamente nos casos que motivaram construí-lo.
+  const porUrl = (h) => parseLicense('<permissions><license xlink:href="' + h + '"><license-p>x</license-p></license></permissions>');
+  const porProsa = (t) => parseLicense('<permissions><license><license-p>' + t + '</license-p></license></permissions>');
+  [['by/4.0/', 'CC BY', true],
+   ['by-nc/4.0/', 'CC BY-NC', false],
+   ['by-nc-nd/4.0/', 'CC BY-NC-ND', false],
+   ['by-nd/4.0/', 'CC BY-ND', false],
+   ['by-sa/4.0/', 'CC BY-SA', false],
+   ['by-nc-sa/4.0/', 'CC BY-NC-SA', false]].forEach(([sufixo, cc, esperado]) => {
+    const r = porUrl('http://creativecommons.org/licenses/' + sufixo);
+    ok('licença por URL ' + sufixo + ' → ' + cc + ', redistribuivel=' + esperado,
+       r.cc === cc && !!r.redistribuivel === esperado, 'saiu cc=' + r.cc + ' redistribuivel=' + r.redistribuivel);
+  });
+  const zero = porUrl('https://creativecommons.org/publicdomain/zero/1.0/');
+  ok('⚠️ CC0 (domínio público) É redistribuível', zero.cc === 'CC0' && zero.redistribuivel === true,
+     'sem espaço em "CC0", o regex antigo classificava o caso mais permissivo como restrito');
+  // Licença declarada só em prosa, sem URL — a ordem dos testes importa.
+  [['Distributed under CC BY 4.0', 'CC BY', true],
+   ['licensed CC BY-NC 4.0', 'CC BY-NC', false],
+   ['under a CC BY-NC-ND license', 'CC BY-NC-ND', false],
+   ['CC BY-SA terms', 'CC BY-SA', false]].forEach(([t, cc, esperado]) => {
+    const r = porProsa(t);
+    ok('licença por prosa "' + t.slice(0, 26) + '" → ' + cc,
+       r.cc === cc && !!r.redistribuivel === esperado, 'saiu cc=' + r.cc + ' redistribuivel=' + r.redistribuivel);
+  });
+  ok('⚠️ sem declaração de licença, NÃO é redistribuível',
+     porProsa('no license statement').redistribuivel === false,
+     'o padrão tem de ser o restritivo');
+
+  // ⚠️ E o PROMPT tem de contar a mesma história do anexo. Se as regras
+  // mandassem escrever o marcador enquanto o anexo não o oferece, a IA
+  // inventaria marcador — e `inserirTabelas` apagaria, deixando um buraco.
+  const disc = fs.readFileSync(path.join(__dirname, '..', 'lib', 'discussao.js'), 'utf8');
+  ok('o prompt ramifica as regras de tabela pela licença', /temTab && !podeReproduzir/.test(disc));
+  ok('e o ramo permissivo exige o direito', /temTab && podeReproduzir/.test(disc));
+  // ⚠️ O defeito que quase escapou: com licença restrita, o segundo ternário caía
+  // no else e dizia "o artigo não tem tabelas extraíveis" — contradizendo, três
+  // linhas acima, o aviso de que as tabelas existem mas não podem ser copiadas.
+  ok('⚠️ "não tem tabelas" só aparece quando REALMENTE não há tabela',
+     /\$\{temTab \? '' : '- O artigo não tem tabelas extraíveis\.'\}/.test(disc),
+     'com licença restrita o prompt dizia que o artigo não tinha tabelas, logo abaixo de listá-las');
+}
 
 // ---- ⚠️ AS REGRAS DE VOCABULÁRIO DO PROFESSOR -------------------------------
 // Duas ordens diretas, dadas olhando a discussão do coma mixedematoso (03/08):
