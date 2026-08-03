@@ -508,6 +508,17 @@ textarea{resize:vertical;line-height:1.6}
 .mural-text .mural-p:first-child{margin-top:0}
 .mural-text .mural-p:last-child{margin-bottom:0}
 .mural-text .mural-h{font-weight:700;color:var(--tx);font-size:1.12rem;line-height:1.35;margin:1.1rem 0 .35rem;text-align:left}
+/* Amarelo da marca no tema escuro (pedido do professor, 03/08: "no painel escuro,
+   utilize também o amarelo para não ficar tão monocromático"). A discussão do
+   artigo é uma parede de branco sobre azul — título, negrito e corpo quase no
+   mesmo tom.
+   ⚠️ O amarelo marca SEÇÃO (`## `), não todo título. `###` é subtítulo e continua
+   claro: dourar os dois devolveria o problema com outra cor, e some a hierarquia
+   que separa "Achados" de "Quando suspeitar".
+   ⚠️ SÓ NO ESCURO. --gold no claro é #f59e0b, que sobre fundo branco dá 2,2:1 —
+   reprova em qualquer critério de contraste. No escuro é 8,5:1 sobre o card. */
+.mural-text .mural-h1,.mural-text .mural-h2{color:var(--gold)}
+html[data-theme="light"] .mural-text .mural-h1,html[data-theme="light"] .mural-text .mural-h2{color:var(--tx)}
 /* Discussão completa (texto integral do PMC): recolhida por padrão — são ~2.000
    palavras, e aberta destruiria a rolagem da lista do mural. */
 .mural-disc{margin:.2rem 0 .9rem;border:1px solid var(--bd);border-radius:10px;background:var(--s2)}
@@ -15113,8 +15124,10 @@ function muralTextHTML(txt){
       i++;continue;
     }
     // Título de seção (## …): destaque em negrito, igual ao editor WYSIWYG.
-    var hm=/^\s*#{1,4}\s+(.+?)\s*$/.exec(line);
-    if(hm){flush();out.push('<div class="mural-h"'+(_mal?' style="text-align:'+_mal+'"':'')+'>'+muralInlineHTML(esc(hm[1]))+'</div>');i++;continue;}
+    // O NÍVEL vai na classe (mural-h2, mural-h3 …) porque o amarelo do tema
+    // escuro marca só a SEÇÃO — ver o comentário no CSS de .mural-h2.
+    var hm=/^\s*(#{1,4})\s+(.+?)\s*$/.exec(line);
+    if(hm){flush();out.push('<div class="mural-h mural-h'+hm[1].length+'"'+(_mal?' style="text-align:'+_mal+'"':'')+'>'+muralInlineHTML(esc(hm[2]))+'</div>');i++;continue;}
     // Lista com marcadores (- / * / +): agrupa linhas consecutivas num <ul>.
     if(/^\s*[-*+]\s+/.test(line)){
       flush();
