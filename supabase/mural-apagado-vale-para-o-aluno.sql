@@ -76,6 +76,22 @@ $function$;
 --    está em outro CTE).
 
 -- ---------------------------------------------------------------------------
+-- 2b. ⚠️ TERCEIRA TRAVA (aplicada depois, quando o card CONTINUOU na tela com o
+--     banco já limpo): as RPCs passam a DEVOLVER `radar_hidden` ao cliente.
+--     O app semeia o mural com a cópia do localStorage
+--     (`admAvisos = mergeRadarAvisos(lsGet('adm_avisos'))`) e essa semente só é
+--     filtrada por `radarHidden` — que, para o aluno, era SEMPRE vazio porque
+--     nenhuma RPC mandava a lista. O filtro existia e nunca recebia o dado.
+--     Nada sensível: são chaves (URL/título) de notícias públicas removidas.
+--
+--       'radar_hidden', coalesce(payload->'radar_hidden', '[]'::jsonb),
+--
+--     No cliente (index.html): `var radarHidden=lsGet('radar_hidden')||[]`
+--     declarado ANTES de `var admAvisos=…` (senão a semente é filtrada por uma
+--     lista vazia) e `lsSet('radar_hidden', …)` no applyStatePayload, para a
+--     próxima abertura já nascer sem o que foi apagado, mesmo offline.
+
+-- ---------------------------------------------------------------------------
 -- 3. Limpeza do resíduo (roda como service_role/postgres, sem passar pelo
 --    gatilho). Idempotente: pode rodar de novo a qualquer momento.
 -- ---------------------------------------------------------------------------

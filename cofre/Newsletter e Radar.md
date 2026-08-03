@@ -194,11 +194,12 @@ O teto de saída é **`max_tokens: 6000`** (`lib/discussao.js`). Tabela em markd
 
 
 ## ⚠️ `radar_hidden` — o que o professor apaga do Mural (e o buraco de 03/08/2026)
-`radar_hidden` guarda a **chave** (`sourceId || link || titulo`) de cada card que o professor excluiu. Ela precisa ser respeitada em **quatro** lugares, e até 03/08 dois deles ignoravam:
+`radar_hidden` guarda a **chave** (`sourceId || link || titulo`) de cada card que o professor excluiu. Ela precisa ser respeitada em **cinco** lugares, e até 03/08 três deles ignoravam:
 - **cliente do professor** (`mergeRadarAvisos`, index.html) — filtra na leitura. ✅ sempre funcionou, e era exatamente por isso que o defeito não dava sintoma: na tela de quem apagava, o item sumia.
 - **gatilho do banco** (`endodirect_global_preserve_server_keys`) — restaurava `radar_avisos` do valor antigo em **todo** save do professor, desfazendo a exclusão no mesmo UPDATE. ❌ → hoje preserva **menos** o que está em `radar_hidden`.
 - **RPCs de conteúdo** (`endodirect_public_content` / `endodirect_member_content`) — juntavam `adm_avisos + radar_avisos` sem olhar `radar_hidden`, e entregavam o item apagado a todo aluno. ❌ → hoje filtram nas duas metades.
 - **cron** (`mergeMuralItems`, lib/radar.js) — `existingMuralKeys` já impedia a **re-entrada**, mas o ramo `retained` **mantinha** vivo o que já estava gravado; e o cron grava como service_role, sem passar pelo gatilho. ❌ → hoje descarta oculto nos dois ramos.
+- **⚠️ cópia no APARELHO do aluno** — o app semeia o mural com `lsGet('adm_avisos')` e essa semente só é filtrada por `radarHidden`. Duas falhas somadas: `radarHidden` era declarado **depois** de `admAvisos` (filtro rodava vazio) e **nenhuma RPC devolvia `radar_hidden`** — o filtro existia e nunca recebia a lista. Foi o que manteve os dois cards falsos na tela **com o banco já limpo**. ❌ → hoje as RPCs entregam `radar_hidden`, o app guarda com `lsSet` e a declaração vem antes da semente (some também offline).
 
 **Se a regra da chave mudar em um lugar, tem de mudar nos três** (index.html, lib/radar.js, SQL) — senão o apagado volta por onde ficou. Registro da correção: `supabase/mural-apagado-vale-para-o-aluno.sql`; regressão: `scripts/test-mural-apagado.js`. Conferência que tem de dar **0**:
 ```sql

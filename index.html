@@ -3939,9 +3939,16 @@ function dedupeMuralList(list){
   });
   return out;
 }
+// ⚠️ ORDEM IMPORTA: radarHidden TEM de existir antes de admAvisos. A semente
+// abaixo vem do localStorage e passa por mergeRadarAvisos, que filtra o que o
+// professor apagou — com a lista declarada DEPOIS, o filtro rodava vazio e um
+// card excluído voltava a aparecer em qualquer aparelho que ainda tivesse a
+// cópia local. Foi o que manteve as duas notícias falsas na tela do aluno mesmo
+// com o banco já limpo (03/08/2026). Guardar radar_hidden no aparelho fecha o
+// caso offline: sem rede, a cópia velha continua sendo filtrada.
+var radarHidden=lsGet('radar_hidden')||[]; // chaves apagadas do mural pelo professor (cron nao re-insere)
 var admAvisos=mergeRadarAvisos(lsGet('adm_avisos')||[]);
 var radarAvisos=[]; // avisos automaticos do radar (campo radar_avisos); preservado nos saves do admin
-var radarHidden=[]; // sourceIds de itens do radar ocultados pelo professor (cron nao re-insere)
 // Chaves do payload global geridas pelo SERVIDOR (cron/newsletter): preservadas
 // nos saves do admin para não serem apagadas (newsletter_extra/unsub/sent/edição).
 var globalServerKeys={};
@@ -4118,7 +4125,9 @@ function applyStatePayload(payload,personalOnly){
     if(Array.isArray(payload.mm_shared)){sharedMM=payload.mm_shared;try{lsSet('mm_shared',sharedMM);}catch(e){}try{invalidateSharedMeta();}catch(e){}try{renderMMList();}catch(e){}}
     if(Array.isArray(payload.fc_shared)){fcShared=payload.fc_shared;try{lsSet('fc_shared',fcShared);}catch(e){}try{invalidateSharedMeta();}catch(e){}}
     if(Array.isArray(payload.radar_avisos))radarAvisos=payload.radar_avisos;
-    if(Array.isArray(payload.radar_hidden))radarHidden=payload.radar_hidden;
+    // Guardado no aparelho: na próxima abertura a semente local do mural já
+    // nasce sem o que foi apagado, mesmo antes de o servidor responder.
+    if(Array.isArray(payload.radar_hidden)){radarHidden=payload.radar_hidden;try{lsSet('radar_hidden',radarHidden);}catch(e){}}
     if(Array.isArray(payload.adm_avisos)||Array.isArray(payload.radar_avisos)){
       admAvisos=mergeRadarAvisos((Array.isArray(payload.adm_avisos)?payload.adm_avisos:[]).concat(Array.isArray(payload.radar_avisos)?payload.radar_avisos:[]));
     }
