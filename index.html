@@ -1355,6 +1355,7 @@ input.dmm-inp-subsub{flex:1;min-width:0;background:transparent;color:var(--t2);f
   <div class="modal-box">
     <div class="modal-hdr"><span class="modal-hdr-title">💬 Feedback</span><button class="modal-close" id="fb-modal-close">✕</button></div>
     <div id="fb-body" class="modal-body">
+      <div id="fb-intro" style="display:none;font-size:.83rem;line-height:1.5;color:var(--t2);background:var(--s2,#f6f8fc);border-radius:9px;padding:.6rem .7rem;margin-bottom:.9rem"></div>
       <div style="margin-bottom:.9rem">
         <div class="flbl" style="margin-bottom:.4rem">Avaliação</div>
         <div style="display:flex;gap:.35rem">
@@ -1380,7 +1381,13 @@ input.dmm-inp-subsub{flex:1;min-width:0;background:transparent;color:var(--t2);f
       <div style="margin-bottom:.9rem"><div class="flbl" style="margin-bottom:.4rem">Mensagem</div>
         <textarea id="fb-text" rows="3" placeholder="Descreva com detalhes…" style="width:100%;font-size:.81rem;resize:none"></textarea>
       </div>
-      <div style="display:flex;gap:.55rem;justify-content:flex-end">
+      <!-- Só aparece para quem não tem e-mail na sessão (demo/visitante): sem
+           endereço de retorno o feedback não pode ser respondido nem gravado. -->
+      <div id="fb-email-wrap" style="display:none;margin-bottom:.9rem"><div class="flbl" style="margin-bottom:.4rem">Seu e-mail (para retorno)</div>
+        <input id="fb-email" type="email" placeholder="voce@email.com" style="width:100%;font-size:.81rem">
+      </div>
+      <div style="display:flex;gap:.55rem;justify-content:flex-end;align-items:center">
+        <span id="fb-status" style="flex:1;font-size:.78rem;color:var(--t2)"></span>
         <button class="btn btn-outline" id="fb-cancel">Cancelar</button>
         <button class="btn btn-primary" id="fb-submit">📤 Enviar</button>
       </div>
@@ -5352,6 +5359,7 @@ function startApp(){
     try{markLockedNavItems();}catch(e){}
     try{loadMyTickets({});}catch(e){} // popula o badge "nova resposta" do Suporte já no login
     try{maybeShowWhatsNew();}catch(e){} // janela de novidades (1x por versão), exceto durante o onboarding
+    try{maybeAskFeedback();}catch(e){} // convite de feedback p/ assinante de +30 dias (a RPC decide se pede)
   }
 }
 var demoOnboardToPresc=false; // demo alunopro: após a janela inicial, abre o Assistente de IA
@@ -5376,6 +5384,7 @@ function maybeOnboardAfterHydrate(){
     try{setText('tb-usub',profileDisplayLabel(prof));}catch(e){}
     try{maybeLandMedicoHome();}catch(e){} // médico abre no Mural (tela de início)
     try{maybeShowWhatsNew();}catch(e){} // novidades 1x por versão (perfil veio do remoto)
+    try{maybeAskFeedback();}catch(e){} // convite de feedback p/ assinante de +30 dias (a RPC decide se pede)
     return;
   }
   openOnboard();
@@ -10595,22 +10604,136 @@ function submitSF(){
 }
 
 // ── FEEDBACK ──
+// ⚠️ Até 03/08/2026 esta tela era um botão que não levava a lugar nenhum:
+// submitFeedback() trocava o corpo do modal pelo "Obrigado pelo feedback!" e
+// DESCARTAVA o texto — nada era enviado nem gravado. Todo feedback escrito por
+// aluno desde o lançamento se perdeu, sem erro em log nenhum. Agora segue o
+// MESMO caminho do formulário de suporte (POST /api/ai kind:'support' →
+// lib/support.js): grava em endodirect_support e avisa por e-mail, aparecendo
+// na caixa de Suporte do painel com a tag "Feedback · <categoria>". Pedir
+// feedback sem isso seria pedir para o aluno falar num microfone desligado.
 var fbState={rating:0,cat:'',tipo:''};
+var fbSending=false;
+function fbSessionEmail(){
+  var e=String((currentUser&&currentUser.email)||'').trim();
+  return /^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(e)?e:'';
+}
+function fbSetStatus(m,cor){var s=document.getElementById('fb-status');if(s){s.textContent=m||'';s.style.color=cor||'var(--t2)';}}
 function openFeedback(){
   fbState={rating:0,cat:'',tipo:''};
+  fbSending=false;
   document.getElementById('fb-body').style.display='block';
   document.getElementById('fb-success').style.display='none';
   document.getElementById('fb-text').value='';
+  fbSetStatus('');
+  var sb=document.getElementById('fb-submit');if(sb){sb.disabled=false;sb.textContent='📤 Enviar';}
+  // Sem e-mail na sessão (demo/visitante) o campo de retorno aparece; com
+  // sessão real o endereço é o da conta e o aluno não digita nada.
+  var mail=fbSessionEmail();
+  var ew=document.getElementById('fb-email-wrap');if(ew)ew.style.display=mail?'none':'block';
+  var intro=document.getElementById('fb-intro');
+  if(intro){
+    if(fbAskAuto){
+      var meses=Math.floor(fbAskDias/30);
+      intro.textContent='Você usa o Endodirect há '+(meses>=2?(meses+' meses'):(fbAskDias+' dias'))
+        +'. O que está bom e o que precisa melhorar? A resposta vai direto para a equipe.';
+      intro.style.display='block';
+    }else{intro.style.display='none';}
+  }
+  var cancel=document.getElementById('fb-cancel');if(cancel)cancel.textContent=fbAskAuto?'Agora não':'Cancelar';
   document.querySelectorAll('.fb-star').forEach(function(s){s.style.opacity='0.35';});
   document.querySelectorAll('.fb-cat-btn,.fb-tipo-btn').forEach(function(b){b.classList.remove('on');});
   document.getElementById('feedback-modal').style.display='flex';
 }
-function closeFeedback(){document.getElementById('feedback-modal').style.display='none';}
+function closeFeedback(){
+  // Fechar um convite AUTOMÁTICO é "agora não": conta a tentativa e adia. Sem
+  // isso o app repetiria o pedido a cada abertura para quem já disse não.
+  if(fbAskAuto){fbAskAdiar();fbAskAuto=false;}
+  document.getElementById('feedback-modal').style.display='none';
+}
 function submitFeedback(){
+  if(fbSending)return;
   if(!fbState.rating){notify('Dê uma avaliação em estrelas.','err');return;}
   if(!fbState.cat){notify('Selecione uma categoria.','err');return;}
-  document.getElementById('fb-body').style.display='none';
-  document.getElementById('fb-success').style.display='block';
+  var email=fbSessionEmail()||String(((document.getElementById('fb-email')||{}).value)||'').trim();
+  if(!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email)){
+    var ew=document.getElementById('fb-email-wrap');if(ew)ew.style.display='block';
+    fbSetStatus('Informe um e-mail para retorno.','var(--red)');return;
+  }
+  var txt=String(((document.getElementById('fb-text')||{}).value)||'').trim();
+  var msg=Array(fbState.rating+1).join('⭐')+' '+fbState.rating+'/5 · '+fbState.cat+(fbState.tipo?' · '+fbState.tipo:'')
+    +'\n\n'+(txt||'(sem comentário — o aluno só deu a nota)');
+  var ctx='feedback · '+(fbAskAuto?'pedido no app':'espontâneo')
+    +' · '+((currentUser&&currentUser.role)||'visitante')+((currentUser&&currentUser.id)?' (logado)':' (demo)')
+    +(fbAskDias>0?' · '+fbAskDias+' dias de assinatura':'');
+  var btn=document.getElementById('fb-submit'),antes=btn?btn.textContent:'';
+  fbSending=true;if(btn){btn.disabled=true;btn.textContent='Enviando…';}
+  fbSetStatus('');
+  // O "Obrigado" só aparece DEPOIS de o servidor confirmar. Mostrar antes é o
+  // que fazia o feedback sumir sem ninguém perceber.
+  fetch(AI_API_ENDPOINT,{method:'POST',headers:{'Content-Type':'application/json'},credentials:'same-origin',
+    body:JSON.stringify({kind:'support',name:(currentUser&&currentUser.name)||'',email:email,category:'Feedback · '+fbState.cat,message:msg,context:ctx})})
+    .then(function(r){return r.json().catch(function(){return{};}).then(function(d){if(!r.ok||!d.ok)throw new Error((d&&d.error)||'Falha ao enviar.');return d;});})
+    .then(function(){
+      fbAskRegistrarEnvio();
+      fbAskAuto=false;
+      document.getElementById('fb-body').style.display='none';
+      document.getElementById('fb-success').style.display='block';
+    })
+    .catch(function(e){fbSetStatus((e&&e.message)||'Falha ao enviar. Tente de novo.','var(--red)');})
+    .then(function(){fbSending=false;if(btn){btn.disabled=false;btn.textContent=antes||'📤 Enviar';}});
+}
+
+// ── PEDIDO DE FEEDBACK AO ABRIR A PLATAFORMA (assinantes de mais de 30 dias) ──
+// QUEM recebe o convite e A PARTIR DE QUANDO são decisões do SQL
+// (endodirect_meu_feedback): assinatura ativa iniciada há mais de 30 dias, a
+// partir de 01/09/2026, e que ainda não mandou feedback nos últimos 180 dias.
+// Ficar no banco tem dois motivos: a regra não depende de um index.html velho
+// em cache no celular do aluno, e a data pode ser mudada sem novo deploy.
+// O cliente decide só QUANDO mostrar — e respeita o "agora não".
+var FB_ASK_ATRASO_MS=20000;   // não cair em cima do splash/hydrate
+var FB_ASK_ADIA_DIAS=14;      // "agora não" = duas semanas de silêncio
+var FB_ASK_MAX=3;             // no máximo 3 convites por pessoa
+var fbAskChecked=false,fbAskAuto=false,fbAskDias=0,fbAskTentativas=0;
+function fbAskEstado(){var s=lsGet('fb_ask');return (s&&typeof s==='object')?s:{n:0,ate:''};}
+function fbAskAdiar(){
+  var s=fbAskEstado();
+  s.n=(parseInt(s.n,10)||0)+1;
+  s.ate=new Date(Date.now()+FB_ASK_ADIA_DIAS*864e5).toISOString();
+  lsSet('fb_ask',s);
+}
+function fbAskRegistrarEnvio(){lsSet('fb_ask',{n:FB_ASK_MAX,ate:'',enviado:new Date().toISOString()});}
+function anyModalOpen(){
+  var aberto=false;
+  try{document.querySelectorAll('.modal-bg').forEach(function(m){if(m&&m.style&&m.style.display==='flex')aberto=true;});}catch(e){}
+  return aberto;
+}
+function fbAskAbrir(){
+  if(fbAskTentativas>=5)return;
+  fbAskTentativas++;
+  // Nunca empilhar em cima de outra janela (onboarding, novidades, chat): espera.
+  if(anyModalOpen()){setTimeout(fbAskAbrir,60000);return;}
+  fbAskAuto=true;
+  openFeedback();
+}
+function maybeAskFeedback(){
+  try{
+    if(fbAskChecked)return;
+    if(!canUseRemoteState())return;                        // só sessão real (demo não conta)
+    if(!currentUser||currentUser.role!=='aluno')return;
+    var s=fbAskEstado();
+    if((parseInt(s.n,10)||0)>=FB_ASK_MAX)return;           // já convidamos o bastante
+    if(s.ate&&new Date(s.ate).getTime()>Date.now())return; // "agora não" ainda vale
+    var client=getSupabaseClient();if(!client)return;
+    fbAskChecked=true;
+    client.rpc('endodirect_meu_feedback').then(function(res){
+      var d=res&&res.data;
+      var row=(Array.isArray(d)?d[0]:d)||null;
+      if(!row||!row.pedir)return;
+      fbAskDias=parseInt(row.dias,10)||0;
+      setTimeout(fbAskAbrir,FB_ASK_ATRASO_MS);
+    },function(){});
+  }catch(e){}
 }
 // Formulário de suporte (página Suporte do aluno): envia a mensagem para o nosso
 // suporte por e-mail (POST /api/ai kind:'support' → lib/support.js via Resend).

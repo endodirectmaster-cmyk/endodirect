@@ -1,6 +1,6 @@
 ---
 tags: [cofre, dados, supabase]
-atualizado: 2026-07-30
+atualizado: 2026-08-03
 ---
 
 # Dados e Supabase
@@ -118,6 +118,7 @@ alter table public.minha_tabela_bkp enable row level security;  -- na MESMA leva
 ## RLS e RPCs (security-definer)
 - `endodirect_member_content` — conteúdo do membro.
 - **Direito de acesso / planos (`endodirect_acessos`):** o acesso pago é concedido pela RPC `endodirect_acessos_ativos()`, que só conta linhas com **`status='active'` E (`expires_at` nulo ou futuro)** (também soma `endodirect_assinaturas` ativas; hoje 0 linhas). Ranqueia `plano:standard`(1) < `plano:gold`(2) < `plano:premium`(3) e injeta `plano` + os `curso:<slug>` até o tier. O painel Estudantes (`endodirect_admin_students`) mostra o plano com o MESMO gate (`status='active'`). **Para cancelar/remover alguém de um plano:** basta a linha NÃO estar `active` (ou expirar) — `update endodirect_acessos set status='canceled', expires_at=now() where lower(email)=... and scope like 'plano%'`. Preferir MANTER a linha (histórico do pagamento: `provider_order_id`, `notes`) e documentar em `notes`, em vez de deletar. O **webhook do pagar.me** ([[Pagamentos pagar.me]]) já seta `status='canceled'` no estorno/cancelamento — conferir antes de agir manualmente (a conta continua existindo, só cai para Degustação).
+- **`endodirect_meu_feedback()`** (03/08) — decide se o app convida ESTE aluno a dar feedback ao abrir a plataforma. Devolve `dias` (tempo de assinatura), `ja_respondeu` e `pedir`. `pedir` = assinatura **ativa** iniciada há **mais de 30 dias** + data **≥ 01/09/2026** + sem feedback nos últimos **180 dias**. Início da assinatura = compra ativa mais antiga, casando por `user_id` **e** por e-mail (acesso não vinculado não pode zerar o tempo de casa). Lê só `auth.uid()`/`auth.jwt()` — ninguém consulta a situação de outro. **A regra mora aqui e não no `index.html`** porque o app fica em cache no celular do aluno (service worker): regra no cliente continuaria valendo a versão velha por dias, e a data pode mudar sem deploy. ⚠️ `proacl` conferido: `anon` **não** executa (ver a lição das duas revogações em [[Decisões]]).
 - `endodirect_admin_overview` — visão do admin (analytics). Agrega do `app_state` dos alunos. Retorna: `alunos`, `ativos`, `respostas`, `acertos`, `simulados`, `flashcards`, `mapas`, `ultima_atividade`, `por_area`, `simulado_media`, `simulados_recentes`, e **origem geográfica**: `com_uf`/`por_uf` (UF de `user_profile.uf` com fallback `ck_billing.uf` — de todos) e `com_cidade`/`por_cidade` (cidade de `ck_billing.city` — só de quem fez checkout). A definição **não** está no `supabase-setup.sql`; é mantida por migration na base (ex.: `admin_overview_add_geo`). O check de admin é via `auth.jwt()->>'email'` — não dá para chamar pela service role.
 
 ## Shapes de dados (cliente)

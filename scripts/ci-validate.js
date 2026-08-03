@@ -290,5 +290,17 @@ try {
   fail('regressão da campanha de recuperação falhou (verifique lib/trial-emails.js):\n' + out);
 }
 
+// ⚠️ Feedback do aluno. O botão "Enviar" ficou meses trocando a tela pelo
+//     "Obrigado pelo feedback!" e DESCARTANDO o texto — sem erro em log nenhum.
+//     Como a plataforma agora CONVIDA quem assina há mais de 30 dias, voltar
+//     àquele comportamento seria pior do que não perguntar nada.
+try {
+  execFileSync(process.execPath, [path.join('scripts', 'test-feedback.js')], { stdio: 'pipe' });
+  ok('regressão feedback: envia de verdade + convite só para quem o banco autoriza');
+} catch (e) {
+  const out = (e.stdout ? e.stdout.toString() : '') + (e.stderr ? e.stderr.toString() : '');
+  fail('regressão do feedback falhou (verifique index.html):\n' + out);
+}
+
 if (errors) { console.error(`\n${errors} verificação(ões) falharam.`); process.exit(1); }
 console.log('\nTodas as verificações passaram.');
