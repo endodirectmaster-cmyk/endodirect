@@ -302,5 +302,46 @@ const ft = {
      ehTabelaDeEstudosIncluidos(['Autor', 'x1', 'x2', 'x3', 'x4', 'x5'], 9, '') === true);
 }
 
+
+// ---- ⚠️ AS REGRAS DE VOCABULÁRIO DO PROFESSOR -------------------------------
+// Duas ordens diretas, dadas olhando a discussão do coma mixedematoso (03/08):
+// "retira esse 'profundo'. Coisa de IA" e "trocar FT4 por T4 livre". Elas vivem
+// no texto do prompt, que é o tipo de coisa que alguém reescreve para "melhorar
+// a redação" e leva junto sem perceber. Corrigir as discussões já gravadas não
+// impede a próxima de nascer errada — quem impede é o prompt.
+{
+  const disc = fs.readFileSync(path.join(__dirname, '..', 'lib', 'discussao.js'), 'utf8');
+  const radar = fs.readFileSync(path.join(__dirname, '..', 'lib', 'radar.js'), 'utf8');
+  const sis = disc.slice(disc.indexOf('const SISTEMA'), disc.indexOf('function montarPrompt'));
+
+  ok('o prompt da discussão manda escrever "T4 livre"', /T4 livre/.test(sis), sis.slice(0, 80));
+  ok('e proíbe FT4 explicitamente', /nunca "FT4"|nunca .FT4./.test(sis));
+  // ⚠️ A exceção importa: a legenda decodifica a sigla impressa NA imagem do
+  // artigo, que está em inglês. Sem ela, a regra viraria "FT4, T4 livre" errado.
+  ok('mas abre a exceção da legenda de figura', /FIGURA|legenda/i.test(sis),
+     'sem isso a legenda da Figura 1 fica sem como decodificar a sigla da imagem');
+  ok('proíbe "profundo" como reforço', /profundo/.test(sis));
+  // ⚠️ E a proibição NÃO pode ser da palavra: o artigo diz "hipotermia pode ser
+  // profunda", e "reflexos profundos" é anatomia. Proibir tudo apagaria os dois.
+  ok('preservando o uso legítimo (hipotermia profunda / reflexos profundos)',
+     /hipotermia profunda/.test(sis) && /reflexos profundos/.test(sis),
+     'proibir a palavra inteira apagaria dois usos corretos');
+
+  // ⚠️ O CARD também escreve para o mural. Só na discussão, o card do MESMO
+  // artigo diria FT4 logo acima dela.
+  //
+  // ⚠️ COMENTÁRIO FORA ANTES DE ASSEVERAR. A 1ª versão desta asserção lia a fatia
+  // crua e passava com a regra REMOVIDA do prompt — porque o comentário que eu
+  // havia escrito logo acima do `const system` também dizia "T4 livre". A sonda
+  // media o meu comentário, não o texto que vai para o modelo. Mesma família do
+  // stub de `isFormalMuralType` (02/08), do `window[fn]` e do regex truncado por
+  // `;` (31/07): teste verde sobre trecho que ele não alcança compra confiança.
+  const semCom = radar.replace(/^\s*\/\/.*$/gm, '');
+  const i0 = semCom.indexOf('async function summarizeWithAI');
+  const sisRadar = semCom.slice(semCom.indexOf('const system', i0), semCom.indexOf('const prompt', i0));
+  ok('o prompt do CARD do radar também manda "T4 livre"', /T4 livre/.test(sisRadar), sisRadar.slice(0, 200));
+  ok('e a asserção lê o texto do prompt, não um comentário', sisRadar.indexOf('//') < 0, sisRadar.slice(0, 120));
+}
+
 console.log(bad ? '\nFALHOU: ' + bad : '\n✓ prompt da discussão: anexos sobrevivem ao corte; sem coluna de referências e sem tabela de estudos incluídos; resultado da metanálise preservado');
 process.exit(bad ? 1 : 0);
