@@ -1,6 +1,6 @@
 ---
 tags: [cofre, dados, supabase]
-atualizado: 2026-08-03
+atualizado: 2026-08-04
 ---
 
 # Dados e Supabase
@@ -39,7 +39,9 @@ Um item de `diretrizes` com **`rascunho:true`** é filtrado **no servidor**, nã
 - `endodirect_state_backup` — backups manuais do estado. (RLS ON sem policy = só service_role — padrão seguro, item INFO do linter.)
 - `endodirect_acessos` — acessos liberados (escopo, status, validade). Alimentada pelo checkout e pelo [[Pagamentos pagar.me|webhook]].
 ### Contas institucionais (parceiros)
-Login único no domínio `endodirect.com.br` (não no do parceiro: a recuperação de senha tem de cair numa caixa que o professor controla). Criadas por SQL em `auth.users` **+ `auth.identities`** — sem a linha de identidade o login por senha não funciona — com `email_confirmed_at` já preenchido. ⚠️ `auth.identities.email` é **coluna gerada**, não aceita insert. Direito de acesso como qualquer cortesia: linha em `endodirect_acessos` com `provider='manual'` (para não contar como pagante). **O limite de 2 dispositivos vale para elas** — login compartilhado por 3+ pessoas simultâneas se autoexpulsa em ~5s. Hoje: `novonordisk@endodirect.com.br`, Gold até 30/07/2027.
+Login único no domínio `endodirect.com.br` (não no do parceiro: a recuperação de senha tem de cair numa caixa que o professor controla). Criadas por SQL em `auth.users` **+ `auth.identities`** — sem a linha de identidade o login por senha não funciona — com `email_confirmed_at` já preenchido. ⚠️ `auth.identities.email` é **coluna gerada**, não aceita insert. Direito de acesso como qualquer cortesia: linha em `endodirect_acessos` com `provider='manual'` (para não contar como pagante). **O limite de 2 dispositivos vale para elas** — login compartilhado por 3+ pessoas simultâneas se autoexpulsa em ~5s.
+
+**Hoje: nenhuma ativa.** `novonordisk@endodirect.com.br` foi **cancelada em 04/08/2026** a pedido do professor. Cancelamento **reversível de propósito** — nada foi apagado: `endodirect_acessos` com `status='canceled'` + `expires_at=now()`, `auth.users.banned_until='2099-12-31'` (barra o login), sessões e refresh tokens apagados, 2 linhas de `endodirect_devices` removidas. Para religar: `status='active'`, `expires_at` nova e `banned_until=null` — a conta, a senha e o estado de estudo continuam lá. Para apagar de vez (irreversível): remover de `auth.users`, o que leva junto `endodirect_app_state` por cascata.
 
 - `endodirect_devices` — anti-compartilhamento: dispositivos ativos por aluno `(user_id, device_id, last_seen)`. Limite de **2**; RPCs `endodirect_session_claim` (login, mantém os 2 mais recentes) e `endodirect_session_check` (heartbeat). Cliente: `device_id` em `localStorage`, heartbeat 60s, expulsa com overlay "Sessão encerrada". Só para `role='aluno'` (admins isentos). DDL em `supabase/device-session-limit.sql` (migration `device_session_limit`).
 

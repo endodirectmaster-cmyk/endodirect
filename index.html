@@ -3538,7 +3538,21 @@ function studyEvent(q,ok){
     if(!ok)srsAdd(q);
   }catch(e){}
 }
-var provasDB=lsGet('provas')||[];
+// Rótulos de área que são a MESMA subespecialidade com dois nomes. Andrologia e
+// Endocrinologia Masculina são a mesma coisa (professor, 04/08/2026) e apareciam
+// como duas linhas no Analytics — 84 questões de um lado, 3 do outro. O banco já
+// foi unificado; isto impede a volta: qualquer cópia velha (localStorage, aba
+// antiga, importação) é canonizada AO CARREGAR, então nem o save de uma aba
+// desatualizada reescreve o rótulo antigo (a chave de merge de `provas` é
+// enunciado+gabarito+instituição — a área não entra nela e passaria batida).
+var AREA_CANON={'Andrologia':'Endocrinologia Masculina'};
+function canonProvaArea(lista){
+  (Array.isArray(lista)?lista:[]).forEach(function(q){
+    if(q&&q.area&&AREA_CANON[q.area])q.area=AREA_CANON[q.area];
+  });
+  return Array.isArray(lista)?lista:[];
+}
+var provasDB=canonProvaArea(lsGet('provas')||[]);
 // Degustação: contagem de usos das ferramentas com cota (3 usos cada).
 var degTrials=lsGet('deg_trials')||{};
 var FC_SEED={
@@ -4121,7 +4135,7 @@ function applyStatePayload(payload,personalOnly){
   if(payload.plan!==undefined)DB.plan=payload.plan;
   if(payload.qotd&&typeof payload.qotd==='object'){DB.qotd=Object.assign({},payload.qotd,DB.qotd||{});try{localStorage.setItem('qotd_answered',JSON.stringify(DB.qotd));}catch(e){}try{var _qp=document.getElementById('panel-qotd');if(_qp&&_qp.classList.contains('on'))renderQotdArchive();}catch(e){}}
   if(!personalOnly){
-    if(Array.isArray(payload.provas))provasDB=payload.provas;
+    if(Array.isArray(payload.provas))provasDB=canonProvaArea(payload.provas);
     if(Array.isArray(payload.mm_shared)){sharedMM=payload.mm_shared;try{lsSet('mm_shared',sharedMM);}catch(e){}try{invalidateSharedMeta();}catch(e){}try{renderMMList();}catch(e){}}
     if(Array.isArray(payload.fc_shared)){fcShared=payload.fc_shared;try{lsSet('fc_shared',fcShared);}catch(e){}try{invalidateSharedMeta();}catch(e){}}
     if(Array.isArray(payload.radar_avisos))radarAvisos=payload.radar_avisos;

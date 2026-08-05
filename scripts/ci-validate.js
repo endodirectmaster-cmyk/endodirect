@@ -290,6 +290,17 @@ try {
   fail('regressão da campanha de recuperação falhou (verifique lib/trial-emails.js):\n' + out);
 }
 
+// ⚠️ Andrologia = Endocrinologia Masculina. O Analytics mostrava as duas como
+//     linhas separadas (84 questões contra 3). A área NÃO entra na chave de
+//     merge de `provas`, então uma aba antiga reescreveria o rótulo de volta.
+try {
+  execFileSync(process.execPath, [path.join('scripts', 'test-area-canonica.js')], { stdio: 'pipe' });
+  ok('regressão área canônica: Andrologia não volta a se separar de Endocrinologia Masculina');
+} catch (e) {
+  const out = (e.stdout ? e.stdout.toString() : '') + (e.stderr ? e.stderr.toString() : '');
+  fail('regressão da área canônica falhou (verifique canonProvaArea no index.html):\n' + out);
+}
+
 // ⚠️ "Apaguei do mural" tem de valer para o ALUNO. O item apagado sumia da tela
 //     do professor e continuava publicado: o gatilho do banco restaurava
 //     radar_avisos e as RPCs de conteúdo ignoravam radar_hidden. Ficaram 4 itens
