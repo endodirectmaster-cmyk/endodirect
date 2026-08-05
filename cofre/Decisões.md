@@ -1,6 +1,6 @@
 ---
 tags: [cofre, decisoes]
-atualizado: 2026-08-04
+atualizado: 2026-08-05
 ---
 
 # Decisões
@@ -8,6 +8,10 @@ atualizado: 2026-08-04
 Log de decisões de produto e técnicas (mais recentes no topo).
 
 ## 2026-08
+- **🔀 Andrologia e Endocrinologia Masculina eram a MESMA subespecialidade em duas linhas (2026-08-05, "andrologia e endocrinologia masculina são a mesma coisa").** O professor viu as duas separadas no Analytics. Os números explicam por que passou despercebido: **84 questões** rotuladas `Andrologia` contra **3** em `Endocrinologia Masculina` — mas só **3 respostas** de um lado e 21 do outro, porque o rótulo `Andrologia` **não existe em nenhum dropdown** do painel (`DEFAULT_SUBESP`, `DIR_SUBS`): é resíduo de importação. O aluno praticamente nunca caía nele.
+  - **Fundido nos dois lugares que o Analytics soma:** as 84 questões em `provas` (84 + 3 = **87**, total de 2.401 intacto) e o `perf`/`perfTema` de **4 alunos** — somando `total`/`correct` por tema em vez de sobrescrever. Conferência: **23 respostas / 21 acertos** depois, exatamente 3+20 e 3+18 de antes. Nada perdido. Backup do estado global antes de mexer (`endodirect_state_backup` id=8).
+  - **⚠️ Só o banco não bastaria.** A chave de merge de `provas` em `GLOBAL_MERGE_KEYS` é `stem|answer|inst` — **a área não entra nela**. Uma aba antiga do painel, com a cópia velha em memória, reescreveria os 84 rótulos de volta sem erro nenhum. Por isso a canonização (`AREA_CANON` + `canonProvaArea`) roda **ao carregar**, nos dois pontos onde `provasDB` nasce (localStorage e hydrate). `scripts/test-area-canonica.js` no CI trava os dois pontos e o dropdown; cobertura provada com 4 quebras.
+  - **⚠️ Sobraram outros rótulos duplicados no banco de questões** — `Básica` (141) vs `Endocrinologia Básica` (6), `Lípides` (157) vs `Dislipidemia e Aterosclerose` (9), `Endocrinologia do Esporte` (20) vs `Endocrinologia Esportiva` (do dropdown), e o composto `Endocrinologia Feminina e Andrologia` (20), que **não dá para dividir sozinho** (é uma área que virou duas). Levados ao professor; **nada foi mexido sem decisão dele**.
 - **⛔ Acesso institucional Novo Nordisk CANCELADO (2026-08-04, "pode cancelar o login e senha da novo nordisk").** Feito de forma **reversível**: revoguei o direito (`endodirect_acessos` → `status='canceled'`, `expires_at=now()`), **barrei o login** (`auth.users.banned_until='2099-12-31'`), apaguei **1 sessão aberta + 1 refresh token** e as **2 linhas de dispositivo**. Nada foi excluído — conta, senha e estado de estudo continuam no banco; religar são três campos. Apagar de vez levaria junto o `endodirect_app_state` por cascata, e isso ninguém pediu.
   - **⚠️ Havia gente usando na hora:** `last_sign_in_at` de **04/08 12:03 UTC** (~40 min antes do pedido) e **2 dispositivos** registrados. As sessões caíram na mesma transação — quem estava com a plataforma aberta foi desconectado no ato, sem aviso. Contei isso ao professor em vez de deixá-lo descobrir por um e-mail da empresa.
   - **A senha nunca esteve no repositório** (regra permanente), então não havia o que remover de arquivo nenhum — o cancelamento é todo no banco.
