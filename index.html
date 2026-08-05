@@ -743,8 +743,16 @@ html[data-theme="light"] .cat-pill.on{background:var(--blue);border-color:var(--
   .tb-logo{width:auto;min-width:0;background:transparent;padding:.55rem 0;gap:7px;margin-left:.5rem}
   .tb-logo span{color:var(--tx);font-size:.92rem}
   .tb-logo-img{width:30px;height:30px}
-  .tb-logo-light{display:none}
-  .tb-logo-dark{display:inline-block!important}
+  /* ⚠️ No desktop a faixa do logo tem fundo próprio (--navy, escuro nos dois
+     temas), então o logo DOURADO serve sempre. No celular a faixa é
+     transparente e quem manda é o tema: no escuro (padrão) o fundo é
+     var(--surface) escuro → logo dourado; no claro é branco → logo azul.
+     Até 05/08/2026 o azul era forçado nos dois, e no tema escuro ele
+     literalmente sumia — o professor via só os pontinhos dourados. */
+  .tb-logo-light{display:inline-block}
+  .tb-logo-dark{display:none}
+  html[data-theme="light"] .tb-logo-light{display:none}
+  html[data-theme="light"] .tb-logo-dark{display:inline-block}
   .tb-user>div:first-child{display:none}
   #panel-mmap.mm-open .mm-gen-card{display:none}
   .tb-bc{display:none}
@@ -4275,26 +4283,61 @@ function refreshAfterRemoteState(){
 function canUseRemoteState(){
   return !!(currentUser&&currentUser.id&&getSupabaseClient());
 }
+// ⚠️ ESTADO DE CARGA DOS RESUMOS (05/08/2026). Os capítulos privados (Resumos e
+// Artigos) só existem no servidor: a semente local (REF_GUIDELINES, 8 itens) NÃO
+// tem nenhum item `privado`. Então, se este carregamento falha, a tela de Resumos
+// fica com o cabeçalho e MAIS NADA — foi exatamente o que o professor viu no
+// celular. Antes o erro era engolido por um `.catch(function(){})` mudo: sem
+// retentativa, sem log, sem aviso na tela. Agora falha 3x antes de desistir e a
+// tela diz o que houve, com botão de tentar de novo.
+var resumosErro=false;   // a última tentativa esgotou as retentativas
+function carregarResumos(client,rpc,tentativa){
+  tentativa=tentativa||1;
+  return client.rpc(rpc).then(function(r2){
+    if(r2.error)throw r2.error;
+    if(r2.data&&Array.isArray(r2.data.diretrizes)&&r2.data.diretrizes.length){
+      diretrizes=r2.data.diretrizes;
+      diretrizes.forEach(function(d){if(d&&d.sub)d.sub=dirMigrateSub(d.sub);});
+      try{lsSet('diretrizes',diretrizes);}catch(e){}
+      resumosErro=false;
+    }
+  }).catch(function(e){
+    // Rede de celular derruba resposta grande (~1,8 MB) com frequência; uma
+    // tentativa só deixava o aluno sem Resumos pelo resto da sessão.
+    if(tentativa<3){
+      return new Promise(function(r){setTimeout(r,900*tentativa);})
+        .then(function(){return carregarResumos(client,rpc,tentativa+1);});
+    }
+    resumosErro=true;
+    console.warn('Resumos indisponíveis após '+tentativa+' tentativas',e);
+  });
+}
+// Recarrega sob demanda (botão "Tentar de novo" da tela de Resumos).
+function recarregarResumos(){
+  var client=getSupabaseClient();
+  if(!client)return Promise.resolve();
+  var rpc=(currentUser&&currentUser.id)?'endodirect_member_resumos'
+         :((typeof isTestShowcase==='function'&&isTestShowcase())?'endodirect_showcase_resumos':'endodirect_member_resumos');
+  resumosErro=false;
+  return carregarResumos(client,rpc);
+}
 function hydratePublicContent(){
   var client=getSupabaseClient();
   if(!client||remoteStateLoaded)return;
   client.rpc('endodirect_public_content').then(function(res){
     if(res.error)throw res.error;
     if(res.data)applyStatePayload(res.data);
-  }).then(function(){
+  })
+  // ⚠️ Os Resumos NÃO podem depender do sucesso da chamada anterior: encadeados
+  // no `.then` de sucesso, uma falha ali pulava esta etapa inteira em silêncio.
+  .catch(function(e){if(!remoteStateWarned){remoteStateWarned=true;console.warn('Supabase public content unavailable',e);}})
+  .then(function(){
     // Visitantes/degustação e a conta demo (alunopro, sem id) não passam pelo
     // member_content; ainda assim buscam as diretrizes/Resumos pelo RPC dedicado.
     // A conta de vitrine (alunopro) recebe TODOS os capítulos (showcase_resumos);
     // os demais recebem públicas + 1 por área (member_resumos). Se falhar, mantém as públicas.
     var _resuRpc=(typeof isTestShowcase==='function'&&isTestShowcase())?'endodirect_showcase_resumos':'endodirect_member_resumos';
-    return client.rpc(_resuRpc).then(function(r2){
-      if(r2.error)throw r2.error;
-      if(r2.data&&Array.isArray(r2.data.diretrizes)&&r2.data.diretrizes.length){
-        diretrizes=r2.data.diretrizes;
-        diretrizes.forEach(function(d){if(d&&d.sub)d.sub=dirMigrateSub(d.sub);});
-        try{lsSet('diretrizes',diretrizes);}catch(e){}
-      }
-    }).catch(function(){});
+    return carregarResumos(client,_resuRpc);
   }).then(function(){
     remoteStateLoaded=true;
     refreshAfterRemoteState();
@@ -4322,18 +4365,14 @@ function hydrateRemoteState(){
   }else{
     loads.push(client.rpc('endodirect_member_content')
       .then(function(res){if(res.error)throw res.error;if(res.data)applyStatePayload(res.data);})
-      // As diretrizes/Resumos vêm de um RPC próprio e leve (endodirect_member_resumos):
-      // separá-las do member_content mantém a resposta principal pequena e evita que o
-      // payload grande (provas) impeça a chegada dos capítulos privados (Resumos). Encadeado
-      // após o member_content para ordem determinística; se falhar, mantém as públicas.
-      .then(function(){return client.rpc('endodirect_member_resumos').then(function(r2){
-        if(r2.error)throw r2.error;
-        if(r2.data&&Array.isArray(r2.data.diretrizes)&&r2.data.diretrizes.length){
-          diretrizes=r2.data.diretrizes;
-          diretrizes.forEach(function(d){if(d&&d.sub)d.sub=dirMigrateSub(d.sub);});
-          try{lsSet('diretrizes',diretrizes);}catch(e){}
-        }
-      }).catch(function(e){if(!remoteStateWarned){console.warn('Resumos (member_resumos) indisponível',e);}});}));
+      // ⚠️ As diretrizes/Resumos vêm de um RPC próprio e leve. Ele roda DEPOIS do
+      // member_content (ordem determinística: senão as 66 públicas do
+      // member_content sobrescreveriam os capítulos privados), mas NUNCA
+      // dependendo do sucesso dele — o member_content já está em ~5 MB, e
+      // encadeado no `.then` de sucesso uma falha lá levava os Resumos junto,
+      // deixando a tela do aluno vazia sem nenhum sinal.
+      .catch(function(e){if(!remoteStateWarned){console.warn('member_content indisponível',e);}})
+      .then(function(){return carregarResumos(client,'endodirect_member_resumos');}));
   }
   Promise.all(loads)
     .then(function(){
@@ -10238,6 +10277,23 @@ function diretrizesViewHTML(){
       // Nas Diretrizes (refPrivadoMode falso) as de RESUMO_ONLY_SUBS não entram.
       .filter(function(s){return refPrivadoMode||RESUMOS_ONLY_SUBS.indexOf(s.sub)<0;});
     var _sub1=refPrivadoMode?'Escolha uma subespecialidade para ver os resumos de estudo, com pontos-chave, flashcards e mapas mentais.':'Escolha uma subespecialidade para ver os resumos das principais diretrizes.';
+    // ⚠️ TELA VAZIA NUNCA (05/08/2026). Os capítulos privados só existem no
+    // servidor — a semente local não tem nenhum. Se a carga não veio, a grade
+    // ficava vazia com o cabeçalho por cima e nada mais, sem dizer por quê: o
+    // aluno lê isso como "não tem conteúdo". Agora ou está carregando, ou
+    // explica a falha e oferece tentar de novo.
+    if(refPrivadoMode&&!subs.length){
+      var _cab='<div class="ph"><h1>'+_T+'</h1><p>'+_sub1+'</p></div>';
+      if(resumosErro){
+        return _cab+'<div class="ref-soon" style="margin-top:1rem"><div class="ref-soon-ico">📡</div>'
+          +'<h2>Não foi possível carregar os resumos</h2>'
+          +'<p>A conexão falhou no meio do caminho. O conteúdo está no servidor — é só tentar de novo.</p>'
+          +'<button class="btn btn-primary btn-sm" id="btn-resumos-retry" style="margin-top:.6rem">🔄 Tentar de novo</button></div>';
+      }
+      if(!remoteStateLoaded)return _cab+'<div style="margin-top:1rem">'+ldHTML('Carregando os resumos…')+'</div>';
+      return _cab+'<div class="ref-soon" style="margin-top:1rem"><div class="ref-soon-ico">🔜</div><h2>Em breve</h2>'
+        +'<p>Os resumos de estudo ainda estão sendo preparados.</p></div>';
+    }
     return '<div class="ph"><h1>'+_T+'</h1><p>'+_sub1+'</p></div>'
       +'<div class="dir-sub-grid">'+subs.map(function(s){
         var _c=refPrivadoMode?_cntSub(s.count,dirArtigoCount(s.sub)):_cnt(s.count);
@@ -10303,6 +10359,12 @@ function bindDiretrizesView(root){
   var _assb=root.querySelector('[data-dir-assine]');if(_assb)_assb.addEventListener('click',_resuUpsell);
   // Alternador Capítulos × Artigos (Resumos): troca o tipo e volta para a grade de temas.
   root.querySelectorAll('[data-dir-tipo]').forEach(function(b){b.addEventListener('click',function(){refTipoSel=b.dataset.dirTipo;refTemaSel='';refFlashOpen={};refFlashIdx={};renderDiretrizesInto(root);});});
+  // "Tentar de novo" quando a carga dos Resumos falhou (ver carregarResumos).
+  var _rtry=root.querySelector('#btn-resumos-retry');
+  if(_rtry)_rtry.addEventListener('click',function(){
+    _rtry.disabled=true;_rtry.innerHTML=ldHTML('Carregando…');
+    recarregarResumos().then(function(){renderDiretrizesInto(root);});
+  });
   // Entrar numa subespecialidade sempre começa pelos capítulos.
   root.querySelectorAll('[data-dir-sub]').forEach(function(b){b.addEventListener('click',function(){refSubSel=b.dataset.dirSub;refTemaSel='';refTipoSel='capitulo';refFlashOpen={};renderDiretrizesInto(root);});});
   root.querySelectorAll('[data-dir-tema]').forEach(function(b){b.addEventListener('click',function(){refTemaSel=b.dataset.dirTema;refFlashOpen={};renderDiretrizesInto(root);});});

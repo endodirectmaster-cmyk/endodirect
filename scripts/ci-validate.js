@@ -290,6 +290,18 @@ try {
   fail('regressão da campanha de recuperação falhou (verifique lib/trial-emails.js):\n' + out);
 }
 
+// ⚠️ Resumos nunca em branco + logo legível no celular. A tela de Resumos ficava
+//     só com o cabeçalho quando a carga falhava (a semente local não tem nenhum
+//     capítulo privado), e o erro morria num .catch mudo. O logo azul-marinho
+//     era forçado no celular e sumia no tema escuro.
+try {
+  execFileSync(process.execPath, [path.join('scripts', 'test-resumos-e-logo.js')], { stdio: 'pipe' });
+  ok('regressão Resumos/logo: falha de carga é visível e retentável; logo segue o tema');
+} catch (e) {
+  const out = (e.stdout ? e.stdout.toString() : '') + (e.stderr ? e.stderr.toString() : '');
+  fail('regressão de Resumos/logo falhou (verifique carregarResumos e o bloco .tb-logo do celular):\n' + out);
+}
+
 // ⚠️ Andrologia = Endocrinologia Masculina. O Analytics mostrava as duas como
 //     linhas separadas (84 questões contra 3). A área NÃO entra na chave de
 //     merge de `provas`, então uma aba antiga reescreveria o rótulo de volta.
