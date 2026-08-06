@@ -11243,13 +11243,66 @@ var IG_TOOLS=[
 var igEditId=null; // id do item da fila em edição (null = criando novo)
 var igDraftImg=''; // imagem (base64 ou URL) do enunciado no formulário manual
 var igDraftImgRef=''; // atribuição/minirreferência da imagem (quando vinda do PubMed/Open-i)
+// Sinônimos por MODALIDADE. A figura devolvida pelo Open-i tem de citar a MESMA
+// modalidade que foi pedida — senão uma TC entra no lugar de um ultrassom.
+var IG_IMG_MODAL=[
+  ['mri','magnetic resonance','mr imaging'],
+  ['ct','cat scan','computed tomography','tomography'],
+  ['ultrasound','ultrasonography','ultrasonographic','sonography','sonographic','doppler','echography'],
+  ['scintigraphy','scintigraphic','spect','pet','radioiodine','uptake'],
+  ['dxa','dexa','densitometry','bone mineral density','bmd'],
+  ['radiograph','radiography','x-ray','xray','roentgenogram'],
+  ['ecg','ekg','electrocardiogram','electrocardiographic']
+];
+var IG_IMG_STOP={the:1,and:1,with:1,from:1,for:1,case:1,image:1,imaging:1,scan:1,view:1,patient:1,study:1,figure:1,showing:1,shows:1};
+function igImgHas(hay,termo){
+  var t=String(termo).toLowerCase().replace(/[.*+?^${}()|[\]\\]/g,'\\$&').replace(/[\s-]+/g,'[\\s-]+');
+  try{return new RegExp('(^|[^a-z0-9])'+t+'($|[^a-z0-9])','i').test(String(hay||''));}catch(e){return false;}
+}
+// ⚠️🐛 FIX (06/08/2026): antes o app anexava o PRIMEIRO resultado do Open-i sem
+// conferir nada. A busca do Open-i casa o TEXTO DO ARTIGO, então qualquer figura de
+// um artigo que cite "pituitary MRI" entra — foi assim que uma prancha de oncologia
+// de 6 painéis ilustrou uma questão de prolactina. Agora a figura só é aceita se o
+// título/legenda DELA citarem a mesma modalidade e ao menos um termo clínico da
+// busca. Sem candidato aprovado, a questão fica SEM imagem — que é o certo: imagem
+// errada num material de estudo é pior do que imagem nenhuma.
+function igImgRelevante(query,it){
+  var hay=(String((it&&it.title)||'')+' '+String((it&&it.caption)||'')).toLowerCase().trim();
+  if(!hay)return false;                       // sem metadado não há como conferir
+  var q=String(query||'').toLowerCase(),grupo=null,i,j;
+  for(i=0;i<IG_IMG_MODAL.length&&!grupo;i++)
+    for(j=0;j<IG_IMG_MODAL[i].length;j++)
+      if(igImgHas(q,IG_IMG_MODAL[i][j])){grupo=IG_IMG_MODAL[i];break;}
+  if(grupo){
+    var okMod=false;
+    for(i=0;i<grupo.length&&!okMod;i++)if(igImgHas(hay,grupo[i]))okMod=true;
+    if(!okMod)return false;                   // pediram RM e veio TC
+  }
+  var termos=q.replace(/[^a-z0-9 -]+/g,' ').split(/\s+/).filter(function(w){
+    return w.length>=4&&!IG_IMG_STOP[w]&&!(grupo&&grupo.indexOf(w)>=0);
+  });
+  if(!termos.length)return !!grupo;           // busca só com modalidade: a modalidade basta
+  for(i=0;i<termos.length;i++){
+    var raiz=termos[i].length>6?termos[i].slice(0,termos[i].length-3):termos[i];
+    if(hay.indexOf(raiz)>=0)return true;      // órgão/achado aparece na própria figura
+  }
+  return false;
+}
 // Busca uma imagem de exame complementar (PubMed Central via Open-i) p/ ilustrar a
-// questão. Best-effort: qualquer falha devolve null (a questão fica sem imagem).
+// questão. Best-effort: qualquer falha — ou nenhum candidato relevante — devolve
+// null e a questão fica sem imagem.
 function igFetchExamImage(query){
   query=String(query||'').trim();if(!query)return Promise.resolve(null);
-  return fetch('/api/ai',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({kind:'openi',query:query,n:1})})
+  return fetch('/api/ai',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({kind:'openi',query:query,n:6})})
     .then(function(r){return r.ok?r.json():null;})
-    .then(function(d){if(!d||!d.ok||!d.items||!d.items.length)return null;var it=d.items[0];if(!it.img)return null;return {img:it.img,imgRef:igFormatImgRef(it)};})
+    .then(function(d){
+      if(!d||!d.ok||!d.items||!d.items.length)return null;
+      for(var i=0;i<d.items.length;i++){
+        var it=d.items[i];
+        if(it&&it.img&&igImgRelevante(query,it))return {img:it.img,imgRef:igFormatImgRef(it)};
+      }
+      return null;
+    })
     .catch(function(){return null;});
 }
 // Monta a minirreferência (ABREVIADA) exibida abaixo da imagem:
@@ -11719,7 +11772,13 @@ function igAttachExamImage(q,d){
   if(!iq)return Promise.resolve(q);
   return igFetchExamImage(iq).then(function(im){if(im){q.img=im.img;q.imgRef=im.imgRef;}return q;}).catch(function(){return q;});
 }
-var IG_IMAGEQUERY_RULE=' Se — e SOMENTE se — a vinheta envolver um exame de IMAGEM/complementar que valha ilustrar (ex.: RM de sela, USG de tireoide, TC de adrenal, cintilografia, densitometria, ECG, radiografia), inclua no JSON o campo "imageQuery" com TERMOS DE BUSCA EM INGLÊS para achar essa imagem no PubMed (ex.: "pituitary MRI microadenoma", "thyroid ultrasound nodule", "adrenal CT adenoma"); se não houver imagem pertinente, use "imageQuery":"" (string vazia).';
+// ⚠️ Regra ESTREITA de propósito. A versão anterior mandava ilustrar sempre que a
+// vinheta "envolvesse um exame de imagem" — e o gerador pedia figura até para caso
+// cujo exame o próprio enunciado descreve como NORMAL. Resultado real (06/08): uma
+// questão de macroprolactinemia, cujo enunciado diz "RM de sela normal, sem imagem
+// sugestiva de adenoma", veio com uma prancha de 6 painéis de um artigo de oncologia
+// com setas apontando lesões — a figura CONTRADIZIA o enunciado.
+var IG_IMAGEQUERY_RULE=' Campo "imageQuery": só preencha quando a figura for INDISPENSÁVEL para responder — quando o achado de imagem é o dado que decide a questão e o aluno precisa INTERPRETAR a figura. Use "imageQuery":"" (string vazia) em todos os outros casos, inclusive: (a) o enunciado DESCREVE o exame como normal, sem alterações ou negativo — NUNCA ilustre exame normal; (b) o exame aparece de passagem e o raciocínio se resolve pela clínica ou pelo laboratório; (c) o achado já está descrito por extenso no enunciado. Na dúvida, use "" — questão sem imagem é melhor do que questão com imagem que não corresponde ao caso. Quando preencher, use TERMOS DE BUSCA EM INGLÊS nomeando MODALIDADE + ÓRGÃO + ACHADO (ex.: "pituitary MRI macroadenoma", "thyroid ultrasound papillary carcinoma", "adrenal CT pheochromocytoma").';
 // Dois níveis de dificuldade, alternados no lote (pedido do Rodolpho 2026-07-23):
 // 'titulo' = padrão prova de título/especialista; 'muito_avancado' = banca difícil.
 function igNivelDesc(level){

@@ -369,6 +369,18 @@ try {
   fail('regressão do mural apagado falhou (verifique lib/radar.js e supabase/mural-apagado-vale-para-o-aluno.sql):\n' + out);
 }
 
+// ⚠️ A figura da Questão do Dia precisa ter a ver com a questão. O app anexava o
+//     PRIMEIRO resultado do Open-i sem conferir nada, e a busca do Open-i casa o
+//     TEXTO DO ARTIGO — uma prancha de oncologia de 6 painéis ilustrou uma questão
+//     de prolactina cujo enunciado dizia que a RM de sela era NORMAL.
+try {
+  execFileSync(process.execPath, [path.join('scripts', 'test-imagem-questao.js')], { stdio: 'pipe' });
+  ok('regressão imagem da questão: figura conferida contra a busca; exame normal não é ilustrado');
+} catch (e) {
+  const out = (e.stdout ? e.stdout.toString() : '') + (e.stderr ? e.stderr.toString() : '');
+  fail('regressão da imagem da questão falhou (verifique igImgRelevante/IG_IMAGEQUERY_RULE no index.html):\n' + out);
+}
+
 // ⚠️ O save do painel apagava, em silêncio, edição feita direto no banco. Em
 //     06/08 as tabelas do posicionamento de hipogonadismo foram gravadas às 12:30
 //     e sumiram às 12:48 no save de uma aba aberta desde antes: mergeConcurrent só
