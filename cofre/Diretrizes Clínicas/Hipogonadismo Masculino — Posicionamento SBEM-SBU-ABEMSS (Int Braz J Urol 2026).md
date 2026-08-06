@@ -60,6 +60,19 @@ O professor pediu as tabelas em português. Reproduzidas **fielmente** no capít
 
 **⚠️ Lição aplicada, do próprio cofre:** a tabela do Mural quebrou em 02/08 por causa de uma **linha de agrupamento** (uma célula preenchida, o resto vazio). Por isso a Tabela 2 virou duas tabelas simples. Antes de gravar, renderizei as três **no app real, em Chromium**, pela aba Diretrizes: **4 tabelas, 27 linhas, zero markdown cru na tela**.
 
+## ⚠️ O painel aberto REVERTEU o que eu gravei no servidor (06/08/2026)
+Gravei as tabelas ~12:30; às **12:48 o save do painel do professor sobrescreveu** e elas sumiram — junto com uma correção nos pontos-chave da reposição, que voltou a dizer "hematócrito > 54%" como contraindicação. O professor viu a tela sem tabela nenhuma e perguntou se tinha subido.
+
+**Mecanismo:** `diretrizes` está em `GLOBAL_MERGE_KEYS`, e o `mergeConcurrent` parte da cópia EM MEMÓRIA da aba do admin. Ele **acrescenta** itens cuja chave é nova no servidor (por isso o capítulo novo sobreviveu), mas **descarta as alterações em itens já existentes** — que é exatamente o que uma edição server-side faz. Sem erro, sem aviso.
+
+**Consequência prática:** toda gravação minha em `diretrizes` precisa ser seguida de **F5 no painel** antes de o professor mexer, senão o próximo save dele desfaz.
+
+**⚠️ Cuidado com a chave de merge:** ela é `fonte|tema|titulo|sub`. Eu mudei o `fonte` do capítulo público (para citar SBU/ABEMSS) — isso **muda a chave** e faz o item parecer "novo" de um lado e "sumido" do outro, o que confunde qualquer diagnóstico posterior. Mudar `fonte`/`tema` de um capítulo existente não é edição inócua.
+
+**Não é o mesmo caso do mural:** lá o gatilho do banco restaurava `radar_avisos` e o item apagado voltava. Aqui não há gatilho — `diretrizes` é chave do professor, e a cópia dele ganha por desenho. **Blindagem equivalente NÃO foi implementada**; oferecida ao professor, sem resposta até agora.
+
+**O capítulo público "Hipogonadismo masculino" sumiu no mesmo save — e foi o professor que apagou**, de propósito ("era praticamente uma duplicata"). Perguntei antes de restaurar; ele confirmou. Sobrou o capítulo novo, que cobre o mesmo terreno com a fonte atualizada.
+
 ## Onde isso vive na plataforma
 - **`CLINICAL_GUIDELINES`** (index.html) — a linha de hipogonadismo, reescrita e conferida contra o PDF. É o que ancora **toda** geração de IA.
 - **Aba Diretrizes** — capítulo "Hipogonadismo masculino" (corrigido) + capítulo novo "Hipogonadismo masculino — Posicionamento SBEM/SBU/ABEMSS (2026)".
