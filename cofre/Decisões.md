@@ -1,6 +1,6 @@
 ---
 tags: [cofre, decisoes]
-atualizado: 2026-08-05
+atualizado: 2026-08-06
 ---
 
 # Decisões
@@ -8,6 +8,10 @@ atualizado: 2026-08-05
 Log de decisões de produto e técnicas (mais recentes no topo).
 
 ## 2026-08
+- **📊 Anual × mensal no painel de assinantes (2026-08-06, "quantos são plano anual e quantos são plano mensal").** Hoje: **28 anuais + 5 mensais = 33** — fecha exatamente com o número "Assinantes" que já estava na tela. Aparece no card de Conversão (linha sob o número + barra de proporção), no bloco de Estudantes e como etiqueta na linha de cada aluno pagante.
+  - **⚠️ A distinção vem do `tipo` que o CHECKOUT grava, não de palpite sobre duração.** `api/checkout/order.js` é o plano ANUAL, pagamento único → `tipo='avulso'`; `api/checkout/subscribe.js` é o MENSAL recorrente (`interval:'month'`) → `tipo='recorrente'`. Conferido nos dois arquivos **e** nos dados: os 28 avulsos têm exatamente **365 dias** de validade; os 5 recorrentes, **30 a 62** (a renovação empurra o vencimento sem mexer no `created_at`).
+  - **Por que NÃO classificar por duração** (a armadilha óbvia): um mensal renovado 12 vezes acumularia ~365 dias entre `created_at` e `expires_at` e viraria "anual" na conta — o número que o professor usa para prever caixa ficaria errado sem nenhum sintoma. O teste do CI trava o contrato com os dois arquivos de checkout.
+  - **Cortesia continua fora dos dois** (`provider='manual'` não é receita), e o helper devolve etiqueta vazia para quem não paga — provado executando a função recortada do `index.html`, não por busca de texto. Cobertura: 4 quebras.
 - **📨 Reengajamento automático do ASSINANTE parado há 14+ dias (2026-08-05, "programa também email para o pessoal que passar mais de 2 semanas sem acessar… mostra os títulos dos artigos de revisão e das diretrizes").** Sai no cron diário (nenhuma função serverless nova — teto de 12 mantido). Assunto: *"O que entrou no Endodirect enquanto você esteve fora"*.
   - **⚠️ A DIFERENÇA QUE DEFINE ESTE E-MAIL: as campanhas anteriores eram de DISPARO ÚNICO** (chave no ledger → nunca repete). Esta é **permanente e a condição não expira sozinha** — quem está parado hoje continua parado amanhã. Sem trava, as mesmas 11 pessoas receberiam o mesmo e-mail **todo dia** até marcarem como spam, o que queima o domínio de envio. Por isso o **cooldown de 30 dias** vive na RPC, junto com a regra de quem entra, e o envio grava a data em `trial_emails[email].reengajamento`.
   - **Quem decide é o banco** (`endodirect_reengajamento_alvos(p_dias, p_cooldown)`), com o **mesmo "último uso"** que o professor vê no card do Analytics (`greatest(devices.last_seen, auth.last_sign_in_at)`) — se as duas contas divergissem, o e-mail iria para quem a tela diz estar ativo. Exclui admin, contas de teste, **cortesia** (`provider='manual'` — parceiro não é assinante), quem cancelou a newsletter e quem assinou há menos de 14 dias.

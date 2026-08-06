@@ -12029,6 +12029,14 @@ function admEstPlanoTag(p){
   if(p==='Standard')return '<span class="tag tag-blue">Standard</span>';
   return '<span class="tag" style="background:var(--bd);color:var(--t2)">Degustação</span>';
 }
+// Ciclo de cobrança ao lado do plano. Vem da RPC (`ciclo`), que traduz o `tipo`
+// gravado pelo checkout: anual = pagamento único (avulso), mensal = assinatura
+// recorrente. Quem não paga (degustação/cortesia) não tem ciclo — e some.
+function admEstCicloTag(c){
+  if(c==='anual')return '<span class="tag" style="background:var(--s2);color:var(--t2);margin-left:.3rem;font-size:.62rem">anual</span>';
+  if(c==='mensal')return '<span class="tag" style="background:var(--s2);color:var(--t2);margin-left:.3rem;font-size:.62rem">mensal</span>';
+  return '';
+}
 function admEstudantesHTML(){
   var head='<div class="adm-ph" style="display:flex;align-items:flex-start;justify-content:space-between;gap:.6rem;flex-wrap:wrap"><div><h1>Estudantes</h1></div><div style="display:flex;gap:.5rem;align-items:center"><input type="search" id="adm-est-search" placeholder="Buscar por nome ou e-mail…" style="width:220px" value="'+esc(admEstSearch)+'"><button class="btn btn-outline" id="adm-est-reload" style="padding:.5rem .75rem" title="Atualizar lista">↻</button></div></div><div class="adm-pc">';
   if(admEstErr){
@@ -12047,6 +12055,8 @@ function admEstudantesHTML(){
       // (provider='manual') aparece separada — contá-la aqui inflaria o número
       // e poluiria qualquer métrica de retenção construída em cima dele.
       +'<div class="adm-bigstat"><div class="adm-bigstat-n" style="color:var(--gold)">'+n(d.pagos)+'</div><div class="adm-bigstat-l">Assinantes'
+        // Ciclo de cobrança (anual x mensal) vem do `tipo` gravado pelo checkout — ver a RPC.
+        +((n(d.anuais)||n(d.mensais))?'<div style="font-size:.63rem;color:var(--t3);margin-top:.15rem">'+n(d.anuais)+' anual'+(n(d.anuais)===1?'':'s')+' · '+n(d.mensais)+' mensal'+(n(d.mensais)===1?'':'is')+'</div>':'')
         +(n(d.cortesias)?'<div style="font-size:.63rem;color:var(--t3);margin-top:.15rem">+'+n(d.cortesias)+' cortesia'+(n(d.cortesias)>1?'s':'')+'</div>':'')
       +'</div></div>'
       +'<div class="adm-bigstat"><div class="adm-bigstat-n" style="color:var(--blue)">'+n(d.este_mes)+'</div><div class="adm-bigstat-l">Este mês</div></div>'
@@ -12068,7 +12078,7 @@ function admEstRowsHTML(filtro){
     return '<div class="adm-table-row">'
       +'<span style="flex:2.2;display:flex;align-items:center;gap:.6rem"><span class="tb-avatar" style="background:var(--navy)">'+esc(nome.charAt(0).toUpperCase())+'</span><span style="font-size:.82rem;font-weight:600">'+esc(nome)+'</span></span>'
       +'<span style="flex:2.5;font-size:.78rem;color:var(--t2)">'+esc(e.email||'')+'</span>'
-      +'<span style="flex:1.2">'+admEstPlanoTag(e.plano)+'</span>'
+      +'<span style="flex:1.2">'+admEstPlanoTag(e.plano)+admEstCicloTag(e.ciclo)+'</span>'
       +'<span style="flex:1.1;font-size:.76rem;color:var(--t2)">'+admEstFmtDate(e.created_at)+'</span>'
       +'<span style="flex:1.2;font-size:.76rem;color:var(--t2)">'+(ativo?admEstFmtDate(e.last_sign_in_at):'Nunca')+'</span>'
       +'<span style="flex:1.1"><span class="tag '+(ativo?'tag-grn':'tag-red')+'">'+(ativo?'Ativo':'Sem 1º acesso')+'</span></span>'
@@ -13151,13 +13161,32 @@ function admConversionCardHTML(){
   var convR=recent.length?Math.round(rPay/recent.length*100):null;
   var convO=older.length?Math.round(oPay/older.length*100):null;
   var esteMes=n(d.este_mes);
-  var kpi=function(val,lbl,cor){return '<div class="adm-bigstat"><div class="adm-bigstat-n" style="color:'+cor+'">'+val+'</div><div class="adm-bigstat-l">'+lbl+'</div></div>';};
+  var kpi=function(val,lbl,cor,sub){return '<div class="adm-bigstat"><div class="adm-bigstat-n" style="color:'+cor+'">'+val+'</div><div class="adm-bigstat-l">'+lbl
+    +(sub?'<div style="font-size:.63rem;color:var(--t3);margin-top:.15rem">'+sub+'</div>':'')+'</div></div>';};
+  // ⚠️ ANUAL x MENSAL vem da RPC (campo `ciclo`), que lê o `tipo` gravado pelo
+  // CHECKOUT — anual é pagamento único (avulso), mensal é assinatura recorrente.
+  // Não dá para deduzir por duração: um mensal renovado 12 vezes acumularia um
+  // ano de validade e passaria por anual. Cortesia não entra em nenhum dos dois.
+  var anuais=n(d.anuais),mensais=n(d.mensais);
+  var subCiclo=(anuais||mensais)?(anuais+' anual'+(anuais===1?'':'s')+' · '+mensais+' mensal'+(mensais===1?'':'is')):'';
   var inner='<div class="g2" style="grid-template-columns:repeat(4,1fr);margin:.2rem 0 1rem">'
     +kpi(conv+'%','Conversão geral','var(--grn)')
-    +kpi(pagos,'Assinantes','var(--gold)')
+    +kpi(pagos,'Assinantes','var(--gold)',subCiclo)
     +kpi(degust,'Em degustação','var(--blue)')
     +kpi(esteMes,'Novos este mês','var(--pur)')
   +'</div>';
+  // Barra de proporção anual × mensal: é a leitura que o número sozinho não dá
+  // (previsibilidade de caixa — anual entra de uma vez, mensal renova todo mês).
+  if(anuais||mensais){
+    var totCiclo=anuais+mensais,pctA=totCiclo?Math.round(anuais/totCiclo*100):0;
+    inner+='<div class="sec-title" style="margin:.2rem 0 .5rem;font-size:.82rem">Assinantes por ciclo de cobrança</div>'
+      +'<div class="rep-area-row"><div class="rep-area-name" style="min-width:150px">📅 Plano anual</div>'
+      +'<div class="rep-area-track"><div class="rep-area-fill" style="width:'+pctA+'%;background:var(--gold)"></div></div>'
+      +'<div class="rep-area-pct">'+anuais+' <span style="color:var(--t3);font-weight:600">('+pctA+'%)</span></div></div>'
+      +'<div class="rep-area-row"><div class="rep-area-name" style="min-width:150px">🔁 Plano mensal</div>'
+      +'<div class="rep-area-track"><div class="rep-area-fill" style="width:'+(100-pctA)+'%;background:var(--blue)"></div></div>'
+      +'<div class="rep-area-pct">'+mensais+' <span style="color:var(--t3);font-weight:600">('+(100-pctA)+'%)</span></div></div>';
+  }
   // Funil visual cadastros → assinantes.
   inner+='<div class="rep-area-row"><div class="rep-area-name" style="min-width:150px">Cadastros</div><div class="rep-area-track"><div class="rep-area-fill" style="width:100%;background:var(--blue)"></div></div><div class="rep-area-pct">'+total+'</div></div>'
     +'<div class="rep-area-row"><div class="rep-area-name" style="min-width:150px">Assinantes</div><div class="rep-area-track"><div class="rep-area-fill" style="width:'+conv+'%;background:var(--gold)"></div></div><div class="rep-area-pct">'+pagos+' · '+conv+'%</div></div>';
@@ -13229,7 +13258,7 @@ function admSumidosCardHTML(){
     return '<div class="adm-table-row">'
       +'<span style="flex:2.2;display:flex;align-items:center;gap:.6rem"><span class="tb-avatar" style="background:var(--navy)">'+esc(nome.charAt(0).toUpperCase())+'</span><span style="font-size:.82rem;font-weight:600">'+esc(nome)+'</span></span>'
       +'<span style="flex:2.5;font-size:.78rem;color:var(--t2)">'+esc(e.email||'')+'</span>'
-      +'<span style="flex:1.2">'+admEstPlanoTag(e.plano)+'</span>'
+      +'<span style="flex:1.2">'+admEstPlanoTag(e.plano)+admEstCicloTag(e.ciclo)+'</span>'
       +'<span style="flex:1.3;font-size:.8rem;font-weight:700;color:'+cor+'">'+quanto+'</span>'
     +'</div>';
   }).join('');

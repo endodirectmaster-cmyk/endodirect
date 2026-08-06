@@ -290,6 +290,16 @@ try {
   fail('regressão da campanha de recuperação falhou (verifique lib/trial-emails.js):\n' + out);
 }
 
+// ⚠️ Anual x mensal no painel. A distinção vem do `tipo` que o CHECKOUT grava —
+//     deduzir por duração faz um mensal renovado 12 vezes virar 'anual'.
+try {
+  execFileSync(process.execPath, [path.join('scripts', 'test-ciclo-cobranca.js')], { stdio: 'pipe' });
+  ok('regressão ciclo de cobrança: anual x mensal sai do checkout, não de palpite por duração');
+} catch (e) {
+  const out = (e.stdout ? e.stdout.toString() : '') + (e.stderr ? e.stderr.toString() : '');
+  fail('regressão do ciclo de cobrança falhou:\n' + out);
+}
+
 // ⚠️ Reengajamento do assinante parado 14+ dias. Diferente das campanhas de
 //     disparo único, a condição NÃO expira sozinha: sem o cooldown, as mesmas
 //     pessoas receberiam o mesmo e-mail todo dia.
