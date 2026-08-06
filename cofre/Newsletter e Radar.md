@@ -1,9 +1,23 @@
 ---
 tags: [cofre, newsletter, radar]
-atualizado: 2026-08-03
+atualizado: 2026-08-05
 ---
 
 # Newsletter e Radar
+
+## Os e-mails que saem sozinhos (e o que trava cada um)
+Todos pegam carona no cron diário do radar (10:30 UTC) — o plano limita o número de crons, então **nenhum e-mail tem função serverless própria**.
+
+| e-mail | quem recebe | o que impede o disparo repetido |
+|---|---|---|
+| Newsletter do dia | inscritos | `newsletter_sent` (trava claim-first) |
+| Degustação: aviso + win-back | quem está/esteve em degustação | chave por pessoa no ledger `trial_emails` |
+| Campanha "o que entrou desde a sua degustação" | ex-degustação | chave única `novidades_2026_08` — dispara uma vez e acabou |
+| **Reengajamento (14+ dias parado)** | **assinante pagante** | **cooldown de 30 dias na RPC** |
+
+**⚠️ O reengajamento é o único cuja condição NÃO expira sozinha.** Nos outros, a pessoa sai do público naturalmente (assinou, a degustação acabou, a campanha já foi). Aqui, quem está parado hoje continua parado amanhã: **sem o cooldown, o mesmo grupo receberia o mesmo e-mail todo dia** até marcar como spam — e aí o domínio de envio inteiro paga o preço. A regra e o cooldown vivem em `endodirect_reengajamento_alvos(p_dias, p_cooldown)`; o envio grava a data em `trial_emails[email].reengajamento`.
+
+Detalhes que valem para os quatro: opt-out (`newsletter_unsub`) é conferido **na RPC e de novo antes de enviar**; `List-Unsubscribe` em todos; teto `MAX_PER_RUN` por execução; e **conteúdo contado na hora do envio** — número ou título chumbado em e-mail envelhece calado. No reengajamento os títulos saem do mural respeitando `radar_hidden`: o que o professor apaga não reaparece na caixa de ninguém.
 
 ### A fila de discussões não chega a zero — e isso é o limite, não defeito (2026-07-31)
 Depois de retirar o botão, a cadeia drenou 3 pendentes e **parou em 1**: `pubmed:42475087` ("Cardiovascular Risk Reclassification With the 2026 Dyslipidemia Guidelines"). Ele tem link de PMC e entra na fila pelo **título** (o regex pega "Guidelines" mesmo com `tipo:'Estudo Original'`), mas nenhuma gravação sai.
