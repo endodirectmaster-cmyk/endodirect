@@ -290,6 +290,17 @@ try {
   fail('regressão da campanha de recuperação falhou (verifique lib/trial-emails.js):\n' + out);
 }
 
+// ⚠️ Reengajamento do assinante parado 14+ dias. Diferente das campanhas de
+//     disparo único, a condição NÃO expira sozinha: sem o cooldown, as mesmas
+//     pessoas receberiam o mesmo e-mail todo dia.
+try {
+  execFileSync(process.execPath, [path.join('scripts', 'test-reengajamento.js')], { stdio: 'pipe' });
+  ok('regressão reengajamento: cooldown, opt-out, títulos reais do mural e sem repetição');
+} catch (e) {
+  const out = (e.stdout ? e.stdout.toString() : '') + (e.stderr ? e.stderr.toString() : '');
+  fail('regressão do reengajamento falhou (verifique lib/trial-emails.js e a RPC endodirect_reengajamento_alvos):\n' + out);
+}
+
 // ⚠️ Resumos nunca em branco + logo legível no celular. A tela de Resumos ficava
 //     só com o cabeçalho quando a carga falhava (a semente local não tem nenhum
 //     capítulo privado), e o erro morria num .catch mudo. O logo azul-marinho
