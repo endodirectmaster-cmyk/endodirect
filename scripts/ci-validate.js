@@ -290,6 +290,17 @@ try {
   fail('regressão da campanha de recuperação falhou (verifique lib/trial-emails.js):\n' + out);
 }
 
+// ⚠️ "Alunos com atividade" era ACUMULADO desde sempre e passava por indicador
+//     de engajamento — um número que só cresce e nunca cai. Agora o KPI tem
+//     janela de 30 dias, com o acumulado como linha de apoio.
+try {
+  execFileSync(process.execPath, [path.join('scripts', 'test-ativos-janela.js')], { stdio: 'pipe' });
+  ok('regressão ativos: o número grande é o da janela de 30 dias, não o acumulado');
+} catch (e) {
+  const out = (e.stdout ? e.stdout.toString() : '') + (e.stderr ? e.stderr.toString() : '');
+  fail('regressão de ativos por janela falhou:\n' + out);
+}
+
 // ⚠️ Anual x mensal no painel. A distinção vem do `tipo` que o CHECKOUT grava —
 //     deduzir por duração faz um mensal renovado 12 vezes virar 'anual'.
 try {
