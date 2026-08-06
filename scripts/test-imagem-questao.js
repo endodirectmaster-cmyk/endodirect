@@ -49,15 +49,76 @@ function varObj(nome){
   throw new Error('não fechou '+nome);
 }
 
+function varRe(nome){
+  const m=html.match(new RegExp('var '+nome+'=\\/.*?\\/;'));
+  if(!m)throw new Error('var '+nome+' (regex) não encontrada');
+  return m[0];
+}
 const sandbox={};
 vm.createContext(sandbox);
 vm.runInContext([
   varArr('IG_IMG_MODAL'),
   varObj('IG_IMG_STOP'),
+  varArr('IG_IMG_MODAL_PT'),
+  varArr('IG_IMG_ORGAOS'),
+  varRe('IG_IMG_NORMAL'),
+  trecho('function igImgDeacc(','igImgDeacc'),
   trecho('function igImgHas(','igImgHas'),
+  trecho('function igImgHasPref(','igImgHasPref'),
+  trecho('function igImgModalDaBusca(','igImgModalDaBusca'),
+  trecho('function igImgOrgaos(','igImgOrgaos'),
+  trecho('function igImgPedidoCoerente(','igImgPedidoCoerente'),
   trecho('function igImgRelevante(','igImgRelevante')
 ].join('\n'),sandbox);
-const {igImgRelevante}=sandbox;
+const {igImgRelevante,igImgPedidoCoerente}=sandbox;
+
+// --- O ENUNCIADO manda: coerência do pedido antes mesmo de buscar --------------
+// Enunciado REAL do print do professor (06/08). A RM é descrita como NORMAL.
+const stemPrint='Mulher de 34 anos investiga amenorreia secundária de 8 meses e galactorreia. '
+  +'Nega uso de medicamentos, cefaleia ou alteração visual. Exames: prolactina 68 ng/mL [VR 4,8–23,3], '
+  +'TSH 2,1 mUI/L [VR 0,4–4,0], beta-hCG negativo. RM de sela sem contraste descreve hipófise de dimensões '
+  +'normais, sem imagem sugestiva de adenoma. Repetida a prolactina em nova coleta com diluição seriada, '
+  +'mantém-se em 71 ng/mL. Qual o próximo passo mais adequado?';
+ok(igImgPedidoCoerente('pituitary MRI microadenoma',stemPrint)===false,
+   'REGRESSÃO DO PRINT: enunciado diz que a RM de sela é NORMAL — não pode buscar figura nenhuma');
+
+// Mesmo caso, mas com achado de verdade: aí a figura faz sentido.
+const stemAchado='Homem de 42 anos com cefaleia e hemianopsia bitemporal. RM de sela evidencia lesão '
+  +'expansiva selar de 2,4 cm com extensão suprasselar. Qual o diagnóstico mais provável?';
+ok(igImgPedidoCoerente('pituitary MRI macroadenoma',stemAchado)===true,
+   'enunciado com achado de imagem real tem de continuar podendo ilustrar');
+
+// Órgão que o enunciado nem menciona.
+ok(igImgPedidoCoerente('adrenal CT pheochromocytoma',stemAchado)===false,
+   'busca de ÓRGÃO que o enunciado não cita tem de ser recusada');
+
+// Modalidade que o caso não tem (enunciado tem USG, busca pede TC).
+const stemUsg='Mulher de 51 anos com nódulo tireoidiano palpável. USG de tireoide mostra nódulo sólido '
+  +'hipoecogênico de 1,8 cm com microcalcificações. Qual a conduta?';
+ok(igImgPedidoCoerente('thyroid CT nodule',stemUsg)===false,
+   'busca de MODALIDADE que o enunciado não cita tem de ser recusada');
+ok(igImgPedidoCoerente('thyroid ultrasound papillary carcinoma',stemUsg)===true,
+   'modalidade e órgão batendo com o enunciado tem de passar');
+
+// Sem enunciado (uso antigo), não trava.
+ok(igImgPedidoCoerente('thyroid ultrasound nodule','')===true,
+   'sem enunciado a coerência não pode bloquear');
+
+// --- a figura tem de citar o órgão DO ENUNCIADO -------------------------------
+ok(igImgRelevante('thyroid ultrasound nodule',{
+     title:'Ultrasound of the ovary',
+     caption:'Transvaginal sonography showing an ovarian cyst.'},stemUsg)===false,
+   'figura de outro órgão não passa, mesmo com a modalidade certa');
+ok(igImgRelevante('thyroid ultrasound nodule',{
+     title:'Thyroid nodule',
+     caption:'Sonography of a hypoechoic thyroid nodule with microcalcifications.'},stemUsg)===true,
+   'figura do órgão do enunciado, modalidade certa, tem de passar');
+
+// --- o call site precisa MESMO usar o enunciado -------------------------------
+const attach=trecho('function igAttachExamImage(','igAttachExamImage');
+ok(/igImgPedidoCoerente\(/.test(attach),
+   'igAttachExamImage tem de conferir a coerência com o enunciado antes de buscar');
+ok(/q\.stem|stem/.test(attach),'igAttachExamImage tem de ler o enunciado da questão');
 
 // --- (A) o caso REAL do print --------------------------------------------------
 // A figura que entrou: artigo de oncologia, sem nada de hipófise na legenda.

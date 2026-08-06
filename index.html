@@ -11255,9 +11255,91 @@ var IG_IMG_MODAL=[
   ['ecg','ekg','electrocardiogram','electrocardiographic']
 ];
 var IG_IMG_STOP={the:1,and:1,with:1,from:1,for:1,case:1,image:1,imaging:1,scan:1,view:1,patient:1,study:1,figure:1,showing:1,shows:1};
+// Modalidades como o ENUNCIADO as escreve (português), na MESMA ordem de
+// IG_IMG_MODAL — o índice liga o termo em português ao grupo em inglês.
+var IG_IMG_MODAL_PT=[
+  ['rm','rnm','ressonancia','ressonancia magnetica'],
+  ['tc','tomografia','tomografia computadorizada'],
+  ['usg','ultrassom','ultrassonografia','ultrassonografico','ecografia','doppler'],
+  ['cintilografia','cintilografico','pet','spect','captacao'],
+  ['densitometria','dxa','dexa'],
+  ['radiografia','raio-x','raio x','rx'],
+  ['ecg','eletrocardiograma']
+];
+// Órgãos: como aparecem no enunciado (pt, por prefixo) x como aparecem na legenda
+// da figura (en). É o que amarra a figura ao TEXTO da questão, não só à busca.
+var IG_IMG_ORGAOS=[
+  {pt:['sela','selar','hipofis','pituitar','prolactinoma','acromegal','sindrome de sheehan'],en:['pituitary','sella','sellar','hypophys','prolactinoma','adenohypophys']},
+  {pt:['tireoide','tireoidian','bocio','tireotox'],en:['thyroid','goiter','goitre','thyroidal']},
+  {pt:['adrenal','suprarrenal','feocromocitoma','incidentaloma','cushing'],en:['adrenal','pheochromocytoma','phaeochromocytoma','suprarenal']},
+  {pt:['paratireoide','paratireoidian','hiperparatireoid'],en:['parathyroid','sestamibi']},
+  {pt:['pancreas','pancreatic','insulinoma'],en:['pancreas','pancreatic','insulinoma']},
+  {pt:['ovario','ovarian','anexial','utero','uterin'],en:['ovary','ovarian','uterus','uterine','adnexal']},
+  {pt:['testicul','escrotal','bolsa escrotal'],en:['testis','testicular','testes','scrotal','scrotum']},
+  {pt:['densitometria','coluna lombar','colo femoral','femur','vertebr','ossea','osso'],en:['bone','lumbar','spine','spinal','femoral','vertebral','skeletal']},
+  {pt:['renal','rins','rim'],en:['kidney','renal']}
+];
+// Marcas de exame NORMAL no enunciado. Se a frase que cita o exame diz isso, não
+// existe figura certa: qualquer imagem real do achado CONTRADIZ o enunciado.
+var IG_IMG_NORMAL=/(^|[^a-z])(normal|normais|normalidade|sem alterac|sem anormalidade|sem imagem sugestiva|sem evidencia|sem sinais|sem nodul|sem lesa|inalterad|preservad|habitual)/;
+function igImgDeacc(s){
+  s=String(s||'').toLowerCase();
+  try{return s.normalize('NFD').replace(/[\u0300-\u036f]/g,'');}catch(e){return s;}
+}
 function igImgHas(hay,termo){
   var t=String(termo).toLowerCase().replace(/[.*+?^${}()|[\]\\]/g,'\\$&').replace(/[\s-]+/g,'[\\s-]+');
   try{return new RegExp('(^|[^a-z0-9])'+t+'($|[^a-z0-9])','i').test(String(hay||''));}catch(e){return false;}
+}
+// Casa por PREFIXO com limite de palavra à esquerda ("hipofis" pega "hipofisário").
+function igImgHasPref(hay,pref){
+  var t=String(pref).toLowerCase().replace(/[.*+?^${}()|[\]\\]/g,'\\$&').replace(/[\s-]+/g,'[\\s-]+');
+  try{return new RegExp('(^|[^a-z0-9])'+t,'i').test(String(hay||''));}catch(e){return false;}
+}
+// Índice do grupo de modalidade que a BUSCA (inglês) pede; -1 se nenhuma.
+function igImgModalDaBusca(query){
+  var q=igImgDeacc(query),i,j;
+  for(i=0;i<IG_IMG_MODAL.length;i++)
+    for(j=0;j<IG_IMG_MODAL[i].length;j++)
+      if(igImgHas(q,IG_IMG_MODAL[i][j]))return i;
+  return -1;
+}
+// Grupos de órgão citados num texto (pt para o enunciado, en para a legenda).
+function igImgOrgaos(txt,lado){
+  var t=igImgDeacc(txt),out=[];
+  IG_IMG_ORGAOS.forEach(function(g,idx){
+    var lista=g[lado],k;
+    for(k=0;k<lista.length;k++)if(igImgHasPref(t,lista[k])){out.push(idx);return;}
+  });
+  return out;
+}
+// ⚠️ O pedido de imagem tem de ser COERENTE COM O ENUNCIADO (pedido do professor:
+// "só preciso que fique mais precisa a imagem junto do texto do enunciado").
+// Três recusas, todas olhando o texto da questão e não os termos que a IA inventou:
+//  1. o enunciado descreve o exame como NORMAL → nenhuma figura serve;
+//  2. a busca pede um ÓRGÃO que o enunciado nem menciona;
+//  3. a busca pede uma MODALIDADE que o enunciado nem menciona (pediu TC, o caso tem USG).
+function igImgPedidoCoerente(query,stem){
+  var s=igImgDeacc(stem);
+  if(!s)return true;                                   // sem enunciado, não há o que conferir
+  var mi=igImgModalDaBusca(query);
+  if(mi>=0){
+    var ptTermos=IG_IMG_MODAL_PT[mi]||[],frases=s.split(/[.;?!]+/),i,j,citou=false;
+    for(i=0;i<frases.length;i++){
+      var temMod=false;
+      for(j=0;j<ptTermos.length;j++)if(igImgHas(frases[i],ptTermos[j])){temMod=true;break;}
+      if(!temMod)continue;
+      citou=true;
+      if(IG_IMG_NORMAL.test(frases[i]))return false;    // (1) exame normal no enunciado
+    }
+    if(!citou)return false;                             // (3) modalidade que o caso não tem
+  }
+  var oq=igImgOrgaos(query,'en');
+  if(oq.length){
+    var os=igImgOrgaos(s,'pt'),k;
+    for(k=0;k<oq.length;k++)if(os.indexOf(oq[k])>=0)return true;
+    return false;                                       // (2) órgão fora do enunciado
+  }
+  return true;
 }
 // ⚠️🐛 FIX (06/08/2026): antes o app anexava o PRIMEIRO resultado do Open-i sem
 // conferir nada. A busca do Open-i casa o TEXTO DO ARTIGO, então qualquer figura de
@@ -11266,17 +11348,24 @@ function igImgHas(hay,termo){
 // título/legenda DELA citarem a mesma modalidade e ao menos um termo clínico da
 // busca. Sem candidato aprovado, a questão fica SEM imagem — que é o certo: imagem
 // errada num material de estudo é pior do que imagem nenhuma.
-function igImgRelevante(query,it){
-  var hay=(String((it&&it.title)||'')+' '+String((it&&it.caption)||'')).toLowerCase().trim();
+function igImgRelevante(query,it,stem){
+  var hay=igImgDeacc(String((it&&it.title)||'')+' '+String((it&&it.caption)||'')).trim();
   if(!hay)return false;                       // sem metadado não há como conferir
-  var q=String(query||'').toLowerCase(),grupo=null,i,j;
-  for(i=0;i<IG_IMG_MODAL.length&&!grupo;i++)
-    for(j=0;j<IG_IMG_MODAL[i].length;j++)
-      if(igImgHas(q,IG_IMG_MODAL[i][j])){grupo=IG_IMG_MODAL[i];break;}
+  var q=igImgDeacc(query),i,mi=igImgModalDaBusca(q),grupo=mi>=0?IG_IMG_MODAL[mi]:null;
   if(grupo){
     var okMod=false;
     for(i=0;i<grupo.length&&!okMod;i++)if(igImgHas(hay,grupo[i]))okMod=true;
     if(!okMod)return false;                   // pediram RM e veio TC
+  }
+  // A figura tem de citar um órgão QUE O ENUNCIADO MENCIONA — não basta bater com
+  // os termos de busca, que a IA pode ter escolhido fora do caso.
+  if(stem){
+    var os=igImgOrgaos(stem,'pt');
+    if(os.length){
+      var oc=igImgOrgaos(hay,'en'),k,bate=false;
+      for(k=0;k<os.length&&!bate;k++)if(oc.indexOf(os[k])>=0)bate=true;
+      if(!bate)return false;
+    }
   }
   var termos=q.replace(/[^a-z0-9 -]+/g,' ').split(/\s+/).filter(function(w){
     return w.length>=4&&!IG_IMG_STOP[w]&&!(grupo&&grupo.indexOf(w)>=0);
@@ -11291,7 +11380,7 @@ function igImgRelevante(query,it){
 // Busca uma imagem de exame complementar (PubMed Central via Open-i) p/ ilustrar a
 // questão. Best-effort: qualquer falha — ou nenhum candidato relevante — devolve
 // null e a questão fica sem imagem.
-function igFetchExamImage(query){
+function igFetchExamImage(query,stem){
   query=String(query||'').trim();if(!query)return Promise.resolve(null);
   return fetch('/api/ai',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({kind:'openi',query:query,n:6})})
     .then(function(r){return r.ok?r.json():null;})
@@ -11299,7 +11388,7 @@ function igFetchExamImage(query){
       if(!d||!d.ok||!d.items||!d.items.length)return null;
       for(var i=0;i<d.items.length;i++){
         var it=d.items[i];
-        if(it&&it.img&&igImgRelevante(query,it))return {img:it.img,imgRef:igFormatImgRef(it)};
+        if(it&&it.img&&igImgRelevante(query,it,stem))return {img:it.img,imgRef:igFormatImgRef(it)};
       }
       return null;
     })
@@ -11770,7 +11859,11 @@ function igShuffleMCQ(q){
 function igAttachExamImage(q,d){
   var iq=d&&d.imageQuery?String(d.imageQuery).trim():'';
   if(!iq)return Promise.resolve(q);
-  return igFetchExamImage(iq).then(function(im){if(im){q.img=im.img;q.imgRef=im.imgRef;}return q;}).catch(function(){return q;});
+  var stem=String((q&&q.stem)||'');
+  // Antes de gastar a busca: o pedido bate com o enunciado? (exame normal, órgão
+  // ou modalidade que a vinheta nem cita → questão fica sem figura)
+  if(!igImgPedidoCoerente(iq,stem))return Promise.resolve(q);
+  return igFetchExamImage(iq,stem).then(function(im){if(im){q.img=im.img;q.imgRef=im.imgRef;}return q;}).catch(function(){return q;});
 }
 // ⚠️ Regra ESTREITA de propósito. A versão anterior mandava ilustrar sempre que a
 // vinheta "envolvesse um exame de imagem" — e o gerador pedia figura até para caso
