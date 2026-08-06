@@ -290,6 +290,18 @@ try {
   fail('regressão da campanha de recuperação falhou (verifique lib/trial-emails.js):\n' + out);
 }
 
+// ⚠️ Hipogonadismo SBEM/SBU/ABEMSS 2026: dois erros de FATO estavam no bloco que
+//     ancora toda a geração de IA ("repetir em 2 dias" e "Ht >54%" como
+//     contraindicação), e metade dos geradores clínicos não recebia diretriz
+//     nenhuma. Ver cofre/Diretrizes Clínicas.
+try {
+  execFileSync(process.execPath, [path.join('scripts', 'test-hipogonadismo-2026.js')], { stdio: 'pipe' });
+  ok('regressão hipogonadismo 2026: números do posicionamento + geradores clínicos ancorados');
+} catch (e) {
+  const out = (e.stdout ? e.stdout.toString() : '') + (e.stderr ? e.stderr.toString() : '');
+  fail('regressão do hipogonadismo 2026 falhou (verifique CLINICAL_GUIDELINES e groundSys no index.html):\n' + out);
+}
+
 // ⚠️ "Alunos com atividade" era ACUMULADO desde sempre e passava por indicador
 //     de engajamento — um número que só cresce e nunca cai. Agora o KPI tem
 //     janela de 30 dias, com o acumulado como linha de apoio.
