@@ -50,6 +50,16 @@ Dois erros que a IA repetia em questão, comentário e flashcard, e que também 
 
 Faltavam ainda os dois números que mais caem em prova: **corte da livre calculada (6,5)** e **alvo da reposição (450–600)**.
 
+## As três tabelas do documento (traduzidas, 06/08/2026)
+O professor pediu as tabelas em português. Reproduzidas **fielmente** no capítulo novo:
+- **Tabela 1** — sinais/sintomas em três grupos: **específicos** (desenvolvimento sexual incompleto, perda de pelos, **testículos < 6 mL**), **sugestivos** (libido, DE, ginecomastia, eunucoide, infertilidade, vasomotores, enrugamento peribucal, fraturas) e **inespecíficos** (energia, humor, cognição, sono, força, adiposidade, anemia normo/normo).
+- **Tabela 2** — cada nível de falha dividido em **orgânico × funcional**. Reproduzida como **duas tabelas** (primário e secundário) em vez de uma com linha de agrupamento — ver a lição abaixo.
+- **Tabela 3** — ajuste de dose: manter dentro do alvo (reavaliar anual), subir/descer gradualmente com reavaliação em **6–12 semanas**, e reavaliar o diagnóstico se os sintomas persistem com nível no alvo. Acrescentada a monitorização por formulação (curta: pico 2–5 d, nadir 15–20 d; prolongada: 10–14 semanas, dosar no fim do intervalo; gel: 2–8 h após aplicar).
+
+**⚠️ Dois alvos diferentes no MESMO documento, e não é erro:** o texto recomenda mirar **450–600 ng/dL** (faixa média do normal), enquanto a **Tabela 3 é adaptada** de outras diretrizes e usa **400–700 ng/dL**. Deixei os dois com uma nota explicando: 450–600 é o alvo a perseguir; 400–700 é a janela em que não se mexe na dose. Harmonizar em silêncio seria falsear a fonte.
+
+**⚠️ Lição aplicada, do próprio cofre:** a tabela do Mural quebrou em 02/08 por causa de uma **linha de agrupamento** (uma célula preenchida, o resto vazio). Por isso a Tabela 2 virou duas tabelas simples. Antes de gravar, renderizei as três **no app real, em Chromium**, pela aba Diretrizes: **4 tabelas, 27 linhas, zero markdown cru na tela**.
+
 ## Onde isso vive na plataforma
 - **`CLINICAL_GUIDELINES`** (index.html) — a linha de hipogonadismo, reescrita e conferida contra o PDF. É o que ancora **toda** geração de IA.
 - **Aba Diretrizes** — capítulo "Hipogonadismo masculino" (corrigido) + capítulo novo "Hipogonadismo masculino — Posicionamento SBEM/SBU/ABEMSS (2026)".
