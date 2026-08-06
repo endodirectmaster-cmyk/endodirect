@@ -65,11 +65,26 @@ Gravei as tabelas ~12:30; às **12:48 o save do painel do professor sobrescreveu
 
 **Mecanismo:** `diretrizes` está em `GLOBAL_MERGE_KEYS`, e o `mergeConcurrent` parte da cópia EM MEMÓRIA da aba do admin. Ele **acrescenta** itens cuja chave é nova no servidor (por isso o capítulo novo sobreviveu), mas **descarta as alterações em itens já existentes** — que é exatamente o que uma edição server-side faz. Sem erro, sem aviso.
 
-**Consequência prática:** toda gravação minha em `diretrizes` precisa ser seguida de **F5 no painel** antes de o professor mexer, senão o próximo save dele desfaz.
+**Não é o mesmo caso do mural:** lá o gatilho do banco restaurava `radar_avisos` e o item apagado voltava. Aqui não há gatilho — `diretrizes` é chave do professor, e a cópia dele ganhava por desenho.
 
-**⚠️ Cuidado com a chave de merge:** ela é `fonte|tema|titulo|sub`. Eu mudei o `fonte` do capítulo público (para citar SBU/ABEMSS) — isso **muda a chave** e faz o item parecer "novo" de um lado e "sumido" do outro, o que confunde qualquer diagnóstico posterior. Mudar `fonte`/`tema` de um capítulo existente não é edição inócua.
+### ✅ Blindado no mesmo dia (o professor autorizou: "pode fazer")
 
-**Não é o mesmo caso do mural:** lá o gatilho do banco restaurava `radar_avisos` e o item apagado voltava. Aqui não há gatilho — `diretrizes` é chave do professor, e a cópia dele ganha por desenho. **Blindagem equivalente NÃO foi implementada**; oferecida ao professor, sem resposta até agora.
+O baseline deixou de guardar só a chave e passa a guardar **chave → assinatura de conteúdo** (`itemSig`, sobre uma serialização **canônica** com as chaves ordenadas em todo nível — o mesmo item chega do JSONB do servidor e do painel com ordem diferente). Com isso o merge decide item a item:
+
+| Situação | O que acontece agora |
+|---|---|
+| Servidor editou, painel não tocou | **Adota a versão do servidor** ← era aqui que sumia |
+| Os dois editaram o mesmo item | Mantém a do professor **e avisa em vermelho**, nomeando o item |
+| Estava no baseline e sumiu do painel | Continua sendo exclusão — não ressuscita |
+| Chave nova no servidor | Continua sendo acrescentada |
+
+Vale para as **11 coleções** de `GLOBAL_MERGE_KEYS`, não só `diretrizes`. Custo medido no payload real (7,6 MB / 3.610 itens): **~80 ms**, uma vez na carga e uma por gravação.
+
+**A regra do F5 deixa de valer para edição** — o save preserva sozinho.
+
+**⚠️ Mas continua valendo quando eu mudo um campo da CHAVE:** ela é `fonte|tema|titulo|sub`. Eu mudei o `fonte` do capítulo público (para citar SBU/ABEMSS) — isso **muda a chave**, o item vira "novo" de um lado e "sumido" do outro, e nem o merge novo tem como casar os dois. Foi o que confundiu o diagnóstico aqui. Mudar `fonte`/`tema` de um capítulo existente não é edição inócua.
+
+Cobertura: `scripts/test-merge-servidor.js` no CI, provada por mutação contra as duas versões antigas; A/B em Chromium real contra a `main`.
 
 **O capítulo público "Hipogonadismo masculino" sumiu no mesmo save — e foi o professor que apagou**, de propósito ("era praticamente uma duplicata"). Perguntei antes de restaurar; ele confirmou. Sobrou o capítulo novo, que cobre o mesmo terreno com a fonte atualizada.
 

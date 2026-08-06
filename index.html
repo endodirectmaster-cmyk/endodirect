@@ -4049,29 +4049,62 @@ var GLOBAL_MERGE_KEYS={
   ig_stories:function(it){return it.id||((it.stem||'')+'|'+(it.answer||''));},
   ig_pending:function(it){return it.id||((it.stem||'')+'|'+(it.answer||''));}
 };
-// Snapshot das chaves que esta sessão tinha (por coleção) na última sincronização
-// com o servidor. É o que permite distinguir "adição de outro editor" (chave nova
-// no servidor, fora do baseline) de "item que EU apaguei" (chave que estava no
-// baseline) — ver mergeConcurrent. Capturado junto com lastGlobalUpdatedAt.
+// Serialização CANÔNICA (chaves ordenadas em todo nível) — o mesmo item tem sempre
+// a mesma string, venha ele do JSONB do servidor ou montado aqui pelo painel, onde
+// a ordem das chaves difere. Sem isso a comparação de conteúdo acusaria mudança
+// onde não houve. Custo medido no payload real (7,6 MB / 3.610 itens): ~80 ms,
+// uma vez na carga e uma por gravação.
+function stableStr(v){
+  if(v===null||typeof v!=='object')return JSON.stringify(v);
+  if(Array.isArray(v)){var o='[',i;for(i=0;i<v.length;i++){if(i)o+=',';o+=stableStr(v[i]);}return o+']';}
+  var ks=Object.keys(v).sort(),s='{',j;
+  for(j=0;j<ks.length;j++){if(j)s+=',';s+=JSON.stringify(ks[j])+':'+stableStr(v[ks[j]]);}
+  return s+'}';
+}
+// Assinatura de conteúdo: djb2 + comprimento. Colisão só faria o merge deixar de
+// adotar uma edição do servidor — degrada para o comportamento antigo, não corrompe.
+function itemSig(it){
+  var s;try{s=stableStr(it);}catch(e){return 'h0';}
+  var h=5381,i=s.length;while(i)h=(h*33^s.charCodeAt(--i))>>>0;
+  return 'h'+h.toString(36)+'.'+s.length;
+}
+// Snapshot do que esta sessão tinha (por coleção) na última sincronização com o
+// servidor: chave → ASSINATURA DE CONTEÚDO. A chave distingue "adição de outro
+// editor" de "item que EU apaguei"; a assinatura distingue "o servidor editou este
+// item" de "eu editei" — ver mergeConcurrent. Capturado com lastGlobalUpdatedAt.
 var globalBaseline={};
 function captureGlobalBaseline(payload){
   payload=payload||{};globalBaseline={};
   Object.keys(GLOBAL_MERGE_KEYS).forEach(function(coll){
     var fn=GLOBAL_MERGE_KEYS[coll],arr=Array.isArray(payload[coll])?payload[coll]:[],s={};
-    arr.forEach(function(it){try{s[fn(it)]=1;}catch(e){}});
+    arr.forEach(function(it){try{s[fn(it)]=itemSig(it);}catch(e){}});
     globalBaseline[coll]=s;
   });
 }
-// Merge de coleção com baseline: parte do MEU estado atual (honra minhas exclusões
-// e edições) e só ACRESCENTA itens do servidor cuja chave é nova desde o baseline
-// (i.e., adicionados por OUTRO editor/cron) — nunca ressuscita o que apaguei.
-function mergeConcurrent(serverArr,localArr,baseKeys,keyFn){
-  var out=Array.isArray(localArr)?localArr.slice():[];var localKeys={};
-  out.forEach(function(it){try{localKeys[keyFn(it)]=1;}catch(e){}});
-  baseKeys=baseKeys||{};
+// Merge de coleção com baseline. Parte do MEU estado atual e decide item a item:
+//  • chave nova no servidor (fora do baseline) e que eu não tenho → ACRESCENTA
+//    (adição de outro editor/cron);
+//  • chave que estava no baseline e sumiu do meu estado → EU APAGUEI, não ressuscita;
+//  • chave que os dois têm e cujo conteúdo do servidor MUDOU desde o baseline:
+//      – se o meu ainda é igual ao baseline (não toquei) → ADOTA o do servidor;
+//      – se eu também mudei → mantém o MEU e registra conflito para avisar.
+// ⚠️🐛 FIX (06/08/2026): o terceiro caso não existia. Toda edição feita direto no
+// banco em item que o painel já tinha era descartada em silêncio no próximo save —
+// foi assim que as tabelas do posicionamento de hipogonadismo sumiram às 12:48.
+function mergeConcurrent(serverArr,localArr,baseSigs,keyFn,report){
+  var out=Array.isArray(localArr)?localArr.slice():[];var localAt={};
+  out.forEach(function(it,i){try{var lk=keyFn(it);if(localAt[lk]===undefined)localAt[lk]=i;}catch(e){}});
+  baseSigs=baseSigs||{};
   (Array.isArray(serverArr)?serverArr:[]).forEach(function(it){
     var k;try{k=keyFn(it);}catch(e){k=null;}
-    if(k!=null&&!baseKeys[k]&&!localKeys[k])out.push(it);
+    if(k==null)return;
+    var base=baseSigs[k],at=localAt[k];
+    if(!base){if(at===undefined){out.push(it);if(report)report.added++;}return;}
+    if(at===undefined)return;                 // estava no baseline e não está mais: eu apaguei
+    if(typeof base!=='string')return;         // baseline sem assinatura (formato antigo)
+    if(itemSig(it)===base)return;             // o servidor não mexeu neste item
+    if(itemSig(out[at])===base){out[at]=it;if(report)report.updated++;}
+    else if(report)report.conflicts.push(k);
   });
   return out;
 }
@@ -4443,13 +4476,17 @@ function saveRemoteState(){
       // O union antigo ressuscitava itens excluídos (ex.: apagar um tema de Diretrizes
       // e ele voltar no F5), inclusive quando só o cron do radar bumpava o updated_at.
       if(lastGlobalUpdatedAt&&serverUpd&&serverUpd!==lastGlobalUpdatedAt){
-        var resurrected=false;
+        var rep={added:0,updated:0,conflicts:[]};
         Object.keys(GLOBAL_MERGE_KEYS).forEach(function(coll){
-          var before=Array.isArray(p[coll])?p[coll].length:0;
-          p[coll]=mergeConcurrent(serverP[coll],p[coll],globalBaseline[coll],GLOBAL_MERGE_KEYS[coll]);
-          if(p[coll].length>before)resurrected=true;
+          p[coll]=mergeConcurrent(serverP[coll],p[coll],globalBaseline[coll],GLOBAL_MERGE_KEYS[coll],rep);
         });
-        if(resurrected){try{notify('Outro editor salvou em paralelo — itens mesclados para não perder conteúdo. Recarregue para ver tudo.','info');}catch(e){}}
+        // Conflito de verdade (os dois lados mexeram no MESMO item) é o único caso
+        // em que algo do servidor não entra — então avisa em vermelho e nomeia.
+        if(rep.conflicts.length){
+          try{notify('Este item mudou no servidor e aqui ao mesmo tempo — mantive a SUA versão de '+rep.conflicts.length+' item(ns). Dê F5 para ver o que veio do servidor: '+rep.conflicts.slice(0,2).map(function(k){return String(k).split('|').filter(Boolean)[1]||String(k).slice(0,40);}).join(' · '),'err');}catch(e){}
+        }else if(rep.added||rep.updated){
+          try{notify('Salvo sem sobrescrever o servidor — '+rep.added+' item(ns) novo(s) e '+rep.updated+' atualizado(s) vieram junto. Recarregue para ver.','info');}catch(e){}
+        }
       }
       var stamp=new Date().toISOString();
       return client.from('endodirect_global_state').upsert({id:'main',payload:p,updated_by:currentUser.id,updated_at:stamp},{onConflict:'id'}).then(function(res){if(res.error)throw res.error;lastGlobalUpdatedAt=stamp;captureGlobalBaseline(p);});

@@ -369,6 +369,18 @@ try {
   fail('regressão do mural apagado falhou (verifique lib/radar.js e supabase/mural-apagado-vale-para-o-aluno.sql):\n' + out);
 }
 
+// ⚠️ O save do painel apagava, em silêncio, edição feita direto no banco. Em
+//     06/08 as tabelas do posicionamento de hipogonadismo foram gravadas às 12:30
+//     e sumiram às 12:48 no save de uma aba aberta desde antes: mergeConcurrent só
+//     acrescentava chave nova e descartava alteração em item já existente.
+try {
+  execFileSync(process.execPath, [path.join('scripts', 'test-merge-servidor.js')], { stdio: 'pipe' });
+  ok('regressão merge com o servidor: edição server-side sobrevive ao save do painel');
+} catch (e) {
+  const out = (e.stdout ? e.stdout.toString() : '') + (e.stderr ? e.stderr.toString() : '');
+  fail('regressão do merge com o servidor falhou (verifique mergeConcurrent/itemSig no index.html):\n' + out);
+}
+
 // ⚠️ Feedback do aluno. O botão "Enviar" ficou meses trocando a tela pelo
 //     "Obrigado pelo feedback!" e DESCARTANDO o texto — sem erro em log nenhum.
 //     Como a plataforma agora CONVIDA quem assina há mais de 30 dias, voltar
