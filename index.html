@@ -13326,12 +13326,22 @@ function admAnalyticsHTML(){
       : '<div class="empty" style="padding:.6rem;font-size:.78rem;color:var(--t3)">Ainda sem perfil informado. Aparece conforme os alunos respondem "Você é:" no primeiro acesso.</div>')
     +'</div>';
   var semDados=n(ov.respostas)===0&&n(ov.simulados)===0;
-  var kpi=function(val,lbl,cor){return '<div class="adm-bigstat"><div class="adm-bigstat-n" style="color:'+cor+'">'+val+'</div><div class="adm-bigstat-l">'+lbl+'</div></div>';};
+  var kpi=function(val,lbl,cor,sub){return '<div class="adm-bigstat"><div class="adm-bigstat-n" style="color:'+cor+'">'+val+'</div><div class="adm-bigstat-l">'+lbl
+    +(sub?'<div style="font-size:.63rem;color:var(--t3);margin-top:.15rem">'+sub+'</div>':'')+'</div></div>';};
   var html=head
     +'<div style="display:flex;align-items:center;gap:.5rem;margin-bottom:1rem;flex-wrap:wrap"><span class="tag tag-blue">Dados reais</span><span style="font-size:.7rem;color:var(--t3)">Agregado do progresso salvo de cada aluno • última atividade: '+esc(ultTxt)+'</span></div>'
     +'<div class="g2" style="grid-template-columns:repeat(4,1fr);margin-bottom:1.1rem">'
       +kpi(n(ov.alunos),'Alunos cadastrados','var(--blue)')
-      +kpi(n(ov.ativos),'Alunos com atividade','var(--grn)')
+      // ⚠️ ERA ACUMULADO DESDE SEMPRE e passava por indicador de engajamento:
+      // quem respondeu UMA questão em março e nunca mais voltou seguia somando,
+      // e o número só crescia. Pior, fica ao lado de "última atividade: <hoje>",
+      // o que induz a ler como recente. Agora o número grande tem JANELA —
+      // respondeu questão nos últimos 30 dias (payload->'act', contagem por
+      // dia) — e o acumulado vira a linha de baixo, junto com quem só abriu.
+      // "Abriram" usa a MESMA fonte do card "sem acesso há 14+ dias", para as
+      // duas leituras da tela falarem a mesma língua.
+      +kpi(n(ov.ativos_30d),'Estudaram (30 dias)','var(--grn)',
+           n(ov.abriram_30d)+' abriram · '+n(ov.ativos)+' já usaram alguma vez')
       +kpi(n(ov.simulados),'Simulados realizados','var(--gold)')
       +kpi(taxa==null?'—':(taxa+'%'),'Taxa de acerto geral','var(--pur)')
     +'</div>';
