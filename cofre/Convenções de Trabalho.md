@@ -82,6 +82,35 @@ Abri o PR #659 no mesmo branch que já tinha sido **squash-mergeado** duas vezes
 
 **Ficou também:** `workflow_dispatch` no `.github/workflows/ci.yml`, para dar como pedir a validação sem empurrar commit vazio.
 
+### Resultado da 1ª auditoria adversarial (07/08/2026): 6,1%
+
+**196 fatos auditados nos 3 extratos de maior risco. 12 achados.**
+EXAGERO 8 · DESCONTEXTO 3 · INCOMPLETO 1 · **INVERSÃO 0**.
+⚠️ **Nenhum número, dose ou corte estava trocado** — a fidelidade numérica que o
+verificador garante estava de pé. O que se perdia era outra coisa.
+
+**O padrão dominante, e virou guarda automática:** *"We suggest"* — recomendação
+GRADE **condicional**, às vezes com certeza muito baixa — chegava à base como
+**"não se deve"**, **"devem ser trocados"**, **"deve-se"**. Uma sugestão fraca
+virava ordem. `forcaPerdida()` no verificador agora reprova isso; ela achou
+**7 casos**, dois a mais do que a amostra da auditoria tinha visto.
+
+**A guarda é ESTREITA de propósito:** só dispara com "we suggest" na citação (marcador
+inequívoco) + imperativo em português + nenhuma ressalva. A primeira versão aceitava
+a palavra **"pode"** solta como ressalva e deixou passar um caso — "pode" aparece por
+mil motivos numa frase e não é sinal da força da recomendação.
+
+**Achado sistêmico que nenhuma guarda pega:** no craniofaringioma, **56% (139/249)**
+das citações terminam no meio da frase — o PDF de duas colunas foi extraído com as
+colunas intercaladas. A citação existe e os números batem, mas ela não é prova
+legível sozinha. Nos artigos que extraí **localmente com pdfjs** (hiponatremia) isso
+cai para **5%**; nos vindos do texto do Google Drive, sobe. **Quando houver escolha,
+extrair o texto localmente.**
+
+**hipo-3 passou LIMPO** — 61 fatos, zero achados, com todos os limites de correção,
+doses e "primeira linha" exatos. É a prova de que a taxa não é ruído de método.
+
+
 ## 🖥️ Mudança de JS no `index.html` — testar em NAVEGADOR REAL antes de mergear
 
 O cofre já registrava a regra ([[Pendências]], item do OSCE lazy): **dois apagões**

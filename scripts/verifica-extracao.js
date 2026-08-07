@@ -60,6 +60,27 @@ function semHifenDeQuebra(s) {
   return String(s || '').replace(/-\s+/g, '');
 }
 
+
+// ⚠️ FORÇA DA RECOMENDAÇÃO — achado da auditoria adversarial de 07/08/2026.
+// "We suggest" é recomendação GRADE CONDICIONAL (frequentemente com certeza muito
+// baixa). Nas extrações ela virava "não se deve" e "devem ser trocados": uma
+// sugestão fraca chegava à IA como ordem. Oito dos doze achados da auditoria eram
+// desse tipo — nenhum número estava errado, a FORÇA é que se perdia.
+// A regra é estreita de propósito: só dispara quando a citação diz "we suggest"
+// (marcador inequívoco de condicional) E a afirmação usa linguagem imperativa SEM
+// nenhuma marca de ressalva. "should not be used" continua podendo virar "não deve".
+const IMPERATIVO_PT = /(^|[^a-zà-ú])(deve|devem|deve-se|não se deve|nao se deve|é obrigatóri|e obrigatori|é mandatóri|tem de|têm de|sempre se|nunca se)/i;
+// ⚠️ Só marcas de ressalva INEQUÍVOCAS. A primeira versão aceitava "pode" solto e
+// deixou passar o caso #30 ("Não se deve desmamar…, nesses casos pode ser
+// interrompido"): o "pode" ali é de outra oração, não é a força da recomendação.
+const RESSALVA_PT = /(sugere-se|sugerimos|sugere que|pode-se considerar|pode ser considerad|é opcional|condicional|baixa certeza|certeza muito baixa|recomendação fraca)/i;
+function forcaPerdida(afirmacao, citacao) {
+  if (!/we suggest/i.test(citacao)) return false;
+  if (/we recommend/i.test(citacao)) return false;   // a citação traz as duas: não dá para decidir aqui
+  if (RESSALVA_PT.test(afirmacao)) return false;
+  return IMPERATIVO_PT.test(afirmacao);
+}
+
 // Números da afirmação que precisam estar na citação. Ignora numeração de item
 // ("(1)", "(2)") e anos isolados de 4 dígitos, que costumam vir da referência.
 function numerosRelevantes(s) {
@@ -131,6 +152,11 @@ function main() {
       const faltando = numerosRelevantes(afi).filter((n) => !numeroPresente(n, c));
       if (faltando.length) {
         problemas.push(`${rot}: ⚠️ número(s) na afirmação sem respaldo na citação: ${faltando.join(', ')} → "${afi.slice(0, 90)}…"`);
+        totReprovados++;
+        return;
+      }
+      if (forcaPerdida(afi, cit)) {
+        problemas.push(`${rot}: ⚠️ FORÇA DA RECOMENDAÇÃO PERDIDA — a citação diz "we suggest" (GRADE condicional) e a afirmação usa imperativo. Escreva "sugere-se"/"pode-se considerar" → "${afi.slice(0, 90)}…"`);
         totReprovados++;
       }
     });
