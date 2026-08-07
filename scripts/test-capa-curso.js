@@ -125,6 +125,19 @@ const semValores = injecao.replace(/="[^"]*"/g, '=""');
 ok((semValores.match(/onerror=/g) || []).length === 1,
   'apareceu um onerror FORA de valor de atributo — a URL conseguiu injetar atributo');
 
+// ── 4a. endereço aceito na capa ────────────────────────────────────────────
+// As capas que o professor mandou moram no repositório (/img/cursos/*.jpg) e
+// são servidas pelo mesmo domínio. Se `capaUrlOk` voltar a exigir http(s), as
+// quatro capas somem de uma vez e o card cai no desenho sem erro nenhum.
+ok(caixa.capaUrlOk('/img/cursos/endoteem.jpg'), 'caminho do próprio site foi recusado — as capas do repositório sumiriam');
+ok(caixa.capaUrlOk('https://ex.com/a.jpg'), 'link https foi recusado');
+ok(!caixa.capaUrlOk('//evil.com/a.jpg'), 'endereço protocolo-relativo foi aceito — parece relativo mas aponta para fora');
+ok(!caixa.capaUrlOk('javascript:alert(1)'), 'javascript: foi aceito');
+ok(!caixa.capaUrlOk('data:image/png;base64,AAA'), 'data: foi aceito');
+ok(!caixa.capaUrlOk(''), 'string vazia foi aceita');
+ok(/<img class="cc-img" src="\/img\/cursos\/endoteem\.jpg"/.test(caixa.cursoCapaHTML('EndoTEEM 2026', 'endoteem', '/img/cursos/endoteem.jpg', 78, false)),
+  'a capa do repositório não foi aplicada no card');
+
 // ── 4b. miniatura REAL da aula (Bunny) ──────────────────────────────────────
 // O professor pediu "imagens mais reais". A fonte é o quadro da aula dele
 // mesmo, derivado do playlist.m3u8 que já está gravado. Se este trecho quebrar,
@@ -161,13 +174,13 @@ ok(caixa.cursoNomeBySlug('endoteem') === 'EndoTEEM 2027',
 
 // ── 6. as duas telas usam a capa (e o emoji sumiu das duas) ────────────────
 const aluno = fatia('function aTile(slug,nome,n,capa){', 'var allCount=', 'aTile do aluno');
-ok(/cursoCapaHTML\(nome,slug,capa,78,true\)/.test(aluno), 'o card bloqueado do aluno não usa cursoCapaHTML');
-ok(/cursoCapaHTML\(nome,slug,capa,78,false\)/.test(aluno), 'o card liberado do aluno não usa cursoCapaHTML');
+ok(/cursoCapaHTML\(nome,slug,capa,96,true\)/.test(aluno), 'o card bloqueado do aluno não usa cursoCapaHTML');
+ok(/cursoCapaHTML\(nome,slug,capa,96,false\)/.test(aluno), 'o card liberado do aluno não usa cursoCapaHTML');
 ok(!EMOJI.test(aluno.replace(/🔒|🎁/g, '')), 'sobrou emoji decorativo no card do aluno');
 
 const prof = fatia("verHTML='<div style=\"font-size:.72rem;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--t3);margin-bottom:.6rem\">Escolha um curso para abrir",
   '}else if(!admCursoMod){', 'grade de cursos do professor');
-ok(/cursoCapaHTML\(nm,cc\.slug,cc\.capa,86,false\)/.test(prof), 'a grade do professor não usa cursoCapaHTML');
+ok(/cursoCapaHTML\(nm,cc\.slug,cc\.capa,104,false\)/.test(prof), 'a grade do professor não usa cursoCapaHTML');
 ok(!/dsb-ico">🎓/.test(prof), 'a grade do professor ainda tem o 🎓 genérico');
 
 // ── 7. o CSS que a capa precisa ────────────────────────────────────────────

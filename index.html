@@ -8136,11 +8136,17 @@ function cursoCapaReal(slug){
   }
   return '';
 }
+// Endereço aceito no campo `capa`. Além de http(s), aceita CAMINHO DO PRÓPRIO
+// SITE (/img/cursos/x.jpg): as capas que o professor mandou moram no repositório
+// e são servidas pelo mesmo domínio — caminho relativo é same-origin por
+// construção e sobrevive a uma troca de domínio. `//host/x` fica DE FORA de
+// propósito: parece relativo mas é protocolo-relativo, e aponta para fora.
+function capaUrlOk(u){var s=String(u||'').trim();return /^https?:\/\//i.test(s)||/^\/[^/]/.test(s);}
 // Bloco visual da capa. Ordem de preferência: imagem própria do professor
 // (campo `capa` do catálogo) → quadro da aula no Bunny → desenho gerado.
 function cursoCapaHTML(nome,slug,capaUrl,altura,cinza){
   var c=cursoCapa(nome,slug),h=altura||78;
-  var img=capaUrl&&safeHttpUrl(capaUrl)?String(capaUrl).trim():cursoCapaReal(slug);
+  var img=capaUrl&&capaUrlOk(capaUrl)?String(capaUrl).trim():cursoCapaReal(slug);
   // ⚠️ O desenho é SEMPRE renderizado, com a foto POR CIMA. É o que garante que
   // nunca apareça capa quebrada: se a miniatura não existir (vídeo sem quadro
   // gerado, pull zone com token, curso sem aula), o `onerror` remove a imagem e
@@ -8173,12 +8179,12 @@ function renderCursosAluno(){
     if(!acc&&!sample){
       // Não incluído no plano: capa dessaturada; ao clicar, abre o upgrade.
       return '<button type="button" class="curso-tile lock" data-curso-upsell="1" title="Não incluído no seu plano — clique para fazer upgrade">'
-        +cursoCapaHTML(nome,slug,capa,78,true)
+        +cursoCapaHTML(nome,slug,capa,96,true)
         +'<span class="ct-nome" style="color:var(--t2)">'+esc(nome)+'</span><span class="ct-sub">🔒 Fazer upgrade</span></button>';
     }
     var subline=sample?'<span class="ct-sub gold">🎁 amostra grátis</span>':'<span class="ct-sub">'+n+' aula'+(n===1?'':'s')+'</span>';
     return '<button type="button" class="curso-tile'+(active?' on':'')+'" data-cursofilter="'+esc(slug)+'">'
-      +cursoCapaHTML(nome,slug,capa,78,false)
+      +cursoCapaHTML(nome,slug,capa,96,false)
       +'<span class="ct-nome">'+esc(nome)+'</span>'+subline+'</button>';
   }
   var allCount=data.filter(function(c){return cursoAcessivel(c.curso);}).length;
@@ -14036,7 +14042,7 @@ function admCatalogoHTML(){
         +'<div style="flex:1;min-width:0"><div style="font-size:.68rem;color:var(--t3);margin-bottom:.4rem">slug: <code>'+esc(c.slug)+'</code></div>'
         +(podeCapa
           ?('<div class="fld2" style="margin:0"><label>Imagem de capa (link http, opcional)</label><input type="text" class="cat-capa" value="'+esc(c.capa||'')+'" placeholder="Deixe em branco para usar a capa gerada">'
-            +'<div style="font-size:.64rem;color:var(--t3);margin-top:.25rem">Em branco, a capa é desenhada a partir do nome do curso (o cartão ao lado). Só links <code>https://</code>.</div></div>')
+            +'<div style="font-size:.64rem;color:var(--t3);margin-top:.25rem">Em branco, usa o quadro da 1ª aula do curso; sem aula, o desenho gerado do nome. Aceita <code>https://…</code> ou um caminho do próprio site (<code>/img/cursos/…</code>).</div></div>')
           :'<div style="font-size:.7rem;color:var(--t2);line-height:1.5">A capa é desenhada a partir do nome do curso. Para trocar por uma imagem própria, rode a coluna <code>capa</code> do <code>supabase-setup.sql</code>.</div>')
       +'</div></div>'
       +'<div class="g2" style="margin-bottom:.6rem"><div class="fld2" style="margin:0"><label>Nome</label><input type="text" class="cat-nome" value="'+esc(c.nome||'')+'"></div><div class="fld2" style="margin:0"><label>Preço avulso (R$)</label><input type="number" min="0" step="0.01" class="cat-preco" value="'+reais+'"></div></div>'
@@ -14120,7 +14126,7 @@ function admCursosHTML(){
   if(!admCursoFiltro){
     // Nível 0 — grade de cursos (somente os cursos).
     verHTML='<div style="font-size:.72rem;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--t3);margin-bottom:.6rem">Escolha um curso para abrir</div>'
-      +'<div class="dir-sub-grid">'+(Array.isArray(catalogoCursos)?catalogoCursos:[]).map(function(cc){var n=cont[cc.slug]||0;var nm=cc.nome||cursoNomeBySlug(cc.slug);return '<button class="dir-sub-btn" data-curso-btn="'+esc(cc.slug)+'">'+cursoCapaHTML(nm,cc.slug,cc.capa,86,false)+'<h3>'+esc(nm)+'</h3><div class="dsb-cnt">'+n+' aula'+(n===1?'':'s')+'</div></button>';}).join('')+'</div>';
+      +'<div class="dir-sub-grid">'+(Array.isArray(catalogoCursos)?catalogoCursos:[]).map(function(cc){var n=cont[cc.slug]||0;var nm=cc.nome||cursoNomeBySlug(cc.slug);return '<button class="dir-sub-btn" data-curso-btn="'+esc(cc.slug)+'">'+cursoCapaHTML(nm,cc.slug,cc.capa,104,false)+'<h3>'+esc(nm)+'</h3><div class="dsb-cnt">'+n+' aula'+(n===1?'':'s')+'</div></button>';}).join('')+'</div>';
   }else if(!admCursoMod){
     // Nível 1 — subespecialidades do curso (+ adicionar subespecialidade).
     var cnome=cursoNomeBySlug(admCursoFiltro);
@@ -14407,7 +14413,7 @@ function bindAdmSec(sec){
           var capaEl=card.querySelector('.cat-capa');
           if(capaEl){
             var capa=(capaEl.value||'').trim();
-            if(capa&&!safeHttpUrl(capa)){notify('A capa de "'+(card.querySelector('.cat-nome').value||card.dataset.catSlug)+'" precisa ser um link http(s) — ignorada.','err');capa='';}
+            if(capa&&!capaUrlOk(capa)){notify('A capa de "'+(card.querySelector('.cat-nome').value||card.dataset.catSlug)+'" precisa ser um link https:// ou um caminho do site (/img/...) — ignorada.','err');capa='';}
             row.capa=capa;
           }
           rows.push(row);

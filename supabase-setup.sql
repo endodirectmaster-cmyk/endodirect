@@ -256,6 +256,14 @@ alter table public.endodirect_cursos add column if not exists tier text;
 -- que e o caso normal; a coluna existe so para o professor poder trocar por uma
 -- foto quando quiser, sem mexer em codigo.
 alter table public.endodirect_cursos add column if not exists capa text not null default '';
+
+-- Capas enviadas pelo professor (07/08/2026), servidas do proprio dominio a
+-- partir de img/cursos/ no repositorio. Caminho relativo (nao URL absoluta) para
+-- sobreviver a troca de dominio. So preenche o que ainda estiver vazio: se ele
+-- trocar a capa pelo painel, rodar este arquivo de novo nao desfaz a escolha.
+update public.endodirect_cursos set capa = '/img/cursos/hiperglicemia.jpg' where slug = 'hiperglicemia' and coalesce(capa,'') = '';
+update public.endodirect_cursos set capa = '/img/cursos/lipides.jpg'       where slug = 'lipides'       and coalesce(capa,'') = '';
+update public.endodirect_cursos set capa = '/img/cursos/endoteem.jpg'      where slug = 'endoteem'      and coalesce(capa,'') = '';
 do $$ begin
   if not exists (select 1 from pg_constraint where conname = 'endodirect_cursos_tier_chk') then
     alter table public.endodirect_cursos
