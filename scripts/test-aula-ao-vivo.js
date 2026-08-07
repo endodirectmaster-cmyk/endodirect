@@ -124,6 +124,35 @@ function contaApi(dir){
 const nApi=contaApi(path.join(__dirname,'..','api'));
 ok(nApi<=12,'⚠️ a Vercel só aceita 12 funções serverless e agora são '+nApi+' — o aviso tem de pegar carona num cron existente, não virar função nova');
 
+// --- a chave geral: desligada HOJE, e desliga TUDO -----------------------------
+// O professor pediu para tirar o bloco do painel "por enquanto" (07/08/2026).
+// O risco não é desligar — é RELIGAR PELA METADE: alguém troca AO_VIVO_ATIVO para
+// true esperando a funcionalidade inteira de volta e recebe, por exemplo, o item
+// no menu do aluno sem o formulário para agendar a aula. Por isso o teste exige
+// que TODOS os pontos de entrada consultem a mesma chave.
+const mFlag=html.match(/var AO_VIVO_ATIVO=(true|false);/);
+ok(!!mFlag,'a chave AO_VIVO_ATIVO sumiu do index.html');
+if(mFlag){
+  // Hoje ela está desligada. Quando o professor mandar religar, troque para true
+  // AQUI e no index.html — a linha existe para a mudança ser consciente.
+  ok(mFlag[1]==='false','AO_VIVO_ATIVO está `true`: se foi de propósito, atualize este teste junto');
+}
+// A chave tem de ser declarada ANTES da primeira função que a lê, senão a
+// primeira chamada pega `undefined` (que é falsy — e por sorte hoje o desligado
+// é justamente o falsy; se um dia o padrão virar ligado, isso quebra calado).
+const posFlag=html.indexOf('var AO_VIVO_ATIVO=');
+ok(posFlag>=0&&posFlag<html.indexOf('function lpAoVivoBanner('),
+  'AO_VIVO_ATIVO é declarada DEPOIS de lpAoVivoBanner — a leitura pode cair em undefined');
+
+for(const [fn,rotulo] of [['lpAoVivoBanner','banner da landing'],['aoVivoAplicarNav','item do menu do aluno'],
+                          ['carregarAoVivo','consulta ao servidor'],['aoVivoIniciarPoll','poll de 60s'],
+                          ['admAoVivoHTML','formulário no painel do professor']]){
+  ok(/AO_VIVO_ATIVO/.test(corpo(fn)),`${rotulo} (${fn}) não consulta AO_VIVO_ATIVO — religar a chave deixaria essa parte fora de sincronia`);
+}
+// E o painel de assistir: com a chave desligada, `goPanel('aovivo')` desvia.
+ok(/id==='aovivo'&&!AO_VIVO_ATIVO/.test(corpo('goPanel')),
+  'goPanel não desvia o painel aovivo com a chave desligada — link/hash antigo abriria uma tela morta');
+
 if(falhas.length){
   console.error('✗ aula ao vivo:');
   falhas.forEach(f=>console.error('  - '+f));

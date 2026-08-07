@@ -1,9 +1,29 @@
 ---
 tags: [cofre, processo]
-atualizado: 2026-07-31
+atualizado: 2026-08-07
 ---
 
 # Convenções de Trabalho
+
+## 🎨 Mudança de APARÊNCIA se confere com print, não com teste (2026-08-07)
+
+O `ci-validate` e o harness A/B em Chromium provam que o app **sobe** e que o
+bloco grande executa até a última linha. **Nenhum dos dois vê se ficou bonito** —
+que foi exatamente a reclamação do professor sobre os ícones dos cursos.
+
+Ao desenhar as capas, três glifos passaram em toda verificação e estavam errados
+na tela: a tireoide virou dois círculos, o osso virou um halter de academia e a
+adrenal virou outra gota, indistinguível da do diabetes. Só apareceu quando
+montei uma bancada que renderiza os candidatos lado a lado, no tamanho real, e
+tirei print.
+
+**O procedimento:** extrair o CSS e o JS reais do `index.html` (nunca reescrevê-los
+no harness — senão se testa outra coisa), renderizar em Chromium, tirar print
+**nos dois temas** e **na largura de celular**, e olhar. Foi assim que apareceu
+também que o card de 176 px fixos deixava **um por linha** no celular.
+
+O harness fica em `scratchpad/capas/` (`render.js` = as telas reais;
+`cand.js` = candidatos lado a lado para escolher um glifo).
 
 ## 🔬 Varredura do acervo clínico: ritmo escolhido é o SEGURO (2026-08-07)
 

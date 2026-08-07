@@ -440,5 +440,17 @@ try {
   fail('regressão do feedback falhou (verifique index.html):\n' + out);
 }
 
+// ⚠️ Capa dos cursos. O professor reprovou os ícones ("está muito feio esses
+//     ícones") e o conserto se desfaz calado de dois jeitos: alguém volta ao
+//     emoji (que cada sistema desenha do seu jeito) ou duas subespecialidades
+//     passam a dividir o mesmo desenho — e os cards voltam a ser idênticos.
+try {
+  execFileSync(process.execPath, [path.join('scripts', 'test-capa-curso.js')], { stdio: 'pipe' });
+  ok('regressão capa dos cursos: SVG por subespecialidade nos dois painéis, sem slug cru');
+} catch (e) {
+  const out = (e.stdout ? e.stdout.toString() : '') + (e.stderr ? e.stderr.toString() : '');
+  fail('regressão da capa dos cursos falhou (verifique cursoCapaHTML/CURSO_TEMAS no index.html):\n' + out);
+}
+
 if (errors) { console.error(`\n${errors} verificação(ões) falharam.`); process.exit(1); }
 console.log('\nTodas as verificações passaram.');
