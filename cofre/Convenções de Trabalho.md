@@ -5,6 +5,30 @@ atualizado: 2026-08-07
 
 # Convenções de Trabalho
 
+## 🎣 RECUPERAÇÃO FALSA: o perigo não é o que o fato diz, é o que ele responde (2026-08-07)
+
+Modo de falha descoberto na auditoria da tireoide, e que nenhuma das quatro
+camadas anteriores mede.
+
+Nenhum dos 218 fatos afirmava "dar iodo antes da tionamida" — três diziam
+explicitamente o contrário. Mas:
+
+- **um** fato continha a frase *"o iodo for administrado primeiro"* (correto: é
+  a ordem entre iodo e **lítio**, terapia alternativa de uso incomum). Numa base
+  indexada, é ele que volta para *"qual a ordem do iodo na tempestade?"*;
+- **três** fatos de dose de iodo não tinham marcador de ordem nenhum — e a fonte
+  **tinha** o marcador na mesma célula de tabela. O fato irmão do SSKI preservou;
+  o do Lugol perdeu. Assimetria dentro do mesmo extrato.
+
+**A regra:** num acervo atomizado, todo fato precisa sobreviver a ser lido
+SOZINHO. Fato de dose de um fármaco cuja ORDEM importa tem de carregar a ordem.
+Fato de posologia cuja indicação tem porteiro (diagnóstico, população, fase) tem
+de carregar o porteiro — foi o mesmo defeito no NTIS, onde a posologia de
+hormônio flutuava ao lado da mensagem "não trate o eutireoidiano doente".
+
+**Ao mandar auditar, peça explicitamente:** *"o que este fato responde se for
+recuperado sozinho, sem os vizinhos?"*
+
 ## ⏰ Rotina horária que mantém a sessão viva (2026-08-07)
 
 *"mantenha sempre a sessão ativa"*. O contêiner é recuperado por inatividade, e
