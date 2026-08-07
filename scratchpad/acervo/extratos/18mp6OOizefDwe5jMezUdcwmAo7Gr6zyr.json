@@ -528,7 +528,7 @@
    "secao": "Ajustes de dose e regras do dia de doença"
   },
   {
-   "afirmacao": "Regra do dia de doença: em infecção com temperatura acima de 38·5°C, quadro gripal, diarreia ou infecção de vias aéreas superiores, a dose diária de glicocorticoide deve ser dobrada por 24 h nos adultos e aumentada para 30 mg/m² por dia (divididos em quatro doses) nas crianças.",
+   "afirmacao": "Regra do dia de doença: em infecção com temperatura acima de 38·5°C, quadro gripal, diarreia ou infecção de vias aéreas superiores, a dose diária de glicocorticoide deve ser dobrada — ⚠️ o original diz \"doubled over 24 h\", isto é, dobrar o TOTAL DIÁRIO, e NÃO tomar dose dobrada por apenas um dia; a fonte não fixa duração, e a diretriz conjunta ESE/Endocrine Society 2024 orienta manter enquanto durar a doença nos adultos e aumentada para 30 mg/m² por dia (divididos em quatro doses) nas crianças.",
    "citacao": "In the case of an infection causing a temperature greater than 38·5°C, flu-like illness, diarrhoea, or an upper respiratory tract infection, the daily dose of glucocorticoid should be doubled over 24 h in adults and increased to 30 mg/m2 per day (divided in four doses) in children",
    "secao": "Ajustes de dose e regras do dia de doença"
   },
@@ -682,5 +682,6 @@
    "citacao": "There are reports that around 15–30% of patients retain some corticosteroid production, even years after diag- nosis.138,139 However, the clinical significance of this is currently unclear",
    "secao": "Perspectivas futuras"
   }
- ]
+ ],
+ "auditoria": "Auditoria adversarial em 07/08/2026: 135 fatos lidos, todos os de número/dose/tempo auditados contra o parágrafo. 6 não-OK; o mais grave era a regra do dia de doença traduzida como prazo de 24 h (subtratamento). Zero inversões."
 }
