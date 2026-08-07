@@ -60,6 +60,34 @@ O professor pediu as tabelas em português. Reproduzidas **fielmente** no capít
 
 **⚠️ Lição aplicada, do próprio cofre:** a tabela do Mural quebrou em 02/08 por causa de uma **linha de agrupamento** (uma célula preenchida, o resto vazio). Por isso a Tabela 2 virou duas tabelas simples. Antes de gravar, renderizei as três **no app real, em Chromium**, pela aba Diretrizes: **4 tabelas, 27 linhas, zero markdown cru na tela**.
 
+## ⚠️ O painel aberto REVERTEU o que eu gravei no servidor (06/08/2026)
+Gravei as tabelas ~12:30; às **12:48 o save do painel do professor sobrescreveu** e elas sumiram — junto com uma correção nos pontos-chave da reposição, que voltou a dizer "hematócrito > 54%" como contraindicação. O professor viu a tela sem tabela nenhuma e perguntou se tinha subido.
+
+**Mecanismo:** `diretrizes` está em `GLOBAL_MERGE_KEYS`, e o `mergeConcurrent` parte da cópia EM MEMÓRIA da aba do admin. Ele **acrescenta** itens cuja chave é nova no servidor (por isso o capítulo novo sobreviveu), mas **descarta as alterações em itens já existentes** — que é exatamente o que uma edição server-side faz. Sem erro, sem aviso.
+
+**Não é o mesmo caso do mural:** lá o gatilho do banco restaurava `radar_avisos` e o item apagado voltava. Aqui não há gatilho — `diretrizes` é chave do professor, e a cópia dele ganhava por desenho.
+
+### ✅ Blindado no mesmo dia (o professor autorizou: "pode fazer")
+
+O baseline deixou de guardar só a chave e passa a guardar **chave → assinatura de conteúdo** (`itemSig`, sobre uma serialização **canônica** com as chaves ordenadas em todo nível — o mesmo item chega do JSONB do servidor e do painel com ordem diferente). Com isso o merge decide item a item:
+
+| Situação | O que acontece agora |
+|---|---|
+| Servidor editou, painel não tocou | **Adota a versão do servidor** ← era aqui que sumia |
+| Os dois editaram o mesmo item | Mantém a do professor **e avisa em vermelho**, nomeando o item |
+| Estava no baseline e sumiu do painel | Continua sendo exclusão — não ressuscita |
+| Chave nova no servidor | Continua sendo acrescentada |
+
+Vale para as **11 coleções** de `GLOBAL_MERGE_KEYS`, não só `diretrizes`. Custo medido no payload real (7,6 MB / 3.610 itens): **~80 ms**, uma vez na carga e uma por gravação.
+
+**A regra do F5 deixa de valer para edição** — o save preserva sozinho.
+
+**⚠️ Mas continua valendo quando eu mudo um campo da CHAVE:** ela é `fonte|tema|titulo|sub`. Eu mudei o `fonte` do capítulo público (para citar SBU/ABEMSS) — isso **muda a chave**, o item vira "novo" de um lado e "sumido" do outro, e nem o merge novo tem como casar os dois. Foi o que confundiu o diagnóstico aqui. Mudar `fonte`/`tema` de um capítulo existente não é edição inócua.
+
+Cobertura: `scripts/test-merge-servidor.js` no CI, provada por mutação contra as duas versões antigas; A/B em Chromium real contra a `main`.
+
+**O capítulo público "Hipogonadismo masculino" sumiu no mesmo save — e foi o professor que apagou**, de propósito ("era praticamente uma duplicata"). Perguntei antes de restaurar; ele confirmou. Sobrou o capítulo novo, que cobre o mesmo terreno com a fonte atualizada.
+
 ## Onde isso vive na plataforma
 - **`CLINICAL_GUIDELINES`** (index.html) — a linha de hipogonadismo, reescrita e conferida contra o PDF. É o que ancora **toda** geração de IA.
 - **Aba Diretrizes** — capítulo "Hipogonadismo masculino" (corrigido) + capítulo novo "Hipogonadismo masculino — Posicionamento SBEM/SBU/ABEMSS (2026)".

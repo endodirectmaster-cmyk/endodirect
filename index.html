@@ -1268,6 +1268,15 @@ input.dmm-inp-subsub{flex:1;min-width:0;background:transparent;color:var(--t2);f
         <div class="flbl" style="margin-bottom:.3rem">Especialidade ou área de atuação</div>
         <input type="text" id="ob-outros" placeholder="Ex: Cardiologista, Geriatra, Clínico geral…">
       </div>
+      <!-- ATUAÇÃO: separa endocrinologia de ADULTO da PEDIÁTRICA. Até 06/08/2026 a
+           plataforma não perguntava, então não havia como responder "quantos
+           endocrinopediatras eu tenho?" — o rótulo era só "Endocrinologista" ou
+           "Residente". O rótulo do campo e as opções mudam conforme o perfil
+           (ver setupOnboardProfileChoices). -->
+      <div id="ob-atuacao-wrap" style="display:none;margin-bottom:.85rem">
+        <div class="flbl" style="margin-bottom:.3rem" id="ob-atuacao-lbl">Área de atuação <span style="color:var(--red)">*</span></div>
+        <select id="ob-atuacao" style="width:100%"></select>
+      </div>
       <div id="ob-crm-wrap" style="display:none;margin-bottom:.85rem">
         <div class="flbl" style="margin-bottom:.3rem">CRM e UF <span style="color:var(--red)">*</span></div>
         <div style="display:flex;gap:.4rem">
@@ -1535,6 +1544,9 @@ input.dmm-inp-subsub{flex:1;min-width:0;background:transparent;color:var(--t2);f
 .lp-mural-meta{font-size:.68rem;color:#8a93a3}
 .lp-prof-grid{display:grid;grid-template-columns:1fr 1fr;gap:.5rem}
 .lp-prof-frame{position:relative;aspect-ratio:16/9;border-radius:9px;overflow:hidden;background:#000}
+.aovivo-dot{display:inline-block;width:9px;height:9px;border-radius:50%;background:#e5484d;box-shadow:0 0 0 0 rgba(229,72,77,.7);animation:aovivoPulse 1.6s infinite}
+@keyframes aovivoPulse{0%{box-shadow:0 0 0 0 rgba(229,72,77,.7)}70%{box-shadow:0 0 0 8px rgba(229,72,77,0)}100%{box-shadow:0 0 0 0 rgba(229,72,77,0)}}
+@media (prefers-reduced-motion:reduce){.aovivo-dot{animation:none}}
 .lp-prof-frame iframe,.lp-prof-frame video{position:absolute;inset:0;width:100%;height:100%;border:0;object-fit:cover}
 .lp-prof-name{font-size:.66rem;font-weight:700;color:#c3cee0;margin-top:.28rem;text-align:center}
 .lp-team{display:grid;grid-template-columns:repeat(auto-fit,minmax(258px,1fr));gap:1rem}
@@ -1577,6 +1589,14 @@ input.dmm-inp-subsub{flex:1;min-width:0;background:transparent;color:var(--t2);f
 #checkout-modal .ck-copy{width:100%;background:#18243f;border:1px solid #2a3a5c;color:#cbd2dd;border-radius:9px;padding:.55rem .7rem;font-size:.72rem;word-break:break-all;cursor:pointer;font-family:var(--font)}
 </style>
 <div id="landing-screen">
+  <!-- Convite da aula ao vivo para quem AINDA NÃO TEM CONTA. É a porta de entrada:
+       a RPC endodirect_aovivo devolve título e horário ao visitante, mas NUNCA o
+       link do stream — para assistir é preciso criar a conta (gratuita). -->
+  <div id="lp-aovivo" style="display:none;background:linear-gradient(90deg,#7f1d1d,#b91c1c);color:#fff;padding:.7rem 1rem;text-align:center;font-size:.86rem;line-height:1.5">
+    <span class="aovivo-dot" style="vertical-align:middle;margin-right:.4rem"></span>
+    <b id="lp-aovivo-txt"></b>
+    <button onclick="showLoginScreen()" style="margin-left:.7rem;background:#fff;color:#b91c1c;border:0;border-radius:8px;padding:.35rem .9rem;font-weight:700;font-size:.8rem;cursor:pointer">Criar conta e assistir</button>
+  </div>
   <div class="lp-nav"><div class="lp-wrap lp-nav-in">
     <div class="lp-brand"><img src="logo.png.png" alt="Endodirect">Endodirect</div>
     <button class="lp-cta" onclick="showLoginScreen()">Acessar a plataforma</button>
@@ -1994,6 +2014,8 @@ input.dmm-inp-subsub{flex:1;min-width:0;background:transparent;color:var(--t2);f
         <button class="sb-item" data-p="art">📄 Resumidor</button>
         <div class="sb-sec">Pessoal</div>
         <button class="sb-item" data-p="notas">📓 Caderno</button>
+        <!-- Só aparece quando existe aula agendada ou no ar (ver aoVivoAplicarNav). -->
+        <button class="sb-item" data-p="aovivo" id="sb-aovivo" style="display:none">🔴 Aula ao vivo</button>
         <button class="sb-item" data-p="mural">📢 Mural</button>
         <button class="sb-item" data-p="chat">💬 Chat IA</button>
         <button class="sb-item" data-p="perfil">👤 Perfil</button>
@@ -2461,6 +2483,12 @@ input.dmm-inp-subsub{flex:1;min-width:0;background:transparent;color:var(--t2);f
         <p style="font-size:.83rem;color:var(--t2);line-height:1.55;margin:.2rem 0 1rem">Responda as questões do dia já publicadas. As que você já respondeu mostram o gabarito comentado; as demais ficam disponíveis para responder quando quiser.</p>
         <div id="panel-qotd-body"></div>
       </div>
+    </div>
+
+    <div class="panel" id="panel-aovivo">
+      <div class="breadcrumb">Dashboard <b>/ Aula ao vivo</b></div>
+      <div class="ph"><h1>Aula ao vivo</h1></div>
+      <div class="pc" id="aovivo-pc"></div>
     </div>
 
     <div class="panel" id="panel-mural">
@@ -4049,29 +4077,62 @@ var GLOBAL_MERGE_KEYS={
   ig_stories:function(it){return it.id||((it.stem||'')+'|'+(it.answer||''));},
   ig_pending:function(it){return it.id||((it.stem||'')+'|'+(it.answer||''));}
 };
-// Snapshot das chaves que esta sessão tinha (por coleção) na última sincronização
-// com o servidor. É o que permite distinguir "adição de outro editor" (chave nova
-// no servidor, fora do baseline) de "item que EU apaguei" (chave que estava no
-// baseline) — ver mergeConcurrent. Capturado junto com lastGlobalUpdatedAt.
+// Serialização CANÔNICA (chaves ordenadas em todo nível) — o mesmo item tem sempre
+// a mesma string, venha ele do JSONB do servidor ou montado aqui pelo painel, onde
+// a ordem das chaves difere. Sem isso a comparação de conteúdo acusaria mudança
+// onde não houve. Custo medido no payload real (7,6 MB / 3.610 itens): ~80 ms,
+// uma vez na carga e uma por gravação.
+function stableStr(v){
+  if(v===null||typeof v!=='object')return JSON.stringify(v);
+  if(Array.isArray(v)){var o='[',i;for(i=0;i<v.length;i++){if(i)o+=',';o+=stableStr(v[i]);}return o+']';}
+  var ks=Object.keys(v).sort(),s='{',j;
+  for(j=0;j<ks.length;j++){if(j)s+=',';s+=JSON.stringify(ks[j])+':'+stableStr(v[ks[j]]);}
+  return s+'}';
+}
+// Assinatura de conteúdo: djb2 + comprimento. Colisão só faria o merge deixar de
+// adotar uma edição do servidor — degrada para o comportamento antigo, não corrompe.
+function itemSig(it){
+  var s;try{s=stableStr(it);}catch(e){return 'h0';}
+  var h=5381,i=s.length;while(i)h=(h*33^s.charCodeAt(--i))>>>0;
+  return 'h'+h.toString(36)+'.'+s.length;
+}
+// Snapshot do que esta sessão tinha (por coleção) na última sincronização com o
+// servidor: chave → ASSINATURA DE CONTEÚDO. A chave distingue "adição de outro
+// editor" de "item que EU apaguei"; a assinatura distingue "o servidor editou este
+// item" de "eu editei" — ver mergeConcurrent. Capturado com lastGlobalUpdatedAt.
 var globalBaseline={};
 function captureGlobalBaseline(payload){
   payload=payload||{};globalBaseline={};
   Object.keys(GLOBAL_MERGE_KEYS).forEach(function(coll){
     var fn=GLOBAL_MERGE_KEYS[coll],arr=Array.isArray(payload[coll])?payload[coll]:[],s={};
-    arr.forEach(function(it){try{s[fn(it)]=1;}catch(e){}});
+    arr.forEach(function(it){try{s[fn(it)]=itemSig(it);}catch(e){}});
     globalBaseline[coll]=s;
   });
 }
-// Merge de coleção com baseline: parte do MEU estado atual (honra minhas exclusões
-// e edições) e só ACRESCENTA itens do servidor cuja chave é nova desde o baseline
-// (i.e., adicionados por OUTRO editor/cron) — nunca ressuscita o que apaguei.
-function mergeConcurrent(serverArr,localArr,baseKeys,keyFn){
-  var out=Array.isArray(localArr)?localArr.slice():[];var localKeys={};
-  out.forEach(function(it){try{localKeys[keyFn(it)]=1;}catch(e){}});
-  baseKeys=baseKeys||{};
+// Merge de coleção com baseline. Parte do MEU estado atual e decide item a item:
+//  • chave nova no servidor (fora do baseline) e que eu não tenho → ACRESCENTA
+//    (adição de outro editor/cron);
+//  • chave que estava no baseline e sumiu do meu estado → EU APAGUEI, não ressuscita;
+//  • chave que os dois têm e cujo conteúdo do servidor MUDOU desde o baseline:
+//      – se o meu ainda é igual ao baseline (não toquei) → ADOTA o do servidor;
+//      – se eu também mudei → mantém o MEU e registra conflito para avisar.
+// ⚠️🐛 FIX (06/08/2026): o terceiro caso não existia. Toda edição feita direto no
+// banco em item que o painel já tinha era descartada em silêncio no próximo save —
+// foi assim que as tabelas do posicionamento de hipogonadismo sumiram às 12:48.
+function mergeConcurrent(serverArr,localArr,baseSigs,keyFn,report){
+  var out=Array.isArray(localArr)?localArr.slice():[];var localAt={};
+  out.forEach(function(it,i){try{var lk=keyFn(it);if(localAt[lk]===undefined)localAt[lk]=i;}catch(e){}});
+  baseSigs=baseSigs||{};
   (Array.isArray(serverArr)?serverArr:[]).forEach(function(it){
     var k;try{k=keyFn(it);}catch(e){k=null;}
-    if(k!=null&&!baseKeys[k]&&!localKeys[k])out.push(it);
+    if(k==null)return;
+    var base=baseSigs[k],at=localAt[k];
+    if(!base){if(at===undefined){out.push(it);if(report)report.added++;}return;}
+    if(at===undefined)return;                 // estava no baseline e não está mais: eu apaguei
+    if(typeof base!=='string')return;         // baseline sem assinatura (formato antigo)
+    if(itemSig(it)===base)return;             // o servidor não mexeu neste item
+    if(itemSig(out[at])===base){out[at]=it;if(report)report.updated++;}
+    else if(report)report.conflicts.push(k);
   });
   return out;
 }
@@ -4112,7 +4173,7 @@ function globalStatePayload(){
   // professor grava apenas os avisos manuais em adm_avisos. A leitura
   // (member_content/public_content) mescla os dois.
   // Mescla as chaves geridas pelo servidor (newsletter_*) para NÃO apagá-las no save.
-  return Object.assign({},globalServerKeys,{provas:provasDB,adm_avisos:admAvisos.filter(function(a){return !isRadarAuto(a);}),radar_avisos:radarAvisos,radar_hidden:radarHidden,adm_questoes:admQuestoes,podcasts:podcasts,adm_cursos:admCursos,curso_mods_extra:admCursoModsExtra,adm_estudantes:admEstudantes,mm_shared:sharedMM,fc_shared:fcShared,diretrizes:diretrizes,diretrizes_temas:dirTemasExtra,ig_stories:igStories,ig_pending:igPending});
+  return Object.assign({},globalServerKeys,{provas:provasDB,adm_avisos:admAvisos.filter(function(a){return !isRadarAuto(a);}),radar_avisos:radarAvisos,radar_hidden:radarHidden,adm_questoes:admQuestoes,podcasts:podcasts,adm_cursos:admCursos,curso_mods_extra:admCursoModsExtra,adm_estudantes:admEstudantes,mm_shared:sharedMM,fc_shared:fcShared,diretrizes:diretrizes,diretrizes_temas:dirTemasExtra,ig_stories:igStories,ig_pending:igPending,aovivo:aoVivoAgendada});
 }
 function currentStatePayload(){
   return Object.assign({},userStatePayload(),globalStatePayload());
@@ -4163,7 +4224,8 @@ function applyStatePayload(payload,personalOnly){
     if(Array.isArray(payload.acessos))userAcessos=payload.acessos;
     if(Array.isArray(payload.cursos))catalogoCursos=payload.cursos;
     if(Array.isArray(payload.ig_stories)){igStories=payload.ig_stories;try{lsSet('ig_stories',igStories);}catch(e){}try{var _mp=document.getElementById('panel-mural'),_qm=document.getElementById('qotd-modal');if(_mp&&_mp.classList.contains('on')&&(!_qm||_qm.style.display==='none'))renderQotd();}catch(e){}}
-    if(Array.isArray(payload.ig_pending)){igPending=payload.ig_pending;try{lsSet('ig_pending',igPending);}catch(e){}try{updateAdmPendBadge();}catch(e){}try{maybePendAlert();}catch(e){}}
+    if(payload.aovivo!==undefined)aoVivoAgendada=(payload.aovivo&&typeof payload.aovivo==='object')?payload.aovivo:null;
+  if(Array.isArray(payload.ig_pending)){igPending=payload.ig_pending;try{lsSet('ig_pending',igPending);}catch(e){}try{updateAdmPendBadge();}catch(e){}try{maybePendAlert();}catch(e){}}
     // Preserva chaves geridas pelo servidor (newsletter + lembrete IG) p/ o save do admin não apagá-las.
     ['newsletter_extra','newsletter_unsub','newsletter_sent','newsletter','newsletter_recent','newsletter_qotd_id','ig_notice_sent','qotd_autopost_date','trial_emails'].forEach(function(k){if(payload[k]!==undefined)globalServerKeys[k]=payload[k];});
   }
@@ -4443,13 +4505,17 @@ function saveRemoteState(){
       // O union antigo ressuscitava itens excluídos (ex.: apagar um tema de Diretrizes
       // e ele voltar no F5), inclusive quando só o cron do radar bumpava o updated_at.
       if(lastGlobalUpdatedAt&&serverUpd&&serverUpd!==lastGlobalUpdatedAt){
-        var resurrected=false;
+        var rep={added:0,updated:0,conflicts:[]};
         Object.keys(GLOBAL_MERGE_KEYS).forEach(function(coll){
-          var before=Array.isArray(p[coll])?p[coll].length:0;
-          p[coll]=mergeConcurrent(serverP[coll],p[coll],globalBaseline[coll],GLOBAL_MERGE_KEYS[coll]);
-          if(p[coll].length>before)resurrected=true;
+          p[coll]=mergeConcurrent(serverP[coll],p[coll],globalBaseline[coll],GLOBAL_MERGE_KEYS[coll],rep);
         });
-        if(resurrected){try{notify('Outro editor salvou em paralelo — itens mesclados para não perder conteúdo. Recarregue para ver tudo.','info');}catch(e){}}
+        // Conflito de verdade (os dois lados mexeram no MESMO item) é o único caso
+        // em que algo do servidor não entra — então avisa em vermelho e nomeia.
+        if(rep.conflicts.length){
+          try{notify('Este item mudou no servidor e aqui ao mesmo tempo — mantive a SUA versão de '+rep.conflicts.length+' item(ns). Dê F5 para ver o que veio do servidor: '+rep.conflicts.slice(0,2).map(function(k){return String(k).split('|').filter(Boolean)[1]||String(k).slice(0,40);}).join(' · '),'err');}catch(e){}
+        }else if(rep.added||rep.updated){
+          try{notify('Salvo sem sobrescrever o servidor — '+rep.added+' item(ns) novo(s) e '+rep.updated+' atualizado(s) vieram junto. Recarregue para ver.','info');}catch(e){}
+        }
       }
       var stamp=new Date().toISOString();
       return client.from('endodirect_global_state').upsert({id:'main',payload:p,updated_by:currentUser.id,updated_at:stamp},{onConflict:'id'}).then(function(res){if(res.error)throw res.error;lastGlobalUpdatedAt=stamp;captureGlobalBaseline(p);});
@@ -5357,7 +5423,24 @@ function refreshAdminIdentity(){
 // Landing (site público): mostrada por padrão a visitantes sem sessão.
 // O botão "Acessar a plataforma" revela a tela de login.
 function showLoginScreen(){var l=document.getElementById('landing-screen');if(l)l.style.display='none';var ls=document.getElementById('login-screen');if(ls)ls.style.display='flex';try{if(window.__setLoginMode)window.__setLoginMode('entrar');}catch(e){}try{window.scrollTo(0,0);}catch(e){}}
-function showLandingScreen(){var l=document.getElementById('landing-screen');if(l)l.style.display='block';var ls=document.getElementById('login-screen');if(ls)ls.style.display='none';}
+function showLandingScreen(){var l=document.getElementById('landing-screen');if(l)l.style.display='block';var ls=document.getElementById('login-screen');if(ls)ls.style.display='none';try{lpAoVivoBanner();}catch(e){}}
+// Faixa da aula ao vivo na landing (visitante sem conta). Best-effort: qualquer
+// falha simplesmente não mostra a faixa — a landing não pode depender disto.
+function lpAoVivoBanner(){
+  var el=document.getElementById('lp-aovivo');if(!el)return;
+  var client=getSupabaseClient();if(!client)return;
+  client.rpc('endodirect_aovivo').then(function(r){
+    if(r.error)return;
+    var d=r.data||{},a=d.aovivo;
+    if(d.agora){var t=Date.parse(d.agora);if(isFinite(t))aoVivoAgoraSkew=t-Date.now();}
+    if(!a||!a.inicio)return;
+    var f=aoVivoFase(a);
+    if(f.fase!=='agendada'&&f.fase!=='ao_vivo')return;
+    var txt=document.getElementById('lp-aovivo-txt');
+    if(txt)txt.textContent=(f.fase==='ao_vivo'?'AO VIVO AGORA: ':'Aula ao vivo · '+aoVivoDataBR(a.inicio)+' — ')+(a.titulo||'');
+    el.style.display='';
+  }).catch(function(){});
+}
 function showMMModal(){var m=document.getElementById('lp-mm-modal');if(m)m.classList.add('on');}
 function hideMMModal(){var m=document.getElementById('lp-mm-modal');if(m)m.classList.remove('on');}
 // ---------- Janela de NOVIDADES (aluno) ----------
@@ -5398,6 +5481,9 @@ function startApp(){
   try{restoreMMLive();}catch(e){} // idem para o editor visual de mapas (#mm-live)
   medicoHomeApplied=false; // re-avalia a tela inicial do médico a cada login/onboarding
   startSessionWatcher();
+  // Aula ao vivo: consulta já no boot (o item do menu só existe se houver aula) e
+  // religa o poll — a aula pode começar com a plataforma aberta.
+  try{carregarAoVivo();aoVivoIniciarPoll();}catch(e){}
   var isAdmin=u.role==='admin';
   var app=document.getElementById('app-screen');
   document.getElementById('login-screen').style.display='none';
@@ -6125,7 +6211,7 @@ function startGoogleOAuth(){
   });
 }
 
-var PANEL_LABELS={dash:'Dashboard',desemp:'Desempenho',plano:'Plano de estudo',quest:'Questões',qotd:'Questão do Dia',flash:'Flashcards',mmap:'Mapas Mentais',podcast:'Podcasts',cursos:'Cursos',crono:'Cronograma',sr:'Revisão',erros:'Caderno de erros',sim:'OSCE',simfull:'Simulado',calc:'Calculadoras',rx:'Prescrição Simulada',presc:'Consultório',art:'Resumidor',notas:'Caderno',favs:'Favoritos',mural:'Mural',ref:'Diretrizes',resu:'Resumos',chat:'Chat IA',perfil:'Perfil',support:'Suporte',adm:'Painel Admin'};
+var PANEL_LABELS={dash:'Dashboard',desemp:'Desempenho',plano:'Plano de estudo',quest:'Questões',qotd:'Questão do Dia',flash:'Flashcards',mmap:'Mapas Mentais',podcast:'Podcasts',cursos:'Cursos',crono:'Cronograma',sr:'Revisão',erros:'Caderno de erros',sim:'OSCE',simfull:'Simulado',calc:'Calculadoras',rx:'Prescrição Simulada',presc:'Consultório',art:'Resumidor',notas:'Caderno',favs:'Favoritos',mural:'Mural',aovivo:'Aula ao vivo',ref:'Diretrizes',resu:'Resumos',chat:'Chat IA',perfil:'Perfil',support:'Suporte',adm:'Painel Admin'};
 function closeMobileNav(){
   document.body.classList.remove('mobile-nav-open');
   var b=document.getElementById('btn-mobile-nav');
@@ -6211,7 +6297,7 @@ function hasScope(scope){return !scope||isAdminUser()||userAcessos.indexOf(scope
 // Degustacao: aluno logado, sem nenhum acesso ativo (não comprou pacote/curso).
 function isDegustacao(){return !!(currentUser&&currentUser.role==='aluno'&&!isAdminUser()&&(!userAcessos||userAcessos.length===0));}
 // Paineis liberados na degustacao (o resto fica 🔒 com upsell).
-var DEGUSTACAO_PANELS={dash:1,desemp:1,plano:1,flash:1,mmap:1,quest:1,qotd:1,perfil:1,support:1,calc:1,podcast:1,crono:1,notas:1,ref:1,resu:1,erros:1};
+var DEGUSTACAO_PANELS={aovivo:1,dash:1,desemp:1,plano:1,flash:1,mmap:1,quest:1,qotd:1,perfil:1,support:1,calc:1,podcast:1,crono:1,notas:1,ref:1,resu:1,erros:1};
 // Ferramentas com IA liberadas na degustação por COTA (3 usos cada): simulador
 // de casos, simulado, prescrição e chat IA. Após esgotar, vira upsell.
 var TRIAL_PANELS={sim:1,simfull:1,rx:1,chat:1};
@@ -6253,7 +6339,11 @@ function canSeePanel(id){
   if(id==='presc'&&!prescAllowed())return false;
   if(isDegustacao()){
     // Após os 7 dias, a degustação encerra: nenhuma funcionalidade (só conta/suporte → upsell).
-    if(degExpired())return id==='perfil'||id==='support';
+    // ⚠️ `aovivo` sobrevive ao fim da degustação DE PROPÓSITO: a aula ao vivo é a
+    // porta de entrada (decisão do professor 06/08/2026 — "aberta para quem entrar
+    // na plataforma"), então quem já esgotou o teste continua podendo assistir.
+    // A GRAVAÇÃO, essa sim, é só de assinante — vira aula normal em adm_cursos.
+    if(degExpired())return id==='perfil'||id==='support'||id==='aovivo';
     if(id==='mural')return muralTrialActive(); // degustação do mural: 7 dias
     if(DEGUSTACAO_PANELS[id])return true;
     if(TRIAL_PANELS[id])return trialLeft(id)>0;
@@ -6493,6 +6583,161 @@ function showBancoLock(show){
   }
   el.style.display=show?'block':'none';
 }
+// ────────────────────────── AULA AO VIVO ──────────────────────────
+// Transmissão dentro da plataforma (pedido do professor 06/08/2026: "chamar mais
+// pessoas para entrar na plataforma e assistir a aula dentro dela").
+// Regras que ele definiu:
+//   • AO VIVO → qualquer pessoa CADASTRADA, inclusive degustação (e mesmo depois
+//     de a degustação expirar). Visitante não logado NÃO recebe o link do stream
+//     (o corte é no servidor, na RPC endodirect_aovivo) — vê só o convite.
+//   • GRAVAÇÃO → só assinante. Ela não fica aqui: vira aula normal em adm_cursos,
+//     onde o controle de acesso por pacote já existe.
+// A fonte é AGNÓSTICA: HLS (Bunny, que a plataforma já toca na landing via
+// hls.js), Vimeo ou YouTube. O professor cola o link e funciona.
+// `aoVivo` = o que o ALUNO recebe (RPC endodirect_aovivo, sem o link do stream
+// para quem não está logado). `aoVivoAgendada` = a cópia do PROFESSOR, que vem do
+// global_state e é o que o painel edita e grava. São duas por desenho: o aluno
+// nunca lê o global_state.
+var aoVivo=null,aoVivoAgendada=null,aoVivoAgoraSkew=0,aoVivoPoll=null,aoVivoTick=null,aoVivoHls=null;
+function aoVivoAgora(){return Date.now()+aoVivoAgoraSkew;}
+// Fase derivada do RELÓGIO, com override manual (a aula atrasa, ou o professor
+// encerra antes). `forcar` vence o horário.
+function aoVivoFase(a){
+  if(!a||!a.inicio)return {fase:'nenhuma',falta:0};
+  var ini=Date.parse(a.inicio);
+  if(!isFinite(ini))return {fase:'nenhuma',falta:0};
+  var dur=Math.max(1,parseInt(a.duracaoMin,10)||90)*60000;
+  var agora=aoVivoAgora();
+  if(a.forcar==='encerrada')return {fase:'encerrada',falta:0,ini:ini};
+  if(a.forcar==='ao_vivo')return {fase:'ao_vivo',falta:0,ini:ini};
+  if(agora<ini)return {fase:'agendada',falta:ini-agora,ini:ini};
+  if(agora<ini+dur)return {fase:'ao_vivo',falta:0,ini:ini};
+  return {fase:'encerrada',falta:0,ini:ini};
+}
+function aoVivoDataBR(iso){
+  var d=new Date(iso);if(!isFinite(d.getTime()))return '';
+  try{return d.toLocaleString('pt-BR',{weekday:'long',day:'2-digit',month:'long',hour:'2-digit',minute:'2-digit'});}
+  catch(e){return d.toLocaleString();}
+}
+function aoVivoContagem(ms){
+  if(ms<0)ms=0;
+  var s=Math.floor(ms/1000),d=Math.floor(s/86400),h=Math.floor(s%86400/3600),m=Math.floor(s%3600/60),ss=s%60;
+  if(d>0)return d+(d===1?' dia ':' dias ')+h+'h '+m+'min';
+  if(h>0)return h+'h '+m+'min '+ss+'s';
+  return m+'min '+ss+'s';
+}
+// Mostra/esconde o item do menu. Só existe item quando há aula agendada ou no ar —
+// menu com item morto ensina o aluno a ignorar o menu.
+function aoVivoAplicarNav(){
+  var b=document.getElementById('sb-aovivo');if(!b)return;
+  var f=aoVivoFase(aoVivo);
+  var mostrar=(f.fase==='agendada'||f.fase==='ao_vivo');
+  b.style.display=mostrar?'':'none';
+  b.innerHTML=(f.fase==='ao_vivo'?'<span class="aovivo-dot"></span> Aula AO VIVO':'🔴 Aula ao vivo')
+    +(f.fase==='agendada'?'<span class="tag tag-blue" style="margin-left:auto;font-size:.6rem">em breve</span>':'');
+}
+function carregarAoVivo(){
+  var client=getSupabaseClient();
+  if(!client)return Promise.resolve(null);
+  return client.rpc('endodirect_aovivo').then(function(r){
+    if(r.error)throw r.error;
+    var d=r.data||{};
+    aoVivo=d.aovivo||null;
+    // Relógio do SERVIDOR: o horário da aula não pode depender do relógio do
+    // aparelho do aluno, que pode estar minutos (ou fusos) fora.
+    if(d.agora){var t=Date.parse(d.agora);if(isFinite(t))aoVivoAgoraSkew=t-Date.now();}
+    aoVivoAplicarNav();
+    try{if(document.getElementById('panel-aovivo').classList.contains('on'))renderAoVivo();}catch(e){}
+    return aoVivo;
+  }).catch(function(){return null;});
+}
+// Reconsulta periódica: a aula começa com a plataforma JÁ ABERTA, então sem isto
+// o aluno só veria o "ao vivo" depois de dar F5.
+function aoVivoIniciarPoll(){
+  if(aoVivoPoll)return;
+  aoVivoPoll=setInterval(function(){carregarAoVivo();},60000);
+}
+function aoVivoPlayerHTML(a){
+  var src=String((a&&a.src)||'').trim();
+  if(!src)return '<div class="empty" style="padding:1rem">A transmissão ainda não foi liberada. Atualize em instantes.</div>';
+  if(/\.m3u8(\?|$)/i.test(src))
+    return '<video id="aovivo-video" controls playsinline style="width:100%;aspect-ratio:16/9;background:#000;border-radius:12px;display:block"></video>';
+  var v=vimeoId(src);
+  if(v)return '<iframe title="Aula ao vivo" src="https://player.vimeo.com/video/'+v+'" style="width:100%;aspect-ratio:16/9;border:0;border-radius:12px;display:block" allow="autoplay;fullscreen;picture-in-picture" allowfullscreen></iframe>';
+  var y=ytId(src);
+  if(y)return '<iframe title="Aula ao vivo" src="https://www.youtube.com/embed/'+y+'?autoplay=1" style="width:100%;aspect-ratio:16/9;border:0;border-radius:12px;display:block" allow="autoplay;fullscreen" allowfullscreen></iframe>';
+  return '<video id="aovivo-video" controls playsinline src="'+esc(src)+'" style="width:100%;aspect-ratio:16/9;background:#000;border-radius:12px;display:block"></video>';
+}
+// HLS ao vivo (Bunny): hls.js já vem carregado no <head> para os players da
+// landing. Safari toca .m3u8 nativamente e dispensa a biblioteca.
+function aoVivoMontarHls(a){
+  var src=String((a&&a.src)||'');
+  if(!/\.m3u8(\?|$)/i.test(src))return;
+  var v=document.getElementById('aovivo-video');if(!v)return;
+  try{if(aoVivoHls){aoVivoHls.destroy();aoVivoHls=null;}}catch(e){}
+  try{
+    if(v.canPlayType('application/vnd.apple.mpegurl')){v.src=src;}
+    else if(window.Hls&&window.Hls.isSupported()){
+      aoVivoHls=new window.Hls({liveDurationInfinity:true});
+      aoVivoHls.loadSource(src);aoVivoHls.attachMedia(v);
+    }else{v.src=src;}
+  }catch(e){}
+}
+function renderAoVivo(){
+  var box=document.getElementById('aovivo-pc');if(!box)return;
+  if(aoVivoTick){clearInterval(aoVivoTick);aoVivoTick=null;}
+  var a=aoVivo,f=aoVivoFase(a);
+  if(f.fase==='nenhuma'){
+    box.innerHTML='<div class="card"><div class="empty" style="padding:1.4rem;text-align:center">Nenhuma aula ao vivo marcada no momento.<div style="font-size:.78rem;color:var(--t3);margin-top:.4rem">Quando houver, você recebe aviso por e-mail e notificação no celular.</div></div></div>';
+    return;
+  }
+  var cab='<div class="card" style="margin-bottom:1rem"><div style="font-size:1.15rem;font-weight:800;line-height:1.35">'+esc(a.titulo||'Aula ao vivo')+'</div>'
+    +(a.sub?'<span class="tag tag-blue" style="margin-top:.45rem;display:inline-block">'+esc(a.sub)+'</span>':'')
+    +(a.desc?'<p style="font-size:.85rem;color:var(--t2);line-height:1.6;margin:.6rem 0 0">'+esc(a.desc)+'</p>':'')
+    +'</div>';
+  if(f.fase==='agendada'){
+    box.innerHTML=cab
+      +'<div class="card" style="text-align:center;padding:1.6rem 1rem">'
+      +'<div style="font-size:.8rem;color:var(--t2);text-transform:uppercase;letter-spacing:.06em">Começa em</div>'
+      +'<div id="aovivo-cd" style="font-size:2rem;font-weight:800;color:var(--blue);margin:.4rem 0">'+aoVivoContagem(f.falta)+'</div>'
+      +'<div style="font-size:.85rem;color:var(--t2)">'+esc(aoVivoDataBR(a.inicio))+'</div>'
+      +'<div style="font-size:.74rem;color:var(--t3);margin-top:.9rem;line-height:1.6">Deixe esta página aberta — o vídeo aparece sozinho quando a aula começar.<br>Você também recebe aviso por e-mail e notificação no celular.</div>'
+      +'</div>';
+    aoVivoTick=setInterval(function(){
+      var g=aoVivoFase(aoVivo);
+      var el=document.getElementById('aovivo-cd');
+      if(g.fase!=='agendada'){renderAoVivo();return;}
+      if(el)el.textContent=aoVivoContagem(g.falta);
+    },1000);
+    return;
+  }
+  if(f.fase==='ao_vivo'){
+    box.innerHTML=cab
+      +'<div class="card" style="padding:.7rem">'
+      +'<div style="display:flex;align-items:center;gap:.5rem;margin-bottom:.6rem"><span class="aovivo-dot"></span><b style="font-size:.82rem;letter-spacing:.05em">AO VIVO AGORA</b></div>'
+      +aoVivoPlayerHTML(a)
+      +'<div style="font-size:.72rem;color:var(--t3);margin-top:.6rem">Se travar, atualize a página — a transmissão continua do ponto atual.</div>'
+      +'</div>';
+    aoVivoMontarHls(a);
+    // Enquanto está no ar, confere a cada 30 s se o professor encerrou.
+    aoVivoTick=setInterval(function(){
+      if(aoVivoFase(aoVivo).fase!=='ao_vivo')renderAoVivo();
+    },30000);
+    return;
+  }
+  box.innerHTML=cab
+    +'<div class="card" style="text-align:center;padding:1.5rem 1rem">'
+    +'<div style="font-size:1.05rem;font-weight:700;margin-bottom:.4rem">A aula ao vivo terminou</div>'
+    +'<p style="font-size:.85rem;color:var(--t2);line-height:1.6;margin:0 0 1rem">A gravação fica disponível em <b>Cursos</b> para quem assina.</p>'
+    +(currentPlanKey()
+      ? '<button class="btn btn-primary" id="btn-aovivo-cursos">Ir para Cursos</button>'
+      : '<button class="btn btn-primary" id="btn-aovivo-assinar">Assinar para ver a gravação</button>')
+    +'</div>';
+  var bc=document.getElementById('btn-aovivo-cursos');
+  if(bc)bc.addEventListener('click',function(){goPanel('cursos');});
+  var ba=document.getElementById('btn-aovivo-assinar');
+  if(ba)ba.addEventListener('click',function(){try{goPanel('plano');}catch(e){location.hash='#planos';}});
+}
 function goPanel(id){
   if(!canSeePanel(id)){showLockedPanel(id);return;}
   try{deviceTickThrottled();}catch(e){} // valida o limite de dispositivos a cada navegação (throttle 4s)
@@ -6513,6 +6758,7 @@ function goPanel(id){
   if(id==='mmap')renderMMList();
   if(id==='podcast')renderPodcasts();
   if(id==='cursos')renderCursosAluno();
+  if(id==='aovivo'){renderAoVivo();aoVivoIniciarPoll();}
   if(id==='desemp')renderDesempenho();
   if(id==='plano')renderPlano();
   if(id==='erros')renderErros();
@@ -11206,13 +11452,167 @@ var IG_TOOLS=[
 var igEditId=null; // id do item da fila em edição (null = criando novo)
 var igDraftImg=''; // imagem (base64 ou URL) do enunciado no formulário manual
 var igDraftImgRef=''; // atribuição/minirreferência da imagem (quando vinda do PubMed/Open-i)
+// Sinônimos por MODALIDADE. A figura devolvida pelo Open-i tem de citar a MESMA
+// modalidade que foi pedida — senão uma TC entra no lugar de um ultrassom.
+var IG_IMG_MODAL=[
+  ['mri','magnetic resonance','mr imaging'],
+  ['ct','cat scan','computed tomography','tomography'],
+  ['ultrasound','ultrasonography','ultrasonographic','sonography','sonographic','doppler','echography'],
+  ['scintigraphy','scintigraphic','spect','pet','radioiodine','uptake'],
+  ['dxa','dexa','densitometry','bone mineral density','bmd'],
+  ['radiograph','radiography','x-ray','xray','roentgenogram'],
+  ['ecg','ekg','electrocardiogram','electrocardiographic']
+];
+var IG_IMG_STOP={the:1,and:1,with:1,from:1,for:1,case:1,image:1,imaging:1,scan:1,view:1,patient:1,study:1,figure:1,showing:1,shows:1};
+// Modalidades como o ENUNCIADO as escreve (português), na MESMA ordem de
+// IG_IMG_MODAL — o índice liga o termo em português ao grupo em inglês.
+var IG_IMG_MODAL_PT=[
+  ['rm','rnm','ressonancia','ressonancia magnetica'],
+  ['tc','tomografia','tomografia computadorizada'],
+  ['usg','ultrassom','ultrassonografia','ultrassonografico','ecografia','doppler'],
+  ['cintilografia','cintilografico','pet','spect','captacao'],
+  ['densitometria','dxa','dexa'],
+  ['radiografia','raio-x','raio x','rx'],
+  ['ecg','eletrocardiograma']
+];
+// Órgãos: como aparecem no enunciado (pt, por prefixo) x como aparecem na legenda
+// da figura (en). É o que amarra a figura ao TEXTO da questão, não só à busca.
+var IG_IMG_ORGAOS=[
+  {pt:['sela','selar','hipofis','pituitar','prolactinoma','acromegal','sindrome de sheehan'],en:['pituitary','sella','sellar','hypophys','prolactinoma','adenohypophys']},
+  {pt:['tireoide','tireoidian','bocio','tireotox'],en:['thyroid','goiter','goitre','thyroidal']},
+  {pt:['adrenal','suprarrenal','feocromocitoma','incidentaloma','cushing'],en:['adrenal','pheochromocytoma','phaeochromocytoma','suprarenal']},
+  {pt:['paratireoide','paratireoidian','hiperparatireoid'],en:['parathyroid','sestamibi']},
+  {pt:['pancreas','pancreatic','insulinoma'],en:['pancreas','pancreatic','insulinoma']},
+  {pt:['ovario','ovarian','anexial','utero','uterin'],en:['ovary','ovarian','uterus','uterine','adnexal']},
+  {pt:['testicul','escrotal','bolsa escrotal'],en:['testis','testicular','testes','scrotal','scrotum']},
+  {pt:['densitometria','coluna lombar','colo femoral','femur','vertebr','ossea','osso'],en:['bone','lumbar','spine','spinal','femoral','vertebral','skeletal']},
+  {pt:['renal','rins','rim'],en:['kidney','renal']}
+];
+// Marcas de exame NORMAL no enunciado. Se a frase que cita o exame diz isso, não
+// existe figura certa: qualquer imagem real do achado CONTRADIZ o enunciado.
+var IG_IMG_NORMAL=/(^|[^a-z])(normal|normais|normalidade|sem alterac|sem anormalidade|sem imagem sugestiva|sem evidencia|sem sinais|sem nodul|sem lesa|inalterad|preservad|habitual)/;
+function igImgDeacc(s){
+  s=String(s||'').toLowerCase();
+  try{return s.normalize('NFD').replace(/[\u0300-\u036f]/g,'');}catch(e){return s;}
+}
+function igImgHas(hay,termo){
+  var t=String(termo).toLowerCase().replace(/[.*+?^${}()|[\]\\]/g,'\\$&').replace(/[\s-]+/g,'[\\s-]+');
+  try{return new RegExp('(^|[^a-z0-9])'+t+'($|[^a-z0-9])','i').test(String(hay||''));}catch(e){return false;}
+}
+// Casa por PREFIXO com limite de palavra à esquerda ("hipofis" pega "hipofisário").
+function igImgHasPref(hay,pref){
+  var t=String(pref).toLowerCase().replace(/[.*+?^${}()|[\]\\]/g,'\\$&').replace(/[\s-]+/g,'[\\s-]+');
+  try{return new RegExp('(^|[^a-z0-9])'+t,'i').test(String(hay||''));}catch(e){return false;}
+}
+// Índice do grupo de modalidade que a BUSCA (inglês) pede; -1 se nenhuma.
+function igImgModalDaBusca(query){
+  var q=igImgDeacc(query),i,j;
+  for(i=0;i<IG_IMG_MODAL.length;i++)
+    for(j=0;j<IG_IMG_MODAL[i].length;j++)
+      if(igImgHas(q,IG_IMG_MODAL[i][j]))return i;
+  return -1;
+}
+// Grupos de órgão citados num texto (pt para o enunciado, en para a legenda).
+function igImgOrgaos(txt,lado){
+  var t=igImgDeacc(txt),out=[];
+  IG_IMG_ORGAOS.forEach(function(g,idx){
+    var lista=g[lado],k;
+    for(k=0;k<lista.length;k++)if(igImgHasPref(t,lista[k])){out.push(idx);return;}
+  });
+  return out;
+}
+// ⚠️ O pedido de imagem tem de ser COERENTE COM O ENUNCIADO (pedido do professor:
+// "só preciso que fique mais precisa a imagem junto do texto do enunciado").
+// Três recusas, todas olhando o texto da questão e não os termos que a IA inventou:
+//  1. o enunciado descreve o exame como NORMAL → nenhuma figura serve;
+//  2. a busca pede um ÓRGÃO que o enunciado nem menciona;
+//  3. a busca pede uma MODALIDADE que o enunciado nem menciona (pediu TC, o caso tem USG).
+function igImgPedidoCoerente(query,stem){
+  var s=igImgDeacc(stem);
+  if(!s)return true;                                   // sem enunciado, não há o que conferir
+  var mi=igImgModalDaBusca(query);
+  if(mi>=0){
+    var ptTermos=IG_IMG_MODAL_PT[mi]||[],frases=s.split(/[.;?!]+/),i,j,citou=false;
+    for(i=0;i<frases.length;i++){
+      var temMod=false;
+      for(j=0;j<ptTermos.length;j++)if(igImgHas(frases[i],ptTermos[j])){temMod=true;break;}
+      if(!temMod)continue;
+      citou=true;
+      if(IG_IMG_NORMAL.test(frases[i]))return false;    // (1) exame normal no enunciado
+    }
+    if(!citou)return false;                             // (3) modalidade que o caso não tem
+  }
+  var oq=igImgOrgaos(query,'en');
+  if(oq.length){
+    var os=igImgOrgaos(s,'pt'),k;
+    for(k=0;k<oq.length;k++)if(os.indexOf(oq[k])>=0)return true;
+    return false;                                       // (2) órgão fora do enunciado
+  }
+  return true;
+}
+// ⚠️🐛 FIX (06/08/2026): antes o app anexava o PRIMEIRO resultado do Open-i sem
+// conferir nada. A busca do Open-i casa o TEXTO DO ARTIGO, então qualquer figura de
+// um artigo que cite "pituitary MRI" entra — foi assim que uma prancha de oncologia
+// de 6 painéis ilustrou uma questão de prolactina. Agora a figura só é aceita se o
+// título/legenda DELA citarem a mesma modalidade e ao menos um termo clínico da
+// busca. Sem candidato aprovado, a questão fica SEM imagem — que é o certo: imagem
+// errada num material de estudo é pior do que imagem nenhuma.
+// Legendas que denunciam figura que NÃO é exame de imagem. Backstop do filtro
+// `it=` do Open-i (api/ai.js), que já exclui gráficos e microscopia na origem mas
+// não é perfeito — a própria base classifica cintilografia ora como exame, ora
+// como gráfico.
+var IG_IMG_NAO_EXAME=/(^|[^a-z])(roc curve|kaplan|survival curve|flow ?chart|flow diagram|study design|bar graph|scatter ?plot|histogram|box ?plot|forest plot|consort|questionnaire|schematic|western blot|immunohistochem|histolog|cytolog|micrograph|hematoxylin|h&e stain)/;
+function igImgRelevante(query,it,stem){
+  // ⚠️ `title` é o título do ARTIGO, não da figura — um artigo chamado "thyroid
+  // scintigraphy in radioiodine therapy" faz qualquer figura sua parecer uma
+  // cintilografia. Por isso a MODALIDADE é conferida só na LEGENDA; o título entra
+  // apenas no casamento de órgão, que é mais tolerante.
+  var cap=igImgDeacc(String((it&&it.caption)||'')).trim();
+  var hay=igImgDeacc(String((it&&it.title)||'')+' '+String((it&&it.caption)||'')).trim();
+  if(!hay)return false;                       // sem metadado não há como conferir
+  if(cap&&IG_IMG_NAO_EXAME.test(cap))return false;   // curva ROC, fluxograma, lâmina…
+  var q=igImgDeacc(query),i,mi=igImgModalDaBusca(q),grupo=mi>=0?IG_IMG_MODAL[mi]:null;
+  if(grupo){
+    if(!cap)return false;                     // sem legenda não dá para checar a modalidade
+    var okMod=false;
+    for(i=0;i<grupo.length&&!okMod;i++)if(igImgHas(cap,grupo[i]))okMod=true;
+    if(!okMod)return false;                   // pediram RM e veio TC (ou um gráfico)
+  }
+  // A figura tem de citar um órgão QUE O ENUNCIADO MENCIONA — não basta bater com
+  // os termos de busca, que a IA pode ter escolhido fora do caso.
+  if(stem){
+    var os=igImgOrgaos(stem,'pt');
+    if(os.length){
+      var oc=igImgOrgaos(hay,'en'),k,bate=false;
+      for(k=0;k<os.length&&!bate;k++)if(oc.indexOf(os[k])>=0)bate=true;
+      if(!bate)return false;
+    }
+  }
+  var termos=q.replace(/[^a-z0-9 -]+/g,' ').split(/\s+/).filter(function(w){
+    return w.length>=4&&!IG_IMG_STOP[w]&&!(grupo&&grupo.indexOf(w)>=0);
+  });
+  if(!termos.length)return !!grupo;           // busca só com modalidade: a modalidade basta
+  for(i=0;i<termos.length;i++){
+    var raiz=termos[i].length>6?termos[i].slice(0,termos[i].length-3):termos[i];
+    if(hay.indexOf(raiz)>=0)return true;      // órgão/achado aparece na própria figura
+  }
+  return false;
+}
 // Busca uma imagem de exame complementar (PubMed Central via Open-i) p/ ilustrar a
-// questão. Best-effort: qualquer falha devolve null (a questão fica sem imagem).
-function igFetchExamImage(query){
+// questão. Best-effort: qualquer falha — ou nenhum candidato relevante — devolve
+// null e a questão fica sem imagem.
+function igFetchExamImage(query,stem){
   query=String(query||'').trim();if(!query)return Promise.resolve(null);
-  return fetch('/api/ai',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({kind:'openi',query:query,n:1})})
+  return fetch('/api/ai',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({kind:'openi',query:query,n:6})})
     .then(function(r){return r.ok?r.json():null;})
-    .then(function(d){if(!d||!d.ok||!d.items||!d.items.length)return null;var it=d.items[0];if(!it.img)return null;return {img:it.img,imgRef:igFormatImgRef(it)};})
+    .then(function(d){
+      if(!d||!d.ok||!d.items||!d.items.length)return null;
+      for(var i=0;i<d.items.length;i++){
+        var it=d.items[i];
+        if(it&&it.img&&igImgRelevante(query,it,stem))return {img:it.img,imgRef:igFormatImgRef(it)};
+      }
+      return null;
+    })
     .catch(function(){return null;});
 }
 // Monta a minirreferência (ABREVIADA) exibida abaixo da imagem:
@@ -11680,9 +12080,19 @@ function igShuffleMCQ(q){
 function igAttachExamImage(q,d){
   var iq=d&&d.imageQuery?String(d.imageQuery).trim():'';
   if(!iq)return Promise.resolve(q);
-  return igFetchExamImage(iq).then(function(im){if(im){q.img=im.img;q.imgRef=im.imgRef;}return q;}).catch(function(){return q;});
+  var stem=String((q&&q.stem)||'');
+  // Antes de gastar a busca: o pedido bate com o enunciado? (exame normal, órgão
+  // ou modalidade que a vinheta nem cita → questão fica sem figura)
+  if(!igImgPedidoCoerente(iq,stem))return Promise.resolve(q);
+  return igFetchExamImage(iq,stem).then(function(im){if(im){q.img=im.img;q.imgRef=im.imgRef;}return q;}).catch(function(){return q;});
 }
-var IG_IMAGEQUERY_RULE=' Se — e SOMENTE se — a vinheta envolver um exame de IMAGEM/complementar que valha ilustrar (ex.: RM de sela, USG de tireoide, TC de adrenal, cintilografia, densitometria, ECG, radiografia), inclua no JSON o campo "imageQuery" com TERMOS DE BUSCA EM INGLÊS para achar essa imagem no PubMed (ex.: "pituitary MRI microadenoma", "thyroid ultrasound nodule", "adrenal CT adenoma"); se não houver imagem pertinente, use "imageQuery":"" (string vazia).';
+// ⚠️ Regra ESTREITA de propósito. A versão anterior mandava ilustrar sempre que a
+// vinheta "envolvesse um exame de imagem" — e o gerador pedia figura até para caso
+// cujo exame o próprio enunciado descreve como NORMAL. Resultado real (06/08): uma
+// questão de macroprolactinemia, cujo enunciado diz "RM de sela normal, sem imagem
+// sugestiva de adenoma", veio com uma prancha de 6 painéis de um artigo de oncologia
+// com setas apontando lesões — a figura CONTRADIZIA o enunciado.
+var IG_IMAGEQUERY_RULE=' Campo "imageQuery": só preencha quando a figura for INDISPENSÁVEL para responder — quando o achado de imagem é o dado que decide a questão e o aluno precisa INTERPRETAR a figura. Use "imageQuery":"" (string vazia) em todos os outros casos, inclusive: (a) o enunciado DESCREVE o exame como normal, sem alterações ou negativo — NUNCA ilustre exame normal; (b) o exame aparece de passagem e o raciocínio se resolve pela clínica ou pelo laboratório; (c) o achado já está descrito por extenso no enunciado. Na dúvida, use "" — questão sem imagem é melhor do que questão com imagem que não corresponde ao caso. Quando preencher, use TERMOS DE BUSCA EM INGLÊS nomeando MODALIDADE + ÓRGÃO + ACHADO (ex.: "pituitary MRI macroadenoma", "thyroid ultrasound papillary carcinoma", "adrenal CT pheochromocytoma").';
 // Dois níveis de dificuldade, alternados no lote (pedido do Rodolpho 2026-07-23):
 // 'titulo' = padrão prova de título/especialista; 'muito_avancado' = banca difícil.
 function igNivelDesc(level){
@@ -13321,6 +13731,37 @@ function admAnalyticsHTML(){
         +'<div style="margin-top:.7rem">'+(porCidade.length?'<div class="adm-table"><div class="adm-table-head"><span style="flex:3">Cidade</span><span style="flex:1;text-align:right">Alunos</span></div>'+porCidade.map(function(x){return '<div class="adm-table-row"><span style="flex:3;font-size:.8rem;font-weight:600">'+esc(x.cidade||'—')+(x.uf?' <span style="color:var(--t3);font-weight:400">/ '+esc(x.uf)+'</span>':'')+'</span><span style="flex:1;text-align:right;font-weight:700">'+n(x.n)+'</span></div>';}).join('')+'</div>':'<div class="empty" style="padding:.6rem;font-size:.78rem;color:var(--t3)">As cidades aparecem quando os alunos concluem uma compra (endereço de cobrança).</div>')+'</div>'
       +'</details></div>'
     +'</div>';
+  // Endocrinologia PEDIÁTRICA, dentro do card de perfil profissional (pedido do
+  // professor 06/08/2026: "quantos endocrinopediatras ou residentes de
+  // endocrinologia pediátrica, se tiver").
+  // ⚠️ O ponto delicado é a COBERTURA: os 4 rótulos antigos não separavam adulto
+  // de pediátrica, então quem entrou antes de 06/08 não tem o campo. Mostrar só
+  // "0" seria enganoso — parece "não tenho nenhum" quando é "ainda não perguntei".
+  // Por isso o bloco diz sempre quantos dos elegíveis já responderam.
+  var admPedHTML=function(pp){
+    var tot=n(pp.ped_total),eleg=n(pp.atuacao_elegiveis),inf=n(pp.atuacao_informaram);
+    var det=Array.isArray(pp.ped_por_perfil)?pp.ped_por_perfil:[];
+    var pistas=Array.isArray(pp.pistas_ped_outros)?pp.pistas_ped_outros:[];
+    if(!eleg&&!tot&&!pistas.length)return '';
+    var h='<div style="margin-top:.9rem;padding-top:.8rem;border-top:1px solid var(--bd)">'
+      +'<div style="display:flex;align-items:center;justify-content:space-between;gap:.6rem;flex-wrap:wrap">'
+      +'<span style="font-size:.8rem;font-weight:700">🧒 Endocrinologia pediátrica</span>'
+      +'<span class="tag '+(tot?'tag-grn':'tag-blue')+'">'+tot+' aluno(s)</span></div>';
+    if(det.length){
+      h+='<div style="margin-top:.5rem">'+det.map(function(x){
+        var quem=(x.perfil==='Residente'?'Residente':'Endocrinologista');
+        return '<div style="display:flex;justify-content:space-between;font-size:.78rem;padding:.25rem 0"><span style="color:var(--t2)">'+esc(quem)+' · '+esc(x.atuacao||'')+'</span><span style="font-weight:700">'+n(x.n)+'</span></div>';
+      }).join('')+'</div>';
+    }
+    h+='<div style="font-size:.68rem;color:var(--t3);margin-top:.45rem;line-height:1.5">'
+      +(inf<eleg
+        ? '<b>'+inf+' de '+eleg+'</b> endocrinologistas e residentes já informaram a área de atuação. Os demais entraram antes de a pergunta existir — podem responder em <b>Meu perfil → Editar perfil</b>.'
+        : 'Todos os '+eleg+' endocrinologistas e residentes já informaram a área de atuação.');
+    if(pistas.length){
+      h+='<br>Em “Outros”, '+pistas.map(function(p){return '<b>'+n(p.n)+'</b> escreveu “'+esc(p.especialidade||'')+'”';}).join(', ')+' — não entra na contagem porque não é área declarada.';
+    }
+    return h+'</div></div>';
+  };
   // Perfil profissional dos alunos. Fica junto da origem geográfica: as duas
   // respondem "quem é o meu público", e a leitura é a mesma.
   var pp=admPerfilPro||{},porPerfil=Array.isArray(pp.por_perfil)?pp.por_perfil:[];
@@ -13340,6 +13781,7 @@ function admAnalyticsHTML(){
         // percentuais não fecharem em 100%.
         +(semPerfil?'<div style="font-size:.68rem;color:var(--t3);margin-top:.45rem">Os percentuais são sobre quem informou. '+semPerfil+' aluno(s) sem esse campo — entraram antes de a pergunta existir no primeiro acesso.':'')
       : '<div class="empty" style="padding:.6rem;font-size:.78rem;color:var(--t3)">Ainda sem perfil informado. Aparece conforme os alunos respondem "Você é:" no primeiro acesso.</div>')
+    +admPedHTML(pp)
     +'</div>';
   var semDados=n(ov.respostas)===0&&n(ov.simulados)===0;
   var kpi=function(val,lbl,cor,sub){return '<div class="adm-bigstat"><div class="adm-bigstat-n" style="color:'+cor+'">'+val+'</div><div class="adm-bigstat-l">'+lbl
@@ -13461,6 +13903,39 @@ function playerEmbed(c){
   return '<video controls style="width:100%;max-height:62vh;display:block" src="'+esc(c.src||'')+'"></video>';
 }
 var admCursoFiltro='',admCursoVideoFile=null,admCursoVideoData=null,admCursoSubtab='ver',admCursoEditIdx=null,admCursoMod='',admCursoModAdd=false,admCursoAddMod='';
+// Agendamento da aula ao vivo. Fica no topo de Cursos porque é lá que a GRAVAÇÃO
+// vai morar depois (como aula normal, só para assinante).
+function admAoVivoHTML(){
+  var a=aoVivoAgendada||{},f=aoVivoFase(aoVivoAgendada);
+  // <input type="datetime-local"> quer horário LOCAL sem fuso; o que guardamos é
+  // ISO em UTC. Converter aqui evita a aula "andar" 3 horas ao reabrir o form.
+  var localVal='';
+  if(a.inicio){var d=new Date(a.inicio);if(isFinite(d.getTime())){
+    var p=function(x){return String(x).padStart(2,'0');};
+    localVal=d.getFullYear()+'-'+p(d.getMonth()+1)+'-'+p(d.getDate())+'T'+p(d.getHours())+':'+p(d.getMinutes());
+  }}
+  var selo=({agendada:'<span class="tag tag-blue">agendada</span>',ao_vivo:'<span class="tag tag-grn">NO AR</span>',encerrada:'<span class="tag">encerrada</span>',nenhuma:''})[f.fase]||'';
+  return '<div class="card" style="margin-bottom:1.1rem;border:1px solid var(--bd2)">'
+    +'<div class="card-head"><span class="card-title">🔴 Aula ao vivo</span>'+selo+'</div>'
+    +'<p style="font-size:.76rem;color:var(--t2);line-height:1.6;margin:.1rem 0 .9rem">Aparece no menu do aluno só quando está agendada ou no ar. <b>Qualquer cadastrado assiste</b> (inclusive degustação); a <b>gravação é só de assinante</b> — depois publique-a aqui embaixo como aula normal.</p>'
+    +'<div class="g2" style="margin-bottom:.7rem"><div class="fld2" style="margin:0"><label>Título</label><input type="text" id="av-titulo" value="'+esc(a.titulo||'')+'" placeholder="Ex: Hipogonadismo masculino na prática"></div>'
+    +'<div class="fld2" style="margin:0"><label>Subespecialidade (opcional)</label><input type="text" id="av-sub" value="'+esc(a.sub||'')+'" placeholder="Ex: Endocrinologia Masculina"></div></div>'
+    +'<div class="fld2" style="margin-bottom:.7rem"><label>Descrição</label><textarea id="av-desc" rows="2" placeholder="O que o aluno vai ver na aula…">'+esc(a.desc||'')+'</textarea></div>'
+    +'<div class="g2" style="margin-bottom:.7rem"><div class="fld2" style="margin:0"><label>Início (seu horário)</label><input type="datetime-local" id="av-inicio" value="'+esc(localVal)+'"></div>'
+    +'<div class="fld2" style="margin:0"><label>Duração prevista (min)</label><input type="number" id="av-dur" min="10" max="480" value="'+esc(String(a.duracaoMin||90))+'"></div></div>'
+    +'<div class="fld2" style="margin-bottom:.7rem"><label>Link da transmissão</label><input type="text" id="av-src" value="'+esc(a.src||'')+'" placeholder="HLS do Bunny (.m3u8), Vimeo ou YouTube">'
+    +'<div style="font-size:.68rem;color:var(--t3);margin-top:.3rem">Aceita os três. O <b>.m3u8 do Bunny</b> toca dentro da página, sem player de terceiro — trave por domínio no painel do Bunny para não vazar.</div></div>'
+    +'<div class="fld2" style="margin-bottom:.85rem"><label>Estado</label><select id="av-forcar">'
+    +['<option value="">Automático (pelo horário)</option>',
+      '<option value="ao_vivo"'+(a.forcar==='ao_vivo'?' selected':'')+'>Forçar NO AR (comecei antes/depois)</option>',
+      '<option value="encerrada"'+(a.forcar==='encerrada'?' selected':'')+'>Encerrar agora</option>'].join('')
+    +'</select></div>'
+    +'<div style="display:flex;gap:6px;flex-wrap:wrap;align-items:center">'
+    +'<button class="btn btn-primary" id="btn-av-save">💾 Salvar aula ao vivo</button>'
+    +(a.titulo?'<button class="btn btn-outline" id="btn-av-del">🗑️ Remover</button>':'')
+    +'<span id="av-msg" style="font-size:.76rem;font-weight:600"></span></div>'
+    +'</div>';
+}
 function admCursosHTML(){
   var cont={};admCursos.forEach(function(c){if(c.curso)cont[c.curso]=(cont[c.curso]||0)+1;});
   var lista=admCursoFiltro?admCursos.filter(function(c){return c.curso===admCursoFiltro;}):admCursos;
@@ -13513,6 +13988,7 @@ function admCursosHTML(){
   }
 
   return '<div class="adm-ph"><h1>Cursos</h1><p>Importe e organize videoaulas por curso.</p></div>'
+    +'<div class="adm-pc" style="padding-bottom:0">'+admAoVivoHTML()+'</div>'
   +'<div class="adm-pc">'
   +'<div class="pill-tab-row">'
     +'<button class="pill-tab'+(admCursoSubtab==='ver'?' on':'')+'" data-csub="ver">📺 Ver cursos</button>'
@@ -13734,6 +14210,35 @@ function bindAdmSec(sec){
   if(sec==='pendencias'){bindAdmPendencias();return;}
 
   if(sec==='cursos'){
+    var avSave=document.getElementById('btn-av-save');
+    if(avSave)avSave.addEventListener('click',function(){
+      var msg=document.getElementById('av-msg');
+      var val=function(id){var e=document.getElementById(id);return e?String(e.value||'').trim():'';};
+      var titulo=val('av-titulo'),iniLocal=val('av-inicio'),src=val('av-src');
+      var falha=function(t){if(msg){msg.textContent=t;msg.style.color='var(--red)';}};
+      if(!titulo)return falha('Dê um título à aula.');
+      if(!iniLocal)return falha('Informe a data e a hora de início.');
+      // datetime-local é horário LOCAL do professor; gravamos ISO (UTC) para o
+      // aluno em qualquer fuso ver a hora certa.
+      var ini=new Date(iniLocal);
+      if(!isFinite(ini.getTime()))return falha('Data de início inválida.');
+      if(src&&!safeHttpUrl(src))return falha('O link da transmissão precisa começar com http:// ou https://');
+      aoVivoAgendada={
+        id:(aoVivoAgendada&&aoVivoAgendada.id)||('lv-'+Date.now()),
+        titulo:titulo,sub:val('av-sub'),desc:val('av-desc'),
+        inicio:ini.toISOString(),
+        duracaoMin:Math.max(10,Math.min(480,parseInt(val('av-dur'),10)||90)),
+        src:src,forcar:val('av-forcar')
+      };
+      queueRemoteStateSave(true);
+      if(msg){msg.textContent='Salva. O aluno vê no próximo F5 (ou em até 1 min, sozinho).';msg.style.color='var(--grn)';}
+      renderAdmSec('cursos');
+    });
+    var avDel=document.getElementById('btn-av-del');
+    if(avDel)avDel.addEventListener('click',function(){
+      if(!confirm('Remover a aula ao vivo? O item some do menu do aluno.'))return;
+      aoVivoAgendada=null;queueRemoteStateSave(true);renderAdmSec('cursos');
+    });
     main.querySelectorAll('[data-csub]').forEach(function(b){b.addEventListener('click',function(){admCursoSubtab=b.dataset.csub;admCursoEditIdx=null;admCursoAddMod='';renderAdmSec('cursos');});});
     if(admCursoSubtab==='catalogo'){
       if(!(Array.isArray(catalogoCursos)&&catalogoCursos.length))loadCursoCatalogo(function(){renderAdmSec('cursos');});
@@ -14693,6 +15198,9 @@ submitOnboard=function(){
     var resid=(document.getElementById('ob-resid').value||'').trim();
     if(!resid){err.textContent='Informe sua instituição de residência médica.';err.style.display='block';return;}
     prof.residencia=resid;
+    var atv=((document.getElementById('ob-atuacao')||{}).value||'').trim();
+    if(!atv){err.textContent=(perfil==='Residente'?'Informe o seu programa de residência.':'Informe a sua área de atuação.');err.style.display='block';return;}
+    prof.atuacao=atv;
     prof.displayPerfil=(perfil==='Residente')?'Médico(a) Residente':'Endocrinologista';
   }
   // CRM + UF obrigatórios para todos os perfis (necessários para a prescrição via Memed).
@@ -14711,12 +15219,34 @@ submitOnboard=function(){
   queueRemoteStateSave();
   if(demoOnboardToPresc){demoOnboardToPresc=false;try{if(typeof canSeePanel==='function'&&canSeePanel('presc'))goPanel('presc');}catch(e){}}
 };
+// Opções de atuação por perfil. Os VALORES são o que fica gravado em
+// user_profile.atuacao e o que a RPC do Analytics conta — mexer neles quebra a
+// contagem retroativa, então mudam junto com ATUACAO_PEDIATRICA e o SQL.
+var ATUACAO_OPCOES={
+  Endocrinologista:[['Adulto','Endocrinologia de adultos'],['Pediátrica','Endocrinologia pediátrica'],['Adulto e pediátrica','Atendo adultos e crianças']],
+  Residente:[['Endocrinologia','Endocrinologia e metabologia (adulto)'],['Endocrinologia pediátrica','Endocrinologia pediátrica'],['Pediatria','Pediatria'],['Clínica médica','Clínica médica'],['Outro','Outro programa']]
+};
+// Os valores que contam como endocrinologia PEDIÁTRICA. Lista explícita de
+// propósito: "Pediatria" (geral) NÃO entra, e uma comparação por pedaço de texto
+// ("contém pediát") passaria a contar errado.
+var ATUACAO_PEDIATRICA=['Pediátrica','Adulto e pediátrica','Endocrinologia pediátrica'];
 function setupOnboardProfileChoices(){
   var perfil=(document.querySelector('input[name="ob-perfil"]:checked')||{}).value;
   var grad=document.getElementById('ob-grad-wrap');
   var resid=document.getElementById('ob-resid-wrap');
   var outros=document.getElementById('ob-outros-wrap');
   var anow=document.getElementById('ob-ano-wrap');
+  var atw=document.getElementById('ob-atuacao-wrap'),atsel=document.getElementById('ob-atuacao'),atlbl=document.getElementById('ob-atuacao-lbl');
+  if(atw&&atsel){
+    var ops=ATUACAO_OPCOES[perfil];
+    atw.style.display=ops?'block':'none';
+    if(ops){
+      if(atlbl)atlbl.innerHTML=(perfil==='Residente'?'Programa de residência':'Área de atuação')+' <span style="color:var(--red)">*</span>';
+      var atual=atsel.value;
+      atsel.innerHTML='<option value="">Selecione…</option>'+ops.map(function(o){return '<option value="'+esc(o[0])+'">'+esc(o[1])+'</option>';}).join('');
+      atsel.value=atual;   // preserva a escolha se o professor voltar ao mesmo perfil
+    }
+  }
   // Instituição de graduação: só para o estudante de medicina.
   if(grad)grad.style.display=(perfil==='Estudante')?'block':'none';
   if(resid)resid.style.display=(perfil==='Residente'||perfil==='Endocrinologista')?'block':'none';
@@ -14768,6 +15298,11 @@ function renderPerfil(){
       +'<div class="g2" style="margin-bottom:.7rem"><div class="fld2" style="margin:0"><label>CPF</label><input type="text" id="pf-cpf" value="'+esc(cpfVal)+'" inputmode="numeric" placeholder="Somente números"></div>'
       +'<div class="fld2" style="margin:0"><label>Contato (telefone)</label><input type="text" id="pf-contato" value="'+esc(contatoVal)+'" inputmode="tel" placeholder="(DDD) 9..."></div></div>'
       +'<div class="fld2" style="margin-bottom:.7rem"><label>'+instLabel+'</label><input type="text" id="pf-inst" value="'+esc(instVal)+'"></div>'
+      // Atuação (adulto x pediátrica): editável aqui porque os 93 alunos que já
+      // entraram nunca viram essa pergunta no primeiro acesso — sem este campo o
+      // número no Analytics só cresceria com cadastros novos.
+      +(ATUACAO_OPCOES[perfilVal]?'<div class="fld2" style="margin-bottom:.7rem"><label>'+(perfilVal==='Residente'?'Programa de residência':'Área de atuação')+'</label><select id="pf-atuacao"><option value="">Não informado</option>'
+        +ATUACAO_OPCOES[perfilVal].map(function(o){return '<option value="'+esc(o[0])+'"'+(prof.atuacao===o[0]?' selected':'')+'>'+esc(o[1])+'</option>';}).join('')+'</select></div>':'')
       +'<div id="pf-err" style="display:none;background:var(--red-l);border:1px solid #5a2326;border-radius:var(--rs);padding:.45rem .75rem;font-size:.73rem;color:var(--red);margin-bottom:.7rem"></div>'
       +'<div style="display:flex;gap:6px"><button class="btn btn-primary" id="btn-pf-save">💾 Salvar</button><button class="btn btn-outline" id="btn-pf-cancel">Cancelar</button></div></div>';
   }else{
@@ -14778,6 +15313,7 @@ function renderPerfil(){
       +row('Perfil',valOr(label))
       +(perfilVal==='Estudante'?row('Graduação',valOr(prof.graduacao)):'')
       +((perfilVal==='Residente'||perfilVal==='Endocrinologista')?row('Residência médica',valOr(prof.residencia)):'')
+      +(ATUACAO_OPCOES[perfilVal]?row(perfilVal==='Residente'?'Programa de residência':'Área de atuação',valOr(prof.atuacao)):'')
       +(perfilVal==='Outros'?row('Área de atuação',valOr(prof.especialidade)):'')
       +(prof.crm?row('CRM / UF',valOr(prof.crm+(prof.uf?' / '+prof.uf:''))):'')
       +row('CPF',valOr(prof.cpf))
@@ -14845,6 +15381,8 @@ function wirePerfil(){
     if(prof.perfil==='Estudante'){prof.graduacao=inst;}
     else if(prof.perfil==='Outros'){prof.especialidade=inst;prof.displayPerfil=inst||prof.displayPerfil;}
     else{prof.residencia=inst;}
+    var atEl=document.getElementById('pf-atuacao');
+    if(atEl)prof.atuacao=(atEl.value||'').trim();
     lsSet('user_profile',prof);
     if(currentUser){currentUser.profile=prof;currentUser.sub=profileDisplayLabel(prof);}
     // Mantém CPF/telefone também no ck_billing (pré-preenche o checkout).

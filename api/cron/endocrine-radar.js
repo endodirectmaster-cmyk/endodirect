@@ -6,6 +6,7 @@ const { sendDailyNewsletter } = require('../../lib/newsletter');
 const { refreshPodcastsFromFeed } = require('../../lib/podcasts');
 const { sendTrialEmails, sendWinbackNovidades, sendReengajamento } = require('../../lib/trial-emails');
 const { sendIgDailyNotice, autoPostDailyQotd } = require('../../lib/instagram');
+const { sendAvisoAoVivo } = require('../../lib/aovivo');
 // Dá a partida na cadeia de discussões: uma requisição ao próprio backend, que
 // gera um artigo por invocação e chama a próxima. Não espera a resposta — o que
 // importa é a primeira invocação ter começado.
@@ -72,6 +73,12 @@ module.exports = async function handler(req, res) {
     let reengajamento = { sent: false, reason: 'skipped' };
     try { reengajamento = await sendReengajamento(); }
     catch (e) { console.error('[cron-radar] reengajamento erro:', (e && e.stack) || e); reengajamento = { sent: false, reason: 'error' }; }
+    // Aviso da AULA AO VIVO do dia (e-mail + push). Pega carona aqui porque o
+    // plano limita os cron jobs e a Vercel está em 12/12 funções serverless.
+    // Idempotente por aula (ledger em payload.aovivo_sent). Fail-safe.
+    let aovivo = { ok: true, skipped: 'nao rodou' };
+    try { aovivo = await sendAvisoAoVivo(); }
+    catch (e) { console.error('[cron-radar] aula ao vivo erro:', (e && e.stack) || e); aovivo = { ok: false, error: 'error' }; }
     // Lembrete diário do Story "Questão do Dia" (Instagram). Acoplado ao cron do
     // radar (plano limita o nº de crons). Fail-safe: nunca derruba o cron.
     let igStory = { sent: false, reason: 'skipped' };
@@ -97,7 +104,7 @@ module.exports = async function handler(req, res) {
     let discussoes = { partida: false };
     try { discussoes = { partida: await dispararCadeia() }; }
     catch (e) { console.error('[cron-radar] cadeia discussoes erro:', (e && e.stack) || e); discussoes = { partida: false }; }
-    return json(res, 200, { ok: true, ...result, qotd, newsletter, podcasts, trialEmails, novidades, reengajamento, igStory, discussoes });
+    return json(res, 200, { ok: true, ...result, qotd, newsletter, podcasts, trialEmails, novidades, reengajamento, aovivo, igStory, discussoes });
   } catch (error) {
     console.error('[cron-radar] erro:', (error && error.stack) || error);
     try { await sendAlert('Radar diário falhou', ['O cron endocrine-radar lançou erro e NÃO atualizou o mural hoje.', 'Erro: ' + ((error && error.message) || error)]); } catch (_) {}

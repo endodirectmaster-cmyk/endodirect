@@ -369,6 +369,53 @@ try {
   fail('regressão do mural apagado falhou (verifique lib/radar.js e supabase/mural-apagado-vale-para-o-aluno.sql):\n' + out);
 }
 
+// ⚠️ Aula ao vivo. A regra do professor é que a aula é aberta a quem SE CADASTRA
+//     (é a porta de entrada) e a gravação é só de assinante. Se o link do stream
+//     vazasse para o visitante, a funcionalidade perderia o propósito inteiro —
+//     por isso o corte é na RPC, e este teste falha se voltar a ser só de tela.
+try {
+  execFileSync(process.execPath, [path.join('scripts', 'test-aula-ao-vivo.js')], { stdio: 'pipe' });
+  ok('regressão aula ao vivo: link só para quem tem conta; gravação só p/ assinante; aviso não repete');
+} catch (e) {
+  const out = (e.stdout ? e.stdout.toString() : '') + (e.stderr ? e.stderr.toString() : '');
+  fail('regressão da aula ao vivo falhou (verifique supabase/aula-ao-vivo.sql, lib/aovivo.js e aoVivo* no index.html):\n' + out);
+}
+
+// ⚠️ Endocrinologia PEDIÁTRICA no Analytics. O risco não é o número, é a leitura
+//     dele: "0" sem a cobertura da pergunta faz parecer "não tenho nenhum
+//     endocrinopediatra" quando a verdade é "ainda não perguntei" (0 de 53).
+try {
+  execFileSync(process.execPath, [path.join('scripts', 'test-endocrino-pediatrica.js')], { stdio: 'pipe' });
+  ok('regressão endocrino pediátrica: conta só quem declarou + mostra a cobertura da pergunta');
+} catch (e) {
+  const out = (e.stdout ? e.stdout.toString() : '') + (e.stderr ? e.stderr.toString() : '');
+  fail('regressão de endocrinologia pediátrica falhou (verifique ATUACAO_* e admPedHTML no index.html):\n' + out);
+}
+
+// ⚠️ A figura da Questão do Dia precisa ter a ver com a questão. O app anexava o
+//     PRIMEIRO resultado do Open-i sem conferir nada, e a busca do Open-i casa o
+//     TEXTO DO ARTIGO — uma prancha de oncologia de 6 painéis ilustrou uma questão
+//     de prolactina cujo enunciado dizia que a RM de sela era NORMAL.
+try {
+  execFileSync(process.execPath, [path.join('scripts', 'test-imagem-questao.js')], { stdio: 'pipe' });
+  ok('regressão imagem da questão: figura conferida contra a busca; exame normal não é ilustrado');
+} catch (e) {
+  const out = (e.stdout ? e.stdout.toString() : '') + (e.stderr ? e.stderr.toString() : '');
+  fail('regressão da imagem da questão falhou (verifique igImgRelevante/IG_IMAGEQUERY_RULE no index.html):\n' + out);
+}
+
+// ⚠️ O save do painel apagava, em silêncio, edição feita direto no banco. Em
+//     06/08 as tabelas do posicionamento de hipogonadismo foram gravadas às 12:30
+//     e sumiram às 12:48 no save de uma aba aberta desde antes: mergeConcurrent só
+//     acrescentava chave nova e descartava alteração em item já existente.
+try {
+  execFileSync(process.execPath, [path.join('scripts', 'test-merge-servidor.js')], { stdio: 'pipe' });
+  ok('regressão merge com o servidor: edição server-side sobrevive ao save do painel');
+} catch (e) {
+  const out = (e.stdout ? e.stdout.toString() : '') + (e.stderr ? e.stderr.toString() : '');
+  fail('regressão do merge com o servidor falhou (verifique mergeConcurrent/itemSig no index.html):\n' + out);
+}
+
 // ⚠️ Feedback do aluno. O botão "Enviar" ficou meses trocando a tela pelo
 //     "Obrigado pelo feedback!" e DESCARTANDO o texto — sem erro em log nenhum.
 //     Como a plataforma agora CONVIDA quem assina há mais de 30 dias, voltar

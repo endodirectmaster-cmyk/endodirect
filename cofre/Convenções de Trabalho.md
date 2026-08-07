@@ -5,6 +5,43 @@ atualizado: 2026-07-31
 
 # Convenções de Trabalho
 
+## 🌐 A rede do ambiente é CONFIGURÁVEL — e desde 06/08/2026 está aberta (2026-08-06)
+
+Durante meses eu tratei "o proxy bloqueia" como fato da natureza e **construí
+contornos**: o harness de Chromium local existe porque eu não alcançava o preview
+da Vercel; recusei escrever conteúdo clínico porque não alcançava o site da
+revista; validei o filtro de imagem com **fixtures inventadas por mim** porque não
+alcançava o Open-i.
+
+**Era configuração, não limite.** O ambiente roda com um nível de acesso de rede
+(`None` / `Trusted` / `Full` / `Custom`). O padrão é **Trusted**, que libera só
+uma lista fixa (npm, PyPI, GitHub, registries) — todo o resto leva **403 do
+proxy**. Em `claude.ai/code` → ícone de nuvem acima da caixa de mensagem →
+engrenagem do ambiente → **Network access: Custom** → **Allowed domains**, um por
+linha. ⚠️ Marcar **"Also include default list of common package managers"**, senão
+o Custom SUBSTITUI a lista padrão e o npm/PyPI somem.
+
+O professor abriu em 06/08 e passou a valer **na sessão em curso**, não só nas
+novas. Liberados: `openi.nlm.nih.gov`, `eutils.ncbi.nlm.nih.gov`,
+`pubmed.ncbi.nlm.nih.gov`, `endodirect.com.br` (+ subdomínios), `*.supabase.co`,
+`*.vercel.app`.
+
+**O que isso mudou na mesma hora:** validei o filtro de imagem contra a busca real
+e descobri que **3 das 6 figuras que meu filtro aprovava não eram exame** (curva
+ROC, gráfico de barras, lâmina de citologia) — as fixtures davam 10/10. Ver
+[[Decisões]].
+
+**A lição, e ela é geral:** *fixture escrita por mim é otimista por construção — eu
+escrevo a entrada que o meu código espera.* Antes de me contentar com teste
+sintético, **perguntar se dá para bater na fonte de verdade** — e se um 403 estiver
+no caminho, dizer qual host e pedir, em vez de contornar.
+
+⚠️ **Não contornar a política por dentro:** cheguei a ver que o Postgres do
+Supabase tem a extensão `http` disponível e daria para fazer o banco buscar por
+mim. Não é o caminho — é furar a política de egresso por dentro da produção, e
+abre SSRF a partir do banco. O `README` do proxy diz explicitamente para **relatar
+o host bloqueado, não rotear em volta**.
+
 ## ⚠️ Branch depois de um squash-merge: rebase ANTES de abrir o próximo PR (2026-07-31)
 
 Abri o PR #659 no mesmo branch que já tinha sido **squash-mergeado** duas vezes. Dois sintomas, os dois com cara de outra coisa:
