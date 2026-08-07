@@ -369,6 +369,18 @@ try {
   fail('regressão do mural apagado falhou (verifique lib/radar.js e supabase/mural-apagado-vale-para-o-aluno.sql):\n' + out);
 }
 
+// ⚠️ Aula ao vivo. A regra do professor é que a aula é aberta a quem SE CADASTRA
+//     (é a porta de entrada) e a gravação é só de assinante. Se o link do stream
+//     vazasse para o visitante, a funcionalidade perderia o propósito inteiro —
+//     por isso o corte é na RPC, e este teste falha se voltar a ser só de tela.
+try {
+  execFileSync(process.execPath, [path.join('scripts', 'test-aula-ao-vivo.js')], { stdio: 'pipe' });
+  ok('regressão aula ao vivo: link só para quem tem conta; gravação só p/ assinante; aviso não repete');
+} catch (e) {
+  const out = (e.stdout ? e.stdout.toString() : '') + (e.stderr ? e.stderr.toString() : '');
+  fail('regressão da aula ao vivo falhou (verifique supabase/aula-ao-vivo.sql, lib/aovivo.js e aoVivo* no index.html):\n' + out);
+}
+
 // ⚠️ Endocrinologia PEDIÁTRICA no Analytics. O risco não é o número, é a leitura
 //     dele: "0" sem a cobertura da pergunta faz parecer "não tenho nenhum
 //     endocrinopediatra" quando a verdade é "ainda não perguntei" (0 de 53).
