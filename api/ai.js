@@ -116,6 +116,11 @@ async function openiSearch(query, n) {
   }).filter(function (x) { return x.img; });
 }
 
+// Base clínica PROFUNDA por subespecialidade (lib/ → não conta como função
+// serverless). Ver o cabeçalho de lib/clinical-deep.js para por que ela mora no
+// servidor e não no index.html.
+const { deepFor } = require('./../lib/clinical-deep');
+
 module.exports = async function handler(req, res) {
   if (req.method === 'OPTIONS') {
     res.setHeader('Allow', 'POST, OPTIONS');
@@ -238,10 +243,22 @@ module.exports = async function handler(req, res) {
   // Prescrição) é cacheado inteiro. Tem de ser STRING ou ARRAY de blocos 'text'.
   const SYS_SPLIT = '__ENDODIRECT_SYS_SPLIT_b1f7__'; // sentinela IDENTICA a de authoringSys (index.html)
   const rawSystem = String(body.system || '');
+  // ⚠️ TETO DO NÚCLEO. Ultrapassá-lo CORTA EM SILÊNCIO o FIM do bloco — a IA
+  // perde diretriz sem erro, sem log e sem nada quebrar na tela. Em 07/08/2026 o
+  // núcleo estava a 341 caracteres deste teto; scripts/test-teto-diretrizes.js
+  // trava no CI antes do prejuízo.
+  const TETO_NUCLEO = 60000;
+  // O bloco PROFUNDO da subespecialidade entra no MESMO prefixo cacheável: o
+  // prefixo passa a ser `núcleo + profundo(área)`, estável por área, então cada
+  // subespecialidade reaproveita a própria entrada de cache.
+  const TETO_PROFUNDO = 120000;
+  const areaPedida = String(body.area || body.grounding || '').slice(0, 120);
+  let profundo = '';
+  try { profundo = deepFor(areaPedida, TETO_PROFUNDO); } catch (e) { profundo = ''; }
   let system;
   if (rawSystem.indexOf(SYS_SPLIT) !== -1) {
     const parts = rawSystem.split(SYS_SPLIT);
-    const head = parts[0].slice(0, 60000);        // diretrizes estáveis = prefixo cacheável (idêntico em todos os geradores)
+    const head = parts[0].slice(0, TETO_NUCLEO) + profundo;  // núcleo + aprofundamento da área = prefixo cacheável
     const tail = parts.slice(1).join('').slice(0, 8000); // formato JSON/persona variável (não cacheia)
     system = [];
     if (head) system.push({ type: 'text', text: head, cache_control: { type: 'ephemeral' } });
