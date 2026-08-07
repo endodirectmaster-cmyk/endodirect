@@ -5,6 +5,25 @@ atualizado: 2026-08-07
 
 # Convenções de Trabalho
 
+## 🚀 Deploy AUTORIZADO em pé, sem perguntar (2026-08-07)
+
+*"pode ir deployando sem falar comigo"* — dito depois de eu segurar em produção,
+esperando aprovação, uma correção de conteúdo clínico que podia levar alguém a
+corrigir sódio rápido demais. **A autorização é permanente e vale para o
+trabalho normal.**
+
+**O que NÃO muda:** deploy só depois de `ci-validate` + harness A/B em Chromium
+(e, para mudança de aparência, print). A autorização remove a espera pela
+aprovação, não a conferência.
+
+**O que continua exigindo pergunta**, porque é decisão dele e não minha:
+mudança de preço, de regra de acesso/liberação de curso, envio de e-mail em
+massa, e qualquer coisa que apague dado de aluno.
+
+**A lição por trás:** havia correção clínica pronta e testada parada no branch
+enquanto a versão errada rodava em produção. Segurar por educação tem custo — e
+naquele caso o custo era clínico.
+
 ## 🕳️ A QUARTA camada: erro de OMISSÃO não deixa rastro (2026-08-07)
 
 A auditoria adversarial do consenso de prolactinoma achou 9 erros de sentido em
