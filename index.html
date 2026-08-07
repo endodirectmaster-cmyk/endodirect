@@ -872,16 +872,18 @@ html[data-theme="light"] .cat-pill.on{background:var(--blue);border-color:var(--
 .curso-capa .cc-img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;display:block;z-index:2}
 .curso-capa.cc-off{filter:grayscale(1);opacity:.55}
 /* Card de curso do aluno (a faixa + nome + contagem). Largura ELÁSTICA, não
-   fixa: com 176px travados, dois cards + o vão passavam de 360px e o celular
-   ficava com um card por linha. Com flex-basis 156 e teto de 210 cabem dois no
-   celular e cinco no computador. O align-items:stretch do flex-wrap iguala a
-   altura quando um nome quebra em duas linhas. */
-.curso-tile{display:flex;flex-direction:column;gap:.15rem;flex:1 1 140px;min-width:132px;max-width:210px;border:1.5px solid var(--bd2);background:var(--surface);border-radius:14px;padding:.5rem;cursor:pointer;text-align:left;transition:.15s;font-family:var(--font)}
+   fixa. ⚠️ Quem decide a QUEBRA de linha é o FLEX-BASIS, não o min-width: com
+   basis 190 dois cards somavam 391px e o celular de 360 quebrava em um por
+   linha, mesmo com min-width 148 permitindo dois. Basis 150 cabe dois no
+   celular e o flex-grow leva ao teto de 250 no computador.
+   O align-items:stretch do flex-wrap iguala a altura quando um nome quebra em
+   duas linhas. */
+.curso-tile{display:flex;flex-direction:column;gap:.2rem;flex:1 1 150px;min-width:140px;max-width:250px;border:1.5px solid var(--bd2);background:var(--surface);border-radius:14px;padding:.5rem;cursor:pointer;text-align:left;transition:.15s;font-family:var(--font)}
 .curso-tile:hover{border-color:var(--blue);transform:translateY(-2px)}
 .curso-tile.on{border-color:var(--blue);background:var(--blue-l)}
 .curso-tile.lock{border-style:dashed;opacity:.72}
-.curso-tile .ct-nome{font-size:.83rem;font-weight:700;color:var(--tx);line-height:1.3;padding:.15rem .15rem 0}
-.curso-tile .ct-sub{font-size:.68rem;color:var(--t3);padding:0 .15rem .1rem}
+.curso-tile .ct-nome{font-size:.88rem;font-weight:700;color:var(--tx);line-height:1.3;padding:.15rem .15rem 0}
+.curso-tile .ct-sub{font-size:.72rem;color:var(--t3);padding:0 .15rem .1rem}
 .curso-tile .ct-sub.gold{color:var(--gold);font-weight:700}
 /* Mesma capa no painel do professor, dentro do card de curso já existente. */
 .dir-sub-btn .curso-capa{margin-bottom:.55rem}
@@ -8160,13 +8162,17 @@ function capaUrlOk(u){var s=String(u||'').trim();return /^https?:\/\//i.test(s)|
 // Bloco visual da capa. Ordem de preferência: imagem própria do professor
 // (campo `capa` do catálogo) → quadro da aula no Bunny → desenho gerado.
 function cursoCapaHTML(nome,slug,capaUrl,altura,cinza){
-  var c=cursoCapa(nome,slug),h=altura||78;
+  var c=cursoCapa(nome,slug),h=altura||0;
+  // altura 0 = proporcional (16:9). Com altura FIXA, o mesmo card fica 1,9:1 no
+  // computador e 1,17:1 no celular — o recorte da foto muda de acordo com a
+  // largura da tela, que é justamente o que não se quer.
+  var dim=h?('height:'+h+'px'):'aspect-ratio:16/9';
   var img=capaUrl&&capaUrlOk(capaUrl)?String(capaUrl).trim():cursoCapaReal(slug);
   // ⚠️ O desenho é SEMPRE renderizado, com a foto POR CIMA. É o que garante que
   // nunca apareça capa quebrada: se a miniatura não existir (vídeo sem quadro
   // gerado, pull zone com token, curso sem aula), o `onerror` remove a imagem e
   // sobra o desenho — em vez do ícone de foto ausente.
-  return '<div class="curso-capa'+(cinza?' cc-off':'')+'" style="--cg1:'+c.g[0]+';--cg2:'+c.g[1]+';height:'+h+'px">'
+  return '<div class="curso-capa'+(cinza?' cc-off':'')+'" style="--cg1:'+c.g[0]+';--cg2:'+c.g[1]+';'+dim+'">'
     +'<svg viewBox="0 0 24 24" aria-hidden="true">'+c.svg+'</svg>'
     +(img?'<img class="cc-img" src="'+esc(img)+'" alt="" loading="lazy" onerror="this.remove()">':'')
     +'</div>';
@@ -8194,17 +8200,17 @@ function renderCursosAluno(){
     if(!acc&&!sample){
       // Não incluído no plano: capa dessaturada; ao clicar, abre o upgrade.
       return '<button type="button" class="curso-tile lock" data-curso-upsell="1" title="Não incluído no seu plano — clique para fazer upgrade">'
-        +cursoCapaHTML(nome,slug,capa,96,true)
+        +cursoCapaHTML(nome,slug,capa,0,true)
         +'<span class="ct-nome" style="color:var(--t2)">'+esc(nome)+'</span><span class="ct-sub">🔒 Fazer upgrade</span></button>';
     }
     var subline=sample?'<span class="ct-sub gold">🎁 amostra grátis</span>':'<span class="ct-sub">'+n+' aula'+(n===1?'':'s')+'</span>';
     return '<button type="button" class="curso-tile'+(active?' on':'')+'" data-cursofilter="'+esc(slug)+'">'
-      +cursoCapaHTML(nome,slug,capa,96,false)
+      +cursoCapaHTML(nome,slug,capa,0,false)
       +'<span class="ct-nome">'+esc(nome)+'</span>'+subline+'</button>';
   }
   var allCount=data.filter(function(c){return cursoAcessivel(c.curso);}).length;
   var catVis=catalog.filter(function(cc){return cursoVisivel(cc.slug);});
-  if(frow)frow.innerHTML='<div style="display:flex;flex-wrap:wrap;gap:.7rem">'+catVis.map(function(cc){return aTile(cc.slug,cc.nome,cnt[cc.slug]||0,cc.capa);}).join('')+'</div>';
+  if(frow)frow.innerHTML='<div style="display:flex;flex-wrap:wrap;gap:.7rem;width:100%">'+catVis.map(function(cc){return aTile(cc.slug,cc.nome,cnt[cc.slug]||0,cc.capa);}).join('')+'</div>';
   if(cursoFilter&&!cursoAcessivel(cursoFilter)&&!cursoTemLiberada(cursoFilter)){cursoFilter='';cursoMod='';}
   var el=document.getElementById('curso-list');if(!el)return;
   // Primeira entrada: mostra só os cards de curso (frow). As subespecialidades
@@ -14142,7 +14148,7 @@ function admCursosHTML(){
   if(!admCursoFiltro){
     // Nível 0 — grade de cursos (somente os cursos).
     verHTML='<div style="font-size:.72rem;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--t3);margin-bottom:.6rem">Escolha um curso para abrir</div>'
-      +'<div class="dir-sub-grid">'+(Array.isArray(catalogoCursos)?catalogoCursos:[]).map(function(cc){var n=cont[cc.slug]||0;var nm=cc.nome||cursoNomeBySlug(cc.slug);return '<button class="dir-sub-btn" data-curso-btn="'+esc(cc.slug)+'">'+cursoCapaHTML(nm,cc.slug,cc.capa,104,false)+'<h3>'+esc(nm)+'</h3><div class="dsb-cnt">'+n+' aula'+(n===1?'':'s')+'</div></button>';}).join('')+'</div>';
+      +'<div class="dir-sub-grid">'+(Array.isArray(catalogoCursos)?catalogoCursos:[]).map(function(cc){var n=cont[cc.slug]||0;var nm=cc.nome||cursoNomeBySlug(cc.slug);return '<button class="dir-sub-btn" data-curso-btn="'+esc(cc.slug)+'">'+cursoCapaHTML(nm,cc.slug,cc.capa,0,false)+'<h3>'+esc(nm)+'</h3><div class="dsb-cnt">'+n+' aula'+(n===1?'':'s')+'</div></button>';}).join('')+'</div>';
   }else if(!admCursoMod){
     // Nível 1 — subespecialidades do curso (+ adicionar subespecialidade).
     var cnome=cursoNomeBySlug(admCursoFiltro);
