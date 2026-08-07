@@ -60,6 +60,60 @@ function semHifenDeQuebra(s) {
   return String(s || '').replace(/-\s+/g, '');
 }
 
+// ⚠️ ELISÃO DECLARADA — `[…]` dentro da citação (07/08/2026).
+//
+// POR QUE ISTO EXISTE. O PDF de duas colunas do Nature Reviews Primer de
+// osteogênese imperfeita sai da extração com as COLUNAS INTERCALADAS. A frase
+// verdadeira é:
+//
+//   "The increased mineral content in bone of patients with osteogenesis
+//    imperfecta is unchanged by bisphosphonate treatment"
+//
+// e no texto extraído ela aparece assim, partida por um pedaço da outra coluna:
+//
+//   "The increased mineral content in bone of patients with |deletion in Wnt1 in
+//    exon 3) survives post natally, has| osteogenesis imperfecta is unchanged by
+//    bisphosphonate treatment"
+//
+// Exigindo citação CONTÍGUA, o extrator só tinha dois caminhos, os dois ruins:
+// cortar a citação no ponto da quebra — e aí a afirmação "não é alterado pelo
+// bisfosfonato" fica sem NENHUM respaldo, que é o defeito que a auditoria achou
+// em 11 fatos deste extrato — ou descartar o fato, perdendo o conteúdo.
+//
+// A elisão declarada resolve sem afrouxar: cada pedaço continua LITERAL e
+// conferido, a ordem tem de ser a do texto, e o buraco tem tamanho máximo. O que
+// muda é que o extrator passa a poder DIZER que pulou algo, em vez de fingir que
+// a frase acabava ali. Escondido é que era perigoso.
+const ELISAO = /\s*\[(?:…|\.\.\.)\]\s*/;
+const GAP_MAX = 400; // um respingo de coluna tem ~50-120 chars; 400 dá folga sem permitir costurar trechos distantes
+
+// Devolve null se a citação (com ou sem elisão) casa com a fonte; senão, o motivo.
+function conferirCitacao(cit, fonte, fonteSH) {
+  const pedacos = String(cit).split(ELISAO).map((p) => norm(p)).filter((p) => p.length);
+  if (pedacos.length === 1) {
+    const c = pedacos[0];
+    if (fonte.includes(c) || fonteSH.includes(semHifenDeQuebra(c))) return null;
+    return 'CITAÇÃO NÃO ENCONTRADA NO PDF';
+  }
+  // Com elisão: cada pedaço literal, NA ORDEM, e o buraco entre eles limitado.
+  for (const p of pedacos) {
+    if (p.length < 12) return `pedaço de citação curto demais entre elisões ("${p}") — não prova nada`;
+  }
+  for (const base of [fonte, fonteSH]) {
+    const alvos = base === fonte ? pedacos : pedacos.map(semHifenDeQuebra);
+    let pos = 0, ok = true, buraco = 0;
+    for (const p of alvos) {
+      const j = base.indexOf(p, pos);
+      if (j < 0) { ok = false; break; }
+      if (pos > 0) buraco = Math.max(buraco, j - pos);
+      pos = j + p.length;
+    }
+    if (ok && buraco <= GAP_MAX) return null;
+    if (ok) return `elisão pula ${buraco} caracteres (máximo ${GAP_MAX}) — isso não é quebra de coluna, é costurar trechos distantes`;
+  }
+  return 'CITAÇÃO NÃO ENCONTRADA NO PDF (algum pedaço da elisão não existe, ou estão fora de ordem)';
+}
+
 
 // ⚠️ FORÇA DA RECOMENDAÇÃO — achado da auditoria adversarial de 07/08/2026.
 // "We suggest" é recomendação GRADE CONDICIONAL (frequentemente com certeza muito
@@ -129,6 +183,7 @@ function main() {
       continue;
     }
     const fonte = norm(fs.readFileSync(pTexto, 'utf8'));
+    const fonteSH = semHifenDeQuebra(fonte); // calculado uma vez por extrato, não por fato
 
     const fatos = Array.isArray(ext.fatos) ? ext.fatos : [];
     if (!fatos.length) problemas.push('extrato sem nenhum fato');
@@ -140,15 +195,18 @@ function main() {
       const afi = String((f && f.afirmacao) || '');
       if (!afi.trim()) { problemas.push(`${rot}: sem afirmação`); totReprovados++; return; }
       if (!cit.trim()) { problemas.push(`${rot}: SEM CITAÇÃO — regra inegociável`); totReprovados++; return; }
-      if (cit.trim().length < 25) {
+      if (cit.replace(ELISAO, ' ').trim().length < 25) {
         problemas.push(`${rot}: citação curta demais (${cit.trim().length} chars) para servir de prova`);
         totReprovados++; return;
       }
-      const c = norm(cit);
-      if (!fonte.includes(c) && !semHifenDeQuebra(fonte).includes(semHifenDeQuebra(c))) {
-        problemas.push(`${rot}: ⚠️ CITAÇÃO NÃO ENCONTRADA NO PDF → "${cit.slice(0, 90)}…"`);
+      const motivo = conferirCitacao(cit, fonte, fonteSH);
+      if (motivo) {
+        problemas.push(`${rot}: ⚠️ ${motivo} → "${cit.slice(0, 90)}…"`);
         totReprovados++; return;
       }
+      // Para as regras seguintes (números, força) a elisão não importa: o que
+      // vale é o texto literal que a citação de fato traz.
+      const c = norm(String(cit).split(ELISAO).join(' '));
       const faltando = numerosRelevantes(afi).filter((n) => !numeroPresente(n, c));
       if (faltando.length) {
         problemas.push(`${rot}: ⚠️ número(s) na afirmação sem respaldo na citação: ${faltando.join(', ')} → "${afi.slice(0, 90)}…"`);
