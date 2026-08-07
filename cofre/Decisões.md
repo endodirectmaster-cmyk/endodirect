@@ -8,6 +8,12 @@ atualizado: 2026-08-07
 Log de decisões de produto e técnicas (mais recentes no topo).
 
 ## 2026-08
+- **🔕 Aula ao vivo DESLIGADA por uma chave só, não apagada (2026-08-07, "pode tirar por enquanto este bloco de aula ao vivo").** `AO_VIVO_ATIVO=false` no `index.html` governa os SEIS pontos de entrada de uma vez: formulário no painel do professor, item no menu do aluno, painel de assistir (com desvio em `goPanel`), banner da landing, consulta ao servidor e o poll de 60s. Trocar para `true` religa tudo.
+  - **O risco não era desligar, era RELIGAR PELA METADE** — alguém trocar a chave esperando a funcionalidade inteira e receber o item de menu sem o formulário para agendar. O teste `test-aula-ao-vivo.js` passou a exigir que TODOS os pontos consultem a mesma chave, e falha se um deles deixar de consultá-la.
+  - **A chave é declarada ANTES da primeira função que a lê**, e o teste trava isso: declarada depois, a primeira leitura pegaria `undefined` — que hoje é falsy e por acaso dá o resultado certo, mas quebraria calado se o padrão um dia virar ligado.
+  - **O desvio em `goPanel` fica no TOPO da função**, antes de gravar `last_panel`: senão um link ou hash antigo gravaria o painel morto e o aluno voltaria nele a cada reload só para ser desviado de novo.
+  - Nada foi removido: RPC `endodirect_aovivo`, `lib/aovivo.js` e o aviso no cron seguem no lugar.
+
 - **🎨 Capa dos cursos: desenho SVG gerado do nome, nos dois painéis (2026-08-07, "deixa uma imagem mais bonitinha para cada um dos cursos, tanto no painel do professor quanto do aluno" → "Porque está muito feio esses ícones").**
   - **O que havia:** todo curso saía com o mesmo `🎓` cinza. Quatro cards idênticos, sem hierarquia visual e sem dizer nada sobre o conteúdo.
   - **Duas escolhas, e o porquê de cada uma.**

@@ -5452,7 +5452,16 @@ function showLoginScreen(){var l=document.getElementById('landing-screen');if(l)
 function showLandingScreen(){var l=document.getElementById('landing-screen');if(l)l.style.display='block';var ls=document.getElementById('login-screen');if(ls)ls.style.display='none';try{lpAoVivoBanner();}catch(e){}}
 // Faixa da aula ao vivo na landing (visitante sem conta). Best-effort: qualquer
 // falha simplesmente não mostra a faixa — a landing não pode depender disto.
+// ⚠️ CHAVE GERAL DA AULA AO VIVO.
+// O professor pediu para tirar o bloco do painel "por enquanto" (07/08/2026) —
+// não para apagar a funcionalidade. Uma chave só governa TUDO: o formulário no
+// painel dele, o item no menu do aluno, o painel de assistir, o banner da
+// landing e o poll de 60s. Trocar para `true` religa tudo, sem mexer em mais
+// nada. Gatear em cada ponto separadamente seria a receita para religar meio
+// desligado — o item do menu voltando sem o formulário para agendar, por exemplo.
+var AO_VIVO_ATIVO=false;
 function lpAoVivoBanner(){
+  if(!AO_VIVO_ATIVO)return;
   var el=document.getElementById('lp-aovivo');if(!el)return;
   var client=getSupabaseClient();if(!client)return;
   client.rpc('endodirect_aovivo').then(function(r){
@@ -6656,6 +6665,7 @@ function aoVivoContagem(ms){
 // menu com item morto ensina o aluno a ignorar o menu.
 function aoVivoAplicarNav(){
   var b=document.getElementById('sb-aovivo');if(!b)return;
+  if(!AO_VIVO_ATIVO){b.style.display='none';return;}
   var f=aoVivoFase(aoVivo);
   var mostrar=(f.fase==='agendada'||f.fase==='ao_vivo');
   b.style.display=mostrar?'':'none';
@@ -6663,6 +6673,7 @@ function aoVivoAplicarNav(){
     +(f.fase==='agendada'?'<span class="tag tag-blue" style="margin-left:auto;font-size:.6rem">em breve</span>':'');
 }
 function carregarAoVivo(){
+  if(!AO_VIVO_ATIVO)return Promise.resolve(null);
   var client=getSupabaseClient();
   if(!client)return Promise.resolve(null);
   return client.rpc('endodirect_aovivo').then(function(r){
@@ -6680,7 +6691,7 @@ function carregarAoVivo(){
 // Reconsulta periódica: a aula começa com a plataforma JÁ ABERTA, então sem isto
 // o aluno só veria o "ao vivo" depois de dar F5.
 function aoVivoIniciarPoll(){
-  if(aoVivoPoll)return;
+  if(!AO_VIVO_ATIVO||aoVivoPoll)return;
   aoVivoPoll=setInterval(function(){carregarAoVivo();},60000);
 }
 function aoVivoPlayerHTML(a){
@@ -6765,6 +6776,10 @@ function renderAoVivo(){
   if(ba)ba.addEventListener('click',function(){try{goPanel('plano');}catch(e){location.hash='#planos';}});
 }
 function goPanel(id){
+  // Aula ao vivo desligada (ver AO_VIVO_ATIVO): desvia ANTES de qualquer coisa,
+  // senão o painel morto ainda seria gravado como `last_panel` e o aluno voltaria
+  // nele a cada reload, só para ser desviado de novo.
+  if(id==='aovivo'&&!AO_VIVO_ATIVO)id='dash';
   if(!canSeePanel(id)){showLockedPanel(id);return;}
   try{deviceTickThrottled();}catch(e){} // valida o limite de dispositivos a cada navegação (throttle 4s)
   try{if(currentUser&&currentUser.role!=='admin')lsSet('last_panel',id);}catch(e){} // lembra o painel p/ restaurar no reload
@@ -14072,6 +14087,7 @@ var admCursoFiltro='',admCursoVideoFile=null,admCursoVideoData=null,admCursoSubt
 // Agendamento da aula ao vivo. Fica no topo de Cursos porque é lá que a GRAVAÇÃO
 // vai morar depois (como aula normal, só para assinante).
 function admAoVivoHTML(){
+  if(!AO_VIVO_ATIVO)return '';
   var a=aoVivoAgendada||{},f=aoVivoFase(aoVivoAgendada);
   // <input type="datetime-local"> quer horário LOCAL sem fuso; o que guardamos é
   // ISO em UTC. Converter aqui evita a aula "andar" 3 horas ao reabrir o form.
