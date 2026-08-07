@@ -42,6 +42,12 @@ scratchpad/flashcards/missing*.json
 # (trechos de uma frase), que é uso legítimo e é o que a base clínica precisa.
 scratchpad/acervo/textos/
 scratchpad/acervo/__pycache__/
+# ⚠️ Pasta de trabalho isolada por artigo, criada quando mais de um agente extrai
+# ao mesmo tempo (o verificador roda sobre uma pasta inteira, então dois agentes
+# na mesma pasta fazem um reprovar pelo arquivo meio-escrito do outro). Ela
+# contém uma CÓPIA do texto integral — mesmo motivo de `textos/` estar aqui, e o
+# repositório é público. Só o extrato verificado sai dela para `extratos/`.
+scratchpad/acervo/trabalho/
 
 # Rascunhos que os agentes criam durante a extração (fatiadores, checadores
 # temporários, cache do Python). O que importa é o EXTRATO verificado.
