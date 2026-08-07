@@ -247,7 +247,17 @@ module.exports = async function handler(req, res) {
   // perde diretriz sem erro, sem log e sem nada quebrar na tela. Em 07/08/2026 o
   // núcleo estava a 341 caracteres deste teto; scripts/test-teto-diretrizes.js
   // trava no CI antes do prejuízo.
-  const TETO_NUCLEO = 60000;
+  //
+  // 60000 → 80000 em 07/08/2026. A varredura do acervo CORRIGE o núcleo, não só
+  // acrescenta profundidade: o consenso de prolactinoma da Pituitary Society
+  // mostrou que a 1ª linha se decide pelo grau de Knosp, e o núcleo dizia
+  // "agonista mesmo em macroadenoma". Corrigir isso sozinho já estourava o teto.
+  // Com 233 artigos ainda na fila, espremer o texto a cada correção transformaria
+  // o teto em pressão para escrever pior — exatamente ao contrário do objetivo.
+  // O custo é pequeno: o núcleo é o prefixo CACHEADO e idêntico em toda geração,
+  // então a 1ª chamada grava e as seguintes leem a ~0,1x. O que NÃO se pode é
+  // deixar crescer sem teto: sem ele o corte volta a ser silencioso.
+  const TETO_NUCLEO = 80000;
   // O bloco PROFUNDO da subespecialidade entra no MESMO prefixo cacheável: o
   // prefixo passa a ser `núcleo + profundo(área)`, estável por área, então cada
   // subespecialidade reaproveita a própria entrada de cache.
