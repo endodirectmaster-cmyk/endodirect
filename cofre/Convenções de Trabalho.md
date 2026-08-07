@@ -5,6 +5,56 @@ atualizado: 2026-08-07
 
 # Convenções de Trabalho
 
+## 🎣 RECUPERAÇÃO FALSA: o perigo não é o que o fato diz, é o que ele responde (2026-08-07)
+
+Modo de falha descoberto na auditoria da tireoide, e que nenhuma das quatro
+camadas anteriores mede.
+
+Nenhum dos 218 fatos afirmava "dar iodo antes da tionamida" — três diziam
+explicitamente o contrário. Mas:
+
+- **um** fato continha a frase *"o iodo for administrado primeiro"* (correto: é
+  a ordem entre iodo e **lítio**, terapia alternativa de uso incomum). Numa base
+  indexada, é ele que volta para *"qual a ordem do iodo na tempestade?"*;
+- **três** fatos de dose de iodo não tinham marcador de ordem nenhum — e a fonte
+  **tinha** o marcador na mesma célula de tabela. O fato irmão do SSKI preservou;
+  o do Lugol perdeu. Assimetria dentro do mesmo extrato.
+
+**A regra:** num acervo atomizado, todo fato precisa sobreviver a ser lido
+SOZINHO. Fato de dose de um fármaco cuja ORDEM importa tem de carregar a ordem.
+Fato de posologia cuja indicação tem porteiro (diagnóstico, população, fase) tem
+de carregar o porteiro — foi o mesmo defeito no NTIS, onde a posologia de
+hormônio flutuava ao lado da mensagem "não trate o eutireoidiano doente".
+
+**Ao mandar auditar, peça explicitamente:** *"o que este fato responde se for
+recuperado sozinho, sem os vizinhos?"*
+
+## ⏰ Rotina horária que mantém a sessão viva (2026-08-07)
+
+*"mantenha sempre a sessão ativa"*. O contêiner é recuperado por inatividade, e
+com ele param os agentes e se perde o estado de trabalho. Criada a rotina
+**`Endodirect — varredura clínica`**, que dispara **de hora em hora nesta mesma
+sessão** (não abre sessão nova — o contexto continua).
+
+**A ordem de prioridade que ela segue**, sempre nesta ordem:
+1. processar resultado de agente pendente (conferindo as acusações graves no
+   texto-fonte antes de aceitar — auditor erra);
+2. auditar os extratos que ainda não têm o campo `auditoria`, **priorizando por
+   risco clínico do assunto, não por tamanho**;
+3. só então extrair artigo novo, começando pelas áreas sem nenhum bloco.
+
+**⚠️ LIMITAÇÃO REAL da rotina: ela roda SEM conectores MCP.** As sessões que ela
+dispara não têm Google Drive nem GitHub. Consequências práticas:
+- **não consegue baixar artigo novo do Drive** (a etapa 3 fica bloqueada);
+- **não consegue abrir nem dar merge em PR** — ou seja, **não deploya**.
+
+O que ela FAZ bem: auditoria (os agentes trabalham em arquivo local), correção de
+extrato, verificação, remontagem da base, commit e push para o branch. O trabalho
+se acumula no branch e vai para produção na próxima sessão viva.
+
+Para a rotina ganhar conectores, ela precisa ser criada pela interface de
+Routines do claude.ai, não por aqui.
+
 ## 🚀 Deploy AUTORIZADO em pé, sem perguntar (2026-08-07)
 
 *"pode ir deployando sem falar comigo"* — dito depois de eu segurar em produção,
