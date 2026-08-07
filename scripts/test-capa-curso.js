@@ -34,12 +34,20 @@ function fatia(inicio, fim, rotulo) {
 }
 
 // ── carrega os helpers reais do index.html num sandbox ─────────────────────
-const js = fatia('var CURSO_GLIFOS={', 'function renderCursosAluno(){', 'bloco das capas');
+const js = fatia('var CURSO_GLIFOS={', 'function renderCursosAluno(){', 'bloco das capas');  // inclui cursoCapaReal + cursoCapaHTML
 const nomes = fatia('var CURSO_NOME_FALLBACK=', 'function loadCursoCatalogo(', 'cursoNomeBySlug');
 const caixa = {
   esc: (s) => String(s || '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;'),
   safeHttpUrl: (u) => /^https?:\/\//i.test(String(u || '').trim()),
-  catalogoCursos: []
+  catalogoCursos: [],
+  // aulas de mentira nos MESMOS formatos que estão no banco hoje
+  admCursos: [
+    { curso: 'endo_essencial', src: 'https://vimeo.com/1199272118?share=copy' },
+    { curso: 'endo_essencial', src: 'https://vz-1196f9a8-6ea.b-cdn.net/77f6d123-91c7-4f8a-9888-47c17609a293/playlist.m3u8' },
+    { curso: 'endoteem', src: 'https://player.mediadelivery.net/play/680513/37be5953-3d7c-4010-9412-e4c45127283b' },
+    { curso: 'endoteem', src: 'https://vz-f9c42905-205.b-cdn.net/d01bcc6b-42b0-428f-895a-4daa14df3563/playlist.m3u8' },
+    { curso: 'lipides', src: 'https://vimeo.com/999' }
+  ]
 };
 vm.createContext(caixa);
 vm.runInContext(js + '\n' + nomes, caixa);
@@ -101,11 +109,42 @@ ok(/<img class="cc-img" src="https:\/\/ex\.com\/a\.jpg"/.test(caixa.cursoCapaHTM
   'a capa não usa a imagem própria quando o link é https');
 const sujo = caixa.cursoCapaHTML('X', 'x', 'javascript:alert(1)', 78, false);
 ok(!/cc-img/.test(sujo) && /<svg/.test(sujo), 'link não-http virou <img> — tem de cair no desenho gerado');
+ok(!/javascript:/i.test(sujo), 'a URL javascript: vazou para o HTML da capa');
 // O que importa não é a palavra "onerror" aparecer — escapada, ela é texto
-// inerte. É a ASPA não fechar o atributo src e abrir um atributo novo.
+// inerte, e a capa tem um `onerror` LEGÍTIMO (o que troca a foto pelo desenho).
+// O que não pode é a ASPA da URL fechar o src e abrir um atributo novo: isso
+// apareceria como um SEGUNDO onerror e como um src cortado no meio.
 const injecao = caixa.cursoCapaHTML('X', 'x', 'https://e.com/"onerror="alert(1)', 78, false);
-ok(/&quot;/.test(injecao) && !/"\s*onerror/i.test(injecao),
-  'a aspa da URL da capa não foi escapada — dá para fechar src=" e injetar atributo');
+const src = injecao.match(/src="([^"]*)"/);
+ok(src && src[1] === 'https://e.com/&quot;onerror=&quot;alert(1)',
+  'a aspa da URL da capa não foi escapada — o src fechou antes da hora: ' + JSON.stringify(src && src[1]));
+// Contar "onerror=" no texto cru não serve: escapado, ele aparece DENTRO do
+// valor do src e o teste acusaria injeção onde não há. Tira os valores entre
+// aspas primeiro — o que sobrar são atributos de verdade.
+const semValores = injecao.replace(/="[^"]*"/g, '=""');
+ok((semValores.match(/onerror=/g) || []).length === 1,
+  'apareceu um onerror FORA de valor de atributo — a URL conseguiu injetar atributo');
+
+// ── 4b. miniatura REAL da aula (Bunny) ──────────────────────────────────────
+// O professor pediu "imagens mais reais". A fonte é o quadro da aula dele
+// mesmo, derivado do playlist.m3u8 que já está gravado. Se este trecho quebrar,
+// a capa volta a ser só desenho SEM ninguém perceber — daí o teste.
+ok(caixa.cursoCapaReal('endo_essencial') === 'https://vz-1196f9a8-6ea.b-cdn.net/77f6d123-91c7-4f8a-9888-47c17609a293/thumbnail.jpg',
+  'não derivou a miniatura da 1ª aula do Bunny em endo_essencial (a 1ª aula é do Vimeo e tem de ser pulada)');
+ok(caixa.cursoCapaReal('endoteem') === 'https://vz-f9c42905-205.b-cdn.net/d01bcc6b-42b0-428f-895a-4daa14df3563/thumbnail.jpg',
+  'não derivou a miniatura do Bunny em endoteem (o embed mediadelivery tem de ser pulado)');
+ok(caixa.cursoCapaReal('lipides') === '', 'curso só com Vimeo não devia render miniatura');
+ok(caixa.cursoCapaReal('hiperglicemia') === '', 'curso sem aula não devia render miniatura');
+
+// A foto entra POR CIMA do desenho, e o desenho continua lá: é o que evita capa
+// quebrada quando a miniatura não existe.
+const comFoto = caixa.cursoCapaHTML('Endocrinologia Essencial', 'endo_essencial', '', 78, false);
+ok(/<svg/.test(comFoto), 'o desenho sumiu quando há foto — sem ele, miniatura ausente vira capa quebrada');
+ok(/onerror="this.remove\(\)"/.test(comFoto), 'a foto não tem onerror — miniatura ausente deixaria ícone de imagem quebrada');
+ok(/cc-img/.test(comFoto), 'a foto do Bunny não foi aplicada');
+// A capa do professor tem prioridade sobre a miniatura da aula.
+ok(/src="https:\/\/meu\.site\/capa\.jpg"/.test(caixa.cursoCapaHTML('Endocrinologia Essencial', 'endo_essencial', 'https://meu.site/capa.jpg', 78, false)),
+  'a imagem própria do professor devia ganhar da miniatura da aula');
 
 // ── 5. nunca mostrar o slug cru ────────────────────────────────────────────
 caixa.catalogoCursos = [];   // catálogo do banco ainda não chegou

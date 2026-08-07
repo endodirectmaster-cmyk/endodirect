@@ -867,7 +867,9 @@ html[data-theme="light"] .cat-pill.on{background:var(--blue);border-color:var(--
 .curso-capa{position:relative;overflow:hidden;border-radius:10px;display:flex;align-items:center;justify-content:center;background:linear-gradient(135deg,var(--cg1,#1e40af),var(--cg2,#60a5fa));box-shadow:inset 0 -20px 30px -20px rgba(0,0,0,.5)}
 .curso-capa::after{content:"";position:absolute;inset:0;background:radial-gradient(120% 95% at 12% -10%,rgba(255,255,255,.3),rgba(255,255,255,0) 62%);pointer-events:none}
 .curso-capa svg{position:relative;z-index:1;width:44%;max-width:54px;height:auto;fill:none;stroke:#fff;stroke-width:1.6;stroke-linecap:round;stroke-linejoin:round;opacity:.96;filter:drop-shadow(0 2px 5px rgba(0,0,0,.32))}
-.curso-capa .cc-img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;display:block}
+/* z-index 2: a foto fica acima do desenho E do brilho do ::after — o brilho
+   existe para dar volume ao gradiente, e sobre uma foto só lavaria a imagem. */
+.curso-capa .cc-img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;display:block;z-index:2}
 .curso-capa.cc-off{filter:grayscale(1);opacity:.55}
 /* Card de curso do aluno (a faixa + nome + contagem). Largura ELÁSTICA, não
    fixa: com 176px travados, dois cards + o vão passavam de 360px e o celular
@@ -8115,14 +8117,37 @@ function cursoCapa(nome,slug){
   var h=0;for(var j=0;j<txt.length;j++)h=(h*31+txt.charCodeAt(j))>>>0;
   return {svg:CURSO_GLIFOS.capelo,g:CURSO_GRAD_FALLBACK[h%CURSO_GRAD_FALLBACK.length]};
 }
-// Bloco visual da capa. `capaUrl` (opcional) é a imagem própria do professor —
-// só entra se for http(s); qualquer outra coisa cai no desenho gerado.
+// ⚠️ IMAGEM DE VERDADE, e de onde ela sai.
+// O professor viu o desenho e pediu "ao invés de figurinhas, troca por imagens
+// mais reais". Foto de banco de imagens tem dois problemas: direito de uso (a
+// plataforma é paga) e não ter nada a ver com a AULA. A fonte certa já estava
+// aqui: TODA aula está no Bunny Stream, e o Bunny serve o quadro do vídeo no
+// mesmo caminho do `playlist.m3u8` que já está gravado na aula — trocando o nome
+// do arquivo por `thumbnail.jpg`. Ou seja, a capa passa a ser um quadro da aula
+// DO PRÓPRIO PROFESSOR: real, dele, sem upload e sem direito de imagem de
+// terceiro. Vimeo e o embed `player.mediadelivery.net` não expõem o quadro por
+// URL derivável (precisariam de chamada de API), então esses são pulados.
+function cursoCapaReal(slug){
+  var d=(typeof admCursos!=='undefined'&&Array.isArray(admCursos))?admCursos:[];
+  for(var i=0;i<d.length;i++){
+    var c=d[i];if(!c||c.curso!==slug)continue;
+    var m=String(c.src||'').match(/^(https:\/\/vz-[a-z0-9-]+\.b-cdn\.net\/[0-9a-f-]{36})\//i);
+    if(m)return m[1]+'/thumbnail.jpg';
+  }
+  return '';
+}
+// Bloco visual da capa. Ordem de preferência: imagem própria do professor
+// (campo `capa` do catálogo) → quadro da aula no Bunny → desenho gerado.
 function cursoCapaHTML(nome,slug,capaUrl,altura,cinza){
   var c=cursoCapa(nome,slug),h=altura||78;
-  var img=capaUrl&&safeHttpUrl(capaUrl)?String(capaUrl).trim():'';
+  var img=capaUrl&&safeHttpUrl(capaUrl)?String(capaUrl).trim():cursoCapaReal(slug);
+  // ⚠️ O desenho é SEMPRE renderizado, com a foto POR CIMA. É o que garante que
+  // nunca apareça capa quebrada: se a miniatura não existir (vídeo sem quadro
+  // gerado, pull zone com token, curso sem aula), o `onerror` remove a imagem e
+  // sobra o desenho — em vez do ícone de foto ausente.
   return '<div class="curso-capa'+(cinza?' cc-off':'')+'" style="--cg1:'+c.g[0]+';--cg2:'+c.g[1]+';height:'+h+'px">'
-    +(img?'<img class="cc-img" src="'+esc(img)+'" alt="" loading="lazy">'
-         :'<svg viewBox="0 0 24 24" aria-hidden="true">'+c.svg+'</svg>')
+    +'<svg viewBox="0 0 24 24" aria-hidden="true">'+c.svg+'</svg>'
+    +(img?'<img class="cc-img" src="'+esc(img)+'" alt="" loading="lazy" onerror="this.remove()">':'')
     +'</div>';
 }
 function renderCursosAluno(){
