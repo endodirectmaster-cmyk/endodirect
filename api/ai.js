@@ -254,14 +254,24 @@ module.exports = async function handler(req, res) {
   const TETO_PROFUNDO = 120000;
   const areaPedida = String(body.area || body.grounding || '').slice(0, 120);
   let profundo = '';
-  try { profundo = deepFor(areaPedida, TETO_PROFUNDO); } catch (e) { profundo = ''; }
+  // O 3º argumento é o TEMA: a seleção dentro da área é por relevância, porque a
+  // extração é exaustiva (um artigo de craniofaringioma tem 249 fatos) e mandar a
+  // área inteira não cabe nem faz sentido — questão de cetoacidose não precisa da
+  // tabela de doses da hipofosfatasia. Ver lib/clinical-deep.js.
+  try { profundo = deepFor(areaPedida, TETO_PROFUNDO, areaPedida); } catch (e) { profundo = ''; }
   let system;
   if (rawSystem.indexOf(SYS_SPLIT) !== -1) {
     const parts = rawSystem.split(SYS_SPLIT);
-    const head = parts[0].slice(0, TETO_NUCLEO) + profundo;  // núcleo + aprofundamento da área = prefixo cacheável
+    const nucleoHead = parts[0].slice(0, TETO_NUCLEO);      // núcleo = prefixo cacheável estável
+    const head = nucleoHead + profundo;                      // (mantido para o teste de tamanho)
     const tail = parts.slice(1).join('').slice(0, 8000); // formato JSON/persona variável (não cacheia)
     system = [];
-    if (head) system.push({ type: 'text', text: head, cache_control: { type: 'ephemeral' } });
+    // ⚠️ DOIS pontos de cache, não um. O NÚCLEO é idêntico em toda geração da
+    // plataforma e tem a melhor taxa de acerto possível; o APROFUNDAMENTO varia
+    // com o tema. Se fossem um bloco só, cada tema novo invalidaria também o
+    // núcleo e a economia do cache evaporaria.
+    if (nucleoHead) system.push({ type: 'text', text: nucleoHead, cache_control: { type: 'ephemeral' } });
+    if (profundo) system.push({ type: 'text', text: profundo, cache_control: { type: 'ephemeral' } });
     if (tail) system.push({ type: 'text', text: tail });
     if (!system.length) system = '';
   } else {

@@ -33,14 +33,45 @@ const TETO = parseInt(mTeto[1], 10);
 // ── a camada PROFUNDA tem de estar ligada, senão o conteúdo extraído dos
 //    artigos não chega à IA e o núcleo volta a ser o único limite ────────────
 ok(/require\(.*clinical-deep.*\)/.test(ai), 'api/ai.js tem de carregar lib/clinical-deep');
-ok(/head\s*=\s*parts\[0\]\.slice\(0,\s*TETO_NUCLEO\)\s*\+\s*profundo/.test(ai),
-  'o bloco profundo tem de entrar no MESMO prefixo cacheável do núcleo');
+ok(/nucleoHead\s*=\s*parts\[0\]\.slice\(0,\s*TETO_NUCLEO\)/.test(ai),
+  'o núcleo tem de ser cortado no TETO_NUCLEO antes de virar prefixo cacheável');
 const deep = require(path.join(raiz, 'lib', 'clinical-deep'));
 ok(deep.canonArea('Andrologia') === 'Endocrinologia Masculina',
   'a área tem de ser canonizada igual ao index.html (Andrologia = Endocrinologia Masculina)');
 ok(deep.canonArea('Cardiologia') === '', 'área fora da endocrinologia não pode receber bloco profundo');
 ok(deep.deepFor('Cardiologia') === '', 'sem área canônica, o bloco profundo é vazio');
 ok(deep.deepFor('Diabetes').length > 500, 'a área Diabetes já deve ter conteúdo profundo');
+
+
+// ── SELEÇÃO POR TEMA dentro da área ─────────────────────────────────────────
+// A extração do acervo é exaustiva de propósito (10 artigos = 1.325 fatos), então
+// a ENTREGA precisa escolher. Sem isto, ou a área inteira estoura o teto ou a IA
+// recebe a tabela de doses da hipofosfatasia numa questão de cetoacidose.
+const cob = deep.coberturaDeep();
+const areaComVarios = Object.keys(cob).filter((a) => cob[a] >= 2)[0];
+if (areaComVarios) {
+  const blocos = deep.DEEP[areaComVarios];
+  const temaDoSegundo = String(blocos[1].tema || '').split(/[—-]/)[0].trim();
+  const saida = deep.deepFor(areaComVarios, 120000, areaComVarios + ' ' + temaDoSegundo);
+  const primeiro = (saida.match(/• ([^—]{0,70})/) || [])[1] || '';
+  ok(primeiro.toLowerCase().includes(temaDoSegundo.toLowerCase().slice(0, 12)),
+    `⚠️ a seleção por tema não priorizou o bloco pedido: pedi "${temaDoSegundo}" e veio "${primeiro.trim()}"`);
+}
+// ⚠️ Teto apertado NÃO pode devolver vazio: um artigo bem extraído passa de 40 mil
+// caracteres, então nenhum bloco inteiro cabe — e devolver nada faria a IA perder
+// justamente o tema que foi pedido.
+if (areaComVarios) {
+  const curto = deep.deepFor(areaComVarios, 9000, areaComVarios + ' ' + String(deep.DEEP[areaComVarios][0].tema || ''));
+  ok(curto.length > 3000, '⚠️ com teto apertado o bloco profundo veio VAZIO — deveria entregar o mais relevante cortado');
+  ok(/cortado por limite/.test(curto), 'o corte por limite tem de ser declarado no próprio texto');
+}
+// Os dois pontos de cache: núcleo e aprofundamento separados.
+ok(/nucleoHead, cache_control/.test(ai.replace(/\s+/g, ' ')) || /text: nucleoHead/.test(ai),
+  'o núcleo tem de ir como bloco cacheável próprio');
+ok(/text: profundo, cache_control/.test(ai.replace(/\s+/g, ' ')),
+  '⚠️ o aprofundamento tem de ter cache PRÓPRIO — junto do núcleo, cada tema novo invalidaria o núcleo também');
+ok(/deepFor\(areaPedida, TETO_PROFUNDO, areaPedida\)/.test(ai),
+  'api/ai.js tem de passar o TEMA para a seleção, não só a área');
 
 // ── avalia CLINICAL_GUIDELINES de verdade ────────────────────────────────────
 function valorDaVar(nome) {
