@@ -62,10 +62,20 @@ function main() {
     if (!canon) { semArea.push(`${arq} (area=${JSON.stringify(e.area)})`); continue; }
     const fatos = (Array.isArray(e.fatos) ? e.fatos : []).map((f) => String(f.afirmacao || '').trim()).filter(Boolean);
     if (!fatos.length) continue;
+    // ⚠️ A RESSALVA VAI NA FRENTE, e isso é deliberado.
+    // O extrator registra em `conflito` quando o artigo CONTRARIA o núcleo — em
+    // geral porque o artigo é mais antigo. Caso real: a revisão de diabetes
+    // pós-transplante de 2016 manda EVITAR iSGLT2 e AR GLP-1, enquanto o núcleo
+    // carrega o ADA 2026, que os recomenda. Até 07/08 o montador DESCARTAVA esse
+    // campo: a IA recebia a conduta de 2016 sem saber que fora superada.
+    // Fica no INÍCIO do texto porque `deepFor` corta pelo fim — uma ressalva que
+    // o truncamento apaga é pior do que inútil, dá falsa sensação de proteção.
+    const ressalva = String(e.conflito || '').trim();
+    const corpo = fatos.join(' ');
     (porArea[canon] = porArea[canon] || []).push({
       tema: String(e.tema || e.titulo || '').trim(),
       fonte: String(e.fonte || '').trim(),
-      texto: fatos.join(' '),
+      texto: ressalva ? ('⚠️ RESSALVA — o núcleo prevalece sobre esta fonte nos pontos a seguir: ' + ressalva + ' | CONTEÚDO: ' + corpo) : corpo,
       _peso: PESO_TIPO[String(e.tipo || 'outro').toLowerCase()] != null ? PESO_TIPO[String(e.tipo || 'outro').toLowerCase()] : 6,
       _ano: Number(e.ano) || 0,
       _fatos: fatos.length

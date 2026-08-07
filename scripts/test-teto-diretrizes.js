@@ -73,6 +73,54 @@ ok(/text: profundo, cache_control/.test(ai.replace(/\s+/g, ' ')),
 ok(/deepFor\(areaPedida, TETO_PROFUNDO, areaPedida\)/.test(ai),
   'api/ai.js tem de passar o TEMA para a seleção, não só a área');
 
+
+// ⚠️ O bloco MAIS RELEVANTE não pode ser pulado por não caber. Sem esta garantia,
+// pedir um tema grande entregava silenciosamente um tema pequeno da mesma área —
+// conteúdo da área certa e do assunto errado, sem nenhum sinal.
+{
+  // ⚠️ A área tem de ter um bloco PEQUENO convivendo com um GRANDE. Numa área só
+  // de blocos grandes, nenhum cabe e o corte gracioso já salvaria sozinho — o teste
+  // passaria mesmo com o defeito. O caso que discrimina é: o pequeno cabe, o
+  // relevante não, e o pequeno entra no lugar dele.
+  const areas = Object.keys(deep.DEEP).filter((a) => {
+    const t = deep.DEEP[a].map((x) => x.texto.length);
+    return t.length >= 2 && Math.min(...t) < 6000 && Math.max(...t) > 20000;
+  });
+  for (const a of areas) {
+    const maior = deep.DEEP[a].slice().sort((x, y) => y.texto.length - x.texto.length)[0];
+    // ⚠️ A chave tem de DISCRIMINAR. Pegar o começo do tema não serve: o bloco
+    // grande de Diabetes chama-se "Diabetes pós-transplante…" e o começo dá
+    // "diabetes", que casa também com o bloco de MODY — o teste passava com o
+    // defeito presente. Use a palavra mais longa do tema que NÃO é o nome da área.
+    const chave = String(maior.tema || '')
+      .split(/[^A-Za-zÀ-ÿ]+/)
+      .filter((w) => w.length >= 7 && w.toLowerCase() !== a.toLowerCase())
+      .sort((x, y) => y.length - x.length)[0] || '';
+    if (chave.length < 7) continue;
+    const apertado = deep.deepFor(a, 9000, a + ' ' + chave);
+    const primeiro = (apertado.match(/• ([^—]{0,70})/) || [])[1] || '';
+    ok(primeiro.toLowerCase().includes(chave.toLowerCase().slice(0, 7)),
+      `⚠️ com teto apertado, pedi "${chave}" em ${a} e veio "${primeiro.trim()}" — o bloco mais relevante foi PULADO em vez de cortado`);
+    break;
+  }
+}
+// A RESSALVA de conflito com o núcleo tem de chegar à IA, e no INÍCIO do bloco
+// (o corte por teto come o fim). Sem ela, a IA recebe conduta superada sem aviso.
+{
+  const dados = require('../lib/clinical-deep-data.js');
+  let comRessalva = null, areaR = '';
+  for (const a of Object.keys(dados)) {
+    const b = (dados[a] || []).find((x) => /RESSALVA/.test(x.texto));
+    if (b) { comRessalva = b; areaR = a; break; }
+  }
+  if (comRessalva) {
+    ok(/^⚠️ RESSALVA/.test(comRessalva.texto),
+      'a ressalva de conflito tem de estar no INÍCIO do texto do bloco — no fim, o corte por teto a apaga');
+    const ent = deep.deepFor(areaR, 120000, areaR + ' ' + String(comRessalva.tema || ''));
+    ok(/RESSALVA/.test(ent), '⚠️ a ressalva de conflito com o núcleo NÃO está chegando à IA');
+  }
+}
+
 // ── avalia CLINICAL_GUIDELINES de verdade ────────────────────────────────────
 function valorDaVar(nome) {
   const i = html.indexOf('var ' + nome + '=');
