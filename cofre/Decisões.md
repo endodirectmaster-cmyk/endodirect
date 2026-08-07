@@ -8,6 +8,14 @@ atualizado: 2026-08-07
 Log de decisões de produto e técnicas (mais recentes no topo).
 
 ## 2026-08
+- **🔎 Triagem dos 12 conflitos já registrados nos extratos (2026-08-07).** Ao agir sobre o prolactinoma percebi que **12 dos 19 extratos** já carregavam campo `conflito` — e nenhum outro tinha sido tratado. A triagem separou três naturezas:
+  - **O artigo é MAIS ANTIGO que o núcleo** (diabetes pós-transplante 2016 × ADA 2026): a ressalva está certa, o núcleo prevalece, **nada a fazer**.
+  - **O núcleo está ERRADO ou desatualizado** (prolactinoma): corrigir em TODOS os lugares — núcleo, flashcards, mapas mentais.
+  - **É LACUNA disfarçada de conflito** — e este é o caso perigoso.
+  - **⚠️ Ressalva FALSA é pior que ressalva ausente.** O extrato de insuficiência adrenal induzida por glicocorticoide (ESE + Endocrine Society 2024) dizia divergir de uma entrada do núcleo vinda do *Lancet* 2021. Conferi com `nucleo-sobre.js`: **essa entrada não existe** — 0 resultados para cosintropina, cortisol matinal, desmame e estímulo. Como o montador prefixa a ressalva com *"o núcleo prevalece sobre esta fonte nos pontos a seguir"*, mantê-la mandaria a IA **descartar a diretriz de 2024 em favor de nada**. Campo reescrito para LACUNA e o núcleo ganhou a entrada (é a causa mais comum de insuficiência adrenal, ≥1% da população exposta, e o núcleo era silencioso).
+  - **Regra:** todo `conflito` tem de ser conferido contra o núcleo REAL com `scripts/nucleo-sobre.js` antes de virar ressalva. O extrator descreve o núcleo de memória; a memória erra.
+  - **Confirmado como já corrigido:** a ordem da tempestade tireoidiana ("TIONAMIDA PRIMEIRO… e SÓ ENTÃO o iodo") está no núcleo.
+
 - **🧠 O que a extração encontra tem de CORRIGIR a plataforma, não só engordar a base (2026-08-07, "sempre se tornar mais inteligente e incorporar todas essas informações nas diretrizes e em toda a plataforma").**
   - **O caso que provou a regra:** o consenso de prolactinoma da Pituitary Society 2023 mostra que a 1ª linha se decide pelo **grau de Knosp**, não pelo tamanho — *"Patients with prolactinoma of Knosp grade ≥2 should be treated with cabergoline (strong)"* e, em Knosp 0–1, *"the curative potential and risks of surgery"* devem ser discutidos **ANTES** de iniciar o medicamento. O núcleo dizia o contrário: "agonista dopaminérgico é a 1ª linha MESMO em macroprolactinomas". Acrescentar o bloco profundo não conserta isso — **o núcleo vai em TODA chamada e continuaria ensinando a versão errada.**
   - **Três lugares corrigidos, não um:** o núcleo (`CLINICAL_GUIDELINES`), o **flashcard** de neuroendocrinologia e o **mapa mental** de hiperprolactinemia — os dois últimos são conteúdo que o aluno lê DIRETO, sem passar por IA. Procurar só no núcleo teria deixado a versão errada na tela.
