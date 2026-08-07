@@ -5,6 +5,32 @@ atualizado: 2026-08-07
 
 # Convenções de Trabalho
 
+## ⏰ Rotina horária que mantém a sessão viva (2026-08-07)
+
+*"mantenha sempre a sessão ativa"*. O contêiner é recuperado por inatividade, e
+com ele param os agentes e se perde o estado de trabalho. Criada a rotina
+**`Endodirect — varredura clínica`**, que dispara **de hora em hora nesta mesma
+sessão** (não abre sessão nova — o contexto continua).
+
+**A ordem de prioridade que ela segue**, sempre nesta ordem:
+1. processar resultado de agente pendente (conferindo as acusações graves no
+   texto-fonte antes de aceitar — auditor erra);
+2. auditar os extratos que ainda não têm o campo `auditoria`, **priorizando por
+   risco clínico do assunto, não por tamanho**;
+3. só então extrair artigo novo, começando pelas áreas sem nenhum bloco.
+
+**⚠️ LIMITAÇÃO REAL da rotina: ela roda SEM conectores MCP.** As sessões que ela
+dispara não têm Google Drive nem GitHub. Consequências práticas:
+- **não consegue baixar artigo novo do Drive** (a etapa 3 fica bloqueada);
+- **não consegue abrir nem dar merge em PR** — ou seja, **não deploya**.
+
+O que ela FAZ bem: auditoria (os agentes trabalham em arquivo local), correção de
+extrato, verificação, remontagem da base, commit e push para o branch. O trabalho
+se acumula no branch e vai para produção na próxima sessão viva.
+
+Para a rotina ganhar conectores, ela precisa ser criada pela interface de
+Routines do claude.ai, não por aqui.
+
 ## 🚀 Deploy AUTORIZADO em pé, sem perguntar (2026-08-07)
 
 *"pode ir deployando sem falar comigo"* — dito depois de eu segurar em produção,
