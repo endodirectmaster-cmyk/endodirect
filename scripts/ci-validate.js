@@ -381,6 +381,18 @@ try {
   fail('regressão da aula ao vivo falhou (verifique supabase/aula-ao-vivo.sql, lib/aovivo.js e aoVivo* no index.html):\n' + out);
 }
 
+// ⚠️ TETO do bloco clínico. `api/ai.js` corta o prefixo cacheável num teto fixo e
+//     o que se perde é o FIM do bloco — sem erro, sem log, sem nada quebrar na
+//     tela: a IA simplesmente passa a gerar sem aquela diretriz. Em 07/08 o núcleo
+//     estava a 341 caracteres do corte.
+try {
+  execFileSync(process.execPath, [path.join('scripts', 'test-teto-diretrizes.js')], { stdio: 'pipe' });
+  ok('teto do bloco clínico: núcleo dentro do limite + camada profunda por subespecialidade ligada');
+} catch (e) {
+  const out = (e.stdout ? e.stdout.toString() : '') + (e.stderr ? e.stderr.toString() : '');
+  fail('teto do bloco clínico falhou (verifique CLINICAL_GUIDELINES, lib/clinical-deep.js e api/ai.js):\n' + out);
+}
+
 // ⚠️ Endocrinologia PEDIÁTRICA no Analytics. O risco não é o número, é a leitura
 //     dele: "0" sem a cobertura da pergunta faz parecer "não tenho nenhum
 //     endocrinopediatra" quando a verdade é "ainda não perguntei" (0 de 53).

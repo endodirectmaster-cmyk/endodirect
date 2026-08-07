@@ -435,3 +435,21 @@ O PubMed entrega a data como `2026 Jun 13` / `2026 May` / `2026` / `2026/06/13`.
 
 ## Pendência
 Confirmar entrega para Eduardo/Bruno (checar spam). O botão "✉️ Enviar teste da newsletter" no Mural do admin foi **removido** a pedido do usuário (2026-06-15); o endpoint `/api/newsletter/test` continua existindo, mas sem gatilho na UI. Ver [[Pendências]].
+
+## ⚠️ O ledger do reengajamento prova ALVO, não ENTREGA (2026-08-07)
+
+Na autoverificação do primeiro disparo, contei 11 e-mails com a chave
+`reengajamento` no `trial_emails` e quase relatei "11 enviados". **O ledger é
+gravado para a lista inteira depois do `sendBatch`, sem olhar o retorno por
+endereço** — é fail-closed de propósito (melhor não reenviar do que enviar duas
+vezes), mas não é prova de entrega.
+
+**O que o ledger PROVA, e não é pouco:** todas as saídas antecipadas de
+`sendReengajamento` (`no_api_key`, `no_service_key`, `rpc_error`, `no_targets`,
+`sem_novidades`) acontecem **antes** da gravação. Ledger escrito ⇒ havia
+RESEND_API_KEY e service key, a RPC devolveu alvos e havia novidade no mural.
+O único elo não provado é o aceite do Resend por endereço.
+
+**Para provar entrega** seria preciso o log do cron (`[reengajamento] enviados
+X/Y`) — mas a retenção de runtime log da Vercel é curta e ele já tinha sumido
+~1h depois. Se isso importar, o caminho é gravar o `enviados` no próprio payload.

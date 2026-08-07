@@ -5,6 +5,34 @@ atualizado: 2026-07-31
 
 # Convenções de Trabalho
 
+## 🔬 Varredura do acervo clínico: ritmo escolhido é o SEGURO (2026-08-07)
+
+Perguntado se preferia acelerar (6–8 agentes simultâneos) ou manter o ritmo, o
+professor respondeu: *"Deixe do jeito mais seguro e preciso. Não vamos perder
+qualidade."* **A decisão é essa, e vale para o resto da varredura.** Levas
+pequenas, verificação completa, nada de paralelismo que atropele conferência.
+
+### As três camadas de conferência, e o que cada uma NÃO pega
+
+1. **`scripts/verifica-extracao.js`** — a citação existe no texto? o número da
+   afirmação aparece na citação? ⚠️ **Não confere se a citação SUSTENTA a
+   afirmação.** Um trecho verdadeiro embaixo de uma frase que diz outra coisa
+   passa.
+2. **Autoverificação do agente** — ele roda o script contra si mesmo até passar.
+   Pega os próprios deslizes de fatiamento (foi assim que 53 fatos foram
+   reescritos na 1ª leva), mas **é o mesmo autor conferindo o próprio trabalho**.
+3. **Auditoria adversarial** (criada em 07/08) — um agente que tenta DERRUBAR
+   extratos já aprovados, classificando cada fato em OK / EXAGERO / INVERSÃO /
+   DESCONTEXTO / INCOMPLETO. Audita amostra + **todos** os fatos com dose, corte
+   laboratorial, "contraindicado", "não deve", "primeira linha" ou percentual —
+   os que causam dano se errados.
+
+**A lição por trás:** as duas primeiras camadas medem FIDELIDADE LITERAL; nenhuma
+mede FIDELIDADE DE SENTIDO. Antes de escalar a extração, medir a taxa de erro
+semântica — escalar um processo cuja taxa de erro você não conhece é multiplicar
+o desconhecido.
+
+
 ## 🌐 A rede do ambiente é CONFIGURÁVEL — e desde 06/08/2026 está aberta (2026-08-06)
 
 Durante meses eu tratei "o proxy bloqueia" como fato da natureza e **construí
@@ -53,6 +81,35 @@ Abri o PR #659 no mesmo branch que já tinha sido **squash-mergeado** duas vezes
 **A correção é uma linha,** e é a mesma dos dois casos: `git fetch origin main && git rebase origin/main` — o rebase **descarta sozinho** os patches já upstream (`dropping … -- patch contents already upstream`) — depois `push --force-with-lease`. Feito isso, o CI disparou e o merge passou na hora.
 
 **Ficou também:** `workflow_dispatch` no `.github/workflows/ci.yml`, para dar como pedir a validação sem empurrar commit vazio.
+
+### Resultado da 1ª auditoria adversarial (07/08/2026): 6,1%
+
+**196 fatos auditados nos 3 extratos de maior risco. 12 achados.**
+EXAGERO 8 · DESCONTEXTO 3 · INCOMPLETO 1 · **INVERSÃO 0**.
+⚠️ **Nenhum número, dose ou corte estava trocado** — a fidelidade numérica que o
+verificador garante estava de pé. O que se perdia era outra coisa.
+
+**O padrão dominante, e virou guarda automática:** *"We suggest"* — recomendação
+GRADE **condicional**, às vezes com certeza muito baixa — chegava à base como
+**"não se deve"**, **"devem ser trocados"**, **"deve-se"**. Uma sugestão fraca
+virava ordem. `forcaPerdida()` no verificador agora reprova isso; ela achou
+**7 casos**, dois a mais do que a amostra da auditoria tinha visto.
+
+**A guarda é ESTREITA de propósito:** só dispara com "we suggest" na citação (marcador
+inequívoco) + imperativo em português + nenhuma ressalva. A primeira versão aceitava
+a palavra **"pode"** solta como ressalva e deixou passar um caso — "pode" aparece por
+mil motivos numa frase e não é sinal da força da recomendação.
+
+**Achado sistêmico que nenhuma guarda pega:** no craniofaringioma, **56% (139/249)**
+das citações terminam no meio da frase — o PDF de duas colunas foi extraído com as
+colunas intercaladas. A citação existe e os números batem, mas ela não é prova
+legível sozinha. Nos artigos que extraí **localmente com pdfjs** (hiponatremia) isso
+cai para **5%**; nos vindos do texto do Google Drive, sobe. **Quando houver escolha,
+extrair o texto localmente.**
+
+**hipo-3 passou LIMPO** — 61 fatos, zero achados, com todos os limites de correção,
+doses e "primeira linha" exatos. É a prova de que a taxa não é ruído de método.
+
 
 ## 🖥️ Mudança de JS no `index.html` — testar em NAVEGADOR REAL antes de mergear
 

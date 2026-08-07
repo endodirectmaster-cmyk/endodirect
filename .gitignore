@@ -34,3 +34,21 @@ scratchpad/flashcards/stage/
 scratchpad/flashcards/items/
 scratchpad/flashcards/*.output
 scratchpad/flashcards/missing*.json
+
+# ⚠️ Texto INTEGRAL de artigos científicos, baixado do Drive para a extração.
+# NUNCA versionar: este repositório é PÚBLICO e o conteúdo é protegido por
+# direito autoral (Nature Reviews, Osteoporosis International, Lancet…).
+# O que pode ser versionado é o EXTRATO — fatos em português com citações curtas
+# (trechos de uma frase), que é uso legítimo e é o que a base clínica precisa.
+scratchpad/acervo/textos/
+scratchpad/acervo/__pycache__/
+
+# Rascunhos que os agentes criam durante a extração (fatiadores, checadores
+# temporários, cache do Python). O que importa é o EXTRATO verificado.
+scratchpad/acervo/__pycache__/
+scratchpad/**/__pycache__/
+scratchpad/*.py
+scratchpad/acervo/*.py
+scratchpad/work/
+# (scratchpad/boot-navegador/ CONTINUA versionado: é o harness de navegador real,
+#  ferramenta permanente, não rascunho de agente.)
