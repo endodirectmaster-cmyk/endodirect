@@ -5,6 +5,44 @@ atualizado: 2026-08-07
 
 # Convenções de Trabalho
 
+## 🕳️ A QUARTA camada: erro de OMISSÃO não deixa rastro (2026-08-07)
+
+A auditoria adversarial do consenso de prolactinoma achou 9 erros de sentido em
+175 fatos (5,1%). **Nenhum deles foi o achado que importou.**
+
+O artigo tem **151 recomendações graduadas**. O extrato cobria as primeiras e
+**parou em "Aggressive prolactinomas"**. Gestação (15 recomendações),
+criança/adolescente, doença psiquiátrica, menopausa, pessoa trans e doença renal
+crônica ficaram **inteiramente de fora** — e o campo `tema` do extrato
+**anunciava todos eles**.
+
+**Por que nenhuma camada existente pegava isso:**
+
+| camada | o que mede | por que passa |
+|---|---|---|
+| `verifica-extracao.js` | a citação existe no PDF? o número bate? | o que está lá está certo |
+| autoconferência do agente | o mesmo | idem |
+| auditoria adversarial | o sentido do que está lá | audita o que existe |
+
+Um fato errado alguém contesta. **Uma seção ausente é invisível** — e quem
+consome o extrato lê o `tema` e supõe cobertura completa.
+
+`scripts/cobertura-extracao.js` é a peneira que faltava, e virou
+**pré-requisito do montador** (como a etapa 3), não relatório opcional:
+
+1. **COBERTURA** — recomendações graduadas no PDF × fatos que declaram força.
+2. **PROMESSA** — cada tema anunciado no campo `tema` aparece em algum fato?
+3. **CITAÇÃO TRUNCADA** — citação terminada em preposição, conjunção ou hífen.
+   Ela passa no verificador e **não sustenta a afirmação**. Dois fatos tiveram de
+   ser apagados por isso: o PDF de duas colunas parte a frase no meio, e o
+   pedaço que sobra ("…in patients aged", "…and are of low concern for") vira
+   lastro falso. 13 dos 19 extratos têm alguma citação assim.
+
+**Regra:** ao mandar extrair, dizer explicitamente para não usar citação partida
+e para preservar população e qualificadores ("men", "children",
+"microprolactinoma", "rarely", "although", "potentially") — foi por perder esses
+que 6 dos 9 erros de sentido entraram.
+
 ## 🩺 A terceira camada pagou: 2,3% de erro SEMÂNTICO num extrato aprovado (2026-08-07)
 
 O extrato da Diretriz Internacional de SOP 2023 passou nas duas primeiras

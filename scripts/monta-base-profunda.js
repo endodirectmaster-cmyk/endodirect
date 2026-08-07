@@ -50,6 +50,21 @@ function main() {
     process.exit(1);
   }
 
+  // ── etapa 3b: COBERTURA — o extrato representa o artigo inteiro? ──────────
+  // A etapa 3 prova que o que está lá está certo. Não prova que está tudo lá.
+  // O consenso de prolactinoma passou 100% na etapa 3 tendo deixado de fora as
+  // seções de gestação, criança, doença psiquiátrica, menopausa, pessoa trans e
+  // doença renal — com o campo `tema` anunciando todas. Erro de OMISSÃO não
+  // deixa rastro; por isso vira pré-requisito, não relatório opcional.
+  try {
+    execFileSync(process.execPath, [path.join(RAIZ, 'scripts', 'cobertura-extracao.js'), '--dir', path.join(RAIZ, argDir)], { stdio: 'pipe' });
+  } catch (e) {
+    const out = (e.stdout ? e.stdout.toString() : '') + (e.stderr ? e.stderr.toString() : '');
+    console.error('✗ A verificação de COBERTURA reprovou — nada será gerado.\n');
+    console.error(out);
+    process.exit(1);
+  }
+
   if (!fs.existsSync(DIR_EXTRATOS)) { console.error('✗ não existe ' + DIR_EXTRATOS); process.exit(1); }
   const arquivos = fs.readdirSync(DIR_EXTRATOS).filter((f) => f.endsWith('.json'));
   if (!arquivos.length) { console.error('✗ nenhum extrato em ' + DIR_EXTRATOS); process.exit(1); }
