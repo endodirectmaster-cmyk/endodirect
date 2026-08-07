@@ -272,7 +272,7 @@ f('A ativacao da via MAPK no PCP restringe-se a poucas celulas tumorais, as celu
   'Mechanisms/pathophysiology')
 
 f('Mais de 90% das celulas tumorais proliferativas do PCP (identificadas pela expressao de Ki67) estao contidas na populacao SOX2+, pERK1+/ERK2+.',
-  'Interestingly, \\>90% of the proliferative tumour cells (identified by their expression of Ki67) are contained within the SOX2+, pERK1+/ERK2+ cell popu lation,',
+  'Interestingly, \\>90% of the proliferative tumour cells (identified by their expression of Ki67) are 0123456789(); contained within the SOX2+, pERK1+/ERK2+ cell popu lation,',
   'Mechanisms/pathophysiology')
 
 f('O achado sugere que celulas-tronco SOX2+ normais da hipofise podem ser transformadas em celulas iniciadoras de PCP pela mutacao BRAFV600E via ativacao de MAPK.',
@@ -462,7 +462,7 @@ f('Nos microadenomas hipofisarios o sinal diagnostico e a presenca de uma ou mai
   'Other sellar and parasellar lesions')
 
 f('Microadenomas usualmente captam menos contraste que a hipofise normal e, por isso, sao mais bem detectados na RM pos-contraste.',
-  'Usually, microadenomas take up contrast media less than the normal pituitary gland and are, therefore, better detected on post contrast MRI',
+  'Usually, microadenomas take up contrast media 0123456789(); less than the normal pituitary gland and are, therefore, better detected on post contrast MRI128,129.',
   'Other sellar and parasellar lesions')
 
 # ===================== GRADUACAO DE ENVOLVIMENTO HIPOTALAMICO =====================
@@ -499,44 +499,60 @@ f('O grau estimado no pre-operatorio precisa ser refinado pelos achados cirurgic
   'Hypothalamic involvement')
 
 # ===================== PROGNOSTICO =====================
-f('Pacientes com craniofaringioma de inicio na infancia que desenvolveram obesidade grave (IMC maior ou igual a 7 desvios-padrao) por sindrome hipotalamica receberam mais intervencoes cirurgicas (media 1,74; variacao 1 a 4) e mostraram menor capacidade funcional que pacientes com peso normal (media 1,39; variacao 1 a 5).',
-  'patients with childhood onset CP who developed severe obesity (BMI of ≥7 s.d.) due to hypothalamic syndrome received more surgical interventions (mean 1.74; range 1–4)',
+f('Obesidade grave no craniofaringioma de inicio na infancia foi definida como IMC maior ou igual a 7 desvios-padrao decorrente de sindrome hipotalamica.',
+  'patients with childhood onset CP who developed severe obesity (BMI of ≥7 s.d.) due to hypothalamic syndrome received',
   'Prognosis')
 
-f('Pacientes com peso normal receberam em media 1,39 intervencoes cirurgicas (variacao 1 a 5).',
-  'weight patients (mean number of surgical interventions 1.39; range 1–5)',
+f('Os pacientes com obesidade grave receberam mais intervencoes cirurgicas, em media 1,74 (variacao de 1 a 4).',
+  'more surgical interventions (mean 1.74; range 1–4)',
+  'Prognosis')
+
+f('Os pacientes com peso normal mostraram maior capacidade funcional e receberam em media 1,39 intervencoes cirurgicas (variacao de 1 a 5).',
+  'weight patients (mean number of surgical interventions ventions per patient, used as a surrogate for the local 1.39; range 1–5)135.',
   'Prognosis')
 
 f('A estrategia cirurgica poupadora do hipotalamo aumentou a taxa de IMC normal a longo prazo de 17% para 38% em comparacao com a ressecao total macroscopica previamente realizada.',
-  'egy increased the rate of ‘normal’ long term BMI from 17% to 38% compared with previously performed GTR.',
+  'egy increased the rate of ‘normal’ long term BMI from tumours that may be completely resected without neuro 17% to 38% compared with previously performed GTR.',
   'Prognosis')
 
 f('O percentual de ganho de peso clinicamente relevante permaneceu em 62% apos intervencao poupadora do hipotalamo.',
   'gain remained at 62% after a hypothalamus sparing',
   'Prognosis')
 
-f('Cerca de 50% de todos os pacientes, independentemente da intervencao cirurgica, desenvolveram obesidade morbida (IMC maior que 2 desvios-padrao) durante seguimento medio de 8,5 anos na coorte de ressecao total e de 3 anos na coorte poupadora do hipotalamo.',
-  'intervention, with \\~50% of all patients (regardless of surgical intervention) developing morbid obesity (BMI of \\>2 s.d.) during a mean follow up of 8.5 years in the',
+f('Cerca de 50% de todos os pacientes, independentemente da intervencao cirurgica, desenvolveram obesidade morbida.',
+  'intervention, with \\~50% of all patients (regardless of',
+  'Prognosis')
+
+f('Obesidade morbida foi definida como IMC acima de 2 desvios-padrao, durante seguimento medio de 8,5 anos.',
+  'of \\>2 s.d.) during a mean follow up of 8.5 years in the',
+  'Prognosis')
+
+f('O seguimento medio foi mais curto na coorte poupadora do hipotalamo, de 3 anos, do que na coorte de ressecao total macroscopica.',
+  'GTR cohort and 3 years in the hypothalamus sparing',
   'Prognosis')
 
 f('O numero medio de intervencoes cirurgicas por paciente, usado como substituto da taxa de recorrencia local, nao diferiu notavelmente entre os grupos: 1,52 na estrategia poupadora do hipotalamo versus 1,45 no grupo de ressecao total macroscopica.',
-  'ventions per patient, used as a surrogate for the local recurrence rate, was not noticeably different between the two groups (1.52 in the hypothalamus sparing strategy group versus 1.45 in the GTR group).',
+  'two groups (1.52 in the hypothalamus sparing strategy type is controversial. Better 5year overall survival has group versus 1.45 in the GTR group).',
   'Prognosis')
 
 f('O seguimento foi marcadamente mais curto no grupo poupador do hipotalamo (media 33 meses) do que no grupo historico tratado por ressecao total macroscopica (media 103 meses).',
-  'up was markedly shorter in the hypothalamus sparing strategy group (mean 33 months) than in the historical group treated by GTR (mean 103 months).',
+  'strategy group (mean 33 months) than in the historical increased perioperative mortality has been described group treated by GTR (mean 103 months).',
   'Prognosis')
 
 f('A sobrevida global em 20 anos foi reduzida em pacientes com craniofaringioma com envolvimento hipotalamico.',
-  'vival was shown to be reduced in patients with CP with hypothalamic involvement',
+  'In another report, 20year overall sur differences between both histological subtypes42. No vival was shown to be reduced in patients with CP with specific histopathological feature can thus far predict hypothalamic involvement139.',
   'Prognosis')
 
-f('A sobrevida livre de progressao em 20 anos NAO se associou ao grau de ressecao cirurgica nem ao uso adjuvante de radioterapia, apoiando a nocao de que a ressecao total macroscopica nao traz vantagem na prevencao da recorrencia do craniofaringioma.',
-  'found that 20year progression free survival was not associated with the degree of surgical resection and',
+f('A sobrevida livre de progressao em 20 anos NAO se associou ao grau de ressecao cirurgica nem ao uso adjuvante de radioterapia.',
+  'found that 20year progression free survival was not cohort, CPs lacking calcifications have been described to associated with the degree of surgical resection and be associated with more favourable prognoses, reflecting not related with the adjuvant use of radiotherapy, sup',
+  'Prognosis')
+
+f('Isso apoia a nocao de que a ressecao total macroscopica NAO traz vantagem em termos de prevenir a recorrencia do craniofaringioma.',
+  'porting the notion that GTR has no advantage in terms able calcifications, as mentioned above136. Whether ini of preventing CP recurrence.',
   'Prognosis')
 
 f('Em coorte de craniofaringioma de inicio na idade adulta, os CP sem calcificacoes foram descritos como associados a prognostico mais favoravel, refletindo o maior risco de recorrencia com calcificacoes detectaveis no pos-operatorio.',
-  'cohort, CPs lacking calcifications have been described to be associated with more favourable prognoses, reflecting',
+  'cohort, CPs lacking calcifications have been described to associated with the degree of surgical resection and be associated with more favourable prognoses, reflecting',
   'Prognosis')
 
 f('Nenhuma caracteristica histopatologica especifica consegue, ate agora, predizer a sobrevida apos craniofaringioma de inicio na infancia.',
@@ -549,7 +565,11 @@ f('No ACP de inicio na idade adulta descreveu-se mortalidade perioperatoria aume
 
 # ===================== MANEJO =====================
 f('O melhor tratamento para o craniofaringioma e aquele que leva a menor morbidade a longo prazo; pode incluir cirurgia isolada, irradiacao isolada ou, mais comumente, a combinacao das duas.',
-  'The best treatment for CP is that which leads to the least long term morbidity.',
+  'CP is that which leads to the least long term morbidity.',
+  'Management')
+
+f('O tratamento pode incluir cirurgia isolada, irradiacao isolada ou, mais comumente, a combinacao das duas.',
+  'Treatment may include surgery alone, irradiation alone',
   'Management')
 
 f('A cirurgia isolada implica ressecao total macroscopica e, portanto, e apropriada para tumores que podem ser completamente ressecados sem lesao neurovascular e sem comprometimento visual.',
@@ -659,12 +679,16 @@ f('Uma revisao internacional recente de 56 criancas mostrou progressao em 42 pac
   'national review of 56 children showed progression in 42 patients with IFNα treatment after a median time of 14 months',
   'Intracystic therapies')
 
-f('Agentes de radioterapia intracistica (Ytrio-90 e Fosforo-32) ou quimioterapia (bleomicina) podem ser usados por via intracistica, mas podem associar-se a neurotoxicidade irreversivel ou ate morte e nao provaram ser consistentemente eficazes.',
-  'Additionally, radiotherapy agents (90Yttrium and 32Phosphorus) or chemotherapy (bleomycin) can be used intracystically, but these agents may be associated',
+f('Agentes de radioterapia (Ytrio-90 e Fosforo-32) ou quimioterapia (bleomicina) podem ser usados por via intracistica.',
+  'Additionally, radiotherapy agents (90Yttrium and when planning a surgical strategy. 32Phosphorus) or chemotherapy (bleomycin) can be used intracystically, but these agents may be associated',
   'Intracystic therapies')
 
-f('Em revisao recente, a evidencia disponivel NAO conseguiu sustentar o uso de bleomicina intracistica em criancas com base em beneficios e efeitos nocivos.',
-  'recent review, the available evidence could not support the use of intracystic bleomycin in children on the basis of benefits and harmful effects',
+f('Esses agentes intracisticos podem associar-se a neurotoxicidade irreversivel ou ate a morte e NAO provaram ser consistentemente eficazes.',
+  'with irreversible neurotoxicity or even death and have is no hypothalamus involvement and most tumours not proven to be consistently efficacious.',
+  'Intracystic therapies')
+
+f('Em revisao recente, a evidencia disponivel NAO conseguiu sustentar o uso de bleomicina intracistica em criancas.',
+  'recent review, the available evidence could not support in these cases and is commonly used in adult patients the use of intracystic bleomycin in children on the basis',
   'Intracystic therapies')
 
 f('Ate o momento, os estudos sobre terapias intracisticas sao pequenos e com poder estatistico insuficiente, com dados limitados para sustentar seu uso.',
@@ -680,20 +704,16 @@ f('A taxa de obesidade pos-operatoria grave associa-se ao grau de dano hipotalam
   'The rate of severe postoperative obesity is associated with the grade of hypothalamic damage',
   'Postoperative hypothalamic damage')
 
-f('No grau 0 de de Vile nao ha dano discernivel as estruturas hipotalamicas e ha estabilizacao da evolucao ponderal, com IMC de 1,10 desvios-padrao (0,1 a 1,3 DP).',
-  'No discernible damage to hypothalamic structures',
+f('Na graduacao de dano hipotalamico pos-operatorio, ausencia de dano discernivel as estruturas hipotalamicas corresponde a estabilizacao da evolucao ponderal, com IMC de 1,10 desvios-padrao (0,1 a 1,3 DP).',
+  'No discernible damage to hypothalamic structures Stabilization of weight development • BMI: 1.10 s.d. (0.1–1.3 s.d.)',
   'Figura 5')
 
-f('O IMC no grau 0 de dano hipotalamico pos-operatorio foi de 1,10 desvios-padrao, com intervalo interquartil de 0,1 a 1,3 DP.',
-  '• BMI: 1.10 s.d. (0.1–1.3 s.d.)',
+f('Anormalidade do assoalho do terceiro ventriculo e/ou brecha no tuber cinereum corresponde a ganho de peso, com IMC de 2,5 desvios-padrao (1,4 a 3,5 DP).',
+  'Abnormality of the floor of the third ventricle and/or a breach in the tuber cinereum Weight gain • BMI: 2.5 s.d. (1.4–3.5 s.d.)',
   'Figura 5')
 
-f('O grau 1 de de Vile corresponde a anormalidade do assoalho do terceiro ventriculo e/ou brecha no tuber cinereum, com ganho de peso e IMC de 2,5 desvios-padrao (1,4 a 3,5 DP).',
-  '• BMI: 2.5 s.d. (1.4–3.5 s.d.)',
-  'Figura 5')
-
-f('O grau 2 de de Vile corresponde ao assoalho do terceiro ventriculo completamente deficiente ou extensamente rompido por tumor residual, com obesidade grave e IMC de 5,5 desvios-padrao (4,3 a 8,8 DP).',
-  '• BMI: 5.5 s.d. (4.3–8.8 s.d.)',
+f('Assoalho do terceiro ventriculo completamente deficiente ou extensamente rompido por tumor residual corresponde a obesidade grave, com IMC de 5,5 desvios-padrao (4,3 a 8,8 DP).',
+  'Floor of the third ventricle completely deficient or extensively breached by residual tumour Severe obesity • BMI: 5.5 s.d. (4.3–8.8 s.d.)',
   'Figura 5')
 
 f('No grau 2 de de Vile os defeitos alcancam os corpos mamilares e envolvem o hipotalamo e o tuber cinereum; o dano hipotalamico resulta em ganho de peso e desenvolvimento de obesidade hipotalamica.',
@@ -877,23 +897,23 @@ f('A ocitocina melhorou o comportamento pro-social observado pelos pais em um ca
   'Hypothalamic obesity')
 
 f('Atualmente NENHUM metodo de tratamento bariatrico provou ser eficaz em ensaios clinicos randomizados em pacientes com craniofaringioma e obesidade hipotalamica.',
-  'Currently, no bariatric treatment method has been proven to be efficacious in randomized controlled trials',
+  'Currently, no bariatric treatment method has been lesions and ACP with anterior and posterior hypo proven to be efficacious in randomized controlled trials',
   'Bariatric treatment')
 
 f('Reducao de IMC a curto prazo com cirurgia bariatrica foi relatada em estudos que analisaram dados de seguimento de 5 a 10 anos em pacientes com ACP de inicio na infancia e obesidade hipotalamica.',
-  'with bariatric surgery has been reported in studies',
+  'with bariatric surgery has been reported in studies psychopathological symptoms such as anxiety, depres analysing 5–10 year follow up data in patients with',
   'Bariatric treatment')
 
 f('Melhora clinicamente significativa do comportamento de compulsao alimentar foi observada imediatamente apos a banda gastrica ajustavel laparoscopica, que foi bem tolerada, mas a reducao de peso a longo prazo NAO foi alcancada apos seguimento mediano de 7,1 anos.',
-  'scopic adjustable gastric banding was well tolerated, but',
+  'scopic adjustable gastric banding was well tolerated, but quent problems in the daily functioning of those with long term weight reduction was not achieved after a childhood onset CP201,202. median follow up of 7.1 years following bariatric inter',
   'Bariatric treatment')
 
 f('Metanalise com 21 pacientes com ACP relatou que, aos 12 meses apos o procedimento, o bypass gastrico em Y de Roux, a derivacao biliopancreatica e a gastrectomia vertical foram os tratamentos bariatricos mais eficientes na obesidade hipotalamica do craniofaringioma de inicio na infancia.',
-  'A meta analysis encompassing 21 patients',
+  'A meta analysis encompassing 21 patients tional impairments are known risk factors associated with ACP reported that, at 12 months post procedure, with reduced psychosocial and neurocognitive func Roux enY gastric bypass, biliopancreatic diversion tion after treatment. Endocrine, ophthalmological and and sleeve gastrectomy were the most efficient bariatric',
   'Bariatric treatment')
 
 f('O tratamento bariatrico com tecnicas cirurgicas nao reversiveis e controverso na faixa etaria pediatrica por preocupacoes legais, medicas e eticas.',
-  'Bariatric treatment with non reversible sur gical techniques is controversial in the paediatric age',
+  'Bariatric treatment with non reversible sur most clinically relevant negative risk factor for impair gical techniques is controversial in the paediatric age ments in body image, social functioning and physi cohort owing to legal, medical and ethical concerns194.',
   'Bariatric treatment')
 
 f('Abordagens de tratamento individualizadas baseadas na avaliacao de dominios clinicos, como o comportamento alimentar afetado pela sindrome hipotalamica, foram recomendadas.',
@@ -902,7 +922,7 @@ f('Abordagens de tratamento individualizadas baseadas na avaliacao de dominios c
 
 # ===================== NEUROPSICOSSOCIAL =====================
 f('Os estudos de funcionalidade fisica e psicossocial no seguimento de longo prazo apos craniofaringioma variam de funcao reduzida em cerca de 50% dos pacientes ate funcao excelente na maioria deles.',
-  'able observations, ranging from reduced function in',
+  'able observations, ranging from reduced function in improved hyperphagia and weight loss in combination \\~50% of patients to excellent function in the majority',
   'Neuropsychosocial functioning')
 
 f('As reducoes do funcionamento social e emocional sao os comprometimentos mais frequentes, com os pacientes avaliando seu status psicossocial como pior do que sua saude fisica.',
@@ -991,8 +1011,16 @@ f('Uma publicacao da Nigeria relatou alta mortalidade pos-cirurgica (32%), nao o
   'A publication from Nigeria228 reported a high postsurgical mortality (32%) that has not been observed in other series (7% in Turkey229 and 6% in Jordan230 and Egypt226).',
   'Box 2')
 
-f('A experiencia jordaniana no tratamento do craniofaringioma de inicio pediatrico observou sobrevida global em 5 anos de 87 ± 7%, semelhante a de paises de alta renda, mas com qualidade de vida prejudicada por comorbidades e dificuldades de integracao escolar e profissional.',
+f('A experiencia jordaniana no tratamento do craniofaringioma de inicio pediatrico relatou sobrevida global em 5 anos.',
+  'reported on the Jordanian experience in treating paediatric- onset CP, observing a 5-year overall survival',
+  'Box 2')
+
+f('Essa sobrevida global jordaniana foi de 87 ± 7%, semelhante a de paises de alta renda.',
   'of 87 ± 7%, which is similar to that in high- income countries. However, in their study,',
+  'Box 2')
+
+f('Apesar da sobrevida semelhante, a qualidade de vida das criancas sobreviventes foi prejudicada por comorbidades e por dificuldades de integracao escolar e, depois, na vida profissional.',
+  'the quality of life of surviving children was impaired owing to comorbidities and',
   'Box 2')
 
 f('As dificuldades foram atribuidas a apresentacao tardia, ao encaminhamento a especialistas apenas apos intervencao cirurgica inicial por neurocirurgioes com experiencia limitada em craniofaringioma e a recursos limitados de reabilitacao comunitaria.',

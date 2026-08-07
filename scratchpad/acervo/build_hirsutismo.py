@@ -58,8 +58,11 @@ f("Hirsutismo de importância para a paciente ('patient-important hirsutism') é
 f("O crescimento do pelo sexual depende inteiramente da presença de androgênio, que induz folículos velos em áreas sexo-específicas a se transformarem em pelos terminais, maiores e mais pigmentados.",
   "The growth of sexual hair is entirely", "larger and more heavily pigmented", secao=S1)
 
-f("A fase de crescimento (anágena) do pelo facial dura cerca de 4 meses; por isso são necessários cerca de 6 meses para detectar os efeitos da terapia hormonal e cerca de 9 meses para que esses efeitos sejam máximos.",
-  "(which varies with body area) is", "for these effects to become maximal", secao=S1)
+f("A fase de crescimento (anágena) do pelo, que varia conforme a área corporal, dura cerca de 4 meses para o pelo facial; por causa do longo ciclo de crescimento, são necessários cerca de 6 meses para detectar os efeitos da terapia hormonal.",
+  "(which varies with body area) is", "to detect the effects of hormonal therapy and", secao=S1)
+
+f("São necessários cerca de 9 meses para que os efeitos da terapia hormonal sobre o hirsutismo se tornem máximos; o hirsutismo resulta da interação entre os androgênios plasmáticos e a sensibilidade aparente do folículo piloso ao androgênio.",
+  "9 months for these effects to become maximal", "apparent sensitivity of the hair follicle to androgen", secao=S1)
 
 f("A sensibilidade do folículo piloso é determinada em parte pelo metabolismo local de androgênios, sobretudo pela conversão de testosterona em di-hidrotestosterona pela enzima 5-alfa-redutase e subsequente ligação ao receptor androgênico.",
   "The sensitivity of the hair follicle is de", "binding of these molecules to the androgen  receptor", secao=S1)
@@ -100,7 +103,7 @@ f("No diagnóstico diferencial do hirsutismo deve-se considerar síndrome de Cus
 
 # ---------------- DIAGNÓSTICO ----------------
 f("Recomendação: dosar androgênios em todas as mulheres com escore de hirsutismo anormal; quando a testosterona total sérica for normal, se o crescimento de pelo sexual for moderado/grave, ou leve mas com evidência clínica de doença endócrina hiperandrogênica (como distúrbio menstrual ou progressão apesar do tratamento), medir testosterona total e livre séricas em amostra do início da manhã por ensaio especializado confiável.",
-  "We suggest testing for elevated androgen levels  in all women with an abnormal hirsutism score", "tosterone by a reliable specialty assay", secao=S2)
+  "all women with an abnormal hirsutism score (2", "tosterone by a reliable specialty assay", secao=S2)
 
 f("Recomendação: rastrear HAC não clássica por deficiência de 21-hidroxilase nas mulheres hiperandrogenêmicas medindo 17-hidroxiprogesterona no início da manhã, na fase folicular, ou em dia aleatório nas com amenorreia ou menstruações infrequentes.",
   "We suggest screening hyperandrogenemic women  for NCCAH due to 21-hydroxylase deficiency by", "for those with amenorrhea or infrequent menses", secao=S2)
@@ -109,7 +112,7 @@ f("Nas pacientes hirsutas com alto risco de hiperplasia adrenal congênita (hist
   "In hirsute patients with a high risk of  congenital adrenal hyperplasia (positive family  history, member of a high-risk ethnic group), we  suggest this screening even if serum total and free  testosterone are normal", secao=S2)
 
 f("Recomendação: não dosar androgênios em mulheres eumenorreicas com crescimento piloso local indesejado (isto é, sem escore de hirsutismo anormal), pela baixa probabilidade de identificar doença que mude a conduta ou o desfecho.",
-  "We suggest against testing for elevated androgen  levels in eumenorrheic women with unwanted  local hair growth", "change management or outcome", secao=S2)
+  "in the absence of an abnormal hirsutism score) because of the low", "change management or outcome", secao=S2)
 
 f("O hirsutismo é um diagnóstico clínico, e seu manejo é em grande medida independente da etiologia; ainda assim, é indicador potencial de doença hiperandrogênica subjacente que pode exigir tratamento específico e ter implicações para fertilidade, riscos médicos e aconselhamento genético.",
   "Hirsutism is a clinical diagnosis. The management of", "medical risks, and genetic counseling", secao=S2)
@@ -177,7 +180,7 @@ f("Em metanálise de quatro estudos com 132 participantes, mudanças de estilo d
 
 # ---------------- FARMACOLÓGICO ----------------
 f("Recomendação: para a maioria das mulheres com hirsutismo que não buscam fertilidade, usar contraceptivos orais como terapia inicial do hirsutismo de importância clínica.",
-  "For the majority of women with hirsutism who", "are not seeking fertility, we suggest OCs as initial  therapy for treating patient-important hirsutism", secao=S4)
+  "For the majority of women with hirsutism who are not seeking fertility, we suggest OCs as initial therapy for treating patient-important hirsutism", secao=S4)
 
 f("Recomendação: evitar monoterapia com antiandrogênio como terapia inicial pelo potencial teratogênico, a menos que a mulher use contracepção adequada; para mulheres sem atividade sexual, esterilizadas ou em uso de contracepção reversível de longa duração, pode-se usar contraceptivo oral ou antiandrogênio como terapia inicial.",
   "For most women with hirsutism, we suggest  against antiandrogen monotherapy as initial", "regarding efficacy, side effects, and cost", secao=S4)
