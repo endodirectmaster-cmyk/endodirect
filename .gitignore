@@ -42,3 +42,8 @@ scratchpad/flashcards/missing*.json
 # (trechos de uma frase), que é uso legítimo e é o que a base clínica precisa.
 scratchpad/acervo/textos/
 scratchpad/acervo/__pycache__/
+
+# Rascunhos que os agentes criam durante a extração (fatiadores, checadores
+# temporários, cache do Python). O que importa é o EXTRATO verificado.
+scratchpad/acervo/__pycache__/
+scratchpad/acervo/*.py
