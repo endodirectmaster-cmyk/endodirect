@@ -51,6 +51,15 @@ function norm(s) {
     .trim();
 }
 
+// Segunda passada, SÓ para o artefato de PDF: o extrator de texto quebra a palavra
+// no fim da linha e deixa "sulfo- nylureas", "dia- betes". Removemos APENAS hífen
+// SEGUIDO DE ESPAÇO — "low-dose" e "HNF1B-diabetes" não têm espaço depois do
+// hífen e ficam intactos. É normalização de ARTEFATO, não afrouxamento: as
+// palavras são as mesmas, muda só onde o PDF quebrou a linha.
+function semHifenDeQuebra(s) {
+  return String(s || '').replace(/-\s+/g, '');
+}
+
 // Números da afirmação que precisam estar na citação. Ignora numeração de item
 // ("(1)", "(2)") e anos isolados de 4 dígitos, que costumam vir da referência.
 function numerosRelevantes(s) {
@@ -115,7 +124,7 @@ function main() {
         totReprovados++; return;
       }
       const c = norm(cit);
-      if (!fonte.includes(c)) {
+      if (!fonte.includes(c) && !semHifenDeQuebra(fonte).includes(semHifenDeQuebra(c))) {
         problemas.push(`${rot}: ⚠️ CITAÇÃO NÃO ENCONTRADA NO PDF → "${cit.slice(0, 90)}…"`);
         totReprovados++; return;
       }
