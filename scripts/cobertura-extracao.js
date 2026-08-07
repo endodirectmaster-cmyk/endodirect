@@ -106,7 +106,14 @@ function main() {
     const truncadas = fatos.filter((f) => CAUDA_RUIM.test(String(f.citacao || '').trim()));
     if (truncadas.length) {
       const pct = truncadas.length / fatos.length;
-      const msg = `${truncadas.length} de ${fatos.length} citações terminam em preposição/conjunção/hífen (frase cortada — o PDF de 2 colunas faz isso)`;
+      // ⚠️ Desde 07/08/2026 isto TEM conserto: `verifica-extracao.js` aceita
+      // ELISÃO DECLARADA — `citacao: "…primeira parte […] continuação…"`, com
+      // cada pedaço literal, na ordem e com o buraco limitado. A causa quase
+      // sempre é a INTERCALAÇÃO DE COLUNAS do PDF: a frase verdadeira continua
+      // depois de um respingo de ~50 chars da outra coluna. Antes disso, o
+      // extrator só podia cortar a citação (deixando a afirmação sem respaldo)
+      // ou jogar o fato fora.
+      const msg = `${truncadas.length} de ${fatos.length} citações terminam em preposição/conjunção/hífen (frase cortada — o PDF de 2 colunas faz isso; reconstrua com elisão declarada "[…]")`;
       if (pct > 0.25) problemas.push(msg + ' — acima de 25%, reprova');
       else if (truncadas.length) avisos.push(`  ${rotulo}: ${msg}`);
     }
