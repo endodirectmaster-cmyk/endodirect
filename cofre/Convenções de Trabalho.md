@@ -5,6 +5,54 @@ atualizado: 2026-08-07
 
 # Convenções de Trabalho
 
+## 🩺 A terceira camada pagou: 2,3% de erro SEMÂNTICO num extrato aprovado (2026-08-07)
+
+O extrato da Diretriz Internacional de SOP 2023 passou nas duas primeiras
+camadas: verificador mecânico (256/256 citações existem no PDF, todo número da
+afirmação aparece na citação) e autoconferência do extrator. A auditoria
+adversarial auditou **os 256 fatos** e achou **6 não-OK — 2,3%; 3,3% no
+subconjunto de alto risco**.
+
+### O erro que justifica a camada inteira
+
+Fato [232]: *"letrozol é 1ª linha; **clomifeno associado a metformina**,
+gonadotrofinas ou cirurgia ovariana têm papel principalmente de **segunda
+linha**"*. A fonte diz: *"Letrozole is the preferred first line pharmacological
+infertility therapy, **with clomiphene in combination with metformin**;
+gonadotrophins or ovarian surgery primarily having a role as second line
+therapy."*
+
+**O ponto e vírgula é o divisor.** Clomifeno+metformina é aposto da 1ª linha, não
+da 2ª. A citação é literal e correta — a leitura é que inverteu. **Nenhuma
+camada mecânica pega isso.**
+
+E o dano seria clínico: o letrozol é off-label em vários países, então rebaixar
+a via ORAL empurra o clínico direto para gonadotrofina ou cirurgia, removendo a
+alternativa barata e segura — o oposto do que a diretriz quer.
+
+### Onde os erros se concentraram
+
+Os dois graves ([232] e o AMH sem "em adultas") vieram da **Discussion**, não das
+tabelas de recomendação. Em texto corrido a qualificação mora na frase seguinte
+ou depois de um ponto e vírgula. **Gate para as próximas levas:** fato originado
+em Abstract/Discussion exige leitura do parágrafo inteiro e dois testes
+explícitos — *"vale para adolescente?"* e *"esta frase atribui linha de
+tratamento?"*.
+
+### ⚠️ Minha própria instrução injetou uma premissa falsa
+
+Mandei o auditor conferir "ultrassom não diagnostica dentro de 8 anos da
+menarca". **Esse prazo não existe neste artigo** — é da diretriz de 2018. O
+auditor não engoliu e me corrigiu. Lição: o prompt do auditor também é fonte de
+erro, e um auditor que só confirma o que o chefe sugeriu não serve.
+
+### Melhoria estrutural pendente
+
+O extrato **não registra a categoria** da recomendação. A diretriz separa
+evidência (EBR), consenso clínico (CR) e ponto de boa prática (PP, "evidence not
+sought") — e o formato atual entrega os três iguais para a IA. Levar `tipo` e
+GRADE como campos do fato.
+
 ## 🎨 Mudança de APARÊNCIA se confere com print, não com teste (2026-08-07)
 
 O `ci-validate` e o harness A/B em Chromium provam que o app **sobe** e que o
