@@ -1,0 +1,657 @@
+{
+  "fileId": "1Y0gTSFmCKB4iK9YVEDjkM-7SImB0glo8",
+  "titulo": "Diagnosis and management of prolactin-secreting pituitary adenomas: a Pituitary Society international Consensus Statement",
+  "tema": "prolactinoma e hiperprolactinemia — causas, armadilhas do ensaio (macroprolactina e efeito gancho), imagem, agonistas dopaminérgicos (dose, efeitos adversos, valvulopatia, retirada), cirurgia por grau de Knosp, resistência/agressividade, gestação, criança, doença psiquiátrica, menopausa, pessoa trans e doença renal crônica",
+  "fonte": "Petersenn S, Fleseriu M, Casanueva FF, Giustina A, Biermasz N, Biller BMK, et al. Diagnosis and management of prolactin-secreting pituitary adenomas: a Pituitary Society international Consensus Statement. Nature Reviews Endocrinology 2023 (DOI 10.1038/s41574-023-00886-5)",
+  "area": "Neuroendocrinologia",
+  "tipo": "diretriz",
+  "ano": 2023,
+  "conflito": "O núcleo já cita este mesmo consenso, mas o resume de forma que hoje CONTRARIA o texto original em dois pontos. (1) O núcleo diz que 'agonista dopaminérgico é a 1ª linha MESMO em macroprolactinomas'. O consenso restringe isso: 'Medical treatment is the preferred first-line treatment option in patients with a low chance of surgical remission (Knosp grade ≥2) (strong)' — ou seja, o agonista só é a 1ª linha preferencial no Knosp ≥2. Para microprolactinoma e macroprolactinoma bem encapsulado (Knosp 0 e 1), 'Surgery by an expert pituitary neurosurgeon should therefore be discussed alongside dopamine agonist treatment as a first-line option in this subgroup of patients (strong)'. A decisão passou a ser pelo grau de Knosp, não pelo tamanho. (2) O núcleo restringe a cirurgia a 'resistência/intolerância ao agonista ou apoplexia'. O consenso acrescenta como indicações a perda visual rápida e progressiva, a preferência da paciente jovem para evitar décadas de agonista, o debulking antes da gestação e a rinorreia liquórica espontânea. O núcleo também não traz os cortes concretos de rastreio de valvulopatia (ecocardiograma basal e a cada 2–3 anos se >2,0 mg/semana de cabergolina; a cada 5–6 anos se ≤2,0 mg/semana), que estão neste consenso.",
+  "fatos": [
+    {
+      "afirmacao": "Microprolactinomas raramente proliferam e são de baixa preocupação clínica quanto a crescimento (recomendação forte).",
+      "citacao": "Microprolactinomas rarely proliferate and are of low concern for",
+      "secao": "Background — Epidemiology (quadro de recomendações)"
+    },
+    {
+      "afirmacao": "Macroprolactinomas, especialmente em homens, têm evolução clínica diferente (recomendação forte).",
+      "citacao": "• Macroprolactinomas, especially in men, have a different clinical",
+      "secao": "Background — Epidemiology (quadro de recomendações)"
+    },
+    {
+      "afirmacao": "O prognóstico do macroprolactinoma difere do dos microadenomas e exige seguimento mais próximo.",
+      "citacao": "prognosis compared with microadenomas and require closer",
+      "secao": "Background — Epidemiology (quadro de recomendações)"
+    },
+    {
+      "afirmacao": "Os prolactinomas são adenomas secretores de prolactina derivados dos lactotrofos e respondem por 50% dos adenomas hipofisários.",
+      "citacao": "secreting adenomas derived from lactotrophs, account for 50% of",
+      "secao": "Background — Epidemiology"
+    },
+    {
+      "afirmacao": "A razão mulher:homem do prolactinoma é de 5:1 a 10:1 na idade reprodutiva e se iguala após a menopausa.",
+      "citacao": "ratio of 5:1 to 10:1, whereas after menopause the ratio equalizes",
+      "secao": "Background — Epidemiology"
+    },
+    {
+      "afirmacao": "A taxa de incidência padronizada de prolactinoma em mulheres é três vezes maior que em homens.",
+      "citacao": "standardized incidence rate in women is three times higher than in",
+      "secao": "Background — Epidemiology"
+    },
+    {
+      "afirmacao": "A razão entre macroprolactinomas e microprolactinomas é de aproximadamente 1:8 em mulheres e 4:1 em homens — ou seja, no homem predomina o macroadenoma.",
+      "citacao": "men. The ratio between macroprolactinomas and microprolactinomas is approximately 1:8 in women and 4:1 in men.",
+      "secao": "Background — Epidemiology"
+    },
+    {
+      "afirmacao": "Microprolactinoma é definido por diâmetro máximo menor que 10 mm e é o tipo mais frequente de prolactinoma.",
+      "citacao": "Microprolactinomas (\\<10 mm in maximal diameter) are the most",
+      "secao": "Background — Epidemiology"
+    },
+    {
+      "afirmacao": "Macroprolactinoma é definido por diâmetro de 10 mm ou mais.",
+      "citacao": "nomas (≥10 mm diameter). Giant prolactinomas (macroprolactinomas",
+      "secao": "Background — Epidemiology"
+    },
+    {
+      "afirmacao": "Microprolactinomas raramente evoluem para macroprolactinomas.",
+      "citacao": "frequent type of prolactinoma and seldom grow into macroprolacti-",
+      "secao": "Background — Epidemiology"
+    },
+    {
+      "afirmacao": "A pesquisa de mutação germinativa de MEN1 pode ser considerada em pacientes com história familiar de adenoma hipofisário (recomendação fraca).",
+      "citacao": "• MEN1 germline mutation screening could be considered in patients",
+      "secao": "Background — Molecular pathogenetic mechanisms"
+    },
+    {
+      "afirmacao": "A pesquisa de MEN1 também pode ser considerada em pacientes com história familiar de adenomas hipofisários e em pacientes jovens.",
+      "citacao": "with a family history of pituitary adenomas and in patients aged",
+      "secao": "Background — Molecular pathogenetic mechanisms"
+    },
+    {
+      "afirmacao": "Sugere-se pesquisar MEN1 em pacientes com menos de 30 anos que tenham macroadenoma (recomendação fraca).",
+      "citacao": "\\<30 years old with macroadenomas (weak).",
+      "secao": "Background — Molecular pathogenetic mechanisms"
+    },
+    {
+      "afirmacao": "A pesquisa de mutação somática não deve ser feita de rotina no prolactinoma (recomendação forte).",
+      "citacao": "• Somatic mutation screening should not be routinely performed",
+      "secao": "Background — Molecular pathogenetic mechanisms"
+    },
+    {
+      "afirmacao": "Uma mutação somática hotspot no fator de splicing SF3B1 (R625H) foi identificada em 20% dos prolactinomas em uma série.",
+      "citacao": "(SF3B1R625H) was identified in 20% of prolactinomas in one series and",
+      "secao": "Background — Molecular pathogenetic mechanisms"
+    },
+    {
+      "afirmacao": "A mutação hotspot do SF3B1 associou-se a níveis séricos mais altos de prolactina e a comportamento potencialmente mais agressivo do prolactinoma.",
+      "citacao": "was associated with higher serum levels of prolactin and potentially",
+      "secao": "Background — Molecular pathogenetic mechanisms"
+    },
+    {
+      "afirmacao": "Macroprolactinomas em portadores de neoplasia endócrina múltipla tipo 1 (mutação germinativa em MEN1) são mais agressivos do que nos não portadores.",
+      "citacao": "in MEN1) are more aggressive than in those without these mutations, and",
+      "secao": "Background — Molecular pathogenetic mechanisms"
+    },
+    {
+      "afirmacao": "Prolactinomas com mutação de MEN1 podem ser resistentes à terapia.",
+      "citacao": "prolactinomas with MEN1 mutations could be resistant to therapy",
+      "secao": "Background — Molecular pathogenetic mechanisms"
+    },
+    {
+      "afirmacao": "Em contrapartida, microprolactinomas com mutação de MEN1 podem ser menos agressivos do que se pensava.",
+      "citacao": "By contrast, microprolactinomas with MEN1 mutations might be less",
+      "secao": "Background — Molecular pathogenetic mechanisms"
+    },
+    {
+      "afirmacao": "Como variantes patogênicas de AIP são muito raramente detectadas, não se recomenda o rastreamento de AIP no adulto, para evitar exame e custo desnecessários.",
+      "citacao": "very rarely detected, screening is not recommended in order to avoid",
+      "secao": "Background — Molecular pathogenetic mechanisms"
+    },
+    {
+      "afirmacao": "No sistema de graduação deste consenso, recomendação FRACA significa que se baseia em evidência de qualidade muito baixa ou baixa.",
+      "citacao": "• Weak: based on very low quality or low quality evidence",
+      "secao": "Box 1 — Grading of evidence and recommendations"
+    },
+    {
+      "afirmacao": "No sistema de graduação deste consenso, recomendação FORTE significa que se baseia em evidência de qualidade moderada ou alta.",
+      "citacao": "• Strong: based on moderate quality or high quality evidence",
+      "secao": "Box 1 — Grading of evidence and recommendations"
+    },
+    {
+      "afirmacao": "Perda de libido e/ou infertilidade, irregularidade menstrual de início recente ou amenorreia na mulher, e disfunção erétil e/ou hipogonadismo hipogonadotrófico no homem devem motivar investigação de hiperprolactinemia (recomendação forte).",
+      "citacao": "• Loss of libido and/or infertility, new-onset menstrual irregulari- ties or amenorrhoea in women, as well as erectile dysfunction and/or hypogonadotrophic hypogonadism in men, should trigger investigation for hyperprolactinaemia (strong).",
+      "secao": "Clinical presentation — Hyperprolactinaemia and hypogonadism"
+    },
+    {
+      "afirmacao": "Adenomas secretores de prolactina associam-se a maior probabilidade de obesidade e de síndrome metabólica (recomendação fraca).",
+      "citacao": "• Prolactin-secreting adenomas have been associated with increased likelihood of obesity and the metabolic syndrome (weak).",
+      "secao": "Clinical presentation — Hyperprolactinaemia and hypogonadism"
+    },
+    {
+      "afirmacao": "O aumento da secreção de prolactina no estresse, na gestação e na lactação inibe os neurônios hipotalâmicos de kisspeptina e, com isso, reduz a produção de GnRH.",
+      "citacao": "Increased prolactin secretion during stress, pregnancy and lac- tation inhibits hypothalamic kisspeptin neuron function, and con- sequently reduces gonadotrophin-releasing hormone (GnRH) production",
+      "secao": "Clinical presentation — Hyperprolactinaemia and hypogonadism"
+    },
+    {
+      "afirmacao": "A supressão do eixo hipotálamo-hipófise-gonadal induzida pela prolactina costuma reverter após a normalização da prolactina sérica, mas o hipogonadismo pode persistir, sobretudo em homens com macroprolactinoma.",
+      "citacao": "gonadal axis that usually reverts after normalization of prolactin serum levels26, although hypogonadism can persist, especially in men with macroprolactinoma",
+      "secao": "Clinical presentation — Hyperprolactinaemia and hypogonadism"
+    },
+    {
+      "afirmacao": "A hiperprolactinemia causa oligomenorreia ou amenorreia com ou sem galactorreia na mulher e disfunção erétil no homem; perda de libido e infertilidade ocorrem em ambos os sexos.",
+      "citacao": "Hyperprolactinaemia leads to oligomenorrhoea or amenorrhoea with or without galactorrhoea in women and erectile dysfunction in men, while loss of libido and infertility are observed in both sexes",
+      "secao": "Clinical presentation — Hyperprolactinaemia and hypogonadism"
+    },
+    {
+      "afirmacao": "A obesidade é relatada como quatro vezes mais prevalente em pessoas com prolactinoma do que em pessoas com adenoma hipofisário não funcionante, mas provavelmente é secundária ao hipogonadismo associado.",
+      "citacao": "Although obesity is reportedly fourfold more prevalent in individu- als with prolactinoma versus those with non-functioning pituitary adenoma30, this disorder probably occurs secondary to associated hypogonadism",
+      "secao": "Clinical presentation — Hyperprolactinaemia and hypogonadism"
+    },
+    {
+      "afirmacao": "É provavelmente justificado rastrear hipogonadismo hipogonadotrófico em homens e em mulheres na pré-menopausa, tanto no microprolactinoma quanto no macroprolactinoma.",
+      "citacao": "Based on available data, screening for hypogonadotrophic hypo- gonadism in men and in premenopausal women with microprolactinoma and macroprolactinoma is probably warranted.",
+      "secao": "Clinical presentation — Hyperprolactinaemia and hypogonadism"
+    },
+    {
+      "afirmacao": "Macroprolactinomas e, menos frequentemente, microprolactinomas podem causar deficiência dos eixos de GH, TSH e ACTH; o paciente deve ser avaliado clinicamente, testado para deficiências hipofisárias e tratado conforme as diretrizes padrão (recomendação forte).",
+      "citacao": "• Macroprolactinomas and, less frequently, microprolactinomas can cause growth hormone (GH), thyroid-stimulating hormone (TSH) and adrenocorticotrophic hormone (ACTH) axis deficien- cies. Patients should be evaluated for associated clinical features, tested for pituitary hormone deficiencies and appropriately treated per standard guidelines (strong).",
+      "secao": "Clinical presentation — Other pituitary hormone deficiencies"
+    },
+    {
+      "afirmacao": "A ressecção cirúrgica do prolactinoma pode resolver o hipopituitarismo, mas também pode causar novas deficiências; o reteste pós-operatório é recomendado (recomendação forte).",
+      "citacao": "• Surgical resection of prolactinomas can resolve hypopituitarism but can also cause new-onset deficiencies. Postoperative retesting is recommended (strong).",
+      "secao": "Clinical presentation — Other pituitary hormone deficiencies"
+    },
+    {
+      "afirmacao": "As deficiências hormonais hipofisárias são mais frequentes no macroprolactinoma do que no microprolactinoma.",
+      "citacao": "Hormone deficiencies are more frequently encountered in patients with macroprolactinoma than in those with microprolactinoma",
+      "secao": "Clinical presentation — Other pituitary hormone deficiencies"
+    },
+    {
+      "afirmacao": "Em estudo com 81 homens, a prevalência pré-tratamento de deficiência de TSH ou ACTH foi de 6,7% e 0% nos macroprolactinomas de 10–19 mm; 17,9% e 6,9% nos de 20–39 mm; e 26,1% e 33,3% nos prolactinomas gigantes de 40 mm ou mais — ou seja, o risco de hipopituitarismo cresce com o tamanho.",
+      "citacao": "In a study in 81 men, prevalence of pretreatment TSH or ACTH deficiency was 6.7% and 0%, respectively, for macroprolactinomas 10–19 mm in size, 17.9% and 6.9%, respectively, for macroprolactinomas 20–39 mm in size and 26.1% and 33.3%, respectively, for giant prolactinomas ≥40 mm in size",
+      "secao": "Clinical presentation — Other pituitary hormone deficiencies"
+    },
+    {
+      "afirmacao": "Como a cirurgia e a radioterapia podem induzir hipopituitarismo, o cronograma de avaliação pós-tratamento deve ser individualizado.",
+      "citacao": "As surgery and radiation can each induce hypopituitarism, the post-treatment evaluation timeline should be individualized",
+      "secao": "Clinical presentation — Other pituitary hormone deficiencies"
+    },
+    {
+      "afirmacao": "O consenso foi retestar a função hipofisária após agonista dopaminérgico eficaz, conforme as deficiências basais, a extensão da massa e a resposta da prolactina e do adenoma.",
+      "citacao": "the consensus was to retest pituitary function after effective dopamine agonist therapy depending on baseline pituitary deficien- cies and mass extension, as well as prolactin and adenoma response.",
+      "secao": "Clinical presentation — Other pituitary hormone deficiencies"
+    },
+    {
+      "afirmacao": "Recomenda-se rastrear deficiência de GH, TSH e ACTH em quem vai ser operado, e retestar aproximadamente 6 a 12 semanas após a cirurgia.",
+      "citacao": "Screening for GH, TSH and ACTH deficiencies was recommended for those undergoing surgical resection and retesting approximately 6–12 weeks after surgery was recommended depending on baseline",
+      "secao": "Clinical presentation — Other pituitary hormone deficiencies"
+    },
+    {
+      "afirmacao": "Parte dos participantes concluiu que pacientes com deficiência hormonal ao diagnóstico e aqueles com prolactinoma maior que 6 mm deveriam ser todos retestados após a cirurgia.",
+      "citacao": "Some participants concluded that patients with a hormonal deficiency at diagnosis, as well as those with prolactinoma \\>6 mm in size should all be retested after surgery.",
+      "secao": "Clinical presentation — Other pituitary hormone deficiencies"
+    },
+    {
+      "afirmacao": "Paciente com hiperprolactinemia mas prolactina abaixo de cinco vezes o limite superior da normalidade (LSN) deve repetir a dosagem (recomendação forte); a coleta por cateter (cannulated sampling) é recomendada se houver suspeita de influência do estresse (recomendação forte).",
+      "citacao": "• Patients with hyperprolactinaemia but serum levels of prolactin less than five times the upper limit of normal (ULN) should undergo repeat prolactin testing (strong). Cannulated prolactin sampling is recommended if an influence of stress is suspected (strong).",
+      "secao": "Initial assessment — Causes of hyperprolactinaemia"
+    },
+    {
+      "afirmacao": "Em geral o tamanho do adenoma hipofisário e o nível sérico de prolactina se correlacionam; a discrepância entre os dois deve levar a considerar outras causas (recomendação forte).",
+      "citacao": "• In general, pituitary adenoma size and serum levels of prolac- tin correlate; discrepancy should trigger consideration of other possible causes (strong).",
+      "secao": "Initial assessment — Causes of hyperprolactinaemia"
+    },
+    {
+      "afirmacao": "O uso de medicamentos deve ser revisado rigorosamente para excluir hiperprolactinemia induzida por fármaco (recomendação forte).",
+      "citacao": "• Medication use should be rigorously reviewed to exclude drug-induced hyperprolactinaemia (strong).",
+      "secao": "Initial assessment — Causes of hyperprolactinaemia"
+    },
+    {
+      "afirmacao": "Hipotireoidismo primário, insuficiência renal e insuficiência hepática devem ser reconhecidos como causas de hiperprolactinemia leve (recomendação forte).",
+      "citacao": "• Primary hypothyroidism, renal insufficiency and liver failure should be recognized as causes of mild hyperprolactinaemia (strong).",
+      "secao": "Initial assessment — Causes of hyperprolactinaemia"
+    },
+    {
+      "afirmacao": "A gestação não deve ser esquecida como causa de hiperprolactinemia (recomendação forte).",
+      "citacao": "• Pregnancy should not be overlooked as a cause of hyperprolactinaemia (strong).",
+      "secao": "Initial assessment — Causes of hyperprolactinaemia"
+    },
+    {
+      "afirmacao": "A dopamina de origem hipotalâmica atravessa a haste hipofisária e suprime a produção de prolactina e a proliferação dos lactotrofos via receptores D2; essas ações inibitórias são contrapostas pelo estrogênio.",
+      "citacao": "Dopamine traverses the pituitary stalk and suppresses prolactin production and lactotroph proliferation via D2 receptors (D2R). These inhibitory actions are opposed by oestrogen.",
+      "secao": "Initial assessment — Causes of hyperprolactinaemia"
+    },
+    {
+      "afirmacao": "A causa patológica mais comum de hiperprolactinemia é a produção excessiva de prolactina por um prolactinoma.",
+      "citacao": "The most common pathological cause of hyperprolactinaemia is excess prolactin production by a prolactinoma",
+      "secao": "Initial assessment — Causes of hyperprolactinaemia"
+    },
+    {
+      "afirmacao": "Massas parasselares ou intrasselares que comprimem a haste hipofisária, incluindo adenomas hipofisários não secretores, podem comprometer o fluxo de dopamina e causar hiperprolactinemia (efeito haste).",
+      "citacao": "sellar or intrasellar masses impinging on the pituitary stalk, including non-secreting pituitary adenomas, can compromise dopamine flow and",
+      "secao": "Initial assessment — Causes of hyperprolactinaemia"
+    },
+    {
+      "afirmacao": "Prolactina elevada até seis vezes o LSN pode refletir lesão hipotalâmico-hipofisária ou trauma local, cirurgia, radiação, fratura de crânio ou aneurisma de carótida interna — e não necessariamente prolactinoma.",
+      "citacao": "Hence, elevated serum levels of pro- lactin (up to six times ULN)38,39 might reflect a hypothalamic–pituitary lesion or evidence of local trauma, surgery, radiation, skull fracture or internal carotid artery aneurysm",
+      "secao": "Initial assessment — Causes of hyperprolactinaemia"
+    },
+    {
+      "afirmacao": "Pontos de corte de prolactina ajustados ao tamanho do adenoma podem ajudar a distinguir prolactinoma verdadeiro de outras lesões hipofisárias.",
+      "citacao": "Pituitary adenoma size-adapted cut-offs for prolactin might distinguish true prolactinomas from other pituitary lesions",
+      "secao": "Initial assessment — Causes of hyperprolactinaemia"
+    },
+    {
+      "afirmacao": "Em análise caso-controle houve discreto aumento do risco de prolactinoma com terapia hormonal da menopausa e com anticoncepcional oral combinado de estrogênio-progesterona, mas o risco com anticoncepcional oral não se confirmou na análise de coorte prospectiva.",
+      "citacao": "In a case–control analysis, there was a mildly increased risk of prolactinoma with menopausal hormone therapy as well as with combined oestrogen–progesterone oral contraceptives, but the risk with oral contraceptives was not present in the prospective cohort analysis",
+      "secao": "Initial assessment — Causes of hyperprolactinaemia"
+    },
+    {
+      "afirmacao": "O hipotireoidismo primário pode se apresentar com hiperprolactinemia, que é reversível com a reposição de hormônio tireoidiano.",
+      "citacao": "Primary hypothyroidism can present with hyperprolactinaemia, which is reversible with thyroid hormone replacement.",
+      "secao": "Initial assessment — Causes of hyperprolactinaemia"
+    },
+    {
+      "afirmacao": "A hipotensão intracraniana pode causar hiperprolactinemia.",
+      "citacao": "Intracranial hypotension can cause hyperprolactinaemia43. Stress",
+      "secao": "Initial assessment — Causes of hyperprolactinaemia"
+    },
+    {
+      "afirmacao": "O estresse (por exemplo, o da punção venosa) pode elevar a prolactina de duas a quatro vezes, com duração menor que 1 hora.",
+      "citacao": "Stress (for example, due to venipuncture) can induce a twofold to fourfold rise in serum levels of prolactin that lasts for \\<1 h.",
+      "secao": "Initial assessment — Causes of hyperprolactinaemia"
+    },
+    {
+      "afirmacao": "Recomenda-se coleta repetida ou por cateter venoso quando a prolactina está abaixo de cinco vezes o LSN ou quando há suspeita de influência do estresse.",
+      "citacao": "venipuncture sampling for testing is recommended with serum lev- els of prolactin less than five times ULN or if an influence of stress is suspected",
+      "secao": "Initial assessment — Causes of hyperprolactinaemia"
+    },
+    {
+      "afirmacao": "Elevações fisiológicas de prolactina podem ocorrer após exercício, refeições hiperproteicas e consumo de álcool.",
+      "citacao": "Physiological prolactin increases can occur after exercise, high-protein meals and alcohol consumption",
+      "secao": "Initial assessment — Causes of hyperprolactinaemia"
+    },
+    {
+      "afirmacao": "Na síndrome dos ovários policísticos, a prolactina elevada exige investigação adicional, pois a SOP em si raramente se associa a hiperprolactinemia.",
+      "citacao": "Patients with polycystic ovary syndrome (PCOS) require further evaluation of elevated serum levels of prolactin, as PCOS per se is rarely associated with hyperprolactinaemia",
+      "secao": "Initial assessment — Causes of hyperprolactinaemia"
+    },
+    {
+      "afirmacao": "Prolactina alta na hipofisite linfocítica pode refletir ação autoimune celular ou efeito haste; deve-se considerar hipofisite diante de hiperprolactinemia aparentemente idiopática.",
+      "citacao": "High prolactin with lymphocytic hypophysitis could reflect either autoimmune cell actions or a stalk effect49. Hypophysitis should be con- sidered with apparently idiopathic hyperprolactinaemia",
+      "secao": "Initial assessment — Causes of hyperprolactinaemia"
+    },
+    {
+      "afirmacao": "A cossecreção de prolactina com GH na acromegalia ou com TSH no tireotropinoma decorre de adenoma pluri-hormonal ou de efeito haste.",
+      "citacao": "Prolactin co-secretion with GH in acromegaly or with TSH in thyrotrophinoma is due to either plurihormonal adenoma or a stalk effect",
+      "secao": "Initial assessment — Causes of hyperprolactinaemia"
+    },
+    {
+      "afirmacao": "Muitos fármacos que agem como antagonistas dopaminérgicos ou como agonistas serotoninérgicos podem causar hiperprolactinemia e galactorreia.",
+      "citacao": "Many drugs acting as dopamine antagonists or as serotonin agonists can cause hyperprolactinaemia and galactorrhoea",
+      "secao": "Initial assessment — Causes of hyperprolactinaemia"
+    },
+    {
+      "afirmacao": "A prolactina é depurada pelo rim, de modo que a insuficiência renal crônica pode elevar a prolactina sérica.",
+      "citacao": "Prolactin is systemically cleared by the kidney, so chronic kidney insufficiency can cause elevated serum levels of prolactin.",
+      "secao": "Fig. 1 — Neuroendocrine regulation of prolactin secretion"
+    },
+    {
+      "afirmacao": "TRH e peptídeo intestinal vasoativo (VIP) do hipotálamo estimulam a secreção de prolactina, assim como o estrogênio.",
+      "citacao": "By contrast, thyrotrophin-releasing hormone (TRH) and vasoactive intestinal peptide (VIP) from the hypothalamus stimulate prolactin secretion in the pituitary, as does oestrogen.",
+      "secao": "Fig. 1 — Neuroendocrine regulation of prolactin secretion"
+    },
+    {
+      "afirmacao": "Lesões suprasselares e infundibulares que envolvem a haste, e fármacos com atividade antagonista no receptor D2, aumentam a secreção de prolactina.",
+      "citacao": "Suprasellar and infundibular lesions involving the stalk and pharmacological agents with antagonist activity at the D2R can result in an increase in prolactin secretion.",
+      "secao": "Fig. 1 — Neuroendocrine regulation of prolactin secretion"
+    },
+    {
+      "afirmacao": "São causas fisiológicas de hiperprolactinemia: gestação, estimulação da mama ou do mamilo, estresse, sono, coito e exercício.",
+      "citacao": "Physiological Pregnancy; breast or nipple stimulation; stress; sleep; coitus; exercise.",
+      "secao": "Box 2 — Aetiology of hyperprolactinaemia"
+    },
+    {
+      "afirmacao": "Causam hiperprolactinemia por lesão hipotalâmico-hipofisária/da haste: adenomas, craniofaringioma, cisto da bolsa de Rathke, extensão suprasselar de massa hipofisária, meningioma, disgerminoma, metástases hipotalâmicas ou hipofisárias, doenças granulomatosas, infiltrações, irradiação, hipotensão intracraniana e trauma (secção da haste, cirurgia selar, traumatismo craniano grave).",
+      "citacao": "Hypothalamic–pituitary stalk damage Adenomas; craniopharyngioma; Rathke's cleft cyst; suprasellar pituitary mass extension; meningioma; dysgerminoma; hypothalamic or pituitary metastases; granulomatous disorders; infiltrations; pituitary and/or brain irradiation; intracranial hypotension; trauma (pituitary stalk section, sellar surgery, severe head injury).",
+      "secao": "Box 2 — Aetiology of hyperprolactinaemia"
+    },
+    {
+      "afirmacao": "Causas não hipofisárias de hiperprolactinemia incluem secreção ectópica de prolactina, hipotireoidismo primário, insuficiência renal crônica, cirrose, pseudociese, crises epilépticas, desnutrição, anorexia nervosa e lesões de parede torácica (trauma, piercing, cirurgia, herpes-zóster).",
+      "citacao": "Non-pituitary disorders Ectopic prolactin secretion; primary hypothyroidism; chronic renal failure; cirrhosis; pseudocyesis; epileptic seizures; malnutrition; anorexia nervosa; chest (neurogenic, chest wall trauma, piercings, surgery, herpes zoster).",
+      "secao": "Box 2 — Aetiology of hyperprolactinaemia"
+    },
+    {
+      "afirmacao": "Há causa genética rara de hiperprolactinemia: mutação inativadora do gene do receptor de prolactina (PRLR).",
+      "citacao": "Genetic Inactivating mutation in the gene encoding prolactin receptor (PRLR).",
+      "secao": "Box 2 — Aetiology of hyperprolactinaemia"
+    },
+    {
+      "afirmacao": "Bloqueadores do receptor de dopamina que causam hiperprolactinemia incluem fenotiazinas (clorpromazina, perfenazina), butirofenonas (haloperidol), tioxantenos, metoclopramida, domperidona e alizaprida.",
+      "citacao": "Pharmacological Dopamine receptor blockers Phenothiazines (chlorpromazine, perphenazine); butyrophenones (haloperidol); thioxanthenes; metoclopramide; domperidone; alizapride.",
+      "secao": "Box 2 — Aetiology of hyperprolactinaemia"
+    },
+    {
+      "afirmacao": "Neurolépticos associados a hiperprolactinemia incluem clorpromazina, risperidona, promazina, prometazina, trifluoperazina, flufenazina, butaperazina, perfenazina, tietilperazina, tioridazina, haloperidol, pimozida, tiotixeno e molindona.",
+      "citacao": "Neuroleptics Chlorpromazine; risperidone; promazine; promethazine; trifluoperazine; fluphenazine; butaperazine; perphenazine; thiethylperazine; thioridazine; haloperidol; pimozide; thiothixene; molindone.",
+      "secao": "Box 2 — Aetiology of hyperprolactinaemia"
+    },
+    {
+      "afirmacao": "Anti-hipertensivos que podem elevar a prolactina: labetalol, reserpina e verapamil.",
+      "citacao": "Antihypertensives Labetalol; reserpine; verapamil.",
+      "secao": "Box 2 — Aetiology of hyperprolactinaemia"
+    },
+    {
+      "afirmacao": "Anti-histamínicos H2 que podem elevar a prolactina: cimetidina e ranitidina.",
+      "citacao": "H2 antihistamines Cimetidine; ranitidine.",
+      "secao": "Box 2 — Aetiology of hyperprolactinaemia"
+    },
+    {
+      "afirmacao": "Opiáceos e agonistas opiáceos que elevam a prolactina incluem heroína, metadona, apomorfina e morfina.",
+      "citacao": "Opiates and opiate agonists Heroin; methadone; apomorphine; morphine.",
+      "secao": "Box 2 — Aetiology of hyperprolactinaemia"
+    },
+    {
+      "afirmacao": "Antidepressivos tricíclicos e inibidores seletivos da recaptação de serotonina podem causar hiperprolactinemia.",
+      "citacao": "Antidepressants Tricyclic antidepressants; selective serotonin reuptake inhibitors.",
+      "secao": "Box 2 — Aetiology of hyperprolactinaemia"
+    },
+    {
+      "afirmacao": "A alfa-metildopa, inibidora da síntese de dopamina, causa hiperprolactinemia.",
+      "citacao": "Dopamine synthesis inhibitors α-Methyldopa.",
+      "secao": "Box 2 — Aetiology of hyperprolactinaemia"
+    },
+    {
+      "afirmacao": "A reserpina, depletora de catecolaminas, causa hiperprolactinemia.",
+      "citacao": "Catecholamine depleters Reserpine.",
+      "secao": "Box 2 — Aetiology of hyperprolactinaemia"
+    },
+    {
+      "afirmacao": "A fenitoína é um anticonvulsivante que pode causar hiperprolactinemia.",
+      "citacao": "Anticonvulsants Phenytoin.",
+      "secao": "Box 2 — Aetiology of hyperprolactinaemia"
+    },
+    {
+      "afirmacao": "Diante de sintomas inconsistentes e níveis variáveis de prolactina, deve-se suspeitar de resultado falso-positivo ou falso-negativo (recomendação forte).",
+      "citacao": "• In patients with inconsistent symptoms and variable serum levels of prolactin, false-positive or false-negative results should be suspected (strong).",
+      "secao": "Initial assessment — Biochemical evaluation"
+    },
+    {
+      "afirmacao": "Os intervalos de referência dos ensaios de prolactina podem não estar suficientemente validados para reconhecer hiperprolactinemia leve (recomendação fraca).",
+      "citacao": "• Standard prolactin assay reference ranges might not be sufficiently validated to recognize mild hyperprolactinaemia (weak).",
+      "secao": "Initial assessment — Biochemical evaluation"
+    },
+    {
+      "afirmacao": "Amostras com prolactina acima do limite superior de detecção do ensaio devem ser diluídas para fornecer um valor exato (recomendação forte).",
+      "citacao": "• Serum samples with prolactin levels above the upper detection limit should be diluted to provide an exact value (strong).",
+      "secao": "Initial assessment — Biochemical evaluation"
+    },
+    {
+      "afirmacao": "A macroprolactinemia deve ser investigada em pacientes com prolactina moderadamente elevada (abaixo de 200 ng/ml), ao menos naqueles com achados clínicos ou de imagem discordantes (recomendação forte).",
+      "citacao": "• Macroprolactinaemia should be evaluated in patients with mod- erately increased serum levels of prolactin (\\<200 ng/ml), at least in those with discordant clinical or imaging findings (strong).",
+      "secao": "Initial assessment — Biochemical evaluation"
+    },
+    {
+      "afirmacao": "Com sintomas e medidas de prolactina inconsistentes, deve-se considerar exposição à biotina ou anticorpos heterófilos/anti-animais como causa de erro laboratorial, embora sejam raros (recomendação forte).",
+      "citacao": "• With inconsistent symptoms and inconsistent measurement values for prolactin, biotin exposure or heterophilic or human anti-animal antibodies, although rare, should be considered as a cause of erroneous laboratory results (strong).",
+      "secao": "Initial assessment — Biochemical evaluation"
+    },
+    {
+      "afirmacao": "Em paciente com adenoma gigante e quadro típico de hiperprolactinemia mas prolactina normal ou pouco elevada, a amostra deve ser remedida após diluição a 1:100 para excluir efeito gancho (high-dose hook effect) (recomendação forte).",
+      "citacao": "• In patients with giant adenoma and typical features of hyper- prolactinaemia but normal or slightly elevated serum levels of prolactin, samples should be re-measured after 1:100 dilution to exclude a high-dose hook effect (strong).",
+      "secao": "Initial assessment — Biochemical evaluation"
+    },
+    {
+      "afirmacao": "Erros de ensaio, macroprolactinemia e efeito gancho são as três razões possíveis de dosagem de prolactina falso-positiva ou falso-negativa.",
+      "citacao": "Assay errors, macroprolactinaemia and high-dose hook effect are all possible reasons for false-positive or false-negative prolactin measurements",
+      "secao": "Initial assessment — Biochemical evaluation"
+    },
+    {
+      "afirmacao": "A prolactina é medida por imunoensaio calibrado contra o padrão internacional da OMS 84/500, que contém exclusivamente prolactina humana monomérica de 23 kDa.",
+      "citacao": "Prolactin is usually measured by immunoassay, calibrated against the WHO 84/500 international standard contain- ing exclusively 23 kDa monomeric human prolactin.",
+      "secao": "Initial assessment — Biochemical evaluation (Prolactin assays)"
+    },
+    {
+      "afirmacao": "O diagnóstico depende de intervalos de referência específicos do ensaio e do sexo; os limites superiores publicados são menores que os informados pela maioria dos fabricantes, os valores normais são mais altos em mulheres, e as unidades variam (1 µg/l = 21,2 mUI/l).",
+      "citacao": "However, published upper limits are lower than those presented by most manufacturers56, normal values are higher in women than in men and different measurement units might be provided (that is, 1 µg/l = 21.2 mIU/l).",
+      "secao": "Initial assessment — Biochemical evaluation (Prolactin assays)"
+    },
+    {
+      "afirmacao": "Testes de estímulo e de supressão da prolactina dão resultados inespecíficos e foram amplamente abandonados.",
+      "citacao": "Stimulation and suppression tests yield non-specific results and have been largely abandoned",
+      "secao": "Initial assessment — Biochemical evaluation (Prolactin assays)"
+    },
+    {
+      "afirmacao": "A forma circulante principal da prolactina tem 23 kDa; a 'big' prolactina tem 40–60 kDa e a 'big-big' prolactina tem mais de 150 kDa.",
+      "citacao": "The major circulating form of prolactin has a molecular weight of 23 kDa, in contrast to ‘big’ prolactin (40–60 kDa) and ‘big-big’ prolactin (\\>150 kDa).",
+      "secao": "Initial assessment — Biochemical evaluation (Macroprolactinaemia)"
+    },
+    {
+      "afirmacao": "Em 10 a 25% das pessoas com hiperprolactinemia é possível detectar big prolactina e big-big prolactina no soro.",
+      "citacao": "In 10–25% of individuals with hyper- prolactinaemia, big prolactin and big-big prolactin might be detect- able in serum",
+      "secao": "Initial assessment — Biochemical evaluation (Macroprolactinaemia)"
+    },
+    {
+      "afirmacao": "Autoanticorpos antiprolactina (na maioria IgG) ligados à prolactina compõem a big-big prolactina e, portanto, a macroprolactinemia.",
+      "citacao": "to prolactin contribute to big-big prolactin and therefore to macro- prolactinaemia.",
+      "secao": "Initial assessment — Biochemical evaluation (Macroprolactinaemia)"
+    },
+    {
+      "afirmacao": "Como essas variantes interferem no ensaio mas são biologicamente inativas, a maioria dos pacientes com macroprolactinemia não tem os sintomas típicos de hiperprolactinemia.",
+      "citacao": "As these variants interfere with prolactin assays but are biologically inactive, most patients with macroprolactinaemia lack typical clinical symptoms of hyperprolactinaemia",
+      "secao": "Initial assessment — Biochemical evaluation (Macroprolactinaemia)"
+    },
+    {
+      "afirmacao": "A recuperação da prolactina após precipitação com polietilenoglicol (PEG) costuma distinguir macroprolactinemia de hiperprolactinemia verdadeira.",
+      "citacao": "Prolactin recovery after polyethylene glycol precipitation can usually distin- guish between macroprolactinaemia and true hyperprolactinaemia",
+      "secao": "Initial assessment — Biochemical evaluation (Macroprolactinaemia)"
+    },
+    {
+      "afirmacao": "No efeito gancho, concentrações extremamente altas de prolactina saturam os dois anticorpos do ensaio de dois sítios e impedem a formação do sanduíche, falseando o resultado para baixo.",
+      "citacao": "In two-site immunoradiometric or chemiluminometric assays, incubation with extremely high concentrations of prolactin saturates both antibodies and prevents sandwich formation, result- ing in the so-called hook effect.",
+      "secao": "Initial assessment — Biochemical evaluation (Hook effect)"
+    },
+    {
+      "afirmacao": "Por causa do efeito gancho, pacientes com prolactina muito alta podem apresentar apenas níveis moderadamente elevados na dosagem.",
+      "citacao": "Thus, patients with very high serum levels of prolactin might show only moderately elevated levels in assay measurements.",
+      "secao": "Initial assessment — Biochemical evaluation (Hook effect)"
+    },
+    {
+      "afirmacao": "O efeito gancho é raro nos ensaios atuais, mas deve ser considerado quando a prolactina está só discretamente elevada e a suspeita clínica de macroprolactinoma é alta.",
+      "citacao": "The hook effect is rarely encountered in current assays, but should be considered when prolactin level is only mildly elevated and clinical suspicion for a macroprolactinoma is high",
+      "secao": "Initial assessment — Biochemical evaluation (Hook effect)"
+    },
+    {
+      "afirmacao": "Sinais e sintomas de hiperprolactinemia, achado laboratorial de hipogonadismo hipogonadotrófico ou massa selar na RM devem todos motivar a dosagem de prolactina.",
+      "citacao": "Clinical signs and symptoms of hyperprolactinaemia, laboratory findings of hypogonadotrophic hypogonadism or sellar mass on MRI should all trigger evaluation of prolactin.",
+      "secao": "Fig. 2 — Diagnostic algorithm for prolactinoma"
+    },
+    {
+      "afirmacao": "Se a prolactina estiver apenas moderadamente elevada (até 200 ng/ml), devem-se considerar outros diagnósticos que não o prolactinoma.",
+      "citacao": "If moderately elevated blood levels are observed (≤200 ng/ml), diagnoses other than prolactinoma should be considered.",
+      "secao": "Fig. 2 — Diagnostic algorithm for prolactinoma"
+    },
+    {
+      "afirmacao": "Prolactina acima de 200 ng/ml torna o prolactinoma mais provável que outros diagnósticos.",
+      "citacao": "If prolactin levels are \\>200 ng/ml, prolactinoma is more probable than other diagnoses.",
+      "secao": "Fig. 2 — Diagnostic algorithm for prolactinoma"
+    },
+    {
+      "afirmacao": "Achados de imagem inconsistentes com o quadro clínico devem motivar investigação de efeito haste (não prolactinoma) ou de efeito gancho.",
+      "citacao": "Imaging results inconsistent with clinical findings should prompt investigation for non-prolactinoma stalk effect, or high-dose hook effect.",
+      "secao": "Fig. 2 — Diagnostic algorithm for prolactinoma"
+    },
+    {
+      "afirmacao": "A RM deve ser feita na hiperprolactinemia confirmada ao diagnóstico (se não houver outra causa não adenomatosa evidente), para demonstrar a resposta do adenoma ao tratamento clínico e para estabelecer o novo basal 3 a 6 meses após a cirurgia (recomendação forte).",
+      "citacao": "• MRI should be performed in patients with confirmed hyperpro- lactinaemia at diagnosis (if no other non-adenomatous causes for hyperprolactinaemia are evident), to demonstrate pituitary adenoma response to medical treatment, and to establish base- line status 3–6 months after surgery (strong).",
+      "secao": "Imaging — MRI"
+    },
+    {
+      "afirmacao": "O momento da RM após o início da terapia medicamentosa depende do tamanho do adenoma, da proximidade do quiasma óptico e da resposta da prolactina.",
+      "citacao": "Timing of MRI after medical therapy initiation depends on adenoma size, proximity to the optic chiasm and prolactin response to therapy.",
+      "secao": "Imaging — MRI"
+    },
+    {
+      "afirmacao": "A frequência da imagem de seguimento deve ser baseada em fatores clínicos, bioquímicos e histológicos e nos exames de imagem prévios (recomendação forte).",
+      "citacao": "• Follow-up imaging frequency should be based on clinical, bio- chemical and histological factors, as well as previous imaging results (strong).",
+      "secao": "Imaging — MRI"
+    },
+    {
+      "afirmacao": "Imagem seriada deve ser feita no prolactinoma resistente ao tratamento; diante de sintomas novos (alteração visual, cefaleia ou galactorreia); diante de disfunção hipofisária nova; e diante de nova elevação da prolactina (recomendação forte).",
+      "citacao": "• Serial imaging should be performed for treatment-resistant pro- lactinoma; new onset of symptoms, including visual changes, headaches or galactorrhoea; new-onset pituitary dysfunction; and evidence of a new increase in serum levels of prolactin (strong).",
+      "secao": "Imaging — MRI"
+    },
+    {
+      "afirmacao": "O realce dinâmico por gadolínio é importante no diagnóstico inicial do prolactinoma; nas RM de seguimento o gadolínio deve ser usado com parcimônia, preferindo-se quelatos macrocíclicos aos lineares até que se esclareçam os riscos de retenção a longo prazo (recomendação forte).",
+      "citacao": "• Dynamic gadolinium-based MRI contrast enhancement is impor- tant for initial diagnosis of prolactinoma (strong). For follow-up MRIs, gadolinium should be used judiciously; macrocyclic chelates are preferred over linear chelates until further studies clarify possible long-term retention risks (strong).",
+      "secao": "Imaging — MRI"
+    },
+    {
+      "afirmacao": "O gadolínio deve ser usado com cautela na doença renal crônica pelo risco de fibrose sistêmica nefrogênica (recomendação forte).",
+      "citacao": "• Gadolinium should be used with caution in patients with chronic kidney disease (CKD) owing to the risk of nephrogenic systemic fibrosis (strong).",
+      "secao": "Imaging — MRI"
+    },
+    {
+      "afirmacao": "Pacientes com adenoma hipofisário de alto risco de comportamento agressivo exigem vigilância mais próxima (recomendação forte).",
+      "citacao": "• Patients with pituitary adenoma at high risk of aggressive behaviour require closer surveillance (strong).",
+      "secao": "Imaging — MRI"
+    },
+    {
+      "afirmacao": "A expansão do macroprolactinoma costuma vir acompanhada de alterações bioquímicas e clínicas, e a prolactina em geral se correlaciona com o tamanho do adenoma, mas há exceções.",
+      "citacao": "Macroprolactinoma expansion is usually accompanied by biochemical and clinical changes63,64, and serum levels of prolactin usually correlate with adenoma size, but exceptions occur",
+      "secao": "Imaging — MRI"
+    },
+    {
+      "afirmacao": "Como microadenomas não tratados com agonista dopaminérgico raramente crescem, a RM (como adjuvante à dosagem de prolactina) costuma ser indicada apenas quando há suspeita de crescimento, proximidade do quiasma óptico ou avaliação de possibilidade cirúrgica.",
+      "citacao": "As microadenomas not treated with dopamine agonists rarely increase in size, MRI (as an adjunct to prolactin monitoring) is typically warranted only with suspected adenoma growth or optic chiasm proximity or to evaluate surgical possibilities",
+      "secao": "Imaging — MRI"
+    },
+    {
+      "afirmacao": "Prolactinomas costumam ser discretamente hiperintensos na RM ponderada em T2.",
+      "citacao": "Prolactinomas are typically mildly hyperintense on T2-weighted MRI",
+      "secao": "Imaging — MRI"
+    },
+    {
+      "afirmacao": "Sinal heterogêneo em T2 (que reflete necrose e hemorragia) pode associar-se a prolactina mais alta e a resposta menos eficaz ao agonista dopaminérgico do que o adenoma homogêneo.",
+      "citacao": "reflects necrosis and haemorrhage and that might be associated with increased serum levels of prolactin and less effective dopamine agonist response compared with a homogeneous adenoma",
+      "secao": "Imaging — MRI"
+    },
+    {
+      "afirmacao": "A hipointensidade em T2 em mulheres associa-se a resistência ao agonista dopaminérgico.",
+      "citacao": "T2 hypointen- sity in women has been associated with dopamine agonist resistance",
+      "secao": "Imaging — MRI"
+    },
+    {
+      "afirmacao": "O tratamento com agonista dopaminérgico aumenta a hiperintensidade em T2, embora esse aumento possa não ser perceptível em adenomas hemorrágicos ou já muito hiperintensos; a sequência de eco gradiente T2 pode ajudar no diagnóstico de hemorragia.",
+      "citacao": "Increased T2 hyperintensity occurs with dopamine agonist treatment, although this increase might not be noticeable in haemorrhagic or highly hyperintense adenomas. T2 echo gradient imaging might be useful for diagnosing haemorrhage.",
+      "secao": "Imaging — MRI"
+    },
+    {
+      "afirmacao": "No macroprolactinoma, a RM deve ser repetida 3 a 6 meses após o início do agonista dopaminérgico, pois a redução de tamanho aos 3 meses de cabergolina prediz resposta a longo prazo e/ou controle bioquímico.",
+      "citacao": "For macroprolactinomas, MRI should be repeated at 3–6 months after the start of dopamine agonist treat- ment, as a reduction in size at 3 months after starting cabergoline could predict further long-term response and/or biochemical control",
+      "secao": "Imaging — Timing after medical therapy"
+    },
+    {
+      "afirmacao": "No microprolactinoma, a repetição da RM depende do seguimento clínico e bioquímico, mas pode ser feita após 1 ano ou, no mínimo, quando se cogitar a retirada do agonista dopaminérgico.",
+      "citacao": "For microprolactinomas, re-scanning depends on clinical and biochemical follow-up, but can be repeated after 1 year, or at least when consider- ing withdrawal of dopamine agonists.",
+      "secao": "Imaging — Timing after medical therapy"
+    },
+    {
+      "afirmacao": "Como o adenoma pode crescer mesmo em uso de agonista dopaminérgico quando é bioquimicamente resistente, deve-se considerar imagem de seguimento se a prolactina permanecer elevada ou estiver subindo.",
+      "citacao": "As adenoma growth can occur with biochemically resistant prolactinomas treated with dopamine agonists, follow-up imaging should be considered for persistently elevated or rising serum levels of prolactin.",
+      "secao": "Imaging — Timing after medical therapy"
+    },
+    {
+      "afirmacao": "Se não houver redução do tumor com o agonista dopaminérgico e a prolactina inicial não for inequivocamente indicativa de prolactinoma, deve-se reconsiderar efeito haste por adenoma não funcionante.",
+      "citacao": "If shrinkage is not demon- strated with dopamine agonists and the initial serum level of prolactin is not unequivocally indicative of prolactinoma, a stalk effect due to a non-functioning adenoma should be reconsidered.",
+      "secao": "Imaging — Timing after medical therapy"
+    },
+    {
+      "afirmacao": "Em micro e macroprolactinomas que responderam ao tratamento, imagem seriada além de 1 ano não é necessária, a menos que a prolactina suba persistentemente.",
+      "citacao": "For treatment-responsive microprolactinomas and macropro- lactinomas, serial imaging beyond 1 year is not necessary unless serum levels of prolactin persistently increase",
+      "secao": "Imaging — Timing after medical therapy"
+    },
+    {
+      "afirmacao": "Macroprolactinomas com resposta parcial ou próximos do quiasma óptico podem exigir imagem anual nos primeiros 3 anos e menos frequente depois; sintomas sugestivos de apoplexia hipofisária exigem imagem imediata.",
+      "citacao": "might require periodic annual imaging for the first 3 years and less frequently thereafter64. Symptoms suggestive of pituitary apoplexy warrant prompt imaging.",
+      "secao": "Imaging — Timing after medical therapy"
+    },
+    {
+      "afirmacao": "Pode haver dissociação entre bioquímica e imagem: normalização da prolactina sem redução importante da massa, ou redução importante sem normalização completa da prolactina.",
+      "citacao": "Discordant results showing normalization of prolactin serum lev- els without substantial mass shrinkage, or notable shrinkage without complete normalization of prolactin serum levels, could be encoun- tered.",
+      "secao": "Imaging — Timing after medical therapy"
+    },
+    {
+      "afirmacao": "A prolactina costuma normalizar nos primeiros 6 meses e a redução importante da massa também pode ocorrer cedo, mas alguns prolactinomas só diminuem lentamente ao longo de vários anos de agonista dopaminérgico.",
+      "citacao": "Although prolactin serum levels often normalize within the first 6 months73, and substantial mass shrinkage can also occur early, some prolactinomas only slowly decrease in size over several years of dopamine agonist therapy.",
+      "secao": "Imaging — Timing after medical therapy"
+    },
+    {
+      "afirmacao": "Quando se cogita retirar o agonista dopaminérgico, a ausência de adenoma residual na RM é fator prognóstico favorável de não recorrência.",
+      "citacao": "When dopamine agonist withdrawal is being considered, an absence of residual adenoma on MRI is a favourable prognostic factor for lack of recurrence",
+      "secao": "Imaging — Timing after medical therapy"
+    },
+    {
+      "afirmacao": "Após a retirada do agonista dopaminérgico, a RM deve ser feita se a prolactina subir progressivamente ou se surgirem cefaleia, alteração visual ou disfunção hipofisária.",
+      "citacao": "MRI should be performed after dopamine agonist withdrawal if serum levels of prolactin rise progressively or if headaches, vision changes or pituitary dysfunction develop.",
+      "secao": "Imaging — Timing after medical therapy"
+    },
+    {
+      "afirmacao": "A RM deve ser feita 3 a 6 meses após a cirurgia para estabelecer um novo basal.",
+      "citacao": "MRI should be performed 3–6 months postop- eratively to establish a new baseline.",
+      "secao": "Imaging — Timing after surgery"
+    },
+    {
+      "afirmacao": "Em adenomas parcialmente ressecados e resistentes ao agonista dopaminérgico, a imagem seriada pode ser feita em intervalos iniciais de 6 a 12 meses.",
+      "citacao": "Serial imaging might be performed for dopamine agonist-resistant, partially resected adenomas at initial imaging intervals of 6–12 months.",
+      "secao": "Imaging — Timing after surgery"
+    },
+    {
+      "afirmacao": "Adenomas completamente ressecados só devem ser reimaginados se a prolactina subir ou se surgirem cefaleia, alteração visual ou disfunção hipofisária.",
+      "citacao": "Completely resected adenomas should be re-imaged only if serum levels of prolactin rise, or if head- aches, vision changes or pituitary dysfunction develop",
+      "secao": "Imaging — Timing after surgery"
+    },
+    {
+      "afirmacao": "Se a cirurgia foi feita como primeira linha no microprolactinoma e a prolactina normalizou no pós-operatório, só se repete imagem se a hiperprolactinemia recorrer.",
+      "citacao": "If surgery is performed as first-line management for microprolactinoma and postoperative normalization of prolactin serum levels is achieved, repeat imaging is required only upon hyperprolactinaemia recurrence.",
+      "secao": "Imaging — Timing after surgery"
+    },
+    {
+      "afirmacao": "A gestação é fator de risco para crescimento do prolactinoma, especialmente do macroprolactinoma, e o risco é maior em quem não foi operada previamente.",
+      "citacao": "Pregnancy is a risk factor for prolactinoma enlarge- ment, especially for macroprolactinomas, and risk is increased in patients without prior surgery",
+      "secao": "Imaging — During pregnancy"
+    },
+    {
+      "afirmacao": "Na gestante com prolactinoma que desenvolve cefaleia mais intensa ou de características diferentes, ou alteração visual, deve-se fazer RM SEM contraste.",
+      "citacao": "MRI without contrast agent adminis- tration should be performed if a pregnant patient with prolactinoma develops headaches of increased severity or different characteristics, or vision changes, typically indicative of adenoma enlargement.",
+      "secao": "Imaging — During pregnancy"
+    },
+    {
+      "afirmacao": "Como já se relatou apoplexia durante a gestação até em microprolactinoma, a imagem é obrigatória diante de sintomas preocupantes.",
+      "citacao": "As apoplexy during pregnancy has been reported even in those with microprolactinoma77, imaging is required for concerning symptoms.",
+      "secao": "Imaging — During pregnancy"
+    },
+    {
+      "afirmacao": "As estratégias de imagem novas têm papel limitado na prática clínica de rotina do prolactinoma (recomendação forte).",
+      "citacao": "• There is a limited role for novel imaging strategies in routine clinical practice (strong).",
+      "secao": "Imaging — Novel imaging strategies"
+    },
+    {
+      "afirmacao": "A resposta ao agonista dopaminérgico pode ser predita por imagem funcional (recomendação fraca).",
+      "citacao": "• Response to dopamine agonist therapy might be predicted by functional imaging (weak).",
+      "secao": "Imaging — Novel imaging strategies"
+    },
+    {
+      "afirmacao": "A imagem funcional aplicada com técnicas híbridas de RM pode melhorar a localização pré-operatória do prolactinoma em casos selecionados (recomendação fraca).",
+      "citacao": "• Functional imaging applied with hybrid MRI techniques might improve preoperative prolactinoma localization in selected patients (weak).",
+      "secao": "Imaging — Novel imaging strategies"
+    },
+    {
+      "afirmacao": "O PET molecular com 11C-metionina é promissor como adjuvante à RM para localizar prolactinomas de novo e residuais quando a RM é indeterminada.",
+      "citacao": "Molecular 11C-methionine PET imaging holds promise as an adjunct to MRI for localization of de novo and residual prolactinomas when MRI is indeterminate",
+      "secao": "Imaging — Novel imaging strategies"
+    }
+  ]
+}
