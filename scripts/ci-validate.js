@@ -369,6 +369,17 @@ try {
   fail('regressão do mural apagado falhou (verifique lib/radar.js e supabase/mural-apagado-vale-para-o-aluno.sql):\n' + out);
 }
 
+// ⚠️ Endocrinologia PEDIÁTRICA no Analytics. O risco não é o número, é a leitura
+//     dele: "0" sem a cobertura da pergunta faz parecer "não tenho nenhum
+//     endocrinopediatra" quando a verdade é "ainda não perguntei" (0 de 53).
+try {
+  execFileSync(process.execPath, [path.join('scripts', 'test-endocrino-pediatrica.js')], { stdio: 'pipe' });
+  ok('regressão endocrino pediátrica: conta só quem declarou + mostra a cobertura da pergunta');
+} catch (e) {
+  const out = (e.stdout ? e.stdout.toString() : '') + (e.stderr ? e.stderr.toString() : '');
+  fail('regressão de endocrinologia pediátrica falhou (verifique ATUACAO_* e admPedHTML no index.html):\n' + out);
+}
+
 // ⚠️ A figura da Questão do Dia precisa ter a ver com a questão. O app anexava o
 //     PRIMEIRO resultado do Open-i sem conferir nada, e a busca do Open-i casa o
 //     TEXTO DO ARTIGO — uma prancha de oncologia de 6 painéis ilustrou uma questão

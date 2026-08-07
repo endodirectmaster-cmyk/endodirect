@@ -62,6 +62,7 @@ vm.runInContext([
   varArr('IG_IMG_MODAL_PT'),
   varArr('IG_IMG_ORGAOS'),
   varRe('IG_IMG_NORMAL'),
+  varRe('IG_IMG_NAO_EXAME'),
   trecho('function igImgDeacc(','igImgDeacc'),
   trecho('function igImgHas(','igImgHas'),
   trecho('function igImgHasPref(','igImgHasPref'),
@@ -173,6 +174,45 @@ ok(!/var it=d\.items\[0\]/.test(fetchBody),
    'não pode voltar a pegar o primeiro resultado sem conferir');
 ok(/return null;\s*\}\)/.test(fetchBody.replace(/\s+/g,m=>m.includes('\n')?'\n':' ')) || /return null/.test(fetchBody),
    'sem candidato aprovado a questão tem de ficar SEM imagem');
+
+// --- (C) figuras que NÃO são exame -------------------------------------------
+// Casos REAIS colhidos do Open-i ao vivo em 06/08/2026, depois que a política de
+// rede do ambiente foi aberta. Os três passavam pelo filtro da primeira versão.
+const stemGraves='Homem de 29 anos com tireotoxicose. Cintilografia de tireoide com captação difusamente aumentada. Diagnóstico?';
+ok(igImgRelevante('thyroid scintigraphy Graves disease',{
+     // ⚠️ o TÍTULO do artigo cita a modalidade; a FIGURA é uma curva ROC.
+     title:"Prognostic value of (99m)Tc-pertechnetate thyroid scintigraphy in radioiodine therapy in Graves' disease: a pilot clinical study.",
+     caption:'ROC curve used to identify cut-off values related to RIT success in patients with GD. (a) Thyroid mass. The area under the curve (AUC) was 0.811.'},
+     stemGraves)===false,
+   'REAL: curva ROC não pode ilustrar cintilografia — o título do ARTIGO não vale como modalidade');
+ok(igImgRelevante('thyroid ultrasound papillary carcinoma',{
+     title:'Ultrasound features of papillary thyroid carcinoma: a retrospective study.',
+     caption:'Cytological images showing nuclear grooving (A) and intranuclear inclusions (B; arrows) consistent with papillary carcinoma.'},
+     stemUsg)===false,
+   'REAL: lâmina de citologia não pode entrar no lugar de um ultrassom');
+ok(igImgRelevante('bone densitometry osteoporosis',{
+     title:'Improvement of treatment rate of osteoporosis after educational intervention.',
+     caption:'Bar graph of the osteoporosis treatment rate before and after educations.'},
+     'Mulher de 63 anos com fratura por fragilidade. Densitometria óssea com T-score de coluna lombar −2,8. Conduta?')===false,
+   'REAL: gráfico de barras não é densitometria');
+// E o que é exame de verdade continua passando (também colhido ao vivo):
+ok(igImgRelevante('thyroid scintigraphy Graves disease',{
+     title:'Ectopic thyroid tissue.',
+     caption:'Technetium pertechnetate thyroid scintigraphy showing diffusely increased uptake.'},
+     stemGraves)===true,
+   'cintilografia de verdade tem de continuar passando');
+ok(/var IG_IMG_NAO_EXAME=/.test(html),'a lista de figuras que não são exame tem de existir');
+
+// --- (D) o filtro na ORIGEM (api/ai.js) ---------------------------------------
+const ai=fs.readFileSync(path.join(__dirname,'..','api','ai.js'),'utf8');
+ok(/OPENI_TIPOS\s*=\s*'[^']*'/.test(ai),'api/ai.js tem de definir os tipos de imagem aceitos no Open-i');
+const tipos=(ai.match(/OPENI_TIPOS\s*=\s*'([^']*)'/)||[])[1]||'';
+ok(!/(^|,)g(,|$)/.test(tipos),
+   '⚠️ o tipo "g" (gráficos) NÃO pode entrar — é o maior balde do Open-i e entrega curva ROC como exame');
+ok(!/(^|,)mc(,|$)/.test(tipos),'o tipo "mc" (microscopia) não pode entrar — entrega lâmina no lugar do exame');
+ok(/(^|,)(m)(,|$)/.test(tipos)&&/(^|,)(c)(,|$)/.test(tipos)&&/(^|,)(u)(,|$)/.test(tipos),
+   'RM, TC e ultrassom precisam estar entre os tipos aceitos');
+ok(/it:\s*OPENI_TIPOS/.test(ai),'o parâmetro it= tem de ir na busca do Open-i');
 
 // --- (B) a regra do prompt ------------------------------------------------------
 const regra=(html.match(/var IG_IMAGEQUERY_RULE='([^']*)'/)||[])[1]||'';

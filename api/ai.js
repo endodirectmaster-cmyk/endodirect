@@ -84,9 +84,16 @@ function extractText(payload) {
 // Busca de imagem de exame complementar no Open-i (NLM/NIH) — figuras do PubMed
 // Central p/ ilustrar as Questões do Dia. Server-side (evita CORS na busca do JSON)
 // e best-effort: qualquer falha devolve lista vazia (a questão fica sem imagem).
+// Tipos de imagem do Open-i que interessam a uma questão clínica:
+// x = radiografia/medicina nuclear, c = TC, m = RM, u = ultrassom, p = PET.
+// ⚠️ Ficam DE FORA de propósito: `g` (gráficos) e `mc` (microscopia). Sem este
+// filtro, `g` é de longe o maior balde (19.542 x 1.826 do ultrassom numa busca por
+// "thyroid") e entrega curva ROC e gráfico de barras como se fosse exame — foi o
+// que o professor viu em 06/08. `mc` entrega lâmina de citologia no lugar do US.
+const OPENI_TIPOS = 'x,c,m,u,p';
 async function openiSearch(query, n) {
   const OPENI = 'https://openi.nlm.nih.gov';
-  const qs = new URLSearchParams({ query: String(query || '').slice(0, 300), m: '1', n: String(Math.max(1, Math.min(n || 4, 8))) });
+  const qs = new URLSearchParams({ query: String(query || '').slice(0, 300), m: '1', n: String(Math.max(1, Math.min(n || 4, 8))), it: OPENI_TIPOS });
   const abs = function (p) { p = String(p || ''); return p && p.charAt(0) === '/' ? OPENI + p : p; };
   const r = await fetch(OPENI + '/api/search?' + qs.toString(), { headers: { Accept: 'application/json' } });
   if (!r.ok) return [];

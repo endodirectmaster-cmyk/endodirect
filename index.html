@@ -1268,6 +1268,15 @@ input.dmm-inp-subsub{flex:1;min-width:0;background:transparent;color:var(--t2);f
         <div class="flbl" style="margin-bottom:.3rem">Especialidade ou área de atuação</div>
         <input type="text" id="ob-outros" placeholder="Ex: Cardiologista, Geriatra, Clínico geral…">
       </div>
+      <!-- ATUAÇÃO: separa endocrinologia de ADULTO da PEDIÁTRICA. Até 06/08/2026 a
+           plataforma não perguntava, então não havia como responder "quantos
+           endocrinopediatras eu tenho?" — o rótulo era só "Endocrinologista" ou
+           "Residente". O rótulo do campo e as opções mudam conforme o perfil
+           (ver setupOnboardProfileChoices). -->
+      <div id="ob-atuacao-wrap" style="display:none;margin-bottom:.85rem">
+        <div class="flbl" style="margin-bottom:.3rem" id="ob-atuacao-lbl">Área de atuação <span style="color:var(--red)">*</span></div>
+        <select id="ob-atuacao" style="width:100%"></select>
+      </div>
       <div id="ob-crm-wrap" style="display:none;margin-bottom:.85rem">
         <div class="flbl" style="margin-bottom:.3rem">CRM e UF <span style="color:var(--red)">*</span></div>
         <div style="display:flex;gap:.4rem">
@@ -11348,14 +11357,26 @@ function igImgPedidoCoerente(query,stem){
 // título/legenda DELA citarem a mesma modalidade e ao menos um termo clínico da
 // busca. Sem candidato aprovado, a questão fica SEM imagem — que é o certo: imagem
 // errada num material de estudo é pior do que imagem nenhuma.
+// Legendas que denunciam figura que NÃO é exame de imagem. Backstop do filtro
+// `it=` do Open-i (api/ai.js), que já exclui gráficos e microscopia na origem mas
+// não é perfeito — a própria base classifica cintilografia ora como exame, ora
+// como gráfico.
+var IG_IMG_NAO_EXAME=/(^|[^a-z])(roc curve|kaplan|survival curve|flow ?chart|flow diagram|study design|bar graph|scatter ?plot|histogram|box ?plot|forest plot|consort|questionnaire|schematic|western blot|immunohistochem|histolog|cytolog|micrograph|hematoxylin|h&e stain)/;
 function igImgRelevante(query,it,stem){
+  // ⚠️ `title` é o título do ARTIGO, não da figura — um artigo chamado "thyroid
+  // scintigraphy in radioiodine therapy" faz qualquer figura sua parecer uma
+  // cintilografia. Por isso a MODALIDADE é conferida só na LEGENDA; o título entra
+  // apenas no casamento de órgão, que é mais tolerante.
+  var cap=igImgDeacc(String((it&&it.caption)||'')).trim();
   var hay=igImgDeacc(String((it&&it.title)||'')+' '+String((it&&it.caption)||'')).trim();
   if(!hay)return false;                       // sem metadado não há como conferir
+  if(cap&&IG_IMG_NAO_EXAME.test(cap))return false;   // curva ROC, fluxograma, lâmina…
   var q=igImgDeacc(query),i,mi=igImgModalDaBusca(q),grupo=mi>=0?IG_IMG_MODAL[mi]:null;
   if(grupo){
+    if(!cap)return false;                     // sem legenda não dá para checar a modalidade
     var okMod=false;
-    for(i=0;i<grupo.length&&!okMod;i++)if(igImgHas(hay,grupo[i]))okMod=true;
-    if(!okMod)return false;                   // pediram RM e veio TC
+    for(i=0;i<grupo.length&&!okMod;i++)if(igImgHas(cap,grupo[i]))okMod=true;
+    if(!okMod)return false;                   // pediram RM e veio TC (ou um gráfico)
   }
   // A figura tem de citar um órgão QUE O ENUNCIADO MENCIONA — não basta bater com
   // os termos de busca, que a IA pode ter escolhido fora do caso.
@@ -13510,6 +13531,37 @@ function admAnalyticsHTML(){
         +'<div style="margin-top:.7rem">'+(porCidade.length?'<div class="adm-table"><div class="adm-table-head"><span style="flex:3">Cidade</span><span style="flex:1;text-align:right">Alunos</span></div>'+porCidade.map(function(x){return '<div class="adm-table-row"><span style="flex:3;font-size:.8rem;font-weight:600">'+esc(x.cidade||'—')+(x.uf?' <span style="color:var(--t3);font-weight:400">/ '+esc(x.uf)+'</span>':'')+'</span><span style="flex:1;text-align:right;font-weight:700">'+n(x.n)+'</span></div>';}).join('')+'</div>':'<div class="empty" style="padding:.6rem;font-size:.78rem;color:var(--t3)">As cidades aparecem quando os alunos concluem uma compra (endereço de cobrança).</div>')+'</div>'
       +'</details></div>'
     +'</div>';
+  // Endocrinologia PEDIÁTRICA, dentro do card de perfil profissional (pedido do
+  // professor 06/08/2026: "quantos endocrinopediatras ou residentes de
+  // endocrinologia pediátrica, se tiver").
+  // ⚠️ O ponto delicado é a COBERTURA: os 4 rótulos antigos não separavam adulto
+  // de pediátrica, então quem entrou antes de 06/08 não tem o campo. Mostrar só
+  // "0" seria enganoso — parece "não tenho nenhum" quando é "ainda não perguntei".
+  // Por isso o bloco diz sempre quantos dos elegíveis já responderam.
+  var admPedHTML=function(pp){
+    var tot=n(pp.ped_total),eleg=n(pp.atuacao_elegiveis),inf=n(pp.atuacao_informaram);
+    var det=Array.isArray(pp.ped_por_perfil)?pp.ped_por_perfil:[];
+    var pistas=Array.isArray(pp.pistas_ped_outros)?pp.pistas_ped_outros:[];
+    if(!eleg&&!tot&&!pistas.length)return '';
+    var h='<div style="margin-top:.9rem;padding-top:.8rem;border-top:1px solid var(--bd)">'
+      +'<div style="display:flex;align-items:center;justify-content:space-between;gap:.6rem;flex-wrap:wrap">'
+      +'<span style="font-size:.8rem;font-weight:700">🧒 Endocrinologia pediátrica</span>'
+      +'<span class="tag '+(tot?'tag-grn':'tag-blue')+'">'+tot+' aluno(s)</span></div>';
+    if(det.length){
+      h+='<div style="margin-top:.5rem">'+det.map(function(x){
+        var quem=(x.perfil==='Residente'?'Residente':'Endocrinologista');
+        return '<div style="display:flex;justify-content:space-between;font-size:.78rem;padding:.25rem 0"><span style="color:var(--t2)">'+esc(quem)+' · '+esc(x.atuacao||'')+'</span><span style="font-weight:700">'+n(x.n)+'</span></div>';
+      }).join('')+'</div>';
+    }
+    h+='<div style="font-size:.68rem;color:var(--t3);margin-top:.45rem;line-height:1.5">'
+      +(inf<eleg
+        ? '<b>'+inf+' de '+eleg+'</b> endocrinologistas e residentes já informaram a área de atuação. Os demais entraram antes de a pergunta existir — podem responder em <b>Meu perfil → Editar perfil</b>.'
+        : 'Todos os '+eleg+' endocrinologistas e residentes já informaram a área de atuação.');
+    if(pistas.length){
+      h+='<br>Em “Outros”, '+pistas.map(function(p){return '<b>'+n(p.n)+'</b> escreveu “'+esc(p.especialidade||'')+'”';}).join(', ')+' — não entra na contagem porque não é área declarada.';
+    }
+    return h+'</div></div>';
+  };
   // Perfil profissional dos alunos. Fica junto da origem geográfica: as duas
   // respondem "quem é o meu público", e a leitura é a mesma.
   var pp=admPerfilPro||{},porPerfil=Array.isArray(pp.por_perfil)?pp.por_perfil:[];
@@ -13529,6 +13581,7 @@ function admAnalyticsHTML(){
         // percentuais não fecharem em 100%.
         +(semPerfil?'<div style="font-size:.68rem;color:var(--t3);margin-top:.45rem">Os percentuais são sobre quem informou. '+semPerfil+' aluno(s) sem esse campo — entraram antes de a pergunta existir no primeiro acesso.':'')
       : '<div class="empty" style="padding:.6rem;font-size:.78rem;color:var(--t3)">Ainda sem perfil informado. Aparece conforme os alunos respondem "Você é:" no primeiro acesso.</div>')
+    +admPedHTML(pp)
     +'</div>';
   var semDados=n(ov.respostas)===0&&n(ov.simulados)===0;
   var kpi=function(val,lbl,cor,sub){return '<div class="adm-bigstat"><div class="adm-bigstat-n" style="color:'+cor+'">'+val+'</div><div class="adm-bigstat-l">'+lbl
@@ -14882,6 +14935,9 @@ submitOnboard=function(){
     var resid=(document.getElementById('ob-resid').value||'').trim();
     if(!resid){err.textContent='Informe sua instituição de residência médica.';err.style.display='block';return;}
     prof.residencia=resid;
+    var atv=((document.getElementById('ob-atuacao')||{}).value||'').trim();
+    if(!atv){err.textContent=(perfil==='Residente'?'Informe o seu programa de residência.':'Informe a sua área de atuação.');err.style.display='block';return;}
+    prof.atuacao=atv;
     prof.displayPerfil=(perfil==='Residente')?'Médico(a) Residente':'Endocrinologista';
   }
   // CRM + UF obrigatórios para todos os perfis (necessários para a prescrição via Memed).
@@ -14900,12 +14956,34 @@ submitOnboard=function(){
   queueRemoteStateSave();
   if(demoOnboardToPresc){demoOnboardToPresc=false;try{if(typeof canSeePanel==='function'&&canSeePanel('presc'))goPanel('presc');}catch(e){}}
 };
+// Opções de atuação por perfil. Os VALORES são o que fica gravado em
+// user_profile.atuacao e o que a RPC do Analytics conta — mexer neles quebra a
+// contagem retroativa, então mudam junto com ATUACAO_PEDIATRICA e o SQL.
+var ATUACAO_OPCOES={
+  Endocrinologista:[['Adulto','Endocrinologia de adultos'],['Pediátrica','Endocrinologia pediátrica'],['Adulto e pediátrica','Atendo adultos e crianças']],
+  Residente:[['Endocrinologia','Endocrinologia e metabologia (adulto)'],['Endocrinologia pediátrica','Endocrinologia pediátrica'],['Pediatria','Pediatria'],['Clínica médica','Clínica médica'],['Outro','Outro programa']]
+};
+// Os valores que contam como endocrinologia PEDIÁTRICA. Lista explícita de
+// propósito: "Pediatria" (geral) NÃO entra, e uma comparação por pedaço de texto
+// ("contém pediát") passaria a contar errado.
+var ATUACAO_PEDIATRICA=['Pediátrica','Adulto e pediátrica','Endocrinologia pediátrica'];
 function setupOnboardProfileChoices(){
   var perfil=(document.querySelector('input[name="ob-perfil"]:checked')||{}).value;
   var grad=document.getElementById('ob-grad-wrap');
   var resid=document.getElementById('ob-resid-wrap');
   var outros=document.getElementById('ob-outros-wrap');
   var anow=document.getElementById('ob-ano-wrap');
+  var atw=document.getElementById('ob-atuacao-wrap'),atsel=document.getElementById('ob-atuacao'),atlbl=document.getElementById('ob-atuacao-lbl');
+  if(atw&&atsel){
+    var ops=ATUACAO_OPCOES[perfil];
+    atw.style.display=ops?'block':'none';
+    if(ops){
+      if(atlbl)atlbl.innerHTML=(perfil==='Residente'?'Programa de residência':'Área de atuação')+' <span style="color:var(--red)">*</span>';
+      var atual=atsel.value;
+      atsel.innerHTML='<option value="">Selecione…</option>'+ops.map(function(o){return '<option value="'+esc(o[0])+'">'+esc(o[1])+'</option>';}).join('');
+      atsel.value=atual;   // preserva a escolha se o professor voltar ao mesmo perfil
+    }
+  }
   // Instituição de graduação: só para o estudante de medicina.
   if(grad)grad.style.display=(perfil==='Estudante')?'block':'none';
   if(resid)resid.style.display=(perfil==='Residente'||perfil==='Endocrinologista')?'block':'none';
@@ -14957,6 +15035,11 @@ function renderPerfil(){
       +'<div class="g2" style="margin-bottom:.7rem"><div class="fld2" style="margin:0"><label>CPF</label><input type="text" id="pf-cpf" value="'+esc(cpfVal)+'" inputmode="numeric" placeholder="Somente números"></div>'
       +'<div class="fld2" style="margin:0"><label>Contato (telefone)</label><input type="text" id="pf-contato" value="'+esc(contatoVal)+'" inputmode="tel" placeholder="(DDD) 9..."></div></div>'
       +'<div class="fld2" style="margin-bottom:.7rem"><label>'+instLabel+'</label><input type="text" id="pf-inst" value="'+esc(instVal)+'"></div>'
+      // Atuação (adulto x pediátrica): editável aqui porque os 93 alunos que já
+      // entraram nunca viram essa pergunta no primeiro acesso — sem este campo o
+      // número no Analytics só cresceria com cadastros novos.
+      +(ATUACAO_OPCOES[perfilVal]?'<div class="fld2" style="margin-bottom:.7rem"><label>'+(perfilVal==='Residente'?'Programa de residência':'Área de atuação')+'</label><select id="pf-atuacao"><option value="">Não informado</option>'
+        +ATUACAO_OPCOES[perfilVal].map(function(o){return '<option value="'+esc(o[0])+'"'+(prof.atuacao===o[0]?' selected':'')+'>'+esc(o[1])+'</option>';}).join('')+'</select></div>':'')
       +'<div id="pf-err" style="display:none;background:var(--red-l);border:1px solid #5a2326;border-radius:var(--rs);padding:.45rem .75rem;font-size:.73rem;color:var(--red);margin-bottom:.7rem"></div>'
       +'<div style="display:flex;gap:6px"><button class="btn btn-primary" id="btn-pf-save">💾 Salvar</button><button class="btn btn-outline" id="btn-pf-cancel">Cancelar</button></div></div>';
   }else{
@@ -14967,6 +15050,7 @@ function renderPerfil(){
       +row('Perfil',valOr(label))
       +(perfilVal==='Estudante'?row('Graduação',valOr(prof.graduacao)):'')
       +((perfilVal==='Residente'||perfilVal==='Endocrinologista')?row('Residência médica',valOr(prof.residencia)):'')
+      +(ATUACAO_OPCOES[perfilVal]?row(perfilVal==='Residente'?'Programa de residência':'Área de atuação',valOr(prof.atuacao)):'')
       +(perfilVal==='Outros'?row('Área de atuação',valOr(prof.especialidade)):'')
       +(prof.crm?row('CRM / UF',valOr(prof.crm+(prof.uf?' / '+prof.uf:''))):'')
       +row('CPF',valOr(prof.cpf))
@@ -15034,6 +15118,8 @@ function wirePerfil(){
     if(prof.perfil==='Estudante'){prof.graduacao=inst;}
     else if(prof.perfil==='Outros'){prof.especialidade=inst;prof.displayPerfil=inst||prof.displayPerfil;}
     else{prof.residencia=inst;}
+    var atEl=document.getElementById('pf-atuacao');
+    if(atEl)prof.atuacao=(atEl.value||'').trim();
     lsSet('user_profile',prof);
     if(currentUser){currentUser.profile=prof;currentUser.sub=profileDisplayLabel(prof);}
     // Mantém CPF/telefone também no ck_billing (pré-preenche o checkout).
