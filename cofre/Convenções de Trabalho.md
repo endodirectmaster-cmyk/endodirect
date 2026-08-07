@@ -5,6 +5,73 @@ atualizado: 2026-08-07
 
 # Convenções de Trabalho
 
+## 🚪 AUDITE O CAMINHO, NÃO SÓ O CONTEÚDO (2026-08-07)
+
+A auditoria da hipofosfatasia devolveu 15,4% de erro semântico e **zero
+inversões clínicas** — e mesmo assim concluiu que *"como está hoje, a base pode
+levar alguém a dar bisfosfonato a quem não deve"*. Nenhum fato errado. Três
+defeitos de **caminho**:
+
+1. a pergunta do médico não canonizava para nenhuma área (`"osteoporose"` → `''`);
+2. o chat não mandava a pergunta como `grounding`, então **nunca** recebia base
+   profunda — em nenhum tema;
+3. quando o bloco chegava, o cabeçalho da ressalva mandava preferir o núcleo,
+   exatamente onde a fonte contraindica o que o núcleo recomenda.
+
+**A regra:** extração verificada não é entrega. Depois de extrair, teste a
+CADEIA com a pergunta que um médico faria de verdade — em português, com
+vinheta, com o termo decisivo no meio da frase:
+
+```
+node -e "const d=require('./lib/clinical-deep');
+const q='<a pergunta real>'; console.log(d.canonArea(q), d.deepFor(q,120000,q).length)"
+```
+
+Se der `'' 0`, o artigo não existe para quem pergunta. **Ao mandar auditar, peça
+também:** *"que pergunta um médico faria para precisar deste artigo, e ela chega
+até ele?"*
+
+## 🕰️ A RESSALVA ENVELHECE — e quanto melhor a varredura, mais depressa (2026-08-07)
+
+O campo `conflito` é uma **fotografia do núcleo no dia da leitura**. A varredura
+CORRIGE o núcleo (é metade do objetivo dela), e no instante em que corrige, a
+ressalva do artigo que motivou a correção passa a descrever um núcleo que não
+existe mais. Medido: **6 das 13 ressalvas** citavam texto já substituído — a do
+prolactinoma mandava sobrescrever uma entrada **já certa**.
+
+**A trava é a mesma dos fatos: citação literal, conferida.** Ao escrever ou
+mexer num `conflito`, preencher:
+
+- `conflito_direcao` — **obrigatório, sem padrão**: `nucleo_prevalece` |
+  `fonte_prevalece` | `lacuna` | `misto` | `alinhado`. O montador reprova sem ele.
+- `nucleo_citado` — trechos que a ressalva atribui ao núcleo, **verbatim**. É o
+  que quebra quando o núcleo muda.
+- `nucleo_ausente` — para `lacuna`: se o termo passar a existir, a lacuna acabou.
+- `nucleo_prevalece_porque` — exigido quando a ressalva contém proibição e a
+  direção é `nucleo_prevalece`.
+
+**Depois de corrigir o núcleo a partir de um artigo, volte no `conflito` daquele
+artigo.** Rode `node scripts/confere-ressalvas.js` (está no `ci-validate`).
+
+## 🧪 TESTE QUE CONFERE CONSISTÊNCIA NÃO CONFERE CORREÇÃO (2026-08-07)
+
+Descoberto testando por mutação a própria correção acima. Troquei o
+`conflito_direcao` da hipofosfatasia de volta para `nucleo_prevalece` — a
+inversão original, a que entrega contraindicação sob ordem de ignorá-la — e
+**todos os testes continuaram verdes**. Porque eles conferiam que o cabeçalho
+entregue bate com o campo declarado, e o cabeçalho **muda junto com o campo**.
+
+E não dava para consertar com mais asserção: a **mesma linguagem de proibição
+aparece nas duas pontas**. Na hipofosfatasia é a fonte que proíbe e ela tem de
+vencer; no PTDM de 2016 é a fonte que manda evitar iSGLT2 e ela tem de perder
+para o ADA 2026 do núcleo. Nenhum teste distingue os dois — só julgamento clínico.
+
+**A saída, quando o certo não é derivável:** não finja que é. Exija que o
+julgamento fique **escrito** (`nucleo_prevalece_porque`) e falhe sem ele. Não
+impede o erro; impede que seja cometido de passagem. E **diga no próprio teste o
+que ele não prova** — asserção que não pode falhar é pior que asserção nenhuma,
+porque compra confiança sem entregar nada.
+
 ## 🎣 RECUPERAÇÃO FALSA: o perigo não é o que o fato diz, é o que ele responde (2026-08-07)
 
 Modo de falha descoberto na auditoria da tireoide, e que nenhuma das quatro

@@ -262,7 +262,15 @@ module.exports = async function handler(req, res) {
   // prefixo passa a ser `núcleo + profundo(área)`, estável por área, então cada
   // subespecialidade reaproveita a própria entrada de cache.
   const TETO_PROFUNDO = 120000;
-  const areaPedida = String(body.area || body.grounding || '').slice(0, 120);
+  // ⚠️ 120 → 600 caracteres em 07/08/2026, quando o CHAT passou a mandar a
+  // pergunta como `grounding`. Nos geradores o campo é um rótulo curto ("Tireoide
+  // nódulo") e 120 sobrava; numa pergunta clínica de verdade o termo que decide o
+  // roteamento vem DEPOIS da vinheta — "mulher de 62 anos, fratura de punho após
+  // queda da própria altura, DXA com T-score −2,7, fosfatase alcalina 22…" passa
+  // de 120 antes de dizer "fosfatase alcalina". Cortar aqui é cortar em silêncio.
+  // Este texto só alimenta o ROTEAMENTO (canonArea + pontuação por tema); ele não
+  // vai para o modelo, então crescer não custa token nem vaza nada.
+  const areaPedida = String(body.area || body.grounding || '').slice(0, 600);
   let profundo = '';
   // O 3º argumento é o TEMA: a seleção dentro da área é por relevância, porque a
   // extração é exaustiva (um artigo de craniofaringioma tem 249 fatos) e mandar a

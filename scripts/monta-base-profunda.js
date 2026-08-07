@@ -34,6 +34,31 @@ const SAIDA = path.join(RAIZ, 'lib', 'clinical-deep-data.js');
 // protegido fica do corte por teto).
 const PESO_TIPO = { diretriz: 0, consenso: 0, posicionamento: 0, revisao: 1, metanalise: 2, ensaio: 3, observacional: 4, caso: 5, outro: 6 };
 
+// ⚠️ QUEM VENCE A RESSALVA — o campo mais perigoso desta base.
+//
+// Até 07/08/2026 este cabeçalho era UM SÓ, fixo, e dizia sempre "o núcleo
+// prevalece sobre esta fonte". A auditoria da hipofosfatasia/osteogênese
+// imperfeita mostrou o estrago: o `conflito` daquele extrato diz, com citação
+// literal, que na hipofosfatasia `bisphosphonates are contraindicated`, e o
+// núcleo recomenda bisfosfonato/denosumabe para osteoporose sem falar em
+// fosfatase alcalina. O cabeçalho entregava a contraindicação à IA já mandando
+// ignorá-la. Nenhum fato errado, nenhuma citação falsa — e a conduta invertida.
+//
+// A direção NÃO é adivinhável a partir do texto: entre os 13 conflitos escritos
+// até hoje há artigo velho superado pelo núcleo (PTDM 2016), artigo novo que
+// supera o núcleo (hiponatremia 2026), lacuna pura (NTIS, craniofaringioma) e
+// caso em que o vencedor muda de ponto para ponto. Por isso é campo OBRIGATÓRIO
+// e sem valor padrão: extrato com `conflito` e sem `conflito_direcao` REPROVA a
+// montagem. Um padrão silencioso aqui é exatamente o defeito que se está
+// corrigindo.
+const CABECALHO_RESSALVA = {
+  nucleo_prevalece: '⚠️ RESSALVA — O NÚCLEO PREVALECE sobre esta fonte nos pontos a seguir (fonte mais antiga ou superada); use o núcleo neles e esta fonte no resto: ',
+  fonte_prevalece: '⚠️ EXCEÇÃO — ESTA FONTE PREVALECE SOBRE O NÚCLEO nos pontos a seguir. NÃO aplique aqui a regra geral do núcleo; siga o que está escrito nesta ressalva: ',
+  lacuna: '⚠️ LACUNA DO NÚCLEO — o núcleo não cobre este tema; esta fonte é a referência nos pontos a seguir: ',
+  misto: '⚠️ RESSALVA PONTO A PONTO — núcleo e fonte divergem e o vencedor MUDA a cada item. Leia cada ponto e siga o que ele determina; NÃO presuma que um dos dois vence em bloco: ',
+  alinhado: '' // não é entregue à IA; ver abaixo
+};
+
 function canonizar(area) {
   const { canonArea } = require(path.join(RAIZ, 'lib', 'clinical-deep.js'));
   return canonArea(area);
@@ -65,12 +90,29 @@ function main() {
     process.exit(1);
   }
 
+  // ── etapa 3c: a RESSALVA ainda descreve o núcleo que existe hoje? ─────────
+  // A varredura do acervo CORRIGE o núcleo — é metade do objetivo dela. E toda
+  // vez que corrige, a ressalva do artigo que motivou a correção passa a
+  // descrever um núcleo que não existe mais. Medido em 07/08/2026: 6 das 13
+  // ressalvas citavam texto já substituído, entre elas a do prolactinoma, que
+  // mandava sobrescrever uma entrada JÁ CERTA. Ressalva velha chega com
+  // autoridade de aviso de segurança — por isso é pré-requisito, não relatório.
+  try {
+    execFileSync(process.execPath, [path.join(RAIZ, 'scripts', 'confere-ressalvas.js'), '--dir', path.join(RAIZ, argDir)], { stdio: 'pipe' });
+  } catch (e) {
+    const out = (e.stdout ? e.stdout.toString() : '') + (e.stderr ? e.stderr.toString() : '');
+    console.error('✗ A conferência das RESSALVAS reprovou — nada será gerado.\n');
+    console.error(out);
+    process.exit(1);
+  }
+
   if (!fs.existsSync(DIR_EXTRATOS)) { console.error('✗ não existe ' + DIR_EXTRATOS); process.exit(1); }
   const arquivos = fs.readdirSync(DIR_EXTRATOS).filter((f) => f.endsWith('.json'));
   if (!arquivos.length) { console.error('✗ nenhum extrato em ' + DIR_EXTRATOS); process.exit(1); }
 
   const porArea = {};
   const semArea = [];
+  const semDirecao = [];
   for (const arq of arquivos) {
     const e = JSON.parse(fs.readFileSync(path.join(DIR_EXTRATOS, arq), 'utf8'));
     const canon = canonizar(e.area || '');
@@ -78,23 +120,53 @@ function main() {
     const fatos = (Array.isArray(e.fatos) ? e.fatos : []).map((f) => String(f.afirmacao || '').trim()).filter(Boolean);
     if (!fatos.length) continue;
     // ⚠️ A RESSALVA VAI NA FRENTE, e isso é deliberado.
-    // O extrator registra em `conflito` quando o artigo CONTRARIA o núcleo — em
-    // geral porque o artigo é mais antigo. Caso real: a revisão de diabetes
-    // pós-transplante de 2016 manda EVITAR iSGLT2 e AR GLP-1, enquanto o núcleo
-    // carrega o ADA 2026, que os recomenda. Até 07/08 o montador DESCARTAVA esse
-    // campo: a IA recebia a conduta de 2016 sem saber que fora superada.
-    // Fica no INÍCIO do texto porque `deepFor` corta pelo fim — uma ressalva que
-    // o truncamento apaga é pior do que inútil, dá falsa sensação de proteção.
+    // O extrator registra em `conflito` quando o artigo e o núcleo divergem.
+    // Caso real: a revisão de diabetes pós-transplante de 2016 manda EVITAR
+    // iSGLT2 e AR GLP-1, enquanto o núcleo carrega o ADA 2026, que os recomenda.
+    // Até 07/08 o montador DESCARTAVA esse campo: a IA recebia a conduta de 2016
+    // sem saber que fora superada. Fica no INÍCIO do texto porque `deepFor` corta
+    // pelo fim — uma ressalva que o truncamento apaga é pior do que inútil, dá
+    // falsa sensação de proteção.
     const ressalva = String(e.conflito || '').trim();
     const corpo = fatos.join(' ');
+    let texto = corpo;
+    if (ressalva) {
+      const dir = String(e.conflito_direcao || '').trim();
+      // ⚠️ presença da CHAVE, não verdade do valor: `alinhado` mapeia para ''
+      // (não vai à IA) e um `!CABECALHO_RESSALVA[dir]` o reprovaria como se
+      // fosse direção ausente. Foi o que aconteceu na primeira execução.
+      if (!Object.prototype.hasOwnProperty.call(CABECALHO_RESSALVA, dir)) {
+        semDirecao.push(`${arq} (conflito_direcao=${JSON.stringify(e.conflito_direcao || null)})`);
+        continue;
+      }
+      // `alinhado` é registro de auditoria, não instrução: o núcleo JÁ foi
+      // corrigido a partir desta fonte, então mandar a ressalva para a IA seria
+      // alarme falso ocupando o prefixo cacheado. Fica no JSON, sai da entrega.
+      texto = dir === 'alinhado' ? corpo : (CABECALHO_RESSALVA[dir] + ressalva + ' | CONTEÚDO: ' + corpo);
+    }
     (porArea[canon] = porArea[canon] || []).push({
       tema: String(e.tema || e.titulo || '').trim(),
       fonte: String(e.fonte || '').trim(),
-      texto: ressalva ? ('⚠️ RESSALVA — o núcleo prevalece sobre esta fonte nos pontos a seguir: ' + ressalva + ' | CONTEÚDO: ' + corpo) : corpo,
+      texto: texto,
       _peso: PESO_TIPO[String(e.tipo || 'outro').toLowerCase()] != null ? PESO_TIPO[String(e.tipo || 'outro').toLowerCase()] : 6,
       _ano: Number(e.ano) || 0,
       _fatos: fatos.length
     });
+  }
+
+  // ⚠️ ABORTA: ressalva sem direção declarada. Ver CABECALHO_RESSALVA.
+  if (semDirecao.length) {
+    console.error('✗ ' + semDirecao.length + ' extrato(s) têm `conflito` sem `conflito_direcao` — nada será gerado.\n');
+    semDirecao.forEach((s) => console.error('   · ' + s));
+    console.error('\nDeclare `conflito_direcao` com um destes valores:');
+    console.error('   nucleo_prevalece — a fonte é mais antiga/superada; o núcleo vence nos pontos da ressalva');
+    console.error('   fonte_prevalece  — a fonte é mais nova/mais específica e SOBREPÕE o núcleo nesses pontos');
+    console.error('   lacuna           — o núcleo é silente no tema; a fonte é a referência');
+    console.error('   misto            — o vencedor muda de ponto para ponto dentro da mesma ressalva');
+    console.error('   alinhado         — o núcleo já foi corrigido a partir desta fonte (fica no JSON, não vai à IA)');
+    console.error('\nNão existe padrão. Assumir "o núcleo prevalece" foi o que quase entregou');
+    console.error('bisfosfonato contraindicado na hipofosfatasia com aval da própria ressalva.');
+    process.exit(1);
   }
 
   // ordena: autoridade primeiro, depois mais recente, depois mais denso
