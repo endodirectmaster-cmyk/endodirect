@@ -1,0 +1,717 @@
+{
+ "fileId": "hipo-5",
+ "titulo": "Hyponatremia: Pathophysiology of different etiologies",
+ "tema": "hiponatremia — fisiopatologia das etiologias",
+ "fonte": "Verbalis JG. Hyponatremia: Pathophysiology of different etiologies. Best Pract Res Clin Endocrinol Metab 2026;40:102084. https://doi.org/10.1016/j.beem.2026.102084",
+ "area": "Endocrinopatias",
+ "tipo": "revisao",
+ "ano": 2026,
+ "conflito": "Sem contradição frontal ao núcleo, mas TRÊS refinamentos importantes registrados literalmente. (1) COPEPTINA: o núcleo lista copeptina entre os exames dos distúrbios do sódio/água; este artigo diz o oposto PARA A HIPONATREMIA — \"For similar reasons, the measurement of copeptin levels has been found to be of little diagnostic value in the differential diagnosis of hyponatremia [27].\" O valor da copeptina no núcleo refere-se ao diagnóstico da deficiência de AVP (diabetes insipidus), não ao diferencial da hiponatremia. (2) SÓDIO URINÁRIO ALTO NA SIAD: o núcleo afirma que a SIAD cursa com \"Na urinário alto\"; o artigo ressalva que ele PODE ESTAR BAIXO — \"Consequently, urinary [Na + ] is usually elevated, but it may be low in patients with SIAD who are ingesting a low-sodium diet.\" E acrescenta que chamar o sódio urinário elevado de perda renal de sal é impreciso: \"While the elevated [Na + ] has sometimes been described as “renal salt wasting”, it is more accurately a reflection of the absence of renal Na+ conservation.\" (3) HIPOTIREOIDISMO: o núcleo manda excluir hipotireoidismo antes de diagnosticar SIAD; o artigo restringe isso ao hipotireoidismo GRAVE — \"However, hypothyroidism must be severe to cause this degree of renal\" ... \"Because of this, several studies have shown no association between mild to moderately elevated TSH levels and hyponatremia [57,58].\" (a legenda da Fig. 1 se interpõe entre os dois trechos no PDF). OBSERVAÇÃO: este artigo NÃO trata de adaptação cerebral, desmielinização osmótica nem de limites de velocidade de correção — não há nada a confrontar com o núcleo nesses pontos.",
+ "fatos": [
+  {
+   "afirmacao": "A hiponatremia é o distúrbio eletrolítico mais frequentemente encontrado na prática clínica.",
+   "citacao": "Hyponatremia is the most frequently encountered electrolyte disorder in clinical practice.",
+   "secao": "Resumo"
+  },
+  {
+   "afirmacao": "A hiponatremia pode ocorrer por aumento da água corporal total (TBW), por redução do sódio ou do potássio corporais, ou por qualquer combinação desses mecanismos — e em muitos casos mais de um mecanismo está operante.",
+   "citacao": "Hyponatremia can occur by an increase in total body water (TBW), a decrease in body Na + or K + , or any combination of these. In many cases, more than one of these mechanisms is operant.",
+   "secao": "Resumo"
+  },
+  {
+   "afirmacao": "Como mais de um mecanismo costuma coexistir, o sistema de classificação que separa as etiologias da hiponatremia deve se basear em fatores que não o próprio nível do sódio sérico.",
+   "citacao": "Therefore, a classification system to separate the various etiologies of hyponatremia should be based on factors other than the level of serum [Na + ] itself.",
+   "secao": "Resumo"
+  },
+  {
+   "afirmacao": "A avaliação do volume do líquido extracelular (LEC) fornece a classificação de trabalho mais útil da etiologia da hiponatremia, porque um sódio sérico baixo pode estar associado a volume de LEC diminuído, normal ou aumentado.",
+   "citacao": "An assessment of extracellular fluid volume (ECF) volume provides the most useful working classification of the etiology of the hyponatremia, because a low serum [Na + ] can be associated with a decreased, normal, or increased ECF volume. This chapter",
+   "secao": "Resumo"
+  },
+  {
+   "afirmacao": "As três grandes classes de hiponatremia são: com volume de LEC diminuído (hiponatremia hipovolêmica); com volume de LEC aumentado (hiponatremia hipervolêmica); e com volume de LEC normal (hiponatremia euvolêmica).",
+   "citacao": "the three major classes of hyponatremia: Hyponatremia with decreased ECF volume (hypovolemic hyponatremia); Hyponatremia with increased ECF volume (hypervolemic hyponatremia); and Hyponatremia with normal ECF vo- lume (euvolemic hyponatremia)",
+   "secao": "Resumo"
+  },
+  {
+   "afirmacao": "O sódio plasmático ou sérico é determinado pelo conteúdo corporal total de sódio, potássio e água, expresso pela equação: sódio sérico = (sódio corporal trocável total + potássio corporal trocável total) / água corporal total.",
+   "citacao": "The plasma or serum [Na + ] is determined by the body's total content of sodium, potassium, and water, as shown by the following equation: = + + + + Serum [Na ] (total body exchangeable Na total body exchangeable K )/total body water (TBW)",
+   "secao": "Fisiopatologia da hiponatremia"
+  },
+  {
+   "afirmacao": "A fórmula deriva simplificada dos estudos de Edelman e introduziu erros na predição das variações do sódio sérico; como há muitas imprecisões nas medidas de perdas e de ingestão de sódio, potássio e água, não há substituto para medidas frequentes do sódio sérico em cenários clínicos de mudança rápida.",
+   "citacao": "This formula has been simplified from studies made by Edelman in the 1950s, which introduced some errors in the prediction of changes in serum [Na + ] and has been subject to later reinterpretation [1]. Although this revision of the original formula is more accurate, there are so many inaccuracies in the measurements of sodium, potassium, and water losses, as well as intake, that there is no substitute for frequent measurements of the serum [Na + ] in rapidly changing clinical settings.",
+   "secao": "Fisiopatologia da hiponatremia"
+  },
+  {
+   "afirmacao": "Diante do paciente hiponatrêmico, a primeira tarefa do médico é garantir que a hiponatremia realmente reflete um estado hipo-osmolar e não é consequência de pseudo-hiponatremia ou de hiponatremia translocacional.",
+   "citacao": "the physician's first task is to ensure that hyponatremia actually reflects a hypoosmolar state and is not a consequence of pseudohyponatremia or translocational hyponatremia [2].",
+   "secao": "Fisiopatologia da hiponatremia"
+  },
+  {
+   "afirmacao": "Na hiponatremia com depleção de volume do LEC, o déficit de sódio corporal total excede o déficit de água corporal total.",
+   "citacao": "Patients with hyponatremia who have ECF volume depletion have sustained a deficit in total body Na + that exceeds the deficit in TBW.",
+   "secao": "Hiponatremia com LEC diminuído (hiponatremia hipovolêmica)"
+  },
+  {
+   "afirmacao": "A redução do volume do LEC se manifesta por veias jugulares planas, turgor cutâneo diminuído, mucosas secas, hipotensão ortostática e taquicardia.",
+   "citacao": "The decrease in ECF volume is manifested by physical findings such as flat neck veins, decreased skin turgor, dry mucous membranes, orthostatic hypotension, and tachycardia.",
+   "secao": "Hiponatremia com LEC diminuído (hiponatremia hipovolêmica)"
+  },
+  {
+   "afirmacao": "Se suficientemente grave, a depleção de volume é um estímulo potente para a secreção de AVP; quando osmorreceptores e receptores de volume recebem estímulos opostos, os osmorreceptores permanecem ativos, mas o set point do sistema é rebaixado.",
+   "citacao": "If sufficiently severe, volume depletion is a potent stimulus to AVP secretion. When the os- moreceptors and volume receptors receive opposing stimuli, the former remains active but the set point of the system is lowered [3].",
+   "secao": "Hiponatremia com LEC diminuído (hiponatremia hipovolêmica)"
+  },
+  {
+   "afirmacao": "Na presença de hipovolemia, a AVP é secretada e a água é retida apesar da hipo-osmolalidade; a retenção de água mediada por AVP é crítica para o processo patológico, e praticamente todos os casos de hiponatremia hipovolêmica têm um componente proeminente de retenção de água.",
+   "citacao": "Thus, in the presence of hypovolemia, AVP is secreted and water is retained, despite hypoosmolality. Whereas the hyponatremia in this setting clearly involves a depletion of body solutes, the resulting AVP-mediated retention of water is critical to the pathologic process producing hyponatremia: virtually all cases of hypovolemic hyponatremia have a prominent component of water retention.",
+   "secao": "Hiponatremia com LEC diminuído (hiponatremia hipovolêmica)"
+  },
+  {
+   "afirmacao": "A medida da concentração de sódio urinário ajuda a definir se as perdas de fluido são de origem renal ou extrarrenal: um sódio urinário menor que 30 mmol/L reflete resposta renal normal à depleção de volume e indica fonte extrarrenal de perda de fluido.",
+   "citacao": "Measurement of the urine [Na + ] concentration is helpful in assessing whether the fluid losses are renal or extrarenal in origin. A urine [Na + ] of less than 30 mmol/L reflects a normal renal response to volume depletion and indicates an extrarenal source of fluid loss [4].",
+   "secao": "Perdas extrarrenais de soluto"
+  },
+  {
+   "afirmacao": "As perdas extrarrenais são vistas tipicamente em doenças gastrointestinais com vômitos ou diarreia, além de perda de fluido para um terceiro espaço (cavidade abdominal na pancreatite, luz intestinal no íleo), queimaduras e trauma muscular.",
+   "citacao": "This is usually seen in patients with gastrointestinal diseases causing vomiting or diarrhea. Other causes include loss of fluid into a third space, such as the abdominal cavity in pancreatitis or the bowel lumen with ileus. Burns and muscle trauma can also be associated with large fluid and electrolyte losses.",
+   "secao": "Perdas extrarrenais de soluto"
+  },
+  {
+   "afirmacao": "Como muitos desses estados patológicos cursam com sede aumentada, o aumento da água livre ingerida por via oral ou infundida por via parenteral pode levar à hiponatremia.",
+   "citacao": "Because many of these pathologic states are associated with increased thirst, an increase in orally ingested or parenterally infused free water can lead to hyponatremia.",
+   "secao": "Perdas extrarrenais de soluto"
+  },
+  {
+   "afirmacao": "Hiponatremia hipovolêmica em paciente cujo sódio urinário é maior que 30 mmol/L indica o rim como fonte das perdas de soluto e fluido.",
+   "citacao": "Hypovolemic hyponatremia in patients whose urine [Na + ] is higher than 30 mmol/L indicates the kidney as the source of solute and fluid losses.",
+   "secao": "Perdas renais de soluto"
+  },
+  {
+   "afirmacao": "A hiponatremia induzida por diurético responde por proporção significativa da hiponatremia sintomática em pacientes hospitalizados e ocorre quase exclusivamente com tiazídicos, e não com diuréticos de alça.",
+   "citacao": "Diuretic-induced hyponatremia, a commonly observed clinical entity, accounts for a significant proportion of symptomatic hyponatremia in hospitalized patients. It occurs almost exclusively with thiazide rather than loop diuretics.",
+   "secao": "Perdas renais de soluto"
+  },
+  {
+   "afirmacao": "A razão de os tiazídicos causarem hiponatremia e os diuréticos de alça não é que ambas as classes prejudicam a capacidade de diluir a urina, mas os diuréticos de alça também prejudicam a geração do gradiente concentrador do interstício medular, limitando a concentração urinária máxima que pode ser alcançada.",
+   "citacao": "This is most likely because both classes of diuretics can impair urine diluting ability, but loop diuretics also impair the generation of the medullary interstitial concentrating gradient, thus limiting the maximal urinary concentration that can be achieved.",
+   "secao": "Perdas renais de soluto"
+  },
+  {
+   "afirmacao": "A hiponatremia por tiazídico costuma ficar evidente em 7 a 14 dias na maioria dos pacientes, mas ocasionalmente pode ocorrer até 2 anos após o início da terapia.",
+   "citacao": "The hyponatremia is usually evident within 7–14 days in most patients, but occasionally can occur as late as 2 years after the initiation of therapy.",
+   "secao": "Perdas renais de soluto"
+  },
+  {
+   "afirmacao": "Mulheres com baixo peso parecem particularmente propensas à hiponatremia por diurético, e a idade avançada foi identificada como fator de risco em alguns estudos, mas não em todos.",
+   "citacao": "Underweight women appear to be particularly prone to this complication, and advanced age has been found to be a risk factor in some, but not all, studies [5,6].",
+   "secao": "Perdas renais de soluto"
+  },
+  {
+   "afirmacao": "Os diuréticos causam hiponatremia por três mecanismos: depleção de volume (que prejudica a excreção de água por maior liberação de AVP e menor entrega de fluido tubular ao segmento diluidor); efeito direto sobre a função diluidora da alça ascendente espessa ou do túbulo contorcido distal; e depleção de potássio, que contribui para a perda de soluto trocável corporal total.",
+   "citacao": "Diuretics can cause hyponatremia by several mechanisms: 1) volume depletion, which results in impaired water excretion by enhanced AVP release and decreased tubular fluid delivery to the diluting segment; 2) a direct effect on the diluting function of the thick ascending limb or distal convoluted tubule; and 3) K + depletion that frequently accompanies diuretic use, which contributes to the loss of total body exchangeable solute (Na + + K + ) [7].",
+   "secao": "Perdas renais de soluto"
+  },
+  {
+   "afirmacao": "O abuso dissimulado de diurético deve sempre ser considerado em pacientes em que outras alterações eletrolíticas e a alta excreção urinária de cloro sugiram essa possibilidade.",
+   "citacao": "surreptitious diuretic abuse should always be considered in patients in whom other electrolyte abnormalities and high urinary Cl − excretion suggest this possibility.",
+   "secao": "Perdas renais de soluto"
+  },
+  {
+   "afirmacao": "Estudos genéticos e de fenotipagem sugeriram que um defeito herdado na captação de PGE2 no ducto coletor pode conferir risco aumentado de hiponatremia induzida por tiazídico.",
+   "citacao": "Recent genetic and phenotyping studies have suggested that an inherited defect in PGE2 uptake in the collecting duct may confer an increased risk of thiazide-induced hyponatremia [8].",
+   "secao": "Perdas renais de soluto"
+  },
+  {
+   "afirmacao": "A nefropatia perdedora de sal ocorre em alguns pacientes com insuficiência renal avançada; a tendência à perda de sódio geralmente não se manifesta com ingestão normal de sódio, mas nefropatia intersticial, doença cística medular, doença renal policística ou obstrução urinária parcial podem gerar perda de sódio suficiente para causar hiponatremia hipovolêmica.",
+   "citacao": "Salt-losing nephropathy occurs in some patients with advanced renal insufficiency. In most of these patients, the Na + -wasting tendency is not one that manifests itself at normal rates of sodium intake; however, some patients with interstitial nephropathy, medullary cystic disease, polycystic kidney disease, or partial urinary obstruction develop sufficient Na + wasting to cause hypo- volemic hyponatremia.",
+   "secao": "Perdas renais de soluto"
+  },
+  {
+   "afirmacao": "Pacientes com acidose tubular renal proximal apresentam perda renal de sódio e potássio apesar de insuficiência renal modesta, porque a bicarbonatúria obriga a perda desses cátions.",
+   "citacao": "Patients with proximal renal tubular acidosis exhibit renal Na + and K + wasting, despite modest renal in- sufficiency, because bicarbonaturia obligates these cation losses.",
+   "secao": "Perdas renais de soluto"
+  },
+  {
+   "afirmacao": "A insuficiência adrenal está associada a excreção renal de água prejudicada e hiponatremia; o diagnóstico deve ser considerado no paciente hiponatrêmico com contração de volume cujo sódio urinário NÃO está baixo, particularmente quando potássio sérico, ureia e creatinina estão elevados.",
+   "citacao": "It has long been recognized that adrenal insufficiency is associated with impaired renal water excretion and hyponatremia. This diagnosis should be considered in the volume-contracted hyponatremic patient whose urine [Na + ] is not low, particularly when the serum [K + ], urea, and creatinine levels are elevated.",
+   "secao": "Insuficiência adrenal (hiponatremia hipovolêmica)"
+  },
+  {
+   "afirmacao": "Existem mecanismos separados para a deficiência de mineralocorticoide e de glicocorticoide; o defeito de excreção de água da deficiência mineralocorticoide é mediado pela AVP e por fatores intrarrenais independentes de AVP, ambos ativados pela queda do volume do LEC mais do que pela deficiência de aldosterona em si.",
+   "citacao": "Separate mechanisms for mineralocorticoid and glucocorticoid deficiency have been defined [9]. Observations in experimental animals have provided evidence that the defect in water excretion associated with mineralocorticoid deficiency is mediated by AVP and by AVP-independent intrarenal factors, both of which are activated by decreases of ECF volume more so than by a deficiency of aldosterone per se.",
+   "secao": "Insuficiência adrenal (hiponatremia hipovolêmica)"
+  },
+  {
+   "afirmacao": "A presença na urina de um soluto osmoticamente ativo, não reabsorvível ou pouco reabsorvível, provoca excreção renal de sódio e culmina em depleção de volume; causas comuns são glicosúria por diabetes descompensado, infusão de manitol e diurese de ureia após alívio de obstrução do trato urinário.",
+   "citacao": "The presence in the urine of an osmotically active, non-reabsorbable or poorly reabsorbable solute causes the renal excretion of Na + and culminates in volume depletion. Glycosuria secondary to uncontrolled diabetes mellitus, mannitol infusion, or urea diuresis after relief of urinary tract obstruction are common causes of this disorder.",
+   "secao": "Diurese osmótica (solute diuresis)"
+  },
+  {
+   "afirmacao": "No diabetes, a perda de sódio causada pela glicosúria pode ser agravada pela cetonúria, porque hidroxibutirato e acetoacetato também causam perdas urinárias de eletrólitos; a cetonúria contribui para a perda renal de sódio e hiponatremia da inanição e da cetoacidose alcoólica.",
+   "citacao": "In patients with diabetes, the Na + wasting caused by the J.G. Verbalis Best Practice & Research Clinical Endocrinology & Metabolism 40 (2026) 102084 2 glycosuria can be aggravated by ketonuria because hydroxybutyrate and acetoacetate also cause urinary electrolyte losses. Ketonuria can contribute to the renal Na + wasting and hyponatremia seen in states of starvation and alcoholic ketoacidosis.",
+   "secao": "Diurese osmótica (solute diuresis)"
+  },
+  {
+   "afirmacao": "A excreção de sódio e água também aumenta quando um ânion não reabsorvível aparece na urina, o que se observa principalmente na alcalose metabólica com bicarbonatúria que acompanha vômitos intensos ou aspiração nasogástrica: a excreção de bicarbonato exige excreção concomitante de cátions, incluindo sódio e potássio, para manter a eletroneutralidade.",
+   "citacao": "and water excretion are also increased when a non-reabsorbable anion appears in the urine. This is observed principally with the metabolic alkalosis and bicarbonaturia that accompany severe vomiting or nasogastric suction. In these patients, the excretion of HCO3 − requires the concomitant excretion of cations, including Na + and K + , to maintain electroneutrality.",
+   "secao": "Diurese osmótica (solute diuresis)"
+  },
+  {
+   "afirmacao": "Embora as perdas renais nesses cenários sejam frequentemente hipotônicas, a sede estimulada pela contração de volume e a consequente ingestão de água podem resultar no desenvolvimento de hiponatremia.",
+   "citacao": "Whereas the renal losses in such clinical settings is often hypotonic, volume contraction–stimulated thirst and water intake can result in the development of hypo- natremia.",
+   "secao": "Diurese osmótica (solute diuresis)"
+  },
+  {
+   "afirmacao": "O cerebral salt wasting é uma síndrome rara, descrita primariamente em pacientes com hemorragia subaracnóidea, mas também com outros tipos de lesão do SNC, que pode levar a natriurese com subsequente contração de volume.",
+   "citacao": "Cerebral salt wasting is a rare syndrome described primarily in patients with subarachnoid hemorrhage, but also with other types of CNS lesions, which can lead to natriuresis with subsequent volume contraction.",
+   "secao": "Cerebral salt wasting (perda cerebral de sal)"
+  },
+  {
+   "afirmacao": "Embora a hiponatremia seja frequentemente relatada nesses pacientes, o verdadeiro cerebral salt wasting é provavelmente menos comum do que se costuma relatar; um estudo prospectivo bem conduzido de pacientes com hemorragia subaracnóidea que desenvolveram hiponatremia não encontrou evidência conclusiva de contração de volume ou de perda renal de sal em nenhum deles.",
+   "citacao": "Although hyponatremia is frequently reported in these patients, true cerebral salt wasting is probably less common than often reported [10]. A well-done prospective study of patients with subarachnoid hemorrhage who developed hyponatremia found no conclusive evidence for volume contraction or renal salt wasting in any of these patients [11].",
+   "secao": "Cerebral salt wasting (perda cerebral de sal)"
+  },
+  {
+   "afirmacao": "O mecanismo dessa natriurese é desconhecido, mas foram sugeridas como possíveis etiologias a liberação aumentada de peptídeos natriuréticos e alterações do tônus simpático renal.",
+   "citacao": "The mechanism of this natriuresis is unknown, but increased release of natriuretic peptides and alterations in renal sympathetic tone have been suggested as possible etiologies [12].",
+   "secao": "Cerebral salt wasting (perda cerebral de sal)"
+  },
+  {
+   "afirmacao": "Nos estágios avançados, os estados edematosos frequentemente se associam à queda do sódio sérico: o paciente tem aumento do sódio corporal total, mas o aumento da água corporal total excede o do sódio.",
+   "citacao": "In advanced stages, edematous states are frequently associated with a decrease in serum [Na + ]. Patients generally have an increase in total body Na + content, but the rise in TBW exceeds that of Na + .",
+   "secao": "Hiponatremia com LEC aumentado (hiponatremia hipervolêmica)"
+  },
+  {
+   "afirmacao": "Com exceção da insuficiência renal, os estados hipervolêmicos caracterizam-se por retenção ávida de sódio, com concentração de sódio urinário frequentemente menor que 10 mmol/L; essa retenção pode ser mascarada pelo uso concomitante de diuréticos, frequentes em pacientes edematosos.",
+   "citacao": "With the exception of renal failure, these states are characterized by avid Na + retention (urine Na + concentration often < 10 mmol/L). This sodium retention may be obscured by the concomitant use of diuretics, which are frequently used in edematous patients.",
+   "secao": "Hiponatremia com LEC aumentado (hiponatremia hipervolêmica)"
+  },
+  {
+   "afirmacao": "Na insuficiência cardíaca congestiva foi proposto um mecanismo mediado por entrega diminuída de fluido tubular ao néfron distal e/ou por liberação aumentada de AVP; em modelo experimental de baixo débito cardíaco, tanto a AVP quanto a menor entrega ao segmento diluidor mostraram-se importantes na anormalidade de excreção de água.",
+   "citacao": "A mechanism mediated by decreased delivery of tubule fluid to the distal nephron and/or increased release of AVP has been proposed. In an experimental model of low cardiac output, both AVP and diminished delivery to the diluting segment were found to be important in mediating the abnormality in water excretion.",
+   "secao": "Insuficiência cardíaca congestiva"
+  },
+  {
+   "afirmacao": "A queda do volume sanguíneo efetivo e a redução do enchimento arterial são sentidas por barorreceptores aórticos e do seio carotídeo, que estimulam a secreção de AVP; esse estímulo provavelmente se sobrepõe à inibição da secreção de AVP que acompanha a distensão aguda do átrio esquerdo.",
+   "citacao": "The decrement in effective blood volume and decrease in arterial filling are sensed by aortic and carotid sinus baroreceptors, which stimulate AVP secretion [13]. This stimulation likely supersedes the inhibition of AVP secretion that accompanies acute distention of the left atrium.",
+   "secao": "Insuficiência cardíaca congestiva"
+  },
+  {
+   "afirmacao": "Há evidência de que a distensão crônica dos átrios embota a sensibilidade desse barorreceptor, de modo que os barorreceptores de alta pressão passam a atuar de forma desinibida estimulando a secreção de AVP.",
+   "citacao": "There is also evidence that chronic distention of the atria blunts the sensitivity of this baroreceptor, so high-pressure baroreceptors can act in an uninhibited manner to stimulate AVP secretion.",
+   "secao": "Insuficiência cardíaca congestiva"
+  },
+  {
+   "afirmacao": "Níveis plasmáticos altos de AVP foram demonstrados em pacientes com insuficiência cardíaca congestiva tanto na presença quanto na ausência de diuréticos.",
+   "citacao": "High plasma AVP levels have been demonstrated in patients with congestive heart failure both in the presence and absence of diuretics.",
+   "secao": "Insuficiência cardíaca congestiva"
+  },
+  {
+   "afirmacao": "É mais provável que vias não osmóticas, cuja ativação é sugerida pelo aumento da atividade simpática na insuficiência cardíaca congestiva, sejam os mediadores da secreção de AVP nos estados formadores de edema.",
+   "citacao": "It is most likely that non-osmotic pathways, whose activation is suggested by the increase in sympathetic activity seen in congestive heart failure, are the mediators of AVP secretion in edema-forming states.",
+   "secao": "Insuficiência cardíaca congestiva"
+  },
+  {
+   "afirmacao": "Esses fatores neuro-humorais contribuem ainda mais para a hiponatremia ao reduzir a taxa de filtração glomerular e aumentar a reabsorção tubular de sódio, diminuindo assim a entrega de fluido aos segmentos diluidores distais do néfron; o grau de ativação neuro-humoral correlaciona-se com a gravidade clínica da disfunção ventricular esquerda.",
+   "citacao": "These neurohumoral factors further contribute to the hyponatremia by decreasing the glomerular filtration rate (GFR) and enhancing tubular Na + reabsorption, thereby decreasing fluid delivery to the distal diluting segments of the nephron. The degree of neurohumoral activation correlates with the clinical severity of left ventricular dysfunction [13].",
+   "secao": "Insuficiência cardíaca congestiva"
+  },
+  {
+   "afirmacao": "Pacientes com cirrose avançada e ascite frequentemente apresentam hiponatremia como consequência da incapacidade de excretar uma sobrecarga de água.",
+   "citacao": "Patients with advanced cirrhosis and ascites frequently present with hyponatremia as a consequence of their inability to excrete a water load [14].",
+   "secao": "Insuficiência hepática / cirrose"
+  },
+  {
+   "afirmacao": "A visão clássica é que a queda do volume sanguíneo arterial efetivo (EABV) leva à retenção ávida de sódio e água na tentativa de restaurar o EABV; embora a retenção renal de sódio ocorra cedo, ela é provavelmente consequência do subenchimento arterial mediado por vasodilatação.",
+   "citacao": "The classic view suggests that a decrement in effective arterial blood volume (EABV) leads to avid Na + and water retention in an attempt to restore EABV toward normal. Although renal Na + retention occurs early in the pathologic process, this is likely a consequence of vasodilation-mediated arterial underfilling [15].",
+   "secao": "Insuficiência hepática / cirrose"
+  },
+  {
+   "afirmacao": "Várias alterações patológicas da cirrose podem contribuir para a queda do EABV: acúmulo venoso esplâncnico, redução da pressão oncótica plasmática secundária à hipoalbuminemia e queda da resistência periférica.",
+   "citacao": "a number of the pathologic derangements in cirrhosis, including splanchnic venous pooling, diminished plasma oncotic pressure secondary to hypoalbuminemia, and decrease in peripheral resistance, could all contribute to a decrease in EABV.",
+   "secao": "Insuficiência hepática / cirrose"
+  },
+  {
+   "afirmacao": "Muitos modelos experimentais de disfunção hepática — hipertensão portal aguda por constrição da veia, ligadura do ducto biliar e cirrose crônica por tetracloreto de carbono — demonstraram papel predominante da secreção de AVP na patogênese da hiponatremia da insuficiência hepática.",
+   "citacao": "many experimental models of deranged liver function, including acute portal hypertension by vein constriction, bile duct ligation, and chronic cirrhosis produced by the administration of carbon tetrachloride, have demonstrated a predominant role for AVP secretion in the pathogenesis of hyponatremia with hepatic failure [17].",
+   "secao": "Insuficiência hepática / cirrose"
+  },
+  {
+   "afirmacao": "Pacientes com cirrose sem edema ou ascite excretam normalmente uma sobrecarga de água, ao passo que aqueles com ascite geralmente não conseguem.",
+   "citacao": "Although patients with cirrhosis who have no edema or ascites excrete a water load normally, those with ascites usually do not.",
+   "secao": "Insuficiência hepática / cirrose"
+  },
+  {
+   "afirmacao": "Os pacientes com defeito na excreção de água tinham níveis mais altos de AVP, atividade de renina plasmática, aldosterona plasmática e norepinefrina, menores taxas de produção de PGE2, albumina sérica mais baixa e menor excreção urinária de sódio — tudo sugerindo redução do EABV.",
+   "citacao": "Patients who had a defect in water excretion had higher levels of AVP, plasma renin activity, plasma aldosterone, and norepinephrine [18], as well as lower rates of PGE2 production. Similarly, their serum albumin level was lower, as was their urinary excretion of J.G. Verbalis Best Practice & Research Clinical Endocrinology & Metabolism 40 (2026) 102084 3 Na + , all suggesting a decrease in EABV.",
+   "secao": "Insuficiência hepática / cirrose"
+  },
+  {
+   "afirmacao": "Como na insuficiência cardíaca, o tônus simpático é alto na cirrose, e as concentrações plasmáticas de norepinefrina — índice da atividade barorreceptora em humanos — correlacionam-se bem com os níveis de AVP e com a excreção de água, apoiando a visão de que o EABV está contraído, e não expandido, na cirrose descompensada.",
+   "citacao": "As is the case in heart failure, sympathetic tone is high in cirrhosis [19]. Plasma con- centrations of norepinephrine, an index of baroreceptor activity in humans, correlates well with AVP levels and water excretion. These studies offer strong support for the view that EABV is contracted, rather than expanded, in decompensated cirrhosis.",
+   "secao": "Insuficiência hepática / cirrose"
+  },
+  {
+   "afirmacao": "A observação de que a inibição da óxido nítrico sintase corrige a hiporresponsividade arterial aos vasodilatadores e a excreção anormal de água em ratos cirróticos é forte evidência do papel do óxido nítrico na vasodilatação.",
+   "citacao": "The observation that the inhibition of nitric oxide synthase corrects the arterial hypo-responsiveness to vasodilators and the abnormal water excretion in cirrhotic rats provides strong evidence of a role for nitric oxide in the vasodilation [20].",
+   "secao": "Insuficiência hepática / cirrose"
+  },
+  {
+   "afirmacao": "A incidência de hiponatremia na síndrome nefrótica é menor do que na insuficiência cardíaca congestiva ou na cirrose, muito provavelmente por causa da pressão arterial mais alta, da TFG mais alta e de comprometimentos mais modestos da excreção de sódio e água.",
+   "citacao": "The incidence of hyponatremia in the nephrotic syndrome is lower than in congestive heart failure or cirrhosis, most likely as a consequence of the higher blood pressure, higher GFR, and more modest impairments in Na + and water excretion than in the other groups of patients.",
+   "secao": "Síndrome nefrótica"
+  },
+  {
+   "afirmacao": "Como os níveis lipídicos estão frequentemente elevados na síndrome nefrótica, deve-se sempre fazer a medida direta da osmolalidade plasmática.",
+   "citacao": "Because lipid levels are frequently elevated, a direct measurement of plasma osmolality should always be done.",
+   "secao": "Síndrome nefrótica"
+  },
+  {
+   "afirmacao": "Considerando as alterações das forças de Starling que acompanham a hipoalbuminemia e permitem a transudação de sódio e água através das membranas capilares para o interstício, acredita-se que pacientes com síndrome nefrótica tenham EABV diminuído, e marcadores neuro-humorais aumentados sustentam essa teoria do subenchimento.",
+   "citacao": "In view of the alterations in Starling forces that accompany hypoalbuminemia and allow the transudation of Na + and water across capillary membranes to the interstitial space, patients with nephrotic syndrome are thought to have decreased EABV. Increased levels of neurohumoral markers of decreased EABV also support this underfilling theory [21].",
+   "secao": "Síndrome nefrótica"
+  },
+  {
+   "afirmacao": "Esses eventos patogênicos podem não se aplicar a todos os pacientes: alguns com síndrome nefrótica têm volume plasmático aumentado com atividade de renina plasmática e aldosterona suprimidas, e a causa dessa discrepância ainda não é conhecida.",
+   "citacao": "However, these pathogenic events may not be applicable to all patients with the disorder. Some patients with the nephrotic syndrome have increased plasma volume with suppressed plasma renin activity and aldosterone levels [22]. The cause of these discrepancies is not yet known.",
+   "secao": "Síndrome nefrótica"
+  },
+  {
+   "afirmacao": "Na doença renal, a capacidade de excretar água livre é preservada melhor do que a capacidade de reabsorver água, mas a TFG do paciente ainda determina a taxa máxima de formação de água livre.",
+   "citacao": "In the setting of experimental or human renal disease, the ability to excrete free water is maintained better than the ability to reabsorb water. Nonetheless, the patient's GFR still determines the maximal rate of free water formation.",
+   "secao": "Insuficiência renal"
+  },
+  {
+   "afirmacao": "Se a osmolalidade urinária mínima está limitada a 150–250 mOsm/kg H2O e a excreção fracionada de água se aproxima de 20–30 % da carga filtrada, estima-se que um paciente urêmico com TFG de 2 mL/min/1,73 m2 excrete apenas cerca de 300 mL de água livre por dia — e a ingestão de mais líquido do que isso resultará em hiponatremia.",
+   "citacao": "Thus, if minimal urine osmolality is limited to 150–250 mOsm/kg H2O and fractional water excretion approaches 20–30 % of the filtered load, a uremic patient with a GFR of 2 mL/min/1.73 m 2 is estimated to excrete only ∼300 mL of free water/day. Intake of more fluid than this will result in hyponatremia.",
+   "secao": "Insuficiência renal"
+  },
+  {
+   "afirmacao": "Na maioria dos casos de insuficiência renal crônica, a queda da TFG associada à sede aumentada produz hiponatremia.",
+   "citacao": "In most cases of chronic renal failure, decreases in GFR with increased thirst produces hyponatremia in patients with renal insufficiency [23].",
+   "secao": "Insuficiência renal"
+  },
+  {
+   "afirmacao": "Como a avaliação clínica de graus mais leves de redução ou aumento do volume do LEC não é muito sensível, a medida do sódio urinário é necessária para confirmar a hiponatremia euvolêmica.",
+   "citacao": "Because clinical assessment of milder degrees of decreased or increased ECF volume are not very sensitive, measurement of the urine [Na + ] is required to confirm euvolemic hyponatremia.",
+   "secao": "Hiponatremia com LEC normal (hiponatremia euvolêmica)"
+  },
+  {
+   "afirmacao": "Um sódio urinário baixo é habitualmente encontrado na hiponatremia hipovolêmica e frequentemente na hipervolêmica, refletindo perfusão renal reduzida por queda do EABV.",
+   "citacao": "As discussed previously, a low urine [Na + ] is usually found in patients with hypovolemic hyponatremia and often found in patients with hy- pervolemic hyponatremia, reflecting decreased renal perfusion resulting from decreased EABV.",
+   "secao": "Hiponatremia com LEC normal (hiponatremia euvolêmica)"
+  },
+  {
+   "afirmacao": "Na hiponatremia euvolêmica o EABV é normal, de modo que não há estímulo à conservação renal de sódio (nem ativação do sistema renina-angiotensina-aldosterona nem de mecanismos intrarrenais) e a excreção urinária de sódio simplesmente reflete a ingestão de sódio do paciente.",
+   "citacao": "However, in patients with euvolemic hyponatremia the EABV is normal, so there is no stimulus to renal sodium conservation (including activation of the renin-angio- tensin-aldosterone system and intrarenal mechanisms). Consequently, the urine Na + excretion will simply reflect the patient’s Na + intake.",
+   "secao": "Hiponatremia com LEC normal (hiponatremia euvolêmica)"
+  },
+  {
+   "afirmacao": "Embora o sódio urinário elevado às vezes seja descrito como \"perda renal de sal\", é mais acuradamente um reflexo da AUSÊNCIA de conservação renal de sódio.",
+   "citacao": "While the elevated [Na + ] has sometimes been described as “renal salt wasting”, it is more accurately a reflection of the absence of renal Na+ conservation.",
+   "secao": "Hiponatremia com LEC normal (hiponatremia euvolêmica)"
+  },
+  {
+   "afirmacao": "Diferentes níveis de sódio urinário já foram propostos para definir euvolemia, mas muitos autores usam um sódio urinário maior ou igual a 30 mmol/L.",
+   "citacao": "Different levels of urine [Na + ] have been proposed to define euvolemia, but many authors use a urine [Na+ ] of ≥ 30 mmol/L [24,25].",
+   "secao": "Hiponatremia com LEC normal (hiponatremia euvolêmica)"
+  },
+  {
+   "afirmacao": "As ressalvas ao uso do sódio urinário para definir o estado volêmico incluem administração recente de diurético, distúrbios verdadeiros de perda renal de sal e estados hipervolêmicos com volume de LEC total aumentado, porém EABV diminuído.",
+   "citacao": "Caveats to using the using urine [Na + ] to define ECFV status include recent diuretic ad- ministration, true renal salt wasting disorders, and hypervolemic states with increased total ECFV but decreased EABV.",
+   "secao": "Hiponatremia com LEC normal (hiponatremia euvolêmica)"
+  },
+  {
+   "afirmacao": "A síndrome da antidiurese inapropriada (SIAD), antes chamada de síndrome da secreção inapropriada de hormônio antidiurético (SIADH), é a causa mais comum de hiponatremia em pacientes hospitalizados.",
+   "citacao": "The syndrome of inappropriate antidiuresis (SIAD), previously referred to as the syndrome of inappropriate antidiuretic hormone secretion (SIADH), is the most common cause of hyponatremia in hospitalized patients.",
+   "secao": "Síndrome da antidiurese inapropriada (SIAD)"
+  },
+  {
+   "afirmacao": "A SIAD foi descrita inicialmente por Schwartz e colaboradores em dois pacientes com carcinoma broncogênico e depois caracterizada por Bartter e Schwartz: os pacientes têm hipo-osmolalidade sérica enquanto excretam urina que não é maximamente diluída (osmolalidade urinária acima de 100 mOsm/kg H2O).",
+   "citacao": "As first described by Schwartz et al. in two patients with bronchogenic carcinoma, and later characterized further by Bartter and Schwartz, patients with this syndrome have serum hypoosmolality when excreting urine that is less than maximally dilute (> 100 mOsm/kg H2O).",
+   "secao": "Síndrome da antidiurese inapropriada (SIAD)"
+  },
+  {
+   "afirmacao": "Na SIAD o sódio urinário depende da ingestão de sódio, porque o balanço de sódio é mantido; consequentemente o sódio urinário costuma estar elevado, MAS pode estar baixo em pacientes com SIAD que ingerem dieta pobre em sódio.",
+   "citacao": "the urine [Na + ] is dependent on Na + intake, because Na + balance is maintained. Consequently, urinary [Na + ] is usually elevated, but it may be low in patients with SIAD who are ingesting a low-sodium diet.",
+   "secao": "Síndrome da antidiurese inapropriada (SIAD)"
+  },
+  {
+   "afirmacao": "Antes de confirmar o diagnóstico de SIAD é preciso excluir outras causas de capacidade de diluição diminuída — doença renal, hipofisária, adrenal, tireoidiana, cardíaca ou hepática — e também descartar estímulos não osmóticos para liberação de AVP, particularmente alterações hemodinâmicas (por hipotensão, náusea ou fármacos).",
+   "citacao": "Before the diagnosis of SIAD is confirmed, other causes for a decreased diluting capacity, such as renal, pituitary, adrenal, thyroid, cardiac, or hepatic disease, must be excluded. In addition, non- osmotic stimuli for AVP release, particularly hemodynamic derangements (e.g., caused by hypotension, nausea, or drugs), must be ruled out.",
+   "secao": "Síndrome da antidiurese inapropriada (SIAD)"
+  },
+  {
+   "afirmacao": "Outra pista da presença de SIAD é o achado de hipouricemia, que parece ocorrer como consequência do aumento do clearance de urato.",
+   "citacao": "Another clue to the presence of SIAD is the finding of hypouricemia. Hypouricemia appears to occur as a consequence of increased urate clearance [26].",
+   "secao": "Síndrome da antidiurese inapropriada (SIAD)"
+  },
+  {
+   "afirmacao": "A medida de AVP elevada pode confirmar o diagnóstico clínico, mas não é necessária: a maioria dos pacientes com SIAD tem níveis de AVP na faixa normal (2 a 10 pg/mL), sendo que a presença de qualquer AVP mensurável já é anormal no estado hipo-osmolar.",
+   "citacao": "Measurement of an elevated level of AVP can confirm the clinical diagnosis, but is not necessary. It should be noted that most patients with SIAD have AVP levels in the normal range (2 −10 pg/mL); the presence of any measurable AVP is, however, abnormal in the hypoosmolar state.",
+   "secao": "Síndrome da antidiurese inapropriada (SIAD)"
+  },
+  {
+   "afirmacao": "Os níveis plasmáticos de AVP nunca foram um requisito para o diagnóstico de SIAD, em parte porque estão elevados também nos estados de hiponatremia hipovolêmica e portanto têm pouco valor diagnóstico diferencial.",
+   "citacao": "Plasma AVP levels have never been a requirement for the diagnosis of SIAD, in part because they are elevated in states of hypovolemic hyponatremia as well as SIAD, and therefore have little differential diagnostic",
+   "secao": "Síndrome da antidiurese inapropriada (SIAD)"
+  },
+  {
+   "afirmacao": "Pelas mesmas razões, a medida dos níveis de copeptina mostrou-se de POUCO valor diagnóstico no diagnóstico diferencial da hiponatremia.",
+   "citacao": "For similar reasons, the measurement of copeptin levels has been found to be of little diagnostic value in the differential diagnosis of hyponatremia [27].",
+   "secao": "Síndrome da antidiurese inapropriada (SIAD)"
+  },
+  {
+   "afirmacao": "Como a própria presença de hiponatremia já é evidência de diluição anormal, um teste formal de diluição urinária não precisa ser realizado na maioria dos casos; o teste de sobrecarga hídrica pode ajudar a determinar se persiste anormalidade em paciente cujo sódio sérico já foi corrigido por restrição hídrica.",
+   "citacao": "Because the presence of hyponatremia is itself evidence for abnormal dilution, a formal urine- diluting test need not be performed in most cases. The water loading test can be helpful in determining whether an abnormality remains in a patient whose serum [Na + ] has been corrected by water restriction.",
+   "secao": "Síndrome da antidiurese inapropriada (SIAD)"
+  },
+  {
+   "afirmacao": "Leaf e colaboradores, em 1953, descreveram os efeitos da administração crônica de AVP sobre o balanço de sódio e água e notaram que era necessária ingestão de água de alto volume para o desenvolvimento de hiponatremia, com incremento concomitante da excreção urinária de sódio.",
+   "citacao": "Leaf and associates described the effects of chronic AVP administration on Na + and water balance [28]. They noted that high-volume water intake was required for the development of hyponatremia. Concomitant with the water retention, an increment in urinary Na + excretion was observed.",
+   "secao": "SIAD — fisiopatologia"
+  },
+  {
+   "afirmacao": "A sobrecarga hídrica aguda causa natriurese transitória, mas quando a ingestão de água aumenta mais lentamente não se documenta perda líquida significativa de sódio; esses estudos demonstraram que a hiponatremia é principalmente consequência da RETENÇÃO DE ÁGUA, ainda que o aumento líquido do balanço de água não explique inteiramente a queda do sódio sérico.",
+   "citacao": "Acute water loading causes transient natriuresis but, when water intake is increased more slowly, no significant negative Na + loss was documented. These studies clearly demonstrated that hyponatremia is mainly a consequence of water retention; however, it should be recognized that the net increase in water balance fails to account entirely for the decrement in serum [Na + ] [28].",
+   "secao": "SIAD — fisiopatologia"
+  },
+  {
+   "afirmacao": "Em modelo de SIAD em ratos, a água retida distribui-se no espaço intracelular e em equilíbrio com a tonicidade do LEC; a natriurese e a caliurese que ocorrem cedo no modelo contribuem para a queda dos solutos corporais e explicam em parte a hiponatremia observada.",
+   "citacao": "In a carefully studied model of SIAD in rats, the retained water was found to be distributed in the intracellular space and in equilibrium with the tonicity of the ECF [29]. The natriuresis and kaliuresis that occur early in the development of this model contribute to a decrement of body solutes and, in part, account for the observed hyponatremia.",
+   "secao": "SIAD — fisiopatologia"
+  },
+  {
+   "afirmacao": "As contribuições relativas da retenção de água e das perdas de soluto variam com a DURAÇÃO da hiponatremia induzida: a retenção de água é central no processo, mas, com hiponatremia mais prolongada, a depleção de sódio torna-se predominante.",
+   "citacao": "Studies involving analysis of whole- body water and electrolyte content have demonstrated that the relative contributions of water retention and solute losses vary with the duration of induced hyponatremia; the former is central to the process but, with more prolonged hyponatremia, Na + depletion becomes predominant [30].",
+   "secao": "SIAD — fisiopatologia"
+  },
+  {
+   "afirmacao": "Embora a natriurese acompanhe frequentemente a SIAD, a secreção de AVP estimulada de forma não osmótica é ESSENCIAL para a síndrome.",
+   "citacao": "Although natriuresis frequently accompanies SIAD, non-osmotically stimulated AVP secretion is es- sential.",
+   "secao": "SIAD — fisiopatologia"
+  },
+  {
+   "afirmacao": "Pacientes com SIAD também têm regulação anormal da sede, já que a ingestão de líquido não é totalmente inibida pela hipo-osmolalidade; o mecanismo dessa falha não é totalmente entendido, mas reflete em parte a ingestão continuada de bebidas por razões que não a sede verdadeira.",
+   "citacao": "Finally, patients with the syndrome also have abnormal thirst regulation, since fluid intake is not fully inhibited by the hypoosmolality. The mechanism of this failure to suppress fluid intake is not fully understood, but partly reflects the continued ingestion of beverages for reasons other than true thirst.",
+   "secao": "SIAD — fisiopatologia"
+  },
+  {
+   "afirmacao": "Após a retenção inicial de água, a perda de sódio e o desenvolvimento de hiponatremia, a administração continuada de AVP é acompanhada de reestabelecimento do balanço de sódio e de declínio do efeito antidiurético do hormônio.",
+   "citacao": "After the initial retention of water, loss of Na + , and development of hyponatremia, continued administration of AVP is accom- panied by reestablishment of Na + balance and a decline in the antidiuretic effect of the hormone.",
+   "secao": "SIAD — fisiopatologia"
+  },
+  {
+   "afirmacao": "A integridade da regulação renal do sódio se manifesta pela capacidade de conservar sódio durante restrição de sódio e pela excreção normal de uma carga de sódio: os mecanismos que regulam a excreção de sódio estão intactos.",
+   "citacao": "The integrity of renal regulation of Na + balance is manifested by the ability to conserve Na + during Na + restriction and by the normal excretion of a Na + load. Thus, the mechanisms that regulate Na + excretion are intact.",
+   "secao": "SIAD — fisiopatologia"
+  },
+  {
+   "afirmacao": "O fenômeno do \"escape da vasopressina\" consiste no aumento do fluxo urinário e na queda da osmolalidade urinária apesar da administração continuada de AVP.",
+   "citacao": "Decreased antidiuretic effect of AVP, to varying degrees, has been described in many studies [31,32], because urine flow increases and urine osmolality decreases despite continued administration of AVP. This effect has been termed “vasopressin escape.”",
+   "secao": "SIAD — fisiopatologia"
+  },
+  {
+   "afirmacao": "Vários estudos demonstraram que é necessária a expansão hipotônica do volume do LEC, e não a administração crônica de AVP por si só, para que o escape ocorra, porque o fenômeno só é visto quando um balanço hídrico positivo é alcançado.",
+   "citacao": "Several studies have demonstrated that hypotonic ECF volume expansion, rather than chronic administration of AVP per se, is needed for escape to occur because the escape phenomenon is seen only when a positive water balance is achieved [33].",
+   "secao": "SIAD — fisiopatologia"
+  },
+  {
+   "afirmacao": "No escape da antidiurese induzida por desmopressina descreveu-se queda proeminente da expressão de AQP2, sem mudança concomitante das AQP3 e AQP4 basolaterais, e a queda de AQP2 associou-se à menor responsividade do receptor V2 da AVP.",
+   "citacao": "A prominent decrease in AQP2 expression has been reported in the process of escape from desmopressin-induced antidiuresis, without a concomitant change in basolateral AQP3 and AQP4 [36,37]. The decrement in AQP2 was associated with decreased AVP V2 receptor responsiveness [36].",
+   "secao": "SIAD — fisiopatologia"
+  },
+  {
+   "afirmacao": "As causas de SIAD caem em quatro categorias gerais: neoplasias malignas; doença pulmonar; distúrbios do SNC; e efeitos de medicamentos. Além disso, a hiponatremia por reposição hídrica excessiva pode ocorrer após exercício moderado e grave, e reconhece-se cada vez mais que uma forma idiopática é comum em idosos.",
+   "citacao": "These fall into four general categories: 1) malignancies; 2) pulmonary disease; 3) CNS disorders; and 4) medication effects. In addition, hyponatremia caused by excessive water repletion can occur after moderate and severe exercise [38]; and it has been increasingly recognized that an idiopathic form is common in older adults [39–42].",
+   "secao": "SIAD — estudos clínicos"
+  },
+  {
+   "afirmacao": "Nem todos os pacientes com SIAD produzem AVP ectopicamente; entre os tumores que causam SIAD, o carcinoma broncogênico, e particularmente o câncer de pulmão de pequenas células, é o mais comum, com prevalência relatada de 11 %.",
+   "citacao": "but not all patients with SIAD produce AVP exctopically. Of the tumors that cause SIAD, bronchogenic carcinoma, and particularly small cell lung cancer, is the most common, with a reported prevalence of 11 % [43].",
+   "secao": "SIAD — estudos clínicos"
+  },
+  {
+   "afirmacao": "Pacientes com carcinoma broncogênico têm níveis plasmáticos de AVP mais altos em relação à osmolalidade plasmática mesmo sem SIAD franca, e a SIAD já foi relatada ocasionalmente precedendo o diagnóstico do tumor em vários meses.",
+   "citacao": "It appears that patients with bronchogenic carcinoma have higher plasma AVP levels in relation to plasma osmolality, even if they do not manifest full-blown SIAD; however, in patients with the clinical syndrome, levels of AVP are generally higher. The possibility that AVP could serve as a marker of bronchogenic carcinoma has been suggested, and SIAD has been reported occasionally to precede diagnosis of the tumor by several months [44].",
+   "secao": "SIAD — estudos clínicos"
+  },
+  {
+   "afirmacao": "Entre 625.114 indivíduos dinamarqueses, a mortalidade por todas as causas foi aumentada na hiponatremia leve, moderada e grave em comparação com normonatrêmicos; a razão de taxa de incidência de diagnóstico subsequente de câncer de cabeça e pescoço ou pulmonar foi marcadamente aumentada em todos os níveis de hiponatremia.",
+   "citacao": "Among 625,114 Danish subjects, all-cause mortality was increased in mild, moderate, and severe hyponatremia compared with normonatremic individuals. Of special note, the incident rate ratio of a subsequent diagnosis of head and neck or pulmonary cancer was markedly increased in patients at all levels of hyponatremia;",
+   "secao": "SIAD — estudos clínicos"
+  },
+  {
+   "afirmacao": "Nesse estudo dinamarquês, 1893 de 14.517 pacientes hiponatrêmicos (13 %) tiveram subsequentemente diagnóstico de câncer, levando à conclusão de que a hiponatremia se associa a risco aumentado de ser diagnosticado com qualquer câncer, particularmente pulmonar e de cabeça e pescoço.",
+   "citacao": "1893 of 14,517 of all hyponatremic patients (13 %) sub- sequently had a diagnosis of cancer, leading to the conclusion that hyponatremia is associated with an increased risk of being subsequently diagnosed with any cancer, particularly pulmonary and head and neck cancers [45].",
+   "secao": "SIAD — estudos clínicos"
+  },
+  {
+   "afirmacao": "As neoplasias de cabeça e pescoço são o segundo tipo de tumor mais comumente associado à SIAD, que ocorre em aproximadamente 3 % desses pacientes.",
+   "citacao": "Head and neck malignancies are the second most common tumors associated with SIAD, which occurs in approximately 3 % of these patients.",
+   "secao": "SIAD — estudos clínicos"
+  },
+  {
+   "afirmacao": "O mecanismo do aumento da secreção de AVP em outros distúrbios pulmonares não é conhecido, mas as anormalidades associadas dos gases arteriais poderiam funcionar como mediadores; a SIAD pode ocorrer também na tuberculose miliar, e não apenas na tuberculose limitada ao pulmão.",
+   "citacao": "The mechanism of increased AVP secretion in other pulmonary disorders is not known, but the associated abnormalities in arterial blood gases could function as mediators. Antidiuretic activity has been assayed in tuberculous lung tissue, but SIAD can also occur in the setting of miliary rather than only lung-limited tuberculosis.",
+   "secao": "SIAD — estudos clínicos"
+  },
+  {
+   "afirmacao": "Nos distúrbios do SNC, a AVP é muito provavelmente secretada pela neuro-hipófise; estudos em macacos mostraram que elevações da pressão intracraniana causam secreção de AVP, o que pode ser o mecanismo mediador da SIAD em pelo menos alguns distúrbios do SNC.",
+   "citacao": "In CNS disorders, AVP is most likely secreted from the neurohypophysis. Studies of monkeys have shown that elevations of intracranial pressure cause AVP secretion, which may be the mechanism that mediates SIAD in at least some CNS disorders.",
+   "secao": "SIAD — estudos clínicos"
+  },
+  {
+   "afirmacao": "As células magnocelulares secretoras de AVP no hipotálamo estão sujeitas a numerosos estímulos excitatórios, o que torna concebível que uma grande variedade de distúrbios neurológicos possa estimular a secreção de AVP.",
+   "citacao": "The magnocellular AVP-secreting cells in the hypothalamus are subject to numerous excitatory inputs, and therefore it is conceivable that a large variety of neurologic disorders can stimulate the secretion of AVP.",
+   "secao": "SIAD — estudos clínicos"
+  },
+  {
+   "afirmacao": "Foi descrita hiponatremia em lactentes que preenchiam todos os critérios de SIAD, mas com níveis plasmáticos de AVP INDETECTÁVEIS; a análise genética revelou mutação com ganho de função no receptor V2 da AVP ligado ao X, em que no códon 137 uma mutação missense trocou arginina por cisteína ou leucina — condição denominada \"síndrome nefrogênica da antidiurese inapropriada\" (NSIAD).",
+   "citacao": "Although SIAD as typically described is associated with inappropriate secretion of AVP, hyponatremia has been described in infants who met all criteria for a diagnosis of SIAD but had undetectable plasma AVP levels. Genetic analysis revealed a gain-of- function mutation at the X-linked AVP V2 receptor, where in codon 137 a missense mutation resulted in the change from arginine to cysteine or leucine. The authors termed this “nephrogenic syndrome of inappropriate antidiuresis” (NSIAD) [46].",
+   "secao": "SIAD — estudos clínicos"
+  },
+  {
+   "afirmacao": "No estudo de Zerbe sobre a osmorregulação da AVP na SIAD, na grande maioria a concentração plasmática de AVP estava inadequadamente suprimida em relação à hipotonicidade, e na maioria dos pacientes ficava entre 1 e 10 pg/mL — a mesma faixa de adultos saudáveis normo-hidratados —, de modo que a secreção inapropriada só pode ser demonstrada medindo a AVP em condições hipotônicas.",
+   "citacao": "Zerbe and colleagues have studied the osmoregulation of AVP secretion in a large group of patients with SIAD [47]. In the great majority, the plasma AVP concentration was inadequately suppressed relative to the hypotonicity. In most patients, the plasma AVP concentration ranged from 1 to 10 pg/mL, the same range as in normally hydrated healthy adults. Inappropriate secretion, therefore, can often be demonstrated only by measuring AVP under hypotonic conditions.",
+   "secao": "SIAD — estudos clínicos"
+  },
+  {
+   "afirmacao": "Mesmo medindo AVP em condições hipotônicas, anormalidades da AVP plasmática não eram aparentes em quase 10 % dos pacientes com evidência clínica de SIAD.",
+   "citacao": "Even with this approach, however, abnormalities in plasma AVP were not apparent in almost 10 % of patients with clinical evidence of SIAD.",
+   "secao": "SIAD — estudos clínicos"
+  },
+  {
+   "afirmacao": "Ao medir a AVP plasmática durante infusão de salina hipertônica em 25 pacientes com SIAD, foram identificados quatro tipos diferentes de defeitos osmorregulatórios, sem que nenhum padrão pudesse ser associado à patologia subjacente.",
+   "citacao": "To define the nature of the osmoregulatory defect in these patients better, plasma AVP was measured during infusion of hypertonic saline. When this method of analysis was applied to 25 patients with SIAD, four different types of osmoregulatory defects were identified (Fig. 1). Despite these different patterns of AVP secretion, the authors could not associate any pattern with the underlying pathology.",
+   "secao": "SIAD — estudos clínicos"
+  },
+  {
+   "afirmacao": "O defeito osmorregulatório tipo A associa-se a flutuações grandes e erráticas da AVP plasmática sem relação com a elevação da osmolalidade; o tipo B corresponde a reajuste para baixo do osmostato (reset osmostat); o tipo C tem AVP elevada inicialmente que só volta a subir apropriadamente quando a osmolalidade atinge a faixa normal, indicando osmorreceptor funcionante; e o tipo D tem estimulação e supressão normais da AVP apesar de marcada incapacidade de excretar sobrecarga hídrica.",
+   "citacao": "Type A osmoregulatory defect was associated with large and erratic fluctuations in plasma AVP, which bore no relation to the rise in plasma osmolality. Type B osmoregulatory defect was consistent with a downward resetting of the osmostat for AVP secretion. Type C osmoregulatory defect was associated with elevated plasma AVP initially, which did not change during the infusion of hypertonic saline until plasma osmolality reached the normal range, after which plasma AVP began to rise appropriately, indicating a normally functioning osmoreceptor mechanism. Type D osmoregulatory defect was associated with normal stimulation and suppression of plasma AVP secretion, despite a marked inability to excrete a water load.",
+   "secao": "SIAD — estudos clínicos"
+  },
+  {
+   "afirmacao": "Pacientes com carcinoma broncogênico, geralmente considerado associado à produção ectópica de AVP, manifestaram TODAS as categorias de defeito osmorregulatório, incluindo o reset osmostat, sugerindo que alguns tumores causem SIAD não por produzir o hormônio ectopicamente, mas por interferir na osmorregulação normal da secreção de AVP pela neuro-hipófise — por invasão direta do nervo vago, implantes metastáticos no hipotálamo ou outra alteração neuropática mais generalizada.",
+   "citacao": "It is of interest that patients with bronchogenic carcinoma, which is generally believed to be associated with ectopic production of AVP, manifested every ca- tegory of osmoregulatory defect, including the reset osmostat. Based on these and other results, it has been suggested that some of these tumors may cause SIAD secretion not by producing the hormone ectopically, but by interfering with the normal osmor- egulation of AVP secretion from the neurohypophysis through direct invasion of the vagus nerve, metastatic implants in the hypothalamus, or some other more generalized neuropathic change.",
+   "secao": "SIAD — estudos clínicos"
+  },
+  {
+   "afirmacao": "O defeito de excreção de água da insuficiência hipofisária anterior, e particularmente da deficiência de ACTH, associa-se a níveis plasmáticos elevados de AVP e é corrigido por doses fisiológicas de glicocorticoide.",
+   "citacao": "The water excretory defect of anterior pituitary insufficiency, and particularly ACTH deficiency, is associated with elevated plasma AVP levels [48,49] and corrected by physiologic doses of glucocorticoids.",
+   "secao": "Deficiência de glicocorticoide"
+  },
+  {
+   "afirmacao": "Cães adrenalectomizados que recebem reposição de mineralocorticoide ainda têm excreção anormal de água livre, indicando papel próprio do glicocorticoide.",
+   "citacao": "Similarly, adrenalectomized dogs receiving replacement of mineralocorticoids still have abnormal free water excretion.",
+   "secao": "Deficiência de glicocorticoide"
+  },
+  {
+   "afirmacao": "Em resumo, o defeito da deficiência de glicocorticoide parece ser primariamente DEPENDENTE de AVP, mas um mecanismo independente de AVP torna-se evidente com deficiência hormonal mais prolongada.",
+   "citacao": "In summary, the defect in glucocorticoid deficiency appears to be primarily AVP-dependent, but an AVP-independent me- chanism becomes evident with more prolonged hormone deficiency.",
+   "secao": "Deficiência de glicocorticoide"
+  },
+  {
+   "afirmacao": "É provável que alterações da hemodinâmica sistêmica expliquem a liberação não osmótica de AVP na deficiência de glicocorticoide, embora um efeito direto do hormônio glicocorticoide sobre a liberação de AVP não tenha sido excluído.",
+   "citacao": "It appears likely that alterations in systemic hemodynamics account for the non-osmotic release of AVP, but a direct effect of glucocorticoid hormone on AVP release has not been excluded.",
+   "secao": "Deficiência de glicocorticoide"
+  },
+  {
+   "afirmacao": "O mecanismo renal independente de AVP é provavelmente causado por alterações da hemodinâmica renal, e não por aumento direto da permeabilidade à água do ducto coletor.",
+   "citacao": "The AVP-independent renal mechanism is probably caused by alterations in renal hemodynamics and not by a direct increase in collecting duct water permeability.",
+   "secao": "Deficiência de glicocorticoide"
+  },
+  {
+   "afirmacao": "Deve-se sempre lembrar que o hipoadrenalismo SECUNDÁRIO, como ocorre no hipopituitarismo, também pode estar associado a hiponatremia.",
+   "citacao": "It should always be remembered that secondary hypoadrenalism, as occurs in hypopituitarism, can also be associated with hyponatremia [53,54].",
+   "secao": "Deficiência de glicocorticoide"
+  },
+  {
+   "afirmacao": "Pacientes e animais de experimentação com hipotireoidismo GRAVE frequentemente têm excreção de água prejudicada e às vezes desenvolvem hiponatremia; o defeito de diluição é revertido pelo tratamento com hormônio tireoidiano.",
+   "citacao": "Patients and experimental animals with severe hypothyroidism often have impaired water excretion and sometimes develop hyponatremia [55]. The dilution defect is reversed by treatment with thyroid hormone.",
+   "secao": "Hipotireoidismo"
+  },
+  {
+   "afirmacao": "Foram propostos como mecanismos do defeito no hipotireoidismo a entrega diminuída de filtrado ao segmento diluidor e a secreção persistente de AVP, isoladas ou em combinação; nos estudos humanos, porém, a redução do fluxo sanguíneo renal e da taxa de filtração glomerular parecem ser os mecanismos predominantes.",
+   "citacao": "Decreased delivery of filtrate to the diluting segment and persistent secretion of AVP, alone or in combination, have been proposed as mechanisms responsible for the defect. Evidence for both factors have been shown in experimental animals, but in human studies, decreased renal blood flow and glomerular filtration rate appear to be the predominant mechanisms [56].",
+   "secao": "Hipotireoidismo"
+  },
+  {
+   "afirmacao": "O hipotireoidismo precisa ser GRAVE para causar esse grau de disfunção renal.",
+   "citacao": "However, hypothyroidism must be severe to cause this degree of renal",
+   "secao": "Hipotireoidismo"
+  },
+  {
+   "afirmacao": "Justamente porque o hipotireoidismo precisa ser grave, vários estudos NÃO mostraram associação entre níveis de TSH leve a moderadamente elevados e hiponatremia.",
+   "citacao": "Because of this, several studies have shown no association between mild to moderately elevated TSH levels and hyponatremia [57,58].",
+   "secao": "Hipotireoidismo"
+  },
+  {
+   "afirmacao": "O critério diagnóstico da polidipsia primária é a presença de poliúria (geralmente definida como débito urinário maior que 40 mL/kg/24 h) apesar de osmolalidade urinária apropriadamente suprimida (menor que 100 mOsm/kg H2O).",
+   "citacao": "The diagnostic criterion for this syndrome is the presence of polyuria (generally defined as urine output > 40/mL/kg/24 h) despite appropriately suppressed urine osmolality (< 100 mOsm/kg H2O.",
+   "secao": "Polidipsia primária"
+  },
+  {
+   "afirmacao": "O desenvolvimento de hiponatremia com urina diluída deve levantar suspeita de distúrbio polidípsico primário; embora grandes volumes de líquido precisem ser ingeridos para superar a capacidade normal de excreção de água, esse volume não precisa ser excessivamente alto se houver redução concomitante da ingestão de soluto.",
+   "citacao": "The development of hyponatremia with a dilute urine should raise suspicion of a primary polydipsic disorder. Although large volumes of fluid need to be ingested to overwhelm the normal water excretory ability, this volume need not be excessively high if there are concomitant decreases in solute intake.",
+   "secao": "Polidipsia primária"
+  },
+  {
+   "afirmacao": "Pacientes com doença psiquiátrica demonstram ingestão aumentada de água; embora a polidipsia normalmente não se associe a hiponatremia, esses pacientes têm risco aumentado de desenvolver hiponatremia quando estão agudamente psicóticos — a maioria tem esquizofrenia, alguns têm depressão psicótica, e a prevalência verdadeira é desconhecida.",
+   "citacao": "It has long been recognized that patients with psychiatric disease demonstrate increased water intake. Although polydipsia is normally not associated with hyponatremia, these patients are at increased risk of developing hyponatremia when they are acutely psychotic [59]. Most of these patients have schizophrenia, but some have psychotic depression. The true prevalence of hyponatremia in this population of patients is unknown.",
+   "secao": "Polidipsia primária"
+  },
+  {
+   "afirmacao": "O mecanismo da hiponatremia na psicose é multifatorial: as exacerbações psicóticas associam-se a níveis aumentados de AVP em esquizofrênicos com hiponatremia, e a percepção da sede também está aumentada, com ingestão excessiva de água que excede a capacidade excretora.",
+   "citacao": "The mechanism responsible for the hyponatremia in psychosis appears to be multifactorial. Psychotic exacerbations appear to be associated with increased AVP levels in schizophrenic patients with hyponatremia [60]. Finally, thirst perception is also increased, because excessive water intake that exceeds excretory capacity is responsible for many episodes of hyponatremia in these patients.",
+   "secao": "Polidipsia primária"
+  },
+  {
+   "afirmacao": "A hiponatremia ocorre em consumidores de cerveja (a chamada \"beer potomania\"); embora atribuída ao aumento da ingestão de líquido num contexto de ingestão de soluto muito baixa, esses pacientes podem também ter sofrido perdas significativas de soluto.",
+   "citacao": "Hyponatremia occurs in beer drinkers (so-called “beer potomania”). Although this has been ascribed to an increase in fluid intake in the setting of very low solute intake [62], such patients may also have sustained significant solute losses [63].",
+   "secao": "Polidipsia primária"
+  },
+  {
+   "afirmacao": "Apresentação semelhante à beer potomania pode ocorrer em pacientes que não bebem cerveja em excesso, mas têm ingestão de soluto muito baixa, seja por preferência dietética (por exemplo, ovolactovegetariana), inapetência ou acesso limitado a alimentos (dieta de \"chá e torrada\").",
+   "citacao": "A similar pre- sentation can occur in patients who do not drink beer excessively, but have very low solute intake, either due to patient preference for a specific diet (e.g., ovolactovegetarian), poor appetite, or limited access to food (e.g., “tea and toast” diet) [64].",
+   "secao": "Polidipsia primária"
+  },
+  {
+   "afirmacao": "A prevalência de hiponatremia adquirida no hospital é alta em adultos e crianças, particularmente no período pós-operatório; a maioria dos pacientes afetados parece clinicamente euvolêmica e tem níveis mensuráveis de AVP na circulação.",
+   "citacao": "The prevalence of hospital-acquired hyponatremia is high in adults and children, particularly in the postoperative period [65,66]. Most affected patients appear clinically euvolemic and have measurable levels of AVP in their circulation.",
+   "secao": "Hiponatremia pós-operatória"
+  },
+  {
+   "afirmacao": "Embora a hiponatremia pós-operatória ocorra primariamente por administração de fluidos hipotônicos, a queda do sódio sérico pode ocorrer nesse estado de alta secreção de AVP mesmo quando fluidos ISOTÔNICOS são administrados.",
+   "citacao": "Although this occurs primarily as a consequence of administration of hypotonic fluids [67], a decrease in serum [Na + ] can occur in this high-AVP secretory state even when isotonic fluids are administered [68].",
+   "secao": "Hiponatremia pós-operatória"
+  },
+  {
+   "afirmacao": "Um subgrupo de pacientes com hiponatremia pós-operatória desenvolve encefalopatia hiponatrêmica, frequentemente acompanhada de convulsões e hipóxia.",
+   "citacao": "However, a subgroup of postoperative hyponatremic patients develop hyponatremic encephalopathy, often accompanied by seizures and hypoxia [69].",
+   "secao": "Hiponatremia pós-operatória"
+  },
+  {
+   "afirmacao": "O exercício de endurance extenuante, como treinamento militar, maratonas e triatlos, pode causar hiponatremia frequentemente sintomática, denominada \"hiponatremia associada ao exercício\" (EAH).",
+   "citacao": "There has been increasing recognition that strenuous endurance exercise, such as military training [70] and marathons and triathlons [71], can cause hyponatremia that is frequently symptomatic, referred to as “exercise-associated hyponatremia (EAH)”.",
+   "secao": "Exercício de endurance"
+  },
+  {
+   "afirmacao": "Em estudo prospectivo de 488 corredores da Maratona de Boston, 13 % tinham sódio sérico menor que 130 mmol/L; a análise multivariada mostrou que o GANHO DE PESO relacionado à ingestão excessiva de líquido é o mais forte preditor isolado de EAH.",
+   "citacao": "A prospective study of 488 runners in the Boston Marathon showed that 13 % of the runners had a serum [Na + ] lower than 130 mmol/L; multivariate analysis revealed that weight gain related to excessive fluid intake is the strongest single predictor of EAH.",
+   "secao": "Exercício de endurance"
+  },
+  {
+   "afirmacao": "Tempos de prova mais longos e índice de massa corporal baixo também foram preditores de hiponatremia associada ao exercício, mas a composição dos líquidos consumidos e o uso de AINEs NÃO foram preditivos.",
+   "citacao": "Longer racing times and a low body mass index (BMI) were also predictors [72], but composition of the fluids consumed and use of NSAIDs were not predictive.",
+   "secao": "Exercício de endurance"
+  },
+  {
+   "afirmacao": "A hiponatremia sintomática é ainda mais frequente em provas de ultra-endurance; além da ingestão excessiva de fluidos hipotônicos, pacientes com EAH geralmente têm níveis inapropriados de AVP, sugerindo fortemente que a secreção não osmótica de AVP contribui para a patogênese.",
+   "citacao": "Symptomatic hyponatremia is even more frequent in ultra-endurance events[73]. In addition to excessive intake of hypotonic fluids, patients with EAH generally have inappropriate AVP levels, strongly suggesting that non-osmotic AVP secretion contributes to the pathogenesis [74].",
+   "secao": "Exercício de endurance"
+  },
+  {
+   "afirmacao": "Como a desmopressina é agonista seletivo dos receptores V2 da AVP, espera-se que pacientes tratados com ela tenham risco aumentado de hiponatremia; a prevalência relatada em pacientes tratados por deficiência de arginina-vasopressina (AVP-D, antes chamada diabetes insipidus) é relativamente baixa porque em geral eles não bebem quantidades excessivas de líquido.",
+   "citacao": "Because desmopressin is a selective agonist of the AVP V2 receptors, it would be expected that patients treated with desmopressin are at increased risk of developing hyponatremia. The reported prevalence in patients treated with desmopressin for arginine vasopressin deficiency (AVP-D, also known as diabetes insipidus) is relatively low because they generally do not drink excessive amounts of fluid.",
+   "secao": "Agentes farmacológicos"
+  },
+  {
+   "afirmacao": "Um estudo relatou prevalência de 27 % de hiponatremia leve (131–134 mmol/L) e de 15 % de hiponatremia mais grave (≤130 mmol/L) no seguimento de longo prazo de pacientes com AVP-D crônica.",
+   "citacao": "However, one study has reported a 27 % prevalence of mild hyponatremia (131 −134 mmol/L) and a 15 % prevalence of more severe hyponatremia (≤130 mmol/L) with long-term follow-up of patients with chronic AVP-D [76].",
+   "secao": "Agentes farmacológicos"
+  },
+  {
+   "afirmacao": "Pacientes que recebem desmopressina em doses mais altas para indicações como doença de von Willebrand, ou idosos com função renal diminuída que recebem desmopressina para enurese noturna, têm risco aumentado de desenvolver hiponatremia.",
+   "citacao": "Patients who receive desmopressin at higher doses for indications such as von Willebrand disease [77], or older patients with decreased renal function who receive desmopressin for nocturnal enuresis [78], are at increased risk to develop hyponatremia.",
+   "secao": "Agentes farmacológicos"
+  },
+  {
+   "afirmacao": "A ocitocina é reconhecida há muito como causa de SIAD desde os relatos iniciais de hiponatremia durante infusões de ocitocina para induzir o parto; estudos metabólicos confirmaram que a hiponatremia era causada por retenção de água e não por depleção de sódio.",
+   "citacao": "Oxytocin has long been recognized as cause of SIAD since initial reports of hyponatremia during oxytocin infusions to induce parturition [79]. Metabolic studies confirmed that the hyponatremia was caused by water retention and not sodium depletion [80].",
+   "secao": "Agentes farmacológicos"
+  },
+  {
+   "afirmacao": "A ação antidiurética da ocitocina é consistente com estudos de ligação a receptores que mostraram 10 a 15 % de reatividade cruzada da ocitocina nos receptores V2 da AVP.",
+   "citacao": "This is consistent with receptor binding studies that have shown 10–15 % cross-reactivity of oxytocin at AVP V2 receptors.",
+   "secao": "Agentes farmacológicos"
+  },
+  {
+   "afirmacao": "Casos de hiponatremia relacionada ao MDMA (\"ecstasy\") geralmente preenchem critérios de SIAD, mas estudos recentes sugerem que possam decorrer da estimulação da secreção de OCITOCINA pelo MDMA, e não de vasopressina — o que apoia o uso do termo \"SIAD\" em vez de \"SIADH\", já que a antidiurese nem sempre é causada pelo hormônio antidiurético.",
+   "citacao": "Although these cases usually meet criteria for a diagnosis of SIAD, recent studies have suggested that they may be due to MDMA stimulation of oxytocin secretion rather than vasopressin secretion as the etiology of the water retention and subsequent hyponatremia. [82] This supports the use of “SIAD” to describe antidiuresis-mediated euvolemic hyponatremia rather than “SIADH”, since the antidiuresis is not always caused by antidiuretic hormone (AVP).",
+   "secao": "Agentes farmacológicos"
+  },
+  {
+   "afirmacao": "A prevalência de hiponatremia leve em pacientes que tomam clorpropamida pode chegar a 7 %, mas hiponatremia grave (menor que 130 mmol/L) ocorre em apenas 2 % dos pacientes; as sulfonilureias causam hiponatremia principalmente por potencializar os efeitos renais da AVP.",
+   "citacao": "The prevalence of mild hyponatremia in patients taking chlorpropamide may be as high as 7 %, but severe hyponatremia (< 130 mmol/L) occurs in only 2 % of patients [83]. Sulfonylureas cause hyponatremia primarily by potentiating the renal effects of AVP [84], but non-AVP mediated effects may be contributory [85].",
+   "secao": "Agentes farmacológicos"
+  },
+  {
+   "afirmacao": "A carbamazepina tem propriedades antidiuréticas bem conhecidas, e os antiepilépticos oxcarbazepina e eslicarbazepina, da mesma classe, causam hiponatremia com taxas ainda MAIORES que a carbamazepina (prevalências de 43 % e 33 % versus 16 %).",
+   "citacao": "The anticonvulsant drug carbamazepine is well known to have antidiuretic properties. The antiepileptics oxcarbazepine and eslicarbazapine, both of the same class as carbamazepine, have been reported to cause hyponatremia at even higher rates than carbamazepine (43 % and 33 % vs. 16 % prevalences) [86].",
+   "secao": "Agentes farmacológicos"
+  },
+  {
+   "afirmacao": "O mecanismo da hiponatremia por carbamazepina é o aumento renal do efeito antidiurético da AVP.",
+   "citacao": "Evidence supports a mechanism mediated by renal enhancement of the antidiuretic effect of AVP [87] to explain carbamazepine-mediated hyponatremia.",
+   "secao": "Agentes farmacológicos"
+  },
+  {
+   "afirmacao": "Entre os psicotrópicos associados a hiponatremia estão fenotiazinas, a butirofenona haloperidol e antidepressivos tricíclicos; os antidepressivos fluoxetina, sertralina e paroxetina também foram associados, e idosos parecem particularmente suscetíveis, com prevalências de até 22 a 28 %.",
+   "citacao": "Among the agents implicated are phenothiazines, the butyrophenone haloperidol, and tricyclic antidepressants. The widely used antidepressants fluoxetine, sertraline, and paroxetine have also been associated with hyponatremia [88]. Older adults appear to be particularly susceptible, with prevalences as high as 22–28 % [89–92].",
+   "secao": "Agentes farmacológicos"
+  },
+  {
+   "afirmacao": "A tendência dos psicotrópicos a causar hiponatremia é ainda agravada por seus efeitos anticolinérgicos: ao secar as mucosas, esses agentes estimulam a ingestão de água.",
+   "citacao": "The tendency for these drugs to cause hyponatremia is further compounded by their anticholinergic effects: by drying the mucous membranes, these agents can stimulate water intake.",
+   "secao": "Agentes farmacológicos"
+  },
+  {
+   "afirmacao": "O efeito da vincristina pode ser mediado pelo efeito neurotóxico da droga sobre o sistema de microtúbulos hipotalâmico, que então altera o controle osmorreceptor normal da secreção de AVP.",
+   "citacao": "The effect of vincristine might be mediated by the drug's neurotoxic effect on the hypothalamic microtubule system, which then alters normal osmoreceptor control of AVP secretion [93].",
+   "secao": "Agentes farmacológicos"
+  },
+  {
+   "afirmacao": "O mecanismo do defeito de diluição da ciclofosfamida não é totalmente compreendido; ela pode agir, ao menos em parte, aumentando a sensibilidade renal à AVP, já que a droga não parece elevar os níveis plasmáticos de AVP.",
+   "citacao": "The mechanism of the diluting defect that results from cyclophosphamide is not fully understood; it may act, at least in part, to enhance renal sensitivity to AVP, because the drug does not appear to increase plasma AVP levels [94].",
+   "secao": "Agentes farmacológicos"
+  },
+  {
+   "afirmacao": "Os inibidores de checkpoint imunológico foram associados a hiponatremia hipovolêmica por perdas de fluido e a hiponatremia euvolêmica principalmente por insuficiência adrenal primária e secundária, esta última particularmente com o uso de inibidores de CTLA-4.",
+   "citacao": "Immune checkpoint inhibitors have been associated with hypovolemic hyponatremia due to fluid losses, and euvolemic hyponatremia primarily due to both primary and secondary adrenal insufficiency, the latter particularly with use of CTLA-4 inhibitors [95].",
+   "secao": "Agentes farmacológicos"
+  },
+  {
+   "afirmacao": "Sabe-se que agonistas opioides (por exemplo, morfina) reduzem o fluxo urinário causando antidiurese mediada por AVP.",
+   "citacao": "it has been known that opioid agonists (e.g., morphine) reduce urine flow by causing AVP-mediated antidiuresis.",
+   "secao": "Agentes farmacológicos"
+  },
+  {
+   "afirmacao": "Os efeitos relatados dos opioides sobre a AVP variam de estimulação a nenhuma mudança e até inibição da secreção, porque opiáceos e seus receptores estão amplamente distribuídos no cérebro e o local de ação pode diferir muito conforme a via de administração.",
+   "citacao": "However, the reported effects vary; they range from stimulation to no change and even to inhibition of AVP secretion. The reasons for these diverse observations may be that the opiates and their receptors are widely distributed in the brain, implying that the site of action of the opiate can differ markedly, depending on the route of administration.",
+   "secao": "Agentes farmacológicos"
+  },
+  {
+   "afirmacao": "Existem múltiplos peptídeos e tipos de receptores opiáceos: agonistas de receptores μ têm propriedades antidiuréticas, enquanto os receptores δ têm o efeito oposto.",
+   "citacao": "Also, there are multiple opiate peptides and receptor types. Agonists of μ-receptors have antidiuretic properties, whereas δ-receptors have the opposite effect.",
+   "secao": "Agentes farmacológicos"
+  },
+  {
+   "afirmacao": "Apesar de relatos de caso associando inibidores da ECA à hiponatremia, dado o uso amplo desses agentes a verdadeira incidência deve ser mínima, e uma associação com bloqueadores do receptor de angiotensina não foi relatada até o momento.",
+   "citacao": "Several case reports have suggested an association between the use of angiotensin converting enzyme (ACE) inhibitors and hyponatremia. However, given the widespread use of these agents, the true incidence of hyponatremia must be vanishingly low. Similarly, an association with angiotensin receptor blockers has not been reported to date.",
+   "secao": "Agentes farmacológicos"
+  },
+  {
+   "afirmacao": "Foram relatados casos raros de hiponatremia durante a fase de ataque da amiodarona e associação com tacrolimo, sobretudo em transplantados — mais frequente com tacrolimo do que com ciclosporina, sugerindo que não é efeito de classe dos inibidores de calcineurina.",
+   "citacao": "Rare patients have been reported to develop hyponatremia during amiodarone loading [96]. There have been reports of hyponatremia associated with the use of tacrolimus, mostly in patients after organ transplantation. This seems to be more frequent with tacrolimus than cyclosporin, suggesting that it is not a class effect of calcineurin inhibitors [97,98].",
+   "secao": "Agentes farmacológicos"
+  },
+  {
+   "afirmacao": "A fisiopatologia da hiponatremia difere marcadamente entre as muitas etiologias e conforme o estado volêmico do LEC do paciente, e o tratamento ótimo depende da fisiopatologia subjacente.",
+   "citacao": "The pathophysiology of hyponatremia differs markedly among the many different etiologies of hyponatremia, as well as the ECF volume status of the patient. Optimal treatment of hyponatremia is dependent on the underlying pathophysiology.",
+   "secao": "Sumário"
+  }
+ ]
+}

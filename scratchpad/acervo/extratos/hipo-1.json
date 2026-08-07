@@ -1,0 +1,772 @@
+{
+ "fileId": "hipo-1",
+ "titulo": "Considerações especiais da hiponatremia no paciente idoso (Refardt, BPRCEM 2026)",
+ "tema": "hiponatremia no idoso — particularidades",
+ "fonte": "Refardt J. Special considerations of hyponatremia in the elderly patient. Best Pract Res Clin Endocrinol Metab 2026;40:102040",
+ "area": "Endocrinopatias",
+ "tipo": "revisao",
+ "ano": 2026,
+ "conflito": "ATUALIZA/CONTRARIA a entrada do núcleo \"Distúrbios do sódio e da água (revisões 2025–26)\" em 3 pontos.\n(1) LIMITES DE CORREÇÃO. O núcleo registra \"≤8 mmol/L/24 h se risco de desmielinização osmótica (≤10–12 sem risco)\". Este artigo de 2026 é MAIS ESTRITO no teto geral (máximo 10 mmol/L em 24 h — não 12) e acrescenta um teto de 48 h que o núcleo não tem (18 mmol/L), e no alto risco de SDO usa faixa 6–8 mmol/L/24 h (não apenas ≤8). CITAÇÃO: \"In chronic hyponatremia, management focuses on addressing the underlying cause while raising sodium levels gra- dually to allow reversal of cerebral adaptations (maximum 10 mmol/l in the first 24 h and of 18 mmol/l in the first 48 h [40])\" e \"even slower correction rates with 6–8 mmol/l within 24 h are recommended\".\n(2) ALGORITMO DIAGNÓSTICO NO IDOSO. O núcleo manda \"classificar por volemia + osmolalidade urinária + Na urinário\" com o corte clássico de urina diluída. No idoso o artigo desloca o corte da osmolalidade urinária de ≤100 para ≤200 mOsm/kg e desqualifica a avaliação de volemia como eixo confiável. CITAÇÃO: \"However, in older adults - because kidneys dilute urine less efficiently - a threshold of ≤ 200 mOsm/kg may be more appropriate\" e \"Although volume status assessment is routinely performed in clinical care, it has low sensitivity and specificity, particularly when distinguishing between euvolemia and mild hypovolemia [46]\".\n(3) COPEPTINA. O núcleo usa a copeptina como exame-chave no eixo AVP (deficiência/resistência à AVP). Este artigo afirma que ela NÃO ajuda no diagnóstico diferencial da hiponatremia — o que delimita o uso registrado no núcleo. CITAÇÃO: \"Unfortunately, measuring AVP directly or its stable surrogate marker copeptin has not proven helpful in this differentiation\".\nCOMPLEMENTO (não contraria, detalha): o núcleo cita \"bólus 100–150 mL\" de salina 3% sem separar as diretrizes; o artigo especifica que os 100 mL são a recomendação americana (em 10 min) e os 150 mL a europeia (em 20 min), ambas mirando alta de 5 mmol. CITAÇÃO: \"American and European guidelines [40,66] differ slightly in dosing recommendations (100 ml 3 % over 10 min versus 150 ml 3 % over 20 min respectively), but both aim for a modest (5 mmol) rapid rise in sodium to improve symptoms\".",
+ "fatos": [
+  {
+   "afirmacao": "A hiponatremia é o distúrbio eletrolítico mais comum, particularmente em idosos; a alta prevalência nessa população é impulsionada por condições subjacentes como insuficiência cardíaca e renal e por fatores como polifarmácia e desnutrição.",
+   "citacao": "Hyponatremia is the most common electrolyte disorder, particularly in older adults. Its high prevalence in this population is driven by underlying conditions such as heart and kidney failure, as well as by factors like polypharmacy and malnutrition",
+   "secao": "Abstract"
+  },
+  {
+   "afirmacao": "O aumento das temperaturas globais também foi associado a maiores taxas de hiponatremia.",
+   "citacao": "Rising global temperatures have also been linked to increased hyponatremia rates",
+   "secao": "Abstract"
+  },
+  {
+   "afirmacao": "A hiponatremia crônica associa-se a risco elevado de quedas, osteoporose, fraturas, comprometimento cognitivo e muscular e mortalidade.",
+   "citacao": "Chronic hyponatremia is associated with elevated risks of falls, osteoporosis, fractures, cognitive and muscular impairment, and mortality",
+   "secao": "Abstract"
+  },
+  {
+   "afirmacao": "Apesar desses desfechos adversos, a condição é frequentemente subdiagnosticada e subtratada, em parte pela complexidade da sua avaliação; algoritmos diagnósticos simplificados, passo a passo, em diretrizes futuras podem ajudar a corrigir essa lacuna.",
+   "citacao": "Despite these adverse outcomes, the condition is often underdiagnosed and undertreated, partly due to the complexity of its evaluation. Simplified, step-by-step diagnostic algorithms in future guidelines may help address this gap",
+   "secao": "Abstract"
+  },
+  {
+   "afirmacao": "Evidências crescentes apoiam o benefício clínico de corrigir a hiponatremia; entre as novas terapias, os inibidores de SGLT2 e a suplementação proteica são especialmente promissores, com eficácia tanto em elevar o sódio plasmático quanto em oferecer benefícios de saúde mais amplos.",
+   "citacao": "Evidence increasingly supports the clinical benefits of correcting hyponatremia, prompting investigation into novel therapies. Among these, SGLT2 inhibitors and protein supplementation are especially promising, offering efficacy not only in raising plasma sodium but also in providing broader health benefits",
+   "secao": "Abstract"
+  },
+  {
+   "afirmacao": "A hiponatremia é o distúrbio eletrolítico mais comum tanto em pacientes internados quanto ambulatoriais, com risco que aumenta acentuadamente com a idade; entre pacientes geriátricos institucionalizados a prevalência chega a 50%.",
+   "citacao": "Hyponatremia is the most common electrolyte disorder in both inpatient and outpatient settings, with risk increasing markedly with age [1]. Among institutionalized geriatric patients, prevalence can reach up to 50 %",
+   "secao": "Introduction"
+  },
+  {
+   "afirmacao": "A síndrome da antidiurese inapropriada (SIAD) é a principal causa de hiponatremia nas populações mais velhas, frequentemente desencadeada por polifarmácia e por uma gama de doenças associadas à idade.",
+   "citacao": "tidiuresis (SIAD) is the leading cause in older populations [3], often triggered by polypharmacy and a range of age-associated disorders",
+   "secao": "Introduction"
+  },
+  {
+   "afirmacao": "Outras causas comuns são doença cardíaca, hepática e renal crônica, além de desnutrição — todas predispõem à hiponatremia.",
+   "citacao": "Other common causes include chronic heart, liver, and kidney disease, as well as malnutrition, all of which predispose to hyponatremia",
+   "secao": "Introduction"
+  },
+  {
+   "afirmacao": "A prevalência de hiponatremia sobe nos meses de verão, particularmente em idosos, e projeta-se que aumente substancialmente com o aquecimento global.",
+   "citacao": "Prevalence rises during summer months, particularly in older adults [5,6], and is projected to increase substantially with global warming",
+   "secao": "Introduction"
+  },
+  {
+   "afirmacao": "A hiponatremia associa-se significativamente a maior mortalidade global e a pior desfecho; foi ligada a comprometimentos neurocognitivos e neuromusculares e à redução da qualidade óssea, o que em conjunto explica o aumento do risco de quedas, fraturas e déficits de atenção nessa população.",
+   "citacao": "Hyponatremia is significantly associated with higher overall mortality [7] and worse outcome [8–11]. In addition, it has been linked to neurocognitive and neuromuscular impairments as well as reduced bone quality, explaining together the increased risk of falls [12], fractures [13] and attention deficits [12] in this population",
+   "secao": "Introduction"
+  },
+  {
+   "afirmacao": "A correção da hiponatremia demonstrou melhorar esses comprometimentos e aumentar a qualidade de vida.",
+   "citacao": "Correction of hyponatremia has been shown to improve these impairments [12,14] and enhance quality of life",
+   "secao": "Introduction"
+  },
+  {
+   "afirmacao": "Apesar desses dados, a hiponatremia crônica frequentemente permanece sem tratamento; a complexidade do diagnóstico correto, ainda mais difícil por medicamentos interferentes e comorbidades, é certamente um fator importante.",
+   "citacao": "Despite these data, chronic hyponatremia often remains untreated [16]. The complexity of its correct diagnosis, which is further complicated by interfering medications and comorbidities, is certainly an important factor here",
+   "secao": "Introduction"
+  },
+  {
+   "afirmacao": "Novas opções de tratamento surgiram com os inibidores da proteína transportadora de sódio-glicose 2 (SGLT2), a empagliflozina, e com a suplementação proteica, para corrigir a hiponatremia induzida pela SIAD.",
+   "citacao": "new options using the sodium-glucose transport protein 2 (SGLT2) inhibitors [17,18] empagliflozin or protein supplementation [19] to correct SIAD-induced hyponatremia",
+   "secao": "Introduction"
+  },
+  {
+   "afirmacao": "A idade por si só é forte fator de risco para hiponatremia: a partir dos 50 anos o risco sobe progressivamente.",
+   "citacao": "Age per se is a strong risk factor for hyponatremia. Beyond the age of 50 years, the risk of hyponatremia rises progressively",
+   "secao": "Prevalence, causes and pathophysiology of hyponatremia in the elderly"
+  },
+  {
+   "afirmacao": "Em pacientes hospitalizados, indivíduos com mais de 80 anos têm risco 10 vezes maior de desenvolver hiponatremia profunda em comparação com pacientes mais jovens.",
+   "citacao": "This association is especially pronounced in hospitalized patients; where individuals over 80 years have been found to have a 10-fold higher risk for developing profound hyponatremia compared to younger patients",
+   "secao": "Prevalence, causes and pathophysiology of hyponatremia in the elderly"
+  },
+  {
+   "afirmacao": "O número de comorbidades também é fator de risco, e a prevalência de hiponatremia varia entre departamentos, com as maiores taxas na terapia intensiva e nas enfermarias de medicina interna.",
+   "citacao": "Since the number of comorbidities is also a risk factor for hyponatremia [20,24], it is not surprising that hyponatremia prevalence varies between departments, with the highest rates found in intensive care and internal medicine wards",
+   "secao": "Prevalence, causes and pathophysiology of hyponatremia in the elderly"
+  },
+  {
+   "afirmacao": "As taxas de hiponatremia são elevadas em casas de repouso geriátricas, com prevalência de até 50%.",
+   "citacao": "Hyponatremia rates are also elevated in geriatric nursing homes with a prevalence of up to 50 %",
+   "secao": "Prevalence, causes and pathophysiology of hyponatremia in the elderly"
+  },
+  {
+   "afirmacao": "Em termos etiológicos, a SIAD é a causa mais comum de hiponatremia, seguida de hipovolemia e hipervolemia.",
+   "citacao": "In terms of etiology SIAD is the most common cause of hyponatremia, followed by hypovolemia and hypervolemia",
+   "secao": "Prevalence, causes and pathophysiology of hyponatremia in the elderly"
+  },
+  {
+   "afirmacao": "Em pacientes hospitalizados a prevalência de hiponatremia aumenta no verão: temperaturas externas médias acima de 20°C marcam um limiar além do qual as taxas sobem acentuadamente.",
+   "citacao": "In hospitalized patients, hyponatremia prevalence increases during summer, with mean outdoor temperatures above 20°C marking a threshold beyond which rates rise sharply",
+   "secao": "Prevalence, causes and pathophysiology of hyponatremia in the elderly"
+  },
+  {
+   "afirmacao": "Modelos climáticos demonstram que as taxas de hospitalização por hiponatremia aumentarão 6,3% com uma elevação de 1°C e 13,9% com elevação de 2°C, esperando-se ainda aumento de dois terços na prevalência de hiponatremia profunda.",
+   "citacao": "climate models impressively demonstrate that hospitalization rates due to hyponatremia will increase by 6.3 % with a 1°C rise and by 13.9 % with a 2°C rise [30]. In addition, a two-third increase in prevalence of profound hyponatremia is expected",
+   "secao": "Prevalence, causes and pathophysiology of hyponatremia in the elderly"
+  },
+  {
+   "afirmacao": "Os idosos são especialmente vulneráveis à hiponatremia induzida pelo calor; outros fatores de risco são doença renal crônica e medicamentos como diuréticos e antidepressivos.",
+   "citacao": "Elderly patients are especially vulnerable for heat induced hyponatremia according to a recent systematic review [31]. Other risk factors are chronic kidney disease and medications such as diuretics and antidepressants",
+   "secao": "Prevalence, causes and pathophysiology of hyponatremia in the elderly"
+  },
+  {
+   "afirmacao": "Os mecanismos da hiponatremia induzida pelo calor incluem ingestão desproporcional de fluidos hipotônicos em relação à perda de sal pelo suor, estresse induzido pelo calor e liberação não osmótica de arginina-vasopressina por vasodilatação.",
+   "citacao": "Mechanisms for heat-induced hyponatremia include disproportionate intake of hypotonic fluids relative to salt loss through sweat, heat-induced stress, and non-osmotic release of arginine vasopressin due to vasodilation",
+   "secao": "Prevalence, causes and pathophysiology of hyponatremia in the elderly"
+  },
+  {
+   "afirmacao": "Uma mudança da idade é que a sensação de sede — normalmente disparada por osmolalidade sanguínea alta ou volume sanguíneo baixo — é mais fraca do que em pessoas jovens.",
+   "citacao": "For one, thirst-sensation - normally triggered by high blood osmolality [33] or low blood volume [34,35] is weaker than in younger people",
+   "secao": "Prevalence, causes and pathophysiology of hyponatremia in the elderly"
+  },
+  {
+   "afirmacao": "Ao mesmo tempo, no idoso a liberação de arginina-vasopressina (AVP) é mais sensível a aumentos da osmolalidade.",
+   "citacao": "At the same time, arginine vasopressin (AVP) release is more sensitive to increases in osmolality",
+   "secao": "Prevalence, causes and pathophysiology of hyponatremia in the elderly"
+  },
+  {
+   "afirmacao": "A função renal também se altera com a idade: tanto a capacidade de concentrar quanto a de diluir a urina estão reduzidas.",
+   "citacao": "Kidney function is also altered: both the ability to concentrate [33] and to dilute [37,38] urine is reduced",
+   "secao": "Prevalence, causes and pathophysiology of hyponatremia in the elderly"
+  },
+  {
+   "afirmacao": "Os idosos têm menos massa magra, de modo que mesmo pequenas mudanças na água corporal total podem causar variações maiores do sódio plasmático.",
+   "citacao": "In addition, older adults have less lean body mass, so even small changes in total body water can cause larger shifts in plasma sodium levels",
+   "secao": "Prevalence, causes and pathophysiology of hyponatremia in the elderly"
+  },
+  {
+   "afirmacao": "Esses fatores explicam por que a hiponatremia é causada principalmente por excesso de água livre, e não por depleção de sódio.",
+   "citacao": "These factors also explain why hyponatremia is mainly caused by an excess of free water rather than sodium depletion",
+   "secao": "Prevalence, causes and pathophysiology of hyponatremia in the elderly"
+  },
+  {
+   "afirmacao": "O primeiro passo na avaliação da hiponatremia é medir a osmolalidade plasmática e, confirmada a hiponatremia hipotônica, a osmolalidade urinária — esta reflete diretamente a atividade da AVP e ajuda a determinar a causa.",
+   "citacao": "The first step in assessing hyponatremia is to measure plasma osmolality, followed by urine osmolality if hypotonic hyponatremia is confirmed [40]. The latter directly reflects AVP activity and is thus helpful to determine the cause",
+   "secao": "Diagnostic challenges in the assessment of hyponatremia in the elderly"
+  },
+  {
+   "afirmacao": "Osmolalidade urinária baixa (≤100 mOsm/kg) aponta para AVP suprimida, como na polidipsia primária, na baixa ingestão de solutos ou na potomania da cerveja (consumo pesado de cerveja com nutrição pobre).",
+   "citacao": "Low (≤100 mOsm/kg) urine osmolality levels point to suppressed AVP as seen in primary polydipsia, low solute intake, or beer potomania (heavy beer drinking with poor nutrition)",
+   "secao": "Diagnostic challenges in the assessment of hyponatremia in the elderly"
+  },
+  {
+   "afirmacao": "⚠️ No idoso, porém, como os rins diluem a urina de forma menos eficiente, um limiar de ≤200 mOsm/kg pode ser mais apropriado.",
+   "citacao": "However, in older adults - because kidneys dilute urine less efficiently - a threshold of ≤ 200 mOsm/kg may be more appropriate",
+   "secao": "Diagnostic challenges in the assessment of hyponatremia in the elderly"
+  },
+  {
+   "afirmacao": "Osmolalidade urinária elevada (>100–200 mOsm/kg) indica atividade aumentada da AVP, que pode ser apropriada (hipovolemia ou condições com baixo volume arterial efetivo, como insuficiência cardíaca e cirrose) ou inapropriada, como na SIAD.",
+   "citacao": "Elevated (> 100–200 mOsm/kg) urine osmolality on the other hand indicates increased AVP activity. This may be appropriate, as in hypovolemia or conditions with low effective arterial volume (e.g. heart failure, cirrhosis), or inappropriate such as in SIAD",
+   "secao": "Diagnostic challenges in the assessment of hyponatremia in the elderly"
+  },
+  {
+   "afirmacao": "⚠️ Medir a AVP diretamente ou seu marcador substituto estável, a copeptina, não se mostrou útil nessa diferenciação.",
+   "citacao": "Unfortunately, measuring AVP directly or its stable surrogate marker copeptin has not proven helpful in this differentiation",
+   "secao": "Diagnostic challenges in the assessment of hyponatremia in the elderly"
+  },
+  {
+   "afirmacao": "O passo seguinte recomendado é medir o sódio urinário, que reflete o sistema renina-angiotensina-aldosterona e a atividade dos peptídeos natriuréticos.",
+   "citacao": "Accordingly, it is generally advised to measure urine sodium as a next step. Urine sodium reflects the renin- angiotensin-aldosteron system and natriuretic peptide activity",
+   "secao": "Diagnostic challenges in the assessment of hyponatremia in the elderly"
+  },
+  {
+   "afirmacao": "Sódio urinário baixo (≤30 mmol/l) sugere hipovolemia verdadeira ou baixo volume sanguíneo arterial efetivo, enquanto nível elevado (>30 mmol/l) indica atividade aumentada da AVP, como na insuficiência adrenal ou na SIAD.",
+   "citacao": "A low (≤30 mmol/l) level suggests either true hypovolemia or low effective arterial blood volume as described above [40], while an elevated level (> 30 mmol/l) indicates increased AVP activity such as in adrenal insufficiency or SIAD",
+   "secao": "Diagnostic challenges in the assessment of hyponatremia in the elderly"
+  },
+  {
+   "afirmacao": "⚠️ Os diuréticos — droga comum no idoso — aumentam artificialmente o sódio urinário e podem mascarar a real causa da hiponatremia; recomenda-se então medir e calcular a excreção fracionada de ureia e de ácido úrico, menos influenciadas pelos diuréticos.",
+   "citacao": "However, diuretics – a common drug in the elderly - artificially increase urinary sodium and can mask the real cause of hypo- natremia. Instead, the measurement and calculation of fractional urea and uric acid is advised, since these are less influenced by diuretics",
+   "secao": "Diagnostic challenges in the assessment of hyponatremia in the elderly"
+  },
+  {
+   "afirmacao": "Excreção fracionada de ureia e de ácido úrico baixas (<35% e <8%, respectivamente) sugerem hipovolemia, enquanto valores elevados (>55% e >12%, respectivamente) indicam SIAD.",
+   "citacao": "Low fractional urea and uric acid levels (< 35 % and < 8 % respectively), suggest hypovolemia, while elevated levels (> 55 % and > 12 % respectively) indicate SIAD",
+   "secao": "Diagnostic challenges in the assessment of hyponatremia in the elderly"
+  },
+  {
+   "afirmacao": "⚠️ Embora a avaliação do estado volêmico seja rotineira, ela tem baixa sensibilidade e especificidade, sobretudo para distinguir euvolemia de hipovolemia leve — desafio adicional no idoso, que frequentemente tem hipotensão ortostática não hipovolêmica e turgor cutâneo reduzido inespecífico; o ultrassom à beira do leito pode ajudar.",
+   "citacao": "Although volume status assessment is routinely performed in clinical care, it has low sensitivity and specificity, particularly when distinguishing between euvolemia and mild hypovolemia [46]. This poses an additional diagnostic challenge in older patients, who often have non-hypovolemic orthostatic hypotension and nonspecific reduced skin turgor [47]. Here, point-of-care ultrasound might",
+   "secao": "Diagnostic challenges in the assessment of hyponatremia in the elderly"
+  },
+  {
+   "afirmacao": "Além da maior sensibilidade à AVP, da menor capacidade renal de concentração e do uso de múltiplos medicamentos que complicam o diagnóstico correto, os idosos sofrem mais frequentemente de hiponatremia multifatorial; por isso recomenda-se reavaliação regular nos casos sem resposta à terapia.",
+   "citacao": "In addition to increased AVP sensitivity, reduced renal concentrating ability, and the use of multiple medications that complicate correct diagnosis, older patients also suffer more frequently from multifactorial hyponatremia [49]. Accordingly, regular re-eva- luation is recommended in cases of non-response to therapy",
+   "secao": "Diagnostic challenges in the assessment of hyponatremia in the elderly"
+  },
+  {
+   "afirmacao": "Hiponatremia euvolêmica (SIAD): caracterizada por secreção inapropriada de arginina-vasopressina (AVP) levando à retenção de água, resultando em hiponatremia dilucional.",
+   "citacao": "• Euvolemic hyponatremia (SIAD): Characterized by inappropriate arginine vasopressin (AVP) secretion leading to water retention, resulting in dilutional hypo",
+   "secao": "Fig. 1 — Pathophysiology of the most common hyponatremia etiologies"
+  },
+  {
+   "afirmacao": "Hiponatremia hipervolêmica: o baixo volume sanguíneo arterial efetivo estimula mecanismos neuro-hormonais, incluindo AVP e ativação do sistema renina-angiotensina-aldosterona (SRAA), resultando em retenção excessiva de fluido e diluição do sódio.",
+   "citacao": "• Hypervolemic hyponatremia: Low effective arterial blood volume stimulates neurohormonal mechanisms, including AVP and renin–angiotensin–aldosterone system (RAAS) activation, resulting in excessive fluid retention and sodium dilution",
+   "secao": "Fig. 1 — Pathophysiology of the most common hyponatremia etiologies"
+  },
+  {
+   "afirmacao": "Hiponatremia hipovolêmica: a perda extensa de fluido extracelular dispara retenção de água mediada pela AVP e ativação do SRAA para conservar sal e água.",
+   "citacao": "• Hypovolemic hyponatremia: extensive extracellular fluid loss triggers AVP-mediated water retention and RAAS activation to conserve salt and water",
+   "secao": "Fig. 1 — Pathophysiology of the most common hyponatremia etiologies"
+  },
+  {
+   "afirmacao": "A SIAD caracteriza-se por atividade inadequada da AVP apesar de osmolalidade plasmática normal ou baixa e volume sanguíneo normal; essa atividade persistente faz os rins reabsorverem água livre, levando à retenção hídrica e discreta expansão do fluido extracelular.",
+   "citacao": "SIAD is characterized by an inadequate AVP activity despite normal or low plasma osmolality and normal blood volume. This persistent AVP activity causes the kidneys to reabsorb free water, leading to water retention and a mild expansion of the extracellular fluid",
+   "secao": "Aetiologies of hyponatremia — Syndrome of inappropriate antidiuresis (SIAD)"
+  },
+  {
+   "afirmacao": "O corpo responde à expansão aumentando a excreção de sódio (natriurese secundária), o que reduz o sódio corporal total; como o volume extracelular depende de sódio e água, a perda de sódio compensa a água extra e o paciente parece clinicamente euvolêmico em vez de francamente hipervolêmico — o efeito líquido é diluição do sódio plasmático, produzindo hiponatremia hipotônica.",
+   "citacao": "The body responds to this expansion by increasing sodium excretion (secondary natriuresis), which reduces total body sodium [50]. Because extracellular volume is determined by both sodium and water content, the loss of sodium offsets the extra water, so patients appear clinically euvolemic rather than overtly fluid overloaded. The net effect is dilution of plasma sodium, producing hypotonic hyponatremia",
+   "secao": "Aetiologies of hyponatremia — Syndrome of inappropriate antidiuresis (SIAD)"
+  },
+  {
+   "afirmacao": "A SIAD pode ser secundária a ampla gama de condições, incluindo neoplasias, doenças pulmonares, doenças do sistema nervoso central e estressores fisiológicos como dor ou náusea, além de poder ser desencadeada por medicamentos.",
+   "citacao": "SIAD can develop secondary to a wide range of conditions, including malignancies, pulmonary disorders, central nervous system diseases, and physiological stressors such as pain or nausea. It can also be triggered by certain medications",
+   "secao": "Aetiologies of hyponatremia — Syndrome of inappropriate antidiuresis (SIAD)"
+  },
+  {
+   "afirmacao": "⚠️ Os medicamentos que causam SIAD incluem análogos da AVP (desmopressina), que agem nos receptores de vasopressina-2 dos ductos coletores renais; drogas que aumentam a liberação central de AVP (vincristina, ifosfamida); e agentes que estimulam diretamente os receptores de vasopressina-2 (inibidores seletivos da recaptação de serotonina, carbamazepina).",
+   "citacao": "These include AVP analogues (desmopressine) that interact with vasopressin-2 receptors in the renal collecting ducts, drugs that increase central AVP release (e.g., vincristine, ifosfamide), and agents that directly stimulate vasopressin-2 receptors (e.g., selective serotonin re- uptake inhibitors, carbamazepine) [53]",
+   "secao": "Aetiologies of hyponatremia — Syndrome of inappropriate antidiuresis (SIAD)"
+  },
+  {
+   "afirmacao": "Os idosos são particularmente vulneráveis à SIAD por sua frequente polimorbidade e polimedicação, e — preocupantemente — a consciência desses efeitos colaterais medicamentosos é baixa.",
+   "citacao": "Older adults are particularly vulnerable to SIAD because of their frequent polymorbidity and polymedication. Concerningly, awareness of these medication side effects is low",
+   "secao": "Aetiologies of hyponatremia — Syndrome of inappropriate antidiuresis (SIAD)"
+  },
+  {
+   "afirmacao": "⚠️ A SIAD é um diagnóstico de exclusão que exige a presença de níveis normais de cortisol — particularmente relevante diante do alto uso de todo tipo de corticoide (cremes, inaladores, injeções, comprimidos etc.) em pacientes idosos.",
+   "citacao": "It is important to note, that SIAD is a diagnosis of exclusion that requires the presence of normal cortisol levels [55]. This is particularly relevant in view of the high use of all kind of steroids (cremes, inhalers, injections, tablets, etc) in elderly patients",
+   "secao": "Aetiologies of hyponatremia — Syndrome of inappropriate antidiuresis (SIAD)"
+  },
+  {
+   "afirmacao": "Quando nenhum fator desencadeante é identificado — a chamada SIAD idiopática — recomenda-se investigação diagnóstica incluindo avaliação de possível neoplasia.",
+   "citacao": "In case no triggering factor can be identified – so called idiopathic SIAD – a diagnostic work up including evaluation for possible malignancy Fig. 2. Proposed diagnostic algorithm in patients with idiopathic SIAD. J. Refardt Best Practice & Research Clinical Endocrinology & Metabolism 40 (2026) 102040 3 is recommended (Fig. 2)",
+   "secao": "Aetiologies of hyponatremia — Syndrome of inappropriate antidiuresis (SIAD)"
+  },
+  {
+   "afirmacao": "A hiponatremia hipovolêmica ocorre quando o corpo perde mais sódio do que água, por exemplo em gastroenterite, sangramento ou desvios de fluido para o terceiro espaço (queimaduras, sepse).",
+   "citacao": "Hypovolemic hyponatremia occurs when the body loses more sodium than water [56], for example in cases of gastroenteritis or bleeding or third-space fluid shifts (i.e.burns, sepsis)",
+   "secao": "Aetiologies of hyponatremia — Hypovolemic hyponatremia"
+  },
+  {
+   "afirmacao": "⚠️ Os diuréticos tiazídicos e similares aos tiazídicos são causa comum de hiponatremia, que ocorre em até 20% dos pacientes que os usam.",
+   "citacao": "Thiazide and thiazide-like diuretics are a common cause of hyponatremia [57,58] as it occurs in up to 20 % of the patients taking them",
+   "secao": "Aetiologies of hyponatremia — Hypovolemic hyponatremia"
+  },
+  {
+   "afirmacao": "⚠️ A hiponatremia induzida por tiazídico geralmente se desenvolve dentro de semanas, mas ocorrências mais tardias também são possíveis.",
+   "citacao": "While thiazide induced hyponatremia usually develops within weeks, also more delayed occurrences are possible",
+   "secao": "Aetiologies of hyponatremia — Hypovolemic hyponatremia"
+  },
+  {
+   "afirmacao": "Além da idade, o sexo feminino é fator de risco para hiponatremia por tiazídico.",
+   "citacao": "Again, age in addition to female sex is a risk factor [57,59,62]. Re-exposure should be avoided",
+   "secao": "Aetiologies of hyponatremia — Hypovolemic hyponatremia"
+  },
+  {
+   "afirmacao": "⚠️ A reexposição ao tiazídico deve ser evitada, pois a maioria dos pacientes volta a ficar hiponatrêmica.",
+   "citacao": "Re-exposure should be avoided since most patients become again hyponatremic",
+   "secao": "Aetiologies of hyponatremia — Hypovolemic hyponatremia"
+  },
+  {
+   "afirmacao": "Pacientes com hiponatremia associada a tiazídico podem estar euvolêmicos ou hipovolêmicos, pois a etiologia é multifatorial: pode resultar da perda de sódio urinário levando a depleção volêmica leve e da capacidade reduzida do túbulo contorcido distal de diluir a urina.",
+   "citacao": "Patients with thiazide-associated hyponatremia can be euvolemic or hypovolemic as its etiology can be multifactorial. It may result from the loss of urine sodium leading to mild volume depletion and a reduced ability of the distal convoluted tubule to dilute urine",
+   "secao": "Aetiologies of hyponatremia — Hypovolemic hyponatremia"
+  },
+  {
+   "afirmacao": "Adicionalmente, uma mutação genética no transportador de prostaglandinas do ducto coletor pode elevar a prostaglandina E2 urinária, aumentando a atividade da aquaporina 2 sem envolver a AVP, o que amplia a reabsorção renal de água e leva a hiponatremia dilucional.",
+   "citacao": "Additionally, a genetic mutation in the prostaglandin transporter of the collecting duct can raise urinary prostaglandin E2 levels, which increases aquaporin 2 activity without involving AVP. This boosts water reabsorption in the kidneys, leading to dilutional hyponatremia",
+   "secao": "Aetiologies of hyponatremia — Hypovolemic hyponatremia"
+  },
+  {
+   "afirmacao": "A hiponatremia por alta ingestão de água ocorre quando a ingestão excede o volume urinário máximo excretável, determinado pela ingestão de solutos — por isso pacientes com baixa ingestão de solutos têm risco maior.",
+   "citacao": "Hyponatremia due to high water Intake occurs when water ingestion exceeds the maximal excretable urine volume, which is determined by solute intake [65]. This means, that patients with low solute intake are at higher risk of developing hyponatremia",
+   "secao": "Aetiologies of hyponatremia — High water and low solute intake"
+  },
+  {
+   "afirmacao": "Isso se aplica a todos os pacientes com desnutrição, como anorexia relacionada a doença crônica, potomania da cerveja e a chamada “síndrome do chá com torrada” (tea and toast syndrome), frequente em idosos.",
+   "citacao": "This applies to all patients with malnutrition, such as chronic illness-related anorexia, beer potomania and the so called “tea and toast syndrome” often occurring in elderly patients",
+   "secao": "Aetiologies of hyponatremia — High water and low solute intake"
+  },
+  {
+   "afirmacao": "Na síndrome do chá com torrada, a ingestão insuficiente de sal e de proteína somada à capacidade reduzida de diluição dos rins envelhecidos prejudica a excreção de água; por isso, uma história nutricional detalhada deve fazer parte do exame de rotina do paciente com hiponatremia.",
+   "citacao": "In the latter, insufficient salt and protein intake and the reduced dilution capacity of aging kidneys impair water excretion. Accordingly, a detailed nutritional history should be part of the routine examination of patients with hyponatremia",
+   "secao": "Aetiologies of hyponatremia — High water and low solute intake"
+  },
+  {
+   "afirmacao": "A hiponatremia hipervolêmica envolve aumento global do sódio corporal total acompanhado de excesso de água relativamente maior, movido por ativação do sistema renina-angiotensina-aldosterona em resposta à redução do volume sanguíneo arterial efetivo, junto de retenção de água mediada pela AVP e filtração glomerular reduzida.",
+   "citacao": "Hypervolemic hyponatremia involves an overall increase in total body sodium, accompanied by a relatively greater water excess (Fig. 1). This imbalance is driven by activation of the renin–angiotensin–aldosterone system (RAAS) in response to reduced effective arterial blood volume, together with AVP–mediated water retention and reduced glomerular filtration",
+   "secao": "Aetiologies of hyponatremia — Hypervolemic hyponatremia"
+  },
+  {
+   "afirmacao": "Ocorre tipicamente em pacientes com insuficiência cardíaca ou cirrose hepática, com os pacientes mais velhos em maior risco devido às mudanças relacionadas à idade.",
+   "citacao": "This typically occurs in patients with heart failure or liver cirrhosis, with older patients being at higher risk due to the age-related changes described above",
+   "secao": "Aetiologies of hyponatremia — Hypervolemic hyponatremia"
+  },
+  {
+   "afirmacao": "O tratamento da insuficiência cardíaca e da cirrose inclui diuréticos de alça e antagonistas do receptor mineralocorticoide, o que pode reduzir ainda mais o volume arterial efetivo e perturbar a homeostase do sódio, especialmente com ingestão excessiva de fluido hipotônico.",
+   "citacao": "The treatment of heart failure and liver cirrhosis includes loop diuretics and mineralocorticoid receptor antagonists. This can further reduce effective arterial blood volume and disrupt sodium homeostasis, especially in cases of excessive intake of hypotonic fluid",
+   "secao": "Aetiologies of hyponatremia — Hypervolemic hyponatremia"
+  },
+  {
+   "afirmacao": "Em resumo, os idosos têm risco aumentado de hiponatremia por qualquer causa, por mudanças fisiológicas da idade e maior carga de comorbidades, sendo a SIAD a causa subjacente mais frequente.",
+   "citacao": "In summary, older adults are at heightened risk for hyponatremia due to any cause due to age-related physiological changes and a higher burden of comorbidities, with the syndrome of inappropriate antidiuresis (SIAD) being the most frequent underlying cause",
+   "secao": "Aetiologies of hyponatremia — Hypervolemic hyponatremia"
+  },
+  {
+   "afirmacao": "Os sintomas clínicos da hiponatremia são determinados principalmente pela velocidade de queda do sódio: nos casos agudos (<48 h) a capacidade cerebral de se adaptar ao gradiente osmótico é superada, a água desloca-se para o tecido cerebral e resulta em edema cerebral, podendo elevar a pressão intracraniana com cefaleia, inquietação e confusão, e progredir para herniação cerebral e morte se não tratado prontamente.",
+   "citacao": "Clinical symptoms of hyponatremia are mainly determined by the rate of sodium decline. In acute cases (< 48 h), the brain’s ability to adapt to the rising osmotic gradient across the blood–brain barrier is overwhelmed, causing water to shift into brain tissue and resulting in cerebral oedema. This may raise intracranial pressure, producing headaches, restlessness, and confusion, and can progress to brain herniation and death if not promptly treated",
+   "secao": "Effects of hyponatremia and its correction"
+  },
+  {
+   "afirmacao": "Em contraste, quando a hiponatremia se desenvolve gradualmente ao longo de vários dias, o cérebro se adapta expelindo sódio e, em seguida, osmólitos orgânicos, reduzindo a osmolalidade intracerebral e o risco de edema — por isso a hiponatremia crônica frequentemente parece clinicamente silenciosa.",
+   "citacao": "In contrast, when hyponatremia develops gradually over several days, the brain adapts by expelling sodium and, subsequently, organic osmolytes, thereby lowering intracerebral osmolality and reducing the risk of oedema [69]. As a result, chronic hyponatremia often appears clinically silent",
+   "secao": "Effects of hyponatremia and its correction"
+  },
+  {
+   "afirmacao": "⚠️ Apesar da aparente ausência de sintomas agudos, evidências crescentes ligam a hiponatremia crônica a comprometimentos neurocognitivos e neuromusculares, saúde óssea reduzida, maior incidência de quedas e fraturas e pior qualidade de vida.",
+   "citacao": "Despite this apparent lack of acute symptoms, accumulating evidence links chronic hyponatremia to neurocognitive and neuromuscular impairments [12,14,70], reduced bone health [71], a higher incidence of falls and fractures [12,72–74], and diminished quality of life",
+   "secao": "Effects of hyponatremia and its correction"
+  },
+  {
+   "afirmacao": "É digno de nota que a maioria das populações estudadas tinha idade média em torno de 70 anos, o que enfatiza a suscetibilidade da população idosa a essa condição.",
+   "citacao": "Also noteworthy is the fact that most of the patient populations studied had an average age of around 70 years, emphasizing the susceptibility of the elderly population to this condition",
+   "secao": "Effects of hyponatremia and its correction"
+  },
+  {
+   "afirmacao": "Embora a maior parte dos dados de apoio seja observacional, a correção ativa da hiponatremia tem sido associada à reversão de muitos desses desfechos adversos.",
+   "citacao": "Moreover, although most supporting data are observational, active correction of hyponatremia has been associated with reversal of many of these adverse outcomes",
+   "secao": "Effects of hyponatremia and its correction"
+  },
+  {
+   "afirmacao": "⚠️ No estudo de Renneboog et al., 122 idosos com hiponatremia crônica leve a moderada clinicamente silenciosa admitidos no pronto-socorro tiveram quedas muito mais frequentes do que os pares com sódio normal, e o risco esteve elevado independentemente da gravidade da hiponatremia.",
+   "citacao": "A well-known example is the study by Renneboog et al. [12], which examined a group of 122 older adults with clinically silent, chronic mild-to-moderate hyponatremia admitted to the emergency department. Falls were far more common in these patients than in their peers with normal sodium levels, and the risk was elevated regardless of hyponatremia severity",
+   "secao": "Effects of hyponatremia and its correction — Neurocognitive and neuromuscular function"
+  },
+  {
+   "afirmacao": "Outras pesquisas confirmaram o padrão: mesmo a hiponatremia leve foi ligada a probabilidade substancialmente maior de quedas, tanto em pacientes hospitalizados quanto em pessoas vivendo independentemente na comunidade.",
+   "citacao": "Other research has confirmed this pattern: even mild hyponatremia has been linked to a substantially higher likelihood of falls, both in hospitalised patients and in those living independently in the community",
+   "secao": "Effects of hyponatremia and its correction — Neurocognitive and neuromuscular function"
+  },
+  {
+   "afirmacao": "⚠️ O aumento de risco associado à hiponatremia leve foi comparável ao efeito de mais de uma década de envelhecimento.",
+   "citacao": "In fact, the increased risk associated with mild hyponatremia was comparable to the effect of more than a decade of ageing",
+   "secao": "Effects of hyponatremia and its correction — Neurocognitive and neuromuscular function"
+  },
+  {
+   "afirmacao": "⚠️ Em um estudo caso-controle com 16 pacientes com hiponatremia leve a moderada, os pacientes tiveram pior desempenho em testes de marcha, com resultados comparáveis aos de controles normonatrêmicos levemente intoxicados por álcool; após a normalização do sódio, as anormalidades de equilíbrio se resolveram.",
+   "citacao": "The impact of correcting hyponatremia was strikingly shown in a small case control study of 16 patients with mild to moderate hyponatremia [80]. In this study, patients performed worse on gait tests, with results comparable to those seen in normonatremic controls who were mildly alcohol-intoxicated. After sodium levels were normalized, balance abnormalities resolved",
+   "secao": "Effects of hyponatremia and its correction — Neurocognitive and neuromuscular function"
+  },
+  {
+   "afirmacao": "Um estudo de seguimento do mesmo grupo destacou que idosos com hiponatremia moderada apresentaram maior comprometimento de marcha e de desempenho cognitivo do que indivíduos mais jovens, ressaltando a vulnerabilidade aumentada do cérebro envelhecido às flutuações do sódio.",
+   "citacao": "A follow-up study by the same group highlighted that older adults with moderate hyponatremia experienced greater impairment in gait and cognitive performance than younger individuals, underscoring the heightened vulnerability of the ageing brain to sodium fluctua",
+   "secao": "Effects of hyponatremia and its correction — Neurocognitive and neuromuscular function"
+  },
+  {
+   "afirmacao": "Um pequeno estudo ambulatorial mostrou que indivíduos com hiponatremia leve a moderada apresentavam cefaleia, confusão e instabilidade de marcha, além de pior desempenho em testes neurocognitivos e musculares comparados a pares saudáveis; o tratamento melhorou os sintomas em todos os pacientes, mas os ganhos em função neurocognitiva foram mínimos.",
+   "citacao": "One small outpatient study found that individuals with mild-to-moderate hyponatremia experienced symptoms such as headache, confusion, and gait instability, along with poorer performance on neurocognitive and muscular tests compared with healthy peers [14]. While treatment improved J. Refardt Best Practice & Research Clinical Endocrinology & Metabolism 40 (2026) 102040 4 symptoms in all patients, gains in neurocognitive function were minimal",
+   "secao": "Effects of hyponatremia and its correction — Neurocognitive and neuromuscular function"
+  },
+  {
+   "afirmacao": "Em outro estudo com catorze pacientes com hiponatremia e cirrose hepática tratados com o antagonista do receptor de vasopressina tolvaptana, houve melhora em cognição, qualidade de vida e achados de ressonância magnética cerebral.",
+   "citacao": "In another study of fourteen patients with hyponatremia and liver cirrhosis treated with the vasopressin receptor antagonist tolvaptan, improvements were seen in cognition, quality of life, and brain MRI findings",
+   "secao": "Effects of hyponatremia and its correction — Neurocognitive and neuromuscular function"
+  },
+  {
+   "afirmacao": "Pesquisas observacionais mais recentes mostraram que corrigir a hiponatremia moderada a grave pode melhorar o desempenho cognitivo e produzir mudanças mensuráveis na estrutura cerebral e na atividade neuronal.",
+   "citacao": "More recent observational research has similarly shown that correcting moderate-to-severe hypona- tremia can enhance cognitive performance and produce measurable changes in brain structure and neuronal activity",
+   "secao": "Effects of hyponatremia and its correction — Neurocognitive and neuromuscular function"
+  },
+  {
+   "afirmacao": "Nos ensaios SALT, pacientes que receberam o antagonista da vasopressina tolvaptana tiveram tanto elevação do sódio quanto melhora notável nos escores de saúde mental em comparação com placebo.",
+   "citacao": "In the SALT trials [83], patients receiving the vasopressin antagonist tolvaptan experienced both increased sodium levels and notable improvements in mental health scores compared with placebo",
+   "secao": "Effects of hyponatremia and its correction — Neurocognitive and neuromuscular function"
+  },
+  {
+   "afirmacao": "⚠️ O estudo INSIGHT, que avaliou o impacto da tolvaptana sobre cognição e estabilidade postural em pessoas com hiponatremia clinicamente assintomática, encontrou apenas uma tendência a melhor desempenho neurocognitivo junto da correção do sódio.",
+   "citacao": "The INSIGHT study [84], which examined tolvaptan’s impact on cognition and postural stability in people with clinically asymptomatic hyponatremia, found a trend toward better neurocognitive performance alongside sodium correction",
+   "secao": "Effects of hyponatremia and its correction — Neurocognitive and neuromuscular function"
+  },
+  {
+   "afirmacao": "⚠️ Em um ensaio cruzado com o inibidor de SGLT2 empagliflozina na hiponatremia crônica relacionada à SIAD, o sódio melhorou após quatro semanas de tratamento, mas não houve efeito sobre a marcha e os ganhos cognitivos foram mínimos.",
+   "citacao": "Another crossover trial tested the SGLT2 inhibitor empagliflozin in chronic SIAD-related hyponatremia; while sodium levels im- proved after four weeks of treatment, effects on gait were absent and cognitive gains were minimal",
+   "secao": "Effects of hyponatremia and its correction — Neurocognitive and neuromuscular function"
+  },
+  {
+   "afirmacao": "A falta de evidência mais forte provavelmente reflete a natureza observacional de boa parte da pesquisa, o fato de muitos participantes não atingirem a normonatremia e a inexistência, até hoje, de ensaio randomizado desenhado especificamente para detectar mudanças na função neurocognitiva ou neuromuscular.",
+   "citacao": "The lack of stronger evidence likely reflects the observational nature of much of the research, the fact that many participants did not achieve normo- natremia, and that no randomized trial to date has been designed specifically to detect changes in neurocognitive or neuromuscular function",
+   "secao": "Effects of hyponatremia and its correction — Neurocognitive and neuromuscular function"
+  },
+  {
+   "afirmacao": "Múltiplos estudos e metanálises mostraram ligação consistente entre hiponatremia crônica e maior risco de osteoporose e fraturas.",
+   "citacao": "Multiple studies and meta-analyses have shown a consistent link between chronic hyponatremia and a higher risk of osteoporosis and fractures",
+   "secao": "Effects of hyponatremia and its correction — Bone health"
+  },
+  {
+   "afirmacao": "⚠️ Em idosos, o aumento do risco de fratura persiste mesmo quando a densidade óssea é semelhante à de indivíduos com sódio normal, sugerindo que outros mecanismos estão envolvidos.",
+   "citacao": "Research in older adults has found that this increased fracture risk persists even when bone density is similar to that of individuals with normal sodium levels [88], suggesting other mechanisms are involved",
+   "secao": "Effects of hyponatremia and its correction — Bone health"
+  },
+  {
+   "afirmacao": "Uma metanálise também ligou a hiponatremia a maior probabilidade de quedas, com a instabilidade de marcha provavelmente contribuindo para o risco elevado de fratura.",
+   "citacao": "One meta-analysis also linked hyponatremia to a greater likelihood of falls [73], with gait instability likely contributing to the elevated fracture risk",
+   "secao": "Effects of hyponatremia and its correction — Bone health"
+  },
+  {
+   "afirmacao": "⚠️ Tanto a gravidade quanto a duração da hiponatremia elevam ainda mais o risco de osteoporose e de fraturas por fragilidade.",
+   "citacao": "Additional evidence indicates that both the severity and duration of hyponatremia further elevate the risk of osteoporosis and fragility fractures",
+   "secao": "Effects of hyponatremia and its correction — Bone health"
+  },
+  {
+   "afirmacao": "Além das quedas, a própria perda óssea pode ser promovida diretamente pela hiponatremia, já que o osso é o maior reservatório corporal de sódio osmoticamente inativo; estudos experimentais em ratos apoiam essa ideia, mostrando perda óssea marcada e aumento da atividade osteoclástica após hiponatremia prolongada.",
+   "citacao": "Beyond falls, bone loss itself may be directly promoted by hyponatremia, as bone serves as the body’s largest reservoir of osmotically inactive sodium [90]. Experimental studies in rats support this idea, showing marked bone loss and increased osteoclast activity after prolonged hyponatremia",
+   "secao": "Effects of hyponatremia and its correction — Bone health"
+  },
+  {
+   "afirmacao": "No ensaio INSIGHT, o tratamento com a tolvaptana associou-se a aumento da osteocalcina, marcador de formação óssea.",
+   "citacao": "In the INSIGHT trial [84], treatment with the vasopressin antagonist tolvaptan was associated with an increase in osteocalcin, a marker of bone formation",
+   "secao": "Effects of hyponatremia and its correction — Bone health"
+  },
+  {
+   "afirmacao": "⚠️ Em dois estudos com o inibidor de SGLT2 empagliflozina, os pacientes cujo sódio se normalizou mostraram aumento de marcadores de atividade osteoblástica, enquanto os que permaneceram hiponatrêmicos não.",
+   "citacao": "Similar results were seen in two studies involving the SGLT2 inhibitor empagliflozin [75,92], where patients whose sodium levels normalized showed rises in markers of osteoblast activity, while those who remained hyponatremic did not",
+   "secao": "Effects of hyponatremia and its correction — Bone health"
+  },
+  {
+   "afirmacao": "⚠️ Uma análise transversal recente em idosos encontrou que mesmo a hiponatremia leve associou-se independentemente a menor densidade mineral óssea no quadril, embora sem alterações na estrutura trabecular.",
+   "citacao": "A recent cross-sectional analysis in older adults also found that even mild hyponatremia was independently associated with lower bone mineral density at the hip, though without changes in trabecular structure",
+   "secao": "Effects of hyponatremia and its correction — Bone health"
+  },
+  {
+   "afirmacao": "Além da saúde óssea, a hiponatremia também foi ligada a sarcopenia e redução da força muscular em pacientes idosos; trabalhos experimentais em ratos envelhecidos mostram que a hiponatremia pode acelerar a perda de massa magra e associa-se a maiores taxas de hipogonadismo e cardiomiopatia, fatores que aceleram as mudanças ligadas à idade.",
+   "citacao": "Beyond bone health, hyponatremia has also been linked to sarcopenia and reduced muscle strength in older patients [94]. Ex- perimental work in ageing rats supports these observations [95], showing that hyponatremia can accelerate loss of lean mass and is associated with higher rates of hypogonadism and cardiomyopathy. Together, these factors accelerate the age-related changes",
+   "secao": "Effects of hyponatremia and its correction — Bone health"
+  },
+  {
+   "afirmacao": "A hiponatremia foi ligada a piores desfechos em ampla gama de condições médicas, com múltiplos estudos mostrando associação com maior mortalidade, o que provavelmente reflete interação complexa de doenças subjacentes e fatores fisiológicos.",
+   "citacao": "Hyponatremia has been linked to poorer outcomes across a wide range of medical conditions, with multiple studies showing an association with higher mortality [9,22,96–98]. This increased risk likely reflects a complex interplay of underlying disorders and",
+   "secao": "Effects of hyponatremia and its correction — Morbidity and mortality"
+  },
+  {
+   "afirmacao": "Em pacientes com SIAD, o tratamento ativo associou-se a maior correção do sódio e a internações mais curtas do que o cuidado padrão.",
+   "citacao": "For example, in patients with SIAD, active treatment has been associated with greater sodium correction and shorter hospital stays compared with",
+   "secao": "Effects of hyponatremia and its correction — Morbidity and mortality"
+  },
+  {
+   "afirmacao": "⚠️ Em pacientes com insuficiência cardíaca, a falha em corrigir a hiponatremia foi ligada a maior probabilidade de reinternação ou óbito.",
+   "citacao": "In heart failure patients, failure to correct hyponatremia has been linked to a higher likelihood of readmission or",
+   "secao": "Effects of hyponatremia and its correction — Morbidity and mortality"
+  },
+  {
+   "afirmacao": "⚠️ Uma metanálise de 15 estudos observacionais indicou que a melhora da hiponatremia se correlaciona com redução da mortalidade global, particularmente em idosos e naqueles com hiponatremia mais pronunciada.",
+   "citacao": "A meta-analysis of 15 observational studies indicated that hyponatremia improvement in correlates with reduced overall mortality - particularly in older adults and those with more pronounced hyponatremia",
+   "secao": "Effects of hyponatremia and its correction — Morbidity and mortality"
+  },
+  {
+   "afirmacao": "⚠️ Ensaios clínicos randomizados, todos usando antagonistas do receptor de vasopressina (vaptanos), não demonstraram benefício claro sobre mortalidade ou reinternação — o que pode dever-se ao risco de sobrecorreção e eventos adversos associados, bem como à natureza heterogênea da hiponatremia, que provavelmente exige abordagem mais individualizada.",
+   "citacao": "Randomized controlled trials, all using vasopressin receptor antagonists (vaptans) [83, 102–105], have not demonstrated clear benefits for mortality or rehospitalization. This lack of effect may be due to the risk of overcorrection and associated adverse events [106], as well as the heterogeneous nature of hyponatremia, which likely requires a more tailored, individualized treatment ap",
+   "secao": "Effects of hyponatremia and its correction — Morbidity and mortality"
+  },
+  {
+   "afirmacao": "Permanece incerto se a ligação entre hiponatremia e maus desfechos clínicos é causal ou apenas associativa; resultados de um grande ensaio randomizado avaliando o impacto do tratamento direcionado da hiponatremia sobre mortalidade e reinternação em 30 dias devem ser publicados em breve.",
+   "citacao": "Whether the link between hyponatremia and poor clinical outcomes reflects a causal relationship or merely an association re- mains uncertain, highlighting the need for well-designed outcome studies. Results from a large randomized trial assessing the impact of targeted hyponatremia treatment on 30-day mortality and rehospitalization [107] are expected to be published in the near future",
+   "secao": "Effects of hyponatremia and its correction — Morbidity and mortality"
+  },
+  {
+   "afirmacao": "Como o quadro clínico depende do início da hiponatremia, o tratamento também se divide nessas categorias: nos casos agudos com manifestações graves, a correção rápida com salina hipertônica tem prioridade sobre a investigação diagnóstica ou a terapia específica da causa.",
+   "citacao": "Since the clinical picture depends on hyponatremia onset, treatment is also divided into these categories. In acute cases with severe manifestations, rapid hyponatremia correction with hypertonic saline takes priority over diagnostic work-up or cause-specific",
+   "secao": "Hyponatremia treatment options"
+  },
+  {
+   "afirmacao": "⚠️ Na hiponatremia crônica, o manejo foca em tratar a causa subjacente elevando o sódio gradualmente para permitir a reversão das adaptações cerebrais — máximo de 10 mmol/l nas primeiras 24 h e de 18 mmol/l nas primeiras 48 h.",
+   "citacao": "In chronic hyponatremia, management focuses on addressing the underlying cause while raising sodium levels gra- dually to allow reversal of cerebral adaptations (maximum 10 mmol/l in the first 24 h and of 18 mmol/l in the first 48 h",
+   "secao": "Hyponatremia treatment options"
+  },
+  {
+   "afirmacao": "⚠️ Em pacientes com hiponatremia profunda, hipocalemia, alcoolismo, doença hepática avançada ou desnutrição, que têm alto risco de síndrome de desmielinização osmótica — complicação neurológica potencialmente devastadora causada por dano à mielina pelo estresse osmótico —, recomendam-se taxas de correção ainda mais lentas, de 6–8 mmol/l em 24 h.",
+   "citacao": "In patients with profound hyponatremia, hypokalemia, alcoholism, advanced liver disease, or malnutrition [66] 120 who are at high risk of osmotic demyelination syndrome - a potentially devastating neurological complication caused by myelin damage from osmotic stress [108] – even slower correction rates with 6–8 mmol/l within 24 h are recommended",
+   "secao": "Hyponatremia treatment options"
+  },
+  {
+   "afirmacao": "⚠️ Se os limites de correção forem excedidos, podem-se usar medidas como ingestão oral de água, fluidos hipotônicos intravenosos ou desmopressina para rebaixar o sódio.",
+   "citacao": "If correction limits are exceeded, measures such as oral water intake, intravenous hypotonic fluids, or desmopressin can be used to re-lower sodium levels",
+   "secao": "Hyponatremia treatment options"
+  },
+  {
+   "afirmacao": "A hiponatremia aguda gravemente sintomática é emergência médica que exige tratamento imediato com salina hipertônica.",
+   "citacao": "Acute, severely symptomatic hyponatremia is a medical emergency requiring immediate treatment with hypertonic saline",
+   "secao": "Hyponatremia treatment options — Hypertonic saline infusion"
+  },
+  {
+   "afirmacao": "⚠️ As diretrizes americana e europeia diferem levemente na dose (100 ml de salina a 3% em 10 min versus 150 ml de salina a 3% em 20 min, respectivamente), mas ambas visam a uma elevação rápida e modesta do sódio de 5 mmol para melhorar os sintomas.",
+   "citacao": "American and European guidelines [40,66] differ slightly in dosing recommendations (100 ml 3 % over 10 min versus 150 ml 3 % over 20 min respectively), but both aim for a modest (5 mmol) rapid rise in sodium to improve symptoms",
+   "secao": "Hyponatremia treatment options — Hypertonic saline infusion"
+  },
+  {
+   "afirmacao": "A diretriz europeia recomenda ajuste de dose para 2 ml/kg em pacientes nos extremos de tamanho corporal, propensos a sobre ou subcorreção.",
+   "citacao": "The European guidelines also recommend dosage adjustment of 2 ml/kg for patients at the extremes of body size [40], as they are prone to over- or under",
+   "secao": "Hyponatremia treatment options — Hypertonic saline infusion"
+  },
+  {
+   "afirmacao": "⚠️ Cautela extra é recomendada em indivíduos idosos ou frágeis, que têm risco aumentado de sobrecorreção pela massa magra e pela água corporal total frequentemente menores.",
+   "citacao": "Extra caution is also advised in older or frail individuals, who are at increased risk of overcorrection due to often lower lean body mass and total body water",
+   "secao": "Hyponatremia treatment options — Hypertonic saline infusion"
+  },
+  {
+   "afirmacao": "A administração em bólus parece mais segura e preferível à infusão contínua, e ambas podem ser feitas por acesso venoso periférico.",
+   "citacao": "Overall, bolus administration appears safer and preferable to continuous infusion [112,113], both can be given via a peripheral venous access",
+   "secao": "Hyponatremia treatment options — Hypertonic saline infusion"
+  },
+  {
+   "afirmacao": "Alguns centros usam o “clamp de desmopressina”, administrando desmopressina junto com a salina hipertônica para reduzir o risco de correção rápida demais; dados observacionais apoiam a abordagem, mas faltam ensaios randomizados.",
+   "citacao": "Some centres also use a “desmopressin clamp,” giving desmopressin alongside hypertonic saline to reduce the risk of overly rapid correction [109,116]. While observational data support this approach, randomized trials are lacking",
+   "secao": "Hyponatremia treatment options — Hypertonic saline infusion"
+  },
+  {
+   "afirmacao": "A salina isotônica, geralmente cloreto de sódio a 0,9%, é o pilar do tratamento da hiponatremia hipovolêmica: repõe água e sódio ao mesmo tempo em que suprime a ativação do SRAA e da AVP, o que pode disparar diurese aquosa — tornando essencial a monitorização rigorosa do sódio nos pacientes com hiponatremia grave.",
+   "citacao": "Isotonic saline, usually 0.9 % sodium chloride, is the mainstay of treatment for hypovolemic hyponatremia [117]. It replenishes both water and sodium while suppressing RAAS and AVP activation, which can trigger a water diuresis - making close sodium monitoring essential in patients with severe hyponatremia",
+   "secao": "Hyponatremia treatment options — Isotonic saline infusion"
+  },
+  {
+   "afirmacao": "⚠️ Em contraste, a salina isotônica deve ser evitada na SIAD, pois a água infundida não pode ser adequadamente excretada e pode reduzir ainda mais o sódio.",
+   "citacao": "In contrast, isotonic saline should be avoided in SIAD, as the infused water cannot be adequately excreted and may further lower sodium levels",
+   "secao": "Hyponatremia treatment options — Isotonic saline infusion"
+  },
+  {
+   "afirmacao": "A restrição hídrica é o tratamento de primeira linha da SIAD crônica não gravemente sintomática.",
+   "citacao": "Fluid restriction is the first-line treatment for chronic, non-severely symptomatic SIAD",
+   "secao": "Hyponatremia treatment options — Fluid restriction"
+  },
+  {
+   "afirmacao": "⚠️ Dois ensaios randomizados em pacientes majoritariamente idosos mostraram melhora apenas modesta do sódio com a restrição hídrica (3 e 4 mmol/l após 4 dias), e a efetividade no mundo real é frequentemente menor.",
+   "citacao": "Two randomized trials in mainly older patients showed modest improvements in sodium levels with this approach [120,121] (3 and 4 mmol/l after 4 days), but real- world effectiveness is often lower",
+   "secao": "Hyponatremia treatment options — Fluid restriction"
+  },
+  {
+   "afirmacao": "⚠️ A restrição hídrica é particularmente pouco efetiva em pacientes com urina muito concentrada (>500 mOsm/kg) ou com sódio urinário alto (>130 mmol/l).",
+   "citacao": "This is particularly the case in patients with highly concentrated urine (> 500 mOsm/kg) or high urinary sodium levels (> 130 mmol/l) [122]. While generally safe, occasional cases of acute kidney injury and hypotension have been reported",
+   "secao": "Hyponatremia treatment options — Fluid restriction"
+  },
+  {
+   "afirmacao": "Embora geralmente segura, casos ocasionais de lesão renal aguda e hipotensão foram relatados com a restrição hídrica.",
+   "citacao": "While generally safe, occasional cases of acute kidney injury and hypotension have been reported",
+   "secao": "Hyponatremia treatment options — Fluid restriction"
+  },
+  {
+   "afirmacao": "As recomendações típicas são limitar a ingestão de fluidos a cerca de meio litro a um litro por dia, ou a meio litro a menos do que o débito urinário diário.",
+   "citacao": "Typical recommendations are to limit fluid intake to around half a litre to one litre per day, or half a litre less than daily urine output",
+   "secao": "Hyponatremia treatment options — Fluid restriction"
+  },
+  {
+   "afirmacao": "A razão eletrólitos urina/plasma pode ajudar a guiar o nível de restrição, com valores mais altos indicando limites mais estritos.",
+   "citacao": "The urine-to-plasma electrolyte ratio [124] can help guide the restriction level, with higher values indicating stricter limits",
+   "secao": "Hyponatremia treatment options — Fluid restriction"
+  },
+  {
+   "afirmacao": "⚠️ Manter restrição hídrica estrita ao longo do tempo é difícil, e um limite mais moderado pode bastar em pacientes cuja urina é menos concentrada — o que raramente é o caso em pacientes idosos, por sua sensação de sede frequentemente reduzida e consequente menor ingestão de líquidos.",
+   "citacao": "Maintaining strict fluid restriction over time can be challenging, and a more moderate limit may be suf- ficient in patients whose urine is less concentrated [125]. It should be noted that this is rarely the case in older patients due to their often-reduced thirst sensation and consequently lower fluid intake",
+   "secao": "Hyponatremia treatment options — Fluid restriction"
+  },
+  {
+   "afirmacao": "Os diuréticos de alça são o pilar do manejo da hiponatremia hipervolêmica, reduzindo a capacidade renal de reabsorver água e levando a aquarese.",
+   "citacao": "Loop diuretics are the mainstay in managing hypervolemic hyponatremia by reducing the kidneys ability to reabsorb water and thereby leading to aquaresis",
+   "secao": "Hyponatremia treatment options — Loop diuretics"
+  },
+  {
+   "afirmacao": "As diretrizes europeias listam diuréticos de alça em baixa dose com comprimidos de cloreto de sódio como opção de segunda linha para SIAD moderada a grave.",
+   "citacao": "European guidelines list low-dose loop diuretics with sodium chloride tablets also as a second-line option for moderate to severe SIAD",
+   "secao": "Hyponatremia treatment options — Loop diuretics"
+  },
+  {
+   "afirmacao": "⚠️ Um ensaio, porém, mostrou que acrescentar diuréticos de alça — isolados ou com comprimidos de sal — à restrição hídrica não trouxe vantagem sobre a restrição hídrica isolada para elevar o sódio.",
+   "citacao": "However, one trial found that adding loop diuretics - either alone or with salt tablets - to fluid restriction offered no advantage over fluid restriction alone in raising sodium levels",
+   "secao": "Hyponatremia treatment options — Loop diuretics"
+  },
+  {
+   "afirmacao": "Os vaptanos promovem excreção de água sem perda de sódio, reduzindo a capacidade renal de reabsorver água pelos canais de aquaporina 2; a tolvaptana, oral, está disponível na Europa e nos EUA, enquanto a conivaptana é opção intravenosa usada apenas nos EUA.",
+   "citacao": "Vaptans promote water excretion without sodium loss by reducing the kidney’s ability to reabsorb water through the aquaporin 2 channels. Tolvaptan, taken orally, is available in both Europe and the US, while conivaptan is an intravenous option used only in the",
+   "secao": "Hyponatremia treatment options — Vasopressin receptor antagonists"
+  },
+  {
+   "afirmacao": "Grandes ensaios clínicos mostraram que a tolvaptana eleva efetivamente o sódio em pacientes com SIAD, insuficiência cardíaca ou cirrose hepática, levando à sua aprovação para SIAD na Europa e para hiponatremia euvolêmica e hipervolêmica nos EUA.",
+   "citacao": "Large clinical trials showed that tolvaptan effectively raises sodium levels in patients with SIAD, heart failure, or liver cirrhosis [127,128], leading to its approval for SIAD in Europe and for both euvolemic and hypervolemic hyponatremia in the US",
+   "secao": "Hyponatremia treatment options — Vasopressin receptor antagonists"
+  },
+  {
+   "afirmacao": "Em 2013, a FDA restringiu o uso da tolvaptana na cirrose hepática depois que doses mais altas foram ligadas a toxicidade hepática grave em pacientes tratados por doença renal policística.",
+   "citacao": "However, in 2013 the FDA restricted its use in liver cirrhosis after higher doses were linked to severe liver toxicity in patients treated for polycystic kidney disease",
+   "secao": "Hyponatremia treatment options — Vasopressin receptor antagonists"
+  },
+  {
+   "afirmacao": "⚠️ A principal preocupação com a tolvaptana é o risco de correção rápida demais do sódio, especialmente na hiponatremia profunda, motivo pelo qual o tratamento costuma ser iniciado no hospital; começar com dose menor (7,5 mg/dia) ajuda a reduzir esse risco, mas mesmo assim houve elevação rápida do sódio em um em cada cinco pacientes em estudo recentemente publicado.",
+   "citacao": "A key concern with tolvaptan is the risk of overly rapid sodium correction [130], especially for patients with profound hypo- natremia [131], which is why treatment is usually started in hospital. Beginning with a lower dose (7.5 mg/day) can help reduce this risk [132]. Although even with this approach, rapid sodium rise was observed in one of five patients in a recently published study",
+   "secao": "Hyponatremia treatment options — Vasopressin receptor antagonists"
+  },
+  {
+   "afirmacao": "⚠️ É preciso cautela extra em quem usa inibidores ou indutores da CYP3A4 pelas possíveis interações medicamentosas, problema comum em idosos com múltiplos medicamentos.",
+   "citacao": "Extra caution is needed in those taking CYP3A4 inhibitors or inducers because of possible drug interactions, a common issue in older adults with multiple medications",
+   "secao": "Hyponatremia treatment options — Vasopressin receptor antagonists"
+  },
+  {
+   "afirmacao": "⚠️ O tratamento com tolvaptana também exige que o paciente possa beber livremente e tenha sensação de sede intacta, o que pode estar diminuído no idoso.",
+   "citacao": "Treatment also requires that patients can drink freely and have an intact sense of thirst, which may be diminished in the elderly",
+   "secao": "Hyponatremia treatment options — Vasopressin receptor antagonists"
+  },
+  {
+   "afirmacao": "O alto custo diário da tolvaptana pode limitar ainda mais seu uso, particularmente em idosos com restrições financeiras; ainda assim, houve sucesso a longo prazo em casos cuidadosamente monitorados, tornando-a opção potente em pacientes idosos criteriosamente selecionados.",
+   "citacao": "The high daily cost of tolvaptan can further limit its use, particularly for older people with financial constraints. Even so, long-term success has been reported in carefully monitored cases, making it a potent treatment option in carefully selected older patients",
+   "secao": "Hyponatremia treatment options — Vasopressin receptor antagonists"
+  },
+  {
+   "afirmacao": "⚠️ Usar comprimidos de sal isoladamente para tratar SIAD costuma ser inefetivo, pois cada comprimido fornece apenas pequena carga osmótica, sendo necessários muitos para aumentar significativamente o débito urinário; um estudo prospectivo não encontrou benefício adicional dos comprimidos de sal combinados à restrição hídrica.",
+   "citacao": "Using salt tablets alone to treat SIAD is often ineffective, as each tablet provides only a small osmotic load, meaning many would be needed to significantly increase urine output. In line with this, a prospective study found no added benefit from salt tablets when combined with fluid restriction",
+   "secao": "Hyponatremia treatment options — Salt tablets"
+  },
+  {
+   "afirmacao": "A administração de ureia oral em pó leva a diurese osmótica por sua forte carga osmótica; na maioria dos países europeus a ureia é fornecida por farmácias como alimento médico manipulado, enquanto nos EUA há formulações aromatizadas prontas para uso e aprovadas pela FDA.",
+   "citacao": "Administration of oral urea powder leads to osmotic diuresis due to its strong osmotic load. In most European countries, urea is provided by pharmacies as a compounded medical food, while in the US, flavoured ready-to-use formulations are available and FDA- approved [135]",
+   "secao": "Hyponatremia treatment options — Oral urea"
+  },
+  {
+   "afirmacao": "As diretrizes europeias recomendam a ureia para SIAD moderada a grave refratária à restrição hídrica.",
+   "citacao": "European guidelines recommend its use for moderate to severe, fluid-restriction refractory SIAD",
+   "secao": "Hyponatremia treatment options — Oral urea"
+  },
+  {
+   "afirmacao": "⚠️ Embora se recomende dose ajustada ao peso corporal (0,25–0,50 g/kg por dia), costuma-se usar dose inicial de 30 g por dia, que pode ser aumentada para 60 ou 90 g por dia se necessário.",
+   "citacao": "Although a body weight adapted dosage is recommended (0.25–0.50 g/kg per day), a starting dose of 30 g per day is usually used which can be J. Refardt Best Practice & Research Clinical Endocrinology & Metabolism 40 (2026) 102040 6 increased to 60 or 90 g per day if needed",
+   "secao": "Hyponatremia treatment options — Oral urea"
+  },
+  {
+   "afirmacao": "⚠️ Em pacientes idosos frágeis ou com alto risco de sobrecorreção, deve-se escolher dose inicial menor, de 15 g por dia.",
+   "citacao": "In frail elderly patients or patients at high risk for overcorrection, a lower starting dose of 15 g per day should be chosen",
+   "secao": "Hyponatremia treatment options — Oral urea"
+  },
+  {
+   "afirmacao": "A ureia mostrou-se efetiva em ampla gama de pacientes com SIAD: um estudo prospectivo a considerou segura, bem tolerada e tão efetiva quanto a tolvaptana quando os pacientes receberam cada tratamento por um ano em sequência.",
+   "citacao": "Urea has been shown to be effective in a wide range of patients with SIAD. One prospective study found urea to be safe, well tolerated, and as effective as tolvaptan when patients received each treatment for a year in sequence",
+   "secao": "Hyponatremia treatment options — Oral urea"
+  },
+  {
+   "afirmacao": "Não há ensaios controlados randomizados com ureia, mas metanálises recentes apoiam sua segurança e eficácia.",
+   "citacao": "Although no randomized controlled trials are available, recent meta-analyses support its safety and efficacy",
+   "secao": "Hyponatremia treatment options — Oral urea"
+  },
+  {
+   "afirmacao": "⚠️ O uso de ureia também foi relatado na hiponatremia hipervolêmica por insuficiência cardíaca; contudo, seu benefício é duvidoso em pacientes com ureia basal alta e, na cirrose hepática, deve ser usada apenas com extrema cautela pela evidência limitada e pelo risco de encefalopatia hepática.",
+   "citacao": "The use of urea has also been reported in hypervolemic hyponatremia due to heart failure [139–141]. However, its benefit is doubtful in patients with high baseline urea, and in liver cirrhosis it should be used only with extreme caution due to limited evidence and the risk of hepatic encephalopathy",
+   "secao": "Hyponatremia treatment options — Oral urea"
+  },
+  {
+   "afirmacao": "Um problema comum da ureia é a má palatabilidade, que pode ser melhorada dissolvendo-a em bebida de sabor forte, como suco de laranja, quando não houver preparação aromatizada pronta; de resto é bem tolerada e segura.",
+   "citacao": "A common issue when using urea is its poor palatability, which can be improved by dissolving it in a strongly flavoured beverage like orange juice if no ready-to-use flavored preparation is available [40]. Otherwise, it is well tolerated and safe",
+   "secao": "Hyponatremia treatment options — Oral urea"
+  },
+  {
+   "afirmacao": "⚠️ A ureia pode também proteger contra a síndrome de desmielinização osmótica: em estudo com ratos, causou menos mortes e menos dano neurológico do que os vaptanos ou a salina hipertônica após correção rápida do sódio.",
+   "citacao": "Urea may also protect against osmotic demyelination syndrome, according to a rat study that found that urea caused fewer deaths and less neurological damage than vaptans or hypertonic saline solution after rapid sodium correction",
+   "secao": "Hyponatremia treatment options — Oral urea"
+  },
+  {
+   "afirmacao": "As proteínas são fonte natural de ureia, pois são degradadas em nitrogênio, que o fígado converte em ureia para excreção: cerca de 10 g de proteína produzem 50 mmol de ureia.",
+   "citacao": "Proteins are a natural source of urea, as they are broken down into nitrogen, which the liver converts into urea for excretion. About 10 g of protein produces 50 mmol of urea",
+   "secao": "Hyponatremia treatment options — Protein supplementation"
+  },
+  {
+   "afirmacao": "Em modelos de SIAD em ratos, tanto a dieta hiperproteica quanto a dieta hipoproteica suplementada com ureia oral elevaram o sódio plasmático, reduziram a natriurese e aumentaram a ureia medular em comparação com a dieta hipoproteica isolada.",
+   "citacao": "In rat models of SIAD [145], both a high-protein diet and a low-protein diet supplemented with oral urea raised plasma sodium, reduced natriuresis, and increased medullary urea compared with a low-protein diet alone",
+   "secao": "Hyponatremia treatment options — Protein supplementation"
+  },
+  {
+   "afirmacao": "⚠️ Um estudo clínico prospectivo recente com dezessete pacientes ambulatoriais com SIAD crônica confirmou esses achados: consumir 90 g de proteína por dia por sete dias aumentou os níveis de sódio e de ureia na mesma medida que consumir 30 g de ureia por dia.",
+   "citacao": "A recent prospective clinical study involving seventeen outpatients with chronic SIAD confirmed these findings. Con- suming 90 g of protein per day over a period of seven days increased sodium and urea levels to a similar extent as consuming 30 g of urea per day",
+   "secao": "Hyponatremia treatment options — Protein supplementation"
+  },
+  {
+   "afirmacao": "⚠️ Um efeito colateral positivo da dieta hiperproteica é o aumento de massa e força musculares, o que poderia reduzir o risco de quedas nesse grupo frágil — mas os resultados precisam ser confirmados em estudo maior e de longo prazo.",
+   "citacao": "A positive side effect of a high-protein diet is an increase in muscle mass and strength, which could reduce the risk of falls in this frail population group. However, these results must first be confirmed in a larger and longer-term study",
+   "secao": "Hyponatremia treatment options — Protein supplementation"
+  },
+  {
+   "afirmacao": "Os inibidores de SGLT2 promovem excreção urinária de glicose, levando a diurese osmótica e à excreção de água livre de eletrólitos; originalmente desenvolvidos como antidiabéticos orais, também retardam a progressão da doença renal crônica e oferecem proteção cardiovascular inclusive em pessoas sem diabetes.",
+   "citacao": "SGLT2 inhibitors promote glucose excretion in the urine, thereby leading to osmotic diuresis and excretion of electrolyte-free water [146–148]. Originally developed as oral diabetes drugs, they also slow chronic kidney disease progression and offer cardio- vascular protection also in people without diabetes",
+   "secao": "Hyponatremia treatment options — SGLT2 inhibitors"
+  },
+  {
+   "afirmacao": "⚠️ Em dois ensaios controlados por placebo em pacientes com SIAD, acrescentar a empagliflozina melhorou os níveis de sódio; o primeiro estudo foi em pacientes hospitalizados, limitado a quatro dias e com restrição hídrica associada, e o segundo em pacientes ambulatoriais por quatro semanas e sem restrição hídrica, com aumento moderado do sódio (4 mmol/l) e boa tolerabilidade.",
+   "citacao": "In two placebo-controlled trials in patients with SIAD adding the SGLT2-inhibitor empagliflozin improved sodium levels [153,154]. While the first study was conducted on hospitalized patients, was limited to four days, and also included fluid restriction, the second study was conducted on outpatients over a period of four weeks and without fluid restriction. The increase in sodium was moderate (4 mmol/l) in the outpatient study, but the treatment was well tolerated",
+   "secao": "Hyponatremia treatment options — SGLT2 inhibitors"
+  },
+  {
+   "afirmacao": "A possibilidade de tratar a SIAD com inibidores de SGLT2 é interessante pelo efeito cardiorrenal protetor, que pode impactar positivamente as comorbidades comuns em pacientes idosos com SIAD; faltam dados de outros inibidores de SGLT2, mas pode-se presumir efeito semelhante ao da empagliflozina.",
+   "citacao": "In addition, the possibility of treating SIAD with SGLT2 inhibitors is interesting due to their cardiorenal protective effect, which could have a positive impact on the common comorbidities in older SIAD patients. Although data for other SGLT2 inhibitors are lacking, a similar effect as empagliflozin treatment can be assumed",
+   "secao": "Hyponatremia treatment options — SGLT2 inhibitors"
+  },
+  {
+   "afirmacao": "⚠️ Devem-se considerar os efeitos adversos potenciais dos inibidores de SGLT2, incluindo infecções geniturinárias e cetoacidose, como em qualquer outra indicação.",
+   "citacao": "Potential adverse effects of SGLT2 inhibitors, including genitourinary infections and ketoacidosis, should be considered, as with their use for any other indication",
+   "secao": "Hyponatremia treatment options — SGLT2 inhibitors"
+  },
+  {
+   "afirmacao": "A SIAD é hoje a principal causa de hiponatremia, impulsionada por polifarmácia e múltiplas comorbidades, embora as formas hipervolêmica e hipovolêmica também precisem ser consideradas.",
+   "citacao": "SIAD is now the leading cause, driven by polypharmacy and multiple comorbidities, though hypervolemic and hypovolemic forms must also be considered",
+   "secao": "Conclusions"
+  },
+  {
+   "afirmacao": "⚠️ Embora antes considerada assintomática, a hiponatremia crônica é hoje ligada a comprometimento neurocognitivo e neuromuscular, densidade óssea reduzida, maior risco de fratura, pior qualidade de vida, mais reinternações e maior mortalidade.",
+   "citacao": "Although once considered asymptomatic, chronic hyponatremia is now linked to neurocognitive and neuromuscular impairment, reduced bone density, higher fracture risk, poorer quality of life, increased rehospitalizations, and greater mortality",
+   "secao": "Conclusions"
+  },
+  {
+   "afirmacao": "Estudos observacionais sugerem que esses desfechos podem melhorar com a correção do sódio, embora os dados de ensaios randomizados permaneçam limitados; até haver evidência mais forte, o manejo da hiponatremia crônica deve ser visto como parte do suporte ao envelhecimento saudável.",
+   "citacao": "Observational studies suggest these outcomes can improve when sodium levels are corrected, though randomized controlled trial data remain limited. Until stronger evidence is available, managing chronic hyponatremia should be seen as part of supporting healthy ageing",
+   "secao": "Conclusions"
+  },
+  {
+   "afirmacao": "O diagnóstico diferencial apropriado é pré-requisito, já que o tratamento adequado difere conforme a etiologia da hiponatremia.",
+   "citacao": "Appropriate differential diagnosis is a prerequisite, as the appropriate treatment is different in various aetiologies of hyponatremia",
+   "secao": "Conclusions"
+  },
+  {
+   "afirmacao": "Os pilares do tratamento da hiponatremia crônica são: salina isotônica na hiponatremia hipovolêmica; restrição hídrica e diuréticos de alça na hipervolêmica; e restrição hídrica, ureia ou vaptanos nos pacientes com SIAD.",
+   "citacao": "Several treatment modalities of chronic hyponatremia are available, with the mainstays being isotonic saline infusion in hypovolemic hyponatremia, fluid restriction and loop diuretics in hypervolemic hyponatremia, and fluid restriction, urea or vaptans in patients with SIAD",
+   "secao": "Conclusions"
+  },
+  {
+   "afirmacao": "A suplementação proteica e os inibidores de SGLT2 surgiram nos últimos anos como alternativas de tratamento atraentes e holísticas, especialmente em pacientes idosos.",
+   "citacao": "In addition, protein supplementation and SGLT2 inhibitors have appeared in the last years as treatment alternatives that could represent an attractive and holistic option, especially in older patients",
+   "secao": "Conclusions"
+  },
+  {
+   "afirmacao": "Os idosos enfrentam risco aumentado de hiponatremia por mudanças relacionadas à idade na regulação da AVP e na capacidade de concentração urinária, além de maiores taxas de comorbidades, polifarmácia e desnutrição.",
+   "citacao": "• Older adults face a heightened risk of hyponatremia due to age-related changes in AVP regulation and urine concentration abilities, as well as higher rates of comorbidities, polypharmacy, and malnutrition",
+   "secao": "Practice Points"
+  },
+  {
+   "afirmacao": "A hiponatremia crônica está ligada a maior mortalidade e morbidade, incluindo declínio neuromuscular e cognitivo e osteoporose.",
+   "citacao": "• Chronic hyponatremia is linked to higher mortality and morbidity, including neuromuscular and cognitive decline as well as",
+   "secao": "Practice Points"
+  },
+  {
+   "afirmacao": "Há evidência de que corrigir a hiponatremia pode melhorar a função neuromuscular e neurocognitiva e beneficiar a saúde óssea, e uma abordagem diagnóstica passo a passo é útil na avaliação da hiponatremia.",
+   "citacao": "• Evidence suggests that correcting hyponatremia may improve neuromuscular and neurocognitive function and benefit bone health • A step-wise diagnostic approach is helpful when evaluating hyponatremia",
+   "secao": "Practice Points"
+  },
+  {
+   "afirmacao": "Há nova evidência para o tratamento da SIAD, com inibidores de SGLT2 e suplementação proteica oferecendo benefícios de saúde mais amplos na população idosa.",
+   "citacao": "• New evidence is available for SIAD treatment, with SGLT2 inhibitors and protein supplementation offering broader health benefits in the elderly population",
+   "secao": "Practice Points"
+  },
+  {
+   "afirmacao": "A agenda de pesquisa inclui biomarcadores para auxiliar no diagnóstico diferencial da hiponatremia, biomarcadores para detecção precoce da síndrome de desmielinização osmótica que guiem a taxa de correção do sódio, o possível papel protetor da ureia contra essa síndrome e ensaios prospectivos sobre a reversibilidade dos déficits neurocognitivos e neuromusculares.",
+   "citacao": "• Biomarkers to aid in the differential diagnosis of hyponatremia • Combinations of established treatments as well as longer-termed clinical studies on SGLT2-inhibitors and protein supple- mentation. • Evaluation of biomarkers for early detection of osmotic demyelination syndrome to guide sodium correction rate • Possible protective role of urea for osmotic demyelination syndrome • Prospective trials to evaluate the reversibility of neurocognitive and neuromuscular deficits in hyponatremic patients",
+   "secao": "Research Agenda"
+  }
+ ]
+}
