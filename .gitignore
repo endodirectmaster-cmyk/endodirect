@@ -49,6 +49,15 @@ scratchpad/acervo/__pycache__/
 # repositório é público. Só o extrato verificado sai dela para `extratos/`.
 scratchpad/acervo/trabalho/
 
+# ⚠️ playwright-core: 14 MB instalados SOB DEMANDA pelo harness de navegador
+# (scratchpad/boot-navegador/README.md manda rodar `npm i playwright-core` na
+# hora do teste A/B). Este repositório versiona o node_modules de propósito, mas
+# isto aqui não é dependência da plataforma — é ferramenta de teste local, não
+# está no package.json e não tem por que viajar no bundle. Sem esta linha ele
+# aparece como arquivo novo toda vez que o harness roda.
+node_modules/playwright-core/
+node_modules/.bin/playwright-core
+
 # Rascunhos que os agentes criam durante a extração (fatiadores, checadores
 # temporários, cache do Python). O que importa é o EXTRATO verificado.
 scratchpad/acervo/__pycache__/
