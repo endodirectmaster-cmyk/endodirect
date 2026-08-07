@@ -108,17 +108,111 @@ ok(/deepFor\(areaPedida, TETO_PROFUNDO, areaPedida\)/.test(ai),
 // (o corte por teto come o fim). Sem ela, a IA recebe conduta superada sem aviso.
 {
   const dados = require('../lib/clinical-deep-data.js');
+  const CABECA = /^⚠️ (RESSALVA|EXCEÇÃO|LACUNA DO NÚCLEO)/;
   let comRessalva = null, areaR = '';
   for (const a of Object.keys(dados)) {
-    const b = (dados[a] || []).find((x) => /RESSALVA/.test(x.texto));
+    const b = (dados[a] || []).find((x) => CABECA.test(x.texto));
     if (b) { comRessalva = b; areaR = a; break; }
   }
   if (comRessalva) {
-    ok(/^⚠️ RESSALVA/.test(comRessalva.texto),
-      'a ressalva de conflito tem de estar no INÍCIO do texto do bloco — no fim, o corte por teto a apaga');
     const ent = deep.deepFor(areaR, 120000, areaR + ' ' + String(comRessalva.tema || ''));
-    ok(/RESSALVA/.test(ent), '⚠️ a ressalva de conflito com o núcleo NÃO está chegando à IA');
+    ok(CABECA.test(ent.slice(ent.indexOf(comRessalva.texto.slice(0, 40)))) || ent.indexOf(comRessalva.texto.slice(0, 40)) >= 0,
+      '⚠️ a ressalva de conflito com o núcleo NÃO está chegando à IA');
   }
+
+  // ⚠️ A DIREÇÃO DA RESSALVA — o defeito que motivou este teste (07/08/2026).
+  // O cabeçalho era um só e dizia sempre "o núcleo prevalece sobre esta fonte".
+  // O extrato de hipofosfatasia carrega, com citação literal, que ali o
+  // bisfosfonato é CONTRAINDICADO — e o núcleo recomenda antirreabsortivo para
+  // osteoporose. O cabeçalho entregava a contraindicação já mandando ignorá-la:
+  // nenhum fato errado, nenhuma citação falsa, e a conduta invertida.
+  // Este teste lê os EXTRATOS e confere que o texto entregue diz o que o extrato
+  // declarou — em particular que `fonte_prevalece` nunca vira "o núcleo prevalece".
+  //
+  // ⚠️ O QUE ESTE TESTE **NÃO** PROVA, e o teste por mutação mostrou: ele confere
+  // CONSISTÊNCIA, não CORREÇÃO. Trocar o `conflito_direcao` da hipofosfatasia
+  // para `nucleo_prevalece` reintroduz a inversão original e este bloco continua
+  // verde, porque o cabeçalho entregue muda junto com o campo. Quem pega esse
+  // caso é o scripts/confere-ressalvas.js, que exige justificativa escrita
+  // (`nucleo_prevalece_porque`) para marcar `nucleo_prevalece` numa ressalva que
+  // contém proibição. Não confie só no que está aqui.
+  const fsx = require('fs');
+  const dirExt = path.join(raiz, 'scratchpad', 'acervo', 'extratos');
+  if (fsx.existsSync(dirExt)) {
+    const porTema = {};
+    for (const a of Object.keys(dados)) for (const b of dados[a]) porTema[String(b.tema || '').trim()] = b;
+    let conferidos = 0;
+    for (const arq of fsx.readdirSync(dirExt).filter((f) => f.endsWith('.json'))) {
+      const e = JSON.parse(fsx.readFileSync(path.join(dirExt, arq), 'utf8'));
+      if (!String(e.conflito || '').trim()) continue;
+      const b = porTema[String(e.tema || e.titulo || '').trim()];
+      if (!b) continue;
+      conferidos++;
+      const t = b.texto;
+      if (e.conflito_direcao === 'fonte_prevalece') {
+        ok(/^⚠️ EXCEÇÃO — ESTA FONTE PREVALECE SOBRE O NÚCLEO/.test(t),
+          `⚠️ INVERSÃO DE CONDUTA: "${String(e.tema).slice(0, 40)}" está marcado fonte_prevalece e o bloco entregue não abre com a exceção`);
+        ok(!/O NÚCLEO PREVALECE sobre esta fonte/.test(t),
+          `⚠️ INVERSÃO DE CONDUTA: "${String(e.tema).slice(0, 40)}" é fonte_prevalece e o texto manda usar o núcleo`);
+      }
+      if (e.conflito_direcao === 'nucleo_prevalece') {
+        ok(/^⚠️ RESSALVA — O NÚCLEO PREVALECE/.test(t),
+          `"${String(e.tema).slice(0, 40)}" está marcado nucleo_prevalece e o bloco não diz isso`);
+      }
+      if (e.conflito_direcao === 'lacuna') {
+        ok(/^⚠️ LACUNA DO NÚCLEO/.test(t), `"${String(e.tema).slice(0, 40)}" está marcado lacuna e o bloco não diz isso`);
+      }
+      if (e.conflito_direcao === 'alinhado') {
+        ok(!CABECA.test(t),
+          `"${String(e.tema).slice(0, 40)}" está marcado alinhado (o núcleo já foi corrigido a partir dele) e mesmo assim entrega ressalva — é alarme falso no prefixo cacheado`);
+      }
+    }
+    ok(conferidos >= 5, `esperava conferir a direção de várias ressalvas e conferi ${conferidos}`);
+  }
+}
+
+// ── ROTEAMENTO POR TERMO CLÍNICO ────────────────────────────────────────────
+// ⚠️ Medido em 07/08/2026: "osteoporose", "fosfatase alcalina baixa" e
+// "Osteoporose refratária" canonizavam para NADA — bloco profundo de 0 caractere.
+// O único texto que alcançava Osteometabolismo era a palavra "Osteometabolismo",
+// que nenhum médico digita. O artigo que diz `bisphosphonates are contraindicated`
+// estava na base, verificado, e não chegava a quem perguntava exatamente por ele.
+ok(deep.canonArea('osteoporose') === 'Osteometabolismo', 'termo clínico "osteoporose" tem de rotear para Osteometabolismo');
+ok(deep.canonArea('fosfatase alcalina baixa') === 'Osteometabolismo', '"fosfatase alcalina" tem de rotear para Osteometabolismo');
+ok(deep.canonArea('prolactinoma') === 'Neuroendocrinologia', '"prolactinoma" tem de rotear para Neuroendocrinologia');
+{
+  const q = 'Mulher de 62 anos, fratura de punho após queda da própria altura, DXA com T-score −2,7, sem causa secundária aparente. Fosfatase alcalina 22 U/L. Posso iniciar alendronato?';
+  ok(deep.canonArea(q) === 'Osteometabolismo', 'a pergunta clínica inteira tem de rotear pela palavra que decide, mesmo tarde na frase');
+  const b = deep.deepFor(q, 120000, q);
+  ok(/CONTRAINDICADO|contraindicated/i.test(b),
+    '⚠️ a contraindicação de bisfosfonato na hipofosfatasia NÃO está chegando a quem pergunta por ela');
+}
+// ⚠️ FRONTEIRA DE PALAVRA. A chave 'osso' (sinônimo de Osteometabolismo) está
+// dentro de "posso" e "nosso". Enquanto canonArea só recebia NOME DE ÁREA isso
+// era inofensivo; ao receber a pergunta do médico, "posso dar isso ao nosso
+// paciente?" roteava para Osteometabolismo por acidente.
+ok(deep.canonArea('posso dar isso ao nosso paciente?') === '',
+  '⚠️ substring casual ("posso"/"nosso" contêm "osso") não pode definir a subespecialidade');
+
+// ── O CHAT precisa mandar a pergunta como grounding ─────────────────────────
+// Era o único consumidor de IA que nunca recebia a base profunda: o api/ai.js
+// roteia por `body.area||body.grounding` e o chat não mandava nem um nem outro.
+// ⚠️ Nada de regex sobre o system inteiro: ele passa de 1 KB e tem parênteses
+// dentro, então `[^)]*` casa errado e o teste vira sempre-verde. Ancora-se no
+// fim do argumento (`+CLINICAL_GUIDELINES,`) e lê só o que vem depois.
+{
+  const ANCORA = "+CLINICAL_GUIDELINES,";
+  let i = -1, n = 0;
+  while ((i = html.indexOf("callAI('ESCOPO RESTRITO", i + 1)) >= 0) {
+    n++;
+    const j = html.indexOf(ANCORA, i);
+    ok(j > 0 && j - i < 4000, `chat ${n}: não achei o fim do system (${ANCORA})`);
+    if (j < 0) continue;
+    const cauda = html.slice(j + ANCORA.length, j + ANCORA.length + 60);
+    ok(/^(text|txt),\s*1200\s*,\s*null\s*,\s*\1\s*\)/.test(cauda),
+      `⚠️ chat ${n}: a pergunta não vai como grounding (veio "${cauda.slice(0, 32)}…") — sem isso o chat NUNCA recebe a base profunda`);
+  }
+  ok(n === 2, `esperava 2 chamadas de chat (aluno e admin) e achei ${n}`);
 }
 
 // ── avalia CLINICAL_GUIDELINES de verdade ────────────────────────────────────

@@ -1,498 +1,503 @@
 {
-  "fileId": "hipo-3",
-  "titulo": "Treatment of chronic hyponatremia and controversy about osmotic demyelination syndrome",
-  "tema": "hiponatremia crônica — tratamento e controvérsia da desmielinização osmótica",
-  "fonte": "Beck J. Treatment of chronic hyponatremia and controversy about osmotic demyelination syndrome. Best Pract Res Clin Endocrinol Metab 2026;40:102067",
-  "area": "Endocrinopatias",
-  "tipo": "revisao",
-  "ano": 2026,
-  "conflito": "ATUALIZA/CONTRARIA o núcleo (\"Distúrbios do sódio e da água — revisões 2025-26\"), que trata os limites de correção como fato assentado (\"LIMITE <=8 mmol/L/24 h se risco de desmielinização osmótica; <=10-12 sem risco\") e não menciona tolvaptan. (1) CONTROVÉRSIA ATIVA: esta revisão de 2026 documenta que, desde 2023, evidência de peso questiona esses limites — coorte de >22.000 pacientes com incidência de SDO de apenas 0,05 %, e uma coorte de >3000 pacientes com Na <120 na qual 5 dos 7 casos de SDO ocorreram SEM ultrapassar 8 mmol/L; uma metanálise de 16 coortes ligou correção RÁPIDA a MENOR mortalidade sem aumento significativo de SDO. A autora, porém, conclui que abandonar os limites NÃO se justifica sem ECR. (2) O núcleo OMITE o limite de 48 h (18 mmol/L), a definição do grupo de alto risco (Na <=105 mmol/L) e a META de apenas 4-6 mmol/L/dia nesse grupo. (3) O núcleo generaliza \"<=8 se risco\", mas a diretriz EUROPEIA de 2014 não traz limiar menor específico para alto risco. (4) O núcleo lista \"restrição hídrica/vaptanos\" juntos, enquanto aqui o vaptano é usado SEM restrição hídrica, exigindo sede intacta. (5) O núcleo não registra que o FDA retirou a aprovação do tolvaptan na cirrose. CITACOES: \"In 2023 a debate regarding the true incidence and clinical relevance of ODS arose. MacMillan et al. conducted a multicenter cohort study involving over 22,000 patients with hyponatremia across nine Canadian hospitals, reporting an overall ODS incidence of 0.05 % [24,4]. Rapid correction of serum sodium occurred in 17.7 % of patients, but only 12 developed ODS, seven of whom had not experienced rapid correction.\" || \"Among the seven patients who developed ODS, five had not exceeded an 8 mmol/L\" || \"Similarly, a meta-analysis by Ayus et al. including 16 cohort studies showed that rapid sodium correction was associated with lower mortality and shorter hospitalizations, without a significant increase in ODS risk [5].\" || \"In the absence of randomized controlled trials, abandoning the current correction limits outlined in existing guidelines cannot be justified at this time.\" || \"In 2007 and again in 2013, U.S. expert panels recommended limiting the rate of sodium correction in chronic hyponatremia to 10–12 mmol/L within 24 h and 18 mmol/L within 48 h. For individuals at high risk for osmotic demyelination syndrome (ODS)—those with serum sodium ≤ 105 mmol/L, alcoholism, malnutrition, advanced liver disease, or hypokalemia—stricter limits were advised, with a maximum of 8 mmol/L in 24 h and therapeutic goals of only 4–6 mmol/L per day [59,60].\" || \"European guidelines published in 2014 recommended similar limits, with a maximum increase of 10 mmol/L in the first 24 h and 8 mmol/L per day thereafter, without specific lower thresholds for high-risk patients [44].\" || \"vaptans (without fluid restriction)\" || \"However, in 2013, the FDA withdrew approval for its use in liver cirrhosis after reports of serious hepatotoxicity associated with higher tolvaptan doses used in patients with autosomal dominant polycystic kidney disease [53].\"",
-  "fatos": [
-    {
-      "afirmacao": "Panorama do tratamento da hiponatremia crônica: a salina isotônica permanece a pedra angular da hiponatremia HIPOvolêmica; restrição hídrica e diuréticos de alça são preferidos nos estados HIPERvolêmicos; a reposição de corticosteroide é a terapia de primeira linha na hiponatremia por insuficiência adrenal; e na SIAD euvolêmica o tratamento de primeira linha é a restrição hídrica, com ureia oral ou antagonistas do receptor de vasopressina como opções de segunda linha.",
-      "citacao": "Isotonic saline remains the cornerstone for hypo- volemic hyponatremia, whereas fluid restriction and loop diuretics are preferred in hypervolemic states. Corticosteroid replacement is the first-line therapy in hyponatremia due to adrenal in- sufficiency. In the euvolemic syndrome of inappropriate antidiuresis, first-line treatment is fluid restriction, with additional oral urea or vasopressin receptor antagonists as second-line options.",
-      "secao": "Resumo"
-    },
-    {
-      "afirmacao": "A complicação mais temida do tratamento da hiponatremia é a síndrome de desmielinização osmótica, com risco MÁXIMO em pacientes com hiponatremia grave (sódio <=105 mmol/L), alcoolismo, desnutrição, doença hepática ou hipocalemia. As diretrizes atuais recomendam limitar a correção do sódio a <=10–12 mmol/L por 24 h (<=8 mmol/L nos pacientes de alto risco).",
-      "citacao": "The most feared complication of hyponatremia treatment is osmotic demyelination syndrome, with highest risk in patients with severe hyponatremia (≤105 mmol/L), alcoholism, malnutri- tion, liver disease, or hypokalemia. Current guidelines recommend limiting sodium correction to ≤ 10–12 mmol/L per 24 h (≤8 mmol/L in high-risk patients).",
-      "secao": "Resumo"
-    },
-    {
-      "afirmacao": "Estratégias novas como suplementação proteica e inibidores do SGLT2 oferecem adjuvantes promissores no tratamento da hiponatremia crônica.",
-      "citacao": "Novel strategies such as protein supplementation and SGLT2 inhibitors offer promising adjuncts.",
-      "secao": "Resumo"
-    },
-    {
-      "afirmacao": "No manejo do paciente com hiponatremia grave (sódio sérico <=120 mmol/L) devem-se levantar duas perguntas fundamentais: qual a agudeza do início, e há manifestações neurológicas graves? As respostas determinam tanto a urgência quanto a intensidade da intervenção terapêutica.",
-      "citacao": "The management of patients with severe hyponatremia (serum sodium ≤120 mmol/L) should raise two fundamental clinical questions: What is the acuity of onset, and are severe neurological manifestations present? The answers to these questions are critical, as they determine both the urgency and the intensity of therapeutic intervention.",
-      "secao": "Treatment of chronic hyponatremia"
-    },
-    {
-      "afirmacao": "Na hiponatremia aguda gravemente sintomática, com convulsões, coma ou herniação iminente por edema cerebral, o aumento IMEDIATO do sódio com salina hipertônica tem PRIORIDADE sobre a investigação diagnóstica adicional ou o tratamento etiológico dirigido.",
-      "citacao": "Acute, severely symptomatic hyponatremia with neurological symptoms-such as seizures, coma, or impending herniation due to cerebral edema, require prompt therapy. Immediate increase of serum sodium with hypertonic saline takes priority over further diagnostic work-up or targeted etiologic treatment in severe neurological manifestations.",
-      "secao": "Treatment of chronic hyponatremia"
-    },
-    {
-      "afirmacao": "UM OU DOIS bolus de salina hipertônica costumam ser suficientes para obter aumento de 4–6 mmol/L no sódio sérico, estabilizar o paciente e resolver os sintomas agudos.",
-      "citacao": "One or two hypertonic saline boluses are usually sufficient to achieve a 4–6 mmol/L increase in serum sodium, stabilize the patient and to resolve acute symptoms.",
-      "secao": "Treatment of chronic hyponatremia"
-    },
-    {
-      "afirmacao": "A hiponatremia CRÔNICA (>= 48 h) desenvolve-se gradualmente, resultando em sintomas mais leves e sutis; os mecanismos adaptativos minimizam o edema cerebral, o que explica por que esses pacientes frequentemente parecem menos sintomáticos do que a concentração de sódio sugeriria.",
-      "citacao": "Meanwhile, chronic hyponatremic (≥ 48 h) typically develops gradually over time, resulting in milder and more subtle symptoms. Adaptive mechanisms minimize brain swelling, explaining why such patients often appear less symptomatic than their serum sodium concentration would suggest.",
-      "secao": "Treatment of chronic hyponatremia"
-    },
-    {
-      "afirmacao": "Avaliação completa da etiologia subjacente da hiponatremia é essencial para guiar a terapia dirigida, elevar o sódio em ritmo controlado e prevenir complicações.",
-      "citacao": "A throughout evaluation of the underlying etiology of hyponatremia is essential to guide targeted therapy, increase sodium levels at a controlled pace and prevent complications in these patients.",
-      "secao": "Treatment of chronic hyponatremia"
-    },
-    {
-      "afirmacao": "Em 2007 e novamente em 2013, painéis de especialistas dos EUA recomendaram limitar a taxa de correção do sódio na hiponatremia crônica a 10–12 mmol/L em 24 h e 18 mmol/L em 48 h. Para indivíduos de ALTO RISCO de SDO — sódio sérico <= 105 mmol/L, alcoolismo, desnutrição, doença hepática avançada ou hipocalemia — foram aconselhados limites mais estritos, com MÁXIMO de 8 mmol/L em 24 h e metas terapêuticas de apenas 4–6 mmol/L por dia.",
-      "citacao": "In 2007 and again in 2013, U.S. expert panels recommended limiting the rate of sodium correction in chronic hyponatremia to 10–12 mmol/L within 24 h and 18 mmol/L within 48 h. For individuals at high risk for osmotic demyelination syndrome (ODS)—those with serum sodium ≤ 105 mmol/L, alcoholism, malnutrition, advanced liver disease, or hypokalemia—stricter limits were advised, with a maximum of 8 mmol/L in 24 h and therapeutic goals of only 4–6 mmol/L per day [59,60].",
-      "secao": "Recommended correction limits in the treatment of chronic hyponatremia"
-    },
-    {
-      "afirmacao": "As diretrizes EUROPEIAS publicadas em 2014 recomendaram limites semelhantes, com aumento máximo de 10 mmol/L nas primeiras 24 h e 8 mmol/L por dia a seguir, mas SEM limiares específicos mais baixos para pacientes de alto risco. Apesar das diferenças menores, ambas as diretrizes compartilham ênfase consistente em segurança e correção cautelosa.",
-      "citacao": "European guidelines published in 2014 recommended similar limits, with a maximum increase of 10 mmol/L in the first 24 h and 8 mmol/L per day thereafter, without specific lower thresholds for high-risk patients [44]. Despite minor differences, both guidelines share a consistent emphasis on safety and cautious sodium correction.",
-      "secao": "Recommended correction limits in the treatment of chronic hyponatremia"
-    },
-    {
-      "afirmacao": "A administração de salina isotônica (cloreto de sódio a 0.9 %) é a terapia de primeira linha da hiponatremia hipovolêmica: ao restaurar sódio e volume extracelular, reverte os gatilhos fisiológicos do sistema renina-angiotensina-aldosterona e da liberação de vasopressina, o que promove diurese aquosa assim que a depleção de volume é corrigida.",
-      "citacao": "The administration of isotonic saline (0.9 % sodium chloride) is the first-line therapy for hypovolemic hyponatremia [26]. By restoring both sodium and extracellular fluid volume, it reverses the physiological triggers for renin–angiotensin–aldosterone system (RAAS) and arginine vasopressin (AVP) release, which in turn promotes a water diuresis once volume depletion is corrected.",
-      "secao": "Treatment approaches according to etiology — Hypovolemic hyponatremia"
-    },
-    {
-      "afirmacao": "Como essa diurese pode causar subida RÁPIDA do sódio sérico, pacientes com hiponatremia moderada a grave exigem monitorização estreita e frequente dos níveis de sódio durante o tratamento.",
-      "citacao": "Because this diuresis can lead to a rapid rise in serum sodium, patients with moderate to severe hyponatremia require close and frequent monitoring of sodium levels during treatment [64].",
-      "secao": "Treatment approaches according to etiology — Hypovolemic hyponatremia"
-    },
-    {
-      "afirmacao": "A salina isotônica NÃO é eficaz na síndrome da antidiurese inapropriada (SIAD): a excreção prejudicada de água livre impede que a água infundida seja adequadamente eliminada, o que pode PARADOXALMENTE PIORAR a hiponatremia em vez de melhorá-la.",
-      "citacao": "In contrast, isotonic saline is not effective in the syndrome of inappropriate antidiuresis (SIAD). In this setting, impaired free-water excretion prevents the infused water from being adequately eliminated, which can paradoxically worsen hyponatremia rather than improve it [45].",
-      "secao": "Treatment approaches according to etiology — Hypovolemic hyponatremia"
-    },
-    {
-      "afirmacao": "A hiponatremia hipovolêmica por perda cerebral de sal (cerebral salt wasting, CSW) foi descrita em distúrbios intracranianos, mas diferenciá-la da SIAD é desafiador e sua incidência é considerada baixa; quando o CSW com perda renal de sódio e alta excreção urinária é o diagnóstico mais provável, a ressuscitação de volume e de sal — e NÃO a restrição hídrica — representa o tratamento de primeira linha.",
-      "citacao": "Hypovolemic hyponatremia due to cerebral salt wasting (CSW) has been described in intracranial disorders. However, differ- entiating cerebral salt wasting from the syndrome of inappropriate antidiuresis is challenging and its incidence is thought to be rather low (see also chapter “Diagnostic algorithm of hyponatremia“). If cerebral salt wasting with renal sodium loss and high urine excretion is diagnosed as the most likely diagnosis, volume and salt resuscitation (rather than fluid restriction) represents the first- line treatment.",
-      "secao": "Treatment approaches according to etiology — Hypovolemic hyponatremia"
-    },
-    {
-      "afirmacao": "Na hiponatremia por insuficiência adrenal, a reposição imediata de glicocorticoide é a pedra angular do tratamento: na insuficiência adrenal PRIMÁRIA a deficiência mineralocorticoide associa-se à perda renal de sódio e hipovolemia, enquanto na SECUNDÁRIA há supressão diminuída da vasopressina, que pode ser restaurada pela reposição de glicocorticoide.",
-      "citacao": "In hyponatremia due to adrenal insufficiency, prompt glucocorticoid replacement is the cornerstone of treatment. In primary adrenal insufficiency, mineralocorticoid deficiency is associated with renal sodium loss and hypovolemia, whereas secondary adrenal insufficiency is associated with a diminished suppression of vasopressin, which can be restored by glucocorticoid replacement.",
-      "secao": "Treatment approaches according to etiology — Hypovolemic hyponatremia"
-    },
-    {
-      "afirmacao": "Os diuréticos de alça são pedra angular da terapia dos estados hipervolêmicos, como insuficiência cardíaca descompensada e hiponatremia hipervolêmica: induzem natriurese e, ao mesmo tempo, reduzem a osmolalidade urinária ao inibir o cotransportador sódio-potássio-2cloro no ramo ascendente espesso da alça de Henle, enfraquecendo o gradiente osmótico que impulsiona a reabsorção de água nos ductos coletores. Assim, diminuem a capacidade renal de concentrar urina e promovem a excreção de água livre de eletrólitos.",
-      "citacao": "Loop diuretics represent a cornerstone of therapy for hypervolemic states, such as decompensated heart failure and hypervolemic hyponatremia [33]. Although loop diuretics induce natriuresis, they simultaneously reduce urinary osmolality by diminishing solute accumulation in the renal medulla. This effect results from inhibition of the Na⁺–K⁺–2Cl⁻ cotransporter in the thick ascending limb of the loop of Henle, thereby weakening the osmotic gradient that drives water reabsorption in the collecting ducts. Consequently, loop diuretics decrease the kidney’s ability to concentrate urine and promote the excretion of electrolyte-free water in hypervolemic hyponatremia.",
-      "secao": "Treatment approaches according to etiology — Hypervolemic hyponatremia"
-    },
-    {
-      "afirmacao": "Na polidipsia, a pedra angular do manejo é restringir a ingesta de líquidos, tipicamente limitando o consumo total de água a menos que a capacidade excretora renal, frequentemente <= 1–1.5 litros por dia. A correção costuma ser gradual assim que cessa a ingesta excessiva, pois os rins excretam água livre rapidamente quando a atividade da AVP se normaliza; intervenções comportamentais e educação do paciente são importantes, sobretudo nos transtornos psiquiátricos, em que a polidipsia é crônica e recorrente.",
-      "citacao": "The cornerstone of hyponatremia management in polydipsia is restriction of fluid intake, typically limiting total water con- sumption to less than the renal excretory capacity, often ≤ 1–1.5 liters per day. Correction is usually gradual once excessive intake ceases, as the kidneys rapidly excrete free water once AVP activity normalizes. Behavioral interventions and patient education are important, particularly in patients with psychiatric disorders, in whom polydipsia is often chronic and recurrent [2].",
-      "secao": "Polydipsia"
-    },
-    {
-      "afirmacao": "A hiponatremia por baixo aporte de soluto ocorre quando o consumo alimentar de proteína e sal é insuficiente para sustentar a excreção renal normal de água (por exemplo, na dieta de chá e torrada ou na potomania da cerveja); nesses pacientes a capacidade renal de eliminar água livre fica limitada pela disponibilidade de soluto excretável.",
-      "citacao": "Hyponatremia resulting from low-solute intake occurs when dietary consumption of protein and salt is insufficient to sustain normal renal water excretion (e.g.in “tea and toast diet” or “beer potomania”). In such patients, the kidney’s capacity to eliminate free water is constrained by the availability of excretable solute.",
-      "secao": "Low-solute intake"
-    },
-    {
-      "afirmacao": "Em condições normais, a ingestão de aproximadamente 600–900 mOsm de soluto por dia permite excretar até 12–18 litros de urina maximamente diluída. Já em indivíduos que consomem quantidades extremamente baixas de soluto — dietas compostas em grande parte de chá, torrada ou cerveja — a carga osmolar total pode cair para 100–200 mOsm por dia, limitando a capacidade de excretar água livre a apenas 2–4 litros diários; mesmo ingesta modesta de líquido nessas condições pode causar retenção de água e hiponatremia dilucional.",
-      "citacao": "Under normal circumstances, the ingestion of approximately 600–900 mOsm of solute per day allows for the excretion of up to 12–18 liters of maximally dilute urine. By contrast, in individuals consuming extremely low quantities of solute — as seen in diets composed largely of tea, toast, or beer — the total osmolar load may fall to 100–200 mOsm per day, limiting the capacity to excrete free water to only 2–4 liters daily. Even modest fluid intake under these conditions may therefore result in water retention and dilutional hyponatremia [30].",
-      "secao": "Low-solute intake"
-    },
-    {
-      "afirmacao": "O passo inicial do manejo é reconhecer a etiologia e suspender toda ingesta de fluido hipotônico, incluindo água em excesso, cerveja ou chá. A restauração do aporte de soluto deve ser GRADUAL, começando com quantidades modestas de proteína e sal da dieta. A administração ABRUPTA de salina isotônica deve ser EVITADA, pois pode deflagrar aumento súbito do débito urinário e correção rápida descontrolada do sódio; se fluidos intravenosos forem necessários, pequenos bolus (por exemplo, 250 mL de salina isotônica) podem ser dados sob monitorização estrita do sódio sérico e do débito urinário.",
-      "citacao": "The initial step in management is to recognize the underlying etiology and discontinue all hypotonic fluid intake, including excessive water, beer, or tea. Restoration of solute intake should be undertaken gradually, beginning with modest amounts of dietary protein and salt. Abrupt administration of isotonic saline should be avoided, as it may trigger a sudden increase in urine output and uncontrolled rapid sodium correction. If intravenous fluids are required, small boluses (e.g., 250 mL isotonic saline) may be given under strict monitoring of serum sodium and urine output.",
-      "secao": "Low-solute intake"
-    },
-    {
-      "afirmacao": "Quando o aporte de soluto é restaurado abruptamente — seja por salina isotônica, seja pela reintrodução de proteína e sal na dieta — o rim recupera rapidamente a capacidade de excretar água, o que frequentemente leva a diurese profusa e supracorreção perigosa do sódio, podendo predispor a síndrome de desmielinização osmótica.",
-      "citacao": "When solute intake is abruptly restored, either through administration of isotonic saline or by reintroduction of dietary protein and salt, the kidney rapidly regains the ability to excrete water. This often leads to a profound diuresis and a potentially dangerous overcorrection of serum sodium concentration, which can predispose to osmotic demyelination syndrome (ODS).",
-      "secao": "Low-solute intake"
-    },
-    {
-      "afirmacao": "A restrição hídrica permanece a terapia de PRIMEIRA LINHA na hiponatremia da SIAD; tipicamente recomenda-se restrição de 500–1000 mL por dia, ou 500 mL a MENOS que o débito urinário de 24 horas.",
-      "citacao": "Fluid restriction remains the first-line therapy for patients with hyponatremia in the syndrome of in- appropriate antidiuresis (SIAD) [15,33]. Typically, a restriction of 500–1000 mL per day, or 500 mL less than the 24-hour urine output, is recommended.",
-      "secao": "Euvolemic hyponatremia in SIAD — First line treatment"
-    },
-    {
-      "afirmacao": "Em ensaio randomizado de 2020 com 46 pacientes ambulatoriais de idade média de 74 anos, a restrição hídrica resultou em aumento médio do sódio plasmático de 3 mmol/L após 3 dias e 4 mmol/L após 30 dias, comparado com apenas 1 mmol/L no grupo controle não tratado.",
-      "citacao": "In a 2020 randomized controlled trial involving 46 outpatients with a mean age of 74 years, fluid restriction resulted in a mean plasma sodium increase of 3 mmol/L after 3 days and 4 mmol/L after 30 days, compared with only 1 mmol/L in the untreated control group [14].",
-      "secao": "Euvolemic hyponatremia in SIAD — First line treatment"
-    },
-    {
-      "afirmacao": "COMO PREVER QUEM NÃO RESPONDE A RESTRIÇÃO HÍDRICA: apesar dos resultados dos ensaios, a eficácia no mundo real é frequentemente menor e pode ser INADEQUADA em pacientes com osmolalidade urinária acima de 500 mOsm/kg, sódio urinário acima de 130 mmol/L, ou relação de eletrólitos urina/plasma maior que 1.0.",
-      "citacao": "Despite these findings, the real-world efficacy of fluid restriction is often lower and may be inadequate in patients with urine osmolality exceeding 500 mOsm/kg, urine sodium above 130 mmol/L, or a urine-to-plasma electrolyte ratio greater than 1.0 [13,63].",
-      "secao": "Euvolemic hyponatremia in SIAD — First line treatment"
-    },
-    {
-      "afirmacao": "Embora a restrição hídrica seja em geral segura e bem tolerada, efeitos adversos como lesão renal aguda e hipotensão foram relatados em até 10 % dos pacientes em estudos clínicos; além disso, é frequentemente limitada pela baixa tolerabilidade, especialmente por períodos mais longos.",
-      "citacao": "Although fluid restriction is generally safe and well tolerated, adverse effects such as acute kidney injury and hypotension have been reported in up to 10 % of patients in clinical studies [20]. Moreover, fluid restriction is often limited due to low tolerability, especially for a longer period of time.",
-      "secao": "Euvolemic hyponatremia in SIAD — First line treatment"
-    },
-    {
-      "afirmacao": "A ureia oral induz diurese osmótica e é outra opção estabelecida de tratamento da SIAD; na maioria dos países europeus é preparada por farmácias como alimento medicinal manipulado sob prescrição, enquanto nos EUA há formulações aromatizadas prontas para uso, aprovadas pelo FDA como alimento medicinal.",
-      "citacao": "Oral Urea can induce osmotic diuresis and is another established treatment option for SIAD. In most European countries, urea is prepared by pharmacies as a compounded medical food on physician request, whereas in the United States, ready-to-use flavored formulations are available and approved by the FDA as medical food [38].",
-      "secao": "Euvolemic hyponatremia in SIAD — Second line: oral urea"
-    },
-    {
-      "afirmacao": "As diretrizes europeias recomendam dose de ureia de 0.25–0.50 g/kg por dia para pacientes com hiponatremia moderada a profunda refratária à restrição hídrica.",
-      "citacao": "The European guidelines recommend a dose of 0.25–0.50 g/kg per day for patients with moderate to profound hyponatremia that is refractory to fluid restriction [44].",
-      "secao": "Euvolemic hyponatremia in SIAD — Second line: oral urea"
-    },
-    {
-      "afirmacao": "Uma dose de 30 g de ureia fornece aproximadamente 500 miliosmoles de soluto excretável, equivalente à carga osmótica de cerca de 15 comprimidos de cloreto de sódio (de 1 g cada); as necessidades diárias tipicas variam de 15 a 60 g.",
-      "citacao": "A 30 g dose of urea provides approximately 500 milliosmoles of excretable solute, equivalent to the osmotic load of about 15 sodium chloride tablets (1 g each) [28]. Typical daily requirements range from 15 to 60 g.",
-      "secao": "Euvolemic hyponatremia in SIAD — Second line: oral urea"
-    },
-    {
-      "afirmacao": "A ação osmótica máxima da ureia ocorre ao longo dos segmentos do néfron IMPERMEÁVEIS a ureia — especificamente os túbulos conectores, os ductos coletores corticais e os ductos coletores medulares externos.",
-      "citacao": "The maximal osmotic action of urea occurs along the urea-impermeable nephron segments, specifically the connecting tubules, cortical collecting ducts, and outer me- dullary collecting ducts [38].",
-      "secao": "Euvolemic hyponatremia in SIAD — Second line: oral urea"
-    },
-    {
-      "afirmacao": "A maior parte da evidência sobre a ureia vem de relatos de caso, séries retrospectivas (total de cerca de 500 pacientes) e alguns pequenos estudos observacionais prospectivos (cerca de 40 pacientes).",
-      "citacao": "Most supporting evidence comes from case reports, retrospective series (total n ≈ 500 patients), and several small prospective observational studies (n ≈ 40 patients).",
-      "secao": "Euvolemic hyponatremia in SIAD — Second line: oral urea"
-    },
-    {
-      "afirmacao": "Um estudo prospectivo cruzado com 12 pacientes demonstrou que a ureia oral é segura, bem tolerada e COMPARÁVEL EM EFICÁCIA AO TOLVAPTAN, tendo os pacientes sido tratados sequencialmente com vaptano por um ano e com ureia por outro.",
-      "citacao": "A prospective crossover study of 12 patients demonstrated that oral urea is safe, well tolerated, and comparable in efficacy to tolvaptan, when patients were treated sequentially with vaptans for one year and urea for another [43].",
-      "secao": "Euvolemic hyponatremia in SIAD — Second line: oral urea"
-    },
-    {
-      "afirmacao": "Os níveis plasmáticos de ureia sobem tipicamente durante o tratamento, estabilizando após dois dias em torno de 12 mmol/L; duas metanálises recentes confirmaram eficácia e segurança, mostrando aumento médio do sódio sérico de cerca de 9 mmol/L durante a terapia — porém faltam ensaios clínicos randomizados.",
-      "citacao": "Plasma urea levels typically rise during treatment, stabilizing after two days at around 12 mmol/L [32]. Two recent meta- analyses confirmed its efficacy and safety, showing an average serum sodium increase of about 9 mmol/L during therapy [10,62], however randomized controlled trials are lacking.",
-      "secao": "Euvolemic hyponatremia in SIAD — Second line: oral urea"
-    },
-    {
-      "afirmacao": "Apesar do gosto ruim, a ureia é em geral bem tolerada e segura, e o sabor amargo pode ser atenuado dissolvendo-a em bebidas de sabor forte quando não há preparações aromatizadas. Para minimizar o risco de supracorreção e de desmielinização osmótica, a terapia deve começar com dose inicial BAIXA (15 g por dia), particularmente em pacientes com fatores de risco para SDO.",
-      "citacao": "Despite its poor taste, urea is generally well tolerated and safe [31]. The bitter taste can be mitigated by dissolving urea in strongly flavored beverages when flavored preparations are unavailable [44]. To minimize the risk of overcorrection and osmotic demyelination, therapy should begin with a low initial dose (15 g daily), particularly in patients with risk factors for ODS.",
-      "secao": "Euvolemic hyponatremia in SIAD — Second line: oral urea"
-    },
-    {
-      "afirmacao": "Além da SIAD, a ureia foi explorada na hiponatremia hipervolêmica: séries de casos documentaram correção bem-sucedida em 36 pacientes com insuficiência cardíaca, mas o benefício parece limitado naqueles com ureia plasmática basal elevada (> 20 mmol/L).",
-      "citacao": "Beyond SIAD, urea has also been explored in hypervolemic hypona- tremia. Case series have documented successful correction of hyponatremia in 36 patients with heart failure [9]. However, its benefit appears limited in those with elevated baseline plasma urea levels (> 20 mmol/L).",
-      "secao": "Euvolemic hyponatremia in SIAD — Second line: oral urea"
-    },
-    {
-      "afirmacao": "Em pacientes com CIRROSE HEPÁTICA, a ureia deve ser usada apenas com grande cautela e caso a caso, dado o risco de acúmulo de amônia e potencial encefalopatia hepática, além da ausência de evidência robusta de apoio.",
-      "citacao": "Similarly, in patients with liver cirrhosis, urea should be used only with great caution and on a case-by-case basis, given the risk of ammonia accumulation and potential hepatic encephalopathy, as well as the absence of robust supporting evidence.",
-      "secao": "Euvolemic hyponatremia in SIAD — Second line: oral urea"
-    },
-    {
-      "afirmacao": "Os antagonistas do receptor de vasopressina (vaptanos) agem antagonizando os receptores V2 da vasopressina, inibindo assim a expressão de aquaporina-2 nos ductos coletores renais e promovendo aquarese (excreção de água livre de eletrólitos).",
-      "citacao": "Vasopressin receptor antagonists (Vaptans) act by antagonizing vasopressin V₂ receptors, thereby inhibiting aquaporin-2 expression in the renal collecting ducts and promoting aquaresis (excretion of electrolyte-free water).",
-      "secao": "Euvolemic hyponatremia in SIAD — Second line: vaptans"
-    },
-    {
-      "afirmacao": "O tolvaptan, formulação ORAL, está disponível na Europa e nos EUA, enquanto o conivaptan, preparação INTRAVENOSA, é aprovado exclusivamente nos EUA.",
-      "citacao": "Tolvaptan, an oral formulation, is available in both Europe and the United States, while conivaptan, an intravenous preparation, is approved exclusively in the United States [33].",
-      "secao": "Euvolemic hyponatremia in SIAD — Second line: vaptans"
-    },
-    {
-      "afirmacao": "A eficácia do tolvaptan foi estabelecida nos ensaios SALT-1 e SALT-2, dois estudos randomizados, duplo-cegos e controlados por placebo que incluíram 448 pacientes com hiponatremia euvolêmica por SIAD ou hiponatremia hipervolêmica secundária a insuficiência cardíaca ou cirrose hepática; esses ensaios pivotais demonstraram aumentos significativos do sódio sérico, levando à aprovação do tolvaptan para SIAD na Europa e para hiponatremia euvolêmica e hipervolêmica nos EUA.",
-      "citacao": "The efficacy of tolvaptan was established in the SALT-1 and SALT-2 trials, two randomized, double-blind, placebo- controlled studies that enrolled 448 patients with euvolemic hyponatremia due to SIAD or hypervolemic hyponatremia secondary to heart failure or liver cirrhosis [40,56]. These pivotal trials demonstrated significant increases in serum sodium levels, leading to the approval of tolvaptan for the treatment of SIAD in Europe and for both euvolemic and hypervolemic hyponatremia in the United States [56].",
-      "secao": "Euvolemic hyponatremia in SIAD — Second line: vaptans"
-    },
-    {
-      "afirmacao": "POR QUE NÃO USAR TOLVAPTAN NA CIRROSE: em 2013 o FDA RETIROU a aprovação para uso na cirrose hepática, após relatos de hepatotoxicidade grave associada às doses mais altas de tolvaptan usadas em pacientes com doença renal policística autossômica dominante.",
-      "citacao": "However, in 2013, the FDA withdrew approval for its use in liver cirrhosis after reports of serious hepatotoxicity associated with higher tolvaptan doses used in patients with autosomal dominant polycystic kidney disease [53].",
-      "secao": "Euvolemic hyponatremia in SIAD — Second line: vaptans"
-    },
-    {
-      "afirmacao": "A principal limitação da terapia com tolvaptan é o risco de correção rápida demais do sódio, o que exige INÍCIO HOSPITALAR e titulação cuidadosa, particularmente nos pacientes com hiponatremia profunda; por isso, ingesta hídrica adequada (com CESSAÇÃO da restrição hídrica) e mecanismo da sede INTACTO são pré-requisitos essenciais para a terapia segura com tolvaptan.",
-      "citacao": "A major limitation of tolvaptan therapy is the risk of overly rapid sodium correction, which necessitates in-hospital initiation and careful titration, particularly in patients with profound hyponatremia [54,55]. Therefore, adequate fluid intake (cessation of fluid restriction) and an intact thirst mechanism are essential prerequisites for safe tolvaptan therapy.",
-      "secao": "Euvolemic hyponatremia in SIAD — Second line: vaptans"
-    },
-    {
-      "afirmacao": "Começar com dose inicial mais baixa reduz a probabilidade de supracorreção e por isso é recomendado ao iniciar a terapia; deve-se ter cautela também em pacientes em uso de inibidores ou indutores do CYP3A4, pelo potencial de interações medicamentosas significativas.",
-      "citacao": "Starting with a lower initial dose has been shown to reduce the likelihood of overcorrection and is therefore recommended when initiating therapy [17]. Clinicians should also be cautious in patients receiving CYP3A4 inhibitors or inducers, given the potential for significant drug–drug interactions [54].",
-      "secao": "Euvolemic hyponatremia in SIAD — Second line: vaptans"
-    },
-    {
-      "afirmacao": "O custo elevado do tratamento com tolvaptan — aproximadamente US$100 por dia (cerca de 100 euros) — frequentemente limita seu uso prático em escala mais ampla.",
-      "citacao": "The high cost of treatment—approximately US$100 per day (roughly €100)—often limits its practical use in a broader scale of patients.",
-      "secao": "Euvolemic hyponatremia in SIAD — Second line: vaptans"
-    },
-    {
-      "afirmacao": "Apesar dos desafios, o tratamento de longo prazo pode ser viável em casos selecionados: um relato de caso descreveu manejo bem-sucedido de SIAD idiopática com tolvaptan por mais de seis anos, demonstrando que, com monitorização apropriada, a terapia pode ser segura e eficaz em indivíduos bem escolhidos.",
-      "citacao": "Despite these challenges, long-term treatment may be feasible in selected cases. For example, a case report described the successful man- agement of idiopathic SIAD with tolvaptan for over six years, demonstrating that with appropriate monitoring, the therapy can be both safe and effective in well-chosen individuals [8].",
-      "secao": "Euvolemic hyponatremia in SIAD — Second line: vaptans"
-    },
-    {
-      "afirmacao": "Comprimidos de cloreto de sódio raramente bastam como terapia isolada na SIAD: cada comprimido de 1 g fornece apenas cerca de 34 mmol de íons sódio e cloreto, de modo que seria necessário um grande número de comprimidos para gerar carga osmótica suficiente para excretar 1 litro de urina com osmolalidade de 500 mOsm/kg.",
-      "citacao": "Salt tablets (sodium chloride tablets) as monotherapy is rarely sufficient as standalone therapy for SIAD. Each 1 g tablet provides only about 34 mmol of sodium and chloride ions, meaning that a large number of tablets would be needed to generate a sufficient osmotic load to excrete 1 liter of urine with an osmolality of 500 mOsm/kg.",
-      "secao": "Euvolemic hyponatremia in SIAD — Salt tablets"
-    },
-    {
-      "afirmacao": "Um estudo prospectivo que avaliou comprimidos de sal como terapia ADJUVANTE a restrição hídrica não relatou benefício significativo sobre a restrição hídrica isolada, sugerindo efeito aditivo apenas modesto dos comprimidos de cloreto de sódio.",
-      "citacao": "A prospective study evaluating salt tablets as adjunct therapy to fluid restriction reported no significant benefit over fluid restriction alone [20], suggesting only a modest additive effect of sodium chloride tablets in the treatment of hyponatremia.",
-      "secao": "Euvolemic hyponatremia in SIAD — Salt tablets"
-    },
-    {
-      "afirmacao": "O uso de diuréticos de alça combinados a comprimidos orais de sal foi descrito em algumas séries de casos de SIAD; porém um estudo randomizado controlado com 92 pacientes com SIAD não mostrou diferença no aumento do sódio entre restrição hídrica isolada e tratamento adicional com furosemida, com incidência AUMENTADA de lesão renal aguda nos que receberam furosemida — de modo que a evidência para diuréticos de alça na SIAD permanece limitada.",
-      "citacao": "Loop diuretics in combination with oral salt tablets has been described in some case series of SIAD [12,18]. However, a ran- domized controlled study of 92 patients with SIAD, showed no difference in sodium increase between fluid restriction alone or additional furosemide treatment, with increased incidences of acute kidney injury in patients receiving furosemide [20]. Therefore, the evidence of loop diuretics in SIAD treatment remains limited.",
-      "secao": "Euvolemic hyponatremia in SIAD — Loop diuretics"
-    },
-    {
-      "afirmacao": "A suplementação proteica mostrou-se opção eficaz na SIAD, pois as proteínas da dieta são metabolizadas a nitrogênio, que o fígado converte em ureia — um osmol solúvel e excretável. Aproximadamente 10 g de ingesta proteica produzem 50 mmol de ureia, contribuindo para a carga osmótica renal e facilitando a excreção de água.",
-      "citacao": "Protein supplementation has shown to be an effective treatment option in SIAD as dietary proteins are metabolized to nitrogen, which the liver converts into urea, a soluble and excretable osmole. Approximately 10 g of protein intake produces 50 mmol of urea, thereby contributing to the renal osmotic load and facilitating water excretion [33].",
-      "secao": "Emerging treatment options for SIAD — Protein supplementation"
-    },
-    {
-      "afirmacao": "Em modelos de SIAD em ratos, os animais que receberam dieta com 20 % de proteína ou dieta pobre em proteína suplementada com ureia oral apresentaram concentrações plasmáticas de sódio mais altas, natriurese reduzida e níveis mais altos de ureia na medula interna, em comparação com os mantidos apenas em dieta pobre em proteína.",
-      "citacao": "In rat models of SIAD, animals receiving either a 20 % protein diet or a low-protein diet supplemented with oral urea showed higher plasma sodium concentrations, reduced natriuresis, and increased inner medullary urea levels compared with those maintained on a low- protein diet alone [57].",
-      "secao": "Emerging treatment options for SIAD — Protein supplementation"
-    },
-    {
-      "afirmacao": "Em ensaio controlado de 2023 com 17 pacientes ambulatoriais com SIAD crônica, a suplementação proteica alta (90 g/dia por 7 dias) elevou o sódio plasmático e as concentrações de ureia plasmática e urinária em grau COMPARÁVEL ao obtido com 30 g/dia de ureia oral pelo mesmo período.",
-      "citacao": "In a 2023 a controlled trial involving 17 outpatients with chronic SIAD, high protein supplementation (90 g/day for 7 days) raised plasma sodium, as well as plasma and urinary urea concentrations, to a degree comparable to that achieved with 30 g/day of oral urea administered for the same duration [27].",
-      "secao": "Emerging treatment options for SIAD — Protein supplementation"
-    },
-    {
-      "afirmacao": "Os inibidores do cotransportador sódio-glicose 2 (SGLT2) promovem excreção renal de glicose, reduzindo o gradiente osmótico na medula renal e aumentando o clearance de água livre de eletrólitos.",
-      "citacao": "(SGLT2) inhibitors promote renal glucose excretion, thereby reducing the osmotic gradient within the renal medulla and enhancing electrolyte-free water clearance [11].",
-      "secao": "Emerging treatment options for SIAD — SGLT2 inhibitors"
-    },
-    {
-      "afirmacao": "A utilidade potencial dos iSGLT2 na hiponatremia foi avaliada primeiro em ensaio randomizado duplo-cego controlado por placebo com 87 pacientes hospitalizados com SIAD, no qual a empagliflozina (25 mg por dia durante 4 dias) combinada a restrição hídrica padrão (< 1000 mL/24 h) produziu aumento MAIOR do sódio plasmático do que restrição hídrica mais placebo (10 versus 7 mmol/L; p = 0.04).",
-      "citacao": "Their potential utility in hyponatremia was first evaluated in a double-blind, placebo-controlled randomized trial of 87 hospitalized patients with SIAD, in which empagliflozin (25 mg daily for 4 days) combined with standard fluid restriction (< 1000 mL/24 h) produced a greater increase in plasma sodium than fluid restriction plus placebo (10 vs. 7 mmol/L; p = 0.04) [37].",
-      "secao": "Emerging treatment options for SIAD — SGLT2 inhibitors"
-    },
-    {
-      "afirmacao": "Um ensaio cruzado duplo-cego controlado por placebo em pacientes ambulatoriais com SIAD crônica confirmou os achados: 4 semanas de empagliflozina (25 mg por dia) elevaram o sódio sérico em média 4.1 mmol/L (IC de 95 %: 1.7–6.5; p = 0.004). A evidência para outros iSGLT2 permanece limitada, mas o mecanismo compartilhado sugere efeito semelhante.",
-      "citacao": "A subsequent double-blind, placebo-controlled crossover trial in outpatients with chronic SIAD confirmed these findings: 4 weeks of empagliflozin (25 mg daily) raised serum sodium by an average of 4.1 mmol/L (95 % CI 1.7–6.5; p = 0.004) [36]. While evidence for other SGLT2 inhibitors remains limited, their shared mechanism of action suggests a similar effect on sodium increase among other SGLT2 inhibitors.",
-      "secao": "Emerging treatment options for SIAD — SGLT2 inhibitors"
-    },
-    {
-      "afirmacao": "A SDO é complicação rara mas devastadora da correção rápida da hiponatremia crônica, e evidencia o equilíbrio delicado exigido no tratamento: correção lenta demais mantém o edema cerebral, correção rápida demais arrisca desmielinização irreversível.",
-      "citacao": "Osmotic demyelination syndrome (ODS) is a rare but devastating complication of rapid correction of chronic hyponatremia. The syndrome underlines the delicate balance required in treating hyponatremia: overly slow correction risks ongoing cerebral edema, while overly rapid correction risks irreversible demyelination.",
-      "secao": "Osmotic demyelination syndrome"
-    },
-    {
-      "afirmacao": "A mielinólise pontina central (MPC) foi descrita pela primeira vez em 1959 por Adams, Victor e Mancall, que relataram desmielinização simétrica e não inflamatória da ponte central em achados de autópsia de pacientes desnutridos e alcoolistas.",
-      "citacao": "Central pontine myelinolysis (CPM) was first described in 1959 by Adams, Victor, and Mancall, who reported symmetrical, non- inflammatory demyelination of the central pons in autopsy findings of malnourished and alcoholic patients [1].",
-      "secao": "Osmotic demyelination syndrome — Historical background"
-    },
-    {
-      "afirmacao": "Durante os anos 1970, observações clínicas passaram cada vez mais a ligar a mielinólise pontina central ao tratamento da hiponatremia grave, e lesões semelhantes foram descritas em regiões extrapontinas — incluindo córtex cerebral, tálamo, gânglios da base e cerebelo — levando ao termo mielinólise extrapontina (MEP).",
-      "citacao": "During the 1970s, clinical observations increasingly linked CPM to treatment of severe hyponatremia and similar lesions were described in extrapontine regions, including the cerebral cortex, thalamus, basal ganglia, and cerebellum, leading to the term extrapontine myelinolysis (EPM)",
-      "secao": "Osmotic demyelination syndrome — Historical background"
-    },
-    {
-      "afirmacao": "Por décadas a condição foi percebida como extraordinariamente rara, confinada a pacientes debilitados com alcoolismo ou desnutrição, e NÃO RELACIONADA à correção do sódio.",
-      "citacao": "However, for decades it was perceived as an extraordinarily rare condition, confined to debilitated patients with alcoholism or malnutrition, and unrelated to sodium correction.",
-      "secao": "Osmotic demyelination syndrome — Historical background"
-    },
-    {
-      "afirmacao": "Em 1986, Sterns e colaboradores publicaram no New England Journal of Medicine o estudo de referência que introduziu o termo síndrome de desmielinização osmótica (ODS), para enfatizar sua definição CLÍNICA (em vez do termo patológico MPC/MEP) e sua associação com a correção da hiponatremia.",
-      "citacao": "In 1986, Sterns and colleagues published a landmark New England Journal of Medicine study introducing the term “Osmotic Demyelination Syndrome” (ODS) to emphasize its clinical definition (rather than the pathological term CPM/EPM) and its association with hyponatremia correction [48].",
-      "secao": "Osmotic demyelination syndrome — Historical background"
-    },
-    {
-      "afirmacao": "A EVIDÊNCIA QUE FUNDOU OS LIMITES CLÁSSICOS: Sterns apresentou uma série de 80 pacientes com sódio plasmático < 105 mmol/l. Destes, 38 foram corrigidos em mais de 12 pontos em 24 h, e MAIS DE 50 % desses desenvolveram sequelas neurológicas — 14 com diagnóstico de mielinólise pontina central. Em contraste, TODOS os pacientes cujo sódio sérico foi corrigido em MENOS de 12 mmol/L em 24 h se recuperaram sem complicações.",
-      "citacao": "They presented a summary of 80 patients with plasma sodium < 105 mmol/l. Of these patients, 38 patients corrected by > 12 points in 24 h, out of which > 50 % developed neurological sequelae. Among them, 14 were diagnosed with central pontine myelinolysis (CPM). In contrast, all patients whose serum sodium was corrected by less than 12 mmol/L within 24 h recovered without complications.",
-      "secao": "Osmotic demyelination syndrome — Historical background"
-    },
-    {
-      "afirmacao": "Esse trabalho pivotal lançou a base para o termo SDO, hoje comum, e para as diretrizes existentes que limitam a taxa de correção do sódio a fim de reduzir o risco de complicações neurológicas.",
-      "citacao": "This pivotal work laid the foundation for the now common term ODS and existing guidelines of limiting sodium correction rate to reduce the risk of neuro- logical complications.",
-      "secao": "Osmotic demyelination syndrome — Historical background"
-    },
-    {
-      "afirmacao": "Modelos animais forneceram em seguida confirmação experimental da CAUSALIDADE entre correção rápida e desmielinização: modelos em rato e cão demonstraram lesões pontinas e extrapontinas reprodutíveis após correção rápida da hiponatremia grave, ao passo que a hiponatremia NÃO tratada não as produziu.",
-      "citacao": "Animal models subsequently provided experimental confirmation of causality between rapid correction and demyelination with rat and dog models demonstrating reproducible pontine and extrapontine lesions following rapid correction of severe hyponatremia, whereas untreated hyponatremia did not [22,61].",
-      "secao": "Osmotic demyelination syndrome — Historical background"
-    },
-    {
-      "afirmacao": "A SDO representa uma FALHA do cérebro em se readaptar após a correção da hiponatremia crônica; o termo mielinólise refere-se a destruição das bainhas de mielina que revestem as fibras nervosas, e as células gliais, especialmente os astrócitos, têm papel central na manutenção da integridade da mielina e na proteção das fibras contra o estresse osmótico.",
-      "citacao": "ODS represents a failure of the brain to readapt following the correction of chronic hyponatremia. The term “myelinolysis” refers to the destruction of the myelin sheaths coating the nerve fibers. Glial cells, especially astrocytes, play a central role in maintaining myelin integrity and protecting nerve fibers from osmotic stress in hyponatremic conditions [23].",
-      "secao": "Osmotic demyelination syndrome — Pathophysiology"
-    },
-    {
-      "afirmacao": "Durante a hiponatremia, o cérebro — particularmente os astrócitos — perde rapidamente osmólitos, incluindo sódio, potássio e moléculas orgânicas como taurina e mio-inositol, para reduzir a pressão osmótica intracelular e evitar o edema celular; esse processo adaptativo ocorre dentro de 24–48 h.",
-      "citacao": "During hyponatremia, the brain—particularly astrocytes—rapidly loses osmolytes, including sodium, potassium, and organic molecules such as taurine and myo-inositol, to reduce intracellular osmotic pressure and prevent cellular swelling. This adaptive process occurs within 24–48 h [50,51].",
-      "secao": "Osmotic demyelination syndrome — Pathophysiology"
-    },
-    {
-      "afirmacao": "Na CORREÇÃO da hiponatremia, porém, a recaptação dos osmólitos para dentro das células é MUITO MAIS LENTA e exige gasto energético significativo ao longo de vários dias, pois os osmólitos orgânicos precisam ser transportados ativamente de volta pela ATPase sódio-potássio. Se o sódio sérico sobe mais rápido do que os osmólitos podem ser restaurados, ocorrem desidratação e retração celular.",
-      "citacao": "However, during the correction of hyponatremia, the reuptake of osmolytes into the cells is much slower and requires significant energy expenditure over several days, as organic osmolytes must be actively transported back into the cells by the so- dium–potassium ATPase. If serum sodium rises more rapidly than osmolytes can be restored, cellular dehydration and cell shrinkage occur.",
-      "secao": "Osmotic demyelination syndrome — Pathophysiology"
-    },
-    {
-      "afirmacao": "O cérebro adaptado a hiponatremia, ainda depletado de osmoles, é por isso particularmente suscetível a lesão por aumento rápido da concentração de sódio; as regiões pontina e extrapontinas são especialmente suscetíveis por suas altas demandas metabólicas e recuperação mais lenta de osmólitos.",
-      "citacao": "The hyponatremia-adapted brain, still depleted of osmoles, is therefore particularly susceptible to injury from a rapid increase in sodium concentration [58,7]. The pontine and extrapontine regions are particularly susceptible because of their high metabolic demands and slower osmolyte recovery.",
-      "secao": "Osmotic demyelination syndrome — Pathophysiology"
-    },
-    {
-      "afirmacao": "Desnutrição, depleção de tiamina e desequilíbrios eletrolíticos — particularmente potássio, magnésio e fosfato baixos — prejudicam ainda mais o metabolismo energético astrocitário e o funcionamento adequado da ATPase sódio-potássio, comprometendo a energia necessária para manter os gradientes iônicos e transportar osmólitos orgânicos para os astrócitos durante a correção do sódio.",
-      "citacao": "Malnutrition, thiamine depletion, and electrolyte imbalances—particularly low potassium, magnesium, and phosphate—further impair astrocytic energy metabolism and the proper function of sodium–potassium ATPase, compromising the energy required to maintain ionic gradients and transport organic osmolytes into astrocytes during sodium",
-      "secao": "Osmotic demyelination syndrome — Pathophysiology"
-    },
-    {
-      "afirmacao": "Consequentemente, deficiências de potássio, fosfato, magnésio e de aporte calórico, combinadas a depleção de tiamina, prejudicam gravemente a função astrocitária e a capacidade cerebral de readaptação após a hiponatremia, tornando esses pacientes mais vulneráveis a desmielinização osmótica.",
-      "citacao": "Consequently, deficiencies in potassium, phosphate, magnesium, and caloric intake, when combined with thiamine de- pletion, severely impair astrocyte function and the brain’s ability to readapt after hyponatremia, rendering patients with such conditions more vulnerable to osmotic demyelination [19,35].",
-      "secao": "Osmotic demyelination syndrome — Pathophysiology"
-    },
-    {
-      "afirmacao": "A apresentação clínica da SDO é frequentemente BIFÁSICA: o paciente pode inicialmente MELHORAR após a correção do sódio, apenas para deteriorar de três a dez dias após a correção rápida. Os sintomas incluem flutuação do nível de consciência, alterações comportamentais, disartria e disfagia; casos graves resultam em convulsões, quadriplegia e síndrome do encarceramento (locked-in).",
-      "citacao": "The clinical presentation of ODS is often biphasic. Patients may initially improve following sodium correction, only to deteriorate three to ten days after rapid sodium correction. Symptoms include fluctuating levels of consciousness, behavioral changes, dysarthria and dysphagia. Severe cases result in seizures, quadriplegia and the locked-in syndrome.",
-      "secao": "Osmotic demyelination syndrome — Clinical features and diagnosis"
-    },
-    {
-      "afirmacao": "Embora a neuroimagem confirmatória possa revelar lesões desmielinizantes pontinas e extrapontinas, o DIAGNÓSTICO PERMANECE PRIMARIAMENTE CLÍNICO: os achados de imagem são frequentemente tardios, pois a ressonância pode permanecer negativa por vários dias ou semanas após o início dos sintomas. Assim, apoiar-se apenas na imagem leva a SUBDIAGNÓSTICO, particularmente quando os pacientes já receberam alta ou foram transferidos para outros serviços.",
-      "citacao": "While confirmatory neuroimaging can reveal pontine and extrapontine demyelinating lesions, diagnosis remains primarily clinical. Imaging findings are often delayed as MRI may remain negative for several days or weeks after symptom onset. Consequently, reliance on imaging findings alone can lead to underdiagnosis, particularly when patients have already been discharged or transferred to other facilities.",
-      "secao": "Osmotic demyelination syndrome — Clinical features and diagnosis"
-    },
-    {
-      "afirmacao": "FATORES DE RISCO REAIS PARA SDO: são particularmente vulneráveis os pacientes com hiponatremia crônica profunda (sódio sérico <=105 mmol/L), alcoolismo, desnutrição, doença hepática avançada e hipocalemia. Deficiência de tiamina e outros distúrbios eletrolíticos, como fosfato e magnésio baixos, prejudicam ainda mais a função astrocitária e o transporte de osmólitos pela bomba ATPase sódio-potássio, agravando a vulnerabilidade ao estresse osmótico; por isso, manter os eletrólitos normais e repô-los quando necessário são medidas preventivas CRÍTICAS durante a correção do sódio.",
-      "citacao": "Certain patients are particularly vulnerable to ODS, including those with profound chronic hyponatremia (serum sodium ≤105 mmol/L), alcoholism, malnutrition, advanced liver disease, and hypokalemia. Thiamine deficiency and other electrolyte disturbances, like low phosphate, and magnesium, further impair astrocytic function and osmolyte transport via sodium–potassium ATPase pump, thereby exacerbating vulnerability to osmotic stress [19,35]. Therefore, maintenance of normal electrolyte levels and substitution if needed are critical preventive measures in sodium correction [35].",
-      "secao": "Osmotic demyelination syndrome — Risk factors"
-    },
-    {
-      "afirmacao": "Algumas ETIOLOGIAS conferem risco maior de correção rápida e de SDO, particularmente quando a causa reversível subjacente — hipovolemia, uso de tiazídico, antidepressivos, desmopressina ou insuficiência adrenal — é REMOVIDA: uma vez reduzido o estímulo a liberação de vasopressina, pode surgir diurese aquosa súbita que eleva rapidamente a concentração de sódio sérico.",
-      "citacao": "Some etiologies of hyponatremia also confer a higher risk of rapid sodium correction and ODS. This is particularly frequent when the underlying, reversible cause of hyponatremia—such as hypovolemia, thiazide use, antidepressants, desmopressin, or adrenal insufficiency—is removed. Once the stimulus for arginine vasopressin (AVP) release decreases, a sudden water diuresis may arise, rapidly increasing serum sodium concentrations.",
-      "secao": "Osmotic demyelination syndrome — Risk factors"
-    },
-    {
-      "afirmacao": "No baixo aporte de soluto, como na potomania da cerveja ou na dieta de chá e torrada, a restauração da nutrição ou a infusão de salina também pode restaurar abruptamente a capacidade de excretar água, levando a diurese aquosa rápida e potencial supracorreção do sódio, predispondo a SDO.",
-      "citacao": "In low-solute intake, like “beer potomania” or “tea and toast diet”, restoration of nutrition or saline infusion can also abruptly restore this ability to excrete water, leading to rapid water diuresis and potential sodium overcorrection, predisposing to ODS [52].",
-      "secao": "Osmotic demyelination syndrome — Risk factors"
-    },
-    {
-      "afirmacao": "A correção excessiva da hiponatremia ocorre mais comumente pela excreção INESPERADA de grande volume de urina diluída; por isso a monitorização estreita do débito urinário e de sua composição é essencial durante o tratamento, para permitir ajustes terapêuticos oportunos.",
-      "citacao": "Excessive correction of hyponatremia most commonly occurs due to the unexpected excretion of a large volume of dilute urine [46]. Close monitoring of urine output and composition is therefore essential during treatment to allows timely therapeutic ad- justments.",
-      "secao": "Osmotic demyelination syndrome — Preventive strategies"
-    },
-    {
-      "afirmacao": "O sódio sérico pode ser re-abaixado com segurança usando dextrose a 5 % em água (D5W) intravenosa; porém a infusão RÁPIDA de D5W tem desvantagens potenciais, incluindo glicosúria aumentada com diurese osmótica e estimulação da insulina, que pode reduzir ainda mais o potássio e o fosfato séricos — fatores que AUMENTAM o risco de SDO.",
-      "citacao": "Serum sodium can be safely re-lowered using intravenous dextrose 5 % in water (D5W). Rapid D5W infusion can carry potential drawbacks, including increased glycosuria leading to osmotic diuresis, as well as insulin stimulation that may further lower serum potassium and phosphate—factors that heighten the risk of ODS.",
-      "secao": "Osmotic demyelination syndrome — Preventive strategies"
-    },
-    {
-      "afirmacao": "Como alternativa a igualar as perdas urinárias de água com D5W, as perdas urinárias podem ser INTERROMPIDAS com desmopressina (DDAVP), seja em resposta ao surgimento de diurese aquosa, seja proativamente antecipando-a; o DDAVP é análogo sintético da vasopressina que se liga seletivamente aos receptores V2 dos ductos coletores renais, aumenta a reabsorção de água livre e desacelera a taxa de correção do sódio.",
-      "citacao": "As an alternative to matching urine water losses with D5W, urine losses can be stopped by administering desmopressin (1-desamino-8-D-arginine vasopressin; DDAVP), either in response to the emergence of a water diuresis or proactively in anticipation of a water diuresis. DDAVP is a synthetic analog of vasopressin that selectively binds to V₂ receptors in the renal collecting ducts, enhances free-water reabsorption and slows the rate of sodium cor- rection.",
-      "secao": "Osmotic demyelination syndrome — Preventive strategies"
-    },
-    {
-      "afirmacao": "A administração PROATIVA de DDAVP — o chamado DDAVP clamp — em combinação com salina hipertônica cuidadosamente titulada demonstrou controlar a subida do sódio sérico quando aplicada em centros experientes, e vários estudos apoiam essa abordagem como segura e eficaz para minimizar o risco de desmielinização osmótica.",
-      "citacao": "Proactive administration of DDAVP—often referred to as the “DDAVP clamp”—in combination with carefully titrated hy- pertonic saline has shown to control serum sodium rise, when applied in experienced centers. Several studies support this approach as both safe and effective in minimizing osmotic demyelination risk [21,3,34,42,47].",
-      "secao": "Osmotic demyelination syndrome — Preventive strategies"
-    },
-    {
-      "afirmacao": "Uma pesquisa europeia recente sobre a prática clínica atual mostrou que apenas uma MINORIA dos médicos usa DDAVP, enquanto a maioria dos centros aplica D5W para manejar a correção rápida demais do sódio; e, quando o DDAVP é usado, a maioria dos respondentes o aplica de forma REATIVA e não proativa. Assim, até o momento, a administração proativa de DDAVP fica restrita a centros experientes e precisa ser titulada com cuidado.",
-      "citacao": "However, a recent European survey on current clinical practice of hyponatremia treatment showed that only a minority of physicians use DDAVP, whereas most centers apply D5W to manage overly rapid sodium correction. If DDAVP is used, most survey respondents applied it as a reactive rather than proactive approach [6]. Therefore, to date proactive administration of DDAVP is rather limited to experienced centers and needs to be titrated carefully.",
-      "secao": "Osmotic demyelination syndrome — Preventive strategies"
-    },
-    {
-      "afirmacao": "A CONTROVÉRSIA: em 2023 surgiu um debate sobre a verdadeira incidência e a relevância clínica da SDO. MacMillan e colaboradores conduziram estudo de coorte multicêntrico com mais de 22.000 pacientes com hiponatremia em nove hospitais canadenses, relatando incidência GLOBAL de SDO de 0.05 %. A correção rápida do sódio ocorreu em 17.7 % dos pacientes, mas apenas 12 desenvolveram SDO — e sete deles NÃO haviam sofrido correção rápida.",
-      "citacao": "In 2023 a debate regarding the true incidence and clinical relevance of ODS arose. MacMillan et al. conducted a multicenter cohort study involving over 22,000 patients with hyponatremia across nine Canadian hospitals, reporting an overall ODS incidence of 0.05 % [24,4]. Rapid correction of serum sodium occurred in 17.7 % of patients, but only 12 developed ODS, seven of whom had not experienced rapid correction.",
-      "secao": "Recent controversy about ODS"
-    },
-    {
-      "afirmacao": "No editorial que acompanhou o estudo, Ayus e Moritz argumentaram que a adesão ESTRITA às diretrizes atuais pode levar a SUBTRATAMENTO, monitorização excessiva e internações mais longas; como resultado, os autores defenderam metas de correção MAIS LIBERAIS.",
-      "citacao": "In the accompanying editorial, Ayus and Moritz argued that strict adherence to current guidelines may lead to undertreatment, excessive monitoring, and longer hospital stays [49]. As a results, the authors advocated for more liberal correction targets in hyponatremia correction.",
-      "secao": "Recent controversy about ODS"
-    },
-    {
-      "afirmacao": "A REFUTAÇÃO: um grupo de especialistas publicou um position paper apontando limitações metodológicas a considerar ANTES de liberar os limites de correção existentes. Apoiar-se apenas em codificação CID e em confirmação por ressonância provavelmente SUBESTIMOU os casos de SDO, já que o diagnóstico é primariamente clínico e as alterações de imagem podem ser tardias. Além disso, a maioria dos pacientes incluídos tinha sódio sérico > 120 mmol/L — população de risco inerentemente BAIXO para SDO. Ao focar nos pacientes com hiponatremia grave (<=110 mmol/L), a incidência estimada de SDO naquela coorte subiu para 2.6 %.",
-      "citacao": "However, a group of experts published a position paper alluding to some methodological limitations needing to be considered before liberating the existing correction limits [49]. The reliance on solely ICD coding and MRI confirmation likely underestimated ODS cases, as diagnosis of ODS is primarily clinical and imaging changes may be delayed. Also, most included patients had a serum sodium > 120 mmol/L—a population at inherently low risk for ODS. When focusing on patients with severe hyponatremia (≤110 mmol/L), the estimated ODS incidence in their cohort increased to 2.6 %.",
-      "secao": "Recent controversy about ODS"
-    },
-    {
-      "afirmacao": "Outro estudo multicêntrico, de Seethapathy e colaboradores, DESAFIOU a noção de que o limiar de correção seja o fator de risco mais importante para SDO: envolveu mais de 3000 pacientes com sódio < 120 mmol/L e mostrou que a correção MAIS LENTA associou-se a mortalidade MAIOR e internações mais longas. Entre os sete pacientes que desenvolveram SDO, cinco NÃO haviam excedido correção de 8 mmol/L.",
-      "citacao": "Another multicenter study by Seethapathy et al. challenged the notion that correction threshold is the most important risk factor for ODS. Their study involved over 3000 patients with sodium < 120 mmol/L and showed that slower correction was associated with higher mortality and longer hospital stays [41]. Among the seven patients who developed ODS, five had not exceeded an 8 mmol/L",
-      "secao": "Recent controversy about ODS"
-    },
-    {
-      "afirmacao": "De modo semelhante, uma metanálise de Ayus e colaboradores incluindo 16 estudos de coorte mostrou que a correção RÁPIDA do sódio associou-se a mortalidade MENOR e internações mais curtas, SEM aumento significativo do risco de SDO.",
-      "citacao": "Similarly, a meta-analysis by Ayus et al. including 16 cohort studies showed that rapid sodium correction was associated with lower mortality and shorter hospitalizations, without a significant increase in ODS risk [5].",
-      "secao": "Recent controversy about ODS"
-    },
-    {
-      "afirmacao": "Embora esses estudos ofereçam indícios convincentes de que o risco de SDO com a correção rápida do sódio possa estar SUPERESTIMADO, os próprios autores alertaram que essa associação NÃO deve ser interpretada como causal.",
-      "citacao": "Although these studies offer compelling hints that the risk of ODS with rapid sodium correction may be overstated, the authors cautioned that this asso- ciation should not be interpreted as causal.",
-      "secao": "Recent controversy about ODS"
-    },
-    {
-      "afirmacao": "Em análise relacionada, Rondon-Berrios e Sterns exploraram se a relação observada entre taxa de correção e mortalidade reflete causalidade verdadeira ou, antes, um EPIFENOMENO da gravidade da doença subjacente: argumentaram que pequenas diferenças nas taxas de correção dificilmente determinam diretamente a mortalidade e que ambos os desfechos refletem a gravidade do distúrbio que causa a hiponatremia e a capacidade limitada do paciente de excretar água.",
-      "citacao": "In a related analysis, Rondon-Berrios and Sterns [39] explored whether the observed relationship between correction rate and mortality reflects true causality or rather an epiphenomenon of underlying disease severity. They argued that small differences in correction rates are unlikely to directly determine mortality; instead, both outcomes reflect the severity of the underlying disorder causing hyponatremia and a patient’s limited ability to excrete water.",
-      "secao": "Recent controversy about ODS"
-    },
-    {
-      "afirmacao": "Pacientes com doença sistêmica grave frequentemente exibem excreção renal de água prejudicada, resultando em taxas de correção mais lentas E mortalidade mais alta; já pacientes com condições menos graves tipicamente excretam urina diluída com mais eficiência, o que facilita correção mais rápida e melhor sobrevida.",
-      "citacao": "Patients with severe systemic illness often exhibit impaired renal water excretion, resulting in slower correction rates and higher mortality. Conversely, patients with less severe conditions are typically able to excrete dilute urine more efficiently, facilitating more rapid correction and improved survival.",
-      "secao": "Recent controversy about ODS"
-    },
-    {
-      "afirmacao": "CONCLUSÃO DA AUTORA SOBRE A CONTROVÉRSIA: no conjunto, esses estudos sublinham a controvérsia em curso sobre o manejo da hiponatremia, particularmente quanto à relevância clínica da SDO. Porém, NA AUSÊNCIA DE ENSAIOS CLÍNICOS RANDOMIZADOS, ABANDONAR os limites de correção atuais das diretrizes existentes NÃO PODE SER JUSTIFICADO neste momento; mais pesquisa é necessária para determinar o risco real de SDO e esclarecer sua relação causal com a taxa de correção do sódio.",
-      "citacao": "Taken together, these studies underscore the ongoing controversy surrounding the management of hyponatremia, particularly with respect to the clinical relevance of osmotic demyelination syndrome (ODS). In the absence of randomized controlled trials, abandoning the current correction limits outlined in existing guidelines cannot be justified at this time. Further research is needed to determine the true risk of ODS and to clarify its causal relationship with the rate of sodium correction.",
-      "secao": "Future directions"
-    },
-    {
-      "afirmacao": "A fisiopatologia da SDO reflete a incapacidade do cérebro de se readaptar a desvios osmóticos rápidos quando o sódio aumenta; evidências experimentais e clínicas implicam a correção RÁPIDA como o principal fator de risco, especialmente em pacientes com hiponatremia grave e crônica e comorbidades como ingesta alcoólica, desnutrição e hipocalemia. Estudos recentes que questionam a relevância desses limites reacenderam o debate, mas até o momento o CONSENSO PREDOMINANTE de especialistas favorece a manutenção da cautela.",
-      "citacao": "Its pathophysiology re- flects the brain’s inability to readapt to rapid osmotic shifts when sodium increases. Experimental and clinical evidence implicates rapid correction as the principal risk factor, especially in patients with severe, chronic hyponatremia and comorbidities such as alcohol intake, malnutrition, and hypokalemia. Recent studies questioning the relevance of these limits have reignited debate, but to date prevailing expert consensus favors continued caution.",
-      "secao": "Conclusion"
-    },
-    {
-      "afirmacao": "Preocupação central no manejo da hiponatremia é prevenir a SDO, complicação rara mas devastadora da correção rápida da hiponatremia crônica; os sintomas neurológicos são frequentemente TARDIOS, ocorrendo apenas de três a dez dias após a correção rápida do sódio. Pacientes com hiponatremia grave (<=105 mmol/L), alcoolismo, desnutrição, hipocalemia ou doença hepática são particularmente vulneráveis.",
-      "citacao": "A key concern in hyponatremia management is the prevention of osmotic demyelination syndrome (ODS), a rare but devastating complication arising from rapid correction of chronic hyponatremia. Neurological symptoms are often delayed, occurring only three to ten days after rapid sodium correction. Patients with severe hyponatremia (≤105 mmol/L), alcoholism, malnutrition, hypokalemia or liver disease are particularly vulnerable.",
-      "secao": "Summary"
-    },
-    {
-      "afirmacao": "As diretrizes atuais dos EUA e europeias recomendam limitar a correção do sódio sérico a 10–12 mmol/L em 24 h e 18 mmol/L em 48 h, com limiares mais estritos (<=8 mmol/L por 24 h) nos pacientes de alto risco.",
-      "citacao": "Current U.S. and European guidelines recommend limiting serum sodium correction to 10–12 mmol/L in 24 h and 18 mmol/L in 48 h, with stricter thresholds (≤8 mmol/L per 24 h) in high-risk patients.",
-      "secao": "Summary"
-    },
-    {
-      "afirmacao": "Ponto de prática sobre limites: segundo as diretrizes atuais, o sódio NÃO deve subir mais que 10–12 mmol/L em 24 h e 18 mmol/L em 48 h; para pacientes de ALTO RISCO (sódio sérico <=105 mmol/L, ingesta alcoólica, desnutrição, doença hepática ou hipocalemia) recomendam-se limites de <= 8 mmol/L por 24 h e METAS de 4–6 mmol/L/dia.",
-      "citacao": "According to current guidelines, sodium should not rise by more than 10–12 mmol/L in 24 h and 18 mmol/L in 48 h. – For high-risk patients (serum sodium ≤105 mmol/L, alcohol intake, malnutrition, liver disease, or hypokalemia), limits of ≤ 8 mmol/L per 24 h and targets of 4–6 mmol/L/day are recommended.",
-      "secao": "Practice Points"
-    },
-    {
-      "afirmacao": "Ponto de prática — terapia guiada pelo status volêmico: hiponatremia hipovolêmica com salina isotônica e monitorização estreita para correção rápida; hiponatremia hipervolêmica com restrição hídrica e diuréticos de alça; hiponatremia euvolêmica (SIAD) com restrição hídrica de primeira linha, tendo como demais opções ureia oral, vaptanos (SEM restrição hídrica), suplementação proteica e inibidores do SGLT2.",
-      "citacao": "Hypovolemic hyponatremia: isotonic saline, close monitoring for rapid correction. – Hypervolemic hyponatremia: fluid restriction and loop diuretics. – Euvolemic hyponatremia (SIAD): fluid restriction as first-line therapy. Further therapeutic options: oral urea, vaptans (without fluid restriction), protein supplementation, SGLT2-inhibitors.",
-      "secao": "Practice Points"
-    },
-    {
-      "afirmacao": "Ponto de prática sobre SDO: complicação rara mas devastadora da correção rápida da hiponatremia crônica, com início TARDIO dos sintomas neurológicos 3–10 dias após a correção rápida; o diagnóstico é CLÍNICO e apoiar-se apenas nos achados de imagem pode perder ou atrasar o diagnóstico; fatores de risco principais são hiponatremia crônica grave (<=105 mmol/L), alcoolismo, desnutrição, doença hepática e hipocalemia; e recomendam-se monitorização estreita do débito urinário e administração de infusão de glicose ou DDAVP para prevenir novo aumento rápido do sódio.",
-      "citacao": "A rare but devastating complication of rapid correction of chronic hyponatremia with delayed onset of neurological symptoms 3–10 days after rapid sodium correction. – Clinical diagnosis, solely relying on imaging findings can miss or delay the diagnosis. – Key risk factors: Severe chronic hyponatremia (≤105 mmol/L), alcoholism, malnutrition, liver disease, and hypokalemia. – Close monitoring of urine output, administration of glucose infusion or DDAVP to prevent further rapid sodium increase.",
-      "secao": "Practice Points"
-    },
-    {
-      "afirmacao": "Agenda de pesquisa: investigar novas estratégias terapêuticas para a hiponatremia crônica, particularmente na SIAD — suplementação proteica, análogos da apelina, antagonistas da interleucina-6 e transportadores de ureia; medidas preventivas contra a correção rápida demais do sódio, incluindo o uso do clamp de desmopressina (DDAVP) em abordagem proativa; e evidência clínica robusta que defina limites de correção baseados em evidência e esclareça a relação causal entre a SDO e o aumento rápido do sódio.",
-      "citacao": "Investigating further therapeutic strategies for chronic hyponatremia, particularly in SIAD, such as protein supplementation, apelin analogues, interleukin-6 antagonists, and urea transporters. – Preventive measures against overly rapid sodium correction, including the use of a desmopressin (DDAVP) clamp in a proactive approach. – Need for robust clinical evidence defining evidence-based correction limits and clarifying the causal relationship between osmotic demyelination syndrome (ODS) and rapid sodium correction.",
-      "secao": "Research Agenda"
-    },
-    {
-      "afirmacao": "Tabela 1 — SIAD (hiponatremia euvolêmica): restrição hídrica de 500–1000 mL/dia reduz a ingesta de água em relação à capacidade excretora; CAUTELA: eficácia limitada quando a osmolalidade urinária é > 500 mOsm/kg.",
-      "citacao": "Fluid restriction (500–1000 mL/ day) Reduces water intake relative to excretory capacity Limited efficacy when urine osmolality > 500 mOsm/kg",
-      "secao": "Table 1 — Treatment options in chronic hyponatremia"
-    },
-    {
-      "afirmacao": "Tabela 1 — ureia oral (0.25–0.50 g/kg/dia) induz diurese osmótica, alternativa eficaz e segura; CAUTELAS: palatabilidade ruim, começar baixo (15 g/dia) em risco de SDO e EVITAR em doença hepática grave.",
-      "citacao": "Oral urea (0.25–0.50 g/kg/day) Induces osmotic diuresis; effective and safe alternative Poor palatability; start low (15 g/ day) in ODS risk; avoid in severe liver disease",
-      "secao": "Table 1 — Treatment options in chronic hyponatremia"
-    },
-    {
-      "afirmacao": "Tabela 1 — vaptanos (ex.: tolvaptan): antagonismo do receptor V2 bloqueia o efeito da AVP e promove aquarese; CAUTELAS: risco de correção rápida, iniciar no HOSPITAL, hepatotoxicidade em doses mais altas e custo elevado.",
-      "citacao": "Vaptans (e.g., tolvaptan) V₂ receptor antagonism → blocks AVP effect → promotes aquaresis Risk of rapid correction; initiate in hospital; hepatotoxicity at higher doses; costly",
-      "secao": "Table 1 — Treatment options in chronic hyponatremia"
-    },
-    {
-      "afirmacao": "Tabela 1 — hiponatremia hipovolêmica: salina isotônica (NaCl a 0.9 %) restaura o volume extracelular, suprime SRAA e AVP e promove diurese aquosa após a repleção; CAUTELA: monitorizar de perto para evitar correção rápida demais, e CONTRAINDICADA na SIAD.",
-      "citacao": "Hypovolemic Hyponatremia Isotonic saline (0.9 % NaCl) Restores extracellular volume → suppresses RAAS and AVP → promotes water diuresis once volume repleted Monitor closely to avoid overly rapid correction; contraindicated in SIAD",
-      "secao": "Table 1 — Treatment options in chronic hyponatremia"
-    },
-    {
-      "afirmacao": "Tabela 1 — baixo aporte de soluto (dieta de chá e torrada / potomania da cerveja): restauração GRADUAL de proteína e sal da dieta, com uso cauteloso de salina isotônica (apenas pequenos bolus), aumentando a carga de soluto e restaurando a capacidade renal de excretar água; CAUTELA: risco de supracorreção rápida, exigindo monitorização estreita do sódio e do débito urinário, e evitando repleção abrupta de soluto.",
-      "citacao": "Low-Solute Intake ('Tea and Toast' / 'Beer Potomania') Gradual restoration of dietary protein and salt; cautious use of isotonic saline (only small boluses) Increases solute load, restoring renal water excretion capacity Risk of rapid overcorrection → close sodium and urine output monitoring; avoid abrupt solute repletion",
-      "secao": "Table 1 — Treatment options in chronic hyponatremia"
-    }
-  ],
-  "auditoria": "Auditoria adversarial em 07/08/2026: 97/97 fatos auditados; 1 incompleto corrigido (limite de 8 mmol/L sem a janela temporal). A controvérsia de 2023 sobre a SDO foi preservada COMO controvérsia, sem virar afrouxamento dos limites."
+ "fileId": "hipo-3",
+ "titulo": "Treatment of chronic hyponatremia and controversy about osmotic demyelination syndrome",
+ "tema": "hiponatremia crônica — tratamento e controvérsia da desmielinização osmótica",
+ "fonte": "Beck J. Treatment of chronic hyponatremia and controversy about osmotic demyelination syndrome. Best Pract Res Clin Endocrinol Metab 2026;40:102067",
+ "area": "Endocrinopatias",
+ "tipo": "revisao",
+ "ano": 2026,
+ "conflito": "O NÚCLEO PREVALECE NOS LIMITES DE CORREÇÃO — E A PRÓPRIA FONTE CONCORDA. Esta revisão de 2026 documenta a controvérsia aberta em 2023 (\"MacMillan et al. conducted a multicenter cohort study involving over 22,000 patients with hyponatremia across nine Canadian hospitals, reporting an overall ODS incidence of 0.05 % [24,4]\", \"Among the seven patients who developed ODS, five had not exceeded an 8 mmol/L\", \"a meta-analysis by Ayus et al. including 16 cohort studies showed that rapid sodium correction was associated with lower mortality and shorter hospitalizations, without a significant increase in ODS risk [5]\") e conclui contra afrouxar: \"In the absence of randomized controlled trials, abandoning the current correction limits outlined in existing guidelines cannot be justified at this time.\" ⚠️ NÃO use esses dados de coorte para autorizar correção mais rápida — eles são o argumento de um debate em curso, não uma recomendação. O detalhe que a fonte ACRESCENTA e o núcleo não tem: o vaptano é usado SEM restrição hídrica e exige sede intacta (\"vaptans (without fluid restriction)\"). Os limites de 48 h, a definição de alto risco e a retirada do tolvaptan na cirrose JÁ foram incorporados ao núcleo em 07/08/2026.",
+ "fatos": [
+  {
+   "afirmacao": "Panorama do tratamento da hiponatremia crônica: a salina isotônica permanece a pedra angular da hiponatremia HIPOvolêmica; restrição hídrica e diuréticos de alça são preferidos nos estados HIPERvolêmicos; a reposição de corticosteroide é a terapia de primeira linha na hiponatremia por insuficiência adrenal; e na SIAD euvolêmica o tratamento de primeira linha é a restrição hídrica, com ureia oral ou antagonistas do receptor de vasopressina como opções de segunda linha.",
+   "citacao": "Isotonic saline remains the cornerstone for hypo- volemic hyponatremia, whereas fluid restriction and loop diuretics are preferred in hypervolemic states. Corticosteroid replacement is the first-line therapy in hyponatremia due to adrenal in- sufficiency. In the euvolemic syndrome of inappropriate antidiuresis, first-line treatment is fluid restriction, with additional oral urea or vasopressin receptor antagonists as second-line options.",
+   "secao": "Resumo"
+  },
+  {
+   "afirmacao": "A complicação mais temida do tratamento da hiponatremia é a síndrome de desmielinização osmótica, com risco MÁXIMO em pacientes com hiponatremia grave (sódio <=105 mmol/L), alcoolismo, desnutrição, doença hepática ou hipocalemia. As diretrizes atuais recomendam limitar a correção do sódio a <=10–12 mmol/L por 24 h (<=8 mmol/L nos pacientes de alto risco).",
+   "citacao": "The most feared complication of hyponatremia treatment is osmotic demyelination syndrome, with highest risk in patients with severe hyponatremia (≤105 mmol/L), alcoholism, malnutri- tion, liver disease, or hypokalemia. Current guidelines recommend limiting sodium correction to ≤ 10–12 mmol/L per 24 h (≤8 mmol/L in high-risk patients).",
+   "secao": "Resumo"
+  },
+  {
+   "afirmacao": "Estratégias novas como suplementação proteica e inibidores do SGLT2 oferecem adjuvantes promissores no tratamento da hiponatremia crônica.",
+   "citacao": "Novel strategies such as protein supplementation and SGLT2 inhibitors offer promising adjuncts.",
+   "secao": "Resumo"
+  },
+  {
+   "afirmacao": "No manejo do paciente com hiponatremia grave (sódio sérico <=120 mmol/L) devem-se levantar duas perguntas fundamentais: qual a agudeza do início, e há manifestações neurológicas graves? As respostas determinam tanto a urgência quanto a intensidade da intervenção terapêutica.",
+   "citacao": "The management of patients with severe hyponatremia (serum sodium ≤120 mmol/L) should raise two fundamental clinical questions: What is the acuity of onset, and are severe neurological manifestations present? The answers to these questions are critical, as they determine both the urgency and the intensity of therapeutic intervention.",
+   "secao": "Treatment of chronic hyponatremia"
+  },
+  {
+   "afirmacao": "Na hiponatremia aguda gravemente sintomática, com convulsões, coma ou herniação iminente por edema cerebral, o aumento IMEDIATO do sódio com salina hipertônica tem PRIORIDADE sobre a investigação diagnóstica adicional ou o tratamento etiológico dirigido.",
+   "citacao": "Acute, severely symptomatic hyponatremia with neurological symptoms-such as seizures, coma, or impending herniation due to cerebral edema, require prompt therapy. Immediate increase of serum sodium with hypertonic saline takes priority over further diagnostic work-up or targeted etiologic treatment in severe neurological manifestations.",
+   "secao": "Treatment of chronic hyponatremia"
+  },
+  {
+   "afirmacao": "UM OU DOIS bolus de salina hipertônica costumam ser suficientes para obter aumento de 4–6 mmol/L no sódio sérico, estabilizar o paciente e resolver os sintomas agudos.",
+   "citacao": "One or two hypertonic saline boluses are usually sufficient to achieve a 4–6 mmol/L increase in serum sodium, stabilize the patient and to resolve acute symptoms.",
+   "secao": "Treatment of chronic hyponatremia"
+  },
+  {
+   "afirmacao": "A hiponatremia CRÔNICA (>= 48 h) desenvolve-se gradualmente, resultando em sintomas mais leves e sutis; os mecanismos adaptativos minimizam o edema cerebral, o que explica por que esses pacientes frequentemente parecem menos sintomáticos do que a concentração de sódio sugeriria.",
+   "citacao": "Meanwhile, chronic hyponatremic (≥ 48 h) typically develops gradually over time, resulting in milder and more subtle symptoms. Adaptive mechanisms minimize brain swelling, explaining why such patients often appear less symptomatic than their serum sodium concentration would suggest.",
+   "secao": "Treatment of chronic hyponatremia"
+  },
+  {
+   "afirmacao": "Avaliação completa da etiologia subjacente da hiponatremia é essencial para guiar a terapia dirigida, elevar o sódio em ritmo controlado e prevenir complicações.",
+   "citacao": "A throughout evaluation of the underlying etiology of hyponatremia is essential to guide targeted therapy, increase sodium levels at a controlled pace and prevent complications in these patients.",
+   "secao": "Treatment of chronic hyponatremia"
+  },
+  {
+   "afirmacao": "Em 2007 e novamente em 2013, painéis de especialistas dos EUA recomendaram limitar a taxa de correção do sódio na hiponatremia crônica a 10–12 mmol/L em 24 h e 18 mmol/L em 48 h. Para indivíduos de ALTO RISCO de SDO — sódio sérico <= 105 mmol/L, alcoolismo, desnutrição, doença hepática avançada ou hipocalemia — foram aconselhados limites mais estritos, com MÁXIMO de 8 mmol/L em 24 h e metas terapêuticas de apenas 4–6 mmol/L por dia.",
+   "citacao": "In 2007 and again in 2013, U.S. expert panels recommended limiting the rate of sodium correction in chronic hyponatremia to 10–12 mmol/L within 24 h and 18 mmol/L within 48 h. For individuals at high risk for osmotic demyelination syndrome (ODS)—those with serum sodium ≤ 105 mmol/L, alcoholism, malnutrition, advanced liver disease, or hypokalemia—stricter limits were advised, with a maximum of 8 mmol/L in 24 h and therapeutic goals of only 4–6 mmol/L per day [59,60].",
+   "secao": "Recommended correction limits in the treatment of chronic hyponatremia"
+  },
+  {
+   "afirmacao": "As diretrizes EUROPEIAS publicadas em 2014 recomendaram limites semelhantes, com aumento máximo de 10 mmol/L nas primeiras 24 h e 8 mmol/L por dia a seguir, mas SEM limiares específicos mais baixos para pacientes de alto risco. Apesar das diferenças menores, ambas as diretrizes compartilham ênfase consistente em segurança e correção cautelosa.",
+   "citacao": "European guidelines published in 2014 recommended similar limits, with a maximum increase of 10 mmol/L in the first 24 h and 8 mmol/L per day thereafter, without specific lower thresholds for high-risk patients [44]. Despite minor differences, both guidelines share a consistent emphasis on safety and cautious sodium correction.",
+   "secao": "Recommended correction limits in the treatment of chronic hyponatremia"
+  },
+  {
+   "afirmacao": "A administração de salina isotônica (cloreto de sódio a 0.9 %) é a terapia de primeira linha da hiponatremia hipovolêmica: ao restaurar sódio e volume extracelular, reverte os gatilhos fisiológicos do sistema renina-angiotensina-aldosterona e da liberação de vasopressina, o que promove diurese aquosa assim que a depleção de volume é corrigida.",
+   "citacao": "The administration of isotonic saline (0.9 % sodium chloride) is the first-line therapy for hypovolemic hyponatremia [26]. By restoring both sodium and extracellular fluid volume, it reverses the physiological triggers for renin–angiotensin–aldosterone system (RAAS) and arginine vasopressin (AVP) release, which in turn promotes a water diuresis once volume depletion is corrected.",
+   "secao": "Treatment approaches according to etiology — Hypovolemic hyponatremia"
+  },
+  {
+   "afirmacao": "Como essa diurese pode causar subida RÁPIDA do sódio sérico, pacientes com hiponatremia moderada a grave exigem monitorização estreita e frequente dos níveis de sódio durante o tratamento.",
+   "citacao": "Because this diuresis can lead to a rapid rise in serum sodium, patients with moderate to severe hyponatremia require close and frequent monitoring of sodium levels during treatment [64].",
+   "secao": "Treatment approaches according to etiology — Hypovolemic hyponatremia"
+  },
+  {
+   "afirmacao": "A salina isotônica NÃO é eficaz na síndrome da antidiurese inapropriada (SIAD): a excreção prejudicada de água livre impede que a água infundida seja adequadamente eliminada, o que pode PARADOXALMENTE PIORAR a hiponatremia em vez de melhorá-la.",
+   "citacao": "In contrast, isotonic saline is not effective in the syndrome of inappropriate antidiuresis (SIAD). In this setting, impaired free-water excretion prevents the infused water from being adequately eliminated, which can paradoxically worsen hyponatremia rather than improve it [45].",
+   "secao": "Treatment approaches according to etiology — Hypovolemic hyponatremia"
+  },
+  {
+   "afirmacao": "A hiponatremia hipovolêmica por perda cerebral de sal (cerebral salt wasting, CSW) foi descrita em distúrbios intracranianos, mas diferenciá-la da SIAD é desafiador e sua incidência é considerada baixa; quando o CSW com perda renal de sódio e alta excreção urinária é o diagnóstico mais provável, a ressuscitação de volume e de sal — e NÃO a restrição hídrica — representa o tratamento de primeira linha.",
+   "citacao": "Hypovolemic hyponatremia due to cerebral salt wasting (CSW) has been described in intracranial disorders. However, differ- entiating cerebral salt wasting from the syndrome of inappropriate antidiuresis is challenging and its incidence is thought to be rather low (see also chapter “Diagnostic algorithm of hyponatremia“). If cerebral salt wasting with renal sodium loss and high urine excretion is diagnosed as the most likely diagnosis, volume and salt resuscitation (rather than fluid restriction) represents the first- line treatment.",
+   "secao": "Treatment approaches according to etiology — Hypovolemic hyponatremia"
+  },
+  {
+   "afirmacao": "Na hiponatremia por insuficiência adrenal, a reposição imediata de glicocorticoide é a pedra angular do tratamento: na insuficiência adrenal PRIMÁRIA a deficiência mineralocorticoide associa-se à perda renal de sódio e hipovolemia, enquanto na SECUNDÁRIA há supressão diminuída da vasopressina, que pode ser restaurada pela reposição de glicocorticoide.",
+   "citacao": "In hyponatremia due to adrenal insufficiency, prompt glucocorticoid replacement is the cornerstone of treatment. In primary adrenal insufficiency, mineralocorticoid deficiency is associated with renal sodium loss and hypovolemia, whereas secondary adrenal insufficiency is associated with a diminished suppression of vasopressin, which can be restored by glucocorticoid replacement.",
+   "secao": "Treatment approaches according to etiology — Hypovolemic hyponatremia"
+  },
+  {
+   "afirmacao": "Os diuréticos de alça são pedra angular da terapia dos estados hipervolêmicos, como insuficiência cardíaca descompensada e hiponatremia hipervolêmica: induzem natriurese e, ao mesmo tempo, reduzem a osmolalidade urinária ao inibir o cotransportador sódio-potássio-2cloro no ramo ascendente espesso da alça de Henle, enfraquecendo o gradiente osmótico que impulsiona a reabsorção de água nos ductos coletores. Assim, diminuem a capacidade renal de concentrar urina e promovem a excreção de água livre de eletrólitos.",
+   "citacao": "Loop diuretics represent a cornerstone of therapy for hypervolemic states, such as decompensated heart failure and hypervolemic hyponatremia [33]. Although loop diuretics induce natriuresis, they simultaneously reduce urinary osmolality by diminishing solute accumulation in the renal medulla. This effect results from inhibition of the Na⁺–K⁺–2Cl⁻ cotransporter in the thick ascending limb of the loop of Henle, thereby weakening the osmotic gradient that drives water reabsorption in the collecting ducts. Consequently, loop diuretics decrease the kidney’s ability to concentrate urine and promote the excretion of electrolyte-free water in hypervolemic hyponatremia.",
+   "secao": "Treatment approaches according to etiology — Hypervolemic hyponatremia"
+  },
+  {
+   "afirmacao": "Na polidipsia, a pedra angular do manejo é restringir a ingesta de líquidos, tipicamente limitando o consumo total de água a menos que a capacidade excretora renal, frequentemente <= 1–1.5 litros por dia. A correção costuma ser gradual assim que cessa a ingesta excessiva, pois os rins excretam água livre rapidamente quando a atividade da AVP se normaliza; intervenções comportamentais e educação do paciente são importantes, sobretudo nos transtornos psiquiátricos, em que a polidipsia é crônica e recorrente.",
+   "citacao": "The cornerstone of hyponatremia management in polydipsia is restriction of fluid intake, typically limiting total water con- sumption to less than the renal excretory capacity, often ≤ 1–1.5 liters per day. Correction is usually gradual once excessive intake ceases, as the kidneys rapidly excrete free water once AVP activity normalizes. Behavioral interventions and patient education are important, particularly in patients with psychiatric disorders, in whom polydipsia is often chronic and recurrent [2].",
+   "secao": "Polydipsia"
+  },
+  {
+   "afirmacao": "A hiponatremia por baixo aporte de soluto ocorre quando o consumo alimentar de proteína e sal é insuficiente para sustentar a excreção renal normal de água (por exemplo, na dieta de chá e torrada ou na potomania da cerveja); nesses pacientes a capacidade renal de eliminar água livre fica limitada pela disponibilidade de soluto excretável.",
+   "citacao": "Hyponatremia resulting from low-solute intake occurs when dietary consumption of protein and salt is insufficient to sustain normal renal water excretion (e.g.in “tea and toast diet” or “beer potomania”). In such patients, the kidney’s capacity to eliminate free water is constrained by the availability of excretable solute.",
+   "secao": "Low-solute intake"
+  },
+  {
+   "afirmacao": "Em condições normais, a ingestão de aproximadamente 600–900 mOsm de soluto por dia permite excretar até 12–18 litros de urina maximamente diluída. Já em indivíduos que consomem quantidades extremamente baixas de soluto — dietas compostas em grande parte de chá, torrada ou cerveja — a carga osmolar total pode cair para 100–200 mOsm por dia, limitando a capacidade de excretar água livre a apenas 2–4 litros diários; mesmo ingesta modesta de líquido nessas condições pode causar retenção de água e hiponatremia dilucional.",
+   "citacao": "Under normal circumstances, the ingestion of approximately 600–900 mOsm of solute per day allows for the excretion of up to 12–18 liters of maximally dilute urine. By contrast, in individuals consuming extremely low quantities of solute — as seen in diets composed largely of tea, toast, or beer — the total osmolar load may fall to 100–200 mOsm per day, limiting the capacity to excrete free water to only 2–4 liters daily. Even modest fluid intake under these conditions may therefore result in water retention and dilutional hyponatremia [30].",
+   "secao": "Low-solute intake"
+  },
+  {
+   "afirmacao": "O passo inicial do manejo é reconhecer a etiologia e suspender toda ingesta de fluido hipotônico, incluindo água em excesso, cerveja ou chá. A restauração do aporte de soluto deve ser GRADUAL, começando com quantidades modestas de proteína e sal da dieta. A administração ABRUPTA de salina isotônica deve ser EVITADA, pois pode deflagrar aumento súbito do débito urinário e correção rápida descontrolada do sódio; se fluidos intravenosos forem necessários, pequenos bolus (por exemplo, 250 mL de salina isotônica) podem ser dados sob monitorização estrita do sódio sérico e do débito urinário.",
+   "citacao": "The initial step in management is to recognize the underlying etiology and discontinue all hypotonic fluid intake, including excessive water, beer, or tea. Restoration of solute intake should be undertaken gradually, beginning with modest amounts of dietary protein and salt. Abrupt administration of isotonic saline should be avoided, as it may trigger a sudden increase in urine output and uncontrolled rapid sodium correction. If intravenous fluids are required, small boluses (e.g., 250 mL isotonic saline) may be given under strict monitoring of serum sodium and urine output.",
+   "secao": "Low-solute intake"
+  },
+  {
+   "afirmacao": "Quando o aporte de soluto é restaurado abruptamente — seja por salina isotônica, seja pela reintrodução de proteína e sal na dieta — o rim recupera rapidamente a capacidade de excretar água, o que frequentemente leva a diurese profusa e supracorreção perigosa do sódio, podendo predispor a síndrome de desmielinização osmótica.",
+   "citacao": "When solute intake is abruptly restored, either through administration of isotonic saline or by reintroduction of dietary protein and salt, the kidney rapidly regains the ability to excrete water. This often leads to a profound diuresis and a potentially dangerous overcorrection of serum sodium concentration, which can predispose to osmotic demyelination syndrome (ODS).",
+   "secao": "Low-solute intake"
+  },
+  {
+   "afirmacao": "A restrição hídrica permanece a terapia de PRIMEIRA LINHA na hiponatremia da SIAD; tipicamente recomenda-se restrição de 500–1000 mL por dia, ou 500 mL a MENOS que o débito urinário de 24 horas.",
+   "citacao": "Fluid restriction remains the first-line therapy for patients with hyponatremia in the syndrome of in- appropriate antidiuresis (SIAD) [15,33]. Typically, a restriction of 500–1000 mL per day, or 500 mL less than the 24-hour urine output, is recommended.",
+   "secao": "Euvolemic hyponatremia in SIAD — First line treatment"
+  },
+  {
+   "afirmacao": "Em ensaio randomizado de 2020 com 46 pacientes ambulatoriais de idade média de 74 anos, a restrição hídrica resultou em aumento médio do sódio plasmático de 3 mmol/L após 3 dias e 4 mmol/L após 30 dias, comparado com apenas 1 mmol/L no grupo controle não tratado.",
+   "citacao": "In a 2020 randomized controlled trial involving 46 outpatients with a mean age of 74 years, fluid restriction resulted in a mean plasma sodium increase of 3 mmol/L after 3 days and 4 mmol/L after 30 days, compared with only 1 mmol/L in the untreated control group [14].",
+   "secao": "Euvolemic hyponatremia in SIAD — First line treatment"
+  },
+  {
+   "afirmacao": "COMO PREVER QUEM NÃO RESPONDE A RESTRIÇÃO HÍDRICA: apesar dos resultados dos ensaios, a eficácia no mundo real é frequentemente menor e pode ser INADEQUADA em pacientes com osmolalidade urinária acima de 500 mOsm/kg, sódio urinário acima de 130 mmol/L, ou relação de eletrólitos urina/plasma maior que 1.0.",
+   "citacao": "Despite these findings, the real-world efficacy of fluid restriction is often lower and may be inadequate in patients with urine osmolality exceeding 500 mOsm/kg, urine sodium above 130 mmol/L, or a urine-to-plasma electrolyte ratio greater than 1.0 [13,63].",
+   "secao": "Euvolemic hyponatremia in SIAD — First line treatment"
+  },
+  {
+   "afirmacao": "Embora a restrição hídrica seja em geral segura e bem tolerada, efeitos adversos como lesão renal aguda e hipotensão foram relatados em até 10 % dos pacientes em estudos clínicos; além disso, é frequentemente limitada pela baixa tolerabilidade, especialmente por períodos mais longos.",
+   "citacao": "Although fluid restriction is generally safe and well tolerated, adverse effects such as acute kidney injury and hypotension have been reported in up to 10 % of patients in clinical studies [20]. Moreover, fluid restriction is often limited due to low tolerability, especially for a longer period of time.",
+   "secao": "Euvolemic hyponatremia in SIAD — First line treatment"
+  },
+  {
+   "afirmacao": "A ureia oral induz diurese osmótica e é outra opção estabelecida de tratamento da SIAD; na maioria dos países europeus é preparada por farmácias como alimento medicinal manipulado sob prescrição, enquanto nos EUA há formulações aromatizadas prontas para uso, aprovadas pelo FDA como alimento medicinal.",
+   "citacao": "Oral Urea can induce osmotic diuresis and is another established treatment option for SIAD. In most European countries, urea is prepared by pharmacies as a compounded medical food on physician request, whereas in the United States, ready-to-use flavored formulations are available and approved by the FDA as medical food [38].",
+   "secao": "Euvolemic hyponatremia in SIAD — Second line: oral urea"
+  },
+  {
+   "afirmacao": "As diretrizes europeias recomendam dose de ureia de 0.25–0.50 g/kg por dia para pacientes com hiponatremia moderada a profunda refratária à restrição hídrica.",
+   "citacao": "The European guidelines recommend a dose of 0.25–0.50 g/kg per day for patients with moderate to profound hyponatremia that is refractory to fluid restriction [44].",
+   "secao": "Euvolemic hyponatremia in SIAD — Second line: oral urea"
+  },
+  {
+   "afirmacao": "Uma dose de 30 g de ureia fornece aproximadamente 500 miliosmoles de soluto excretável, equivalente à carga osmótica de cerca de 15 comprimidos de cloreto de sódio (de 1 g cada); as necessidades diárias tipicas variam de 15 a 60 g.",
+   "citacao": "A 30 g dose of urea provides approximately 500 milliosmoles of excretable solute, equivalent to the osmotic load of about 15 sodium chloride tablets (1 g each) [28]. Typical daily requirements range from 15 to 60 g.",
+   "secao": "Euvolemic hyponatremia in SIAD — Second line: oral urea"
+  },
+  {
+   "afirmacao": "A ação osmótica máxima da ureia ocorre ao longo dos segmentos do néfron IMPERMEÁVEIS a ureia — especificamente os túbulos conectores, os ductos coletores corticais e os ductos coletores medulares externos.",
+   "citacao": "The maximal osmotic action of urea occurs along the urea-impermeable nephron segments, specifically the connecting tubules, cortical collecting ducts, and outer me- dullary collecting ducts [38].",
+   "secao": "Euvolemic hyponatremia in SIAD — Second line: oral urea"
+  },
+  {
+   "afirmacao": "A maior parte da evidência sobre a ureia vem de relatos de caso, séries retrospectivas (total de cerca de 500 pacientes) e alguns pequenos estudos observacionais prospectivos (cerca de 40 pacientes).",
+   "citacao": "Most supporting evidence comes from case reports, retrospective series (total n ≈ 500 patients), and several small prospective observational studies (n ≈ 40 patients).",
+   "secao": "Euvolemic hyponatremia in SIAD — Second line: oral urea"
+  },
+  {
+   "afirmacao": "Um estudo prospectivo cruzado com 12 pacientes demonstrou que a ureia oral é segura, bem tolerada e COMPARÁVEL EM EFICÁCIA AO TOLVAPTAN, tendo os pacientes sido tratados sequencialmente com vaptano por um ano e com ureia por outro.",
+   "citacao": "A prospective crossover study of 12 patients demonstrated that oral urea is safe, well tolerated, and comparable in efficacy to tolvaptan, when patients were treated sequentially with vaptans for one year and urea for another [43].",
+   "secao": "Euvolemic hyponatremia in SIAD — Second line: oral urea"
+  },
+  {
+   "afirmacao": "Os níveis plasmáticos de ureia sobem tipicamente durante o tratamento, estabilizando após dois dias em torno de 12 mmol/L; duas metanálises recentes confirmaram eficácia e segurança, mostrando aumento médio do sódio sérico de cerca de 9 mmol/L durante a terapia — porém faltam ensaios clínicos randomizados.",
+   "citacao": "Plasma urea levels typically rise during treatment, stabilizing after two days at around 12 mmol/L [32]. Two recent meta- analyses confirmed its efficacy and safety, showing an average serum sodium increase of about 9 mmol/L during therapy [10,62], however randomized controlled trials are lacking.",
+   "secao": "Euvolemic hyponatremia in SIAD — Second line: oral urea"
+  },
+  {
+   "afirmacao": "Apesar do gosto ruim, a ureia é em geral bem tolerada e segura, e o sabor amargo pode ser atenuado dissolvendo-a em bebidas de sabor forte quando não há preparações aromatizadas. Para minimizar o risco de supracorreção e de desmielinização osmótica, a terapia deve começar com dose inicial BAIXA (15 g por dia), particularmente em pacientes com fatores de risco para SDO.",
+   "citacao": "Despite its poor taste, urea is generally well tolerated and safe [31]. The bitter taste can be mitigated by dissolving urea in strongly flavored beverages when flavored preparations are unavailable [44]. To minimize the risk of overcorrection and osmotic demyelination, therapy should begin with a low initial dose (15 g daily), particularly in patients with risk factors for ODS.",
+   "secao": "Euvolemic hyponatremia in SIAD — Second line: oral urea"
+  },
+  {
+   "afirmacao": "Além da SIAD, a ureia foi explorada na hiponatremia hipervolêmica: séries de casos documentaram correção bem-sucedida em 36 pacientes com insuficiência cardíaca, mas o benefício parece limitado naqueles com ureia plasmática basal elevada (> 20 mmol/L).",
+   "citacao": "Beyond SIAD, urea has also been explored in hypervolemic hypona- tremia. Case series have documented successful correction of hyponatremia in 36 patients with heart failure [9]. However, its benefit appears limited in those with elevated baseline plasma urea levels (> 20 mmol/L).",
+   "secao": "Euvolemic hyponatremia in SIAD — Second line: oral urea"
+  },
+  {
+   "afirmacao": "Em pacientes com CIRROSE HEPÁTICA, a ureia deve ser usada apenas com grande cautela e caso a caso, dado o risco de acúmulo de amônia e potencial encefalopatia hepática, além da ausência de evidência robusta de apoio.",
+   "citacao": "Similarly, in patients with liver cirrhosis, urea should be used only with great caution and on a case-by-case basis, given the risk of ammonia accumulation and potential hepatic encephalopathy, as well as the absence of robust supporting evidence.",
+   "secao": "Euvolemic hyponatremia in SIAD — Second line: oral urea"
+  },
+  {
+   "afirmacao": "Os antagonistas do receptor de vasopressina (vaptanos) agem antagonizando os receptores V2 da vasopressina, inibindo assim a expressão de aquaporina-2 nos ductos coletores renais e promovendo aquarese (excreção de água livre de eletrólitos).",
+   "citacao": "Vasopressin receptor antagonists (Vaptans) act by antagonizing vasopressin V₂ receptors, thereby inhibiting aquaporin-2 expression in the renal collecting ducts and promoting aquaresis (excretion of electrolyte-free water).",
+   "secao": "Euvolemic hyponatremia in SIAD — Second line: vaptans"
+  },
+  {
+   "afirmacao": "O tolvaptan, formulação ORAL, está disponível na Europa e nos EUA, enquanto o conivaptan, preparação INTRAVENOSA, é aprovado exclusivamente nos EUA.",
+   "citacao": "Tolvaptan, an oral formulation, is available in both Europe and the United States, while conivaptan, an intravenous preparation, is approved exclusively in the United States [33].",
+   "secao": "Euvolemic hyponatremia in SIAD — Second line: vaptans"
+  },
+  {
+   "afirmacao": "A eficácia do tolvaptan foi estabelecida nos ensaios SALT-1 e SALT-2, dois estudos randomizados, duplo-cegos e controlados por placebo que incluíram 448 pacientes com hiponatremia euvolêmica por SIAD ou hiponatremia hipervolêmica secundária a insuficiência cardíaca ou cirrose hepática; esses ensaios pivotais demonstraram aumentos significativos do sódio sérico, levando à aprovação do tolvaptan para SIAD na Europa e para hiponatremia euvolêmica e hipervolêmica nos EUA.",
+   "citacao": "The efficacy of tolvaptan was established in the SALT-1 and SALT-2 trials, two randomized, double-blind, placebo- controlled studies that enrolled 448 patients with euvolemic hyponatremia due to SIAD or hypervolemic hyponatremia secondary to heart failure or liver cirrhosis [40,56]. These pivotal trials demonstrated significant increases in serum sodium levels, leading to the approval of tolvaptan for the treatment of SIAD in Europe and for both euvolemic and hypervolemic hyponatremia in the United States [56].",
+   "secao": "Euvolemic hyponatremia in SIAD — Second line: vaptans"
+  },
+  {
+   "afirmacao": "POR QUE NÃO USAR TOLVAPTAN NA CIRROSE: em 2013 o FDA RETIROU a aprovação para uso na cirrose hepática, após relatos de hepatotoxicidade grave associada às doses mais altas de tolvaptan usadas em pacientes com doença renal policística autossômica dominante.",
+   "citacao": "However, in 2013, the FDA withdrew approval for its use in liver cirrhosis after reports of serious hepatotoxicity associated with higher tolvaptan doses used in patients with autosomal dominant polycystic kidney disease [53].",
+   "secao": "Euvolemic hyponatremia in SIAD — Second line: vaptans"
+  },
+  {
+   "afirmacao": "A principal limitação da terapia com tolvaptan é o risco de correção rápida demais do sódio, o que exige INÍCIO HOSPITALAR e titulação cuidadosa, particularmente nos pacientes com hiponatremia profunda; por isso, ingesta hídrica adequada (com CESSAÇÃO da restrição hídrica) e mecanismo da sede INTACTO são pré-requisitos essenciais para a terapia segura com tolvaptan.",
+   "citacao": "A major limitation of tolvaptan therapy is the risk of overly rapid sodium correction, which necessitates in-hospital initiation and careful titration, particularly in patients with profound hyponatremia [54,55]. Therefore, adequate fluid intake (cessation of fluid restriction) and an intact thirst mechanism are essential prerequisites for safe tolvaptan therapy.",
+   "secao": "Euvolemic hyponatremia in SIAD — Second line: vaptans"
+  },
+  {
+   "afirmacao": "Começar com dose inicial mais baixa reduz a probabilidade de supracorreção e por isso é recomendado ao iniciar a terapia; deve-se ter cautela também em pacientes em uso de inibidores ou indutores do CYP3A4, pelo potencial de interações medicamentosas significativas.",
+   "citacao": "Starting with a lower initial dose has been shown to reduce the likelihood of overcorrection and is therefore recommended when initiating therapy [17]. Clinicians should also be cautious in patients receiving CYP3A4 inhibitors or inducers, given the potential for significant drug–drug interactions [54].",
+   "secao": "Euvolemic hyponatremia in SIAD — Second line: vaptans"
+  },
+  {
+   "afirmacao": "O custo elevado do tratamento com tolvaptan — aproximadamente US$100 por dia (cerca de 100 euros) — frequentemente limita seu uso prático em escala mais ampla.",
+   "citacao": "The high cost of treatment—approximately US$100 per day (roughly €100)—often limits its practical use in a broader scale of patients.",
+   "secao": "Euvolemic hyponatremia in SIAD — Second line: vaptans"
+  },
+  {
+   "afirmacao": "Apesar dos desafios, o tratamento de longo prazo pode ser viável em casos selecionados: um relato de caso descreveu manejo bem-sucedido de SIAD idiopática com tolvaptan por mais de seis anos, demonstrando que, com monitorização apropriada, a terapia pode ser segura e eficaz em indivíduos bem escolhidos.",
+   "citacao": "Despite these challenges, long-term treatment may be feasible in selected cases. For example, a case report described the successful man- agement of idiopathic SIAD with tolvaptan for over six years, demonstrating that with appropriate monitoring, the therapy can be both safe and effective in well-chosen individuals [8].",
+   "secao": "Euvolemic hyponatremia in SIAD — Second line: vaptans"
+  },
+  {
+   "afirmacao": "Comprimidos de cloreto de sódio raramente bastam como terapia isolada na SIAD: cada comprimido de 1 g fornece apenas cerca de 34 mmol de íons sódio e cloreto, de modo que seria necessário um grande número de comprimidos para gerar carga osmótica suficiente para excretar 1 litro de urina com osmolalidade de 500 mOsm/kg.",
+   "citacao": "Salt tablets (sodium chloride tablets) as monotherapy is rarely sufficient as standalone therapy for SIAD. Each 1 g tablet provides only about 34 mmol of sodium and chloride ions, meaning that a large number of tablets would be needed to generate a sufficient osmotic load to excrete 1 liter of urine with an osmolality of 500 mOsm/kg.",
+   "secao": "Euvolemic hyponatremia in SIAD — Salt tablets"
+  },
+  {
+   "afirmacao": "Um estudo prospectivo que avaliou comprimidos de sal como terapia ADJUVANTE a restrição hídrica não relatou benefício significativo sobre a restrição hídrica isolada, sugerindo efeito aditivo apenas modesto dos comprimidos de cloreto de sódio.",
+   "citacao": "A prospective study evaluating salt tablets as adjunct therapy to fluid restriction reported no significant benefit over fluid restriction alone [20], suggesting only a modest additive effect of sodium chloride tablets in the treatment of hyponatremia.",
+   "secao": "Euvolemic hyponatremia in SIAD — Salt tablets"
+  },
+  {
+   "afirmacao": "O uso de diuréticos de alça combinados a comprimidos orais de sal foi descrito em algumas séries de casos de SIAD; porém um estudo randomizado controlado com 92 pacientes com SIAD não mostrou diferença no aumento do sódio entre restrição hídrica isolada e tratamento adicional com furosemida, com incidência AUMENTADA de lesão renal aguda nos que receberam furosemida — de modo que a evidência para diuréticos de alça na SIAD permanece limitada.",
+   "citacao": "Loop diuretics in combination with oral salt tablets has been described in some case series of SIAD [12,18]. However, a ran- domized controlled study of 92 patients with SIAD, showed no difference in sodium increase between fluid restriction alone or additional furosemide treatment, with increased incidences of acute kidney injury in patients receiving furosemide [20]. Therefore, the evidence of loop diuretics in SIAD treatment remains limited.",
+   "secao": "Euvolemic hyponatremia in SIAD — Loop diuretics"
+  },
+  {
+   "afirmacao": "A suplementação proteica mostrou-se opção eficaz na SIAD, pois as proteínas da dieta são metabolizadas a nitrogênio, que o fígado converte em ureia — um osmol solúvel e excretável. Aproximadamente 10 g de ingesta proteica produzem 50 mmol de ureia, contribuindo para a carga osmótica renal e facilitando a excreção de água.",
+   "citacao": "Protein supplementation has shown to be an effective treatment option in SIAD as dietary proteins are metabolized to nitrogen, which the liver converts into urea, a soluble and excretable osmole. Approximately 10 g of protein intake produces 50 mmol of urea, thereby contributing to the renal osmotic load and facilitating water excretion [33].",
+   "secao": "Emerging treatment options for SIAD — Protein supplementation"
+  },
+  {
+   "afirmacao": "Em modelos de SIAD em ratos, os animais que receberam dieta com 20 % de proteína ou dieta pobre em proteína suplementada com ureia oral apresentaram concentrações plasmáticas de sódio mais altas, natriurese reduzida e níveis mais altos de ureia na medula interna, em comparação com os mantidos apenas em dieta pobre em proteína.",
+   "citacao": "In rat models of SIAD, animals receiving either a 20 % protein diet or a low-protein diet supplemented with oral urea showed higher plasma sodium concentrations, reduced natriuresis, and increased inner medullary urea levels compared with those maintained on a low- protein diet alone [57].",
+   "secao": "Emerging treatment options for SIAD — Protein supplementation"
+  },
+  {
+   "afirmacao": "Em ensaio controlado de 2023 com 17 pacientes ambulatoriais com SIAD crônica, a suplementação proteica alta (90 g/dia por 7 dias) elevou o sódio plasmático e as concentrações de ureia plasmática e urinária em grau COMPARÁVEL ao obtido com 30 g/dia de ureia oral pelo mesmo período.",
+   "citacao": "In a 2023 a controlled trial involving 17 outpatients with chronic SIAD, high protein supplementation (90 g/day for 7 days) raised plasma sodium, as well as plasma and urinary urea concentrations, to a degree comparable to that achieved with 30 g/day of oral urea administered for the same duration [27].",
+   "secao": "Emerging treatment options for SIAD — Protein supplementation"
+  },
+  {
+   "afirmacao": "Os inibidores do cotransportador sódio-glicose 2 (SGLT2) promovem excreção renal de glicose, reduzindo o gradiente osmótico na medula renal e aumentando o clearance de água livre de eletrólitos.",
+   "citacao": "(SGLT2) inhibitors promote renal glucose excretion, thereby reducing the osmotic gradient within the renal medulla and enhancing electrolyte-free water clearance [11].",
+   "secao": "Emerging treatment options for SIAD — SGLT2 inhibitors"
+  },
+  {
+   "afirmacao": "A utilidade potencial dos iSGLT2 na hiponatremia foi avaliada primeiro em ensaio randomizado duplo-cego controlado por placebo com 87 pacientes hospitalizados com SIAD, no qual a empagliflozina (25 mg por dia durante 4 dias) combinada a restrição hídrica padrão (< 1000 mL/24 h) produziu aumento MAIOR do sódio plasmático do que restrição hídrica mais placebo (10 versus 7 mmol/L; p = 0.04).",
+   "citacao": "Their potential utility in hyponatremia was first evaluated in a double-blind, placebo-controlled randomized trial of 87 hospitalized patients with SIAD, in which empagliflozin (25 mg daily for 4 days) combined with standard fluid restriction (< 1000 mL/24 h) produced a greater increase in plasma sodium than fluid restriction plus placebo (10 vs. 7 mmol/L; p = 0.04) [37].",
+   "secao": "Emerging treatment options for SIAD — SGLT2 inhibitors"
+  },
+  {
+   "afirmacao": "Um ensaio cruzado duplo-cego controlado por placebo em pacientes ambulatoriais com SIAD crônica confirmou os achados: 4 semanas de empagliflozina (25 mg por dia) elevaram o sódio sérico em média 4.1 mmol/L (IC de 95 %: 1.7–6.5; p = 0.004). A evidência para outros iSGLT2 permanece limitada, mas o mecanismo compartilhado sugere efeito semelhante.",
+   "citacao": "A subsequent double-blind, placebo-controlled crossover trial in outpatients with chronic SIAD confirmed these findings: 4 weeks of empagliflozin (25 mg daily) raised serum sodium by an average of 4.1 mmol/L (95 % CI 1.7–6.5; p = 0.004) [36]. While evidence for other SGLT2 inhibitors remains limited, their shared mechanism of action suggests a similar effect on sodium increase among other SGLT2 inhibitors.",
+   "secao": "Emerging treatment options for SIAD — SGLT2 inhibitors"
+  },
+  {
+   "afirmacao": "A SDO é complicação rara mas devastadora da correção rápida da hiponatremia crônica, e evidencia o equilíbrio delicado exigido no tratamento: correção lenta demais mantém o edema cerebral, correção rápida demais arrisca desmielinização irreversível.",
+   "citacao": "Osmotic demyelination syndrome (ODS) is a rare but devastating complication of rapid correction of chronic hyponatremia. The syndrome underlines the delicate balance required in treating hyponatremia: overly slow correction risks ongoing cerebral edema, while overly rapid correction risks irreversible demyelination.",
+   "secao": "Osmotic demyelination syndrome"
+  },
+  {
+   "afirmacao": "A mielinólise pontina central (MPC) foi descrita pela primeira vez em 1959 por Adams, Victor e Mancall, que relataram desmielinização simétrica e não inflamatória da ponte central em achados de autópsia de pacientes desnutridos e alcoolistas.",
+   "citacao": "Central pontine myelinolysis (CPM) was first described in 1959 by Adams, Victor, and Mancall, who reported symmetrical, non- inflammatory demyelination of the central pons in autopsy findings of malnourished and alcoholic patients [1].",
+   "secao": "Osmotic demyelination syndrome — Historical background"
+  },
+  {
+   "afirmacao": "Durante os anos 1970, observações clínicas passaram cada vez mais a ligar a mielinólise pontina central ao tratamento da hiponatremia grave, e lesões semelhantes foram descritas em regiões extrapontinas — incluindo córtex cerebral, tálamo, gânglios da base e cerebelo — levando ao termo mielinólise extrapontina (MEP).",
+   "citacao": "During the 1970s, clinical observations increasingly linked CPM to treatment of severe hyponatremia and similar lesions were described in extrapontine regions, including the cerebral cortex, thalamus, basal ganglia, and cerebellum, leading to the term extrapontine myelinolysis (EPM)",
+   "secao": "Osmotic demyelination syndrome — Historical background"
+  },
+  {
+   "afirmacao": "Por décadas a condição foi percebida como extraordinariamente rara, confinada a pacientes debilitados com alcoolismo ou desnutrição, e NÃO RELACIONADA à correção do sódio.",
+   "citacao": "However, for decades it was perceived as an extraordinarily rare condition, confined to debilitated patients with alcoholism or malnutrition, and unrelated to sodium correction.",
+   "secao": "Osmotic demyelination syndrome — Historical background"
+  },
+  {
+   "afirmacao": "Em 1986, Sterns e colaboradores publicaram no New England Journal of Medicine o estudo de referência que introduziu o termo síndrome de desmielinização osmótica (ODS), para enfatizar sua definição CLÍNICA (em vez do termo patológico MPC/MEP) e sua associação com a correção da hiponatremia.",
+   "citacao": "In 1986, Sterns and colleagues published a landmark New England Journal of Medicine study introducing the term “Osmotic Demyelination Syndrome” (ODS) to emphasize its clinical definition (rather than the pathological term CPM/EPM) and its association with hyponatremia correction [48].",
+   "secao": "Osmotic demyelination syndrome — Historical background"
+  },
+  {
+   "afirmacao": "A EVIDÊNCIA QUE FUNDOU OS LIMITES CLÁSSICOS: Sterns apresentou uma série de 80 pacientes com sódio plasmático < 105 mmol/l. Destes, 38 foram corrigidos em mais de 12 pontos em 24 h, e MAIS DE 50 % desses desenvolveram sequelas neurológicas — 14 com diagnóstico de mielinólise pontina central. Em contraste, TODOS os pacientes cujo sódio sérico foi corrigido em MENOS de 12 mmol/L em 24 h se recuperaram sem complicações.",
+   "citacao": "They presented a summary of 80 patients with plasma sodium < 105 mmol/l. Of these patients, 38 patients corrected by > 12 points in 24 h, out of which > 50 % developed neurological sequelae. Among them, 14 were diagnosed with central pontine myelinolysis (CPM). In contrast, all patients whose serum sodium was corrected by less than 12 mmol/L within 24 h recovered without complications.",
+   "secao": "Osmotic demyelination syndrome — Historical background"
+  },
+  {
+   "afirmacao": "Esse trabalho pivotal lançou a base para o termo SDO, hoje comum, e para as diretrizes existentes que limitam a taxa de correção do sódio a fim de reduzir o risco de complicações neurológicas.",
+   "citacao": "This pivotal work laid the foundation for the now common term ODS and existing guidelines of limiting sodium correction rate to reduce the risk of neuro- logical complications.",
+   "secao": "Osmotic demyelination syndrome — Historical background"
+  },
+  {
+   "afirmacao": "Modelos animais forneceram em seguida confirmação experimental da CAUSALIDADE entre correção rápida e desmielinização: modelos em rato e cão demonstraram lesões pontinas e extrapontinas reprodutíveis após correção rápida da hiponatremia grave, ao passo que a hiponatremia NÃO tratada não as produziu.",
+   "citacao": "Animal models subsequently provided experimental confirmation of causality between rapid correction and demyelination with rat and dog models demonstrating reproducible pontine and extrapontine lesions following rapid correction of severe hyponatremia, whereas untreated hyponatremia did not [22,61].",
+   "secao": "Osmotic demyelination syndrome — Historical background"
+  },
+  {
+   "afirmacao": "A SDO representa uma FALHA do cérebro em se readaptar após a correção da hiponatremia crônica; o termo mielinólise refere-se a destruição das bainhas de mielina que revestem as fibras nervosas, e as células gliais, especialmente os astrócitos, têm papel central na manutenção da integridade da mielina e na proteção das fibras contra o estresse osmótico.",
+   "citacao": "ODS represents a failure of the brain to readapt following the correction of chronic hyponatremia. The term “myelinolysis” refers to the destruction of the myelin sheaths coating the nerve fibers. Glial cells, especially astrocytes, play a central role in maintaining myelin integrity and protecting nerve fibers from osmotic stress in hyponatremic conditions [23].",
+   "secao": "Osmotic demyelination syndrome — Pathophysiology"
+  },
+  {
+   "afirmacao": "Durante a hiponatremia, o cérebro — particularmente os astrócitos — perde rapidamente osmólitos, incluindo sódio, potássio e moléculas orgânicas como taurina e mio-inositol, para reduzir a pressão osmótica intracelular e evitar o edema celular; esse processo adaptativo ocorre dentro de 24–48 h.",
+   "citacao": "During hyponatremia, the brain—particularly astrocytes—rapidly loses osmolytes, including sodium, potassium, and organic molecules such as taurine and myo-inositol, to reduce intracellular osmotic pressure and prevent cellular swelling. This adaptive process occurs within 24–48 h [50,51].",
+   "secao": "Osmotic demyelination syndrome — Pathophysiology"
+  },
+  {
+   "afirmacao": "Na CORREÇÃO da hiponatremia, porém, a recaptação dos osmólitos para dentro das células é MUITO MAIS LENTA e exige gasto energético significativo ao longo de vários dias, pois os osmólitos orgânicos precisam ser transportados ativamente de volta pela ATPase sódio-potássio. Se o sódio sérico sobe mais rápido do que os osmólitos podem ser restaurados, ocorrem desidratação e retração celular.",
+   "citacao": "However, during the correction of hyponatremia, the reuptake of osmolytes into the cells is much slower and requires significant energy expenditure over several days, as organic osmolytes must be actively transported back into the cells by the so- dium–potassium ATPase. If serum sodium rises more rapidly than osmolytes can be restored, cellular dehydration and cell shrinkage occur.",
+   "secao": "Osmotic demyelination syndrome — Pathophysiology"
+  },
+  {
+   "afirmacao": "O cérebro adaptado a hiponatremia, ainda depletado de osmoles, é por isso particularmente suscetível a lesão por aumento rápido da concentração de sódio; as regiões pontina e extrapontinas são especialmente suscetíveis por suas altas demandas metabólicas e recuperação mais lenta de osmólitos.",
+   "citacao": "The hyponatremia-adapted brain, still depleted of osmoles, is therefore particularly susceptible to injury from a rapid increase in sodium concentration [58,7]. The pontine and extrapontine regions are particularly susceptible because of their high metabolic demands and slower osmolyte recovery.",
+   "secao": "Osmotic demyelination syndrome — Pathophysiology"
+  },
+  {
+   "afirmacao": "Desnutrição, depleção de tiamina e desequilíbrios eletrolíticos — particularmente potássio, magnésio e fosfato baixos — prejudicam ainda mais o metabolismo energético astrocitário e o funcionamento adequado da ATPase sódio-potássio, comprometendo a energia necessária para manter os gradientes iônicos e transportar osmólitos orgânicos para os astrócitos durante a correção do sódio.",
+   "citacao": "Malnutrition, thiamine depletion, and electrolyte imbalances—particularly low potassium, magnesium, and phosphate—further impair astrocytic energy metabolism and the proper function of sodium–potassium ATPase, compromising the energy required to maintain ionic gradients and transport organic osmolytes into astrocytes during sodium",
+   "secao": "Osmotic demyelination syndrome — Pathophysiology"
+  },
+  {
+   "afirmacao": "Consequentemente, deficiências de potássio, fosfato, magnésio e de aporte calórico, combinadas a depleção de tiamina, prejudicam gravemente a função astrocitária e a capacidade cerebral de readaptação após a hiponatremia, tornando esses pacientes mais vulneráveis a desmielinização osmótica.",
+   "citacao": "Consequently, deficiencies in potassium, phosphate, magnesium, and caloric intake, when combined with thiamine de- pletion, severely impair astrocyte function and the brain’s ability to readapt after hyponatremia, rendering patients with such conditions more vulnerable to osmotic demyelination [19,35].",
+   "secao": "Osmotic demyelination syndrome — Pathophysiology"
+  },
+  {
+   "afirmacao": "A apresentação clínica da SDO é frequentemente BIFÁSICA: o paciente pode inicialmente MELHORAR após a correção do sódio, apenas para deteriorar de três a dez dias após a correção rápida. Os sintomas incluem flutuação do nível de consciência, alterações comportamentais, disartria e disfagia; casos graves resultam em convulsões, quadriplegia e síndrome do encarceramento (locked-in).",
+   "citacao": "The clinical presentation of ODS is often biphasic. Patients may initially improve following sodium correction, only to deteriorate three to ten days after rapid sodium correction. Symptoms include fluctuating levels of consciousness, behavioral changes, dysarthria and dysphagia. Severe cases result in seizures, quadriplegia and the locked-in syndrome.",
+   "secao": "Osmotic demyelination syndrome — Clinical features and diagnosis"
+  },
+  {
+   "afirmacao": "Embora a neuroimagem confirmatória possa revelar lesões desmielinizantes pontinas e extrapontinas, o DIAGNÓSTICO PERMANECE PRIMARIAMENTE CLÍNICO: os achados de imagem são frequentemente tardios, pois a ressonância pode permanecer negativa por vários dias ou semanas após o início dos sintomas. Assim, apoiar-se apenas na imagem leva a SUBDIAGNÓSTICO, particularmente quando os pacientes já receberam alta ou foram transferidos para outros serviços.",
+   "citacao": "While confirmatory neuroimaging can reveal pontine and extrapontine demyelinating lesions, diagnosis remains primarily clinical. Imaging findings are often delayed as MRI may remain negative for several days or weeks after symptom onset. Consequently, reliance on imaging findings alone can lead to underdiagnosis, particularly when patients have already been discharged or transferred to other facilities.",
+   "secao": "Osmotic demyelination syndrome — Clinical features and diagnosis"
+  },
+  {
+   "afirmacao": "FATORES DE RISCO REAIS PARA SDO: são particularmente vulneráveis os pacientes com hiponatremia crônica profunda (sódio sérico <=105 mmol/L), alcoolismo, desnutrição, doença hepática avançada e hipocalemia. Deficiência de tiamina e outros distúrbios eletrolíticos, como fosfato e magnésio baixos, prejudicam ainda mais a função astrocitária e o transporte de osmólitos pela bomba ATPase sódio-potássio, agravando a vulnerabilidade ao estresse osmótico; por isso, manter os eletrólitos normais e repô-los quando necessário são medidas preventivas CRÍTICAS durante a correção do sódio.",
+   "citacao": "Certain patients are particularly vulnerable to ODS, including those with profound chronic hyponatremia (serum sodium ≤105 mmol/L), alcoholism, malnutrition, advanced liver disease, and hypokalemia. Thiamine deficiency and other electrolyte disturbances, like low phosphate, and magnesium, further impair astrocytic function and osmolyte transport via sodium–potassium ATPase pump, thereby exacerbating vulnerability to osmotic stress [19,35]. Therefore, maintenance of normal electrolyte levels and substitution if needed are critical preventive measures in sodium correction [35].",
+   "secao": "Osmotic demyelination syndrome — Risk factors"
+  },
+  {
+   "afirmacao": "Algumas ETIOLOGIAS conferem risco maior de correção rápida e de SDO, particularmente quando a causa reversível subjacente — hipovolemia, uso de tiazídico, antidepressivos, desmopressina ou insuficiência adrenal — é REMOVIDA: uma vez reduzido o estímulo a liberação de vasopressina, pode surgir diurese aquosa súbita que eleva rapidamente a concentração de sódio sérico.",
+   "citacao": "Some etiologies of hyponatremia also confer a higher risk of rapid sodium correction and ODS. This is particularly frequent when the underlying, reversible cause of hyponatremia—such as hypovolemia, thiazide use, antidepressants, desmopressin, or adrenal insufficiency—is removed. Once the stimulus for arginine vasopressin (AVP) release decreases, a sudden water diuresis may arise, rapidly increasing serum sodium concentrations.",
+   "secao": "Osmotic demyelination syndrome — Risk factors"
+  },
+  {
+   "afirmacao": "No baixo aporte de soluto, como na potomania da cerveja ou na dieta de chá e torrada, a restauração da nutrição ou a infusão de salina também pode restaurar abruptamente a capacidade de excretar água, levando a diurese aquosa rápida e potencial supracorreção do sódio, predispondo a SDO.",
+   "citacao": "In low-solute intake, like “beer potomania” or “tea and toast diet”, restoration of nutrition or saline infusion can also abruptly restore this ability to excrete water, leading to rapid water diuresis and potential sodium overcorrection, predisposing to ODS [52].",
+   "secao": "Osmotic demyelination syndrome — Risk factors"
+  },
+  {
+   "afirmacao": "A correção excessiva da hiponatremia ocorre mais comumente pela excreção INESPERADA de grande volume de urina diluída; por isso a monitorização estreita do débito urinário e de sua composição é essencial durante o tratamento, para permitir ajustes terapêuticos oportunos.",
+   "citacao": "Excessive correction of hyponatremia most commonly occurs due to the unexpected excretion of a large volume of dilute urine [46]. Close monitoring of urine output and composition is therefore essential during treatment to allows timely therapeutic ad- justments.",
+   "secao": "Osmotic demyelination syndrome — Preventive strategies"
+  },
+  {
+   "afirmacao": "O sódio sérico pode ser re-abaixado com segurança usando dextrose a 5 % em água (D5W) intravenosa; porém a infusão RÁPIDA de D5W tem desvantagens potenciais, incluindo glicosúria aumentada com diurese osmótica e estimulação da insulina, que pode reduzir ainda mais o potássio e o fosfato séricos — fatores que AUMENTAM o risco de SDO.",
+   "citacao": "Serum sodium can be safely re-lowered using intravenous dextrose 5 % in water (D5W). Rapid D5W infusion can carry potential drawbacks, including increased glycosuria leading to osmotic diuresis, as well as insulin stimulation that may further lower serum potassium and phosphate—factors that heighten the risk of ODS.",
+   "secao": "Osmotic demyelination syndrome — Preventive strategies"
+  },
+  {
+   "afirmacao": "Como alternativa a igualar as perdas urinárias de água com D5W, as perdas urinárias podem ser INTERROMPIDAS com desmopressina (DDAVP), seja em resposta ao surgimento de diurese aquosa, seja proativamente antecipando-a; o DDAVP é análogo sintético da vasopressina que se liga seletivamente aos receptores V2 dos ductos coletores renais, aumenta a reabsorção de água livre e desacelera a taxa de correção do sódio.",
+   "citacao": "As an alternative to matching urine water losses with D5W, urine losses can be stopped by administering desmopressin (1-desamino-8-D-arginine vasopressin; DDAVP), either in response to the emergence of a water diuresis or proactively in anticipation of a water diuresis. DDAVP is a synthetic analog of vasopressin that selectively binds to V₂ receptors in the renal collecting ducts, enhances free-water reabsorption and slows the rate of sodium cor- rection.",
+   "secao": "Osmotic demyelination syndrome — Preventive strategies"
+  },
+  {
+   "afirmacao": "A administração PROATIVA de DDAVP — o chamado DDAVP clamp — em combinação com salina hipertônica cuidadosamente titulada demonstrou controlar a subida do sódio sérico quando aplicada em centros experientes, e vários estudos apoiam essa abordagem como segura e eficaz para minimizar o risco de desmielinização osmótica.",
+   "citacao": "Proactive administration of DDAVP—often referred to as the “DDAVP clamp”—in combination with carefully titrated hy- pertonic saline has shown to control serum sodium rise, when applied in experienced centers. Several studies support this approach as both safe and effective in minimizing osmotic demyelination risk [21,3,34,42,47].",
+   "secao": "Osmotic demyelination syndrome — Preventive strategies"
+  },
+  {
+   "afirmacao": "Uma pesquisa europeia recente sobre a prática clínica atual mostrou que apenas uma MINORIA dos médicos usa DDAVP, enquanto a maioria dos centros aplica D5W para manejar a correção rápida demais do sódio; e, quando o DDAVP é usado, a maioria dos respondentes o aplica de forma REATIVA e não proativa. Assim, até o momento, a administração proativa de DDAVP fica restrita a centros experientes e precisa ser titulada com cuidado.",
+   "citacao": "However, a recent European survey on current clinical practice of hyponatremia treatment showed that only a minority of physicians use DDAVP, whereas most centers apply D5W to manage overly rapid sodium correction. If DDAVP is used, most survey respondents applied it as a reactive rather than proactive approach [6]. Therefore, to date proactive administration of DDAVP is rather limited to experienced centers and needs to be titrated carefully.",
+   "secao": "Osmotic demyelination syndrome — Preventive strategies"
+  },
+  {
+   "afirmacao": "A CONTROVÉRSIA: em 2023 surgiu um debate sobre a verdadeira incidência e a relevância clínica da SDO. MacMillan e colaboradores conduziram estudo de coorte multicêntrico com mais de 22.000 pacientes com hiponatremia em nove hospitais canadenses, relatando incidência GLOBAL de SDO de 0.05 %. A correção rápida do sódio ocorreu em 17.7 % dos pacientes, mas apenas 12 desenvolveram SDO — e sete deles NÃO haviam sofrido correção rápida.",
+   "citacao": "In 2023 a debate regarding the true incidence and clinical relevance of ODS arose. MacMillan et al. conducted a multicenter cohort study involving over 22,000 patients with hyponatremia across nine Canadian hospitals, reporting an overall ODS incidence of 0.05 % [24,4]. Rapid correction of serum sodium occurred in 17.7 % of patients, but only 12 developed ODS, seven of whom had not experienced rapid correction.",
+   "secao": "Recent controversy about ODS"
+  },
+  {
+   "afirmacao": "No editorial que acompanhou o estudo, Ayus e Moritz argumentaram que a adesão ESTRITA às diretrizes atuais pode levar a SUBTRATAMENTO, monitorização excessiva e internações mais longas; como resultado, os autores defenderam metas de correção MAIS LIBERAIS.",
+   "citacao": "In the accompanying editorial, Ayus and Moritz argued that strict adherence to current guidelines may lead to undertreatment, excessive monitoring, and longer hospital stays [49]. As a results, the authors advocated for more liberal correction targets in hyponatremia correction.",
+   "secao": "Recent controversy about ODS"
+  },
+  {
+   "afirmacao": "A REFUTAÇÃO: um grupo de especialistas publicou um position paper apontando limitações metodológicas a considerar ANTES de liberar os limites de correção existentes. Apoiar-se apenas em codificação CID e em confirmação por ressonância provavelmente SUBESTIMOU os casos de SDO, já que o diagnóstico é primariamente clínico e as alterações de imagem podem ser tardias. Além disso, a maioria dos pacientes incluídos tinha sódio sérico > 120 mmol/L — população de risco inerentemente BAIXO para SDO. Ao focar nos pacientes com hiponatremia grave (<=110 mmol/L), a incidência estimada de SDO naquela coorte subiu para 2.6 %.",
+   "citacao": "However, a group of experts published a position paper alluding to some methodological limitations needing to be considered before liberating the existing correction limits [49]. The reliance on solely ICD coding and MRI confirmation likely underestimated ODS cases, as diagnosis of ODS is primarily clinical and imaging changes may be delayed. Also, most included patients had a serum sodium > 120 mmol/L—a population at inherently low risk for ODS. When focusing on patients with severe hyponatremia (≤110 mmol/L), the estimated ODS incidence in their cohort increased to 2.6 %.",
+   "secao": "Recent controversy about ODS"
+  },
+  {
+   "afirmacao": "Outro estudo multicêntrico, de Seethapathy e colaboradores, DESAFIOU a noção de que o limiar de correção seja o fator de risco mais importante para SDO: envolveu mais de 3000 pacientes com sódio < 120 mmol/L e mostrou que a correção MAIS LENTA associou-se a mortalidade MAIOR e internações mais longas. Entre os sete pacientes que desenvolveram SDO, cinco NÃO haviam excedido correção de 8 mmol/L.",
+   "citacao": "Another multicenter study by Seethapathy et al. challenged the notion that correction threshold is the most important risk factor for ODS. Their study involved over 3000 patients with sodium < 120 mmol/L and showed that slower correction was associated with higher mortality and longer hospital stays [41]. Among the seven patients who developed ODS, five had not exceeded an 8 mmol/L",
+   "secao": "Recent controversy about ODS"
+  },
+  {
+   "afirmacao": "De modo semelhante, uma metanálise de Ayus e colaboradores incluindo 16 estudos de coorte mostrou que a correção RÁPIDA do sódio associou-se a mortalidade MENOR e internações mais curtas, SEM aumento significativo do risco de SDO.",
+   "citacao": "Similarly, a meta-analysis by Ayus et al. including 16 cohort studies showed that rapid sodium correction was associated with lower mortality and shorter hospitalizations, without a significant increase in ODS risk [5].",
+   "secao": "Recent controversy about ODS"
+  },
+  {
+   "afirmacao": "Embora esses estudos ofereçam indícios convincentes de que o risco de SDO com a correção rápida do sódio possa estar SUPERESTIMADO, os próprios autores alertaram que essa associação NÃO deve ser interpretada como causal.",
+   "citacao": "Although these studies offer compelling hints that the risk of ODS with rapid sodium correction may be overstated, the authors cautioned that this asso- ciation should not be interpreted as causal.",
+   "secao": "Recent controversy about ODS"
+  },
+  {
+   "afirmacao": "Em análise relacionada, Rondon-Berrios e Sterns exploraram se a relação observada entre taxa de correção e mortalidade reflete causalidade verdadeira ou, antes, um EPIFENOMENO da gravidade da doença subjacente: argumentaram que pequenas diferenças nas taxas de correção dificilmente determinam diretamente a mortalidade e que ambos os desfechos refletem a gravidade do distúrbio que causa a hiponatremia e a capacidade limitada do paciente de excretar água.",
+   "citacao": "In a related analysis, Rondon-Berrios and Sterns [39] explored whether the observed relationship between correction rate and mortality reflects true causality or rather an epiphenomenon of underlying disease severity. They argued that small differences in correction rates are unlikely to directly determine mortality; instead, both outcomes reflect the severity of the underlying disorder causing hyponatremia and a patient’s limited ability to excrete water.",
+   "secao": "Recent controversy about ODS"
+  },
+  {
+   "afirmacao": "Pacientes com doença sistêmica grave frequentemente exibem excreção renal de água prejudicada, resultando em taxas de correção mais lentas E mortalidade mais alta; já pacientes com condições menos graves tipicamente excretam urina diluída com mais eficiência, o que facilita correção mais rápida e melhor sobrevida.",
+   "citacao": "Patients with severe systemic illness often exhibit impaired renal water excretion, resulting in slower correction rates and higher mortality. Conversely, patients with less severe conditions are typically able to excrete dilute urine more efficiently, facilitating more rapid correction and improved survival.",
+   "secao": "Recent controversy about ODS"
+  },
+  {
+   "afirmacao": "CONCLUSÃO DA AUTORA SOBRE A CONTROVÉRSIA: no conjunto, esses estudos sublinham a controvérsia em curso sobre o manejo da hiponatremia, particularmente quanto à relevância clínica da SDO. Porém, NA AUSÊNCIA DE ENSAIOS CLÍNICOS RANDOMIZADOS, ABANDONAR os limites de correção atuais das diretrizes existentes NÃO PODE SER JUSTIFICADO neste momento; mais pesquisa é necessária para determinar o risco real de SDO e esclarecer sua relação causal com a taxa de correção do sódio.",
+   "citacao": "Taken together, these studies underscore the ongoing controversy surrounding the management of hyponatremia, particularly with respect to the clinical relevance of osmotic demyelination syndrome (ODS). In the absence of randomized controlled trials, abandoning the current correction limits outlined in existing guidelines cannot be justified at this time. Further research is needed to determine the true risk of ODS and to clarify its causal relationship with the rate of sodium correction.",
+   "secao": "Future directions"
+  },
+  {
+   "afirmacao": "A fisiopatologia da SDO reflete a incapacidade do cérebro de se readaptar a desvios osmóticos rápidos quando o sódio aumenta; evidências experimentais e clínicas implicam a correção RÁPIDA como o principal fator de risco, especialmente em pacientes com hiponatremia grave e crônica e comorbidades como ingesta alcoólica, desnutrição e hipocalemia. Estudos recentes que questionam a relevância desses limites reacenderam o debate, mas até o momento o CONSENSO PREDOMINANTE de especialistas favorece a manutenção da cautela.",
+   "citacao": "Its pathophysiology re- flects the brain’s inability to readapt to rapid osmotic shifts when sodium increases. Experimental and clinical evidence implicates rapid correction as the principal risk factor, especially in patients with severe, chronic hyponatremia and comorbidities such as alcohol intake, malnutrition, and hypokalemia. Recent studies questioning the relevance of these limits have reignited debate, but to date prevailing expert consensus favors continued caution.",
+   "secao": "Conclusion"
+  },
+  {
+   "afirmacao": "Preocupação central no manejo da hiponatremia é prevenir a SDO, complicação rara mas devastadora da correção rápida da hiponatremia crônica; os sintomas neurológicos são frequentemente TARDIOS, ocorrendo apenas de três a dez dias após a correção rápida do sódio. Pacientes com hiponatremia grave (<=105 mmol/L), alcoolismo, desnutrição, hipocalemia ou doença hepática são particularmente vulneráveis.",
+   "citacao": "A key concern in hyponatremia management is the prevention of osmotic demyelination syndrome (ODS), a rare but devastating complication arising from rapid correction of chronic hyponatremia. Neurological symptoms are often delayed, occurring only three to ten days after rapid sodium correction. Patients with severe hyponatremia (≤105 mmol/L), alcoholism, malnutrition, hypokalemia or liver disease are particularly vulnerable.",
+   "secao": "Summary"
+  },
+  {
+   "afirmacao": "As diretrizes atuais dos EUA e europeias recomendam limitar a correção do sódio sérico a 10–12 mmol/L em 24 h e 18 mmol/L em 48 h, com limiares mais estritos (<=8 mmol/L por 24 h) nos pacientes de alto risco.",
+   "citacao": "Current U.S. and European guidelines recommend limiting serum sodium correction to 10–12 mmol/L in 24 h and 18 mmol/L in 48 h, with stricter thresholds (≤8 mmol/L per 24 h) in high-risk patients.",
+   "secao": "Summary"
+  },
+  {
+   "afirmacao": "Ponto de prática sobre limites: segundo as diretrizes atuais, o sódio NÃO deve subir mais que 10–12 mmol/L em 24 h e 18 mmol/L em 48 h; para pacientes de ALTO RISCO (sódio sérico <=105 mmol/L, ingesta alcoólica, desnutrição, doença hepática ou hipocalemia) recomendam-se limites de <= 8 mmol/L por 24 h e METAS de 4–6 mmol/L/dia.",
+   "citacao": "According to current guidelines, sodium should not rise by more than 10–12 mmol/L in 24 h and 18 mmol/L in 48 h. – For high-risk patients (serum sodium ≤105 mmol/L, alcohol intake, malnutrition, liver disease, or hypokalemia), limits of ≤ 8 mmol/L per 24 h and targets of 4–6 mmol/L/day are recommended.",
+   "secao": "Practice Points"
+  },
+  {
+   "afirmacao": "Ponto de prática — terapia guiada pelo status volêmico: hiponatremia hipovolêmica com salina isotônica e monitorização estreita para correção rápida; hiponatremia hipervolêmica com restrição hídrica e diuréticos de alça; hiponatremia euvolêmica (SIAD) com restrição hídrica de primeira linha, tendo como demais opções ureia oral, vaptanos (SEM restrição hídrica), suplementação proteica e inibidores do SGLT2.",
+   "citacao": "Hypovolemic hyponatremia: isotonic saline, close monitoring for rapid correction. – Hypervolemic hyponatremia: fluid restriction and loop diuretics. – Euvolemic hyponatremia (SIAD): fluid restriction as first-line therapy. Further therapeutic options: oral urea, vaptans (without fluid restriction), protein supplementation, SGLT2-inhibitors.",
+   "secao": "Practice Points"
+  },
+  {
+   "afirmacao": "Ponto de prática sobre SDO: complicação rara mas devastadora da correção rápida da hiponatremia crônica, com início TARDIO dos sintomas neurológicos 3–10 dias após a correção rápida; o diagnóstico é CLÍNICO e apoiar-se apenas nos achados de imagem pode perder ou atrasar o diagnóstico; fatores de risco principais são hiponatremia crônica grave (<=105 mmol/L), alcoolismo, desnutrição, doença hepática e hipocalemia; e recomendam-se monitorização estreita do débito urinário e administração de infusão de glicose ou DDAVP para prevenir novo aumento rápido do sódio.",
+   "citacao": "A rare but devastating complication of rapid correction of chronic hyponatremia with delayed onset of neurological symptoms 3–10 days after rapid sodium correction. – Clinical diagnosis, solely relying on imaging findings can miss or delay the diagnosis. – Key risk factors: Severe chronic hyponatremia (≤105 mmol/L), alcoholism, malnutrition, liver disease, and hypokalemia. – Close monitoring of urine output, administration of glucose infusion or DDAVP to prevent further rapid sodium increase.",
+   "secao": "Practice Points"
+  },
+  {
+   "afirmacao": "Agenda de pesquisa: investigar novas estratégias terapêuticas para a hiponatremia crônica, particularmente na SIAD — suplementação proteica, análogos da apelina, antagonistas da interleucina-6 e transportadores de ureia; medidas preventivas contra a correção rápida demais do sódio, incluindo o uso do clamp de desmopressina (DDAVP) em abordagem proativa; e evidência clínica robusta que defina limites de correção baseados em evidência e esclareça a relação causal entre a SDO e o aumento rápido do sódio.",
+   "citacao": "Investigating further therapeutic strategies for chronic hyponatremia, particularly in SIAD, such as protein supplementation, apelin analogues, interleukin-6 antagonists, and urea transporters. – Preventive measures against overly rapid sodium correction, including the use of a desmopressin (DDAVP) clamp in a proactive approach. – Need for robust clinical evidence defining evidence-based correction limits and clarifying the causal relationship between osmotic demyelination syndrome (ODS) and rapid sodium correction.",
+   "secao": "Research Agenda"
+  },
+  {
+   "afirmacao": "Tabela 1 — SIAD (hiponatremia euvolêmica): restrição hídrica de 500–1000 mL/dia reduz a ingesta de água em relação à capacidade excretora; CAUTELA: eficácia limitada quando a osmolalidade urinária é > 500 mOsm/kg.",
+   "citacao": "Fluid restriction (500–1000 mL/ day) Reduces water intake relative to excretory capacity Limited efficacy when urine osmolality > 500 mOsm/kg",
+   "secao": "Table 1 — Treatment options in chronic hyponatremia"
+  },
+  {
+   "afirmacao": "Tabela 1 — ureia oral (0.25–0.50 g/kg/dia) induz diurese osmótica, alternativa eficaz e segura; CAUTELAS: palatabilidade ruim, começar baixo (15 g/dia) em risco de SDO e EVITAR em doença hepática grave.",
+   "citacao": "Oral urea (0.25–0.50 g/kg/day) Induces osmotic diuresis; effective and safe alternative Poor palatability; start low (15 g/ day) in ODS risk; avoid in severe liver disease",
+   "secao": "Table 1 — Treatment options in chronic hyponatremia"
+  },
+  {
+   "afirmacao": "Tabela 1 — vaptanos (ex.: tolvaptan): antagonismo do receptor V2 bloqueia o efeito da AVP e promove aquarese; CAUTELAS: risco de correção rápida, iniciar no HOSPITAL, hepatotoxicidade em doses mais altas e custo elevado.",
+   "citacao": "Vaptans (e.g., tolvaptan) V₂ receptor antagonism → blocks AVP effect → promotes aquaresis Risk of rapid correction; initiate in hospital; hepatotoxicity at higher doses; costly",
+   "secao": "Table 1 — Treatment options in chronic hyponatremia"
+  },
+  {
+   "afirmacao": "Tabela 1 — hiponatremia hipovolêmica: salina isotônica (NaCl a 0.9 %) restaura o volume extracelular, suprime SRAA e AVP e promove diurese aquosa após a repleção; CAUTELA: monitorizar de perto para evitar correção rápida demais, e CONTRAINDICADA na SIAD.",
+   "citacao": "Hypovolemic Hyponatremia Isotonic saline (0.9 % NaCl) Restores extracellular volume → suppresses RAAS and AVP → promotes water diuresis once volume repleted Monitor closely to avoid overly rapid correction; contraindicated in SIAD",
+   "secao": "Table 1 — Treatment options in chronic hyponatremia"
+  },
+  {
+   "afirmacao": "Tabela 1 — baixo aporte de soluto (dieta de chá e torrada / potomania da cerveja): restauração GRADUAL de proteína e sal da dieta, com uso cauteloso de salina isotônica (apenas pequenos bolus), aumentando a carga de soluto e restaurando a capacidade renal de excretar água; CAUTELA: risco de supracorreção rápida, exigindo monitorização estreita do sódio e do débito urinário, e evitando repleção abrupta de soluto.",
+   "citacao": "Low-Solute Intake ('Tea and Toast' / 'Beer Potomania') Gradual restoration of dietary protein and salt; cautious use of isotonic saline (only small boluses) Increases solute load, restoring renal water excretion capacity Risk of rapid overcorrection → close sodium and urine output monitoring; avoid abrupt solute repletion",
+   "secao": "Table 1 — Treatment options in chronic hyponatremia"
+  }
+ ],
+ "auditoria": "Auditoria adversarial em 07/08/2026: 97/97 fatos auditados; 1 incompleto corrigido (limite de 8 mmol/L sem a janela temporal). A controvérsia de 2023 sobre a SDO foi preservada COMO controvérsia, sem virar afrouxamento dos limites.",
+ "conflito_direcao": "nucleo_prevalece",
+ "nucleo_citado": [
+  "Os números de 24 h das diretrizes são TETOS, não metas a perseguir",
+  "o FDA RETIROU o tolvaptan na CIRROSE"
+ ]
 }

@@ -393,6 +393,20 @@ try {
   fail('teto do bloco clínico falhou (verifique CLINICAL_GUIDELINES, lib/clinical-deep.js e api/ai.js):\n' + out);
 }
 
+// ⚠️ RESSALVAS × NÚCLEO. O campo `conflito` de um extrato é uma FOTOGRAFIA do
+//     núcleo no dia da leitura, e a varredura do acervo CORRIGE o núcleo — é
+//     metade do objetivo dela. Toda correção envelhece a ressalva do artigo que
+//     a motivou. Medido em 07/08/2026: 6 das 13 ressalvas citavam texto já
+//     substituído, e a do prolactinoma mandava sobrescrever uma entrada JÁ CERTA.
+//     A trava é a mesma dos fatos: citação literal do núcleo, conferida.
+try {
+  execFileSync(process.execPath, [path.join('scripts', 'confere-ressalvas.js')], { stdio: 'pipe' });
+  ok('ressalvas da base profunda: direção declarada e citações do núcleo conferidas');
+} catch (e) {
+  const out = (e.stdout ? e.stdout.toString() : '') + (e.stderr ? e.stderr.toString() : '');
+  fail('conferência das ressalvas falhou (o núcleo mudou e alguma ressalva ficou para trás):\n' + out);
+}
+
 // ⚠️ Endocrinologia PEDIÁTRICA no Analytics. O risco não é o número, é a leitura
 //     dele: "0" sem a cobertura da pergunta faz parecer "não tenho nenhum
 //     endocrinopediatra" quando a verdade é "ainda não perguntei" (0 de 53).

@@ -6,7 +6,7 @@
  "area": "Tireoide",
  "tipo": "revisao",
  "ano": 2021,
- "conflito": "Não é conflito de conteúdo, é conflito de LEITURA: a entrada do núcleo (ETA 2022, Graves pediátrica) resume a tempestade como 'iodo + glicocorticoide + betabloqueador + ATD' — uma ENUMERAÇÃO que, se lida como sequência, inverte a regra explícita deste capítulo: 'Inhibition of thyroid gland synthesis of new thyroid hormone with a thionamide should be initiated before iodine therapy, to prevent the stimulation of new thyroid hormone synthesis that can occur when iodine is given initially' e 'The time delay between antithyroid medications and iodine administration is at least 60 minutes.' A TIONAMIDA VEM PRIMEIRO, e o iodo pelo menos 60 min depois. O núcleo é mais novo (2022) e não foi sobrescrito; registra-se aqui apenas a precisão de ordem.",
+ "conflito": "RESOLVIDO — registro de auditoria, sem divergência ativa. Esta fonte é a origem da correção que o núcleo hoje carrega. O capítulo é explícito: \"Inhibition of thyroid gland synthesis of new thyroid hormone with a thionamide should be initiated before iodine therapy, to prevent the stimulation of new thyroid hormone synthesis that can occur when iodine is given initially\" e \"The time delay between antithyroid medications and iodine administration is at least 60 minutes.\" Até 07/08/2026 o núcleo resumia a tempestade como uma ENUMERAÇÃO (\"iodo + glicocorticoide + betabloqueador + ATD\") que, lida como sequência, invertia essa regra. O núcleo foi reescrito e hoje diz \"⚠️ A ORDEM IMPORTA: TIONAMIDA PRIMEIRO\" com o intervalo mínimo antes do iodo. Não há mais o que sobrescrever.",
  "fatos": [
   {
    "afirmacao": "O cenário clínico típico da crise tireotóxica é paciente com bócio, taquicardia, sinais de hiperatividade autonômica (fezes amolecidas, hiperreflexia), febre e delirium agitado.",
@@ -674,5 +674,9 @@
    "secao": "Terapia definitiva"
   }
  ],
- "auditoria": "Auditoria adversarial em 07/08/2026: 133/133 fatos auditados. 16 não-OK, dos quais 6 clinicamente consequentes. Zero inversões. Principais correções: a dose de PTU do Précis excede o teto diário do corpo do mesmo capítulo (contradição da fonte, agora sinalizada); doses de iodo sem marcador de ordem; e o fato da ordem iodo x lítio, que era a recuperação falsa mais provável para a pergunta da ordem na tempestade. A entrada do núcleo sobre a ordem tionamida→iodo foi conferida ponto a ponto e está sustentada."
+ "auditoria": "Auditoria adversarial em 07/08/2026: 133/133 fatos auditados. 16 não-OK, dos quais 6 clinicamente consequentes. Zero inversões. Principais correções: a dose de PTU do Précis excede o teto diário do corpo do mesmo capítulo (contradição da fonte, agora sinalizada); doses de iodo sem marcador de ordem; e o fato da ordem iodo x lítio, que era a recuperação falsa mais provável para a pergunta da ordem na tempestade. A entrada do núcleo sobre a ordem tionamida→iodo foi conferida ponto a ponto e está sustentada.",
+ "conflito_direcao": "alinhado",
+ "nucleo_citado": [
+  "A ORDEM IMPORTA: TIONAMIDA PRIMEIRO"
+ ]
 }
