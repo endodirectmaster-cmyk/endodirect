@@ -264,6 +264,7 @@ alter table public.endodirect_cursos add column if not exists capa text not null
 update public.endodirect_cursos set capa = '/img/cursos/hiperglicemia.jpg' where slug = 'hiperglicemia' and coalesce(capa,'') = '';
 update public.endodirect_cursos set capa = '/img/cursos/lipides.jpg'       where slug = 'lipides'       and coalesce(capa,'') = '';
 update public.endodirect_cursos set capa = '/img/cursos/endoteem.jpg'      where slug = 'endoteem'      and coalesce(capa,'') = '';
+update public.endodirect_cursos set capa = '/img/cursos/endo_essencial.jpg' where slug = 'endo_essencial' and coalesce(capa,'') = '';
 do $$ begin
   if not exists (select 1 from pg_constraint where conname = 'endodirect_cursos_tier_chk') then
     alter table public.endodirect_cursos
