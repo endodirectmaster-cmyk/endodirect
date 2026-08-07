@@ -99,6 +99,11 @@ ok(/class="curso-capa"/.test(capa), 'a capa perdeu a classe .curso-capa');
 ok(/--cg1:#[0-9a-f]{6};--cg2:#[0-9a-f]{6}/i.test(capa), 'a capa não injeta o par de cores em --cg1/--cg2');
 ok(/<svg viewBox="0 0 24 24"/.test(capa), 'a capa não desenha o SVG');
 ok(/height:78px/.test(capa), 'a capa ignorou a altura pedida');
+// Altura 0 = proporcional. É o modo do card do aluno: com altura fixa, o recorte
+// da foto muda conforme a largura da tela (1,9:1 no computador, 1,17:1 no celular).
+const prop = caixa.cursoCapaHTML('Lípides', 'lipides', '', 0, false);
+ok(/aspect-ratio:16\/9/.test(prop) && !/height:\d/.test(prop),
+  'altura 0 devia virar aspect-ratio 16/9 e não altura fixa');
 
 // Curso bloqueado: dessatura, NÃO some (o aluno precisa ver que existe).
 ok(/class="curso-capa cc-off"/.test(caixa.cursoCapaHTML('Lípides', 'lipides', '', 78, true)),
@@ -174,13 +179,13 @@ ok(caixa.cursoNomeBySlug('endoteem') === 'EndoTEEM 2027',
 
 // ── 6. as duas telas usam a capa (e o emoji sumiu das duas) ────────────────
 const aluno = fatia('function aTile(slug,nome,n,capa){', 'var allCount=', 'aTile do aluno');
-ok(/cursoCapaHTML\(nome,slug,capa,96,true\)/.test(aluno), 'o card bloqueado do aluno não usa cursoCapaHTML');
-ok(/cursoCapaHTML\(nome,slug,capa,96,false\)/.test(aluno), 'o card liberado do aluno não usa cursoCapaHTML');
+ok(/cursoCapaHTML\(nome,slug,capa,0,true\)/.test(aluno), 'o card bloqueado do aluno não usa cursoCapaHTML');
+ok(/cursoCapaHTML\(nome,slug,capa,0,false\)/.test(aluno), 'o card liberado do aluno não usa cursoCapaHTML');
 ok(!EMOJI.test(aluno.replace(/🔒|🎁/g, '')), 'sobrou emoji decorativo no card do aluno');
 
 const prof = fatia("verHTML='<div style=\"font-size:.72rem;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--t3);margin-bottom:.6rem\">Escolha um curso para abrir",
   '}else if(!admCursoMod){', 'grade de cursos do professor');
-ok(/cursoCapaHTML\(nm,cc\.slug,cc\.capa,104,false\)/.test(prof), 'a grade do professor não usa cursoCapaHTML');
+ok(/cursoCapaHTML\(nm,cc\.slug,cc\.capa,0,false\)/.test(prof), 'a grade do professor não usa cursoCapaHTML');
 ok(!/dsb-ico">🎓/.test(prof), 'a grade do professor ainda tem o 🎓 genérico');
 
 // ── 7. o CSS que a capa precisa ────────────────────────────────────────────
