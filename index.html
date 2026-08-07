@@ -859,6 +859,30 @@ html[data-theme="light"] .cat-pill.on{background:var(--blue);border-color:var(--
 .dir-sub-btn .dsb-ico{font-size:1.5rem;line-height:1}
 .dir-sub-btn h3{margin:.4rem 0 .2rem;font-size:1rem;color:var(--tx)}
 .dir-sub-btn .dsb-cnt{font-size:.72rem;color:var(--t3)}
+/* ── CAPA DO CURSO ──
+   Faixa em gradiente com um glifo de linha branca ao centro (ver cursoCapaHTML).
+   O ::after é um brilho no canto superior esquerdo — é o que separa "gradiente
+   de CSS" de "capa"; sem ele a faixa fica chapada. O curso bloqueado usa
+   .cc-off, que dessatura em vez de esconder: o aluno vê que existe. */
+.curso-capa{position:relative;overflow:hidden;border-radius:10px;display:flex;align-items:center;justify-content:center;background:linear-gradient(135deg,var(--cg1,#1e40af),var(--cg2,#60a5fa));box-shadow:inset 0 -20px 30px -20px rgba(0,0,0,.5)}
+.curso-capa::after{content:"";position:absolute;inset:0;background:radial-gradient(120% 95% at 12% -10%,rgba(255,255,255,.3),rgba(255,255,255,0) 62%);pointer-events:none}
+.curso-capa svg{position:relative;z-index:1;width:44%;max-width:54px;height:auto;fill:none;stroke:#fff;stroke-width:1.6;stroke-linecap:round;stroke-linejoin:round;opacity:.96;filter:drop-shadow(0 2px 5px rgba(0,0,0,.32))}
+.curso-capa .cc-img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;display:block}
+.curso-capa.cc-off{filter:grayscale(1);opacity:.55}
+/* Card de curso do aluno (a faixa + nome + contagem). Largura ELÁSTICA, não
+   fixa: com 176px travados, dois cards + o vão passavam de 360px e o celular
+   ficava com um card por linha. Com flex-basis 156 e teto de 210 cabem dois no
+   celular e cinco no computador. O align-items:stretch do flex-wrap iguala a
+   altura quando um nome quebra em duas linhas. */
+.curso-tile{display:flex;flex-direction:column;gap:.15rem;flex:1 1 140px;min-width:132px;max-width:210px;border:1.5px solid var(--bd2);background:var(--surface);border-radius:14px;padding:.5rem;cursor:pointer;text-align:left;transition:.15s;font-family:var(--font)}
+.curso-tile:hover{border-color:var(--blue);transform:translateY(-2px)}
+.curso-tile.on{border-color:var(--blue);background:var(--blue-l)}
+.curso-tile.lock{border-style:dashed;opacity:.72}
+.curso-tile .ct-nome{font-size:.83rem;font-weight:700;color:var(--tx);line-height:1.3;padding:.15rem .15rem 0}
+.curso-tile .ct-sub{font-size:.68rem;color:var(--t3);padding:0 .15rem .1rem}
+.curso-tile .ct-sub.gold{color:var(--gold);font-weight:700}
+/* Mesma capa no painel do professor, dentro do card de curso já existente. */
+.dir-sub-btn .curso-capa{margin-bottom:.55rem}
 .dir-back{display:inline-flex;align-items:center;gap:.35rem;background:#e8eefb;border:1px solid #c7d3ee;color:#16223f;font-weight:700;cursor:pointer;font-size:.78rem;padding:.4rem .85rem;border-radius:999px;margin-bottom:.9rem;transition:.15s;font-family:var(--font)}
 .dir-back:hover{border-color:var(--blue);color:var(--blue);background:#fff}
 html[data-theme="light"] .dir-back{background:#f8f9fc;border-color:var(--bd2);color:var(--tx)}
@@ -8008,6 +8032,7 @@ function renderPodcasts(){
 // ── CURSOS (aluno) ──
 var cursoFilter='';
 var cursoMod=''; // subespecialidade (módulo) selecionada dentro do curso
+var cursoCatPedido=false; // já tentamos buscar o catálogo nesta sessão (ver renderCursosAluno)
 // Conta de demonstração (vitrine): vê todos os cursos, mesmo os ocultos ao público.
 function isTestShowcase(){return String((currentUser&&currentUser.email)||'').toLowerCase()==='alunopro@endodirect.com.br';}
 // Cursos visíveis SÓ para admin/demonstração (não aparecem para nenhum aluno real).
@@ -8032,28 +8057,108 @@ function cursoAcessivel(slug){
 function aulaLiberada(c){return !!(c&&(cursoAcessivel(c.curso)||c.free));}
 // Curso alcançável só por amostra grátis (professor liberou ≥1 aula, mas o curso não é acessível).
 function cursoTemLiberada(slug){return (Array.isArray(admCursos)?admCursos:[]).some(function(c){return c&&c.curso===slug&&aulaLiberada(c);});}
+// ── CAPA DO CURSO ───────────────────────────────────────────────────────────
+// Todo curso mostrava o mesmo 🎓 — cards idênticos, sem hierarquia visual e sem
+// dizer nada sobre o conteúdo. Duas escolhas deliberadas:
+//
+// 1. DESENHO EM SVG, não emoji. O professor reprovou os ícones ("está muito feio
+//    esses ícones"), e emoji é o pior caminho: cada sistema desenha o seu
+//    (o 🩸 do Windows não é o do iPhone), o traço é cartunesco e não combina com
+//    o resto da interface. Os glifos abaixo são linha branca sobre gradiente —
+//    iguais em qualquer aparelho e no mesmo estilo dos ícones do menu.
+// 2. GERADA DO NOME, não de arquivo. Funciona para os cursos que já existem e
+//    para os que o professor criar depois, sem subir imagem nenhuma. Se ele
+//    quiser uma foto própria, o campo `capa` (URL) do catálogo tem prioridade.
+//
+// viewBox 24×24, traço branco, sem preenchimento — ver a regra .curso-capa svg.
+var CURSO_GLIFOS={
+  medalha:'<path d="M7 4h10v4.5a5 5 0 0 1-10 0z"/><path d="M7 5.5H4.6a2.4 2.4 0 0 0 2.4 4.3"/><path d="M17 5.5h2.4a2.4 2.4 0 0 1-2.4 4.3"/><path d="M12 13.5V17"/><path d="M8.6 20h6.8l-1-3H9.6z"/>',
+  livro:'<path d="M3 5.6c2.7-1.2 5.6-1.2 9 0v12.8c-3.4-1.2-6.3-1.2-9 0z"/><path d="M21 5.6c-2.7-1.2-5.6-1.2-9 0v12.8c3.4-1.2 6.3-1.2 9 0z"/>',
+  gota:'<path d="M12 3.4s6 6.3 6 9.9a6 6 0 0 1-12 0c0-3.6 6-9.9 6-9.9z"/><path d="M9.4 13.6a2.6 2.6 0 0 0 2.6 2.6"/>',
+  coracao:'<path d="M12 20.2S3.4 14.7 3.4 9.3A4.75 4.75 0 0 1 12 6.4a4.75 4.75 0 0 1 8.6 2.9c0 5.4-8.6 10.9-8.6 10.9z"/>',
+  tireoide:'<path d="M12 8C10 5.2 6.4 4.3 4.7 6.3 3 8.3 4.6 11.2 7.4 11.8c-2.4.6-3.7 3-2.2 4.6 1.6 1.8 5.2.6 6.8-2.6z"/><path d="M12 8c2-2.8 5.6-3.7 7.3-1.7 1.7 2 .1 4.9-2.7 5.5 2.4.6 3.7 3 2.2 4.6-1.6 1.8-5.2.6-6.8-2.6z"/><path d="M12 5.8v11.6"/>',
+  balanca:'<path d="M12 4.2v15.6"/><path d="M9 19.8h6"/><path d="M4 7.6h16"/><path d="M4 7.6 1.7 12.8a2.4 2.4 0 0 0 4.6 0z"/><path d="M20 7.6l-2.3 5.2a2.4 2.4 0 0 0 4.6 0z"/>',
+  adrenal:'<path d="M13.7 3.4 5.7 13.7h5.3l-.7 6.9 8-10.3h-5.3z"/>',
+  osso:'<path d="M8 9.8a2 2 0 1 0-2.6 2.2 2 2 0 1 0 2.6 2.2h8a2 2 0 1 0 2.6-2.2 2 2 0 1 0-2.6-2.2z"/>',
+  cerebro:'<path d="M12 5.6v10.4"/><path d="M12 5.6a3.2 3.2 0 0 0-5.4 2.2 3 3 0 0 0-1.5 2.6 3 3 0 0 0 1.4 2.5 3 3 0 0 0 2.6 3.1"/><path d="M12 5.6a3.2 3.2 0 0 1 5.4 2.2 3 3 0 0 1 1.5 2.6 3 3 0 0 1-1.4 2.5 3 3 0 0 1-2.6 3.1"/><path d="M12 16v2"/><circle cx="12" cy="19.6" r="1.4"/>',
+  venus:'<circle cx="12" cy="8.6" r="4.6"/><path d="M12 13.2v7"/><path d="M9.2 17.2h5.6"/>',
+  marte:'<circle cx="10.4" cy="13.6" r="5"/><path d="m14.2 9.8 5.4-5.4"/><path d="M14.8 4.4h4.8v4.8"/>',
+  crianca:'<circle cx="12" cy="6.4" r="2.8"/><path d="M12 9.2v6"/><path d="M8.2 12h7.6"/><path d="m12 15.2-2.4 4.6"/><path d="m12 15.2 2.4 4.6"/>',
+  pulso:'<path d="M3 12h4l2.6-6.2L13.6 18l2.6-6H21"/>',
+  trans:'<circle cx="12" cy="13.2" r="4.6"/><path d="M12 17.8v4.2"/><path d="M9.6 20.2h4.8"/><path d="m15.4 9.8 3.6-3.6"/><path d="M15 6.2h4v4"/><path d="M8.6 9.8 5 6.2"/><path d="M9 6.2H5v4"/>',
+  capelo:'<path d="M2.5 8.6 12 4.2l9.5 4.4-9.5 4.4z"/><path d="M6.2 11v4.3c0 1.5 2.6 2.7 5.8 2.7s5.8-1.2 5.8-2.7V11"/><path d="M21.5 8.6v5.2"/>'
+};
+var CURSO_TEMAS=[
+  {re:/teem|t[íi]tulo de especialista|especialista|prova de t[íi]tulo/i, k:'medalha',  g:['#7c3aed','#c026d3']},
+  {re:/essencial|b[áa]sic|fundament|introdu/i,                          k:'livro',    g:['#1d4ed8','#38bdf8']},
+  {re:/hiperglicemia|diabet|glic|insulin|cetoacid/i,                    k:'gota',     g:['#b91c1c','#f97316']},
+  {re:/l[íi]pid|colesterol|dislipid|aterosc|cardiovasc/i,               k:'coracao',  g:['#9f1239','#f43f5e']},
+  {re:/tire[óo]?ide|tiroide|n[óo]dulo|bo[çc]io/i,                       k:'tireoide', g:['#0e7490','#22d3ee']},
+  {re:/obesidad|peso|bari[áa]tric|emagrec/i,                            k:'balanca',  g:['#047857','#34d399']},
+  {re:/adrenal|suprarrenal|cortisol|cushing|feocromo/i,                 k:'adrenal',  g:['#b45309','#fbbf24']},
+  {re:/[óo]sse|osteo|osso|c[áa]lcio|paratire|raquit/i,                  k:'osso',     g:['#475569','#94a3b8']},
+  {re:/neuroend[óo]crin|hip[óo]fise|pituit|prolactin|acromeg/i,         k:'cerebro',  g:['#4338ca','#818cf8']},
+  {re:/feminin|ov[áa]ri|gesta[çc]|menopaus|sop\b/i,                     k:'venus',    g:['#a21caf','#f0abfc']},
+  {re:/masculin|testost|androl|hipogonad/i,                             k:'marte',    g:['#1e3a8a','#7dd3fc']},
+  {re:/pedi[áa]tric|crian[çc]|infant|puberdad|crescim/i,                k:'crianca',  g:['#0f766e','#5eead4']},
+  {re:/esporte|exerc[íi]cio|atleta|desempenho f[íi]sic/i,               k:'pulso',    g:['#4d7c0f','#a3e635']},
+  {re:/transg[êe]ner|afirma[çc][ãa]o de g[êe]nero|hormoniza/i,          k:'trans',    g:['#0369a1','#f9a8d4']}
+];
+var CURSO_GRAD_FALLBACK=[['#1e40af','#60a5fa'],['#5b21b6','#a78bfa'],['#0f766e','#2dd4bf'],['#9f1239','#fb7185'],['#a16207','#facc15']];
+function cursoCapa(nome,slug){
+  var txt=String(nome||'')+' '+String(slug||'');
+  for(var i=0;i<CURSO_TEMAS.length;i++){
+    if(CURSO_TEMAS[i].re.test(txt))return {svg:CURSO_GLIFOS[CURSO_TEMAS[i].k],g:CURSO_TEMAS[i].g};
+  }
+  // Sem tema conhecido: capelo + gradiente estável por hash do nome. O mesmo
+  // curso fica sempre com a mesma cor, o que dá memória visual ao aluno.
+  var h=0;for(var j=0;j<txt.length;j++)h=(h*31+txt.charCodeAt(j))>>>0;
+  return {svg:CURSO_GLIFOS.capelo,g:CURSO_GRAD_FALLBACK[h%CURSO_GRAD_FALLBACK.length]};
+}
+// Bloco visual da capa. `capaUrl` (opcional) é a imagem própria do professor —
+// só entra se for http(s); qualquer outra coisa cai no desenho gerado.
+function cursoCapaHTML(nome,slug,capaUrl,altura,cinza){
+  var c=cursoCapa(nome,slug),h=altura||78;
+  var img=capaUrl&&safeHttpUrl(capaUrl)?String(capaUrl).trim():'';
+  return '<div class="curso-capa'+(cinza?' cc-off':'')+'" style="--cg1:'+c.g[0]+';--cg2:'+c.g[1]+';height:'+h+'px">'
+    +(img?'<img class="cc-img" src="'+esc(img)+'" alt="" loading="lazy">'
+         :'<svg viewBox="0 0 24 24" aria-hidden="true">'+c.svg+'</svg>')
+    +'</div>';
+}
 function renderCursosAluno(){
   var data=Array.isArray(admCursos)?admCursos:[];
   var frow=document.getElementById('curso-filter-row');
   var cnt={};data.forEach(function(c){if(c.curso&&aulaLiberada(c))cnt[c.curso]=(cnt[c.curso]||0)+1;});
+  // Catálogo vazio: só aparecem os cursos que JÁ têm aula, e com o nome vindo do
+  // fallback. `loadCursoCatalogo` só rodava para o admin — o aluno dependia de
+  // `payload.cursos` do RPC, que não chega em toda sessão (conta de demonstração,
+  // por exemplo). Busca uma vez (a RLS libera leitura para anon) e repinta.
+  if(!(Array.isArray(catalogoCursos)&&catalogoCursos.length)&&!cursoCatPedido){
+    cursoCatPedido=true;
+    try{loadCursoCatalogo(function(){try{renderCursosAluno();}catch(e){}});}catch(e){}
+  }
   // Catálogo completo (igual ao admin); fallback p/ cursos que têm aula.
   var catalog=(Array.isArray(catalogoCursos)&&catalogoCursos.length)
-    ? catalogoCursos.map(function(cc){return {slug:cc.slug,nome:cc.nome||cursoNomeBySlug(cc.slug)};})
-    : Object.keys(cnt).map(function(s){return {slug:s,nome:cursoNomeBySlug(s)};});
-  function aTile(slug,nome,n,icon){
+    ? catalogoCursos.map(function(cc){return {slug:cc.slug,nome:cc.nome||cursoNomeBySlug(cc.slug),capa:cc.capa||''};})
+    : Object.keys(cnt).map(function(s){return {slug:s,nome:cursoNomeBySlug(s),capa:''};});
+  function aTile(slug,nome,n,capa){
     var active=cursoFilter===slug;
     var acc=cursoAcessivel(slug);
     var sample=!acc&&cursoTemLiberada(slug); // acessível só via amostra grátis
     if(!acc&&!sample){
-      // Não incluído no plano: opaco; ao clicar, abre o upgrade.
-      return '<button type="button" data-curso-upsell="1" title="Não incluído no seu plano — clique para fazer upgrade" style="display:flex;flex-direction:column;align-items:flex-start;gap:.2rem;border:1.5px dashed var(--bd2);background:var(--s2);border-radius:14px;padding:.7rem .9rem;min-width:155px;text-align:left;opacity:.5;cursor:pointer"><span style="font-size:1.45rem;filter:grayscale(1)">'+icon+'</span><span style="font-size:.83rem;font-weight:700;color:var(--t2)">'+esc(nome)+'</span><span style="font-size:.68rem;color:var(--t3)">🔒 Fazer upgrade</span></button>';
+      // Não incluído no plano: capa dessaturada; ao clicar, abre o upgrade.
+      return '<button type="button" class="curso-tile lock" data-curso-upsell="1" title="Não incluído no seu plano — clique para fazer upgrade">'
+        +cursoCapaHTML(nome,slug,capa,78,true)
+        +'<span class="ct-nome" style="color:var(--t2)">'+esc(nome)+'</span><span class="ct-sub">🔒 Fazer upgrade</span></button>';
     }
-    var subline=sample?'<span style="font-size:.68rem;color:var(--gold);font-weight:700">🎁 amostra grátis</span>':'<span style="font-size:.68rem;color:var(--t3)">'+n+' aula'+(n===1?'':'s')+'</span>';
-    return '<button type="button" data-cursofilter="'+esc(slug)+'" style="display:flex;flex-direction:column;align-items:flex-start;gap:.2rem;border:1.5px solid '+(active?'var(--blue)':'var(--bd2)')+';background:'+(active?'var(--blue-l)':'var(--surface)')+';border-radius:14px;padding:.7rem .9rem;cursor:pointer;min-width:155px;text-align:left"><span style="font-size:1.45rem">'+icon+'</span><span style="font-size:.83rem;font-weight:700;color:var(--tx)">'+esc(nome)+'</span>'+subline+'</button>';
+    var subline=sample?'<span class="ct-sub gold">🎁 amostra grátis</span>':'<span class="ct-sub">'+n+' aula'+(n===1?'':'s')+'</span>';
+    return '<button type="button" class="curso-tile'+(active?' on':'')+'" data-cursofilter="'+esc(slug)+'">'
+      +cursoCapaHTML(nome,slug,capa,78,false)
+      +'<span class="ct-nome">'+esc(nome)+'</span>'+subline+'</button>';
   }
   var allCount=data.filter(function(c){return cursoAcessivel(c.curso);}).length;
   var catVis=catalog.filter(function(cc){return cursoVisivel(cc.slug);});
-  if(frow)frow.innerHTML='<div style="display:flex;flex-wrap:wrap;gap:.6rem">'+catVis.map(function(cc){return aTile(cc.slug,cc.nome,cnt[cc.slug]||0,'🎓');}).join('')+'</div>';
+  if(frow)frow.innerHTML='<div style="display:flex;flex-wrap:wrap;gap:.7rem">'+catVis.map(function(cc){return aTile(cc.slug,cc.nome,cnt[cc.slug]||0,cc.capa);}).join('')+'</div>';
   if(cursoFilter&&!cursoAcessivel(cursoFilter)&&!cursoTemLiberada(cursoFilter)){cursoFilter='';cursoMod='';}
   var el=document.getElementById('curso-list');if(!el)return;
   // Primeira entrada: mostra só os cards de curso (frow). As subespecialidades
@@ -13842,16 +13947,36 @@ function cursoModList(curso){
   return Object.keys(seen).sort(function(a,b){return a.localeCompare(b,'pt-BR');}).map(function(m){return {mod:m,count:seen[m]};});
 }
 // ── Catálogo de cursos (endodirect_cursos) ──
+// A coluna `capa` (imagem própria do curso) é nova. Se o banco desta instalação
+// ainda não a tem, o SELECT não a devolve — e mandá-la no upsert derrubaria o
+// salvamento INTEIRO do catálogo, não só a capa. Então a pergunta é feita ao
+// próprio dado carregado, e o campo só aparece/viaja quando existe de verdade.
+function catalogoTemCapa(){
+  var cat=Array.isArray(catalogoCursos)?catalogoCursos:[];
+  for(var i=0;i<cat.length;i++){if(cat[i]&&Object.prototype.hasOwnProperty.call(cat[i],'capa'))return true;}
+  return false;
+}
 function cursoSlugOptions(selected,includeNone){
   var cat=Array.isArray(catalogoCursos)?catalogoCursos:[];
   var opts=includeNone?'<option value=""'+(!selected?' selected':'')+'>— Nenhum (todos os membros) —</option>':'';
   cat.forEach(function(c){opts+='<option value="'+esc(c.slug)+'"'+(selected===c.slug?' selected':'')+'>'+esc(c.nome)+'</option>';});
   return opts;
 }
+// Nome de exibição quando o catálogo ainda não chegou. Sem isto o aluno via o
+// SLUG CRU no card ("endo_essencial", "endoteem") — acontece nas sessões que não
+// carregam `endodirect_cursos` (conta de demonstração, rede lenta, primeira
+// pintura antes do RPC responder). O catálogo do banco continua mandando; isto é
+// só o piso, para nunca haver nome técnico na tela do aluno.
+var CURSO_NOME_FALLBACK={hiperglicemia:'Hiperglicemia Hospitalar',lipides:'Lípides',endo_essencial:'Endocrinologia Essencial',endoteem:'EndoTEEM 2026'};
 function cursoNomeBySlug(slug){
   var cat=Array.isArray(catalogoCursos)?catalogoCursos:[];
-  for(var i=0;i<cat.length;i++){if(cat[i].slug===slug)return cat[i].nome;}
-  return slug||'';
+  for(var i=0;i<cat.length;i++){if(cat[i].slug===slug&&cat[i].nome)return cat[i].nome;}
+  if(!slug)return '';
+  if(CURSO_NOME_FALLBACK[slug])return CURSO_NOME_FALLBACK[slug];
+  // Curso criado depois desta lista: troca _/- por espaço e capitaliza. Fica
+  // "Endo Novo" em vez de "endo_novo" — feio ainda, mas não parece defeito.
+  return String(slug).replace(/[_-]+/g,' ').replace(/\s+/g,' ').trim()
+    .replace(/(^|\s)([a-zà-ú])/g,function(m,a,b){return a+b.toUpperCase();});
 }
 function loadCursoCatalogo(cb){
   var client=getSupabaseClient();
@@ -13875,10 +14000,20 @@ function admCatalogoHTML(){
   var intro='<div style="font-size:.78rem;color:var(--t2);line-height:1.6;margin-bottom:.9rem">Defina nome, preço avulso e o <b>pacote</b> de cada curso. O pacote controla em qual nível (Standard / Gold) o curso é liberado. <b>Nenhum</b> = vendido só à parte (ex.: EndoTEEM).</div>';
   if(!cat.length)return intro+'<div class="card"><div class="empty">Carregando catálogo…</div></div>';
   function tierOpt(sel){var o=[['','Nenhum (à parte)'],['standard','Standard'],['gold','Gold']];return o.map(function(p){return '<option value="'+p[0]+'"'+((sel||'')===p[0]?' selected':'')+'>'+p[1]+'</option>';}).join('');}
+  var podeCapa=catalogoTemCapa();
   return intro+cat.map(function(c){
     var reais=((c.preco_avulso_cents||0)/100).toFixed(2);
+    var nm=c.nome||cursoNomeBySlug(c.slug);
     return '<div class="card" style="margin-bottom:.9rem" data-cat-slug="'+esc(c.slug)+'">'
-      +'<div style="font-size:.68rem;color:var(--t3);margin-bottom:.5rem">slug: <code>'+esc(c.slug)+'</code></div>'
+      +'<div style="display:flex;gap:.9rem;align-items:flex-start;margin-bottom:.6rem">'
+        +'<div style="width:132px;flex-shrink:0">'+cursoCapaHTML(nm,c.slug,c.capa,78,false)
+          +'<div style="font-size:.62rem;color:var(--t3);text-align:center">capa atual</div></div>'
+        +'<div style="flex:1;min-width:0"><div style="font-size:.68rem;color:var(--t3);margin-bottom:.4rem">slug: <code>'+esc(c.slug)+'</code></div>'
+        +(podeCapa
+          ?('<div class="fld2" style="margin:0"><label>Imagem de capa (link http, opcional)</label><input type="text" class="cat-capa" value="'+esc(c.capa||'')+'" placeholder="Deixe em branco para usar a capa gerada">'
+            +'<div style="font-size:.64rem;color:var(--t3);margin-top:.25rem">Em branco, a capa é desenhada a partir do nome do curso (o cartão ao lado). Só links <code>https://</code>.</div></div>')
+          :'<div style="font-size:.7rem;color:var(--t2);line-height:1.5">A capa é desenhada a partir do nome do curso. Para trocar por uma imagem própria, rode a coluna <code>capa</code> do <code>supabase-setup.sql</code>.</div>')
+      +'</div></div>'
       +'<div class="g2" style="margin-bottom:.6rem"><div class="fld2" style="margin:0"><label>Nome</label><input type="text" class="cat-nome" value="'+esc(c.nome||'')+'"></div><div class="fld2" style="margin:0"><label>Preço avulso (R$)</label><input type="number" min="0" step="0.01" class="cat-preco" value="'+reais+'"></div></div>'
       +'<div class="fld2"><label>Descrição</label><textarea rows="2" class="cat-desc">'+esc(c.descricao||'')+'</textarea></div>'
       +'<div class="g2" style="margin:.2rem 0"><div class="fld2" style="margin:0"><label>Pacote (tier)</label><select class="cat-tier">'+tierOpt(c.tier)+'</select></div><div class="fld2" style="margin:0"><label>Ordem</label><input type="number" class="cat-ordem" value="'+(c.ordem||0)+'"></div></div>'
@@ -13954,27 +14089,21 @@ function admCursosHTML(){
     +'<div class="upload-status" id="adm-curso-upload-status"></div>'
     +'<div style="display:flex;gap:.5rem;flex-wrap:wrap"><button class="btn btn-primary" id="btn-adm-addcurso">'+(ed?'💾 Salvar alterações':'+ Adicionar aula')+'</button>'+(ed?'<button class="btn btn-ghost" id="btn-adm-cancelcurso">Cancelar</button>':'')+'</div></div>';
 
-  function cursoTile(slug,nome,n,icon){
-    var active=admCursoFiltro===slug;
-    return '<button type="button" data-curso-btn="'+esc(slug)+'" style="display:flex;flex-direction:column;align-items:flex-start;gap:.2rem;border:1.5px solid '+(active?'var(--blue)':'var(--bd2)')+';background:'+(active?'var(--blue-l)':'var(--surface)')+';border-radius:14px;padding:.8rem .95rem;cursor:pointer;min-width:160px;text-align:left">'
-      +'<span style="font-size:1.5rem">'+icon+'</span>'
-      +'<span style="font-size:.84rem;font-weight:700;color:var(--tx)">'+esc(nome)+'</span>'
-      +'<span style="font-size:.7rem;color:var(--t3)">'+n+' aula'+(n===1?'':'s')+'</span></button>';
-  }
   function admLessonCard(c){var i=admCursos.indexOf(c);var meta=c.asset?'<div class="asset-meta">Supabase Storage: '+esc(c.asset.name||'video')+' · '+formatBytes(c.asset.size)+'</div>':'';return '<div class="card curso-aula-card" data-adm-openaula="'+i+'" style="cursor:pointer" title="Abrir a trilha da aula (Aula · Resumo · Questões)"><div style="display:flex;align-items:flex-start;gap:.7rem"><div style="width:48px;height:48px;border-radius:10px;background:var(--navy);display:flex;align-items:center;justify-content:center;font-size:1.3rem;flex-shrink:0">🎬</div><div style="flex:1;min-width:0"><div style="font-size:.86rem;font-weight:700;color:var(--tx);margin-bottom:.25rem">'+esc(c.title)+'</div><div style="display:flex;flex-wrap:wrap;gap:.3rem;margin-bottom:.4rem">'+(c.curso?'<span class="tag tag-grn">'+esc(cursoNomeBySlug(c.curso))+'</span>':'<span class="tag" style="background:#1c2a48;color:#9aa6ba">Sem curso</span>')+(c.modulo?'<span class="tag tag-pur">'+esc(c.modulo)+'</span>':'')+(c.dur?'<span class="tag tag-gold">'+esc(c.dur)+'</span>':'')+(c.free?'<span class="tag tag-gold">🎁 Amostra grátis</span>':'')+'</div>'+(c.desc?'<div style="font-size:.74rem;color:var(--t2);line-height:1.5;margin-bottom:.4rem">'+esc(c.desc)+'</div>':'')+meta+'<div style="display:flex;gap:5px;flex-wrap:wrap;align-items:center;margin-top:.15rem"><span style="font-size:.72rem;color:var(--blue);font-weight:700">▶ Abrir trilha</span><span style="flex:1"></span><button class="btn btn-outline btn-sm" data-adm-freecurso="'+i+'" title="Liberar/retirar como amostra grátis para a degustação"'+(c.free?' style="color:var(--gold);border-color:var(--gold)"':'')+'>'+(c.free?'🎁 Amostra ✓':'🎁 Tornar amostra')+'</button><button class="btn btn-outline btn-sm" data-adm-delcurso="'+i+'" style="color:var(--red);border-color:var(--red)">🗑 Excluir</button></div></div></div></div>';}
   // Navegação igual às Diretrizes: curso → subespecialidade → aula.
   var verHTML;
   if(!admCursoFiltro){
     // Nível 0 — grade de cursos (somente os cursos).
     verHTML='<div style="font-size:.72rem;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--t3);margin-bottom:.6rem">Escolha um curso para abrir</div>'
-      +'<div class="dir-sub-grid">'+(Array.isArray(catalogoCursos)?catalogoCursos:[]).map(function(cc){var n=cont[cc.slug]||0;return '<button class="dir-sub-btn" data-curso-btn="'+esc(cc.slug)+'"><div class="dsb-ico">🎓</div><h3>'+esc(cc.nome)+'</h3><div class="dsb-cnt">'+n+' aula'+(n===1?'':'s')+'</div></button>';}).join('')+'</div>';
+      +'<div class="dir-sub-grid">'+(Array.isArray(catalogoCursos)?catalogoCursos:[]).map(function(cc){var n=cont[cc.slug]||0;var nm=cc.nome||cursoNomeBySlug(cc.slug);return '<button class="dir-sub-btn" data-curso-btn="'+esc(cc.slug)+'">'+cursoCapaHTML(nm,cc.slug,cc.capa,86,false)+'<h3>'+esc(nm)+'</h3><div class="dsb-cnt">'+n+' aula'+(n===1?'':'s')+'</div></button>';}).join('')+'</div>';
   }else if(!admCursoMod){
     // Nível 1 — subespecialidades do curso (+ adicionar subespecialidade).
     var cnome=cursoNomeBySlug(admCursoFiltro);
+    var ccat=(Array.isArray(catalogoCursos)?catalogoCursos:[]).filter(function(x){return x&&x.slug===admCursoFiltro;})[0];
     var mods=cursoModList(admCursoFiltro);
     var addUI=admCursoModAdd?('<div class="dir-tema-add"><label style="font-size:.72rem;color:var(--t2);font-weight:600">Nova subespecialidade em '+esc(cnome)+'</label><input type="text" id="curso-newsub" placeholder="Ex: Diabetes, Tireoide, Obesidade…"><div style="display:flex;gap:.4rem"><button class="btn btn-primary btn-sm" id="btn-curso-newsub-create">Criar</button><button class="btn btn-outline btn-sm" id="btn-curso-newsub-cancel">Cancelar</button></div></div>'):'';
     verHTML='<button class="dir-back" data-acurso-back style="margin-bottom:1rem">← Voltar aos cursos</button>'
-      +'<div class="adm-ph" style="display:flex;align-items:flex-start;justify-content:space-between;gap:.6rem;flex-wrap:wrap;margin-top:0"><div><h1>🎓 '+esc(cnome)+'</h1></div><button class="btn btn-primary" id="btn-curso-addsub" style="padding:.55rem 1.1rem">➕ Adicionar subespecialidade</button></div>'
+      +'<div class="adm-ph" style="display:flex;align-items:center;justify-content:space-between;gap:.7rem;flex-wrap:wrap;margin-top:0"><div style="display:flex;align-items:center;gap:.7rem"><div style="width:62px;flex-shrink:0">'+cursoCapaHTML(cnome,admCursoFiltro,ccat&&ccat.capa,44,false)+'</div><h1 style="margin:0">'+esc(cnome)+'</h1></div><button class="btn btn-primary" id="btn-curso-addsub" style="padding:.55rem 1.1rem">➕ Adicionar subespecialidade</button></div>'
       +addUI
       +((mods.length||admCursoModAdd)?('<div class="dir-sub-grid">'+mods.map(function(o){return '<button class="dir-sub-btn" data-acursomod="'+esc(o.mod)+'"><div class="dsb-ico">'+dirSubIcon(o.mod)+'</div><h3>'+esc(o.mod)+'</h3><div class="dsb-cnt">'+o.count+' aula'+(o.count===1?'':'s')+'</div></button>';}).join('')+'</div>'):'<div class="empty">Nenhuma subespecialidade ainda — clique em “➕ Adicionar subespecialidade”.</div>');
   }else{
@@ -14246,7 +14375,17 @@ function bindAdmSec(sec){
       if(bCatSave)bCatSave.addEventListener('click',function(){
         var rows=[];
         main.querySelectorAll('[data-cat-slug]').forEach(function(card){
-          rows.push({slug:card.dataset.catSlug,nome:(card.querySelector('.cat-nome').value||'').trim(),descricao:(card.querySelector('.cat-desc').value||'').trim(),preco_avulso_cents:Math.round((parseFloat(card.querySelector('.cat-preco').value)||0)*100),tier:(card.querySelector('.cat-tier').value||null),ativo:card.querySelector('.cat-ativo').checked,ordem:parseInt(card.querySelector('.cat-ordem').value,10)||0});
+          var row={slug:card.dataset.catSlug,nome:(card.querySelector('.cat-nome').value||'').trim(),descricao:(card.querySelector('.cat-desc').value||'').trim(),preco_avulso_cents:Math.round((parseFloat(card.querySelector('.cat-preco').value)||0)*100),tier:(card.querySelector('.cat-tier').value||null),ativo:card.querySelector('.cat-ativo').checked,ordem:parseInt(card.querySelector('.cat-ordem').value,10)||0};
+          // `capa` só viaja se a coluna existir (ver catalogoTemCapa): mandar uma
+          // coluna inexistente faz o upsert INTEIRO falhar, levando junto nome,
+          // preço e pacote de todos os cursos.
+          var capaEl=card.querySelector('.cat-capa');
+          if(capaEl){
+            var capa=(capaEl.value||'').trim();
+            if(capa&&!safeHttpUrl(capa)){notify('A capa de "'+(card.querySelector('.cat-nome').value||card.dataset.catSlug)+'" precisa ser um link http(s) — ignorada.','err');capa='';}
+            row.capa=capa;
+          }
+          rows.push(row);
         });
         if(!rows.length){notify('Nada para salvar.','err');return;}
         saveCursoCatalogo(rows);

@@ -1,6 +1,6 @@
 ---
 tags: [cofre, decisoes]
-atualizado: 2026-08-06
+atualizado: 2026-08-07
 ---
 
 # Decisões
@@ -8,6 +8,17 @@ atualizado: 2026-08-06
 Log de decisões de produto e técnicas (mais recentes no topo).
 
 ## 2026-08
+- **🎨 Capa dos cursos: desenho SVG gerado do nome, nos dois painéis (2026-08-07, "deixa uma imagem mais bonitinha para cada um dos cursos, tanto no painel do professor quanto do aluno" → "Porque está muito feio esses ícones").**
+  - **O que havia:** todo curso saía com o mesmo `🎓` cinza. Quatro cards idênticos, sem hierarquia visual e sem dizer nada sobre o conteúdo.
+  - **Duas escolhas, e o porquê de cada uma.**
+    1. **SVG de traço, não emoji.** Emoji é desenhado por cada sistema operacional — o `🩸` do Windows não é o do iPhone — e o traço cartunesco destoa do resto da interface. Os glifos são linha branca sobre gradiente, iguais em qualquer aparelho. **Foi exatamente disto que o professor reclamou na primeira versão**, que ainda usava emoji, só que maior.
+    2. **Gerada do NOME, não de arquivo.** Funciona para os cursos que já existem e para os que ele criar depois, sem subir imagem nenhuma. 14 temas reconhecidos (diabetes, tireoide, lípides, adrenal, osso, neuro, feminina, masculina, pediátrica, esporte, transgeneridade, obesidade, essencial, título/TEEM); fora deles, capelo + gradiente estável por hash do nome — o mesmo curso fica sempre com a mesma cor.
+  - **⚠️ Desenhar glifo é trabalho VISUAL — não dá para validar lendo o código.** As três primeiras tentativas passaram em toda verificação e estavam erradas na tela: a tireoide virou dois círculos, o osso virou um halter de academia e a adrenal virou outra gota, igual à do diabetes. Só apareceu porque montei uma bancada em Chromium que renderiza os candidatos lado a lado, no tamanho real, e OLHEI. **Regra:** mudança de aparência se confere com print, não com teste de string.
+  - **Adrenal virou um RAIO (adrenalina).** Rim-com-glândula, glândula sozinha e núcleo esteroide foram todos testados e nenhum se lê a 54 px. O raio é inequívoco e clinicamente cabível (medula adrenal / feocromocitoma).
+  - **Cores separadas depois de olhar:** Lípides × Feminina estavam quase idênticas (as duas rosa-vermelho) e Adrenal × Esporte também (as duas laranja). Feminina foi para magenta e Esporte para lima.
+  - **Defeito encontrado de carona — o card mostrava o SLUG CRU.** O print do professor tinha `endo_essencial` e `endoteem` no lugar dos nomes. Duas causas: (a) `cursoNomeBySlug` devolvia o próprio slug quando o catálogo do banco não tinha chegado; (b) `loadCursoCatalogo` **só rodava para admin** — o aluno dependia de `payload.cursos` do RPC, que não chega em toda sessão (conta de demonstração). Agora há lista fixa de nomes como piso, um "prettifier" para cursos futuros, e `renderCursosAluno` busca o catálogo uma vez quando ele falta.
+  - **Coluna `capa` (imagem própria) — aditiva e com o cliente tolerante.** `endodirect_cursos.capa` + `capa` no RPC `endodirect_member_content`, ambos aplicados no banco. O cliente só manda `capa` no upsert **se a coluna existir no dado carregado**: mandar coluna inexistente derrubaria o upsert INTEIRO do catálogo, levando junto nome, preço e pacote de todos os cursos.
+  - **Largura do card é elástica.** Com 176 px travados, dois cards + o vão passavam de 360 px e o celular ficava com **um card por linha**. Medido em Chromium a 360 px: agora são dois por linha, 152 px cada, sem rolagem horizontal.
 - **🧠 Varredura do acervo do Drive: o achado que reformulou a tarefa (2026-08-07, "leia todos os artigos da plataforma… quero a plataforma mais completa de endocrinologia já criada").**
   - **Acervo:** 61 pastas, 4 níveis, 282 arquivos → **259 artigos clínicos únicos** (fora a pasta `Organizar`, os `.DS_Store` e as duplicatas por tamanho). Neuroendocrino 62, Adrenal 38, Obesidade 36, Osteometabolismo 34, Tireoide 28, Diabetes 25, Endocrinopatias 17, Lípides 15, Esporte 3, Feminina 1. **Masculina, Pediátrica e Transgeneridade estão VAZIAS** — três subespecialidades que a plataforma cobre e o acervo não.
   - **⚠️ O NÚCLEO DA PLATAFORMA É MAIS NOVO QUE O ACERVO, na maioria dos temas.** Conferido à mão: o núcleo cita *14º Consenso de Acromegalia (Pituitary Society 2023)*, *Incidentaloma hipofisário (Pituitary Society 2025)*, *distúrbios do sódio (revisões 2025–26)* — enquanto os PDFs correspondentes do Drive são de 2014, 2018, 2019, 2022. O cruzamento automático classificou **146 de 172** como "núcleo já tem fonte mais nova".

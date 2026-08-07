@@ -250,6 +250,12 @@ for each row execute function public.endodirect_touch_updated_at();
 -- 'tier' define em qual pacote o curso entra (standard < gold < premium).
 -- null = curso fora dos pacotes (vendido a parte, ex.: EndoTEEM).
 alter table public.endodirect_cursos add column if not exists tier text;
+
+-- 'capa': URL http(s) de uma imagem propria para o card do curso. Vazio = a
+-- plataforma desenha a capa a partir do nome (ver cursoCapaHTML no index.html),
+-- que e o caso normal; a coluna existe so para o professor poder trocar por uma
+-- foto quando quiser, sem mexer em codigo.
+alter table public.endodirect_cursos add column if not exists capa text not null default '';
 do $$ begin
   if not exists (select 1 from pg_constraint where conname = 'endodirect_cursos_tier_chk') then
     alter table public.endodirect_cursos
@@ -412,7 +418,7 @@ returns jsonb language sql security definer set search_path = public stable as $
     'member',  coalesce(array_length((select scopes from a), 1), 0) > 0,
     'acessos', to_jsonb((select scopes from a)),
     'cursos',  coalesce((select jsonb_agg(jsonb_build_object(
-                  'slug', slug, 'nome', nome, 'descricao', descricao,
+                  'slug', slug, 'nome', nome, 'descricao', descricao, 'capa', capa,
                   'preco_avulso_cents', preco_avulso_cents, 'tier', tier,
                   'incluso_no_plano', incluso_no_plano, 'ativo', ativo, 'ordem', ordem
                 ) order by ordem, nome) from public.endodirect_cursos where ativo), '[]'::jsonb),
