@@ -5,6 +5,34 @@ atualizado: 2026-07-31
 
 # Convenções de Trabalho
 
+## 🔬 Varredura do acervo clínico: ritmo escolhido é o SEGURO (2026-08-07)
+
+Perguntado se preferia acelerar (6–8 agentes simultâneos) ou manter o ritmo, o
+professor respondeu: *"Deixe do jeito mais seguro e preciso. Não vamos perder
+qualidade."* **A decisão é essa, e vale para o resto da varredura.** Levas
+pequenas, verificação completa, nada de paralelismo que atropele conferência.
+
+### As três camadas de conferência, e o que cada uma NÃO pega
+
+1. **`scripts/verifica-extracao.js`** — a citação existe no texto? o número da
+   afirmação aparece na citação? ⚠️ **Não confere se a citação SUSTENTA a
+   afirmação.** Um trecho verdadeiro embaixo de uma frase que diz outra coisa
+   passa.
+2. **Autoverificação do agente** — ele roda o script contra si mesmo até passar.
+   Pega os próprios deslizes de fatiamento (foi assim que 53 fatos foram
+   reescritos na 1ª leva), mas **é o mesmo autor conferindo o próprio trabalho**.
+3. **Auditoria adversarial** (criada em 07/08) — um agente que tenta DERRUBAR
+   extratos já aprovados, classificando cada fato em OK / EXAGERO / INVERSÃO /
+   DESCONTEXTO / INCOMPLETO. Audita amostra + **todos** os fatos com dose, corte
+   laboratorial, "contraindicado", "não deve", "primeira linha" ou percentual —
+   os que causam dano se errados.
+
+**A lição por trás:** as duas primeiras camadas medem FIDELIDADE LITERAL; nenhuma
+mede FIDELIDADE DE SENTIDO. Antes de escalar a extração, medir a taxa de erro
+semântica — escalar um processo cuja taxa de erro você não conhece é multiplicar
+o desconhecido.
+
+
 ## 🌐 A rede do ambiente é CONFIGURÁVEL — e desde 06/08/2026 está aberta (2026-08-06)
 
 Durante meses eu tratei "o proxy bloqueia" como fato da natureza e **construí
