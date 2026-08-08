@@ -87,7 +87,19 @@ const CAMINHO = [
   ['alca fechada', 'Diabetes'],
   ['bomba de insulina', 'Diabetes'],
   ['dasiglucagon', 'Diabetes'],
-  ['pramlintida', 'Diabetes'],
+  // ⚠️ `pramlintida` e `exenatida` MUDARAM DE ÁREA (08/08/2026), e a mudança
+  // corrigiu uma decisão minha. Eu as tinha mandado para Diabetes raciocinando
+  // pela indicação em bula; o auditor da farmacoterapia MEDIU o conteúdo e me
+  // desmentiu — `exenatid` tem 15 ocorrências em Obesidade contra 3 em Diabetes,
+  // `pramlintida` 4 contra 2. Indicação de bula não é o critério: onde está o
+  // CONTEÚDO é. Peso de fármaco, então a doença nomeada continua vencendo.
+  ['pramlintida', 'Obesidade'],
+  ['exenatida emagrece?', 'Obesidade'],
+  ['exenatida no DM2', 'Diabetes'],
+  ['pramlintida no DM1', 'Diabetes'],
+  ['reganho apos suspender a medicacao', 'Obesidade'],
+  ['lorcaserina foi retirada do mercado?', 'Obesidade'],
+  ['reganho de peso apos tireoidectomia', 'Tireoide'],
   ['insulite', 'Diabetes'],
   ['glucagon nasal', 'Diabetes'],
   ['lua de mel', 'Diabetes'],
