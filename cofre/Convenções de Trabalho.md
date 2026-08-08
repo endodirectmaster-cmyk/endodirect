@@ -5,6 +5,52 @@ atualizado: 2026-08-08
 
 # Convenções de Trabalho
 
+## 🔗 O HASH PROVA QUE O TEXTO NÃO MUDOU — NUNCA QUE ELE VEIO DO LUGAR CERTO (2026-08-08)
+
+Dois fatos **pediátricos** citavam a tabela de **ADULTO**, com `cit_sha`
+conferindo e `verifica-extracao.js` aprovando. Não era erro de digitação: as
+duas tabelas repetem linhas inteiras, palavra por palavra.
+
+**A causa é estrutural e vale para a base toda.** `lib/citacao.js › referenciar`
+localiza a citação com `indexOf(alvo, 0)` — **ancora sempre na PRIMEIRA
+ocorrência**. O extrator original tinha a trava certa (um marco de
+desambiguação, com comentário explícito de que "as tabelas de adulto e de
+criança repetem linhas inteiras") e **a migração para offset a desfez em
+silêncio**. Como a tabela de adulto vem antes no artigo, todo texto repetido
+migrou para ela.
+
+E o hash não pega, por construção: as duas ocorrências resolvem para o mesmo
+texto, logo para o mesmo hash.
+
+`scripts/confere-ancoragem.js` mede isso, e está no `ci-validate`. Medido em
+4.441 citações: **71 ambíguas, 0 de risco.**
+
+**A triagem é o que torna a peneira usável.** Ambíguo não é errado:
+- **benigno** (a maioria) — recomendação impressa no quadro-resumo e de novo no
+  corpo. Texto igual, sentido igual, tanto faz onde ancora. Só avisa.
+- **de risco** — o fato **fala de população** (criança/adulto/gestante) e ancora
+  na 1ª ocorrência de um texto repetido. É o padrão exato do defeito. **Reprova.**
+
+Saída para quem conserta: abrir as duas ocorrências e decidir. Âncora certa →
+marcar o fato com `cit_ancora_ok: true`. Errada → reancorar e estender a citação
+até um trecho **único**. A marca existe porque **peneira tem de convergir**:
+sem ela, o fato já conferido seria acusado para sempre, e peneira que grita o
+que já se sabe correto morre de ser ignorada.
+
+### ⚠️ E a peneira nova quase mentiu na primeira versão
+
+Ela contava ocorrências **pedaço a pedaço** e acusou um fato da diretriz de
+obesidade cujo 1º pedaço é `é recomendada a redução sustentada de pelo menos` —
+que aparece duas vezes, uma seguida de **5%** e outra de **10%**. Parecia o
+achado perfeito. Mas a citação tem **dois** pedaços com elisão declarada, e o
+segundo traz "5% do peso… risco DASCV moderado": **junta, ela identifica um
+lugar só e prova o número.**
+
+A ambiguidade é da **sequência inteira**, não do pedaço isolado. Contar pedaço
+super-relata — e peneira que grita demais é ignorada tão depressa quanto peneira
+cega. Corrigido, o total caiu de 91 para 71, e as de risco de 8 para 4 (as 4
+restantes conferidas à mão e marcadas).
+
 ## 🕶️ PENEIRA CEGA É PIOR QUE PENEIRA AUSENTE — a terceira reincidência (2026-08-08)
 
 A migração das citações para referência (`cit` + `cit_sha`) esvaziou o campo

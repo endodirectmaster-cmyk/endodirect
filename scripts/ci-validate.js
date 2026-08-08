@@ -419,6 +419,22 @@ try {
   fail('conferência das ressalvas falhou (o núcleo mudou e alguma ressalva ficou para trás):\n' + out);
 }
 
+// ⚠️ ÂNCORA AMBÍGUA. A citação por offset prova que o TEXTO não foi adulterado —
+//     nunca provou que ele veio do LUGAR certo. Onde o artigo repete um trecho
+//     (tabela de adulto e de criança com linhas idênticas), `referenciar` ancora
+//     na PRIMEIRA ocorrência e o `cit_sha` confere do mesmo jeito, porque as duas
+//     resolvem para o mesmo texto. Medido em 08/08/2026: dois fatos PEDIÁTRICOS
+//     citavam a tabela de ADULTO, com o verificador aprovando. Reprova só o caso
+//     de risco (o fato fala de população E ancora na 1ª ocorrência); repetição
+//     benigna — a recomendação impressa no resumo e de novo no corpo — só avisa.
+try {
+  execFileSync(process.execPath, [path.join('scripts', 'confere-ancoragem.js')], { stdio: 'pipe' });
+  ok('âncora das citações: nenhum fato de população provado por trecho ambíguo');
+} catch (e) {
+  const out = (e.stdout ? e.stdout.toString() : '') + (e.stderr ? e.stderr.toString() : '');
+  fail('citação ancorada em trecho que aparece em mais de um lugar do artigo:\n' + out);
+}
+
 // ⚠️ Endocrinologia PEDIÁTRICA no Analytics. O risco não é o número, é a leitura
 //     dele: "0" sem a cobertura da pergunta faz parecer "não tenho nenhum
 //     endocrinopediatra" quando a verdade é "ainda não perguntei" (0 de 53).
