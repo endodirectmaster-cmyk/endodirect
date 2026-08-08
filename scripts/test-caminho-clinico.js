@@ -176,6 +176,22 @@ const CAMINHO = [
   ['Ozempic em paciente com DM2 e doenca renal cronica', 'Diabetes'],
   ['Saxenda em paciente com hipotireoidismo', 'Tireoide'],
 
+  // ⚠️ O DIFERENCIAL DA MASSA SELAR ERA INALCANÇÁVEL INTEIRO: quinze termos com
+  // conteúdo em Neuroendocrinologia e `canonArea` devolvendo "" para todos.
+  // Quem via uma massa selar e queria o diferencial não chegava a lugar nenhum,
+  // e a via de acesso cirúrgico também não.
+  ['massa selar: penso em germinoma?', 'Neuroendocrinologia'],
+  ['cisto da bolsa de Rathke incidental', 'Neuroendocrinologia'],
+  ['ressecao total macroscopica ou parcial no craniofaringioma?', 'Neuroendocrinologia'],
+  ['via transesfenoidal ou transcraniana?', 'Neuroendocrinologia'],
+  ['mutacao CTNNB1 no adamantinomatoso', 'Neuroendocrinologia'],
+  ['panhipopituitarismo apos cirurgia', 'Neuroendocrinologia'],
+  // ⚠️ A sentinela que manteve `celulas germinativas` SOLTO fora do mapa: tumor
+  // de células germinativas TESTICULAR é bem mais comum, e a área masculina está
+  // vazia — mandá-lo para a hipófise seria trocar buraco por erro.
+  ['tumor de celulas germinativas testicular com beta-hCG', '(vazio)'],
+  ['velocidade de crescimento reduzida com hipotireoidismo', 'Tireoide'],
+
   // Sentinelas de outras áreas — o achado glicêmico não pode sequestrá-las.
   ['hiperglicemia em paciente com acromegalia', 'Neuroendocrinologia'],
   ['obeso em insulina: indico cirurgia bariatrica?', 'Obesidade'],
