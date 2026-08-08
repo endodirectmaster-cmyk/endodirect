@@ -5,6 +5,45 @@ atualizado: 2026-08-08
 
 # Convenções de Trabalho
 
+## 🔎 CONFERÊNCIA PARCIAL NÃO É AUDITORIA, E NÃO PODE ENTRAR NO CAMPO (2026-08-08)
+
+Com o orçamento em 75% e 0 agentes cabendo, usei a hora conferindo eu mesma a
+fatia de MAIOR RISCO do extrato de MASLD/DHGNA (96 fatos): **os 25 fatos que
+carregam número, corte ou dose**, um a um contra o texto-fonte.
+
+**Resultado: zero erro.** Conferidos dígito a dígito — FIB-4 <1,3 com VPN ≥90%,
+o corte 2,0 no ≥65 anos, >2,67, a zona 1,3–2,67; LSM <8,0 / 8,0–12,0 / >12,0
+kPa; ELF 7,7–9,8 e >9,8; CAP 274/311/336 dB/m; os números dos três casos
+clínicos; pioglitazona 15→30 mg/dia **com a ressalva de que a eficácia de 15
+mg/dia na NASH "remains to be established"**; câncer de bexiga 1 caso adicional
+por 899–6.380 tratados ≥3 anos com NNT 4–256 e 2–12; álcool >21 doses/semana
+homens e >14 mulheres em 2 anos.
+
+Dois sinais de qualidade que vale registrar: a ressalva de dose **não sumiu**
+(é o tipo de hedge que já se perdeu nesta base), e o fato #82 declara uma
+**contradição interna do próprio artigo** — a legenda da figura 3 dá cT1
+633–794 ms e o texto do caso 2 dá ≤820 ms — em vez de escolher uma das duas.
+
+### E a decisão que importa mais que o resultado
+
+**Não escrevi isso no campo `auditoria`.** Conferi ~26% dos fatos, e só numa
+dimensão. Marcar o extrato como auditado seria repetir literalmente o erro já
+registrado neste cofre: *relatar "100% auditado" sobre 93%*.
+
+O que a auditoria adversarial ainda tem de fazer e eu **não** fiz:
+- os outros 71 fatos, que não têm número;
+- se a **citação sustenta** a afirmação (citação íntegra que não prova o que o
+  fato diz é defeito tão grave quanto citação errada);
+- cabeça de frase encalhada, âncora ambígua, população apagada;
+- conferir as **decisões de NÃO-extração** do extrator.
+
+`status-auditoria.js` continua contando o extrato como PENDENTE, que é o certo.
+O ganho é outro: quando o agente rodar, ele começa sabendo que a fatia numérica
+já foi batida — e deve gastar o esforço no resto, conferindo-me por amostragem
+em vez de refazer tudo.
+
+**Regra: conferência parcial vira BRIEF do auditor, nunca campo `auditoria`.**
+
 ## 🏷️ UMA PALAVRA A MAIS NO CAMPO `tipo` REBAIXOU UMA DIRETRIZ INTEIRA (2026-08-08)
 
 O professor perguntou se os 10% extraídos já estavam no ar e mandou a regra:
