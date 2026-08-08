@@ -234,6 +234,32 @@ ok(deep.canonArea('prolactinoma') === 'Neuroendocrinologia', '"prolactinoma" tem
     '⚠️ vinheta de craniofaringioma não entregou o bloco — a área vazia venceu a área que tem o conteúdo');
 }
 
+// ⚠️ CATEGORIA ANTES DE COMPRIMENTO. Este desempate já esteve errado DUAS vezes,
+// então cada caso abaixo é um erro que aconteceu de verdade:
+//   · "termo mais longo vence" mandava "testosterona total normal: trato o
+//     hirsutismo?" para Endocrinologia MASCULINA — exame(12) ganhando de
+//     doença(10). Só não doía porque a área masculina está vazia; no dia em que
+//     entrar o 1º artigo de hipogonadismo, vira resposta errada;
+//   · "a metformina trata hirsutismo?" empatava 10×10 e caía em Diabetes pela
+//     ordem da chave no objeto;
+//   · "contar termos" (a regra que tentei no lugar de comprimento) mandava
+//     "IMC 38 pós-sleeve investigando hiperaldosteronismo" para Obesidade,
+//     porque dois termos de cenário venciam um de assunto.
+// Numa vinheta, EXAME e FÁRMACO são cenário; a DOENÇA é o assunto.
+{
+  const DESEMPATE = [
+    ['Mulher de 30 anos com testosterona total normal: trato o hirsutismo?', 'Endocrinologia Feminina'],
+    ['A metformina trata hirsutismo?', 'Endocrinologia Feminina'],
+    ['Paciente com IMC 38 pós-sleeve, investigando hiperaldosteronismo', 'Adrenal'],
+    ['Homem de 45 anos com testosterona total de 210 ng/dL e sintomas', 'Endocrinologia Masculina'],
+    ['Mulher de 26 anos com hiperandrogenismo e 17-hidroxiprogesterona elevada', 'Endocrinologia Feminina']
+  ];
+  for (const [q, esperado] of DESEMPATE) {
+    ok(deep.canonArea(q) === esperado,
+      `⚠️ desempate de roteamento: "${q.slice(0, 54)}…" foi para "${deep.canonArea(q)}" e devia ir para "${esperado}" (doença > fármaco > exame)`);
+  }
+}
+
 // ⚠️ FRONTEIRA DE PALAVRA. A chave 'osso' (sinônimo de Osteometabolismo) está
 // dentro de "posso" e "nosso". Enquanto canonArea só recebia NOME DE ÁREA isso
 // era inofensivo; ao receber a pergunta do médico, "posso dar isso ao nosso
