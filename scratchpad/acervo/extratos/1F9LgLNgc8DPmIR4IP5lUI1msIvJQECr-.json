@@ -5,8 +5,12 @@
  "area": "Lípides",
  "tipo": "diretriz",
  "ano": 2025,
- "conflito": "O NÚCLEO E ESTA FONTE CONCORDAM NAS METAS — não sobrescreva o que já está certo. O núcleo carrega esta mesma diretriz com as metas de LDL-c por categoria (extremo <40, muito alto <50, alto <70, intermediário <100, baixo <115) e elas batem com a Tabela 5.1. O que esta fonte ACRESCENTA e o núcleo não tem: (1) ⚠️ DRC EM DIÁLISE sem doença cardiovascular estabelecida — recomenda-se CONTRA iniciar estatina (recomendação FORTE, evidência ALTA); é contraintuitivo e contraria o reflexo de estatinizar todo renal crônico. (2) TETOS DE DOSE COM IMUNOSSUPRESSOR (ciclosporina, tacrolimus, everolimus, sirolimus) e com antirretroviral, dose a dose. (3) GESTAÇÃO: quando parar e quando reiniciar cada hipolipemiante. (4) PEDIATRIA com idades-gatilho por fármaco. (5) FITOSTERÓIS: a diretriz brasileira FREIA a recomendação europeia, citando evidência genética de potencial efeito aterogênico. (6) Gatilho prático que falta no núcleo: em risco baixo e intermediário, inicia-se ou intensifica-se fármaco quando LDL-c ou não-HDL-c está persistentemente ≥30 mg/dL acima da meta. ⚠️ REGISTRO, NÃO RESOLUÇÃO: o núcleo também carrega o ADA Standards of Care 2026, que fixa LDL <55 mg/dL no diabético com doença aterosclerótica estabelecida, enquanto esta diretriz fixa <50 para o muito alto risco. São duas diretrizes vigentes com números próximos e diferentes — ao ensinar, cite a fonte junto do número, nunca um número único.",
+ "conflito": "O NÚCLEO E ESTA FONTE CONCORDAM NAS METAS — não sobrescreva o que já está certo. O núcleo carrega esta mesma diretriz com as metas de LDL-c por categoria (extremo <40, muito alto <50, alto <70, intermediário <100, baixo <115) e elas batem com a Tabela 5.1. O que esta fonte ACRESCENTA e o núcleo não tem: (1) ⚠️ DRC EM DIÁLISE sem doença cardiovascular estabelecida — recomenda-se CONTRA iniciar estatina (recomendação FORTE, evidência ALTA); é contraintuitivo e contraria o reflexo de estatinizar todo renal crônico. (2) TETOS DE DOSE COM IMUNOSSUPRESSOR (ciclosporina, tacrolimus, everolimus, sirolimus) e com antirretroviral, dose a dose. (3) GESTAÇÃO: quando parar e quando reiniciar cada hipolipemiante. (4) PEDIATRIA com idades-gatilho por fármaco. (5) FITOSTERÓIS: a diretriz brasileira FREIA a recomendação europeia, citando evidência genética de potencial efeito aterogênico. (6) Gatilho prático que falta no núcleo: em risco baixo e intermediário, inicia-se ou intensifica-se fármaco quando LDL-c ou não-HDL-c está persistentemente ≥30 mg/dL acima da meta. ⚠️ REGISTRO, NÃO RESOLUÇÃO: o núcleo também carrega o ADA Standards of Care 2026, que fixa LDL <55 mg/dL no diabético com doença aterosclerótica estabelecida, enquanto esta diretriz fixa <50 para o muito alto risco. São duas diretrizes vigentes com números próximos e diferentes — ao ensinar, cite a fonte junto do número, nunca um número único. ⚠️ SEGUNDO REGISTRO, ACHADO NA AUDITORIA DE 08/08/2026 — o núcleo carrega uma TERCEIRA entrada de metas de LDL, a da SBD ('Dislipidemia no DM (SBD)'), que junta baixo e intermediário numa faixa só ('intermediário/baixo <100 mg/dL') e não tem a categoria de risco extremo. Esta diretriz separa: intermediário < 100 e BAIXO < 115. Então, para o paciente de BAIXO risco, o número do núcleo (SBD) e o desta fonte (SBC) DIVERGEM — 100 contra 115. Também aqui: registro, não resolução; cite a fonte junto do número.",
  "conflito_direcao": "lacuna",
+ "nucleo_citado": [
+  "muito alto <50, alto <70, intermediário/baixo <100 mg/dL",
+  "meta de LDL <55 mg/dL"
+ ],
  "nucleo_ausente": [
   "fitosterol",
   "pitavastatina",
@@ -1384,7 +1388,7 @@
    "cit_sha": "c467dc73f7114c97"
   },
   {
-   "afirmacao": "Se a estatina precisar ser suspensa, recomenda-se iniciar IMEDIATAMENTE terapia hipolipemiante não estatínica (ezetimiba, ácido bempedoico ou terapia anti-PCSK9) durante o período de suspensão, para mitigar o risco cardiovascular da elevação do LDL-c.",
+   "afirmacao": "Se a estatina precisar ser suspensa, recomenda-se iniciar IMEDIATAMENTE terapia hipolipemiante não estatínica (ezetimiba, ácido bempedoico ou terapia anti-PCSK9) durante o período de suspensão, para mitigar o risco cardiovascular da elevação do LDL-c (recomendação FORTE, certeza ALTA).",
    "secao": "1.6. Sumário de recomendações – manejo de sintomas musculares relacionados a estatinas",
    "cit": [
     [
@@ -1586,6 +1590,18 @@
     ]
    ],
    "cit_sha": "67f48cf7e5d31546"
+  },
+  {
+   "afirmacao": "Para indivíduos de RISCO CARDIOVASCULAR MUITO ALTO, a meta do LDL-c é < 50 mg/dL e a do não-HDL-c é < 80 mg/dL. ⚠️ Estes são os valores do MUITO ALTO risco; metas mais baixas que estas pertencem ao RISCO EXTREMO. No PDF de duas colunas, os bullets de meta que aparecem ao final da seção do muito alto risco são, na verdade, os do risco extremo, deslocados pela extração — confira sempre pelo texto corrido da própria seção ou pela tabela de metas.",
+   "secao": "5.2.4. Indivíduos de Risco Muito Alto",
+   "cit": [
+    [
+     0,
+     227770,
+     97
+    ]
+   ],
+   "cit_sha": "a1b159dddad6ad84"
   },
   {
    "afirmacao": "No IMPROVE-IT, a terapia combinada de sinvastatina com ezetimiba atingiu LDL-c médio de 53 mg/dL e promoveu redução adicional do risco cardiovascular em comparação à monoterapia, que atingiu LDL-c médio de 69 mg/dL.",
@@ -2392,7 +2408,7 @@
    "cit_sha": "c07f2053b5a252eb"
   },
   {
-   "afirmacao": "Com BLOQUEADORES DOS CANAIS DE CÁLCIO (verapamil, diltiazem, amlodipina), que inibem o CYP3A4: a SINVASTATINA tem dose máxima de 20 mg/dia e a LOVASTATINA, de 40 mg/dia; não é necessário ajuste para atorvastatina, rosuvastatina, pravastatina, fluvastatina e pitavastatina.",
+   "afirmacao": "Com AMIODARONA, o risco de miopatia aumenta e valem os seguintes tetos de dose de estatina: SINVASTATINA no máximo 20 mg/dia e LOVASTATINA no máximo 40 mg/dia; NÃO é necessário ajuste de dose para atorvastatina, rosuvastatina, pravastatina, fluvastatina e pitavastatina. ⚠️ Esta linha de 'sem ajuste necessário' é a da AMIODARONA e NÃO se aplica aos bloqueadores dos canais de cálcio, cuja linha na mesma tabela traz somente os tetos de sinvastatina (20 mg/dia com verapamil ou amlodipina) e de lovastatina (40 mg/dia com verapamil).",
    "secao": "Tabela 8.2 – Interações medicamentosas das estatinas",
    "cit": [
     [
@@ -3016,7 +3032,7 @@
    "cit_sha": "53bfc08a35d665c0"
   },
   {
-   "afirmacao": "RECOMENDAÇÕES DIETÉTICAS da diretriz brasileira de dislipidemias, em percentual do valor calórico total: gorduras totais 20-35%; gorduras saturadas < 7%; gorduras trans — não ingerir; ácidos graxos monoinsaturados 15%; ácidos graxos poli-insaturados 5-10%; carboidratos totais 50-55%; e fibras 25 g/dia.",
+   "afirmacao": "RECOMENDAÇÕES DIETÉTICAS da diretriz brasileira de dislipidemias, em percentual do valor calórico total: gorduras totais 20-35%; gorduras saturadas < 7%; gorduras trans — não ingerir; ácidos graxos monoinsaturados 15%; ácidos graxos poli-insaturados 5-10%; carboidratos totais 50-55% (todas estas com recomendação FORTE, certeza ALTA); e fibras 25 g/dia — esta última é a ÚNICA linha da tabela com recomendação CONDICIONAL, certeza MODERADA.",
    "secao": "1.6. Sumário de recomendações – dietéticas",
    "cit": [
     [
@@ -5182,7 +5198,7 @@
    "cit_sha": "ccf6a9debb49a92e"
   },
   {
-   "afirmacao": "No cenário de meta de LDL-c < 70 mg/dL e não-HDL-c < 100 mg/dL (RISCO ALTO), recomendam-se redução do LDL-c ≥ 50% e uso preferencial de estatina de alta potência OU terapia combinada de estatina com ezetimiba.",
+   "afirmacao": "Para indivíduos de RISCO CARDIOVASCULAR ALTO, recomendam-se redução do LDL-c ≥ 50%, meta primária de LDL-c < 70 mg/dL e meta coprimária de não-HDL-c < 100 mg/dL, com uso preferencial de estatina de alta potência OU terapia combinada de estatina com ezetimiba.",
    "secao": "5.2.3. Indivíduos de Risco Alto",
    "cit": [
     [
@@ -5734,16 +5750,21 @@
    "cit_sha": "db47dddb78c09b9e"
   },
   {
-   "afirmacao": "No estudo ACCORD, subanálise de 941 pacientes com hipertrigliceridemia (TG ≥ 204 mg/dL) e HDL-c baixo (< 35 mg/dL) evidenciou redução de eventos cardiovasculares com FIBRATO — benefício restrito a esse subgrupo de TG alto e HDL-c baixo.",
+   "afirmacao": "O estudo ACCORD comparou FENOFIBRATO com placebo em diabéticos dislipidêmicos JÁ EM USO DE SINVASTATINA e NÃO houve redução de eventos cardiovasculares fatais, infarto do miocárdio ou AVC — o resultado principal foi NEGATIVO. Só numa SUBANÁLISE de 941 pacientes com hipertrigliceridemia (TG ≥ 204 mg/dL) e HDL-c baixo (< 35 mg/dL) houve redução de eventos com o fibrato; outros estudos mostraram benefício especificamente nesse subgrupo de TG alto com HDL-c baixo, mas ainda seria necessário um ensaio randomizado dedicado a essa população — ensaio que veio a ser o PROMINENT, também negativo. Portanto, esta subanálise NÃO autoriza usar fibrato para reduzir risco cardiovascular em quem já está em estatina.",
    "secao": "7.7. Fibratos",
    "cit": [
     [
      0,
+     273892,
+     238
+    ],
+    [
+     0,
      274134,
-     212
+     408
     ]
    ],
-   "cit_sha": "4459993702fec4a2"
+   "cit_sha": "fdd508001334f3d6"
   },
   {
    "afirmacao": "O estudo REDUCE-IT demonstrou que o ICOSAPENTA ETILA (forma purificada de EPA) reduziu significativamente eventos cardiovasculares maiores em pacientes com doença cardiovascular estabelecida ou diabetes tipo 2 em uso de estatina e com TRIGLICÉRIDES EM JEJUM ENTRE 135 E 499 mg/dL.",

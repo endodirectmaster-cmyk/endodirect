@@ -72,10 +72,17 @@ const CAUDA_RUIM = /\b(and|or|with|for|of|in|to|the|a|an|that|which|as|by|from|i
 // mal, então `CAUDA_RUIM` passa direto. É o mesmo negativo perdido que já apagou
 // um "não" na dislipidemia e inverteu o sentido.
 //
-// O sinal barato: citação que COMEÇA em minúscula. Não é prova de defeito — o
-// extrator pode ter começado no meio de propósito —, mas é onde o defeito mora,
-// e a contagem é alta (96 de 249 num extrato). Por isso AVISA e não reprova:
-// reprovar 96 fatos bons para achar 1 ruim faria o time desligar a peneira.
+// O sinal: a citação começa no MEIO de uma frase do texto-fonte — o caractere
+// que a antecede não é fim de frase. Não é prova de defeito (o extrator pode ter
+// começado no meio de propósito), mas é onde o defeito mora. Por isso AVISA e não
+// reprova: reprovar 84 fatos bons para achar 1 ruim faria o time desligar a peneira.
+//
+// ⚠️ A 1ª versão testava se a citação começava em MINÚSCULA. Funcionou enquanto o
+// JSON guardava o texto original; quando a citação passou a ser resolvida da base
+// NORMALIZADA (toda minúscula), virou carimbo — 134 de 135 fatos. Cega pela
+// segunda vez, do mesmo jeito, e por minha causa. Olhar o texto-fonte é melhor
+// que o original: responde direto "começa no meio de uma frase?", sem depender de
+// maiúscula (que o PDF perde) nem de idioma.
 const CABECA_SOLTA = /^[a-zà-ÿ]/;
 // Palavra que, aparecendo logo depois de uma cabeça encalhada, sinaliza que o
 // que se perdeu foi uma NEGAÇÃO ou uma RESSALVA — aí o risco é de inversão.
@@ -106,7 +113,23 @@ function main() {
     const fatos = (Array.isArray(e.fatos) ? e.fatos : []).map((f) => {
       if (String(f.citacao || '').trim()) return f;
       const r = bsC ? CIT.resolver(f, bsC) : null;
-      return r ? Object.assign({}, f, { citacao: r.texto }) : f;
+      if (!r) return f;
+      // ⚠️ `meio_de_frase` decidido pelo TEXTO-FONTE, não pela caixa da letra.
+      // A peneira original olhava se a citação começava em minúscula. Depois da
+      // migração isso virou carimbo: o texto resolvido vem da base NORMALIZADA,
+      // que é toda minúscula, e a peneira passou a casar com 134 de 135 fatos —
+      // ou seja, ficou cega pela segunda vez, do mesmo jeito e por minha causa.
+      // Olhar o que ANTECEDE a citação é melhor que o original: responde
+      // diretamente "esta citação começa no meio de uma frase?", sem depender de
+      // maiúscula (que o PDF perde) nem de idioma.
+      let meio = false;
+      if (Array.isArray(f.cit) && f.cit.length) {
+        const [base, off] = f.cit[0];
+        const b = bsC[base | 0] || '';
+        const antes = b.slice(Math.max(0, off - 40), off).replace(/\s+$/, '');
+        meio = antes.length > 0 && !/[.!?:;]$/.test(antes);
+      }
+      return Object.assign({}, f, { citacao: r.texto, _meioDeFrase: meio });
     });
     const rotulo = (e.tema || e.titulo || arq).slice(0, 46);
     const problemas = [];
@@ -165,7 +188,9 @@ function main() {
     // adiante (o padrão de "…none of these| approaches has been proven…").
     // O resto vira aviso com contagem, para dar tamanho ao problema sem
     // transformar a peneira em ruído.
-    const cabecaSolta = fatos.filter((f) => CABECA_SOLTA.test(String(f.citacao || '').trim()));
+    const cabecaSolta = fatos.filter((f) => (typeof f._meioDeFrase === 'boolean')
+      ? f._meioDeFrase
+      : CABECA_SOLTA.test(String(f.citacao || '').trim()));
     // ⚠️ O sinal NÃO é "a afirmação tem a palavra não". A primeira versão desta
     // peneira reprovou "a excreção aumenta quando um ânion NÃO-reabsorvível…" —
     // ali o "não" faz parte do nome do ânion, não nega a frase. E a citação
@@ -190,7 +215,7 @@ function main() {
       podeInverter.forEach((f) => avisos.push(
         `  ⚠️ ${rotulo}: POSSÍVEL INVERSÃO — citação "${String(f.citacao).slice(0, 62)}…" sustenta "${String(f.afirmacao).slice(0, 62)}…" (a cabeça que carrega a negação ficou na outra coluna)`));
     } else if (cabecaSolta.length) {
-      avisos.push(`  ${rotulo}: ${cabecaSolta.length} de ${fatos.length} citações começam em minúscula (pode ser corte deliberado; pode ser cabeça de frase perdida na outra coluna)`);
+      avisos.push(`  ${rotulo}: ${cabecaSolta.length} de ${fatos.length} citações começam no MEIO de uma frase do texto-fonte (pode ser corte deliberado; pode ser cabeça de frase perdida na outra coluna)`);
     }
 
     if (problemas.length) {

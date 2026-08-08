@@ -1,0 +1,1524 @@
+{
+ "fileId": "1mLQXSccgHuczjcDnN4GRVe8HxMM2aoMf",
+ "titulo": "Diabetic ketoacidosis (Nature Reviews Disease Primers)",
+ "fonte": "Dhatariya KK, Glaser NS, Codner E, Umpierrez GE. Diabetic ketoacidosis. Nature Reviews Disease Primers 2020;6:40 (doi 10.1038/s41572-020-0165-1)",
+ "area": "Diabetes",
+ "tipo": "revisao",
+ "ano": 2020,
+ "tema": "Cetoacidose diabética (CAD) em adultos e em crianças: epidemiologia, fatores precipitantes, fisiopatologia, critérios diagnósticos (ADA, JBDS, ISPAD) e critérios de RESOLUÇÃO, e o manejo por fase — fluidos, insulina intravenosa, reposição de potássio, bicarbonato e fosfato — além das complicações, com destaque para a lesão cerebral pediátrica",
+ "fatos": [
+  {
+   "afirmacao": "DIAGNÓSTICO da cetoacidose diabética (CAD): o diagnóstico só se confirma quando os TRÊS critérios estão presentes — 'D' (glicemia elevada OU história familiar de diabetes mellitus), 'K' (cetoácidos altos na urina ou no sangue) e 'A' (acidose metabólica com ânion gap alto). A CAD é a emergência hiperglicêmica aguda mais comum em pessoas com diabetes.",
+   "secao": "Abstract",
+   "cit": [
+    [
+     0,
+     148,
+     372
+    ]
+   ],
+   "cit_sha": "648e7f3938120f43"
+  },
+  {
+   "afirmacao": "TRATAMENTO da cetoacidose diabética (CAD) — os pilares são quatro: restauração do volume circulante, insulinoterapia, reposição de eletrólitos e tratamento do evento precipitante subjacente. O diagnóstico e o manejo precoces são fundamentais para melhorar os desfechos.",
+   "secao": "Abstract",
+   "cit": [
+    [
+     0,
+     521,
+     238
+    ]
+   ],
+   "cit_sha": "2b82927f986526a1"
+  },
+  {
+   "afirmacao": "A cetoacidose diabética (CAD) resulta da falta ABSOLUTA (ausência total) ou RELATIVA (níveis insuficientes para suprimir a produção de cetonas) de insulina somada à elevação de hormônios contrarreguladores, produzindo a tríade hiperglicemia + acidose metabólica + cetose (cetonemia sérica >3,0 mmol/l), frequentemente com graus variáveis de depleção do volume circulante.",
+   "secao": "Introduction",
+   "cit": [
+    [
+     0,
+     1955,
+     463
+    ]
+   ],
+   "cit_sha": "edd90f3f0762acda"
+  },
+  {
+   "afirmacao": "A cetoacidose diabética (CAD) ocorre sobretudo no diabetes tipo 1 descontrolado, mas TAMBÉM ocorre em adultos com diabetes tipo 2 mal controlado sob condições de estresse (doenças clínicas ou cirúrgicas agudas) e, em adolescentes, no diabetes tipo 2 de início recente — o chamado DM2 propenso à cetose (ketosis-prone T2DM). Ou seja, CAD não exclui diabetes tipo 2.",
+   "secao": "Introduction",
+   "cit": [
+    [
+     0,
+     2419,
+     452
+    ]
+   ],
+   "cit_sha": "4684ae243670998b"
+  },
+  {
+   "afirmacao": "Fatores precipitantes da cetoacidose diabética (CAD): qualquer doença ou estresse fisiológico pode precipitá-la, mas as causas mais frequentes são as INFECÇÕES, em particular infecção do trato urinário e gastroenterite.",
+   "secao": "Introduction",
+   "cit": [
+    [
+     0,
+     2882,
+     168
+    ]
+   ],
+   "cit_sha": "8e22614f3aaa50a2"
+  },
+  {
+   "afirmacao": "No DM2 propenso à cetose (ketosis-prone T2DM), apesar da apresentação com cetoacidose diabética (CAD) e insulina baixa, a frequência de autoanticorpos típicos do DM1 é a mesma de quem se apresenta com estado hiperglicêmico hiperosmolar (EHH), e a função das células beta se recupera rapidamente com a restauração da secreção de insulina após o tratamento — de modo que esses indivíduos frequentemente podem voltar a medicação oral, sem necessidade de manter insulina.",
+   "secao": "Introduction",
+   "cit": [
+    [
+     0,
+     3597,
+     219
+    ]
+   ],
+   "cit_sha": "8b0197b5b19140d4"
+  },
+  {
+   "afirmacao": "DIAGNÓSTICO — apesar de os critérios de cetoacidose diabética (CAD) variarem entre as diretrizes quanto à glicemia e ao método de documentar a cetose, TODAS concordam em dois pontos: os três componentes têm de estar presentes E o pH venoso ou arterial deve ser <7,30.",
+   "secao": "Introduction",
+   "cit": [
+    [
+     0,
+     4950,
+     246
+    ]
+   ],
+   "cit_sha": "7cf0af8c6daf20ae"
+  },
+  {
+   "afirmacao": "MORTALIDADE da cetoacidose diabética (CAD): <1% em crianças e adultos nos países desenvolvidos, porém muito maior nos países em desenvolvimento, com taxas de até 3–13% em crianças. Nos adultos, as mortes por CAD ocorrem principalmente em idosos (>60 anos) ou em quem tem doença precipitante grave; nas crianças, a maioria das mortes decorre de lesão cerebral ou edema cerebral.",
+   "secao": "Introduction",
+   "cit": [
+    [
+     0,
+     5270,
+     438
+    ]
+   ],
+   "cit_sha": "0f7801bbd3373101"
+  },
+  {
+   "afirmacao": "CRITÉRIOS DIAGNÓSTICOS E DE GRAVIDADE DA ADA PARA ADULTOS (Tabela 1 — colunas: gravidade | glicose mg/dl (mmol/l) | pH arterial ou venoso | bicarbonato mmol/l | cetonas urinárias/séricas | β-hidroxibutirato mmol/l | ânion gap mmol/l | estado mental). LEVE: glicose >250 (13,8), pH 7,25–7,30, bicarbonato 15–18, cetonas positivas, β-hidroxibutirato >3,0, ânion gap >10, alerta. MODERADA: glicose >250 (13,8), pH 7,24–7,0, bicarbonato 10–15, ânion gap >12, alerta/sonolento. GRAVE: glicose >250 (13,8), pH <7,0, bicarbonato <10, ânion gap >12, estupor/coma.",
+   "secao": "Table 1 | Diagnostic criteria for DKA — American Diabetes Association criteria for adults",
+   "cit": [
+    [
+     0,
+     16953,
+     183
+    ]
+   ],
+   "cit_sha": "8009a1572b079e7c"
+  },
+  {
+   "afirmacao": "CRITÉRIOS DIAGNÓSTICOS DO JOINT BRITISH DIABETES SOCIETIES (JBDS, Reino Unido) para cetoacidose diabética (CAD) — sem estratificação de gravidade: glicose >200 mg/dl (11,1 mmol/l), pH <7,30, bicarbonato <15 mmol/l, cetonas urinárias ou séricas positivas e β-hidroxibutirato >3,0 mmol/l (ânion gap e estado mental não se aplicam nesse critério).",
+   "secao": "Table 1 | Diagnostic criteria for DKA — Joint British Diabetes Societies for Inpatient Care",
+   "cit": [
+    [
+     0,
+     17137,
+     101
+    ]
+   ],
+   "cit_sha": "298e03639597e286"
+  },
+  {
+   "afirmacao": "CRITÉRIOS PEDIÁTRICOS DA ISPAD (International Society of Pediatric and Adolescent Diabetes) para cetoacidose diabética (CAD) — a gravidade é definida pelo pH e pelo bicarbonato, com glicose >200 mg/dl (11,1 mmol/l) e β-hidroxibutirato >3,0 mmol/l em todos os graus. LEVE: pH <7,30 e bicarbonato <15 mmol/l. MODERADA: pH <7,2 e bicarbonato <10 mmol/l. GRAVE: pH <7,1 e bicarbonato <5 mmol/l. ⚠️ Os pontos de corte pediátricos de bicarbonato na CAD grave (<5) são MAIS BAIXOS que os do adulto pela ADA (<10).",
+   "secao": "Table 1 | Diagnostic criteria for DKA — International Society of Pediatric and Adolescent Diabetes",
+   "cit": [
+    [
+     0,
+     17298,
+     149
+    ]
+   ],
+   "cit_sha": "386c31732f3de07c"
+  },
+  {
+   "afirmacao": "⚠️ A GRAVIDADE da cetoacidose diabética (CAD) é definida pelo GRAU DE ACIDOSE e pelo NÍVEL DE CONSCIÊNCIA — e NÃO pelo grau de hiperglicemia nem pelo grau de cetonemia. Os critérios da ADA recomendam usar o pH arterial ou venoso para diagnosticar, para avaliar a necessidade de bicarbonato e para medir a resolução; o pH venoso pode ser usado para diagnosticar CAD.",
+   "secao": "Table 1 | Diagnostic criteria for DKA (nota de rodapé)",
+   "cit": [
+    [
+     0,
+     17448,
+     406
+    ]
+   ],
+   "cit_sha": "3cf1d99c861ec7c1"
+  },
+  {
+   "afirmacao": "EPIDEMIOLOGIA da cetoacidose diabética (CAD): entre adultos, dois terços dos episódios ocorrem em pessoas com diabetes tipo 1 e um terço em pessoas com diabetes tipo 2. Em crianças (<18 anos), a CAD ocorre comumente já no diagnóstico inicial do DM1, com incidência variando de 13% a 80% conforme a população.",
+   "secao": "Epidemiology",
+   "cit": [
+    [
+     0,
+     8596,
+     283
+    ]
+   ],
+   "cit_sha": "98e7583953626caf"
+  },
+  {
+   "afirmacao": "A cetoacidose diabética (CAD) é a apresentação mais precoce do diabetes em crianças com menos de 5 anos de idade e em pessoas sem acesso fácil a cuidado médico por razões econômicas ou sociais. A frequência de CAD ao diagnóstico correlaciona-se INVERSAMENTE com a frequência de DM1 na população — quanto mais comum o DM1, maior a chance de os sintomas de início serem reconhecidos antes de virar CAD.",
+   "secao": "Epidemiology",
+   "cit": [
+    [
+     0,
+     8979,
+     480
+    ]
+   ],
+   "cit_sha": "4052a990e1d3973b"
+  },
+  {
+   "afirmacao": "MORTALIDADE POR IDADE na cetoacidose diabética (CAD): nos países desenvolvidos as taxas de letalidade hospitalar caíram para <1% em todas as faixas etárias e sexos; ainda assim, a CAD é a PRINCIPAL CAUSA de morte entre crianças e adultos com menos de 58 anos com DM1, respondendo por >50% de todas as mortes de crianças com diabetes. A mortalidade sobe substancialmente com comorbidades e com a idade, chegando a 8–10% nos maiores de 65–75 anos.",
+   "secao": "Epidemiology",
+   "cit": [
+    [
+     0,
+     13774,
+     472
+    ]
+   ],
+   "cit_sha": "0c357ae7e9074fcd"
+  },
+  {
+   "afirmacao": "CAD RECORRENTE: no Reino Unido a recorrência responde por 66% das internações por cetoacidose diabética no DM1 e 35% no DM2; nos EUA, 21,6% dos adultos de 18 a 89 anos com DM1 ou DM2 tiveram CAD recorrente, e 16% desses foram internados em mais de um hospital, indicando fragmentação do cuidado. A CAD recorrente concentra-se num pequeno número de adultos ou crianças com problemas comportamentais, sociais ou psicológicos.",
+   "secao": "Epidemiology",
+   "cit": [
+    [
+     0,
+     13130,
+     643
+    ]
+   ],
+   "cit_sha": "73331fc05dfb1ed0"
+  },
+  {
+   "afirmacao": "FATORES PRECIPITANTES em adultos com diabetes conhecido: infecções, doenças intercorrentes como a síndrome coronariana aguda, problemas da bomba de insulina (por exemplo, deslocamento ou obstrução do conjunto de infusão) e má adesão / não uso da insulina prescrita.",
+   "secao": "Risk factors",
+   "cit": [
+    [
+     0,
+     14895,
+     286
+    ]
+   ],
+   "cit_sha": "380f123b12ff39ce"
+  },
+  {
+   "afirmacao": "Outras condições reconhecidas como precipitantes de cetoacidose diabética (CAD) em adultos: infarto do miocárdio, acidente vascular cerebral, pancreatite, abuso de álcool, embolia pulmonar e trauma.",
+   "secao": "Risk factors",
+   "cit": [
+    [
+     0,
+     16118,
+     177
+    ]
+   ],
+   "cit_sha": "bb07bab1c7c2e22c"
+  },
+  {
+   "afirmacao": "FATORES DE RISCO PARA CAD RECORRENTE: baixo nível socioeconômico, adolescência, sexo feminino (possivelmente por maior incidência de omissão deliberada de insulina, questões psicológicas, transtornos alimentares e dismorfia corporal), hemoglobina glicada (HbA1c) alta, episódios prévios de cetoacidose diabética e história de problemas de saúde mental.",
+   "secao": "Risk factors",
+   "cit": [
+    [
+     0,
+     16296,
+     333
+    ]
+   ],
+   "cit_sha": "7870f54afbb1f825"
+  },
+  {
+   "afirmacao": "EM CRIANÇAS: a falta de reconhecimento imediato do DM1 de início recente pelos profissionais de saúde aumenta o risco de cetoacidose diabética (CAD) ao diagnóstico. Entre crianças com DM1 já conhecido, a MAIORIA dos episódios de CAD é causada por OMISSÃO DE INSULINA.",
+   "secao": "Risk factors",
+   "cit": [
+    [
+     0,
+     16630,
+     257
+    ]
+   ],
+   "cit_sha": "0c4d92ee25bd69f6"
+  },
+  {
+   "afirmacao": "TRANSTORNO ALIMENTAR como fator de risco de cetoacidose diabética (CAD): num relato com ~350 meninas adolescentes e mulheres (13–60 anos), a alimentação desordenada contribuiu para ~20% dos episódios RECORRENTES de CAD; e sugere-se que ~30% das jovens mulheres com DM1 (15 ± 2 anos) tenham um transtorno alimentar. Elas omitem insulina por medo de ganhar peso com bom controle glicêmico, sofrimento relacionado ao diabetes, medo de hipoglicemia e rebeldia contra a autoridade.",
+   "secao": "Risk factors",
+   "cit": [
+    [
+     0,
+     21305,
+     462
+    ]
+   ],
+   "cit_sha": "ce7c6f7536a009e6"
+  },
+  {
+   "afirmacao": "BOMBA DE INSULINA em menores de 18 anos: dados da auditoria nacional pediátrica do Reino Unido (UK National Paediatric Diabetes Audit) mostram que o uso de bomba de insulina também está associado a AUMENTO do risco de cetoacidose diabética (CAD) nessa faixa etária.",
+   "secao": "Risk factors — Pharmacological risk factors",
+   "cit": [
+    [
+     0,
+     21936,
+     165
+    ]
+   ],
+   "cit_sha": "86808813588d0c13"
+  },
+  {
+   "afirmacao": "INIBIDORES DE SGLT2 e cetoacidose diabética (CAD): em ensaios randomizados, a CAD é RARA em pacientes com diabetes tipo 2 tratados com inibidores de SGLT2 (incidência de 0,16–0,76 eventos por 1.000 pacientes-ano). Já em ADULTOS COM DM1, vários ensaios relataram risco MAIOR de cetose associada ao inibidor de SGLT2 (5–12%) e incidência de CAD de ~3–5%, contra 0–1,9% no placebo — e a CAD ocorreu apesar do uso de medidas para minimizar o risco de cetose.",
+   "secao": "Risk factors — Pharmacological risk factors",
+   "cit": [
+    [
+     0,
+     22230,
+     585
+    ]
+   ],
+   "cit_sha": "63bc357750c899d6"
+  },
+  {
+   "afirmacao": "MECANISMO DA CAD EUGLICÊMICA POR INIBIDOR DE SGLT2: o fármaco promove glicosúria e derruba a glicemia; com a queda da glicose caem também as concentrações de insulina e sobe o glucagon, o que promove β-oxidação lipídica e produção de cetoácidos. Em quem já usa insulina, as doses podem ser reduzidas com a queda da glicemia, mas a cetogênese NÃO é impedida — e, como a glicemia está baixa, a CAD euglicêmica ocorre mais frequentemente nesses indivíduos.",
+   "secao": "Mechanisms/pathophysiology — SGLT2 inhibitor-induced ketoacidosis",
+   "cit": [
+    [
+     1,
+     41453,
+     322
+    ]
+   ],
+   "cit_sha": "0f1da2454f2f2af0"
+  },
+  {
+   "afirmacao": "INIBIDORES DE CHECKPOINT IMUNOLÓGICO (anti-CTLA4, anti-PD1/PDL1) e cetoacidose diabética (CAD): na base de farmacovigilância da OMS, entre 283 casos de diabetes de início recente, >50% dos pacientes com diabetes induzido por inibidor de checkpoint se apresentaram com CAD; numa série de grandes centros acadêmicos, a incidência estimada de DM1 de início recente foi de 1%, com tempo mediano de 49 dias até o início, e 76% dos casos se apresentaram com CAD.",
+   "secao": "Risk factors — Pharmacological risk factors",
+   "cit": [
+    [
+     0,
+     24359,
+     427
+    ]
+   ],
+   "cit_sha": "d432529494d0edb7"
+  },
+  {
+   "afirmacao": "Fármacos e substâncias que precipitam cetoacidose diabética (CAD): corticosteroides, agentes simpatomiméticos (usados em descongestionantes nasais) e pentamidina; antipsicóticos atípicos, que se associam a CAD de instalação AGUDA mesmo sem ganho de peso; e o uso de cannabis, associado a maior risco de CAD em adultos com DM1 no registro T1D Exchange dos EUA.",
+   "secao": "Risk factors — Pharmacological risk factors",
+   "cit": [
+    [
+     0,
+     23547,
+     595
+    ]
+   ],
+   "cit_sha": "8b1ea84de90d0ed2"
+  },
+  {
+   "afirmacao": "FISIOPATOLOGIA da hipercalemia inicial na cetoacidose diabética (CAD): a insulina mantém o potássio dentro da célula; sua falta faz o potássio migrar para o espaço extracelular. Além disso, os íons hidrogênio extracelulares dos cetoácidos são trocados por potássio intracelular, e a hipertonicidade extracelular arrasta água e potássio para fora da célula. Com a diurese osmótica, cai o volume circulante e sobe a aldosterona, que excreta potássio na urina — o efeito final é HIPERCALEMIA com estoque corporal total DEPLETADO.",
+   "secao": "Mechanisms/pathophysiology — Electrolyte disturbance",
+   "cit": [
+    [
+     0,
+     37612,
+     196
+    ]
+   ],
+   "cit_sha": "a836fda22e56fdbe"
+  },
+  {
+   "afirmacao": "⚠️ POTÁSSIO NA CAD — a leitura da entrada engana: para cada queda de 0,1 unidade no pH, o potássio sérico SOBE 0,6 mmol/l; assim, na fase aguda ANTES de iniciar fluido e insulina, o potássio sérico pode chegar a ≥7,0 mmol/l. Ainda assim, por perda renal, o estoque corporal total de potássio está em geral substancialmente depletado, estimado em 3–5 mmol/kg.",
+   "secao": "Mechanisms/pathophysiology — Electrolyte disturbance",
+   "cit": [
+    [
+     0,
+     38871,
+     375
+    ]
+   ],
+   "cit_sha": "55f1d523a2bdc9d2"
+  },
+  {
+   "afirmacao": "ÂNION GAP na cetoacidose diabética (CAD): o acúmulo de cetoácidos reduz o bicarbonato sérico, e a retenção desses 'ácidos fortes' gera acidose metabólica com ÂNION GAP ALTO. O ânion gap é o cálculo da diferença entre cátions e ânions do soro e serve de guia para a causa do excesso de acidez.",
+   "secao": "Mechanisms/pathophysiology — Ketogenesis",
+   "cit": [
+    [
+     0,
+     30825,
+     338
+    ]
+   ],
+   "cit_sha": "a0ef9262836b1d4f"
+  },
+  {
+   "afirmacao": "Faixa de referência do ÂNION GAP em indivíduos saudáveis: 10–14 mmol/l. A relação entre a variação do ânion gap e a variação do bicarbonato sérico nem sempre é 1:1, ao contrário do que se postulava.",
+   "secao": "Mechanisms/pathophysiology — Ketogenesis",
+   "cit": [
+    [
+     0,
+     31552,
+     244
+    ]
+   ],
+   "cit_sha": "00bb3301a6f6b1cc"
+  },
+  {
+   "afirmacao": "Os três corpos cetônicos produzidos pelo fígado na cetoacidose diabética (CAD) são acetona, acetoacetato e β-hidroxibutirato; a acetona exalada é o que dá o hálito 'de fruta' clássico. Acetoacetato e β-hidroxibutirato são os ácidos (cetoácidos), com pKa de 3,6 e 4,7 respectivamente.",
+   "secao": "Mechanisms/pathophysiology — Ketogenesis",
+   "cit": [
+    [
+     0,
+     30040,
+     317
+    ]
+   ],
+   "cit_sha": "a902baf71506ccd9"
+  },
+  {
+   "afirmacao": "Por que a acidemia importa na cetoacidose diabética (CAD): com pH <7,35 os sistemas biológicos intracelulares começam a falhar, e há dano IRREVERSÍVEL em torno de pH <6,8 — pH tão baixo pode causar disfunção neurológica, coma e, se grave ou prolongado, morte.",
+   "secao": "Mechanisms/pathophysiology",
+   "cit": [
+    [
+     0,
+     35416,
+     275
+    ]
+   ],
+   "cit_sha": "cd0bd41cb16853d8"
+  },
+  {
+   "afirmacao": "⚠️ NÍVEL DE CONSCIÊNCIA NÃO ACOMPANHA O pH na cetoacidose diabética (CAD): há pessoas plenamente alertas e orientadas com pH de 6,9 e outras obnubiladas com pH de 7,2 — o que sugere um componente de 'reserva fisiológica'. Depleção de volume circulante, glicemia muito alta e o desvio rápido de eletrólitos entre os espaços intra e extracelular também podem contribuir.",
+   "secao": "Mechanisms/pathophysiology — Inflammation",
+   "cit": [
+    [
+     0,
+     40975,
+     384
+    ]
+   ],
+   "cit_sha": "380f28472f39a5f8"
+  },
+  {
+   "afirmacao": "EDEMA CEREBRAL PEDIÁTRICO — natureza do dano: o edema cerebral da cetoacidose diabética (CAD) é VASOGÊNICO (por ruptura da barreira hematoencefálica), embora o mecanismo permaneça indeterminado; postula-se que o estado inflamatório participe das complicações da CAD em crianças, particularmente edema e lesão cerebral.",
+   "secao": "Mechanisms/pathophysiology — Inflammation",
+   "cit": [
+    [
+     0,
+     40569,
+     317
+    ]
+   ],
+   "cit_sha": "26ae58543b684c12"
+  },
+  {
+   "afirmacao": "DIAGNÓSTICO DIFERENCIAL — CETOACIDOSE ALCOÓLICA: a GLICEMIA é o achado diagnóstico-chave que a diferencia da cetoacidose diabética (CAD). Ao contrário da CAD, que costuma cursar com hiperglicemia grave, a presença de cetoacidose SEM hiperglicemia num paciente com alcoolismo é virtualmente diagnóstica de cetoacidose alcoólica.",
+   "secao": "Mechanisms/pathophysiology — Alcoholic ketoacidosis",
+   "cit": [
+    [
+     0,
+     42328,
+     115
+    ]
+   ],
+   "cit_sha": "21281ade23937d57"
+  },
+  {
+   "afirmacao": "DIAGNÓSTICO DIFERENCIAL — CETOACIDOSE ALCOÓLICA: desenvolve-se em pessoas com abuso crônico de álcool após uma libação, com náusea, vômito e inanição aguda; a abstinência aguda libera hormônios contrarreguladores e a inanição associada cursa com baixa secreção de insulina, o que causa lipólise e cetogênese. A fisiopatologia é DIFERENTE da cetoacidose diabética (CAD).",
+   "secao": "Mechanisms/pathophysiology — Alcoholic ketoacidosis",
+   "cit": [
+    [
+     0,
+     42141,
+     186
+    ]
+   ],
+   "cit_sha": "06cdbd8acb719d26"
+  },
+  {
+   "afirmacao": "DIAGNÓSTICO DIFERENCIAL — CETOSE DE JEJUM (starvation ketosis): ocorre com ingestão calórica reduzida prolongada de <500 kcal/dia; em pessoas saudáveis ou com obesidade sem diabetes, o β-hidroxibutirato pode chegar a 5–6 mmol/l após vários dias de inanição absoluta, ou 4–5 mmol/l após 10 dias. Para comparação, num indivíduo saudável e sem jejum o β-hidroxibutirato deve ser <0,3 mmol/l.",
+   "secao": "Mechanisms/pathophysiology — Starvation ketosis",
+   "cit": [
+    [
+     0,
+     43382,
+     667
+    ]
+   ],
+   "cit_sha": "65b3846c09186a77"
+  },
+  {
+   "afirmacao": "⚠️ COMO SEPARAR CETOSE DE JEJUM DE CETOACIDOSE DIABÉTICA (CAD) PELO BICARBONATO: por causa da compensação renal, a cetose induzida por inanição dificilmente se apresenta com bicarbonato sérico <18,0 mmol/l. Portanto, bicarbonato abaixo desse valor aponta para outra causa que não a cetose de jejum simples.",
+   "secao": "Mechanisms/pathophysiology — Starvation ketosis",
+   "cit": [
+    [
+     0,
+     44539,
+     92
+    ],
+    [
+     0,
+     44732,
+     54
+    ]
+   ],
+   "cit_sha": "bbb4926eae8fcdc7"
+  },
+  {
+   "afirmacao": "APRESENTAÇÃO CLÍNICA da cetoacidose diabética (CAD): história curta, sintomas em geral em poucas horas — poliúria, polidipsia e, quando a CAD é a primeira manifestação do diabetes, perda de peso. Polifagia é relatada em crianças, mas é rara em adultos.",
+   "secao": "Diagnosis, screening and prevention — Presentation",
+   "cit": [
+    [
+     0,
+     45107,
+     320
+    ]
+   ],
+   "cit_sha": "0f7883d8aa5158c4"
+  },
+  {
+   "afirmacao": "⚠️ DOR ABDOMINAL na cetoacidose diabética (CAD): sintomas gastrointestinais (náusea, vômito e dor abdominal generalizada) ocorrem em >60% dos pacientes, e a dor pode mimetizar abdome agudo, sendo especialmente comum em crianças e em quem tem acidose metabólica grave. A dor tipicamente se resolve nas primeiras 24 horas de tratamento — e a NÃO resolução nesse prazo deve motivar busca de outras causas.",
+   "secao": "Diagnosis, screening and prevention — Presentation",
+   "cit": [
+    [
+     0,
+     45529,
+     441
+    ]
+   ],
+   "cit_sha": "8f58a2c1d686192a"
+  },
+  {
+   "afirmacao": "EXAME FÍSICO na cetoacidose diabética (CAD): adultos e crianças costumam mostrar sinais de depleção do volume circulante (mucosas secas, taquicardia). O estado mental à admissão varia de plena vigília a letargia e estupor, com <20% dos adultos hospitalizados apresentando perda de consciência. Com a queda do pH surge a respiração de Kussmaul (respiração profunda e laboriosa) e o hálito pode ter odor frutado por exalação de acetona.",
+   "secao": "Diagnosis, screening and prevention — Presentation",
+   "cit": [
+    [
+     0,
+     46245,
+     291
+    ]
+   ],
+   "cit_sha": "d311497dd2818c03"
+  },
+  {
+   "afirmacao": "⚠️ ARMADILHAS DO EXAME FÍSICO na cetoacidose diabética (CAD): a maioria dos adultos e das crianças está normotérmica ou até HIPOTÉRMICA à apresentação MESMO havendo infecção. Hipotensão pode ocorrer em adultos, mas é rara em crianças — em crianças documenta-se alta frequência de HIPERTENSÃO apesar da depleção volumétrica importante. Por isso NÃO se deve usar a pressão arterial como marcador de gravidade da CAD em crianças.",
+   "secao": "Diagnosis, screening and prevention — Presentation",
+   "cit": [
+    [
+     0,
+     46853,
+     430
+    ]
+   ],
+   "cit_sha": "2174369df1c9add2"
+  },
+  {
+   "afirmacao": "DIAGNÓSTICO da cetoacidose diabética (CAD) apoia-se na TRÍADE hiperglicemia + cetose + acidose metabólica. ADA, Joint British Diabetes Societies e ISPAD concordam que a característica diagnóstica principal é a ELEVAÇÃO DA CETONEMIA TOTAL circulante, mas divergem em outros critérios, como glicose e bicarbonato séricos.",
+   "secao": "Diagnosis, screening and prevention — Diagnosis",
+   "cit": [
+    [
+     0,
+     47294,
+     453
+    ]
+   ],
+   "cit_sha": "4e78323971615039"
+  },
+  {
+   "afirmacao": "⚠️ GLICEMIA NORMAL NÃO EXCLUI CETOACIDOSE DIABÉTICA (CAD): estudos mostram que entre 3% e 8,7% dos adultos que se apresentam com CAD têm glicemia normal ou apenas discretamente elevada.",
+   "secao": "Diagnosis, screening and prevention — Diagnosis",
+   "cit": [
+    [
+     0,
+     47759,
+     133
+    ]
+   ],
+   "cit_sha": "c1496df1b79be791"
+  },
+  {
+   "afirmacao": "CAD EUGLICÊMICA — quando suspeitar: foi descrita na inanição prolongada, no consumo excessivo de álcool, em indivíduos parcialmente tratados (que receberam doses insuficientes de insulina), na GESTAÇÃO e em quem usa inibidor de SGLT2. Em quem usa inibidor de SGLT2 e se apresenta com cetoacidose diabética sem hiperglicemia grave, a HISTÓRIA MEDICAMENTOSA detalhada é a chave para confirmar o diagnóstico.",
+   "secao": "Diagnosis, screening and prevention — Diagnosis",
+   "cit": [
+    [
+     0,
+     48658,
+     411
+    ]
+   ],
+   "cit_sha": "c223844ba3614cf3"
+  },
+  {
+   "afirmacao": "⚠️ TESTE DE CETONA POR NITROPRUSSIATO (urina) SUBESTIMA a cetoacidose diabética (CAD): ele mede ACETOACETATO e NÃO detecta β-hidroxibutirato, que é a principal cetona na CAD. Como o acetoacetato responde por apenas 15–40% da cetonemia total, basear-se apenas no teste urinário de cetonas provavelmente subestima a gravidade da cetonemia.",
+   "secao": "Diagnosis, screening and prevention — Diagnosis",
+   "cit": [
+    [
+     0,
+     50302,
+     367
+    ]
+   ],
+   "cit_sha": "228095744dc558ed"
+  },
+  {
+   "afirmacao": "FALSOS RESULTADOS DO TESTE DE NITROPRUSSIATO na cetoacidose diabética (CAD): fármacos sulfidrílicos (por exemplo, captopril) e o valproato dão FALSO-POSITIVO no teste urinário de nitroprussiato; tiras vencidas ou mal armazenadas dão FALSO-NEGATIVO, o que também ocorre quando a urina está muito ácida, por exemplo após consumo de grandes quantidades de vitamina C.",
+   "secao": "Diagnosis, screening and prevention — Diagnosis",
+   "cit": [
+    [
+     0,
+     50670,
+     433
+    ]
+   ],
+   "cit_sha": "9e35a9a08ec1879a"
+  },
+  {
+   "afirmacao": "RECOMENDAÇÃO FORTE do Joint British Diabetes Societies for Inpatient Care: DESACONSELHAM FORTEMENTE o uso de testes urinários de cetona e RECOMENDAM a medida direta do β-hidroxibutirato em amostra de SANGUE para avaliar cetonemia, tanto no ambulatório quanto no hospital.",
+   "secao": "Diagnosis, screening and prevention — Diagnosis",
+   "cit": [
+    [
+     0,
+     51104,
+     254
+    ]
+   ],
+   "cit_sha": "cc273cfcc1443a76"
+  },
+  {
+   "afirmacao": "QUANDO NÃO HÁ DOSAGEM DE CETONA na cetoacidose diabética (CAD): bicarbonato de 18,0 e de 15,0 mmol/l correspondem, respectivamente, a β-hidroxibutirato de 3,0 e 4,4 mmol/l — permitindo uma estimativa pelo bicarbonato quando o teste plasmático de cetona é indisponível.",
+   "secao": "Diagnosis, screening and prevention — Diagnosis",
+   "cit": [
+    [
+     0,
+     51650,
+     253
+    ]
+   ],
+   "cit_sha": "d7e74f665238e2ca"
+  },
+  {
+   "afirmacao": "MONITORIZAÇÃO DA RESPOSTA na cetoacidose diabética (CAD) — as diretrizes do Reino Unido RECOMENDAM INTENSIFICAR o tratamento se o β-hidroxibutirato plasmático NÃO cair pelo menos 0,5 mmol/l por hora após o início de fluido e insulina intravenosa.",
+   "secao": "Diagnosis, screening and prevention — Diagnosis",
+   "cit": [
+    [
+     0,
+     51982,
+     203
+    ]
+   ],
+   "cit_sha": "5b17e70842efad51"
+  },
+  {
+   "afirmacao": "SOBREPOSIÇÃO CAD + ESTADO HIPERGLICÊMICO HIPEROSMOLAR (EHH): entre 1.211 pacientes na primeira internação por crise hiperglicêmica pelos critérios da ADA, 465 (38%) tinham CAD isolada, 421 (35%) EHH isolado e 325 (27%) tinham características COMBINADAS de CAD e EHH. Após ajuste para idade, sexo, IMC, etnia e índice de comorbidade de Charlson, o quadro combinado CAD–EHH teve mortalidade intra-hospitalar MAIOR que a CAD isolada (OR ajustado 2,7; IC 95% 1,4–4,9).",
+   "secao": "Diagnosis, screening and prevention — Diagnosis",
+   "cit": [
+    [
+     0,
+     52287,
+     553
+    ]
+   ],
+   "cit_sha": "372cad832d800197"
+  },
+  {
+   "afirmacao": "AVALIAÇÃO INICIAL à admissão por cetoacidose diabética (CAD): avaliar imediatamente estado hemodinâmico e nível de consciência e medir glicemia, cetonas no sangue ou na urina, eletrólitos séricos, gasometria VENOSA e hemograma completo. Buscar ativamente os precipitantes, INCLUINDO ELETROCARDIOGRAMA para excluir síndrome coronariana aguda e detectar alterações de repolarização (ondas T apiculadas) por hipercalemia.",
+   "secao": "Diagnosis, screening and prevention — Systemic assessment",
+   "cit": [
+    [
+     0,
+     52861,
+     501
+    ]
+   ],
+   "cit_sha": "d8f9e486cb3c5d50"
+  },
+  {
+   "afirmacao": "MARCADORES DE GRAVIDADE da cetoacidose diabética (CAD) SUGERIDOS pelas diretrizes do Reino Unido, além da classificação da ADA: cetonas >6,0 mmol/l, pH venoso <7,0, HIPOCALEMIA à admissão (<3,5 mmol/l), pressão arterial sistólica <90 mmHg, frequência de pulso >100 bpm ou <60 bpm, saturação de oxigênio <92% (assumindo normal na linha de base) e escala de coma de Glasgow <12.",
+   "secao": "Diagnosis, screening and prevention — Systemic assessment",
+   "cit": [
+    [
+     0,
+     53641,
+     354
+    ]
+   ],
+   "cit_sha": "ea7bd83489c4db6f"
+  },
+  {
+   "afirmacao": "VIA AÉREA na cetoacidose diabética (CAD): se a respiração estiver comprometida por letargia ou coma, é preciso iniciar manejo URGENTE da via aérea com apoio da equipe de terapia intensiva. Uma limitação da classificação da ADA é que o grau de acidemia se correlaciona imperfeitamente com o nível de consciência do paciente.",
+   "secao": "Diagnosis, screening and prevention — Systemic assessment",
+   "cit": [
+    [
+     0,
+     53481,
+     159
+    ]
+   ],
+   "cit_sha": "fa6e659662a190f5"
+  },
+  {
+   "afirmacao": "CAUSA DA MORTE difere por população na cetoacidose diabética (CAD): em ADULTOS a mortalidade decorre com frequência do precipitante subjacente (infecção ou doença intercorrente); em CRIANÇAS a mortalidade resulta principalmente de EDEMA CEREBRAL ou lesão cerebral — por isso a avaliação do nível de consciência é de importância particular na criança.",
+   "secao": "Diagnosis, screening and prevention — Systemic assessment",
+   "cit": [
+    [
+     0,
+     54365,
+     387
+    ]
+   ],
+   "cit_sha": "89b1f81570e2768f"
+  },
+  {
+   "afirmacao": "PREVENÇÃO — REGRAS DOS DIAS DE DOENÇA ('sick day rules'): conjunto simples de instruções para quando o paciente adoece por qualquer motivo, que determinam que — particularmente no DM1 — a INSULINA NUNCA DEVE SER SUSPENSA, mesmo que a pessoa não esteja ingerindo sólidos nem líquidos.",
+   "secao": "Diagnosis, screening and prevention — Prevention",
+   "cit": [
+    [
+     0,
+     54863,
+     123
+    ],
+    [
+     0,
+     55078,
+     137
+    ]
+   ],
+   "cit_sha": "476434105a3b60ed"
+  },
+  {
+   "afirmacao": "PREVENÇÃO — conduta nos dias de doença para evitar cetoacidose diabética (CAD): medir a glicemia a cada poucas horas e as cetonas (sangue ou urina) pelo menos DUAS VEZES AO DIA; se houver cetonas detectáveis, AUMENTAR a dose de insulina; manter boa hidratação; e, se o vômito for persistente, a internação hospitalar frequentemente é necessária.",
+   "secao": "Diagnosis, screening and prevention — Prevention",
+   "cit": [
+    [
+     0,
+     55216,
+     382
+    ]
+   ],
+   "cit_sha": "85720909f428b66c"
+  },
+  {
+   "afirmacao": "OBJETIVO DO TRATAMENTO da cetoacidose diabética (CAD): insulinoterapia e reposição de fluido e eletrólitos são as pedras angulares; a meta é corrigir a acidemia, restaurar o volume circulante normal e normalizar a glicemia e os distúrbios ácido-base.",
+   "secao": "Management",
+   "cit": [
+    [
+     0,
+     56207,
+     309
+    ]
+   ],
+   "cit_sha": "a75ff8f5466455ef"
+  },
+  {
+   "afirmacao": "FREQUÊNCIA DE MONITORIZAÇÃO durante o tratamento da cetoacidose diabética (CAD): glicemia DE HORA EM HORA na maioria dos pacientes; eletrólitos (sódio, potássio, cloro e bicarbonato), ureia, creatinina e pH VENOSO a cada 2–4 horas; fosfato, cálcio e magnésio menos frequentemente (em geral a cada 4–6 horas); estado neurológico de hora em hora pela escala de coma de Glasgow ou pela escala AVPU. Em CRIANÇAS com estado cognitivo alterado pode ser necessária monitorização a cada 30 minutos.",
+   "secao": "Management",
+   "cit": [
+    [
+     0,
+     56801,
+     600
+    ]
+   ],
+   "cit_sha": "80a6468e4633d9e2"
+  },
+  {
+   "afirmacao": "ONDE TRATAR a cetoacidose diabética (CAD): limiar BAIXO para transferir a unidade de cuidados intermediários (alta dependência) ou UTI quem chega com estado cognitivo alterado, distúrbio metabólico grave ou não melhora após o tratamento inicial. Por outro lado, pessoas com CAD LEVE pela classificação da ADA, com cognição normal e capazes de comer e beber, PODEM ser tratadas com fluidos ORAIS e insulina SUBCUTÂNEA em ambiente de cuidado agudo, potencialmente evitando a internação.",
+   "secao": "Management",
+   "cit": [
+    [
+     0,
+     57402,
+     515
+    ]
+   ],
+   "cit_sha": "b1180b6b799490c6"
+  },
+  {
+   "afirmacao": "⚠️ CRITÉRIOS DE RESOLUÇÃO da cetoacidose diabética (CAD) — NÃO são os critérios diagnósticos: a resolução exige a COMBINAÇÃO de glicemia <200 mg/dl (11,1 mmol/l), bicarbonato sérico ≥18,0 mmol/l, pH venoso >7,30 e ânion gap calculado ≤14,0 mmol/l. Alternativamente, β-hidroxibutirato sérico <1,0 mmol/l também pode ser usado para determinar a resolução.",
+   "secao": "Management",
+   "cit": [
+    [
+     0,
+     57918,
+     362
+    ]
+   ],
+   "cit_sha": "84447c8ba525aa89"
+  },
+  {
+   "afirmacao": "RESOLUÇÃO da cetoacidose diabética (CAD) onde NÃO há dosagem de β-hidroxibutirato: a NORMALIZAÇÃO DO ÂNION GAP é o melhor indicador de resolução da CAD.",
+   "secao": "Management",
+   "cit": [
+    [
+     0,
+     58281,
+     138
+    ]
+   ],
+   "cit_sha": "7409c8f78265a428"
+  },
+  {
+   "afirmacao": "FLUIDO — FASE INICIAL EM ADULTOS com cetoacidose diabética (CAD): a ADA e as diretrizes do Reino Unido RECOMENDAM soro fisiológico (cloreto de sódio 0,9%) para a reposição inicial, administrado a 500–1.000 ml/hora nas primeiras 2–4 horas.",
+   "secao": "Management — Volume correction",
+   "cit": [
+    [
+     0,
+     58680,
+     220
+    ]
+   ],
+   "cit_sha": "9e5a52a8f5fae716"
+  },
+  {
+   "afirmacao": "FLUIDO — FASE DE TRANSIÇÃO EM ADULTOS com cetoacidose diabética (CAD): APÓS restaurado o volume intravascular, o sódio sérico e o estado de hidratação (avaliado por pressão arterial, frequência cardíaca e balanço hídrico) determinam se a infusão de soro fisiológico (salina normal) pode ser REDUZIDA para 250 ml/hora ou se deve ser trocada por cloreto de sódio a 0,45% na velocidade de 250–500 ml/hora.",
+   "secao": "Management — Volume correction",
+   "cit": [
+    [
+     0,
+     59832,
+     322
+    ]
+   ],
+   "cit_sha": "d596009e90e44a41"
+  },
+  {
+   "afirmacao": "⚠️ QUANDO ENTRAR COM GLICOSE NO SORO (ADULTOS com cetoacidose diabética): a glicemia cai para <200 mg/dl (11,1 mmol/l) ANTES de a cetoacidose se resolver; por isso, assim que a glicemia atinge ~200 mg/dl (11,1 mmol/l), o fluido de reposição deve conter DEXTROSE 5–10% — para prevenir hipoglicemia e permitir manter a insulina até corrigir a cetonemia.",
+   "secao": "Management — Volume correction",
+   "cit": [
+    [
+     0,
+     60290,
+     333
+    ]
+   ],
+   "cit_sha": "c0126efc0de12f87"
+  },
+  {
+   "afirmacao": "RINGER LACTATO VERSUS SORO FISIOLÓGICO na cetoacidose diabética (CAD): estudo comparando os dois NÃO encontrou diferença no tempo até a resolução da CAD, embora a hiperglicemia tenha se resolvido MAIS TARDE no grupo do Ringer lactato.",
+   "secao": "Management — Volume correction",
+   "cit": [
+    [
+     0,
+     58901,
+     368
+    ]
+   ],
+   "cit_sha": "b555348211509572"
+  },
+  {
+   "afirmacao": "⚠️ ARMADILHA DO SORO FISIOLÓGICO na cetoacidose diabética (CAD): grandes volumes de salina 0,9% causam acidose metabólica HIPERCLORÊMICA, porque o cloreto do soro fisiológico está em 154 mmol/l contra 100 mmol/l no soro do paciente. Em geral ela não tem efeito adverso agudo, MAS pode ATRASAR a transição para insulina subcutânea se o bicarbonato sérico for usado como indicador de resolução da CAD.",
+   "secao": "Management — Volume correction",
+   "cit": [
+    [
+     0,
+     59452,
+     379
+    ]
+   ],
+   "cit_sha": "d6394104e75ae933"
+  },
+  {
+   "afirmacao": "FLUIDO EM CRIANÇAS (<18 anos) com cetoacidose diabética (CAD): o déficit hídrico varia de 30 a 100 ml/kg conforme a duração dos sintomas; como a avaliação clínica do déficit (tempo de enchimento capilar, turgor) é frequentemente IMPRECISA em crianças com CAD, deve-se assumir déficit médio de ~70 ml/kg para a maioria delas.",
+   "secao": "Management — Volume correction",
+   "cit": [
+    [
+     0,
+     60624,
+     448
+    ]
+   ],
+   "cit_sha": "5b240f09b9361880"
+  },
+  {
+   "afirmacao": "FLUIDO — BOLUS INICIAL EM CRIANÇAS com cetoacidose diabética (CAD): bolus inicial de 10–20 ml/kg de salina 0,9% (ou outro fluido isotônico) prontamente em 30–60 minutos para restaurar a perfusão de órgãos. Em criança com CHOQUE HIPOVOLÊMICO, a administração inicial deve ser 20 ml/kg em 15–30 minutos. Os bolus podem ser repetidos conforme o estado hemodinâmico; o bolus é preferido na criança por garantir perfusão tecidual mais rápida que a infusão contínua lenta.",
+   "secao": "Management — Volume correction",
+   "cit": [
+    [
+     0,
+     61073,
+     503
+    ]
+   ],
+   "cit_sha": "91673c9b057ec55a"
+  },
+  {
+   "afirmacao": "FLUIDO — FASE DE MANUTENÇÃO EM CRIANÇAS com cetoacidose diabética (CAD): APÓS o bolus inicial, o restante do déficit hídrico deve ser reposto ao longo de 24–48 horas, usando cloreto de sódio a 0,45–0,9%.",
+   "secao": "Management — Volume correction",
+   "cit": [
+    [
+     0,
+     61659,
+     132
+    ]
+   ],
+   "cit_sha": "310599f3eb118463"
+  },
+  {
+   "afirmacao": "⚠️ MUDANÇA DE CONDUTA PEDIÁTRICA — o ensaio randomizado PECARN FLUID: NÃO houve diferença nos desfechos neurológicos agudos nem pós-recuperação em crianças com cetoacidose diabética (CAD) tratadas com correção volêmica RÁPIDA versus LENTA, nem entre salina 0,9% e 0,45%. Numa subanálise de crianças com acidose grave e comprometimento cognitivo, a correção volêmica RÁPIDA resultou em MELHORA do estado mental durante o tratamento. Ou seja, variações no protocolo de fluidos NÃO são a causa do edema/lesão cerebral na CAD — o que revoga a recomendação dos anos 1980–1990 de infundir devagar para prevenir edema cerebral.",
+   "secao": "Management — Volume correction",
+   "cit": [
+    [
+     0,
+     61951,
+     626
+    ]
+   ],
+   "cit_sha": "3cd6f5a6cdbef11a"
+  },
+  {
+   "afirmacao": "MÉTODO DAS DUAS BOLSAS ('two-bag') na cetoacidose diabética (CAD) de adultos e crianças: duas bolsas simultâneas com conteúdo eletrolítico IDÊNTICO (salina 0,45% ou 0,9% com potássio), sendo que só UMA contém dextrose a 10%. A bolsa sem dextrose é usada inicialmente como fluido de ressuscitação, e a dextrose é acrescentada quando a glicemia cai para 200–250 mg/dl (11,0–13,9 mmol/l). O método evita a troca contínua de frascos conforme a glicemia.",
+   "secao": "Management — Volume correction",
+   "cit": [
+    [
+     0,
+     62578,
+     433
+    ]
+   ],
+   "cit_sha": "d22ee8911582ca27"
+  },
+  {
+   "afirmacao": "SÓDIO na cetoacidose diabética (CAD): a maioria dos adultos e das crianças tem HIPONATREMIA LEVE à apresentação, que volta gradualmente à faixa normal de 135 a 145 mmol/l à medida que a glicemia cai e a água retorna ao espaço intracelular.",
+   "secao": "Management — Volume correction",
+   "cit": [
+    [
+     0,
+     63304,
+     220
+    ]
+   ],
+   "cit_sha": "93d6c8db1a00c43a"
+  },
+  {
+   "afirmacao": "⚠️ SÓDIO CORRIGIDO na cetoacidose diabética (CAD) — isto é uma FÓRMULA DE CÁLCULO, NÃO é meta terapêutica nem limite de velocidade de correção: propõe-se que o sódio MEDIDO caia 1,6 mmol/l para cada 100 mg/dl (5,5 mmol/l) de elevação da glicemia acima do normal, de modo que o sódio CORRIGIDO = sódio sérico medido + 1,6 × ((glicose em mg/dl − 100)/100). Acompanhar o sódio corrigido durante o tratamento é útil para monitorar a adequação das velocidades relativas de fluido e sódio.",
+   "secao": "Management — Volume correction",
+   "cit": [
+    [
+     0,
+     63525,
+     337
+    ]
+   ],
+   "cit_sha": "119318f926f5adfd"
+  },
+  {
+   "afirmacao": "INSULINA — princípio geral na cetoacidose diabética (CAD): a maioria das pessoas é tratada com INFUSÃO INTRAVENOSA de insulina até a CAD se resolver E o paciente estar comendo e bebendo normalmente, quando então se faz a transição para insulina subcutânea.",
+   "secao": "Management — Insulin administration",
+   "cit": [
+    [
+     0,
+     64243,
+     211
+    ]
+   ],
+   "cit_sha": "d733cf8f6b9ad0e8"
+  },
+  {
+   "afirmacao": "INSULINA — FASE INICIAL EM ADULTOS com cetoacidose diabética (CAD): a infusão intravenosa CONTÍNUA de insulina REGULAR (solúvel) é o tratamento de escolha. Muitos protocolos recomendam um BOLUS de insulina de 0,1 unidade/kg por via intravenosa ou intramuscular caso se antecipe demora para obter acesso venoso, seguido IMEDIATAMENTE de infusão intravenosa de taxa fixa a 0,1 unidade/kg/hora. ⚠️ PRÉ-CONDIÇÃO OBRIGATÓRIA ANTES DE INICIAR/MANTER A INSULINA: checar o POTÁSSIO — havendo hipocalemia, a insulina deve ser ADIADA e o potássio reposto primeiro, sob monitorização cardíaca.",
+   "secao": "Management — Insulin administration — Intravenous infusion",
+   "cit": [
+    [
+     0,
+     64711,
+     195
+    ],
+    [
+     0,
+     64914,
+     85
+    ]
+   ],
+   "cit_sha": "8f56c84b836b0937"
+  },
+  {
+   "afirmacao": "⚠️ INSULINA — FASE DE TRANSIÇÃO EM ADULTOS com cetoacidose diabética (CAD): assim que a glicemia atinge ~200 mg/dl (11,0 mmol/l), a taxa de infusão de insulina é REDUZIDA para 0,02–0,05 unidade/kg/hora e acrescenta-se dextrose a 5% à infusão, para manter a glicemia entre 140 e 200 mg/dl (7,8–11,0 mmol/l) ATÉ a resolução da cetoacidose. A insulina NÃO é suspensa nesse momento — só a taxa cai e entra a glicose. ⚠️ PRÉ-CONDIÇÃO OBRIGATÓRIA ANTES DE INICIAR/MANTER A INSULINA: checar o POTÁSSIO — havendo hipocalemia, a insulina deve ser ADIADA e o potássio reposto primeiro, sob monitorização cardíaca.",
+   "secao": "Management — Insulin administration — Intravenous infusion",
+   "cit": [
+    [
+     0,
+     65000,
+     277
+    ]
+   ],
+   "cit_sha": "15ab914ccca86460"
+  },
+  {
+   "afirmacao": "⚠️ INSULINA EM CRIANÇAS com cetoacidose diabética (CAD): a ISPAD RECOMENDA insulina regular intravenosa em infusão contínua a 0,1 unidade/kg/hora, que deve ser iniciada IMEDIATAMENTE APÓS o(s) bolus inicial(is) de fluido intravenoso — ou seja, o fluido vem ANTES da insulina. ⚠️ PRÉ-CONDIÇÃO OBRIGATÓRIA ANTES DE INICIAR/MANTER A INSULINA: checar o POTÁSSIO — havendo hipocalemia, a insulina deve ser ADIADA e o potássio reposto primeiro, sob monitorização cardíaca.",
+   "secao": "Management — Insulin administration — Intravenous infusion",
+   "cit": [
+    [
+     0,
+     65278,
+     305
+    ]
+   ],
+   "cit_sha": "3a76c3c69c491590"
+  },
+  {
+   "afirmacao": "⚠️ EM CRIANÇAS com cetoacidose diabética (CAD), NÃO se faz bolus inicial de insulina: ele NÃO é necessário, porque a infusão intravenosa contínua atinge rapidamente o estado de equilíbrio da insulina sérica. A expansão do volume intravascular ANTES da insulina é particularmente importante nas crianças que chegam com glicemia muito alta e hiperosmolalidade, porque o volume intravascular cairá substancialmente quando o estado hiperosmolar se resolver.",
+   "secao": "Management — Insulin administration — Intravenous infusion",
+   "cit": [
+    [
+     0,
+     65584,
+     404
+    ]
+   ],
+   "cit_sha": "df4f54d1c88dd0ff"
+  },
+  {
+   "afirmacao": "INSULINA EM DOSE MENOR NA CRIANÇA com cetoacidose diabética (CAD): pequenos estudos mostraram que a infusão a 0,05 unidade/kg/hora resolve a hiperglicemia em tempo semelhante à dose padrão de 0,1 unidade/kg/hora; PODE-SE CONSIDERAR essa dose menor em crianças muito pequenas (<6 anos) ou em outras com maior sensibilidade à insulina, para as quais a dose padrão pode ser desnecessária. ⚠️ PRÉ-CONDIÇÃO OBRIGATÓRIA ANTES DE INICIAR/MANTER A INSULINA: checar o POTÁSSIO — havendo hipocalemia, a insulina deve ser ADIADA e o potássio reposto primeiro, sob monitorização cardíaca.",
+   "secao": "Management — Insulin administration — Intravenous infusion",
+   "cit": [
+    [
+     0,
+     65989,
+     366
+    ]
+   ],
+   "cit_sha": "9dbc3302487d20e0"
+  },
+  {
+   "afirmacao": "VIA DA INSULINA EM CRIANÇAS com cetoacidose diabética (CAD): em geral RECOMENDA-SE a via INTRAVENOSA, porque a absorção subcutânea é não confiável no estado de depleção de volume. A via subcutânea PODE ser usada em crianças com CAD LEVE ou quando a via intravenosa não é possível.",
+   "secao": "Management — Insulin administration — Intravenous infusion",
+   "cit": [
+    [
+     0,
+     66356,
+     314
+    ]
+   ],
+   "cit_sha": "60f5c4982a237337"
+  },
+  {
+   "afirmacao": "⚠️ QUANDO ENTRAR COM GLICOSE NA CRIANÇA com cetoacidose diabética (CAD) — o limiar pediátrico é MAIS ALTO que o do adulto: quando a glicemia cai para ~250 mg/dl (13,9 mmol/l), deve-se usar fluido intravenoso COM DEXTROSE para manter a glicemia em ~100–150 mg/dl (5,5–8,3 mmol/l), MANTENDO a velocidade total de infusão de fluido.",
+   "secao": "Management — Insulin administration — Intravenous infusion",
+   "cit": [
+    [
+     0,
+     66671,
+     259
+    ]
+   ],
+   "cit_sha": "8716613467cce782"
+  },
+  {
+   "afirmacao": "TRANSIÇÃO PARA INSULINA SUBCUTÂNEA após cetoacidose diabética (CAD): só depois de alcançada a resolução BIOQUÍMICA da CAD E com o paciente comendo e bebendo normalmente, em adultos e crianças. Adultos com diabetes recém-diagnosticado ou que nunca usaram insulina devem começar com dose TOTAL de 0,5–0,6 unidade/kg/dia; quem já usava insulina subcutânea antes da internação deve RETOMAR o esquema prévio.",
+   "secao": "Management — Insulin administration — Maintenance insulin therapy",
+   "cit": [
+    [
+     0,
+     66960,
+     455
+    ]
+   ],
+   "cit_sha": "bcdc5770fda36a8f"
+  },
+  {
+   "afirmacao": "ESQUEMA SUBCUTÂNEO APÓS A CAD: para a maioria dos adultos, o esquema BASAL-BOLUS (insulina rápida a cada refeição + basal de ação longa uma ou duas vezes ao dia) é PREFERIDO ao uso de insulina regular, por causa da MENOR taxa de hipoglicemia intra-hospitalar, apesar de controle glicêmico semelhante. Em crianças os esquemas variam por serviço, mas o basal-bolus também é geralmente preferido.",
+   "secao": "Management — Insulin administration — Maintenance insulin therapy",
+   "cit": [
+    [
+     0,
+     67416,
+     300
+    ]
+   ],
+   "cit_sha": "c4cfded6d10d1f5e"
+  },
+  {
+   "afirmacao": "ALTERNATIVA À INSULINA INTRAVENOSA na cetoacidose diabética (CAD): doses frequentes de análogo de insulina RÁPIDA por via SUBCUTÂNEA (a cada 1–2 horas) podem ser alternativa aceitável à infusão intravenosa, pois os dois tratamentos resolvem a CAD em tempo semelhante.",
+   "secao": "Management — Insulin administration — Maintenance insulin therapy",
+   "cit": [
+    [
+     0,
+     67834,
+     265
+    ]
+   ],
+   "cit_sha": "c1d228a72150d8b4"
+  },
+  {
+   "afirmacao": "PROTOCOLO SUBCUTÂNEO de insulina rápida na cetoacidose diabética (CAD), em adultos E crianças: bolus de 0,2 unidade/kg no início do tratamento, seguido de 0,1–0,2 unidade/kg a cada 1–3 horas ATÉ a glicemia ficar <250 mg/dl (13,9 mmol/l); a partir daí a dose é REDUZIDA À METADE e mantida a cada 1–2 horas até a resolução da CAD. ⚠️ PRÉ-CONDIÇÃO OBRIGATÓRIA ANTES DE INICIAR/MANTER A INSULINA: checar o POTÁSSIO — havendo hipocalemia, a insulina deve ser ADIADA e o potássio reposto primeiro, sob monitorização cardíaca.",
+   "secao": "Management — Insulin administration — Maintenance insulin therapy",
+   "cit": [
+    [
+     0,
+     68100,
+     149
+    ],
+    [
+     0,
+     68342,
+     179
+    ]
+   ],
+   "cit_sha": "d9732b1851ba513f"
+  },
+  {
+   "afirmacao": "DOSE DIÁRIA TOTAL DE INSULINA na criança após cetoacidose diabética (CAD): em geral 0,7–0,8 unidade/kg/dia na criança PRÉ-PÚBERE e 1,0–1,2 unidade/kg/dia no adolescente PÚBERE.",
+   "secao": "Management — Insulin administration — Maintenance insulin therapy",
+   "cit": [
+    [
+     0,
+     68522,
+     145
+    ]
+   ],
+   "cit_sha": "1077c7420e54fa91"
+  },
+  {
+   "afirmacao": "VIA INTRAMUSCULAR de insulina rápida na cetoacidose diabética (CAD): é eficaz em adultos e crianças, PORÉM é mais dolorosa que a subcutânea e seria potencialmente CONTRAINDICADA em quem usa anticoagulantes.",
+   "secao": "Management — Insulin administration — Maintenance insulin therapy",
+   "cit": [
+    [
+     0,
+     69286,
+     242
+    ]
+   ],
+   "cit_sha": "85a8a148d107e996"
+  },
+  {
+   "afirmacao": "BOMBA DE INSULINA (infusão subcutânea contínua, CSII) e risco de cetoacidose diabética (CAD): ensaios e metanálises mostram pequena mas significativa redução da HbA1c e do risco de hipoglicemia grave com CSII, MAS também AUMENTO do risco de cetoacidose com CSII, principalmente por falha do dispositivo e/ou oclusão do cateter — achado confirmado pela auditoria nacional de bombas do Reino Unido. O uso frequente de automonitorização domiciliar da glicemia reduziu consideravelmente essa complicação.",
+   "secao": "Management — Insulin administration — Maintenance insulin therapy",
+   "cit": [
+    [
+     0,
+     68961,
+     324
+    ]
+   ],
+   "cit_sha": "c1680aadf808bebf"
+  },
+  {
+   "afirmacao": "⚠️ POTÁSSIO na cetoacidose diabética (CAD): QUASE TODOS os pacientes têm déficit substancial de potássio na apresentação e a reposição é quase sempre necessária, MESMO com potássio sérico normal ou levemente elevado à admissão. Quando a insulina começa, a cetogênese é suprimida, a acidose se resolve e a insulina empurra o potássio de volta para dentro da célula — e o paciente pode ficar PROFUNDAMENTE HIPOCALÊMICO. A hipocalemia ocorre com frequência apesar de reposição agressiva, e monitorar o potássio nas primeiras horas de tratamento é parte essencial do manejo.",
+   "secao": "Management — Potassium replacement",
+   "cit": [
+    [
+     0,
+     69551,
+     690
+    ]
+   ],
+   "cit_sha": "174ea1682154a14b"
+  },
+  {
+   "afirmacao": "MONITORIZAÇÃO CARDÍACA durante reposição de potássio na cetoacidose diabética (CAD): pelos desvios rápidos de potássio e pelo risco de arritmia cardíaca, RECOMENDA-SE monitorização cardíaca CONTÍNUA em todos os casos em que o potássio é administrado a mais de 10 mmol/hora.",
+   "secao": "Management — Potassium replacement",
+   "cit": [
+    [
+     0,
+     70242,
+     224
+    ]
+   ],
+   "cit_sha": "229073966de176e3"
+  },
+  {
+   "afirmacao": "⚠️ REPOSIÇÃO DE POTÁSSIO EM ADULTOS com cetoacidose diabética (CAD), pelo potássio DE ENTRADA: K+ ≥5,5 mmol/l → NÃO repor (risco de precipitar arritmia cardíaca com potássio adicional); K+ 4,0–5,0 mmol/l → 20 mmol/l no fluido de reposição; K+ 3,0–4,0 mmol/l → 40 mmol/l no fluido de reposição; K+ ≤3,0 mmol/l → 10–20 mmol POR HORA até o K+ sérico ficar >3,0 mmol/l, e então acrescentar 40 mmol/l ao fluido de reposição.",
+   "secao": "Box 2 | Current potassium replacement guidelines",
+   "cit": [
+    [
+     0,
+     70516,
+     346
+    ]
+   ],
+   "cit_sha": "baf692bf690ef26d"
+  },
+  {
+   "afirmacao": "⚠️ REPOSIÇÃO DE POTÁSSIO EM CRIANÇAS com cetoacidose diabética (CAD), pelo potássio DE ENTRADA (⚠️ note a regra que ADIA A INSULINA): K+ >5,0 mmol/l → ADIAR o potássio até K+ ≤5,0 mmol/l; K+ 3,5–5,0 mmol/l → acrescentar 40 mmol/l de potássio à infusão APÓS o bolus inicial de fluido; K+ <3,5 mmol/l → iniciar reposição de 40 mmol/l de potássio o quanto antes E ADIAR A ADMINISTRAÇÃO DE INSULINA até o potássio normalizar.",
+   "secao": "Box 2 | Current potassium replacement guidelines",
+   "cit": [
+    [
+     0,
+     70863,
+     342
+    ]
+   ],
+   "cit_sha": "fcfe567c81b684c8"
+  },
+  {
+   "afirmacao": "⚠️ ADULTO com cetoacidose diabética (CAD) que desenvolve HIPOCALEMIA SINTOMÁTICA (fraqueza muscular e arritmia cardíaca): iniciar a reposição de potássio e ADIAR a administração de INSULINA até o potássio subir acima de 3,3 mmol/l.",
+   "secao": "Management — Potassium replacement",
+   "cit": [
+    [
+     0,
+     71825,
+     238
+    ]
+   ],
+   "cit_sha": "049131dc0f338c53"
+  },
+  {
+   "afirmacao": "⚠️ TAXA DE INSULINA E HIPOCALEMIA na cetoacidose diabética (CAD): a pesquisa nacional do Reino Unido mostrou que a infusão intravenosa de insulina a 0,1 unidade/kg/hora se associou a hipocalemia em 55% dos adultos. Embora nenhum dano tenha sido associado a essa hipocalemia, o achado apoia a prática de REDUZIR a taxa de infusão de insulina para 0,05 unidade/kg/hora DEPOIS que a glicemia cai.",
+   "secao": "Management — Potassium replacement",
+   "cit": [
+    [
+     0,
+     72064,
+     368
+    ]
+   ],
+   "cit_sha": "1270686dfe9def7e"
+  },
+  {
+   "afirmacao": "HIPOCALEMIA MATA na cetoacidose diabética (CAD): em dois estudos, dentro de 24–48 horas da admissão o potássio de adultos caiu em média de 4,8 ± 1,0 e 4,9 ± 1,1 para 3,65 ± 0,66 e 3,66 ± 0,6 mmol/l. A hipocalemia GRAVE (<2,5 mmol/l) associou-se a mortalidade aumentada (OR 3,17; IC 95% 1,49–6,76), associação que se manteve após ajuste para variáveis demográficas e parâmetros metabólicos da admissão.",
+   "secao": "Management — Potassium replacement",
+   "cit": [
+    [
+     0,
+     71206,
+     331
+    ]
+   ],
+   "cit_sha": "ebd16c79c901f781"
+  },
+  {
+   "afirmacao": "⚠️ HIPOCALEMIA PRÉ-TRATAMENTO NA CRIANÇA com cetoacidose diabética (CAD) é rara, mas quando presente exige reposição de potássio mais precoce e agressiva, e a INFUSÃO DE INSULINA DEVE SER ADIADA até que haja diurese documentada E o potássio sérico esteja restaurado a valor próximo do normal. O potássio sérico deve ser monitorado a cada 2–4 horas, ajustando-se a concentração de potássio nos fluidos intravenosos; deve-se considerar monitor cardíaco ou eletrocardiogramas frequentes durante a reposição intravenosa de potássio.",
+   "secao": "Management — Potassium replacement",
+   "cit": [
+    [
+     0,
+     72433,
+     602
+    ]
+   ],
+   "cit_sha": "3ea9ba044d2e0374"
+  },
+  {
+   "afirmacao": "SAL DE POTÁSSIO na cetoacidose diabética (CAD): protocolos de ADULTO tipicamente recomendam cloreto de potássio isolado; protocolos PEDIÁTRICOS frequentemente recomendam mistura de cloreto de potássio com fosfato de potássio ou acetato de potássio, para reduzir a carga de cloreto e assim diminuir o risco de acidose hiperclorêmica.",
+   "secao": "Management — Potassium replacement",
+   "cit": [
+    [
+     0,
+     73119,
+     276
+    ]
+   ],
+   "cit_sha": "5f6026fc2914571e"
+  },
+  {
+   "afirmacao": "⚠️ BICARBONATO na cetoacidose diabética (CAD): o tratamento com bicarbonato intravenoso NÃO É ROTINEIRAMENTE RECOMENDADO nem para adultos nem para crianças. Não se demonstrou melhora no tempo até a resolução bioquímica, no tempo de internação nem na mortalidade. O bicarbonato pode AUMENTAR o risco de hipocalemia, RETARDAR a resolução da cetose, causar aumento PARADOXAL da acidemia cerebral (por elevação da pCO2 tecidual) e aumentar o risco de lesão cerebral. Comentários sugerem que subgrupos específicos de adultos poderiam se beneficiar, mas FALTAM dados de ensaios randomizados.",
+   "secao": "Management — Bicarbonate administration",
+   "cit": [
+    [
+     0,
+     73423,
+     685
+    ]
+   ],
+   "cit_sha": "f83ed5276e9ae8d3"
+  },
+  {
+   "afirmacao": "FOSFATO na cetoacidose diabética (CAD): tal como o potássio, o fosfato sérico costuma estar NORMAL à apresentação, embora haja depleção intracelular, e a concentração sérica CAI durante o tratamento da CAD.",
+   "secao": "Management — Phosphate replacement",
+   "cit": [
+    [
+     0,
+     74131,
+     185
+    ]
+   ],
+   "cit_sha": "2e849575f7e784a9"
+  },
+  {
+   "afirmacao": "QUANDO REPOR FOSFATO na cetoacidose diabética (CAD): a reposição é necessária em quem tem fosfato sérico <1,0–1,5 mg/dl (0,3–0,5 mmol/l).",
+   "secao": "Management — Phosphate replacement",
+   "cit": [
+    [
+     0,
+     74317,
+     24
+    ],
+    [
+     0,
+     74414,
+     94
+    ]
+   ],
+   "cit_sha": "41ba7bf3f8043128"
+  },
+  {
+   "afirmacao": "REPOSIÇÃO DE FOSFATO na cetoacidose diabética (CAD) — em quem CONSIDERAR FORTEMENTE: indivíduos com disfunção cardíaca, anemia ou depressão respiratória. A hipofosfatemia foi associada a complicações graves, incluindo rabdomiólise, insuficiência renal, insuficiência respiratória, arritmias e anemia hemolítica. A preocupação com a reposição é o risco de HIPOCALCEMIA, mas os estudos que documentaram hipocalcemia usaram reposição mais agressiva que a dos protocolos atuais.",
+   "secao": "Management — Phosphate replacement",
+   "cit": [
+    [
+     0,
+     74509,
+     453
+    ]
+   ],
+   "cit_sha": "724a886096b1e74f"
+  },
+  {
+   "afirmacao": "MONITORIZAÇÃO DO FOSFATO na cetoacidose diabética (CAD): dosar pelo menos a cada 4–6 horas durante o tratamento; RECOMENDA-SE monitorização MAIS frequente (a cada 2–3 horas) para quem NÃO está recebendo reposição de fosfato.",
+   "secao": "Management — Phosphate replacement",
+   "cit": [
+    [
+     0,
+     75631,
+     195
+    ]
+   ],
+   "cit_sha": "74a106281e7646f0"
+  },
+  {
+   "afirmacao": "⚠️ LESÃO CEREBRAL NA CRIANÇA com cetoacidose diabética (CAD) — a complicação grave mais reconhecida: rara em adultos, a lesão cerebral GRAVE ocorre em 0,3–0,9% dos episódios de CAD em crianças e associa-se a mortalidade ALTA (21–24%) e morbidade neurológica permanente (20–26%). Os fatores de risco incluem acidemia grave e déficits graves de volume circulante. Crianças mais novas (<5 anos) têm risco AUMENTADO.",
+   "secao": "Management — Cerebral injury",
+   "cit": [
+    [
+     0,
+     75937,
+     410
+    ]
+   ],
+   "cit_sha": "85b2cda06dd08821"
+  },
+  {
+   "afirmacao": "LESÃO CEREBRAL LEVE na criança com cetoacidose diabética (CAD): embora a lesão cerebral GRAVE ocorra em <1% das crianças com CAD, a lesão cerebral LEVE é muito mais comum — possivelmente na MAIORIA das crianças. Descrevem-se déficits sutis de memória, atenção e quociente de inteligência em crianças com DM1 e história de CAD comparadas às sem CAD, diferenças que persistem após ajuste para HbA1c e fatores demográficos.",
+   "secao": "Management — Cerebral injury",
+   "cit": [
+    [
+     0,
+     76525,
+     352
+    ]
+   ],
+   "cit_sha": "8429b9b0c72017fa"
+  },
+  {
+   "afirmacao": "⚠️ SINAIS DE ALARME DE LESÃO CEREBRAL na cetoacidose diabética (CAD): mudança do estado mental, INÍCIO DE CEFALEIA durante o tratamento da CAD e RECORRÊNCIA DE VÔMITOS são indicativos de lesão cerebral. A lesão cerebral pode existir já na apresentação, antes de iniciar o tratamento, mas é MAIS COMUM nas primeiras 12 HORAS de tratamento.",
+   "secao": "Management — Cerebral injury",
+   "cit": [
+    [
+     0,
+     77184,
+     285
+    ]
+   ],
+   "cit_sha": "378c26be23ec4547"
+  },
+  {
+   "afirmacao": "⚠️ TRATAMENTO DA LESÃO CEREBRAL relacionada à cetoacidose diabética (CAD): NÃO se deve ADIAR o tratamento enquanto se aguarda exame de imagem — muitos pacientes não têm alteração detectável na imagem no momento da deterioração neurológica. O tratamento consiste em MANITOL ou SALINA HIPERTÔNICA, que induzem desvio osmótico de líquido do espaço intracelular para o compartimento vascular.",
+   "secao": "Management — Cerebral injury",
+   "cit": [
+    [
+     0,
+     77741,
+     283
+    ]
+   ],
+   "cit_sha": "4223cdc0af308ed7"
+  },
+  {
+   "afirmacao": "TRATAR O PRECIPITANTE junto com a cetoacidose diabética (CAD): em ADULTOS o precipitante mais comum é INFECÇÃO — de quadro gastrointestinal com diarreia e vômito a infecções respiratórias ou urinárias — e essas doenças precisam ser tratadas AO MESMO TEMPO que a CAD; doenças não infecciosas, como a síndrome coronariana aguda, também precisam ser avaliadas e tratadas na apresentação.",
+   "secao": "Management — The precipitating illness",
+   "cit": [
+    [
+     0,
+     78051,
+     395
+    ]
+   ],
+   "cit_sha": "0ea18abd3a4f821d"
+  },
+  {
+   "afirmacao": "⚠️ INVESTIGAÇÃO DO PRECIPITANTE EM CRIANÇAS difere da do adulto: na criança, os episódios de cetoacidose diabética (CAD) geralmente ocorrem no início/diagnóstico do diabetes ou por omissão de insulina; doenças intercorrentes graves raramente estão presentes, e a investigação DE ROTINA de causas precipitantes é DESNECESSÁRIA.",
+   "secao": "Management — The precipitating illness",
+   "cit": [
+    [
+     0,
+     78447,
+     252
+    ]
+   ],
+   "cit_sha": "67b31dca63631df1"
+  },
+  {
+   "afirmacao": "COMPLICAÇÕES MAIS FREQUENTES DO TRATAMENTO da cetoacidose diabética (CAD) são a HIPOCALEMIA e a HIPOGLICEMIA — em geral leves e facilmente tratadas com monitorização bioquímica cuidadosa e contínua.",
+   "secao": "Other complications",
+   "cit": [
+    [
+     0,
+     79561,
+     188
+    ]
+   ],
+   "cit_sha": "20f2eab06e612a9a"
+  },
+  {
+   "afirmacao": "ESTADO DE HIPERCOAGULABILIDADE na cetoacidose diabética (CAD): há risco aumentado de TROMBOSE VENOSA PROFUNDA, particularmente quando se usam cateteres venosos centrais para obter acesso porque o acesso periférico não foi possível pela desidratação grave.",
+   "secao": "Other complications",
+   "cit": [
+    [
+     0,
+     79750,
+     289
+    ]
+   ],
+   "cit_sha": "ba7f0777cc50f4e1"
+  },
+  {
+   "afirmacao": "LESÃO RENAL AGUDA (LRA) na cetoacidose diabética (CAD) pediátrica: num estudo, 64% das crianças com CAD tinham LRA e mais de 50% delas estavam em estágio 2 ou 3 — o que sugere LESÃO TUBULAR RENAL, e não apenas uremia pré-renal por hipoperfusão.",
+   "secao": "Other complications",
+   "cit": [
+    [
+     0,
+     80040,
+     295
+    ]
+   ],
+   "cit_sha": "7b1becddaa9e6d8c"
+  },
+  {
+   "afirmacao": "MUCORMICOSE na cetoacidose diabética (CAD): pacientes com CAD e controle glicêmico cronicamente ruim são singularmente suscetíveis à mucormicose RINOCEREBRAL ou PULMONAR, frequentemente fatal — as condições acidóticas reduzem a ligação do ferro à transferrina, criando condições que favorecem o crescimento fúngico.",
+   "secao": "Other complications",
+   "cit": [
+    [
+     0,
+     80383,
+     260
+    ]
+   ],
+   "cit_sha": "00a9714a2c29bce0"
+  },
+  {
+   "afirmacao": "COMPLICAÇÕES RARAS da cetoacidose diabética (CAD): arritmias cardíacas por distúrbio eletrolítico, necrose intestinal, edema pulmonar e pneumomediastino (que pode se associar a pneumotórax e é atribuído a vômitos prolongados e hiperventilação). A síndrome de disfunção de múltiplos órgãos é outra complicação rara, podendo associar-se a trombocitopenia em crianças.",
+   "secao": "Other complications",
+   "cit": [
+    [
+     0,
+     85176,
+     326
+    ]
+   ],
+   "cit_sha": "18e3a58e5122848a"
+  },
+  {
+   "afirmacao": "ESTADO HIPERGLICÊMICO HIPEROSMOLAR (EHH) — a outra emergência hiperglicêmica: ocorre MENOS que a cetoacidose diabética (CAD) (<1% das emergências relacionadas ao diabetes), mas tem mortalidade substancial de até 20%. Caracteriza-se por hiperglicemia grave e osmolalidade sérica alta com depleção do volume circulante; no EHH a insulina é suficiente para inibir a cetogênese, mas insuficiente para garantir a captação celular de glicose — daí hiperglicemia e diurese osmótica SEM cetose. Corticosteroides e antipsicóticos atípicos também podem precipitar EHH.",
+   "secao": "Box 1 | Hyperglycaemic hyperosmolar state",
+   "cit": [
+    [
+     0,
+     18105,
+     471
+    ]
+   ],
+   "cit_sha": "1327419db475d62c"
+  },
+  {
+   "afirmacao": "CRITÉRIOS DIAGNÓSTICOS DO ESTADO HIPERGLICÊMICO HIPEROSMOLAR (EHH) — Reino Unido: glicose ≥30 mmol/l, pH >7,3, bicarbonato >15 mmol/l, β-hidroxibutirato sanguíneo <3,0 mmol/l e osmolalidade >320 mOsmol/l. EUA: glicose >33,3 mmol/l, pH >7,3 e bicarbonato >18 mmol/l, com cetonas urinárias ou séricas baixas e osmolalidade >320 mOsmol/l.",
+   "secao": "Box 1 | Hyperglycaemic hyperosmolar state",
+   "cit": [
+    [
+     0,
+     19040,
+     444
+    ]
+   ],
+   "cit_sha": "9cfff8da4ee17b5d"
+  },
+  {
+   "afirmacao": "⚠️ QUANDO INICIAR INSULINA NO ESTADO HIPERGLICÊMICO HIPEROSMOLAR (EHH) — regra DIFERENTE da cetoacidose diabética (CAD): a depleção de volume circulante é MAIS grave no EHH que na CAD e exigem-se velocidades MAIORES de fluido. A insulina intravenosa é iniciada imediatamente após o bolus inicial de fluido SE houver evidência de acidose metabólica (CAD e EHH coexistem com frequência). PORÉM, na AUSÊNCIA de acidose, a infusão intravenosa de taxa fixa baseada no peso só é iniciada DEPOIS que a glicemia deixa de cair apenas com a reposição de fluido (Reino Unido) ou DEPOIS que o potássio foi corrigido (EUA).",
+   "secao": "Box 1 | Hyperglycaemic hyperosmolar state",
+   "cit": [
+    [
+     0,
+     19919,
+     625
+    ]
+   ],
+   "cit_sha": "b751318e145db383"
+  },
+  {
+   "afirmacao": "MANEJO DO ESTADO HIPERGLICÊMICO HIPEROSMOLAR (EHH): além de detectar e tratar a causa precipitante, o manejo envolve corrigir os déficits de fluido — INCLUINDO reposição de potássio — e reduzir a hiperosmolalidade. Fluidos intravenosos como a salina 0,9% também baixam a glicemia por corrigir a hemoconcentração e restaurar a perfusão renal.",
+   "secao": "Box 1 | Hyperglycaemic hyperosmolar state",
+   "cit": [
+    [
+     0,
+     19485,
+     433
+    ]
+   ],
+   "cit_sha": "b6069fb7f56ad325"
+  },
+  {
+   "afirmacao": "ADESÃO AO TRATAMENTO e cetoacidose diabética (CAD): nos EUA, 50% dos PRIMEIROS episódios de CAD em adultos com DM2 e ~80% dos episódios RECORRENTES são causados por má adesão à terapia. No Reino Unido, adultos que participaram de programa estruturado de educação em diabetes e usavam esquema basal-bolus flexível com razão individualizada de carboidratos tiveram redução de 61% no risco de CAD.",
+   "secao": "Outlook — Clinical priorities",
+   "cit": [
+    [
+     0,
+     89682,
+     382
+    ]
+   ],
+   "cit_sha": "3c914850a40e0420"
+  },
+  {
+   "afirmacao": "PREVENÇÃO DA CAD AO DIAGNÓSTICO EM CRIANÇAS: na Itália, um programa de prevenção que educou pais, pediatras e funcionários das escolas reduziu a cetoacidose diabética (CAD) como forma de apresentação do diabetes de 78% para 12,5% ao longo de 8 anos de seguimento.",
+   "secao": "Outlook",
+   "cit": [
+    [
+     0,
+     87333,
+     380
+    ]
+   ],
+   "cit_sha": "ac25bfc5917b77f6"
+  },
+  {
+   "afirmacao": "BOMBA DE INSULINA (CSII) e prevenção da cetoacidose diabética (CAD) em crianças: em estudo alemão, crianças com DM1 em CSII tiveram taxas MENORES de CAD que as tratadas com injeções (2,29 versus 2,80 por 100 pacientes-ano), sugerindo que ampliar o uso de CSII pode ser um método alternativo para reduzir a incidência de CAD — porém a bomba é cara e exige acesso a centros especializados.",
+   "secao": "Outlook — Clinical priorities",
+   "cit": [
+    [
+     0,
+     89194,
+     377
+    ]
+   ],
+   "cit_sha": "cb7e4d4ef37331bf"
+  },
+  {
+   "afirmacao": "LACUNAS DE EVIDÊNCIA no tratamento da cetoacidose diabética (CAD): muitas diretrizes evoluíram em grande parte com base em CONSENSO E OPINIÃO, e faltam grandes ensaios randomizados para definir o melhor manejo — incluindo o conteúdo eletrolítico ideal dos fluidos intravenosos (por exemplo, Ringer lactato versus salina 0,9%), as taxas e técnicas ótimas de administração de insulina e a combinação ideal de sais de potássio para reposição.",
+   "secao": "Outlook — Unmet needs and areas for future research",
+   "cit": [
+    [
+     0,
+     91043,
+     556
+    ]
+   ],
+   "cit_sha": "2fa9fbecb101d14b"
+  },
+  {
+   "afirmacao": "ACESSO À INSULINA e cetoacidose diabética (CAD): em regiões de baixo nível socioeconômico o acesso à insulina é nulo ou limitado por falta de 'segurança de suprimento', e em partes da África a CAD foi a principal causa de morte entre pessoas que precisam de insulina e foram internadas no hospital.",
+   "secao": "Management",
+   "cit": [
+    [
+     0,
+     55906,
+     300
+    ]
+   ],
+   "cit_sha": "1bf81e732c99ffc0"
+  },
+  {
+   "afirmacao": "A INSULINA e a SOLUÇÃO SALINA A 0,9% — os dois pilares do tratamento da cetoacidose diabética (CAD) — constam da lista de medicamentos essenciais da OMS. Nas partes menos desenvolvidas do mundo, é preciso garantir disponibilidade fácil de insulina a preço acessível, e a educação dos profissionais de saúde locais é chave para o reconhecimento da CAD.",
+   "secao": "Outlook — Clinical priorities",
+   "cit": [
+    [
+     0,
+     90610,
+     390
+    ]
+   ],
+   "cit_sha": "15cbc354c7ca9b4b"
+  }
+ ]
+}

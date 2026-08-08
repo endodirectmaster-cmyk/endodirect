@@ -1,0 +1,1658 @@
+{
+ "fileId": "1wlPADpO0MCZhmiBxhbH_JclzDXY5qKYd",
+ "titulo": "Manejo do diabetes e/ou da hiperglicemia induzidos por glicocorticoide (GID/GIH)",
+ "fonte": "Kim HN, Mathioudakis N. Management of Glucocorticoid-Induced Diabetes and/or Hyperglycemia. In: Matfin G, ed. Endocrine and Metabolic Medical Emergencies: A Clinician's Guide. 2nd ed. Hoboken: John Wiley & Sons; 2018. cap. 38, p. 616-630.",
+ "area": "Diabetes",
+ "tipo": "revisao",
+ "ano": 2018,
+ "conflito_direcao": "misto",
+ "conflito": "NÃO é conflito de conduta: é COMPLEMENTO COM RESSALVA. Conferido com scripts/nucleo-sobre.js — a única entrada do núcleo sobre este assunto é a de hiperglicemia em oncologia (ADA Standards of Care 2026), que diz que \"a metformina é a 1ª linha para essas excursões glicêmicas\" na \"hiperglicemia induzida por drogas em pacientes oncológicos\". (1) O NÚCLEO PREVALECE como enquadramento geral — é de 2026, o capítulo é de 2018, e o próprio capítulo põe a metformina na base do manejo. (2) MAS a fonte acrescenta a ressalva que o núcleo, lido sozinho, não carrega e que muda a conduta exatamente na população que o núcleo nomeia: a metformina tem INÍCIO DE AÇÃO LENTO e pode não ser adequada para CURSOS CURTOS de glicocorticoide; no único ensaio randomizado (34 pacientes sem diabetes prévio, prednisona por ≥4 semanas) a metformina 850 mg 2x/dia NÃO alterou a tolerância à glicose em relação ao placebo; e na hiperglicemia pós-prandial ≥200 mg/dL a metformina entra JUNTO com NPH, não sozinha. Na dexametasona em pulso — a situação da quimioterapia — o pico de hiperglicemia é entre 5 e 6 da tarde e o esquema é insulina (basal-bolus ou NPH 2x/dia), com redução pré-emptiva depois. (3) LACUNA: o núcleo não tem nada sobre o HORÁRIO do pico (pós-almoço/pré-jantar), sobre a NPH sincronizada com o corticoide matinal (0,1 unidade/kg por 10 mg de equivalente de prednisona), sobre glinida/sulfonilureia de ação curta cronometrada com o pico, nem sobre REDUZIR a insulina pré-emptivamente quando o corticoide é desmamado. (4) ⚠️ NÃO MISTURAR EQUIVALÊNCIAS: a conversão que este capítulo usa para dimensionar a NPH (dexametasona 12 mg = prednisona 75 mg) é MENOS potente que a equivalência fisiológica que o núcleo carrega da diretriz ESE/Endocrine Society 2024 (\"dexametasona 0,25-0,5 mg/dia\" para prednisona 4-6 mg) — são perguntas diferentes (quanto de insulina prescrever versus quanto o eixo adrenal está suprimido) e trocar uma pela outra erra a dose. (5) Sem divergência com o extrato da insuficiência adrenal induzida por glicocorticoide (17gypfzRnYoQF_qvbqeV5e7qy5jaFkRFK): são as duas faces do mesmo paciente — lá o desmame protege o eixo, aqui o mesmo desmame obriga a BAIXAR a insulina junto, sob pena de hipoglicemia.",
+ "nucleo_citado": [
+  "a metformina é a 1ª linha para essas excursões glicêmicas",
+  "hiperglicemia induzida por drogas em pacientes oncológicos",
+  "dexametasona 0,25-0,5 mg/dia"
+ ],
+ "nucleo_ausente": [
+  "pós-almoço",
+  "pré-jantar",
+  "0,1 unidade/kg",
+  "hiperglicemia induzida por glicocorticoide",
+  "diabetes induzido por glicocorticoide",
+  "glinida"
+ ],
+ "tema": "hiperglicemia (GIH) e diabetes (GID) induzidos por glicocorticoide — prevalência e fatores de risco por dose; qual corticoide e em que esquema (hidrocortisona, prednisona/prednisolona, metilprednisolona, dexametasona; dose única matinal, 2x/dia, pulso); o padrão glicêmico e o horário do pico; quando dosar a glicemia (pós-almoço e pré-jantar); terapias não insulínicas; esquemas de insulina (NPH sincronizada com o glicocorticoide matinal, basal-bolus, bomba, insulinas concentradas); titulação e REDUÇÃO PRÉ-EMPTIVA da insulina no desmame do corticoide; e três casos clínicos",
+ "fatos": [
+  {
+   "afirmacao": "Os glicocorticoides são a classe de medicamentos mais comumente associada a hiperglicemia induzida por droga: além de tenderem a piorar o controle glicêmico em quem já tem diabetes, eles também precipitam hiperglicemia com frequência em pacientes previamente euglicêmicos.",
+   "secao": "Introdução",
+   "cit": [
+    [
+     0,
+     4410,
+     295
+    ]
+   ],
+   "cit_sha": "d384b17cb66e1c52"
+  },
+  {
+   "afirmacao": "O uso de glicocorticoide ORAL atinge aproximadamente 1% da população geral, com taxas maiores em idosos, e o uso crônico (≥5 anos) ocorre em quase um terço desses pacientes.",
+   "secao": "Introdução",
+   "cit": [
+    [
+     0,
+     4223,
+     186
+    ]
+   ],
+   "cit_sha": "33d4805442f20630"
+  },
+  {
+   "afirmacao": "Ao manejar a hiperglicemia induzida por glicocorticoide é preciso levar em conta a ação farmacológica e a POTÊNCIA do glicocorticoide, a DURAÇÃO esperada de uso e o nível BASAL de controle glicêmico.",
+   "secao": "Introdução",
+   "cit": [
+    [
+     0,
+     4849,
+     218
+    ]
+   ],
+   "cit_sha": "88d520b3e523c499"
+  },
+  {
+   "afirmacao": "As estratégias baseadas em evidência para o manejo da hiperglicemia induzida por glicocorticoide são LIMITADAS; entender o perfil de ação dos glicocorticoides e seus efeitos sobre a glicemia é fundamental para identificar a estratégia de manejo.",
+   "secao": "Introdução",
+   "cit": [
+    [
+     0,
+     5068,
+     205
+    ],
+    [
+     0,
+     5274,
+     68
+    ]
+   ],
+   "cit_sha": "113dfca55f0bb569"
+  },
+  {
+   "afirmacao": "A hiperglicemia induzida por glicocorticoide é um problema clínico comum que PODE RESULTAR EM EMERGÊNCIAS HIPERGLICÊMICAS.",
+   "secao": "Pontos-chave",
+   "cit": [
+    [
+     0,
+     1627,
+     101
+    ]
+   ],
+   "cit_sha": "ff9d48897915d508"
+  },
+  {
+   "afirmacao": "NÃO existe terminologia padronizada para distinguir a piora da hiperglicemia com glicocorticoide em quem já tem diabetes da hiperglicemia de início novo em quem não tem diabetes prévio.",
+   "secao": "Definição",
+   "cit": [
+    [
+     0,
+     5354,
+     213
+    ]
+   ],
+   "cit_sha": "bfe4956348774490"
+  },
+  {
+   "afirmacao": "Neste capítulo, GIH (hiperglicemia induzida por glicocorticoide) designa a hiperglicemia em pacientes COM diabetes pré-existente, e GID (diabetes induzido por glicocorticoide) designa o desenvolvimento de diabetes em pessoas com tolerância à glicose previamente NORMAL.",
+   "secao": "Definição",
+   "cit": [
+    [
+     0,
+     5568,
+     310
+    ]
+   ],
+   "cit_sha": "d58ba799abc19a36"
+  },
+  {
+   "afirmacao": "Meta-análise de 13 estudos observacionais de pacientes recebendo glicocorticoides em doses e durações variáveis encontrou taxas de GIH (com diabetes prévio) de 18,6% e de GID (sem diabetes prévio) de 32,3%.",
+   "secao": "Prevalência",
+   "cit": [
+    [
+     0,
+     6136,
+     35
+    ],
+    [
+     0,
+     6243,
+     155
+    ]
+   ],
+   "cit_sha": "dfa96b229c8dd999"
+  },
+  {
+   "afirmacao": "Em hospital terciário, 64% de TODOS os internados e 56% dos internados SEM diabetes em serviço de clínica médica que receberam glicocorticoide em ALTA DOSE por mais de 2 dias apresentaram hiperglicemia.",
+   "secao": "Prevalência",
+   "cit": [
+    [
+     0,
+     6399,
+     208
+    ]
+   ],
+   "cit_sha": "ab6853b75034da7e"
+  },
+  {
+   "afirmacao": "A prevalência de hiperglicemia com glicocorticoide foi de 39% em internados com neoplasias hematológicas, e de mais de 40% e de 15% em pacientes SEM diabetes recebendo glicocorticoide por doenças renais e respiratórias primárias, respectivamente.",
+   "secao": "Prevalência",
+   "cit": [
+    [
+     0,
+     6608,
+     258
+    ]
+   ],
+   "cit_sha": "37dcf3f9bbfaab8d"
+  },
+  {
+   "afirmacao": "Em receptores de transplante, a incidência relatada de diabetes de início novo é muito variável (2–50%), em parte pelo uso concomitante de imunossupressores que também afetam o metabolismo da glicose.",
+   "secao": "Prevalência",
+   "cit": [
+    [
+     0,
+     6867,
+     205
+    ]
+   ],
+   "cit_sha": "6b386cb8db51bdb8"
+  },
+  {
+   "afirmacao": "NÃO é sempre possível prever quem desenvolverá diabetes induzido por glicocorticoide (GID), porque o impacto do glicocorticoide sistêmico sobre o metabolismo da glicose é variável e nem todos os pacientes desenvolvem hiperglicemia; ainda assim, DOSE e DURAÇÃO do glicocorticoide associam-se claramente a risco maior.",
+   "secao": "Fatores de risco para GID",
+   "cit": [
+    [
+     0,
+     7113,
+     360
+    ]
+   ],
+   "cit_sha": "a642eb3eda08e672"
+  },
+  {
+   "afirmacao": "Em estudo caso-controle com cerca de 12.000 casos, o risco de desenvolver diabetes induzido por glicocorticoide subiu com a DOSE: aumento de 2 vezes com dose equivalente de hidrocortisona de 1–39 mg/dia, de 3 vezes com 40–79 mg/dia, de 6 vezes com 80–119 mg/dia e de 10 vezes com doses de 120 mg/dia ou mais.",
+   "secao": "Fatores de risco para GID",
+   "cit": [
+    [
+     0,
+     7474,
+     300
+    ]
+   ],
+   "cit_sha": "ad019ffdfe10dd09"
+  },
+  {
+   "afirmacao": "Os fatores de risco tradicionais do diabetes tipo 2 também são fatores de risco para o diabetes induzido por glicocorticoide: idade mais avançada, índice de massa corporal, intolerância à glicose e história familiar de diabetes.",
+   "secao": "Fatores de risco para GID",
+   "cit": [
+    [
+     0,
+     7775,
+     207
+    ]
+   ],
+   "cit_sha": "26eeb6bea7216c5e"
+  },
+  {
+   "afirmacao": "Infecção pelo vírus da hepatite C, bem como o uso concomitante de inibidores de calcineurina em transplantados e de micofenolato de mofetila no lúpus eritematoso sistêmico, foram descritos como fatores de risco INDEPENDENTES para diabetes induzido por glicocorticoide.",
+   "secao": "Fatores de risco para GID",
+   "cit": [
+    [
+     0,
+     7983,
+     300
+    ]
+   ],
+   "cit_sha": "9c4ec6e053ed512a"
+  },
+  {
+   "afirmacao": "Existem várias preparações de glicocorticoide com POTÊNCIAS e DURAÇÕES DE AÇÃO diferentes, usadas em indicações diferentes.",
+   "secao": "Regimes comuns de glicocorticoide",
+   "cit": [
+    [
+     0,
+     8315,
+     121
+    ]
+   ],
+   "cit_sha": "e47227c54c763997"
+  },
+  {
+   "afirmacao": "A HIDROCORTISONA é um glicocorticoide de ação CURTA, o mais usado no hospital em doses de estresse.",
+   "secao": "Regimes comuns de glicocorticoide",
+   "cit": [
+    [
+     0,
+     8437,
+     100
+    ]
+   ],
+   "cit_sha": "ea66bf2eafca912f"
+  },
+  {
+   "afirmacao": "As doses de estresse de HIDROCORTISONA no hospital são, por exemplo, 100 mg por via intravenosa a cada 8 horas ou 50 mg IV a cada 6–8 horas, usadas no perioperatório para insuficiência adrenal ou para tratar crise adrenal e choque séptico.",
+   "secao": "Regimes comuns de glicocorticoide",
+   "cit": [
+    [
+     0,
+     8437,
+     100
+    ],
+    [
+     0,
+     8806,
+     157
+    ]
+   ],
+   "cit_sha": "a32edf9769fb3260"
+  },
+  {
+   "afirmacao": "PREDNISONA e METILPREDNISOLONA são glicocorticoides de ação INTERMEDIÁRIA, muito usados em doses e durações variadas pelas propriedades anti-inflamatória e imunossupressora.",
+   "secao": "Regimes comuns de glicocorticoide",
+   "cit": [
+    [
+     0,
+     8964,
+     165
+    ]
+   ],
+   "cit_sha": "8f5a802a73d0d199"
+  },
+  {
+   "afirmacao": "Na exacerbação de DPOC ou de asma usa-se prednisona em alta dose, 40–60 mg/dia, com ou sem desmame; conforme a gravidade dos sintomas respiratórios, o curso oral pode ser precedido de metilprednisolona 60–125 mg, 1–4 vezes ao dia por vários dias.",
+   "secao": "Regimes comuns de glicocorticoide",
+   "cit": [
+    [
+     0,
+     9130,
+     345
+    ]
+   ],
+   "cit_sha": "defbd7bb788b8fa9"
+  },
+  {
+   "afirmacao": "No tratamento da nefrite lúpica e da rejeição aguda de transplante pode-se usar PULSOTERAPIA com glicocorticoide em alta dose: metilprednisolona 250–1000 mg/dia por 3 dias.",
+   "secao": "Regimes comuns de glicocorticoide",
+   "cit": [
+    [
+     0,
+     9476,
+     167
+    ]
+   ],
+   "cit_sha": "2869e79475407fbe"
+  },
+  {
+   "afirmacao": "A DEXAMETASONA é o glicocorticoide de ação LONGA, usada com frequência em condições neurocirúrgicas e oncológicas; um esquema comum para edema cerebral é dexametasona 4–8 mg IV a cada 4–6 horas.",
+   "secao": "Regimes comuns de glicocorticoide",
+   "cit": [
+    [
+     0,
+     9644,
+     190
+    ]
+   ],
+   "cit_sha": "41c4fba12940f9a3"
+  },
+  {
+   "afirmacao": "Doses muito mais altas de dexametasona são usadas em quimioterapia: o esquema de indução da leucemia linfocítica aguda inclui dexametasona 40 mg nos dias 1–4 e 4–11; a dexametasona também é usada em cuidados paliativos ou em cirurgia para tratar náusea, em doses de 8–20 mg.",
+   "secao": "Regimes comuns de glicocorticoide",
+   "cit": [
+    [
+     0,
+     9835,
+     299
+    ]
+   ],
+   "cit_sha": "14e01d3843c8401e"
+  },
+  {
+   "afirmacao": "⚠️ O uso INTERMITENTE da dexametasona (glicocorticoide potente) como antiemético na quimioterapia impõe desafio único ao controle glicêmico, porque a escolha do manejo precisa equilibrar a curta duração de uso contra o potencial de excursões glicêmicas significativas.",
+   "secao": "Regimes comuns de glicocorticoide",
+   "cit": [
+    [
+     0,
+     10135,
+     263
+    ]
+   ],
+   "cit_sha": "e4445d700d15628f"
+  },
+  {
+   "afirmacao": "A hiperglicemia induzida por glicocorticoide é mediada sobretudo por AUMENTO DA RESISTÊNCIA À INSULINA, com menor captação periférica de glicose pelo músculo e pelo tecido adiposo, gliconeogênese hepática (particularmente no período pós-prandial) e supressão da produção endógena de insulina.",
+   "secao": "Fisiopatologia e padrão da GIH",
+   "cit": [
+    [
+     0,
+     10434,
+     262
+    ]
+   ],
+   "cit_sha": "47a3727a35f61aec"
+  },
+  {
+   "afirmacao": "⚠️ Os glicocorticoides causam hiperglicemia PÓS-PRANDIAL significativa e têm MENOS impacto sobre a glicemia de JEJUM — por isso a glicemia de jejum isolada subestima o problema.",
+   "secao": "Fisiopatologia e padrão da GIH",
+   "cit": [
+    [
+     0,
+     10697,
+     97
+    ]
+   ],
+   "cit_sha": "a225cf03f2c5adb9"
+  },
+  {
+   "afirmacao": "⚠️ PADRÃO-CHAVE: quando glicocorticoides de ação INTERMEDIÁRIA — prednisona e prednisolona — são administrados UMA VEZ AO DIA PELA MANHÃ, a glicemia sobe gradualmente ao longo do dia, com PICO NO PÓS-ALMOÇO E NO PRÉ-JANTAR, retornando ao basal na manhã seguinte.",
+   "secao": "Fisiopatologia e padrão da GIH",
+   "cit": [
+    [
+     0,
+     10795,
+     298
+    ]
+   ],
+   "cit_sha": "bd4e375730b9ff74"
+  },
+  {
+   "afirmacao": "Esse padrão glicêmico reflete o perfil de ação do glicocorticoide de ação intermediária, com efeito de PICO em 4–8 horas e duração de ação de 12–16 horas.",
+   "secao": "Fisiopatologia e padrão da GIH",
+   "cit": [
+    [
+     0,
+     11094,
+     140
+    ]
+   ],
+   "cit_sha": "9ab957a026a9a79e"
+  },
+  {
+   "afirmacao": "Sabe-se MUITO MENOS sobre os efeitos dos OUTROS glicocorticoides (os que não são de ação intermediária) do que sobre a prednisona e a prednisolona.",
+   "secao": "Fisiopatologia e padrão da GIH",
+   "cit": [
+    [
+     0,
+     11235,
+     46
+    ]
+   ],
+   "cit_sha": "fac81eddff65d084"
+  },
+  {
+   "afirmacao": "DEXAMETASONA: em estudo pequeno com adultos saudáveis, houve aumento da glicemia de JEJUM após dexametasona 8 mg, mas NÃO com as doses de 2 ou 4 mg.",
+   "secao": "Fisiopatologia e padrão da GIH",
+   "cit": [
+    [
+     0,
+     11282,
+     188
+    ]
+   ],
+   "cit_sha": "2d82ffb15542b637"
+  },
+  {
+   "afirmacao": "⚠️ Apesar de a dexametasona ter duração de ação de 36–54 horas, o efeito hiperglicemiante de uma DOSE ÚNICA teve pico em 24 horas e dissipou-se em 48 horas.",
+   "secao": "Fisiopatologia e padrão da GIH",
+   "cit": [
+    [
+     0,
+     11471,
+     158
+    ]
+   ],
+   "cit_sha": "ffa9ced55f2b0bfc"
+  },
+  {
+   "afirmacao": "⚠️ DEXAMETASONA EM PULSO (40 mg) PELA MANHÃ no mieloma múltiplo: o pico de hiperglicemia ocorreu entre 5 e 6 da tarde (5–6 p.m.), tanto em pacientes COM quanto SEM diabetes pré-existente. A glicemia de JEJUM não foi afetada em quem NÃO tinha diabetes, mas DOBROU em quem tinha diabetes.",
+   "secao": "Fisiopatologia e padrão da GIH",
+   "cit": [
+    [
+     0,
+     11630,
+     339
+    ]
+   ],
+   "cit_sha": "1f57de4c0e5d0757"
+  },
+  {
+   "afirmacao": "Em indivíduos saudáveis recebendo DEXAMETASONA, o nível de insulina estava significativamente elevado 20 horas após a dose do glicocorticoide, sugerindo pico glicêmico ligeiramente diferente e duração de ação MAIS LONGA do que a dos glicocorticoides de ação intermediária.",
+   "secao": "Fisiopatologia e padrão da GIH",
+   "cit": [
+    [
+     0,
+     11970,
+     253
+    ]
+   ],
+   "cit_sha": "e1daece8db7ccfa7"
+  },
+  {
+   "afirmacao": "NÃO há diretrizes diagnósticas formais para GIH/GID, mas aplicam-se os mesmos critérios da American Diabetes Association usados para diagnosticar diabetes.",
+   "secao": "Diagnóstico",
+   "cit": [
+    [
+     0,
+     12234,
+     155
+    ]
+   ],
+   "cit_sha": "1d0cfd1879710b74"
+  },
+  {
+   "afirmacao": "⚠️ ARMADILHA DIAGNÓSTICA: confiar SOMENTE na glicemia de JEJUM pode enganar, porque os glicocorticoides impactam sobretudo o metabolismo pós-prandial da glicose e a glicemia de jejum pode estar NORMAL.",
+   "secao": "Diagnóstico",
+   "cit": [
+    [
+     0,
+     12390,
+     178
+    ]
+   ],
+   "cit_sha": "21c98273559e0d93"
+  },
+  {
+   "afirmacao": "A HbA1c pode NÃO ser adequada para diagnosticar hiperglicemia/diabetes por glicocorticoide em pacientes que iniciaram o glicocorticoide RECENTEMENTE.",
+   "secao": "Diagnóstico",
+   "cit": [
+    [
+     0,
+     12569,
+     81
+    ]
+   ],
+   "cit_sha": "4431da8e80bcef40"
+  },
+  {
+   "afirmacao": "O critério diagnóstico mais prático e útil na hiperglicemia induzida por glicocorticoide é a glicemia ALEATÓRIA >200 mg/dL (11,1 mmol/L).",
+   "secao": "Diagnóstico",
+   "cit": [
+    [
+     0,
+     13170,
+     103
+    ]
+   ],
+   "cit_sha": "2b2a88e57dcf6665"
+  },
+  {
+   "afirmacao": "⚠️ QUANDO DOSAR: a glicemia PÓS-PRANDIAL é provavelmente a medida mais SENSÍVEL para detectar hiperglicemia induzida por glicocorticoide; alguns estudos recomendam monitorar a glicemia PÓS-ALMOÇO ou PRÉ-JANTAR nos primeiros 2–3 dias de tratamento em pacientes que recebem o glicocorticoide PELA MANHÃ, e considerar tratamento se a glicemia pré-prandial for ≥140 mg/dL (7,8 mmol/L) e a pós-prandial ≥200 mg/dL (11,1 mmol/L).",
+   "secao": "Diagnóstico",
+   "cit": [
+    [
+     0,
+     13274,
+     386
+    ]
+   ],
+   "cit_sha": "164708d0881b4067"
+  },
+  {
+   "afirmacao": "A hiperglicemia não controlada com uso de glicocorticoide pode resultar em desidratação, comprometimento renal e lesão renal aguda e hospitalizações desnecessárias, além de associar-se a desfechos adversos graves.",
+   "secao": "Desfechos adversos associados",
+   "cit": [
+    [
+     0,
+     13689,
+     262
+    ]
+   ],
+   "cit_sha": "217a7178f7161af1"
+  },
+  {
+   "afirmacao": "Em pacientes com exacerbação aguda de DPOC recebendo glicocorticoide, o risco de MORTE e o tempo de internação aumentaram conforme subiam os níveis de glicemia.",
+   "secao": "Desfechos adversos associados",
+   "cit": [
+    [
+     0,
+     13952,
+     134
+    ]
+   ],
+   "cit_sha": "dc7d172a1a3e93e1"
+  },
+  {
+   "afirmacao": "Em pacientes com neoplasias hematológicas recebendo glicocorticoide sistêmico, a glicemia MÁXIMA foi preditora do tempo de internação hospitalar entre os pacientes SEM diabetes pré-existente.",
+   "secao": "Desfechos adversos associados",
+   "cit": [
+    [
+     0,
+     14087,
+     124
+    ],
+    [
+     0,
+     14279,
+     99
+    ]
+   ],
+   "cit_sha": "1932525e205117fc"
+  },
+  {
+   "afirmacao": "Em pacientes com doença do enxerto contra o hospedeiro AGUDA, a hiperglicemia PRECOCE durante o tratamento com glicocorticoide associou-se a redução da sobrevida global.",
+   "secao": "Desfechos adversos associados",
+   "cit": [
+    [
+     0,
+     14379,
+     164
+    ]
+   ],
+   "cit_sha": "57a7ee75b1dc1869"
+  },
+  {
+   "afirmacao": "Em neoplasias hematológicas, a hiperglicemia associou-se a maior risco de infecção, toxicidade da quimioterapia, doença do enxerto contra o hospedeiro e mortalidade; a hiperglicemia também se associou a menor sobrevida global em tumor cerebral e, no transplante de órgão sólido, a mais eventos cardíacos maiores e falência do enxerto.",
+   "secao": "Desfechos adversos associados",
+   "cit": [
+    [
+     0,
+     14544,
+     423
+    ]
+   ],
+   "cit_sha": "a0b58966b58da9e0"
+  },
+  {
+   "afirmacao": "Identificar os pacientes de ALTO RISCO de desenvolver hiperglicemia, diagnosticar precocemente e implementar em tempo hábil a estratégia de tratamento são passos cruciais no cuidado de quem recebe glicocorticoide.",
+   "secao": "Desfechos adversos associados",
+   "cit": [
+    [
+     0,
+     14968,
+     198
+    ]
+   ],
+   "cit_sha": "fef8ed289779b7e3"
+  },
+  {
+   "afirmacao": "⚠️ FORÇA DA EVIDÊNCIA: a evidência para orientar o manejo farmacológico da GIH/GID é MUITO LIMITADA — não houve nenhum grande ensaio clínico randomizado avaliando diferentes estratégias de tratamento ou terapias hipoglicemiantes.",
+   "secao": "Opções de tratamento",
+   "cit": [
+    [
+     0,
+     15185,
+     154
+    ],
+    [
+     0,
+     15381,
+     62
+    ]
+   ],
+   "cit_sha": "d15f821b0b54b2ab"
+  },
+  {
+   "afirmacao": "Parte dos estudos disponíveis foi conduzida em indivíduos SAUDÁVEIS, o que limita a generalização das inferências para pacientes com intolerância à glicose ou diabetes de base.",
+   "secao": "Opções de tratamento",
+   "cit": [
+    [
+     0,
+     15652,
+     172
+    ]
+   ],
+   "cit_sha": "326d582a636cf2a1"
+  },
+  {
+   "afirmacao": "NÃO existem ensaios comparativos diretos entre as diversas terapias não insulínicas na hiperglicemia por glicocorticoide, e não há estudos avaliando o papel das insulinas concentradas mais novas nem dos inibidores de SGLT-2.",
+   "secao": "Opções de tratamento",
+   "cit": [
+    [
+     0,
+     15825,
+     239
+    ]
+   ],
+   "cit_sha": "6a45464d3a24e98b"
+  },
+  {
+   "afirmacao": "⚠️ FORÇA DA RECOMENDAÇÃO: as recomendações de manejo propostas pelos autores baseiam-se em evidência limitada, na fisiopatologia conhecida, nas propriedades farmacológicas das terapias, em OPINIÃO DE ESPECIALISTA e em experiência clínica pessoal — não em ensaios clínicos.",
+   "secao": "Opções de tratamento",
+   "cit": [
+    [
+     0,
+     16065,
+     217
+    ]
+   ],
+   "cit_sha": "7a0b1f2e7e998fb2"
+  },
+  {
+   "afirmacao": "Conforme a RESERVA INSULÍNICA basal e a dose e duração do glicocorticoide, alguns pacientes podem alcançar controle glicêmico satisfatório titulando agentes não insulínicos; porém deve haver LIMIAR BAIXO para iniciar insulina em quem tem hiperglicemia sustentada ou grave apesar de terapia não insulínica máxima, dado que a evidência para os não insulínicos é escassa e essas medicações não foram testadas com rigor.",
+   "secao": "Terapias não insulínicas",
+   "cit": [
+    [
+     0,
+     16322,
+     466
+    ]
+   ],
+   "cit_sha": "c7aa2fad516470d0"
+  },
+  {
+   "afirmacao": "METFORMINA: em ensaio duplo-cego controlado por placebo com 34 pacientes SEM diabetes prévio recebendo pelo menos 4 semanas de prednisona (dose mediana 30–35 mg), a metformina 850 mg duas vezes ao dia NÃO alterou a tolerância à glicose em relação ao placebo em 4 semanas.",
+   "secao": "Terapias não insulínicas — metformina",
+   "cit": [
+    [
+     0,
+     16799,
+     287
+    ]
+   ],
+   "cit_sha": "24f3d71759103ea3"
+  },
+  {
+   "afirmacao": "⚠️ Como os glicocorticoides reduzem significativamente a sensibilidade HEPÁTICA à insulina, em teoria a metformina deveria ser a base do manejo da hiperglicemia induzida por glicocorticoide; PORÉM ela tem INÍCIO DE AÇÃO LENTO e pode NÃO ser adequada para CURSOS CURTOS de glicocorticoide.",
+   "secao": "Terapias não insulínicas — metformina",
+   "cit": [
+    [
+     0,
+     17087,
+     250
+    ]
+   ],
+   "cit_sha": "524f483bc95dc6d1"
+  },
+  {
+   "afirmacao": "Em pacientes com hiperglicemia ACENTUADA pode ser necessário associar à metformina um hipoglicemiante potente e de ação MAIS RÁPIDA, como sulfonilureia ou glinida (meglitinida), porque além de aliviar a resistência à insulina pode ser preciso aumentar a produção endógena de insulina.",
+   "secao": "Terapias não insulínicas — metformina",
+   "cit": [
+    [
+     0,
+     17338,
+     334
+    ]
+   ],
+   "cit_sha": "1e33201e931d0a09"
+  },
+  {
+   "afirmacao": "Em pacientes JÁ em insulinoterapia, maximizar a metformina para melhorar a sensibilidade à insulina pode reduzir a necessidade total de insulina e diminuir o risco de hipoglicemia e de ganho de peso.",
+   "secao": "Terapias não insulínicas — metformina",
+   "cit": [
+    [
+     0,
+     17673,
+     188
+    ]
+   ],
+   "cit_sha": "3a55953848377acf"
+  },
+  {
+   "afirmacao": "SECRETAGOGOS: a evidência que apoia o uso de sulfonilureias no diabetes por glicocorticoide limita-se à GLIMEPIRIDA — no uso crônico de prednisolona (inicialmente 20–40 mg/dia e depois 5–10 mg/dia por mais de um ano), a glimepirida reverteu a disfunção de célula β e melhorou a HbA1c em cerca de 2% (26 mmol/mol) após 8 semanas de tratamento.",
+   "secao": "Terapias não insulínicas — secretagogos",
+   "cit": [
+    [
+     0,
+     17884,
+     293
+    ]
+   ],
+   "cit_sha": "d493af46869d0288"
+  },
+  {
+   "afirmacao": "O uso bem-sucedido da NATEGLINIDA para tratar a hiperglicemia PÓS-PRANDIAL observada com a terapia com prednisolona já foi descrito na literatura.",
+   "secao": "Terapias não insulínicas — secretagogos",
+   "cit": [
+    [
+     0,
+     18178,
+     147
+    ]
+   ],
+   "cit_sha": "bf56a82276e12bd4"
+  },
+  {
+   "afirmacao": "Mecanicamente, os secretagogos (sulfonilureias e glinidas) são opções atraentes porque contrapõem a disfunção de célula β observada com o tratamento com glicocorticoide.",
+   "secao": "Terapias não insulínicas — secretagogos",
+   "cit": [
+    [
+     0,
+     18326,
+     152
+    ]
+   ],
+   "cit_sha": "7a267e1df5540f1b"
+  },
+  {
+   "afirmacao": "⚠️ RISCO: algumas SULFONILUREIAS têm perfil de ação LONGO que pode não coincidir com a duração da hiperglicemia esperada com glicocorticoide de ação INTERMEDIÁRIA, deixando o paciente sob risco de HIPOGLICEMIA DE JEJUM, especialmente durante o DESMAME da dose do glicocorticoide.",
+   "secao": "Terapias não insulínicas — secretagogos",
+   "cit": [
+    [
+     0,
+     18479,
+     227
+    ]
+   ],
+   "cit_sha": "658184381f0a37f1"
+  },
+  {
+   "afirmacao": "As GLINIDAS têm início IMEDIATO e duração de ação CURTA e podem ser úteis para atacar a hiperglicemia pós-prandial do glicocorticoide sem aumentar significativamente o risco de hipoglicemia de jejum.",
+   "secao": "Terapias não insulínicas — secretagogos",
+   "cit": [
+    [
+     0,
+     18707,
+     206
+    ]
+   ],
+   "cit_sha": "20fe0ec35bde8438"
+  },
+  {
+   "afirmacao": "Os secretagogos podem ter papel no tratamento da hiperglicemia MODESTA por glicocorticoide ou em pacientes que recusam medicações injetáveis.",
+   "secao": "Terapias não insulínicas — secretagogos",
+   "cit": [
+    [
+     0,
+     18914,
+     144
+    ]
+   ],
+   "cit_sha": "fb2948584bbfff06"
+  },
+  {
+   "afirmacao": "⚠️ TIMING: quando se usa um secretagogo na hiperglicemia por glicocorticoide, deve-se escolher o agente de ação MAIS CURTA e SINCRONIZAR a administração com o pico esperado do glicocorticoide — por exemplo, a prednisona dada pela MANHÃ produz pico de glicemia por volta do ALMOÇO, com valores em queda no resto do dia.",
+   "secao": "Terapias não insulínicas — secretagogos",
+   "cit": [
+    [
+     0,
+     19059,
+     330
+    ]
+   ],
+   "cit_sha": "91f8643772b2936d"
+  },
+  {
+   "afirmacao": "⚠️ Uma sulfonilureia de ação MAIS LONGA, como glibenclamida (glyburide) ou glimepirida, pode predispor à hipoglicemia de JEJUM nesses pacientes; já uma sulfonilureia de ação mais CURTA, como glipizida ou gliclazida (ou uma glinida), dada com o café da manhã ou com o almoço, tem menos potencial de causá-la.",
+   "secao": "Terapias não insulínicas — secretagogos",
+   "cit": [
+    [
+     0,
+     19390,
+     81
+    ],
+    [
+     0,
+     19543,
+     169
+    ]
+   ],
+   "cit_sha": "5f117421f2c68a05"
+  },
+  {
+   "afirmacao": "TIAZOLIDINEDIONAS: em estudo pequeno (n = 7) com pacientes com diabetes induzido por glicocorticoide de longa data, a troglitazona 400 mg/dia por 5–8 semanas melhorou significativamente a HbA1c e a glicemia pós-prandial, mas essa medicação específica foi retirada do mercado por lesão hepática associada.",
+   "secao": "Terapias não insulínicas — tiazolidinedionas",
+   "cit": [
+    [
+     0,
+     19738,
+     274
+    ]
+   ],
+   "cit_sha": "93519123a21cd943"
+  },
+  {
+   "afirmacao": "⚠️ RECOMENDAÇÃO NEGATIVA: os autores NÃO recomendam o uso de tiazolidinedionas (por exemplo, pioglitazona) para a hiperglicemia induzida por glicocorticoide, dada a evidência limitada e os efeitos adversos graves conhecidos, como insuficiência cardíaca congestiva e fraturas por fragilidade.",
+   "secao": "Terapias não insulínicas — tiazolidinedionas",
+   "cit": [
+    [
+     0,
+     20013,
+     206
+    ]
+   ],
+   "cit_sha": "027a6248160ef145"
+  },
+  {
+   "afirmacao": "INIBIDORES DE DPP-4: um estudo com sitagliptina associada a prednisolona em ALTA DOSE não mostrou benefício em 2 semanas, apesar de melhora da função de célula β, em pacientes com síndrome metabólica e sem diabetes prévio.",
+   "secao": "Terapias não insulínicas — inibidores de DPP-4",
+   "cit": [
+    [
+     0,
+     20260,
+     207
+    ]
+   ],
+   "cit_sha": "9f1a0606e0128941"
+  },
+  {
+   "afirmacao": "ALOGLIPTINA: em pacientes com hiperglicemia por prednisolona em alta dose e SEM diabetes prévio, 3 semanas de tratamento com alogliptina reduziram a glicemia pós-prandial de 2 horas em cerca de 35 mg/dL (∼2 mmol/L).",
+   "secao": "Terapias não insulínicas — inibidores de DPP-4",
+   "cit": [
+    [
+     0,
+     20565,
+     199
+    ]
+   ],
+   "cit_sha": "a982045f595d6ba5"
+  },
+  {
+   "afirmacao": "Apesar da evidência conflitante, pelo início de ação IMEDIATO e pelo efeito dirigido ao PÓS-PRANDIAL, os inibidores de DPP-4 podem ser razoáveis em pacientes SEM diabetes prévio e com hiperglicemia MODESTA por glicocorticoide.",
+   "secao": "Terapias não insulínicas — inibidores de DPP-4",
+   "cit": [
+    [
+     0,
+     20765,
+     215
+    ]
+   ],
+   "cit_sha": "50d4b81028bc4ab0"
+  },
+  {
+   "afirmacao": "AGONISTAS DE GLP-1 melhoram o controle glicêmico por vários mecanismos: liberação de insulina glicose-dependente, supressão da secreção pós-prandial de glucagon e retardo do esvaziamento gástrico.",
+   "secao": "Terapias não insulínicas — agonistas de GLP-1",
+   "cit": [
+    [
+     0,
+     21020,
+     202
+    ]
+   ],
+   "cit_sha": "1808199324abcf6b"
+  },
+  {
+   "afirmacao": "Em estudo randomizado pequeno controlado por placebo com indivíduos SAUDÁVEIS recebendo prednisolona 80 mg/dia, a EXENATIDA preveniu a hiperglicemia pós-prandial e a disfunção de célula β em comparação com placebo.",
+   "secao": "Terapias não insulínicas — agonistas de GLP-1",
+   "cit": [
+    [
+     0,
+     21223,
+     196
+    ]
+   ],
+   "cit_sha": "870a26b221c756cc"
+  },
+  {
+   "afirmacao": "Os agonistas de GLP-1 NÃO foram estudados com rigor em pacientes que recebem glicocorticoide; o mecanismo dirigido à hiperglicemia pós-prandial é vantagem para essa indicação, mas em pacientes SEM diabetes prévio iniciar um injetável para uma condição possivelmente passageira pode ser opção pouco atraente, sobretudo pelos efeitos gastrointestinais.",
+   "secao": "Terapias não insulínicas — agonistas de GLP-1",
+   "cit": [
+    [
+     0,
+     21420,
+     474
+    ]
+   ],
+   "cit_sha": "41a07c748a44e902"
+  },
+  {
+   "afirmacao": "INIBIDORES DE SGLT-2: NÃO há estudos avaliando seu papel na hiperglicemia induzida por glicocorticoide; dado o início de ação RÁPIDO, pode haver espaço para uso em pacientes selecionados com hiperglicemia MODERADA avessos a terapia injetável — EMBORA possam agravar a desidratação e o risco de lesão renal aguda associados aos glicocorticoides.",
+   "secao": "Terapias não insulínicas — inibidores de SGLT-2",
+   "cit": [
+    [
+     0,
+     21913,
+     335
+    ]
+   ],
+   "cit_sha": "7702fbbb2474e619"
+  },
+  {
+   "afirmacao": "Quase todos os pacientes com diabetes AVANÇADO tratados com glicocorticoide precisarão iniciar ou intensificar um esquema de insulina; além disso, a insulina deve ser iniciada em pacientes com hiperglicemia SUSTENTADA em terapia não insulínica máxima. A escolha da insulina e do esquema depende em parte da DURAÇÃO DE AÇÃO e do INTERVALO DE DOSE do glicocorticoide.",
+   "secao": "Insulina",
+   "cit": [
+    [
+     0,
+     22257,
+     414
+    ]
+   ],
+   "cit_sha": "f083b9981dcef49b"
+  },
+  {
+   "afirmacao": "⚠️ ESCOLHA-CHAVE: a NPH aplicada UMA VEZ AO DIA PELA MANHÃ é o esquema de insulina PREFERIDO para cobrir glicocorticoides de ação INTERMEDIÁRIA (prednisona, prednisolona), porque o efeito de pico da NPH COINCIDE com o do glicocorticoide.",
+   "secao": "Insulina — NPH",
+   "cit": [
+    [
+     0,
+     22676,
+     181
+    ]
+   ],
+   "cit_sha": "07db492158fa8c0d"
+  },
+  {
+   "afirmacao": "A NPH pode ser usada em monoterapia ou combinada a uma insulina de ação longa já em uso ou a um esquema basal-bolus, sobretudo para contrapor a hiperglicemia PÓS-PRANDIAL; quando combinada a um esquema já existente, NÃO é preciso mudar o esquema de base — a dose de NPH é simplesmente ACRESCENTADA e sincronizada com o glicocorticoide.",
+   "secao": "Insulina — NPH",
+   "cit": [
+    [
+     0,
+     22858,
+     406
+    ]
+   ],
+   "cit_sha": "6ab4400e14b3c684"
+  },
+  {
+   "afirmacao": "⚠️ DOSE: a dose inicial recomendada de NPH na hiperglicemia por glicocorticoide é 0,1 unidade/kg para cada 10 mg de equivalente de PREDNISONA.",
+   "secao": "Insulina — NPH",
+   "cit": [
+    [
+     0,
+     23265,
+     85
+    ]
+   ],
+   "cit_sha": "1720b207136f0097"
+  },
+  {
+   "afirmacao": "⚠️ TETO: a dose INICIAL máxima de NPH é 0,4 unidade/kg, aplicada a doses de PREDNISONA de 40 mg ou mais (regra proposta por Clore e Thurby-Hay) — como no exemplo de um paciente de 70 kg iniciando prednisona 40 mg pela manhã, que receberia 28 unidades de NPH.",
+   "secao": "Insulina — NPH",
+   "cit": [
+    [
+     0,
+     24304,
+     275
+    ]
+   ],
+   "cit_sha": "6db391f9d2d612f0"
+  },
+  {
+   "afirmacao": "EXEMPLO DE CÁLCULO: para um paciente de 70 kg iniciando prednisona 40 mg pela manhã, a dose inicial de NPH seria 28 unidades (0,4 unidade/kg × 70 kg), e deve ser dada NO MOMENTO da dose de prednisona.",
+   "secao": "Insulina — NPH",
+   "cit": [
+    [
+     0,
+     24386,
+     193
+    ]
+   ],
+   "cit_sha": "acdda3701f2ece1a"
+  },
+  {
+   "afirmacao": "⚠️ Se o paciente recebe glicocorticoide de ação INTERMEDIÁRIA DUAS VEZES AO DIA ou glicocorticoide de ação LONGA uma vez ao dia, a dose diária total de NPH é calculada da mesma forma, mas administrada em DUAS DOSES DIVIDIDAS.",
+   "secao": "Insulina — NPH",
+   "cit": [
+    [
+     0,
+     24580,
+     187
+    ]
+   ],
+   "cit_sha": "6d60ca08b29995fc"
+  },
+  {
+   "afirmacao": "⚠️ Para pacientes recebendo glicocorticoide de ação INTERMEDIÁRIA duas vezes ao dia ou glicocorticoide de ação LONGA uma vez ao dia, uma estratégia alternativa é o esquema BASAL-BOLUS, porque nesses casos pode haver hiperglicemia mais SUSTENTADA ao longo de todo o dia.",
+   "secao": "Insulina — basal-bolus",
+   "cit": [
+    [
+     0,
+     24796,
+     239
+    ]
+   ],
+   "cit_sha": "0e9ca64347738bc9"
+  },
+  {
+   "afirmacao": "Recomenda-se usar insulina de ação longa (por exemplo glargina, detemir) e insulina de ação rápida (asparte, lispro, glulisina) com um esquema DESPROPORCIONALMENTE maior na cobertura PRANDIAL, para acomodar o efeito hiperglicemiante pós-prandial dos glicocorticoides.",
+   "secao": "Insulina — basal-bolus",
+   "cit": [
+    [
+     0,
+     25036,
+     250
+    ]
+   ],
+   "cit_sha": "1240a38285fe164e"
+  },
+  {
+   "afirmacao": "⚠️ DOSE BASAL-BOLUS: a dose diária total inicial recomendada é tipicamente 0,5–0,6 unidade/kg/dia, com 30% da dose como insulina BASAL e 70% como insulina BOLUS — ou seja, cobertura PRANDIAL desproporcionalmente maior, para acomodar o efeito pós-prandial do glicocorticoide.",
+   "secao": "Insulina — basal-bolus",
+   "cit": [
+    [
+     0,
+     25148,
+     292
+    ]
+   ],
+   "cit_sha": "a0bd0513fff34b1f"
+  },
+  {
+   "afirmacao": "BOMBA DE INSULINA: o manejo é semelhante ao do basal-bolus injetado; pela resistência à insulina aumentada e pela hiperglicemia pós-prandial exagerada com o glicocorticoide, a razão insulina/carboidrato e o fator de sensibilidade à insulina precisarão de ajuste. A taxa basal da MANHÃ pode precisar ser aumentada, mas as taxas basais globais podem permanecer as mesmas, a menos que haja hiperglicemia sustentada ao longo do dia conforme o tipo e o intervalo de dose do glicocorticoide.",
+   "secao": "Insulina — bomba",
+   "cit": [
+    [
+     0,
+     25455,
+     467
+    ]
+   ],
+   "cit_sha": "47ee1b4852b503f2"
+  },
+  {
+   "afirmacao": "Alguns pacientes desenvolvem resistência à insulina GRAVE no contexto do uso de glicocorticoide, exigindo grande quantidade de insulina.",
+   "secao": "Insulina — insulinas concentradas",
+   "cit": [
+    [
+     0,
+     25945,
+     112
+    ]
+   ],
+   "cit_sha": "7289520131bc0fc3"
+  },
+  {
+   "afirmacao": "Quando é preciso grande volume de insulina, para garantir absorção confiável da insulina injetada e evitar desconforto do paciente, podem ser consideradas insulinas CONCENTRADAS, como U200, U300 ou U500.",
+   "secao": "Insulina — insulinas concentradas",
+   "cit": [
+    [
+     0,
+     27169,
+     180
+    ]
+   ],
+   "cit_sha": "1e7f72cc0d432592"
+  },
+  {
+   "afirmacao": "⚠️ Ao titular um esquema com insulina U500, lembrar que ela tem início de ação próximo ao da insulina REGULAR humana, mas duração de ação INTERMEDIÁRIA entre a regular e a NPH; para evitar erro de prescrição ou de uso, recomenda-se caneta de U500 ou seringa específica para U500 quando disponíveis.",
+   "secao": "Insulina — insulinas concentradas",
+   "cit": [
+    [
+     0,
+     27350,
+     381
+    ]
+   ],
+   "cit_sha": "c37ed4ea5e04bde2"
+  },
+  {
+   "afirmacao": "As insulinas PRÉ-MISTURADAS (por exemplo NPH/regular humana, asparte protamina/asparte, lispro protamina/lispro) geralmente NÃO são úteis no manejo do GID/GIH, pela inflexibilidade inerente de dose.",
+   "secao": "Insulina — pré-misturadas",
+   "cit": [
+    [
+     0,
+     27749,
+     209
+    ]
+   ],
+   "cit_sha": "22e3fe644dcc43fb"
+  },
+  {
+   "afirmacao": "⚠️ MONITORIZAÇÃO SOB INSULINA: qualquer que seja o esquema escolhido, a glicemia deve ser monitorada com frequência (PRÉ-REFEIÇÃO — que também reflete a excursão pós-prandial anterior — e ao DEITAR), e as doses podem precisar de titulação DIÁRIA.",
+   "secao": "Insulina — titulação",
+   "cit": [
+    [
+     0,
+     28015,
+     247
+    ]
+   ],
+   "cit_sha": "3083320b486edd3e"
+  },
+  {
+   "afirmacao": "⚠️ Tipicamente recomendam-se ajustes de dose de insulina de 10–20%, mas no contexto do uso de glicocorticoide podem ser necessários AUMENTOS mais agressivos, de 20–50%.",
+   "secao": "Insulina — titulação",
+   "cit": [
+    [
+     0,
+     28263,
+     138
+    ]
+   ],
+   "cit_sha": "be051b30864220d6"
+  },
+  {
+   "afirmacao": "METAS: para a maioria dos pacientes recomenda-se glicemia de 80–130 mg/dL (4,4–7,2 mmol/L) PRÉ-REFEIÇÃO e <180 mg/dL (10 mmol/L) PÓS-PRANDIAL; as metas devem ser individualizadas conforme idade e risco de hipoglicemia (por exemplo, 90–150 mg/dL [5–8,3 mmol/L] pré-refeição e <200 mg/dL [11,1 mmol/L] pós-prandial no IDOSO).",
+   "secao": "Insulina — titulação",
+   "cit": [
+    [
+     0,
+     28402,
+     351
+    ]
+   ],
+   "cit_sha": "fa1fa6c6ab046fcb"
+  },
+  {
+   "afirmacao": "⚠️⚠️ DESMAME DO CORTICOIDE: quando a dose do glicocorticoide é reduzida (redução de pelo menos 15% da dose diária), é NECESSÁRIO um ajuste PRÉ-EMPTIVO da dose de insulina para EVITAR HIPOGLICEMIA.",
+   "secao": "Ajuste da insulina no desmame do glicocorticoide",
+   "cit": [
+    [
+     0,
+     28800,
+     84
+    ],
+    [
+     0,
+     28926,
+     62
+    ]
+   ],
+   "cit_sha": "e6ab71901efdb8e3"
+  },
+  {
+   "afirmacao": "O quanto reduzir a insulina no desmame do glicocorticoide é ditado pelo padrão glicêmico das últimas 24 horas e pela redução de dose do glicocorticoide que se antecipa.",
+   "secao": "Ajuste da insulina no desmame do glicocorticoide",
+   "cit": [
+    [
+     0,
+     28989,
+     132
+    ]
+   ],
+   "cit_sha": "e7bf9fb6c1e2b59e"
+  },
+  {
+   "afirmacao": "⚠️ Se o paciente está em NPH e o glicocorticoide está sendo desmamado, pode-se ajustar a dose pela mesma regra de 0,1 unidade/kg por 10 mg de equivalente de prednisona, OU reduzir a dose em 10–20% se a maioria das glicemias estiver dentro da faixa-alvo.",
+   "secao": "Ajuste da insulina no desmame do glicocorticoide",
+   "cit": [
+    [
+     0,
+     29122,
+     213
+    ]
+   ],
+   "cit_sha": "6564c37b18b91ce6"
+  },
+  {
+   "afirmacao": "⚠️ No esquema BASAL-BOLUS durante o desmame do glicocorticoide, a insulina basal e a bolus podem precisar ser ajustadas SEPARADAMENTE, conforme o grau de controle das glicemias de JEJUM versus PRÉ-REFEIÇÃO; geralmente ajustes de 10–20%, mas mudanças mais agressivas podem ser necessárias conforme o grau de descontrole.",
+   "secao": "Ajuste da insulina no desmame do glicocorticoide",
+   "cit": [
+    [
+     0,
+     29336,
+     310
+    ]
+   ],
+   "cit_sha": "6c0365c4ffbce3f5"
+  },
+  {
+   "afirmacao": "Todos os pacientes, com ou sem diabetes prévio, devem ser orientados a seguir dieta com MENOS CARBOIDRATO, já que os glicocorticoides exageram a resposta hiperglicêmica à ingestão de carboidrato; além disso, deve-se estimular hidratação adequada.",
+   "secao": "Abordagem geral de manejo",
+   "cit": [
+    [
+     0,
+     29675,
+     244
+    ]
+   ],
+   "cit_sha": "f6da16584da68149"
+  },
+  {
+   "afirmacao": "⚠️ GID — CURSO CURTO: em pacientes SEM diabetes prévio em curso curto de glicocorticoide (por exemplo <7 dias) e sem sintomas alarmantes, PODE SER RAZOÁVEL abster-se de terapia farmacológica, pois a hiperglicemia deve se resolver após a suspensão do glicocorticoide; ainda assim, manter dieta pobre em carboidrato e hidratação adequada.",
+   "secao": "Manejo do GID (sem diabetes prévio)",
+   "cit": [
+    [
+     0,
+     29958,
+     335
+    ]
+   ],
+   "cit_sha": "8cba8db6c6b87c00"
+  },
+  {
+   "afirmacao": "⚠️ GID — LONGO PRAZO: para pacientes que ficarão em glicocorticoide por tempo prolongado, os autores recomendam abordagem ditada pelo GRAU DE HIPERGLICEMIA PÓS-PRANDIAL (especialmente PÓS-ALMOÇO). Para hiperglicemia pós-prandial modesta mas sustentada (<200 mg/dL [11,1 mmol/L]), pode-se considerar iniciar metformina e/ou um hipoglicemiante leve, como inibidor de DPP-4 ou inibidor de SGLT-2.",
+   "secao": "Manejo do GID (sem diabetes prévio)",
+   "cit": [
+    [
+     0,
+     30294,
+     436
+    ]
+   ],
+   "cit_sha": "52bb6a3253d5a0d6"
+  },
+  {
+   "afirmacao": "No GID, os agonistas de GLP-1 também são opção para pacientes que não são avessos a terapia injetável; se houver hiperglicemia sustentada com doses máximas de agentes orais ou não insulínicos, deve-se iniciar insulina NPH.",
+   "secao": "Manejo do GID (sem diabetes prévio)",
+   "cit": [
+    [
+     0,
+     30746,
+     214
+    ]
+   ],
+   "cit_sha": "5b3a2eb77100b9ef"
+  },
+  {
+   "afirmacao": "⚠️ GID GRAVE: em pacientes com hiperglicemia sustentada e GRAVE (glicemia pós-prandial ≥200 mg/dL [11,1 mmol/L]), deve-se iniciar metformina para melhorar a sensibilidade à insulina JUNTO COM NPH. Em quem recusa insulina, dado o início de ação mais lento da metformina, provavelmente será preciso associar também um hipoglicemiante de ação mais rápida — glinidas, sulfonilureias de ação curta (glipizida, gliclazida) e/ou agonista de GLP-1 diário.",
+   "secao": "Manejo do GID (sem diabetes prévio)",
+   "cit": [
+    [
+     0,
+     30961,
+     472
+    ]
+   ],
+   "cit_sha": "2b4a222641840164"
+  },
+  {
+   "afirmacao": "⚠️ No algoritmo do GID, a conduta de apenas MONITORAR sem terapia farmacológica pode ser opção razoável na AUSÊNCIA de sintomas alarmantes, já que a hiperglicemia deve se resolver após um curso CURTO de glicocorticoide; dieta pobre em carboidrato e hidratação adequada devem ser estimuladas.",
+   "secao": "Algoritmo de manejo do GID (figura)",
+   "cit": [
+    [
+     0,
+     33576,
+     208
+    ]
+   ],
+   "cit_sha": "f303bd0c94135d82"
+  },
+  {
+   "afirmacao": "⚠️ O algoritmo de manejo do diabetes induzido por glicocorticoide (GID) decide por DOIS eixos: o GRAU de hiperglicemia PÓS-PRANDIAL (moderada <200 mg/dL versus grave ≥200 mg/dL) e a DURAÇÃO do glicocorticoide (<7 dias versus ≥7 dias).",
+   "secao": "Algoritmo de manejo do GID (figura)",
+   "cit": [
+    [
+     0,
+     32751,
+     76
+    ],
+    [
+     0,
+     33077,
+     73
+    ]
+   ],
+   "cit_sha": "ab1650a52725e313"
+  },
+  {
+   "afirmacao": "⚠️ No algoritmo de manejo do diabetes induzido por glicocorticoide (GID) consta a necessidade de RASTREAMENTO REGULAR para o desenvolvimento de diabetes.",
+   "secao": "Algoritmo de manejo do GID (figura)",
+   "cit": [
+    [
+     0,
+     33523,
+     45
+    ]
+   ],
+   "cit_sha": "525f0ff4671d3adb"
+  },
+  {
+   "afirmacao": "⚠️ ALGORITMO DO GID (metformina + NPH): NPH DIÁRIA junto com o glicocorticoide da MANHÃ; começar com 0,1 unidade/kg para cada 10 mg de dose de equivalente de prednisona; DIVIDIR em duas doses ao dia com as refeições se o glicocorticoide for dado 2x/dia; titular em incrementos de 10–20% até a meta glicêmica.",
+   "secao": "Algoritmo de manejo do GID (figura)",
+   "cit": [
+    [
+     0,
+     33280,
+     183
+    ]
+   ],
+   "cit_sha": "8c7f67d81b92a39e"
+  },
+  {
+   "afirmacao": "⚠️ GIH: em pacientes COM diabetes tratados com agentes NÃO insulínicos, pode ser possível alcançar controle satisfatório titulando os agentes já em uso ou acrescentando novas medicações; porém o médico deve ter LIMIAR BAIXO para iniciar insulina em quem mantém hiperglicemia sustentada com agentes não insulínicos máximos.",
+   "secao": "Manejo da GIH (com diabetes prévio)",
+   "cit": [
+    [
+     0,
+     31491,
+     368
+    ]
+   ],
+   "cit_sha": "cea7461fc18c54ea"
+  },
+  {
+   "afirmacao": "⚠️ GIH MODESTA sem insulina: em pacientes que ainda não requerem insulina e têm hiperglicemia modesta (glicemia pós-prandial <200 mg/dL [11,1 mmol/L]), recomenda-se MAXIMIZAR a metformina conforme tolerado para melhorar a sensibilidade à insulina; se o paciente ainda não usa medicação dirigida à hiperglicemia pós-prandial, as opções são acrescentar inibidor de DPP-4, inibidor de SGLT-2, agonista de GLP-1 diário ou secretagogo (preferencialmente glinida ou sulfonilureia de ação curta) — a escolha depende da DURAÇÃO esperada do glicocorticoide e do GRAU de hiperglicemia.",
+   "secao": "Manejo da GIH (com diabetes prévio)",
+   "cit": [
+    [
+     0,
+     31860,
+     593
+    ]
+   ],
+   "cit_sha": "c6b69c61038c08b0"
+  },
+  {
+   "afirmacao": "Em pacientes já com agentes não insulínicos máximos e ainda com hiperglicemia sustentada, recomenda-se INICIAR INSULINA, com o esquema determinado pelo TIPO de glicocorticoide e pelo INTERVALO DE DOSE.",
+   "secao": "Manejo da GIH (com diabetes prévio)",
+   "cit": [
+    [
+     0,
+     32454,
+     187
+    ]
+   ],
+   "cit_sha": "a1e4b8e9fc5aa76b"
+  },
+  {
+   "afirmacao": "⚠️ NÃO EXISTE diretriz oficial para o manejo da hiperglicemia induzida por glicocorticoide, e o corte pós-prandial de 200 mg/dL (11,1 mmol/L) usado no algoritmo é ARBITRÁRIO, baseado na experiência clínica dos autores — outro limiar para iniciar terapia pode ser adotado a critério do médico, conforme o quadro clínico do paciente.",
+   "secao": "Algoritmo de manejo da GIH (figura)",
+   "cit": [
+    [
+     0,
+     34307,
+     273
+    ]
+   ],
+   "cit_sha": "959076b8e9aa937e"
+  },
+  {
+   "afirmacao": "⚠️ MAXIMIZAR A TERAPIA NÃO INSULÍNICA na GIH significa: escolher a abordagem terapêutica pelo controle glicêmico basal e pela dose/duração do glicocorticoide; maximizar a metformina para melhorar a sensibilidade à insulina; considerar agentes dirigidos à hiperglicemia PÓS-PRANDIAL (inibidor de DPP-4, inibidor de SGLT-2, agonista de GLP-1 diário, secretagogo); e, se usar secretagogo, escolher agente de ação MAIS CURTA (glinida, glipizida, gliclazida) SINCRONIZADO com o pico esperado do glicocorticoide.",
+   "secao": "Algoritmo de manejo da GIH (figura)",
+   "cit": [
+    [
+     0,
+     34586,
+     456
+    ]
+   ],
+   "cit_sha": "9e39aa001c7e2211"
+  },
+  {
+   "afirmacao": "⚠️ OPÇÕES DE INSULINA NA GIH — glicocorticoide de ação INTERMEDIÁRIA: dose diária total = 0,1 unidade/kg para cada 10 mg de equivalente de prednisona; NPH diária se o glicocorticoide for dado 1x/dia; dividir 2x/dia com as refeições se o glicocorticoide for dado 2x/dia (alternativamente usar basal-bolus). No BASAL-BOLUS: basal = insulina de ação longa, bolus = insulina de ação rápida, dose diária total 0,5–0,6 unidade/kg/dia, dividida em 30% basal e 70% bolus; NPH 2x/dia também é opção.",
+   "secao": "Algoritmo de manejo da GIH (figura)",
+   "cit": [
+    [
+     0,
+     35886,
+     319
+    ]
+   ],
+   "cit_sha": "7c52f933332f3a41"
+  },
+  {
+   "afirmacao": "⚠️ BOMBA DE INSULINA no algoritmo da GIH: com glicocorticoide UMA VEZ AO DIA pode ser preciso ajustar a taxa basal da MANHÃ; com glicocorticoide de ação LONGA podem ser necessários ajustes das taxas basais AO LONGO DO DIA E DURANTE A NOITE.",
+   "secao": "Algoritmo de manejo da GIH (figura)",
+   "cit": [
+    [
+     0,
+     36249,
+     145
+    ]
+   ],
+   "cit_sha": "9650f6b919b5f187"
+  },
+  {
+   "afirmacao": "⚠️ O perfil da NPH ESPELHA o padrão glicêmico do glicocorticoide de ação INTERMEDIÁRIA: o pico da NPH ocorre em 4–8 horas, coincidindo com o pico da subida da glicemia, e sua ação declina após 16 horas, coincidindo com o retorno da glicemia ao normal no jejum noturno (faixa normal de 71–140 mg/dL [4–7,8 mmol/L]).",
+   "secao": "Figura — perfil espelhado NPH × GC intermediário",
+   "cit": [
+    [
+     0,
+     23845,
+     364
+    ]
+   ],
+   "cit_sha": "d4319e14a511d947"
+  },
+  {
+   "afirmacao": "⚠️ Com glicocorticoide de ação LONGA (dexametasona) ficam elevadas TANTO a glicemia de JEJUM QUANTO a PÓS-PRANDIAL, com pico de hiperglicemia por volta das 5–6 da tarde (5–6 p.m.); a insulina BASAL mira a hiperglicemia de jejum enquanto a insulina BOLUS mira a hiperglicemia pós-prandial.",
+   "secao": "Figura — padrão glicêmico do GC de ação longa",
+   "cit": [
+    [
+     0,
+     26467,
+     578
+    ]
+   ],
+   "cit_sha": "0b15d7754a138bc8"
+  },
+  {
+   "afirmacao": "⚠️ CASO TÍPICO (DM2 + prednisona em dose baixa): mulher de 56 anos com DM2 em metformina 1000 mg 2x/dia e glipizida 5 mg 2x/dia, sem hipoglicemias, iniciou prednisona 15 mg/dia por polimialgia reumática — a glicemia de JEJUM foi a MENOR do dia (110 mg/dL) e a hiperglicemia apareceu ao longo do dia: pré-almoço 145 mg/dL e pré-jantar 171 mg/dL. Pesa 78 kg (IMC 32 kg/m2).",
+   "secao": "Caso 1 — DM2 em orais recebendo prednisona em dose baixa",
+   "cit": [
+    [
+     0,
+     35191,
+     202
+    ],
+    [
+     0,
+     35521,
+     173
+    ]
+   ],
+   "cit_sha": "4747de0200c53252"
+  },
+  {
+   "afirmacao": "⚠️ CASO 1 — CONDUTA: hiperglicemia moderada com prednisona em dose baixa; como a paciente já está em dose máxima de metformina e de sulfonilureia de ação curta, pode-se acrescentar terapia não insulínica dirigida à hiperglicemia PÓS-PRANDIAL — inibidor de DPP-4 ou agonista de GLP-1; se ela não for avessa a injetável, tenta-se o agonista de GLP-1 primeiro, por ter efeito hipoglicemiante mais potente que o inibidor de DPP-4, e por ajudar a contrapor o ganho de peso do glicocorticoide.",
+   "secao": "Caso 1 — DM2 em orais recebendo prednisona em dose baixa",
+   "cit": [
+    [
+     0,
+     36504,
+     574
+    ]
+   ],
+   "cit_sha": "c8cb6162d637166d"
+  },
+  {
+   "afirmacao": "⚠️ CASO 1 — se um teste curto de terapia não insulínica falhar, a insulina deve ser iniciada rapidamente: NPH em dose inicial de 12 unidades (0,15 unidade/kg/dia) SINCRONIZADA com a dose matinal de prednisona.",
+   "secao": "Caso 1 — DM2 em orais recebendo prednisona em dose baixa",
+   "cit": [
+    [
+     0,
+     37079,
+     205
+    ]
+   ],
+   "cit_sha": "ad004660948a4a26"
+  },
+  {
+   "afirmacao": "⚠️ CASO 2 (DM2 mal controlado + DEXAMETASONA em quimioterapia): mulher de 52 anos com sobrepeso e DM2 mal controlado (HbA1c 9,2% [78 mmol/mol]), em gliburida/metformina 5/500 mg/dia, recebendo dexametasona 12 mg IV uma vez por semana em duas de cada três semanas; pesa 80 kg (IMC 28 kg/m2), função renal normal. Glicemias domiciliares: pré-café 187 mg/dL, pré-almoço 196 mg/dL e pré-jantar 224 mg/dL.",
+   "secao": "Caso 2 — DM2 mal controlado iniciando dexametasona",
+   "cit": [
+    [
+     0,
+     37392,
+     495
+    ]
+   ],
+   "cit_sha": "e90e89a1d2d1a33e"
+  },
+  {
+   "afirmacao": "⚠️ CASO 2 — CONDUTA: dada a hiperglicemia grave no basal, a insulinoterapia está indicada; simultaneamente a metformina deve ser maximizada para 1000 mg 2x/dia para aumentar a sensibilidade à insulina, e os autores RECOMENDAM SUSPENDER a gliburida (glibenclamida) pela longa duração de ação e pelo risco de hipoglicemia.",
+   "secao": "Caso 2 — DM2 mal controlado iniciando dexametasona",
+   "cit": [
+    [
+     0,
+     37930,
+     126
+    ],
+    [
+     0,
+     38057,
+     131
+    ]
+   ],
+   "cit_sha": "070d079081e430b6"
+  },
+  {
+   "afirmacao": "⚠️ CASO 2 — esquema basal-bolus com insulina de ação longa (glargina, detemir) e de ação rápida (asparte, lispro, glulisina): dose diária total inicial de 40 unidades (0,5 unidade/kg/dia × 80 kg), com 30% basal (12 unidades) e 70% bolus (9 unidades em cada refeição), ajustando depois pelo grau de controle glicêmico.",
+   "secao": "Caso 2 — DM2 mal controlado iniciando dexametasona",
+   "cit": [
+    [
+     0,
+     38189,
+     371
+    ]
+   ],
+   "cit_sha": "0b152fa0f6e0b402"
+  },
+  {
+   "afirmacao": "⚠️⚠️ CASO 2 — o impacto glicêmico da DEXAMETASONA dura cerca de 48 horas, e a paciente deve ser orientada a REDUZIR as doses de insulina PRÉ-EMPTIVAMENTE se o controle glicêmico estiver razoável.",
+   "secao": "Caso 2 — DM2 mal controlado iniciando dexametasona",
+   "cit": [
+    [
+     0,
+     38561,
+     177
+    ]
+   ],
+   "cit_sha": "73f18c4421fa65b1"
+  },
+  {
+   "afirmacao": "⚠️⚠️ ESQUEMA DE REDUÇÃO PROGRESSIVA DA INSULINA APÓS DEXAMETASONA: como o impacto glicêmico da dexametasona dura cerca de 48 horas, as doses devem ser reduzidas PRÉ-EMPTIVAMENTE se o controle estiver razoável — exemplo de esquema (insulina de ação longa / insulina de ação rápida): dia da quimioterapia 12 e 9 unidades com as refeições; 2º dia 12 e 9; 3º dia 11 e 7; 4º dia 11 e 7; 5º dia 10 e 5; 6º dia 10 e 5; 7º dia 9 e 3; e no dia da quimioterapia seguinte volta-se a 12 e 9 unidades.",
+   "secao": "Caso 2 — DM2 mal controlado iniciando dexametasona",
+   "cit": [
+    [
+     0,
+     38561,
+     558
+    ]
+   ],
+   "cit_sha": "bb57137f429648ce"
+  },
+  {
+   "afirmacao": "⚠️ EQUIVALÊNCIA DE DOSE E ALTERNATIVA COM NPH (caso 2): a dose de dexametasona precisa ser convertida em equivalente de prednisona — DEXAMETASONA 12 mg = PREDNISONA 75 mg — e então a dose inicial de NPH é estimada pela regra de 0,4 unidade/kg/dia, correspondendo a 32 unidades por dia, administradas em duas doses divididas com as refeições (16 unidades 2x/dia); a dose deve ser titulada pela resposta glicêmica e REDUZIDA EMPIRICAMENTE após dois dias de uso da dexametasona.",
+   "secao": "Caso 2 — DM2 mal controlado iniciando dexametasona",
+   "cit": [
+    [
+     0,
+     39161,
+     279
+    ],
+    [
+     0,
+     39441,
+     247
+    ]
+   ],
+   "cit_sha": "b37aa3c56b9015fb"
+  },
+  {
+   "afirmacao": "⚠️ CASO 3 (DM2 já em basal-bolus + prednisona 1x/dia): mulher de 53 anos com DM2 em insulina, com surto de artrite reumatoide, iniciou prednisona 40 mg/dia; usa metformina 1000 mg 2x/dia, glargina 42 unidades ao deitar, asparte 16 unidades nas refeições e escala corretiva; HbA1c 8,6% (71 mmol/mol); pesa 90 kg (IMC 32 kg/m2), com função renal normal.",
+   "secao": "Caso 3 — DM2 em basal-bolus iniciando prednisona 1x/dia",
+   "cit": [
+    [
+     0,
+     39777,
+     339
+    ]
+   ],
+   "cit_sha": "392c0acc48629e49"
+  },
+  {
+   "afirmacao": "⚠️ CASO 3 — CONDUTA A: ajustar o basal-bolus existente para cobrir a hiperglicemia predominantemente PÓS-PRANDIAL. A dose diária total dela é 90 unidades; dado o controle basal inadequado, é razoável aumentar 10% a dose total (∼100 unidades) e REDISTRIBUIR em 30% basal (30 unidades) e 70% bolus (23 unidades nas refeições).",
+   "secao": "Caso 3 — DM2 em basal-bolus iniciando prednisona 1x/dia",
+   "cit": [
+    [
+     0,
+     40160,
+     315
+    ]
+   ],
+   "cit_sha": "7bfd8cefc1847ca0"
+  },
+  {
+   "afirmacao": "⚠️ CASO 3 — CONDUTA B: alternativamente, acrescentar NPH ao esquema basal-bolus existente, em dose inicial de 36 unidades (0,4 unidade/kg/dia) UMA VEZ AO DIA, SINCRONIZADA com a prednisona da MANHÃ, ajustando depois conforme a resposta glicêmica.",
+   "secao": "Caso 3 — DM2 em basal-bolus iniciando prednisona 1x/dia",
+   "cit": [
+    [
+     0,
+     40476,
+     228
+    ]
+   ],
+   "cit_sha": "2f92089013b5dda2"
+  },
+  {
+   "afirmacao": "⚠️ Os profissionais devem ANTECIPAR e estar prontos para tratar a hiperglicemia ANTES de iniciar o glicocorticoide.",
+   "secao": "Conclusões",
+   "cit": [
+    [
+     0,
+     40717,
+     91
+    ]
+   ],
+   "cit_sha": "f547bc069c52e230"
+  },
+  {
+   "afirmacao": "⚠️⚠️ RASTREIO: pacientes SEM diabetes prévio mas em ALTO RISCO de desenvolver diabetes induzido por glicocorticoide devem ter a glicemia monitorada no PÓS-ALMOÇO e no PRÉ-JANTAR nos primeiros DOIS DIAS de terapia com glicocorticoide; se todos os valores forem <140 mg/dL (7,8 mmol/L), é razoável PARAR a monitorização.",
+   "secao": "Conclusões",
+   "cit": [
+    [
+     0,
+     40809,
+     208
+    ],
+    [
+     0,
+     41020,
+     60
+    ]
+   ],
+   "cit_sha": "e2a4365e0a1196b1"
+  },
+  {
+   "afirmacao": "⚠️ Pacientes COM diabetes pré-existente devem monitorar a glicemia com FREQUÊNCIA, incluindo uma checagem PÓS-PRANDIAL DEPOIS DO ALMOÇO, para NÃO deixar passar a hiperglicemia pós-prandial.",
+   "secao": "Conclusões",
+   "cit": [
+    [
+     0,
+     41081,
+     159
+    ]
+   ],
+   "cit_sha": "d6c055f61d13a1c4"
+  },
+  {
+   "afirmacao": "Todos os pacientes em glicocorticoide devem ser estimulados a manter hidratação adequada e orientados sobre a necessidade de seguir dieta com menos carboidrato.",
+   "secao": "Conclusões",
+   "cit": [
+    [
+     0,
+     41241,
+     129
+    ]
+   ],
+   "cit_sha": "f71c3f5fc6492bd6"
+  },
+  {
+   "afirmacao": "A escolha da terapia e a abordagem de manejo da hiperglicemia por glicocorticoide dependem da RESERVA INSULÍNICA basal, da DOSE e da DURAÇÃO da terapia com glicocorticoide.",
+   "secao": "Conclusões",
+   "cit": [
+    [
+     0,
+     41371,
+     139
+    ]
+   ],
+   "cit_sha": "6edca35f24590653"
+  },
+  {
+   "afirmacao": "Com base no número limitado de estudos, na experiência clínica, no efeito glicêmico e no perfil de ação conhecidos dos glicocorticoides e nas propriedades farmacológicas das terapias não insulínicas, ALGUNS pacientes podem alcançar controle glicêmico adequado APENAS com terapia não insulínica.",
+   "secao": "Conclusões",
+   "cit": [
+    [
+     0,
+     41615,
+     278
+    ]
+   ],
+   "cit_sha": "a8be9d216fba6921"
+  },
+  {
+   "afirmacao": "⚠️ São FAVORECIDOS os agentes que aumentam a sensibilidade à insulina e miram a hiperglicemia PÓS-PRANDIAL; as opções não insulínicas incluem metformina, sulfonilureia de ação curta e glinidas, inibidores de DPP-4 e agonistas de GLP-1. A seleção deve considerar também o INÍCIO DE AÇÃO e o efeito hipoglicemiante de cada droga.",
+   "secao": "Conclusões",
+   "cit": [
+    [
+     0,
+     41894,
+     344
+    ]
+   ],
+   "cit_sha": "ef9316d5b254a941"
+  },
+  {
+   "afirmacao": "Deve haver LIMIAR BAIXO para iniciar insulina em pacientes com hiperglicemia SUSTENTADA apesar de terapia não insulínica máxima; a escolha da insulinoterapia dependerá da DURAÇÃO DE AÇÃO do glicocorticoide e do INTERVALO DE DOSE.",
+   "secao": "Conclusões",
+   "cit": [
+    [
+     0,
+     42239,
+     230
+    ]
+   ],
+   "cit_sha": "628156d34362b78f"
+  },
+  {
+   "afirmacao": "⚠️⚠️ CONCLUSÃO CENTRAL: a NPH de ação intermediária UMA VEZ AO DIA, sincronizada com a dose MATINAL do glicocorticoide, é a preferida durante o tratamento com glicocorticoide de ação INTERMEDIÁRIA, porque seu efeito de pico coincide com o do glicocorticoide. Já um esquema basal-bolus MODIFICADO, com maior proporção de bolus (70%), ou NPH DUAS VEZES AO DIA pode ser usado com glicocorticoide de ação intermediária 2x/dia ou de ação longa 1x/dia.",
+   "secao": "Conclusões",
+   "cit": [
+    [
+     0,
+     42470,
+     355
+    ]
+   ],
+   "cit_sha": "33757cd46094fb37"
+  }
+ ]
+}

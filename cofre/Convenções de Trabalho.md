@@ -5,6 +5,56 @@ atualizado: 2026-08-07
 
 # Convenções de Trabalho
 
+## 🔋 FORÇA MÁXIMA COM FREIO EM 85% — e o medidor, porque eu não enxergo o painel (2026-08-08)
+
+Regra do professor, válida **até o fim da extração/auditoria**: rodar a todo vapor
+e **recuar aos 85% do consumo**, voltando à força máxima quando a janela resetar.
+
+⚠️ **O percentual está no painel DELE, não na minha sessão.** Sem medir, "recuar
+aos 85%" é palpite — e o palpite já falhou uma vez, custando 4 agentes mortos no
+meio do trabalho. O que eu SEI medir é o `subagent_tokens` que cada agente relata
+ao terminar. Daí o `scripts/orcamento-agentes.js`:
+
+```
+node scripts/orcamento-agentes.js                 # estado e veredito (saída 2 = freio)
+node scripts/orcamento-agentes.js --soma 253751   # registra um agente que terminou
+```
+
+O teto de 2,0 M de tokens por janela é **calibrado, não oficial**: vem da única
+observação real que existe — a janela estourou com 8 agentes rodando quando o
+painel marcava 92%, somando ~2,0 M. Na conferência seguinte o script marcou 58%
+com o painel em 57%. É grosseiro e deliberadamente conservador: **errar para baixo
+custa uma pausa; errar para cima mata agente no meio e perde tudo o que gastou.**
+
+O freio é o **passo zero** da rotina horária. Ao bater 85%: não lançar agente
+novo, deixar terminar o que já roda, commitar e encerrar em silêncio.
+
+E a lição de como isso deu errado na primeira tentativa: lancei **8 agentes de uma
+vez**, o limite de 5 horas estourou no meio, e **4 morreram com o trabalho pela
+metade**. Agente morto não devolve nada — os tokens que ele gastou viram zero.
+
+**Lote grande demais não é força máxima, é desperdício máximo.** A força está no
+trabalho CONCLUÍDO, e um lote só é bom se couber inteiro no orçamento restante.
+Melhor 5 que terminam do que 8 que morrem aos 60%.
+
+**O que salvou o que dava para salvar** foi a convenção da pasta isolada
+`scratchpad/acervo/trabalho/<fileId>/`:
+
+- os **9 textos-fonte já baixados** sobreviveram — e o download do Drive + extração
+  do PDF é a parte cara e lenta;
+- **2 extratos parciais** (118 e 116 fatos) sobreviveram **conferidos, 0
+  reprovados**, e um agente novo pôde CONTINUAR em vez de recomeçar.
+
+**Ao relançar depois de uma queda por limite:** antes de disparar, rode um
+inventário das pastas de trabalho (texto presente? extrato parcial? quantos
+fatos?) e mande o agente **continuar**, não recomeçar. O prompt tem de dizer, com
+todas as letras, "NÃO apague o que está lá, ACRESCENTE" e "o texto já está
+baixado, não vá ao Drive".
+
+**Ordem de prioridade ao escolher o lote:** primeiro os que têm trabalho parcial
+salvo (o token já gasto se aproveita), depois os que têm o texto baixado, e só
+então os que começam do zero.
+
 ## 📚 A CITAÇÃO NÃO É MAIS PUBLICADA — e continua sendo a prova (2026-08-08)
 
 Duas exigências certas, juntas, produziram uma terceira coisa que nenhuma das

@@ -1,0 +1,1937 @@
+{
+ "fileId": "1c0GoKq_bdLfZOEuJMJpwDZOO62RtoTry",
+ "titulo": "Diagnosis and Management of Prediabetes: A Review",
+ "fonte": "Echouffo-Tcheugui JB, Perreault L, Ji L, Dagogo-Jack S. Diagnosis and Management of Prediabetes: A Review. JAMA 2023;329(14):1206-1216 (doi:10.1001/jama.2023.4063)",
+ "area": "Diabetes",
+ "tipo": "revisao",
+ "ano": 2023,
+ "tema": "Pré-diabetes: critérios diagnósticos de ADA, OMS e International Expert Committee, rastreamento, fisiopatologia, complicações e prevenção com estilo de vida e fármacos",
+ "conflito": "DIVERGÊNCIA DE CORTES DIAGNÓSTICOS — esta revisão é do JAMA 2023 e o núcleo é ADA Standards of Care 2026 + SBD/IDF. (1) TOTG DE 1 HORA: a fonte NÃO menciona a glicemia de 1 hora em lugar nenhum — descreve só glicemia de jejum, glicemia de 2 h e HbA1c. O núcleo traz o critério da SBD/IDF (diabetes com glicemia de 1 h ≥209 mg/dL; pré-diabetes 155–208 mg/dL). Use o núcleo: o critério é mais novo e é o que vale no Brasil. (2) GLICEMIA DE JEJUM E HbA1c pela ADA: os dois concordam (jejum 100–125 mg/dL; HbA1c 5,7–6,4%). A fonte ACRESCENTA dois conjuntos de cortes que o núcleo não registra — Organização Mundial da Saúde (jejum 110–125 mg/dL, sem critério de HbA1c) e International Expert Committee (HbA1c 6,0–6,4%, sem critério de glicemia). São critérios de outras sociedades, úteis para ler literatura antiga ou laudo internacional, e NÃO substituem o corte da ADA/SBD que o núcleo usa. (3) TIRZEPATIDA: a fonte afirma que, até 2023, não havia dados sobre prevenção da progressão de pré-diabetes para diabetes. O núcleo já traz o SURMOUNT-1 de 3 anos. O dado da fonte está superado — vale o núcleo. (4) METFORMINA: alinhado no essencial (IMC ≥35, idade <60 anos, diabetes gestacional prévio). A fonte acrescenta dois porteiros que o núcleo não lista — glicemia de jejum ≥110 mg/dL e HbA1c ≥6,0% — e isso é acréscimo compatível, não conflito. (5) META DE PESO: a fonte cita a ADA de 2023 (≥7%); o núcleo traz a ADA 2026 (≥5–7%). Vale o núcleo, mais novo. O que a fonte acrescenta sem conflitar: rastreamento (USPSTF a cada 3 anos dos 35 aos 70 anos com sobrepeso/obesidade; ADA universal a cada 3 anos a partir dos 35 anos), a discordância entre os três testes de rastreio (concordância de apenas 4,1%), a ausência de regra para CONFIRMAR pré-diabetes com segundo teste, a remissão espontânea (33–59% em 1–5 anos) e a tabela de ensaios de fármacos (acarbose, pioglitazona, rosiglitazona, orlistate, liraglutida, valsartana, nateglinida).",
+ "conflito_direcao": "nucleo_prevalece",
+ "nucleo_prevalece_porque": "O núcleo é ADA Standards of Care 2026 somada ao critério SBD/IDF do TOTG de 1 hora, enquanto a fonte é uma revisão narrativa do JAMA de abril de 2023 com busca encerrada em fevereiro de 2023. Onde os dois falam da mesma coisa (glicemia de jejum e HbA1c pela ADA) eles concordam; onde diferem, a diferença é de DATA e de PAÍS, não de qualidade: o TOTG de 1 hora não existia como critério consolidado quando a fonte foi escrita, e a afirmação da fonte de que faltavam dados de tirzepatida para prevenção foi superada pelo SURMOUNT-1 de 3 anos que o núcleo já registra. A fonte não contraindica nada que o núcleo recomende — ela apenas não conhece o que veio depois.",
+ "nucleo_citado": [
+  "glicemia de 1h ≥209 mg/dL no TOTG 75g (critério SBD/IDF, não contemplado pela ADA 2026)",
+  "glicemia de 1h 155–208 mg/dL no TOTG (SBD/IDF, não contemplado pela ADA 2026)",
+  "Pré-diabetes = A1C 5,7–6,4%, glicemia de jejum 100–125 (glicemia de jejum alterada)",
+  "a tirzepatida reduz o peso em até ~20% e a progressão para diabetes tipo 2 em ~93% (1,3% vs 13,3%) em pessoas com obesidade e pré-diabetes",
+  "Considerar metformina para prevenção, sobretudo em IMC ≥35 kg/m², idade <60 anos e mulheres com diabetes gestacional prévio",
+  "monitorar o pré-diabetes para o desenvolvimento de diabetes pelo menos anualmente",
+  "meta de perda de peso ≥5–7% e ≥150 min/semana de atividade física moderada"
+ ],
+ "nucleo_ausente": [
+  "International Expert Committee",
+  "110–125",
+  "US Preventive Services Task Force",
+  "acarbose",
+  "STOP-NIDDM",
+  "voglibose"
+ ],
+ "fatos": [
+  {
+   "afirmacao": "Pré-diabetes é estágio intermediário entre a regulação glicêmica normal e o diabetes; afeta 1 em cada 3 adultos nos EUA e cerca de 720 milhões de pessoas no mundo.",
+   "secao": "Resumo",
+   "cit": [
+    [
+     0,
+     2605,
+     178
+    ]
+   ],
+   "cit_sha": "c6ee4409ea018355"
+  },
+  {
+   "afirmacao": "Pré-diabetes, estágio intermediário de desregulação glicêmica que pode preceder o diabetes tipo 2, afetou aproximadamente 720 milhões de pessoas no mundo em 2021 e deve afetar cerca de 1 bilhão de pessoas até 2045.",
+   "secao": "Introdução",
+   "cit": [
+    [
+     0,
+     148,
+     218
+    ]
+   ],
+   "cit_sha": "b198a27a078f8c69"
+  },
+  {
+   "afirmacao": "Nos EUA, aproximadamente 10% das pessoas com pré-diabetes progridem para diabetes A CADA ANO.",
+   "secao": "Introdução",
+   "cit": [
+    [
+     0,
+     368,
+     98
+    ]
+   ],
+   "cit_sha": "dc71aeff42a9d0dd"
+  },
+  {
+   "afirmacao": "Métodos desta revisão: busca no PubMed de artigos em inglês publicados entre 1º de janeiro de 1990 e 31 de julho de 2022, atualizada em 5 de novembro de 2022 e em 2 de fevereiro de 2023.",
+   "secao": "Métodos",
+   "cit": [
+    [
+     0,
+     589,
+     178
+    ]
+   ],
+   "cit_sha": "60d2032fda39c0a3"
+  },
+  {
+   "afirmacao": "A revisão focou em coortes prospectivas de alta qualidade, ensaios randomizados, revisões sistemáticas e meta-análises, e usou levantamentos nacionalmente representativos para estimar a frequência da doença.",
+   "secao": "Métodos",
+   "cit": [
+    [
+     0,
+     1020,
+     202
+    ]
+   ],
+   "cit_sha": "8367661cb7e6e584"
+  },
+  {
+   "afirmacao": "Como os desfechos variam conforme a DEFINIÇÃO DE CASO de pré-diabetes, os autores relataram os desfechos separadamente por casos definidos por glicemia de jejum, glicemia de 2 horas após sobrecarga oral de 75 g (2hPG) ou HbA1c.",
+   "secao": "Métodos",
+   "cit": [
+    [
+     0,
+     1223,
+     272
+    ]
+   ],
+   "cit_sha": "f8c4c08596d956fb"
+  },
+  {
+   "afirmacao": "Foram identificados 680 relatos, dos quais 110 foram incluídos: 20 ensaios clínicos randomizados, 9 revisões sistemáticas e meta-análises, 7 diretrizes, 3 estudos de diagnóstico, 58 estudos de coorte e resultados de 13 levantamentos nacionalmente representativos.",
+   "secao": "Métodos",
+   "cit": [
+    [
+     0,
+     1496,
+     259
+    ]
+   ],
+   "cit_sha": "287e75b6b6d2c133"
+  },
+  {
+   "afirmacao": "Conversão de unidades: para converter glicose de mg/dL para mmol/L, multiplicar por 0,0555; para converter HbA1c para mmol/mol, usar a equação (10,93 × HbA1c) − 23,50.",
+   "secao": "Métodos — unidades",
+   "cit": [
+    [
+     0,
+     1851,
+     141
+    ]
+   ],
+   "cit_sha": "632e71e25b2ae8c1"
+  },
+  {
+   "afirmacao": "Os critérios diagnósticos de pré-diabetes são LIGEIRAMENTE DIFERENTES entre American Diabetes Association (ADA), Organização Mundial da Saúde (OMS) e International Expert Committee — não existe um corte único.",
+   "secao": "Diagnóstico",
+   "cit": [
+    [
+     0,
+     2018,
+     193
+    ]
+   ],
+   "cit_sha": "7bc51570fd707bcd"
+  },
+  {
+   "afirmacao": "Os critérios de pré-diabetes incluem a glicemia de jejum alterada, baseada na glicemia de jejum, e a intolerância à glicose, baseada na glicemia de 2 horas do TOTG (2hPG).",
+   "secao": "Diagnóstico",
+   "cit": [
+    [
+     0,
+     2212,
+     149
+    ]
+   ],
+   "cit_sha": "2c04d1cae6cb63c3"
+  },
+  {
+   "afirmacao": "Critério da AMERICAN DIABETES ASSOCIATION para glicemia de jejum alterada no pré-diabetes: glicemia de jejum de 100 a 125 mg/dL (5,5–6,9 mmol/L).",
+   "secao": "Diagnóstico",
+   "cit": [
+    [
+     0,
+     2362,
+     144
+    ]
+   ],
+   "cit_sha": "e0e0877633bf01b1"
+  },
+  {
+   "afirmacao": "Critério de INTOLERÂNCIA À GLICOSE para pré-diabetes nesta revisão do JAMA (2023): glicemia de 2 horas (2hPG) de 140 a 199 mg/dL (7,8–11,0 mmol/L). Para saber a qual sociedade cada corte pertence, ver a Tabela 1 do artigo.",
+   "secao": "Diagnóstico",
+   "cit": [
+    [
+     0,
+     2507,
+     97
+    ]
+   ],
+   "cit_sha": "4dc886a9181bec34"
+  },
+  {
+   "afirmacao": "Tabela 1 (critérios diagnósticos de pré-diabetes) — GLICEMIA DE JEJUM: American Diabetes Association (2023) 100–125 mg/dL; Organização Mundial da Saúde (2006) 110–125 mg/dL; International Expert Committee (2009) não se aplica (NA). ⚠️ O corte da OMS é 110 mg/dL, e não 100.",
+   "secao": "Diagnóstico — Tabela 1",
+   "cit": [
+    [
+     0,
+     10574,
+     291
+    ]
+   ],
+   "cit_sha": "893e2d6f9b282db2"
+  },
+  {
+   "afirmacao": "Tabela 1 — GLICEMIA DE 2 HORAS PÓS-SOBRECARGA (TOTG 75 g): American Diabetes Association (2023) 140–199 mg/dL e Organização Mundial da Saúde (2006) 140–199 mg/dL (idênticas); o International Expert Committee (2009) não define esse critério (NA).",
+   "secao": "Diagnóstico — Tabela 1",
+   "cit": [
+    [
+     0,
+     10574,
+     291
+    ]
+   ],
+   "cit_sha": "893e2d6f9b282db2"
+  },
+  {
+   "afirmacao": "Tabela 1 — HEMOGLOBINA GLICADA: American Diabetes Association (2023) 5,7–6,4%; a Organização Mundial da Saúde (2006) NÃO usa HbA1c (NA); International Expert Committee (2009) 6,0–6,4%.",
+   "secao": "Diagnóstico — Tabela 1",
+   "cit": [
+    [
+     0,
+     10574,
+     291
+    ]
+   ],
+   "cit_sha": "893e2d6f9b282db2"
+  },
+  {
+   "afirmacao": "Pré-diabetes por HbA1c: 5,7% a 6,4% pela American Diabetes Association OU 6,0% a 6,4% pelo International Expert Committee — dois cortes distintos convivem na literatura.",
+   "secao": "Diagnóstico",
+   "cit": [
+    [
+     0,
+     5028,
+     175
+    ]
+   ],
+   "cit_sha": "4081b63ca40dc010"
+  },
+  {
+   "afirmacao": "Definição de pré-diabetes no resumo desta revisão do JAMA (2023): glicemia de jejum de 100 a 125 mg/dL, glicemia de 140 a 199 mg/dL medida 2 horas após sobrecarga oral de 75 g de glicose, ou HbA1c de 5,7% a 6,4% ou de 6,0% a 6,4%. O resumo NÃO diz a qual sociedade cada faixa de HbA1c pertence — isso está na Tabela 1.",
+   "secao": "Resumo",
+   "cit": [
+    [
+     0,
+     2784,
+     238
+    ]
+   ],
+   "cit_sha": "567c9d0d2acdd79e"
+  },
+  {
+   "afirmacao": "Como teste para o diagnóstico INICIAL de diabetes ou pré-diabetes, a HbA1c tem a vantagem da conveniência (não exige jejum) em relação à glicemia de jejum ou à glicemia de 2 horas.",
+   "secao": "Diagnóstico",
+   "cit": [
+    [
+     0,
+     5204,
+     176
+    ]
+   ],
+   "cit_sha": "a97ea435ee82c8e1"
+  },
+  {
+   "afirmacao": "A HbA1c pode ser NÃO CONFIÁVEL como medida da glicemia média sob certas condições: anemia hemolítica, deficiência de ferro, hemoglobinopatias, gestação e uremia.",
+   "secao": "Diagnóstico",
+   "cit": [
+    [
+     0,
+     5381,
+     192
+    ]
+   ],
+   "cit_sha": "cf700fdbb0cc3462"
+  },
+  {
+   "afirmacao": "Há diferenças étnicas na HbA1c independentes da glicemia: no US Diabetes Prevention Program (DPP), indivíduos negros tiveram glicemia de jejum e glicemia de 2 horas semelhantes, porém HbA1c MAIS ALTA que indivíduos brancos.",
+   "secao": "Diagnóstico",
+   "cit": [
+    [
+     0,
+     5575,
+     260
+    ]
+   ],
+   "cit_sha": "5175bbdb2fd8c3b2"
+  },
+  {
+   "afirmacao": "Revisão sistemática documentou MAIOR risco de diagnóstico falso-positivo de pré-diabetes em pessoas negras que em brancas quando a HbA1c é usada; é aconselhável corroborar com dosagem de glicemia em pessoas com condições que possam afetar a validade da HbA1c.",
+   "secao": "Diagnóstico",
+   "cit": [
+    [
+     0,
+     5837,
+     331
+    ]
+   ],
+   "cit_sha": "835ff1fff23e021a"
+  },
+  {
+   "afirmacao": "Rastreamento de pré-diabetes pela US PREVENTIVE SERVICES TASK FORCE: a cada 3 anos em adultos de 35 a 70 anos com sobrepeso ou obesidade.",
+   "secao": "Rastreamento",
+   "cit": [
+    [
+     0,
+     6195,
+     150
+    ]
+   ],
+   "cit_sha": "117c64855584f2f0"
+  },
+  {
+   "afirmacao": "Rastreamento de pré-diabetes pela AMERICAN DIABETES ASSOCIATION: rastreamento UNIVERSAL a cada 3 anos em todos os adultos com 35 anos ou mais, independentemente de fatores de risco.",
+   "secao": "Rastreamento",
+   "cit": [
+    [
+     0,
+     6347,
+     164
+    ]
+   ],
+   "cit_sha": "fcbb659375f06b8d"
+  },
+  {
+   "afirmacao": "US Preventive Services Task Force e American Diabetes Association recomendam glicemia de jejum, HbA1c ou glicemia de 2 horas (2hPG) como teste de rastreamento de pré-diabetes.",
+   "secao": "Rastreamento",
+   "cit": [
+    [
+     0,
+     6513,
+     154
+    ]
+   ],
+   "cit_sha": "96babc9b31912daf"
+  },
+  {
+   "afirmacao": "Os três testes discordam muito entre si: em estudo transversal representativo da população dos EUA, a glicemia de jejum identificou 28,3% dos indivíduos como tendo pré-diabetes, contra 21,7% pela HbA1c e 13,3% pela glicemia de 2 horas; a concordância entre os 3 testes foi de apenas 4,1%.",
+   "secao": "Rastreamento",
+   "cit": [
+    [
+     0,
+     6671,
+     349
+    ]
+   ],
+   "cit_sha": "7e5a46d95ca0c02a"
+  },
+  {
+   "afirmacao": "US Preventive Services Task Force e American Diabetes Association recomendam monitorização ANUAL da progressão para diabetes em indivíduos com pré-diabetes.",
+   "secao": "Rastreamento",
+   "cit": [
+    [
+     0,
+     7023,
+     167
+    ]
+   ],
+   "cit_sha": "62585a6ee4a92e98"
+  },
+  {
+   "afirmacao": "Para DIAGNOSTICAR DIABETES (não pré-diabetes), a American Diabetes Association recomenda apoiar-se em 2 resultados de teste alterados, da mesma amostra ou de 2 amostras separadas; se forem 2 amostras, o segundo teste — repetição do inicial ou um teste diferente — deve ser feito sem demora.",
+   "secao": "Rastreamento",
+   "cit": [
+    [
+     0,
+     7191,
+     330
+    ]
+   ],
+   "cit_sha": "251673cb27d6fcf7"
+  },
+  {
+   "afirmacao": "NÃO existem diretrizes equivalentes sobre repetir o teste para CONFIRMAR o diagnóstico de PRÉ-DIABETES; a baixa concordância entre os 3 testes de rastreamento, em parte por instabilidade de estados como a glicemia de jejum alterada, aumenta a chance de falso-positivo quando se rastreia com um único teste.",
+   "secao": "Rastreamento",
+   "cit": [
+    [
+     0,
+     7523,
+     349
+    ]
+   ],
+   "cit_sha": "8568a37055721e45"
+  },
+  {
+   "afirmacao": "Na GLICEMIA DE JEJUM ALTERADA há produção endógena de glicose mais alta ou \"inapropriada\" por resistência hepática à insulina, menor depuração hepática de glicose e menor capacidade da glicose de estimular a própria captação e suprimir a própria produção; há também função de célula beta prejudicada.",
+   "secao": "Fisiopatologia",
+   "cit": [
+    [
+     0,
+     7904,
+     430
+    ]
+   ],
+   "cit_sha": "ef750104f782cc65"
+  },
+  {
+   "afirmacao": "A INTOLERÂNCIA À GLICOSE caracteriza-se predominantemente por resistência do músculo esquelético, que causa captação retardada de glicose, e por disfunção de célula beta — fisiopatologia distinta da glicemia de jejum alterada.",
+   "secao": "Fisiopatologia",
+   "cit": [
+    [
+     0,
+     8340,
+     153
+    ]
+   ],
+   "cit_sha": "a3a82db1b517a836"
+  },
+  {
+   "afirmacao": "Pessoas com pré-diabetes exibem graus variados de resistência insulínica e disfunção de célula beta, com resistência insulínica quase máxima e perda de função de célula beta de 80% ou mais na intolerância à glicose.",
+   "secao": "Fisiopatologia",
+   "cit": [
+    [
+     0,
+     8499,
+     304
+    ]
+   ],
+   "cit_sha": "574e97670bc830c0"
+  },
+  {
+   "afirmacao": "Como a HbA1c quantifica a glicemia média dos últimos 2 a 3 meses, pacientes com pré-diabetes definido por HbA1c elevada podem ter glicemia de jejum alterada, intolerância à glicose, ou ambas, em piora.",
+   "secao": "Fisiopatologia",
+   "cit": [
+    [
+     0,
+     8806,
+     223
+    ]
+   ],
+   "cit_sha": "691f8d1ac9359b2e"
+  },
+  {
+   "afirmacao": "Taxas ANUAIS de pré-diabetes incidente em adultos que partiam de regulação glicêmica normal: 6,2% no Baltimore Longitudinal Study on Aging (predominantemente brancos), 7,8% entre indígenas Pima e 11% em adultos negros ou brancos com história parental de diabetes tipo 2.",
+   "secao": "Epidemiologia",
+   "cit": [
+    [
+     0,
+     9060,
+     335
+    ]
+   ],
+   "cit_sha": "075b4526678ac93b"
+  },
+  {
+   "afirmacao": "A progressão de regulação glicêmica normal para pré-diabetes associou-se a aumento de peso e resistência insulínica somados a declínio da secreção endógena de insulina, demonstrando que resistência insulínica e falência de célula beta evoluem SIMULTANEAMENTE, e não sequencialmente.",
+   "secao": "Epidemiologia",
+   "cit": [
+    [
+     0,
+     9398,
+     382
+    ]
+   ],
+   "cit_sha": "49d81de915e345b5"
+  },
+  {
+   "afirmacao": "Pessoas que mantiveram regulação glicêmica normal apesar de ganho de peso e resistência insulínica tinham resposta secretora endógena de insulina à carga de glicose bem preservada.",
+   "secao": "Epidemiologia",
+   "cit": [
+    [
+     0,
+     9781,
+     170
+    ]
+   ],
+   "cit_sha": "b7580db685676951"
+  },
+  {
+   "afirmacao": "Investigação post-mortem mostrou queda relativa de aproximadamente 40% no volume de células beta pancreáticas em indivíduos com pré-diabetes em comparação com aqueles com glicemia de jejum normal.",
+   "secao": "Epidemiologia",
+   "cit": [
+    [
+     0,
+     9957,
+     253
+    ]
+   ],
+   "cit_sha": "48d5fe112407370f"
+  },
+  {
+   "afirmacao": "Principais fatores de risco para pré-diabetes: sobrepeso ou obesidade (IMC de 25,0 a 29,9 para sobrepeso e 30 para obesidade, definição da OMS), idade mais avançada, inatividade física e dieta não saudável.",
+   "secao": "Epidemiologia",
+   "cit": [
+    [
+     0,
+     10213,
+     310
+    ]
+   ],
+   "cit_sha": "d386a5d031c42f3e"
+  },
+  {
+   "afirmacao": "No NHANES 2017-2020, o pré-diabetes (definido por glicemia de jejum, glicemia de 2 horas ou HbA1c) foi mais prevalente no grupo de 65 anos ou mais que no de 18 a 44 anos (48,8% vs 27,8%).",
+   "secao": "Epidemiologia",
+   "cit": [
+    [
+     0,
+     11269,
+     256
+    ]
+   ],
+   "cit_sha": "6b6a7a197b3bccbf"
+  },
+  {
+   "afirmacao": "Em amostra nacional dos EUA, mais de 80% dos indivíduos com pré-diabetes tinham sobrepeso ou obesidade.",
+   "secao": "Epidemiologia",
+   "cit": [
+    [
+     0,
+     11528,
+     101
+    ]
+   ],
+   "cit_sha": "e98cbead99b93407"
+  },
+  {
+   "afirmacao": "Meta-análise de 4 coortes alemãs de indivíduos de origem europeia: história de diabetes em pelo menos 1 parente de primeiro grau associou-se a maior chance de pré-diabetes definido como glicemia de jejum alterada, intolerância à glicose ou ambas (odds ratio 1,40; IC 95% 1,27–1,54).",
+   "secao": "Epidemiologia",
+   "cit": [
+    [
+     0,
+     11643,
+     319
+    ]
+   ],
+   "cit_sha": "1204425aa33dbb1e"
+  },
+  {
+   "afirmacao": "Em estudo dos EUA, a taxa de incidência de pré-diabetes foi semelhante (≈11% ao ano) entre filhos de pais com diabetes tipo 2 ao longo de 5 anos, fossem eles negros ou brancos.",
+   "secao": "Epidemiologia",
+   "cit": [
+    [
+     0,
+     11965,
+     213
+    ]
+   ],
+   "cit_sha": "ce71ac843812e8be"
+  },
+  {
+   "afirmacao": "Levantamentos nacionais de adultos americanos de 18 anos ou mais entre 2017 e 2020 mostraram prevalência de pré-diabetes de 38% na população geral.",
+   "secao": "Epidemiologia",
+   "cit": [
+    [
+     0,
+     12181,
+     150
+    ]
+   ],
+   "cit_sha": "d232d3c5070c0621"
+  },
+  {
+   "afirmacao": "A International Diabetes Federation estimou em 2021 prevalência global de INTOLERÂNCIA À GLICOSE de 10,2%, correspondendo a 541 milhões de adultos de 20 a 79 anos, com prevalência menor (5,7%) quando o pré-diabetes era definido por glicemia de jejum alterada.",
+   "secao": "Epidemiologia",
+   "cit": [
+    [
+     0,
+     12334,
+     294
+    ]
+   ],
+   "cit_sha": "b6d2270ce54a248a"
+  },
+  {
+   "afirmacao": "No NHANES 2017-2020 NÃO houve diferenças significativas na prevalência de pré-diabetes entre asiáticos não hispânicos (37,3%), negros não hispânicos (39,2%), hispânicos (35,4%) e brancos não hispânicos (38,7%).",
+   "secao": "Epidemiologia",
+   "cit": [
+    [
+     0,
+     12630,
+     312
+    ],
+    [
+     0,
+     12967,
+     63
+    ]
+   ],
+   "cit_sha": "36733b9e8eb92cb5"
+  },
+  {
+   "afirmacao": "Nas últimas 3 décadas nos EUA a prevalência de pré-diabetes aumentou de forma constante em todos os grupos raciais, étnicos e etários.",
+   "secao": "Epidemiologia",
+   "cit": [
+    [
+     0,
+     13033,
+     139
+    ]
+   ],
+   "cit_sha": "15688a247997f15c"
+  },
+  {
+   "afirmacao": "A International Diabetes Federation projetou que até 2045 o número de adultos com intolerância à glicose será de 730 milhões, ou 11,2% da população adulta mundial; pelo critério de glicemia de jejum alterada a estimativa equivalente é de 441 milhões de adultos, ou 6,2%.",
+   "secao": "Epidemiologia",
+   "cit": [
+    [
+     0,
+     13178,
+     303
+    ]
+   ],
+   "cit_sha": "1ef2ab72c25ac5cb"
+  },
+  {
+   "afirmacao": "A prevalência crescente de obesidade em crianças e adolescentes, e o provável aumento resultante da prevalência de pré-diabetes nessa faixa, podem elevar ainda mais a prevalência de pré-diabetes.",
+   "secao": "Epidemiologia",
+   "cit": [
+    [
+     0,
+     13483,
+     192
+    ]
+   ],
+   "cit_sha": "8e7b9e4863dd319b"
+  },
+  {
+   "afirmacao": "No Baltimore Longitudinal Study of Aging (observacional), 102 de 265 participantes com pré-diabetes progrediram para diabetes em 10 anos de seguimento; o estudo incluiu predominantemente pessoas brancas (96%), o que NÃO é representativo da população dos EUA.",
+   "secao": "Complicações — progressão para diabetes",
+   "cit": [
+    [
+     0,
+     13742,
+     258
+    ]
+   ],
+   "cit_sha": "b1831ada5b24c0de"
+  },
+  {
+   "afirmacao": "Nos ensaios randomizados de prevenção de diabetes na Ásia, Europa e EUA, as taxas ANUAIS de progressão de pré-diabetes para diabetes nos grupos CONTROLE variaram de 5,8% a 18,3%.",
+   "secao": "Complicações — progressão para diabetes",
+   "cit": [
+    [
+     0,
+     14001,
+     215
+    ]
+   ],
+   "cit_sha": "1ac6903b4a214fdb"
+  },
+  {
+   "afirmacao": "No US DPP, que incluiu uma amostra diversa da população americana, a incidência de diabetes no grupo PLACEBO foi de 11,0 por 100 pessoas-ano (IC 95% 9,8–12,3) nos primeiros 2,8 anos do estudo.",
+   "secao": "Complicações — progressão para diabetes",
+   "cit": [
+    [
+     0,
+     14222,
+     211
+    ]
+   ],
+   "cit_sha": "2ac7f8dc709080c4"
+  },
+  {
+   "afirmacao": "Em 30 anos de seguimento no estudo chinês Da Qing, a incidência CUMULATIVA de diabetes foi de 95,9% entre os participantes que entraram com pré-diabetes e foram alocados ao grupo controle.",
+   "secao": "Complicações — progressão para diabetes",
+   "cit": [
+    [
+     0,
+     14436,
+     178
+    ]
+   ],
+   "cit_sha": "2ab878310fe41f84"
+  },
+  {
+   "afirmacao": "Meta-análise de 103 coortes prospectivas (até 24 anos de seguimento): incidência cumulativa de diabetes de 31% em 12 anos para GLICEMIA DE JEJUM ALTERADA (risco relativo 4,32), 41% em 12 anos para INTOLERÂNCIA À GLICOSE (risco relativo 3,61) e 31% em 10 anos para pré-diabetes definido por HbA1c de 5,7% a 6,4% (risco relativo 5,5).",
+   "secao": "Complicações — progressão para diabetes",
+   "cit": [
+    [
+     0,
+     14617,
+     399
+    ]
+   ],
+   "cit_sha": "7841904fd235fed3"
+  },
+  {
+   "afirmacao": "Na mesma meta-análise de coortes prospectivas de pessoas com pré-diabetes: em indivíduos com glicemia de jejum alterada E intolerância à glicose SIMULTÂNEAS o risco relativo de diabetes foi de 6,90; o maior risco relativo foi o dos indivíduos com HbA1c mais alta (risco relativo de 10 para HbA1c de 6,0% a 6,4%).",
+   "secao": "Complicações — progressão para diabetes",
+   "cit": [
+    [
+     0,
+     15019,
+     252
+    ]
+   ],
+   "cit_sha": "e973a2f4b461898a"
+  },
+  {
+   "afirmacao": "A idade de início do pré-diabetes influencia a progressão: idosos (>60 anos) com pré-diabetes parecem desenvolver diabetes a uma taxa MENOR que os de meia-idade (incidência cumulativa ≈9% em 6,5 anos entre indivíduos com 75 anos em média).",
+   "secao": "Complicações — progressão para diabetes",
+   "cit": [
+    [
+     0,
+     15274,
+     331
+    ]
+   ],
+   "cit_sha": "a8b3dc780922dd70"
+  },
+  {
+   "afirmacao": "No US DPP, indivíduos dos principais grupos raciais e étnicos dos EUA progrediram de intolerância à glicose para diabetes tipo 2 em taxas semelhantes, SEM evidência de diferenças étnicas significativas.",
+   "secao": "Complicações — progressão para diabetes",
+   "cit": [
+    [
+     0,
+     15608,
+     236
+    ]
+   ],
+   "cit_sha": "df2f00e6199bfd61"
+  },
+  {
+   "afirmacao": "No grupo controle do US DPP, as taxas brutas de incidência de diabetes por 100 pessoas-ano foram 10,3, 12,4, 11,7, 12,9 e 12,1 nos grupos raciais e étnicos comparados.",
+   "secao": "Complicações — progressão para diabetes",
+   "cit": [
+    [
+     0,
+     15847,
+     125
+    ]
+   ],
+   "cit_sha": "a4ff05780714649f"
+  },
+  {
+   "afirmacao": "Coorte prospectiva de 15 080 adultos por 5 anos: raça ou etnia autodeclarada NÃO foi preditor significativo de diabetes incidente (odds ratio negros vs brancos 0,98; IC 95% 0,69–1,40; odds ratio outras raças vs brancos 1,09; IC 95% 0,59–2,02).",
+   "secao": "Complicações — progressão para diabetes",
+   "cit": [
+    [
+     0,
+     18511,
+     317
+    ]
+   ],
+   "cit_sha": "3fe6cbf60718de25"
+  },
+  {
+   "afirmacao": "Frequência de progressão: ensaios randomizados relataram taxas ANUAIS de progressão de pré-diabetes para diabetes de 5,8% a 18,3%, em seguimento médio de aproximadamente 3 anos, entre participantes NÃO tratados alocados aos grupos controle.",
+   "secao": "Perguntas frequentes",
+   "cit": [
+    [
+     0,
+     16100,
+     242
+    ]
+   ],
+   "cit_sha": "bab748363a52ec4a"
+  },
+  {
+   "afirmacao": "Meta-análise com mais de 250 000 participantes seguidos por até 24 anos relatou incidência cumulativa de diabetes de 31% a 41% em mediana de 12 anos de seguimento (população com pré-diabetes).",
+   "secao": "Perguntas frequentes",
+   "cit": [
+    [
+     0,
+     16690,
+     172
+    ]
+   ],
+   "cit_sha": "fcc5a61e5a071f0d"
+  },
+  {
+   "afirmacao": "Intervenções de estilo de vida eficazes nos ensaios randomizados consistiram em restrição calórica, aumento da atividade física, automonitoramento da ingestão alimentar e do comportamento de exercício, além de apoio para obstáculos psicológicos, sociais e motivacionais.",
+   "secao": "Perguntas frequentes",
+   "cit": [
+    [
+     0,
+     16924,
+     263
+    ]
+   ],
+   "cit_sha": "b1f5afdcdecd53e4"
+  },
+  {
+   "afirmacao": "A AMERICAN DIABETES ASSOCIATION recomenda, em pessoas com PRÉ-DIABETES, perda de peso de pelo menos 7% por dieta saudável e aproximadamente 150 min/semana de atividade física de intensidade moderada.",
+   "secao": "Perguntas frequentes",
+   "cit": [
+    [
+     0,
+     17188,
+     186
+    ]
+   ],
+   "cit_sha": "23231b806afcb415"
+  },
+  {
+   "afirmacao": "Ensaios randomizados de vários medicamentos (metformina, pioglitazona e acarbose) demonstraram eficácia sobre placebo em retardar a progressão para diabetes; porém NENHUM medicamento foi aprovado pela FDA americana para prevenção de diabetes, e os fármacos tendem a perder o efeito quando descontinuados.",
+   "secao": "Perguntas frequentes",
+   "cit": [
+    [
+     0,
+     17456,
+     363
+    ]
+   ],
+   "cit_sha": "29d229207771dd26"
+  },
+  {
+   "afirmacao": "A modificação do estilo de vida é o PILAR (mainstay) da prevenção do diabetes em pessoas com pré-diabetes.",
+   "secao": "Perguntas frequentes",
+   "cit": [
+    [
+     0,
+     17820,
+     62
+    ]
+   ],
+   "cit_sha": "85a1c6cb5c5e6a8d"
+  },
+  {
+   "afirmacao": "Indivíduos com pré-diabetes têm MAIS fatores de risco de doença cardiovascular que pessoas sem pré-diabetes e têm taxas aumentadas de eventos cardiovasculares.",
+   "secao": "Complicações micro e macrovasculares",
+   "cit": [
+    [
+     0,
+     18877,
+     167
+    ]
+   ],
+   "cit_sha": "cc8e29f33fc7c323"
+  },
+  {
+   "afirmacao": "Meta-análise de 129 estudos prospectivos (10 069 955 indivíduos; seguimento mediano 9,8 anos): pré-diabetes na linha de base (definido por intolerância à glicose ou glicemia de jejum alterada) associou-se a maior taxa de doença cardiovascular (58,3 vs 67,0 por 10 000 pessoas-ano) e de mortalidade por todas as causas (73,6 vs 81 por 10 000 pessoas-ano).",
+   "secao": "Complicações micro e macrovasculares",
+   "cit": [
+    [
+     0,
+     19045,
+     575
+    ]
+   ],
+   "cit_sha": "a612571b6af96bc1"
+  },
+  {
+   "afirmacao": "Diferença de risco ABSOLUTO entre pessoas com pré-diabetes e normoglicêmicas: 7,36 por 10 000 pessoas-ano para mortalidade por todas as causas e 8,75 por 10 000 pessoas-ano para doença cardiovascular composta.",
+   "secao": "Complicações micro e macrovasculares",
+   "cit": [
+    [
+     0,
+     19623,
+     257
+    ]
+   ],
+   "cit_sha": "c25effd1056f1a43"
+  },
+  {
+   "afirmacao": "Meta-análise citada no resumo: pré-diabetes na linha de base associou-se a aumento de mortalidade e de eventos cardiovasculares (excesso de risco absoluto de 7,36 por 10 000 pessoas-ano para mortalidade e 8,75 por 10 000 pessoas-ano para doença cardiovascular ao longo de 6,6 anos).",
+   "secao": "Resumo",
+   "cit": [
+    [
+     0,
+     3118,
+     276
+    ]
+   ],
+   "cit_sha": "f56f7728e10af484"
+  },
+  {
+   "afirmacao": "O pré-diabetes associa-se a taxas mais altas de hospitalização.",
+   "secao": "Complicações micro e macrovasculares",
+   "cit": [
+    [
+     0,
+     20113,
+     63
+    ]
+   ],
+   "cit_sha": "af725f916c808269"
+  },
+  {
+   "afirmacao": "Complicações MICROVASCULARES — retinopatia, neuropatia e nefropatia — são FREQUENTES entre indivíduos com pré-diabetes.",
+   "secao": "Complicações micro e macrovasculares",
+   "cit": [
+    [
+     0,
+     20179,
+     137
+    ]
+   ],
+   "cit_sha": "c0f5120d339f58af"
+  },
+  {
+   "afirmacao": "Até 7,9% dos indivíduos com pré-diabetes tinham RETINOPATIA na linha de base no US DPP.",
+   "secao": "Complicações micro e macrovasculares",
+   "cit": [
+    [
+     0,
+     20317,
+     85
+    ]
+   ],
+   "cit_sha": "818be14f58d43d1f"
+  },
+  {
+   "afirmacao": "A proporção de indivíduos com pré-diabetes que tinham NEUROPATIA PERIFÉRICA foi de 7,5% a 16% no NHANES 2009-2014.",
+   "secao": "Complicações micro e macrovasculares",
+   "cit": [
+    [
+     0,
+     20405,
+     124
+    ]
+   ],
+   "cit_sha": "2ee507472cf28645"
+  },
+  {
+   "afirmacao": "A prevalência de DOENÇA RENAL CRÔNICA, baseada na taxa de filtração glomerular estimada, entre indivíduos com pré-diabetes foi de 9,7% no NHANES 2017-2020.",
+   "secao": "Complicações micro e macrovasculares",
+   "cit": [
+    [
+     0,
+     20532,
+     166
+    ]
+   ],
+   "cit_sha": "bf54729a79032ed9"
+  },
+  {
+   "afirmacao": "Em estudos prospectivos, o risco de doença renal crônica associado ao pré-diabetes foi maior que o associado à normoglicemia (risco relativo de 1,10 a 1,50, dependendo da definição de pré-diabetes; taxas absolutas não relatadas).",
+   "secao": "Complicações micro e macrovasculares",
+   "cit": [
+    [
+     0,
+     20701,
+     290
+    ]
+   ],
+   "cit_sha": "ed055677456bf7da"
+  },
+  {
+   "afirmacao": "O pré-diabetes também foi associado a maior frequência de comprometimento cognitivo e de alterações estruturais cerebrais em comparação com a regulação glicêmica normal.",
+   "secao": "Complicações micro e macrovasculares",
+   "cit": [
+    [
+     0,
+     20997,
+     152
+    ]
+   ],
+   "cit_sha": "028b360feb2550f6"
+  },
+  {
+   "afirmacao": "NENHUMA organização profissional recomenda formalmente rastreamento regular de complicações microvasculares ou macrovasculares em indivíduos com pré-diabetes, por falta de dados de efetividade e custo-efetividade.",
+   "secao": "Complicações micro e macrovasculares",
+   "cit": [
+    [
+     0,
+     21155,
+     229
+    ]
+   ],
+   "cit_sha": "21eee5279e7070e1"
+  },
+  {
+   "afirmacao": "Meta-análise com 12 257 adultos de 47 coortes (compostas sobretudo por glicemia de jejum alterada, intolerância à glicose ou ambas, e menos por HbA1c elevada) avaliou a resolução do pré-diabetes para normoglicemia sustentada em 1 a 11 anos: a resolução ocorreu em 33% a 59% dos indivíduos em 1 a 5 anos e em 17% a 42% em 6 a 11 anos, caindo com seguimento mais longo.",
+   "secao": "Remissão espontânea do pré-diabetes",
+   "cit": [
+    [
+     0,
+     21422,
+     556
+    ]
+   ],
+   "cit_sha": "ada18112b05fc9a8"
+  },
+  {
+   "afirmacao": "Entre pessoas com pré-diabetes, o diabetes PODE SER PREVENIDO com modificação intensiva do estilo de vida, como dieta e exercício.",
+   "secao": "Tratamento — estilo de vida",
+   "cit": [
+    [
+     0,
+     22031,
+     140
+    ]
+   ],
+   "cit_sha": "840bba34004834e9"
+  },
+  {
+   "afirmacao": "NENHUM dos ensaios de prevenção de diabetes recrutou participantes usando o critério de HbA1c para pré-diabetes — a evidência de prevenção vem de populações definidas por TOTG/glicemia, não por HbA1c.",
+   "secao": "Tratamento — estilo de vida",
+   "cit": [
+    [
+     0,
+     22177,
+     103
+    ]
+   ],
+   "cit_sha": "c3d8a56b3206b617"
+  },
+  {
+   "afirmacao": "No US DPP, pessoas com INTOLERÂNCIA À GLICOSE foram randomizadas para programa de modificação do estilo de vida, metformina ou placebo.",
+   "secao": "Tratamento — estilo de vida",
+   "cit": [
+    [
+     0,
+     22281,
+     131
+    ]
+   ],
+   "cit_sha": "a740f738a32ec86a"
+  },
+  {
+   "afirmacao": "A intervenção de estilo de vida do US DPP consistiu em 16 sessões individuais centrais ministradas por gerentes de caso (nutricionistas, fisiologistas do exercício ou psicólogos comportamentais treinados) nos primeiros 6 meses, seguidas de sessões presenciais quinzenais de manutenção com contato telefônico entre elas.",
+   "secao": "Tratamento — estilo de vida",
+   "cit": [
+    [
+     0,
+     22678,
+     340
+    ]
+   ],
+   "cit_sha": "87742e67bc8975a0"
+  },
+  {
+   "afirmacao": "No US DPP, a taxa de incidência de diabetes em 3 anos foi de 10,8 casos por 100 pessoas-ano no grupo controle contra 4,8 casos por 100 pessoas-ano com a intervenção de estilo de vida.",
+   "secao": "Tratamento — estilo de vida",
+   "cit": [
+    [
+     0,
+     23021,
+     191
+    ]
+   ],
+   "cit_sha": "bef8ee9c4d8b3844"
+  },
+  {
+   "afirmacao": "Modificação intensiva do estilo de vida (restrição calórica, atividade física aumentada de 150 min/semana, automonitoramento e apoio motivacional) reduziu a incidência de diabetes em 6,2 casos por 100 pessoas-ano em 3 anos; a metformina reduziu o risco de diabetes em pessoas com pré-diabetes em 3,2 casos por 100 pessoas-ano em 3 anos.",
+   "secao": "Resumo",
+   "cit": [
+    [
+     0,
+     3395,
+     374
+    ]
+   ],
+   "cit_sha": "b1668a5a334c250a"
+  },
+  {
+   "afirmacao": "A intervenção de estilo de vida do DPP foi bem tolerada, SEM eventos adversos maiores; a taxa de hospitalização por qualquer motivo foi de 16,1% no placebo, 15,9% na metformina e 15,6% no estilo de vida.",
+   "secao": "Tratamento — estilo de vida",
+   "cit": [
+    [
+     0,
+     23215,
+     240
+    ]
+   ],
+   "cit_sha": "cd5598b0a89aff0d"
+  },
+  {
+   "afirmacao": "No DPP, mais pessoas do grupo estilo de vida que do placebo relataram sintomas musculoesqueléticos (24,1% vs 21,1%); a taxa de óbito por 100 pessoas-ano foi de 0,16% no placebo e 0,10% no estilo de vida, e NENHUMA morte foi atribuída à participação no estudo.",
+   "secao": "Tratamento — estilo de vida",
+   "cit": [
+    [
+     0,
+     23458,
+     273
+    ]
+   ],
+   "cit_sha": "ebaae67d6d15b7db"
+  },
+  {
+   "afirmacao": "Outros ensaios de 3 a 6 anos na China, Finlândia, Japão e Índia mostraram que intervenções de estilo de vida com mudanças dietéticas e aumento de atividade física se associaram a menor incidência de diabetes em comparação com placebo ou cuidado usual.",
+   "secao": "Tratamento — estilo de vida",
+   "cit": [
+    [
+     0,
+     23734,
+     298
+    ]
+   ],
+   "cit_sha": "8ba9d822a4ace7f3"
+  },
+  {
+   "afirmacao": "Na maioria dos ensaios randomizados o efeito da modificação do estilo de vida foi mediado principalmente pela PERDA DE PESO; o Da Qing chinês e o DPP indiano foram exceções, possivelmente por IMC menor no recrutamento (26 [3,8] no Da Qing e 25,8 [3,5] no DPP indiano) que em outros estudos (34 [6,7] no US DPP; 31 [4,6] no estudo finlandês).",
+   "secao": "Tratamento — estilo de vida",
+   "cit": [
+    [
+     0,
+     24033,
+     692
+    ]
+   ],
+   "cit_sha": "670d997ff9419aca"
+  },
+  {
+   "afirmacao": "Na maioria dos ensaios de prevenção, o efeito da modificação do estilo de vida sobre a incidência de diabetes PERSISTIU após a descontinuação da intervenção.",
+   "secao": "Tratamento — estilo de vida",
+   "cit": [
+    [
+     0,
+     24728,
+     166
+    ]
+   ],
+   "cit_sha": "04cda15e2f123566"
+  },
+  {
+   "afirmacao": "Seguimento estendido: DPS finlandês — incidência em 13 anos de 4,5 por 100 pessoas-ano na intervenção e 7,2 no controle; Da Qing chinês — incidência em 30 anos de 117,5 por 1000 pessoas-ano no controle e 70,7 na intervenção; US DPP — incidência cumulativa em 15 anos de 55% no estilo de vida e 62% no placebo.",
+   "secao": "Tratamento — estilo de vida",
+   "cit": [
+    [
+     0,
+     24895,
+     423
+    ]
+   ],
+   "cit_sha": "58fe54d89f97b73c"
+  },
+  {
+   "afirmacao": "No DPP, apesar de melhorias em fatores de risco cardiovascular (pressão sistólica, LDL-colesterol e triglicerídeos), a intervenção de estilo de vida dos primeiros 2,8 anos NÃO reduziu significativamente os riscos de nefropatia, retinopatia ou neuropatia após 15 anos de seguimento (prevalência de complicações de 11,3% no estilo de vida vs 12,4% no placebo).",
+   "secao": "Tratamento — estilo de vida",
+   "cit": [
+    [
+     0,
+     28469,
+     459
+    ]
+   ],
+   "cit_sha": "33cd92c2c0b4b78a"
+  },
+  {
+   "afirmacao": "No DPP, a aterosclerose subclínica pelo cálcio de artéria coronária após 14 anos foi de 75% no estilo de vida vs 84% no placebo, enquanto os eventos cardiovasculares em 21 anos tiveram incidência bruta de 5,28 por 1000 pessoas-ano no placebo vs 6,10 no estilo de vida.",
+   "secao": "Tratamento — estilo de vida",
+   "cit": [
+    [
+     0,
+     28931,
+     323
+    ]
+   ],
+   "cit_sha": "36dc00ebb0d3884b"
+  },
+  {
+   "afirmacao": "No estudo Da Qing, a modificação do estilo de vida associou-se a redução significativa de diabetes tanto no período ativo de 6 anos do ensaio quanto no período pós-ensaio, e mostrou resultados favoráveis de longo prazo para desfechos cardiovasculares e microvasculares.",
+   "secao": "Tratamento — estilo de vida",
+   "cit": [
+    [
+     0,
+     29257,
+     320
+    ]
+   ],
+   "cit_sha": "c247144577b5087e"
+  },
+  {
+   "afirmacao": "No relatório de 30 anos do estudo Da Qing, a modificação prévia do estilo de vida associou-se a redução significativa de MORTE CARDIOVASCULAR (incidência cumulativa de 45,7% no grupo intervenção vs 56,3% no comparador — a frase é partida pela Tabela 3 no PDF, e a palavra \"controle\" só aparece na página seguinte).",
+   "secao": "Tratamento — estilo de vida",
+   "cit": [
+    [
+     0,
+     29593,
+     189
+    ]
+   ],
+   "cit_sha": "11283f1b631a08b2"
+  },
+  {
+   "afirmacao": "No estudo Da Qing (continuação da frase do relatório de 30 anos, partida pela Tabela 3 no PDF), os EVENTOS de doença cardiovascular tiveram incidência cumulativa de 52,9% no grupo intervenção vs 66,5% no controle após 30 anos de seguimento.",
+   "secao": "Tratamento — estilo de vida",
+   "cit": [
+    [
+     0,
+     33488,
+     165
+    ]
+   ],
+   "cit_sha": "94a99211398aeaf7"
+  },
+  {
+   "afirmacao": "O Da Qing mostrou redução da carga combinada de complicações MICROVASCULARES (retinopatia, nefropatia e neuropatia) após 30 anos de seguimento (incidência cumulativa de 25,1% no grupo intervenção vs 34,0% no controle).",
+   "secao": "Tratamento — estilo de vida",
+   "cit": [
+    [
+     0,
+     33656,
+     248
+    ]
+   ],
+   "cit_sha": "d582065df99944a4"
+  },
+  {
+   "afirmacao": "Indivíduos com pré-diabetes PERSISTENTE que NÃO progridem para diabetes ainda podem enfrentar riscos aumentados de complicações.",
+   "secao": "Tratamento — estilo de vida",
+   "cit": [
+    [
+     0,
+     33907,
+     120
+    ]
+   ],
+   "cit_sha": "2e4c2e4d99cc0736"
+  },
+  {
+   "afirmacao": "Após 3 anos de seguimento na fase ATIVA do US DPP, 40% dos participantes do grupo de modificação intensiva do estilo de vida atingiram tolerância normal à glicose, contra 20% nos grupos metformina ou placebo.",
+   "secao": "Tratamento — estilo de vida",
+   "cit": [
+    [
+     0,
+     34033,
+     202
+    ]
+   ],
+   "cit_sha": "5c51522e905fed03"
+  },
+  {
+   "afirmacao": "Fatores associados a alta probabilidade de REVERSÃO à regulação glicêmica normal entre participantes do DPP: menores glicemia de jejum e glicemia de 2 horas basais, idade mais jovem, maior resposta insulínica à carga de glicose e perda de peso.",
+   "secao": "Tratamento — estilo de vida",
+   "cit": [
+    [
+     0,
+     34241,
+     250
+    ]
+   ],
+   "cit_sha": "6d95cd6d473e89b1"
+  },
+  {
+   "afirmacao": "Análise post hoc do DPP Outcomes Study mostrou MENOR risco de diabetes 10 anos após a randomização entre os que conseguiram regulação glicêmica normal nos 6 anos seguintes à intervenção ativa (incidência cumulativa de diabetes em 6 anos de 2,6% nos que atingiram normoglicemia vs 3,2% nos que permaneceram com pré-diabetes).",
+   "secao": "Tratamento — estilo de vida",
+   "cit": [
+    [
+     0,
+     34494,
+     393
+    ]
+   ],
+   "cit_sha": "a50e6c21f670a50a"
+  },
+  {
+   "afirmacao": "No DPP, os benefícios de longo prazo de atingir regulação glicêmica normal incluíram menor risco de diabetes, menor prevalência de doença microvascular e menor risco macrovascular.",
+   "secao": "Tratamento — estilo de vida",
+   "cit": [
+    [
+     0,
+     34890,
+     183
+    ]
+   ],
+   "cit_sha": "db1f0f5d3b383105"
+  },
+  {
+   "afirmacao": "Meta-análise de 47 ensaios randomizados (n = 26 460 participantes) mostrou evidência FORTE para modificação do estilo de vida e evidência MODERADA para fármacos na obtenção de normoglicemia em pessoas com pré-diabetes.",
+   "secao": "Tratamento — estilo de vida",
+   "cit": [
+    [
+     0,
+     35079,
+     209
+    ]
+   ],
+   "cit_sha": "ab13ba981f6b012d"
+  },
+  {
+   "afirmacao": "Tabela 2 — Da Qing (China, 1986-1992; pré-diabetes definido por INTOLERÂNCIA À GLICOSE; idade 45 anos, IMC 25,8; braços dieta n=130, exercício n=141, dieta+exercício n=126, controle n=133; SEM meta específica de peso; seguimento médio 6 anos): incidência cumulativa de diabetes de 65,9% no controle vs 47,1% na dieta, 44,2% no exercício e 44,6% em dieta + exercício.",
+   "secao": "Tabela 2 — ensaios de estilo de vida",
+   "cit": [
+    [
+     0,
+     25985,
+     292
+    ]
+   ],
+   "cit_sha": "e105497253202ae0"
+  },
+  {
+   "afirmacao": "Tabela 2, coluna \"Relative risk reduction for diabetes, %\" no ensaio Da Qing: redução de risco RELATIVO de diabetes de 31,5% com dieta, 46% com exercício e 42% com dieta + exercício.",
+   "secao": "Tabela 2 — ensaios de estilo de vida",
+   "cit": [
+    [
+     0,
+     25908,
+     76
+    ],
+    [
+     0,
+     26118,
+     45
+    ]
+   ],
+   "cit_sha": "1a1edb48b830c1b2"
+  },
+  {
+   "afirmacao": "Tabela 2 — DPS finlandês (Finlândia, 1993-2001; INTOLERÂNCIA À GLICOSE; idade 55 anos, IMC 31; dieta+exercício n=265 vs controle n=257; meta de perda de peso >5%; seguimento médio 4 anos): taxa de incidência de 32 casos por 1000 pessoas-ano no grupo dieta e exercício vs 78 no controle.",
+   "secao": "Tabela 2 — ensaios de estilo de vida",
+   "cit": [
+    [
+     0,
+     26284,
+     226
+    ]
+   ],
+   "cit_sha": "ac8975066a6c96b1"
+  },
+  {
+   "afirmacao": "Tabela 2 — US DPP (EUA, 1996-2001; INTOLERÂNCIA À GLICOSE, com glicemia de jejum alterada em alguns; idade 51 anos, IMC 34; dieta+exercício n=1079, metformina n=1073, controle n=1082; META DE PERDA DE PESO 7%; seguimento médio 2,8 anos): incidência de 10,8 por 100 pessoas-ano no placebo vs 7,8 na metformina e 4,8 no estilo de vida.",
+   "secao": "Tabela 2 — ensaios de estilo de vida",
+   "cit": [
+    [
+     0,
+     26517,
+     310
+    ]
+   ],
+   "cit_sha": "38a5c6037e0b0c9a"
+  },
+  {
+   "afirmacao": "Tabela 2, coluna \"Relative risk reduction for diabetes, %\" no US DPP: redução de risco RELATIVO de diabetes de 58% com dieta e exercício e de 31% com metformina (os 31% da metformina reaparecem na Tabela 3 do mesmo artigo).",
+   "secao": "Tabela 2 — ensaios de estilo de vida",
+   "cit": [
+    [
+     0,
+     26517,
+     169
+    ]
+   ],
+   "cit_sha": "98b0932e46b2c5bf"
+  },
+  {
+   "afirmacao": "Tabela 2, coluna \"Reversal of prediabetes, %\" no US DPP: reversão do pré-diabetes em 40% com estilo de vida e 20% com metformina (os mesmos 40% e 20% aparecem no texto corrido do artigo).",
+   "secao": "Tabela 2 — ensaios de estilo de vida",
+   "cit": [
+    [
+     0,
+     26687,
+     171
+    ]
+   ],
+   "cit_sha": "f1f4e64b2c7bc537"
+  },
+  {
+   "afirmacao": "Tabela 2 — ensaio japonês (Japão, 1984-2003; INTOLERÂNCIA À GLICOSE, apenas homens; IMC 24; dieta+exercício n=102 vs controle n=356; SEM meta específica de peso; seguimento médio 4 anos): incidência cumulativa de diabetes de 9,3% no controle vs 3,0% no grupo intervenção (dieta e exercício).",
+   "secao": "Tabela 2 — ensaios de estilo de vida",
+   "cit": [
+    [
+     0,
+     26859,
+     236
+    ]
+   ],
+   "cit_sha": "d01e6df39054c246"
+  },
+  {
+   "afirmacao": "Tabela 2 — DPP indiano 1 (Índia, 2003-2005; INTOLERÂNCIA À GLICOSE; idade 46 anos, IMC 25,8; dieta+exercício n=133, metformina n=133, dieta+exercício+metformina n=136, controle n=136; SEM meta específica de peso; seguimento médio 3 anos): incidência cumulativa de 55,0% no controle vs 39,3% em dieta e exercício, 40,5% em metformina e 39,5% em dieta, exercício e metformina.",
+   "secao": "Tabela 2 — ensaios de estilo de vida",
+   "cit": [
+    [
+     0,
+     27115,
+     383
+    ]
+   ],
+   "cit_sha": "5309d72152a1cbdf"
+  },
+  {
+   "afirmacao": "Tabela 2 — DPP indiano 2 (Índia, 2003-2005; INTOLERÂNCIA À GLICOSE; idade 45 anos, IMC 26; dieta+exercício n=203 vs dieta+exercício+pioglitazona n=204; seguimento médio 3 anos): incidência cumulativa de 31,6% no grupo dieta e exercício vs 29,8% no grupo pioglitazona — acrescentar pioglitazona ao estilo de vida NÃO ajudou.",
+   "secao": "Tabela 2 — ensaios de estilo de vida",
+   "cit": [
+    [
+     0,
+     27505,
+     283
+    ]
+   ],
+   "cit_sha": "c26788ef3a49c21d"
+  },
+  {
+   "afirmacao": "Fatores de risco maiores para pré-diabetes no algoritmo da Figura: história familiar de diabetes, idade mais avançada, sobrepeso ou obesidade, inatividade física e história de diabetes mellitus gestacional (DMG).",
+   "secao": "Figura — algoritmo",
+   "cit": [
+    [
+     0,
+     37980,
+     177
+    ]
+   ],
+   "cit_sha": "a841e1ece622b8cc"
+  },
+  {
+   "afirmacao": "Critérios para DIAGNÓSTICO de pré-diabetes no algoritmo da Figura desta revisão do JAMA (2023), que reproduz os cortes da American Diabetes Association: glicemia de jejum (FPG) 100–125 mg/dL, glicemia de 2 horas 140–199 mg/dL e HbA1c 5,7%–6,4%.",
+   "secao": "Figura — algoritmo",
+   "cit": [
+    [
+     0,
+     38158,
+     311
+    ]
+   ],
+   "cit_sha": "d3fa3ce60342f67d"
+  },
+  {
+   "afirmacao": "INDICAÇÕES DE METFORMINA no algoritmo da Figura: glicemia de jejum ≥110 mg/dL, HbA1c ≥6,0% e preferência do paciente. ⚠️ São cortes para INDICAR METFORMINA, e NÃO para diagnosticar pré-diabetes — o diagnóstico usa jejum 100–125 mg/dL e HbA1c 5,7%–6,4%.",
+   "secao": "Figura — algoritmo",
+   "cit": [
+    [
+     0,
+     38158,
+     311
+    ]
+   ],
+   "cit_sha": "d3fa3ce60342f67d"
+  },
+  {
+   "afirmacao": "A modificação do estilo de vida é a abordagem INICIAL PREFERIDA após o diagnóstico de pré-diabetes; a metformina entra na resposta subótima ao estilo de vida. O algoritmo específico da Figura NÃO foi testado em ensaios clínicos randomizados.",
+   "secao": "Figura — algoritmo",
+   "cit": [
+    [
+     0,
+     38470,
+     243
+    ]
+   ],
+   "cit_sha": "4d77f3c940b71279"
+  },
+  {
+   "afirmacao": "Modificação DIETÉTICA no algoritmo: reduzir a ingestão calórica em 700 kcal/dia, com foco em gorduras saturadas e açúcares simples.",
+   "secao": "Figura — algoritmo",
+   "cit": [
+    [
+     0,
+     37435,
+     102
+    ]
+   ],
+   "cit_sha": "23a198ae72f16199"
+  },
+  {
+   "afirmacao": "ATIVIDADE FÍSICA no algoritmo: aumentar a atividade para ≥30 min/dia em 5 ou mais dias por semana.",
+   "secao": "Figura — algoritmo",
+   "cit": [
+    [
+     0,
+     37538,
+     75
+    ]
+   ],
+   "cit_sha": "91e4ea32593c84a8"
+  },
+  {
+   "afirmacao": "Meta de PERDA DE PESO no algoritmo: individualizada, tipicamente ≥7% do peso corporal em quem tem sobrepeso ou obesidade.",
+   "secao": "Figura — algoritmo",
+   "cit": [
+    [
+     0,
+     37811,
+     98
+    ]
+   ],
+   "cit_sha": "b5c93947b8074a65"
+  },
+  {
+   "afirmacao": "AUTOMONITORAMENTO no algoritmo: registrar tipos de alimento, porções, calorias, minutos de atividade e passos dados a cada dia.",
+   "secao": "Figura — algoritmo",
+   "cit": [
+    [
+     0,
+     37710,
+     100
+    ]
+   ],
+   "cit_sha": "f1db2c8394d34dbe"
+  },
+  {
+   "afirmacao": "Contato com a equipe terapêutica no algoritmo: visitas presenciais frequentes no início, seguidas de visitas menos frequentes, com visitas virtuais opcionais.",
+   "secao": "Figura — algoritmo",
+   "cit": [
+    [
+     0,
+     37310,
+     124
+    ]
+   ],
+   "cit_sha": "4c5a784c39f5d859"
+  },
+  {
+   "afirmacao": "Durante terapia PROLONGADA com metformina, avaliar os pacientes quanto a deficiência de vitamina B12.",
+   "secao": "Figura — algoritmo",
+   "cit": [
+    [
+     0,
+     37614,
+     95
+    ]
+   ],
+   "cit_sha": "5fa366f86b1d6316"
+  },
+  {
+   "afirmacao": "Outras medidas no algoritmo do pré-diabetes: cessação do tabagismo, melhora da higiene do sono e redução do estresse.",
+   "secao": "Figura — algoritmo",
+   "cit": [
+    [
+     0,
+     37910,
+     69
+    ]
+   ],
+   "cit_sha": "9f7576784d185691"
+  },
+  {
+   "afirmacao": "Vários ensaios randomizados demonstraram que, comparada ao placebo, a METFORMINA reduziu a incidência de diabetes em pessoas com pré-diabetes: no US DPP as taxas brutas em 3 anos foram 11,0 e 7,8 por 100 pessoas-ano no placebo e na metformina; no DPP indiano a incidência cumulativa em 3 anos foi 55,0% e 40,5%.",
+   "secao": "Tratamento — fármacos",
+   "cit": [
+    [
+     0,
+     35475,
+     297
+    ]
+   ],
+   "cit_sha": "f0fb583d4490e0e1"
+  },
+  {
+   "afirmacao": "Embora a metformina tenha sido MENOS eficaz que a modificação do estilo de vida no DPP, teve efeito SEMELHANTE ao do estilo de vida entre indivíduos com IMC 35 ou mais (taxas brutas de incidência em 3 anos por 100 pessoas-ano de 14,3 no placebo, 7,0 na metformina e 7,3 no estilo de vida).",
+   "secao": "Tratamento — fármacos",
+   "cit": [
+    [
+     0,
+     35773,
+     365
+    ]
+   ],
+   "cit_sha": "86432c894cdcd832"
+  },
+  {
+   "afirmacao": "Em MULHERES COM HISTÓRIA DE DIABETES GESTACIONAL, metformina e modificação intensiva do estilo de vida preveniram de modo SEMELHANTE a progressão de pré-diabetes para diabetes (taxas de incidência ajustadas por idade em 10 anos por 100 pessoas-ano de 11,4 no placebo, 6,7 na metformina e 7,6 no estilo de vida).",
+   "secao": "Tratamento — fármacos",
+   "cit": [
+    [
+     0,
+     36141,
+     294
+    ]
+   ],
+   "cit_sha": "bad65d027ddd3a9e"
+  },
+  {
+   "afirmacao": "Após 15 anos no DPP Outcomes Study, a metformina (vs placebo) teve efeito MAIOR sobre a incidência de diabetes em mulheres com história de diabetes gestacional (diferença absoluta de −4,57 casos por 100 pessoas-ano) do que em mulheres paridas SEM história de diabetes gestacional (−0,38 casos por 100 pessoas-ano).",
+   "secao": "Tratamento — fármacos",
+   "cit": [
+    [
+     0,
+     36464,
+     437
+    ]
+   ],
+   "cit_sha": "44b58bd56dfe3bf2"
+  },
+  {
+   "afirmacao": "A metformina NÃO se associou a menor risco de diabetes em todas as faixas etárias: foi MENOS eficaz que o placebo na redução da incidência de diabetes em 2,8 anos entre participantes do DPP com 60 anos ou mais.",
+   "secao": "Tratamento — fármacos",
+   "cit": [
+    [
+     0,
+     36919,
+     215
+    ]
+   ],
+   "cit_sha": "d1611a4b83f23cd1"
+  },
+  {
+   "afirmacao": "No US DPP, a diferença absoluta da taxa de incidência de diabetes com metformina vs placebo foi de 1,2 casos por 100 pessoas-ano na faixa etária mais velha, contra −4,9 casos por 100 pessoas-ano nos participantes de 25 a 44 anos (o benefício da metformina concentrou-se nos mais jovens).",
+   "secao": "Tratamento — fármacos",
+   "cit": [
+    [
+     0,
+     38987,
+     125
+    ]
+   ],
+   "cit_sha": "5390244d988aa286"
+  },
+  {
+   "afirmacao": "A AMERICAN DIABETES ASSOCIATION recomenda que a metformina seja CONSIDERADA em subgrupos específicos de pacientes com pré-diabetes — IMC 35 ou mais, idade menor que 60 anos, mulheres com história de diabetes gestacional, ou glicemia de jejum mais alta.",
+   "secao": "Tratamento — fármacos",
+   "cit": [
+    [
+     0,
+     39115,
+     292
+    ]
+   ],
+   "cit_sha": "b0f51b866c670153"
+  },
+  {
+   "afirmacao": "A metformina para PREVENIR diabetes em pessoas com pré-diabetes é MAIS EFICAZ para mulheres com diabetes gestacional prévio e para indivíduos com menos de 60 anos com IMC de 35 ou mais, glicemia de jejum de 110 mg/dL ou mais, ou HbA1c de 6,0% ou mais — são os porteiros de indicação usados por esta revisão do JAMA (2023).",
+   "secao": "Resumo",
+   "cit": [
+    [
+     0,
+     3770,
+     237
+    ]
+   ],
+   "cit_sha": "95c0cae322ce5033"
+  },
+  {
+   "afirmacao": "No US DPP, o tratamento com metformina, comparado ao placebo, associou-se a maior frequência de sintomas GASTROINTESTINAIS (77,8 vs 30,7 eventos por 100 pessoas-ano).",
+   "secao": "Tratamento — fármacos",
+   "cit": [
+    [
+     0,
+     39463,
+     167
+    ]
+   ],
+   "cit_sha": "621377fc98b47447"
+  },
+  {
+   "afirmacao": "Indivíduos em tratamento PROLONGADO com metformina podem apresentar má absorção de vitamina B12 e de fator intrínseco e DEVEM ser monitorados para deficiência de vitamina B12.",
+   "secao": "Tratamento — fármacos",
+   "cit": [
+    [
+     0,
+     39633,
+     177
+    ]
+   ],
+   "cit_sha": "ace259c33e750379"
+  },
+  {
+   "afirmacao": "TIAZOLIDINEDIONAS na prevenção de diabetes em pré-diabetes (3 ensaios): DPP (incidência em 1 ano por 100 pessoas-ano de 3,0 com troglitazona vs 12,0 com placebo), DREAM (incidência cumulativa em 3 anos de 10,6% com rosiglitazona vs 25,0% com placebo) e ACT NOW (incidência em 3 anos por 100 pessoas-ano de 2,1 com pioglitazona vs 7,6 com placebo).",
+   "secao": "Tratamento — fármacos",
+   "cit": [
+    [
+     0,
+     39816,
+     485
+    ]
+   ],
+   "cit_sha": "551459fcc793b74c"
+  },
+  {
+   "afirmacao": "INIBIDORES DA α-GLICOSIDASE em pré-diabetes: STOP-NIDDM (incidência cumulativa em 3 anos de 32% com acarbose vs 42% com placebo), estudo ACE (incidência em 5 anos por 100 pessoas-ano de 3,2 com acarbose vs 3,8 com placebo) e estudo japonês (incidência cumulativa em 1 ano de 8% com voglibose vs 17% com placebo).",
+   "secao": "Tratamento — fármacos",
+   "cit": [
+    [
+     0,
+     40302,
+     441
+    ]
+   ],
+   "cit_sha": "473c5f1a78d13623"
+  },
+  {
+   "afirmacao": "ANÁLOGOS DE GLP-1 em pré-diabetes: liraglutida (incidência cumulativa de diabetes em 3 anos de 2% vs 6% com placebo) e semaglutida (na semana 68, diabetes tipo 2 em 0,5% dos participantes que tinham pré-diabetes na semana 0 com semaglutida vs 3,0% com placebo, programa STEP).",
+   "secao": "Tratamento — fármacos",
+   "cit": [
+    [
+     0,
+     40744,
+     433
+    ]
+   ],
+   "cit_sha": "6741492cb409995c"
+  },
+  {
+   "afirmacao": "A TIRZEPATIDA causa perda de peso significativa, mas, até onde os autores desta revisão de 2023 sabiam, NÃO havia dados publicados sobre prevenção da progressão de pré-diabetes para diabetes.",
+   "secao": "Tratamento — fármacos",
+   "cit": [
+    [
+     0,
+     41178,
+     247
+    ]
+   ],
+   "cit_sha": "b368a8c3ef0b556d"
+  },
+  {
+   "afirmacao": "O efeito de longo prazo dos FÁRMACOS para prevenir diabetes tem sido geralmente MENOR que o da modificação intensiva do estilo de vida; após a cessação do medicamento a glicemia tipicamente retorna à faixa pré-diabética original, enquanto a modificação do estilo de vida tem efeito mais sustentável.",
+   "secao": "Tratamento — fármacos",
+   "cit": [
+    [
+     0,
+     41428,
+     292
+    ]
+   ],
+   "cit_sha": "14ee0b0d1aac5115"
+  },
+  {
+   "afirmacao": "Fármacos como metformina ou tiazolidinediona NÃO têm efeitos permanentes sobre a resistência insulínica e a disfunção de célula beta, o que provavelmente explica a falta de efeito sustentado.",
+   "secao": "Tratamento — fármacos",
+   "cit": [
+    [
+     0,
+     41726,
+     186
+    ]
+   ],
+   "cit_sha": "a121682569173999"
+  },
+  {
+   "afirmacao": "Nos ensaios randomizados NÃO houve benefício ADITIVO na redução do risco de diabetes além do obtido com a modificação do estilo de vida (incidência cumulativa em 3 anos de 31,6% no placebo vs 29,8% na pioglitazona; e de 39,5% nos grupos metformina e estilo de vida vs 55,0% no placebo).",
+   "secao": "Tratamento — fármacos",
+   "cit": [
+    [
+     0,
+     41913,
+     356
+    ]
+   ],
+   "cit_sha": "5b589a90c74c3410"
+  },
+  {
+   "afirmacao": "Estudo que COMBINOU metformina e rosiglitazona em pessoas com pré-diabetes relatou MAIOR redução do risco de diabetes que cada medicamento isolado (incidência cumulativa em 3,9 anos de 14% no grupo metformina + rosiglitazona vs 39% no placebo).",
+   "secao": "Tratamento — fármacos",
+   "cit": [
+    [
+     0,
+     42276,
+     275
+    ]
+   ],
+   "cit_sha": "54bac96c605e6274"
+  },
+  {
+   "afirmacao": "A evidência de que medicamentos reduzam desfechos cardiovasculares, microvasculares e de mortalidade é LIMITADA; análise post hoc do STOP-NIDDM relatou efeito benéfico da acarbose sobre eventos cardiovasculares em pessoas com pré-diabetes (incidência cumulativa de eventos de 4,7% no placebo vs 2,2% na acarbose).",
+   "secao": "Tratamento — fármacos",
+   "cit": [
+    [
+     0,
+     42552,
+     359
+    ]
+   ],
+   "cit_sha": "d10438ac4b0d0e1e"
+  },
+  {
+   "afirmacao": "Tabela 3 (ensaios randomizados de medicamentos para prevenir diabetes tipo 2) — TRIPOD (EUA, 2002; intolerância à glicose em MULHERES COM HISTÓRIA DE DIABETES GESTACIONAL; IMC 30; troglitazona vs placebo; n=266; seguimento 2,5 anos): redução de risco relativo de 55% (IC 95% 17 a 75); taxa anual de incidência de diabetes de 12,1% no placebo vs 5,4% na troglitazona.",
+   "secao": "Tabela 3 — ensaios de fármacos",
+   "cit": [
+    [
+     0,
+     29875,
+     447
+    ]
+   ],
+   "cit_sha": "a0cce990668bddd5"
+  },
+  {
+   "afirmacao": "Tabela 3 — STOP-NIDDM (internacional, 2002; intolerância à glicose e glicemia de jejum alterada; IMC 31; ACARBOSE vs placebo; n=1429; seguimento 3,3 anos): redução de risco relativo de 25% (IC de 10 a 37); incidência cumulativa de 42% no placebo vs 32% na acarbose.",
+   "secao": "Tabela 3 — ensaios de fármacos",
+   "cit": [
+    [
+     0,
+     30323,
+     172
+    ]
+   ],
+   "cit_sha": "0986c42922581e2a"
+  },
+  {
+   "afirmacao": "Tabela 3 — US DPP (EUA, 2002; intolerância à glicose e glicemia de jejum alterada; IMC 34; METFORMINA vs placebo; n=3234; seguimento 2,8 anos): redução de risco relativo de 31% (IC de 17 a 43); incidência de 11,0 por 100 pessoas-ano no placebo vs 7,8 na metformina.",
+   "secao": "Tabela 3 — ensaios de fármacos",
+   "cit": [
+    [
+     0,
+     30496,
+     171
+    ]
+   ],
+   "cit_sha": "2ad2e8c7a92765ae"
+  },
+  {
+   "afirmacao": "Tabela 3 — DPP troglitazona (EUA, 2005; intolerância à glicose; TROGLITAZONA vs placebo; n=585; seguimento 0,9 ano): redução de risco relativo de 75% (IC não relatado); incidência de 3,0 por 100 pessoas-ano na troglitazona vs 12,0 no placebo.",
+   "secao": "Tabela 3 — ensaios de fármacos",
+   "cit": [
+    [
+     0,
+     30668,
+     156
+    ]
+   ],
+   "cit_sha": "41aff9b6e83d1689"
+  },
+  {
+   "afirmacao": "Tabela 3 — XENDOS (internacional, 2006; regulação glicêmica normal E intolerância à glicose; IMC 37; ORLISTATE vs placebo; n=3305; seguimento 4 anos): redução de risco relativo de 37% (IC de 14 a 54); incidência cumulativa de 9% no placebo vs 6,2% no orlistate.",
+   "secao": "Tabela 3 — ensaios de fármacos",
+   "cit": [
+    [
+     0,
+     30825,
+     188
+    ]
+   ],
+   "cit_sha": "12d9256237945074"
+  },
+  {
+   "afirmacao": "Tabela 3 — DPP indiano 1 (Índia, 2006; intolerância à glicose; IMC 25,8; METFORMINA vs placebo; n=531; seguimento 2,5 anos): redução de risco relativo de 26,4% (IC de 19,1 a 35,1); incidência cumulativa de 55,0% no placebo vs 40,5% na metformina.",
+   "secao": "Tabela 3 — ensaios de fármacos",
+   "cit": [
+    [
+     0,
+     31014,
+     170
+    ]
+   ],
+   "cit_sha": "1555273295a68c23"
+  },
+  {
+   "afirmacao": "Tabela 3 — DPP indiano 2 (Índia, 2006; intolerância à glicose; IMC 25,9; PIOGLITAZONA vs placebo; n=407; seguimento 3 anos): redução de risco relativo de apenas 2% (IC de −44 a 33, ou seja, SEM benefício demonstrado); incidência cumulativa de 31,6% no placebo vs 29,8% na pioglitazona.",
+   "secao": "Tabela 3 — ensaios de fármacos",
+   "cit": [
+    [
+     0,
+     31185,
+     168
+    ]
+   ],
+   "cit_sha": "5996fa48689a8d93"
+  },
+  {
+   "afirmacao": "Tabela 3 — DREAM rosiglitazona (internacional, 2006; intolerância à glicose e glicemia de jejum alterada; IMC 30,9; ROSIGLITAZONA vs placebo; n=5269; seguimento 3 anos): redução de risco relativo de 62% (IC de 56 a 67); incidência cumulativa de 25,0% no placebo vs 10,6% na rosiglitazona.",
+   "secao": "Tabela 3 — ensaios de fármacos",
+   "cit": [
+    [
+     0,
+     31354,
+     181
+    ]
+   ],
+   "cit_sha": "54597100b71e214e"
+  },
+  {
+   "afirmacao": "Tabela 3 — DREAM ramipril (internacional, 2006; intolerância à glicose e glicemia de jejum alterada; IMC 30,9; RAMIPRIL vs placebo; n=5269; seguimento 3 anos): redução de risco relativo de 9% (IC de −3 a 20, sem significância); incidência cumulativa de 19,5% no placebo vs 18,1% no ramipril.",
+   "secao": "Tabela 3 — ensaios de fármacos",
+   "cit": [
+    [
+     0,
+     31536,
+     170
+    ]
+   ],
+   "cit_sha": "8ccf895bb8366b45"
+  },
+  {
+   "afirmacao": "Tabela 3 — ensaio de VOGLIBOSE (Japão, 2006; intolerância à glicose; IMC 25,8; voglibose vs placebo; n=1780; seguimento 0,9 ano): redução de risco relativo de 40% (IC de 18 a 57); incidência cumulativa de 17% no placebo vs 8% na voglibose.",
+   "secao": "Tabela 3 — ensaios de fármacos",
+   "cit": [
+    [
+     0,
+     31707,
+     163
+    ]
+   ],
+   "cit_sha": "b549f5e40369ae1b"
+  },
+  {
+   "afirmacao": "Tabela 3 — NAVIGATOR nateglinida (internacional, 2010; intolerância à glicose e glicemia de jejum alterada; IMC 30,5; NATEGLINIDA vs placebo; n=9306; seguimento 5 anos): −7% (IC de −15 a 0), ou seja, FALTA de redução de risco, favorecendo o placebo; incidência cumulativa de 34% no placebo e 34% na nateglinida.",
+   "secao": "Tabela 3 — ensaios de fármacos",
+   "cit": [
+    [
+     0,
+     31871,
+     195
+    ]
+   ],
+   "cit_sha": "88a035cde1280b64"
+  },
+  {
+   "afirmacao": "Tabela 3 — NAVIGATOR valsartana (internacional, 2010; intolerância à glicose e glicemia de jejum alterada; IMC 30,5; VALSARTANA vs placebo; n=9306; seguimento 5 anos): redução de risco relativo de 14% (IC de 8 a 20); incidência cumulativa de 36,8% no placebo vs 33,1% na valsartana.",
+   "secao": "Tabela 3 — ensaios de fármacos",
+   "cit": [
+    [
+     0,
+     32067,
+     176
+    ]
+   ],
+   "cit_sha": "a8df8ba05759ab36"
+  },
+  {
+   "afirmacao": "Tabela 3 — ACT NOW (EUA, 2010; intolerância à glicose; IMC 33,7; PIOGLITAZONA vs placebo; n=602; seguimento 2,4 anos): redução de risco relativo de 72% (IC de 51 a 84); incidência de 7,6 por 100 pessoas-ano no placebo vs 2,1 na pioglitazona.",
+   "secao": "Tabela 3 — ensaios de fármacos",
+   "cit": [
+    [
+     0,
+     32244,
+     177
+    ]
+   ],
+   "cit_sha": "92eb7c427bdc4d49"
+  },
+  {
+   "afirmacao": "Tabela 3 — CANOE (Canadá, 2010; intolerância à glicose; IMC 31,7; METFORMINA + ROSIGLITAZONA vs placebo; n=207; seguimento 3,9 anos): redução de risco relativo de 66% (IC de 41 a 80); incidência cumulativa de 39% no placebo vs 14% no grupo tratamento.",
+   "secao": "Tabela 3 — ensaios de fármacos",
+   "cit": [
+    [
+     0,
+     32422,
+     178
+    ]
+   ],
+   "cit_sha": "7a43b9eec350c939"
+  },
+  {
+   "afirmacao": "Tabela 3 — SCALE (internacional, 2010; intolerância à glicose e glicemia de jejum alterada; IMC 38,9; LIRAGLUTIDA vs placebo; n=2254; seguimento 3 anos): redução de risco relativo de 79% (IC de 66 a 87); incidência cumulativa de 6% no placebo vs 2% na liraglutida.",
+   "secao": "Tabela 3 — ensaios de fármacos",
+   "cit": [
+    [
+     0,
+     32601,
+     174
+    ]
+   ],
+   "cit_sha": "aec4fd3123df5c66"
+  },
+  {
+   "afirmacao": "Tabela 3 — ACE (China e Hong Kong, 2010; intolerância à glicose; IMC 24,5; ACARBOSE vs placebo; n=6522; seguimento 5 anos): redução de risco relativo de 18% (IC de 6 a 29); incidência de 3,8 por 100 pessoas-ano no placebo vs 3,2 na acarbose.",
+   "secao": "Tabela 3 — ensaios de fármacos",
+   "cit": [
+    [
+     0,
+     32776,
+     177
+    ]
+   ],
+   "cit_sha": "781bd666931f4579"
+  },
+  {
+   "afirmacao": "Limitações desta revisão: a qualidade dos estudos incluídos NÃO foi formalmente avaliada; a busca da literatura pode ter perdido estudos relevantes; e os achados dos ensaios randomizados podem NÃO se aplicar a todos os indivíduos com pré-diabetes definido pelos vários critérios.",
+   "secao": "Limitações",
+   "cit": [
+    [
+     0,
+     42927,
+     319
+    ]
+   ],
+   "cit_sha": "1b253d606af39c21"
+  },
+  {
+   "afirmacao": "Os ensaios de prevenção de diabetes tiveram duração de intervenção relativamente curta, seguida de tempo SEM intervenção antes da medição dos desfechos; observações feitas estritamente durante o seguimento estendido NÃO podem ser atribuídas apenas ao efeito da exposição prévia na fase de intervenção.",
+   "secao": "Limitações",
+   "cit": [
+    [
+     0,
+     43247,
+     345
+    ]
+   ],
+   "cit_sha": "94fdb49dc445a50b"
+  },
+  {
+   "afirmacao": "Conclusão: o pré-diabetes associa-se a risco aumentado de diabetes, eventos cardiovasculares e mortalidade; a terapia de PRIMEIRA LINHA é a modificação do estilo de vida com perda de peso e exercício, ou metformina; a modificação do estilo de vida associa-se a benefício MAIOR que a metformina.",
+   "secao": "Conclusões",
+   "cit": [
+    [
+     0,
+     4034,
+     285
+    ]
+   ],
+   "cit_sha": "c8145c13bca80e49"
+  }
+ ]
+}

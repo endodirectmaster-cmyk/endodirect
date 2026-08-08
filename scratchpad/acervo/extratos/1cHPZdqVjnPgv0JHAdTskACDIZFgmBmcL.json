@@ -1,0 +1,928 @@
+{
+ "fileId": "1cHPZdqVjnPgv0JHAdTskACDIZFgmBmcL",
+ "titulo": "Euglycemic Ketoacidosis",
+ "fonte": "Bonora BM, Avogaro A, Fadini GP. Euglycemic Ketoacidosis. Current Diabetes Reports 2020;20:25 (doi 10.1007/s11892-020-01307-x)",
+ "area": "Diabetes",
+ "tipo": "revisao",
+ "ano": 2020,
+ "tema": "Cetoacidose euglicêmica (cetoacidose com glicemia < 200 mg/dL): fisiopatologia, gatilhos (iSGLT2, jejum/dieta pobre em carboidrato, gestação, álcool, sepse, pancreatite, cirurgia, cocaína, doenças metabólicas hereditárias), diagnóstico, prevenção e tratamento em pessoas com e sem diabetes",
+ "fatos": [
+  {
+   "afirmacao": "A cetoacidose EUGLICÊMICA (euKA) é a cetoacidose que ocorre com glicemia < 200 mg/dl — impropriamente chamada de euglicêmica — e pode ocorrer também em pessoas SEM diabetes; a ausência de hiperglicemia marcada atrasa o diagnóstico e o tratamento e pode levar a desfechos adversos graves.",
+   "secao": "Abstract",
+   "cit": [
+    [
+     0,
+     418,
+     271
+    ]
+   ],
+   "cit_sha": "eb7482f483ccc788"
+  },
+  {
+   "afirmacao": "⚠️ GATILHO FARMACOLÓGICO: o uso dos inibidores do cotransportador sódio-glicose 2 (iSGLT2 / SGLT2i) pode predispor ao desenvolvimento de cetoacidose com níveis de glicemia relativamente BAIXOS OU NORMAIS — foi o uso clínico amplo dessa classe que recolocou a cetoacidose euglicêmica em evidência.",
+   "secao": "Abstract",
+   "cit": [
+    [
+     0,
+     706,
+     254
+    ]
+   ],
+   "cit_sha": "43152c708ecb3b84"
+  },
+  {
+   "afirmacao": "A cetoacidose EUGLICÊMICA pode ocorrer NA AUSÊNCIA DE DIABETES, em cenários como gestação, restrição da ingesta calórica, doenças de depósito de glicogênio ou gliconeogênese defeituosa (abuso de álcool ou doença hepática crônica) e abuso de cocaína.",
+   "secao": "Abstract",
+   "cit": [
+    [
+     0,
+     961,
+     241
+    ]
+   ],
+   "cit_sha": "edfcace6dfbddf7b"
+  },
+  {
+   "afirmacao": "A cetoacidose EUGLICÊMICA (euKA) é um diagnóstico desafiador para a maioria dos médicos, que podem ser induzidos ao erro pela presença de glicemia normal ou de hiperglicemia apenas leve.",
+   "secao": "Abstract",
+   "cit": [
+    [
+     0,
+     1211,
+     127
+    ]
+   ],
+   "cit_sha": "bed1fc57a0dd6732"
+  },
+  {
+   "afirmacao": "As diretrizes dos EUA e do Reino Unido sugerem, para diagnosticar a CETOACIDOSE DIABÉTICA (CAD), um limiar de glicemia de 250 mg/dL e de 200 mg/dL, respectivamente — são os cortes da forma HIPERGLICÊMICA da doença.",
+   "secao": "Introduction",
+   "cit": [
+    [
+     0,
+     2242,
+     173
+    ]
+   ],
+   "cit_sha": "01beaab23fab6f84"
+  },
+  {
+   "afirmacao": "O termo 'cetoacidose euglicêmica' (euKA) nasceu em 1973, quando Munro e colaboradores relataram que, entre 211 episódios de CAD em diabetes tipo 1, 37 tinham glicemia < 300 mg/dL e 16 episódios tinham glicemia < 200 mg/dL.",
+   "secao": "Introduction",
+   "cit": [
+    [
+     0,
+     2416,
+     237
+    ]
+   ],
+   "cit_sha": "db2812296a3d35fe"
+  },
+  {
+   "afirmacao": "Em série posterior de 722 episódios de CAD em Birmingham (Reino Unido), 23 episódios foram identificados como cetoacidose EUGLICÊMICA pelos critérios de Munro, mas apenas oito apresentaram glicemia < 200 mg/dL.",
+   "secao": "Introduction",
+   "cit": [
+    [
+     0,
+     2654,
+     192
+    ]
+   ],
+   "cit_sha": "7fa4310ea9682009"
+  },
+  {
+   "afirmacao": "Os cenários em que já se descreveu a apresentação EUGLICÊMICA da cetoacidose são: gestação em mulheres com ou SEM diabetes, restrição da ingesta de carboidrato ou inanição (starvation), doenças de depósito de glicogênio, gliconeogênese defeituosa (abuso de álcool ou doença hepática crônica), sepse, pancreatite e abuso de cocaína; mais recentemente, o interesse renovou-se pela associação da euKA aos iSGLT2.",
+   "secao": "Introduction",
+   "cit": [
+    [
+     0,
+     2847,
+     368
+    ]
+   ],
+   "cit_sha": "49f675b4f80f7e0a"
+  },
+  {
+   "afirmacao": "A cetoacidose EUGLICÊMICA é um desafio diagnóstico e de manejo porque a glicemia relativamente baixa ou normal pode atrasar o reconhecimento, o diagnóstico e o tratamento.",
+   "secao": "Introduction",
+   "cit": [
+    [
+     0,
+     3355,
+     156
+    ]
+   ],
+   "cit_sha": "4d5ea34047f92525"
+  },
+  {
+   "afirmacao": "Na cetoacidose EUGLICÊMICA a deficiência de insulina e a resistência à insulina costumam ser mais BRANDAS, o que limita a elevação da glicemia; a superprodução e a subutilização de glicose são MENORES do que na CAD hiperglicêmica.",
+   "secao": "Pathogenesis and Precipitating Factors",
+   "cit": [
+    [
+     0,
+     4889,
+     195
+    ]
+   ],
+   "cit_sha": "d9d2f2d24dd003d9"
+  },
+  {
+   "afirmacao": "Na cetoacidose EUGLICÊMICA induzida por iSGLT2, a depuração renal de glicose está AUMENTADA, o que contribui para níveis MAIS BAIXOS de glicemia.",
+   "secao": "Pathogenesis and Precipitating Factors",
+   "cit": [
+    [
+     0,
+     5085,
+     100
+    ]
+   ],
+   "cit_sha": "96a73a12965e2980"
+  },
+  {
+   "afirmacao": "Os fatores precipitantes da CAD e da cetoacidose EUGLICÊMICA são: infecção grave, descontinuação da insulinoterapia ou insulinoterapia inadequada, falha da bomba de insulina, baixa ingesta de carboidrato ou jejum prolongado, consumo de álcool, eventos agudos intercorrentes (pancreatite, infarto do miocárdio, acidente vascular cerebral), fármacos que afetam o metabolismo dos carboidratos (por exemplo, corticosteroides), cirurgia e outras condições físicas e médicas estressantes.",
+   "secao": "Pathogenesis and Precipitating Factors",
+   "cit": [
+    [
+     0,
+     5186,
+     481
+    ]
+   ],
+   "cit_sha": "f24b05baa97a3141"
+  },
+  {
+   "afirmacao": "A apresentação clínica da cetoacidose EUGLICÊMICA é a mesma da CAD: náusea, vômito, dor abdominal difusa, poliúria, polidipsia, perda de peso, desidratação, fraqueza, fadiga, taquicardia, taquipneia e respiração de Kussmaul; o estado mental varia de alerta pleno a letargia profunda ou coma.",
+   "secao": "Clinical Presentation and Diagnosis",
+   "cit": [
+    [
+     0,
+     7769,
+     326
+    ]
+   ],
+   "cit_sha": "31ccf834e08ea0d6"
+  },
+  {
+   "afirmacao": "A CAD clássica define-se pela tríade hiperglicemia (≥ 250 mg/dL), acidose metabólica com ânion-gap elevado (pH arterial < 7,3, bicarbonato sérico < 15 mEq/L, ânion-gap > 10–12 mEq/L) e concentrações elevadas de corpos cetônicos — são os critérios da forma HIPERGLICÊMICA clássica; a cetoacidose EUGLICÊMICA cursa com glicemia mais baixa e escapa desse corte.",
+   "secao": "Clinical Presentation and Diagnosis",
+   "cit": [
+    [
+     0,
+     8096,
+     258
+    ]
+   ],
+   "cit_sha": "9c46d8eca736aea2"
+  },
+  {
+   "afirmacao": "⚠️ A cetoacidose EUGLICÊMICA caracteriza-se por glicemia MAIS BAIXA (< 200 mg/dL); o nome é impróprio, porque a definição inclui também episódios com glicemia acima da faixa normal.",
+   "secao": "Clinical Presentation and Diagnosis",
+   "cit": [
+    [
+     0,
+     8355,
+     171
+    ]
+   ],
+   "cit_sha": "40b70418d0c59dd0"
+  },
+  {
+   "afirmacao": "A gravidade da CAD classifica-se em leve, moderada ou grave com base na gravidade da acidose metabólica (pH sanguíneo, bicarbonato e ânion-gap) e na presença de alteração do estado mental.",
+   "secao": "Clinical Presentation and Diagnosis",
+   "cit": [
+    [
+     0,
+     8527,
+     197
+    ]
+   ],
+   "cit_sha": "8c6417accef3414e"
+  },
+  {
+   "afirmacao": "A indicação da DAPAGLIFLOZINA (iSGLT2) foi estendida a pessoas com diabetes tipo 1 e IMC ≥ 27 kg/m2, mas SOMENTE na Europa; o FDA (EUA) recusou a aprovação de iSGLT2 para o DM1 porque os dados disponíveis do iSGLT2 como adjuvante à insulina sugeriram que os benefícios globais NÃO superavam os riscos de CAD potencialmente fatal.",
+   "secao": "Causes of euKA — SGLT2i",
+   "cit": [
+    [
+     0,
+     8872,
+     433
+    ]
+   ],
+   "cit_sha": "1a47937418f3a843"
+  },
+  {
+   "afirmacao": "Os iSGLT2 bloqueiam o cotransportador sódio-glicose 2 (SGLT2), localizado no túbulo renal proximal inicial, responsável pela reabsorção da maior parte (80–90%) da glicose filtrada pelo glomérulo; o aumento resultante da excreção urinária de glicose reduz a glicemia plasmática.",
+   "secao": "Causes of euKA — SGLT2i",
+   "cit": [
+    [
+     0,
+     9306,
+     298
+    ]
+   ],
+   "cit_sha": "519e97d6221a8da5"
+  },
+  {
+   "afirmacao": "Em 2015, o FDA (EUA) e a Agência Europeia de Medicamentos, com base no relato de poucos casos, emitiram alerta de que os iSGLT2 podem causar CAD tanto no diabetes tipo 1 quanto no tipo 2.",
+   "secao": "Causes of euKA — SGLT2i",
+   "cit": [
+    [
+     0,
+     9605,
+     172
+    ]
+   ],
+   "cit_sha": "ee0f576fd191aec6"
+  },
+  {
+   "afirmacao": "Nos programas de ensaios clínicos dos três iSGLT2 mais usados (canagliflozina, dapagliflozina e empagliflozina), os números de CAD foram pequenos, com incidência MENOR que 1 por 1000 pacientes-ano ou pessoas-ano.",
+   "secao": "Causes of euKA — SGLT2i",
+   "cit": [
+    [
+     0,
+     9992,
+     141
+    ],
+    [
+     0,
+     10176,
+     90
+    ]
+   ],
+   "cit_sha": "ba2ed7bd53ce339f"
+  },
+  {
+   "afirmacao": "Um estudo de coorte com quatro grandes bancos de dados de sinistros de seguro dos EUA relatou risco de CAD quase DUAS VEZES maior em novos usuários de iSGLT2 em comparação com não usuários de iSGLT2.",
+   "secao": "Causes of euKA — SGLT2i",
+   "cit": [
+    [
+     0,
+     10507,
+     169
+    ]
+   ],
+   "cit_sha": "b282736aa1af757b"
+  },
+  {
+   "afirmacao": "Em grande banco de dados de sinistros de pessoas com seguro comercial nos EUA, a taxa de CAD nos 180 dias após o início de um iSGLT2 foi cerca do DOBRO da taxa após o início de um inibidor de DPP4 (4,9 vs. 2,2 eventos por 1000 pessoas-ano; HR 2,2, IC 95% 1,4–3,6).",
+   "secao": "Causes of euKA — SGLT2i",
+   "cit": [
+    [
+     0,
+     10677,
+     354
+    ]
+   ],
+   "cit_sha": "73531cd413682607"
+  },
+  {
+   "afirmacao": "Em outro estudo de coorte, com banco de dados do seguro-saúde coreano, o tratamento com iSGLT2 NÃO aumentou o risco de cetoacidose em comparação com o tratamento com inibidor de DPP-4 (HR 0,96, IC 95% 0,58–1,57).",
+   "secao": "Causes of euKA — SGLT2i",
+   "cit": [
+    [
+     0,
+     11032,
+     205
+    ]
+   ],
+   "cit_sha": "34bbae83fabae694"
+  },
+  {
+   "afirmacao": "A taxa exata com que a cetoacidose ocorre durante a terapia com iSGLT2 é difícil de estabelecer.",
+   "secao": "Causes of euKA — SGLT2i",
+   "cit": [
+    [
+     0,
+     11238,
+     116
+    ]
+   ],
+   "cit_sha": "3395d2c207be283d"
+  },
+  {
+   "afirmacao": "O risco de cetoacidose com iSGLT2 é MUITO MAIOR nas pessoas com diabetes tipo 1: os ensaios de fase 3 de iSGLT2 em DM1 documentaram aumento significativo do risco de CAD nos tratados com iSGLT2, e esse aumento parece ser DOSE-DEPENDENTE.",
+   "secao": "Causes of euKA — SGLT2i",
+   "cit": [
+    [
+     0,
+     11355,
+     251
+    ]
+   ],
+   "cit_sha": "9af16823b7b864f0"
+  },
+  {
+   "afirmacao": "No DEPICT-1 (dapagliflozina em diabetes tipo 1 inadequadamente controlado), em 52 semanas de seguimento houve mais eventos adjudicados como CAD nos grupos dapagliflozina: 4,0%, 3,4% e 1,9% com dapagliflozina 5 mg, 10 mg e placebo, correspondendo a taxas de incidência de 4,8, 3,7 e 2,2 por 100 pacientes-ano.",
+   "secao": "Causes of euKA — SGLT2i",
+   "cit": [
+    [
+     0,
+     11607,
+     371
+    ]
+   ],
+   "cit_sha": "f23f282e8df68470"
+  },
+  {
+   "afirmacao": "No programa EASE, a taxa de CAD com empagliflozina 2,5 mg foi semelhante à do placebo (0,8% e 1,2%), enquanto foi MAIOR com empagliflozina 10 mg e 25 mg em comparação com placebo (4,3%, 3,3% e 1,2%), correspondendo a taxas de incidência de 5,9, 5,1 e 1,8 por 100 pacientes-ano.",
+   "secao": "Causes of euKA — SGLT2i",
+   "cit": [
+    [
+     0,
+     11979,
+     388
+    ]
+   ],
+   "cit_sha": "58a3a79de55d3817"
+  },
+  {
+   "afirmacao": "O mecanismo proposto da cetoacidose induzida por iSGLT2 é a redução das concentrações de insulina com aumento das de glucagon: a glicemia baixa causada pela glicosúria durante o iSGLT2 estimula a secreção de glucagon e suprime a produção de insulina, elevando a razão glucagon:insulina e resultando em aumento da lipólise e da entrega de ácidos graxos livres ao fígado, onde são oxidados.",
+   "secao": "Causes of euKA — SGLT2i",
+   "cit": [
+    [
+     0,
+     12458,
+     473
+    ]
+   ],
+   "cit_sha": "18361236006c22bc"
+  },
+  {
+   "afirmacao": "Alguns estudos sugeriram que o SGLT2 também é expresso nas células alfa pancreáticas humanas e que os iSGLT2 poderiam exercer efeito estimulatório DIRETO sobre as células alfa, mas o achado é controverso e NÃO foi replicado de forma consistente em todos os estudos.",
+   "secao": "Causes of euKA — SGLT2i",
+   "cit": [
+    [
+     0,
+     13163,
+     301
+    ]
+   ],
+   "cit_sha": "3e39267567392490"
+  },
+  {
+   "afirmacao": "Em camundongos diabéticos, a cetose induzida por iSGLT2 NÃO é afetada pela interrupção da sinalização do glucagon com anticorpo bloqueador do receptor de glucagon; assim, o efeito cetogênico dos iSGLT2 provavelmente ocorre de forma INDEPENDENTE do glucagon.",
+   "secao": "Causes of euKA — SGLT2i",
+   "cit": [
+    [
+     0,
+     13465,
+     273
+    ]
+   ],
+   "cit_sha": "a6c1c8b50f54404b"
+  },
+  {
+   "afirmacao": "⚠️ ATENÇÃO À ARMADILHA INVERSA: na CAD induzida por iSGLT2 a MAIORIA dos casos cursa com glicemia ELEVADA, e a forma euglicêmica é minoria — em revisão de 105 casos de CAD por iSGLT2, a glicemia média à admissão foi 294 ± 188 mg/dL e 37 pacientes (35,2%) tinham CAD euglicêmica, com glicemia de admissão menor que 200 mg/dL. A glicemia média na CAD por iSGLT2 tende a ser mais baixa que na CAD clássica.",
+   "secao": "Causes of euKA — SGLT2i",
+   "cit": [
+    [
+     0,
+     13859,
+     367
+    ]
+   ],
+   "cit_sha": "fd2fa452684fafa7"
+  },
+  {
+   "afirmacao": "Os fatores precipitantes da CAD induzida por iSGLT2 são: redução excessiva das doses de insulina (> 50%) ou omissão de insulina, sobretudo se combinada com dieta pobre em carboidrato; ingesta de álcool; evento agudo (por exemplo, infarto do miocárdio); infecção ou febre; trauma; cirurgia e todos os estados contrarregulatórios; e falha ou mau funcionamento da bomba de insulina.",
+   "secao": "Causes of euKA — SGLT2i",
+   "cit": [
+    [
+     0,
+     14227,
+     345
+    ]
+   ],
+   "cit_sha": "f09f0fab3a8ecadd"
+  },
+  {
+   "afirmacao": "Alguns relatos descrevem a ocorrência de CAD em pessoas com diabetes tipo 2 presumido que, posteriormente, se provaram portadoras de diabetes autoimune.",
+   "secao": "Causes of euKA — SGLT2i",
+   "cit": [
+    [
+     0,
+     14573,
+     134
+    ]
+   ],
+   "cit_sha": "34395f3a0238b816"
+  },
+  {
+   "afirmacao": "Em uma minoria dos casos de CAD associada a iSGLT2 (22%) NÃO havia nenhum fator precipitante claro.",
+   "secao": "Causes of euKA — SGLT2i",
+   "cit": [
+    [
+     0,
+     14708,
+     100
+    ]
+   ],
+   "cit_sha": "c8a610853d274ce1"
+  },
+  {
+   "afirmacao": "A duração do tratamento com iSGLT2 antes do início da CAD é extremamente variável (0,3 a 420 dias) — a cetoacidose pode surgir em qualquer momento do tratamento.",
+   "secao": "Causes of euKA — SGLT2i",
+   "cit": [
+    [
+     0,
+     14809,
+     92
+    ]
+   ],
+   "cit_sha": "4b6badf0b56d1987"
+  },
+  {
+   "afirmacao": "⚠️ GATILHO — JEJUM E RESTRIÇÃO DE CARBOIDRATO: a restrição da ingesta de carboidrato/calorias ou o jejum prolongado COM manutenção da insulinoterapia pode ser fator precipitante de CAD; a inanição ou a restrição estrita de carboidrato é causa de cetoacidose EUGLICÊMICA também em indivíduos SEM diabetes.",
+   "secao": "Causes of euKA — Low Caloric Intake or Starvation",
+   "cit": [
+    [
+     0,
+     14935,
+     267
+    ]
+   ],
+   "cit_sha": "6808709419bf7e1b"
+  },
+  {
+   "afirmacao": "⚠️ MECANISMO DO GATILHO JEJUM: a redução do carboidrato da dieta leva ao uso de fontes alternativas de energia — ácidos graxos livres (AGL) e cetonas geradas pela lipólise; durante o jejum a lipólise e a produção de AGL aceleram, a insulina fica MENOS eficaz em suprimir a lipólise e ocorre cetogênese, que leva à cetoacidose euglicêmica. O jejum prolongado pode ainda depletar quase totalmente os estoques de glicogênio e contribuir para o estado EUGLICÊMICO.",
+   "secao": "Causes of euKA — Low Caloric Intake or Starvation",
+   "cit": [
+    [
+     0,
+     15203,
+     465
+    ]
+   ],
+   "cit_sha": "b330f52726de4869"
+  },
+  {
+   "afirmacao": "⚠️ GATILHO — JEJUM EM PESSOA SEM DIABETES: homem de 24 anos SEM história médica, que jejuou por 3 dias por náusea e vômito, apresentou-se ao pronto-socorro com taquipneia, taquicardia sinusal, acidose metabólica com ânion-gap alto, bicarbonato baixo, cetonúria substancial e β-hidroxibutirato sanguíneo aumentado; o pH começou a normalizar IMEDIATAMENTE com infusão intravenosa de dextrose.",
+   "secao": "Causes of euKA — Low Caloric Intake or Starvation",
+   "cit": [
+    [
+     0,
+     15669,
+     422
+    ]
+   ],
+   "cit_sha": "d3e3703a14130c94"
+  },
+  {
+   "afirmacao": "A inanição ou a restrição da ingesta de carboidrato precipita cetoacidose EUGLICÊMICA mais comumente em pessoas COM diabetes do que em pessoas não diabéticas, e em geral representa fator precipitante da CAD típica.",
+   "secao": "Causes of euKA — Low Caloric Intake or Starvation",
+   "cit": [
+    [
+     0,
+     16092,
+     193
+    ]
+   ],
+   "cit_sha": "3af841e7aaf92b2f"
+  },
+  {
+   "afirmacao": "⚠️ GATILHO — GESTAÇÃO: a CAD na gestação é complicação grave para a mãe e o feto, associada a altas taxas de mortalidade, e pode ocorrer no diabetes tipo 1, no tipo 2 e no diabetes gestacional (DMG).",
+   "secao": "Causes of euKA — Pregnancy",
+   "cit": [
+    [
+     0,
+     16338,
+     208
+    ]
+   ],
+   "cit_sha": "59489d22ec765780"
+  },
+  {
+   "afirmacao": "A taxa exata de CAD na gestação é difícil de estabelecer, provavelmente entre 0,5 e 10% de todas as gestações de mulheres com diabetes, sendo 90% desses casos mulheres com diabetes gestacional (DMG).",
+   "secao": "Causes of euKA — Pregnancy",
+   "cit": [
+    [
+     0,
+     16547,
+     215
+    ]
+   ],
+   "cit_sha": "d8b12d379d2b0025"
+  },
+  {
+   "afirmacao": "⚠️ POR QUE A GESTAÇÃO É GATILHO: a gestação é um estado PROPENSO À CETOSE por alterações fisiológicas intrínsecas — sobretudo no segundo e terceiro trimestres desenvolvem-se resistência à insulina, inanição acelerada e alcalose respiratória; além disso, náusea e vômito são comuns na gestação.",
+   "secao": "Causes of euKA — Pregnancy",
+   "cit": [
+    [
+     0,
+     16763,
+     289
+    ]
+   ],
+   "cit_sha": "da69271c2c3b5610"
+  },
+  {
+   "afirmacao": "Na gestação, a queda da sensibilidade à insulina é mecanismo fisiológico para entregar glicose ao feto e à placenta, o que TENDE A REDUZIR a glicemia materna; o metabolismo materno desvia-se para o uso de ácidos graxos livres como combustível primário, e a lipólise torna a gestante mais suscetível à cetose.",
+   "secao": "Causes of euKA — Pregnancy",
+   "cit": [
+    [
+     0,
+     17346,
+     365
+    ]
+   ],
+   "cit_sha": "48e0302acde97ddf"
+  },
+  {
+   "afirmacao": "Na gestação, para compensar a alcalose respiratória ocorre aumento da excreção renal de bicarbonato, o que favorece a acidose metabólica.",
+   "secao": "Causes of euKA — Pregnancy",
+   "cit": [
+    [
+     0,
+     17712,
+     148
+    ]
+   ],
+   "cit_sha": "a401b6eb59760a0b"
+  },
+  {
+   "afirmacao": "⚠️ POR QUE A GLICEMIA ENGANA NA GESTANTE: a hemodiluição fisiológica da gravidez provavelmente contribui para manter a glicemia relativamente BAIXA OU NORMAL em mulheres com diabetes, e a CAD na gestante tende a ocorrer com glicemias MAIS BAIXAS do que em mulheres não gestantes com diabetes.",
+   "secao": "Causes of euKA — Pregnancy",
+   "cit": [
+    [
+     0,
+     17861,
+     264
+    ]
+   ],
+   "cit_sha": "fe2da9e2f14f0cae"
+  },
+  {
+   "afirmacao": "Nos casos publicados de cetoacidose EUGLICÊMICA com glicemia < 200 mg/dL na gestação, quase todos ocorreram no TERCEIRO TRIMESTRE (32ª a 37ª semana de gestação); a idade média foi 30 anos e a glicemia média 110 mg/dl, com distribuição igual entre diabetes tipo 1, tipo 2 e diabetes gestacional.",
+   "secao": "Causes of euKA — Pregnancy",
+   "cit": [
+    [
+     0,
+     18126,
+     322
+    ]
+   ],
+   "cit_sha": "125136e2a1cd1148"
+  },
+  {
+   "afirmacao": "⚠️ CONDUTA NA GESTANTE COM DIABETES: o tratamento da cetoacidose diabética (incluindo a forma EUGLICÊMICA) na gestação inclui reposição de fluidos, infusão de insulina E solução de glicose intravenosa — a glicose IV entra JUNTO com a insulina, e não depois dela como na CAD hiperglicêmica clássica. Os fatores precipitantes e a apresentação clínica são semelhantes aos da não gestante, exceto por tenderem a evoluir MAIS RAPIDAMENTE.",
+   "secao": "Causes of euKA — Pregnancy",
+   "cit": [
+    [
+     0,
+     18640,
+     276
+    ]
+   ],
+   "cit_sha": "55c34d083956b3b6"
+  },
+  {
+   "afirmacao": "Os desfechos adversos fetais da cetoacidose na gestação incluem malformações, morte intrauterina, trabalho de parto pré-termo, hipóxia, sofrimento fetal, arritmias cardíacas, hiperbilirrubinemia, hipoglicemia e complicações neurológicas; as complicações maternas incluem pré-eclâmpsia, eclâmpsia, lesão renal aguda, síndrome do desconforto respiratório do adulto, coma e morte.",
+   "secao": "Causes of euKA — Pregnancy",
+   "cit": [
+    [
+     0,
+     18917,
+     341
+    ]
+   ],
+   "cit_sha": "b33a14c554fda071"
+  },
+  {
+   "afirmacao": "⚠️ GATILHO — INANIÇÃO NA GESTAÇÃO SEM DIABETES: dois casos de cetoacidose EUGLICÊMICA foram relatados como consequência de inanição em gestantes SEM diabetes e SEM diabetes gestacional, e ambas foram tratadas com dextrose intravenosa; a euKA pode ocorrer em gestantes sem diabetes, e diagnóstico e tratamento precoces reduzem o risco de desfechos adversos para a mãe e para o feto.",
+   "secao": "Causes of euKA — Pregnancy",
+   "cit": [
+    [
+     0,
+     19259,
+     408
+    ]
+   ],
+   "cit_sha": "5b009d7225afc975"
+  },
+  {
+   "afirmacao": "Com a melhora do aconselhamento pré-natal, do entendimento e do manejo, a incidência de cetoacidose euglicêmica/CAD na gestação e sua mortalidade declinaram significativamente nos últimos anos.",
+   "secao": "Causes of euKA — Pregnancy",
+   "cit": [
+    [
+     0,
+     18449,
+     190
+    ]
+   ],
+   "cit_sha": "c38b5a9d6ce6bfce"
+  },
+  {
+   "afirmacao": "⚠️ GATILHO — ÁLCOOL: a cetoacidose alcoólica (AKA) é um SUBTIPO de cetoacidose EUGLICÊMICA que ocorre em indivíduos SEM diabetes.",
+   "secao": "Causes of euKA — Alcoholic Ketoacidosis",
+   "cit": [
+    [
+     0,
+     19691,
+     103
+    ]
+   ],
+   "cit_sha": "5f405a1ae4de4ee4"
+  },
+  {
+   "afirmacao": "A cetoacidose alcoólica foi descrita em 1940 por Dillon e colaboradores, em série de nove indivíduos SEM diabetes, com história de consumo crônico de álcool, que apresentaram cetoacidose.",
+   "secao": "Causes of euKA — Alcoholic Ketoacidosis",
+   "cit": [
+    [
+     0,
+     19795,
+     174
+    ]
+   ],
+   "cit_sha": "f35c526470320d55"
+  },
+  {
+   "afirmacao": "A cetoacidose alcoólica (AKA) tem apresentação semelhante à da cetoacidose euglicêmica, porém frequentemente com valores de glicose NORMAIS OU BAIXOS e SEM glicosúria.",
+   "secao": "Causes of euKA — Alcoholic Ketoacidosis",
+   "cit": [
+    [
+     0,
+     20020,
+     113
+    ]
+   ],
+   "cit_sha": "e9b389579e3963a4"
+  },
+  {
+   "afirmacao": "⚠️ MECANISMO DO GATILHO ÁLCOOL: na cetoacidose alcoólica a acidose decorre do acúmulo de lactato e de corpos cetônicos; a AUSÊNCIA de hiperglicemia resulta da restrição calórica prolongada, da depleção dos estoques hepáticos de glicogênio e da gliconeogênese prejudicada (pelo etanol, que eleva a razão NADH/NAD). As cetonas derivam da oxidação do etanol a acetaldeído, convertido em acetato e depois em acetoacetato.",
+   "secao": "Causes of euKA — Alcoholic Ketoacidosis",
+   "cit": [
+    [
+     0,
+     20134,
+     432
+    ]
+   ],
+   "cit_sha": "722d71272401d900"
+  },
+  {
+   "afirmacao": "⚠️ CONDUTA QUE DIFERE DA CAD DIABÉTICA — CETOACIDOSE ALCOÓLICA: os pacientes têm sintomas clássicos de CAD que melhoram RAPIDAMENTE com glicose intravenosa e grandes volumes de soro fisiológico intravenoso, EM GERAL SEM INSULINA. Ocasionalmente pode ser necessário bicarbonato intravenoso para corrigir o distúrbio metabólico.",
+   "secao": "Causes of euKA — Alcoholic Ketoacidosis",
+   "cit": [
+    [
+     0,
+     20567,
+     264
+    ]
+   ],
+   "cit_sha": "f16635c90ed70c1a"
+  },
+  {
+   "afirmacao": "⚠️ GATILHO — PANCREATITE: foi descrito caso de cetoacidose EUGLICÊMICA em indivíduo NÃO diabético durante internação por pancreatite aguda.",
+   "secao": "Causes of euKA — Other Causes of euKA",
+   "cit": [
+    [
+     0,
+     20964,
+     127
+    ]
+   ],
+   "cit_sha": "03b6a74854bc7ab3"
+  },
+  {
+   "afirmacao": "⚠️ GATILHO — SEPSE: cetoacidose EUGLICÊMICA foi descrita em mulher de 76 anos SEM diabetes e SEM história de inanição, dieta pobre em carboidrato ou abuso de álcool, com choque séptico por colangite obstrutiva aguda.",
+   "secao": "Causes of euKA — Other Causes of euKA",
+   "cit": [
+    [
+     0,
+     21092,
+     216
+    ]
+   ],
+   "cit_sha": "e3487b0fb85c5554"
+  },
+  {
+   "afirmacao": "⚠️ MECANISMO DO GATILHO SEPSE ('cetoacidose séptica'): pessoas com sepse têm níveis aumentados de hormônios contrarregulatórios e resistência à insulina mediada por esses hormônios e por citocinas pró-inflamatórias, o que pode induzir cetogênese mesmo em pessoas SEM diabetes mellitus; além disso, o choque séptico induz disfunção renal que pode reduzir a excreção de cetonas.",
+   "secao": "Causes of euKA — Other Causes of euKA",
+   "cit": [
+    [
+     0,
+     21395,
+     442
+    ]
+   ],
+   "cit_sha": "81f321f17e7e906c"
+  },
+  {
+   "afirmacao": "⚠️ GATILHO — CIRURGIA: foram relatados dois casos de cetoacidose EUGLICÊMICA em indivíduos com diabetes após CIRURGIA ABDOMINAL, aparentemente NÃO devidos a jejum prolongado.",
+   "secao": "Causes of euKA — Other Causes of euKA",
+   "cit": [
+    [
+     0,
+     21838,
+     140
+    ]
+   ],
+   "cit_sha": "fb8ba2a0d2c9622c"
+  },
+  {
+   "afirmacao": "⚠️ GATILHO — COCAÍNA: em indivíduos que abusam de cocaína, a ingesta calórica pobre e os efeitos hipoglicemiantes da cocaína são causas potenciais da euglicemia observada durante a cetoacidose.",
+   "secao": "Causes of euKA — Other Causes of euKA",
+   "cit": [
+    [
+     0,
+     22021,
+     162
+    ]
+   ],
+   "cit_sha": "21e22520121b6a43"
+  },
+  {
+   "afirmacao": "⚠️ DIAGNÓSTICO DIFERENCIAL DA ACIDOSE COM EUGLICEMIA: a ingestão de fármacos como salicilato, metanol, etilenoglicol e paraldeído também pode causar acidose metabólica COM EUGLICEMIA, acompanhada de níveis aumentados de corpos cetônicos; a dosagem desses fármacos e intoxicantes pode ajudar no diagnóstico diferencial.",
+   "secao": "Causes of euKA — Other Causes of euKA",
+   "cit": [
+    [
+     0,
+     22184,
+     281
+    ]
+   ],
+   "cit_sha": "704d0311b9f1ac98"
+  },
+  {
+   "afirmacao": "A cetoacidose também é característica de várias doenças metabólicas hereditárias, vistas sobretudo na infância: quando decorre de defeitos da gliconeogênese ou do metabolismo do glicogênio (por exemplo, glicogenose) e da doença da urina em xarope de bordo, a cetogênese vem acompanhada de EUGLICEMIA ou até de HIPOGLICEMIA.",
+   "secao": "Causes of euKA — Other Causes of euKA",
+   "cit": [
+    [
+     0,
+     22466,
+     294
+    ]
+   ],
+   "cit_sha": "48fb43142c8466b9"
+  },
+  {
+   "afirmacao": "A prevenção da cetose e de sua progressão para cetoacidose é idealmente o primeiro alvo para mitigar a cetoacidose EUGLICÊMICA: pessoas com diabetes ou com outras condições que predispõem à euKA, bem como os médicos, devem ser instruídos sobre os fatores precipitantes e sobre como evitá-los.",
+   "secao": "Mitigating euKA",
+   "cit": [
+    [
+     0,
+     22777,
+     267
+    ]
+   ],
+   "cit_sha": "762136f5aba4b3e8"
+  },
+  {
+   "afirmacao": "⚠️ REGRA-CHAVE DA CETOACIDOSE EUGLICÊMICA: pacientes e profissionais devem ser capazes de reconhecer prontamente sinais e sintomas de cetoacidose e ser advertidos de que a CETOACIDOSE PODE OCORRER EM QUALQUER NÍVEL GLICÊMICO.",
+   "secao": "Mitigating euKA",
+   "cit": [
+    [
+     0,
+     23045,
+     142
+    ]
+   ],
+   "cit_sha": "5dd74ec810287494"
+  },
+  {
+   "afirmacao": "⚠️ ARMADILHA DO SENSOR DE GLICOSE: indivíduos com diabetes que usam sensores intersticiais de glicose podem ser ENGANADOS por leituras dentro ou próximas da faixa-alvo e, assim, deixar de reconhecer a cetoacidose EUGLICÊMICA incipiente.",
+   "secao": "Mitigating euKA",
+   "cit": [
+    [
+     0,
+     23188,
+     172
+    ]
+   ],
+   "cit_sha": "da49864d5d895b13"
+  },
+  {
+   "afirmacao": "Pessoas com diabetes devem ser educadas sobre como ajustar a dose de insulina durante doenças intercorrentes; recomenda-se a automedida de CETONAS SANGUÍNEAS CAPILARES, em quem usa dispositivos licenciados para esse fim, durante a doença ou diante de sinais e sintomas compatíveis com cetose (mal-estar, náusea e vômito).",
+   "secao": "Mitigating euKA",
+   "cit": [
+    [
+     0,
+     23361,
+     306
+    ]
+   ],
+   "cit_sha": "dd03a77645b60f55"
+  },
+  {
+   "afirmacao": "⚠️ QUANDO SUSPENDER O iSGLT2 — CIRURGIA ELETIVA: para minimizar o risco de CAD/cetoacidose EUGLICÊMICA associada a iSGLT2, sociedades internacionais recomendam SUSPENDER o iSGLT2 pelo menos 24 h ANTES de cirurgia eletiva, de procedimentos invasivos programados ou de atividade física intensa e estressante prevista.",
+   "secao": "Mitigating euKA",
+   "cit": [
+    [
+     0,
+     23668,
+     267
+    ]
+   ],
+   "cit_sha": "4dfbf2ed292d423c"
+  },
+  {
+   "afirmacao": "⚠️ QUANDO SUSPENDER O iSGLT2 — EMERGÊNCIA E DOENÇA AGUDA: o posicionamento internacional recomenda SUSPENDER IMEDIATAMENTE o iSGLT2 em caso de cirurgia de emergência, de qualquer evento de estresse extremo ou de qualquer situação que possa precipitar CAD, INCLUINDO DOENÇA AGUDA.",
+   "secao": "Mitigating euKA",
+   "cit": [
+    [
+     0,
+     23936,
+     146
+    ]
+   ],
+   "cit_sha": "5391bfa2fd398834"
+  },
+  {
+   "afirmacao": "⚠️ ERRO A EVITAR EM QUEM USA iSGLT2: o posicionamento internacional recomenda EVITAR suspender a insulina ou reduzir a dose de insulina excessivamente, pelo risco de CAD/cetoacidose euglicêmica.",
+   "secao": "Mitigating euKA",
+   "cit": [
+    [
+     0,
+     24083,
+     64
+    ]
+   ],
+   "cit_sha": "3b2139324065d202"
+  },
+  {
+   "afirmacao": "⚠️ GATILHOS A EVITAR EM QUEM USA iSGLT2: o posicionamento internacional recomenda EVITAR a ingesta excessiva de álcool e as dietas muito pobres em carboidrato / CETOGÊNICAS, pelo risco de CAD/cetoacidose euglicêmica.",
+   "secao": "Mitigating euKA",
+   "cit": [
+    [
+     0,
+     24151,
+     85
+    ]
+   ],
+   "cit_sha": "89e1f27ea2fe539b"
+  },
+  {
+   "afirmacao": "O manejo cuidadoso do diabetes na gestante, particularmente no ÚLTIMO TRIMESTRE, é muito importante para prevenir a ocorrência de CAD/cetoacidose euglicêmica.",
+   "secao": "Mitigating euKA",
+   "cit": [
+    [
+     0,
+     24237,
+     135
+    ]
+   ],
+   "cit_sha": "9a0f41b3bec6d3ca"
+  },
+  {
+   "afirmacao": "⚠️ TRATAMENTO DA CETOACIDOSE EUGLICÊMICA EM PESSOA COM DIABETES: é semelhante ao da CAD hiperglicêmica — reposição rápida de fluidos, seguida de infusão intravenosa CONTÍNUA de insulina, correção dos distúrbios eletrolíticos e SOLUÇÕES COM DEXTROSE quando a glicemia estiver abaixo de 250 mg/dL. Na forma EUGLICÊMICA a glicemia já está abaixo desse limiar desde a admissão, de modo que a dextrose entra JUNTO com a insulina desde o início.",
+   "secao": "Management of euKA",
+   "cit": [
+    [
+     0,
+     24392,
+     320
+    ]
+   ],
+   "cit_sha": "3651589cd75ff092"
+  },
+  {
+   "afirmacao": "O tratamento deve continuar até a RESOLUÇÃO da cetoacidose (normalização da acidose e dos corpos cetônicos); a terapia com bicarbonato pode ser necessária na acidose grave.",
+   "secao": "Management of euKA",
+   "cit": [
+    [
+     0,
+     24713,
+     175
+    ]
+   ],
+   "cit_sha": "76c4ffb92d796636"
+  },
+  {
+   "afirmacao": "⚠️ CONDUTA QUE DIFERE — CETOACIDOSE EUGLICÊMICA EM PESSOA SEM DIABETES (por álcool, inanição, sepse, gestação sem diabetes): a infusão de insulina NÃO é necessária; reposição de fluidos, correção dos distúrbios eletrolíticos e solução de glicose intravenosa bastam para a resolução da acidose — diferente da pessoa COM diabetes, em que a infusão contínua de insulina faz parte do tratamento.",
+   "secao": "Management of euKA",
+   "cit": [
+    [
+     0,
+     24889,
+     230
+    ]
+   ],
+   "cit_sha": "1414a544600477d2"
+  },
+  {
+   "afirmacao": "A cetoacidose é uma emergência médica rara, porém grave, que exige cuidado hospitalar imediato; a cetoacidose EUGLICÊMICA é um desafio diagnóstico pela AUSÊNCIA de hiperglicemia marcada, o que pode resultar em atraso do reconhecimento e do tratamento e levar a complicações graves e à morte.",
+   "secao": "Conclusions",
+   "cit": [
+    [
+     0,
+     25132,
+     280
+    ]
+   ],
+   "cit_sha": "167928ef345fca85"
+  },
+  {
+   "afirmacao": "Com a introdução dos iSGLT2 no manejo do diabetes, a incidência de cetoacidose EUGLICÊMICA aumentou, mas continua rara.",
+   "secao": "Conclusions",
+   "cit": [
+    [
+     0,
+     25413,
+     129
+    ]
+   ],
+   "cit_sha": "23de820970968275"
+  }
+ ]
+}
