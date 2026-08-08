@@ -418,6 +418,28 @@ const CAMINHO = [
   // T1 clínico do TNM e a chave de 3 letras casaria estadiamento oncológico.
   ['estadiamento cT1 do carcinoma de tireoide', 'Tireoide'],
 
+  // ⚠️ `efedrina` REVERTE UMA EXCLUSÃO MINHA DE HOJE DE MANHÃ. Eu a deixara fora
+  // por aparecer em três áreas (Obesidade 5, Neuroendocrino 1, Tireoide 1). A
+  // exclusão custou caro: "efedrina para perda de peso" devolvia NENHUMA área, e
+  // o fato 81 da ABESO é o ÚNICO lugar da base que registra que ela aumenta 2 a
+  // 3,5× o risco de eventos psiquiátricos, gastrintestinais e cardíacos
+  // INCLUINDO AVC. Buraco em fato de SEGURANÇA é pior que impureza de rota.
+  // A segunda linha guarda a outra ponta: com doença nomeada, ela cede.
+  ['efedrina para perda de peso', 'Obesidade'],
+  ['efedrina no hipertireoidismo', 'Tireoide'],
+  // Vocabulário bariátrico e nutricional que o auditor achou mudo:
+  ['suplementacao de calcio apos derivacao biliopancreatica', 'Obesidade'],
+  ['RYGB: qual a reposicao de ferro?', 'Obesidade'],
+  // Sem "emagrecer": ela já roteava sozinha e carregava o teste.
+  ['pular o cafe da manha: o que diz a evidencia?', 'Obesidade'],
+  ['gordura de coco emagrece?', 'Obesidade'],
+  // ⚠️ `perda de peso` CONTINUA FORA, e esta linha guarda a decisão contra o
+  // pedido do auditor: aparece em oito áreas, e perda de peso INVOLUNTÁRIA é
+  // bandeira vermelha de hipertireoidismo, insuficiência adrenal e neoplasia.
+  // Roteá-la para Obesidade responderia a pergunta mais grave com o bloco mais
+  // inofensivo. Se alguém a acrescentar, esta reprova.
+  ['perda de peso involuntaria com TSH suprimido', 'Tireoide'],
+
   // Sentinelas de outras áreas — o achado glicêmico não pode sequestrá-las.
   ['hiperglicemia em paciente com acromegalia', 'Neuroendocrinologia'],
   ['obeso em insulina: indico cirurgia bariatrica?', 'Obesidade'],
