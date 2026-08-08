@@ -1,6 +1,6 @@
 ---
 tags: [cofre, decisoes]
-atualizado: 2026-08-07
+atualizado: 2026-08-08
 ---
 
 # Decisões
@@ -8,6 +8,18 @@ atualizado: 2026-08-07
 Log de decisões de produto e técnicas (mais recentes no topo).
 
 ## 2026-08
+- **🔍 Quatro auditorias adversariais na área mais usada, e o que elas acharam (2026-08-08).** Auditados cetoacidose (124 fatos), cetoacidose euglicêmica (76→77), hiperglicemia por corticoide (131) e exercício no DM1 (145→147). **Taxa de erro semântica entre 5,3% e 8,4% — e quase nada era erro de LEITURA.** Nenhuma inversão de sentido, nenhum número trocado, nenhum deslocamento de coluna: o defeito dominante é **contexto perdido na atomização**, o fato que responde certo ao parágrafo e errado à pergunta.
+  - **O pior achado, e é de dose:** a regra da NPH para hiperglicemia por corticoide estava com a citação truncada exatamente antes do TETO (`maximum initial dose of 0.4 units/kg for doses 40 mg or above`). Sozinha, prescrevia dose **linear** — em 75 mg de equivalente de prednisona daria 60 unidades num paciente de 80 kg, contra as 32 que o capítulo calcula. **Quase o dobro de insulina.** O mesmo teto faltava nas duas figuras que repetem a regra.
+  - **Duas na direção da hipoglicemia, no exercício:** um fato liberava "pode iniciar qualquer exercício" numa faixa em que a tabela manda **adiar** com 15–30 g de carboidrato (a citação pegara 1 das 8 células da linha); outros dois impunham "só aeróbico" a linhas em que a tabela libera tudo — insulina de correção antes de treino resistido em quem não precisava.
+  - **Omissão que muda conduta na euglicêmica:** nos 76 fatos não havia **nenhuma** instrução para suspender o iSGLT2 DEPOIS que a cetoacidose instalou (os dois fatos que falavam de suspender eram preventivos). Quem puxasse "tratamento" recebia a prescrição completa menos o único passo que a distingue da CAD clássica.
+  - **Uma "sem divergência" que era falsa:** o capítulo de 2018 prescreve hidrocortisona 100 mg IV 8/8 h (=300 mg/dia) e a diretriz ESE 2024 diz 200 mg como total diário, avisando *"não por tomada"* — exatamente o erro de leitura que 100 mg 8/8 h representa. O `conflito` alegava concordância.
+  - **Falso positivo importante, registrado para não virar lenda:** o fato dos 105 casos de CAD por iSGLT2 (média 294 mg/dL, 35% euglicêmicos) foi reconferido e está **certo em tudo** — "a maioria com glicemia elevada" é afirmação literal do autor, não inferência minha.
+
+- **🧭 Um quarto degrau de peso no roteador: o achado glicêmico vence o FÁRMACO, nunca a DOENÇA (2026-08-08).** Cinco perguntas do capítulo novo caíam em Adrenal porque corticoide é fármaco (2000) e glicemia é achado (1000) — inclusive "em que horário medir a glicemia?", cuja resposta errada (medir o jejum) é a armadilha que o capítulo documenta.
+  - A saída óbvia — promover `glicemia` a peso de doença — **cobrava caro, e eu medi**: quebrava "hiperglicemia na acromegalia". `CAT_ACHADO_FORTE` (2500) fica acima de qualquer fármaco e abaixo de qualquer doença. Resultado na bateria própria: **22/35 → 34/35, com Adrenal SUBINDO de 13/14 para 14/14 e zero sentinela movida.**
+  - **`insulina` ficou de fora do degrau, de propósito:** promovê-la fechava a última pergunta e quebrava duas de obesidade ("obeso em insulina: indico bariátrica?" virava Diabetes). A que deixei aberta é ambígua de verdade — os dois extratos têm tabela de equivalência e elas **divergem** (1:6,25 para dimensionar insulina, 1:10 de potência fisiológica).
+  - **Termos que estavam mudos:** `CAD` — o que o médico brasileiro escreve — devolvia `""`, e nenhuma grafia de `EHH`/`estado hiperosmolar` alcançava o único extrato da base com esse conteúdo. Mais `nph`, `basal-bolus` e `etilismo`/`etilista` (peso de achado, para a cetoacidose alcoólica que não diz "cetoacidose").
+  - **Rotear certo não basta: tem de CHEGAR.** Com o roteamento corrigido, "EHH em idoso com glicemia 900" ia para Diabetes e o bloco devolvido **não tinha a palavra hiperosmolar** — o `tema` do extrato não a continha e a seleção por tema não o alcançava. Diabetes está em 232k contra teto de 120k, então bloco não escolhido é bloco que não existe.
 - **🩸 Lote 1 de Diabetes fechado: 7,3% do acervo, e a área saiu de rara para completa (2026-08-08).** Entraram **DM1** (227 fatos), **hiperglicemia induzida por glicocorticoide** (131) e **pré-diabetes** (158). Com cetoacidose e a euglicêmica, Diabetes foi de 130 fatos — todos sobre pós-transplante e MODY — para **7 blocos**. Base: **27 artigos, 4.438 fatos**.
   - **As três ressalvas foram bem escritas e uma delas eu conferi:** o extrato de DM1 alega que o núcleo registra atraso mediano de ~2 anos com teplizumabe enquanto a fonte diz 3. Conferido — o núcleo diz mesmo "~2 anos", e a fonte é de abril de 2023, mais velha que o núcleo. Divergência real, direção `misto` correta.
   - **Pré-diabetes trouxe o achado esperado:** a revisão do JAMA 2023 **não menciona a glicemia de 1 hora em lugar nenhum**. O núcleo carrega o critério da SBD/IDF (≥209 mg/dL para diabetes; 155–208 pré-diabetes). Direção `nucleo_prevalece`, corretamente.

@@ -5,7 +5,7 @@
  "area": "Endocrinologia do Esporte",
  "tipo": "consenso",
  "ano": 2020,
- "tema": "exercício no diabetes tipo 1 com CGM/isCGM — alvos de glicose do sensor e de carboidrato ANTES, DURANTE, DEPOIS e na NOITE pós-exercício, estratificados por TIPO e INTENSIDADE de exercício (aeróbico leve-moderado, aeróbico intenso, anaeróbico, resistido, intervalado/HIT), por DURAÇÃO (30–45 min e >45 min), pela HORA DO DIA e pelo valor de glicose no início; ajuste de insulina (bolus prandial e basal) em MÚLTIPLAS DOSES (MDI) e em BOMBA (CSII), com a ressalva de que nada disso se aplica a sistemas HÍBRIDOS DE ALÇA FECHADA; estratificação de risco de hipoglicemia (Ex 0/Ex 1/Ex 2, escores de percepção, TBR), acurácia/MARD e lag time do sensor no exercício; em ADULTOS, IDOSOS (≥65 anos) e CRIANÇAS/ADOLESCENTES (6 a <18 anos)",
+ "tema": "exercício no diabetes tipo 1 com CGM/isCGM — alvos de glicose do sensor e de carboidrato ANTES, DURANTE, DEPOIS e na NOITE pós-exercício, estratificados por GRUPO de rotina/risco de hipoglicemia (Ex 0/Ex 1/Ex 2), pela SETA DE TENDÊNCIA e, nas linhas de hiperglicemia, pelo TIPO de exercício (aeróbico leve-moderado, aeróbico intenso, anaeróbico, resistido, intervalado/HIT); ajuste de insulina por TIPO, INTENSIDADE e DURAÇÃO (30–45 min e >45 min) e pela HORA DO DIA — as porcentagens de redução de bolus prandial e de basal em MÚLTIPLAS DOSES (MDI) e em BOMBA (CSII) existem no artigo SÓ para CRIANÇAS E ADOLESCENTES (Tabela 4); para adultos há apenas orientação em prosa. Com a ressalva de que nada disso se aplica a sistemas HÍBRIDOS DE ALÇA FECHADA; escores de percepção de hipoglicemia e TBR, acurácia/MARD e lag time do sensor no exercício; em ADULTOS, IDOSOS (≥65 anos) e CRIANÇAS/ADOLESCENTES (6 a <18 anos). ⚠️ LIMITE DESTE EXTRATO: nas Tabelas 1, 2, 5 e 6 cada linha tem seis células de ação (três grupos × duas direções esperadas da glicose) e o PDF entrega três, quatro, cinco ou sete — por isso os fatos trazem os limiares e o CONJUNTO de ações de cada linha, nunca a ação atribuída a uma coluna isolada.",
  "fatos": [
   {
    "afirmacao": "No diabetes tipo 1 (DM1), o exercício agudo AUMENTA o risco de disglicemia, e a DIREÇÃO da excursão glicêmica depende, em parte, da intensidade e da duração do tipo de exercício.",
@@ -349,16 +349,16 @@
    "cit_sha": "f827c9bd4e387c80"
   },
   {
-   "afirmacao": "ADULTOS com DM1 — faixa-alvo de glicose do sensor ANTES do exercício, por grupo: 7,0–10,0 mmol/l (126–180 mg/dl) para exercício intenso/baixo risco de hipoglicemia; 8,0–11,0 mmol/l (145–198 mg/dl) para exercício moderado/risco moderado; 9,0–12,0 mmol/l (162–216 mg/dl) para exercício mínimo/alto risco.",
+   "afirmacao": "ADULTOS com DM1 — faixa de glicose do sensor ANTES do exercício em que a tabela libera INICIAR o exercício, por grupo: 7,0–10,0 mmol/l (126–180 mg/dl) para exercício intenso/baixo risco de hipoglicemia; 8,0–11,0 mmol/l (145–198 mg/dl) para exercício moderado/risco moderado; 9,0–12,0 mmol/l (162–216 mg/dl) para exercício mínimo/alto risco. ⚠️ Mesmo DENTRO desta faixa a tabela já pede ~15 g de carboidrato em uma das combinações de grupo e seta de tendência — \"pode iniciar qualquer exercício\" não vale para a linha inteira.",
    "secao": "Tabela 1 — alvos pré-exercício (adultos)",
    "cit": [
     [
      0,
      27235,
-     95
+     158
     ]
    ],
-   "cit_sha": "e4f78c17d49aa1f3"
+   "cit_sha": "222c0cd89c61e3b2"
   },
   {
    "afirmacao": "ADULTOS com DM1 — quando se aplica correção de insulina ANTES do exercício por hiperglicemia, usar apenas 50% do fator de correção habitual quando a glicose do sensor está próxima do limiar superior.",
@@ -1177,16 +1177,16 @@
    "cit_sha": "83b0c92bfdaf6bbf"
   },
   {
-   "afirmacao": "CRIANÇAS E ADOLESCENTES com DM1 — DURANTE o exercício, limiar de carboidrato por grupo: <7,0 mmol/l (<126 mg/dl) para exercício intenso/baixo risco; <8,0 mmol/l (<145 mg/dl) para exercício moderado/risco moderado; <9,0 mmol/l (<162 mg/dl) para exercício mínimo/alto risco.",
+   "afirmacao": "CRIANÇAS E ADOLESCENTES com DM1 — DURANTE o exercício, limiar de glicose do sensor abaixo do qual se dá carboidrato, por grupo: <7,0 mmol/l (<126 mg/dl) para exercício intenso/baixo risco; <8,0 mmol/l (<145 mg/dl) para exercício moderado/risco moderado; <9,0 mmol/l (<162 mg/dl) para exercício mínimo/alto risco. Os LIMIARES são iguais aos da tabela de adultos, mas a QUANTIDADE de carboidrato da tabela pediátrica é MENOR — começa em ~5 g (≈0,2 g/kg).",
    "secao": "Tabela 6 — alvos durante o exercício (crianças)",
    "cit": [
     [
      0,
-     30766,
-     80
+     47471,
+     135
     ]
    ],
-   "cit_sha": "a87b2641a511b71a"
+   "cit_sha": "4ec24e848ef7f0a0"
   },
   {
    "afirmacao": "CRIANÇAS E ADOLESCENTES com DM1 — limiar de glicose do sensor para dar carboidrato no PÓS-EXERCÍCIO (inclusive na fase noturna), por grupo: <4,4 mmol/l (<80 mg/dl) para exercício intenso/baixo risco; <5,0 mmol/l (<90 mg/dl) para exercício moderado/risco moderado; <5,6 mmol/l (<100 mg/dl) para exercício mínimo/alto risco. As quantidades usadas são nenhum CHO, ~5 g (≈0,2 g/kg), ~10 g (≈0,3 g/kg) ou quantidade individualizada, conforme a seta.",
@@ -1201,16 +1201,16 @@
    "cit_sha": "292348f10a0f9e57"
   },
   {
-   "afirmacao": "CRIANÇAS E ADOLESCENTES com DM1 — se for aplicada correção de insulina por glicose alta no PÓS-EXERCÍCIO, o fator de correção habitual pode ser reduzido em até 50%.",
+   "afirmacao": "CRIANÇAS E ADOLESCENTES com DM1 — se for aplicada correção de insulina por glicose alta no PÓS-EXERCÍCIO (inclusive na fase noturna), o fator de correção habitual pode ser reduzido em até 50%. ⚠️ E a tabela pediátrica de pós-exercício traz a mesma ressalva das demais: estas recomendações NÃO se aplicam a sistemas HÍBRIDOS DE ALÇA FECHADA.",
    "secao": "Tabela 7 — alvos pós-exercício (crianças)",
    "cit": [
     [
      0,
-     37247,
-     135
+     54213,
+     206
     ]
    ],
-   "cit_sha": "af56c545e8167da4"
+   "cit_sha": "b82fe984e1b03bea"
   },
   {
    "afirmacao": "Neste consenso de exercício no DM1, as recomendações de consumo de carboidrato foram estratificadas conforme a VELOCIDADE de variação da glicose (setas), separadamente para a fase pré-exercício, durante o exercício, pós-exercício e a fase noturna pós-exercício.",
@@ -1525,28 +1525,28 @@
    "cit_sha": "e7a0885a55591fb3"
   },
   {
-   "afirmacao": "⚠️ ADULTOS com DM1 — HIPERGLICEMIA ANTES do exercício, faixa 10,1–15,0 mmol/l (181–270 mg/dl) para exercício intenso/baixo risco de hipoglicemia, 11,1–15,0 mmol/l (199–270 mg/dl) para exercício moderado/risco moderado e 12,1–15,0 mmol/l (217–270 mg/dl) para exercício mínimo/alto risco: a conduta MUDA COM O TIPO DE EXERCÍCIO — pode-se iniciar exercício AERÓBICO leve a moderado (AE), mas para TREINO RESISTIDO (RT) e TREINO DE ALTA INTENSIDADE (HIT) deve-se CONSIDERAR CORREÇÃO DE INSULINA. Entrada da tabela de alvos pré-exercício do consenso EASD/ISPAD.",
+   "afirmacao": "⚠️ ADULTOS com DM1 — HIPERGLICEMIA ANTES do exercício, faixa 10,1–15,0 mmol/l (181–270 mg/dl) para exercício intenso/baixo risco de hipoglicemia, 11,1–15,0 mmol/l (199–270 mg/dl) para exercício moderado/risco moderado e 12,1–15,0 mmol/l (217–270 mg/dl) para exercício mínimo/alto risco: nesta linha a conduta MUDA COM O TIPO DE EXERCÍCIO — a tabela traz \"pode iniciar exercício AERÓBICO leve a moderado (AE), CONSIDERAR correção de insulina para TREINO RESISTIDO (RT) e TREINO DE ALTA INTENSIDADE (HIT)\", \"pode iniciar QUALQUER exercício, considerar correção de insulina\" e \"pode iniciar QUALQUER exercício\". ⚠️ O PDF entrega só quatro das seis células desta linha (três grupos × duas direções esperadas da glicose), então NÃO se sabe qual célula vale para qual grupo/seta: a ressalva de RT/HIT é o cenário mais conservador da linha, e não a regra de todos os grupos.",
    "secao": "Tabela 1 — alvos pré-exercício (adultos)",
    "cit": [
     [
      0,
      26997,
-     154
+     237
     ]
    ],
-   "cit_sha": "5623e73c4dab425a"
+   "cit_sha": "85af45bc630a478a"
   },
   {
-   "afirmacao": "ADULTOS com DM1 — faixa PRÉ-EXERCÍCIO mais baixa a partir da qual ainda se pode INICIAR qualquer tipo de exercício, por grupo: 5,0–6,9 mmol/l (90–125 mg/dl) para exercício intenso/baixo risco de hipoglicemia; 5,0–7,9 mmol/l (90–144 mg/dl) para exercício moderado/risco moderado; 5,0–8,9 mmol/l (90–161 mg/dl) para exercício mínimo/alto risco. Entrada da tabela de alvos pré-exercício do consenso EASD/ISPAD.",
+   "afirmacao": "⚠️ ADULTOS com DM1 — a faixa PRÉ-EXERCÍCIO de 5,0–6,9 mmol/l (90–125 mg/dl) para exercício intenso/baixo risco de hipoglicemia, 5,0–7,9 mmol/l (90–144 mg/dl) para exercício moderado/risco moderado e 5,0–8,9 mmol/l (90–161 mg/dl) para exercício mínimo/alto risco NÃO é liberação automática: nesta MESMA faixa a tabela traz tanto \"pode iniciar qualquer exercício\" (sem carboidrato, ou com ~10, ~15 ou ~20 g) quanto \"ADIAR TODO exercício\" com ~15, 20, ~25 ou ~30 g de carboidrato — o que decide é a coluna do grupo e a linha da seta de tendência. Ler apenas a primeira célula da linha libera exercício em quem a tabela mandaria ADIAR.",
    "secao": "Tabela 1 — alvos pré-exercício (adultos)",
    "cit": [
     [
      0,
      27394,
-     106
+     295
     ]
    ],
-   "cit_sha": "7ba55693ca15d00f"
+   "cit_sha": "5407afebefa9f652"
   },
   {
    "afirmacao": "ADULTOS com DM1 — quando a tabela pré-exercício manda ADIAR o exercício por glicose baixa, existem DOIS patamares distintos de liberação: adiar até atingir PELO MENOS 5,0 mmol/l (90 mg/dl) na situação mais restritiva, ou adiar até atingir 3,9–4,9 mmol/l (70–89 mg/dl) na situação menos restritiva — sempre acompanhados da seta de tendência adequada.",
@@ -1585,16 +1585,16 @@
    "cit_sha": "14f1239a9e0d9706"
   },
   {
-   "afirmacao": "ADULTOS com DM1 — DURANTE o exercício, na faixa de hiperglicemia SEM cetose relevante — 10,1–15,0 mmol/l (181–270 mg/dl) para exercício intenso/baixo risco de hipoglicemia, 11,1–15,0 mmol/l (199–270 mg/dl) para exercício moderado/risco moderado e 12,1–15,0 mmol/l (217–270 mg/dl) para exercício mínimo/alto risco — o exercício PROSSEGUE, podendo-se considerar correção de insulina. Entrada da tabela de alvos durante o exercício do consenso EASD/ISPAD.",
+   "afirmacao": "ADULTOS com DM1 — DURANTE o exercício, na faixa de hiperglicemia SEM cetose relevante — 10,1–15,0 mmol/l (181–270 mg/dl) para exercício intenso/baixo risco de hipoglicemia, 11,1–15,0 mmol/l (199–270 mg/dl) para exercício moderado/risco moderado e 12,1–15,0 mmol/l (217–270 mg/dl) para exercício mínimo/alto risco — o exercício PROSSEGUE em todas as células desta linha; a correção de insulina aparece em apenas UMA delas (\"prosseguir todo exercício, considerar correção de insulina\"), e não em todos os grupos.",
    "secao": "Tabela 2 — alvos durante o exercício (adultos)",
    "cit": [
     [
      0,
      30477,
-     146
+     176
     ]
    ],
-   "cit_sha": "28b2ec55731660d0"
+   "cit_sha": "577568314a8b7ffa"
   },
   {
    "afirmacao": "A tabela de alvos PÓS-EXERCÍCIO do consenso EASD/ISPAD de DM1 vale para a fase pós-exercício E TAMBÉM para a fase NOTURNA pós-exercício, quando o exercício foi feito no FIM DA TARDE ou à NOITE — ou seja, o mesmo limiar de carboidrato governa a madrugada de quem treinou ao entardecer.",
@@ -1662,16 +1662,16 @@
    "cit_sha": "644af9eff7a9ea7b"
   },
   {
-   "afirmacao": "CRIANÇAS E ADOLESCENTES com DM1 — HIPERGLICEMIA ANTES do exercício, faixa 10,1–15,0 mmol/l (181–270 mg/dl) para exercício intenso/baixo risco de hipoglicemia, 11,1–15,0 mmol/l (199–270 mg/dl) para exercício moderado/risco moderado e 12,1–15,0 mmol/l (217–270 mg/dl) para exercício mínimo/alto risco: nessa faixa o exercício pode ser iniciado, mas a tabela pediátrica marca exercício AERÓBICO leve a moderado (AE) como a opção nessa condição. Entrada da tabela pediátrica de alvos pré-exercício do consenso EASD/ISPAD.",
+   "afirmacao": "CRIANÇAS E ADOLESCENTES com DM1 — HIPERGLICEMIA ANTES do exercício, faixa 10,1–15,0 mmol/l (181–270 mg/dl) para exercício intenso/baixo risco de hipoglicemia, 11,1–15,0 mmol/l (199–270 mg/dl) para exercício moderado/risco moderado e 12,1–15,0 mmol/l (217–270 mg/dl) para exercício mínimo/alto risco: a tabela pediátrica traz \"pode iniciar exercício AERÓBICO leve a moderado (AE)\" em UMA célula e \"pode iniciar QUALQUER exercício\" nas outras DUAS que o PDF entrega — AE não é a única opção da faixa. Entrada da tabela pediátrica de alvos pré-exercício do consenso EASD/ISPAD.",
    "secao": "Tabela 5 — alvos pré-exercício (crianças)",
    "cit": [
     [
      0,
      44557,
-     128
+     145
     ]
    ],
-   "cit_sha": "d141eb7756178fcf"
+   "cit_sha": "abdb0d46fbb099dc"
   },
   {
    "afirmacao": "CRIANÇAS E ADOLESCENTES com DM1 — se for feita correção de insulina ANTES do exercício por hiperglicemia, usar 50% do fator de correção habitual quando a glicose do sensor estiver PRÓXIMA do limiar glicêmico superior; e, quando o exercício for ADIADO por glicose baixa, adiar até atingir pelo menos 5,0 mmol/l (90 mg/dl) e, idealmente, 7,0 a 10,0 mmol/l (126 a 180 mg/dl), ou mais alto naqueles com risco aumentado de hipoglicemia.",
@@ -1734,7 +1734,7 @@
    "cit_sha": "f9372e84f7abb4bc"
   },
   {
-   "afirmacao": "⚠️ Por que os limiares de glicose do sensor deste consenso de exercício no DM1 são mais ALTOS do que os limiares de glicemia capilar: eles foram definidos levando em conta o ATRASO (lag time) do CGM e do isCGM em relação à SMBG em torno do exercício.",
+   "afirmacao": "⚠️ Os limiares de glicose do SENSOR deste consenso de exercício no DM1 foram definidos levando em conta o ATRASO (lag time) do CGM e do isCGM em relação à glicemia capilar (SMBG) em torno do exercício; o documento os apresenta como limiares SEGUROS de glicose do sensor — e não como valores de glicemia capilar.",
    "secao": "Discussão",
    "cit": [
     [
@@ -1756,6 +1756,46 @@
     ]
    ],
    "cit_sha": "eecf494030465a65"
+  },
+  {
+   "afirmacao": "⚠️ ADULTOS com DM1 — ANTES do exercício, glicose do sensor >15,0 mmol/l (>270 mg/dl) COM cetonemia ≤1,5 mmol/l (hiperglicemia SEM cetose relevante): o exercício NÃO está proibido, e a conduta depende do TIPO — a linha da tabela traz \"considerar correção de insulina e pode iniciar exercício AERÓBICO leve a moderado (AE)\", \"considerar correção de insulina e pode iniciar QUALQUER exercício\" e \"pode iniciar QUALQUER exercício\". ⚠️ O PDF entrega cinco das seis células desta linha (três grupos × duas direções esperadas da glicose), então NÃO se sabe qual célula vale para qual grupo/seta.",
+   "secao": "Tabela 1 — alvos pré-exercício (adultos)",
+   "cit": [
+    [
+     0,
+     26734,
+     262
+    ]
+   ],
+   "cit_sha": "cdc7e3a5fdbd9535"
+  },
+  {
+   "afirmacao": "⚠️ ADULTOS com DM1 — DURANTE o exercício, glicose do sensor >15,0 mmol/l (>270 mg/dl) COM cetonemia ≤1,5 mmol/l: o exercício NÃO é interrompido, e a conduta depende do TIPO — a linha da tabela traz \"considerar correção de insulina e prosseguir todo exercício\", \"prosseguir todo exercício, CONSIDERAR o aeróbico leve a moderado (AE)\" e \"prosseguir todo exercício\". ⚠️ O PDF entrega cinco das seis células desta linha (três grupos × duas direções esperadas da glicose), então NÃO se sabe qual célula vale para qual grupo/seta.",
+   "secao": "Tabela 2 — alvos durante o exercício (adultos)",
+   "cit": [
+    [
+     0,
+     30267,
+     209
+    ]
+   ],
+   "cit_sha": "4b69b49112422c60"
   }
- ]
+ ],
+ "auditoria": {
+  "data": "2026-08-08",
+  "fatos_tocados": [
+   29,
+   98,
+   100,
+   127,
+   128,
+   132,
+   138,
+   144,
+   146,
+   147
+  ],
+  "achado": "Auditoria adversarial de 145 fatos: 8 corrigidos (5,5%) e 2 acrescentados (agora 147). (1) DOIS fatos PEDIÁTRICOS eram provados por citação da tabela de ADULTO — #98 (\"Tabela 6\") apontava para dentro da Tabela 2 e #100 (\"Tabela 7\") para dentro da Tabela 3. Mesmo texto, tabela errada. Causa: o build.js desambiguava por MARCO único, mas a migração da citação para offset (lib/citacao.js `referenciar`) reancorou cada citação na PRIMEIRA ocorrência do texto na base, e este artigo repete linhas inteiras entre a tabela de adulto e a de criança. Corrigido apontando para a ocorrência certa e estendendo a citação até um trecho ÚNICO. (2) CINCO fatos de tabela liam UMA célula como se fosse a linha inteira (#29, #127, #128, #132, #138). O pior era #128: afirmava que a faixa pré-exercício de 5,0–6,9 / 5,0–7,9 / 5,0–8,9 mmol/l libera \"qualquer tipo de exercício\", quando a MESMA linha manda ADIAR todo exercício com 15–30 g de carboidrato nas combinações de grupo e seta em que se espera QUEDA da glicose — que é o caso do aeróbico. #127 e #138 erravam para o outro lado (impunham \"só aeróbico\" a toda a linha). (3) #144 afirmava uma comparação com a glicemia capilar que a citação não sustenta. (4) ACRESCENTADOS #146 e #147: as duas linhas de hiperglicemia SEM cetose relevante (>15,0 mmol/l com cetonemia ≤1,5) das tabelas de adulto tinham sido descartadas inteiras — são as ÚNICAS linhas das tabelas de adulto em que a conduta depende do TIPO de exercício (AE vs todo Ex). O mapeamento célula→coluna é mesmo irrecuperável (5 células para 6 posições), mas o CONJUNTO de ações da linha é, e entra declarado como tal. NÚCLEO: medido com nucleo-sobre.js — o núcleo não tem nada sobre alvo de glicose no exercício, carboidrato por seta de tendência, hipoglicemia noturna pós-exercício nem alça fechada híbrida. É LACUNA, não divergência; nenhuma ressalva foi inventada. COSTURA/DUPLICATAS: nenhuma afirmação repetida; o reparo de 174→145 está íntegro. A única referência duplicada (#98 = #114) era o defeito da tabela errada, agora desfeito. NÃO CORRIGIDO, por limite da ferramenta: #27 (8.051 chars), #53 (2.242) e #71 (1.916) têm a frase partida ao meio por uma tabela de página inteira; a elisão declarada tem teto de 400 chars de buraco (verifica-extracao.js GAP_MAX), então a citação contígua gigante é a única forma que passa na verificação."
+ }
 }

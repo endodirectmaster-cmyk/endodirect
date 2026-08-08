@@ -5,7 +5,7 @@
  "area": "Diabetes",
  "tipo": "revisao",
  "ano": 2020,
- "tema": "Cetoacidose diabética (CAD) em adultos e em crianças: epidemiologia, fatores precipitantes, fisiopatologia, critérios diagnósticos (ADA, JBDS, ISPAD) e critérios de RESOLUÇÃO, e o manejo por fase — fluidos, insulina intravenosa, reposição de potássio, bicarbonato e fosfato — além das complicações, com destaque para a lesão cerebral pediátrica",
+ "tema": "Cetoacidose diabética (CAD) e as demais CRISES HIPERGLICÊMICAS — inclui o ESTADO HIPERGLICÊMICO HIPEROSMOLAR (EHH, coma hiperosmolar) em contraste com a CAD — em adultos e em crianças: epidemiologia, fatores precipitantes, fisiopatologia, critérios diagnósticos (ADA, JBDS, ISPAD) e critérios de RESOLUÇÃO, e o manejo por fase — fluidos, insulina intravenosa, reposição de potássio, bicarbonato e fosfato — além das complicações, com destaque para a lesão cerebral pediátrica",
  "fatos": [
   {
    "afirmacao": "DIAGNÓSTICO da cetoacidose diabética (CAD): o diagnóstico só se confirma quando os TRÊS critérios estão presentes — 'D' (glicemia elevada OU história familiar de diabetes mellitus), 'K' (cetoácidos altos na urina ou no sangue) e 'A' (acidose metabólica com ânion gap alto). A CAD é a emergência hiperglicêmica aguda mais comum em pessoas com diabetes.",
@@ -1031,7 +1031,7 @@
    "cit_sha": "c4cfded6d10d1f5e"
   },
   {
-   "afirmacao": "ALTERNATIVA À INSULINA INTRAVENOSA na cetoacidose diabética (CAD): doses frequentes de análogo de insulina RÁPIDA por via SUBCUTÂNEA (a cada 1–2 horas) podem ser alternativa aceitável à infusão intravenosa, pois os dois tratamentos resolvem a CAD em tempo semelhante.",
+   "afirmacao": "ALTERNATIVA À INSULINA INTRAVENOSA na cetoacidose diabética (CAD): doses frequentes de análogo de insulina RÁPIDA por via SUBCUTÂNEA (a cada 1–2 horas) podem ser alternativa aceitável à infusão intravenosa, pois os dois tratamentos resolvem a CAD em tempo semelhante. ⚠️ PRÉ-CONDIÇÃO OBRIGATÓRIA ANTES DE INICIAR/MANTER A INSULINA: checar o POTÁSSIO — havendo hipocalemia, a insulina deve ser ADIADA e o potássio reposto primeiro, sob monitorização cardíaca.",
    "secao": "Management — Insulin administration — Maintenance insulin therapy",
    "cit": [
     [
@@ -1120,16 +1120,16 @@
    "cit_sha": "229073966de176e3"
   },
   {
-   "afirmacao": "⚠️ REPOSIÇÃO DE POTÁSSIO EM ADULTOS com cetoacidose diabética (CAD), pelo potássio DE ENTRADA: K+ ≥5,5 mmol/l → NÃO repor (risco de precipitar arritmia cardíaca com potássio adicional); K+ 4,0–5,0 mmol/l → 20 mmol/l no fluido de reposição; K+ 3,0–4,0 mmol/l → 40 mmol/l no fluido de reposição; K+ ≤3,0 mmol/l → 10–20 mmol POR HORA até o K+ sérico ficar >3,0 mmol/l, e então acrescentar 40 mmol/l ao fluido de reposição.",
+   "afirmacao": "⚠️ REPOSIÇÃO DE POTÁSSIO EM ADULTOS com cetoacidose diabética (CAD), pelo potássio DE ENTRADA: K+ ≥5,5 mmol/l → NÃO repor (risco de precipitar arritmia cardíaca com potássio adicional); K+ 4,0–5,0 mmol/l → 20 mmol/l no fluido de reposição; K+ 3,0–4,0 mmol/l → 40 mmol/l no fluido de reposição; K+ ≤3,0 mmol/l → 10–20 mmol POR HORA até o K+ sérico ficar >3,0 mmol/l, e então acrescentar 40 mmol/l ao fluido de reposição. ⚠️ ESTA TABELA NÃO LIBERA A INSULINA: no adulto que desenvolve hipocalemia SINTOMÁTICA (fraqueza muscular e arritmia cardíaca), inicia-se a reposição de potássio e ADIA-SE a administração de insulina até o potássio subir acima de 3,3 mmol/l.",
    "secao": "Box 2 | Current potassium replacement guidelines",
    "cit": [
     [
      0,
      70516,
-     346
+     1547
     ]
    ],
-   "cit_sha": "baf692bf690ef26d"
+   "cit_sha": "b3031b1f9e4c2a0e"
   },
   {
    "afirmacao": "⚠️ REPOSIÇÃO DE POTÁSSIO EM CRIANÇAS com cetoacidose diabética (CAD), pelo potássio DE ENTRADA (⚠️ note a regra que ADIA A INSULINA): K+ >5,0 mmol/l → ADIAR o potássio até K+ ≤5,0 mmol/l; K+ 3,5–5,0 mmol/l → acrescentar 40 mmol/l de potássio à infusão APÓS o bolus inicial de fluido; K+ <3,5 mmol/l → iniciar reposição de 40 mmol/l de potássio o quanto antes E ADIAR A ADMINISTRAÇÃO DE INSULINA até o potássio normalizar.",
@@ -1520,5 +1520,13 @@
    ],
    "cit_sha": "15cbc354c7ca9b4b"
   }
- ]
+ ],
+ "auditoria": {
+  "data": "2026-08-08",
+  "fatos_tocados": [
+   85,
+   92
+  ],
+  "achado": "Auditoria adversarial dos 124 fatos contra o texto-fonte. NENHUMA inversão de sentido, número trocado ou deslocamento de coluna encontrado. Tabela 1 conferida coluna a coluna (9 colunas: gravidade | glicose | pH arterial ou venoso | bicarbonato | cetonas urinárias ou séricas | beta-hidroxibutirato | ânion gap | estado mental | referência) nas três diretrizes (ADA adulto, JBDS, ISPAD pediátrica) — bate. Nenhum fato cita as Tabelas 2 ou 3, corretamente puladas por colunas intercaladas (conferido por offset contra as faixas das duas tabelas no texto normalizado). As 6 elisões declaradas ([…]) foram abertas contra a fonte: todas escondem apenas rodapé de página, cabeçalho corrente (\"Primer\") ou legenda da Figura 3 — nenhuma esconde negação. DOIS DEFEITOS DE RECUPERAÇÃO FALSA corrigidos: (1) fato 92 (Box 2, potássio no ADULTO) trazia a tabela de reposição pelo K de entrada SEM o portão que ADIA a insulina. A assimetria é do próprio artigo: o Box 2 traz a regra de adiar a insulina dentro da coluna PEDIÁTRICA (por isso o fato 93 já a carregava), enquanto no adulto ela mora no corpo do texto (fato 94). Lido sozinho, o fato 92 respondia \"adulto com K de entrada 2,8\" com a dose de potássio e nada sobre segurar a insulina. Citação substituída por um trecho CONTÍGUO (sem elisão) que vai do Box 2 até a frase da hipocalemia sintomática, para que o corte de 3,3 mmol/l fique provado no próprio fato — a elisão foi recusada de propósito porque o buraco (961 caracteres) estoura o GAP_MAX de 400 do verificador, que existe justamente para impedir costura de trechos distantes. (2) fato 85 (análogo rápido subcutâneo a cada 1–2 h como alternativa à infusão intravenosa) é conduta de insulina na CAD ATIVA e não carregava a pré-condição do potássio que os fatos 76, 77, 78, 80 e 86 já carregam. NÚCLEO: a entrada de potássio na CAD foi conferida verbatim contra a fonte e está FIEL — os três limiares pediátricos do Box 2, o corte adulto de 3,3 amarrado ao quadro SINTOMÁTICO, os 55% de hipocalemia com insulina a 0,1 U/kg/h, o bicarbonato fora da rotina e a gravidade medida por acidose e nível de consciência. Sem conflito a declarar. Falta apenas (lacuna, não erro) a faixa de reposição do ADULTO, inclusive o teto K+ ≥5,5 mmol/l -> não repor. CAMINHO: as 4 vinhetas testadas devolvem \"Diabetes\" com o bloco de CAD em 1º lugar. Mas canonArea NÃO roteia \"CAD\", \"crise hiperglicêmica\", \"emergência hiperglicêmica\", \"estado hiperglicêmico hiperosmolar\", \"EHH\", \"coma hiperosmolar\" nem \"hiperosmolar\" — relatado, lib/clinical-deep.js NÃO editada."
+ }
 }

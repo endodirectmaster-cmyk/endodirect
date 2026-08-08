@@ -1,9 +1,83 @@
 ---
 tags: [cofre, processo]
-atualizado: 2026-08-07
+atualizado: 2026-08-08
 ---
 
 # Convenções de Trabalho
+
+## 🕶️ PENEIRA CEGA É PIOR QUE PENEIRA AUSENTE — a terceira reincidência (2026-08-08)
+
+A migração das citações para referência (`cit` + `cit_sha`) esvaziou o campo
+`citacao`. **Três peneiras liam esse campo e passaram a medir o nada** —
+`cobertura-extracao.js`, a sub-peneira `CABEÇA_SOLTA` dentro dela, e agora
+`scripts/proporcao-citada.js`, achado pelo auditor do exercício no DM1.
+
+O padrão é sempre o mesmo e é o que o torna perigoso: **a peneira não quebra,
+ela ATESTA.** O `proporcao-citada.js` imprimia `✓ nenhum extrato acima de 55%`
+somando zero de 27 extratos. Se tivesse dado erro, alguém teria consertado.
+
+Regra que fica: **toda peneira precisa de uma trava que a impeça de dar selo
+verde sobre medição vazia.** A do `proporcao-citada.js` é literal — se TODOS os
+extratos medirem 0%, ele sai com código 1 dizendo que isso é cegueira, não
+limpeza. Ao mudar o formato de um dado, procure quem o LÊ antes de comemorar o
+relatório limpo.
+
+## ⚖️ AO CONSERTAR UMA PENEIRA CEGA, NÃO TROQUE O ALARME FALSO PELO SILÊNCIO
+
+Consertado, o `proporcao-citada.js` acusou seis extratos entre 57% e 72% e
+gritou "citado verbatim num repositório PÚBLICO". **Era mentira, e na direção
+que assusta.** Depois da migração o JSON versionado guarda `[[0,418,271]]` e um
+hash: quem clona e não tem o artigo não reconstitui uma palavra.
+
+São **dois números diferentes**, e confundi-los era o erro:
+
+| | o que é | o que faz |
+|---|---|---|
+| **EXPOSTO** | citação gravada como TEXTO no JSON | risco real de direito autoral · **reprova** |
+| **COBERTO** | união de tudo, inclusive só-referência | dependência do artigo · **informa** |
+
+Hoje EXPOSTO é 0% em todos os 27. COBERTO chega a 72% e é sinal editorial
+("o extrato virou quase uma tradução"), não jurídico. Antes de reescrever,
+conferi os dois lados: `test-citacao-nao-publicada.js` passa, e o
+`lib/clinical-deep-data.js` — que É versionado — é gerado só de `f.afirmacao`.
+
+## 📐 A CONTA DE COBERTURA É DE UNIÃO, NUNCA DE SOMA
+
+As auditorias estendem muitas citações a partir de outras, então sobreposição é
+regra. Somar comprimentos conta o mesmo trecho duas vezes e passa de 100%. E
+como um fato pode ancorar na base 0 ou na 1 (sem hífen de quebra), cujos offsets
+não são comparáveis, tudo é resolvido para TEXTO e relocalizado numa régua só.
+
+## 🎯 TESTE QUE PROCURA PALAVRA-CHAVE NUMA JANELA REPROVA O ACERTO (2026-08-08)
+
+O `test-teto-diretrizes.js` reprovou **três vezes** com o bloco CERTO em
+primeiro lugar: janela de 70 caracteres (os `tema` cresceram), `[^—]` (o `tema`
+tem travessão), janela de 240 (uma frase nova caiu depois dela).
+
+Não era o tamanho da janela — era a **formulação**. O teste quer afirmar "veio o
+bloco certo", e isso se verifica por **IDENTIDADE** (comparar o cabeçalho
+devolvido com o `tema` esperado), não caçando uma palavra num pedaço do
+cabeçalho. Reformulado assim, e conferido por mutação: fazer o `deepFor` PULAR o
+bloco que não cabe volta a reprovar, mostrando MODY no lugar da cetoacidose.
+
+## 🚦 RELATO DE AGENTE É PISTA, NÃO PROVA — meça você mesmo
+
+O auditor do corticoide entregou um pacote de roteamento medido: "base GIH 6/12
+→ 11/12, Adrenal 15/15, dano zero". Montei **bateria própria**
+(`scratchpad/bateria-caminho.js`) e a minha linha de base deu **3/12**, não
+6/12. Não é contradição — são perguntas diferentes —, mas é a razão de o número
+que vale ser o medido aqui. Já houve agente relatando "regressão passa" quando
+não passava.
+
+E a bateria própria pegou **dois danos que o relato não tinha**: promover
+`glicemia`/`hiperglicemia` a peso de doença sequestrava "hiperglicemia na
+acromegalia", e promover `insulina` sequestrava "obeso em insulina: indico
+bariátrica?". Daí o quarto degrau de peso (abaixo).
+
+**A bateria tem duas metades, e a segunda é a que importa:** alvos (resposta
+certa conhecida) e **sentinelas**, medidas por MOVIMENTO contra um instantâneo —
+a pergunta pode estar hoje numa área discutível, mas o pacote não pode ser o que
+a muda.
 
 ## 🔋 FORÇA MÁXIMA COM FREIO EM 85% — e o medidor, porque eu não enxergo o painel (2026-08-08)
 
