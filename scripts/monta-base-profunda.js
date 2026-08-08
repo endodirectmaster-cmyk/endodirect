@@ -54,7 +54,12 @@ const PESO_TIPO = { diretriz: 0, consenso: 0, posicionamento: 0, revisao: 1, met
 const CABECALHO_RESSALVA = {
   nucleo_prevalece: '⚠️ RESSALVA — O NÚCLEO PREVALECE sobre esta fonte nos pontos a seguir (fonte mais antiga ou superada); use o núcleo neles e esta fonte no resto: ',
   fonte_prevalece: '⚠️ EXCEÇÃO — ESTA FONTE PREVALECE SOBRE O NÚCLEO nos pontos a seguir. NÃO aplique aqui a regra geral do núcleo; siga o que está escrito nesta ressalva: ',
-  lacuna: '⚠️ LACUNA DO NÚCLEO — o núcleo não cobre este tema; esta fonte é a referência nos pontos a seguir: ',
+  // ⚠️ "não cobre OS PONTOS A SEGUIR", e não "não cobre este tema": a lacuna é
+  // quase sempre PARCIAL. A dislipidemia é o caso claro — o núcleo tem as metas
+  // por categoria de risco, certas e conferidas, e não tem nada sobre estatina
+  // em diálise, fitosterol ou teto de dose com imunossupressor. Dizer que ele
+  // "não cobre o tema" seria falso e convidaria a IA a descartar o que está certo.
+  lacuna: '⚠️ LACUNA DO NÚCLEO — o núcleo não cobre os pontos a seguir (pode cobrir o tema em geral); esta fonte é a referência NELES: ',
   misto: '⚠️ RESSALVA PONTO A PONTO — núcleo e fonte divergem e o vencedor MUDA a cada item. Leia cada ponto e siga o que ele determina; NÃO presuma que um dos dois vence em bloco: ',
   alinhado: '' // não é entregue à IA; ver abaixo
 };
@@ -128,6 +133,39 @@ function main() {
     // pelo fim — uma ressalva que o truncamento apaga é pior do que inútil, dá
     // falsa sensação de proteção.
     const ressalva = String(e.conflito || '').trim();
+    // ⚠️ ARTIGO GRANDE DEMAIS PARA UM BLOCO SÓ — split por seção (08/08/2026).
+    //
+    // A Diretriz Brasileira de Dislipidemias 2025 rendeu 583 fatos, 144.584
+    // caracteres: 24 mil ACIMA do teto de entrega. Com um bloco único, `deepFor`
+    // corta pelo FIM, e o fim era exatamente o conteúdo mais difícil de achar em
+    // outro lugar — gestação, pediatria com idade-gatilho por fármaco, tetos de
+    // dose com imunossupressor e antirretroviral, e o "não iniciar estatina em
+    // diálise sem DCV estabelecida". O corte é POSICIONAL e cego: não sabe que
+    // está jogando fora a parte rara para preservar a parte que todo mundo sabe.
+    //
+    // Partido em pedaços, cada um vira um bloco com o seu próprio `tema` (as
+    // seções que ele cobre), e aí a seleção por relevância de `deepFor` passa a
+    // funcionar DENTRO do artigo: quem pergunta de estatina na gestação recebe o
+    // pedaço da gestação, não os primeiros 120 mil caracteres do documento.
+    //
+    // A ressalva é repetida em TODOS os pedaços de propósito: ela é o cabeçalho
+    // de segurança, e um pedaço que chegue sozinho sem ela é um pedaço sem aviso.
+    const TETO_BLOCO = 60000;
+    const grupos = [];
+    {
+      const seq = (Array.isArray(e.fatos) ? e.fatos : []).filter((f) => String(f.afirmacao || '').trim());
+      let atual = null;
+      for (const f of seq) {
+        const sec = String(f.secao || '').replace(/\s+/g, ' ').trim();
+        if (!atual || atual.n + f.afirmacao.length > TETO_BLOCO) {
+          atual = { fatos: [], n: 0, secoes: [] };
+          grupos.push(atual);
+        }
+        atual.fatos.push(String(f.afirmacao).trim());
+        atual.n += f.afirmacao.length;
+        if (sec && atual.secoes.indexOf(sec) < 0 && atual.secoes.length < 4) atual.secoes.push(sec);
+      }
+    }
     const corpo = fatos.join(' ');
     let texto = corpo;
     if (ressalva) {
@@ -144,14 +182,30 @@ function main() {
       // alarme falso ocupando o prefixo cacheado. Fica no JSON, sai da entrega.
       texto = dir === 'alinhado' ? corpo : (CABECALHO_RESSALVA[dir] + ressalva + ' | CONTEÚDO: ' + corpo);
     }
-    (porArea[canon] = porArea[canon] || []).push({
-      tema: String(e.tema || e.titulo || '').trim(),
-      fonte: String(e.fonte || '').trim(),
-      texto: texto,
-      _peso: PESO_TIPO[String(e.tipo || 'outro').toLowerCase()] != null ? PESO_TIPO[String(e.tipo || 'outro').toLowerCase()] : 6,
-      _ano: Number(e.ano) || 0,
-      _fatos: fatos.length
-    });
+    const temaBase = String(e.tema || e.titulo || '').trim();
+    const cabecalhoRessalva = (ressalva && e.conflito_direcao !== 'alinhado')
+      ? CABECALHO_RESSALVA[String(e.conflito_direcao || '').trim()] + ressalva + ' | CONTEÚDO: '
+      : '';
+    // Um pedaço só → bloco único, como sempre foi. Vários → um bloco por pedaço,
+    // cada um nomeado pelas seções que cobre, para a seleção por tema funcionar.
+    const pedacos = grupos.length > 1 ? grupos : null;
+    const blocos = pedacos
+      ? pedacos.map((g, i) => ({
+        tema: `${temaBase} (parte ${i + 1}/${pedacos.length}${g.secoes.length ? ' — ' + g.secoes.join('; ').slice(0, 150) : ''})`,
+        texto: cabecalhoRessalva + g.fatos.join(' '),
+        _fatos: g.fatos.length
+      }))
+      : [{ tema: temaBase, texto: texto, _fatos: fatos.length }];
+    for (const b of blocos) {
+      (porArea[canon] = porArea[canon] || []).push({
+        tema: b.tema,
+        fonte: String(e.fonte || '').trim(),
+        texto: b.texto,
+        _peso: PESO_TIPO[String(e.tipo || 'outro').toLowerCase()] != null ? PESO_TIPO[String(e.tipo || 'outro').toLowerCase()] : 6,
+        _ano: Number(e.ano) || 0,
+        _fatos: b._fatos
+      });
+    }
   }
 
   // ⚠️ ABORTA: ressalva sem direção declarada. Ver CABECALHO_RESSALVA.

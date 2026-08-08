@@ -187,6 +187,53 @@ ok(deep.canonArea('prolactinoma') === 'Neuroendocrinologia', '"prolactinoma" tem
   ok(/CONTRAINDICADO|contraindicated/i.test(b),
     '⚠️ a contraindicação de bisfosfonato na hipofosfatasia NÃO está chegando a quem pergunta por ela');
 }
+// ── A PERGUNTA REAL DO MÉDICO CHEGA AO BLOCO? ───────────────────────────────
+// ⚠️ Medido em 08/08/2026 com 21 vinhetas realistas: SETE não roteavam para
+// lugar nenhum, entre elas as TRÊS de hiponatremia — logo a área onde mais se
+// corrigiu conduta (5 extratos, 638 fatos, o teto lido como meta, o gatilho da
+// desmielinização). Causa: o mapa de termos só conhecia NOME DE DIAGNÓSTICO, e
+// o médico escreve o ACHADO. Quem já sabe que é hiponatremia não pergunta.
+//
+// Cada caso abaixo é uma pergunta que falhava. Não troque por sinônimo do nome
+// da doença — é exatamente isso que o teste existe para impedir.
+{
+  const VINHETAS = [
+    ['Idoso de 78 anos com sódio de 118, confuso. Qual o limite de correção nas primeiras 24 h?', 'Endocrinopatias'],
+    ['Corrigi o sódio rápido demais, subiu 14 mmol/L em 24 h. O que faço agora?', 'Endocrinopatias'],
+    ['Prolactina de 45 ng/mL numa paciente assintomática com ressonância normal — o que pedir antes de tratar?', 'Neuroendocrinologia'],
+    // ⚠️ A vinheta tem de ser respondível PELO BLOCO QUE EXISTE. A primeira
+    // versão perguntava "IMC 38 e apneia do sono, qual farmacoterapia?" e
+    // esperava Obesidade — mas o único bloco de Obesidade é o consenso de
+    // dumping, que não fala de farmacoterapia da obesidade. O teste passava
+    // enquanto entregasse conteúdo IRRELEVANTE da área certa, e só quebrou
+    // quando a área ficou vazia. Teste de roteamento que aceita qualquer
+    // conteúdo da área mede meia coisa.
+    ['Hipoglicemia pós-prandial dois anos após bypass gástrico. Como investigo?', 'Obesidade'],
+    ['Cortisol matinal de 210 nmol/L num paciente em desmame de corticoide. Suspendo?', 'Adrenal'],
+    ['Paciente com bócio, taquicardia de 140, febre e agitação. Escore de Burch-Wartofsky 55.', 'Tireoide'],
+    ['Jovem de 22 anos, magro, hiperglicemia leve familiar em três gerações, anticorpos negativos.', 'Diabetes'],
+    ['Paciente com perda precoce de dentes decíduos e fraturas de metatarso, fosfatase alcalina baixa.', 'Osteometabolismo']
+  ];
+  for (const [q, esperado] of VINHETAS) {
+    const b = deep.deepFor(q, 120000, q);
+    const entregue = ((b.match(/APROFUNDAMENTO — ([^(]+)\(/) || [])[1] || '').trim();
+    ok(b.length > 1000 && entregue.toUpperCase() === esperado.toUpperCase(),
+      `⚠️ a pergunta "${q.slice(0, 52)}…" entregou ${b.length} chars de "${entregue || 'NADA'}" (esperado ${esperado}) — o artigo existe na base e não chega a quem pergunta por ele`);
+  }
+}
+
+// ⚠️ CONVERGÊNCIA vence COMPRIMENTO. A regra antiga ("a chave mais longa vence")
+// mandava "Menina de 9 anos com cefaleia, baixa estatura e calcificação
+// suprasselar" para Endocrinologia Pediátrica — que não tem NENHUM bloco — por
+// causa de `baixa estatura` (14 letras), deixando de fora os 395 fatos de
+// craniofaringioma que são o assunto exato da pergunta.
+{
+  const q = 'Menina de 9 anos com cefaleia, baixa estatura e calcificação suprasselar na tomografia. Conduta?';
+  const b = deep.deepFor(q, 120000, q);
+  ok(/craniofaringioma/i.test(b),
+    '⚠️ vinheta de craniofaringioma não entregou o bloco — a área vazia venceu a área que tem o conteúdo');
+}
+
 // ⚠️ FRONTEIRA DE PALAVRA. A chave 'osso' (sinônimo de Osteometabolismo) está
 // dentro de "posso" e "nosso". Enquanto canonArea só recebia NOME DE ÁREA isso
 // era inofensivo; ao receber a pergunta do médico, "posso dar isso ao nosso
