@@ -5,7 +5,7 @@
  "area": "Diabetes",
  "tipo": "revisao",
  "ano": 2020,
- "tema": "Cetoacidose euglicêmica (cetoacidose com glicemia < 200 mg/dL): fisiopatologia, gatilhos (iSGLT2, jejum/dieta pobre em carboidrato, gestação, álcool, sepse, pancreatite, cirurgia, cocaína, doenças metabólicas hereditárias), diagnóstico, prevenção e tratamento em pessoas com e sem diabetes",
+ "tema": "Cetoacidose euglicêmica (cetoacidose com glicemia < 200 mg/dL): fisiopatologia, gatilhos e fatores precipitantes (iSGLT2 / gliflozinas, jejum prolongado e inanição, dieta cetogênica pobre em carboidrato, gestação, cetoacidose alcoólica do etilismo, sepse, pancreatite, cirurgia, cocaína, doenças metabólicas hereditárias), diagnóstico por cetonemia, quando suspender o iSGLT2, prevenção e tratamento com insulina e glicose intravenosa em pessoas com e sem diabetes",
  "fatos": [
   {
    "afirmacao": "A cetoacidose EUGLICÊMICA (euKA) é a cetoacidose que ocorre com glicemia < 200 mg/dl — impropriamente chamada de euglicêmica — e pode ocorrer também em pessoas SEM diabetes; a ausência de hiperglicemia marcada atrasa o diagnóstico e o tratamento e pode levar a desfechos adversos graves.",
@@ -56,16 +56,16 @@
    "cit_sha": "bed1fc57a0dd6732"
   },
   {
-   "afirmacao": "As diretrizes dos EUA e do Reino Unido sugerem, para diagnosticar a CETOACIDOSE DIABÉTICA (CAD), um limiar de glicemia de 250 mg/dL e de 200 mg/dL, respectivamente — são os cortes da forma HIPERGLICÊMICA da doença.",
+   "afirmacao": "As diretrizes dos EUA e do Reino Unido sugerem, para diagnosticar a CETOACIDOSE DIABÉTICA (CAD), um limiar de glicemia de 250 mg/dL e de 200 mg/dL, respectivamente — são os cortes da forma HIPERGLICÊMICA da doença. ⚠️ GLICEMIA ABAIXO DESSES CORTES NÃO EXCLUI CETOACIDOSE: já em 1973 Munro descreveu, entre 211 episódios de CAD no diabetes tipo 1, 37 com glicemia < 300 mg/dL e 16 com glicemia < 200 mg/dL — é a forma EUGLICÊMICA, e ela escapa desses limiares.",
    "secao": "Introduction",
    "cit": [
     [
      0,
      2242,
-     173
+     345
     ]
    ],
-   "cit_sha": "01beaab23fab6f84"
+   "cit_sha": "19cb375867d9812e"
   },
   {
    "afirmacao": "O termo 'cetoacidose euglicêmica' (euKA) nasceu em 1973, quando Munro e colaboradores relataram que, entre 211 episódios de CAD em diabetes tipo 1, 37 tinham glicemia < 300 mg/dL e 16 episódios tinham glicemia < 200 mg/dL.",
@@ -200,7 +200,7 @@
    "cit_sha": "8c6417accef3414e"
   },
   {
-   "afirmacao": "A indicação da DAPAGLIFLOZINA (iSGLT2) foi estendida a pessoas com diabetes tipo 1 e IMC ≥ 27 kg/m2, mas SOMENTE na Europa; o FDA (EUA) recusou a aprovação de iSGLT2 para o DM1 porque os dados disponíveis do iSGLT2 como adjuvante à insulina sugeriram que os benefícios globais NÃO superavam os riscos de CAD potencialmente fatal.",
+   "afirmacao": "⚠️ SITUAÇÃO REGULATÓRIA COMO O ARTIGO A DESCREVE EM 2020 — confira o estado atual antes de aplicar: a indicação da DAPAGLIFLOZINA (iSGLT2) foi estendida a pessoas com diabetes tipo 1 e IMC ≥ 27 kg/m2, mas SOMENTE na Europa; o FDA (EUA) recusou a aprovação de iSGLT2 para o DM1 porque os dados disponíveis do iSGLT2 como adjuvante à insulina sugeriram que os benefícios globais NÃO superavam os riscos de CAD potencialmente fatal.",
    "secao": "Causes of euKA — SGLT2i",
    "cit": [
     [
@@ -236,7 +236,7 @@
    "cit_sha": "ee0f576fd191aec6"
   },
   {
-   "afirmacao": "Nos programas de ensaios clínicos dos três iSGLT2 mais usados (canagliflozina, dapagliflozina e empagliflozina), os números de CAD foram pequenos, com incidência MENOR que 1 por 1000 pacientes-ano ou pessoas-ano.",
+   "afirmacao": "Nos programas de ensaios clínicos dos três iSGLT2 mais usados (canagliflozina, dapagliflozina e empagliflozina), os números de CAD foram pequenos, com incidência MENOR que 1 por 1000 pacientes-ano ou pessoas-ano. ⚠️ NÃO LEIA ESSE NÚMERO COMO A INCIDÊNCIA DA VIDA REAL: o próprio artigo ressalva que o cenário pode ser diferente na prática clínica real, onde as condições estão longe do ambiente \"ideal\" dos ensaios randomizados — nos quais os pacientes são homogêneos, altamente selecionados e com seguimento próximo.",
    "secao": "Causes of euKA — SGLT2i",
    "cit": [
     [
@@ -247,10 +247,10 @@
     [
      0,
      10176,
-     90
+     330
     ]
    ],
-   "cit_sha": "ba2ed7bd53ce339f"
+   "cit_sha": "404120b4fead387b"
   },
   {
    "afirmacao": "Um estudo de coorte com quatro grandes bancos de dados de sinistros de seguro dos EUA relatou risco de CAD quase DUAS VEZES maior em novos usuários de iSGLT2 em comparação com não usuários de iSGLT2.",
@@ -277,16 +277,16 @@
    "cit_sha": "73531cd413682607"
   },
   {
-   "afirmacao": "Em outro estudo de coorte, com banco de dados do seguro-saúde coreano, o tratamento com iSGLT2 NÃO aumentou o risco de cetoacidose em comparação com o tratamento com inibidor de DPP-4 (HR 0,96, IC 95% 0,58–1,57).",
+   "afirmacao": "⚠️ DADO DISCORDANTE — NÃO leia como ausência de risco: em outro estudo de coorte, com banco de dados do seguro-saúde coreano, o tratamento com iSGLT2 NÃO aumentou o risco de cetoacidose em comparação com o tratamento com inibidor de DPP-4 (HR 0,96, IC 95% 0,58–1,57). O artigo traz esse achado em CONTRASTE (\"However\") com as coortes americanas, que encontraram risco cerca de duas vezes maior, e conclui logo em seguida que, até o momento, a taxa exata com que a cetoacidose ocorre durante a terapia com iSGLT2 é difícil de estabelecer.",
    "secao": "Causes of euKA — SGLT2i",
    "cit": [
     [
      0,
      11032,
-     205
+     322
     ]
    ],
-   "cit_sha": "34bbae83fabae694"
+   "cit_sha": "f28ed65a83449e5c"
   },
   {
    "afirmacao": "A taxa exata com que a cetoacidose ocorre durante a terapia com iSGLT2 é difícil de estabelecer.",
@@ -661,7 +661,7 @@
    "cit_sha": "722d71272401d900"
   },
   {
-   "afirmacao": "⚠️ CONDUTA QUE DIFERE DA CAD DIABÉTICA — CETOACIDOSE ALCOÓLICA: os pacientes têm sintomas clássicos de CAD que melhoram RAPIDAMENTE com glicose intravenosa e grandes volumes de soro fisiológico intravenoso, EM GERAL SEM INSULINA. Ocasionalmente pode ser necessário bicarbonato intravenoso para corrigir o distúrbio metabólico.",
+   "afirmacao": "⚠️ CONDUTA QUE DIFERE DA CAD DIABÉTICA — CETOACIDOSE ALCOÓLICA (AKA), que por definição ocorre em pessoa SEM diabetes: os pacientes têm sintomas clássicos de CAD que melhoram RAPIDAMENTE com glicose intravenosa e grandes volumes de soro fisiológico intravenoso, EM GERAL SEM INSULINA. Ocasionalmente pode ser necessário bicarbonato intravenoso para corrigir o distúrbio metabólico. ⚠️ NÃO ESTENDA ISTO A QUEM TEM DIABETES: no diabético, o álcool é fator PRECIPITANTE de CAD e a infusão contínua de insulina faz parte do tratamento.",
    "secao": "Causes of euKA — Alcoholic Ketoacidosis",
    "cit": [
     [
@@ -877,6 +877,18 @@
    "cit_sha": "3651589cd75ff092"
   },
   {
+   "afirmacao": "⚠️ CONDUTA QUE DIFERE DA CAD CLÁSSICA — CETOACIDOSE EM QUEM USA iSGLT2: o tratamento começa por SUSPENDER O iSGLT2, e inclui reposição de fluidos, infusão de insulina e solução de glicose intravenosa (Tabela 1 do artigo, linha \"SGLT2i\", em pessoas com diabetes). ⚠️ Suspender o fármaco NÃO aparece na seção \"Management of euKA\" do corpo do artigo — que só manda suspendê-lo de forma preventiva, antes de cirurgia ou diante de doença aguda — e é o passo que a conduta da CAD clássica não tem.",
+   "secao": "Table 1 — Causes, pathogenesis, and management of euKA (linha SGLT2i, coluna Treatment)",
+   "cit": [
+    [
+     0,
+     6046,
+     81
+    ]
+   ],
+   "cit_sha": "090f26e4498803e4"
+  },
+  {
    "afirmacao": "O tratamento deve continuar até a RESOLUÇÃO da cetoacidose (normalização da acidose e dos corpos cetônicos); a terapia com bicarbonato pode ser necessária na acidose grave.",
    "secao": "Management of euKA",
    "cit": [
@@ -924,5 +936,10 @@
    ],
    "cit_sha": "23de820970968275"
   }
- ]
+ ],
+ "auditoria": {
+  "data": "2026-08-08",
+  "fatos_tocados": 6,
+  "achado": "Auditoria adversarial, 76 fatos lidos, todos os 23 de número/dose/limiar conferidos: zero inversões, zero erros numéricos, zero perdas de força. O achado que muda conduta é de OMISSÃO: a célula da Tabela 1 \"Stop SGLT2i, fluid replacement, insulin infusion and intravenous glucose solution\" não tem contrapartida no corpo, e sem ela os 3 fatos de tratamento (#72–#75) mandavam fluido+insulina+dextrose e nunca mandavam SUSPENDER O FÁRMACO que está causando a cetose — fato novo recuperado. Recuperação falsa: #5 (corte de 250/200 mg/dL da CAD clássica, que sozinho ensinava a excluir cetoacidose abaixo do corte), #55 (\"em geral sem insulina\" da cetoacidose alcoólica sem o porteiro \"sem diabetes\" — o álcool também precipita CAD em diabético), #23 (coorte coreana negativa entregue sem a marca de discordância) e #20 (incidência <1/1000 pacientes-ano dos ENSAIOS sem a ressalva da vida real que vem na frase seguinte). #17 ganhou âncora temporal (status regulatório de 2020). Tabela 1: deslocamento da coluna Pathogenesis CONFIRMADO em 3 checagens contra o corpo, e nenhum dos 76 fatos cita dentro da tabela — a decisão de pulá-la estava certa. As 2 entradas novas do núcleo (armadilha dupla e suspensão pré-operatória) conferem com a fonte, palavra por palavra."
+ }
 }

@@ -98,14 +98,22 @@ ok(/deepFor\(areaPedida, TETO_PROFUNDO, areaPedida\)/.test(ai),
       .sort((x, y) => y.length - x.length)[0] || '';
     if (chave.length < 7) continue;
     const apertado = deep.deepFor(a, 9000, a + ' ' + chave);
-    // ⚠️ DUAS vezes esta medição reprovou com o bloco CERTO em primeiro lugar.
-    // Primeiro a janela de 70 caracteres passou a cortar antes da palavra-chave
-    // (os `tema` cresceram); depois o `[^—]` parou no travessão — e o próprio
-    // `tema` tem travessão ("diabetes tipo 1 — revisão geral: …"), então a chave
-    // ficava do lado de fora. Agora lê 240 caracteres crus depois do marcador.
+    // ⚠️ TRÊS vezes esta medição reprovou com o bloco CERTO em primeiro lugar, e
+    // sempre pelo mesmo motivo: ela procurava a PALAVRA-CHAVE dentro de uma
+    // janela de N caracteres do cabeçalho. Janela de 70 → os `tema` cresceram e
+    // a chave saiu; `[^—]` → o próprio `tema` tem travessão; janela de 240 → uma
+    // frase acrescentada ao FIM de um `tema` longo ficou fora dela.
+    //
+    // O erro era de formulação, não de tamanho de janela. O que o teste quer
+    // afirmar é "veio o bloco CERTO", e isso se verifica por IDENTIDADE, não
+    // procurando uma palavra num pedaço do cabeçalho. Comparar o começo do
+    // cabeçalho devolvido com o começo do `tema` esperado responde exatamente
+    // essa pergunta e não depende de onde a chave caiu.
+    const cab = (s) => String(s).toLowerCase().replace(/\s+/g, ' ').trim().slice(0, 60);
     const primeiro = (apertado.match(/• ([^\n]{0,240})/) || [])[1] || '';
-    ok(primeiro.toLowerCase().includes(chave.toLowerCase().slice(0, 7)),
-      `⚠️ com teto apertado, pedi "${chave}" em ${a} e veio "${primeiro.trim()}" — o bloco mais relevante foi PULADO em vez de cortado`);
+    ok(cab(primeiro) === cab(maior.tema),
+      `⚠️ com teto apertado, pedi "${chave}" em ${a} e veio "${primeiro.trim().slice(0, 80)}" `
+      + `em vez de "${String(maior.tema).trim().slice(0, 80)}" — o bloco mais relevante foi PULADO em vez de cortado`);
     break;
   }
 }
