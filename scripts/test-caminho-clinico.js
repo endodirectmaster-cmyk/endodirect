@@ -283,6 +283,29 @@ const CAMINHO = [
   ['gastroparesia apos bariatrica em diabetico', 'Diabetes'],
   ['bariatrica e diabetes', 'Diabetes'],
 
+  // ⚠️ DOIS AR GLP-1 SEM ROTA, UM DELES COM A MARCA JÁ NO MAPA (08/08/2026).
+  // "diarreia persistente com dulaglutida" devolvia "" — nenhuma área — porque
+  // `trulicity` estava no mapa e `dulaglutida` não. O nome genérico é o que o
+  // médico prescreve. As duas têm conteúdo (10 e 9 ocorrências) no artigo de
+  // eventos adversos gastrintestinais, que é exatamente o que responde.
+  ['diarreia persistente com dulaglutida: o que faco?', 'Obesidade'],
+  ['lixisenatida causa nausea?', 'Obesidade'],
+  // Peso de fármaco: com a doença nomeada, a doença continua vencendo.
+  ['dulaglutida no diabetes tipo 2', 'Diabetes'],
+  // ⚠️ ESTA É A LINHA QUE MEDE O TIER, e escrevi só depois de a mutação passar:
+  // tirar as duas de CAT_FARMACO não reprovava nada, porque `diabetes tipo 2`
+  // (15 chars) vence a dulaglutida nos dois tiers. Com uma sigla CURTA de doença
+  // a diferença aparece — `sop`(3) só ganha do fármaco se ele for fármaco. E o
+  // destino está conferido: Feminina responde (177 "SOP", 4 "GLP-1"), Obesidade
+  // não tem SOP nenhuma. GLP-1 na SOP é pergunta de consultório, não hipótese.
+  ['dulaglutida na SOP', 'Endocrinologia Feminina'],
+  // ⚠️ SENTINELA DE ROTA VAZIA. `albiglutida`, `retatrutida`, `survodutida`,
+  // `orforglipron` e `beinaglutida` foram conferidas uma a uma e têm ZERO
+  // conteúdo na base. Rota para conteúdo que não existe devolve bloco vazio com
+  // cara de resposta — pior que buraco. Se alguém acrescentar o termo sem
+  // acrescentar o artigo, esta linha reprova.
+  ['albiglutida', '(vazio)'],
+
   // Sentinelas de outras áreas — o achado glicêmico não pode sequestrá-las.
   ['hiperglicemia em paciente com acromegalia', 'Neuroendocrinologia'],
   ['obeso em insulina: indico cirurgia bariatrica?', 'Obesidade'],
