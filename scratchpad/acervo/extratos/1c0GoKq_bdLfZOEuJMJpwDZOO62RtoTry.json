@@ -5,7 +5,7 @@
  "area": "Diabetes",
  "tipo": "revisao",
  "ano": 2023,
- "tema": "Pré-diabetes: critérios diagnósticos de ADA, OMS e International Expert Committee, rastreamento, fisiopatologia, complicações e prevenção com estilo de vida e fármacos",
+ "tema": "Pré-diabetes (glicemia de jejum alterada e intolerância à glicose): critérios diagnósticos de glicemia de jejum, glicemia de 2 horas no TOTG de 75 g e HbA1c pela ADA, pela OMS e pelo International Expert Committee; rastreamento e monitorização anual; fisiopatologia; risco de progressão para diabetes tipo 2; remissão e reversão espontânea à normoglicemia; complicações micro e macrovasculares; prevenção com estilo de vida, perda de peso e fármacos (metformina, acarbose, pioglitazona, liraglutida)",
  "conflito": "DIVERGÊNCIA DE CORTES DIAGNÓSTICOS — esta revisão é do JAMA 2023 e o núcleo é ADA Standards of Care 2026 + SBD/IDF. (1) TOTG DE 1 HORA: a fonte NÃO menciona a glicemia de 1 hora em lugar nenhum — descreve só glicemia de jejum, glicemia de 2 h e HbA1c. O núcleo traz o critério da SBD/IDF (diabetes com glicemia de 1 h ≥209 mg/dL; pré-diabetes 155–208 mg/dL). Use o núcleo: o critério é mais novo e é o que vale no Brasil. (2) GLICEMIA DE JEJUM E HbA1c pela ADA: os dois concordam (jejum 100–125 mg/dL; HbA1c 5,7–6,4%). A fonte ACRESCENTA dois conjuntos de cortes que o núcleo não registra — Organização Mundial da Saúde (jejum 110–125 mg/dL, sem critério de HbA1c) e International Expert Committee (HbA1c 6,0–6,4%, sem critério de glicemia). São critérios de outras sociedades, úteis para ler literatura antiga ou laudo internacional, e NÃO substituem o corte da ADA/SBD que o núcleo usa. (3) TIRZEPATIDA: a fonte afirma que, até 2023, não havia dados sobre prevenção da progressão de pré-diabetes para diabetes. O núcleo já traz o SURMOUNT-1 de 3 anos. O dado da fonte está superado — vale o núcleo. (4) METFORMINA: alinhado no essencial (IMC ≥35, idade <60 anos, diabetes gestacional prévio). A fonte acrescenta dois porteiros que o núcleo não lista — glicemia de jejum ≥110 mg/dL e HbA1c ≥6,0% — e isso é acréscimo compatível, não conflito. (5) META DE PESO: a fonte cita a ADA de 2023 (≥7%); o núcleo traz a ADA 2026 (≥5–7%). Vale o núcleo, mais novo. O que a fonte acrescenta sem conflitar: rastreamento (USPSTF a cada 3 anos dos 35 aos 70 anos com sobrepeso/obesidade; ADA universal a cada 3 anos a partir dos 35 anos), a discordância entre os três testes de rastreio (concordância de apenas 4,1%), a ausência de regra para CONFIRMAR pré-diabetes com segundo teste, a remissão espontânea (33–59% em 1–5 anos) e a tabela de ensaios de fármacos (acarbose, pioglitazona, rosiglitazona, orlistate, liraglutida, valsartana, nateglinida).",
  "conflito_direcao": "nucleo_prevalece",
  "nucleo_prevalece_porque": "O núcleo é ADA Standards of Care 2026 somada ao critério SBD/IDF do TOTG de 1 hora, enquanto a fonte é uma revisão narrativa do JAMA de abril de 2023 com busca encerrada em fevereiro de 2023. Onde os dois falam da mesma coisa (glicemia de jejum e HbA1c pela ADA) eles concordam; onde diferem, a diferença é de DATA e de PAÍS, não de qualidade: o TOTG de 1 hora não existia como critério consolidado quando a fonte foi escrita, e a afirmação da fonte de que faltavam dados de tirzepatida para prevenção foi superada pelo SURMOUNT-1 de 3 anos que o núcleo já registra. A fonte não contraindica nada que o núcleo recomende — ela apenas não conhece o que veio depois.",
@@ -160,7 +160,7 @@
    "cit_sha": "e0e0877633bf01b1"
   },
   {
-   "afirmacao": "Critério de INTOLERÂNCIA À GLICOSE para pré-diabetes nesta revisão do JAMA (2023): glicemia de 2 horas (2hPG) de 140 a 199 mg/dL (7,8–11,0 mmol/L). Para saber a qual sociedade cada corte pertence, ver a Tabela 1 do artigo.",
+   "afirmacao": "Critério de INTOLERÂNCIA À GLICOSE (glicemia de 2 horas pós-sobrecarga) para pré-diabetes nesta revisão do JAMA (2023): 2hPG de 140 a 199 mg/dL (7,8–11,0 mmol/L).",
    "secao": "Diagnóstico",
    "cit": [
     [
@@ -220,7 +220,7 @@
    "cit_sha": "4081b63ca40dc010"
   },
   {
-   "afirmacao": "Definição de pré-diabetes no resumo desta revisão do JAMA (2023): glicemia de jejum de 100 a 125 mg/dL, glicemia de 140 a 199 mg/dL medida 2 horas após sobrecarga oral de 75 g de glicose, ou HbA1c de 5,7% a 6,4% ou de 6,0% a 6,4%. O resumo NÃO diz a qual sociedade cada faixa de HbA1c pertence — isso está na Tabela 1.",
+   "afirmacao": "Definição de pré-diabetes no resumo desta revisão do JAMA (2023): glicemia de jejum de 100 a 125 mg/dL, glicemia de 140 a 199 mg/dL medida 2 horas após sobrecarga oral de 75 g de glicose, ou HbA1c de 5,7% a 6,4% ou de 6,0% a 6,4%. ⚠️ O resumo NÃO diz de quem é cada faixa de HbA1c: 5,7–6,4% é o corte da American Diabetes Association e 6,0–6,4% é o do International Expert Committee — atribuição que só aparece na Tabela 1 e no corpo do artigo, e sem a qual o par de faixas fica sem dono.",
    "secao": "Resumo",
    "cit": [
     [
@@ -352,7 +352,7 @@
    "cit_sha": "251673cb27d6fcf7"
   },
   {
-   "afirmacao": "NÃO existem diretrizes equivalentes sobre repetir o teste para CONFIRMAR o diagnóstico de PRÉ-DIABETES; a baixa concordância entre os 3 testes de rastreamento, em parte por instabilidade de estados como a glicemia de jejum alterada, aumenta a chance de falso-positivo quando se rastreia com um único teste.",
+   "afirmacao": "Até esta revisão do JAMA (2023) NÃO existiam diretrizes equivalentes sobre repetir o teste para CONFIRMAR o diagnóstico de PRÉ-DIABETES (o diabetes, esse sim, exige 2 resultados alterados); a baixa concordância entre os 3 testes de rastreamento, em parte por instabilidade de estados como a glicemia de jejum alterada, aumenta a chance de falso-positivo quando se rastreia com um único teste.",
    "secao": "Rastreamento",
    "cit": [
     [
@@ -460,7 +460,7 @@
    "cit_sha": "48d5fe112407370f"
   },
   {
-   "afirmacao": "Principais fatores de risco para pré-diabetes: sobrepeso ou obesidade (IMC de 25,0 a 29,9 para sobrepeso e 30 para obesidade, definição da OMS), idade mais avançada, inatividade física e dieta não saudável.",
+   "afirmacao": "Principais fatores de risco para pré-diabetes: sobrepeso ou obesidade (definição da Organização Mundial da Saúde — IMC de 25,0 a 29,9 para sobrepeso e IMC ≥30 para obesidade), idade mais avançada, inatividade física e dieta não saudável.",
    "secao": "Epidemiologia",
    "cit": [
     [
@@ -693,7 +693,7 @@
    "cit_sha": "df2f00e6199bfd61"
   },
   {
-   "afirmacao": "No grupo controle do US DPP, as taxas brutas de incidência de diabetes por 100 pessoas-ano foram 10,3, 12,4, 11,7, 12,9 e 12,1 nos grupos raciais e étnicos comparados.",
+   "afirmacao": "No grupo controle do US DPP, as taxas brutas de incidência de diabetes ficaram entre 10,3 e 12,9 casos por 100 pessoas-ano nos cinco grupos raciais e étnicos analisados (10,3; 12,4; 11,7; 12,9; 12,1) — valores próximos entre si, coerentes com a ausência de diferença étnica significativa na progressão.",
    "secao": "Complicações — progressão para diabetes",
    "cit": [
     [
@@ -753,7 +753,7 @@
    "cit_sha": "b1f5afdcdecd53e4"
   },
   {
-   "afirmacao": "A AMERICAN DIABETES ASSOCIATION recomenda, em pessoas com PRÉ-DIABETES, perda de peso de pelo menos 7% por dieta saudável e aproximadamente 150 min/semana de atividade física de intensidade moderada.",
+   "afirmacao": "A AMERICAN DIABETES ASSOCIATION, na versão de 2023 citada por esta revisão do JAMA, recomenda em pessoas com PRÉ-DIABETES perda de peso de pelo menos 7% por dieta saudável e aproximadamente 150 min/semana de atividade física de intensidade moderada (meta da edição de 2023 — edições posteriores da ADA podem trazer número diferente).",
    "secao": "Perguntas frequentes",
    "cit": [
     [
@@ -765,7 +765,7 @@
    "cit_sha": "23231b806afcb415"
   },
   {
-   "afirmacao": "Ensaios randomizados de vários medicamentos (metformina, pioglitazona e acarbose) demonstraram eficácia sobre placebo em retardar a progressão para diabetes; porém NENHUM medicamento foi aprovado pela FDA americana para prevenção de diabetes, e os fármacos tendem a perder o efeito quando descontinuados.",
+   "afirmacao": "Ensaios randomizados de vários medicamentos (metformina, pioglitazona e acarbose) demonstraram eficácia sobre placebo em retardar a progressão para diabetes; porém, até o fechamento da busca desta revisão do JAMA (fevereiro de 2023), NENHUM medicamento havia sido aprovado pela FDA americana para prevenção de diabetes, e os fármacos tendem a perder o efeito quando descontinuados.",
    "secao": "Perguntas frequentes",
    "cit": [
     [
@@ -801,7 +801,7 @@
    "cit_sha": "cc8e29f33fc7c323"
   },
   {
-   "afirmacao": "Meta-análise de 129 estudos prospectivos (10 069 955 indivíduos; seguimento mediano 9,8 anos): pré-diabetes na linha de base (definido por intolerância à glicose ou glicemia de jejum alterada) associou-se a maior taxa de doença cardiovascular (58,3 vs 67,0 por 10 000 pessoas-ano) e de mortalidade por todas as causas (73,6 vs 81 por 10 000 pessoas-ano).",
+   "afirmacao": "Meta-análise de 129 estudos prospectivos (10 069 955 indivíduos; seguimento mediano 9,8 anos): pré-diabetes na linha de base (definido por intolerância à glicose ou glicemia de jejum alterada) associou-se a maior taxa de doença cardiovascular (67,0 por 10 000 pessoas-ano nos com pré-diabetes vs 58,3 nos com regulação glicêmica normal) e de mortalidade por todas as causas (81 por 10 000 pessoas-ano nos com pré-diabetes vs 73,6 nos normoglicêmicos).",
    "secao": "Complicações micro e macrovasculares",
    "cit": [
     [
@@ -921,7 +921,7 @@
    "cit_sha": "028b360feb2550f6"
   },
   {
-   "afirmacao": "NENHUMA organização profissional recomenda formalmente rastreamento regular de complicações microvasculares ou macrovasculares em indivíduos com pré-diabetes, por falta de dados de efetividade e custo-efetividade.",
+   "afirmacao": "Até esta revisão do JAMA (abril de 2023), NENHUMA organização profissional recomendava formalmente rastreamento regular de complicações microvasculares ou macrovasculares em indivíduos com pré-diabetes, por falta de dados de efetividade e custo-efetividade.",
    "secao": "Complicações micro e macrovasculares",
    "cit": [
     [
@@ -1005,7 +1005,7 @@
    "cit_sha": "bef8ee9c4d8b3844"
   },
   {
-   "afirmacao": "Modificação intensiva do estilo de vida (restrição calórica, atividade física aumentada de 150 min/semana, automonitoramento e apoio motivacional) reduziu a incidência de diabetes em 6,2 casos por 100 pessoas-ano em 3 anos; a metformina reduziu o risco de diabetes em pessoas com pré-diabetes em 3,2 casos por 100 pessoas-ano em 3 anos.",
+   "afirmacao": "Modificação intensiva do estilo de vida (restrição calórica, atividade física aumentada para ≥150 min/semana, automonitoramento e apoio motivacional) reduziu a incidência de diabetes em 6,2 casos por 100 pessoas-ano em 3 anos; a metformina reduziu o risco de diabetes em pessoas com pré-diabetes em 3,2 casos por 100 pessoas-ano em 3 anos.",
    "secao": "Resumo",
    "cit": [
     [
@@ -1125,7 +1125,7 @@
    "cit_sha": "c247144577b5087e"
   },
   {
-   "afirmacao": "No relatório de 30 anos do estudo Da Qing, a modificação prévia do estilo de vida associou-se a redução significativa de MORTE CARDIOVASCULAR (incidência cumulativa de 45,7% no grupo intervenção vs 56,3% no comparador — a frase é partida pela Tabela 3 no PDF, e a palavra \"controle\" só aparece na página seguinte).",
+   "afirmacao": "No relatório de 30 anos do estudo chinês Da Qing, a modificação prévia do estilo de vida associou-se a redução significativa de MORTE CARDIOVASCULAR: incidência cumulativa de 45,7% no grupo intervenção vs 56,3% no grupo controle.",
    "secao": "Tratamento — estilo de vida",
    "cit": [
     [
@@ -1370,7 +1370,7 @@
    "cit_sha": "d3fa3ce60342f67d"
   },
   {
-   "afirmacao": "INDICAÇÕES DE METFORMINA no algoritmo da Figura: glicemia de jejum ≥110 mg/dL, HbA1c ≥6,0% e preferência do paciente. ⚠️ São cortes para INDICAR METFORMINA, e NÃO para diagnosticar pré-diabetes — o diagnóstico usa jejum 100–125 mg/dL e HbA1c 5,7%–6,4%.",
+   "afirmacao": "INDICAÇÕES DE METFORMINA no algoritmo da Figura desta revisão do JAMA (2023), que segue a American Diabetes Association: idade <60 anos, IMC >35, história de diabetes mellitus gestacional, glicemia de jejum ≥110 mg/dL, HbA1c ≥6,0% e preferência do paciente. ⚠️ São cortes para INDICAR METFORMINA, e NÃO para diagnosticar pré-diabetes — o diagnóstico usa jejum 100–125 mg/dL, glicemia de 2 horas 140–199 mg/dL e HbA1c 5,7%–6,4%. (No PDF de duas colunas os três primeiros itens saem impressos ANTES do título \"Indications for metformin therapy\"; o corpo do artigo confirma que os seis pertencem à indicação de metformina.)",
    "secao": "Figura — algoritmo",
    "cit": [
     [
@@ -1394,7 +1394,7 @@
    "cit_sha": "4d77f3c940b71279"
   },
   {
-   "afirmacao": "Modificação DIETÉTICA no algoritmo: reduzir a ingestão calórica em 700 kcal/dia, com foco em gorduras saturadas e açúcares simples.",
+   "afirmacao": "Modificação DIETÉTICA no algoritmo de pré-diabetes da Figura desta revisão do JAMA (2023): reduzir a ingestão calórica em 700 kcal/dia, com foco em gorduras saturadas e açúcares simples.",
    "secao": "Figura — algoritmo",
    "cit": [
     [
@@ -1406,7 +1406,7 @@
    "cit_sha": "23a198ae72f16199"
   },
   {
-   "afirmacao": "ATIVIDADE FÍSICA no algoritmo: aumentar a atividade para ≥30 min/dia em 5 ou mais dias por semana.",
+   "afirmacao": "ATIVIDADE FÍSICA no algoritmo de pré-diabetes da Figura desta revisão do JAMA (2023): aumentar a atividade para ≥30 min/dia em 5 ou mais dias por semana.",
    "secao": "Figura — algoritmo",
    "cit": [
     [
@@ -1418,7 +1418,7 @@
    "cit_sha": "91e4ea32593c84a8"
   },
   {
-   "afirmacao": "Meta de PERDA DE PESO no algoritmo: individualizada, tipicamente ≥7% do peso corporal em quem tem sobrepeso ou obesidade.",
+   "afirmacao": "Meta de PERDA DE PESO no algoritmo de pré-diabetes da Figura desta revisão do JAMA (2023): individualizada, tipicamente ≥7% do peso corporal em quem tem sobrepeso ou obesidade.",
    "secao": "Figura — algoritmo",
    "cit": [
     [
@@ -1538,7 +1538,7 @@
    "cit_sha": "d1611a4b83f23cd1"
   },
   {
-   "afirmacao": "No US DPP, a diferença absoluta da taxa de incidência de diabetes com metformina vs placebo foi de 1,2 casos por 100 pessoas-ano na faixa etária mais velha, contra −4,9 casos por 100 pessoas-ano nos participantes de 25 a 44 anos (o benefício da metformina concentrou-se nos mais jovens).",
+   "afirmacao": "No US DPP, a metformina AUMENTOU a incidência de diabetes na faixa etária mais velha do estudo — diferença absoluta vs placebo de +1,2 casos por 100 pessoas-ano — e a REDUZIU nos participantes de 25 a 44 anos (−4,9 casos por 100 pessoas-ano): o benefício da metformina concentrou-se nos mais jovens.",
    "secao": "Tratamento — fármacos",
    "cit": [
     [
@@ -1550,16 +1550,16 @@
    "cit_sha": "5390244d988aa286"
   },
   {
-   "afirmacao": "A AMERICAN DIABETES ASSOCIATION recomenda que a metformina seja CONSIDERADA em subgrupos específicos de pacientes com pré-diabetes — IMC 35 ou mais, idade menor que 60 anos, mulheres com história de diabetes gestacional, ou glicemia de jejum mais alta.",
+   "afirmacao": "A AMERICAN DIABETES ASSOCIATION (edição de 2023 citada por esta revisão do JAMA) recomenda que a metformina seja CONSIDERADA em subgrupos específicos de pacientes com pré-diabetes: IMC 35 ou mais, idade menor que 60 anos, mulheres com história de diabetes gestacional, OU glicemia de jejum mais alta (≥110 mg/dL) ou HbA1c mais alta (≥6,0%).",
    "secao": "Tratamento — fármacos",
    "cit": [
     [
      0,
      39115,
-     292
+     335
     ]
    ],
-   "cit_sha": "b0f51b866c670153"
+   "cit_sha": "69cd7afd27d22d75"
   },
   {
    "afirmacao": "A metformina para PREVENIR diabetes em pessoas com pré-diabetes é MAIS EFICAZ para mulheres com diabetes gestacional prévio e para indivíduos com menos de 60 anos com IMC de 35 ou mais, glicemia de jejum de 110 mg/dL ou mais, ou HbA1c de 6,0% ou mais — são os porteiros de indicação usados por esta revisão do JAMA (2023).",
@@ -1932,6 +1932,42 @@
     ]
    ],
    "cit_sha": "c8145c13bca80e49"
+  },
+  {
+   "afirmacao": "No quadro de perguntas frequentes desta revisão do JAMA (2023), a American Diabetes Association recomenda que o tratamento com metformina DEVE SER CONSIDERADO em pessoas com pré-diabetes, particularmente as com idade <60 anos, IMC ≥35, glicemia de jejum ≥110 mg/dL E HbA1c ≥6,0%, e em mulheres com diabetes gestacional prévio. ⚠️ Aqui os porteiros aparecem ligados por \"E\"; no corpo do mesmo artigo eles aparecem ligados por \"OU\" (basta um deles). A divergência é do próprio artigo e muda quem recebe metformina.",
+   "secao": "Perguntas frequentes",
+   "cit": [
+    [
+     0,
+     17883,
+     287
+    ]
+   ],
+   "cit_sha": "430a451584e97415"
   }
- ]
+ ],
+ "auditoria": {
+  "data": "2026-08-08",
+  "fatos_tocados": [
+   11,
+   16,
+   27,
+   36,
+   55,
+   60,
+   61,
+   64,
+   74,
+   81,
+   91,
+   111,
+   113,
+   114,
+   115,
+   125,
+   126,
+   158
+  ],
+  "achado": "Auditoria adversarial de recuperação isolada — cada afirmação foi lida como se voltasse sozinha à IA, sem vizinhos e sem o campo `secao` (que `monta-base-profunda.js` nunca envia). 17 dos 158 fatos corrigidos e 1 fato acrescentado (11,4% de defeito). NADA foi erro de leitura de número: os 158 conferem dígito a dígito contra a fonte, inclusive as duas tabelas coluna a coluna, e nenhuma citação é ambígua (nenhum trecho resolvido se repete no texto-fonte, logo o `indexOf(alvo,0)` de `lib/citacao.js › referenciar` não desancorou nada aqui). Os defeitos foram de contexto perdido na atomização e de artefato de PDF. MUDAM CONDUTA: (1) #126 tinha a lista de indicação de metformina da ADA cortada em \"glicemia de jejum mais alta\", perdendo o valor 110 mg/dL e o critério inteiro de HbA1c ≥6,0% — citação estendida (contígua) e critérios completados; (2) #111 listava 3 das 6 indicações de metformina da Figura porque o PDF de duas colunas imprime \"idade <60 anos / IMC >35 / história de DMG\" ANTES do título \"Indications for metformin therapy\" — completado, com a confirmação do corpo do artigo; (3) fato novo (#158) cobre a frase do quadro de perguntas frequentes que NENHUM fato citava, e que liga os porteiros da metformina por \"E\" enquanto o corpo do artigo os liga por \"OU\" — divergência do próprio artigo que muda quem recebe o fármaco; (4) #36 dizia \"IMC 25,0 a 29,9 para sobrepeso e 30 para obesidade\" porque o extrator do PDF trocou o \"≥\" por um caractere de controle U+0002 — corrigido para IMC ≥30; o mesmo artefato tirava o \"≥\" de \"≥150 min/semana\" em #81; (5) #60 e #115 traziam a meta de perda de peso de ≥7% atribuída à \"American Diabetes Association\" SEM ANO, contradizendo em silêncio o núcleo (ADA 2026, ≥5–7%) — datadas na afirmação; (6) #64 dava \"58,3 vs 67,0\" e \"73,6 vs 81\" sem dizer qual grupo é qual, e lida sozinha a ordem inverte o sentido (o primeiro número é o do NORMOGLICÊMICO) — rotulado; (7) #125 dizia \"faixa etária mais velha\" sem explicitar que o sinal positivo significa MAIS diabetes com metformina — direção explicitada. ÂNCORA/CONTEXTO: #55 entregava cinco taxas sem dizer a que grupo racial cada uma pertence (os rótulos estão a 2472 caracteres no PDF, muito além do GAP_MAX=400 da elisão) — reescrito para o que a citação sustenta; #11, #16, #113, #114 apontavam para \"a Tabela 1\" ou \"o algoritmo\" sem dizer de que artigo, e #16 entregava duas faixas de HbA1c sem dono; #91 dizia \"no comparador\" e carregava comentário sobre a diagramação do PDF; #27, #61, #74 afirmavam \"não existem diretrizes\" / \"nenhum medicamento aprovado pela FDA\" / \"nenhuma organização recomenda\" sem data. RESSALVA DO TOTG DE 1 HORA CONFIRMADA: busca no texto-fonte inteiro não acha nenhuma menção a glicemia de 1 hora (nem 209, nem 155–208, nem \"1-hour\"/\"1 h\"), então `conflito_direcao: nucleo_prevalece` continua correto; depois de (5) nenhum fato do extrato contradiz o núcleo em silêncio. ROTEAMENTO: o campo `tema` foi enriquecido com os termos que a pergunta real carrega e que faltavam (glicemia de jejum, HbA1c, TOTG, intolerância à glicose, risco de progressão, remissão/normoglicemia, metformina, perda de peso). Antes, no teto de produção de 120 000 caracteres, 3 de 6 vinhetas de pré-diabetes NÃO recebiam este bloco e uma quarta chegava em 3º lugar; depois, todas chegam em 1º ou 2º, sem sequestrar as vinhetas de controle de cetoacidose, DM1 e diabetes por glicocorticoide."
+ }
 }

@@ -419,6 +419,21 @@ try {
   fail('conferência das ressalvas falhou (o núcleo mudou e alguma ressalva ficou para trás):\n' + out);
 }
 
+// ⚠️ CAMINHO CLÍNICO. Extração verificada NÃO é entrega: o projeto já perdeu
+//     artigos inteiros por roteamento, com o conteúdo certo na base e
+//     inalcançável (a contraindicação de bisfosfonato devolvendo 0 caractere, os
+//     154 fatos de hirsutismo arquivados em Adrenal, `CAD` devolvendo ""). E o
+//     teste mede as DUAS pontas: cair na área certa e o bloco devolvido conter
+//     mesmo o assunto — "EHH em idoso" roteava certo e voltava sem uma linha
+//     sobre estado hiperosmolar.
+try {
+  execFileSync(process.execPath, [path.join('scripts', 'test-caminho-clinico.js')], { stdio: 'pipe' });
+  ok('caminho clínico: a pergunta do médico chega ao artigo que a responde');
+} catch (e) {
+  const out = (e.stdout ? e.stdout.toString() : '') + (e.stderr ? e.stderr.toString() : '');
+  fail('roteamento ou chegada do bloco clínico regrediu:\n' + out);
+}
+
 // ⚠️ ÂNCORA AMBÍGUA. A citação por offset prova que o TEXTO não foi adulterado —
 //     nunca provou que ele veio do LUGAR certo. Onde o artigo repete um trecho
 //     (tabela de adulto e de criança com linhas idênticas), `referenciar` ancora
