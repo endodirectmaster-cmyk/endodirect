@@ -5,6 +5,50 @@ atualizado: 2026-08-08
 
 # Convenções de Trabalho
 
+## 🧪 MUTAÇÃO NO DEFEITO QUE VOCÊ ACABOU DE CONSERTAR (2026-08-08)
+
+Consertei uma cegueira real do `deepFor`, escrevi `scripts/test-caminho-clinico.js`
+com **46 medições**, reintroduzi o defeito por mutação para conferir a rede — e
+**as 46 passaram alegremente.**
+
+Peneira que não pega o defeito que acabou de ser consertado não é rede, é
+enfeite. E o motivo era de FORMULAÇÃO: eu media "o bloco chega?" quando o que
+discrimina é "**qual bloco vem primeiro?**". Diabetes tem 232k contra teto de
+120k — o bloco existir não quer dizer nada; ele ser escolhido é tudo.
+
+Com a cegueira, *"Pré-diabetes pode reverter sozinho?"* devolvia o bloco de
+hiperglicemia por **corticoide** em primeiro, e o de pré-diabetes sumia inteiro.
+Essa é a medição que virou teste.
+
+**Regra: todo conserto ganha uma mutação, e a mutação tem de REPROVAR antes de o
+conserto ser considerado feito.** Já falhou assim três vezes hoje (a M4 das
+ressalvas, o teto do bloco clínico duas vezes).
+
+## 🔎 A CEGUEIRA DO `deepFor`: o nome da área era removido como SUBSTRING (2026-08-08)
+
+Achado pela auditoria do pré-diabetes. A linha era:
+
+```js
+const alvo = deacc(tema || area).replace(deacc(canon), ' ');
+```
+
+`String.replace` com padrão de TEXTO casa **substring** e troca só a **primeira**
+ocorrência. Em Diabetes:
+
+```
+"pre-diabetes pode reverter sozinho?"  →  "pre-  pode reverter sozinho?"
+```
+
+e o que sobrava, `pre`, morria no filtro de 4 caracteres. A palavra mais
+discriminante da pergunta valia **zero** na escolha do bloco. `canonArea`
+acertava a área sempre — a cegueira era só na seleção do bloco, que é onde
+ninguém olhava.
+
+Conserto: tokenizar **preservando o hífen** e derrubar o nome da área só quando
+ele é token inteiro. E emitir cada composto **também partido** (`basal-bolus` →
+`basal-bolus`, `basal`, `bolus`), senão o conserto seria troca e não ganho: um
+bloco que escreve "basal e bolus" deixaria de casar.
+
 ## 🔗 O HASH PROVA QUE O TEXTO NÃO MUDOU — NUNCA QUE ELE VEIO DO LUGAR CERTO (2026-08-08)
 
 Dois fatos **pediátricos** citavam a tabela de **ADULTO**, com `cit_sha`
