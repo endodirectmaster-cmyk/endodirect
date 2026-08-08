@@ -117,6 +117,17 @@ const CAMINHO = [
   ['atorvastatina em paciente com hipotireoidismo', 'Tireoide'],
   ['adrenalectomia unilateral no hiperaldosteronismo', 'Adrenal'],
 
+  // ⚠️ SIGLA E GRAFIA QUE O MÉDICO ESCREVE. `Lp(a)` não roteava, com 45
+  // ocorrências na base — `lipoproteina(a)` roteava, mas ninguém digita isso.
+  // Mesma família do `CAD` e do `EHH`: o conteúdo existe, a palavra real não
+  // está no mapa, e o buraco é invisível para quem lê o código.
+  ['Lp(a) elevada: muda a conduta?', 'Lípides'],
+  ['Lp(a) de 120 nmol/L em prevencao primaria', 'Lípides'],
+  ['Lp(a) alta em paciente com hipotireoidismo', 'Tireoide'],
+  ['macroadenoma hipofisario com hemianopsia', 'Neuroendocrinologia'],
+  ['adenoma adrenal com secrecao autonoma de cortisol', 'Adrenal'],
+  ['SHBG na sindrome dos ovarios policisticos', 'Endocrinologia Feminina'],
+
   // Sentinelas de outras áreas — o achado glicêmico não pode sequestrá-las.
   ['hiperglicemia em paciente com acromegalia', 'Neuroendocrinologia'],
   ['obeso em insulina: indico cirurgia bariatrica?', 'Obesidade'],
