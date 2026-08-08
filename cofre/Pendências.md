@@ -1,9 +1,33 @@
 ---
 tags: [cofre, pendencias]
-atualizado: 2026-08-03
+atualizado: 2026-08-08
 ---
 
 # Pendências
+
+## ✅ DIABETES FECHADO — a primeira área da Rota B (2026-08-08)
+
+**7 de 7 extratos auditados**, 849 fatos. A área saiu de 130 fatos (109 de
+diabetes pós-transplante + 21 de MODY, as duas coisas mais raras do assunto)
+para cobertura real: DM1, cetoacidose clássica e euglicêmica, hiperglicemia por
+corticoide, pré-diabetes, exercício no DM1.
+
+**O que as sete auditorias mediram:** taxa de erro semântica entre **2,6% e
+10,8%**, e quase nada era erro de LEITURA — nenhuma inversão, nenhum número
+trocado, nenhum deslocamento de coluna. O defeito dominante é **contexto perdido
+na atomização**: o fato responde certo ao parágrafo e errado à pergunta.
+
+Os três que mudavam conduta de verdade:
+- regra da NPH com a citação truncada **antes do teto** — prescrevia dose linear,
+  quase o dobro de insulina em 75 mg de equivalente de prednisona;
+- 20 fatos de uma tabela que era a seção **pediátrica** do ADA sem declarar isso,
+  incluindo meta pressórica mais estrita que a do adulto;
+- nos 76 fatos da cetoacidose euglicêmica faltava a **única** instrução que a
+  distingue: suspender o iSGLT2 depois que a cetoacidose instalou.
+
+**Próxima: Obesidade** (29 pendentes no acervo, 14 de alta ancoragem). Começou
+com a Diretriz Brasileira 2025 (162 fatos, em auditoria) + Lancet 2021
+farmacoterapia e JAMA 2020 cirurgia bariátrica (em extração).
 
 ## 🗺️ ROTA B — fechar uma subespecialidade de cada vez (2026-08-08)
 
