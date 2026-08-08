@@ -5,6 +5,44 @@ atualizado: 2026-08-08
 
 # Convenções de Trabalho
 
+## 📏 CONDIÇÃO DE COLETA: A REGRA GANHOU GUARDA, E A GUARDA SÓ FICOU BOA NA 3ª TENTATIVA (2026-08-08)
+
+A regra estava no cofre e não tinha nenhuma verificação:
+`scripts/test-coleta-nucleo.js` agora a aplica no `ci-validate`.
+
+**Três versões, e as duas primeiras mentiam:**
+
+1. **Ruído.** Marcava 11 entradas, 7 eram lixo — casava "insulina" em
+   *"prescrever glucagon para todos em insulina"* (fármaco, não exame) e "GH" em
+   *"tratar com GH"*. Conserto: exigir **contexto de dosagem** antes do analito
+   (dosar, colher, rastrear, "diagnóstico bioquímico por"…).
+2. **Distância.** Procurava a condição em QUALQUER lugar da entrada — e entrada
+   de núcleo tem até 2 000 caracteres. Apaguei *"pela manhã, sentado, SEM
+   restringir sódio"* do hiperaldosteronismo para ver a peneira reprovar e **ela
+   passou**: a palavra "sódio" reaparecia 900 caracteres adiante, em *"restrição
+   de sódio (<5 g de sal/dia)"*, que é TRATAMENTO. Conserto: janela de 130
+   caracteres em volta do analito.
+
+**Condição de coleta que não está ao lado do exame não é condição de coleta, é
+coincidência de vocabulário.**
+
+E a peneira carrega **controle positivo**: as entradas de hiperaldosteronismo e
+de incidentaloma adrenal declaram a coleta e não podem ser marcadas. Sem
+controle positivo não dá para distinguir peneira limpa de peneira cega — que é o
+defeito que já cegou três scripts deste repositório.
+
+### A lacuna que ficou, e por que não a consertei
+
+A entrada de **feocromocitoma** manda pedir metanefrinas plasmáticas livres e
+**não diz em que posição colher** — e a posição é a causa clássica de
+falso-positivo desse rastreio, que manda o paciente para tomografia e teste
+genético à toa.
+
+**Não há nenhum artigo de feocromocitoma no acervo** (conferido na base
+profunda inteira). Escrever a condição de memória é exatamente o que este
+projeto proíbe. Está registrada como `PENDENTES` dentro do próprio script — em
+código, não em promessa —, e sai de lá quando entrar material.
+
 ## 🚫 A PENEIRA DE ALCANCE QUE EU TENTEI ESCREVER NÃO PODE EXISTIR (2026-08-08)
 
 Quatro áreas passam do teto de 120k (Diabetes 234k, Endocrinopatias 170k,

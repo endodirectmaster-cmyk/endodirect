@@ -419,6 +419,19 @@ try {
   fail('conferência das ressalvas falhou (o núcleo mudou e alguma ressalva ficou para trás):\n' + out);
 }
 
+// ⚠️ CONDIÇÃO DE COLETA NO NÚCLEO. Regra do professor que estava no cofre sem
+//     nenhuma guarda: um valor de exame sem a condição em que foi colhido é
+//     OUTRO número — testosterona de 300 às 7 h em jejum não é 300 às 16 h. E o
+//     núcleo vai em TODA chamada de IA, então a entrada que manda pedir um exame
+//     sem dizer como colhê-lo ensina o erro em toda geração da plataforma.
+try {
+  execFileSync(process.execPath, [path.join('scripts', 'test-coleta-nucleo.js')], { stdio: 'pipe' });
+  ok('condição de coleta: entrada de núcleo que pede exame diz como colhê-lo');
+} catch (e) {
+  const out = (e.stdout ? e.stdout.toString() : '') + (e.stderr ? e.stderr.toString() : '');
+  fail('entrada de núcleo pede exame sem a condição de coleta:\n' + out);
+}
+
 // ⚠️ CAMINHO CLÍNICO. Extração verificada NÃO é entrega: o projeto já perdeu
 //     artigos inteiros por roteamento, com o conteúdo certo na base e
 //     inalcançável (a contraindicação de bisfosfonato devolvendo 0 caractere, os
