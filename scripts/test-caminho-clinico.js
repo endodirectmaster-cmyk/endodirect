@@ -128,6 +128,41 @@ const CAMINHO = [
   ['adenoma adrenal com secrecao autonoma de cortisol', 'Adrenal'],
   ['SHBG na sindrome dos ovarios policisticos', 'Endocrinologia Feminina'],
 
+  // ⚠️ ERRO DE ROTA COM CONSEQUÊNCIA CLÍNICA. `obesidade hipotalamica` casava em
+  // `obesidade` (CANON) e entregava a diretriz de obesidade COMUM — estilo de
+  // vida primeiro — exatamente onde os dois artigos de craniofaringioma dizem
+  // que isso não funciona. "Criança com síndrome hipotalâmica e hiperfagia"
+  // devolvia ZERO.
+  ['obesidade hipotalamica', 'Neuroendocrinologia'],
+  ['Adolescente com obesidade hipotalamica apos cirurgia de tumor selar', 'Neuroendocrinologia'],
+  ['Crianca com sindrome hipotalamica e hiperfagia grave', 'Neuroendocrinologia'],
+  ['craniofaringeoma em adulto', 'Neuroendocrinologia'],
+  ['craniofaringioma adamantinomatoso na infancia', 'Neuroendocrinologia'],
+  // …e as sentinelas que impediram `papilifero` e `braf` de entrarem soltos: os
+  // dois são marcadores do carcinoma PAPILÍFERO DE TIREOIDE, muito mais comum.
+  ['carcinoma papilifero de tireoide com mutacao BRAF', 'Tireoide'],
+  ['nodulo tireoidiano Bethesda V com BRAF positivo', 'Tireoide'],
+  ['obesidade grau III: indico bariatrica?', 'Obesidade'],
+  ['reganho de peso apos sleeve', 'Obesidade'],
+
+  // ⚠️ O MAPA DE OBESIDADE NÃO TINHA NENHUM ANTIOBESIDÊNICO CLÁSSICO — nem
+  // `orlistate`, nem `sibutramina`, nem `fentermina`, nem `naltrexona-bupropiona`
+  // — e nem `sobrepeso`, que é metade do nome da área.
+  ['orlistate: ainda tem lugar?', 'Obesidade'],
+  ['naltrexona-bupropiona em quem?', 'Obesidade'],
+  ['fentermina-topiramato: quanto emagrece?', 'Obesidade'],
+  ['sibutramina e risco cardiovascular', 'Obesidade'],
+  ['paciente com sobrepeso e IMC 27: trato?', 'Obesidade'],
+  ['reganho de peso apos suspender a medicacao', 'Obesidade'],
+  ['quero emagrecer: por onde comeco?', 'Obesidade'],
+  // ⚠️ A SENTINELA QUE MANTÉM `perda de peso` FORA DO MAPA. Perda de peso
+  // INVOLUNTÁRIA é bandeira vermelha de hipertireoidismo, insuficiência adrenal
+  // e neoplasia — mapeá-la para Obesidade responderia a pergunta mais grave com
+  // o bloco mais inofensivo. `emagrecer` entrou no lugar porque carrega a
+  // INTENÇÃO, que "perda de peso" não carrega.
+  ['perda de peso com hiperpigmentacao e avidez por sal', 'Adrenal'],
+  ['AR GLP-1 no DM2 com doenca renal cronica', 'Diabetes'],
+
   // Sentinelas de outras áreas — o achado glicêmico não pode sequestrá-las.
   ['hiperglicemia em paciente com acromegalia', 'Neuroendocrinologia'],
   ['obeso em insulina: indico cirurgia bariatrica?', 'Obesidade'],
