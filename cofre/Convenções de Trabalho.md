@@ -5,6 +5,34 @@ atualizado: 2026-08-08
 
 # Convenções de Trabalho
 
+## 📉 O MEDIDOR DO FREIO SUBCONTAVA — agente que termina e não relata (2026-08-08)
+
+O extrator da cirurgia bariátrica gravou o extrato **inteiro** (138 fatos, todos
+com citação, `tema` escrito) e **morreu sem mandar a notificação**. `ListAgents`
+não o via mais e o `subagent_tokens` dele nunca chegou.
+
+**O medidor marcava 83%. A conta real era 96%.** Um agente inteiro — ~14% da
+janela — sumia da soma, e eu teria lançado outro sobre capacidade inexistente.
+
+É a mesma doença das peneiras cegas, e é pior num medidor de FREIO: ele erra na
+direção que **libera**. Peneira cega dá selo verde; medidor que subconta dá sinal
+verde.
+
+**Conserto:** `--estimado`, que registra o gasto de quem não relatou **separado
+do medido**. A calibração do TETO continua limpa (depende só de número real) e a
+segurança usa a soma dos dois. O script mostra as duas linhas e diz que fração
+do total é chute.
+
+```
+6 agente(s) relatado(s) · 1655k MEDIDO · 83%
++ 1 agente(s) que NÃO relataram · 270k ESTIMADO
+= 1925k de ~2000k · 96% (14% disso é estimativa)
+```
+
+**Regra: ao ver `ListAgents` vazio com trabalho novo no disco, procure o agente
+que não relatou e registre o gasto dele.** Extrato completo sem notificação
+correspondente é o sintoma.
+
 ## 💊 A PALAVRA QUE SE DIGITA ≠ A PALAVRA QUE ESTÁ NO ARTIGO (2026-08-08)
 
 Quinta ocorrência do mesmo padrão em um dia, e agora dá para nomear a família:
