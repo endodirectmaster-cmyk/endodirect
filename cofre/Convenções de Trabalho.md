@@ -5,6 +5,24 @@ atualizado: 2026-08-08
 
 # Convenções de Trabalho
 
+## 📡 O RELATO DO AGENTE ERRA PARA OS DOIS LADOS (2026-08-08)
+
+Já estava registrado que agente exagera achado. Hoje apareceu o **oposto**, que
+é mais perigoso porque não levanta suspeita: o auditor do DM1 listou os termos
+de roteamento faltantes e deu `glucagon nasal`, `lua de mel` e `remissão
+parcial` como **"já roteiam corretamente"**.
+
+Medi os três: **devolviam vazio**. Como eu estava conferindo a lista dele de
+qualquer jeito, achei — mas se tivesse aceitado a parte "está tudo bem" do
+relato sem medir, os três teriam ficado mudos indefinidamente.
+
+**Conferir a acusação e conferir a absolvição custam o mesmo.** Ao processar
+relato de agente, meça as duas colunas.
+
+No total eram **nove** assuntos do Seminar de DM1 com conteúdo na base e
+`canonArea` devolvendo `""` — incluindo `alça fechada`, que o núcleo chama de
+método **preferido** no DM1 em todas as idades (ADA 2026).
+
 ## 🫥 O SÍMBOLO QUE VIROU BYTE INVISÍVEL (2026-08-08)
 
 O extrator de PDF trocou `≥` por **U+0002** em oito lugares do artigo de
