@@ -1,1783 +1,1876 @@
 {
- "fileId": "1Z8ODls-kIEaoqjRcOq1RQPi7K6HHo68-",
- "titulo": "The Diagnosis and Treatment of Craniopharyngioma",
- "tema": "craniofaringioma — diagnostico, tratamento cirurgico/radioterapico e sequelas hipotalamicas",
- "fonte": "Müller HL. The Diagnosis and Treatment of Craniopharyngioma. Neuroendocrinology 2020;110:753–766 (DOI: 10.1159/000504512)",
- "area": "Neuroendocrino",
- "tipo": "revisao",
- "ano": 2020,
- "fatos": [
-  {
-   "afirmacao": "O craniofaringioma (CP) e uma malformacao embrionaria rara de baixo grau histologico (WHO grau I).",
-   "secao": "Introducao",
-   "cit": [
-    [
-     0,
-     2217,
-     50
+  "fileId": "1Z8ODls-kIEaoqjRcOq1RQPi7K6HHo68-",
+  "titulo": "The Diagnosis and Treatment of Craniopharyngioma",
+  "tema": "craniofaringioma — diagnostico por imagem, cirurgia x radioterapia (fotons, protons, radiocirurgia), obesidade hipotalamica (tratamento farmacologico e bariatrico), reposicao do hipopituitarismo e sequelas hipotalamicas",
+  "fonte": "Müller HL. The Diagnosis and Treatment of Craniopharyngioma. Neuroendocrinology 2020;110:753–766 (DOI: 10.1159/000504512)",
+  "area": "Neuroendocrino",
+  "tipo": "revisao",
+  "ano": 2020,
+  "fatos": [
+    {
+      "afirmacao": "O craniofaringioma (CP) e uma malformacao embrionaria rara de baixo grau histologico (WHO grau I).",
+      "secao": "Introducao",
+      "cit": [
+        [
+          0,
+          2217,
+          50
+        ],
+        [
+          0,
+          2330,
+          45
+        ]
+      ],
+      "cit_sha": "0870e442317a4744"
+    },
+    {
+      "afirmacao": "O craniofaringioma origina-se dos remanescentes do ducto craniofaringeo, na area selar e parasselar.",
+      "secao": "Introducao",
+      "cit": [
+        [
+          0,
+          2446,
+          57
+        ],
+        [
+          0,
+          2565,
+          27
+        ]
+      ],
+      "cit_sha": "dba6715e144ac693"
+    },
+    {
+      "afirmacao": "A sobrevida global em 20 anos apos craniofaringioma de inicio na infancia e alta, de 87 a 95%.",
+      "secao": "Introducao",
+      "cit": [
+        [
+          0,
+          2565,
+          177
+        ]
+      ],
+      "cit_sha": "f159b88ac2fc09dc"
+    },
+    {
+      "afirmacao": "Apesar da alta sobrevida, a qualidade de vida a longo prazo e frequentemente comprometida pelas sequelas da proximidade anatomica do tumor com o eixo hipotalamo-hipofisario e o nervo/quiasma optico.",
+      "secao": "Introducao",
+      "cit": [
+        [
+          0,
+          4005,
+          122
+        ]
+      ],
+      "cit_sha": "823a0aa6d1677ca8"
+    },
+    {
+      "afirmacao": "O acometimento hipotalamico inicial do CP e/ou lesoes relacionadas ao tratamento no eixo hipotalamo-hipofisario resultam em obesidade hipotalamica.",
+      "secao": "Introducao",
+      "cit": [
+        [
+          0,
+          4137,
+          145
+        ]
+      ],
+      "cit_sha": "da08635abbc0143a"
+    },
+    {
+      "afirmacao": "Nenhuma intervencao de estilo de vida, farmacologica ou bariatrica para obesidade hipotalamica no CP tem eficacia comprovada em ensaios clinicos randomizados; recomenda-se prevenir a sequela hipotalamica com abordagens poupadoras do hipotalamo que respeitem os nucleos das areas hipotalamicas posteriores.",
+      "secao": "Introducao",
+      "cit": [
+        [
+          0,
+          4300,
+          378
+        ]
+      ],
+      "cit_sha": "b7e29479e84002ee"
+    },
+    {
+      "afirmacao": "Existem 2 subtipos de craniofaringioma: o adamantinomatoso (ACP) e o papilifero (PCP).",
+      "secao": "Pathology and Molecular Genetics",
+      "cit": [
+        [
+          0,
+          4712,
+          71
+        ]
+      ],
+      "cit_sha": "ce52ba0a16e19c06"
+    },
+    {
+      "afirmacao": "O craniofaringioma adamantinomatoso e dirigido por mutacoes somaticas em CTNNB1 (que codifica a beta-catenina), em sua maioria mutacoes pontuais no exon 3 que afetam residuos regulatorios envolvidos na estabilidade da proteina beta-catenina.",
+      "secao": "Pathology and Molecular Genetics",
+      "cit": [
+        [
+          0,
+          4784,
+          179
+        ]
+      ],
+      "cit_sha": "f737fa1588619ea0"
+    },
+    {
+      "afirmacao": "A consequencia das mutacoes de CTNNB1 e que a beta-catenina nao pode ser degradada eficientemente, acumula-se dentro da celula e hiperativa a via WNT/beta-catenina.",
+      "secao": "Pathology and Molecular Genetics",
+      "cit": [
+        [
+          0,
+          4984,
+          148
+        ]
+      ],
+      "cit_sha": "6990fa54f4c70392"
+    },
+    {
+      "afirmacao": "O craniofaringioma papilifero tem baixa taxa mutacional (15 mutacoes/MB) e, em vez de mutacoes em CTNNB1, alberga mutacoes somaticas BRAF-V600E; nenhuma outra mutacao recorrente ou aberracao genomica foi identificada.",
+      "secao": "Pathology and Molecular Genetics",
+      "cit": [
+        [
+          0,
+          5143,
+          223
+        ]
+      ],
+      "cit_sha": "b27ca84614127f76"
+    },
+    {
+      "afirmacao": "A expressao do BRAF-V600E oncogenico e observada na grande maioria das celulas tumorais do craniofaringioma papilifero.",
+      "secao": "Pathology and Molecular Genetics",
+      "cit": [
+        [
+          0,
+          5378,
+          91
+        ]
+      ],
+      "cit_sha": "a1c908af2b35c784"
+    },
+    {
+      "afirmacao": "A ativacao da via MAPK no craniofaringioma papilifero restringe-se as celulas basais que circundam os nucleos fibrovasculares.",
+      "secao": "Pathology and Molecular Genetics",
+      "cit": [
+        [
+          0,
+          5587,
+          101
+        ]
+      ],
+      "cit_sha": "a84ff8bb1227ee96"
+    },
+    {
+      "afirmacao": "A terapia alvo abre perspectivas para tratar o craniofaringioma papilifero com mutacao BRAF-V600E, detectada exclusivamente no PCP de inicio na idade adulta.",
+      "secao": "Pathology and Molecular Genetics",
+      "cit": [
+        [
+          0,
+          5750,
+          144
+        ]
+      ],
+      "cit_sha": "28405835b5fb6d88"
+    },
+    {
+      "afirmacao": "O diagnostico do craniofaringioma de inicio na infancia costuma ser tardio, frequentemente anos apos a manifestacao inicial dos sintomas.",
+      "secao": "Clinical Manifestations",
+      "cit": [
+        [
+          0,
+          5930,
+          116
+        ]
+      ],
+      "cit_sha": "db17531ff553c2ce"
+    },
+    {
+      "afirmacao": "Ao diagnostico do craniofaringioma, o quadro e caracterizado por sintomas de pressao intracraniana aumentada, como nausea e cefaleia.",
+      "secao": "Clinical Manifestations",
+      "cit": [
+        [
+          0,
+          6058,
+          137
+        ]
+      ],
+      "cit_sha": "7b161c040a5ca826"
+    },
+    {
+      "afirmacao": "As manifestacoes primarias do craniofaringioma incluem deficits endocrinos em 52 a 87% e comprometimento visual em 62 a 84% dos casos.",
+      "secao": "Clinical Manifestations",
+      "cit": [
+        [
+          0,
+          6206,
+          95
+        ]
+      ],
+      "cit_sha": "682179feeab956e6"
+    },
+    {
+      "afirmacao": "As deficiencias hormonais no craniofaringioma afetam a secrecao de hormonio de crescimento (GH, 75%), gonadotrofinas (LH/FSH, 40%), TSH (25%) e ACTH (25%).",
+      "secao": "Clinical Manifestations",
+      "cit": [
+        [
+          0,
+          6427,
+          170
+        ]
+      ],
+      "cit_sha": "544d60b7a02b038d"
+    },
+    {
+      "afirmacao": "No momento do diagnostico do craniofaringioma, 40 a 87% dos pacientes ja apresentam pelo menos 1 deficit endocrino.",
+      "secao": "Clinical Manifestations",
+      "cit": [
+        [
+          0,
+          6598,
+          89
+        ]
+      ],
+      "cit_sha": "cc86a275cf1be1cc"
+    },
+    {
+      "afirmacao": "Diabetes insipidus neuro-hormonal e observado no pre-operatorio em 17 a 27% de todos os pacientes com craniofaringioma.",
+      "secao": "Clinical Manifestations",
+      "cit": [
+        [
+          0,
+          6699,
+          123
+        ]
+      ],
+      "cit_sha": "9c9241e3942f3c8e"
+    },
+    {
+      "afirmacao": "Analise de dados antropometricos de consultas de rotina antes do diagnostico de craniofaringioma em 90 criancas revelou reducao da velocidade de crescimento ja em lactentes de apenas 12 meses.",
+      "secao": "Clinical Manifestations",
+      "cit": [
+        [
+          0,
+          6834,
+          174
+        ]
+      ],
+      "cit_sha": "caba76b74d1f7a4e"
+    },
+    {
+      "afirmacao": "O ganho de peso, preditivo de obesidade hipotalamica, ocorre como manifestacao tardia, pouco antes do diagnostico do craniofaringioma.",
+      "secao": "Clinical Manifestations",
+      "cit": [
+        [
+          0,
+          7009,
+          116
+        ]
+      ],
+      "cit_sha": "6dbc2f68b03c1506"
+    },
+    {
+      "afirmacao": "A duracao mediana da historia clinica antes do diagnostico de craniofaringioma foi de 6 meses, variando de 0,1 a 108 meses, e correlacionou-se positivamente com a idade do paciente ao diagnostico.",
+      "secao": "Clinical Manifestations",
+      "cit": [
+        [
+          0,
+          7219,
+          167
+        ]
+      ],
+      "cit_sha": "5634dbca76befa73"
+    },
+    {
+      "afirmacao": "Tamanho do tumor, grau de ressecao cirurgica, envolvimento hipotalamico e IMC ao diagnostico NAO se associaram a duracao da historia clinica previa.",
+      "secao": "Clinical Manifestations",
+      "cit": [
+        [
+          0,
+          7387,
+          152
+        ]
+      ],
+      "cit_sha": "10d21b3235c91e26"
+    },
+    {
+      "afirmacao": "Deficits neurologicos e comprometimento visual associaram-se a tumores maiores ao diagnostico e reduziram a sobrevida global em 10 anos.",
+      "secao": "Clinical Manifestations",
+      "cit": [
+        [
+          0,
+          7551,
+          133
+        ]
+      ],
+      "cit_sha": "b9e99309020f79d0"
+    },
+    {
+      "afirmacao": "Deficiencias endocrinas, retardo de crescimento e ganho de peso foram os sintomas com maior duracao de historia clinica antes do diagnostico.",
+      "secao": "Clinical Manifestations",
+      "cit": [
+        [
+          0,
+          7685,
+          125
+        ]
+      ],
+      "cit_sha": "b706bea8ccaeccc8"
+    },
+    {
+      "afirmacao": "A combinacao de cefaleia, comprometimento visual, retardo de crescimento e poliuria/polidipsia e altamente indicativa de craniofaringioma e deve levar a investigacao neurorradiologica.",
+      "secao": "Clinical Manifestations",
+      "cit": [
+        [
+          0,
+          7819,
+          174
+        ]
+      ],
+      "cit_sha": "ffdde77d67f3a9a5"
+    },
+    {
+      "afirmacao": "No estudo KRANIOPHARYNGEOM 2007, o intervalo mediano entre a manifestacao inicial da doenca e o diagnostico de craniofaringioma foi de 5 meses (variacao 0,01 a 108 meses).",
+      "secao": "Figura 1",
+      "cit": [
+        [
+          0,
+          3786,
+          126
+        ]
+      ],
+      "cit_sha": "0e4d7cbfbe205741"
+    },
+    {
+      "afirmacao": "O craniofaringioma papilifero e usualmente uma entidade solida e nao calcificada.",
+      "secao": "Neuroradiological Imaging",
+      "cit": [
+        [
+          0,
+          8020,
+          52
+        ]
+      ],
+      "cit_sha": "fa2d7eb6d28298d6"
+    },
+    {
+      "afirmacao": "A regra dos 90% resume a imagem do craniofaringioma adamantinomatoso: cerca de 90% dos tumores sao predominantemente cisticos, 90% mostram calcificacoes mais ou menos proeminentes e cerca de 90% captam contraste nas paredes do cisto.",
+      "secao": "Neuroradiological Imaging",
+      "cit": [
+        [
+          0,
+          8132,
+          192
+        ]
+      ],
+      "cit_sha": "c6f31c1061a501ed"
+    },
+    {
+      "afirmacao": "Na RM sem contraste, as partes solidas e as paredes do cisto podem mostrar sinais T1 variados; em T2 os tumores sao usualmente hipo e hiperintensos, variabilidade devida a distribuicao heterogenea das calcificacoes.",
+      "secao": "Neuroradiological Imaging",
+      "cit": [
+        [
+          0,
+          8325,
+          157
+        ]
+      ],
+      "cit_sha": "68511c567560027a"
+    },
+    {
+      "afirmacao": "A comprovacao de calcificacoes no craniofaringioma geralmente NAO e possivel pela ressonancia magnetica.",
+      "secao": "Neuroradiological Imaging",
+      "cit": [
+        [
+          0,
+          8639,
+          78
+        ]
+      ],
+      "cit_sha": "5804cecabe50f085"
+    },
+    {
+      "afirmacao": "As sequencias ideais para identificar calcificacoes sao as ponderadas em T2* ou as de susceptibilidade (SWI), ambas prejudicadas pelo conteudo aereo dos seios.",
+      "secao": "Neuroradiological Imaging",
+      "cit": [
+        [
+          0,
+          8718,
+          194
+        ]
+      ],
+      "cit_sha": "cec39e91bc8b0408"
+    },
+    {
+      "afirmacao": "A tomografia computadorizada permanece o padrao-ouro para identificar calcificacoes nessa area, apesar da desvantagem do uso de raios X em criancas.",
+      "secao": "Neuroradiological Imaging",
+      "cit": [
+        [
+          0,
+          8924,
+          157
+        ]
+      ],
+      "cit_sha": "612ca3d13b598a29"
+    },
+    {
+      "afirmacao": "A comprovacao de calcificacoes na imagem e importante para o diagnostico diferencial de outras massas selares e para detectar pequenos restos pos-operatorios indetectaveis na RM.",
+      "secao": "Neuroradiological Imaging",
+      "cit": [
+        [
+          0,
+          9082,
+          195
+        ]
+      ],
+      "cit_sha": "315976272106f44c"
+    },
+    {
+      "afirmacao": "Os principais diagnosticos diferenciais de massas selares/parasselares em criancas sao o glioma de baixo grau e o tumor de celulas germinativas.",
+      "secao": "Neuroradiological Imaging",
+      "cit": [
+        [
+          0,
+          9286,
+          114
+        ]
+      ],
+      "cit_sha": "91caf7dbd66272f7"
+    },
+    {
+      "afirmacao": "A classificacao de de Vile definiu a extensao do dano hipotalamico pos-operatorio em 1 de 3 graus, conforme os defeitos pos-operatorios no assoalho do terceiro ventriculo.",
+      "secao": "Neuroradiological Imaging",
+      "cit": [
+        [
+          0,
+          10569,
+          194
+        ]
+      ],
+      "cit_sha": "c506ac2afd5abc83"
+    },
+    {
+      "afirmacao": "Os nucleos hipotalamicos posteriores localizam-se nas paredes laterais do terceiro ventriculo, a partir do nivel dos corpos mamilares e posteriormente a eles.",
+      "secao": "Neuroradiological Imaging",
+      "cit": [
+        [
+          0,
+          10900,
+          163
+        ]
+      ],
+      "cit_sha": "f565de423bb9f116"
+    },
+    {
+      "afirmacao": "Na classificacao alema de envolvimento hipotalamico: grau 0 define craniofaringioma sem contato com o assoalho do terceiro ventriculo; grau I e o CP com contato ou compressao do hipotalamo anterior aos corpos mamilares.",
+      "secao": "Neuroradiological Imaging",
+      "cit": [
+        [
+          0,
+          11064,
+          180
+        ]
+      ],
+      "cit_sha": "9d5b2c613e805146"
+    },
+    {
+      "afirmacao": "O grau II e o tumor que causa deslocamento, compressao ou destruicao do hipotalamo a partir do nivel dos corpos mamilares ou dorsalmente a eles.",
+      "secao": "Neuroradiological Imaging",
+      "cit": [
+        [
+          0,
+          11249,
+          164
+        ]
+      ],
+      "cit_sha": "fc0f80a9be74b821"
+    },
+    {
+      "afirmacao": "Os corpos mamilares definem a fronteira entre envolvimento/lesao hipotalamica anterior e posterior.",
+      "secao": "Figura 2",
+      "cit": [
+        [
+          0,
+          10344,
+          88
+        ]
+      ],
+      "cit_sha": "6341dcb92b75867f"
+    },
+    {
+      "afirmacao": "No seguimento do craniofaringioma, a imagem de rotina deve limitar-se a RM SEM aplicacao de gadolinio, para reduzir a carga de radiacao e o risco potencial de deposicao de gadolinio.",
+      "secao": "Neuroradiological Imaging",
+      "cit": [
+        [
+          0,
+          11424,
+          179
+        ]
+      ],
+      "cit_sha": "67b00b3f91c7f5e6"
+    },
+    {
+      "afirmacao": "O melhor tratamento para o craniofaringioma e aquele que envolve a menor morbidade a longo prazo; pode incluir apenas cirurgia, apenas irradiacao ou, mais comumente, a combinacao dos dois.",
+      "secao": "Neurosurgery",
+      "cit": [
+        [
+          0,
+          11693,
+          182
+        ]
+      ],
+      "cit_sha": "8274ef40564328ea"
+    },
+    {
+      "afirmacao": "A cirurgia isolada implica ressecao radical e, portanto, e apropriada para tumores que podem ser completamente ressecados sem lesao neurovascular e sem comprometimento visual.",
+      "secao": "Neurosurgery",
+      "cit": [
+        [
+          0,
+          11876,
+          166
+        ]
+      ],
+      "cit_sha": "e21b68a62f1fd0c7"
+    },
+    {
+      "afirmacao": "Na populacao pediatrica, o envolvimento hipotalamico pre-operatorio aumenta a probabilidade de obesidade pre e pos-operatoria, e o dano hipotalamico durante a cirurgia aumenta o risco de ganho de peso pos-operatorio.",
+      "secao": "Neurosurgery",
+      "cit": [
+        [
+          0,
+          12120,
+          228
+        ]
+      ],
+      "cit_sha": "6a8a95e3496b6989"
+    },
+    {
+      "afirmacao": "Evitar dano hipotalamico irreversivel e um objetivo chave no tratamento do craniofaringioma.",
+      "secao": "Neurosurgery",
+      "cit": [
+        [
+          0,
+          12500,
+          93
+        ]
+      ],
+      "cit_sha": "949121a472ac6bfc"
+    },
+    {
+      "afirmacao": "Cirurgia limitada e radioterapia sao apropriadas para a maioria dos pacientes, inclusive aqueles em que a cirurgia radical poderia ser considerada.",
+      "secao": "Neurosurgery",
+      "cit": [
+        [
+          0,
+          12605,
+          135
+        ]
+      ],
+      "cit_sha": "b8997b1a766e4dd4"
+    },
+    {
+      "afirmacao": "A cirurgia limitada assume varias formas: ressecao parcial, fenestracao ou aspiracao de cisto, colocacao de cateter e reservatorio de Ommaya, ou derivacao liquorica.",
+      "secao": "Neurosurgery",
+      "cit": [
+        [
+          0,
+          12978,
+          182
+        ]
+      ],
+      "cit_sha": "a81891d7a61aac8b"
+    },
+    {
+      "afirmacao": "A aspiracao ou fenestracao de cisto, embora importante para reduzir volume tumoral e sintomas, pode ter beneficio apenas temporario, e a reacumulacao do liquido cistico durante a irradiacao e quase certa.",
+      "secao": "Neurosurgery",
+      "cit": [
+        [
+          0,
+          13676,
+          222
+        ]
+      ],
+      "cit_sha": "ad6950379833d037"
+    },
+    {
+      "afirmacao": "Na maioria dos casos a radioterapia e administrada no momento da progressao apos cirurgia previa.",
+      "secao": "Radiation Therapy",
+      "cit": [
+        [
+          0,
+          14089,
+          96
+        ]
+      ],
+      "cit_sha": "1daba725808be9b7"
+    },
+    {
+      "afirmacao": "A terapia com protons deposita a dose ao longo de um trajeto que termina no alvo, reduzindo significativamente a dose em tecido nao alvo; o potencial de controle tumoral e igual entre as duas modalidades.",
+      "secao": "Radiation Therapy",
+      "cit": [
+        [
+          0,
+          15008,
+          223
+        ]
+      ],
+      "cit_sha": "929a367b69f89e93"
+    },
+    {
+      "afirmacao": "Independentemente da modalidade de radioterapia, o eixo hipotalamo-hipofisario, os nervos opticos e o quiasma, os componentes principais da circulacao cerebral e partes do tronco encefalico recebem a dose de prescricao na maioria dos casos.",
+      "secao": "Radiation Therapy",
+      "cit": [
+        [
+          0,
+          15380,
+          217
+        ]
+      ],
+      "cit_sha": "b2a8e3525570148d"
+    },
+    {
+      "afirmacao": "No estudo prospectivo de terapia com protons por espalhamento passivo, 94 criancas de 0 a 21 anos foram incluidas ate o inicio de 2016.",
+      "secao": "Radiation Therapy",
+      "cit": [
+        [
+          0,
+          18788,
+          72
+        ]
+      ],
+      "cit_sha": "9d98a26a5a09ebe0"
+    },
+    {
+      "afirmacao": "O volume alvo para a terapia com protons incluiu o leito tumoral pos-operatorio com volume alvo clinico adicional de 0,5 cm, destinado a cobrir a extensao tumoral microscopica.",
+      "secao": "Radiation Therapy",
+      "cit": [
+        [
+          0,
+          18861,
+          182
+        ]
+      ],
+      "cit_sha": "3191f44a526a275e"
+    },
+    {
+      "afirmacao": "A partir do inicio da terapia com protons, os pacientes foram acompanhados a cada 3 meses por 1 ano e, depois, a cada 6 meses por 5 anos.",
+      "secao": "Radiation Therapy",
+      "cit": [
+        [
+          0,
+          19084,
+          92
+        ]
+      ],
+      "cit_sha": "551fb2db761b1ab3"
+    },
+    {
+      "afirmacao": "Resultados preliminares sugeriram que taxa e padrao de falha, e as taxas de necrose, vasculopatia e complicacoes neurologicas graves associadas ao volume alvo foram equivalentes a terapia com fotons.",
+      "secao": "Radiation Therapy",
+      "cit": [
+        [
+          0,
+          19177,
+          215
+        ]
+      ],
+      "cit_sha": "8422d76f6c41a617"
+    },
+    {
+      "afirmacao": "Corrigidos para a distribuicao de dose no cerebro normal, os tratados com protons nao tiveram mudanca nos escores de desempenho academico (leitura e matematica), enquanto os tratados com fotons demonstraram declinio significativo.",
+      "secao": "Radiation Therapy",
+      "cit": [
+        [
+          0,
+          19516,
+          192
+        ]
+      ],
+      "cit_sha": "de7abff22c95c52f"
+    },
+    {
+      "afirmacao": "A radiocirurgia tem indicacoes e experiencia limitadas, sendo adequada apenas para residuo solido de pequeno volume e quando o tumor NAO esta em contato com estruturas vitais como o quiasma optico.",
+      "secao": "Tabela 1",
+      "cit": [
+        [
+          0,
+          16848,
+          157
+        ]
+      ],
+      "cit_sha": "31aa14a46c1b0f38"
+    },
+    {
+      "afirmacao": "A radioterapia bidimensional convencional tem dados clinicos confiaveis e seguimento longo indicando alta eficacia, mas baixa precisao geometrica e nenhuma protecao confiavel dos tecidos normais vizinhos.",
+      "secao": "Tabela 1",
+      "cit": [
+        [
+          0,
+          16012,
+          80
+        ]
+      ],
+      "cit_sha": "9404ab4a1e80f397"
+    },
+    {
+      "afirmacao": "A aplicacao intracavitaria de isotopo coloidal alcanca altas taxas de controle tumoral do componente cistico e e aplicavel a tumores recorrentes apos irradiacao previa, mas subdoseia os componentes solidos.",
+      "secao": "Tabela 1",
+      "cit": [
+        [
+          0,
+          17328,
+          102
+        ]
+      ],
+      "cit_sha": "d60c4aa6df6f3b29"
+    },
+    {
+      "afirmacao": "No craniofaringioma cistico, a descompressao por cateter intracistico pode ser feita repetidamente quando conectado a um reservatorio de Ommaya.",
+      "secao": "Instillation of Sclerosing Substances for Cystic CP",
+      "cit": [
+        [
+          0,
+          18129,
+          127
+        ]
+      ],
+      "cit_sha": "438461e439981b2a"
+    },
+    {
+      "afirmacao": "Principalmente no craniofaringioma cistico unico recorrente, a instilacao intracavitaria de substancias esclerosantes como o interferon-alfa e um tratamento de escolha.",
+      "secao": "Instillation of Sclerosing Substances for Cystic CP",
+      "cit": [
+        [
+          0,
+          18257,
+          136
+        ]
+      ],
+      "cit_sha": "07eba53bcb5261fd"
+    },
+    {
+      "afirmacao": "A instilacao de bleomicina esta OBSOLETA por neurotoxicidade em caso de extravasamento.",
+      "secao": "Instillation of Sclerosing Substances for Cystic CP",
+      "cit": [
+        [
+          0,
+          18406,
+          81
+        ]
+      ],
+      "cit_sha": "9873fb37b13ac0ec"
+    },
+    {
+      "afirmacao": "O tratamento sistemico com interferon alfa NAO se mostrou eficiente para prevenir a progressao do craniofaringioma solido.",
+      "secao": "Instillation of Sclerosing Substances for Cystic CP",
+      "cit": [
+        [
+          0,
+          18496,
+          115
+        ]
+      ],
+      "cit_sha": "3b56a83474a7ca60"
+    },
+    {
+      "afirmacao": "35% dos pacientes com craniofaringioma apresentam manifestacoes clinicas de disfuncao hipotalamica (obesidade hipotalamica, deficits neuropsicologicos e disturbios do ritmo circadiano) ja ao diagnostico.",
+      "secao": "Hypothalamic Syndrome",
+      "cit": [
+        [
+          0,
+          21483,
+          205
+        ]
+      ],
+      "cit_sha": "bcd906eb765666d1"
+    },
+    {
+      "afirmacao": "A incidencia de disfuncao hipotalamica sobe para 65 a 80% apos tratamento cirurgico radical.",
+      "secao": "Hypothalamic Syndrome",
+      "cit": [
+        [
+          0,
+          21697,
+          100
+        ]
+      ],
+      "cit_sha": "09ee983e2df0204d"
+    },
+    {
+      "afirmacao": "O tratamento de lesoes supraquiasmaticas com envolvimento hipotalamico e desafiador e associa-se a alta morbidade.",
+      "secao": "Hypothalamic Syndrome",
+      "cit": [
+        [
+          0,
+          21806,
+          121
+        ]
+      ],
+      "cit_sha": "517f38836eee5542"
+    },
+    {
+      "afirmacao": "A obesidade hipotalamica e causada principalmente por lesoes cirurgicas de estruturas hipotalamicas posteriores, incluindo os corpos mamilares.",
+      "secao": "Hypothalamic Syndrome",
+      "cit": [
+        [
+          0,
+          21936,
+          110
+        ]
+      ],
+      "cit_sha": "5278b6e8afecf98e"
+    },
+    {
+      "afirmacao": "O grau de obesidade hipotalamica associa-se claramente ao grau de dano hipotalamico nos pacientes com craniofaringioma.",
+      "secao": "Hypothalamic Syndrome",
+      "cit": [
+        [
+          0,
+          22100,
+          91
+        ]
+      ],
+      "cit_sha": "9d567328a24c3c85"
+    },
+    {
+      "afirmacao": "Por disturbios na regulacao da saciedade, no fluxo simpatico central e no gasto energetico, pacientes com craniofaringioma frequentemente desenvolvem obesidade hipotalamica morbida, em geral NAO responsiva a modificacoes convencionais de estilo de vida (dieta e exercicio).",
+      "secao": "Lifestyle and Dietary Interventions",
+      "cit": [
+        [
+          0,
+          22284,
+          223
+        ]
+      ],
+      "cit_sha": "4949aa8e7e43f0d8"
+    },
+    {
+      "afirmacao": "Apenas 1 relato de caso observou efeito clinicamente significativo de intervencao dietetica por jejum modificado poupador de proteina (PSMF), mas o ganho de peso retornou apos a descontinuacao.",
+      "secao": "Lifestyle and Dietary Interventions",
+      "cit": [
+        [
+          0,
+          22529,
+          140
+        ]
+      ],
+      "cit_sha": "639b543216734593"
+    },
+    {
+      "afirmacao": "O hipopituitarismo deve ser tratado com reposicao dos hormonios deficientes conforme as diretrizes existentes.",
+      "secao": "Endocrine Substitution of Hypopituitarism",
+      "cit": [
+        [
+          0,
+          22782,
+          108
+        ]
+      ],
+      "cit_sha": "82bf1811a64f79f2"
+    },
+    {
+      "afirmacao": "A reposicao de GH e segura quanto ao risco de recorrencia do craniofaringioma, embora seus efeitos beneficos sobre a composicao corporal a longo prazo sejam tema de debate.",
+      "secao": "Endocrine Substitution of Hypopituitarism",
+      "cit": [
+        [
+          0,
+          22899,
+          162
+        ]
+      ],
+      "cit_sha": "8e033ec88ce6845e"
+    },
+    {
+      "afirmacao": "Na reposicao endocrina do hipopituitarismo apos craniofaringioma, deve-se evitar a superdosagem de glicocorticoide, e a levotiroxina deve ser reposta em dose suficiente para atingir T4 livre na metade media a superior do intervalo de referencia. ⚠️ O artigo NAO trata da ORDEM de inicio dos hormonios.",
+      "secao": "Endocrine Substitution of Hypopituitarism",
+      "cit": [
+        [
+          0,
+          27048,
+          183
+        ]
+      ],
+      "cit_sha": "f0589c3c2ea40523"
+    },
+    {
+      "afirmacao": "A terapia com derivados de anfetamina na obesidade hipotalamica baseia-se na reducao observada da secrecao de epinefrina e da ativacao simpatoadrenal, que se manifesta como resposta endocrina prejudicada a hipoglicemia.",
+      "secao": "Pharmacological Treatment of HO",
+      "cit": [
+        [
+          0,
+          27272,
+          224
+        ]
+      ],
+      "cit_sha": "ad561b86f5e23dc5"
+    },
+    {
+      "afirmacao": "Em criancas com obesidade hipotalamica por craniofaringioma, a dextroanfetamina por 24 meses, iniciada 10 meses apos a cirurgia, estabilizou o IMC, diminuiu o ganho de peso continuo e aumentou o nivel de atividade fisica espontanea.",
+      "secao": "Pharmacological Treatment of HO",
+      "cit": [
+        [
+          0,
+          27508,
+          178
+        ]
+      ],
+      "cit_sha": "bbf68f464bf0ab12"
+    },
+    {
+      "afirmacao": "Em criancas com obesidade hipotalamica por craniofaringioma, houve melhora da sonolencia diurna mesmo com uso de dextroanfetamina por prazo mais curto.",
+      "secao": "Pharmacological Treatment of HO",
+      "cit": [
+        [
+          0,
+          27695,
+          103
+        ]
+      ],
+      "cit_sha": "ff44aae25d5b542a"
+    },
+    {
+      "afirmacao": "O metilfenidato, estimulante central inibidor da recaptacao de dopamina, foi benefico contra o ganho de peso em 1 relato de caso pediatrico de obesidade hipotalamica por craniofaringioma.",
+      "secao": "Pharmacological Treatment of HO",
+      "cit": [
+        [
+          0,
+          24197,
+          105
+        ]
+      ],
+      "cit_sha": "eec3c5b8f1028370"
+    },
+    {
+      "afirmacao": "O efeito de agonista do receptor de GLP-1 sobre o peso foi analisado em 8 pacientes com obesidade hipotalamica (6 com craniofaringioma), com perda de peso sustentada e melhora dos perfis de risco cardiovascular e metabolico.",
+      "secao": "Pharmacological Treatment of HO",
+      "cit": [
+        [
+          0,
+          28058,
+          222
+        ]
+      ],
+      "cit_sha": "40d9b5f10450da10"
+    },
+    {
+      "afirmacao": "A secrecao de insulina e reduzida pela ligacao do diazoxido ao canal KATP das celulas beta, e a metformina melhora a sensibilidade a insulina por diminuir a gliconeogenese hepatica.",
+      "secao": "Pharmacological Treatment of HO",
+      "cit": [
+        [
+          0,
+          28430,
+          163
+        ]
+      ],
+      "cit_sha": "70f65d4e22e9b579"
+    },
+    {
+      "afirmacao": "A metformina melhora a sensibilidade a insulina por diminuir a gliconeogenese hepatica.",
+      "secao": "Pharmacological Treatment of HO",
+      "cit": [
+        [
+          0,
+          28514,
+          79
+        ]
+      ],
+      "cit_sha": "224b6177064a424e"
+    },
+    {
+      "afirmacao": "A combinacao de diazoxido e metformina foi avaliada em 9 pacientes com craniofaringioma e obesidade hipotalamica, com ganho de peso de +1,2 ± 5,9 kg contra +9,5 ± 2,7 kg nos 6 meses previos a terapia.",
+      "secao": "Pharmacological Treatment of HO",
+      "cit": [
+        [
+          0,
+          28594,
+          283
+        ]
+      ],
+      "cit_sha": "f3cf3249d035c58e"
+    },
+    {
+      "afirmacao": "Niveis altos de insulina pre-tratamento associaram-se a reducao de peso mais robusta com diazoxido e metformina; as limitacoes do estudo foram a coorte pequena e os eventos adversos (1 paciente saiu por edema periferico e outro por emese e elevacao de enzimas hepaticas).",
+      "secao": "Pharmacological Treatment of HO",
+      "cit": [
+        [
+          0,
+          28878,
+          305
+        ]
+      ],
+      "cit_sha": "6b39cd90771c00a4"
+    },
+    {
+      "afirmacao": "A combinacao de fenofibrato e metformina em pacientes pediatricos com craniofaringioma melhorou a resistencia a insulina e o perfil lipidico, porem NAO melhorou o IMC; ⚠️ o proprio artigo diverge quanto ao tamanho desse estudo (22 pacientes no texto corrido, numero menor na sua Tabela 2), entao o n nao e recuperavel com seguranca.",
+      "secao": "Pharmacological Treatment of HO",
+      "cit": [
+        [
+          0,
+          29205,
+          81
+        ],
+        [
+          0,
+          29452,
+          186
+        ]
+      ],
+      "cit_sha": "e4ed5f9bfd5925f3"
+    },
+    {
+      "afirmacao": "Sob metformina e fenofibrato houve melhora da resistencia insulinica e do perfil lipidico, mas o tratamento nao resultou em melhora do IMC.",
+      "secao": "Pharmacological Treatment of HO",
+      "cit": [
+        [
+          0,
+          29452,
+          186
+        ]
+      ],
+      "cit_sha": "7575f66109f1b8ae"
+    },
+    {
+      "afirmacao": "O octreotide, analogo da somatostatina, foi avaliado na obesidade hipotalamica de coorte pediatrica mista (majoritariamente craniofaringioma): reduziu a secrecao de insulina, com melhora moderada ou nula do IMC e aumento do risco de formacao de calculos biliares.",
+      "secao": "Tabela 2",
+      "cit": [
+        [
+          0,
+          24323,
+          212
+        ]
+      ],
+      "cit_sha": "1d96a89c745c37ce"
+    },
+    {
+      "afirmacao": "No tratamento da obesidade hipotalamica, o diazoxido isolado (ativador de canal de potassio que inibe a secrecao de insulina) NAO mudou o IMC em ensaio com 18 pacientes.",
+      "secao": "Tabela 2",
+      "cit": [
+        [
+          0,
+          24557,
+          91
+        ]
+      ],
+      "cit_sha": "8afa314a96c8358e"
+    },
+    {
+      "afirmacao": "Pacientes com craniofaringioma e dano cirurgico limitado a estruturas hipotalamicas anteriores especificas apresentaram niveis de ocitocina de jejum reduzidos.",
+      "secao": "Pharmacological Treatment of HO",
+      "cit": [
+        [
+          0,
+          29638,
+          156
+        ]
+      ],
+      "cit_sha": "30716ae12533b415"
+    },
+    {
+      "afirmacao": "Em estudo piloto com 11 pacientes com craniofaringioma, testou-se uma aplicacao nasal unica de 24 UI de ocitocina, que foi muito bem tolerada e elevou a concentracao de ocitocina na saliva e na urina.",
+      "secao": "Pharmacological Treatment of HO",
+      "cit": [
+        [
+          0,
+          32485,
+          151
+        ]
+      ],
+      "cit_sha": "d66f17cea391ecf6"
+    },
+    {
+      "afirmacao": "Apos a ocitocina nasal, os pacientes com lesao hipotalamica cirurgica limitada as areas anteriores melhoraram a identificacao emocional em comparacao aos com lesoes anteriores e posteriores.",
+      "secao": "Pharmacological Treatment of HO",
+      "cit": [
+        [
+          0,
+          32878,
+          234
+        ]
+      ],
+      "cit_sha": "feb3a5c61be8223c"
+    },
+    {
+      "afirmacao": "Concentracoes salivares de ocitocina pos-prandiais reduzidas em relacao ao jejum associaram-se a obesidade hipotalamica e a comportamento alimentar adverso e transtornos alimentares.",
+      "secao": "Pharmacological Treatment of HO",
+      "cit": [
+        [
+          0,
+          35152,
+          200
+        ]
+      ],
+      "cit_sha": "98c68941a54089fa"
+    },
+    {
+      "afirmacao": "O conhecimento atual sobre os efeitos da ocitocina de longo prazo no craniofaringioma baseia-se em poucos relatos de caso.",
+      "secao": "Pharmacological Treatment of HO",
+      "cit": [
+        [
+          0,
+          35365,
+          97
+        ]
+      ],
+      "cit_sha": "94dafade2b15fb15"
+    },
+    {
+      "afirmacao": "Em 199 criancas com craniofaringioma nao houve reducao do IMC durante 3 anos de reposicao de GH.",
+      "secao": "Tabela 2",
+      "cit": [
+        [
+          0,
+          26380,
+          48
+        ]
+      ],
+      "cit_sha": "8f3817b19f034f77"
+    },
+    {
+      "afirmacao": "Em 260 criancas com craniofaringioma nao houve reducao do IMC durante 5 anos de reposicao de GH.",
+      "secao": "Tabela 2",
+      "cit": [
+        [
+          0,
+          26463,
+          48
+        ]
+      ],
+      "cit_sha": "af7b604ecfaa865e"
+    },
+    {
+      "afirmacao": "Em 79 criancas com craniofaringioma houve efeito benefico de longo prazo do GH sobre o IMC quando reposto durante a infancia e a vida adulta.",
+      "secao": "Tabela 2",
+      "cit": [
+        [
+          0,
+          26640,
+          50
+        ]
+      ],
+      "cit_sha": "a4912129c2c729b5"
+    },
+    {
+      "afirmacao": "Varios relatos sobre os efeitos da intervencao bariatrica na evolucao do peso na obesidade hipotalamica foram publicados com resultados mistos.",
+      "secao": "Bariatric Treatment of HO",
+      "cit": [
+        [
+          0,
+          35497,
+          124
+        ]
+      ],
+      "cit_sha": "f27f9a97c61fe27e"
+    },
+    {
+      "afirmacao": "Na banda gastrica ajustavel laparoscopica (LAGB) em 6 criancas com obesidade hipotalamica por craniofaringioma NAO houve mudanca do IMC ao longo de 5,5 anos de seguimento, com necessidade de reajuste da banda e explante do dispositivo (o IMC medio inicial impresso na tabela e incompativel com a faixa impressa ao lado, entao esse valor nao e recuperavel).",
+      "secao": "Tabela 3",
+      "cit": [
+        [
+          0,
+          30716,
+          99
+        ]
+      ],
+      "cit_sha": "542e03da9fcb0cb5"
+    },
+    {
+      "afirmacao": "Na gastrectomia vertical (sleeve) em 3 criancas com obesidade hipotalamica por craniofaringioma o IMC medio caiu de 49,2 para 35,3 em 2 anos, com sangramento leve e deficiencia de acido folico e vitamina D — serie de casos, sem comparador.",
+      "secao": "Tabela 3",
+      "cit": [
+        [
+          0,
+          30838,
+          122
+        ]
+      ],
+      "cit_sha": "9c5f7670b901c719"
+    },
+    {
+      "afirmacao": "Apos bypass gastrico em Y de Roux com vagotomia em 1 crianca de 223 kg com obesidade hipotalamica por craniofaringioma houve perda de 49 kg em 2,5 anos, com deficiencia leve de ferro — relato de caso unico.",
+      "secao": "Tabela 3",
+      "cit": [
+        [
+          0,
+          31667,
+          68
+        ]
+      ],
+      "cit_sha": "90ab72f3fcc216d0"
+    },
+    {
+      "afirmacao": "Um bypass gastrico em Y de Roux em 1 crianca com obesidade hipotalamica por craniofaringioma reduziu o IMC de 65,0 para 43,0 em 4 anos, complicado por diarreia, sindrome de dumping e deterioracao psicologica — relato de caso unico.",
+      "secao": "Tabela 3",
+      "cit": [
+        [
+          0,
+          31355,
+          89
+        ]
+      ],
+      "cit_sha": "86a57f111bebc2cc"
+    },
+    {
+      "afirmacao": "Outro relato de caso unico de bypass gastrico em Y de Roux em 1 crianca com obesidade hipotalamica por craniofaringioma registrou queda do IMC de 51,5 para 39,0 em 9 meses, sem complicacoes relatadas.",
+      "secao": "Tabela 3",
+      "cit": [
+        [
+          0,
+          31278,
+          51
+        ]
+      ],
+      "cit_sha": "16cb5ea38983a23f"
+    },
+    {
+      "afirmacao": "A derivacao biliopancreatica com switch duodenal em 1 crianca com obesidade hipotalamica por craniofaringioma reduziu o IMC de 45,0 para 32,0 em 2 anos, complicada por bradicardia com necessidade de marcapasso e estenose intestinal — relato de caso unico.",
+      "secao": "Tabela 3",
+      "cit": [
+        [
+          0,
+          31798,
+          77
+        ]
+      ],
+      "cit_sha": "ee529c64849d6218"
+    },
+    {
+      "afirmacao": "A gastrectomia vertical em 2 criancas com obesidade hipotalamica por craniofaringioma NAO mudou o IMC e cursou com vomitos e eficacia prejudicada da desmopressina.",
+      "secao": "Tabela 3",
+      "cit": [
+        [
+          0,
+          31066,
+          104
+        ]
+      ],
+      "cit_sha": "9cd62b84baa8dd24"
+    },
+    {
+      "afirmacao": "Estudos de funcionalidade fisica e psicossocial no seguimento apos craniofaringioma variam de funcao reduzida em quase 50% ate funcao excelente na maioria dos pacientes.",
+      "secao": "Neuropsychological and Psychosocial Functioning",
+      "cit": [
+        [
+          0,
+          35804,
+          114
+        ]
+      ],
+      "cit_sha": "1e79b94a228f1241"
+    },
+    {
+      "afirmacao": "A reducao do funcionamento social e emocional e o comprometimento mais frequente, com os pacientes avaliando seu status psicossocial como pior do que sua saude fisica.",
+      "secao": "Neuropsychological and Psychosocial Functioning",
+      "cit": [
+        [
+          0,
+          35931,
+          179
+        ]
+      ],
+      "cit_sha": "2c609ef21d3dcec5"
+    },
+    {
+      "afirmacao": "Estudos comportamentais observaram sintomas psicopatologicos frequentes como ansiedade, depressao e retraimento, alem de risco aumentado de apatia em sobreviventes de longo prazo do craniofaringioma de inicio na infancia.",
+      "secao": "Neuropsychological and Psychosocial Functioning",
+      "cit": [
+        [
+          0,
+          36203,
+          206
+        ]
+      ],
+      "cit_sha": "2b599a84e561b1c9"
+    },
+    {
+      "afirmacao": "Pacientes tratados com estrategias cirurgicas radicais como ressecao total macroscopica, resultando em lesoes cirurgicas das areas hipotalamicas posteriores, tiveram qualidade de vida significativamente pior no seguimento de curto prazo de 3 anos.",
+      "secao": "Quality of Life",
+      "cit": [
+        [
+          0,
+          36863,
+          273
+        ]
+      ],
+      "cit_sha": "278a227f6fb0566c"
+    },
+    {
+      "afirmacao": "Nenhuma terapia bariatrica ou farmacologica para obesidade hipotalamica no craniofaringioma tem eficacia comprovada em ensaios randomizados; as combinacoes de agentes farmacologicos parecem as mais promissoras.",
+      "secao": "Conclusion",
+      "cit": [
+        [
+          0,
+          37268,
+          218
+        ]
+      ],
+      "cit_sha": "8c4140f396198177"
+    },
+    {
+      "afirmacao": "Recomenda-se a prevencao da obesidade hipotalamica, com atencao especial as abordagens poupadoras do hipotalamo que respeitem a integridade dos nucleos essenciais das areas hipotalamicas posteriores.",
+      "secao": "Conclusion",
+      "cit": [
+        [
+          0,
+          37487,
+          107
+        ]
+      ],
+      "cit_sha": "cca336509c58c33d"
+    },
+    {
+      "afirmacao": "Se o tumor tem localizacao favoravel, a terapia de escolha e a ressecao completa, com cuidado para preservar as funcoes optica e hipotalamica.",
+      "secao": "Abstract",
+      "cit": [
+        [
+          0,
+          1858,
+          21
+        ],
+        [
+          0,
+          1908,
+          128
+        ]
+      ],
+      "cit_sha": "e8c2ee573834de9f"
+    },
+    {
+      "afirmacao": "Em pacientes com localizacao tumoral desfavoravel (isto e, com envolvimento hipotalamico), a terapia recomendada e uma estrategia cirurgica limitada poupadora do hipotalamo seguida de irradiacao local.",
+      "secao": "Abstract",
+      "cit": [
+        [
+          0,
+          2037,
+          47
+        ],
+        [
+          0,
+          2098,
+          191
+        ]
+      ],
+      "cit_sha": "e5ca348fdb6dc5ec"
+    },
+    {
+      "afirmacao": "As estrategias de tratamento cirurgico devem basear-se em abordagem multidisciplinar com equipes experientes.",
+      "secao": "Abstract",
+      "cit": [
+        [
+          0,
+          2290,
+          155
+        ]
+      ],
+      "cit_sha": "a8b7fa8b7340006e"
+    },
+    {
+      "afirmacao": "As manifestacoes clinicas do craniofaringioma relacionam-se a deficiencias hipotalamicas/hipofisarias, comprometimento visual e aumento da pressao intracraniana.",
+      "secao": "Abstract",
+      "cit": [
+        [
+          0,
+          1115,
+          61
+        ],
+        [
+          0,
+          1238,
+          59
+        ],
+        [
+          0,
+          1357,
+          16
+        ]
+      ],
+      "cit_sha": "2aea0b1c53416a27"
+    },
+    {
+      "afirmacao": "A recorrencia e a progressao do craniofaringioma sao frequentes, e a irradiacao provou ser eficaz em reduzi-las.",
+      "secao": "Abstract",
+      "cit": [
+        [
+          0,
+          458,
+          29
+        ],
+        [
+          0,
+          535,
+          62
+        ],
+        [
+          0,
+          625,
+          26
+        ]
+      ],
+      "cit_sha": "559761ca4471442a"
+    },
+    {
+      "afirmacao": "O craniofaringioma deve ser manejado como doenca frequentemente cronica, com cuidado continuado de pacientes pediatricos e adultos por equipes multidisciplinares experientes.",
+      "secao": "Abstract",
+      "cit": [
+        [
+          0,
+          1458,
+          17
+        ],
+        [
+          0,
+          1535,
+          60
+        ],
+        [
+          0,
+          1656,
+          61
+        ],
+        [
+          0,
+          1775,
+          42
+        ]
+      ],
+      "cit_sha": "3a2be21b0170ec0b"
+    },
+    {
+      "afirmacao": "Deve-se CONSIDERAR a centralizacao do tratamento do craniofaringioma em centros de excelencia experientes e em redes multicentricas de referencia, para assegurar alto padrao de qualidade do tratamento — a fonte enuncia isso como algo A CONSIDERAR, e nao como recomendacao forte.",
+      "secao": "Abstract",
+      "cit": [
+        [
+          0,
+          2511,
+          53
+        ],
+        [
+          0,
+          2628,
+          60
+        ],
+        [
+          0,
+          2743,
+          54
+        ]
+      ],
+      "cit_sha": "33004fa830d1fe75"
+    },
+    {
+      "afirmacao": "A radioterapia implica radioterapia externa por feixe usando fotons ou protons.",
+      "secao": "Radiation Therapy",
+      "cit": [
+        [
+          0,
+          13988,
+          82
+        ]
+      ],
+      "cit_sha": "211cc4937d15a900"
+    },
+    {
+      "afirmacao": "O craniofaringioma e um dos tumores cerebrais pediatricos para os quais a terapia com protons e mais promissora.",
+      "secao": "Radiation Therapy",
+      "cit": [
+        [
+          0,
+          14651,
+          87
+        ]
+      ],
+      "cit_sha": "555941db7c5edd70"
+    },
+    {
+      "afirmacao": "A radioterapia conformacional fracionada/IMRT e amplamente disponivel, altamente conformacional e facil de adaptar a alvos que mudam, mas expoe um volume maior de tecido normal a doses baixas de radiacao.",
+      "secao": "Tabela 1",
+      "cit": [
+        [
+          0,
+          16139,
+          81
+        ]
+      ],
+      "cit_sha": "38515f198a8d7efb"
+    },
+    {
+      "afirmacao": "A terapia com protons fracionada poupa tecido normal: o volume de tecido normal exposto a doses baixas e significativamente menor do que com metodos de fotons fracionados.",
+      "secao": "Tabela 1",
+      "cit": [
+        [
+          0,
+          16397,
+          94
+        ]
+      ],
+      "cit_sha": "0961a4e12a4f1d3c"
+    },
+    {
+      "afirmacao": "As desvantagens da terapia com protons sao experiencia limitada e custos significativos; os sistemas de orientacao por imagem ficaram atrasados e os sistemas mais novos de varredura por feixe de lapis exigem avaliacao em ensaios clinicos.",
+      "secao": "Tabela 1",
+      "cit": [
+        [
+          0,
+          16492,
+          78
+        ]
+      ],
+      "cit_sha": "0b51d1627002c705"
+    },
+    {
+      "afirmacao": "A radiocirurgia usa uma unica sessao de tratamento, e altamente conformacional e praticamente nao entrega dose a tecido nao alvo.",
+      "secao": "Tabela 1",
+      "cit": [
+        [
+          0,
+          16753,
+          47
+        ]
+      ],
+      "cit_sha": "ff93a5da3cf4e5df"
+    },
+    {
+      "afirmacao": "A radiocirurgia hipofracionada guiada por imagem (CyberKnife) tem indicacoes e experiencia muito limitadas, papel ainda indefinido e nenhum dado confiavel de controle tumoral ou reducao de efeitos colaterais.",
+      "secao": "Tabela 1",
+      "cit": [
+        [
+          0,
+          17162,
+          123
+        ]
+      ],
+      "cit_sha": "6ce0ddfdf5f82808"
+    },
+    {
+      "afirmacao": "As desvantagens do isotopo coloidal intracavitario sao a limitacao aos tumores cisticos, a subdosagem dos componentes solidos e complicacoes por extravasamento ou doses altas proximas a vias visuais e tronco encefalico.",
+      "secao": "Tabela 1",
+      "cit": [
+        [
+          0,
+          17431,
+          205
+        ]
+      ],
+      "cit_sha": "a3e6c0e62949f6a4"
+    },
+    {
+      "afirmacao": "A segunda geracao da terapia com protons (varredura por feixe de lapis) usa feixes pequenos com pesos individuais para conformar melhor a dose ao alvo e reduzir o volume que recebe as doses mais altas.",
+      "secao": "Radiation Therapy",
+      "cit": [
+        [
+          0,
+          17861,
+          156
+        ]
+      ],
+      "cit_sha": "38e80c13f47afb59"
+    },
+    {
+      "afirmacao": "A dextroanfetamina e um estimulante central que estimula a secrecao de noradrenalina e dopamina e inibe a recaptacao de dopamina.",
+      "secao": "Tabela 2",
+      "cit": [
+        [
+          0,
+          23321,
+          100
+        ]
+      ],
+      "cit_sha": "a22c41c5b4b64c6e"
+    },
+    {
+      "afirmacao": "Com dextroanfetamina houve reducao do ganho de peso continuo e estabilizacao do IMC em 10 de 12 pacientes e melhora da sonolencia diurna em 11 de 12 pacientes, em coorte pediatrica mista de obesidade hipotalamica (9 com craniofaringioma; os demais com astrocitoma ou glioma).",
+      "secao": "Tabela 2",
+      "cit": [
+        [
+          0,
+          23539,
+          155
+        ]
+      ],
+      "cit_sha": "a1f2d9ad55750478"
+    },
+    {
+      "afirmacao": "Cafeina associada a efedrina-HCl em 2 criancas com craniofaringioma produziu perda de peso media de 13,9% seis meses apos 2,6 a 5,5 anos de intervencao.",
+      "secao": "Tabela 2",
+      "cit": [
+        [
+          0,
+          23940,
+          77
+        ]
+      ],
+      "cit_sha": "a4cba647c9b51470"
+    },
+    {
+      "afirmacao": "O mazindol, amina simpaticomimetica semelhante a anfetamina, reduziu o peso de 70 para 60 kg em 1 adulto com craniofaringioma apos 3 semanas de intervencao.",
+      "secao": "Tabela 2",
+      "cit": [
+        [
+          0,
+          24095,
+          79
+        ]
+      ],
+      "cit_sha": "dec8b0b0199a7728"
+    },
+    {
+      "afirmacao": "A liraglutida reduziu o IMC de 41,8 para 35,3 em 1 adulto com craniofaringioma apos 8 meses de intervencao.",
+      "secao": "Tabela 2",
+      "cit": [
+        [
+          0,
+          25474,
+          91
+        ]
+      ],
+      "cit_sha": "7b033d269dcee983"
+    },
+    {
+      "afirmacao": "Com exenatida em coorte de craniofaringioma nao houve perda de peso significativa no total, com peso estavel ou reduzido nos respondedores (60%).",
+      "secao": "Tabela 2",
+      "cit": [
+        [
+          0,
+          25361,
+          90
+        ]
+      ],
+      "cit_sha": "b6d0af037eba2cac"
+    },
+    {
+      "afirmacao": "Os agonistas do receptor de GLP-1 melhoram a sensibilidade a insulina, aumentam a saciedade e reduzem a velocidade do esvaziamento gastrico.",
+      "secao": "Tabela 2",
+      "cit": [
+        [
+          0,
+          25085,
+          82
+        ]
+      ],
+      "cit_sha": "70a63b43d2b2d112"
+    },
+    {
+      "afirmacao": "A naltrexona, antagonista opioide, reduz o apetite e potencializa os efeitos anorexigenicos da ocitocina.",
+      "secao": "Tabela 2",
+      "cit": [
+        [
+          0,
+          25608,
+          95
+        ]
+      ],
+      "cit_sha": "1f105a5031f51599"
+    },
+    {
+      "afirmacao": "A suplementacao SUPRAFISIOLOGICA de T3 aumenta o gasto energetico por inducao de termogenese; houve reducao de peso com 3 x 10 microgramas de T3/dia por 11 a 27 meses em pouquissimos pacientes SEM craniofaringioma (1 adulto e 3 criancas), fora de qualquer ensaio controlado.",
+      "secao": "Tabela 2",
+      "cit": [
+        [
+          0,
+          25773,
+          198
+        ]
+      ],
+      "cit_sha": "2f4756c41cbcc3c1"
+    },
+    {
+      "afirmacao": "Em 1 crianca com craniofaringioma NAO houve reducao de peso com 3 x 12,5 microgramas de T3/dia por 2 meses.",
+      "secao": "Tabela 2",
+      "cit": [
+        [
+          0,
+          25996,
+          66
+        ]
+      ],
+      "cit_sha": "eeecb6be2dbf97b9"
+    },
+    {
+      "afirmacao": "O diazoxido e um ativador de canal de potassio que inibe a secrecao de insulina.",
+      "secao": "Tabela 2",
+      "cit": [
+        [
+          0,
+          24557,
+          38
+        ]
+      ],
+      "cit_sha": "29342c26218f4204"
+    },
+    {
+      "afirmacao": "O manejo cirurgico do craniofaringioma, especialmente em criancas, permanece controverso.",
+      "secao": "Neurosurgery",
+      "cit": [
+        [
+          0,
+          11625,
+          67
+        ]
+      ],
+      "cit_sha": "8f69bde8417ac3ff"
+    },
+    {
+      "afirmacao": "Um fator maior que afeta os pacientes com craniofaringioma adamantinomatoso e a disfuncao hipotalamica.",
+      "secao": "Neurosurgery",
+      "cit": [
+        [
+          0,
+          12043,
+          76
+        ]
+      ],
+      "cit_sha": "20e42f229c66c099"
+    },
+    {
+      "afirmacao": "Embora nao bem estabelecido, o ganho de peso pos-operatorio em adultos tambem e um problema e correlaciona-se com o envolvimento hipotalamico.",
+      "secao": "Neurosurgery",
+      "cit": [
+        [
+          0,
+          12360,
+          131
+        ]
+      ],
+      "cit_sha": "ed05d0b4f9b4c5e7"
+    },
+    {
+      "afirmacao": "A cirurgia limitada pode ser feita para descomprimir ou ressecar partes do tumor reduzindo seu impacto na visao e o efeito de massa sobre cerebro ou tronco, reduzir o volume a irradiar e a dose em tecidos normais criticos, e restaurar o fluxo liquorico.",
+      "secao": "Neurosurgery",
+      "cit": [
+        [
+          0,
+          13161,
+          236
+        ]
+      ],
+      "cit_sha": "ae53a328896c6da5"
+    },
+    {
+      "afirmacao": "Opcoes cirurgicas adicionais incluem aspiracao estereotaxica, colocacao de cateter ou procedimentos endoscopicos.",
+      "secao": "Neurosurgery",
+      "cit": [
+        [
+          0,
+          13564,
+          111
+        ]
+      ],
+      "cit_sha": "d16465f72107eff3"
+    },
+    {
+      "afirmacao": "Para o estadiamento adequado do craniofaringioma e importante avaliar a localizacao do tumor.",
+      "secao": "Neuroradiological Imaging",
+      "cit": [
+        [
+          0,
+          10505,
+          63
+        ]
+      ],
+      "cit_sha": "726aa9588774864a"
+    },
+    {
+      "afirmacao": "Em crianca com craniofaringioma confinado ao espaco intrasselar (grau 0, sem envolvimento hipotalamico), o IMC ao diagnostico era de -1,96 DP e de -1,62 DP 36 meses apos ressecao completa.",
+      "secao": "Figura 2",
+      "cit": [
+        [
+          0,
+          9675,
+          184
+        ]
+      ],
+      "cit_sha": "0e88212876414e3b"
+    },
+    {
+      "afirmacao": "Em crianca com craniofaringioma envolvendo hipotalamo anterior e posterior (grau II), o IMC ao diagnostico era de +6,08 DP e de +6,79 DP 36 meses apos ressecao completa — ou seja, a ressecao completa NAO reverteu a obesidade hipotalamica.",
+      "secao": "Figura 2",
+      "cit": [
+        [
+          0,
+          10093,
+          250
+        ]
+      ],
+      "cit_sha": "34527234cf760bb0"
+    },
+    {
+      "afirmacao": "Qualquer melhora clinicamente significativa no prognostico do craniofaringioma exigira estrategias neurocirurgicas e radio-oncologicas multidisciplinares adaptadas ao risco, com suporte medico e psicossocial, pois trata-se de doenca majoritariamente cronica.",
+      "secao": "Conclusion",
+      "cit": [
+        [
+          0,
+          37773,
+          264
+        ]
+      ],
+      "cit_sha": "1ea5ff270317aa5f"
+    },
+    {
+      "afirmacao": "Dificuldades de aprendizagem, controle emocional, preocupacoes com a aparencia fisica e imagem corporal e relacoes insatisfatorias com pares sao problemas frequentes no funcionamento diario das criancas.",
+      "secao": "Neuropsychological and Psychosocial Functioning",
+      "cit": [
+        [
+          0,
+          36429,
+          181
+        ]
+      ],
+      "cit_sha": "670c68bc4adf0452"
+    },
+    {
+      "afirmacao": "A analise sistematica da qualidade de vida relacionada a saude a longo prazo apos craniofaringioma ainda nao foi estabelecida.",
+      "secao": "Quality of Life",
+      "cit": [
+        [
+          0,
+          36641,
+          81
+        ]
+      ],
+      "cit_sha": "a58abf71196decd6"
+    }
+  ],
+  "conflito": "(1) LACUNA REAL DO NUCLEO: o CLINICAL_GUIDELINES nao tem nenhuma entrada de craniofaringioma nem de obesidade hipotalamica; nestes pontos esta fonte e a referencia. (2) ⚠️ O NUCLEO VENCE NA ORDEM DA REPOSICAO HORMONAL, e este artigo NAO a traz. O artigo so diz \"glucocorticoid overreplacement should be avoided and levothyroxine should be substituted in a dose sufficient to achieve free T4 levels in the mid-to-upper half of the reference range\" — sem uma palavra sobre sequencia. O nucleo carrega a regra, ainda que sob hipotireoidismo congenito: \"no CH central, excluir/tratar insuficiência adrenal antes do LT4 (risco de crise adrenal)\". NO POS-OPERATORIO DE CRANIOFARINGIOMA COM PAN-HIPOPITUITARISMO, GLICOCORTICOIDE ANTES DE LEVOTIROXINA: iniciar levotiroxina primeiro acelera o metabolismo do cortisol e pode precipitar crise adrenal. Nenhum dos dois artigos de craniofaringioma do acervo enuncia essa ordem — trate-a como conteudo do nucleo, nao da fonte. (3) CONFLITO ENTRE FONTES DO ACERVO (registrar, nao resolver): sobre sobrevida global em 20 anos no craniofaringioma de inicio na infancia, este artigo (Neuroendocrinology 2020) afirma 87-95%, enquanto o Nature Reviews Disease Primers 2019 dos mesmos autores (fileId 1uSuX7m8ufiH8u3pmn4oHIei-lY4FDdee) da, em coortes pediatricas, media de 62% em 20 anos, e 66-85% em coortes mistas. Ao ensinar sobrevida em 20 anos, citar a faixa e a fonte, nunca um numero unico. (4) DIVERGENCIA INTERNA DESTE ARTIGO: o estudo de fenofibrato + metformina aparece com 22 pacientes no texto corrido e com numero menor na Tabela 2 do proprio artigo (a Tabela 1 do Primer 2019 concorda com a tabela). O n nao e recuperavel. (5) O QUE ESTE ARTIGO NAO COBRE e o Primer 2019 cobre: diabetes insipidus como consequencia da cirurgia (haste preservada x sacrificada), terapia alvo do PCP com inibidores de BRAF/MEK, e a ausencia de vantagem da ressecao total macroscopica sobre o controle tumoral. Neste artigo, a lesao hipotalamica aparece atribuida sobretudo a cirurgia; a propria abertura da secao de sequelas diz que ela decorre de intervencoes \"surgical and/or radio-oncological\" — nao presuma que a irradiacao poupa o hipotalamo.",
+  "conflito_direcao": "misto",
+  "nucleo_citado": [
+    "no CH central, excluir/tratar insuficiência adrenal antes do LT4 (risco de crise adrenal)"
+  ],
+  "nucleo_ausente": [
+    "craniofaringioma",
+    "obesidade hipotalamica"
+  ],
+  "auditoria": {
+    "data": "2026-08-08",
+    "fatos_tocados": [
+      14,
+      15,
+      28,
+      41,
+      44,
+      73,
+      75,
+      76,
+      77,
+      83,
+      85,
+      86,
+      96,
+      97,
+      98,
+      99,
+      100,
+      101,
+      102,
+      109,
+      110,
+      112,
+      114,
+      115,
+      126,
+      133,
+      142,
+      143
     ],
-    [
-     0,
-     2330,
-     45
-    ]
-   ],
-   "cit_sha": "0870e442317a4744"
-  },
-  {
-   "afirmacao": "O craniofaringioma origina-se dos remanescentes do ducto craniofaringeo, na area selar e parasselar.",
-   "secao": "Introducao",
-   "cit": [
-    [
-     0,
-     2446,
-     57
-    ],
-    [
-     0,
-     2565,
-     27
-    ]
-   ],
-   "cit_sha": "dba6715e144ac693"
-  },
-  {
-   "afirmacao": "A sobrevida global em 20 anos apos craniofaringioma de inicio na infancia e alta, de 87 a 95%.",
-   "secao": "Introducao",
-   "cit": [
-    [
-     0,
-     2565,
-     177
-    ]
-   ],
-   "cit_sha": "f159b88ac2fc09dc"
-  },
-  {
-   "afirmacao": "Apesar da alta sobrevida, a qualidade de vida a longo prazo e frequentemente comprometida pelas sequelas da proximidade anatomica do tumor com o eixo hipotalamo-hipofisario e o nervo/quiasma optico.",
-   "secao": "Introducao",
-   "cit": [
-    [
-     0,
-     4005,
-     122
-    ]
-   ],
-   "cit_sha": "823a0aa6d1677ca8"
-  },
-  {
-   "afirmacao": "O acometimento hipotalamico inicial do CP e/ou lesoes relacionadas ao tratamento no eixo hipotalamo-hipofisario resultam em obesidade hipotalamica.",
-   "secao": "Introducao",
-   "cit": [
-    [
-     0,
-     4137,
-     145
-    ]
-   ],
-   "cit_sha": "da08635abbc0143a"
-  },
-  {
-   "afirmacao": "Nenhuma intervencao de estilo de vida, farmacologica ou bariatrica para obesidade hipotalamica no CP tem eficacia comprovada em ensaios clinicos randomizados; recomenda-se prevenir a sequela hipotalamica com abordagens poupadoras do hipotalamo que respeitem os nucleos das areas hipotalamicas posteriores.",
-   "secao": "Introducao",
-   "cit": [
-    [
-     0,
-     4300,
-     378
-    ]
-   ],
-   "cit_sha": "b7e29479e84002ee"
-  },
-  {
-   "afirmacao": "Existem 2 subtipos de craniofaringioma: o adamantinomatoso (ACP) e o papilifero (PCP).",
-   "secao": "Pathology and Molecular Genetics",
-   "cit": [
-    [
-     0,
-     4712,
-     71
-    ]
-   ],
-   "cit_sha": "ce52ba0a16e19c06"
-  },
-  {
-   "afirmacao": "O craniofaringioma adamantinomatoso e dirigido por mutacoes somaticas em CTNNB1 (que codifica a beta-catenina), em sua maioria mutacoes pontuais no exon 3 que afetam residuos regulatorios envolvidos na estabilidade da proteina beta-catenina.",
-   "secao": "Pathology and Molecular Genetics",
-   "cit": [
-    [
-     0,
-     4784,
-     179
-    ]
-   ],
-   "cit_sha": "f737fa1588619ea0"
-  },
-  {
-   "afirmacao": "A consequencia das mutacoes de CTNNB1 e que a beta-catenina nao pode ser degradada eficientemente, acumula-se dentro da celula e hiperativa a via WNT/beta-catenina.",
-   "secao": "Pathology and Molecular Genetics",
-   "cit": [
-    [
-     0,
-     4984,
-     148
-    ]
-   ],
-   "cit_sha": "6990fa54f4c70392"
-  },
-  {
-   "afirmacao": "O craniofaringioma papilifero tem baixa taxa mutacional (15 mutacoes/MB) e, em vez de mutacoes em CTNNB1, alberga mutacoes somaticas BRAF-V600E; nenhuma outra mutacao recorrente ou aberracao genomica foi identificada.",
-   "secao": "Pathology and Molecular Genetics",
-   "cit": [
-    [
-     0,
-     5143,
-     223
-    ]
-   ],
-   "cit_sha": "b27ca84614127f76"
-  },
-  {
-   "afirmacao": "A expressao do BRAF-V600E oncogenico e observada na grande maioria das celulas tumorais do craniofaringioma papilifero.",
-   "secao": "Pathology and Molecular Genetics",
-   "cit": [
-    [
-     0,
-     5378,
-     91
-    ]
-   ],
-   "cit_sha": "a1c908af2b35c784"
-  },
-  {
-   "afirmacao": "A ativacao da via MAPK no craniofaringioma papilifero restringe-se as celulas basais que circundam os nucleos fibrovasculares.",
-   "secao": "Pathology and Molecular Genetics",
-   "cit": [
-    [
-     0,
-     5587,
-     101
-    ]
-   ],
-   "cit_sha": "a84ff8bb1227ee96"
-  },
-  {
-   "afirmacao": "A terapia alvo abre perspectivas para tratar o craniofaringioma papilifero com mutacao BRAF-V600E, detectada exclusivamente no PCP de inicio na idade adulta.",
-   "secao": "Pathology and Molecular Genetics",
-   "cit": [
-    [
-     0,
-     5750,
-     144
-    ]
-   ],
-   "cit_sha": "28405835b5fb6d88"
-  },
-  {
-   "afirmacao": "O diagnostico do craniofaringioma de inicio na infancia costuma ser tardio, frequentemente anos apos a manifestacao inicial dos sintomas, com quadro clinico marcado por sintomas de hipertensao intracraniana (nausea e cefaleia) ao diagnostico.",
-   "secao": "Clinical Manifestations",
-   "cit": [
-    [
-     0,
-     5930,
-     116
-    ]
-   ],
-   "cit_sha": "db17531ff553c2ce"
-  },
-  {
-   "afirmacao": "Ao diagnostico, o quadro e caracterizado por sintomas de pressao intracraniana aumentada, como nausea e cefaleia.",
-   "secao": "Clinical Manifestations",
-   "cit": [
-    [
-     0,
-     6058,
-     137
-    ]
-   ],
-   "cit_sha": "7b161c040a5ca826"
-  },
-  {
-   "afirmacao": "As manifestacoes primarias do craniofaringioma incluem deficits endocrinos em 52 a 87% e comprometimento visual em 62 a 84% dos casos.",
-   "secao": "Clinical Manifestations",
-   "cit": [
-    [
-     0,
-     6206,
-     95
-    ]
-   ],
-   "cit_sha": "682179feeab956e6"
-  },
-  {
-   "afirmacao": "As deficiencias hormonais no craniofaringioma afetam a secrecao de hormonio de crescimento (GH, 75%), gonadotrofinas (LH/FSH, 40%), TSH (25%) e ACTH (25%).",
-   "secao": "Clinical Manifestations",
-   "cit": [
-    [
-     0,
-     6427,
-     170
-    ]
-   ],
-   "cit_sha": "544d60b7a02b038d"
-  },
-  {
-   "afirmacao": "No momento do diagnostico do craniofaringioma, 40 a 87% dos pacientes ja apresentam pelo menos 1 deficit endocrino.",
-   "secao": "Clinical Manifestations",
-   "cit": [
-    [
-     0,
-     6598,
-     89
-    ]
-   ],
-   "cit_sha": "cc86a275cf1be1cc"
-  },
-  {
-   "afirmacao": "Diabetes insipidus neuro-hormonal e observado no pre-operatorio em 17 a 27% de todos os pacientes com craniofaringioma.",
-   "secao": "Clinical Manifestations",
-   "cit": [
-    [
-     0,
-     6699,
-     123
-    ]
-   ],
-   "cit_sha": "9c9241e3942f3c8e"
-  },
-  {
-   "afirmacao": "Analise de dados antropometricos de consultas de rotina antes do diagnostico de craniofaringioma em 90 criancas revelou reducao da velocidade de crescimento ja em lactentes de apenas 12 meses.",
-   "secao": "Clinical Manifestations",
-   "cit": [
-    [
-     0,
-     6834,
-     174
-    ]
-   ],
-   "cit_sha": "caba76b74d1f7a4e"
-  },
-  {
-   "afirmacao": "O ganho de peso, preditivo de obesidade hipotalamica, ocorre como manifestacao tardia, pouco antes do diagnostico do craniofaringioma.",
-   "secao": "Clinical Manifestations",
-   "cit": [
-    [
-     0,
-     7009,
-     116
-    ]
-   ],
-   "cit_sha": "6dbc2f68b03c1506"
-  },
-  {
-   "afirmacao": "A duracao mediana da historia clinica antes do diagnostico de craniofaringioma foi de 6 meses, variando de 0,1 a 108 meses, e correlacionou-se positivamente com a idade do paciente ao diagnostico.",
-   "secao": "Clinical Manifestations",
-   "cit": [
-    [
-     0,
-     7219,
-     167
-    ]
-   ],
-   "cit_sha": "5634dbca76befa73"
-  },
-  {
-   "afirmacao": "Tamanho do tumor, grau de ressecao cirurgica, envolvimento hipotalamico e IMC ao diagnostico NAO se associaram a duracao da historia clinica previa.",
-   "secao": "Clinical Manifestations",
-   "cit": [
-    [
-     0,
-     7387,
-     152
-    ]
-   ],
-   "cit_sha": "10d21b3235c91e26"
-  },
-  {
-   "afirmacao": "Deficits neurologicos e comprometimento visual associaram-se a tumores maiores ao diagnostico e reduziram a sobrevida global em 10 anos.",
-   "secao": "Clinical Manifestations",
-   "cit": [
-    [
-     0,
-     7551,
-     133
-    ]
-   ],
-   "cit_sha": "b9e99309020f79d0"
-  },
-  {
-   "afirmacao": "Deficiencias endocrinas, retardo de crescimento e ganho de peso foram os sintomas com maior duracao de historia clinica antes do diagnostico.",
-   "secao": "Clinical Manifestations",
-   "cit": [
-    [
-     0,
-     7685,
-     125
-    ]
-   ],
-   "cit_sha": "b706bea8ccaeccc8"
-  },
-  {
-   "afirmacao": "A combinacao de cefaleia, comprometimento visual, retardo de crescimento e poliuria/polidipsia e altamente indicativa de craniofaringioma e deve levar a investigacao neurorradiologica.",
-   "secao": "Clinical Manifestations",
-   "cit": [
-    [
-     0,
-     7819,
-     174
-    ]
-   ],
-   "cit_sha": "ffdde77d67f3a9a5"
-  },
-  {
-   "afirmacao": "No estudo KRANIOPHARYNGEOM 2007, o intervalo mediano entre a manifestacao inicial da doenca e o diagnostico de craniofaringioma foi de 5 meses (variacao 0,01 a 108 meses).",
-   "secao": "Figura 1",
-   "cit": [
-    [
-     0,
-     3786,
-     126
-    ]
-   ],
-   "cit_sha": "0e4d7cbfbe205741"
-  },
-  {
-   "afirmacao": "O craniofaringioma papilifero e usualmente uma entidade solida e nao calcificada.",
-   "secao": "Neuroradiological Imaging",
-   "cit": [
-    [
-     0,
-     8020,
-     111
-    ]
-   ],
-   "cit_sha": "ffe38328def7fce4"
-  },
-  {
-   "afirmacao": "A regra dos 90% resume a imagem do craniofaringioma adamantinomatoso: cerca de 90% dos tumores sao predominantemente cisticos, 90% mostram calcificacoes mais ou menos proeminentes e cerca de 90% captam contraste nas paredes do cisto.",
-   "secao": "Neuroradiological Imaging",
-   "cit": [
-    [
-     0,
-     8132,
-     192
-    ]
-   ],
-   "cit_sha": "c6f31c1061a501ed"
-  },
-  {
-   "afirmacao": "Na RM sem contraste, as partes solidas e as paredes do cisto podem mostrar sinais T1 variados; em T2 os tumores sao usualmente hipo e hiperintensos, variabilidade devida a distribuicao heterogenea das calcificacoes.",
-   "secao": "Neuroradiological Imaging",
-   "cit": [
-    [
-     0,
-     8325,
-     157
-    ]
-   ],
-   "cit_sha": "68511c567560027a"
-  },
-  {
-   "afirmacao": "A comprovacao de calcificacoes no craniofaringioma geralmente NAO e possivel pela ressonancia magnetica.",
-   "secao": "Neuroradiological Imaging",
-   "cit": [
-    [
-     0,
-     8639,
-     78
-    ]
-   ],
-   "cit_sha": "5804cecabe50f085"
-  },
-  {
-   "afirmacao": "As sequencias ideais para identificar calcificacoes sao as ponderadas em T2* ou as de susceptibilidade (SWI), ambas prejudicadas pelo conteudo aereo dos seios.",
-   "secao": "Neuroradiological Imaging",
-   "cit": [
-    [
-     0,
-     8718,
-     194
-    ]
-   ],
-   "cit_sha": "cec39e91bc8b0408"
-  },
-  {
-   "afirmacao": "A tomografia computadorizada permanece o padrao-ouro para identificar calcificacoes nessa area, apesar da desvantagem do uso de raios X em criancas.",
-   "secao": "Neuroradiological Imaging",
-   "cit": [
-    [
-     0,
-     8924,
-     157
-    ]
-   ],
-   "cit_sha": "612ca3d13b598a29"
-  },
-  {
-   "afirmacao": "A comprovacao de calcificacoes na imagem e importante para o diagnostico diferencial de outras massas selares e para detectar pequenos restos pos-operatorios indetectaveis na RM.",
-   "secao": "Neuroradiological Imaging",
-   "cit": [
-    [
-     0,
-     9082,
-     195
-    ]
-   ],
-   "cit_sha": "315976272106f44c"
-  },
-  {
-   "afirmacao": "Os principais diagnosticos diferenciais de massas selares/parasselares em criancas sao o glioma de baixo grau e o tumor de celulas germinativas.",
-   "secao": "Neuroradiological Imaging",
-   "cit": [
-    [
-     0,
-     9286,
-     114
-    ]
-   ],
-   "cit_sha": "91caf7dbd66272f7"
-  },
-  {
-   "afirmacao": "A classificacao de de Vile definiu a extensao do dano hipotalamico pos-operatorio em 1 de 3 graus, conforme os defeitos pos-operatorios no assoalho do terceiro ventriculo.",
-   "secao": "Neuroradiological Imaging",
-   "cit": [
-    [
-     0,
-     10569,
-     194
-    ]
-   ],
-   "cit_sha": "c506ac2afd5abc83"
-  },
-  {
-   "afirmacao": "Os nucleos hipotalamicos posteriores localizam-se nas paredes laterais do terceiro ventriculo, a partir do nivel dos corpos mamilares e posteriormente a eles.",
-   "secao": "Neuroradiological Imaging",
-   "cit": [
-    [
-     0,
-     10900,
-     163
-    ]
-   ],
-   "cit_sha": "f565de423bb9f116"
-  },
-  {
-   "afirmacao": "Na classificacao alema de envolvimento hipotalamico: grau 0 define craniofaringioma sem contato com o assoalho do terceiro ventriculo; grau I e o CP com contato ou compressao do hipotalamo anterior aos corpos mamilares.",
-   "secao": "Neuroradiological Imaging",
-   "cit": [
-    [
-     0,
-     11064,
-     180
-    ]
-   ],
-   "cit_sha": "9d5b2c613e805146"
-  },
-  {
-   "afirmacao": "O grau II e o tumor que causa deslocamento, compressao ou destruicao do hipotalamo a partir do nivel dos corpos mamilares ou dorsalmente a eles.",
-   "secao": "Neuroradiological Imaging",
-   "cit": [
-    [
-     0,
-     11249,
-     164
-    ]
-   ],
-   "cit_sha": "fc0f80a9be74b821"
-  },
-  {
-   "afirmacao": "Os corpos mamilares definem a fronteira entre envolvimento/lesao hipotalamica anterior e posterior.",
-   "secao": "Figura 2",
-   "cit": [
-    [
-     0,
-     10344,
-     88
-    ]
-   ],
-   "cit_sha": "6341dcb92b75867f"
-  },
-  {
-   "afirmacao": "A imagem de rotina no seguimento deve limitar-se a RM SEM aplicacao de gadolinio, para reduzir a carga de radiacao e o risco potencial de deposicao de gadolinio.",
-   "secao": "Neuroradiological Imaging",
-   "cit": [
-    [
-     0,
-     11424,
-     179
-    ]
-   ],
-   "cit_sha": "67b00b3f91c7f5e6"
-  },
-  {
-   "afirmacao": "O melhor tratamento para o craniofaringioma e aquele que envolve a menor morbidade a longo prazo; pode incluir apenas cirurgia, apenas irradiacao ou, mais comumente, a combinacao dos dois.",
-   "secao": "Neurosurgery",
-   "cit": [
-    [
-     0,
-     11693,
-     182
-    ]
-   ],
-   "cit_sha": "8274ef40564328ea"
-  },
-  {
-   "afirmacao": "A cirurgia isolada implica ressecao radical e, portanto, e apropriada para tumores que podem ser completamente ressecados sem lesao neurovascular e sem comprometimento visual.",
-   "secao": "Neurosurgery",
-   "cit": [
-    [
-     0,
-     11876,
-     166
-    ]
-   ],
-   "cit_sha": "e21b68a62f1fd0c7"
-  },
-  {
-   "afirmacao": "Na populacao pediatrica, o envolvimento hipotalamico pre-operatorio aumenta a probabilidade de obesidade pre e pos-operatoria, e o dano hipotalamico durante a cirurgia aumenta o risco de ganho de peso pos-operatorio.",
-   "secao": "Neurosurgery",
-   "cit": [
-    [
-     0,
-     12154,
-     194
-    ]
-   ],
-   "cit_sha": "d76a916029484596"
-  },
-  {
-   "afirmacao": "Evitar dano hipotalamico irreversivel e um objetivo chave no tratamento do craniofaringioma.",
-   "secao": "Neurosurgery",
-   "cit": [
-    [
-     0,
-     12500,
-     93
-    ]
-   ],
-   "cit_sha": "949121a472ac6bfc"
-  },
-  {
-   "afirmacao": "Cirurgia limitada e radioterapia sao apropriadas para a maioria dos pacientes, inclusive aqueles em que a cirurgia radical poderia ser considerada.",
-   "secao": "Neurosurgery",
-   "cit": [
-    [
-     0,
-     12605,
-     135
-    ]
-   ],
-   "cit_sha": "b8997b1a766e4dd4"
-  },
-  {
-   "afirmacao": "A cirurgia limitada assume varias formas: ressecao parcial, fenestracao ou aspiracao de cisto, colocacao de cateter e reservatorio de Ommaya, ou derivacao liquorica.",
-   "secao": "Neurosurgery",
-   "cit": [
-    [
-     0,
-     12978,
-     182
-    ]
-   ],
-   "cit_sha": "a81891d7a61aac8b"
-  },
-  {
-   "afirmacao": "A aspiracao ou fenestracao de cisto, embora importante para reduzir volume tumoral e sintomas, pode ter beneficio apenas temporario, e a reacumulacao do liquido cistico durante a irradiacao e quase certa.",
-   "secao": "Neurosurgery",
-   "cit": [
-    [
-     0,
-     13676,
-     222
-    ]
-   ],
-   "cit_sha": "ad6950379833d037"
-  },
-  {
-   "afirmacao": "Na maioria dos casos a radioterapia e administrada no momento da progressao apos cirurgia previa.",
-   "secao": "Radiation Therapy",
-   "cit": [
-    [
-     0,
-     14089,
-     96
-    ]
-   ],
-   "cit_sha": "1daba725808be9b7"
-  },
-  {
-   "afirmacao": "A terapia com protons deposita a dose ao longo de um trajeto que termina no alvo, reduzindo significativamente a dose em tecido nao alvo; o potencial de controle tumoral e igual entre as duas modalidades.",
-   "secao": "Radiation Therapy",
-   "cit": [
-    [
-     0,
-     15008,
-     223
-    ]
-   ],
-   "cit_sha": "929a367b69f89e93"
-  },
-  {
-   "afirmacao": "Independentemente da modalidade de radioterapia, o eixo hipotalamo-hipofisario, os nervos opticos e o quiasma, os componentes principais da circulacao cerebral e partes do tronco encefalico recebem a dose de prescricao na maioria dos casos.",
-   "secao": "Radiation Therapy",
-   "cit": [
-    [
-     0,
-     15380,
-     217
-    ]
-   ],
-   "cit_sha": "b2a8e3525570148d"
-  },
-  {
-   "afirmacao": "No estudo prospectivo de terapia com protons por espalhamento passivo, 94 criancas de 0 a 21 anos foram incluidas ate o inicio de 2016.",
-   "secao": "Radiation Therapy",
-   "cit": [
-    [
-     0,
-     18788,
-     72
-    ]
-   ],
-   "cit_sha": "9d98a26a5a09ebe0"
-  },
-  {
-   "afirmacao": "O volume alvo para a terapia com protons incluiu o leito tumoral pos-operatorio com volume alvo clinico adicional de 0,5 cm, destinado a cobrir a extensao tumoral microscopica.",
-   "secao": "Radiation Therapy",
-   "cit": [
-    [
-     0,
-     18861,
-     182
-    ]
-   ],
-   "cit_sha": "3191f44a526a275e"
-  },
-  {
-   "afirmacao": "A partir do inicio da terapia com protons, os pacientes foram acompanhados a cada 3 meses por 1 ano e, depois, a cada 6 meses por 5 anos.",
-   "secao": "Radiation Therapy",
-   "cit": [
-    [
-     0,
-     19084,
-     92
-    ]
-   ],
-   "cit_sha": "551fb2db761b1ab3"
-  },
-  {
-   "afirmacao": "Resultados preliminares sugeriram que taxa e padrao de falha, e as taxas de necrose, vasculopatia e complicacoes neurologicas graves associadas ao volume alvo foram equivalentes a terapia com fotons.",
-   "secao": "Radiation Therapy",
-   "cit": [
-    [
-     0,
-     19177,
-     215
-    ]
-   ],
-   "cit_sha": "8422d76f6c41a617"
-  },
-  {
-   "afirmacao": "Corrigidos para a distribuicao de dose no cerebro normal, os tratados com protons nao tiveram mudanca nos escores de desempenho academico (leitura e matematica), enquanto os tratados com fotons demonstraram declinio significativo.",
-   "secao": "Radiation Therapy",
-   "cit": [
-    [
-     0,
-     19516,
-     192
-    ]
-   ],
-   "cit_sha": "de7abff22c95c52f"
-  },
-  {
-   "afirmacao": "A radiocirurgia tem indicacoes e experiencia limitadas, sendo adequada apenas para residuo solido de pequeno volume e quando o tumor NAO esta em contato com estruturas vitais como o quiasma optico.",
-   "secao": "Tabela 1",
-   "cit": [
-    [
-     0,
-     16848,
-     157
-    ]
-   ],
-   "cit_sha": "31aa14a46c1b0f38"
-  },
-  {
-   "afirmacao": "A radioterapia bidimensional convencional tem dados clinicos confiaveis e seguimento longo indicando alta eficacia, mas baixa precisao geometrica e nenhuma protecao confiavel dos tecidos normais vizinhos.",
-   "secao": "Tabela 1",
-   "cit": [
-    [
-     0,
-     16012,
-     80
-    ]
-   ],
-   "cit_sha": "9404ab4a1e80f397"
-  },
-  {
-   "afirmacao": "A aplicacao intracavitaria de isotopo coloidal alcanca altas taxas de controle tumoral do componente cistico e e aplicavel a tumores recorrentes apos irradiacao previa, mas subdoseia os componentes solidos.",
-   "secao": "Tabela 1",
-   "cit": [
-    [
-     0,
-     17328,
-     102
-    ]
-   ],
-   "cit_sha": "d60c4aa6df6f3b29"
-  },
-  {
-   "afirmacao": "No craniofaringioma cistico, a descompressao por cateter intracistico pode ser feita repetidamente quando conectado a um reservatorio de Ommaya.",
-   "secao": "Instillation of Sclerosing Substances for Cystic CP",
-   "cit": [
-    [
-     0,
-     18129,
-     127
-    ]
-   ],
-   "cit_sha": "438461e439981b2a"
-  },
-  {
-   "afirmacao": "Principalmente no craniofaringioma cistico unico recorrente, a instilacao intracavitaria de substancias esclerosantes como o interferon-alfa e um tratamento de escolha.",
-   "secao": "Instillation of Sclerosing Substances for Cystic CP",
-   "cit": [
-    [
-     0,
-     18257,
-     136
-    ]
-   ],
-   "cit_sha": "07eba53bcb5261fd"
-  },
-  {
-   "afirmacao": "A instilacao de bleomicina esta OBSOLETA por neurotoxicidade em caso de extravasamento.",
-   "secao": "Instillation of Sclerosing Substances for Cystic CP",
-   "cit": [
-    [
-     0,
-     18406,
-     81
-    ]
-   ],
-   "cit_sha": "9873fb37b13ac0ec"
-  },
-  {
-   "afirmacao": "O tratamento sistemico com interferon alfa NAO se mostrou eficiente para prevenir a progressao do craniofaringioma solido.",
-   "secao": "Instillation of Sclerosing Substances for Cystic CP",
-   "cit": [
-    [
-     0,
-     18496,
-     115
-    ]
-   ],
-   "cit_sha": "3b56a83474a7ca60"
-  },
-  {
-   "afirmacao": "35% dos pacientes com craniofaringioma apresentam manifestacoes clinicas de disfuncao hipotalamica (obesidade hipotalamica, deficits neuropsicologicos e disturbios do ritmo circadiano) ja ao diagnostico.",
-   "secao": "Hypothalamic Syndrome",
-   "cit": [
-    [
-     0,
-     21483,
-     205
-    ]
-   ],
-   "cit_sha": "bcd906eb765666d1"
-  },
-  {
-   "afirmacao": "A incidencia de disfuncao hipotalamica sobe para 65 a 80% apos tratamento cirurgico radical.",
-   "secao": "Hypothalamic Syndrome",
-   "cit": [
-    [
-     0,
-     21697,
-     100
-    ]
-   ],
-   "cit_sha": "09ee983e2df0204d"
-  },
-  {
-   "afirmacao": "O tratamento de lesoes supraquiasmaticas com envolvimento hipotalamico e desafiador e associa-se a alta morbidade.",
-   "secao": "Hypothalamic Syndrome",
-   "cit": [
-    [
-     0,
-     21806,
-     121
-    ]
-   ],
-   "cit_sha": "517f38836eee5542"
-  },
-  {
-   "afirmacao": "A obesidade hipotalamica e causada principalmente por lesoes cirurgicas de estruturas hipotalamicas posteriores, incluindo os corpos mamilares.",
-   "secao": "Hypothalamic Syndrome",
-   "cit": [
-    [
-     0,
-     21936,
-     110
-    ]
-   ],
-   "cit_sha": "5278b6e8afecf98e"
-  },
-  {
-   "afirmacao": "O grau de obesidade hipotalamica associa-se claramente ao grau de dano hipotalamico nos pacientes com craniofaringioma.",
-   "secao": "Hypothalamic Syndrome",
-   "cit": [
-    [
-     0,
-     22100,
-     91
-    ]
-   ],
-   "cit_sha": "9d567328a24c3c85"
-  },
-  {
-   "afirmacao": "Por disturbios na regulacao da saciedade, no fluxo simpatico central e no gasto energetico, pacientes com craniofaringioma frequentemente desenvolvem obesidade hipotalamica morbida, em geral NAO responsiva a modificacoes convencionais de estilo de vida (dieta e exercicio).",
-   "secao": "Lifestyle and Dietary Interventions",
-   "cit": [
-    [
-     0,
-     22284,
-     223
-    ]
-   ],
-   "cit_sha": "4949aa8e7e43f0d8"
-  },
-  {
-   "afirmacao": "Apenas 1 relato de caso observou efeito clinicamente significativo de intervencao dietetica por jejum modificado poupador de proteina (PSMF), mas o ganho de peso retornou apos a descontinuacao.",
-   "secao": "Lifestyle and Dietary Interventions",
-   "cit": [
-    [
-     0,
-     22529,
-     140
-    ]
-   ],
-   "cit_sha": "639b543216734593"
-  },
-  {
-   "afirmacao": "O hipopituitarismo deve ser tratado com reposicao dos hormonios deficientes conforme as diretrizes existentes.",
-   "secao": "Endocrine Substitution of Hypopituitarism",
-   "cit": [
-    [
-     0,
-     22782,
-     108
-    ]
-   ],
-   "cit_sha": "82bf1811a64f79f2"
-  },
-  {
-   "afirmacao": "A reposicao de GH e segura quanto ao risco de recorrencia do craniofaringioma, embora seus efeitos beneficos sobre a composicao corporal a longo prazo sejam tema de debate.",
-   "secao": "Endocrine Substitution of Hypopituitarism",
-   "cit": [
-    [
-     0,
-     22899,
-     162
-    ]
-   ],
-   "cit_sha": "8e033ec88ce6845e"
-  },
-  {
-   "afirmacao": "Deve-se evitar a superdosagem de glicocorticoide, e a levotiroxina deve ser reposta em dose suficiente para atingir T4 livre na metade media a superior do intervalo de referencia.",
-   "secao": "Endocrine Substitution of Hypopituitarism",
-   "cit": [
-    [
-     0,
-     27048,
-     183
-    ]
-   ],
-   "cit_sha": "f0589c3c2ea40523"
-  },
-  {
-   "afirmacao": "A terapia com derivados de anfetamina na obesidade hipotalamica baseia-se na reducao observada da secrecao de epinefrina e da ativacao simpatoadrenal, que se manifesta como resposta endocrina prejudicada a hipoglicemia.",
-   "secao": "Pharmacological Treatment of HO",
-   "cit": [
-    [
-     0,
-     27272,
-     224
-    ]
-   ],
-   "cit_sha": "ad561b86f5e23dc5"
-  },
-  {
-   "afirmacao": "A dextroanfetamina por 24 meses, iniciada 10 meses apos a cirurgia, estabilizou o IMC, diminuiu o ganho de peso continuo e aumentou o nivel de atividade fisica espontanea.",
-   "secao": "Pharmacological Treatment of HO",
-   "cit": [
-    [
-     0,
-     27508,
-     178
-    ]
-   ],
-   "cit_sha": "bbf68f464bf0ab12"
-  },
-  {
-   "afirmacao": "Melhora da sonolencia diurna foi observada mesmo com uso de dextroanfetamina por prazo mais curto.",
-   "secao": "Pharmacological Treatment of HO",
-   "cit": [
-    [
-     0,
-     27695,
-     103
-    ]
-   ],
-   "cit_sha": "ff44aae25d5b542a"
-  },
-  {
-   "afirmacao": "O metilfenidato teve efeitos beneficos sobre a evolucao do peso apos craniofaringioma.",
-   "secao": "Pharmacological Treatment of HO",
-   "cit": [
-    [
-     0,
-     27830,
-     78
-    ]
-   ],
-   "cit_sha": "ee0d090c07c4a604"
-  },
-  {
-   "afirmacao": "O efeito de agonista do receptor de GLP-1 sobre o peso foi analisado em 8 pacientes com obesidade hipotalamica (6 com craniofaringioma), com perda de peso sustentada e melhora dos perfis de risco cardiovascular e metabolico.",
-   "secao": "Pharmacological Treatment of HO",
-   "cit": [
-    [
-     0,
-     28058,
-     222
-    ]
-   ],
-   "cit_sha": "40d9b5f10450da10"
-  },
-  {
-   "afirmacao": "A secrecao de insulina e reduzida pela ligacao do diazoxido ao canal KATP das celulas beta, e a metformina melhora a sensibilidade a insulina por diminuir a gliconeogenese hepatica.",
-   "secao": "Pharmacological Treatment of HO",
-   "cit": [
-    [
-     0,
-     28430,
-     163
-    ]
-   ],
-   "cit_sha": "70f65d4e22e9b579"
-  },
-  {
-   "afirmacao": "A metformina melhora a sensibilidade a insulina por diminuir a gliconeogenese hepatica.",
-   "secao": "Pharmacological Treatment of HO",
-   "cit": [
-    [
-     0,
-     28514,
-     79
-    ]
-   ],
-   "cit_sha": "224b6177064a424e"
-  },
-  {
-   "afirmacao": "A combinacao de diazoxido e metformina foi avaliada em 9 pacientes com craniofaringioma e obesidade hipotalamica, com ganho de peso de +1,2 ± 5,9 kg contra +9,5 ± 2,7 kg nos 6 meses previos a terapia.",
-   "secao": "Pharmacological Treatment of HO",
-   "cit": [
-    [
-     0,
-     28594,
-     283
-    ]
-   ],
-   "cit_sha": "f3cf3249d035c58e"
-  },
-  {
-   "afirmacao": "Niveis altos de insulina pre-tratamento associaram-se a reducao de peso mais robusta com diazoxido e metformina; as limitacoes do estudo foram a coorte pequena e os eventos adversos (1 paciente saiu por edema periferico e outro por emese e elevacao de enzimas hepaticas).",
-   "secao": "Pharmacological Treatment of HO",
-   "cit": [
-    [
-     0,
-     28878,
-     305
-    ]
-   ],
-   "cit_sha": "6b39cd90771c00a4"
-  },
-  {
-   "afirmacao": "A combinacao de fenofibrato e metformina em 22 pacientes pediatricos com craniofaringioma melhorou a resistencia a insulina e o perfil lipidico, porem NAO melhorou o IMC.",
-   "secao": "Pharmacological Treatment of HO",
-   "cit": [
-    [
-     0,
-     29205,
-     81
-    ]
-   ],
-   "cit_sha": "25a2b02256e17423"
-  },
-  {
-   "afirmacao": "Sob metformina e fenofibrato houve melhora da resistencia insulinica e do perfil lipidico, mas o tratamento nao resultou em melhora do IMC.",
-   "secao": "Pharmacological Treatment of HO",
-   "cit": [
-    [
-     0,
-     29452,
-     186
-    ]
-   ],
-   "cit_sha": "7575f66109f1b8ae"
-  },
-  {
-   "afirmacao": "O octreotide, analogo da somatostatina, reduziu a secrecao de insulina com melhora moderada ou nula do IMC e aumento do risco de formacao de calculos biliares.",
-   "secao": "Tabela 2",
-   "cit": [
-    [
-     0,
-     24435,
-     100
-    ]
-   ],
-   "cit_sha": "16d98435c5bfce5d"
-  },
-  {
-   "afirmacao": "Em ensaio com diazoxido isolado em 18 pacientes nao houve mudanca do IMC.",
-   "secao": "Tabela 2",
-   "cit": [
-    [
-     0,
-     24628,
-     28
-    ]
-   ],
-   "cit_sha": "88f6bab38c51c76d"
-  },
-  {
-   "afirmacao": "Pacientes com craniofaringioma e dano cirurgico limitado a estruturas hipotalamicas anteriores especificas apresentaram niveis de ocitocina de jejum reduzidos.",
-   "secao": "Pharmacological Treatment of HO",
-   "cit": [
-    [
-     0,
-     29638,
-     156
-    ]
-   ],
-   "cit_sha": "30716ae12533b415"
-  },
-  {
-   "afirmacao": "Em estudo piloto com 11 pacientes com craniofaringioma, testou-se uma aplicacao nasal unica de 24 UI de ocitocina, que foi muito bem tolerada e elevou a concentracao de ocitocina na saliva e na urina.",
-   "secao": "Pharmacological Treatment of HO",
-   "cit": [
-    [
-     0,
-     32485,
-     151
-    ]
-   ],
-   "cit_sha": "d66f17cea391ecf6"
-  },
-  {
-   "afirmacao": "Apos a ocitocina nasal, os pacientes com lesao hipotalamica cirurgica limitada as areas anteriores melhoraram a identificacao emocional em comparacao aos com lesoes anteriores e posteriores.",
-   "secao": "Pharmacological Treatment of HO",
-   "cit": [
-    [
-     0,
-     32878,
-     234
-    ]
-   ],
-   "cit_sha": "feb3a5c61be8223c"
-  },
-  {
-   "afirmacao": "Concentracoes salivares de ocitocina pos-prandiais reduzidas em relacao ao jejum associaram-se a obesidade hipotalamica e a comportamento alimentar adverso e transtornos alimentares.",
-   "secao": "Pharmacological Treatment of HO",
-   "cit": [
-    [
-     0,
-     35152,
-     200
-    ]
-   ],
-   "cit_sha": "98c68941a54089fa"
-  },
-  {
-   "afirmacao": "O conhecimento atual sobre os efeitos da ocitocina de longo prazo no craniofaringioma baseia-se em poucos relatos de caso.",
-   "secao": "Pharmacological Treatment of HO",
-   "cit": [
-    [
-     0,
-     35365,
-     97
-    ]
-   ],
-   "cit_sha": "94dafade2b15fb15"
-  },
-  {
-   "afirmacao": "Em 199 criancas com craniofaringioma nao houve reducao do IMC durante 3 anos de reposicao de GH.",
-   "secao": "Tabela 2",
-   "cit": [
-    [
-     0,
-     26380,
-     48
-    ]
-   ],
-   "cit_sha": "8f3817b19f034f77"
-  },
-  {
-   "afirmacao": "Em 260 criancas com craniofaringioma nao houve reducao do IMC durante 5 anos de reposicao de GH.",
-   "secao": "Tabela 2",
-   "cit": [
-    [
-     0,
-     26463,
-     48
-    ]
-   ],
-   "cit_sha": "af7b604ecfaa865e"
-  },
-  {
-   "afirmacao": "Em 79 criancas com craniofaringioma houve efeito benefico de longo prazo do GH sobre o IMC quando reposto durante a infancia e a vida adulta.",
-   "secao": "Tabela 2",
-   "cit": [
-    [
-     0,
-     26640,
-     50
-    ]
-   ],
-   "cit_sha": "a4912129c2c729b5"
-  },
-  {
-   "afirmacao": "Varios relatos sobre os efeitos da intervencao bariatrica na evolucao do peso na obesidade hipotalamica foram publicados com resultados mistos.",
-   "secao": "Bariatric Treatment of HO",
-   "cit": [
-    [
-     0,
-     35497,
-     124
-    ]
-   ],
-   "cit_sha": "f27f9a97c61fe27e"
-  },
-  {
-   "afirmacao": "Na banda gastrica ajustavel laparoscopica (LAGB) em 6 criancas nao houve mudanca do IMC medio de 40,2, com necessidade de reajuste da banda e explante do dispositivo.",
-   "secao": "Tabela 3",
-   "cit": [
-    [
-     0,
-     30716,
-     99
-    ]
-   ],
-   "cit_sha": "542e03da9fcb0cb5"
-  },
-  {
-   "afirmacao": "Na gastrectomia vertical (sleeve) em 3 criancas o IMC medio caiu de 49,2 para 35,3, com sangramento leve e deficiencia de acido folico e vitamina D.",
-   "secao": "Tabela 3",
-   "cit": [
-    [
-     0,
-     30838,
-     122
-    ]
-   ],
-   "cit_sha": "9c5f7670b901c719"
-  },
-  {
-   "afirmacao": "Apos bypass gastrico em Y de Roux com vagotomia em 1 crianca de 223 kg houve perda de 49 kg em 2,5 anos, com deficiencia leve de ferro.",
-   "secao": "Tabela 3",
-   "cit": [
-    [
-     0,
-     31667,
-     68
-    ]
-   ],
-   "cit_sha": "90ab72f3fcc216d0"
-  },
-  {
-   "afirmacao": "Um bypass gastrico em Y de Roux pediatrico reduziu o IMC de 65,0 para 43,0 em 4,0 anos, complicado por diarreia, sindrome de dumping e deterioracao psicologica.",
-   "secao": "Tabela 3",
-   "cit": [
-    [
-     0,
-     31355,
-     89
-    ]
-   ],
-   "cit_sha": "86a57f111bebc2cc"
-  },
-  {
-   "afirmacao": "Outro bypass gastrico em Y de Roux pediatrico reduziu o IMC de 51,5 para 39,0 em 9 meses, sem complicacoes relatadas.",
-   "secao": "Tabela 3",
-   "cit": [
-    [
-     0,
-     31278,
-     51
-    ]
-   ],
-   "cit_sha": "16cb5ea38983a23f"
-  },
-  {
-   "afirmacao": "A derivacao biliopancreatica com switch duodenal em 1 crianca reduziu o IMC de 45,0 para 32,0 em 2,0 anos, complicada por bradicardia com necessidade de marcapasso e estenose intestinal.",
-   "secao": "Tabela 3",
-   "cit": [
-    [
-     0,
-     31798,
-     46
-    ]
-   ],
-   "cit_sha": "3bac9b2a4547cbb4"
-  },
-  {
-   "afirmacao": "A gastrectomia vertical em 2 criancas nao mudou o IMC e cursou com vomitos e eficacia prejudicada da desmopressina.",
-   "secao": "Tabela 3",
-   "cit": [
-    [
-     0,
-     31122,
-     48
-    ]
-   ],
-   "cit_sha": "1413c396ec4de665"
-  },
-  {
-   "afirmacao": "Estudos de funcionalidade fisica e psicossocial no seguimento apos craniofaringioma variam de funcao reduzida em quase 50% ate funcao excelente na maioria dos pacientes.",
-   "secao": "Neuropsychological and Psychosocial Functioning",
-   "cit": [
-    [
-     0,
-     35804,
-     114
-    ]
-   ],
-   "cit_sha": "1e79b94a228f1241"
-  },
-  {
-   "afirmacao": "A reducao do funcionamento social e emocional e o comprometimento mais frequente, com os pacientes avaliando seu status psicossocial como pior do que sua saude fisica.",
-   "secao": "Neuropsychological and Psychosocial Functioning",
-   "cit": [
-    [
-     0,
-     35931,
-     179
-    ]
-   ],
-   "cit_sha": "2c609ef21d3dcec5"
-  },
-  {
-   "afirmacao": "Estudos comportamentais observaram sintomas psicopatologicos frequentes como ansiedade, depressao e retraimento, alem de risco aumentado de apatia em sobreviventes de longo prazo do craniofaringioma de inicio na infancia.",
-   "secao": "Neuropsychological and Psychosocial Functioning",
-   "cit": [
-    [
-     0,
-     36203,
-     206
-    ]
-   ],
-   "cit_sha": "2b599a84e561b1c9"
-  },
-  {
-   "afirmacao": "Pacientes tratados com estrategias cirurgicas radicais como ressecao total macroscopica, resultando em lesoes cirurgicas das areas hipotalamicas posteriores, tiveram qualidade de vida significativamente pior no seguimento de curto prazo de 3 anos.",
-   "secao": "Quality of Life",
-   "cit": [
-    [
-     0,
-     36863,
-     273
-    ]
-   ],
-   "cit_sha": "278a227f6fb0566c"
-  },
-  {
-   "afirmacao": "Nenhuma terapia bariatrica ou farmacologica para obesidade hipotalamica no craniofaringioma tem eficacia comprovada em ensaios randomizados; as combinacoes de agentes farmacologicos parecem as mais promissoras.",
-   "secao": "Conclusion",
-   "cit": [
-    [
-     0,
-     37268,
-     218
-    ]
-   ],
-   "cit_sha": "8c4140f396198177"
-  },
-  {
-   "afirmacao": "Recomenda-se a prevencao da obesidade hipotalamica, com atencao especial as abordagens poupadoras do hipotalamo que respeitem a integridade dos nucleos essenciais das areas hipotalamicas posteriores.",
-   "secao": "Conclusion",
-   "cit": [
-    [
-     0,
-     37487,
-     107
-    ]
-   ],
-   "cit_sha": "cca336509c58c33d"
-  },
-  {
-   "afirmacao": "Se o tumor tem localizacao favoravel, a terapia de escolha e a ressecao completa, com cuidado para preservar as funcoes optica e hipotalamica.",
-   "secao": "Abstract",
-   "cit": [
-    [
-     0,
-     1908,
-     128
-    ]
-   ],
-   "cit_sha": "9577839733b69c82"
-  },
-  {
-   "afirmacao": "Em pacientes com localizacao tumoral desfavoravel (isto e, com envolvimento hipotalamico), a terapia recomendada e uma estrategia cirurgica limitada poupadora do hipotalamo seguida de irradiacao local.",
-   "secao": "Abstract",
-   "cit": [
-    [
-     0,
-     2098,
-     191
-    ]
-   ],
-   "cit_sha": "928f1a1142193d4d"
-  },
-  {
-   "afirmacao": "As estrategias de tratamento cirurgico devem basear-se em abordagem multidisciplinar com equipes experientes.",
-   "secao": "Abstract",
-   "cit": [
-    [
-     0,
-     2290,
-     155
-    ]
-   ],
-   "cit_sha": "a8b7fa8b7340006e"
-  },
-  {
-   "afirmacao": "As manifestacoes clinicas do craniofaringioma relacionam-se a deficiencias hipotalamicas/hipofisarias, comprometimento visual e aumento da pressao intracraniana.",
-   "secao": "Abstract",
-   "cit": [
-    [
-     0,
-     1115,
-     61
-    ]
-   ],
-   "cit_sha": "31733e72af8fbea0"
-  },
-  {
-   "afirmacao": "A recorrencia e a progressao do craniofaringioma sao frequentes, e a irradiacao provou ser eficaz em reduzi-las.",
-   "secao": "Abstract",
-   "cit": [
-    [
-     0,
-     458,
-     29
-    ],
-    [
-     0,
-     535,
-     62
-    ],
-    [
-     0,
-     625,
-     26
-    ]
-   ],
-   "cit_sha": "559761ca4471442a"
-  },
-  {
-   "afirmacao": "O craniofaringioma deve ser manejado como doenca frequentemente cronica, com cuidado continuado de pacientes pediatricos e adultos por equipes multidisciplinares experientes.",
-   "secao": "Abstract",
-   "cit": [
-    [
-     0,
-     1535,
-     60
-    ]
-   ],
-   "cit_sha": "131e9f9b26402046"
-  },
-  {
-   "afirmacao": "Recomenda-se centralizar o tratamento do craniofaringioma em centros de excelencia experientes e em redes multicentricas de referencia para garantir alto padrao de qualidade do tratamento.",
-   "secao": "Abstract",
-   "cit": [
-    [
-     0,
-     427,
-     30
-    ]
-   ],
-   "cit_sha": "42a5fbd76dbbe1e2"
-  },
-  {
-   "afirmacao": "A radioterapia implica radioterapia externa por feixe usando fotons ou protons.",
-   "secao": "Radiation Therapy",
-   "cit": [
-    [
-     0,
-     13988,
-     82
-    ]
-   ],
-   "cit_sha": "211cc4937d15a900"
-  },
-  {
-   "afirmacao": "O craniofaringioma e um dos tumores cerebrais pediatricos para os quais a terapia com protons e mais promissora.",
-   "secao": "Radiation Therapy",
-   "cit": [
-    [
-     0,
-     14651,
-     87
-    ]
-   ],
-   "cit_sha": "555941db7c5edd70"
-  },
-  {
-   "afirmacao": "A radioterapia conformacional fracionada/IMRT e amplamente disponivel, altamente conformacional e facil de adaptar a alvos que mudam, mas expoe um volume maior de tecido normal a doses baixas de radiacao.",
-   "secao": "Tabela 1",
-   "cit": [
-    [
-     0,
-     16139,
-     81
-    ]
-   ],
-   "cit_sha": "38515f198a8d7efb"
-  },
-  {
-   "afirmacao": "A terapia com protons fracionada poupa tecido normal: o volume de tecido normal exposto a doses baixas e significativamente menor do que com metodos de fotons fracionados.",
-   "secao": "Tabela 1",
-   "cit": [
-    [
-     0,
-     16397,
-     94
-    ]
-   ],
-   "cit_sha": "0961a4e12a4f1d3c"
-  },
-  {
-   "afirmacao": "As desvantagens da terapia com protons sao experiencia limitada e custos significativos; os sistemas de orientacao por imagem ficaram atrasados e os sistemas mais novos de varredura por feixe de lapis exigem avaliacao em ensaios clinicos.",
-   "secao": "Tabela 1",
-   "cit": [
-    [
-     0,
-     16492,
-     78
-    ]
-   ],
-   "cit_sha": "0b51d1627002c705"
-  },
-  {
-   "afirmacao": "A radiocirurgia usa uma unica sessao de tratamento, e altamente conformacional e praticamente nao entrega dose a tecido nao alvo.",
-   "secao": "Tabela 1",
-   "cit": [
-    [
-     0,
-     16753,
-     47
-    ]
-   ],
-   "cit_sha": "ff93a5da3cf4e5df"
-  },
-  {
-   "afirmacao": "A radiocirurgia hipofracionada guiada por imagem (CyberKnife) tem indicacoes e experiencia muito limitadas, papel ainda indefinido e nenhum dado confiavel de controle tumoral ou reducao de efeitos colaterais.",
-   "secao": "Tabela 1",
-   "cit": [
-    [
-     0,
-     17162,
-     123
-    ]
-   ],
-   "cit_sha": "6ce0ddfdf5f82808"
-  },
-  {
-   "afirmacao": "As desvantagens do isotopo coloidal intracavitario sao a limitacao aos tumores cisticos, a subdosagem dos componentes solidos e complicacoes por extravasamento ou doses altas proximas a vias visuais e tronco encefalico.",
-   "secao": "Tabela 1",
-   "cit": [
-    [
-     0,
-     17431,
-     205
-    ]
-   ],
-   "cit_sha": "a3e6c0e62949f6a4"
-  },
-  {
-   "afirmacao": "A segunda geracao da terapia com protons (varredura por feixe de lapis) usa feixes pequenos com pesos individuais para conformar melhor a dose ao alvo e reduzir o volume que recebe as doses mais altas.",
-   "secao": "Radiation Therapy",
-   "cit": [
-    [
-     0,
-     17861,
-     156
-    ]
-   ],
-   "cit_sha": "38e80c13f47afb59"
-  },
-  {
-   "afirmacao": "A dextroanfetamina e um estimulante central que estimula a secrecao de noradrenalina e dopamina e inibe a recaptacao de dopamina.",
-   "secao": "Tabela 2",
-   "cit": [
-    [
-     0,
-     23321,
-     100
-    ]
-   ],
-   "cit_sha": "a22c41c5b4b64c6e"
-  },
-  {
-   "afirmacao": "Com dexanfetamina houve reducao do ganho de peso continuo e estabilizacao do IMC em 10 de 12 pacientes e melhora da sonolencia diurna em 11 de 12 pacientes.",
-   "secao": "Tabela 2",
-   "cit": [
-    [
-     0,
-     23579,
-     115
-    ]
-   ],
-   "cit_sha": "300236f0720420b9"
-  },
-  {
-   "afirmacao": "Cafeina associada a efedrina-HCl em 2 criancas com craniofaringioma produziu perda de peso media de 13,9% seis meses apos 2,6 a 5,5 anos de intervencao.",
-   "secao": "Tabela 2",
-   "cit": [
-    [
-     0,
-     23940,
-     77
-    ]
-   ],
-   "cit_sha": "a4cba647c9b51470"
-  },
-  {
-   "afirmacao": "O mazindol, amina simpaticomimetica semelhante a anfetamina, reduziu o peso de 70 para 60 kg em 1 adulto com craniofaringioma apos 3 semanas de intervencao.",
-   "secao": "Tabela 2",
-   "cit": [
-    [
-     0,
-     24095,
-     79
-    ]
-   ],
-   "cit_sha": "dec8b0b0199a7728"
-  },
-  {
-   "afirmacao": "A liraglutida reduziu o IMC de 41,8 para 35,3 em 1 adulto com craniofaringioma apos 8 meses de intervencao.",
-   "secao": "Tabela 2",
-   "cit": [
-    [
-     0,
-     25474,
-     91
-    ]
-   ],
-   "cit_sha": "7b033d269dcee983"
-  },
-  {
-   "afirmacao": "Com exenatida em coorte de craniofaringioma nao houve perda de peso significativa no total, com peso estavel ou reduzido nos respondedores (60%).",
-   "secao": "Tabela 2",
-   "cit": [
-    [
-     0,
-     25361,
-     90
-    ]
-   ],
-   "cit_sha": "b6d0af037eba2cac"
-  },
-  {
-   "afirmacao": "Os agonistas do receptor de GLP-1 melhoram a sensibilidade a insulina, aumentam a saciedade e reduzem a velocidade do esvaziamento gastrico.",
-   "secao": "Tabela 2",
-   "cit": [
-    [
-     0,
-     25085,
-     82
-    ]
-   ],
-   "cit_sha": "70a63b43d2b2d112"
-  },
-  {
-   "afirmacao": "A naltrexona, antagonista opioide, reduz o apetite e potencializa os efeitos anorexigenicos da ocitocina.",
-   "secao": "Tabela 2",
-   "cit": [
-    [
-     0,
-     25608,
-     95
-    ]
-   ],
-   "cit_sha": "1f105a5031f51599"
-  },
-  {
-   "afirmacao": "O T3 aumenta o gasto energetico por inducao de termogenese; houve reducao de peso com 3 x 10 microgramas de T3/dia por 11 a 27 meses em pacientes sem craniofaringioma.",
-   "secao": "Tabela 2",
-   "cit": [
-    [
-     0,
-     25915,
-     56
-    ]
-   ],
-   "cit_sha": "f5ac366b27df34cd"
-  },
-  {
-   "afirmacao": "Em 1 crianca com craniofaringioma NAO houve reducao de peso com 3 x 12,5 microgramas de T3/dia por 2 meses.",
-   "secao": "Tabela 2",
-   "cit": [
-    [
-     0,
-     25996,
-     66
-    ]
-   ],
-   "cit_sha": "eeecb6be2dbf97b9"
-  },
-  {
-   "afirmacao": "O diazoxido e um ativador de canal de potassio que inibe a secrecao de insulina.",
-   "secao": "Tabela 2",
-   "cit": [
-    [
-     0,
-     24557,
-     38
-    ]
-   ],
-   "cit_sha": "29342c26218f4204"
-  },
-  {
-   "afirmacao": "O manejo cirurgico do craniofaringioma, especialmente em criancas, permanece controverso.",
-   "secao": "Neurosurgery",
-   "cit": [
-    [
-     0,
-     11625,
-     67
-    ]
-   ],
-   "cit_sha": "8f69bde8417ac3ff"
-  },
-  {
-   "afirmacao": "Um fator maior que afeta os pacientes com craniofaringioma adamantinomatoso e a disfuncao hipotalamica.",
-   "secao": "Neurosurgery",
-   "cit": [
-    [
-     0,
-     12043,
-     76
-    ]
-   ],
-   "cit_sha": "20e42f229c66c099"
-  },
-  {
-   "afirmacao": "Embora nao bem estabelecido, o ganho de peso pos-operatorio em adultos tambem e um problema e correlaciona-se com o envolvimento hipotalamico.",
-   "secao": "Neurosurgery",
-   "cit": [
-    [
-     0,
-     12360,
-     131
-    ]
-   ],
-   "cit_sha": "ed05d0b4f9b4c5e7"
-  },
-  {
-   "afirmacao": "A cirurgia limitada pode ser feita para descomprimir ou ressecar partes do tumor reduzindo seu impacto na visao e o efeito de massa sobre cerebro ou tronco, reduzir o volume a irradiar e a dose em tecidos normais criticos, e restaurar o fluxo liquorico.",
-   "secao": "Neurosurgery",
-   "cit": [
-    [
-     0,
-     13161,
-     236
-    ]
-   ],
-   "cit_sha": "ae53a328896c6da5"
-  },
-  {
-   "afirmacao": "Opcoes cirurgicas adicionais incluem aspiracao estereotaxica, colocacao de cateter ou procedimentos endoscopicos.",
-   "secao": "Neurosurgery",
-   "cit": [
-    [
-     0,
-     13564,
-     111
-    ]
-   ],
-   "cit_sha": "d16465f72107eff3"
-  },
-  {
-   "afirmacao": "Para o estadiamento adequado do craniofaringioma e importante avaliar a localizacao do tumor.",
-   "secao": "Neuroradiological Imaging",
-   "cit": [
-    [
-     0,
-     10505,
-     63
-    ]
-   ],
-   "cit_sha": "726aa9588774864a"
-  },
-  {
-   "afirmacao": "Um paciente com craniofaringioma confinado ao espaco intrasselar (grau 0, sem envolvimento hipotalamico) tinha IMC ao diagnostico de -1,96 DP e IMC de -1,62 DP 36 meses apos ressecao completa.",
-   "secao": "Figura 2",
-   "cit": [
-    [
-     0,
-     9782,
-     77
-    ]
-   ],
-   "cit_sha": "bc2f90f31397b48f"
-  },
-  {
-   "afirmacao": "Um paciente com craniofaringioma envolvendo hipotalamo anterior e posterior (grau II) tinha IMC ao diagnostico de +6,08 DP e IMC de +6,79 DP 36 meses apos ressecao completa.",
-   "secao": "Figura 2",
-   "cit": [
-    [
-     0,
-     10266,
-     77
-    ]
-   ],
-   "cit_sha": "f87aabb34ef06730"
-  },
-  {
-   "afirmacao": "Qualquer melhora clinicamente significativa no prognostico do craniofaringioma exigira estrategias neurocirurgicas e radio-oncologicas multidisciplinares adaptadas ao risco, com suporte medico e psicossocial, pois trata-se de doenca majoritariamente cronica.",
-   "secao": "Conclusion",
-   "cit": [
-    [
-     0,
-     37773,
-     264
-    ]
-   ],
-   "cit_sha": "1ea5ff270317aa5f"
-  },
-  {
-   "afirmacao": "Dificuldades de aprendizagem, controle emocional, preocupacoes com a aparencia fisica e imagem corporal e relacoes insatisfatorias com pares sao problemas frequentes no funcionamento diario das criancas.",
-   "secao": "Neuropsychological and Psychosocial Functioning",
-   "cit": [
-    [
-     0,
-     36429,
-     181
-    ]
-   ],
-   "cit_sha": "670c68bc4adf0452"
-  },
-  {
-   "afirmacao": "A analise sistematica da qualidade de vida relacionada a saude a longo prazo apos craniofaringioma ainda nao foi estabelecida.",
-   "secao": "Quality of Life",
-   "cit": [
-    [
-     0,
-     36641,
-     81
-    ]
-   ],
-   "cit_sha": "a58abf71196decd6"
+    "achado": "Auditoria adversarial de 146 fatos contra o PDF. 27 fatos defeituosos de 146 (18,5%); o #28 foi ajustado por higiene (a citacao carregava a cabeca da frase do fato seguinte) e conferido como NAO invertido. RECUPERACAO FALSA (dominante): 7 fatos da Tabela 3 (bariatrica), 6 da Tabela 2/secao farmacologica e 2 de imagem/quadro clinico vinham de tabelas cujo titulo e coluna diziam \"hypothalamic obesity\"/\"CP cohort\" e nenhum declarava a doenca, a populacao pediatrica nem que eram relatos/series de caso — sozinhos respondiam \"cirurgia bariatrica/farmaco em crianca obesa\" com dados de obesidade hipotalamica, contra a propria conclusao do artigo (nada provado em ensaio randomizado). SEGURANCA: o fato de T3 omitia que a dose e SUPRAFISIOLOGICA; o de reposicao hormonal nao dizia de que quadro falava e o artigo nao traz a ordem glicocorticoide-antes-de-levotiroxina (registrado na ressalva). FORCA: \"should be considered\" virou \"recomenda-se\" no fato de centralizacao, cuja citacao tinha 30 caracteres. CABECA ENCALHADA: 5 citacoes comecavam depois do qualificador que sustenta o fato (populacao pediatrica; \"if the tumor is favorably localized\"; \"in patients with unfavorable tumor localization\") — reancoradas. NUMERO: n do estudo de fenofibrato+metformina contestado pela propria Tabela 2 do artigo e pelo Primer 2019; declarado. ANCORA: confere-ancoragem.js devolveu 0 ambiguas em 146 citacoes, entao nenhum fato recebeu cit_ancora_ok (marcar sem ambiguidade so criaria isencao futura da peneira). CONTROLE: 0 caracteres de controle neste texto-fonte."
   }
- ]
 }

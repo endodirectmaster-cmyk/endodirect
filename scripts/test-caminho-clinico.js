@@ -192,6 +192,13 @@ const CHEGADA = [
   ['cetoacidose alcoolica em paciente sem diabetes: preciso de insulina?', 'alcool'],
   ['osteoporose refrataria com fosfatase alcalina baixa: posso dar bisfosfonato?', 'bisfosfonato'],
   ['maratonista com diabetes tipo 1: alvo de glicose antes do treino', 'exerc'],
+  // ⚠️ Obesidade passou de 68k (2 blocos) para 148k (4 blocos) em 08/08/2026 e
+  // ATRAVESSOU o teto de 120k. A partir daqui, bloco não escolhido é bloco que
+  // não existe — a mesma condição que escondeu o conteúdo de estado hiperosmolar
+  // em Diabetes. Estas três sondam o conteúdo dos blocos NOVOS.
+  ['orlistate: ainda tem lugar?', 'orlistat'],
+  ['fentermina-topiramato em quem?', 'fentermina'],
+  ['indico cirurgia bariatrica: quais os riscos?', 'bariátric'],
 ];
 
 for (const [pergunta, marca] of CHEGADA) {
