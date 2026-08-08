@@ -5,6 +5,36 @@ atualizado: 2026-08-08
 
 # Convenções de Trabalho
 
+## 🫥 O SÍMBOLO QUE VIROU BYTE INVISÍVEL (2026-08-08)
+
+O extrator de PDF trocou `≥` por **U+0002** em oito lugares do artigo de
+pré-diabetes. O efeito no extrato:
+
+> "IMC de 25,0 a 29,9 para sobrepeso e **30** para obesidade"
+
+quando a fonte diz **≥30**. O corte virou PONTO em vez de PISO — quem tem IMC 34
+deixa de ter obesidade pela leitura do fato. O mesmo apagou o `≥` de
+`≥150 min/semana` e dos três porteiros da metformina (`IMC ≥35`, `jejum ≥110`,
+`HbA1c ≥6,0%`).
+
+⚠️ **Nenhuma peneira pegava, e não é descuido delas:** `norm()` normaliza aspas,
+travessões e espaços, mas não toca em caractere de controle. A citação resolve,
+o hash confere, o verificador aprova — e o operador de comparação simplesmente
+não está lá. É primo da âncora ambígua: **a prova está íntegra e mesmo assim diz
+outra coisa.**
+
+`scripts/confere-controle.js` mostra onde olhar, priorizando o que está colado
+em número (que é o que muda conduta). **Ele avisa e não reprova de propósito**:
+o conserto exige abrir o PDF e decidir qual símbolo era (`≥`, `≤`, `±`, `→`), e
+isso é leitura humana.
+
+Varrido o acervo inteiro: **1 artigo, 8 ocorrências, todas `≥`, todas já
+corrigidas.** Rodar ao extrair artigo novo.
+
+E o contraexemplo que impede o conserto automático burro: no mesmo artigo,
+"TRIPOD … IMC 30" está **certo sem** o `≥` — o cabeçalho da tabela diz
+`bmi at entry, mean (sd)`, então ali 30 é média, não corte.
+
 ## 🧪 MUTAÇÃO NO DEFEITO QUE VOCÊ ACABOU DE CONSERTAR (2026-08-08)
 
 Consertei uma cegueira real do `deepFor`, escrevi `scripts/test-caminho-clinico.js`
