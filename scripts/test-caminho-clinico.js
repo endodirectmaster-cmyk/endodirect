@@ -145,6 +145,24 @@ const CAMINHO = [
   ['obesidade grau III: indico bariatrica?', 'Obesidade'],
   ['reganho de peso apos sleeve', 'Obesidade'],
 
+  // ⚠️ O MAPA DE OBESIDADE NÃO TINHA NENHUM ANTIOBESIDÊNICO CLÁSSICO — nem
+  // `orlistate`, nem `sibutramina`, nem `fentermina`, nem `naltrexona-bupropiona`
+  // — e nem `sobrepeso`, que é metade do nome da área.
+  ['orlistate: ainda tem lugar?', 'Obesidade'],
+  ['naltrexona-bupropiona em quem?', 'Obesidade'],
+  ['fentermina-topiramato: quanto emagrece?', 'Obesidade'],
+  ['sibutramina e risco cardiovascular', 'Obesidade'],
+  ['paciente com sobrepeso e IMC 27: trato?', 'Obesidade'],
+  ['reganho de peso apos suspender a medicacao', 'Obesidade'],
+  ['quero emagrecer: por onde comeco?', 'Obesidade'],
+  // ⚠️ A SENTINELA QUE MANTÉM `perda de peso` FORA DO MAPA. Perda de peso
+  // INVOLUNTÁRIA é bandeira vermelha de hipertireoidismo, insuficiência adrenal
+  // e neoplasia — mapeá-la para Obesidade responderia a pergunta mais grave com
+  // o bloco mais inofensivo. `emagrecer` entrou no lugar porque carrega a
+  // INTENÇÃO, que "perda de peso" não carrega.
+  ['perda de peso com hiperpigmentacao e avidez por sal', 'Adrenal'],
+  ['AR GLP-1 no DM2 com doenca renal cronica', 'Diabetes'],
+
   // Sentinelas de outras áreas — o achado glicêmico não pode sequestrá-las.
   ['hiperglicemia em paciente com acromegalia', 'Neuroendocrinologia'],
   ['obeso em insulina: indico cirurgia bariatrica?', 'Obesidade'],
