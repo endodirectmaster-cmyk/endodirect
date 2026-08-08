@@ -352,6 +352,29 @@ const CAMINHO = [
   ['como interpreto o CGM?', 'Diabetes'],
   ['CGM durante o exercicio aerobico', 'Endocrinologia do Esporte'],
 
+  // ⚠️ SEGUNDA PASSADA DA MESMA VARREDURA, agora em FRASES (bigramas e
+  // trigramas distintivos, ≥90% numa área) em vez de palavras soltas. A lista de
+  // palavras era ruidosa; a de frases trouxe as entidades clínicas de verdade.
+  // Cada pergunta abaixo devolvia "(vazio)" antes — conferido contra a árvore
+  // antiga, porque `siadh`, `estatina` e `dm2` estavam carregando três delas.
+  ['quando suspendo o agonista dopaminergico?', 'Neuroendocrinologia'],
+  ['restricao hidrica: quantos ml por dia?', 'Endocrinopatias'],
+  ['como calculo o deficit de agua livre?', 'Endocrinopatias'],
+  ['debito urinario alto durante a correcao', 'Endocrinopatias'],
+  ['sintomas musculares: suspendo o remedio?', 'Lípides'],
+  ['miopatia com CK 10 vezes o normal', 'Lípides'],
+  ['paciente de risco extremo: qual a meta?', 'Lípides'],
+  ['banda gastrica ainda se usa?', 'Obesidade'],
+  ['PTDM: quando rastrear?', 'Diabetes'],
+  ['hormonio tireoidiano no idoso', 'Tireoide'],
+  ['funcao das celulas beta se recupera?', 'Diabetes'],
+  // ⚠️ `mialgia` SOZINHA ficou de fora e estas duas guardam a decisão: 3
+  // ocorrências em Lípides contra 5 espalhadas por Adrenal, Diabetes, Obesidade
+  // e Osteometabolismo. Mialgia é sintoma de todo mundo; sintoma muscular DE
+  // ESTATINA é assunto de Lípides. Se alguém promover `mialgia`, elas reprovam.
+  ['mialgia na insuficiencia adrenal', 'Adrenal'],
+  ['miopatia por hipotireoidismo', 'Tireoide'],
+
   // Sentinelas de outras áreas — o achado glicêmico não pode sequestrá-las.
   ['hiperglicemia em paciente com acromegalia', 'Neuroendocrinologia'],
   ['obeso em insulina: indico cirurgia bariatrica?', 'Obesidade'],
