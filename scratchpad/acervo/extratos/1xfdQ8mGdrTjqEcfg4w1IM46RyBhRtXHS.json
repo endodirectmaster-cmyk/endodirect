@@ -538,7 +538,8 @@
      115
     ]
    ],
-   "cit_sha": "da0f6232e5b0e8d7"
+   "cit_sha": "da0f6232e5b0e8d7",
+   "cit_ancora_ok": true
   },
   {
    "afirmacao": "ADULTOS com DM1 — DURANTE o exercício, glicose do sensor <3,0 mmol/l (<54 mg/dl): parar todo exercício, fazer SMBG confirmatória, ingerir quantidade individualizada de carboidrato e NÃO reiniciar o exercício.",
@@ -550,7 +551,8 @@
      109
     ]
    ],
-   "cit_sha": "cca6679d0b87ddf2"
+   "cit_sha": "cca6679d0b87ddf2",
+   "cit_ancora_ok": true
   },
   {
    "afirmacao": "ADULTOS com DM1 — após consumir carboidrato DURANTE o exercício, conferir a glicose do sensor pelo menos 30 min depois e repetir o tratamento se necessário; para REINICIAR o exercício, atingir glicose do sensor de pelo menos 4,4 mmol/l (80 mg/dl) com seta horizontal ou ascendente.",
@@ -1378,7 +1380,8 @@
      80
     ]
    ],
-   "cit_sha": "a87b2641a511b71a"
+   "cit_sha": "a87b2641a511b71a",
+   "cit_ancora_ok": true
   },
   {
    "afirmacao": "ADULTOS com DM1 — DURANTE o exercício, glicose do sensor <3,9 mmol/l (<70 mg/dl): parar todo exercício, considerar SMBG confirmatória, ingerir quantidade individualizada de carboidrato — nesse patamar o reinício do exercício ainda é possível (diferente do <3,0 mmol/l, em que não se reinicia).",
@@ -1796,6 +1799,7 @@
    146,
    147
   ],
-  "achado": "Auditoria adversarial de 145 fatos: 8 corrigidos (5,5%) e 2 acrescentados (agora 147). (1) DOIS fatos PEDIÁTRICOS eram provados por citação da tabela de ADULTO — #98 (\"Tabela 6\") apontava para dentro da Tabela 2 e #100 (\"Tabela 7\") para dentro da Tabela 3. Mesmo texto, tabela errada. Causa: o build.js desambiguava por MARCO único, mas a migração da citação para offset (lib/citacao.js `referenciar`) reancorou cada citação na PRIMEIRA ocorrência do texto na base, e este artigo repete linhas inteiras entre a tabela de adulto e a de criança. Corrigido apontando para a ocorrência certa e estendendo a citação até um trecho ÚNICO. (2) CINCO fatos de tabela liam UMA célula como se fosse a linha inteira (#29, #127, #128, #132, #138). O pior era #128: afirmava que a faixa pré-exercício de 5,0–6,9 / 5,0–7,9 / 5,0–8,9 mmol/l libera \"qualquer tipo de exercício\", quando a MESMA linha manda ADIAR todo exercício com 15–30 g de carboidrato nas combinações de grupo e seta em que se espera QUEDA da glicose — que é o caso do aeróbico. #127 e #138 erravam para o outro lado (impunham \"só aeróbico\" a toda a linha). (3) #144 afirmava uma comparação com a glicemia capilar que a citação não sustenta. (4) ACRESCENTADOS #146 e #147: as duas linhas de hiperglicemia SEM cetose relevante (>15,0 mmol/l com cetonemia ≤1,5) das tabelas de adulto tinham sido descartadas inteiras — são as ÚNICAS linhas das tabelas de adulto em que a conduta depende do TIPO de exercício (AE vs todo Ex). O mapeamento célula→coluna é mesmo irrecuperável (5 células para 6 posições), mas o CONJUNTO de ações da linha é, e entra declarado como tal. NÚCLEO: medido com nucleo-sobre.js — o núcleo não tem nada sobre alvo de glicose no exercício, carboidrato por seta de tendência, hipoglicemia noturna pós-exercício nem alça fechada híbrida. É LACUNA, não divergência; nenhuma ressalva foi inventada. COSTURA/DUPLICATAS: nenhuma afirmação repetida; o reparo de 174→145 está íntegro. A única referência duplicada (#98 = #114) era o defeito da tabela errada, agora desfeito. NÃO CORRIGIDO, por limite da ferramenta: #27 (8.051 chars), #53 (2.242) e #71 (1.916) têm a frase partida ao meio por uma tabela de página inteira; a elisão declarada tem teto de 400 chars de buraco (verifica-extracao.js GAP_MAX), então a citação contígua gigante é a única forma que passa na verificação."
+  "achado": "Auditoria adversarial de 145 fatos: 8 corrigidos (5,5%) e 2 acrescentados (agora 147). (1) DOIS fatos PEDIÁTRICOS eram provados por citação da tabela de ADULTO — #98 (\"Tabela 6\") apontava para dentro da Tabela 2 e #100 (\"Tabela 7\") para dentro da Tabela 3. Mesmo texto, tabela errada. Causa: o build.js desambiguava por MARCO único, mas a migração da citação para offset (lib/citacao.js `referenciar`) reancorou cada citação na PRIMEIRA ocorrência do texto na base, e este artigo repete linhas inteiras entre a tabela de adulto e a de criança. Corrigido apontando para a ocorrência certa e estendendo a citação até um trecho ÚNICO. (2) CINCO fatos de tabela liam UMA célula como se fosse a linha inteira (#29, #127, #128, #132, #138). O pior era #128: afirmava que a faixa pré-exercício de 5,0–6,9 / 5,0–7,9 / 5,0–8,9 mmol/l libera \"qualquer tipo de exercício\", quando a MESMA linha manda ADIAR todo exercício com 15–30 g de carboidrato nas combinações de grupo e seta em que se espera QUEDA da glicose — que é o caso do aeróbico. #127 e #138 erravam para o outro lado (impunham \"só aeróbico\" a toda a linha). (3) #144 afirmava uma comparação com a glicemia capilar que a citação não sustenta. (4) ACRESCENTADOS #146 e #147: as duas linhas de hiperglicemia SEM cetose relevante (>15,0 mmol/l com cetonemia ≤1,5) das tabelas de adulto tinham sido descartadas inteiras — são as ÚNICAS linhas das tabelas de adulto em que a conduta depende do TIPO de exercício (AE vs todo Ex). O mapeamento célula→coluna é mesmo irrecuperável (5 células para 6 posições), mas o CONJUNTO de ações da linha é, e entra declarado como tal. NÚCLEO: medido com nucleo-sobre.js — o núcleo não tem nada sobre alvo de glicose no exercício, carboidrato por seta de tendência, hipoglicemia noturna pós-exercício nem alça fechada híbrida. É LACUNA, não divergência; nenhuma ressalva foi inventada. COSTURA/DUPLICATAS: nenhuma afirmação repetida; o reparo de 174→145 está íntegro. A única referência duplicada (#98 = #114) era o defeito da tabela errada, agora desfeito. NÃO CORRIGIDO, por limite da ferramenta: #27 (8.051 chars), #53 (2.242) e #71 (1.916) têm a frase partida ao meio por uma tabela de página inteira; a elisão declarada tem teto de 400 chars de buraco (verifica-extracao.js GAP_MAX), então a citação contígua gigante é a única forma que passa na verificação.",
+  "ancoragem": "Conferidas as 3 âncoras ambíguas que falam de população (#44, #45, #114): as três se dizem ADULTOS e ancoram dentro da Tabela 2 (adulto, 29773-36122), com a segunda ocorrência caindo na Tabela 6 (criança, 46463-53274). Âncora correta, marcadas com cit_ancora_ok. Conferido tambem que os dois fatos PEDIÁTRICOS reancorados pela auditoria (#98 -> 47471 = Tabela 6; #100 -> 54213 = Tabela 7) caem mesmo em tabela de criança."
  }
 }
