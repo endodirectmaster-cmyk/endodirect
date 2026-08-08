@@ -80,6 +80,22 @@ const CAMINHO = [
   ['amenorreia secundaria em atleta', 'Endocrinologia Feminina'],
   ['atleta amenorreica com baixa disponibilidade energetica', 'Endocrinologia Feminina'],
 
+  // ⚠️ Nove assuntos do Seminar de DM1 devolviam "" com conteúdo na base. O mais
+  // grave é `alça fechada`: o núcleo diz que ela é o método PREFERIDO no DM1
+  // (ADA 2026) e a pergunta não chegava a lugar nenhum. Os três últimos desta
+  // lista o auditor havia dado como "já roteiam corretamente" — não roteavam.
+  ['alca fechada', 'Diabetes'],
+  ['bomba de insulina', 'Diabetes'],
+  ['dasiglucagon', 'Diabetes'],
+  ['pramlintida', 'Diabetes'],
+  ['insulite', 'Diabetes'],
+  ['glucagon nasal', 'Diabetes'],
+  ['lua de mel', 'Diabetes'],
+  ['remissao parcial', 'Diabetes'],
+  // …e a sentinela que impede `remissao parcial` de virar peso de doença:
+  ['remissao parcial da acromegalia apos cirurgia', 'Neuroendocrinologia'],
+  ['alca fechada durante o exercicio no DM1', 'Endocrinologia do Esporte'],
+
   // Sentinelas de outras áreas — o achado glicêmico não pode sequestrá-las.
   ['hiperglicemia em paciente com acromegalia', 'Neuroendocrinologia'],
   ['obeso em insulina: indico cirurgia bariatrica?', 'Obesidade'],
