@@ -69,6 +69,25 @@ nas`) e o `.` do regex não casando `\n`. **Busca que não acha não prova
 ausência**: conferi cada "sumiço" pelo número cru antes de concluir qualquer
 coisa, e os três estavam no texto.
 
+### Terceira dimensão medida: dose sem população — resultado NEGATIVO
+
+Varri os 234 fatos dos dois extratos procurando a classe de dano da tabela
+pediátrica da ADA: **fato com dose ou corte que não carrega a própria
+população**. Saíram 6 candidatos, e ao ler os 6 **nenhum é defeito** — são
+definições (o que É uma VLCD, o que É densidade energética, o que É a IDA) ou
+afirmações autossuficientes.
+
+O melhor exemplo de por que a peneira sozinha não decide: **efedrina (#81)**
+tem dose (60–150 mg) e nenhum marcador de população — e está certo, porque
+carrega o próprio dano na MESMA frase: benefício de menos de 1 kg contra
+aumento de **2 a 3,5×** em eventos psiquiátricos, gastrintestinais e cardíacos,
+**incluindo AVC**. Recuperado sozinho, ele desaconselha. E o fato #80 traz a
+**Classe III** para o capítulo inteiro de suplementos.
+
+**Risco que viaja junto da dose dispensa marcador de população.** A pergunta
+certa nunca foi "tem a palavra adulto?", é *"o que este fato responde se for
+recuperado sozinho?"*.
+
 ## 🏷️ UMA PALAVRA A MAIS NO CAMPO `tipo` REBAIXOU UMA DIRETRIZ INTEIRA (2026-08-08)
 
 O professor perguntou se os 10% extraídos já estavam no ar e mandou a regra:
