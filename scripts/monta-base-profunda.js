@@ -34,6 +34,40 @@ const SAIDA = path.join(RAIZ, 'lib', 'clinical-deep-data.js');
 // protegido fica do corte por teto).
 const PESO_TIPO = { diretriz: 0, consenso: 0, posicionamento: 0, revisao: 1, metanalise: 2, ensaio: 3, observacional: 4, caso: 5, outro: 6 };
 
+// ⚠️ TIPO FORA DO VOCABULÁRIO ABORTA A MONTAGEM (08/08/2026), e o motivo é um
+// caso real que passou despercebido por horas.
+//
+// O Posicionamento Nutricional da ABESO — documento de sociedade, 138 fatos —
+// veio com `tipo: "posicionamento de sociedade (diretriz)"`. A string é
+// descritiva e está CORRETA em português; ela só não é uma das nove chaves.
+// O código antigo caía no `!= null ? ... : 6` e atribuía peso 6 — `outro`, o
+// tier MAIS BAIXO, abaixo de relato de caso — a uma diretriz de sociedade.
+//
+// O estrago é silencioso e vale exatamente onde dói: `_peso` é o PRIMEIRO
+// critério de ordenação, e Obesidade tem 322k contra teto de 120k. O artigo
+// ficava em ÚLTIMO na área mais espremida da base — primeiro a ser cortado
+// sempre que a relevância empata. Nenhum erro de fato, nenhuma citação falsa,
+// nenhum aviso: um documento inteiro rebaixado por uma palavra a mais no campo.
+//
+// Padrão silencioso em campo de AUTORIDADE é o mesmo defeito que já corrigimos
+// em `conflito_direcao`: se o valor não é reconhecido, o certo é PARAR, não
+// chutar o pior. Quem escreve um tipo novo escolhe conscientemente entre
+// acrescentá-lo ao vocabulário ou usar uma das chaves existentes.
+function pesoDoTipo(e) {
+  const t = String(e.tipo || 'outro').toLowerCase().trim();
+  if (PESO_TIPO[t] == null) {
+    console.error(`\n✗ TIPO NÃO RECONHECIDO: "${e.tipo}"`);
+    console.error(`  no extrato: ${String(e.titulo || e.fileId || '?').slice(0, 70)}`);
+    console.error(`  vocabulário aceito: ${Object.keys(PESO_TIPO).join(', ')}`);
+    console.error('  \n  Isto ABORTA de propósito. O padrão antigo era peso 6 ("outro"), o tier');
+    console.error('  mais baixo — e rebaixar em silêncio uma diretriz de sociedade para baixo');
+    console.error('  de relato de caso é pior que parar. Corrija o campo `tipo` do extrato');
+    console.error('  ou acrescente a chave nova a PESO_TIPO, conscientemente.\n');
+    process.exit(1);
+  }
+  return PESO_TIPO[t];
+}
+
 // ⚠️ QUEM VENCE A RESSALVA — o campo mais perigoso desta base.
 //
 // Até 07/08/2026 este cabeçalho era UM SÓ, fixo, e dizia sempre "o núcleo
@@ -229,7 +263,7 @@ function main() {
         tema: b.tema,
         fonte: String(e.fonte || '').trim(),
         texto: b.texto,
-        _peso: PESO_TIPO[String(e.tipo || 'outro').toLowerCase()] != null ? PESO_TIPO[String(e.tipo || 'outro').toLowerCase()] : 6,
+        _peso: pesoDoTipo(e),
         _ano: Number(e.ano) || 0,
         _fatos: b._fatos
       });

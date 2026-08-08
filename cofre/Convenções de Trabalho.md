@@ -5,6 +5,69 @@ atualizado: 2026-08-08
 
 # Convenções de Trabalho
 
+## 🏷️ UMA PALAVRA A MAIS NO CAMPO `tipo` REBAIXOU UMA DIRETRIZ INTEIRA (2026-08-08)
+
+O professor perguntou se os 10% extraídos já estavam no ar e mandou a regra:
+**manter sempre a versão mais atual do documento**. Fui auditar o acervo por
+ano/versão e achei outra coisa, pior, no meio do caminho.
+
+O Posicionamento Nutricional da ABESO — documento de sociedade, 138 fatos —
+veio com:
+
+```json
+"tipo": "posicionamento de sociedade (diretriz)"
+```
+
+A string está **correta em português** e é descritiva. Ela só não é uma das nove
+chaves de `PESO_TIPO`. O código fazia `PESO_TIPO[t] != null ? PESO_TIPO[t] : 6`
+e atribuía **peso 6 — `outro`, o tier mais baixo, abaixo de relato de caso** — a
+uma diretriz de sociedade.
+
+O estrago é silencioso e cai exatamente onde dói: `_peso` é o **primeiro**
+critério de ordenação do montador, e Obesidade tem 322k contra teto de 120k. O
+artigo ficava em **último** na área mais espremida da base — primeiro a ser
+cortado sempre que a relevância empatasse. Nenhum fato errado, nenhuma citação
+falsa, nenhum aviso.
+
+**Conserto do dado é metade. A outra metade é o silêncio:** o montador agora
+**ABORTA** em tipo fora do vocabulário, com a lista do que é aceito. Mesma
+decisão já tomada em `conflito_direcao` — **padrão silencioso em campo de
+autoridade é o defeito, não a conveniência**. Quem escrever um tipo novo escolhe
+conscientemente entre acrescentá-lo ao vocabulário ou usar uma chave existente.
+
+### O efeito colateral que virou correção de MEDIDA
+
+Corrigir o tipo mudou a ordem do montador (o bloco nutricional subiu de último
+para 2º) e **reprovou o teste de ordem do dumping** — que eu tinha escrito
+horas antes para guardar uma evicção real.
+
+Fui medir antes de reagir: o bloco de dumping continuava chegando **100%
+inteiro, com 85 menções**. A asserção reprovava uma mudança que era melhoria.
+
+O defeito original nunca foi de ordem — era **evicção** (chegavam 6 menções em
+vez de 85). "Qual bloco vem primeiro" pegava o defeito, mas mede uma coisa mais
+estreita que o dano. Entrou o bloco **COMPLETUDE**: o artigo que responde chega
+≥90% inteiro e com N ocorrências mínimas da palavra, independente de ordem.
+Conferido por mutação — desfazer as palavras-cola reprova.
+
+**Asserção de ordem é proxy; meça o dano quando puder.**
+
+### E os dois desempates estruturais que MEDI e não enviei
+
+Tentei os dois candidatos óbvios para "tema-lista vence tema-focado":
+
+| desempate | resultado |
+|---|---|
+| tema mais **curto** | 5 perguntas melhores, **2 piores** |
+| **menos assuntos** reivindicados no tema | erra nos mesmos lugares |
+
+Os dois quebram no mesmo ponto: o bloco de eventos adversos dos AR GLP-1
+reivindica **60 assuntos** e **é** a resposta certa para "náusea com
+semaglutida"; e "hiponatremia de 118" troca o algoritmo pelo bloco do **idoso**,
+estreitando a população sem que a idade tenha sido dita. **Tema-lista não é
+sinal de irrelevância** — um posicionamento de 260 páginas cobre 90 assuntos
+mesmo. Nenhum dos dois foi enviado.
+
 ## 🔢 CONTAR OCORRÊNCIA NÃO É MEDIR CONTEÚDO (2026-08-08)
 
 A regra que venho aplicando o dia inteiro — **"onde está o conteúdo é"**, nascida

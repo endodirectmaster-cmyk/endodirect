@@ -470,14 +470,6 @@ const PRIMEIRO = [
   // o bloco nutricional — senão a promoção de `cirurgia bariatrica` só trocou
   // um sequestro por outro, agora dentro da própria área.
   ['indico cirurgia bariatrica para IMC 38 com diabetes tipo 2?', 'cirurgia bariátrica'],
-  // ⚠️ O ARTIGO INTEIRO DE DUMPING NÃO CHEGAVA À PERGUNTA QUE DIZ "DUMPING"
-  // (08/08/2026). O bloco tem 78 ocorrências da palavra e tema de 129 chars —
-  // "Síndrome de dumping após cirurgia gástrica…" — e perdia para dois blocos de
-  // tema-lista (1.804 e 2.466 chars) que pontuavam +3 em `apos`, `anos` e
-  // `dois`. Chegavam 6 menções de dumping em vez de 85. Duas causas somadas:
-  // palavra de pergunta valendo 3 pontos, e empate desfeito pela ordem do
-  // montador em vez de pela especificidade do tema.
-  ['dumping tardio dois anos apos bypass: como investigo?', 'dumping'],
 ];
 
 for (const [pergunta, esperado] of PRIMEIRO) {
@@ -488,8 +480,64 @@ for (const [pergunta, esperado] of PRIMEIRO) {
     `"${pergunta}" → o PRIMEIRO bloco é "${cab.slice(0, 56)}", esperado um que contenha "${esperado}"`);
 }
 
+// ─────────────────────────────────────────────────────────────────────────────
+// 4. COMPLETUDE — o artigo que responde chega INTEIRO, não em migalhas
+// ─────────────────────────────────────────────────────────────────────────────
+// ⚠️ ESTE BLOCO SUBSTITUI UMA ASSERÇÃO DE ORDEM QUE SE PROVOU FRÁGIL, e a troca
+// é uma correção de MEDIDA, não um afrouxamento.
+//
+// O defeito original (08/08/2026) era EVICÇÃO: "dumping tardio dois anos após
+// bypass" recebia 6 menções de dumping em vez de 85, porque o artigo inteiro
+// era cortado pelo teto. Escrevi a asserção como "qual bloco vem PRIMEIRO", que
+// pegava o defeito — mas mede uma coisa mais estreita que o dano.
+//
+// Horas depois corrigi o `tipo` do Posicionamento da ABESO (estava caindo em
+// "outro" por string fora do vocabulário) e a ordem do montador mudou: o bloco
+// nutricional subiu de último para 2º. A asserção de ordem reprovou, e o
+// conteúdo de dumping continuava chegando INTEIRO — 100% do bloco, 85 menções.
+// Ou seja: ela reprovava uma mudança que era melhoria.
+//
+// Tentei os dois desempates estruturais possíveis e MEDI os dois:
+//   · por tema mais CURTO  → 5 perguntas melhores, 2 piores;
+//   · por MENOS assuntos reivindicados no tema → mesmo problema.
+// Os dois erram no mesmo lugar: o bloco de eventos adversos dos AR GLP-1
+// reivindica 60 assuntos e É a resposta certa para "náusea com semaglutida";
+// e "hiponatremia de 118" troca o algoritmo pelo bloco do IDOSO, estreitando a
+// população sem que a idade tenha sido dita. Tema-lista não é sinal de
+// irrelevância — um posicionamento de 260 páginas cobre 90 assuntos mesmo.
+//
+// Então não enviei heurística nenhuma e passei a medir O DANO, que é
+// independente de ordem: o artigo que responde chega quase inteiro?
+const COMPLETUDE = [
+  // pergunta, área, marca do bloco-alvo no tema, % mínimo do bloco que tem de
+  // chegar, e mínimo de ocorrências da palavra no que foi entregue.
+  ['dumping tardio dois anos apos bypass: como investigo?', 'Obesidade', 'dumping', 90, 50],   // medido hoje: 100%, 85
+  ['esteatose hepatica com FIB-4 de 2,1: encaminho?', 'Obesidade', 'hepatica', 90, 40],      // medido hoje: 100%, 88
+  ['PTDM: quando rastrear?', 'Diabetes', 'ptdm', 90, 40],
+  ['prolactina de 80 com macroprolactina: e prolactinoma?', 'Neuroendocrinologia', 'prolactinoma', 90, 80], // medido hoje: 100%, 187
+];
+
+for (const [pergunta, areaEsperada, marcaTema, pctMin, ocorrMin] of COMPLETUDE) {
+  const area = deep.canonArea(pergunta);
+  const txt = area ? deep.deepFor(area, 120000, pergunta) : '';
+  const semAcento = (x) => String(x).toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '');
+  const alvo = (deep.DEEP[areaEsperada] || []).find((b) => semAcento(b.tema).includes(marcaTema));
+  if (!alvo) { ok(false, `COMPLETUDE: não achei bloco com "${marcaTema}" em ${areaEsperada}`); continue; }
+  // maior prefixo do bloco presente na entrega = quanto dele sobreviveu ao corte
+  let lo = 0; let hi = alvo.texto.length;
+  while (lo < hi) {
+    const m = Math.ceil((lo + hi) / 2);
+    if (txt.indexOf(alvo.texto.slice(0, m)) >= 0) lo = m; else hi = m - 1;
+  }
+  const pct = Math.round((100 * lo) / alvo.texto.length);
+  const ocorr = semAcento(txt).split(marcaTema).length - 1;
+  ok(area === areaEsperada && pct >= pctMin && ocorr >= ocorrMin,
+    `"${pergunta}" → ${area}: o bloco de "${marcaTema}" chegou a ${pct}% (mín ${pctMin}%) `
+    + `com ${ocorr} ocorrência(s) da palavra (mín ${ocorrMin}) — artigo cortado é artigo que não existe`);
+}
+
 if (falhas) {
-  console.error(`\n✗ caminho clínico: ${falhas} falha(s) de ${CAMINHO.length + CHEGADA.length + PRIMEIRO.length} medição(ões).`);
+  console.error(`\n✗ caminho clínico: ${falhas} falha(s) de ${CAMINHO.length + CHEGADA.length + PRIMEIRO.length + COMPLETUDE.length} medição(ões).`);
   process.exit(1);
 }
-console.log(`✓ caminho clínico: ${CAMINHO.length} roteamento(s) + ${CHEGADA.length} chegada(s) + ${PRIMEIRO.length} ordem(ns)`);
+console.log(`✓ caminho clínico: ${CAMINHO.length} roteamento(s) + ${CHEGADA.length} chegada(s) + ${PRIMEIRO.length} ordem(ns) + ${COMPLETUDE.length} completude(s)`);
