@@ -84,6 +84,20 @@ const CAMINHO = [
   // grave é `alça fechada`: o núcleo diz que ela é o método PREFERIDO no DM1
   // (ADA 2026) e a pergunta não chegava a lugar nenhum. Os três últimos desta
   // lista o auditor havia dado como "já roteiam corretamente" — não roteavam.
+  // ⚠️ NÃO "CONSERTE" ESTA LINHA PARA ESPORTE. Eu quase o fiz em 08/08/2026, e
+  // a contagem de ocorrências dizia que sim: "alça fechada" aparece SEIS vezes
+  // em Endocrinologia do Esporte e ZERO no bloco que Diabetes entrega.
+  //
+  // Fui ler as seis. Todas são CLÁUSULA DE EXCLUSÃO — "estas recomendações NÃO
+  // se aplicam a sistemas híbridos de alça fechada". O artigo de exercício não
+  // ensina nada sobre alça fechada; ele repete que as tabelas dele não valem
+  // para quem a usa. Diabetes não tem a expressão, mas tem o conteúdo vizinho
+  // que serve (CSII, incrementos de 0,025 U/h, bomba aumentada por sensor), e o
+  // NÚCLEO carrega a recomendação da ADA 2026 de que a alça fechada é o método
+  // preferido no DM1.
+  //
+  // CONTAR OCORRÊNCIA NÃO É MEDIR CONTEÚDO. Seis menções que só dizem "isto não
+  // se aplica a você" valem menos que zero menção com conteúdo adjacente útil.
   ['alca fechada', 'Diabetes'],
   ['bomba de insulina', 'Diabetes'],
   ['dasiglucagon', 'Diabetes'],
@@ -217,6 +231,164 @@ const CAMINHO = [
   ['quando encaminho ao hepatologista?', 'Obesidade'],
   ['elastografia hepatica com 14 kPa', 'Obesidade'],
 
+  // ⚠️ A BASE NÃO SABIA RESPONDER "O QUE COMER" (08/08/2026). Entrou o
+  // Posicionamento Nutricional da ABESO (138 fatos) e, medido termo a termo,
+  // 24 assuntos dele não tinham NENHUMA rota. Estas são as que a medição pegou.
+  // ⚠️ NENHUMA DELAS PODE CONTER "emagrecer" NEM "obesidade". Escrevi as 15
+  // primeiras com essas palavras, conferi por mutação e SEIS passavam com o
+  // conserto desfeito — `emagrecer` e `obesidade` já roteavam sozinhas e as
+  // chaves novas não estavam sendo medidas em nada. Acerto emprestado outra vez.
+  // Cada pergunta abaixo devolvia "(vazio)" antes do conserto.
+  ['posso indicar jejum intermitente?', 'Obesidade'],
+  ['dieta low carb tem risco?', 'Obesidade'],
+  ['dieta do mediterraneo: qual a evidencia?', 'Obesidade'],
+  ['dieta DASH', 'Obesidade'],
+  ['adocante aspartame faz mal?', 'Obesidade'],
+  // Sem `adocante` na frase, senão a chave genérica carrega o adoçante nomeado
+  // e o mapa de edulcorantes fica sem medição nenhuma.
+  ['aspartame causa cancer?', 'Obesidade'],
+  ['indice glicemico dos alimentos', 'Obesidade'],
+  ['substitutos de refeicao funcionam?', 'Obesidade'],
+  ['whey protein emagrece?', 'Obesidade'],
+  ['oleo de coco emagrece?', 'Obesidade'],
+  ['garcinia cambogia emagrece?', 'Obesidade'],
+  ['balao intragastrico', 'Obesidade'],
+  ['telenutricao', 'Obesidade'],
+  ['densidade energetica da dieta', 'Obesidade'],
+  ['VLCD dieta de muito baixas calorias', 'Obesidade'],
+  // Sem "IMC" na frase: `imc` é chave antiga e roteava sozinha, deixando
+  // `escore-z` sem medição — foi o que a mutação pegou.
+  ['escore-Z de 2,5 na crianca', 'Obesidade'],
+  // ⚠️ `cetogenica` APONTAVA PARA DIABETES e a palavra tem ZERO ocorrência em
+  // todo o conteúdo de Diabetes. A única está na ABESO, em Obesidade — e é
+  // justamente a que diz que a VLCKD é potencialmente DELETÉRIA no DM1. A
+  // pergunta mais perigosa das duas ia para o lado que não tem a advertência.
+  ['dieta cetogenica para emagrecer', 'Obesidade'],
+  ['dieta cetogenica no diabetes tipo 1 e segura?', 'Obesidade'],
+  // A chave CURTA `cetogenica` existe separada da frase `dieta cetogenica`, e
+  // esta é a única pergunta que a mede: sem "dieta" colado, a frase longa não
+  // casa e só a chave curta segura a rota.
+  ['cetogenica funciona?', 'Obesidade'],
+  // ⚠️ LIMITE CONHECIDO, registrado em vez de contornado. "alimentação
+  // cetogênica no diabetes tipo 1" vai para DIABETES: `cetogenica`(3010) perde
+  // para `diabetes tipo 1`(3015) e só a frase `dieta cetogenica`(3016) vence.
+  // NÃO inflei o peso da chave curta, pelo motivo já medido no caso do Esporte
+  // (ver `areasOrdenadas`): qualquer peso que vença `diabetes tipo 1` vence
+  // junto `osteoporose`(3011) e `prolactinoma`(3012), e aí a cetogênica passa a
+  // sequestrar a base inteira. O grafismo padrão em português é "dieta
+  // cetogênica", que está coberto; esta linha existe para que o dia em que
+  // alguém resolver o resto saiba exatamente o que estava quebrado.
+  ['alimentacao cetogenica no diabetes tipo 1 e segura?', 'Diabetes'],
+  // O outro prato: a rota da cetoacidose não pode ter sido levada junto.
+  ['paciente com cetoacidose diabetica: reposicao de volume', 'Diabetes'],
+  // `compulsao alimentar` entrou com peso de ACHADO justamente para que as DUAS
+  // rotas abaixo estejam certas — a compulsão é sintoma dos dois quadros.
+  ['compulsao alimentar: como abordo?', 'Obesidade'],
+  ['compulsao alimentar no craniofaringioma', 'Neuroendocrinologia'],
+
+  // ⚠️ `cirurgia bariatrica` ERA PROCEDIMENTO (2000) e cedia a qualquer doença
+  // nomeada. Medido: Diabetes tem UMA ocorrência de "bariátric" em toda a base
+  // profunda contra 172 em Obesidade, e a pergunta ia para Diabetes.
+  ['indico cirurgia bariatrica para IMC 38 com diabetes tipo 2?', 'Obesidade'],
+  ['cirurgia bariatrica no diabetes tipo 2', 'Obesidade'],
+  // ...e `bariatrica` SOZINHA continua cedendo, de propósito: menção de
+  // passagem não é o assunto. Estas duas guardam a metade conservadora do
+  // conserto — se alguém promover a chave curta junto, elas reprovam.
+  ['gastroparesia apos bariatrica em diabetico', 'Diabetes'],
+  ['bariatrica e diabetes', 'Diabetes'],
+
+  // ⚠️ DOIS AR GLP-1 SEM ROTA, UM DELES COM A MARCA JÁ NO MAPA (08/08/2026).
+  // "diarreia persistente com dulaglutida" devolvia "" — nenhuma área — porque
+  // `trulicity` estava no mapa e `dulaglutida` não. O nome genérico é o que o
+  // médico prescreve. As duas têm conteúdo (10 e 9 ocorrências) no artigo de
+  // eventos adversos gastrintestinais, que é exatamente o que responde.
+  ['diarreia persistente com dulaglutida: o que faco?', 'Obesidade'],
+  ['lixisenatida causa nausea?', 'Obesidade'],
+  // Peso de fármaco: com a doença nomeada, a doença continua vencendo.
+  ['dulaglutida no diabetes tipo 2', 'Diabetes'],
+  // ⚠️ ESTA É A LINHA QUE MEDE O TIER, e escrevi só depois de a mutação passar:
+  // tirar as duas de CAT_FARMACO não reprovava nada, porque `diabetes tipo 2`
+  // (15 chars) vence a dulaglutida nos dois tiers. Com uma sigla CURTA de doença
+  // a diferença aparece — `sop`(3) só ganha do fármaco se ele for fármaco. E o
+  // destino está conferido: Feminina responde (177 "SOP", 4 "GLP-1"), Obesidade
+  // não tem SOP nenhuma. GLP-1 na SOP é pergunta de consultório, não hipótese.
+  ['dulaglutida na SOP', 'Endocrinologia Feminina'],
+  // ⚠️ SENTINELA DE ROTA VAZIA. `albiglutida`, `retatrutida`, `survodutida`,
+  // `orforglipron` e `beinaglutida` foram conferidas uma a uma e têm ZERO
+  // conteúdo na base. Rota para conteúdo que não existe devolve bloco vazio com
+  // cara de resposta — pior que buraco. Se alguém acrescentar o termo sem
+  // acrescentar o artigo, esta linha reprova.
+  ['albiglutida', '(vazio)'],
+
+  // ⚠️ VARREDURA DE "CONTEÚDO SEM ROTA" (08/08/2026). Em vez de sondar bloco a
+  // bloco, listei os termos DISTINTIVOS de cada área (≥85% das ocorrências numa
+  // área só) e perguntei quais não têm nenhuma rota. Deu 137. Estes são os que
+  // um médico digita de verdade — cada um conferido por contagem antes de entrar.
+  //
+  // MACRO e MICRO não casavam `prolactinoma`: `bate` exige fronteira de palavra
+  // e o "o" de macro é alfanumérico. 84 ocorrências mudas, e macro x micro é A
+  // distinção clínica da doença.
+  // Sem `cabergolina` na frase: ela é chave antiga de Neuro e roteava sozinha.
+  ['macroprolactinoma de 2 cm: opero?', 'Neuroendocrinologia'],
+  ['microprolactinoma na gestacao: suspendo a cabergolina?', 'Neuroendocrinologia'],
+  // Alvo co-primário do LDL, 44 ocorrências, nenhuma rota. E `triglicerides` —
+  // a palavra que se lê no exame — só roteava como `hipertrigliceridemia`.
+  // Sem "LDL": `ldl` é chave antiga e carregava o teste inteiro.
+  ['nao-HDL alto: o que faco?', 'Lípides'],
+  ['triglicerides de 800: risco de pancreatite?', 'Lípides'],
+  ['apolipoproteina B na estratificacao de risco', 'Lípides'],
+  // `supracorrecao` (38) é a palavra do ERRO que se quer evitar; só
+  // `desmielinizacao osmotica`, que é a consequência, tinha rota.
+  // Sem "sódio": `sodio` é chave antiga de Endocrinopatias.
+  ['supracorrecao: qual o limite em 24 h?', 'Endocrinopatias'],
+  // `anovulacao`(3) roteava e `ovulacao`(29) não; `letrozol`(6) sim, `clomifeno`(19) não.
+  ['inducao da ovulacao na SOP: letrozol ou clomifeno?', 'Endocrinologia Feminina'],
+  ['clomifeno falhou: qual o proximo passo?', 'Endocrinologia Feminina'],
+  // `apneia obstrutiva do sono` estava por extenso; `apneia do sono`, como se
+  // fala, não. `bypass` sozinho idem — "bypass em Y de Roux" devolvia vazio.
+  ['apneia do sono no obeso: como rastreio?', 'Obesidade'],
+  ['bypass em Y de Roux: qual a reposicao de ferro?', 'Obesidade'],
+  // ⚠️ RADIOTERAPIA VIROU PROCEDIMENTO depois de criar erro de rota como doença:
+  // "radioterapia no câncer de tireoide" ia para o artigo de CRANIOFARINGIOMA,
+  // porque `radioterapia`(3012) vencia `tireoide`(3008). Tireoide não tem
+  // conteúdo de radioterapia — nenhuma das duas responde — mas buraco avisa e
+  // erro de rota não. Estas duas guardam os dois lados.
+  ['radioterapia no cancer de tireoide', 'Tireoide'],
+  ['radioterapia apos ressecao de craniofaringioma', 'Neuroendocrinologia'],
+  // ⚠️ CGM: o vocabulário inteiro estava mudo. Ele ficou em DIABETES e não em
+  // Esporte, contra a regra do conteúdo (45 ocorrências lá, 14 aqui) — porque
+  // chave de Esporte é GATILHO da promoção condicional, e transformar um
+  // DISPOSITIVO em gatilho de esporte alargou uma regra escrita estreita de
+  // propósito. As duas primeiras linhas abaixo são as que reprovavam quando eu
+  // tinha posto em Esporte; as duas últimas garantem que o esporte não se perdeu.
+  ['tempo no alvo no CGM: qual a meta?', 'Diabetes'],
+  ['CGM no diabetes tipo 2 em insulina', 'Diabetes'],
+  ['como interpreto o CGM?', 'Diabetes'],
+  ['CGM durante o exercicio aerobico', 'Endocrinologia do Esporte'],
+
+  // ⚠️ SEGUNDA PASSADA DA MESMA VARREDURA, agora em FRASES (bigramas e
+  // trigramas distintivos, ≥90% numa área) em vez de palavras soltas. A lista de
+  // palavras era ruidosa; a de frases trouxe as entidades clínicas de verdade.
+  // Cada pergunta abaixo devolvia "(vazio)" antes — conferido contra a árvore
+  // antiga, porque `siadh`, `estatina` e `dm2` estavam carregando três delas.
+  ['quando suspendo o agonista dopaminergico?', 'Neuroendocrinologia'],
+  ['restricao hidrica: quantos ml por dia?', 'Endocrinopatias'],
+  ['como calculo o deficit de agua livre?', 'Endocrinopatias'],
+  ['debito urinario alto durante a correcao', 'Endocrinopatias'],
+  ['sintomas musculares: suspendo o remedio?', 'Lípides'],
+  ['miopatia com CK 10 vezes o normal', 'Lípides'],
+  ['paciente de risco extremo: qual a meta?', 'Lípides'],
+  ['banda gastrica ainda se usa?', 'Obesidade'],
+  ['PTDM: quando rastrear?', 'Diabetes'],
+  ['hormonio tireoidiano no idoso', 'Tireoide'],
+  ['funcao das celulas beta se recupera?', 'Diabetes'],
+  // ⚠️ `mialgia` SOZINHA ficou de fora e estas duas guardam a decisão: 3
+  // ocorrências em Lípides contra 5 espalhadas por Adrenal, Diabetes, Obesidade
+  // e Osteometabolismo. Mialgia é sintoma de todo mundo; sintoma muscular DE
+  // ESTATINA é assunto de Lípides. Se alguém promover `mialgia`, elas reprovam.
+  ['mialgia na insuficiencia adrenal', 'Adrenal'],
+  ['miopatia por hipotireoidismo', 'Tireoide'],
+
   // Sentinelas de outras áreas — o achado glicêmico não pode sequestrá-las.
   ['hiperglicemia em paciente com acromegalia', 'Neuroendocrinologia'],
   ['obeso em insulina: indico cirurgia bariatrica?', 'Obesidade'],
@@ -284,6 +456,28 @@ const PRIMEIRO = [
   ['Como confirmo prediabetes?', 'pré-diabetes'],
   ['paciente com CAD e pH 7,1: quando comeco a insulina?', 'cetoacidose'],
   ['maratonista com diabetes tipo 1: alvo de glicose antes do treino', 'exerc'],
+  // ⚠️ EM OBESIDADE A CHEGADA NÃO DISCRIMINA MAIS, e por isso estas vieram para
+  // cá. A área passou a 338k contra teto de 120k e o bloco nutricional sozinho
+  // ocupa 62k: qualquer pergunta que o eleja recebe um texto que contém TODAS as
+  // palavras de dieta, então "o bloco contém a palavra" volta verdadeiro mesmo
+  // quando a escolha foi por acaso. Medido: 18 perguntas de nutrição devolviam
+  // 113 265 chars — o MESMO número nas 18. O que ainda discrimina é a ORDEM.
+  ['posso indicar jejum intermitente?', 'tratamento nutricional'],
+  ['adocante aspartame faz mal?', 'tratamento nutricional'],
+  ['whey protein emagrece?', 'tratamento nutricional'],
+  ['dieta cetogenica no diabetes tipo 1 e segura?', 'tratamento nutricional'],
+  // A contraprova do mesmo teto: dentro de Obesidade, a cirurgia tem de vencer
+  // o bloco nutricional — senão a promoção de `cirurgia bariatrica` só trocou
+  // um sequestro por outro, agora dentro da própria área.
+  ['indico cirurgia bariatrica para IMC 38 com diabetes tipo 2?', 'cirurgia bariátrica'],
+  // ⚠️ O ARTIGO INTEIRO DE DUMPING NÃO CHEGAVA À PERGUNTA QUE DIZ "DUMPING"
+  // (08/08/2026). O bloco tem 78 ocorrências da palavra e tema de 129 chars —
+  // "Síndrome de dumping após cirurgia gástrica…" — e perdia para dois blocos de
+  // tema-lista (1.804 e 2.466 chars) que pontuavam +3 em `apos`, `anos` e
+  // `dois`. Chegavam 6 menções de dumping em vez de 85. Duas causas somadas:
+  // palavra de pergunta valendo 3 pontos, e empate desfeito pela ordem do
+  // montador em vez de pela especificidade do tema.
+  ['dumping tardio dois anos apos bypass: como investigo?', 'dumping'],
 ];
 
 for (const [pergunta, esperado] of PRIMEIRO) {

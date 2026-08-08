@@ -5,6 +5,212 @@ atualizado: 2026-08-08
 
 # Convenções de Trabalho
 
+## 🔢 CONTAR OCORRÊNCIA NÃO É MEDIR CONTEÚDO (2026-08-08)
+
+A regra que venho aplicando o dia inteiro — **"onde está o conteúdo é"**, nascida
+da correção da exenatida — quase me fez estragar uma decisão certa. Ela precisa
+de uma ressalva, e a ressalva custou uma leitura.
+
+Fiz a varredura ESPELHO da anterior: em vez de "que conteúdo não tem rota?",
+perguntei **"que rota aponta para área que não tem o termo?"**. Saiu, entre
+outros:
+
+```
+alca fechada  -> Diabetes   mas o conteúdo está em: Endocrinologia do Esporte:6
+```
+
+Seis ocorrências lá, ZERO no bloco que Diabetes entrega. Pela regra do conteúdo,
+mudança óbvia — e o cofre ainda registra `alça fechada` como "o mais grave" dos
+buracos consertados, o que tornava tentador achar que eu o tinha consertado para
+o lado errado.
+
+**Fui ler as seis ocorrências. Todas são cláusula de EXCLUSÃO:**
+
+> "⚠️ LIMITE DE APLICAÇÃO: todas as recomendações de alvo glicêmico e de
+> carboidrato deste consenso **NÃO se aplicam a sistemas híbridos de alça
+> fechada**."
+
+O artigo de exercício não ensina nada sobre alça fechada — ele repete cinco
+vezes que as tabelas dele **não valem** para quem a usa. Mandar a pergunta para
+lá entregaria um bloco que menciona o assunto só para dizer "isto não é para
+você". Diabetes não tem a expressão, mas tem o conteúdo vizinho que serve (CSII,
+incrementos de 0,025 U/h, bomba aumentada por sensor) e o núcleo carrega a
+recomendação da ADA 2026. **A decisão antiga estava certa.**
+
+**A ressalva, então:** frequência é uma PISTA de onde está o conteúdo, não uma
+medida dele. Antes de mover uma chave por contagem, leia as ocorrências —
+menção pode ser negação, ressalva, referência bibliográfica ou nome de estudo.
+Guardei o raciocínio como comentário na própria linha da bateria, porque a
+próxima varredura vai reencontrar exatamente esta contagem e sentir a mesma
+tentação.
+
+**Achado de acervo que saiu disso:** a base **não tem conteúdo substantivo de
+alça fechada / AID em lugar nenhum**. O núcleo diz que é o método preferido no
+DM1; a camada profunda tem CSII e bomba aumentada por sensor, que é uma geração
+anterior. Falta artigo — é material do professor, não conserto de código.
+
+### Dois outros "achados" da mesma varredura que NÃO eram achados
+
+- **`hipogonadismo` → Endocrinologia Masculina devolve 0 caracteres**, com 20
+  ocorrências em Neuroendocrinologia. É correto: aquelas 20 são hipogonadismo
+  CENTRAL por prolactinoma/hipopituitarismo, e mandar "reponho testosterona?"
+  para o artigo da hipófise é **trocar buraco por erro** — a mesma decisão já
+  registrada para `células germinativas`. O núcleo tem o posicionamento
+  SBEM-SBU-ABEMSS, então a pergunta é respondida de lá.
+- **Chaves de nome de área, marca e grafia variante** (`osteometabolismo`,
+  `mounjaro`, `craniofaringeoma` com "e") aparecem na lista por construção: elas
+  existem justamente para casar o que o TEXTO não escreve. Ruído da medida, não
+  defeito.
+
+## 🔦 INVERTER A PERGUNTA DA VARREDURA — "que conteúdo NENHUMA pergunta alcança?" (2026-08-08)
+
+Duas varreduras no mesmo dia, e a segunda rendeu dez vezes mais que a primeira
+porque a pergunta era outra.
+
+**A primeira** foi bloco a bloco: uma sonda escrita à mão por bloco, medindo se
+ele chega. Custou caro em atenção e achou **um** defeito.
+
+**A segunda** foi ao contrário e é mecânica: listar os termos **distintivos** de
+cada área — os que concentram ≥85% das ocorrências numa área só, com frequência
+mínima — e perguntar quais **não têm rota nenhuma**. Deu **137**, e nove eram
+sérios, incluindo `macroprolactinoma`/`microprolactinoma` (84 ocorrências
+mudas), `nao-HDL` (44) e `triglicerides` (65).
+
+```js
+// distintivo = ≥85% das ocorrências numa área; sem rota = canonArea() vazio
+if (freq[k][dom] / tot < 0.85) continue;
+if (D.canonArea(k)) continue;      // já alcançável
+achados.push([freq[k][dom], dom, k]);
+```
+
+**Por que isto NÃO é a tautologia do `confere-alcance.js`.** Aquele script
+derivava a sonda do próprio bloco e media se o bloco vencia a si mesmo — sempre
+vencia. Este não mede vitória nenhuma: mede se **existe alguma pergunta capaz de
+alcançar** um conteúdo que já está na base. Termo com conteúdo e sem rota é
+inalcançável por definição, não por comparação.
+
+### O padrão que os achados têm em comum
+
+Quase todos são **a forma que o mapa tem × a forma que o médico digita**:
+
+| no mapa | mudo | ocorrências |
+|---|---|---|
+| `prolactinoma` | `macroprolactinoma`, `microprolactinoma` | 84 |
+| `hipertrigliceridemia` | `triglicerides` | 65 |
+| `trulicity` (marca) | `dulaglutida` (genérico) | 10 |
+| `anovulacao` | `ovulacao` | 29 |
+| `letrozol` | `clomifeno` | 19 |
+| `apneia obstrutiva do sono` | `apneia do sono` | 41 |
+| `desmielinizacao osmotica` (consequência) | `supracorrecao` (o erro) | 38 |
+
+**A regra: para cada chave do mapa, pergunte qual é a OUTRA palavra para a mesma
+coisa** — a sigla, o genérico ao lado da marca, a forma curta ao lado da
+extensa, o achado ao lado da doença, a causa ao lado da consequência. É onde os
+buracos se escondem, porque quem escreveu a chave já sabia o que queria dizer.
+
+### E uma exceção à regra do conteúdo, que precisou ser medida para existir
+
+`cgm` tem 45 ocorrências em Esporte e 14 em Diabetes. Pela regra que vale desde
+a correção da exenatida — **onde está o conteúdo é** — iria para Esporte. Pus,
+medi e **voltei**: chave de Esporte não é só um peso, é **gatilho da promoção
+condicional**. CGM é dispositivo, não esporte, e alargar o gatilho quebrou
+*"tempo no alvo no CGM: qual a meta?"* e *"CGM no diabetes tipo 2 em insulina"*,
+que foram parar em endocrinologia do esporte.
+
+**"Onde está o conteúdo" decide o DESTINO, não o TIER.** Quando a chave também é
+gatilho de regra, o gatilho manda.
+
+## 🧹 A PALAVRA DE PERGUNTA VALIA 3 PONTOS, E EXPULSOU UM ARTIGO INTEIRO (2026-08-08)
+
+Achado ao varrer, bloco a bloco, se algum conteúdo de Obesidade tinha sido
+expulso pelo teto depois de a área ganhar 84k de nutrição. Um tinha, e era o
+pior candidato possível: **o artigo de síndrome de dumping não chegava à
+pergunta que diz "dumping"**.
+
+```
+"dumping tardio dois anos após bypass: como investigo?"
+   bloco de DUMPING  (tema de   129 chars, 78 ocorrências da palavra) → 12 pts
+   bloco de CIRURGIA (tema de 1.804 chars)                            → 13 pts  ← vencia
+   bloco de NUTRIÇÃO (tema de 2.466 chars)                            → 13 pts  ← vencia
+```
+
+Chegavam **6** menções de dumping em vez de 85. A causa não é o teto: é que
+`apos`, `anos` e `dois` caem dentro de um tema longo e lá valem **+3 cada**, a
+mesma pontuação da palavra que descreve o assunto. **Tema longo é lista de
+palavras-chave, e lista de palavras-chave casa quase toda pergunta da área.**
+
+Conserto: as palavras de pergunta entraram em `VAZIAS`. `dumping` voltou de 6
+para 85 ocorrências e o bloco certo vem em primeiro.
+
+### E a metade que eu NÃO enviei, que é a lição de verdade
+
+O conserto óbvio para "tema-lista vence tema-focado" é desempatar pelo tema
+mais curto. Escrevi, passou na bateria, e **não fui em frente** — porque a
+bateria não media aquilo (a mutação do desempate passava). Antes de manter,
+rodei varredura diferencial em 25 perguntas realistas: **4 mudavam de bloco e
+DUAS ficavam piores.**
+
+- *"náusea com semaglutida"* perdia o artigo que **é** sobre eventos adversos
+  gastrintestinais dos AR GLP-1 — cujo tema é longo — para o de farmacoterapia.
+- *"hiponatremia de 118"* trocava o **algoritmo diagnóstico** pelo bloco do
+  **idoso**, estreitando a população num caso em que a idade não foi dita. É
+  exatamente o dano que a auditoria da tabela pediátrica já tinha achado.
+
+Dois melhores e dois piores não é conserto, é cara-ou-coroa — e eu estaria
+enviando um selo verde por cima. **Ficou o que mede; saiu o que empata.** Mesma
+decisão de quando apaguei o `confere-alcance.js`: peneira que não distingue não
+vira peneira só porque o número dela é bonito.
+
+**Regra: mutação que passa é ordem de investigar, não permissão de enviar.** Se
+a bateria não vê a mudança, ou eu acho o caso que a prova, ou ela não vai.
+
+## 🧪 A PERGUNTA DE TESTE CARREGAVA A RESPOSTA NO BOLSO (2026-08-08)
+
+Segunda cara do **acerto emprestado**, e esta é minha, de escrever teste. A
+primeira (abaixo) era empate desfeito por ordem arbitrária. Esta é pior porque
+parece rigor: eu tinha acabado de acrescentar 24 termos de nutrição ao roteador
+e escrevi 15 perguntas novas para medi-los. Todas passaram. Rodei a mutação —
+tirar o termo e exigir que a bateria reprove — e **seis passaram com o conserto
+desfeito**.
+
+O motivo é banal e por isso perigoso:
+
+```
+['jejum intermitente funciona para emagrecer?', 'Obesidade']   ← `emagrecer` já roteava
+['dieta low carb na obesidade',                'Obesidade']   ← `obesidade` já roteava
+['escore-Z do IMC na crianca',                 'Obesidade']   ← `imc` já roteava
+['adocante aspartame faz mal?',                'Obesidade']   ← `adocante` cobria `aspartame`
+```
+
+A pergunta continha uma chave **antiga** que sozinha dava o destino certo. O
+teste media o mapa de ontem e dizia "verde" sobre o de hoje. Note que a última
+é a mais traiçoeira: `adocante` e `aspartame` eram **as duas novas**, e mesmo
+assim a genérica escondia a nomeada — dentro do próprio lote recém-escrito.
+
+**A regra que ficou: pergunta de teste de roteamento não pode conter nenhum
+termo que já roteasse para o destino esperado.** A forma de conferir é
+mecânica e leva 30 segundos — `git stash` no arquivo do roteador, rodar as
+perguntas novas contra a árvore antiga, e toda que já devolver o destino certo
+está emprestada:
+
+```
+git stash push lib/clinical-deep.js -q
+node -e "…canonArea(p)…"   # quem já acerta aqui NÃO mede nada
+git stash pop -q
+```
+
+Depois disso as perguntas viraram `posso indicar jejum intermitente?`,
+`dieta low carb tem risco?`, `escore-Z de 2,5 na crianca`,
+`aspartame causa cancer?` — todas devolviam `(vazio)` antes do conserto, e
+todas reprovam quando a chave sai. **Doze mutações, uma chave por vez, doze
+reprovações.**
+
+Corolário que já vale para a próxima vez: **mutação em lote mente.** Mutei
+`cetogenica` e `dieta cetogenica` juntas e a bateria reprovou, o que me deixaria
+satisfeita — mas era a frase longa segurando tudo. Só ao mutar a curta sozinha
+apareceu que ela não tinha nenhuma pergunta própria. É a mesma lição da fronteira
+de palavra, logo abaixo: **mutação incompleta parece mutação.**
+
 ## 🔤 A SIGLA NUNCA PONTUAVA, E O BLOCO CERTO VINHA POR ACASO (2026-08-08)
 
 Achado ao investigar uma regressão que eu mesma causei. `deepFor` filtra os
