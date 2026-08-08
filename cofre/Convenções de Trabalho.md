@@ -5,6 +5,29 @@ atualizado: 2026-08-08
 
 # Convenções de Trabalho
 
+## 🆔 O fileId DO DRIVE TEM 33 CARACTERES — não corte ao montar briefing (2026-08-08)
+
+Passei `1aTQRBGfXP56X1QlWEPb` (20 chars) no briefing de extração; o real é
+`1aTQRBGfXP56X1QlWEPb8M5VFmD-ZTcrX`. O agente não conseguiu baixar do Drive,
+achou o completo em `fila-extracao.json` e seguiu — mas gastou rodadas nisso, e
+se tivesse "consertado" adivinhando teria baixado outro artigo.
+
+`verifica-extracao.js` resolve o texto por `ext.fileId`, então o ID errado
+quebraria a verificação depois. **Copie o ID de `fila-extracao.json` ou do
+`manifest.json`, sempre inteiro.**
+
+## 🛑 O GERADOR RECUSA EXTRATO VAZIO, E ISSO ME SALVOU (2026-08-08)
+
+Rodei `monta-base-profunda.js` com um agente de extração ainda no meio do
+trabalho. Ele tinha criado o arquivo do extrato com **0 fatos**, e o gerador
+reprovou: *"extrato sem nenhum fato · A verificação REPROVOU — nada será
+gerado."*
+
+Sem essa recusa eu teria assado na base um artigo vazio e publicado o resultado
+como se estivesse completo. **Regra: com agente de extração rodando, remontar a
+base só depois da notificação de término** — arquivo que já existe no disco não
+quer dizer trabalho terminado.
+
 ## 📏 CONDIÇÃO DE COLETA: A REGRA GANHOU GUARDA, E A GUARDA SÓ FICOU BOA NA 3ª TENTATIVA (2026-08-08)
 
 A regra estava no cofre e não tinha nenhuma verificação:
