@@ -364,6 +364,14 @@ const PRIMEIRO = [
   // o bloco nutricional — senão a promoção de `cirurgia bariatrica` só trocou
   // um sequestro por outro, agora dentro da própria área.
   ['indico cirurgia bariatrica para IMC 38 com diabetes tipo 2?', 'cirurgia bariátrica'],
+  // ⚠️ O ARTIGO INTEIRO DE DUMPING NÃO CHEGAVA À PERGUNTA QUE DIZ "DUMPING"
+  // (08/08/2026). O bloco tem 78 ocorrências da palavra e tema de 129 chars —
+  // "Síndrome de dumping após cirurgia gástrica…" — e perdia para dois blocos de
+  // tema-lista (1.804 e 2.466 chars) que pontuavam +3 em `apos`, `anos` e
+  // `dois`. Chegavam 6 menções de dumping em vez de 85. Duas causas somadas:
+  // palavra de pergunta valendo 3 pontos, e empate desfeito pela ordem do
+  // montador em vez de pela especificidade do tema.
+  ['dumping tardio dois anos apos bypass: como investigo?', 'dumping'],
 ];
 
 for (const [pergunta, esperado] of PRIMEIRO) {

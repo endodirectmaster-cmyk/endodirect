@@ -5,6 +5,50 @@ atualizado: 2026-08-08
 
 # Convenções de Trabalho
 
+## 🧹 A PALAVRA DE PERGUNTA VALIA 3 PONTOS, E EXPULSOU UM ARTIGO INTEIRO (2026-08-08)
+
+Achado ao varrer, bloco a bloco, se algum conteúdo de Obesidade tinha sido
+expulso pelo teto depois de a área ganhar 84k de nutrição. Um tinha, e era o
+pior candidato possível: **o artigo de síndrome de dumping não chegava à
+pergunta que diz "dumping"**.
+
+```
+"dumping tardio dois anos após bypass: como investigo?"
+   bloco de DUMPING  (tema de   129 chars, 78 ocorrências da palavra) → 12 pts
+   bloco de CIRURGIA (tema de 1.804 chars)                            → 13 pts  ← vencia
+   bloco de NUTRIÇÃO (tema de 2.466 chars)                            → 13 pts  ← vencia
+```
+
+Chegavam **6** menções de dumping em vez de 85. A causa não é o teto: é que
+`apos`, `anos` e `dois` caem dentro de um tema longo e lá valem **+3 cada**, a
+mesma pontuação da palavra que descreve o assunto. **Tema longo é lista de
+palavras-chave, e lista de palavras-chave casa quase toda pergunta da área.**
+
+Conserto: as palavras de pergunta entraram em `VAZIAS`. `dumping` voltou de 6
+para 85 ocorrências e o bloco certo vem em primeiro.
+
+### E a metade que eu NÃO enviei, que é a lição de verdade
+
+O conserto óbvio para "tema-lista vence tema-focado" é desempatar pelo tema
+mais curto. Escrevi, passou na bateria, e **não fui em frente** — porque a
+bateria não media aquilo (a mutação do desempate passava). Antes de manter,
+rodei varredura diferencial em 25 perguntas realistas: **4 mudavam de bloco e
+DUAS ficavam piores.**
+
+- *"náusea com semaglutida"* perdia o artigo que **é** sobre eventos adversos
+  gastrintestinais dos AR GLP-1 — cujo tema é longo — para o de farmacoterapia.
+- *"hiponatremia de 118"* trocava o **algoritmo diagnóstico** pelo bloco do
+  **idoso**, estreitando a população num caso em que a idade não foi dita. É
+  exatamente o dano que a auditoria da tabela pediátrica já tinha achado.
+
+Dois melhores e dois piores não é conserto, é cara-ou-coroa — e eu estaria
+enviando um selo verde por cima. **Ficou o que mede; saiu o que empata.** Mesma
+decisão de quando apaguei o `confere-alcance.js`: peneira que não distingue não
+vira peneira só porque o número dela é bonito.
+
+**Regra: mutação que passa é ordem de investigar, não permissão de enviar.** Se
+a bateria não vê a mudança, ou eu acho o caso que a prova, ou ela não vai.
+
 ## 🧪 A PERGUNTA DE TESTE CARREGAVA A RESPOSTA NO BOLSO (2026-08-08)
 
 Segunda cara do **acerto emprestado**, e esta é minha, de escrever teste. A
