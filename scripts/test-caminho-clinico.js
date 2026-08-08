@@ -96,6 +96,27 @@ const CAMINHO = [
   ['remissao parcial da acromegalia apos cirurgia', 'Neuroendocrinologia'],
   ['alca fechada durante o exercicio no DM1', 'Endocrinologia do Esporte'],
 
+  // ⚠️ ERRO DE ROTA, não buraco: `diabetes insipidus` casava só em `diabetes`
+  // (substring do CANON) e ia para DIABETES MELLITUS. Poliúria, sede e sódio
+  // respondidos com o bloco de glicemia — e com toda a confiança do mundo.
+  ['diabetes insipidus com poliuria e sodio 150', 'Neuroendocrinologia'],
+  ['diabetes insipido apos cirurgia de hipofise', 'Neuroendocrinologia'],
+  ['diabetes tipo 2 descompensado', 'Diabetes'],
+
+  // A classe dos inibidores de PCSK9 estava fora do mapa, com 46 ocorrências na
+  // Diretriz de Dislipidemias — mesmo padrão dos iSGLT2.
+  ['inibidor de PCSK9 no LDL residual', 'Lípides'],
+  ['evolocumabe apos infarto', 'Lípides'],
+  ['sindrome da quilomicronemia familiar e pancreatite', 'Lípides'],
+
+  // Amiodarona × estatina: o trade está documentado em `lib/clinical-deep.js`.
+  // O nome da estatina protege a pergunta do TETO DE DOSE, que é segurança de
+  // prescrição; a forma genérica "amiodarona e estatina" é limite aceito.
+  ['paciente em amiodarona ha 6 meses com palpitacoes e perda de peso', 'Tireoide'],
+  ['sinvastatina com amiodarona: qual a dose maxima?', 'Lípides'],
+  ['atorvastatina em paciente com hipotireoidismo', 'Tireoide'],
+  ['adrenalectomia unilateral no hiperaldosteronismo', 'Adrenal'],
+
   // Sentinelas de outras áreas — o achado glicêmico não pode sequestrá-las.
   ['hiperglicemia em paciente com acromegalia', 'Neuroendocrinologia'],
   ['obeso em insulina: indico cirurgia bariatrica?', 'Obesidade'],
