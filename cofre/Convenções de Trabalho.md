@@ -5,6 +5,53 @@ atualizado: 2026-08-08
 
 # Convenções de Trabalho
 
+## 🔤 A SIGLA NUNCA PONTUAVA, E O BLOCO CERTO VINHA POR ACASO (2026-08-08)
+
+Achado ao investigar uma regressão que eu mesma causei. `deepFor` filtra os
+termos da pergunta por `length >= 4` — para tirar "com", "de", "em". Só que isso
+derrubava junto **as siglas que decidem a pergunta**: `EHH`, `CAD`, `SOP`,
+`PTH`, `GH`, `T4`.
+
+Medido: *"EHH em idoso com glicemia 900"* pontuava só em `idoso` e `glicemia`.
+**Quatro blocos empatavam em 4 pontos** e o desempate era a ordem de autoridade
+do montador — o bloco certo vinha em primeiro **por acaso**, e parou de vir
+assim que outro bloco entrou na frente dele na ordem.
+
+Ou seja: o teste que eu tinha escrito para o EHH passava por coincidência, não
+por acerto. **Empate desfeito por ordem arbitrária é acerto emprestado.**
+
+### O conserto tem DUAS metades, e a segunda eu aprendi quebrando
+
+1. **Token curto passa quando é termo clínico conhecido** (está em `TERMOS` ou
+   `CANON`). Palavra que o mapa reconhece nunca é ruído, tenha o tamanho que
+   tiver — e ruído genérico de 3 letras continua fora, porque não está no mapa.
+2. **Sigla precisa de FRONTEIRA DE PALAVRA.** Ao deixar `CAD` pontuar, o
+   casamento por substring passou a achar `cad` dentro de *"cadeia"*, *"década"*
+   e *"aplicador"* — e *"paciente com CAD e pH 7,1"* devolveu o bloco de **DM1**
+   em primeiro. Token de 3 letras num texto de 40 mil casa em quase tudo.
+
+Conferido por mutação, uma de cada vez: desfazer (1) reprova; desfazer (2)
+**sozinha não reprovava** — porque eu tinha mutado só a busca no texto e deixado
+a fronteira no `tema`. Mutação incompleta é mutação que mente. Refeita nos dois
+lugares, reprova.
+
+## 🔀 UM EXTRATO PODE ALIMENTAR DUAS ÁREAS (2026-08-08)
+
+A regra "o fármaco cede para a doença nomeada" está certa e é testada — mas
+Obesidade guardava o **único** bloco da base sobre evento gastrintestinal de AR
+GLP-1, e **7 das 9 linhas da tabela do artigo são de pacientes com DM2**. Medido:
+*"DM2 em semaglutida com vômito, reduzo a dose?"* canoniza para Diabetes e o
+bloco **não chegava**.
+
+Dava para remendar com composto (`nausea com glp-1` → Obesidade), mas seria
+mentira sobre a natureza do assunto: evento gastrintestinal de incretina
+acontece nas duas populações. O campo `area` passou a aceitar **lista**.
+
+⚠️ **Não é de graça:** o bloco entra inteiro nas duas áreas e ambas têm teto de
+120k. Diabetes foi de 234k para 284k. Declare duas áreas só quando a pergunta
+REAL chega pelas duas — e rode a bateria depois, porque foi exatamente essa
+duplicação que expôs o defeito da sigla acima.
+
 ## 🔢 UM CAMPO, UM SIGNIFICADO — e o "100% auditado" que era 93% (2026-08-08)
 
 O professor perguntou "% de extração?" e eu dei **três números seguidos, dois

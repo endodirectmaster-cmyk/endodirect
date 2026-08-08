@@ -69,6 +69,34 @@ function canonizar(area) {
   return canonArea(area);
 }
 
+// ⚠️ UM EXTRATO PODE ALIMENTAR MAIS DE UMA ÁREA (08/08/2026).
+//
+// Achado pela auditoria dos eventos gastrintestinais dos AR GLP-1, e ele expõe
+// uma tensão real da arquitetura. A regra "o fármaco cede para a doença nomeada"
+// está certa e é testada — mas Obesidade guardava o ÚNICO bloco da base sobre
+// evento gastrintestinal de AR GLP-1, e **7 das 9 linhas da tabela do artigo são
+// de pacientes com DM2**. Medido: "DM2 em semaglutida com vômito, reduzo a
+// dose?" canoniza para Diabetes e o bloco NÃO CHEGA.
+//
+// Podia-se remendar com composto (`nausea com glp-1` → Obesidade), mas seria
+// mentira sobre a natureza do assunto: evento gastrintestinal de incretina
+// acontece nas duas populações e o artigo trata das duas. O campo `area` aceitar
+// lista é o conserto honesto — e é conservador, porque só vale para o extrato
+// que declarar isso explicitamente.
+//
+// ⚠️ NÃO É DE GRAÇA: o bloco entra inteiro nas duas áreas e ambas têm teto de
+// 120k. Duplicar um extrato grande empurra os últimos blocos da área para fora.
+// Declare duas áreas só quando a pergunta REAL chega pelas duas.
+function areasDoExtrato(e) {
+  const bruto = Array.isArray(e.area) ? e.area : String(e.area || '').split(/\s*[;|]\s*/);
+  const vistas = [];
+  for (const a of bruto) {
+    const c = canonizar(a);
+    if (c && vistas.indexOf(c) < 0) vistas.push(c);
+  }
+  return vistas;
+}
+
 function main() {
   // ── etapa 3: a verificação é PRÉ-REQUISITO, não opcional ──────────────────
   try {
@@ -120,8 +148,8 @@ function main() {
   const semDirecao = [];
   for (const arq of arquivos) {
     const e = JSON.parse(fs.readFileSync(path.join(DIR_EXTRATOS, arq), 'utf8'));
-    const canon = canonizar(e.area || '');
-    if (!canon) { semArea.push(`${arq} (area=${JSON.stringify(e.area)})`); continue; }
+    const areas = areasDoExtrato(e);
+    if (!areas.length) { semArea.push(`${arq} (area=${JSON.stringify(e.area)})`); continue; }
     const fatos = (Array.isArray(e.fatos) ? e.fatos : []).map((f) => String(f.afirmacao || '').trim()).filter(Boolean);
     if (!fatos.length) continue;
     // ⚠️ A RESSALVA VAI NA FRENTE, e isso é deliberado.
@@ -196,7 +224,7 @@ function main() {
         _fatos: g.fatos.length
       }))
       : [{ tema: temaBase, texto: texto, _fatos: fatos.length }];
-    for (const b of blocos) {
+    for (const canon of areas) for (const b of blocos) {
       (porArea[canon] = porArea[canon] || []).push({
         tema: b.tema,
         fonte: String(e.fonte || '').trim(),
