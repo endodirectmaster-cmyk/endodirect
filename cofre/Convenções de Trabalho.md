@@ -5,6 +5,30 @@ atualizado: 2026-08-08
 
 # Convenções de Trabalho
 
+## 🕳️ O FATO QUE DECLARA A PRÓPRIA CEGUEIRA (2026-08-08)
+
+O artigo de eventos gastrintestinais dos AR GLP-1 é de dez/2022 e **não trata**
+de jejum pré-operatório, risco de aspiração nem gastroparesia estabelecida —
+justamente a pergunta em que mais se erra hoje (a orientação da ASA é de
+jun/2023, posterior).
+
+O extrator fez duas coisas certas, e a segunda não estava no briefing:
+
+1. **Não pôs esses termos no `tema`**, para o bloco não ser escolhido nessas
+   perguntas;
+2. **gravou um fato que declara o limite de escopo** — *"FORA desse escopo
+   declarado … este documento não traz nenhuma recomendação, e não deve ser
+   usado como…"*.
+
+O (1) sozinho não bastaria: a pergunta chega a Obesidade por outras palavras, e
+o bloco vem junto de qualquer jeito. Com o (2), a IA recebe **a declaração
+explícita de que a fonte não sabe** — que é a única defesa contra confabular
+quando o bloco é recuperado fora do escopo dele.
+
+**Regra: quando um artigo é notoriamente omisso num ponto vizinho e perigoso,
+grave um fato dizendo isso.** Silêncio parece cobertura; declaração de silêncio
+é cobertura de verdade.
+
 ## 🆔 O fileId DO DRIVE TEM 33 CARACTERES — não corte ao montar briefing (2026-08-08)
 
 Passei `1aTQRBGfXP56X1QlWEPb` (20 chars) no briefing de extração; o real é
