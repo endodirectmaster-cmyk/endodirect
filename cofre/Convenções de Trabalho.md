@@ -5,6 +5,37 @@ atualizado: 2026-08-08
 
 # Convenções de Trabalho
 
+## 🚫 A PENEIRA DE ALCANCE QUE EU TENTEI ESCREVER NÃO PODE EXISTIR (2026-08-08)
+
+Quatro áreas passam do teto de 120k (Diabetes 234k, Endocrinopatias 170k,
+Lípides 150k, Neuroendocrinologia 137k) e nelas **bloco não escolhido é bloco
+que não existe**. Quis automatizar a conferência: para cada bloco, montar uma
+pergunta e ver se ele volta.
+
+**Escrevi duas versões e as duas passavam com teto de 20 000**, o que é
+impossível se estivessem medindo alguma coisa.
+
+O motivo é estrutural: `deepFor` dá **prioridade absoluta ao bloco mais
+relevante** e o CORTA em vez de pulá-lo. Qualquer sonda que eu derive *do
+próprio bloco* — do `tema` ou do vocabulário exclusivo do texto — torna aquele
+bloco o mais relevante, e ele sempre volta. A medição é tautológica.
+
+O caso real é o oposto: o EHH sumiu porque a pergunta usava uma sigla que **não
+está no bloco**, e as palavras que ela tinha ("idoso", "glicemia") casavam
+melhor com os irmãos. Detectar isso exige saber que médico escreve "EHH" para
+"estado hiperglicêmico hiperosmolar" — **conhecimento de domínio, não extraível
+do texto por máquina.**
+
+**Apaguei o script em vez de versionar um selo verde que mede tautologia.** O
+que protege de verdade é a bateria escrita à mão em
+`scripts/test-caminho-clinico.js`, com a sigla e a grafia que o médico usa. Foi
+ela que achou, na mesma sessão, `Lp(a)` sem rota com **45 ocorrências** na base
+— `lipoproteina(a)` roteava, mas ninguém digita isso.
+
+**Regra: automatize a peneira quando a máquina souber o que procurar. Quando o
+sinal é vocabulário humano, a bateria é escrita à mão, e isso não é preguiça —
+é a única coisa que funciona.**
+
 ## 📡 O RELATO DO AGENTE ERRA PARA OS DOIS LADOS (2026-08-08)
 
 Já estava registrado que agente exagera achado. Hoje apareceu o **oposto**, que
