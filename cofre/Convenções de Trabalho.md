@@ -5,6 +5,37 @@ atualizado: 2026-08-07
 
 # Convenções de Trabalho
 
+## 🔋 FORÇA MÁXIMA COM FREIO EM 90% — e por que lote grande demais é DESPERDÍCIO (2026-08-08)
+
+Regra do professor, válida **até o fim da extração/auditoria**: rodar a todo vapor
+e **recuar ao chegar perto de 90% do consumo**, retomando quando a janela resetar.
+
+E a lição de como isso deu errado na primeira tentativa: lancei **8 agentes de uma
+vez**, o limite de 5 horas estourou no meio, e **4 morreram com o trabalho pela
+metade**. Agente morto não devolve nada — os tokens que ele gastou viram zero.
+
+**Lote grande demais não é força máxima, é desperdício máximo.** A força está no
+trabalho CONCLUÍDO, e um lote só é bom se couber inteiro no orçamento restante.
+Melhor 5 que terminam do que 8 que morrem aos 60%.
+
+**O que salvou o que dava para salvar** foi a convenção da pasta isolada
+`scratchpad/acervo/trabalho/<fileId>/`:
+
+- os **9 textos-fonte já baixados** sobreviveram — e o download do Drive + extração
+  do PDF é a parte cara e lenta;
+- **2 extratos parciais** (118 e 116 fatos) sobreviveram **conferidos, 0
+  reprovados**, e um agente novo pôde CONTINUAR em vez de recomeçar.
+
+**Ao relançar depois de uma queda por limite:** antes de disparar, rode um
+inventário das pastas de trabalho (texto presente? extrato parcial? quantos
+fatos?) e mande o agente **continuar**, não recomeçar. O prompt tem de dizer, com
+todas as letras, "NÃO apague o que está lá, ACRESCENTE" e "o texto já está
+baixado, não vá ao Drive".
+
+**Ordem de prioridade ao escolher o lote:** primeiro os que têm trabalho parcial
+salvo (o token já gasto se aproveita), depois os que têm o texto baixado, e só
+então os que começam do zero.
+
 ## 📚 A CITAÇÃO NÃO É MAIS PUBLICADA — e continua sendo a prova (2026-08-08)
 
 Duas exigências certas, juntas, produziram uma terceira coisa que nenhuma das
