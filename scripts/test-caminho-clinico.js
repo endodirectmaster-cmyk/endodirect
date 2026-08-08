@@ -440,6 +440,39 @@ const CAMINHO = [
   // inofensivo. Se alguém a acrescentar, esta reprova.
   ['perda de peso involuntaria com TSH suprimido', 'Tireoide'],
 
+  // ⚠️ TIREOIDE ERA A ÁREA MAIS COMUM COM A COBERTURA MAIS RARA: dois artigos, os
+  // dois de quadro raro (doente eutireoidiano e tempestade). Entraram
+  // hipertireoidismo (Lancet 2023) e efeitos de fármacos (NEJM 2019).
+  // Sem `metimazol`/`tsh`/`tireotoxicose`/`tireoidite` nas quatro abaixo: as
+  // primeiras versões tinham, e passavam com o conserto desfeito.
+  ['agranulocitose: quando suspeitar?', 'Tireoide'],
+  // Separadas: juntas na mesma frase, `ptu` carregava `carbimazol`.
+  ['carbimazol: qual a dose inicial?', 'Tireoide'],
+  ['PTU no primeiro trimestre', 'Tireoide'],
+  ['captacao de 24 horas baixa', 'Tireoide'],
+  ['adenoma toxico: radioiodo ou cirurgia?', 'Tireoide'],
+  ['propranolol na tempestade tireoidiana', 'Tireoide'],
+  // ⚠️ `biotina` é o ARTEFATO QUE IMITA GRAVES — TSH falsamente baixo, T4 livre
+  // falsamente alto e TRAb falso-positivo. O NEJM registra que os testes
+  // "exactly mimicked the biochemical findings of Graves' disease". Sem rota,
+  // trata-se hipertireoidismo que não existe.
+  ['paciente em uso de biotina: os exames sao confiaveis?', 'Tireoide'],
+  ['inibidor de checkpoint: qual disfuncao endocrina?', 'Tireoide'],
+  // ...e a sentinela do outro lado do checkpoint, que é de outra área:
+  ['hipofisite por checkpoint', 'Neuroendocrinologia'],
+  // ⚠️ `litio` FOI PARA TIREOIDE POR MEDIÇÃO: 26 ocorrências na base profunda,
+  // TODAS em Tireoide. A linha seguinte parece errada e NÃO É — eu esperava
+  // Osteometabolismo e medi o contrário: `hipercalcemia` tem 1 ocorrência em
+  // Osteometabolismo, 1 em Adrenal e 2 em Tireoide, ou seja, A BASE PROFUNDA NÃO
+  // RESPONDE HIPERCALCEMIA. Quem responde é o núcleo, que traz o diferencial
+  // inteiro. Mandar para Osteometabolismo entregaria um bloco de hipofosfatasia
+  // e osteogênese imperfeita — as duas doenças RARAS que são todo o acervo da
+  // área. Enquanto não houver artigo de hiperparatireoidismo, Tireoide ao menos
+  // entrega o lítio. Esta linha é um MARCADOR DE BURACO DE ACERVO: quando entrar
+  // artigo de hipercalcemia, ela deve mudar para Osteometabolismo.
+  ['litio causa bocio?', 'Tireoide'],
+  ['litio no diferencial de hipercalcemia', 'Tireoide'],
+
   // Sentinelas de outras áreas — o achado glicêmico não pode sequestrá-las.
   ['hiperglicemia em paciente com acromegalia', 'Neuroendocrinologia'],
   ['obeso em insulina: indico cirurgia bariatrica?', 'Obesidade'],
