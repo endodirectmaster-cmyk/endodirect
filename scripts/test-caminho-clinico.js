@@ -128,6 +128,23 @@ const CAMINHO = [
   ['adenoma adrenal com secrecao autonoma de cortisol', 'Adrenal'],
   ['SHBG na sindrome dos ovarios policisticos', 'Endocrinologia Feminina'],
 
+  // ⚠️ ERRO DE ROTA COM CONSEQUÊNCIA CLÍNICA. `obesidade hipotalamica` casava em
+  // `obesidade` (CANON) e entregava a diretriz de obesidade COMUM — estilo de
+  // vida primeiro — exatamente onde os dois artigos de craniofaringioma dizem
+  // que isso não funciona. "Criança com síndrome hipotalâmica e hiperfagia"
+  // devolvia ZERO.
+  ['obesidade hipotalamica', 'Neuroendocrinologia'],
+  ['Adolescente com obesidade hipotalamica apos cirurgia de tumor selar', 'Neuroendocrinologia'],
+  ['Crianca com sindrome hipotalamica e hiperfagia grave', 'Neuroendocrinologia'],
+  ['craniofaringeoma em adulto', 'Neuroendocrinologia'],
+  ['craniofaringioma adamantinomatoso na infancia', 'Neuroendocrinologia'],
+  // …e as sentinelas que impediram `papilifero` e `braf` de entrarem soltos: os
+  // dois são marcadores do carcinoma PAPILÍFERO DE TIREOIDE, muito mais comum.
+  ['carcinoma papilifero de tireoide com mutacao BRAF', 'Tireoide'],
+  ['nodulo tireoidiano Bethesda V com BRAF positivo', 'Tireoide'],
+  ['obesidade grau III: indico bariatrica?', 'Obesidade'],
+  ['reganho de peso apos sleeve', 'Obesidade'],
+
   // Sentinelas de outras áreas — o achado glicêmico não pode sequestrá-las.
   ['hiperglicemia em paciente com acromegalia', 'Neuroendocrinologia'],
   ['obeso em insulina: indico cirurgia bariatrica?', 'Obesidade'],
