@@ -389,6 +389,57 @@ const CAMINHO = [
   ['mialgia na insuficiencia adrenal', 'Adrenal'],
   ['miopatia por hipotireoidismo', 'Tireoide'],
 
+  // ⚠️ ERRO DE ROTA QUE EU MESMA CRIEI HOJE, achado pelo auditor da DHGNA. Pus
+  // `pos-transplante` em Diabetes junto com `ptdm`, e como DOENÇA (3015) ele
+  // passou a vencer `nash`(3004): "NASH pós-transplante hepático" ia para
+  // Diabetes e os 7 fatos de esteato-hepatite no enxerto ficavam inalcançáveis.
+  // Medido: `pos-transplante` está DIVIDIDO (Obesidade 8, Diabetes 7) — não é
+  // chave de uma área só. Virou ACHADO; as duas rotas abaixo guardam os dois
+  // lados, e `ptdm`(68 ocorrências) segura o lado diabetológico sozinho.
+  ['NASH pos-transplante hepatico', 'Obesidade'],
+  ['esteato-hepatite recorrente apos transplante hepatico', 'Obesidade'],
+  ['diabetes pos-transplante com tacrolimo', 'Diabetes'],
+  // Vocabulário hepático que o auditor achou mudo, cada termo medido antes:
+  // Sem "DHGNA" na frase: ela já roteava sozinha e carregava o teste.
+  ['carcinoma hepatocelular: quando rastrear?', 'Obesidade'],
+  ['fibrose avancada: encaminho?', 'Obesidade'],
+  ['LSM de 11 kPa', 'Obesidade'],
+  ['enzimas hepaticas elevadas', 'Obesidade'],
+  // ...e a sentinela que impede `enzimas hepaticas` de roubar a estatina:
+  ['enzimas hepaticas em uso de estatina', 'Lípides'],
+  // ⚠️ `cirrose` FICOU FORA DO MAPA e estas duas guardam a decisão. O conteúdo
+  // está EMPATADO (Endocrinopatias 25 x Obesidade 24) e, mesmo com peso de
+  // achado, `cirrose`(7 chars) vence `sodio`(5) por comprimento — mandando a
+  // hiponatremia da cirrose para Obesidade. Fora do mapa, quem decide é o resto
+  // da frase e as DUAS acertam. Termo empatado é melhor mudo que árbitro.
+  ['cirrose com sodio de 120', 'Endocrinopatias'],
+  ['cirrose na esteatose hepatica', 'Obesidade'],
+  // ⚠️ `ct1` ficou de fora: 9 ocorrências em Obesidade, mas "cT1" é o estádio
+  // T1 clínico do TNM e a chave de 3 letras casaria estadiamento oncológico.
+  ['estadiamento cT1 do carcinoma de tireoide', 'Tireoide'],
+
+  // ⚠️ `efedrina` REVERTE UMA EXCLUSÃO MINHA DE HOJE DE MANHÃ. Eu a deixara fora
+  // por aparecer em três áreas (Obesidade 5, Neuroendocrino 1, Tireoide 1). A
+  // exclusão custou caro: "efedrina para perda de peso" devolvia NENHUMA área, e
+  // o fato 81 da ABESO é o ÚNICO lugar da base que registra que ela aumenta 2 a
+  // 3,5× o risco de eventos psiquiátricos, gastrintestinais e cardíacos
+  // INCLUINDO AVC. Buraco em fato de SEGURANÇA é pior que impureza de rota.
+  // A segunda linha guarda a outra ponta: com doença nomeada, ela cede.
+  ['efedrina para perda de peso', 'Obesidade'],
+  ['efedrina no hipertireoidismo', 'Tireoide'],
+  // Vocabulário bariátrico e nutricional que o auditor achou mudo:
+  ['suplementacao de calcio apos derivacao biliopancreatica', 'Obesidade'],
+  ['RYGB: qual a reposicao de ferro?', 'Obesidade'],
+  // Sem "emagrecer": ela já roteava sozinha e carregava o teste.
+  ['pular o cafe da manha: o que diz a evidencia?', 'Obesidade'],
+  ['gordura de coco emagrece?', 'Obesidade'],
+  // ⚠️ `perda de peso` CONTINUA FORA, e esta linha guarda a decisão contra o
+  // pedido do auditor: aparece em oito áreas, e perda de peso INVOLUNTÁRIA é
+  // bandeira vermelha de hipertireoidismo, insuficiência adrenal e neoplasia.
+  // Roteá-la para Obesidade responderia a pergunta mais grave com o bloco mais
+  // inofensivo. Se alguém a acrescentar, esta reprova.
+  ['perda de peso involuntaria com TSH suprimido', 'Tireoide'],
+
   // Sentinelas de outras áreas — o achado glicêmico não pode sequestrá-las.
   ['hiperglicemia em paciente com acromegalia', 'Neuroendocrinologia'],
   ['obeso em insulina: indico cirurgia bariatrica?', 'Obesidade'],
