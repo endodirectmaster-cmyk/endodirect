@@ -5,6 +5,63 @@ atualizado: 2026-08-08
 
 # Convenções de Trabalho
 
+## 🔢 CONTAR OCORRÊNCIA NÃO É MEDIR CONTEÚDO (2026-08-08)
+
+A regra que venho aplicando o dia inteiro — **"onde está o conteúdo é"**, nascida
+da correção da exenatida — quase me fez estragar uma decisão certa. Ela precisa
+de uma ressalva, e a ressalva custou uma leitura.
+
+Fiz a varredura ESPELHO da anterior: em vez de "que conteúdo não tem rota?",
+perguntei **"que rota aponta para área que não tem o termo?"**. Saiu, entre
+outros:
+
+```
+alca fechada  -> Diabetes   mas o conteúdo está em: Endocrinologia do Esporte:6
+```
+
+Seis ocorrências lá, ZERO no bloco que Diabetes entrega. Pela regra do conteúdo,
+mudança óbvia — e o cofre ainda registra `alça fechada` como "o mais grave" dos
+buracos consertados, o que tornava tentador achar que eu o tinha consertado para
+o lado errado.
+
+**Fui ler as seis ocorrências. Todas são cláusula de EXCLUSÃO:**
+
+> "⚠️ LIMITE DE APLICAÇÃO: todas as recomendações de alvo glicêmico e de
+> carboidrato deste consenso **NÃO se aplicam a sistemas híbridos de alça
+> fechada**."
+
+O artigo de exercício não ensina nada sobre alça fechada — ele repete cinco
+vezes que as tabelas dele **não valem** para quem a usa. Mandar a pergunta para
+lá entregaria um bloco que menciona o assunto só para dizer "isto não é para
+você". Diabetes não tem a expressão, mas tem o conteúdo vizinho que serve (CSII,
+incrementos de 0,025 U/h, bomba aumentada por sensor) e o núcleo carrega a
+recomendação da ADA 2026. **A decisão antiga estava certa.**
+
+**A ressalva, então:** frequência é uma PISTA de onde está o conteúdo, não uma
+medida dele. Antes de mover uma chave por contagem, leia as ocorrências —
+menção pode ser negação, ressalva, referência bibliográfica ou nome de estudo.
+Guardei o raciocínio como comentário na própria linha da bateria, porque a
+próxima varredura vai reencontrar exatamente esta contagem e sentir a mesma
+tentação.
+
+**Achado de acervo que saiu disso:** a base **não tem conteúdo substantivo de
+alça fechada / AID em lugar nenhum**. O núcleo diz que é o método preferido no
+DM1; a camada profunda tem CSII e bomba aumentada por sensor, que é uma geração
+anterior. Falta artigo — é material do professor, não conserto de código.
+
+### Dois outros "achados" da mesma varredura que NÃO eram achados
+
+- **`hipogonadismo` → Endocrinologia Masculina devolve 0 caracteres**, com 20
+  ocorrências em Neuroendocrinologia. É correto: aquelas 20 são hipogonadismo
+  CENTRAL por prolactinoma/hipopituitarismo, e mandar "reponho testosterona?"
+  para o artigo da hipófise é **trocar buraco por erro** — a mesma decisão já
+  registrada para `células germinativas`. O núcleo tem o posicionamento
+  SBEM-SBU-ABEMSS, então a pergunta é respondida de lá.
+- **Chaves de nome de área, marca e grafia variante** (`osteometabolismo`,
+  `mounjaro`, `craniofaringeoma` com "e") aparecem na lista por construção: elas
+  existem justamente para casar o que o TEXTO não escreve. Ruído da medida, não
+  defeito.
+
 ## 🔦 INVERTER A PERGUNTA DA VARREDURA — "que conteúdo NENHUMA pergunta alcança?" (2026-08-08)
 
 Duas varreduras no mesmo dia, e a segunda rendeu dez vezes mais que a primeira

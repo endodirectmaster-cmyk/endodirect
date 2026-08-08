@@ -84,6 +84,20 @@ const CAMINHO = [
   // grave é `alça fechada`: o núcleo diz que ela é o método PREFERIDO no DM1
   // (ADA 2026) e a pergunta não chegava a lugar nenhum. Os três últimos desta
   // lista o auditor havia dado como "já roteiam corretamente" — não roteavam.
+  // ⚠️ NÃO "CONSERTE" ESTA LINHA PARA ESPORTE. Eu quase o fiz em 08/08/2026, e
+  // a contagem de ocorrências dizia que sim: "alça fechada" aparece SEIS vezes
+  // em Endocrinologia do Esporte e ZERO no bloco que Diabetes entrega.
+  //
+  // Fui ler as seis. Todas são CLÁUSULA DE EXCLUSÃO — "estas recomendações NÃO
+  // se aplicam a sistemas híbridos de alça fechada". O artigo de exercício não
+  // ensina nada sobre alça fechada; ele repete que as tabelas dele não valem
+  // para quem a usa. Diabetes não tem a expressão, mas tem o conteúdo vizinho
+  // que serve (CSII, incrementos de 0,025 U/h, bomba aumentada por sensor), e o
+  // NÚCLEO carrega a recomendação da ADA 2026 de que a alça fechada é o método
+  // preferido no DM1.
+  //
+  // CONTAR OCORRÊNCIA NÃO É MEDIR CONTEÚDO. Seis menções que só dizem "isto não
+  // se aplica a você" valem menos que zero menção com conteúdo adjacente útil.
   ['alca fechada', 'Diabetes'],
   ['bomba de insulina', 'Diabetes'],
   ['dasiglucagon', 'Diabetes'],
