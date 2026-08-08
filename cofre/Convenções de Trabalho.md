@@ -5,10 +5,29 @@ atualizado: 2026-08-07
 
 # Convenções de Trabalho
 
-## 🔋 FORÇA MÁXIMA COM FREIO EM 90% — e por que lote grande demais é DESPERDÍCIO (2026-08-08)
+## 🔋 FORÇA MÁXIMA COM FREIO EM 85% — e o medidor, porque eu não enxergo o painel (2026-08-08)
 
 Regra do professor, válida **até o fim da extração/auditoria**: rodar a todo vapor
-e **recuar ao chegar perto de 90% do consumo**, retomando quando a janela resetar.
+e **recuar aos 85% do consumo**, voltando à força máxima quando a janela resetar.
+
+⚠️ **O percentual está no painel DELE, não na minha sessão.** Sem medir, "recuar
+aos 85%" é palpite — e o palpite já falhou uma vez, custando 4 agentes mortos no
+meio do trabalho. O que eu SEI medir é o `subagent_tokens` que cada agente relata
+ao terminar. Daí o `scripts/orcamento-agentes.js`:
+
+```
+node scripts/orcamento-agentes.js                 # estado e veredito (saída 2 = freio)
+node scripts/orcamento-agentes.js --soma 253751   # registra um agente que terminou
+```
+
+O teto de 2,0 M de tokens por janela é **calibrado, não oficial**: vem da única
+observação real que existe — a janela estourou com 8 agentes rodando quando o
+painel marcava 92%, somando ~2,0 M. Na conferência seguinte o script marcou 58%
+com o painel em 57%. É grosseiro e deliberadamente conservador: **errar para baixo
+custa uma pausa; errar para cima mata agente no meio e perde tudo o que gastou.**
+
+O freio é o **passo zero** da rotina horária. Ao bater 85%: não lançar agente
+novo, deixar terminar o que já roda, commitar e encerrar em silêncio.
 
 E a lição de como isso deu errado na primeira tentativa: lancei **8 agentes de uma
 vez**, o limite de 5 horas estourou no meio, e **4 morreram com o trabalho pela
