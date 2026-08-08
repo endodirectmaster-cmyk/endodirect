@@ -10,548 +10,1311 @@
  "fatos": [
   {
    "afirmacao": "O diabetes mellitus pós-transplante (PTDM) é consequência frequente do transplante de órgão sólido e foi associado a maior mortalidade e mais infecções em diferentes grupos de transplantados.",
-   "citacao": "Post-transplant diabetes mellitus (PTDM) is a frequent consequence of solid organ transplantation. PTDM has been associated with greater mortality and increased infections in different transplant groups using different diagnostic criteria.",
-   "secao": "Definição"
+   "secao": "Definição",
+   "cit": [
+    [
+     0,
+     387,
+     239
+    ]
+   ],
+   "cit_sha": "05f16143d0b87b24"
   },
   {
    "afirmacao": "O primeiro consenso internacional, de 2003, criou critérios para o diabetes de início novo após transplante (NODAT) baseados nos critérios glicêmicos da American Diabetes Association, mas NÃO excluía a hospitalização pós-transplante imediata, período em que muitos pacientes recebem altas doses de corticosteroides.",
-   "citacao": "An international consensus panel recommended a consistent set of guidelines in 2003 based on American Diabetes Association glucose criteria but did not exclude the immediate post-transplant hospi- talization when many patients receive large doses of corticosteroids.",
-   "secao": "Diagnóstico — histórico"
+   "secao": "Diagnóstico — histórico",
+   "cit": [
+    [
+     0,
+     627,
+     266
+    ]
+   ],
+   "cit_sha": "7cf822761c296109"
   },
   {
    "afirmacao": "A maior monitorização glicêmica durante as internações revelou intolerância à glicose significativa na maioria dos receptores imediatamente após o transplante; por isso o painel de consenso revisou suas diretrizes e recomendou ADIAR o rastreamento e o diagnóstico de PTDM até que o receptor esteja em doses estáveis de imunossupressão, após a alta da internação inicial do transplante.",
-   "citacao": "Greater glucose monitoring during all hospitalizations has revealed significant glucose intolerance in the majority of recipients immediately after transplant. As a result, the international consensus panel reviewed its earlier guidelines and recommended delaying screening and diagnosis of PTDM until the recipient is on stable doses of immunosuppression after discharge from initial transplant hospitalization.",
-   "secao": "Diagnóstico — quando diagnosticar"
+   "secao": "Diagnóstico — quando diagnosticar",
+   "cit": [
+    [
+     0,
+     894,
+     412
+    ]
+   ],
+   "cit_sha": "669a31912c185345"
   },
   {
    "afirmacao": "O motivo de adiar é duplo: a hiperglicemia nem sempre persiste após a alta, e o diagnóstico de diabetes na maioria das populações não transplantadas é geralmente reservado ao contexto ambulatorial; assim, a avaliação deve esperar o paciente estar estável e já reduzido às doses provavelmente crônicas de imunossupressão.",
-   "citacao": "Because the hyperglycemia does not always persist after discharge and the diagnosis of diabetes in most non- transplant populations is generally reserved for the out- patient setting, the consensus panel recommended delay- ing the evaluation for and diagnosis of PTDM until the recipient had been discharged from the hospital, was sta- ble, and had tapered to likely chronic immunosuppression doses.",
-   "secao": "Diagnóstico — quando diagnosticar"
+   "secao": "Diagnóstico — quando diagnosticar",
+   "cit": [
+    [
+     0,
+     9216,
+     399
+    ]
+   ],
+   "cit_sha": "562b5e9904b83bf1"
   },
   {
    "afirmacao": "O painel alertou que, embora a hemoglobina A1C tenha sido adotada como critério diagnóstico por muitos, ela NÃO é confiável como método único de rastreamento de diabetes durante o primeiro ano após o transplante.",
-   "citacao": "The group cautioned that whereas hemoglobin A1C has been adopted as a diagnostic criterion by many, it is not reliable as the sole diabetes screening method during the first year after transplant.",
-   "secao": "Diagnóstico — HbA1c"
+   "secao": "Diagnóstico — HbA1c",
+   "cit": [
+    [
+     0,
+     1307,
+     196
+    ]
+   ],
+   "cit_sha": "679e3fc24abb5c60"
   },
   {
    "afirmacao": "Por várias razões, incluindo a sobrevida reduzida das hemácias após o transplante, a hemoglobina A1C é uma medida menos confiável para identificar intolerância à glicose significativa nos primeiros 12 meses após o transplante; o painel concluiu que ela pode ser usada para diagnosticar diabetes se estiver elevada (maior ou igual a 6,5%), mas não deve ser usada isoladamente como rastreamento de PTDM, particularmente no primeiro ano.",
-   "citacao": "For many reasons, including reduced red blood cell survival after transplant, hemoglobin A1C is a less reliable measure for identifying significant glucose intol- erance in the first 12 months after transplant (10, 11). The panel concluded that whereas hemoglobin A1C can be used to diagnose diabetes if elevated (ⱖ6.5%), it should not be used alone as a screen for PTDM, particularly in the first year after transplant.",
-   "secao": "Diagnóstico — HbA1c"
+   "secao": "Diagnóstico — HbA1c",
+   "cit": [
+    [
+     0,
+     9729,
+     420
+    ]
+   ],
+   "cit_sha": "5f445d4accae36cf"
   },
   {
    "afirmacao": "No seguimento ambulatorial, a HbA1c isolada também não é adequada para assegurar o controle glicêmico, particularmente no primeiro ano após o transplante, por causa da perda sanguínea e do maior turnover das hemácias.",
-   "citacao": "However, HbA1c alone is not adequate for assuring glucose control, particularly in the first year after transplant, because of blood loss and higher red blood cell turnover.",
-   "secao": "Diagnóstico — HbA1c"
+   "secao": "Diagnóstico — HbA1c",
+   "cit": [
+    [
+     0,
+     70205,
+     173
+    ]
+   ],
+   "cit_sha": "487dc17426849432"
   },
   {
    "afirmacao": "Os critérios diagnósticos de PTDM (Tabela 1) são: glicemia de jejum acima de 126 mg/dL (7 mmol/L) em mais de uma ocasião; glicemia aleatória acima de 200 mg/dL (11,1 mmol/L) com sintomas; glicemia de 2 horas após TTGO com 75 g acima de 200 mg/dL (11,1 mmol/L); ou HbA1c acima de 6,5%.",
-   "citacao": "1) Fasting glucose ⬎126 mg/dL (7 mmol/L) on more than one occasion. 2) Random glucose ⬎200 mg/dL (11.1 mmol/L) with symptoms. 3) Two-hour glucose after a 75-g OGTT of ⬎200 mg/dL (11.1 mmol/L). 4) HbA1c ⬎6.5%.",
-   "secao": "Diagnóstico — critérios"
+   "secao": "Diagnóstico — critérios",
+   "cit": [
+    [
+     0,
+     6283,
+     208
+    ]
+   ],
+   "cit_sha": "e9868c8e5b1bf6a2"
   },
   {
    "afirmacao": "O diagnóstico de PTDM só pode ser feito por esses critérios da ADA/OMS depois que o receptor recebeu alta hospitalar e foi reduzido à sua imunossupressão de manutenção; a HbA1c não deve ser usada isoladamente para rastrear PTDM no primeiro ano após o transplante.",
-   "citacao": "the diagnosis of PTDM can be made using any of the following American Diabetes\n\nAssociation/World Health Organization criteria for the diagnosis of diabetes (4, 5) once the transplant recipient has been discharged from the hospital and tapered to their maintenance immunosuppression. However, HbA1c should not be used alone to screen for diagnosis of PTDM within the first year after transplant.",
-   "secao": "Diagnóstico — critérios"
+   "secao": "Diagnóstico — critérios",
+   "cit": [
+    [
+     0,
+     5888,
+     394
+    ]
+   ],
+   "cit_sha": "b1cf35c984a845b1"
   },
   {
    "afirmacao": "A primeira recomendação do painel foi mudar o nome de NODAT para PTDM, porque muitos casos de diabetes identificados pela primeira vez após o transplante provavelmente não são novos.",
-   "citacao": "The first recommendation of the group was to change the name from NODAT to PTDM because many cases of diabetes first identified after transplant are likely not new.",
-   "secao": "Diagnóstico — nomenclatura"
+   "secao": "Diagnóstico — nomenclatura",
+   "cit": [
+    [
+     0,
+     8154,
+     164
+    ]
+   ],
+   "cit_sha": "68685bbe9c3cb2f0"
   },
   {
    "afirmacao": "Há grande variação entre os centros quanto ao rastreamento de diabetes antes do transplante, e a maioria usa apenas glicemia de jejum e hemoglobina A1C — métodos MENOS sensíveis que o TTGO para identificar diabetes em pacientes com insuficiência renal crônica; por isso não se sabe quantos dos casos reconhecidos após o transplante são realmente novos.",
-   "citacao": "There is considerable variation among transplant centers as to how or if candidates are screened for diabetes before transplant, but most centers use only fasting glucose and hemoglobin A1C for screening candidates. These methods are less sensitive than the OGTT for identifying diabetes in patients with chronic renal failure (7). Thus, it is unknown how many of those first recognized as having diabetes after transplant are truly new.",
-   "secao": "Diagnóstico — rastreio pré-transplante"
+   "secao": "Diagnóstico — rastreio pré-transplante",
+   "cit": [
+    [
+     0,
+     8319,
+     437
+    ]
+   ],
+   "cit_sha": "a033c2e7d12392cb"
   },
   {
    "afirmacao": "O diagnóstico de PTDM não tem 'data final': se um receptor adulto ou pediátrico de órgão sólido for diagnosticado com diabetes 1, 10 ou 40 anos depois, ainda pode ser chamado de PTDM.",
-   "citacao": "It should be noted that, currently, the diagnosis of PTDM has no “end date.” If an adult or a pediatric solid organ transplant recipient is diagnosed with diabetes 1, 10, or 40 years later, it is still eligible to be called PTDM.",
-   "secao": "Diagnóstico — definição temporal"
+   "secao": "Diagnóstico — definição temporal",
+   "cit": [
+    [
+     0,
+     10150,
+     229
+    ]
+   ],
+   "cit_sha": "8fa6d607b548b6b6"
   },
   {
    "afirmacao": "A incidência de PTDM descrita após o consenso de 2003 varia conforme o órgão: rim 10 a 74%, coração 11 a 38%, fígado 7 a 30% e pulmão 32%.",
-   "citacao": "Type of Transplant Incidence, % Refs. Kidney 10–74 9, 13, 15, 43, 126, 211 Heart 11–38 212 Liver 7–30 213 Lung 32 165",
-   "secao": "Incidência"
+   "secao": "Incidência",
+   "cit": [
+    [
+     0,
+     13036,
+     117
+    ]
+   ],
+   "cit_sha": "9c88eeefb1e22715"
   },
   {
    "afirmacao": "As taxas de incidência publicadas devem ser consideradas relativas, e não absolutas, porque provavelmente mudarão de forma significativa quando os novos critérios diagnósticos de PTDM forem implementados.",
-   "citacao": "these should be considered relative, not absolute, risk rates because those rates are likely to be significantly changed from what we and others have published in the past once the new criteria for diagnosis of PTDM are implemented",
-   "secao": "Incidência"
+   "secao": "Incidência",
+   "cit": [
+    [
+     0,
+     11417,
+     231
+    ]
+   ],
+   "cit_sha": "93ab2223e23beb80"
   },
   {
    "afirmacao": "Assim como no diabetes tipo 2, o PTDM é mais provável em indivíduos com fatores de risco pré-existentes de DM2 — idade e história familiar de DM2 — e naqueles com raça ou etnia de maior risco que caucasianos, particularmente afro-americanos e hispânicos.",
-   "citacao": "Just as with type 2 diabetes, PTDM is more likely to occur in individuals with pre-existing type 2 diabetes risk factors, including age and a family history of type 2 dia- betes, and in those with race or ethnicity considered at higher risk than Caucasians for type 2 diabetes—par- ticularly African Americans and Hispanics (16)",
-   "secao": "Fatores de risco"
+   "secao": "Fatores de risco",
+   "cit": [
+    [
+     0,
+     11729,
+     328
+    ]
+   ],
+   "cit_sha": "22a017b324be061f"
   },
   {
    "afirmacao": "A obesidade, definida por IMC elevado ou por circunferência da cintura aumentada, associa-se a maior risco de PTDM; a obesidade pode anteceder o transplante, mas o ganho de peso após o transplante também contribui.",
-   "citacao": "Importantly, obesity, whether defined as elevated BMI or increased waist circumference, has also been associated with increased risk of type 2 di- abetes as well as PTDM. Obesity can predate the trans- plant, but weight gain after transplant can also contribute.",
-   "secao": "Fatores de risco"
+   "secao": "Fatores de risco",
+   "cit": [
+    [
+     0,
+     12315,
+     262
+    ]
+   ],
+   "cit_sha": "d4741c8d017191b1"
   },
   {
    "afirmacao": "Vários polimorfismos de nucleotídeo único (SNPs) de genes candidatos do diabetes tipo 1 e tipo 2 associam-se ao risco de PTDM, incluindo genes implicados nas síndromes MODY; em receptores renais hispânicos, o achado foi em SNPs do substrato do receptor de insulina (IRS)-1.",
-   "citacao": "Multiple studies have found an association between type 1 and type 2 diabetes candidate gene single nucleotide polymorphisms (SNPs) with risk for PTDM, including several genes implicated in maturity onset diabetes of the young syndromes. For example, in Hispanic kidney trans- plant recipients, SNPs in insulin receptor substrate (IRS)-1",
-   "secao": "Fatores de risco — genética"
+   "secao": "Fatores de risco — genética",
+   "cit": [
+    [
+     0,
+     12608,
+     337
+    ]
+   ],
+   "cit_sha": "1596556762aa6626"
   },
   {
    "afirmacao": "SNPs no fator nuclear de hepatócito 4 também se associaram a diabetes após transplante renal.",
-   "citacao": "and hepatocyte nuclear factor 4 were associated with di-\n\nnot surprising that those individuals with CF who have not abetes after kidney transplant (17).",
-   "secao": "Fatores de risco — genética"
+   "secao": "Fatores de risco — genética",
+   "cit": [
+    [
+     0,
+     15008,
+     152
+    ]
+   ],
+   "cit_sha": "0bdd4976aa709a1b"
   },
   {
    "afirmacao": "Outros SNPs de genes candidatos de DM2 associados ao PTDM incluem KCNJ11-Kir6.2 e algumas variantes de KCNQ1; portadores de múltiplos SNPs em genes diabéticos tinham risco ainda maior, e o PTDM também se associou a SNPs em vários genes de interleucinas.",
-   "citacao": "KCNJ11-Kir6.2, and some but not all variants of KCNQ1 (18–22). Those carrying multiple SNPs in diabetic genes were at even greater risk. PTDM has also been associated with SNPs in multiple IL genes, particularly IL-2, IL-7R, IL-17R, IL-1B, IL-4, IL-17-RE, IL-17R, and IL-17RB (23).",
-   "secao": "Fatores de risco — genética"
+   "secao": "Fatores de risco — genética",
+   "cit": [
+    [
+     0,
+     15352,
+     281
+    ]
+   ],
+   "cit_sha": "6b3e61ade74f09db"
   },
   {
    "afirmacao": "Os inibidores de calcineurina (ciclosporina e tacrolimo) ligam-se ao fator nuclear de células T ativadas (NFAT), que por sua vez regula negativamente a transcrição de adiponectina — de modo que indivíduos com SNP nesse gene candidato podem ter maior risco de intolerância à glicose com esquemas que contenham inibidor de calcineurina.",
-   "citacao": "One of the commonly used classes of immunosuppressant agents, the calcineurin inhibitors (CNIs; cyclosporine and tacroli- mus), bind to nuclear factor of activated T-cells (NFAT). NFAT, in turn, can down-regulate adiponectin transcrip- tion, so individuals with SNP in this candidate gene may be at greater risk for glucose intolerance related to CNI- containing regimens.",
-   "secao": "Fatores de risco — genética"
+   "secao": "Fatores de risco — genética",
+   "cit": [
+    [
+     0,
+     16025,
+     372
+    ]
+   ],
+   "cit_sha": "e5c170f9ad09050c"
   },
   {
    "afirmacao": "Vários estudos retrospectivos identificaram a doença renal policística autossômica dominante como fator que aumenta o risco de PTDM após transplante renal.",
-   "citacao": "have identified autosomal dominant polycystic kidney dis-\n\nmunosuppression protocols. A recent prospective ease (PCKD) as increasing the risk of PTDM after kidney\n\nrandomized trial of early withdrawal of corticosteroids transplant (13, 26–28).",
-   "secao": "Fatores de risco — doença de base"
+   "secao": "Fatores de risco — doença de base",
+   "cit": [
+    [
+     0,
+     17110,
+     241
+    ]
+   ],
+   "cit_sha": "19268c30e7fdab9f"
   },
   {
    "afirmacao": "Indivíduos com fibrose cística que ainda não desenvolveram diabetes relacionado à fibrose cística antes do transplante têm risco maior de desenvolver diabetes após o transplante pulmonar do que outros candidatos a transplante de pulmão.",
-   "citacao": "not surprising that those individuals with CF who have not abetes after kidney transplant (17). Additional type 2 can-\n\ndeveloped CFRD before transplant are at higher risk for didate gene SNPs associated with PTDM include TCF7L2,\n\ndeveloping diabetes after lung transplant than other lung KCNJ11-Kir6.2, and some but not all variants of KCNQ1 (18–22). Those carrying multiple SNPs in diabetic genes were at even greater risk. PTDM has also been associated with SNPs in multiple IL genes, particularly IL-2, IL-7R, IL-17R, IL-1B, IL-4, IL-17-RE, IL-17R, and IL-17RB (23). Finally, SNPs in the transcription factor NFATc4 and adi-\n\ntransplant candidates (32).",
-   "secao": "Fatores de risco — fibrose cística"
+   "secao": "Fatores de risco — fibrose cística",
+   "cit": [
+    [
+     0,
+     15065,
+     654
+    ]
+   ],
+   "cit_sha": "069d6a7ea4f04f87"
   },
   {
    "afirmacao": "A rejeição aguda e crônica associa-se a risco de PTDM após transplante renal, mas causa e efeito são difíceis de provar porque a rejeição é geralmente tratada com corticosteroides em altas doses, que também contribuem para o risco.",
-   "citacao": "Acute and chronic rejection is associated with risk of PTDM after kidney transplant (104, 105). However, cause and effect are harder to prove because rejection is also generally treated with high-dose corticosteroids, which can also contribute to risk",
-   "secao": "Fatores de risco — inflamação"
+   "secao": "Fatores de risco — inflamação",
+   "cit": [
+    [
+     0,
+     38326,
+     251
+    ]
+   ],
+   "cit_sha": "2eb3586c76e2a5e6"
   },
   {
    "afirmacao": "Enxertos renais de doador falecido expressam níveis mais altos de citocinas pró-inflamatórias que os de doador vivo; em análise retrospectiva de 386 receptores de transplante renal, os que receberam enxerto de doador falecido tiveram quase quatro vezes mais probabilidade de desenvolver PTDM do que os receptores de doador vivo.",
-   "citacao": "Deceased donor kidney allografts express higher levels of proinflammatory cytokines compared to living kidney donor grafts, whether related or unrelated, suggesting the graft injury that is more likely with a deceased donor is more impor- tant than relative histocompatibility to rejection. This pro- inflammatory response may contribute to the observation that kidney transplant recipients who receive a deceased donor graft rather than a living donor graft are also at greater risk for PTDM (108 –111). In a retrospective anal- ysis of 386 kidney transplant recipients, those who re- ceived deceased donor grafts were nearly four times more likely to develop PTDM than recipients of living donor grafts",
-   "secao": "Fatores de risco — doador"
+   "secao": "Fatores de risco — doador",
+   "cit": [
+    [
+     0,
+     38699,
+     704
+    ]
+   ],
+   "cit_sha": "9ef7013d09df4e04"
   },
   {
    "afirmacao": "O vírus da hepatite C associou-se de forma consistente a aumento de 2,5 a 4 vezes no risco relativo de PTDM após transplante hepático, e a infecção pelo HCV após o transplante de fígado associa-se a maior resistência à insulina mesmo controlando para IMC, medicações, álcool ou grau de fibrose hepática.",
-   "citacao": "HCV has been consistently associated with an increased relative risk of PTDM (2.5- to 4-fold) after liver transplant (116 – 119). HCV infection after liver transplant is associated with increased insulin resistance, as measured by homeo- stasis model assessment of insulin resistance, even when controlling for BMI, medications, alcohol, or degree of liver fibrosis (120).",
-   "secao": "Fatores de risco — hepatite C"
+   "secao": "Fatores de risco — hepatite C",
+   "cit": [
+    [
+     0,
+     40298,
+     372
+    ]
+   ],
+   "cit_sha": "b2bc9332c06e1f69"
   },
   {
    "afirmacao": "Em metanálise de 10 estudos, receptores de transplante renal com infecção por HCV tiveram risco aumentado de PTDM em comparação com os HCV-negativos (odds ratio 3,97; intervalo de confiança de 95% 1,83 a 8,61), e em ensaio observacional prospectivo o odds ratio foi 6,37 (intervalo de confiança de 95% 2,28 a 17,7).",
-   "citacao": "In a meta-analysis of 10 studies, Fabrizi et al (121) reported an increased risk of PTDM in kidney transplant recipients with HCV infection compared to HCV-negative recipients (odds ratio, 3.97; 95% confidence interval, 1.83– 8.61). HCV was also associated with risk after con- trolling for known risk factors in another cohort of 306 kidney transplant recipients (122) and a prospective ob- servational trial (odds ratio, 6.37; 95% confidence inter- val, 2.28–17.7) (123).",
-   "secao": "Fatores de risco — hepatite C"
+   "secao": "Fatores de risco — hepatite C",
+   "cit": [
+    [
+     0,
+     40941,
+     473
+    ]
+   ],
+   "cit_sha": "0ddd7ec48eea6f48"
   },
   {
    "afirmacao": "Em receptores de transplante hepático e renal, o risco de PTDM é ainda maior naqueles que têm HCV e recebem imunossupressão baseada em tacrolimo, em comparação com qualquer um dos fatores de risco isoladamente.",
-   "citacao": "In liver and kidney transplant recipients, the risk of PTDM is even higher in those who have HCV and are treated with tacrolimus-based immunosuppression, compared to ei- ther risk factor alone (40, 127, 128).",
-   "secao": "Fatores de risco — hepatite C"
+   "secao": "Fatores de risco — hepatite C",
+   "cit": [
+    [
+     0,
+     41788,
+     208
+    ]
+   ],
+   "cit_sha": "1a532876bdfe7aa3"
   },
   {
    "afirmacao": "Uma metanálise de sete estudos em transplante renal, incorporando 1389 receptores, sugeriu que os receptores CMV-positivos têm risco maior de PTDM; em ensaio observacional prospectivo, a infecção por CMV foi fator de risco independente para PTDM, sintomática ou não, avaliada por TTGO 10 semanas após o transplante, e a secreção de insulina de primeira fase, de segunda fase e a área sob a curva foram todas menores nos receptores CMV-positivos.",
-   "citacao": "However, a meta-analysis of seven kidney transplant stud- ies incorporating 1389 recipients suggested that overall, CMV-positive recipients were at greater risk for PTDM (132). In a prospective observational trial of recipients with or without CMV, CMV infection was an indepen- dent risk factor for PTDM, whether or not the recipients were symptomatic, as assessed by OGTT at 10 weeks after transplant (133). First-phase, second-phase, and area-un- der-the-curve insulin secretion were all lower in CMV- positive recipients (133).",
-   "secao": "Fatores de risco — citomegalovírus"
+   "secao": "Fatores de risco — citomegalovírus",
+   "cit": [
+    [
+     0,
+     42592,
+     531
+    ]
+   ],
+   "cit_sha": "984d6d5c50cc2990"
   },
   {
    "afirmacao": "A hipomagnesemia é outro mecanismo proposto: em análise retrospectiva de 254 receptores de transplante renal, os que desenvolveram PTDM tinham níveis séricos de magnésio mais baixos no primeiro mês após o transplante, e os de magnésio mais baixo desenvolveram PTDM mais rapidamente.",
-   "citacao": "In a retrospective analysis of 254 renal transplant recipients, patients who developed PTDM had lower serum magne- sium levels in the first month after transplant compared to non-PTDM recipients, and those with the lowest magne- sium levels developed PTDM more rapidly (76).",
-   "secao": "Fatores de risco — magnésio"
+   "secao": "Fatores de risco — magnésio",
+   "cit": [
+    [
+     0,
+     28426,
+     274
+    ]
+   ],
+   "cit_sha": "f041ef09f95bb696"
   },
   {
    "afirmacao": "Nesse estudo o tacrolimo associou-se a PTDM, mas a associação desapareceu quando se controlou para a hipomagnesemia, sugerindo que o tacrolimo pode aumentar o risco de PTDM em parte pela indução de hipomagnesemia.",
-   "citacao": "In this study, ta- crolimus was associated with PTDM, but the association disappeared when controlling for hypomagnesemia, sug- gesting that tacrolimus may increase the risk of PTDM, in part through the induction of hypomagnesemia.",
-   "secao": "Fatores de risco — magnésio"
+   "secao": "Fatores de risco — magnésio",
+   "cit": [
+    [
+     0,
+     28794,
+     231
+    ]
+   ],
+   "cit_sha": "23730ad4e9792d9d"
   },
   {
    "afirmacao": "As estatinas associaram-se a maior risco de glicemia de jejum alterada e de disglicemia em receptores de aloenxerto renal, e os pacientes tratados com atorvastatina tiveram mais glicemia de jejum alterada e mais PTDM do que os tratados com fluvastatina; as estatinas também aumentaram o risco de PTDM em receptores de transplante hepático, especialmente nos que já tinham glicemia de jejum alterada antes do transplante.",
-   "citacao": "Statins have been asso- ciated with increased risk of impaired fasting glucose (IFG) and dysglycemia (IFG and/or PTDM) in renal allo- graft recipients (138). Patients treated with atorvastatin had more IFG and PTDM than those on fluvastatin (138). Statins have also been shown to increase the risk of PTDM in liver transplant recipients, especially in those with IFG before transplant (139).",
-   "secao": "Fatores de risco — estatinas"
+   "secao": "Fatores de risco — estatinas",
+   "cit": [
+    [
+     0,
+     44597,
+     391
+    ]
+   ],
+   "cit_sha": "1cde30382547924d"
   },
   {
    "afirmacao": "Se a deficiência de vitamina D é fator de risco para PTDM ainda NÃO foi estabelecido, embora ela se associe a maior risco de diabetes na população não transplantada.",
-   "citacao": "However, whether vita- min D deficiency is a risk factor for PTDM has not been established. A randomized controlled trial of vitamin D sup- plementation in kidney transplant recipients is ongoing in France,withdevelopmentofPTDMbeingoneoftheprimary end points of the study (137).",
-   "secao": "Fatores de risco — vitamina D"
+   "secao": "Fatores de risco — vitamina D",
+   "cit": [
+    [
+     0,
+     43993,
+     278
+    ]
+   ],
+   "cit_sha": "81007d012a0aace1"
   },
   {
    "afirmacao": "Está bem estabelecido que os corticosteroides causam hiperglicemia por vários mecanismos: induzindo ou piorando a resistência à insulina pré-existente, aumentando a gliconeogênese hepática e, a longo prazo, estimulando o apetite e o ganho de peso; o impacto é dose-dependente.",
-   "citacao": "Corticosteroids are well established to cause hypergly- cemia through several mechanisms: by inducing or wors- ening pre-existing insulin resistance, increasing hepatic gluconeogenesis, and long-term, by stimulating appetite and weight gain (33–35). The impact is dose-dependent.",
-   "secao": "Corticosteroides — mecanismo"
+   "secao": "Corticosteroides — mecanismo",
+   "cit": [
+    [
+     0,
+     16546,
+     279
+    ]
+   ],
+   "cit_sha": "227773c31ffda7d5"
   },
   {
    "afirmacao": "Corticosteroides em altas doses, frequentemente usados como parte dos protocolos de indução na hospitalização pós-transplante imediata, têm impacto muito maior que os corticosteroides crônicos em baixa dose comuns aos protocolos de manutenção.",
-   "citacao": "High-dose corticosteroids, often used as part of induction protocols in the immediate post-transplant hospitaliza- tion, have much greater impact than chronic low-dose cor- risk of PTDM. Specifically, several retrospective studies\n\nticosteroids that are common to many maintenance im- have identified autosomal dominant polycystic kidney dis-\n\nmunosuppression protocols.",
-   "secao": "Corticosteroides — dose"
+   "secao": "Corticosteroides — dose",
+   "cit": [
+    [
+     0,
+     16826,
+     368
+    ]
+   ],
+   "cit_sha": "96b9a6f9d6cefee5"
   },
   {
    "afirmacao": "Um ensaio prospectivo randomizado de retirada precoce de corticosteroides versus manutenção de prednisona crônica em baixa dose (5 mg/dia), de 6 meses a 5 anos após o transplante renal, mostrou que a incidência de PTDM foi minimamente afetada.",
-   "citacao": "A recent prospective ease (PCKD) as increasing the risk of PTDM after kidney\n\nrandomized trial of early withdrawal of corticosteroids transplant (13, 26–28). However, at least one retrospec-\n\nvs remaining on low-dose chronic prednisone (5 mg/d) tive cohort study, where the diabetes screening protocol\n\nfrom 6 months to 5 years after kidney transplant\n\n40 Shivaswamy et al Post-Transplant Diabetes Mellitus Endocrine Reviews, February 2016, 37(1):37–61\n\nshowed that incidence of PTDM was minimally im- pacted (36).",
-   "secao": "Corticosteroides — retirada"
+   "secao": "Corticosteroides — retirada",
+   "cit": [
+    [
+     0,
+     17195,
+     509
+    ]
+   ],
+   "cit_sha": "64be05146f43c11f"
   },
   {
    "afirmacao": "O micofenolato mofetil e a azatioprina não demonstraram grande impacto na ação da insulina ou no metabolismo da glicose e, portanto, não parecem ter papel importante no PTDM.",
-   "citacao": "Mycophenolate mofetil and azathioprine have not been shown to have a large impact on insulin action or glucose metabolism and so do not appear to have a major role in PTDM.",
-   "secao": "Micofenolato e azatioprina"
+   "secao": "Micofenolato e azatioprina",
+   "cit": [
+    [
+     0,
+     17790,
+     172
+    ]
+   ],
+   "cit_sha": "cd09740323dbf7ae"
   },
   {
    "afirmacao": "Há evidência crescente de que os imunossupressores mais usados — particularmente os inibidores de calcineurina (por exemplo, tacrolimo e ciclosporina) e os inibidores do alvo da rapamicina em mamíferos (mTOR; por exemplo, sirolimo/rapamicina e everolimo) — contribuem para o PTDM; há relatos de que tanto a intolerância à glicose quanto a dislipidemia que ocorre predominantemente com os inibidores de mTOR melhoram quando a dose é reduzida.",
-   "citacao": "There is increasing evidence that the other commonly used immu- nosuppressants, particularly CNIs (eg, tacrolimus and cy- closporine) and inhibitors of the mammalian target of rapamycin (mTOR; eg, sirolimus or rapamycin and everolimus), may contribute to PTDM. Our work in an- imals suggests a dose-dependent effect of both tacrolimus and sirolimus on glucose metabolism (37), although there are no comparable human studies. However, there are reports that both glucose intolerance and the dyslipidemia that occurs predominantly with mTOR inhibitors im- prove as the dose is reduced.",
-   "secao": "Inibidores de calcineurina e mTOR"
+   "secao": "Inibidores de calcineurina e mTOR",
+   "cit": [
+    [
+     0,
+     17963,
+     583
+    ]
+   ],
+   "cit_sha": "323a8092330df441"
   },
   {
    "afirmacao": "A ciclosporina foi o primeiro inibidor de calcineurina introduzido e, como permitiu doses menores de corticosteroide, observou-se menos hiperglicemia, levando muitos a acreditar que esses agentes não tinham impacto sobre a secreção ou a ação da insulina; foi apenas com a introdução do tacrolimo que a associação entre inibidores de calcineurina e intolerância à glicose foi identificada pela primeira vez.",
-   "citacao": "Cyclosporine was the first CNI to be introduced, and it greatly improved graft survival with lower doses of cor- ticosteroids. Because lower doses of corticosteroids were needed, both to prevent and treat rejection, less hypergly- cemia was observed, initially leading many to believe these agents had no impact on insulin secretion or action. It wasn’t until tacrolimus was introduced that the associa- tion between CNIs and glucose intolerance was first iden- tified (38, 39).",
-   "secao": "Ciclosporina x tacrolimo"
+   "secao": "Ciclosporina x tacrolimo",
+   "cit": [
+    [
+     0,
+     18547,
+     478
+    ]
+   ],
+   "cit_sha": "2fb4181b512c067d"
   },
   {
    "afirmacao": "Embora o tacrolimo pareça aumentar o risco relativo de PTDM mais do que a ciclosporina, ficou claro que a ciclosporina também se associa a risco: 18% contra 8%, respectivamente, segundo dados do U.S. Renal Database para a incidência de PTDM em 2 anos após transplante renal; a maior risco relativo do tacrolimo foi também confirmado por ensaio controlado randomizado.",
-   "citacao": "Although tacrolimus appeared to increase relative risk for developing PTDM more than cyclosporine treatment, it became apparent that cyclospor- ine was also associated with risk, 18% compared to 8%, respectively, based on data from the U.S. Renal Database for the 2-year incidence of PTDM after kidney transplant (42). A greater relative risk of tacrolimus compared to cyclospor- inewasalsoconfirmedbyarandomizedcontrolledtrial(43).",
-   "secao": "Ciclosporina x tacrolimo"
+   "secao": "Ciclosporina x tacrolimo",
+   "cit": [
+    [
+     0,
+     19213,
+     432
+    ]
+   ],
+   "cit_sha": "0d627f8d8feba264"
   },
   {
    "afirmacao": "O tacrolimo aumentou o risco de diabetes em receptores já reconhecidos como de mais alto risco, como afro-americanos e pessoas com história prévia de hepatite C, e mostrou-se capaz de aumentar a incidência de pré-diabetes após transplante renal (33% em 12 meses).",
-   "citacao": "Tacrolimus therapy increased diabetes risk in transplant recipients already known to be at highest risk, such as African Americans and those with prior his- tory of hepatitis C (40, 41). Although tacrolimus appeared to increase relative risk for developing PTDM more than cyclosporine treatment, it became apparent that cyclospor- ine was also associated with risk, 18% compared to 8%, respectively, based on data from the U.S. Renal Database for the 2-year incidence of PTDM after kidney transplant (42). A greater relative risk of tacrolimus compared to cyclospor- inewasalsoconfirmedbyarandomizedcontrolledtrial(43). Tacrolimus was also shown to increase the incidence of pre- diabetes after kidney transplant (33% at 12 mo) (44).",
-   "secao": "Tacrolimo"
+   "secao": "Tacrolimo",
+   "cit": [
+    [
+     0,
+     19026,
+     733
+    ]
+   ],
+   "cit_sha": "74ba01d7f9053fe6"
   },
   {
    "afirmacao": "Os inibidores de calcineurina demonstraram prejudicar a secreção de insulina em estudos clínicos, e estudos em animais confirmaram que o tratamento com tacrolimo piorou a tolerância à glicose in vivo e in vitro, tanto em modelos normais quanto resistentes à insulina, predominantemente por diminuição da secreção de insulina.",
-   "citacao": "CNIs have been shown to impair insulin secretion in clinical studies (49–53). Animal studies con- firmed that treatment with tacrolimus worsened glucose tolerance both in vivo and in vitro and in normal as well as insulin-resistant models, predominantly through de- creasing insulin secretion (54, 55).",
-   "secao": "Inibidores de calcineurina — mecanismo"
+   "secao": "Inibidores de calcineurina — mecanismo",
+   "cit": [
+    [
+     0,
+     21449,
+     302
+    ]
+   ],
+   "cit_sha": "b4fd9ab3386102ce"
   },
   {
    "afirmacao": "O tacrolimo também reduz a massa de células beta e aumenta a apoptose das ilhotas, com menor impacto sobre a sinalização da insulina, sugerindo que sua ação predominante é sobre a PRODUÇÃO de insulina; o tratamento de modelos animais com inibidores de calcineurina também demonstrou queda da atividade da glicoquinase e redução da expressão do gene da insulina.",
-   "citacao": "Tacrolimus was also shown to reduce ␤-cell mass and increase islet apoptosis, but it had less impact on insulin signaling, suggesting that its predomi- nant action was on insulin production (56). CNI treatment of animal models has also demonstrated decreased glu- cokinase activity and reduced insulin gene expression (57–59).",
-   "secao": "Inibidores de calcineurina — mecanismo"
+   "secao": "Inibidores de calcineurina — mecanismo",
+   "cit": [
+    [
+     0,
+     22123,
+     326
+    ]
+   ],
+   "cit_sha": "fbf1072b3528837d"
   },
   {
    "afirmacao": "O tacrolimo induz apoptose de células beta em ilhotas isoladas de roedores e humanas: o aumento da apoptose foi observado após 24 horas de tratamento de ilhotas humanas, via aumento da clivagem e da atividade da caspase-3, associado a diminuição da fosforilação de Akt e dos níveis de mRNA e proteína de IRS-2.",
-   "citacao": "Tacrolimus has also been shown to induce ␤-cell apo- ptosis in both isolated rodent and human islets. Increased apoptosis was also observed after 24-hour treatment of isolated human islets with tacrolimus through the up-reg- ulation of caspase-3 cleavage and activity (60). The apo- ptosis was associated with decreased Akt phosphorylation and IRS-2 mRNA and protein levels, suggesting that CNIs impact human␤-cell survival in part through regulation of IRS-2 (61).",
-   "secao": "Inibidores de calcineurina — mecanismo"
+   "secao": "Inibidores de calcineurina — mecanismo",
+   "cit": [
+    [
+     0,
+     22450,
+     465
+    ]
+   ],
+   "cit_sha": "9310dfdb7a37b7d8"
   },
   {
    "afirmacao": "Dados mais recentes sugerem que esquemas com tacrolimo, mais do que com ciclosporina, também podem aumentar a resistência à insulina após transplante renal; em adipócitos humanos, tanto a ciclosporina quanto o tacrolimo inibiram a captação de glicose independentemente da sinalização da insulina, removendo o GLUT4 da superfície celular por aumento da taxa de endocitose.",
-   "citacao": "gest that tacrolimus more than cyclosporine-based regi- mens can also increase insulin resistance after kidney transplant. This was first reported in animal studies but was also suggested in recent clinical studies as measured by homeostasis model assessment of insulin resistance and fasting insulin concentration (64–66). In human adi- pocytes, both cyclosporine and tacrolimus inhibited glu- cose uptake independent of insulin signaling by removing GLUT4 from the cell surface through an increased rate of endocytosis (67).",
-   "secao": "Inibidores de calcineurina — mecanismo"
+   "secao": "Inibidores de calcineurina — mecanismo",
+   "cit": [
+    [
+     0,
+     23410,
+     526
+    ]
+   ],
+   "cit_sha": "016679d6dcc0ebf5"
   },
   {
    "afirmacao": "Em resumo, os inibidores de calcineurina podem aumentar o risco de PTDM reduzindo a secreção de insulina, aumentando a resistência à insulina por mecanismos dependentes e independentes da sinalização insulínica, ou indiretamente por seu impacto sobre a concentração de magnésio; pequenos estudos clínicos em indivíduos magros e euglicêmicos não mostraram impacto significativo sobre a ação da insulina, sugerindo que risco ou suscetibilidade pré-existentes possam ser necessários.",
-   "citacao": "Studies performed predominantly in vitro and in animal models suggest that CNIs may increase the risk of PTDM by reducing insulin secretion, increasing insulin resistance through both insulin signaling and non- insulin signaling mechanisms, or indirectly through its impact on magnesium concentration. However, small clinical studies of thin, euglycemic subjects did not dem- onstrate a significant impact of CNIs on insulin action, suggesting that pre-existing risk or susceptibility may be required.",
-   "secao": "Inibidores de calcineurina — síntese"
+   "secao": "Inibidores de calcineurina — síntese",
+   "cit": [
+    [
+     0,
+     29981,
+     501
+    ]
+   ],
+   "cit_sha": "e75db0b41ff87e22"
   },
   {
    "afirmacao": "O sirolimo, primeiro inibidor de mTOR usado em transplante de órgão sólido, associou-se a intolerância à glicose; logo após sua introdução observou-se hipertrigliceridemia grave semelhante à de outros agentes que agravam a resistência à insulina, e dados do U.S. Renal Database sugerem que ele se associa de forma independente a maior risco de diabetes após transplante renal.",
-   "citacao": "Sirolimus, the first mTOR inhibitor to be used in solid organ transplantation, has also been associated with glu- cose intolerance after organ transplant. Soon after its in- troduction, patients treated with sirolimus were observed to have severe hypertriglyceridemia similar to that ob- served with other agents known to aggravate insulin re- sistance, raising suspicion that it could affect insulin action (80). Studies of data from the U.S. Renal Database suggest that sirolimus is independently associated with increased risk for diabetes after kidney transplant (25, 81, 82).",
-   "secao": "Sirolimo (mTOR)"
+   "secao": "Sirolimo (mTOR)",
+   "cit": [
+    [
+     0,
+     30483,
+     580
+    ]
+   ],
+   "cit_sha": "5494fd55707e135e"
   },
   {
    "afirmacao": "Uma análise retrospectiva de 10 anos dos esquemas de imunossupressão revelou que os esquemas que incluíam sirolimo tinham mais probabilidade de desenvolver diabetes após o transplante renal; entretanto, o impacto do sirolimo pode depender da suscetibilidade individual ou ser globalmente menor que o dos inibidores de calcineurina, pois relatos de caso sugerem que a conversão de ciclosporina para sirolimo pode melhorar o controle glicêmico.",
-   "citacao": "A 10-year retrospective analysis of immunosuppression reg- imens also revealed that regimens that included sirolimus were more likely to develop diabetes after kidney trans- plantation (83). However, the impact of sirolimus may depend on individual or pre-existing susceptibility or may overall be less than that of the CNIs because case reports suggest that conversion from cyclosporine to sirolimus can improve glycemic control (84).",
-   "secao": "Sirolimo (mTOR)"
+   "secao": "Sirolimo (mTOR)",
+   "cit": [
+    [
+     0,
+     31064,
+     435
+    ]
+   ],
+   "cit_sha": "bd465cba2783a8bc"
   },
   {
    "afirmacao": "O tratamento com sirolimo reduz a massa de células beta de ilhotas humanas e de rato por apoptose; em modelo de camundongo prenhe o sirolimo prejudicou a proliferação de células beta, e ele também prejudica a proliferação das células ductais pancreáticas, que alguns acreditam servir de precursoras para o desenvolvimento de novas ilhotas.",
-   "citacao": "Sirolimus treatment has been shown to reduce ␤-cell mass of human and rat islets through apoptosis (85). Sirolimus also has antiproliferative effects on multiple cells. In a pregnant mouse model, sirolimus impaired the proliferation of ␤-cells, so it may also impact ␤-cell replication in non- pregnant adults (86). Sirolimus has also been shown to impair proliferation of pancreatic ductal cells, which some believe serve as a precursor for the development of new islets (87).",
-   "secao": "Sirolimo — mecanismo"
+   "secao": "Sirolimo — mecanismo",
+   "cit": [
+    [
+     0,
+     31539,
+     477
+    ]
+   ],
+   "cit_sha": "409609d9f3fd4923"
   },
   {
    "afirmacao": "O maior impacto do sirolimo sobre o metabolismo da glicose pode estar na transdução do sinal da insulina: o sirolimo (rapamicina) liga-se ao mTOR, e um dos mecanismos importantes de retroalimentação negativa dessa via é a fosforilação do IRS-1 em resíduos específicos de serina (307, 612 e 636, entre outros), levando à supressão da sinalização PI3K/Akt.",
-   "citacao": "Sirolimus, also called rapamycin, binds to mTOR, and one of the important negative feedback mechanisms of this pathway is via protein kinase-dependent phosphor- ylation of IRS-1 at specific serine residues (307, 612, and 636, among others), leading to suppression of PI3K/Akt signaling.",
-   "secao": "Sirolimo — mecanismo"
+   "secao": "Sirolimo — mecanismo",
+   "cit": [
+    [
+     0,
+     32916,
+     286
+    ]
+   ],
+   "cit_sha": "d2f719db90794f9c"
   },
   {
    "afirmacao": "O mTOR existe em dois complexos: o mTORC1 (mTOR, raptor, mLST8 e PRAS40) regula a fosforilação da p70 S6 quinase e promove a síntese proteica; o mTORC2 (mTOR, mLST8, rictor, PROTOR e mSin1) participa da fosforilação de Akt na serina 473, evento necessário para a atividade ótima de Akt.",
-   "citacao": "mTOR exists in two multimeric complexes, mTORC1 and mTORC2 (90–92). mTORC1 is comprised of mTOR, raptor, mLST8/G␤L, and PRAS40 (proline-rich Akt sub- strate 40). It regulates the phosphorylation of p70 ribosomal protein S6 kinase and promotes protein synthesis. mTORC2 consists of mTOR, mLST8/G␤L, rictor, PROTOR, and mSin1 and it plays a role in phosphorylation of Akt at serine 473, an event required for optimal Akt activity.",
-   "secao": "Sirolimo — mecanismo"
+   "secao": "Sirolimo — mecanismo",
+   "cit": [
+    [
+     0,
+     33203,
+     428
+    ]
+   ],
+   "cit_sha": "72892ecdf29852dc"
   },
   {
    "afirmacao": "O sirolimo suprime a fosforilação de Akt estimulada por insulina no fígado, na gordura e no músculo; também rompe a fosforilação do mTORC2, reduzindo a supressão da gliconeogênese hepática mediada por insulina, e induz a desfosforilação de Yin Yang 1, que medeia a supressão de genes da sinalização da insulina.",
-   "citacao": "Sirolimus suppresses insulin-stimu- lated Akt phosphorylation in the liver, fat, and muscle of male and female rats (54, 55). Sirolimus also disrupts the phosphorylation of mTORC2, reducing insulin-mediated suppression of hepatic gluconeogenesis (93), and can in- duce Yin Yang 1 dephosphorylation, which mediates sup- pression of insulin signaling genes, resulting in decreased insulin signaling (94).",
-   "secao": "Sirolimo — mecanismo"
+   "secao": "Sirolimo — mecanismo",
+   "cit": [
+    [
+     0,
+     33934,
+     402
+    ]
+   ],
+   "cit_sha": "d4808130c5f3dd51"
   },
   {
    "afirmacao": "Embora o sirolimo em baixa dose iniba o mTOR1, responsável por seu efeito imunossupressor, pode ser necessária alta dose de sirolimo para inibir o mTOR2, que está ligado à resistência à insulina.",
-   "citacao": "Although low-dose sirolimus can inhibit mTOR1, responsible for its immunosuppressive effects, high-dose sirolimus may be required to inhibit mTOR2, which is linked to insulin resistance (93, 95).",
-   "secao": "Sirolimo — mecanismo"
+   "secao": "Sirolimo — mecanismo",
+   "cit": [
+    [
+     0,
+     34439,
+     195
+    ]
+   ],
+   "cit_sha": "74db18373b47d623"
   },
   {
    "afirmacao": "Alguns estudos sugerem efeito bifásico do tempo: aumento agudo da sensibilidade à insulina após o sirolimo em miotubos, células musculares e humanos saudáveis, enquanto a administração crônica induz resistência à insulina in vitro e in vivo, muito provavelmente pela ruptura do mTORC2.",
-   "citacao": "Some studies have al- ready alluded to a potential biphasic effect of time, where an increase in insulin sensitivity was observed acutely after sirolimus treatment in C2C12 myotubes (100), L6 skeletal muscle cells (101), and healthy humans (96), possibly me- diated by disrupting an S6-mediated feedback loop (100), whereas chronic administration induces insulin resistance in vitro (in C2C12 myotubes) (100) and in vivo (56, 93, 102), most likely due to disruption of mTORC2 (93).",
-   "secao": "Sirolimo — mecanismo"
+   "secao": "Sirolimo — mecanismo",
+   "cit": [
+    [
+     0,
+     36952,
+     481
+    ]
+   ],
+   "cit_sha": "8dcffbbee2d6504b"
   },
   {
    "afirmacao": "O everolimo é outro inibidor de mTOR disponível; embora haja menos estudos avaliando seu impacto relativo sobre o metabolismo da glicose, não há dados que sugiram impacto substancialmente diferente do sirolimo sobre o risco futuro de diabetes.",
-   "citacao": "Everolimus is another available mTOR inhibitor. Al- though there are fewer studies evaluating its relative im- pact on glucose metabolism, its mechanism of action, there are no data to suggest that it has any substantially different impact on future diabetes risk than sirolimus.",
-   "secao": "Everolimo"
+   "secao": "Everolimo",
+   "cit": [
+    [
+     0,
+     37434,
+     279
+    ]
+   ],
+   "cit_sha": "cb32ff0c73af1908"
   },
   {
    "afirmacao": "Enquanto não houver estratégias comprovadas de prevenção, é imperativo que os esquemas de imunossupressão sejam escolhidos pela evidência de prolongar a sobrevida do enxerto, e NÃO para evitar o PTDM.",
-   "citacao": "Research is actively focused on strategies to prevent PTDM, but until strategies are found, it is imperative that immunosuppression regimens are chosen based on their evidence to prolong graft survival, not to avoid PTDM.",
-   "secao": "Escolha do imunossupressor"
+   "secao": "Escolha do imunossupressor",
+   "cit": [
+    [
+     0,
+     1970,
+     221
+    ]
+   ],
+   "cit_sha": "6b2471358f5a4ed9"
   },
   {
    "afirmacao": "O primeiro relato a sugerir que o PTDM afeta a sobrevida mostrou sobrevida de 1 ano de 98% naqueles sem PTDM contra 83% naqueles com PTDM.",
-   "citacao": "The first report to suggest that PTDM impacts survival showed that 1-year survival was 98% in those without PTDM vs 83% in those with PTDM (140).",
-   "secao": "Desfechos — rim"
+   "secao": "Desfechos — rim",
+   "cit": [
+    [
+     0,
+     47255,
+     145
+    ]
+   ],
+   "cit_sha": "e3bd37b7ac540309"
   },
   {
    "afirmacao": "O estudo de Cosio e colaboradores descreveu aumento de 2 vezes na mortalidade, igual ao do diabetes pré-transplante e independente de outros fatores conhecidos por reduzir a sobrevida; a redução da sobrevida do paciente por PTDM é atribuível em grande parte ao aumento dos eventos de doença cardiovascular, em até 3 vezes mesmo controlando para outros fatores de risco.",
-   "citacao": "Awareness of the potential impact of post-transplant diabetes increased even more with the study by Cosio et al (142), who described a 2-fold increase in mortality (Figure 4) compared to nontransplant recip- ients, which was equal to that of pretransplant diabetes, already established to worsen outcome, and independent of other factors known to reduce survival, and was con- firmed by Kaskiske et al and others (33, 34, 142, 143). The reduction in patient survival due to PTDM is largely at- tributable to increased cardiovascular disease events (33), as much as 3-fold even when controlling for other risk factors",
-   "secao": "Desfechos — rim"
+   "secao": "Desfechos — rim",
+   "cit": [
+    [
+     0,
+     47607,
+     616
+    ]
+   ],
+   "cit_sha": "1153816a364c4ddd"
   },
   {
    "afirmacao": "O maior impacto do PTDM sobre a sobrevida do enxerto provavelmente não se deve a maiores taxas de rejeição, mas sim à morte com enxerto funcionante; além disso, o PTDM associa-se a maior risco de sepse e de mortalidade relacionada à sepse e é fator de risco para o desenvolvimento de infecção por citomegalovírus.",
-   "citacao": "However, the greatest impact of PTDM on graft survival is likely not due to increased rejection rates, but rather to death with a functioning graft (150). Only one study suggests PTDM to be a risk factor for death- censored renal graft failure (143).\n\nDiabetes can predispose to many types of infection, as can immunosuppression. Thus, it is not surprising that\n\nPTDM has been shown to be associated with greater risk of sepsis and sepsis-related mortality (113, 148). PTDM is also a risk factor for developing CMV infection",
-   "secao": "Desfechos — rim"
+   "secao": "Desfechos — rim",
+   "cit": [
+    [
+     0,
+     48709,
+     522
+    ]
+   ],
+   "cit_sha": "b19be0013992f507"
   },
   {
    "afirmacao": "Nos poucos estudos retrospectivos disponíveis, o PTDM após transplante cardíaco não afeta a sobrevida, mas pode aumentar hipertensão, insuficiência renal, infecção e rejeição.",
-   "citacao": "In summary, in the few available retrospective studies, PTDM after heart trans- plantation does not affect survival, but it may increase hypertension, re- nal failure, infection, and rejection.",
-   "secao": "Desfechos — coração"
+   "secao": "Desfechos — coração",
+   "cit": [
+    [
+     0,
+     51448,
+     193
+    ]
+   ],
+   "cit_sha": "dabf33a8d8f3e5b1"
   },
   {
    "afirmacao": "Após transplante hepático, um estudo retrospectivo de 438 receptores mostrou que o PTDM se associou a maior risco de sepse, insuficiência renal crônica e menor sobrevida em comparação com os que não tinham PTDM.",
-   "citacao": "After liver transplant, a recent ret- rospective study of 438 recipients showed that PTDM was associated with increased risk of sepsis, chronic renal fail-\n\nure, and decreased survival, compared to those without PTDM (155).",
-   "secao": "Desfechos — fígado"
+   "secao": "Desfechos — fígado",
+   "cit": [
+    [
+     0,
+     51642,
+     222
+    ]
+   ],
+   "cit_sha": "1679843758b3c79d"
   },
   {
    "afirmacao": "Metas glicêmicas específicas não foram estabelecidas para o período pós-transplante imediato, mas dados em receptores renais sugerem que o controle glicêmico estrito (meta de glicemia 70 a 110 mg/dL) se associa a mais hipoglicemia e pode aumentar o risco de futuros episódios de rejeição em comparação com o controle padrão (meta de glicemia 70 a 180 mg/dL).",
-   "citacao": "Specific glycemic targets have not been es- tablished for patients in the immediate post-transplant set- ting. However, data from a study in kidney transplant recipients suggest that tight glycemic control (blood glu- cose goal, 70–110 mg/dL) is associated with increased hypoglycemia and may increase the risk for future rejec- tion episodes compared to standard blood glucose control (blood glucose goal, 70–180 mg/dL) (166).",
-   "secao": "Tratamento hospitalar — metas"
+   "secao": "Tratamento hospitalar — metas",
+   "cit": [
+    [
+     0,
+     54933,
+     427
+    ]
+   ],
+   "cit_sha": "0e6659f8726346d5"
   },
   {
    "afirmacao": "Para os transplantados, parece razoável seguir as metas gerais de internação: glicemia de 140 a 180 mg/dL na unidade de terapia intensiva, glicemia pré-prandial abaixo de 140 mg/dL fora da UTI e glicemia aleatória abaixo de 180 mg/dL.",
-   "citacao": "Thus, for transplant recipients, it seems reasonable to follow current general practice guidelines for inpatient blood glucose goals (intensive care unit blood glucose goal, 140–180 mg/dL; non-intensive care unit premeal blood glucose goal,⬍140 mg/dL; random blood glucose goal,⬍180 mg/ dL) (167).",
-   "secao": "Tratamento hospitalar — metas"
+   "secao": "Tratamento hospitalar — metas",
+   "cit": [
+    [
+     0,
+     55361,
+     297
+    ]
+   ],
+   "cit_sha": "364619209f2b494f"
   },
   {
    "afirmacao": "No período pós-transplante imediato a insulinoterapia é geralmente necessária para controlar a hiperglicemia pós-operatória, especialmente pela exigência de imunossupressores em altas doses; o estresse e a dor pós-operatórios também contribuem para as altas necessidades de insulina.",
-   "citacao": "In the immediate post-transplant setting, insulin ther- apy is generally required to manage postoperative hyper- glycemia, especially given the requirement for high-dose immunosuppressants in this setting. Postoperative stress and pain likely also contribute to high insulin dose re- quirements (168).",
-   "secao": "Tratamento hospitalar — insulina"
+   "secao": "Tratamento hospitalar — insulina",
+   "cit": [
+    [
+     0,
+     55659,
+     301
+    ]
+   ],
+   "cit_sha": "9eb260811626a340"
   },
   {
    "afirmacao": "No período pós-operatório precoce a insulina intravenosa é comumente utilizada, pois os algoritmos permitem titular a dose com frequência; as infusões intravenosas de insulina foram estudadas no contexto pós-transplante e seu uso mostrou-se seguro e eficaz.",
-   "citacao": "In light of high insulin requirements and frequent changes in immunosuppressant doses, renal function (in kidney transplant recipients), and nutritional intake, in the early postoperative period, iv insulin therapy is com- monly utilized. Intravenous insulin algorithms allow in- sulin doses to be frequently titrated to better prevent sig- nificant glucose excursions. Intravenous insulin infusions have been studied in the post-transplant setting, and their use has been shown to be safe and efficacious (170, 171).",
-   "secao": "Tratamento hospitalar — insulina"
+   "secao": "Tratamento hospitalar — insulina",
+   "cit": [
+    [
+     0,
+     56501,
+     517
+    ]
+   ],
+   "cit_sha": "01ec3c5145e6d694"
   },
   {
    "afirmacao": "Após estabilização nutricional, converte-se para esquema de múltiplas injeções diárias, calculando as doses subcutâneas a partir da infusão intravenosa, em esquema formal basal/bolus com insulina de correção; doses fixas adicionais de insulina de ação longa (por exemplo, NPH, glargina ou detemir) podem ser úteis para cobrir doses intermitentes programadas de corticosteroide.",
-   "citacao": "Once patients are on a stable nutritional regimen, they can be transitioned to a multiple-daily injectable insulin regimen, as recently reviewed (12). Subcutaneous insulin doses are generally calculated utilizing requirements from the iv insulin infusion, utilizing a formal basal/bolus reg- imen with correction insulin used as needed for persistent hyperglycemia. Additional fixed doses of long-acting in- sulin can be useful to cover intermittent doses of scheduled corticosteroids (eg, NPH, glargine, or detemir).",
-   "secao": "Tratamento hospitalar — insulina"
+   "secao": "Tratamento hospitalar — insulina",
+   "cit": [
+    [
+     0,
+     57019,
+     517
+    ]
+   ],
+   "cit_sha": "7cbb6d1198cdb73d"
   },
   {
    "afirmacao": "A nutrição parenteral total aumenta as necessidades de insulina, que podem ser cobertas por infusão intravenosa separada, com ou sem adição de insulina à solução; uma vez estável, a insulina intravenosa pode ser convertida em insulina de ação longa com insulina de correção a cada 4 a 6 horas, mantendo-se parte da necessidade dentro da nutrição parenteral para evitar hipoglicemia caso ela seja interrompida inesperadamente.",
-   "citacao": "TPN can\n\nincrease insulin requirements that can be covered with a separate iv insulin drip, with or without the addition of insulin to the TPN solution. Once stable, iv insulin can be transitioned to long-acting insulin with correction insulin every 4 to 6 hours as needed, although there is safety in keeping some of the insulin requirements in the TPN to prevent hypoglycemia if the TPN were discontinued un- expectedly (172).",
-   "secao": "Tratamento hospitalar — nutrição parenteral"
+   "secao": "Tratamento hospitalar — nutrição parenteral",
+   "cit": [
+    [
+     0,
+     57537,
+     427
+    ]
+   ],
+   "cit_sha": "acc8dcfdcb23e0e4"
   },
   {
    "afirmacao": "Em geral, os hipoglicemiantes orais são tipicamente evitados nos transplantados hospitalizados pelo risco de efeitos colaterais e também pela preocupação com falta de eficácia nesse contexto.",
-   "citacao": "In general, as in the inpatient management of diabetes in nontransplant patients, oral hypoglycemic medications are typically avoided in hospitalized transplant recipients due to the risk of side effects, but also due to concerns over a lack of efficacy in this setting.",
-   "secao": "Tratamento hospitalar — orais"
+   "secao": "Tratamento hospitalar — orais",
+   "cit": [
+    [
+     0,
+     58398,
+     270
+    ]
+   ],
+   "cit_sha": "f62b3c6ce2e73cda"
   },
   {
    "afirmacao": "O manejo glicêmico de longo prazo do PTDM frequentemente exige insulina ao longo do tempo, particularmente nos pacientes com maior obesidade, embora alguns pacientes possam ser candidatos a hipoglicemiantes orais isolados ou combinados à insulina.",
-   "citacao": "Long-term glucose management of PTDM frequently requires insulin over time, particularly in those with the greatest obesity (37, 55, 57, 60, 141). However, some patients may be candidates for oral hypoglycemic medi- cations alone or in combination with insulin therapy.",
-   "secao": "Tratamento ambulatorial"
+   "secao": "Tratamento ambulatorial",
+   "cit": [
+    [
+     0,
+     60940,
+     269
+    ]
+   ],
+   "cit_sha": "e31f73bddd2ad8cf"
   },
   {
    "afirmacao": "A metformina tem sido usada no tratamento do PTDM e alguns sugeriram que deveria ser a primeira linha após o transplante renal, mas, pela frequência de função renal reduzida, infecções e uso de contraste, ela deve ser usada com cuidado, particularmente em receptores renais, pelo risco raro mas potencial de acidose láctica com função renal reduzida.",
-   "citacao": "Metformin is often the first-line therapy for treatment of type 2 diabetes in nontransplant recipients and has been used for treatment of PTDM (173). Animal studies suggest that metformin reduces immunosuppressant-induced exocrine (and possibly endocrine) cell apoptosis with sub- sequent improvement in glycemic control (54). Thus, some have suggested that metformin should be first-line therapy for PTDM after kidney transplant (174). How- ever, because of the frequency of reduced kidney function, infections, and the use of contrast agents, metformin should be used carefully, particularly in kidney transplant recipients, due to the rare but potential risk of lactic aci- dosis with reduced renal function (175).",
-   "secao": "Metformina"
+   "secao": "Metformina",
+   "cit": [
+    [
+     0,
+     61411,
+     717
+    ]
+   ],
+   "cit_sha": "b20f039a8f113c1b"
   },
   {
    "afirmacao": "Numa revisão recente de 47 000 receptores de transplante renal do Scientific Registry of Transplant Recipients, 10% preencheram ao menos uma prescrição de metformina, embora quase 40% dos usuários tivessem creatinina sérica acima do limite aprovado pela FDA; não houve diferença na sobrevida do paciente ou do enxerto entre quem recebeu e quem não recebeu metformina.",
-   "citacao": "a recent review of 47 000 kidney transplant recipi- ents in the Scientific Registry of Transplant Recipients\n\nsuggests that 10% of transplant recipients filled at least one prescription for metformin, although nearly 40% of the metformin users had a serum creatinine level above the Food and Drug Administration-approved cutoff (176). No data were given on the incidence of lactic acidosis in this study, but there was no difference in patient or allo- graft survival between those who received metformin and those who did not, suggesting that metformin did not ap- pear to negatively impact long-term outcomes.",
-   "secao": "Metformina"
+   "secao": "Metformina",
+   "cit": [
+    [
+     0,
+     62153,
+     610
+    ]
+   ],
+   "cit_sha": "fad1f31f7640f455"
   },
   {
    "afirmacao": "Um outro estudo retrospectivo pequeno do uso de metformina após transplante renal não mostrou mudança significativa da HbA1c nem efeitos colaterais significativos ao longo de 16 meses de uso; até o momento, não há dados publicados sobre o uso de metformina em outros grupos de transplante de órgão sólido.",
-   "citacao": "One other small, retrospective study of metformin use after kidney transplant showed no significant change in hemoglobin A1c (HbA1c) and no significant side effects over 16 months of use (177). To date, there are no published data on the use of metformin in other solid organ transplant groups.",
-   "secao": "Metformina"
+   "secao": "Metformina",
+   "cit": [
+    [
+     0,
+     62764,
+     294
+    ]
+   ],
+   "cit_sha": "25462b739f15dd5f"
   },
   {
    "afirmacao": "A metformina é eficaz em receptores renais estáveis, mas é contraindicada em muitos outros grupos de transplante, incluindo durante hospitalizações agudas; não deve ser usada com queda da taxa de filtração glomerular, elevação das enzimas hepáticas, insuficiência cardíaca congestiva ou infecção ativa significativa, e deve ser suspensa antes de procedimento programado com contraste intravenoso.",
-   "citacao": "Metformin Effective in stable KTX patients but contraindicated\n\nfor many other TX groups, including during acute hospitalizations (177, 214)\n\nShould not be used during acute hospitalization,\n\nwith 2 GFR, 1 LFTs, CHF, or active, significant infection; and should be held for planned iv contrast procedure",
-   "secao": "Metformina — quando evitar"
+   "secao": "Metformina — quando evitar",
+   "cit": [
+    [
+     0,
+     63666,
+     300
+    ]
+   ],
+   "cit_sha": "d1cf9e42ab06fbbf"
   },
   {
    "afirmacao": "As sulfonilureias são comumente utilizadas no PTDM, com poucos dados de segurança ou eficácia disponíveis, e a hipoglicemia pode aumentar significativamente na insuficiência renal; num pequeno estudo em receptores renais com PTDM elas não alteraram a farmacocinética da ciclosporina, mas o risco é de hipoglicemia mais frequente e mais prolongada com queda da filtração glomerular.",
-   "citacao": "Sulfonylureas Efficacy is not well documented in transplant patients. Did not alter cyclosporine pharmacokinetics in a small study of KTX recipients with PTDM (215–218) Increased risk of more frequent and more prolonged hypoglycemia with 2 GFR",
-   "secao": "Sulfonilureias"
+   "secao": "Sulfonilureias",
+   "cit": [
+    [
+     0,
+     63967,
+     243
+    ]
+   ],
+   "cit_sha": "9955961e6b36ce49"
   },
   {
    "afirmacao": "A repaglinida estimula a secreção de insulina de forma semelhante às sulfonilureias e, em pequeno ensaio observacional, mostrou-se modestamente eficaz em receptores de transplante renal com PTDM.",
-   "citacao": "half-life, although it stimulates insulin secretion similar to sulfonylureas. In a small observational trial, repaglinide was shown to be modestly efficacious in kidney transplant recipients with PTDM (180).",
-   "secao": "Repaglinida"
+   "secao": "Repaglinida",
+   "cit": [
+    [
+     0,
+     66172,
+     207
+    ]
+   ],
+   "cit_sha": "641eceb0c2fb0fd5"
   },
   {
    "afirmacao": "A repaglinida foi eficaz e segura, sem interação com os inibidores de calcineurina, em pequeno estudo de receptores de transplante renal com PTDM, e tem MENOS risco de hipoglicemia com queda da filtração glomerular do que as sulfonilureias — por isso é por vezes preferida no transplantado com função renal reduzida.",
-   "citacao": "Repaglinide Effective and safe with no interaction with CNIs in a small study of KTX recipients with PTDM (180)\n\nLess risk of hypoglycemia with 2 GFR than\n\nsulfonylureas",
-   "secao": "Repaglinida"
+   "secao": "Repaglinida",
+   "cit": [
+    [
+     0,
+     64211,
+     167
+    ]
+   ],
+   "cit_sha": "7810db6f5d9a7b46"
   },
   {
    "afirmacao": "As tiazolidinedionas (por exemplo, pioglitazona) foram eficazes e seguras em pequenos estudos de receptores de transplante renal, mas têm risco conhecido de ganho de peso, edema, insuficiência cardíaca e redução da massa óssea, sendo contraindicadas com enzimas hepáticas elevadas (exceto na doença hepática gordurosa) e com insuficiência cardíaca conhecida.",
-   "citacao": "Thiazolidinediones (eg,\n\npioglitazone)\n\nEffective and safe in small studies of KTX recipients\n\n(177, 180, 183, 219, 220)\n\nKnown risk for weight gain, edema, heart failure,\n\nand reduced bone mass; contraindicated with known elevated liver function tests with the exception for known fatty liver disease including after liver transplant; contraindicated with known heart failure; unknown impact on risk for heart failure risk after transplant",
-   "secao": "Tiazolidinedionas"
+   "secao": "Tiazolidinedionas",
+   "cit": [
+    [
+     0,
+     64379,
+     435
+    ]
+   ],
+   "cit_sha": "3e247d392486b8ab"
   },
   {
    "afirmacao": "Os inibidores de alfa-glicosidase não têm, até o momento, nenhum estudo de segurança ou eficácia em populações de transplante de órgãos; devem ser evitados com queda da filtração glomerular e é improvável que sejam eficazes como agente único.",
-   "citacao": "-Glucosidase inhibitors No studies of safety or efficacy to date in organ\n\ntransplant populations\n\nAvoid with 2 GFR; unlikely to be an effective\n\nsingle agent",
-   "secao": "Inibidores de alfa-glicosidase"
+   "secao": "Inibidores de alfa-glicosidase",
+   "cit": [
+    [
+     0,
+     64816,
+     155
+    ]
+   ],
+   "cit_sha": "8e7f2cdc4ed12d5b"
   },
   {
    "afirmacao": "No contexto não transplantado os inibidores de DPP-4 têm risco relativamente baixo de hipoglicemia, são neutros no peso e podem ser usados com segurança em quem tem apenas redução leve da função renal ou com ajuste de dose na doença renal crônica mais significativa; por esses fatores, e por não afetarem os níveis dos imunossupressores, são cada vez mais usados no tratamento do PTDM sem preocupações significativas de segurança.",
-   "citacao": "In the non- transplant setting, DPP-4 inhibitors have a relatively low risk of hypoglycemia, are weight neutral, and can be used safely in patients who have only mild reductions in kidney function or if the dose is adjusted appropriately with more significant chronic kidney disease. Because of these fac- tors, as well as evidence that they do not affect immuno- suppressant levels, DPP-4 inhibitors are increasingly used for treatment of PTDM without significant safety con- cerns identified (179, 181, 182).",
-   "secao": "Inibidores de DPP-4"
+   "secao": "Inibidores de DPP-4",
+   "cit": [
+    [
+     0,
+     66588,
+     510
+    ]
+   ],
+   "cit_sha": "e6f7574621ef09b9"
   },
   {
    "afirmacao": "A vildagliptina reduziu a glicemia plasmática de 2 horas no TTGO e também a HbA1c em receptores de transplante renal com tolerância à glicose diminuída, e no PTDM em ensaio fase II randomizado, duplo-cego e controlado por placebo; de forma importante, não houve diferenças na função renal nem nos níveis dos imunossupressores, e os efeitos adversos não diferiram entre os grupos.",
-   "citacao": "Vildagliptin reduced 2-hour plasma glucose on OGTT as well as HbA1c in kidney transplant recipients with impaired glucose toler-\n\nance, as well as for PTDM in a randomized, double-blind, placebo-controlled, phase II trial (179, 183). Importantly, no differences in renal function or immunosuppressant levels were noted, and adverse effects were not different between the two groups.",
-   "secao": "Inibidores de DPP-4"
+   "secao": "Inibidores de DPP-4",
+   "cit": [
+    [
+     0,
+     67099,
+     381
+    ]
+   ],
+   "cit_sha": "c39dbd38e67e0728"
   },
   {
    "afirmacao": "A vildagliptina também foi eficaz para diabetes pré-transplante ou PTDM após transplante cardíaco, com HbA1c significativamente reduzida após 8 meses de terapia, sem mudança nos níveis dos imunossupressores nem necessidade de alterar a dose do imunossupressor.",
-   "citacao": "gliptin was also reported to be efficacious for pretrans- plant diabetes or PTDM after heart transplant (184). HbA1c was significantly reduced after 8 months of ther- apy, with no change in immunosuppressant levels or re- quired change in immunosuppressant drug dose.",
-   "secao": "Inibidores de DPP-4"
+   "secao": "Inibidores de DPP-4",
+   "cit": [
+    [
+     0,
+     67633,
+     267
+    ]
+   ],
+   "cit_sha": "e290fd191d0d871f"
   },
   {
    "afirmacao": "Ensaios retrospectivos e pequenos ensaios randomizados controlados em receptores de transplante renal mostram a segurança de vários inibidores de DPP-4; deve-se reduzir a dose de todos, EXCETO a da linagliptina, quando há queda da filtração glomerular.",
-   "citacao": "Retrospective and small random controlled trials of KTX recipients show safety of several DPP-4 inhibitors (8, 181–184) Reduce dose of all but linagliptin with 2 GFR",
-   "secao": "Inibidores de DPP-4 — dose"
+   "secao": "Inibidores de DPP-4 — dose",
+   "cit": [
+    [
+     0,
+     65355,
+     165
+    ]
+   ],
+   "cit_sha": "529561ef2390dd06"
   },
   {
    "afirmacao": "A linagliptina é depurada predominantemente de forma independente do rim, portanto não exige mudança de dose com variações da creatinina, o que a torna o mais atraente dos inibidores de DPP-4 para uso após transplante renal, tanto para prevenção quanto para tratamento.",
-   "citacao": "Linagliptin is predominantly cleared independent of the kidney, so it does not require a change in dosing with changes in creatinine, making it the most attractive of the DPP-4 inhibitors for use after kidney transplant, in par- ticular, for prevention or treatment.",
-   "secao": "Linagliptina"
+   "secao": "Linagliptina",
+   "cit": [
+    [
+     0,
+     83936,
+     266
+    ]
+   ],
+   "cit_sha": "6ff1505020cec499"
   },
   {
    "afirmacao": "Ao contrário dos inibidores de DPP-4, que têm sido usados com segurança no transplantado, há menos dados e MAIOR preocupação com os agonistas de GLP-1, que causam mais náusea e têm maior impacto sobre o esvaziamento gástrico — ambos os efeitos levantam a dúvida de se poderiam alterar os desfechos do transplante por modificarem a absorção e/ou o pico de concentração dos imunossupressores.",
-   "citacao": "Although DPP-4 inhibitors have been used safely, there are less data and greater concern about the use of GLP-1 agonists, which can cause greater nausea and have a greater impact on gastric emptying. Both effects raise con- cerns about whether these agents might impact transplant outcomes by changing immunosuppressant absorption and/or immunosuppressant peak concentrations.",
-   "secao": "Agonistas de GLP-1"
+   "secao": "Agonistas de GLP-1",
+   "cit": [
+    [
+     0,
+     67901,
+     376
+    ]
+   ],
+   "cit_sha": "9b0c459db2562026"
   },
   {
    "afirmacao": "Até o momento, apenas uma pequena série de cinco casos relatou tratamento com agonista de GLP-1 em receptores de transplante renal: três semanas de liraglutida não alteraram os níveis nem a dose do tacrolimo, e não se observaram efeitos adversos específicos do transplante; não há estudos de exenatida, que não deve ser usada com clearance de creatinina abaixo de 30 mL/min, e essa classe deve ser reservada ao tratamento sob protocolo de pesquisa até que sua segurança e eficácia sejam determinadas.",
-   "citacao": "To date, only one small case series of five subjects has reported on treatment with GLP-1 agonist in kidney transplant recip- ients (185). Three weeks of liraglutide therapy did not alter tacrolimus levels or dosing in these subjects, and no trans- plant-specific adverse effects were noted. There are no studies of exenatide, which is often associated with even greater nausea. Exenatide should not be used with creat- inine clearance ⬍ 30 mL/min. Thus, this class of agents should be reserved for treatment only under a research protocol until their safety and efficacy in transplant re- cipients can be determined.",
-   "secao": "Agonistas de GLP-1"
+   "secao": "Agonistas de GLP-1",
+   "cit": [
+    [
+     0,
+     68278,
+     617
+    ]
+   ],
+   "cit_sha": "5d78a9d1bc8c1b18"
   },
   {
    "afirmacao": "Na Tabela 4 desta revisão de 2016 sobre o TRANSPLANTADO de órgão sólido, os agonistas de GLP-1 (exenatida, liraglutida, lixisenatida) diminuem a motilidade intestinal, o que pode afetar a absorção dos imunossupressores e não havia sido estudado, e a tabela orienta não usá-los NO TRANSPLANTADO se a filtração glomerular for menor que 40 mL/min. ⚠️ É um limiar de 2016 e específico do transplante — não é o corte de função renal dos AR GLP-1 no diabetes tipo 2 fora do transplante.",
-   "citacao": "Decreases bowel motility, which may impact\n\nabsorption of immune suppression agents and has not yet been studied; should not use if GFR ⬍ 40 mL/min",
-   "secao": "Agonistas de GLP-1"
+   "secao": "Agonistas de GLP-1",
+   "cit": [
+    [
+     0,
+     65124,
+     146
+    ]
+   ],
+   "cit_sha": "ef5813a19cde70e7"
   },
   {
    "afirmacao": "A classe mais nova, os inibidores do cotransportador sódio-glicose 2, deve ser usada com cautela considerável nos transplantados, se é que deve: causam depleção de volume e aumento do risco de infecções geniturinárias, ambos de maior consequência em receptores imunossuprimidos que comumente têm função renal reduzida, e relatos recentes de cetoacidose diabética são mais um motivo para evitá-los na população transplantada até que estudos de segurança sejam feitos.",
-   "citacao": "Similarly, the newest class of medications, sodium-glu- cose cotransporter 2 inhibitors, should be used with con- siderable caution in transplant recipients, if at all. They are known to cause volume depletion and increased risk for genitourinary infections, both of which may have greater consequences in the immunosuppressed transplant recip- ients, who commonly have reduced kidney function. Re- cent reports of diabetic ketoacidosis associated with these agents are just one more reason to avoid these agents in the transplant population until safety studies have been per- formed (186, 187).",
-   "secao": "Inibidores de SGLT-2"
+   "secao": "Inibidores de SGLT-2",
+   "cit": [
+    [
+     0,
+     68896,
+     596
+    ]
+   ],
+   "cit_sha": "67fc0b08ff29da5e"
   },
   {
    "afirmacao": "As metas de controle glicêmico nos transplantados são semelhantes às dos outros grupos de diabetes e devem levar em conta duração do diabetes, comorbidades, risco de hipoglicemia e expectativa de vida, permitindo controle menos estrito nos de alto risco de hipoglicemia; a American Diabetes Association recomenda meta de HbA1c abaixo de 7% fora do contexto de transplante, enquanto as diretrizes KDIGO recomendam meta de HbA1c de 7 a 7,5% para transplantados renais, por causa do risco de hipoglicemia decorrente da função renal reduzida e da história frequente de doença cardíaca.",
-   "citacao": "Goals for glycemic control in transplant recipients are similar to other diabetes groups and should take into ac- count duration of diabetes, comorbidities, risk for hypo- glycemia, and life expectancy, allowing for less stringent glycemic control in those at high risk for hypoglycemia (188). The American Diabetes Association recommends a HbA1c goal of⬍7% for patients outside of the transplant setting. The Kidney Disease: Improving Global Outcomes (KDIGO) guidelines recommend a HbA1c goal of 7–7.5% for kidney transplant patients because of their risk of hy- poglycemia due to reduced renal function and frequent\n\ndoi: 10.1210/er.2015-1084 press.endocrine.org/journal/edrv 51\n\nhistory of heart disease (189).",
-   "secao": "Metas glicêmicas ambulatoriais"
+   "secao": "Metas glicêmicas ambulatoriais",
+   "cit": [
+    [
+     0,
+     69493,
+     711
+    ]
+   ],
+   "cit_sha": "8b52941c3efeee61"
   },
   {
    "afirmacao": "A automonitorização glicêmica é importante para qualquer paciente transplantado em uso de insulina ou de qualquer agente que estimule a secreção de insulina, direta ou indiretamente; não há diretrizes publicadas de metas pré ou pós-prandiais específicas para transplantados, além das da American Diabetes Association (80 a 130 mg/dL).",
-   "citacao": "Self-glucose monitoring is important for any transplant patient prescribed insulin or any agent that stimulates insulin secretion, directly or in- directly. There are no published guidelines for pre- or post- meal glucose goals for transplant patients separate from the American Diabetes Association (80–130 mg/dL).",
-   "secao": "Metas glicêmicas ambulatoriais"
+   "secao": "Metas glicêmicas ambulatoriais",
+   "cit": [
+    [
+     0,
+     70379,
+     315
+    ]
+   ],
+   "cit_sha": "c9886e7ce908853e"
   },
   {
    "afirmacao": "Embora seja preciso cautela nos pacientes com função renal reduzida, o controle glicêmico continua sendo um objetivo para prevenir futuras complicações microvasculares, porque os transplantados renais, em particular, podem viver mais 20 anos ou mais.",
-   "citacao": "Although caution must be used in those with reduced kidney function, glucose control remains a goal to prevent future microvascular complications be- cause kidney transplant patients, in particular, can live another 20 years or more (190).",
-   "secao": "Metas glicêmicas ambulatoriais"
+   "secao": "Metas glicêmicas ambulatoriais",
+   "cit": [
+    [
+     0,
+     70769,
+     239
+    ]
+   ],
+   "cit_sha": "3c9958618b3a8efe"
   },
   {
    "afirmacao": "O tratamento das comorbidades deve considerar as interações medicamentosas, porque muitos dos imunossupressores são metabolizados pelas mesmas vias que a maioria dos hipolipemiantes e alguns medicamentos para pressão arterial.",
-   "citacao": "Treatment must be mindful of drug-drug interac- tions because many of the immunosuppressants are me- tabolized through the same pathways as most of the lipid- lowering agents and some blood pressure medications.",
-   "secao": "Interações medicamentosas"
+   "secao": "Interações medicamentosas",
+   "cit": [
+    [
+     0,
+     71665,
+     211
+    ]
+   ],
+   "cit_sha": "6f218622fbe68d2a"
   },
   {
    "afirmacao": "As diretrizes KDOQI recomendam meta de pressão arterial abaixo de 140/80 mm Hg tanto para diabéticos quanto para não diabéticos com doença renal crônica, enquanto as diretrizes internacionais KDIGO recomendam meta mais estrita, abaixo de 130/80 mm Hg, sem evidência específica de ensaio clínico.",
-   "citacao": "are outlined by both the US KDOQI guidelines, which recommend a blood pressure goal of⬍ 140/80 mm Hg for both diabetic and nondiabetic patients with chronic kid- ney disease, and the international KDIGO guidelines, which recommend a more stringent ⬍ 130/80 mm Hg guideline, without specific trial evidence (191).",
-   "secao": "Hipertensão"
+   "secao": "Hipertensão",
+   "cit": [
+    [
+     0,
+     72155,
+     312
+    ]
+   ],
+   "cit_sha": "3c5856b6fe3ba21c"
   },
   {
    "afirmacao": "O tratamento com inibidor da enzima conversora de angiotensina ou bloqueador do receptor de angiotensina é recomendado como agente de primeira linha na maioria dos transplantados, preferindo-se o segundo se a hipercalemia for uma preocupação; os diuréticos são comumente o segundo agente, e os bloqueadores dos canais de cálcio têm maior probabilidade de interações medicamentosas com os imunossupressores, que precisam ser consideradas junto com outros fármacos depurados pelas mesmas vias metabólicas — inclusive os hipolipemiantes.",
-   "citacao": "Treat- ment with an angiotensin-converting enzyme or angioten- sin-receptor blocker is recommended as the first-line agent for treatment of blood pressure in most, with the latter preferred if hyperkalemia is a concern. Commonly, di- uretics are used as the second agent, as in nontransplant patients. Calcium channel blockers are more likely to have drug-drug interactions with immunosuppressants and must be taken into consideration with other medications cleared by the same metabolic pathways, which also in- clude lipid-lowering therapies.",
-   "secao": "Hipertensão"
+   "secao": "Hipertensão",
+   "cit": [
+    [
+     0,
+     72584,
+     544
+    ]
+   ],
+   "cit_sha": "e0908504b5315369"
   },
   {
    "afirmacao": "As diretrizes KDOQI sugerem estatinas como agente de primeira linha para a hipercolesterolemia em receptores de transplante renal, depois de excluídas causas secundárias; o sirolimo e o everolimo, em particular, podem se associar a hipertrigliceridemia grave.",
-   "citacao": "KDOQI guidelines for the treatment of lipids of kidney transplant recipients suggest statins as the first-line agent for treatment of hypercholesterolemia after excluding sec- ondary causes (192), as do the new American Heart As- sociation/American College of Cardiology guidelines for diabetes patients and the American Diabetes Association’s revised guidelines for treatment of dyslipidemia in non- transplant patients (193, 194). Sirolimus and everolimus, in particular, can be associated with severe hypertriglyc- eridemia.",
-   "secao": "Dislipidemia"
+   "secao": "Dislipidemia",
+   "cit": [
+    [
+     0,
+     73693,
+     527
+    ]
+   ],
+   "cit_sha": "5ccb4b4733916fbc"
   },
   {
    "afirmacao": "O tratamento com óleo de peixe é bem tolerado e os fibratos podem ser usados com segurança em combinação com os imunossupressores, mas outras terapias combinadas — como estatinas com fibratos ou niacina em receptores que também usam inibidor de calcineurina — devem ser usadas com cuidado pelo risco de interações medicamentosas, com relatos de casos de rabdomiólise e lesão hepática grave.",
-   "citacao": "Treatment with fish oil is well tolerated, and fibrates can be used safely in combination with immuno- suppressants, but other combination therapies, such as statins with fibrates or niacin in recipients also receiving CNIs, should be used carefully because of the risk for drug- drug interactions, with case reports of rhabdomyolysis and severe liver injury (195).",
-   "secao": "Dislipidemia"
+   "secao": "Dislipidemia",
+   "cit": [
+    [
+     0,
+     74221,
+     365
+    ]
+   ],
+   "cit_sha": "e2ae8e57c2165efa"
   },
   {
    "afirmacao": "Além dos tratamentos farmacológicos, pode ser necessária mudança da imunossupressão — reduzindo a dose de um inibidor de mTOR ou trocando-o completamente por outro agente, ou reduzindo a dose de corticosteroide.",
-   "citacao": "In addition to pharmacolog- ical treatments, changes in immunosuppression may also be required—from reducing the dose of, or switching com- pletely away from, a mTOR inhibitor to another agent (196–198), or reducing the steroid dose (199).",
-   "secao": "Dislipidemia"
+   "secao": "Dislipidemia",
+   "cit": [
+    [
+     0,
+     74587,
+     239
+    ]
+   ],
+   "cit_sha": "2d4c3bfd49f69224"
   },
   {
    "afirmacao": "Exames oftalmológicos anuais são tão ou mais importantes nos pacientes com PTDM quanto no diabetes fora do transplante: os corticosteroides comuns a muitos esquemas de transplante podem causar ou acelerar cataratas, e a imunossupressão também aumenta o risco de outras infecções oculares.",
-   "citacao": "Annual eye exams are as important or even more im- portant to those with PTDM as well as nontransplant diabetes. Corticosteroids common to many transplant regimens can cause or accelerate cataracts. Immunosup- pression also increases the risk of other eye infections.",
-   "secao": "Cuidados — olhos"
+   "secao": "Cuidados — olhos",
+   "cit": [
+    [
+     0,
+     74898,
+     267
+    ]
+   ],
+   "cit_sha": "e3dff43412b5fb8d"
   },
   {
    "afirmacao": "Muitos receptores de transplante já têm neuropatia no momento do transplante em razão da sua doença de base, com ou sem PTDM, de modo que todos devem ser rastreados com teste do monofilamento para avaliar o risco de lesão; toda infecção do pé deve ser tratada em caráter de urgência, porque pode progredir para infecções profundas e osteomielite na vigência de imunossupressão.",
-   "citacao": "Many transplant re- cipients have neuropathy at the time of transplant due to their other underlying disease, with or without PTDM, so all should be screened with monofilament testing to assess risk for injury. Because some may also have peripheral vascular disease, any injury to the skin, particularly in the presence of immunosuppression, can result in infection. All foot infections should be treated emergently because they can progress to deeper infections and osteomyelitis in the presence of immunosuppression.",
-   "secao": "Cuidados — pés"
+   "secao": "Cuidados — pés",
+   "cit": [
+    [
+     0,
+     75878,
+     518
+    ]
+   ],
+   "cit_sha": "c2eec4f347a25ea4"
   },
   {
    "afirmacao": "Os pacientes transplantados devem receber vacina anual contra gripe e a vacina antipneumocócica, se já se passaram mais de 5 anos desde a última dose; quem nunca recebeu a vacina pneumocócica antes do transplante deve recebê-la ao diagnóstico de PTDM.",
-   "citacao": "Transplant patients should get annual flu shots and the pneumonia vaccine, if it has been more than 5 years since they previously received the vac- cine. If they have never had a pneumonia vaccine before transplant, if they develop PTDM, they should receive one upon diagnosis.",
-   "secao": "Cuidados — vacinação"
+   "secao": "Cuidados — vacinação",
+   "cit": [
+    [
+     0,
+     76651,
+     277
+    ]
+   ],
+   "cit_sha": "bcd7dcbb095b8f24"
   },
   {
    "afirmacao": "As mulheres que desejam engravidar devem ser encorajadas a esperar até que as doses de imunossupressão estejam estáveis e o risco de rejeição esteja reduzido, pelo menos 6 meses e preferencialmente 1 ano após o transplante.",
-   "citacao": "Women desir- ing pregnancy should be encouraged to wait until immu- nosuppression doses are stable and their risk of rejection is reduced, at least 6 months and preferably 1 year after transplant.",
-   "secao": "Cuidados — reprodução"
+   "secao": "Cuidados — reprodução",
+   "cit": [
+    [
+     0,
+     78063,
+     196
+    ]
+   ],
+   "cit_sha": "5f70cfba0dfebd7c"
   },
   {
    "afirmacao": "Na internação imediata do transplante a hipoglicemia grave é risco ainda maior do que a hiperglicemia, a menos que haja comunicação regular e intencional entre enfermeiros, educadores em diabetes, cirurgiões do transplante, nutrição, nefrologistas, infectologistas, hospitalistas e endocrinologistas.",
-   "citacao": "Severe hypoglycemia is even more of a risk than hyperglycemia unless there is regular and intentional communication between and among all the nurses, diabetes educators, transplant surgeons, nu- trition therapy personnel, nephrologists, infectious dis- ease specialists, hospitalists, and endocrinologists, all of whom, and more, may be involved with the patient",
-   "secao": "Cuidados — equipe"
+   "secao": "Cuidados — equipe",
+   "cit": [
+    [
+     0,
+     79907,
+     362
+    ]
+   ],
+   "cit_sha": "42e649f221a000b6"
   },
   {
    "afirmacao": "Mudanças intensivas de estilo de vida, redução da ingestão calórica, perda de peso e exercício são passos bem estabelecidos para prevenir o diabetes tipo 2; a atenção à prevenção do ganho de peso pode ser outra estratégia contra o PTDM, embora a perda de peso não deva ser estimulada imediatamente após o transplante, para permitir a cicatrização adequada da ferida.",
-   "citacao": "Intensive lifestyle changes, reduced calorie intake, weight loss, and exercise are well established steps to pre- vent type 2 diabetes in nontransplant populations with long-term impact (204–206). Attention to preventing weight gain may be another strategy to prevent PTDM, although weight loss should not be encouraged immedi- ately after transplant to allow time for proper wound heal- ing.",
-   "secao": "Prevenção"
+   "secao": "Prevenção",
+   "cit": [
+    [
+     0,
+     82070,
+     392
+    ]
+   ],
+   "cit_sha": "03edc66832ce24e3"
   },
   {
    "afirmacao": "A modificação do estilo de vida — incluindo encaminhamento ao nutricionista, programa de exercícios e orientação para perda de peso — é benéfica após o transplante renal nos pacientes com tolerância à glicose diminuída e deve ser incorporada a qualquer medida de prevenção.",
-   "citacao": "Although activity may be limited early because of pain or muscle loss, lifestyle modification, including dietitian referral, exercise program, and weight loss advice, are ben- eficial after kidney transplant for those with impaired glu- cose tolerance and should be incorporated into any pre- vention measure (207).",
-   "secao": "Prevenção"
+   "secao": "Prevenção",
+   "cit": [
+    [
+     0,
+     82463,
+     315
+    ]
+   ],
+   "cit_sha": "31ca77c36581e104"
   },
   {
    "afirmacao": "A metformina e as tiazolidinedionas são eficazes na prevenção do diabetes tipo 2 fora do transplante, mas há poucos estudos mostrando se podem prevenir o PTDM; em estudos animais a metformina minimiza a hiperglicemia induzida por imunossupressor e a rosiglitazona previne a hiperglicemia secundária ao sirolimo.",
-   "citacao": "Metformin and thiazolidinediones, in particular, are effective in preventing type 2 diabetes in nontransplant populations (208, 209). However, there are few studies to demonstrate whether these medications can prevent PTDM. In animal studies, metformin can minimize immunosuppressant-induced hyperglycemia (54), and rosiglitazone prevents hyperglycemia secondary to siroli- mus (210).",
-   "secao": "Prevenção"
+   "secao": "Prevenção",
+   "cit": [
+    [
+     0,
+     82779,
+     384
+    ]
+   ],
+   "cit_sha": "013dd4d8506cf646"
   },
   {
    "afirmacao": "As estratégias de prevenção provavelmente precisam ser aplicadas cedo após o transplante, e a metformina é difícil de usar nessa fase por causa das hospitalizações frequentes, dos procedimentos com contraste, das infecções e da função renal reduzida; os efeitos colaterais das tiazolidinedionas (edema, insuficiência cardíaca e perda óssea) reduzem o entusiasmo por seu uso preventivo em qualquer grupo de transplante.",
-   "citacao": "However, the potential side effects of thiazo- lidinediones (eg, edema, heart failure, and bone loss) re- duce enthusiasm for their use as a diabetes prevention agent in any transplant group. Prevention strategies are likely to be required early after transplant, and metformin can also be difficult to use in this time frame because of frequent hospitalizations, contrast procedures and infec- tions, and reduced kidney function.",
-   "secao": "Prevenção"
+   "secao": "Prevenção",
+   "cit": [
+    [
+     0,
+     83164,
+     430
+    ]
+   ],
+   "cit_sha": "631268d63bf70930"
   },
   {
    "afirmacao": "Estão em avaliação inibidores de DPP-4 (sitagliptina, vildagliptina ou linagliptina) para prevenção, embora não tenham sido comprovados na prevenção de diabetes fora do transplante; todos são seguros e eficazes no tratamento do PTDM e não têm efeito adverso sobre as concentrações dos imunossupressores.",
-   "citacao": "As a result, others are evaluating the potential role for DPP-4 inhibitors, sitagliptin, vildagliptin, or linagliptin, for prevention although they have not been proven to pre- vent diabetes in nontransplant populations. All are safe and efficacious in treating PTDM and have no adverse effect on immunosuppressant concentrations (182–184).",
-   "secao": "Prevenção"
+   "secao": "Prevenção",
+   "cit": [
+    [
+     0,
+     83595,
+     340
+    ]
+   ],
+   "cit_sha": "cc8c7e8737ab91ed"
   },
   {
    "afirmacao": "À época da revisão havia pelo menos três estudos ativos de prevenção do PTDM: um de intervenção no estilo de vida (CAVIAR), um de administração de insulina basal (ITP-NODAT) e um com inibidor de DPP-4 (sitagliptina) após transplante renal.",
-   "citacao": "At the time of this review, there are at least three active studies focused on lifestyle intervention (Comparing Glycae- mic Benefits of Active vs Passive Lifestyle Intervention in Kidney Allograft Recipients \\[CAVIAR; NCT02233491\\]), basalinsulinadministration(AClinicalTrialtoPreventNew Onset Diabetes After Transplantation \\[ITP-NODAT; NCT01683331\\]), and use of a DPP-4 inhibitor (Efficacy Study of Sitagliptin to Prevent New-onset Diabetes After Kidney Transplant \\[NCT01928199\\]) for the prevention of PTDM.",
-   "secao": "Prevenção"
+   "secao": "Prevenção",
+   "cit": [
+    [
+     0,
+     84548,
+     513
+    ]
+   ],
+   "cit_sha": "b2a80f9249b68a1c"
   },
   {
    "afirmacao": "Enquanto as mudanças nos esquemas de imunossupressão não forem bem estudadas quanto aos desfechos globais, estratégias individualizadas destinadas a reduzir o PTDM NÃO devem ser preferidas àquelas estabelecidas como de melhores desfechos globais do transplante, como reiterado pelo recente Comitê de Diretrizes do Consenso Internacional para PTDM.",
-   "citacao": "It is most im- portant that until changes in immunosuppression regi- mens have been well studied for overall outcomes, individualized strategies aimed at potentially reducing PTDM should not be preferred over those established to have the best overall transplant outcomes, as reiterated by the recent International Consensus Guidelines Committee for PTDM (6).",
-   "secao": "Prevenção — princípio"
+   "secao": "Prevenção — princípio",
+   "cit": [
+    [
+     0,
+     85491,
+     359
+    ]
+   ],
+   "cit_sha": "097bdafabff893ce"
   },
   {
    "afirmacao": "O manejo de qualquer tipo de diabetes é mais desafiador após o transplante do que fora dele por causa do maior risco de flutuação da função renal, dos vários tipos de suplementação nutricional que afetam o esquema de tratamento e das grandes variações de resistência à insulina causadas por mudanças na imunossupressão, episódios intermitentes de rejeição, infecção ou necessidade de procedimentos e cirurgias.",
-   "citacao": "Management of any type of diabetes is more challenging after transplant than in nontransplant settings because of greater risk of fluctuating kidney function; varying types of nutritional supplementation that impact diabetes treat- ment regimens; and large variations in insulin resistance due to changes in immunosuppression, intermittent epi- sodes of rejection, infection or need for interval proce- dures or surgery.",
-   "secao": "Síntese"
+   "secao": "Síntese",
+   "cit": [
+    [
+     0,
+     87343,
+     420
+    ]
+   ],
+   "cit_sha": "21505067c4571c7e"
   },
   {
    "afirmacao": "As metas de tratamento e as terapias precisam considerar o maior risco de função renal flutuante e reduzida, que pode causar hipoglicemia; o manejo é ainda mais complicado pelo maior risco de interações medicamentosas entre os imunossupressores e os fármacos necessários ao tratamento das comorbidades de hipertensão e hiperlipidemia.",
-   "citacao": "Treatment goals and therapies must consider the greater risk for fluctuating and reduced kidney function, which can cause hypoglycemia. Research is actively focused on strategies to prevent PTDM",
-   "secao": "Síntese"
+   "secao": "Síntese",
+   "cit": [
+    [
+     0,
+     1834,
+     194
+    ]
+   ],
+   "cit_sha": "8de986510449d5bf"
   }
  ],
  "conflito_direcao": "misto",
