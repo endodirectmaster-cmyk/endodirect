@@ -101,6 +101,18 @@ function main() {
       problemas.push(`\`conflito_direcao\` = ${JSON.stringify(dir)} não é um valor válido. Use: ${DIRECOES.join(' | ')}`);
     }
 
+    // ⚠️ JUSTIFICATIVA ÓRFÃ. `nucleo_prevalece_porque` só faz sentido sob
+    // `nucleo_prevalece`. Sobrando debaixo de outra direção, ela é o resto de uma
+    // direção que MUDOU — e o motivo de ter mudado costuma ser que a justificativa
+    // estava errada. Caso real: a do PTDM afirmava que o núcleo "indica iSGLT2 e
+    // AR GLP-1" para o transplantado. O núcleo não fala de transplante em entrada
+    // nenhuma; era extrapolação de população, não fonte superada. A direção virou
+    // `misto` e a frase errada ficou no arquivo, pronta para ser lida como
+    // verdade na próxima vez que alguém abrisse o extrato.
+    if (dir && dir !== 'nucleo_prevalece' && String(e.nucleo_prevalece_porque || '').trim()) {
+      problemas.push(`tem \`nucleo_prevalece_porque\` mas a direção é \`${dir}\` — justificativa órfã de uma direção que mudou. Apague-a: ela documenta um raciocínio que não vale mais.`);
+    }
+
     const citados = Array.isArray(e.nucleo_citado) ? e.nucleo_citado : [];
     const ausentes = Array.isArray(e.nucleo_ausente) ? e.nucleo_ausente : [];
 
