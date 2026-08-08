@@ -204,6 +204,19 @@ const CAMINHO = [
   ['tumor de celulas germinativas testicular com beta-hCG', '(vazio)'],
   ['velocidade de crescimento reduzida com hipotireoidismo', 'Tireoide'],
 
+  // ⚠️ O ROTEADOR NÃO TINHA UMA ÚNICA PALAVRA HEPÁTICA. Zero ocorrências de
+  // `hepat`, `esteatos`, `nafld`, `masld`, `nash`, `figado`, `fibrose` ou
+  // `cirrose` no mapa inteiro, e 16 de 16 termos testados devolviam "". A doença
+  // hepática gordurosa é a interseção de obesidade, diabetes e lípides — e era
+  // invisível pelas três. As DUAS nomenclaturas entram: o artigo é da virada de
+  // NAFLD/NASH para MASLD/MASH e o médico digita as duas.
+  ['esteatose hepatica em paciente obeso: preciso investigar fibrose?', 'Obesidade'],
+  ['FIB-4 de 1,8: o que faco?', 'Obesidade'],
+  ['NASH tem tratamento aprovado?', 'Obesidade'],
+  ['MASLD: qual o criterio diagnostico?', 'Obesidade'],
+  ['quando encaminho ao hepatologista?', 'Obesidade'],
+  ['elastografia hepatica com 14 kPa', 'Obesidade'],
+
   // Sentinelas de outras áreas — o achado glicêmico não pode sequestrá-las.
   ['hiperglicemia em paciente com acromegalia', 'Neuroendocrinologia'],
   ['obeso em insulina: indico cirurgia bariatrica?', 'Obesidade'],
@@ -233,6 +246,8 @@ const CHEGADA = [
   ['cetoacidose alcoolica em paciente sem diabetes: preciso de insulina?', 'alcool'],
   ['osteoporose refrataria com fosfatase alcalina baixa: posso dar bisfosfonato?', 'bisfosfonato'],
   ['maratonista com diabetes tipo 1: alvo de glicose antes do treino', 'exerc'],
+  ['FIB-4 de 1,8: o que faco?', 'fib-4'],
+  ['quando encaminho ao hepatologista?', 'hepatolog'],
   // ⚠️ Obesidade passou de 68k (2 blocos) para 148k (4 blocos) em 08/08/2026 e
   // ATRAVESSOU o teto de 120k. A partir daqui, bloco não escolhido é bloco que
   // não existe — a mesma condição que escondeu o conteúdo de estado hiperosmolar
