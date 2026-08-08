@@ -419,6 +419,20 @@ try {
   fail('conferência das ressalvas falhou (o núcleo mudou e alguma ressalva ficou para trás):\n' + out);
 }
 
+// ⚠️ O CAMPO `auditoria` SIGNIFICA UMA COISA SÓ. Ele chegou a ter três formatos
+//     convivendo — string do legado, objeto com `achado` (auditoria de verdade)
+//     e objeto que o extrator usava como bloco de notas. Medido em 08/08/2026:
+//     contando o bloco de notas como auditoria, a base parecia 100% auditada
+//     quando estava em 93%. Erro na direção que ENCERRA o assunto, porque
+//     ninguém revisita o que já está verde. Nota de extração vai em `extracao`.
+try {
+  execFileSync(process.execPath, [path.join('scripts', 'status-auditoria.js')], { stdio: 'pipe' });
+  ok('campo `auditoria`: só auditoria adversarial, nota de extração em `extracao`');
+} catch (e) {
+  const out = (e.stdout ? e.stdout.toString() : '') + (e.stderr ? e.stderr.toString() : '');
+  fail('campo `auditoria` malformado — a contagem de cobertura vai errar em silêncio:\n' + out);
+}
+
 // ⚠️ CONDIÇÃO DE COLETA NO NÚCLEO. Regra do professor que estava no cofre sem
 //     nenhuma guarda: um valor de exame sem a condição em que foi colhido é
 //     OUTRO número — testosterona de 300 às 7 h em jejum não é 300 às 16 h. E o

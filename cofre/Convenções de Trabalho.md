@@ -5,6 +5,43 @@ atualizado: 2026-08-08
 
 # Convenções de Trabalho
 
+## 🔢 UM CAMPO, UM SIGNIFICADO — e o "100% auditado" que era 93% (2026-08-08)
+
+O professor perguntou "% de extração?" e eu dei **três números seguidos, dois
+errados**:
+
+1. "Obesidade em 2/5 auditados" — errado: a cirurgia bariátrica **já** estava
+   auditada e eu não contei;
+2. "30/30, **100% auditados**" — errado ao contrário: contei como auditoria o
+   que era **anotação do extrator**.
+
+A causa: `auditoria` tinha **três formatos convivendo** — string do legado,
+objeto com `achado` (auditoria de verdade) e objeto com `escopo`/`nao_extraido`,
+que o extrator usava como bloco de notas. Cada contagem improvisada acertava um
+formato e errava outro.
+
+**O segundo erro é o perigoso**, e é a mesma família das peneiras cegas: um
+"100% auditado" falso **encerra o assunto**. Ninguém volta a olhar o que já está
+verde. Errar para menos custa uma conferência; errar para mais apaga o trabalho
+que falta.
+
+**Conserto em três camadas, porque contagem improvisada foi o que falhou:**
+
+| camada | o que faz |
+|---|---|
+| origem | a nota do extrator mudou para o campo `extracao` |
+| contagem | `scripts/status-auditoria.js`, único, com a definição num lugar só |
+| trava | o mesmo script **reprova** `auditoria` malformada, e está no `ci-validate` |
+
+**Regra do campo, daqui em diante:**
+- `auditoria` → SÓ auditoria adversarial (string legada ou objeto com `achado`);
+- `extracao` → decisões e limites de quem extraiu (o que ficou de fora, tabela
+  pulada, discordância interna do artigo).
+
+E a distinção que a trava faz de propósito: ela **exige o formato** e apenas
+**informa a cobertura**. Exigir 100% de auditoria por CI só faria alguém marcar
+o campo para o vermelho sumir — que é o oposto do que ele serve.
+
 ## 📉 O MEDIDOR DO FREIO SUBCONTAVA — agente que termina e não relata (2026-08-08)
 
 O extrator da cirurgia bariátrica gravou o extrato **inteiro** (138 fatos, todos
