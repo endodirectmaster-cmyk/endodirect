@@ -6,7 +6,7 @@
  "area": "Diabetes",
  "tipo": "revisao",
  "ano": 2016,
- "conflito": "O núcleo da plataforma carrega o ADA Standards of Care 2026, MAIS NOVO que esta revisão de 2016 — não substitua o núcleo por ela em três pontos. (1) iSGLT2: esta revisão manda evitá-los no transplantado — \"Avoid until safety studies are performed\" e \"should be used with con- siderable caution in transplant recipients, if at all\" —, enquanto o núcleo (ADA 2026) os indica por benefício cardiorrenal independentemente da A1C. (2) Agonistas de GLP-1: aqui \"this class of agents should be reserved for treatment only under a research protocol until their safety and efficacy in transplant re- cipients can be determined\", com corte de função renal \"should not use if GFR ⬍ 40 mL/min\"; o núcleo os coloca como preferenciais no DM2 e na obesidade. (3) Metformina: o corte citado é o de creatinina aprovado pela FDA em 2016 (\"a serum creatinine level above the Food and Drug Administration-approved cutoff\"), hoje substituído por corte de TFG estimada. O que permanece válido e é o APROFUNDAMENTO que o núcleo não tem: quando diagnosticar o PTDM, por que a HbA1c engana no 1º ano, e o mecanismo de cada imunossupressor.",
+ "conflito": "Esta fonte é de 2016 e o núcleo carrega o ADA Standards of Care 2026, mas o vencedor MUDA a cada ponto — e ⚠️ o núcleo NÃO trata de transplante em nenhuma entrada (não fala de PTDM, transplantado, tacrolimo nem imunossupressão), então não existe \"regra do núcleo para o transplantado\". (1) PROIBIÇÃO EM BLOCO de iSGLT2 e AR GLP-1 — SUPERADA, prefira o núcleo: a própria fonte a condiciona à falta de estudos (\"Avoid until safety studies are performed\"; \"should be reserved for treatment only under a research protocol until their safety and efficacy in transplant re- cipients can be determined\"), e essa condição foi cumprida; hoje essas classes são usadas em transplantados. (2) MAS AS RAZÕES CLÍNICAS DA FONTE NÃO EXPIRARAM e o núcleo é silente sobre elas — SIGA A FONTE: iSGLT2 aumentam o risco de infecção geniturinária (consequência maior no imunossuprimido), causam depleção de volume e hipotensão em quem já tem função renal reduzida, e há relatos de cetoacidose; os AR GLP-1 retardam o esvaziamento gástrico e podem alterar a absorção e o pico dos imunossupressores (vigiar o nível de tacrolimo). O que o núcleo diz é para DM2 com IC/DRC/DASCV, não para o transplantado: usar essas classes aqui exige a monitorização que a fonte descreve. (3) Metformina: o corte citado é o de CREATININA aprovado pela FDA em 2016 (\"a serum creatinine level above the Food and Drug Administration-approved cutoff\"), hoje substituído por corte de TFG estimada — prefira o núcleo. O que permanece integralmente válido, e é o APROFUNDAMENTO que o núcleo não tem: quando diagnosticar o PTDM (só após a alta e com imunossupressão estável), por que a HbA1c engana no 1º ano, e o mecanismo de cada imunossupressor.",
  "fatos": [
   {
    "afirmacao": "O diabetes mellitus pós-transplante (PTDM) é consequência frequente do transplante de órgão sólido e foi associado a maior mortalidade e mais infecções em diferentes grupos de transplantados.",
@@ -370,7 +370,7 @@
   },
   {
    "afirmacao": "As sulfonilureias são comumente utilizadas no PTDM, com poucos dados de segurança ou eficácia disponíveis, e a hipoglicemia pode aumentar significativamente na insuficiência renal; num pequeno estudo em receptores renais com PTDM elas não alteraram a farmacocinética da ciclosporina, mas o risco é de hipoglicemia mais frequente e mais prolongada com queda da filtração glomerular.",
-   "citacao": "Sulfonylureas Efficacy is not well documented in transplant\n\npatients. Did not alter cyclosporine pharmacokinetics in a small study of KTX recipients with PTDM (215–218)\n\nIncreased risk of more frequent and more prolonged hypoglycemia with",
+   "citacao": "Sulfonylureas Efficacy is not well documented in transplant patients. Did not alter cyclosporine pharmacokinetics in a small study of KTX recipients with PTDM (215–218) Increased risk of more frequent and more prolonged hypoglycemia with 2 GFR",
    "secao": "Sulfonilureias"
   },
   {
@@ -379,12 +379,7 @@
    "secao": "Repaglinida"
   },
   {
-   "afirmacao": "A repaglinida tem sido por vezes preferida em pacientes com função renal reduzida por causa de sua meia-vida mais curta. [Aqui o extrator do PDF intercala a Tabela 4 no meio da frase.]",
-   "citacao": "Repaglinide has sometimes been preferred in pa- tients with reduced kidney function because of its shorter",
-   "secao": "Repaglinida"
-  },
-  {
-   "afirmacao": "A repaglinida foi eficaz e segura, sem interação com os inibidores de calcineurina, num pequeno estudo de receptores de transplante renal com PTDM, e tem menos risco de hipoglicemia com queda da filtração glomerular do que as sulfonilureias.",
+   "afirmacao": "A repaglinida foi eficaz e segura, sem interação com os inibidores de calcineurina, em pequeno estudo de receptores de transplante renal com PTDM, e tem MENOS risco de hipoglicemia com queda da filtração glomerular do que as sulfonilureias — por isso é por vezes preferida no transplantado com função renal reduzida.",
    "citacao": "Repaglinide Effective and safe with no interaction with CNIs in a small study of KTX recipients with PTDM (180)\n\nLess risk of hypoglycemia with 2 GFR than\n\nsulfonylureas",
    "secao": "Repaglinida"
   },
@@ -415,7 +410,7 @@
   },
   {
    "afirmacao": "Ensaios retrospectivos e pequenos ensaios randomizados controlados em receptores de transplante renal mostram a segurança de vários inibidores de DPP-4; deve-se reduzir a dose de todos, EXCETO a da linagliptina, quando há queda da filtração glomerular.",
-   "citacao": "Retrospective and small random controlled trials of\n\nKTX recipients show safety of several DPP-4 inhibitors (8, 181–184)\n\nReduce dose of all but linagliptin with",
+   "citacao": "Retrospective and small random controlled trials of KTX recipients show safety of several DPP-4 inhibitors (8, 181–184) Reduce dose of all but linagliptin with 2 GFR",
    "secao": "Inibidores de DPP-4 — dose"
   },
   {
@@ -424,7 +419,7 @@
    "secao": "Linagliptina"
   },
   {
-   "afirmacao": "Há menos dados e maior preocupação com o uso dos agonistas de GLP-1, que podem causar mais náusea e ter maior impacto sobre o esvaziamento gástrico — ambos os efeitos levantam a dúvida de se esses agentes poderiam alterar os desfechos do transplante por modificarem a absorção e/ou o pico de concentração dos imunossupressores.",
+   "afirmacao": "Ao contrário dos inibidores de DPP-4, que têm sido usados com segurança no transplantado, há menos dados e MAIOR preocupação com os agonistas de GLP-1, que causam mais náusea e têm maior impacto sobre o esvaziamento gástrico — ambos os efeitos levantam a dúvida de se poderiam alterar os desfechos do transplante por modificarem a absorção e/ou o pico de concentração dos imunossupressores.",
    "citacao": "Although DPP-4 inhibitors have been used safely, there are less data and greater concern about the use of GLP-1 agonists, which can cause greater nausea and have a greater impact on gastric emptying. Both effects raise con- cerns about whether these agents might impact transplant outcomes by changing immunosuppressant absorption and/or immunosuppressant peak concentrations.",
    "secao": "Agonistas de GLP-1"
   },
@@ -434,7 +429,7 @@
    "secao": "Agonistas de GLP-1"
   },
   {
-   "afirmacao": "Os agonistas de GLP-1 (exenatida, liraglutida, lixisenatida) diminuem a motilidade intestinal, o que pode afetar a absorção dos imunossupressores e ainda não foi estudado, e não devem ser usados se a filtração glomerular for menor que 40 mL/min.",
+   "afirmacao": "Na Tabela 4 desta revisão de 2016 sobre o TRANSPLANTADO de órgão sólido, os agonistas de GLP-1 (exenatida, liraglutida, lixisenatida) diminuem a motilidade intestinal, o que pode afetar a absorção dos imunossupressores e não havia sido estudado, e a tabela orienta não usá-los NO TRANSPLANTADO se a filtração glomerular for menor que 40 mL/min. ⚠️ É um limiar de 2016 e específico do transplante — não é o corte de função renal dos AR GLP-1 no diabetes tipo 2 fora do transplante.",
    "citacao": "Decreases bowel motility, which may impact\n\nabsorption of immune suppression agents and has not yet been studied; should not use if GFR ⬍ 40 mL/min",
    "secao": "Agonistas de GLP-1"
   },
@@ -469,8 +464,8 @@
    "secao": "Hipertensão"
   },
   {
-   "afirmacao": "O tratamento com inibidor da enzima conversora de angiotensina ou bloqueador do receptor de angiotensina é recomendado como agente de primeira linha na maioria, preferindo-se o segundo se a hipercalemia for uma preocupação; os diuréticos são comumente o segundo agente, e os bloqueadores dos canais de cálcio têm maior probabilidade de interações medicamentosas com os imunossupressores.",
-   "citacao": "Treat- ment with an angiotensin-converting enzyme or angioten- sin-receptor blocker is recommended as the first-line agent for treatment of blood pressure in most, with the latter preferred if hyperkalemia is a concern. Commonly, di- uretics are used as the second agent, as in nontransplant patients. Calcium channel blockers are more likely to have drug-drug interactions with immunosuppressants and",
+   "afirmacao": "O tratamento com inibidor da enzima conversora de angiotensina ou bloqueador do receptor de angiotensina é recomendado como agente de primeira linha na maioria dos transplantados, preferindo-se o segundo se a hipercalemia for uma preocupação; os diuréticos são comumente o segundo agente, e os bloqueadores dos canais de cálcio têm maior probabilidade de interações medicamentosas com os imunossupressores, que precisam ser consideradas junto com outros fármacos depurados pelas mesmas vias metabólicas — inclusive os hipolipemiantes.",
+   "citacao": "Treat- ment with an angiotensin-converting enzyme or angioten- sin-receptor blocker is recommended as the first-line agent for treatment of blood pressure in most, with the latter preferred if hyperkalemia is a concern. Commonly, di- uretics are used as the second agent, as in nontransplant patients. Calcium channel blockers are more likely to have drug-drug interactions with immunosuppressants and must be taken into consideration with other medications cleared by the same metabolic pathways, which also in- clude lipid-lowering therapies.",
    "secao": "Hipertensão"
   },
   {
@@ -559,9 +554,15 @@
    "secao": "Síntese"
   }
  ],
- "conflito_direcao": "nucleo_prevalece",
+ "conflito_direcao": "misto",
  "nucleo_citado": [
   "usar um iSGLT2 ou AR GLP-1 com benefício comprovado INDEPENDENTE da A1C"
  ],
- "nucleo_prevalece_porque": "A proibição desta fonte é CONDICIONAL À AUSÊNCIA DE EVIDÊNCIA, e a evidência chegou. O texto de 2016 diz literalmente \"Avoid until safety studies are performed\" e, para os AR GLP-1, \"should be reserved for treatment only under a research protocol until their safety and efficacy in transplant re- cipients can be determined\" — ou seja, a própria fonte condiciona a proibição a estudos futuros. O núcleo carrega o ADA Standards of Care 2026, dez anos mais novo, que indica iSGLT2 e AR GLP-1 por benefício cardiorrenal independentemente da A1C. Não é o caso da hipofosfatasia, em que a proibição é MECANÍSTICA (o bisfosfonato é análogo do pirofosfato e piora a mineralização) e não expira com evidência nova."
+ "nucleo_prevalece_porque": "Vale só para o ponto (1). A proibição EM BLOCO da fonte é CONDICIONAL À AUSÊNCIA DE EVIDÊNCIA — \"Avoid until safety studies are performed\" e \"should be reserved for treatment only under a research protocol until their safety and efficacy in transplant re- cipients can be determined\" — e essa condição foi cumprida. Não vale para o ponto (2): ali a proibição é MECANÍSTICA (infecção geniturinária no imunossuprimido, depleção de volume com função renal reduzida, esvaziamento gástrico alterando a absorção do imunossupressor), não expira com evidência nova, e o núcleo não a cobre porque não fala de transplante. Por isso a direção é `misto`, e não `nucleo_prevalece`: marcar o conflito inteiro como \"o núcleo vence\" mandava descartar as cautelas mecanísticas junto com a proibição vencida.",
+ "nucleo_ausente": [
+  "PTDM",
+  "transplantado",
+  "tacrolimo",
+  "imunossupress"
+ ]
 }
