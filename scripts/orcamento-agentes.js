@@ -24,6 +24,7 @@
  * Uso:
  *   node scripts/orcamento-agentes.js                    → estado e veredito
  *   node scripts/orcamento-agentes.js --soma 253751      → registra um agente
+ *   node scripts/orcamento-agentes.js --estimado 270000 → agente que NÃO relatou (ver abaixo)
  *   node scripts/orcamento-agentes.js --reset            → nova janela (após o reset)
  *   node scripts/orcamento-agentes.js --reset-em "2026-08-08T07:00:00Z"
  */
@@ -67,13 +68,40 @@ if (soma && soma !== true) {
   gravar(d);
 }
 
-const pct = d.tokens / TETO;
+// ⚠️ AGENTE QUE TERMINA E NÃO RELATA (08/08/2026). O extrator da cirurgia
+// bariátrica gravou o extrato inteiro — 138 fatos, todos com citação — e
+// **morreu sem mandar a notificação**. `ListAgents` não o via mais, e o
+// `subagent_tokens` dele nunca chegou.
+//
+// O efeito é o pior possível para um medidor de freio: ele **subconta**. Um
+// agente inteiro (~14% da janela) sumia da soma, e o script daria luz verde
+// para lançar outro em cima de capacidade que não existe. É a mesma doença das
+// peneiras cegas — selo verde sobre dado incompleto.
+//
+// Daí `--estimado`: registra o gasto de um agente que não relatou, SEPARADO do
+// medido, para que a calibração do TETO continue limpa (ela depende só de
+// número real) enquanto a segurança usa a soma dos dois. Estimativa entra pela
+// média observada, e o script diz quanto do total é chute.
+const est = arg('--estimado');
+if (est) {
+  const n = est !== true ? (parseInt(est, 10) || 0) : 250000;
+  d.estimado = (d.estimado || 0) + n;
+  d.agentesEstimados = (d.agentesEstimados || 0) + 1;
+  gravar(d);
+}
+
+const totalTokens = d.tokens + (d.estimado || 0);
+const pct = totalTokens / TETO;
 const decorrido = (agora - new Date(d.inicio).getTime()) / 3600000;
 const restante = Math.max(0, JANELA_H - decorrido);
 const fmt = (n) => (n / 1000).toFixed(0) + 'k';
 
 console.log(`JANELA DE ${JANELA_H} h — começou ${d.inicio.slice(11, 16)} UTC, restam ${restante.toFixed(1)} h`);
-console.log(`  ${d.agentes} agente(s) concluído(s) · ${fmt(d.tokens)} de ~${fmt(TETO)} tokens · ${(pct * 100).toFixed(0)}%`);
+console.log(`  ${d.agentes} agente(s) relatado(s) · ${fmt(d.tokens)} MEDIDO · ${((d.tokens / TETO) * 100).toFixed(0)}%`);
+if (d.estimado) {
+  console.log(`  + ${d.agentesEstimados} agente(s) que NÃO relataram · ${fmt(d.estimado)} ESTIMADO`);
+}
+console.log(`  = ${fmt(totalTokens)} de ~${fmt(TETO)} · ${(pct * 100).toFixed(0)}%${d.estimado ? ` (${((d.estimado / totalTokens) * 100).toFixed(0)}% disso é estimativa)` : ''}`);
 console.log(`  (teto CALIBRADO, não oficial — ver o cabeçalho do script)`);
 
 if (pct >= FREIO) {
@@ -82,5 +110,5 @@ if (pct >= FREIO) {
   console.log(`   Commitar o que estiver pronto e esperar a janela virar em ${restante.toFixed(1)} h.`);
   process.exit(2);
 }
-const cabem = Math.floor((TETO * FREIO - d.tokens) / 250000); // ~250k por agente, média observada
+const cabem = Math.floor((TETO * FREIO - totalTokens) / 250000); // ~250k por agente, média observada
 console.log(`\n✓ SEGUE: cabem mais ~${cabem} agente(s) antes do freio (média observada ~250k cada).`);
