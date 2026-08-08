@@ -44,6 +44,31 @@ em vez de refazer tudo.
 
 **Regra: conferência parcial vira BRIEF do auditor, nunca campo `auditoria`.**
 
+### O mesmo feito no extrato da ABESO (138 fatos), na mesma hora
+
+- **Zero caractere de controle.** Importa: o `≥` virando U+0002 já transformou
+  "IMC ≥30" em "IMC 30" em dois outros artigos da base. Aqui os símbolos vieram
+  íntegros.
+- **Cortes conferidos:** IMC 25,0–29,9 (sobrepeso) e ≥30,0 (obesidade); VLCD
+  definida como **< 800 kcal/dia** com 70–100 g/dia de proteína ou 0,8–1,5 g/kg
+  de peso **ideal**; metanálise de 6 RCTs com 16,1 ± 1,6% vs 9,7 ± 2,4% em 4
+  meses; n = 6.163 nos estudos com seguimento ≥3 anos.
+- **138/138 citações resolvem** com hash conferido, e as amostradas sustentam
+  mesmo a afirmação — inclusive a **Classe IIa, Nível A** preservada no fato da
+  recomendação formal contra VLCD como primeira opção.
+
+**Um falso alarme meu, registrado porque quase virou acusação.** Vi `≤ 800kcal`
+na fonte e o fato dizendo "MENOS de 800" — ia apontar divergência. O `≤ 800` é
+critério de inclusão de uma revisão sistemática específica; a **definição** de
+VLCD, noutra linha, é `< 800kcal`. O extrator não confundiu os dois contextos.
+**Contexto de número é parte do número.**
+
+⚠️ E duas vezes na mesma hora meu `grep` com janela de contexto devolveu ZERO
+para números que estavam lá — a hifenização de quebra de linha do PDF (`proteí-
+nas`) e o `.` do regex não casando `\n`. **Busca que não acha não prova
+ausência**: conferi cada "sumiço" pelo número cru antes de concluir qualquer
+coisa, e os três estavam no texto.
+
 ## 🏷️ UMA PALAVRA A MAIS NO CAMPO `tipo` REBAIXOU UMA DIRETRIZ INTEIRA (2026-08-08)
 
 O professor perguntou se os 10% extraídos já estavam no ar e mandou a regra:
