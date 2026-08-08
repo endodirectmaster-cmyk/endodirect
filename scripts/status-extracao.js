@@ -46,6 +46,7 @@ function main() {
 
   let fatos = 0;
   const porArea = {};
+  const idade = [];
   const doAcervo = [];
   const deFora = [];
   for (const arq of extratos) {
@@ -57,6 +58,7 @@ function main() {
     porArea[area].artigos++;
     porArea[area].fatos += n;
     (idsAcervo.has(e.fileId) ? doAcervo : deFora).push({ id: e.fileId, fatos: n, area: e.area });
+    idade.push({ ano: Number(e.ano) || 0, tipo: String(e.tipo || '?'), area, fatos: n, titulo: String(e.titulo || arq).slice(0, 56) });
   }
 
   // Quanto FALTA, e o que falta que mais importa.
@@ -97,6 +99,34 @@ function main() {
   if (vazias.length) {
     console.log('\n⚠️ SEM NENHUM BLOCO (a IA gera essas áreas só com o núcleo):');
     vazias.forEach((a) => console.log('   · ' + a));
+  }
+
+  // ⚠️ IDADE DA FONTE — instrução permanente do professor (08/08/2026): "mantenha
+  // sempre o arquivo mais atualizado". Ele deu o exemplo de ter em mãos uma
+  // diretriz de dislipidemia de 2017 quando a plataforma já rodava a de 2025.
+  //
+  // Isto NÃO reprova: artigo velho não é artigo errado, e tema de rotação lenta
+  // envelhece bem. É um RELATÓRIO, porque a desatualização é invisível por
+  // construção — a citação confere, o hash bate, o verificador aprova, e o corte
+  // que mudou em diretriz nova simplesmente não está lá. Hoje eu achei os casos
+  // na mão; sem isto aqui, na próxima varredura eu posso não achar.
+  //
+  // O que já é automático e NÃO precisa desta lista: dentro de uma área, o
+  // montador ordena por tipo → ANO MAIS RECENTE → densidade, então quando a base
+  // tem as duas versões a nova chega primeiro. Esta lista serve para o caso que o
+  // montador não pode resolver — quando a versão nova NÃO está na base.
+  const anoAtual = new Date().getFullYear();
+  const velhos = idade.filter((x) => x.ano && anoAtual - x.ano >= 5).sort((a, b) => a.ano - b.ano);
+  if (velhos.length) {
+    console.log(`\nFONTES COM 5 ANOS OU MAIS (${velhos.length} de ${idade.length}) — conferir se saiu versão nova:`);
+    for (const v of velhos) {
+      console.log(`   ${v.ano}  ${String(anoAtual - v.ano).padStart(2)}a  ${v.tipo.slice(0, 14).padEnd(15)}${v.area.slice(0, 18).padEnd(19)}${v.titulo}`);
+    }
+  }
+  const semAno = idade.filter((x) => !x.ano);
+  if (semAno.length) {
+    console.log(`\n⚠️ ${semAno.length} extrato(s) SEM campo \`ano\` — não dá para saber se envelheceram:`);
+    semAno.forEach((v) => console.log('   · ' + v.titulo));
   }
 }
 
