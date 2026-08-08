@@ -306,6 +306,52 @@ const CAMINHO = [
   // acrescentar o artigo, esta linha reprova.
   ['albiglutida', '(vazio)'],
 
+  // ⚠️ VARREDURA DE "CONTEÚDO SEM ROTA" (08/08/2026). Em vez de sondar bloco a
+  // bloco, listei os termos DISTINTIVOS de cada área (≥85% das ocorrências numa
+  // área só) e perguntei quais não têm nenhuma rota. Deu 137. Estes são os que
+  // um médico digita de verdade — cada um conferido por contagem antes de entrar.
+  //
+  // MACRO e MICRO não casavam `prolactinoma`: `bate` exige fronteira de palavra
+  // e o "o" de macro é alfanumérico. 84 ocorrências mudas, e macro x micro é A
+  // distinção clínica da doença.
+  // Sem `cabergolina` na frase: ela é chave antiga de Neuro e roteava sozinha.
+  ['macroprolactinoma de 2 cm: opero?', 'Neuroendocrinologia'],
+  ['microprolactinoma na gestacao: suspendo a cabergolina?', 'Neuroendocrinologia'],
+  // Alvo co-primário do LDL, 44 ocorrências, nenhuma rota. E `triglicerides` —
+  // a palavra que se lê no exame — só roteava como `hipertrigliceridemia`.
+  // Sem "LDL": `ldl` é chave antiga e carregava o teste inteiro.
+  ['nao-HDL alto: o que faco?', 'Lípides'],
+  ['triglicerides de 800: risco de pancreatite?', 'Lípides'],
+  ['apolipoproteina B na estratificacao de risco', 'Lípides'],
+  // `supracorrecao` (38) é a palavra do ERRO que se quer evitar; só
+  // `desmielinizacao osmotica`, que é a consequência, tinha rota.
+  // Sem "sódio": `sodio` é chave antiga de Endocrinopatias.
+  ['supracorrecao: qual o limite em 24 h?', 'Endocrinopatias'],
+  // `anovulacao`(3) roteava e `ovulacao`(29) não; `letrozol`(6) sim, `clomifeno`(19) não.
+  ['inducao da ovulacao na SOP: letrozol ou clomifeno?', 'Endocrinologia Feminina'],
+  ['clomifeno falhou: qual o proximo passo?', 'Endocrinologia Feminina'],
+  // `apneia obstrutiva do sono` estava por extenso; `apneia do sono`, como se
+  // fala, não. `bypass` sozinho idem — "bypass em Y de Roux" devolvia vazio.
+  ['apneia do sono no obeso: como rastreio?', 'Obesidade'],
+  ['bypass em Y de Roux: qual a reposicao de ferro?', 'Obesidade'],
+  // ⚠️ RADIOTERAPIA VIROU PROCEDIMENTO depois de criar erro de rota como doença:
+  // "radioterapia no câncer de tireoide" ia para o artigo de CRANIOFARINGIOMA,
+  // porque `radioterapia`(3012) vencia `tireoide`(3008). Tireoide não tem
+  // conteúdo de radioterapia — nenhuma das duas responde — mas buraco avisa e
+  // erro de rota não. Estas duas guardam os dois lados.
+  ['radioterapia no cancer de tireoide', 'Tireoide'],
+  ['radioterapia apos ressecao de craniofaringioma', 'Neuroendocrinologia'],
+  // ⚠️ CGM: o vocabulário inteiro estava mudo. Ele ficou em DIABETES e não em
+  // Esporte, contra a regra do conteúdo (45 ocorrências lá, 14 aqui) — porque
+  // chave de Esporte é GATILHO da promoção condicional, e transformar um
+  // DISPOSITIVO em gatilho de esporte alargou uma regra escrita estreita de
+  // propósito. As duas primeiras linhas abaixo são as que reprovavam quando eu
+  // tinha posto em Esporte; as duas últimas garantem que o esporte não se perdeu.
+  ['tempo no alvo no CGM: qual a meta?', 'Diabetes'],
+  ['CGM no diabetes tipo 2 em insulina', 'Diabetes'],
+  ['como interpreto o CGM?', 'Diabetes'],
+  ['CGM durante o exercicio aerobico', 'Endocrinologia do Esporte'],
+
   // Sentinelas de outras áreas — o achado glicêmico não pode sequestrá-las.
   ['hiperglicemia em paciente com acromegalia', 'Neuroendocrinologia'],
   ['obeso em insulina: indico cirurgia bariatrica?', 'Obesidade'],

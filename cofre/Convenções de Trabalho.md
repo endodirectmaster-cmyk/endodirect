@@ -5,6 +5,64 @@ atualizado: 2026-08-08
 
 # Convenções de Trabalho
 
+## 🔦 INVERTER A PERGUNTA DA VARREDURA — "que conteúdo NENHUMA pergunta alcança?" (2026-08-08)
+
+Duas varreduras no mesmo dia, e a segunda rendeu dez vezes mais que a primeira
+porque a pergunta era outra.
+
+**A primeira** foi bloco a bloco: uma sonda escrita à mão por bloco, medindo se
+ele chega. Custou caro em atenção e achou **um** defeito.
+
+**A segunda** foi ao contrário e é mecânica: listar os termos **distintivos** de
+cada área — os que concentram ≥85% das ocorrências numa área só, com frequência
+mínima — e perguntar quais **não têm rota nenhuma**. Deu **137**, e nove eram
+sérios, incluindo `macroprolactinoma`/`microprolactinoma` (84 ocorrências
+mudas), `nao-HDL` (44) e `triglicerides` (65).
+
+```js
+// distintivo = ≥85% das ocorrências numa área; sem rota = canonArea() vazio
+if (freq[k][dom] / tot < 0.85) continue;
+if (D.canonArea(k)) continue;      // já alcançável
+achados.push([freq[k][dom], dom, k]);
+```
+
+**Por que isto NÃO é a tautologia do `confere-alcance.js`.** Aquele script
+derivava a sonda do próprio bloco e media se o bloco vencia a si mesmo — sempre
+vencia. Este não mede vitória nenhuma: mede se **existe alguma pergunta capaz de
+alcançar** um conteúdo que já está na base. Termo com conteúdo e sem rota é
+inalcançável por definição, não por comparação.
+
+### O padrão que os achados têm em comum
+
+Quase todos são **a forma que o mapa tem × a forma que o médico digita**:
+
+| no mapa | mudo | ocorrências |
+|---|---|---|
+| `prolactinoma` | `macroprolactinoma`, `microprolactinoma` | 84 |
+| `hipertrigliceridemia` | `triglicerides` | 65 |
+| `trulicity` (marca) | `dulaglutida` (genérico) | 10 |
+| `anovulacao` | `ovulacao` | 29 |
+| `letrozol` | `clomifeno` | 19 |
+| `apneia obstrutiva do sono` | `apneia do sono` | 41 |
+| `desmielinizacao osmotica` (consequência) | `supracorrecao` (o erro) | 38 |
+
+**A regra: para cada chave do mapa, pergunte qual é a OUTRA palavra para a mesma
+coisa** — a sigla, o genérico ao lado da marca, a forma curta ao lado da
+extensa, o achado ao lado da doença, a causa ao lado da consequência. É onde os
+buracos se escondem, porque quem escreveu a chave já sabia o que queria dizer.
+
+### E uma exceção à regra do conteúdo, que precisou ser medida para existir
+
+`cgm` tem 45 ocorrências em Esporte e 14 em Diabetes. Pela regra que vale desde
+a correção da exenatida — **onde está o conteúdo é** — iria para Esporte. Pus,
+medi e **voltei**: chave de Esporte não é só um peso, é **gatilho da promoção
+condicional**. CGM é dispositivo, não esporte, e alargar o gatilho quebrou
+*"tempo no alvo no CGM: qual a meta?"* e *"CGM no diabetes tipo 2 em insulina"*,
+que foram parar em endocrinologia do esporte.
+
+**"Onde está o conteúdo" decide o DESTINO, não o TIER.** Quando a chave também é
+gatilho de regra, o gatilho manda.
+
 ## 🧹 A PALAVRA DE PERGUNTA VALIA 3 PONTOS, E EXPULSOU UM ARTIGO INTEIRO (2026-08-08)
 
 Achado ao varrer, bloco a bloco, se algum conteúdo de Obesidade tinha sido
