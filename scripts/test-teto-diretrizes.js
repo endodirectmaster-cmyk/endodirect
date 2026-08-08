@@ -98,10 +98,12 @@ ok(/deepFor\(areaPedida, TETO_PROFUNDO, areaPedida\)/.test(ai),
       .sort((x, y) => y.length - x.length)[0] || '';
     if (chave.length < 7) continue;
     const apertado = deep.deepFor(a, 9000, a + ' ' + chave);
-    // ⚠️ A janela era de 70 caracteres e passou a cortar antes da palavra-chave
-    // quando os `tema` cresceram (o de cetoacidose tem 120+). O teste reprovava
-    // com o bloco CERTO em primeiro lugar — artefato da medição, não defeito.
-    const primeiro = (apertado.match(/• ([^—]{0,200})/) || [])[1] || '';
+    // ⚠️ DUAS vezes esta medição reprovou com o bloco CERTO em primeiro lugar.
+    // Primeiro a janela de 70 caracteres passou a cortar antes da palavra-chave
+    // (os `tema` cresceram); depois o `[^—]` parou no travessão — e o próprio
+    // `tema` tem travessão ("diabetes tipo 1 — revisão geral: …"), então a chave
+    // ficava do lado de fora. Agora lê 240 caracteres crus depois do marcador.
+    const primeiro = (apertado.match(/• ([^\n]{0,240})/) || [])[1] || '';
     ok(primeiro.toLowerCase().includes(chave.toLowerCase().slice(0, 7)),
       `⚠️ com teto apertado, pedi "${chave}" em ${a} e veio "${primeiro.trim()}" — o bloco mais relevante foi PULADO em vez de cortado`);
     break;
