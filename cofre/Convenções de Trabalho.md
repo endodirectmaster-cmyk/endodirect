@@ -5,6 +5,53 @@ atualizado: 2026-08-08
 
 # Convenções de Trabalho
 
+## 🧪 A PERGUNTA DE TESTE CARREGAVA A RESPOSTA NO BOLSO (2026-08-08)
+
+Segunda cara do **acerto emprestado**, e esta é minha, de escrever teste. A
+primeira (abaixo) era empate desfeito por ordem arbitrária. Esta é pior porque
+parece rigor: eu tinha acabado de acrescentar 24 termos de nutrição ao roteador
+e escrevi 15 perguntas novas para medi-los. Todas passaram. Rodei a mutação —
+tirar o termo e exigir que a bateria reprove — e **seis passaram com o conserto
+desfeito**.
+
+O motivo é banal e por isso perigoso:
+
+```
+['jejum intermitente funciona para emagrecer?', 'Obesidade']   ← `emagrecer` já roteava
+['dieta low carb na obesidade',                'Obesidade']   ← `obesidade` já roteava
+['escore-Z do IMC na crianca',                 'Obesidade']   ← `imc` já roteava
+['adocante aspartame faz mal?',                'Obesidade']   ← `adocante` cobria `aspartame`
+```
+
+A pergunta continha uma chave **antiga** que sozinha dava o destino certo. O
+teste media o mapa de ontem e dizia "verde" sobre o de hoje. Note que a última
+é a mais traiçoeira: `adocante` e `aspartame` eram **as duas novas**, e mesmo
+assim a genérica escondia a nomeada — dentro do próprio lote recém-escrito.
+
+**A regra que ficou: pergunta de teste de roteamento não pode conter nenhum
+termo que já roteasse para o destino esperado.** A forma de conferir é
+mecânica e leva 30 segundos — `git stash` no arquivo do roteador, rodar as
+perguntas novas contra a árvore antiga, e toda que já devolver o destino certo
+está emprestada:
+
+```
+git stash push lib/clinical-deep.js -q
+node -e "…canonArea(p)…"   # quem já acerta aqui NÃO mede nada
+git stash pop -q
+```
+
+Depois disso as perguntas viraram `posso indicar jejum intermitente?`,
+`dieta low carb tem risco?`, `escore-Z de 2,5 na crianca`,
+`aspartame causa cancer?` — todas devolviam `(vazio)` antes do conserto, e
+todas reprovam quando a chave sai. **Doze mutações, uma chave por vez, doze
+reprovações.**
+
+Corolário que já vale para a próxima vez: **mutação em lote mente.** Mutei
+`cetogenica` e `dieta cetogenica` juntas e a bateria reprovou, o que me deixaria
+satisfeita — mas era a frase longa segurando tudo. Só ao mutar a curta sozinha
+apareceu que ela não tinha nenhuma pergunta própria. É a mesma lição da fronteira
+de palavra, logo abaixo: **mutação incompleta parece mutação.**
+
 ## 🔤 A SIGLA NUNCA PONTUAVA, E O BLOCO CERTO VINHA POR ACASO (2026-08-08)
 
 Achado ao investigar uma regressão que eu mesma causei. `deepFor` filtra os

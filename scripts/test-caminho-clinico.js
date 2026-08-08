@@ -217,6 +217,72 @@ const CAMINHO = [
   ['quando encaminho ao hepatologista?', 'Obesidade'],
   ['elastografia hepatica com 14 kPa', 'Obesidade'],
 
+  // ⚠️ A BASE NÃO SABIA RESPONDER "O QUE COMER" (08/08/2026). Entrou o
+  // Posicionamento Nutricional da ABESO (138 fatos) e, medido termo a termo,
+  // 24 assuntos dele não tinham NENHUMA rota. Estas são as que a medição pegou.
+  // ⚠️ NENHUMA DELAS PODE CONTER "emagrecer" NEM "obesidade". Escrevi as 15
+  // primeiras com essas palavras, conferi por mutação e SEIS passavam com o
+  // conserto desfeito — `emagrecer` e `obesidade` já roteavam sozinhas e as
+  // chaves novas não estavam sendo medidas em nada. Acerto emprestado outra vez.
+  // Cada pergunta abaixo devolvia "(vazio)" antes do conserto.
+  ['posso indicar jejum intermitente?', 'Obesidade'],
+  ['dieta low carb tem risco?', 'Obesidade'],
+  ['dieta do mediterraneo: qual a evidencia?', 'Obesidade'],
+  ['dieta DASH', 'Obesidade'],
+  ['adocante aspartame faz mal?', 'Obesidade'],
+  // Sem `adocante` na frase, senão a chave genérica carrega o adoçante nomeado
+  // e o mapa de edulcorantes fica sem medição nenhuma.
+  ['aspartame causa cancer?', 'Obesidade'],
+  ['indice glicemico dos alimentos', 'Obesidade'],
+  ['substitutos de refeicao funcionam?', 'Obesidade'],
+  ['whey protein emagrece?', 'Obesidade'],
+  ['oleo de coco emagrece?', 'Obesidade'],
+  ['garcinia cambogia emagrece?', 'Obesidade'],
+  ['balao intragastrico', 'Obesidade'],
+  ['telenutricao', 'Obesidade'],
+  ['densidade energetica da dieta', 'Obesidade'],
+  ['VLCD dieta de muito baixas calorias', 'Obesidade'],
+  // Sem "IMC" na frase: `imc` é chave antiga e roteava sozinha, deixando
+  // `escore-z` sem medição — foi o que a mutação pegou.
+  ['escore-Z de 2,5 na crianca', 'Obesidade'],
+  // ⚠️ `cetogenica` APONTAVA PARA DIABETES e a palavra tem ZERO ocorrência em
+  // todo o conteúdo de Diabetes. A única está na ABESO, em Obesidade — e é
+  // justamente a que diz que a VLCKD é potencialmente DELETÉRIA no DM1. A
+  // pergunta mais perigosa das duas ia para o lado que não tem a advertência.
+  ['dieta cetogenica para emagrecer', 'Obesidade'],
+  ['dieta cetogenica no diabetes tipo 1 e segura?', 'Obesidade'],
+  // A chave CURTA `cetogenica` existe separada da frase `dieta cetogenica`, e
+  // esta é a única pergunta que a mede: sem "dieta" colado, a frase longa não
+  // casa e só a chave curta segura a rota.
+  ['cetogenica funciona?', 'Obesidade'],
+  // ⚠️ LIMITE CONHECIDO, registrado em vez de contornado. "alimentação
+  // cetogênica no diabetes tipo 1" vai para DIABETES: `cetogenica`(3010) perde
+  // para `diabetes tipo 1`(3015) e só a frase `dieta cetogenica`(3016) vence.
+  // NÃO inflei o peso da chave curta, pelo motivo já medido no caso do Esporte
+  // (ver `areasOrdenadas`): qualquer peso que vença `diabetes tipo 1` vence
+  // junto `osteoporose`(3011) e `prolactinoma`(3012), e aí a cetogênica passa a
+  // sequestrar a base inteira. O grafismo padrão em português é "dieta
+  // cetogênica", que está coberto; esta linha existe para que o dia em que
+  // alguém resolver o resto saiba exatamente o que estava quebrado.
+  ['alimentacao cetogenica no diabetes tipo 1 e segura?', 'Diabetes'],
+  // O outro prato: a rota da cetoacidose não pode ter sido levada junto.
+  ['paciente com cetoacidose diabetica: reposicao de volume', 'Diabetes'],
+  // `compulsao alimentar` entrou com peso de ACHADO justamente para que as DUAS
+  // rotas abaixo estejam certas — a compulsão é sintoma dos dois quadros.
+  ['compulsao alimentar: como abordo?', 'Obesidade'],
+  ['compulsao alimentar no craniofaringioma', 'Neuroendocrinologia'],
+
+  // ⚠️ `cirurgia bariatrica` ERA PROCEDIMENTO (2000) e cedia a qualquer doença
+  // nomeada. Medido: Diabetes tem UMA ocorrência de "bariátric" em toda a base
+  // profunda contra 172 em Obesidade, e a pergunta ia para Diabetes.
+  ['indico cirurgia bariatrica para IMC 38 com diabetes tipo 2?', 'Obesidade'],
+  ['cirurgia bariatrica no diabetes tipo 2', 'Obesidade'],
+  // ...e `bariatrica` SOZINHA continua cedendo, de propósito: menção de
+  // passagem não é o assunto. Estas duas guardam a metade conservadora do
+  // conserto — se alguém promover a chave curta junto, elas reprovam.
+  ['gastroparesia apos bariatrica em diabetico', 'Diabetes'],
+  ['bariatrica e diabetes', 'Diabetes'],
+
   // Sentinelas de outras áreas — o achado glicêmico não pode sequestrá-las.
   ['hiperglicemia em paciente com acromegalia', 'Neuroendocrinologia'],
   ['obeso em insulina: indico cirurgia bariatrica?', 'Obesidade'],
@@ -284,6 +350,20 @@ const PRIMEIRO = [
   ['Como confirmo prediabetes?', 'pré-diabetes'],
   ['paciente com CAD e pH 7,1: quando comeco a insulina?', 'cetoacidose'],
   ['maratonista com diabetes tipo 1: alvo de glicose antes do treino', 'exerc'],
+  // ⚠️ EM OBESIDADE A CHEGADA NÃO DISCRIMINA MAIS, e por isso estas vieram para
+  // cá. A área passou a 338k contra teto de 120k e o bloco nutricional sozinho
+  // ocupa 62k: qualquer pergunta que o eleja recebe um texto que contém TODAS as
+  // palavras de dieta, então "o bloco contém a palavra" volta verdadeiro mesmo
+  // quando a escolha foi por acaso. Medido: 18 perguntas de nutrição devolviam
+  // 113 265 chars — o MESMO número nas 18. O que ainda discrimina é a ORDEM.
+  ['posso indicar jejum intermitente?', 'tratamento nutricional'],
+  ['adocante aspartame faz mal?', 'tratamento nutricional'],
+  ['whey protein emagrece?', 'tratamento nutricional'],
+  ['dieta cetogenica no diabetes tipo 1 e segura?', 'tratamento nutricional'],
+  // A contraprova do mesmo teto: dentro de Obesidade, a cirurgia tem de vencer
+  // o bloco nutricional — senão a promoção de `cirurgia bariatrica` só trocou
+  // um sequestro por outro, agora dentro da própria área.
+  ['indico cirurgia bariatrica para IMC 38 com diabetes tipo 2?', 'cirurgia bariátrica'],
 ];
 
 for (const [pergunta, esperado] of PRIMEIRO) {
