@@ -5,6 +5,68 @@ atualizado: 2026-08-03
 
 # Pendências
 
+## 🗺️ ROTA B — fechar uma subespecialidade de cada vez (2026-08-08)
+
+O professor escolheu a Rota B: **extrair E auditar até fechar a área**, em vez de
+extrair tudo e auditar depois. Motivo: **todo extrato auditado até hoje tinha
+erro** (5–20% de taxa semântica, e em cada rodada pelo menos um que mudava
+conduta). Extrair 230 artigos sem auditar produz uma base grande com taxa de erro
+desconhecida — rápido, e pior que a de hoje.
+
+**Uma área só está FECHADA quando todos os extratos dela passaram por auditoria
+adversarial.** Fila zerada não é área fechada.
+
+### Ordem, e por quê
+
+O critério não é o tamanho da fila, é o **buraco entre importância clínica e
+cobertura**:
+
+| # | área | na base | pendentes / alta ancoragem |
+|---|---|---|---|
+| 1 | **Diabetes** ← em curso | 130 fatos, **todos sobre coisas raras** | 23 / 9 |
+| 2 | Obesidade | 86 (só o consenso de dumping) | 30 / 15 |
+| 3 | Tireoide | 218 | 23 / 13 |
+| 4 | Osteometabolismo | 282 | 32 / 22 |
+| 5 | Adrenal | 286 | 34 / 19 |
+| 6 | Neuroendocrino (a mais coberta) | 781 | 56 / 29 |
+
+Lípides (583) e Endocrinopatias (638) já estão densas. Esporte tem 3 pendentes e
+fecha junto de qualquer leva.
+
+⚠️ **Pediátrica, Masculina e Transgeneridade têm ZERO artigos no acervo do Drive.**
+Não é ordem de prioridade — o material não existe lá. Hoje a IA gera essas três só
+com o núcleo, e só o professor pode resolver, mandando artigos.
+
+### Por que Diabetes é a primeira
+
+É a área mais usada da endocrinologia e a base tem **130 fatos, sendo 109 de
+diabetes pós-transplante e 21 de MODY** — as duas coisas mais raras que existem no
+assunto. Nada de DM2, cetoacidose, insulinização ou complicações. É o maior
+descompasso entre o que o aluno pergunta e o que a base sabe.
+
+### Ritual por artigo, sem pular etapa
+
+1. agente extrai em `scratchpad/acervo/trabalho/<fileId>/` (pasta isolada)
+2. `verifica-extracao.js --dir <trabalho>` → 0 reprovados
+3. `cobertura-extracao.js --dir <trabalho>`
+4. **eu confiro à mão toda acusação grave contra o texto-fonte** — auditor erra, e
+   já errou (a acusação contra a metade 1 da dislipidemia era falso alarme)
+5. mover o extrato para `scratchpad/acervo/extratos/`
+6. `protege-citacoes.js` — texto da citação vira offset+hash, senão o CI reprova
+7. `confere-ressalvas.js`
+8. `monta-base-profunda.js`
+9. **teste de CAMINHO** — a pergunta real do médico chega ao bloco?
+10. auditoria adversarial do extrato
+11. correção do núcleo se a fonte o contrariar → `index.html` + bump do `sw.js` +
+    harness A/B em Chromium
+12. `ci-validate` + commit + PR + merge
+
+### Regra que só aparece com muitos agentes
+
+**Só UM agente pode editar `lib/clinical-deep.js` por vez.** Os demais apenas
+RELATAM os termos que faltam em `TERMOS`; eu aplico. Dois agentes no mesmo arquivo
+perdem trabalho um do outro sem aviso.
+
 ## ⚠️ Vitrine (`alunopro`) sem identidade no servidor — decisão do professor (2026-08-02)
 - [ ] **Dar conta REAL no Supabase à vitrine.** Hoje `alunopro` é conta **local do bundle** (`var USERS` no `index.html`), com a senha publicada no código e **sem sessão no Supabase**. Consequência estrutural: **nenhum gate de servidor consegue distinguir a vitrine de um visitante qualquer** — qualquer regra que ela passe, um `curl` também passa. Foi isso que fez o gate de 01/08 devolver vazio e deixar a aba Resumos em branco por um dia (revertido; ver [[Auditoria 2026-08-01]]).
   - **O que fazer:** criar o usuário `alunopro@endodirect.com.br` no Supabase, conceder o acesso de plano e fazer o cliente **logar de fato**. Aí a vitrine pode usar o **`member_resumos` comum** — a função especial `endodirect_showcase_resumos()` deixa de existir, e some junto a superfície aberta que a auditoria apontou. Acesso passa a ser revogável, auditável e com limite de taxa.
