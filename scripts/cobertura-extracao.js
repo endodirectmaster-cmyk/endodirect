@@ -31,6 +31,7 @@
  */
 const fs = require('fs');
 const path = require('path');
+const CIT = require('../lib/citacao');
 
 const arg = (nome, padrao) => {
   const i = process.argv.indexOf(nome);
@@ -95,9 +96,28 @@ function main() {
 
   for (const arq of arquivos) {
     const e = JSON.parse(fs.readFileSync(path.join(DIR, 'extratos', arq), 'utf8'));
-    const fatos = Array.isArray(e.fatos) ? e.fatos : [];
+    // ⚠️ A citação não é mais texto no JSON: é REFERÊNCIA para o texto-fonte
+    // local (ver lib/citacao.js). Sem resolver, `f.citacao` vem vazio e TODAS as
+    // peneiras deste arquivo passam a achar zero — não porque o defeito sumiu,
+    // mas porque elas ficaram cegas. Aconteceu comigo na migração: o relatório
+    // veio limpo e limpo era o sintoma, não o resultado.
+    const pTxtC = path.join(DIR, 'textos', String(e.fileId || '') + '.txt');
+    const bsC = fs.existsSync(pTxtC) ? CIT.bases(fs.readFileSync(pTxtC, 'utf8')) : null;
+    const fatos = (Array.isArray(e.fatos) ? e.fatos : []).map((f) => {
+      if (String(f.citacao || '').trim()) return f;
+      const r = bsC ? CIT.resolver(f, bsC) : null;
+      return r ? Object.assign({}, f, { citacao: r.texto }) : f;
+    });
     const rotulo = (e.tema || e.titulo || arq).slice(0, 46);
     const problemas = [];
+
+    // ⚠️ PENEIRA CEGA É PIOR QUE PENEIRA AUSENTE — ela devolve "✓" sem ter olhado.
+    // Se o extrato guarda referências e o texto-fonte não está aqui, as peneiras
+    // 3 e 4 não têm o que ler e passariam calado.
+    const refsSemTexto = fatos.filter((f) => Array.isArray(f.cit) && !String(f.citacao || '').trim()).length;
+    if (refsSemTexto) {
+      problemas.push(`${refsSemTexto} de ${fatos.length} citações não puderam ser resolvidas (texto-fonte ausente em ${pTxtC}). As peneiras de citação truncada e de cabeça encalhada NÃO foram aplicadas — este "✓" não vale.`);
+    }
 
     // ── 1. cobertura das recomendações graduadas ────────────────────────────
     // Só se aplica quando o artigo REALMENTE usa GRADE; senão o teste não diz nada.

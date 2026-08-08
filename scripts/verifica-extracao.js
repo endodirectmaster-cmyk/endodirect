@@ -29,6 +29,9 @@
  */
 const fs = require('fs');
 const path = require('path');
+// Resolução de citação por REFERÊNCIA (offset+hash) — ver o cabeçalho de lib/citacao.js
+// para por que o texto literal deixou de ser versionado.
+const CIT = require('../lib/citacao');
 
 const argDir = (() => {
   const i = process.argv.indexOf('--dir');
@@ -86,6 +89,24 @@ function semHifenDeQuebra(s) {
 // a frase acabava ali. Escondido é que era perigoso.
 const ELISAO = /\s*\[(?:…|\.\.\.)\]\s*/;
 const GAP_MAX = 400; // um respingo de coluna tem ~50-120 chars; 400 dá folga sem permitir costurar trechos distantes
+
+// Mesmas regras de qualidade da elisão, aplicadas à forma REFERENCIADA — onde a
+// literalidade já vem provada pelo hash e só falta julgar se a elisão é honesta.
+function conferirElisaoRef(refs) {
+  if (!Array.isArray(refs) || !refs.length) return 'referência de citação vazia';
+  for (const [, , len] of refs) {
+    if (len < 12) return `pedaço de citação com ${len} caracteres entre elisões — não prova nada`;
+  }
+  for (let i = 1; i < refs.length; i++) {
+    const [bAnt, oAnt, lAnt] = refs[i - 1];
+    const [b, o] = refs[i];
+    if (b !== bAnt) return 'elisão atravessa normalizações diferentes do texto-fonte';
+    const buraco = o - (oAnt + lAnt);
+    if (buraco < 0) return 'pedaços da elisão fora de ordem no texto-fonte';
+    if (buraco > GAP_MAX) return `elisão pula ${buraco} caracteres (máximo ${GAP_MAX}) — isso não é quebra de coluna, é costurar trechos distantes`;
+  }
+  return null;
+}
 
 // Devolve null se a citação (com ou sem elisão) casa com a fonte; senão, o motivo.
 function conferirCitacao(cit, fonte, fonteSH) {
@@ -182,8 +203,10 @@ function main() {
       extratosRuins++;
       continue;
     }
-    const fonte = norm(fs.readFileSync(pTexto, 'utf8'));
-    const fonteSH = semHifenDeQuebra(fonte); // calculado uma vez por extrato, não por fato
+    const bruto = fs.readFileSync(pTexto, 'utf8');
+    const bs = CIT.bases(bruto);            // [norm, norm+sem hífen de quebra]
+    const fonte = bs[0];
+    const fonteSH = bs[1];                  // calculados uma vez por extrato, não por fato
 
     const fatos = Array.isArray(ext.fatos) ? ext.fatos : [];
     if (!fatos.length) problemas.push('extrato sem nenhum fato');
@@ -191,15 +214,32 @@ function main() {
     fatos.forEach((f, i) => {
       totFatos++;
       const rot = `fato #${i + 1}`;
-      const cit = String((f && f.citacao) || '');
       const afi = String((f && f.afirmacao) || '');
       if (!afi.trim()) { problemas.push(`${rot}: sem afirmação`); totReprovados++; return; }
-      if (!cit.trim()) { problemas.push(`${rot}: SEM CITAÇÃO — regra inegociável`); totReprovados++; return; }
+
+      // ⚠️ A citação pode vir de duas formas, e as duas provam a mesma coisa:
+      //   · REFERÊNCIA (`cit` + `cit_sha`) — o formato de hoje. O texto literal
+      //     NÃO é versionado; fica no texto-fonte, que está no .gitignore. O
+      //     hash prova que o trecho naquele offset é exatamente o que sustenta a
+      //     afirmação; mexer no texto ou no offset quebra. Ver lib/citacao.js.
+      //   · TEXTO (`citacao`) — o formato antigo, aceito enquanto houver extrato
+      //     recém-escrito por um agente que ainda não referenciou.
+      const res = CIT.resolver(f, bs);
+      if (!res) {
+        problemas.push(`${rot}: ⚠️ CITAÇÃO NÃO RESOLVE — ${Array.isArray(f.cit) ? 'o offset não bate com o texto-fonte ou o hash falhou (texto-fonte alterado?)' : 'SEM CITAÇÃO — regra inegociável'}`);
+        totReprovados++; return;
+      }
+      const cit = res.texto;
       if (cit.replace(ELISAO, ' ').trim().length < 25) {
         problemas.push(`${rot}: citação curta demais (${cit.trim().length} chars) para servir de prova`);
         totReprovados++; return;
       }
-      const motivo = conferirCitacao(cit, fonte, fonteSH);
+      // Literalidade e ordem já estão provadas pelo offset+hash quando a citação
+      // é referência. O que continua valendo para as duas formas é a regra de
+      // QUALIDADE da elisão: pedaço curto demais e buraco grande demais.
+      const motivo = res.origem === 'ref'
+        ? conferirElisaoRef(f.cit)
+        : conferirCitacao(cit, fonte, fonteSH);
       if (motivo) {
         problemas.push(`${rot}: ⚠️ ${motivo} → "${cit.slice(0, 90)}…"`);
         totReprovados++; return;

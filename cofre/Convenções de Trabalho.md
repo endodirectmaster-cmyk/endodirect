@@ -5,6 +5,64 @@ atualizado: 2026-08-07
 
 # Convenções de Trabalho
 
+## 📚 A CITAÇÃO NÃO É MAIS PUBLICADA — e continua sendo a prova (2026-08-08)
+
+Duas exigências certas, juntas, produziram uma terceira coisa que nenhuma das
+duas pediu:
+
+- extrair EXAUSTIVAMENTE (o professor pediu "100% das informações");
+- exigir CITAÇÃO LITERAL para cada fato (a garantia anti-alucinação).
+
+Somando as citações de um extrato, **72% de um artigo Elsevier por assinatura
+estava reconstituível verbatim** neste repositório, que é PÚBLICO. Cinco extratos
+passavam de 55%. Nenhum dos artigos é open access.
+
+**A saída não podia ser encurtar a citação** — seria trocar risco jurídico por
+risco clínico, e o clínico é pior. A saída foi separar PROVA de PUBLICAÇÃO:
+
+```json
+"cit":     [[0, 12045, 236]],        // base, offset, tamanho no texto-fonte
+"cit_sha": "a3f9c2…"                 // hash do texto literal resolvido
+```
+
+O texto continua em `scratchpad/acervo/textos/`, que está no .gitignore. Quem tem
+o artigo resolve e confere tudo o que se conferia antes; quem não tem, não ganha
+o artigo de graça. **A prova ficou MAIS forte**: deslocar o offset em 1 caractere
+agora reprova, o que o `includes` de antes não pegava.
+
+**No fluxo de trabalho:** o agente extrator continua escrevendo `citacao` com o
+texto — é o jeito natural, e o verificador aceita as duas formas. Antes de
+commitar, rode:
+
+```
+node scripts/protege-citacoes.js     # troca texto por offset+hash
+node scripts/mostra-citacao.js <extrato> [n|--busca "termo"]   # ler a prova localmente
+```
+
+`scripts/test-citacao-nao-publicada.js` (no `ci-validate`) reprova se um extrato
+RASTREADO ainda tiver texto. Esquecer publica o artigo, e ninguém percebe.
+
+**O que continua versionado, e por quê:** as citações dentro do campo `conflito`
+(~383 caracteres por artigo, menos de 1% de cada um). Elas são o aviso de
+segurança entregue à IA em tempo de execução — sem elas o bloco chega sem
+ressalva.
+
+## 🕶️ PENEIRA CEGA DEVOLVE "✓" SEM TER OLHADO (2026-08-08)
+
+Ao migrar as citações, rodei `cobertura-extracao.js` e o relatório veio **limpo**.
+Eu quase comemorei. As peneiras liam `f.citacao`, que tinha acabado de sumir do
+JSON: elas não acharam nada porque não tinham o que ler.
+
+**Limpo era o sintoma, não o resultado.** Quando um campo que uma verificação
+consome muda de forma, a verificação não falha — ela emudece, e o silêncio se
+parece com aprovação. Hoje `cobertura-extracao.js` reclama alto quando não
+consegue resolver a citação, em vez de aprovar por omissão.
+
+**A regra:** ao mudar o formato de um dado, procure TODO consumidor
+(`grep -n "\.campo"`) e confira se o número de achados MUDOU no sentido esperado.
+Verificação que passa a achar zero logo depois de uma migração está quebrada até
+prova em contrário.
+
 ## 🚪 AUDITE O CAMINHO, NÃO SÓ O CONTEÚDO (2026-08-07)
 
 A auditoria da hipofosfatasia devolveu 15,4% de erro semântico e **zero

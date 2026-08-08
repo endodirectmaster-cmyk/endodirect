@@ -393,6 +393,18 @@ try {
   fail('teto do bloco clínico falhou (verifique CLINICAL_GUIDELINES, lib/clinical-deep.js e api/ai.js):\n' + out);
 }
 
+// ⚠️ TEXTO DE ARTIGO NO REPOSITÓRIO PÚBLICO. Medido em 08/08/2026: 72% de um
+//     artigo Elsevier por assinatura estava reconstituível verbatim aqui, somando
+//     as citações de um extrato. Cada citação isolada é legítima; a SOMA não era.
+//     O extrato passou a guardar offset+hash; este teste impede que o texto volte.
+try {
+  execFileSync(process.execPath, [path.join('scripts', 'test-citacao-nao-publicada.js')], { stdio: 'pipe' });
+  ok('citações: extratos versionados guardam referência, não o texto do artigo');
+} catch (e) {
+  const out = (e.stdout ? e.stdout.toString() : '') + (e.stderr ? e.stderr.toString() : '');
+  fail('texto literal de artigo prestes a ser publicado:\n' + out);
+}
+
 // ⚠️ RESSALVAS × NÚCLEO. O campo `conflito` de um extrato é uma FOTOGRAFIA do
 //     núcleo no dia da leitura, e a varredura do acervo CORRIGE o núcleo — é
 //     metade do objetivo dela. Toda correção envelhece a ressalva do artigo que
