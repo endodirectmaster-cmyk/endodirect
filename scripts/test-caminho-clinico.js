@@ -163,6 +163,19 @@ const CAMINHO = [
   ['perda de peso com hiperpigmentacao e avidez por sal', 'Adrenal'],
   ['AR GLP-1 no DM2 com doenca renal cronica', 'Diabetes'],
 
+  // ⚠️ NOME COMERCIAL. O médico e, sobretudo, o PACIENTE escrevem "Ozempic",
+  // "Mounjaro", "Saxenda" — não "semaglutida". Todos devolviam "" com a base
+  // cheia (semaglutida 88 ocorrências em Obesidade, tirzepatida 29). Mesma
+  // família do `CAD`, do `EHH` e do `Lp(a)`.
+  ['Ozempic: quanto tempo para fazer efeito?', 'Obesidade'],
+  ['Mounjaro causa mais nausea que Ozempic?', 'Obesidade'],
+  ['paciente tomando Saxenda com constipacao', 'Obesidade'],
+  ['Xenical ainda se usa?', 'Obesidade'],
+  ['Byetta no DM2', 'Diabetes'],
+  // …e as sentinelas: a marca cede para a doença nomeada.
+  ['Ozempic em paciente com DM2 e doenca renal cronica', 'Diabetes'],
+  ['Saxenda em paciente com hipotireoidismo', 'Tireoide'],
+
   // Sentinelas de outras áreas — o achado glicêmico não pode sequestrá-las.
   ['hiperglicemia em paciente com acromegalia', 'Neuroendocrinologia'],
   ['obeso em insulina: indico cirurgia bariatrica?', 'Obesidade'],

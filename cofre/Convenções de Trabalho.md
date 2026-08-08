@@ -5,6 +5,34 @@ atualizado: 2026-08-08
 
 # Convenções de Trabalho
 
+## 💊 A PALAVRA QUE SE DIGITA ≠ A PALAVRA QUE ESTÁ NO ARTIGO (2026-08-08)
+
+Quinta ocorrência do mesmo padrão em um dia, e agora dá para nomear a família:
+
+| o que o artigo escreve | o que o médico digita | devolvia |
+|---|---|---|
+| cetoacidose diabética | **CAD** | `""` |
+| estado hiperglicêmico hiperosmolar | **EHH** | `""` |
+| lipoproteína(a) | **Lp(a)** | `""` |
+| craniofaringioma | **craniofaringeoma** | `""` |
+| semaglutida, tirzepatida, liraglutida | **Ozempic, Mounjaro, Saxenda** | `""` |
+
+Em todos, o conteúdo estava na base, verificado, e a palavra real não estava no
+mapa. Os nomes comerciais são o caso mais gritante porque **o paciente também
+escreve assim**: semaglutida tem 88 ocorrências em Obesidade, tirzepatida 29
+(mais 26 no núcleo), e `ozempic`/`mounjaro` devolviam nada.
+
+**O buraco é invisível para quem lê o código** — o mapa parece completo, porque
+cada entrada dele está certa. Só medição com vocabulário humano acha, e é por
+isso que `scripts/test-caminho-clinico.js` é escrito à mão (ver a nota sobre a
+peneira de alcance que não pode existir).
+
+**Ao extrair artigo novo, pergunte: como o paciente chama isso?** Sigla,
+abreviação, nome comercial e grafia alternativa entram no mapa junto com o termo
+técnico. Nomes comerciais entram com peso de FÁRMACO, então cedem para qualquer
+doença nomeada na frase — "Ozempic em paciente com DM2 e DRC" continua indo para
+Diabetes.
+
 ## 🕳️ O FATO QUE DECLARA A PRÓPRIA CEGUEIRA (2026-08-08)
 
 O artigo de eventos gastrintestinais dos AR GLP-1 é de dez/2022 e **não trata**
