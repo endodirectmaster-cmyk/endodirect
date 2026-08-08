@@ -5,6 +5,68 @@ atualizado: 2026-08-08
 
 # Convenções de Trabalho
 
+## 🏷️ O TEMA É UMA REIVINDICAÇÃO, E REIVINDICAÇÃO FALSA ROUBA O ARTIGO CERTO (2026-08-08)
+
+O `tema` do extrato não é enfeite: é o índice pelo qual `deepFor` escolhe o
+bloco, e cada assunto listado nele **compete** por toda pergunta daquele
+assunto. Reivindicar o que o texto não entrega é tirar a pergunta de quem a
+responde.
+
+Medido: o tema do Posicionamento da ABESO prometia `síndrome de dumping`, e o
+texto dela entrega **2 ocorrências** contra **78** do artigo dedicado. Empatavam
+em 7 pontos — `dumping`(3, no tema) + `bypass`(3, no tema) + `tardio`(1) de um
+lado; `dumping`(3) + `tardio`(3) + `bypass`(1) do outro — e **o desempate era a
+ordem do montador**. Ou seja: o teste do dumping esteve certo o dia inteiro **por
+acaso**, e virou errado no instante em que corrigi o campo `tipo` da ABESO e a
+ordem mudou.
+
+**O conserto é no DADO, não no peso.** Tirei `síndrome de dumping` do tema (21
+caracteres) e o bloco voltou de **6% para 100%**, com 87 ocorrências entregues.
+Nenhuma pergunta de nutrição se moveu.
+
+**Regra: assunto entra no tema quando o TEXTO o entrega.** Antes de listar,
+pergunte se outro bloco da mesma área entrega muito mais — se entrega, a
+reivindicação é dele. E `tema` é campo de índice, não de citação: corrigi-lo não
+mexe em prova nenhuma.
+
+⚠️ Já tinha tentado resolver isto por HEURÍSTICA duas vezes — desempate por tema
+mais curto e por menos assuntos reivindicados — e as duas erravam tanto quanto
+acertavam (ver a nota do dumping mais abaixo). **O problema nunca foi o
+desempate; era a reivindicação falsa.**
+
+## 🧰 A ASSERÇÃO DE COMPLETUDE PEGOU UMA REGRESSÃO NO DIA EM QUE NASCEU (2026-08-08)
+
+Escrevi o bloco COMPLETUDE de manhã, para medir o DANO (o artigo chega inteiro?)
+em vez do proxy (qual bloco vem primeiro). Horas depois, ao processar a
+auditoria da ABESO, ele reprovou: o bloco de dumping chegava a **6%**.
+
+Era regressão de verdade e eu não a teria visto: a asserção antiga, de ordem,
+teria passado — o bloco *aparecia* na entrega, só que truncado a 6%. **"Bloco
+entregue" e "bloco entregue INTEIRO" são medidas diferentes, e a distância entre
+elas é o artigo.**
+
+## 📏 O QUE UM AUDITOR NÃO SABE, O BRIEF TEM DE DIZER (2026-08-08)
+
+Duas auditorias no mesmo dia, e **as duas quebraram citações da mesma forma**:
+para acrescentar conteúdo achado noutro lugar do PDF, costuraram peças distantes
+numa elisão só. Uma pulava 6.161 caracteres; outra, **162.904**.
+
+`verifica-extracao.js` barra isso (`GAP_MAX = 400`) e barrou. Mas os dois
+auditores só souberam da regra **depois de reprovar**, porque o meu brief não a
+mencionava. O defeito é meu, não deles.
+
+**As três saídas legítimas, agora no brief:**
+1. **Tornar contígua** — se o buraco é do mesmo assunto, estenda a peça única.
+2. **Fato novo** — se a peça distante é outra passagem (célula de tabela, outro
+   capítulo), ela não pertence à mesma citação: vira fato próprio com citação
+   contígua e ponteiro recíproco.
+3. **Encolher a afirmação** — se a peça distante sustentava só um acessório,
+   tire-o e aponte onde está provado.
+
+E o corolário que os dois casos ensinaram: **ao encolher a citação, encolha
+também a afirmação.** O segundo auditor deixou "(16 semanas)" num ponteiro cujo
+lastro tinha ido embora — e o verificador pegou.
+
 ## 🔎 CONFERÊNCIA PARCIAL NÃO É AUDITORIA, E NÃO PODE ENTRAR NO CAMPO (2026-08-08)
 
 Com o orçamento em 75% e 0 agentes cabendo, usei a hora conferindo eu mesma a
