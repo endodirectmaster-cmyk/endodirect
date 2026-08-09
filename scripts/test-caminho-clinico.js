@@ -762,6 +762,22 @@ const PRIMEIRO = [
   ['esclera azulada e fraturas de repetição na criança', 'osteogênese imperfeita'],
   ['doença dos ossos de vidro', 'osteogênese imperfeita'],
   ['escleras azuis em lactente com fratura', 'osteogênese imperfeita'],
+  // ⚠️ O BLOCO NOVO ROUBOU A EMERGÊNCIA DO BLOCO ANTIGO (09/08/2026). Ao entrar
+  // em Adrenal, o extrato da HAC — cujo tema tem 1.571 chars — passou a vencer
+  // "cortisol basal 3, faço teste de estímulo?" (10 × 9) e "crise adrenal,
+  // hidrocortisona IV agora" (6 × 4), porque o tema dele nomeia `cortisol`,
+  // `estímulo` e `hidrocortisona` e o da insuficiência adrenal não — apesar de
+  // esse bloco ter 29 ocorrências de hidrocortisona no corpo e dizer "manejo da
+  // crise adrenal" no próprio tema.
+  // Consertado do lado certo: o tema do bloco de insuficiência adrenal passou a
+  // nomear o que ele já respondia (cortisol basal/matinal, cosintropina,
+  // hidrocortisona parenteral). Desempatar por tema mais curto foi medido em
+  // 08/08 e é cara-ou-coroa — 2 de 4 mudanças pioravam.
+  ['cortisol basal 3, faco teste de estimulo?', 'insuficiência adrenal —'],
+  ['crise adrenal, hidrocortisona IV agora', 'insuficiência adrenal —'],
+  ['crise perdedora de sal no lactente com 21-hidroxilase', 'hiperplasia adrenal congenita'],
+  ['hipertensao resistente com hipocalemia, rastreio?', 'hiperaldosteronismo'],
+  ['poliuria hipotonica de 6 L/dia, investigo como?', 'diabetes insipidus central'],
   // ⚠️ O DESEMPATE DA CONDIÇÃO EXIGIDA, nos dois sentidos. GIOP e osteoporose
   // empatavam em 18 pontos com os mesmos seis termos no tema, e a ordem do array
   // dava o primeiro lugar ao GIOP mesmo quando a pergunta não citava corticoide
