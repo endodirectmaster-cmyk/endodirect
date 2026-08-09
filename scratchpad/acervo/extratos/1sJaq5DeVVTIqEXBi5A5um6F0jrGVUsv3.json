@@ -14,7 +14,11 @@
     "a MAIORIA dos casos ocorre nos 3 primeiros meses, MAS PODE OCORRER A QUALQUER MOMENTO",
     "iodo antes da tionamida ESTIMULA nova síntese hormonal",
     "Escore de Burch-Wartofsky: ≥45 = tempestade, 25–44 = iminente, <25 improvável",
-    "NUNCA PTU (falência hepática)"
+    "NUNCA PTU (falência hepática)",
+    "a escolha do antitireoidiano preferido é DESCONHECIDA",
+    "preferindo titulação de dose ao bloqueio-e-substituição",
+    "intervalo FIXO de 0,1–4,0 mU/L",
+    "evitar <5 anos, preferir >10"
   ],
   "nucleo_ausente": [
     "hipertireoidismo subclínico",
@@ -31,6 +35,35 @@
     "Jod-Basedow"
   ],
   "nucleo_prevalece_porque": "A divergência é sobre a CONDUTA NA GESTANTE (trocar carbimazol/metimazol por propiltiouracil no 1º trimestre). O núcleo carrega ali a ATA 2026 (Korevaar et al., Thyroid 36(5)), diretriz DEDICADA à tireoide na gestação e TRÊS ANOS mais nova que esta revisão de 2023 — e a metanálise de 2022 que este artigo comenta é anterior a ela, portanto já estava disponível quando a ATA 2026 foi escrita. O que este artigo acrescenta não é uma conduta alternativa, é um NÚMERO que deve acompanhar a conduta do núcleo: expor a gestante aos DOIS antitireoidianos foi a condição de maior excesso de anomalias (31,4 por 1000 nascidos vivos, contra 17,2 só com carbimazol/metimazol e 9,8 só com propiltiouracil). Use a conduta do núcleo; cite o número desta fonte ao informar a paciente.",
+  "auditoria": {
+    "data": "2026-08-09",
+    "achado": "O ACHADO GRAVE ESTAVA NO PONTEIRO PARA O NÚCLEO, DENTRO DE UM FATO — onde nenhuma peneira olha. O campo `conflito` deste extrato JÁ tinha sido atualizado em 09/08/2026 (\"o 'metimazol depois' que esta fonte contestava nao existe mais\") e o `nucleo_citado` já trazia \"PTU (se disponível) ATÉ 16 SEMANAS\" verbatim, de modo que `confere-ressalvas.js` passava verde. Mas o fato #87 — justamente o que carrega a instrução \"para a conduta prevalece o núcleo\" — continuava dizendo, por escrito, que o núcleo manda \"propiltiouracil no 1º trimestre e metimazol depois\". `confere-ressalvas.js` só confere `conflito`/`nucleo_citado`; a restituição do núcleo DENTRO de `fatos[].afirmacao` está fora do alcance dele. Resultado: o cabeçalho estava certo e o fato entregue ao médico estava errado, mandando trocar a gestante de volta para metimazol depois do 1º trimestre exatamente onde a ATA 2026 se RECUSA a recomendar um dos dois — e com o marco errado (trimestre em vez de semanas). ⚠️ RESSALVA DENTRO DE FATO É RESSALVA QUE NÃO ENVELHECE SOB VIGILÂNCIA: enquanto não houver peneira para ela, todo ponteiro para o núcleo escrito numa afirmação tem de ser conferido a mão. SEGUNDO EIXO DO ACHADO — POPULAÇÃO IMPLÍCITA. Este é um artigo do ADULTO NÃO GESTANTE que mora na mesma área da ATA 2026 de gestação e da ETA 2022 de Graves pediátrica, e nove fatos de dose, corte ou contraindicação não diziam para quem valiam: a faixa de referência do TSH (3 fatos), \"o antitireoidiano preferido é o metimazol\", o bloqueio-e-substituição (2 fatos, sem a contraindicação na gestação, que mora 16 mil caracteres adiante no PDF), as contraindicações do radioiodo (lista lida como fechada, sem a restrição etária pediátrica) e as doses da tempestade tireoidiana. TERCEIRO EIXO — FRASE DE ESCOPO ESTREITO ENTREGUE COMO REGRA GERAL: \"o teste regular de função tireoidiana durante o uso de amiodarona tem pouco valor\" foi escrita num artigo que NÃO discute em nenhum ponto o hipotireoidismo induzido por amiodarona (conferido por busca no texto integral: zero ocorrências), e sozinha vira ordem de não monitorar. QUARTO — a paralisia periódica tireotóxica manda tratar com potássio e a revisão não dá dose, via nem velocidade; o fato foi marcado como NÃO PRESCRITIVO. NENHUMA CITAÇÃO PRECISOU SER MEXIDA: os 121 fatos usam citação de PEÇA ÚNICA e contígua (base 0), sem uma única elisão, então o GAP_MAX nem chega a ser exercido. No fato #87 usei a terceira saída — ENCOLHER A AFIRMAÇÃO: o marco em semanas NÃO tem lastro na citação daquele fato (a citação não contém o número), então o ponteiro passou a descrever o marco qualitativamente (\"marco expresso em SEMANAS\") e a mandar ler o número na entrada do núcleo, onde ele está conferido verbatim por `nucleo_citado`. Escrever \"16 semanas\" ali teria repetido exatamente o erro que o brief documenta.",
+    "fatos_tocados": [
+      "⭐ #87 (Gestação — o número 31,4 e a troca por PTU) — o ponteiro afirmava que o núcleo manda \"propiltiouracil no 1º trimestre e metimazol depois\". O núcleo foi corrigido e não diz mais isso. Reescrito: o núcleo manda PTU (se disponível) até um marco em SEMANAS e, passado ele, declara DESCONHECIDA a escolha do antitireoidiano. Saída de citação usada: ENCOLHER A AFIRMAÇÃO (o número do marco não tem lastro nesta citação; fica apontado, não afirmado).",
+      "⭐ #52 (bloqueio-e-substituição) — descrevia a alternativa como neutra. Ganhou as duas omissões que mudam a conduta: CONTRAINDICADO na gestação (a contraindicação está provada no fato do 1º trimestre, a ~16 mil caracteres de distância no PDF — ponteiro recíproco, não costura) e a preferência do núcleo por titulação na Graves pediátrica.",
+      "⭐ #97 (bloqueio-e-substituição na pandemia) — mesma omissão, mesmo aviso.",
+      "⭐ #90 (tratamento no 1º trimestre) — ganhou o aviso de que o artigo raciocina por TRIMESTRE e o núcleo por SEMANAS.",
+      "⭐ #91 (voltar ao metimazol depois do 1º trimestre) — ganhou o aviso explícito de que NÃO autoriza a volta ao metimazol: o núcleo declara DESCONHECIDA a escolha depois do marco.",
+      "⭐ #9, #10 e #11 (faixa de referência do TSH, definição de subclínico, algoritmo) — a faixa é a do ADULTO NÃO GESTANTE. Marcada a população e apontado que o núcleo usa limite inferior MAIS BAIXO nos dois primeiros trimestres; sem a marca, gestante dentro da faixa dela era rotulada \"TSH baixo\".",
+      "⭐ #44 (rastreio de função tireoidiana sob amiodarona \"tem pouco valor\") — marcado o escopo: a revisão não discute hipotireoidismo por amiodarona (zero ocorrências no corpo) e o argumento é só sobre o valor preditivo do subclínico.",
+      "⭐ #50 (\"o antitireoidiano preferido é o metimazol\") — marcada a população: adulto fora da gestação e da tempestade; na gestação inicial o núcleo manda PTU.",
+      "⭐ #106 (paralisia periódica tireotóxica — tratar com potássio) — marcado como NÃO PRESCRITIVO: a revisão não dá dose, via nem velocidade, e o potássio está deslocado para dentro da célula, não perdido.",
+      "⭐ #112 (doses da tempestade tireoidiana) — marcadas como doses de ADULTO, com aviso de não transpor para a criança.",
+      "⭐ #57 (contraindicações do radioiodo) — a lista era lida como fechada; marcada como não exaustiva por IDADE, apontando a restrição etária pediátrica do núcleo."
+    ],
+    "tentei_derrubar_e_nao_consegui": [
+      "CITAÇÃO — os 121 fatos usam UMA peça contígua cada (base 0, menor peça 92 chars, maior 1397), sem nenhuma elisão. Não há costura possível de achar aqui. Três citações grandes (#7, #13, #71) atravessam respingo de coluna do PDF de duas colunas mantendo UMA fatia contígua, que é a primeira das três saídas do brief e a certa.",
+      "FORÇA DA RECOMENDAÇÃO — conferi um a um os 22 fatos com imperativo (deve / não deve / contraindicado / proibido) contra a citação: todos correspondem a \"should\", \"should not\", \"must\", \"is contraindicated\" ou \"is recommended\" na fonte. Este artigo é revisão narrativa e não usa GRADE, portanto não há \"we suggest\" para ser endurecido.",
+      "DOSES — conferi contra a fonte todas as doses do extrato (propranolol 10–40 mg 3–4×/dia; metimazol 5–10 / 10–20 / 30–40 mg pelo múltiplo do T4 livre; manutenção 2,5–10,0 e 2,5–7,5 mg; bloqueio-e-substituição 20–40 mg; prednisona 40 mg/dia; metimazol 40–60 mg + perclorato 500 mg 2×/dia; iodeto de potássio 10–30 mg; PTU 250 mg e metimazol 20 mg na lactação; ¹³¹I 10 mCi/370 MBq e 15 mCi/555 MBq; tempestade: PTU 500–1000 mg + 250 mg 4/4 h, metimazol 60–80 mg/dia, propranolol 60–80 mg 4/4 h, SSKI 5 gotas 6/6 h, hidrocortisona 300 mg + 100 mg 8/8 h). Nenhuma divergiu da fonte.",
+      "BURCH-WARTOFSKY — a tabela 3 foi reproduzida item a item sem erro, inclusive a sobreposição de 39,4 °C entre duas faixas, que é do PRÓPRIO artigo e não da extração. Os cortes (≥45 / 25–44 / <25) batem com o núcleo verbatim; a única diferença é o rótulo da faixa do meio (\"iminente\" no núcleo), e isso já está registrado no campo `conflito`. Única imprecisão sobrada, mínima: a afirmação escreve \"40,0 °C ou mais\" onde o parêntese do artigo diz \">40,0\" — mas a coluna em °F do mesmo artigo diz \"≥104,0\", que corresponde a ≥40,0, e a faixa anterior termina em 39,9; a leitura do extrato é a única coerente.",
+      "ESCORE GREAT (#69) — tentei acusar invenção de pontuação a partir da figura 3, que sai do PDF com as colunas intercaladas. Não há: a extração se recusa a atribuir pontos por item, diz isso na própria afirmação e no campo `extracao`, e extrai só o que é legível (classes 0–1 / 2–3 / 4–6, recidiva 16 / 44 / 68%). É a conduta certa diante de figura ilegível.",
+      "CHA2DS2-VASc (#101) — tentei acusar a omissão do ponto de sexo feminino. A extração já a tinha achado e escrito no fato, mandando conferir a composição em fonte cardiológica. Nada a acrescentar.",
+      "MONITORIZAÇÃO LABORATORIAL DE ROTINA (#55) — tentei derrubar a atribuição \"citando ATA 2016 e ETA 2018\", que NÃO aparece na citação. Fui à bibliografia do PDF: os marcadores 10,11 vêm imediatamente depois da frase, e a lista de referências confirma 10 = Ross et al., ATA 2016, e 11 = Kahaly et al., ETA 2018. A atribuição procede.",
+      "METANÁLISE DE 2022 (#86/#87) — reconferi 61,5 / 17,2 / 9,8 / 31,4 e a direção de cada um (excesso sobre a população não exposta e sem doença). Tudo bate, e o 31,4 é mesmo o da exposição AOS DOIS.",
+      "TABELA 2 — as prevalências (Graves 70%, bócio multinodular tóxico 10%, adenoma tóxico 6%, tireoidite subaguda 3%, fármacos 9%) fecham com o resumo do artigo (bócio nodular tóxico 16% = 10 + 6) e o denominador de 1144 hipertireoidismos manifestos está no rodapé extraído. Coerente ponta a ponta.",
+      "COORTE DINAMARQUESA (#117/#118) — 235 547, 7,3 anos, dois TSH <0,3 mU/L em 6 meses com ≥14 dias de intervalo, HR 1,24 (não tratado) x 1,01 (tratado), 11% e 13% por semestre de TSH baixo, 1,18 sob levotiroxina: todos conferidos na citação e no contexto certo. Única perda mínima: #118 não repete o comparador (\"comparado com os não tratados\") que a frase original traz — a mensagem do fato continua correta."
+    ]
+  },
   "extracao": {
     "data": "2026-08-08",
     "escopo": "Extração integral do CORPO do artigo. Texto-fonte baixado pelo canal sancionado (ferramenta do Google Drive, read_file_content) para scratchpad/acervo/textos/1sJaq5DeVVTIqEXBi5A5um6F0jrGVUsv3.txt, que é gitignored (confirmado com git check-ignore: .gitignore:43 scratchpad/acervo/textos/): 98 484 caracteres. O corpo (resumo, texto corrido, legendas das figuras 1 a 3, tabelas 1, 2 e 3, e o boxe \"Search strategy and selection criteria\") vai do caractere 0 ao ~72 900 e foi lido 100%, em cinco leituras sequenciais. Do caractere ~72 900 ao fim são as 151 referências bibliográficas, as declarações de interesse, a lista de contribuidores e as âncoras de link do PDF — sem conteúdo clínico. Toda citação é CONTÍGUA (uma só peça em `cit`): nenhum fato usa elisão, portanto o buraco máximo de 400 caracteres do verificador não chega a ser testado. Números decimais e o símbolo do radioiodo são grafados na afirmação com os MESMOS caracteres do PDF (ponto médio · / ∙ e ¹³¹I com expoente), para o número da afirmação ser localizável, caractere por caractere, dentro da citação.",
@@ -142,7 +175,7 @@
       "cit_sha": "a717a2d90b6ef64e"
     },
     {
-      "afirmacao": "PRIMEIRO PASSO (Lancet 2023): havendo suspeita clínica, o excesso hormonal deve ser confirmado ou excluído por testes bioquímicos. Valores de TSH DENTRO da faixa de referência (0·4–4·0 mU/L) EXCLUEM com acurácia o hipertireoidismo — as ÚNICAS exceções são o raro adenoma hipofisário produtor de TSH e a resistência ao hormônio tireoidiano, associados a TSH normal ou levemente aumentado. Confirmado o TSH baixo (menor que 0·4 mU/L), o passo seguinte é dosar o T4 livre (FT4). ⚠️ A faixa de referência do TSH pode variar levemente entre laboratórios.",
+      "afirmacao": "PRIMEIRO PASSO (Lancet 2023): havendo suspeita clínica, o excesso hormonal deve ser confirmado ou excluído por testes bioquímicos. Valores de TSH DENTRO da faixa de referência (0·4–4·0 mU/L) EXCLUEM com acurácia o hipertireoidismo — as ÚNICAS exceções são o raro adenoma hipofisário produtor de TSH e a resistência ao hormônio tireoidiano, associados a TSH normal ou levemente aumentado. Confirmado o TSH baixo (menor que 0·4 mU/L), o passo seguinte é dosar o T4 livre (FT4). ⚠️ A faixa de referência do TSH pode variar levemente entre laboratórios. ⚠️⚠️ POPULAÇÃO — ESTA FAIXA É A DO ADULTO NÃO GESTANTE. Na GESTAÇÃO o núcleo (ATA 2026) manda preferir o intervalo local por trimestre e, na falta dele, usar um intervalo FIXO cujo LIMITE INFERIOR É MAIS BAIXO que o deste artigo, no primeiro e no segundo trimestres. Aplicar o limite inferior deste artigo a uma gestante rotula como “TSH baixo” quem está DENTRO da faixa dela e dispara investigação de hipertireoidismo que não existe. Use a entrada “Tireoide na gestação (ATA 2026)” do núcleo para o número.",
       "secao": "Diagnóstico — TSH normal exclui, com duas exceções",
       "cit": [
         [
@@ -151,10 +184,11 @@
           476
         ]
       ],
-      "cit_sha": "988f6a3c8bb3e73c"
+      "cit_sha": "988f6a3c8bb3e73c",
+      "nucleo_sha": "69830687ee78"
     },
     {
-      "afirmacao": "SEGUNDO PASSO (Lancet 2023): valores AUMENTADOS de T4 livre confirmam tireotoxicose. Um T4 livre DENTRO da faixa normal (com TSH baixo) pode indicar T3-TOXICOSE ou HIPERTIREOIDISMO SUBCLÍNICO — este definido como TSH menor que 0∙4 mU/L com T4 livre E T3 livre DENTRO das respectivas faixas de referência. A progressão do hipertireoidismo subclínico para T3-toxicose ocorre em cerca de 10% de todos os pacientes com hipertireoidismo, especialmente naqueles com BÓCIO NODULAR. ⚠️ Esta revisão NÃO discute o hipertireoidismo subclínico e remete às diretrizes da ETA — ou seja, EM QUEM TRATAR o hipertireoidismo subclínico NÃO está respondido por esta fonte.",
+      "afirmacao": "SEGUNDO PASSO (Lancet 2023): valores AUMENTADOS de T4 livre confirmam tireotoxicose. Um T4 livre DENTRO da faixa normal (com TSH baixo) pode indicar T3-TOXICOSE ou HIPERTIREOIDISMO SUBCLÍNICO — este definido como TSH menor que 0∙4 mU/L com T4 livre E T3 livre DENTRO das respectivas faixas de referência. A progressão do hipertireoidismo subclínico para T3-toxicose ocorre em cerca de 10% de todos os pacientes com hipertireoidismo, especialmente naqueles com BÓCIO NODULAR. ⚠️ Esta revisão NÃO discute o hipertireoidismo subclínico e remete às diretrizes da ETA — ou seja, EM QUEM TRATAR o hipertireoidismo subclínico NÃO está respondido por esta fonte. ⚠️ POPULAÇÃO: o corte de TSH que define aqui o hipertireoidismo subclínico é o do ADULTO NÃO GESTANTE. Na gestação, o núcleo (ATA 2026) usa um limite inferior de TSH MAIS BAIXO nos dois primeiros trimestres, e esta definição não se transporta para a gestante.",
       "secao": "Diagnóstico — do T4 livre ao T3 livre; definição de hipertireoidismo subclínico",
       "cit": [
         [
@@ -163,10 +197,11 @@
           502
         ]
       ],
-      "cit_sha": "9771e29ac6069a4a"
+      "cit_sha": "9771e29ac6069a4a",
+      "nucleo_sha": "69830687ee78"
     },
     {
-      "afirmacao": "ALGORITMO DIAGNÓSTICO (figura 1 do Lancet 2023): suspeita clínica de hipertireoidismo → dosar TSH. TSH normal ou elevado → hipertireoidismo EXCLUÍDO (salvo o raro adenoma hipofisário secretor de TSH e a resistência ao hormônio tireoidiano). TSH BAIXO → dosar T4 livre. T4 livre ELEVADO → HIPERTIREOIDISMO. T4 livre NORMAL → dosar T3 livre: T3 livre elevado = T3-TOXICOSE; T3 livre normal = HIPERTIREOIDISMO SUBCLÍNICO. TSH baixo é abaixo de 0∙4 mU/L e TSH normal é dentro de 0∙4–4∙0 mU/L.",
+      "afirmacao": "ALGORITMO DIAGNÓSTICO (figura 1 do Lancet 2023): suspeita clínica de hipertireoidismo → dosar TSH. TSH normal ou elevado → hipertireoidismo EXCLUÍDO (salvo o raro adenoma hipofisário secretor de TSH e a resistência ao hormônio tireoidiano). TSH BAIXO → dosar T4 livre. T4 livre ELEVADO → HIPERTIREOIDISMO. T4 livre NORMAL → dosar T3 livre: T3 livre elevado = T3-TOXICOSE; T3 livre normal = HIPERTIREOIDISMO SUBCLÍNICO. TSH baixo é abaixo de 0∙4 mU/L e TSH normal é dentro de 0∙4–4∙0 mU/L. ⚠️ POPULAÇÃO: algoritmo do ADULTO NÃO GESTANTE. Na gestação, o limite inferior do TSH que o núcleo (ATA 2026) adota é MAIS BAIXO nos dois primeiros trimestres — rodar este algoritmo numa gestante produz “TSH baixo” falso.",
       "secao": "Diagnóstico — algoritmo da figura 1",
       "cit": [
         [
@@ -175,7 +210,8 @@
           697
         ]
       ],
-      "cit_sha": "6bbb98f2364e4706"
+      "cit_sha": "6bbb98f2364e4706",
+      "nucleo_sha": "69830687ee78"
     },
     {
       "afirmacao": "INTERFERÊNCIA ANALÍTICA (Lancet 2023): os testes de função tireoidiana são suscetíveis a interferência analítica por macro-TSH, anticorpos e uso de BIOTINA. Felizmente a interferência analítica é rara, e o conselho é consultar o laboratório de bioquímica quando houver discrepância entre TSH e T4 livre ou resultados que não façam sentido.",
@@ -562,7 +598,7 @@
       "cit_sha": "00a713a1f87a210f"
     },
     {
-      "afirmacao": "⚠️ ACHADO CONTRAINTUITIVO (Lancet 2023): a tireotoxicose induzida por amiodarona PODE ser precedida por hipertireoidismo SUBCLÍNICO, que pode remitir espontaneamente e NEM SEMPRE progride para tireotoxicose manifesta por amiodarona. POR ISSO, segundo esta revisão, \"o teste regular de função tireoidiana durante o uso de amiodarona tem pouco valor\". ⚠️ Note a base do argumento — é o VALOR PREDITIVO do achado subclínico isolado que é baixo; a revisão não diz que se deve ignorar sintomas ou deixar de investigar suspeita clínica.",
+      "afirmacao": "⚠️ ACHADO CONTRAINTUITIVO (Lancet 2023): a tireotoxicose induzida por amiodarona PODE ser precedida por hipertireoidismo SUBCLÍNICO, que pode remitir espontaneamente e NEM SEMPRE progride para tireotoxicose manifesta por amiodarona. POR ISSO, segundo esta revisão, \"o teste regular de função tireoidiana durante o uso de amiodarona tem pouco valor\". ⚠️ Note a base do argumento — é o VALOR PREDITIVO do achado subclínico isolado que é baixo; a revisão não diz que se deve ignorar sintomas ou deixar de investigar suspeita clínica. ⚠️⚠️ ESCOPO DA FRASE, CONFERIDO NA AUDITORIA ADVERSARIAL CONTRA O TEXTO INTEGRAL: esta revisão é sobre TIREOTOXICOSE e NÃO discute em nenhum ponto o HIPOTIREOIDISMO induzido por amiodarona (busca no corpo do artigo: nenhuma ocorrência), que é o desfecho tireoidiano mais frequente da droga. A frase, portanto, foi escrita olhando só para a tireotoxicose e apoia-se SÓ na má capacidade do hipertireoidismo subclínico de prever a tireotoxicose manifesta. ⚠️ NÃO a entregue como “não é preciso monitorar função tireoidiana em quem usa amiodarona” — a revisão não examinou a pergunta inteira, e nesta mesma extração ela recomenda monitorização periódica para inibidor de checkpoint e ajuste de levotiroxina sob inibidor de tirosina-quinase.",
       "secao": "Amiodarona — rastreio periódico de função tireoidiana tem pouco valor",
       "cit": [
         [
@@ -634,7 +670,7 @@
       "cit_sha": "6160c9f3802dcdc8"
     },
     {
-      "afirmacao": "ANTITIREOIDIANOS (Lancet 2023): reduzem a síntese de hormônio tireoidiano por INIBIÇÃO DA TIREOPEROXIDASE. O antitireoidiano PREFERIDO é o METIMAZOL. O CARBIMAZOL é PRÓ-FÁRMACO do metimazol, e o PROPILTIOURACIL (PTU) é MAIS TÓXICO que o metimazol.",
+      "afirmacao": "ANTITIREOIDIANOS (Lancet 2023): reduzem a síntese de hormônio tireoidiano por INIBIÇÃO DA TIREOPEROXIDASE. O antitireoidiano PREFERIDO é o METIMAZOL. O CARBIMAZOL é PRÓ-FÁRMACO do metimazol, e o PROPILTIOURACIL (PTU) é MAIS TÓXICO que o metimazol. ⚠️ POPULAÇÃO — “PREFERIDO” AQUI É O ADULTO FORA DA GESTAÇÃO E FORA DA TEMPESTADE TIREOIDIANA: o próprio artigo enuncia essas duas exceções (ver, nesta mesma extração, o fato da pancreatite por metimazol e o fato do tratamento da tempestade). Na gestação inicial o núcleo (ATA 2026) manda “PTU (se disponível)”. Recuperado sozinho e aplicado à gestante, este fato inverte a conduta.",
       "secao": "Antitireoidianos — mecanismo e qual escolher",
       "cit": [
         [
@@ -643,7 +679,8 @@
           227
         ]
       ],
-      "cit_sha": "1c1297a52c680f2d"
+      "cit_sha": "1c1297a52c680f2d",
+      "nucleo_sha": "69830687ee78"
     },
     {
       "afirmacao": "⚠️ DOSE INICIAL DE METIMAZOL PELO T4 LIVRE (Lancet 2023, ADULTO fora da gestação) — a dose inicial DEPENDE DA GRAVIDADE do hipertireoidismo: 5–10 mg POR DIA para T4 livre de 1∙0–1∙5 vez o limite superior da normalidade; 10–20 mg POR DIA para T4 livre de 1∙5–2∙0 vezes o limite superior; e 30–40 mg POR DIA para T4 livre de 2∙0–3∙0 vezes o limite superior. ⚠️ ESTE É O TETO DA REGRA PUBLICADA: a revisão NÃO especifica dose para T4 livre ACIMA de 3∙0 vezes o limite superior — não extrapole. Após cerca de 4 SEMANAS, a dose de metimazol é TITULADA conforme as concentrações de T4 livre E T3 livre. A dose usual de metimazol para MANTER o eutireoidismo é de 2·5–10∙0 mg por dia.",
@@ -658,7 +695,7 @@
       "cit_sha": "adcf0d4d56bbc0b0"
     },
     {
-      "afirmacao": "BLOQUEIO-E-SUBSTITUIÇÃO (Lancet 2023): como alternativa à titulação, pode-se MANTER a dose inicial alta (20–40 mg de metimazol por dia) e ACRESCENTAR levotiroxina — o chamado regime de bloqueio-e-substituição. ⚠️ A SUPERIORIDADE do bloqueio-e-substituição sobre a abordagem de titulação NÃO FOI DEMONSTRADA.",
+      "afirmacao": "BLOQUEIO-E-SUBSTITUIÇÃO (Lancet 2023): como alternativa à titulação, pode-se MANTER a dose inicial alta (20–40 mg de metimazol por dia) e ACRESCENTAR levotiroxina — o chamado regime de bloqueio-e-substituição. ⚠️ A SUPERIORIDADE do bloqueio-e-substituição sobre a abordagem de titulação NÃO FOI DEMONSTRADA. ⚠️⚠️ RECUPERADO SOZINHO, ESTE FATO OMITE DUAS COISAS QUE MUDAM A CONDUTA: (a) o bloqueio-e-substituição é CONTRAINDICADO NA GESTAÇÃO, pelo risco de HIPOTIREOIDISMO FETAL — ver, nesta mesma extração, o fato do tratamento no primeiro trimestre, que traz a contraindicação com a citação que a sustenta; (b) na doença de Graves PEDIÁTRICA o núcleo manda “preferindo titulação de dose ao bloqueio-e-substituição”. Este fato descreve uma ALTERNATIVA no adulto não gestante, não uma opção neutra em qualquer paciente.",
       "secao": "Bloqueio-e-substituição — o que é e se é melhor",
       "cit": [
         [
@@ -667,7 +704,8 @@
           257
         ]
       ],
-      "cit_sha": "5ff7181c722bcbc1"
+      "cit_sha": "5ff7181c722bcbc1",
+      "nucleo_sha": "69830687ee78"
     },
     {
       "afirmacao": "⚠️ EFEITOS ADVERSOS DOS ANTITIREOIDIANOS (Lancet 2023): a MAIORIA ocorre nos PRIMEIROS 3 MESES. Rash cutâneo e artralgia são COMUNS (1·0–5∙0%); alterações de paladar ou olfato e AGRANULOCITOSE são RAROS (0·2–1·0%); HEPATOTOXICIDADE, icterícia colestática e vasculite lúpus-símile são MUITO RAROS (menos de 0·1%). ⚠️ \"A maioria nos 3 primeiros meses\" NÃO significa que passar de 3 meses encerre o risco — ver, nesta mesma extração, o fato sobre efeitos adversos MAIORES no tratamento LONGO com metimazol, em que um dos eventos ocorreu APÓS o primeiro ano de tratamento.",
@@ -718,7 +756,7 @@
       "cit_sha": "765d6981369ce918"
     },
     {
-      "afirmacao": "RADIOIODO / ¹³¹I (Lancet 2023): causa dano e morte da célula tireoidiana. A dose de ¹³¹I é FIXA (por exemplo, 10 mCi ou 370 MBq) OU calculada com base no tamanho do bócio e na captação de radioiodo. ⚠️ O ¹³¹I NÃO DEVE ser usado na ORBITOPATIA DE GRAVES ATIVA, na GESTAÇÃO e durante a AMAMENTAÇÃO. Hipotireoidismo acaba se desenvolvendo na maioria dos pacientes.",
+      "afirmacao": "RADIOIODO / ¹³¹I (Lancet 2023): causa dano e morte da célula tireoidiana. A dose de ¹³¹I é FIXA (por exemplo, 10 mCi ou 370 MBq) OU calculada com base no tamanho do bócio e na captação de radioiodo. ⚠️ O ¹³¹I NÃO DEVE ser usado na ORBITOPATIA DE GRAVES ATIVA, na GESTAÇÃO e durante a AMAMENTAÇÃO. Hipotireoidismo acaba se desenvolvendo na maioria dos pacientes. ⚠️ ESTA LISTA DE CONTRAINDICAÇÕES NÃO É EXAUSTIVA POR IDADE: o núcleo, na doença de Graves PEDIÁTRICA, traz restrição ETÁRIA ao radioiodo que esta frase não menciona. Não leia a lista como fechada.",
       "secao": "Radioiodo — dose, contraindicações e desfecho",
       "cit": [
         [
@@ -727,7 +765,8 @@
           310
         ]
       ],
-      "cit_sha": "8638ed50f1f87661"
+      "cit_sha": "8638ed50f1f87661",
+      "nucleo_sha": "69830687ee78"
     },
     {
       "afirmacao": "RISCO DE CÂNCER APÓS radioiodo (¹³¹I) (Lancet 2023): uma METANÁLISE do risco de câncer após terapia com ¹³¹I para hipertireoidismo descreve o risco global agrupado de câncer, comparando exposição a ¹³¹I versus não exposição, como NÃO ESTATISTICAMENTE SIGNIFICATIVO — embora se observe associação dose-resposta LINEAR entre a terapia com ¹³¹I e a mortalidade por câncer SÓLIDO. Esses achados sugerem que os riscos de câncer induzido por radiação após ¹³¹I para hipertireoidismo são PEQUENOS e podem só ser detectáveis em doses administradas mais altas. Para aconselhar o paciente, pode-se dizer que o risco de câncer pelo ¹³¹I é aparentemente pequeno o bastante para ser INDISTINGUÍVEL do risco de câncer de quem é tratado com antitireoidianos ou cirurgia.",
@@ -1078,7 +1117,7 @@
       "cit_sha": "264b3d2c12f90a64"
     },
     {
-      "afirmacao": "⚠️ ACHADO QUE DESAFIA A TROCA NO 1º TRIMESTRE (Lancet 2023, GESTANTES): a cifra ALTA de 31·4 anomalias em excesso com exposição a AMBOS os antitireoidianos (ver, nesta mesma extração, o fato com os números completos da metanálise de 2022) é um achado NOVO e, segundo os autores, \"NÃO APOIA as diretrizes atuais que recomendam a TROCA de carbimazol/metimazol por propiltiouracil no PRIMEIRO TRIMESTRE\". O risco teratogênico parece CORRELACIONAR-SE COM A DOSE de carbimazol/metimazol no primeiro trimestre, e o HIPERTIREOIDISMO EM SI não se associa a essas anomalias. ⚠️ ATENÇÃO AO USAR ESTE FATO SOZINHO: esta é uma revisão de 2023 e o dado acima é um ALERTA quantitativo, NÃO uma conduta. Para a CONDUTA na gestante prevalece o núcleo, que carrega a ATA 2026 (diretriz dedicada à tireoide na gestação, três anos mais nova): propiltiouracil no 1º trimestre e metimazol depois, na menor dose eficaz. O que este artigo acrescenta é o custo, medido, de expor a gestante aos DOIS antitireoidianos.",
+      "afirmacao": "⚠️ ACHADO QUE DESAFIA A TROCA NO 1º TRIMESTRE (Lancet 2023, GESTANTES): a cifra ALTA de 31·4 anomalias em excesso com exposição a AMBOS os antitireoidianos (ver, nesta mesma extração, o fato com os números completos da metanálise de 2022) é um achado NOVO e, segundo os autores, \"NÃO APOIA as diretrizes atuais que recomendam a TROCA de carbimazol/metimazol por propiltiouracil no PRIMEIRO TRIMESTRE\". O risco teratogênico parece CORRELACIONAR-SE COM A DOSE de carbimazol/metimazol no primeiro trimestre, e o HIPERTIREOIDISMO EM SI não se associa a essas anomalias. ⚠️ ATENÇÃO AO USAR ESTE FATO SOZINHO: esta é uma revisão de 2023 e o dado acima é um ALERTA quantitativo, NÃO uma conduta. Para a CONDUTA na gestante prevalece o núcleo, que carrega a ATA 2026 (diretriz dedicada à tireoide na gestação, três anos mais nova) e manda usar a MENOR DOSE EFICAZ. ⚠️⚠️ CORRIGIDO NA AUDITORIA ADVERSARIAL: este ponteiro dizia que o núcleo manda “propiltiouracil no 1º trimestre e metimazol depois”. O NÚCLEO NÃO DIZ MAIS ISSO. Ele manda “PTU (se disponível)” até um marco expresso em SEMANAS — e não pelo fim do trimestre — e, passado esse marco, declara que “a escolha do antitireoidiano preferido é DESCONHECIDA”, sem recomendar nenhum dos dois. Leia o marco e a conduta na entrada “Tireoide na gestação (ATA 2026)” do núcleo; NÃO os deduza deste artigo, que raciocina por trimestre. O que este artigo acrescenta é o custo, medido, de expor a gestante aos DOIS antitireoidianos.",
       "secao": "⚠️ Gestação — o número 31,4 e a troca de metimazol por PTU no 1º trimestre",
       "cit": [
         [
@@ -1087,7 +1126,8 @@
           361
         ]
       ],
-      "cit_sha": "fa04d84e8046d806"
+      "cit_sha": "fa04d84e8046d806",
+      "nucleo_sha": "69830687ee78"
     },
     {
       "afirmacao": "ESTRATÉGIAS PARA MINIMIZAR A EXPOSIÇÃO (Lancet 2023, GESTANTES): a primeira é SUBSTITUIR carbimazol/metimazol por propiltiouracil ANTES da gestação; a segunda é PARAR o antitireoidiano assim que a gravidez for confirmada. ⚠️ A segunda estratégia EXIGE monitorização da função tireoidiana a CADA 2 SEMANAS durante o primeiro trimestre e a CADA 4 SEMANAS no segundo e no terceiro. As CONDIÇÕES para poder parar o antitireoidiano são: dose ESTÁVEL e BAIXA de metimazol (5–10 mg) ou de propiltiouracil (100–200 mg); período de tratamento LONGO (mais de 6 meses); concentrações NORMAIS de TSH; anticorpos antirreceptor de TSH AUSENTES; e AUSÊNCIA de bócio.",
@@ -1114,7 +1154,7 @@
       "cit_sha": "b642837c32f06351"
     },
     {
-      "afirmacao": "⚠️ TRATAMENTO NO PRIMEIRO TRIMESTRE (Lancet 2023, GESTANTES): se o tratamento for necessário no primeiro trimestre, deve-se iniciar PROPILTIOURACIL (ou carbimazol/metimazol se o propiltiouracil não estiver disponível). O ALVO é manter o T4 LIVRE NA FAIXA DO LIMITE SUPERIOR DA NORMALIDADE, com a MENOR dose possível de antitireoidiano. ⚠️ O REGIME DE BLOQUEIO-E-SUBSTITUIÇÃO É CONTRAINDICADO NA GESTAÇÃO, pelo risco de HIPOTIREOIDISMO FETAL.",
+      "afirmacao": "⚠️ TRATAMENTO NO PRIMEIRO TRIMESTRE (Lancet 2023, GESTANTES): se o tratamento for necessário no primeiro trimestre, deve-se iniciar PROPILTIOURACIL (ou carbimazol/metimazol se o propiltiouracil não estiver disponível). O ALVO é manter o T4 LIVRE NA FAIXA DO LIMITE SUPERIOR DA NORMALIDADE, com a MENOR dose possível de antitireoidiano. ⚠️ O REGIME DE BLOQUEIO-E-SUBSTITUIÇÃO É CONTRAINDICADO NA GESTAÇÃO, pelo risco de HIPOTIREOIDISMO FETAL. ⚠️ MARCO — LEIA JUNTO COM O NÚCLEO: este artigo raciocina por TRIMESTRE. O núcleo (ATA 2026) NÃO usa o fim do primeiro trimestre como marco do PTU — usa um marco expresso em SEMANAS e, passado ele, declara DESCONHECIDA a escolha do antitireoidiano. Para a conduta, vale a entrada “Tireoide na gestação (ATA 2026)” do núcleo, não o trimestre deste artigo.",
       "secao": "⚠️ Gestação — qual droga no 1º trimestre, alvo do T4 livre e bloqueio-e-substituição PROIBIDO",
       "cit": [
         [
@@ -1123,10 +1163,11 @@
           381
         ]
       ],
-      "cit_sha": "c6cba24d63ac22ed"
+      "cit_sha": "c6cba24d63ac22ed",
+      "nucleo_sha": "69830687ee78"
     },
     {
-      "afirmacao": "TROCA DE VOLTA APÓS O 1º TRIMESTRE (Lancet 2023, GESTANTES): o propiltiouracil PODERIA ser substituído por carbimazol/metimazol APÓS o primeiro trimestre, para reduzir o risco de INSUFICIÊNCIA HEPÁTICA FULMINANTE associada ao propiltiouracil. ⚠️ ENTRETANTO, evidência FIRME que apoie essa recomendação é ESCASSA, e pode-se PREFERIR CONTINUAR com dose baixa de propiltiouracil. Se houver indicação de TIREOIDECTOMIA, ela deve ser feita no SEGUNDO TRIMESTRE da gestação.",
+      "afirmacao": "TROCA DE VOLTA APÓS O 1º TRIMESTRE (Lancet 2023, GESTANTES): o propiltiouracil PODERIA ser substituído por carbimazol/metimazol APÓS o primeiro trimestre, para reduzir o risco de INSUFICIÊNCIA HEPÁTICA FULMINANTE associada ao propiltiouracil. ⚠️ ENTRETANTO, evidência FIRME que apoie essa recomendação é ESCASSA, e pode-se PREFERIR CONTINUAR com dose baixa de propiltiouracil. Se houver indicação de TIREOIDECTOMIA, ela deve ser feita no SEGUNDO TRIMESTRE da gestação. ⚠️ NÃO LEIA ISTO COMO AUTORIZAÇÃO PARA VOLTAR AO METIMAZOL: o próprio artigo diz que a evidência é ESCASSA, e o núcleo (ATA 2026), passado o marco em semanas que ele fixa, declara DESCONHECIDA a escolha do antitireoidiano — ou seja, o núcleo NÃO recomenda o metimazol depois.",
       "secao": "Gestação — voltar ao metimazol depois do 1º trimestre? evidência escassa",
       "cit": [
         [
@@ -1135,7 +1176,8 @@
           393
         ]
       ],
-      "cit_sha": "d4be2495f86f8d40"
+      "cit_sha": "d4be2495f86f8d40",
+      "nucleo_sha": "69830687ee78"
     },
     {
       "afirmacao": "⚠️ PROPRANOLOL NA GESTAÇÃO (Lancet 2023, GESTANTES): como tratamento SINTOMÁTICO pode-se usar propranolol 10–40 mg, 3 a 4 vezes ao dia. ⚠️ MAS o tratamento PROLONGADO e o tratamento APÓS O QUINTO MÊS de gestação devem ser EVITADOS, pelo risco de BRADICARDIA FETAL, RESTRIÇÃO DE CRESCIMENTO INTRAUTERINO e HIPOGLICEMIA NEONATAL.",
@@ -1198,7 +1240,7 @@
       "cit_sha": "34244825d0ca4712"
     },
     {
-      "afirmacao": "BLOQUEIO-E-SUBSTITUIÇÃO NA PANDEMIA (Lancet 2023): para manter o controle do hipertireoidismo de Graves durante a pandemia de COVID-19, o regime de BLOQUEIO-E-SUBSTITUIÇÃO poderia ser escolhido diante da disponibilidade escassa de exames bioquímicos durante os lockdowns; e deve-se ficar especialmente atento ao desenvolvimento de NEUTROPENIA induzida por antitireoidiano.",
+      "afirmacao": "BLOQUEIO-E-SUBSTITUIÇÃO NA PANDEMIA (Lancet 2023): para manter o controle do hipertireoidismo de Graves durante a pandemia de COVID-19, o regime de BLOQUEIO-E-SUBSTITUIÇÃO poderia ser escolhido diante da disponibilidade escassa de exames bioquímicos durante os lockdowns; e deve-se ficar especialmente atento ao desenvolvimento de NEUTROPENIA induzida por antitireoidiano. ⚠️ MESMO AVISO DO FATO DO BLOQUEIO-E-SUBSTITUIÇÃO: ele é CONTRAINDICADO NA GESTAÇÃO (risco de hipotireoidismo fetal) e o núcleo prefere a titulação de dose na doença de Graves PEDIÁTRICA — a conveniência logística descrita aqui não revoga nenhuma das duas.",
       "secao": "COVID-19 — bloqueio-e-substituição durante restrição de exames",
       "cit": [
         [
@@ -1207,7 +1249,8 @@
           318
         ]
       ],
-      "cit_sha": "7110070f3bc70358"
+      "cit_sha": "7110070f3bc70358",
+      "nucleo_sha": "69830687ee78"
     },
     {
       "afirmacao": "⚠️ FIBRILAÇÃO ATRIAL E TIREOIDE (Lancet 2023): recomenda-se DOSAR TSH em TODOS os pacientes com fibrilação atrial — MAS apenas 3% dos pacientes com fibrilação atrial de INÍCIO NOVO desenvolvem hipertireoidismo. No sentido inverso, a fibrilação atrial se desenvolve em 8% dos pacientes DENTRO DE 30 DIAS após o diagnóstico de hipertireoidismo. O risco de fibrilação atrial em pacientes com hipertireoidismo AUMENTA em pessoas com MAIS DE 60 ANOS e naquelas com DOENÇA ISQUÊMICA DO CORAÇÃO, INSUFICIÊNCIA CARDÍACA CONGESTIVA ou DOENÇA VALVAR CARDÍACA.",
@@ -1306,7 +1349,7 @@
       "cit_sha": "8e9df6b5a0435e00"
     },
     {
-      "afirmacao": "⚠️ TRATAMENTO DA PARALISIA PERIÓDICA TIREOTÓXICA (Lancet 2023): ⚠️ O GRAU DE HIPOCALEMIA VARIA, e NORMOCALEMIA NÃO EXCLUI o diagnóstico. Na fase AGUDA, a paralisia periódica tireotóxica DEVE ser tratada com POTÁSSIO, para prevenir arritmias potencialmente fatais e complicações respiratórias e para encurtar o episódio de paralisia. Betabloqueadores NÃO SELETIVOS podem atenuar e PREVENIR recorrências das crises paralíticas. O eutireoidismo deve ser restaurado PRONTAMENTE e mantido de forma estável. Foi PROPOSTO que todos os pacientes com paralisia periódica tireotóxica recebam tratamento ABLATIVO da tireoide. ⚠️ A suplementação PROFILÁTICA de potássio NÃO está indicada quando o paciente está eutireóideo.",
+      "afirmacao": "⚠️ TRATAMENTO DA PARALISIA PERIÓDICA TIREOTÓXICA (Lancet 2023): ⚠️ O GRAU DE HIPOCALEMIA VARIA, e NORMOCALEMIA NÃO EXCLUI o diagnóstico. Na fase AGUDA, a paralisia periódica tireotóxica DEVE ser tratada com POTÁSSIO, para prevenir arritmias potencialmente fatais e complicações respiratórias e para encurtar o episódio de paralisia. Betabloqueadores NÃO SELETIVOS podem atenuar e PREVENIR recorrências das crises paralíticas. O eutireoidismo deve ser restaurado PRONTAMENTE e mantido de forma estável. Foi PROPOSTO que todos os pacientes com paralisia periódica tireotóxica recebam tratamento ABLATIVO da tireoide. ⚠️ A suplementação PROFILÁTICA de potássio NÃO está indicada quando o paciente está eutireóideo. ⚠️⚠️ O QUE ESTA REVISÃO NÃO DÁ, E O FATO NÃO PODE SUPRIR: ela NÃO especifica dose, via nem velocidade da reposição de potássio. Este fato NÃO é prescrição — a dose tem de vir de outra fonte. Leia junto o fato vizinho sobre o MECANISMO da hipocalemia nesta síndrome (o potássio é DESLOCADO para dentro da célula, não perdido), que é a razão de a reposição ser cautelosa e de o potássio poder rebater para cima quando a crise cede.",
       "secao": "⚠️ Paralisia periódica tireotóxica — POTÁSSIO NORMAL NÃO EXCLUI, e o tratamento",
       "cit": [
         [
@@ -1378,7 +1421,7 @@
       "cit_sha": "b9ebde6f32958af7"
     },
     {
-      "afirmacao": "⚠️ TRATAMENTO DA TEMPESTADE TIREOIDIANA (Lancet 2023) — o tratamento deve ser AGRESSIVO e inclui tratamento ESPECÍFICO (contra o excesso hormonal) e tratamento de SUPORTE (contra o evento precipitante e a descompensação sistêmica). ESPECÍFICO: TIONAMIDA — PROPILTIOURACIL em ataque de 500–1000 mg, seguido de 250 mg A CADA 4 HORAS; OU METIMAZOL 60–80 mg POR DIA. BETABLOQUEADOR — PROPRANOLOL 60–80 mg a cada 4 horas. IODO — 5 GOTAS (equivalentes a 0∙25 mL ou 250 mg) de SOLUÇÃO SATURADA DE IODETO DE POTÁSSIO por via oral A CADA 6 HORAS. GLICOCORTICOIDE — HIDROCORTISONA em ataque de 300 mg por via intravenosa, seguida de 100 mg a cada 8 horas. ⚠️ O PROPILTIOURACIL é PREFERIDO ao metimazol AQUI, pelo efeito adicional de inibir a conversão de T4 em T3. ⚠️⚠️ A ORDEM IMPORTA: OS ANTITIREOIDIANOS DEVEM SER ADMINISTRADOS 1 HORA ANTES DO IODETO DE POTÁSSIO.",
+      "afirmacao": "⚠️ TRATAMENTO DA TEMPESTADE TIREOIDIANA (Lancet 2023) — o tratamento deve ser AGRESSIVO e inclui tratamento ESPECÍFICO (contra o excesso hormonal) e tratamento de SUPORTE (contra o evento precipitante e a descompensação sistêmica). ESPECÍFICO: TIONAMIDA — PROPILTIOURACIL em ataque de 500–1000 mg, seguido de 250 mg A CADA 4 HORAS; OU METIMAZOL 60–80 mg POR DIA. BETABLOQUEADOR — PROPRANOLOL 60–80 mg a cada 4 horas. IODO — 5 GOTAS (equivalentes a 0∙25 mL ou 250 mg) de SOLUÇÃO SATURADA DE IODETO DE POTÁSSIO por via oral A CADA 6 HORAS. GLICOCORTICOIDE — HIDROCORTISONA em ataque de 300 mg por via intravenosa, seguida de 100 mg a cada 8 horas. ⚠️ O PROPILTIOURACIL é PREFERIDO ao metimazol AQUI, pelo efeito adicional de inibir a conversão de T4 em T3. ⚠️⚠️ A ORDEM IMPORTA: OS ANTITIREOIDIANOS DEVEM SER ADMINISTRADOS 1 HORA ANTES DO IODETO DE POTÁSSIO. ⚠️ POPULAÇÃO: são doses de ADULTO. Esta área carrega no núcleo uma entrada de doença de Graves PEDIÁTRICA com esquema de tempestade PRÓPRIO — não transponha estas doses para a criança.",
       "secao": "⚠️ Tempestade tireoidiana — TRATAMENTO com doses, e A ORDEM tionamida→iodo",
       "cit": [
         [
@@ -1387,7 +1430,8 @@
           591
         ]
       ],
-      "cit_sha": "23bdc64f135d9470"
+      "cit_sha": "23bdc64f135d9470",
+      "nucleo_sha": "69830687ee78"
     },
     {
       "afirmacao": "SUPORTE NA TEMPESTADE TIREOIDIANA (Lancet 2023): a terapia de suporte inclui mantas de resfriamento, ressuscitação volêmica, antibióticos, suporte nutricional, cuidado respiratório e monitorização em unidade de terapia intensiva. ⚠️ Em caso de RESPOSTA RUIM, pode-se considerar PLASMAFÉRESE ou plasma exchange e TIREOIDECTOMIA DE EMERGÊNCIA.",

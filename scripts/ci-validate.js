@@ -419,6 +419,27 @@ try {
   fail('conferência das ressalvas falhou (o núcleo mudou e alguma ressalva ficou para trás):\n' + out);
 }
 
+// ⚠️ E UM NÍVEL ABAIXO: o FATO que restitui o núcleo dentro de `afirmacao`.
+//     A trava acima confere `conflito` e `nucleo_citado`, que são campos DO
+//     EXTRATO — e por isso ficou verde em 09/08/2026 enquanto 15 fatos, em 5
+//     extratos, restituíam o núcleo por escrito dentro de `fatos[].afirmacao`,
+//     onde nenhuma peneira olhava. Um deles dizia que "o núcleo manda
+//     propiltiouracil no 1º trimestre e metimazol depois". Corrigi o núcleo (o
+//     marco da ATA 2026 é 16 SEMANAS, e passado ele a escolha do antitireoidiano
+//     é DECLARADA DESCONHECIDA) e o fato virou mentira: passou a mandar trocar a
+//     gestante de volta para metimazol exatamente onde a diretriz se recusa a
+//     recomendar. Ficou três dias assim, com o cabeçalho do extrato certo.
+//     A regra é a do `cit_sha`: texto que copia outro texto carrega selo do que
+//     copiou. Achado pela auditoria adversarial, não por teste — por isso virou
+//     teste.
+try {
+  execFileSync(process.execPath, [path.join('scripts', 'confere-nucleo-nos-fatos.js')], { stdio: 'pipe' });
+  ok('núcleo restituído dentro dos fatos: selo confere com o núcleo de hoje');
+} catch (e) {
+  const out = (e.stdout ? e.stdout.toString() : '') + (e.stderr ? e.stderr.toString() : '');
+  fail('há fato que restitui o núcleo com selo velho — releia antes de selar:\n' + out);
+}
+
 // ⚠️ O CAMPO `auditoria` SIGNIFICA UMA COISA SÓ. Ele chegou a ter três formatos
 //     convivendo — string do legado, objeto com `achado` (auditoria de verdade)
 //     e objeto que o extrator usava como bloco de notas. Medido em 08/08/2026:

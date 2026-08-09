@@ -5,6 +5,40 @@ atualizado: 2026-08-09
 
 # Convenções de Trabalho
 
+## 🔐 TEXTO QUE COPIA OUTRO TEXTO PRECISA DE SELO DO QUE COPIOU (2026-08-09)
+
+A regra do `cit_sha` — citação carrega o hash do que citou — valia para o
+ARTIGO. Faltava para o **núcleo**, e o buraco custou uma prescrição invertida
+entregue por três dias.
+
+Corrigi o núcleo no marco do PTU da ATA 2026 (**16 semanas**, não o fim do 1º
+trimestre; e passado o marco a diretriz declara **DESCONHECIDA** a escolha do
+antitireoidiano). O `confere-ressalvas.js` seguiu verde — **e estava certo**:
+ele confere `conflito` e `nucleo_citado`, que são campos **do extrato**.
+
+Só que **15 fatos, em 5 extratos, restituem o núcleo por escrito dentro de
+`fatos[].afirmacao`**, e ali nenhuma peneira olhava. Um deles dizia: *"prevalece
+o núcleo: propiltiouracil no 1º trimestre e metimazol depois"*. Depois da
+correção, virou mentira — mandava trocar a gestante de volta para metimazol
+exatamente onde a diretriz se recusa a recomendar, e com o marco errado.
+Cabeçalho do extrato certo, fato entregue errado.
+
+**Achado por AUDITORIA ADVERSARIAL, não por teste — e por isso virou teste.**
+`lib/nucleo.js` + `scripts/confere-nucleo-nos-fatos.js`: fato que menciona o
+núcleo carrega `nucleo_sha`; mudou o núcleo, todos reprovam. A reprovação **é** o
+pedido de releitura, e reler 15 fatos custa minutos.
+
+⚠️ **Duas armadilhas na própria peneira, as duas achadas medindo:**
+1. `/núcleo/` casa com **nucleo**tídeo — "polimorfismo de nucleotídeo único",
+   "oligonucleotídeo antissenso". Sem fronteira de palavra, 36 achados em vez de
+   17, quase metade de genética e lípides.
+2. "núcleo" também é **anatomia** — o núcleo paraventricular hipotalâmico, na
+   fisiopatologia do eutireoidiano doente. Sem excluí-lo, dois fatos reprovariam
+   **para sempre**, a cada mudança do núcleo.
+
+**Ruído que nunca resolve é o jeito mais rápido de um alarme virar paisagem.**
+Peneira larga demais não protege mais — ensina a ignorar.
+
 ## 🚨 O HARNESS A/B APROVOU UM RETRATO DE TRÊS DIAS ATRÁS (2026-08-09)
 
 O portão que existe para pegar apagão **passou verde sem medir o meu diff** — e

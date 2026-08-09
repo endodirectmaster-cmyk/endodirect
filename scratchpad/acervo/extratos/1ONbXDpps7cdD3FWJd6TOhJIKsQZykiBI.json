@@ -1,832 +1,851 @@
 {
- "fileId": "1ONbXDpps7cdD3FWJd6TOhJIKsQZykiBI",
- "titulo": "Efeitos de fármacos sobre a tireoide — doença induzida por droga × artefato de ensaio (Drug Effects on the Thyroid, NEJM 2019)",
- "fonte": "Burch HB. Drug Effects on the Thyroid. Review Article (Julie R. Ingelfinger, M.D., Editor). N Engl J Med 2019;381:749-61. DOI: 10.1056/NEJMra1901214. Division of Diabetes, Endocrinology, and Metabolic Diseases, National Institute of Diabetes and Digestive and Kidney Diseases, National Institutes of Health, Bethesda, MD. Copyright © 2019 Massachusetts Medical Society.",
- "area": "Tireoide",
- "tipo": "revisao",
- "ano": 2019,
- "tema": "fármaco e tireoide — disfunção tireoidiana INDUZIDA POR MEDICAMENTO e INTERFERÊNCIA DE ENSAIO em pessoa eutireóidea; AMIODARONA e tireoide (conteúdo de iodo do comprimido, tireotoxicose induzida por amiodarona tipo 1 × tipo 2, o que separa uma da outra, tionamida × corticoide, quando usar os dois juntos, hipotireoidismo induzido por amiodarona, TSH que sobe ao iniciar amiodarona em quem já usa levotiroxina, T4 alto com TSH normal sob amiodarona); LÍTIO e tireoide (bócio, hipotireoidismo, tireoidite indolor, anti-TPO, quem tem mais risco); INIBIDOR DE CHECKPOINT IMUNOLÓGICO e tireoide (nivolumabe, pembrolizumabe, ipilimumabe, anti-PD-1, anti-CTLA-4, tireoidite destrutiva, tireotoxicose transitória seguida de hipotireoidismo, quando aparece, é irreversível?, suspender ou não a imunoterapia, hipofisite e hipotireoidismo central); INIBIDOR DE TIROSINA-QUINASE e MULTIQUINASE (sunitinibe, sorafenibe, tireoidite, hipotireoidismo, aumento da necessidade de levotiroxina); ALENTUZUMABE e doença de Graves na esclerose múltipla; INTERFERON ALFA e INTERLEUCINA-2 (hepatite C, melanoma); BEXAROTENO e MITOTANO (hipotireoidismo central); IODO em excesso — efeito Wolff-Chaikoff, fenômeno Jod-Basedow, contraste iodado de tomografia, povidona-iodo, expectorante, kelp; ESTROGÊNIO ORAL, SERM e TBG (globulina ligadora de tiroxina) mudando a dose de levotiroxina, estradiol transdérmico; BIOTINA e interferência de ensaio (TSH falsamente baixo, T4 livre falsamente alto, TRAb falsamente positivo, imitando doença de Graves; ensaio sanduíche × imunoensaio competitivo; quantos dias sem o suplemento antes de repetir); HEPARINA e ENOXAPARINA elevando espuriamente T4 livre e T3; FENITOÍNA, CARBAMAZEPINA, OXCARBAZEPINA e SALSALATO com T4 livre baixo artefatual imitando hipotireoidismo central; GLICOCORTICOIDE, AGONISTA DOPAMINÉRGICO, ANÁLOGO DE SOMATOSTATINA e METFORMINA suprimindo o TSH sem hipertireoidismo; fármacos que atrapalham a ABSORÇÃO da levotiroxina (inibidor de bomba de prótons, sulfato ferroso, carbonato de cálcio, hidróxido de alumínio, sucralfato, colestiramina, raloxifeno, café, leite, soja); indutores enzimáticos (fenobarbital, rifampicina) aumentando a dose de levotiroxina; e a via inversa — hipertireoidismo e hipotireoidismo alterando varfarina, estatina (miopatia), propranolol, glicosídeo cardíaco e glicocorticoide",
- "conflito": "NÃO HÁ CONTRADIÇÃO FRONTAL COM O NÚCLEO — há LACUNA, e ela é grande. Medido no bloco `CLINICAL_GUIDELINES` do index.html (linhas 5233 a 5327): `amiodarona` 0 ocorrências, `biotina` 0, `TBG` 0, `dopamina` 0, `heparina` 0, `interferon` 0, `tirosina-quinase` 0, `Wolff` 0, `Basedow` 0. `lítio` aparece 1 vez e SÓ no diferencial de hipercalcemia com PTH não suprimido (hiperparatireoidismo) — nada sobre bócio, hipotireoidismo ou tireoidite indolor pelo lítio. `checkpoint` aparece 1 vez e SÓ como causa de HIPOFISITE — nada sobre tireoidite destrutiva nem sobre a diferença anti-CTLA-4 (hipofisite) × anti-PD-1 (disfunção tireoidiana primária), que é justamente o que roteia a investigação. `fenitoína`, `carbamazepina`, `rifampicina` e `mitotano` aparecem no núcleo apenas como INDUTORES FORTES DO CYP3A4 que podem precipitar CRISE ADRENAL — o mesmo elenco de fármacos, em outro eixo; o núcleo não diz que eles também aumentam a necessidade de levotiroxina (indução de glicuronidação), nem que fenitoína/carbamazepina produzem T4 livre falsamente baixo por diluição do soro no ensaio, nem que o mitotano causa hipotireoidismo CENTRAL na maioria dos tratados para carcinoma adrenocortical. ⚠️ RESSALVA DE VINTAGE (o artigo é de 2019, e o núcleo é mais novo): as ESTIMATIVAS DE FREQUÊNCIA da disfunção tireoidiana por inibidor de checkpoint (≈5 a 10% com anti-CTLA-4, 10 a 20% com anti-PD-1, mais de 20% com combinação) e o repertório de agentes citados (só ipilimumabe, e as classes anti-CTLA-4/anti-PD-1) são de uma revisão de 2019; a imunoterapia se expandiu muito desde então, e esses números devem ser entregues COMO ESTIMATIVAS DE 2019, nunca como taxa corrente. O aviso de vintage está escrito DENTRO dos fatos correspondentes. Como o núcleo é SILENTE sobre disfunção tireoidiana por checkpoint, não há nada dele a sobrescrever — não é conflito, é lacuna. ⚠️ TAMBÉM NÃO É CONFLITO: o artigo cita 150 µg como ingestão diária recomendada de iodo para HOMENS E MULHERES NÃO GRÁVIDAS (unidade de comparação para a carga de iodo da amiodarona), enquanto o núcleo traz 250 µg/dia para GESTANTE E LACTANTE — populações diferentes, recomendações compatíveis. E a ordem do tratamento da tempestade tireoidiana no núcleo (tionamida antes do iodo) não é contrariada aqui: o artigo apenas registra que o PTU inibe a conversão de T4 em T3 e que a dexametasona é usada na tireotoxicose grave pelo mesmo mecanismo.",
- "conflito_direcao": "lacuna",
- "nucleo_citado": [
-  "HIPOFISITE: lembrar dos inibidores de checkpoint imunológico como causa.",
-  "tiazídico, lítio, secreção ectópica de PTH (rara)",
-  "⚠️ INÍCIO de indutor forte do CYP3A4 (rifampicina, fenitoína, carbamazepina, fenobarbital, primidona, mitotano, enzalutamida, apalutamida) pode PRECIPITAR CRISE ADRENAL",
-  "IODO 250 µg/dia (gestante e lactante); nos de risco de deficiência, suplementar 150 µg/dia",
-  "tempestade tireoidiana — ⚠️ A ORDEM IMPORTA: TIONAMIDA PRIMEIRO (metimazol 20–30 mg VO 6/6 h ou PTU 200–400 mg VO 6–8/8 h, que ainda reduz a conversão periférica de T4 em T3) e SÓ ENTÃO o iodo"
- ],
- "nucleo_ausente": [
-  "amiodarona",
-  "tireotoxicose induzida por amiodarona tipo 1 e tipo 2",
-  "biotina",
-  "TBG / globulina ligadora de tiroxina",
-  "heparina",
-  "enoxaparina",
-  "efeito Wolff-Chaikoff",
-  "fenômeno Jod-Basedow",
-  "inibidor de tirosina-quinase / sunitinibe / sorafenibe",
-  "alentuzumabe",
-  "bexaroteno",
-  "interferon alfa",
-  "interleucina-2",
-  "oxcarbazepina",
-  "salsalato",
-  "sequestrante de ácidos biliares / colestiramina",
-  "inibidor de bomba de prótons e levotiroxina",
-  "agonista dopaminérgico e supressão do TSH",
-  "desiodase tipo 3",
-  "tireoidite destrutiva por inibidor de checkpoint"
- ],
- "extracao": {
-  "data": "2026-08-08",
-  "escopo": "Extração integral do CORPO do artigo. Texto-fonte baixado pelo canal sancionado (ferramenta do Google Drive, read_file_content) para scratchpad/acervo/textos/, que está no .gitignore (conferido com `git check-ignore`): 56.313 caracteres em 472 linhas; 55.948 caracteres na base normalizada. O CORPO (abstract, texto corrido, Tabela 1, Tabela 2 e as legendas das Figuras 1 a 4) ocupa a base normalizada de 0 a ~40.760; de 40.764 em diante são as REFERÊNCIAS bibliográficas (81 referências) e os rodapés de download do periódico, sem conteúdo clínico próprio. O corpo foi lido 100%, seção por seção: Physiology; Classification (Tabela 1); Drugs Affecting Hypothalamic-Pituitary Control; Drugs Affecting Thyroid Hormone Synthesis or Release; Drugs That Enhance Thyroid Autoimmunity; Drugs Causing Direct Thyroid Damage; Drugs Affecting Protein Binding; Drugs Affecting Thyroid Hormone Activation, Metabolism, and Excretion; Drugs Affecting Absorption of Thyroid Hormone Preparations; Drugs Causing Abnormal Thyroid Tests in Euthyroid Patients (Biotin, Amiodarone, Heparin, Phenytoin/Carbamazepine/Salsalate); Effect of Thyroid Dysfunction on Drug Metabolism; Conclusions. ⚠️ O PDF é de DUAS COLUNAS e a extração INTERCALA as colunas: em várias passagens a frase verdadeira aparece partida por um respingo da outra coluna, e as células das Tabelas 1 e 2 aparecem embutidas no meio do texto corrido. Onde isso partiu uma citação, usei ELISÃO DECLARADA com buraco medido (todos ≤ 400 caracteres) ou, quando o buraco passava de 400, DOIS FATOS com ponteiro recíproco (biotina; estrogênio/TBG). Nenhuma citação costura trechos distantes.",
-  "nao_extraido": [
-   "TABELAS SUPLEMENTARES S1 e S2 (o artigo remete a elas: 'For a detailed list of drugs interacting with the thyroid, see Tables S1 and S2 in the Supplementary Appendix'). NÃO estão no PDF baixado — são material suplementar do NEJM.org. ⚠️ Isto é LACUNA DE FONTE, e importa: a lista DETALHADA de fármacos que interagem com a tireoide está justamente ali, e o que este extrato traz é o que o CORPO do artigo nomeia. Ausência de um fármaco neste extrato NÃO significa que o artigo o considere seguro.",
-   "TABELA 2, LINHA DA AMIODARONA — as células de T4 LIVRE, T3 e CONDIÇÃO MIMETIZADA NÃO foram atribuídas A PARTIR DA TABELA. Motivo: no texto extraído essas células aparecem como 'Amiodarone the pituitary High Low end of Thyrotropin-secreting pituitary adeno- normal range ma, thyroid hormone resistance', ou seja, embutidas no meio da frase do texto corrido ('Amiodarone inhibits T3 generation both within the pituitary and in the periphery') — o 'Amiodarone' ali é do TEXTO, não o rótulo da linha da tabela, e o rótulo verdadeiro ('Amiodarone | Class III antiarrhythmic agent | High end of normal range') está 1.400 caracteres antes. A CÉLULA NÃO SE AUTODESCREVE nesse ponto. ⚠️ Nada se perdeu: o TEXTO CORRIDO do próprio artigo afirma o mesmo conteúdo de forma inequívoca e contígua (TSH elevado ou no limite superior do normal, T4 total e livre altos, T3 no limite inferior do normal; confusão possível com tireotoxicose primária, com adenoma secretor de TSH e com resistência ao hormônio tireoidiano), e é dessa fonte, sem ambiguidade de coluna, que os fatos de artefato da amiodarona foram extraídos. O que a tabela dá sozinha e foi extraído é a linha de cabeçalho (ordem das colunas) e a célula do TSH da amiodarona, que É autorrotulada e contígua.",
-   "TABELA 2, DEMAIS LINHAS — EXTRAÍDAS, e a razão de ser possível está dita aqui para conferência: as linhas de BIOTINA, ENOXAPARINA, HEPARINA, FENITOÍNA e SALSALATO saem do PDF CONTÍGUAS E COMPLETAS (nome do fármaco + classe + três valores + condição mimetizada), portanto AUTORROTULADAS — não dependem de adivinhar coluna. A ordem das colunas está provada por citação própria do cabeçalho ('Drug Drug Class Test Results Condition Mimicked Thyrotropin Free T4 T3'), e a direção de cada valor é ainda CORROBORADA pelo texto corrido do artigo. A linha de CARBAMAZEPINA E OXCARBAZEPINA tem o nome do fármaco separado das suas células por 411 caracteres de texto da outra coluna e do rodapé do periódico; foi extraída com citação CONTÍGUA (que carrega o entremeio à vista, em vez de costurá-lo com elisão), e a atribuição é recuperável porque a coluna 'Drug' da tabela está em ORDEM ALFABÉTICA e essas células ficam exatamente entre a linha da biotina e a da enoxaparina.",
-   "TABELA 1, grupo 'Interference with endogenous thyroid function' (Disruption of hypothalamic-pituitary control; Decreased thyroid hormone production or release; Increased thyroid hormone production; Enhanced thyroid autoimmunity; Destructive thyroiditis; Changes in thyroid hormone-binding proteins; Inhibition of thyroid hormone activation; Displacement of thyroid hormone from binding proteins; Increased thyroid hormone metabolism or elimination): NÃO extraído COMO TABELA, por escolha e não por impossibilidade. Os nove itens aparecem intercalados com a legenda da Figura 1 ao longo de ~1.760 caracteres, e cada um deles JÁ É o título de uma seção do texto corrido, de onde os fatos correspondentes foram extraídos com citação limpa. Os outros dois grupos da Tabela 1 ('Interference with thyroid hormone therapy' e 'Interference with thyroid laboratory testing in euthyroid persons') FORAM extraídos, porque nomeiam categorias que o texto corrido não enumera em lista.",
-   "FIGURA 1 (fisiologia do hormônio tireoidiano) e FIGURA 2 (sítios anatômicos de interação fármaco-tireoide): as legendas foram lidas integralmente; delas só extraí o que é clinicamente acionável e não repete o texto corrido (a proporção de ligação às proteínas e o peso da TBG). O restante é descrição de mecanismo já coberta pela seção de fisiologia, e os RÓTULOS SOLTOS do diagrama da Figura 2 ('↓ Conversão de T4 em T3', 'Hipofisite', 'Tireoidite', '↓ absorção de LT4' etc.) saem do PDF como palavras avulsas, sem o fármaco ao lado — atribuir cada seta a um fármaco exigiria ler o desenho, que o texto não recupera. Não extraídos.",
-   "REFERÊNCIAS BIBLIOGRÁFICAS (81 itens, base normalizada de 40.764 a 55.948) e os rodapés repetidos de download do periódico: sem conteúdo clínico próprio. Não extraídos.",
-   "Detalhes de mecanismo BIOQUÍMICO da fisiologia tireoidiana (simportador sódio-iodeto, pendrina, DUOX2, MCT8, receptor TR/RXR e elemento responsivo TRE, sulfatação e glicuronidação passo a passo): lidos, mas extraídos apenas na medida em que explicam uma decisão clínica (ligação às proteínas, conversão de T4 em T3, recirculação êntero-hepática). O detalhe molecular restante não muda conduta e ficou fora."
+  "fileId": "1ONbXDpps7cdD3FWJd6TOhJIKsQZykiBI",
+  "titulo": "Efeitos de fármacos sobre a tireoide — doença induzida por droga × artefato de ensaio (Drug Effects on the Thyroid, NEJM 2019)",
+  "fonte": "Burch HB. Drug Effects on the Thyroid. Review Article (Julie R. Ingelfinger, M.D., Editor). N Engl J Med 2019;381:749-61. DOI: 10.1056/NEJMra1901214. Division of Diabetes, Endocrinology, and Metabolic Diseases, National Institute of Diabetes and Digestive and Kidney Diseases, National Institutes of Health, Bethesda, MD. Copyright © 2019 Massachusetts Medical Society.",
+  "area": "Tireoide",
+  "tipo": "revisao",
+  "ano": 2019,
+  "tema": "fármaco e tireoide — disfunção tireoidiana INDUZIDA POR MEDICAMENTO e INTERFERÊNCIA DE ENSAIO em pessoa eutireóidea; AMIODARONA e tireoide (conteúdo de iodo do comprimido, tireotoxicose induzida por amiodarona tipo 1 × tipo 2, o que separa uma da outra, tionamida × corticoide, quando usar os dois juntos, hipotireoidismo induzido por amiodarona, TSH que sobe ao iniciar amiodarona em quem já usa levotiroxina, T4 alto com TSH normal sob amiodarona); LÍTIO e tireoide (bócio, hipotireoidismo, tireoidite indolor, anti-TPO, quem tem mais risco); INIBIDOR DE CHECKPOINT IMUNOLÓGICO e tireoide (nivolumabe, pembrolizumabe, ipilimumabe, anti-PD-1, anti-CTLA-4, tireoidite destrutiva, tireotoxicose transitória seguida de hipotireoidismo, quando aparece, é irreversível?, suspender ou não a imunoterapia, hipofisite e hipotireoidismo central); INIBIDOR DE TIROSINA-QUINASE e MULTIQUINASE (sunitinibe, sorafenibe, tireoidite, hipotireoidismo, aumento da necessidade de levotiroxina); ALENTUZUMABE e doença de Graves na esclerose múltipla; INTERFERON ALFA e INTERLEUCINA-2 (hepatite C, melanoma); BEXAROTENO e MITOTANO (hipotireoidismo central); IODO em excesso — efeito Wolff-Chaikoff, fenômeno Jod-Basedow, contraste iodado de tomografia, povidona-iodo, expectorante, kelp; ESTROGÊNIO ORAL, SERM e TBG (globulina ligadora de tiroxina) mudando a dose de levotiroxina, estradiol transdérmico; BIOTINA e interferência de ensaio (TSH falsamente baixo, T4 livre falsamente alto, TRAb falsamente positivo, imitando doença de Graves; ensaio sanduíche × imunoensaio competitivo; quantos dias sem o suplemento antes de repetir); HEPARINA e ENOXAPARINA elevando espuriamente T4 livre e T3; FENITOÍNA, CARBAMAZEPINA, OXCARBAZEPINA e SALSALATO com T4 livre baixo artefatual imitando hipotireoidismo central; GLICOCORTICOIDE, AGONISTA DOPAMINÉRGICO, ANÁLOGO DE SOMATOSTATINA e METFORMINA suprimindo o TSH sem hipertireoidismo; fármacos que atrapalham a ABSORÇÃO da levotiroxina (inibidor de bomba de prótons, sulfato ferroso, carbonato de cálcio, hidróxido de alumínio, sucralfato, colestiramina, raloxifeno, café, leite, soja); indutores enzimáticos (fenobarbital, rifampicina) aumentando a dose de levotiroxina; e a via inversa — hipertireoidismo e hipotireoidismo alterando varfarina, estatina (miopatia), propranolol, glicosídeo cardíaco e glicocorticoide",
+  "conflito": "NÃO HÁ CONTRADIÇÃO FRONTAL COM O NÚCLEO — há LACUNA, e ela é grande. Medido no bloco `CLINICAL_GUIDELINES` do index.html (linhas 5233 a 5327): `amiodarona` 0 ocorrências, `biotina` 0, `TBG` 0, `dopamina` 0, `heparina` 0, `interferon` 0, `tirosina-quinase` 0, `Wolff` 0, `Basedow` 0. `lítio` aparece 1 vez e SÓ no diferencial de hipercalcemia com PTH não suprimido (hiperparatireoidismo) — nada sobre bócio, hipotireoidismo ou tireoidite indolor pelo lítio. `checkpoint` aparece 1 vez e SÓ como causa de HIPOFISITE — nada sobre tireoidite destrutiva nem sobre a diferença anti-CTLA-4 (hipofisite) × anti-PD-1 (disfunção tireoidiana primária), que é justamente o que roteia a investigação. `fenitoína`, `carbamazepina`, `rifampicina` e `mitotano` aparecem no núcleo apenas como INDUTORES FORTES DO CYP3A4 que podem precipitar CRISE ADRENAL — o mesmo elenco de fármacos, em outro eixo; o núcleo não diz que eles também aumentam a necessidade de levotiroxina (indução de glicuronidação), nem que fenitoína/carbamazepina produzem T4 livre falsamente baixo por diluição do soro no ensaio, nem que o mitotano causa hipotireoidismo CENTRAL na maioria dos tratados para carcinoma adrenocortical. ⚠️ RESSALVA DE VINTAGE (o artigo é de 2019, e o núcleo é mais novo): as ESTIMATIVAS DE FREQUÊNCIA da disfunção tireoidiana por inibidor de checkpoint (≈5 a 10% com anti-CTLA-4, 10 a 20% com anti-PD-1, mais de 20% com combinação) e o repertório de agentes citados (só ipilimumabe, e as classes anti-CTLA-4/anti-PD-1) são de uma revisão de 2019; a imunoterapia se expandiu muito desde então, e esses números devem ser entregues COMO ESTIMATIVAS DE 2019, nunca como taxa corrente. O aviso de vintage está escrito DENTRO dos fatos correspondentes. Como o núcleo é SILENTE sobre disfunção tireoidiana por checkpoint, não há nada dele a sobrescrever — não é conflito, é lacuna. ⚠️ TAMBÉM NÃO É CONFLITO: o artigo cita 150 µg como ingestão diária recomendada de iodo para HOMENS E MULHERES NÃO GRÁVIDAS (unidade de comparação para a carga de iodo da amiodarona), enquanto o núcleo traz 250 µg/dia para GESTANTE E LACTANTE — populações diferentes, recomendações compatíveis. E a ordem do tratamento da tempestade tireoidiana no núcleo (tionamida antes do iodo) não é contrariada aqui: o artigo apenas registra que o PTU inibe a conversão de T4 em T3 e que a dexametasona é usada na tireotoxicose grave pelo mesmo mecanismo.",
+  "conflito_direcao": "lacuna",
+  "nucleo_citado": [
+    "HIPOFISITE: lembrar dos inibidores de checkpoint imunológico como causa.",
+    "tiazídico, lítio, secreção ectópica de PTH (rara)",
+    "⚠️ INÍCIO de indutor forte do CYP3A4 (rifampicina, fenitoína, carbamazepina, fenobarbital, primidona, mitotano, enzalutamida, apalutamida) pode PRECIPITAR CRISE ADRENAL",
+    "IODO 250 µg/dia (gestante e lactante); nos de risco de deficiência, suplementar 150 µg/dia",
+    "tempestade tireoidiana — ⚠️ A ORDEM IMPORTA: TIONAMIDA PRIMEIRO (metimazol 20–30 mg VO 6/6 h ou PTU 200–400 mg VO 6–8/8 h, que ainda reduz a conversão periférica de T4 em T3) e SÓ ENTÃO o iodo"
   ],
-  "autoverificacao_do_extrator": "CONFERÊNCIAS FEITAS. (1) Todas as citações são REFERÊNCIA (offset+hash) resolvida contra o texto-fonte local; nenhuma foi gravada com o texto literal no JSON. (2) Todas resolveram na BASE 0 (espaços colapsados); a base 1 (remoção do hífen de quebra) não foi necessária em nenhum fato. (3) Buraco de elisão medido fato a fato: os únicos fatos com elisão são quatro — Tabela 1/artefatos (~140), amiodarona/artefato (322), lítio/bócio (303) e alentuzumabe/latência (295) —, todos abaixo do teto de 400, e em todos o buraco é comprovadamente quebra de coluna ou rodapé de página do periódico, não passagem distante. (4) Onde o buraco passava de 400 a solução foi DOIS FATOS com ponteiro recíproco, e não elisão: biotina (1.392 caracteres de legenda da Figura 4 entre as duas metades da frase) e estrogênio/TBG (519 caracteres de rodapé + cabeçalho da Tabela 2). (5) GRADAÇÃO PRESERVADA e escrita dentro da afirmação: 'pode' do quadro do tipo 2 da amiodarona; 'notada de forma variável na literatura' das frequências de checkpoint; 'varia amplamente' da prevalência de hipotireoidismo pelo lítio; 'podem estar relacionados' do mecanismo isquêmico dos inibidores de tirosina-quinase; 'às vezes' do aumento de dose de levotiroxina pelos indutores enzimáticos; 'raros' dos casos graves de hipotireoidismo por sunitinibe; 'não é clinicamente relevante nas doses usuais' do propranolol; 'uma interpretação sugere' do mecanismo pós-alentuzumabe. (6) DOENÇA × ARTEFATO declarado EXPLICITAMENTE em cada fato: nenhum fato diz que um fármaco 'altera o TSH' sem dizer se é disfunção real ou interferência de método. (7) O número 40% do sunitinibe está escrito por extenso ('quarenta por cento') porque a fonte grafa 'Forty percent' — escrever '40%' criaria número sem respaldo na citação."
- },
- "fatos": [
-  {
-   "afirmacao": "⚠️ PRINCÍPIO QUE ORGANIZA TODO O TEMA \"fármaco e tireoide\" (Burch HB, Drug Effects on the Thyroid, NEJM 2019; revisão narrativa): as consequências não intencionais da farmacoterapia sobre a tireoide variam em importância desde EFEITOS LABORATORIAIS ARTEFATUAIS até DISFUNÇÃO TIREOIDIANA GRAVE. Ou seja, diante de exame tireoidiano alterado em paciente sob qualquer fármaco, a primeira pergunta não é \"qual doença tratar\" e sim \"isto é disfunção real ou interferência de método\". A revisão se propõe explicitamente a dar uma abordagem sistemática à disfunção tireoidiana induzida por fármacos, com ênfase nas interações clinicamente relevantes E nos artefatos dos ensaios laboratoriais.",
-   "secao": "Escopo — doença real × artefato de exame",
-   "cit": [
-    [
-     0,
-     572,
-     331
-    ]
-   ],
-   "cit_sha": "f2425d2262d16cc3"
-  },
-  {
-   "afirmacao": "⚠️ CONCLUSÃO DA REVISÃO (NEJM 2019, Burch) — o que um fármaco pode fazer com a tireoide, em duas famílias distintas. (1) DOENÇA REAL: fármacos perturbam o controle da tireoide no nível hipotálamo-hipofisário, disparam destruição tireoidiana imune e não imune, induzem ou agravam autoimunidade tireoidiana e causam tanto hipotireoidismo quanto tireotoxicose; afetam a ligação do hormônio às proteínas carreadoras e a conversão de T4 em T3, além do metabolismo e da reciclagem do hormônio; e muitos fármacos afetam a eficiência da terapia com hormônio tireoidiano EXÓGENO, exigindo vigilância para evitar tanto SUBTRATAMENTO enquanto o fármaco está em uso quanto SUPERTRATAMENTO depois que ele é suspenso. (2) ARTEFATO: fármacos podem alterar os resultados dos exames tireoidianos de modo que mimetiza ARTEFATUALMENTE doença de Graves, hipotireoidismo central e hipertireoidismo central, APESAR de o paciente se manter EUTIREÓIDEO. Conhecer essas interações permite monitorar, intervir quando apropriado e EVITAR exames e tratamentos desnecessários.",
-   "secao": "Escopo — o que a revisão conclui",
-   "cit": [
-    [
-     0,
-     39539,
-     1049
-    ]
-   ],
-   "cit_sha": "0e3fa80c9546ef79"
-  },
-  {
-   "afirmacao": "A revisão do NEJM 2019 (Burch) registra que ALGUNS fármacos ou classes interferem com a tireoide em MÚLTIPLOS NÍVEIS ao mesmo tempo — nomeadamente AMIODARONA, GLICOCORTICOIDES e ANTIEPILÉPTICOS. ⚠️ Consequência prática: nesses três, achar um mecanismo não encerra a investigação, porque pode haver disfunção real e artefato de ensaio coexistindo no mesmo paciente. A revisão também registra que o paciente em REPOSIÇÃO com hormônio tireoidiano está sujeito a interações próprias, que interferem na dissolução do comprimido, na absorção gastrintestinal ou na depuração metabólica.",
-   "secao": "Escopo — fármacos que agem em vários níveis",
-   "cit": [
-    [
-     0,
-     5864,
-     334
-    ]
-   ],
-   "cit_sha": "5476af9245f8dbdf"
-  },
-  {
-   "afirmacao": "TABELA 1 do NEJM 2019 (Burch), grupo \"interferência com os EXAMES tireoidianos em pessoas EUTIREÓIDEAS\": são QUATRO os padrões de artefato que um fármaco pode produzir sem que exista doença — (1) hormônio tireoidiano FALSAMENTE ELEVADO; (2) hormônio tireoidiano FALSAMENTE BAIXO; (3) TSH sérico FALSAMENTE BAIXO; (4) anticorpo ANTIRRECEPTOR DE TSH (TRAb) FALSAMENTE ELEVADO. ⚠️ O quarto é o mais perigoso: um TRAb falsamente positivo fecha, no papel, o diagnóstico de doença de Graves em quem não a tem. ⚠️ A citação é literal, mas o PDF do NEJM é de duas colunas e o texto extraído INTERCALA os itens da tabela com a legenda da Figura 1; a elisão declarada marca onde a legenda entra.",
-   "secao": "Classificação (Tabela 1) — as quatro formas de ARTEFATO",
-   "cit": [
-    [
-     0,
-     7849,
-     230
+  "nucleo_ausente": [
+    "amiodarona",
+    "tireotoxicose induzida por amiodarona tipo 1 e tipo 2",
+    "biotina",
+    "TBG / globulina ligadora de tiroxina",
+    "heparina",
+    "enoxaparina",
+    "efeito Wolff-Chaikoff",
+    "fenômeno Jod-Basedow",
+    "inibidor de tirosina-quinase / sunitinibe / sorafenibe",
+    "alentuzumabe",
+    "bexaroteno",
+    "interferon alfa",
+    "interleucina-2",
+    "oxcarbazepina",
+    "salsalato",
+    "sequestrante de ácidos biliares / colestiramina",
+    "inibidor de bomba de prótons e levotiroxina",
+    "agonista dopaminérgico e supressão do TSH",
+    "desiodase tipo 3",
+    "tireoidite destrutiva por inibidor de checkpoint"
+  ],
+  "extracao": {
+    "data": "2026-08-08",
+    "escopo": "Extração integral do CORPO do artigo. Texto-fonte baixado pelo canal sancionado (ferramenta do Google Drive, read_file_content) para scratchpad/acervo/textos/, que está no .gitignore (conferido com `git check-ignore`): 56.313 caracteres em 472 linhas; 55.948 caracteres na base normalizada. O CORPO (abstract, texto corrido, Tabela 1, Tabela 2 e as legendas das Figuras 1 a 4) ocupa a base normalizada de 0 a ~40.760; de 40.764 em diante são as REFERÊNCIAS bibliográficas (81 referências) e os rodapés de download do periódico, sem conteúdo clínico próprio. O corpo foi lido 100%, seção por seção: Physiology; Classification (Tabela 1); Drugs Affecting Hypothalamic-Pituitary Control; Drugs Affecting Thyroid Hormone Synthesis or Release; Drugs That Enhance Thyroid Autoimmunity; Drugs Causing Direct Thyroid Damage; Drugs Affecting Protein Binding; Drugs Affecting Thyroid Hormone Activation, Metabolism, and Excretion; Drugs Affecting Absorption of Thyroid Hormone Preparations; Drugs Causing Abnormal Thyroid Tests in Euthyroid Patients (Biotin, Amiodarone, Heparin, Phenytoin/Carbamazepine/Salsalate); Effect of Thyroid Dysfunction on Drug Metabolism; Conclusions. ⚠️ O PDF é de DUAS COLUNAS e a extração INTERCALA as colunas: em várias passagens a frase verdadeira aparece partida por um respingo da outra coluna, e as células das Tabelas 1 e 2 aparecem embutidas no meio do texto corrido. Onde isso partiu uma citação, usei ELISÃO DECLARADA com buraco medido (todos ≤ 400 caracteres) ou, quando o buraco passava de 400, DOIS FATOS com ponteiro recíproco (biotina; estrogênio/TBG). Nenhuma citação costura trechos distantes.",
+    "nao_extraido": [
+      "TABELAS SUPLEMENTARES S1 e S2 (o artigo remete a elas: 'For a detailed list of drugs interacting with the thyroid, see Tables S1 and S2 in the Supplementary Appendix'). NÃO estão no PDF baixado — são material suplementar do NEJM.org. ⚠️ Isto é LACUNA DE FONTE, e importa: a lista DETALHADA de fármacos que interagem com a tireoide está justamente ali, e o que este extrato traz é o que o CORPO do artigo nomeia. Ausência de um fármaco neste extrato NÃO significa que o artigo o considere seguro.",
+      "TABELA 2, LINHA DA AMIODARONA — as células de T4 LIVRE, T3 e CONDIÇÃO MIMETIZADA NÃO foram atribuídas A PARTIR DA TABELA. Motivo: no texto extraído essas células aparecem como 'Amiodarone the pituitary High Low end of Thyrotropin-secreting pituitary adeno- normal range ma, thyroid hormone resistance', ou seja, embutidas no meio da frase do texto corrido ('Amiodarone inhibits T3 generation both within the pituitary and in the periphery') — o 'Amiodarone' ali é do TEXTO, não o rótulo da linha da tabela, e o rótulo verdadeiro ('Amiodarone | Class III antiarrhythmic agent | High end of normal range') está 1.400 caracteres antes. A CÉLULA NÃO SE AUTODESCREVE nesse ponto. ⚠️ Nada se perdeu: o TEXTO CORRIDO do próprio artigo afirma o mesmo conteúdo de forma inequívoca e contígua (TSH elevado ou no limite superior do normal, T4 total e livre altos, T3 no limite inferior do normal; confusão possível com tireotoxicose primária, com adenoma secretor de TSH e com resistência ao hormônio tireoidiano), e é dessa fonte, sem ambiguidade de coluna, que os fatos de artefato da amiodarona foram extraídos. O que a tabela dá sozinha e foi extraído é a linha de cabeçalho (ordem das colunas) e a célula do TSH da amiodarona, que É autorrotulada e contígua.",
+      "TABELA 2, DEMAIS LINHAS — EXTRAÍDAS, e a razão de ser possível está dita aqui para conferência: as linhas de BIOTINA, ENOXAPARINA, HEPARINA, FENITOÍNA e SALSALATO saem do PDF CONTÍGUAS E COMPLETAS (nome do fármaco + classe + três valores + condição mimetizada), portanto AUTORROTULADAS — não dependem de adivinhar coluna. A ordem das colunas está provada por citação própria do cabeçalho ('Drug Drug Class Test Results Condition Mimicked Thyrotropin Free T4 T3'), e a direção de cada valor é ainda CORROBORADA pelo texto corrido do artigo. A linha de CARBAMAZEPINA E OXCARBAZEPINA tem o nome do fármaco separado das suas células por 411 caracteres de texto da outra coluna e do rodapé do periódico; foi extraída com citação CONTÍGUA (que carrega o entremeio à vista, em vez de costurá-lo com elisão), e a atribuição é recuperável porque a coluna 'Drug' da tabela está em ORDEM ALFABÉTICA e essas células ficam exatamente entre a linha da biotina e a da enoxaparina.",
+      "TABELA 1, grupo 'Interference with endogenous thyroid function' (Disruption of hypothalamic-pituitary control; Decreased thyroid hormone production or release; Increased thyroid hormone production; Enhanced thyroid autoimmunity; Destructive thyroiditis; Changes in thyroid hormone-binding proteins; Inhibition of thyroid hormone activation; Displacement of thyroid hormone from binding proteins; Increased thyroid hormone metabolism or elimination): NÃO extraído COMO TABELA, por escolha e não por impossibilidade. Os nove itens aparecem intercalados com a legenda da Figura 1 ao longo de ~1.760 caracteres, e cada um deles JÁ É o título de uma seção do texto corrido, de onde os fatos correspondentes foram extraídos com citação limpa. Os outros dois grupos da Tabela 1 ('Interference with thyroid hormone therapy' e 'Interference with thyroid laboratory testing in euthyroid persons') FORAM extraídos, porque nomeiam categorias que o texto corrido não enumera em lista.",
+      "FIGURA 1 (fisiologia do hormônio tireoidiano) e FIGURA 2 (sítios anatômicos de interação fármaco-tireoide): as legendas foram lidas integralmente; delas só extraí o que é clinicamente acionável e não repete o texto corrido (a proporção de ligação às proteínas e o peso da TBG). O restante é descrição de mecanismo já coberta pela seção de fisiologia, e os RÓTULOS SOLTOS do diagrama da Figura 2 ('↓ Conversão de T4 em T3', 'Hipofisite', 'Tireoidite', '↓ absorção de LT4' etc.) saem do PDF como palavras avulsas, sem o fármaco ao lado — atribuir cada seta a um fármaco exigiria ler o desenho, que o texto não recupera. Não extraídos.",
+      "REFERÊNCIAS BIBLIOGRÁFICAS (81 itens, base normalizada de 40.764 a 55.948) e os rodapés repetidos de download do periódico: sem conteúdo clínico próprio. Não extraídos.",
+      "Detalhes de mecanismo BIOQUÍMICO da fisiologia tireoidiana (simportador sódio-iodeto, pendrina, DUOX2, MCT8, receptor TR/RXR e elemento responsivo TRE, sulfatação e glicuronidação passo a passo): lidos, mas extraídos apenas na medida em que explicam uma decisão clínica (ligação às proteínas, conversão de T4 em T3, recirculação êntero-hepática). O detalhe molecular restante não muda conduta e ficou fora."
     ],
-    [
-     0,
-     8209,
-     90
-    ]
-   ],
-   "cit_sha": "e4a2360baf11e2b2"
+    "autoverificacao_do_extrator": "CONFERÊNCIAS FEITAS. (1) Todas as citações são REFERÊNCIA (offset+hash) resolvida contra o texto-fonte local; nenhuma foi gravada com o texto literal no JSON. (2) Todas resolveram na BASE 0 (espaços colapsados); a base 1 (remoção do hífen de quebra) não foi necessária em nenhum fato. (3) Buraco de elisão medido fato a fato: os únicos fatos com elisão são quatro — Tabela 1/artefatos (~140), amiodarona/artefato (322), lítio/bócio (303) e alentuzumabe/latência (295) —, todos abaixo do teto de 400, e em todos o buraco é comprovadamente quebra de coluna ou rodapé de página do periódico, não passagem distante. (4) Onde o buraco passava de 400 a solução foi DOIS FATOS com ponteiro recíproco, e não elisão: biotina (1.392 caracteres de legenda da Figura 4 entre as duas metades da frase) e estrogênio/TBG (519 caracteres de rodapé + cabeçalho da Tabela 2). (5) GRADAÇÃO PRESERVADA e escrita dentro da afirmação: 'pode' do quadro do tipo 2 da amiodarona; 'notada de forma variável na literatura' das frequências de checkpoint; 'varia amplamente' da prevalência de hipotireoidismo pelo lítio; 'podem estar relacionados' do mecanismo isquêmico dos inibidores de tirosina-quinase; 'às vezes' do aumento de dose de levotiroxina pelos indutores enzimáticos; 'raros' dos casos graves de hipotireoidismo por sunitinibe; 'não é clinicamente relevante nas doses usuais' do propranolol; 'uma interpretação sugere' do mecanismo pós-alentuzumabe. (6) DOENÇA × ARTEFATO declarado EXPLICITAMENTE em cada fato: nenhum fato diz que um fármaco 'altera o TSH' sem dizer se é disfunção real ou interferência de método. (7) O número 40% do sunitinibe está escrito por extenso ('quarenta por cento') porque a fonte grafa 'Forty percent' — escrever '40%' criaria número sem respaldo na citação."
   },
-  {
-   "afirmacao": "TABELA 1 do NEJM 2019 (Burch), grupo \"interferência com a TERAPIA com hormônio tireoidiano\" — o que um fármaco pode fazer contra a levotiroxina do paciente já tratado: (1) reduzir a DISSOLUÇÃO do comprimido; (2) reduzir a ABSORÇÃO do hormônio; (3) reduzir os níveis de hormônio LIVRE; (4) aumentar o METABOLISMO ou a ELIMINAÇÃO do hormônio. ⚠️ Isto é categoria à parte da disfunção tireoidiana e do artefato de ensaio: aqui a tireoide do paciente pode estar irrelevante — o que muda é a necessidade de dose. ⚠️ Citação literal de um PDF de duas colunas, em que os itens da tabela aparecem INTERCALADOS com a legenda da Figura 1.",
-   "secao": "Classificação (Tabela 1) — interferência com a TERAPIA",
-   "cit": [
-    [
-     0,
-     7158,
-     467
-    ]
-   ],
-   "cit_sha": "1072d35079292adb"
-  },
-  {
-   "afirmacao": "⚠️ AMIODARONA — POR QUE ELA MEXE COM A TIREOIDE (NEJM 2019, Burch): é um antiarrítmico de classe III que tem 37,3% de IODO em peso e sofre desiodação parcial, liberando aproximadamente 7 mg de iodeto por comprimido de 200 mg — cerca de 45 vezes a ingestão diária recomendada de 150 μg para homens e mulheres não grávidas. ⚠️ DISFUNÇÃO REAL, NÃO ARTEFATO: além de induzir HIPOTIREOIDISMO em pacientes suscetíveis, o iodo proveniente da amiodarona causa HIPERTIREOIDISMO em alguns pacientes — o distúrbio conhecido como TIREOTOXICOSE INDUZIDA POR AMIODARONA DO TIPO 1. Portanto o tipo 1 é, por mecanismo, um fenômeno de EXCESSO DE IODO (Jod-Basedow) sobre a tireoide.",
-   "secao": "Amiodarona — carga de iodo e tireotoxicose TIPO 1",
-   "cit": [
-    [
-     0,
-     15328,
-     455
-    ]
-   ],
-   "cit_sha": "1b642d45f4a4201c"
-  },
-  {
-   "afirmacao": "⚠️ AMIODARONA, TIREOTOXICOSE DO TIPO 2 — O QUE SEPARA DO TIPO 1 E POR QUE O TRATAMENTO É OPOSTO (NEJM 2019, Burch). A amiodarona causa uma TIREOIDITE DESTRUTIVA, chamada tireotoxicose induzida por amiodarona do TIPO 2, em 5 a 10% dos pacientes tratados; acredita-se que resulte de efeito CITOTÓXICO DIRETO da amiodarona sobre os tireócitos (mecanismo diferente do tipo 1, que é carga de iodo). QUADRO: o paciente afetado PODE apresentar taquicardia persistente ou piora da arritmia, TIREOIDE NÃO DOLOROSA ao exame físico, elevação de T4 livre e T3 séricos e TSH sérico SUPRIMIDO. ⚠️ TRATAMENTO: ao contrário da tireotoxicose induzida por amiodarona do TIPO 1, que é tipicamente manejada com ANTITIREOIDIANOS, a doença do TIPO 2 é tratada PREFERENCIALMENTE com GLICOCORTICOIDES. ⚠️ Isto é doença tireoidiana REAL — não é artefato de ensaio: o TSH está suprimido, e não elevado/normal como no artefato da amiodarona no eutireóideo.",
-   "secao": "Amiodarona — tireotoxicose TIPO 2, quadro clínico e o tratamento OPOSTO",
-   "cit": [
-    [
-     0,
-     23136,
-     624
-    ]
-   ],
-   "cit_sha": "3b562edaddd186e7"
-  },
-  {
-   "afirmacao": "⚠️ AMIODARONA — O QUE FAZER QUANDO A DISTINÇÃO TIPO 1 × TIPO 2 NÃO FECHA (NEJM 2019, Burch): a revisão registra que NA PRÁTICA é frequentemente DIFÍCIL distinguir a doença do tipo 1 da do tipo 2, e que a necessidade URGENTE de tratamento em pacientes com situação cardíaca precária frequentemente leva os clínicos a instituir terapia INICIALMENTE COM AMBOS — antitireoidianos E glicocorticoides. ⚠️ Ou seja, a resposta da revisão à ambiguidade diagnóstica não é escolher um dos dois às cegas nem esperar: é cobrir os dois mecanismos enquanto o paciente estiver cardiologicamente instável.",
-   "secao": "Amiodarona — quando NÃO se consegue separar tipo 1 de tipo 2",
-   "cit": [
-    [
-     0,
-     23761,
-     263
-    ]
-   ],
-   "cit_sha": "264347ca930e5ad9"
-  },
-  {
-   "afirmacao": "A CONVERSÃO de T4 em T3 é INIBIDA por vários fármacos (NEJM 2019, Burch): AMIODARONA, DEXAMETASONA (e outros GLICOCORTICOIDES), PROPRANOLOL EM ALTAS DOSES, os agentes COLECISTOGRÁFICOS IPODATO e ÁCIDO IOPANOICO (este último não mais disponível nos Estados Unidos) e o antitireoidiano PROPILTIOURACIL. ⚠️ Consequência: T3 baixo em paciente sob qualquer um destes NÃO é, por si só, evidência de hipotireoidismo. ⚠️ Que a inibição pela amiodarona ocorre nos DOIS compartimentos — dentro da HIPÓFISE e na PERIFERIA — está provado nos fatos \"Dexametasona — inibição da conversão usada como TRATAMENTO\" e \"Amiodarona — ARTEFATO no paciente EUTIREÓIDEO (padrão laboratorial)\"; a ressalva de dose do propranolol está no fato \"Propranolol — a ressalva de dose\".",
-   "secao": "Amiodarona — inibição da conversão de T4 em T3",
-   "cit": [
-    [
-     0,
-     27506,
-     300
-    ]
-   ],
-   "cit_sha": "3d4c1ae1e27a7769"
-  },
-  {
-   "afirmacao": "⚠️ AMIODARONA NO PACIENTE EUTIREÓIDEO — ESTE PADRÃO É ARTEFATO PREVISÍVEL, NÃO DOENÇA (NEJM 2019, Burch). Além de causar hipotireoidismo e tireotoxicose VERDADEIROS, a amiodarona produz alterações PREVISÍVEIS nos exames tireoidianos de pessoas EUTIREÓIDEAS. Mecanismo: a inibição da conversão periférica e central de T4 em T3 pela amiodarona e por seu principal metabólito ativo, a DESETILAMIODARONA, reduz o T3 circulante e intra-hipofisário, o que estimula a liberação de TRH e de TSH por ausência de retroalimentação negativa; o aumento do TSH estimula mais liberação tireoidiana de T4, que ainda se acumula porque a conversão em T3 está inibida. ⚠️ RESULTADO NO EUTIREÓIDEO: TSH sérico ELEVADO ou no LIMITE SUPERIOR do normal, T4 TOTAL e LIVRE ALTOS, e T3 no LIMITE INFERIOR do normal.",
-   "secao": "Amiodarona — ARTEFATO no paciente EUTIREÓIDEO (padrão laboratorial)",
-   "cit": [
-    [
-     0,
-     35561,
-     816
-    ]
-   ],
-   "cit_sha": "250d6f7774276140"
-  },
-  {
-   "afirmacao": "⚠️ AMIODARONA — OS DOIS DIAGNÓSTICOS ERRADOS QUE O ARTEFATO PRODUZ, E COMO DESFAZER CADA UM (NEJM 2019, Burch). (1) O T4 ELEVADO do paciente eutireóideo em uso de amiodarona PODE ser confundido com TIREOTOXICOSE PRIMÁRIA — mas um TSH NÃO SUPRIMIDO EXCLUI essa possibilidade. (2) A elevação CONCOMITANTE de TSH e de T4 livre PODE ser tomada como evidência de ADENOMA HIPOFISÁRIO SECRETOR DE TSH ou de RESISTÊNCIA AO HORMÔNIO TIREOIDIANO — mas valores NORMAIS em exames tireoidianos realizados ANTES do início da amiodarona, QUANDO DISPONÍVEIS, essencialmente excluem esses distúrbios. ⚠️ A citação está partida por quebra de página do PDF (rodapé do periódico), marcada por elisão declarada.",
-   "secao": "Amiodarona — como NÃO tratar quem não tem doença",
-   "cit": [
-    [
-     0,
-     36378,
-     106
+  "fatos": [
+    {
+      "afirmacao": "⚠️ PRINCÍPIO QUE ORGANIZA TODO O TEMA \"fármaco e tireoide\" (Burch HB, Drug Effects on the Thyroid, NEJM 2019; revisão narrativa): as consequências não intencionais da farmacoterapia sobre a tireoide variam em importância desde EFEITOS LABORATORIAIS ARTEFATUAIS até DISFUNÇÃO TIREOIDIANA GRAVE. Ou seja, diante de exame tireoidiano alterado em paciente sob qualquer fármaco, a primeira pergunta não é \"qual doença tratar\" e sim \"isto é disfunção real ou interferência de método\". A revisão se propõe explicitamente a dar uma abordagem sistemática à disfunção tireoidiana induzida por fármacos, com ênfase nas interações clinicamente relevantes E nos artefatos dos ensaios laboratoriais.",
+      "secao": "Escopo — doença real × artefato de exame",
+      "cit": [
+        [
+          0,
+          572,
+          331
+        ]
+      ],
+      "cit_sha": "f2425d2262d16cc3"
+    },
+    {
+      "afirmacao": "⚠️ CONCLUSÃO DA REVISÃO (NEJM 2019, Burch) — o que um fármaco pode fazer com a tireoide, em duas famílias distintas. (1) DOENÇA REAL: fármacos perturbam o controle da tireoide no nível hipotálamo-hipofisário, disparam destruição tireoidiana imune e não imune, induzem ou agravam autoimunidade tireoidiana e causam tanto hipotireoidismo quanto tireotoxicose; afetam a ligação do hormônio às proteínas carreadoras e a conversão de T4 em T3, além do metabolismo e da reciclagem do hormônio; e muitos fármacos afetam a eficiência da terapia com hormônio tireoidiano EXÓGENO, exigindo vigilância para evitar tanto SUBTRATAMENTO enquanto o fármaco está em uso quanto SUPERTRATAMENTO depois que ele é suspenso. (2) ARTEFATO: fármacos podem alterar os resultados dos exames tireoidianos de modo que mimetiza ARTEFATUALMENTE doença de Graves, hipotireoidismo central e hipertireoidismo central, APESAR de o paciente se manter EUTIREÓIDEO. Conhecer essas interações permite monitorar, intervir quando apropriado e EVITAR exames e tratamentos desnecessários.",
+      "secao": "Escopo — o que a revisão conclui",
+      "cit": [
+        [
+          0,
+          39539,
+          1049
+        ]
+      ],
+      "cit_sha": "0e3fa80c9546ef79"
+    },
+    {
+      "afirmacao": "A revisão do NEJM 2019 (Burch) registra que ALGUNS fármacos ou classes interferem com a tireoide em MÚLTIPLOS NÍVEIS ao mesmo tempo — nomeadamente AMIODARONA, GLICOCORTICOIDES e ANTIEPILÉPTICOS. ⚠️ Consequência prática: nesses três, achar um mecanismo não encerra a investigação, porque pode haver disfunção real e artefato de ensaio coexistindo no mesmo paciente. A revisão também registra que o paciente em REPOSIÇÃO com hormônio tireoidiano está sujeito a interações próprias, que interferem na dissolução do comprimido, na absorção gastrintestinal ou na depuração metabólica.",
+      "secao": "Escopo — fármacos que agem em vários níveis",
+      "cit": [
+        [
+          0,
+          5864,
+          334
+        ]
+      ],
+      "cit_sha": "5476af9245f8dbdf"
+    },
+    {
+      "afirmacao": "TABELA 1 do NEJM 2019 (Burch), grupo \"interferência com os EXAMES tireoidianos em pessoas EUTIREÓIDEAS\": são QUATRO os padrões de artefato que um fármaco pode produzir sem que exista doença — (1) hormônio tireoidiano FALSAMENTE ELEVADO; (2) hormônio tireoidiano FALSAMENTE BAIXO; (3) TSH sérico FALSAMENTE BAIXO; (4) anticorpo ANTIRRECEPTOR DE TSH (TRAb) FALSAMENTE ELEVADO. ⚠️ O quarto é o mais perigoso: um TRAb falsamente positivo fecha, no papel, o diagnóstico de doença de Graves em quem não a tem. ⚠️ A citação é literal, mas o PDF do NEJM é de duas colunas e o texto extraído INTERCALA os itens da tabela com a legenda da Figura 1; a elisão declarada marca onde a legenda entra.",
+      "secao": "Classificação (Tabela 1) — as quatro formas de ARTEFATO",
+      "cit": [
+        [
+          0,
+          7849,
+          230
+        ],
+        [
+          0,
+          8209,
+          90
+        ]
+      ],
+      "cit_sha": "e4a2360baf11e2b2"
+    },
+    {
+      "afirmacao": "TABELA 1 do NEJM 2019 (Burch), grupo \"interferência com a TERAPIA com hormônio tireoidiano\" — o que um fármaco pode fazer contra a levotiroxina do paciente já tratado: (1) reduzir a DISSOLUÇÃO do comprimido; (2) reduzir a ABSORÇÃO do hormônio; (3) reduzir os níveis de hormônio LIVRE; (4) aumentar o METABOLISMO ou a ELIMINAÇÃO do hormônio. ⚠️ Isto é categoria à parte da disfunção tireoidiana e do artefato de ensaio: aqui a tireoide do paciente pode estar irrelevante — o que muda é a necessidade de dose. ⚠️ Citação literal de um PDF de duas colunas, em que os itens da tabela aparecem INTERCALADOS com a legenda da Figura 1.",
+      "secao": "Classificação (Tabela 1) — interferência com a TERAPIA",
+      "cit": [
+        [
+          0,
+          7158,
+          467
+        ]
+      ],
+      "cit_sha": "1072d35079292adb"
+    },
+    {
+      "afirmacao": "⚠️ AMIODARONA — POR QUE ELA MEXE COM A TIREOIDE (NEJM 2019, Burch): é um antiarrítmico de classe III que tem 37,3% de IODO em peso e sofre desiodação parcial, liberando aproximadamente 7 mg de iodeto por comprimido de 200 mg — cerca de 45 vezes a ingestão diária recomendada de 150 μg para homens e mulheres não grávidas. ⚠️ DISFUNÇÃO REAL, NÃO ARTEFATO: além de induzir HIPOTIREOIDISMO em pacientes suscetíveis, o iodo proveniente da amiodarona causa HIPERTIREOIDISMO em alguns pacientes — o distúrbio conhecido como TIREOTOXICOSE INDUZIDA POR AMIODARONA DO TIPO 1. Portanto o tipo 1 é, por mecanismo, um fenômeno de EXCESSO DE IODO sobre a tireoide — o rótulo \"Jod-Basedow\" e a ressalva de que ele incide sobretudo em quem já tem função tireoidiana AUTÔNOMA estão no fato \"Iodo — Jod-Basedow e as FONTES de iodo\", e NÃO nesta citação. ⚠️ TRATAMENTO: este fato NÃO traz a conduta. Tipo 1 e tipo 2 têm tratamentos OPOSTOS (antitireoidiano × glicocorticoide) e o quadro clínico não os separa — ver os fatos \"Amiodarona — tireotoxicose TIPO 2, quadro clínico e o tratamento OPOSTO\" e \"Amiodarona — quando NÃO se consegue separar tipo 1 de tipo 2\".",
+      "secao": "Amiodarona — carga de iodo e tireotoxicose TIPO 1",
+      "cit": [
+        [
+          0,
+          15328,
+          455
+        ]
+      ],
+      "cit_sha": "1b642d45f4a4201c"
+    },
+    {
+      "afirmacao": "⚠️ AMIODARONA, TIREOTOXICOSE DO TIPO 2 — O QUE SEPARA DO TIPO 1 E POR QUE O TRATAMENTO É OPOSTO (NEJM 2019, Burch). A amiodarona causa uma TIREOIDITE DESTRUTIVA, chamada tireotoxicose induzida por amiodarona do TIPO 2, em 5 a 10% dos pacientes tratados; acredita-se que resulte de efeito CITOTÓXICO DIRETO da amiodarona sobre os tireócitos (mecanismo diferente do tipo 1, que é carga de iodo). QUADRO: o paciente afetado PODE apresentar taquicardia persistente ou piora da arritmia, TIREOIDE NÃO DOLOROSA ao exame físico, elevação de T4 livre e T3 séricos e TSH sérico SUPRIMIDO. ⚠️ ESTE QUADRO NÃO DISTINGUE O TIPO 2 DO TIPO 1 — não o use como discriminador: taquicardia/piora da arritmia, tireoide não dolorosa, T4 livre e T3 altos e TSH suprimido são o quadro da tireotoxicose por amiodarona nos DOIS tipos, e esta revisão NÃO oferece nenhum critério (nem ultrassonografia com Doppler, nem captação de radioiodo) para separá-los. ⚠️ POR ISSO, NÃO ESCOLHA O TRATAMENTO A PARTIR DESTE FATO SOZINHO: a própria revisão diz que na prática é frequentemente difícil separar tipo 1 de tipo 2 e que, no paciente cardiologicamente instável, a terapia é iniciada com ANTITIREOIDIANO E GLICOCORTICOIDE JUNTOS — ver o fato \"Amiodarona — quando NÃO se consegue separar tipo 1 de tipo 2\". ⚠️ TRATAMENTO: ao contrário da tireotoxicose induzida por amiodarona do TIPO 1, que é tipicamente manejada com ANTITIREOIDIANOS, a doença do TIPO 2 é tratada PREFERENCIALMENTE com GLICOCORTICOIDES. ⚠️ Isto é doença tireoidiana REAL — não é artefato de ensaio: o TSH está suprimido, e não elevado/normal como no artefato da amiodarona no eutireóideo.",
+      "secao": "Amiodarona — tireotoxicose TIPO 2, quadro clínico e o tratamento OPOSTO",
+      "cit": [
+        [
+          0,
+          23136,
+          624
+        ]
+      ],
+      "cit_sha": "3b562edaddd186e7"
+    },
+    {
+      "afirmacao": "⚠️ AMIODARONA — O QUE FAZER QUANDO A DISTINÇÃO TIPO 1 × TIPO 2 NÃO FECHA (NEJM 2019, Burch): a revisão registra que NA PRÁTICA é frequentemente DIFÍCIL distinguir a doença do tipo 1 da do tipo 2, e que a necessidade URGENTE de tratamento em pacientes com situação cardíaca precária frequentemente leva os clínicos a instituir terapia INICIALMENTE COM AMBOS — antitireoidianos E glicocorticoides. ⚠️ Ou seja, a resposta da revisão à ambiguidade diagnóstica não é escolher um dos dois às cegas nem esperar: é cobrir os dois mecanismos enquanto o paciente estiver cardiologicamente instável.",
+      "secao": "Amiodarona — quando NÃO se consegue separar tipo 1 de tipo 2",
+      "cit": [
+        [
+          0,
+          23761,
+          263
+        ]
+      ],
+      "cit_sha": "264347ca930e5ad9"
+    },
+    {
+      "afirmacao": "A CONVERSÃO de T4 em T3 é INIBIDA por vários fármacos (NEJM 2019, Burch): AMIODARONA, DEXAMETASONA (e outros GLICOCORTICOIDES), PROPRANOLOL EM ALTAS DOSES, os agentes COLECISTOGRÁFICOS IPODATO e ÁCIDO IOPANOICO (este último não mais disponível nos Estados Unidos) e o antitireoidiano PROPILTIOURACIL. ⚠️ Consequência: T3 baixo em paciente sob qualquer um destes NÃO é, por si só, evidência de hipotireoidismo. ⚠️ Que a inibição pela amiodarona ocorre nos DOIS compartimentos — dentro da HIPÓFISE e na PERIFERIA — está provado nos fatos \"Dexametasona — inibição da conversão usada como TRATAMENTO\" e \"Amiodarona — ARTEFATO no paciente EUTIREÓIDEO (padrão laboratorial)\"; a ressalva de dose do propranolol está no fato \"Propranolol — a ressalva de dose\".",
+      "secao": "Amiodarona — inibição da conversão de T4 em T3",
+      "cit": [
+        [
+          0,
+          27506,
+          300
+        ]
+      ],
+      "cit_sha": "3d4c1ae1e27a7769"
+    },
+    {
+      "afirmacao": "⚠️ AMIODARONA NO PACIENTE EUTIREÓIDEO — ESTE PADRÃO É ARTEFATO PREVISÍVEL, NÃO DOENÇA (NEJM 2019, Burch). Além de causar hipotireoidismo e tireotoxicose VERDADEIROS, a amiodarona produz alterações PREVISÍVEIS nos exames tireoidianos de pessoas EUTIREÓIDEAS. Mecanismo: a inibição da conversão periférica e central de T4 em T3 pela amiodarona e por seu principal metabólito ativo, a DESETILAMIODARONA, reduz o T3 circulante e intra-hipofisário, o que estimula a liberação de TRH e de TSH por ausência de retroalimentação negativa; o aumento do TSH estimula mais liberação tireoidiana de T4, que ainda se acumula porque a conversão em T3 está inibida. ⚠️ RESULTADO NO EUTIREÓIDEO: TSH sérico ELEVADO ou no LIMITE SUPERIOR do normal, T4 TOTAL e LIVRE ALTOS, e T3 no LIMITE INFERIOR do normal.",
+      "secao": "Amiodarona — ARTEFATO no paciente EUTIREÓIDEO (padrão laboratorial)",
+      "cit": [
+        [
+          0,
+          35561,
+          816
+        ]
+      ],
+      "cit_sha": "250d6f7774276140"
+    },
+    {
+      "afirmacao": "⚠️ AMIODARONA — OS DOIS DIAGNÓSTICOS ERRADOS QUE O ARTEFATO PRODUZ, E COMO DESFAZER CADA UM (NEJM 2019, Burch). (1) O T4 ELEVADO do paciente eutireóideo em uso de amiodarona PODE ser confundido com TIREOTOXICOSE PRIMÁRIA — mas um TSH NÃO SUPRIMIDO EXCLUI essa possibilidade. (2) A elevação CONCOMITANTE de TSH e de T4 livre PODE ser tomada como evidência de ADENOMA HIPOFISÁRIO SECRETOR DE TSH ou de RESISTÊNCIA AO HORMÔNIO TIREOIDIANO — mas valores NORMAIS em exames tireoidianos realizados ANTES do início da amiodarona, QUANDO DISPONÍVEIS, essencialmente excluem esses distúrbios. ⚠️ A citação está partida por quebra de página do PDF (rodapé do periódico), marcada por elisão declarada.",
+      "secao": "Amiodarona — como NÃO tratar quem não tem doença",
+      "cit": [
+        [
+          0,
+          36378,
+          106
+        ],
+        [
+          0,
+          36806,
+          364
+        ]
+      ],
+      "cit_sha": "5b0680c215931a28"
+    },
+    {
+      "afirmacao": "AMIODARONA EM QUEM JÁ USA LEVOTIROXINA (NEJM 2019, Burch): pacientes com função tireoidiana NORMAL enquanto recebem terapia com levotiroxina PODEM ter aumentos SEMELHANTES do TSH depois de iniciar a amiodarona. ⚠️ O ARTIGO AFIRMA SÓ ISTO: que o TSH pode subir. ⚠️ LEITURA (inferência, não está na citação): esse TSH que sobe logo após a introdução da amiodarona em paciente estável na levotiroxina não é necessariamente subtratamento — pode ser o mesmo fenômeno previsível descrito para o eutireóideo (inibição da conversão de T4 em T3, com T4 livre ALTO). ⚠️ DECIDA PELO T4 LIVRE, NÃO PELO TSH ISOLADO, e nos dois sentidos: a conclusão da própria revisão manda vigiar tanto o SUBTRATAMENTO enquanto o fármaco está em uso quanto o SUPERTRATAMENTO depois que ele é suspenso.",
+      "secao": "Amiodarona — paciente já em levotiroxina",
+      "cit": [
+        [
+          0,
+          37171,
+          148
+        ]
+      ],
+      "cit_sha": "e5c1466bef1f3d1b"
+    },
+    {
+      "afirmacao": "TABELA 2 do NEJM 2019 (Burch), intitulada \"Fármacos que causam resultados ESPÚRIOS de exames tireoidianos em pessoas EUTIREÓIDEAS\", tem as colunas, NESTA ORDEM: Fármaco | Classe do fármaco | Resultados dos exames (TSH, T4 livre, T3) | Condição MIMETIZADA. ⚠️ Esta ordem de colunas é o que permite ler as demais linhas da tabela. A primeira linha é a da AMIODARONA, classificada como \"agente antiarrítmico de classe III\", com TSH no LIMITE SUPERIOR DA FAIXA NORMAL no paciente eutireóideo — coerente com o padrão descrito no texto corrido do próprio artigo.",
+      "secao": "Amiodarona — Tabela 2, coluna do TSH",
+      "cit": [
+        [
+          0,
+          26355,
+          215
+        ]
+      ],
+      "cit_sha": "bd80b3f4c79b2944"
+    },
+    {
+      "afirmacao": "⚠️ IODO EM EXCESSO — HIPOTIREOIDISMO REAL, E QUEM CORRE RISCO (NEJM 2019, Burch). O excesso de iodo INTRATIREOIDIANO inibe a síntese de hormônio tireoidiano, resultando no EFEITO WOLFF-CHAIKOFF; o mecanismo exato é DESCONHECIDO, mas a inibição aguda da peroxidase tireoidiana pode ocorrer pela geração de compostos iodados intratireoidianos como iodolactonas e iodoaldeídos. ⚠️ QUEM ESCAPA E QUEM NÃO ESCAPA: pessoas com tireoide NORMAL escapam desse efeito em 1 a 2 semanas; mas quem tem função tireoidiana COMPROMETIDA por TIREOIDITE LINFOCÍTICA subjacente ou por ABLAÇÃO TIREOIDIANA PARCIAL com radioiodo ou cirurgia PODE NÃO ESCAPAR até que a carga de iodo seja depurada. ⚠️ Portanto, tireoidite de Hashimoto, radioiodo prévio ou tireoidectomia parcial identificam, ANTES da exposição, quem tende a ficar hipotireóideo com uma carga de iodo.",
+      "secao": "Iodo — efeito Wolff-Chaikoff e quem NÃO escapa dele",
+      "cit": [
+        [
+          0,
+          14271,
+          583
+        ]
+      ],
+      "cit_sha": "5b1337f1139efb9b"
+    },
+    {
+      "afirmacao": "⚠️ IODO EM EXCESSO — TIREOTOXICOSE REAL (JOD-BASEDOW) E DE ONDE VEM O IODO (NEJM 2019, Burch). O excesso de iodo também contribui para TIREOTOXICOSE — o fenômeno JOD-BASEDOW —, PARTICULARMENTE em pacientes com função tireoidiana AUTÔNOMA preexistente (nódulo/bócio autônomo). ⚠️ FONTES MEDICAMENTOSAS COMUNS de iodo em excesso: agentes de CONTRASTE IODADO usados em tomografia computadorizada e colecistografia; medicações com alto conteúdo de iodo, como a AMIODARONA e a POVIDONA-IODO TÓPICA; e preparações de VENDA LIVRE e suplementos, incluindo EXPECTORANTES, DUCHAS VAGINAIS e KELP (alga). ⚠️ Isto é doença real, não artefato: perguntar por contraste recente, expectorante e suplemento de alga faz parte da investigação de tireotoxicose e de hipotireoidismo de início recente.",
+      "secao": "Iodo — Jod-Basedow e as FONTES de iodo",
+      "cit": [
+        [
+          0,
+          14855,
+          472
+        ]
+      ],
+      "cit_sha": "d0e7987474824411"
+    },
+    {
+      "afirmacao": "⚠️ LÍTIO — DOENÇA TIREOIDIANA REAL, NÃO ARTEFATO DE ENSAIO (NEJM 2019, Burch). O uso de lítio causa BÓCIO e HIPOTIREOIDISMO por DIMINUIR A LIBERAÇÃO de hormônio tireoidiano, através da INIBIÇÃO DA PINOCITOSE DO COLOIDE. FREQUÊNCIA DO BÓCIO: em um estudo com pacientes com doença maníaco-depressiva, 50% dos tratados com lítio tinham bócio à ULTRASSONOGRAFIA de tireoide, contra 16% dos pacientes que NÃO receberam lítio. ⚠️ A citação está partida pela quebra de página do PDF (rodapé do periódico), marcada por elisão declarada.",
+      "secao": "Lítio — bócio e hipotireoidismo (mecanismo e frequência de bócio)",
+      "cit": [
+        [
+          0,
+          15859,
+          278
+        ],
+        [
+          0,
+          16440,
+          42
+        ]
+      ],
+      "cit_sha": "00be00ed89c8cbd9"
+    },
+    {
+      "afirmacao": "⚠️ LÍTIO E HIPOTIREOIDISMO — QUANTO (NEJM 2019, Burch): a prevalência RELATADA de hipotireoidismo entre pacientes em uso de lítio VARIA AMPLAMENTE. Um sumário de 1778 casos publicados mostrou prevalência MÉDIA de 17,6%. Uma METANÁLISE mostrou que a prevalência de hipotireoidismo entre pacientes tratados com lítio estava aumentada POR UM FATOR DE 6 em comparação com a prevalência entre controles. ⚠️ Guarde a heterogeneidade junto com o número: o próprio artigo diz que a prevalência relatada varia amplamente, então 17,6% é uma média de casos publicados, e não uma taxa firme.",
+      "secao": "Lítio — frequência do hipotireoidismo",
+      "cit": [
+        [
+          0,
+          16483,
+          337
+        ]
+      ],
+      "cit_sha": "dcb558aeb31f0696"
+    },
+    {
+      "afirmacao": "LÍTIO — FATORES DE RISCO PARA HIPOTIREOIDISMO (NEJM 2019, Burch): SEXO FEMININO e IDADE ACIMA DE 40 ANOS, ambos os quais COSSEGREGAM com TIREOIDITE LINFOCÍTICA CRÔNICA e com teste POSITIVO para anticorpos ANTIPEROXIDASE TIREOIDIANA (anti-TPO) — o que indica RESERVA TIREOIDIANA DIMINUÍDA e AUTOIMUNIDADE AUMENTADA como possíveis predisposições. ⚠️ Leitura prática: mulher acima de 40 anos e/ou anti-TPO positivo é o perfil em que vale monitorar a função tireoidiana sob lítio.",
+      "secao": "Lítio — quem tem mais risco",
+      "cit": [
+        [
+          0,
+          16821,
+          283
+        ]
+      ],
+      "cit_sha": "0c31777241b5271c"
+    },
+    {
+      "afirmacao": "⚠️ LÍTIO TAMBÉM CAUSA TIREOTOXICOSE, E NÃO SÓ HIPOTIREOIDISMO (NEJM 2019, Burch): o uso de lítio está TAMBÉM ligado a TIREOIDITE INDOLOR (painless thyroiditis) — isto é, tireotoxicose por destruição, não por hiperfunção. A natureza dessa associação é DESCONHECIDA, mas aproximadamente METADE dos pacientes afetados tem testes POSITIVOS para anticorpos tireoidianos. ⚠️ Portanto tireotoxicose em paciente sob lítio não deve ser automaticamente lida como doença de Graves nem como falha do lítio: tireoidite indolor induzida pelo próprio fármaco entra no diferencial.",
+      "secao": "Lítio — tireoidite indolor (tireotoxicose)",
+      "cit": [
+        [
+          0,
+          17105,
+          197
+        ]
+      ],
+      "cit_sha": "6be9f3fc48f62740"
+    },
+    {
+      "afirmacao": "⚠️ INIBIDORES DE CHECKPOINT IMUNOLÓGICO — QUAL EIXO CADA CLASSE ATINGE (NEJM 2019, Burch). Os inibidores de checkpoint, incluindo os que inibem o antígeno 4 do linfócito T citotóxico (CTLA-4) e o receptor de morte celular programada 1 (PD-1), têm uma VARIEDADE de efeitos endócrinos adversos. ⚠️ A distinção que muda a investigação: a HIPOFISITE ocorre MAIS FREQUENTEMENTE em pacientes usando inibidores de CTLA-4, enquanto a DISFUNÇÃO TIREOIDIANA PRIMÁRIA é vista MAIS FREQUENTEMENTE com inibidores de PD-1. ⚠️ O CORPO do artigo nomeia UM único fármaco desta classe, o IPILIMUMABE, como exemplo de anti-CTLA-4 (ver o fato \"Checkpoint — ipilimumabe e hipofisite (hipotireoidismo CENTRAL)\"); NÃO nomeia nenhum anti-PD-1 — a atribuição de um fármaco concreto a esta classe tem de vir de outra fonte, não daqui. ⚠️ Isto é doença real (imunomediada), não artefato de ensaio. ⚠️ VINTAGE: revisão de 2019 — o repertório de imunoterápicos e as estimativas de incidência se ampliaram desde então.",
+      "secao": "Checkpoint — anti-CTLA-4 × anti-PD-1: qual eixo cada um atinge",
+      "cit": [
+        [
+          0,
+          12586,
+          347
+        ]
+      ],
+      "cit_sha": "8082077a8c28eb77"
+    },
+    {
+      "afirmacao": "⚠️ IPILIMUMABE E HIPOFISITE — HIPOTIREOIDISMO CENTRAL, NÃO PRIMÁRIO (NEJM 2019, Burch). O ipilimumabe, agente anti-CTLA-4, foi associado a HIPOFISITE DESTRUTIVA, com graus variáveis de HIPOTIREOIDISMO CENTRAL, INSUFICIÊNCIA ADRENAL e HIPOGONADISMO, ocorrendo em 3 a 10% dos pacientes tratados para MELANOMA na dose aprovada de 3 mg por quilograma de peso corporal a cada 3 semanas, por até 4 ciclos. CRONOLOGIA: os efeitos ocorrem dentro de 1 a 3 meses após o início do tratamento (dentro de 2 a 4 ciclos). QUADRO: cefaleia, fadiga, perda de peso, intolerância ao frio e perda de libido. IMAGEM: a ressonância magnética revela aumento hipofisário, espessamento da haste hipofisária e realce homogêneo em MUITOS, MAS NÃO EM TODOS os casos. ⚠️ VINTAGE, E ESTE É UM FATO COM DOSE: a dose e o esquema citados são os APROVADOS À ÉPOCA (revisão de 2019) para MELANOMA em monoterapia; desde então o ipilimumabe passou a ser usado em outras doses, outros esquemas (inclusive combinados) e outras indicações, e a frequência de hipofisite é DOSE-DEPENDENTE — não leia este intervalo de frequência como taxa corrente nem esta posologia como regra de dosagem de hoje. ⚠️ Consequência prática: neste cenário o TSH pode estar baixo ou normal com T4 livre baixo — investigar a hipófise, e não a tireoide, e afastar insuficiência adrenal antes de repor hormônio tireoidiano.",
+      "secao": "Checkpoint — ipilimumabe e hipofisite (hipotireoidismo CENTRAL)",
+      "cit": [
+        [
+          0,
+          12934,
+          669
+        ]
+      ],
+      "cit_sha": "e85974229c0a541f"
+    },
+    {
+      "afirmacao": "HIPOFISITE POR INIBIDOR DE CHECKPOINT — PROGNÓSTICO POR EIXO (NEJM 2019, Burch): a RECUPERAÇÃO das funções GONADAL e TIREOIDIANA é vista em ATÉ METADE dos pacientes, enquanto a recuperação do EIXO ADRENAL RARAMENTE ocorre. ⚠️ Leitura prática: no seguimento, a reposição de levotiroxina e a de esteroides sexuais podem eventualmente ser reavaliadas, mas a reposição de glicocorticoide tende a ser PERMANENTE — não suspenda por presumir recuperação.",
+      "secao": "Checkpoint — hipofisite: o que se recupera e o que não",
+      "cit": [
+        [
+          0,
+          13604,
+          128
+        ]
+      ],
+      "cit_sha": "d1f2da3ea701d4e2"
+    },
+    {
+      "afirmacao": "⚠️ INIBIDOR DE CHECKPOINT E DISFUNÇÃO TIREOIDIANA PRIMÁRIA — QUANTO (NEJM 2019, Burch): a disfunção tireoidiana primária é registrada de forma VARIÁVEL na literatura, afetando aproximadamente 5 a 10% dos pacientes tratados com inibidores de CTLA-4, 10 a 20% dos tratados com inibidores de PD-1, e MAIS DE 20% dos pacientes tratados com TERAPIA COMBINADA. ⚠️ Guarde a ressalva junto com os números: o próprio artigo diz que a frequência é \"notada de forma variável na literatura\". ⚠️ VINTAGE: estimativas de uma revisão de 2019; o uso de imunoterapia se expandiu muito desde então.",
+      "secao": "Checkpoint — frequência da disfunção tireoidiana PRIMÁRIA",
+      "cit": [
+        [
+          0,
+          17465,
+          276
+        ]
+      ],
+      "cit_sha": "c4886260fa739559"
+    },
+    {
+      "afirmacao": "⚠️ INIBIDOR DE CHECKPOINT — O CURSO TÍPICO DA TIREOIDE, DO INÍCIO AO HIPOTIREOIDISMO DEFINITIVO (NEJM 2019, Burch). A MAIORIA dos pacientes que recebem essa terapia para câncer tem TIREOIDITE INDOLOR, apresentando-se com TIREOTOXICOSE TRANSITÓRIA SEGUIDA DE HIPOTIREOIDISMO; a doença de GRAVES RARAMENTE ocorre. CRONOLOGIA: a tireotoxicose tipicamente se desenvolve 4 a 8 semanas após o início da terapia, mas PODE ocorrer em até 2 semanas com terapia COMBINADA, ou até 18 semanas com monoterapia anti-CTLA-4; a fase tireotóxica é frequentemente LEVE e PODE PASSAR DESPERCEBIDA, resolvendo-se em 3 a 10 semanas — porém casos MODERADOS e GRAVES já ocorreram. O HIPOTIREOIDISMO instala-se 10 a 20 semanas após o início da terapia e é FREQUENTEMENTE IRREVERSÍVEL. ⚠️ O QUE FAZER COM A DROGA: a terapia de bloqueio de checkpoint GERALMENTE NÃO É INTERROMPIDA por causa de efeitos adversos tireoidianos, que são manejados CONVENCIONALMENTE. ⚠️ Doença real (tireoidite destrutiva), não artefato: tireotoxicose aqui NÃO é indicação de tionamida como na Graves.",
+      "secao": "Checkpoint — o padrão: tireoidite destrutiva, cronologia e o que fazer com a droga",
+      "cit": [
+        [
+          0,
+          17742,
+          734
+        ]
+      ],
+      "cit_sha": "b33dc1b940014dfd"
+    },
+    {
+      "afirmacao": "INIBIDOR DE CHECKPOINT E ANTICORPOS TIREOIDIANOS (NEJM 2019, Burch): acredita-se que a disfunção tireoidiana durante o bloqueio de checkpoint reflita REDUÇÃO DA AUTOTOLERÂNCIA IMUNE causada por esses fármacos. Em 40 a 50% dos pacientes afetados, anticorpos ANTIPEROXIDASE TIREOIDIANA ou ANTITIREOGLOBULINA estão presentes NO MOMENTO da disrupção tireoidiana, mas seu papel FISIOPATOLÓGICO é INCERTO; a MAIORIA das séries NÃO inclui níveis de anticorpo PRÉ-TRATAMENTO. Alguns estudos mostram aumento de anticorpos preexistentes ou desenvolvimento de anticorpos durante o bloqueio. ⚠️ UM teste PRÉ-TRATAMENTO POSITIVO para anticorpos indica RISCO AUMENTADO de disfunção tireoidiana induzida pelo fármaco. A revisão registra que estudos mecanísticos adicionais ainda são necessários.",
+      "secao": "Checkpoint — anticorpos tireoidianos antes e durante",
+      "cit": [
+        [
+          0,
+          18477,
+          620
+        ]
+      ],
+      "cit_sha": "d23f1ef8353ed7c2"
+    },
+    {
+      "afirmacao": "⚠️ INTERLEUCINA-2 E INTERFERON ALFA — DOENÇA TIREOIDIANA REAL POR TIREOIDITE (NEJM 2019, Burch). O uso de citocinas imunoestimulatórias inespecíficas como a INTERLEUCINA-2 e o INTERFERON ALFA em pacientes com carcinoma de células renais metastático, melanoma ou HEPATITE C resulta em disfunção tireoidiana em 15 a 50% dos pacientes, com graus variáveis de HIPOTIREOIDISMO frequentemente PRECEDIDO DE TIREOTOXICOSE devida a TIREOIDITE. DADOS: em uma série de 89 pacientes com tumores sólidos tratados com interleucina-2, a disfunção tireoidiana se desenvolveu em 22% dos pacientes, manifestando-se como tireotoxicose LEVE em mediana de 7 semanas e hipotireoidismo subsequente em mediana de 11 semanas; anticorpos tireoidianos surgiram na MAIORIA dos pacientes que tinham testes NEGATIVOS antes do tratamento.",
+      "secao": "Interleucina-2 e interferon alfa — disfunção tireoidiana",
+      "cit": [
+        [
+          0,
+          19231,
+          669
+        ]
+      ],
+      "cit_sha": "327628fdbd502ada"
+    },
+    {
+      "afirmacao": "INTERFERON ALFA NA HEPATITE C (NEJM 2019, Burch): entre 1233 pacientes com hepatite C que estavam EUTIREÓIDEOS ANTES de receber interferon alfa, eventos tireoidianos ocorreram em 16,7% dos pacientes — incluindo aproximadamente 5% com TIREOTOXICOSE e 12% com HIPOTIREOIDISMO. ⚠️ Os mecanismos da disfunção tireoidiana induzida por citocinas são POUCO COMPREENDIDOS, mas fatores de risco para autoimunidade tireoidiana — SEXO FEMININO, teste POSITIVO para anticorpos tireoidianos no basal ou durante o tratamento, e TSH BASAL MARGINALMENTE NORMAL — estão desproporcionalmente presentes nos pacientes afetados.",
+      "secao": "Interferon alfa na hepatite C — frequência e fatores de risco",
+      "cit": [
+        [
+          0,
+          19901,
+          548
+        ]
+      ],
+      "cit_sha": "29a616c56b4e2ada"
+    },
+    {
+      "afirmacao": "⚠️ ALENTUZUMABE — O FÁRMACO QUE CAUSA DOENÇA DE GRAVES (NEJM 2019, Burch). O alentuzumabe é anticorpo monoclonal humanizado contra o antígeno de superfície celular CD52; o tratamento leva a DEPLEÇÃO PROFUNDA de linfócitos B e T circulantes e a ALTA TAXA de autoimunidade tireoidiana em pacientes com ESCLEROSE MÚLTIPLA. DADOS: entre 248 pacientes tratados com alentuzumabe, a disfunção tireoidiana se desenvolveu em 41,1%, e a DOENÇA DE GRAVES se desenvolveu em 71,6% dos pacientes afetados; o intervalo MEDIANO entre a dose FINAL de alentuzumabe e o início da doença de Graves foi de 17 MESES. Tireoidite SUBAGUDA e hipotireoidismo PRIMÁRIO também são vistos com frequência aumentada após alentuzumabe. ⚠️ Doença autoimune real, não artefato — e de latência longa: o Graves aparece MESES DEPOIS de terminada a droga.",
+      "secao": "Alentuzumabe — doença de Graves na esclerose múltipla",
+      "cit": [
+        [
+          0,
+          20450,
+          643
+        ]
+      ],
+      "cit_sha": "a1ca0ecf412edd7c"
+    },
+    {
+      "afirmacao": "⚠️ ALENTUZUMABE — POR QUANTO TEMPO VIGIAR A TIREOIDE (NEJM 2019, Burch): a MAIORIA dos casos de disfunção tireoidiana associada ao alentuzumabe é diagnosticada DENTRO DE 3 ANOS após o término da terapia, MAS já ocorreram casos 5 a 9 ANOS após a cessação do fármaco. ⚠️ ALÉM DISSO: a doença de Graves após alentuzumabe associa-se a ALTA TAXA DE FLUTUAÇÃO dos anticorpos ESTIMULANTES e BLOQUEADORES contra o receptor de TSH — um evento INCOMUM que se manifesta como PERÍODOS ALTERNANTES de HIPERTIREOIDISMO e HIPOTIREOIDISMO. ⚠️ Consequência prática: paciente que \"vira\" de hiper para hipo sob/depois de alentuzumabe não é necessariamente supertratamento com tionamida — pode ser troca do tipo de anticorpo. ⚠️ A citação está partida pela quebra de página do PDF, marcada por elisão declarada.",
+      "secao": "Alentuzumabe — até quando vigiar, e a alternância hiper/hipo",
+      "cit": [
+        [
+          0,
+          21094,
+          44
+        ],
+        [
+          0,
+          21433,
+          396
+        ]
+      ],
+      "cit_sha": "aa560a2cd065d31d"
+    },
+    {
+      "afirmacao": "ALENTUZUMABE, ANTICORPOS E ESPECIFICIDADE DE CONTEXTO (NEJM 2019, Burch): em um ensaio clínico de fase 2 de alentuzumabe em pacientes com esclerose múltipla, 15,1% dos participantes que desenvolveram disfunção tireoidiana tinham testes POSITIVOS para anticorpos antiperoxidase tireoidiana NO BASAL, e 54,8% tinham testes NEGATIVOS no basal que se tornaram POSITIVOS durante o tratamento. ⚠️ NOTAVELMENTE, o uso de alentuzumabe em pacientes com LEUCEMIA ou com ARTRITE REUMATOIDE NÃO foi associado a doença de Graves; e o uso de outra imunoterapia, o INTERFERON BETA-1a, em pacientes com esclerose múltipla, resulta em taxa comparativamente BAIXA de disfunção tireoidiana, de 6,5%. ⚠️ Portanto o risco tireoidiano do alentuzumabe não é transferível automaticamente entre indicações.",
+      "secao": "Alentuzumabe — anticorpos e o contraste com outras indicações",
+      "cit": [
+        [
+          0,
+          21830,
+          580
+        ]
+      ],
+      "cit_sha": "16bab9f8622d61ac"
+    },
+    {
+      "afirmacao": "AUTOIMUNIDADE TIREOIDIANA APÓS RECUPERAÇÃO DO SISTEMA IMUNE (NEJM 2019, Burch): os mecanismos da autoimunidade tireoidiana após alentuzumabe NÃO são conhecidos; UMA interpretação dos dados de reconstituição linfocitária SUGERE que a recuperação precoce de linfócitos B na janela que precede o reaparecimento de linfócitos T reguladores permita autoimunidade mediada por células B. ⚠️ OUTROS EXEMPLOS do mesmo fenômeno — autoimunidade tireoidiana que aparece DEPOIS de o sistema imune se recuperar — incluem: doença de GRAVES após terapia antirretroviral altamente ativa para infecção avançada pelo HIV; autoimunidade tireoidiana em pacientes CURADOS de doença de Cushing endógena; e autoimunidade tireoidiana no período PÓS-PARTO.",
+      "secao": "Autoimunidade tireoidiana após reconstituição imune",
+      "cit": [
+        [
+          0,
+          22411,
+          688
+        ]
+      ],
+      "cit_sha": "fc9d67aceb23fe89"
+    },
+    {
+      "afirmacao": "⚠️ INIBIDOR DE TIROSINA-QUINASE / MULTIQUINASE — TIREOIDITE E HIPOTIREOIDISMO REAIS (NEJM 2019, Burch). A terapia oncológica alvo-dirigida com inibidores de TIROSINA-QUINASE ou de MULTIQUINASE foi associada a RISCO AUMENTADO DE TIREOIDITE; as alterações mais amplamente relatadas ocorrem em pacientes recebendo SUNITINIBE para carcinoma de células renais metastático ou para tumores estromais gastrintestinais (GIST). QUANTO: em TRÊS grandes ensaios clínicos, o hipotireoidismo ocorreu em 14 a 25% dos pacientes com carcinoma de células renais tratados com sunitinibe; a MAIORIA dos casos foi classificada como LEVE A MODERADA em gravidade, mas houve casos RAROS de disfunção GRAVE.",
+      "secao": "Inibidor de tirosina-quinase — tireoidite e hipotireoidismo (sunitinibe)",
+      "cit": [
+        [
+          0,
+          24025,
+          539
+        ]
+      ],
+      "cit_sha": "09b3b17ad7f0f1b1"
+    },
+    {
+      "afirmacao": "⚠️ SUNITINIBE — O QUE ESPERAR NO SEGUIMENTO (NEJM 2019, Burch): em um ensaio com 42 pacientes que tinham função tireoidiana NORMAL ANTES do tratamento com sunitinibe, o HIPOTIREOIDISMO ocorreu em 36% dos participantes, MUITOS DELES com TSH MAIOR QUE 20 mUI POR LITRO. A probabilidade de desenvolver hipotireoidismo AUMENTOU COM A DURAÇÃO da terapia. ⚠️ QUARENTA POR CENTO dos pacientes apresentaram TIREOTOXICOSE TRANSITÓRIA ANTES de o hipotireoidismo se instalar — achado consistente com TIREOIDITE DESTRUTIVA. ⚠️ Portanto tireotoxicose sob sunitinibe é fase de tireoidite destrutiva, não Graves — e o hipotireoidismo que a segue é doença real, com TSH que pode passar de 20 mUI/L.",
+      "secao": "Sunitinibe — magnitude, tempo e a fase tireotóxica que precede",
+      "cit": [
+        [
+          0,
+          24565,
+          470
+        ]
+      ],
+      "cit_sha": "35823e64755bdf5a"
+    },
+    {
+      "afirmacao": "MECANISMO PROPOSTO DA TIREOIDITE POR INIBIDOR DE TIROSINA-QUINASE (NEJM 2019, Burch): os mecanismos que contribuem para o desenvolvimento de tireoidite nesses pacientes PODEM estar relacionados a ISQUEMIA resultante da inibição do RECEPTOR DO FATOR DE CRESCIMENTO ENDOTELIAL VASCULAR (VEGFR) por vários fármacos dessa classe; INVOLUÇÃO TIREOIDIANA MARCADA foi notada à ULTRASSONOGRAFIA em alguns pacientes afetados. ⚠️ Mecanismo apresentado como hipótese (\"podem estar relacionados\"), não como fato estabelecido.",
+      "secao": "Inibidor de tirosina-quinase — mecanismo proposto",
+      "cit": [
+        [
+          0,
+          25036,
+          340
+        ]
+      ],
+      "cit_sha": "978d5a938905e2f1"
+    },
+    {
+      "afirmacao": "⚠️ INIBIDOR DE TIROSINA-QUINASE NO PACIENTE QUE JÁ USA LEVOTIROXINA (NEJM 2019, Burch): os inibidores de tirosina-quinase TAMBÉM parecem AUMENTAR O METABOLISMO do hormônio tireoidiano. Um estudo de SORAFENIBE em pacientes DEPENDENTES DE LEVOTIROXINA com câncer de tireoide mostrou que, 26 SEMANAS após o início do tratamento, havia evidência de INATIVAÇÃO ACELERADA DA LEVOTIROXINA por atividade AUMENTADA da DESIODASE TIPO 3. ⚠️ Consequência: TSH que sobe após iniciar um inibidor de tirosina-quinase em paciente DEPENDENTE DE LEVOTIROXINA (a fonte estudou câncer de tireoide; não diz \"tireoidectomizado\") pode ser necessidade REAL de dose maior — mecanismo distinto da tireoidite destrutiva descrita para o sunitinibe.",
+      "secao": "Inibidor de tirosina-quinase — aumento da necessidade de levotiroxina (sorafenibe)",
+      "cit": [
+        [
+          0,
+          29235,
+          317
+        ]
+      ],
+      "cit_sha": "0cf3a9b3f93d7d81"
+    },
+    {
+      "afirmacao": "⚠️ BEXAROTENO — HIPOTIREOIDISMO CENTRAL REAL, E DE ALTA FREQUÊNCIA (NEJM 2019, Burch): o retinoide sintético BEXAROTENO induz supressão RÁPIDA E PROFUNDA do TSH, levando a HIPOTIREOIDISMO CENTRAL FRANCO em 40 A 70% DOS PACIENTES TRATADOS, com recuperação da função normal DENTRO DE SEMANAS após a suspensão do fármaco. MECANISMO: ação DIRETA do bexaroteno sobre os tireotrofos hipofisários, agravada por metabolismo aumentado do hormônio tireoidiano por vias NÃO DESIODASE, como a SULFATAÇÃO. ⚠️ Aqui o TSH BAIXO com T4 livre BAIXO é doença central verdadeira, não artefato de ensaio — e o TSH NÃO serve para monitorar a reposição.",
+      "secao": "Bexaroteno — hipotireoidismo CENTRAL",
+      "cit": [
+        [
+          0,
+          11683,
+          436
+        ]
+      ],
+      "cit_sha": "0458bcab92a012e6"
+    },
+    {
+      "afirmacao": "⚠️ MITOTANO — HIPOTIREOIDISMO CENTRAL NA MAIORIA DOS TRATADOS (NEJM 2019, Burch): o mitotano causa HIPOTIREOIDISMO na MAIORIA dos pacientes tratados para CARCINOMA ADRENOCORTICAL. PADRÃO LABORATORIAL: T4 livre SUBNORMAL com nível de TSH INAPROPRIADAMENTE NORMAL e resposta EMBOTADA do tireotrofo ao TRH — achados CONSISTENTES COM HIPOTIREOIDISMO CENTRAL. O T4 livre começa a cair DENTRO DOS PRIMEIROS 3 MESES de tratamento com mitotano, e reposição de hormônio tireoidiano de LONGO PRAZO é frequentemente necessária. ⚠️ Ler TSH normal como \"tireoide normal\" neste paciente é o erro clássico: o TSH inapropriadamente normal É o achado da doença central. ⚠️ ANTES DE REPOR — O ARTIGO NÃO DIZ ISTO, O NÚCLEO DIZ: o mitotano é adrenolítico e o núcleo do Endodirect registra que o INÍCIO de mitotano pode PRECIPITAR CRISE ADRENAL. Iniciar hormônio tireoidiano em paciente com insuficiência adrenal não tratada precipita crise adrenal — garanta a cobertura com glicocorticoide antes de repor, como o fato do ipilimumabe/hipofisite já adverte para o hipotireoidismo central de outra causa. ⚠️ E o TSH não serve para monitorar a reposição no hipotireoidismo central: acompanhe pelo T4 livre.",
+      "secao": "Mitotano — hipotireoidismo central no carcinoma adrenocortical",
+      "cit": [
+        [
+          0,
+          12120,
+          465
+        ]
+      ],
+      "cit_sha": "c295d5b42037ddbe",
+      "nucleo_sha": "69830687ee78"
+    },
+    {
+      "afirmacao": "⚠️ TSH BAIXO COM T4 LIVRE NORMAL SOB ESTES FÁRMACOS NEM SEMPRE É HIPERTIREOIDISMO SUBCLÍNICO — E É ESSA A ARMADILHA (NEJM 2019, Burch). VÁRIAS categorias de fármacos exercem efeito SUPRESSOR sobre a liberação de TSH SEM afetar apreciavelmente os níveis circulantes de T4 — a saber: GLICOCORTICOIDES, AGONISTAS DOPAMINÉRGICOS, ANÁLOGOS DE SOMATOSTATINA e METFORMINA. Embora a supressão do TSH nesses pacientes seja USUALMENTE METABOLICAMENTE INSIGNIFICANTE, um TSH BAIXO com T4 livre NORMAL PODE ser confundido com HIPERTIREOIDISMO SUBCLÍNICO, levando a AVALIAÇÃO OU TRATAMENTO DESNECESSÁRIOS. ⚠️ NÃO É EXCLUSÃO, É GRADAÇÃO: a fonte diz \"usualmente\" metabolicamente insignificante e \"pode\" ser confundido — ela não afirma que hipertireoidismo subclínico está descartado. O fármaco explica o TSH baixo; ele não impede que o mesmo paciente também tenha doença tireoidiana. ⚠️ Aqui a supressão do TSH é efeito farmacológico central real, não artefato de método — mas também NÃO é tireotoxicose: não indica tionamida nem radioiodo.",
+      "secao": "Glicocorticoide, agonista dopaminérgico, análogo de somatostatina e metformina — TSH baixo SEM doença",
+      "cit": [
+        [
+          0,
+          13733,
+          484
+        ]
+      ],
+      "cit_sha": "0e8ff281d9d45f8f"
+    },
+    {
+      "afirmacao": "⚠️ TBG (GLOBULINA LIGADORA DE TIROXINA) — A LISTA DOS DOIS SENTIDOS (NEJM 2019, Burch). AUMENTAM a TBG: ESTROGÊNIO ORAL e MODULADORES SELETIVOS DO RECEPTOR DE ESTROGÊNIO (SERMs), METADONA, HEROÍNA, MITOTANO e FLUOROURACILA. REDUZEM a TBG: ANDROGÊNIOS, GLICOCORTICOIDES e NIACINA. ⚠️ As alterações MAIS COMUNS E CLINICAMENTE RELEVANTES da TBG ocorrem com fármacos CONTENDO ESTROGÊNIO em pacientes que fazem REPOSIÇÃO com hormônio tireoidiano: nesses pacientes, o aumento da ligação proteica leva a ligação ADICIONAL de T4 e, consequentemente, a T4 LIVRE BAIXO. ⚠️ Fato complementar (necessidade de dose e via transdérmica) está no fato \"Estrogênio — muda a NECESSIDADE de levotiroxina\".",
+      "secao": "TBG — quem aumenta e quem reduz a globulina ligadora de tiroxina",
+      "cit": [
+        [
+          0,
+          25428,
+          569
+        ]
+      ],
+      "cit_sha": "6109f46e8a6222c7"
+    },
+    {
+      "afirmacao": "⚠️ ESTROGÊNIO ORAL MUDA A DOSE DE LEVOTIROXINA — E O TRANSDÉRMICO NÃO (NEJM 2019, Burch). O paciente DEPENDENTE de hormônio tireoidiano EXÓGENO terá NECESSIDADE DE DOSE AUMENTADA após o INÍCIO do tratamento com ESTROGÊNIO ORAL; já em pacientes com TIREOIDE FUNCIONANTE, a produção ENDÓGENA de hormônio tireoidiano AUMENTA e compensa. ⚠️ O ESTRADIOL TRANSDÉRMICO tem efeito MÍNIMO sobre a globulina ligadora de tiroxina, porque essa via de administração CONTORNA O EFEITO DE PRIMEIRA PASSAGEM HEPÁTICO. ⚠️ Consequência prática: ao iniciar estrogênio oral em mulher em uso de levotiroxina, reavaliar o TSH e esperar precisar de MAIS levotiroxina; trocar para via transdérmica evita o problema. ⚠️ O mecanismo (aumento da TBG) está no fato \"TBG — quem aumenta e quem reduz a globulina ligadora de tiroxina\"; a citação abaixo começa no meio da palavra \"dependent\" por quebra de página do PDF.",
+      "secao": "Estrogênio — muda a NECESSIDADE de levotiroxina; transdérmico não",
+      "cit": [
+        [
+          0,
+          26571,
+          393
+        ]
+      ],
+      "cit_sha": "08e5d7a3ef94d550"
+    },
+    {
+      "afirmacao": "DESLOCAMENTO DO HORMÔNIO TIREOIDIANO DAS PROTEÍNAS DE LIGAÇÃO (NEJM 2019, Burch): ocorre com os antiepilépticos FENITOÍNA e CARBAMAZEPINA, com o SALSALATO e alguns outros ANTI-INFLAMATÓRIOS NÃO ESTEROIDAIS, com FUROSEMIDA EM ALTA DOSE e com preparações de HEPARINA. ⚠️ A importância CLÍNICA dessas interações é FREQUENTEMENTE DESPREZÍVEL, e no caso dos ANTIEPILÉPTICOS e da HEPARINA os efeitos envolvem PRIMARIAMENTE ALTERAÇÕES NO EXAME LABORATORIAL de função tireoidiana — ou seja, ARTEFATO, e não doença.",
+      "secao": "Deslocamento das proteínas de ligação — quais fármacos e o que significa",
+      "cit": [
+        [
+          0,
+          26965,
+          470
+        ]
+      ],
+      "cit_sha": "c9552d4d90277f0f"
+    },
+    {
+      "afirmacao": "⚠️ POR QUE UM FÁRMACO CONSEGUE DERRUBAR O T3 SEM MEXER NA TIREOIDE (NEJM 2019, Burch): CEM POR CENTO do T4 é produzido NA TIREOIDE, MAS 80% do T3 — a forma ATIVA do hormônio tireoidiano — deriva da 5-MONODESIODAÇÃO do T4 em TECIDOS PERIFÉRICOS como FÍGADO e RIM, pela ação das desiodases tipo 1 e tipo 2. ⚠️ É por isso que amiodarona, dexametasona, propranolol em altas doses, ipodato/ácido iopanoico e propiltiouracil conseguem reduzir o T3 agindo FORA da tireoide — e por que T3 baixo nesses pacientes não indica, por si só, doença tireoidiana. ⚠️ Citação literal de PDF de duas colunas, com as palavras intercaladas na extração.",
+      "secao": "Fisiologia — 80% do T3 vem da conversão PERIFÉRICA (base do efeito dos inibidores de conversão)",
+      "cit": [
+        [
+          0,
+          2175,
+          255
+        ]
+      ],
+      "cit_sha": "6a9289f0f08d1b82"
+    },
+    {
+      "afirmacao": "⚠️ POR QUE COLESTIRAMINA E INDUTORES ENZIMÁTICOS MEXEM NO HORMÔNIO TIREOIDIANO (NEJM 2019, Burch): a CONJUGAÇÃO do hormônio tireoidiano, por GLICURONIDAÇÃO e SULFATAÇÃO no FÍGADO e no RIM, aumenta sua SOLUBILIDADE EM ÁGUA e permite a secreção na BILE. Enquanto o hormônio SULFATADO é rapidamente submetido a nova desiodação e eliminado na urina ou nas fezes, o hormônio GLICURONIDADO pode ser eliminado nas fezes OU ser DESCONJUGADO POR MICRORGANISMOS INTESTINAIS e RECICLADO na CIRCULAÇÃO ÊNTERO-HEPÁTICA. ⚠️ São estes os dois pontos onde os fármacos entram: o sequestrante de ácidos biliares interrompe a reciclagem (e derruba o hormônio), e o indutor de glicuronidação acelera a eliminação (e aumenta a necessidade de levotiroxina). ⚠️ Os NOMES dos indutores (fenobarbital, fenitoína, carbamazepina, rifampicina) NÃO estão nesta citação: estão no fato \"Indutores de glicuronidação — aumentam a necessidade de levotiroxina\".",
+      "secao": "Fisiologia — recirculação êntero-hepática (base do efeito dos sequestrantes e dos indutores enzimáticos)",
+      "cit": [
+        [
+          0,
+          9631,
+          432
+        ]
+      ],
+      "cit_sha": "e93d0ced45c6994f"
+    },
+    {
+      "afirmacao": "FISIOLOGIA QUE EXPLICA O ARTEFATO DAS PROTEÍNAS DE LIGAÇÃO (NEJM 2019, Burch): o hormônio tireoidiano circulante está MAIS DE 99% ligado a proteínas carreadoras — globulina ligadora de tiroxina (TBG), TRANSTIRRETINA e ALBUMINA. ⚠️ Os níveis séricos de ALBUMINA e de TRANSTIRRETINA são MUITO MAIS ALTOS que o nível de TBG, mas é a TBG que responde por APROXIMADAMENTE 75% DA LIGAÇÃO, por sua MAIOR AFINIDADE pelo hormônio tireoidiano. ⚠️ É por isso que um fármaco que mexe na TBG (estrogênio, androgênio, glicocorticoide, niacina) desloca o T4 total sem que exista doença tireoidiana.",
+      "secao": "Fisiologia — 99% ligado, e a TBG responde por ~75% da ligação",
+      "cit": [
+        [
+          0,
+          8424,
+          560
+        ]
+      ],
+      "cit_sha": "0cc2717b2ccfb3f5"
+    },
+    {
+      "afirmacao": "⚠️ REGRA GERAL DO ARTEFATO (NEJM 2019, Burch): VÁRIOS fármacos estão associados a RESULTADOS ANORMAIS de exames laboratoriais da tireoide em pessoas EUTIREÓIDEAS (Tabela 2 do artigo). ⚠️ A CONSCIÊNCIA dessas interações e a CAPACIDADE DE DISTINGUIR esses efeitos da DISFUNÇÃO TIREOIDIANA VERDADEIRA PREVINEM intervenções diagnósticas ou terapêuticas DESNECESSÁRIAS. ⚠️ Esta é a pergunta a fazer antes de tratar qualquer exame tireoidiano discrepante: o paciente está clinicamente eutireóideo e usando algum fármaco desta lista?",
+      "secao": "Exames alterados no EUTIREÓIDEO — a regra geral",
+      "cit": [
+        [
+          0,
+          32166,
+          299
+        ]
+      ],
+      "cit_sha": "6553a00a89566229"
+    },
+    {
+      "afirmacao": "⚠️ BIOTINA — O ARTEFATO QUE IMITA GRAVES (NEJM 2019, Burch). A biotina é usada FARMACOLOGICAMENTE para tratar distúrbios NEUROMUSCULARES como a ESCLEROSE MÚLTIPLA e é também SUPLEMENTO ALIMENTAR POPULAR. Reagentes laboratoriais BIOTINILADOS são amplamente usados em laboratórios clínicos por sua FORTE LIGAÇÃO à ESTREPTAVIDINA fixada em fase sólida, e ensaios comerciais para T4 LIVRE, T3, TSH e ANTICORPO ANTIRRECEPTOR DE TSH (TRAb) comumente INCLUEM BIOTINILAÇÃO. ⚠️ NUMEROSOS RELATOS de interferência da biotina levando a DIAGNÓSTICO E MANEJO INCORRETOS já foram publicados, incluindo casos com TSH FALSAMENTE BAIXO, T4 LIVRE FALSAMENTE ALTO e resultado POSITIVO de anticorpo ANTIRRECEPTOR DE TSH. ⚠️ Ver o fato complementar \"Biotina — mimetiza EXATAMENTE a bioquímica da doença de Graves; doses e direção por plataforma\", que traz a conclusão da mesma frase (partida por quebra de página do PDF), as doses envolvidas e a direção do erro em cada tipo de ensaio.",
+      "secao": "Biotina — por que interfere, e o TRIO de resultados falsos",
+      "cit": [
+        [
+          0,
+          32473,
+          768
+        ]
+      ],
+      "cit_sha": "82c857a68d49416f"
+    },
+    {
+      "afirmacao": "⚠️ BIOTINA — O DANO CONCRETO, AS DOSES E A DIREÇÃO DO ERRO (NEJM 2019, Burch). Em casos publicados, os resultados dos testes de anticorpo [antirreceptor de TSH, junto com TSH falsamente baixo e T4 livre falsamente alto — ver o fato \"Biotina — por que interfere, e o TRIO de resultados falsos\"] MIMETIZARAM EXATAMENTE OS ACHADOS BIOQUÍMICOS DA DOENÇA DE GRAVES. ⚠️ DOSE: embora tais casos frequentemente envolvam doses de biotina de 300 mg por dia OU MAIS, GRAUS MENORES de interferência ocorrem com doses tão BAIXAS quanto 10 mg POR DIA — ou seja, suplemento de balcão em dose cosmética já basta para atrapalhar. ⚠️ DIREÇÃO DO ERRO POR PLATAFORMA: a direção e o grau da interferência DEPENDEM DA PLATAFORMA DO ENSAIO — métodos de DOIS SÍTIOS (SANDUÍCHE), usados na MAIORIA dos ensaios de TSH, mostram valores FALSAMENTE BAIXOS; e IMUNOENSAIOS COMPETITIVOS para hormônio tireoidiano produzem resultados FALSAMENTE ELEVADOS. ⚠️ Isto é ARTEFATO DE MÉTODO em pessoa EUTIREÓIDEA: tratar como Graves (tionamida, radioiodo) é dano direto.",
+      "secao": "Biotina — mimetiza EXATAMENTE a bioquímica da doença de Graves; doses e direção por plataforma",
+      "cit": [
+        [
+          0,
+          34645,
+          514
+        ]
+      ],
+      "cit_sha": "936bb6f4727c4cfc"
+    },
+    {
+      "afirmacao": "⚠️ BIOTINA — CONDUTA (NEJM 2019, Burch): dada a ALTA PREVALÊNCIA de suplementação de biotina na POPULAÇÃO GERAL, pacientes com resultados INCONGRUENTES de exames laboratoriais da tireoide DEVEM SER PERGUNTADOS se tomam suplementos de biotina. A interferência do ensaio frequentemente SE RESOLVE DENTRO DE 48 HORAS após a descontinuação da biotina, MAS os pacientes devem se ABSTER do suplemento por VÁRIOS DIAS antes de o exame ser repetido. ⚠️ Ou seja: antes de tratar TSH suprimido com T4 livre alto, pergunte por biotina e repita o exame depois de alguns dias sem o suplemento.",
+      "secao": "Biotina — o que fazer na prática",
+      "cit": [
+        [
+          0,
+          35160,
+          389
+        ]
+      ],
+      "cit_sha": "3c8c705be4f58023"
+    },
+    {
+      "afirmacao": "MECANISMO DA INTERFERÊNCIA DA BIOTINA NO ENSAIO DE TSH (legenda da Figura 3 do NEJM 2019, Burch): o EXCESSO DE BIOTINA produz interferência VARIÁVEL em ensaios que usam reagentes biotinilados; em ensaios de DOIS SÍTIOS (SANDUÍCHE), INCLUINDO OS DE TSH, o nível de TSH resulta FALSAMENTE BAIXO OU INDETECTÁVEL. ⚠️ MECANISMO (Painéis C e D da figura, agora dentro da citação): na presença de excesso de biotina, o complexo do TSH com os anticorpos anti-TSH NÃO CONSEGUE COMPETIR EFICAZMENTE pela ligação à estreptavidina na fase sólida; após a lavagem, o SINAL BAIXO resulta em um VALOR DE TSH FALSAMENTE BAIXO. ⚠️ Artefato de método em pessoa eutireóidea — o TSH indetectável NÃO é tireotoxicose.",
+      "secao": "Biotina — mecanismo no ensaio de TSH (sanduíche)",
+      "cit": [
+        [
+          0,
+          30540,
+          1017
+        ]
+      ],
+      "cit_sha": "a3258bc9d6b2028f"
+    },
+    {
+      "afirmacao": "MECANISMO DA INTERFERÊNCIA DA BIOTINA NO T4 LIVRE (legenda da Figura 4 do NEJM 2019, Burch): em ALGUNS IMUNOENSAIOS COMPETITIVOS, INCLUINDO OS DE T4 LIVRE, T3 LIVRE E ANTICORPOS ANTIRRECEPTOR DE TSH, os resultados PODEM SER FALSAMENTE ELEVADOS. ⚠️ MECANISMO (Painéis C e D da figura, agora dentro da citação): o excesso de biotina no soro MONOPOLIZA OS SÍTIOS DE LIGAÇÃO DA ESTREPTAVIDINA, impedindo a ligação dos complexos; como o valor de T4 livre no ensaio é INVERSAMENTE PROPORCIONAL à quantidade de marcador remanescente após a lavagem, o sinal BAIXO OU AUSENTE leva ao cálculo de um valor de T4 LIVRE FALSAMENTE ELEVADO. ⚠️ É por isso que a biotina produz, ao mesmo tempo, TSH baixo e T4 livre alto — o retrato bioquímico da tireotoxicose, sem tireotoxicose.",
+      "secao": "Biotina — mecanismo no ensaio de T4 livre (competitivo)",
+      "cit": [
+        [
+          0,
+          33691,
+          953
+        ]
+      ],
+      "cit_sha": "4f4bfbbd24b021dc"
+    },
+    {
+      "afirmacao": "TABELA 2 do NEJM 2019 (Burch) — LINHA DA BIOTINA, completa e autorrotulada: BIOTINA, classe \"MICRONUTRIENTE\", com TSH BAIXO, T4 LIVRE ALTO e T3 ALTO, MIMETIZANDO HIPERTIREOIDISMO PRIMÁRIO. ⚠️ A ordem das colunas (TSH, T4 livre, T3) está provada no fato \"Amiodarona — Tabela 2, coluna do TSH\", que cita o cabeçalho da tabela; e a direção de cada valor é CORROBORADA pelo texto corrido do próprio artigo (TSH falsamente baixo, T4 livre falsamente alto). ⚠️ Paciente EUTIREÓIDEO: nada disso é doença.",
+      "secao": "Biotina — linha da Tabela 2",
+      "cit": [
+        [
+          0,
+          27943,
+          58
+        ]
+      ],
+      "cit_sha": "5a70d86435a8a5f7"
+    },
+    {
+      "afirmacao": "⚠️ HEPARINA — T4 LIVRE E T3 FALSAMENTE ALTOS, POR REAÇÃO QUE ACONTECE NO TUBO (NEJM 2019, Burch). A heparina LIBERA LIPASE LIPOPROTEICA do endotélio vascular; a amostra de sangue de um paciente que recebe heparina tem ATIVIDADE AUMENTADA de lipase lipoproteica, que PERSISTE IN VITRO. Os ÁCIDOS GRAXOS LIVRES liberados pela lipase DESLOCAM T4 e T3 das proteínas de ligação, causando valores ESPURIAMENTE ALTOS. Os ensaios de hormônio LIVRE com PERÍODOS DE INCUBAÇÃO PROLONGADOS — como a medida por DIÁLISE DE EQUILÍBRIO — são os MAIS AFETADOS; efeitos SEMELHANTES são vistos com preparações de HEPARINA DE BAIXO PESO MOLECULAR. ⚠️ COMO RESOLVER: ensaios competitivos PADRÃO de hormônio livre e a dosagem de TSH GERALMENTE NÃO SÃO AFETADOS, então o exame pode ser REPETIDO com esses ensaios, ou os valores REVERIFICADOS 24 HORAS APÓS a heparina ter sido interrompida. ⚠️ Artefato de método — não é tireotoxicose e não se trata.",
+      "secao": "Heparina — T4 livre e T3 falsamente altos (artefato in vitro)",
+      "cit": [
+        [
+          0,
+          37328,
+          751
+        ]
+      ],
+      "cit_sha": "3c0cb003cdec1f22"
+    },
+    {
+      "afirmacao": "TABELA 2 do NEJM 2019 (Burch) — LINHAS DA ENOXAPARINA E DA HEPARINA, completas e autorrotuladas: ENOXAPARINA, classe \"ANTICOAGULANTE\", com TSH NORMAL, T4 LIVRE ALTO e T3 ALTO, MIMETIZANDO ADENOMA HIPOFISÁRIO SECRETOR DE TSH ou RESISTÊNCIA AO HORMÔNIO TIREOIDIANO; e HEPARINA, classe \"ANTICOAGULANTE\", com o MESMO padrão (TSH NORMAL, T4 LIVRE ALTO, T3 ALTO) e as MESMAS condições mimetizadas. ⚠️ A ordem das colunas (TSH, T4 livre, T3) está provada no fato \"Amiodarona — Tabela 2, coluna do TSH\", que cita o cabeçalho; e a direção dos valores é CORROBORADA pelo texto corrido (deslocamento por ácidos graxos livres eleva espuriamente T4 livre e T3, com TSH geralmente não afetado). ⚠️ Paciente EUTIREÓIDEO — não investigar TSHoma sem antes suspeitar da heparina.",
+      "secao": "Heparina e enoxaparina — linhas da Tabela 2",
+      "cit": [
+        [
+          0,
+          28522,
+          220
+        ]
+      ],
+      "cit_sha": "9d508ff5e583ac86"
+    },
+    {
+      "afirmacao": "⚠️ FENITOÍNA, CARBAMAZEPINA E SALSALATO — T4 LIVRE BAIXO QUE NÃO É HIPOTIREOIDISMO CENTRAL (NEJM 2019, Burch). Além de aumentar o metabolismo do hormônio tireoidiano, a FENITOÍNA e a CARBAMAZEPINA DESLOCAM o T4 das proteínas de ligação. Embora o efeito IMEDIATO seja T4 livre TRANSITORIAMENTE ELEVADO com supressão RECÍPROCA do TSH, espera-se que AMBOS os níveis se NORMALIZEM depois de atingido o equilíbrio. Por isso PARECIA PARADOXAL que pacientes CLINICAMENTE EUTIREÓIDEOS em uso dessas medicações tivessem T4 LIVRE BAIXO com TSH NORMAL, sugerindo HIPOTIREOIDISMO CENTRAL. ⚠️ NO ENTANTO, determinou-se afinal que os valores REDUZIDOS de T4 livre nesse contexto são ARTEFATUAIS e estão relacionados à DILUIÇÃO DO SORO em ensaios que exigem essa etapa. Efeitos SEMELHANTES são vistos com o SALSALATO. ⚠️ Consequência: não iniciar levotiroxina nem investigar hipófise nesse paciente por causa desse padrão.",
+      "secao": "Fenitoína, carbamazepina e salsalato — T4 livre BAIXO artefatual",
+      "cit": [
+        [
+          0,
+          38120,
+          710
+        ]
+      ],
+      "cit_sha": "2518e444df5c99ff"
+    },
+    {
+      "afirmacao": "TABELA 2 do NEJM 2019 (Burch) — LINHAS DA FENITOÍNA E DO SALSALATO, completas e autorrotuladas: FENITOÍNA, classe \"AGENTE ANTIEPILÉPTICO\", com TSH NORMAL, T4 LIVRE BAIXO e T3 no LIMITE INFERIOR DA FAIXA NORMAL, MIMETIZANDO HIPOTIREOIDISMO CENTRAL; e SALSALATO, classe \"ANTI-INFLAMATÓRIO NÃO ESTEROIDAL\", com TSH NORMAL, T4 LIVRE no LIMITE INFERIOR DA FAIXA NORMAL e T3 no LIMITE INFERIOR DA FAIXA NORMAL, também MIMETIZANDO HIPOTIREOIDISMO CENTRAL. ⚠️ A ordem das colunas (TSH, T4 livre, T3) está provada no fato \"Amiodarona — Tabela 2, coluna do TSH\"; a direção dos valores é CORROBORADA pelo texto corrido do artigo (T4 livre baixo com TSH normal, artefatual). ⚠️ Paciente EUTIREÓIDEO.",
+      "secao": "Fenitoína e salsalato — linhas da Tabela 2",
+      "cit": [
+        [
+          0,
+          28743,
+          212
+        ]
+      ],
+      "cit_sha": "80c652dba6ba2c30"
+    },
+    {
+      "afirmacao": "TABELA 2 do NEJM 2019 (Burch) — LINHA DA CARBAMAZEPINA E DA OXCARBAZEPINA: classe \"AGENTE ANTIEPILÉPTICO\", com TSH NORMAL, T4 LIVRE BAIXO e T3 no LIMITE INFERIOR DA FAIXA NORMAL, MIMETIZANDO HIPOTIREOIDISMO CENTRAL em pessoa EUTIREÓIDEA. ⚠️ A OXCARBAZEPINA só aparece NA TABELA — o texto corrido do artigo discute apenas fenitoína e carbamazepina. ⚠️ COMO A ATRIBUIÇÃO É RECUPERÁVEL apesar do PDF de duas colunas: a coluna \"Drug\" da Tabela 2 está em ORDEM ALFABÉTICA (Amiodarone, Biotin, Carbamazepine and oxcarbazepine, Enoxaparin, Heparin, Phenytoin, Salsalate) e estas células ficam EXATAMENTE entre a linha da biotina e a da enoxaparina; a ordem das colunas está provada no fato \"Amiodarona — Tabela 2, coluna do TSH\", e a direção dos valores é corroborada pelo texto corrido. ⚠️ A citação abaixo é CONTÍGUA e por isso carrega, no meio, o texto da outra coluna e o rodapé do periódico que o PDF intercalou entre o nome do fármaco e suas células — está ali de propósito, para não costurar trechos distantes.",
+      "secao": "Carbamazepina e oxcarbazepina — linha da Tabela 2",
+      "cit": [
+        [
+          0,
+          28002,
+          519
+        ]
+      ],
+      "cit_sha": "2ac6c982389e3032"
+    },
+    {
+      "afirmacao": "DEXAMETASONA NA TIREOTOXICOSE GRAVE (NEJM 2019, Burch): a amiodarona inibe a geração de T3 tanto DENTRO DA HIPÓFISE quanto NA PERIFERIA; e a inibição da conversão de T4 em T3 pela DEXAMETASONA é EXPLORADA TERAPEUTICAMENTE no tratamento de pacientes com TIREOTOXICOSE GRAVE. ⚠️ Ou seja, o mesmo mecanismo que em outros fármacos é efeito colateral (queda do T3) é aqui usado de propósito. ⚠️ Citação literal de PDF de duas colunas: as células da Tabela 2 e a legenda aparecem intercaladas no meio da frase.",
+      "secao": "Dexametasona — inibição da conversão usada como TRATAMENTO",
+      "cit": [
+        [
+          0,
+          27807,
+          407
+        ]
+      ],
+      "cit_sha": "2ba643cb809afdc9"
+    },
+    {
+      "afirmacao": "⚠️ PROPRANOLOL E CONVERSÃO DE T4 EM T3 — A RESSALVA QUE NÃO PODE SUMIR (NEJM 2019, Burch): embora o propranolol EM ALTAS DOSES conste entre os fármacos que inibem a conversão de T4 em T3, o efeito do propranolol sobre a MONODESIODINAÇÃO NÃO É CLINICAMENTE RELEVANTE NAS DOSES USUAIS. ⚠️ Não atribua ao betabloqueador em dose habitual a queda do T3 de um paciente.",
+      "secao": "Propranolol — a ressalva de dose",
+      "cit": [
+        [
+          0,
+          28956,
+          79
+        ]
+      ],
+      "cit_sha": "4d6c87eb906dfe20"
+    },
+    {
+      "afirmacao": "⚠️ FENOBARBITAL, FENITOÍNA, CARBAMAZEPINA E RIFAMPICINA AUMENTAM A NECESSIDADE DE LEVOTIROXINA (NEJM 2019, Burch): o tratamento com fármacos que INDUZEM ENZIMAS DE GLICURONIDAÇÃO — incluindo FENOBARBITAL, FENITOÍNA, CARBAMAZEPINA e RIFAMPICINA — ÀS VEZES exige AUMENTO da dose de LEVOTIROXINA. ⚠️ Note a gradação: \"às vezes\", não sempre. ⚠️ Isto é efeito FARMACOCINÉTICO REAL sobre o hormônio administrado — distinto do artefato de dosagem que a fenitoína e a carbamazepina também produzem (T4 livre falsamente baixo por diluição do soro no ensaio). O mesmo paciente pode ter os dois fenômenos ao mesmo tempo.",
+      "secao": "Indutores de glicuronidação — aumentam a necessidade de levotiroxina",
+      "cit": [
+        [
+          0,
+          29036,
+          198
+        ]
+      ],
+      "cit_sha": "b391bab52a481c96"
+    },
+    {
+      "afirmacao": "SEQUESTRANTES DE ÁCIDOS BILIARES E HORMÔNIO TIREOIDIANO (NEJM 2019, Burch): COLESTIRAMINA, COLESTIPOL e COLESEVELAM REDUZEM os níveis de hormônio tireoidiano TANTO na tireotoxicose ENDÓGENA quanto na IATROGÊNICA, presumivelmente por INTERFERIR NA RECIRCULAÇÃO ÊNTERO-HEPÁTICA do hormônio tireoidiano. ⚠️ Duas leituras práticas opostas: no paciente em levotiroxina, o sequestrante derruba o hormônio e desestabiliza o controle; na tireotoxicose, esse mesmo efeito é aproveitável.",
+      "secao": "Sequestrantes de ácidos biliares — reduzem o hormônio tireoidiano",
+      "cit": [
+        [
+          0,
+          29553,
+          257
+        ]
+      ],
+      "cit_sha": "4a065f5b4b479ffc"
+    },
+    {
+      "afirmacao": "ABSORÇÃO DA LEVOTIROXINA (NEJM 2019, Burch): os comprimidos de hormônio tireoidiano tomados por via oral requerem MEIO ÁCIDO para DISSOLUÇÃO antes de serem transportados ao intestino delgado para absorção. Aproximadamente 60 A 80% da levotiroxina é ABSORVIDA em 2 A 4 HORAS após uma dose oral em JEJUM. ⚠️ O uso DIÁRIO de INIBIDORES DE BOMBA DE PRÓTONS associa-se a NECESSIDADE AUMENTADA de levotiroxina; essa necessidade é atendida AUMENTANDO A DOSE de levotiroxina OU TROCANDO PARA UMA PREPARAÇÃO LÍQUIDA.",
+      "secao": "Levotiroxina — dissolução ácida, absorção e inibidor de bomba de prótons",
+      "cit": [
+        [
+          0,
+          29870,
+          463
+        ]
+      ],
+      "cit_sha": "38cc244c63bb5524"
+    },
+    {
+      "afirmacao": "⚠️ LEVOTIROXINA — O QUE ATRAPALHA A ABSORÇÃO E O QUE ORIENTAR (NEJM 2019, Burch). INTERFEREM na absorção gastrintestinal do hormônio tireoidiano: SULFATO FERROSO, CARBONATO DE CÁLCIO, HIDRÓXIDO DE ALUMÍNIO, SUCRALFATO, SEQUESTRANTES DE ÁCIDOS BILIARES e RALOXIFENO. RECOMENDA-SE tomar o hormônio tireoidiano 4 HORAS ANTES de ingerir qualquer uma dessas medicações, OU mover a dose de levotiroxina para a HORA DE DORMIR. ESTÔMAGO VAZIO é aconselhado, já que ATÉ fórmula de SOJA, LEITE ou CAFÉ podem prejudicar a absorção. ⚠️ Os pacientes DEVEM SER INFORMADOS de que INICIAR OU PARAR essas medicações afetará a ESTABILIDADE dos níveis de hormônio tireoidiano, exigindo REAVALIAÇÃO após essas mudanças.",
+      "secao": "Levotiroxina — o que atrapalha a absorção e como espaçar",
+      "cit": [
+        [
+          0,
+          31558,
+          548
+        ]
+      ],
+      "cit_sha": "f59c2b87a55b7e6d"
+    },
+    {
+      "afirmacao": "⚠️ A VIA CONTRÁRIA: A DISFUNÇÃO TIREOIDIANA ALTERA O FÁRMACO (NEJM 2019, Burch). Tanto o HIPERtireoidismo quanto o HIPOtireoidismo podem afetar a FARMACOCINÉTICA e a EFICÁCIA de medicamentos comuns, além da FREQUÊNCIA DE EFEITOS ADVERSOS. EXEMPLOS: (1) VARFARINA — necessidade de dose CONTRAINTUITIVAMENTE MENOR durante o HIPERTIREOIDISMO, por TURNOVER ACELERADO dos fatores de coagulação dependentes de VITAMINA K; (2) ESTATINAS — associadas a RISCO AUMENTADO DE MIOPATIA na presença de HIPOTIREOIDISMO. (3) O HIPERTIREOIDISMO ACELERA o metabolismo de numerosos medicamentos, incluindo PROPRANOLOL, GLICOSÍDEOS CARDÍACOS e GLICOCORTICOIDES, e, inversamente, o HIPOTIREOIDISMO RETARDA a depuração desses fármacos.",
+      "secao": "Direção inversa — a disfunção tireoidiana muda o fármaco (varfarina, estatina)",
+      "cit": [
+        [
+          0,
+          38880,
+          647
+        ]
+      ],
+      "cit_sha": "3a47edbc2395c0cb"
+    }
+  ],
+  "auditoria": {
+    "data": "2026-08-09",
+    "fatos_tocados": [
+      "⭐ Amiodarona — tireotoxicose TIPO 2 (#7) — PAR DE CONDUTA OPOSTA. O fato encadeava QUADRO CLÍNICO → \"tipo 2\" → GLICOCORTICOIDE, mas o quadro que ele descreve (taquicardia/piora da arritmia, tireoide não dolorosa, T4 livre e T3 altos, TSH suprimido) é o MESMO do tipo 1, que se trata com antitireoidiano. Lido sozinho, mandava dar corticoide a partir de um quadro que não discrimina nada. Acrescentado: aviso de que o quadro NÃO separa os tipos, de que esta revisão não traz discriminador algum (não há \"Doppler\" nem \"radioiodine uptake\" no artigo — conferido por busca no texto-fonte), e ponteiro para o fato #8 (tionamida + corticoide juntos no instável). Citação inalterada.",
+      "⭐ Biotina — mecanismo no ensaio de TSH (#49) — a afirmação descrevia os PAINÉIS C e D da Figura 3 (\"o complexo não compete pela estreptavidina\", \"sinal baixo → TSH falsamente baixo\") e a citação PARAVA em \"(panel a)\": 625 caracteres do que a afirmação alegava não estavam citados. Corrigido pela SAÍDA 1 (tornar contígua): a peça única foi estendida de 393 para 1.017 caracteres, até \"(panel d).\" — sem elisão, porque o trecho é contíguo. cit_sha recalculado.",
+      "⭐ Biotina — mecanismo no ensaio de T4 livre (#50) — mesmo defeito na Figura 4: a afirmação alegava os Painéis C e D (\"a biotina monopoliza os sítios de estreptavidina\", \"sinal baixo/ausente → T4 livre falsamente elevado\") e a citação parava em \"(panel a)\". SAÍDA 1: peça única estendida de 324 para 953 caracteres, até \"(panel d).\" cit_sha recalculado.",
+      "⭐ Mitotano — hipotireoidismo central (#37) — o fato manda repor hormônio tireoidiano a longo prazo numa população (carcinoma adrenocortical em uso de fármaco ADRENOLÍTICO) que é, por definição, de risco de insuficiência adrenal, e não dizia uma palavra sobre o eixo adrenal — enquanto o fato irmão do ipilimumabe/hipofisite (#21) diz. O artigo não trata do ponto; o NÚCLEO trata (\"⚠️ INÍCIO de indutor forte do CYP3A4 (… mitotano …) pode PRECIPITAR CRISE ADRENAL\", já em `nucleo_citado`). Acrescentado aviso explicitamente atribuído ao núcleo e não à fonte, mais a nota de que o TSH não monitora reposição no hipotireoidismo central. Citação inalterada.",
+      "Checkpoint — anti-CTLA-4 × anti-PD-1 (#20) — a afirmação dava \"(ex.: nivolumabe, pembrolizumabe)\" como exemplos de anti-PD-1. NENHUM DOS DOIS APARECE NO CORPO DO ARTIGO: nivolumabe e pembrolizumabe só ocorrem em TÍTULOS DA LISTA DE REFERÊNCIAS (linhas 457 e 465 do texto-fonte; \"pem- brolizumab\" quebrado pelo hífen de linha), e o próprio extrato declara as referências como não extraídas. Era conteúdo sem lastro entregue sob \"(NEJM 2019, Burch)\". SAÍDA 3 (encolher a afirmação): os nomes saíram e ficou escrito que o corpo nomeia apenas o ipilimumabe e nenhum anti-PD-1.",
+      "Checkpoint — ipilimumabe e hipofisite (#21) — é o ÚNICO fato do artigo com POSOLOGIA (3 mg/kg a cada 3 semanas, até 4 ciclos) e era o único do bloco de imunoterapia SEM o aviso de vintage que os vizinhos #20, #23 e #24 carregam. Acrescentado o aviso, com a razão que importa clinicamente: a frequência de hipofisite é dose-dependente e a posologia de 2019 não é regra de dosagem de hoje. Nenhum número novo foi escrito (o verificador reprovaria).",
+      "Glicocorticoide/agonista dopaminérgico/somatostatina/metformina (#38) — a MANCHETE dizia \"NÃO É HIPERTIREOIDISMO SUBCLÍNICO\" em caixa alta; a fonte diz \"usually metabolically insignificant\" e \"may be confused with subclinical hyperthyroidism\". A manchete transformava um \"usualmente\" em exclusão diagnóstica e, lida sozinha, manda descartar um TSH suprimido de verdade. Trocada por \"NEM SEMPRE É … E É ESSA A ARMADILHA\" + a gradação escrita por extenso.",
+      "Amiodarona — paciente já em levotiroxina (#12) — a citação diz APENAS que o TSH pode subir; a afirmação seguia para \"aumentar a dose de levotiroxina por reflexo pode ser erro\", que é inferência e, sozinha, empurra para o SUBTRATAMENTO que a conclusão do próprio artigo (fato #2) manda evitar. A inferência foi rotulada como inferência e substituída pela regra que decide: guie-se pelo T4 livre, nos dois sentidos.",
+      "Amiodarona — tireotoxicose TIPO 1 (#6) — \"(Jod-Basedow)\" era rótulo importado do fato #15 sem ponteiro, e o fato não avisava que existe um tipo 2 com tratamento oposto. Acrescentados os dois ponteiros e a advertência de que este fato não traz conduta.",
+      "Dexametasona (#57) — a afirmação dizia \"TANTO dentro da hipófise QUANTO na periferia\" e a citação começava 12 caracteres DEPOIS do \"both within\" que prova o \"tanto\". SAÍDA 1: a peça única recuou de 27.819 para 27.807 (395 → 407 caracteres). cit_sha recalculado.",
+      "Inibidor de tirosina-quinase e levotiroxina (#35) — \"paciente tireoidectomizado\" era inferência; a fonte diz \"levothyroxine-dependent patients with thyroid cancer\". Trocado, com a fonte explicitada.",
+      "Fisiologia — recirculação êntero-hepática (#43) — a lista de indutores (fenobarbital, fenitoína, carbamazepina, rifampicina) estava dentro da afirmação sem estar na citação dela; vem do fato #59. Ponteiro acrescentado e a lista marcada como de outro fato."
     ],
-    [
-     0,
-     36806,
-     364
-    ]
-   ],
-   "cit_sha": "5b0680c215931a28"
-  },
-  {
-   "afirmacao": "AMIODARONA EM QUEM JÁ USA LEVOTIROXINA (NEJM 2019, Burch): pacientes com função tireoidiana NORMAL enquanto recebem terapia com levotiroxina PODEM ter aumentos SEMELHANTES do TSH depois de iniciar a amiodarona. ⚠️ Ou seja, TSH que sobe logo após a introdução da amiodarona em paciente estável na levotiroxina não é necessariamente subtratamento — pode ser o mesmo fenômeno previsível descrito para o eutireóideo (inibição da conversão de T4 em T3), e aumentar a dose de levotiroxina por reflexo pode ser erro.",
-   "secao": "Amiodarona — paciente já em levotiroxina",
-   "cit": [
-    [
-     0,
-     37171,
-     148
-    ]
-   ],
-   "cit_sha": "e5c1466bef1f3d1b"
-  },
-  {
-   "afirmacao": "TABELA 2 do NEJM 2019 (Burch), intitulada \"Fármacos que causam resultados ESPÚRIOS de exames tireoidianos em pessoas EUTIREÓIDEAS\", tem as colunas, NESTA ORDEM: Fármaco | Classe do fármaco | Resultados dos exames (TSH, T4 livre, T3) | Condição MIMETIZADA. ⚠️ Esta ordem de colunas é o que permite ler as demais linhas da tabela. A primeira linha é a da AMIODARONA, classificada como \"agente antiarrítmico de classe III\", com TSH no LIMITE SUPERIOR DA FAIXA NORMAL no paciente eutireóideo — coerente com o padrão descrito no texto corrido do próprio artigo.",
-   "secao": "Amiodarona — Tabela 2, coluna do TSH",
-   "cit": [
-    [
-     0,
-     26355,
-     215
-    ]
-   ],
-   "cit_sha": "bd80b3f4c79b2944"
-  },
-  {
-   "afirmacao": "⚠️ IODO EM EXCESSO — HIPOTIREOIDISMO REAL, E QUEM CORRE RISCO (NEJM 2019, Burch). O excesso de iodo INTRATIREOIDIANO inibe a síntese de hormônio tireoidiano, resultando no EFEITO WOLFF-CHAIKOFF; o mecanismo exato é DESCONHECIDO, mas a inibição aguda da peroxidase tireoidiana pode ocorrer pela geração de compostos iodados intratireoidianos como iodolactonas e iodoaldeídos. ⚠️ QUEM ESCAPA E QUEM NÃO ESCAPA: pessoas com tireoide NORMAL escapam desse efeito em 1 a 2 semanas; mas quem tem função tireoidiana COMPROMETIDA por TIREOIDITE LINFOCÍTICA subjacente ou por ABLAÇÃO TIREOIDIANA PARCIAL com radioiodo ou cirurgia PODE NÃO ESCAPAR até que a carga de iodo seja depurada. ⚠️ Portanto, tireoidite de Hashimoto, radioiodo prévio ou tireoidectomia parcial identificam, ANTES da exposição, quem tende a ficar hipotireóideo com uma carga de iodo.",
-   "secao": "Iodo — efeito Wolff-Chaikoff e quem NÃO escapa dele",
-   "cit": [
-    [
-     0,
-     14271,
-     583
-    ]
-   ],
-   "cit_sha": "5b1337f1139efb9b"
-  },
-  {
-   "afirmacao": "⚠️ IODO EM EXCESSO — TIREOTOXICOSE REAL (JOD-BASEDOW) E DE ONDE VEM O IODO (NEJM 2019, Burch). O excesso de iodo também contribui para TIREOTOXICOSE — o fenômeno JOD-BASEDOW —, PARTICULARMENTE em pacientes com função tireoidiana AUTÔNOMA preexistente (nódulo/bócio autônomo). ⚠️ FONTES MEDICAMENTOSAS COMUNS de iodo em excesso: agentes de CONTRASTE IODADO usados em tomografia computadorizada e colecistografia; medicações com alto conteúdo de iodo, como a AMIODARONA e a POVIDONA-IODO TÓPICA; e preparações de VENDA LIVRE e suplementos, incluindo EXPECTORANTES, DUCHAS VAGINAIS e KELP (alga). ⚠️ Isto é doença real, não artefato: perguntar por contraste recente, expectorante e suplemento de alga faz parte da investigação de tireotoxicose e de hipotireoidismo de início recente.",
-   "secao": "Iodo — Jod-Basedow e as FONTES de iodo",
-   "cit": [
-    [
-     0,
-     14855,
-     472
-    ]
-   ],
-   "cit_sha": "d0e7987474824411"
-  },
-  {
-   "afirmacao": "⚠️ LÍTIO — DOENÇA TIREOIDIANA REAL, NÃO ARTEFATO DE ENSAIO (NEJM 2019, Burch). O uso de lítio causa BÓCIO e HIPOTIREOIDISMO por DIMINUIR A LIBERAÇÃO de hormônio tireoidiano, através da INIBIÇÃO DA PINOCITOSE DO COLOIDE. FREQUÊNCIA DO BÓCIO: em um estudo com pacientes com doença maníaco-depressiva, 50% dos tratados com lítio tinham bócio à ULTRASSONOGRAFIA de tireoide, contra 16% dos pacientes que NÃO receberam lítio. ⚠️ A citação está partida pela quebra de página do PDF (rodapé do periódico), marcada por elisão declarada.",
-   "secao": "Lítio — bócio e hipotireoidismo (mecanismo e frequência de bócio)",
-   "cit": [
-    [
-     0,
-     15859,
-     278
-    ],
-    [
-     0,
-     16440,
-     42
-    ]
-   ],
-   "cit_sha": "00be00ed89c8cbd9"
-  },
-  {
-   "afirmacao": "⚠️ LÍTIO E HIPOTIREOIDISMO — QUANTO (NEJM 2019, Burch): a prevalência RELATADA de hipotireoidismo entre pacientes em uso de lítio VARIA AMPLAMENTE. Um sumário de 1778 casos publicados mostrou prevalência MÉDIA de 17,6%. Uma METANÁLISE mostrou que a prevalência de hipotireoidismo entre pacientes tratados com lítio estava aumentada POR UM FATOR DE 6 em comparação com a prevalência entre controles. ⚠️ Guarde a heterogeneidade junto com o número: o próprio artigo diz que a prevalência relatada varia amplamente, então 17,6% é uma média de casos publicados, e não uma taxa firme.",
-   "secao": "Lítio — frequência do hipotireoidismo",
-   "cit": [
-    [
-     0,
-     16483,
-     337
-    ]
-   ],
-   "cit_sha": "dcb558aeb31f0696"
-  },
-  {
-   "afirmacao": "LÍTIO — FATORES DE RISCO PARA HIPOTIREOIDISMO (NEJM 2019, Burch): SEXO FEMININO e IDADE ACIMA DE 40 ANOS, ambos os quais COSSEGREGAM com TIREOIDITE LINFOCÍTICA CRÔNICA e com teste POSITIVO para anticorpos ANTIPEROXIDASE TIREOIDIANA (anti-TPO) — o que indica RESERVA TIREOIDIANA DIMINUÍDA e AUTOIMUNIDADE AUMENTADA como possíveis predisposições. ⚠️ Leitura prática: mulher acima de 40 anos e/ou anti-TPO positivo é o perfil em que vale monitorar a função tireoidiana sob lítio.",
-   "secao": "Lítio — quem tem mais risco",
-   "cit": [
-    [
-     0,
-     16821,
-     283
-    ]
-   ],
-   "cit_sha": "0c31777241b5271c"
-  },
-  {
-   "afirmacao": "⚠️ LÍTIO TAMBÉM CAUSA TIREOTOXICOSE, E NÃO SÓ HIPOTIREOIDISMO (NEJM 2019, Burch): o uso de lítio está TAMBÉM ligado a TIREOIDITE INDOLOR (painless thyroiditis) — isto é, tireotoxicose por destruição, não por hiperfunção. A natureza dessa associação é DESCONHECIDA, mas aproximadamente METADE dos pacientes afetados tem testes POSITIVOS para anticorpos tireoidianos. ⚠️ Portanto tireotoxicose em paciente sob lítio não deve ser automaticamente lida como doença de Graves nem como falha do lítio: tireoidite indolor induzida pelo próprio fármaco entra no diferencial.",
-   "secao": "Lítio — tireoidite indolor (tireotoxicose)",
-   "cit": [
-    [
-     0,
-     17105,
-     197
-    ]
-   ],
-   "cit_sha": "6be9f3fc48f62740"
-  },
-  {
-   "afirmacao": "⚠️ INIBIDORES DE CHECKPOINT IMUNOLÓGICO — QUAL EIXO CADA CLASSE ATINGE (NEJM 2019, Burch). Os inibidores de checkpoint, incluindo os que inibem o antígeno 4 do linfócito T citotóxico (CTLA-4) e o receptor de morte celular programada 1 (PD-1), têm uma VARIEDADE de efeitos endócrinos adversos. ⚠️ A distinção que muda a investigação: a HIPOFISITE ocorre MAIS FREQUENTEMENTE em pacientes usando inibidores de CTLA-4 (ex.: ipilimumabe), enquanto a DISFUNÇÃO TIREOIDIANA PRIMÁRIA é vista MAIS FREQUENTEMENTE com inibidores de PD-1 (ex.: nivolumabe, pembrolizumabe). ⚠️ Isto é doença real (imunomediada), não artefato de ensaio. ⚠️ VINTAGE: revisão de 2019 — o repertório de imunoterápicos e as estimativas de incidência se ampliaram desde então.",
-   "secao": "Checkpoint — anti-CTLA-4 × anti-PD-1: qual eixo cada um atinge",
-   "cit": [
-    [
-     0,
-     12586,
-     347
-    ]
-   ],
-   "cit_sha": "8082077a8c28eb77"
-  },
-  {
-   "afirmacao": "⚠️ IPILIMUMABE E HIPOFISITE — HIPOTIREOIDISMO CENTRAL, NÃO PRIMÁRIO (NEJM 2019, Burch). O ipilimumabe, agente anti-CTLA-4, foi associado a HIPOFISITE DESTRUTIVA, com graus variáveis de HIPOTIREOIDISMO CENTRAL, INSUFICIÊNCIA ADRENAL e HIPOGONADISMO, ocorrendo em 3 a 10% dos pacientes tratados para MELANOMA na dose aprovada de 3 mg por quilograma de peso corporal a cada 3 semanas, por até 4 ciclos. CRONOLOGIA: os efeitos ocorrem dentro de 1 a 3 meses após o início do tratamento (dentro de 2 a 4 ciclos). QUADRO: cefaleia, fadiga, perda de peso, intolerância ao frio e perda de libido. IMAGEM: a ressonância magnética revela aumento hipofisário, espessamento da haste hipofisária e realce homogêneo em MUITOS, MAS NÃO EM TODOS os casos. ⚠️ Consequência prática: neste cenário o TSH pode estar baixo ou normal com T4 livre baixo — investigar a hipófise, e não a tireoide, e afastar insuficiência adrenal antes de repor hormônio tireoidiano.",
-   "secao": "Checkpoint — ipilimumabe e hipofisite (hipotireoidismo CENTRAL)",
-   "cit": [
-    [
-     0,
-     12934,
-     669
-    ]
-   ],
-   "cit_sha": "e85974229c0a541f"
-  },
-  {
-   "afirmacao": "HIPOFISITE POR INIBIDOR DE CHECKPOINT — PROGNÓSTICO POR EIXO (NEJM 2019, Burch): a RECUPERAÇÃO das funções GONADAL e TIREOIDIANA é vista em ATÉ METADE dos pacientes, enquanto a recuperação do EIXO ADRENAL RARAMENTE ocorre. ⚠️ Leitura prática: no seguimento, a reposição de levotiroxina e a de esteroides sexuais podem eventualmente ser reavaliadas, mas a reposição de glicocorticoide tende a ser PERMANENTE — não suspenda por presumir recuperação.",
-   "secao": "Checkpoint — hipofisite: o que se recupera e o que não",
-   "cit": [
-    [
-     0,
-     13604,
-     128
-    ]
-   ],
-   "cit_sha": "d1f2da3ea701d4e2"
-  },
-  {
-   "afirmacao": "⚠️ INIBIDOR DE CHECKPOINT E DISFUNÇÃO TIREOIDIANA PRIMÁRIA — QUANTO (NEJM 2019, Burch): a disfunção tireoidiana primária é registrada de forma VARIÁVEL na literatura, afetando aproximadamente 5 a 10% dos pacientes tratados com inibidores de CTLA-4, 10 a 20% dos tratados com inibidores de PD-1, e MAIS DE 20% dos pacientes tratados com TERAPIA COMBINADA. ⚠️ Guarde a ressalva junto com os números: o próprio artigo diz que a frequência é \"notada de forma variável na literatura\". ⚠️ VINTAGE: estimativas de uma revisão de 2019; o uso de imunoterapia se expandiu muito desde então.",
-   "secao": "Checkpoint — frequência da disfunção tireoidiana PRIMÁRIA",
-   "cit": [
-    [
-     0,
-     17465,
-     276
-    ]
-   ],
-   "cit_sha": "c4886260fa739559"
-  },
-  {
-   "afirmacao": "⚠️ INIBIDOR DE CHECKPOINT — O CURSO TÍPICO DA TIREOIDE, DO INÍCIO AO HIPOTIREOIDISMO DEFINITIVO (NEJM 2019, Burch). A MAIORIA dos pacientes que recebem essa terapia para câncer tem TIREOIDITE INDOLOR, apresentando-se com TIREOTOXICOSE TRANSITÓRIA SEGUIDA DE HIPOTIREOIDISMO; a doença de GRAVES RARAMENTE ocorre. CRONOLOGIA: a tireotoxicose tipicamente se desenvolve 4 a 8 semanas após o início da terapia, mas PODE ocorrer em até 2 semanas com terapia COMBINADA, ou até 18 semanas com monoterapia anti-CTLA-4; a fase tireotóxica é frequentemente LEVE e PODE PASSAR DESPERCEBIDA, resolvendo-se em 3 a 10 semanas — porém casos MODERADOS e GRAVES já ocorreram. O HIPOTIREOIDISMO instala-se 10 a 20 semanas após o início da terapia e é FREQUENTEMENTE IRREVERSÍVEL. ⚠️ O QUE FAZER COM A DROGA: a terapia de bloqueio de checkpoint GERALMENTE NÃO É INTERROMPIDA por causa de efeitos adversos tireoidianos, que são manejados CONVENCIONALMENTE. ⚠️ Doença real (tireoidite destrutiva), não artefato: tireotoxicose aqui NÃO é indicação de tionamida como na Graves.",
-   "secao": "Checkpoint — o padrão: tireoidite destrutiva, cronologia e o que fazer com a droga",
-   "cit": [
-    [
-     0,
-     17742,
-     734
-    ]
-   ],
-   "cit_sha": "b33dc1b940014dfd"
-  },
-  {
-   "afirmacao": "INIBIDOR DE CHECKPOINT E ANTICORPOS TIREOIDIANOS (NEJM 2019, Burch): acredita-se que a disfunção tireoidiana durante o bloqueio de checkpoint reflita REDUÇÃO DA AUTOTOLERÂNCIA IMUNE causada por esses fármacos. Em 40 a 50% dos pacientes afetados, anticorpos ANTIPEROXIDASE TIREOIDIANA ou ANTITIREOGLOBULINA estão presentes NO MOMENTO da disrupção tireoidiana, mas seu papel FISIOPATOLÓGICO é INCERTO; a MAIORIA das séries NÃO inclui níveis de anticorpo PRÉ-TRATAMENTO. Alguns estudos mostram aumento de anticorpos preexistentes ou desenvolvimento de anticorpos durante o bloqueio. ⚠️ UM teste PRÉ-TRATAMENTO POSITIVO para anticorpos indica RISCO AUMENTADO de disfunção tireoidiana induzida pelo fármaco. A revisão registra que estudos mecanísticos adicionais ainda são necessários.",
-   "secao": "Checkpoint — anticorpos tireoidianos antes e durante",
-   "cit": [
-    [
-     0,
-     18477,
-     620
-    ]
-   ],
-   "cit_sha": "d23f1ef8353ed7c2"
-  },
-  {
-   "afirmacao": "⚠️ INTERLEUCINA-2 E INTERFERON ALFA — DOENÇA TIREOIDIANA REAL POR TIREOIDITE (NEJM 2019, Burch). O uso de citocinas imunoestimulatórias inespecíficas como a INTERLEUCINA-2 e o INTERFERON ALFA em pacientes com carcinoma de células renais metastático, melanoma ou HEPATITE C resulta em disfunção tireoidiana em 15 a 50% dos pacientes, com graus variáveis de HIPOTIREOIDISMO frequentemente PRECEDIDO DE TIREOTOXICOSE devida a TIREOIDITE. DADOS: em uma série de 89 pacientes com tumores sólidos tratados com interleucina-2, a disfunção tireoidiana se desenvolveu em 22% dos pacientes, manifestando-se como tireotoxicose LEVE em mediana de 7 semanas e hipotireoidismo subsequente em mediana de 11 semanas; anticorpos tireoidianos surgiram na MAIORIA dos pacientes que tinham testes NEGATIVOS antes do tratamento.",
-   "secao": "Interleucina-2 e interferon alfa — disfunção tireoidiana",
-   "cit": [
-    [
-     0,
-     19231,
-     669
-    ]
-   ],
-   "cit_sha": "327628fdbd502ada"
-  },
-  {
-   "afirmacao": "INTERFERON ALFA NA HEPATITE C (NEJM 2019, Burch): entre 1233 pacientes com hepatite C que estavam EUTIREÓIDEOS ANTES de receber interferon alfa, eventos tireoidianos ocorreram em 16,7% dos pacientes — incluindo aproximadamente 5% com TIREOTOXICOSE e 12% com HIPOTIREOIDISMO. ⚠️ Os mecanismos da disfunção tireoidiana induzida por citocinas são POUCO COMPREENDIDOS, mas fatores de risco para autoimunidade tireoidiana — SEXO FEMININO, teste POSITIVO para anticorpos tireoidianos no basal ou durante o tratamento, e TSH BASAL MARGINALMENTE NORMAL — estão desproporcionalmente presentes nos pacientes afetados.",
-   "secao": "Interferon alfa na hepatite C — frequência e fatores de risco",
-   "cit": [
-    [
-     0,
-     19901,
-     548
-    ]
-   ],
-   "cit_sha": "29a616c56b4e2ada"
-  },
-  {
-   "afirmacao": "⚠️ ALENTUZUMABE — O FÁRMACO QUE CAUSA DOENÇA DE GRAVES (NEJM 2019, Burch). O alentuzumabe é anticorpo monoclonal humanizado contra o antígeno de superfície celular CD52; o tratamento leva a DEPLEÇÃO PROFUNDA de linfócitos B e T circulantes e a ALTA TAXA de autoimunidade tireoidiana em pacientes com ESCLEROSE MÚLTIPLA. DADOS: entre 248 pacientes tratados com alentuzumabe, a disfunção tireoidiana se desenvolveu em 41,1%, e a DOENÇA DE GRAVES se desenvolveu em 71,6% dos pacientes afetados; o intervalo MEDIANO entre a dose FINAL de alentuzumabe e o início da doença de Graves foi de 17 MESES. Tireoidite SUBAGUDA e hipotireoidismo PRIMÁRIO também são vistos com frequência aumentada após alentuzumabe. ⚠️ Doença autoimune real, não artefato — e de latência longa: o Graves aparece MESES DEPOIS de terminada a droga.",
-   "secao": "Alentuzumabe — doença de Graves na esclerose múltipla",
-   "cit": [
-    [
-     0,
-     20450,
-     643
-    ]
-   ],
-   "cit_sha": "a1ca0ecf412edd7c"
-  },
-  {
-   "afirmacao": "⚠️ ALENTUZUMABE — POR QUANTO TEMPO VIGIAR A TIREOIDE (NEJM 2019, Burch): a MAIORIA dos casos de disfunção tireoidiana associada ao alentuzumabe é diagnosticada DENTRO DE 3 ANOS após o término da terapia, MAS já ocorreram casos 5 a 9 ANOS após a cessação do fármaco. ⚠️ ALÉM DISSO: a doença de Graves após alentuzumabe associa-se a ALTA TAXA DE FLUTUAÇÃO dos anticorpos ESTIMULANTES e BLOQUEADORES contra o receptor de TSH — um evento INCOMUM que se manifesta como PERÍODOS ALTERNANTES de HIPERTIREOIDISMO e HIPOTIREOIDISMO. ⚠️ Consequência prática: paciente que \"vira\" de hiper para hipo sob/depois de alentuzumabe não é necessariamente supertratamento com tionamida — pode ser troca do tipo de anticorpo. ⚠️ A citação está partida pela quebra de página do PDF, marcada por elisão declarada.",
-   "secao": "Alentuzumabe — até quando vigiar, e a alternância hiper/hipo",
-   "cit": [
-    [
-     0,
-     21094,
-     44
-    ],
-    [
-     0,
-     21433,
-     396
-    ]
-   ],
-   "cit_sha": "aa560a2cd065d31d"
-  },
-  {
-   "afirmacao": "ALENTUZUMABE, ANTICORPOS E ESPECIFICIDADE DE CONTEXTO (NEJM 2019, Burch): em um ensaio clínico de fase 2 de alentuzumabe em pacientes com esclerose múltipla, 15,1% dos participantes que desenvolveram disfunção tireoidiana tinham testes POSITIVOS para anticorpos antiperoxidase tireoidiana NO BASAL, e 54,8% tinham testes NEGATIVOS no basal que se tornaram POSITIVOS durante o tratamento. ⚠️ NOTAVELMENTE, o uso de alentuzumabe em pacientes com LEUCEMIA ou com ARTRITE REUMATOIDE NÃO foi associado a doença de Graves; e o uso de outra imunoterapia, o INTERFERON BETA-1a, em pacientes com esclerose múltipla, resulta em taxa comparativamente BAIXA de disfunção tireoidiana, de 6,5%. ⚠️ Portanto o risco tireoidiano do alentuzumabe não é transferível automaticamente entre indicações.",
-   "secao": "Alentuzumabe — anticorpos e o contraste com outras indicações",
-   "cit": [
-    [
-     0,
-     21830,
-     580
-    ]
-   ],
-   "cit_sha": "16bab9f8622d61ac"
-  },
-  {
-   "afirmacao": "AUTOIMUNIDADE TIREOIDIANA APÓS RECUPERAÇÃO DO SISTEMA IMUNE (NEJM 2019, Burch): os mecanismos da autoimunidade tireoidiana após alentuzumabe NÃO são conhecidos; UMA interpretação dos dados de reconstituição linfocitária SUGERE que a recuperação precoce de linfócitos B na janela que precede o reaparecimento de linfócitos T reguladores permita autoimunidade mediada por células B. ⚠️ OUTROS EXEMPLOS do mesmo fenômeno — autoimunidade tireoidiana que aparece DEPOIS de o sistema imune se recuperar — incluem: doença de GRAVES após terapia antirretroviral altamente ativa para infecção avançada pelo HIV; autoimunidade tireoidiana em pacientes CURADOS de doença de Cushing endógena; e autoimunidade tireoidiana no período PÓS-PARTO.",
-   "secao": "Autoimunidade tireoidiana após reconstituição imune",
-   "cit": [
-    [
-     0,
-     22411,
-     688
-    ]
-   ],
-   "cit_sha": "fc9d67aceb23fe89"
-  },
-  {
-   "afirmacao": "⚠️ INIBIDOR DE TIROSINA-QUINASE / MULTIQUINASE — TIREOIDITE E HIPOTIREOIDISMO REAIS (NEJM 2019, Burch). A terapia oncológica alvo-dirigida com inibidores de TIROSINA-QUINASE ou de MULTIQUINASE foi associada a RISCO AUMENTADO DE TIREOIDITE; as alterações mais amplamente relatadas ocorrem em pacientes recebendo SUNITINIBE para carcinoma de células renais metastático ou para tumores estromais gastrintestinais (GIST). QUANTO: em TRÊS grandes ensaios clínicos, o hipotireoidismo ocorreu em 14 a 25% dos pacientes com carcinoma de células renais tratados com sunitinibe; a MAIORIA dos casos foi classificada como LEVE A MODERADA em gravidade, mas houve casos RAROS de disfunção GRAVE.",
-   "secao": "Inibidor de tirosina-quinase — tireoidite e hipotireoidismo (sunitinibe)",
-   "cit": [
-    [
-     0,
-     24025,
-     539
-    ]
-   ],
-   "cit_sha": "09b3b17ad7f0f1b1"
-  },
-  {
-   "afirmacao": "⚠️ SUNITINIBE — O QUE ESPERAR NO SEGUIMENTO (NEJM 2019, Burch): em um ensaio com 42 pacientes que tinham função tireoidiana NORMAL ANTES do tratamento com sunitinibe, o HIPOTIREOIDISMO ocorreu em 36% dos participantes, MUITOS DELES com TSH MAIOR QUE 20 mUI POR LITRO. A probabilidade de desenvolver hipotireoidismo AUMENTOU COM A DURAÇÃO da terapia. ⚠️ QUARENTA POR CENTO dos pacientes apresentaram TIREOTOXICOSE TRANSITÓRIA ANTES de o hipotireoidismo se instalar — achado consistente com TIREOIDITE DESTRUTIVA. ⚠️ Portanto tireotoxicose sob sunitinibe é fase de tireoidite destrutiva, não Graves — e o hipotireoidismo que a segue é doença real, com TSH que pode passar de 20 mUI/L.",
-   "secao": "Sunitinibe — magnitude, tempo e a fase tireotóxica que precede",
-   "cit": [
-    [
-     0,
-     24565,
-     470
-    ]
-   ],
-   "cit_sha": "35823e64755bdf5a"
-  },
-  {
-   "afirmacao": "MECANISMO PROPOSTO DA TIREOIDITE POR INIBIDOR DE TIROSINA-QUINASE (NEJM 2019, Burch): os mecanismos que contribuem para o desenvolvimento de tireoidite nesses pacientes PODEM estar relacionados a ISQUEMIA resultante da inibição do RECEPTOR DO FATOR DE CRESCIMENTO ENDOTELIAL VASCULAR (VEGFR) por vários fármacos dessa classe; INVOLUÇÃO TIREOIDIANA MARCADA foi notada à ULTRASSONOGRAFIA em alguns pacientes afetados. ⚠️ Mecanismo apresentado como hipótese (\"podem estar relacionados\"), não como fato estabelecido.",
-   "secao": "Inibidor de tirosina-quinase — mecanismo proposto",
-   "cit": [
-    [
-     0,
-     25036,
-     340
-    ]
-   ],
-   "cit_sha": "978d5a938905e2f1"
-  },
-  {
-   "afirmacao": "⚠️ INIBIDOR DE TIROSINA-QUINASE NO PACIENTE QUE JÁ USA LEVOTIROXINA (NEJM 2019, Burch): os inibidores de tirosina-quinase TAMBÉM parecem AUMENTAR O METABOLISMO do hormônio tireoidiano. Um estudo de SORAFENIBE em pacientes DEPENDENTES DE LEVOTIROXINA com câncer de tireoide mostrou que, 26 SEMANAS após o início do tratamento, havia evidência de INATIVAÇÃO ACELERADA DA LEVOTIROXINA por atividade AUMENTADA da DESIODASE TIPO 3. ⚠️ Consequência: TSH que sobe após iniciar um inibidor de tirosina-quinase em paciente tireoidectomizado pode ser necessidade REAL de dose maior — mecanismo distinto da tireoidite destrutiva descrita para o sunitinibe.",
-   "secao": "Inibidor de tirosina-quinase — aumento da necessidade de levotiroxina (sorafenibe)",
-   "cit": [
-    [
-     0,
-     29235,
-     317
-    ]
-   ],
-   "cit_sha": "0cf3a9b3f93d7d81"
-  },
-  {
-   "afirmacao": "⚠️ BEXAROTENO — HIPOTIREOIDISMO CENTRAL REAL, E DE ALTA FREQUÊNCIA (NEJM 2019, Burch): o retinoide sintético BEXAROTENO induz supressão RÁPIDA E PROFUNDA do TSH, levando a HIPOTIREOIDISMO CENTRAL FRANCO em 40 A 70% DOS PACIENTES TRATADOS, com recuperação da função normal DENTRO DE SEMANAS após a suspensão do fármaco. MECANISMO: ação DIRETA do bexaroteno sobre os tireotrofos hipofisários, agravada por metabolismo aumentado do hormônio tireoidiano por vias NÃO DESIODASE, como a SULFATAÇÃO. ⚠️ Aqui o TSH BAIXO com T4 livre BAIXO é doença central verdadeira, não artefato de ensaio — e o TSH NÃO serve para monitorar a reposição.",
-   "secao": "Bexaroteno — hipotireoidismo CENTRAL",
-   "cit": [
-    [
-     0,
-     11683,
-     436
-    ]
-   ],
-   "cit_sha": "0458bcab92a012e6"
-  },
-  {
-   "afirmacao": "⚠️ MITOTANO — HIPOTIREOIDISMO CENTRAL NA MAIORIA DOS TRATADOS (NEJM 2019, Burch): o mitotano causa HIPOTIREOIDISMO na MAIORIA dos pacientes tratados para CARCINOMA ADRENOCORTICAL. PADRÃO LABORATORIAL: T4 livre SUBNORMAL com nível de TSH INAPROPRIADAMENTE NORMAL e resposta EMBOTADA do tireotrofo ao TRH — achados CONSISTENTES COM HIPOTIREOIDISMO CENTRAL. O T4 livre começa a cair DENTRO DOS PRIMEIROS 3 MESES de tratamento com mitotano, e reposição de hormônio tireoidiano de LONGO PRAZO é frequentemente necessária. ⚠️ Ler TSH normal como \"tireoide normal\" neste paciente é o erro clássico: o TSH inapropriadamente normal É o achado da doença central.",
-   "secao": "Mitotano — hipotireoidismo central no carcinoma adrenocortical",
-   "cit": [
-    [
-     0,
-     12120,
-     465
-    ]
-   ],
-   "cit_sha": "c295d5b42037ddbe"
-  },
-  {
-   "afirmacao": "⚠️ TSH BAIXO COM T4 LIVRE NORMAL SOB ESTES FÁRMACOS NÃO É HIPERTIREOIDISMO SUBCLÍNICO (NEJM 2019, Burch). VÁRIAS categorias de fármacos exercem efeito SUPRESSOR sobre a liberação de TSH SEM afetar apreciavelmente os níveis circulantes de T4 — a saber: GLICOCORTICOIDES, AGONISTAS DOPAMINÉRGICOS, ANÁLOGOS DE SOMATOSTATINA e METFORMINA. Embora a supressão do TSH nesses pacientes seja USUALMENTE METABOLICAMENTE INSIGNIFICANTE, um TSH BAIXO com T4 livre NORMAL PODE ser confundido com HIPERTIREOIDISMO SUBCLÍNICO, levando a AVALIAÇÃO OU TRATAMENTO DESNECESSÁRIOS. ⚠️ Aqui a supressão do TSH é efeito farmacológico central real, não artefato de método — mas também NÃO é tireotoxicose: não indica tionamida nem radioiodo.",
-   "secao": "Glicocorticoide, agonista dopaminérgico, análogo de somatostatina e metformina — TSH baixo SEM doença",
-   "cit": [
-    [
-     0,
-     13733,
-     484
-    ]
-   ],
-   "cit_sha": "0e8ff281d9d45f8f"
-  },
-  {
-   "afirmacao": "⚠️ TBG (GLOBULINA LIGADORA DE TIROXINA) — A LISTA DOS DOIS SENTIDOS (NEJM 2019, Burch). AUMENTAM a TBG: ESTROGÊNIO ORAL e MODULADORES SELETIVOS DO RECEPTOR DE ESTROGÊNIO (SERMs), METADONA, HEROÍNA, MITOTANO e FLUOROURACILA. REDUZEM a TBG: ANDROGÊNIOS, GLICOCORTICOIDES e NIACINA. ⚠️ As alterações MAIS COMUNS E CLINICAMENTE RELEVANTES da TBG ocorrem com fármacos CONTENDO ESTROGÊNIO em pacientes que fazem REPOSIÇÃO com hormônio tireoidiano: nesses pacientes, o aumento da ligação proteica leva a ligação ADICIONAL de T4 e, consequentemente, a T4 LIVRE BAIXO. ⚠️ Fato complementar (necessidade de dose e via transdérmica) está no fato \"Estrogênio — muda a NECESSIDADE de levotiroxina\".",
-   "secao": "TBG — quem aumenta e quem reduz a globulina ligadora de tiroxina",
-   "cit": [
-    [
-     0,
-     25428,
-     569
-    ]
-   ],
-   "cit_sha": "6109f46e8a6222c7"
-  },
-  {
-   "afirmacao": "⚠️ ESTROGÊNIO ORAL MUDA A DOSE DE LEVOTIROXINA — E O TRANSDÉRMICO NÃO (NEJM 2019, Burch). O paciente DEPENDENTE de hormônio tireoidiano EXÓGENO terá NECESSIDADE DE DOSE AUMENTADA após o INÍCIO do tratamento com ESTROGÊNIO ORAL; já em pacientes com TIREOIDE FUNCIONANTE, a produção ENDÓGENA de hormônio tireoidiano AUMENTA e compensa. ⚠️ O ESTRADIOL TRANSDÉRMICO tem efeito MÍNIMO sobre a globulina ligadora de tiroxina, porque essa via de administração CONTORNA O EFEITO DE PRIMEIRA PASSAGEM HEPÁTICO. ⚠️ Consequência prática: ao iniciar estrogênio oral em mulher em uso de levotiroxina, reavaliar o TSH e esperar precisar de MAIS levotiroxina; trocar para via transdérmica evita o problema. ⚠️ O mecanismo (aumento da TBG) está no fato \"TBG — quem aumenta e quem reduz a globulina ligadora de tiroxina\"; a citação abaixo começa no meio da palavra \"dependent\" por quebra de página do PDF.",
-   "secao": "Estrogênio — muda a NECESSIDADE de levotiroxina; transdérmico não",
-   "cit": [
-    [
-     0,
-     26571,
-     393
-    ]
-   ],
-   "cit_sha": "08e5d7a3ef94d550"
-  },
-  {
-   "afirmacao": "DESLOCAMENTO DO HORMÔNIO TIREOIDIANO DAS PROTEÍNAS DE LIGAÇÃO (NEJM 2019, Burch): ocorre com os antiepilépticos FENITOÍNA e CARBAMAZEPINA, com o SALSALATO e alguns outros ANTI-INFLAMATÓRIOS NÃO ESTEROIDAIS, com FUROSEMIDA EM ALTA DOSE e com preparações de HEPARINA. ⚠️ A importância CLÍNICA dessas interações é FREQUENTEMENTE DESPREZÍVEL, e no caso dos ANTIEPILÉPTICOS e da HEPARINA os efeitos envolvem PRIMARIAMENTE ALTERAÇÕES NO EXAME LABORATORIAL de função tireoidiana — ou seja, ARTEFATO, e não doença.",
-   "secao": "Deslocamento das proteínas de ligação — quais fármacos e o que significa",
-   "cit": [
-    [
-     0,
-     26965,
-     470
-    ]
-   ],
-   "cit_sha": "c9552d4d90277f0f"
-  },
-  {
-   "afirmacao": "⚠️ POR QUE UM FÁRMACO CONSEGUE DERRUBAR O T3 SEM MEXER NA TIREOIDE (NEJM 2019, Burch): CEM POR CENTO do T4 é produzido NA TIREOIDE, MAS 80% do T3 — a forma ATIVA do hormônio tireoidiano — deriva da 5-MONODESIODAÇÃO do T4 em TECIDOS PERIFÉRICOS como FÍGADO e RIM, pela ação das desiodases tipo 1 e tipo 2. ⚠️ É por isso que amiodarona, dexametasona, propranolol em altas doses, ipodato/ácido iopanoico e propiltiouracil conseguem reduzir o T3 agindo FORA da tireoide — e por que T3 baixo nesses pacientes não indica, por si só, doença tireoidiana. ⚠️ Citação literal de PDF de duas colunas, com as palavras intercaladas na extração.",
-   "secao": "Fisiologia — 80% do T3 vem da conversão PERIFÉRICA (base do efeito dos inibidores de conversão)",
-   "cit": [
-    [
-     0,
-     2175,
-     255
-    ]
-   ],
-   "cit_sha": "6a9289f0f08d1b82"
-  },
-  {
-   "afirmacao": "⚠️ POR QUE COLESTIRAMINA E INDUTORES ENZIMÁTICOS MEXEM NO HORMÔNIO TIREOIDIANO (NEJM 2019, Burch): a CONJUGAÇÃO do hormônio tireoidiano, por GLICURONIDAÇÃO e SULFATAÇÃO no FÍGADO e no RIM, aumenta sua SOLUBILIDADE EM ÁGUA e permite a secreção na BILE. Enquanto o hormônio SULFATADO é rapidamente submetido a nova desiodação e eliminado na urina ou nas fezes, o hormônio GLICURONIDADO pode ser eliminado nas fezes OU ser DESCONJUGADO POR MICRORGANISMOS INTESTINAIS e RECICLADO na CIRCULAÇÃO ÊNTERO-HEPÁTICA. ⚠️ São estes os dois pontos onde os fármacos entram: o sequestrante de ácidos biliares interrompe a reciclagem (e derruba o hormônio), e o indutor de glicuronidação (fenobarbital, fenitoína, carbamazepina, rifampicina) acelera a eliminação (e aumenta a necessidade de levotiroxina).",
-   "secao": "Fisiologia — recirculação êntero-hepática (base do efeito dos sequestrantes e dos indutores enzimáticos)",
-   "cit": [
-    [
-     0,
-     9631,
-     432
-    ]
-   ],
-   "cit_sha": "e93d0ced45c6994f"
-  },
-  {
-   "afirmacao": "FISIOLOGIA QUE EXPLICA O ARTEFATO DAS PROTEÍNAS DE LIGAÇÃO (NEJM 2019, Burch): o hormônio tireoidiano circulante está MAIS DE 99% ligado a proteínas carreadoras — globulina ligadora de tiroxina (TBG), TRANSTIRRETINA e ALBUMINA. ⚠️ Os níveis séricos de ALBUMINA e de TRANSTIRRETINA são MUITO MAIS ALTOS que o nível de TBG, mas é a TBG que responde por APROXIMADAMENTE 75% DA LIGAÇÃO, por sua MAIOR AFINIDADE pelo hormônio tireoidiano. ⚠️ É por isso que um fármaco que mexe na TBG (estrogênio, androgênio, glicocorticoide, niacina) desloca o T4 total sem que exista doença tireoidiana.",
-   "secao": "Fisiologia — 99% ligado, e a TBG responde por ~75% da ligação",
-   "cit": [
-    [
-     0,
-     8424,
-     560
-    ]
-   ],
-   "cit_sha": "0cc2717b2ccfb3f5"
-  },
-  {
-   "afirmacao": "⚠️ REGRA GERAL DO ARTEFATO (NEJM 2019, Burch): VÁRIOS fármacos estão associados a RESULTADOS ANORMAIS de exames laboratoriais da tireoide em pessoas EUTIREÓIDEAS (Tabela 2 do artigo). ⚠️ A CONSCIÊNCIA dessas interações e a CAPACIDADE DE DISTINGUIR esses efeitos da DISFUNÇÃO TIREOIDIANA VERDADEIRA PREVINEM intervenções diagnósticas ou terapêuticas DESNECESSÁRIAS. ⚠️ Esta é a pergunta a fazer antes de tratar qualquer exame tireoidiano discrepante: o paciente está clinicamente eutireóideo e usando algum fármaco desta lista?",
-   "secao": "Exames alterados no EUTIREÓIDEO — a regra geral",
-   "cit": [
-    [
-     0,
-     32166,
-     299
-    ]
-   ],
-   "cit_sha": "6553a00a89566229"
-  },
-  {
-   "afirmacao": "⚠️ BIOTINA — O ARTEFATO QUE IMITA GRAVES (NEJM 2019, Burch). A biotina é usada FARMACOLOGICAMENTE para tratar distúrbios NEUROMUSCULARES como a ESCLEROSE MÚLTIPLA e é também SUPLEMENTO ALIMENTAR POPULAR. Reagentes laboratoriais BIOTINILADOS são amplamente usados em laboratórios clínicos por sua FORTE LIGAÇÃO à ESTREPTAVIDINA fixada em fase sólida, e ensaios comerciais para T4 LIVRE, T3, TSH e ANTICORPO ANTIRRECEPTOR DE TSH (TRAb) comumente INCLUEM BIOTINILAÇÃO. ⚠️ NUMEROSOS RELATOS de interferência da biotina levando a DIAGNÓSTICO E MANEJO INCORRETOS já foram publicados, incluindo casos com TSH FALSAMENTE BAIXO, T4 LIVRE FALSAMENTE ALTO e resultado POSITIVO de anticorpo ANTIRRECEPTOR DE TSH. ⚠️ Ver o fato complementar \"Biotina — mimetiza EXATAMENTE a bioquímica da doença de Graves; doses e direção por plataforma\", que traz a conclusão da mesma frase (partida por quebra de página do PDF), as doses envolvidas e a direção do erro em cada tipo de ensaio.",
-   "secao": "Biotina — por que interfere, e o TRIO de resultados falsos",
-   "cit": [
-    [
-     0,
-     32473,
-     768
-    ]
-   ],
-   "cit_sha": "82c857a68d49416f"
-  },
-  {
-   "afirmacao": "⚠️ BIOTINA — O DANO CONCRETO, AS DOSES E A DIREÇÃO DO ERRO (NEJM 2019, Burch). Em casos publicados, os resultados dos testes de anticorpo [antirreceptor de TSH, junto com TSH falsamente baixo e T4 livre falsamente alto — ver o fato \"Biotina — por que interfere, e o TRIO de resultados falsos\"] MIMETIZARAM EXATAMENTE OS ACHADOS BIOQUÍMICOS DA DOENÇA DE GRAVES. ⚠️ DOSE: embora tais casos frequentemente envolvam doses de biotina de 300 mg por dia OU MAIS, GRAUS MENORES de interferência ocorrem com doses tão BAIXAS quanto 10 mg POR DIA — ou seja, suplemento de balcão em dose cosmética já basta para atrapalhar. ⚠️ DIREÇÃO DO ERRO POR PLATAFORMA: a direção e o grau da interferência DEPENDEM DA PLATAFORMA DO ENSAIO — métodos de DOIS SÍTIOS (SANDUÍCHE), usados na MAIORIA dos ensaios de TSH, mostram valores FALSAMENTE BAIXOS; e IMUNOENSAIOS COMPETITIVOS para hormônio tireoidiano produzem resultados FALSAMENTE ELEVADOS. ⚠️ Isto é ARTEFATO DE MÉTODO em pessoa EUTIREÓIDEA: tratar como Graves (tionamida, radioiodo) é dano direto.",
-   "secao": "Biotina — mimetiza EXATAMENTE a bioquímica da doença de Graves; doses e direção por plataforma",
-   "cit": [
-    [
-     0,
-     34645,
-     514
-    ]
-   ],
-   "cit_sha": "936bb6f4727c4cfc"
-  },
-  {
-   "afirmacao": "⚠️ BIOTINA — CONDUTA (NEJM 2019, Burch): dada a ALTA PREVALÊNCIA de suplementação de biotina na POPULAÇÃO GERAL, pacientes com resultados INCONGRUENTES de exames laboratoriais da tireoide DEVEM SER PERGUNTADOS se tomam suplementos de biotina. A interferência do ensaio frequentemente SE RESOLVE DENTRO DE 48 HORAS após a descontinuação da biotina, MAS os pacientes devem se ABSTER do suplemento por VÁRIOS DIAS antes de o exame ser repetido. ⚠️ Ou seja: antes de tratar TSH suprimido com T4 livre alto, pergunte por biotina e repita o exame depois de alguns dias sem o suplemento.",
-   "secao": "Biotina — o que fazer na prática",
-   "cit": [
-    [
-     0,
-     35160,
-     389
-    ]
-   ],
-   "cit_sha": "3c8c705be4f58023"
-  },
-  {
-   "afirmacao": "MECANISMO DA INTERFERÊNCIA DA BIOTINA NO ENSAIO DE TSH (legenda da Figura 3 do NEJM 2019, Burch): o EXCESSO DE BIOTINA produz interferência VARIÁVEL em ensaios que usam reagentes biotinilados; em ensaios de DOIS SÍTIOS (SANDUÍCHE), INCLUINDO OS DE TSH, o nível de TSH resulta FALSAMENTE BAIXO OU INDETECTÁVEL. ⚠️ Na presença de excesso de biotina, o complexo do TSH com os anticorpos anti-TSH NÃO CONSEGUE COMPETIR EFICAZMENTE pela ligação à estreptavidina na fase sólida; após a lavagem, o SINAL BAIXO resulta em um VALOR DE TSH FALSAMENTE BAIXO. ⚠️ Artefato de método em pessoa eutireóidea — o TSH indetectável NÃO é tireotoxicose.",
-   "secao": "Biotina — mecanismo no ensaio de TSH (sanduíche)",
-   "cit": [
-    [
-     0,
-     30540,
-     393
-    ]
-   ],
-   "cit_sha": "abaec5d7d733d355"
-  },
-  {
-   "afirmacao": "MECANISMO DA INTERFERÊNCIA DA BIOTINA NO T4 LIVRE (legenda da Figura 4 do NEJM 2019, Burch): em ALGUNS IMUNOENSAIOS COMPETITIVOS, INCLUINDO OS DE T4 LIVRE, T3 LIVRE E ANTICORPOS ANTIRRECEPTOR DE TSH, os resultados PODEM SER FALSAMENTE ELEVADOS. ⚠️ O excesso de biotina no soro MONOPOLIZA OS SÍTIOS DE LIGAÇÃO DA ESTREPTAVIDINA, impedindo a ligação dos complexos; como o valor de T4 livre no ensaio é INVERSAMENTE PROPORCIONAL à quantidade de marcador remanescente após a lavagem, o sinal BAIXO OU AUSENTE leva ao cálculo de um valor de T4 LIVRE FALSAMENTE ELEVADO. ⚠️ É por isso que a biotina produz, ao mesmo tempo, TSH baixo e T4 livre alto — o retrato bioquímico da tireotoxicose, sem tireotoxicose.",
-   "secao": "Biotina — mecanismo no ensaio de T4 livre (competitivo)",
-   "cit": [
-    [
-     0,
-     33691,
-     324
-    ]
-   ],
-   "cit_sha": "475ab734af300d17"
-  },
-  {
-   "afirmacao": "TABELA 2 do NEJM 2019 (Burch) — LINHA DA BIOTINA, completa e autorrotulada: BIOTINA, classe \"MICRONUTRIENTE\", com TSH BAIXO, T4 LIVRE ALTO e T3 ALTO, MIMETIZANDO HIPERTIREOIDISMO PRIMÁRIO. ⚠️ A ordem das colunas (TSH, T4 livre, T3) está provada no fato \"Amiodarona — Tabela 2, coluna do TSH\", que cita o cabeçalho da tabela; e a direção de cada valor é CORROBORADA pelo texto corrido do próprio artigo (TSH falsamente baixo, T4 livre falsamente alto). ⚠️ Paciente EUTIREÓIDEO: nada disso é doença.",
-   "secao": "Biotina — linha da Tabela 2",
-   "cit": [
-    [
-     0,
-     27943,
-     58
-    ]
-   ],
-   "cit_sha": "5a70d86435a8a5f7"
-  },
-  {
-   "afirmacao": "⚠️ HEPARINA — T4 LIVRE E T3 FALSAMENTE ALTOS, POR REAÇÃO QUE ACONTECE NO TUBO (NEJM 2019, Burch). A heparina LIBERA LIPASE LIPOPROTEICA do endotélio vascular; a amostra de sangue de um paciente que recebe heparina tem ATIVIDADE AUMENTADA de lipase lipoproteica, que PERSISTE IN VITRO. Os ÁCIDOS GRAXOS LIVRES liberados pela lipase DESLOCAM T4 e T3 das proteínas de ligação, causando valores ESPURIAMENTE ALTOS. Os ensaios de hormônio LIVRE com PERÍODOS DE INCUBAÇÃO PROLONGADOS — como a medida por DIÁLISE DE EQUILÍBRIO — são os MAIS AFETADOS; efeitos SEMELHANTES são vistos com preparações de HEPARINA DE BAIXO PESO MOLECULAR. ⚠️ COMO RESOLVER: ensaios competitivos PADRÃO de hormônio livre e a dosagem de TSH GERALMENTE NÃO SÃO AFETADOS, então o exame pode ser REPETIDO com esses ensaios, ou os valores REVERIFICADOS 24 HORAS APÓS a heparina ter sido interrompida. ⚠️ Artefato de método — não é tireotoxicose e não se trata.",
-   "secao": "Heparina — T4 livre e T3 falsamente altos (artefato in vitro)",
-   "cit": [
-    [
-     0,
-     37328,
-     751
-    ]
-   ],
-   "cit_sha": "3c0cb003cdec1f22"
-  },
-  {
-   "afirmacao": "TABELA 2 do NEJM 2019 (Burch) — LINHAS DA ENOXAPARINA E DA HEPARINA, completas e autorrotuladas: ENOXAPARINA, classe \"ANTICOAGULANTE\", com TSH NORMAL, T4 LIVRE ALTO e T3 ALTO, MIMETIZANDO ADENOMA HIPOFISÁRIO SECRETOR DE TSH ou RESISTÊNCIA AO HORMÔNIO TIREOIDIANO; e HEPARINA, classe \"ANTICOAGULANTE\", com o MESMO padrão (TSH NORMAL, T4 LIVRE ALTO, T3 ALTO) e as MESMAS condições mimetizadas. ⚠️ A ordem das colunas (TSH, T4 livre, T3) está provada no fato \"Amiodarona — Tabela 2, coluna do TSH\", que cita o cabeçalho; e a direção dos valores é CORROBORADA pelo texto corrido (deslocamento por ácidos graxos livres eleva espuriamente T4 livre e T3, com TSH geralmente não afetado). ⚠️ Paciente EUTIREÓIDEO — não investigar TSHoma sem antes suspeitar da heparina.",
-   "secao": "Heparina e enoxaparina — linhas da Tabela 2",
-   "cit": [
-    [
-     0,
-     28522,
-     220
-    ]
-   ],
-   "cit_sha": "9d508ff5e583ac86"
-  },
-  {
-   "afirmacao": "⚠️ FENITOÍNA, CARBAMAZEPINA E SALSALATO — T4 LIVRE BAIXO QUE NÃO É HIPOTIREOIDISMO CENTRAL (NEJM 2019, Burch). Além de aumentar o metabolismo do hormônio tireoidiano, a FENITOÍNA e a CARBAMAZEPINA DESLOCAM o T4 das proteínas de ligação. Embora o efeito IMEDIATO seja T4 livre TRANSITORIAMENTE ELEVADO com supressão RECÍPROCA do TSH, espera-se que AMBOS os níveis se NORMALIZEM depois de atingido o equilíbrio. Por isso PARECIA PARADOXAL que pacientes CLINICAMENTE EUTIREÓIDEOS em uso dessas medicações tivessem T4 LIVRE BAIXO com TSH NORMAL, sugerindo HIPOTIREOIDISMO CENTRAL. ⚠️ NO ENTANTO, determinou-se afinal que os valores REDUZIDOS de T4 livre nesse contexto são ARTEFATUAIS e estão relacionados à DILUIÇÃO DO SORO em ensaios que exigem essa etapa. Efeitos SEMELHANTES são vistos com o SALSALATO. ⚠️ Consequência: não iniciar levotiroxina nem investigar hipófise nesse paciente por causa desse padrão.",
-   "secao": "Fenitoína, carbamazepina e salsalato — T4 livre BAIXO artefatual",
-   "cit": [
-    [
-     0,
-     38120,
-     710
-    ]
-   ],
-   "cit_sha": "2518e444df5c99ff"
-  },
-  {
-   "afirmacao": "TABELA 2 do NEJM 2019 (Burch) — LINHAS DA FENITOÍNA E DO SALSALATO, completas e autorrotuladas: FENITOÍNA, classe \"AGENTE ANTIEPILÉPTICO\", com TSH NORMAL, T4 LIVRE BAIXO e T3 no LIMITE INFERIOR DA FAIXA NORMAL, MIMETIZANDO HIPOTIREOIDISMO CENTRAL; e SALSALATO, classe \"ANTI-INFLAMATÓRIO NÃO ESTEROIDAL\", com TSH NORMAL, T4 LIVRE no LIMITE INFERIOR DA FAIXA NORMAL e T3 no LIMITE INFERIOR DA FAIXA NORMAL, também MIMETIZANDO HIPOTIREOIDISMO CENTRAL. ⚠️ A ordem das colunas (TSH, T4 livre, T3) está provada no fato \"Amiodarona — Tabela 2, coluna do TSH\"; a direção dos valores é CORROBORADA pelo texto corrido do artigo (T4 livre baixo com TSH normal, artefatual). ⚠️ Paciente EUTIREÓIDEO.",
-   "secao": "Fenitoína e salsalato — linhas da Tabela 2",
-   "cit": [
-    [
-     0,
-     28743,
-     212
-    ]
-   ],
-   "cit_sha": "80c652dba6ba2c30"
-  },
-  {
-   "afirmacao": "TABELA 2 do NEJM 2019 (Burch) — LINHA DA CARBAMAZEPINA E DA OXCARBAZEPINA: classe \"AGENTE ANTIEPILÉPTICO\", com TSH NORMAL, T4 LIVRE BAIXO e T3 no LIMITE INFERIOR DA FAIXA NORMAL, MIMETIZANDO HIPOTIREOIDISMO CENTRAL em pessoa EUTIREÓIDEA. ⚠️ A OXCARBAZEPINA só aparece NA TABELA — o texto corrido do artigo discute apenas fenitoína e carbamazepina. ⚠️ COMO A ATRIBUIÇÃO É RECUPERÁVEL apesar do PDF de duas colunas: a coluna \"Drug\" da Tabela 2 está em ORDEM ALFABÉTICA (Amiodarone, Biotin, Carbamazepine and oxcarbazepine, Enoxaparin, Heparin, Phenytoin, Salsalate) e estas células ficam EXATAMENTE entre a linha da biotina e a da enoxaparina; a ordem das colunas está provada no fato \"Amiodarona — Tabela 2, coluna do TSH\", e a direção dos valores é corroborada pelo texto corrido. ⚠️ A citação abaixo é CONTÍGUA e por isso carrega, no meio, o texto da outra coluna e o rodapé do periódico que o PDF intercalou entre o nome do fármaco e suas células — está ali de propósito, para não costurar trechos distantes.",
-   "secao": "Carbamazepina e oxcarbazepina — linha da Tabela 2",
-   "cit": [
-    [
-     0,
-     28002,
-     519
-    ]
-   ],
-   "cit_sha": "2ac6c982389e3032"
-  },
-  {
-   "afirmacao": "DEXAMETASONA NA TIREOTOXICOSE GRAVE (NEJM 2019, Burch): a amiodarona inibe a geração de T3 tanto DENTRO DA HIPÓFISE quanto NA PERIFERIA; e a inibição da conversão de T4 em T3 pela DEXAMETASONA é EXPLORADA TERAPEUTICAMENTE no tratamento de pacientes com TIREOTOXICOSE GRAVE. ⚠️ Ou seja, o mesmo mecanismo que em outros fármacos é efeito colateral (queda do T3) é aqui usado de propósito. ⚠️ Citação literal de PDF de duas colunas: as células da Tabela 2 e a legenda aparecem intercaladas no meio da frase.",
-   "secao": "Dexametasona — inibição da conversão usada como TRATAMENTO",
-   "cit": [
-    [
-     0,
-     27819,
-     395
-    ]
-   ],
-   "cit_sha": "297db73c6aee3f19"
-  },
-  {
-   "afirmacao": "⚠️ PROPRANOLOL E CONVERSÃO DE T4 EM T3 — A RESSALVA QUE NÃO PODE SUMIR (NEJM 2019, Burch): embora o propranolol EM ALTAS DOSES conste entre os fármacos que inibem a conversão de T4 em T3, o efeito do propranolol sobre a MONODESIODINAÇÃO NÃO É CLINICAMENTE RELEVANTE NAS DOSES USUAIS. ⚠️ Não atribua ao betabloqueador em dose habitual a queda do T3 de um paciente.",
-   "secao": "Propranolol — a ressalva de dose",
-   "cit": [
-    [
-     0,
-     28956,
-     79
-    ]
-   ],
-   "cit_sha": "4d6c87eb906dfe20"
-  },
-  {
-   "afirmacao": "⚠️ FENOBARBITAL, FENITOÍNA, CARBAMAZEPINA E RIFAMPICINA AUMENTAM A NECESSIDADE DE LEVOTIROXINA (NEJM 2019, Burch): o tratamento com fármacos que INDUZEM ENZIMAS DE GLICURONIDAÇÃO — incluindo FENOBARBITAL, FENITOÍNA, CARBAMAZEPINA e RIFAMPICINA — ÀS VEZES exige AUMENTO da dose de LEVOTIROXINA. ⚠️ Note a gradação: \"às vezes\", não sempre. ⚠️ Isto é efeito FARMACOCINÉTICO REAL sobre o hormônio administrado — distinto do artefato de dosagem que a fenitoína e a carbamazepina também produzem (T4 livre falsamente baixo por diluição do soro no ensaio). O mesmo paciente pode ter os dois fenômenos ao mesmo tempo.",
-   "secao": "Indutores de glicuronidação — aumentam a necessidade de levotiroxina",
-   "cit": [
-    [
-     0,
-     29036,
-     198
-    ]
-   ],
-   "cit_sha": "b391bab52a481c96"
-  },
-  {
-   "afirmacao": "SEQUESTRANTES DE ÁCIDOS BILIARES E HORMÔNIO TIREOIDIANO (NEJM 2019, Burch): COLESTIRAMINA, COLESTIPOL e COLESEVELAM REDUZEM os níveis de hormônio tireoidiano TANTO na tireotoxicose ENDÓGENA quanto na IATROGÊNICA, presumivelmente por INTERFERIR NA RECIRCULAÇÃO ÊNTERO-HEPÁTICA do hormônio tireoidiano. ⚠️ Duas leituras práticas opostas: no paciente em levotiroxina, o sequestrante derruba o hormônio e desestabiliza o controle; na tireotoxicose, esse mesmo efeito é aproveitável.",
-   "secao": "Sequestrantes de ácidos biliares — reduzem o hormônio tireoidiano",
-   "cit": [
-    [
-     0,
-     29553,
-     257
-    ]
-   ],
-   "cit_sha": "4a065f5b4b479ffc"
-  },
-  {
-   "afirmacao": "ABSORÇÃO DA LEVOTIROXINA (NEJM 2019, Burch): os comprimidos de hormônio tireoidiano tomados por via oral requerem MEIO ÁCIDO para DISSOLUÇÃO antes de serem transportados ao intestino delgado para absorção. Aproximadamente 60 A 80% da levotiroxina é ABSORVIDA em 2 A 4 HORAS após uma dose oral em JEJUM. ⚠️ O uso DIÁRIO de INIBIDORES DE BOMBA DE PRÓTONS associa-se a NECESSIDADE AUMENTADA de levotiroxina; essa necessidade é atendida AUMENTANDO A DOSE de levotiroxina OU TROCANDO PARA UMA PREPARAÇÃO LÍQUIDA.",
-   "secao": "Levotiroxina — dissolução ácida, absorção e inibidor de bomba de prótons",
-   "cit": [
-    [
-     0,
-     29870,
-     463
-    ]
-   ],
-   "cit_sha": "38cc244c63bb5524"
-  },
-  {
-   "afirmacao": "⚠️ LEVOTIROXINA — O QUE ATRAPALHA A ABSORÇÃO E O QUE ORIENTAR (NEJM 2019, Burch). INTERFEREM na absorção gastrintestinal do hormônio tireoidiano: SULFATO FERROSO, CARBONATO DE CÁLCIO, HIDRÓXIDO DE ALUMÍNIO, SUCRALFATO, SEQUESTRANTES DE ÁCIDOS BILIARES e RALOXIFENO. RECOMENDA-SE tomar o hormônio tireoidiano 4 HORAS ANTES de ingerir qualquer uma dessas medicações, OU mover a dose de levotiroxina para a HORA DE DORMIR. ESTÔMAGO VAZIO é aconselhado, já que ATÉ fórmula de SOJA, LEITE ou CAFÉ podem prejudicar a absorção. ⚠️ Os pacientes DEVEM SER INFORMADOS de que INICIAR OU PARAR essas medicações afetará a ESTABILIDADE dos níveis de hormônio tireoidiano, exigindo REAVALIAÇÃO após essas mudanças.",
-   "secao": "Levotiroxina — o que atrapalha a absorção e como espaçar",
-   "cit": [
-    [
-     0,
-     31558,
-     548
-    ]
-   ],
-   "cit_sha": "f59c2b87a55b7e6d"
-  },
-  {
-   "afirmacao": "⚠️ A VIA CONTRÁRIA: A DISFUNÇÃO TIREOIDIANA ALTERA O FÁRMACO (NEJM 2019, Burch). Tanto o HIPERtireoidismo quanto o HIPOtireoidismo podem afetar a FARMACOCINÉTICA e a EFICÁCIA de medicamentos comuns, além da FREQUÊNCIA DE EFEITOS ADVERSOS. EXEMPLOS: (1) VARFARINA — necessidade de dose CONTRAINTUITIVAMENTE MENOR durante o HIPERTIREOIDISMO, por TURNOVER ACELERADO dos fatores de coagulação dependentes de VITAMINA K; (2) ESTATINAS — associadas a RISCO AUMENTADO DE MIOPATIA na presença de HIPOTIREOIDISMO. (3) O HIPERTIREOIDISMO ACELERA o metabolismo de numerosos medicamentos, incluindo PROPRANOLOL, GLICOSÍDEOS CARDÍACOS e GLICOCORTICOIDES, e, inversamente, o HIPOTIREOIDISMO RETARDA a depuração desses fármacos.",
-   "secao": "Direção inversa — a disfunção tireoidiana muda o fármaco (varfarina, estatina)",
-   "cit": [
-    [
-     0,
-     38880,
-     647
-    ]
-   ],
-   "cit_sha": "3a47edbc2395c0cb"
+    "achado": "AUDITORIA ADVERSARIAL DOS 63 FATOS. || O QUE FOI MEDIDO. (1) As 63 citações resolvem contra o texto-fonte local (56.313 caracteres brutos, 55.948 na base 0); nenhuma usa a base 1. (2) As QUATRO elisões declaradas foram abertas e lidas uma a uma: #4 (130 caracteres = legenda da Figura 1 intercalada nos itens da Tabela 1), #11 (322), #16 (303) e #29 (295) — os três últimos são RODAPÉ DE PÁGINA do periódico (\"n engl j med 381;8 … all rights reserved.\"), palavra por palavra. Nenhuma costura trecho distante; nenhuma passa de 400. Tentei derrubá-las e não consegui. (3) MAPA DE COBERTURA do corpo (0 a 40.764 da base normalizada; de 40.764 em diante são as 81 referências): 32,5% do corpo ficou fora de citação, em 15 lacunas ≥ 200 caracteres. Li todas. Treze são declaradas no campo `extracao` ou são lixo tipográfico (cabeçalho/afiliação, fisiologia molecular, grupo 1 da Tabela 1 intercalado com a legenda da Figura 1, legenda da Figura 2, rodapés de página, `Disclosure`). ⚠️ AS DUAS RESTANTES ERAM DEFEITO REAL E ESTÃO CORRIGIDAS: 30.933-31.558 (Painéis B-D da Figura 3) e 34.015-34.645 (Painéis B-D da Figura 4) — exatamente o mecanismo que os fatos #49 e #50 AFIRMAVAM sem citar. (4) Os 60 números da base foram conferidos NA FONTE E COM O CONTEXTO (37,3% de iodo; 7 mg por comprimido de 200 mg; 45 vezes; 150 μg \"for men and nonpregnant women\"; 5-10% do tipo 2; 50% × 16% de bócio sob lítio; 1778 casos e 17,6%; fator de 6; 40 anos; 3-10% de hipofisite a 3 mg/kg a cada 3 semanas por até 4 ciclos; 1-3 meses e 2-4 ciclos; 5-10/10-20/>20% de disfunção tireoidiana; 4-8, 2, 18, 3-10 e 10-20 semanas; 40-50% de anticorpos; 15-50% e 89 pacientes e 22% e 7/11 semanas; 1233 e 16,7% e 5% e 12%; 248 e 41,1% e 71,6% e 17 meses; 3 anos e 5-9 anos; 15,1%, 54,8% e 6,5%; 14-25% e 42 pacientes e 36% e TSH > 20 mUI/L e \"quarenta por cento\"; 26 semanas; 40-70% do bexaroteno; 3 meses do mitotano; 99% e 75% e 100% e 80%; 300 mg e 10 mg de biotina; 48 horas; 24 horas; 60-80% em 2-4 horas; 4 horas; 1-2 semanas do escape de Wolff-Chaikoff). NENHUM NÚMERO ERRADO — nem de valor, nem de contexto. A decisão de grafar \"quarenta por cento\" por extenso está certa: a fonte escreve \"Forty percent\". (5) As 5 entradas de `nucleo_citado` batem VERBATIM com o `CLINICAL_GUIDELINES` de hoje e as 20 de `nucleo_ausente` continuam ausentes (`confere-ressalvas.js` verde). A direção `lacuna` é a correta: o núcleo tem \"checkpoint\" uma vez e SÓ como causa de hipofisite, e \"lítio\" uma vez e SÓ no diferencial de hipercalcemia. || O QUE TENTEI DERRUBAR E NÃO CONSEGUI. (a) A não-extração das células de T4 livre/T3/condição mimetizada da linha da AMIODARONA na Tabela 2: fui ao texto bruto e a alegação do extrator se confirma — o rótulo verdadeiro da linha (\"Amiodarone | Class III antiarrhythmic agent | High end of normal range\", citado no fato #13) termina em 26.570 e as células continuam só em 27.819, 1.249 caracteres depois, e no ponto das células o \"Amiodarone\" que aparece é o do TEXTO CORRIDO (\"Amiodarone inhibits T3 generation both within the pituitary and in the periphery\"), não o rótulo da tabela. A célula não se autodescreve ali, e o conteúdo não se perdeu: está no texto corrido, citado nos fatos #10 e #11. Decisão certa. (b) A atribuição da linha CARBAMAZEPINA/OXCARBAZEPINA (#56) por ordem alfabética: conferi a coluna \"Drug\" inteira no texto bruto (Amiodarone, Biotin, Carbamazepine and oxcarbazepine, Enoxaparin, Heparin, Phenytoin, Salsalate) e as células \"Antiepileptic agent | Normal | Low | Low end of normal range | Central hypothyroidism\" caem exatamente entre a biotina e a enoxaparina. Correta — e a citação é CONTÍGUA, carregando os 411 caracteres de entremeio à vista em vez de costurá-los. (c) As linhas de Tabela 2 de BIOTINA, ENOXAPARINA, HEPARINA, FENITOÍNA e SALSALATO: saem do PDF autorroturadas e completas, e cada direção de valor bate com o texto corrido. Nenhuma inversão. (d) A conversão 150 μg × 250 μg/dia do núcleo: NÃO é conflito — 150 μg é a ingestão diária recomendada \"for men and nonpregnant women\" usada como unidade de comparação da carga de iodo da amiodarona, e os 250 μg do núcleo são de gestante e lactante. Populações diferentes; a ressalva já dizia isso e está certa. (e) A ordem tionamida-antes-do-iodo da tempestade tireoidiana do núcleo: o artigo não a contraria em ponto nenhum — só registra que o PTU inibe a conversão periférica e que a dexametasona é usada na tireotoxicose grave pelo mesmo mecanismo (#57). (f) `proporcao-citada.js` marca \"1 não localizada\" neste extrato: é ARTEFATO DE MEDIÇÃO, não defeito — o primeiro pedaço da elisão do fato #11 termina em \"…unsuppressed thy-\", e a régua daquele script procura na base 1 (sem hífen de quebra), onde esse sufixo não existe mais. Na base 0, que é onde a citação foi gravada, resolve. (g) VINTAGE dos inibidores de checkpoint e de tirosina-quinase: procurei defasagem CONTRA O NÚCLEO e não há — o núcleo é silente sobre disfunção tireoidiana por checkpoint e sobre TKI, então não há versão mais nova a preservar; o que faltava era o aviso de vintage no ÚNICO fato com posologia (#21), e foi acrescentado. || TAXA DE ERRO SEMÂNTICA: 12 de 63 fatos tocados = 19,0%. Três defeitos eram de PROVA (afirmação além da citação: #49, #50, #57 — os dois primeiros com 625 e 630 caracteres de mecanismo alegado e não citado), um era de CONTEÚDO SEM LASTRO (#20, nomes de fármacos que só existem na lista de referências), quatro eram de DANO POR RECUPERAÇÃO ISOLADA (#7 conduta oposta, #37 crise adrenal, #38 gradação apagada, #12 subtratamento) e quatro eram de ATRIBUIÇÃO (#6, #21, #35, #43). ⚠️ O de maior risco clínico é o #7: era o único ponto da base em que um fato, sozinho, entregava um quadro clínico não discriminante seguido de UM dos dois tratamentos opostos."
   }
- ]
 }
