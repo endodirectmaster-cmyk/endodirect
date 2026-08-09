@@ -106,6 +106,26 @@ const CAMINHO = [
   // `prognatismo` 3×0, `macroglossia` 3×0, `gigantismo` 8×0.
   // ❌ `totg` ficou de fora: 19 aqui contra 8 fora, e o TOTG 75 g é o rastreio do
   // diabetes GESTACIONAL — as duas últimas linhas são o controle disso.
+  // ⚠️ ENDOCRINOPATIA POR INIBIDOR DE CHECKPOINT — o bloco era praticamente
+  // inalcançável (09/08/2026). `checkpoint` e `inibidor de checkpoint`
+  // apontavam para Tireoide, de quando o único conteúdo do assunto era o braço
+  // tireoidiano do bloco de fármaco-e-tireoide. Medido depois de o artigo
+  // entrar: `inibidor de checkpoint` é **102 em Endocrinopatias × 9 em
+  // Tireoide**, `checkpoint` 119 × 24. Enquanto apontavam para lá, *"diabetes
+  // por inibidor de checkpoint"* e *"insuficiência adrenal por inibidor de
+  // checkpoint"* caíam as duas em **Tireoide**.
+  // ❌ `hipofisite` (33×5 a favor de Endocrinopatias) NÃO se moveu: é assunto da
+  // hipófise. ❌ `imunoterapia` também não — 4 aqui contra 8 em Tireoide.
+  // As quatro últimas linhas são o controle: Tireoide e Diabetes não perdem o
+  // que é delas.
+  ['diabetes por inibidor de checkpoint', 'Endocrinopatias'],
+  ['insuficiencia adrenal por inibidor de checkpoint', 'Endocrinopatias'],
+  ['irAE endocrino, o que rastreio', 'Endocrinopatias'],
+  ['endocrinopatia por imunoterapia', 'Endocrinopatias'],
+  ['hipofisite por ipilimumabe', 'Neuroendocrinologia'],
+  ['tireoidite subaguda, dor cervical', 'Tireoide'],
+  ['amiodarona causou tireotoxicose', 'Tireoide'],
+  ['cetoacidose diabetica, conduta', 'Diabetes'],
   ['IGF-1 elevado, como confirmo acromegalia', 'Neuroendocrinologia'],
   ['prognatismo e maos aumentadas', 'Neuroendocrinologia'],
   ['nadir de GH pos-op, criterio de cura', 'Neuroendocrinologia'],
@@ -665,7 +685,13 @@ const CAMINHO = [
   // "exactly mimicked the biochemical findings of Graves' disease". Sem rota,
   // trata-se hipertireoidismo que não existe.
   ['paciente em uso de biotina: os exames sao confiaveis?', 'Tireoide'],
-  ['inibidor de checkpoint: qual disfuncao endocrina?', 'Tireoide'],
+  // ⚠️ ESTA LINHA MUDOU DE RESPOSTA EM 09/08/2026, e a mudança é correta. Ela
+  // esperava Tireoide de quando o ÚNICO conteúdo de inibidor de checkpoint na
+  // base era o braço tireoidiano do bloco de fármaco-e-tireoide (9 menções).
+  // Entrou o artigo de endocrinopatias por ICI (102 menções, quatro eixos), e a
+  // pergunta "qual disfunção endócrina?" passou a ter dono de verdade. Não
+  // afrouxei o teste: troquei a resposta esperada porque a base mudou.
+  ['inibidor de checkpoint: qual disfuncao endocrina?', 'Endocrinopatias'],
   // ...e a sentinela do outro lado do checkpoint, que é de outra área:
   ['hipofisite por checkpoint', 'Neuroendocrinologia'],
   // ✅ O MARCADOR DE BURACO DE ACERVO DISPAROU, E FOI ATENDIDO (09/08/2026).

@@ -33,6 +33,32 @@ com zero `µ` e o limite da EFSA para vitamina D virou "100 mg/day" quando o rea
 é 100 **µg** — erro de 1000×. Aí toda unidade e todo sinal são suspeitos:
 **não invente o que se perdeu**, encolha a afirmação e diga onde conferir.
 
+⚠️ **E há mais DUAS assinaturas que esse teste NÃO pega**, ambas achadas em
+09/08/2026 e ambas com `þ` = 0:
+
+- **HÍFEN APAGADO (NEJM).** A fonte do corpo mapeia o hífen para largura quase
+  zero e o texto sai `extraadrenal`, `lipid rich`, `α adrenergic`,
+  `pheochromocy` + quebra + `toma`. Sinal: **contagem de hífen absurdamente
+  baixa** — 83 neste artigo contra 600+ em outras extrações NEJM da base.
+  ⚠️ **Não reconstrua o hífen**: os itens de largura pequena são ambíguos entre
+  hífen e espaço real (`18 ⟦ ⟧ year` é hífen, `Fig. ⟦ ⟧ 1` é espaço), e
+  reconstruir é fabricar a fonte. Números, unidades, `>`, `<`, `%` e o travessão
+  de faixa costumam sobreviver — confira e declare no `conflito`.
+- **ZERO WIDTH SPACE depois do hífen (Nature Reviews).** 351 ocorrências de
+  U+200B em `anti-PD1`, `ICI-DM`, `immune-related`. ⚠️ **O `norm` de
+  `lib/citacao.js` não remove U+200B** (não é `\s` em JS) e o `semHifenDeQuebra`
+  também não: procurar `anti-pd1` **falha com a palavra lá**. Saída: busque numa
+  vista sem ZWSP e mapeie o offset de volta — a fatia gravada continua sendo
+  pedaço exato da base.
+
+**Diagnóstico das duas, em uma linha:**
+
+```
+node -e "const t=require('fs').readFileSync(process.argv[1],'utf8');
+console.log('hifens:', (t.match(/-/g)||[]).length,
+            '| U+200B:', (t.match(/​/g)||[]).length);" CAMINHO_DO_TXT
+```
+
 ⚠️ **O Lancet escreve decimal com ponto médio** (`0·25`, `–2·5`). O `norm` de
 `lib/citacao.js` não converte `·` em `.`, então escreva o número **como a fonte
 escreve**. E **nunca modifique o arquivo em `textos/`** para contornar: ele é
