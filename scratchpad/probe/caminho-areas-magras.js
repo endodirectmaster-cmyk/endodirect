@@ -1,6 +1,15 @@
 // Teste de caminho nas áreas menos varridas. Não altera nada.
 // Pergunta do médico → área canônica + bloco que chega em PRIMEIRO lugar.
-const { canonArea, deepFor } = require('../../lib/clinical-deep.js');
+const { canonArea, deepFor, DEEP } = require('../../lib/clinical-deep.js');
+// ⚠️ A chave TEM de ser o tema, não a linha inteira. `• {tema} — {fonte}: {texto}`
+// carrega o corpo do bloco, e o corpo de um artigo de 100+ fatos contém quase
+// qualquer expressão — foi assim que estas sondas deram verde em caminhos que
+// estavam quebrados. Quarto falso verde meu pela mesma causa.
+const temaDoPrimeiro = (area, saida) => {
+  const l1 = saida.split('\n').find((l) => l.startsWith('• ')) || '';
+  const b = (DEEP[area] || []).find((x) => l1.startsWith('• ' + x.tema + ' — '));
+  return b ? b.tema : '';
+};
 
 // [pergunta, área esperada, regex do bloco que DEVE chegar em 1º]
 const CASOS = [
@@ -39,8 +48,8 @@ let falhas = 0;
 for (const [q, areaEsperada, rx] of CASOS) {
   const a = canonArea(q);
   const saida = a ? deepFor(a, 400000, q) : '';
-  const l1 = (saida.split('\n').find((l) => l.startsWith('• ')) || '').slice(2);
-  const tema1 = l1.slice(0, 100);
+  const l1 = temaDoPrimeiro(a, saida);
+  ;
   const okArea = a === areaEsperada;
   const okBloco = !rx || rx.test(l1);
   if (!okArea || !okBloco) {

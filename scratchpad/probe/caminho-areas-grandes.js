@@ -1,12 +1,21 @@
 // Teste de ordem nas 4 áreas grandes — onde os blocos disputam de verdade.
 // A pergunta do médico tem de receber PRIMEIRO o bloco que a responde.
-const { canonArea, deepFor } = require('../../lib/clinical-deep.js');
+const { canonArea, deepFor, DEEP } = require('../../lib/clinical-deep.js');
+// ⚠️ A chave TEM de ser o tema, não a linha inteira. `• {tema} — {fonte}: {texto}`
+// carrega o corpo do bloco, e o corpo de um artigo de 100+ fatos contém quase
+// qualquer expressão — foi assim que estas sondas deram verde em caminhos que
+// estavam quebrados. Quarto falso verde meu pela mesma causa.
+const temaDoPrimeiro = (area, saida) => {
+  const l1 = saida.split('\n').find((l) => l.startsWith('• ')) || '';
+  const b = (DEEP[area] || []).find((x) => l1.startsWith('• ' + x.tema + ' — '));
+  return b ? b.tema : '';
+};
 
 // [pergunta, área esperada, regex do 1º bloco]
 const CASOS = [
   // ── Tireoide (9 blocos, 98% do teto)
-  ['crise tireotóxica com febre e taquicardia, o que faço agora', 'Tireoide', /crise tireotóxica/i],
-  ['escore de Burch-Wartofsky, quando chamo de tempestade', 'Tireoide', /crise tireotóxica/i],
+  ['crise tireotóxica com febre e taquicardia, o que faço agora', 'Tireoide', /^crise tireotóxica/i],
+  ['escore de Burch-Wartofsky, quando chamo de tempestade', 'Tireoide', /^crise tireotóxica/i],
   ['T3 baixo e T4 normal em paciente de UTI, trato?', 'Tireoide', /eutireoidiano|NTIS/i],
   ['T3 reverso alto no doente grave', 'Tireoide', /eutireoidiano|NTIS/i],
   ['amiodarona causou tireotoxicose, qual tipo', 'Tireoide', /fármaco e tireoide/i],
@@ -44,7 +53,7 @@ let falhas = [];
 for (const [q, areaEsp, rx] of CASOS) {
   const a = canonArea(q);
   const saida = a ? deepFor(a, 400000, q) : '';
-  const l1 = (saida.split('\n').find((l) => l.startsWith('• ')) || '').slice(2);
+  const l1 = temaDoPrimeiro(a, saida);
   const okA = a === areaEsp, okB = rx.test(l1);
   if (!okA || !okB) falhas.push([q, a, l1.slice(0, 66), okA, okB, areaEsp]);
 }

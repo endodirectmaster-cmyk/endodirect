@@ -773,6 +773,26 @@ const PRIMEIRO = [
   // nomear o que ele já respondia (cortisol basal/matinal, cosintropina,
   // hidrocortisona parenteral). Desempatar por tema mais curto foi medido em
   // 08/08 e é cara-ou-coroa — 2 de 4 mudanças pioravam.
+  // ⚠️ A EMERGÊNCIA DA TIREOIDE ESTAVA SENDO ROUBADA PELO TEMA (09/08/2026), e a
+  // regra da dominância diz por quê: o tema do bloco do hipertireoidismo no
+  // ADULTO reivindicava "tempestade tireoidiana / crise tireotóxica (escore de
+  // Burch-Wartofsky)" — e o CORPO dele tem **ZERO** ocorrência de "crise
+  // tireotóxica" e UMA de "Burch", contra 3 e 7 no bloco da crise. Do outro lado,
+  // o tema do bloco da crise tinha 118 caracteres e não nomeava NENHUM sinal
+  // cardinal, enquanto o corpo dele tem tempestade ×42 e taquicardia ×5.
+  // Consertados os dois lados: o ADULTO deixou de reivindicar o que não entrega,
+  // e a crise passou a nomear febre, taquicardia, rebaixamento e o escore.
+  // ⚠️ Mesma regra tirou `biotina` (1 ocorrência no corpo contra 22 no bloco de
+  // fármaco) e `lítio` (1 contra 15) do tema do ADULTO.
+  ['crise tireotoxica com febre e taquicardia, o que faco agora', 'crise tireotóxica'],
+  ['paciente com tireotoxicose e febre 39, rebaixamento', 'crise tireotóxica'],
+  ['escore de Burch-Wartofsky, quando chamo de tempestade', 'crise tireotóxica'],
+  ['biotina falseia o TSH?', 'fármaco e tireoide'],
+  ['litio e hipotireoidismo, monitorizo como', 'fármaco e tireoide'],
+  // controles: o bloco do ADULTO tem de continuar ganhando o que é dele
+  ['doenca de Graves no adulto, metimazol por quanto tempo', 'tireotoxicose no adulto'],
+  ['nodulo toxico, radioiodo ou cirurgia?', 'tireotoxicose no adulto'],
+  ['hipertireoidismo no idoso com fibrilacao atrial', 'tireotoxicose no adulto'],
   ['cortisol basal 3, faco teste de estimulo?', 'insuficiência adrenal —'],
   ['crise adrenal, hidrocortisona IV agora', 'insuficiência adrenal —'],
   ['crise perdedora de sal no lactente com 21-hidroxilase', 'hiperplasia adrenal congenita'],
@@ -867,7 +887,7 @@ const COMPLETUDE = [
   ['PTDM: quando rastrear?', 'Diabetes', 'ptdm', 'ptdm', 90, 40],
   ['prolactina de 80 com macroprolactina: e prolactinoma?', 'Neuroendocrinologia', 'prolactinoma', 'prolactinoma', 90, 80], // medido: 100%, 187
   ['devo repor levotiroxina no doente grave com T3 baixo?', 'Tireoide', 'eutireoidiano', 'eutireoidiano', 90, 2],
-  ['tempestade tireoidiana com Burch-Wartofsky 55', 'Tireoide', 'crise tireotoxica — diagnostico', 'burch', 90, 10],
+  ['tempestade tireoidiana com Burch-Wartofsky 55', 'Tireoide', 'crise tireotoxica, tambem chamada tempestade tireoidiana', 'burch', 90, 10],
   // ⚠️ ESTE É O CASO EM QUE A EVICÇÃO FAZIA MAL, e não só omitia (09/08/2026).
   // Endocrinopatias hoje é hiponatremia inteira: 5 blocos, 170k contra teto de
   // 120k. O bloco da hiponatremia AGUDA SINTOMÁTICA chegava a 1% na pergunta do
