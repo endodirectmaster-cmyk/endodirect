@@ -479,6 +479,22 @@ try {
   fail('a base profunda commitada não corresponde aos extratos:\n' + out);
 }
 
+// ⚠️ O MESMO ARTIGO EXTRAÍDO DUAS VEZES. Achado em 09/08/2026 varrendo a fila:
+//     **5 títulos têm DOIS fileId** no `fila-extracao.json`, e num deles — o
+//     diabetes insipidus central — um id JÁ foi extraído (169 fatos) e o outro
+//     seguia na fila marcado como pendente. Nada impedia a leva seguinte de
+//     extraí-lo de novo. Duplicata não é só desperdício: dobra o peso do artigo
+//     na seleção por tema, come teto de área em dobro, e faz a IA ver a mesma
+//     afirmação duas vezes — o que soa como confirmação independente sem ser.
+//     Medido ao entrar: 44 extratos, 44 títulos distintos, zero duplicados.
+try {
+  execFileSync(process.execPath, [path.join('scripts', 'confere-artigo-duplicado.js')], { stdio: 'pipe' });
+  ok('artigo duplicado: nenhum artigo extraído duas vezes sob ids diferentes');
+} catch (e) {
+  const out = (e.stdout ? e.stdout.toString() : '') + (e.stderr ? e.stderr.toString() : '');
+  fail('o mesmo artigo foi extraído mais de uma vez:\n' + out);
+}
+
 // ⚠️ PROVA COPIADA ENTRE FATOS. A auditoria do GIOP achou QUATRO fatos com a
 //     MESMA citação byte a byte — mesmo offset, mesmo tamanho, mesmo `cit_sha`.
 //     A fatia provava o primeiro; os outros três afirmavam preferência de

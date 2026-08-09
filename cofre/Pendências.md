@@ -83,6 +83,35 @@ Não entrou ainda porque reprovaria agora, com dois extratos cujos agentes ainda
 não relataram — e consertar extrato de agente no ar é o acidente que a convenção
 do `git add -A` já descreve. Entra quando a leva fechar.
 
+## 👯 A FILA TEM 5 TÍTULOS COM DOIS `fileId` — e um deles já foi extraído (2026-08-09)
+
+Achado varrendo o `fila-extracao.json`: 245 ids para **240 títulos**. Os cinco
+repetidos:
+
+| título | ids |
+|---|---|
+| Diagnosis and management of central diabetes insipidus in adults | `1w-2-Umi` ✅ **já extraído** · `11xOGY3Q` **ainda pendente** |
+| Endocrine toxicities of immune checkpoint inhibitors | `1DYg7sRy` · `1UAUYQB9` |
+| The epidemiology, diagnosis and treatment of prolactinomas | `1g-okiMj` · `1qmeqMdU` |
+| The management of primary aldosteronism: case detection… | `1G3A3M0s` · `1GZZArFd` |
+| Postoperative diabetes insipidus: how to define and grade… | `1oYhQhUd` · `1GnEV5Lt` |
+
+⚠️ **O do diabetes insipidus é o perigoso:** um id já virou extrato (169 fatos) e
+o outro segue marcado como pendente. Nada impedia a leva seguinte de extraí-lo de
+novo — e duplicata **dobra o peso do artigo na seleção por tema**, come teto de
+área em dobro e faz a IA ver a mesma afirmação duas vezes, o que soa como
+confirmação independente sem ser.
+
+✅ **Guarda de CI criada no mesmo dia** (`confere-artigo-duplicado.js`): compara o
+TÍTULO normalizado dos extratos, não o `fileId` — porque o defeito da fila é
+justamente ter dois ids para o mesmo artigo. Zero falso positivo hoje (44
+extratos, 44 títulos distintos) e conferida nos dois sentidos.
+
+**O que ainda falta, e é trabalho de fila, não de CI:** marcar os ids perdedores
+no `fila-extracao.json` para que nenhum agente os escolha. A guarda pega o
+acidente **depois** de a extração ser feita — melhor que nada, mas gasta uma leva
+inteira de agente antes de acusar.
+
 ## 🕵️ O ARTIGO DE CUSHING RESPONDE "QUAL EXAME", NÃO "QUANDO SUSPEITAR" (2026-08-09)
 
 Lacuna de **acervo**, não de roteamento — anotada para a fila do professor.
