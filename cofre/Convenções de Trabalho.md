@@ -5,6 +5,36 @@ atualizado: 2026-08-09
 
 # Convenções de Trabalho
 
+## 🔎 O ARTIGO SÓ RESPONDIA A QUEM JÁ SABIA O DIAGNÓSTICO (2026-08-09)
+
+Passei o dia caçando **evicção** — artigo certo cortado pelo teto. Varrendo as
+quatro áreas que **cabem** no teto (e que por isso não podem sofrer evicção)
+achei o defeito que vem **antes** dela: a área nem é consultada.
+
+A osteogênese imperfeita tem 30k de texto e era alcançável **só pelo próprio
+nome**. Das 7 formas naturais de perguntar por ela, **6 caíam em NENHUMA área**:
+o sinal (*"escleras azuladas"*), a classificação (*Sillence*), o gene
+(*COL1A1*), o achado associado (*dentinogênese imperfeita*) e a apresentação
+(*fragilidade óssea*). *"Criança com fraturas de repetição e escleras azuladas"*
+— o quadro de livro-texto — não chegava a lugar nenhum.
+
+**A assimetria é o ponto: quem já sabe o diagnóstico chega; quem está
+DIAGNOSTICANDO, não.** E quem está diagnosticando é justamente quem precisa.
+Vale para toda área pequena: ao varrer, pergunte pelo **quadro**, não pelo nome
+da doença — perguntar pelo nome é a forma mais fácil de um teste passar sem
+medir nada.
+
+**Cada chave contada antes de entrar**, como manda a regra de dominância:
+`esclera` 12 na área contra **1 em toda a base** (e `esclerose`/`esclerodermia`
+não casam — divergem na 7ª letra), `col1a1` 11×0, `dentinogenese` 8×0,
+`sillence` 4×0, `fragilidade ossea` 6×0, `antirreabsortivo` 5×0.
+
+❌ **`perda auditiva` ficou de fora APESAR de dominar 7 a 1.** É sintoma
+genérico, e chave genérica é como área é sequestrada (foi assim que "diabetes"
+levou a de Esporte). **Dominância autoriza, mas não obriga: se o termo pertence
+à clínica inteira, ele não é chave de área.** A guarda ficou no teste —
+*"perda auditiva no hipotireoidismo"* tem de continuar caindo em Tireoide.
+
 ## ⚖️ REIVINDICAR NÃO É "O TEXTO MENCIONA?", É "O TEXTO DOMINA?" (2026-08-09)
 
 A regra do tema como reivindicação (nota abaixo) dizia **quando não reivindicar**.

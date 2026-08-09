@@ -37,6 +37,24 @@ const CAMINHO = [
   ['mulher de 30 anos com testosterona total normal: trato o hirsutismo?', 'Endocrinologia Feminina'],
   ['DM2 descompensado apos pulso de corticoide', 'Diabetes'],
 
+  // ⚠️ QUEM JÁ SABE O DIAGNÓSTICO CHEGAVA; QUEM ESTAVA DIAGNOSTICANDO, NÃO.
+  // A osteogênese imperfeita (30k) só era alcançável pelo PRÓPRIO NOME: das 7
+  // formas naturais de perguntar por ela, 6 caíam em NENHUMA área — o sinal, a
+  // classificação, o gene, o achado associado e a apresentação. Achado em
+  // 09/08/2026 varrendo as 4 áreas que CABEM no teto: elas não podem sofrer
+  // evicção, mas sofrem o defeito anterior a ela, que é não ser consultada.
+  // Cada chave foi contada antes de entrar (`esclera` 12 na área contra 1 em
+  // toda a base; as outras, exclusivas). `perda auditiva` ficou de fora de
+  // propósito, apesar de dominar 7 a 1: sintoma genérico sequestra área — e a
+  // última linha deste bloco é a prova viva disso.
+  ['crianca com fraturas de repeticao e escleras azuladas', 'Osteometabolismo'],
+  ['classificacao de Sillence: como uso?', 'Osteometabolismo'],
+  ['mutacao em COL1A1: qual doenca?', 'Osteometabolismo'],
+  ['dentinogenese imperfeita: qual a doenca de base?', 'Osteometabolismo'],
+  ['crianca com fragilidade ossea e perda auditiva', 'Osteometabolismo'],
+  ['antirreabsortivo esta contraindicado em quem?', 'Osteometabolismo'],
+  ['perda auditiva no hipotireoidismo', 'Tireoide'], // guarda: `esclera` não pode virar `perda auditiva`
+
   // Emergências hiperglicêmicas: `CAD` e `EHH` devolviam "" até 08/08/2026, e o
   // extrato da CAD é o ÚNICO da base com conteúdo de estado hiperosmolar.
   ['paciente com CAD, pH 7,1: quando comeco a insulina?', 'Diabetes'],
