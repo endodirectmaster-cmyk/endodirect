@@ -331,7 +331,34 @@ function main() {
 //
 // ${totalBlocos} bloco(s) · ${totalFatos} fato(s) verificado(s).
 module.exports = `;
-  fs.writeFileSync(SAIDA, cabecalho + JSON.stringify(limpo, null, 1) + ';\n');
+  const conteudo = cabecalho + JSON.stringify(limpo, null, 1) + ';\n';
+
+  // ⚠️ `--conferir`: a INVARIANTE de que o que está commitado é o que os extratos
+  // produzem hoje. Nasceu de um buraco medido em 09/08/2026 — um extrato chegou
+  // com `tipo` fora do vocabulário fechado, este montador ABORTOU (corretamente),
+  // e o `ci-validate` passou VERDE assim mesmo, porque ele valida o
+  // `clinical-deep-data.js` já construído, que seguia consistente e apenas
+  // VELHO. Três artigos extraídos, verificados e commitados podiam existir no
+  // repositório sem chegar a médico nenhum, e nada acusava.
+  //
+  // Conferir a IGUALDADE pega os dois lados de uma vez — o extrato que aborta a
+  // montagem E o "esqueci de rebuildar". Copiar só a checagem do `tipo` para o CI
+  // seria pior: daria confiança falsa sobre as outras condições de aborto.
+  if (process.argv.includes('--conferir')) {
+    const atual = fs.existsSync(SAIDA) ? fs.readFileSync(SAIDA, 'utf8') : '';
+    if (atual === conteudo) {
+      console.log(`\n✓ base montada confere com ${path.relative(RAIZ, SAIDA)} ` +
+                  `(${totalBlocos} bloco(s) · ${totalFatos} fato(s)).`);
+      return;
+    }
+    console.error(`\n✗ ${path.relative(RAIZ, SAIDA)} NÃO é o que os extratos produzem hoje.`);
+    console.error(`  commitado: ${atual.length} chars · montado agora: ${conteudo.length} chars`);
+    console.error('\n  O que está no ar não é o que foi extraído. Rode:');
+    console.error('    node scripts/monta-base-profunda.js\n');
+    process.exit(1);
+  }
+
+  fs.writeFileSync(SAIDA, conteudo);
   console.log('\n✓ gerado ' + path.relative(RAIZ, SAIDA));
 }
 

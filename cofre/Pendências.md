@@ -48,7 +48,17 @@ craniofaringioma (manejo), **cetoacidose euglicêmica**, **cetoacidose diabétic
 NTIS, exercício com CGM · `2021` insuficiência adrenal, crise tireotóxica,
 farmacoterapia da obesidade.
 
-## 🟢 O CI FICA VERDE COM EXTRATO QUE NÃO MONTA (2026-08-09)
+## ✅ RESOLVIDO — O CI FICAVA VERDE COM EXTRATO QUE NÃO MONTA (2026-08-09)
+
+Consertado no mesmo dia com a invariante descrita abaixo:
+`monta-base-profunda.js --conferir` remonta a base e exige **igualdade byte a
+byte** com o `lib/clinical-deep-data.js` commitado; entrou no `ci-validate`.
+Conferido nos dois sentidos — passa hoje (54 blocos, 6.686 fatos) e **reprova
+com um único caractere de diferença**, saindo com código 1.
+
+O registro do buraco fica abaixo, porque a lição é sobre o TIPO de guarda.
+
+## 🟢 O CI FICAVA VERDE COM EXTRATO QUE NÃO MONTA (2026-08-09)
 
 Achado processando a leva de Adrenal/Neuroendocrinologia. O
 `monta-base-profunda.js` **abortou** — um extrato veio com

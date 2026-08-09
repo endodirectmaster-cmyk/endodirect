@@ -458,6 +458,27 @@ try {
   fail('corte de escore T/Z sem o sinal de menos — o PDF comeu o hífen:\n' + out);
 }
 
+// ⚠️ O QUE ESTÁ NO AR TEM DE SER O QUE FOI EXTRAÍDO. Buraco medido em
+//     09/08/2026: um extrato chegou com `tipo` fora do vocabulário fechado, o
+//     `monta-base-profunda.js` ABORTOU (corretamente, para não rebaixar em
+//     silêncio uma revisão ao tier de relato de caso) — e este arquivo passou
+//     VERDE assim mesmo, porque validava o `clinical-deep-data.js` já
+//     construído, que seguia consistente e apenas VELHO. TRÊS artigos
+//     extraídos, verificados e commitados podiam existir no repositório sem
+//     chegar a médico nenhum, e nada acusava. É a versão estrutural de
+//     "extração verificada não é entrega".
+//     A guarda é a INVARIANTE, não uma peneira nova: remontar e exigir
+//     igualdade byte a byte pega o extrato que aborta a montagem E o "esqueci de
+//     rebuildar". Copiar só a checagem do `tipo` daria confiança falsa sobre as
+//     outras condições de aborto.
+try {
+  execFileSync(process.execPath, [path.join('scripts', 'monta-base-profunda.js'), '--conferir'], { stdio: 'pipe' });
+  ok('base profunda no ar: o `clinical-deep-data.js` é o que os extratos produzem hoje');
+} catch (e) {
+  const out = (e.stdout ? e.stdout.toString() : '') + (e.stderr ? e.stderr.toString() : '');
+  fail('a base profunda commitada não corresponde aos extratos:\n' + out);
+}
+
 // ⚠️ PROVA COPIADA ENTRE FATOS. A auditoria do GIOP achou QUATRO fatos com a
 //     MESMA citação byte a byte — mesmo offset, mesmo tamanho, mesmo `cit_sha`.
 //     A fatia provava o primeiro; os outros três afirmavam preferência de
