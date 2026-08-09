@@ -153,6 +153,34 @@ peneira:** medido sobre a base inteira, deu **2 de 2 falsos positivos**
 (fludrocortisona é mesmo em mg; o "grão de 60 mg" é de tireoide dessecada). Serve
 como pista para o auditor ler, não como acusação.
 
+### 📎 CITAÇÃO REPETIDA ENTRE FATOS — comece por aqui, é barato e pega grave
+
+Agrupe os fatos por `JSON.stringify(f.cit)`. **Grupo com 2 ou mais fatos merece
+leitura**: pode ser legítimo (duas afirmações provadas pela mesma passagem), mas
+é também a assinatura do copia-e-cola. No GIOP eram **quatro fatos com a mesma
+fatia**, e ela provava só o primeiro — os outros três afirmavam preferência de
+fármaco cuja frase ficava 100–400 chars adiante, na mesma célula.
+
+⚠️ **Não confie no verde do `verifica-extracao.js` aqui.** Ele passou nos três,
+porque a peneira dele é de NÚMEROS e o único número era o `40` do cabeçalho
+*"adults ≥40 years"* que a fatia continha. Ele prova que a citação existe no PDF,
+**não** que ela prova a afirmação.
+
+O caso do fármaco já virou CI (`confere-farmaco-na-citacao.js`, 0 falso positivo
+no escopo de citação idêntica). O que sobra para você é o resto: corte,
+população, direção da recomendação.
+
+### ⚖️ Se você ESTENDER a citação, você anestesia a peneira de números
+
+Estender para trás até a frase que fixa a população é a saída certa para o
+defeito dominante desta base — mas no GIOP as fatias chegaram a **1.902
+caracteres** contendo quase **todos os números da Tabela 1**. Ali um corte
+trocado entre linhas da mesma tabela passa verde.
+
+**Estenda mesmo assim, e depois confira à mão os fatos que você estendeu, um a
+um** — e diga no relatório que conferiu. Nesses fatos a garantia deixou de ser
+mecânica.
+
 ### 🔑 A SUA VARREDURA TAMBÉM ERRA — desconfie da chave que você escolheu
 
 Você vai escrever `node -e` para varrer os fatos. Duas armadilhas já pegaram

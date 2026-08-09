@@ -5,6 +5,48 @@ atualizado: 2026-08-09
 
 # Convenções de Trabalho
 
+## 📎 CITAÇÃO REPETIDA BYTE A BYTE É PROVA COPIADA (2026-08-09)
+
+Achado pela auditoria do GIOP e **conferido por mim na fonte**: quatro fatos
+(idx 26, 28, 29, 30) carregavam a MESMA citação — mesmo offset, mesmo tamanho,
+mesmo `cit_sha`. A fatia provava o primeiro. Os outros três afirmavam
+preferência de fármaco cuja frase ficava **100 a 400 caracteres adiante**, na
+mesma célula da tabela.
+
+⚠️ **E o `verifica-extracao.js` passou VERDE nos três.** A peneira dele é de
+NÚMEROS, e o único número daquelas afirmações era `40` — que está na fatia,
+porque ela começa no cabeçalho *"adults ≥40 years"*. **Prova fabricada com
+número emprestado do cabeçalho.** É o limite do verificador escrito com todas as
+letras: ele prova que a citação EXISTE no PDF, não que ela prova a afirmação.
+
+Virou guarda de CI (`confere-farmaco-na-citacao.js`) depois de medir o escopo:
+
+| escopo | candidatos em 6.197 fatos |
+|---|---|
+| fármaco na afirmação e ausente da citação, em qualquer fato | 176 (2,8%) |
+| o mesmo, só onde a `cit` é IDÊNTICA à de outro fato | 2 |
+| idem, aceitando a abreviatura da diretriz (`rom`, `den`, `ral`) | **0** |
+
+Os 176 são quase todos legítimos: a fonte escreve a CLASSE (`GLP-1 RA`, `oral
+BP`) e o fato nomeia o agente que o cabeçalho da tabela dava. **É a diferença
+entre técnica e guarda de novo** — 2,8% vira paisagem, 0% significa alguma
+coisa. Conferida nos dois sentidos: passa hoje e REPROVA na versão pré-auditoria
+do GIOP.
+
+## ⚖️ ESTENDER A CITAÇÃO PARA TRÁS ANESTESIA A PENEIRA DE NÚMEROS (2026-08-09)
+
+A técnica que conserta população órfã — estender a citação até a frase que fixa
+idade, doença ou cenário — **tem preço, e ele não estava escrito**. No GIOP as
+citações estendidas chegaram a **1.902 caracteres** e passaram a conter
+praticamente **todos os números da Tabela 1**. Dentro de uma fatia dessas, um
+corte trocado entre linhas da mesma tabela passa verde: o número está lá, só que
+provando outra linha.
+
+**Não é motivo para não estender** — a população órfã é o defeito dominante da
+base. É motivo para saber que, nesses fatos, a garantia deixou de ser mecânica e
+passou a ser humana. O auditor do GIOP conferiu os 17 um a um e declarou isso no
+relatório; é o que se espera de quem usar a técnica.
+
 ## 🧹 `git add -A` COM AGENTE RODANDO VARRE O TRABALHO DELE PELA METADE (2026-08-09)
 
 Commitei um conserto meu enquanto o auditor do GIOP estava no ar. `git add -A`
