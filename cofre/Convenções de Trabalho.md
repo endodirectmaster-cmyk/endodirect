@@ -5,6 +5,27 @@ atualizado: 2026-08-09
 
 # Convenções de Trabalho
 
+## ☠️ AGENTE QUE MORRE SEM NOTIFICAR DEIXA O GASTO INVISÍVEL — e o freio erra PARA BAIXO (2026-08-09)
+
+O `orcamento-agentes.js` só conta o que cada agente **relata ao terminar**. Um
+agente que trava ou morre **nunca relata**, e o gasto dele fica fora do medidor.
+⚠️ **O erro é na direção perigosa:** o freio dos 85% acha que há folga quando não
+há.
+
+O caso: a auditoria da HAC foi lançada e a última linha do transcrito dela é de
+**15:27**; às **18:06** o arquivo seguia parado, sem notificação de término. Quase
+três horas contra os ~25 minutos típicos dos outros cinco agentes do dia. O
+medidor marcava 69%; com o gasto provável dela, o real estaria perto de **81%**.
+
+Pior efeito colateral: **eu segurei lançamentos durante uma hora inteira** por
+acreditar que havia um agente vivo trabalhando. Agente fantasma custa janela.
+
+**Regra:** quando um agente passar de ~2× o tempo típico sem notificação, confira
+o transcrito dele (`stat` + último `"timestamp"` no fim do arquivo, sem ler o
+corpo, que estoura o contexto). Se estiver parado, **considere-o morto**: some ao
+medidor uma estimativa do gasto dele antes de decidir lançar outro, e relance a
+tarefa na janela seguinte. Não vale ler o `.output` inteiro — 594 KB de JSONL.
+
 ## 🧪 CHAVE NOVA SÓ ENTRA DEPOIS DO CONTROLE INVERSO (2026-08-09)
 
 Contar a dominância não basta. **Teste também a pergunta que NOMEIA a doença
