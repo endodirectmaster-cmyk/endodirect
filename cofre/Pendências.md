@@ -48,6 +48,31 @@ craniofaringioma (manejo), **cetoacidose euglicêmica**, **cetoacidose diabétic
 NTIS, exercício com CGM · `2021` insuficiência adrenal, crise tireotóxica,
 farmacoterapia da obesidade.
 
+## 🟢 O CI FICA VERDE COM EXTRATO QUE NÃO MONTA (2026-08-09)
+
+Achado processando a leva de Adrenal/Neuroendocrinologia. O
+`monta-base-profunda.js` **abortou** — um extrato veio com
+`tipo: "revisão narrativa (Review)"`, fora do vocabulário fechado do
+`PESO_TIPO`, e a guarda para de propósito em vez de rebaixar em silêncio uma
+revisão para o tier de relato de caso. A guarda funcionou.
+
+⚠️ **Mas o `ci-validate` passou verde mesmo assim**, porque ele valida o
+`lib/clinical-deep-data.js` já construído — que continua consistente, só
+**velho**. Resultado: três artigos extraídos, verificados e commitados podem
+existir no repositório sem chegar a médico nenhum, e nada acusa.
+
+É a versão estrutural de "extração verificada não é entrega".
+
+**O conserto certo é uma invariante, não uma peneira nova:** rodar o montador no
+CI e exigir que a saída seja IGUAL ao `clinical-deep-data.js` commitado. Isso
+pega os dois lados — o extrato que aborta a montagem E o "esqueci de rebuildar".
+Copiar só a checagem do `tipo` seria pior: daria confiança falsa sobre as outras
+condições de aborto.
+
+Não entrou ainda porque reprovaria agora, com dois extratos cujos agentes ainda
+não relataram — e consertar extrato de agente no ar é o acidente que a convenção
+do `git add -A` já descreve. Entra quando a leva fechar.
+
 ## 🎯 O BLOCO "INDUZIDO POR X" VENCE A PERGUNTA QUE NÃO CITA X — METADE RESOLVIDA (2026-08-09)
 
 ✅ **A metade da SOBRA está consertada**, e o conserto é de **desempate**, não de

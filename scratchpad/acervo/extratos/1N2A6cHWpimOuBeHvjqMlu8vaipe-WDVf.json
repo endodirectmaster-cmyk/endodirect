@@ -1,0 +1,1446 @@
+{
+ "fileId": "1N2A6cHWpimOuBeHvjqMlu8vaipe-WDVf",
+ "titulo": "Congenital Adrenal Hyperplasia Due to 21-Hydroxylase Deficiency",
+ "tema": "hiperplasia adrenal congenita (HAC, CAH) por deficiencia de 21-hidroxilase (CYP21A2) — FORMA CLASSICA x FORMA NAO CLASSICA (nao-classica, tardia): perdedora de sal, perdedor de sal, perda de sal, virilizante simples, crise adrenal perdedora de sal do recem-nascido, hiponatremia com hipercalemia no lactente, hipoglicemia; 17-hidroxiprogesterona (17-OHP) — corte diagnostico e CONDICAO DE COLETA (pela manha, fase folicular), teste de estimulo com corticotropina (ACTH, cosintropina), 21-desoxicortisol, 11-oxiandrogenios; rastreio neonatal, triagem neonatal, teste do pezinho, ajuste do corte por idade gestacional e peso ao nascer; genitalia atipica, genitalia ambigua, virilizacao, virilizada, clitoromegalia, seio urogenital, 46,XX, cirurgia genital, vaginoplastia, dexametasona pre-natal; hirsutismo, acne, irregularidade menstrual, oligomenorreia, amenorreia, subfertilidade, infertilidade, abortamento de repeticao, diferencial com sindrome dos ovarios policisticos (SOP); tratamento: hidrocortisona, prednisolona, dexametasona, glicocorticoide de acao longa na crianca, dose de estresse, dose de stress, crise adrenal, hidrocortisona injetavel de emergencia, mineralocorticoide; crescimento, baixa estatura, estatura adulta, puberdade precoce central, osteopenia; gestacao, gestante, engravidar, concepcao, progesterona adrenal; tumor de resto adrenal testicular (TART), mielolipoma adrenal, azoospermia, oligospermia; sindrome CAH-X e Ehlers-Danlos por hipermobilidade; transtorno psiquiatrico, ansiedade, depressao; risco cardiometabolico, diabetes gestacional.",
+ "fonte": "Merke DP, Auchus RJ. Congenital Adrenal Hyperplasia Due to 21-Hydroxylase Deficiency. N Engl J Med 2020;383(13):1248-1261 (DOI 10.1056/NEJMra1909786)",
+ "area": "Adrenal",
+ "tipo": "revisao",
+ "ano": 2020,
+ "conflito": "⚠️ DOIS PONTOS — O PRIMEIRO É DE SEGURANÇA E NÃO É SOBRE O NÚCLEO. (1) ESCOPO — O QUE ESTA FONTE NÃO RESPONDE: a Tabela 1 do artigo, que trazia o diagnóstico por sexo, as DOSES DE ESTRESSE em mg e o REGIME DE REPOSIÇÃO, não sobreviveu à extração do PDF. Conferido no texto-fonte: ZERO ocorrência de fludrocortisona. ⚠️ Portanto esta fonte descreve a CRISE ADRENAL PERDEDORA DE SAL do recém-nascido — que ela mesma diz ser FATAL se não diagnosticada e tratada — e NÃO traz a conduta dela: não há dose nem monitorização de MINERALOCORTICOIDE (fludrocortisona), não há os mg da dose de estresse por faixa etária, não há reposição de sal, e não há conduta da crise instalada (fluidos, glicose, hidrocortisona endovenosa). O que ela responde é O QUE É, COMO RECONHECER e COMO CONFIRMAR, mais a conduta QUALITATIVA (na doença intercorrente, aumentar a DOSE e a FREQUÊNCIA do glicocorticoide; hidrocortisona INJETÁVEL para emergência domiciliar). Para dose e monitorização do mineralocorticoide, e para o manejo da crise instalada, use outra fonte — não deduza daqui. Também não estão aqui: o corte de rastreio da forma NÃO CLÁSSICA (170–200 ng/dL, que está na Endocrine Society 2018, no bloco de hirsutismo) nem os cortes do papel-filtro do rastreio neonatal por idade gestacional — o artigo dá a REGRA de ajustar o corte, nunca os números. (2) ARTIGO DE 2020 — O CAPÍTULO DE TERAPIA NOVA ESTÁ SUPERADO. Ao encerrar, o artigo diz sobre as alternativas ao glicocorticoide na HAC: \"Some of these concepts have been tested in small trials, but none are currently approved by the Food and Drug Administration\" — e entre essas alternativas ele lista justamente os antagonistas do receptor 1 do fator liberador de corticotropina (CRF1). O NÚCLEO PREVALECE nesse ponto: ele já registra a aprovação do crinecerfonte, um antagonista oral de CRF1, \"Aprovado (FDA dez/2024, Crenessity) como adjuvante ao glicocorticoide em adultos e crianças ≥4 anos na deficiência de 21-hidroxilase.\" Ou seja: a frase \"nenhum aprovado pelo FDA\" descreve 2020 e NÃO vale mais; existe hoje adjuvante aprovado que permite baixar a dose de glicocorticoide. ⚠️ O conflito é SÓ esse. O restante do artigo (diagnóstico, cortes de 17-hidroxiprogesterona, formas clássica e não clássica, crise adrenal, dose na criança, gestação, TART) não conflita com o núcleo — o núcleo simplesmente não fala desses assuntos.",
+ "conflito_direcao": "nucleo_prevalece",
+ "nucleo_prevalece_porque": "A afirmação da fonte é uma constatação DATADA de setembro de 2020 (\"none are currently approved\"), não uma recomendação clínica. O núcleo é posterior e traz o fato novo (aprovação FDA de dezembro de 2024) que a torna falsa. Não há juízo clínico da fonte sendo sobrescrito: há um fato regulatório que mudou depois da publicação.",
+ "nucleo_citado": [
+  "Aprovado (FDA dez/2024, Crenessity) como adjuvante ao glicocorticoide em adultos e crianças ≥4 anos na deficiência de 21-hidroxilase."
+ ],
+ "nucleo_ausente": [
+  "17-hidroxiprogesterona",
+  "genitália atípica",
+  "tumor de resto adrenal",
+  "não clássica"
+ ],
+ "fatos": [
+  {
+   "afirmacao": "A hiperplasia adrenal congênita (HAC) é um distúrbio autossômico recessivo, e o tipo mais comum de HAC é a deficiência de 21-hidroxilase.",
+   "secao": "Introdução",
+   "cit": [
+    [
+     0,
+     1230,
+     56
+    ]
+   ],
+   "cit_sha": "04c791b387caf00d"
+  },
+  {
+   "afirmacao": "Na HAC, mutações no CYP21A2 (gene que codifica a 21-hidroxilase, uma enzima do citocromo P-450) causam falta de 21-hidroxilase, enzima necessária para a produção de cortisol e de aldosterona no córtex adrenal.",
+   "secao": "Introdução",
+   "cit": [
+    [
+     1,
+     1411,
+     203
+    ]
+   ],
+   "cit_sha": "d9fd51f076dc2c33"
+  },
+  {
+   "afirmacao": "Cascata fisiopatológica da HAC por deficiência de 21-hidroxilase: a redução do cortisol leva à superprodução de corticotropina (ACTH) hipofisária, que estimula o acúmulo de precursores do cortisol e o desvio deles pelas vias esteroidogênicas que produzem androgênios adrenais.",
+   "secao": "Introdução",
+   "cit": [
+    [
+     0,
+     1510,
+     391
+    ]
+   ],
+   "cit_sha": "5d2a21771684f71c",
+   "extracao": "Citação ESTENDIDA PARA TRÁS para trazer \"21-hydroxylase\", que a afirmação nomeia. Conferido à mão: a fatia é contígua e a cascata descrita é a mesma frase."
+  },
+  {
+   "afirmacao": "A forma CLÁSSICA da hiperplasia adrenal congênita (HAC) é hoje a causa mais comum de genitália atípica em recém-nascidos 46,XX e a causa mais comum de insuficiência adrenal primária durante a infância.",
+   "secao": "Introdução",
+   "cit": [
+    [
+     0,
+     1910,
+     135
+    ]
+   ],
+   "cit_sha": "c7d9a05ffb29466c"
+  },
+  {
+   "afirmacao": "A HAC CLÁSSICA ocorre em 1 a cada 10.000 a 1 a cada 20.000 nascidos vivos, com base em dados de milhões de recém-nascidos rastreados no mundo.",
+   "secao": "Introdução",
+   "cit": [
+    [
+     1,
+     2435,
+     60
+    ]
+   ],
+   "cit_sha": "9523fa59819b5f40"
+  },
+  {
+   "afirmacao": "A HAC NÃO CLÁSSICA é comum no mundo todo, com prevalência estimada entre 1 caso por 200 pessoas e 1 caso por 1000 pessoas.",
+   "secao": "Introdução",
+   "cit": [
+    [
+     0,
+     2810,
+     127
+    ]
+   ],
+   "cit_sha": "66e4e7b621119c99",
+   "extracao": "Denominador = população geral. Não confundir com a prevalência de HAC não clássica ENTRE MULHERES HIPERANDROGÊNICAS (4,2%), que está no bloco de hirsutismo (Endocrine Society 2018) em Endocrinologia Feminina. Os dois números são compatíveis: denominadores diferentes."
+  },
+  {
+   "afirmacao": "Parte das pessoas com HAC NÃO CLÁSSICA bioquímica e genética é assintomática e NÃO requer terapia — achado de estudos de familiares de pacientes com HAC clássica.",
+   "secao": "Introdução",
+   "cit": [
+    [
+     0,
+     2709,
+     99
+    ]
+   ],
+   "cit_sha": "e78a8b3dc5851a4d"
+  },
+  {
+   "afirmacao": "O rastreio neonatal hormonal da forma CLÁSSICA da HAC, que salva vidas, começou em 1977 no Alasca e hoje está implantado em todos os 50 estados dos EUA e em mais de 40 países.",
+   "secao": "Introdução",
+   "cit": [
+    [
+     0,
+     2219,
+     164
+    ]
+   ],
+   "cit_sha": "06d1628c8fe0ec81"
+  },
+  {
+   "afirmacao": "⚠️ DIFERENTE DAS DEMAIS INSUFICIÊNCIAS ADRENAIS: na HAC o objetivo terapêutico é DUPLO — primeiro repor os hormônios deficientes e, segundo, reduzir os níveis excessivos de androgênio. Nas outras formas de insuficiência adrenal só existe o primeiro objetivo.",
+   "secao": "Introdução",
+   "cit": [
+    [
+     0,
+     2941,
+     200
+    ]
+   ],
+   "cit_sha": "efc5831f078c65e5",
+   "extracao": "Fato-chave para a área Adrenal, que só tinha blocos de insuficiência adrenal: ele impede transportar para a HAC a lógica de reposição isolada."
+  },
+  {
+   "afirmacao": "Apesar de a grande maioria dos pacientes com HAC sobreviver, as terapias existentes não conseguiram evitar múltiplas condições coexistentes, e ainda ocorrem mortes por crise adrenal.",
+   "secao": "Introdução",
+   "cit": [
+    [
+     0,
+     3292,
+     118
+    ]
+   ],
+   "cit_sha": "1062d71dbcdb7981"
+  },
+  {
+   "afirmacao": "O CYP21A2 (gene da 21-hidroxilase, cuja deficiência causa a HAC) mapeia no cromossomo 6 (6p21.3), dentro do complexo principal de histocompatibilidade, num locus de repetições de baixo número de cópias.",
+   "secao": "Características genéticas",
+   "cit": [
+    [
+     0,
+     3621,
+     124
+    ]
+   ],
+   "cit_sha": "7c4c29abc5b3c562"
+  },
+  {
+   "afirmacao": "São conhecidas mais de 200 mutações do CYP21A2 na HAC; a maioria envolve 10 sequências deletérias derivadas do pseudogene não funcional CYP21A1P, geradas por desalinhamento e conversão gênica durante a meiose de genes homólogos.",
+   "secao": "Características genéticas",
+   "cit": [
+    [
+     0,
+     4059,
+     235
+    ]
+   ],
+   "cit_sha": "fbe340ff73c1b40e"
+  },
+  {
+   "afirmacao": "Aproximadamente 20 a 30% das mutações clássicas do CYP21A2 na HAC são deleções de 30 kb, geralmente associadas a mutação nula.",
+   "secao": "Características genéticas",
+   "cit": [
+    [
+     0,
+     4300,
+     113
+    ]
+   ],
+   "cit_sha": "03e8c1d5d1d8853e"
+  },
+  {
+   "afirmacao": "Cerca de 3% das deleções do CYP21A2 na HAC retêm atividade parcial da 21-hidroxilase por causa da localização dos sítios de junção e associam-se a fenótipo mais brando — ou seja, o sítio de junção pode ser clinicamente relevante.",
+   "secao": "Características genéticas",
+   "cit": [
+    [
+     0,
+     4431,
+     214
+    ]
+   ],
+   "cit_sha": "85919cfaddc294df"
+  },
+  {
+   "afirmacao": "⚠️ Na HAC, a maioria dos afetados é heterozigoto composto, com mutações diferentes em cada alelo, e o fenótipo corresponde ao defeito gênico MAIS BRANDO dos dois.",
+   "secao": "Características genéticas",
+   "cit": [
+    [
+     0,
+     4659,
+     148
+    ]
+   ],
+   "cit_sha": "7c9c4d155ab2c547"
+  },
+  {
+   "afirmacao": "Na HAC, a correlação entre genótipo e fenótipo é FORTE para as mutações graves (0 a 1% de atividade da 21-hidroxilase), e há variabilidade fenotípica maior entre os genótipos intermediários e menos graves; o espectro fenotípico vai da perda completa até cerca de 30% de atividade da 21-hidroxilase.",
+   "secao": "Características genéticas",
+   "cit": [
+    [
+     0,
+     10638,
+     330
+    ]
+   ],
+   "cit_sha": "cd393a8d2b5e9dff"
+  },
+  {
+   "afirmacao": "Cerca de 10% dos pacientes com HAC têm a síndrome CAH-X, que combina características da HAC com características da síndrome de Ehlers-Danlos do tipo hipermobilidade; decorre de deleção gênica contígua que rompe CYP21A2 e TNXB, e o diagnóstico é por genotipagem.",
+   "secao": "Características genéticas",
+   "cit": [
+    [
+     0,
+     4809,
+     281
+    ]
+   ],
+   "cit_sha": "b2d4a48cc299dbe0"
+  },
+  {
+   "afirmacao": "O fenótipo clínico da síndrome CAH-X — a variante da hiperplasia adrenal congênita (HAC) que cursa com hipermobilidade — inclui hipermobilidade articular, artralgias, luxações articulares, hérnias e defeitos de linha média que podem incluir anormalidades estruturais cardíacas.",
+   "secao": "Características genéticas",
+   "cit": [
+    [
+     0,
+     5391,
+     175
+    ]
+   ],
+   "cit_sha": "981490bafeced11e"
+  },
+  {
+   "afirmacao": "⚠️ NA HAC, A DOSAGEM DE ESTEROIDES — NÃO A GENOTIPAGEM — É O PADRÃO DIAGNÓSTICO. A genotipagem não é usada como teste diagnóstico de primeira linha por causa da complexidade do locus CYP21A2.",
+   "secao": "Características genéticas",
+   "cit": [
+    [
+     0,
+     5573,
+     171
+    ]
+   ],
+   "cit_sha": "efca5a575ec42691"
+  },
+  {
+   "afirmacao": "Na HAC, duplicações e deleções gênicas, o pseudogene CYP21A1P e múltiplas mutações em alguns alelos dificultam distinguir pacientes afetados de portadores, e a genotipagem dos pais é frequentemente necessária para confirmar o genótipo.",
+   "secao": "Características genéticas",
+   "cit": [
+    [
+     0,
+     5746,
+     230
+    ]
+   ],
+   "cit_sha": "18aed88a315ec7af"
+  },
+  {
+   "afirmacao": "Na HAC por deficiência de 21-hidroxilase, o 21-desoxicortisol é biomarcador MAIS ESPECÍFICO que a 17-hidroxiprogesterona (porque, ao contrário dela, não é produzido nas gônadas e é exclusivamente de origem adrenal) e já foi incorporado a alguns protocolos de rastreio neonatal.",
+   "secao": "Esteroidogênese",
+   "cit": [
+    [
+     0,
+     6216,
+     342
+    ]
+   ],
+   "cit_sha": "df65f64433c388e1",
+   "extracao": "Citação ESTENDIDA PARA TRÁS: a primeira versão parava em \"more specific biomarker\" e deixava SEM LASTRO o porquê (\"não é produzido nas gônadas, é exclusivamente adrenal\"), que a afirmação usa. Conferido à mão: fatia contígua (só a quebra de parágrafo entre \"Hence,\" e \"21-deoxycortisol\")."
+  },
+  {
+   "afirmacao": "Na deficiência de 21-hidroxilase (HAC), a 11β-hidroxiandrostenediona é o precursor androgênico mais abundante em quase todos os pacientes.",
+   "secao": "Esteroidogênese",
+   "cit": [
+    [
+     0,
+     6639,
+     136
+    ]
+   ],
+   "cit_sha": "24aad8e641751098",
+   "extracao": "Citação ESTENDIDA PARA TRÁS para conter o nome do esteroide (11β-hidroxiandrostenediona). Conferido à mão: fatia contígua, mesma frase."
+  },
+  {
+   "afirmacao": "Na HAC, o metabolismo extra-adrenal converte a 11β-hidroxiandrostenediona no androgênio 11-cetotestosterona, que é agonista potente do receptor de androgênio.",
+   "secao": "Esteroidogênese",
+   "cit": [
+    [
+     0,
+     6779,
+     149
+    ]
+   ],
+   "cit_sha": "8af6953eed11acf6"
+  },
+  {
+   "afirmacao": "⚠️ NA HAC CLÁSSICA, TODOS OS PACIENTES PERDEM SAL EM ALGUM GRAU. A subdivisão da HAC clássica em forma perdedora de sal e forma virilizante simples — baseada na capacidade de a adrenal produzir pequenas quantidades de aldosterona na virilizante simples — caiu em desuso justamente por isso; as apresentações se sobrepõem e essa subtipagem muitas vezes não é clinicamente útil.",
+   "secao": "Apresentação clínica e diagnóstico",
+   "cit": [
+    [
+     0,
+     7182,
+     359
+    ]
+   ],
+   "cit_sha": "97c49b23a89b14ae",
+   "extracao": "Citação ESTENDIDA PARA A FRENTE: a primeira versão parava em \"lose salt to some degree\" e deixava sem lastro \"as apresentações se sobrepõem e a subtipagem muitas vezes não é clinicamente útil\". Conferido à mão. Fato de segurança: rotular um paciente como \"virilizante simples\" não autoriza tratá-lo como se não perdesse sal."
+  },
+  {
+   "afirmacao": "A maioria dos casos de HAC em lactentes é detectada primeiro pelo rastreio neonatal, que reduziu morbidade e mortalidade e levou a hiponatremia menos grave e internações mais curtas no diagnóstico.",
+   "secao": "Lactância (apresentação e diagnóstico)",
+   "cit": [
+    [
+     0,
+     7551,
+     206
+    ]
+   ],
+   "cit_sha": "0491593b37d2aa2a"
+  },
+  {
+   "afirmacao": "⚠️ O RASTREIO NEONATAL DE HAC BASEIA-SE EM 17-HIDROXIPROGESTERONA ELEVADA POR IMUNOENSAIO, MAS ELA TAMBÉM SE ELEVA EM RECÉM-NASCIDOS SAUDÁVEIS NOS PRIMEIROS 1 A 2 DIAS DE VIDA E EM PREMATUROS E NEONATOS DOENTES — o que cria desafio diagnóstico (falso-positivo).",
+   "secao": "Lactância (apresentação e diagnóstico)",
+   "cit": [
+    [
+     0,
+     7764,
+     311
+    ]
+   ],
+   "cit_sha": "7eee2812003c3ed7"
+  },
+  {
+   "afirmacao": "⚠️ CONDIÇÃO QUE DECIDE O RESULTADO DO RASTREIO NEONATAL DE HAC: os falso-positivos de 17-hidroxiprogesterona por elevação fisiológica podem ser frequentemente identificados AJUSTANDO O CORTE PARA A IDADE GESTACIONAL, com ou sem consideração do PESO AO NASCER.",
+   "secao": "Lactância (apresentação e diagnóstico)",
+   "cit": [
+    [
+     0,
+     7899,
+     345
+    ]
+   ],
+   "cit_sha": "2061dd6cbc1c2472",
+   "extracao": "Citação ESTENDIDA PARA TRÁS para conter o analito (17-hidroxiprogesterona), que a afirmação nomeia — sem isso o corte ficaria sem dizer de que exame fala. Sobrepõe-se em parte à do fato anterior, mas NÃO é a mesma fatia: aqui o que se prova é a regra de AJUSTE por idade gestacional e peso. Conferido à mão. ⚠️ O artigo NÃO publica os valores numéricos do corte de 17-OHP no papel-filtro — só a regra de ajuste. Nada foi inventado; ver relatório."
+  },
+  {
+   "afirmacao": "No rastreio neonatal de HAC, o rastreio de segunda etapa por cromatografia líquida com espectrometria de massa em tandem, a dosagem de 21-desoxicortisol ou o teste genético demonstraram melhorar a acurácia.",
+   "secao": "Lactância (apresentação e diagnóstico)",
+   "cit": [
+    [
+     0,
+     8250,
+     191
+    ]
+   ],
+   "cit_sha": "684f61bf1ade9446"
+  },
+  {
+   "afirmacao": "⚠️ CORTE DIAGNÓSTICO DA HAC (forma CLÁSSICA) NO LACTENTE: 17-hidroxiprogesterona acima de 1000 ng/dL estabelece o diagnóstico, e a maioria dos lactentes afetados tem níveis bem acima de 5000 ng/dL. Este é o valor SÉRICO diagnóstico — o artigo não fornece o corte numérico do papel-filtro do rastreio neonatal, que depende de idade gestacional e peso ao nascer.",
+   "secao": "Lactância (apresentação e diagnóstico)",
+   "cit": [
+    [
+     0,
+     8443,
+     165
+    ]
+   ],
+   "cit_sha": "719e700869672d92",
+   "extracao": "A ressalva final não acrescenta número algum: é limite de escopo da fonte, verificável por ausência. Confere com o bloco de hirsutismo (Endocrine Society 2018), que exige 17-OHP de 1000 a 1500 ng/dL para o diagnóstico definitivo de HAC NÃO clássica — populações diferentes, não conflito."
+  },
+  {
+   "afirmacao": "No diagnóstico da HAC, o teste de estímulo com corticotropina (ACTH) é recomendado para confirmar o diagnóstico e afastar distúrbios mais raros da esteroidogênese.",
+   "secao": "Lactância (apresentação e diagnóstico)",
+   "cit": [
+    [
+     0,
+     11344,
+     124
+    ]
+   ],
+   "cit_sha": "0be696733429ce4f",
+   "extracao": "A citação começa no meio de frase porque a cabeça (\"Although random steroid measurements may be informative\") ficou na página anterior, separada pela Figura 2. Não foi costurada."
+  },
+  {
+   "afirmacao": "⚠️ NA INVESTIGAÇÃO DE HAC, 17-HIDROXIPROGESTERONA ELEVADA TEM DIAGNÓSTICO DIFERENCIAL: ela também se eleva na deficiência de 11β-hidroxilase, na deficiência de 3β-hidroxiesteroide desidrogenase e na deficiência de citocromo P-450 oxidorredutase. As formas se distinguem dosando VÁRIOS esteroides no teste de estímulo com corticotropina.",
+   "secao": "Lactância (apresentação e diagnóstico)",
+   "cit": [
+    [
+     0,
+     11473,
+     292
+    ]
+   ],
+   "cit_sha": "6168c37e83bc47cc"
+  },
+  {
+   "afirmacao": "Na HAC CLÁSSICA, os níveis altos de androgênios de origem adrenal afetam o desenvolvimento da genitália EXTERNA em fetos 46,XX já a partir do primeiro trimestre; são achados comuns aumento do clitóris, fusão parcial dos grandes lábios e seio urogenital no lugar de aberturas uretral e vaginal separadas.",
+   "secao": "Lactância (apresentação e diagnóstico)",
+   "cit": [
+    [
+     0,
+     14010,
+     306
+    ]
+   ],
+   "cit_sha": "acc1cbbd8ed7de5e"
+  },
+  {
+   "afirmacao": "Na HAC clássica em 46,XX, útero, tubas uterinas e ovários formam-se NORMALMENTE; e o excesso de androgênios adrenais NÃO afeta a diferenciação sexual de 46,XY.",
+   "secao": "Lactância (apresentação e diagnóstico)",
+   "cit": [
+    [
+     0,
+     14318,
+     131
+    ]
+   ],
+   "cit_sha": "85c8d5aa3097cafe"
+  },
+  {
+   "afirmacao": "⚠️ EMERGÊNCIA NEONATAL: aproximadamente 75% dos lactentes com HAC CLÁSSICA têm crise adrenal perdedora de sal nas primeiras 3 semanas de vida, e ela é fatal se o distúrbio não for diagnosticado e tratado.",
+   "secao": "Lactância (apresentação e diagnóstico)",
+   "cit": [
+    [
+     0,
+     15511,
+     187
+    ]
+   ],
+   "cit_sha": "30c54cf8770dfc0a"
+  },
+  {
+   "afirmacao": "Na forma mais grave da HAC clássica, a falta de produção intrauterina de cortisol afeta o desenvolvimento da medula adrenal e resulta em deficiência de EPINEFRINA (adrenalina).",
+   "secao": "Lactância (apresentação e diagnóstico)",
+   "cit": [
+    [
+     0,
+     15700,
+     152
+    ]
+   ],
+   "cit_sha": "85ffc926738424c8"
+  },
+  {
+   "afirmacao": "Na HAC clássica do lactente, a combinação das deficiências de cortisol, epinefrina e aldosterona resulta em hipovolemia, hiponatremia e hipercalemia que, se não diagnosticadas, levam a choque e hipoglicemia.",
+   "secao": "Lactância (apresentação e diagnóstico)",
+   "cit": [
+    [
+     0,
+     15856,
+     195
+    ]
+   ],
+   "cit_sha": "57c26ca15206f885"
+  },
+  {
+   "afirmacao": "⚠️ QUANDO SUSPEITAR: o diagnóstico de HAC deve ser considerado em lactentes que se apresentam com ganho de peso insuficiente, dificuldade de alimentação e desidratação com HIPONATREMIA e HIPERCALEMIA.",
+   "secao": "Lactância (apresentação e diagnóstico)",
+   "cit": [
+    [
+     0,
+     16075,
+     152
+    ]
+   ],
+   "cit_sha": "9792eee9a429abe4"
+  },
+  {
+   "afirmacao": "Em aproximadamente 25% dos pacientes com HAC CLÁSSICA, a produção de aldosterona é suficiente para manter o balanço de sódio na primeira infância.",
+   "secao": "Infância (apresentação e diagnóstico)",
+   "cit": [
+    [
+     0,
+     16239,
+     133
+    ]
+   ],
+   "cit_sha": "e41bce6d3b238d45"
+  },
+  {
+   "afirmacao": "Sem rastreio neonatal, a criança com HAC clássica se apresenta com sinais de excesso androgênico — pelo pubiano e velocidade de crescimento linear acelerada — tipicamente antes dos 4 anos de idade, e as meninas podem ter clitoromegalia ou seio urogenital não percebidos antes.",
+   "secao": "Infância (apresentação e diagnóstico)",
+   "cit": [
+    [
+     0,
+     16411,
+     253
+    ]
+   ],
+   "cit_sha": "7c58da77b0b1cb45"
+  },
+  {
+   "afirmacao": "⚠️ CORTE DIAGNÓSTICO DA HAC CLÁSSICA NA CRIANÇA (o mesmo do lactente): 17-hidroxiprogesterona BASAL OU ESTIMULADA POR CORTICOTROPINA acima de 1000 ng/dL estabelece o diagnóstico.",
+   "secao": "Infância (apresentação e diagnóstico)",
+   "cit": [
+    [
+     0,
+     16666,
+     215
+    ]
+   ],
+   "cit_sha": "00d60d08b10437fd"
+  },
+  {
+   "afirmacao": "⚠️ DIFERENCIAÇÃO ENTRE AS FORMAS NA CRIANÇA: crianças com HAC NÃO CLÁSSICA podem ter sinais de excesso androgênico em várias idades, mas são MAIS VELHAS e MENOS sintomáticas do que as crianças com HAC clássica que se apresentam além do período neonatal — e as MENINAS TÊM GENITÁLIA NORMAL.",
+   "secao": "Infância (apresentação e diagnóstico)",
+   "cit": [
+    [
+     0,
+     16883,
+     230
+    ]
+   ],
+   "cit_sha": "e3b8c9829f81aa78"
+  },
+  {
+   "afirmacao": "O hiperandrogenismo leve da HAC NÃO CLÁSSICA pode surgir na adolescência ou na vida adulta em mulheres afetadas, mas é ASSINTOMÁTICO em homens pós-púberes. Os sintomas podem incluir hirsutismo, acne, disfunção menstrual, subfertilidade e abortamentos de repetição — ou pode não haver sintoma nenhum.",
+   "secao": "Adolescência e vida adulta",
+   "cit": [
+    [
+     0,
+     17141,
+     304
+    ]
+   ],
+   "cit_sha": "065a174a8d643327"
+  },
+  {
+   "afirmacao": "⚠️ DIFERENCIAL OBRIGATÓRIO: as manifestações clínicas da HAC NÃO CLÁSSICA são difíceis de diferenciar da síndrome dos ovários policísticos (SOP), que é mais comum, e a DOSAGEM DE ESTEROIDES é necessária para estabelecer o diagnóstico.",
+   "secao": "Adolescência e vida adulta",
+   "cit": [
+    [
+     0,
+     17447,
+     159
+    ]
+   ],
+   "cit_sha": "3d58f757bc13652d"
+  },
+  {
+   "afirmacao": "⚠️ CONDIÇÃO DE COLETA QUE DECIDE O RESULTADO — a dosagem de 17-hidroxiprogesterona para investigar HAC NÃO CLÁSSICA pode ser feita PELA MANHÃ, NA FASE FOLICULAR do ciclo menstrual, para reduzir a possibilidade de falso-positivo; entretanto, o TESTE DE ESTÍMULO COM CORTICOTROPINA é geralmente necessário para estabelecer o diagnóstico.",
+   "secao": "Adolescência e vida adulta",
+   "cit": [
+    [
+     0,
+     17608,
+     255
+    ]
+   ],
+   "cit_sha": "e94c0c87a0117a25",
+   "extracao": "Alinhado com o bloco de hirsutismo (Endocrine Society 2018) em Endocrinologia Feminina, que também manda colher no início da manhã e na fase folicular. Sem conflito."
+  },
+  {
+   "afirmacao": "Na HAC CLÁSSICA, a maioria dos desfechos adversos é atribuível à deficiência de cortisol e ao desafio de repor glicocorticoide de modo a suprimir adequadamente o excesso androgênico dirigido pela corticotropina SEM causar exposição glicocorticoide excessiva.",
+   "secao": "Desfechos adversos — visão geral",
+   "cit": [
+    [
+     0,
+     17919,
+     268
+    ]
+   ],
+   "cit_sha": "6ea53fe10b7e3963"
+  },
+  {
+   "afirmacao": "⚠️ NA HAC, PACIENTES DE TODAS AS IDADES CORREM RISCO DE MORTE POR CRISE ADRENAL, mais frequentemente desencadeada por DOENÇAS INFECCIOSAS — e isso apesar da redução da mortalidade infantil obtida com o rastreio neonatal.",
+   "secao": "Crise adrenal e mortalidade",
+   "cit": [
+    [
+     0,
+     18434,
+     120
+    ]
+   ],
+   "cit_sha": "9c3e80d7b8cd2689"
+  },
+  {
+   "afirmacao": "A crise adrenal foi relatada como a principal causa de morte em 588 pacientes com HAC num estudo nacional sueco; e num estudo de coorte pareada retrospectiva no Reino Unido a mortalidade por todas as causas foi mais de 5 vezes maior entre pacientes com HAC do que entre controles.",
+   "secao": "Crise adrenal e mortalidade",
+   "cit": [
+    [
+     0,
+     18556,
+     288
+    ]
+   ],
+   "cit_sha": "4d4e6736d37f0493"
+  },
+  {
+   "afirmacao": "Doenças gastrointestinais são precipitante comum de crise adrenal ao longo de toda a vida em pacientes com HAC.",
+   "secao": "Crise adrenal e mortalidade",
+   "cit": [
+    [
+     0,
+     18848,
+     106
+    ]
+   ],
+   "cit_sha": "e8eaf88ebd4f0da2"
+  },
+  {
+   "afirmacao": "⚠️ NA CRISE ADRENAL DA HAC, A HIPOGLICEMIA É O QUE MAIS PESA: pode ocorrer hipoglicemia ameaçadora à vida, às vezes com convulsões (raramente com sequela neurológica permanente), especialmente em CRIANÇAS — e a deterioração clínica rápida e os desfechos adversos relacionam-se MAIS à hipoglicemia do que aos distúrbios eletrolíticos.",
+   "secao": "Crise adrenal e mortalidade",
+   "cit": [
+    [
+     0,
+     18961,
+     299
+    ]
+   ],
+   "cit_sha": "14d4fd2f630b6217"
+  },
+  {
+   "afirmacao": "⚠️ DOSE DE ESTRESSE NA HAC — CONDUTA NA DOENÇA INTERCORRENTE: a dose de estresse durante a doença deve incluir AUMENTO DA DOSE de glicocorticoide E AUMENTO DA FREQUÊNCIA de administração, junto com ingestão frequente de carboidratos simples e complexos.",
+   "secao": "Crise adrenal e mortalidade",
+   "cit": [
+    [
+     0,
+     19282,
+     183
+    ]
+   ],
+   "cit_sha": "26df35c2e2918f41",
+   "extracao": "⚠️ ENCOLHIDO: o artigo remete os VALORES da dose de estresse (mg, via, por faixa etária) à Tabela 1, e a Tabela 1 NÃO sobreviveu à extração do PDF. Nenhum número foi inventado. Ver relatório."
+  },
+  {
+   "afirmacao": "⚠️ CRISE ADRENAL NA HAC NÃO CLÁSSICA: embora pacientes com HAC não clássica comumente tenham comprometimento leve, mas clinicamente silencioso, do cortisol, a crise adrenal na forma NÃO clássica só foi relatada no contexto de TERAPIA COM GLICOCORTICOIDE, por supressão iatrogênica secundária do eixo hipotálamo-hipófise-adrenal.",
+   "secao": "Crise adrenal e mortalidade",
+   "cit": [
+    [
+     0,
+     19481,
+     295
+    ]
+   ],
+   "cit_sha": "afdb9af309dc2106",
+   "extracao": "Fato que separa as duas formas na prática: não transportar para a não clássica o risco de crise espontânea da clássica, mas também não ignorar o risco criado pelo próprio tratamento."
+  },
+  {
+   "afirmacao": "Na hiperplasia adrenal congênita (HAC), a vaginoplastia e a divisão do seio urogenital permitem a intromissão e o potencial de fertilidade, mas surgiram preocupações quanto aos desfechos de função sexual.",
+   "secao": "Genitália atípica",
+   "cit": [
+    [
+     0,
+     20683,
+     161
+    ]
+   ],
+   "cit_sha": "ba5a0636877a6941"
+  },
+  {
+   "afirmacao": "Entre as considerações que tornaram controversa a cirurgia genital precoce na HAC está a possibilidade de uma identidade sexual masculina, especialmente em lactentes 46,XX plenamente virilizadas; sobre o tema existem uma diretriz de prática clínica da Endocrine Society e um consenso de especialistas europeu.",
+   "secao": "Genitália atípica",
+   "cit": [
+    [
+     0,
+     21783,
+     184
+    ]
+   ],
+   "cit_sha": "f2d2d459f5247c3e"
+  },
+  {
+   "afirmacao": "Na genitália atípica da HAC, recomenda-se que os pais sejam informados sobre as opções cirúrgicas, INCLUINDO POSTERGAR A CIRURGIA e observar até que a criança esteja mais velha e possa participar da decisão.",
+   "secao": "Genitália atípica",
+   "cit": [
+    [
+     0,
+     21865,
+     107
+    ],
+    [
+     0,
+     22300,
+     163
+    ]
+   ],
+   "cit_sha": "80bb0fd066824574",
+   "extracao": "Elisão declarada: entre \"rec-\" e \"ommend\" o PDF intercala o rodapé da página e os balões da Figura 3. Buraco conferido dentro do GAP_MAX."
+  },
+  {
+   "afirmacao": "Na HAC, se a cirurgia genital for postergada, é necessário um exame para determinar se a anatomia permite fluxo menstrual adequado ANTES da puberdade nas pacientes do sexo feminino.",
+   "secao": "Genitália atípica",
+   "cit": [
+    [
+     0,
+     22469,
+     151
+    ]
+   ],
+   "cit_sha": "6018b42cfd3bf938"
+  },
+  {
+   "afirmacao": "Na HAC, a terapia com testosterona estaria indicada para indução puberal se uma menina afetada tiver identidade sexual masculina.",
+   "secao": "Genitália atípica",
+   "cit": [
+    [
+     0,
+     22622,
+     111
+    ]
+   ],
+   "cit_sha": "f419c3c94f5d6f97"
+  },
+  {
+   "afirmacao": "⚠️ DEXAMETASONA PRÉ-NATAL NA HAC — NÃO É MAIS RECOMENDADA: o tratamento pré-natal com dexametasona reduz a virilização da genitália externa em fetos 46,XX afetados, MAS não é mais recomendado por causa da segurança desconhecida e dos potenciais efeitos sobre o cérebro fetal em desenvolvimento.",
+   "secao": "Genitália atípica",
+   "cit": [
+    [
+     0,
+     22735,
+     218
+    ]
+   ],
+   "cit_sha": "d3294d5140ce459f"
+  },
+  {
+   "afirmacao": "Na HAC, ainda são necessários dados de longo prazo sobre os desfechos em pessoas que foram submetidas à cirurgia genital e nas que não foram.",
+   "secao": "Genitália atípica",
+   "cit": [
+    [
+     0,
+     22956,
+     100
+    ]
+   ],
+   "cit_sha": "1aa1dcf378f35668"
+  },
+  {
+   "afirmacao": "Na HAC, a baixa estatura na vida adulta é consequência TANTO do hiperandrogenismo QUANTO do tratamento com glicocorticoide: a administração prolongada de glicocorticoide suprime o crescimento, e os níveis circulantes elevados de esteroides sexuais adrenais aceleram a maturação esquelética e podem desencadear início precoce da puberdade central.",
+   "secao": "Crescimento e desenvolvimento",
+   "cit": [
+    [
+     0,
+     23090,
+     319
+    ]
+   ],
+   "cit_sha": "f7ca546887e12f20"
+  },
+  {
+   "afirmacao": "Metanálise de estudos com pacientes tratados por HAC mostrou escore médio de estatura adulta de −1,4 DP (10 cm) abaixo da média populacional.",
+   "secao": "Crescimento e desenvolvimento",
+   "cit": [
+    [
+     0,
+     23411,
+     139
+    ]
+   ],
+   "cit_sha": "a981b98e7eaf5ada"
+  },
+  {
+   "afirmacao": "Na HAC, o uso de MINERALOCORTICOIDE durante a infância associou-se a MAIOR estatura em comparação com o não uso, porque a reposição mineralocorticoide garante euvolemia, o que diminui o estímulo da corticotropina e a consequente síntese de androgênio adrenal.",
+   "secao": "Crescimento e desenvolvimento",
+   "cit": [
+    [
+     0,
+     23590,
+     262
+    ]
+   ],
+   "cit_sha": "e85c6ad3c23f40cf",
+   "extracao": "Este é o ÚNICO conteúdo de mineralocorticoide que sobreviveu à extração; o artigo não traz dose de fludrocortisona nem a monitorização (renina, pressão, sódio) — isso estava na Tabela 1, ausente. Ver relatório."
+  },
+  {
+   "afirmacao": "⚠️ TETO DE DOSE DE GLICOCORTICOIDE NA CRIANÇA COM HAC EM TRATAMENTO: o efeito supressor do crescimento é especialmente evidente na LACTÂNCIA e na PUBERDADE, e doses acima de 15 a 20 mg POR METRO QUADRADO de superfície corporal POR DIA nesses períodos do desenvolvimento REDUZEM a estatura adulta final.",
+   "secao": "Crescimento e desenvolvimento",
+   "cit": [
+    [
+     0,
+     23854,
+     244
+    ]
+   ],
+   "cit_sha": "6a43c9f4c2766179",
+   "extracao": "⚠️ COLISÃO NUMÉRICA DELIBERADAMENTE EXPLICITADA: \"15 a 20 mg/m²/dia\" aqui é TETO na CRIANÇA; adiante, \"15 a 20 mg/dia\" de hidrocortisona é a DOSE de gestante com HAC NÃO clássica. Mesmos números, unidade e população diferentes."
+  },
+  {
+   "afirmacao": "Pacientes com HAC NÃO CLÁSSICA também podem ter estatura adulta comprometida, mas o déficit é MENOS grave do que nos pacientes com a forma CLÁSSICA.",
+   "secao": "Crescimento e desenvolvimento",
+   "cit": [
+    [
+     0,
+     24105,
+     140
+    ]
+   ],
+   "cit_sha": "6f8d8b56dfe002f3"
+  },
+  {
+   "afirmacao": "⚠️ NA CRIANÇA COM HAC, GLICOCORTICOIDE DE LONGA AÇÃO NÃO É RECOMENDADO: embora os glicocorticoides de ação longa sejam eficazes em suprimir os androgênios adrenais, eles têm MAIS probabilidade do que a HIDROCORTISONA de ação curta de prejudicar a velocidade de crescimento e NÃO são recomendados para tratamento de longo prazo em crianças.",
+   "secao": "Crescimento e desenvolvimento",
+   "cit": [
+    [
+     0,
+     24249,
+     233
+    ]
+   ],
+   "cit_sha": "669a9ed99d8dea13"
+  },
+  {
+   "afirmacao": "Na HAC, a exposição alterada a androgênios e glicocorticoides no período fetal e pós-natal influencia o desenvolvimento e a função cerebrais, podendo afetar a saúde mental.",
+   "secao": "Aspectos psicológicos e efeitos cerebrais",
+   "cit": [
+    [
+     0,
+     24598,
+     170
+    ]
+   ],
+   "cit_sha": "b5d3f5497bebb606"
+  },
+  {
+   "afirmacao": "Estudos de registro e de coorte mostraram maior prevalência de transtornos psiquiátricos na HAC CLÁSSICA em relação a controles: ansiedade, depressão, uso abusivo de álcool, transtornos de personalidade e suicidalidade entre pacientes do sexo MASCULINO, e transtornos de ajustamento entre pacientes do sexo FEMININO.",
+   "secao": "Aspectos psicológicos e efeitos cerebrais",
+   "cit": [
+    [
+     0,
+     24770,
+     247
+    ]
+   ],
+   "cit_sha": "5165fbedab28bf86"
+  },
+  {
+   "afirmacao": "A terapia com glicocorticoide na HAC foi relatada como capaz de afetar a memória de trabalho e produzir alterações cerebrais, incluindo hiperintensidades de substância branca que sugerem redução da integridade estrutural da substância branca.",
+   "secao": "Aspectos psicológicos e efeitos cerebrais",
+   "cit": [
+    [
+     0,
+     25488,
+     214
+    ]
+   ],
+   "cit_sha": "3c2f230d66e7e572"
+  },
+  {
+   "afirmacao": "Na HAC, a prevalência de orientação sexual feminina entre mulheres afetadas foi relatada entre aproximadamente 5 e 15%, correlacionando-se com a exposição androgênica.",
+   "secao": "Aspectos psicológicos e efeitos cerebrais",
+   "cit": [
+    [
+     0,
+     25844,
+     201
+    ]
+   ],
+   "cit_sha": "96a06c06a3157522"
+  },
+  {
+   "afirmacao": "Na HAC, observou-se maior comprometimento da qualidade de vida nos pacientes com as formas mais graves da doença.",
+   "secao": "Aspectos psicológicos e efeitos cerebrais",
+   "cit": [
+    [
+     0,
+     26496,
+     109
+    ]
+   ],
+   "cit_sha": "9f3b378e21b6d0f4"
+  },
+  {
+   "afirmacao": "Mesmo na HAC NÃO CLÁSSICA, forma leve da doença, existem alterações do eixo hipotálamo-hipófise-adrenal, que podem contribuir para vulnerabilidade psiquiátrica.",
+   "secao": "Aspectos psicológicos e efeitos cerebrais",
+   "cit": [
+    [
+     0,
+     26942,
+     64
+    ],
+    [
+     0,
+     27318,
+     91
+    ]
+   ],
+   "cit_sha": "5bd8a89b700481cf",
+   "extracao": "Elisão declarada: quebra de página entre \"pres-\" e \"ent\", com rodapé no meio."
+  },
+  {
+   "afirmacao": "Na HAC CLÁSSICA, a fusão labioescrotal e a presença de seio urogenital impedem a relação vaginal a menos que se faça cirurgia reconstrutiva, e a estenose vaginal subsequente pode causar dispareunia.",
+   "secao": "Subfertilidade",
+   "cit": [
+    [
+     0,
+     27589,
+     185
+    ]
+   ],
+   "cit_sha": "f43419d63e745a63"
+  },
+  {
+   "afirmacao": "⚠️ NA MULHER COM HAC CLÁSSICA, O MAIOR OBSTÁCULO HORMONAL À FERTILIDADE É A PRODUÇÃO ELEVADA DE PROGESTERONA de origem adrenal — acima dos androgênios elevados, da oligo-ovulação ou anovulação e dos ovários policísticos secundários, que também podem prejudicar a fertilidade.",
+   "secao": "Subfertilidade",
+   "cit": [
+    [
+     0,
+     27778,
+     238
+    ]
+   ],
+   "cit_sha": "89b0705bbc855412"
+  },
+  {
+   "afirmacao": "Na HAC, o acúmulo de progesterona a montante da 17-hidroxiprogesterona durante a fase folicular afina o endométrio e altera o muco cervical de modo semelhante à ação dos contraceptivos progestínicos, além de levar a oligomenorreia ou amenorreia.",
+   "secao": "Subfertilidade",
+   "cit": [
+    [
+     0,
+     28018,
+     257
+    ]
+   ],
+   "cit_sha": "c84eec56142b003d"
+  },
+  {
+   "afirmacao": "Na HAC, o controle hormonal estrito para concepção pode exigir INTENSIFICAÇÃO do glicocorticoide além do que constituiria controle adequado em outras circunstâncias.",
+   "secao": "Subfertilidade",
+   "cit": [
+    [
+     0,
+     28277,
+     147
+    ]
+   ],
+   "cit_sha": "974897ed8288369e"
+  },
+  {
+   "afirmacao": "Aconselhamento genético pré-concepcional é aconselhado na HAC, já que a frequência de portadores de um alelo de HAC clássica é de cerca de 1 em 60 e, sem genotipagem do parceiro, o risco de ter um filho afetado com HAC clássica é de 1 em 120.",
+   "secao": "Subfertilidade",
+   "cit": [
+    [
+     0,
+     28428,
+     222
+    ]
+   ],
+   "cit_sha": "82a316b3d98c8b66"
+  },
+  {
+   "afirmacao": "A maioria das pessoas que recebe diagnóstico de HAC NÃO CLÁSSICA carrega uma mutação associada à forma CLÁSSICA. Teoricamente a chance de um paciente com HAC não clássica ter um filho com HAC clássica é de 1 em 250, mas esse risco foi relatado como 1 a 2% em dois grandes estudos de coorte.",
+   "secao": "Subfertilidade",
+   "cit": [
+    [
+     0,
+     28652,
+     295
+    ]
+   ],
+   "cit_sha": "375a0f218c48fa5c"
+  },
+  {
+   "afirmacao": "A HAC NÃO CLÁSSICA é às vezes diagnosticada durante a investigação de oligomenorreia ou amenorreia e infertilidade; estima-se, porém, que 90% das mulheres com HAC não clássica NUNCA recebam o diagnóstico.",
+   "secao": "Subfertilidade",
+   "cit": [
+    [
+     0,
+     28954,
+     193
+    ]
+   ],
+   "cit_sha": "c12f70a8958e7b34"
+  },
+  {
+   "afirmacao": "Aproximadamente 83% das mulheres com HAC NÃO CLÁSSICA conhecida engravidam em até 1 ano depois de começarem a tentar conceber, COM ou SEM terapia glicocorticoide.",
+   "secao": "Subfertilidade",
+   "cit": [
+    [
+     0,
+     29149,
+     152
+    ]
+   ],
+   "cit_sha": "75e53d1168241c9a"
+  },
+  {
+   "afirmacao": "⚠️ NA HAC NÃO CLÁSSICA O RISCO É DE ABORTAMENTO: essas mulheres têm risco aumentado de aborto espontâneo e, em dois grandes estudos retrospectivos, o risco de abortamento foi de cerca de 25% SEM terapia e MENOR QUE 10% COM tratamento com hidrocortisona.",
+   "secao": "Subfertilidade",
+   "cit": [
+    [
+     0,
+     29303,
+     219
+    ]
+   ],
+   "cit_sha": "ac186fe0d9a77e8a"
+  },
+  {
+   "afirmacao": "Muitos HOMENS com HAC CLÁSSICA têm oligospermia ou azoospermia; uma das razões é que os níveis elevados de androgênio de origem adrenal fazem retroalimentação negativa sobre o eixo hipotálamo-hipófise-testicular, suprimem tanto a secreção de gonadotrofinas quanto a síntese de testosterona pelas células de Leydig e impedem a espermatogênese.",
+   "secao": "Subfertilidade",
+   "cit": [
+    [
+     0,
+     29621,
+     48
+    ],
+    [
+     0,
+     29670,
+     178
+    ]
+   ],
+   "cit_sha": "1a5c36f9b5a8be93",
+   "extracao": "Elisão declarada: quebra de página entre \"provide\" e \"negative feedback\"."
+  },
+  {
+   "afirmacao": "⚠️ TUMORES DE RESTO ADRENAL TESTICULAR (TART) desenvolvem-se em 30 a 50% dos adolescentes e homens com HAC CLÁSSICA, particularmente após períodos de mau controle ou de não adesão ao tratamento; são geralmente bilaterais e surgem da rede testicular (rete testis).",
+   "secao": "Subfertilidade",
+   "cit": [
+    [
+     0,
+     29858,
+     244
+    ]
+   ],
+   "cit_sha": "fe8cebbc8983a59d"
+  },
+  {
+   "afirmacao": "⚠️ MONITORIZAÇÃO: os tumores de resto adrenal testicular (TART) da HAC são facilmente identificados por ULTRASSONOGRAFIA, que deve ser realizada ao completar a puberdade nos meninos com HAC CLÁSSICA.",
+   "secao": "Subfertilidade",
+   "cit": [
+    [
+     0,
+     30104,
+     132
+    ]
+   ],
+   "cit_sha": "2301c02a14240722"
+  },
+  {
+   "afirmacao": "Na HAC, os TART podem causar dano irreversível às células de Sertoli e às células germinativas em desenvolvimento; a presença de um TART e níveis elevados de FSH são fatores de mau prognóstico para a fertilidade masculina.",
+   "secao": "Subfertilidade",
+   "cit": [
+    [
+     0,
+     30238,
+     202
+    ]
+   ],
+   "cit_sha": "256e897f22ce8e48"
+  },
+  {
+   "afirmacao": "Na HAC, se um TART for identificado, os exames de ultrassom devem ser realizados PELO MENOS ANUALMENTE, dependendo do tamanho do tumor, dos achados laboratoriais e do exame físico, e do desejo do paciente quanto à busca de fertilidade.",
+   "secao": "Subfertilidade",
+   "cit": [
+    [
+     0,
+     30444,
+     235
+    ]
+   ],
+   "cit_sha": "1af8912215dbc734"
+  },
+  {
+   "afirmacao": "Na HAC, a perda crônica da retroalimentação negativa e os níveis elevados de corticotropina podem levar a aumento adrenal, formação de nódulos e desorganização zonal.",
+   "secao": "Subfertilidade",
+   "cit": [
+    [
+     0,
+     30681,
+     141
+    ]
+   ],
+   "cit_sha": "c77db5ed722a8dd6"
+  },
+  {
+   "afirmacao": "Na HAC, os níveis séricos de 11-oxiandrogênios correlacionam-se diretamente com o tamanho adrenal e com a presença de TART, o que demonstra sua utilidade como BIOMARCADORES de controle da doença a longo prazo.",
+   "secao": "Subfertilidade",
+   "cit": [
+    [
+     0,
+     30824,
+     170
+    ]
+   ],
+   "cit_sha": "c936e7ab5851e2f8"
+  },
+  {
+   "afirmacao": "Os mielolipomas adrenais, comumente bilaterais embora assimétricos, também são tumores característicos da HAC CLÁSSICA; são benignos e não produtores de esteroides, mas tendem a crescer até tamanho maciço MESMO com intensificação do glicocorticoide, e podem exigir remoção cirúrgica por efeito de massa.",
+   "secao": "Subfertilidade",
+   "cit": [
+    [
+     0,
+     30998,
+     385
+    ]
+   ],
+   "cit_sha": "693bc9ba43b35ce4"
+  },
+  {
+   "afirmacao": "Em mulheres com HAC CLÁSSICA, tumores de resto adrenal podem desenvolver-se nos ovários ou nos ligamentos uterinos adjacentes, e esses tumores geralmente NÃO são identificados por imagem convencional.",
+   "secao": "Subfertilidade",
+   "cit": [
+    [
+     0,
+     31385,
+     179
+    ]
+   ],
+   "cit_sha": "329adeaa46d96b3d"
+  },
+  {
+   "afirmacao": "Na HAC CLÁSSICA é provável o desenvolvimento de consequências metabólicas pela exposição crônica à terapia glicocorticoide suprafisiológica, embora as ações anabólicas dos androgênios possam mitigar alguns dos efeitos dos glicocorticoides.",
+   "secao": "Condições metabólicas coexistentes",
+   "cit": [
+    [
+     0,
+     31598,
+     237
+    ]
+   ],
+   "cit_sha": "b12db2224065554b"
+  },
+  {
+   "afirmacao": "Metanálise de 20 estudos sobre fatores de risco cardiovascular em pacientes com HAC tratados com glicocorticoide identificou pequenos aumentos da espessura íntima-média carotídea e da resistência à insulina em comparação com controles saudáveis, além de maior prevalência de hipertensão, hiperlipidemia, fibrilação atrial, tromboembolismo venoso, obesidade e diabetes.",
+   "secao": "Condições metabólicas coexistentes",
+   "cit": [
+    [
+     0,
+     31837,
+     185
+    ],
+    [
+     0,
+     32333,
+     189
+    ]
+   ],
+   "cit_sha": "219e85ec012e3502",
+   "extracao": "Elisão declarada: quebra de página entre \"and\" e \"insulin resistance\", com rodapé de copyright no meio. Buraco dentro do GAP_MAX."
+  },
+  {
+   "afirmacao": "Na HAC, como a maioria dos pacientes estudados tem menos de 50 anos de idade, os dados sobre EVENTOS cardiovasculares são insuficientes para atribuir risco.",
+   "secao": "Condições metabólicas coexistentes",
+   "cit": [
+    [
+     1,
+     32196,
+     123
+    ]
+   ],
+   "cit_sha": "054bb1d96459d961"
+  },
+  {
+   "afirmacao": "Um estudo de coorte nacional sueco mostrou incidência aumentada de distúrbios cardiovasculares e metabólicos entre ADULTOS com HAC CLÁSSICA.",
+   "secao": "Condições metabólicas coexistentes",
+   "cit": [
+    [
+     0,
+     32669,
+     135
+    ]
+   ],
+   "cit_sha": "3979c80117ea0be6"
+  },
+  {
+   "afirmacao": "Mulheres com HAC CLÁSSICA, em comparação com controles pareadas por idade, têm risco aumentado de DIABETES GESTACIONAL, que é fator de risco conhecido para o desenvolvimento posterior de diabetes.",
+   "secao": "Condições metabólicas coexistentes",
+   "cit": [
+    [
+     0,
+     32821,
+     207
+    ]
+   ],
+   "cit_sha": "5b6858bc515cc205"
+  },
+  {
+   "afirmacao": "A diretriz de prática clínica da Endocrine Society recomenda, na HAC, atenção precoce aos fatores de risco cardiometabólicos e aconselhamento sobre escolhas de estilo de vida saudável.",
+   "secao": "Condições metabólicas coexistentes",
+   "cit": [
+    [
+     0,
+     33032,
+     155
+    ]
+   ],
+   "cit_sha": "2cdcb8ac80c1298c"
+  },
+  {
+   "afirmacao": "Ao longo de toda a vida, o objetivo primário da terapia da HAC em cada paciente é repor a insuficiência adrenal da HAC para manter volume plasmático normal e equilíbrio fisiológico.",
+   "secao": "Manejo",
+   "cit": [
+    [
+     0,
+     33201,
+     185
+    ]
+   ],
+   "cit_sha": "9e2de4d941ce6a61"
+  },
+  {
+   "afirmacao": "⚠️ TODO PACIENTE COM HAC DEVE RECEBER: informação detalhada sobre dose de estresse de glicocorticoide, identificação de alerta médico e uso de emergência de HIDROCORTISONA INJETÁVEL.",
+   "secao": "Manejo",
+   "cit": [
+    [
+     0,
+     33394,
+     169
+    ]
+   ],
+   "cit_sha": "d3cd55f32a6fa10e",
+   "extracao": "Esta é a VIA da conduta de emergência (injetável). Os valores em mg continuam na Tabela 1, ausente da extração."
+  },
+  {
+   "afirmacao": "Na CRIANÇA com HAC há um objetivo terapêutico adicional: suprimir a produção de androgênio de origem adrenal o suficiente para permitir crescimento e desenvolvimento normais e alcançar estatura adulta normal.",
+   "secao": "Manejo",
+   "cit": [
+    [
+     0,
+     33565,
+     209
+    ]
+   ],
+   "cit_sha": "05d45565223f558b"
+  },
+  {
+   "afirmacao": "⚠️ NO ADULTO COM HAC O ALVO MUDA: durante a transição para o cuidado adulto, depois que o crescimento linear parou, o controle do excesso de androgênio adrenal é frequentemente RELAXADO para limitar a exposição prolongada ao excesso de glicocorticoide, já que aproximadamente 40% dos adultos com HAC têm osteopenia.",
+   "secao": "Manejo",
+   "cit": [
+    [
+     0,
+     33776,
+     287
+    ]
+   ],
+   "cit_sha": "25b71e49e08d7ba0"
+  },
+  {
+   "afirmacao": "Objetivos adicionais do cuidado do ADULTO com HAC são a preservação da fertilidade e a monitorização das consequências de longo prazo da terapia glicocorticoide.",
+   "secao": "Manejo",
+   "cit": [
+    [
+     0,
+     34070,
+     135
+    ]
+   ],
+   "cit_sha": "ba3db87ec9fdc119"
+  },
+  {
+   "afirmacao": "⚠️ NO ADULTO com HAC, as doses divididas de HIDROCORTISONA podem ser mantidas indefinidamente ou trocadas por dose única de glicocorticoide sintético de ação mais longa para aumentar a adesão — mas essa troca associa-se a MAIOR RISCO DE SÍNDROME DE CUSHING IATROGÊNICA.",
+   "secao": "Manejo",
+   "cit": [
+    [
+     0,
+     34207,
+     238
+    ]
+   ],
+   "cit_sha": "aaa2349d659cc9b6"
+  },
+  {
+   "afirmacao": "⚠️ NA HAC, quando se usam glicocorticoides sintéticos potentes, a dose deve ser cuidadosamente ajustada para fornecer a MENOR quantidade necessária para alcançar o controle desejado, em vez de ser determinada arbitrariamente pelos tamanhos de comprimido disponíveis.",
+   "secao": "Manejo",
+   "cit": [
+    [
+     0,
+     34447,
+     237
+    ]
+   ],
+   "cit_sha": "6c7ae8d9b36444dd"
+  },
+  {
+   "afirmacao": "⚠️ NA MULHER COM HAC NÃO CLÁSSICA, o contraceptivo oral e a espironolactona ou o acetato de ciproterona (onde disponível) são ALTERNATIVAS ao glicocorticoide para manejar hirsutismo, acne ou ambos decorrentes do excesso androgênico.",
+   "secao": "Manejo",
+   "cit": [
+    [
+     0,
+     36520,
+     221
+    ]
+   ],
+   "cit_sha": "18087eca567b95c9",
+   "extracao": "Alinhado com o bloco de hirsutismo (Endocrine Society 2018) em Endocrinologia Feminina, que também põe contraceptivo oral e antiandrogênio antes do glicocorticoide na HAC não clássica."
+  },
+  {
+   "afirmacao": "⚠️ NO HOMEM COM HAC NÃO CLÁSSICA NÃO HÁ INDICAÇÃO MÉDICA DE GLICOCORTICOIDE, exceto no caso raro em que o fenótipo fica na fronteira entre a forma clássica e a não clássica, com risco de infertilidade. Nos MENINOS, o tratamento é desmamado na infância e descontinuado durante a adolescência.",
+   "secao": "Manejo",
+   "cit": [
+    [
+     0,
+     36743,
+     294
+    ]
+   ],
+   "cit_sha": "400b05b9c859a822"
+  },
+  {
+   "afirmacao": "⚠️ ALVO NA MULHER COM HAC CLÁSSICA QUE TENTA ENGRAVIDAR: a progesterona de origem adrenal deve ser suprimida, com meta MENOR QUE 0,6 ng/mL (2,0 nmol/L).",
+   "secao": "Manejo — gestação",
+   "cit": [
+    [
+     0,
+     37039,
+     168
+    ]
+   ],
+   "cit_sha": "f069bf51e74c1065"
+  },
+  {
+   "afirmacao": "⚠️ DEXAMETASONA É CONTRAINDICADA DURANTE A GESTAÇÃO na HAC, porque ela NÃO é metabolizada pela placenta e portanto ALCANÇA O FETO.",
+   "secao": "Manejo — gestação",
+   "cit": [
+    [
+     0,
+     37209,
+     127
+    ]
+   ],
+   "cit_sha": "81b2dfa2247ea403"
+  },
+  {
+   "afirmacao": "Na gestação da mulher com HAC CLÁSSICA, o tratamento com hidrocortisona, prednisolona ou ambas, administrado em duas ou três doses divididas, associou-se a gestações bem-sucedidas em 21 mulheres com HAC clássica, frequentemente com o uso de 1 a 2 mg de prednisolona ao deitar.",
+   "secao": "Manejo — gestação",
+   "cit": [
+    [
+     0,
+     37338,
+     233
+    ]
+   ],
+   "cit_sha": "d81bbf07ed30a4fc"
+  },
+  {
+   "afirmacao": "⚠️ NA MULHER COM HAC NÃO CLÁSSICA, o tratamento com 15 a 20 mg de HIDROCORTISONA POR DIA (dose diária total, NÃO por metro quadrado), iniciado ANTES da concepção e continuado ATÉ O TERMO, associa-se empiricamente a redução das taxas de abortamento.",
+   "secao": "Manejo — gestação",
+   "cit": [
+    [
+     0,
+     37575,
+     198
+    ]
+   ],
+   "cit_sha": "8d4c46e71c2899b0",
+   "extracao": "⚠️ A explicitação \"dose diária total, NÃO por metro quadrado\" não acrescenta número: separa esta dose do teto de 15-20 mg/m²/dia da CRIANÇA, que tem os mesmos dígitos."
+  },
+  {
+   "afirmacao": "Homens e adolescentes com TART na HAC requerem INTENSIFICAÇÃO da dose de glicocorticoide para obter redução do tumor; entretanto, os TART desenvolvem elementos fibróticos ao longo do tempo, que NÃO regridem em resposta aos glicocorticoides.",
+   "secao": "Manejo — TART",
+   "cit": [
+    [
+     0,
+     37777,
+     214
+    ]
+   ],
+   "cit_sha": "4fa98a3baf808618"
+  },
+  {
+   "afirmacao": "⚠️ EXCEÇÃO EM QUE A DEXAMETASONA É USADA NA HAC: a dexametasona, administrada DUAS VEZES AO DIA, é frequentemente necessária para alcançar o grau de supressão da corticotropina necessário para reduzir os TART, aliviar a supressão gonadotrófica e permitir a recuperação da função testicular e da espermatogênese — conduta para HOMENS e ADOLESCENTES com TART (ver, neste mesmo extrato, os fatos de que glicocorticoide de ação longa NÃO é recomendado na criança e de que dexametasona é CONTRAINDICADA na gestação).",
+   "secao": "Manejo — TART",
+   "cit": [
+    [
+     0,
+     37993,
+     233
+    ]
+   ],
+   "cit_sha": "02a7c4ed1310d65b",
+   "extracao": "A ressalva final não acrescenta número: amarra a população da citação (homens e adolescentes com TART) e evita que a conduta seja lida como autorização geral de dexametasona na HAC, contrariando os fatos de criança e de gestação deste mesmo extrato."
+  },
+  {
+   "afirmacao": "Na HAC, TART grandes e confluentes podem ser removidos cirurgicamente, o que também elimina o efeito de massa associado, mas a testosterona testicular e a produção de espermatozoides raramente retornam a níveis normais.",
+   "secao": "Manejo — TART",
+   "cit": [
+    [
+     0,
+     38245,
+     170
+    ]
+   ],
+   "cit_sha": "9bfdde190d31d3e1"
+  },
+  {
+   "afirmacao": "Dadas as consequências adversas da exposição crônica a glicocorticoide suprafisiológico na HAC, propõem-se tratamentos alternativos baseados na fisiopatologia, incluindo reposição diurna de cortisol e fármacos que reduzem os níveis de androgênio e permitem menor dose de glicocorticoide.",
+   "secao": "Perspectivas (2020)",
+   "cit": [
+    [
+     0,
+     38521,
+     210
+    ]
+   ],
+   "cit_sha": "2028047048cdabf0"
+  },
+  {
+   "afirmacao": "⚠️ SITUAÇÃO EM 2020, JÁ SUPERADA — o artigo afirma que alguns desses conceitos de terapia alternativa na HAC foram testados em pequenos ensaios, mas que NENHUM estava então aprovado pelo FDA. Ver a ressalva de conflito deste extrato: o crinecerfonte (antagonista de CRF1) foi aprovado pelo FDA em dezembro de 2024.",
+   "secao": "Perspectivas (2020)",
+   "cit": [
+    [
+     0,
+     38811,
+     124
+    ]
+   ],
+   "cit_sha": "b9531340daaa8ab1",
+   "extracao": "Fato mantido com a data explícita na afirmação porque ele documenta o estado da arte de 2020; a atualização vive no campo `conflito`, com direção `nucleo_prevalece`."
+  },
+  {
+   "afirmacao": "Abordagens terapêuticas novas propostas para a HAC incluem: reposição circadiana de cortisol com glicocorticoide de liberação modificada ou infusão subcutânea de hidrocortisona; antagonistas do receptor 1 do fator liberador de corticotropina; anticorpos anticorticotropina; antagonistas do receptor de corticotropina (melanocortina 2, MC2R); agentes adrenolíticos; adrenalectomia; e inibição farmacológica de enzimas esteroidogênicas ou de receptores de esteroides.",
+   "secao": "Perspectivas (2020)",
+   "cit": [
+    [
+     0,
+     35011,
+     693
+    ]
+   ],
+   "cit_sha": "48fae33062ec872c"
+  },
+  {
+   "afirmacao": "Como a HAC é um distúrbio monogênico, a terapia gênica com tecnologias baseadas em células e de edição gênica pode vir a restaurar a esteroidogênese defeituosa.",
+   "secao": "Perspectivas (2020)",
+   "cit": [
+    [
+     0,
+     35711,
+     131
+    ]
+   ],
+   "cit_sha": "1256f90b58c89a49"
+  },
+  {
+   "afirmacao": "A HAC é uma doença complexa e frequentemente ameaçadora à vida, com múltiplos desequilíbrios hormonais que podem resultar em desfechos adversos relacionados TANTO à doença QUANTO ao tratamento.",
+   "secao": "Conclusões",
+   "cit": [
+    [
+     0,
+     38949,
+     160
+    ]
+   ],
+   "cit_sha": "2cbef3e274273511"
+  }
+ ]
+}
