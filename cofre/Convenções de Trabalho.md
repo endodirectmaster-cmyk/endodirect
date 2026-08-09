@@ -47,6 +47,41 @@ base. É motivo para saber que, nesses fatos, a garantia deixou de ser mecânica
 passou a ser humana. O auditor do GIOP conferiu os 17 um a um e declarou isso no
 relatório; é o que se espera de quem usar a técnica.
 
+## 🏷️ O `tema` É A SUPERFÍCIE DE BUSCA — escreva a palavra do MÉDICO (2026-08-09)
+
+O `deepFor` pontua `+3` por termo da pergunta achado no **tema** e `+1` no
+corpo. Com todos os blocos da área cabendo no teto (é o caso de Endocrinopatias,
+172k de 400k), **todos chegam** — o tema não decide QUEM chega, decide QUEM VEM
+PRIMEIRO. E na hiponatremia isso decidiu errado nos dois sentidos:
+
+- *"sódio 118 com convulsão, conduta agora"* → 1º era o **algoritmo
+  diagnóstico**. O bloco de emergência empatava em 4 pontos e perdia no
+  desempate por ordem de array, porque `sodio` estava no tema do algoritmo
+  (*"sódio urinário"*) e não no dele — que dizia só "hiponatremia".
+- *"sódio 120 sem sintomas, velocidade de correção"* → 1º era o bloco **agudo
+  sintomático**, com bolus de salina hipertônica. O bloco crônico, dono do
+  limite de velocidade, não dizia nem "sódio" nem "correção" no tema.
+
+**Regra:** o tema tem de trazer o **analito**, o **cenário** e o **verbo que se
+digita**. Não basta a palavra do artigo. ⚠️ E o radical do `deepFor` corta 2
+letras, **não conjuga**: `convulsionando` não alcança `convulsão`, `correr` não
+alcança `corrida`. Onde a forma importa, escreva as duas.
+
+Corolário medido no mesmo dia, no roteamento de área: a lista do Esporte tinha
+`corrida`, `natacao`, `musculacao` e **nenhum verbo** — e `correr`, `nadar`,
+`pedalar` caíam em Diabetes.
+
+## 🧾 EDITANDO EXTRATO POR SCRIPT, PRESERVE A INDENTAÇÃO (2026-08-09)
+
+Mudei UM campo de `hipo-3.json` e o diff saiu com **2.360 linhas**: reescrevi com
+`JSON.stringify(j, null, 2)` e o arquivo estava com indentação 1. O conteúdo
+estava certo (conferi que os 97 fatos eram idênticos como JSON), mas um diff
+desses **esconde a mudança real** e inutiliza o `git log -p` daquele arquivo.
+
+A base tem os dois estilos (28 extratos com indentação 1, 12 com 2) — então não
+há um número certo: **leia o do arquivo antes de reescrever**. Refeito com o
+indent original, o diff voltou a ser 1 linha.
+
 ## 🧹 `git add -A` COM AGENTE RODANDO VARRE O TRABALHO DELE PELA METADE (2026-08-09)
 
 Commitei um conserto meu enquanto o auditor do GIOP estava no ar. `git add -A`
