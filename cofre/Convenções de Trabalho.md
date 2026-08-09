@@ -5,6 +5,34 @@ atualizado: 2026-08-09
 
 # Convenções de Trabalho
 
+## 📄 O CAMPO `secao` NUNCA CHEGA AO MODELO — o fato tem de se bastar (2026-08-09)
+
+Achado por auditoria adversarial e **conferido no código** por mim
+(`monta-base-profunda.js`): o montador faz `atual.fatos.push(String(f.afirmacao))`
+e mais nada. O `secao` só é usado no **sufixo do tema** das partes de um artigo
+partido — no máximo 4 seções, cortadas em 150 caracteres. **Ele não acompanha o
+fato.**
+
+Consequência: um fato que se apoia no cabeçalho da seção para dizer de que
+doença, cenário ou população fala **chega órfão** à tela do médico.
+
+O caso que provou: dois critérios do Painel 1 do hiperparatireoidismo diziam só
+*"PAINEL 1, CRITÉRIO 2a (ENVOLVIMENTO ESQUELÉTICO) — escore T < −2,5"* e
+*"CRITÉRIO 4 (CALCIÚRIA): >400 mg/dia"*. A seção dizia "indicações de cirurgia";
+o fato, não. Sozinhos, o primeiro lia-se como o corte **diagnóstico** de
+osteoporose e o segundo como limiar de tratamento — e **>400 mg/dia é justamente
+o teto de tratamento do HIPOparatireoidismo**, o extrato irmão da mesma área.
+
+**Regra para todo extrator: escreva a doença, o cenário e a população DENTRO da
+`afirmacao`.** `secao` é organização, não contexto entregue.
+
+⚠️ **Tentei transformar isso em peneira e MEDI que não presta como guarda:**
+procurar palavra de escopo presente na `secao` e ausente na `afirmacao` dá 59 de
+6.182 fatos (1%), e dos **6 que amostrei, 6 eram falso positivo** — o contexto
+agudo viaja por **via e tempo** ("intravenosa rápida", "1 L em 1 h", "até a
+recuperação clínica"), não pela palavra "crise". A peneira acharia os dois casos
+reais, mas afogados em ruído. Foi para o brief como técnica.
+
 ## 🪤 EU CAÍ NA ARMADILHA QUE POLICIO, E O VERIFICADOR ME PEGOU (2026-08-09)
 
 Consertando um fato acusado pela auditoria, escrevi na afirmação que *"no

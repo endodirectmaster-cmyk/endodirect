@@ -89,6 +89,27 @@ da base inteira:**
 falso positivo, um alarme desses vira paisagem e deixa de proteger. Ele presta
 quando alguém LÊ os candidatos — que é o seu trabalho.
 
+### 📄 O `secao` NUNCA CHEGA AO MODELO — procure fato que se apoia nele
+
+Conferido no código (`monta-base-profunda.js`): o montador envia **só** a
+`afirmacao`. O `secao` aparece apenas no sufixo do tema das partes, cortado em
+150 chars. **Fato que depende do cabeçalho da seção chega órfão.**
+
+O caso: dois critérios do Painel 1 do hiperparatireoidismo diziam só *"CRITÉRIO
+2a (ENVOLVIMENTO ESQUELÉTICO) — escore T < −2,5"* e *"CRITÉRIO 4: >400 mg/dia"*.
+A seção dizia "indicações de **cirurgia**"; o fato, não. Sozinhos, um lia-se como
+o corte **diagnóstico** de osteoporose e o outro como limiar de tratamento — e
+**>400 mg/dia é o teto de tratamento do HIPOparatireoidismo**, da mesma área.
+
+**Como varrer:** compare palavra de escopo (doença, população, cenário, via) da
+`secao` contra a `afirmacao`.
+
+⚠️ **Calibre:** medido sobre 6.182 fatos, isso dá **59 candidatos (1%)** e dos
+**6 amostrados, 6 eram falso positivo** — o escopo agudo costuma viajar por
+**via e tempo** ("intravenosa rápida", "1 L em 1 h", "até a recuperação
+clínica"), não pela palavra. **Leia antes de acusar**; a pergunta certa não é
+"falta a palavra?", é *"lido sozinho, isto pode ser tomado por outra coisa?"*.
+
 ### ·  O LANCET ESCREVE DECIMAL COM PONTO MÉDIO — não modifique a fonte por isso
 
 `0·25 mmol/L`, `–2·5`, `31·4`. O `norm` de `lib/citacao.js` **não** converte
