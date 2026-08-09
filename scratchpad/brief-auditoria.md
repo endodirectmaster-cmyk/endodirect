@@ -153,6 +153,23 @@ peneira:** medido sobre a base inteira, deu **2 de 2 falsos positivos**
 (fludrocortisona é mesmo em mg; o "grão de 60 mg" é de tireoide dessecada). Serve
 como pista para o auditor ler, não como acusação.
 
+### 🔑 A SUA VARREDURA TAMBÉM ERRA — desconfie da chave que você escolheu
+
+Você vai escrever `node -e` para varrer os fatos. Duas armadilhas já pegaram
+quem escreveu a varredura, não o extrato:
+
+- **Chave que funde itens distintos.** Uma sonda minha identificava o bloco
+  cortando o tema no primeiro `" — "`; os temas **têm travessão dentro**, então
+  quatro blocos viraram um e ela relatou *"5 de 9 entregues"* com os 9 chegando.
+  **Prefira o índice do array à string.**
+- **Âncora ambígua.** Procurar `tireotoxica` casou 7 de 9 blocos de Tireoide, e o
+  `find()` devolveu o bloco errado. Se a sua âncora casa mais de um item, ela não
+  é âncora — **conte os casamentos antes de confiar no primeiro**.
+
+E o índice que você cita no relatório é o que eu vou abrir: **cite o índice do
+array E cole as primeiras palavras do fato.** Dois relatórios vieram com a
+numeração deslocada em 1 e me custaram tempo conferindo o fato errado.
+
 ### ⚠️ Antes de acusar
 
 - **Confira o número no texto-fonte, com o contexto dele.** Já houve falso
