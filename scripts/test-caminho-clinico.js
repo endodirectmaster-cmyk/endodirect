@@ -79,6 +79,16 @@ const CAMINHO = [
   ['insuficiencia adrenal induzida por glicocorticoide, quem rastreio', 'Adrenal'],
   ['hiperglicemia apos pulso de metilprednisolona', 'Diabetes'],
 
+  // ⚠️ LÍPIDES — a área de UM artigo só, e três formas de perguntar por ele
+  // caíam em NENHUMA área (09/08/2026). `apolipoproteina B` roteava e a SIGLA
+  // `ApoB` não — sendo que ela está VERBATIM no tema da parte 2 da diretriz.
+  // `xantoma` é o sinal clássico da hipercolesterolemia familiar (mesma falha da
+  // esclera azulada na osteogênese imperfeita: o sinal não alcançava o artigo).
+  // Contado: `apob` 36×0, `xantoma` 1×0, `bempedoico` 16×0.
+  ['ApoB, quando peco', 'Lípides'],
+  ['xantoma tendineo', 'Lípides'],
+  ['acido bempedoico', 'Lípides'],
+
   // ⚠️ LEVA DE 09/08/2026 — hiperaldosteronismo, HAC e diabetes insipidus.
   // As duas primeiras são a EMERGÊNCIA NEONATAL da HAC: antes destas chaves,
   // "genitália ambígua e hiponatremia" caía em **Endocrinopatias** (o bloco da
