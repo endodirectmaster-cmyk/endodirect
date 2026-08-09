@@ -98,6 +98,20 @@ const CAMINHO = [
   ['AMH elevado em mulher jovem', 'Endocrinologia Feminina'],
   ['acne grave em adolescente com HAC', 'Adrenal'],
   ['alopecia no hipotireoidismo', 'Tireoide'],
+  // ⚠️ ACROMEGALIA — o extrator relatou que estas perguntas JÁ chegavam ao bloco
+  // dele "porque o tema pontua +3". Conferi e NÃO chegavam: ele mediu o ranking
+  // DENTRO da área e esqueceu que, sem chave, `canonArea` não devolve área
+  // nenhuma e não há bloco algum para pontuar. Pontuação de tema só existe
+  // depois que a área foi resolvida. Contado: `igf-1` 91×1, `pegvisomanto` 26×0,
+  // `prognatismo` 3×0, `macroglossia` 3×0, `gigantismo` 8×0.
+  // ❌ `totg` ficou de fora: 19 aqui contra 8 fora, e o TOTG 75 g é o rastreio do
+  // diabetes GESTACIONAL — as duas últimas linhas são o controle disso.
+  ['IGF-1 elevado, como confirmo acromegalia', 'Neuroendocrinologia'],
+  ['prognatismo e maos aumentadas', 'Neuroendocrinologia'],
+  ['nadir de GH pos-op, criterio de cura', 'Neuroendocrinologia'],
+  ['pegvisomanto dose e monitorizacao', 'Neuroendocrinologia'],
+  ['diabetes gestacional, quando rastreio', 'Diabetes'],
+  ['glicemia de jejum 95 na gestante', 'Diabetes'],
   ['ApoB, quando peco', 'Lípides'],
   ['xantoma tendineo', 'Lípides'],
   ['acido bempedoico', 'Lípides'],
