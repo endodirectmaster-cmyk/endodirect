@@ -79,6 +79,23 @@ const CAMINHO = [
   ['insuficiencia adrenal induzida por glicocorticoide, quem rastreio', 'Adrenal'],
   ['hiperglicemia apos pulso de metilprednisolona', 'Diabetes'],
 
+  // ⚠️ LEVA DE 09/08/2026 — hiperaldosteronismo, HAC e diabetes insipidus.
+  // As duas primeiras são a EMERGÊNCIA NEONATAL da HAC: antes destas chaves,
+  // "genitália ambígua e hiponatremia" caía em **Endocrinopatias** (o bloco da
+  // hiponatremia) e "crise perdedora de sal" não caía em área nenhuma.
+  ['recem-nascido com genitalia ambigua e hiponatremia, penso em HAC?', 'Adrenal'],
+  ['crise perdedora de sal no lactente com 21-hidroxilase', 'Adrenal'],
+  ['cateterismo de veias adrenais ou so TC?', 'Adrenal'],
+  ['paciente adipsico com hipernatremia, como reponho agua?', 'Neuroendocrinologia'],
+  ['diabetes insipidus apos transesfenoidal, resposta trifasica', 'Neuroendocrinologia'],
+  // `hipernatremia` MUDOU de Endocrinopatias para cá porque o conteúdo chegou:
+  // lá a contagem é ZERO (os cinco blocos são de HIPOnatremia) e aqui é 21.
+  ['hipernatremia de 165 no idoso acamado', 'Neuroendocrinologia'],
+  // Controles do roubo que estas chaves poderiam causar — todos têm de FICAR:
+  ['mulher com hirsutismo: rastreio de hiperplasia adrenal congenita nao classica', 'Endocrinologia Feminina'],
+  ['poliuria e polidipsia com glicemia 400', 'Diabetes'],
+  ['SIADH, como confirmo?', 'Endocrinopatias'],
+
   // ⚠️ QUEM JÁ SABE O DIAGNÓSTICO CHEGAVA; QUEM ESTAVA DIAGNOSTICANDO, NÃO.
   // A osteogênese imperfeita (30k) só era alcançável pelo PRÓPRIO NOME: das 7
   // formas naturais de perguntar por ela, 6 caíam em NENHUMA área — o sinal, a
