@@ -80,6 +80,18 @@ const CAMINHO = [
   // estas duas linhas; até lá, roteá-las é regressão.
   ['tetania com Chvostek positivo', '(vazio)'],
   ['sinal de Trousseau: o que investigo?', '(vazio)'],
+  // …mas a APRESENTAÇÃO chega, e a linha entre as duas coisas foi medida, não
+  // argumentada: "formigamento perioral após cirurgia de pescoço" é a pergunta
+  // DIAGNÓSTICA ("isto é hipoparatireoidismo?"), que é exatamente o que a
+  // diretriz de 2022 responde. O que me convenceu foi ler a ENTREGA: o bloco
+  // que chega à IA declara sozinho o que a fonte não cobre ("não responde",
+  // "o que infundir", "emergênc"). Sem essa declaração no texto entregue, estas
+  // duas linhas teriam de sair junto com as de cima.
+  ['formigamento perioral e caimbras apos cirurgia de pescoco', 'Osteometabolismo'],
+  ['parestesia perioral apos cirurgia cervical', 'Osteometabolismo'],
+  // sentinela: a parestesia do DIABÉTICO é neuropatia, não hipocalcemia
+  ['parestesia nos pes do diabetico', 'Diabetes'],
+  ['formigamento nos pes e queimacao a noite no diabetico', 'Diabetes'],
 
   // ⚠️ OSTEOPOROSE (Manual Brasileiro 2021, extraído em 09/08/2026). A área
   // tinha só hipofosfatasia e osteogênese imperfeita — duas doenças RARAS —, e a

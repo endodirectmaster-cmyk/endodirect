@@ -5,6 +5,36 @@ atualizado: 2026-08-09
 
 # Convenções de Trabalho
 
+## 🚦 APRESENTAÇÃO ROTEIA, CRISE NÃO — e a linha se traça LENDO A ENTREGA (2026-08-09)
+
+Faltava um critério para o caso em que a área está certa e o artigo é
+**parcial**: ele responde a pergunta diagnóstica, mas não a de emergência.
+
+Aconteceu no hipoparatireoidismo. A diretriz de 2022 é de manejo **crônico** —
+conferido: ZERO ocorrência de tetany, Chvostek, Trousseau, cálcio intravenoso,
+gluconato, infusão, ECG e emergency — e manda mirar a **metade inferior** da
+faixa normal. Entregá-la a quem tem doente em tetania repete o acidente da
+hiponatremia aguda, que recebia o bloco da correção lenta.
+
+Minha primeira decisão foi excluir tudo: `tetania`, `chvostek`, `trousseau`,
+`parestesia perioral`. **Estava larga demais.** *"Formigamento perioral e cãibras
+após cirurgia de pescoço"* é a apresentação clássica do hipoparatireoidismo
+pós-cirúrgico — pergunta **diagnóstica**, exatamente o que a diretriz responde
+(como confirmar, PTH de 12-24 h, quando chamar de permanente). Recusá-la deixava
+o médico sem nada numa complicação comum de tireoidectomia.
+
+**O que decidiu não foi o argumento, foi ler o que CHEGA à IA.** Fui conferir e o
+bloco entregue **declara sozinho** o que a fonte não cobre — "não responde",
+"o que infundir" e "emergênc" aparecem no texto entregue, porque o `conflito` é
+repetido no cabeçalho de cada pedaço. Com essa declaração viajando junto, a
+apresentação pode rotear; sem ela, não poderia.
+
+**A regra:** quando o artigo cobre parte do assunto, roteie a pergunta que ele
+RESPONDE e recuse a que ele contradiz — e só confie nisso depois de **ler o
+bloco entregue** e ver o limite declarado lá dentro. `tetania`, `chvostek` e
+`trousseau` seguem fora, com sentinela no teste, até existir fonte de
+hipocalcemia AGUDA.
+
 ## 🔐 TEXTO QUE COPIA OUTRO TEXTO PRECISA DE SELO DO QUE COPIOU (2026-08-09)
 
 A regra do `cit_sha` — citação carrega o hash do que citou — valia para o
