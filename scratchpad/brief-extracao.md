@@ -186,6 +186,30 @@ Declare em `conflito` + `conflito_direcao`, com `nucleo_citado` verbatim. ⚠️
 avise no relatório: **ressalva no bloco profundo é atenuação, não conserto** — se
 o núcleo estiver errado ou incompleto, quem conserta o núcleo sou eu.
 
+**O `conflito` CHEGA ao modelo.** Conferido no código: ele é colado como
+cabeçalho do bloco e **repetido em todos os pedaços** de um artigo partido. É ali
+que vai um aviso de segurança que não cabe dentro de cada fato. O `extracao` e o
+`secao` **não** chegam.
+
+### ⛔ EXCEÇÃO QUE JÁ ENGOLIU UM AVISO DE SEGURANÇA: `alinhado` DESCARTA a ressalva
+
+Quando `conflito_direcao` é **`alinhado`**, o montador entrega **só o corpo** — a
+ressalva fica no JSON e **some da entrega**. A razão é boa e está no código:
+alinhado é *registro de auditoria*, o núcleo já foi corrigido a partir daquela
+fonte, e repetir a ressalva seria alarme falso ocupando o prefixo cacheado.
+
+⚠️ **Mas o `conflito` acumulou dois papéis**, e o segundo não pode ser
+descartado: além de "onde esta fonte diverge do núcleo", virou o lugar de
+declarar **o que a fonte NÃO responde**. No extrato do feocromocitoma, 2.704
+caracteres declarados `alinhado` incluíam *"não traz nenhum valor de corte
+absoluto de metanefrina… e não tem conduta de crise hipertensiva"* — descartado
+em silêncio.
+
+**Regra:** se você vai declarar `alinhado`, **o que a fonte não responde tem de
+estar DENTRO das `afirmacao`** dos fatos onde o médico procuraria o número que
+falta — como já se faz com população e condição de coleta. E se há mesmo
+divergência ativa com o núcleo, então a direção não é `alinhado`.
+
 ### Antes de devolver, rode e cole a saída
 
 ```
