@@ -51,6 +51,20 @@ const CAMINHO = [
   ['DM1 em cetoacidose apos treino intenso', 'Diabetes'],
   ['maratonista com hipotireoidismo', 'Tireoide'],
 
+  // ⚠️ O EUTIREOIDIANO DOENTE SÓ ERA ALCANÇÁVEL PELO PRÓPRIO NOME (09/08/2026).
+  // As duas primeiras caíam em NENHUMA área: nenhuma palavra da apresentação era
+  // chave. `t3`/`t4` entraram com peso de ACHADO, não de doença — por isso a
+  // terceira linha, que é o controle: "fratura vertebral em T3" é NÍVEL
+  // VERTEBRAL, e `fratura` (doença, 3000) tem de ganhar do hormônio (1000).
+  ['T3 baixo e T4 normal em paciente de UTI, trato?', 'Tireoide'],
+  ['T3 reverso alto no doente grave', 'Tireoide'],
+  ['fratura vertebral em T3 apos queda', 'Osteometabolismo'],
+  // Mesma falha de FORMA VERBAL do Esporte, agora em Obesidade: `emagrecer` era
+  // chave e `emagrece` não — e "qual remédio emagrece mais" está VERBATIM no tema
+  // do bloco de farmacoterapia. `abeso` é a sociedade que assina as diretrizes.
+  ['qual remedio emagrece mais', 'Obesidade'],
+  ['qual dieta a ABESO recomenda', 'Obesidade'],
+
   // ⚠️ QUEM JÁ SABE O DIAGNÓSTICO CHEGAVA; QUEM ESTAVA DIAGNOSTICANDO, NÃO.
   // A osteogênese imperfeita (30k) só era alcançável pelo PRÓPRIO NOME: das 7
   // formas naturais de perguntar por ela, 6 caíam em NENHUMA área — o sinal, a
