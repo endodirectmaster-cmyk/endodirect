@@ -85,6 +85,19 @@ const CAMINHO = [
   // `xantoma` é o sinal clássico da hipercolesterolemia familiar (mesma falha da
   // esclera azulada na osteogênese imperfeita: o sinal não alcançava o artigo).
   // Contado: `apob` 36×0, `xantoma` 1×0, `bempedoico` 16×0.
+  // ⚠️ ENDOCRINOLOGIA FEMININA — o quadro do hiperandrogenismo estava pela
+  // metade: `hiperandrogenismo`, `sop`, `hirsutismo` e `ferriman` já eram
+  // chaves, mas "alopecia androgenética feminina" e "AMH elevado" caíam em
+  // NENHUMA área. Contado: `alopecia` 9×3, `amh` 15×3.
+  // ❌ `acne` (9×4) ficou de fora depois de eu TENTAR e medir o estrago: "acne
+  // grave em adolescente com HAC" passava a cair em Feminina, porque `acne`
+  // (4 letras, peso 3004) vence `hac` (3 letras, 3003) no desempate por
+  // comprimento. Uma pergunta que NOMEIA a doença perdia para um sinal, por uma
+  // letra. As duas últimas linhas são o controle disso.
+  ['alopecia androgenetica feminina', 'Endocrinologia Feminina'],
+  ['AMH elevado em mulher jovem', 'Endocrinologia Feminina'],
+  ['acne grave em adolescente com HAC', 'Adrenal'],
+  ['alopecia no hipotireoidismo', 'Tireoide'],
   ['ApoB, quando peco', 'Lípides'],
   ['xantoma tendineo', 'Lípides'],
   ['acido bempedoico', 'Lípides'],
