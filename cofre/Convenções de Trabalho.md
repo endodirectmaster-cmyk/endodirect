@@ -5,6 +5,28 @@ atualizado: 2026-08-09
 
 # Convenções de Trabalho
 
+## 🪤 EU CAÍ NA ARMADILHA QUE POLICIO, E O VERIFICADOR ME PEGOU (2026-08-09)
+
+Consertando um fato acusado pela auditoria, escrevi na afirmação que *"no
+hiperparatireoidismo primário o núcleo manda manter **25OHD >30 ng/mL**"*. É
+verdade, está verbatim no núcleo — **e não tem lastro na citação daquele
+artigo**, que é sobre hipercalcemia PTH-INDEPENDENTE. O `verifica-extracao.js`
+reprovou na hora: *"números na afirmação sem respaldo na citação: 25, 30"*.
+
+**É exatamente o erro que eu escrevo em todo brief de agente.** Reescrevi sem o
+número — "o núcleo manda MANTER a vitamina D reposta (o alvo numérico está na
+entrada de hiperparatireoidismo primário do núcleo, onde é conferido verbatim)"
+— e passou.
+
+**A regra vale para mim igual:** quando o conserto precisa de um fato que vem de
+OUTRA fonte, aponte para onde ele é provado; não o transcreva com número dentro
+de uma afirmação cuja citação é de outro artigo. É a mesma disciplina do "(16
+semanas)" que um auditor teve de desfazer.
+
+⚠️ **E o que isso diz da peneira: ela pegou o revisor, não só o revisado.** Uma
+guarda que só reprova trabalho de agente e nunca o meu não estaria medindo o
+processo inteiro.
+
 ## 🔤 QUANDO A FONTE DE SÍMBOLOS DO PDF NÃO SOBREVIVE (2026-08-09)
 
 O irmão mais grave do sinal de menos comido. No artigo de hipercalcemia
