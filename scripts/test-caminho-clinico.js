@@ -110,6 +110,32 @@ const CAMINHO = [
   ['sarcopenia na obesidade do idoso', 'Obesidade'],
   ['artefato de ensaio por biotina no TSH', 'Tireoide'],
 
+  // ⚠️ HIPERCALCEMIA — os DOIS lados do PTH entraram juntos em 09/08/2026, e a
+  // regra que eu tinha escrito exigia isso: `pth` ficara de fora porque levaria
+  // "hipercalcemia com PTH inapropriadamente normal" a uma área cujo único bloco
+  // de paratireoide era o de HIPOpara — área certa, bloco errado.
+  ['hipercalcemia com PTH inapropriadamente normal', 'Osteometabolismo'],
+  ['hipercalcemia da malignidade: como trato?', 'Osteometabolismo'],
+  ['PTHrP elevado em paciente oncologico', 'Osteometabolismo'],
+  ['crise hipercalcemica: hidratacao e depois?', 'Osteometabolismo'],
+  ['calciuria de 24 horas de 450 mg', 'Osteometabolismo'],
+  // ⚠️ E O MÉDICO NEM SEMPRE ESCREVE O NOME DA CONDIÇÃO. Esta continuava sem
+  // área DEPOIS de `hipercalcemia` entrar, e é a formulação mais comum de todas
+  // — hipercalcemia costuma ser achado de exame de rotina.
+  ['calcio alto achado por acaso no exame', 'Osteometabolismo'],
+  // ⚠️ ERRO DE ROTA, não buraco: caía em TIREOIDE porque `cintilografia` (13
+  // letras → 3013) ganhava de `paratireoide` (12 → 3012) por UM PONTO no
+  // desempate por comprimento. `sestamibi` sozinho não conserta — só a frase.
+  ['cintilografia de paratireoide', 'Osteometabolismo'],
+  ['cintilografia com sestamibi', 'Osteometabolismo'],
+  ['osteoporose induzida por glicocorticoide: quem trato?', 'Osteometabolismo'],
+  // …e as sentinelas do que NÃO pode ter sido roubado. `tiazidico` foi proposto
+  // como exclusivo por DOIS agentes e não é: 29 aqui contra 19 fora, porque
+  // hiponatremia por tiazídico é de Endocrinopatias. Contei antes de aplicar.
+  ['hiponatremia por tiazidico na idosa', 'Endocrinopatias'],
+  ['cintilografia de tireoide com captacao alta', 'Tireoide'],
+  ['hipotireoidismo induzido por litio', 'Tireoide'],
+
   // ⚠️ O ACERVO É DE MANEJO, NÃO DE DIAGNÓSTICO — medido em 09/08/2026 com 25
   // apresentações escritas como o médico pergunta quando AINDA NÃO tem o
   // diagnóstico. 18 das 25 não chegavam a área nenhuma. Fui ver a causa e na
@@ -546,18 +572,22 @@ const CAMINHO = [
   ['inibidor de checkpoint: qual disfuncao endocrina?', 'Tireoide'],
   // ...e a sentinela do outro lado do checkpoint, que é de outra área:
   ['hipofisite por checkpoint', 'Neuroendocrinologia'],
-  // ⚠️ `litio` FOI PARA TIREOIDE POR MEDIÇÃO: 26 ocorrências na base profunda,
-  // TODAS em Tireoide. A linha seguinte parece errada e NÃO É — eu esperava
-  // Osteometabolismo e medi o contrário: `hipercalcemia` tem 1 ocorrência em
-  // Osteometabolismo, 1 em Adrenal e 2 em Tireoide, ou seja, A BASE PROFUNDA NÃO
-  // RESPONDE HIPERCALCEMIA. Quem responde é o núcleo, que traz o diferencial
-  // inteiro. Mandar para Osteometabolismo entregaria um bloco de hipofosfatasia
-  // e osteogênese imperfeita — as duas doenças RARAS que são todo o acervo da
-  // área. Enquanto não houver artigo de hiperparatireoidismo, Tireoide ao menos
-  // entrega o lítio. Esta linha é um MARCADOR DE BURACO DE ACERVO: quando entrar
-  // artigo de hipercalcemia, ela deve mudar para Osteometabolismo.
+  // ✅ O MARCADOR DE BURACO DE ACERVO DISPAROU, E FOI ATENDIDO (09/08/2026).
+  // Esta linha esperava `Tireoide` e trazia escrita a própria condição de
+  // validade: *"quando entrar artigo de hipercalcemia, ela deve mudar para
+  // Osteometabolismo"*. Em 08/08 a base profunda NÃO respondia hipercalcemia
+  // (1 ocorrência em Osteometabolismo, 1 em Adrenal, 2 em Tireoide), e mandar
+  // para Osteometabolismo entregaria hipofosfatasia e osteogênese imperfeita —
+  // as duas doenças RARAS que eram todo o acervo da área.
+  //
+  // Entraram os dois lados do PTH: hiperparatireoidismo primário e hipercalcemia
+  // PTH-independente. Medido AGORA para esta pergunta: Osteometabolismo entrega
+  // **231 menções de hipercalcemia** e 13 de lítio; Tireoide entrega **2**. A
+  // rota mudou porque a base mudou, não porque afrouxei o teste.
+  // ⚠️ E a metade tireoidiana do lítio continua onde deve: `litio causa bocio?`,
+  // `hipotireoidismo induzido por litio` e `bocio por litio` seguem em Tireoide.
   ['litio causa bocio?', 'Tireoide'],
-  ['litio no diferencial de hipercalcemia', 'Tireoide'],
+  ['litio no diferencial de hipercalcemia', 'Osteometabolismo'],
 
   // Sentinelas de outras áreas — o achado glicêmico não pode sequestrá-las.
   ['hiperglicemia em paciente com acromegalia', 'Neuroendocrinologia'],

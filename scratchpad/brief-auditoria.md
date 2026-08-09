@@ -89,6 +89,32 @@ da base inteira:**
 falso positivo, um alarme desses vira paisagem e deixa de proteger. Ele presta
 quando alguém LÊ os candidatos — que é o seu trabalho.
 
+### 🔤 A FONTE DE SÍMBOLOS DO PDF PODE NÃO TER SOBREVIVIDO — confira antes de tudo
+
+Achado em 09/08/2026, no artigo de hipercalcemia PTH-independente: o texto
+extraído tinha **zero `µ`, zero travessão, zero `−`, zero `°`**, mais `þ` no
+lugar de `+` e o padrão `2.20e2.55` no lugar de faixas com travessão. O limite
+da EFSA para vitamina D saiu impresso como **"100 mg/day"** quando o real é 100
+**µg** — erro de **1000×**.
+
+**Rode isto no texto-fonte antes de auditar números:**
+
+```
+node -e "const t=require('fs').readFileSync(process.argv[1],'utf8');
+for (const c of ['µ','–','−','°','α']) console.log(c, t.split(c).length-1);
+console.log('þ (era +):', t.split('þ').length-1);
+console.log('N.NeN.N (era travessão):', (t.match(/\d+[.,]\d+e\d+[.,]\d+/g)||[]).length);" CAMINHO_DO_TXT
+```
+
+`þ` ou `N.NeN.N` presentes = **fonte corrompida, inequivocamente**. Aí toda
+unidade e todo sinal do artigo são suspeitos, e a regra é a mesma do menos:
+**não invente o que se perdeu** — encolha a afirmação e diga onde conferir.
+
+⚠️ **O teste inverso — "fármaco dosado em µg escrito em mg" — NÃO presta como
+peneira:** medido sobre a base inteira, deu **2 de 2 falsos positivos**
+(fludrocortisona é mesmo em mg; o "grão de 60 mg" é de tireoide dessecada). Serve
+como pista para o auditor ler, não como acusação.
+
 ### ⚠️ Antes de acusar
 
 - **Confira o número no texto-fonte, com o contexto dele.** Já houve falso
