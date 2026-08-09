@@ -5,6 +5,36 @@ atualizado: 2026-08-09
 
 # Convenções de Trabalho
 
+## ⚖️ REIVINDICAR NÃO É "O TEXTO MENCIONA?", É "O TEXTO DOMINA?" (2026-08-09)
+
+A regra do tema como reivindicação (nota abaixo) dizia **quando não reivindicar**.
+Faltava o outro lado: **quando reivindicar é obrigatório**. Dois casos no mesmo
+dia, com desfechos opostos, fecham o critério.
+
+**Caso NTIS — parei.** O artigo da síndrome do eutireoidiano doente perdia a
+pergunta *"paciente em UTI com T3 baixo e TSH normal: é doença tireoidiana?"*.
+Podia ter enfiado o painel laboratorial no tema, mas **outros artigos de tireoide
+discutem T3 e TSH tanto quanto ele**. Reivindicar ali seria escrever para vencer
+a sonda. Fica em 1%, registrado como limite.
+
+**Caso hiponatremia aguda — enriqueci.** O bloco do tratamento de emergência
+perdia a pergunta do paciente **convulsionando**, e quem chegava no lugar era o
+bloco da hiponatremia **crônica**, que manda corrigir DEVAGAR. Aqui o tema
+**tinha de** reivindicar: `bolus` aparece **40 vezes nele contra ≤3** em qualquer
+vizinho, `salina hipertonica` 19 contra ≤4, `desmopressina` 22 contra ≤4.
+
+**O critério é comparativo, não absoluto.** Antes de pôr um assunto no tema,
+conte-o **nos outros blocos da mesma área**:
+- o texto **domina** o assunto (ordem de grandeza acima dos vizinhos) → o tema
+  **tem de** dizer, e calar é deixar a pergunta com quem responde pior;
+- o texto **menciona** e um vizinho entrega mais → **é reivindicação falsa**,
+  mesmo sendo verdade que o texto menciona.
+
+⚠️ **E o dano da omissão não é simétrico ao da omissão comum.** Perder um artigo
+costuma **omitir** informação; aqui **entregou a recomendação oposta** numa
+emergência. Ao varrer uma área acima do teto, a pergunta não é só "chega o
+artigo certo?" — é **"quem chega no lugar dele diz o CONTRÁRIO?"**.
+
 ## 🎯 A SONDA TAMBÉM TEM ÂNCORA, E ÂNCORA AMBÍGUA MEDE O ARTIGO ERRADO (2026-08-09)
 
 Já sabia que **âncora ambígua** estraga citação. Descobri que estraga **teste**

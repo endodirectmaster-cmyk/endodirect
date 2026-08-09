@@ -1,1111 +1,1111 @@
 {
- "fileId": "hipo-4",
- "titulo": "The treatment of acute symptomatic hyponatraemia in the hospital setting",
- "tema": "hiponatremia aguda sintomática — tratamento",
- "fonte": "Prince R, Chifu I, Arshad MF. The treatment of acute symptomatic hyponatraemia in the hospital setting. Best Pract Res Clin Endocrinol Metab 2026;40:102079",
- "area": "Endocrinopatias",
- "tipo": "revisao",
- "ano": 2026,
- "conflito": "⚠️ UM ÚNICO PONTO, E É DE SEGURANÇA. Esta fonte contém a frase \"Rapid sodium correction (>10 mmol/l/24 h) has been recently associated with lower in-hospital and 30-day mortality\" — que, lida fora de contexto, autoriza exatamente o que mata. Ela é uma ASSOCIAÇÃO observacional citada de passagem, e o próprio artigo, na sua recomendação, faz o contrário: \"we recommend a limited rapid increase of serum sodium level by at least 5 mmol/l by administration of fixed bolus(es) of hypertonic saline (HTS) to reverse symptoms of cerebral oedema, while limiting total increase to 8–10 mmol/l in the first 24 h, and each subsequent 24 h period.\" e \"In patients with additional risk factors for ODS (severe hyponatraemia <120 mmol/l, hypokalaemia, alcohol excess, malnutrition, volume depletion, liver cirrhosis) a lower limit of 6–8 mmol/l per 24 h is considered to be safer.\" O NÚCLEO PREVALECE: os tetos valem. Todo o resto desta fonte (tetos por janela de 24 h, bólus de 150 mL em 20 min com reavaliação antes de repetir, gatilho ampliado do alto risco) JÁ foi incorporado ao núcleo em 07/08/2026 e não é mais divergência.",
- "fatos": [
-  {
-   "afirmacao": "Recomendação central dos autores na hiponatremia aguda sintomática: elevar rapidamente o sódio sérico em pelo menos 5 mmol/l com bolus FIXOS de salina hipertônica (HTS) para reverter os sintomas de edema cerebral, limitando o aumento TOTAL a 8–10 mmol/l nas primeiras 24 h e em cada período de 24 h subsequente.",
-   "secao": "Resumo",
-   "cit": [
-    [
-     0,
-     1019,
-     281
-    ]
-   ],
-   "cit_sha": "f35e8e454e6fbc2b"
-  },
-  {
-   "afirmacao": "A hiponatremia aguda sintomática causa edema cerebral potencialmente fatal, enquanto a correção rápida demais causa síndrome de desmielinização osmótica (SDO) com dano neurológico permanente — o tratamento equilibra esses dois riscos. Estado neurológico, débito urinário e bioquímica devem ser monitorados com cuidado; desmopressina e/ou dextrose intravenosa são recomendadas para reverter ou prevenir a correção rápida demais.",
-   "secao": "Resumo",
-   "cit": [
-    [
-     0,
-     779,
-     708
-    ]
-   ],
-   "cit_sha": "387281895317ffc5"
-  },
-  {
-   "afirmacao": "A hiponatremia é uma anormalidade eletrolítica comum, afetando 5 % dos adultos, subindo para 20 % dos maiores de 65 anos e 35 % dos pacientes internados.",
-   "secao": "Epidemiology and prognosis",
-   "cit": [
-    [
-     0,
-     1790,
-     153
-    ]
-   ],
-   "cit_sha": "47704310ba99ebe1"
-  },
-  {
-   "afirmacao": "A mortalidade hospitalar permanece alta, sobretudo entre os admitidos com hiponatremia grave (<120 mmol/l), variando de 5 % a 20 %, com mortalidade em 30 dias de 7–30 %.",
-   "secao": "Epidemiology and prognosis",
-   "cit": [
-    [
-     0,
-     2056,
-     180
-    ]
-   ],
-   "cit_sha": "71848ac92fe13ce1"
-  },
-  {
-   "afirmacao": "A correção rápida do sódio (>10 mmol/l/24 h) foi RECENTEMENTE associada a MENOR mortalidade intra-hospitalar e em 30 dias, embora não esteja claro o quanto isso se deve à taxa de correção, já que a mortalidade também sofre influência da etiologia da hiponatremia, da gravidade da doença, de condições não relacionadas surgidas na internação e de comorbidades.",
-   "secao": "Epidemiology and prognosis",
-   "cit": [
-    [
-     0,
-     2237,
-     440
-    ]
-   ],
-   "cit_sha": "2584ddae9f74aff0"
-  },
-  {
-   "afirmacao": "Os sintomas da hiponatremia decorrem da hipotonicidade plasmática: a queda da osmolalidade sérica desloca água para dentro das células cerebrais, causando edema cerebral. Os mecanismos adaptativos (fluxo de água para o líquor e redistribuição de eletrólitos e outros osmoles) podem levar até 48 h para atingir efeito pleno.",
-   "secao": "Symptoms of acute hyponatraemia arise from cerebral oedema",
-   "cit": [
-    [
-     0,
-     3376,
-     388
-    ]
-   ],
-   "cit_sha": "ae4dce2abda0ac1d"
-  },
-  {
-   "afirmacao": "O espectro de sintomas neurológicos causados pelo aumento rápido da pressão intracraniana vai de leve (náusea, cefaleia, confusão, sonolência) a grave (vômitos, convulsões, parada respiratória, coma), podendo ser fatal.",
-   "secao": "Symptoms of acute hyponatraemia arise from cerebral oedema",
-   "cit": [
-    [
-     0,
-     3992,
-     245
-    ]
-   ],
-   "cit_sha": "15d5d987c0c1b97f"
-  },
-  {
-   "afirmacao": "Se não houver prova em contrário, todo episódio de hiponatremia sintomática deve ser tratado como CRÔNICO (>48 h).",
-   "secao": "Symptoms of acute hyponatraemia arise from cerebral oedema",
-   "cit": [
-    [
-     0,
-     4238,
-     116
-    ]
-   ],
-   "cit_sha": "506fd60e036a8548"
-  },
-  {
-   "afirmacao": "O objetivo do tratamento na hiponatremia aguda sintomática é elevar a concentração de sódio o suficiente para aliviar os sintomas, revertendo o edema cerebral e prevenindo a herniação transtentorial.",
-   "secao": "Symptoms of acute hyponatraemia arise from cerebral oedema",
-   "cit": [
-    [
-     0,
-     4355,
-     203
-    ]
-   ],
-   "cit_sha": "84e8c5864e952596"
-  },
-  {
-   "afirmacao": "O termo síndrome de desmielinização osmótica (SDO) foi cunhado em 1986 para descrever a mielinólise pontina central (MPC) e a mielinólise extrapontina (MEP) causadas por aumento rápido da osmolalidade plasmática.",
-   "secao": "Limits of sodium correction to avoid osmotic demyelination syndrome",
-   "cit": [
-    [
-     0,
-     4627,
-     205
-    ]
-   ],
-   "cit_sha": "9b42a8880079fc86"
-  },
-  {
-   "afirmacao": "A SDO é deflagrada pela correção rápida demais da hiponatremia, em particular da hiponatremia CRÔNICA — mas também já foi observada em indivíduos SEM correção rápida e até na AUSÊNCIA de hiponatremia.",
-   "secao": "Limits of sodium correction to avoid osmotic demyelination syndrome",
-   "cit": [
-    [
-     0,
-     4833,
-     235
-    ]
-   ],
-   "cit_sha": "6018c9e6b1eac317"
-  },
-  {
-   "afirmacao": "Metanálise recente (2025) concluiu que as chances de SDO foram 4 vezes maiores nos pacientes com taxa de correção acima de 8 mmol/l/24 h em comparação com taxa abaixo de 8 mmol/l/24 h.",
-   "secao": "Limits of sodium correction to avoid osmotic demyelination syndrome",
-   "cit": [
-    [
-     0,
-     5069,
-     195
-    ]
-   ],
-   "cit_sha": "8bba606677714fbc"
-  },
-  {
-   "afirmacao": "Fatores de risco ADICIONAIS para SDO: hiponatremia grave (<120 mmol/l, particularmente se o sódio estiver <110 mmol/l), excesso de álcool, desnutrição, depleção de volume, transplante hepático, cirrose hepática, insuficiência renal, diabetes, hipocalemia e hipofosfatemia.",
-   "secao": "Limits of sodium correction to avoid osmotic demyelination syndrome",
-   "cit": [
-    [
-     0,
-     5271,
-     272
-    ]
-   ],
-   "cit_sha": "4a7c1d821d4cee9d"
-  },
-  {
-   "afirmacao": "O mecanismo pelo qual a correção rápida causa SDO é incompletamente compreendido; acredita-se envolver desvios eletrolíticos súbitos com apoptose de astrócitos e oligodendrócitos, além da liberação de agentes mielotóxicos e ruptura da barreira hematoencefálica, com inflamação e dano à bainha de mielina.",
-   "secao": "Limits of sodium correction to avoid osmotic demyelination syndrome",
-   "cit": [
-    [
-     0,
-     5544,
-     433
-    ]
-   ],
-   "cit_sha": "47587138a3de20e0"
-  },
-  {
-   "afirmacao": "Historicamente a incidência de SDO era relativamente maior, antes da introdução das diretrizes que desencorajam desvios rápidos do sódio. Atualmente a SDO é complicação RARA do tratamento da hiponatremia, com incidência relatada geralmente abaixo de 1 % — porém a incidência real provavelmente é subestimada, pois os relatos se apoiam sobretudo em análises retrospectivas e métodos de avaliação não padronizados.",
-   "secao": "Limits of sodium correction to avoid osmotic demyelination syndrome",
-   "cit": [
-    [
-     0,
-     5978,
-     407
-    ]
-   ],
-   "cit_sha": "dbac47ac1487ccea"
-  },
-  {
-   "afirmacao": "Coerente com os dois mecanismos de lesão, a SDO costuma ser BIFÁSICA, com sintomas iniciais seguidos de um período de melhora antes da deterioração; os sintomas geralmente se desenvolvem 1–16 dias após o insulto.",
-   "secao": "Limits of sodium correction to avoid osmotic demyelination syndrome",
-   "cit": [
-    [
-     0,
-     6432,
-     175
-    ]
-   ],
-   "cit_sha": "acec6da157c49055"
-  },
-  {
-   "afirmacao": "A apresentação clínica da SDO varia conforme a área cerebral acometida e pode incluir confusão, fraqueza de padrão de neurônio motor superior, sintomas cerebelares, disartria, disfagia, sintomas oculares, distúrbios do movimento e paresia, com possível progressão para síndrome do encarceramento (locked-in).",
-   "secao": "Limits of sodium correction to avoid osmotic demyelination syndrome",
-   "cit": [
-    [
-     0,
-     6608,
-     299
-    ]
-   ],
-   "cit_sha": "2631dffbf507cacd"
-  },
-  {
-   "afirmacao": "O diagnóstico da SDO baseia-se nos sintomas clínicos e em alterações confirmatórias na ressonância magnética; porém essas alterações radiológicas podem levar até 7 dias para se desenvolver. O EEG também pode apoiar o diagnóstico (ondas delta e teta puntiformes e lentificação difusa).",
-   "secao": "Limits of sodium correction to avoid osmotic demyelination syndrome",
-   "cit": [
-    [
-     0,
-     6908,
-     333
-    ]
-   ],
-   "cit_sha": "161e9d6c462b80bc"
-  },
-  {
-   "afirmacao": "Corticoides, imunoglobulinas e plasmaférese foram testados como tratamento da SDO para reduzir o dano inflamatório, com dados de apoio em modelos animais de hiponatremia, mas evidência clínica limitada até o momento.",
-   "secao": "Limits of sodium correction to avoid osmotic demyelination syndrome",
-   "cit": [
-    [
-     0,
-     7242,
-     217
-    ]
-   ],
-   "cit_sha": "7fcbeea3426f6f56"
-  },
-  {
-   "afirmacao": "Há debate considerável sobre a taxa ideal de correção: o objetivo geral é elevar rapidamente o sódio para reverter o edema cerebral e simultaneamente prevenir supracorreção e SDO. Isso é um desafio clínico substancial porque o risco de SDO se correlaciona com a CRONICIDADE da hiponatremia, muitas vezes difícil de determinar por falta de bioquímica recente.",
-   "secao": "Treatment goals — Sodium correction limits and safety",
-   "cit": [
-    [
-     0,
-     7512,
-     415
-    ]
-   ],
-   "cit_sha": "939e2b153b5bd2ea"
-  },
-  {
-   "afirmacao": "A taxa de correção também sofre influência de fatores específicos do paciente, incluindo peso corporal, comorbidades, status volêmico e diurese.",
-   "secao": "Treatment goals — Sodium correction limits and safety",
-   "cit": [
-    [
-     0,
-     7928,
-     154
-    ]
-   ],
-   "cit_sha": "fedd6af712971c47"
-  },
-  {
-   "afirmacao": "Tabela 1 — metas e limites de correção do sódio (mmol/l). ⚠️ A linha de 24 h tem quatro colunas (alvo e limite de cada diretriz) e a leitura correta é: Diretriz Europeia (Spasovski 2014) — ALVO 5 na 1ª hora, LIMITE 10 em 24 h, 18 em 48 h. Diretriz Americana (Verbalis 2013) — ALVO 4–6 na elevação inicial, ALVO 4–8 em 24 h, LIMITE 10–12 em 24 h, 18 em 48 h. Os valores de 24 h de cada diretriz são TETOS que não se ultrapassam, exceto o alvo americano de 4–8 — nenhum deles é meta a ser perseguida.",
-   "secao": "Table 1",
-   "cit": [
-    [
-     0,
-     8406,
-     216
-    ]
-   ],
-   "cit_sha": "fb24cb52dd98e464"
-  },
-  {
-   "afirmacao": "A diretriz europeia orienta aumentar o sódio sérico em 5 mmol/L dentro de 1 h nos pacientes GRAVEMENTE sintomáticos.",
-   "secao": "Treatment goals — Sodium correction limits and safety",
-   "cit": [
-    [
-     0,
-     8226,
-     97
-    ]
-   ],
-   "cit_sha": "45cdbb928de44aa1"
-  },
-  {
-   "afirmacao": "Nos casos MODERADAMENTE sintomáticos, a meta europeia de elevação é alcançada dentro de 24 h, garantindo que a correção total não ultrapasse 10 mmol/l nas primeiras 24 h e 8 mmol/l nas 24 h seguintes.",
-   "secao": "Treatment goals — Sodium correction limits and safety",
-   "cit": [
-    [
-     0,
-     8739,
-     174
-    ]
-   ],
-   "cit_sha": "e9f2552e02836c27"
-  },
-  {
-   "afirmacao": "A justificativa da elevação rápida recomendada é reverter rapidamente a herniação transtentorial reduzindo a pressão intracraniana em 5–10 mm Hg e reverter os sintomas da hiponatremia.",
-   "secao": "Treatment goals — Sodium correction limits and safety",
-   "cit": [
-    [
-     0,
-     8914,
-     203
-    ]
-   ],
-   "cit_sha": "660bb01bb4864798"
-  },
-  {
-   "afirmacao": "A diretriz americana ajusta as metas: na hiponatremia verdadeiramente aguda de instalação rápida (por exemplo, polidipsia extrema) limitar a taxa de correção NÃO é considerado necessário; já nos pacientes de alto risco de SDO a correção em 24 h deve ser limitada a 8 mmol.",
-   "secao": "Treatment goals — Sodium correction limits and safety",
-   "cit": [
-    [
-     0,
-     9118,
-     322
-    ]
-   ],
-   "cit_sha": "6ac3dfc11e1b70ce"
-  },
-  {
-   "afirmacao": "A supracorreção foi definida na literatura por limites variados, mais frequentemente como aumento >8, >10 ou >12 mmol/l em 24 h; a incidência de SDO entre os supracorrigidos varia muito entre estudos, provavelmente por diferenças de população, de cronicidade e do método de diagnóstico da SDO.",
-   "secao": "Treatment goals — Sodium correction limits and safety",
-   "cit": [
-    [
-     0,
-     9441,
-     339
-    ]
-   ],
-   "cit_sha": "e658929da2c02eef"
-  },
-  {
-   "afirmacao": "Metanálise recente mostrou risco significativamente maior de SDO com taxas de correção acima de 8 mmol/l/24 h, com odds ratio de 4.03 (1.74, 9.37); ainda assim a SDO também foi relatada em pacientes com taxas de correção MENORES, o que implica risco individual.",
-   "secao": "Treatment goals — Sodium correction limits and safety",
-   "cit": [
-    [
-     0,
-     9930,
-     276
-    ]
-   ],
-   "cit_sha": "b9268cd881f309fb"
-  },
-  {
-   "afirmacao": "Taxas MAIS LENTAS de correção foram associadas a maior mortalidade, embora isso possa ser confundido pela gravidade da causa subjacente da hiponatremia afetando a taxa de correção (por exemplo, SIAD por malignidade).",
-   "secao": "Treatment goals — Sodium correction limits and safety",
-   "cit": [
-    [
-     0,
-     10207,
-     233
-    ]
-   ],
-   "cit_sha": "6f5c9ebfcd935de5"
-  },
-  {
-   "afirmacao": "RECOMENDAÇÃO DOS AUTORES: aumento inicial do sódio sérico de PELO MENOS 5 mmol/l nas primeiras 24 h para reverter o edema cerebral e aliviar sintomas; aumento TOTAL limitado a 8–10 mmol/l nas primeiras 24 h e em cada janela de 24 h subsequente; em pacientes com fatores de risco adicionais para SDO (hiponatremia grave <120 mmol/l, hipocalemia, excesso de álcool, desnutrição, depleção de volume, cirrose hepática) um limite MENOR de 6–8 mmol/l por 24 h é considerado mais seguro.",
-   "secao": "Treatment goals — Sodium correction limits and safety",
-   "cit": [
-    [
-     0,
-     10441,
-     498
-    ]
-   ],
-   "cit_sha": "0f2cb02461cb53ca"
-  },
-  {
-   "afirmacao": "Nos pacientes que seguem com sintomas hiponatrêmicos GRAVES (por exemplo, convulsões) após a correção inicial, aumentos adicionais do sódio de até 10–12 mmol/l por dia podem ser justificados, dado que o benefício terapêutico de reverter o edema cerebral supera o risco de SDO.",
-   "secao": "Treatment goals — Sodium correction limits and safety",
-   "cit": [
-    [
-     0,
-     10940,
-     305
-    ]
-   ],
-   "cit_sha": "67d19c828731a68a"
-  },
-  {
-   "afirmacao": "Os fatores que emergem DURANTE a internação e predizem supracorreção incluem aumento do débito urinário (após reposição volêmica) e a frequência de administração das infusões de salina hipertônica.",
-   "secao": "Risk factors for under- and overcorrection",
-   "cit": [
-    [
-     0,
-     11582,
-     168
-    ]
-   ],
-   "cit_sha": "105a70f63b871c61"
-  },
-  {
-   "afirmacao": "Os escores SHOR (Severe Hyponatremia Overcorrection Risk) e o mais recente NASK (hypoNatremia, Alcoholism, Severe symptoms, and hypoKalemia) combinam dados basais do paciente para prever quem tem mais chance de supracorrigir, e seu uso pode ser considerado para orientar decisões de monitorização — embora a aplicabilidade seja limitada por discrepâncias na meta de variação do sódio entre os estudos e as diretrizes.",
-   "secao": "Risk factors for under- and overcorrection",
-   "cit": [
-    [
-     0,
-     11751,
-     445
-    ]
-   ],
-   "cit_sha": "16a7ac59d8ca95a4"
-  },
-  {
-   "afirmacao": "Não há atualmente parâmetro bioquímico disponível para avaliar o risco de supracorreção. Níveis BAIXOS de copeptina após 24 h de tratamento correlacionam-se com risco aumentado de supracorreção em 48 h, provavelmente refletindo a excreção de água livre após a queda da vasopressina com a reposição volêmica — mas a utilidade e a viabilidade da copeptina para prever supracorreção na prática clínica não estão estabelecidas.",
-   "secao": "Risk factors for under- and overcorrection",
-   "cit": [
-    [
-     0,
-     12197,
-     460
-    ]
-   ],
-   "cit_sha": "bd71010781525cce"
-  },
-  {
-   "afirmacao": "O risco de SUBcorreção é aumentado em pacientes com peso corporal mais alto (>=100 kg), sódio sérico basal elevado ou SIAD; o momento e o número de bolus também influenciam, e monitorização estreita é necessária nesse grupo.",
-   "secao": "Risk factors for under- and overcorrection",
-   "cit": [
-    [
-     0,
-     12658,
-     263
-    ]
-   ],
-   "cit_sha": "6d5d41300fd748e2"
-  },
-  {
-   "afirmacao": "Tabela 2 — George 2018 (coorte retrospectiva; correção >8 mmol/24 h): fatores de risco para correção rápida demais foram sexo feminino, idade mais jovem, esquizofrenia, depressão, tabagismo atual, menor índice de massa corporal, convulsões, hiponatremia prévia, doença hepática crônica, insuficiência cardíaca congestiva, câncer, menor sódio sérico, menor sódio urinário, menor osmolalidade urinária e menor potássio urinário.",
-   "secao": "Table 2",
-   "cit": [
-    [
-     0,
-     13423,
-     325
-    ]
-   ],
-   "cit_sha": "5f4ce47baee93312"
-  },
-  {
-   "afirmacao": "Tabela 2 — Chifu 2021 (retrospectiva; >10 mmol nas primeiras 24 h ou >8 mmol nos períodos de 24 h subsequentes): sintomas graves e menor sódio sérico. Yang 2022 (análise post-hoc de ECR; >12 mmol nas primeiras 24 h ou >18 mmol nas primeiras 48 h): alcoolismo crônico, sintomas graves de hiponatremia, menor sódio sérico e menor potássio sérico.",
-   "secao": "Table 2",
-   "cit": [
-    [
-     0,
-     13916,
-     345
-    ]
-   ],
-   "cit_sha": "ba65aaec4658d7d3"
-  },
-  {
-   "afirmacao": "A salina hipertônica é um grupo de fluidos com concentrações supra-fisiológicas de cloreto de sódio; o objetivo de sua administração é elevar rapidamente a concentração de sódio sérico para reverter o edema cerebral, e pode ser dada como infusão OU como bolus.",
-   "secao": "Treatment with hypertonic saline (HTS) — Bolus vs continuous infusion",
-   "cit": [
-    [
-     0,
-     12990,
-     256
-    ]
-   ],
-   "cit_sha": "098063240638c40b"
-  },
-  {
-   "afirmacao": "As diretrizes europeia e americana defendem ambas o uso de bolus de salina hipertônica a 3 % para tratar a hiponatremia gravemente sintomática, embora difiram no número e no volume dos bolus recomendados.",
-   "secao": "Treatment with hypertonic saline (HTS) — Bolus vs continuous infusion",
-   "cit": [
-    [
-     0,
-     14579,
-     215
-    ]
-   ],
-   "cit_sha": "c87dcb8e5c01f2ea"
-  },
-  {
-   "afirmacao": "A infusão contínua é recomendada pela diretriz europeia em casos de extremos de peso ou quando há sintomas persistentes apesar de bolus repetidos, enquanto a diretriz americana recomenda correção por infusão contínua quando os sintomas são LEVES.",
-   "secao": "Treatment with hypertonic saline (HTS) — Bolus vs continuous infusion",
-   "cit": [
-    [
-     0,
-     14795,
-     291
-    ]
-   ],
-   "cit_sha": "9a60f318fca874ae"
-  },
-  {
-   "afirmacao": "Comparação retrospectiva de bolus versus infusão de salina a 3 % demonstrou melhora rápida tanto da concentração de sódio quanto da escala de coma de Glasgow com o tratamento em bolus, sem aumento associado do risco de supracorreção.",
-   "secao": "Treatment with hypertonic saline (HTS) — Bolus vs continuous infusion",
-   "cit": [
-    [
-     0,
-     15087,
-     233
-    ]
-   ],
-   "cit_sha": "b010557d5f742fd7"
-  },
-  {
-   "afirmacao": "O ensaio SALSA, recentemente publicado, comparou bolus de salina hipertônica ajustados ao peso (2 ml/kg para sintomas moderadamente graves e 4 ml/kg para sintomas graves) com infusão contínua ajustada ao peso e também demonstrou melhor eficiência e segurança da terapia em BOLUS.",
-   "secao": "Treatment with hypertonic saline (HTS) — Bolus vs continuous infusion",
-   "cit": [
-    [
-     0,
-     15321,
-     289
-    ]
-   ],
-   "cit_sha": "fed1f6bee927b274"
-  },
-  {
-   "afirmacao": "Metanálise recente encontrou risco SEMELHANTE de supracorreção, SDO e mortalidade entre regimes de infusão e de bolus; o tempo de internação foi marginalmente maior com os regimes em bolus, o que pode refletir diferenças na etiologia subjacente e não a modalidade terapêutica em si.",
-   "secao": "Treatment with hypertonic saline (HTS) — Bolus vs continuous infusion",
-   "cit": [
-    [
-     0,
-     15611,
-     317
-    ]
-   ],
-   "cit_sha": "cace2a3419e0fca6"
-  },
-  {
-   "afirmacao": "Tanto o NÚMERO quanto o VOLUME dos bolus administrados são determinantes-chave do risco de supracorreção, o que reforça a necessidade de abordagem cautelosa, individualizada e com monitorização cuidadosa.",
-   "secao": "Treatment with hypertonic saline (HTS) — Bolus vs continuous infusion",
-   "cit": [
-    [
-     0,
-     15929,
-     212
-    ]
-   ],
-   "cit_sha": "ae4cca322fa2d79a"
-  },
-  {
-   "afirmacao": "Tabela 3 — Garrahy 2019 (observacional): aumento mediano do sódio em 6 h de 6 mmol/l com bolus intermitente rápido (RIB) versus 3 mmol/l com infusão contínua lenta (SCI), p <0.0001; necessidade de terapia de re-abaixamento 22.7 % versus 0.0 % (p 0.008). Baek 2021 (ECR): tempo médio até aumento de 5 mmol/l de 8.2 h com RIB versus 8.6 h com SCI (p 0.21); re-abaixamento 41.4 % versus 57.1 % (p 0.04).",
-   "secao": "Table 3",
-   "cit": [
-    [
-     0,
-     19849,
-     552
-    ]
-   ],
-   "cit_sha": "81d5a8c513ec2df0"
-  },
-  {
-   "afirmacao": "Apesar das diretrizes, a prática clínica real quanto ao volume, ao modo de administração (bolus, infusão contínua ou ambos) e a velocidade de administração da salina hipertônica é muito heterogênea, refletindo as incertezas por evidência limitada e relatos contraditórios; além disso, a disponibilidade de salina hipertônica a 3 % pode ser um problema em alguns lugares, como no Reino Unido, onde a concentração de 2.7 % é a mais usada por questão de disponibilidade.",
-   "secao": "Treatment with hypertonic saline (HTS) — Bolus vs continuous infusion",
-   "cit": [
-    [
-     0,
-     16221,
-     573
-    ]
-   ],
-   "cit_sha": "280cfbb35d69964d"
-  },
-  {
-   "afirmacao": "Múltiplas fórmulas para determinar o volume ideal do bolus de salina hipertônica foram sugeridas com base em sódio sérico e água corporal total, mas sua relevância clínica é limitada: consideram apenas o efeito da salina hipertônica (sem contabilizar perdas de água e eletrólitos) e incluem parâmetros que não podem ser medidos rapidamente na prática (por exemplo, a água corporal total).",
-   "secao": "Bolus volumes and number of boluses",
-   "cit": [
-    [
-     0,
-     16831,
-     429
-    ]
-   ],
-   "cit_sha": "7371255be275e0b7"
-  },
-  {
-   "afirmacao": "Na presença de sintomas GRAVES ambas as diretrizes recomendam correção com bolus de salina hipertônica, porém a diretriz europeia recomenda DOIS bolus consecutivos de 150 ml SEM aguardar o resultado intermediário do sódio entre eles, enquanto a americana recomenda ATÉ 3 bolus de 100 ml cada, administrados em 10 min.",
-   "secao": "Bolus volumes and number of boluses",
-   "cit": [
-    [
-     0,
-     17625,
-     327
-    ]
-   ],
-   "cit_sha": "521e2f25c5d41242"
-  },
-  {
-   "afirmacao": "Quando os sintomas são MODERADOS, com menor risco de herniação cerebral, a diretriz europeia recomenda apenas UM bolus de salina hipertônica (150 ml em 20 min), enquanto a americana recomenda infusão contínua de salina hipertônica de 0.5–2 ml/kg/hora.",
-   "secao": "Bolus volumes and number of boluses",
-   "cit": [
-    [
-     0,
-     17953,
-     262
-    ]
-   ],
-   "cit_sha": "05fe400de29f4996"
-  },
-  {
-   "afirmacao": "A abordagem baseada no peso (2 ml/kg) para a dose do bolus é recomendada pela diretriz europeia nos extremos de composição corporal ou em caso de sintomas persistentes apesar de aumento inicial do sódio sérico de 5 mmol/l.",
-   "secao": "Bolus volumes and number of boluses",
-   "cit": [
-    [
-     0,
-     18216,
-     219
-    ]
-   ],
-   "cit_sha": "f4a6ad30ff667109"
-  },
-  {
-   "afirmacao": "A administração de MÚLTIPLOS bolus associa-se a taxas mais altas de supracorreção. Até 30 % dos pacientes atingem correção de 5 mmol/l após um ÚNICO bolus de 150 ml, o que sugere que dar outro bolus nesses casos é não só desnecessário como aumenta o risco de supracorreção; por isso, a recomendação europeia de partir direto para um SEGUNDO bolus sem checar a resposta do sódio ao primeiro deveria ser RECONSIDERADA.",
-   "secao": "Bolus volumes and number of boluses",
-   "cit": [
-    [
-     0,
-     18436,
-     483
-    ]
-   ],
-   "cit_sha": "6561841653fa91e5"
-  },
-  {
-   "afirmacao": "Embora o peso do paciente influencie significativamente a taxa de correção dependente do volume, o ensaio SALSA também relatou risco AUMENTADO de supracorreção com bolus repetidos ajustados ao peso; esses achados apoiam uma abordagem GUIADA POR SINTOMAS para repetir os bolus de salina hipertônica, em vez de se apoiar apenas na resposta bioquímica imediata.",
-   "secao": "Bolus volumes and number of boluses",
-   "cit": [
-    [
-     0,
-     18920,
-     385
-    ]
-   ],
-   "cit_sha": "ba09fea72db59b9a"
-  },
-  {
-   "afirmacao": "A taxa de correção do sódio depende não apenas do número, mas também do VOLUME dos bolus: volumes maiores (250 ml) conseguem correção rápida de 5 mmol/l, porém exigem com mais frequência terapia de re-abaixamento com glicose a 5 % em comparação com volumes menores (100 ml).",
-   "secao": "Bolus volumes and number of boluses",
-   "cit": [
-    [
-     0,
-     19312,
-     287
-    ]
-   ],
-   "cit_sha": "db0fc4d283d0909c"
-  },
-  {
-   "afirmacao": "Há evidência crescente das vantagens de uma estratégia de bolus baseada no PESO sobre volumes fixos de salina hipertônica (o modelo de tamanho único), especialmente em casos de peso corporal muito baixo ou muito alto.",
-   "secao": "Bolus volumes and number of boluses",
-   "cit": [
-    [
-     0,
-     19600,
-     207
-    ]
-   ],
-   "cit_sha": "06c21c86f2f34483"
-  },
-  {
-   "afirmacao": "A etiologia da hiponatremia também contribui para o risco de supra e de subcorreção, como se observa com a desidratação e com a SIAD, respectivamente.",
-   "secao": "Bolus volumes and number of boluses",
-   "cit": [
-    [
-     0,
-     20553,
-     145
-    ]
-   ],
-   "cit_sha": "4276242c5e9104cb"
-  },
-  {
-   "afirmacao": "No conjunto, uma estratégia de bolus baseada no peso e uma decisão guiada por sintomas sobre repetir a administração do bolus parecem ser abordagem eficaz e equilibrada para o manejo agudo da hiponatremia sintomática.",
-   "secao": "Bolus volumes and number of boluses",
-   "cit": [
-    [
-     0,
-     20699,
-     206
-    ]
-   ],
-   "cit_sha": "449a0415ef61fea9"
-  },
-  {
-   "afirmacao": "Em caso de sintomas graves refratários a terapia apesar de correção de 5 mmol/l, a diretriz europeia recomenda infusão CONTÍNUA de salina hipertônica visando aumento de 1 mmol/l/hora até os sintomas melhorarem, ou até aumento total de 10 mmol/l, ou até o sódio sérico atingir 130 mmol/l (o que ocorrer primeiro); a diretriz americana é menos estrita e permite correções de 10–12 mmol/24 h em alguns casos.",
-   "secao": "Bolus volumes and number of boluses",
-   "cit": [
-    [
-     0,
-     20906,
-     495
-    ]
-   ],
-   "cit_sha": "b6836f59f2e42094"
-  },
-  {
-   "afirmacao": "Com base na evidência disponível, os autores recomendam PROCURAR CAUSAS ADICIONAIS quando os sintomas persistem apesar de correção do sódio de 10 mmol/l ou após elevar o sódio até 130 mmol/l.",
-   "secao": "Bolus volumes and number of boluses",
-   "cit": [
-    [
-     0,
-     21402,
-     190
-    ]
-   ],
-   "cit_sha": "58765e51786698c6"
-  },
-  {
-   "afirmacao": "RECOMENDAÇÃO PRÁTICA DOS AUTORES: dar inicialmente um bolus de 150 ml de salina a 3 % em 20 min, seguido de avaliações regulares do sódio sérico e dos sintomas ANTES de repetir a administração de bolus. Volume ajustado ao peso, menor, de 100 ml, deve ser considerado nos pacientes de baixo peso corporal (<60 kg). Um SEGUNDO bolus deve ser administrado em caso de sintomas persistentes ou em piora E aumento insuficiente do sódio sérico (<5 mmol/l) nas primeiras 4 h após o bolus inicial.",
-   "secao": "Recommendations",
-   "cit": [
-    [
-     0,
-     21609,
-     452
-    ]
-   ],
-   "cit_sha": "ba24a1aa959512a7"
-  },
-  {
-   "afirmacao": "As dosagens laboratoriais de sódio sérico/plasmático usam eletrodo íon-seletivo INDIRETO, no qual o soro é diluído; o volume de diluente é proporcional ao volume sanguíneo total, de modo que a razão diluente/soro sofre influência das concentrações de lipídios e proteínas do sangue. Já os gasômetros usam eletrodo íon-específico DIRETO, sem diluição — além de resultado mais rápido, esse método é mais útil para diagnosticar pseudo-hiponatremia.",
-   "secao": "Monitoring — Biochemical",
-   "cit": [
-    [
-     0,
-     22189,
-     568
-    ]
-   ],
-   "cit_sha": "7b2c1cc86f2015dc"
-  },
-  {
-   "afirmacao": "Pequenas diferenças médias entre gasômetro e laboratório podem mascarar diferenças MAIORES, de até 10 mmol/l em alguns pacientes (particularmente na pseudo-hiponatremia por hiperlipidemia); e mesmo as pequenas diferenças médias de 1–3 mmol/l são clinicamente significativas ao avaliar se a correção está dentro da faixa-alvo na hiponatremia.",
-   "secao": "Monitoring — Biochemical",
-   "cit": [
-    [
-     0,
-     22942,
-     327
-    ]
-   ],
-   "cit_sha": "2227dc2c994af249"
-  },
-  {
-   "afirmacao": "Os autores recomendam que durante o tratamento da hiponatremia se use SEMPRE O MESMO método de análise, e que concentrações de sódio obtidas por métodos diferentes NÃO sejam comparadas para avaliar a variação; gasômetros devem ser usados quando disponíveis por fornecerem resultados mais rápidos, permitindo ajuste rápido do tratamento.",
-   "secao": "Monitoring — Biochemical",
-   "cit": [
-    [
-     0,
-     23270,
-     360
-    ]
-   ],
-   "cit_sha": "748c78926d81cf2e"
-  },
-  {
-   "afirmacao": "Quando a hiponatremia foi diagnosticada por sódio laboratorial, é necessária uma medida adicional de sódio por gasômetro ANTES de iniciar o tratamento, para guiar a monitorização e o manejo subsequentes.",
-   "secao": "Monitoring — Biochemical",
-   "cit": [
-    [
-     0,
-     23846,
-     240
-    ]
-   ],
-   "cit_sha": "504d5ec68ae8534e"
-  },
-  {
-   "afirmacao": "Débito urinário acima do normal é fator de risco bem estabelecido para supracorreção e deve ser medido pelo menos de HORA EM HORA; pacientes que se apresentam desidratados têm risco especialmente maior de supracorreção pelo início rápido da aquarese.",
-   "secao": "Monitoring — Clinical",
-   "cit": [
-    [
-     0,
-     24175,
-     289
-    ]
-   ],
-   "cit_sha": "5dd55f97436b170f"
-  },
-  {
-   "afirmacao": "Diurese aumentada (>=2 ml/kg/hora) deve deflagrar reavaliação do paciente, consideração de gasometria de repetição mais precoce e reposição volêmica, para evitar supracorreção.",
-   "secao": "Monitoring — Clinical",
-   "cit": [
-    [
-     0,
-     24465,
-     186
-    ]
-   ],
-   "cit_sha": "a99af249f5f703cd"
-  },
-  {
-   "afirmacao": "Todos os pacientes devem ser monitorados regularmente quanto a sintomas de hiponatremia (náusea, confusão, cefaleia, vômitos, convulsões, queda da escala de coma de Glasgow, coma e sofrimento cardiorrespiratório) e também quanto a sintomas de SDO, que inicialmente incluem encefalopatia e convulsões e depois viram amplo espectro neurológico, mais comumente disfunção motora. Como os sintomas de hiponatremia e de SDO se SOBREPÕEM, qualquer deterioração exige avaliação e investigação cuidadosas para confirmar a causa.",
-   "secao": "Monitoring — Clinical",
-   "cit": [
-    [
-     0,
-     24652,
-     682
-    ]
-   ],
-   "cit_sha": "9acc6e661e0fb02d"
-  },
-  {
-   "afirmacao": "Há evidência de que a permanência em unidade de terapia intensiva resulta em risco estatisticamente MENOR de supracorreção do sódio.",
-   "secao": "Monitoring — Clinical",
-   "cit": [
-    [
-     0,
-     25335,
-     150
-    ]
-   ],
-   "cit_sha": "ee2b70a91f4c34c0"
-  },
-  {
-   "afirmacao": "Os autores recomendam que pacientes com hiponatremia grave sejam submetidos a avaliações HORÁRIAS de sintomas, escala de coma de Glasgow e débito urinário, com gasometrias a cada 4 horas; na prática, isso significa alocá-los em ambiente de monitorização estreita, como unidade de alta dependência, terapia intensiva ou área de alta vigilância do pronto-socorro.",
-   "secao": "Monitoring — Clinical",
-   "cit": [
-    [
-     0,
-     25486,
-     409
-    ]
-   ],
-   "cit_sha": "8863d7e28ade4eaa"
-  },
-  {
-   "afirmacao": "O manejo da supracorreção deve ser conduzido por médicos experientes; tanto a infusão de glicose a 5 % quanto a desmopressina são usadas para TRATAR e para PREVENIR a supracorreção.",
-   "secao": "Management of overcorrection",
-   "cit": [
-    [
-     0,
-     25925,
-     174
-    ]
-   ],
-   "cit_sha": "d280bd08d32902d2"
-  },
-  {
-   "afirmacao": "A diretriz europeia recomenda re-abaixar o sódio com 10 ml/kg de água livre de eletrólitos (glicose a 5 %) em uma hora e/ou 2 microgramas de desmopressina IV até a cada 8 h, nos casos em que a correção do sódio ultrapassa 10 mmol/l nas primeiras 24 h ou 8 mmol/l/24 h depois disso.",
-   "secao": "Management of overcorrection",
-   "cit": [
-    [
-     0,
-     26297,
-     211
-    ]
-   ],
-   "cit_sha": "f3b1814b3d67c6ca"
-  },
-  {
-   "afirmacao": "A diretriz americana NÃO recomenda tratar a supracorreção nos casos de hiponatremia verdadeiramente aguda (<48 h), por exemplo intoxicação hídrica autoinduzida ou hiponatremia induzida por exercício; em todas as demais circunstâncias recomenda parar a salina assim que a meta de aumento do sódio for atingida.",
-   "secao": "Management of overcorrection",
-   "cit": [
-    [
-     0,
-     26509,
-     313
-    ]
-   ],
-   "cit_sha": "ea25271c3c8aa209"
-  },
-  {
-   "afirmacao": "A diretriz americana recomenda ainda iniciar PREVENTIVAMENTE infusão de dextrose a 5 %, água por via oral ou 2–4 microgramas de desmopressina para impedir aumento adicional da concentração de sódio.",
-   "secao": "Management of overcorrection",
-   "cit": [
-    [
-     0,
-     27034,
-     168
-    ]
-   ],
-   "cit_sha": "4647a64e7e7642a3"
-  },
-  {
-   "afirmacao": "Se a supracorreção ocorrer (definida por aumento >8 mmol/l ou >12 mmol/l, conforme o risco de SDO), a diretriz americana recomenda 2–4 microgramas de desmopressina e 3 ml/kg de dextrose a 5 % em uma hora.",
-   "secao": "Management of overcorrection",
-   "cit": [
-    [
-     0,
-     27203,
-     181
-    ]
-   ],
-   "cit_sha": "63c3766b127ab88e"
-  },
-  {
-   "afirmacao": "Três abordagens de uso da desmopressina foram descritas: PROATIVA (administrada junto com o início do tratamento da hiponatremia, visando limitar a diurese e prevenir a supracorreção); REATIVA (administrada quando o sódio está subindo rapidamente e se antecipa que ultrapassará o limite desejado, ou quando há aumento do débito urinário); e de RESGATE (administrada depois que a supracorreção já ocorreu).",
-   "secao": "Management of overcorrection — Desmopressin",
-   "cit": [
-    [
-     0,
-     27398,
-     506
-    ]
-   ],
-   "cit_sha": "4a98fcd4aba391cb"
-  },
-  {
-   "afirmacao": "Dados retrospectivos demonstram risco significativamente MENOR de supracorreção com desmopressina proativa em comparação com as outras abordagens (reativa, resgate e nenhuma desmopressina), embora outros estudos não tenham encontrado mudança significativa no risco de supracorreção.",
-   "secao": "Management of overcorrection — Desmopressin",
-   "cit": [
-    [
-     0,
-     27905,
-     273
-    ]
-   ],
-   "cit_sha": "e4f745d66e53d9f0"
-  },
-  {
-   "afirmacao": "A administração REATIVA de desmopressina reduz a velocidade de aumento da concentração de sódio e, portanto, mantém a variação dentro dos limites recomendados quando a supracorreção parece provável.",
-   "secao": "Management of overcorrection — Desmopressin",
-   "cit": [
-    [
-     0,
-     28179,
-     242
-    ]
-   ],
-   "cit_sha": "bf8b9ba90c791c48"
-  },
-  {
-   "afirmacao": "Um ensaio randomizado comparando as abordagens reativa e proativa encontrou taxas SEMELHANTES de supracorreção e tempo semelhante para atingir a elevação-alvo de 5 mmol/l entre os dois grupos.",
-   "secao": "Management of overcorrection — Desmopressin",
-   "cit": [
-    [
-     0,
-     28422,
-     175
-    ]
-   ],
-   "cit_sha": "8b6ba0f43bce5736"
-  },
-  {
-   "afirmacao": "Dados retrospectivos mostram que o uso PROATIVO de desmopressina também aumenta a proporção de pacientes que atingem o aumento-alvo de sódio em 24 h — porém o uso proativo NÃO é atualmente apoiado por nenhuma das duas diretrizes.",
-   "secao": "Management of overcorrection — Desmopressin",
-   "cit": [
-    [
-     0,
-     28598,
-     302
-    ]
-   ],
-   "cit_sha": "3b03e2d07fe83998"
-  },
-  {
-   "afirmacao": "Em pacientes cujo sódio já foi supracorrigido, a desmopressina combinada com dextrose a 5 % consegue RE-ABAIXAR o sódio e pode reverter sintomas sugestivos de SDO; já com desmopressina isolada a variação do sódio pode ficar estática, representando queda da taxa de correção.",
-   "secao": "Management of overcorrection — Desmopressin",
-   "cit": [
-    [
-     0,
-     28901,
-     368
-    ]
-   ],
-   "cit_sha": "ae4d7197cdc017a1"
-  },
-  {
-   "afirmacao": "Embora a estratégia de RESGATE consiga re-abaixar o sódio, a supracorreção já ocorreu; por isso as estratégias proativa e reativa provavelmente são as mais apropriadas em pacientes com risco elevado de SDO. Contudo, pelas possíveis complicações e pela ausência de diretrizes para o uso proativo, essa abordagem deve por ora ser usada apenas em centros experientes.",
-   "secao": "Management of overcorrection — Desmopressin",
-   "cit": [
-    [
-     0,
-     29270,
-     412
-    ]
-   ],
-   "cit_sha": "22c7212228b5c986"
-  },
-  {
-   "afirmacao": "As infusões de glicose são facilmente disponíveis e frequentemente usadas em combinação com a desmopressina, num duplo mecanismo (a solução de glicose baixa a concentração de sódio e a desmopressina reduz a diurese aquosa). A glicose também pode ser usada em monoterapia, seja para re-abaixar o sódio, seja para MANTER o nível atual pareando a infusão de glicose a 5 % com o débito urinário; porém a evidência comparativa é limitada e, sem desmopressina concomitante, podem ser necessários GRANDES volumes de solução de glicose.",
-   "secao": "Management of overcorrection — Glucose 5 %",
-   "cit": [
-    [
-     0,
-     29695,
-     610
-    ]
-   ],
-   "cit_sha": "62f660bd6bc7d77d"
-  },
-  {
-   "afirmacao": "Não há comparações diretas entre desmopressina e glicose a 5 %. Um pequeno ECR não mostrou diferença no risco de supracorreção entre as abordagens proativa e reativa da desmopressina, de modo que os autores recomendam monitorização cuidadosa e decidir o manejo pela velocidade de subida do sódio e pelo débito urinário — idealmente PREVENINDO a supracorreção em vez de agir apenas depois que ela ocorreu.",
-   "secao": "Management of overcorrection — Recommendations",
-   "cit": [
-    [
-     0,
-     30322,
-     520
-    ]
-   ],
-   "cit_sha": "71b27f4fb5c5c8f6"
-  },
-  {
-   "afirmacao": "Se medidas reativas forem necessárias para prevenir a supracorreção, deve-se buscar aconselhamento especializado para definir se usar desmopressina, infusão de glicose ou a combinação das duas; a desmopressina parece particularmente útil para reduzir a diurese de grande volume e, com isso, diminuir a quantidade necessária de solução de glicose.",
-   "secao": "Management of overcorrection — Recommendations",
-   "cit": [
-    [
-     0,
-     30843,
-     326
-    ]
-   ],
-   "cit_sha": "2b43387d4e1a2038"
-  },
-  {
-   "afirmacao": "O manejo ideal da hiponatremia foi recentemente contestado e as diretrizes já têm mais de uma década, estando atualmente em revisão.",
-   "secao": "Summary",
-   "cit": [
-    [
-     0,
-     31178,
-     156
-    ]
-   ],
-   "cit_sha": "a8f2b4b6fb9d06c4"
-  },
-  {
-   "afirmacao": "Na avaliação inicial da hiponatremia é importante determinar o intervalo de tempo provável em que ela se desenvolveu, já que a hiponatremia CRÔNICA pode ser manejada de forma mais conservadora; o aumento rápido da concentração de sódio de 5 mmol/l permanece o pilar do tratamento da hiponatremia aguda sintomática.",
-   "secao": "Summary",
-   "cit": [
-    [
-     0,
-     31427,
-     308
-    ]
-   ],
-   "cit_sha": "0fa5f119c8e3ce03"
-  },
-  {
-   "afirmacao": "Por isso os autores recomendam manter os aumentos de sódio dentro de 8–10 mmol/l/24 h. ⚠️ A frase original abre duas exceções que apontam em direções OPOSTAS: sintomas graves persistentes de hiponatremia podem justificar ultrapassar esse teto; já o paciente de ALTO RISCO de desmielinização osmótica NÃO está isento dele — para esse paciente o teto é MAIS BAIXO (ver o fato sobre alto risco).",
-   "secao": "Summary",
-   "cit": [
-    [
-     0,
-     31736,
-     333
-    ]
-   ],
-   "cit_sha": "3ded3f162bbf0087"
-  },
-  {
-   "afirmacao": "Há evidência limitada sobre como prevenir ou tratar a supracorreção, exceto por um ECR recente que mostrou desfechos semelhantes entre pacientes manejados com abordagem proativa ou reativa de desmopressina; por ora, aconselhamento especializado deve ser buscado ao manejar correção rápida demais.",
-   "secao": "Summary",
-   "cit": [
-    [
-     0,
-     32291,
-     451
-    ]
-   ],
-   "cit_sha": "d9a88ca7395f11c7"
-  },
-  {
-   "afirmacao": "Ponto de prática: um aumento rápido porém LIMITADO do sódio sérico na hiponatremia sintomática é recomendado para reverter o edema cerebral; a correção deve visar aumento de 5 mmol/l nas primeiras 24 h pela administração de UM bolus de salina hipertônica (150 ml de NaCl a 3 % em 20 min; para peso corporal baixo, considerar volume ajustado ao peso de 100 ml).",
-   "secao": "Practice Points",
-   "cit": [
-    [
-     0,
-     33509,
-     362
-    ]
-   ],
-   "cit_sha": "22e3d689bfaa2de0"
-  },
-  {
-   "afirmacao": "Ponto de prática: os pacientes devem ser monitorados de perto em unidade de cuidados intermediários ou terapia intensiva após a salina hipertônica, incluindo monitorização regular da concentração de sódio por gasometria a cada 4 h e débito urinário e escala de coma de Glasgow HORÁRIOS. Um segundo bolus de salina hipertônica deve ser administrado em caso de sintomas persistentes ou em piora E aumento insuficiente do sódio sérico (<5 mmol/l).",
-   "secao": "Practice Points",
-   "cit": [
-    [
-     0,
-     33874,
-     418
-    ]
-   ],
-   "cit_sha": "e3f91761a77aff9f"
-  },
-  {
-   "afirmacao": "Ponto de prática: a correção do sódio deve ser limitada a 8–10 mmol/l/24 h, considerando limites menores de 6–8 mmol/l/24 h em pacientes de alto risco de SDO; e o manejo da supracorreção com dextrose a 5 % com ou sem desmopressina exige aconselhamento especializado.",
-   "secao": "Practice Points",
-   "cit": [
-    [
-     0,
-     34295,
-     231
-    ]
-   ],
-   "cit_sha": "e59b92eda67a2957"
-  },
-  {
-   "afirmacao": "Agenda de pesquisa: comparar em ensaios randomizados volumes FIXOS versus AJUSTADOS AO PESO de bolus de salina hipertônica; avaliar as abordagens proativa, reativa e de resgate com desmopressina e dextrose a 5 % para reduzir o risco de supracorreção e SDO; estabelecer escores preditivos e parâmetros confiáveis de risco de correção rápida demais e de SDO; e definir por ECR o nível de aumento do sódio que confere risco de SDO conforme as características individuais.",
-   "secao": "Research Agenda",
-   "cit": [
-    [
-     0,
-     32984,
-     506
-    ]
-   ],
-   "cit_sha": "936cdb67f8433020"
-  }
- ],
- "auditoria": "Auditoria adversarial em 07/08/2026: 91/91 fatos auditados. 3 não-OK corrigidos, dois deles BLOQUEANDO publicação — a linha de 24 h da Tabela 1 lida com deslocamento de coluna (teto virou alvo, e a meta americana virou limite europeu) e a frase das duas exceções, que atomizada isentava do teto justamente o paciente de alto risco de SDO.",
- "conflito_direcao": "nucleo_prevalece",
- "nucleo_citado": [
-  "TOTAL limitado a 8–10 mmol/L",
-  "salina 3% em BÓLUS de 150 mL em 20 min",
-  "limite 6–8 mmol/L/24 h (meta 4–6 mmol/L/dia)"
- ]
+  "fileId": "hipo-4",
+  "titulo": "The treatment of acute symptomatic hyponatraemia in the hospital setting",
+  "tema": "hiponatremia aguda sintomática — tratamento de emergência: bolus de salina hipertônica (100 mL, 150 mL), quantos bolus repetir e infusão contínua versus bolus; alvo de elevação de 5 mmol/L nas primeiras horas; convulsão, coma e rebaixamento do nível de consciência (Glasgow), sintomas graves, edema cerebral e herniação; desmopressina para travar a correção",
+  "fonte": "Prince R, Chifu I, Arshad MF. The treatment of acute symptomatic hyponatraemia in the hospital setting. Best Pract Res Clin Endocrinol Metab 2026;40:102079",
+  "area": "Endocrinopatias",
+  "tipo": "revisao",
+  "ano": 2026,
+  "conflito": "⚠️ UM ÚNICO PONTO, E É DE SEGURANÇA. Esta fonte contém a frase \"Rapid sodium correction (>10 mmol/l/24 h) has been recently associated with lower in-hospital and 30-day mortality\" — que, lida fora de contexto, autoriza exatamente o que mata. Ela é uma ASSOCIAÇÃO observacional citada de passagem, e o próprio artigo, na sua recomendação, faz o contrário: \"we recommend a limited rapid increase of serum sodium level by at least 5 mmol/l by administration of fixed bolus(es) of hypertonic saline (HTS) to reverse symptoms of cerebral oedema, while limiting total increase to 8–10 mmol/l in the first 24 h, and each subsequent 24 h period.\" e \"In patients with additional risk factors for ODS (severe hyponatraemia <120 mmol/l, hypokalaemia, alcohol excess, malnutrition, volume depletion, liver cirrhosis) a lower limit of 6–8 mmol/l per 24 h is considered to be safer.\" O NÚCLEO PREVALECE: os tetos valem. Todo o resto desta fonte (tetos por janela de 24 h, bólus de 150 mL em 20 min com reavaliação antes de repetir, gatilho ampliado do alto risco) JÁ foi incorporado ao núcleo em 07/08/2026 e não é mais divergência.",
+  "fatos": [
+    {
+      "afirmacao": "Recomendação central dos autores na hiponatremia aguda sintomática: elevar rapidamente o sódio sérico em pelo menos 5 mmol/l com bolus FIXOS de salina hipertônica (HTS) para reverter os sintomas de edema cerebral, limitando o aumento TOTAL a 8–10 mmol/l nas primeiras 24 h e em cada período de 24 h subsequente.",
+      "secao": "Resumo",
+      "cit": [
+        [
+          0,
+          1019,
+          281
+        ]
+      ],
+      "cit_sha": "f35e8e454e6fbc2b"
+    },
+    {
+      "afirmacao": "A hiponatremia aguda sintomática causa edema cerebral potencialmente fatal, enquanto a correção rápida demais causa síndrome de desmielinização osmótica (SDO) com dano neurológico permanente — o tratamento equilibra esses dois riscos. Estado neurológico, débito urinário e bioquímica devem ser monitorados com cuidado; desmopressina e/ou dextrose intravenosa são recomendadas para reverter ou prevenir a correção rápida demais.",
+      "secao": "Resumo",
+      "cit": [
+        [
+          0,
+          779,
+          708
+        ]
+      ],
+      "cit_sha": "387281895317ffc5"
+    },
+    {
+      "afirmacao": "A hiponatremia é uma anormalidade eletrolítica comum, afetando 5 % dos adultos, subindo para 20 % dos maiores de 65 anos e 35 % dos pacientes internados.",
+      "secao": "Epidemiology and prognosis",
+      "cit": [
+        [
+          0,
+          1790,
+          153
+        ]
+      ],
+      "cit_sha": "47704310ba99ebe1"
+    },
+    {
+      "afirmacao": "A mortalidade hospitalar permanece alta, sobretudo entre os admitidos com hiponatremia grave (<120 mmol/l), variando de 5 % a 20 %, com mortalidade em 30 dias de 7–30 %.",
+      "secao": "Epidemiology and prognosis",
+      "cit": [
+        [
+          0,
+          2056,
+          180
+        ]
+      ],
+      "cit_sha": "71848ac92fe13ce1"
+    },
+    {
+      "afirmacao": "A correção rápida do sódio (>10 mmol/l/24 h) foi RECENTEMENTE associada a MENOR mortalidade intra-hospitalar e em 30 dias, embora não esteja claro o quanto isso se deve à taxa de correção, já que a mortalidade também sofre influência da etiologia da hiponatremia, da gravidade da doença, de condições não relacionadas surgidas na internação e de comorbidades.",
+      "secao": "Epidemiology and prognosis",
+      "cit": [
+        [
+          0,
+          2237,
+          440
+        ]
+      ],
+      "cit_sha": "2584ddae9f74aff0"
+    },
+    {
+      "afirmacao": "Os sintomas da hiponatremia decorrem da hipotonicidade plasmática: a queda da osmolalidade sérica desloca água para dentro das células cerebrais, causando edema cerebral. Os mecanismos adaptativos (fluxo de água para o líquor e redistribuição de eletrólitos e outros osmoles) podem levar até 48 h para atingir efeito pleno.",
+      "secao": "Symptoms of acute hyponatraemia arise from cerebral oedema",
+      "cit": [
+        [
+          0,
+          3376,
+          388
+        ]
+      ],
+      "cit_sha": "ae4dce2abda0ac1d"
+    },
+    {
+      "afirmacao": "O espectro de sintomas neurológicos causados pelo aumento rápido da pressão intracraniana vai de leve (náusea, cefaleia, confusão, sonolência) a grave (vômitos, convulsões, parada respiratória, coma), podendo ser fatal.",
+      "secao": "Symptoms of acute hyponatraemia arise from cerebral oedema",
+      "cit": [
+        [
+          0,
+          3992,
+          245
+        ]
+      ],
+      "cit_sha": "15d5d987c0c1b97f"
+    },
+    {
+      "afirmacao": "Se não houver prova em contrário, todo episódio de hiponatremia sintomática deve ser tratado como CRÔNICO (>48 h).",
+      "secao": "Symptoms of acute hyponatraemia arise from cerebral oedema",
+      "cit": [
+        [
+          0,
+          4238,
+          116
+        ]
+      ],
+      "cit_sha": "506fd60e036a8548"
+    },
+    {
+      "afirmacao": "O objetivo do tratamento na hiponatremia aguda sintomática é elevar a concentração de sódio o suficiente para aliviar os sintomas, revertendo o edema cerebral e prevenindo a herniação transtentorial.",
+      "secao": "Symptoms of acute hyponatraemia arise from cerebral oedema",
+      "cit": [
+        [
+          0,
+          4355,
+          203
+        ]
+      ],
+      "cit_sha": "84e8c5864e952596"
+    },
+    {
+      "afirmacao": "O termo síndrome de desmielinização osmótica (SDO) foi cunhado em 1986 para descrever a mielinólise pontina central (MPC) e a mielinólise extrapontina (MEP) causadas por aumento rápido da osmolalidade plasmática.",
+      "secao": "Limits of sodium correction to avoid osmotic demyelination syndrome",
+      "cit": [
+        [
+          0,
+          4627,
+          205
+        ]
+      ],
+      "cit_sha": "9b42a8880079fc86"
+    },
+    {
+      "afirmacao": "A SDO é deflagrada pela correção rápida demais da hiponatremia, em particular da hiponatremia CRÔNICA — mas também já foi observada em indivíduos SEM correção rápida e até na AUSÊNCIA de hiponatremia.",
+      "secao": "Limits of sodium correction to avoid osmotic demyelination syndrome",
+      "cit": [
+        [
+          0,
+          4833,
+          235
+        ]
+      ],
+      "cit_sha": "6018c9e6b1eac317"
+    },
+    {
+      "afirmacao": "Metanálise recente (2025) concluiu que as chances de SDO foram 4 vezes maiores nos pacientes com taxa de correção acima de 8 mmol/l/24 h em comparação com taxa abaixo de 8 mmol/l/24 h.",
+      "secao": "Limits of sodium correction to avoid osmotic demyelination syndrome",
+      "cit": [
+        [
+          0,
+          5069,
+          195
+        ]
+      ],
+      "cit_sha": "8bba606677714fbc"
+    },
+    {
+      "afirmacao": "Fatores de risco ADICIONAIS para SDO: hiponatremia grave (<120 mmol/l, particularmente se o sódio estiver <110 mmol/l), excesso de álcool, desnutrição, depleção de volume, transplante hepático, cirrose hepática, insuficiência renal, diabetes, hipocalemia e hipofosfatemia.",
+      "secao": "Limits of sodium correction to avoid osmotic demyelination syndrome",
+      "cit": [
+        [
+          0,
+          5271,
+          272
+        ]
+      ],
+      "cit_sha": "4a7c1d821d4cee9d"
+    },
+    {
+      "afirmacao": "O mecanismo pelo qual a correção rápida causa SDO é incompletamente compreendido; acredita-se envolver desvios eletrolíticos súbitos com apoptose de astrócitos e oligodendrócitos, além da liberação de agentes mielotóxicos e ruptura da barreira hematoencefálica, com inflamação e dano à bainha de mielina.",
+      "secao": "Limits of sodium correction to avoid osmotic demyelination syndrome",
+      "cit": [
+        [
+          0,
+          5544,
+          433
+        ]
+      ],
+      "cit_sha": "47587138a3de20e0"
+    },
+    {
+      "afirmacao": "Historicamente a incidência de SDO era relativamente maior, antes da introdução das diretrizes que desencorajam desvios rápidos do sódio. Atualmente a SDO é complicação RARA do tratamento da hiponatremia, com incidência relatada geralmente abaixo de 1 % — porém a incidência real provavelmente é subestimada, pois os relatos se apoiam sobretudo em análises retrospectivas e métodos de avaliação não padronizados.",
+      "secao": "Limits of sodium correction to avoid osmotic demyelination syndrome",
+      "cit": [
+        [
+          0,
+          5978,
+          407
+        ]
+      ],
+      "cit_sha": "dbac47ac1487ccea"
+    },
+    {
+      "afirmacao": "Coerente com os dois mecanismos de lesão, a SDO costuma ser BIFÁSICA, com sintomas iniciais seguidos de um período de melhora antes da deterioração; os sintomas geralmente se desenvolvem 1–16 dias após o insulto.",
+      "secao": "Limits of sodium correction to avoid osmotic demyelination syndrome",
+      "cit": [
+        [
+          0,
+          6432,
+          175
+        ]
+      ],
+      "cit_sha": "acec6da157c49055"
+    },
+    {
+      "afirmacao": "A apresentação clínica da SDO varia conforme a área cerebral acometida e pode incluir confusão, fraqueza de padrão de neurônio motor superior, sintomas cerebelares, disartria, disfagia, sintomas oculares, distúrbios do movimento e paresia, com possível progressão para síndrome do encarceramento (locked-in).",
+      "secao": "Limits of sodium correction to avoid osmotic demyelination syndrome",
+      "cit": [
+        [
+          0,
+          6608,
+          299
+        ]
+      ],
+      "cit_sha": "2631dffbf507cacd"
+    },
+    {
+      "afirmacao": "O diagnóstico da SDO baseia-se nos sintomas clínicos e em alterações confirmatórias na ressonância magnética; porém essas alterações radiológicas podem levar até 7 dias para se desenvolver. O EEG também pode apoiar o diagnóstico (ondas delta e teta puntiformes e lentificação difusa).",
+      "secao": "Limits of sodium correction to avoid osmotic demyelination syndrome",
+      "cit": [
+        [
+          0,
+          6908,
+          333
+        ]
+      ],
+      "cit_sha": "161e9d6c462b80bc"
+    },
+    {
+      "afirmacao": "Corticoides, imunoglobulinas e plasmaférese foram testados como tratamento da SDO para reduzir o dano inflamatório, com dados de apoio em modelos animais de hiponatremia, mas evidência clínica limitada até o momento.",
+      "secao": "Limits of sodium correction to avoid osmotic demyelination syndrome",
+      "cit": [
+        [
+          0,
+          7242,
+          217
+        ]
+      ],
+      "cit_sha": "7fcbeea3426f6f56"
+    },
+    {
+      "afirmacao": "Há debate considerável sobre a taxa ideal de correção: o objetivo geral é elevar rapidamente o sódio para reverter o edema cerebral e simultaneamente prevenir supracorreção e SDO. Isso é um desafio clínico substancial porque o risco de SDO se correlaciona com a CRONICIDADE da hiponatremia, muitas vezes difícil de determinar por falta de bioquímica recente.",
+      "secao": "Treatment goals — Sodium correction limits and safety",
+      "cit": [
+        [
+          0,
+          7512,
+          415
+        ]
+      ],
+      "cit_sha": "939e2b153b5bd2ea"
+    },
+    {
+      "afirmacao": "A taxa de correção também sofre influência de fatores específicos do paciente, incluindo peso corporal, comorbidades, status volêmico e diurese.",
+      "secao": "Treatment goals — Sodium correction limits and safety",
+      "cit": [
+        [
+          0,
+          7928,
+          154
+        ]
+      ],
+      "cit_sha": "fedd6af712971c47"
+    },
+    {
+      "afirmacao": "Tabela 1 — metas e limites de correção do sódio (mmol/l). ⚠️ A linha de 24 h tem quatro colunas (alvo e limite de cada diretriz) e a leitura correta é: Diretriz Europeia (Spasovski 2014) — ALVO 5 na 1ª hora, LIMITE 10 em 24 h, 18 em 48 h. Diretriz Americana (Verbalis 2013) — ALVO 4–6 na elevação inicial, ALVO 4–8 em 24 h, LIMITE 10–12 em 24 h, 18 em 48 h. Os valores de 24 h de cada diretriz são TETOS que não se ultrapassam, exceto o alvo americano de 4–8 — nenhum deles é meta a ser perseguida.",
+      "secao": "Table 1",
+      "cit": [
+        [
+          0,
+          8406,
+          216
+        ]
+      ],
+      "cit_sha": "fb24cb52dd98e464"
+    },
+    {
+      "afirmacao": "A diretriz europeia orienta aumentar o sódio sérico em 5 mmol/L dentro de 1 h nos pacientes GRAVEMENTE sintomáticos.",
+      "secao": "Treatment goals — Sodium correction limits and safety",
+      "cit": [
+        [
+          0,
+          8226,
+          97
+        ]
+      ],
+      "cit_sha": "45cdbb928de44aa1"
+    },
+    {
+      "afirmacao": "Nos casos MODERADAMENTE sintomáticos, a meta europeia de elevação é alcançada dentro de 24 h, garantindo que a correção total não ultrapasse 10 mmol/l nas primeiras 24 h e 8 mmol/l nas 24 h seguintes.",
+      "secao": "Treatment goals — Sodium correction limits and safety",
+      "cit": [
+        [
+          0,
+          8739,
+          174
+        ]
+      ],
+      "cit_sha": "e9f2552e02836c27"
+    },
+    {
+      "afirmacao": "A justificativa da elevação rápida recomendada é reverter rapidamente a herniação transtentorial reduzindo a pressão intracraniana em 5–10 mm Hg e reverter os sintomas da hiponatremia.",
+      "secao": "Treatment goals — Sodium correction limits and safety",
+      "cit": [
+        [
+          0,
+          8914,
+          203
+        ]
+      ],
+      "cit_sha": "660bb01bb4864798"
+    },
+    {
+      "afirmacao": "A diretriz americana ajusta as metas: na hiponatremia verdadeiramente aguda de instalação rápida (por exemplo, polidipsia extrema) limitar a taxa de correção NÃO é considerado necessário; já nos pacientes de alto risco de SDO a correção em 24 h deve ser limitada a 8 mmol.",
+      "secao": "Treatment goals — Sodium correction limits and safety",
+      "cit": [
+        [
+          0,
+          9118,
+          322
+        ]
+      ],
+      "cit_sha": "6ac3dfc11e1b70ce"
+    },
+    {
+      "afirmacao": "A supracorreção foi definida na literatura por limites variados, mais frequentemente como aumento >8, >10 ou >12 mmol/l em 24 h; a incidência de SDO entre os supracorrigidos varia muito entre estudos, provavelmente por diferenças de população, de cronicidade e do método de diagnóstico da SDO.",
+      "secao": "Treatment goals — Sodium correction limits and safety",
+      "cit": [
+        [
+          0,
+          9441,
+          339
+        ]
+      ],
+      "cit_sha": "e658929da2c02eef"
+    },
+    {
+      "afirmacao": "Metanálise recente mostrou risco significativamente maior de SDO com taxas de correção acima de 8 mmol/l/24 h, com odds ratio de 4.03 (1.74, 9.37); ainda assim a SDO também foi relatada em pacientes com taxas de correção MENORES, o que implica risco individual.",
+      "secao": "Treatment goals — Sodium correction limits and safety",
+      "cit": [
+        [
+          0,
+          9930,
+          276
+        ]
+      ],
+      "cit_sha": "b9268cd881f309fb"
+    },
+    {
+      "afirmacao": "Taxas MAIS LENTAS de correção foram associadas a maior mortalidade, embora isso possa ser confundido pela gravidade da causa subjacente da hiponatremia afetando a taxa de correção (por exemplo, SIAD por malignidade).",
+      "secao": "Treatment goals — Sodium correction limits and safety",
+      "cit": [
+        [
+          0,
+          10207,
+          233
+        ]
+      ],
+      "cit_sha": "6f5c9ebfcd935de5"
+    },
+    {
+      "afirmacao": "RECOMENDAÇÃO DOS AUTORES: aumento inicial do sódio sérico de PELO MENOS 5 mmol/l nas primeiras 24 h para reverter o edema cerebral e aliviar sintomas; aumento TOTAL limitado a 8–10 mmol/l nas primeiras 24 h e em cada janela de 24 h subsequente; em pacientes com fatores de risco adicionais para SDO (hiponatremia grave <120 mmol/l, hipocalemia, excesso de álcool, desnutrição, depleção de volume, cirrose hepática) um limite MENOR de 6–8 mmol/l por 24 h é considerado mais seguro.",
+      "secao": "Treatment goals — Sodium correction limits and safety",
+      "cit": [
+        [
+          0,
+          10441,
+          498
+        ]
+      ],
+      "cit_sha": "0f2cb02461cb53ca"
+    },
+    {
+      "afirmacao": "Nos pacientes que seguem com sintomas hiponatrêmicos GRAVES (por exemplo, convulsões) após a correção inicial, aumentos adicionais do sódio de até 10–12 mmol/l por dia podem ser justificados, dado que o benefício terapêutico de reverter o edema cerebral supera o risco de SDO.",
+      "secao": "Treatment goals — Sodium correction limits and safety",
+      "cit": [
+        [
+          0,
+          10940,
+          305
+        ]
+      ],
+      "cit_sha": "67d19c828731a68a"
+    },
+    {
+      "afirmacao": "Os fatores que emergem DURANTE a internação e predizem supracorreção incluem aumento do débito urinário (após reposição volêmica) e a frequência de administração das infusões de salina hipertônica.",
+      "secao": "Risk factors for under- and overcorrection",
+      "cit": [
+        [
+          0,
+          11582,
+          168
+        ]
+      ],
+      "cit_sha": "105a70f63b871c61"
+    },
+    {
+      "afirmacao": "Os escores SHOR (Severe Hyponatremia Overcorrection Risk) e o mais recente NASK (hypoNatremia, Alcoholism, Severe symptoms, and hypoKalemia) combinam dados basais do paciente para prever quem tem mais chance de supracorrigir, e seu uso pode ser considerado para orientar decisões de monitorização — embora a aplicabilidade seja limitada por discrepâncias na meta de variação do sódio entre os estudos e as diretrizes.",
+      "secao": "Risk factors for under- and overcorrection",
+      "cit": [
+        [
+          0,
+          11751,
+          445
+        ]
+      ],
+      "cit_sha": "16a7ac59d8ca95a4"
+    },
+    {
+      "afirmacao": "Não há atualmente parâmetro bioquímico disponível para avaliar o risco de supracorreção. Níveis BAIXOS de copeptina após 24 h de tratamento correlacionam-se com risco aumentado de supracorreção em 48 h, provavelmente refletindo a excreção de água livre após a queda da vasopressina com a reposição volêmica — mas a utilidade e a viabilidade da copeptina para prever supracorreção na prática clínica não estão estabelecidas.",
+      "secao": "Risk factors for under- and overcorrection",
+      "cit": [
+        [
+          0,
+          12197,
+          460
+        ]
+      ],
+      "cit_sha": "bd71010781525cce"
+    },
+    {
+      "afirmacao": "O risco de SUBcorreção é aumentado em pacientes com peso corporal mais alto (>=100 kg), sódio sérico basal elevado ou SIAD; o momento e o número de bolus também influenciam, e monitorização estreita é necessária nesse grupo.",
+      "secao": "Risk factors for under- and overcorrection",
+      "cit": [
+        [
+          0,
+          12658,
+          263
+        ]
+      ],
+      "cit_sha": "6d5d41300fd748e2"
+    },
+    {
+      "afirmacao": "Tabela 2 — George 2018 (coorte retrospectiva; correção >8 mmol/24 h): fatores de risco para correção rápida demais foram sexo feminino, idade mais jovem, esquizofrenia, depressão, tabagismo atual, menor índice de massa corporal, convulsões, hiponatremia prévia, doença hepática crônica, insuficiência cardíaca congestiva, câncer, menor sódio sérico, menor sódio urinário, menor osmolalidade urinária e menor potássio urinário.",
+      "secao": "Table 2",
+      "cit": [
+        [
+          0,
+          13423,
+          325
+        ]
+      ],
+      "cit_sha": "5f4ce47baee93312"
+    },
+    {
+      "afirmacao": "Tabela 2 — Chifu 2021 (retrospectiva; >10 mmol nas primeiras 24 h ou >8 mmol nos períodos de 24 h subsequentes): sintomas graves e menor sódio sérico. Yang 2022 (análise post-hoc de ECR; >12 mmol nas primeiras 24 h ou >18 mmol nas primeiras 48 h): alcoolismo crônico, sintomas graves de hiponatremia, menor sódio sérico e menor potássio sérico.",
+      "secao": "Table 2",
+      "cit": [
+        [
+          0,
+          13916,
+          345
+        ]
+      ],
+      "cit_sha": "ba65aaec4658d7d3"
+    },
+    {
+      "afirmacao": "A salina hipertônica é um grupo de fluidos com concentrações supra-fisiológicas de cloreto de sódio; o objetivo de sua administração é elevar rapidamente a concentração de sódio sérico para reverter o edema cerebral, e pode ser dada como infusão OU como bolus.",
+      "secao": "Treatment with hypertonic saline (HTS) — Bolus vs continuous infusion",
+      "cit": [
+        [
+          0,
+          12990,
+          256
+        ]
+      ],
+      "cit_sha": "098063240638c40b"
+    },
+    {
+      "afirmacao": "As diretrizes europeia e americana defendem ambas o uso de bolus de salina hipertônica a 3 % para tratar a hiponatremia gravemente sintomática, embora difiram no número e no volume dos bolus recomendados.",
+      "secao": "Treatment with hypertonic saline (HTS) — Bolus vs continuous infusion",
+      "cit": [
+        [
+          0,
+          14579,
+          215
+        ]
+      ],
+      "cit_sha": "c87dcb8e5c01f2ea"
+    },
+    {
+      "afirmacao": "A infusão contínua é recomendada pela diretriz europeia em casos de extremos de peso ou quando há sintomas persistentes apesar de bolus repetidos, enquanto a diretriz americana recomenda correção por infusão contínua quando os sintomas são LEVES.",
+      "secao": "Treatment with hypertonic saline (HTS) — Bolus vs continuous infusion",
+      "cit": [
+        [
+          0,
+          14795,
+          291
+        ]
+      ],
+      "cit_sha": "9a60f318fca874ae"
+    },
+    {
+      "afirmacao": "Comparação retrospectiva de bolus versus infusão de salina a 3 % demonstrou melhora rápida tanto da concentração de sódio quanto da escala de coma de Glasgow com o tratamento em bolus, sem aumento associado do risco de supracorreção.",
+      "secao": "Treatment with hypertonic saline (HTS) — Bolus vs continuous infusion",
+      "cit": [
+        [
+          0,
+          15087,
+          233
+        ]
+      ],
+      "cit_sha": "b010557d5f742fd7"
+    },
+    {
+      "afirmacao": "O ensaio SALSA, recentemente publicado, comparou bolus de salina hipertônica ajustados ao peso (2 ml/kg para sintomas moderadamente graves e 4 ml/kg para sintomas graves) com infusão contínua ajustada ao peso e também demonstrou melhor eficiência e segurança da terapia em BOLUS.",
+      "secao": "Treatment with hypertonic saline (HTS) — Bolus vs continuous infusion",
+      "cit": [
+        [
+          0,
+          15321,
+          289
+        ]
+      ],
+      "cit_sha": "fed1f6bee927b274"
+    },
+    {
+      "afirmacao": "Metanálise recente encontrou risco SEMELHANTE de supracorreção, SDO e mortalidade entre regimes de infusão e de bolus; o tempo de internação foi marginalmente maior com os regimes em bolus, o que pode refletir diferenças na etiologia subjacente e não a modalidade terapêutica em si.",
+      "secao": "Treatment with hypertonic saline (HTS) — Bolus vs continuous infusion",
+      "cit": [
+        [
+          0,
+          15611,
+          317
+        ]
+      ],
+      "cit_sha": "cace2a3419e0fca6"
+    },
+    {
+      "afirmacao": "Tanto o NÚMERO quanto o VOLUME dos bolus administrados são determinantes-chave do risco de supracorreção, o que reforça a necessidade de abordagem cautelosa, individualizada e com monitorização cuidadosa.",
+      "secao": "Treatment with hypertonic saline (HTS) — Bolus vs continuous infusion",
+      "cit": [
+        [
+          0,
+          15929,
+          212
+        ]
+      ],
+      "cit_sha": "ae4cca322fa2d79a"
+    },
+    {
+      "afirmacao": "Tabela 3 — Garrahy 2019 (observacional): aumento mediano do sódio em 6 h de 6 mmol/l com bolus intermitente rápido (RIB) versus 3 mmol/l com infusão contínua lenta (SCI), p <0.0001; necessidade de terapia de re-abaixamento 22.7 % versus 0.0 % (p 0.008). Baek 2021 (ECR): tempo médio até aumento de 5 mmol/l de 8.2 h com RIB versus 8.6 h com SCI (p 0.21); re-abaixamento 41.4 % versus 57.1 % (p 0.04).",
+      "secao": "Table 3",
+      "cit": [
+        [
+          0,
+          19849,
+          552
+        ]
+      ],
+      "cit_sha": "81d5a8c513ec2df0"
+    },
+    {
+      "afirmacao": "Apesar das diretrizes, a prática clínica real quanto ao volume, ao modo de administração (bolus, infusão contínua ou ambos) e a velocidade de administração da salina hipertônica é muito heterogênea, refletindo as incertezas por evidência limitada e relatos contraditórios; além disso, a disponibilidade de salina hipertônica a 3 % pode ser um problema em alguns lugares, como no Reino Unido, onde a concentração de 2.7 % é a mais usada por questão de disponibilidade.",
+      "secao": "Treatment with hypertonic saline (HTS) — Bolus vs continuous infusion",
+      "cit": [
+        [
+          0,
+          16221,
+          573
+        ]
+      ],
+      "cit_sha": "280cfbb35d69964d"
+    },
+    {
+      "afirmacao": "Múltiplas fórmulas para determinar o volume ideal do bolus de salina hipertônica foram sugeridas com base em sódio sérico e água corporal total, mas sua relevância clínica é limitada: consideram apenas o efeito da salina hipertônica (sem contabilizar perdas de água e eletrólitos) e incluem parâmetros que não podem ser medidos rapidamente na prática (por exemplo, a água corporal total).",
+      "secao": "Bolus volumes and number of boluses",
+      "cit": [
+        [
+          0,
+          16831,
+          429
+        ]
+      ],
+      "cit_sha": "7371255be275e0b7"
+    },
+    {
+      "afirmacao": "Na presença de sintomas GRAVES ambas as diretrizes recomendam correção com bolus de salina hipertônica, porém a diretriz europeia recomenda DOIS bolus consecutivos de 150 ml SEM aguardar o resultado intermediário do sódio entre eles, enquanto a americana recomenda ATÉ 3 bolus de 100 ml cada, administrados em 10 min.",
+      "secao": "Bolus volumes and number of boluses",
+      "cit": [
+        [
+          0,
+          17625,
+          327
+        ]
+      ],
+      "cit_sha": "521e2f25c5d41242"
+    },
+    {
+      "afirmacao": "Quando os sintomas são MODERADOS, com menor risco de herniação cerebral, a diretriz europeia recomenda apenas UM bolus de salina hipertônica (150 ml em 20 min), enquanto a americana recomenda infusão contínua de salina hipertônica de 0.5–2 ml/kg/hora.",
+      "secao": "Bolus volumes and number of boluses",
+      "cit": [
+        [
+          0,
+          17953,
+          262
+        ]
+      ],
+      "cit_sha": "05fe400de29f4996"
+    },
+    {
+      "afirmacao": "A abordagem baseada no peso (2 ml/kg) para a dose do bolus é recomendada pela diretriz europeia nos extremos de composição corporal ou em caso de sintomas persistentes apesar de aumento inicial do sódio sérico de 5 mmol/l.",
+      "secao": "Bolus volumes and number of boluses",
+      "cit": [
+        [
+          0,
+          18216,
+          219
+        ]
+      ],
+      "cit_sha": "f4a6ad30ff667109"
+    },
+    {
+      "afirmacao": "A administração de MÚLTIPLOS bolus associa-se a taxas mais altas de supracorreção. Até 30 % dos pacientes atingem correção de 5 mmol/l após um ÚNICO bolus de 150 ml, o que sugere que dar outro bolus nesses casos é não só desnecessário como aumenta o risco de supracorreção; por isso, a recomendação europeia de partir direto para um SEGUNDO bolus sem checar a resposta do sódio ao primeiro deveria ser RECONSIDERADA.",
+      "secao": "Bolus volumes and number of boluses",
+      "cit": [
+        [
+          0,
+          18436,
+          483
+        ]
+      ],
+      "cit_sha": "6561841653fa91e5"
+    },
+    {
+      "afirmacao": "Embora o peso do paciente influencie significativamente a taxa de correção dependente do volume, o ensaio SALSA também relatou risco AUMENTADO de supracorreção com bolus repetidos ajustados ao peso; esses achados apoiam uma abordagem GUIADA POR SINTOMAS para repetir os bolus de salina hipertônica, em vez de se apoiar apenas na resposta bioquímica imediata.",
+      "secao": "Bolus volumes and number of boluses",
+      "cit": [
+        [
+          0,
+          18920,
+          385
+        ]
+      ],
+      "cit_sha": "ba09fea72db59b9a"
+    },
+    {
+      "afirmacao": "A taxa de correção do sódio depende não apenas do número, mas também do VOLUME dos bolus: volumes maiores (250 ml) conseguem correção rápida de 5 mmol/l, porém exigem com mais frequência terapia de re-abaixamento com glicose a 5 % em comparação com volumes menores (100 ml).",
+      "secao": "Bolus volumes and number of boluses",
+      "cit": [
+        [
+          0,
+          19312,
+          287
+        ]
+      ],
+      "cit_sha": "db0fc4d283d0909c"
+    },
+    {
+      "afirmacao": "Há evidência crescente das vantagens de uma estratégia de bolus baseada no PESO sobre volumes fixos de salina hipertônica (o modelo de tamanho único), especialmente em casos de peso corporal muito baixo ou muito alto.",
+      "secao": "Bolus volumes and number of boluses",
+      "cit": [
+        [
+          0,
+          19600,
+          207
+        ]
+      ],
+      "cit_sha": "06c21c86f2f34483"
+    },
+    {
+      "afirmacao": "A etiologia da hiponatremia também contribui para o risco de supra e de subcorreção, como se observa com a desidratação e com a SIAD, respectivamente.",
+      "secao": "Bolus volumes and number of boluses",
+      "cit": [
+        [
+          0,
+          20553,
+          145
+        ]
+      ],
+      "cit_sha": "4276242c5e9104cb"
+    },
+    {
+      "afirmacao": "No conjunto, uma estratégia de bolus baseada no peso e uma decisão guiada por sintomas sobre repetir a administração do bolus parecem ser abordagem eficaz e equilibrada para o manejo agudo da hiponatremia sintomática.",
+      "secao": "Bolus volumes and number of boluses",
+      "cit": [
+        [
+          0,
+          20699,
+          206
+        ]
+      ],
+      "cit_sha": "449a0415ef61fea9"
+    },
+    {
+      "afirmacao": "Em caso de sintomas graves refratários a terapia apesar de correção de 5 mmol/l, a diretriz europeia recomenda infusão CONTÍNUA de salina hipertônica visando aumento de 1 mmol/l/hora até os sintomas melhorarem, ou até aumento total de 10 mmol/l, ou até o sódio sérico atingir 130 mmol/l (o que ocorrer primeiro); a diretriz americana é menos estrita e permite correções de 10–12 mmol/24 h em alguns casos.",
+      "secao": "Bolus volumes and number of boluses",
+      "cit": [
+        [
+          0,
+          20906,
+          495
+        ]
+      ],
+      "cit_sha": "b6836f59f2e42094"
+    },
+    {
+      "afirmacao": "Com base na evidência disponível, os autores recomendam PROCURAR CAUSAS ADICIONAIS quando os sintomas persistem apesar de correção do sódio de 10 mmol/l ou após elevar o sódio até 130 mmol/l.",
+      "secao": "Bolus volumes and number of boluses",
+      "cit": [
+        [
+          0,
+          21402,
+          190
+        ]
+      ],
+      "cit_sha": "58765e51786698c6"
+    },
+    {
+      "afirmacao": "RECOMENDAÇÃO PRÁTICA DOS AUTORES: dar inicialmente um bolus de 150 ml de salina a 3 % em 20 min, seguido de avaliações regulares do sódio sérico e dos sintomas ANTES de repetir a administração de bolus. Volume ajustado ao peso, menor, de 100 ml, deve ser considerado nos pacientes de baixo peso corporal (<60 kg). Um SEGUNDO bolus deve ser administrado em caso de sintomas persistentes ou em piora E aumento insuficiente do sódio sérico (<5 mmol/l) nas primeiras 4 h após o bolus inicial.",
+      "secao": "Recommendations",
+      "cit": [
+        [
+          0,
+          21609,
+          452
+        ]
+      ],
+      "cit_sha": "ba24a1aa959512a7"
+    },
+    {
+      "afirmacao": "As dosagens laboratoriais de sódio sérico/plasmático usam eletrodo íon-seletivo INDIRETO, no qual o soro é diluído; o volume de diluente é proporcional ao volume sanguíneo total, de modo que a razão diluente/soro sofre influência das concentrações de lipídios e proteínas do sangue. Já os gasômetros usam eletrodo íon-específico DIRETO, sem diluição — além de resultado mais rápido, esse método é mais útil para diagnosticar pseudo-hiponatremia.",
+      "secao": "Monitoring — Biochemical",
+      "cit": [
+        [
+          0,
+          22189,
+          568
+        ]
+      ],
+      "cit_sha": "7b2c1cc86f2015dc"
+    },
+    {
+      "afirmacao": "Pequenas diferenças médias entre gasômetro e laboratório podem mascarar diferenças MAIORES, de até 10 mmol/l em alguns pacientes (particularmente na pseudo-hiponatremia por hiperlipidemia); e mesmo as pequenas diferenças médias de 1–3 mmol/l são clinicamente significativas ao avaliar se a correção está dentro da faixa-alvo na hiponatremia.",
+      "secao": "Monitoring — Biochemical",
+      "cit": [
+        [
+          0,
+          22942,
+          327
+        ]
+      ],
+      "cit_sha": "2227dc2c994af249"
+    },
+    {
+      "afirmacao": "Os autores recomendam que durante o tratamento da hiponatremia se use SEMPRE O MESMO método de análise, e que concentrações de sódio obtidas por métodos diferentes NÃO sejam comparadas para avaliar a variação; gasômetros devem ser usados quando disponíveis por fornecerem resultados mais rápidos, permitindo ajuste rápido do tratamento.",
+      "secao": "Monitoring — Biochemical",
+      "cit": [
+        [
+          0,
+          23270,
+          360
+        ]
+      ],
+      "cit_sha": "748c78926d81cf2e"
+    },
+    {
+      "afirmacao": "Quando a hiponatremia foi diagnosticada por sódio laboratorial, é necessária uma medida adicional de sódio por gasômetro ANTES de iniciar o tratamento, para guiar a monitorização e o manejo subsequentes.",
+      "secao": "Monitoring — Biochemical",
+      "cit": [
+        [
+          0,
+          23846,
+          240
+        ]
+      ],
+      "cit_sha": "504d5ec68ae8534e"
+    },
+    {
+      "afirmacao": "Débito urinário acima do normal é fator de risco bem estabelecido para supracorreção e deve ser medido pelo menos de HORA EM HORA; pacientes que se apresentam desidratados têm risco especialmente maior de supracorreção pelo início rápido da aquarese.",
+      "secao": "Monitoring — Clinical",
+      "cit": [
+        [
+          0,
+          24175,
+          289
+        ]
+      ],
+      "cit_sha": "5dd55f97436b170f"
+    },
+    {
+      "afirmacao": "Diurese aumentada (>=2 ml/kg/hora) deve deflagrar reavaliação do paciente, consideração de gasometria de repetição mais precoce e reposição volêmica, para evitar supracorreção.",
+      "secao": "Monitoring — Clinical",
+      "cit": [
+        [
+          0,
+          24465,
+          186
+        ]
+      ],
+      "cit_sha": "a99af249f5f703cd"
+    },
+    {
+      "afirmacao": "Todos os pacientes devem ser monitorados regularmente quanto a sintomas de hiponatremia (náusea, confusão, cefaleia, vômitos, convulsões, queda da escala de coma de Glasgow, coma e sofrimento cardiorrespiratório) e também quanto a sintomas de SDO, que inicialmente incluem encefalopatia e convulsões e depois viram amplo espectro neurológico, mais comumente disfunção motora. Como os sintomas de hiponatremia e de SDO se SOBREPÕEM, qualquer deterioração exige avaliação e investigação cuidadosas para confirmar a causa.",
+      "secao": "Monitoring — Clinical",
+      "cit": [
+        [
+          0,
+          24652,
+          682
+        ]
+      ],
+      "cit_sha": "9acc6e661e0fb02d"
+    },
+    {
+      "afirmacao": "Há evidência de que a permanência em unidade de terapia intensiva resulta em risco estatisticamente MENOR de supracorreção do sódio.",
+      "secao": "Monitoring — Clinical",
+      "cit": [
+        [
+          0,
+          25335,
+          150
+        ]
+      ],
+      "cit_sha": "ee2b70a91f4c34c0"
+    },
+    {
+      "afirmacao": "Os autores recomendam que pacientes com hiponatremia grave sejam submetidos a avaliações HORÁRIAS de sintomas, escala de coma de Glasgow e débito urinário, com gasometrias a cada 4 horas; na prática, isso significa alocá-los em ambiente de monitorização estreita, como unidade de alta dependência, terapia intensiva ou área de alta vigilância do pronto-socorro.",
+      "secao": "Monitoring — Clinical",
+      "cit": [
+        [
+          0,
+          25486,
+          409
+        ]
+      ],
+      "cit_sha": "8863d7e28ade4eaa"
+    },
+    {
+      "afirmacao": "O manejo da supracorreção deve ser conduzido por médicos experientes; tanto a infusão de glicose a 5 % quanto a desmopressina são usadas para TRATAR e para PREVENIR a supracorreção.",
+      "secao": "Management of overcorrection",
+      "cit": [
+        [
+          0,
+          25925,
+          174
+        ]
+      ],
+      "cit_sha": "d280bd08d32902d2"
+    },
+    {
+      "afirmacao": "A diretriz europeia recomenda re-abaixar o sódio com 10 ml/kg de água livre de eletrólitos (glicose a 5 %) em uma hora e/ou 2 microgramas de desmopressina IV até a cada 8 h, nos casos em que a correção do sódio ultrapassa 10 mmol/l nas primeiras 24 h ou 8 mmol/l/24 h depois disso.",
+      "secao": "Management of overcorrection",
+      "cit": [
+        [
+          0,
+          26297,
+          211
+        ]
+      ],
+      "cit_sha": "f3b1814b3d67c6ca"
+    },
+    {
+      "afirmacao": "A diretriz americana NÃO recomenda tratar a supracorreção nos casos de hiponatremia verdadeiramente aguda (<48 h), por exemplo intoxicação hídrica autoinduzida ou hiponatremia induzida por exercício; em todas as demais circunstâncias recomenda parar a salina assim que a meta de aumento do sódio for atingida.",
+      "secao": "Management of overcorrection",
+      "cit": [
+        [
+          0,
+          26509,
+          313
+        ]
+      ],
+      "cit_sha": "ea25271c3c8aa209"
+    },
+    {
+      "afirmacao": "A diretriz americana recomenda ainda iniciar PREVENTIVAMENTE infusão de dextrose a 5 %, água por via oral ou 2–4 microgramas de desmopressina para impedir aumento adicional da concentração de sódio.",
+      "secao": "Management of overcorrection",
+      "cit": [
+        [
+          0,
+          27034,
+          168
+        ]
+      ],
+      "cit_sha": "4647a64e7e7642a3"
+    },
+    {
+      "afirmacao": "Se a supracorreção ocorrer (definida por aumento >8 mmol/l ou >12 mmol/l, conforme o risco de SDO), a diretriz americana recomenda 2–4 microgramas de desmopressina e 3 ml/kg de dextrose a 5 % em uma hora.",
+      "secao": "Management of overcorrection",
+      "cit": [
+        [
+          0,
+          27203,
+          181
+        ]
+      ],
+      "cit_sha": "63c3766b127ab88e"
+    },
+    {
+      "afirmacao": "Três abordagens de uso da desmopressina foram descritas: PROATIVA (administrada junto com o início do tratamento da hiponatremia, visando limitar a diurese e prevenir a supracorreção); REATIVA (administrada quando o sódio está subindo rapidamente e se antecipa que ultrapassará o limite desejado, ou quando há aumento do débito urinário); e de RESGATE (administrada depois que a supracorreção já ocorreu).",
+      "secao": "Management of overcorrection — Desmopressin",
+      "cit": [
+        [
+          0,
+          27398,
+          506
+        ]
+      ],
+      "cit_sha": "4a98fcd4aba391cb"
+    },
+    {
+      "afirmacao": "Dados retrospectivos demonstram risco significativamente MENOR de supracorreção com desmopressina proativa em comparação com as outras abordagens (reativa, resgate e nenhuma desmopressina), embora outros estudos não tenham encontrado mudança significativa no risco de supracorreção.",
+      "secao": "Management of overcorrection — Desmopressin",
+      "cit": [
+        [
+          0,
+          27905,
+          273
+        ]
+      ],
+      "cit_sha": "e4f745d66e53d9f0"
+    },
+    {
+      "afirmacao": "A administração REATIVA de desmopressina reduz a velocidade de aumento da concentração de sódio e, portanto, mantém a variação dentro dos limites recomendados quando a supracorreção parece provável.",
+      "secao": "Management of overcorrection — Desmopressin",
+      "cit": [
+        [
+          0,
+          28179,
+          242
+        ]
+      ],
+      "cit_sha": "bf8b9ba90c791c48"
+    },
+    {
+      "afirmacao": "Um ensaio randomizado comparando as abordagens reativa e proativa encontrou taxas SEMELHANTES de supracorreção e tempo semelhante para atingir a elevação-alvo de 5 mmol/l entre os dois grupos.",
+      "secao": "Management of overcorrection — Desmopressin",
+      "cit": [
+        [
+          0,
+          28422,
+          175
+        ]
+      ],
+      "cit_sha": "8b6ba0f43bce5736"
+    },
+    {
+      "afirmacao": "Dados retrospectivos mostram que o uso PROATIVO de desmopressina também aumenta a proporção de pacientes que atingem o aumento-alvo de sódio em 24 h — porém o uso proativo NÃO é atualmente apoiado por nenhuma das duas diretrizes.",
+      "secao": "Management of overcorrection — Desmopressin",
+      "cit": [
+        [
+          0,
+          28598,
+          302
+        ]
+      ],
+      "cit_sha": "3b03e2d07fe83998"
+    },
+    {
+      "afirmacao": "Em pacientes cujo sódio já foi supracorrigido, a desmopressina combinada com dextrose a 5 % consegue RE-ABAIXAR o sódio e pode reverter sintomas sugestivos de SDO; já com desmopressina isolada a variação do sódio pode ficar estática, representando queda da taxa de correção.",
+      "secao": "Management of overcorrection — Desmopressin",
+      "cit": [
+        [
+          0,
+          28901,
+          368
+        ]
+      ],
+      "cit_sha": "ae4d7197cdc017a1"
+    },
+    {
+      "afirmacao": "Embora a estratégia de RESGATE consiga re-abaixar o sódio, a supracorreção já ocorreu; por isso as estratégias proativa e reativa provavelmente são as mais apropriadas em pacientes com risco elevado de SDO. Contudo, pelas possíveis complicações e pela ausência de diretrizes para o uso proativo, essa abordagem deve por ora ser usada apenas em centros experientes.",
+      "secao": "Management of overcorrection — Desmopressin",
+      "cit": [
+        [
+          0,
+          29270,
+          412
+        ]
+      ],
+      "cit_sha": "22c7212228b5c986"
+    },
+    {
+      "afirmacao": "As infusões de glicose são facilmente disponíveis e frequentemente usadas em combinação com a desmopressina, num duplo mecanismo (a solução de glicose baixa a concentração de sódio e a desmopressina reduz a diurese aquosa). A glicose também pode ser usada em monoterapia, seja para re-abaixar o sódio, seja para MANTER o nível atual pareando a infusão de glicose a 5 % com o débito urinário; porém a evidência comparativa é limitada e, sem desmopressina concomitante, podem ser necessários GRANDES volumes de solução de glicose.",
+      "secao": "Management of overcorrection — Glucose 5 %",
+      "cit": [
+        [
+          0,
+          29695,
+          610
+        ]
+      ],
+      "cit_sha": "62f660bd6bc7d77d"
+    },
+    {
+      "afirmacao": "Não há comparações diretas entre desmopressina e glicose a 5 %. Um pequeno ECR não mostrou diferença no risco de supracorreção entre as abordagens proativa e reativa da desmopressina, de modo que os autores recomendam monitorização cuidadosa e decidir o manejo pela velocidade de subida do sódio e pelo débito urinário — idealmente PREVENINDO a supracorreção em vez de agir apenas depois que ela ocorreu.",
+      "secao": "Management of overcorrection — Recommendations",
+      "cit": [
+        [
+          0,
+          30322,
+          520
+        ]
+      ],
+      "cit_sha": "71b27f4fb5c5c8f6"
+    },
+    {
+      "afirmacao": "Se medidas reativas forem necessárias para prevenir a supracorreção, deve-se buscar aconselhamento especializado para definir se usar desmopressina, infusão de glicose ou a combinação das duas; a desmopressina parece particularmente útil para reduzir a diurese de grande volume e, com isso, diminuir a quantidade necessária de solução de glicose.",
+      "secao": "Management of overcorrection — Recommendations",
+      "cit": [
+        [
+          0,
+          30843,
+          326
+        ]
+      ],
+      "cit_sha": "2b43387d4e1a2038"
+    },
+    {
+      "afirmacao": "O manejo ideal da hiponatremia foi recentemente contestado e as diretrizes já têm mais de uma década, estando atualmente em revisão.",
+      "secao": "Summary",
+      "cit": [
+        [
+          0,
+          31178,
+          156
+        ]
+      ],
+      "cit_sha": "a8f2b4b6fb9d06c4"
+    },
+    {
+      "afirmacao": "Na avaliação inicial da hiponatremia é importante determinar o intervalo de tempo provável em que ela se desenvolveu, já que a hiponatremia CRÔNICA pode ser manejada de forma mais conservadora; o aumento rápido da concentração de sódio de 5 mmol/l permanece o pilar do tratamento da hiponatremia aguda sintomática.",
+      "secao": "Summary",
+      "cit": [
+        [
+          0,
+          31427,
+          308
+        ]
+      ],
+      "cit_sha": "0fa5f119c8e3ce03"
+    },
+    {
+      "afirmacao": "Por isso os autores recomendam manter os aumentos de sódio dentro de 8–10 mmol/l/24 h. ⚠️ A frase original abre duas exceções que apontam em direções OPOSTAS: sintomas graves persistentes de hiponatremia podem justificar ultrapassar esse teto; já o paciente de ALTO RISCO de desmielinização osmótica NÃO está isento dele — para esse paciente o teto é MAIS BAIXO (ver o fato sobre alto risco).",
+      "secao": "Summary",
+      "cit": [
+        [
+          0,
+          31736,
+          333
+        ]
+      ],
+      "cit_sha": "3ded3f162bbf0087"
+    },
+    {
+      "afirmacao": "Há evidência limitada sobre como prevenir ou tratar a supracorreção, exceto por um ECR recente que mostrou desfechos semelhantes entre pacientes manejados com abordagem proativa ou reativa de desmopressina; por ora, aconselhamento especializado deve ser buscado ao manejar correção rápida demais.",
+      "secao": "Summary",
+      "cit": [
+        [
+          0,
+          32291,
+          451
+        ]
+      ],
+      "cit_sha": "d9a88ca7395f11c7"
+    },
+    {
+      "afirmacao": "Ponto de prática: um aumento rápido porém LIMITADO do sódio sérico na hiponatremia sintomática é recomendado para reverter o edema cerebral; a correção deve visar aumento de 5 mmol/l nas primeiras 24 h pela administração de UM bolus de salina hipertônica (150 ml de NaCl a 3 % em 20 min; para peso corporal baixo, considerar volume ajustado ao peso de 100 ml).",
+      "secao": "Practice Points",
+      "cit": [
+        [
+          0,
+          33509,
+          362
+        ]
+      ],
+      "cit_sha": "22e3d689bfaa2de0"
+    },
+    {
+      "afirmacao": "Ponto de prática: os pacientes devem ser monitorados de perto em unidade de cuidados intermediários ou terapia intensiva após a salina hipertônica, incluindo monitorização regular da concentração de sódio por gasometria a cada 4 h e débito urinário e escala de coma de Glasgow HORÁRIOS. Um segundo bolus de salina hipertônica deve ser administrado em caso de sintomas persistentes ou em piora E aumento insuficiente do sódio sérico (<5 mmol/l).",
+      "secao": "Practice Points",
+      "cit": [
+        [
+          0,
+          33874,
+          418
+        ]
+      ],
+      "cit_sha": "e3f91761a77aff9f"
+    },
+    {
+      "afirmacao": "Ponto de prática: a correção do sódio deve ser limitada a 8–10 mmol/l/24 h, considerando limites menores de 6–8 mmol/l/24 h em pacientes de alto risco de SDO; e o manejo da supracorreção com dextrose a 5 % com ou sem desmopressina exige aconselhamento especializado.",
+      "secao": "Practice Points",
+      "cit": [
+        [
+          0,
+          34295,
+          231
+        ]
+      ],
+      "cit_sha": "e59b92eda67a2957"
+    },
+    {
+      "afirmacao": "Agenda de pesquisa: comparar em ensaios randomizados volumes FIXOS versus AJUSTADOS AO PESO de bolus de salina hipertônica; avaliar as abordagens proativa, reativa e de resgate com desmopressina e dextrose a 5 % para reduzir o risco de supracorreção e SDO; estabelecer escores preditivos e parâmetros confiáveis de risco de correção rápida demais e de SDO; e definir por ECR o nível de aumento do sódio que confere risco de SDO conforme as características individuais.",
+      "secao": "Research Agenda",
+      "cit": [
+        [
+          0,
+          32984,
+          506
+        ]
+      ],
+      "cit_sha": "936cdb67f8433020"
+    }
+  ],
+  "auditoria": "Auditoria adversarial em 07/08/2026: 91/91 fatos auditados. 3 não-OK corrigidos, dois deles BLOQUEANDO publicação — a linha de 24 h da Tabela 1 lida com deslocamento de coluna (teto virou alvo, e a meta americana virou limite europeu) e a frase das duas exceções, que atomizada isentava do teto justamente o paciente de alto risco de SDO.",
+  "conflito_direcao": "nucleo_prevalece",
+  "nucleo_citado": [
+    "TOTAL limitado a 8–10 mmol/L",
+    "salina 3% em BÓLUS de 150 mL em 20 min",
+    "limite 6–8 mmol/L/24 h (meta 4–6 mmol/L/dia)"
+  ]
 }

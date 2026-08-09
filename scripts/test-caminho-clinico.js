@@ -635,6 +635,23 @@ const COMPLETUDE = [
   ['prolactina de 80 com macroprolactina: e prolactinoma?', 'Neuroendocrinologia', 'prolactinoma', 'prolactinoma', 90, 80], // medido: 100%, 187
   ['devo repor levotiroxina no doente grave com T3 baixo?', 'Tireoide', 'eutireoidiano', 'eutireoidiano', 90, 2],
   ['tempestade tireoidiana com Burch-Wartofsky 55', 'Tireoide', 'crise tireotoxica — diagnostico', 'burch', 90, 10],
+  // ⚠️ ESTE É O CASO EM QUE A EVICÇÃO FAZIA MAL, e não só omitia (09/08/2026).
+  // Endocrinopatias hoje é hiponatremia inteira: 5 blocos, 170k contra teto de
+  // 120k. O bloco da hiponatremia AGUDA SINTOMÁTICA chegava a 1% na pergunta do
+  // paciente convulsionando — e no lugar dele chegavam o algoritmo, a
+  // fisiopatologia e o bloco da hiponatremia CRÔNICA, cuja mensagem é corrigir
+  // DEVAGAR por medo de desmielinização. O médico com um doente convulsionando
+  // recebia a recomendação oposta à que precisava: o bloco certo traz bolus de
+  // salina hipertônica (43 menções de "bolus" na entrega de hoje).
+  //
+  // Conserto no DADO: o tema tinha 43 chars — "hiponatremia aguda sintomática —
+  // tratamento" — e perdia para vizinhos mais descritivos. Enriquecido só com o
+  // que o texto ENTREGA e DOMINA na área (medido bloco a bloco: `bolus` 40 vs
+  // ≤3, `salina hipertonica` 19 vs ≤4, `desmopressina` 22 vs ≤4, `edema
+  // cerebral` 9 vs ≤3, `150 ml` 6 vs ≤1, `glasgow` 4 vs 0).
+  // Conferido nos dois sentidos: 1 pergunta subiu de 1% para 100% e as outras 7
+  // do assunto seguem em 100% — enriquecer o tema certo não expulsou vizinho.
+  ['hiponatremia com convulsao: quanto de salina hipertonica?', 'Endocrinopatias', 'aguda sintomatica', 'bolus', 90, 20],
 ];
 
 for (const [pergunta, areaEsperada, ancora, palavra, pctMin, ocorrMin] of COMPLETUDE) {
