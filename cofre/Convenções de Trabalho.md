@@ -5,6 +5,40 @@ atualizado: 2026-08-09
 
 # Convenções de Trabalho
 
+## ➖ O PDF COME O SINAL DE MENOS, E O CORTE TROCA DE LADO (2026-08-09)
+
+O defeito de maior consequência de prescrição que esta base já produziu, e ele
+cabia em um caractere: um fato publicava **`escore T ≤ 2,5`**, sem o menos.
+Recuperado sozinho, **diagnostica osteoporose em quem tem densidade NORMAL** e
+manda tratar com antirreabsortivo. O hífen do `−2,5` se perdeu na conversão do
+PDF, junto com metade da pontuação da tabela.
+
+⚠️ **E o extrator SABIA do risco.** Ele declarou, em `extracao`, ter deixado de
+publicar **dois outros** escores T do capítulo 8 exatamente porque tinham perdido
+o sinal. Cuidou de dois; o terceiro passou. **Cuidado manual não escala** — é
+por isso que virou peneira (`scripts/confere-sinal-de-corte.js`, no `ci-validate`).
+
+### A regra que decide o que vira CI e o que vira técnica de auditor
+
+No MESMO dia eu tinha uma segunda varredura candidata — a da "cabeça perdida"
+(citação que começa no meio da frase e deixa o qualificador para trás). Medi as
+duas antes de decidir, sobre as 6.625 citações da base:
+
+| varredura | falso positivo | destino |
+|---|---|---|
+| sinal de escore T/Z | ~zero (corte com `≤` é negativo **por definição**) | **CI** |
+| cabeça perdida | ~85%; o gatilho de limiar acertou **0 de 3** | **brief do auditor** |
+
+**Peneira só vira guarda quando o falso positivo é baixo o bastante para que
+reprovar signifique alguma coisa.** Alarme ruidoso vira paisagem, e aí não
+protege mais nada — a mesma razão pela qual excluí `nucleotídeo` e o núcleo
+paraventricular da peneira do selo.
+
+⚠️ **E não generalize esta guarda para "todo número negativo".** Ela é estreita
+de propósito: só sabe de escore T e Z, onde a direção é conhecida (OMS:
+osteoporose é T ≤ −2,5). Verificador que tenta adivinhar o sinal de qualquer
+número volta a ser ruído.
+
 ## 🚦 APRESENTAÇÃO ROTEIA, CRISE NÃO — e a linha se traça LENDO A ENTREGA (2026-08-09)
 
 Faltava um critério para o caso em que a área está certa e o artigo é

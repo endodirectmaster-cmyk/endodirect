@@ -440,6 +440,24 @@ try {
   fail('há fato que restitui o núcleo com selo velho — releia antes de selar:\n' + out);
 }
 
+// ⚠️ O PDF COME O SINAL DE MENOS, E O CORTE TROCA DE LADO. Achado pela auditoria
+//     adversarial do Manual Brasileiro de Osteoporose (09/08/2026): um fato
+//     publicava `escore T ≤ 2,5`, sem o menos — o que diagnostica osteoporose em
+//     densidade NORMAL e manda tratar com antirreabsortivo. O extrator até
+//     declarara ter retido DOIS outros escores T pelo mesmo motivo; cuidou de
+//     dois e o terceiro passou. Cuidado manual não escala.
+//     Esta guarda é estreita de propósito — só escore T e escore Z, onde a
+//     direção é conhecida (OMS: osteoporose é T ≤ −2,5). Por isso ela pode ser
+//     CI, enquanto a varredura de "cabeça perdida" ficou só no brief do auditor:
+//     medida no mesmo dia, aquela dava ~85% de falso positivo.
+try {
+  execFileSync(process.execPath, [path.join('scripts', 'confere-sinal-de-corte.js')], { stdio: 'pipe' });
+  ok('sinal dos cortes: nenhum escore T/Z publicado sem o menos');
+} catch (e) {
+  const out = (e.stdout ? e.stdout.toString() : '') + (e.stderr ? e.stderr.toString() : '');
+  fail('corte de escore T/Z sem o sinal de menos — o PDF comeu o hífen:\n' + out);
+}
+
 // ⚠️ O CAMPO `auditoria` SIGNIFICA UMA COISA SÓ. Ele chegou a ter três formatos
 //     convivendo — string do legado, objeto com `achado` (auditoria de verdade)
 //     e objeto que o extrator usava como bloco de notas. Medido em 08/08/2026:
