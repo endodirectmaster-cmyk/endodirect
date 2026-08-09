@@ -83,6 +83,49 @@ Não entrou ainda porque reprovaria agora, com dois extratos cujos agentes ainda
 não relataram — e consertar extrato de agente no ar é o acidente que a convenção
 do `git add -A` já descreve. Entra quando a leva fechar.
 
+## 🕵️ O ARTIGO DE CUSHING RESPONDE "QUAL EXAME", NÃO "QUANDO SUSPEITAR" (2026-08-09)
+
+Lacuna de **acervo**, não de roteamento — anotada para a fila do professor.
+
+A metanálise de acurácia que entrou hoje cobre o rastreio bioquímico com
+sensibilidade e especificidade por teste. Ela **não descreve o fenótipo**.
+Contado na base montada: `estrias violáceas`, `giba`, `face em lua cheia` e
+`fragilidade capilar` têm **ZERO** ocorrência em qualquer bloco; `cushingoide`
+tem 5 (e nenhuma no bloco de Cushing).
+
+Consequência medida: *"fácies cushingoide e estrias violáceas"* chega à área
+certa (pus `cushingoide` → Adrenal, 5×1) e **nenhum bloco responde**.
+
+⚠️ **Não roteei `estrias violáceas` nem as outras**, pela mesma regra do
+`xantelasma` em Lípides: rotear para conteúdo que não existe é prometer o que não
+se entrega. O conserto é um artigo sobre o quadro clínico de Cushing.
+
+⚠️ E o extrator mediu duas chaves que eu **recusei por redundância**:
+`cortisol salivar` (21×0) e `cortisol livre urinario` (27×0). Elas são
+exclusivas, mas `cushing`, `cortisol` e `dexametasona` já levam a Adrenal, e com
+o tema novo o bloco vence sozinho nas três perguntas que testei. **Chave
+redundante é peso escondido** — entra sem precisar e reaparece desequilibrando
+outro empate depois.
+
+## 🔤 RAIZ DE 5 LETRAS CASA NO MEIO DE OUTRA PALAVRA (2026-08-09)
+
+Medido, sem conserto, porque o remédio óbvio quebra o que funciona.
+
+O `deepFor` corta 2 letras de radical e casa por **substring** quando a raiz tem
+mais de 4 caracteres — só as de até 4 ganham fronteira de palavra. Resultado:
+`estrias` vira a raiz `estri` e casa dentro de **"restringi-lo"**. Contado nos
+temas da base: das 7 ocorrências de `estri`, **7 são no meio de palavra e zero
+começam palavra**.
+
+Foi o que fez o bloco do hiperaldosteronismo vencer *"fácies cushingoide e
+estrias violáceas"* por `estri*` (+3 pelo tema).
+
+⚠️ **Subir a fronteira para 5 ou 6 letras NÃO é o conserto**: `calci` casa 11
+vezes no meio de palavra e ali é legítimo (`hipocalcemia`, `nefrocalcinose`), que
+é justamente a flexão que a regra existe para permitir. Um conserto de verdade
+precisa distinguir composição de colisão — provavelmente por lista de radicais
+conhecidos, e com medição contra as 277 linhas de roteamento.
+
 ## 🔀 A PONTUAÇÃO NÃO ENXERGA DIREÇÃO, E EM ENDOCRINOLOGIA A DIREÇÃO É O DIAGNÓSTICO (2026-08-09)
 
 Medido no teste de ordem, **sem conserto** — o mecanismo certo é maior que o
