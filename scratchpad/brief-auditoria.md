@@ -89,6 +89,26 @@ da base inteira:**
 falso positivo, um alarme desses vira paisagem e deixa de proteger. Ele presta
 quando alguém LÊ os candidatos — que é o seu trabalho.
 
+### 🪞 VARRA TAMBÉM A CAUDA — o defeito não mora só no começo da citação
+
+Técnica que um auditor desta base **inventou** em 09/08/2026 e que achou um
+defeito real que o resto do brief não pegaria. A varredura da cabeça perdida olha
+o que vem ANTES do `offset`. Olhe também o que vem **DEPOIS** de `offset + len`.
+
+O caso: a citação terminava em *"but overcorrection has also been reported"* e a
+fonte continuava **" in cdi."** — sete caracteres. A afirmação reivindicava o
+contraste ("mas a supracorreção também já foi relatada **no próprio DIC**"), e
+sem essas duas palavras a fatia provava só o genérico. Conserto: `len 195 → 202`,
+gap zero, `cit_sha` recalculado.
+
+Varra assim: pegue os ~60 caracteres **seguintes** ao fim de cada peça; se a
+fatia não termina em `.`/`!`/`?` e a afirmação faz uma **restrição de escopo**
+(nesta doença, nesta população, neste cenário) que as palavras seguintes
+carregam, é saída 1 — estender até fechar a frase.
+
+Medido na mesma auditoria: 11 de 169 citações terminam no meio de frase, e
+**1 era defeito real**. Rendimento parecido com o da cabeça, e é barato.
+
 ### 📄 O `secao` NUNCA CHEGA AO MODELO — procure fato que se apoia nele
 
 Conferido no código (`monta-base-profunda.js`): o montador envia **só** a
