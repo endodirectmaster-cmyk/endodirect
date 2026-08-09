@@ -118,6 +118,17 @@ const CAMINHO = [
   // hipófise. ❌ `imunoterapia` também não — 4 aqui contra 8 em Tireoide.
   // As quatro últimas linhas são o controle: Tireoide e Diabetes não perdem o
   // que é delas.
+  // ⚠️ EU EXTRAÍ O FEOCROMOCITOMA E ESQUECI DE LIGAR O ROTEAMENTO (09/08/2026).
+  // O bloco ficou na base, verificado e auditado, e **inalcançável** pelas três
+  // perguntas que mais o caracterizam — as três caíam em NENHUMA área. É
+  // "extração verificada não é entrega" na forma mais crua.
+  // Contado, todos ZERO fora de Adrenal: `metanefrina` 30, `bloqueio alfa` 12,
+  // `sdhb` 12, `paraganglioma` 77.
+  // ❌ `catecolamina` (16×7) ficou de fora — a crise tireotóxica tem 4.
+  ['metanefrinas plasmaticas elevadas, proximo passo', 'Adrenal'],
+  ['bloqueio alfa antes da cirurgia, por quantos dias', 'Adrenal'],
+  ['SDHB positivo, com que frequencia rastreio', 'Adrenal'],
+  ['paraganglioma de corpo carotideo', 'Adrenal'],
   ['diabetes por inibidor de checkpoint', 'Endocrinopatias'],
   ['insuficiencia adrenal por inibidor de checkpoint', 'Endocrinopatias'],
   ['irAE endocrino, o que rastreio', 'Endocrinopatias'],
