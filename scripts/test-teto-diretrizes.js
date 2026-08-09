@@ -52,7 +52,7 @@ const areaComVarios = Object.keys(cob).filter((a) => cob[a] >= 2)[0];
 if (areaComVarios) {
   const blocos = deep.DEEP[areaComVarios];
   const temaDoSegundo = String(blocos[1].tema || '').split(/[—-]/)[0].trim();
-  const saida = deep.deepFor(areaComVarios, 120000, areaComVarios + ' ' + temaDoSegundo);
+  const saida = deep.deepFor(areaComVarios, deep.TETO_PROFUNDO, areaComVarios + ' ' + temaDoSegundo);
   const primeiro = (saida.match(/• ([^—]{0,70})/) || [])[1] || '';
   ok(primeiro.toLowerCase().includes(temaDoSegundo.toLowerCase().slice(0, 12)),
     `⚠️ a seleção por tema não priorizou o bloco pedido: pedi "${temaDoSegundo}" e veio "${primeiro.trim()}"`);
@@ -70,8 +70,16 @@ ok(/nucleoHead, cache_control/.test(ai.replace(/\s+/g, ' ')) || /text: nucleoHea
   'o núcleo tem de ir como bloco cacheável próprio');
 ok(/text: profundo, cache_control/.test(ai.replace(/\s+/g, ' ')),
   '⚠️ o aprofundamento tem de ter cache PRÓPRIO — junto do núcleo, cada tema novo invalidaria o núcleo também');
-ok(/deepFor\(areaPedida, TETO_PROFUNDO, areaPedida\)/.test(ai),
+ok(/deepFor\(areaPedida, tetoDestePedido, areaPedida\)/.test(ai),
   'api/ai.js tem de passar o TEMA para a seleção, não só a área');
+// ⚠️ A TRAVA DO ANEXO É O QUE TORNA SEGURO O TETO DE 400k (09/08/2026). PDF e
+// texto baixado por URL viajam no MESMO pedido; 400k de base profunda somados a
+// um PDF de diretriz estouram o contexto e a importação falha INTEIRA. Se alguém
+// remover esta linha para "simplificar", volta a falhar só em produção e só com
+// anexo — o pior tipo de defeito, porque o caminho comum continua verde.
+ok(/const temAnexo = !!\(body\.documentBase64 \|\| body\.url\)/.test(ai)
+  && /temAnexo \? 120000 : TETO_PROFUNDO/.test(ai),
+  '⚠️ sumiu a trava que recua o teto profundo quando há PDF ou URL no pedido — com anexo o contexto estoura');
 
 
 // ⚠️ O bloco MAIS RELEVANTE não pode ser pulado por não caber. Sem esta garantia,
@@ -128,7 +136,7 @@ ok(/deepFor\(areaPedida, TETO_PROFUNDO, areaPedida\)/.test(ai),
     if (b) { comRessalva = b; areaR = a; break; }
   }
   if (comRessalva) {
-    const ent = deep.deepFor(areaR, 120000, areaR + ' ' + String(comRessalva.tema || ''));
+    const ent = deep.deepFor(areaR, deep.TETO_PROFUNDO, areaR + ' ' + String(comRessalva.tema || ''));
     ok(CABECA.test(ent.slice(ent.indexOf(comRessalva.texto.slice(0, 40)))) || ent.indexOf(comRessalva.texto.slice(0, 40)) >= 0,
       '⚠️ a ressalva de conflito com o núcleo NÃO está chegando à IA');
   }
@@ -196,7 +204,7 @@ ok(deep.canonArea('prolactinoma') === 'Neuroendocrinologia', '"prolactinoma" tem
 {
   const q = 'Mulher de 62 anos, fratura de punho após queda da própria altura, DXA com T-score −2,7, sem causa secundária aparente. Fosfatase alcalina 22 U/L. Posso iniciar alendronato?';
   ok(deep.canonArea(q) === 'Osteometabolismo', 'a pergunta clínica inteira tem de rotear pela palavra que decide, mesmo tarde na frase');
-  const b = deep.deepFor(q, 120000, q);
+  const b = deep.deepFor(q, deep.TETO_PROFUNDO, q);
   ok(/CONTRAINDICADO|contraindicated/i.test(b),
     '⚠️ a contraindicação de bisfosfonato na hipofosfatasia NÃO está chegando a quem pergunta por ela');
 }
@@ -228,7 +236,7 @@ ok(deep.canonArea('prolactinoma') === 'Neuroendocrinologia', '"prolactinoma" tem
     ['Paciente com perda precoce de dentes decíduos e fraturas de metatarso, fosfatase alcalina baixa.', 'Osteometabolismo']
   ];
   for (const [q, esperado] of VINHETAS) {
-    const b = deep.deepFor(q, 120000, q);
+    const b = deep.deepFor(q, deep.TETO_PROFUNDO, q);
     const entregue = ((b.match(/APROFUNDAMENTO — ([^(]+)\(/) || [])[1] || '').trim();
     ok(b.length > 1000 && entregue.toUpperCase() === esperado.toUpperCase(),
       `⚠️ a pergunta "${q.slice(0, 52)}…" entregou ${b.length} chars de "${entregue || 'NADA'}" (esperado ${esperado}) — o artigo existe na base e não chega a quem pergunta por ele`);
@@ -242,7 +250,7 @@ ok(deep.canonArea('prolactinoma') === 'Neuroendocrinologia', '"prolactinoma" tem
 // craniofaringioma que são o assunto exato da pergunta.
 {
   const q = 'Menina de 9 anos com cefaleia, baixa estatura e calcificação suprasselar na tomografia. Conduta?';
-  const b = deep.deepFor(q, 120000, q);
+  const b = deep.deepFor(q, deep.TETO_PROFUNDO, q);
   ok(/craniofaringioma/i.test(b),
     '⚠️ vinheta de craniofaringioma não entregou o bloco — a área vazia venceu a área que tem o conteúdo');
 }
@@ -340,6 +348,37 @@ ok(sentIdx && sentAi && sentIdx === sentAi,
 // ── a cauda também tem teto, e é bem menor ──────────────────────────────────
 const mTail = ai.match(/parts\.slice\(1\)\.join\(''\)\.slice\(0,\s*(\d+)\)/);
 ok(!!mTail, 'não achei o corte da cauda variável em api/ai.js');
+
+// ── NENHUMA ÁREA PODE PASSAR DO TETO PROFUNDO ───────────────────────────────
+// ⚠️ ESTA GUARDA É O PREÇO DE TER SUBIDO O TETO (09/08/2026). Subir de 120k para
+// 400k fez a evicção sumir HOJE — e é justamente aí que ela fica perigosa: some
+// do teste sem sumir do futuro. Área que passa do teto perde os últimos blocos
+// EM SILÊNCIO, e foi assim que "hiponatremia com convulsão" passou a receber o
+// bloco da correção LENTA e "Graves: metimazol por quanto tempo" passou a
+// receber a diretriz de GESTAÇÃO. Agora isso reprova antes de chegar ao médico.
+// Não há mais teto para onde subir (400k = TETO_MAXIMO): quando esta linha
+// reprovar, a saída é DIVIDIR a subespecialidade.
+// DOIS níveis, de propósito. ESTOURAR reprova (é dano real: bloco cortado em
+// silêncio). CHEGAR PERTO só avisa, alto e em toda rodada — porque em 09/08/2026
+// Tireoide já entrou a 96%, e reprovar o CI no dia da decisão travaria todo o
+// resto por uma condição que o professor aceitou de olhos abertos. Aviso que não
+// bloqueia continua sendo aviso; o que não pode é não existir.
+{
+  const AVISO = 0.90;
+  for (const [areaNome, blocos] of Object.entries(deep.DEEP)) {
+    const emitido = blocos.reduce((n, b) => n + b.tema.length + b.fonte.length + b.texto.length + 6, 0);
+    const pct = Math.round(100 * emitido / deep.TETO_PROFUNDO);
+    ok(emitido <= deep.TETO_PROFUNDO,
+      `⚠️ ${areaNome} ocupa ${emitido} de ${deep.TETO_PROFUNDO} (${pct}%) e ESTOURA o teto: os últimos blocos são `
+      + `cortados em silêncio e o médico recebe o artigo errado. Não há teto para onde subir (400k = TETO_MAXIMO) — `
+      + `DIVIDA a subespecialidade (ex.: gestação como área própria).`);
+    if (emitido > deep.TETO_PROFUNDO * AVISO && emitido <= deep.TETO_PROFUNDO) {
+      console.warn(`  ⚠️ AVISO: ${areaNome} já ocupa ${pct}% do teto profundo (${emitido}/${deep.TETO_PROFUNDO}). `
+        + `Folga de ${deep.TETO_PROFUNDO - emitido} caracteres — cerca de UM artigo. O próximo extrato desta área `
+        + `provavelmente exige DIVIDIR a subespecialidade, porque o teto já está no máximo.`);
+    }
+  }
+}
 
 if (falhas.length) {
   console.error('✗ teto do bloco clínico:');

@@ -546,7 +546,7 @@ const CHEGADA = [
 
 for (const [pergunta, marca] of CHEGADA) {
   const area = deep.canonArea(pergunta);
-  const txt = area ? deep.deepFor(area, 120000, pergunta) : '';
+  const txt = area ? deep.deepFor(area, deep.TETO_PROFUNDO, pergunta) : '';
   ok(txt.toLowerCase().includes(marca),
     `"${pergunta}" roteia para ${area || '(vazio)'} mas o bloco (${(txt.length / 1000).toFixed(0)}k) `
     + `NÃO contém "${marca}" — área certa, assunto errado`);
@@ -589,7 +589,7 @@ const PRIMEIRO = [
 
 for (const [pergunta, esperado] of PRIMEIRO) {
   const area = deep.canonArea(pergunta);
-  const txt = area ? deep.deepFor(area, 120000, pergunta) : '';
+  const txt = area ? deep.deepFor(area, deep.TETO_PROFUNDO, pergunta) : '';
   const cab = ((txt.match(/• ([^\n]{0,80})/) || [])[1] || '(nenhum bloco)').toLowerCase();
   ok(cab.includes(esperado),
     `"${pergunta}" → o PRIMEIRO bloco é "${cab.slice(0, 56)}", esperado um que contenha "${esperado}"`);
@@ -714,7 +714,7 @@ const COMPLETUDE = [
 
 for (const [pergunta, areaEsperada, ancora, palavra, pctMin, ocorrMin] of COMPLETUDE) {
   const area = deep.canonArea(pergunta);
-  const txt = area ? deep.deepFor(area, 120000, pergunta) : '';
+  const txt = area ? deep.deepFor(area, deep.TETO_PROFUNDO, pergunta) : '';
   const semAcento = (x) => String(x).toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '');
   // o montador quebra artigo grande em "(parte N/M — seções)" (monta-base-profunda.js);
   // pedaços do MESMO artigo não são âncoras concorrentes, então o sufixo sai antes de

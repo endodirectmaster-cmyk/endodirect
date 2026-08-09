@@ -291,7 +291,7 @@ function main() {
   }
 
   // ── relatório e aviso de corte ────────────────────────────────────────────
-  const TETO_AREA = 120000; // mesmo teto de api/ai.js (TETO_PROFUNDO)
+  const TETO_AREA = require('../lib/clinical-deep').TETO_PROFUNDO; // fonte única, não cópia
   let totalBlocos = 0, totalFatos = 0;
   console.log('Base profunda por área:');
   for (const a of Object.keys(porArea).sort()) {

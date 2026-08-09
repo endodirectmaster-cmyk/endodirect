@@ -119,7 +119,7 @@ async function openiSearch(query, n) {
 // Base clínica PROFUNDA por subespecialidade (lib/ → não conta como função
 // serverless). Ver o cabeçalho de lib/clinical-deep.js para por que ela mora no
 // servidor e não no index.html.
-const { deepFor } = require('./../lib/clinical-deep');
+const { deepFor, TETO_PROFUNDO } = require('./../lib/clinical-deep');
 
 module.exports = async function handler(req, res) {
   if (req.method === 'OPTIONS') {
@@ -261,7 +261,10 @@ module.exports = async function handler(req, res) {
   // O bloco PROFUNDO da subespecialidade entra no MESMO prefixo cacheável: o
   // prefixo passa a ser `núcleo + profundo(área)`, estável por área, então cada
   // subespecialidade reaproveita a própria entrada de cache.
-  const TETO_PROFUNDO = 120000;
+  // ⚠️ O VALOR MORA EM lib/clinical-deep.js e é importado no topo — era 120000
+  // repetido aqui, no montador e nos testes, amarrados só por comentário. Em
+  // 09/08/2026 subiu para 360000 (decisão do professor) e a cópia local viraria
+  // deriva silenciosa: os testes mediriam um teto que a produção não usa.
   // ⚠️ 120 → 600 caracteres em 07/08/2026, quando o CHAT passou a mandar a
   // pergunta como `grounding`. Nos geradores o campo é um rótulo curto ("Tireoide
   // nódulo") e 120 sobrava; numa pergunta clínica de verdade o termo que decide o
@@ -276,7 +279,17 @@ module.exports = async function handler(req, res) {
   // extração é exaustiva (um artigo de craniofaringioma tem 249 fatos) e mandar a
   // área inteira não cabe nem faz sentido — questão de cetoacidose não precisa da
   // tabela de doses da hipofosfatasia. Ver lib/clinical-deep.js.
-  try { profundo = deepFor(areaPedida, TETO_PROFUNDO, areaPedida); } catch (e) { profundo = ''; }
+  // ⚠️⚠️ COM ANEXO, O TETO É OUTRO — e isto é o que torna seguro subir de 120k
+  // para 400k (09/08/2026). O PDF (`documentBase64`) e o texto de artigo baixado
+  // por URL (`fetch-article`, até 120k chars) viajam NO MESMO pedido. Somando
+  // 400k de base profunda a um PDF de diretriz, o contexto estoura e a
+  // importação falha INTEIRA — o usuário perde o trabalho, não perde qualidade.
+  // E ali a base profunda é apoio, não fundamento: a fonte daquele pedido é o
+  // documento que ele acabou de mandar. Então o anexo manda, e o profundo recua
+  // para o teto antigo, que conviveu com anexo o tempo todo sem incidente.
+  const temAnexo = !!(body.documentBase64 || body.url);
+  const tetoDestePedido = temAnexo ? 120000 : TETO_PROFUNDO;
+  try { profundo = deepFor(areaPedida, tetoDestePedido, areaPedida); } catch (e) { profundo = ''; }
   let system;
   if (rawSystem.indexOf(SYS_SPLIT) !== -1) {
     const parts = rawSystem.split(SYS_SPLIT);
