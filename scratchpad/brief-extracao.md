@@ -116,6 +116,32 @@ termo achado nele contra `+1` no corpo. Erros medidos que custaram o artigo:
 alcança `convulsão`, `correr` não alcança `corrida`, `emagrece` não alcança
 `emagrecer`. Onde a forma importa, escreva as duas.
 
+### ⚖️ E O LIMITE DISSO: só reivindique no tema o que o seu corpo DOMINA
+
+O tema é onde se ganha a pergunta, então a tentação é listar tudo. **Não faça**:
+uma palavra no tema vale `+3` e no corpo vale `+1`, então reivindicar assunto que
+você mal menciona **rouba a pergunta do bloco que a responde**. Reivindicar não é
+*"o meu texto menciona?"*, é *"o meu texto DOMINA?"*.
+
+Três casos medidos em 09/08/2026, todos no mesmo artigo de tireoide:
+
+| o tema reivindicava | ocorrências no corpo dele | no bloco que responde |
+|---|---|---|
+| crise tireotóxica / Burch-Wartofsky | **0** e 1 | 3 e 7 |
+| biotina | 1 | **22** |
+| lítio | 1 | **15** |
+
+O primeiro fazia a pergunta *"crise tireotóxica com febre e taquicardia, o que
+faço agora"* — uma emergência — receber o bloco do hipertireoidismo crônico.
+
+**Antes de pôr um assunto no seu tema, conte-o no seu corpo e nos outros blocos
+da área.** Se outro bloco domina, deixe para ele.
+
+⚠️ **E o ponteiro não pode repetir a palavra que você quer ceder.** Tentei
+escrever *"⚠️ BIOTINA tem bloco próprio: ver fármaco e tireoide"* e a palavra
+continuou valendo `+3` no tema — o ponteiro anulava a cessão. Ceda de vez, ou
+descreva sem nomear.
+
 ### Campos — não confunda, isto já produziu falso verde
 
 - `afirmacao` · `cit` · `cit_sha` · `secao` (organização) · `extracao` (suas
