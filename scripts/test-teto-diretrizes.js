@@ -80,6 +80,17 @@ ok(/deepFor\(areaPedida, tetoDestePedido, areaPedida\)/.test(ai),
 ok(/const temAnexo = !!\(body\.documentBase64 \|\| body\.url\)/.test(ai)
   && /temAnexo \? TETO_COM_ANEXO : TETO_PROFUNDO/.test(ai),
   '⚠️ sumiu a trava que recua o teto profundo quando há PDF ou URL no pedido — com anexo o contexto estoura');
+// ⚠️ E O ANEXO NÃO ERA O ÚNICO JEITO DE ESTOURAR. Medido em 09/08/2026, depois
+// de o teto profundo subir para 400k: `prompt` é cortado em 200.000 chars, o
+// núcleo ocupa até 80.000 e o profundo até 400.000 — a 3,2 chars/token isso dá
+// 217k tokens contra um contexto de 200k, e o pedido falha INTEIRO. Antes do
+// aumento eram 129k, por isso ninguém tinha visto. A trava do anexo não pegava,
+// porque prompt grande não é anexo. O conserto é ORÇAMENTO: o profundo fica com
+// o que sobra depois do núcleo, do prompt e do anexo — e em uso normal não morde.
+ok(/ORCAMENTO_CHARS\s*=\s*Math\.floor\(\(200000 - RESERVA_SAIDA\) \* CHARS_POR_TOKEN\)/.test(ai)
+  && /const sobra = ORCAMENTO_CHARS - TETO_NUCLEO - custoPrompt - custoAnexo/.test(ai)
+  && /Math\.max\(2000, Math\.min\(temAnexo \? TETO_COM_ANEXO : TETO_PROFUNDO, sobra\)\)/.test(ai),
+  '⚠️ sumiu o orçamento de contexto do bloco profundo — prompt grande + área grande estoura os 200k e o pedido falha inteiro');
 
 
 // ⚠️ O bloco MAIS RELEVANTE não pode ser pulado por não caber. Sem esta garantia,

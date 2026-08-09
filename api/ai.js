@@ -288,7 +288,27 @@ module.exports = async function handler(req, res) {
   // documento que ele acabou de mandar. Então o anexo manda, e o profundo recua
   // para o teto antigo, que conviveu com anexo o tempo todo sem incidente.
   const temAnexo = !!(body.documentBase64 || body.url);
-  const tetoDestePedido = temAnexo ? TETO_COM_ANEXO : TETO_PROFUNDO;
+  // ⚠️⚠️ E O ANEXO NÃO ERA O ÚNICO JEITO DE ESTOURAR — o `prompt` sozinho basta.
+  // Medido em 09/08/2026, DEPOIS de eu subir o teto: `prompt` é cortado em
+  // 200.000 caracteres (abaixo), o núcleo ocupa até 80.000 e o profundo até
+  // 400.000. A 3,2 chars/token — que é o realista para português clínico com
+  // acento, não os 3,6 otimistas — isso dá **217k tokens contra um contexto de
+  // 200k**: o pedido falha INTEIRO. Antes de eu subir o teto eram 129k, e por
+  // isso ninguém tinha visto. A trava do anexo não pegava este caso, porque
+  // prompt grande não é anexo.
+  // O conserto é orçamento, não mais um caso especial: o profundo fica com o que
+  // sobra depois do núcleo, do prompt e do anexo. Em uso normal (prompt de
+  // alguns milhares de caracteres) a conta não morde — o profundo continua
+  // recebendo os 400.000 inteiros.
+  const CHARS_POR_TOKEN = 3.2;                 // conservador de propósito
+  const RESERVA_SAIDA = 8000;                  // teto de `clampTokens`
+  const ORCAMENTO_CHARS = Math.floor((200000 - RESERVA_SAIDA) * CHARS_POR_TOKEN);
+  const custoAnexo = temAnexo ? 120000 : 0;    // MAX_CHARS de lib/fetch-article
+  // 200000 é o mesmo corte que o `prompt` sofre logo abaixo — medir o bruto
+  // encolheria o profundo por causa de texto que nem chega a ser enviado.
+  const custoPrompt = Math.min(String(body.prompt || '').length, 200000);
+  const sobra = ORCAMENTO_CHARS - TETO_NUCLEO - custoPrompt - custoAnexo;
+  const tetoDestePedido = Math.max(2000, Math.min(temAnexo ? TETO_COM_ANEXO : TETO_PROFUNDO, sobra));
   try { profundo = deepFor(areaPedida, tetoDestePedido, areaPedida); } catch (e) { profundo = ''; }
   let system;
   if (rawSystem.indexOf(SYS_SPLIT) !== -1) {
