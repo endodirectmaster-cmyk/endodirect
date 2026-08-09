@@ -55,6 +55,19 @@ const CAMINHO = [
   ['antirreabsortivo esta contraindicado em quem?', 'Osteometabolismo'],
   ['perda auditiva no hipotireoidismo', 'Tireoide'], // guarda: `esclera` não pode virar `perda auditiva`
 
+  // ⚠️ O ACERVO É DE MANEJO, NÃO DE DIAGNÓSTICO — medido em 09/08/2026 com 25
+  // apresentações escritas como o médico pergunta quando AINDA NÃO tem o
+  // diagnóstico. 18 das 25 não chegavam a área nenhuma. Fui ver a causa e na
+  // maioria NÃO é roteamento: 12 assuntos grandes não têm um único bloco na
+  // base (hipotireoidismo, nódulo, Cushing, feocromocitoma, hiperaldosteronismo,
+  // hipercalcemia, hipoparatireoidismo, osteoporose, menopausa, baixa estatura).
+  // Rotear esses para uma área sem o artigo entregaria o artigo errado — pior
+  // que não rotear. Ficam como LACUNA DE ACERVO, não como chave faltando.
+  // Só entraram as duas em que o artigo EXISTE e estava parado ao lado.
+  ['mulher com ciclos irregulares e acne', 'Endocrinologia Feminina'],
+  ['ciclo menstrual irregular ha um ano', 'Endocrinologia Feminina'],
+  ['intolerancia ao calor e sudorese', 'Tireoide'],
+
   // Emergências hiperglicêmicas: `CAD` e `EHH` devolviam "" até 08/08/2026, e o
   // extrato da CAD é o ÚNICO da base com conteúdo de estado hiperosmolar.
   ['paciente com CAD, pH 7,1: quando comeco a insulina?', 'Diabetes'],
