@@ -55,6 +55,49 @@ const CAMINHO = [
   ['antirreabsortivo esta contraindicado em quem?', 'Osteometabolismo'],
   ['perda auditiva no hipotireoidismo', 'Tireoide'], // guarda: `esclera` não pode virar `perda auditiva`
 
+  // ⚠️ HIPOPARATIREOIDISMO (diretriz internacional 2022, extraída em 09/08/2026).
+  // O roubo era de área: "hipocalcemia após tireoidectomia total" caía em
+  // TIREOIDE, porque `tireoidectomia` é CAT_FARMACO (2000) e nada levava para
+  // Osteometabolismo. A pergunta é da PARATIREOIDE — a cirurgia da tireoide é só
+  // a causa. `hipocalcemia` vale 3000 e ganha.
+  ['hipocalcemia apos tireoidectomia total', 'Osteometabolismo'],
+  ['hipoparatireoidismo pos-cirurgico: como manejo?', 'Osteometabolismo'],
+  ['hipercalciuria no hipoparatireoidismo: uso tiazidico?', 'Osteometabolismo'],
+  ['autotransplante de paratireoide: quando indico?', 'Osteometabolismo'],
+  ['APECED e gene AIRE', 'Osteometabolismo'],
+  // …e os controles que a chave nova poderia ter sequestrado:
+  ['tireoidectomia total por cancer: qual a extensao?', 'Tireoide'],
+  ['crise tireotoxica apos tireoidectomia', 'Tireoide'],
+  ['hipoglicemia grave no diabetico', 'Diabetes'],
+  // ⚠️⚠️ SENTINELA DE UMA OMISSÃO DELIBERADA, e a razão não é dominância — é DANO.
+  // `tetania`, `chvostek` e `trousseau` NÃO podem rotear enquanto a base só tiver
+  // a diretriz CRÔNICA de 2022. Conferi na fonte: ZERO ocorrência de tetany,
+  // Chvostek, Trousseau, paresthesia, cramp e tingling, e ZERO de cálcio
+  // intravenoso, gluconato, infusão, ECG e emergency. Ela manda mirar a metade
+  // INFERIOR da faixa normal — conselho de manutenção. Entregá-lo a quem tem um
+  // doente em tetania repete o acidente da hiponatremia aguda, que recebia o
+  // bloco da correção LENTA. Quem trouxer fonte de hipocalcemia AGUDA remove
+  // estas duas linhas; até lá, roteá-las é regressão.
+  ['tetania com Chvostek positivo', '(vazio)'],
+  ['sinal de Trousseau: o que investigo?', '(vazio)'],
+
+  // ⚠️ OSTEOPOROSE (Manual Brasileiro 2021, extraído em 09/08/2026). A área
+  // tinha só hipofosfatasia e osteogênese imperfeita — duas doenças RARAS —, e a
+  // doença óssea MAIS COMUM não tinha bloco. Era a mesma distorção que fez
+  // Diabetes ser a primeira da fila (130 fatos, 109 de pós-transplante).
+  ['FRAX de 22% em risco maior: trato?', 'Osteometabolismo'],
+  ['escore T de -2,7 no femur: e osteoporose?', 'Osteometabolismo'],
+  ['fratura de quadril apos queda da propria altura', 'Osteometabolismo'],
+  ['fratura atipica de femur com dor subtrocanterica', 'Osteometabolismo'],
+  ['perda de altura de 4 cm no idoso: investigo?', 'Osteometabolismo'],
+  ['CTX e P1NP: para que servem?', 'Osteometabolismo'],
+  ['dor ossea com fratura sem trauma no idoso', 'Osteometabolismo'],
+  // …e os dois termos que MEDI E RECUSEI, cada um com sentinela na área que os
+  // domina: `sarcopenia` é de Obesidade (5 contra 21 fora) e `artefato` é de
+  // Tireoide (3 contra 27). Chave exclusiva hoje pode ser roubo amanhã.
+  ['sarcopenia na obesidade do idoso', 'Obesidade'],
+  ['artefato de ensaio por biotina no TSH', 'Tireoide'],
+
   // ⚠️ O ACERVO É DE MANEJO, NÃO DE DIAGNÓSTICO — medido em 09/08/2026 com 25
   // apresentações escritas como o médico pergunta quando AINDA NÃO tem o
   // diagnóstico. 18 das 25 não chegavam a área nenhuma. Fui ver a causa e na
