@@ -78,7 +78,7 @@ ok(/deepFor\(areaPedida, tetoDestePedido, areaPedida\)/.test(ai),
 // remover esta linha para "simplificar", volta a falhar só em produção e só com
 // anexo — o pior tipo de defeito, porque o caminho comum continua verde.
 ok(/const temAnexo = !!\(body\.documentBase64 \|\| body\.url\)/.test(ai)
-  && /temAnexo \? 120000 : TETO_PROFUNDO/.test(ai),
+  && /temAnexo \? TETO_COM_ANEXO : TETO_PROFUNDO/.test(ai),
   '⚠️ sumiu a trava que recua o teto profundo quando há PDF ou URL no pedido — com anexo o contexto estoura');
 
 

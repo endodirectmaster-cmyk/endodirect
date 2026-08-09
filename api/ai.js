@@ -119,7 +119,7 @@ async function openiSearch(query, n) {
 // Base clínica PROFUNDA por subespecialidade (lib/ → não conta como função
 // serverless). Ver o cabeçalho de lib/clinical-deep.js para por que ela mora no
 // servidor e não no index.html.
-const { deepFor, TETO_PROFUNDO } = require('./../lib/clinical-deep');
+const { deepFor, TETO_PROFUNDO, TETO_COM_ANEXO } = require('./../lib/clinical-deep');
 
 module.exports = async function handler(req, res) {
   if (req.method === 'OPTIONS') {
@@ -288,7 +288,7 @@ module.exports = async function handler(req, res) {
   // documento que ele acabou de mandar. Então o anexo manda, e o profundo recua
   // para o teto antigo, que conviveu com anexo o tempo todo sem incidente.
   const temAnexo = !!(body.documentBase64 || body.url);
-  const tetoDestePedido = temAnexo ? 120000 : TETO_PROFUNDO;
+  const tetoDestePedido = temAnexo ? TETO_COM_ANEXO : TETO_PROFUNDO;
   try { profundo = deepFor(areaPedida, tetoDestePedido, areaPedida); } catch (e) { profundo = ''; }
   let system;
   if (rawSystem.indexOf(SYS_SPLIT) !== -1) {
