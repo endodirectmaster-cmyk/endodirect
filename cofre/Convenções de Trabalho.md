@@ -1,9 +1,47 @@
 ---
 tags: [cofre, processo]
-atualizado: 2026-08-08
+atualizado: 2026-08-09
 ---
 
 # Convenções de Trabalho
+
+## 🎯 A SONDA TAMBÉM TEM ÂNCORA, E ÂNCORA AMBÍGUA MEDE O ARTIGO ERRADO (2026-08-09)
+
+Já sabia que **âncora ambígua** estraga citação. Descobri que estraga **teste**
+— e o meu estava estragado.
+
+A asserção de COMPLETUDE identifica o bloco-alvo por um trecho do `tema`. Usei
+`tireotoxica` para "tempestade tireoidiana com Burch-Wartofsky 55" e o teste
+reprovou acusando **3% de chegada**. Ia registrar como limite de teto. Fui medir
+antes: o bloco da crise tireotóxica chegava **INTEIRO — 100%, 15 menções de
+"burch"**. O que estava em 3% era o artigo da **GESTAÇÃO**: `tireotoxica` casa
+com **7 dos 9 blocos** da área, e o `find` devolve o primeiro. A sonda mediu um
+artigo pelo outro.
+
+**O erro de uma sonda é pior que o erro que ela procura**, porque vem assinado
+como medição. Uma reprovação falsa manda consertar o que não está quebrado — e
+uma aprovação falsa é o que eu já tinha, dormindo em dois casos: `dumping` casa
+com o artigo do dumping **e** com o da bariátrica, `prolactinoma` com dois
+blocos. Passavam porque o `find` calhava de pegar o certo — **acerto emprestado
+dentro do próprio teste**.
+
+**Conserto estrutural, em três partes:**
+1. **Âncora e palavra viraram campos separados.** Identificar o bloco e contar
+   presença são trabalhos diferentes: a âncora precisa ser *única*, a palavra
+   precisa ser *frequente*. Um campo só obrigava a mesma string a ser as duas
+   coisas, e é isso que força o uso de termo genérico.
+2. **Âncora que casa com dois artigos REPROVA por ambiguidade, antes de medir** —
+   com a mensagem dizendo que é ambiguidade. Silenciosamente medir o primeiro é
+   o que produziu os dois acertos emprestados.
+3. **Artigo partido pelo montador não é ambiguidade.** `(parte 1/2)` e
+   `(parte 2/2)` são o mesmo artigo: o sufixo sai antes de comparar, e mede-se o
+   maior pedaço.
+
+⚠️ **E confirmei que o aperto não afrouxou a sonda**, mutando as três: âncora
+ambígua reprova com o diagnóstico certo; artigo partido não é falso-positivo; e
+**evicção de verdade continua pega** — com teto de 60k em vez de 120k, o bloco
+da crise despenca de 100% para 0%. Teste verde só vale depois de ficar vermelho
+pelo motivo certo.
 
 ## 🏷️ O TEMA É UMA REIVINDICAÇÃO, E REIVINDICAÇÃO FALSA ROUBA O ARTIGO CERTO (2026-08-08)
 

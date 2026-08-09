@@ -593,20 +593,68 @@ for (const [pergunta, esperado] of PRIMEIRO) {
 // Então não enviei heurística nenhuma e passei a medir O DANO, que é
 // independente de ordem: o artigo que responde chega quase inteiro?
 const COMPLETUDE = [
-  // pergunta, área, marca do bloco-alvo no tema, % mínimo do bloco que tem de
-  // chegar, e mínimo de ocorrências da palavra no que foi entregue.
-  ['dumping tardio dois anos apos bypass: como investigo?', 'Obesidade', 'dumping', 90, 50],   // medido hoje: 100%, 85
-  ['esteatose hepatica com FIB-4 de 2,1: encaminho?', 'Obesidade', 'hepatica', 90, 40],      // medido hoje: 100%, 88
-  ['PTDM: quando rastrear?', 'Diabetes', 'ptdm', 90, 40],
-  ['prolactina de 80 com macroprolactina: e prolactinoma?', 'Neuroendocrinologia', 'prolactinoma', 90, 80], // medido hoje: 100%, 187
+  // pergunta, área, ÂNCORA (trecho do tema que identifica o bloco-alvo), PALAVRA
+  // contada na entrega, % mínimo do bloco que tem de chegar, e mínimo de
+  // ocorrências daquela palavra.
+  //
+  // ⚠️ ÂNCORA E PALAVRA SÃO CAMPOS SEPARADOS DESDE 09/08/2026, e a separação
+  // nasceu de um erro DESTA SONDA. Eu tinha um campo só, e usei `tireotoxica`
+  // para "tempestade tireoidiana com Burch-Wartofsky 55". A sonda reprovou
+  // acusando 3% de chegada — mas o bloco da crise tireotóxica chegava INTEIRO
+  // (100%, 15 menções de "burch"). `tireotoxica` casa com 7 dos 9 blocos da
+  // área, e o `find` pegou o PRIMEIRO: o artigo da GESTAÇÃO. A sonda mediu um
+  // artigo pelo outro — âncora ambígua dentro do meu próprio teste.
+  //
+  // Ao consertar, achei o mesmo defeito DORMINDO em dois casos que passavam:
+  // `dumping` casa com o artigo do dumping E com o da cirurgia bariátrica, e
+  // `prolactinoma` com dois blocos. Passavam porque o `find` calhava de pegar o
+  // certo — acerto emprestado, igual ao que já me mordeu no roteamento. Agora a
+  // âncora que casa com DOIS ARTIGOS reprova por ambiguidade, antes de medir.
+  //
+  // ⚠️ TIREOIDE ENTROU AQUI EM 09/08/2026 e trouxe um LIMITE MEDIDO. A área foi
+  // de 218 para 768 fatos e está em 357k contra teto de 120k — só DOIS blocos
+  // cabem por pergunta. O artigo de síndrome do eutireoidiano doente (19,8k,
+  // tema de 161 chars) estava sendo EXPULSO por três artigos novos com temas de
+  // ~3.000 caracteres, que pontuam +3 em toda palavra genérica de tireoide.
+  //
+  // Enriqueci o tema do NTIS DUAS VEZES, e só com o que o texto entrega
+  // (conferido por contagem: `uti` 11, `rT3` 17, `levotiroxina` 6, `sepse` 4,
+  // `jejum` 6, `tsh` 21, `hipotireoidismo` 13). Ganhou a pergunta ACIONÁVEL —
+  // "devo repor levotiroxina no doente grave?" foi de 1% para 100%.
+  //
+  // ⚠️ E NÃO GANHOU a de enquadramento: "paciente em UTI com T3 baixo e TSH
+  // normal: é doença tireoidiana?" segue em 1%. PAREI DE PROPÓSITO. Mais
+  // palavras no tema seria escrever para vencer a sonda, não para descrever o
+  // artigo — o defeito espelho do que consertei no dumping. Fica registrado: o
+  // artigo é alcançável pelo NOME da síndrome, por `rT3` e pela pergunta de
+  // conduta; não é alcançável por descrição do painel laboratorial. Quem chegar
+  // aqui com teto maior, ou com a área dividida, deve retestar aquela frase.
+  ['dumping tardio dois anos apos bypass: como investigo?', 'Obesidade', 'dumping apos cirurgia', 'dumping', 90, 50],  // medido: 100%, 85
+  ['esteatose hepatica com FIB-4 de 2,1: encaminho?', 'Obesidade', 'hepatica gordurosa', 'hepatica', 90, 40],          // medido: 100%, 88
+  ['PTDM: quando rastrear?', 'Diabetes', 'ptdm', 'ptdm', 90, 40],
+  ['prolactina de 80 com macroprolactina: e prolactinoma?', 'Neuroendocrinologia', 'prolactinoma', 'prolactinoma', 90, 80], // medido: 100%, 187
+  ['devo repor levotiroxina no doente grave com T3 baixo?', 'Tireoide', 'eutireoidiano', 'eutireoidiano', 90, 2],
+  ['tempestade tireoidiana com Burch-Wartofsky 55', 'Tireoide', 'crise tireotoxica — diagnostico', 'burch', 90, 10],
 ];
 
-for (const [pergunta, areaEsperada, marcaTema, pctMin, ocorrMin] of COMPLETUDE) {
+for (const [pergunta, areaEsperada, ancora, palavra, pctMin, ocorrMin] of COMPLETUDE) {
   const area = deep.canonArea(pergunta);
   const txt = area ? deep.deepFor(area, 120000, pergunta) : '';
   const semAcento = (x) => String(x).toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '');
-  const alvo = (deep.DEEP[areaEsperada] || []).find((b) => semAcento(b.tema).includes(marcaTema));
-  if (!alvo) { ok(false, `COMPLETUDE: não achei bloco com "${marcaTema}" em ${areaEsperada}`); continue; }
+  // o montador quebra artigo grande em "(parte N/M — seções)" (monta-base-profunda.js);
+  // pedaços do MESMO artigo não são âncoras concorrentes, então o sufixo sai antes de
+  // comparar. Dois artigos DIFERENTES sob a mesma âncora, sim, são ambiguidade.
+  const temaBase = (t) => semAcento(t).replace(/\s*\(parte \d+\/\d+[\s\S]*$/, '');
+  const candidatos = (deep.DEEP[areaEsperada] || []).filter((b) => semAcento(b.tema).includes(ancora));
+  if (!candidatos.length) { ok(false, `COMPLETUDE: não achei bloco com "${ancora}" em ${areaEsperada}`); continue; }
+  const artigos = new Set(candidatos.map((b) => temaBase(b.tema)));
+  if (artigos.size > 1) {
+    ok(false, `COMPLETUDE: âncora ambígua — "${ancora}" casa com ${artigos.size} artigos diferentes em `
+      + `${areaEsperada}; a medida cairia no artigo errado. Use um trecho do tema que só o alvo tenha`);
+    continue;
+  }
+  // artigo partido pelo montador: mede o maior pedaço, que é o que carrega o conteúdo
+  const alvo = candidatos.reduce((a, b) => (b.texto.length > a.texto.length ? b : a));
   // maior prefixo do bloco presente na entrega = quanto dele sobreviveu ao corte
   let lo = 0; let hi = alvo.texto.length;
   while (lo < hi) {
@@ -614,10 +662,10 @@ for (const [pergunta, areaEsperada, marcaTema, pctMin, ocorrMin] of COMPLETUDE) 
     if (txt.indexOf(alvo.texto.slice(0, m)) >= 0) lo = m; else hi = m - 1;
   }
   const pct = Math.round((100 * lo) / alvo.texto.length);
-  const ocorr = semAcento(txt).split(marcaTema).length - 1;
+  const ocorr = semAcento(txt).split(palavra).length - 1;
   ok(area === areaEsperada && pct >= pctMin && ocorr >= ocorrMin,
-    `"${pergunta}" → ${area}: o bloco de "${marcaTema}" chegou a ${pct}% (mín ${pctMin}%) `
-    + `com ${ocorr} ocorrência(s) da palavra (mín ${ocorrMin}) — artigo cortado é artigo que não existe`);
+    `"${pergunta}" → ${area}: o bloco de "${ancora}" chegou a ${pct}% (mín ${pctMin}%) `
+    + `com ${ocorr} ocorrência(s) de "${palavra}" (mín ${ocorrMin}) — artigo cortado é artigo que não existe`);
 }
 
 if (falhas) {
