@@ -5,6 +5,48 @@ atualizado: 2026-08-09
 
 # Convenções de Trabalho
 
+## 🧹 `git add -A` COM AGENTE RODANDO VARRE O TRABALHO DELE PELA METADE (2026-08-09)
+
+Commitei um conserto meu enquanto o auditor do GIOP estava no ar. `git add -A`
+pega **tudo**, inclusive um extrato salvo no meio da edição do agente — e o que
+entra no commit é um JSON pela metade, com a validação passando porque o
+verificador só roda depois.
+
+Desta vez não pegou nada (conferi o `--stat`: só os meus dois arquivos), mas foi
+**sorte de temporização**, não cuidado.
+
+**Regra: com agente no ar, commit por CAMINHO EXPLÍCITO.** `git add lib/x.js
+scripts/y.js`, nunca `-A`. O `-A` volta a ser seguro quando `git status` estiver
+limpo e nenhum agente estiver rodando. E confira sempre o `git show --stat` do
+que acabou de commitar — é a única prova barata de que só entrou o que você quis.
+
+## 🏷️ O `tema` É PARA O BLOCO O QUE O `secao` É PARA O FATO (2026-08-09)
+
+Extensão medida da regra abaixo, um nível acima. O `deepFor` emite cada bloco
+como `• {tema} — {fonte}: {texto}` — então o `tema` **chega ao modelo**, ao
+contrário do `secao`. Só que ele chega **uma vez, no cabeçalho de até 68 mil
+caracteres de fatos**. Esperar que um "no ADULTO" no topo governe um fato que
+está 40 mil caracteres abaixo é a mesma aposta que o `secao` já perdeu.
+
+Medido em Obesidade: **3 dos 8 blocos não trazem marca de população no tema**
+(diretriz CV da ABESO, efeito gastrintestinal de AR GLP-1, dumping) — todos são
+de adulto. E a pergunta *"obesidade em criança de 8 anos, IMC no P97"* roteia
+para **Obesidade** e recebe os 350 mil caracteres de conteúdo adulto, com o
+cabeçalho mandando *"prefira-os a lembranças gerais"*.
+
+O que segura hoje: a régua pediátrica entrou no **núcleo** (v216), e o núcleo vai
+em toda chamada; e os blocos que carregam **dose** (farmacoterapia, bariátrica)
+escrevem "no ADULTO" no tema.
+
+**Não virou peneira de CI, pelo mesmo critério de sempre:** exigir marca de
+população em todo tema acusaria blocos onde população não quer dizer nada
+(hipercalcemia, dislipidemia) — falso positivo alto demais para um alarme que
+precisa significar algo quando dispara. Vale como reforço da regra que já existe:
+**a população mora na `afirmacao`**, não no cabeçalho que a carrega.
+
+Áreas sem nenhum bloco (Pediátrica, Masculina, Transgeneridade) devolvem **vazio**
+— conferido: não há queda silenciosa para a área vizinha quando só elas pontuam.
+
 ## 📄 O CAMPO `secao` NUNCA CHEGA AO MODELO — o fato tem de se bastar (2026-08-09)
 
 Achado por auditoria adversarial e **conferido no código** por mim

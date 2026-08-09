@@ -68,6 +68,30 @@ motivo para auditar menos; é motivo para dividir.
 
 ⚠️ **E não dá para subir o teto de novo:** 400k já é o `TETO_MAXIMO`.
 
+**O que acontece no instante em que ela cruzar — medido em 09/08 pela sonda
+`scratchpad/probe/tireoide-borda.js`, que roda o caminho real (`deepFor`):**
+
+- Hoje os **9 blocos chegam inteiros** em todas as perguntas que testei.
+- **O primeiro bloco some com +10.000 caracteres** na área (folga real: 8.237).
+  O menor bloco tem 6.782 caracteres; os outros oito vão de 16.769 a 68.373.
+  Nenhum artigo real acrescenta menos que isso — **a próxima extração de tireoide
+  despeja um bloco inteiro, em silêncio**.
+- **A ordem de despejo é sã**, e isso é a boa notícia: cai sempre o bloco *menos*
+  relevante para a pergunta (numa pergunta de crise tireotóxica cai o NTIS; numa
+  de T3 baixo na UTI cai a crise). Não é o caso da hiponatremia, em que o bloco
+  despejado **contradizia** a pergunta — aqui ele só é dispensável.
+
+Ou seja: o risco de hoje é **perder profundidade**, não receber resposta errada.
+Isso rebaixa a urgência de "agora" para "antes do próximo artigo de tireoide" —
+mas não muda a decisão, porque a folga já não cabe nem mais uma auditoria.
+
+⚠️ **A sonda me ensinou a desconfiar da própria chave.** A primeira versão dela
+identificava o bloco cortando o tema no primeiro `" — "`, e os temas **têm
+travessão dentro** (o sufixo de seções). Quatro blocos da gestação viraram um só
+e ela relatou *"5 de 9 entregues"* quando os 9 chegavam. Chave passou a ser o
+índice do bloco. É a mesma armadilha da âncora ambígua que já me pegou dentro do
+meu próprio teste de completude.
+
 ⚠️ **A divisão NÃO é só roteamento — é mudança de produto**, e por isso é
 decisão dele: a lista de áreas está acoplada ao `index.html` em `FC_CATS` (12
 subespecialidades), submapas de tema, cores, calculadoras por área e filtros do
