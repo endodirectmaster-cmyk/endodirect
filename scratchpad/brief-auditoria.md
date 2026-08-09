@@ -89,6 +89,23 @@ da base inteira:**
 falso positivo, um alarme desses vira paisagem e deixa de proteger. Ele presta
 quando alguém LÊ os candidatos — que é o seu trabalho.
 
+### ·  O LANCET ESCREVE DECIMAL COM PONTO MÉDIO — não modifique a fonte por isso
+
+`0·25 mmol/L`, `–2·5`, `31·4`. O `norm` de `lib/citacao.js` **não** converte
+`·` em `.`, então uma afirmação escrita com `0,25` **não** é reconhecida dentro
+de `0·25` e o verificador reprova.
+
+Medido em 09/08/2026: **6 fontes da base usam ponto médio entre dígitos** (uma
+com 848 ocorrências) e **75 fatos já escrevem o número com `·`**. Essa é a saída
+certa — **escreva o número como a FONTE escreve**.
+
+⚠️ **Não modifique o arquivo em `textos/` para contornar.** Um extrator desta
+leva converteu 13 pontos médios no texto-fonte; a conversão era correta e está
+declarada em `extracao`, mas ela faz os `cit_sha` daquele extrato dependerem da
+modificação — e `textos/` é gitignored, então **um novo download quebra todos os
+hashes** daquele artigo. Quem re-baixar precisa reaplicar a mesma conversão.
+Escrever o número com `·` não tem esse problema.
+
 ### 🔤 A FONTE DE SÍMBOLOS DO PDF PODE NÃO TER SOBREVIVIDO — confira antes de tudo
 
 Achado em 09/08/2026, no artigo de hipercalcemia PTH-independente: o texto

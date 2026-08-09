@@ -5,6 +5,42 @@ atualizado: 2026-08-09
 
 # Convenções de Trabalho
 
+## 🔤 QUANDO A FONTE DE SÍMBOLOS DO PDF NÃO SOBREVIVE (2026-08-09)
+
+O irmão mais grave do sinal de menos comido. No artigo de hipercalcemia
+PTH-independente, o texto extraído tinha **zero `µ`, zero travessão, zero `−`,
+zero `°`, zero letra grega**, mais `þ` no lugar de `+` e o padrão `2.20e2.55` no
+lugar de faixas. O limite da EFSA para vitamina D saía impresso como
+**"100 mg/day"** quando o real é 100 **µg** — **erro de 1000×**.
+
+**O extrator conteve:** extraiu o fato **sem número e sem unidade**, com aviso de
+conferir no original. Confirmei depois nos 139 fatos publicados: **zero `þ` e
+zero faixa corrompida herdados**, e o único valor em mg é prednisolona 40 mg/dia,
+verbatim e plausível. O `1-a-hydroxylase` da fonte virou `1-alfa-hidroxilase` —
+restauração inequívoca, não invenção.
+
+**Virou AVISO em `verifica-extracao.js`, não reprovação.** A detecção tem falso
+positivo ~zero (`þ` não é caractere de português nem inglês; `2.20e2.55` não é
+notação clínica), mas reprovar impediria de trabalhar com um PDF ruim — e este
+extrato lidou bem. O aviso aparece para quem está conferindo, que é quem age.
+
+⚠️ **A peneira INVERSA foi medida e recusada:** "fármaco dosado em µg escrito em
+mg" deu **2 de 2 falsos positivos** na base inteira (fludrocortisona É em mg; o
+"grão de 60 mg" é de tireoide dessecada). Ficou como pista no brief.
+
+### ·  E o primo silencioso: o Lancet escreve decimal com PONTO MÉDIO
+
+`0·25`, `–2·5`, `31·4`. O `norm` de `lib/citacao.js` **não** converte `·` em `.`,
+então uma afirmação com `0,25` não é reconhecida dentro de `0·25`. Medido: **6
+fontes da base** usam ponto médio entre dígitos (uma com 848 ocorrências) e **75
+fatos já escrevem o número com `·`** — essa é a saída certa, **escrever como a
+fonte escreve**.
+
+⚠️ **Um extrator contornou modificando o arquivo em `textos/`.** A conversão era
+correta e está declarada, mas `textos/` é gitignored: **um novo download quebra
+todos os `cit_sha` daquele artigo**, e quem re-baixar tem de reaplicar a mesma
+conversão. Escrever o número com `·` não tem esse problema.
+
 ## ➖ O PDF COME O SINAL DE MENOS, E O CORTE TROCA DE LADO (2026-08-09)
 
 O defeito de maior consequência de prescrição que esta base já produziu, e ele
