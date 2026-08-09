@@ -48,10 +48,34 @@ craniofaringioma (manejo), **cetoacidose euglicêmica**, **cetoacidose diabétic
 NTIS, exercício com CGM · `2021` insuficiência adrenal, crise tireotóxica,
 farmacoterapia da obesidade.
 
-## 🎯 O BLOCO "INDUZIDO POR X" VENCE A PERGUNTA QUE NÃO CITA X (2026-08-09)
+## 🎯 O BLOCO "INDUZIDO POR X" VENCE A PERGUNTA QUE NÃO CITA X — METADE RESOLVIDA (2026-08-09)
 
-Classe de defeito medida no teste de caminho das 4 áreas grandes, ainda **sem
-conserto** — o mecanismo certo custa mais que o tempo que sobrou da janela.
+✅ **A metade da SOBRA está consertada**, e o conserto é de **desempate**, não de
+peso: com pontos IGUAIS, o bloco que exige uma condição ausente da pergunta vai
+para trás. A estreiteza é o ponto — mexer na pontuação reordenaria blocos de
+notas diferentes, que é como se entrega conteúdo da área certa e do assunto
+errado. Só condição com sinônimo FECHADO entra no mapa (`CONDICAO_EXIGIDA`); hoje
+só `glicocorticoide`, com as 13 formas que o médico escreve (prednisona,
+dexametasona, corticoterapia…).
+
+Junto veio o conserto de área que faltava: **`fratura` sozinha não era chave** —
+só os compostos —, então *"paciente em prednisona há 4 meses, previno fratura?"*
+era decidida por `prednisona` e ia para **Adrenal**. Medido: `fratura` é 329 de
+352 em Osteometabolismo (93%). Os dois mecanismos compõem certo: com corticoide
+na pergunta chega o GIOP; sem, chega a osteoporose geral.
+
+❌ **A metade da FALTA continua aberta:** *"biotina falseia o TSH?"* e *"lítio e
+hipotireoidismo"* recebem em primeiro o bloco do hipertireoidismo no ADULTO, e
+não o de **fármaco e tireoide**, que é o dono da interferência de ensaio e da
+disfunção medicamentosa. Ali não há empate — o bloco do adulto ganha por pontos,
+então o desempate não alcança. E `induzida por MEDICAMENTO` ficou de fora do mapa
+de propósito: "medicamento" não tem sinônimo fechado, e exigir a palavra
+derrubaria justamente a pergunta que **nomeia o fármaco**.
+
+O que provavelmente resolve: reconhecer que a pergunta nomeia UM FÁRMACO (lista
+fechada, como a do `confere-farmaco-na-citacao.js`) e dar bônus ao bloco que
+declara `induzid* por medicamento`. Precisa de medição contra as 265 linhas de
+roteamento antes de entrar.
 
 **O caso que a expõe, com os números:** *"fratura de quadril após queda da
 própria altura"* — paciente que não toma corticoide nenhum — recebe em primeiro

@@ -65,6 +65,20 @@ const CAMINHO = [
   ['qual remedio emagrece mais', 'Obesidade'],
   ['qual dieta a ABESO recomenda', 'Obesidade'],
 
+  // ⚠️ QUEM QUERIA PREVENIR FRATURA RECEBIA INSUFICIÊNCIA ADRENAL (09/08/2026).
+  // `fratura` sozinha não era chave — só os compostos (`fratura de quadril`,
+  // `fratura por fragilidade`, `fratura vertebral`) —, então "paciente em
+  // prednisona há 4 meses, previno fratura?" era decidida por `prednisona`, que
+  // é chave de Adrenal. Medido: `fratura` é 329 de 352 em Osteometabolismo (93%).
+  // As quatro últimas são os controles: sem a palavra `fratura`, a pergunta de
+  // corticoide continua sendo de Adrenal e de Diabetes.
+  ['paciente em prednisona ha 4 meses, previno fratura?', 'Osteometabolismo'],
+  ['paciente em corticoide cronico, previno fratura como?', 'Osteometabolismo'],
+  ['crise adrenal apos suspender prednisona', 'Adrenal'],
+  ['desmame de prednisona, como faco', 'Adrenal'],
+  ['insuficiencia adrenal induzida por glicocorticoide, quem rastreio', 'Adrenal'],
+  ['hiperglicemia apos pulso de metilprednisolona', 'Diabetes'],
+
   // ⚠️ QUEM JÁ SABE O DIAGNÓSTICO CHEGAVA; QUEM ESTAVA DIAGNOSTICANDO, NÃO.
   // A osteogênese imperfeita (30k) só era alcançável pelo PRÓPRIO NOME: das 7
   // formas naturais de perguntar por ela, 6 caíam em NENHUMA área — o sinal, a
@@ -731,6 +745,15 @@ const PRIMEIRO = [
   ['esclera azulada e fraturas de repetição na criança', 'osteogênese imperfeita'],
   ['doença dos ossos de vidro', 'osteogênese imperfeita'],
   ['escleras azuis em lactente com fratura', 'osteogênese imperfeita'],
+  // ⚠️ O DESEMPATE DA CONDIÇÃO EXIGIDA, nos dois sentidos. GIOP e osteoporose
+  // empatavam em 18 pontos com os mesmos seis termos no tema, e a ordem do array
+  // dava o primeiro lugar ao GIOP mesmo quando a pergunta não citava corticoide
+  // nenhum. Agora, com pontos IGUAIS, o bloco que exige uma condição ausente da
+  // pergunta vai para trás — e volta para a frente assim que ela aparece.
+  ['fratura de quadril após queda da própria altura', 'osteoporose no adulto'],
+  ['fratura vertebral por insuficiência sem trauma', 'osteoporose no adulto'],
+  ['fratura por fragilidade em quem usa prednisona há 6 meses', 'glicocorticoide'],
+  ['osteoporose em uso de dexametasona, qual agente', 'glicocorticoide'],
 ];
 
 for (const [pergunta, esperado] of PRIMEIRO) {
