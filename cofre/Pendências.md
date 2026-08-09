@@ -5,6 +5,49 @@ atualizado: 2026-08-09
 
 # Pendências
 
+## 📅 AUDITORIA DE ATUALIDADE DO ACERVO — resultado, e o que só o professor resolve (2026-08-09)
+
+Resposta à instrução dele (*"mantenha o cuidado de sempre manter o arquivo mais
+atualizado — eu tinha uma diretriz de dislipidemia de 2017 e a plataforma já
+estava com a de 2025"*). Cruzei os **35 extratos** contra os **245 itens da fila**
+por três testes, do mais frouxo ao mais estrito:
+
+1. **palavra-chave + área** → 6 "achados", **todos falso positivo** (sobreposição
+   frouxa: *"Type 1 diabetes Seminar"* não é versão nova de *PTDM*);
+2. **mesma pasta do Drive + ano maior** → 12 "achados", **também falso positivo**:
+   as pastas são amplas (`Plataforma ED/Diabetes`), então artigo mais novo na
+   mesma pasta **não** é versão mais nova do mesmo documento;
+3. **mesma SOCIEDADE reeditando + ano maior** → 1 "achado", **falso positivo**
+   (Endocrine Society publicando sobre *outro* assunto).
+
+**✅ Conclusão: nenhum extrato da base tem edição mais nova esperando na fila.**
+Os dois casos que pareciam supersessão real já estavam cobertos — a diretriz
+**brasileira de obesidade de 2025** e a **conjunta ESE/Endocrine Society de 2024**
+de insuficiência adrenal **já estão extraídas**.
+
+⚠️ **Lição de método: "mesma pasta" e "palavra em comum" NÃO detectam
+supersessão.** A organização do Drive é por assunto, não por linhagem de
+documento. Só o par *mesma sociedade + mesmo assunto* diria, e isso exige olhar
+caso a caso.
+
+### ⛔ O QUE NÃO DÁ PARA CONSERTAR EXTRAINDO — precisa do professor
+
+**A base responde CETOACIDOSE com material de 2020**, e o **consenso ADA/EASD de
+2024 sobre crises hiperglicêmicas NÃO EXISTE no Drive** (busquei a fila inteira
+por `hyperglycemic crisis`, `ketoacidosis`, `hiperosmolar`: o mais novo é de
+**2020**). Cetoacidose é emergência e é dos assuntos mais consultados —
+**este é o item de maior risco da lista de defasagem, e só o professor resolve,
+mandando o documento.**
+
+### Os 17 extratos com 5+ anos (para ele decidir o que vale substituir)
+
+`2016` PTDM · `2017` osteogênese imperfeita · `2018` hirsutismo (Endocrine
+Society), hiperglicemia por glicocorticoide · `2019` fármacos e tireoide,
+hipofosfatasia, craniofaringioma · `2020` dumping, cirurgia bariátrica,
+craniofaringioma (manejo), **cetoacidose euglicêmica**, **cetoacidose diabética**,
+NTIS, exercício com CGM · `2021` insuficiência adrenal, crise tireotóxica,
+farmacoterapia da obesidade.
+
 ## ⛔ A FILA DA ROTA B MUDOU DE ORDEM POR CAUSA DO TETO (2026-08-09)
 
 A tabela mais abaixo põe **Tireoide em 3º**. **Não extraia mais nada de Tireoide
