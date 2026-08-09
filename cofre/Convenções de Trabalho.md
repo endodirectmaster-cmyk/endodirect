@@ -5,6 +5,31 @@ atualizado: 2026-08-09
 
 # Convenções de Trabalho
 
+## 🧪 CHAVE NOVA SÓ ENTRA DEPOIS DO CONTROLE INVERSO (2026-08-09)
+
+Contar a dominância não basta. **Teste também a pergunta que NOMEIA a doença
+concorrente** — é lá que a chave nova rouba.
+
+O caso: `acne` mede 9 em Endocrinologia Feminina contra 4 em Adrenal (2,25:1) e
+parecia aceitável. Com ela aplicada, *"acne grave em adolescente com HAC"* passou
+a cair em **Feminina** — porque `acne` tem 4 letras (peso 3004) e `hac` tem 3
+(3003), e o desempate DENTRO da categoria é por comprimento. **Uma pergunta que
+nomeia a doença perdeu para um sinal, por uma letra.** É a segunda vez que o
+desempate por comprimento morde (a primeira foi `cintilografia` 3013 ×
+`paratireoide` 3012). Chave removida.
+
+**O roteiro, então, é:** (1) contar alvo × resto; (2) rodar as perguntas que a
+chave deve consertar; (3) **rodar as perguntas das áreas vizinhas que nomeiam a
+doença delas**; (4) só então aplicar. E vale a regra do `perda auditiva`: domínio
+não basta quando o termo pertence à clínica inteira — acne é da dermatologia, da
+adrenal e da ginecologia.
+
+⚠️ **Corolário do mesmo dia:** chave que a base já resolve é **peso escondido**.
+`cortisol salivar` (21×0) e `cortisol livre urinario` (27×0) eram exclusivas e
+foram recusadas: `cushing`, `cortisol` e `dexametasona` já levavam a Adrenal e o
+bloco vencia sozinho. Chave desnecessária entra sem precisar e reaparece
+desequilibrando outro empate depois.
+
 ## 📎 CITAÇÃO REPETIDA BYTE A BYTE É PROVA COPIADA (2026-08-09)
 
 Achado pela auditoria do GIOP e **conferido por mim na fonte**: quatro fatos
