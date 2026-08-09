@@ -48,6 +48,46 @@ craniofaringioma (manejo), **cetoacidose euglicêmica**, **cetoacidose diabétic
 NTIS, exercício com CGM · `2021` insuficiência adrenal, crise tireotóxica,
 farmacoterapia da obesidade.
 
+## 🎯 O BLOCO "INDUZIDO POR X" VENCE A PERGUNTA QUE NÃO CITA X (2026-08-09)
+
+Classe de defeito medida no teste de caminho das 4 áreas grandes, ainda **sem
+conserto** — o mecanismo certo custa mais que o tempo que sobrou da janela.
+
+**O caso que a expõe, com os números:** *"fratura de quadril após queda da
+própria altura"* — paciente que não toma corticoide nenhum — recebe em primeiro
+o bloco do **GIOP**. Os dois empatam em **18 pontos**, com exatamente os mesmos
+seis termos (`fratura`, `quadril`, `após`, `queda`, `própria`, `altura`) no tema,
+e o desempate é a ordem do array. O empate é legítimo: a diretriz do ACR
+**discute mesmo** fratura por fragilidade e quadril. Não é tema inflado.
+
+**Por que isso é uma classe e não um caso:** a base tem pelo menos quatro blocos
+"induzido por X" — GIOP, hiperglicemia induzida por glicocorticoide, diabetes
+pós-transplante e disfunção tireoidiana induzida por medicamento. E o defeito
+corta **para os dois lados**, medido na mesma varredura:
+
+- **sobra**: GIOP vence a pergunta que não menciona corticoide;
+- **falta**: *"biotina falseia o TSH?"* e *"lítio e hipotireoidismo"* recebem em
+  primeiro o bloco do hipertireoidismo no ADULTO, e não o de **fármaco e
+  tireoide**, que é o dono da interferência de ensaio e da disfunção
+  medicamentosa.
+
+**O mecanismo que falta:** um bloco cuja aplicabilidade é CONDICIONAL deveria
+ganhar pontos quando a pergunta cita a condição e perdê-los quando não cita. É a
+mesma família do conserto da negação (o `deepFor` passou a saber que "sem
+sintomas" não pontua o bloco sintomático): pontuação por contagem de palavra não
+enxerga nem negação nem pré-requisito.
+
+⚠️ **Não fazer às pressas.** Derivar a condição do tema (`induzid[oa] por X`) é
+elegante e arriscado — precisa de sinônimo (`glicocorticoide` = `prednisona` =
+`corticoide` = `dexametasona`) e de medição contra as 254 linhas de roteamento
+antes de entrar.
+
+**Consertado hoje, do que era só tema faltando** (esses não precisavam de
+mecanismo novo, só das palavras certas na superfície de busca): osteogênese
+imperfeita por **esclera azulada** (12 ocorrências no texto, zero no tema — a
+pergunta patognomônica recebia o GIOP) e **fratura de quadril** no bloco da
+osteoporose (30 ocorrências no texto, zero no tema).
+
 ## ⏳ TIREOIDE A 98% DO TETO — e ela cresce SEM artigo novo (2026-08-09)
 
 Números para a decisão do professor, todos medidos:

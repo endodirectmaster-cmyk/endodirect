@@ -709,6 +709,14 @@ const PRIMEIRO = [
   ['sódio 120 sem sintomas, velocidade de correção', 'crônica'],
   ['hiponatremia assintomática, corrijo quão rápido', 'crônica'],
   ['sódio urinário 40, investigo o quê', 'algoritmo diagnóstico'],
+  // ⚠️ OSTEOGÊNESE IMPERFEITA PELA APRESENTAÇÃO CLÁSSICA (09/08/2026). O texto do
+  // bloco tem 12 ocorrências de "esclera" e o TEMA não tinha nenhuma — então
+  // "esclera azulada e fraturas de repetição na criança" recebia em primeiro o
+  // bloco do GIOP, que só pontuava por `fratura` e `criança`. O sinal
+  // patognomônico não alcançava o artigo que é sobre ele.
+  ['esclera azulada e fraturas de repetição na criança', 'osteogênese imperfeita'],
+  ['doença dos ossos de vidro', 'osteogênese imperfeita'],
+  ['escleras azuis em lactente com fratura', 'osteogênese imperfeita'],
 ];
 
 for (const [pergunta, esperado] of PRIMEIRO) {
