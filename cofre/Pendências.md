@@ -1,9 +1,34 @@
 ---
 tags: [cofre, pendencias]
-atualizado: 2026-08-08
+atualizado: 2026-08-09
 ---
 
 # Pendências
+
+## ⛔ A FILA DA ROTA B MUDOU DE ORDEM POR CAUSA DO TETO (2026-08-09)
+
+A tabela mais abaixo põe **Tireoide em 3º**. **Não extraia mais nada de Tireoide
+antes de dividir a área** — a medida diz por quê:
+
+| área | ocupa | folga até 400k | cabe |
+|---|---|---|---|
+| **Tireoide** | 383.665 | **16.335** | **ZERO artigo** |
+| Obesidade | 350.391 | 49.609 | ~1 |
+| Diabetes | 284.265 | 115.735 | ~2 |
+| **Osteometabolismo** | 51.374 | 348.626 | **~7** |
+| Adrenal | 87.488 | 312.512 | ~6 |
+
+O teto profundo foi ao **máximo** (400k) em 09/08 e Tireoide já ocupa **96%**.
+O próximo extrato de tireoide **reprova o `test-teto-diretrizes.js`** — a guarda
+existe justamente para isso. Auditoria de Tireoide pode seguir (não acrescenta
+conteúdo); **extração, não**.
+
+**Próxima área para extrair: Osteometabolismo (era a 4ª).** Duas razões que
+apontam para o mesmo lugar: é quem tem **mais folga** (~7 artigos) e é onde
+moram **três dos doze assuntos sem nenhum bloco** — osteoporose, hipercalcemia/
+hiperparatireoidismo e hipoparatireoidismo. Hoje a área só tem hipofosfatasia e
+osteogênese imperfeita, que são **doenças raras**: a mesma distorção que fez
+Diabetes ser a primeira da fila (130 fatos, 109 de pós-transplante e 21 de MODY).
 
 ## ✅ DIABETES FECHADO — a primeira área da Rota B (2026-08-08)
 
