@@ -479,6 +479,26 @@ try {
   fail('a base profunda commitada não corresponde aos extratos:\n' + out);
 }
 
+// ⚠️ AVISO DE ESCOPO ESCONDIDO NUM `alinhado`. O montador NÃO entrega a ressalva
+//     quando `conflito_direcao` é `alinhado` — e a razão é boa (registro de
+//     auditoria; o núcleo já foi corrigido a partir daquela fonte). Mas o campo
+//     `conflito` acumulou um segundo papel: declarar **o que a fonte não
+//     responde**, que é aviso de SEGURANÇA. No feocromocitoma, 2.704 chars
+//     declarados `alinhado` incluíam "não traz corte de metanefrina, não traz
+//     condição de coleta e NÃO TRAZ CONDUTA DE CRISE HIPERTENSIVA" — descartado
+//     em silêncio, e a auditoria confirmou que aquele aviso não chegava por
+//     nenhuma outra via (nem núcleo, nem tema, nem os 93 fatos).
+//     ⚠️ A primeira versão do padrão dava 3 falsos positivos em 4 (pegava "não
+//     há mais o que sobrescrever" e "o NÚCLEO não tem entrada sobre X"). Apertado
+//     para exigir o SUJEITO explícito ("a fonte não traz…"): 1 de 4, e era o real.
+try {
+  execFileSync(process.execPath, [path.join('scripts', 'confere-escopo-alinhado.js')], { stdio: 'pipe' });
+  ok('escopo em ressalva alinhada: nenhum aviso de segurança escondido em ressalva que não é entregue');
+} catch (e) {
+  const out = (e.stdout ? e.stdout.toString() : '') + (e.stderr ? e.stderr.toString() : '');
+  fail('ressalva de escopo dentro de um `alinhado` — ela não chega ao médico:\n' + out);
+}
+
 // ⚠️ O MESMO ARTIGO EXTRAÍDO DUAS VEZES. Achado em 09/08/2026 varrendo a fila:
 //     **5 títulos têm DOIS fileId** no `fila-extracao.json`, e num deles — o
 //     diabetes insipidus central — um id JÁ foi extraído (169 fatos) e o outro
