@@ -5,6 +5,30 @@ atualizado: 2026-08-09
 
 # Convenções de Trabalho
 
+## 🚨 O HARNESS A/B APROVOU UM RETRATO DE TRÊS DIAS ATRÁS (2026-08-09)
+
+O portão que existe para pegar apagão **passou verde sem medir o meu diff** — e
+o portão é justamente o que não pode falhar em silêncio.
+
+O `check.js` **não copia nada**: ele lê o que estiver em `$AB_DIR/main/` e
+`$AB_DIR/branch/`. Como reusei `AB_DIR=/tmp/ab` de uma sessão anterior, ele
+mediu um `index.html` de **6 de agosto**, imprimiu "OK — mesmos números da main,
+nenhum pageerror" e eu quase entreguei em cima disso.
+
+**O que me salvou foi conferir um número que eu já esperava ver mudar:** o
+`maiorScript` do branch veio **idêntico** ao da rodada anterior, depois de eu ter
+somado ~800 caracteres ao `index.html`. Número que não muda quando deveria mudar
+é sinal tão forte quanto número errado.
+
+**Consertado na raiz:** o harness agora compara `branch/index.html` byte a byte
+com o `index.html` da árvore de trabalho e **recusa rodar** se diferirem,
+imprimindo o comando para repopular. Testado nos dois sentidos — um único byte
+a mais já reprova.
+
+⚠️ **A lição que vale além deste script: ferramenta que LÊ de um diretório
+externo tem de provar que leu o que você acha que ela leu.** Verde de ferramenta
+desatualizada é pior que vermelho, porque encerra a investigação.
+
 ## 🔎 O ARTIGO SÓ RESPONDIA A QUEM JÁ SABIA O DIAGNÓSTICO (2026-08-09)
 
 Passei o dia caçando **evicção** — artigo certo cortado pelo teto. Varrendo as
