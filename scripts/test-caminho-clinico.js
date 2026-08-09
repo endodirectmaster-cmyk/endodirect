@@ -660,6 +660,25 @@ const COMPLETUDE = [
   // como motivo para AFASTAR o diagnóstico, que é a armadilha que o próprio
   // núcleo alerta ("glicemia normal não afasta cetoacidose").
   ['paciente em dapagliflozina com acidose e glicemia de 180: e cetoacidose?', 'Diabetes', 'cetoacidose euglicemica', 'euglicemica', 90, 20],
+  // ⚠️ AQUI QUEM EXPULSAVA ERA A DIRETRIZ DA GESTAÇÃO, e o risco é de POPULAÇÃO.
+  // "doença de Graves: metimazol por quanto tempo?" chegava a 7% no artigo do
+  // ADULTO, e 60% da entrega vinha da ATA 2026 de gestação — cuja resposta para
+  // antitireoidiano é outra (PTU até 16 semanas). A pergunta não disse gestante.
+  //
+  // Medi antes de mexer, porque a suspeita óbvia era distorção sistêmica: a ATA
+  // ocupa 188k dos 357k da área. NÃO É — em 8 de 10 perguntas não-gestacionais a
+  // gestação ocupa só 0–8% da entrega (o pedaço de 3k, que cabe na sobra). O
+  // defeito era de UMA pergunta, e a causa era omissão no tema do ADULTO: o
+  // artigo é o ÚNICO da área com "18 meses" (2 contra 0 em todos os outros) e
+  // seu tema não dizia nada sobre duração. Acrescentado o que ele entrega —
+  // 12–18 meses, quando suspender, remissão, recorrência, TBII antes de parar.
+  // Resultado: 7% → 100%, com "18 meses" 4x, "remissão" 7x e "TBII" 12x na
+  // entrega; as 3 perguntas de gestação seguem em 100%.
+  // âncora no trecho que existe ANTES e DEPOIS do conserto, de propósito: se eu
+  // ancorasse na frase que acabei de escrever no tema, a asserção reprovaria na
+  // árvore antiga por "não achei bloco" — provaria que editei o tema, não que a
+  // entrega melhorou. Ancorada assim, ela reprova medindo 7%.
+  ['doenca de Graves: metimazol por quanto tempo?', 'Tireoide', 'hipertireoidismo e tireotoxicose no adulto', 'remissao', 90, 4],
 ];
 
 for (const [pergunta, areaEsperada, ancora, palavra, pctMin, ocorrMin] of COMPLETUDE) {
