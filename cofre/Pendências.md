@@ -5,6 +5,39 @@ atualizado: 2026-08-09
 
 # Pendências
 
+## ⏸️ PARADA COMBINADA — retomar na SEXTA, 14/08/2026 (2026-08-09, 21:34 UTC)
+
+O professor pediu pausa e retomada na sexta. **Estado exato em que paramos**, para
+não perder tempo redescobrindo:
+
+| | |
+|---|---|
+| Base profunda | **47 artigos · 7.164 fatos** |
+| Auditoria adversarial | **45/47 (96%)** |
+| Acervo do Drive | **42 de 259 (16,2%)** |
+| Teste de caminho | **299 roteamentos + 10 chegadas + 35 ordens + 9 completudes** |
+| `ci-validate` | verde · harness A/B em Chromium igual à main |
+| Árvore | limpa, tudo commitado e empurrado |
+| Ramo | `claude/open-access-article-discussion-zrgpkp`, **65 commits à frente da main** |
+| ⚠️ Produção | **v214**. O ramo está em **v219** |
+
+**As DUAS primeiras coisas a fazer na sexta**, nesta ordem:
+
+1. **Auditoria adversarial dos dois extratos que faltam** — acromegalia (212
+   fatos) e endocrinopatia por inibidor de checkpoint (111). Um auditor por vez.
+   Pelo risco, comece pelo **checkpoint**: ele tem a ordem glicocorticoide →
+   levotiroxina (a inversa precipita crise adrenal), a divergência interna da
+   dose de hidrocortisona entre a Tabela 1 e o corpo, e o diabetes que abre em
+   cetoacidose. O brief pronto é `scratchpad/brief-auditoria.md`.
+2. **A decisão de deploy é do professor** (ver abaixo) — cinco correções de
+   núcleo estão represadas no ramo, e nenhuma chegou a médico nenhum.
+
+⚠️ **O que está represado em v219 e NÃO está no ar:** régua da obesidade
+pediátrica (P95 × P97), cautela do romosozumabe em quem usa corticoide, as **duas**
+correções da copeptina (condição de coleta com sódio >150, e o basal como
+porteiro para não ler DI nefrogênico como polidipsia primária) e o corte do GH
+no TOTG por ensaio (0,4 com ultrassensível × 1,0 com o antigo).
+
 ## 📅 AUDITORIA DE ATUALIDADE DO ACERVO — resultado, e o que só o professor resolve (2026-08-09)
 
 Resposta à instrução dele (*"mantenha o cuidado de sempre manter o arquivo mais
