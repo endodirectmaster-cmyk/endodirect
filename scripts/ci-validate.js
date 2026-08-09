@@ -458,6 +458,28 @@ try {
   fail('corte de escore T/Z sem o sinal de menos — o PDF comeu o hífen:\n' + out);
 }
 
+// ⚠️ PROVA COPIADA ENTRE FATOS. A auditoria do GIOP achou QUATRO fatos com a
+//     MESMA citação byte a byte — mesmo offset, mesmo tamanho, mesmo `cit_sha`.
+//     A fatia provava o primeiro; os outros três afirmavam preferência de
+//     fármaco cuja frase ficava 100–400 chars adiante, na mesma célula da
+//     tabela. E o `verifica-extracao.js` passou VERDE nos três: a peneira dele é
+//     de NÚMEROS, e o único número daquelas afirmações era o "40" do cabeçalho
+//     "adults ≥40 years", que a fatia continha. Prova fabricada com número
+//     emprestado.
+//     Escopo medido antes de virar guarda: "fármaco na afirmação e ausente da
+//     citação" em QUALQUER fato dá 176 de 6.197 (2,8%, quase tudo legítimo — a
+//     fonte escreve a classe, o fato nomeia o agente). Restrito a fatos com
+//     citação IDÊNTICA à de outro, dá 2, e zero depois de aceitar a abreviatura
+//     da própria diretriz (`rom`, `den`, `ral`). Citação repetida é a assinatura
+//     do copia-e-cola: é onde falhar volta a significar alguma coisa.
+try {
+  execFileSync(process.execPath, [path.join('scripts', 'confere-farmaco-na-citacao.js')], { stdio: 'pipe' });
+  ok('fármaco na citação: nenhum agente afirmado sem lastro na fatia que o prova');
+} catch (e) {
+  const out = (e.stdout ? e.stdout.toString() : '') + (e.stderr ? e.stderr.toString() : '');
+  fail('fármaco nomeado na afirmação e ausente da citação dela:\n' + out);
+}
+
 // ⚠️ O CAMPO `auditoria` SIGNIFICA UMA COISA SÓ. Ele chegou a ter três formatos
 //     convivendo — string do legado, objeto com `achado` (auditoria de verdade)
 //     e objeto que o extrator usava como bloco de notas. Medido em 08/08/2026:
