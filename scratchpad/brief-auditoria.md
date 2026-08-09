@@ -109,6 +109,19 @@ carregam, é saída 1 — estender até fechar a frase.
 Medido na mesma auditoria: 11 de 169 citações terminam no meio de frase, e
 **1 era defeito real**. Rendimento parecido com o da cabeça, e é barato.
 
+### ✅ O `conflito` CHEGA AO MODELO — e é o único campo além da `afirmacao` que chega
+
+Conferido no código (`monta-base-profunda.js`): a ressalva do `conflito` é
+colada **na frente do corpo do bloco**, como cabeçalho, e o comentário da linha
+213 diz que ela é **repetida em TODOS os pedaços** de um artigo partido, de
+propósito. A única exceção é `conflito_direcao: "alinhado"`, que sai da entrega
+(o núcleo já foi corrigido, e mandar a ressalva seria alarme falso).
+
+**Consequência para você, auditor:** quando um aviso de segurança precisa chegar
+ao médico e não cabe em cada fato, o lugar dele é o `conflito` — **nunca** o
+`extracao` nem o `secao`, que ficam no JSON e não são entregues. E audite a
+ressalva do `conflito` como auditaria um fato: ela chega com autoridade de aviso.
+
 ### 📄 O `secao` NUNCA CHEGA AO MODELO — procure fato que se apoia nele
 
 Conferido no código (`monta-base-profunda.js`): o montador envia **só** a

@@ -20,6 +20,19 @@
   "pseudo-Cushing"
  ],
  "extracao": "Extraído do PDF do Drive (14 páginas) com PyMuPDF em ordem natural de blocos — o modo \"sorted\" INTERCALAVA as duas colunas e foi descartado. Conferência de fonte corrompida: zero \"þ\" e zero padrões \"N.NeN.N\", logo a fonte NÃO tem o defeito de símbolos que já produziu erro de 1000× nesta base. ⚠️ Mas o texto tem ZERO ocorrências de \"µ\": o artigo simplesmente não escreve cortes em µg/dL — os únicos cortes numéricos do corpo estão em nmol/L (50 e 138) e a dose de CRH em mcg. Por isso NENHUM fato converte nmol/L para µg/dL. O corpo do artigo vai do início até a seção de referências (≈43,5 mil de 77 mil caracteres normalizados); o restante são as 162 referências, sem conteúdo clínico. As tabelas 1 e 2 vieram íntegras no texto e cada linha foi citada com o CABEÇALHO da tabela junto, para provar qual coluna é sensibilidade e qual é especificidade; as 12 linhas foram conferidas uma a uma contra a afirmação, valor por valor.",
+ "auditoria": {
+  "data": "2026-08-09",
+  "fatos_tocados": [
+   11,
+   12,
+   18,
+   19,
+   50,
+   55,
+   61
+  ],
+  "achado": "Auditoria adversarial dos 61 fatos contra o texto integral. CONFERIDO E LIMPO: (a) AS 12 LINHAS DE TABELA (índices 10-15 da Tabela 1 e 27-32 da Tabela 2) refeitas por comparação de conjunto — todo número de cada linha aparece na afirmação, nenhum número da afirmação está fora da linha, e a ATRIBUIÇÃO DE COLUNA (estudos | CS | não-CS | suspicion | sensibilidade | especificidade | LR+ | LR-) confere linha a linha contra o cabeçalho citado; (b) AS DUAS LINHAS DO dex-CRH, onde o buraco até o cabeçalho passava de 400 e o extrator estendeu o primeiro pedaço até o fim da linha do UFC: os 16 números do UFC da Tabela 1 e os 15 da Tabela 2 NÃO intersectam nenhum número da linha do dex-CRH, e NENHUM deles entrou nas afirmações 15 e 32 — a extensão não contaminou; (c) ZERO conversão de unidade em todo o extrato: a única ocorrência de \"µ\" nos 61 fatos é a declaração, DENTRO da afirmação 18, de que a fonte não fornece a conversão de nmol/L para µg/dL; (d) ZERO citação repetida byte a byte entre fatos (agrupamento por JSON.stringify(cit) não produz nenhum grupo com 2+); (e) todo fato de acurácia NOMEIA o teste; (f) o erro de digitação da própria fonte no LNSC está do lado certo — \"93.8\" ocorre uma única vez no artigo, na Tabela 1, e o resumo imprime \"(93.%-97.2%)\" com um dígito comido; o extrator citou a Tabela 1 e acertou; (g) a ressalva do INCIDENTALOMA é fiel à frase da fonte e, ao contrário do `secao`, o campo `conflito` É entregue ao modelo como cabeçalho de todo bloco (monta-base-profunda.js, CABECALHO_RESSALVA + ressalva + ' | CONTEÚDO: '), e este extrato cabe em UM bloco (34.381 < TETO_BLOCO 60.000), de modo que a cerca do incidentaloma viaja com todos os fatos; (h) o aviso de viés de publicação dos testes com dexametasona JÁ estava em `afirmacao` (fatos 44 e 45), não só em `extracao`. SETE DEFEITOS CORRIGIDOS: (1) fato 12 afirmava que a sensibilidade de 98.6% do teste de 1 mg era \"a mais alta de todos os testes\" — FALSO: a dexametasona-CRH tem exatamente os mesmos 98.6% (o próprio fato 15 deste extrato o diz), e a fonte escreve \"of the FIRST-LINE diagnostic tests, the DST had the highest sensitivity\"; o superlativo também não tinha lastro na citação do fato (cabeçalho + linha do DST). Corrigido para \"a mais alta entre os testes de primeira linha, e empatada com a da dexametasona-CRH\"; (2) o mesmo fato 12 entregava o número mais suspeito de otimismo da metanálise sem nenhum ponteiro para os fatos de viés de publicação e de otimização da sensibilidade — ponteiro acrescentado à afirmação; (3) fato 55 tinha METADE da afirmação sem citação: a fatia terminava em \"...statistical evidence (using\" e o restante (teste da razão de verossimilhança, ranqueamento das DOR por metanálise em rede, modelo de análise de variância de 2 vias, teste de Deeks e gráficos de floresta) começava só depois de um rodapé de quebra de página de 171 caracteres. Saída 1: segunda peça [0,9934,469], buraco 171 < GAP_MAX 400, cit_sha recalculado (0a4e6c16540a7ace → a6e09ba28c305396); (4) fato 30 dizia que o cortisol sérico da meia-noite \"foi o único teste cuja LR+ não caiu muito\" e o `extracao` remetia a um \"fato próprio\" que NÃO EXISTIA — nenhuma citação do extrato cobria a frase \"relatively large reductions in lr+ values for all tests except for msc\" (offsets 28283-28354). Saída 1 no fato 50: citação estendida para trás de [0,28404,402] para [0,28030,776] (peça única, buraco zero), com a frase incorporada à afirmação do 50; cit_sha 5097700eb2f3fb8a → 01908f86b7976416. O ponteiro do fato 30 agora resolve; (5) fato 19 terminava com \"ela NÃO diz nada sobre a especificidade nesse mesmo corte, QUE É a mais baixa entre os testes de primeira linha\" — a oração relativa, lida pelo antecedente mais próximo, atribuía ao corte de 50 nmol/L uma especificidade que o artigo NÃO publica nesse corte, contradizendo a própria frase anterior e convidando ao uso confirmatório. Reescrito; (6) fatos 18 e 19 (o corte de 50 nmol/L e o desempenho nele) eram os únicos que podiam ser lidos como válidos no INCIDENTALOMA ADRENAL — 50 nmol/L é exatamente o corte que o núcleo usa para MACS — e não carregavam a cerca em si mesmos. Cerca acrescentada às duas afirmações, com o termo MACS do núcleo; (7) fato 11 guardava a divergência entre o resumo e a Tabela 1 só em `extracao`, campo que não chega ao médico; a divergência foi levada para a `afirmacao`, sem escrever o número truncado. UM FATO NOVO (índice 61, saída 2): a nota de rodapé da Tabela 1 que define a coluna \"suspicion\" está 509 caracteres depois do fim da tabela (acima do GAP_MAX) e nenhum fato a citava, embora SEIS afirmações (10-15) dependam da definição dela. Fato próprio com citação contígua [0,21608,116]. NÃO CORRIGIDO, fica para o dono do extrato: (i) a fonte traz, em 34718, \"many studies of ufc and lnsc used roc analysis to find optimal cut-offs, while studies of dexamethasone tests typically used predefined cut-offs\" — é o espelho do viés dos testes com dexametasona, aplicado a UFC e salivar, e o extrato não o cobre; citação sugerida [0,34718,305], cit_sha b3e8e5e1cc7a278a; (ii) fato 29 afirma que a LR- de 0.010 é \"a mais baixa de todos os testes neste cenário\" — verdadeiro (conferido contra as seis linhas da Tabela 2) mas não provado pela citação do próprio fato, que traz só o cabeçalho e a linha do DST; (iii) fato 23 termina a citação no meio da frase (\"...indicating that a positive\"), porque a continuação está do outro lado da figura 3, a cerca de 3.000 caracteres — saída 1 impossível, saída 3 seria encolher a fatia até \"(10.5 and 7.0, respectively)\". ⚠️ Os fatos 12, 15, 32 e 50 tiveram citação estendida ou afirmação alterada em pontos onde a peneira de números do verifica-extracao.js fica anestesiada pelo tamanho da fatia; TODOS foram conferidos à mão, valor por valor, contra o texto-fonte."
+ },
  "fatos": [
   {
    "afirmacao": "SÍNDROME DE CUSHING — ACURÁCIA DOS TESTES DE RASTREIO BIOQUÍMICO. Metanálise de acurácia diagnóstica (J Clin Endocrinol Metab, 2020) que reuniu 139 estudos e 14 140 participantes, dos quais 4324 com síndrome de Cushing. Os estudos individuais tinham de 7 a 299 participantes (mediana 82) e a prevalência de Cushing dentro deles ia de 3.0% a 91.1% (mediana 28.6%). ⚠️ LEIA A PREVALÊNCIA: mediana de quase 29% de doentes significa POPULAÇÃO JÁ SOB SUSPEITA CLÍNICA, de alta probabilidade pré-teste — não é rastreio de assintomático.",
@@ -165,7 +178,7 @@
    "extracao": "O cabeçalho da Tabela 1 entra na citação de propósito: é ele que prova qual coluna é sensibilidade, qual é especificidade e qual é LR — a linha sozinha é só uma fileira de números. Linha conferida à mão contra a afirmação, célula a célula."
   },
   {
-   "afirmacao": "CORTISOL SALIVAR DA NOITE / MEIA-NOITE (LNSC, late-night salivary cortisol) — ACURÁCIA PARA DIAGNOSTICAR SÍNDROME DE CUSHING em adultos sob suspeita clínica (metanálise JCEM 2020, análise primária, 58 estudos, 1868 com Cushing e 5049 sem): SENSIBILIDADE 95.8% (IC 95% 93.8-97.2) e ESPECIFICIDADE 93.4% (IC 95% 90.7-95.4); razão de verossimilhança positiva 14.6 (IC 95% 10.3-20.7) e negativa 0.045 (IC 95% 0.030-0.066). Em 51.8% dos participantes sem Cushing havia features clínicas de Cushing. ⚠️ Par agregado ATRAVÉS de cortes diferentes, e o corte não está no corpo do artigo.",
+   "afirmacao": "CORTISOL SALIVAR DA NOITE / MEIA-NOITE (LNSC, late-night salivary cortisol) — ACURÁCIA PARA DIAGNOSTICAR SÍNDROME DE CUSHING em adultos sob suspeita clínica (metanálise JCEM 2020, análise primária, 58 estudos, 1868 com Cushing e 5049 sem): SENSIBILIDADE 95.8% (IC 95% 93.8-97.2) e ESPECIFICIDADE 93.4% (IC 95% 90.7-95.4); razão de verossimilhança positiva 14.6 (IC 95% 10.3-20.7) e negativa 0.045 (IC 95% 0.030-0.066). Em 51.8% dos participantes sem Cushing havia features clínicas de Cushing. ⚠️ Par agregado ATRAVÉS de cortes diferentes, e o corte não está no corpo do artigo. ⚠️ DIVERGÊNCIA DENTRO DA PRÓPRIA FONTE: o RESUMO do artigo imprime o limite inferior deste intervalo TRUNCADO, com um dígito faltando; o valor correto é o da Tabela 1, que é o citado aqui. Se você comparar com o resumo no PubMed e achar diferença, é erro de digitação da fonte, não deste extrato.",
    "secao": "Tabela 1 — cortisol salivar da noite/meia-noite (LNSC)",
    "cit": [
     [
@@ -183,7 +196,7 @@
    "extracao": "⚠️ O RESUMO DO PRÓPRIO ARTIGO TEM ERRO DE DIGITAÇÃO AQUI: ele imprime a sensibilidade do LNSC como \"95.8% (93.%-97.2%)\", com o limite inferior truncado. A Tabela 1 traz 93.8 e é ela que foi citada. Linha conferida à mão, célula a célula."
   },
   {
-   "afirmacao": "TESTE DE SUPRESSÃO COM 1 mg DE DEXAMETASONA OVERNIGHT (DST) — ACURÁCIA PARA DIAGNOSTICAR SÍNDROME DE CUSHING em adultos sob suspeita clínica (metanálise JCEM 2020, análise primária, 50 estudos, 1531 com Cushing e 3267 sem): SENSIBILIDADE 98.6% (IC 95% 96.9-99.4) — a mais alta de todos os testes — e ESPECIFICIDADE 90.6% (IC 95% 86.4-93.6), a mais baixa entre os de primeira linha; razão de verossimilhança positiva 10.5 (IC 95% 7.2-15.3) e negativa 0.016 (IC 95% 0.007-0.035). Em 76.4% dos participantes sem Cushing havia features clínicas de Cushing. ⚠️ Par agregado ATRAVÉS de cortes diferentes; o ponto de corte de cortisol deste teste tem fato próprio neste mesmo bloco.",
+   "afirmacao": "TESTE DE SUPRESSÃO COM 1 mg DE DEXAMETASONA OVERNIGHT (DST) — ACURÁCIA PARA DIAGNOSTICAR SÍNDROME DE CUSHING em adultos sob suspeita clínica (metanálise JCEM 2020, análise primária, 50 estudos, 1531 com Cushing e 3267 sem): SENSIBILIDADE 98.6% (IC 95% 96.9-99.4) — a mais alta ENTRE OS TESTES DE PRIMEIRA LINHA, e EMPATADA com a da dexametasona-CRH, que não é de primeira linha — e ESPECIFICIDADE 90.6% (IC 95% 86.4-93.6), a mais baixa entre os de primeira linha (a da dexametasona-CRH é mais baixa ainda); razão de verossimilhança positiva 10.5 (IC 95% 7.2-15.3) e negativa 0.016 (IC 95% 0.007-0.035). Em 76.4% dos participantes sem Cushing havia features clínicas de Cushing. ⚠️ Par agregado ATRAVÉS de cortes diferentes; o ponto de corte de cortisol deste teste tem fato próprio neste mesmo bloco. ⚠️ E esta sensibilidade é o número que a PRÓPRIA metanálise assinala como o mais suspeito de otimismo: houve viés de publicação nos testes com dexametasona e os estudos originais otimizavam a sensibilidade deles, que muitas vezes já fazia parte do critério de inclusão — ver os fatos próprios de viés de publicação neste mesmo bloco.",
    "secao": "Tabela 1 — supressão com 1 mg de dexametasona overnight (DST)",
    "cit": [
     [
@@ -279,7 +292,7 @@
    "cit_sha": "2f42197ab7d7d771"
   },
   {
-   "afirmacao": "⚠️ SUPRESSÃO COM 1 mg DE DEXAMETASONA OVERNIGHT (DST) NA SÍNDROME DE CUSHING — O ÚNICO PONTO DE CORTE NUMÉRICO DADO NO CORPO DESTE ARTIGO (metanálise JCEM 2020): usar um corte de cortisol de 50 nmol/L resultou em SENSIBILIDADE MAIOR porém ESPECIFICIDADE MENOR do que usar 138 nmol/L. Isto é o trade-off do corte, medido: baixar o corte pega mais doentes e gera mais falso-positivo. ⚠️ A fonte escreve estes cortes em nmol/L e NÃO fornece a conversão para µg/dL — não converta a partir deste artigo.",
+   "afirmacao": "⚠️ SUPRESSÃO COM 1 mg DE DEXAMETASONA OVERNIGHT (DST) NA SÍNDROME DE CUSHING — O ÚNICO PONTO DE CORTE NUMÉRICO DADO NO CORPO DESTE ARTIGO (metanálise JCEM 2020): usar um corte de cortisol de 50 nmol/L resultou em SENSIBILIDADE MAIOR porém ESPECIFICIDADE MENOR do que usar 138 nmol/L. Isto é o trade-off do corte, medido: baixar o corte pega mais doentes e gera mais falso-positivo. ⚠️ A fonte escreve estes cortes em nmol/L e NÃO fornece a conversão para µg/dL — não converta a partir deste artigo. ⚠️ E NÃO TRANSPORTE ESTE CORTE PARA O INCIDENTALOMA ADRENAL: esta metanálise EXCLUIU deliberadamente os estudos que rastreavam incidentaloma adrenal (fato próprio deste bloco), de modo que nem este corte nem o desempenho dele foram validados para secreção autônoma de cortisol (MACS) no incidentaloma — para esse cenário a referência é a diretriz de incidentaloma, não este artigo.",
    "secao": "⚠️ Ponto de corte do teste de 1 mg — 50 x 138 nmol/L",
    "cit": [
     [
@@ -292,7 +305,7 @@
    "extracao": "⚠️ Encolhi de propósito: NÃO escrevi o equivalente em µg/dL. O artigo não traz nenhum µ (zero ocorrências de \"µ\" no texto extraído) e não dá a conversão; escrever \"1,8 µg/dL\" aqui seria um número sem lastro na citação e exatamente o defeito que a base já pagou caro. O médico que precisar do valor em µg/dL tem de buscá-lo na diretriz, não aqui."
   },
   {
-   "afirmacao": "⚠️ SUPRESSÃO COM 1 mg DE DEXAMETASONA OVERNIGHT (DST) NA SÍNDROME DE CUSHING — DESEMPENHO NO CORTE HABITUAL: usando o corte TÍPICO de 50 nmol/L, o teste alcançou sensibilidade MUITO ALTA, de 99.2%, o que o torna um excelente teste de PRIMEIRA LINHA (metanálise JCEM 2020, população adulta sob suspeita clínica de Cushing). ⚠️ Sensibilidade altíssima serve para EXCLUIR (um resultado suprimido torna Cushing muito improvável); ela NÃO diz nada sobre a especificidade nesse mesmo corte, que é a mais baixa entre os testes de primeira linha.",
+   "afirmacao": "⚠️ SUPRESSÃO COM 1 mg DE DEXAMETASONA OVERNIGHT (DST) NA SÍNDROME DE CUSHING — DESEMPENHO NO CORTE HABITUAL: usando o corte TÍPICO de 50 nmol/L, o teste alcançou sensibilidade MUITO ALTA, de 99.2%, o que o torna um excelente teste de PRIMEIRA LINHA (metanálise JCEM 2020, população adulta sob suspeita clínica de Cushing). ⚠️ Sensibilidade altíssima serve para EXCLUIR (um resultado suprimido torna Cushing muito improvável); ela NÃO diz nada sobre a especificidade nesse mesmo corte — o artigo simplesmente NÃO PUBLICA a especificidade deste corte, e a especificidade mais baixa entre os testes de primeira linha que aparece em outro fato deste bloco é uma média agregada ATRAVÉS de vários cortes, NÃO a especificidade deste. Sozinho, este número não autoriza usar o teste como CONFIRMATÓRIO. ⚠️ E ele NÃO vale no INCIDENTALOMA ADRENAL: os estudos de incidentaloma foram excluídos desta metanálise (fato próprio deste bloco), então esta sensibilidade não foi validada para secreção autônoma de cortisol (MACS).",
    "secao": "⚠️ Ponto de corte do teste de 1 mg — sensibilidade em 50 nmol/L",
    "cit": [
     [
@@ -709,16 +722,16 @@
    "cit_sha": "c39a218b215a8125"
   },
   {
-   "afirmacao": "⚠️ SÍNDROME DE CUSHING — UM TESTE POSITIVO NÃO FECHA O DIAGNÓSTICO (metanálise JCEM 2020): a maioria das diretrizes, incluindo a da Endocrine Society, recomenda que SÓ sejam testados os pacientes COM FEATURES CLÍNICAS de Cushing. Nesse cenário, um resultado positivo é útil mas NÃO prova definitivamente que o paciente tem Cushing — tipicamente é preciso realizar MÚLTIPLOS TESTES na avaliação de Cushing, e esta análise sustenta essa conduta.",
+   "afirmacao": "⚠️ SÍNDROME DE CUSHING — UM TESTE POSITIVO NÃO FECHA O DIAGNÓSTICO (metanálise JCEM 2020): a maioria das diretrizes, incluindo a da Endocrine Society, recomenda que SÓ sejam testados os pacientes COM FEATURES CLÍNICAS de Cushing. Nesse cenário, um resultado positivo é útil mas NÃO prova definitivamente que o paciente tem Cushing — tipicamente é preciso realizar MÚLTIPLOS TESTES na avaliação de Cushing, e esta análise sustenta essa conduta. ⚠️ O MOTIVO ESTÁ MEDIDO: excluir os estudos que usaram apenas controles saudáveis (isto é, controles sem nenhuma suspeita de Cushing) reduziu a sensibilidade e, sobretudo, a ESPECIFICIDADE dos testes, e produziu reduções relativamente GRANDES das razões de verossimilhança POSITIVAS de TODOS os testes EXCETO a do cortisol sérico da meia-noite. É por isso que um teste positivo isolado não fecha o diagnóstico no paciente que já tem features de Cushing.",
    "secao": "⚠️ Conclusão — um teste positivo não fecha o diagnóstico",
    "cit": [
     [
      0,
-     28404,
-     402
+     28030,
+     776
     ]
    ],
-   "cit_sha": "5097700eb2f3fb8a"
+   "cit_sha": "01908f86b7976416"
   },
   {
    "afirmacao": "⚠️ SÍNDROME DE CUSHING — AS ESTRATÉGIAS ATUAIS SÃO MELHORES PARA EXCLUIR DO QUE PARA CONFIRMAR (metanálise JCEM 2020): baixa suspeita clínica de Cushing somada a um teste de supressão com 1 mg de dexametasona NEGATIVO torna o diagnóstico muito improvável. Já num paciente COM algumas features de Cushing, um teste POSITIVO não confirma automaticamente o diagnóstico; nesse cenário é prudente, como sugere a diretriz da Endocrine Society, que MÚLTIPLOS TESTES sejam realizados antes de firmar o diagnóstico de Cushing.",
@@ -776,9 +789,14 @@
      0,
      9453,
      310
+    ],
+    [
+     0,
+     9934,
+     469
     ]
    ],
-   "cit_sha": "0a4e6c16540a7ace"
+   "cit_sha": "a6e09ba28c305396"
   },
   {
    "afirmacao": "SÍNDROME DE CUSHING — ESCOLHAS DE DADOS NA METANÁLISE (JCEM 2020): quando um estudo apresentava cortisol livre urinário com e sem extração por solvente, foram usados os dados EXTRAÍDOS. Quando o mesmo estudo usava ensaio imunométrico e por espectrometria de massa (para cortisol livre urinário ou salivar), a ESPECTROMETRIA DE MASSA foi a usada na análise primária. Quando havia múltiplas amostras coletadas, foi usada a MÉDIA dos valores, salvo especificação em contrário dos autores. ⚠️ Isso importa ao comparar com o seu laboratório: a análise primária privilegia espectrometria de massa e média de amostras.",
@@ -844,6 +862,18 @@
     ]
    ],
    "cit_sha": "0c513bf58cb58a54"
+  },
+  {
+   "afirmacao": "SÍNDROME DE CUSHING — O QUE SIGNIFICA A COLUNA \"SUSPICION\" DA TABELA 1 DESTA METANÁLISE (JCEM 2020): a nota de rodapé da tabela define que \"suspicion\" é a PORCENTAGEM DOS PACIENTES SEM CUSHING QUE TINHAM FEATURES DE CUSHING — ou seja, quanto do grupo de comparação era de gente clinicamente suspeita, e não de controles saudáveis. ⚠️ Isto é o que fixa a leitura de todos os pares sensibilidade/especificidade da Tabela 1 deste bloco: quanto MENOR essa porcentagem, mais o grupo de comparação era formado por gente sadia e mais fácil ficou para o teste separar os dois grupos — logo, mais otimista é a especificidade publicada. Esse mecanismo não é suposição: está MEDIDO em fato próprio deste bloco, na análise que exclui os estudos com controles apenas saudáveis.",
+   "secao": "Tabela 1 — o que é a coluna \"suspicion\"",
+   "cit": [
+    [
+     0,
+     21608,
+     116
+    ]
+   ],
+   "cit_sha": "fad079dcf4671c8e"
   }
  ]
 }
