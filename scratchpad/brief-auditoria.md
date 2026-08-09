@@ -59,6 +59,36 @@ Se a prova de uma afirmação está em dois pontos distantes, use UMA destas:
 afirmação.** Um auditor deixou "(16 semanas)" num ponteiro cujo lastro tinha ido
 embora, e o verificador pegou.
 
+### 🔦 TÉCNICA: caçar a CABEÇA PERDIDA da citação
+
+O defeito dominante desta base é **contexto perdido na atomização**, e ele tem
+uma assinatura mecânica: a citação começa **no meio de uma frase**, e o
+qualificador que mudava tudo ficou para trás. É assim que *"não se recomenda X"*
+vira *"recomenda-se X"*, e foi assim que se achou o fato dos critérios da
+fratura atípica — listava os cinco critérios maiores e **omitia "ao menos 4 dos
+5"** e a localização obrigatória.
+
+Varra assim: para cada peça de `cit`, pegue os ~80 caracteres **anteriores** ao
+`offset`; se eles NÃO terminam em `.`/`!`/`?` (ou seja, a cabeça está no meio da
+frase) e contêm **negação** (`não`, `nunca`, `exceto`, `salvo`,
+`contraindicado`, `nem`), leia o fato inteiro e decida.
+
+⚠️ **Calibre a expectativa — isto foi medido em 09/08/2026 sobre 6.625 citações
+da base inteira:**
+- **negação → 39 candidatos**, e a taxa de acerto é de **cerca de 1 em 6**: a
+  maioria é lixo de coluna intercalada do PDF, não frase de verdade.
+- **limiar** (`ao menos N`, `pelo menos N`) → 10 candidatos, e **0 de 3
+  amostrados eram reais**. Em texto de diretriz a frase anterior quase sempre
+  contém um corte, de outra população; o fato seguinte declara o dele
+  corretamente. **Gatilho descartado.**
+- **escopo** (`apenas`, `somente`) → 4 candidatos, sinal fraco.
+- ⚠️ Filtre rodapé de periódico antes (`3 of 17`, `doi:`, `vol.`), senão ele
+  domina o resultado.
+
+**Por isso isto é técnica de auditor, e NÃO virou peneira de CI**: com ~85% de
+falso positivo, um alarme desses vira paisagem e deixa de proteger. Ele presta
+quando alguém LÊ os candidatos — que é o seu trabalho.
+
 ### ⚠️ Antes de acusar
 
 - **Confira o número no texto-fonte, com o contexto dele.** Já houve falso
