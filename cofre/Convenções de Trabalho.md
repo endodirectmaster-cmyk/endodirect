@@ -5,26 +5,35 @@ atualizado: 2026-08-09
 
 # Convenções de Trabalho
 
-## ☠️ AGENTE QUE MORRE SEM NOTIFICAR DEIXA O GASTO INVISÍVEL — e o freio erra PARA BAIXO (2026-08-09)
+## ⏳ EU DECLAREI UM AGENTE MORTO E ELE ESTAVA VIVO (2026-08-09)
 
-O `orcamento-agentes.js` só conta o que cada agente **relata ao terminar**. Um
-agente que trava ou morre **nunca relata**, e o gasto dele fica fora do medidor.
-⚠️ **O erro é na direção perigosa:** o freio dos 85% acha que há folga quando não
-há.
+**Correção de um erro meu, e a versão anterior desta nota estava errada.**
 
-O caso: a auditoria da HAC foi lançada e a última linha do transcrito dela é de
-**15:27**; às **18:06** o arquivo seguia parado, sem notificação de término. Quase
-três horas contra os ~25 minutos típicos dos outros cinco agentes do dia. O
-medidor marcava 69%; com o gasto provável dela, o real estaria perto de **81%**.
+Declarei a auditoria da HAC morta porque o transcrito dela estava parado às 15:27
+e às 18:06 nada tinha mudado — quase três horas contra os ~25 minutos típicos dos
+outros cinco agentes do dia. Cheguei a somar 250k ao medidor como estimativa do
+gasto perdido.
 
-Pior efeito colateral: **eu segurei lançamentos durante uma hora inteira** por
-acreditar que havia um agente vivo trabalhando. Agente fantasma custa janela.
+**Ela não tinha morrido: terminou em 3h32min e relatou 227.307 tokens.** Auditoria
+completa, sete defeitos achados, um deles grave. O `stat` do arquivo e o último
+`"timestamp"` do transcrito **não são sinal confiável de vida** — o arquivo é
+escrito por um caminho em que o `stat` mente (reportava 121 bytes num arquivo de
+594 KB).
 
-**Regra:** quando um agente passar de ~2× o tempo típico sem notificação, confira
-o transcrito dele (`stat` + último `"timestamp"` no fim do arquivo, sem ler o
-corpo, que estoura o contexto). Se estiver parado, **considere-o morto**: some ao
-medidor uma estimativa do gasto dele antes de decidir lançar outro, e relance a
-tarefa na janela seguinte. Não vale ler o `.output` inteiro — 594 KB de JSONL.
+**O que fica, corrigido:**
+- **Duração não é sinal de morte.** Um auditor sério pode levar 8× o tempo de um
+  extrator. Só a notificação de término (ou a ausência do processo) decide.
+- **A estimativa que somei ao medidor era ruído**, e tive de desfazê-la. Se for
+  estimar mesmo assim, marque a estimativa como tal e reverta assim que o agente
+  relatar.
+- ⚠️ **O risco real que a nota anterior descrevia continua existindo** — o
+  `orcamento-agentes.js` só conta o que o agente relata ao terminar, então um
+  agente que morra de verdade fica fora do medidor e o freio erra para baixo.
+  Mas o remédio não é declarar morte por relógio.
+- **Não leia o `.output` inteiro** — 594 KB de JSONL estouram o contexto.
+
+E o custo do meu erro: **segurei lançamentos por uma hora** achando que havia um
+fantasma. A ironia é que havia um agente vivo, fazendo o melhor trabalho do dia.
 
 ## 🧪 CHAVE NOVA SÓ ENTRA DEPOIS DO CONTROLE INVERSO (2026-08-09)
 
