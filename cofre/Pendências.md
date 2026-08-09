@@ -83,6 +83,48 @@ Não entrou ainda porque reprovaria agora, com dois extratos cujos agentes ainda
 não relataram — e consertar extrato de agente no ar é o acidente que a convenção
 do `git add -A` já descreve. Entra quando a leva fechar.
 
+## 🔀 A PONTUAÇÃO NÃO ENXERGA DIREÇÃO, E EM ENDOCRINOLOGIA A DIREÇÃO É O DIAGNÓSTICO (2026-08-09)
+
+Medido no teste de ordem, **sem conserto** — o mecanismo certo é maior que o
+tempo desta janela, e improvisar aqui é pior que registrar.
+
+**O caso:** toda pergunta de HIPERcalcemia escrita com VALOR recebe em primeiro o
+bloco do **HIPOparatireoidismo**.
+
+| pergunta | 1º bloco entregue |
+|---|---|
+| "cálcio 11,4 com PTH normal-alto" | hipoparatireoidismo crônico |
+| "cálcio alto com PTH inapropriadamente normal" | hipoparatireoidismo crônico |
+| "cálcio 11,4 e PTH 88" | hipoparatireoidismo crônico |
+| "cálcio 13 com PTH baixo" | hipoparatireoidismo crônico |
+| "**hipercalcemia** com PTH suprimido" | hipercalcemia com PTH suprimido ✅ |
+
+**Só acerta quando o médico escreve a PALAVRA.** E o médico escreve o valor.
+
+**Por que acontece, e por que não é over-claim de tema:** as palavras da pergunta
+(`cálcio`, `PTH`, `alto`, `normal`) estão nos dois temas — só que no do
+hipoparatireoidismo elas apontam para o lado OPOSTO (*"fósforo alto"*, *"PTH
+inapropriadamente baixo"*). A pontuação conta presença, não direção. Empatados, o
+desempate é a ordem de autoridade do montador, e o hipoparatireoidismo é uma
+**diretriz internacional de 2022** enquanto o hiperparatireoidismo é um **Seminar
+de 2018** — a diretriz sorteia primeiro, por construção e com razão.
+
+⚠️ **E o número não ajuda:** `11,4` vira os tokens `11` e `4`, ambos derrubados
+pelo filtro de 4 caracteres. Quem dá o valor em vez da palavra não tem
+discriminação nenhuma.
+
+**O que limita o dano hoje** (por isso não é emergência): Osteometabolismo cabe
+inteira no teto (313k de 400k), então **os dois blocos CHEGAM** — é ordem, não
+evicção, ao contrário do acidente da hiponatremia. E os dois temas se declaram
+("hipoparatireoidismo CRÔNICO…" / "⚠️ NÃO CONFUNDIR COM HIPOPARATIREOIDISMO").
+
+**Mecanismo que provavelmente resolve:** desempate por DIREÇÃO, na mesma família
+do desempate por condição exigida que já entrou. Quando a pergunta carrega um
+marcador de direção para um analito (`cálcio alto`, `hiper-`, valor acima da
+faixa), o bloco cujo tema declara a direção OPOSTA para o mesmo analito vai para
+trás. Precisa de: um mapa analito → par de direções, leitura do valor numérico
+contra a faixa, e medição contra as 274 linhas de roteamento antes de entrar.
+
 ## 🎯 O BLOCO "INDUZIDO POR X" VENCE A PERGUNTA QUE NÃO CITA X — METADE RESOLVIDA (2026-08-09)
 
 ✅ **A metade da SOBRA está consertada**, e o conserto é de **desempate**, não de
