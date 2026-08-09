@@ -48,6 +48,36 @@ craniofaringioma (manejo), **cetoacidose euglicêmica**, **cetoacidose diabétic
 NTIS, exercício com CGM · `2021` insuficiência adrenal, crise tireotóxica,
 farmacoterapia da obesidade.
 
+## ⏳ TIREOIDE A 98% DO TETO — e ela cresce SEM artigo novo (2026-08-09)
+
+Números para a decisão do professor, todos medidos:
+
+| | chars | % do teto de 400k |
+|---|---|---|
+| **Tireoide hoje** | **391.745** | **98%** — folga de 8.255 |
+| se dividir: *Tireoide na gestação* (ATA 2026, 4 blocos) | 203.264 | 51% |
+| se dividir: *Tireoide* (5 blocos restantes) | 188.481 | 47% |
+
+⚠️ **O que mudou de patamar: a área cresce sem eu extrair nada.** As duas
+auditorias adversariais de hoje somaram **8.080 caracteres** de ressalva de
+população aos fatos de tireoide — e a folga é de **8.255**. **Uma auditoria a
+mais do mesmo tamanho esgota**, e aí o `test-teto-diretrizes.js` reprova.
+
+Auditar é acrescentar texto de segurança, e texto de segurança ocupa teto. Não é
+motivo para auditar menos; é motivo para dividir.
+
+⚠️ **E não dá para subir o teto de novo:** 400k já é o `TETO_MAXIMO`.
+
+⚠️ **A divisão NÃO é só roteamento — é mudança de produto**, e por isso é
+decisão dele: a lista de áreas está acoplada ao `index.html` em `FC_CATS` (12
+subespecialidades), submapas de tema, cores, calculadoras por área e filtros do
+mural. Uma 13ª subespecialidade muda o que o aluno vê.
+
+**Correção de uma medição minha:** cheguei a calcular a ATA de gestação como 74%
+da área. Estava errado — meu filtro casava `gestação` no tema do artigo do
+hipertireoidismo no ADULTO, que discute gravidez. O valor certo é **52%**,
+consistente com os 53% que eu tinha medido antes.
+
 ## ⛔ A FILA DA ROTA B MUDOU DE ORDEM POR CAUSA DO TETO (2026-08-09)
 
 A tabela mais abaixo põe **Tireoide em 3º**. **Não extraia mais nada de Tireoide
