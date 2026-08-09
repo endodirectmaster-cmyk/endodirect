@@ -37,6 +37,20 @@ const CAMINHO = [
   ['mulher de 30 anos com testosterona total normal: trato o hirsutismo?', 'Endocrinologia Feminina'],
   ['DM2 descompensado apos pulso de corticoide', 'Diabetes'],
 
+  // ⚠️ A LISTA DE ESPORTE TINHA OS SUBSTANTIVOS E NENHUM VERBO (09/08/2026).
+  // `corrida` era chave, `correr` não — e o médico escreve a vinheta em verbo.
+  // Sem chave da área casando, a promoção condicional do Esporte não dispara e
+  // `diabetes tipo 1` sequestra a pergunta, que é o defeito que essa promoção
+  // existe para impedir. Os três primeiros falhavam; os controles abaixo
+  // provam que `correr` e `caminhar` não vazam por dentro de outra palavra.
+  ['DM1 vai correr 10 km, como ajusto o CGM e o carboidrato', 'Endocrinologia do Esporte'],
+  ['nadar com diabetes tipo 1', 'Endocrinologia do Esporte'],
+  ['pedalar com diabetes tipo 1', 'Endocrinologia do Esporte'],
+  ['quando pode ocorrer hipoglicemia noturna no DM1', 'Diabetes'],
+  ['encaminhar paciente com DM2 para nefrologista', 'Diabetes'],
+  ['DM1 em cetoacidose apos treino intenso', 'Diabetes'],
+  ['maratonista com hipotireoidismo', 'Tireoide'],
+
   // ⚠️ QUEM JÁ SABE O DIAGNÓSTICO CHEGAVA; QUEM ESTAVA DIAGNOSTICANDO, NÃO.
   // A osteogênese imperfeita (30k) só era alcançável pelo PRÓPRIO NOME: das 7
   // formas naturais de perguntar por ela, 6 caíam em NENHUMA área — o sinal, a
@@ -670,6 +684,31 @@ const PRIMEIRO = [
   // o bloco nutricional — senão a promoção de `cirurgia bariatrica` só trocou
   // um sequestro por outro, agora dentro da própria área.
   ['indico cirurgia bariatrica para IMC 38 com diabetes tipo 2?', 'cirurgia bariátrica'],
+  // ⚠️ HIPONATREMIA — O PAR AGUDO×CRÔNICO É O CAMINHO MAIS PERIGOSO DA BASE, e
+  // ele já errou nos DOIS sentidos. Aqui a área nunca foi o problema: os cinco
+  // blocos cabem (172k contra teto de 400k), então todos CHEGAM. O que decide o
+  // que o médico lê primeiro é a ORDEM — e era ela que estava trocada.
+  //
+  // Medido em 09/08/2026:
+  //   · "sódio 118 com convulsão, conduta agora"      → 1º era o ALGORITMO
+  //     diagnóstico. O bloco de emergência empatava em 4 pontos e perdia no
+  //     desempate por ordem de array, porque `sodio` estava no tema do
+  //     algoritmo ("sódio urinário") e não no dele.
+  //   · "sódio 120 sem sintomas, velocidade de correção" → 1º era o bloco
+  //     AGUDO SINTOMÁTICO, com bolus de salina hipertônica, para um paciente
+  //     que a pergunta declara assintomático. Inverso exato do acidente antigo.
+  //
+  // Consertado em dois lugares: o `deepFor` passou a NEGAR termo ("sem
+  // sintomas" não pontua mais o bloco sintomático — o roteador de área já fazia
+  // isso via `bate()`), e os dois temas passaram a carregar as palavras que o
+  // MÉDICO digita (sódio, velocidade de correção, convulsionando) em vez de só
+  // as que o artigo usa.
+  ['sódio 118 com convulsão, conduta agora', 'aguda sintomática'],
+  ['paciente convulsionando com sódio 110', 'aguda sintomática'],
+  ['hiponatremia com coma, salina hipertônica', 'aguda sintomática'],
+  ['sódio 120 sem sintomas, velocidade de correção', 'crônica'],
+  ['hiponatremia assintomática, corrijo quão rápido', 'crônica'],
+  ['sódio urinário 40, investigo o quê', 'algoritmo diagnóstico'],
 ];
 
 for (const [pergunta, esperado] of PRIMEIRO) {
