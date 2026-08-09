@@ -5,6 +5,38 @@ atualizado: 2026-08-09
 
 # Convenções de Trabalho
 
+## 🔴 GUARDA VERDE AQUI, VERMELHA NO CI: O CORPUS NÃO EXISTE LÁ (2026-08-09)
+
+Abri o PR #729 com o `ci-validate` inteiro verde na minha máquina. **O check
+`validate` do GitHub reprovou os 47 extratos de uma vez** — e não havia defeito
+nenhum na base.
+
+A guarda nova `monta-base-profunda.js --conferir` roda, antes de montar, as três
+etapas de pré-requisito — e a primeira delas, o `verifica-extracao.js`, **lê
+`scratchpad/acervo/textos/`**. Esse diretório está no `.gitignore` porque o
+repositório é PÚBLICO e o texto integral dos artigos é protegido por direito
+autoral. **No runner ele nunca vai existir.** A peneira não achou defeito: ela
+não tinha o que ler.
+
+**A regra que fica: antes de pôr uma peneira no `ci-validate`, pergunte de que
+arquivos ela depende e se esses arquivos estão versionados.** Rodar verde na
+máquina que tem o corpus não prova nada sobre o runner, que tem só o que está no
+git. Peneira que só pode dar vermelho é pior que peneira ausente — vira paisagem
+e ensina a ignorar o CI inteiro.
+
+**O conserto, e por que ele não afrouxa nada:** a INVARIANTE que a guarda existe
+para provar — "o `clinical-deep-data.js` commitado é o que os extratos produzem
+hoje" — não depende do texto-fonte; a montagem lê só `extratos/*.json`. As três
+etapas são pré-requisito de ESCRITA, e a escrita acontece onde o corpus está.
+Então em `--conferir` sem corpus elas não rodam, e o script **diz isso em voz
+alta** na primeira linha da saída.
+
+⚠️ **Tudo ou nada, de propósito.** Um único `.txt` presente e as etapas rodam
+inteiras — corpus PELA METADE tem de reprovar mesmo. Peneira cega devolve "✓" sem
+ter olhado, e foi assim que a cobertura ficou cega na migração das citações: o
+relatório veio limpo e limpo era o sintoma, não o resultado. Testado nos dois
+sentidos: sem nenhum `.txt` passa e diz que não conferiu; com um só, reprova.
+
 ## ⏳ EU DECLAREI UM AGENTE MORTO E ELE ESTAVA VIVO (2026-08-09)
 
 **Correção de um erro meu, e a versão anterior desta nota estava errada.**
