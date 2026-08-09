@@ -652,6 +652,14 @@ const COMPLETUDE = [
   // Conferido nos dois sentidos: 1 pergunta subiu de 1% para 100% e as outras 7
   // do assunto seguem em 100% — enriquecer o tema certo não expulsou vizinho.
   ['hiponatremia com convulsao: quanto de salina hipertonica?', 'Endocrinopatias', 'aguda sintomatica', 'bolus', 90, 20],
+  // Diabetes é a área de maior tráfego e está em 2,32x o teto (8 blocos, ~3
+  // cabem). Varrida bloco a bloco em 09/08/2026: 9 dos 10 assuntos chegam
+  // inteiros. Esta asserção trava o par cuja confusão é perigosa — o bloco da
+  // cetoacidose EUGLICÊMICA contra o da CAD clássica: quem pergunta por acidose
+  // com glicemia de 180 e recebe só a CAD clássica pode ler o corte de glicemia
+  // como motivo para AFASTAR o diagnóstico, que é a armadilha que o próprio
+  // núcleo alerta ("glicemia normal não afasta cetoacidose").
+  ['paciente em dapagliflozina com acidose e glicemia de 180: e cetoacidose?', 'Diabetes', 'cetoacidose euglicemica', 'euglicemica', 90, 20],
 ];
 
 for (const [pergunta, areaEsperada, ancora, palavra, pctMin, ocorrMin] of COMPLETUDE) {
