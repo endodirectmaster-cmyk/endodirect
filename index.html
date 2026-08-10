@@ -4616,6 +4616,18 @@ function saveRemoteState(){
 function esc(s){return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');}
 // Só aceita http(s) em hrefs (bloqueia javascript:/data: etc.).
 function safeHttpUrl(u){return /^https?:\/\//i.test(String(u||'').trim());}
+// ⚠️ SRC DE IMAGEM ACEITA `data:`, HREF DE LINK NÃO. O botão "Anexar" guarda a foto
+// como `data:image/jpeg;base64,...` (é assim que o app carrega imagem do computador
+// sem bucket), mas o render da figura validava com `safeHttpUrl` — que só aceita
+// http(s). Resultado: o professor anexava, via "Imagem anexada 🖼️", a imagem ficava
+// salva no payload e o capítulo NÃO DESENHAVA NADA. Silencioso, que é o pior tipo.
+// Não dá para afrouxar o `safeHttpUrl`: ele também valida `href`, e ali `data:` abre
+// `data:text/html`. Por isso a checagem de SRC é separada, e só para tipos de imagem
+// rasterizada — nada de `svg+xml`, que carrega script.
+function safeImgSrc(u){
+  u=String(u||'').trim();
+  return /^https?:\/\//i.test(u)||/^data:image\/(png|jpe?g|gif|webp);base64,[A-Za-z0-9+/=\s]+$/i.test(u);
+}
 function ldHTML(label){return'<span class="ld"><span class="ld-dots"><span></span><span></span><span></span></span><span>'+esc(label||'Gerando...')+'</span></span>';}
 function notify(msg,type){
   var el=document.createElement('div');
@@ -10828,7 +10840,7 @@ function dirFigurasHTML(figs){
     if(!f)return;
     var media='';
     if(f.svg){media='<div style="text-align:center;overflow-x:auto;margin:.35rem 0">'+f.svg+'</div>';}
-    else if(safeHttpUrl(f.url)){media='<div style="text-align:center;overflow-x:auto;margin:.35rem 0"><img src="'+esc(f.url)+'" alt="'+esc(f.alt||f.titulo||'Figura')+'" loading="lazy" referrerpolicy="no-referrer" style="max-width:100%;border-radius:8px"></div>';}
+    else if(safeImgSrc(f.url)){media='<div style="text-align:center;overflow-x:auto;margin:.35rem 0"><img src="'+esc(f.url)+'" alt="'+esc(f.alt||f.titulo||'Figura')+'" loading="lazy" referrerpolicy="no-referrer" style="max-width:100%;border-radius:8px"></div>';}
     if(!media)return;
     html+='<figure class="dir-fig" style="margin:.7rem 0">'
       +(f.titulo?'<div class="dfx-title">🖼️ '+esc(f.titulo)+'</div>':'')
@@ -13190,9 +13202,18 @@ function admOpenImgPanelHTML(){
   }
   // Marcador de posição — só faz sentido quando há figura anexada.
   var marker=f?('<div style="font-size:.64rem;color:var(--t3);margin:.1rem 0 .5rem;line-height:1.6">📍 Posição no texto: escreva <code>[[figura]]</code> onde quiser que ela apareça no resumo. <button class="btn btn-outline btn-sm" data-adm-oi-marker style="padding:.08rem .45rem">Inserir aqui</button> <span style="color:var(--t3)">— sem o marcador, a figura fica após os pontos-chave.</span></div>'):'';
+  // ⚠️ O CRÉDITO PRECISA SER EDITÁVEL. Antes, o anexo gravava a legenda fixa "Imagem
+  // anexada pelo professor" e não havia onde trocar — mas é embaixo da figura que a
+  // referência tem de aparecer, e ela muda a cada imagem. Salva ao sair do campo
+  // (`change`), não a cada tecla: repintar o painel a cada letra rouba o foco.
+  var credito=f?('<div style="margin:.1rem 0 .55rem">'
+    +'<label style="display:block;font-size:.64rem;color:var(--t3);margin-bottom:.2rem">Crédito (aparece abaixo da figura)</label>'
+    +'<input type="text" id="adm-oi-credito" value="'+esc(f.fonte||'')+'" placeholder="Ex.: Autor. Título. Edição; ano, p. 27." style="width:100%;font-size:.72rem">'
+    +'</div>'):'';
   return '<div class="card" id="adm-oi-panel" style="margin:.2rem 0 1rem;padding:.7rem .8rem">'
     +'<div style="font-size:.8rem;font-weight:700;margin-bottom:.4rem">🖼️ Imagem do capítulo <span style="font-weight:400;color:var(--t3)">(PubMed Central · Open-i · ou anexar)</span></div>'
     +cur
+    +credito
     +marker
     +'<div style="display:flex;gap:.4rem;flex-wrap:wrap;align-items:center"><input type="text" id="adm-oi-q" value="'+esc(admOpenImgSuggestQuery())+'" style="flex:1;min-width:170px" placeholder="palavras-chave (inglês encontra mais)"><button class="btn btn-primary btn-sm" data-adm-oi-search>🔎 Buscar</button><label class="btn btn-outline btn-sm" style="cursor:pointer;margin:0">📎 Anexar<input type="file" accept="image/*" data-adm-oi-file style="display:none"></label></div>'
     +'<div style="font-size:.64rem;color:var(--t3);margin-top:.35rem;line-height:1.5">⚠️ Use apenas imagens de <b>licença aberta (CC BY / CC0 / domínio público)</b> ou <b>próprias/autorizadas</b> — o crédito fica abaixo da figura.</div>'
@@ -13305,6 +13326,13 @@ function admOpenImgBind(root){
   var r=root.querySelector('[data-adm-oi-remove]');if(r)r.addEventListener('click',admOpenImgRemove);
   var mk=root.querySelector('[data-adm-oi-marker]');if(mk)mk.addEventListener('click',admOpenImgInsertMarker);
   var fi=root.querySelector('[data-adm-oi-file]');if(fi)fi.addEventListener('change',function(){var f=fi.files&&fi.files[0];if(f)admOpenImgUpload(f);fi.value='';});
+  var cr=root.querySelector('#adm-oi-credito');
+  if(cr)cr.addEventListener('change',function(){
+    var ti=admOpenImgTargetIdx();if(ti<0)return;
+    var figs=diretrizes[ti]&&diretrizes[ti].figuras;if(!figs||!figs.length)return;
+    figs[0].fonte=cr.value.trim();
+    persistDiretrizes();notify('Crédito salvo. ✓','ok');
+  });
   admOpenImgRenderResults();
 }
 // Flashcards ⇄ texto ("Pergunta :: Resposta" por linha).

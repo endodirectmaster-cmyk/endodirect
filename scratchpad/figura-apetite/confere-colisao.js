@@ -41,7 +41,7 @@ const svg=fs.readFileSync('/home/user/endodirect/scratchpad/figura-apetite/apeti
           for(const t of txt){
             if(t.rec&&el.tagName==='rect') continue;
             if(pt.x>t.x+1&&pt.x<t.x+t.w-1&&pt.y>t.y+1&&pt.y<t.y+t.h-1){
-              const marca='traço ✕ '+t.t;
+              const marca='traço ✕ "'+t.t+'" em ('+Math.round(t.x)+','+Math.round(t.y)+') — '+el.tagName+' '+String(el.getAttribute('d')||el.getAttribute('x')||'').slice(0,46);
               if(!choques.includes(marca)) choques.push(marca);
             }
           }
