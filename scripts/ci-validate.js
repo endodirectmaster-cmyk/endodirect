@@ -655,6 +655,18 @@ try {
   fail('regressão do campo malformado falhou (verifique os Array.isArray em dirCardHTML):\n' + out);
 }
 
+// ⚠️ O gráfico de BARRAS tem uma armadilha própria: em português a vírgula separa
+//     itens e TAMBÉM é o separador decimal. "Semaglutida 2,4 mg" partido na
+//     vírgula vira dois itens, com o rótulo destruído e o número errado — por isso
+//     o bloco aceita `;` quando o rótulo precisa de vírgula.
+try {
+  execFileSync(process.execPath, [path.join('scripts', 'test-barra-resumo.js')], { stdio: 'pipe' });
+  ok('gráfico de barras: vírgula decimal no rótulo preservada e round-trip do editor');
+} catch (e) {
+  const out = (e.stdout ? e.stdout.toString() : '') + (e.stderr ? e.stderr.toString() : '');
+  fail('regressão do gráfico de barras falhou (verifique barraHTML/grafItens no index.html):\n' + out);
+}
+
 // ⚠️ O gráfico de pizza do resumo é um bloco NÃO-markdown ({pizza: ...}) e o
 //     editor do resumo é WYSIWYG: renderiza com mdToHtml e salva com htmlToMd.
 //     Sem a marca `wys-pizza`/`data-pizza` que o htmlToMd sabe desfazer, a
