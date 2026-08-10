@@ -17,9 +17,22 @@ mkdir -p /tmp/ab/main /tmp/ab/branch
 git show origin/main:index.html > /tmp/ab/main/index.html
 cp index.html                     /tmp/ab/branch/index.html
 cp growth-lms.js /tmp/ab/main/ && cp growth-lms.js /tmp/ab/branch/
-npm i playwright-core            # o Chromium já vem no ambiente
+
+# playwright-core FORA do repositório (ver o aviso abaixo). O Chromium já vem no ambiente.
+PW=/tmp/pw && mkdir -p $PW && echo '{"name":"pw","private":true}' > $PW/package.json
+npm install playwright-core --prefix $PW --no-audit --no-fund
+
+PLAYWRIGHT_CORE=$PW/node_modules/playwright-core \
 AB_DIR=/tmp/ab node scratchpad/boot-navegador/check.js
 ```
+
+> ⚠️ **NUNCA `npm i` dentro do repositório.** Este projeto **versiona o
+> `node_modules`** e não tem as dependências no `package.json`; um `npm install`
+> aqui **PODA** o que está versionado e leva a plataforma junto. Por isso a
+> instalação vai para fora da árvore e o `check.js` aceita o caminho pela variável
+> `PLAYWRIGHT_CORE`. Em container novo o `playwright-core` **não existe** — o
+> harness falha com `Cannot find module 'playwright-core'`, e a correção é esta
+> receita, não instalar no repo.
 
 ## ⚠️ Duas armadilhas que já produziram um falso apagão
 

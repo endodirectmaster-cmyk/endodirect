@@ -612,7 +612,10 @@ html[data-theme="light"] .mural-text .mural-h1,html[data-theme="light"] .mural-t
   .wys-barra .br-val{grid-column:2;grid-row:1;min-width:0}
   .wys-barra .br-trilho{grid-column:1/-1;grid-row:2}
 }
-.wys-edit .wys-img,.wys-img{display:block;max-width:100%;height:auto;border-radius:8px;margin:.5rem 0;border:1px solid var(--bd2)}
+/* `margin:auto` nas laterais CENTRALIZA a imagem — pedido do professor (10/08).
+   Vale para qualquer largura (P/M/G) e não depende do alinhamento do parágrafo
+   em volta, que o editor pode ter deixado à esquerda. */
+.wys-edit .wys-img,.wys-img{display:block;max-width:100%;height:auto;border-radius:8px;margin:.5rem auto;border:1px solid var(--bd2)}
 /* ⚠️ TETO ABSOLUTO ALÉM DA PORCENTAGEM. Só o percentual não segura: 40% de uma
    coluna de 1600 px ainda são 630 px, e foi o que o professor viu como "P
    grande demais". Com o teto, P/M/G têm tamanho físico previsível em qualquer
@@ -4128,7 +4131,14 @@ var lastGlobalUpdatedAt=null;
 var GLOBAL_MERGE_KEYS={
   adm_cursos:function(it){return (it.src||'')+'|'+(it.title||'');},
   podcasts:function(it){return (it.src||it.link||it.audio||'')+'|'+(it.title||'');},
-  provas:function(it){return (it.stem||'')+'|'+(it.answer||'')+'|'+(it.inst||'');},
+  // ⚠️🐛 FIX (10/08/2026): a chave era `stem|answer|inst`, SEM o ano. Questão que
+  // cai repetida em anos diferentes (TEEM 2024/2026 e três da USP-SP 2024/2025)
+  // colapsava numa chave só — duas questões distintas, mesma identidade. A
+  // ambiguidade virava CONFLITO FANTASMA a cada save, eternamente (ver
+  // mergeConcurrent). As 2.401 questões têm `id` estável e único: é ele a
+  // identidade. Bônus: o `id` sobrevive à edição do enunciado, que a chave antiga
+  // tratava como apagar+criar.
+  provas:function(it){return it.id||((it.stem||'')+'|'+(it.answer||'')+'|'+(it.inst||''));},
   mm_shared:function(it){return it.id||((it.topic||'')+'|'+(it.sub||''));},
   fc_shared:function(it){return it.id||((it.front||'')+'|'+(it.sub||it.cat||''));},
   diretrizes:function(it){return (it.fonte||'')+'|'+(it.tema||it.titulo||'')+'|'+(it.sub||'');},
@@ -4154,10 +4164,30 @@ var MERGE_ROTULOS={
   podcasts:function(pr){return pr[1]||pr[0]||'';},
   adm_cursos:function(pr){return pr[1]||pr[0]||'';}
 };
+// Nome legível a partir do PRÓPRIO item — funciona com qualquer chave, inclusive
+// `id`. O caminho pela chave fica como reserva (itens de sessão antiga, sem item).
+var MERGE_ITEM_ROTULO={
+  provas:function(it){return it.stem||'';},
+  ig_stories:function(it){return it.stem||'';},
+  ig_pending:function(it){return it.stem||'';},
+  diretrizes:function(it){return it.tema||it.titulo||'';},
+  diretrizes_temas:function(it){return it.tema||'';},
+  podcasts:function(it){return it.title||'';},
+  adm_cursos:function(it){return it.title||'';},
+  mm_shared:function(it){return it.topic||it.title||'';},
+  fc_shared:function(it){return it.front||'';},
+  curso_mods_extra:function(it){return it.modulo||it.curso||'';},
+  adm_estudantes:function(it){return it.nome||it.email||'';}
+};
 function rotuloConflito(c){
   var k=String((c&&c.key)!==undefined?c.key:c),coll=(c&&c.coll)||'';
-  var pr=k.split('|'),f=MERGE_ROTULOS[coll];
-  var txt=f?f(pr):(pr.filter(Boolean)[1]||k);
+  var txt='';
+  if(c&&c.item&&typeof c.item==='object'){
+    var g=MERGE_ITEM_ROTULO[coll];
+    try{txt=g?g(c.item):'';}catch(e){txt='';}
+    if(!txt)txt=String(c.item.titulo||c.item.title||c.item.tema||c.item.nome||'');
+  }
+  if(!txt){var pr=k.split('|'),f=MERGE_ROTULOS[coll];txt=f?f(pr):(pr.filter(Boolean)[1]||k);}
   txt=String(txt).replace(/\s+/g,' ').trim().slice(0,46);
   var aba=MERGE_ABAS[coll]||coll;
   return (aba?aba+' — ':'')+(txt||k.slice(0,40));
@@ -4186,11 +4216,22 @@ function itemSig(it){
 // editor" de "item que EU apaguei"; a assinatura distingue "o servidor editou este
 // item" de "eu editei" — ver mergeConcurrent. Capturado com lastGlobalUpdatedAt.
 var globalBaseline={};
+// ⚠️🐛 Chave REPETIDA guarda TODAS as assinaturas (array), não a última. Antes, dois
+// itens diferentes com a mesma chave gravavam só a assinatura do ÚLTIMO; o merge
+// casava a chave com o PRIMEIRO e via divergência dos dois lados — conflito
+// FANTASMA, em todo save, para sempre. Nenhum F5 resolvia, porque não havia nada
+// para resolver. Guardar o conjunto deixa o merge reconhecer "o servidor mandou um
+// item que eu já tinha" mesmo quando a chave é ambígua.
 function captureGlobalBaseline(payload){
   payload=payload||{};globalBaseline={};
   Object.keys(GLOBAL_MERGE_KEYS).forEach(function(coll){
     var fn=GLOBAL_MERGE_KEYS[coll],arr=Array.isArray(payload[coll])?payload[coll]:[],s={};
-    arr.forEach(function(it){try{s[fn(it)]=itemSig(it);}catch(e){}});
+    arr.forEach(function(it){try{
+      var k=fn(it),sig=itemSig(it),cur=s[k];
+      if(cur===undefined)s[k]=sig;                                   // caso normal: chave única
+      else if(typeof cur==='string'){if(cur!==sig)s[k]=[cur,sig];}   // 2ª ocorrência DIFERENTE: vira conjunto
+      else if(cur.indexOf(sig)<0)cur.push(sig);
+    }catch(e){}});
     globalBaseline[coll]=s;
   });
 }
@@ -4214,10 +4255,23 @@ function mergeConcurrent(serverArr,localArr,baseSigs,keyFn,report,coll){
     var base=baseSigs[k],at=localAt[k];
     if(!base){if(at===undefined){out.push(it);if(report)report.added++;}return;}
     if(at===undefined)return;                 // estava no baseline e não está mais: eu apaguei
+    // Chave AMBÍGUA (dois itens distintos com a mesma chave): não dá para casar
+    // servidor↔painel item a item. Se a assinatura que veio é UMA DAS que eu já
+    // tinha, nada mudou — inerte (era daqui que saía o conflito fantasma). Se é
+    // nova, o servidor mexeu em um dos homônimos e não sei em qual: mantenho o meu
+    // e AVISO, porque adotar às cegas sobrescreveria o item errado.
+    if(Array.isArray(base)){
+      if(base.indexOf(itemSig(it))<0&&report)report.conflicts.push({coll:coll||'',key:k,item:it,amb:true});
+      return;
+    }
     if(typeof base!=='string')return;         // baseline sem assinatura (formato antigo)
     if(itemSig(it)===base)return;             // o servidor não mexeu neste item
     if(itemSig(out[at])===base){out[at]=it;if(report)report.updated++;}
-    else if(report)report.conflicts.push({coll:coll||'',key:k});
+    // O item vai junto do conflito para o aviso nomear a questão pelo ENUNCIADO —
+    // a versão do professor, que é a que está na tela dele. Ler o rótulo da CHAVE
+    // só funciona enquanto a chave for feita de texto legível; com `id` (provas)
+    // ela vira "teem-2024-007", que não diz nada a quem está olhando.
+    else if(report)report.conflicts.push({coll:coll||'',key:k,item:out[at]||it});
   });
   return out;
 }
