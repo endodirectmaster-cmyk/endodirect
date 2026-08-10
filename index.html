@@ -4987,23 +4987,28 @@ function pizzaSVG(linha){
 // publicada fica no texto do rótulo e o número é o valor usado para desenhar.
 function barraHTML(linha){
   var corpo=String(linha).replace(/^\{barra:\s*/i,'').replace(/\}\s*$/,'');
-  var itens=[];
+  var itens=[],perdidos=0;
   grafItens(corpo).forEach(function(seg){
+    if(!String(seg).trim())return;
     // O valor pode ser um ponto (`−15%`) ou uma FAIXA (`5–8%`). Muito dado clínico
     // é faixa, e forçar um ponto ali é inventar precisão que a fonte não deu — foi
     // o que o professor apontou na legenda da pizza. Com faixa, mostra-se a faixa
     // e desenha-se o MEIO dela.
-    var m=String(seg).trim().match(/^(.*?)[\s:]+([−–-]?\s*\d+(?:[.,]\d+)?(?:\s*[–-]\s*\d+(?:[.,]\d+)?)?\s*%?)$/);
-    if(!m)return;
+    // `~` é aproximação e faz parte do dado ("~83%"): entra no valor e é impresso.
+    var m=String(seg).trim().match(/^(.*?)[\s:]+([~≈]?\s*[−–-]?\s*\d+(?:[.,]\d+)?(?:\s*[–-]\s*\d+(?:[.,]\d+)?)?\s*%?)$/);
+    if(!m){perdidos++;return;}
     var bruto=m[2].replace(/\s+/g,'');
-    var nums=(bruto.replace(/^[−–-]/,'-').match(/-?\d+(?:[.,]\d+)?/g)||[])
+    var nums=(bruto.replace(/^[~≈]/,'').replace(/^[−–-]/,'-').match(/-?\d+(?:[.,]\d+)?/g)||[])
       .map(function(n){return parseFloat(n.replace(',','.'));});
-    if(!nums.length)return;
-    var v=nums.reduce(function(a,n){return a+n;},0)/nums.length;
-    if(!isFinite(v)||v===0)return;
+    var v=nums.length?nums.reduce(function(a,n){return a+n;},0)/nums.length:NaN;
+    if(!isFinite(v)||v===0){perdidos++;return;}
     itens.push({rot:m[1].trim(),v:v,txt:bruto});
   });
-  if(!itens.length)return '<p>'+mdInline(linha)+'</p>';
+  // ⚠️ ITEM QUE NÃO PARSEIA NÃO PODE SUMIR DA TABELA EM SILÊNCIO. Antes, um valor
+  // que o parser não entendesse era descartado e o gráfico saía com uma barra a
+  // menos — com a mesma cara de um gráfico correto. Se QUALQUER item falhar, o
+  // bloco inteiro volta a ser texto: o professor vê que há algo errado ali.
+  if(!itens.length||perdidos)return '<p>'+mdInline(linha)+'</p>';
   var max=itens.reduce(function(a,it){return Math.max(a,Math.abs(it.v));},0)||1;
   var linhas=itens.map(function(it,i){
     // piso de 2%: barra de valor pequeno não pode sumir e virar rótulo órfão
