@@ -104,10 +104,14 @@ if (mdToHtml && htmlToMd) {
   }
 
   // 6) A inserção já entra em tamanho médio: sem largura, a imagem tomava a tela.
-  ok(/width:65%/.test(html),
+  ok(/width:35%/.test(html),
      'a imagem inserida tem de entrar em tamanho médio, não no tamanho natural');
-  ok(/data-refimgw="40"/.test(html) && /data-refimgw="65"/.test(html) && /data-refimgw="100"/.test(html),
-     'a barra do resumo precisa dos três tamanhos P/M/G, como no mural');
+  ok(/data-refimgw="20"/.test(html) && /data-refimgw="35"/.test(html) && /data-refimgw="100"/.test(html),
+     'a barra do resumo precisa dos três tamanhos P/M/G');
+  // ⚠️ Só a porcentagem não segura a imagem: 40% de uma coluna de 1600 px ainda são
+  // 630 px. O teto absoluto é o que dá tamanho físico previsível em monitor largo.
+  ok(/\.dir-texto \.wys-img,\.wys-edit \.wys-img\{max-width:min\(100%,820px\)\}/.test(html),
+     'a imagem do corpo precisa de teto absoluto além da porcentagem');
 
   // 7) O botão e o caminho de inserção existem de fato na barra do editor.
   ok(/data-wys="img"/.test(html), 'a barra do editor precisa do botão de imagem');
