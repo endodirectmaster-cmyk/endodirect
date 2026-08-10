@@ -584,13 +584,15 @@ html[data-theme="light"] .mural-text .mural-h1,html[data-theme="light"] .mural-t
 .mural-inline-titlewrap>label{display:block;font-size:.72rem;font-weight:700;color:var(--t2);margin-bottom:.25rem}
 .mural-inline-titleinput{width:100%;font-size:1rem;font-weight:700;padding:.5rem .7rem;border:1px solid var(--bd2);border-radius:9px;background:var(--surface);color:var(--tx);outline:none}
 .mural-inline-titleinput:focus{border-color:var(--blue);box-shadow:0 0 0 3px rgba(37,99,235,.12)}
-.wys-pizza{display:flex;align-items:center;gap:1.1rem;flex-wrap:wrap;margin:.7rem 0;padding:.8rem 1rem;background:var(--bg2);border:1px solid var(--bd2);border-radius:10px}
+/* Rosca + legenda centralizadas como um bloco só. A legenda NÃO cresce
+   (flex:0 1 auto): com `flex:1 1 200px` ela esticava até a borda e empurrava o
+   desenho para a esquerda, e aí `justify-content` não tinha folga para centrar. */
+.wys-pizza{display:flex;align-items:center;justify-content:center;gap:1.4rem;flex-wrap:wrap;margin:.7rem 0;padding:.8rem 1rem;background:var(--bg2);border:1px solid var(--bd2);border-radius:10px}
 .wys-pizza svg{width:170px;height:170px;flex:0 0 auto}
-.wys-pizza .pz-leg{list-style:none;margin:0;padding:0;flex:1 1 200px;min-width:190px;max-width:380px}
+.wys-pizza .pz-leg{list-style:none;margin:0;padding:0;flex:0 1 auto;max-width:380px}
 .wys-pizza .pz-leg li{display:flex;align-items:center;gap:.5rem;padding:.22rem 0;font-size:.86rem;line-height:1.3}
 .wys-pizza .pz-cor{width:.78rem;height:.78rem;border-radius:3px;flex:0 0 auto}
-.wys-pizza .pz-rot{flex:1 1 auto;color:var(--t1)}
-.wys-pizza .pz-val{font-weight:700;color:var(--t1);font-variant-numeric:tabular-nums}
+.wys-pizza .pz-rot{color:var(--t1)}
 @media(max-width:520px){.wys-pizza{gap:.7rem}.wys-pizza svg{width:140px;height:140px}}
 .wys-edit .wys-img,.wys-img{display:block;max-width:100%;height:auto;border-radius:8px;margin:.5rem 0;border:1px solid var(--bd2)}
 .mural-source a{color:#5cc8f5;text-decoration:none}
@@ -4930,9 +4932,12 @@ function pizzaSVG(linha){
       partes.push('<path d="M'+x1.toFixed(2)+' '+y1.toFixed(2)+'A'+R+' '+R+' 0 '+grande+' 1 '+x2.toFixed(2)+' '+y2.toFixed(2)
         +'L'+i1.toFixed(2)+' '+j1.toFixed(2)+'A'+r+' '+r+' 0 '+grande+' 0 '+i2.toFixed(2)+' '+j2.toFixed(2)+'Z" fill="'+cor+'"></path>');
     }
-    var pct=Math.round(frac*1000)/10;
+    // Sem percentual calculado na legenda: o rótulo já carrega a FAIXA publicada
+    // ("Metabolismo basal (60–75%)"), e o número da fatia é só um valor
+    // representativo para desenhar. Mostrar "70%" ao lado de "(60–75%)" dava à
+    // conta uma precisão que a fonte não dá.
     leg.push('<li><span class="pz-cor" style="background:'+cor+'"></span>'
-      +'<span class="pz-rot">'+esc(f.rot)+'</span><span class="pz-val">'+String(pct).replace('.',',')+'%</span></li>');
+      +'<span class="pz-rot">'+esc(f.rot)+'</span></li>');
     ang=fim;
   });
   return '<figure class="wys-pizza" data-pizza="'+esc(linha)+'">'

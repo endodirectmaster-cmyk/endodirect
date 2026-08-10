@@ -70,12 +70,35 @@ if (mdToHtml && htmlToMd) {
      'três fatias declaradas têm de virar três fatias desenhadas');
 
   // O rótulo carrega a FAIXA publicada e a fatia usa um valor representativo: o
-  // último número é o peso, o resto é rótulo. Se o parser passasse a pegar o
-  // primeiro número, "Metabolismo basal (60–75%) 70" viraria uma fatia de 60.
+  // ÚLTIMO número é o peso, o resto é rótulo.
+  //
+  // ⚠️ Com o percentual fora da legenda, o texto não prova mais qual número o
+  // parser leu. Então o caso abaixo é montado para discriminar: os rótulos dizem
+  // 90% e 10%, e os pesos dizem o CONTRÁRIO (10 e 90). Se o parser voltar a pegar
+  // o primeiro número, a fatia grande troca de lado — e o large-arc-flag do
+  // caminho (1 = mais de meia volta) acusa.
+  {
+    const h = mdToHtml('{pizza: Fatia A (90%) 10, Fatia B (10%) 90}');
+    const d2 = dom.window.document.createElement('div');
+    d2.innerHTML = h;
+    const paths = [...d2.querySelectorAll('svg path')].map((p) => p.getAttribute('d'));
+    // "A R R 0 <grande> 1" — o 5º campo do comando de arco
+    const grande = paths.map((d) => (/A\d+ \d+ 0 (\d)/.exec(d) || [])[1]);
+    ok(paths.length === 2, 'duas fatias declaradas, duas desenhadas');
+    ok(grande[0] === '0' && grande[1] === '1',
+       'o PESO é o último número: com "(90%) 10" e "(10%) 90" a fatia grande tem de ser a SEGUNDA (veio: ' + JSON.stringify(grande) + ')');
+  }
+
   const leg = [...div.querySelectorAll('.pz-leg li')].map((li) => li.textContent);
   ok(leg.length === 3, 'a legenda tem de nomear as três fatias');
-  ok(leg.some((t) => /60–75%/.test(t) && /70%/.test(t)),
-     'o rótulo mantém a FAIXA da fonte (60–75%) e a fatia mostra o valor usado (70%)');
+  ok(leg.some((t) => /60–75%/.test(t)),
+     'o rótulo tem de manter a FAIXA da fonte (60–75%)');
+
+  // ⚠️ A legenda NÃO mostra o percentual calculado (pedido do professor em
+  // 10/08/2026): "70%" ao lado de "(60–75%)" dava à conta uma precisão que a
+  // fonte não dá. O peso segue existindo — só para desenhar a fatia.
+  ok(!div.querySelector('.pz-val') && !leg.some((t) => /\b70\s*%/.test(t)),
+     'a legenda não pode exibir o percentual calculado da fatia, só o rótulo');
 
   // A lista de bullets acima não pode ser partida em duas pelo bloco.
   const listas = div.querySelectorAll('ul:not(.pz-leg)');
