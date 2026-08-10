@@ -86,7 +86,30 @@ if (mdToHtml && htmlToMd) {
        'o que é recusado continua VISÍVEL como texto — recusar em silêncio esconde o problema');
   }
 
-  // 5) O botão e o caminho de inserção existem de fato na barra do editor.
+  // 5) ⚠️ O TAMANHO TEM DE SOBREVIVER AO SALVAR. Escolher P e a imagem voltar
+  //    grande ao reabrir é o mesmo que não ter o controle. O ciclo carrega a
+  //    largura pelo sufixo {NN} do markdown.
+  {
+    const corpo = dom.window.document.createElement('div');
+    corpo.innerHTML = '<p>Antes.</p><img class="wys-img" style="width:40%;height:auto" src="' + PNG + '" alt=""><p>Depois.</p>';
+    const md = htmlToMd(corpo);
+    ok(/\)\{40\}/.test(md),
+       'ao salvar, a largura escolhida tem de virar o sufixo {40} no markdown (veio: ' + JSON.stringify(md.slice(0, 60)) + ')');
+
+    const devolta = dom.window.document.createElement('div');
+    devolta.innerHTML = mdToHtml(md);
+    const img = devolta.querySelector('img');
+    ok(img && /width:\s*40%/.test(img.getAttribute('style') || ''),
+       'REGRESSÃO: ao reabrir, a imagem perdeu o tamanho escolhido e voltou ao padrão');
+  }
+
+  // 6) A inserção já entra em tamanho médio: sem largura, a imagem tomava a tela.
+  ok(/width:65%/.test(html),
+     'a imagem inserida tem de entrar em tamanho médio, não no tamanho natural');
+  ok(/data-refimgw="40"/.test(html) && /data-refimgw="65"/.test(html) && /data-refimgw="100"/.test(html),
+     'a barra do resumo precisa dos três tamanhos P/M/G, como no mural');
+
+  // 7) O botão e o caminho de inserção existem de fato na barra do editor.
   ok(/data-wys="img"/.test(html), 'a barra do editor precisa do botão de imagem');
   ok(/id="adm-ref-wysimg"/.test(html), 'precisa do seletor de arquivo ligado ao botão');
   ok(/function wysInserirImagem/.test(html), 'precisa da função que insere a imagem no cursor');
