@@ -1,6 +1,6 @@
 ---
 tags: [cofre, clinico, diretriz, adrenal, glicocorticoide]
-atualizado: 2026-06-30
+atualizado: 2026-08-10
 ---
 
 # Insuficiência Adrenal Induzida por Glicocorticoides (GC-IAI) — ESE/ES 2024
@@ -16,7 +16,22 @@ atualizado: 2026-06-30
 - **Síndrome de retirada de GC (SRGC):** sintomas ao reduzir GC **dentro da faixa suprafisiológica** — não causados pela doença de base nem por IA verdadeira (a dose total ainda é suprafisiológica).
 
 ## Risco de GC-IAI (limiares)
-Excede o risco quando **AMBOS**: duração **≥ 3–4 semanas** **E** dose **> equivalente a 15–25 mg de hidrocortisona/dia** (4–6 mg pred, 3–5 mg metilpred, 0,25–0,5 mg dexa). Via **oral** é a de maior risco.
+Excede o risco quando **AMBOS**: duração **≥ 3–4 semanas** **E** dose **> equivalente a 15–25 mg de hidrocortisona/dia** (4–6 mg pred, 3–5 mg metilpred, 0,25–0,5 mg dexa).
+
+⚠️ **QUALQUER VIA pode suprimir o eixo.** Percentuais agrupados da metanálise
+citada na própria diretriz: **intra-articular 52,2%** (IC 40,5–63,6), **oral
+48,7%** (36,9–60,6), **nasal 4,2%** (0,5–28,9) — e o uso concomitante de várias
+vias soma. Ter **limiar baixo para testar até 2 meses após injeção
+intra-articular** (o glicocorticoide é detectável na urina por meses após a
+injeção).
+
+> ⚠️ **CORRIGIDO EM 10/08/2026.** Esta linha dizia *"Via **oral** é a de maior
+> risco"* — está errado nos dois sentidos. A diretriz **não faz esse ranking em
+> lugar nenhum** (`highest risk`, `greatest risk`, `most at risk`: zero
+> ocorrências no texto), e o único número que ela publica por via coloca a
+> **intra-articular ACIMA da oral**. Quem lia a versão antiga descartava a
+> hipótese no paciente que só recebeu infiltrações — exatamente o grupo para o
+> qual a diretriz pede limiar baixo de teste.
 
 ### Fatores de risco (Tabela 3) — baixo / moderado / **alto**
 - **Potência:** baixa = hidrocortisona, cortisona, deflazacort · moderada = prednisona, prednisolona, metilpred, triancinolona · **alta = dexametasona, betametasona, fluticasona**.

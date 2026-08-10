@@ -18,7 +18,13 @@ Pós-cirúrgica/traumática (**neurocirurgia** é a mais comum; TBI), tumores (c
 - **Poliúria hipotônica:** > 40 mL/kg/24 h (ou > 3 L/24 h), osmolalidade urinária < 800 mOsm/kg. Excluir **hipercalcemia/hipocalemia** e diabetes mellitus.
 - **Copeptina** = marcador estável e substituto da AVP:
   - Basal **> 21,4 pmol/L** → **resistência à AVP** (sem necessidade de estímulo).
-  - **Teste de salina hipertônica** (padrão-ouro; infundir **até o sódio atingir pelo menos 150 mmol/L** — só então colher): copeptina **> 4,9 pmol/L = polidipsia primária**; **≤ 4,9 = deficiência de AVP** (acurácia 96–97%). Exige monitorização rápida do Na.
+  - **Teste de salina hipertônica** (padrão-ouro; infundir **até o sódio atingir pelo menos 150 mmol/L** — só então colher): copeptina **≤ 4,9 pmol/L = deficiência de AVP**; **> 4,9 = AVP PRESENTE**, o que significa **polidipsia primária _ou_ resistência à AVP** — quem separa as duas é a copeptina BASAL (>21,4 = resistência à AVP), e é por isso que ela se lê PRIMEIRO (acurácia 96–97%). Exige monitorização rápida do Na.
+    > ⚠️ **Ler o ">4,9" como "polidipsia primária" e ponto é o erro que manda o
+    > paciente com DI NEFROGÊNICO beber menos, com um rim que não concentra.** A
+    > fonte é explícita: *"patients with **NDI or PP** respond to osmotic
+    > stimulation with normal plasma AVP concentrations, while subnormal AVP
+    > responses are diagnostic of CDI"*. Corrigido em 10/08/2026 — o núcleo já
+    > trazia a ordem certa, esta nota não.
   - **Teste de estímulo com arginina** (alternativa bem tolerada): cortes de copeptina ~3,0–5,2 pmol/L.
   - Copeptina ≤ 4,9 só significa deficiência de AVP **se o sódio tiver atingido ≥ 150 mmol/L** na hora da coleta.
 
