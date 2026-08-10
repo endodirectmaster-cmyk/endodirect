@@ -4105,6 +4105,30 @@ var GLOBAL_MERGE_KEYS={
   ig_stories:function(it){return it.id||((it.stem||'')+'|'+(it.answer||''));},
   ig_pending:function(it){return it.id||((it.stem||'')+'|'+(it.answer||''));}
 };
+
+// Rótulo humano do item em conflito. ⚠️🐛 FIX (10/08/2026): o aviso usava o 2º campo
+// da chave de merge para nomear o item. Em `provas` a chave é `stem|answer|inst`, então
+// o 2º campo é a RESPOSTA — o professor viu "mantive a SUA versão... : C · D" enquanto
+// olhava a aba Resumos, sem como saber que o conflito era de duas QUESTÕES noutra aba.
+// Agora cada conflito carrega a coleção, e o rótulo nomeia a ABA e um trecho que
+// identifica o item.
+var MERGE_ABAS={provas:'Provas & Questões',diretrizes:'Diretrizes/Resumos',diretrizes_temas:'Temas de Diretrizes',adm_cursos:'Cursos',podcasts:'Podcasts',mm_shared:'Mapas Mentais',fc_shared:'Flashcards',curso_mods_extra:'Módulos de curso',adm_estudantes:'Estudantes',ig_stories:'Stories',ig_pending:'Stories (pendentes)'};
+var MERGE_ROTULOS={
+  provas:function(pr){return pr[0]||'';},            // o enunciado, não a alternativa
+  ig_stories:function(pr){return pr[0]||'';},
+  ig_pending:function(pr){return pr[0]||'';},
+  diretrizes:function(pr){return pr[1]||pr[0]||'';}, // o tema
+  podcasts:function(pr){return pr[1]||pr[0]||'';},
+  adm_cursos:function(pr){return pr[1]||pr[0]||'';}
+};
+function rotuloConflito(c){
+  var k=String((c&&c.key)!==undefined?c.key:c),coll=(c&&c.coll)||'';
+  var pr=k.split('|'),f=MERGE_ROTULOS[coll];
+  var txt=f?f(pr):(pr.filter(Boolean)[1]||k);
+  txt=String(txt).replace(/\s+/g,' ').trim().slice(0,46);
+  var aba=MERGE_ABAS[coll]||coll;
+  return (aba?aba+' — ':'')+(txt||k.slice(0,40));
+}
 // Serialização CANÔNICA (chaves ordenadas em todo nível) — o mesmo item tem sempre
 // a mesma string, venha ele do JSONB do servidor ou montado aqui pelo painel, onde
 // a ordem das chaves difere. Sem isso a comparação de conteúdo acusaria mudança
@@ -4147,7 +4171,7 @@ function captureGlobalBaseline(payload){
 // ⚠️🐛 FIX (06/08/2026): o terceiro caso não existia. Toda edição feita direto no
 // banco em item que o painel já tinha era descartada em silêncio no próximo save —
 // foi assim que as tabelas do posicionamento de hipogonadismo sumiram às 12:48.
-function mergeConcurrent(serverArr,localArr,baseSigs,keyFn,report){
+function mergeConcurrent(serverArr,localArr,baseSigs,keyFn,report,coll){
   var out=Array.isArray(localArr)?localArr.slice():[];var localAt={};
   out.forEach(function(it,i){try{var lk=keyFn(it);if(localAt[lk]===undefined)localAt[lk]=i;}catch(e){}});
   baseSigs=baseSigs||{};
@@ -4160,7 +4184,7 @@ function mergeConcurrent(serverArr,localArr,baseSigs,keyFn,report){
     if(typeof base!=='string')return;         // baseline sem assinatura (formato antigo)
     if(itemSig(it)===base)return;             // o servidor não mexeu neste item
     if(itemSig(out[at])===base){out[at]=it;if(report)report.updated++;}
-    else if(report)report.conflicts.push(k);
+    else if(report)report.conflicts.push({coll:coll||'',key:k});
   });
   return out;
 }
@@ -4535,12 +4559,12 @@ function saveRemoteState(){
       if(lastGlobalUpdatedAt&&serverUpd&&serverUpd!==lastGlobalUpdatedAt){
         var rep={added:0,updated:0,conflicts:[]};
         Object.keys(GLOBAL_MERGE_KEYS).forEach(function(coll){
-          p[coll]=mergeConcurrent(serverP[coll],p[coll],globalBaseline[coll],GLOBAL_MERGE_KEYS[coll],rep);
+          p[coll]=mergeConcurrent(serverP[coll],p[coll],globalBaseline[coll],GLOBAL_MERGE_KEYS[coll],rep,coll);
         });
         // Conflito de verdade (os dois lados mexeram no MESMO item) é o único caso
         // em que algo do servidor não entra — então avisa em vermelho e nomeia.
         if(rep.conflicts.length){
-          try{notify('Este item mudou no servidor e aqui ao mesmo tempo — mantive a SUA versão de '+rep.conflicts.length+' item(ns). Dê F5 para ver o que veio do servidor: '+rep.conflicts.slice(0,2).map(function(k){return String(k).split('|').filter(Boolean)[1]||String(k).slice(0,40);}).join(' · '),'err');}catch(e){}
+          try{notify('Mudou no servidor e aqui ao mesmo tempo — mantive a SUA versão de '+rep.conflicts.length+' item(ns), nestas abas: '+rep.conflicts.slice(0,2).map(rotuloConflito).join(' · ')+'. Dê F5 para ver o que veio do servidor.','err');}catch(e){}
         }else if(rep.added||rep.updated){
           try{notify('Salvo sem sobrescrever o servidor — '+rep.added+' item(ns) novo(s) e '+rep.updated+' atualizado(s) vieram junto. Recarregue para ver.','info');}catch(e){}
         }

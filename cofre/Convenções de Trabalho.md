@@ -28,6 +28,16 @@ o caminho absoluto.
 aparece como modificado quando ele não existia antes — aparece como **não rastreado**,
 que é fácil de ler como "arquivo meu, tudo bem".
 
+⚠️ **DECLAREI O REPOSITÓRIO ÍNTEGRO CEDO DEMAIS, E ESTAVA ERRADO.** `git status` limpo
+e `ci-validate` verde **não bastam**. A poda do npm levou junto o `playwright-core`,
+que **nunca esteve versionado** — logo o `git checkout -- node_modules` não o trouxe de
+volta, e o `ci-validate` não o exercita. Só apareceu horas depois, quando o harness A/B
+falhou com `Cannot find module 'playwright-core'`.
+**A conferência completa é: `git status` + `ci-validate` + o harness A/B.** O
+`git checkout` restaura só o que está no índice; pacote não rastreado, uma vez podado,
+tem de ser reinstalado — fora da árvore do repositório, com `NODE_PATH` apontando
+para lá (`NODE_PATH=/tmp/pwlib/node_modules AB_DIR=/tmp/ab node scratchpad/boot-navegador/check.js`).
+
 ## 🔀 SÃO TRÊS CAMINHOS ATÉ O MÉDICO, E CORRIGIR UM NÃO CORRIGE OS OUTROS (2026-08-10)
 
 O mesmo fato clínico chega ao médico por **três vias independentes**, e elas não

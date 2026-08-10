@@ -92,10 +92,35 @@ out=mergeConcurrent([comTabelas],[antigo],baseVelho,chave,rep);
 ok(out.length===1&&rep.conflicts.length===0,
    'baseline sem assinatura (sessão antiga) degrada para o comportamento antigo, sem erro');
 
-// --- o call site do index.html precisa passar o report -----------------------
+// --- o call site do index.html precisa passar o report E a coleção -----------
+// ⚠️ A coleção entrou em 10/08/2026. Sem ela, o aviso de conflito nomeava o item
+// pelo 2º campo da chave de merge — e em `provas` esse campo é a RESPOSTA. O
+// professor viu "mantive a SUA versão: C · D" enquanto olhava a aba Resumos, sem
+// como saber que o conflito era de duas QUESTÕES, em outra aba.
 const chamada=html.match(/p\[coll\]=mergeConcurrent\([^)]*\)/);
-ok(chamada&&/,\s*rep\s*\)/.test(chamada[0]),
+ok(chamada&&/\brep\b/.test(chamada[0]),
    'o save tem de passar o objeto de report para mergeConcurrent, senão nada é avisado');
+ok(chamada&&/,\s*coll\s*\)/.test(chamada[0]),
+   'o save tem de passar a COLEÇÃO para mergeConcurrent, senão o aviso não sabe de que aba fala');
+ok(/report\.conflicts\.push\(\{coll:/.test(html),
+   'cada conflito tem de registrar a coleção junto da chave');
+
+// --- o rótulo do conflito não pode nomear a questão pela ALTERNATIVA ----------
+{
+  const rot=html.match(/function rotuloConflito\(c\)\{[\s\S]*?\n\}/);
+  ok(!!rot,'rotuloConflito tem de existir para nomear o item em conflito');
+  if(rot){
+    const fn=new Function('MERGE_ABAS','MERGE_ROTULOS','return '+rot[0].replace(/^function /,'function '))
+      ({provas:'Provas & Questões',diretrizes:'Diretrizes/Resumos'},
+       {provas:function(pr){return pr[0]||'';},diretrizes:function(pr){return pr[1]||pr[0]||'';}});
+    const rProva=fn({coll:'provas',key:'Qual o corte de HbA1c para diabetes?|C|SBD 2024'});
+    ok(/Provas/.test(rProva)&&/HbA1c/.test(rProva)&&!/^\s*C\s*$/.test(rProva),
+       'conflito em prova nomeia a ABA e o ENUNCIADO, nunca só a alternativa');
+    const rDir=fn({coll:'diretrizes',key:'Vilar 8ed|Obesidade: Definição e Epidemiologia|Obesidade'});
+    ok(/Diretrizes/.test(rDir)&&/Defini/.test(rDir),
+       'conflito em diretriz/resumo nomeia a ABA e o TEMA');
+  }
+}
 ok(/rep\.conflicts\.length/.test(html)&&/notify\(/.test(html.slice(html.indexOf('rep.conflicts.length'),html.indexOf('rep.conflicts.length')+900)),
    'conflito real tem de disparar notify visível para o professor');
 ok(/s\[fn\(it\)\]=itemSig\(it\)/.test(html),
