@@ -8,6 +8,12 @@ atualizado: 2026-08-10
 Log de decisões de produto e técnicas (mais recentes no topo).
 
 ## 2026-08
+- **🧠 FIGURA DO CONTROLE HIPOTALÂMICO DO APETITE, REDESENHADA (2026-08-10).** Entrou no capítulo `Regulação do Apetite`, entre "Hormônios de fome e saciedade" e "Sistema hedônico", pelo marcador `[[figura]]`.
+  - ⚠️ **NÃO é a figura do livro.** O professor mandou a Figura 2.2 de um PDF como REFERÊNCIA do que queria. Copiar a arte seria reproduzir material protegido — e o repositório é público. **Redesenhei em SVG**: o que se reaproveita é a FISIOLOGIA (núcleo arqueado, neurônios de 1ª e 2ª ordem, hormônios periféricos), que é fato, não autoria. Legenda: *"Elaborado para o Endodirect"* — sem fingir que é do livro.
+  - **Onde mora:** o campo `figuras` aceita `{svg}` **inline** (`dirFigurasHTML` insere sem escapar), então não precisou de upload nem de bucket. ~8 KB no payload.
+  - ⚠️ **TEMA:** texto e traços neutros usam `currentColor` e herdam a cor do card — funciona no escuro e no claro. Cor fixa só nos acentos (verde estimula, coral inibe), que têm contraste nos dois fundos. **Conferido nos dois temas.**
+  - ⚠️ **COLISÃO É DEFEITO, NÃO ESTILO — e meu primeiro verificador não via.** Ele só comparava texto contra texto e deu "sem colisão" num desenho em que a seta da grelina cortava um título ao meio. Estendido para amostrar cada traço ao longo do comprimento e testar contra as caixas de texto; aí apareceram mais duas (as curvas cortando o título do núcleo arqueado). ⚠️ E ao incluir a borda dos retângulos veio **falso positivo**: o receptor fica sobre a borda **de propósito** (é a membrana) — marcado com `ap-rec` e excluído desse par, porque peneira que grita à toa vira paisagem.
+  - `scratchpad/figura-apetite/` guarda o gerador e o verificador: a figura é **regenerável e editável**, não um binário opaco.
 - **📈 QUATRO GRÁFICOS DE BARRA NO CONTEÚDO (2026-08-10).** Todos com números **já presentes no texto do próprio capítulo** — o gráfico reapresenta, não acrescenta, e assim herda a auditoria do texto:
   - **Tratamento Farmacológico da Obesidade** — perda de peso por fármaco, tirada da tabela do próprio capítulo (tirzepatida −20% SURMOUNT · semaglutida 2,4 mg −15% STEP · liraglutida 3,0 mg −8% SCALE · naltrexona–bupropiona 5–8%).
   - **Tratamento Cirúrgico da Obesidade** — redução de risco (DM2 ~83% · câncer em mulheres ~42% · AVC ~34% · mortalidade geral ~29% · IAM ~29%).
