@@ -186,6 +186,7 @@ function main() {
 
   let totFatos = 0, totReprovados = 0, extratosRuins = 0;
   const relatorio = [];
+  const avisosFonte = [];   // fonte com símbolos corrompidos — avisa, não reprova
 
   for (const arq of arquivos.sort()) {
     const ext = JSON.parse(fs.readFileSync(path.join(DIR_EXTRATOS, arq), 'utf8'));
@@ -204,6 +205,32 @@ function main() {
       continue;
     }
     const bruto = fs.readFileSync(pTexto, 'utf8');
+
+    // ⚠️ A FONTE DE SÍMBOLOS DO PDF PODE NÃO TER SOBREVIVIDO À CONVERSÃO, e aí
+    //    TODO número do artigo fica suspeito. Achado em 09/08/2026 no artigo de
+    //    hipercalcemia PTH-independente: zero `µ`, zero travessão, zero `−`,
+    //    mais `þ` no lugar de `+` e o padrão `2.20e2.55` no lugar de faixas.
+    //    O limite da EFSA para vitamina D saía como "100 mg/day" quando o real
+    //    é 100 **µg** — erro de 1000×. O extrator pegou e não publicou o número.
+    //
+    //    Isto AVISA, não reprova: o extrato pode lidar com a corrupção
+    //    corretamente (aquele lidou), e reprovar ia impedir de trabalhar com um
+    //    PDF ruim. Mas o aviso aparece exatamente para quem está conferindo, que
+    //    é quem pode agir. Detecção com falso positivo ~zero: `þ` não é
+    //    caractere de português nem de inglês, e `2.20e2.55` não é notação
+    //    clínica nenhuma. (Já a peneira inversa — "fármaco de µg escrito em mg"
+    //    — deu 2 de 2 falsos positivos na base e por isso NÃO virou guarda.)
+    {
+      const th = bruto.split('þ').length - 1;
+      const faixas = (bruto.match(/\d+[.,]\d+e\d+[.,]\d+/g) || []).length;
+      if (th || faixas) {
+        avisosFonte.push(`${id}: fonte com FONTE DE SÍMBOLOS CORROMPIDA — `
+          + `${th} ocorrência(s) de "þ" (era "+") e ${faixas} de "N.NeN.N" (era faixa com travessão). `
+          + `Todo número, unidade e sinal deste artigo é suspeito; µ pode ter virado m (erro de 1000×). `
+          + `Não invente o que se perdeu: encolha a afirmação e diga onde conferir.`);
+      }
+    }
+
     const bs = CIT.bases(bruto);            // [norm, norm+sem hífen de quebra]
     const fonte = bs[0];
     const fonteSH = bs[1];                  // calculados uma vez por extrato, não por fato
@@ -267,6 +294,10 @@ function main() {
     const marca = r.problemas.length ? '✗' : '✓';
     console.log(`${marca} ${(r.titulo || r.id).slice(0, 78)}  — ${r.fatos} fato(s)`);
     r.problemas.forEach((p) => console.log('    · ' + p));
+  }
+  if (avisosFonte.length) {
+    console.log('\n⚠️ AVISO DE FONTE (não reprova — o extrato pode ter lidado bem com isso):');
+    avisosFonte.forEach((a) => console.log('  · ' + a));
   }
   console.log(`\n${arquivos.length} extrato(s) · ${totFatos} fato(s) · ${totReprovados} fato(s) reprovado(s) · ${extratosRuins} extrato(s) com problema`);
   if (extratosRuins) {

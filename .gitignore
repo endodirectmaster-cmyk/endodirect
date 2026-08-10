@@ -48,6 +48,17 @@ scratchpad/acervo/__pycache__/
 # contém uma CÓPIA do texto integral — mesmo motivo de `textos/` estar aqui, e o
 # repositório é público. Só o extrato verificado sai dela para `extratos/`.
 scratchpad/acervo/trabalho/
+# ⚠️ Andaimes do extrator, criados na RAIZ de `acervo/` em vez de `trabalho/`
+# (09/08/2026: o agente do diabetes insipidus escreveu `fatos-di-a..d.js` e
+# `monta-di.js` ali). Eles carregam ÂNCORAS VERBATIM do artigo — trechos curtos
+# do texto-fonte usados para RECORTAR a citação — e o repositório é PÚBLICO:
+# mesmo motivo de `textos/` e `trabalho/` estarem aqui. São transitórios: o
+# entregável é o JSON em `extratos/`, com a citação como REFERÊNCIA. E enquanto
+# ficavam rastreados, o hook de fim de turno pedia para commitar arquivo que o
+# agente ainda estava escrevendo.
+scratchpad/acervo/fatos-*.js
+scratchpad/acervo/monta-*.js
+scratchpad/acervo/gera-*.js
 
 # ⚠️ playwright-core: 14 MB instalados SOB DEMANDA pelo harness de navegador
 # (scratchpad/boot-navegador/README.md manda rodar `npm i playwright-core` na
@@ -67,3 +78,8 @@ scratchpad/acervo/*.py
 scratchpad/work/
 # (scratchpad/boot-navegador/ CONTINUA versionado: é o harness de navegador real,
 #  ferramenta permanente, não rascunho de agente.)
+
+# Auditoria do núcleo: recortes de trabalho dos auditores (dumps dos extratos já
+# versionados, feitos para leitura). São derivados e regeneráveis — o que vale é
+# o `relatorio.md` de cada auditor.
+scratchpad/auditoria-nucleo/**/_*.txt

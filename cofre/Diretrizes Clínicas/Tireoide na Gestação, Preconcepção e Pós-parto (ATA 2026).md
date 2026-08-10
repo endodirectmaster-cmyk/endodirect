@@ -1,6 +1,6 @@
 ---
 tags: [cofre, clinico, diretriz, tireoide, gestacao, ata]
-atualizado: 2026-07-01
+atualizado: 2026-08-10
 ---
 
 # Tireoide em Preconcepção, Gestação e Pós-parto — Diretriz da ATA 2026
@@ -44,12 +44,36 @@ atualizado: 2026-07-01
 - TPOAb+ serve para **aconselhar tireoidite pós-parto** e guiar seguimento (TSH q3–6 meses ao planejar; ~7–9% desenvolvem hipo).
 
 ## Hipotiroxinemia isolada (Tabela 12)
-- **1º trimestre → NÃO tratar.**
-- **Após o 1º trimestre → LT4 pode ser considerada** (weak); atenção ao iodo.
+- **1º trimestre → NÃO oferecer LT4** (evidência baixa, condicional).
+- **Após o 1º trimestre → LT4 NÃO DEVE ser oferecida** (**evidência ALTA,
+  recomendação FORTE** — o par de maior força da tabela). Atenção ao iodo e ao ferro.
+
+> ⚠️ **CORRIGIDO EM 10/08/2026 — esta linha estava INVERTIDA.** A nota dizia
+> *"após o 1º trimestre → LT4 pode ser considerada (weak)"*, que é o oposto da
+> diretriz, com a força rebaixada de **High/Strong** para *weak*. Verbatim da
+> Tabela 12: *"Low Conditional — For maternal isolated hypothyroxinemia diagnosed
+> in the first trimester, do not offer levothyroxine treatment. **High Strong** —
+> For maternal isolated hypothyroxinemia diagnosed **after the first trimester**,
+> levothyroxine treatment **should not be offered**."*
+> **O dano da inversão:** levotiroxina oferecida à gestante de 2º ou 3º trimestre
+> contra recomendação forte de evidência alta — e o sobretratamento com LT4 na
+> gestação aumenta hipertensão induzida pela gravidez, pré-eclâmpsia, parto
+> prematuro e complicações fetais. O núcleo já dizia o certo; a nota não.
 
 ## Hipertireoidismo / Graves (Tabelas 13–15)
 - **GTT vs Graves:** tireotoxicose gestacional transitória = **hiperêmese**, **sem TRAb**, autolimitada (resolve no 2º tri) → suporte, **sem ATD**. Não testar função na hiperêmese isolada.
-- **ATD:** **PTU no 1º trimestre**; após, **metimazol**; **menor dose eficaz**, alvo **fT4 no terço superior/limite superior**. Preconcepção em Graves: considerar PTU baixa dose e parar no teste positivo quando viável.
+- **ATD:** **PTU (se disponível) ATÉ 16 SEMANAS** — ⚠️ o marco é 16 semanas (o
+  fechamento da pele fetal), **não** o fim do 1º trimestre. **Depois de 16 semanas
+  a ATA 2026 declara DESCONHECIDA a escolha do antitireoidiano** (*"The choice for
+  a preferred ATD after 16 weeks gestation is unknown"*; *"it remains unclear
+  whether PTU should be continued or switched to MMI"*) — e adverte que **trocar
+  pode causar um período de controle subótimo**. Ao confirmar a gravidez,
+  considerar trocar MMI→PTU na razão **1:20**. **Menor dose eficaz**, alvo **fT4 no
+  terço superior/limite superior**. Preconcepção em Graves: considerar PTU baixa
+  dose e parar no teste positivo quando viável.
+  ⚠️ **NA LACTAÇÃO A PREFERÊNCIA SE INVERTE:** metimazol é preferido ao PTU
+  (hepatotoxicidade do PTU; dose única diária) — MMI ≤20 mg/dia, carbimazol
+  ≤15 mg/dia, PTU ≤750 mg/dia (dados mais robustos até 450 mg/dia).
 - **TRAb:** medir no **1º trimestre** em toda história de Graves; se **>3× o LSN**, repetir e **monitorar tireoide fetal/neonatal** (TRAb cruza a placenta → hiper/hipo fetal). Medir também no momento de cirurgia e repetir 18–20 sem.
 - **Radioiodo contraindicado** na gestação/lactação.
 

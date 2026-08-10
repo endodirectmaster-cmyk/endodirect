@@ -419,6 +419,124 @@ try {
   fail('conferência das ressalvas falhou (o núcleo mudou e alguma ressalva ficou para trás):\n' + out);
 }
 
+// ⚠️ E UM NÍVEL ABAIXO: o FATO que restitui o núcleo dentro de `afirmacao`.
+//     A trava acima confere `conflito` e `nucleo_citado`, que são campos DO
+//     EXTRATO — e por isso ficou verde em 09/08/2026 enquanto 15 fatos, em 5
+//     extratos, restituíam o núcleo por escrito dentro de `fatos[].afirmacao`,
+//     onde nenhuma peneira olhava. Um deles dizia que "o núcleo manda
+//     propiltiouracil no 1º trimestre e metimazol depois". Corrigi o núcleo (o
+//     marco da ATA 2026 é 16 SEMANAS, e passado ele a escolha do antitireoidiano
+//     é DECLARADA DESCONHECIDA) e o fato virou mentira: passou a mandar trocar a
+//     gestante de volta para metimazol exatamente onde a diretriz se recusa a
+//     recomendar. Ficou três dias assim, com o cabeçalho do extrato certo.
+//     A regra é a do `cit_sha`: texto que copia outro texto carrega selo do que
+//     copiou. Achado pela auditoria adversarial, não por teste — por isso virou
+//     teste.
+try {
+  execFileSync(process.execPath, [path.join('scripts', 'confere-nucleo-nos-fatos.js')], { stdio: 'pipe' });
+  ok('núcleo restituído dentro dos fatos: selo confere com o núcleo de hoje');
+} catch (e) {
+  const out = (e.stdout ? e.stdout.toString() : '') + (e.stderr ? e.stderr.toString() : '');
+  fail('há fato que restitui o núcleo com selo velho — releia antes de selar:\n' + out);
+}
+
+// ⚠️ O PDF COME O SINAL DE MENOS, E O CORTE TROCA DE LADO. Achado pela auditoria
+//     adversarial do Manual Brasileiro de Osteoporose (09/08/2026): um fato
+//     publicava `escore T ≤ 2,5`, sem o menos — o que diagnostica osteoporose em
+//     densidade NORMAL e manda tratar com antirreabsortivo. O extrator até
+//     declarara ter retido DOIS outros escores T pelo mesmo motivo; cuidou de
+//     dois e o terceiro passou. Cuidado manual não escala.
+//     Esta guarda é estreita de propósito — só escore T e escore Z, onde a
+//     direção é conhecida (OMS: osteoporose é T ≤ −2,5). Por isso ela pode ser
+//     CI, enquanto a varredura de "cabeça perdida" ficou só no brief do auditor:
+//     medida no mesmo dia, aquela dava ~85% de falso positivo.
+try {
+  execFileSync(process.execPath, [path.join('scripts', 'confere-sinal-de-corte.js')], { stdio: 'pipe' });
+  ok('sinal dos cortes: nenhum escore T/Z publicado sem o menos');
+} catch (e) {
+  const out = (e.stdout ? e.stdout.toString() : '') + (e.stderr ? e.stderr.toString() : '');
+  fail('corte de escore T/Z sem o sinal de menos — o PDF comeu o hífen:\n' + out);
+}
+
+// ⚠️ O QUE ESTÁ NO AR TEM DE SER O QUE FOI EXTRAÍDO. Buraco medido em
+//     09/08/2026: um extrato chegou com `tipo` fora do vocabulário fechado, o
+//     `monta-base-profunda.js` ABORTOU (corretamente, para não rebaixar em
+//     silêncio uma revisão ao tier de relato de caso) — e este arquivo passou
+//     VERDE assim mesmo, porque validava o `clinical-deep-data.js` já
+//     construído, que seguia consistente e apenas VELHO. TRÊS artigos
+//     extraídos, verificados e commitados podiam existir no repositório sem
+//     chegar a médico nenhum, e nada acusava. É a versão estrutural de
+//     "extração verificada não é entrega".
+//     A guarda é a INVARIANTE, não uma peneira nova: remontar e exigir
+//     igualdade byte a byte pega o extrato que aborta a montagem E o "esqueci de
+//     rebuildar". Copiar só a checagem do `tipo` daria confiança falsa sobre as
+//     outras condições de aborto.
+try {
+  execFileSync(process.execPath, [path.join('scripts', 'monta-base-profunda.js'), '--conferir'], { stdio: 'pipe' });
+  ok('base profunda no ar: o `clinical-deep-data.js` é o que os extratos produzem hoje');
+} catch (e) {
+  const out = (e.stdout ? e.stdout.toString() : '') + (e.stderr ? e.stderr.toString() : '');
+  fail('a base profunda commitada não corresponde aos extratos:\n' + out);
+}
+
+// ⚠️ AVISO DE ESCOPO ESCONDIDO NUM `alinhado`. O montador NÃO entrega a ressalva
+//     quando `conflito_direcao` é `alinhado` — e a razão é boa (registro de
+//     auditoria; o núcleo já foi corrigido a partir daquela fonte). Mas o campo
+//     `conflito` acumulou um segundo papel: declarar **o que a fonte não
+//     responde**, que é aviso de SEGURANÇA. No feocromocitoma, 2.704 chars
+//     declarados `alinhado` incluíam "não traz corte de metanefrina, não traz
+//     condição de coleta e NÃO TRAZ CONDUTA DE CRISE HIPERTENSIVA" — descartado
+//     em silêncio, e a auditoria confirmou que aquele aviso não chegava por
+//     nenhuma outra via (nem núcleo, nem tema, nem os 93 fatos).
+//     ⚠️ A primeira versão do padrão dava 3 falsos positivos em 4 (pegava "não
+//     há mais o que sobrescrever" e "o NÚCLEO não tem entrada sobre X"). Apertado
+//     para exigir o SUJEITO explícito ("a fonte não traz…"): 1 de 4, e era o real.
+try {
+  execFileSync(process.execPath, [path.join('scripts', 'confere-escopo-alinhado.js')], { stdio: 'pipe' });
+  ok('escopo em ressalva alinhada: nenhum aviso de segurança escondido em ressalva que não é entregue');
+} catch (e) {
+  const out = (e.stdout ? e.stdout.toString() : '') + (e.stderr ? e.stderr.toString() : '');
+  fail('ressalva de escopo dentro de um `alinhado` — ela não chega ao médico:\n' + out);
+}
+
+// ⚠️ O MESMO ARTIGO EXTRAÍDO DUAS VEZES. Achado em 09/08/2026 varrendo a fila:
+//     **5 títulos têm DOIS fileId** no `fila-extracao.json`, e num deles — o
+//     diabetes insipidus central — um id JÁ foi extraído (169 fatos) e o outro
+//     seguia na fila marcado como pendente. Nada impedia a leva seguinte de
+//     extraí-lo de novo. Duplicata não é só desperdício: dobra o peso do artigo
+//     na seleção por tema, come teto de área em dobro, e faz a IA ver a mesma
+//     afirmação duas vezes — o que soa como confirmação independente sem ser.
+//     Medido ao entrar: 44 extratos, 44 títulos distintos, zero duplicados.
+try {
+  execFileSync(process.execPath, [path.join('scripts', 'confere-artigo-duplicado.js')], { stdio: 'pipe' });
+  ok('artigo duplicado: nenhum artigo extraído duas vezes sob ids diferentes');
+} catch (e) {
+  const out = (e.stdout ? e.stdout.toString() : '') + (e.stderr ? e.stderr.toString() : '');
+  fail('o mesmo artigo foi extraído mais de uma vez:\n' + out);
+}
+
+// ⚠️ PROVA COPIADA ENTRE FATOS. A auditoria do GIOP achou QUATRO fatos com a
+//     MESMA citação byte a byte — mesmo offset, mesmo tamanho, mesmo `cit_sha`.
+//     A fatia provava o primeiro; os outros três afirmavam preferência de
+//     fármaco cuja frase ficava 100–400 chars adiante, na mesma célula da
+//     tabela. E o `verifica-extracao.js` passou VERDE nos três: a peneira dele é
+//     de NÚMEROS, e o único número daquelas afirmações era o "40" do cabeçalho
+//     "adults ≥40 years", que a fatia continha. Prova fabricada com número
+//     emprestado.
+//     Escopo medido antes de virar guarda: "fármaco na afirmação e ausente da
+//     citação" em QUALQUER fato dá 176 de 6.197 (2,8%, quase tudo legítimo — a
+//     fonte escreve a classe, o fato nomeia o agente). Restrito a fatos com
+//     citação IDÊNTICA à de outro, dá 2, e zero depois de aceitar a abreviatura
+//     da própria diretriz (`rom`, `den`, `ral`). Citação repetida é a assinatura
+//     do copia-e-cola: é onde falhar volta a significar alguma coisa.
+try {
+  execFileSync(process.execPath, [path.join('scripts', 'confere-farmaco-na-citacao.js')], { stdio: 'pipe' });
+  ok('fármaco na citação: nenhum agente afirmado sem lastro na fatia que o prova');
+} catch (e) {
+  const out = (e.stdout ? e.stdout.toString() : '') + (e.stderr ? e.stderr.toString() : '');
+  fail('fármaco nomeado na afirmação e ausente da citação dela:\n' + out);
+}
+
 // ⚠️ O CAMPO `auditoria` SIGNIFICA UMA COISA SÓ. Ele chegou a ter três formatos
 //     convivendo — string do legado, objeto com `achado` (auditoria de verdade)
 //     e objeto que o extrator usava como bloco de notas. Medido em 08/08/2026:

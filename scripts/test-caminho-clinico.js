@@ -37,6 +37,254 @@ const CAMINHO = [
   ['mulher de 30 anos com testosterona total normal: trato o hirsutismo?', 'Endocrinologia Feminina'],
   ['DM2 descompensado apos pulso de corticoide', 'Diabetes'],
 
+  // ⚠️ A LISTA DE ESPORTE TINHA OS SUBSTANTIVOS E NENHUM VERBO (09/08/2026).
+  // `corrida` era chave, `correr` não — e o médico escreve a vinheta em verbo.
+  // Sem chave da área casando, a promoção condicional do Esporte não dispara e
+  // `diabetes tipo 1` sequestra a pergunta, que é o defeito que essa promoção
+  // existe para impedir. Os três primeiros falhavam; os controles abaixo
+  // provam que `correr` e `caminhar` não vazam por dentro de outra palavra.
+  ['DM1 vai correr 10 km, como ajusto o CGM e o carboidrato', 'Endocrinologia do Esporte'],
+  ['nadar com diabetes tipo 1', 'Endocrinologia do Esporte'],
+  ['pedalar com diabetes tipo 1', 'Endocrinologia do Esporte'],
+  ['quando pode ocorrer hipoglicemia noturna no DM1', 'Diabetes'],
+  ['encaminhar paciente com DM2 para nefrologista', 'Diabetes'],
+  ['DM1 em cetoacidose apos treino intenso', 'Diabetes'],
+  ['maratonista com hipotireoidismo', 'Tireoide'],
+
+  // ⚠️ O EUTIREOIDIANO DOENTE SÓ ERA ALCANÇÁVEL PELO PRÓPRIO NOME (09/08/2026).
+  // As duas primeiras caíam em NENHUMA área: nenhuma palavra da apresentação era
+  // chave. `t3`/`t4` entraram com peso de ACHADO, não de doença — por isso a
+  // terceira linha, que é o controle: "fratura vertebral em T3" é NÍVEL
+  // VERTEBRAL, e `fratura` (doença, 3000) tem de ganhar do hormônio (1000).
+  ['T3 baixo e T4 normal em paciente de UTI, trato?', 'Tireoide'],
+  ['T3 reverso alto no doente grave', 'Tireoide'],
+  ['fratura vertebral em T3 apos queda', 'Osteometabolismo'],
+  // Mesma falha de FORMA VERBAL do Esporte, agora em Obesidade: `emagrecer` era
+  // chave e `emagrece` não — e "qual remédio emagrece mais" está VERBATIM no tema
+  // do bloco de farmacoterapia. `abeso` é a sociedade que assina as diretrizes.
+  ['qual remedio emagrece mais', 'Obesidade'],
+  ['qual dieta a ABESO recomenda', 'Obesidade'],
+
+  // ⚠️ QUEM QUERIA PREVENIR FRATURA RECEBIA INSUFICIÊNCIA ADRENAL (09/08/2026).
+  // `fratura` sozinha não era chave — só os compostos (`fratura de quadril`,
+  // `fratura por fragilidade`, `fratura vertebral`) —, então "paciente em
+  // prednisona há 4 meses, previno fratura?" era decidida por `prednisona`, que
+  // é chave de Adrenal. Medido: `fratura` é 329 de 352 em Osteometabolismo (93%).
+  // As quatro últimas são os controles: sem a palavra `fratura`, a pergunta de
+  // corticoide continua sendo de Adrenal e de Diabetes.
+  ['paciente em prednisona ha 4 meses, previno fratura?', 'Osteometabolismo'],
+  ['paciente em corticoide cronico, previno fratura como?', 'Osteometabolismo'],
+  ['crise adrenal apos suspender prednisona', 'Adrenal'],
+  ['desmame de prednisona, como faco', 'Adrenal'],
+  ['insuficiencia adrenal induzida por glicocorticoide, quem rastreio', 'Adrenal'],
+  ['hiperglicemia apos pulso de metilprednisolona', 'Diabetes'],
+
+  // ⚠️ LÍPIDES — a área de UM artigo só, e três formas de perguntar por ele
+  // caíam em NENHUMA área (09/08/2026). `apolipoproteina B` roteava e a SIGLA
+  // `ApoB` não — sendo que ela está VERBATIM no tema da parte 2 da diretriz.
+  // `xantoma` é o sinal clássico da hipercolesterolemia familiar (mesma falha da
+  // esclera azulada na osteogênese imperfeita: o sinal não alcançava o artigo).
+  // Contado: `apob` 36×0, `xantoma` 1×0, `bempedoico` 16×0.
+  // ⚠️ ENDOCRINOLOGIA FEMININA — o quadro do hiperandrogenismo estava pela
+  // metade: `hiperandrogenismo`, `sop`, `hirsutismo` e `ferriman` já eram
+  // chaves, mas "alopecia androgenética feminina" e "AMH elevado" caíam em
+  // NENHUMA área. Contado: `alopecia` 9×3, `amh` 15×3.
+  // ❌ `acne` (9×4) ficou de fora depois de eu TENTAR e medir o estrago: "acne
+  // grave em adolescente com HAC" passava a cair em Feminina, porque `acne`
+  // (4 letras, peso 3004) vence `hac` (3 letras, 3003) no desempate por
+  // comprimento. Uma pergunta que NOMEIA a doença perdia para um sinal, por uma
+  // letra. As duas últimas linhas são o controle disso.
+  ['alopecia androgenetica feminina', 'Endocrinologia Feminina'],
+  ['AMH elevado em mulher jovem', 'Endocrinologia Feminina'],
+  ['acne grave em adolescente com HAC', 'Adrenal'],
+  ['alopecia no hipotireoidismo', 'Tireoide'],
+  // ⚠️ ACROMEGALIA — o extrator relatou que estas perguntas JÁ chegavam ao bloco
+  // dele "porque o tema pontua +3". Conferi e NÃO chegavam: ele mediu o ranking
+  // DENTRO da área e esqueceu que, sem chave, `canonArea` não devolve área
+  // nenhuma e não há bloco algum para pontuar. Pontuação de tema só existe
+  // depois que a área foi resolvida. Contado: `igf-1` 91×1, `pegvisomanto` 26×0,
+  // `prognatismo` 3×0, `macroglossia` 3×0, `gigantismo` 8×0.
+  // ❌ `totg` ficou de fora: 19 aqui contra 8 fora, e o TOTG 75 g é o rastreio do
+  // diabetes GESTACIONAL — as duas últimas linhas são o controle disso.
+  // ⚠️ ENDOCRINOPATIA POR INIBIDOR DE CHECKPOINT — o bloco era praticamente
+  // inalcançável (09/08/2026). `checkpoint` e `inibidor de checkpoint`
+  // apontavam para Tireoide, de quando o único conteúdo do assunto era o braço
+  // tireoidiano do bloco de fármaco-e-tireoide. Medido depois de o artigo
+  // entrar: `inibidor de checkpoint` é **102 em Endocrinopatias × 9 em
+  // Tireoide**, `checkpoint` 119 × 24. Enquanto apontavam para lá, *"diabetes
+  // por inibidor de checkpoint"* e *"insuficiência adrenal por inibidor de
+  // checkpoint"* caíam as duas em **Tireoide**.
+  // ❌ `hipofisite` (33×5 a favor de Endocrinopatias) NÃO se moveu: é assunto da
+  // hipófise. ❌ `imunoterapia` também não — 4 aqui contra 8 em Tireoide.
+  // As quatro últimas linhas são o controle: Tireoide e Diabetes não perdem o
+  // que é delas.
+  // ⚠️ EU EXTRAÍ O FEOCROMOCITOMA E ESQUECI DE LIGAR O ROTEAMENTO (09/08/2026).
+  // O bloco ficou na base, verificado e auditado, e **inalcançável** pelas três
+  // perguntas que mais o caracterizam — as três caíam em NENHUMA área. É
+  // "extração verificada não é entrega" na forma mais crua.
+  // Contado, todos ZERO fora de Adrenal: `metanefrina` 30, `bloqueio alfa` 12,
+  // `sdhb` 12, `paraganglioma` 77.
+  // ❌ `catecolamina` (16×7) ficou de fora — a crise tireotóxica tem 4.
+  ['metanefrinas plasmaticas elevadas, proximo passo', 'Adrenal'],
+  ['bloqueio alfa antes da cirurgia, por quantos dias', 'Adrenal'],
+  ['SDHB positivo, com que frequencia rastreio', 'Adrenal'],
+  ['paraganglioma de corpo carotideo', 'Adrenal'],
+  ['diabetes por inibidor de checkpoint', 'Endocrinopatias'],
+  ['insuficiencia adrenal por inibidor de checkpoint', 'Endocrinopatias'],
+  ['irAE endocrino, o que rastreio', 'Endocrinopatias'],
+  ['endocrinopatia por imunoterapia', 'Endocrinopatias'],
+  ['hipofisite por ipilimumabe', 'Neuroendocrinologia'],
+  ['tireoidite subaguda, dor cervical', 'Tireoide'],
+  ['amiodarona causou tireotoxicose', 'Tireoide'],
+  ['cetoacidose diabetica, conduta', 'Diabetes'],
+  ['IGF-1 elevado, como confirmo acromegalia', 'Neuroendocrinologia'],
+  ['prognatismo e maos aumentadas', 'Neuroendocrinologia'],
+  ['nadir de GH pos-op, criterio de cura', 'Neuroendocrinologia'],
+  ['pegvisomanto dose e monitorizacao', 'Neuroendocrinologia'],
+  ['diabetes gestacional, quando rastreio', 'Diabetes'],
+  ['glicemia de jejum 95 na gestante', 'Diabetes'],
+  ['ApoB, quando peco', 'Lípides'],
+  ['xantoma tendineo', 'Lípides'],
+  ['acido bempedoico', 'Lípides'],
+
+  // ⚠️ LEVA DE 09/08/2026 — hiperaldosteronismo, HAC e diabetes insipidus.
+  // As duas primeiras são a EMERGÊNCIA NEONATAL da HAC: antes destas chaves,
+  // "genitália ambígua e hiponatremia" caía em **Endocrinopatias** (o bloco da
+  // hiponatremia) e "crise perdedora de sal" não caía em área nenhuma.
+  ['recem-nascido com genitalia ambigua e hiponatremia, penso em HAC?', 'Adrenal'],
+  ['crise perdedora de sal no lactente com 21-hidroxilase', 'Adrenal'],
+  ['cateterismo de veias adrenais ou so TC?', 'Adrenal'],
+  ['paciente adipsico com hipernatremia, como reponho agua?', 'Neuroendocrinologia'],
+  ['diabetes insipidus apos transesfenoidal, resposta trifasica', 'Neuroendocrinologia'],
+  // `hipernatremia` MUDOU de Endocrinopatias para cá porque o conteúdo chegou:
+  // lá a contagem é ZERO (os cinco blocos são de HIPOnatremia) e aqui é 21.
+  ['hipernatremia de 165 no idoso acamado', 'Neuroendocrinologia'],
+  // ⚠️ A FORMA CLÁSSICA DA HAC VAI PARA ADRENAL, A FRASE NUA FICA EM FEMININA.
+  // Chave composta (10/08/2026): a pergunta que NOMEIA a doença clássica não
+  // alcançava o artigo dedicado à HAC (115 fatos, em Adrenal) — recebia SOP +
+  // hirsutismo. A composta só casa quando a pergunta diz "clássica" e vence a
+  // frase nua por comprimento dentro da mesma categoria.
+  ['crinecerfonte para hiperplasia adrenal congenita classica', 'Adrenal'],
+  ['hiperplasia adrenal congenita classica no lactente', 'Adrenal'],
+  // Controles do roubo que estas chaves poderiam causar — todos têm de FICAR:
+  ['mulher com hirsutismo: rastreio de hiperplasia adrenal congenita nao classica', 'Endocrinologia Feminina'],
+  ['hiperplasia adrenal congenita', 'Endocrinologia Feminina'],
+  ['17-hidroxiprogesterona elevada, o que investigo?', 'Endocrinologia Feminina'],
+  ['poliuria e polidipsia com glicemia 400', 'Diabetes'],
+  ['SIADH, como confirmo?', 'Endocrinopatias'],
+
+  // ⚠️ QUEM JÁ SABE O DIAGNÓSTICO CHEGAVA; QUEM ESTAVA DIAGNOSTICANDO, NÃO.
+  // A osteogênese imperfeita (30k) só era alcançável pelo PRÓPRIO NOME: das 7
+  // formas naturais de perguntar por ela, 6 caíam em NENHUMA área — o sinal, a
+  // classificação, o gene, o achado associado e a apresentação. Achado em
+  // 09/08/2026 varrendo as 4 áreas que CABEM no teto: elas não podem sofrer
+  // evicção, mas sofrem o defeito anterior a ela, que é não ser consultada.
+  // Cada chave foi contada antes de entrar (`esclera` 12 na área contra 1 em
+  // toda a base; as outras, exclusivas). `perda auditiva` ficou de fora de
+  // propósito, apesar de dominar 7 a 1: sintoma genérico sequestra área — e a
+  // última linha deste bloco é a prova viva disso.
+  ['crianca com fraturas de repeticao e escleras azuladas', 'Osteometabolismo'],
+  ['classificacao de Sillence: como uso?', 'Osteometabolismo'],
+  ['mutacao em COL1A1: qual doenca?', 'Osteometabolismo'],
+  ['dentinogenese imperfeita: qual a doenca de base?', 'Osteometabolismo'],
+  ['crianca com fragilidade ossea e perda auditiva', 'Osteometabolismo'],
+  ['antirreabsortivo esta contraindicado em quem?', 'Osteometabolismo'],
+  ['perda auditiva no hipotireoidismo', 'Tireoide'], // guarda: `esclera` não pode virar `perda auditiva`
+
+  // ⚠️ HIPOPARATIREOIDISMO (diretriz internacional 2022, extraída em 09/08/2026).
+  // O roubo era de área: "hipocalcemia após tireoidectomia total" caía em
+  // TIREOIDE, porque `tireoidectomia` é CAT_FARMACO (2000) e nada levava para
+  // Osteometabolismo. A pergunta é da PARATIREOIDE — a cirurgia da tireoide é só
+  // a causa. `hipocalcemia` vale 3000 e ganha.
+  ['hipocalcemia apos tireoidectomia total', 'Osteometabolismo'],
+  ['hipoparatireoidismo pos-cirurgico: como manejo?', 'Osteometabolismo'],
+  ['hipercalciuria no hipoparatireoidismo: uso tiazidico?', 'Osteometabolismo'],
+  ['autotransplante de paratireoide: quando indico?', 'Osteometabolismo'],
+  ['APECED e gene AIRE', 'Osteometabolismo'],
+  // …e os controles que a chave nova poderia ter sequestrado:
+  ['tireoidectomia total por cancer: qual a extensao?', 'Tireoide'],
+  ['crise tireotoxica apos tireoidectomia', 'Tireoide'],
+  ['hipoglicemia grave no diabetico', 'Diabetes'],
+  // ⚠️⚠️ SENTINELA DE UMA OMISSÃO DELIBERADA, e a razão não é dominância — é DANO.
+  // `tetania`, `chvostek` e `trousseau` NÃO podem rotear enquanto a base só tiver
+  // a diretriz CRÔNICA de 2022. Conferi na fonte: ZERO ocorrência de tetany,
+  // Chvostek, Trousseau, paresthesia, cramp e tingling, e ZERO de cálcio
+  // intravenoso, gluconato, infusão, ECG e emergency. Ela manda mirar a metade
+  // INFERIOR da faixa normal — conselho de manutenção. Entregá-lo a quem tem um
+  // doente em tetania repete o acidente da hiponatremia aguda, que recebia o
+  // bloco da correção LENTA. Quem trouxer fonte de hipocalcemia AGUDA remove
+  // estas duas linhas; até lá, roteá-las é regressão.
+  ['tetania com Chvostek positivo', '(vazio)'],
+  ['sinal de Trousseau: o que investigo?', '(vazio)'],
+  // …mas a APRESENTAÇÃO chega, e a linha entre as duas coisas foi medida, não
+  // argumentada: "formigamento perioral após cirurgia de pescoço" é a pergunta
+  // DIAGNÓSTICA ("isto é hipoparatireoidismo?"), que é exatamente o que a
+  // diretriz de 2022 responde. O que me convenceu foi ler a ENTREGA: o bloco
+  // que chega à IA declara sozinho o que a fonte não cobre ("não responde",
+  // "o que infundir", "emergênc"). Sem essa declaração no texto entregue, estas
+  // duas linhas teriam de sair junto com as de cima.
+  ['formigamento perioral e caimbras apos cirurgia de pescoco', 'Osteometabolismo'],
+  ['parestesia perioral apos cirurgia cervical', 'Osteometabolismo'],
+  // sentinela: a parestesia do DIABÉTICO é neuropatia, não hipocalcemia
+  ['parestesia nos pes do diabetico', 'Diabetes'],
+  ['formigamento nos pes e queimacao a noite no diabetico', 'Diabetes'],
+
+  // ⚠️ OSTEOPOROSE (Manual Brasileiro 2021, extraído em 09/08/2026). A área
+  // tinha só hipofosfatasia e osteogênese imperfeita — duas doenças RARAS —, e a
+  // doença óssea MAIS COMUM não tinha bloco. Era a mesma distorção que fez
+  // Diabetes ser a primeira da fila (130 fatos, 109 de pós-transplante).
+  ['FRAX de 22% em risco maior: trato?', 'Osteometabolismo'],
+  ['escore T de -2,7 no femur: e osteoporose?', 'Osteometabolismo'],
+  ['fratura de quadril apos queda da propria altura', 'Osteometabolismo'],
+  ['fratura atipica de femur com dor subtrocanterica', 'Osteometabolismo'],
+  ['perda de altura de 4 cm no idoso: investigo?', 'Osteometabolismo'],
+  ['CTX e P1NP: para que servem?', 'Osteometabolismo'],
+  ['dor ossea com fratura sem trauma no idoso', 'Osteometabolismo'],
+  // …e os dois termos que MEDI E RECUSEI, cada um com sentinela na área que os
+  // domina: `sarcopenia` é de Obesidade (5 contra 21 fora) e `artefato` é de
+  // Tireoide (3 contra 27). Chave exclusiva hoje pode ser roubo amanhã.
+  ['sarcopenia na obesidade do idoso', 'Obesidade'],
+  ['artefato de ensaio por biotina no TSH', 'Tireoide'],
+
+  // ⚠️ HIPERCALCEMIA — os DOIS lados do PTH entraram juntos em 09/08/2026, e a
+  // regra que eu tinha escrito exigia isso: `pth` ficara de fora porque levaria
+  // "hipercalcemia com PTH inapropriadamente normal" a uma área cujo único bloco
+  // de paratireoide era o de HIPOpara — área certa, bloco errado.
+  ['hipercalcemia com PTH inapropriadamente normal', 'Osteometabolismo'],
+  ['hipercalcemia da malignidade: como trato?', 'Osteometabolismo'],
+  ['PTHrP elevado em paciente oncologico', 'Osteometabolismo'],
+  ['crise hipercalcemica: hidratacao e depois?', 'Osteometabolismo'],
+  ['calciuria de 24 horas de 450 mg', 'Osteometabolismo'],
+  // ⚠️ E O MÉDICO NEM SEMPRE ESCREVE O NOME DA CONDIÇÃO. Esta continuava sem
+  // área DEPOIS de `hipercalcemia` entrar, e é a formulação mais comum de todas
+  // — hipercalcemia costuma ser achado de exame de rotina.
+  ['calcio alto achado por acaso no exame', 'Osteometabolismo'],
+  // ⚠️ ERRO DE ROTA, não buraco: caía em TIREOIDE porque `cintilografia` (13
+  // letras → 3013) ganhava de `paratireoide` (12 → 3012) por UM PONTO no
+  // desempate por comprimento. `sestamibi` sozinho não conserta — só a frase.
+  ['cintilografia de paratireoide', 'Osteometabolismo'],
+  ['cintilografia com sestamibi', 'Osteometabolismo'],
+  ['osteoporose induzida por glicocorticoide: quem trato?', 'Osteometabolismo'],
+  // …e as sentinelas do que NÃO pode ter sido roubado. `tiazidico` foi proposto
+  // como exclusivo por DOIS agentes e não é: 29 aqui contra 19 fora, porque
+  // hiponatremia por tiazídico é de Endocrinopatias. Contei antes de aplicar.
+  ['hiponatremia por tiazidico na idosa', 'Endocrinopatias'],
+  ['cintilografia de tireoide com captacao alta', 'Tireoide'],
+  ['hipotireoidismo induzido por litio', 'Tireoide'],
+
+  // ⚠️ O ACERVO É DE MANEJO, NÃO DE DIAGNÓSTICO — medido em 09/08/2026 com 25
+  // apresentações escritas como o médico pergunta quando AINDA NÃO tem o
+  // diagnóstico. 18 das 25 não chegavam a área nenhuma. Fui ver a causa e na
+  // maioria NÃO é roteamento: 12 assuntos grandes não têm um único bloco na
+  // base (hipotireoidismo, nódulo, Cushing, feocromocitoma, hiperaldosteronismo,
+  // hipercalcemia, hipoparatireoidismo, osteoporose, menopausa, baixa estatura).
+  // Rotear esses para uma área sem o artigo entregaria o artigo errado — pior
+  // que não rotear. Ficam como LACUNA DE ACERVO, não como chave faltando.
+  // Só entraram as duas em que o artigo EXISTE e estava parado ao lado.
+  ['mulher com ciclos irregulares e acne', 'Endocrinologia Feminina'],
+  ['ciclo menstrual irregular ha um ano', 'Endocrinologia Feminina'],
+  ['intolerancia ao calor e sudorese', 'Tireoide'],
+
   // Emergências hiperglicêmicas: `CAD` e `EHH` devolviam "" até 08/08/2026, e o
   // extrato da CAD é o ÚNICO da base com conteúdo de estado hiperosmolar.
   ['paciente com CAD, pH 7,1: quando comeco a insulina?', 'Diabetes'],
@@ -457,21 +705,31 @@ const CAMINHO = [
   // "exactly mimicked the biochemical findings of Graves' disease". Sem rota,
   // trata-se hipertireoidismo que não existe.
   ['paciente em uso de biotina: os exames sao confiaveis?', 'Tireoide'],
-  ['inibidor de checkpoint: qual disfuncao endocrina?', 'Tireoide'],
+  // ⚠️ ESTA LINHA MUDOU DE RESPOSTA EM 09/08/2026, e a mudança é correta. Ela
+  // esperava Tireoide de quando o ÚNICO conteúdo de inibidor de checkpoint na
+  // base era o braço tireoidiano do bloco de fármaco-e-tireoide (9 menções).
+  // Entrou o artigo de endocrinopatias por ICI (102 menções, quatro eixos), e a
+  // pergunta "qual disfunção endócrina?" passou a ter dono de verdade. Não
+  // afrouxei o teste: troquei a resposta esperada porque a base mudou.
+  ['inibidor de checkpoint: qual disfuncao endocrina?', 'Endocrinopatias'],
   // ...e a sentinela do outro lado do checkpoint, que é de outra área:
   ['hipofisite por checkpoint', 'Neuroendocrinologia'],
-  // ⚠️ `litio` FOI PARA TIREOIDE POR MEDIÇÃO: 26 ocorrências na base profunda,
-  // TODAS em Tireoide. A linha seguinte parece errada e NÃO É — eu esperava
-  // Osteometabolismo e medi o contrário: `hipercalcemia` tem 1 ocorrência em
-  // Osteometabolismo, 1 em Adrenal e 2 em Tireoide, ou seja, A BASE PROFUNDA NÃO
-  // RESPONDE HIPERCALCEMIA. Quem responde é o núcleo, que traz o diferencial
-  // inteiro. Mandar para Osteometabolismo entregaria um bloco de hipofosfatasia
-  // e osteogênese imperfeita — as duas doenças RARAS que são todo o acervo da
-  // área. Enquanto não houver artigo de hiperparatireoidismo, Tireoide ao menos
-  // entrega o lítio. Esta linha é um MARCADOR DE BURACO DE ACERVO: quando entrar
-  // artigo de hipercalcemia, ela deve mudar para Osteometabolismo.
+  // ✅ O MARCADOR DE BURACO DE ACERVO DISPAROU, E FOI ATENDIDO (09/08/2026).
+  // Esta linha esperava `Tireoide` e trazia escrita a própria condição de
+  // validade: *"quando entrar artigo de hipercalcemia, ela deve mudar para
+  // Osteometabolismo"*. Em 08/08 a base profunda NÃO respondia hipercalcemia
+  // (1 ocorrência em Osteometabolismo, 1 em Adrenal, 2 em Tireoide), e mandar
+  // para Osteometabolismo entregaria hipofosfatasia e osteogênese imperfeita —
+  // as duas doenças RARAS que eram todo o acervo da área.
+  //
+  // Entraram os dois lados do PTH: hiperparatireoidismo primário e hipercalcemia
+  // PTH-independente. Medido AGORA para esta pergunta: Osteometabolismo entrega
+  // **231 menções de hipercalcemia** e 13 de lítio; Tireoide entrega **2**. A
+  // rota mudou porque a base mudou, não porque afrouxei o teste.
+  // ⚠️ E a metade tireoidiana do lítio continua onde deve: `litio causa bocio?`,
+  // `hipotireoidismo induzido por litio` e `bocio por litio` seguem em Tireoide.
   ['litio causa bocio?', 'Tireoide'],
-  ['litio no diferencial de hipercalcemia', 'Tireoide'],
+  ['litio no diferencial de hipercalcemia', 'Osteometabolismo'],
 
   // Sentinelas de outras áreas — o achado glicêmico não pode sequestrá-las.
   ['hiperglicemia em paciente com acromegalia', 'Neuroendocrinologia'],
@@ -515,7 +773,7 @@ const CHEGADA = [
 
 for (const [pergunta, marca] of CHEGADA) {
   const area = deep.canonArea(pergunta);
-  const txt = area ? deep.deepFor(area, 120000, pergunta) : '';
+  const txt = area ? deep.deepFor(area, deep.TETO_PROFUNDO, pergunta) : '';
   ok(txt.toLowerCase().includes(marca),
     `"${pergunta}" roteia para ${area || '(vazio)'} mas o bloco (${(txt.length / 1000).toFixed(0)}k) `
     + `NÃO contém "${marca}" — área certa, assunto errado`);
@@ -554,11 +812,91 @@ const PRIMEIRO = [
   // o bloco nutricional — senão a promoção de `cirurgia bariatrica` só trocou
   // um sequestro por outro, agora dentro da própria área.
   ['indico cirurgia bariatrica para IMC 38 com diabetes tipo 2?', 'cirurgia bariátrica'],
+  // ⚠️ HIPONATREMIA — O PAR AGUDO×CRÔNICO É O CAMINHO MAIS PERIGOSO DA BASE, e
+  // ele já errou nos DOIS sentidos. Aqui a área nunca foi o problema: os cinco
+  // blocos cabem (172k contra teto de 400k), então todos CHEGAM. O que decide o
+  // que o médico lê primeiro é a ORDEM — e era ela que estava trocada.
+  //
+  // Medido em 09/08/2026:
+  //   · "sódio 118 com convulsão, conduta agora"      → 1º era o ALGORITMO
+  //     diagnóstico. O bloco de emergência empatava em 4 pontos e perdia no
+  //     desempate por ordem de array, porque `sodio` estava no tema do
+  //     algoritmo ("sódio urinário") e não no dele.
+  //   · "sódio 120 sem sintomas, velocidade de correção" → 1º era o bloco
+  //     AGUDO SINTOMÁTICO, com bolus de salina hipertônica, para um paciente
+  //     que a pergunta declara assintomático. Inverso exato do acidente antigo.
+  //
+  // Consertado em dois lugares: o `deepFor` passou a NEGAR termo ("sem
+  // sintomas" não pontua mais o bloco sintomático — o roteador de área já fazia
+  // isso via `bate()`), e os dois temas passaram a carregar as palavras que o
+  // MÉDICO digita (sódio, velocidade de correção, convulsionando) em vez de só
+  // as que o artigo usa.
+  ['sódio 118 com convulsão, conduta agora', 'aguda sintomática'],
+  ['paciente convulsionando com sódio 110', 'aguda sintomática'],
+  ['hiponatremia com coma, salina hipertônica', 'aguda sintomática'],
+  ['sódio 120 sem sintomas, velocidade de correção', 'crônica'],
+  ['hiponatremia assintomática, corrijo quão rápido', 'crônica'],
+  ['sódio urinário 40, investigo o quê', 'algoritmo diagnóstico'],
+  // ⚠️ OSTEOGÊNESE IMPERFEITA PELA APRESENTAÇÃO CLÁSSICA (09/08/2026). O texto do
+  // bloco tem 12 ocorrências de "esclera" e o TEMA não tinha nenhuma — então
+  // "esclera azulada e fraturas de repetição na criança" recebia em primeiro o
+  // bloco do GIOP, que só pontuava por `fratura` e `criança`. O sinal
+  // patognomônico não alcançava o artigo que é sobre ele.
+  ['esclera azulada e fraturas de repetição na criança', 'osteogênese imperfeita'],
+  ['doença dos ossos de vidro', 'osteogênese imperfeita'],
+  ['escleras azuis em lactente com fratura', 'osteogênese imperfeita'],
+  // ⚠️ O BLOCO NOVO ROUBOU A EMERGÊNCIA DO BLOCO ANTIGO (09/08/2026). Ao entrar
+  // em Adrenal, o extrato da HAC — cujo tema tem 1.571 chars — passou a vencer
+  // "cortisol basal 3, faço teste de estímulo?" (10 × 9) e "crise adrenal,
+  // hidrocortisona IV agora" (6 × 4), porque o tema dele nomeia `cortisol`,
+  // `estímulo` e `hidrocortisona` e o da insuficiência adrenal não — apesar de
+  // esse bloco ter 29 ocorrências de hidrocortisona no corpo e dizer "manejo da
+  // crise adrenal" no próprio tema.
+  // Consertado do lado certo: o tema do bloco de insuficiência adrenal passou a
+  // nomear o que ele já respondia (cortisol basal/matinal, cosintropina,
+  // hidrocortisona parenteral). Desempatar por tema mais curto foi medido em
+  // 08/08 e é cara-ou-coroa — 2 de 4 mudanças pioravam.
+  // ⚠️ A EMERGÊNCIA DA TIREOIDE ESTAVA SENDO ROUBADA PELO TEMA (09/08/2026), e a
+  // regra da dominância diz por quê: o tema do bloco do hipertireoidismo no
+  // ADULTO reivindicava "tempestade tireoidiana / crise tireotóxica (escore de
+  // Burch-Wartofsky)" — e o CORPO dele tem **ZERO** ocorrência de "crise
+  // tireotóxica" e UMA de "Burch", contra 3 e 7 no bloco da crise. Do outro lado,
+  // o tema do bloco da crise tinha 118 caracteres e não nomeava NENHUM sinal
+  // cardinal, enquanto o corpo dele tem tempestade ×42 e taquicardia ×5.
+  // Consertados os dois lados: o ADULTO deixou de reivindicar o que não entrega,
+  // e a crise passou a nomear febre, taquicardia, rebaixamento e o escore.
+  // ⚠️ Mesma regra tirou `biotina` (1 ocorrência no corpo contra 22 no bloco de
+  // fármaco) e `lítio` (1 contra 15) do tema do ADULTO.
+  ['crise tireotoxica com febre e taquicardia, o que faco agora', 'crise tireotóxica'],
+  ['paciente com tireotoxicose e febre 39, rebaixamento', 'crise tireotóxica'],
+  ['escore de Burch-Wartofsky, quando chamo de tempestade', 'crise tireotóxica'],
+  ['biotina falseia o TSH?', 'fármaco e tireoide'],
+  ['litio e hipotireoidismo, monitorizo como', 'fármaco e tireoide'],
+  // controles: o bloco do ADULTO tem de continuar ganhando o que é dele
+  ['doenca de Graves no adulto, metimazol por quanto tempo', 'tireotoxicose no adulto'],
+  ['nodulo toxico, radioiodo ou cirurgia?', 'tireotoxicose no adulto'],
+  ['hipertireoidismo no idoso com fibrilacao atrial', 'tireotoxicose no adulto'],
+  ['cortisol basal 3, faco teste de estimulo?', 'insuficiência adrenal —'],
+  ['crise adrenal, hidrocortisona IV agora', 'insuficiência adrenal —'],
+  ['crise perdedora de sal no lactente com 21-hidroxilase', 'hiperplasia adrenal congenita'],
+  // Não basta a área resolver: o bloco tem de CHEGAR. Extração verificada não é entrega.
+  ['crinecerfonte para hiperplasia adrenal congenita classica', 'hiperplasia adrenal congenita'],
+  ['hipertensao resistente com hipocalemia, rastreio?', 'hiperaldosteronismo'],
+  ['poliuria hipotonica de 6 L/dia, investigo como?', 'diabetes insipidus central'],
+  // ⚠️ O DESEMPATE DA CONDIÇÃO EXIGIDA, nos dois sentidos. GIOP e osteoporose
+  // empatavam em 18 pontos com os mesmos seis termos no tema, e a ordem do array
+  // dava o primeiro lugar ao GIOP mesmo quando a pergunta não citava corticoide
+  // nenhum. Agora, com pontos IGUAIS, o bloco que exige uma condição ausente da
+  // pergunta vai para trás — e volta para a frente assim que ela aparece.
+  ['fratura de quadril após queda da própria altura', 'osteoporose no adulto'],
+  ['fratura vertebral por insuficiência sem trauma', 'osteoporose no adulto'],
+  ['fratura por fragilidade em quem usa prednisona há 6 meses', 'glicocorticoide'],
+  ['osteoporose em uso de dexametasona, qual agente', 'glicocorticoide'],
 ];
 
 for (const [pergunta, esperado] of PRIMEIRO) {
   const area = deep.canonArea(pergunta);
-  const txt = area ? deep.deepFor(area, 120000, pergunta) : '';
+  const txt = area ? deep.deepFor(area, deep.TETO_PROFUNDO, pergunta) : '';
   const cab = ((txt.match(/• ([^\n]{0,80})/) || [])[1] || '(nenhum bloco)').toLowerCase();
   ok(cab.includes(esperado),
     `"${pergunta}" → o PRIMEIRO bloco é "${cab.slice(0, 56)}", esperado um que contenha "${esperado}"`);
@@ -593,20 +931,112 @@ for (const [pergunta, esperado] of PRIMEIRO) {
 // Então não enviei heurística nenhuma e passei a medir O DANO, que é
 // independente de ordem: o artigo que responde chega quase inteiro?
 const COMPLETUDE = [
-  // pergunta, área, marca do bloco-alvo no tema, % mínimo do bloco que tem de
-  // chegar, e mínimo de ocorrências da palavra no que foi entregue.
-  ['dumping tardio dois anos apos bypass: como investigo?', 'Obesidade', 'dumping', 90, 50],   // medido hoje: 100%, 85
-  ['esteatose hepatica com FIB-4 de 2,1: encaminho?', 'Obesidade', 'hepatica', 90, 40],      // medido hoje: 100%, 88
-  ['PTDM: quando rastrear?', 'Diabetes', 'ptdm', 90, 40],
-  ['prolactina de 80 com macroprolactina: e prolactinoma?', 'Neuroendocrinologia', 'prolactinoma', 90, 80], // medido hoje: 100%, 187
+  // pergunta, área, ÂNCORA (trecho do tema que identifica o bloco-alvo), PALAVRA
+  // contada na entrega, % mínimo do bloco que tem de chegar, e mínimo de
+  // ocorrências daquela palavra.
+  //
+  // ⚠️ ÂNCORA E PALAVRA SÃO CAMPOS SEPARADOS DESDE 09/08/2026, e a separação
+  // nasceu de um erro DESTA SONDA. Eu tinha um campo só, e usei `tireotoxica`
+  // para "tempestade tireoidiana com Burch-Wartofsky 55". A sonda reprovou
+  // acusando 3% de chegada — mas o bloco da crise tireotóxica chegava INTEIRO
+  // (100%, 15 menções de "burch"). `tireotoxica` casa com 7 dos 9 blocos da
+  // área, e o `find` pegou o PRIMEIRO: o artigo da GESTAÇÃO. A sonda mediu um
+  // artigo pelo outro — âncora ambígua dentro do meu próprio teste.
+  //
+  // Ao consertar, achei o mesmo defeito DORMINDO em dois casos que passavam:
+  // `dumping` casa com o artigo do dumping E com o da cirurgia bariátrica, e
+  // `prolactinoma` com dois blocos. Passavam porque o `find` calhava de pegar o
+  // certo — acerto emprestado, igual ao que já me mordeu no roteamento. Agora a
+  // âncora que casa com DOIS ARTIGOS reprova por ambiguidade, antes de medir.
+  //
+  // ⚠️ TIREOIDE ENTROU AQUI EM 09/08/2026 e trouxe um LIMITE MEDIDO. A área foi
+  // de 218 para 768 fatos e está em 357k contra teto de 120k — só DOIS blocos
+  // cabem por pergunta. O artigo de síndrome do eutireoidiano doente (19,8k,
+  // tema de 161 chars) estava sendo EXPULSO por três artigos novos com temas de
+  // ~3.000 caracteres, que pontuam +3 em toda palavra genérica de tireoide.
+  //
+  // Enriqueci o tema do NTIS DUAS VEZES, e só com o que o texto entrega
+  // (conferido por contagem: `uti` 11, `rT3` 17, `levotiroxina` 6, `sepse` 4,
+  // `jejum` 6, `tsh` 21, `hipotireoidismo` 13). Ganhou a pergunta ACIONÁVEL —
+  // "devo repor levotiroxina no doente grave?" foi de 1% para 100%.
+  //
+  // ⚠️ E NÃO GANHOU a de enquadramento: "paciente em UTI com T3 baixo e TSH
+  // normal: é doença tireoidiana?" segue em 1%. PAREI DE PROPÓSITO. Mais
+  // palavras no tema seria escrever para vencer a sonda, não para descrever o
+  // artigo — o defeito espelho do que consertei no dumping. Fica registrado: o
+  // artigo é alcançável pelo NOME da síndrome, por `rT3` e pela pergunta de
+  // conduta; não é alcançável por descrição do painel laboratorial. Quem chegar
+  // aqui com teto maior, ou com a área dividida, deve retestar aquela frase.
+  ['dumping tardio dois anos apos bypass: como investigo?', 'Obesidade', 'dumping apos cirurgia', 'dumping', 90, 50],  // medido: 100%, 85
+  ['esteatose hepatica com FIB-4 de 2,1: encaminho?', 'Obesidade', 'hepatica gordurosa', 'hepatica', 90, 40],          // medido: 100%, 88
+  ['PTDM: quando rastrear?', 'Diabetes', 'ptdm', 'ptdm', 90, 40],
+  ['prolactina de 80 com macroprolactina: e prolactinoma?', 'Neuroendocrinologia', 'prolactinoma', 'prolactinoma', 90, 80], // medido: 100%, 187
+  ['devo repor levotiroxina no doente grave com T3 baixo?', 'Tireoide', 'eutireoidiano', 'eutireoidiano', 90, 2],
+  ['tempestade tireoidiana com Burch-Wartofsky 55', 'Tireoide', 'crise tireotoxica, tambem chamada tempestade tireoidiana', 'burch', 90, 10],
+  // ⚠️ ESTE É O CASO EM QUE A EVICÇÃO FAZIA MAL, e não só omitia (09/08/2026).
+  // Endocrinopatias hoje é hiponatremia inteira: 5 blocos, 170k contra teto de
+  // 120k. O bloco da hiponatremia AGUDA SINTOMÁTICA chegava a 1% na pergunta do
+  // paciente convulsionando — e no lugar dele chegavam o algoritmo, a
+  // fisiopatologia e o bloco da hiponatremia CRÔNICA, cuja mensagem é corrigir
+  // DEVAGAR por medo de desmielinização. O médico com um doente convulsionando
+  // recebia a recomendação oposta à que precisava: o bloco certo traz bolus de
+  // salina hipertônica (43 menções de "bolus" na entrega de hoje).
+  //
+  // Conserto no DADO: o tema tinha 43 chars — "hiponatremia aguda sintomática —
+  // tratamento" — e perdia para vizinhos mais descritivos. Enriquecido só com o
+  // que o texto ENTREGA e DOMINA na área (medido bloco a bloco: `bolus` 40 vs
+  // ≤3, `salina hipertonica` 19 vs ≤4, `desmopressina` 22 vs ≤4, `edema
+  // cerebral` 9 vs ≤3, `150 ml` 6 vs ≤1, `glasgow` 4 vs 0).
+  // Conferido nos dois sentidos: 1 pergunta subiu de 1% para 100% e as outras 7
+  // do assunto seguem em 100% — enriquecer o tema certo não expulsou vizinho.
+  ['hiponatremia com convulsao: quanto de salina hipertonica?', 'Endocrinopatias', 'aguda sintomatica', 'bolus', 90, 20],
+  // Diabetes é a área de maior tráfego e está em 2,32x o teto (8 blocos, ~3
+  // cabem). Varrida bloco a bloco em 09/08/2026: 9 dos 10 assuntos chegam
+  // inteiros. Esta asserção trava o par cuja confusão é perigosa — o bloco da
+  // cetoacidose EUGLICÊMICA contra o da CAD clássica: quem pergunta por acidose
+  // com glicemia de 180 e recebe só a CAD clássica pode ler o corte de glicemia
+  // como motivo para AFASTAR o diagnóstico, que é a armadilha que o próprio
+  // núcleo alerta ("glicemia normal não afasta cetoacidose").
+  ['paciente em dapagliflozina com acidose e glicemia de 180: e cetoacidose?', 'Diabetes', 'cetoacidose euglicemica', 'euglicemica', 90, 20],
+  // ⚠️ AQUI QUEM EXPULSAVA ERA A DIRETRIZ DA GESTAÇÃO, e o risco é de POPULAÇÃO.
+  // "doença de Graves: metimazol por quanto tempo?" chegava a 7% no artigo do
+  // ADULTO, e 60% da entrega vinha da ATA 2026 de gestação — cuja resposta para
+  // antitireoidiano é outra (PTU até 16 semanas). A pergunta não disse gestante.
+  //
+  // Medi antes de mexer, porque a suspeita óbvia era distorção sistêmica: a ATA
+  // ocupa 188k dos 357k da área. NÃO É — em 8 de 10 perguntas não-gestacionais a
+  // gestação ocupa só 0–8% da entrega (o pedaço de 3k, que cabe na sobra). O
+  // defeito era de UMA pergunta, e a causa era omissão no tema do ADULTO: o
+  // artigo é o ÚNICO da área com "18 meses" (2 contra 0 em todos os outros) e
+  // seu tema não dizia nada sobre duração. Acrescentado o que ele entrega —
+  // 12–18 meses, quando suspender, remissão, recorrência, TBII antes de parar.
+  // Resultado: 7% → 100%, com "18 meses" 4x, "remissão" 7x e "TBII" 12x na
+  // entrega; as 3 perguntas de gestação seguem em 100%.
+  // âncora no trecho que existe ANTES e DEPOIS do conserto, de propósito: se eu
+  // ancorasse na frase que acabei de escrever no tema, a asserção reprovaria na
+  // árvore antiga por "não achei bloco" — provaria que editei o tema, não que a
+  // entrega melhorou. Ancorada assim, ela reprova medindo 7%.
+  ['doenca de Graves: metimazol por quanto tempo?', 'Tireoide', 'hipertireoidismo e tireotoxicose no adulto', 'remissao', 90, 4],
 ];
 
-for (const [pergunta, areaEsperada, marcaTema, pctMin, ocorrMin] of COMPLETUDE) {
+for (const [pergunta, areaEsperada, ancora, palavra, pctMin, ocorrMin] of COMPLETUDE) {
   const area = deep.canonArea(pergunta);
-  const txt = area ? deep.deepFor(area, 120000, pergunta) : '';
+  const txt = area ? deep.deepFor(area, deep.TETO_PROFUNDO, pergunta) : '';
   const semAcento = (x) => String(x).toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '');
-  const alvo = (deep.DEEP[areaEsperada] || []).find((b) => semAcento(b.tema).includes(marcaTema));
-  if (!alvo) { ok(false, `COMPLETUDE: não achei bloco com "${marcaTema}" em ${areaEsperada}`); continue; }
+  // o montador quebra artigo grande em "(parte N/M — seções)" (monta-base-profunda.js);
+  // pedaços do MESMO artigo não são âncoras concorrentes, então o sufixo sai antes de
+  // comparar. Dois artigos DIFERENTES sob a mesma âncora, sim, são ambiguidade.
+  const temaBase = (t) => semAcento(t).replace(/\s*\(parte \d+\/\d+[\s\S]*$/, '');
+  const candidatos = (deep.DEEP[areaEsperada] || []).filter((b) => semAcento(b.tema).includes(ancora));
+  if (!candidatos.length) { ok(false, `COMPLETUDE: não achei bloco com "${ancora}" em ${areaEsperada}`); continue; }
+  const artigos = new Set(candidatos.map((b) => temaBase(b.tema)));
+  if (artigos.size > 1) {
+    ok(false, `COMPLETUDE: âncora ambígua — "${ancora}" casa com ${artigos.size} artigos diferentes em `
+      + `${areaEsperada}; a medida cairia no artigo errado. Use um trecho do tema que só o alvo tenha`);
+    continue;
+  }
+  // artigo partido pelo montador: mede o maior pedaço, que é o que carrega o conteúdo
+  const alvo = candidatos.reduce((a, b) => (b.texto.length > a.texto.length ? b : a));
   // maior prefixo do bloco presente na entrega = quanto dele sobreviveu ao corte
   let lo = 0; let hi = alvo.texto.length;
   while (lo < hi) {
@@ -614,10 +1044,10 @@ for (const [pergunta, areaEsperada, marcaTema, pctMin, ocorrMin] of COMPLETUDE) 
     if (txt.indexOf(alvo.texto.slice(0, m)) >= 0) lo = m; else hi = m - 1;
   }
   const pct = Math.round((100 * lo) / alvo.texto.length);
-  const ocorr = semAcento(txt).split(marcaTema).length - 1;
+  const ocorr = semAcento(txt).split(palavra).length - 1;
   ok(area === areaEsperada && pct >= pctMin && ocorr >= ocorrMin,
-    `"${pergunta}" → ${area}: o bloco de "${marcaTema}" chegou a ${pct}% (mín ${pctMin}%) `
-    + `com ${ocorr} ocorrência(s) da palavra (mín ${ocorrMin}) — artigo cortado é artigo que não existe`);
+    `"${pergunta}" → ${area}: o bloco de "${ancora}" chegou a ${pct}% (mín ${pctMin}%) `
+    + `com ${ocorr} ocorrência(s) de "${palavra}" (mín ${ocorrMin}) — artigo cortado é artigo que não existe`);
 }
 
 if (falhas) {

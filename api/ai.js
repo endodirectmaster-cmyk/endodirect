@@ -119,7 +119,7 @@ async function openiSearch(query, n) {
 // Base clínica PROFUNDA por subespecialidade (lib/ → não conta como função
 // serverless). Ver o cabeçalho de lib/clinical-deep.js para por que ela mora no
 // servidor e não no index.html.
-const { deepFor } = require('./../lib/clinical-deep');
+const { deepFor, TETO_PROFUNDO, TETO_COM_ANEXO } = require('./../lib/clinical-deep');
 
 module.exports = async function handler(req, res) {
   if (req.method === 'OPTIONS') {
@@ -261,7 +261,10 @@ module.exports = async function handler(req, res) {
   // O bloco PROFUNDO da subespecialidade entra no MESMO prefixo cacheável: o
   // prefixo passa a ser `núcleo + profundo(área)`, estável por área, então cada
   // subespecialidade reaproveita a própria entrada de cache.
-  const TETO_PROFUNDO = 120000;
+  // ⚠️ O VALOR MORA EM lib/clinical-deep.js e é importado no topo — era 120000
+  // repetido aqui, no montador e nos testes, amarrados só por comentário. Em
+  // 09/08/2026 subiu para 360000 (decisão do professor) e a cópia local viraria
+  // deriva silenciosa: os testes mediriam um teto que a produção não usa.
   // ⚠️ 120 → 600 caracteres em 07/08/2026, quando o CHAT passou a mandar a
   // pergunta como `grounding`. Nos geradores o campo é um rótulo curto ("Tireoide
   // nódulo") e 120 sobrava; numa pergunta clínica de verdade o termo que decide o
@@ -276,7 +279,37 @@ module.exports = async function handler(req, res) {
   // extração é exaustiva (um artigo de craniofaringioma tem 249 fatos) e mandar a
   // área inteira não cabe nem faz sentido — questão de cetoacidose não precisa da
   // tabela de doses da hipofosfatasia. Ver lib/clinical-deep.js.
-  try { profundo = deepFor(areaPedida, TETO_PROFUNDO, areaPedida); } catch (e) { profundo = ''; }
+  // ⚠️⚠️ COM ANEXO, O TETO É OUTRO — e isto é o que torna seguro subir de 120k
+  // para 400k (09/08/2026). O PDF (`documentBase64`) e o texto de artigo baixado
+  // por URL (`fetch-article`, até 120k chars) viajam NO MESMO pedido. Somando
+  // 400k de base profunda a um PDF de diretriz, o contexto estoura e a
+  // importação falha INTEIRA — o usuário perde o trabalho, não perde qualidade.
+  // E ali a base profunda é apoio, não fundamento: a fonte daquele pedido é o
+  // documento que ele acabou de mandar. Então o anexo manda, e o profundo recua
+  // para o teto antigo, que conviveu com anexo o tempo todo sem incidente.
+  const temAnexo = !!(body.documentBase64 || body.url);
+  // ⚠️⚠️ E O ANEXO NÃO ERA O ÚNICO JEITO DE ESTOURAR — o `prompt` sozinho basta.
+  // Medido em 09/08/2026, DEPOIS de eu subir o teto: `prompt` é cortado em
+  // 200.000 caracteres (abaixo), o núcleo ocupa até 80.000 e o profundo até
+  // 400.000. A 3,2 chars/token — que é o realista para português clínico com
+  // acento, não os 3,6 otimistas — isso dá **217k tokens contra um contexto de
+  // 200k**: o pedido falha INTEIRO. Antes de eu subir o teto eram 129k, e por
+  // isso ninguém tinha visto. A trava do anexo não pegava este caso, porque
+  // prompt grande não é anexo.
+  // O conserto é orçamento, não mais um caso especial: o profundo fica com o que
+  // sobra depois do núcleo, do prompt e do anexo. Em uso normal (prompt de
+  // alguns milhares de caracteres) a conta não morde — o profundo continua
+  // recebendo os 400.000 inteiros.
+  const CHARS_POR_TOKEN = 3.2;                 // conservador de propósito
+  const RESERVA_SAIDA = 8000;                  // teto de `clampTokens`
+  const ORCAMENTO_CHARS = Math.floor((200000 - RESERVA_SAIDA) * CHARS_POR_TOKEN);
+  const custoAnexo = temAnexo ? 120000 : 0;    // MAX_CHARS de lib/fetch-article
+  // 200000 é o mesmo corte que o `prompt` sofre logo abaixo — medir o bruto
+  // encolheria o profundo por causa de texto que nem chega a ser enviado.
+  const custoPrompt = Math.min(String(body.prompt || '').length, 200000);
+  const sobra = ORCAMENTO_CHARS - TETO_NUCLEO - custoPrompt - custoAnexo;
+  const tetoDestePedido = Math.max(2000, Math.min(temAnexo ? TETO_COM_ANEXO : TETO_PROFUNDO, sobra));
+  try { profundo = deepFor(areaPedida, tetoDestePedido, areaPedida); } catch (e) { profundo = ''; }
   let system;
   if (rawSystem.indexOf(SYS_SPLIT) !== -1) {
     const parts = rawSystem.split(SYS_SPLIT);

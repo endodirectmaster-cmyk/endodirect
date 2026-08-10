@@ -27,6 +27,7 @@ const argDir = (() => {
   return i > 0 && process.argv[i + 1] ? process.argv[i + 1] : path.join('scratchpad', 'acervo');
 })();
 const DRY = process.argv.includes('--dry');
+const CONFERIR = process.argv.includes('--conferir');
 const DIR_EXTRATOS = path.join(RAIZ, argDir, 'extratos');
 const SAIDA = path.join(RAIZ, 'lib', 'clinical-deep-data.js');
 
@@ -131,9 +132,39 @@ function areasDoExtrato(e) {
   return vistas;
 }
 
+// ⚠️ O TEXTO-FONTE NÃO EXISTE NO CI, E NUNCA VAI EXISTIR (09/08/2026).
+//
+// A guarda `--conferir` entrou no `ci-validate` verde na minha máquina e VERMELHA
+// no runner, reprovando os 47 extratos de uma vez. Não havia defeito nenhum:
+// `scratchpad/acervo/textos/` está no `.gitignore` porque o repositório é PÚBLICO
+// e o texto integral dos artigos é protegido por direito autoral. O
+// `verifica-extracao.js` simplesmente não tinha o que ler.
+//
+// Peneira que só pode dar vermelho não protege — vira paisagem e ensina a ignorar
+// o CI inteiro. E a INVARIANTE que esta guarda existe para provar ("o que está
+// commitado é o que os extratos produzem hoje") NÃO depende do texto-fonte: a
+// montagem lê só `extratos/*.json`. As três etapas abaixo são pré-requisito de
+// ESCRITA, e a escrita acontece onde o corpus está.
+//
+// ⚠️ TUDO OU NADA, de propósito. Um único `.txt` presente e as etapas rodam
+// inteiras. Corpus PELA METADE tem de reprovar mesmo: peneira cega devolve "✓"
+// sem ter olhado, e foi exatamente assim que a cobertura ficou cega na migração
+// das citações — o relatório veio limpo e limpo era o sintoma.
+function temCorpus() {
+  try { return fs.readdirSync(path.join(RAIZ, argDir, 'textos')).some((f) => f.endsWith('.txt')); }
+  catch (_) { return false; }
+}
+
 function main() {
+  const semCorpus = CONFERIR && !temCorpus();
+  if (semCorpus) {
+    console.log(`⚠️ nenhum .txt em ${path.join(argDir, 'textos')} — a conferência das CITAÇÕES e da`);
+    console.log('   COBERTURA não rodou. Este modo prova só a invariante da montagem. As citações');
+    console.log('   são conferidas onde o corpus existe: na máquina que gera a base, antes do commit.\n');
+  }
+
   // ── etapa 3: a verificação é PRÉ-REQUISITO, não opcional ──────────────────
-  try {
+  if (!semCorpus) try {
     execFileSync(process.execPath, [path.join(RAIZ, 'scripts', 'verifica-extracao.js'), '--dir', path.join(RAIZ, argDir)], { stdio: 'pipe' });
   } catch (e) {
     const out = (e.stdout ? e.stdout.toString() : '') + (e.stderr ? e.stderr.toString() : '');
@@ -148,7 +179,7 @@ function main() {
   // seções de gestação, criança, doença psiquiátrica, menopausa, pessoa trans e
   // doença renal — com o campo `tema` anunciando todas. Erro de OMISSÃO não
   // deixa rastro; por isso vira pré-requisito, não relatório opcional.
-  try {
+  if (!semCorpus) try {
     execFileSync(process.execPath, [path.join(RAIZ, 'scripts', 'cobertura-extracao.js'), '--dir', path.join(RAIZ, argDir)], { stdio: 'pipe' });
   } catch (e) {
     const out = (e.stdout ? e.stdout.toString() : '') + (e.stderr ? e.stderr.toString() : '');
@@ -291,7 +322,7 @@ function main() {
   }
 
   // ── relatório e aviso de corte ────────────────────────────────────────────
-  const TETO_AREA = 120000; // mesmo teto de api/ai.js (TETO_PROFUNDO)
+  const TETO_AREA = require('../lib/clinical-deep').TETO_PROFUNDO; // fonte única, não cópia
   let totalBlocos = 0, totalFatos = 0;
   console.log('Base profunda por área:');
   for (const a of Object.keys(porArea).sort()) {
@@ -331,7 +362,34 @@ function main() {
 //
 // ${totalBlocos} bloco(s) · ${totalFatos} fato(s) verificado(s).
 module.exports = `;
-  fs.writeFileSync(SAIDA, cabecalho + JSON.stringify(limpo, null, 1) + ';\n');
+  const conteudo = cabecalho + JSON.stringify(limpo, null, 1) + ';\n';
+
+  // ⚠️ `--conferir`: a INVARIANTE de que o que está commitado é o que os extratos
+  // produzem hoje. Nasceu de um buraco medido em 09/08/2026 — um extrato chegou
+  // com `tipo` fora do vocabulário fechado, este montador ABORTOU (corretamente),
+  // e o `ci-validate` passou VERDE assim mesmo, porque ele valida o
+  // `clinical-deep-data.js` já construído, que seguia consistente e apenas
+  // VELHO. Três artigos extraídos, verificados e commitados podiam existir no
+  // repositório sem chegar a médico nenhum, e nada acusava.
+  //
+  // Conferir a IGUALDADE pega os dois lados de uma vez — o extrato que aborta a
+  // montagem E o "esqueci de rebuildar". Copiar só a checagem do `tipo` para o CI
+  // seria pior: daria confiança falsa sobre as outras condições de aborto.
+  if (CONFERIR) {
+    const atual = fs.existsSync(SAIDA) ? fs.readFileSync(SAIDA, 'utf8') : '';
+    if (atual === conteudo) {
+      console.log(`\n✓ base montada confere com ${path.relative(RAIZ, SAIDA)} ` +
+                  `(${totalBlocos} bloco(s) · ${totalFatos} fato(s)).`);
+      return;
+    }
+    console.error(`\n✗ ${path.relative(RAIZ, SAIDA)} NÃO é o que os extratos produzem hoje.`);
+    console.error(`  commitado: ${atual.length} chars · montado agora: ${conteudo.length} chars`);
+    console.error('\n  O que está no ar não é o que foi extraído. Rode:');
+    console.error('    node scripts/monta-base-profunda.js\n');
+    process.exit(1);
+  }
+
+  fs.writeFileSync(SAIDA, conteudo);
   console.log('\n✓ gerado ' + path.relative(RAIZ, SAIDA));
 }
 

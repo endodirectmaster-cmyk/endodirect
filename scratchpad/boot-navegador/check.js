@@ -27,6 +27,35 @@ const { chromium } = require(process.env.PLAYWRIGHT_CORE || 'playwright-core');
 
 // main/ e branch/ recebem cada um um index.html (ver README.md ao lado).
 const RAIZ = process.env.AB_DIR || __dirname;
+
+// ⚠️⚠️ ESTE HARNESS JÁ APROVOU UM DEPLOY MEDINDO UM RETRATO DE TRÊS DIAS ATRÁS
+// (09/08/2026). Ele NÃO copia nada: lê o que estiver em `main/` e `branch/`. Se
+// o AB_DIR sobrou de uma rodada anterior, ele roda feliz, imprime "OK" e não
+// mediu o diff nenhum — o pior falso verde possível, porque é justamente o
+// portão que existe para pegar apagão. Só percebi porque o `maiorScript` do
+// branch veio idêntico ao da rodada anterior depois de eu ter somado ~800
+// caracteres ao index.html.
+// A partir daqui o harness CONFERE que `branch/index.html` é byte a byte o
+// index.html da árvore de trabalho, e recusa rodar se não for.
+(function conferirFrescor() {
+  const doBranch = path.join(RAIZ, 'branch', 'index.html');
+  const daArvore = path.join(__dirname, '..', '..', 'index.html');
+  let a, b;
+  try { a = fs.readFileSync(daArvore); } catch (e) { return; } // fora do repo: não dá para conferir
+  try { b = fs.readFileSync(doBranch); } catch (e) {
+    console.error(`\n✗ ${doBranch} não existe.\n  Popule antes de medir:\n`
+      + `    rm -rf ${RAIZ} && mkdir -p ${RAIZ}/main ${RAIZ}/branch\n`
+      + `    git show origin/main:index.html > ${RAIZ}/main/index.html\n`
+      + `    cp index.html ${RAIZ}/branch/index.html`);
+    process.exit(2);
+  }
+  if (!a.equals(b)) {
+    console.error(`\n✗ RETRATO VELHO: ${doBranch} (${b.length} bytes) difere do index.html da árvore `
+      + `(${a.length} bytes). O harness mediria uma versão que você não está entregando.\n`
+      + `  Refaça:  cp index.html ${doBranch}`);
+    process.exit(2);
+  }
+})();
 const CHROME = '/opt/pw-browsers/chromium-1194/chrome-linux/chrome';
 // Últimos elementos ligados pelo bloco grande, na ordem em que ele os liga.
 // `fb-submit` é o ÚLTIMO de todos: se ele tem listener, nada antes abortou.

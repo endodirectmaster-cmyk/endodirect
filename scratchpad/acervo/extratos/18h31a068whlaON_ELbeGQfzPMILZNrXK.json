@@ -1,0 +1,3044 @@
+{
+  "fileId": "18h31a068whlaON_ELbeGQfzPMILZNrXK",
+  "titulo": "Manual Brasileiro de Osteoporose: orientações práticas para os profissionais de saúde",
+  "tema": "osteoporose no adulto (SEM corticoide) — DIAGNÓSTICO no consultório: fratura de QUADRIL, de punho e vertebral por fragilidade; quando a fratura por fragilidade (queda da própria altura, trauma mínimo, fratura espontânea) já fecha o diagnóstico sem densitometria, e quais sítios NÃO contam; dor nas costas aguda ou crônica, dor generalizada, artralgia e mialgia, perda de altura e cifose por fratura vertebral — e por que dois terços delas são assintomáticas e achado incidental de radiografia; densitometria óssea (DXA): indicações, escore T e escore Z, sítios (coluna L1-L4, colo e fêmur total, rádio 33%) e artefatos que falseiam a DMO; FRAX no Brasil — variáveis, quando aplicar, limitações; exames laboratoriais na busca de osteoporose secundária e marcadores de remodelação óssea (P1NP, CTX); radiologia da fratura por insuficiência — quando pedir radiografia, TC ou RM, classificação de Genant, fratura benigna versus patológica, e a fratura atípica subtrocantérica (dor na coxa ou na virilha em quem usa bisfosfonato); fatores de risco, quedas e sarcopenia no idoso; epidemiologia, mortalidade e custos no Brasil; tratamento NÃO farmacológico — cálcio (sais, biodisponibilidade, sódio e café), magnésio, vitamina D (valores de referência SBEM/SBPC, dose de ataque e manutenção, correção ANTES do antirreabsortivo) e vitamina K; reabilitação, analgesia e colete após a fratura. Mulher na pós-menopausa e homem acima de 50 anos.",
+  "fonte": "Pedro AO, Plapler PG, Szejnfeld VL (organizadoras). Manual Brasileiro de Osteoporose: orientações práticas para os profissionais de saúde. Coalizão Saúde e Osteoporose (ABQV, com FEBRASGO, SBR e ABRASSO). São Paulo: Editora Clannad; 2021",
+  "area": "Osteometabolismo",
+  "tipo": "diretriz",
+  "ano": 2021,
+  "conflito": "⚠️ TRÊS PONTOS, E O PRIMEIRO É DE SEGURANÇA. (1) EXAMES LABORATORIAIS. O capítulo 6 contém a frase \"não parece haver benefício em solicitar de maneira rotineira um conjunto de exames laboratoriais, com exceção do hormônio estimulante da tireoide (TSH), para fazer diagnóstico de osteoporose secundária\" — que, lida fora de contexto, autoriza dispensar justamente a FOSFATASE ALCALINA que o núcleo torna obrigatória antes de tratar \"osteoporose idiopática\" (porteiro da hipofosfatasia, em que o bisfosfonato é contraindicado). O próprio manual se contradiz duas frases adiante, ao adotar o painel inicial de Diab e Watts, que INCLUI fosfatase alcalina; e o quadro de interpretação laboratorial do manual só mapeia FA ELEVADA (osteomalácia, doença de Paget) — FA BAIXA não aparece em lugar nenhum do texto, nem a hipofosfatasia entre as causas secundárias listadas. O NÚCLEO PREVALECE: a FA entra no painel inicial e FA persistentemente baixa investiga hipofosfatasia ANTES do antirreabsortivo. (2) LIMIAR DE INTERVENÇÃO PELO FRAX. O manual usa os pontos de corte FIXOS americanos — risco de fratura maior em 10 anos ≥ 20% ou de fratura de quadril ≥ 3% \"podem sugerir osteoporose\" — enquanto o núcleo manda estratificar com os limiares do NOGG, que são DEPENDENTES DA IDADE justamente porque um corte fixo subtrata o muito idoso e sobretrata o de 55 anos. O NÚCLEO PREVALECE nos limiares; o que o manual acrescenta e o núcleo não tem é o FRAX ajustado à população BRASILEIRA (quatro estudos nacionais de incidência de fratura de fêmur) e a advertência de que o FRAX vale para virgem de tratamento. (3) ALVO NUMÉRICO DE 25(OH)D. O manual adota os valores SBEM/SBPC (deficiência < 20 ng/mL; adequado 20-60 ng/mL para a população geral < 65 anos; ideal 30-60 ng/mL e alvo > 30 ng/mL para a população de risco, incluindo a osteoporose), enquanto o núcleo, com a Endocrine Society 2024, diz que não há alvo numérico universal e que não se rastreia 25-OH-vitamina D de rotina na população geral saudável. Não é contradição frontal: o manual fala de POPULAÇÃO DE RISCO e de paciente com osteoporose, que é exatamente o grupo que o núcleo não isenta. O NÚCLEO PREVALECE na população geral saudável (não rastrear, sem alvo numérico); o manual acrescenta, sem conflito, a conduta operacional que falta no núcleo — corrigir a deficiência de vitamina D ANTES de iniciar antirreabsortivo potente (ácido zoledrônico, denosumabe), porque o status adequado melhora a resposta e reduz o risco de hipocalcemia.",
+  "fatos": [
+    {
+      "afirmacao": "Definição adotada pelo manual: osteoporose é doença esquelética sistêmica caracterizada por comprometimento da RESISTÊNCIA óssea que predispõe a risco aumentado de fraturas por BAIXO IMPACTO. A resistência óssea depende da densidade óssea e da qualidade óssea (microarquitetura e taxa/grau de remodelação), não só da densidade.",
+      "secao": "Cap. 1 — Conceito de osteoporose e impacto em saúde pública",
+      "cit": [
+        [
+          0,
+          21966,
+          164
+        ]
+      ],
+      "cit_sha": "2f00bb5e9f302a7a"
+    },
+    {
+      "afirmacao": "A osteoporose decorre tanto da redução da densidade mineral óssea quanto do comprometimento da QUALIDADE óssea, que inclui a microarquitetura óssea e a taxa/grau de remodelação.",
+      "secao": "Cap. 1 — Conceito de osteoporose e impacto em saúde pública",
+      "cit": [
+        [
+          0,
+          21655,
+          172
+        ]
+      ],
+      "cit_sha": "5daccafc5358de65"
+    },
+    {
+      "afirmacao": "Em mulheres acima dos 45 anos, a osteoporose é responsável por MAIS dias de internação do que qualquer outra doença, incluindo diabetes, infarto do miocárdio e câncer de mama.",
+      "secao": "Cap. 1 — Conceito de osteoporose e impacto em saúde pública",
+      "cit": [
+        [
+          0,
+          22328,
+          175
+        ]
+      ],
+      "cit_sha": "d38f66b8a8b59242"
+    },
+    {
+      "afirmacao": "⚠️ A osteoporose pode ser ASSINTOMÁTICA até que o paciente apresente uma fratura — e, mesmo então, estima-se que apenas um de cada três pacientes com fratura de quadril seja diagnosticado como tendo osteoporose e, desses, apenas um em cada cinco receba qualquer tipo de tratamento. Muitos não recebem o diagnóstico mesmo depois de tratados por uma fratura: a osteoporose permanece fora da percepção de muitos profissionais que tratam fraturas por fragilidade.",
+      "secao": "Cap. 1 — Conceito de osteoporose e impacto em saúde pública",
+      "cit": [
+        [
+          0,
+          22504,
+          647
+        ]
+      ],
+      "cit_sha": "508fabbe825e5ec5"
+    },
+    {
+      "afirmacao": "Projeção para o Brasil: o número de fraturas de quadril por ano, hoje cerca de 121.700, deve chegar a 160 mil até 2050. A OMS prevê crescimento significativo da população de 65 anos ou mais na América Latina nos próximos 50 anos.",
+      "secao": "Cap. 1 — Conceito de osteoporose e impacto em saúde pública",
+      "cit": [
+        [
+          0,
+          23324,
+          407
+        ]
+      ],
+      "cit_sha": "b5588d79b362dfe3"
+    },
+    {
+      "afirmacao": "Códigos da CID-10 relativos à osteoporose e à fratura: M80.0-M82.1 e M82.8. O critério padronizado para definir e diagnosticar osteoporose e aplicar o código é a DMO com escore T ≤ -2,5 em coluna lombar, colo femoral ou quadril total, medida por densitometria óssea de dupla energia (DXA), que se correlaciona de forma inversamente proporcional ao risco de fratura.",
+      "secao": "Cap. 1 — Conceito de osteoporose e impacto em saúde pública",
+      "cit": [
+        [
+          0,
+          23967,
+          552
+        ]
+      ],
+      "cit_sha": "e2ff4ea5edce5a67"
+    },
+    {
+      "afirmacao": "A osteoporose é a principal causa de fraturas na população acima de 50 anos, atinge ambos os sexos com predominância no feminino, e sua prevalência aumenta com a idade.",
+      "secao": "Cap. 1 — Conceito de osteoporose e impacto em saúde pública",
+      "cit": [
+        [
+          0,
+          24798,
+          181
+        ]
+      ],
+      "cit_sha": "341e03afac41ae8a"
+    },
+    {
+      "afirmacao": "Critérios ampliados de diagnóstico (National Bone Health Alliance, 2014): mulheres na pós-menopausa e homens acima de 50 anos podem ser diagnosticados com osteoporose se tiverem risco elevado de fratura — escore T ≤ -2,5 em coluna ou quadril, OU fratura de quadril com ou sem medida da DMO, OU osteopenia na DMO com fratura vertebral, de úmero proximal, pélvica ou, em alguns casos, distal do antebraço.",
+      "secao": "Cap. 1 — Conceito de osteoporose e impacto em saúde pública",
+      "cit": [
+        [
+          0,
+          25237,
+          808
+        ]
+      ],
+      "cit_sha": "6000884cbd602c4c"
+    },
+    {
+      "afirmacao": "O termo \"osteoporose\" também deve ser usado para diagnosticar indivíduos com risco elevado de fratura pelo algoritmo FRAX (Fracture Risk Assessment Tool) da OMS.",
+      "secao": "Cap. 1 — Conceito de osteoporose e impacto em saúde pública",
+      "cit": [
+        [
+          0,
+          26046,
+          300
+        ]
+      ],
+      "cit_sha": "5c747b8b4ad383a1"
+    },
+    {
+      "afirmacao": "Quadro dos critérios de diagnóstico CLÍNICO de osteoporose do manual, além do critério densitométrico: ocorrência de fratura por fragilidade em QUADRIL; OSTEOPENIA com fratura por fragilidade vertebral, de úmero proximal, rádio distal ou pelve; e risco elevado de fratura calculado pelo FRAX. ⚠️ O critério densitométrico deste mesmo quadro saiu do PDF SEM o sinal negativo e por isso NÃO é reproduzido aqui — o limiar correto, com o sinal, está nos fatos deste capítulo que trazem o critério da CID e os critérios ampliados da National Bone Health Alliance.",
+      "secao": "Cap. 1 — Conceito de osteoporose e impacto em saúde pública",
+      "cit": [
+        [
+          0,
+          26407,
+          179
+        ]
+      ],
+      "cit_sha": "be08872c94a585a4"
+    },
+    {
+      "afirmacao": "As fraturas mais comuns relacionadas à osteoporose são as vertebrais, de antebraço e de quadril (fêmur proximal). Segundo a International Osteoporosis Foundation (IOF), uma em cada três mulheres e um em cada cinco homens com mais de 50 anos sofrerão uma fratura por fragilidade óssea.",
+      "secao": "Cap. 1 — Conceito de osteoporose e impacto em saúde pública",
+      "cit": [
+        [
+          0,
+          26639,
+          50
+        ],
+        [
+          0,
+          26740,
+          58
+        ],
+        [
+          0,
+          26850,
+          54
+        ],
+        [
+          0,
+          26926,
+          51
+        ],
+        [
+          0,
+          27030,
+          52
+        ],
+        [
+          0,
+          27137,
+          35
+        ]
+      ],
+      "cit_sha": "38526ff56a7b2a06"
+    },
+    {
+      "afirmacao": "A osteoporose pode ser idiopática ou PRIMÁRIA (forma mais comum) quando é diagnosticada na ausência de doenças.",
+      "secao": "Cap. 1 — Conceito de osteoporose e impacto em saúde pública",
+      "cit": [
+        [
+          0,
+          27910,
+          45
+        ],
+        [
+          0,
+          28012,
+          48
+        ],
+        [
+          0,
+          28120,
+          18
+        ]
+      ],
+      "cit_sha": "2a2cfd2495d74492"
+    },
+    {
+      "afirmacao": "No hipoestrogenismo há aumento do número e da sobrevida dos osteoclastos, responsáveis pela reabsorção óssea, o que acarreta maior perda óssea predispondo a osteoporose e fratura.",
+      "secao": "Cap. 1 — Conceito de osteoporose e impacto em saúde pública",
+      "cit": [
+        [
+          0,
+          27499,
+          23
+        ],
+        [
+          0,
+          27579,
+          52
+        ],
+        [
+          0,
+          27686,
+          55
+        ],
+        [
+          0,
+          27803,
+          48
+        ]
+      ],
+      "cit_sha": "da445fcc366edf81"
+    },
+    {
+      "afirmacao": "Epidemiologia global segundo a IOF: aproximadamente 200 milhões de pessoas no mundo têm osteoporose; 37,5% estão na Europa, nos Estados Unidos e no Japão e cerca de 5% no Brasil.",
+      "secao": "Cap. 1 — Conceito de osteoporose e impacto em saúde pública",
+      "cit": [
+        [
+          0,
+          29265,
+          191
+        ]
+      ],
+      "cit_sha": "010a9db96d7703bd"
+    },
+    {
+      "afirmacao": "No Brasil, a população propensa a desenvolver osteoporose aumentou de 7,5 milhões em 1980 para 15 milhões em 2000. Estudo brasileiro mostrou que, a partir dos 50 anos, 30% das mulheres e 13% dos homens poderão sofrer algum tipo de fratura decorrente da osteoporose ao longo da vida, especialmente na população branca — mas deve-se considerar a miscigenação brasileira e a menor incidência de fraturas em indivíduos da raça negra.",
+      "secao": "Cap. 1 — Conceito de osteoporose e impacto em saúde pública",
+      "cit": [
+        [
+          0,
+          29629,
+          495
+        ]
+      ],
+      "cit_sha": "401002add9dc1cb8"
+    },
+    {
+      "afirmacao": "Estima-se que o número de fraturas de quadril no Brasil mais do que dobre, passando de 80.640 casos em 2015 para 198 mil casos em 2040.",
+      "secao": "Cap. 1 — Conceito de osteoporose e impacto em saúde pública",
+      "cit": [
+        [
+          0,
+          30131,
+          140
+        ]
+      ],
+      "cit_sha": "77601cad7542e90e"
+    },
+    {
+      "afirmacao": "Na América Latina, estima-se prevalência de osteopenia vertebral em mulheres de 50 anos ou mais entre 45,5% e 49,7% e de osteoporose entre 12,1% e 17,6%; no colo femoral, osteopenia de 46% a 57,2% e osteoporose entre 7,9% e 22%.",
+      "secao": "Cap. 1 — Conceito de osteoporose e impacto em saúde pública",
+      "cit": [
+        [
+          0,
+          30272,
+          279
+        ]
+      ],
+      "cit_sha": "9eaef04fe64143cd"
+    },
+    {
+      "afirmacao": "Estudo em cinco países latino-americanos (Argentina, Brasil, Colômbia, México e Porto Rico) evidenciou prevalência de fratura vertebral em mulheres com mais de 50 anos de aproximadamente 15%: 7% na faixa de 50 a 60 anos, subindo para 28% nas maiores de 80 anos.",
+      "secao": "Cap. 1 — Conceito de osteoporose e impacto em saúde pública",
+      "cit": [
+        [
+          0,
+          30552,
+          316
+        ]
+      ],
+      "cit_sha": "39c3c310f2299935"
+    },
+    {
+      "afirmacao": "⚠️ As taxas de mortalidade no ano seguinte à fratura do quadril são de 23% a 30% e são MAIORES nos homens do que nas mulheres.",
+      "secao": "Cap. 1 — Conceito de osteoporose e impacto em saúde pública",
+      "cit": [
+        [
+          0,
+          31669,
+          135
+        ]
+      ],
+      "cit_sha": "ead3b888deed508d"
+    },
+    {
+      "afirmacao": "⚠️ As fraturas do quadril são as mais graves e aumentam a taxa de mortalidade em 12% a 20% nos dois anos subsequentes, por complicações como infecção, trombose venosa, úlcera de pressão ou condições associadas, em especial cardiovasculares. Mais de 50% dos que sobrevivem à fratura de quadril tornam-se incapazes de vida independente e muitos precisarão viver institucionalizados.",
+      "secao": "Cap. 1 — Conceito de osteoporose e impacto em saúde pública",
+      "cit": [
+        [
+          0,
+          32970,
+          430
+        ]
+      ],
+      "cit_sha": "103cc18d0a5001a9"
+    },
+    {
+      "afirmacao": "As fraturas de quadril respondem por 50% das mortes relacionadas a fratura — a maior parte por hospitalização prolongada, imobilização e perda de função; as vertebrais ocupam 28% das mortes e as demais, 22%.",
+      "secao": "Cap. 1 — Conceito de osteoporose e impacto em saúde pública",
+      "cit": [
+        [
+          0,
+          33703,
+          249
+        ]
+      ],
+      "cit_sha": "8a10ce04b80193bb"
+    },
+    {
+      "afirmacao": "⚠️ Paciente com história de fratura vertebral tem aumento de CINCO vezes no risco de nova fratura vertebral, risco duas a três vezes maior de fratura de quadril e aumento de quatro vezes no risco de fratura de antebraço distal — o que permite identificar quem tem alto risco e estabelecer prevenção secundária.",
+      "secao": "Cap. 1 — Conceito de osteoporose e impacto em saúde pública",
+      "cit": [
+        [
+          0,
+          33592,
+          983
+        ]
+      ],
+      "cit_sha": "9febfe638dcbdc09"
+    },
+    {
+      "afirmacao": "Em mulheres, a fratura vertebral tem incidência crescente a partir dos 50 anos de idade; a fratura de quadril é mais tardia, afetando com maior frequência indivíduos com cerca de 70 anos.",
+      "secao": "Cap. 1 — Conceito de osteoporose e impacto em saúde pública",
+      "cit": [
+        [
+          0,
+          32673,
+          296
+        ]
+      ],
+      "cit_sha": "75da47fcd1008ef3"
+    },
+    {
+      "afirmacao": "Custos: as fraturas por fragilidade foram estimadas em 20 bilhões de dólares por ano nos Estados Unidos e cerca de 30 bilhões de dólares na União Europeia. No Brasil, entre 2008 e 2010, mais de 3,2 milhões de procedimentos por fratura custaram cerca de 289 milhões de reais (US$ 92 milhões) ao Ministério da Saúde.",
+      "secao": "Cap. 1 — Conceito de osteoporose e impacto em saúde pública",
+      "cit": [
+        [
+          0,
+          34833,
+          434
+        ]
+      ],
+      "cit_sha": "9095e37db041cb80"
+    },
+    {
+      "afirmacao": "Estima-se custo anual com osteoporose no Brasil de R$ 1,2 bilhão: R$ 733,5 milhões de perda de produtividade, R$ 234 milhões de custos hospitalares, R$ 162,6 milhões de custos cirúrgicos e R$ 31,9 milhões com tratamento medicamentoso.",
+      "secao": "Cap. 1 — Conceito de osteoporose e impacto em saúde pública",
+      "cit": [
+        [
+          0,
+          35268,
+          348
+        ]
+      ],
+      "cit_sha": "56df104c456ffdb6"
+    },
+    {
+      "afirmacao": "Estima-se que 97% das fraturas de quadril sejam tratadas cirurgicamente; o custo do tratamento é estimado em US$ 3.987 por paciente (custo direto de US$ 12.000 em hospitais particulares) e o tempo médio de internação é de 11 dias.",
+      "secao": "Cap. 1 — Conceito de osteoporose e impacto em saúde pública",
+      "cit": [
+        [
+          0,
+          35909,
+          320
+        ]
+      ],
+      "cit_sha": "8d19e2843fae2f66"
+    },
+    {
+      "afirmacao": "O esqueleto humano é composto por dois tipos de tecido ósseo: o cortical, de revestimento, com estrutura compacta e pouca superfície de contato com o meio; e o trabecular, que ocupa o espaço interno dos ossos, cuja estrutura esponjosa aloja a medula óssea hematopoiética e resulta em grande superfície de contato.",
+      "secao": "Cap. 2 — Fisiopatologia da osteoporose",
+      "cit": [
+        [
+          0,
+          40795,
+          485
+        ]
+      ],
+      "cit_sha": "f2bb4c61f120c5b1"
+    },
+    {
+      "afirmacao": "A remodelação óssea é o processo fisiológico pelo qual o osso se renova, permitindo o reparo de microdanos de desgaste e a rápida liberação do estoque ósseo de cálcio e fósforo para ajustes homeostáticos: no mesmo sítio, o osso velho é reabsorvido e o osso novo é formado e mineralizado. O processo tem cinco fases.",
+      "secao": "Cap. 2 — Fisiopatologia da osteoporose",
+      "cit": [
+        [
+          0,
+          41982,
+          786
+        ]
+      ],
+      "cit_sha": "516e7e633456bfb4"
+    },
+    {
+      "afirmacao": "⚠️ Duas características da remodelação com implicação clínica: (1) reabsorção e formação são ACOPLADAS — se a reabsorção aumenta, a formação aumenta em seguida, e vice-versa (daí a busca por terapias que promovam desacoplamento, com menos reabsorção e mais formação); (2) a reabsorção é mais rápida que a formação.",
+      "secao": "Cap. 2 — Fisiopatologia da osteoporose",
+      "cit": [
+        [
+          0,
+          44179,
+          567
+        ],
+        [
+          0,
+          44853,
+          52
+        ]
+      ],
+      "cit_sha": "c579ba0e4a22ccca"
+    },
+    {
+      "afirmacao": "A reabsorção óssea é um processo mais rápido que a formação óssea: a reabsorção dura de 2 a 3 SEMANAS e a formação com mineralização dura de 2 a 3 MESES. Por isso qualquer estado que aumente o ritmo de remodelação — a deficiência estrogênica após a menopausa, por exemplo — favorece perda de osso, e por isso as terapias antirreabsortivas são tão eficazes.",
+      "secao": "Cap. 2 — Fisiopatologia da osteoporose",
+      "cit": [
+        [
+          0,
+          44853,
+          1343
+        ]
+      ],
+      "cit_sha": "a26e3866da5ddbc4"
+    },
+    {
+      "afirmacao": "Via RANK-RANK-L-OPG: osteoblastos expressam ou secretam o ligante do RANK (RANK-L), que se liga a receptores RANK na membrana dos osteoclastos estimulando sua diferenciação e função; os osteoblastos também secretam osteoprotegerina (OPG), que ocupa os receptores RANK e impede sua ativação, inibindo a reabsorção.",
+      "secao": "Cap. 2 — Fisiopatologia da osteoporose",
+      "cit": [
+        [
+          0,
+          44075,
+          777
+        ]
+      ],
+      "cit_sha": "012a623bb4e19075"
+    },
+    {
+      "afirmacao": "A razão entre RANK-L e OPG determina o quanto os osteoclastos estarão ativos: se RANK-L > OPG, os osteoclastos ficam ativos e há maior reabsorção óssea; se RANK-L < OPG, ficam menos ativos e a reabsorção é menor.",
+      "secao": "Cap. 2 — Fisiopatologia da osteoporose",
+      "cit": [
+        [
+          0,
+          44905,
+          44
+        ],
+        [
+          0,
+          44999,
+          56
+        ],
+        [
+          0,
+          45104,
+          54
+        ],
+        [
+          0,
+          45209,
+          53
+        ],
+        [
+          0,
+          45314,
+          53
+        ],
+        [
+          0,
+          45419,
+          24
+        ]
+      ],
+      "cit_sha": "8c7fe5dec8284b1c"
+    },
+    {
+      "afirmacao": "A queda dos níveis de estrogênio após a menopausa aumenta a produção de RANK-L e reduz a de OPG pelos osteoblastos — é por isso que a reabsorção óssea está aumentada na pós-menopausa. Esse conhecimento permitiu o desenho de terapias antirreabsortivas específicas, como o denosumabe, um anticorpo anti-RANK-L.",
+      "secao": "Cap. 2 — Fisiopatologia da osteoporose",
+      "cit": [
+        [
+          0,
+          45496,
+          538
+        ]
+      ],
+      "cit_sha": "1194233b8d749788"
+    },
+    {
+      "afirmacao": "Via WNT no osso: os receptores LRP5 estão nos osteoblastos e, ativados pelo ligante WNT, aumentam a diferenciação e a atividade dos osteoblastos, ou seja, a formação óssea. Esse estímulo é fisiologicamente freado pela esclerostina (SOST), secretada pelos osteócitos — a SOST é um freio tônico da formação, controlado pelos osteócitos.",
+      "secao": "Cap. 2 — Fisiopatologia da osteoporose",
+      "cit": [
+        [
+          0,
+          47282,
+          479
+        ]
+      ],
+      "cit_sha": "e4580fc4c20d3153"
+    },
+    {
+      "afirmacao": "Doenças raras demonstram a via WNT: mutações inativadoras de LRP5 levam a fragilidade óssea grave na síndrome osteoporose-pseudoglioma, enquanto a perda de função de SOST leva a extremo aumento de massa óssea, como na esclerosteose e na doença de van Buchem. Daí o desenvolvimento de inibidores da SOST como tratamento para osteoporose.",
+      "secao": "Cap. 2 — Fisiopatologia da osteoporose",
+      "cit": [
+        [
+          0,
+          47807,
+          451
+        ]
+      ],
+      "cit_sha": "5885152b8f5fa0a0"
+    },
+    {
+      "afirmacao": "O estradiol, agindo em receptores estrogênicos de osteoblastos, osteoclastos e osteócitos, inibe tonicamente a sinalização RANK-RANK-L e reduz a reabsorção. Na falta de estrogênio há aumento de RANK-L, queda de OPG, aumento do número e da sobrevida dos osteoclastos e marcado aumento da reabsorção — e a terapia de reposição hormonal traz o ritmo de reabsorção de volta ao normal, o que explica por que a TRH é um tratamento efetivo da osteoporose.",
+      "secao": "Cap. 2 — Fisiopatologia da osteoporose",
+      "cit": [
+        [
+          0,
+          48634,
+          608
+        ]
+      ],
+      "cit_sha": "37e7e1fa10b2bfe9"
+    },
+    {
+      "afirmacao": "⚠️ A ação do PTH no osso depende da natureza do estímulo: estímulo CONTÍNUO (níveis altos e sustentados de PTH ou PTH-RP) favorece a REABSORÇÃO — como na perda óssea do hiperparatireoidismo e na hipercalcemia da malignidade mediada por PTH-RP; estímulo INTERMITENTE (picos) favorece a FORMAÇÃO óssea, por inibição da SOST. É esse estímulo intermitente que as aplicações diárias de teriparatida e abaloparatida emulam.",
+      "secao": "Cap. 2 — Fisiopatologia da osteoporose",
+      "cit": [
+        [
+          0,
+          49481,
+          624
+        ]
+      ],
+      "cit_sha": "3fd3f71ed8e196a0"
+    },
+    {
+      "afirmacao": "⚠️ No excesso de glicocorticoide há diminuição crônica da formação óssea, perda de osteócitos e aumento transitório da reabsorção — o que justifica as graves fraturas vertebrais vistas particularmente nos PRIMEIROS 6 MESES de uso de glicocorticoide oral diário em doses altas (por exemplo, > 7,5 mg/dia de prednisona).",
+      "secao": "Cap. 2 — Fisiopatologia da osteoporose",
+      "cit": [
+        [
+          0,
+          50315,
+          382
+        ]
+      ],
+      "cit_sha": "91a395bda968a5ce"
+    },
+    {
+      "afirmacao": "O período de maior ganho de osso é a adolescência; considera-se que o pico de massa óssea seja atingido ao redor dos 25 anos, com manutenção até cerca dos 30 anos. A partir dos 30 anos, mulheres e homens começam a perder osso trabecular; a perda de osso cortical acontece mais tarde — ao redor dos 60 anos nos homens e com a menopausa nas mulheres.",
+      "secao": "Cap. 2 — Fisiopatologia da osteoporose",
+      "cit": [
+        [
+          0,
+          50737,
+          428
+        ]
+      ],
+      "cit_sha": "9fb0590ce9753e4f"
+    },
+    {
+      "afirmacao": "Dinâmica da massa óssea ao longo da vida: até o pico, a formação predomina sobre a reabsorção (ganho de massa); no equilíbrio, formação e reabsorção acontecem no mesmo ritmo (manutenção); após a menopausa, a reabsorção está aumentada e predomina (perda); com o envelhecimento em mulheres e homens há diminuição da FORMAÇÃO com ritmo de reabsorção mantido (perda).",
+      "secao": "Cap. 2 — Fisiopatologia da osteoporose",
+      "cit": [
+        [
+          0,
+          52652,
+          491
+        ]
+      ],
+      "cit_sha": "66bc8512ee8ee222"
+    },
+    {
+      "afirmacao": "No osso trabecular, quanto mais conectadas as trabéculas, mais resistente o osso. O afinamento das trabéculas é MENOS danoso do ponto de vista microarquitetural do que a perda de conectividade — e nisso as mulheres são desfavorecidas: no homem o envelhecimento afila trabéculas sem perder conectividade, enquanto nas mulheres a falta de estrogênio e o envelhecimento resultam predominantemente em PERDA DE CONECTIVIDADE.",
+      "secao": "Cap. 2 — Fisiopatologia da osteoporose",
+      "cit": [
+        [
+          0,
+          51364,
+          597
+        ]
+      ],
+      "cit_sha": "d130de0f0045c6a4"
+    },
+    {
+      "afirmacao": "Quanto maior o diâmetro externo de um osso tubular, mais resistente ele é; o acúmulo de osso subperiosteal aumenta esse diâmetro e é importante determinante da resistência. Os homens mantêm acréscimo de osso subperiosteal mesmo com o envelhecimento, o que dá geometria mais favorável. Tratamentos osteoformadores como o inibidor de esclerostina romosozumabe mostraram-se capazes de estimular a modelação e formar osso novo nas superfícies subperiosteais.",
+      "secao": "Cap. 2 — Fisiopatologia da osteoporose",
+      "cit": [
+        [
+          0,
+          53215,
+          732
+        ]
+      ],
+      "cit_sha": "80f09814f3c8fa97"
+    },
+    {
+      "afirmacao": "O manual afirma que TRÊS elementos principais compõem os pilares da fisiopatologia da osteoporose, e nomeia o primeiro: PICO DE MASSA ÓSSEA INADEQUADO. ⚠️ Os outros dois pilares são títulos de seção do mesmo capítulo, distantes demais no texto-fonte para caberem nesta citação — estão restituídos, com citação própria, nos fatos sobre a perda óssea com a menopausa e o envelhecimento e sobre doenças, medicações ou condições que causem osteoporose secundária.",
+      "secao": "Cap. 2 — Fisiopatologia da osteoporose",
+      "cit": [
+        [
+          0,
+          51992,
+          132
+        ]
+      ],
+      "cit_sha": "452729314980bdae"
+    },
+    {
+      "afirmacao": "Diante de um paciente com osteoporose é importante saber se as condições de saúde na infância e adolescência permitiram acúmulo adequado de massa óssea ou se condições desfavoráveis — desnutrição, doenças graves ou longos períodos acamado — contribuíram para o surgimento da doença mais tarde.",
+      "secao": "Cap. 2 — Fisiopatologia da osteoporose",
+      "cit": [
+        [
+          0,
+          52209,
+          337
+        ]
+      ],
+      "cit_sha": "21cd88b0cbd51173"
+    },
+    {
+      "afirmacao": "A capacidade de cada indivíduo acumular massa óssea durante a infância e a adolescência é determinada pela predisposição GENÉTICA, o que explica a ocorrência de osteoporose idiopática.",
+      "secao": "Cap. 2 — Fisiopatologia da osteoporose",
+      "cit": [
+        [
+          0,
+          54740,
+          218
+        ]
+      ],
+      "cit_sha": "1088bfe3872a1148"
+    },
+    {
+      "afirmacao": "SEGUNDO PILAR — \"perda óssea com a menopausa e o envelhecimento\": as alterações da remodelação a partir da quinta década de vida (maior reabsorção após a menopausa, menor formação com o envelhecimento nos dois sexos), somadas à evolução desfavorável da geometria e da microarquitetura (afilamento cortical, perda de conectividade das trabéculas), resultam em perda de massa óssea em graus variáveis. A OSTEOPOROSE acontece quando essas perdas suplantam a economia de osso construída até o pico de massa óssea.",
+      "secao": "Cap. 2 — Fisiopatologia da osteoporose",
+      "cit": [
+        [
+          0,
+          54959,
+          563
+        ]
+      ],
+      "cit_sha": "c5b1d07cb47cf275"
+    },
+    {
+      "afirmacao": "TERCEIRO PILAR — \"doenças, medicações ou condições que causem osteoporose secundária\": as causas de osteoporose secundária podem ocorrer em qualquer momento da vida e resultar em prejuízo para o osso. Já osteoporose pós-menopausa, osteoporose senil e osteoporose idiopática (predisposição genética) são consideradas formas de osteoporose PRIMÁRIA, em que a doença se inicia primariamente no esqueleto.",
+      "secao": "Cap. 2 — Fisiopatologia da osteoporose",
+      "cit": [
+        [
+          0,
+          55523,
+          438
+        ]
+      ],
+      "cit_sha": "1989c3018a1b4697"
+    },
+    {
+      "afirmacao": "Principais causas ENDÓCRINAS de osteoporose secundária listadas pelo manual: hipercortisolismo, tireotoxicose, hipogonadismo, diabetes mellitus tipo 1 e tipo 2, acromegalia e deficiência de hormônio de crescimento.",
+      "secao": "Cap. 2 — Fisiopatologia da osteoporose",
+      "cit": [
+        [
+          0,
+          56122,
+          465
+        ]
+      ],
+      "cit_sha": "1750f167c8fb27c8"
+    },
+    {
+      "afirmacao": "MEDICAÇÕES listadas como causa de osteoporose secundária: glicocorticoides, anticonvulsivantes, inibidores de aromatase, quimioterapia e imunossupressores, acetato de medroxiprogesterona, agonistas de GnRH, heparina e dicumarínicos, lítio, inibidores da bomba de prótons, inibidores seletivos da recaptação de serotonina e inibidores de SGLT2.",
+      "secao": "Cap. 2 — Fisiopatologia da osteoporose",
+      "cit": [
+        [
+          0,
+          56588,
+          292
+        ]
+      ],
+      "cit_sha": "9f5d8602a1633c7c"
+    },
+    {
+      "afirmacao": "Causas nutricionais/gastrintestinais de osteoporose secundária: disabsorção (doença celíaca, doença de Crohn, fibrose cística, ressecção gastrintestinal incluindo cirurgia bariátrica), alcoolismo, deficiência de cálcio e/ou vitamina D, anorexia nervosa e doença hepática crônica.",
+      "secao": "Cap. 2 — Fisiopatologia da osteoporose",
+      "cit": [
+        [
+          0,
+          56160,
+          386
+        ]
+      ],
+      "cit_sha": "55bc008efa683997"
+    },
+    {
+      "afirmacao": "⚠️ A maioria das causas de osteoporose secundária é clinicamente manifesta e facilmente identificada pela anamnese e pelo exame físico; algumas, porém, podem ser SILENCIOSAS — por exemplo hiperparatireoidismo, doença celíaca oligossintomática e hipercalciúria idiopática —, o que justifica exames laboratoriais de rastreamento na avaliação inicial e no seguimento.",
+      "secao": "Cap. 2 — Fisiopatologia da osteoporose",
+      "cit": [
+        [
+          0,
+          57239,
+          473
+        ]
+      ],
+      "cit_sha": "5a82c1ea3ce8643f"
+    },
+    {
+      "afirmacao": "Além dos elementos que afetam a resistência do osso, é muito importante reconhecer o papel das QUEDAS na determinação das fraturas por fragilidade — por isso a prevenção de quedas é sempre fundamental como base do tratamento da osteoporose.",
+      "secao": "Cap. 2 — Fisiopatologia da osteoporose",
+      "cit": [
+        [
+          0,
+          57947,
+          252
+        ]
+      ],
+      "cit_sha": "109be19b26a97daa"
+    },
+    {
+      "afirmacao": "Recomenda-se avaliar o risco de fratura em mulheres de 65 anos ou mais e homens de 75 anos ou mais. Abaixo dessas idades, a avaliação é indicada quando houver algum fator de risco. NÃO se recomenda avaliar rotineiramente o risco de fratura em indivíduos com menos de 50 anos, a menos que tenham fatores de risco relevantes, pois é improvável que apresentem alto risco.",
+      "secao": "Cap. 3 — Fatores de risco",
+      "cit": [
+        [
+          0,
+          60292,
+          480
+        ]
+      ],
+      "cit_sha": "de852a5031fa3bcb"
+    },
+    {
+      "afirmacao": "Fatores de risco clínicos que se aplicam a TODAS as idades: idade, fratura prévia por fragilidade, glicocorticoides orais ou sistêmicos, insuficiência ovariana prematura não tratada ou hipogonadismo masculino. Fatores que NÃO se aplicam a pacientes com menos de 50 anos: história de quedas, história familiar de fratura de quadril, osteoporose secundária, baixo índice de massa corpórea (< 18,5 kg/m2), tabagismo e etilismo.",
+      "secao": "Cap. 3 — Fatores de risco",
+      "cit": [
+        [
+          0,
+          60773,
+          536
+        ]
+      ],
+      "cit_sha": "10b1b035eb0e6fed"
+    },
+    {
+      "afirmacao": "O manual define etilismo de risco como consumo acima de 14 unidades por semana em mulheres e acima de 21 unidades por semana em homens.",
+      "secao": "Cap. 3 — Fatores de risco",
+      "cit": [
+        [
+          0,
+          61104,
+          76
+        ]
+      ],
+      "cit_sha": "41cbd85ec48a577b"
+    },
+    {
+      "afirmacao": "⚠️ Indivíduos que sofreram fratura recente por fragilidade têm aproximadamente CINCO vezes mais risco de novas fraturas nos DOIS ANOS subsequentes; após dois anos, o risco continua duas vezes maior que em quem nunca fraturou. Aproximadamente metade dos pacientes com fratura de quadril tem história prévia de fraturas anteriores.",
+      "secao": "Cap. 3 — Fatores de risco",
+      "cit": [
+        [
+          0,
+          62366,
+          544
+        ]
+      ],
+      "cit_sha": "53ba2f8385f9e3ba"
+    },
+    {
+      "afirmacao": "Fatores de risco MODIFICÁVEIS listados: álcool, tabagismo, quedas frequentes, sedentarismo, má nutrição, baixa ingestão de cálcio, deficiência de vitamina D, baixo índice de massa corpórea e desordens alimentares. NÃO modificáveis: idade, sexo feminino, raça, história familiar de fratura de quadril, história familiar de osteoporose, história de quedas, menopausa precoce ou hipogonadismo masculino não tratado e osteoporose secundária.",
+      "secao": "Cap. 3 — Fatores de risco",
+      "cit": [
+        [
+          0,
+          61736,
+          486
+        ]
+      ],
+      "cit_sha": "c9e256fc9f4fdcfa"
+    },
+    {
+      "afirmacao": "A desnutrição é altamente prevalente na população idosa, grupo em que é fundamental garantir ingestão adequada de cálcio, vitamina D e PROTEÍNAS. Na idade adulta, a combinação de dieta equilibrada e atividade física regular desempenha papel importante para assegurar a saúde óssea.",
+      "secao": "Cap. 3 — Fatores de risco",
+      "cit": [
+        [
+          0,
+          62223,
+          712
+        ]
+      ],
+      "cit_sha": "2e67766c8c92d41f"
+    },
+    {
+      "afirmacao": "Osteoporose secundária é a redução da massa óssea na qual um fator etiológico pode ser identificado. Os MEDICAMENTOS são os fatores etiológicos mais comuns responsáveis pela osteoporose secundária.",
+      "secao": "Cap. 3 — Fatores de risco",
+      "cit": [
+        [
+          0,
+          63394,
+          435
+        ]
+      ],
+      "cit_sha": "ce241238ab2fb9f5"
+    },
+    {
+      "afirmacao": "⚠️ Duas situações clínicas em que a suspeita de causa secundária deve ser firmemente rastreada: (1) o paciente cuja doença esquelética é particularmente grave para a idade (ou seja, pelo escore Z) e demais fatores de risco; (2) o chamado \"paciente que não responde\" à terapia, em termos de DMO e de fratura. Em ambos, a ADESÃO à terapia deve ser preliminarmente pesquisada.",
+      "secao": "Cap. 3 — Fatores de risco",
+      "cit": [
+        [
+          0,
+          63876,
+          504
+        ]
+      ],
+      "cit_sha": "7abce57a7c2007cc"
+    },
+    {
+      "afirmacao": "A prevalência de osteoporose secundária é relatada em 17% a 30% das mulheres e em 21% a 80% dos homens; as diferenças podem vir da definição usada, da população estudada e do local da investigação — a prevalência é maior em centros de referência ou terciários do que na população geral.",
+      "secao": "Cap. 3 — Fatores de risco",
+      "cit": [
+        [
+          0,
+          66205,
+          576
+        ]
+      ],
+      "cit_sha": "1ef40d80ae46305d"
+    },
+    {
+      "afirmacao": "Medicamentos associados a perda óssea e maior risco de fratura, segundo o manual: terapia antirretroviral; terapias com deprivação hormonal (agonistas do GnRH, inibidores da aromatase, tamoxifeno na pré-menopausa, dose supressiva de hormônio da tireoide); diuréticos de alça; inibidores da bomba de prótons; pioglitazona/rosiglitazona; medicações neurológicas (anticonvulsivantes e ISRS); anticoagulantes (heparina de alto ou baixo peso molecular e varfarina); inibidores da calcineurina; glicocorticoides.",
+      "secao": "Cap. 3 — Fatores de risco",
+      "cit": [
+        [
+          0,
+          64831,
+          875
+        ],
+        [
+          0,
+          65888,
+          18
+        ]
+      ],
+      "cit_sha": "f8e44c85e513bf0f"
+    },
+    {
+      "afirmacao": "Na avaliação clínica do paciente com osteoporose recomenda-se também a pesquisa ATIVA de SARCOPENIA, definida como perda de massa e função muscular com ou sem prejuízo da capacidade funcional — não é simplesmente um distúrbio nutricional associado à idade avançada.",
+      "secao": "Cap. 3 — Fatores de risco",
+      "cit": [
+        [
+          0,
+          64857,
+          444
+        ]
+      ],
+      "cit_sha": "4aef7e8388797232"
+    },
+    {
+      "afirmacao": "Aproximadamente 5% a 13% das pessoas de 60 a 70 anos podem apresentar sarcopenia, subindo para 11% a 50% naquelas com 80 anos ou mais.",
+      "secao": "Cap. 3 — Fatores de risco",
+      "cit": [
+        [
+          0,
+          65364,
+          241
+        ]
+      ],
+      "cit_sha": "5f4479bba9e16db8"
+    },
+    {
+      "afirmacao": "Há sobreposição considerável entre sarcopenia e risco de fragilidade, osteoporose, quedas e fraturas: cerca de 28% dos pacientes com fratura de quadril também têm sarcopenia.",
+      "secao": "Cap. 3 — Fatores de risco",
+      "cit": [
+        [
+          0,
+          67009,
+          221
+        ]
+      ],
+      "cit_sha": "72b8100357abe69a"
+    },
+    {
+      "afirmacao": "⚠️ As quedas são muito frequentes em idosos: ocorrem em 1/3 das pessoas com mais de 65 anos e em metade das pessoas acima de 85 anos. Cerca de 5% das quedas resultam em fratura.",
+      "secao": "Cap. 3 — Fatores de risco",
+      "cit": [
+        [
+          0,
+          67327,
+          166
+        ]
+      ],
+      "cit_sha": "612e5e5623da6c8f"
+    },
+    {
+      "afirmacao": "Fatores INTRÍNSECOS de risco para quedas: idade avançada, baixo índice de massa corpórea, comorbidades, doenças musculoesqueléticas, deficiência cognitiva, distúrbios da marcha e equilíbrio, deficiência sensorial, hipotensão postural, quedas anteriores e medicamentos (benzodiazepínicos, sedativos, hipnóticos, anti-hipertensivos, antiarrítmicos, diuréticos, anticonvulsivantes).",
+      "secao": "Cap. 3 — Fatores de risco",
+      "cit": [
+        [
+          0,
+          67793,
+          276
+        ],
+        [
+          0,
+          68230,
+          108
+        ]
+      ],
+      "cit_sha": "6ae03199ce2b8609"
+    },
+    {
+      "afirmacao": "Fatores EXTRÍNSECOS de risco para quedas: tapetes soltos, piso escorregadio, piso irregular, iluminação insuficiente, cabos elétricos, cadeiras e poltronas sem apoio e objetos espalhados no chão.",
+      "secao": "Cap. 3 — Fatores de risco",
+      "cit": [
+        [
+          0,
+          67863,
+          366
+        ]
+      ],
+      "cit_sha": "720ab0aebec61eea"
+    },
+    {
+      "afirmacao": "O risco de queda aumenta rapidamente conforme o NÚMERO de fatores de risco; o maior risco para fratura de quadril foi encontrado em mulheres com baixa densidade óssea e MAIS DE QUATRO fatores de risco.",
+      "secao": "Cap. 3 — Fatores de risco",
+      "cit": [
+        [
+          0,
+          68339,
+          271
+        ]
+      ],
+      "cit_sha": "76e808cea1c959df"
+    },
+    {
+      "afirmacao": "Cerca de 50% a 80% dos pacientes recebidos em serviços de emergência por quedas relatam perigos ambientais domésticos como uma das causas.",
+      "secao": "Cap. 3 — Fatores de risco",
+      "cit": [
+        [
+          0,
+          69389,
+          148
+        ]
+      ],
+      "cit_sha": "cd2899d35dda7148"
+    },
+    {
+      "afirmacao": "⚠️ Principal limitação da avaliação apenas pela densidade óssea: a MAIOR PARTE das fraturas ocorre em indivíduos com escore T que NÃO preenche critérios para osteoporose (< -2,5 DP) — a densidade óssea acaba tendo baixa sensibilidade quando usada isoladamente.",
+      "secao": "Cap. 4 — Aplicando o FRAX",
+      "cit": [
+        [
+          0,
+          69856,
+          38
+        ],
+        [
+          0,
+          69950,
+          228
+        ]
+      ],
+      "cit_sha": "ba778a46272cba70"
+    },
+    {
+      "afirmacao": "Vários fatores de risco facilmente identificáveis na clínica se associam a fraturas e podem ser usados COM ou SEM a densidade óssea.",
+      "secao": "Cap. 4 — Aplicando o FRAX",
+      "cit": [
+        [
+          0,
+          70179,
+          141
+        ]
+      ],
+      "cit_sha": "108c4fa6f232178b"
+    },
+    {
+      "afirmacao": "De todos os instrumentos de predição de fratura, apenas o FRAX calcula taxas de fratura ajustadas para cada país e tem se mostrado capaz de identificar pacientes de alto risco que devem ser encaminhados para tratamento.",
+      "secao": "Cap. 4 — Aplicando o FRAX",
+      "cit": [
+        [
+          0,
+          71152,
+          197
+        ]
+      ],
+      "cit_sha": "7a8355f43442b6b7"
+    },
+    {
+      "afirmacao": "O FRAX é um algoritmo digital que combina fatores de risco, associados ou não à densidade óssea do COLO DO FÊMUR, e fornece a probabilidade em 10 anos de fratura maior (fêmur, fratura vertebral clínica, úmero ou punho) ou de fratura de fêmur isolada, em homens e mulheres.",
+      "secao": "Cap. 4 — Aplicando o FRAX",
+      "cit": [
+        [
+          0,
+          71386,
+          353
+        ]
+      ],
+      "cit_sha": "9cbeab83f492c5b3"
+    },
+    {
+      "afirmacao": "Existem 68 modelos de FRAX disponíveis em 64 países; além do calculador na web, está disponível em aparelhos de densitometria e celulares. O FRAX foi incorporado a diretrizes e consensos e, em alguns países, recomenda-se seu uso ANTES da realização da densitometria óssea.",
+      "secao": "Cap. 4 — Aplicando o FRAX",
+      "cit": [
+        [
+          0,
+          71740,
+          338
+        ]
+      ],
+      "cit_sha": "54a8f9015d4c7138"
+    },
+    {
+      "afirmacao": "Variáveis do FRAX: idade, índice de massa corporal e fatores de risco dicotomizados — fratura prévia por fragilidade, história familiar de fratura de fêmur, tabagismo atual, corticosteroide oral, artrite reumatoide, outras causas de osteoporose secundária e consumo excessivo de álcool. A probabilidade é computada considerando o risco de fratura E o risco de morte.",
+      "secao": "Cap. 4 — Aplicando o FRAX",
+      "cit": [
+        [
+          0,
+          72079,
+          551
+        ]
+      ],
+      "cit_sha": "8e2610fa8481796d"
+    },
+    {
+      "afirmacao": "No Brasil, o FRAX foi construído a partir de QUATRO estudos epidemiológicos nacionais que verificaram a incidência de fraturas de fêmur em diferentes regiões — portanto o instrumento está ajustado à população brasileira, ainda que com limitações por se basear em poucos estudos.",
+      "secao": "Cap. 4 — Aplicando o FRAX",
+      "cit": [
+        [
+          0,
+          72631,
+          493
+        ]
+      ],
+      "cit_sha": "8af3fc15d78e6530"
+    },
+    {
+      "afirmacao": "Para o cálculo do FRAX no Brasil, o manual recomenda entrar no site da ABRASSO (Associação Brasileira de Avaliação Óssea e Osteometabolismo), onde o FRAX é apresentado de modo prático para uso na prática clínica.",
+      "secao": "Cap. 4 — Aplicando o FRAX",
+      "cit": [
+        [
+          0,
+          73125,
+          304
+        ]
+      ],
+      "cit_sha": "0ba2402fab220c45"
+    },
+    {
+      "afirmacao": "O FRAX pode ser aplicado a homens e mulheres com mais de 40 anos. A MELHOR indicação é quando a paciente tem OSTEOPENIA e há dúvida se é necessário ou não intervir com medicação. Pacientes com densidade óssea normal ou baixo risco de fraturas não devem ser tratados; aquelas com osteoporose densitométrica ou com múltiplos fatores de risco devem ser tratadas.",
+      "secao": "Cap. 4 — Aplicando o FRAX",
+      "cit": [
+        [
+          0,
+          75102,
+          418
+        ]
+      ],
+      "cit_sha": "f36105cd75bc3a96"
+    },
+    {
+      "afirmacao": "⚠️ Outra limitação: o FRAX NÃO distingue pacientes em tratamento daqueles que não estão sendo tratados, e existem poucos estudos sobre sua validade para monitorização terapêutica.",
+      "secao": "Cap. 4 — Aplicando o FRAX",
+      "cit": [
+        [
+          0,
+          75521,
+          207
+        ]
+      ],
+      "cit_sha": "2a83102f652702d0"
+    },
+    {
+      "afirmacao": "⚠️ A realização do FRAX deve ser indicada em pacientes VIRGENS DE TRATAMENTO. Uma vez em tratamento, não está bem estabelecido se o FRAX é sensível às mudanças que ocorrem durante ele, e não há estudos demonstrando a validade de manter o tratamento com base no FRAX.",
+      "secao": "Cap. 4 — Aplicando o FRAX",
+      "cit": [
+        [
+          0,
+          76556,
+          442
+        ]
+      ],
+      "cit_sha": "16822495b419dc5f"
+    },
+    {
+      "afirmacao": "⚠️ A osteoporose NÃO tem manifestações clínicas evidentes até que haja uma FRATURA. Cada fratura por fragilidade aumenta o risco de novas fraturas.",
+      "secao": "Cap. 5 — Quadro clínico da osteoporose",
+      "cit": [
+        [
+          0,
+          77482,
+          145
+        ]
+      ],
+      "cit_sha": "673ac77647653eab"
+    },
+    {
+      "afirmacao": "Uma fratura vertebral incidente prediz fortemente risco aumentado de outra fratura vertebral já no ANO SEGUINTE. Cerca de metade dos pacientes com fratura de quadril já teve uma fratura anterior.",
+      "secao": "Cap. 5 — Quadro clínico da osteoporose",
+      "cit": [
+        [
+          0,
+          77628,
+          195
+        ]
+      ],
+      "cit_sha": "9bf02bb4e125f86b"
+    },
+    {
+      "afirmacao": "A DMO por absorciometria radiológica de dupla energia (DXA) é o teste-padrão para o diagnóstico de osteoporose segundo a classificação da OMS: escore T ≤ -2,5 é consistente com osteoporose e escore T entre -1 e -2,5 corresponde a baixa massa óssea (osteopenia).",
+      "secao": "Cap. 5 — Quadro clínico da osteoporose",
+      "cit": [
+        [
+          0,
+          77824,
+          353
+        ]
+      ],
+      "cit_sha": "af1e79a7a36dfdb1"
+    },
+    {
+      "afirmacao": "Categorias diagnósticas da OMS na tabela do manual: normal com T-score ≥ -1,0; osteopenia entre -1,0 e -2,4; osteoporose ≤ -2,5; osteoporose estabelecida ou severa com T ≤ -2,5 associado a fratura por fragilidade.",
+      "secao": "Cap. 5 — Quadro clínico da osteoporose",
+      "cit": [
+        [
+          0,
+          78181,
+          241
+        ]
+      ],
+      "cit_sha": "46976fc266a8eae2"
+    },
+    {
+      "afirmacao": "⚠️ A MAIORIA das fraturas ocorre em pessoas com baixa massa óssea, mas SEM osteoporose densitométrica. Mesmo assim, o termo \"osteoporose\" só é formalmente aplicado quando o escore T na densitometria é ≤ -2,5.",
+      "secao": "Cap. 5 — Quadro clínico da osteoporose",
+      "cit": [
+        [
+          0,
+          78458,
+          232
+        ]
+      ],
+      "cit_sha": "8e07a4fdd67974e9"
+    },
+    {
+      "afirmacao": "Complicações das fraturas: dor, deformidade, incapacidade física e perda de altura quando a fratura é vertebral — sendo o valor de corte para detecção de osteoporose de pelo menos 2,0 cm de redução da altura.",
+      "secao": "Cap. 5 — Quadro clínico da osteoporose",
+      "cit": [
+        [
+          0,
+          79156,
+          225
+        ]
+      ],
+      "cit_sha": "f068de66da0514e1"
+    },
+    {
+      "afirmacao": "⚠️ ARMADILHA DOS DOIS LADOS: muitos pacientes SEM sintomas presumem incorretamente que não devem ter osteoporose; por outro lado, muitos pacientes COM dores em quadris ou nos pés presumem que a queixa se deve à osteoporose, o que não é tão evidente na AUSÊNCIA de fratura.",
+      "secao": "Cap. 5 — Quadro clínico da osteoporose",
+      "cit": [
+        [
+          0,
+          79382,
+          285
+        ]
+      ],
+      "cit_sha": "64674c0b4dc9b110"
+    },
+    {
+      "afirmacao": "Posicionamento do National Bone Health Alliance Working Group: o diagnóstico de osteoporose pode ser feito quando houver fratura vertebral, fratura do úmero proximal ou fratura do quadril decorrente de trauma de BAIXO GRAU, ou quando houver risco elevado de fratura pelo FRAX — mesmo sem escore T menor que -2,5 (ou seja, com osteopenia).",
+      "secao": "Cap. 5 — Quadro clínico da osteoporose",
+      "cit": [
+        [
+          0,
+          79668,
+          404
+        ]
+      ],
+      "cit_sha": "36fa2e50ccd3e869"
+    },
+    {
+      "afirmacao": "⚠️ O diagnóstico CLÍNICO de osteoporose pode ser feito na presença de uma fratura por fragilidade — principalmente coluna, quadril, punho, úmero e costela — MESMO SEM a medida da DMO. Fraturas por fragilidade resultam de forças mecânicas que normalmente não levariam a fratura em quem não tem osteoporose: são as que ocorrem ESPONTANEAMENTE ou por traumas menores, como uma queda da própria altura.",
+      "secao": "Cap. 5 — Quadro clínico da osteoporose",
+      "cit": [
+        [
+          0,
+          80073,
+          445
+        ]
+      ],
+      "cit_sha": "a17144eb024e1c37"
+    },
+    {
+      "afirmacao": "⚠️ NÃO conta como fratura por fragilidade: certos locais do esqueleto — crânio, coluna cervical, mãos, pés e tornozelos — NÃO estão associados a fraturas por fragilidade; as fraturas por ESTRESSE também não são consideradas por fragilidade, pois decorrem de lesões repetitivas.",
+      "secao": "Cap. 5 — Quadro clínico da osteoporose",
+      "cit": [
+        [
+          0,
+          80519,
+          251
+        ]
+      ],
+      "cit_sha": "426f6150d6d038f9"
+    },
+    {
+      "afirmacao": "⚠️ A FRATURA VERTEBRAL é a manifestação clínica mais comum da osteoporose, e aproximadamente DOIS TERÇOS delas são assintomáticas ou pouco sintomáticas — não são reconhecidas pelo próprio paciente. Em geral são microfraturas decorrentes de movimentos do dia a dia, como dobrar o tronco para varrer o piso, arrumar uma cama, pegar objetos leves do chão ou cozinhar. Na maior parte das vezes são diagnosticadas como achado INCIDENTAL em radiografia de tórax ou de abdome.",
+      "secao": "Cap. 5 — Quadro clínico da osteoporose",
+      "cit": [
+        [
+          0,
+          81099,
+          518
+        ]
+      ],
+      "cit_sha": "9fd6be6e050a51fc"
+    },
+    {
+      "afirmacao": "A avaliação inicial da mulher na pós-menopausa com osteoporose inclui histórico dos fatores de risco clínicos para fratura e de outras condições que contribuem para a perda óssea, exame físico e testes laboratoriais básicos; resultados iniciais anormais podem exigir testes adicionais para causas potencialmente reversíveis, e escores Z baixos identificam quem precisa de avaliação adicional para causas secundárias.",
+      "secao": "Cap. 5 — Quadro clínico da osteoporose",
+      "cit": [
+        [
+          0,
+          81746,
+          513
+        ]
+      ],
+      "cit_sha": "ddea26fea862cbb0"
+    },
+    {
+      "afirmacao": "A cifose por fratura vertebral com perda de altura pode decorrer de deformação das vértebras torácicas e causar comprometimento das funções RESPIRATÓRIA e CARDÍACA e, em última análise, diminuição da qualidade de vida. Os pacientes muitas vezes convivem com dor lombar na vida diária normal, como resultado da sustentação do próprio peso quando eretos.",
+      "secao": "Cap. 5 — Quadro clínico da osteoporose",
+      "cit": [
+        [
+          0,
+          82495,
+          394
+        ]
+      ],
+      "cit_sha": "eb75d4f9d7a65c23"
+    },
+    {
+      "afirmacao": "⚠️ Pacientes com osteoporose e alterações posturais decorrentes das microfraturas podem apresentar DORES MUSCULOESQUELÉTICAS em qualquer uma de suas manifestações: desconforto articular, artralgia e mialgia, chegando a dores generalizadas.",
+      "secao": "Cap. 5 — Quadro clínico da osteoporose",
+      "cit": [
+        [
+          0,
+          84030,
+          241
+        ]
+      ],
+      "cit_sha": "8e3100269950575e"
+    },
+    {
+      "afirmacao": "⚠️ De TODOS os pacientes com fraturas vertebrais osteoporóticas, apenas UM TERÇO precisa de cuidados médicos devido ao início agudo da dor lombar.",
+      "secao": "Cap. 5 — Quadro clínico da osteoporose",
+      "cit": [
+        [
+          0,
+          83780,
+          147
+        ]
+      ],
+      "cit_sha": "e505bbb2acc0dccc"
+    },
+    {
+      "afirmacao": "As fraturas vertebrais decorrentes de quedas ou traumas levam a dores intensas nas costas na fase aguda, que podem ser acompanhadas de contratura muscular antálgica; a dor muitas vezes se torna CRÔNICA.",
+      "secao": "Cap. 5 — Quadro clínico da osteoporose",
+      "cit": [
+        [
+          0,
+          83928,
+          579
+        ]
+      ],
+      "cit_sha": "6b87f4d297b779ed"
+    },
+    {
+      "afirmacao": "⚠️ Em estudo multicêntrico espanhol com mulheres na pós-menopausa atendidas em ambulatório de Medicina Interna por DOR CRÔNICA NAS COSTAS, havia pelo menos uma fratura vertebral NÃO diagnosticada previamente em 15,8% delas. As mulheres com fratura vertebral tinham em média 3,0 cm a menos de altura do que as sem fratura; outro estudo aponta 2,0 cm como valor de corte ideal da perda de altura estimada para detecção de osteoporose.",
+      "secao": "Cap. 5 — Quadro clínico da osteoporose",
+      "cit": [
+        [
+          0,
+          84508,
+          644
+        ]
+      ],
+      "cit_sha": "2e52658847812b5d"
+    },
+    {
+      "afirmacao": "Como estimar a perda de altura no consultório: mede-se a distância entre os dois dedos médios com o indivíduo sentado e os braços totalmente estendidos — em condições normais essa distância corresponde aproximadamente à altura do paciente. A altura máxima pode ser considerada a que se tinha por volta dos 30-35 anos, época do pico de massa óssea.",
+      "secao": "Cap. 5 — Quadro clínico da osteoporose",
+      "cit": [
+        [
+          0,
+          82890,
+          605
+        ]
+      ],
+      "cit_sha": "8089d778660c9de2"
+    },
+    {
+      "afirmacao": "A perda de altura é um indicador útil para a autoavaliação e o prognóstico da osteoporose.",
+      "secao": "Cap. 5 — Quadro clínico da osteoporose",
+      "cit": [
+        [
+          0,
+          84272,
+          101
+        ]
+      ],
+      "cit_sha": "7ddc0a0c31416f55"
+    },
+    {
+      "afirmacao": "Além de necessitarem de terapia, os pacientes com fraturas vertebrais podem apresentar aumento da dor nas costas, redução do tempo de trabalho, depressão, aumento dos dias de repouso no leito e maior taxa de hospitalização e mortalidade.",
+      "secao": "Cap. 5 — Quadro clínico da osteoporose",
+      "cit": [
+        [
+          0,
+          83496,
+          283
+        ]
+      ],
+      "cit_sha": "c0c3564d99f7849c"
+    },
+    {
+      "afirmacao": "As fraturas de quadril são relativamente comuns na osteoporose, afetando até 15% das mulheres e 5% dos homens antes dos 80 anos e aumentando exponencialmente com a idade.",
+      "secao": "Cap. 5 — Quadro clínico da osteoporose",
+      "cit": [
+        [
+          0,
+          85153,
+          172
+        ]
+      ],
+      "cit_sha": "46f1e56ab93d5494"
+    },
+    {
+      "afirmacao": "⚠️ A fratura do rádio distal (fratura de Colles) é mais comum em mulheres logo após a menopausa e RARAMENTE é lembrada como possivelmente a PRIMEIRA fratura osteoporótica — pouquíssimas vezes é tratada com antirreabsortivos, cálcio e vitamina D. Lembrar e tratar essa fratura como já sendo osteoporose pode prevenir de forma bastante efetiva o aparecimento de outras fraturas no futuro.",
+      "secao": "Cap. 5 — Quadro clínico da osteoporose",
+      "cit": [
+        [
+          0,
+          85326,
+          419
+        ]
+      ],
+      "cit_sha": "1cbfb0fab8f69ce1"
+    },
+    {
+      "afirmacao": "Todas as mulheres na pós-menopausa com osteoporose devem ter anamnese, exame físico e avaliação laboratorial básica; os estudos laboratoriais iniciais devem incluir hemograma completo, perfil bioquímico e 25-hidroxivitamina D se houver indicação clínica para avaliar o nível de vitamina D.",
+      "secao": "Cap. 5 — Quadro clínico da osteoporose",
+      "cit": [
+        [
+          0,
+          85886,
+          591
+        ]
+      ],
+      "cit_sha": "9f6b213e24d83482"
+    },
+    {
+      "afirmacao": "Mulheres com anormalidades nos testes laboratoriais iniciais, achados suspeitos na história e no exame físico que sugerem causa secundária de osteoporose, ou escore Z ≤ -2 podem necessitar de avaliação adicional para causas secundárias.",
+      "secao": "Cap. 5 — Quadro clínico da osteoporose",
+      "cit": [
+        [
+          0,
+          86145,
+          608
+        ],
+        [
+          0,
+          86809,
+          24
+        ]
+      ],
+      "cit_sha": "7cca863668a59de7"
+    },
+    {
+      "afirmacao": "⚠️ LIMIARES DE FRAX USADOS PELO MANUAL: para pacientes SEM histórico de fratura por fragilidade e SEM avaliação densitométrica, o diagnóstico clínico de osteoporose também poderá ser feito se houver risco elevado evidente pelo FRAX — probabilidade em 10 anos de fraturas osteoporóticas maiores (úmero, vértebra, antebraço) ≥ 20% ou probabilidade em 10 anos de fratura de quadril ≥ 3% podem sugerir osteoporose.",
+      "secao": "Cap. 5 — Quadro clínico da osteoporose",
+      "cit": [
+        [
+          0,
+          86536,
+          777
+        ]
+      ],
+      "cit_sha": "d3cfc05f10b1c5de"
+    },
+    {
+      "afirmacao": "⚠️ GLICOCORTICOIDES: induzem a sobrevida de osteoclastos, permitindo reabsorção óssea excessiva e fraturas principalmente nas regiões ricas em trabéculas da coluna vertebral; induzem apoptose de osteócitos, contribuindo para o risco de fratura PRECOCE que ocorre ANTES da redução da densidade óssea vista na DMO; e reduzem o recrutamento de precursores de osteoblastos, diminuindo a formação óssea.",
+      "secao": "Cap. 5 — Quadro clínico da osteoporose",
+      "cit": [
+        [
+          0,
+          87844,
+          515
+        ]
+      ],
+      "cit_sha": "5480571335b571d0"
+    },
+    {
+      "afirmacao": "Inibidores de aromatase para câncer de mama (anastrozol, letrozol, exemestano) podem acelerar a perda óssea ao inibir a produção de estrogênio e demonstrou-se que também podem aumentar o risco de fraturas, principalmente na coluna vertebral e no punho.",
+      "secao": "Cap. 5 — Quadro clínico da osteoporose",
+      "cit": [
+        [
+          0,
+          88387,
+          328
+        ]
+      ],
+      "cit_sha": "8ac8a026e3185ffe"
+    },
+    {
+      "afirmacao": "A terapia de privação de andrógenos para câncer de próstata está associada a redução da DMO, MAIOR durante o primeiro ano de terapia em homens com 50 anos ou mais, resultando em risco aumentado de fraturas.",
+      "secao": "Cap. 5 — Quadro clínico da osteoporose",
+      "cit": [
+        [
+          0,
+          88951,
+          219
+        ]
+      ],
+      "cit_sha": "6c3167d28ec9c105"
+    },
+    {
+      "afirmacao": "Inibidores da bomba de prótons, como o omeprazol: o uso PROLONGADO (vários anos), particularmente em altas doses, foi associado a risco aumentado de fratura de quadril em idosos — possivelmente pela menor absorção de cálcio dos alimentos na presença de menos ácido estomacal.",
+      "secao": "Cap. 5 — Quadro clínico da osteoporose",
+      "cit": [
+        [
+          0,
+          89190,
+          402
+        ]
+      ],
+      "cit_sha": "e8e6bd91c92c1e10"
+    },
+    {
+      "afirmacao": "Os anticonvulsivantes carbamazepina e fenitoína têm sido associados a redução da densidade óssea, atribuída à baixa vitamina D e à diminuição da absorção intestinal de cálcio.",
+      "secao": "Cap. 5 — Quadro clínico da osteoporose",
+      "cit": [
+        [
+          0,
+          89612,
+          217
+        ]
+      ],
+      "cit_sha": "14332be6a1e77006"
+    },
+    {
+      "afirmacao": "⚠️ A osteoporose induzida por MEDICAMENTOS é um problema de saúde: muitos médicos desconhecem que vários medicamentos comumente prescritos contribuem para perda óssea significativa e fraturas.",
+      "secao": "Cap. 5 — Quadro clínico da osteoporose",
+      "cit": [
+        [
+          0,
+          91531,
+          189
+        ]
+      ],
+      "cit_sha": "f071708b09a134f1"
+    },
+    {
+      "afirmacao": "Existem doenças e situações clínicas que impactam a massa óssea e aumentam o risco de osteoporose; nesse contexto, os exames laboratoriais são importantes na identificação de fatores ou estados clínicos que contribuem para o comprometimento ósseo.",
+      "secao": "Cap. 6 — Exames laboratoriais",
+      "cit": [
+        [
+          0,
+          92417,
+          258
+        ]
+      ],
+      "cit_sha": "ec10d9a90f309722"
+    },
+    {
+      "afirmacao": "Classificação ampla: osteoporose PRIMÁRIA quando a perda óssea se associa aos efeitos da menopausa ou do envelhecimento; SECUNDÁRIA quando doenças específicas ou a utilização de medicamentos tem efeito deletério ao tecido ósseo.",
+      "secao": "Cap. 6 — Exames laboratoriais",
+      "cit": [
+        [
+          0,
+          93568,
+          256
+        ]
+      ],
+      "cit_sha": "0cc9974120a4fb21"
+    },
+    {
+      "afirmacao": "⚠️ As causas SECUNDÁRIAS de osteoporose variam de 30% a 60% nos homens, ocorrem em mais de 50% das mulheres no período reprodutivo e em cerca de 30% das mulheres na pós-menopausa.",
+      "secao": "Cap. 6 — Exames laboratoriais",
+      "cit": [
+        [
+          0,
+          92930,
+          163
+        ]
+      ],
+      "cit_sha": "970d482c9d6ccb81"
+    },
+    {
+      "afirmacao": "Causas de osteoporose secundária listadas no capítulo de exames: hipogonadismo, síndrome de Cushing, hiperparatireoidismo, hipertireoidismo, doença celíaca/síndrome de má absorção, medicações (glicocorticoide, anticonvulsivantes, lítio), doença pulmonar obstrutiva crônica, doença neurológica crônica, artrite reumatoide, AIDS/HIV, osteogênese imperfeita, homocistinúria e síndrome de Marfan.",
+      "secao": "Cap. 6 — Exames laboratoriais",
+      "cit": [
+        [
+          0,
+          93170,
+          338
+        ]
+      ],
+      "cit_sha": "40fbcf19e13b2f15"
+    },
+    {
+      "afirmacao": "Os exames laboratoriais possibilitam afastar algum fator contribuinte para a osteoporose primária e identificar a causa da osteoporose secundária, principalmente em MULHERES JOVENS e HOMENS.",
+      "secao": "Cap. 6 — Exames laboratoriais",
+      "cit": [
+        [
+          0,
+          93825,
+          205
+        ]
+      ],
+      "cit_sha": "e7331beea32f2198"
+    },
+    {
+      "afirmacao": "Dos casos de osteoporose na pós-menopausa, os principais fatores associados são hipovitaminose D, presença de doenças hepáticas e renais, hipertireoidismo e hiperparatireoidismo.",
+      "secao": "Cap. 6 — Exames laboratoriais",
+      "cit": [
+        [
+          0,
+          98979,
+          178
+        ]
+      ],
+      "cit_sha": "ae47a7554c56a406"
+    },
+    {
+      "afirmacao": "⚠️ AFIRMAÇÃO DA FONTE QUE CONFLITA COM O NÚCLEO: o manual diz que \"não parece haver benefício em solicitar de maneira rotineira um conjunto de exames laboratoriais, com exceção do hormônio estimulante da tireoide (TSH), para fazer diagnóstico de osteoporose secundária\". ⚠️ Lida isolada, essa frase dispensa a FOSFATASE ALCALINA que o núcleo torna obrigatória antes de tratar osteoporose idiopática — e o próprio manual, duas frases adiante, adota um painel inicial que INCLUI fosfatase alcalina. O NÚCLEO PREVALECE. ⚠️ O QUE ESTÁ EM JOGO: a fosfatase alcalina é o porteiro da HIPOFOSFATASIA, e nela o BISFOSFONATO É CONTRAINDICADO (o denosumabe também suprime ainda mais a fosfatase alcalina). Logo, fosfatase alcalina persistentemente BAIXA, corrigida para IDADE E SEXO, em quem tem fratura ou densidade mineral óssea baixa, manda investigar hipofosfatasia ANTES de iniciar o antirreabsortivo.",
+      "secao": "Cap. 6 — Exames laboratoriais",
+      "cit": [
+        [
+          0,
+          94770,
+          218
+        ]
+      ],
+      "cit_sha": "9dd2be7b54cbfacb",
+      "nucleo_sha": "e420852b1d09"
+    },
+    {
+      "afirmacao": "Demonstrou-se que solicitar calciúria de 24 horas, cálcio sérico, paratormônio (PTH) e 25-hidroxivitamina D para TODAS as mulheres, e TSH para aquelas em uso de tiroxina, diagnostica 98% das causas contribuintes para o desenvolvimento da osteoporose em mulheres recém-diagnosticadas.",
+      "secao": "Cap. 6 — Exames laboratoriais",
+      "cit": [
+        [
+          0,
+          94989,
+          305
+        ]
+      ],
+      "cit_sha": "2aef6bdd3819efd3"
+    },
+    {
+      "afirmacao": "Na avaliação de homens e de mulheres no período reprodutivo, a solicitação dos exames laboratoriais deve ser específica e direcionada pela suspeita clínica de alguma doença ou uso de medicamento.",
+      "secao": "Cap. 6 — Exames laboratoriais",
+      "cit": [
+        [
+          0,
+          95295,
+          204
+        ]
+      ],
+      "cit_sha": "6ed1a0555355ef32"
+    },
+    {
+      "afirmacao": "⚠️ PAINEL INICIAL (Diab e Watts) adotado pelo manual: hemograma completo; painel metabólico completo INCLUINDO creatinina, cálcio, fósforo, FOSFATASE ALCALINA e testes de função hepática; 25-hidroxivitamina D para avaliação de hipovitaminose D; testosterona total em homens para avaliar hipogonadismo; e avaliação urinária de 24 horas para cálcio, sódio e creatinina, para avaliar má absorção de cálcio ou hipercalciúria.",
+      "secao": "Cap. 6 — Exames laboratoriais",
+      "cit": [
+        [
+          0,
+          95500,
+          435
+        ]
+      ],
+      "cit_sha": "7cf04e01962ea327"
+    },
+    {
+      "afirmacao": "Avaliação laboratorial ADICIONAL para pacientes selecionados: TSH em sintomáticos ou em tratamento de doença tireoidiana; PTH no caso de hipercalcemia; eletroforese de proteína na suspeita de mieloma múltiplo; FSH e estradiol na suspeita de insuficiência ovariana prematura; anticorpos para doença celíaca na ocorrência de má absorção intestinal; teste para mastocitose; teste para HIV e marcadores ósseos.",
+      "secao": "Cap. 6 — Exames laboratoriais",
+      "cit": [
+        [
+          0,
+          96004,
+          425
+        ]
+      ],
+      "cit_sha": "1c0429e431d53683"
+    },
+    {
+      "afirmacao": "Alterações laboratoriais listadas no quadro de investigação: cálcio elevado; fósforo baixo; 25-hidroxivitamina D baixa; fosfatase alcalina ELEVADA; calciúria de 24 horas elevada; calciúria de 24 horas baixa; eletroforese de proteínas com pico monoclonal; TSH elevado; FSH elevado e estradiol baixo; testosterona livre diminuída; anticorpos antigliadina e antiendomísio positivos; paratormônio intacto elevado; creatinina sérica elevada; enzimas hepáticas alteradas; e cortisol livre na urina de 24 horas elevado ou teste de supressão com dexametasona positivo. ⚠️ FOSFATASE ALCALINA BAIXA NÃO CONSTA DESTE QUADRO, e a hipofosfatasia não aparece em nenhum ponto do manual entre as causas secundárias. Nesse ponto o NÚCLEO PREVALECE: fosfatase alcalina persistentemente baixa, corrigida para idade e sexo, investiga hipofosfatasia ANTES do antirreabsortivo — nela o bisfosfonato é contraindicado.",
+      "secao": "Cap. 6 — Exames laboratoriais",
+      "cit": [
+        [
+          0,
+          94220,
+          530
+        ]
+      ],
+      "cit_sha": "bfeec341b166a5a4",
+      "nucleo_sha": "e420852b1d09"
+    },
+    {
+      "afirmacao": "Diagnósticos prováveis correspondentes, na ordem do quadro: hiperparatireoidismo primário ou metástase óssea; hiperparatireoidismo primário ou osteomalácia; deficiência de vitamina D ou osteomalácia; osteomalácia ou doença de Paget; hipercalciúria ou hiperparatireoidismo primário; deficiência de vitamina D ou má absorção de cálcio; mieloma múltiplo; hipotireoidismo; insuficiência ovariana; hipogonadismo masculino; doença celíaca; hiperparatireoidismo; insuficiência renal; doença hepática; síndrome de Cushing.",
+      "secao": "Cap. 6 — Exames laboratoriais",
+      "cit": [
+        [
+          0,
+          96613,
+          475
+        ]
+      ],
+      "cit_sha": "717115c6847fcfe8"
+    },
+    {
+      "afirmacao": "Marcadores de remodelação óssea são produtos bioquímicos do sangue ou da urina que refletem a atividade metabólica do tecido ósseo, categorizados como marcadores de FORMAÇÃO (fosfatase alcalina óssea, osteocalcina, P1NP, P1CP) ou de REABSORÇÃO (CTX e NTX do colágeno tipo 1, fosfatase ácida tártaro-resistente, deoxipiridinolina urinária).",
+      "secao": "Cap. 6 — Exames laboratoriais",
+      "cit": [
+        [
+          0,
+          97121,
+          760
+        ]
+      ],
+      "cit_sha": "3a52a036b516b85a"
+    },
+    {
+      "afirmacao": "Durante a reabsorção óssea, os osteoclastos removem porções de osso formando as cavidades de reabsorção; esse processo dura em torno de 4 a 6 semanas, intervalo em que os componentes teciduais são catabolizados e podem alcançar a circulação e ser excretados na urina.",
+      "secao": "Cap. 6 — Exames laboratoriais",
+      "cit": [
+        [
+          0,
+          97985,
+          360
+        ]
+      ],
+      "cit_sha": "585a5eff97d96cae"
+    },
+    {
+      "afirmacao": "Em 2012 foi publicada orientação para que o P1NP e o CTX sejam os marcadores de remodelação de REFERÊNCIA na prática clínica e nos ensaios clínicos.",
+      "secao": "Cap. 6 — Exames laboratoriais",
+      "cit": [
+        [
+          0,
+          99759,
+          156
+        ]
+      ],
+      "cit_sha": "164170ae277493d3"
+    },
+    {
+      "afirmacao": "⚠️ Não há algoritmos que incluam os marcadores ósseos para estimar o risco de fratura — essa utilização NÃO é consagrada na prática clínica; a associação entre os níveis de marcadores e a ocorrência de fratura, embora exista, é modesta. Os marcadores podem, sim, auxiliar no diagnóstico de osteoporose secundária.",
+      "secao": "Cap. 6 — Exames laboratoriais",
+      "cit": [
+        [
+          0,
+          100067,
+          392
+        ]
+      ],
+      "cit_sha": "a973e7b204141f7a"
+    },
+    {
+      "afirmacao": "Valores de marcadores muito elevados, em mulheres SEM tratamento, podem indicar outras causas de aumento do remodelamento ósseo, como metástases ósseas, mieloma múltiplo e hiperparatireoidismo primário.",
+      "secao": "Cap. 6 — Exames laboratoriais",
+      "cit": [
+        [
+          0,
+          100460,
+          204
+        ]
+      ],
+      "cit_sha": "e35a630759457663"
+    },
+    {
+      "afirmacao": "O uso dos marcadores para MONITORAR a resposta terapêutica é útil e racional: há associação evidente entre a redução dos marcadores de remodelamento e a redução do risco de fratura.",
+      "secao": "Cap. 6 — Exames laboratoriais",
+      "cit": [
+        [
+          0,
+          100665,
+          224
+        ]
+      ],
+      "cit_sha": "a053e1ee3dccd09f"
+    },
+    {
+      "afirmacao": "⚠️ No monitoramento da resposta ao tratamento com drogas antifraturas, a AUSÊNCIA de mudança na concentração dos marcadores pode significar uso incorreto, baixa adesão, injeção inapropriada de teriparatida, osteoporose secundária ou má resposta — e essa avaliação é mais rápida que o monitoramento pela densitometria óssea, permitindo decisão clínica mais precoce.",
+      "secao": "Cap. 6 — Exames laboratoriais",
+      "cit": [
+        [
+          0,
+          101689,
+          267
+        ],
+        [
+          0,
+          102015,
+          55
+        ],
+        [
+          0,
+          102128,
+          275
+        ]
+      ],
+      "cit_sha": "11e03233a9270b6b"
+    },
+    {
+      "afirmacao": "A International Osteoporosis Foundation (IOF) e a European Calcified Tissue Society (ECTS) propõem que, na prática clínica, os marcadores sirvam de IDENTIFICADORES DE RESPOSTA TERAPÊUTICA INADEQUADA.",
+      "secao": "Cap. 6 — Exames laboratoriais",
+      "cit": [
+        [
+          0,
+          102463,
+          304
+        ]
+      ],
+      "cit_sha": "092dec4fdd02b663"
+    },
+    {
+      "afirmacao": "Fluxograma prático de monitoramento de medicamentos antifraturas proposto por pesquisadores da Universidade de Sheffield: dosar o marcador (P1NP ou CTX) no MOMENTO da decisão de iniciar o tratamento.",
+      "secao": "Cap. 6 — Exames laboratoriais",
+      "cit": [
+        [
+          0,
+          102824,
+          52
+        ],
+        [
+          0,
+          102931,
+          49
+        ],
+        [
+          0,
+          103033,
+          51
+        ],
+        [
+          0,
+          103138,
+          121
+        ]
+      ],
+      "cit_sha": "56f3e9ad792ba84d"
+    },
+    {
+      "afirmacao": "Com 6 MESES faz-se nova medida do marcador de remodelamento. Considera-se resposta adequada se a diminuição do P1NP é superior à menor mudança significativa de 10 μg/L, ou se o valor fica inferior à média geométrica para mulheres jovens (35 μg/L). No caso do CTX — cuja vantagem é alterar mais precocemente que o P1NP — o valor médio é 280 ng/L e a menor mudança significativa fica em torno de 100 ng/L (60-80 ng/L dependendo do método).",
+      "secao": "Cap. 6 — Exames laboratoriais",
+      "cit": [
+        [
+          0,
+          101006,
+          53
+        ],
+        [
+          0,
+          101116,
+          50
+        ],
+        [
+          0,
+          101222,
+          50
+        ],
+        [
+          0,
+          101330,
+          55
+        ],
+        [
+          0,
+          101443,
+          52
+        ],
+        [
+          0,
+          101551,
+          54
+        ],
+        [
+          0,
+          101634,
+          54
+        ],
+        [
+          0,
+          101736,
+          52
+        ]
+      ],
+      "cit_sha": "7cf5c44c41f9e095"
+    },
+    {
+      "afirmacao": "⚠️ Os pontos de corte de marcador de remodelação NÃO devem ser universalizados: os valores estabelecidos pelos autores se referem ao método usado pelo laboratório local da instituição, e cada laboratório deve estabelecer seus próprios pontos de corte de acordo com o método e a referência utilizados.",
+      "secao": "Cap. 6 — Exames laboratoriais",
+      "cit": [
+        [
+          0,
+          101843,
+          492
+        ]
+      ],
+      "cit_sha": "edc53ce4f1643e97"
+    },
+    {
+      "afirmacao": "Conclusão do capítulo: na abordagem diagnóstica da osteoporose, os exames laboratoriais são úteis para identificar fatores contribuintes para a osteoporose primária ou identificar a causa de uma osteoporose secundária; já os marcadores de remodelação óssea carecem de melhor padronização prática, mas podem auxiliar no monitoramento da resposta terapêutica, principalmente identificando os indivíduos com resposta inadequada ao tratamento.",
+      "secao": "Cap. 6 — Exames laboratoriais",
+      "cit": [
+        [
+          0,
+          102554,
+          795
+        ]
+      ],
+      "cit_sha": "9c9059aaf095a939"
+    },
+    {
+      "afirmacao": "A DXA é um procedimento radiográfico que mede a DMO pela atenuação diferencial da energia pelo osso e pelo tecido mole, usando fótons de baixa (30 a 50 kEv) e alta (70 kEv) energia: em baixa energia a atenuação óssea é muito maior que a dos tecidos moles; em alta energia elas são aproximadamente iguais — e essa diferença permite medir a DMO corrigida para a atenuação dos tecidos não esqueléticos.",
+      "secao": "Cap. 7 — Densitometria óssea: indicações, interpretação e artefatos",
+      "cit": [
+        [
+          0,
+          105363,
+          647
+        ]
+      ],
+      "cit_sha": "26b5081eacb2629e"
+    },
+    {
+      "afirmacao": "Para o diagnóstico de osteoporose em adultos, as posições oficiais da ABRASSO recomendam densitometria da COLUNA LOMBAR (região de interesse L1-L4) e do FÊMUR PROXIMAL (colo femoral e fêmur total), podendo ser complementada com a medida do ANTEBRAÇO DISTAL (rádio 33%, também designado rádio 1/3).",
+      "secao": "Cap. 7 — Densitometria óssea: indicações, interpretação e artefatos",
+      "cit": [
+        [
+          0,
+          106118,
+          442
+        ]
+      ],
+      "cit_sha": "25708f4fa05d2180"
+    },
+    {
+      "afirmacao": "INDICAÇÕES de densitometria óssea segundo as posições oficiais da ABRASSO: mulheres com idade ≥ 65 anos e homens com idade ≥ 70 anos; mulheres na pós-menopausa ou na transição menopausal e homens acima de 50 anos, com fatores de risco; adultos com antecedente de fratura por fragilidade, condição clínica ou uso de medicamentos associados a baixa massa óssea ou perda óssea; indivíduos para os quais são consideradas intervenções farmacológicas; indivíduos em tratamento, para monitoramento da eficácia; e indivíduos não tratados nos quais a identificação de perda de massa óssea possa determinar a indicação do tratamento.",
+      "secao": "Cap. 7 — Densitometria óssea: indicações, interpretação e artefatos",
+      "cit": [
+        [
+          0,
+          106713,
+          617
+        ]
+      ],
+      "cit_sha": "3c2c49cdb556406b"
+    },
+    {
+      "afirmacao": "Os limiares de escore T da OMS são aplicáveis à medida da DMO em coluna lombar, fêmur proximal ou antebraço distal (1/3 do rádio) em mulheres na transição menopausal, na pós-menopausa e em homens com 50 anos ou mais: normal (escore T ≥ -1 desvio-padrão), baixa massa óssea ou osteopenia (escore T entre -1 e -2,4 DP) ou osteoporose (escore T ≤ -2,5 DP). Pacientes com escore T ≤ -2,5 DP E presença de fratura por fragilidade são classificadas como osteoporose ESTABELECIDA.",
+      "secao": "Cap. 7 — Densitometria óssea: indicações, interpretação e artefatos",
+      "cit": [
+        [
+          0,
+          107396,
+          544
+        ],
+        [
+          0,
+          107964,
+          112
+        ],
+        [
+          0,
+          108125,
+          25
+        ]
+      ],
+      "cit_sha": "84927ceb6048b428"
+    },
+    {
+      "afirmacao": "Classificação diagnóstica da OMS no quadro do capítulo de densitometria: normal ≥ -1,0 DP; osteopenia -1,1 a -2,4 DP; osteoporose ≤ -2,5 DP; osteoporose estabelecida ou grave ≤ -2,5 + fratura por fragilidade.",
+      "secao": "Cap. 7 — Densitometria óssea: indicações, interpretação e artefatos",
+      "cit": [
+        [
+          0,
+          108255,
+          387
+        ]
+      ],
+      "cit_sha": "a6a41f46236a1007"
+    },
+    {
+      "afirmacao": "Dentro de cada região de interesse a DMO é expressa em gramas de mineral por centímetro quadrado (g/cm2) e padronizada por comparação com a DMO média de uma população de referência de adultos jovens (escore T) e com uma população de referência de mesma idade, sexo e etnia (escore Z); os dois escores são expressos em unidades de desvio-padrão.",
+      "secao": "Cap. 7 — Densitometria óssea: indicações, interpretação e artefatos",
+      "cit": [
+        [
+          0,
+          108077,
+          589
+        ]
+      ],
+      "cit_sha": "c97fd32e9d2715ff"
+    },
+    {
+      "afirmacao": "⚠️ Os limiares de escore T NÃO devem ser aplicados a medições obtidas em mulheres na PRÉ-menopausa ou em homens com idade INFERIOR a 50 anos: nessas situações deve-se relatar o escore Z, que não pode ser usado isoladamente para diagnosticar osteoporose. Escore Z igual ou inferior a -2,0 DP é definido como \"abaixo da faixa esperada para a idade\" e acima de -2,0 DP como \"dentro dos limites esperados para a idade\".",
+      "secao": "Cap. 7 — Densitometria óssea: indicações, interpretação e artefatos",
+      "cit": [
+        [
+          0,
+          109659,
+          532
+        ]
+      ],
+      "cit_sha": "abdf0e9bd5a90bd2"
+    },
+    {
+      "afirmacao": "⚠️ ARTEFATOS: a imagem deve ser avaliada quanto a artefatos — por exemplo clipes cirúrgicos, anéis de umbigo, sulfato de bário no trato intestinal, metal de zíper, moeda, clipe ou outro objeto metálico — ou alteração estrutural local — por exemplo osteófitos, sindesmófitos, fraturas por compressão e calcificação aórtica.",
+      "secao": "Cap. 7 — Densitometria óssea: indicações, interpretação e artefatos",
+      "cit": [
+        [
+          0,
+          111081,
+          312
+        ]
+      ],
+      "cit_sha": "f38f94346d3dcd4a"
+    },
+    {
+      "afirmacao": "⚠️ Quase todos os artefatos e mudanças estruturais locais ELEVAM de modo espúrio a DMO — especialmente as alterações degenerativas da coluna, que podem elevar o escore T da coluna em 2, 3 ou mais desvios-padrão. Já a ausência de osso (laminectomia ou espinha bífida) ou a rotação vertebral (escoliose idiopática) REDUZEM de modo artefatual a DMO.",
+      "secao": "Cap. 7 — Densitometria óssea: indicações, interpretação e artefatos",
+      "cit": [
+        [
+          0,
+          110192,
+          1443
+        ]
+      ],
+      "cit_sha": "9115870760205a28"
+    },
+    {
+      "afirmacao": "Todas as vértebras avaliáveis devem ser usadas, mas as afetadas por alterações estruturais locais devem ser EXCLUÍDAS da análise; as decisões podem ser baseadas, no mínimo, em DUAS vértebras — o uso de uma única vértebra NUNCA é recomendável.",
+      "secao": "Cap. 7 — Densitometria óssea: indicações, interpretação e artefatos",
+      "cit": [
+        [
+          0,
+          111636,
+          274
+        ]
+      ],
+      "cit_sha": "9742a3be742f5bcd"
+    },
+    {
+      "afirmacao": "O rádio 33% é o ÚNICO sítio ósseo periférico que pode ser utilizado para fins diagnósticos, devendo ser feito quando a coluna lombar ou o fêmur proximal não puderem ser medidos ou interpretados, nos pacientes com diagnóstico de hiperparatireoidismo, e nos obesos com peso acima do limite do equipamento de DXA empregado.",
+      "secao": "Cap. 7 — Densitometria óssea: indicações, interpretação e artefatos",
+      "cit": [
+        [
+          0,
+          111911,
+          321
+        ]
+      ],
+      "cit_sha": "b076547e3df4323e"
+    },
+    {
+      "afirmacao": "A varredura da coluna deve se estender o suficiente para incluir a vértebra com o último par de costelas (geralmente T12) e ser baixa o suficiente para mostrar a borda pélvica (geralmente o nível do espaço intervertebral de L4-L5). Para o correto posicionamento do quadril, o paciente deve ter a diáfise reta na imagem e rotação interna do quadril correta — o que pode ser confirmado na imagem ao ver um pequeno trocânter diminuto.",
+      "secao": "Cap. 7 — Densitometria óssea: indicações, interpretação e artefatos",
+      "cit": [
+        [
+          0,
+          109175,
+          444
+        ]
+      ],
+      "cit_sha": "3a9d936e925655bb"
+    },
+    {
+      "afirmacao": "⚠️ Para a correta interpretação do exame, o clínico deve fazer uma inspeção básica da aquisição e da análise das imagens densitométricas que acompanham o relatório: no posicionamento correto da coluna o paciente está reto na mesa (coluna vertebral reta na imagem) e centralizado no campo, com campos de tecido mole aproximadamente iguais em ambos os lados da coluna.",
+      "secao": "Cap. 7 — Densitometria óssea: indicações, interpretação e artefatos",
+      "cit": [
+        [
+          0,
+          110462,
+          466
+        ]
+      ],
+      "cit_sha": "5b69f27419410990"
+    },
+    {
+      "afirmacao": "⚠️ REGRA DE INVESTIGAÇÃO: TODO paciente com osteoporose ou osteopenia e um quadro doloroso AGUDO ou SUBAGUDO na coluna, COM OU SEM história de trauma, deve realizar um exame de imagem para investigação de fratura.",
+      "secao": "Cap. 8 — Radiologia na investigação da fratura",
+      "cit": [
+        [
+          0,
+          113639,
+          193
+        ]
+      ],
+      "cit_sha": "d8bcee3af59e42fd"
+    },
+    {
+      "afirmacao": "Como parcela significativa das fraturas por INSUFICIÊNCIA ocorre em pacientes com escore T entre -1 e -2,5, pode ser prudente estender a indicação de imagem a pacientes com osteopenia e risco aumentado de fratura. Além disso, pela alta prevalência de fraturas vertebrais ASSINTOMÁTICAS, é recomendado rastreamento inicial por imagem de todo paciente com diagnóstico de osteoporose ou com alto risco de fratura.",
+      "secao": "Cap. 8 — Radiologia na investigação da fratura",
+      "cit": [
+        [
+          0,
+          113833,
+          424
+        ]
+      ],
+      "cit_sha": "111643c0581ad7e1"
+    },
+    {
+      "afirmacao": "Indicações de RASTREAMENTO por imagem de fratura vertebral assintomática, no quadro do manual: (a) mulheres acima de 70 anos e homens acima de 80 anos, COM escore T abaixo de um limiar densitométrico; (b) mulheres acima de 65 anos e homens acima de 70 anos, COM escore T abaixo de outro limiar densitométrico; (c) mulheres na pós-menopausa e homens acima de 50 anos com fatores de risco específicos. ⚠️ Nas faixas (a) e (b) o escore T é CONDIÇÃO OBRIGATÓRIA — não basta a idade. Os dois limiares saíram do PDF SEM o sinal negativo e por isso NÃO são reproduzidos aqui: publicá-los como saíram inverteria o corte.",
+      "secao": "Cap. 8 — Radiologia na investigação da fratura",
+      "cit": [
+        [
+          0,
+          114343,
+          272
+        ]
+      ],
+      "cit_sha": "642ac9315633a613"
+    },
+    {
+      "afirmacao": "Fatores de risco específicos que indicam rastreamento de fratura vertebral: redução da estatura de 4 cm ou mais desde o pico de altura; redução da estatura de 2 cm ou mais desde o início do acompanhamento clínico; uso crônico de corticoide; e antecedente de fratura por trauma de baixa energia.",
+      "secao": "Cap. 8 — Radiologia na investigação da fratura",
+      "cit": [
+        [
+          0,
+          114616,
+          222
+        ]
+      ],
+      "cit_sha": "0e50c539370d81be"
+    },
+    {
+      "afirmacao": "De forma geral, a radiografia em DUAS projeções é suficiente para o rastreamento ou avaliação inicial do paciente com dor NÃO radicular da coluna. Considerando sua reduzida acurácia, principalmente em quadros agudos, os casos de radiografia NEGATIVA com suspeita clínica suficiente devem ser complementados com ressonância magnética (RM) ou tomografia computadorizada (TC). Casos de TRAUMA são mais bem avaliados diretamente por TC.",
+      "secao": "Cap. 8 — Radiologia na investigação da fratura",
+      "cit": [
+        [
+          0,
+          114874,
+          452
+        ]
+      ],
+      "cit_sha": "5f80e8efe424aabd"
+    },
+    {
+      "afirmacao": "A RM é fundamental na avaliação do paciente com antecedente ONCOLÓGICO e suspeita de fratura patológica (principalmente por metástase ou mieloma múltiplo): permite selecionar com alta especificidade quem se beneficiará de biópsia óssea, contraindicar a avaliação invasiva na enorme maioria dos casos de fraturas benignas e planejar os trajetos de biópsia.",
+      "secao": "Cap. 8 — Radiologia na investigação da fratura",
+      "cit": [
+        [
+          0,
+          115327,
+          498
+        ]
+      ],
+      "cit_sha": "fff5487e9705d5ad"
+    },
+    {
+      "afirmacao": "Embora os estudos de medicina nuclear, sobretudo o PET, sejam sensíveis à maioria das metástases ósseas, carecem de ESPECIFICIDADE e frequentemente precisam ser correlacionados com RM para confirmação dos achados.",
+      "secao": "Cap. 8 — Radiologia na investigação da fratura",
+      "cit": [
+        [
+          0,
+          115862,
+          257
+        ]
+      ],
+      "cit_sha": "03e35268ab4d3848"
+    },
+    {
+      "afirmacao": "⚠️ Diferentemente da coluna vertebral, onde são comuns as fraturas espontâneas e assintomáticas, as demais fraturas osteoporóticas normalmente ocorrem no contexto do trauma de BAIXA ENERGIA e COM DOR. Os locais mais comuns são o colo do fêmur, o rádio distal, o úmero proximal e as asas sacrais. Esses pacientes devem ser avaliados por radiografia — mas fraturas incompletas ou sem desalinhamento podem não ser caracterizadas e devem ser complementadas com estudo axial, preferencialmente RM.",
+      "secao": "Cap. 8 — Radiologia na investigação da fratura",
+      "cit": [
+        [
+          0,
+          116133,
+          623
+        ]
+      ],
+      "cit_sha": "32cf984b15ecc3da"
+    },
+    {
+      "afirmacao": "⚠️ A radiografia é método eficiente e amplamente aceito como teste inicial para detecção de fraturas vertebrais, MAS mesmo fraturas detectáveis ao método são SUBDIAGNOSTICADAS por radiologistas e demais médicos em até 34% dos casos — em parte pelo uso de nomenclatura pouco clara, como \"leve redução da altura\", \"acunhamento\" e \"achatamento\". Recomenda-se que a palavra \"FRATURA\" seja usada sempre que isso for sugerido pela deformidade dos platôs vertebrais.",
+      "secao": "Cap. 8 — Radiologia na investigação da fratura",
+      "cit": [
+        [
+          0,
+          116812,
+          602
+        ]
+      ],
+      "cit_sha": "4116903feff5cece"
+    },
+    {
+      "afirmacao": "Classificação semiquantitativa de GENANT, a mais utilizada: classifica visualmente os corpos vertebrais em grau 0 (normal), grau 1 (redução da altura somática em aproximadamente 20-25%), grau 2 (redução de 25-40%) e grau 3 (redução em mais de 40%).",
+      "secao": "Cap. 8 — Radiologia na investigação da fratura",
+      "cit": [
+        [
+          0,
+          117568,
+          250
+        ]
+      ],
+      "cit_sha": "fc609209770f697f"
+    },
+    {
+      "afirmacao": "⚠️ Tanto a técnica semiquantitativa quanto as quantitativas, por definição, SUBDIAGNOSTICAM fraturas sem redução da altura vertebral (sobretudo as recentes). Há poucos estudos comparando a acurácia da radiografia com TC e RM, mas eles mostram que a sensibilidade da radiografia provavelmente está entre 50% e 70%.",
+      "secao": "Cap. 8 — Radiologia na investigação da fratura",
+      "cit": [
+        [
+          0,
+          118280,
+          295
+        ]
+      ],
+      "cit_sha": "29bbbdbbefec8fe9"
+    },
+    {
+      "afirmacao": "ARMADILHAS que simulam fratura na radiografia lateral: (1) acunhamento anterior anatômico no terço médio da coluna torácica e na transição toracolombar; (2) morfologia em \"arco de cupido\" nos platôs inferiores de L4 e L5, variação anatômica; (3) nódulos de Schmorl — disrupções focais dos platôs com herniação discal, embora em alguns casos possam se relacionar a insuficiência óssea; (4) doença de Scheuermann — hipercifose idiopática do adolescente com irregularidade dos platôs, nódulos de Schmorl e redução da altura vertebral; (5) malformações congênitas.",
+      "secao": "Cap. 8 — Radiologia na investigação da fratura",
+      "cit": [
+        [
+          0,
+          119396,
+          955
+        ]
+      ],
+      "cit_sha": "956b3d12041974fb"
+    },
+    {
+      "afirmacao": "A fisiopatologia da fratura osteoporótica (sem trauma ou com trauma de baixa energia) é DISTINTA da fratura traumática: envolve quase exclusivamente forças compressivas sobre os corpos vertebrais, de forma que as maiores vantagens da TC — caracterização de cominução, identificação de listeses/luxações e traços nos elementos posteriores — têm menor relevância.",
+      "secao": "Cap. 8 — Radiologia na investigação da fratura",
+      "cit": [
+        [
+          0,
+          120379,
+          438
+        ]
+      ],
+      "cit_sha": "ab1c443389d2a6c5"
+    },
+    {
+      "afirmacao": "Vantagens da TC mesmo assim: maior sensibilidade que a radiografia para o diagnóstico de fratura, sobretudo quando aguda e sem colabamento vertebral; em alguns casos pode caracterizar a fratura como RECENTE, elucidando a dúvida clínica; e maior disponibilidade do que a RM.",
+      "secao": "Cap. 8 — Radiologia na investigação da fratura",
+      "cit": [
+        [
+          0,
+          120895,
+          386
+        ]
+      ],
+      "cit_sha": "f28bd806488a87ae"
+    },
+    {
+      "afirmacao": "⚠️ A RM é o exame de imagem de MAIOR ACURÁCIA para diferenciar fratura por insuficiência de fratura MALIGNA; diversos sinais têm especificidade acima de 90% e, embora nenhum isolado seja patognomônico, a avaliação global permite diagnóstico seguro. Exceção: alguns casos de mieloma múltiplo, em que não se identificam lesões claramente agressivas. A maior parte dos achados pode ser avaliada na sequência ponderada em T1 SEM contraste, o que torna a RM adequada mesmo quando há contraindicação ao gadolínio, como na nefropatia.",
+      "secao": "Cap. 8 — Radiologia na investigação da fratura",
+      "cit": [
+        [
+          0,
+          122050,
+          747
+        ]
+      ],
+      "cit_sha": "7be113018da68e75"
+    },
+    {
+      "afirmacao": "Achados que sugerem a ETIOLOGIA da fratura vertebral — fratura por INSUFICIÊNCIA: preservação de focos de gordura medular; não envolve elementos posteriores; líquido ou gás na fratura; linha de fratura bem definida; recuo angulado do muro posterior. Fratura PATOLÓGICA: baixo sinal difuso em T1; envolve elementos posteriores; componente de partes moles paravertebral; lesão focal arredondada; recuo arredondado do muro posterior.",
+      "secao": "Cap. 8 — Radiologia na investigação da fratura",
+      "cit": [
+        [
+          0,
+          121282,
+          418
+        ]
+      ],
+      "cit_sha": "20162d5103206de8"
+    },
+    {
+      "afirmacao": "Escore META para etiologia de fratura vertebral na RM: pontuação ≤ 4 sugere fratura de insuficiência e ≥ 5 sugere fratura patológica. Há evidências de que sua aplicação seja menos efetiva por profissionais menos experientes.",
+      "secao": "Cap. 8 — Radiologia na investigação da fratura",
+      "cit": [
+        [
+          0,
+          123038,
+          646
+        ]
+      ],
+      "cit_sha": "ec3d0b824ae1d0f6"
+    },
+    {
+      "afirmacao": "⚠️ A RM é a ÚNICA ferramenta consistente para demonstrar EDEMA ÓSSEO no corpo vertebral fraturado — achado tipicamente relacionado a fraturas agudas/subagudas e usado inclusive como critério de seleção de pacientes que se beneficiam de vertebroplastia/cifoplastia. ⚠️ O tempo de permanência do edema ósseo após uma fratura é VARIÁVEL, podendo durar vários meses.",
+      "secao": "Cap. 8 — Radiologia na investigação da fratura",
+      "cit": [
+        [
+          0,
+          125111,
+          613
+        ]
+      ],
+      "cit_sha": "a79a2ac66534ed76"
+    },
+    {
+      "afirmacao": "⚠️ FRATURA ATÍPICA POR BISFOSFONATO: além das fraturas por insuficiência óssea, o uso de bisfosfonatos está relacionado ao surgimento de fraturas atípicas por ESTRESSE nas regiões SUBTROCANTÉRICAS dos fêmures. Por isso, TODA dor na coxa ou na virilha em paciente em uso dessas medicações deve ser investigada por RADIOGRAFIA BILATERAL DAS COXAS; em casos negativos e de alta suspeita clínica, deve-se considerar complementação com RM da coxa do lado da queixa.",
+      "secao": "Cap. 8 — Radiologia na investigação da fratura",
+      "cit": [
+        [
+          0,
+          125769,
+          466
+        ]
+      ],
+      "cit_sha": "828173b9c8e94320"
+    },
+    {
+      "afirmacao": "Critérios para o diagnóstico de fratura atípica subtrocantérica: a fratura deve estar na DIÁFISE FEMORAL, DISTAL ao trocânter menor, e devem estar presentes ao menos 4 dos 5 critérios MAIORES — os critérios menores não são necessários para o diagnóstico.",
+      "secao": "Cap. 8 — Radiologia na investigação da fratura",
+      "cit": [
+        [
+          0,
+          126300,
+          196
+        ]
+      ],
+      "cit_sha": "95fa0693776202bb"
+    },
+    {
+      "afirmacao": "Critérios MAIORES da fratura atípica subtrocantérica — só se aplicam quando a fratura está na DIÁFISE FEMORAL, DISTAL ao trocânter menor, e basta que estejam presentes ao menos 4 dos 5: estar relacionada a trauma de baixa energia, como queda da própria altura; o traço se inicia no córtex LATERAL e tem trajeto substancialmente TRANSVERSAL, embora possa se tornar oblíquo medialmente; fraturas completas acometem ambos os córtex e as incompletas apenas o córtex lateral; não cominutiva ou minimamente cominutiva; espessamento cortical focal na face lateral junto ao local da fratura.",
+      "secao": "Cap. 8 — Radiologia na investigação da fratura",
+      "cit": [
+        [
+          0,
+          126300,
+          634
+        ]
+      ],
+      "cit_sha": "5230fa960c5811a7"
+    },
+    {
+      "afirmacao": "Critérios MENORES da fratura atípica subtrocantérica — ⚠️ NÃO são necessários para o diagnóstico, que se faz com ao menos 4 dos 5 critérios MAIORES: diáfise com espessamento cortical difuso; sintomas prodrômicos unilaterais ou bilaterais de dor vaga na virilha ou coxa; acometimento bilateral; consolidação tardia.",
+      "secao": "Cap. 8 — Radiologia na investigação da fratura",
+      "cit": [
+        [
+          0,
+          126300,
+          822
+        ]
+      ],
+      "cit_sha": "7add9753bd6de087"
+    },
+    {
+      "afirmacao": "O cálcio é o macromineral mais abundante do corpo humano, correspondendo de 1% a 2% do peso corporal; desse total, 99% concentram-se nos ossos. Minerais cuja demanda é superior a 1.000 mg/dia são classificados como macrominerais.",
+      "secao": "Cap. 9 — Cálcio e outros minerais",
+      "cit": [
+        [
+          0,
+          129676,
+          245
+        ]
+      ],
+      "cit_sha": "ff450d4df0e6133d"
+    },
+    {
+      "afirmacao": "Processos do organismo que dependem do cálcio: contração muscular, secreção de hormônios, ativação de enzimas, condução de impulsos nervosos, manutenção de níveis pressóricos adequados e formação e manutenção da massa óssea.",
+      "secao": "Cap. 9 — Cálcio e outros minerais",
+      "cit": [
+        [
+          0,
+          130047,
+          236
+        ]
+      ],
+      "cit_sha": "9f558630ba57d1ca"
+    },
+    {
+      "afirmacao": "O MAGNÉSIO é essencial para o funcionamento da paratireoide, glândula responsável pela secreção do paratormônio (PTH); além disso, a hidrolase envolvida na ativação da vitamina D é dependente de magnésio.",
+      "secao": "Cap. 9 — Cálcio e outros minerais",
+      "cit": [
+        [
+          0,
+          130568,
+          217
+        ]
+      ],
+      "cit_sha": "6fff4e806676fc0e"
+    },
+    {
+      "afirmacao": "A absorção do cálcio depende de pH ÁCIDO e ocorre por duas vias: transcelular e paracelular. A transcelular é a predominante, ocorre no DUODENO, é ativa e saturável, e é dependente do calcitriol [1,25(OH)2D], que modula a calbindina e os canais TRPV6 (borda em escova do enterócito) e TRPV5 (rins). A via paracelular transcorre na metade inferior do intestino delgado, é passiva e não saturável.",
+      "secao": "Cap. 9 — Cálcio e outros minerais",
+      "cit": [
+        [
+          0,
+          131504,
+          1023
+        ]
+      ],
+      "cit_sha": "3e80667434c6de2a"
+    },
+    {
+      "afirmacao": "Cerca de 30% do cálcio da dieta é biodisponível. O leite e seus derivados dispõem do cálcio mais bem absorvido, ao passo que produtos enriquecidos podem ter menor digestibilidade e biodisponibilidade. Vegetais de folhas verdes são ricos em cálcio, mas a presença de FITATOS e OXALATOS pode dificultar a absorção.",
+      "secao": "Cap. 9 — Cálcio e outros minerais",
+      "cit": [
+        [
+          0,
+          134131,
+          400
+        ]
+      ],
+      "cit_sha": "7f3ae73584efd5d2"
+    },
+    {
+      "afirmacao": "⚠️ SÓDIO E CÁLCIO: dietas ricas em cloreto de sódio prejudicam a absorção do cálcio (ambos competem pelo mesmo sítio de absorção) e aumentam a excreção renal de cálcio. Calcula-se que a cada 2 g de sódio ingeridos haja aumento na excreção renal de cálcio da ordem de 300 a 400 mg. O fenômeno só ocorre com ingestão acima de 2,4 g de sódio por dia — e no Brasil a média de consumo é de 9,34 g/dia.",
+      "secao": "Cap. 9 — Cálcio e outros minerais",
+      "cit": [
+        [
+          0,
+          134532,
+          509
+        ]
+      ],
+      "cit_sha": "11d9d70e22db4b19"
+    },
+    {
+      "afirmacao": "O consumo diário de até QUATRO xícaras de café coado, equivalente a 400 mg de cafeína, parece não alterar o metabolismo do cálcio nem a massa óssea, nem aumentar o risco de fraturas ou quedas — sendo dose segura para adultos saudáveis. Mulheres após a menopausa parecem se beneficiar de consumo menor, de até três xícaras (300 mg de cafeína), já que quantidades superiores podem se relacionar a maior risco de fraturas.",
+      "secao": "Cap. 9 — Cálcio e outros minerais",
+      "cit": [
+        [
+          0,
+          135754,
+          453
+        ]
+      ],
+      "cit_sha": "481a14ebdf561deb"
+    },
+    {
+      "afirmacao": "Dietas veganas ou vegetarianas isentas de lácteos podem colocar seus adeptos em risco de INADEQUAÇÃO de ingestão de cálcio; há dados de que esses modelos alimentares parecem contribuir com baixa densidade mineral óssea, aumentando as chances de fraturas. Adeptos devem ser bem orientados sobre a dieta e uma eventual necessidade de suplementação de cálcio.",
+      "secao": "Cap. 9 — Cálcio e outros minerais",
+      "cit": [
+        [
+          0,
+          136208,
+          482
+        ]
+      ],
+      "cit_sha": "dfa729d58b01b04b"
+    },
+    {
+      "afirmacao": "A dieta do Mediterrâneo parece ser PROTETORA contra a osteoporose, com menor risco de fratura em mulheres de meia-idade e idosas e menor risco de fratura de quadril em mulheres e homens acima de 60 anos — possivelmente pela presença de alimentos fontes de cálcio, magnésio e antioxidantes.",
+      "secao": "Cap. 9 — Cálcio e outros minerais",
+      "cit": [
+        [
+          0,
+          136691,
+          364
+        ]
+      ],
+      "cit_sha": "31eaeb503c518c9e"
+    },
+    {
+      "afirmacao": "Dietas CETOGÊNICAS, caracterizadas pelo baixo consumo de carboidrato, mostraram-se negativas à saúde óssea em estudos EXPERIMENTAIS, comprometendo a arquitetura do osso trabecular e cortical — efeitos difíceis de extrapolar para humanos. A adesão por longos períodos pode limitar o acesso a algumas fontes de magnésio, como os grãos integrais.",
+      "secao": "Cap. 9 — Cálcio e outros minerais",
+      "cit": [
+        [
+          0,
+          137738,
+          2361
+        ]
+      ],
+      "cit_sha": "1d218dad066faabf"
+    },
+    {
+      "afirmacao": "Os PREBIÓTICOS atuam de maneira positiva na absorção do cálcio; tanto em crianças em fase de crescimento como em mulheres menopausadas esse tipo de fibra tem efeito benéfico no turnover ósseo e poderia atuar na prevenção de perda óssea na menopausa.",
+      "secao": "Cap. 9 — Cálcio e outros minerais",
+      "cit": [
+        [
+          0,
+          140100,
+          257
+        ]
+      ],
+      "cit_sha": "79f5dbe1bf253fdc"
+    },
+    {
+      "afirmacao": "⚠️ PANORAMA BRASILEIRO DO CONSUMO DE CÁLCIO: uma metanálise de ingestão em adultos de 74 países achou que apenas países nórdicos atingiam a recomendação; no Brasil, a média de consumo é de 505 mg. Outro estudo em população IDOSA verificou prevalência de inadequação de ingestão desse mineral de até 80%.",
+      "secao": "Cap. 9 — Cálcio e outros minerais",
+      "cit": [
+        [
+          0,
+          138158,
+          336
+        ]
+      ],
+      "cit_sha": "e5126480cdfa4dbc"
+    },
+    {
+      "afirmacao": "Acredita-se que até 65% da população mundial apresente algum grau de intolerância a lactose. ⚠️ Os indivíduos com intolerância derivada do polimorfismo LCT -13910C>T NÃO apresentam alteração na absorção do cálcio; o problema é que costumam diminuir o consumo de lácteos por acesso limitado a produtos sem lactose ou por receio dos sintomas.",
+      "secao": "Cap. 9 — Cálcio e outros minerais",
+      "cit": [
+        [
+          0,
+          138495,
+          698
+        ]
+      ],
+      "cit_sha": "2e2c7ea83c627dd5"
+    },
+    {
+      "afirmacao": "A educação nutricional é importante para que o consumo de lácteos não seja retirado da alimentação sem necessidade; o aconselhamento sobre produtos não lácteos fortificados, produtos isentos de lactose e outras fontes do mineral são ferramentas para adequar a ingestão.",
+      "secao": "Cap. 9 — Cálcio e outros minerais",
+      "cit": [
+        [
+          0,
+          139194,
+          352
+        ]
+      ],
+      "cit_sha": "b8cf7338fb3f2892"
+    },
+    {
+      "afirmacao": "⚠️ A suplementação com sais de cálcio SÓ deve ser considerada quando há impossibilidade de aporte dietético suficiente. Destaca-se o CARBONATO — o mais amplamente usado, de menor custo e maior evidência científica —, embora necessite de acidificação gástrica para melhor absorção. Em pacientes com ACLORIDRIA, GASTRECTOMIA ou LITÍASE RENAL dá-se preferência a sais como o CITRATO de cálcio, que exigem maior número de comprimidos; de modo geral recomenda-se 1 a 2 comprimidos de citrato de cálcio na apresentação de 250 mg. ⚠️ O manual NÃO diz se os 250 mg da apresentação são de cálcio ELEMENTAR ou do sal — e ele próprio informa, logo adiante, que o citrato tem pouco mais de um quinto de cálcio elementar. Confira a apresentação antes de converter essa contagem de comprimidos em miligramas de cálcio.",
+      "secao": "Cap. 9 — Cálcio e outros minerais",
+      "cit": [
+        [
+          0,
+          140709,
+          659
+        ]
+      ],
+      "cit_sha": "aa76d3779cca0a9f"
+    },
+    {
+      "afirmacao": "Percentual de CÁLCIO ELEMENTAR dos sais disponíveis no mercado brasileiro: carbonato de cálcio 40%, fosfato de cálcio 38%, citrato de cálcio 21%, lactato de cálcio 13% e gluconato de cálcio 9%.",
+      "secao": "Cap. 9 — Cálcio e outros minerais",
+      "cit": [
+        [
+          0,
+          141606,
+          25
+        ],
+        [
+          0,
+          141686,
+          22
+        ],
+        [
+          0,
+          141761,
+          20
+        ],
+        [
+          0,
+          141897,
+          20
+        ],
+        [
+          0,
+          141971,
+          20
+        ],
+        [
+          0,
+          142047,
+          21
+        ]
+      ],
+      "cit_sha": "8711f7e3d4a2360c"
+    },
+    {
+      "afirmacao": "O MAGNÉSIO: entre 50% e 60% do total corporal encontra-se nos ossos; é identificado em cereais integrais, vegetais folhosos, algumas oleaginosas e tubérculos. A recomendação para mulheres e homens acima de 51 anos é de 320 e 420 mg, respectivamente. Cerca de 30% a 50% do magnésio consumido é absorvido, por transporte ativo na ocasião de baixa ingestão.",
+      "secao": "Cap. 9 — Cálcio e outros minerais",
+      "cit": [
+        [
+          0,
+          142303,
+          99
+        ],
+        [
+          0,
+          142424,
+          52
+        ],
+        [
+          0,
+          142477,
+          58
+        ],
+        [
+          0,
+          142585,
+          54
+        ],
+        [
+          0,
+          142692,
+          50
+        ],
+        [
+          0,
+          142799,
+          30
+        ],
+        [
+          0,
+          142884,
+          46
+        ],
+        [
+          0,
+          142986,
+          56
+        ],
+        [
+          0,
+          143096,
+          22
+        ]
+      ],
+      "cit_sha": "7fea2313b887e866"
+    },
+    {
+      "afirmacao": "⚠️ A escolha de um ESTILO DE VIDA pode influenciar entre 20% e 40% o pico da massa óssea do adulto. A osteoporose é uma doença que pode ser prevenida quando se adotam precocemente hábitos saudáveis: prática de exercícios físicos, dieta com adequado aporte de cálcio E PROTEÍNAS, ingestão moderada de bebida alcoólica e cessação do tabagismo.",
+      "secao": "Cap. 9 — Cálcio e outros minerais",
+      "cit": [
+        [
+          0,
+          142536,
+          48
+        ],
+        [
+          0,
+          142640,
+          51
+        ],
+        [
+          0,
+          142743,
+          55
+        ],
+        [
+          0,
+          142830,
+          53
+        ],
+        [
+          0,
+          142931,
+          54
+        ],
+        [
+          0,
+          143043,
+          52
+        ],
+        [
+          0,
+          143153,
+          30
+        ]
+      ],
+      "cit_sha": "feb5790b92aa675a"
+    },
+    {
+      "afirmacao": "A vitamina D abrange um grupo de secosteroides lipossolúveis que podem ser obtidos por fontes alimentares ou pela síntese cutânea a partir do 7-deidrocolesterol (7-DHC), sob a ação da radiação solar ultravioleta.",
+      "secao": "Cap. 10 — Vitaminas D e K",
+      "cit": [
+        [
+          0,
+          144765,
+          225
+        ]
+      ],
+      "cit_sha": "131c008572a46f36"
+    },
+    {
+      "afirmacao": "A SÍNTESE CUTÂNEA representa a principal fonte de vitamina D para a maioria dos indivíduos; na dieta, ela é encontrada como ergocalciferol (vitamina D2) ou colecalciferol (vitamina D3).",
+      "secao": "Cap. 10 — Vitaminas D e K",
+      "cit": [
+        [
+          0,
+          145248,
+          197
+        ]
+      ],
+      "cit_sha": "d794a98ccae32831"
+    },
+    {
+      "afirmacao": "A forma biologicamente ativa da vitamina D, 1,25(OH)2D ou calcitriol, entra nas células-alvo e interage com o receptor de vitamina D (VDR); o complexo se combina com o receptor do ácido retinoico e regula a transcrição de diversos genes. Os principais órgãos-alvo da 1,25(OH)2D são INTESTINO, OSSO, PARATIREOIDE e RIM.",
+      "secao": "Cap. 10 — Vitaminas D e K",
+      "cit": [
+        [
+          0,
+          145983,
+          494
+        ]
+      ],
+      "cit_sha": "912dc02a6d281aa8"
+    },
+    {
+      "afirmacao": "A vitamina D é crítica para a saúde óssea porque facilita a absorção intestinal de cálcio, modula a secreção de paratormônio (PTH), estimula a mineralização óssea e atua na remodelação óssea.",
+      "secao": "Cap. 10 — Vitaminas D e K",
+      "cit": [
+        [
+          0,
+          146478,
+          182
+        ]
+      ],
+      "cit_sha": "86b77c9949b62eb0"
+    },
+    {
+      "afirmacao": "Existe consenso de que a concentração sérica de 25(OH)D é o MELHOR indicador para avaliação do status de vitamina D, refletindo a ingestão alimentar somada à produção endógena.",
+      "secao": "Cap. 10 — Vitaminas D e K",
+      "cit": [
+        [
+          0,
+          147272,
+          176
+        ]
+      ],
+      "cit_sha": "1b5841da4b64bd37"
+    },
+    {
+      "afirmacao": "GRUPOS EM QUE A DOSAGEM DE 25(OH)D ESTÁ RECOMENDADA: idosos, negros, obesos, gestantes, indivíduos institucionalizados ou com limitada exposição solar, usuários de filtro solar e usuários crônicos de medicamentos que interfiram na metabolização hepática ou na absorção da vitamina D (anticonvulsivantes, antirretrovirais, cetoconazol, isoniazida, orlistate e colestiramina).",
+      "secao": "Cap. 10 — Vitaminas D e K",
+      "cit": [
+        [
+          0,
+          147657,
+          449
+        ]
+      ],
+      "cit_sha": "5745692c77990fa0"
+    },
+    {
+      "afirmacao": "Condições clínicas associadas à deficiência de vitamina D: osteoporose, hiperparatireoidismo primário e secundário, lúpus eritematoso sistêmico, artrite reumatoide, tuberculose, câncer, diabetes mellitus tipo 1, doença renal crônica e doenças disabsortivas intestinais, entre outras.",
+      "secao": "Cap. 10 — Vitaminas D e K",
+      "cit": [
+        [
+          0,
+          148107,
+          294
+        ]
+      ],
+      "cit_sha": "39f138da2044e5da"
+    },
+    {
+      "afirmacao": "⚠️ VALORES DE REFERÊNCIA DE 25(OH)D adotados pela SBEM e pela SBPC no manual: deficiência < 20 ng/mL; adequado para a população geral < 65 anos: 20-60 ng/mL; IDEAL para população de risco: 30 a 60 ng/mL; risco de intoxicação: > 100 ng/mL. ⚠️ Ver conflito declarado com o núcleo (Endocrine Society 2024: não há alvo numérico universal e não se rastreia 25-OH-vitamina D de rotina na população geral saudável).",
+      "secao": "Cap. 10 — Vitaminas D e K",
+      "cit": [
+        [
+          0,
+          150321,
+          242
+        ]
+      ],
+      "cit_sha": "10304cb924028ea4",
+      "nucleo_sha": "e420852b1d09"
+    },
+    {
+      "afirmacao": "Para a população de RISCO, valores de 25(OH)D < 30 ng/mL têm impacto negativo potencial: concentrações acima de 30 ng/mL são recomendadas para idosos, \"caidores crônicos\", gestantes, submetidos a cirurgia bariátrica, usuários de medicamentos que interfiram no metabolismo da vitamina D e em condições como osteoporose, osteomalácia, hiperparatireoidismo secundário, diabetes mellitus tipo 1, câncer, doença renal crônica e má absorção intestinal.",
+      "secao": "Cap. 10 — Vitaminas D e K",
+      "cit": [
+        [
+          0,
+          150564,
+          505
+        ]
+      ],
+      "cit_sha": "275d95610f1f05d1"
+    },
+    {
+      "afirmacao": "⚠️ Em adultos, a deficiência GRAVE de vitamina D — 25(OH)D < 12 ng/mL — pode levar à OSTEOMALÁCIA, doença causada por deficiente mineralização da matriz osteoide, com DOR ÓSSEA, fraqueza muscular, deformidades, pseudofraturas e fraturas. Concentrações não tão baixas já podem levar a HIPERPARATIREOIDISMO SECUNDÁRIO e, consequentemente, a aumento da reabsorção óssea, perda de massa óssea, piora da qualidade óssea e aumento do risco de fraturas por fragilidade.",
+      "secao": "Cap. 10 — Vitaminas D e K",
+      "cit": [
+        [
+          0,
+          151095,
+          470
+        ]
+      ],
+      "cit_sha": "5bc143561917ecd8"
+    },
+    {
+      "afirmacao": "APESAR DE ALGUMA CONTROVÉRSIA a respeito, diretrizes e posicionamentos internacionais recomendam suplementação de 800-2.000 UI de vitamina D para indivíduos > 65 anos ou com osteoporose, objetivando a prevenção de QUEDAS e FRATURAS.",
+      "secao": "Cap. 10 — Vitaminas D e K",
+      "cit": [
+        [
+          0,
+          151566,
+          229
+        ]
+      ],
+      "cit_sha": "b25f0ae902ef2ad5"
+    },
+    {
+      "afirmacao": "Metanálise de Bischoff-Ferrari et al. (2012) com 31.022 participantes com mais de 65 anos: a ingestão diária de vitamina D acima de 800 UI levou a redução de 30% no risco de fratura de QUADRIL e de 14% no risco de outras fraturas NÃO vertebrais. A combinação de suplementação de cálcio E vitamina D tem o grau de evidência mais forte, apontando redução de 33% no risco de fratura de quadril em idosos institucionalizados.",
+      "secao": "Cap. 10 — Vitaminas D e K",
+      "cit": [
+        [
+          0,
+          151796,
+          468
+        ]
+      ],
+      "cit_sha": "ada09b89b687e24a"
+    },
+    {
+      "afirmacao": "⚠️ CORRIGIR A VITAMINA D ANTES DE INICIAR O FÁRMACO: o status adequado de vitamina D melhora a resposta ao tratamento com bisfosfonatos e reduz o risco de HIPOCALCEMIA, especialmente com antirreabsortivos potentes como o ácido zoledrônico ou o denosumabe — por isso recomenda-se a correção da deficiência de vitamina D ANTES da instituição de terapia farmacológica para a osteoporose.",
+      "secao": "Cap. 10 — Vitaminas D e K",
+      "cit": [
+        [
+          0,
+          152265,
+          344
+        ]
+      ],
+      "cit_sha": "54ac166ca1009ef9"
+    },
+    {
+      "afirmacao": "⚠️ ESQUEMA DE REPOSIÇÃO: quando a 25(OH)D está abaixo de 20 ng/mL, recomenda-se dose de ATAQUE com colecalciferol 50.000 UI por SEMANA ou 7.000 UI por DIA durante 6 a 8 semanas, seguida de MANUTENÇÃO de 7.000-14.000 UI por semana ou 1.000-2.000 UI por dia, visando manter a 25(OH)D acima de 30 ng/mL. Indivíduos obesos ou disabsortivos (incluindo pós-bariátricos) podem necessitar de doses DUAS A CINCO vezes maiores, tituladas pelas concentrações sanguíneas almejadas.",
+      "secao": "Cap. 10 — Vitaminas D e K",
+      "cit": [
+        [
+          0,
+          152610,
+          564
+        ]
+      ],
+      "cit_sha": "9f4e6f4a314bbea7"
+    },
+    {
+      "afirmacao": "A suplementação de vitamina D representa medida PREVENTIVA e também tratamento COADJUVANTE às demais terapias para osteoporose.",
+      "secao": "Cap. 10 — Vitaminas D e K",
+      "cit": [
+        [
+          0,
+          153175,
+          140
+        ]
+      ],
+      "cit_sha": "e6f201854727ebeb"
+    },
+    {
+      "afirmacao": "Há dois tipos naturais de vitamina K: vitamina K1 ou filoquinona, sintetizada por plantas e cianobactérias, e vitamina K2 ou menaquinonas (MK-n). Exceto a MK-4, as menaquinonas são sintetizadas por bactérias anaeróbias da flora intestinal ou presentes em alimentos fermentados, como queijos e o \"natto\". A MK-4 é sintetizada a partir da filoquinona e é a forma predominante de vitamina K no corpo humano. Na dieta ocidental, a principal fonte é a filoquinona, predominantemente em hortaliças, vegetais folhosos e óleos vegetais.",
+      "secao": "Cap. 10 — Vitaminas D e K",
+      "cit": [
+        [
+          0,
+          153889,
+          1064
+        ]
+      ],
+      "cit_sha": "36ef499b1a5d01db"
+    },
+    {
+      "afirmacao": "A vitamina K é cofator essencial da gama-glutamilcarboxilase, que catalisa a carboxilação de resíduos de ácido glutâmico presentes em diversas proteínas dependentes de vitamina K (VKDPs), transformando-os em ácido gamacarboxiglutâmico — etapa fundamental para que essas proteínas se tornem biologicamente ativas. Elas estão envolvidas na coagulação sanguínea, no metabolismo ósseo e na prevenção da calcificação vascular.",
+      "secao": "Cap. 10 — Vitaminas D e K",
+      "cit": [
+        [
+          0,
+          156499,
+          441
+        ]
+      ],
+      "cit_sha": "a63521cc23a3ac62"
+    },
+    {
+      "afirmacao": "A deficiência de vitamina K caracteriza-se clinicamente por sangramentos espontâneos, com prolongamento do tempo de protrombina (TP) e do tempo de tromboplastina parcial ativado (TTPa).",
+      "secao": "Cap. 10 — Vitaminas D e K",
+      "cit": [
+        [
+          0,
+          157910,
+          185
+        ]
+      ],
+      "cit_sha": "82496fbde09c4226"
+    },
+    {
+      "afirmacao": "A deficiência de vitamina K é RARA e ocorre geralmente por uso de medicamentos (anticoagulantes antagonistas de vitamina K, antibióticos e anticonvulsivantes), doenças hepáticas e pancreáticas, etilismo e síndromes disabsortivas intestinais.",
+      "secao": "Cap. 10 — Vitaminas D e K",
+      "cit": [
+        [
+          0,
+          159437,
+          232
+        ]
+      ],
+      "cit_sha": "d91abc2aff75a1ca"
+    },
+    {
+      "afirmacao": "NÃO há, até o momento, definição de ingestão recomendada diária (RDA) para a vitamina K — há apenas a indicação de ingestão adequada (IA), ou seja, o nível médio de ingestão de filoquinona por indivíduos saudáveis.",
+      "secao": "Cap. 10 — Vitaminas D e K",
+      "cit": [
+        [
+          0,
+          159670,
+          207
+        ]
+      ],
+      "cit_sha": "905e993d2fca9e31"
+    },
+    {
+      "afirmacao": "O Institute of Medicine estabeleceu 90 µg/dia para mulheres e 120 µg/dia para homens adultos como adequados; o estudo brasileiro BRAZOS, com 2.344 homens e mulheres maiores de 40 anos, encontrou consumo médio de vitamina K próximo a 40 µg/dia; e o Comitê Europeu estabeleceu como adequada a ingestão de filoquinona em 1 µg/kg/dia para todas as idades e ambos os sexos.",
+      "secao": "Cap. 10 — Vitaminas D e K",
+      "cit": [
+        [
+          0,
+          158294,
+          549
+        ]
+      ],
+      "cit_sha": "4dbf14f57851771b"
+    },
+    {
+      "afirmacao": "Estudos sugerem que, para adultos saudáveis desenvolverem deficiência SINTOMÁTICA de vitamina K, é necessária ingestão de filoquinona menor que 10 µg/dia por 2 a 3 semanas.",
+      "secao": "Cap. 10 — Vitaminas D e K",
+      "cit": [
+        [
+          0,
+          159270,
+          166
+        ]
+      ],
+      "cit_sha": "d846a3439a7505d5"
+    },
+    {
+      "afirmacao": "⚠️ Pelo rápido turnover, a concentração plasmática de filoquinona reflete apenas o consumo das últimas 24 horas e NÃO deve ser utilizada como marcador do status nutricional; até o momento não existem parâmetros para definir status adequado de vitamina K.",
+      "secao": "Cap. 10 — Vitaminas D e K",
+      "cit": [
+        [
+          0,
+          159878,
+          306
+        ]
+      ],
+      "cit_sha": "4d03501b00565f6a"
+    },
+    {
+      "afirmacao": "Metanálise de Hao et al., com 80.982 indivíduos de ambos os sexos com mais de 30 anos: o aumento de 50 µg no consumo diário de filoquinona associou-se a redução de 3% na ocorrência de fraturas.",
+      "secao": "Cap. 10 — Vitaminas D e K",
+      "cit": [
+        [
+          0,
+          161329,
+          364
+        ]
+      ],
+      "cit_sha": "98f707f8cbea18f9"
+    },
+    {
+      "afirmacao": "Metanálise de Mott et al., com 11.112 adultos (principalmente mulheres na pós-menopausa e osteoporóticos): a suplementação oral de vitamina K associou-se a menor ocorrência de fraturas clínicas (2,24% versus 3,06%; odds ratio 0,72), mas sem diferença estatística na ocorrência de fraturas VERTEBRAIS (10,55% versus 10,82%; OR 0,96); o ganho de DMO ficou abaixo de 1% e de 2% nos grupos tratados por 1 e 2 anos.",
+      "secao": "Cap. 10 — Vitaminas D e K",
+      "cit": [
+        [
+          0,
+          161694,
+          1191
+        ]
+      ],
+      "cit_sha": "dc2198c89d1c0898"
+    },
+    {
+      "afirmacao": "Somente o JAPÃO recomenda a suplementação oral de MK-4 na dose de 45 mg/dia como terapêutica para a osteoporose, caso o paciente não atinja ingestão de 250-300 µg diários de vitamina K.",
+      "secao": "Cap. 10 — Vitaminas D e K",
+      "cit": [
+        [
+          0,
+          163505,
+          182
+        ]
+      ],
+      "cit_sha": "d791ddc842d36b68"
+    },
+    {
+      "afirmacao": "⚠️ CONCLUSÃO DO CAPÍTULO: metanálises robustas demonstram que a suplementação de vitamina D, especialmente quando associada a CÁLCIO, reduz o risco de fraturas de quadril e de fraturas não vertebrais. Já os estudos sobre vitamina K têm baixa qualidade e vieses metodológicos — portanto NÃO há evidências que justifiquem sua suplementação rotineira para prevenção ou tratamento da osteoporose, a não ser nos casos de deficiência comprovada.",
+      "secao": "Cap. 10 — Vitaminas D e K",
+      "cit": [
+        [
+          0,
+          163688,
+          474
+        ]
+      ],
+      "cit_sha": "c58e9634994c7b70"
+    },
+    {
+      "afirmacao": "A osteoporose é entendida como uma SÍNDROME, e a fratura e a fragilidade são consideradas causas importantes de incapacidade. A fratura de quadril é um evento capaz de provocar uma mudança de vida, estando associada a hospitalização prolongada, incapacidade e mortalidade.",
+      "secao": "Cap. 11 — Exercícios físicos e reabilitação pós-fratura",
+      "cit": [
+        [
+          0,
+          168394,
+          246
+        ]
+      ],
+      "cit_sha": "566148d0aec2057f"
+    },
+    {
+      "afirmacao": "Reabilitar o indivíduo com osteoporose deve abranger não somente a estabilização da fratura, mas também o tratamento de DOR e CONTRATURAS, a avaliação da capacidade funcional, a MOBILIZAÇÃO PRECOCE e a prescrição de exercícios — visando melhora da qualidade óssea, prevenção de quedas e melhor qualidade de vida.",
+      "secao": "Cap. 11 — Exercícios físicos e reabilitação pós-fratura",
+      "cit": [
+        [
+          0,
+          168641,
+          363
+        ]
+      ],
+      "cit_sha": "49f256fac3384937"
+    },
+    {
+      "afirmacao": "Após a estabilização de uma fratura, ainda na FASE AGUDA, deve ser iniciada a reabilitação, com equipe capacitada que inclua médico fisiatra, fisioterapeuta, terapeuta ocupacional, nutricionista, enfermeiro e muitas vezes também psicólogo e assistente social. Na fase aguda, um controle álgico adequado é necessário para facilitar a mobilização o mais rápido possível e com segurança.",
+      "secao": "Cap. 11 — Exercícios físicos e reabilitação pós-fratura",
+      "cit": [
+        [
+          0,
+          169150,
+          673
+        ]
+      ],
+      "cit_sha": "54afef1fa8eecff9"
+    },
+    {
+      "afirmacao": "⚠️ ANALGESIA APÓS A FRATURA: podem ser iniciados analgésicos simples como dipirona ou paracetamol e anti-inflamatórios, se não houver contraindicação. A persistência de dor não é incomum e pode ser necessário ampliar a escala analgésica com OPIOIDES — mas os opioides podem causar sonolência e interferir indiretamente em RISCO AUMENTADO DE QUEDAS e, por consequência, novas fraturas.",
+      "secao": "Cap. 11 — Exercícios físicos e reabilitação pós-fratura",
+      "cit": [
+        [
+          0,
+          169873,
+          558
+        ]
+      ],
+      "cit_sha": "e5acc84f0d6269e7"
+    },
+    {
+      "afirmacao": "Meios e agentes físicos que o médico fisiatra pode prescrever e orientar no manejo da dor e da inflamação: termoterapia, hidroterapia, eletroterapia, fototerapia, terapia manual e terapia por ondas de choque.",
+      "secao": "Cap. 11 — Exercícios físicos e reabilitação pós-fratura",
+      "cit": [
+        [
+          0,
+          170446,
+          877
+        ]
+      ],
+      "cit_sha": "f02822944c56af31"
+    },
+    {
+      "afirmacao": "⚠️ CONTRAINDICAÇÃO ABSOLUTA: a colocação de implantes metálicos ou próteses contraindica de forma ABSOLUTA o uso de calor profundo, como ondas curtas e micro-ondas; o uso do ultrassom é risco relativo e deve ser avaliado individualmente. A terapia por ondas de choque pode ser utilizada com restrições quando sobre metais ou próteses.",
+      "secao": "Cap. 11 — Exercícios físicos e reabilitação pós-fratura",
+      "cit": [
+        [
+          0,
+          170689,
+          1007
+        ]
+      ],
+      "cit_sha": "b8a7cde99770496e"
+    },
+    {
+      "afirmacao": "O mecanismo de trauma e o imobilismo podem levar a dor de caráter nociceptivo e a DOR REFERIDA, distante do local fraturado — geralmente secundárias à síndrome dolorosa miofascial, com \"nódulos\" musculares (pontos-gatilho). A liberação miofascial deve ser realizada quando houver pontos-gatilho e pode ser feita manualmente, com infiltrações anestésicas ou agulhamento a seco.",
+      "secao": "Cap. 11 — Exercícios físicos e reabilitação pós-fratura",
+      "cit": [
+        [
+          0,
+          171718,
+          619
+        ]
+      ],
+      "cit_sha": "626c824d984982a3"
+    },
+    {
+      "afirmacao": "⚠️ COLETES: são indicados nas fraturas VERTEBRAIS, limitando a flexão e a extensão da coluna, mas devem ser utilizados COM CAUTELA e pelo MENOR TEMPO possível, pela possibilidade de dependência física e emocional e de piora da atrofia muscular da região toracolombar, com potencial PIORA DA QUALIDADE ÓSSEA.",
+      "secao": "Cap. 11 — Exercícios físicos e reabilitação pós-fratura",
+      "cit": [
+        [
+          0,
+          172374,
+          429
+        ]
+      ],
+      "cit_sha": "270260b5a6b3ee9c"
+    },
+    {
+      "afirmacao": "Após uma fratura, o paciente pode apresentar limitações em atividades básicas como se alimentar ou se vestir sozinho — limitações que contribuem para menor participação nas atividades e podem levar a alterações de humor e isolamento social.",
+      "secao": "Cap. 11 — Exercícios físicos e reabilitação pós-fratura",
+      "cit": [
+        [
+          0,
+          171324,
+          297
+        ]
+      ],
+      "cit_sha": "a38471b7df7f5698"
+    },
+    {
+      "afirmacao": "Faz parte da avaliação funcional determinar o prognóstico individual de cada paciente e prescrever um programa global de reabilitação, incluindo tecnologias assistidas como cadeiras de rodas, cadeiras de banho, bengalas, muletas e andadores, que têm a capacidade de melhorar a independência e a qualidade de vida. Uma avaliação meticulosa dos antecedentes patológicos e da funcionalidade PRÉVIA à fratura permite o planejamento adequado dos objetivos da reabilitação.",
+      "secao": "Cap. 11 — Exercícios físicos e reabilitação pós-fratura",
+      "cit": [
+        [
+          0,
+          170962,
+          2237
+        ],
+        [
+          0,
+          173200,
+          174
+        ]
+      ],
+      "cit_sha": "16eb8f354c58197d"
+    }
+  ],
+  "conflito_direcao": "nucleo_prevalece",
+  "nucleo_citado": [
+    "⚠️ PORTEIRO OBRIGATÓRIO ANTES DE TRATAR \"OSTEOPOROSE IDIOPÁTICA\" — OLHAR A FOSFATASE ALCALINA",
+    "FA persistentemente BAIXA, corrigida para IDADE E SEXO",
+    "estratificar o risco de fratura com a FRAX + os limiares de intervenção do NOGG (dependentes da idade), classificando em baixo, alto e muito alto risco",
+    "NÃO rastrear 25-OH-vitamina D de rotina na população geral saudável e não há alvo numérico universal",
+    "Cálcio pela dieta + vitamina D ≥800 UI/dia (sobretudo institucionalizados/sem exposição solar); suplementar cálcio+vitamina D quando a ingestão for insuficiente."
+  ],
+  "extracao": "⚠️ COBERTURA PARCIAL DECLARADA — O TEXTO-FONTE TEM 11 DOS 20 CAPÍTULOS. O PDF do Drive tem 13,3 MB e estoura o limite de 10 MB do download do conector; o texto teve de vir por `read_file_content`, que corta em ~175.000 caracteres. O corte cai no meio do capítulo 11. Estão ÍNTEGROS os capítulos 1 a 10 e a maior parte do 11: conceito e impacto em saúde pública, fisiopatologia, fatores de risco, FRAX, quadro clínico, exames laboratoriais, densitometria, radiologia da fratura, cálcio e minerais, vitaminas D e K, exercícios e reabilitação pós-fratura. Estão AUSENTES os capítulos 12 a 20 — prevenção de quedas (cap. 12), adesão do paciente (13), terapia hormonal e SERMs (14), bisfosfonatos (15), denosumabe (16), teriparatida (17), falha de tratamento (18), abordagem nas fraturas de fragilidade (19) e serviço de coordenação de fraturas/FLS (20). Por isso o campo `tema` NÃO promete tratamento farmacológico da osteoporose: para essa pergunta valem o núcleo (NOGG 2024 e ASBMR/BHOF 2024) e outra fonte. O que este extrato traz sobre fármaco é só o que aparece nos capítulos disponíveis (fratura atípica subtrocantérica por bisfosfonato no cap. 8; correção da vitamina D antes do antirreabsortivo no cap. 10; RANK-L/denosumabe e PTH intermitente/teriparatida como mecanismo no cap. 2). ⚠️ INTERCALAÇÃO DE COLUNAS: o PDF é de duas e três colunas e a extração do Drive intercala linhas de colunas vizinhas. Onde a frase verdadeira ficou partida por respingo da coluna ao lado, a citação usa ELISÃO DECLARADA com os pedaços na ordem do texto-fonte e buraco muito abaixo do limite. Trechos irrecuperavelmente embaralhados (o parágrafo de abertura de vários capítulos, a tabela de RDA de cálcio por faixa etária e as legendas de figura) NÃO foram extraídos — preferi perder o conteúdo a costurar prova. ⚠️ NÚMERO QUE NÃO EXTRAÍ DE PROPÓSITO: o quadro de indicações de rastreamento de fratura assintomática (cap. 8) saiu da extração como \"escore T ≤ 1,0\" e \"≤ 1,5\", sem o sinal de menos — no original (Cosman 2014) são -1,0 e -1,5. Extraí as faixas etárias e os demais critérios do quadro, e deixei os dois escores T de fora: publicá-los como estão inverteria o limiar, e \"consertá-los\" seria corrigir a fonte no extrato. ⚠️ INCOERÊNCIA INTERNA DA FONTE: o limite superior da osteopenia aparece três vezes com dois valores — \"escore T entre -1 e -2,5\" no texto do cap. 5 e \"entre -1,0 e -2,4\" na tabela do cap. 5 e no cap. 7. Extraí a forma tabelada (-1,1 a -2,4 / entre -1,0 e -2,4), que é a que o manual usa nas duas classificações formais.",
+  "nucleo_prevalece_porque": "A proibição da fonte é PONTO CEGO, não recomendação superada — e o buraco cego é exatamente onde mora o dano. Conferido no texto-fonte: (a) a frase que dispensa exames de rotina está no capítulo 6, e DUAS FRASES ADIANTE o próprio manual adota o painel de Diab e Watts, que INCLUI fosfatase alcalina — ou seja, ele se contradiz sozinho; (b) o quadro de interpretação laboratorial dele só mapeia FOSFATASE ALCALINA ELEVADA (hiperparatireoidismo), e FA BAIXA não aparece em lugar nenhum; (c) a palavra HIPOFOSFATASIA tem ZERO ocorrência no manual inteiro. Ou seja: a fonte não decidiu contra o porteiro do núcleo, ela nunca considerou a doença que o porteiro procura. O núcleo manda olhar a FA antes de tratar osteoporose idiopática porque na hipofosfatasia o BISFOSFONATO É CONTRAINDICADO (consenso canadense, Osteoporosis International 2019) — e esta base já perdeu essa contraindicação uma vez por roteamento. Seguir a frase do manual isolada devolveria o mesmo dano por outra porta.",
+  "auditoria": {
+    "data": "2026-08-09",
+    "fatos_tocados": [
+      10,
+      29,
+      30,
+      40,
+      43,
+      46,
+      47,
+      52,
+      62,
+      119,
+      124,
+      132,
+      153,
+      166,
+      171,
+      172,
+      187,
+      193,
+      222
+    ],
+    "achado": "Auditoria adversarial dos 227 fatos, um a um, contra o texto-fonte. 18 fatos com defeito semântico (7,9%): 17 corrigidos e 1 relatado sem edição. NÚMEROS: conferidos com FRONTEIRA de número (não substring) — os 227 fatos passam, zero número errado. Operadores de comparação conferidos par a par (operador+número) nos 21 fatos com limiar: zero inversão; as divergências são só sinônimo (\"acima de\" x \">\"). ⚠️ DEFEITO 1, O MAIS GRAVE — #10, ESCORE T SEM O SINAL DE MENOS, PUBLICADO. O quadro de critérios diagnósticos do cap. 1 saiu do PDF como \"escore t ≤ 2,5\" (offset 26371), e o fato REPRODUZIA esse número. Recuperado sozinho, ele diagnostica osteoporose em quem tem escore T zero ou positivo — ou seja, em todo mundo — e manda tratar densidade normal com antirreabsortivo. É exatamente o defeito que o extrator declarou ter evitado nos dois escores T do cap. 8 (#153): a política existia e não foi aplicada aqui. Há TRÊS ocorrências de escore T sem sinal no texto-fonte (26371, 114441, 114514); duas foram retidas, esta passou. CORRIGIDO pela saída 3 (encolher afirmação E citação): a citação passa a [[0,26407,179]], começando DEPOIS do número corrompido, e a afirmação traz só os três critérios íntegros do quadro, com nota de que o limiar densitométrico correto está nos fatos #6 e #8 do mesmo capítulo (que citam \"escore t ≤ -2,5\" com o sinal). ⚠️ DEFEITO 2 — #153, CONJUNÇÃO VIRADA EM CRITÉRIO DE IDADE. O extrator acertou em não publicar os escores T corrompidos (\"≤ 1,0\" e \"≤ 1,5\"), mas ENCOLHEU A CITAÇÃO SEM ENCOLHER A AFIRMAÇÃO — ao contrário: manteve as faixas etárias e apagou a condição. O fato passou a dizer \"rastrear mulheres acima de 70 e homens acima de 80; mulheres acima de 65 e homens acima de 70\", duas faixas sem nada que as diferencie, o que além de incoerente ALARGA a indicação (no manual a idade só vale COM o escore T abaixo do limiar). CORRIGIDO: a afirmação volta a marcar o escore T como condição obrigatória de cada faixa, sem publicar os dois valores corrompidos e sem publicar a relação entre eles (na forma corrompida a relação está invertida). ⚠️ DEFEITO 3 — #166, A COLUNA QUE DECIDE BENIGNO x MALIGNO NÃO ESTAVA NA CITAÇÃO. O fato distribui dez achados de RM entre \"fratura por insuficiência\" e \"fratura patológica\", mas a citação trazia só a tabela intercalada, SEM os cabeçalhos que dizem qual coluna é qual. Se a atribuição estivesse trocada, o fato mandaria chamar de benigna a fratura maligna. Os cabeçalhos (\"fatores sugestivos de etiologia da fratura vertebral / fraturas de insuficiência / fraturas patológicas\") estão CONTÍGUOS, imediatamente antes. CORRIGIDO pela saída 1 (tornar contígua): [[0,121282,418]]. A atribuição do extrator estava certa — agora está provada. ⚠️ DEFEITO 4 — #171/#172, FRATURA ATÍPICA SEM O LIMIAR E SEM A TOPOGRAFIA. (Achado levantado pelo coordenador contra o #170: o #170 está ÍNTEGRO — já traz \"diáfise femoral, distal ao trocânter menor\" e \"ao menos 4 dos 5\", literais e com citação contígua. O defeito está nos DOIS FATOS SEGUINTES.) #171 listava os cinco critérios maiores sem dizer que bastam quatro e sem a topografia obrigatória: quem exigir os cinco perde fratura atípica, quem aceitar um superdiagnostica. #172 listava os menores sem dizer que não são necessários. CORRIGIDOS pela saída 1: #171 → [[0,126300,634]], #172 → [[0,126300,822]], ambos contíguos e cobrindo o qualificador; as duas afirmações passam a carregar o limiar 4/5 e a topografia. ⚠️ DEFEITO 5 — #119/#124, O PORTEIRO DA FOSFATASE ALCALINA SEM O DANO QUE ELE EVITA. Os dois fatos anunciavam o conflito com o núcleo mas NÃO diziam o que está em jogo; o #124 terminava em \"ver conflito com o núcleo\", ponteiro que não existe para quem recebe o fato sozinho. CORRIGIDOS (só texto, citação intacta, nucleo_sha mantido): ambos passam a dizer que na HIPOFOSFATASIA o BISFOSFONATO É CONTRAINDICADO e que fosfatase alcalina persistentemente BAIXA, corrigida para IDADE E SEXO, investiga hipofosfatasia ANTES do antirreabsortivo. ⚠️ DEFEITO 6 — #43, TRÊS PILARES AFIRMADOS, UM PROVADO. A citação provava só \"pico de massa óssea inadequado\"; os outros dois pilares estão a 2.907 e 3.471 caracteres de distância (títulos de seção em 54959 e 55523) — costurar seria fabricar prova. CORRIGIDO pela saída 3 + ponteiro: #43 afirma agora só o que a citação prova e aponta os outros dois; e para o ponteiro cair sobre prova, as citações de #46 e #47 foram estendidas para trás (contíguas: [[0,54959,563]] e [[0,55523,438]]) de modo a INCLUIR os dois títulos de seção, e as afirmações passam a se identificar como segundo e terceiro pilar. ⚠️ DEFEITOS 7 a 12 — AFIRMAÇÃO ALÉM DA CITAÇÃO, todos corrigidos por contiguidade ou elisão curta: #40 (o quarto item da dinâmica da massa óssea ficava fora por um buraco de 1 caractere → [[0,52652,491]]); #62 (\"glicocorticoides\" afirmado sem lastro, separado por 182 chars de respingo de coluna → elisão [[0,64831,875],[0,65888,18]]); #29 (a segunda característica da remodelação → elisão com buraco 107); #30 (a metade final — \"qualquer estado que aumente o ritmo de remodelação favorece perda de osso\" e \"por isso as antirreabsortivas são tão eficazes\" — estava fora → contígua [[0,44853,1343]]); #52 (a primeira metade da afirmação estava fora → [[0,57947,252]]); #132 (\"baixa adesão, injeção inapropriada de teriparatida\" caíam dentro do buraco da elisão → peça do meio [[0,102015,55]], buracos 59 e 59); #193 (\"ácido retinoico\" → [[0,145983,494]]); #222 (a moldura \"meios e agentes físicos... manejo da dor e inflamação... o médico fisiatra pode prescrever\" estava fora → [[0,170446,877]]). ⚠️ DEFEITO 13 — #187, DOSE DE CITRATO DE CÁLCIO AMBÍGUA NA FONTE. \"1 a 2 comprimidos de citrato de cálcio na apresentação de 250 mg\" não diz se os 250 mg são do SAL ou de cálcio ELEMENTAR; combinado com o #188 (citrato = 21% de elementar), o leitor chega a 52-105 mg de cálcio elementar, ordem de grandeza errada para suplementação. Não dá para resolver sem corrigir a fonte. ACRESCENTADA RESSALVA ao fato, sem números novos. ⚠️ RELATADO SEM EDIÇÃO — #57, TABELA IRRECUPERAVELMENTE EMBARALHADA E MESMO ASSIM RECONSTRUÍDA. A citação é sopa de palavras de duas colunas (\"álcool baixo deficiência índice desordens baixa tabagismo má quedas sedentarismo de ingestão nutrição massa de alimentares...\"), e a afirmação entrega uma atribuição coluna a coluna que a citação NÃO demonstra. \"Baixo índice de massa corpórea\" aparece nos DOIS blocos do texto extraído e o fato o coloca só em modificáveis. O extrator declarou em `extracao` que trechos embaralhados não foram extraídos (\"preferi perder o conteúdo a costurar prova\") — este foi. Risco clínico baixo (nada muda de conduta), mas é estrutura fabricada; não editei para não trocar um palpite por outro. ⚠️ RELATADO SEM EDIÇÃO — DECLARAÇÃO DE `extracao` SOBRE O TETO DA OSTEOPENIA NÃO CONFERE COM O QUE FOI FEITO. O campo diz que o limite superior \"aparece três vezes com dois valores\" e que \"extraí a forma tabelada\". São QUATRO ocorrências com TRÊS formas: \"-1 e -2,5\" (texto do cap. 5, @78107), \"-1,0 e -2,4\" (tabela do cap. 5), \"-1 e -2,4\" (texto do cap. 7, @107889) e \"-1,1 a -2,4\" (tabela do cap. 7). E as quatro estão publicadas: #84 e #141 trazem as duas formas de TEXTO, que a declaração diz terem sido descartadas. Cada fato é fiel à sua passagem, mas a base fica com quatro tetos concorrentes e uma zona morta entre -2,4 e -2,5. Não editei: mexer nos números exigiria pôr na afirmação um valor que a citação daquele fato não tem. O QUE TENTEI DERRUBAR E NÃO CONSEGUI — 1) A JUSTIFICATIVA DO `nucleo_prevalece` (fosfatase alcalina) RESISTE NAS TRÊS PERNAS, conferidas no texto-fonte: (a) a frase que dispensa exames de rotina está em 94770 e o painel de Diab e Watts, COM \"fosfatase alcalina\", está em 95500 — duas frases depois, com só duas sentenças no meio; (b) o quadro de interpretação (94220) tem \"4. fosfatase alcalina ELEVADA\" e nenhuma menção a FA baixa: \"fosfatase alcalina baixa\", \"alcalina baixa\", \"baixa fosfatase\" e \"alcalina reduzida\" dão ZERO ocorrência nas duas normalizações; (c) \"hipofosfatasia\" dá ZERO, e também \"hipofosfata\", \"fosfatasia\", \"ALPL\", \"TNSALP\" e \"asfotase\" — busquei nas duas bases, inclusive na que remove o hífen de quebra de linha, então a ausência não é artefato de \"hipofosfata-sia\" partido. As 6 ocorrências de \"fosfatase\" no manual inteiro são as 4 de FA e 2 de fosfatase ácida/óssea. A fonte não decidiu contra o porteiro: ela nunca considerou a doença. O QUE TENTEI DERRUBAR E NÃO CONSEGUI — 2) O `tema` NÃO reivindica tratamento farmacológico. Abre com \"DIAGNÓSTICO no consultório\" e rotula explicitamente \"tratamento NÃO farmacológico\". Zero ocorrência de denosumabe, teriparatida, romosozumabe, abaloparatida, alendronato, zoledronato, risedronato, raloxifeno, SERM, terapia hormonal, falha de tratamento, adesão, \"tratamento farmacológico\", \"fármaco\" ou \"medicamento\". \"bisfosfonato\" aparece uma vez, dentro de \"fratura atípica subtrocantérica (dor na coxa ou na virilha em quem usa bisfosfonato)\", que é assunto de radiologia e ESTÁ coberto (#169-172); \"antirreabsortivo\" aparece uma vez, dentro de \"correção ANTES do antirreabsortivo\", que é a vitamina D do cap. 10 e ESTÁ coberto (#203). O tema também não promete prevenção de quedas (cap. 12) nem FLS (cap. 20) nem prescrição de exercício, e de fato não há fato nenhum sobre eles. Cobertura parcial declarada com honestidade. O QUE TENTEI DERRUBAR E NÃO CONSEGUI — 3) AS ELISÕES ESTÃO LIMPAS. 17 elisões (até 9 peças), maior buraco 182 caracteres, todas as peças ≥18 chars, todas na mesma base e em ordem. O par #189/#190 é o caso-modelo: duas colunas perfeitamente intercaladas linha a linha (magnésio x considerações finais), desmembradas tira a tira com buracos de 1 a 57 — nenhuma costura de trecho distante em lugar nenhum. O QUE TENTEI DERRUBAR E NÃO CONSEGUI — 4) AS 107 CITAÇÕES QUE COMEÇAM NO MEIO DE FRASE. Varri as 107 (não amostrei), classificando a cabeça por cinco gatilhos — negação, limiar numérico, condicional, escopo e força da recomendação — e revisei à mão os 20 que dispararam. 18 são cabeçalho de seção ou respingo da coluna vizinha, sem qualificador perdido; os 2 reais eram #171 e #172, corrigidos acima. Nenhuma negação perdida, nenhum \"não se recomenda X\" virado \"recomenda-se X\". OBSERVAÇÃO DE FONTE (sem ação): #178 atribui ao Brasil consumo médio de 9,34 g/dia de SÓDIO — implausível como sódio (daria ~23 g de sal) e quase certamente sal na fonte. O fato reproduz o manual com fidelidade e o risco clínico é nulo; registrado para que ninguém o cite como número de sódio."
+  }
+}

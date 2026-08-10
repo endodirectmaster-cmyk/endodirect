@@ -1,9 +1,377 @@
 ---
 tags: [cofre, pendencias]
-atualizado: 2026-08-08
+atualizado: 2026-08-09
 ---
 
 # Pendências
+
+## ⏸️ PARADA COMBINADA — retomar na SEXTA, 14/08/2026 (2026-08-09, 21:34 UTC)
+
+O professor pediu pausa e retomada na sexta. **Estado exato em que paramos**, para
+não perder tempo redescobrindo:
+
+| | |
+|---|---|
+| Base profunda | **47 artigos · 7.164 fatos** |
+| Auditoria adversarial | **45/47 (96%)** |
+| Acervo do Drive | **42 de 259 (16,2%)** |
+| Teste de caminho | **299 roteamentos + 10 chegadas + 35 ordens + 9 completudes** |
+| `ci-validate` | verde · harness A/B em Chromium igual à main |
+| Árvore | limpa, tudo commitado e empurrado |
+| Ramo | `claude/open-access-article-discussion-zrgpkp`, **65 commits à frente da main** |
+| ⚠️ Produção | **v214**. O ramo está em **v219** |
+
+**As DUAS primeiras coisas a fazer na sexta**, nesta ordem:
+
+1. **Auditoria adversarial dos dois extratos que faltam** — acromegalia (212
+   fatos) e endocrinopatia por inibidor de checkpoint (111). Um auditor por vez.
+   Pelo risco, comece pelo **checkpoint**: ele tem a ordem glicocorticoide →
+   levotiroxina (a inversa precipita crise adrenal), a divergência interna da
+   dose de hidrocortisona entre a Tabela 1 e o corpo, e o diabetes que abre em
+   cetoacidose. O brief pronto é `scratchpad/brief-auditoria.md`.
+2. **A decisão de deploy é do professor** (ver abaixo) — cinco correções de
+   núcleo estão represadas no ramo, e nenhuma chegou a médico nenhum.
+
+⚠️ **O que está represado em v219 e NÃO está no ar:** régua da obesidade
+pediátrica (P95 × P97), cautela do romosozumabe em quem usa corticoide, as **duas**
+correções da copeptina (condição de coleta com sódio >150, e o basal como
+porteiro para não ler DI nefrogênico como polidipsia primária) e o corte do GH
+no TOTG por ensaio (0,4 com ultrassensível × 1,0 com o antigo).
+
+## 📅 AUDITORIA DE ATUALIDADE DO ACERVO — resultado, e o que só o professor resolve (2026-08-09)
+
+Resposta à instrução dele (*"mantenha o cuidado de sempre manter o arquivo mais
+atualizado — eu tinha uma diretriz de dislipidemia de 2017 e a plataforma já
+estava com a de 2025"*). Cruzei os **35 extratos** contra os **245 itens da fila**
+por três testes, do mais frouxo ao mais estrito:
+
+1. **palavra-chave + área** → 6 "achados", **todos falso positivo** (sobreposição
+   frouxa: *"Type 1 diabetes Seminar"* não é versão nova de *PTDM*);
+2. **mesma pasta do Drive + ano maior** → 12 "achados", **também falso positivo**:
+   as pastas são amplas (`Plataforma ED/Diabetes`), então artigo mais novo na
+   mesma pasta **não** é versão mais nova do mesmo documento;
+3. **mesma SOCIEDADE reeditando + ano maior** → 1 "achado", **falso positivo**
+   (Endocrine Society publicando sobre *outro* assunto).
+
+**✅ Conclusão: nenhum extrato da base tem edição mais nova esperando na fila.**
+Os dois casos que pareciam supersessão real já estavam cobertos — a diretriz
+**brasileira de obesidade de 2025** e a **conjunta ESE/Endocrine Society de 2024**
+de insuficiência adrenal **já estão extraídas**.
+
+⚠️ **Lição de método: "mesma pasta" e "palavra em comum" NÃO detectam
+supersessão.** A organização do Drive é por assunto, não por linhagem de
+documento. Só o par *mesma sociedade + mesmo assunto* diria, e isso exige olhar
+caso a caso.
+
+### ⛔ O QUE NÃO DÁ PARA CONSERTAR EXTRAINDO — precisa do professor
+
+**A base responde CETOACIDOSE com material de 2020**, e o **consenso ADA/EASD de
+2024 sobre crises hiperglicêmicas NÃO EXISTE no Drive** (busquei a fila inteira
+por `hyperglycemic crisis`, `ketoacidosis`, `hiperosmolar`: o mais novo é de
+**2020**). Cetoacidose é emergência e é dos assuntos mais consultados —
+**este é o item de maior risco da lista de defasagem, e só o professor resolve,
+mandando o documento.**
+
+### Os 17 extratos com 5+ anos (para ele decidir o que vale substituir)
+
+`2016` PTDM · `2017` osteogênese imperfeita · `2018` hirsutismo (Endocrine
+Society), hiperglicemia por glicocorticoide · `2019` fármacos e tireoide,
+hipofosfatasia, craniofaringioma · `2020` dumping, cirurgia bariátrica,
+craniofaringioma (manejo), **cetoacidose euglicêmica**, **cetoacidose diabética**,
+NTIS, exercício com CGM · `2021` insuficiência adrenal, crise tireotóxica,
+farmacoterapia da obesidade.
+
+## ✅ RESOLVIDO — O CI FICAVA VERDE COM EXTRATO QUE NÃO MONTA (2026-08-09)
+
+Consertado no mesmo dia com a invariante descrita abaixo:
+`monta-base-profunda.js --conferir` remonta a base e exige **igualdade byte a
+byte** com o `lib/clinical-deep-data.js` commitado; entrou no `ci-validate`.
+Conferido nos dois sentidos — passa hoje (54 blocos, 6.686 fatos) e **reprova
+com um único caractere de diferença**, saindo com código 1.
+
+O registro do buraco fica abaixo, porque a lição é sobre o TIPO de guarda.
+
+## 🟢 O CI FICAVA VERDE COM EXTRATO QUE NÃO MONTA (2026-08-09)
+
+Achado processando a leva de Adrenal/Neuroendocrinologia. O
+`monta-base-profunda.js` **abortou** — um extrato veio com
+`tipo: "revisão narrativa (Review)"`, fora do vocabulário fechado do
+`PESO_TIPO`, e a guarda para de propósito em vez de rebaixar em silêncio uma
+revisão para o tier de relato de caso. A guarda funcionou.
+
+⚠️ **Mas o `ci-validate` passou verde mesmo assim**, porque ele valida o
+`lib/clinical-deep-data.js` já construído — que continua consistente, só
+**velho**. Resultado: três artigos extraídos, verificados e commitados podem
+existir no repositório sem chegar a médico nenhum, e nada acusa.
+
+É a versão estrutural de "extração verificada não é entrega".
+
+**O conserto certo é uma invariante, não uma peneira nova:** rodar o montador no
+CI e exigir que a saída seja IGUAL ao `clinical-deep-data.js` commitado. Isso
+pega os dois lados — o extrato que aborta a montagem E o "esqueci de rebuildar".
+Copiar só a checagem do `tipo` seria pior: daria confiança falsa sobre as outras
+condições de aborto.
+
+Não entrou ainda porque reprovaria agora, com dois extratos cujos agentes ainda
+não relataram — e consertar extrato de agente no ar é o acidente que a convenção
+do `git add -A` já descreve. Entra quando a leva fechar.
+
+## 👯 A FILA TEM 5 TÍTULOS COM DOIS `fileId` — e um deles já foi extraído (2026-08-09)
+
+Achado varrendo o `fila-extracao.json`: 245 ids para **240 títulos**. Os cinco
+repetidos:
+
+| título | ids |
+|---|---|
+| Diagnosis and management of central diabetes insipidus in adults | `1w-2-Umi` ✅ **já extraído** · `11xOGY3Q` **ainda pendente** |
+| Endocrine toxicities of immune checkpoint inhibitors | `1DYg7sRy` · `1UAUYQB9` |
+| The epidemiology, diagnosis and treatment of prolactinomas | `1g-okiMj` · `1qmeqMdU` |
+| The management of primary aldosteronism: case detection… | `1G3A3M0s` · `1GZZArFd` |
+| Postoperative diabetes insipidus: how to define and grade… | `1oYhQhUd` · `1GnEV5Lt` |
+
+⚠️ **O do diabetes insipidus é o perigoso:** um id já virou extrato (169 fatos) e
+o outro segue marcado como pendente. Nada impedia a leva seguinte de extraí-lo de
+novo — e duplicata **dobra o peso do artigo na seleção por tema**, come teto de
+área em dobro e faz a IA ver a mesma afirmação duas vezes, o que soa como
+confirmação independente sem ser.
+
+✅ **Guarda de CI criada no mesmo dia** (`confere-artigo-duplicado.js`): compara o
+TÍTULO normalizado dos extratos, não o `fileId` — porque o defeito da fila é
+justamente ter dois ids para o mesmo artigo. Zero falso positivo hoje (44
+extratos, 44 títulos distintos) e conferida nos dois sentidos.
+
+**O que ainda falta, e é trabalho de fila, não de CI:** marcar os ids perdedores
+no `fila-extracao.json` para que nenhum agente os escolha. A guarda pega o
+acidente **depois** de a extração ser feita — melhor que nada, mas gasta uma leva
+inteira de agente antes de acusar.
+
+## 🕵️ O ARTIGO DE CUSHING RESPONDE "QUAL EXAME", NÃO "QUANDO SUSPEITAR" (2026-08-09)
+
+Lacuna de **acervo**, não de roteamento — anotada para a fila do professor.
+
+A metanálise de acurácia que entrou hoje cobre o rastreio bioquímico com
+sensibilidade e especificidade por teste. Ela **não descreve o fenótipo**.
+Contado na base montada: `estrias violáceas`, `giba`, `face em lua cheia` e
+`fragilidade capilar` têm **ZERO** ocorrência em qualquer bloco; `cushingoide`
+tem 5 (e nenhuma no bloco de Cushing).
+
+Consequência medida: *"fácies cushingoide e estrias violáceas"* chega à área
+certa (pus `cushingoide` → Adrenal, 5×1) e **nenhum bloco responde**.
+
+⚠️ **Não roteei `estrias violáceas` nem as outras**, pela mesma regra do
+`xantelasma` em Lípides: rotear para conteúdo que não existe é prometer o que não
+se entrega. O conserto é um artigo sobre o quadro clínico de Cushing.
+
+⚠️ E o extrator mediu duas chaves que eu **recusei por redundância**:
+`cortisol salivar` (21×0) e `cortisol livre urinario` (27×0). Elas são
+exclusivas, mas `cushing`, `cortisol` e `dexametasona` já levam a Adrenal, e com
+o tema novo o bloco vence sozinho nas três perguntas que testei. **Chave
+redundante é peso escondido** — entra sem precisar e reaparece desequilibrando
+outro empate depois.
+
+## 🔤 RAIZ DE 5 LETRAS CASA NO MEIO DE OUTRA PALAVRA (2026-08-09)
+
+Medido, sem conserto, porque o remédio óbvio quebra o que funciona.
+
+O `deepFor` corta 2 letras de radical e casa por **substring** quando a raiz tem
+mais de 4 caracteres — só as de até 4 ganham fronteira de palavra. Resultado:
+`estrias` vira a raiz `estri` e casa dentro de **"restringi-lo"**. Contado nos
+temas da base: das 7 ocorrências de `estri`, **7 são no meio de palavra e zero
+começam palavra**.
+
+Foi o que fez o bloco do hiperaldosteronismo vencer *"fácies cushingoide e
+estrias violáceas"* por `estri*` (+3 pelo tema).
+
+⚠️ **Subir a fronteira para 5 ou 6 letras NÃO é o conserto**: `calci` casa 11
+vezes no meio de palavra e ali é legítimo (`hipocalcemia`, `nefrocalcinose`), que
+é justamente a flexão que a regra existe para permitir. Um conserto de verdade
+precisa distinguir composição de colisão — provavelmente por lista de radicais
+conhecidos, e com medição contra as 277 linhas de roteamento.
+
+## 🔀 A PONTUAÇÃO NÃO ENXERGA DIREÇÃO, E EM ENDOCRINOLOGIA A DIREÇÃO É O DIAGNÓSTICO (2026-08-09)
+
+Medido no teste de ordem, **sem conserto** — o mecanismo certo é maior que o
+tempo desta janela, e improvisar aqui é pior que registrar.
+
+**O caso:** toda pergunta de HIPERcalcemia escrita com VALOR recebe em primeiro o
+bloco do **HIPOparatireoidismo**.
+
+| pergunta | 1º bloco entregue |
+|---|---|
+| "cálcio 11,4 com PTH normal-alto" | hipoparatireoidismo crônico |
+| "cálcio alto com PTH inapropriadamente normal" | hipoparatireoidismo crônico |
+| "cálcio 11,4 e PTH 88" | hipoparatireoidismo crônico |
+| "cálcio 13 com PTH baixo" | hipoparatireoidismo crônico |
+| "**hipercalcemia** com PTH suprimido" | hipercalcemia com PTH suprimido ✅ |
+
+**Só acerta quando o médico escreve a PALAVRA.** E o médico escreve o valor.
+
+**Por que acontece, e por que não é over-claim de tema:** as palavras da pergunta
+(`cálcio`, `PTH`, `alto`, `normal`) estão nos dois temas — só que no do
+hipoparatireoidismo elas apontam para o lado OPOSTO (*"fósforo alto"*, *"PTH
+inapropriadamente baixo"*). A pontuação conta presença, não direção. Empatados, o
+desempate é a ordem de autoridade do montador, e o hipoparatireoidismo é uma
+**diretriz internacional de 2022** enquanto o hiperparatireoidismo é um **Seminar
+de 2018** — a diretriz sorteia primeiro, por construção e com razão.
+
+⚠️ **E o número não ajuda:** `11,4` vira os tokens `11` e `4`, ambos derrubados
+pelo filtro de 4 caracteres. Quem dá o valor em vez da palavra não tem
+discriminação nenhuma.
+
+**O que limita o dano hoje** (por isso não é emergência): Osteometabolismo cabe
+inteira no teto (313k de 400k), então **os dois blocos CHEGAM** — é ordem, não
+evicção, ao contrário do acidente da hiponatremia. E os dois temas se declaram
+("hipoparatireoidismo CRÔNICO…" / "⚠️ NÃO CONFUNDIR COM HIPOPARATIREOIDISMO").
+
+**Mecanismo que provavelmente resolve:** desempate por DIREÇÃO, na mesma família
+do desempate por condição exigida que já entrou. Quando a pergunta carrega um
+marcador de direção para um analito (`cálcio alto`, `hiper-`, valor acima da
+faixa), o bloco cujo tema declara a direção OPOSTA para o mesmo analito vai para
+trás. Precisa de: um mapa analito → par de direções, leitura do valor numérico
+contra a faixa, e medição contra as 274 linhas de roteamento antes de entrar.
+
+## 🎯 O BLOCO "INDUZIDO POR X" VENCE A PERGUNTA QUE NÃO CITA X — METADE RESOLVIDA (2026-08-09)
+
+✅ **A metade da SOBRA está consertada**, e o conserto é de **desempate**, não de
+peso: com pontos IGUAIS, o bloco que exige uma condição ausente da pergunta vai
+para trás. A estreiteza é o ponto — mexer na pontuação reordenaria blocos de
+notas diferentes, que é como se entrega conteúdo da área certa e do assunto
+errado. Só condição com sinônimo FECHADO entra no mapa (`CONDICAO_EXIGIDA`); hoje
+só `glicocorticoide`, com as 13 formas que o médico escreve (prednisona,
+dexametasona, corticoterapia…).
+
+Junto veio o conserto de área que faltava: **`fratura` sozinha não era chave** —
+só os compostos —, então *"paciente em prednisona há 4 meses, previno fratura?"*
+era decidida por `prednisona` e ia para **Adrenal**. Medido: `fratura` é 329 de
+352 em Osteometabolismo (93%). Os dois mecanismos compõem certo: com corticoide
+na pergunta chega o GIOP; sem, chega a osteoporose geral.
+
+❌ **A metade da FALTA continua aberta:** *"biotina falseia o TSH?"* e *"lítio e
+hipotireoidismo"* recebem em primeiro o bloco do hipertireoidismo no ADULTO, e
+não o de **fármaco e tireoide**, que é o dono da interferência de ensaio e da
+disfunção medicamentosa. Ali não há empate — o bloco do adulto ganha por pontos,
+então o desempate não alcança. E `induzida por MEDICAMENTO` ficou de fora do mapa
+de propósito: "medicamento" não tem sinônimo fechado, e exigir a palavra
+derrubaria justamente a pergunta que **nomeia o fármaco**.
+
+O que provavelmente resolve: reconhecer que a pergunta nomeia UM FÁRMACO (lista
+fechada, como a do `confere-farmaco-na-citacao.js`) e dar bônus ao bloco que
+declara `induzid* por medicamento`. Precisa de medição contra as 265 linhas de
+roteamento antes de entrar.
+
+**O caso que a expõe, com os números:** *"fratura de quadril após queda da
+própria altura"* — paciente que não toma corticoide nenhum — recebe em primeiro
+o bloco do **GIOP**. Os dois empatam em **18 pontos**, com exatamente os mesmos
+seis termos (`fratura`, `quadril`, `após`, `queda`, `própria`, `altura`) no tema,
+e o desempate é a ordem do array. O empate é legítimo: a diretriz do ACR
+**discute mesmo** fratura por fragilidade e quadril. Não é tema inflado.
+
+**Por que isso é uma classe e não um caso:** a base tem pelo menos quatro blocos
+"induzido por X" — GIOP, hiperglicemia induzida por glicocorticoide, diabetes
+pós-transplante e disfunção tireoidiana induzida por medicamento. E o defeito
+corta **para os dois lados**, medido na mesma varredura:
+
+- **sobra**: GIOP vence a pergunta que não menciona corticoide;
+- **falta**: *"biotina falseia o TSH?"* e *"lítio e hipotireoidismo"* recebem em
+  primeiro o bloco do hipertireoidismo no ADULTO, e não o de **fármaco e
+  tireoide**, que é o dono da interferência de ensaio e da disfunção
+  medicamentosa.
+
+**O mecanismo que falta:** um bloco cuja aplicabilidade é CONDICIONAL deveria
+ganhar pontos quando a pergunta cita a condição e perdê-los quando não cita. É a
+mesma família do conserto da negação (o `deepFor` passou a saber que "sem
+sintomas" não pontua o bloco sintomático): pontuação por contagem de palavra não
+enxerga nem negação nem pré-requisito.
+
+⚠️ **Não fazer às pressas.** Derivar a condição do tema (`induzid[oa] por X`) é
+elegante e arriscado — precisa de sinônimo (`glicocorticoide` = `prednisona` =
+`corticoide` = `dexametasona`) e de medição contra as 254 linhas de roteamento
+antes de entrar.
+
+**Consertado hoje, do que era só tema faltando** (esses não precisavam de
+mecanismo novo, só das palavras certas na superfície de busca): osteogênese
+imperfeita por **esclera azulada** (12 ocorrências no texto, zero no tema — a
+pergunta patognomônica recebia o GIOP) e **fratura de quadril** no bloco da
+osteoporose (30 ocorrências no texto, zero no tema).
+
+## ⏳ TIREOIDE A 98% DO TETO — e ela cresce SEM artigo novo (2026-08-09)
+
+Números para a decisão do professor, todos medidos:
+
+| | chars | % do teto de 400k |
+|---|---|---|
+| **Tireoide hoje** | **391.745** | **98%** — folga de 8.255 |
+| se dividir: *Tireoide na gestação* (ATA 2026, 4 blocos) | 203.264 | 51% |
+| se dividir: *Tireoide* (5 blocos restantes) | 188.481 | 47% |
+
+⚠️ **O que mudou de patamar: a área cresce sem eu extrair nada.** As duas
+auditorias adversariais de hoje somaram **8.080 caracteres** de ressalva de
+população aos fatos de tireoide — e a folga é de **8.255**. **Uma auditoria a
+mais do mesmo tamanho esgota**, e aí o `test-teto-diretrizes.js` reprova.
+
+Auditar é acrescentar texto de segurança, e texto de segurança ocupa teto. Não é
+motivo para auditar menos; é motivo para dividir.
+
+⚠️ **E não dá para subir o teto de novo:** 400k já é o `TETO_MAXIMO`.
+
+**O que acontece no instante em que ela cruzar — medido em 09/08 pela sonda
+`scratchpad/probe/tireoide-borda.js`, que roda o caminho real (`deepFor`):**
+
+- Hoje os **9 blocos chegam inteiros** em todas as perguntas que testei.
+- **O primeiro bloco some com +10.000 caracteres** na área (folga real: 8.237).
+  O menor bloco tem 6.782 caracteres; os outros oito vão de 16.769 a 68.373.
+  Nenhum artigo real acrescenta menos que isso — **a próxima extração de tireoide
+  despeja um bloco inteiro, em silêncio**.
+- **A ordem de despejo é sã**, e isso é a boa notícia: cai sempre o bloco *menos*
+  relevante para a pergunta (numa pergunta de crise tireotóxica cai o NTIS; numa
+  de T3 baixo na UTI cai a crise). Não é o caso da hiponatremia, em que o bloco
+  despejado **contradizia** a pergunta — aqui ele só é dispensável.
+
+Ou seja: o risco de hoje é **perder profundidade**, não receber resposta errada.
+Isso rebaixa a urgência de "agora" para "antes do próximo artigo de tireoide" —
+mas não muda a decisão, porque a folga já não cabe nem mais uma auditoria.
+
+⚠️ **A sonda me ensinou a desconfiar da própria chave.** A primeira versão dela
+identificava o bloco cortando o tema no primeiro `" — "`, e os temas **têm
+travessão dentro** (o sufixo de seções). Quatro blocos da gestação viraram um só
+e ela relatou *"5 de 9 entregues"* quando os 9 chegavam. Chave passou a ser o
+índice do bloco. É a mesma armadilha da âncora ambígua que já me pegou dentro do
+meu próprio teste de completude.
+
+⚠️ **A divisão NÃO é só roteamento — é mudança de produto**, e por isso é
+decisão dele: a lista de áreas está acoplada ao `index.html` em `FC_CATS` (12
+subespecialidades), submapas de tema, cores, calculadoras por área e filtros do
+mural. Uma 13ª subespecialidade muda o que o aluno vê.
+
+**Correção de uma medição minha:** cheguei a calcular a ATA de gestação como 74%
+da área. Estava errado — meu filtro casava `gestação` no tema do artigo do
+hipertireoidismo no ADULTO, que discute gravidez. O valor certo é **52%**,
+consistente com os 53% que eu tinha medido antes.
+
+## ⛔ A FILA DA ROTA B MUDOU DE ORDEM POR CAUSA DO TETO (2026-08-09)
+
+A tabela mais abaixo põe **Tireoide em 3º**. **Não extraia mais nada de Tireoide
+antes de dividir a área** — a medida diz por quê:
+
+| área | ocupa | folga até 400k | cabe |
+|---|---|---|---|
+| **Tireoide** | 383.665 | **16.335** | **ZERO artigo** |
+| Obesidade | 350.391 | 49.609 | ~1 |
+| Diabetes | 284.265 | 115.735 | ~2 |
+| **Osteometabolismo** | 51.374 | 348.626 | **~7** |
+| Adrenal | 87.488 | 312.512 | ~6 |
+
+O teto profundo foi ao **máximo** (400k) em 09/08 e Tireoide já ocupa **96%**.
+O próximo extrato de tireoide **reprova o `test-teto-diretrizes.js`** — a guarda
+existe justamente para isso. Auditoria de Tireoide pode seguir (não acrescenta
+conteúdo); **extração, não**.
+
+**Próxima área para extrair: Osteometabolismo (era a 4ª).** Duas razões que
+apontam para o mesmo lugar: é quem tem **mais folga** (~7 artigos) e é onde
+moram **três dos doze assuntos sem nenhum bloco** — osteoporose, hipercalcemia/
+hiperparatireoidismo e hipoparatireoidismo. Hoje a área só tem hipofosfatasia e
+osteogênese imperfeita, que são **doenças raras**: a mesma distorção que fez
+Diabetes ser a primeira da fila (130 fatos, 109 de pós-transplante e 21 de MODY).
 
 ## ✅ DIABETES FECHADO — a primeira área da Rota B (2026-08-08)
 

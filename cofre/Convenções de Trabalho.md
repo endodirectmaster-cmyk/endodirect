@@ -1,9 +1,550 @@
 ---
 tags: [cofre, processo]
-atualizado: 2026-08-08
+atualizado: 2026-08-09
 ---
 
 # Convenções de Trabalho
+
+## 🔀 SÃO TRÊS CAMINHOS ATÉ O MÉDICO, E CORRIGIR UM NÃO CORRIGE OS OUTROS (2026-08-10)
+
+O mesmo fato clínico chega ao médico por **três vias independentes**, e elas não
+se atualizam sozinhas:
+
+1. **O núcleo** (`CLINICAL_GUIDELINES` do `index.html`) — vai em toda chamada de IA.
+2. **As notas de `cofre/Diretrizes Clínicas/`** — fonte de verdade declarada de
+   flashcards, questões, newsletter, Mural e resumos de aula.
+3. **O conteúdo da plataforma** (`endodirect_global_state.payload.diretrizes` no
+   Supabase) — 215 itens, 1,7 milhão de caracteres, o que o médico LÊ nas abas
+   Resumos e Diretrizes.
+
+**Medido em 10/08/2026, e é por isso que esta nota existe:** quatro correções que
+eu tinha feito no núcleo continuavam VIVAS COMO DEFEITO nas notas do cofre
+(condição de coleta da copeptina, ordem de leitura da copeptina, marco de 16
+semanas do PTU, ranking de risco por via do glicocorticoide), e três continuavam
+vivas na plataforma (romosozumabe sem cautela cardiovascular, PTU→metimazol
+inclusive num flashcard, régua pediátrica P95).
+
+**A regra: toda correção de núcleo exige varredura das TRÊS vias pelo termo.**
+A varredura do `index.html` sozinha está certa e é insuficiente. Para a
+plataforma, a varredura é SQL sobre o `payload` — e vale rodar também a pergunta
+inversa: *"os defeitos que já corrigi no núcleo existem aqui?"*, que foi como os
+três da plataforma apareceram.
+
+⚠️ **E o inverso também acontece:** em dois casos o NÚCLEO estava certo e a NOTA
+errada (o ranking por via do glicocorticoide, o Na urinário na SIAD). Não
+presuma que a nota é a fonte e o núcleo a cópia — as duas envelhecem.
+
+## 🔴 GUARDA VERDE AQUI, VERMELHA NO CI: O CORPUS NÃO EXISTE LÁ (2026-08-09)
+
+Abri o PR #729 com o `ci-validate` inteiro verde na minha máquina. **O check
+`validate` do GitHub reprovou os 47 extratos de uma vez** — e não havia defeito
+nenhum na base.
+
+A guarda nova `monta-base-profunda.js --conferir` roda, antes de montar, as três
+etapas de pré-requisito — e a primeira delas, o `verifica-extracao.js`, **lê
+`scratchpad/acervo/textos/`**. Esse diretório está no `.gitignore` porque o
+repositório é PÚBLICO e o texto integral dos artigos é protegido por direito
+autoral. **No runner ele nunca vai existir.** A peneira não achou defeito: ela
+não tinha o que ler.
+
+**A regra que fica: antes de pôr uma peneira no `ci-validate`, pergunte de que
+arquivos ela depende e se esses arquivos estão versionados.** Rodar verde na
+máquina que tem o corpus não prova nada sobre o runner, que tem só o que está no
+git. Peneira que só pode dar vermelho é pior que peneira ausente — vira paisagem
+e ensina a ignorar o CI inteiro.
+
+**O conserto, e por que ele não afrouxa nada:** a INVARIANTE que a guarda existe
+para provar — "o `clinical-deep-data.js` commitado é o que os extratos produzem
+hoje" — não depende do texto-fonte; a montagem lê só `extratos/*.json`. As três
+etapas são pré-requisito de ESCRITA, e a escrita acontece onde o corpus está.
+Então em `--conferir` sem corpus elas não rodam, e o script **diz isso em voz
+alta** na primeira linha da saída.
+
+⚠️ **Tudo ou nada, de propósito.** Um único `.txt` presente e as etapas rodam
+inteiras — corpus PELA METADE tem de reprovar mesmo. Peneira cega devolve "✓" sem
+ter olhado, e foi assim que a cobertura ficou cega na migração das citações: o
+relatório veio limpo e limpo era o sintoma, não o resultado. Testado nos dois
+sentidos: sem nenhum `.txt` passa e diz que não conferiu; com um só, reprova.
+
+## ⏳ EU DECLAREI UM AGENTE MORTO E ELE ESTAVA VIVO (2026-08-09)
+
+**Correção de um erro meu, e a versão anterior desta nota estava errada.**
+
+Declarei a auditoria da HAC morta porque o transcrito dela estava parado às 15:27
+e às 18:06 nada tinha mudado — quase três horas contra os ~25 minutos típicos dos
+outros cinco agentes do dia. Cheguei a somar 250k ao medidor como estimativa do
+gasto perdido.
+
+**Ela não tinha morrido: terminou em 3h32min e relatou 227.307 tokens.** Auditoria
+completa, sete defeitos achados, um deles grave. O `stat` do arquivo e o último
+`"timestamp"` do transcrito **não são sinal confiável de vida** — o arquivo é
+escrito por um caminho em que o `stat` mente (reportava 121 bytes num arquivo de
+594 KB).
+
+**O que fica, corrigido:**
+- **Duração não é sinal de morte.** Um auditor sério pode levar 8× o tempo de um
+  extrator. Só a notificação de término (ou a ausência do processo) decide.
+- **A estimativa que somei ao medidor era ruído**, e tive de desfazê-la. Se for
+  estimar mesmo assim, marque a estimativa como tal e reverta assim que o agente
+  relatar.
+- ⚠️ **O risco real que a nota anterior descrevia continua existindo** — o
+  `orcamento-agentes.js` só conta o que o agente relata ao terminar, então um
+  agente que morra de verdade fica fora do medidor e o freio erra para baixo.
+  Mas o remédio não é declarar morte por relógio.
+- **Não leia o `.output` inteiro** — 594 KB de JSONL estouram o contexto.
+
+E o custo do meu erro: **segurei lançamentos por uma hora** achando que havia um
+fantasma. A ironia é que havia um agente vivo, fazendo o melhor trabalho do dia.
+
+## 🧪 CHAVE NOVA SÓ ENTRA DEPOIS DO CONTROLE INVERSO (2026-08-09)
+
+Contar a dominância não basta. **Teste também a pergunta que NOMEIA a doença
+concorrente** — é lá que a chave nova rouba.
+
+O caso: `acne` mede 9 em Endocrinologia Feminina contra 4 em Adrenal (2,25:1) e
+parecia aceitável. Com ela aplicada, *"acne grave em adolescente com HAC"* passou
+a cair em **Feminina** — porque `acne` tem 4 letras (peso 3004) e `hac` tem 3
+(3003), e o desempate DENTRO da categoria é por comprimento. **Uma pergunta que
+nomeia a doença perdeu para um sinal, por uma letra.** É a segunda vez que o
+desempate por comprimento morde (a primeira foi `cintilografia` 3013 ×
+`paratireoide` 3012). Chave removida.
+
+**O roteiro, então, é:** (1) contar alvo × resto; (2) rodar as perguntas que a
+chave deve consertar; (3) **rodar as perguntas das áreas vizinhas que nomeiam a
+doença delas**; (4) só então aplicar. E vale a regra do `perda auditiva`: domínio
+não basta quando o termo pertence à clínica inteira — acne é da dermatologia, da
+adrenal e da ginecologia.
+
+⚠️ **Corolário do mesmo dia:** chave que a base já resolve é **peso escondido**.
+`cortisol salivar` (21×0) e `cortisol livre urinario` (27×0) eram exclusivas e
+foram recusadas: `cushing`, `cortisol` e `dexametasona` já levavam a Adrenal e o
+bloco vencia sozinho. Chave desnecessária entra sem precisar e reaparece
+desequilibrando outro empate depois.
+
+## 📎 CITAÇÃO REPETIDA BYTE A BYTE É PROVA COPIADA (2026-08-09)
+
+Achado pela auditoria do GIOP e **conferido por mim na fonte**: quatro fatos
+(idx 26, 28, 29, 30) carregavam a MESMA citação — mesmo offset, mesmo tamanho,
+mesmo `cit_sha`. A fatia provava o primeiro. Os outros três afirmavam
+preferência de fármaco cuja frase ficava **100 a 400 caracteres adiante**, na
+mesma célula da tabela.
+
+⚠️ **E o `verifica-extracao.js` passou VERDE nos três.** A peneira dele é de
+NÚMEROS, e o único número daquelas afirmações era `40` — que está na fatia,
+porque ela começa no cabeçalho *"adults ≥40 years"*. **Prova fabricada com
+número emprestado do cabeçalho.** É o limite do verificador escrito com todas as
+letras: ele prova que a citação EXISTE no PDF, não que ela prova a afirmação.
+
+Virou guarda de CI (`confere-farmaco-na-citacao.js`) depois de medir o escopo:
+
+| escopo | candidatos em 6.197 fatos |
+|---|---|
+| fármaco na afirmação e ausente da citação, em qualquer fato | 176 (2,8%) |
+| o mesmo, só onde a `cit` é IDÊNTICA à de outro fato | 2 |
+| idem, aceitando a abreviatura da diretriz (`rom`, `den`, `ral`) | **0** |
+
+Os 176 são quase todos legítimos: a fonte escreve a CLASSE (`GLP-1 RA`, `oral
+BP`) e o fato nomeia o agente que o cabeçalho da tabela dava. **É a diferença
+entre técnica e guarda de novo** — 2,8% vira paisagem, 0% significa alguma
+coisa. Conferida nos dois sentidos: passa hoje e REPROVA na versão pré-auditoria
+do GIOP.
+
+## ⚖️ ESTENDER A CITAÇÃO PARA TRÁS ANESTESIA A PENEIRA DE NÚMEROS (2026-08-09)
+
+A técnica que conserta população órfã — estender a citação até a frase que fixa
+idade, doença ou cenário — **tem preço, e ele não estava escrito**. No GIOP as
+citações estendidas chegaram a **1.902 caracteres** e passaram a conter
+praticamente **todos os números da Tabela 1**. Dentro de uma fatia dessas, um
+corte trocado entre linhas da mesma tabela passa verde: o número está lá, só que
+provando outra linha.
+
+**Não é motivo para não estender** — a população órfã é o defeito dominante da
+base. É motivo para saber que, nesses fatos, a garantia deixou de ser mecânica e
+passou a ser humana. O auditor do GIOP conferiu os 17 um a um e declarou isso no
+relatório; é o que se espera de quem usar a técnica.
+
+## 🏷️ O `tema` É A SUPERFÍCIE DE BUSCA — escreva a palavra do MÉDICO (2026-08-09)
+
+O `deepFor` pontua `+3` por termo da pergunta achado no **tema** e `+1` no
+corpo. Com todos os blocos da área cabendo no teto (é o caso de Endocrinopatias,
+172k de 400k), **todos chegam** — o tema não decide QUEM chega, decide QUEM VEM
+PRIMEIRO. E na hiponatremia isso decidiu errado nos dois sentidos:
+
+- *"sódio 118 com convulsão, conduta agora"* → 1º era o **algoritmo
+  diagnóstico**. O bloco de emergência empatava em 4 pontos e perdia no
+  desempate por ordem de array, porque `sodio` estava no tema do algoritmo
+  (*"sódio urinário"*) e não no dele — que dizia só "hiponatremia".
+- *"sódio 120 sem sintomas, velocidade de correção"* → 1º era o bloco **agudo
+  sintomático**, com bolus de salina hipertônica. O bloco crônico, dono do
+  limite de velocidade, não dizia nem "sódio" nem "correção" no tema.
+
+**Regra:** o tema tem de trazer o **analito**, o **cenário** e o **verbo que se
+digita**. Não basta a palavra do artigo. ⚠️ E o radical do `deepFor` corta 2
+letras, **não conjuga**: `convulsionando` não alcança `convulsão`, `correr` não
+alcança `corrida`. Onde a forma importa, escreva as duas.
+
+Corolário medido no mesmo dia, no roteamento de área: a lista do Esporte tinha
+`corrida`, `natacao`, `musculacao` e **nenhum verbo** — e `correr`, `nadar`,
+`pedalar` caíam em Diabetes.
+
+## 🧾 EDITANDO EXTRATO POR SCRIPT, PRESERVE A INDENTAÇÃO (2026-08-09)
+
+Mudei UM campo de `hipo-3.json` e o diff saiu com **2.360 linhas**: reescrevi com
+`JSON.stringify(j, null, 2)` e o arquivo estava com indentação 1. O conteúdo
+estava certo (conferi que os 97 fatos eram idênticos como JSON), mas um diff
+desses **esconde a mudança real** e inutiliza o `git log -p` daquele arquivo.
+
+A base tem os dois estilos (28 extratos com indentação 1, 12 com 2) — então não
+há um número certo: **leia o do arquivo antes de reescrever**. Refeito com o
+indent original, o diff voltou a ser 1 linha.
+
+## 🧹 `git add -A` COM AGENTE RODANDO VARRE O TRABALHO DELE PELA METADE (2026-08-09)
+
+Commitei um conserto meu enquanto o auditor do GIOP estava no ar. `git add -A`
+pega **tudo**, inclusive um extrato salvo no meio da edição do agente — e o que
+entra no commit é um JSON pela metade, com a validação passando porque o
+verificador só roda depois.
+
+Desta vez não pegou nada (conferi o `--stat`: só os meus dois arquivos), mas foi
+**sorte de temporização**, não cuidado.
+
+**Regra: com agente no ar, commit por CAMINHO EXPLÍCITO.** `git add lib/x.js
+scripts/y.js`, nunca `-A`. O `-A` volta a ser seguro quando `git status` estiver
+limpo e nenhum agente estiver rodando. E confira sempre o `git show --stat` do
+que acabou de commitar — é a única prova barata de que só entrou o que você quis.
+
+## 🏷️ O `tema` É PARA O BLOCO O QUE O `secao` É PARA O FATO (2026-08-09)
+
+Extensão medida da regra abaixo, um nível acima. O `deepFor` emite cada bloco
+como `• {tema} — {fonte}: {texto}` — então o `tema` **chega ao modelo**, ao
+contrário do `secao`. Só que ele chega **uma vez, no cabeçalho de até 68 mil
+caracteres de fatos**. Esperar que um "no ADULTO" no topo governe um fato que
+está 40 mil caracteres abaixo é a mesma aposta que o `secao` já perdeu.
+
+Medido em Obesidade: **3 dos 8 blocos não trazem marca de população no tema**
+(diretriz CV da ABESO, efeito gastrintestinal de AR GLP-1, dumping) — todos são
+de adulto. E a pergunta *"obesidade em criança de 8 anos, IMC no P97"* roteia
+para **Obesidade** e recebe os 350 mil caracteres de conteúdo adulto, com o
+cabeçalho mandando *"prefira-os a lembranças gerais"*.
+
+O que segura hoje: a régua pediátrica entrou no **núcleo** (v216), e o núcleo vai
+em toda chamada; e os blocos que carregam **dose** (farmacoterapia, bariátrica)
+escrevem "no ADULTO" no tema.
+
+**Não virou peneira de CI, pelo mesmo critério de sempre:** exigir marca de
+população em todo tema acusaria blocos onde população não quer dizer nada
+(hipercalcemia, dislipidemia) — falso positivo alto demais para um alarme que
+precisa significar algo quando dispara. Vale como reforço da regra que já existe:
+**a população mora na `afirmacao`**, não no cabeçalho que a carrega.
+
+Áreas sem nenhum bloco (Pediátrica, Masculina, Transgeneridade) devolvem **vazio**
+— conferido: não há queda silenciosa para a área vizinha quando só elas pontuam.
+
+## 📄 O CAMPO `secao` NUNCA CHEGA AO MODELO — o fato tem de se bastar (2026-08-09)
+
+Achado por auditoria adversarial e **conferido no código** por mim
+(`monta-base-profunda.js`): o montador faz `atual.fatos.push(String(f.afirmacao))`
+e mais nada. O `secao` só é usado no **sufixo do tema** das partes de um artigo
+partido — no máximo 4 seções, cortadas em 150 caracteres. **Ele não acompanha o
+fato.**
+
+Consequência: um fato que se apoia no cabeçalho da seção para dizer de que
+doença, cenário ou população fala **chega órfão** à tela do médico.
+
+O caso que provou: dois critérios do Painel 1 do hiperparatireoidismo diziam só
+*"PAINEL 1, CRITÉRIO 2a (ENVOLVIMENTO ESQUELÉTICO) — escore T < −2,5"* e
+*"CRITÉRIO 4 (CALCIÚRIA): >400 mg/dia"*. A seção dizia "indicações de cirurgia";
+o fato, não. Sozinhos, o primeiro lia-se como o corte **diagnóstico** de
+osteoporose e o segundo como limiar de tratamento — e **>400 mg/dia é justamente
+o teto de tratamento do HIPOparatireoidismo**, o extrato irmão da mesma área.
+
+**Regra para todo extrator: escreva a doença, o cenário e a população DENTRO da
+`afirmacao`.** `secao` é organização, não contexto entregue.
+
+⚠️ **Tentei transformar isso em peneira e MEDI que não presta como guarda:**
+procurar palavra de escopo presente na `secao` e ausente na `afirmacao` dá 59 de
+6.182 fatos (1%), e dos **6 que amostrei, 6 eram falso positivo** — o contexto
+agudo viaja por **via e tempo** ("intravenosa rápida", "1 L em 1 h", "até a
+recuperação clínica"), não pela palavra "crise". A peneira acharia os dois casos
+reais, mas afogados em ruído. Foi para o brief como técnica.
+
+## 🪤 EU CAÍ NA ARMADILHA QUE POLICIO, E O VERIFICADOR ME PEGOU (2026-08-09)
+
+Consertando um fato acusado pela auditoria, escrevi na afirmação que *"no
+hiperparatireoidismo primário o núcleo manda manter **25OHD >30 ng/mL**"*. É
+verdade, está verbatim no núcleo — **e não tem lastro na citação daquele
+artigo**, que é sobre hipercalcemia PTH-INDEPENDENTE. O `verifica-extracao.js`
+reprovou na hora: *"números na afirmação sem respaldo na citação: 25, 30"*.
+
+**É exatamente o erro que eu escrevo em todo brief de agente.** Reescrevi sem o
+número — "o núcleo manda MANTER a vitamina D reposta (o alvo numérico está na
+entrada de hiperparatireoidismo primário do núcleo, onde é conferido verbatim)"
+— e passou.
+
+**A regra vale para mim igual:** quando o conserto precisa de um fato que vem de
+OUTRA fonte, aponte para onde ele é provado; não o transcreva com número dentro
+de uma afirmação cuja citação é de outro artigo. É a mesma disciplina do "(16
+semanas)" que um auditor teve de desfazer.
+
+⚠️ **E o que isso diz da peneira: ela pegou o revisor, não só o revisado.** Uma
+guarda que só reprova trabalho de agente e nunca o meu não estaria medindo o
+processo inteiro.
+
+## 🔤 QUANDO A FONTE DE SÍMBOLOS DO PDF NÃO SOBREVIVE (2026-08-09)
+
+O irmão mais grave do sinal de menos comido. No artigo de hipercalcemia
+PTH-independente, o texto extraído tinha **zero `µ`, zero travessão, zero `−`,
+zero `°`, zero letra grega**, mais `þ` no lugar de `+` e o padrão `2.20e2.55` no
+lugar de faixas. O limite da EFSA para vitamina D saía impresso como
+**"100 mg/day"** quando o real é 100 **µg** — **erro de 1000×**.
+
+**O extrator conteve:** extraiu o fato **sem número e sem unidade**, com aviso de
+conferir no original. Confirmei depois nos 139 fatos publicados: **zero `þ` e
+zero faixa corrompida herdados**, e o único valor em mg é prednisolona 40 mg/dia,
+verbatim e plausível. O `1-a-hydroxylase` da fonte virou `1-alfa-hidroxilase` —
+restauração inequívoca, não invenção.
+
+**Virou AVISO em `verifica-extracao.js`, não reprovação.** A detecção tem falso
+positivo ~zero (`þ` não é caractere de português nem inglês; `2.20e2.55` não é
+notação clínica), mas reprovar impediria de trabalhar com um PDF ruim — e este
+extrato lidou bem. O aviso aparece para quem está conferindo, que é quem age.
+
+⚠️ **A peneira INVERSA foi medida e recusada:** "fármaco dosado em µg escrito em
+mg" deu **2 de 2 falsos positivos** na base inteira (fludrocortisona É em mg; o
+"grão de 60 mg" é de tireoide dessecada). Ficou como pista no brief.
+
+### ·  E o primo silencioso: o Lancet escreve decimal com PONTO MÉDIO
+
+`0·25`, `–2·5`, `31·4`. O `norm` de `lib/citacao.js` **não** converte `·` em `.`,
+então uma afirmação com `0,25` não é reconhecida dentro de `0·25`. Medido: **6
+fontes da base** usam ponto médio entre dígitos (uma com 848 ocorrências) e **75
+fatos já escrevem o número com `·`** — essa é a saída certa, **escrever como a
+fonte escreve**.
+
+⚠️ **Um extrator contornou modificando o arquivo em `textos/`.** A conversão era
+correta e está declarada, mas `textos/` é gitignored: **um novo download quebra
+todos os `cit_sha` daquele artigo**, e quem re-baixar tem de reaplicar a mesma
+conversão. Escrever o número com `·` não tem esse problema.
+
+## ➖ O PDF COME O SINAL DE MENOS, E O CORTE TROCA DE LADO (2026-08-09)
+
+O defeito de maior consequência de prescrição que esta base já produziu, e ele
+cabia em um caractere: um fato publicava **`escore T ≤ 2,5`**, sem o menos.
+Recuperado sozinho, **diagnostica osteoporose em quem tem densidade NORMAL** e
+manda tratar com antirreabsortivo. O hífen do `−2,5` se perdeu na conversão do
+PDF, junto com metade da pontuação da tabela.
+
+⚠️ **E o extrator SABIA do risco.** Ele declarou, em `extracao`, ter deixado de
+publicar **dois outros** escores T do capítulo 8 exatamente porque tinham perdido
+o sinal. Cuidou de dois; o terceiro passou. **Cuidado manual não escala** — é
+por isso que virou peneira (`scripts/confere-sinal-de-corte.js`, no `ci-validate`).
+
+### A regra que decide o que vira CI e o que vira técnica de auditor
+
+No MESMO dia eu tinha uma segunda varredura candidata — a da "cabeça perdida"
+(citação que começa no meio da frase e deixa o qualificador para trás). Medi as
+duas antes de decidir, sobre as 6.625 citações da base:
+
+| varredura | falso positivo | destino |
+|---|---|---|
+| sinal de escore T/Z | ~zero (corte com `≤` é negativo **por definição**) | **CI** |
+| cabeça perdida | ~85%; o gatilho de limiar acertou **0 de 3** | **brief do auditor** |
+
+**Peneira só vira guarda quando o falso positivo é baixo o bastante para que
+reprovar signifique alguma coisa.** Alarme ruidoso vira paisagem, e aí não
+protege mais nada — a mesma razão pela qual excluí `nucleotídeo` e o núcleo
+paraventricular da peneira do selo.
+
+⚠️ **E não generalize esta guarda para "todo número negativo".** Ela é estreita
+de propósito: só sabe de escore T e Z, onde a direção é conhecida (OMS:
+osteoporose é T ≤ −2,5). Verificador que tenta adivinhar o sinal de qualquer
+número volta a ser ruído.
+
+## 🚦 APRESENTAÇÃO ROTEIA, CRISE NÃO — e a linha se traça LENDO A ENTREGA (2026-08-09)
+
+Faltava um critério para o caso em que a área está certa e o artigo é
+**parcial**: ele responde a pergunta diagnóstica, mas não a de emergência.
+
+Aconteceu no hipoparatireoidismo. A diretriz de 2022 é de manejo **crônico** —
+conferido: ZERO ocorrência de tetany, Chvostek, Trousseau, cálcio intravenoso,
+gluconato, infusão, ECG e emergency — e manda mirar a **metade inferior** da
+faixa normal. Entregá-la a quem tem doente em tetania repete o acidente da
+hiponatremia aguda, que recebia o bloco da correção lenta.
+
+Minha primeira decisão foi excluir tudo: `tetania`, `chvostek`, `trousseau`,
+`parestesia perioral`. **Estava larga demais.** *"Formigamento perioral e cãibras
+após cirurgia de pescoço"* é a apresentação clássica do hipoparatireoidismo
+pós-cirúrgico — pergunta **diagnóstica**, exatamente o que a diretriz responde
+(como confirmar, PTH de 12-24 h, quando chamar de permanente). Recusá-la deixava
+o médico sem nada numa complicação comum de tireoidectomia.
+
+**O que decidiu não foi o argumento, foi ler o que CHEGA à IA.** Fui conferir e o
+bloco entregue **declara sozinho** o que a fonte não cobre — "não responde",
+"o que infundir" e "emergênc" aparecem no texto entregue, porque o `conflito` é
+repetido no cabeçalho de cada pedaço. Com essa declaração viajando junto, a
+apresentação pode rotear; sem ela, não poderia.
+
+**A regra:** quando o artigo cobre parte do assunto, roteie a pergunta que ele
+RESPONDE e recuse a que ele contradiz — e só confie nisso depois de **ler o
+bloco entregue** e ver o limite declarado lá dentro. `tetania`, `chvostek` e
+`trousseau` seguem fora, com sentinela no teste, até existir fonte de
+hipocalcemia AGUDA.
+
+## 🔐 TEXTO QUE COPIA OUTRO TEXTO PRECISA DE SELO DO QUE COPIOU (2026-08-09)
+
+A regra do `cit_sha` — citação carrega o hash do que citou — valia para o
+ARTIGO. Faltava para o **núcleo**, e o buraco custou uma prescrição invertida
+entregue por três dias.
+
+Corrigi o núcleo no marco do PTU da ATA 2026 (**16 semanas**, não o fim do 1º
+trimestre; e passado o marco a diretriz declara **DESCONHECIDA** a escolha do
+antitireoidiano). O `confere-ressalvas.js` seguiu verde — **e estava certo**:
+ele confere `conflito` e `nucleo_citado`, que são campos **do extrato**.
+
+Só que **15 fatos, em 5 extratos, restituem o núcleo por escrito dentro de
+`fatos[].afirmacao`**, e ali nenhuma peneira olhava. Um deles dizia: *"prevalece
+o núcleo: propiltiouracil no 1º trimestre e metimazol depois"*. Depois da
+correção, virou mentira — mandava trocar a gestante de volta para metimazol
+exatamente onde a diretriz se recusa a recomendar, e com o marco errado.
+Cabeçalho do extrato certo, fato entregue errado.
+
+**Achado por AUDITORIA ADVERSARIAL, não por teste — e por isso virou teste.**
+`lib/nucleo.js` + `scripts/confere-nucleo-nos-fatos.js`: fato que menciona o
+núcleo carrega `nucleo_sha`; mudou o núcleo, todos reprovam. A reprovação **é** o
+pedido de releitura, e reler 15 fatos custa minutos.
+
+⚠️ **Duas armadilhas na própria peneira, as duas achadas medindo:**
+1. `/núcleo/` casa com **nucleo**tídeo — "polimorfismo de nucleotídeo único",
+   "oligonucleotídeo antissenso". Sem fronteira de palavra, 36 achados em vez de
+   17, quase metade de genética e lípides.
+2. "núcleo" também é **anatomia** — o núcleo paraventricular hipotalâmico, na
+   fisiopatologia do eutireoidiano doente. Sem excluí-lo, dois fatos reprovariam
+   **para sempre**, a cada mudança do núcleo.
+
+**Ruído que nunca resolve é o jeito mais rápido de um alarme virar paisagem.**
+Peneira larga demais não protege mais — ensina a ignorar.
+
+## 🚨 O HARNESS A/B APROVOU UM RETRATO DE TRÊS DIAS ATRÁS (2026-08-09)
+
+O portão que existe para pegar apagão **passou verde sem medir o meu diff** — e
+o portão é justamente o que não pode falhar em silêncio.
+
+O `check.js` **não copia nada**: ele lê o que estiver em `$AB_DIR/main/` e
+`$AB_DIR/branch/`. Como reusei `AB_DIR=/tmp/ab` de uma sessão anterior, ele
+mediu um `index.html` de **6 de agosto**, imprimiu "OK — mesmos números da main,
+nenhum pageerror" e eu quase entreguei em cima disso.
+
+**O que me salvou foi conferir um número que eu já esperava ver mudar:** o
+`maiorScript` do branch veio **idêntico** ao da rodada anterior, depois de eu ter
+somado ~800 caracteres ao `index.html`. Número que não muda quando deveria mudar
+é sinal tão forte quanto número errado.
+
+**Consertado na raiz:** o harness agora compara `branch/index.html` byte a byte
+com o `index.html` da árvore de trabalho e **recusa rodar** se diferirem,
+imprimindo o comando para repopular. Testado nos dois sentidos — um único byte
+a mais já reprova.
+
+⚠️ **A lição que vale além deste script: ferramenta que LÊ de um diretório
+externo tem de provar que leu o que você acha que ela leu.** Verde de ferramenta
+desatualizada é pior que vermelho, porque encerra a investigação.
+
+## 🔎 O ARTIGO SÓ RESPONDIA A QUEM JÁ SABIA O DIAGNÓSTICO (2026-08-09)
+
+Passei o dia caçando **evicção** — artigo certo cortado pelo teto. Varrendo as
+quatro áreas que **cabem** no teto (e que por isso não podem sofrer evicção)
+achei o defeito que vem **antes** dela: a área nem é consultada.
+
+A osteogênese imperfeita tem 30k de texto e era alcançável **só pelo próprio
+nome**. Das 7 formas naturais de perguntar por ela, **6 caíam em NENHUMA área**:
+o sinal (*"escleras azuladas"*), a classificação (*Sillence*), o gene
+(*COL1A1*), o achado associado (*dentinogênese imperfeita*) e a apresentação
+(*fragilidade óssea*). *"Criança com fraturas de repetição e escleras azuladas"*
+— o quadro de livro-texto — não chegava a lugar nenhum.
+
+**A assimetria é o ponto: quem já sabe o diagnóstico chega; quem está
+DIAGNOSTICANDO, não.** E quem está diagnosticando é justamente quem precisa.
+Vale para toda área pequena: ao varrer, pergunte pelo **quadro**, não pelo nome
+da doença — perguntar pelo nome é a forma mais fácil de um teste passar sem
+medir nada.
+
+**Cada chave contada antes de entrar**, como manda a regra de dominância:
+`esclera` 12 na área contra **1 em toda a base** (e `esclerose`/`esclerodermia`
+não casam — divergem na 7ª letra), `col1a1` 11×0, `dentinogenese` 8×0,
+`sillence` 4×0, `fragilidade ossea` 6×0, `antirreabsortivo` 5×0.
+
+❌ **`perda auditiva` ficou de fora APESAR de dominar 7 a 1.** É sintoma
+genérico, e chave genérica é como área é sequestrada (foi assim que "diabetes"
+levou a de Esporte). **Dominância autoriza, mas não obriga: se o termo pertence
+à clínica inteira, ele não é chave de área.** A guarda ficou no teste —
+*"perda auditiva no hipotireoidismo"* tem de continuar caindo em Tireoide.
+
+## ⚖️ REIVINDICAR NÃO É "O TEXTO MENCIONA?", É "O TEXTO DOMINA?" (2026-08-09)
+
+A regra do tema como reivindicação (nota abaixo) dizia **quando não reivindicar**.
+Faltava o outro lado: **quando reivindicar é obrigatório**. Dois casos no mesmo
+dia, com desfechos opostos, fecham o critério.
+
+**Caso NTIS — parei.** O artigo da síndrome do eutireoidiano doente perdia a
+pergunta *"paciente em UTI com T3 baixo e TSH normal: é doença tireoidiana?"*.
+Podia ter enfiado o painel laboratorial no tema, mas **outros artigos de tireoide
+discutem T3 e TSH tanto quanto ele**. Reivindicar ali seria escrever para vencer
+a sonda. Fica em 1%, registrado como limite.
+
+**Caso hiponatremia aguda — enriqueci.** O bloco do tratamento de emergência
+perdia a pergunta do paciente **convulsionando**, e quem chegava no lugar era o
+bloco da hiponatremia **crônica**, que manda corrigir DEVAGAR. Aqui o tema
+**tinha de** reivindicar: `bolus` aparece **40 vezes nele contra ≤3** em qualquer
+vizinho, `salina hipertonica` 19 contra ≤4, `desmopressina` 22 contra ≤4.
+
+**O critério é comparativo, não absoluto.** Antes de pôr um assunto no tema,
+conte-o **nos outros blocos da mesma área**:
+- o texto **domina** o assunto (ordem de grandeza acima dos vizinhos) → o tema
+  **tem de** dizer, e calar é deixar a pergunta com quem responde pior;
+- o texto **menciona** e um vizinho entrega mais → **é reivindicação falsa**,
+  mesmo sendo verdade que o texto menciona.
+
+⚠️ **E o dano da omissão não é simétrico ao da omissão comum.** Perder um artigo
+costuma **omitir** informação; aqui **entregou a recomendação oposta** numa
+emergência. Ao varrer uma área acima do teto, a pergunta não é só "chega o
+artigo certo?" — é **"quem chega no lugar dele diz o CONTRÁRIO?"**.
+
+## 🎯 A SONDA TAMBÉM TEM ÂNCORA, E ÂNCORA AMBÍGUA MEDE O ARTIGO ERRADO (2026-08-09)
+
+Já sabia que **âncora ambígua** estraga citação. Descobri que estraga **teste**
+— e o meu estava estragado.
+
+A asserção de COMPLETUDE identifica o bloco-alvo por um trecho do `tema`. Usei
+`tireotoxica` para "tempestade tireoidiana com Burch-Wartofsky 55" e o teste
+reprovou acusando **3% de chegada**. Ia registrar como limite de teto. Fui medir
+antes: o bloco da crise tireotóxica chegava **INTEIRO — 100%, 15 menções de
+"burch"**. O que estava em 3% era o artigo da **GESTAÇÃO**: `tireotoxica` casa
+com **7 dos 9 blocos** da área, e o `find` devolve o primeiro. A sonda mediu um
+artigo pelo outro.
+
+**O erro de uma sonda é pior que o erro que ela procura**, porque vem assinado
+como medição. Uma reprovação falsa manda consertar o que não está quebrado — e
+uma aprovação falsa é o que eu já tinha, dormindo em dois casos: `dumping` casa
+com o artigo do dumping **e** com o da bariátrica, `prolactinoma` com dois
+blocos. Passavam porque o `find` calhava de pegar o certo — **acerto emprestado
+dentro do próprio teste**.
+
+**Conserto estrutural, em três partes:**
+1. **Âncora e palavra viraram campos separados.** Identificar o bloco e contar
+   presença são trabalhos diferentes: a âncora precisa ser *única*, a palavra
+   precisa ser *frequente*. Um campo só obrigava a mesma string a ser as duas
+   coisas, e é isso que força o uso de termo genérico.
+2. **Âncora que casa com dois artigos REPROVA por ambiguidade, antes de medir** —
+   com a mensagem dizendo que é ambiguidade. Silenciosamente medir o primeiro é
+   o que produziu os dois acertos emprestados.
+3. **Artigo partido pelo montador não é ambiguidade.** `(parte 1/2)` e
+   `(parte 2/2)` são o mesmo artigo: o sufixo sai antes de comparar, e mede-se o
+   maior pedaço.
+
+⚠️ **E confirmei que o aperto não afrouxou a sonda**, mutando as três: âncora
+ambígua reprova com o diagnóstico certo; artigo partido não é falso-positivo; e
+**evicção de verdade continua pega** — com teto de 60k em vez de 120k, o bloco
+da crise despenca de 100% para 0%. Teste verde só vale depois de ficar vermelho
+pelo motivo certo.
 
 ## 🏷️ O TEMA É UMA REIVINDICAÇÃO, E REIVINDICAÇÃO FALSA ROUBA O ARTIGO CERTO (2026-08-08)
 
