@@ -78,3 +78,8 @@ scratchpad/acervo/*.py
 scratchpad/work/
 # (scratchpad/boot-navegador/ CONTINUA versionado: é o harness de navegador real,
 #  ferramenta permanente, não rascunho de agente.)
+
+# Auditoria do núcleo: recortes de trabalho dos auditores (dumps dos extratos já
+# versionados, feitos para leitura). São derivados e regeneráveis — o que vale é
+# o `relatorio.md` de cada auditor.
+scratchpad/auditoria-nucleo/**/_*.txt
