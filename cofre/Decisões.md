@@ -8,6 +8,13 @@ atualizado: 2026-08-10
 Log de decisões de produto e técnicas (mais recentes no topo).
 
 ## 2026-08
+- **📈 QUATRO GRÁFICOS DE BARRA NO CONTEÚDO (2026-08-10).** Todos com números **já presentes no texto do próprio capítulo** — o gráfico reapresenta, não acrescenta, e assim herda a auditoria do texto:
+  - **Tratamento Farmacológico da Obesidade** — perda de peso por fármaco, tirada da tabela do próprio capítulo (tirzepatida −20% SURMOUNT · semaglutida 2,4 mg −15% STEP · liraglutida 3,0 mg −8% SCALE · naltrexona–bupropiona 5–8%).
+  - **Tratamento Cirúrgico da Obesidade** — redução de risco (DM2 ~83% · câncer em mulheres ~42% · AVC ~34% · mortalidade geral ~29% · IAM ~29%).
+  - **Craniofaringioma** — frequência das deficiências no hipopituitarismo (GH ~75% · LH/FSH ~40% · TSH ~25% · ACTH ~25%). ⚠️ Existem **DOIS** capítulos com o tema "Craniofaringioma": mirei pelo **índice** (49), não pelo tema.
+  - **Carcinoma anaplásico de tireoide** — o contraste que a prosa esconde: **1–2%** dos cânceres de tireoide e **20–50%** das mortes.
+  - ⚠️ **Uma âncora falhou em silêncio** na primeira tentativa: no capítulo de farmacoterapia a tabela é a **última linha do resumo**, sem `\n` final, e meu `regexp_replace` exigia a quebra. Só 3 de 4 entraram. **Conferir a contagem depois de inserir**, sempre — o UPDATE não reclama de âncora que não casou.
+  - **Conferência final:** os 4 blocos renderizados contra o código **de produção**, comparando barras desenhadas com itens declarados — nenhum item caiu.
 - **📊 GRÁFICO DE BARRAS NO CORPO DO RESUMO (2026-08-10).** `sw.js` v225 → **v226**. Sintaxe `{barra: Rótulo 20%; Rótulo 15%}`, barras HORIZONTAIS (rótulo em português na vertical viraria texto rotacionado).
   - ⚠️ **PIZZA E BARRA NÃO SÃO INTERCAMBIÁVEIS.** Pizza é COMPOSIÇÃO — partes de um todo que somam 100%. Barra é COMPARAÇÃO entre categorias independentes. "Redução de mortalidade 29%, de DM2 83%, de AVC 34%" não soma 100 e não são partes de nada: em pizza, cada fatia seria uma fração inventada de um todo inexistente. Varrendo os 215 capítulos, **quase todo dado clínico é comparação**; composição limpa é rara, porque a maioria vem em FAIXA — e faixa em pizza mente.
   - ⚠️ **A VÍRGULA É O SEPARADOR DECIMAL EM PORTUGUÊS.** `split(',')` transforma "Semaglutida 2,4 mg" em dois itens, com o rótulo destruído e o número errado. O bloco passa a aceitar `;` entre itens quando o rótulo precisa de vírgula; sem `;`, a vírgula segue valendo, para não quebrar o que já está publicado. Vale para a pizza também (`grafItens`).
