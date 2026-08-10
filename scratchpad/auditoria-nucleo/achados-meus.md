@@ -200,6 +200,54 @@ Nutricional. Sem abrir os dois, eu teria citado a fonte errada.
 
 ---
 
+## 8. O que eu conferi dos relatórios dos auditores (e o que mudou de leitura)
+
+Regra da casa: acusação grave só passa depois de eu abrir a fonte. Fiz isso em
+quatro, e as quatro se sustentam — mas uma delas muda de natureza.
+
+**✅ Metformina em oncologia (Diabetes, GRAVE).** Confere. A fonte diz que a
+metformina *"may not be suitable for use in short courses of GC therapy"* — que é
+o pulso de dexametasona da oncologia —, que um ensaio randomizado não mostrou
+efeito em 4 semanas, e que com pós-prandial ≥200 mg/dL ela entra *"along with
+NPH"*. ⚠️ **Duas das minhas quatro buscas voltaram ZERO por hifenização do PDF**
+(`founda- tion`, `signif- icantly`) com o texto bem ali. A armadilha do brief
+pega quem escreveu o brief.
+
+**✅ Estatina em diálise (Lípides, OMISSÃO).** Confere, literal: *"Em indivíduos
+com DRC em programa de diálise, sem doença cardiovascular estabelecida,
+recomenda-se **contra** o início de estatinas. **FORTE ALTA**"* — a força máxima
+que a diretriz usa. E a régua do próprio núcleo classifica o dialítico como alto
+risco, o que empurra para estatinizar.
+
+**✅ A sigla SOMP não existe (SOP, IMPRECISO).** Confere e é pior do que o
+auditor disse. `SOMP` aparece **2 vezes no `index.html`** e em mais nenhum lugar
+do repositório; `polyendocrine` tem **0 ocorrências** na diretriz de 2023 que a
+entrada cita como fonte; e a nota do cofre usa **PMOS** (*polyendocrine metabolic
+ovarian syndrome*). O núcleo entrega uma sigla que não existe na literatura, com
+o crachá de uma diretriz que não a propõe.
+
+**⚠️ Roteamento da HAC — confirmado no número, RECLASSIFICADO na natureza.**
+Medi eu mesmo: `hiperplasia adrenal congenita` → **Endocrinologia Feminina**,
+`hipogonadismo feminino` → **Endocrinologia Masculina**, `insuficiência ovariana
+prematura` → **nenhuma área**. Os três números do auditor estão certos.
+**Mas o primeiro não é descuido: é decisão deliberada e documentada**
+(`clinical-deep.js:170`) — *"de propósito NÃO movi `hiperplasia adrenal
+congenita` nem `17-hidroxiprogesterona`: mover roubaria o rastreio da forma NÃO
+CLÁSSICA de Feminina, onde está o corte de 170–200 ng/dL que ESTE artigo não
+tem."*
+**O que mudou desde aquela decisão, e é a contribuição real do auditor:** entrou
+no acervo um artigo DEDICADO à HAC (Merke & Auchus, NEJM 2020, 115 fatos),
+arquivado em Adrenal. O trade-off foi decidido quando o bloco do hirsutismo era o
+único conteúdo de HAC que existia. Hoje a pergunta que NOMEIA a doença clássica
+não alcança o artigo da doença clássica.
+**Conserto certo, portanto, não é inverter o mapeamento** (isso quebra o rastreio
+da não clássica, que foi medido): é chave composta — a forma clássica e o
+crinecerfonte para Adrenal, a frase nua fica em Feminina. A fazer quando os
+auditores pararem: `lib/clinical-deep.js` é de edição exclusiva minha e há
+auditor medindo roteamento agora.
+
+---
+
 ## 4. Sobre o crivo mecânico (`cortes.js`) — o que ele é e o que não é
 
 409 cortes reconhecidos, 52 exames, 31 grupos com mais de um valor, 15 tocando o
