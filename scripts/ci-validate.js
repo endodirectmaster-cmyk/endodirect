@@ -630,6 +630,18 @@ try {
   fail('regressão do merge com o servidor falhou (verifique mergeConcurrent/itemSig no index.html):\n' + out);
 }
 
+// ⚠️ Seis mapas mentais publicados estavam com o `data` gravado como STRING de
+//     JSON e apareciam VAZIOS, com o título genérico "Tema" — 30 ramos e 107
+//     folhas invisíveis no ar, sem erro e sem aviso, e ninguém tinha notado.
+//     Perder conteúdo em silêncio é pior que quebrar: pelo menos quebrar avisa.
+try {
+  execFileSync(process.execPath, [path.join('scripts', 'test-mapa-mental-forma.js')], { stdio: 'pipe' });
+  ok('mapa mental: `data` em string de JSON é lido, não vira mapa vazio');
+} catch (e) {
+  const out = (e.stdout ? e.stdout.toString() : '') + (e.stderr ? e.stderr.toString() : '');
+  fail('regressão da forma do mapa mental falhou (verifique normalizeMMData no index.html):\n' + out);
+}
+
 // ⚠️ O professor clicou num capítulo e ele NÃO ABRIU — sem erro na tela, sem
 //     nada no F12, e recarregar não resolvia. Um script meu gravara `pts` como
 //     STRING de JSON em 5 capítulos, e `if(d.pts && d.pts.length)` deixava passar
