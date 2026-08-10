@@ -1,6 +1,6 @@
 ---
 tags: [cofre, decisoes]
-atualizado: 2026-08-09
+atualizado: 2026-08-10
 ---
 
 # Decisões
@@ -8,6 +8,13 @@ atualizado: 2026-08-09
 Log de decisões de produto e técnicas (mais recentes no topo).
 
 ## 2026-08
+- **🔍 O RESUMO QUE "NÃO ABRIA": O CONTEÚDO ESTAVA INOCENTE (2026-08-10).** Depois das 27 trocas de linguagem, o professor relatou que o `Fisiopatologia da Obesidade` parou de abrir. Restaurei o backup de 13:32, voltou a abrir — e eu tratei isso como prova de que uma das trocas quebrara o texto. **Não era.** A restauração muda **duas** coisas de uma vez: o conteúdo *e* o `updated_at` que faz o cliente rebuscar. Reaberto o caso com evidência, as três checagens inocentaram o payload:
+  - o bloco `{pizza:}` **não estava** no estado quebrado, e no renderizador da v221 um `{pizza:}` **sem renderizador não lança exceção** — sai como texto literal;
+  - **nenhum campo de identidade** (`fonte`/`tema`/`titulo`/`sub`) mudou em nenhum dos 12 itens — só `resumo`, `pts`, `mapa`;
+  - **zero divergência** nas contagens dos 16 caracteres estruturais do markdown (`* | \n [ ] ( ) \` < > { } _ ~ # !`) entre as duas versões dos 12 itens: a troca mexeu **só em letras**.
+  - Causa provável restante: **estado do cliente**, não payload — `diretrizes` é lido de `lsGet('diretrizes')` no boot, e localStorage **sobrevive ao Ctrl+Shift+R**. Casa com os três sinais do professor (sem erro no F12, recarregar não resolve, outros resumos abrem). **Se repetir, o caminho é limpar a cópia local, não mexer no conteúdo.**
+  - **Ordem corrigida:** o renderizador (PR #731, v222) foi mergeado e conferido no ar **antes** de o `{pizza:}` voltar ao banco. Conteúdo que depende de código não deployado nunca vai primeiro.
+- **🧪 GUARDA DE CI PARA O GRÁFICO DE PIZZA (2026-08-10).** `scripts/test-pizza-resumo.js`: roda o `mdToHtml`/`htmlToMd` **reais** do `index.html` em jsdom e cobre desenho (3 fatias, faixa da fonte no rótulo, lista vizinha não partida) **e** o round-trip do editor WYSIWYG. Sem ele, mexer no `htmlToMd` faria a primeira edição do resumo **comer o gráfico sem erro nenhum**. Conferido por mutação: com o `htmlToMd` cego à marca `wys-pizza`, o teste falha nas três asserções certas.
 - **🥧 GRÁFICO DE PIZZA NO CORPO DO RESUMO + LINGUAGEM CENTRADA NA PESSOA (2026-08-10).** `sw.js` v221 → **v222**.
   - **Pizza:** sintaxe `{pizza: Rótulo 70, Rótulo 20, Rótulo 10}` no markdown do resumo, renderizada como **SVG inline** (rosca + legenda com percentual). O **último número** de cada fatia é o peso e o resto é o rótulo — assim o rótulo carrega a faixa publicada ("Metabolismo basal (60–75%) 70") sem perder informação. Estreou no `Fisiopatologia da Obesidade`, nos componentes do gasto energético. ⚠️ **Por que SVG e não imagem:** o `mdInline` começa com `esc()`, de propósito — HTML vindo do conteúdo é escapado. A pizza é um **bloco reconhecido pelo renderizador**, não HTML solto no texto, e os rótulos seguem escapados. ⚠️ **E por que `data-pizza`:** o editor WYSIWYG faz round-trip HTML→markdown; sem uma marca que o `htmlToMd` saiba devolver, **a primeira edição do resumo comeria o gráfico** — é o mesmo motivo do `wys-img` nas imagens. Print conferido no Chromium antes de subir, como manda a regra da aparência.
   - **Linguagem:** trocadas **27 ocorrências** de `obeso/obesa/obesos/obesas` por construção centrada na pessoa, em 13 itens. ⚠️ **Troca cega quebraria a gramática** — "no pessoa com obesidade", "quanto mais pessoa com obesidade". Cada ocorrência foi reescrita com a regência certa: `no obeso` → `na pessoa com obesidade`; `Microbiota do obeso` → `Microbiota na obesidade`; `↓ quanto mais obeso` → `↓ quanto maior a adiposidade`; `não obeso` → `sem obesidade`; `em obesas` → `em mulheres com obesidade`; `Sobrepeso/obeso` (célula de tabela) → `Sobrepeso/obesidade`.
