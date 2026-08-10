@@ -5,6 +5,35 @@ atualizado: 2026-08-09
 
 # Convenções de Trabalho
 
+## 🔀 SÃO TRÊS CAMINHOS ATÉ O MÉDICO, E CORRIGIR UM NÃO CORRIGE OS OUTROS (2026-08-10)
+
+O mesmo fato clínico chega ao médico por **três vias independentes**, e elas não
+se atualizam sozinhas:
+
+1. **O núcleo** (`CLINICAL_GUIDELINES` do `index.html`) — vai em toda chamada de IA.
+2. **As notas de `cofre/Diretrizes Clínicas/`** — fonte de verdade declarada de
+   flashcards, questões, newsletter, Mural e resumos de aula.
+3. **O conteúdo da plataforma** (`endodirect_global_state.payload.diretrizes` no
+   Supabase) — 215 itens, 1,7 milhão de caracteres, o que o médico LÊ nas abas
+   Resumos e Diretrizes.
+
+**Medido em 10/08/2026, e é por isso que esta nota existe:** quatro correções que
+eu tinha feito no núcleo continuavam VIVAS COMO DEFEITO nas notas do cofre
+(condição de coleta da copeptina, ordem de leitura da copeptina, marco de 16
+semanas do PTU, ranking de risco por via do glicocorticoide), e três continuavam
+vivas na plataforma (romosozumabe sem cautela cardiovascular, PTU→metimazol
+inclusive num flashcard, régua pediátrica P95).
+
+**A regra: toda correção de núcleo exige varredura das TRÊS vias pelo termo.**
+A varredura do `index.html` sozinha está certa e é insuficiente. Para a
+plataforma, a varredura é SQL sobre o `payload` — e vale rodar também a pergunta
+inversa: *"os defeitos que já corrigi no núcleo existem aqui?"*, que foi como os
+três da plataforma apareceram.
+
+⚠️ **E o inverso também acontece:** em dois casos o NÚCLEO estava certo e a NOTA
+errada (o ranking por via do glicocorticoide, o Na urinário na SIAD). Não
+presuma que a nota é a fonte e o núcleo a cópia — as duas envelhecem.
+
 ## 🔴 GUARDA VERDE AQUI, VERMELHA NO CI: O CORPUS NÃO EXISTE LÁ (2026-08-09)
 
 Abri o PR #729 com o `ci-validate` inteiro verde na minha máquina. **O check
