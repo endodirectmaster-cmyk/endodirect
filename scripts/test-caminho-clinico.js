@@ -159,8 +159,17 @@ const CAMINHO = [
   // `hipernatremia` MUDOU de Endocrinopatias para cá porque o conteúdo chegou:
   // lá a contagem é ZERO (os cinco blocos são de HIPOnatremia) e aqui é 21.
   ['hipernatremia de 165 no idoso acamado', 'Neuroendocrinologia'],
+  // ⚠️ A FORMA CLÁSSICA DA HAC VAI PARA ADRENAL, A FRASE NUA FICA EM FEMININA.
+  // Chave composta (10/08/2026): a pergunta que NOMEIA a doença clássica não
+  // alcançava o artigo dedicado à HAC (115 fatos, em Adrenal) — recebia SOP +
+  // hirsutismo. A composta só casa quando a pergunta diz "clássica" e vence a
+  // frase nua por comprimento dentro da mesma categoria.
+  ['crinecerfonte para hiperplasia adrenal congenita classica', 'Adrenal'],
+  ['hiperplasia adrenal congenita classica no lactente', 'Adrenal'],
   // Controles do roubo que estas chaves poderiam causar — todos têm de FICAR:
   ['mulher com hirsutismo: rastreio de hiperplasia adrenal congenita nao classica', 'Endocrinologia Feminina'],
+  ['hiperplasia adrenal congenita', 'Endocrinologia Feminina'],
+  ['17-hidroxiprogesterona elevada, o que investigo?', 'Endocrinologia Feminina'],
   ['poliuria e polidipsia com glicemia 400', 'Diabetes'],
   ['SIADH, como confirmo?', 'Endocrinopatias'],
 
@@ -870,6 +879,8 @@ const PRIMEIRO = [
   ['cortisol basal 3, faco teste de estimulo?', 'insuficiência adrenal —'],
   ['crise adrenal, hidrocortisona IV agora', 'insuficiência adrenal —'],
   ['crise perdedora de sal no lactente com 21-hidroxilase', 'hiperplasia adrenal congenita'],
+  // Não basta a área resolver: o bloco tem de CHEGAR. Extração verificada não é entrega.
+  ['crinecerfonte para hiperplasia adrenal congenita classica', 'hiperplasia adrenal congenita'],
   ['hipertensao resistente com hipocalemia, rastreio?', 'hiperaldosteronismo'],
   ['poliuria hipotonica de 6 L/dia, investigo como?', 'diabetes insipidus central'],
   // ⚠️ O DESEMPATE DA CONDIÇÃO EXIGIDA, nos dois sentidos. GIOP e osteoporose
