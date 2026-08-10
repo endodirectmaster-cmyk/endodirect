@@ -4685,7 +4685,12 @@ function callAIJson(sys,usr,maxTok,retries,model,grounding){
 }
 function mdInline(s){
   var imgs=[];
-  s=esc(s).replace(/!\[([^\]]*)\]\((https?:\/\/[^\s)]+)\)(?:\{(\d{1,3})\})?/g,function(w,alt,url,ww){var _st=ww?(' style="width:'+ww+'%"'):'';imgs.push('<img class="wys-img" src="'+url+'" alt="'+alt+'"'+_st+' referrerpolicy="no-referrer" onerror="this.style.display=\'none\'">');return ''+(imgs.length-1)+'';});
+  // ⚠️ ACEITA TAMBÉM `data:image/...`. A imagem que o professor anexa NO CORPO do
+  // texto é lida do computador e vira data:URL — não existe URL http nenhuma. Enquanto
+  // isto exigia `https?://`, o round-trip PERDIA a imagem: o `htmlToMd` gravava
+  // `![](data:...)` e este render devolvia o markdown CRU na tela. O `safeImgSrc`
+  // decide o que entra; o que não passar continua como texto, visível, sem sumir.
+  s=esc(s).replace(/!\[([^\]]*)\]\(((?:https?:\/\/|data:image\/)[^\s)]+)\)(?:\{(\d{1,3})\})?/g,function(w,alt,url,ww){if(!safeImgSrc(url))return w;var _st=ww?(' style="width:'+ww+'%"'):'';imgs.push('<img class="wys-img" src="'+url+'" alt="'+alt+'"'+_st+' referrerpolicy="no-referrer" onerror="this.style.display=\'none\'">');return ''+(imgs.length-1)+'';});
   s=s.replace(/\*\*(.+?)\*\*/g,'<strong>$1</strong>').replace(/__(.+?)__/g,'<u>$1</u>').replace(/(^|[^*])\*([^*\n]+)\*(?!\*)/g,'$1<em>$2</em>').replace(/`([^`]+)`/g,'<code>$1</code>');
   // ⚠️ ITÁLICO COM UNDERSCORE — vem DEPOIS de `__sublinhado__`, senão comeria a
   // marca dupla. O professor viu `_D_` escrito na tela (30/07), no cabeçalho de
@@ -5137,6 +5142,17 @@ function htmlToMd(root){
     }
     if(node.classList&&node.classList.contains('wys-pizza')){out.push(node.getAttribute('data-pizza')||'');return;}
     if(node.classList&&node.classList.contains('wys-barra')){out.push(node.getAttribute('data-barra')||'');return;}
+    // ⚠️ IMAGEM SOLTA NO TOPO DO EDITOR. O `inline()` já sabia serializar <img>, mas
+    // só quando ela estava DENTRO de um parágrafo. Ao inserir no cursor entre dois
+    // parágrafos, o navegador põe o <img> como filho direto do contenteditable — e
+    // aí ele caía fora de todos os ramos e era DESCARTADO no salvar. O professor
+    // inseria a imagem, salvava, e ela sumia sem aviso.
+    if(tag==='img'){
+      var bsrc=node.getAttribute('src')||'';
+      if(bsrc){var _bw=/width:\s*(\d{1,3})%/.exec(node.getAttribute('style')||'');
+        out.push('!['+(node.getAttribute('alt')||'')+']('+bsrc+')'+(_bw?('{'+_bw[1]+'}'):''));}
+      return;
+    }
     if(tag==='table'){
       var trs=node.querySelectorAll('tr'),allRows=[];
       for(var r=0;r<trs.length;r++){var cs=trs[r].querySelectorAll('th,td'),row=[];for(var cI=0;cI<cs.length;cI++)row.push(cellText(cs[cI]));if(row.length)allRows.push(row);}
@@ -10654,6 +10670,8 @@ function admRefWysHTML(d){
       +'<button type="button" class="wys-tool" data-wys="h" title="Título de seção">H</button>'
       +'<button type="button" class="wys-tool" data-wys="ul" title="Lista com marcadores">•</button>'
       +'<button type="button" class="wys-tool" data-wys="p" title="Parágrafo normal">¶</button>'
+      +'<button type="button" class="wys-tool" data-wys="img" title="Inserir imagem no texto">🖼️</button>'
+      +'<input type="file" id="adm-ref-wysimg" accept="image/*" style="display:none">'
       +wysAlignBar()+wysCorBar()
       +'<span class="wys-spacer"></span>'
       +'<button type="button" class="btn btn-outline btn-sm" id="btn-adm-ref-cancel">Cancelar</button>'
@@ -13267,6 +13285,47 @@ function admOpenImgRemove(){
 }
 // Upload de imagem do computador: reduz (canvas, máx. 1000px, JPEG 0.85) e guarda
 // como data:URL no campo figuras.url (o app já armazena imagens base64 no payload).
+// Lê a imagem do computador e devolve um data:URL reduzido (máx. 1000 px de
+// largura, JPEG 0.85). Usado pelo anexo do CAPÍTULO e pelo botão de imagem NO CORPO
+// do texto — mesma redução nos dois, para não haver duas regras de tamanho.
+function lerImagemReduzida(file,cb){
+  if(!file||!/^image\//.test(file.type||'')){notify('Selecione um arquivo de imagem.','err');return;}
+  var reader=new FileReader();
+  reader.onload=function(){
+    var raw=reader.result,img=new Image();
+    img.onload=function(){
+      var out=raw;
+      try{
+        var maxW=1000,sc=Math.min(1,maxW/(img.naturalWidth||maxW));
+        var w=Math.max(1,Math.round((img.naturalWidth||maxW)*sc)),h=Math.max(1,Math.round((img.naturalHeight||maxW)*sc));
+        var cv=document.createElement('canvas');cv.width=w;cv.height=h;cv.getContext('2d').drawImage(img,0,0,w,h);
+        var jpg=cv.toDataURL('image/jpeg',0.85);
+        if(jpg&&jpg.length<raw.length)out=jpg; // mantém PNG quando já era menor
+      }catch(e){}
+      cb(out);
+    };
+    img.onerror=function(){notify('Não consegui ler essa imagem.','err');};
+    img.src=raw;
+  };
+  reader.onerror=function(){notify('Falha ao ler o arquivo.','err');};
+  reader.readAsDataURL(file);
+}
+// Insere a imagem NO PONTO DO CURSOR do corpo do resumo. O `htmlToMd` já sabe
+// devolver <img> como ![](url), e o mdInline já aceita data: — o round-trip fecha.
+function wysInserirImagem(file,ed){
+  lerImagemReduzida(file,function(dataURL){
+    var alvo=ed||document.getElementById('adm-ref-wys');
+    if(!alvo){notify('Abra o editor do resumo antes de inserir a imagem.','err');return;}
+    alvo.focus();
+    var tag='<img class="wys-img" src="'+esc(dataURL)+'" alt="">';
+    var okCmd=false;
+    try{okCmd=document.execCommand('insertHTML',false,tag+'<p><br></p>');}catch(e){}
+    if(!okCmd){ // navegador sem execCommand: acrescenta no fim, melhor que perder
+      var d=document.createElement('div');d.innerHTML=tag;alvo.appendChild(d.firstChild);
+    }
+    notify('Imagem inserida no texto. 🖼️','ok');
+  });
+}
 function admOpenImgUpload(file){
   if(!file||!/^image\//.test(file.type||'')){notify('Selecione um arquivo de imagem.','err');return;}
   var ti=admOpenImgTargetIdx();if(ti<0){notify('Crie o resumo deste capítulo antes de anexar a imagem.','err');return;}
@@ -14971,6 +15030,7 @@ function bindAdmSec(sec){
           else if(cmd==='aligncenter')document.execCommand('justifyCenter',false,null);
           else if(cmd==='alignright')document.execCommand('justifyRight',false,null);
           else if(cmd==='alignjustify')document.execCommand('justifyFull',false,null);
+          else if(cmd==='img'){var fi=document.getElementById('adm-ref-wysimg');if(fi){fi.onchange=function(){var f=fi.files&&fi.files[0];if(f)wysInserirImagem(f,ed);fi.value='';};fi.click();}}
         }catch(err){}
       });
     });

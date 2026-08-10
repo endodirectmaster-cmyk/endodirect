@@ -630,6 +630,19 @@ try {
   fail('regressão do merge com o servidor falhou (verifique mergeConcurrent/itemSig no index.html):\n' + out);
 }
 
+// ⚠️ Imagem inserida NO CORPO do resumo (diferente da figura do capítulo) passava
+//     pelo editor WYSIWYG e sumia no salvar: o `htmlToMd` só serializava <img> que
+//     estivesse DENTRO de um parágrafo, e ao inserir no cursor o navegador põe a
+//     imagem como filho direto do contenteditable. Do outro lado, o `mdInline`
+//     exigia `https?://` e devolvia o data:URL como TEXTO CRU na tela do aluno.
+try {
+  execFileSync(process.execPath, [path.join('scripts', 'test-imagem-no-corpo.js')], { stdio: 'pipe' });
+  ok('imagem no corpo do resumo: sobrevive ao salvar/reabrir, na posição certa');
+} catch (e) {
+  const out = (e.stdout ? e.stdout.toString() : '') + (e.stderr ? e.stderr.toString() : '');
+  fail('regressão da imagem no corpo falhou (verifique htmlToMd/mdInline no index.html):\n' + out);
+}
+
 // ⚠️ O botão "Anexar" do painel de imagem guardava a foto como `data:image/...` e o
 //     render validava com `safeHttpUrl`, que só aceita http(s): o professor anexava,
 //     via "Imagem anexada 🖼️", a imagem ficava salva — e o capítulo não desenhava
