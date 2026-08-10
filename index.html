@@ -7631,7 +7631,13 @@ function normMMLeaf(lf){
   return kids.length?{label:label||'Detalhe',children:kids}:label;
 }
 function normalizeMMData(data){
-  data=data||{};
+  // ⚠️ `data` pode chegar como STRING de JSON. Em 10/08/2026 seis mapas
+  // publicados estavam assim no banco e apareciam VAZIOS, com o título genérico
+  // "Tema": string é truthy, então `data.root`/`data.branches` davam undefined e
+  // a função devolvia um mapa em branco — sem erro, sem aviso, 30 ramos e 107
+  // folhas invisíveis. Perder conteúdo em silêncio é pior que quebrar.
+  if(typeof data==='string'){try{data=JSON.parse(data);}catch(e){data=null;}}
+  data=(data&&typeof data==='object')?data:{};
   var root=data.root||data.central||data.title||'Tema';
   var branches=(data.branches||[]).map(function(b){
     var leavesRaw=b.leaves||b.children||b.subtopics||[];
