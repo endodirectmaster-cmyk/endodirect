@@ -613,6 +613,11 @@ html[data-theme="light"] .mural-text .mural-h1,html[data-theme="light"] .mural-t
   .wys-barra .br-trilho{grid-column:1/-1;grid-row:2}
 }
 .wys-edit .wys-img,.wys-img{display:block;max-width:100%;height:auto;border-radius:8px;margin:.5rem 0;border:1px solid var(--bd2)}
+/* ⚠️ TETO ABSOLUTO ALÉM DA PORCENTAGEM. Só o percentual não segura: 40% de uma
+   coluna de 1600 px ainda são 630 px, e foi o que o professor viu como "P
+   grande demais". Com o teto, P/M/G têm tamanho físico previsível em qualquer
+   monitor, e o texto continua mandando na largura em telas estreitas. */
+.dir-texto .wys-img,.wys-edit .wys-img{max-width:min(100%,820px)}
 .mural-source a{color:#5cc8f5;text-decoration:none}
 .mural-source a:hover{text-decoration:underline}
 .mural-empty{grid-column:1/-1}
@@ -10673,8 +10678,8 @@ function admRefWysHTML(d){
       +'<button type="button" class="wys-tool" data-wys="img" title="Inserir imagem no texto">🖼️</button>'
       +'<input type="file" id="adm-ref-wysimg" accept="image/*" style="display:none">'
       +'<span class="wys-imglabel">Imagem:</span>'
-      +'<button type="button" class="wys-tool" data-refimgw="40" title="Imagem pequena (clique na imagem antes)">P</button>'
-      +'<button type="button" class="wys-tool" data-refimgw="65" title="Imagem média (clique na imagem antes)">M</button>'
+      +'<button type="button" class="wys-tool" data-refimgw="20" title="Imagem pequena (clique na imagem antes)">P</button>'
+      +'<button type="button" class="wys-tool" data-refimgw="35" title="Imagem média (clique na imagem antes)">M</button>'
       +'<button type="button" class="wys-tool" data-refimgw="100" title="Imagem grande (clique na imagem antes)">G</button>'
       +wysAlignBar()+wysCorBar()
       +'<span class="wys-spacer"></span>'
@@ -13321,7 +13326,7 @@ function wysInserirImagem(file,ed){
     var alvo=ed||document.getElementById('adm-ref-wys');
     if(!alvo){notify('Abra o editor do resumo antes de inserir a imagem.','err');return;}
     alvo.focus();
-    var tag='<img class="wys-img" src="'+esc(dataURL)+'" alt="" style="width:65%;height:auto">';
+    var tag='<img class="wys-img" src="'+esc(dataURL)+'" alt="" style="width:35%;height:auto">';
     var okCmd=false;
     try{okCmd=document.execCommand('insertHTML',false,tag+'<p><br></p>');}catch(e){}
     if(!okCmd){ // navegador sem execCommand: acrescenta no fim, melhor que perder

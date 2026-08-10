@@ -8,6 +8,10 @@ atualizado: 2026-08-10
 Log de decisões de produto e técnicas (mais recentes no topo).
 
 ## 2026-08
+- **📐 SÓ A PORCENTAGEM NÃO SEGURA A IMAGEM (2026-08-10).** `sw.js` v230 → **v231**. Copiei do mural os percentuais 40/65/100 e o professor voltou: *"P ainda ficou muito grande"*. Ele estava certo — **40% de uma coluna de 1.600 px ainda são 630 px**. A coluna do resumo é bem mais larga que a do mural, então o mesmo percentual dá outra imagem.
+  - **Correção em duas frentes:** percentuais menores (**P 20% · M 35% · G 100%**) **e um teto absoluto** `max-width:min(100%,820px)` no corpo do resumo. Medido numa coluna de 1.600 px: **320 / 560 / 820 px**.
+  - ⚠️ **Com o teto, M(45%) e G davam 720 e 820 — quase iguais.** Três opções que produzem quase o mesmo tamanho não são três opções; M desceu para 35% para os degraus ficarem distintos.
+  - **A lição:** herdar o número de outra tela não é herdar o resultado. O que se copia é a **mecânica** (seleção, rótulos, round-trip); o **tamanho** tem de ser medido na coluna onde vai viver.
 - **📏 P / M / G PARA A IMAGEM DO CORPO (2026-08-10).** `sw.js` v229 → **v230**. A imagem entrava no **tamanho natural** e tomava a tela inteira. Entraram os três tamanhos no mesmo padrão que o **mural** já usava — clicar na imagem seleciona (contorno azul), o botão aplica a largura: **P 40% · M 65% · G 100%** —, e a inserção passa a nascer em **M**, para não sair grande por padrão.
   - ⚠️ **O tamanho tem de sobreviver ao salvar.** Escolher P e a imagem voltar grande ao reabrir é o mesmo que não ter o controle. O caminho já existia (`{NN}` no markdown ↔ `width:NN%`), e agora tem teste no ciclo inteiro, conferido por mutação: sem o sufixo no `htmlToMd`, acusa a largura perdida.
   - **Reaproveitar o padrão do mural, não inventar outro:** mesmos rótulos, mesmos percentuais e mesma mecânica de seleção. Duas telas com a mesma função e comportamentos diferentes é defeito de produto.
