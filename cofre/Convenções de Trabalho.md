@@ -1,9 +1,60 @@
 ---
 tags: [cofre, processo]
-atualizado: 2026-08-09
+atualizado: 2026-08-10
 ---
 
 # Convenções de Trabalho
+
+## 🔍 ACUSEI O CONTEÚDO SEM PROVA — E O CONTEÚDO ESTAVA INOCENTE (2026-08-10)
+
+Depois de trocar 27 termos no Supabase, o professor relatou que um resumo **parou
+de abrir**. Restaurei o backup, voltou a abrir, e eu tratei isso como prova de que
+uma das trocas tinha quebrado o texto. **Não era prova de nada** — a restauração
+mexeu em duas coisas ao mesmo tempo (o conteúdo *e* o `updated_at` que faz o
+cliente rebuscar). Só depois fui atrás das evidências, e as três derrubaram a
+hipótese:
+
+1. O bloco `{pizza:}` **não estava** no estado quebrado (`... like '%{pizza%'` = 0) —
+   e, testado no renderizador da v221, um `{pizza:}` sem renderizador **não lança
+   exceção**: sai como texto literal. Duplamente inocente.
+2. **Nenhum campo de identidade mudou** (`fonte`/`tema`/`titulo`/`sub`) em nenhum
+   dos 12 itens — só `resumo`, `pts` e `mapa`. A chave de merge e o filtro de tema
+   continuavam iguais.
+3. **Zero divergência de tokens de markdown.** Contei, em SQL, os 16 caracteres
+   que o `mdToHtml` usa para decidir estrutura (`* | \n [ ] ( ) \` < > { } _ ~ # !`)
+   nas duas versões dos 12 itens: **todas as contagens idênticas**. A troca mexeu
+   só em letras — não há como o parser ver estrutura diferente.
+
+**A regra: sintoma que some com a restauração não incrimina o conteúdo.** A
+restauração é um experimento com mais de uma variável. Antes de culpar o texto,
+prove que o texto muda o *render* — e prove sem adivinhar: contagem de tokens
+estruturais entre as duas versões responde isso sem mover o texto para fora do
+banco (9 MB não cabem no contexto, e ler por amostragem foi o que me enganou antes,
+quando conferi só `**`, `|` e `\n` do item 66 e concluí "idêntico" cedo demais).
+
+O que sobrou como causa provável é **estado do cliente**, não payload: `diretrizes`
+é lido de `lsGet('diretrizes')` no boot, então uma cópia local velha sobrevive ao
+Ctrl+Shift+R (que limpa cache HTTP, não localStorage) — o que casa com os três
+sinais do professor: sem erro no F12, recarregar não resolve, outros resumos abrem.
+
+## 🧩 BLOCO QUE NÃO É MARKDOWN PRECISA DE TESTE DE ROUND-TRIP, NÃO SÓ DE MARCA (2026-08-10)
+
+O gráfico de pizza entrou com a marca `wys-pizza`/`data-pizza` para sobreviver ao
+editor WYSIWYG (que renderiza com `mdToHtml` e salva com `htmlToMd`). A marca
+estava certa — mas **nenhum teste a cobria**. Se alguém mexesse no `htmlToMd`, a
+primeira edição do resumo comeria o gráfico **sem erro nenhum**: o professor salva
+um ajuste de texto e o gráfico não volta.
+
+`scripts/test-pizza-resumo.js` fecha isso, e vale a técnica: **o app inteiro vive
+dentro de um `(function(){'use strict'; ... })()`**, então extrair uma função por
+contagem de chaves falha (há chaves dentro de string e de regex — morre com
+"Unexpected end of input"). O que funciona é **desembrulhar o IIFE e o `use strict`**
+e rodar o bloco num contexto com DOM (jsdom): as declarações de função sobem para o
+escopo do contexto já na instanciação, mesmo que o corpo estoure adiante por falta
+das dependências de CDN. E o `htmlToMd` recebe um **nó**, não uma string.
+
+⚠️ Teste novo só entra depois de **falhar de propósito**: mutei o `htmlToMd` para
+ignorar a marca, o teste acusou as três asserções certas, e só então restaurei.
 
 ## 📦 `npm install` DENTRO DO REPOSITÓRIO APAGA O `node_modules` VERSIONADO (2026-08-10)
 

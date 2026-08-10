@@ -630,6 +630,19 @@ try {
   fail('regressão do merge com o servidor falhou (verifique mergeConcurrent/itemSig no index.html):\n' + out);
 }
 
+// ⚠️ O gráfico de pizza do resumo é um bloco NÃO-markdown ({pizza: ...}) e o
+//     editor do resumo é WYSIWYG: renderiza com mdToHtml e salva com htmlToMd.
+//     Sem a marca `wys-pizza`/`data-pizza` que o htmlToMd sabe desfazer, a
+//     PRIMEIRA edição do resumo come o gráfico — e some sem erro nenhum, que é
+//     o mesmo motivo pelo qual as imagens já carregam `wys-img`.
+try {
+  execFileSync(process.execPath, [path.join('scripts', 'test-pizza-resumo.js')], { stdio: 'pipe' });
+  ok('gráfico de pizza: desenha e sobrevive ao round-trip do editor WYSIWYG');
+} catch (e) {
+  const out = (e.stdout ? e.stdout.toString() : '') + (e.stderr ? e.stderr.toString() : '');
+  fail('regressão do gráfico de pizza falhou (verifique pizzaSVG/mdToHtml/htmlToMd no index.html):\n' + out);
+}
+
 // ⚠️ Feedback do aluno. O botão "Enviar" ficou meses trocando a tela pelo
 //     "Obrigado pelo feedback!" e DESCARTANDO o texto — sem erro em log nenhum.
 //     Como a plataforma agora CONVIDA quem assina há mais de 30 dias, voltar
