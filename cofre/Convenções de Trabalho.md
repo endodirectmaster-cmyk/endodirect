@@ -47,6 +47,13 @@ semanas do PTU, ranking de risco por via do glicocorticoide), e três continuava
 vivas na plataforma (romosozumabe sem cautela cardiovascular, PTU→metimazol
 inclusive num flashcard, régua pediátrica P95).
 
+⚠️ **E a varredura tem de cobrir as GRAFIAS, não o termo (aprendido em 10/08/2026).**
+Varri a plataforma por `percentil 95` e dei por encerrado. Um quinto item escrevia
+`p95` e passou — a mesma régua pediátrica errada, atribuída à OMS, e foi o professor
+quem esbarrou nela ao abrir o resumo. Cubra sigla e por extenso, com e sem acento,
+com e sem hífen. E **trie o resultado por contexto antes de acusar**: das 11
+ocorrências de percentil/escore-z, 10 eram densitometria ou Ferriman-Gallwey.
+
 **A regra: toda correção de núcleo exige varredura das TRÊS vias pelo termo.**
 A varredura do `index.html` sozinha está certa e é insuficiente. Para a
 plataforma, a varredura é SQL sobre o `payload` — e vale rodar também a pergunta
