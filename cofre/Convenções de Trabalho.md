@@ -5,6 +5,39 @@ atualizado: 2026-08-09
 
 # Convenções de Trabalho
 
+## 📦 `npm install` DENTRO DO REPOSITÓRIO APAGA O `node_modules` VERSIONADO (2026-08-10)
+
+Precisei do `pptxgenjs` para gerar um deck e rodei `npm install pptxgenjs` dentro de
+`scratchpad/aula-massa-magra/`. O npm **subiu até a raiz do repositório**, criou
+`package.json` e `package-lock.json` do zero (com o pptxgenjs como única dependência)
+e **removeu 40 pacotes** do `node_modules` — que **é versionado neste projeto**. O
+`git status` mostrou dezenas de `D` em `node_modules/@asamuzakjp/…`, `tldts`,
+`specificity`: a árvore do jsdom, de que os testes dependem.
+
+**Não houve dano porque o `node_modules` está no git.** `git checkout -- node_modules`
+restaurou tudo, apaguei o `package.json`/`package-lock.json` que o npm inventou e as
+20 pastas que ele acrescentou, e o `ci-validate` voltou verde.
+
+**A regra: nunca rodar `npm install` em nenhum diretório dentro do repositório.**
+Sem `package.json` no diretório atual, o npm procura um acima e trata a raiz como o
+projeto — inclusive podando o que não está no `package.json` que ele mesmo acabou de
+criar. Instale numa pasta **fora** da árvore do repositório e aponte o `require` para
+o caminho absoluto.
+
+⚠️ E confira depois: `git status` limpo **e** `ci-validate` verde. O `package.json` não
+aparece como modificado quando ele não existia antes — aparece como **não rastreado**,
+que é fácil de ler como "arquivo meu, tudo bem".
+
+⚠️ **DECLAREI O REPOSITÓRIO ÍNTEGRO CEDO DEMAIS, E ESTAVA ERRADO.** `git status` limpo
+e `ci-validate` verde **não bastam**. A poda do npm levou junto o `playwright-core`,
+que **nunca esteve versionado** — logo o `git checkout -- node_modules` não o trouxe de
+volta, e o `ci-validate` não o exercita. Só apareceu horas depois, quando o harness A/B
+falhou com `Cannot find module 'playwright-core'`.
+**A conferência completa é: `git status` + `ci-validate` + o harness A/B.** O
+`git checkout` restaura só o que está no índice; pacote não rastreado, uma vez podado,
+tem de ser reinstalado — fora da árvore do repositório, com `NODE_PATH` apontando
+para lá (`NODE_PATH=/tmp/pwlib/node_modules AB_DIR=/tmp/ab node scratchpad/boot-navegador/check.js`).
+
 ## 🔀 SÃO TRÊS CAMINHOS ATÉ O MÉDICO, E CORRIGIR UM NÃO CORRIGE OS OUTROS (2026-08-10)
 
 O mesmo fato clínico chega ao médico por **três vias independentes**, e elas não
@@ -23,6 +56,13 @@ eu tinha feito no núcleo continuavam VIVAS COMO DEFEITO nas notas do cofre
 semanas do PTU, ranking de risco por via do glicocorticoide), e três continuavam
 vivas na plataforma (romosozumabe sem cautela cardiovascular, PTU→metimazol
 inclusive num flashcard, régua pediátrica P95).
+
+⚠️ **E a varredura tem de cobrir as GRAFIAS, não o termo (aprendido em 10/08/2026).**
+Varri a plataforma por `percentil 95` e dei por encerrado. Um quinto item escrevia
+`p95` e passou — a mesma régua pediátrica errada, atribuída à OMS, e foi o professor
+quem esbarrou nela ao abrir o resumo. Cubra sigla e por extenso, com e sem acento,
+com e sem hífen. E **trie o resultado por contexto antes de acusar**: das 11
+ocorrências de percentil/escore-z, 10 eram densitometria ou Ferriman-Gallwey.
 
 **A regra: toda correção de núcleo exige varredura das TRÊS vias pelo termo.**
 A varredura do `index.html` sozinha está certa e é insuficiente. Para a

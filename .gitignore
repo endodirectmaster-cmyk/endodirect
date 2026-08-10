@@ -83,3 +83,9 @@ scratchpad/work/
 # versionados, feitos para leitura). São derivados e regeneráveis — o que vale é
 # o `relatorio.md` de cada auditor.
 scratchpad/auditoria-nucleo/**/_*.txt
+
+# Material de videoaula: o .pptx é binário grande e o XML de abstracts é texto de
+# editora. O repositório é PÚBLICO — versionamos os scripts que geram, não o produto.
+scratchpad/aula-massa-magra/*.pptx
+scratchpad/aula-massa-magra/abstracts.xml
+scratchpad/aula-massa-magra/conteudo.md
