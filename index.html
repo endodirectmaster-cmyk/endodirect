@@ -584,6 +584,14 @@ html[data-theme="light"] .mural-text .mural-h1,html[data-theme="light"] .mural-t
 .mural-inline-titlewrap>label{display:block;font-size:.72rem;font-weight:700;color:var(--t2);margin-bottom:.25rem}
 .mural-inline-titleinput{width:100%;font-size:1rem;font-weight:700;padding:.5rem .7rem;border:1px solid var(--bd2);border-radius:9px;background:var(--surface);color:var(--tx);outline:none}
 .mural-inline-titleinput:focus{border-color:var(--blue);box-shadow:0 0 0 3px rgba(37,99,235,.12)}
+.wys-pizza{display:flex;align-items:center;gap:1.1rem;flex-wrap:wrap;margin:.7rem 0;padding:.8rem 1rem;background:var(--bg2);border:1px solid var(--bd2);border-radius:10px}
+.wys-pizza svg{width:170px;height:170px;flex:0 0 auto}
+.wys-pizza .pz-leg{list-style:none;margin:0;padding:0;flex:1 1 200px;min-width:190px;max-width:380px}
+.wys-pizza .pz-leg li{display:flex;align-items:center;gap:.5rem;padding:.22rem 0;font-size:.86rem;line-height:1.3}
+.wys-pizza .pz-cor{width:.78rem;height:.78rem;border-radius:3px;flex:0 0 auto}
+.wys-pizza .pz-rot{flex:1 1 auto;color:var(--t1)}
+.wys-pizza .pz-val{font-weight:700;color:var(--t1);font-variant-numeric:tabular-nums}
+@media(max-width:520px){.wys-pizza{gap:.7rem}.wys-pizza svg{width:140px;height:140px}}
 .wys-edit .wys-img,.wys-img{display:block;max-width:100%;height:auto;border-radius:8px;margin:.5rem 0;border:1px solid var(--bd2)}
 .mural-source a{color:#5cc8f5;text-decoration:none}
 .mural-source a:hover{text-decoration:underline}
@@ -4887,6 +4895,50 @@ function wysAlignRead(line){
   var m=/^\{:(left|center|right)\}\s?/.exec(line||'');
   return m?{align:m[1],rest:line.slice(m[0].length)}:{align:'',rest:line};
 }
+// Gráfico de PIZZA no corpo do resumo: `{pizza: Rótulo 70, Rótulo 20, Rótulo 10}`.
+// O último número de cada fatia é o PESO; o resto é o rótulo — assim o rótulo pode
+// carregar a faixa publicada ("Metabolismo basal (60–75%) 70") sem perder informação.
+//
+// ⚠️ POR QUE SVG E NÃO IMAGEM: `mdInline` começa com `esc()`, então HTML colado no
+// conteúdo é escapado — de propósito. A pizza entra como bloco reconhecido pelo
+// renderizador, não como HTML solto vindo do texto, e os rótulos seguem escapados.
+// ⚠️ E POR QUE `data-pizza`: o editor WYSIWYG faz round-trip HTML→markdown. Sem uma
+// marca que o `htmlToMd` saiba devolver, a primeira edição do resumo comeria o
+// gráfico (é o mesmo motivo do `wys-img` nas imagens).
+var PIZZA_CORES=['#2A9D8F','#E9C46A','#E76F51','#457B9D','#8AB17D','#B5838D','#6D6875'];
+function pizzaSVG(linha){
+  var corpo=String(linha).replace(/^\{pizza:\s*/i,'').replace(/\}\s*$/,'');
+  var fatias=[];
+  corpo.split(',').forEach(function(seg){
+    var m=String(seg).trim().match(/^(.*?)[\s:]+(\d+(?:[.,]\d+)?)$/);
+    if(!m)return;
+    var v=parseFloat(m[2].replace(',','.'));
+    if(!(v>0))return;
+    fatias.push({rot:m[1].trim(),v:v});
+  });
+  if(!fatias.length)return '<p>'+mdInline(linha)+'</p>';
+  var total=fatias.reduce(function(a,f){return a+f.v;},0);
+  var cx=95,cy=95,R=82,r=46,ang=-Math.PI/2,partes=[],leg=[];
+  fatias.forEach(function(f,i){
+    var frac=f.v/total,fim=ang+frac*2*Math.PI,cor=PIZZA_CORES[i%PIZZA_CORES.length];
+    var x1=cx+R*Math.cos(ang),y1=cy+R*Math.sin(ang),x2=cx+R*Math.cos(fim),y2=cy+R*Math.sin(fim);
+    var i1=cx+r*Math.cos(fim),j1=cy+r*Math.sin(fim),i2=cx+r*Math.cos(ang),j2=cy+r*Math.sin(ang);
+    var grande=frac>0.5?1:0;
+    if(fatias.length===1){
+      partes.push('<circle cx="'+cx+'" cy="'+cy+'" r="'+((R+r)/2)+'" fill="none" stroke="'+cor+'" stroke-width="'+(R-r)+'"></circle>');
+    }else{
+      partes.push('<path d="M'+x1.toFixed(2)+' '+y1.toFixed(2)+'A'+R+' '+R+' 0 '+grande+' 1 '+x2.toFixed(2)+' '+y2.toFixed(2)
+        +'L'+i1.toFixed(2)+' '+j1.toFixed(2)+'A'+r+' '+r+' 0 '+grande+' 0 '+i2.toFixed(2)+' '+j2.toFixed(2)+'Z" fill="'+cor+'"></path>');
+    }
+    var pct=Math.round(frac*1000)/10;
+    leg.push('<li><span class="pz-cor" style="background:'+cor+'"></span>'
+      +'<span class="pz-rot">'+esc(f.rot)+'</span><span class="pz-val">'+String(pct).replace('.',',')+'%</span></li>');
+    ang=fim;
+  });
+  return '<figure class="wys-pizza" data-pizza="'+esc(linha)+'">'
+    +'<svg viewBox="0 0 190 190" role="img" aria-label="gráfico de pizza">'+partes.join('')+'</svg>'
+    +'<ul class="pz-leg">'+leg.join('')+'</ul></figure>';
+}
 function mdToHtml(md){
   var lines=String(md||'').replace(/\r/g,'').split('\n');
   var out=[],list=[];
@@ -4899,6 +4951,7 @@ function mdToHtml(md){
     var _a=wysAlignRead(line);var _al=_a.align;line=_a.rest.trim();var _als=_al?(' style="text-align:'+_al+'"'):'';
     if(!line){flushList();continue;}
     if(line==='---'){flushList();out.push('<hr>');continue;}
+    if(/^\{pizza:/i.test(line)){flushList();out.push(pizzaSVG(line));continue;}
     if(isMarkdownTableSep(line))continue;
     if(line.indexOf('|')>=0&&line.split('|').filter(function(c){return c.trim();}).length>=2){
       flushList();
@@ -4988,6 +5041,7 @@ function htmlToMd(root){
       if(items.length)out.push(items.join('\n'));
       return;
     }
+    if(node.classList&&node.classList.contains('wys-pizza')){out.push(node.getAttribute('data-pizza')||'');return;}
     if(tag==='table'){
       var trs=node.querySelectorAll('tr'),allRows=[];
       for(var r=0;r<trs.length;r++){var cs=trs[r].querySelectorAll('th,td'),row=[];for(var cI=0;cI<cs.length;cI++)row.push(cellText(cs[cI]));if(row.length)allRows.push(row);}
