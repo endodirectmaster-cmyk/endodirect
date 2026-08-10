@@ -5,6 +5,29 @@ atualizado: 2026-08-09
 
 # Convenções de Trabalho
 
+## 📦 `npm install` DENTRO DO REPOSITÓRIO APAGA O `node_modules` VERSIONADO (2026-08-10)
+
+Precisei do `pptxgenjs` para gerar um deck e rodei `npm install pptxgenjs` dentro de
+`scratchpad/aula-massa-magra/`. O npm **subiu até a raiz do repositório**, criou
+`package.json` e `package-lock.json` do zero (com o pptxgenjs como única dependência)
+e **removeu 40 pacotes** do `node_modules` — que **é versionado neste projeto**. O
+`git status` mostrou dezenas de `D` em `node_modules/@asamuzakjp/…`, `tldts`,
+`specificity`: a árvore do jsdom, de que os testes dependem.
+
+**Não houve dano porque o `node_modules` está no git.** `git checkout -- node_modules`
+restaurou tudo, apaguei o `package.json`/`package-lock.json` que o npm inventou e as
+20 pastas que ele acrescentou, e o `ci-validate` voltou verde.
+
+**A regra: nunca rodar `npm install` em nenhum diretório dentro do repositório.**
+Sem `package.json` no diretório atual, o npm procura um acima e trata a raiz como o
+projeto — inclusive podando o que não está no `package.json` que ele mesmo acabou de
+criar. Instale numa pasta **fora** da árvore do repositório e aponte o `require` para
+o caminho absoluto.
+
+⚠️ E confira depois: `git status` limpo **e** `ci-validate` verde. O `package.json` não
+aparece como modificado quando ele não existia antes — aparece como **não rastreado**,
+que é fácil de ler como "arquivo meu, tudo bem".
+
 ## 🔀 SÃO TRÊS CAMINHOS ATÉ O MÉDICO, E CORRIGIR UM NÃO CORRIGE OS OUTROS (2026-08-10)
 
 O mesmo fato clínico chega ao médico por **três vias independentes**, e elas não
