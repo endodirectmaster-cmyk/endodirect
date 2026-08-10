@@ -5,37 +5,46 @@ atualizado: 2026-08-10
 
 # Convenções de Trabalho
 
-## 🔍 ACUSEI O CONTEÚDO SEM PROVA — E O CONTEÚDO ESTAVA INOCENTE (2026-08-10)
+## 🧨 EU CONFERI O CONTEÚDO E INOCENTEI O CULPADO: OLHEI O VALOR, NUNCA O TIPO (2026-08-10)
 
-Depois de trocar 27 termos no Supabase, o professor relatou que um resumo **parou
-de abrir**. Restaurei o backup, voltou a abrir, e eu tratei isso como prova de que
-uma das trocas tinha quebrado o texto. **Não era prova de nada** — a restauração
-mexeu em duas coisas ao mesmo tempo (o conteúdo *e* o `updated_at` que faz o
-cliente rebuscar). Só depois fui atrás das evidências, e as três derrubaram a
-hipótese:
+Depois de trocar 27 termos no Supabase, um capítulo **parou de abrir**. Investiguei,
+escrevi aqui que "o conteúdo estava inocente" e reapliquei a troca. **O professor
+voltou dizendo que continuava sem abrir — eu estava errado.**
 
-1. O bloco `{pizza:}` **não estava** no estado quebrado (`... like '%{pizza%'` = 0) —
-   e, testado no renderizador da v221, um `{pizza:}` sem renderizador **não lança
-   exceção**: sai como texto literal. Duplamente inocente.
-2. **Nenhum campo de identidade mudou** (`fonte`/`tema`/`titulo`/`sub`) em nenhum
-   dos 12 itens — só `resumo`, `pts` e `mapa`. A chave de merge e o filtro de tema
-   continuavam iguais.
-3. **Zero divergência de tokens de markdown.** Contei, em SQL, os 16 caracteres
-   que o `mdToHtml` usa para decidir estrutura (`* | \n [ ] ( ) \` < > { } _ ~ # !`)
-   nas duas versões dos 12 itens: **todas as contagens idênticas**. A troca mexeu
-   só em letras — não há como o parser ver estrutura diferente.
+A causa era o conteúdo, num campo que eu não tinha olhado: um script meu gravou o
+`pts` como **STRING de JSON** (`"[\"ponto um\", ...]"`) em vez de array, em 5
+capítulos. O `dirCardHTML` testava `if(d.pts && d.pts.length)` — **string também
+tem `.length`** —, entrava no ramo e estourava no `.map` seguinte
+(`d.pts.map is not a function`), levando o **card inteiro**. Daí os sintomas que me
+despistaram: sem erro na tela, nada no F12, clique morto, e outros resumos abrindo
+(só 5 dos 12 itens alterados tinham o `pts` corrompido).
 
-**A regra: sintoma que some com a restauração não incrimina o conteúdo.** A
-restauração é um experimento com mais de uma variável. Antes de culpar o texto,
-prove que o texto muda o *render* — e prove sem adivinhar: contagem de tokens
-estruturais entre as duas versões responde isso sem mover o texto para fora do
-banco (9 MB não cabem no contexto, e ler por amostragem foi o que me enganou antes,
-quando conferi só `**`, `|` e `\n` do item 66 e concluí "idêntico" cedo demais).
+**O erro de método foi meu, e é o que fica:** eu comparei as duas versões com um
+inventário de **tokens de markdown do campo `resumo`** e, como deu zero divergência,
+declarei o conteúdo inocente. Mas eu tinha na tela, num passo anterior, que os
+campos alterados eram `resumo`, **`pts`** e **`mapa`** — e conferi só o primeiro.
+Uma peneira minuciosa aplicada ao campo errado **não é evidência**; é uma
+sensação de rigor. Pior: eu a usei para encerrar a investigação.
 
-O que sobrou como causa provável é **estado do cliente**, não payload: `diretrizes`
-é lido de `lsGet('diretrizes')` no boot, então uma cópia local velha sobrevive ao
-Ctrl+Shift+R (que limpa cache HTTP, não localStorage) — o que casa com os três
-sinais do professor: sem erro no F12, recarregar não resolve, outros resumos abrem.
+**As regras:**
+
+- **Comparar TIPO antes de comparar valor.** `jsonb_typeof` lado a lado com a versão
+  boa acha em uma consulta o que nenhuma contagem de caracteres acharia. Foi assim
+  que finalmente apareceu: `pts: array` → `pts: string`.
+- **Cobrir TODOS os campos que a diferença aponta**, não o mais óbvio. Se o diff diz
+  `resumo, pts, mapa`, conferir só `resumo` responde 1/3 da pergunta.
+- **Sintoma que some com a restauração continua não sendo prova de qual mudança
+  causou** — a restauração é um experimento com mais de uma variável. Mas isso corta
+  para os dois lados: também não inocenta. O que resolve é **reproduzir**. Rodar o
+  `dirCardHTML` real com o dado real levou dois minutos e devolveu a exceção exata.
+- **Reproduza antes de escrever a conclusão no cofre.** Eu publiquei aqui uma
+  conclusão que só tinha raciocínio por trás, e ela virou base para reaplicar a
+  mudança que quebrou de novo.
+
+⚠️ Varredura que ficou: procurar no payload inteiro campo que seja **string
+parecendo JSON** (`(e->>k) ~ '^\s*[\[{]\s*["\[{]'`). Achou também o `flashcards` do
+"Tireoide e Gestação", corrompido por mim horas antes e ainda não notado, e 6
+`mm_shared.data` **pré-existentes** (presentes no backup mais antigo — não mexi).
 
 ## 🧩 BLOCO QUE NÃO É MARKDOWN PRECISA DE TESTE DE ROUND-TRIP, NÃO SÓ DE MARCA (2026-08-10)
 

@@ -10481,7 +10481,14 @@ function dirCardHTML(d,i){
     body=dirMapaHTML(d.mapa);
   }else{ // 'resumo': texto corrido + pontos-chave + fluxograma(s) (o que houver)
     var parts=[];
-    var figHTML=(d.figuras&&d.figuras.length)?dirFigurasHTML(d.figuras):'';
+    // ⚠️ Array.isArray, não `.length`: STRING TAMBÉM TEM `.length`. Em 10/08/2026
+    // um script meu gravou `pts` como string JSON (`"[\"...\"]"`) em 5 capítulos;
+    // a checagem por truthiness deixava entrar, o `.map` seguinte estourava
+    // (`d.pts.map is not a function`) e o capítulo inteiro PARAVA DE ABRIR — sem
+    // nada na tela e com o clique parecendo morto. O resto do arquivo já usa
+    // Array.isArray; eram estas três linhas as que faltavam. Campo malformado
+    // pode custar a seção dele, nunca o resumo inteiro.
+    var figHTML=Array.isArray(d.figuras)&&d.figuras.length?dirFigurasHTML(d.figuras):'';
     var figInText=false;
     if(d.resumo){
       var rz=String(d.resumo);
@@ -10495,9 +10502,9 @@ function dirCardHTML(d,i){
     // resumo e, quando o resumo termina numa lista (ex.: "Armadilhas de prova"),
     // virava visualmente uma continuação dela. mdInline (que já escapa) permite
     // **negrito** nos bullets, como no resto do conteúdo.
-    if(d.pts&&d.pts.length)parts.push('<div class="dir-pts"><div class="dir-pts-h">🔑 Pontos-chave</div><ul>'+d.pts.map(function(p){return '<li>'+mdInline(String(p))+'</li>';}).join('')+'</ul></div>');
+    if(Array.isArray(d.pts)&&d.pts.length)parts.push('<div class="dir-pts"><div class="dir-pts-h">🔑 Pontos-chave</div><ul>'+d.pts.map(function(p){return '<li>'+mdInline(String(p))+'</li>';}).join('')+'</ul></div>');
     if(figHTML&&!figInText)parts.push(figHTML); // sem marcador → após os pontos-chave (padrão)
-    if(d.fluxogramas&&d.fluxogramas.length)parts.push(dirFluxoHTML(d.fluxogramas));
+    if(Array.isArray(d.fluxogramas)&&d.fluxogramas.length)parts.push(dirFluxoHTML(d.fluxogramas));
     // ARTIGO com ficha: o infográfico vem primeiro e o texto corrido desce para
     // um <details>. As limitações de cada estudo são valiosas demais para sumir,
     // mas quem só quer os números resolve na ficha, sem rolar.

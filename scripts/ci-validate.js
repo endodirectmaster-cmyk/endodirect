@@ -630,6 +630,19 @@ try {
   fail('regressão do merge com o servidor falhou (verifique mergeConcurrent/itemSig no index.html):\n' + out);
 }
 
+// ⚠️ O professor clicou num capítulo e ele NÃO ABRIU — sem erro na tela, sem
+//     nada no F12, e recarregar não resolvia. Um script meu gravara `pts` como
+//     STRING de JSON em 5 capítulos, e `if(d.pts && d.pts.length)` deixava passar
+//     (string TAMBÉM tem `.length`): o `.map` seguinte estourava e levava o card
+//     inteiro. Campo malformado pode custar a seção dele, nunca o resumo.
+try {
+  execFileSync(process.execPath, [path.join('scripts', 'test-resumo-campo-malformado.js')], { stdio: 'pipe' });
+  ok('campo malformado custa a seção, não o resumo inteiro');
+} catch (e) {
+  const out = (e.stdout ? e.stdout.toString() : '') + (e.stderr ? e.stderr.toString() : '');
+  fail('regressão do campo malformado falhou (verifique os Array.isArray em dirCardHTML):\n' + out);
+}
+
 // ⚠️ O gráfico de pizza do resumo é um bloco NÃO-markdown ({pizza: ...}) e o
 //     editor do resumo é WYSIWYG: renderiza com mdToHtml e salva com htmlToMd.
 //     Sem a marca `wys-pizza`/`data-pizza` que o htmlToMd sabe desfazer, a
