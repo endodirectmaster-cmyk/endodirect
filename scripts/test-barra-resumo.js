@@ -95,6 +95,25 @@ if (mdToHtml && htmlToMd) {
        'o travessão do NOME do fármaco não pode ser confundido com faixa (veio: ' + JSON.stringify(rots(d)[1]) + ')');
   }
 
+  // `~` é aproximação e faz parte do dado: entra no valor e é impresso.
+  {
+    const d = render('{barra: Remissão de DM2 ~83%, Mortalidade geral ~29%}');
+    ok(vals(d)[0] === '~83%',
+       'o til da fonte tem de aparecer no valor (veio: ' + JSON.stringify(vals(d)[0]) + ')');
+    ok(largs(d)[1] === Math.round(29 / 83 * 100), 'o til não pode atrapalhar a proporção da barra');
+  }
+
+  // ⚠️ ITEM QUE NÃO PARSEIA NÃO PODE SUMIR EM SILÊNCIO. Um gráfico com uma barra a
+  // menos tem a mesma cara de um gráfico certo — é o mesmo defeito do mapa mental
+  // que aparecia vazio. Se um item falha, o bloco inteiro volta a ser texto.
+  {
+    const d = render('{barra: Bom 20%; Torto sem valor; Outro 10%}');
+    ok(!d.querySelector('.wys-barra'),
+       'REGRESSÃO: item ilegível foi descartado e o gráfico saiu com uma barra a menos, sem avisar');
+    ok((d.textContent || '').indexOf('Torto sem valor') >= 0,
+       'ao degradar para texto, o item problemático tem de ficar visível');
+  }
+
   // Lixo não pode explodir nem virar gráfico vazio: degrada para parágrafo.
   {
     const d = render('{barra: sem número nenhum aqui}');
