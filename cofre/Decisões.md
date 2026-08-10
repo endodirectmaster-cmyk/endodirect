@@ -8,6 +8,9 @@ atualizado: 2026-08-10
 Log de decisões de produto e técnicas (mais recentes no topo).
 
 ## 2026-08
+- **📏 P / M / G PARA A IMAGEM DO CORPO (2026-08-10).** `sw.js` v229 → **v230**. A imagem entrava no **tamanho natural** e tomava a tela inteira. Entraram os três tamanhos no mesmo padrão que o **mural** já usava — clicar na imagem seleciona (contorno azul), o botão aplica a largura: **P 40% · M 65% · G 100%** —, e a inserção passa a nascer em **M**, para não sair grande por padrão.
+  - ⚠️ **O tamanho tem de sobreviver ao salvar.** Escolher P e a imagem voltar grande ao reabrir é o mesmo que não ter o controle. O caminho já existia (`{NN}` no markdown ↔ `width:NN%`), e agora tem teste no ciclo inteiro, conferido por mutação: sem o sufixo no `htmlToMd`, acusa a largura perdida.
+  - **Reaproveitar o padrão do mural, não inventar outro:** mesmos rótulos, mesmos percentuais e mesma mecânica de seleção. Duas telas com a mesma função e comportamentos diferentes é defeito de produto.
 - **🖼️ IMAGEM NO CORPO DO TEXTO, NO PONTO DO CURSOR (2026-08-10).** `sw.js` v228 → **v229**. O painel "Imagem do capítulo" põe **uma** figura por capítulo, posicionada pelo `[[figura]]`. O professor queria outra coisa: **inserir imagem onde está escrevendo**. Entrou botão 🖼️ na barra do editor do resumo, que lê o arquivo, reduz (mesma regra do anexo: 1000 px, JPEG 0.85, via `lerImagemReduzida` compartilhada) e insere no cursor.
   - ⚠️ **DUAS PONTAS ESTAVAM QUEBRADAS, e cada uma sumia com a imagem em silêncio:**
     1. o `htmlToMd` só serializava `<img>` que estivesse **dentro de um parágrafo** — e ao inserir no cursor o navegador põe a imagem como **filho direto** do contenteditable, onde ela caía fora de todos os ramos e era **descartada no salvar**;

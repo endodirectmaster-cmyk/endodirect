@@ -10672,6 +10672,10 @@ function admRefWysHTML(d){
       +'<button type="button" class="wys-tool" data-wys="p" title="Parágrafo normal">¶</button>'
       +'<button type="button" class="wys-tool" data-wys="img" title="Inserir imagem no texto">🖼️</button>'
       +'<input type="file" id="adm-ref-wysimg" accept="image/*" style="display:none">'
+      +'<span class="wys-imglabel">Imagem:</span>'
+      +'<button type="button" class="wys-tool" data-refimgw="40" title="Imagem pequena (clique na imagem antes)">P</button>'
+      +'<button type="button" class="wys-tool" data-refimgw="65" title="Imagem média (clique na imagem antes)">M</button>'
+      +'<button type="button" class="wys-tool" data-refimgw="100" title="Imagem grande (clique na imagem antes)">G</button>'
       +wysAlignBar()+wysCorBar()
       +'<span class="wys-spacer"></span>'
       +'<button type="button" class="btn btn-outline btn-sm" id="btn-adm-ref-cancel">Cancelar</button>'
@@ -13317,7 +13321,7 @@ function wysInserirImagem(file,ed){
     var alvo=ed||document.getElementById('adm-ref-wys');
     if(!alvo){notify('Abra o editor do resumo antes de inserir a imagem.','err');return;}
     alvo.focus();
-    var tag='<img class="wys-img" src="'+esc(dataURL)+'" alt="">';
+    var tag='<img class="wys-img" src="'+esc(dataURL)+'" alt="" style="width:65%;height:auto">';
     var okCmd=false;
     try{okCmd=document.execCommand('insertHTML',false,tag+'<p><br></p>');}catch(e){}
     if(!okCmd){ // navegador sem execCommand: acrescenta no fim, melhor que perder
@@ -15032,6 +15036,30 @@ function bindAdmSec(sec){
           else if(cmd==='alignjustify')document.execCommand('justifyFull',false,null);
           else if(cmd==='img'){var fi=document.getElementById('adm-ref-wysimg');if(fi){fi.onchange=function(){var f=fi.files&&fi.files[0];if(f)wysInserirImagem(f,ed);fi.value='';};fi.click();}}
         }catch(err){}
+      });
+    });
+    // Seleção de imagem no corpo + P/M/G, no mesmo padrão do mural: clicar marca a
+    // imagem (contorno azul), e o botão aplica a largura só nela. Sem seleção, cai
+    // na primeira imagem do texto — melhor que não fazer nada e parecer quebrado.
+    var refSelImg=null;
+    main.querySelectorAll('.wys-edit').forEach(function(ed){
+      ed.addEventListener('click',function(e){
+        var t=e.target;
+        if(t&&t.tagName==='IMG'){
+          if(refSelImg&&refSelImg!==t)refSelImg.classList.remove('wys-img-sel');
+          refSelImg=t;t.classList.add('wys-img-sel');
+        }else if(refSelImg){refSelImg.classList.remove('wys-img-sel');refSelImg=null;}
+      });
+    });
+    main.querySelectorAll('[data-refimgw]').forEach(function(b){
+      b.addEventListener('mousedown',function(e){e.preventDefault();});
+      b.addEventListener('click',function(){
+        var corpo=document.getElementById('adm-ref-wys');
+        var img=refSelImg||(corpo?corpo.querySelector('img'):null);
+        if(!img){notify('Clique primeiro na imagem que quer redimensionar.','info');return;}
+        var w=parseInt(b.dataset.refimgw,10)||100;
+        img.style.width=w+'%';img.style.height='auto';
+        if(!refSelImg){refSelImg=img;img.classList.add('wys-img-sel');}
       });
     });
     var rPdf=document.getElementById('adm-ref-pdf');
