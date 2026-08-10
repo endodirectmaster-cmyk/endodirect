@@ -112,6 +112,11 @@ if (mdToHtml && htmlToMd) {
   // 630 px. O teto absoluto é o que dá tamanho físico previsível em monitor largo.
   ok(/\.dir-texto \.wys-img,\.wys-edit \.wys-img\{max-width:min\(100%,820px\)\}/.test(html),
      'a imagem do corpo precisa de teto absoluto além da porcentagem');
+  // A imagem fica SEMPRE centralizada (pedido do professor, 10/08). Com display:block
+  // é a margem lateral `auto` que centraliza — e ela vale em qualquer largura P/M/G,
+  // sem depender do alinhamento do parágrafo em volta.
+  ok(/\.wys-edit \.wys-img,\.wys-img\{[^}]*margin:\.5rem auto[^}]*\}/.test(html),
+     'a imagem do corpo tem de ficar centralizada (margem lateral auto)');
 
   // 7) O botão e o caminho de inserção existem de fato na barra do editor.
   ok(/data-wys="img"/.test(html), 'a barra do editor precisa do botão de imagem');

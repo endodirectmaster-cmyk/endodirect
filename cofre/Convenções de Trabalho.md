@@ -5,6 +5,40 @@ atualizado: 2026-08-10
 
 # Convenções de Trabalho
 
+## 🔔 O NÚMERO DENTRO DA MENSAGEM DE ERRO É A PORTA DE ENTRADA (2026-08-10)
+
+O aviso dizia *"mantive a SUA versão de **4** item(ns) ... Provas & Questões"*. Em vez
+de teorizar sobre concorrência, escrevi **uma consulta** que contava chaves de merge
+repetidas em `provas`. Resultado: **4**. Não "provavelmente é isso" — o mesmo número,
+na mesma coleção, na primeira tentativa.
+
+**A regra:** quando a mensagem carrega uma **contagem**, reproduzir a contagem antes de
+formular qualquer hipótese. Se o número bate, a causa está achada; se não bate, a
+hipótese morreu barata. É o caminho mais curto e o único que não depende de eu ter
+adivinhado certo.
+
+**E o corolário, que é o defeito em si:** um alarme que **sempre** toca ensina a
+ignorar o alarme. Este existe para avisar **perda de conteúdo de verdade** — foi a
+falta dele que deixou as tabelas de hipogonadismo sumirem em silêncio (06/08). Falso
+positivo em aviso de segurança **é defeito grave**, não incômodo de interface: gasta a
+única atenção que o aviso real vai precisar.
+
+## 🎯 A GUARDA PASSOU MEDINDO OUTRA LINHA: ASSERÇÃO TEXTUAL CASA COM O CÓDIGO ERRADO (2026-08-10)
+
+Escrevi uma guarda de CI com regex sobre o `index.html`
+(`/report\.conflicts\.push\(\{coll:[^}]*item:/`) para exigir que o conflito levasse o
+item junto. **O mutante sobreviveu:** tirei o `item` do ramo que importava e a guarda
+continuou verde — porque o regex casava com **outro** `push`, de um ramo diferente,
+que também tinha `item:`.
+
+**A regra:** asserção textual sobre o fonte prova que *existe uma linha parecida em
+algum lugar*, não que **o caminho sob teste** faz a coisa certa. Onde dá para
+**executar** a função e olhar o que ela devolve, executar — a versão comportamental
+(`rep.conflicts[0].item.resumo === ...`) pega o mutante que o regex deixou passar.
+
+**E o que revelou isso foi o teste de mutação, não a leitura.** Guarda nova sem mutante
+morto é guarda não conferida — eu já tinha lido aquele regex e achado correto.
+
 ## 🧨 EU CONFERI O CONTEÚDO E INOCENTEI O CULPADO: OLHEI O VALOR, NUNCA O TIPO (2026-08-10)
 
 Depois de trocar 27 termos no Supabase, um capítulo **parou de abrir**. Investiguei,

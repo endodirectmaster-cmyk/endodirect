@@ -29,10 +29,23 @@ function corpo(nome){
   }
   throw new Error('não fechou o corpo de '+nome+' (a partir de '+ini+')');
 }
+// Literal de objeto no topo (`var NOME={...};`) — mesma contagem de chaves.
+function objeto(nome){
+  const i=html.indexOf('var '+nome+'={');
+  if(i<0)throw new Error('objeto '+nome+' não encontrado no index.html');
+  let d=0;
+  for(let j=html.indexOf('{',i);j<html.length;j++){
+    if(html[j]==='{')d++;
+    else if(html[j]==='}'){d--;if(!d)return html.slice(i,j+1)+';';}
+  }
+  throw new Error('não fechou o objeto '+nome);
+}
 const sandbox={};
 vm.createContext(sandbox);
-vm.runInContext([corpo('stableStr'),corpo('itemSig'),corpo('mergeConcurrent')].join('\n'),sandbox);
-const {stableStr,itemSig,mergeConcurrent}=sandbox;
+vm.runInContext(['var globalBaseline={};',objeto('GLOBAL_MERGE_KEYS'),
+  corpo('stableStr'),corpo('itemSig'),corpo('mergeConcurrent'),
+  corpo('captureGlobalBaseline')].join('\n'),sandbox);
+const {stableStr,itemSig,mergeConcurrent,captureGlobalBaseline,GLOBAL_MERGE_KEYS}=sandbox;
 
 // --- assinatura canônica -----------------------------------------------------
 ok(itemSig({a:1,b:2})===itemSig({b:2,a:1}),
@@ -67,6 +80,11 @@ ok(out.length===1&&out[0].resumo==='o professor reescreveu',
    'no conflito real a versão do PROFESSOR prevalece (é ele quem está olhando a tela)');
 ok(rep.conflicts.length===1&&rep.updated===0,
    'conflito real tem de ser REGISTRADO para virar aviso — perder em silêncio é o bug');
+// O conflito leva junto o ITEM (a versão do professor, que é a que está na tela
+// dele). Sem isso o aviso só tem a chave para se virar — e quando a chave é um
+// `id` (provas), o professor leria "teem-2024-007" em vez do enunciado.
+ok(rep.conflicts[0]&&rep.conflicts[0].item&&rep.conflicts[0].item.resumo==='o professor reescreveu',
+   'o conflito tem de carregar o ITEM do professor para o aviso conseguir nomeá-lo');
 
 // --- exclusão do professor continua respeitada -------------------------------
 rep={added:0,updated:0,conflicts:[]};
@@ -105,26 +123,96 @@ ok(chamada&&/,\s*coll\s*\)/.test(chamada[0]),
 ok(/report\.conflicts\.push\(\{coll:/.test(html),
    'cada conflito tem de registrar a coleção junto da chave');
 
+// --- ⚠️🐛 CONFLITO FANTASMA: o aviso que voltava a cada save (10/08/2026) --------
+//
+// O professor via, toda vez que salvava: "Mudou no servidor e aqui ao mesmo tempo —
+// mantive a SUA versão de 4 item(ns) ... Provas & Questões". Ninguém tinha editado
+// nada, e nenhum F5 resolvia — não havia o que resolver.
+//
+// Eram 4 questões que caem REPETIDAS em anos diferentes (TEEM 2024/2026 e três da
+// USP-SP 2024/2025). A chave de merge de `provas` era `stem|answer|inst`, SEM o ano:
+// as duas viravam a MESMA chave. O baseline guardava a assinatura da ÚLTIMA e o
+// merge casava a chave com a PRIMEIRA → os dois lados pareciam divergir → conflito.
+// Todo save, para sempre. Um alarme que sempre toca ensina a ignorar o alarme — e
+// este existe para avisar perda de conteúdo de verdade.
+{
+  // 1) A identidade da questão é o `id`, que distingue os homônimos.
+  const kp=GLOBAL_MERGE_KEYS.provas;
+  const stem='Em relação aos exames complementares na Doença de Paget óssea, assinale...';
+  const q24={id:'teem-2024-007',ano:'2024',stem,answer:'C',inst:'TEEM'};
+  const q26={id:'teem-2026-002',ano:'2026',stem,answer:'C',inst:'TEEM'};
+  ok(kp(q24)!==kp(q26),
+     'REGRESSÃO: questão repetida em anos diferentes tem de ter chave DIFERENTE (era o conflito fantasma)');
+  ok(kp({stem:'sem id',answer:'A',inst:'X'}).indexOf('sem id')>=0,
+     'questão sem id continua com chave pelo enunciado — nada pode ficar sem identidade');
+
+  // 2) Chave ambígua (aqui: dois temas homônimos) guarda TODAS as assinaturas.
+  const ch=GLOBAL_MERGE_KEYS.diretrizes_temas;
+  const t1={sub:'Obesidade',tema:'Farmacoterapia',ordem:1};
+  const t2={sub:'Obesidade',tema:'Farmacoterapia',ordem:2};
+  captureGlobalBaseline({diretrizes_temas:[t1,t2]});
+  const baseAmb=sandbox.globalBaseline.diretrizes_temas[ch(t1)];
+  ok(Array.isArray(baseAmb)&&baseAmb.length===2,
+     'chave repetida tem de guardar as DUAS assinaturas; guardar só a última é o que criava o fantasma');
+
+  // 3) Nada mudou dos dois lados → NENHUM aviso. Este é o teste do sintoma.
+  let r={added:0,updated:0,conflicts:[]};
+  let o=mergeConcurrent([t1,t2],[t1,t2],sandbox.globalBaseline.diretrizes_temas,ch,r,'diretrizes_temas');
+  ok(r.conflicts.length===0,
+     'REGRESSÃO 10/08: sem ninguém editar nada, o merge NÃO pode acusar conflito (veio '+r.conflicts.length+')');
+  ok(o.length===2,'e o conteúdo tem de sair intacto');
+
+  // 4) Mudança REAL em chave ambígua: avisa, mas não adota às cegas.
+  r={added:0,updated:0,conflicts:[]};
+  o=mergeConcurrent([t1,{sub:'Obesidade',tema:'Farmacoterapia',ordem:9}],[t1,t2],
+                    sandbox.globalBaseline.diretrizes_temas,ch,r,'diretrizes_temas');
+  ok(r.conflicts.length===1,
+     'mudança de verdade em chave ambígua tem de AVISAR — perder em silêncio é o defeito original');
+  ok(o.length===2&&o[1].ordem===2,
+     'na chave ambígua não se adota às cegas: sobrescreveria o homônimo errado');
+
+  // 5) Chave duplicada mas com itens IDÊNTICOS não é ambiguidade — segue o caminho normal.
+  captureGlobalBaseline({diretrizes_temas:[t1,{sub:'Obesidade',tema:'Farmacoterapia',ordem:1}]});
+  ok(typeof sandbox.globalBaseline.diretrizes_temas[ch(t1)]==='string',
+     'itens idênticos com a mesma chave são intercambiáveis: baseline segue simples');
+}
+
 // --- o rótulo do conflito não pode nomear a questão pela ALTERNATIVA ----------
 {
   const rot=html.match(/function rotuloConflito\(c\)\{[\s\S]*?\n\}/);
   ok(!!rot,'rotuloConflito tem de existir para nomear o item em conflito');
   if(rot){
-    const fn=new Function('MERGE_ABAS','MERGE_ROTULOS','return '+rot[0].replace(/^function /,'function '))
+    const fn=new Function('MERGE_ABAS','MERGE_ROTULOS','MERGE_ITEM_ROTULO','return '+rot[0].replace(/^function /,'function '))
       ({provas:'Provas & Questões',diretrizes:'Diretrizes/Resumos'},
-       {provas:function(pr){return pr[0]||'';},diretrizes:function(pr){return pr[1]||pr[0]||'';}});
+       {provas:function(pr){return pr[0]||'';},diretrizes:function(pr){return pr[1]||pr[0]||'';}},
+       {provas:function(it){return it.stem||'';},diretrizes:function(it){return it.tema||it.titulo||'';}});
     const rProva=fn({coll:'provas',key:'Qual o corte de HbA1c para diabetes?|C|SBD 2024'});
     ok(/Provas/.test(rProva)&&/HbA1c/.test(rProva)&&!/^\s*C\s*$/.test(rProva),
        'conflito em prova nomeia a ABA e o ENUNCIADO, nunca só a alternativa');
     const rDir=fn({coll:'diretrizes',key:'Vilar 8ed|Obesidade: Definição e Epidemiologia|Obesidade'});
     ok(/Diretrizes/.test(rDir)&&/Defini/.test(rDir),
        'conflito em diretriz/resumo nomeia a ABA e o TEMA');
+    // ⚠️ Com a chave virando `id`, ler o rótulo da CHAVE passaria a mostrar
+    // "teem-2024-007" — que não diz nada a quem está olhando a tela. O nome tem de
+    // sair do ITEM.
+    const rId=fn({coll:'provas',key:'teem-2024-007',
+                  item:{id:'teem-2024-007',stem:'Doença de Paget óssea: qual exame?',answer:'C'}});
+    ok(/Paget/.test(rId)&&!/teem-2024-007/.test(rId),
+       'com chave por id, o aviso tem de nomear a questão pelo ENUNCIADO do item, não pelo id');
   }
 }
 ok(/rep\.conflicts\.length/.test(html)&&/notify\(/.test(html.slice(html.indexOf('rep.conflicts.length'),html.indexOf('rep.conflicts.length')+900)),
    'conflito real tem de disparar notify visível para o professor');
-ok(/s\[fn\(it\)\]=itemSig\(it\)/.test(html),
-   'captureGlobalBaseline tem de guardar a ASSINATURA, não apenas a chave');
+// Comportamental em vez de textual: o que importa é o baseline sair com a
+// ASSINATURA do item (é ela que distingue "o servidor editou" de "eu editei"),
+// não a forma como a linha está escrita.
+{
+  const it0={fonte:'SBEM',tema:'Tema X',sub:'Y',resumo:'z'};
+  captureGlobalBaseline({diretrizes:[it0]});
+  const v=sandbox.globalBaseline.diretrizes[GLOBAL_MERGE_KEYS.diretrizes(it0)];
+  ok(v===itemSig(it0),
+     'captureGlobalBaseline tem de guardar a ASSINATURA do item, não apenas a chave');
+}
 
 if(falhas.length){
   console.error('✗ merge com o servidor:');
