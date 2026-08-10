@@ -630,6 +630,20 @@ try {
   fail('regressão do merge com o servidor falhou (verifique mergeConcurrent/itemSig no index.html):\n' + out);
 }
 
+// ⚠️ O botão "Anexar" do painel de imagem guardava a foto como `data:image/...` e o
+//     render validava com `safeHttpUrl`, que só aceita http(s): o professor anexava,
+//     via "Imagem anexada 🖼️", a imagem ficava salva — e o capítulo não desenhava
+//     nada. A correção NÃO pode ser afrouxar o `safeHttpUrl`, que também valida
+//     `href` de link (ali `data:` abre `data:text/html`) — daí um validador só para
+//     src de imagem, e este teste guarda as duas pontas.
+try {
+  execFileSync(process.execPath, [path.join('scripts', 'test-figura-anexada.js')], { stdio: 'pipe' });
+  ok('figura anexada: data: de imagem desenha, crédito abaixo, href segue recusando data:');
+} catch (e) {
+  const out = (e.stdout ? e.stdout.toString() : '') + (e.stderr ? e.stderr.toString() : '');
+  fail('regressão da figura anexada falhou (verifique safeImgSrc/dirFigurasHTML no index.html):\n' + out);
+}
+
 // ⚠️ Seis mapas mentais publicados estavam com o `data` gravado como STRING de
 //     JSON e apareciam VAZIOS, com o título genérico "Tema" — 30 ramos e 107
 //     folhas invisíveis no ar, sem erro e sem aviso, e ninguém tinha notado.
