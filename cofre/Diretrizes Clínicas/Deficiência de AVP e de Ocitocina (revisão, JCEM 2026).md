@@ -1,6 +1,6 @@
 ---
 tags: [cofre, clinico, revisao, neuroendocrino, hipofise]
-atualizado: 2026-06-30
+atualizado: 2026-08-10
 ---
 
 # Deficiência de AVP (DI Central) e de Ocitocina — Revisão (JCEM 2026)
@@ -18,9 +18,24 @@ Pós-cirúrgica/traumática (**neurocirurgia** é a mais comum; TBI), tumores (c
 - **Poliúria hipotônica:** > 40 mL/kg/24 h (ou > 3 L/24 h), osmolalidade urinária < 800 mOsm/kg. Excluir **hipercalcemia/hipocalemia** e diabetes mellitus.
 - **Copeptina** = marcador estável e substituto da AVP:
   - Basal **> 21,4 pmol/L** → **resistência à AVP** (sem necessidade de estímulo).
-  - **Teste de salina hipertônica** (padrão-ouro; elevar Na ≥ 147 mmol/L): copeptina **> 4,9 pmol/L = polidipsia primária**; **≤ 4,9 = deficiência de AVP** (acurácia 96–97%). Exige monitorização rápida do Na.
+  - **Teste de salina hipertônica** (padrão-ouro; infundir **até o sódio atingir pelo menos 150 mmol/L** — só então colher): copeptina **> 4,9 pmol/L = polidipsia primária**; **≤ 4,9 = deficiência de AVP** (acurácia 96–97%). Exige monitorização rápida do Na.
   - **Teste de estímulo com arginina** (alternativa bem tolerada): cortes de copeptina ~3,0–5,2 pmol/L.
-  - Basal copeptina ≤ 4,9 só vale para deficiência de AVP se **Na ≥ 147**.
+  - Copeptina ≤ 4,9 só significa deficiência de AVP **se o sódio tiver atingido ≥ 150 mmol/L** na hora da coleta.
+
+> ⚠️ **CORRIGIDO EM 10/08/2026 — a condição de coleta era 147 e está errada.** O
+> valor foi conferido na **fonte primária**, o próprio estudo que estabeleceu o
+> corte de 4,9 (Fenske W et al. *A Copeptin-Based Approach in the Diagnosis of
+> Diabetes Insipidus.* N Engl J Med 2018;379:428–39). Ele diz três vezes que a
+> amostra de copeptina foi colhida **depois** que o sódio subiu a **pelo menos
+> 150 mmol/L** (*"plasma copeptin was measured when the plasma sodium level had
+> increased to at least 150 mmol per liter"*; *"until the target level of at
+> least 150 mmol per liter was reached. Thereafter, a final blood sample for
+> plasma copeptin measurement was obtained"*). **`147` não aparece nenhuma vez no
+> artigo.**
+> **Por que importa, e para que lado o erro empurrava:** colher com 147 deixa o
+> paciente sub-estimulado, sub-estimulado dá copeptina mais baixa, e o valor cai
+> no ≤ 4,9 — que se lê como deficiência de AVP. A conduta que sai daí é
+> **desmopressina em quem tem polidipsia primária**, e isso causa hiponatremia.
 - **RM:** o "bright spot" hipofisário **não** é critério confiável isolado (pode faltar em saudáveis e estar presente em alguns com deficiência).
 
 ## Tratamento (desmopressina — agonista V2 seletivo, t½ 6–14 h)
