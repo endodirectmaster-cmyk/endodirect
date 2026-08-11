@@ -5,6 +5,23 @@ atualizado: 2026-08-11
 
 # Convenções de Trabalho
 
+## 🎯 O MUTANTE MORREU NA LINHA ERRADA: TROCAR "A PRIMEIRA OCORRÊNCIA" NÃO É TESTAR (2026-08-11)
+
+Meu script de mutação faz `s.replace(a,b)` — **a primeira** ocorrência. Plantei um
+mutante trocando `text-align:justify;text-align-last:left` e ele **sobreviveu**. Fui
+conferir antes de mexer na guarda: a string aparece **3 vezes** no `index.html`, e a
+primeira é `.mural-text`, não `.wys-cap`. **Eu quebrei outra regra e testei a minha.**
+A guarda estava certa o tempo todo.
+
+**A regra:** antes de concluir que um mutante sobreviveu, **confirmar que a mutação
+caiu onde se queria** — `grep -c` no alvo. Se houver mais de uma ocorrência, ancorar o
+trecho (aqui, incluir o `.wys-cap{` inteiro).
+
+**É a segunda vez em dois dias que o teste de mutação me pegou um raciocínio errado** —
+uma vez a guarda ruim (regex casando com outro ramo), outra a mutação ruim. As duas
+falhas se parecem por fora: "verde onde eu esperava vermelho". Só distingue quem vai
+olhar **qual linha** mudou.
+
 ## 🙋 "NÃO CONSEGUI FAZER X" É RELATO DE DEFEITO, NÃO DÚVIDA DE USO (2026-08-11)
 
 O professor escreveu: *"Não consegui deixar modo justificado. Melhor deixar a legenda

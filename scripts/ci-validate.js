@@ -643,6 +643,19 @@ try {
   fail('regressão da imagem no corpo falhou (verifique htmlToMd/mdInline no index.html):\n' + out);
 }
 
+// ⚠️ Clicar na figura AMPLIA na leitura — e NUNCA no editor. O editor do resumo tem
+//     `class="wys-edit dir-texto"`, as duas classes: uma condição por `.dir-texto`
+//     sozinha o pegaria, e lá o clique na imagem é o que a SELECIONA para os botões
+//     P/M/G e para o de legenda. Abrir o ampliador ali tira do professor o único
+//     jeito de redimensionar a figura.
+try {
+  execFileSync(process.execPath, [path.join('scripts', 'test-ampliar-figura.js')], { stdio: 'pipe' });
+  ok('ampliar figura: amplia na leitura (resumo e mural) e nunca no editor');
+} catch (e) {
+  const out = (e.stdout ? e.stdout.toString() : '') + (e.stderr ? e.stderr.toString() : '');
+  fail('regressão do ampliador de figura falhou (verifique ensureLightbox no index.html):\n' + out);
+}
+
 // ⚠️ O botão "Anexar" do painel de imagem guardava a foto como `data:image/...` e o
 //     render validava com `safeHttpUrl`, que só aceita http(s): o professor anexava,
 //     via "Imagem anexada 🖼️", a imagem ficava salva — e o capítulo não desenhava
