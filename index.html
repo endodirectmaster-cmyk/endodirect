@@ -644,7 +644,18 @@ html[data-theme="light"] .mural-text .mural-h1,html[data-theme="light"] .mural-t
    antiga a figura fica dentro de um <p>, e `.wys-edit p{text-align-last:left}` é
    HERDADO pela legenda. Sem fixar, o editor mostrava à esquerda o que o aluno via
    centralizado. Medido em Chromium: dentro do <p> vinha `left`, na raiz vinha `auto`. */
-.wys-cap{max-width:min(100%,720px);margin-left:auto;margin-right:auto;text-align:justify;text-align-last:center;font-size:.8rem;color:var(--t3);line-height:1.4;padding:0 .5rem}
+/* ⚠️ `width:fit-content` + `text-align-last:left` — e NÃO `text-align-last:center`.
+   Com a última linha centralizada, uma legenda longa que sobra UMA PALAVRA a
+   termina com essa palavra solta no meio ("...favorecendo a ingestão / alimentar").
+   Com `left` ela encosta na margem, como em legenda de livro. E o `fit-content` é
+   o que preserva o outro caso: legenda CURTA encolhe até o tamanho do texto e as
+   margens automáticas a centralizam — sem precisar de regra condicional. */
+.wys-cap{width:fit-content;max-width:min(100%,720px);margin-left:auto;margin-right:auto;text-align:justify;text-align-last:left;font-size:.8rem;color:var(--t3);line-height:1.4;padding:0 .5rem}
+/* Clicar amplia (mesmo ampliador do mural). ⚠️ O cursor de lupa NÃO pode aparecer
+   no editor: lá o clique SELECIONA a imagem para os botões P/M/G. O editor tem as
+   DUAS classes (`wys-edit dir-texto`), então a regra dele vem depois para vencer. */
+.dir-texto .wys-img,.dir-fig img{cursor:zoom-in}
+.wys-edit .wys-img{cursor:default}
 /* Dentro do editor a legenda precisa ser VISÍVEL mesmo vazia, senão não há onde
    clicar para escrever — o contorno tracejado e a altura mínima são só do editor. */
 .wys-edit .wys-cap{outline:1px dashed var(--bd2);outline-offset:3px;min-height:1.15em}
@@ -11120,6 +11131,10 @@ function diretrizesViewHTML(){
 // Liga os eventos da visão dentro de um container (aluno ou pré-visualização).
 function bindDiretrizesView(root){
   if(!root)return;
+  // Clicar na figura amplia, aqui também. O ampliador é o MESMO do mural (delegação
+  // no document, criado uma vez) — só precisa existir quando esta tela abre primeiro,
+  // que é o caso de quem entra direto em Resumos sem passar pelo mural.
+  try{ensureLightbox();}catch(e){}
   function _resuUpsell(){try{notify('Recurso exclusivo para assinantes.','err');}catch(e){}try{showAssineScreen((currentUser&&currentUser.email)||'');}catch(e){}}
   root.querySelectorAll('[data-dir-lockedtema]').forEach(function(b){b.addEventListener('click',_resuUpsell);});
   root.querySelectorAll('[data-dir-fmtlock]').forEach(function(b){b.addEventListener('click',_resuUpsell);});
@@ -16199,13 +16214,15 @@ function bindMuralPerDropdown(id,onPick){
   if(btn)btn.addEventListener('click',function(e){e.stopPropagation();var was=dd.classList.contains('open');document.querySelectorAll('.mural-dd.open').forEach(function(x){x.classList.remove('open');});if(!was)dd.classList.add('open');});
   dd.querySelectorAll('.mural-dd-opt').forEach(function(o){o.addEventListener('click',function(e){e.stopPropagation();dd.classList.remove('open');onPick(o.getAttribute('data-perval')||'');});});
 }
-// Lightbox do mural: clicar em qualquer imagem (capa .mural-figure ou inline
-// .mural-inline-img) abre ampliada num overlay. Criado uma única vez; usa
-// delegação de clique no document, então funciona após qualquer re-render.
-function ensureMuralLightbox(){
+// Ampliador de imagem, compartilhado: mural (capa `.mural-figure` ou inline
+// `.mural-inline-img`) E resumos (figura do corpo e figura do capítulo). Criado uma
+// única vez; usa delegação de clique no document, então funciona após qualquer
+// re-render. Duas telas com a mesma função e comportamentos diferentes é defeito de
+// produto — por isso o mesmo overlay, e não um segundo.
+function ensureLightbox(){
   if(window.__muralLbInit)return;window.__muralLbInit=true;
   var ov=document.createElement('div');
-  ov.id='mural-lightbox';
+  ov.id='img-lightbox';
   ov.style.cssText='position:fixed;inset:0;z-index:99999;background:rgba(8,12,24,.92);display:none;align-items:center;justify-content:center;padding:20px;cursor:zoom-out';
   ov.innerHTML='<img alt="" style="max-width:96vw;max-height:92vh;border-radius:10px;background:#fff;box-shadow:0 12px 50px rgba(0,0,0,.55)"><button type="button" aria-label="Fechar" style="position:absolute;top:12px;right:16px;width:42px;height:42px;border:0;border-radius:50%;background:rgba(255,255,255,.18);color:#fff;font-size:1.5rem;line-height:1;cursor:pointer">✕</button>';
   document.body.appendChild(ov);
@@ -16214,7 +16231,14 @@ function ensureMuralLightbox(){
   document.addEventListener('keydown',function(e){if((e.key==='Escape'||e.keyCode===27)&&ov.style.display==='flex')closeLb();});
   document.addEventListener('click',function(e){
     var t=e.target;if(!t||t.tagName!=='IMG'||!t.src)return;
-    if(!(t.classList.contains('mural-inline-img')||(t.closest&&t.closest('.mural-figure'))))return;
+    // ⚠️ NUNCA dentro do editor. Lá o clique na imagem a SELECIONA para os botões
+    // P/M/G e para o de legenda; abrir o ampliador tiraria do professor o único
+    // jeito de redimensionar. O editor tem `class="wys-edit dir-texto"`, então a
+    // checagem por `.dir-texto` sozinha o pegaria — esta guarda vem primeiro.
+    if(t.closest&&t.closest('.wys-edit'))return;
+    var ok=t.classList.contains('mural-inline-img')
+      ||(t.closest&&(t.closest('.mural-figure')||t.closest('.dir-texto')||t.closest('.dir-fig')));
+    if(!ok)return;
     ov.firstChild.src=t.src;ov.style.display='flex';
   });
 }
@@ -16689,7 +16713,7 @@ function muralNoticeCardHTML(a,admin){
     +'</article>';
 }
 initMural=function(){
-  try{ensureMuralLightbox();}catch(e){}
+  try{ensureLightbox();}catch(e){}
   var el=document.getElementById('mural-pc');if(!el)return;
   function dateBR(v){var d=new Date(v||Date.now());if(isNaN(d.getTime()))d=new Date();return d.toLocaleDateString('pt-BR');}
   admAvisos=dedupeMuralList(admAvisos.map(function(a){return normalizeMuralAviso(a,defaultMuralMap());}));
@@ -16940,7 +16964,7 @@ var __bindAdmSecBase=bindAdmSec;
 bindAdmSec=function(sec){
   __bindAdmSecBase(sec);
   if(sec!=='mural')return;
-  try{ensureMuralLightbox();}catch(e){}
+  try{ensureLightbox();}catch(e){}
   function avRenderImgPrev(){var u=((document.getElementById('adm-av-img')||{}).value||'').trim();var box=document.getElementById('adm-av-imgprev');if(!box)return;box.innerHTML=(u&&safeHttpUrl(u))?'<img src="'+esc(u)+'" alt="" style="max-height:130px;max-width:100%;border:1px solid var(--bd);border-radius:8px;background:#fff" onerror="this.style.display=\'none\'">':'';}
   (function(){
     var imgBtn=document.getElementById('adm-av-imgbtn'),imgFile=document.getElementById('adm-av-imgfile'),imgStatus=document.getElementById('adm-av-imgstatus'),imgInp=document.getElementById('adm-av-img');

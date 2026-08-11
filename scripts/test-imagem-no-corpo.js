@@ -209,9 +209,15 @@ if (mdToHtml && htmlToMd) {
   // imagem antiga a figura fica dentro de um <p>, e `.wys-edit p{text-align-last:left}`
   // é HERDADO pela legenda de uma linha só. Sem fixar, o editor mostrava à ESQUERDA
   // o que o aluno vê CENTRALIZADO — medido em Chromium.
-  ok(/\.wys-cap\{[^}]*text-align:justify;text-align-last:center/.test(html),
-     'a legenda precisa fixar text-align E text-align-last: justificada quando é longa, '
-     + 'centralizada quando cabe numa linha — e sem o text-align-last ela herda "left" dentro do <p>');
+  // ⚠️ `text-align-last:left`, NÃO center: com a última linha centralizada, uma legenda
+  // longa que sobra UMA palavra a termina com essa palavra solta no meio.
+  ok(/\.wys-cap\{[^}]*text-align:justify;text-align-last:left/.test(html),
+     'a última linha da legenda tem de encostar na margem; centralizada, deixa palavra solta no meio');
+  // ⚠️ E `fit-content` é o que salva o outro caso: a legenda CURTA encolhe até o texto
+  // e as margens automáticas a centralizam. Sem ele, `left` deixaria a legenda de uma
+  // linha grudada à esquerda de um bloco de 720 px, fora do eixo da figura.
+  ok(/\.wys-cap\{width:fit-content/.test(html),
+     'a legenda precisa de width:fit-content, senão a legenda curta sai desalinhada da figura');
   // ⚠️ Sem teto de largura a legenda atravessava a coluna inteira (1.512 px) enquanto
   // a figura tinha 302 px: lia-se como parágrafo do texto, não como legenda da figura.
   ok(/\.wys-cap\{[^}]*max-width:min\(100%,720px\)[^}]*margin-left:auto;margin-right:auto/.test(html),
