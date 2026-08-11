@@ -2732,33 +2732,57 @@ var FC_CATS=['Diabetes','Obesidade','Tireoide','Adrenal','Neuroendocrinologia','
 // ── SUBTÓPICOS (temas) por subespecialidade — navegação subespecialidade → tema.
 // A ordem define a ordem das abas. Usado por flashcards e mapas mentais. O tema
 // de cada item é explícito (item.tema) ou inferido do enunciado/título (regras).
+// ⚠️ 'Endocrinologia Básica' estava em DIR_SUBS mas FALTAVA aqui — era a única
+// subespecialidade sem temas. No gerador de questões o seletor vinha vazio ("Todos
+// os temas") e TODAS as questões do lote saíam sem subtema, que é o pior caso para
+// a repetição que o professor relatou. Os cinco temas são os capítulos que ele já
+// tem publicados em Resumos (11/08).
+// ⚠️ Os temas de GENÉTICA (pedido do professor, 11/08) entraram nas áreas em que a
+// genética é assunto de prova de verdade. Sem um subtema próprio, o gerador quase
+// nunca chegava lá sozinho: ele converge para o caso mais canônico da área.
 var FC_SUBTOPICS={
+ 'Endocrinologia Básica':['Hormônios: Classes, Síntese e Transporte','Receptores Hormonais e Transdução de Sinal','Fisiologia Endócrina: Eixos e Feedback','Biologia Molecular e Genética em Endocrinologia','Bases da Avaliação Laboratorial em Endocrinologia'],
+ // ⚠️ Diabetes NÃO ganha tema de genética: 'Secundário/MODY' já é esse assunto.
+ // Dois temas que puxam a mesma vinheta é exatamente o defeito que a repetição
+ // expôs em Endocrinologia Feminina ('Amenorreia' e 'Insuf. ovariana').
  'Diabetes':['DM1','DM2','Pré-diabetes','Gestacional','Secundário/MODY','Diagnóstico','Tecnologia','Complicações agudas','Complicações crônicas','Hospital','Idoso'],
- 'Tireoide':['Hipotireoidismo','Hipertireoidismo/Graves','Tireoidites','Nódulo','Câncer','Tireoide e gestação'],
- 'Adrenal':['Insuf. adrenal','Cushing','Hiperaldosteronismo','Feocromocitoma','Incidentaloma','HAC'],
- 'Obesidade':['Avaliação','Tratamento Farmacológico','Tratamento Cirúrgico','Comorbidades','Infantil'],
- 'Neuroendocrinologia':['Prolactinoma','Acromegalia','Hipopituitarismo','DI/SIADH','Incidentaloma hipofisário'],
- 'Osteometabolismo':['Osteoporose','Cálcio/PTH','Vitamina D','Paget','Osteomalácia'],
- 'Lípides':['Hipercolesterolemia','Hipertrigliceridemia','Alfalipoproteinemias'],
- 'Endocrinologia Pediátrica':['Baixa estatura/GH','Puberdade','HAC','Hipotireoidismo congênito','DM1'],
- 'Endocrinologia Feminina':['SOP','Amenorreia','Menopausa','Hirsutismo','Insuf. ovariana'],
- 'Endocrinologia Masculina':['Hipogonadismo','Infertilidade/ginecomastia','Disfunção erétil'],
+ 'Tireoide':['Hipotireoidismo','Hipertireoidismo/Graves','Tireoidites','Nódulo','Câncer','Carcinoma medular e NEM2 (RET)','Tireoide e gestação'],
+ 'Adrenal':['Insuf. adrenal','Cushing','Hiperaldosteronismo','Feocromocitoma','Síndromes de predisposição (SDHx, VHL, NF1)','Incidentaloma','HAC'],
+ 'Obesidade':['Avaliação','Tratamento Farmacológico','Tratamento Cirúrgico','Comorbidades','Obesidade monogênica e sindrômica','Infantil'],
+ 'Neuroendocrinologia':['Prolactinoma','Acromegalia','Hipopituitarismo','DI/SIADH','Incidentaloma hipofisário','NEM1 e adenomas familiares'],
+ 'Osteometabolismo':['Osteoporose','Cálcio/PTH','Vitamina D','Paget','Osteomalácia','Doenças ósseas genéticas (HHF, hipofosfatasia)'],
+ 'Lípides':['Hipercolesterolemia','Hipertrigliceridemia','Alfalipoproteinemias','Dislipidemias genéticas (HF, disbetalipoproteinemia)'],
+ 'Endocrinologia Pediátrica':['Baixa estatura/GH','Puberdade','HAC','Hipotireoidismo congênito','DM1','Síndromes genéticas (Turner, Prader-Willi)'],
+ 'Endocrinologia Feminina':['SOP','Amenorreia','Menopausa','Hirsutismo','Insuf. ovariana','Turner e pré-mutação do FMR1'],
+ 'Endocrinologia Masculina':['Hipogonadismo','Infertilidade/ginecomastia','Disfunção erétil','Klinefelter e Kallmann'],
  'Endocrinologia do Esporte':['Tríade/RED-S','Anabolizantes','Exercício e DM','Performance'],
  'Transgeneridade':['Homem Trans','Mulher Trans','Monitorização'],
  'Endocrinopatias':['Lítio','Amiodarona','Corticoide','Estatinas','Imunoterapia (checkpoint)','Antipsicóticos','Fármaco-induzida (outras)']
 };
 // Regras de classificação (ordem = prioridade; 1ª que casar vence). Texto minúsculo.
 var FC_TEMA_RULES={
+ // ⚠️ Os padrões de GENÉTICA vêm PRIMEIRO (a 1ª regra que casa vence), mas são
+ // ESTREITOS de propósito: exigem marcador genético explícito (nome da síndrome, do
+ // gene, "cariótipo", "germinativ…"). Assim classificam o que é de fato genético sem
+ // varrer para dentro do tema novo o conteúdo antigo que só menciona "familiar".
+ // ⚠️ Nada de `/\bnem\b/`: "nem" é conjunção — casaria em texto clínico comum.
+ 'Endocrinologia Básica':[
+  ['Biologia Molecular e Genética em Endocrinologia',/genétic|genôm|mutaç|\bgene\b|\bgenes\b|alelo|autossômic|heranç|cariótip|sequenciament|epigenétic|transcriç|\bdna\b|\brna\b|imprinting/],
+  ['Bases da Avaliação Laboratorial em Endocrinologia',/imunoensai|\bensaio\b|interferênc|biotina|macroprolactin|efeito gancho|\bhook\b|espectrometr|valor de referênc|acurácia|calibraç|pré-?analític|anticorpo heterófil/],
+  ['Receptores Hormonais e Transdução de Sinal',/receptor|transduç|segundo mensageiro|\bampc\b|\bgpcr\b|tirosina.?quinase|\bjak\b|\bstat\b|sinalizaç|proteína g\b/],
+  ['Fisiologia Endócrina: Eixos e Feedback',/feedback|retroaliment|\beixo\b|pulsátil|circadian|hipotálamo-?hipófis|alça\b/],
+  ['Hormônios: Classes, Síntese e Transporte',/síntese|transporte|carreador|\bshbg\b|\btbg\b|esteroidogên|peptídic|amínic|meia-?vida|secreç|pró-?hormôni/]
+ ],
  'Diabetes':[['Complicações agudas',/cetoacid|\bcad\b|hiperosmolar|\behh\b|hipoglicem|crise hipergli/],['Complicações crônicas',/retinopat|nefropat|neuropat|doença renal|renal crôn|\bdrc\b|pé diabét|microvascular|macrovascular|cardiovascular|risco cv|albumin|retina/],['Gestacional',/gestacion|gravid|grávid/],['Hospital',/hospital|internaç|internad|enfermaria|sliding/],['Idoso',/idoso|geriátr|idade avançad/],['Tecnologia',/tecnolog|\bcgm\b|bomba de insulin|sensor|sistema híbrid|monitor.*contínu/],['Diagnóstico',/diagnóstic|critério|rastrei|classificaç/],['Pré-diabetes',/pré-?diabet|pre-?diabet|intolerân|jejum alterad|prevenção/],['Secundário/MODY',/\bmody\b|secundári|pancreatogên|esteroide/],['DM2',/tipo 2|\bdm2\b|\bdm 2\b|resistência insulín|síndrome metaból|metformin|sglt2|glp-?1|\bgip\b|tirzepatid|sulfonilur|dpp-?4|pioglitaz|acarbose|antidiabét|farmacolog/],['DM1',/tipo 1|\bdm1\b|\bdm 1\b|autoimun|\blada\b|peptíde|célula beta|criança|adolescent|pediátr|insulinopen|insulinoterap|insulin|basal-bolus|análog/]],
- 'Tireoide':[['Câncer',/câncer|carcinoma|bethesda|paaf|tireoglobulin|ti-?rads|maligno|papilífer|tireoidectomi/],['Nódulo',/nódul/],['Hipertireoidismo/Graves',/hipertireoid|graves|tireot[oó]x|\btrab\b|tempestade|tionamid|metimazol|propiltiour|\bptu\b|radioiod/],['Hipotireoidismo',/hipotireoid|hashimoto|levotiroxin|subclínic|mixedema/],['Tireoidites',/tireoidit|quervain|subagud|pós-?part/],['Tireoide e gestação',/gesta|grávid/]],
- 'Adrenal':[['Feocromocitoma',/feocromocit|paragangli|metanefrin|catecolamin/],['Hiperaldosteronismo',/aldosteron|\bconn\b|renina/],['HAC',/hiperplasia adrenal|\bhac\b|21-?hidroxil|17-?oh|congênit/],['Incidentaloma',/incidentalom|adenoma adrenal/],['Cushing',/cushing|cortisol|hipercortisol|dexametason/],['Insuf. adrenal',/insuficiência adrenal|addison|crise adrenal|cosintropin|\bacth\b/]],
- 'Obesidade':[['Infantil',/infantil|criança|pediátr|adolescent/],['Tratamento Cirúrgico',/bariátric|cirurgi|sleeve|bypass|gastrect/],['Tratamento Farmacológico',/farmacológic|farmacoter|semaglutid|tirzepatid|liraglutid|orlistat|naltrexon|bupropion|sibutramin|medicament|\bglp/],['Comorbidades',/comorbid|masld|mash|esteatos|apneia|\baos\b|sarcopên|cardiovascular|risco cv|metaból/],['Avaliação',/\bimc\b|classificaç|avaliaç|circunferênci|diagnóstic|abordagem/]],
- 'Neuroendocrinologia':[['Prolactinoma',/prolactin|cabergolin|bromocriptin/],['DI/SIADH',/insipidus|\bsiadh\b|desmopressin|\badh\b|vasopressin|copeptin|hiponatrem/],['Acromegalia',/acromegal|\bigf\b|somatostatin|pegvisom/],['Incidentaloma hipofisário',/incidentalom|adenoma hipofis|não-?funcionant/],['Hipopituitarismo',/hipopituitar|sheehan|apoplexia|pan-?hipo|deficiência|cushing|\bacth\b/]],
- 'Osteometabolismo':[['Paget',/paget/],['Osteomalácia',/osteomalác|raquitism/],['Vitamina D',/vitamina d|25-?oh|colecalcifer/],['Cálcio/PTH',/paratireoid|\bpth\b|hipercalcem|hipocalcem|cálcio|hiperpara|hipopara|\bhhf\b|pthrp/],['Osteoporose',/osteoporos|densitometr|\bdxa\b|t-?score|bisfosfonat|denosumab|teriparatid|romosozumab|fratur|osteopen/]],
- 'Lípides':[['Hipertrigliceridemia',/triglicer|\btg\b|fibrat|quilomicron|pancreatite/],['Alfalipoproteinemias',/alfalipoprotein|hipoalfa|hiperalfa|\bhdl\b|tangier|apoa/],['Hipercolesterolemia',/colesterol|\bldl\b|familiar|\bhf\b|lp\(a\)|estatin|ezetimib|pcsk9|inclisiran|bempedoic|risco|\bmetas?\b|não-?hdl|apob|escore|prevent|dislipidemi|tratament|manejo/]],
- 'Endocrinologia Pediátrica':[['HAC',/hiperplasia adrenal|\bhac\b|21-?hidroxil|17-?oh/],['Hipotireoidismo congênito',/hipotireoidismo congênit|congênit|pezinho/],['Puberdade',/puberdad|telarca|menarca|\bgnrh\b|precoce/],['DM1',/diabet|\bdm1\b|glicem/],['Baixa estatura/GH',/baixa estatura|estatura|crescimento|\bgh\b|\bpig\b|turner|idade óssea|\bsga\b/]],
- 'Endocrinologia Feminina':[['SOP',/\bsop\b|\bsomp\b|ovários? policíst|rotterdam|policíst/],['Insuf. ovariana',/insuficiência ovarian|falência ovarian|\bpoi\b/],['Menopausa',/menopaus|climatér|terapia hormonal|vasomotor|fogacho/],['Hirsutismo',/hirsut|hiperandrogen|\bacne\b/],['Amenorreia',/amenorrei|oligomenorr|menstrua|anovulaç|prolactin/]],
- 'Endocrinologia Masculina':[['Disfunção erétil',/erétil/],['Infertilidade/ginecomastia',/infertil|ginecomast|espermatog|espermogram|varicocel|fertilidad/],['Hipogonadismo',/hipogonad|testosteron|klinefelter|kallmann|\blh\b|\bfsh\b|reposição|\btrt\b|exógen|hematócrit/]],
+ 'Tireoide':[['Carcinoma medular e NEM2 (RET)',/medular|calciton|\bret\b|nem[ -]?2|\bmen2/],['Câncer',/câncer|carcinoma|bethesda|paaf|tireoglobulin|ti-?rads|maligno|papilífer|tireoidectomi/],['Nódulo',/nódul/],['Hipertireoidismo/Graves',/hipertireoid|graves|tireot[oó]x|\btrab\b|tempestade|tionamid|metimazol|propiltiour|\bptu\b|radioiod/],['Hipotireoidismo',/hipotireoid|hashimoto|levotiroxin|subclínic|mixedema/],['Tireoidites',/tireoidit|quervain|subagud|pós-?part/],['Tireoide e gestação',/gesta|grávid/]],
+ 'Adrenal':[['Síndromes de predisposição (SDHx, VHL, NF1)',/sdh[abcdx]\b|\bvhl\b|von hippel|neurofibromatos|\bnf1\b|germinativ|hereditári|síndrom.*predisposiç/],['Feocromocitoma',/feocromocit|paragangli|metanefrin|catecolamin/],['Hiperaldosteronismo',/aldosteron|\bconn\b|renina/],['HAC',/hiperplasia adrenal|\bhac\b|21-?hidroxil|17-?oh|congênit/],['Incidentaloma',/incidentalom|adenoma adrenal/],['Cushing',/cushing|cortisol|hipercortisol|dexametason/],['Insuf. adrenal',/insuficiência adrenal|addison|crise adrenal|cosintropin|\bacth\b/]],
+ 'Obesidade':[['Obesidade monogênica e sindrômica',/monogênic|sindrômic|\bmc4r\b|leptin.*deficiên|deficiência de leptina|\bpomc\b|prader|bardet|setmelanotid|\blepr\b/],['Infantil',/infantil|criança|pediátr|adolescent/],['Tratamento Cirúrgico',/bariátric|cirurgi|sleeve|bypass|gastrect/],['Tratamento Farmacológico',/farmacológic|farmacoter|semaglutid|tirzepatid|liraglutid|orlistat|naltrexon|bupropion|sibutramin|medicament|\bglp/],['Comorbidades',/comorbid|masld|mash|esteatos|apneia|\baos\b|sarcopên|cardiovascular|risco cv|metaból/],['Avaliação',/\bimc\b|classificaç|avaliaç|circunferênci|diagnóstic|abordagem/]],
+ 'Neuroendocrinologia':[['NEM1 e adenomas familiares',/nem[ -]?1|\bmen1\b|neoplasia endócrina múltipla|menin|adenoma.*familiar|\baip\b|carney/],['Prolactinoma',/prolactin|cabergolin|bromocriptin/],['DI/SIADH',/insipidus|\bsiadh\b|desmopressin|\badh\b|vasopressin|copeptin|hiponatrem/],['Acromegalia',/acromegal|\bigf\b|somatostatin|pegvisom/],['Incidentaloma hipofisário',/incidentalom|adenoma hipofis|não-?funcionant/],['Hipopituitarismo',/hipopituitar|sheehan|apoplexia|pan-?hipo|deficiência|cushing|\bacth\b/]],
+ 'Osteometabolismo':[['Doenças ósseas genéticas (HHF, hipofosfatasia)',/hipofosfatas|osteogênese imperfeit|\bcasr\b|hipocalciúrica familiar|hipofosfatêmic|\bphex\b|\bfgf23\b|raquitismo.*ligad/],['Paget',/paget/],['Osteomalácia',/osteomalác|raquitism/],['Vitamina D',/vitamina d|25-?oh|colecalcifer/],['Cálcio/PTH',/paratireoid|\bpth\b|hipercalcem|hipocalcem|cálcio|hiperpara|hipopara|\bhhf\b|pthrp/],['Osteoporose',/osteoporos|densitometr|\bdxa\b|t-?score|bisfosfonat|denosumab|teriparatid|romosozumab|fratur|osteopen/]],
+ 'Lípides':[['Dislipidemias genéticas (HF, disbetalipoproteinemia)',/hipercolesterolemia familiar|\bhefh\b|\bhofh\b|\bldlr\b|disbetalipoprotein|apo ?e2|lipase lipoproteica|\blpl\b|síndrome da quilomicronemia familiar|\bfcs\b/],['Hipertrigliceridemia',/triglicer|\btg\b|fibrat|quilomicron|pancreatite/],['Alfalipoproteinemias',/alfalipoprotein|hipoalfa|hiperalfa|\bhdl\b|tangier|apoa/],['Hipercolesterolemia',/colesterol|\bldl\b|familiar|\bhf\b|lp\(a\)|estatin|ezetimib|pcsk9|inclisiran|bempedoic|risco|\bmetas?\b|não-?hdl|apob|escore|prevent|dislipidemi|tratament|manejo/]],
+ 'Endocrinologia Pediátrica':[['Síndromes genéticas (Turner, Prader-Willi)',/turner|prader|noonan|silver-?russell|klinefelter|cariótip|\bsnrpn\b|deleç|monossomia|síndrom.*genétic/],['HAC',/hiperplasia adrenal|\bhac\b|21-?hidroxil|17-?oh/],['Hipotireoidismo congênito',/hipotireoidismo congênit|congênit|pezinho/],['Puberdade',/puberdad|telarca|menarca|\bgnrh\b|precoce/],['DM1',/diabet|\bdm1\b|glicem/],['Baixa estatura/GH',/baixa estatura|estatura|crescimento|\bgh\b|\bpig\b|turner|idade óssea|\bsga\b/]],
+ 'Endocrinologia Feminina':[['Turner e pré-mutação do FMR1',/turner|\bfmr1\b|pré-?mutaç|cariótip|disgenesia gonadal|monossomia|45,? ?x\b/],['SOP',/\bsop\b|\bsomp\b|ovários? policíst|rotterdam|policíst/],['Insuf. ovariana',/insuficiência ovarian|falência ovarian|\bpoi\b/],['Menopausa',/menopaus|climatér|terapia hormonal|vasomotor|fogacho/],['Hirsutismo',/hirsut|hiperandrogen|\bacne\b/],['Amenorreia',/amenorrei|oligomenorr|menstrua|anovulaç|prolactin/]],
+ 'Endocrinologia Masculina':[['Klinefelter e Kallmann',/klinefelter|kallmann|47,? ?xxy|anosmia|\bkal1\b|\bfgfr1\b|cariótip|hipogonadismo hipogonadotrófico congênit/],['Disfunção erétil',/erétil/],['Infertilidade/ginecomastia',/infertil|ginecomast|espermatog|espermogram|varicocel|fertilidad/],['Hipogonadismo',/hipogonad|testosteron|klinefelter|kallmann|\blh\b|\bfsh\b|reposição|\btrt\b|exógen|hematócrit/]],
  'Endocrinologia do Esporte':[['Tríade/RED-S',/tríade|red-?s|disponibilidade energét|baixa densidad/],['Anabolizantes',/anaboliz|esteroid|doping|\bepo\b|eritropoetin/],['Exercício e DM',/diabet|glicem|glut4|hipoglicem/],['Performance',/performance|cafeín|exercíci|hipertrofi|cortisol|testosteron/]],
  'Transgeneridade':[['Monitorização',/monitoriz|hematócrit|perfil lipíd|acompanha|rastrei|fertilidad|criopreserv|óssea|densidade/],['Mulher Trans',/feminiliz|mulher trans|estrogên|estradiol|antiandrogên|espironolacton|ciproteron|etinilestradiol/],['Homem Trans',/masculiniz|homem trans|testosteron/]],
  'Endocrinopatias':[['Lítio',/lítio|litio|lithium/],['Amiodarona',/amiodaron|\bait\b|\baih\b/],['Imunoterapia (checkpoint)',/checkpoint|imunoterap|nivolumab|pembrolizumab|ipilimumab|\bici\b|imunomediad|hipofisite/],['Estatinas',/estatin|statin|sinvastatin|atorvastatin|rosuvastatin/],['Antipsicóticos',/antipsicót|neuroléptic|risperidon|haloperidol|prolactin.*fármac/],['Corticoide',/corticoid|glicocorticoid|glucocorticoid|prednison|prednisolon|dexametason|cushing iatrog|supressão adrenal|desmame de corticoid/],['Fármaco-induzida (outras)',/fármac|medicament|induzid|iatrogên|droga/]]
@@ -12624,14 +12648,132 @@ function igAttachExamImage(q,d){
 var IG_IMAGEQUERY_RULE=' Campo "imageQuery": só preencha quando a figura for INDISPENSÁVEL para responder — quando o achado de imagem é o dado que decide a questão e o aluno precisa INTERPRETAR a figura. Use "imageQuery":"" (string vazia) em todos os outros casos, inclusive: (a) o enunciado DESCREVE o exame como normal, sem alterações ou negativo — NUNCA ilustre exame normal; (b) o exame aparece de passagem e o raciocínio se resolve pela clínica ou pelo laboratório; (c) o achado já está descrito por extenso no enunciado. Na dúvida, use "" — questão sem imagem é melhor do que questão com imagem que não corresponde ao caso. Quando preencher, use TERMOS DE BUSCA EM INGLÊS nomeando MODALIDADE + ÓRGÃO + ACHADO (ex.: "pituitary MRI macroadenoma", "thyroid ultrasound papillary carcinoma", "adrenal CT pheochromocytoma").';
 // Dois níveis de dificuldade, alternados no lote (pedido do Rodolpho 2026-07-23):
 // 'titulo' = padrão prova de título/especialista; 'muito_avancado' = banca difícil.
+// ── REPETIÇÃO DE QUESTÃO ─────────────────────────────────────────────────────
+// ⚠️ O professor (11/08): "as questões estão saindo praticamente iguais dentro do
+// mesmo tema" — três de Endocrinologia Feminina com a MESMA vinheta de insuficiência
+// ovariana prematura (34 anos, FSH 58→62, estradiol 12, cariótipo 46,XX), mudando só
+// a redação e a letra do gabarito.
+//
+// Duas causas, e as duas precisavam de correção:
+//  1. cada questão do lote era gerada ISOLADA — nenhuma sabia das outras nem do que
+//     já estava na fila/pendências, e o modelo converge para o caso mais canônico;
+//  2. faltava eixo: todas perguntavam "qual a melhor conduta?". Mesmo tema + mesmo
+//     eixo = mesma questão, por mais que o texto mude.
+// Some-se que "Endocrinologia Feminina" tem só 5 subtemas e DOIS deles (Amenorreia e
+// Insuf. ovariana) caem na mesma vinheta.
+var IG_STOP=('com sem por para que uma uns umas seu sua aos nas nos dos das pelo pela anos ano desde apos sobre entre esta este isso nao mais muito apresenta refere procura atendimento exame exames historia antecedente nega qual melhor conduta adequada provavel diagnostico paciente deseja').split(' ');
+function igTokensStem(s){
+  var t=String(s||'').toLowerCase()
+    .replace(/[áàâãä]/g,'a').replace(/[éêë]/g,'e').replace(/[íï]/g,'i')
+    .replace(/[óôõö]/g,'o').replace(/[úü]/g,'u').replace(/ç/g,'c')
+    .replace(/[^a-z0-9]+/g,' ').trim();
+  var out={},w=t?t.split(' '):[];
+  for(var i=0;i<w.length;i++){
+    var x=w[i];
+    if(!(x.length>=3||/^[0-9]{2,}$/.test(x)))continue;   // números curtos importam: são a digital do caso
+    if(IG_STOP.indexOf(x)>=0)continue;
+    out[x]=1;
+  }
+  return out;
+}
+// Jaccard dos tokens do enunciado. CALIBRADO NA BASE REAL (11/08): a duplicata
+// verdadeira (duas de menopausa aos 52 anos) deu 0,400; o par legítimo mais parecido
+// (hirsutismo × SOP) deu 0,238; duas de DM2 aos 58 anos clinicamente distintas
+// (nefropatia × cetoacidose euglicêmica) deram 0,164. Daí o corte em 0,32 — no meio
+// do vão, e não um número escolhido no olho.
+var IG_SIM_LIMITE=0.32;
+function igJaccard(a,b){
+  var A=igTokensStem(a),B=igTokensStem(b),inter=0,ka=Object.keys(A),kb=Object.keys(B);
+  if(!ka.length||!kb.length)return 0;
+  for(var i=0;i<ka.length;i++)if(B[ka[i]])inter++;
+  var uni=ka.length+kb.length-inter;
+  return uni?(inter/uni):0;
+}
+// A mais parecida da lista, com a nota. Devolve sempre — quem chama decide o corte.
+function igMaisParecida(stem,lista){
+  var best={sim:0,com:''};
+  (lista||[]).forEach(function(o){
+    var s=igJaccard(stem,o);
+    if(s>best.sim)best={sim:s,com:String(o||'')};
+  });
+  return best;
+}
+// Ficha curta do que já existe, para o prompt: o começo da vinheta (onde mora o
+// perfil do paciente) e a alternativa correta (duas questões com o mesmo tema E a
+// mesma resposta costumam ser a mesma questão).
+function igFichaEvitar(q){
+  if(!q)return '';
+  var alt=(q.options&&q.answer)?String(q.options[q.answer]||''):'';
+  var st=String(q.stem||'').replace(/\s+/g,' ').trim();
+  if(!st)return '';
+  return '• '+st.slice(0,150)+(alt?(' → resposta: '+alt.replace(/\s+/g,' ').slice(0,60)):'');
+}
+// Enunciados já existentes na subespecialidade (fila + pendências + postadas).
+function igStemsExistentes(sub){
+  var out=[];
+  function add(l){(l||[]).forEach(function(q){if(q&&q.stem&&(!sub||q.sub===sub))out.push(q);});}
+  try{add(igStories);}catch(e){}
+  try{add(igPending);}catch(e){}
+  return out;
+}
+// Eixo da pergunta. Mesmo tema com eixos diferentes vira questão diferente de
+// verdade; era o que faltava — no lote que o professor viu, as três perguntavam
+// "qual a melhor conduta?".
+var IG_EIXOS=[
+  'o DIAGNÓSTICO mais provável',
+  'a CONDUTA inicial (o que fazer agora)',
+  'o AJUSTE do tratamento em quem já está tratando',
+  'a INTERPRETAÇÃO do exame (o que aquele resultado significa)',
+  'o RASTREIO ou a prevenção de uma complicação',
+  'a COMPLICAÇÃO ou o efeito adverso do tratamento',
+  'a INVESTIGAÇÃO seguinte (qual exame pedir e por quê)'
+];
 function igNivelDesc(level){
   if(level==='titulo')return 'nível PROVA DE TÍTULO (padrão especialista) — raciocínio clínico exigente, com nuance clínica e distratores plausíveis (erros conceituais comuns), evitando questões óbvias/diretas';
   return 'nível MUITO AVANÇADO / DIFÍCIL (banca difícil, questão discriminativa acima do padrão prova de título) — exija raciocínio clínico de MÚLTIPLAS ETAPAS (integrar história + laboratório + imagem para chegar ao diagnóstico ou à melhor conduta), com nuance clínica fina, exceções e armadilhas de diretriz (cutoffs, casos-limite, quando NÃO tratar) e distratores muito plausíveis — erros conceituais sutis que até o especialista comete; PROÍBA questões óbvias, diretas ou de mera memorização de definição';
 }
-function igGenOne(sub,topic,level){
-  var sys=authoringSys('Atue como examinador de prova de título em endocrinologia. Gere UMA questão ORIGINAL de '+sub+', EXATAMENTE 4 alternativas (A–D), só uma correta. O enunciado deve TERMINAR SEMPRE com a pergunta direta (ex.: Qual o diagnóstico mais provável? / Qual a melhor conduta?). Inclua os valores laboratoriais pertinentes INLINE no texto, com unidades e valores de referência (ex.: FSH 2,1 mUI/mL [VR 3,5–12,5]) — não resuma como exames normais nem use tabela. EXCEÇÃO: a hemoglobina glicada (HbA1c) NÃO leva valor de referência — cite só o valor (ex.: HbA1c 8,2%). Quando pertinente, descreva o achado de imagem no enunciado em texto (ex.: USG de tireoide, ECG, RM de sela). NÃO cite a subespecialidade no enunciado. Alternativas CURTAS e concisas (poucas palavras — também vão para o story).'+IG_IMAGEQUERY_RULE+' JSON APENAS: {"stem":"vinheta clínica curta; exames laboratoriais inline com valores, unidades e referência; achado de imagem descrito em texto quando pertinente; TERMINA com a pergunta direta","options":{"A":"alternativa curta","B":"alternativa curta","C":"alternativa curta","D":"alternativa curta"},"answer":"A","explanation":"comentário COMPLETO em 1-2 parágrafos (cerca de 4-8 linhas no total): explique por que a alternativa correta está certa E por que as principais erradas estão erradas, com o critério/valor de corte e citando a diretriz/fonte pelo NOME + ano (sem PMID nem DOI); refira-se ao CONTEÚDO das alternativas, NÃO às letras (A/B/C/D), pois a ordem é embaralhada","imageQuery":"termos em inglês p/ imagem de exame OU string vazia"}');
-  return aiRequest({system:sys,prompt:'Gere 1 questão de Endocrinologia — '+sub+(topic?(', subtema OBRIGATÓRIO (não troque por outro assunto da área): '+topic):'')+', '+igNivelDesc(level)+'; clinicamente precisa e alinhada às diretrizes vigentes. Responda SOMENTE com o objeto JSON.',maxTokens:1100,model:AI_MODEL_CLINICO,grounding:(topic?(sub+' '+topic):sub)})
+// Bloco de "não repita" para o prompt. Vazio quando não há nada a evitar.
+function igBlocoEvitar(fichas){
+  if(!fichas||!fichas.length)return '';
+  return '\n\nJÁ EXISTEM as questões abaixo nesta subespecialidade. A sua tem de ser CLARAMENTE DIFERENTE: outro cenário clínico, outro perfil de paciente e outro ponto de decisão. NÃO repita a mesma vinheta com outras palavras, NEM os mesmos valores de exame, NEM a mesma resposta.\n'+fichas.join('\n');
+}
+function igBlocoEixo(eixo){
+  return eixo?(' A PERGUNTA no fim do enunciado deve ser sobre '+eixo+' — mantenha ESTE eixo, não troque por outro.'):'';
+}
+function igGenOne(sub,topic,level,eixo,fichasEvitar){
+  var sys=authoringSys('Atue como examinador de prova de título em endocrinologia. Gere UMA questão ORIGINAL de '+sub+', EXATAMENTE 4 alternativas (A–D), só uma correta.'+igBlocoEixo(eixo)+' O enunciado deve TERMINAR SEMPRE com a pergunta direta (ex.: Qual o diagnóstico mais provável? / Qual a melhor conduta?). Inclua os valores laboratoriais pertinentes INLINE no texto, com unidades e valores de referência (ex.: FSH 2,1 mUI/mL [VR 3,5–12,5]) — não resuma como exames normais nem use tabela. EXCEÇÃO: a hemoglobina glicada (HbA1c) NÃO leva valor de referência — cite só o valor (ex.: HbA1c 8,2%). Quando pertinente, descreva o achado de imagem no enunciado em texto (ex.: USG de tireoide, ECG, RM de sela). NÃO cite a subespecialidade no enunciado. Alternativas CURTAS e concisas (poucas palavras — também vão para o story).'+IG_IMAGEQUERY_RULE+' JSON APENAS: {"stem":"vinheta clínica curta; exames laboratoriais inline com valores, unidades e referência; achado de imagem descrito em texto quando pertinente; TERMINA com a pergunta direta","options":{"A":"alternativa curta","B":"alternativa curta","C":"alternativa curta","D":"alternativa curta"},"answer":"A","explanation":"comentário COMPLETO em 1-2 parágrafos (cerca de 4-8 linhas no total): explique por que a alternativa correta está certa E por que as principais erradas estão erradas, com o critério/valor de corte e citando a diretriz/fonte pelo NOME + ano (sem PMID nem DOI); refira-se ao CONTEÚDO das alternativas, NÃO às letras (A/B/C/D), pois a ordem é embaralhada","imageQuery":"termos em inglês p/ imagem de exame OU string vazia"}');
+  return aiRequest({system:sys,prompt:'Gere 1 questão de Endocrinologia — '+sub+(topic?(', subtema OBRIGATÓRIO (não troque por outro assunto da área): '+topic):'')+', '+igNivelDesc(level)+'; clinicamente precisa e alinhada às diretrizes vigentes.'+igBlocoEvitar(fichasEvitar)+' Responda SOMENTE com o objeto JSON.',maxTokens:1100,model:AI_MODEL_CLINICO,grounding:(topic?(sub+' '+topic):sub)})
   .then(function(raw){var d=parseJ(raw);if(!d||!d.stem||!d.options)return null;var q=igShuffleMCQ({sub:sub,teem:'',stem:String(d.stem||''),options:{A:d.options.A||'',B:d.options.B||'',C:d.options.C||'',D:d.options.D||''},answer:String(d.answer||'A').toUpperCase().slice(0,1),explanation:String(d.explanation||'')});return igAttachExamImage(q,d);});
+}
+// Gera UMA questão que não repita o que já existe nem o que o próprio lote acabou de
+// produzir. Uma tentativa; se sair parecida demais, uma SEGUNDA dizendo qual saiu
+// repetida. Se ainda assim repetir, entrega MARCADA em vez de descartar: descartar em
+// silêncio esconderia do professor que o gerador está preso num caso só — que é
+// exatamente a informação que ele precisa ter.
+function igGenOneUnica(sub,topic,level,eixo,existentes,produzidas){
+  function alvos(){
+    return (existentes||[]).map(function(q){return String((q&&q.stem)||'');}).concat(produzidas||[]);
+  }
+  function fichas(){
+    var f=(existentes||[]).map(igFichaEvitar).filter(Boolean);
+    (produzidas||[]).forEach(function(s){
+      var t=String(s||'').replace(/\s+/g,' ').trim();
+      if(t)f.push('• '+t.slice(0,150));
+    });
+    return f.slice(-8);   // as 8 mais recentes: o suficiente para orientar sem inflar o prompt
+  }
+  return igGenOne(sub,topic,level,eixo,fichas()).then(function(q){
+    if(!q||!q.stem)return q;
+    var p1=igMaisParecida(q.stem,alvos());
+    if(p1.sim<IG_SIM_LIMITE)return q;
+    var aviso=['• (ATENÇÃO: a tentativa anterior repetiu este caso — faça OUTRO cenário) '+String(q.stem).replace(/\s+/g,' ').slice(0,150)];
+    return igGenOne(sub,topic,level,eixo,fichas().concat(aviso)).then(function(q2){
+      if(!q2||!q2.stem)return q;
+      var p2=igMaisParecida(q2.stem,alvos());
+      if(p2.sim>=IG_SIM_LIMITE)q2.repetida=Math.round(p2.sim*100);
+      return q2;
+    },function(){return q;});
+  });
 }
 function igLoteToQueue(it){igStories.push({id:'ig-'+Date.now()+'-'+Math.round(Math.random()*1e6),sub:it.sub,teem:it.teem||'',stem:it.stem,options:it.options,answer:it.answer,explanation:it.explanation,img:it.img||'',imgRef:it.imgRef||'',status:'queued',createdAt:Date.now()});}
 function igLoteApprove(i){var it=igLoteDraft[i];if(!it)return;igLoteToQueue(it);igLoteDraft.splice(i,1);persistIgStories();notify('Aprovada e adicionada à fila.','ok');renderAdmSec('stories');}
@@ -12654,7 +12796,12 @@ function renderIgLote(){
     var _full='<div style="font-size:.74rem;color:var(--t2);line-height:1.55;white-space:pre-wrap">▾ '+esc(_stem)+'</div>'+_fig+'<div style="margin-top:.35rem;display:grid;gap:.18rem">'+['A','B','C','D'].map(function(L){var ok=(it.answer===L);return '<div style="font-size:.74rem;line-height:1.45;color:'+(ok?'#16a34a':'var(--t2)')+';font-weight:'+(ok?'700':'400')+'"><b>'+L+')</b> '+esc((it.options||{})[L]||'')+(ok?' ✓':'')+'</div>';}).join('')+'</div>'+(it.explanation?'<div style="margin-top:.35rem;font-size:.72rem;color:var(--t3);line-height:1.5"><b>Comentário:</b> '+esc(it.explanation)+'</div>':'');
     return '<div style="border:1px solid var(--bd);border-radius:12px;padding:.7rem .8rem;margin-bottom:.5rem;background:var(--s2)">'
       +'<div style="display:flex;justify-content:space-between;gap:.5rem;flex-wrap:wrap;align-items:center;margin-bottom:.35rem">'
-      +'<div style="font-size:.8rem;font-weight:700;color:var(--tx)">'+dirSubIcon(it.sub)+' '+esc(it.sub||'')+' <span class="tag tag-blue">Gab: '+esc(it.answer)+'</span>'+(it.img?' <span class="tag">🖼️ imagem</span>':'')+(qotdCuratorForSub(it.sub)?' <span class="tag">→ '+esc(qotdCuratorForSub(it.sub).nome)+'</span>':'')+'</div>'
+      +'<div style="font-size:.8rem;font-weight:700;color:var(--tx)">'+dirSubIcon(it.sub)+' '+esc(it.sub||'')+' <span class="tag tag-blue">Gab: '+esc(it.answer)+'</span>'+(it.img?' <span class="tag">🖼️ imagem</span>':'')
+      // ⚠️ Marca a que continuou parecida com uma questão que já existe, mesmo depois
+      // da segunda tentativa. Fica VISÍVEL em vez de sumir: descartar em silêncio
+      // esconderia que o gerador está preso num caso só.
+      +(it.repetida?' <span class="tag" style="background:rgba(220,38,38,.16);color:#fca5a5;border-color:rgba(220,38,38,.4)" title="Enunciado com '+it.repetida+'% de sobreposição de termos com uma questão já existente nesta subespecialidade">⚠️ parecida ('+it.repetida+'%)</span>':'')
+      +(qotdCuratorForSub(it.sub)?' <span class="tag">→ '+esc(qotdCuratorForSub(it.sub).nome)+'</span>':'')+'</div>'
       +'<div style="display:flex;gap:.3rem;flex-wrap:wrap">'
       +'<button class="btn btn-primary btn-sm" data-iglote-dist="'+i+'">📤 Distribuir</button>'
       +'<button class="btn btn-outline btn-sm" data-iglote-ok="'+i+'">✓ Aprovar</button>'
@@ -12699,7 +12846,10 @@ function bindAdmStories(){
     var st=document.getElementById('ig-gen-status');
     gen.disabled=true;gen.innerHTML=ldHTML('Gerando...');if(st)st.textContent='';
     var sys=authoringSys('Atue como examinador de prova de título em endocrinologia. Gere UMA questão ORIGINAL (não copie provas existentes), de '+sub+', com EXATAMENTE 4 alternativas (A–D), só uma correta. O enunciado deve TERMINAR SEMPRE com a pergunta direta (ex.: Qual o diagnóstico mais provável? / Qual a melhor conduta?). Inclua os valores laboratoriais pertinentes INLINE no texto, com unidades e valores de referência (ex.: FSH 2,1 mUI/mL [VR 3,5–12,5]) — não resuma como exames normais nem use tabela. EXCEÇÃO: a hemoglobina glicada (HbA1c) NÃO leva valor de referência — cite só o valor (ex.: HbA1c 8,2%). Quando pertinente, descreva o achado de imagem no enunciado em texto (ex.: USG de tireoide, ECG, RM de sela). NÃO cite a subespecialidade no enunciado. Alternativas CURTAS e concisas (poucas palavras — também vão para o story).'+IG_IMAGEQUERY_RULE+' JSON APENAS: {"stem":"vinheta clínica curta; exames laboratoriais inline com valores, unidades e referência; achado de imagem descrito em texto quando pertinente; TERMINA com a pergunta direta","options":{"A":"alternativa curta","B":"alternativa curta","C":"alternativa curta","D":"alternativa curta"},"answer":"A","explanation":"comentário COMPLETO em 1-2 parágrafos (cerca de 4-8 linhas no total): explique por que a alternativa correta está certa E por que as principais erradas estão erradas, com o critério/valor de corte e citando a diretriz/fonte pelo NOME + ano (sem PMID nem DOI); refira-se ao CONTEÚDO das alternativas, NÃO às letras (A/B/C/D), pois a ordem é embaralhada","imageQuery":"termos em inglês p/ imagem de exame OU string vazia"}');
-    aiRequest({system:sys,prompt:'Gere 1 questão de Endocrinologia — '+sub+(topic?(', subtema OBRIGATÓRIO (não troque por outro assunto da área): '+topic):'')+', nível AVANÇADO (padrão prova de título/especialista) — raciocínio clínico exigente, com nuance clínica e distratores plausíveis (erros conceituais comuns), evitando questões óbvias/diretas; clinicamente precisa e alinhada às diretrizes vigentes. Enunciado conciso, adequado a um story do Instagram.',maxTokens:1100,model:AI_MODEL_CLINICO,grounding:(topic?(sub+' '+topic):sub)})
+    // O gerador avulso também recebe o "não repita": gerar uma a uma não deixa de
+    // convergir para o mesmo caso canônico só porque é uma de cada vez.
+    var _fichas=igStemsExistentes(sub).map(igFichaEvitar).filter(Boolean).slice(-8);
+    aiRequest({system:sys,prompt:'Gere 1 questão de Endocrinologia — '+sub+(topic?(', subtema OBRIGATÓRIO (não troque por outro assunto da área): '+topic):'')+', nível AVANÇADO (padrão prova de título/especialista) — raciocínio clínico exigente, com nuance clínica e distratores plausíveis (erros conceituais comuns), evitando questões óbvias/diretas; clinicamente precisa e alinhada às diretrizes vigentes. Enunciado conciso, adequado a um story do Instagram.'+igBlocoEvitar(_fichas),maxTokens:1100,model:AI_MODEL_CLINICO,grounding:(topic?(sub+' '+topic):sub)})
     .then(function(raw){
       var d=parseJ(raw);if(!d||!d.stem||!d.options)throw new Error('Resposta inválida. Tente de novo.');
       igEditId=null;
@@ -12738,13 +12888,35 @@ function bindAdmStories(){
     var nHard=Math.round(n*0.4),levels=[];
     for(var li=0;li<n;li++)levels.push(li<nHard?'muito_avancado':'titulo');
     levels=igShuffle(levels);
+    // EIXO da pergunta, distinto entre as questões. Mesmo tema com eixos diferentes
+    // vira questão diferente de verdade — no lote que o professor devolveu, as três
+    // perguntavam "qual a melhor conduta?" sobre a MESMA vinheta.
+    var eixos=[],bagE=igShuffle(IG_EIXOS.slice());
+    for(var xi=0;xi<n;xi++)eixos.push(bagE[xi%bagE.length]);
     loteGen.disabled=true;loteGen.innerHTML=ldHTML('Gerando '+n+'…');if(st)st.textContent='';if(res)res.innerHTML='';
     var done=0;
-    igPool(subs.map(function(s,idx){var lvl=levels[idx]||'titulo';return function(){return igGenOne(s,topics[idx],lvl).then(function(r){done++;if(st)st.textContent='Gerando… '+done+'/'+n;return r;});};}),3)
+    // `produzidas` acumula, POR SUBESPECIALIDADE, o que o lote já gerou — e é lido no
+    // momento da chamada, não na montagem. Com 3 em paralelo, as três primeiras não se
+    // veem, mas as seguintes já evitam o que saiu; o que escapar disso ainda passa pela
+    // conferência de semelhança em igGenOneUnica.
+    var produzidas={};
+    igPool(subs.map(function(s,idx){
+      var lvl=levels[idx]||'titulo';
+      return function(){
+        if(!produzidas[s])produzidas[s]=[];
+        return igGenOneUnica(s,topics[idx],lvl,eixos[idx],igStemsExistentes(s),produzidas[s]).then(function(r){
+          if(r&&r.stem)produzidas[s].push(r.stem);
+          done++;if(st)st.textContent='Gerando… '+done+'/'+n;
+          return r;
+        });
+      };
+    }),3)
     .then(function(items){
       igLoteDraft=(items||[]).filter(function(x){return x&&x.stem;});
       if(!igLoteDraft.length){if(res)res.innerHTML='<div style="color:var(--red);font-size:.78rem">❌ A IA não retornou questões. Tente de novo.</div>';return;}
-      if(st)st.textContent='✓ '+igLoteDraft.length+' gerada(s).';renderIgLote();
+      var nRep=igLoteDraft.filter(function(x){return x.repetida;}).length;
+      if(st)st.textContent='✓ '+igLoteDraft.length+' gerada(s).'+(nRep?(' ⚠️ '+nRep+' ainda parecida(s) com questão existente — marcada(s) abaixo.'):'');
+      renderIgLote();return;
     }).catch(function(e){if(res)res.innerHTML='<div style="color:var(--red);font-size:.78rem">❌ '+esc((e&&e.message)||e)+'</div>';})
     .then(function(){loteGen.disabled=false;loteGen.innerHTML='🤖 Gerar lote';});
   });

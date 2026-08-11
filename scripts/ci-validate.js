@@ -643,6 +643,19 @@ try {
   fail('regressão da imagem no corpo falhou (verifique htmlToMd/mdInline no index.html):\n' + out);
 }
 
+// ⚠️ O gerador de questões repetia a MESMA questão dentro do tema: cada uma do lote
+//     era gerada isolada, sem saber das outras nem do que já estava na fila, e todas
+//     perguntavam o mesmo ("qual a melhor conduta?"). O limiar de semelhança foi
+//     calibrado na base real — a duplicata verdadeira deu 0,400 e o par legítimo mais
+//     parecido deu 0,238.
+try {
+  execFileSync(process.execPath, [path.join('scripts', 'test-questao-repetida.js')], { stdio: 'pipe' });
+  ok('questão repetida: acusa a duplicata real e o lote sabe o que já existe');
+} catch (e) {
+  const out = (e.stdout ? e.stdout.toString() : '') + (e.stderr ? e.stderr.toString() : '');
+  fail('regressão de questão repetida falhou (verifique igGenOneUnica/FC_SUBTOPICS no index.html):\n' + out);
+}
+
 // ⚠️ Clicar na figura AMPLIA na leitura — e NUNCA no editor. O editor do resumo tem
 //     `class="wys-edit dir-texto"`, as duas classes: uma condição por `.dir-texto`
 //     sozinha o pegaria, e lá o clique na imagem é o que a SELECIONA para os botões

@@ -5,6 +5,33 @@ atualizado: 2026-08-11
 
 # Convenções de Trabalho
 
+## 🧯 GUARDA COM FOLGA EMBUTIDA NÃO GUARDA (2026-08-11)
+
+Escrevi `ok(comGenetica.length >= 8, ...)` para exigir tema de genética nas **9** áreas
+em que a acrescentei. O mutante que **apagava** a genética de Endocrinologia Feminina
+passou **verde** — sobraram 8, e 8 ≥ 8.
+
+**A regra:** guarda que aceita "quase todos" aceita perder um. Quando a exigência é
+*todos*, verificar **quais faltaram** e listá-los na mensagem, em vez de contar. O
+`>=` com margem parece prudência e é, na prática, uma exceção silenciosa.
+
+E de novo o mesmo par de erros na mesma rodada: **duas** mutações minhas não
+representavam defeito nenhum (uma só declarava uma variável morta, outra renomeava um
+tema — mutante equivalente). Só distingue mutação ruim de guarda ruim quem vai olhar
+**o que a mutação de fato mudou** antes de culpar a guarda.
+
+## 📝 UMA GUARDA TEXTUAL CASOU COM O COMENTÁRIO QUE DOCUMENTA A REGRA (2026-08-11)
+
+Para impedir que alguma regex de classificação usasse `\bnem\b` (a conjunção "nem",
+que casaria em texto clínico comum), escrevi uma guarda que procurava esse padrão no
+fonte. Ela falhou de cara — casando com o **meu próprio comentário** explicando por
+que não se deve usar `\bnem\b`. Texto **sobre** o código, não o código.
+
+**A regra, terceira vez em dois dias:** procurar padrão no fonte prova que *existe uma
+linha parecida em algum lugar*. Quando há função para executar — aqui,
+`classifyTema('...não tem nem poliúria nem polidipsia...', 'Tireoide')` — executar é a
+única verificação que distingue código de conversa sobre código.
+
 ## 🎯 O MUTANTE MORREU NA LINHA ERRADA: TROCAR "A PRIMEIRA OCORRÊNCIA" NÃO É TESTAR (2026-08-11)
 
 Meu script de mutação faz `s.replace(a,b)` — **a primeira** ocorrência. Plantei um
