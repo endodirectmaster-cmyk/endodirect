@@ -629,13 +629,22 @@ html[data-theme="light"] .mural-text .mural-h1,html[data-theme="light"] .mural-t
    que também é centralizada. */
 .wys-fig{margin:.6rem 0}
 .wys-fig>.wys-img{margin:.5rem auto .3rem}
-/* ⚠️ `text-align-last` TAMBÉM, não só `text-align`. Ao legendar uma imagem antiga a
-   figura fica dentro de um <p>, e `.wys-edit p{text-align-last:left}` é HERDADO pela
-   legenda; como ela tem uma linha só, essa linha é a "última" e ia para a esquerda.
-   Resultado: centralizada para o aluno e à esquerda para quem escreve — o editor
-   mentindo sobre o resultado. Medido em Chromium: dentro do <p> vinha
-   `text-align-last: left`, na raiz vinha `auto`. */
-.wys-cap{text-align:center;text-align-last:center;font-size:.8rem;color:var(--t3);line-height:1.4;padding:0 .5rem}
+/* ⚠️ LARGURA PRÓPRIA, MENOR QUE A COLUNA. Sem teto, a legenda atravessava os 1.512 px
+   da coluna enquanto a figura tinha 302 px — lia-se como parágrafo do texto, não como
+   legenda da figura. Com 720 px centralizados ela fica presa ao redor da imagem em
+   qualquer tamanho (P/M/G), e continua mais estreita que o teto de 820 px da figura.
+
+   `justify` + `text-align-last:center` é a convenção de legenda de livro e resolve os
+   dois casos de uma vez: legenda longa fica com as duas margens retas (era o que o
+   professor tentou fazer à mão e não conseguia — o alinhamento aplicado no editor não
+   sobrevive ao salvar, porque a legenda é guardada como TEXTO puro), e legenda curta,
+   de uma linha só, é "última linha" e sai centralizada.
+
+   ⚠️ `text-align-last` explícito TAMBÉM por outro motivo: ao legendar uma imagem
+   antiga a figura fica dentro de um <p>, e `.wys-edit p{text-align-last:left}` é
+   HERDADO pela legenda. Sem fixar, o editor mostrava à esquerda o que o aluno via
+   centralizado. Medido em Chromium: dentro do <p> vinha `left`, na raiz vinha `auto`. */
+.wys-cap{max-width:min(100%,720px);margin-left:auto;margin-right:auto;text-align:justify;text-align-last:center;font-size:.8rem;color:var(--t3);line-height:1.4;padding:0 .5rem}
 /* Dentro do editor a legenda precisa ser VISÍVEL mesmo vazia, senão não há onde
    clicar para escrever — o contorno tracejado e a altura mínima são só do editor. */
 .wys-edit .wys-cap{outline:1px dashed var(--bd2);outline-offset:3px;min-height:1.15em}
