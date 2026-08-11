@@ -1,9 +1,32 @@
 ---
 tags: [cofre, processo]
-atualizado: 2026-08-10
+atualizado: 2026-08-11
 ---
 
 # Convenções de Trabalho
+
+## 🙋 "NÃO CONSEGUI FAZER X" É RELATO DE DEFEITO, NÃO DÚVIDA DE USO (2026-08-11)
+
+O professor escreveu: *"Não consegui deixar modo justificado. Melhor deixar a legenda
+mais centralizada."* Dava para ler como preferência e só mexer no alinhamento. Mas a
+primeira metade da frase é a informação: **ele tentou e o produto não deixou.**
+
+O motivo era estrutural — a legenda é guardada como **texto puro**
+(`figcaption.textContent`), então qualquer formatação aplicada dentro dela é
+**descartada no salvar**. Não era ele errando o botão.
+
+**As duas regras:**
+
+- **Investigar o "não consegui" antes de atender o "melhor deixar".** O que vem depois
+  costuma ser o **contorno** que a pessoa encontrou, não o que ela queria.
+- **Nem todo caminho que falta precisa ser construído.** Aqui a resposta certa não foi
+  criar controle de alinhamento na legenda: foi **entregar de fábrica o resultado**
+  (`justify` + última linha centralizada), que atende o pedido explícito *e* o
+  implícito, sem mais um botão para ele lembrar de apertar.
+
+**E medir antes de escolher:** renderizei a legenda REAL dele em quatro larguras e
+alinhamentos e olhei os quatro. "Mais centralizada" é vago; **1.512 px de legenda para
+302 px de figura** é um número que decide sozinho.
 
 ## 🧪 O PARSER CONSERTOU O MEU CASO DE TESTE E EU MEDI OUTRA COISA (2026-08-10)
 

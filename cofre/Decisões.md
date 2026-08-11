@@ -1,6 +1,6 @@
 ---
 tags: [cofre, decisoes]
-atualizado: 2026-08-10
+atualizado: 2026-08-11
 ---
 
 # Decisões
@@ -8,6 +8,10 @@ atualizado: 2026-08-10
 Log de decisões de produto e técnicas (mais recentes no topo).
 
 ## 2026-08
+- **📐 A LEGENDA PRECISA DA LARGURA DELA, NÃO DA COLUNA (2026-08-11).** `sw.js` v233 → **v234**. Entregue a legenda, o professor voltou: *"Não consegui deixar modo justificado. Melhor deixar a legenda mais centralizada"*. Medido: a legenda ocupava **1.512 px** — a coluna inteira — enquanto a figura tinha **302 px**. Lia-se como parágrafo do texto, não como legenda da figura.
+  - **`max-width:min(100%,720px)` + margens automáticas.** Fica presa ao redor da imagem em qualquer tamanho (P/M/G) e continua mais estreita que o teto de 820 px da figura.
+  - **`text-align:justify` + `text-align-last:center`** — a convenção de legenda de livro, e resolve os dois casos numa regra só: **longa** fica com as duas margens retas; **curta**, de uma linha, é "última linha" e sai **centralizada**. Renderizei as quatro opções com a legenda REAL dele antes de escolher: coluna inteira (3 linhas espalhadas), 620 centralizada (7 linhas, bordas irregulares), 620 justificada e 720 justificada (6 linhas).
+  - ⚠️ **Por que ele "não conseguia" justificar:** o alinhamento aplicado no editor **não sobrevive ao salvar** — a legenda é guardada como TEXTO puro (`figcaption.textContent`), então qualquer formatação dentro dela é descartada. Não era ele errando o botão; era o produto sem esse caminho. A resposta certa não foi criar o caminho, e sim **dar de fábrica o resultado que ele queria**.
 - **🏷️ LEGENDA ABAIXO DA FIGURA DO CORPO (2026-08-10).** `sw.js` v232 → **v233**. A figura do capítulo já tinha campo de crédito; a imagem inserida **no corpo do texto** não tinha onde escrever nada.
   - **A legenda viaja no `alt` do markdown** (`![legenda](url){35}`) — sintaxe que já existia, sem marcador novo para o `htmlToMd` ter de aprender. Rende `<figure><img><figcaption>`; sem legenda, segue só a imagem, como antes.
   - **Escreve-se no lugar onde ela aparece:** a imagem nasce dentro de `<figure>` com o campo já visível (tracejado + texto de apoio, só no editor). Para as imagens **já inseridas** (que são `<img>` solto), o botão **Legenda** embrulha em `<figure>` e leva o cursor para dentro.

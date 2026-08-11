@@ -209,8 +209,13 @@ if (mdToHtml && htmlToMd) {
   // imagem antiga a figura fica dentro de um <p>, e `.wys-edit p{text-align-last:left}`
   // é HERDADO pela legenda de uma linha só. Sem fixar, o editor mostrava à ESQUERDA
   // o que o aluno vê CENTRALIZADO — medido em Chromium.
-  ok(/\.wys-cap\{[^}]*text-align:center;text-align-last:center/.test(html),
-     'a legenda precisa fixar text-align E text-align-last, senão herda "left" dentro do <p>');
+  ok(/\.wys-cap\{[^}]*text-align:justify;text-align-last:center/.test(html),
+     'a legenda precisa fixar text-align E text-align-last: justificada quando é longa, '
+     + 'centralizada quando cabe numa linha — e sem o text-align-last ela herda "left" dentro do <p>');
+  // ⚠️ Sem teto de largura a legenda atravessava a coluna inteira (1.512 px) enquanto
+  // a figura tinha 302 px: lia-se como parágrafo do texto, não como legenda da figura.
+  ok(/\.wys-cap\{[^}]*max-width:min\(100%,720px\)[^}]*margin-left:auto;margin-right:auto/.test(html),
+     'a legenda precisa de largura própria centralizada, senão se espalha pela coluna toda');
   ok(/figure/.test((html.match(/\^\(h\[1-6\]\|p\|ul\|ol\|table\|hr\|blockquote\|div\|figure\)/) || [''])[0]),
      'htmlToMd tem de tratar <figure> como BLOCO, senão a legenda vaza como texto');
 
