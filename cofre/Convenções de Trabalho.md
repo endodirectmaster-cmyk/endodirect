@@ -5,6 +5,28 @@ atualizado: 2026-08-10
 
 # Convenções de Trabalho
 
+## 🧪 O PARSER CONSERTOU O MEU CASO DE TESTE E EU MEDI OUTRA COISA (2026-08-10)
+
+A legenda saía centralizada para o aluno e **à esquerda no editor**. Levantei uma
+hipótese e escrevi um probe para confirmá-la: montei `<p><figure>…</figure></p>` por
+`innerHTML` e comparei o estilo computado. **Deu tudo igual** — e eu quase concluí
+"não é CSS".
+
+Era CSS. O `<figure>` é conteúdo de fluxo e **não pode** estar dentro de `<p>`: ao ler
+aquele `innerHTML`, o parser do navegador **fecha o parágrafo antes** e põe a figura
+fora dele. Meu caso "dentro do `<p>`" nunca existiu. Refeito montando por DOM (que é
+como o código faz, e o DOM aceita o que o parser recusa), a causa apareceu na hora:
+`text-align-last: left` **herdado** de `.wys-edit p` — e numa legenda de uma linha só,
+essa linha *é* a última.
+
+**A regra:** quando o HTML do caso é **inválido**, `innerHTML` não reproduz o estado —
+o parser conserta a árvore e some justamente com o que se quer medir. **Estado que o
+código cria por DOM, o teste tem de criar por DOM.**
+
+**E o de sempre, de novo:** o probe passou nos três cenários e o "verde" era falso.
+Guarda que não distingue os casos não é evidência — é a terceira vez neste dia que uma
+verificação minha mediu algo diferente do que eu queria verificar.
+
 ## 🔔 O NÚMERO DENTRO DA MENSAGEM DE ERRO É A PORTA DE ENTRADA (2026-08-10)
 
 O aviso dizia *"mantive a SUA versão de **4** item(ns) ... Provas & Questões"*. Em vez

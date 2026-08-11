@@ -118,6 +118,102 @@ if (mdToHtml && htmlToMd) {
   ok(/\.wys-edit \.wys-img,\.wys-img\{[^}]*margin:\.5rem auto[^}]*\}/.test(html),
      'a imagem do corpo tem de ficar centralizada (margem lateral auto)');
 
+  // 8) ⚠️ LEGENDA ABAIXO DA FIGURA. Ela viaja no `alt` do markdown
+  //    (`![legenda](url){35}`) e tem de sobreviver ao ciclo inteiro, como o tamanho.
+  //    Legenda que some ao salvar é o mesmo defeito da imagem que sumia: perder o
+  //    trabalho do professor em silêncio.
+  {
+    const corpo = dom.window.document.createElement('div');
+    corpo.innerHTML = '<p>Antes.</p><figure class="wys-fig"><img class="wys-img" style="width:35%;height:auto" src="' + PNG + '" alt="">'
+      + '<figcaption class="wys-cap">Figura 2.2 — regulação do apetite</figcaption></figure><p>Depois.</p>';
+    const md = htmlToMd(corpo);
+    ok(/!\[Figura 2\.2 — regulação do apetite\]/.test(md),
+       'ao salvar, a legenda tem de virar o alt do markdown (veio: ' + JSON.stringify(md.slice(0, 80)) + ')');
+    ok(/\)\{35\}/.test(md), 'a figura com legenda não pode perder o tamanho escolhido');
+
+    const devolta = dom.window.document.createElement('div');
+    devolta.innerHTML = mdToHtml(md);
+    const fc = devolta.querySelector('figcaption');
+    ok(!!fc && /Figura 2\.2/.test(fc.textContent || ''),
+       'REGRESSÃO: ao reabrir, a legenda sumiu');
+    const fim = devolta.querySelector('figure img');
+    ok(!!fim && /width:\s*35%/.test(fim.getAttribute('style') || ''),
+       'a imagem com legenda mantém o tamanho ao reabrir');
+    // A ORDEM importa: legenda ABAIXO da imagem, que foi o pedido.
+    const dentro = [...devolta.querySelector('figure').children].map((n) => n.tagName);
+    ok(dentro.indexOf('IMG') === 0 && dentro.indexOf('FIGCAPTION') === 1,
+       'a legenda tem de vir DEPOIS da imagem (veio: ' + JSON.stringify(dentro) + ')');
+  }
+
+  // 9) Sem legenda, nada muda: nem <figure> vazia, nem legenda fantasma.
+  {
+    const corpo = dom.window.document.createElement('div');
+    corpo.innerHTML = '<figure class="wys-fig"><img class="wys-img" src="' + PNG + '" alt=""><figcaption class="wys-cap"><br></figcaption></figure>';
+    const md = htmlToMd(corpo);
+    ok(/^!\[\]\(/.test(md.trim()),
+       'figcaption vazio (só <br>, como o navegador deixa) não pode virar legenda (veio: ' + JSON.stringify(md.slice(0, 40)) + ')');
+    const d = dom.window.document.createElement('div');
+    d.innerHTML = mdToHtml(md);
+    ok(!d.querySelector('figcaption'), 'sem legenda não se desenha legenda vazia');
+    ok(!!d.querySelector('img'), 'e a imagem continua lá');
+  }
+
+  // 10) ⚠️ `]` NA LEGENDA fecharia o alt cedo e cortaria o texto do professor.
+  {
+    const corpo = dom.window.document.createElement('div');
+    corpo.innerHTML = '<figure class="wys-fig"><img class="wys-img" src="' + PNG + '" alt="">'
+      + '<figcaption class="wys-cap">Figura 2.2 [adaptada] — apetite</figcaption></figure>';
+    const md = htmlToMd(corpo);
+    const d = dom.window.document.createElement('div');
+    d.innerHTML = mdToHtml(md);
+    const fc = d.querySelector('figcaption');
+    ok(!!fc && (fc.textContent || '').indexOf('[adaptada] — apetite') >= 0,
+       'legenda com colchete não pode ser truncada nem voltar com barra invertida (veio: '
+       + JSON.stringify(fc ? fc.textContent : null) + ')');
+  }
+
+  // 11) ⚠️ A FIGURA NÃO PODE SAIR DENTRO DE UM <p>: <figure> é conteúdo de fluxo e o
+  //     parser do navegador a EXPULSA do parágrafo, embaralhando a ordem do texto.
+  {
+    const d = dom.window.document.createElement('div');
+    d.innerHTML = mdToHtml('Antes.\n\n![Uma legenda](' + PNG + '){35}\n\nDepois.\n');
+    const fig = d.querySelector('figure');
+    ok(!!fig && fig.parentNode === d,
+       'a figura tem de ser bloco de primeiro nível, nunca filha de um <p>');
+    const ordem = [...d.children].map((n) => n.tagName);
+    ok(ordem.indexOf('FIGURE') > 0 && ordem.indexOf('FIGURE') < ordem.length - 1,
+       'a figura fica ENTRE os parágrafos (veio: ' + JSON.stringify(ordem) + ')');
+  }
+
+  // 12) A legenda acrescentada a uma imagem ANTIGA (que está dentro de um <p>) não
+  //     pode vazar como texto cru colado no markdown da imagem.
+  {
+    const corpo = dom.window.document.createElement('div');
+    corpo.innerHTML = '<p><figure class="wys-fig"><img class="wys-img" src="' + PNG + '" alt="">'
+      + '<figcaption class="wys-cap">Legenda nova</figcaption></figure></p>';
+    const md = htmlToMd(corpo);
+    ok(md.indexOf(')Legenda nova') < 0 && md.indexOf('![Legenda nova](') >= 0,
+       'legenda de figura dentro de <p> tem de virar alt, não texto solto (veio: '
+       + JSON.stringify(md.slice(0, 80)) + ')');
+  }
+
+  // 13) A opção existe na barra e sabe embrulhar imagem antiga.
+  ok(/data-refimgcap=/.test(html), 'a barra do resumo precisa do botão de legenda');
+  ok(/function wysGarantirLegenda/.test(html),
+     'precisa da função que embrulha a imagem antiga em <figure> para poder legendar');
+  ok(/figcaption class="wys-cap"/.test(html),
+     'a imagem inserida já entra com o campo de legenda pronto');
+  ok(/\.wys-edit \.wys-cap:empty::before\{content:attr\(data-ph\)/.test(html),
+     'no editor, a legenda vazia precisa aparecer — senão não há onde clicar');
+  // ⚠️ Guarda de CSS (não há comportamento para executar em jsdom): ao legendar uma
+  // imagem antiga a figura fica dentro de um <p>, e `.wys-edit p{text-align-last:left}`
+  // é HERDADO pela legenda de uma linha só. Sem fixar, o editor mostrava à ESQUERDA
+  // o que o aluno vê CENTRALIZADO — medido em Chromium.
+  ok(/\.wys-cap\{[^}]*text-align:center;text-align-last:center/.test(html),
+     'a legenda precisa fixar text-align E text-align-last, senão herda "left" dentro do <p>');
+  ok(/figure/.test((html.match(/\^\(h\[1-6\]\|p\|ul\|ol\|table\|hr\|blockquote\|div\|figure\)/) || [''])[0]),
+     'htmlToMd tem de tratar <figure> como BLOCO, senão a legenda vaza como texto');
+
   // 7) O botão e o caminho de inserção existem de fato na barra do editor.
   ok(/data-wys="img"/.test(html), 'a barra do editor precisa do botão de imagem');
   ok(/id="adm-ref-wysimg"/.test(html), 'precisa do seletor de arquivo ligado ao botão');

@@ -621,6 +621,25 @@ html[data-theme="light"] .mural-text .mural-h1,html[data-theme="light"] .mural-t
    grande demais". Com o teto, P/M/G têm tamanho físico previsível em qualquer
    monitor, e o texto continua mandando na largura em telas estreitas. */
 .dir-texto .wys-img,.wys-edit .wys-img{max-width:min(100%,820px)}
+/* Legenda abaixo da figura do corpo (pedido do professor, 10/08).
+   ⚠️ A `figure` fica com a LARGURA TOTAL de propósito: a porcentagem da imagem
+   (P/M/G) resolve contra o bloco que a contém, então encaixotar a figura num teto
+   faria "P" virar 20% de 820 px em vez de 20% da coluna — os três tamanhos
+   encolheriam sem ninguém ter pedido. A legenda centraliza e cai sob a imagem,
+   que também é centralizada. */
+.wys-fig{margin:.6rem 0}
+.wys-fig>.wys-img{margin:.5rem auto .3rem}
+/* ⚠️ `text-align-last` TAMBÉM, não só `text-align`. Ao legendar uma imagem antiga a
+   figura fica dentro de um <p>, e `.wys-edit p{text-align-last:left}` é HERDADO pela
+   legenda; como ela tem uma linha só, essa linha é a "última" e ia para a esquerda.
+   Resultado: centralizada para o aluno e à esquerda para quem escreve — o editor
+   mentindo sobre o resultado. Medido em Chromium: dentro do <p> vinha
+   `text-align-last: left`, na raiz vinha `auto`. */
+.wys-cap{text-align:center;text-align-last:center;font-size:.8rem;color:var(--t3);line-height:1.4;padding:0 .5rem}
+/* Dentro do editor a legenda precisa ser VISÍVEL mesmo vazia, senão não há onde
+   clicar para escrever — o contorno tracejado e a altura mínima são só do editor. */
+.wys-edit .wys-cap{outline:1px dashed var(--bd2);outline-offset:3px;min-height:1.15em}
+.wys-edit .wys-cap:empty::before{content:attr(data-ph);opacity:.5}
 .mural-source a{color:#5cc8f5;text-decoration:none}
 .mural-source a:hover{text-decoration:underline}
 .mural-empty{grid-column:1/-1}
@@ -4687,6 +4706,29 @@ function safeImgSrc(u){
   u=String(u||'').trim();
   return /^https?:\/\//i.test(u)||/^data:image\/(png|jpe?g|gif|webp);base64,[A-Za-z0-9+/=\s]+$/i.test(u);
 }
+// A LEGENDA VIAJA NO `alt` DO MARKDOWN: `![legenda](url){35}`. É sintaxe que já
+// existia — nada de marcador novo para o htmlToMd ter de aprender e esquecer.
+// ⚠️ Um `]` na legenda ("Figura 2.2 [adaptada]") fecharia o alt cedo e CORTARIA o
+// texto do professor em silêncio; por isso vai escapado, e a barra escapa a si
+// mesma. O `mdAltRE` é o pedaço de regex que sabe ler isso, usado nos dois lugares
+// que leem imagem — se um só souber desescapar, a legenda volta com barra na tela.
+var mdAltRE='((?:[^\\]\\\\]|\\\\.)*)';
+function mdEscAlt(s){return String(s||'').replace(/\\/g,'\\\\').replace(/\]/g,'\\]');}
+function mdUnescAlt(s){return String(s||'').replace(/\\([\\\]])/g,'$1');}
+// Linha que é SÓ uma imagem: vira bloco próprio. Com legenda, um <figure> de
+// verdade; sem legenda, a imagem sozinha — como sempre foi.
+// ⚠️ NÃO PODE SAIR DENTRO DE UM <p>: <figure> é conteúdo de fluxo, e o parser do
+// navegador EXPULSA a figura do parágrafo, embaralhando a ordem do texto.
+var RE_IMG_BLOCO=new RegExp('^!\\['+mdAltRE+'\\]\\(((?:https?://|data:image/)[^\\s)]+)\\)(?:\\{(\\d{1,3})\\})?$');
+function mdFiguraBloco(line,als){
+  var m=RE_IMG_BLOCO.exec(String(line||'').trim());
+  if(!m||!safeImgSrc(m[2]))return '';
+  var cap=mdUnescAlt(m[1]);
+  var img='<img class="wys-img" src="'+esc(m[2])+'" alt="'+esc(cap)+'"'
+    +(m[3]?(' style="width:'+m[3]+'%"'):'')+' referrerpolicy="no-referrer" onerror="this.style.display=\'none\'">';
+  if(!cap)return img;
+  return '<figure class="wys-fig"'+(als||'')+'>'+img+'<figcaption class="wys-cap">'+mdInline(cap)+'</figcaption></figure>';
+}
 function ldHTML(label){return'<span class="ld"><span class="ld-dots"><span></span><span></span><span></span></span><span>'+esc(label||'Gerando...')+'</span></span>';}
 function notify(msg,type){
   var el=document.createElement('div');
@@ -4749,7 +4791,10 @@ function mdInline(s){
   // isto exigia `https?://`, o round-trip PERDIA a imagem: o `htmlToMd` gravava
   // `![](data:...)` e este render devolvia o markdown CRU na tela. O `safeImgSrc`
   // decide o que entra; o que não passar continua como texto, visível, sem sumir.
-  s=esc(s).replace(/!\[([^\]]*)\]\(((?:https?:\/\/|data:image\/)[^\s)]+)\)(?:\{(\d{1,3})\})?/g,function(w,alt,url,ww){if(!safeImgSrc(url))return w;var _st=ww?(' style="width:'+ww+'%"'):'';imgs.push('<img class="wys-img" src="'+url+'" alt="'+alt+'"'+_st+' referrerpolicy="no-referrer" onerror="this.style.display=\'none\'">');return ''+(imgs.length-1)+'';});
+  // ⚠️ MESMA leitura de alt do `mdFiguraBloco` (via `mdAltRE` + `mdUnescAlt`): aqui
+  // é a imagem NO MEIO da frase, que não ganha legenda visível — mas se este lado
+  // não desescapasse, a legenda de uma imagem inline voltaria com barra invertida.
+  s=esc(s).replace(new RegExp('!\\['+mdAltRE+'\\]\\(((?:https?://|data:image/)[^\\s)]+)\\)(?:\\{(\\d{1,3})\\})?','g'),function(w,alt,url,ww){if(!safeImgSrc(url))return w;alt=mdUnescAlt(alt);var _st=ww?(' style="width:'+ww+'%"'):'';imgs.push('<img class="wys-img" src="'+url+'" alt="'+alt+'"'+_st+' referrerpolicy="no-referrer" onerror="this.style.display=\'none\'">');return ''+(imgs.length-1)+'';});
   s=s.replace(/\*\*(.+?)\*\*/g,'<strong>$1</strong>').replace(/__(.+?)__/g,'<u>$1</u>').replace(/(^|[^*])\*([^*\n]+)\*(?!\*)/g,'$1<em>$2</em>').replace(/`([^`]+)`/g,'<code>$1</code>');
   // ⚠️ ITÁLICO COM UNDERSCORE — vem DEPOIS de `__sublinhado__`, senão comeria a
   // marca dupla. O professor viu `_D_` escrito na tela (30/07), no cabeçalho de
@@ -5110,6 +5155,10 @@ function mdToHtml(md){
     if(line==='---'){flushList();out.push('<hr>');continue;}
     if(/^\{pizza:/i.test(line)){flushList();out.push(pizzaSVG(line));continue;}
     if(/^\{barra:/i.test(line)){flushList();out.push(barraHTML(line));continue;}
+    // Antes do teste de tabela: uma URL com `|` faria a linha da imagem ser lida
+    // como linha de tabela, e aí a figura sumia dentro de um <td>.
+    var _fig=mdFiguraBloco(line,_als);
+    if(_fig){flushList();out.push(_fig);continue;}
     if(isMarkdownTableSep(line))continue;
     if(line.indexOf('|')>=0&&line.split('|').filter(function(c){return c.trim();}).length>=2){
       flushList();
@@ -5156,7 +5205,7 @@ function htmlToMd(root){
       if(ch.nodeType===3){s+=ch.nodeValue;continue;}
       if(ch.nodeType!==1)continue;
       var tag=ch.tagName.toLowerCase();
-      if(tag==='img'){var isrc=ch.getAttribute('src')||'';var ialt=ch.getAttribute('alt')||'';if(isrc){var _wm=/width:\s*(\d{1,3})%/.exec(ch.getAttribute('style')||'');s+='!['+ialt+']('+isrc+')'+(_wm?('{'+_wm[1]+'}'):'');}continue;}
+      if(tag==='img'){var isrc=ch.getAttribute('src')||'';var ialt=ch.getAttribute('alt')||'';if(isrc){var _wm=/width:\s*(\d{1,3})%/.exec(ch.getAttribute('style')||'');s+='!['+mdEscAlt(ialt)+']('+isrc+')'+(_wm?('{'+_wm[1]+'}'):'');}continue;}
       var inner=inline(ch);
       if(tag==='strong'||tag==='b')s+='**'+inner+'**';
       else if(tag==='em'||tag==='i')s+='*'+inner+'*';
@@ -5209,7 +5258,22 @@ function htmlToMd(root){
     if(tag==='img'){
       var bsrc=node.getAttribute('src')||'';
       if(bsrc){var _bw=/width:\s*(\d{1,3})%/.exec(node.getAttribute('style')||'');
-        out.push('!['+(node.getAttribute('alt')||'')+']('+bsrc+')'+(_bw?('{'+_bw[1]+'}'):''));}
+        out.push('!['+mdEscAlt(node.getAttribute('alt')||'')+']('+bsrc+')'+(_bw?('{'+_bw[1]+'}'):''));}
+      return;
+    }
+    // FIGURA COM LEGENDA. A legenda vem do <figcaption> que o professor digitou no
+    // editor e volta no alt do markdown. ⚠️ Sem este ramo o <figure> cairia fora de
+    // todos os outros e a imagem seria DESCARTADA no salvar — foi exatamente o que
+    // aconteceu com a imagem solta no topo do editor (ramo acima).
+    if(tag==='figure'){
+      var fim=node.querySelector('img'),fcap=node.querySelector('figcaption');
+      if(fim&&fim.getAttribute('src')){
+        var _fw=/width:\s*(\d{1,3})%/.exec(fim.getAttribute('style')||'');
+        // O texto da legenda, não o HTML: o que o navegador deixou de marcação
+        // dentro do figcaption não tem por que virar markdown.
+        var _cap=fcap?String(fcap.textContent||'').replace(/\s+/g,' ').trim():'';
+        out.push('!['+mdEscAlt(_cap)+']('+fim.getAttribute('src')+')'+(_fw?('{'+_fw[1]+'}'):''));
+      }
       return;
     }
     if(tag==='table'){
@@ -5226,8 +5290,13 @@ function htmlToMd(root){
     if(tag==='p'||tag==='div'){
       // contenteditable pode aninhar blocos (ex.: <p><ul>…</ul></p> gerado por
       // insertUnorderedList): se houver filho de bloco, recursa; senão é linha.
+      // ⚠️ `figure` ENTRA NESTA LISTA. Sem ela, um <p> que envolvesse a figura seria
+      // tratado como linha e cairia no `inline()`, que sabe serializar a <img> mas
+      // não a <figcaption> — a legenda vazaria como TEXTO CRU colado na imagem
+      // (`![](url){35}Legenda...`). Acontece quando a legenda é acrescentada a uma
+      // imagem antiga, que está dentro de um parágrafo.
       var hasBlock=false,kids=node.childNodes;
-      for(var k=0;k<kids.length;k++){var c=kids[k];if(c.nodeType===1&&/^(h[1-6]|p|ul|ol|table|hr|blockquote|div)$/.test(c.tagName.toLowerCase())){hasBlock=true;break;}}
+      for(var k=0;k<kids.length;k++){var c=kids[k];if(c.nodeType===1&&/^(h[1-6]|p|ul|ol|table|hr|blockquote|div|figure)$/.test(c.tagName.toLowerCase())){hasBlock=true;break;}}
       if(hasBlock){for(var k2=0;k2<kids.length;k2++)block(kids[k2]);}
       else{pushInlineLines(node,wysAlignMark(node));}
       return;
@@ -10735,6 +10804,7 @@ function admRefWysHTML(d){
       +'<button type="button" class="wys-tool" data-refimgw="20" title="Imagem pequena (clique na imagem antes)">P</button>'
       +'<button type="button" class="wys-tool" data-refimgw="35" title="Imagem média (clique na imagem antes)">M</button>'
       +'<button type="button" class="wys-tool" data-refimgw="100" title="Imagem grande (clique na imagem antes)">G</button>'
+      +'<button type="button" class="wys-tool" data-refimgcap="1" title="Escrever legenda abaixo da figura (clique na imagem antes)">Legenda</button>'
       +wysAlignBar()+wysCorBar()
       +'<span class="wys-spacer"></span>'
       +'<button type="button" class="btn btn-outline btn-sm" id="btn-adm-ref-cancel">Cancelar</button>'
@@ -13375,12 +13445,35 @@ function lerImagemReduzida(file,cb){
 }
 // Insere a imagem NO PONTO DO CURSOR do corpo do resumo. O `htmlToMd` já sabe
 // devolver <img> como ![](url), e o mdInline já aceita data: — o round-trip fecha.
+// Garante <figure class="wys-fig"><img><figcaption class="wys-cap"> em volta de uma
+// imagem já inserida, e devolve a legenda para receber o cursor. As imagens postas
+// ANTES desta versão são <img> solto: sem embrulhar, o botão de legenda não teria
+// onde escrever e pareceria quebrado justamente nas figuras que já estão no ar.
+function wysGarantirLegenda(img){
+  if(!img||!img.parentNode)return null;
+  var fig=img.parentNode;
+  if(!fig.tagName||fig.tagName.toLowerCase()!=='figure'){
+    fig=document.createElement('figure');
+    img.parentNode.insertBefore(fig,img);
+    fig.appendChild(img);
+  }
+  fig.className='wys-fig';
+  var cap=fig.querySelector('figcaption');
+  if(!cap){cap=document.createElement('figcaption');fig.appendChild(cap);}
+  cap.className='wys-cap';
+  cap.setAttribute('data-ph','Clique aqui para escrever a legenda (opcional)');
+  return cap;
+}
 function wysInserirImagem(file,ed){
   lerImagemReduzida(file,function(dataURL){
     var alvo=ed||document.getElementById('adm-ref-wys');
     if(!alvo){notify('Abra o editor do resumo antes de inserir a imagem.','err');return;}
     alvo.focus();
-    var tag='<img class="wys-img" src="'+esc(dataURL)+'" alt="" style="width:35%;height:auto">';
+    // Nasce dentro de <figure> com o campo de legenda JÁ visível (tracejado +
+    // texto de apoio, só no editor): a opção tem de estar à vista no momento em
+    // que a imagem entra, senão ninguém descobre que existe.
+    var tag='<figure class="wys-fig"><img class="wys-img" src="'+esc(dataURL)+'" alt="" style="width:35%;height:auto">'
+      +'<figcaption class="wys-cap" data-ph="Clique aqui para escrever a legenda (opcional)"></figcaption></figure>';
     var okCmd=false;
     try{okCmd=document.execCommand('insertHTML',false,tag+'<p><br></p>');}catch(e){}
     if(!okCmd){ // navegador sem execCommand: acrescenta no fim, melhor que perder
@@ -15119,6 +15212,25 @@ function bindAdmSec(sec){
         var w=parseInt(b.dataset.refimgw,10)||100;
         img.style.width=w+'%';img.style.height='auto';
         if(!refSelImg){refSelImg=img;img.classList.add('wys-img-sel');}
+      });
+    });
+    // Legenda abaixo da figura: mesmo padrão dos botões de tamanho — clicar na
+    // imagem seleciona, o botão age sobre ela. Aqui o botão não escreve nada; ele
+    // abre o campo e LEVA O CURSOR para dentro, para o professor digitar vendo
+    // exatamente onde a legenda vai aparecer.
+    main.querySelectorAll('[data-refimgcap]').forEach(function(b){
+      b.addEventListener('mousedown',function(e){e.preventDefault();});
+      b.addEventListener('click',function(){
+        var corpo=document.getElementById('adm-ref-wys');
+        var img=refSelImg||(corpo?corpo.querySelector('img'):null);
+        if(!img){notify('Clique primeiro na imagem que vai receber a legenda.','info');return;}
+        var cap=wysGarantirLegenda(img);
+        if(!cap)return;
+        if(refSelImg){refSelImg.classList.remove('wys-img-sel');refSelImg=null;}
+        try{
+          var r=document.createRange();r.selectNodeContents(cap);r.collapse(false);
+          var sel=window.getSelection();sel.removeAllRanges();sel.addRange(r);
+        }catch(e){}
       });
     });
     var rPdf=document.getElementById('adm-ref-pdf');
