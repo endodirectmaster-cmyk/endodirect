@@ -1,9 +1,33 @@
 ---
 tags: [cofre, processo]
-atualizado: 2026-08-11
+atualizado: 2026-08-12
 ---
 
 # Convenções de Trabalho
+
+## 📎 O DRIVE PELO MCP TEM TETO DE 10 MB — E O "SEM TEXTO" MENTE (2026-08-12)
+
+O professor mandou a aula "8 - Sindrômica e Monogênica" no Drive. Três paredes
+seguidas, cada uma com um sintoma diferente do mesmo problema:
+
+1. **`read_file_content` devolveu `{"fileContent":""}`** para o arquivo. String vazia
+   **não** quer dizer "arquivo vazio" nem "arquivo corrompido": quer dizer **não há
+   camada de texto extraível**. No primeiro caso era um PNG (nunca teria). No
+   segundo, um PDF de 171 MB — e aí o vazio foi do **tamanho**, não da ausência de
+   texto. **O mesmo retorno para duas causas opostas.** Nunca conclua "o arquivo não
+   tem conteúdo" a partir dele; confirme pelo `mimeType` e pelo `fileSize`.
+2. **`download_file_content` tem teto rígido de 10 MB.** Acima disso devolve erro e
+   manda usar a API padrão do Drive — que exige credencial que a sessão não tem.
+   Não existe paginação, nem faixa de bytes: é tudo ou nada.
+3. **O PNG de 78 KB era só a CAPA.** Uma busca no Drive inteiro (`title contains`)
+   provou que não havia deck nenhum — só o slide de rosto. **Antes de abrir hipótese
+   sobre o conteúdo, confira se o arquivo é o conteúdo.** 78 KB para uma aula
+   inteira já era o número dizendo isso.
+
+**A regra:** com anexo do Drive, meça primeiro (`fileSize`, `mimeType`), depois baixe.
+E quando o arquivo passar de 10 MB, o caminho **não** é insistir na ferramenta — é
+pedir exportação menor (no Canva, "PDF Padrão" em vez de "PDF para impressão") ou
+autorizar o conector da origem.
 
 ## 🔬 EU TINHA O DIFF O TEMPO TODO E FIQUEI CHUTANDO HIPÓTESE (2026-08-11)
 

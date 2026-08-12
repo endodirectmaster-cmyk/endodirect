@@ -1,6 +1,6 @@
 ---
 tags: [cofre, decisoes]
-atualizado: 2026-08-11
+atualizado: 2026-08-12
 ---
 
 # Decisões
@@ -8,6 +8,12 @@ atualizado: 2026-08-11
 Log de decisões de produto e técnicas (mais recentes no topo).
 
 ## 2026-08
+- **📚 CAPÍTULO "OBESIDADE SINDRÔMICA E MONOGÊNICA" AMPLIADO (2026-08-12).** De **3.874 para 8.336 caracteres**, de 10 para **14 pontos**. Mudança **só de conteúdo no Supabase** (`endodirect_global_state.payload->diretrizes`) — nada de `index.html`, logo **sem bump de `sw.js`** e sem CI.
+  - **O que entrou:** a **cadeia leptina → LEPR → POMC → PCSK1 → α-MSH → MC4R** como fio condutor; **deficiência de PCSK1** descrita por inteiro (abria só como indicação de setmelanotide) — diarreia neonatal intratável **antes** da obesidade, hipoglicemia pós-prandial com pró-insulina alta, panhipopituitarismo parcial com DI central; **SIM1, BDNF/NTRK2, SH2B1 (16p11.2), WAGRO**; **síndrome de Alström** — que é *o* diferencial de Bardet–Biedl e não estava lá; **PHP1A / osteodistrofia hereditária de Albright** com o *imprinting* (mãe = quadro completo, pai = só o osso); Prader–Willi ganhou a **inversão nutricional** (hipotonia e má sucção → hiperfagia após os 2 anos), a **grelina alta** e a **polissonografia obrigatória antes e depois do GH**.
+  - **A atualização que mais muda conduta:** **setmelanotide foi aprovado pelo FDA em 19/03/2026 para obesidade hipotalâmica adquirida** (≥ 4 anos, fase 3 TRANSCEND, IMC **−18,4%** ajustado ao placebo). O capítulo já citava a obesidade hipotalâmica como armadilha diagnóstica — agora ela tem tratamento, e o texto diz isso.
+  - **Duas tabelas** no lugar de uma: as monogênicas ganharam coluna de **terapia dirigida** (com o contraintuitivo — setmelanotide **não** serve na deficiência do próprio MC4R, que é o receptor-alvo), e entrou a tabela **Prader–Willi × Bardet–Biedl × Alström**, que é como as três caem em prova.
+  - **Backup antes de escrever:** tabela nova `endodirect_backup_diretriz` (tema, snapshot, motivo, criado_em) com o capítulo íntegro. Depois do episódio em que a aba aberta do professor apagou um capítulo em silêncio, **conteúdo não se sobrescreve sem snapshot**.
+  - **Pendente:** a **aula do professor** ainda não entrou — o PDF exportado do Canva tem **171 MB** e o MCP do Drive não baixa acima de **10 MB**. O texto acima veio de fontes primárias, não da aula; falta o merge com a ênfase dele.
 - **🧨 O BOTÃO "TÍTULO" DESTRUÍA CONTEÚDO (2026-08-11).** `sw.js` v237 → **v238**. O professor editou "Comorbidades e Gestação" e o capítulo saiu **todo em negrito, com as frases coladas**. O **diff contra o backup** deu a resposta que duas hipóteses minhas não tinham dado: os **quatro itens da lista viraram UMA linha começando com `## `** — um título.
   - **A causa:** `document.execCommand('formatBlock')` sobre uma seleção que abrange **mais de um bloco FUNDE todos num só**. O `htmlToMd` não tem culpa: gravou fielmente o `<h3>` único que o navegador criou. Reproduzido em Chromium — lista de 3 itens → `## Item um.Item dois.Item três.`; 3 parágrafos → `## Um. Dois. Três.`; 1 parágrafo → vira título normalmente.
   - **A correção:** não dá para consertar o `formatBlock`; dá para **não deixá-lo rodar onde destrói**. Seleção que abrange mais de um bloco é recusada com instrução (*"Selecione UMA linha só"*), nos **dois** editores (resumo e mural) e também no botão **P**, que usa o mesmo comando. Título de uma linha — o uso real — segue igual.
