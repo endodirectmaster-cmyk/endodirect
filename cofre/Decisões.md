@@ -8,6 +8,11 @@ atualizado: 2026-08-11
 Log de decisões de produto e técnicas (mais recentes no topo).
 
 ## 2026-08
+- **⠿ FILA DA QUESTÃO DO DIA REORDENA POR ARRASTE (2026-08-11).** `sw.js` v236 → **v237**. Pedido do professor: *"ao invés da seta para cima e para baixo, deixa a opção de pressionar e rolar"*. As setas ↑/↓ saíram; entrou a alça ⠿.
+  - **Reusei a mecânica que já existia** na alça dos temas de Resumos, inclusive as duas armadilhas que ela já pagou: **Pointer Events** (o drag-and-drop nativo do HTML5 não funciona em toque, e o professor usa iPhone) e **ouvintes no `document`, sem `setPointerCapture`** — a alça vive DENTRO do card, e o `insertBefore` que reposiciona o card o destaca e reanexa, o que **libera a captura e corta o `pointermove`**. A única diferença é o eixo: a fila é vertical, então o ponto médio é em Y.
+  - ⚠️ **`igStories` guarda POSTADAS e NÃO POSTADAS no mesmo array** e a fila mostra só as não postadas. `igAplicarOrdemFila` escreve **apenas nas posições que as não postadas já ocupavam** — senão a postagem de ontem "anda" no histórico. E **recusa** se a contagem não bater: melhor não gravar do que gravar uma ordem que o professor não viu.
+  - ⚠️ **`touch-action:none` na alça** — sem isso, no toque o navegador **rola a página** em vez de arrastar.
+  - Verificado com **mouse de verdade no Chromium** (jsdom não tem ponteiro nem layout, e o defeito histórico do `setPointerCapture` só aparece assim): arrastar a 3ª para o topo deu ordem `C,A,B,D`, gravou, avisou e limpou as classes. **6 mutantes, 6 pegos** — um deles não aplicou de primeira porque a string existe nas DUAS alças; reancorado no trecho único da fila.
 - **🔁 O GERADOR ESTAVA PRESO NO CASO CANÔNICO (2026-08-11).** `sw.js` v235 → **v236**. O professor: *"as questões estão saindo praticamente iguais dentro do mesmo tema"* — três de Endocrinologia Feminina com a MESMA vinheta de insuficiência ovariana prematura (34 anos, FSH 58→62, estradiol 12, cariótipo 46,XX), mudando só a redação e a letra do gabarito.
   - **Três causas somadas, e as três precisavam de correção:**
     1. **cada questão do lote era gerada ISOLADA** — nenhuma sabia das outras nem do que já estava na fila/pendências. Sem isso o modelo converge para o caso mais canônico da área, sempre;
