@@ -29,6 +29,18 @@ E quando o arquivo passar de 10 MB, o caminho **não** é insistir na ferramenta
 pedir exportação menor (no Canva, "PDF Padrão" em vez de "PDF para impressão") ou
 autorizar o conector da origem.
 
+**O desfecho, no mesmo dia:** o professor autorizou o **conector do Canva** e o
+problema sumiu. `search-designs` acha a aula pelo título e `read-design` devolve o
+texto dos slides **paginado** (`filter.page_indices`), sem exportação, sem teto de
+tamanho e sem o ruído de imagem que inchava o PDF. **Para as aulas dele, o Canva é a
+origem; o Drive é cópia.** Peça o conector antes de pedir reexportação — a exportação
+resolve um arquivo, o conector resolve a classe inteira.
+
+⚠️ **O texto vem com lixo de template:** cada slide arrasta "Orientações para
+PROFESSORES/AUDIOVISUAL". Ignore. E as tabelas chegam **achatadas em linhas soltas**
+(cabeçalho e células em sequência, sem separador) — dá para reconstruir pela ordem,
+mas confira o número de colunas antes de confiar.
+
 ## 🔬 EU TINHA O DIFF O TEMPO TODO E FIQUEI CHUTANDO HIPÓTESE (2026-08-11)
 
 Um capítulo saiu corrompido depois de uma edição. Levantei **duas** hipóteses sobre o
