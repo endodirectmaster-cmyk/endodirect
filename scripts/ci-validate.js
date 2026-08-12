@@ -643,6 +643,30 @@ try {
   fail('regressão da imagem no corpo falhou (verifique htmlToMd/mdInline no index.html):\n' + out);
 }
 
+// ⚠️ Assinatura que vence sem renovar era INVISÍVEL: a CTE `plano` da RPC filtra
+//     acessos vencidos, então quem caducou sumia do painel. Uma mensal venceu e o
+//     único sinal foi o contador cair de 34 para 33 — percebido por acaso (11/08).
+try {
+  execFileSync(process.execPath, [path.join('scripts', 'test-assinatura-vencida.js')], { stdio: 'pipe' });
+  ok('assinatura vencida: renovação que não entrou aparece no painel, na ordem de urgência');
+} catch (e) {
+  const out = (e.stdout ? e.stdout.toString() : '') + (e.stderr ? e.stderr.toString() : '');
+  fail('regressão de assinatura vencida falhou (verifique admVencidasLista/admVencidasCardHTML):\n' + out);
+}
+
+// ⚠️ O botão "H" do editor DESTRUÍA conteúdo: `formatBlock` sobre uma seleção que
+//     abrange mais de um bloco funde todos num só. Foi assim que os 4 itens da lista
+//     do capítulo de Gestação viraram UM título gigante (11/08) — o capítulo saiu
+//     todo em negrito e com as frases coladas. O htmlToMd não tem culpa: gravou
+//     fielmente o <h3> único que o navegador criou.
+try {
+  execFileSync(process.execPath, [path.join('scripts', 'test-titulo-funde-blocos.js')], { stdio: 'pipe' });
+  ok('título: recusa seleção multibloco (que fundia listas) e mantém o uso de uma linha');
+} catch (e) {
+  const out = (e.stdout ? e.stdout.toString() : '') + (e.stderr ? e.stderr.toString() : '');
+  fail('regressão do botão de título falhou (verifique wysSelecaoNumBlocoSo no index.html):\n' + out);
+}
+
 // ⚠️ A FILA da Questão do Dia passou a reordenar por ARRASTE (as setas saíram).
 //     `igStories` guarda postadas e não postadas no MESMO array: reordenar tem de
 //     escrever só nas posições das não postadas, senão a postagem de ontem "anda"

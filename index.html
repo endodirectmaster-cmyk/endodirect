@@ -5013,6 +5013,40 @@ function wysCorLimpar(el,fam){
   for(var i=0;i<cs.length;i++){if(cs[i]&&cs[i].indexOf(fam)!==0)fica.push(cs[i]);}
   el.className=fica.join(' ');
 }
+// ⚠️🐛 `formatBlock` SOBRE SELEÇÃO QUE ABRANGE MAIS DE UM BLOCO FUNDE TUDO NUM SÓ.
+//
+// Foi assim que o capítulo "Comorbidades e Gestação" saiu todo em negrito e com as
+// frases coladas (11/08): o professor selecionou a lista e clicou em "H", e os
+// QUATRO itens viraram UM único `<h3>` — que o htmlToMd gravou fielmente como uma
+// linha `## ...` gigante. Não é defeito do nosso serializador; é o que o navegador
+// faz. Reproduzido em Chromium:
+//   lista de 4 itens  → "## Item um.Item dois.Item três."   (3 blocos → 1)
+//   3 parágrafos      → "## Primeiro. Segundo. Terceiro."   (3 blocos → 1)
+//   1 parágrafo       → vira título normalmente             (uso legítimo, preservado)
+//
+// Não dá para "consertar o formatBlock"; dá para não deixá-lo rodar no caso que
+// destrói. Título de uma linha — que é o uso real — continua funcionando igual.
+function wysBlocoDe(no,ed){
+  var n=(no&&no.nodeType===3)?no.parentNode:no;
+  while(n&&n!==ed&&n.nodeType===1){
+    var t=(n.tagName||'').toLowerCase();
+    if(/^(p|div|li|h[1-6]|blockquote|td|th|figcaption|pre)$/.test(t))return n;
+    n=n.parentNode;
+  }
+  return null;
+}
+function wysSelecaoNumBlocoSo(ed){
+  var s=null;try{s=window.getSelection();}catch(e){}
+  if(!s||!s.rangeCount)return true;              // sem seleção: o cursor está num bloco só
+  var r=s.getRangeAt(0);
+  // Seleção colapsada não precisa de ramo próprio: início e fim são o MESMO nó, então
+  // a comparação abaixo já devolve verdadeiro. (Um `if(r.collapsed)return true` aqui
+  // sobreviveu ao teste de mutação — era linha morta, e linha morta que nenhum teste
+  // consegue defender é linha que engana quem lê.)
+  var a=wysBlocoDe(r.startContainer,ed),b=wysBlocoDe(r.endContainer,ed);
+  if(!a||!b)return true;                          // não deu para decidir: não atrapalha
+  return a===b;
+}
 function wysAplicarCor(spec){
   var sel=window.getSelection&&window.getSelection();
   if(!sel||!sel.rangeCount||sel.isCollapsed){try{notify('Selecione o texto primeiro.','info');}catch(e){}return;}
@@ -14535,6 +14569,63 @@ function admSumidosLista(){
     .filter(function(x){ return x.dias == null || x.dias >= ADM_SUMIDO_DIAS; })
     .sort(function(a,b){ return (b.dias == null ? 1e9 : b.dias) - (a.dias == null ? 1e9 : a.dias); });
 }
+// ⚠️ A RENOVAÇÃO QUE FALHA NÃO AVISAVA NINGUÉM (11/08/2026).
+//
+// Uma assinatura MENSAL venceu às 21h e o único sinal foi o contador de assinantes
+// cair de 34 para 33 — o professor percebeu por acaso, comparando com uma assinatura
+// nova que tinha acabado de entrar. Não existe registro local de cobrança recorrente
+// (`endodirect_assinaturas` está vazia): a verdade da renovação mora só no pagar.me.
+//
+// O sinal que dá para ver daqui é a linha ainda marcada `status = 'active'` com
+// `expires_at` no PASSADO — o acesso caducou e nada o renovou. Isso não distingue
+// cancelamento de cobrança falhada (só o pagar.me distingue), mas transforma um
+// evento invisível em algo que aparece na tela e pede conferência.
+var ADM_VENCE_EM_DIAS = 7;
+function admVencimentoInfo(e){
+  var t=e&&e.expira_em; if(!t)return null;
+  var ms=new Date(t).getTime(); if(isNaN(ms))return null;
+  return {ms:ms,dias:Math.round((ms-Date.now())/864e5),recorrente:!!(e&&e.recorrente)};
+}
+function admVencidasLista(){
+  var list=(admEstData&&Array.isArray(admEstData.students))?admEstData.students:[];
+  return list.map(function(e){return {e:e,v:admVencimentoInfo(e)};})
+    .filter(function(x){return x.v&&x.v.dias<=ADM_VENCE_EM_DIAS;})
+    .sort(function(a,b){return a.v.ms-b.v.ms;});
+}
+function admVencidasCardHTML(){
+  var wrap=function(inner,tag){return '<div class="card" style="margin-bottom:1.1rem"><div class="card-head"><span class="card-title">⏳ Assinaturas vencidas ou vencendo</span>'+(tag||'')+'</div>'+inner+'</div>';};
+  if(admEstErr)return wrap('<div class="empty" style="padding:.6rem;font-size:.78rem;color:var(--t3)">Não foi possível carregar a lista de alunos.</div>');
+  if(!admEstData)return wrap(ldHTML('Verificando vencimentos…'));
+  var lista=admVencidasLista();
+  if(!lista.length){
+    return wrap('<div class="empty" style="padding:.8rem;font-size:.82rem;color:var(--t2)">✅ Nenhuma assinatura vencida, e nenhuma vence nos próximos '+ADM_VENCE_EM_DIAS+' dias.</div>','<span class="tag tag-blue">Dados reais</span>');
+  }
+  var vencidas=lista.filter(function(x){return x.v.dias<=0;}).length;
+  var linhas=lista.map(function(x){
+    var e=x.e,nome=e.name||((e.email||'?').split('@')[0]);
+    var venceu=x.v.dias<=0;
+    var quando=venceu
+      ? (x.v.dias===0?'venceu hoje':('venceu há '+Math.abs(x.v.dias)+' dia'+(Math.abs(x.v.dias)>1?'s':'')))
+      : ('vence em '+x.v.dias+' dia'+(x.v.dias>1?'s':''));
+    return '<div class="adm-table-row">'
+      +'<span style="flex:2.2;display:flex;align-items:center;gap:.6rem"><span class="tb-avatar" style="background:var(--navy)">'+esc(nome.charAt(0).toUpperCase())+'</span><span style="font-size:.82rem;font-weight:600">'+esc(nome)+'</span></span>'
+      +'<span style="flex:2.5;font-size:.78rem;color:var(--t2)">'+esc(e.email||'')+'</span>'
+      +'<span style="flex:1.2">'+admEstPlanoTag(e.plano)+admEstCicloTag(x.v.recorrente?'mensal':'anual')+'</span>'
+      +'<span style="flex:1.3;font-size:.8rem;font-weight:700;color:'+(venceu?'var(--red)':'var(--gold)')+'">'+quando+'</span>'
+    +'</div>';
+  }).join('');
+  return wrap(
+    '<div class="g2" style="grid-template-columns:repeat(2,1fr);margin:.2rem 0 .9rem">'
+      +'<div class="adm-bigstat"><div class="adm-bigstat-n" style="color:var(--red)">'+vencidas+'</div><div class="adm-bigstat-l">Já vencidas</div></div>'
+      +'<div class="adm-bigstat"><div class="adm-bigstat-n" style="color:var(--gold)">'+(lista.length-vencidas)+'</div><div class="adm-bigstat-l">Vencem em '+ADM_VENCE_EM_DIAS+' dias</div></div>'
+    +'</div>'
+    +'<div class="adm-table">'
+      +'<div class="adm-table-head"><span style="flex:2.2">Estudante</span><span style="flex:2.5">E-mail</span><span style="flex:1.2">Plano</span><span style="flex:1.3">Vencimento</span></div>'
+      +linhas
+    +'</div>'
+    +'<div style="font-size:.7rem;color:var(--t3);margin-top:.6rem;line-height:1.55">ℹ️ <b>Uma mensal que venceu sem renovar</b> pode ser cancelamento, cobrança recusada <b>ou cobrança que passou e não foi processada</b> — neste último caso a pessoa <b>pagou e perdeu o acesso</b>. Só o painel do pagar.me distingue os três: confira lá antes de concluir. Cortesias não entram nesta lista.</div>'
+  ,'<span class="tag tag-blue">Dados reais</span>');
+}
 function admSumidosCardHTML(){
   var wrap=function(inner,tag){return '<div class="card" style="margin-bottom:1.1rem"><div class="card-head"><span class="card-title">🔔 Assinantes sem acesso há '+ADM_SUMIDO_DIAS+'+ dias'+'</span>'+(tag||'')+'</div>'+inner+'</div>';};
   if(admEstErr)return wrap('<div class="empty" style="padding:.6rem;font-size:.78rem;color:var(--t3)">Não foi possível carregar a lista de alunos.</div>');
@@ -14674,6 +14765,7 @@ function admAnalyticsHTML(){
     +'</div>';
   // ⚠️ ANTES do card de conversão, de propósito: é o único indicador desta tela
   // que gera ação no MESMO DIA (os nomes estão ali, o professor manda mensagem).
+  html+=admVencidasCardHTML();
   html+=admSumidosCardHTML();
   html+=admConversionCardHTML();
   if(semDados){
@@ -15464,8 +15556,13 @@ function bindAdmSec(sec){
           else if(cmd==='italic')document.execCommand('italic',false,null);
           else if(cmd==='underline')document.execCommand('underline',false,null);
           else if(cmd==='ul')document.execCommand('insertUnorderedList',false,null);
-          else if(cmd==='h')document.execCommand('formatBlock',false,'H3');
-          else if(cmd==='p')document.execCommand('formatBlock',false,'P');
+          // ⚠️ Recusa quando a seleção abrange MAIS DE UM BLOCO: o formatBlock funde
+          // todos num só (foi assim que a lista da Gestação virou um título gigante).
+          else if(cmd==='h'||cmd==='p'){
+            if(!wysSelecaoNumBlocoSo(ed)){
+              notify('Selecione UMA linha só. Com várias selecionadas, o navegador funde tudo num bloco único e a lista se perde.','err');
+            }else document.execCommand('formatBlock',false,(cmd==='h')?'H3':'P');
+          }
           else if(cmd==='alignleft')document.execCommand('justifyLeft',false,null);
           else if(cmd==='aligncenter')document.execCommand('justifyCenter',false,null);
           else if(cmd==='alignright')document.execCommand('justifyRight',false,null);
@@ -17394,9 +17491,14 @@ bindAdmSec=function(sec){
           if(cmd==='bold')document.execCommand('bold',false,null);
           else if(cmd==='italic')document.execCommand('italic',false,null);
           else if(cmd==='underline')document.execCommand('underline',false,null);
-          else if(cmd==='h')document.execCommand('formatBlock',false,'H3');
           else if(cmd==='ul')document.execCommand('insertUnorderedList',false,null);
-          else if(cmd==='p')document.execCommand('formatBlock',false,'P');
+          // ⚠️ Recusa quando a seleção abrange MAIS DE UM BLOCO: o formatBlock funde
+          // todos num só (foi assim que a lista da Gestação virou um título gigante).
+          else if(cmd==='h'||cmd==='p'){
+            if(!wysSelecaoNumBlocoSo(ed)){
+              notify('Selecione UMA linha só. Com várias selecionadas, o navegador funde tudo num bloco único e a lista se perde.','err');
+            }else document.execCommand('formatBlock',false,(cmd==='h')?'H3':'P');
+          }
           else if(cmd==='alignleft')document.execCommand('justifyLeft',false,null);
           else if(cmd==='aligncenter')document.execCommand('justifyCenter',false,null);
           else if(cmd==='alignright')document.execCommand('justifyRight',false,null);
