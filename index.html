@@ -1314,6 +1314,15 @@ input.dmm-inp-subsub{flex:1;min-width:0;background:transparent;color:var(--t2);f
 .dir-tema-card.dtc-dragging{opacity:.55;outline:2px dashed var(--blue2);outline-offset:2px}
 .dir-sub-grid.dtc-reordenando .dir-tema-card{transition:transform .12s}
 .dir-sub-grid.dtc-reordenando{user-select:none}
+/* Alça de arraste da FILA da Questão do Dia — mesma linguagem visual da alça dos
+   temas de Resumos (⠿, contorno tracejado ao arrastar).
+   ⚠️ `touch-action:none` é o que impede o navegador de ROLAR a página em vez de
+   arrastar no toque; sem isso, no iPhone a fila não se move. */
+.ig-drag{cursor:grab;touch-action:none;user-select:none;color:var(--t3);font-size:1.05rem;line-height:1;padding:.1rem .4rem;border-radius:6px;border:1px solid transparent}
+.ig-drag:hover{color:var(--tx);background:var(--s2);border-color:var(--bd2)}
+.ig-fila-card.dtc-dragging{opacity:.55;outline:2px dashed var(--blue2);outline-offset:2px}
+.ig-fila-card.dtc-dragging .ig-drag{cursor:grabbing}
+#ig-fila-lista.dtc-reordenando{user-select:none}
 .dir-tema-acts button{border:1px solid var(--bd2);background:var(--s2);color:var(--t2);border-radius:7px;width:27px;height:27px;font-size:.78rem;cursor:pointer;display:flex;align-items:center;justify-content:center;line-height:1}
 .dir-tema-acts button:hover{border-color:var(--blue);color:var(--tx)}
 .dir-tema-add,.dir-tema-edit{border-radius:14px;background:var(--s2);padding:1rem;display:flex;flex-direction:column;gap:.5rem;min-height:104px;justify-content:center}
@@ -12517,16 +12526,16 @@ function admStoriesHTML(){
   // A FILA mostra só as NÃO postadas. Ao marcar "✓ Postada" (manual ou cron), a
   // questão SAI da fila e passa a aparecer na aba "Postados".
   var q=(igStories||[]).filter(function(it){return it&&it.status!=='posted';});
-  var filaHint='<div style="font-size:.72rem;color:var(--t2);margin-bottom:.55rem;line-height:1.5">A ordem abaixo é a <b>ordem de publicação</b> (o topo é a próxima a ir ao ar/Story). Use <b>↑ / ↓</b> para reordenar. Ao marcar <b>✓ Postada</b>, a questão sai da fila e vai para <b>Postados</b>.</div>';
-  var fila=q.length?(filaHint+q.map(function(it,i){
+  var filaHint='<div style="font-size:.72rem;color:var(--t2);margin-bottom:.55rem;line-height:1.5">A ordem abaixo é a <b>ordem de publicação</b> (o topo é a próxima a ir ao ar/Story). <b>Segure a alça ⠿ e arraste</b> para reordenar. Ao marcar <b>✓ Postada</b>, a questão sai da fila e vai para <b>Postados</b>.</div>';
+  var fila=q.length?(filaHint+'<div id="ig-fila-lista">'+q.map(function(it,i){
     var idx=igStories.indexOf(it);
     var tag=(i===0)?'<span class="tag tag-blue">🔜 próxima</span>':'<span class="tag">na fila</span>';
-    return '<div style="border:1px solid var(--bd);border-radius:12px;padding:.7rem .8rem;margin-bottom:.5rem;background:var(--s2)">'
+    return '<div class="ig-fila-card" data-ig-idx="'+idx+'" style="border:1px solid var(--bd);border-radius:12px;padding:.7rem .8rem;margin-bottom:.5rem;background:var(--s2)">'
       +'<div style="display:flex;justify-content:space-between;gap:.5rem;flex-wrap:wrap;align-items:center">'
-      +'<div style="font-size:.8rem;font-weight:700;color:var(--tx)">'+dirSubIcon(it.sub)+' '+esc(it.sub||'')+' '+tag+'</div>'
+      +'<div style="font-size:.8rem;font-weight:700;color:var(--tx);display:flex;align-items:center;gap:.45rem">'
+        +'<span class="ig-drag" data-ig-drag="'+idx+'" title="Arraste para reordenar" aria-label="Arraste para reordenar esta questão">⠿</span>'
+        +dirSubIcon(it.sub)+' '+esc(it.sub||'')+' '+tag+'</div>'
       +'<div style="display:flex;gap:.3rem;flex-wrap:wrap">'
-      +'<button class="btn btn-outline btn-sm" data-ig-up="'+idx+'"'+(i===0?' disabled':'')+' title="Subir">↑</button>'
-      +'<button class="btn btn-outline btn-sm" data-ig-down="'+idx+'"'+(i===q.length-1?' disabled':'')+' title="Descer">↓</button>'
       +'<button class="btn btn-outline btn-sm" data-ig-load="'+idx+'">✎ Editar</button>'
       +'<button class="btn btn-outline btn-sm" data-ig-dlq="'+idx+'">⬇ Imagem</button>'
       +'<button class="btn btn-outline btn-sm" data-ig-toggle="'+idx+'">✓ Postada</button>'
@@ -12534,7 +12543,7 @@ function admStoriesHTML(){
       +'</div></div>'
       +'<div style="font-size:.72rem;color:var(--t2);margin-top:.35rem">'+esc(String(it.stem||'').slice(0,150))+(String(it.stem||'').length>150?'…':'')+'</div>'
       +'</div>';
-  }).join('')):'<div class="empty">Nenhuma questão na fila. As postadas ficam na aba "Postados" — gere/aprove novas para reabastecer.</div>';
+  }).join('')+'</div>'):'<div class="empty">Nenhuma questão na fila. As postadas ficam na aba "Postados" — gere/aprove novas para reabastecer.</div>';
   var view=admStoriesView||'lote';
   var nPosted=(igStories||[]).filter(function(q){return q&&q.status==='posted';}).length;
   function nb(id,label){return '<button class="btn '+(view===id?'btn-primary':'btn-outline')+' btn-sm" data-stview="'+id+'" style="padding:.52rem 1.05rem">'+label+'</button>';}
@@ -12784,6 +12793,83 @@ function igMakePending(it){return {id:'igp-'+Date.now()+'-'+Math.round(Math.rand
 function igDistribute(i){var it=igLoteDraft[i];if(!it)return;igPending.push(igMakePending(it));igLoteDraft.splice(i,1);persistIgPending();var c=qotdCuratorForSub(it.sub);notify('Distribuída para '+(c?c.nome:'Pendências')+' ('+esc(it.sub||'')+').','ok');renderAdmSec('stories');}
 function igDistributeAll(){if(!igLoteDraft.length)return;var n=igLoteDraft.length;igLoteDraft.forEach(function(it){igPending.push(igMakePending(it));});igLoteDraft=[];persistIgPending();notify(n+' questões distribuídas.','ok');renderAdmSec('stories');}
 // Reordena a fila (ordem = ordem de publicação; topo = próxima). dir: -1 sobe, +1 desce.
+// Aplica a nova ordem da FILA sem mexer nas POSTADAS.
+// ⚠️ `igStories` guarda postadas e não postadas no MESMO array; a fila mostra só as
+// não postadas. Reordenar tem de escrever apenas nas posições que as não postadas
+// já ocupavam — senão a postagem de ontem "anda" no histórico.
+// Recusa se a quantidade não bater (a fila mudou por baixo): melhor não gravar nada
+// do que gravar uma ordem que não é a que o professor viu.
+function igAplicarOrdemFila(ordemIdx){
+  var posicoes=[];
+  (igStories||[]).forEach(function(it,i){if(it&&it.status!=='posted')posicoes.push(i);});
+  if(!Array.isArray(ordemIdx)||posicoes.length!==ordemIdx.length)return false;
+  var novos=ordemIdx.map(function(i){return igStories[i];});
+  if(novos.some(function(x){return !x||x.status==='posted';}))return false;
+  posicoes.forEach(function(pos,k){igStories[pos]=novos[k];});
+  return true;
+}
+// Arrastar para reordenar a fila. Mesma mecânica da alça dos temas de Resumos —
+// e pelas MESMAS razões, que já custaram caro uma vez:
+//  • Pointer Events cobrem mouse e toque com um código só (o drag-and-drop nativo
+//    do HTML5 não funciona em toque, e o professor usa iPhone);
+//  • os ouvintes ficam no DOCUMENTO e sem `setPointerCapture`: a alça vive DENTRO
+//    do card, e ao reposicioná-lo com `insertBefore` o navegador o destaca e
+//    reanexa, o que LIBERA a captura e corta o `pointermove` — o card entrava em
+//    modo de arraste e não saía do lugar.
+// A diferença aqui é o eixo: a fila é VERTICAL, então o ponto médio é em Y.
+function bindIgFilaDrag(root){
+  var lista=root&&root.querySelector('#ig-fila-lista');
+  if(!lista||!lista.querySelector('[data-ig-drag]'))return;
+  var ativo=null;
+  function alvoSob(y,card){
+    var achado=null;
+    lista.querySelectorAll('.ig-fila-card').forEach(function(c){
+      if(c===card)return;
+      var r=c.getBoundingClientRect();
+      if(y>=r.top&&y<=r.bottom)achado=c;
+    });
+    return achado;
+  }
+  function onMove(e){
+    if(!ativo)return;
+    if(e.cancelable)e.preventDefault();
+    var alvo=alvoSob(e.clientY,ativo.card);
+    if(!alvo)return;
+    var r=alvo.getBoundingClientRect();
+    // metade de cima solta ANTES do alvo; metade de baixo, DEPOIS
+    var ref=((e.clientY-r.top)>r.height/2)?alvo.nextSibling:alvo;
+    if(ref===ativo.card)return;              // já está nessa posição
+    lista.insertBefore(ativo.card,ref);
+    ativo.moveu=true;
+  }
+  function onUp(){
+    if(!ativo)return;
+    var st=ativo;ativo=null;
+    document.removeEventListener('pointermove',onMove,true);
+    document.removeEventListener('pointerup',onUp,true);
+    document.removeEventListener('pointercancel',onUp,true);
+    st.card.classList.remove('dtc-dragging');
+    lista.classList.remove('dtc-reordenando');
+    if(!st.moveu)return;                     // arrastou e voltou: nada a gravar
+    var ordem=[];
+    lista.querySelectorAll('.ig-fila-card').forEach(function(c){ordem.push(parseInt(c.dataset.igIdx,10));});
+    if(igAplicarOrdemFila(ordem)){persistIgStories();notify('Ordem da fila salva. ✓','ok');renderAdmSec('stories');}
+    else{notify('Não consegui salvar a ordem — nada foi alterado.','err');renderAdmSec('stories');}
+  }
+  lista.querySelectorAll('[data-ig-drag]').forEach(function(h){
+    h.addEventListener('pointerdown',function(ev){
+      if(ativo)return;
+      ev.preventDefault();ev.stopPropagation();
+      var card=h.closest('.ig-fila-card');if(!card)return;
+      ativo={card:card,moveu:false};
+      card.classList.add('dtc-dragging');
+      lista.classList.add('dtc-reordenando');
+      document.addEventListener('pointermove',onMove,{passive:false,capture:true});
+      document.addEventListener('pointerup',onUp,true);
+      document.addEventListener('pointercancel',onUp,true);
+    });
+  });
+}
 function igMoveQueued(idx,dir){if(idx<0||idx>=igStories.length)return;var j=idx+dir;while(j>=0&&j<igStories.length&&igStories[j]&&igStories[j].status==='posted')j+=dir;if(j<0||j>=igStories.length)return;var t=igStories[idx];igStories[idx]=igStories[j];igStories[j]=t;persistIgStories();renderAdmSec('stories');}
 function igLoteEdit(i){var it=igLoteDraft[i];if(!it)return;igEditId=null;stShowView('manual');igFillForm(it);igLoteDraft.splice(i,1);renderIgLote();try{document.getElementById('ig-stem').scrollIntoView({behavior:'smooth',block:'center'});}catch(e){}notify('Carregada no formulário — edite e clique em "Aprovar p/ a fila".','ok');}
 function renderIgLote(){
@@ -12956,8 +13042,10 @@ function bindAdmStories(){
   main.querySelectorAll('[data-ig-dlq]').forEach(function(b){b.addEventListener('click',function(){var it=igStories[parseInt(b.dataset.igDlq,10)];if(it)igDownload('q',it,'endodireto-'+igFnameSub(it)+'-pergunta.png').catch(function(e){notify((e&&e.message)||'Falha.','err');});});});
   main.querySelectorAll('[data-ig-dla]').forEach(function(b){b.addEventListener('click',function(){var it=igStories[parseInt(b.dataset.igDla,10)];if(it)igDownload('a',it,'endodireto-'+igFnameSub(it)+'-gabarito.png').catch(function(e){notify((e&&e.message)||'Falha.','err');});});});
   main.querySelectorAll('[data-ig-toggle]').forEach(function(b){b.addEventListener('click',function(){var it=igStories[parseInt(b.dataset.igToggle,10)];if(!it)return;var post=(it.status!=='posted');it.status=post?'posted':'queued';if(post)it.postedAt=Date.now();var pr=persistIgStories(true);renderAdmSec('stories');var okMsg=post?'✅ Publicada para os alunos!':'↺ Voltou para a fila.';if(pr&&pr.then){pr.then(function(ok){notify(ok?okMsg:'⚠️ Não consegui salvar agora — verifique a conexão e tente de novo.',ok?'ok':'err');});}else{notify(okMsg,'ok');}});});
-  main.querySelectorAll('[data-ig-up]').forEach(function(b){b.addEventListener('click',function(){igMoveQueued(parseInt(b.dataset.igUp,10),-1);});});
-  main.querySelectorAll('[data-ig-down]').forEach(function(b){b.addEventListener('click',function(){igMoveQueued(parseInt(b.dataset.igDown,10),1);});});
+  // Reordenar a fila é por ARRASTE na alça ⠿ (pedido do professor, 11/08) — as
+  // setas ↑/↓ saíram. `igMoveQueued` continua existindo: é a mesma troca de
+  // posições, e serve de caminho testável sem simular ponteiro.
+  bindIgFilaDrag(main);
   main.querySelectorAll('[data-ig-del]').forEach(function(b){b.addEventListener('click',function(){var i=parseInt(b.dataset.igDel,10);if(!confirm('Excluir esta questão da fila?'))return;igStories.splice(i,1);persistIgStories();renderAdmSec('stories');notify('Questão removida.','ok');});});
   var pdl=document.getElementById('ig-promo-dl');
   if(pdl)pdl.addEventListener('click',function(){var t=IG_TOOLS[parseInt((document.getElementById('ig-promo-sel')||{}).value,10)||0];if(t)igDownload('promo',t,'endodireto-promo-'+igFnameSub({sub:t.nome})+'.png').catch(function(e){notify((e&&e.message)||'Falha.','err');});});

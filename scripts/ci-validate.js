@@ -643,6 +643,20 @@ try {
   fail('regressão da imagem no corpo falhou (verifique htmlToMd/mdInline no index.html):\n' + out);
 }
 
+// ⚠️ A FILA da Questão do Dia passou a reordenar por ARRASTE (as setas saíram).
+//     `igStories` guarda postadas e não postadas no MESMO array: reordenar tem de
+//     escrever só nas posições das não postadas, senão a postagem de ontem "anda"
+//     no histórico. E o arraste usa Pointer Events com os ouvintes no document —
+//     o drag nativo do HTML5 não funciona em toque, e `setPointerCapture` seria
+//     liberado pelo `insertBefore`, cortando o arraste no meio.
+try {
+  execFileSync(process.execPath, [path.join('scripts', 'test-fila-arrastar.js')], { stdio: 'pipe' });
+  ok('fila por arraste: reordena as não postadas e não move as postadas');
+} catch (e) {
+  const out = (e.stdout ? e.stdout.toString() : '') + (e.stderr ? e.stderr.toString() : '');
+  fail('regressão do arraste da fila falhou (verifique igAplicarOrdemFila/bindIgFilaDrag):\n' + out);
+}
+
 // ⚠️ O gerador de questões repetia a MESMA questão dentro do tema: cada uma do lote
 //     era gerada isolada, sem saber das outras nem do que já estava na fila, e todas
 //     perguntavam o mesmo ("qual a melhor conduta?"). O limiar de semelhança foi
