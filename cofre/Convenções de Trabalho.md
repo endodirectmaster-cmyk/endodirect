@@ -5,6 +5,28 @@ atualizado: 2026-08-11
 
 # Convenções de Trabalho
 
+## 🔬 EU TINHA O DIFF O TEMPO TODO E FIQUEI CHUTANDO HIPÓTESE (2026-08-11)
+
+Um capítulo saiu corrompido depois de uma edição. Levantei **duas** hipóteses sobre o
+HTML que o navegador produz, testei as duas em Chromium, e as **duas foram
+refutadas**. Só então fui fazer o que devia ter feito primeiro: **comparar a versão
+boa com a estragada, linha a linha**. A resposta apareceu na hora — os quatro `- ` da
+lista tinham virado uma única linha `## `. Era o botão "Título" aplicado sobre a
+seleção inteira.
+
+**Os dois backups estavam no banco desde o início.** Eu os usei para *restaurar* e não
+para *diagnosticar*.
+
+**A regra:** quando existe um "antes" e um "depois" do mesmo conteúdo, **o diff vem
+antes de qualquer hipótese**. Hipótese testada e refutada custa uma rodada de
+Chromium cada; o diff custa uma consulta e não depende de eu ter adivinhado o
+mecanismo. Só depois de saber *o que* mudou é que vale perguntar *por quê*.
+
+**E o corolário sobre culpa:** minha primeira suspeita foi do nosso serializador
+(`htmlToMd`). Ele estava correto — gravou fielmente o que o navegador tinha feito com
+o DOM. Quando o dado sai errado, o serializador é o suspeito óbvio e muitas vezes é só
+a testemunha.
+
 ## 🧯 GUARDA COM FOLGA EMBUTIDA NÃO GUARDA (2026-08-11)
 
 Escrevi `ok(comGenetica.length >= 8, ...)` para exigir tema de genética nas **9** áreas
