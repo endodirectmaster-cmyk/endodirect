@@ -5,21 +5,8 @@
 //
 // ⚠️ Os números são FICTÍCIOS — é peça de divulgação do recurso, não resultado de
 // aluno real. As subespecialidades são as 14 que existem de fato na base.
-const fs = require('fs');
 const path = require('path');
-const { chromium } = require('/tmp/pw/node_modules/playwright-core');
-
-const RAIZ = path.join(__dirname, '..', '..');
-const logo = fs.readFileSync(path.join(RAIZ, 'logo.png.png')).toString('base64');
-
-// ── Paleta real do app (index.html, tema escuro) ──
-const C = {
-  bg: '#0b1325', surface: '#16233f', s2: '#1c2a48',
-  bd: '#283864', bd2: '#34467a',
-  tx: '#e9eef8', t2: '#a7b2c6', t3: '#7b8aa4',
-  blue: '#3b6fd4', blue2: '#5585e8',
-  grn: '#34d399', red: '#f87171', gold: '#f5b32c', pur: '#a78bfa',
-};
+const { C, marca, renderStory } = require('./base');
 
 // ── Dados simulados ──
 // ⚠️ Os quatro KPIs e o gráfico de atividade NÃO são independentes no app real:
@@ -85,25 +72,8 @@ const maxAtiv = Math.max(...ATIV) || 1;
     HOJE, somaAtiv, RESPONDIDAS, OFENSIVA);
 })();
 
-// ⚠️ ÁREA SEGURA DO STORY. O Instagram desenha a barra de perfil no TOPO e o campo
-// "Enviar mensagem" embaixo; qualquer coisa fora da faixa central fica encoberta.
-// O conteúdo vive entre y=210 e y=1730 — o resto é respiro proposital.
-const html = `<style>
-  *{margin:0;padding:0;box-sizing:border-box}
-  body{width:1080px;height:1920px;background:${C.bg};color:${C.tx};
-       font-family:'Segoe UI',system-ui,sans-serif}
-  #safe{position:absolute;top:210px;left:56px;right:56px;height:1520px;
-        display:flex;flex-direction:column}
-  .card{background:${C.surface};border:1px solid ${C.bd};border-radius:22px;padding:26px 30px}
-  .ttl{font-weight:700;font-size:31px;margin-bottom:18px}
-</style>
-<div id="safe">
-
-<!-- marca -->
-<div style="display:flex;align-items:center;gap:18px;margin-bottom:34px">
-  <img src="data:image/png;base64,${logo}" style="height:64px">
-  <div style="font-size:35px;font-weight:800;letter-spacing:-.02em">Endodirect</div>
-</div>
+const corpo = `
+${marca()}
 
 <!-- cabeçalho da tela -->
 <div style="margin-bottom:28px">
@@ -157,29 +127,7 @@ const html = `<style>
 </div>
 
 <div style="margin-top:auto;padding-top:20px;text-align:center;font-size:24px;color:${C.t3}">
-  endodirect.com.br</div>
-</div>`;
+  endodirect.com.br</div>`;
 
-(async () => {
-  const browser = await chromium.launch({
-    executablePath: '/opt/pw-browsers/chromium-1194/chrome-linux/chrome',
-    args: ['--no-sandbox'],
-  });
-  const page = await browser.newPage({ viewport: { width: 1080, height: 1920 }, deviceScaleFactor: 1 });
-  await page.setContent(html, { waitUntil: 'domcontentloaded' });
-
-  // Guarda: nada pode transbordar a área segura, senão o Instagram corta.
-  const fim = await page.evaluate(() => {
-    const s = document.getElementById('safe');
-    const filhos = [...s.children];
-    const ultimo = filhos[filhos.length - 1].getBoundingClientRect();
-    return { base: Math.round(ultimo.bottom), limite: Math.round(s.getBoundingClientRect().bottom) };
-  });
-  console.log('último elemento termina em y=%d; limite da área segura y=%d', fim.base, fim.limite);
-  if (fim.base > fim.limite) throw new Error('⚠️ conteúdo transborda a área segura em ' + (fim.base - fim.limite) + 'px');
-
-  const out = path.join(__dirname, 'desempenho-story.png');
-  await page.screenshot({ path: out });
-  await browser.close();
-  console.log('gerado:', out);
-})();
+renderStory({ corpo, saida: path.join(__dirname, 'desempenho-story.png') })
+  .catch((e) => { console.error(e.message); process.exit(1); });
