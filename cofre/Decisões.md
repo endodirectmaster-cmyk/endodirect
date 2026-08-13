@@ -1,6 +1,6 @@
 ---
 tags: [cofre, decisoes]
-atualizado: 2026-08-12
+atualizado: 2026-08-13
 ---
 
 # Decisões
@@ -14,6 +14,12 @@ Log de decisões de produto e técnicas (mais recentes no topo).
   - **Duas tabelas** no lugar de uma: as monogênicas ganharam coluna de **terapia dirigida** (com o contraintuitivo — setmelanotide **não** serve na deficiência do próprio MC4R, que é o receptor-alvo), e entrou a tabela **Prader–Willi × Bardet–Biedl × Alström**, que é como as três caem em prova.
   - **Backup antes de escrever:** tabela nova `endodirect_backup_diretriz` (tema, snapshot, motivo, criado_em) com o capítulo íntegro. Depois do episódio em que a aba aberta do professor apagou um capítulo em silêncio, **conteúdo não se sobrescreve sem snapshot**.
   - **Resolvido no mesmo dia** pelo merge com a aula (entrada acima): o texto acima tinha vindo de fontes primárias, não da aula.
+
+- **⚖️ O CAPÍTULO DE CIRÚRGICO ENSINAVA UMA NORMA REVOGADA (2026-08-13).** Refeito a partir da aula **"11 - Tratamento cirúrgico"** (EndoTEEM 2026, `DAGnvr11FNU`, 87 slides): **4.247 → 14.558 caracteres**, 10 → **22 pontos**, **seis tabelas**, `fonte` passa a citar a **Resolução CFM 2.429/2025**.
+  - **O erro que estava no ar:** o capítulo trazia "IMC ≥ 40, ou ≥ 35 com comorbidade, 18–65 anos" e "cirurgia metabólica (CFM 2017): DM2 com IMC 30–34,9, **30–70 anos** e **DM2 < 10 anos**". A **Resolução CFM 2.429/2025** (abril de 2025) substituiu isso: agora vale **IMC ≥ 30 com UMA comorbidade** (DM2, DAC grave com LOA, SAOS grave, OA grave, MASH com fibrose, DRGE grave, DRC do diabetes, indicação de transplante), e **caíram** a faixa de 30–70 anos e o limite de 10 anos de diabetes. Entrou também a faixa **14–16 anos** com IMC > 40 e complicações. Conferido fora da aula antes de publicar — **norma vai para aluno pagante, não se copia de slide sem checar**.
+  - **O que a aula trouxe e não existia no capítulo:** a **conta do PEP com exemplo resolvido**; balão intragástrico inteiro (incluindo *urina azul-esverdeada = vazamento = retirada imediata*); banda gástrica como **a única sem efeito neuroendócrino**, com deslizamento em 50% e erosão em 7%; a tabela do **volume do remanescente** no sleeve; que a alça alimentar do BGYR **interfere pouco na perda de peso** e existe contra refluxo biliar; o **gatilho de fístula** (taquicardia > 120 + febre > 38 °C + dor progressiva); *candy cane*, distensão do remanescente, **encefalopatia por amônia**; duodenal switch; Mason; cápsula Epitomee.
+  - **Mantive o estudo SOS**, que a aula não cobre — refazer não é motivo para perder conteúdo bom.
+  - **🧪 A MUTAÇÃO QUE SOBREVIVEU POR MEIA MEDIDA:** para provar a guarda do blockquote, tirei o `>` da **primeira** linha da fórmula do PEP — e o teste passou verde. A segunda linha ainda começava com `>` e formava a citação sozinha. **Mutação em construção de várias linhas tem de atingir TODAS as linhas que sustentam o efeito**; derrubar uma só mede outra coisa. Com as duas linhas alteradas, a guarda reprovou como devia.
 
 - **🔁 AS 10 QUESTÕES DA AULA: 8 JÁ ESTAVAM NO BANCO, 2 ERAM NOVAS (2026-08-12).** O professor pediu para levar as questões da aula EndoTEEM 2026 para o banco. **Conferi antes de inserir** — e era isso que decidia a tarefa: oito delas são questões TEEM que ele já tinha importado. Entraram só **`aula-obes2-q5`** (MC4R: a monogênica mais comum, estatura elevada, DMO aumentada) e **`aula-obes2-q8`** (PCSK1 pela dissociação insulina baixa × pró-insulina alta). `provas`: **2.401 → 2.403**.
   - **Namespace de `id` próprio (`aula-obes2-*`)** em vez de continuar a série `endodirect-NNN`: aquela série vem do `endodirect_questoes.csv` e uma reimportação futura colidiria. `origem: "Aula EndoTEEM 2026 — Obesidade parte 2"`, `sourceId: "canva:DAGnvm8k2Ms#qN"` — dá para voltar ao slide.

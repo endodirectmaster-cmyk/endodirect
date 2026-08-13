@@ -1,9 +1,25 @@
 ---
 tags: [cofre, processo]
-atualizado: 2026-08-12
+atualizado: 2026-08-13
 ---
 
 # Convenções de Trabalho
+
+## 🧪 MUTAÇÃO EM CONSTRUÇÃO DE VÁRIAS LINHAS TEM DE ATINGIR TODAS ELAS (2026-08-13)
+
+Escrevi uma guarda para provar que a fórmula do PEP renderiza como citação
+(`blockquote`). Para testá-la por mutação, tirei o `>` da **primeira** das duas
+linhas. **Verde.** Não porque a guarda fosse fraca: a **segunda** linha ainda
+começava com `>` e formava a citação sozinha.
+
+**A regra:** quando o efeito nasce de um conjunto de linhas — citação, tabela,
+lista, bloco de código —, derrubar **uma** linha não testa a guarda; testa a
+tolerância do parser. A mutação tem de remover **todas as linhas que sustentam o
+efeito**. Com as duas alteradas, a guarda reprovou na hora.
+
+É a irmã da lição de que **guarda com folga embutida não guarda**: lá o teste
+aceitava perder um item; aqui a *mutação* é que perdia força pela metade. Nos dois
+casos o verde não significava o que eu queria que significasse.
 
 ## 📎 O DRIVE PELO MCP TEM TETO DE 10 MB — E O "SEM TEXTO" MENTE (2026-08-12)
 
