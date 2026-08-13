@@ -5,6 +5,24 @@ atualizado: 2026-08-13
 
 # Convenções de Trabalho
 
+## 🩹 "REFAZER BASEADO NA AULA" NÃO É LICENÇA PARA APAGAR (2026-08-13)
+
+O professor pede "refaz esse resumo baseado na minha aula". A leitura preguiçosa é
+escrever o capítulo novo do zero a partir dos slides e substituir. Foi o que quase
+fiz no capítulo de farmacológico — e **dois fatos do capítulo antigo não estavam na
+aula**: que sob AR GLP-1 se perde **~3× mais massa gorda que magra**, e que **a perda
+de peso não depende de ter náusea**. Ambos altíssimo rendimento, ambos prestes a
+sumir sem uma linha de aviso.
+
+**A regra:** antes de gravar o capítulo refeito, **compare os pontos do antigo com o
+novo, um a um**. O que a aula não cobre e continua verdadeiro **volta**, em seção
+própria. Refazer é somar a ênfase do professor ao que já existia, não trocar uma
+coisa pela outra.
+
+Mesma família da lição de que **perder conteúdo em silêncio é pior que quebrar**: aqui
+o "silêncio" seria eu entregando um capítulo maior e melhor **e** mais pobre em dois
+pontos, sem ninguém notar nunca.
+
 ## 🧪 MUTAÇÃO EM CONSTRUÇÃO DE VÁRIAS LINHAS TEM DE ATINGIR TODAS ELAS (2026-08-13)
 
 Escrevi uma guarda para provar que a fórmula do PEP renderiza como citação
