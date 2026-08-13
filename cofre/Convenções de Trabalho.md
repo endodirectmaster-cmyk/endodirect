@@ -5,6 +5,34 @@ atualizado: 2026-08-13
 
 # Convenções de Trabalho
 
+## 🔒 O RÓTULO MENTIA E EU REPETI A MENTIRA A SESSÃO INTEIRA (2026-08-13)
+
+O card do capítulo mostrava **"🔒 Resumo privado"**. Durante quatro capítulos
+seguidos eu escrevi ao professor "está no ar" **sem nunca ter conferido o que
+`privado` significa**. Ele é que perguntou: *"esses resumos já estão disponíveis
+para os alunos, certo? Se sim, não tem sentido esse botão de publicar."*
+
+Fui ao código e ao servidor. `privado` **nunca** quis dizer escondido: quer dizer
+**"vive na aba Resumos, dos assinantes"**, e a RPC `endodirect_member_resumos`
+entrega esses itens a quem tem o escopo `plano`. O capítulo **já estava no ar** —
+minha frase era certa **por acidente**, apoiada numa suposição que eu não tinha
+testado. E o botão "📢 Publicar" **não publicava**: MOVIA o capítulo para a aba
+Diretrizes, tirando-o de onde o assinante o procura.
+
+⚠️ **E o próprio `index.html` tinha um comentário ERRADO** dizendo "os alunos nunca
+recebem itens privados" (em `admRefMode`), a ~3.000 linhas do comentário certo
+(em `dirIsRascunho`), que avisa: *"não confundir com `privado` … um item privado JÁ
+está no ar"*. Dois comentários contraditórios no mesmo arquivo; quem lesse o errado
+primeiro concluiria o oposto.
+
+**As regras:**
+1. **Antes de afirmar "está no ar", prove.** Visibilidade se confere na fonte que
+   decide — aqui, a RPC —, não no rótulo da interface nem em comentário.
+2. **Rótulo é interface, e interface errada é defeito**, não cosmética. O cadeado
+   fez o dono do produto acreditar que o conteúdo estava escondido.
+3. **Comentário não é fonte de verdade.** Quando dois se contradizem, ambos são
+   suspeitos até que o código ou o banco decida.
+
 ## 🩹 "REFAZER BASEADO NA AULA" NÃO É LICENÇA PARA APAGAR (2026-08-13)
 
 O professor pede "refaz esse resumo baseado na minha aula". A leitura preguiçosa é
