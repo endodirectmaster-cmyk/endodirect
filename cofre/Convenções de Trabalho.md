@@ -1,9 +1,107 @@
 ---
 tags: [cofre, processo]
-atualizado: 2026-08-11
+atualizado: 2026-08-13
 ---
 
 # Convenções de Trabalho
+
+## 🔒 O RÓTULO MENTIA E EU REPETI A MENTIRA A SESSÃO INTEIRA (2026-08-13)
+
+O card do capítulo mostrava **"🔒 Resumo privado"**. Durante quatro capítulos
+seguidos eu escrevi ao professor "está no ar" **sem nunca ter conferido o que
+`privado` significa**. Ele é que perguntou: *"esses resumos já estão disponíveis
+para os alunos, certo? Se sim, não tem sentido esse botão de publicar."*
+
+Fui ao código e ao servidor. `privado` **nunca** quis dizer escondido: quer dizer
+**"vive na aba Resumos, dos assinantes"**, e a RPC `endodirect_member_resumos`
+entrega esses itens a quem tem o escopo `plano`. O capítulo **já estava no ar** —
+minha frase era certa **por acidente**, apoiada numa suposição que eu não tinha
+testado. E o botão "📢 Publicar" **não publicava**: MOVIA o capítulo para a aba
+Diretrizes, tirando-o de onde o assinante o procura.
+
+⚠️ **E o próprio `index.html` tinha um comentário ERRADO** dizendo "os alunos nunca
+recebem itens privados" (em `admRefMode`), a ~3.000 linhas do comentário certo
+(em `dirIsRascunho`), que avisa: *"não confundir com `privado` … um item privado JÁ
+está no ar"*. Dois comentários contraditórios no mesmo arquivo; quem lesse o errado
+primeiro concluiria o oposto.
+
+**As regras:**
+1. **Antes de afirmar "está no ar", prove.** Visibilidade se confere na fonte que
+   decide — aqui, a RPC —, não no rótulo da interface nem em comentário.
+2. **Rótulo é interface, e interface errada é defeito**, não cosmética. O cadeado
+   fez o dono do produto acreditar que o conteúdo estava escondido.
+3. **Comentário não é fonte de verdade.** Quando dois se contradizem, ambos são
+   suspeitos até que o código ou o banco decida.
+
+## 🩹 "REFAZER BASEADO NA AULA" NÃO É LICENÇA PARA APAGAR (2026-08-13)
+
+O professor pede "refaz esse resumo baseado na minha aula". A leitura preguiçosa é
+escrever o capítulo novo do zero a partir dos slides e substituir. Foi o que quase
+fiz no capítulo de farmacológico — e **dois fatos do capítulo antigo não estavam na
+aula**: que sob AR GLP-1 se perde **~3× mais massa gorda que magra**, e que **a perda
+de peso não depende de ter náusea**. Ambos altíssimo rendimento, ambos prestes a
+sumir sem uma linha de aviso.
+
+**A regra:** antes de gravar o capítulo refeito, **compare os pontos do antigo com o
+novo, um a um**. O que a aula não cobre e continua verdadeiro **volta**, em seção
+própria. Refazer é somar a ênfase do professor ao que já existia, não trocar uma
+coisa pela outra.
+
+Mesma família da lição de que **perder conteúdo em silêncio é pior que quebrar**: aqui
+o "silêncio" seria eu entregando um capítulo maior e melhor **e** mais pobre em dois
+pontos, sem ninguém notar nunca.
+
+## 🧪 MUTAÇÃO EM CONSTRUÇÃO DE VÁRIAS LINHAS TEM DE ATINGIR TODAS ELAS (2026-08-13)
+
+Escrevi uma guarda para provar que a fórmula do PEP renderiza como citação
+(`blockquote`). Para testá-la por mutação, tirei o `>` da **primeira** das duas
+linhas. **Verde.** Não porque a guarda fosse fraca: a **segunda** linha ainda
+começava com `>` e formava a citação sozinha.
+
+**A regra:** quando o efeito nasce de um conjunto de linhas — citação, tabela,
+lista, bloco de código —, derrubar **uma** linha não testa a guarda; testa a
+tolerância do parser. A mutação tem de remover **todas as linhas que sustentam o
+efeito**. Com as duas alteradas, a guarda reprovou na hora.
+
+É a irmã da lição de que **guarda com folga embutida não guarda**: lá o teste
+aceitava perder um item; aqui a *mutação* é que perdia força pela metade. Nos dois
+casos o verde não significava o que eu queria que significasse.
+
+## 📎 O DRIVE PELO MCP TEM TETO DE 10 MB — E O "SEM TEXTO" MENTE (2026-08-12)
+
+O professor mandou a aula "8 - Sindrômica e Monogênica" no Drive. Três paredes
+seguidas, cada uma com um sintoma diferente do mesmo problema:
+
+1. **`read_file_content` devolveu `{"fileContent":""}`** para o arquivo. String vazia
+   **não** quer dizer "arquivo vazio" nem "arquivo corrompido": quer dizer **não há
+   camada de texto extraível**. No primeiro caso era um PNG (nunca teria). No
+   segundo, um PDF de 171 MB — e aí o vazio foi do **tamanho**, não da ausência de
+   texto. **O mesmo retorno para duas causas opostas.** Nunca conclua "o arquivo não
+   tem conteúdo" a partir dele; confirme pelo `mimeType` e pelo `fileSize`.
+2. **`download_file_content` tem teto rígido de 10 MB.** Acima disso devolve erro e
+   manda usar a API padrão do Drive — que exige credencial que a sessão não tem.
+   Não existe paginação, nem faixa de bytes: é tudo ou nada.
+3. **O PNG de 78 KB era só a CAPA.** Uma busca no Drive inteiro (`title contains`)
+   provou que não havia deck nenhum — só o slide de rosto. **Antes de abrir hipótese
+   sobre o conteúdo, confira se o arquivo é o conteúdo.** 78 KB para uma aula
+   inteira já era o número dizendo isso.
+
+**A regra:** com anexo do Drive, meça primeiro (`fileSize`, `mimeType`), depois baixe.
+E quando o arquivo passar de 10 MB, o caminho **não** é insistir na ferramenta — é
+pedir exportação menor (no Canva, "PDF Padrão" em vez de "PDF para impressão") ou
+autorizar o conector da origem.
+
+**O desfecho, no mesmo dia:** o professor autorizou o **conector do Canva** e o
+problema sumiu. `search-designs` acha a aula pelo título e `read-design` devolve o
+texto dos slides **paginado** (`filter.page_indices`), sem exportação, sem teto de
+tamanho e sem o ruído de imagem que inchava o PDF. **Para as aulas dele, o Canva é a
+origem; o Drive é cópia.** Peça o conector antes de pedir reexportação — a exportação
+resolve um arquivo, o conector resolve a classe inteira.
+
+⚠️ **O texto vem com lixo de template:** cada slide arrasta "Orientações para
+PROFESSORES/AUDIOVISUAL". Ignore. E as tabelas chegam **achatadas em linhas soltas**
+(cabeçalho e células em sequência, sem separador) — dá para reconstruir pela ordem,
+mas confira o número de colunas antes de confiar.
 
 ## 🔬 EU TINHA O DIFF O TEMPO TODO E FIQUEI CHUTANDO HIPÓTESE (2026-08-11)
 

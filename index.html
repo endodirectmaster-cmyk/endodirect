@@ -14125,31 +14125,37 @@ function admRefSecHTML(){
           // Flashcards e Mapas editam in-loco (não precisam de "Editar tudo").
           // O Resumo é só-leitura → ganha um botão ✏️ Editar no canto superior.
           var isResumo=(fmtAtivo!=='flash'&&fmtAtivo!=='mapa');
-          // Barra de status/visibilidade: mostra se o item é público (Diretriz)
-          // ou privado (Resumo) e permite alternar (publicar / tornar privado).
+          // Barra de status/visibilidade. ⚠️ O selo do item privado dizia
+          // "🔒 Resumo privado" e o cadeado MENTIA: `privado` não quer dizer
+          // "ninguém vê", quer dizer "vive na aba Resumos, dos assinantes" — e a
+          // RPC endodirect_member_resumos entrega esses itens a quem tem o escopo
+          // `plano`. O professor leu o cadeado como "ainda não está no ar" e
+          // perguntou por que existia um botão de publicar; a pergunta estava certa
+          // e o rótulo é que estava errado. Agora o selo diz onde o item aparece.
           var priv=dirIsPrivate(x.d),rasc=dirIsRascunho(x.d);
           var statusTag=rasc
             ? '<span style="font-size:.68rem;font-weight:700;color:#b4690e;background:rgba(180,105,14,.14);padding:.15rem .5rem;border-radius:999px">🚧 Rascunho — só você vê</span>'
             : (priv
-              ? '<span style="font-size:.68rem;font-weight:700;color:var(--gold,#c9a227);background:rgba(201,162,39,.12);padding:.15rem .5rem;border-radius:999px">🔒 Resumo privado</span>'
-              : '<span style="font-size:.68rem;font-weight:700;color:var(--grn);background:rgba(46,160,90,.12);padding:.15rem .5rem;border-radius:999px">✅ Publicado</span>');
+              ? '<span style="font-size:.68rem;font-weight:700;color:var(--gold,#c9a227);background:rgba(201,162,39,.12);padding:.15rem .5rem;border-radius:999px">📗 Resumo · no ar para assinantes</span>'
+              : '<span style="font-size:.68rem;font-weight:700;color:var(--grn);background:rgba(46,160,90,.12);padding:.15rem .5rem;border-radius:999px">✅ Publicado nas Diretrizes</span>');
           // Rascunho: o passo é LIBERAR (sai da curadoria e entra na aba Resumos
-          // dos assinantes). O "📢 Publicar" (privado → Diretrizes, público) só
-          // aparece depois — publicar direto de rascunho pularia a liberação.
+          // dos assinantes). É a ÚNICA transição que sobrou aqui.
           // O inverso ("Tornar resumo") foi removido a pedido.
           //
-          // ⚠️ ARTIGO NÃO TEM "📢 Publicar" (2026-08-01, "esses resumos artigos não
-          // é para aparecerem nas diretrizes"). Esse botão move o item para a aba
-          // Diretrizes, que é destino de DIRETRIZ, não de leitura crítica de um
-          // trial. Ele ficava ao lado de "Editar" no card do artigo, com o texto
-          // "Ele passará a aparecer nas Diretrizes" — um clique de distância do
-          // estado errado. A regra também é filtrada em dirSoNosResumos(), para o
-          // caso de algum artigo já estar público por edição antiga.
+          // ⚠️ NINGUÉM MAIS TEM "📢 Publicar" (2026-08-13). O botão movia o item
+          // para a aba Diretrizes, que é destino de DIRETRIZ — recomendação de
+          // sociedade —, não de capítulo de estudo nem de leitura crítica de um
+          // trial. O ARTIGO já tinha perdido o botão em 2026-08-01 ("esses resumos
+          // artigos não é para aparecerem nas diretrizes"); o CAPÍTULO perdeu agora,
+          // pelo mesmo motivo e a pedido do professor. Um capítulo publicado nas
+          // Diretrizes some da aba Resumos dos assinantes, que é onde ele deve
+          // estar: o botão só oferecia o estado errado, a um clique de distância.
+          // Para artigo, dirSoNosResumos() ainda barra no render; para capítulo NÃO
+          // existe barreira equivalente — e não pode existir, porque as 65 diretrizes
+          // reais também são do tipo 'capitulo' e sumiriam junto.
           var toggleBtn=rasc
             ? '<button class="btn btn-primary btn-sm" data-adm-refliberar="'+x.i+'" title="Sai do rascunho e passa a aparecer na aba Resumos dos assinantes">👁 Liberar para os alunos</button>'
-            : ((priv&&!dirSoNosResumos(x.d))
-              ? '<button class="btn btn-outline btn-sm" data-adm-reftoggle="'+x.i+'" title="Publicar para os alunos (move para Diretrizes)">📢 Publicar</button>'
-              : '');
+            : '';
           // Nos Resumos, o mapa é editável IN-LOCO na própria árvore (contenteditable +
           // ＋/×); nas Diretrizes segue a edição em caixas (admRefMapaHTML).
           var mapaEdit=(admRefMode==='res'&&fmtAtivo==='mapa');
@@ -15371,13 +15377,11 @@ function bindAdmSec(sec){
     // Resumos/dirMapaEditHTML quanto nas Diretrizes/admRefMapaHTML); o querySelectorAll
     // acha o botão em qualquer um dos dois editores.
     main.querySelectorAll('[data-refmapa-genai]').forEach(function(b){b.addEventListener('click',function(){admRefMapaGenAI(parseInt(b.dataset.refmapaGenai));});});
-    main.querySelectorAll('[data-adm-reftoggle]').forEach(function(b){b.addEventListener('click',function(){
-      var i=parseInt(b.dataset.admReftoggle);var d=diretrizes[i];if(!d)return;
-      var toPriv=!dirIsPrivate(d);
-      if(!confirm(toPriv?'Tornar “'+((d.tema||d.titulo)||'este item')+'” um resumo privado? Ele sairá da aba Diretrizes dos alunos.':'Publicar “'+((d.tema||d.titulo)||'este item')+'” para os alunos? Ele passará a aparecer nas Diretrizes.'))return;
-      d.privado=toPriv;persistDiretrizes();rerenderRef();
-      notify(toPriv?'Movido para Resumos (privado). 🔒':'Publicado nas Diretrizes. ✅','ok');
-    });});
+    // ⚠️ O handler de `data-adm-reftoggle` (alternar privado ↔ Diretrizes) foi
+    // REMOVIDO junto com o botão "📢 Publicar" em 2026-08-13. Não o traga de volta
+    // sem trazer também o botão: handler órfão é armadilha — basta alguém colar um
+    // `data-adm-reftoggle` num template para o estado errado voltar a ser alcançável
+    // sem passar por nenhuma revisão.
     // Rascunho → aba Resumos dos assinantes (só tira a flag; segue privado).
     main.querySelectorAll('[data-adm-refliberar]').forEach(function(b){b.addEventListener('click',function(){
       var i=parseInt(b.dataset.admRefliberar);var d=diretrizes[i];if(!d)return;

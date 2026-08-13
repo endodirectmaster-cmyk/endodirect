@@ -99,17 +99,26 @@ const artigoRascunho  = { tipo: 'artigo',   privado: true, rascunho: true };
   ok('e vê o artigo em Resumos › Artigos', ctx.dirModeMatch(artigoPrivado) === true);
 }
 
-// ---- 5. ⚠️ O BOTÃO QUE CRIAVA O ESTADO NÃO EXISTE PARA ARTIGO --------------
+// ---- 5. ⚠️ O BOTÃO QUE CRIAVA O ESTADO NÃO EXISTE PARA NINGUÉM -------------
+// Até 2026-08-13 este bloco exigia que o "📢 Publicar" EXISTISSE e fosse
+// condicionado a não ser artigo (`priv && !dirSoNosResumos(x.d)`). O botão foi
+// removido também do CAPÍTULO, a pedido do professor: ele movia o item para a aba
+// Diretrizes e o tirava da aba Resumos, que é onde o assinante o procura.
+// A invariante nova é ESTRITAMENTE MAIS FORTE — não existe mais caminho para o
+// estado errado —, então esta asserção passou a exigir a ausência. Detalhes e a
+// prova de que as 65 diretrizes reais continuam visíveis: test-publicar-capitulo.js.
 {
   const i = semComentarios.indexOf('var toggleBtn=rasc');
   ok('o bloco do botão existe', i > 0);
   const bloco = semComentarios.slice(i, i + 700);
-  ok('"📢 Publicar" é condicionado a NÃO ser artigo', /priv\s*&&\s*!dirSoNosResumos\(x\.d\)/.test(bloco),
+  ok('nenhum card oferece "📢 Publicar" (nem artigo, nem capítulo)',
+     !/data-adm-reftoggle/.test(semComentarios) && !/>\s*📢 Publicar\s*</.test(semComentarios),
      bloco.slice(0, 260));
   ok('"👁 Liberar" continua para rascunho de qualquer tipo', /data-adm-refliberar/.test(bloco));
-  // A confirmação do botão promete Diretrizes; se ela aparecer para artigo, mente.
-  ok('o texto que promete Diretrizes segue existindo só no toggle de privado',
-     /passará a aparecer nas Diretrizes/.test(SRC));
+  // O texto que prometia Diretrizes sumiu junto com o handler: se ele reaparecer,
+  // é porque alguém reintroduziu a transição.
+  ok('o texto que prometia mover para as Diretrizes não existe mais',
+     !/passará a aparecer nas Diretrizes/.test(semComentarios));
 }
 
 if (bad) { console.error('\n' + bad + ' verificação(ões) de "artigo só nos Resumos" falharam.'); process.exit(1); }

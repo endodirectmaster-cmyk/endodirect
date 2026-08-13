@@ -667,6 +667,20 @@ try {
   fail('regressão do botão de título falhou (verifique wysSelecaoNumBlocoSo no index.html):\n' + out);
 }
 
+// ⚠️ O selo "🔒 Resumo privado" MENTIA e o "📢 Publicar" fazia o contrário do nome.
+//     `privado` nunca significou escondido: significa "aba Resumos, dos assinantes",
+//     e a RPC endodirect_member_resumos entrega esses itens a quem tem escopo `plano`.
+//     O botão não publicava — MOVIA o capítulo para as Diretrizes, tirando-o de onde
+//     o assinante o procura. O professor leu o cadeado, estranhou o botão e tinha
+//     razão nas duas pontas (13/08). Artigo já tinha perdido o botão em 01/08.
+try {
+  execFileSync(process.execPath, [path.join('scripts', 'test-publicar-capitulo.js')], { stdio: 'pipe' });
+  ok('resumos: sem botão de publicar capítulo, selo diz "no ar para assinantes" e as diretrizes reais seguem visíveis');
+} catch (e) {
+  const out = (e.stdout ? e.stdout.toString() : '') + (e.stderr ? e.stderr.toString() : '');
+  fail('regressão do botão Publicar/selo de resumo falhou:\n' + out);
+}
+
 // ⚠️ A FILA da Questão do Dia passou a reordenar por ARRASTE (as setas saíram).
 //     `igStories` guarda postadas e não postadas no MESMO array: reordenar tem de
 //     escrever só nas posições das não postadas, senão a postagem de ontem "anda"
