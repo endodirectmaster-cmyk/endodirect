@@ -22,11 +22,22 @@ const C = {
 };
 
 // ── Dados simulados ──
+// ⚠️ Os quatro KPIs e o gráfico de atividade NÃO são independentes no app real:
+//   • `Hoje` é act[hoje], que é exatamente a ÚLTIMA barra da atividade;
+//   • `Ofensiva` vem de computeStreak(), que PARA no primeiro dia com zero — logo
+//     uma ofensiva de 23 dias exige as 14 barras todas > 0;
+//   • `Respondidas` é o total histórico, então tem de ser MAIOR que a soma das
+//     14 barras (que são só a ponta recente desse histórico).
+// A guarda no fim do arquivo verifica as três coisas.
+const RESPONDIDAS = 323;
+const HOJE = 25;
+const OFENSIVA = 23;
+
 const KPIS = [
   { label: 'Acerto geral', val: '78%', col: C.grn },   // >=70 → verde
-  { label: 'Respondidas', val: '1.247', col: C.blue },
-  { label: 'Ofensiva', val: '23 dias 🔥', col: C.gold },
-  { label: 'Hoje', val: '40', col: C.pur },
+  { label: 'Respondidas', val: RESPONDIDAS.toLocaleString('pt-BR'), col: C.blue },
+  { label: 'Ofensiva', val: OFENSIVA + ' dias 🔥', col: C.gold },
+  { label: 'Hoje', val: String(HOJE), col: C.pur },
 ];
 
 const FOCO = [
@@ -45,13 +56,34 @@ const SUBS = [
   { sub: 'Endocrinologia Pediátrica', pct: 54 },
 ];
 
-const ATIV = [12, 28, 0, 35, 41, 22, 18, 44, 31, 0, 26, 38, 47, 40];
+// Nenhum zero (a ofensiva de 23 dias morreria no primeiro) e a última barra é HOJE.
+const ATIV = [9, 15, 8, 19, 12, 24, 14, 11, 27, 17, 7, 21, 15, HOJE];
 
 // Regras de cor idênticas às do renderDesempenho()
 const corFoco = (p) => (p >= 70 ? C.grn : p >= 50 ? C.gold : C.red);
 const corSub = (p) => (p >= 80 ? C.grn : p >= 60 ? C.blue : C.red);
 
 const maxAtiv = Math.max(...ATIV) || 1;
+
+// ── Guarda de coerência dos dados simulados ──
+// Número inventado que contradiz outro número inventado é o jeito mais fácil de o
+// print perder credibilidade. Estes três casos já aconteceram nesta peça.
+(function coerencia() {
+  const somaAtiv = ATIV.reduce((a, b) => a + b, 0);
+  const erros = [];
+  if (ATIV[ATIV.length - 1] !== HOJE)
+    erros.push(`a última barra da atividade (${ATIV[ATIV.length - 1]}) tem de ser igual a "Hoje" (${HOJE})`);
+  if (OFENSIVA > ATIV.length && ATIV.some((n) => n === 0))
+    erros.push(`ofensiva de ${OFENSIVA} dias é impossível com dia zerado nas últimas ${ATIV.length} barras`);
+  if (somaAtiv >= RESPONDIDAS)
+    erros.push(`as 14 barras somam ${somaAtiv}, que não cabe no total histórico de ${RESPONDIDAS} respondidas`);
+  const minFoco = FOCO.reduce((a, w) => a + w.q, 0);
+  if (minFoco > RESPONDIDAS)
+    erros.push(`os temas de "Onde focar" somam ${minFoco} questões, mais que o total de ${RESPONDIDAS}`);
+  if (erros.length) { console.error('✗ dados incoerentes:'); erros.forEach((e) => console.error('  - ' + e)); process.exit(1); }
+  console.log('✓ coerência: hoje=%d bate com a última barra; 14 dias somam %d de %d respondidas; ofensiva de %d dias sem zeros',
+    HOJE, somaAtiv, RESPONDIDAS, OFENSIVA);
+})();
 
 // ⚠️ ÁREA SEGURA DO STORY. O Instagram desenha a barra de perfil no TOPO e o campo
 // "Enviar mensagem" embaixo; qualquer coisa fora da faixa central fica encoberta.
