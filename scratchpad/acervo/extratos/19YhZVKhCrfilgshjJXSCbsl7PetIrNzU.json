@@ -1405,10 +1405,10 @@
     [
      0,
      33433,
-     78
+     200
     ]
    ],
-   "cit_sha": "c8fdc807a8c29df8"
+   "cit_sha": "b0a7d463efc69705"
   },
   {
    "afirmacao": "⚠️ NA ACROMEGALIA, o EFEITO DE MASSA TUMORAL, a HIPERPROLACTINEMIA e o efeito direto do excesso de GH e IGF-1 podem levar a HIPOPITUITARISMO — e a CIRURGIA e, ESPECIALMENTE, a RADIOTERAPIA aumentam ainda mais esse risco. A avaliação de deficiência hipofisária dos eixos TIREOIDIANO, ADRENAL e GONADAL, tanto AO DIAGNÓSTICO quanto APÓS O TRATAMENTO, é semelhante à de outros adenomas hipofisários.",
@@ -1820,16 +1820,16 @@
    "cit_sha": "262209c9950c8209"
   },
   {
-   "afirmacao": "⚠️ ACROMEGALIA — CRITÉRIO PÓS-OPERATÓRIO COM PRAZO E ALVO: um NADIR de GH MENOR QUE 0·4 ng/mL medido 1 SEMANA APÓS a cirurgia mostrou VALOR PREDITIVO POSITIVO MAIOR QUE 95% para remissão cirúrgica. O prazo (1 semana) e o alvo (menos de 0·4 ng/mL) andam juntos: um sem o outro não é critério.",
-   "secao": "Pós-operatório — nadir de GH com prazo e alvo",
+   "afirmacao": "⚠️ ACROMEGALIA, PÓS-OPERATÓRIO — O LIMIAR E O MOMENTO DA DOSAGEM DE GH AINDA NÃO ESTÃO ESTABELECIDOS: tanto o GH ALEATÓRIO quanto o NADIR DE GH no TOTG (OGTT) do pós-operatório associam-se a remissão de longo prazo, MAS o artigo declara que o LIMIAR de concentração e o MOMENTO ÓTIMO da dosagem — que nos estudos vai de VÁRIAS HORAS A 7 DIAS de pós-operatório — PERMANECEM DESCONHECIDOS. Nesse contexto, UM estudo mostrou que um NADIR de GH MENOR QUE 0·4 ng/mL medido 1 SEMANA APÓS a cirurgia teve VALOR PREDITIVO POSITIVO MAIOR QUE 95% para remissão cirúrgica — é ACHADO DE ESTUDO ÚNICO, NÃO critério consagrado, e o prazo (1 semana) e o alvo (menos de 0·4 ng/mL) só valem juntos. (O artigo escreve o GH em ng/mL, com ponto médio como separador decimal.)",
+   "secao": "Pós-operatório — nadir de GH: achado de estudo único, limiar e prazo ainda não estabelecidos",
    "cit": [
     [
      0,
-     57219,
-     157
+     56937,
+     439
     ]
    ],
-   "cit_sha": "a43382067c5568c6"
+   "cit_sha": "eeda2c8b82c0d556"
   },
   {
    "afirmacao": "⚠️ ACROMEGALIA, PÓS-OPERATÓRIO: limiares de GH ALEATÓRIO de 0·9–5·0 ng/mL predisseram remissão com SENSIBILIDADE de 65–97% e ESPECIFICIDADE de 77–93% — ou seja, o desempenho varia muito conforme o limiar escolhido.",
@@ -2577,5 +2577,9 @@
    ],
    "cit_sha": "e577704fd5cc730a"
   }
- ]
+ ],
+ "auditoria": {
+  "achado": "Auditoria adversarial em 14/08/2026 sobre os 212 fatos. ESTRUTURA: as 212 citações são de PEÇA ÚNICA (nenhuma elisão), todas em base 0, todas resolvem e conferem o cit_sha — o modo de falha por costura (GAP_MAX=400) é estruturalmente inexistente aqui; zero citações idênticas entre fatos. FONTE ÍNTEGRA (zero \"þ\", zero \"N.NeN.N\"); o artigo é do Lancet e escreve o GH em ng/mL com PONTO MÉDIO decimal (0·4), então uma sonda que procure \"0.4\" ou \"0,4\" NÃO acha nada e conclui ausência por engano. DOIS DEFEITOS CORRIGIDOS, ambos pela SAÍDA 1 (tornar a peça contígua), ambos com gap zero: (1) FATO 114 (seguimento neoplásico, tabela 2) — a fatia tinha 78 chars e terminava em \"according to general guidelines\", provando apenas a PRIMEIRA das três cláusulas da afirmação; as duas que faltavam (\"unless igf-1 concentrations are elevated\" e a punção aspirativa de nódulo tireoidiano) estavam nos 122 caracteres SEGUINTES, contíguos. A afirmação já estava correta — quem estava curto era a PROVA. Corrigido para len 200, cit_sha b0a7d463efc69705. Defeito invisível à peneira de números (a fatia não tem número). (2) FATO 149 (nadir de GH pós-operatório) — DEFEITO DE CABEÇA PERDIDA com sobreafirmação: a fatia começava em \"nadir growth hormone concentrations of less than 0·4 ng/ml 1 week postoperatively\", e a frase IMEDIATAMENTE anterior (a 8 caracteres) dizia que \"the concentration threshold and optimal timing of growth hormone measurement (…) remain unknown\". O fato se intitulava \"CRITÉRIO PÓS-OPERATÓRIO COM PRAZO E ALVO\" e afirmava \"um sem o outro não é critério\", elevando o achado de UM estudo (ref 156) a critério consagrado — exatamente contra o que o artigo declara uma frase antes. Recuperado SOZINHO, mandava o médico tratar <0·4 ng/mL em 1 semana como régua de cura. Citação estendida para trás até 56937 (len 439, cit_sha eeda2c8b82c0d556) e AFIRMAÇÃO ENCOLHIDA junto: agora abre pela incerteza declarada e rotula o número como achado de estudo único. Overlap deliberado com o fato 148 (que enuncia a incerteza sozinho): como os fatos chegam SOLO ao médico, um ponteiro para o 148 não viajaria.",
+  "resistiu": "O que tentei derrubar e NÃO consegui. (a) CORTE DE GH NO TOTG: os 3 fatos que carregam corte (44, 134, 149) amarram o número ao ensaio; o 44 traz \"0·4-1·0 ng/mL, depending on the assay used\" e o 134 traz \"<1·0 (or <0·4 with ultrasensitive assays)\", ambos verbatim. Nenhum corte de GH aparece solto no extrato. (b) IGF-1 POR IDADE/SEXO: os fatos 1, 33 e 34 carregam \"age-specific and sex-specific\" explicitamente, e NENHUM fato entrega valor ABSOLUTO de IGF-1 sem faixa — só taxas de eficácia em %, que não precisam de faixa. (c) DOSES: octreotide 50 µg SC 3x/dia, octreotide LAR 10-40 mg IM/4 sem, lanreotida 60-120 mg SC profundo/4-8 sem, pasireotida LAR 40-60 mg IM/4 sem, pegvisomanto 10-30 (até 40) mg/dia SC, cabergolina até 2·5-5 mg/sem VO, octreotide oral 40-80 mg/dia — TODAS conferidas verbatim contra a Tabela 3. O fato 160 ainda alerta para as duas apresentações de octreotide (µg SC 3x/dia × mg IM mensal). (d) PEGVISOMANTO: nenhum fato manda monitorizar com GH; 178 e 183 ancoram o efeito medido no IGF-1, e 183 diz volume tumoral ESTÁVEL (~70%) com aumento em 3-7% — não redução. (e) RASTREIO: colonoscopia ao diagnóstico para todos e seguimento conforme população geral se houver controle bioquímico (fato 110) conferem com a fonte; não há intervalo numérico na fonte para se perder. (f) CONTRADIÇÃO INTERNA DA FONTE (texto corrido diz que estrogênio oral REDUZ o IGF-1; a linha da Tabela 1 marca \"increase\"): conferido que a exclusão foi CIRÚRGICA — a fatia do fato 42 termina em 28968 e a linha do estrogênio começa em 28969; a fatia do fato 43 começa em 29053, logo depois dela. Nenhum fato nasceu da linha contraditória. (g) Varredura numérica: todo número de toda afirmação foi procurado na própria citação — 17 alarmes, TODOS falsos (ordinais \"third-line\"→\"3ª LINHA\" e o \"1\" de \"IGF-1\"). (h) Varredura de cabeça com negação: 16 candidatos, 1 real (o 149). Varredura de cauda: 46 fatias abertas, 1 real (o 114) — o resto é célula de tabela, delimitada de propósito. (i) nucleo_citado: as 3 strings conferidas VERBATIM contra o bloco var CLINICAL_GUIDELINES real (index.html linhas 5637-5731, recortado antes de comparar), e \"estrogênio oral\" de fato não consta do núcleo."
+ }
 }
