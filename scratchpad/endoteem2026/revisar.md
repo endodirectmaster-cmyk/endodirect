@@ -159,3 +159,22 @@ Além disso, a aula traz **dois esquemas de início** que não conversam: o do
 fluxograma (10/16 UI fixos, ajuste ±2 UI a cada 3 dias) e o do slide seguinte
 (0,1–0,2 UI/kg/dia, ajuste ±15–20% a cada 3 dias). Mantive os dois, cada um
 identificado. **Se um deles for o preferido, dizer qual.**
+
+## 13. "Complicações Crônicas do Diabetes" chegou a 27,7 mil caracteres
+
+Depois de receber as aulas de **risco cardiovascular** e de **complicações crônicas**
+(80 slides), o capítulo passou de 10,2k para **27,7k caracteres e 57 pontos**. Está
+correto e completo, mas é grande demais para uma leitura só.
+
+**Sugestão de divisão em quatro capítulos:**
+
+1. **Retinopatia diabética e outras doenças oculares**
+2. **Neuropatia diabética e pé diabético** (inclui autonômica, Ipswich, IWGDF,
+   osteomielite e antibioticoterapia)
+3. **Doença renal do diabetes** (estadiamento, albuminúria, finerenona, faixas de
+   TFG, DRC avançada, insulina no dialítico)
+4. **Comorbidades no paciente diabético** (insuficiência cardíaca, hipertensão,
+   imunização, depressão)
+
+O capítulo atual ficaria como **macrovasculares + risco cardiovascular + metas
+lipídicas**. Decisão sua — não dividi por conta própria.
