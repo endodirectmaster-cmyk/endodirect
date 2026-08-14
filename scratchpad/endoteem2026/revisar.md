@@ -138,3 +138,24 @@ já traz esse "+" corretamente. Parece **desalinhamento de célula** na tabela.
 
 **O que fiz:** montei a tabela do capítulo pelo mecanismo de cada etiologia, com a
 pesquisa de sulfonilureia **negativa** na linha do IGF-2.
+
+## 12. DM2 tratamento — fluxograma de insulinização veio truncado (OCR)
+
+Aula **"Diabetes tipo 2: tratamento"** (DAG0Z8KSb_k), slide do fluxograma de início
+de insulina. O slide é imagem e o texto extraído traz dois números quebrados:
+
+- *"Se em uso de 20-30UI de insulina, iniciar com **2001** (caneta 10-40)"* — li como **20 UI**
+- *"Se em uso de **>301** de insulina, iniciar com 30UI (caneta 30-60)"* — li como **>30 UI**
+
+Registrei no capítulo com esses valores. **Confirmar no slide original.**
+
+E há uma ambiguidade de escopo: o esquema de **10 UI** (só antidiabético oral) /
+**16 UI** (já em AGLP-1 ou basal, suspendendo o AGLP-1) aparece **logo depois** do
+slide de coformulado (liraglutida+degludeca) — 10 e 16 são exatamente os passos de
+dose de coformulado. Escrevi como "esquema fixo do fluxograma da aula", sem afirmar
+a qual fármaco pertence. **Decidir se é do coformulado ou da basal isolada.**
+
+Além disso, a aula traz **dois esquemas de início** que não conversam: o do
+fluxograma (10/16 UI fixos, ajuste ±2 UI a cada 3 dias) e o do slide seguinte
+(0,1–0,2 UI/kg/dia, ajuste ±15–20% a cada 3 dias). Mantive os dois, cada um
+identificado. **Se um deles for o preferido, dizer qual.**
