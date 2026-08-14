@@ -1,9 +1,34 @@
 ---
 tags: [cofre, pendencias]
-atualizado: 2026-08-09
+atualizado: 2026-08-14
 ---
 
 # Pendências
+
+## 🟡 EndoTEEM 2026 — 8 decisões que ficaram para o professor (2026-08-14)
+
+Detalhe completo em `scratchpad/endoteem2026/revisar.md` (15 seções). O que precisa
+de decisão dele:
+
+1. **Dividir capítulos que ficaram grandes.** *Complicações Crônicas do Diabetes* está
+   em **27,7 mil caracteres** (sugestão: retinopatia · neuropatia+pé · doença renal ·
+   comorbidades). *Osteoporose* está em **25,3 mil**.
+2. **Divergências numéricas entre a revisão de 2025 e a aula de 2026** — ~20 pontos,
+   sinalizados dentro dos capítulos. O par **finerenona × espironolactona** (limiar de
+   potássio) está **invertido** entre as duas aulas.
+3. **MODY** entrou dentro de *Diagnóstico e Classificação do Diabetes*; existe uma
+   diretriz **pública** "MODY (diabetes monogênico)". Decidir se merece capítulo próprio.
+4. **Fluxograma de insulinização do DM2 veio truncado por OCR** ("2001", ">301", lidos
+   como 20 e 30 UI) e há dois esquemas de início que não conversam (10/16 UI fixos ×
+   0,1–0,2 UI/kg). Confirmar no slide original.
+5. **6 aulas sem capítulo correspondente**: DHEM, Lipodistrofias, Diabetes monogênico,
+   Diabetes no SUS e Disruptores Endócrinos (×2 — uma anunciada e ausente da pasta).
+6. **Capítulos duplicados** entre a aba Resumos e a aba Diretrizes (mesmo `tema`).
+7. **A fonte original da diretriz pública `Hipopituitarismo` foi perdida** num update
+   meu de sessão anterior e reposta como "Endocrine Society" — **conferir**.
+8. **JPEG de 238 KB embutido** em *Regulação do Apetite* (242 mil caracteres, dos quais
+   4,1 mil são texto). Único capítulo com `data:image` — não toquei.
+
 
 ## ⏸️ PARADA COMBINADA — retomar na SEXTA, 14/08/2026 (2026-08-09, 21:34 UTC)
 

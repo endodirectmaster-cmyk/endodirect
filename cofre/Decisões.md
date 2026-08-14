@@ -1,6 +1,6 @@
 ---
 tags: [cofre, decisoes]
-atualizado: 2026-08-13
+atualizado: 2026-08-14
 ---
 
 # Decisões
@@ -8,6 +8,15 @@ atualizado: 2026-08-13
 Log de decisões de produto e técnicas (mais recentes no topo).
 
 ## 2026-08
+- **📚 EndoTEEM 2026 propagado para os capítulos: 66 aulas do Canva, ~3.200 slides, 82 capítulos enriquecidos (2026-08-14).** Instrução do professor: *"Entre no Canva, na pasta EndoTEEM 2026, e atualize todos os resumos dos capítulos da plataforma baseado nas aulas dessa pasta"* — depois escalada para *"faça tudo"* e *"siga tudo e termine a tarefa toda"*.
+  - **Cobertura final:** 61 aulas aplicadas · 6 sem capítulo correspondente (DHEM, Lipodistrofias, Diabetes monogênico, Diabetes no SUS, Disruptores ×2) · 0 pendentes. Duas pastas ficaram fora do escopo por não corresponderem a capítulo (Inaugural, Hot Topics e Multimídia).
+  - **Por área** (capítulos com fonte EndoTEEM 2026): Tireoide 11 · Obesidade 10 · Diabetes 8 · Adrenal 7 · Osteometabolismo 7 · Neuroendocrinologia 7 · Endocrinologia Feminina 6 · Lípides 6 · Endocrinologia do Esporte 6 · Transgeneridade 5 · Endocrinologia Básica 4 · Endocrinologia Masculina 4 · Endocrinopatias 1.
+  - **O padrão que tornou isso seguro — nunca colar o texto existente.** Todo update é `replace(resumo, '<âncora>', '<bloco novo>' || '<âncora>')`: o conteúdo entra **antes de uma seção que já existe**, e se a âncora não casar o texto fica intacto em vez de ser sobrescrito. Os pontos-chave entram por `(d->'pts') || '[...]'::jsonb`. Gerador em JS valida "novo presente" **e** "âncoras antigas preservadas" antes de emitir o SQL; depois de rodar, confere-se no servidor (chars, nº de pts, `fonte`, e booleanos de presença de conteúdo).
+  - ⚠️ **A lição que custou caro (registrada em Convenções):** filtrar por `sub` + `tema` **não basta** — há diretriz **pública** com o mesmo `tema` de um capítulo. A concatenação de `pts`/`fonte` é **incondicional** e escapa da proteção da âncora. **Todo update passou a exigir `coalesce(privado,'') = 'true'` no filtro.** Auditoria final: **0 diretrizes públicas com fonte EndoTEEM** e nenhuma com contagem de pontos anômala.
+  - **Aulas grandes** (108 e 186 slides) estouram o limite de saída do MCP do Canva: `scratchpad/endoteem2026/dedup-canva.js` lê o arquivo persistido e remove slides repetidos e o boilerplate de "Orientações para PROFESSORES/AUDIOVISUAL" (ex.: 71k → 31k).
+  - **Divergências não arbitradas.** As aulas de revisão (Diabetes 2025, Tireoide 2025) conflitam com as de 2026 em ~20 pontos numéricos. Mantive o valor de **2026** no capítulo e **sinalizei a divergência dentro do próprio capítulo** — o par finerenona/espironolactona (limiar de K) está literalmente invertido entre as duas. Tudo em `scratchpad/endoteem2026/revisar.md` (15 seções), para o professor decidir.
+  - **Fila resumível:** `scratchpad/endoteem2026/fila.json` + `marca.js` (marca por design id e falha se o número de marcados divergir do pedido). Sobreviveu a compactações de contexto e a um 502 do proxy no meio de um update — verificado que o update **não** tinha aplicado antes de repetir.
+  - ⚠️ **Edita item existente → sujeito ao clobber:** o professor precisa dar **F5 antes** de mexer no painel.
 - **✍️ "Ganho de Peso Induzido por Fármacos" reescrito no registro formal/técnico (2026-08-13, *"Muita linguagem de IA. Deixar mais técnico e formal"*).** Só banco — capítulo `privado`, `sub='Obesidade'`. Resumo 7.349 → 8.228 caracteres; 10 pontos-chave reescritos.
   - **A regra já existia** (cofre, 2026-07-28: *"Evite termos genéricos de IA. Deixe linguagem sempre formal e técnica"*), mas a varredura daquele dia cobriu só `trials*.js` — **os 218 capítulos do banco nunca foram varridos**.
   - **Tiques removidos:** personificação do fármaco ("o valproato *é o campeão*", "mirtazapina *ganha peso*" → "associa-se a ganho ponderal"), coloquialismo ("*engana*", "*não resolve*", "*de verdade*", "*mexem menos* na glicose"), aforismo ("*só se reage ao que se mede*", "a duração *muda o sinal*"), adjetivo avaliativo ("alternativa *atraente*", "o mais *marcante*", "*caso clássico*", "dá *lastro* fisiopatológico"), "*Numa* comparação" → "Em comparação", e ⚠️ dentro da prosa.
