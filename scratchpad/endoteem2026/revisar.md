@@ -39,3 +39,47 @@ Essas eu não omiti: entraram no capítulo com atribuição das duas fontes.
   até 16 mm; a de Menopausa dá <=4 / 4-8 (ate 10) / 8-15 mm. Duas aulas do mesmo
   curso. O valor acionável, sem divergência, é o corte de 5 mm na pós-menopausa
   com sangramento.
+
+## 5. ⚠️ ERRO MEU, JÁ CORRIGIDO: a diretriz PÚBLICA de Hipopituitarismo foi tocada
+
+O update de Neuroendocrinologia parte 1 filtrou por `sub` e por `tema`, mas **não
+por `privado`** — e existe uma diretriz **pública** chamada `Hipopituitarismo`
+além do capítulo privado de mesmo nome. O texto dela **não** mudou (a âncora de
+seção não existia lá), mas ela recebeu **16 pontos-chave a mais** e teve a
+**fonte sobrescrita**.
+
+**Correção aplicada:** os 16 pontos foram removidos (voltou aos 9 originais, o
+mesmo número das diretrizes irmãs da área).
+
+⚠️ **A fonte original não era recuperável** — o payload é um blob jsonb sem
+histórico. Repus **"Endocrine Society"**, que é de fato a autoria da diretriz de
+hipopituitarismo do JCEM 2016 e segue o padrão curto das irmãs. **Se o professor
+lembrar o texto exato, é só corrigir no painel.**
+
+Auditei todas as demais diretrizes públicas da plataforma: nenhuma outra carrega
+fonte do EndoTEEM 2026 nem contagem de pontos alterada.
+
+## 6. Unidade do DDAVP nasal (Neuroendocrinologia parte 3)
+
+O slide de tratamento do diabetes insípido escreve **"DDAVP: 0,1-0,2mg/d VO ou
+10-20mg/d nasal"**. A dose nasal em **miligramas** seria mil vezes a terapêutica;
+o próprio deck confirma a unidade certa dois slides antes, ao usar
+**"desmopressina 20 µg intranasal"** no teste de restrição hídrica.
+
+**O que fiz:** escrevi **10 a 20 mcg/dia** no capítulo. É correção de UNIDADE, não
+de conduta — propagar "mg" seria perigoso. Vale corrigir o slide.
+
+## 7. Falso-positivo x falso-negativo no teste de 1 mg (Neuroendocrinologia parte 2)
+
+O slide agrupa sob **"resultados falso-negativos"** duas listas de fármacos:
+(a) os que **reduzem o metabolismo hepático da dexametasona** — amiodarona,
+fluoxetina, fluconazol, ciprofloxacino, ritonavir — e (b) os que **elevam a CBG**
+— estrógenos, tamoxifeno, mitotano.
+
+Só o grupo (a) dá falso-NEGATIVO. O grupo (b) eleva o cortisol **total** medido e
+produz **falso-POSITIVO** — que é, aliás, o que o próprio deck ensina dois slides
+adiante ao mandar **não usar** o teste de 1 mg em quem usa estrógeno, e o que a
+questão do anticoncepcional cobra.
+
+**O que fiz:** separei os dois grupos corretamente no capítulo. Vale corrigir o
+slide, porque, do jeito que está, ele contradiz a própria aula.

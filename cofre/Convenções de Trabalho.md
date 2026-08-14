@@ -2439,3 +2439,28 @@ Pergunta do Rodolpho: *"resolva pendência do vercel. qual a melhor recomendaç�
   1. **Lotes de no máximo 2 itens** por `execute_sql` (~9 KB). Truncagem escala com o tamanho do bloco.
   2. **Conferir por md5, não por olho.** Depois de inserir, comparar banco × fonte local campo a campo: `md5(v->>'resumo')`, `md5(string_agg)` dos `pts`/`flashcards`, `md5(concat_ws)` dos metadados — e diferenciar por script, não visualmente. Contagem de itens não pega nada: o item truncado **está lá**.
   3. **Se o lote carrega um flag de segurança** (`rascunho`, `privado`), reaplicá-lo em um `update` separado depois do insert — idempotente e imune à truncagem: `set payload = jsonb_set(..., jsonb_agg(case when v->>'tipo'='artigo' then v || '{"rascunho":true}'::jsonb else v end order by ord))`. Flag correto não pode depender de o insert ter saído inteiro.
+
+## 🎯 FILTRAR POR `privado` SEMPRE, não só por `sub` e `tema` (2026-08-14)
+
+Ao atualizar os capítulos pela pasta do EndoTEEM 2026, escrevi um `update` que
+casava por `sub` **e** `tema` — e atingiu junto a **diretriz pública** de mesmo
+nome. `Hipopituitarismo`, `Craniofaringioma`, `Acromegalia` e vários outros
+**existem duas vezes** no `payload->'diretrizes'`: uma vez como capítulo da aba
+Resumos (`privado: true`) e outra como diretriz pública. Casar só por `tema`
+pega as duas.
+
+O texto não se perdeu porque o `replace()` não achou a âncora de seção na versão
+pública — mas os `pts` e a `fonte`, que eu concatenava **incondicionalmente**,
+foram sobrescritos. E **a fonte original não era recuperável**: o payload é um
+blob jsonb, sem histórico.
+
+**As regras:**
+1. **Todo `update` em `diretrizes` filtra por `coalesce(d->>'privado','')` também.**
+   Capítulo e diretriz pública são coisas diferentes e têm dono diferente.
+2. **O que é concatenado incondicionalmente (`|| pts`, `|| fonte`) escapa da
+   proteção da âncora.** O `replace()` falha em silêncio; a concatenação, não.
+   Se o alvo pode estar errado, a concatenação é que denuncia — tarde demais.
+3. **Antes de rodar, LISTE quantas linhas o `case` vai casar.** Um `select` com o
+   mesmo predicado custa um segundo e mostra a duplicata.
+4. **Depois de rodar, audite o efeito colateral**, não só o efeito pretendido:
+   procurei por diretrizes públicas com fonte do EndoTEEM e achei a única vítima.
