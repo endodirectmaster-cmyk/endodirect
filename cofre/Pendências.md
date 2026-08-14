@@ -5,6 +5,38 @@ atualizado: 2026-08-14
 
 # Pendências
 
+## ✅ AUDITORIA ADVERSARIAL DA BASE FECHADA — 47/47 extratos, 7.087/7.087 fatos (2026-08-14)
+
+Os dois últimos caíram hoje: **endocrinopatia por checkpoint** (111 fatos) e
+**acromegalia** (212). Achados graves, todos conferidos por mim na fonte antes de
+aceitar:
+
+| | |
+|---|---|
+| Checkpoint `[48]`/`[104]` | A ordem **glicocorticoide antes da levotiroxina** não sobrevivia à atomização. A prova estava 130 chars depois do fim da fatia (base0@30847). Saída 1 + saída 2. |
+| Checkpoint — hidrocortisona | Divergência interna **real e já registrada** pelo extrato: Tabela 1 @20776 `20 mg morning and 10 mg evening` × corpo @37051 `10-20 mg` + `5-10 mg`. |
+| Acromegalia `[149]` | Sobreafirmação: promovia achado de **um estudo** a critério de cura, contra a frase 8 chars antes, que diz que limiar e momento **`remain unknown`**. |
+| Acromegalia `[114]` | A fatia provava 1 de 3 cláusulas; as outras estavam nos 122 chars contíguos seguintes. |
+
+⚠️ **Ressalva ao verificador, não ao extrato:** ele aprova um fato que cita
+"20 mg/10 mg" contra citação do corpo, porque "20" e "10" existem dentro de
+"10-20"/"5-10" **com outro sentido**. Verde mecânico — quem garante é o ponteiro.
+
+## 🟡 Teste de caminho: o teto do ANEXO não é sondado (2026-08-14)
+
+Detalhe em `scratchpad/caminho/achados-teto-anexo.md`. Os 59 blocos são
+alcançáveis, mas as três asserções chamam `deepFor` com **`TETO_PROFUNDO` (400k)**,
+onde toda área cabe inteira. Produção com anexo usa **120k**.
+
+**Defeito medido:** `"nivolumabe: quais toxicidades endócrinas rastrear"` roteia
+para Tireoide e, com anexo, entrega **62k de tireoide na gestação** e perde
+`hipofisite`, `ACTH`, `cortisol`, `cetoacidose` e **`crise adrenal`**.
+
+**Decisão do professor:** ligar `anti-pd` → Endocrinopatias (20×9×1, único
+candidato limpo — `imunoterapia` é 5×4×3 e `ici` casa dentro de "medicina"), e o
+que fazer com `nivolumabe`/`pembrolizumabe` → Tireoide, que é reponderação.
+
+
 ## 🟡 EndoTEEM 2026 — 8 decisões que ficaram para o professor (2026-08-14)
 
 Detalhe completo em `scratchpad/endoteem2026/revisar.md` (15 seções). O que precisa

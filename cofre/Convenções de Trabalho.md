@@ -1,9 +1,47 @@
 ---
 tags: [cofre, processo]
-atualizado: 2026-08-13
+atualizado: 2026-08-14
 ---
 
 # Convenções de Trabalho
+
+## 🧱 CORRIGIR O EXTRATO NÃO CORRIGE O QUE O MÉDICO LÊ (2026-08-14)
+
+Auditei o extrato de endocrinopatia por checkpoint, achei o defeito grave — a
+ordem *glicocorticoide antes da levotiroxina*, cuja inversa precipita crise
+adrenal — estendi a citação, conferi o `cit_sha`, rodei sete verificadores,
+commitei e **anunciei fechado**. Só que **`lib/clinical-deep-data.js` é gerado**,
+e eu não remontei. A frase `"reposição de GLICOCORTICOIDE, se necessário, ANTES
+de começar o hormônio tireoidiano, para não precipitar CRISE ADRENAL"` **não
+estava** no arquivo que o HEAD entregaria. O conserto ficou dentro do JSON.
+
+Quem viu foi o auditor seguinte, que relatou o `ci-validate` vermelho **antes**
+do commit dele. **Eu duvidei — e é aí que mora a segunda lição.**
+
+⚠️ **Minhas duas primeiras sondas deram FALSO "iguais":**
+1. Rodei o montador num `git worktree` limpo. Mas `scratchpad/acervo/textos/` é
+   **gitignored**: sem o corpus o montador **aborta e não escreve nada**, e o
+   arquivo intocado do worktree é, claro, igual ao commitado. Eu tinha mandado o
+   stderr para `/dev/null` e não vi o `exit=1`.
+2. Comparei os **80 primeiros caracteres** da afirmação. A afirmação havia
+   crescido **no fim** — o prefixo era idêntico.
+
+A terceira sonda, pela **cauda**, fechou. E o controle que faltava desde o começo
+era trivial: **o montador é determinístico?** (Duas montagens seguidas, byte a
+byte. É.) Sem esse controle, "difere" não prova nada.
+
+**As regras:**
+1. **Mexeu em extrato, remonte.** Só a `afirmacao` chega ao modelo; corrigir o
+   JSON sem `monta-base-profunda.js` é conserto que não sai do lugar.
+2. **Nunca engula o stderr de uma sonda.** `2>/dev/null` transformou um `exit=1`
+   em prova de que estava tudo bem.
+3. **Sonda que compara prefixo não vê crescimento no fim.** Compare a cauda, ou
+   a string inteira.
+4. **Antes de dizer "difere", prove que a ferramenta é determinística.** E antes
+   de dizer "igual", prove que ela rodou.
+5. **Quando um agente acusa o estado anterior, teste — e aceite quando ele
+   estiver certo.** Este estava.
+
 
 ## 🔒 O RÓTULO MENTIA E EU REPETI A MENTIRA A SESSÃO INTEIRA (2026-08-13)
 
