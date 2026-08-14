@@ -178,3 +178,31 @@ correto e completo, mas é grande demais para uma leitura só.
 
 O capítulo atual ficaria como **macrovasculares + risco cardiovascular + metas
 lipídicas**. Decisão sua — não dividi por conta própria.
+
+## 14. Diabetes: divergências entre a revisão 2025 e as aulas de 2026
+
+A aula **"Diabetes 2025"** (186 slides) é revisão e repete as aulas individuais.
+Propaguei só o que era novo. **Onde os números discordam, mantive o de 2026 no
+capítulo** e registro aqui — confirme qual vale para a prova:
+
+| Tema | Revisão 2025 | Aula 2026 (aplicada) |
+|---|---|---|
+| Canagliflozina — TFG mínima para iniciar | **≥35** mL/min | **≥45** mL/min |
+| Demais AGLP-1 na DRD | TFG **>20** | TFG **>15** |
+| Finerenona — limiar de potássio | K **<5,0** (recomendação IIa) | K **<4,8** |
+| Espironolactona — limiar de potássio | K **<4,8** (IIb) | K **<5** |
+| FIDELIO/FIGARO — TFG da população | 25–**75** | **>25** |
+| Meta pressórica no idoso >80 saudável | <140×**80** | <140×**90** |
+| Neuropatia induzida pelo tratamento | queda >**3** pts de HbA1c em 3 meses | queda >**2** pts |
+| Misturar degludeca com rápida | **"pode ser misturada"** | **"nunca misturar análogo longo com rápida"** |
+| GLP-1 no pré-operatório | dulaglutida/semaglutida SC/VO com prazos de **2, 15 e 21 dias** (slide truncado, ordem ambígua) | **curto 1 dia / longo 7 dias**, com ressalva de manter se dose estável há >12 semanas |
+
+⚠️ **O par finerenona/espironolactona está literalmente invertido entre as duas
+aulas.** No capítulo ficou a versão de 2026. As duas divergências que mais pesam em
+prova são essa e a da mistura da degludeca — ambas estão sinalizadas dentro dos
+capítulos como divergência, não como fato.
+
+**Sobre o MODY**: a aula traz um bloco completo. Não existe capítulo privado de MODY
+— existe uma **diretriz pública** "MODY (diabetes monogênico)". Coloquei o conteúdo
+dentro de *Diagnóstico e Classificação do Diabetes*, em "Outras causas". **Se
+preferir um capítulo próprio de MODY na aba Resumos, me diga.**
