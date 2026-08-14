@@ -83,3 +83,19 @@ questão do anticoncepcional cobra.
 
 **O que fiz:** separei os dois grupos corretamente no capítulo. Vale corrigir o
 slide, porque, do jeito que está, ele contradiz a própria aula.
+
+## 8. 🖼️ Uma imagem de 238 KB embutida em base64 dentro de um capítulo
+
+O capítulo **Regulação do Apetite** tem **242.396 caracteres**. Não é texto: são
+**4.117 caracteres de conteúdo** mais **um JPEG de 238.279 caracteres em base64**
+(cerca de 179 KB de imagem), embutido no corpo do resumo com marcador `{:center}`.
+
+Para dimensionar: o `payload` inteiro de `endodirect_global_state` ocupa
+**4.458 kB** e reúne **218 diretrizes**. Essa única figura é ~**5% de toda a base
+clínica** — e é a única da plataforma nessa condição (conferi: apenas 1 diretriz
+contém `data:image`).
+
+**Não mexi nela** — é figura do professor e a decisão é dele. Mas vale saber que
+ela viaja junto com o bloco inteiro toda vez que a base é carregada, mesmo para
+quem nunca abre esse capítulo. Se valer a pena, a saída natural é hospedar a
+imagem e referenciá-la por URL em vez de embutir o base64.
