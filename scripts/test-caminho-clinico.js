@@ -32,6 +32,20 @@ const ok = (cond, msg) => { if (!cond) { falhas++; console.error('  - ' + msg); 
 // 1. ROTEAMENTO — a pergunta cai na subespecialidade certa?
 // ─────────────────────────────────────────────────────────────────────────────
 const CAMINHO = [
+  // ⚠️ O BLOCO DEDICADO DE CHECKPOINT ERA INALCANÇÁVEL PELAS FRASES NATURAIS
+  // (14/08/2026). As três primeiras caíam em NENHUMA área — o médico recebia
+  // zero conteúdo profundo. As quatro seguintes são os CONTROLES: a frase
+  // específica não pode roubar a pergunta que NOMEIA o órgão, que foi
+  // exatamente o motivo de `imunoterapia` sozinha ter sido rejeitada.
+  ['imunoterapia oncologica: rastreio endocrino antes de cada ciclo', 'Endocrinopatias'],
+  ['toxicidade endocrina da imunoterapia: quais eixos?', 'Endocrinopatias'],
+  ['efeito adverso endocrino de anti-PD1', 'Endocrinopatias'],
+  ['efeito adverso endocrino de anti-PD-1', 'Endocrinopatias'],
+  ['imunoterapia e tireoide', 'Tireoide'],
+  ['imunoterapia para melanoma: e o hipotireoidismo?', 'Tireoide'],
+  ['atezolizumabe e insuficiencia adrenal', 'Adrenal'],
+  ['diabetes por inibidor de checkpoint', 'Endocrinopatias'],
+
   // Os defeitos históricos, cada um com o seu nome no cofre.
   ['osteoporose refrataria com fosfatase alcalina baixa: posso dar bisfosfonato?', 'Osteometabolismo'],
   ['mulher de 30 anos com testosterona total normal: trato o hirsutismo?', 'Endocrinologia Feminina'],
