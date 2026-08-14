@@ -5,6 +5,28 @@ atualizado: 2026-08-14
 
 # Convenções de Trabalho
 
+## 🔢 `privado` É BOOLEANO NO BANCO — eu escrevi "string" num brief e o agente me corrigiu (2026-08-14)
+
+Ao mandar dividir *Complicações Crônicas*, escrevi no brief que todo capítulo novo
+nasce com `privado: 'true'` **(string, como os existentes)**. O agente foi conferir
+antes de obedecer e achou o contrário: **156 itens do payload usam `privado` como
+booleano jsonb e ZERO usam string**. Ele herdou `item->'privado'` do original e
+os capítulos novos saíram na convenção real.
+
+⚠️ **Por que isso passou despercebido tanto tempo:** `d->>'privado'` devolve a
+string `'true'` tanto para o booleano quanto para a string, então o filtro
+`coalesce(d->>'privado','') = 'true'` — que eu usei a sessão inteira — funciona
+nos dois casos. O erro só apareceria ao **criar** item novo.
+
+**As regras:**
+1. **Ao criar item, herde o campo do irmão** (`item->'privado'`), não redigite o
+   literal. Herdar é imune ao tipo.
+2. **Brief de agente é instrução, e instrução errada vira defeito.** Antes de
+   afirmar o tipo de um campo num brief, `jsonb_typeof` nele.
+3. **Agente que confere antes de obedecer está fazendo o trabalho certo.** Este
+   conferiu e me corrigiu; aceitar a correção é mais barato que o defeito.
+
+
 ## 🧱 CORRIGIR O EXTRATO NÃO CORRIGE O QUE O MÉDICO LÊ (2026-08-14)
 
 Auditei o extrato de endocrinopatia por checkpoint, achei o defeito grave — a
