@@ -99,3 +99,42 @@ contém `data:image`).
 ela viaja junto com o bloco inteiro toda vez que a base é carregada, mesmo para
 quem nunca abre esse capítulo. Se valer a pena, a saída natural é hospedar a
 imagem e referenciá-la por URL em vez de embutir o base64.
+
+## 9. Deficiência de B12 na tabela de interferência da HbA1c (Diabetes: rastreio e diagnóstico)
+
+O slide lista **"deficiência de vitamina B12"** entre as causas de **falsa REDUÇÃO**
+da HbA1c. Pela lógica do próprio slide — que coloca **anemia por deficiência de
+ferro** entre as causas de falsa **elevação** e **terapia com ferro** entre as de
+falsa **redução** —, a deficiência de B12 deveria estar do lado da **elevação**:
+ela prolonga a vida da hemácia, como a de ferro. É a **terapia** com B12, ferro ou
+EPO que encurta a sobrevida eritrocitária e **reduz** falsamente a HbA1c.
+
+**O que fiz:** escrevi a tabela pela regra mecanística (tempo de vida da hemácia),
+com **deficiência de B12 na coluna da elevação** e **terapia com ferro, B12 ou EPO**
+na da redução — internamente consistente com o resto do próprio slide. Vale
+corrigir a linha.
+
+## 10. "Síndrome de Hirata (ou Resistência Insulínica tipo A)" (Hipoglicemia: investigação)
+
+O slide titula a síndrome de Hirata como sinônimo de **resistência insulínica tipo
+A** — e, no mesmo slide, descreve corretamente o mecanismo: **anticorpos contra a
+INSULINA**. São coisas diferentes:
+
+- **Hirata** = síndrome autoimune à insulina, por **anticorpos anti-INSULINA**.
+- **Resistência tipo A** = defeito **genético do receptor** de insulina.
+- **Resistência tipo B** = **anticorpos anti-RECEPTOR** — que é justamente o quadro
+  descrito dois slides adiante, com o nome certo.
+
+**O que fiz:** escrevi Hirata sem o parêntese, e acrescentei ao capítulo o alerta
+explícito de não confundir Hirata (anticorpo contra a insulina) com resistência
+tipo B (anticorpo contra o receptor). Vale corrigir o título do slide.
+
+## 11. Linha do IGF-2 na tabela de diferencial da hipoglicemia
+
+Na tabela comparativa, a linha do **tumor produtor de IGF-2** aparece com
+**"pesquisa de sulfonilureia +"**. Não faz sentido — a pesquisa de sulfonilureia
+é positiva na hipoglicemia por **secretagogo**, e a linha dos antidiabéticos orais
+já traz esse "+" corretamente. Parece **desalinhamento de célula** na tabela.
+
+**O que fiz:** montei a tabela do capítulo pelo mecanismo de cada etiologia, com a
+pesquisa de sulfonilureia **negativa** na linha do IGF-2.
