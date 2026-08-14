@@ -1,665 +1,682 @@
 {
-  "_doc": "Fila de trabalho: atualizar os capítulos da plataforma a partir das aulas do EndoTEEM 2026 (Canva, pasta FAFnvphaz3s > Aulas FAFnvngauWg). Pedido do professor em 2026-08-13. Estado por item: pendente | feito | sem_aula | sem_capitulo. As aulas de Inaugural e Hot Topics/Multimidia ficam FORA: a primeira é abertura de curso e a segunda é material misto de atualização, não capítulo.",
-  "_escala": {
-    "aulas_clinicas": 66,
-    "slides_clinicos": 3201,
-    "capitulos_privados": 152,
-    "capitulos_conceituais": "~95 (os demais são fichas de ensaio clínico — STEP, SURMOUNT, SUSTAIN, ACCORD, 4S… — que vêm do artigo, não da aula)"
+ "_doc": "Fila de trabalho: atualizar os capítulos da plataforma a partir das aulas do EndoTEEM 2026 (Canva, pasta FAFnvphaz3s > Aulas FAFnvngauWg). Pedido do professor em 2026-08-13. Estado por item: pendente | feito | sem_aula | sem_capitulo. As aulas de Inaugural e Hot Topics/Multimidia ficam FORA: a primeira é abertura de curso e a segunda é material misto de atualização, não capítulo.",
+ "_escala": {
+  "aulas_clinicas": 66,
+  "slides_clinicos": 3201,
+  "capitulos_privados": 152,
+  "capitulos_conceituais": "~95 (os demais são fichas de ensaio clínico — STEP, SURMOUNT, SUSTAIN, ACCORD, 4S… — que vêm do artigo, não da aula)"
+ },
+ "areas": [
+  {
+   "sub": "Obesidade",
+   "folder": "FAFnvnLGriQ",
+   "aulas": 12,
+   "slides": 688,
+   "itens": [
+    {
+     "aula": "1 - Regulação do apetite",
+     "design": "DAGnvhB0Zys",
+     "slides": 54,
+     "capitulo": "Regulação do Apetite",
+     "estado": "pendente"
+    },
+    {
+     "aula": "2 - Definição e epidemiologia",
+     "design": "DAGnvjtRyZI",
+     "slides": 12,
+     "capitulo": "Obesidade: Definição e Epidemiologia",
+     "estado": "feito",
+     "quando": "2026-08-13"
+    },
+    {
+     "aula": "3 - Fisiopatologia",
+     "design": "DAGnvlFG-I4",
+     "slides": 58,
+     "capitulo": "Fisiopatologia da Obesidade",
+     "estado": "pendente"
+    },
+    {
+     "aula": "4 - diagnóstico e avaliação clínica",
+     "design": "DAGnvvbvllw",
+     "slides": 47,
+     "capitulo": "Obesidade: Avaliação Clínica e Diagnóstico",
+     "estado": "pendente"
+    },
+    {
+     "aula": "5 - Comorbidades e gestação",
+     "design": "DAGnvvR4Log",
+     "slides": 89,
+     "capitulo": "Obesidade: Comorbidades e Gestação",
+     "estado": "pendente"
+    },
+    {
+     "aula": "6 - DHEM",
+     "design": "DAGnvnr-BKc",
+     "slides": 57,
+     "capitulo": null,
+     "estado": "sem_capitulo",
+     "nota": "Doença hepática esteatótica metabólica não tem capítulo próprio na base. Decidir com o professor: criar capítulo novo ou incorporar em Comorbidades."
+    },
+    {
+     "aula": "7 - Lipodistrofias",
+     "design": "DAGnvgKZBS0",
+     "slides": 44,
+     "capitulo": null,
+     "estado": "sem_capitulo",
+     "nota": "Sem capítulo na base. Candidato a capítulo novo."
+    },
+    {
+     "aula": "8 - Sindrômica e Monogênica",
+     "design": "DAGnvm8k2Ms",
+     "slides": 65,
+     "capitulo": "Obesidade Sindrômica e Monogênica",
+     "estado": "feito",
+     "quando": "2026-08-12"
+    },
+    {
+     "aula": "9 - Tratamento não farmacológico",
+     "design": "DAGnvtAbRFQ",
+     "slides": 53,
+     "capitulo": "Dieta e Exercício Físico na Obesidade",
+     "estado": "feito",
+     "quando": "2026-08-13"
+    },
+    {
+     "aula": "10 - Tratamento farmacológico",
+     "design": "DAGnvhcc81M",
+     "slides": 95,
+     "capitulo": "Tratamento Farmacológico da Obesidade",
+     "estado": "feito",
+     "quando": "2026-08-12"
+    },
+    {
+     "aula": "11 - Tratamento cirúrgico",
+     "design": "DAGnvr11FNU",
+     "slides": 87,
+     "capitulo": "Tratamento Cirúrgico da Obesidade",
+     "estado": "feito",
+     "quando": "2026-08-12"
+    },
+    {
+     "aula": "12 - Suplementação",
+     "design": "DAGnvr3xtXg",
+     "slides": 27,
+     "capitulo": "Suplementação Nutricional Pós-Bariátrica",
+     "estado": "feito",
+     "quando": "2026-08-13"
+    }
+   ],
+   "capitulos_sem_aula": [
+    "Abordagem Centrada em Complicações",
+    "Benefícios da Perda de Peso",
+    "Ganho de Peso Induzido por Fármacos"
+   ]
   },
-  "areas": [
+  {
+   "sub": "Diabetes",
+   "folder": "FAFnvtJTA1Y",
+   "aulas": 12,
+   "slides": 593,
+   "itens": [
     {
-      "sub": "Obesidade",
-      "folder": "FAFnvnLGriQ",
-      "aulas": 12,
-      "slides": 688,
-      "itens": [
-        {
-          "aula": "1 - Regulação do apetite",
-          "design": "DAGnvhB0Zys",
-          "slides": 54,
-          "capitulo": "Regulação do Apetite",
-          "estado": "pendente"
-        },
-        {
-          "aula": "2 - Definição e epidemiologia",
-          "design": "DAGnvjtRyZI",
-          "slides": 12,
-          "capitulo": "Obesidade: Definição e Epidemiologia",
-          "estado": "feito",
-          "quando": "2026-08-13"
-        },
-        {
-          "aula": "3 - Fisiopatologia",
-          "design": "DAGnvlFG-I4",
-          "slides": 58,
-          "capitulo": "Fisiopatologia da Obesidade",
-          "estado": "pendente"
-        },
-        {
-          "aula": "4 - diagnóstico e avaliação clínica",
-          "design": "DAGnvvbvllw",
-          "slides": 47,
-          "capitulo": "Obesidade: Avaliação Clínica e Diagnóstico",
-          "estado": "pendente"
-        },
-        {
-          "aula": "5 - Comorbidades e gestação",
-          "design": "DAGnvvR4Log",
-          "slides": 89,
-          "capitulo": "Obesidade: Comorbidades e Gestação",
-          "estado": "pendente"
-        },
-        {
-          "aula": "6 - DHEM",
-          "design": "DAGnvnr-BKc",
-          "slides": 57,
-          "capitulo": null,
-          "estado": "sem_capitulo",
-          "nota": "Doença hepática esteatótica metabólica não tem capítulo próprio na base. Decidir com o professor: criar capítulo novo ou incorporar em Comorbidades."
-        },
-        {
-          "aula": "7 - Lipodistrofias",
-          "design": "DAGnvgKZBS0",
-          "slides": 44,
-          "capitulo": null,
-          "estado": "sem_capitulo",
-          "nota": "Sem capítulo na base. Candidato a capítulo novo."
-        },
-        {
-          "aula": "8 - Sindrômica e Monogênica",
-          "design": "DAGnvm8k2Ms",
-          "slides": 65,
-          "capitulo": "Obesidade Sindrômica e Monogênica",
-          "estado": "feito",
-          "quando": "2026-08-12"
-        },
-        {
-          "aula": "9 - Tratamento não farmacológico",
-          "design": "DAGnvtAbRFQ",
-          "slides": 53,
-          "capitulo": "Dieta e Exercício Físico na Obesidade",
-          "estado": "feito",
-          "quando": "2026-08-13"
-        },
-        {
-          "aula": "10 - Tratamento farmacológico",
-          "design": "DAGnvhcc81M",
-          "slides": 95,
-          "capitulo": "Tratamento Farmacológico da Obesidade",
-          "estado": "feito",
-          "quando": "2026-08-12"
-        },
-        {
-          "aula": "11 - Tratamento cirúrgico",
-          "design": "DAGnvr11FNU",
-          "slides": 87,
-          "capitulo": "Tratamento Cirúrgico da Obesidade",
-          "estado": "feito",
-          "quando": "2026-08-12"
-        },
-        {
-          "aula": "12 - Suplementação",
-          "design": "DAGnvr3xtXg",
-          "slides": 27,
-          "capitulo": "Suplementação Nutricional Pós-Bariátrica",
-          "estado": "feito",
-          "quando": "2026-08-13"
-        }
-      ],
-      "capitulos_sem_aula": [
-        "Abordagem Centrada em Complicações",
-        "Benefícios da Perda de Peso",
-        "Ganho de Peso Induzido por Fármacos"
-      ]
+     "aula": "Complicações crônicas",
+     "design": "DAG0Z2oJXdQ",
+     "slides": 80,
+     "capitulo": "Complicações Crônicas do Diabetes",
+     "estado": "pendente"
     },
     {
-      "sub": "Diabetes",
-      "folder": "FAFnvtJTA1Y",
-      "aulas": 12,
-      "slides": 593,
-      "itens": [
-        {
-          "aula": "Complicações crônicas",
-          "design": "DAG0Z2oJXdQ",
-          "slides": 80,
-          "capitulo": "Complicações Crônicas do Diabetes",
-          "estado": "pendente"
-        },
-        {
-          "aula": "Diabetes 2025",
-          "design": "DAGnvl0qft4",
-          "slides": 186,
-          "capitulo": "MULTIPLOS",
-          "estado": "pendente",
-          "nota": "Aula geral de 186 slides — alimenta vários capítulos; abrir por seção antes de decidir."
-        },
-        {
-          "aula": "Diabetes monogênico",
-          "design": "DAG0Z3hLZ4A",
-          "slides": 19,
-          "capitulo": null,
-          "estado": "sem_capitulo",
-          "nota": "MODY/neonatal sem capítulo próprio. Candidato a capítulo novo."
-        },
-        {
-          "aula": "Diabetes na gestação",
-          "design": "DAG0ZzVLM6Q",
-          "slides": 29,
-          "capitulo": "Diabetes e Gestação",
-          "estado": "pendente"
-        },
-        {
-          "aula": "Diabetes no contexto hospitalar",
-          "design": "DAG0ZzNJQ38",
-          "slides": 37,
-          "capitulo": "Hiperglicemia Hospitalar",
-          "estado": "pendente"
-        },
-        {
-          "aula": "Diabetes no SUS",
-          "design": "DAGnvi2lq7E",
-          "slides": 51,
-          "capitulo": null,
-          "estado": "sem_capitulo",
-          "nota": "Acesso/organização de rede; sem capítulo. Decidir se vira capítulo."
-        },
-        {
-          "aula": "Diabetes tipo 1: diagnóstico e tratamento",
-          "design": "DAG0Z337Q_g",
-          "slides": 68,
-          "capitulo": "Diabetes Tipo 1 e LADA",
-          "estado": "pendente"
-        },
-        {
-          "aula": "Diabetes tipo 2: rastreio e diagnóstico",
-          "design": "DAG0Z3nQqEA",
-          "slides": 18,
-          "capitulo": "Diagnóstico e Classificação do Diabetes",
-          "estado": "pendente"
-        },
-        {
-          "aula": "Diabetes tipo 2: tratamento",
-          "design": "DAG0Z8KSb_k",
-          "slides": 42,
-          "capitulo": "Tratamento do Diabetes Tipo 2 (ADA 2026 / SBD)",
-          "estado": "pendente"
-        },
-        {
-          "aula": "Hipoglicemia: investigação",
-          "design": "DAG0Z8j7LYY",
-          "slides": 22,
-          "capitulo": "Hipoglicemia no Diabetes",
-          "estado": "pendente"
-        },
-        {
-          "aula": "Outras causas de diabetes",
-          "design": "DAG0Z2svXiY",
-          "slides": 16,
-          "capitulo": "Diagnóstico e Classificação do Diabetes",
-          "estado": "pendente",
-          "nota": "Complementa o capítulo de classificação."
-        },
-        {
-          "aula": "Risco cardiovascular no diabético",
-          "design": "DAG1Ps91ClQ",
-          "slides": 25,
-          "capitulo": "Complicações Crônicas do Diabetes",
-          "estado": "pendente"
-        }
-      ],
-      "capitulos_sem_aula": [
-        "Diabetes no Idoso",
-        "Emergências Hiperglicêmicas — CAD e EHH",
-        "Insulinoterapia",
-        "Metas Glicêmicas e Monitorização (CGM)",
-        "Tecnologia no Diabetes"
-      ]
+     "aula": "Diabetes 2025",
+     "design": "DAGnvl0qft4",
+     "slides": 186,
+     "capitulo": "MULTIPLOS",
+     "estado": "pendente",
+     "nota": "Aula geral de 186 slides — alimenta vários capítulos; abrir por seção antes de decidir."
     },
     {
-      "sub": "Tireoide",
-      "folder": "FAFnvje75zk",
-      "aulas": 9,
-      "slides": 513,
-      "itens": [
-        {
-          "aula": "Carcinoma diferenciado",
-          "design": "DAG3TTrlCYw",
-          "slides": 48,
-          "capitulo": "Carcinoma Diferenciado de Tireoide (papilífero e folicular)",
-          "estado": "pendente"
-        },
-        {
-          "aula": "Carcinoma medular",
-          "design": "DAG3BZQCNQc",
-          "slides": 32,
-          "capitulo": "Carcinoma Medular e Anaplásico de Tireoide",
-          "estado": "pendente"
-        },
-        {
-          "aula": "Disfunções subclínicas",
-          "design": "DAG3Tb4Z78I",
-          "slides": 18,
-          "capitulo": "MULTIPLOS",
-          "estado": "pendente",
-          "nota": "Alimenta Hipotireoidismo e Tireotoxicose; não há capítulo de subclínicas."
-        },
-        {
-          "aula": "Hipotireoidismo",
-          "design": "DAG3TUpNEGc",
-          "slides": 38,
-          "capitulo": "Hipotireoidismo",
-          "estado": "pendente"
-        },
-        {
-          "aula": "Medicações e tireoide",
-          "design": "DAG3Tca0KSk",
-          "slides": 19,
-          "capitulo": "Amiodarona e Tireoide (tireotoxicose tipo 1 e 2, hipotireoidismo)",
-          "estado": "pendente",
-          "nota": "Capítulo vive em Endocrinopatias; também alimenta o de Lítio."
-        },
-        {
-          "aula": "Nódulo tireoidiano",
-          "design": "DAG3Tc7SMVA",
-          "slides": 44,
-          "capitulo": "Nódulo Tireoidiano (TI-RADS e Bethesda)",
-          "estado": "pendente"
-        },
-        {
-          "aula": "Tireoide 2025",
-          "design": "DAGnvhMRwcE",
-          "slides": 178,
-          "capitulo": "MULTIPLOS",
-          "estado": "pendente",
-          "nota": "Aula geral; abrir por seção."
-        },
-        {
-          "aula": "Tireoide e gestação",
-          "design": "DAG3Tdw2ErE",
-          "slides": 28,
-          "capitulo": "Tireoide e Gestação",
-          "estado": "pendente"
-        },
-        {
-          "aula": "Tireotoxicose e hipertireoidismo",
-          "design": "DAG3TQWAwRA",
-          "slides": 108,
-          "capitulo": "MULTIPLOS",
-          "estado": "pendente",
-          "nota": "Alimenta Tireotoxicose, Doença de Graves, Bócio/autonomia e Oftalmopatia."
-        }
-      ],
-      "capitulos_sem_aula": [
-        "Emergências Tireoidianas: Crise Tireotóxica e Coma Mixedematoso",
-        "Tireoidites",
-        "Tireoide: Avaliação da Função e Imagem"
-      ]
+     "aula": "Diabetes monogênico",
+     "design": "DAG0Z3hLZ4A",
+     "slides": 19,
+     "capitulo": null,
+     "estado": "sem_capitulo",
+     "nota": "MODY/neonatal sem capítulo próprio. Candidato a capítulo novo."
     },
     {
-      "sub": "Osteometabolismo",
-      "folder": "FAFnvhEcc4o",
-      "aulas": 7,
-      "slides": 272,
-      "itens": [
-        {
-          "aula": "Doença de Paget",
-          "design": "DAG4nXfmlV4",
-          "slides": 22,
-          "capitulo": "Doença de Paget Óssea",
-          "estado": "pendente"
-        },
-        {
-          "aula": "Hipercalcemia e hiperparatireoidismo",
-          "design": "DAG4h2I9hPM",
-          "slides": 38,
-          "capitulo": "MULTIPLOS",
-          "estado": "pendente",
-          "nota": "Hipercalcemia: Diagnóstico e Manejo + Hiperparatireoidismo Primário."
-        },
-        {
-          "aula": "Hipocalcemia e hipoparatireoidismo",
-          "design": "DAG4nVTGwBA",
-          "slides": 29,
-          "capitulo": "Hipoparatireoidismo e Hipocalcemia",
-          "estado": "pendente"
-        },
-        {
-          "aula": "Osteomalacia e Raquitismo",
-          "design": "DAG4ndsoIn8",
-          "slides": 27,
-          "capitulo": "Osteomalácia e Raquitismo",
-          "estado": "pendente"
-        },
-        {
-          "aula": "Osteoporose parte 1: fisiopatologia e diagnóstico",
-          "design": "DAG4nbqGa4o",
-          "slides": 51,
-          "capitulo": "Osteoporose: Diagnóstico e Tratamento",
-          "estado": "pendente"
-        },
-        {
-          "aula": "Osteoporose parte 2: tratamento",
-          "design": "DAG4naPGlK4",
-          "slides": 53,
-          "capitulo": "Osteoporose: Diagnóstico e Tratamento",
-          "estado": "pendente"
-        },
-        {
-          "aula": "Osteoporose parte 3: complicações",
-          "design": "DAG4nRTRNDU",
-          "slides": 52,
-          "capitulo": "Osteoporose: Diagnóstico e Tratamento",
-          "estado": "pendente",
-          "nota": "⚠️ 3 aulas (156 slides) para 1 capítulo — forte candidato a dividir, como já se decidiu para Tireoide/gestação."
-        }
-      ],
-      "capitulos_sem_aula": [
-        "Deficiência e Metabolismo da Vitamina D"
-      ]
+     "aula": "Diabetes na gestação",
+     "design": "DAG0ZzVLM6Q",
+     "slides": 29,
+     "capitulo": "Diabetes e Gestação",
+     "estado": "pendente"
     },
     {
-      "sub": "Lípides",
-      "folder": "FAFnvrLg5DA",
-      "aulas": 6,
-      "slides": 237,
-      "itens": [
-        {
-          "aula": "Lípides 1a - Metabolismo e Dosagem do perfil",
-          "design": "DAGnvm9Raso",
-          "slides": 36,
-          "capitulo": "Metabolismo Lipídico e Lipoproteínas",
-          "estado": "feito",
-          "quando": "2026-08-13"
-        },
-        {
-          "aula": "Lípides 1b - HTG Primárias",
-          "design": "DAGnvhotu48",
-          "slides": 34,
-          "capitulo": "Hipertrigliceridemias Primárias",
-          "estado": "feito",
-          "quando": "2026-08-13"
-        },
-        {
-          "aula": "Lípides 1c - Hipercol Primárias",
-          "design": "DAGnvgLL2Hc",
-          "slides": 34,
-          "capitulo": "Hipercolesterolemias Primárias",
-          "estado": "feito",
-          "quando": "2026-08-13"
-        },
-        {
-          "aula": "Lípides 1d - Alfalipo Primárias",
-          "design": "DAGnvqBibq0",
-          "slides": 24,
-          "capitulo": "Alfalipoproteinemias (Distúrbios do HDL)",
-          "estado": "feito",
-          "quando": "2026-08-13"
-        },
-        {
-          "aula": "Lípides 2a - HTG secundárias",
-          "design": "DAGnvgtSUIQ",
-          "slides": 48,
-          "capitulo": "Hipertrigliceridemias Secundárias",
-          "estado": "feito",
-          "quando": "2026-08-13"
-        },
-        {
-          "aula": "Lípides 2b - Hipercol Secundárias",
-          "design": "DAGnvh82Qzc",
-          "slides": 61,
-          "capitulo": "Hipercolesterolemias Secundárias",
-          "estado": "feito",
-          "quando": "2026-08-13"
-        }
-      ],
-      "capitulos_sem_aula": [],
-      "nota": "ÁREA CONCLUÍDA em 2026-08-13 — 6/6 aulas aplicadas."
+     "aula": "Diabetes no contexto hospitalar",
+     "design": "DAG0ZzNJQ38",
+     "slides": 37,
+     "capitulo": "Hiperglicemia Hospitalar",
+     "estado": "pendente"
     },
     {
-      "sub": "Adrenal",
-      "folder": "FAFnvmC-Y4c",
-      "aulas": 6,
-      "slides": 161,
-      "itens": [
-        {
-          "aula": "Carcinoma e outras doenças nodulares primárias",
-          "design": "DAG3quJCMnk",
-          "slides": 20,
-          "capitulo": "Carcinoma Adrenocortical",
-          "estado": "feito",
-          "quando": "2026-08-13"
-        },
-        {
-          "aula": "Feocromocitoma",
-          "design": "DAG3qjjRTck",
-          "slides": 27,
-          "capitulo": "Feocromocitoma e Paraganglioma",
-          "estado": "feito",
-          "quando": "2026-08-13"
-        },
-        {
-          "aula": "Hiperaldosteronismo primário",
-          "design": "DAG3qsn2vzo",
-          "slides": 21,
-          "capitulo": "Hiperaldosteronismo Primário (Conn)",
-          "estado": "feito",
-          "quando": "2026-08-13"
-        },
-        {
-          "aula": "Hiperplasia Adrenal Congênita",
-          "design": "DAG3qjMxYNU",
-          "slides": 35,
-          "capitulo": "Hiperplasia Adrenal Congênita (HAC)",
-          "estado": "feito",
-          "nota": "Existe também o HAC de Endocrinologia Pediátrica — conferir os dois.",
-          "quando": "2026-08-13"
-        },
-        {
-          "aula": "Incidentaloma Adrenal",
-          "design": "DAG3qr4PYVM",
-          "slides": 22,
-          "capitulo": "Incidentaloma Adrenal",
-          "estado": "feito",
-          "quando": "2026-08-13"
-        },
-        {
-          "aula": "Insuficiência Adrenal",
-          "design": "DAG3qsHK-gQ",
-          "slides": 36,
-          "capitulo": "Insuficiência Adrenal e Crise Adrenal",
-          "estado": "feito",
-          "quando": "2026-08-13"
-        }
-      ],
-      "capitulos_sem_aula": [
-        "Síndrome de Cushing"
-      ],
-      "nota": "ÁREA CONCLUÍDA em 2026-08-13 — 6/6 aulas aplicadas."
+     "aula": "Diabetes no SUS",
+     "design": "DAGnvi2lq7E",
+     "slides": 51,
+     "capitulo": null,
+     "estado": "sem_capitulo",
+     "nota": "Acesso/organização de rede; sem capítulo. Decidir se vira capítulo."
     },
     {
-      "sub": "Endocrinologia Básica",
-      "folder": "FAFnvkndFwU",
-      "aulas": 4,
-      "slides": 143,
-      "itens": [
-        {
-          "aula": "1 - Hormônios e Receptores",
-          "design": "DAGnvin73aM",
-          "slides": 37,
-          "capitulo": "MULTIPLOS",
-          "estado": "pendente",
-          "nota": "Hormônios: Classes, Síntese e Transporte + Receptores Hormonais e Transdução de Sinal."
-        },
-        {
-          "aula": "2 - Fisiologia Endócrina",
-          "design": "DAGnvmipaEg",
-          "slides": 37,
-          "capitulo": "Fisiologia Endócrina: Eixos e Feedback",
-          "estado": "pendente"
-        },
-        {
-          "aula": "3 - Molecular",
-          "design": "DAGnvmn3bEQ",
-          "slides": 50,
-          "capitulo": "Biologia Molecular e Genética em Endocrinologia",
-          "estado": "pendente"
-        },
-        {
-          "aula": "4 - Disruptores",
-          "design": "DAGnvvZVfxU",
-          "slides": 19,
-          "capitulo": null,
-          "estado": "sem_capitulo",
-          "nota": "Disruptores endócrinos sem capítulo. Candidato a capítulo novo."
-        }
-      ],
-      "capitulos_sem_aula": [
-        "Bases da Avaliação Laboratorial em Endocrinologia"
-      ]
+     "aula": "Diabetes tipo 1: diagnóstico e tratamento",
+     "design": "DAG0Z337Q_g",
+     "slides": 68,
+     "capitulo": "Diabetes Tipo 1 e LADA",
+     "estado": "pendente"
     },
     {
-      "sub": "Neuroendocrinologia",
-      "folder": "FAFnvnTm65Y",
-      "aulas": 3,
-      "slides": 216,
-      "itens": [
-        {
-          "aula": "Neuroendocrinologia parte 1",
-          "design": "DAGnvnQfs30",
-          "slides": 73,
-          "capitulo": "MULTIPLOS",
-          "estado": "pendente"
-        },
-        {
-          "aula": "Neuroendocrinologia parte 2",
-          "design": "DAGnvmX2wPE",
-          "slides": 103,
-          "capitulo": "MULTIPLOS",
-          "estado": "pendente"
-        },
-        {
-          "aula": "Neuroendocrinologia parte 3",
-          "design": "DAGnvqmKL18",
-          "slides": 40,
-          "capitulo": "MULTIPLOS",
-          "estado": "pendente"
-        }
-      ],
-      "nota": "3 aulas contínuas cobrindo 8 capítulos — precisa de leitura por seção para repartir.",
-      "capitulos_sem_aula": []
+     "aula": "Diabetes tipo 2: rastreio e diagnóstico",
+     "design": "DAG0Z3nQqEA",
+     "slides": 18,
+     "capitulo": "Diagnóstico e Classificação do Diabetes",
+     "estado": "pendente"
     },
     {
-      "sub": "Endocrinologia Feminina",
-      "folder": "FAFnvnDwxWA",
-      "aulas": 3,
-      "slides": 182,
-      "itens": [
-        {
-          "aula": "Fisiologia e IOP",
-          "design": "DAGnvug1XW8",
-          "slides": 59,
-          "capitulo": "Insuficiência Ovariana Prematura (IOP)",
-          "estado": "pendente"
-        },
-        {
-          "aula": "Menopausa e HSDD",
-          "design": "DAGnvhFpq0Q",
-          "slides": 71,
-          "capitulo": "Menopausa e Terapia Hormonal",
-          "estado": "pendente"
-        },
-        {
-          "aula": "SOP",
-          "design": "DAGnvnZGWoE",
-          "slides": 52,
-          "capitulo": "Síndrome dos Ovários Policísticos (SOP)",
-          "estado": "pendente",
-          "nota": "Também alimenta Hirsutismo e Hiperandrogenismo."
-        }
-      ],
-      "capitulos_sem_aula": [
-        "Amenorreia",
-        "Infertilidade Feminina e Anovulação"
-      ]
+     "aula": "Diabetes tipo 2: tratamento",
+     "design": "DAG0Z8KSb_k",
+     "slides": 42,
+     "capitulo": "Tratamento do Diabetes Tipo 2 (ADA 2026 / SBD)",
+     "estado": "pendente"
     },
     {
-      "sub": "Endocrinologia Masculina",
-      "folder": "FAFnvhISsTQ",
-      "aulas": 2,
-      "slides": 97,
-      "itens": [
-        {
-          "aula": "Andrologia parte 1",
-          "design": "DAGnvrUxhfQ",
-          "slides": 42,
-          "capitulo": "MULTIPLOS",
-          "estado": "pendente"
-        },
-        {
-          "aula": "Andrologia parte 2",
-          "design": "DAGnvsSXYj4",
-          "slides": 55,
-          "capitulo": "MULTIPLOS",
-          "estado": "pendente"
-        }
-      ],
-      "nota": "2 aulas contínuas para 5 capítulos (Hipogonadismo, Testosterona, Disfunção Erétil, Ginecomastia, Infertilidade).",
-      "capitulos_sem_aula": []
+     "aula": "Hipoglicemia: investigação",
+     "design": "DAG0Z8j7LYY",
+     "slides": 22,
+     "capitulo": "Hipoglicemia no Diabetes",
+     "estado": "pendente"
     },
     {
-      "sub": "Endocrinologia do Esporte",
-      "folder": "FAFnvmrazjk",
-      "aulas": 1,
-      "slides": 45,
-      "itens": [
-        {
-          "aula": "Endocrinologia do esporte",
-          "design": "DAGnvu6QPjw",
-          "slides": 45,
-          "capitulo": "MULTIPLOS",
-          "estado": "pendente"
-        }
-      ],
-      "nota": "⚠️ 1 aula de 45 slides para 7 capítulos já existentes — a aula NÃO cobre a área toda. Atualizar só o que ela de fato trata; não apagar o que já existe por ausência na aula.",
-      "capitulos_sem_aula": []
+     "aula": "Outras causas de diabetes",
+     "design": "DAG0Z2svXiY",
+     "slides": 16,
+     "capitulo": "Diagnóstico e Classificação do Diabetes",
+     "estado": "pendente",
+     "nota": "Complementa o capítulo de classificação."
     },
     {
-      "sub": "Transgeneridade",
-      "folder": "FAFnvo8EHS0",
-      "aulas": 1,
-      "slides": 54,
-      "itens": [
-        {
-          "aula": "Terapia de afirmação de gênero",
-          "design": "DAGnvrwo52E",
-          "slides": 54,
-          "capitulo": "MULTIPLOS",
-          "estado": "pendente"
-        }
-      ],
-      "nota": "1 aula para 5 capítulos.",
-      "capitulos_sem_aula": []
+     "aula": "Risco cardiovascular no diabético",
+     "design": "DAG1Ps91ClQ",
+     "slides": 25,
+     "capitulo": "Complicações Crônicas do Diabetes",
+     "estado": "pendente"
     }
-  ],
-  "fora_do_escopo": [
+   ],
+   "capitulos_sem_aula": [
+    "Diabetes no Idoso",
+    "Emergências Hiperglicêmicas — CAD e EHH",
+    "Insulinoterapia",
+    "Metas Glicêmicas e Monitorização (CGM)",
+    "Tecnologia no Diabetes"
+   ]
+  },
+  {
+   "sub": "Tireoide",
+   "folder": "FAFnvje75zk",
+   "aulas": 9,
+   "slides": 513,
+   "itens": [
     {
-      "pasta": "Inaugural",
-      "folder": "FAFnvryR8Os",
-      "designs": 3,
-      "slides": 85,
-      "motivo": "Abertura de curso, não conteúdo clínico."
+     "aula": "Carcinoma diferenciado",
+     "design": "DAG3TTrlCYw",
+     "slides": 48,
+     "capitulo": "Carcinoma Diferenciado de Tireoide (papilífero e folicular)",
+     "estado": "pendente"
     },
     {
-      "pasta": "Hot Topics e Multimidia",
-      "folder": "FAFnvqFvaKc",
-      "designs": 7,
-      "slides": 336,
-      "motivo": "Material misto de atualização e imagens; não corresponde a capítulo. Revisar à parte."
+     "aula": "Carcinoma medular",
+     "design": "DAG3BZQCNQc",
+     "slides": 32,
+     "capitulo": "Carcinoma Medular e Anaplásico de Tireoide",
+     "estado": "pendente"
+    },
+    {
+     "aula": "Disfunções subclínicas",
+     "design": "DAG3Tb4Z78I",
+     "slides": 18,
+     "capitulo": "MULTIPLOS",
+     "estado": "pendente",
+     "nota": "Alimenta Hipotireoidismo e Tireotoxicose; não há capítulo de subclínicas."
+    },
+    {
+     "aula": "Hipotireoidismo",
+     "design": "DAG3TUpNEGc",
+     "slides": 38,
+     "capitulo": "Hipotireoidismo",
+     "estado": "pendente"
+    },
+    {
+     "aula": "Medicações e tireoide",
+     "design": "DAG3Tca0KSk",
+     "slides": 19,
+     "capitulo": "Amiodarona e Tireoide (tireotoxicose tipo 1 e 2, hipotireoidismo)",
+     "estado": "pendente",
+     "nota": "Capítulo vive em Endocrinopatias; também alimenta o de Lítio."
+    },
+    {
+     "aula": "Nódulo tireoidiano",
+     "design": "DAG3Tc7SMVA",
+     "slides": 44,
+     "capitulo": "Nódulo Tireoidiano (TI-RADS e Bethesda)",
+     "estado": "pendente"
+    },
+    {
+     "aula": "Tireoide 2025",
+     "design": "DAGnvhMRwcE",
+     "slides": 178,
+     "capitulo": "MULTIPLOS",
+     "estado": "pendente",
+     "nota": "Aula geral; abrir por seção."
+    },
+    {
+     "aula": "Tireoide e gestação",
+     "design": "DAG3Tdw2ErE",
+     "slides": 28,
+     "capitulo": "Tireoide e Gestação",
+     "estado": "pendente"
+    },
+    {
+     "aula": "Tireotoxicose e hipertireoidismo",
+     "design": "DAG3TQWAwRA",
+     "slides": 108,
+     "capitulo": "MULTIPLOS",
+     "estado": "pendente",
+     "nota": "Alimenta Tireotoxicose, Doença de Graves, Bócio/autonomia e Oftalmopatia."
     }
-  ],
-  "sem_aula_correspondente": {
-    "_doc": "Áreas da plataforma sem NENHUMA aula no EndoTEEM 2026 — ficam intocadas.",
-    "Endocrinologia Pediátrica": 9,
-    "Endocrinopatias": "7 (só 'Medicações e tireoide' toca 2 deles)"
+   ],
+   "capitulos_sem_aula": [
+    "Emergências Tireoidianas: Crise Tireotóxica e Coma Mixedematoso",
+    "Tireoidites",
+    "Tireoide: Avaliação da Função e Imagem"
+   ]
+  },
+  {
+   "sub": "Osteometabolismo",
+   "folder": "FAFnvhEcc4o",
+   "aulas": 7,
+   "slides": 272,
+   "itens": [
+    {
+     "aula": "Doença de Paget",
+     "design": "DAG4nXfmlV4",
+     "slides": 22,
+     "capitulo": "Doença de Paget Óssea",
+     "estado": "feito",
+     "quando": "2026-08-14"
+    },
+    {
+     "aula": "Hipercalcemia e hiperparatireoidismo",
+     "design": "DAG4h2I9hPM",
+     "slides": 38,
+     "capitulo": "MULTIPLOS",
+     "estado": "feito",
+     "nota": "Hipercalcemia: Diagnóstico e Manejo + Hiperparatireoidismo Primário.",
+     "quando": "2026-08-14"
+    },
+    {
+     "aula": "Hipocalcemia e hipoparatireoidismo",
+     "design": "DAG4nVTGwBA",
+     "slides": 29,
+     "capitulo": "Hipoparatireoidismo e Hipocalcemia",
+     "estado": "feito",
+     "quando": "2026-08-14"
+    },
+    {
+     "aula": "Osteomalacia e Raquitismo",
+     "design": "DAG4ndsoIn8",
+     "slides": 27,
+     "capitulo": "Osteomalácia e Raquitismo",
+     "estado": "feito",
+     "quando": "2026-08-14"
+    },
+    {
+     "aula": "Osteoporose parte 1: fisiopatologia e diagnóstico",
+     "design": "DAG4nbqGa4o",
+     "slides": 51,
+     "capitulo": "Osteoporose: Diagnóstico e Tratamento",
+     "estado": "feito",
+     "quando": "2026-08-14"
+    },
+    {
+     "aula": "Osteoporose parte 2: tratamento",
+     "design": "DAG4naPGlK4",
+     "slides": 53,
+     "capitulo": "Osteoporose: Diagnóstico e Tratamento",
+     "estado": "feito",
+     "quando": "2026-08-14"
+    },
+    {
+     "aula": "Osteoporose parte 3: complicações",
+     "design": "DAG4nRTRNDU",
+     "slides": 52,
+     "capitulo": "Osteoporose: Diagnóstico e Tratamento",
+     "estado": "feito",
+     "nota": "⚠️ 3 aulas (156 slides) para 1 capítulo — forte candidato a dividir, como já se decidiu para Tireoide/gestação.",
+     "quando": "2026-08-14"
+    }
+   ],
+   "capitulos_sem_aula": [
+    "(nenhum — Deficiência e Metabolismo da Vitamina D passou a ser alimentado pela Osteoporose parte 1)"
+   ],
+   "nota": "FECHADA 7/7. As 3 aulas de Osteoporose (156 slides) foram fundidas no capítulo único, que passou de 3.533 para 25.334 caracteres — o maior da plataforma e FORTE CANDIDATO A DIVIDIR (diagnóstico | tratamento | complicações e populações especiais). O bloco de vitamina D da parte 1 foi para o capítulo próprio (Deficiência e Metabolismo da Vitamina D), que subiu de 4.019 para 5.946.",
+   "duplicacao_publica": [
+    "Osteoporose na pós-menopausa",
+    "Osteoporose induzida por glicocorticoide",
+    "Hiperparatireoidismo primário",
+    "Hipercalcemia — diagnóstico e manejo",
+    "Hipoparatireoidismo",
+    "Doença de Paget óssea",
+    "Deficiência de vitamina D"
+   ]
+  },
+  {
+   "sub": "Lípides",
+   "folder": "FAFnvrLg5DA",
+   "aulas": 6,
+   "slides": 237,
+   "itens": [
+    {
+     "aula": "Lípides 1a - Metabolismo e Dosagem do perfil",
+     "design": "DAGnvm9Raso",
+     "slides": 36,
+     "capitulo": "Metabolismo Lipídico e Lipoproteínas",
+     "estado": "feito",
+     "quando": "2026-08-13"
+    },
+    {
+     "aula": "Lípides 1b - HTG Primárias",
+     "design": "DAGnvhotu48",
+     "slides": 34,
+     "capitulo": "Hipertrigliceridemias Primárias",
+     "estado": "feito",
+     "quando": "2026-08-13"
+    },
+    {
+     "aula": "Lípides 1c - Hipercol Primárias",
+     "design": "DAGnvgLL2Hc",
+     "slides": 34,
+     "capitulo": "Hipercolesterolemias Primárias",
+     "estado": "feito",
+     "quando": "2026-08-13"
+    },
+    {
+     "aula": "Lípides 1d - Alfalipo Primárias",
+     "design": "DAGnvqBibq0",
+     "slides": 24,
+     "capitulo": "Alfalipoproteinemias (Distúrbios do HDL)",
+     "estado": "feito",
+     "quando": "2026-08-13"
+    },
+    {
+     "aula": "Lípides 2a - HTG secundárias",
+     "design": "DAGnvgtSUIQ",
+     "slides": 48,
+     "capitulo": "Hipertrigliceridemias Secundárias",
+     "estado": "feito",
+     "quando": "2026-08-13"
+    },
+    {
+     "aula": "Lípides 2b - Hipercol Secundárias",
+     "design": "DAGnvh82Qzc",
+     "slides": 61,
+     "capitulo": "Hipercolesterolemias Secundárias",
+     "estado": "feito",
+     "quando": "2026-08-13"
+    }
+   ],
+   "capitulos_sem_aula": [],
+   "nota": "ÁREA CONCLUÍDA em 2026-08-13 — 6/6 aulas aplicadas."
+  },
+  {
+   "sub": "Adrenal",
+   "folder": "FAFnvmC-Y4c",
+   "aulas": 6,
+   "slides": 161,
+   "itens": [
+    {
+     "aula": "Carcinoma e outras doenças nodulares primárias",
+     "design": "DAG3quJCMnk",
+     "slides": 20,
+     "capitulo": "Carcinoma Adrenocortical",
+     "estado": "feito",
+     "quando": "2026-08-13"
+    },
+    {
+     "aula": "Feocromocitoma",
+     "design": "DAG3qjjRTck",
+     "slides": 27,
+     "capitulo": "Feocromocitoma e Paraganglioma",
+     "estado": "feito",
+     "quando": "2026-08-13"
+    },
+    {
+     "aula": "Hiperaldosteronismo primário",
+     "design": "DAG3qsn2vzo",
+     "slides": 21,
+     "capitulo": "Hiperaldosteronismo Primário (Conn)",
+     "estado": "feito",
+     "quando": "2026-08-13"
+    },
+    {
+     "aula": "Hiperplasia Adrenal Congênita",
+     "design": "DAG3qjMxYNU",
+     "slides": 35,
+     "capitulo": "Hiperplasia Adrenal Congênita (HAC)",
+     "estado": "feito",
+     "nota": "Existe também o HAC de Endocrinologia Pediátrica — conferir os dois.",
+     "quando": "2026-08-13"
+    },
+    {
+     "aula": "Incidentaloma Adrenal",
+     "design": "DAG3qr4PYVM",
+     "slides": 22,
+     "capitulo": "Incidentaloma Adrenal",
+     "estado": "feito",
+     "quando": "2026-08-13"
+    },
+    {
+     "aula": "Insuficiência Adrenal",
+     "design": "DAG3qsHK-gQ",
+     "slides": 36,
+     "capitulo": "Insuficiência Adrenal e Crise Adrenal",
+     "estado": "feito",
+     "quando": "2026-08-13"
+    }
+   ],
+   "capitulos_sem_aula": [
+    "Síndrome de Cushing"
+   ],
+   "nota": "ÁREA CONCLUÍDA em 2026-08-13 — 6/6 aulas aplicadas."
+  },
+  {
+   "sub": "Endocrinologia Básica",
+   "folder": "FAFnvkndFwU",
+   "aulas": 4,
+   "slides": 143,
+   "itens": [
+    {
+     "aula": "1 - Hormônios e Receptores",
+     "design": "DAGnvin73aM",
+     "slides": 37,
+     "capitulo": "MULTIPLOS",
+     "estado": "pendente",
+     "nota": "Hormônios: Classes, Síntese e Transporte + Receptores Hormonais e Transdução de Sinal."
+    },
+    {
+     "aula": "2 - Fisiologia Endócrina",
+     "design": "DAGnvmipaEg",
+     "slides": 37,
+     "capitulo": "Fisiologia Endócrina: Eixos e Feedback",
+     "estado": "pendente"
+    },
+    {
+     "aula": "3 - Molecular",
+     "design": "DAGnvmn3bEQ",
+     "slides": 50,
+     "capitulo": "Biologia Molecular e Genética em Endocrinologia",
+     "estado": "pendente"
+    },
+    {
+     "aula": "4 - Disruptores",
+     "design": "DAGnvvZVfxU",
+     "slides": 19,
+     "capitulo": null,
+     "estado": "sem_capitulo",
+     "nota": "Disruptores endócrinos sem capítulo. Candidato a capítulo novo."
+    }
+   ],
+   "capitulos_sem_aula": [
+    "Bases da Avaliação Laboratorial em Endocrinologia"
+   ]
+  },
+  {
+   "sub": "Neuroendocrinologia",
+   "folder": "FAFnvnTm65Y",
+   "aulas": 3,
+   "slides": 216,
+   "itens": [
+    {
+     "aula": "Neuroendocrinologia parte 1",
+     "design": "DAGnvnQfs30",
+     "slides": 73,
+     "capitulo": "MULTIPLOS",
+     "estado": "pendente"
+    },
+    {
+     "aula": "Neuroendocrinologia parte 2",
+     "design": "DAGnvmX2wPE",
+     "slides": 103,
+     "capitulo": "MULTIPLOS",
+     "estado": "pendente"
+    },
+    {
+     "aula": "Neuroendocrinologia parte 3",
+     "design": "DAGnvqmKL18",
+     "slides": 40,
+     "capitulo": "MULTIPLOS",
+     "estado": "pendente"
+    }
+   ],
+   "nota": "3 aulas contínuas cobrindo 8 capítulos — precisa de leitura por seção para repartir.",
+   "capitulos_sem_aula": []
+  },
+  {
+   "sub": "Endocrinologia Feminina",
+   "folder": "FAFnvnDwxWA",
+   "aulas": 3,
+   "slides": 182,
+   "itens": [
+    {
+     "aula": "Fisiologia e IOP",
+     "design": "DAGnvug1XW8",
+     "slides": 59,
+     "capitulo": "Insuficiência Ovariana Prematura (IOP)",
+     "estado": "pendente"
+    },
+    {
+     "aula": "Menopausa e HSDD",
+     "design": "DAGnvhFpq0Q",
+     "slides": 71,
+     "capitulo": "Menopausa e Terapia Hormonal",
+     "estado": "pendente"
+    },
+    {
+     "aula": "SOP",
+     "design": "DAGnvnZGWoE",
+     "slides": 52,
+     "capitulo": "Síndrome dos Ovários Policísticos (SOP)",
+     "estado": "pendente",
+     "nota": "Também alimenta Hirsutismo e Hiperandrogenismo."
+    }
+   ],
+   "capitulos_sem_aula": [
+    "Amenorreia",
+    "Infertilidade Feminina e Anovulação"
+   ]
+  },
+  {
+   "sub": "Endocrinologia Masculina",
+   "folder": "FAFnvhISsTQ",
+   "aulas": 2,
+   "slides": 97,
+   "itens": [
+    {
+     "aula": "Andrologia parte 1",
+     "design": "DAGnvrUxhfQ",
+     "slides": 42,
+     "capitulo": "MULTIPLOS",
+     "estado": "pendente"
+    },
+    {
+     "aula": "Andrologia parte 2",
+     "design": "DAGnvsSXYj4",
+     "slides": 55,
+     "capitulo": "MULTIPLOS",
+     "estado": "pendente"
+    }
+   ],
+   "nota": "2 aulas contínuas para 5 capítulos (Hipogonadismo, Testosterona, Disfunção Erétil, Ginecomastia, Infertilidade).",
+   "capitulos_sem_aula": []
+  },
+  {
+   "sub": "Endocrinologia do Esporte",
+   "folder": "FAFnvmrazjk",
+   "aulas": 1,
+   "slides": 45,
+   "itens": [
+    {
+     "aula": "Endocrinologia do esporte",
+     "design": "DAGnvu6QPjw",
+     "slides": 45,
+     "capitulo": "MULTIPLOS",
+     "estado": "pendente"
+    }
+   ],
+   "nota": "⚠️ 1 aula de 45 slides para 7 capítulos já existentes — a aula NÃO cobre a área toda. Atualizar só o que ela de fato trata; não apagar o que já existe por ausência na aula.",
+   "capitulos_sem_aula": []
+  },
+  {
+   "sub": "Transgeneridade",
+   "folder": "FAFnvo8EHS0",
+   "aulas": 1,
+   "slides": 54,
+   "itens": [
+    {
+     "aula": "Terapia de afirmação de gênero",
+     "design": "DAGnvrwo52E",
+     "slides": 54,
+     "capitulo": "MULTIPLOS",
+     "estado": "pendente"
+    }
+   ],
+   "nota": "1 aula para 5 capítulos.",
+   "capitulos_sem_aula": []
   }
+ ],
+ "fora_do_escopo": [
+  {
+   "pasta": "Inaugural",
+   "folder": "FAFnvryR8Os",
+   "designs": 3,
+   "slides": 85,
+   "motivo": "Abertura de curso, não conteúdo clínico."
+  },
+  {
+   "pasta": "Hot Topics e Multimidia",
+   "folder": "FAFnvqFvaKc",
+   "designs": 7,
+   "slides": 336,
+   "motivo": "Material misto de atualização e imagens; não corresponde a capítulo. Revisar à parte."
+  }
+ ],
+ "sem_aula_correspondente": {
+  "_doc": "Áreas da plataforma sem NENHUMA aula no EndoTEEM 2026 — ficam intocadas.",
+  "Endocrinologia Pediátrica": 9,
+  "Endocrinopatias": "7 (só 'Medicações e tireoide' toca 2 deles)"
+ }
 }
