@@ -206,3 +206,22 @@ capítulos como divergência, não como fato.
 — existe uma **diretriz pública** "MODY (diabetes monogênico)". Coloquei o conteúdo
 dentro de *Diagnóstico e Classificação do Diabetes*, em "Outras causas". **Se
 preferir um capítulo próprio de MODY na aba Resumos, me diga.**
+
+## 15. Tireoide: divergências entre a revisão 2025 e as aulas de 2026
+
+Mesma situação do Diabetes — a aula **"Tireoide 2025"** (178 slides) é revisão.
+Propaguei só o que era novo e **mantive o valor de 2026 quando havia conflito**:
+
+| Tema | Revisão 2025 | Aula 2026 (aplicada) |
+|---|---|---|
+| Fluxograma do hipotireoidismo subclínico | faixas **4,5–7 / 7–10 / ≥10**, com "avaliar fatores de risco" em 7–10 | faixas **<7 / 7–10 / ≥10**, com "tratar se <65 anos" em 7–10 |
+| Hipotireoidismo subclínico no muito idoso | **evitar tratar >85 anos** | **cautela** ao tratar >85 anos |
+| TIA tipo 1 (amiodarona) | antitireoidiano; tireoidectomia se refratária **ou arritmia ameaçadora à vida** | antitireoidiano **+ corticoide**; tireoidectomia se refratária |
+| Pausa da dieta enteral para levotiroxina | **2–4 h** antes | **3 h** antes |
+| Hipertireoidismo transitório da gestação — TSH | **">0,1 (pode vir suprimido)"** | **<0,1** |
+| Pico do β-hCG na gestação | **10–12 semanas** (slide antigo do mesmo deck) | **7–11 semanas** (versão mais recente) |
+| Risco de recorrência do CDT | **duas faixas** (baixo × alto, ATA 2015) | **quatro faixas** (ATA 2025) — mantive as duas versões, porque as duas caem |
+| Resposta excelente após lobectomia | **TG <30 ng/mL** | a aula de 2026 não trazia a coluna da lobectomia — acrescentei a de 2025 |
+
+Todas as divergências acima estão **sinalizadas dentro dos capítulos** como
+divergência, não como fato. **Confirme qual versão vale.**
