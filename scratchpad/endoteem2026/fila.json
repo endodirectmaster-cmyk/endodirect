@@ -58,16 +58,18 @@
      "design": "DAGnvnr-BKc",
      "slides": 57,
      "capitulo": null,
-     "estado": "sem_capitulo",
-     "nota": "Doença hepática esteatótica metabólica não tem capítulo próprio na base. Decidir com o professor: criar capítulo novo ou incorporar em Comorbidades."
+     "estado": "feito",
+     "nota": "Doença hepática esteatótica metabólica não tem capítulo próprio na base. Decidir com o professor: criar capítulo novo ou incorporar em Comorbidades.",
+     "quando": "2026-08-15"
     },
     {
      "aula": "7 - Lipodistrofias",
      "design": "DAGnvgKZBS0",
      "slides": 44,
      "capitulo": null,
-     "estado": "sem_capitulo",
-     "nota": "Sem capítulo na base. Candidato a capítulo novo."
+     "estado": "feito",
+     "nota": "Sem capítulo na base. Candidato a capítulo novo.",
+     "quando": "2026-08-15"
     },
     {
      "aula": "8 - Sindrômica e Monogênica",
@@ -146,8 +148,9 @@
      "design": "DAG0Z3hLZ4A",
      "slides": 19,
      "capitulo": null,
-     "estado": "sem_capitulo",
-     "nota": "MODY/neonatal sem capítulo próprio. Candidato a capítulo novo."
+     "estado": "feito",
+     "nota": "MODY/neonatal sem capítulo próprio. Candidato a capítulo novo.",
+     "quando": "2026-08-15"
     },
     {
      "aula": "Diabetes na gestação",
@@ -170,8 +173,9 @@
      "design": "DAGnvi2lq7E",
      "slides": 51,
      "capitulo": null,
-     "estado": "sem_capitulo",
-     "nota": "Acesso/organização de rede; sem capítulo. Decidir se vira capítulo."
+     "estado": "feito",
+     "nota": "Acesso/organização de rede; sem capítulo. Decidir se vira capítulo.",
+     "quando": "2026-08-15"
     },
     {
      "aula": "Diabetes tipo 1: diagnóstico e tratamento",
@@ -554,16 +558,9 @@
      "design": "DAGnvvZVfxU",
      "slides": 19,
      "capitulo": null,
-     "estado": "sem_capitulo",
-     "nota": "Disruptores endócrinos sem capítulo. Candidato a capítulo novo."
-    },
-    {
-     "aula": "4 - Disruptores Endócrinos (anunciada nas aulas 1 e 3, ainda não está na pasta)",
-     "design": null,
-     "slides": 0,
-     "capitulo": "—",
-     "estado": "sem_capitulo",
-     "nota": "As aulas 1 e 3 anunciam Disruptores Endócrinos como próximo tema, mas o design não existe na pasta Aulas do Canva. Verificar com o professor."
+     "estado": "feito",
+     "nota": "Disruptores endócrinos sem capítulo. Candidato a capítulo novo.",
+     "quando": "2026-08-15"
     }
    ],
    "capitulos_sem_aula": [
@@ -737,5 +734,6 @@
   "_doc": "Áreas da plataforma sem NENHUMA aula no EndoTEEM 2026 — ficam intocadas.",
   "Endocrinologia Pediátrica": 9,
   "Endocrinopatias": "7 (só 'Medicações e tireoide' toca 2 deles)"
- }
+ },
+ "_nota_disruptores": "2026-08-14: o item fantasma \"4 - Disruptores Endócrinos (ainda não está na pasta)\" era ERRO MEU — a pasta declara 4 aulas e a aula existe como \"4 - Disruptores\" (DAGnvvZVfxU, 19 slides), já processada. A fila tinha 67 itens para 66 aulas reais."
 }
