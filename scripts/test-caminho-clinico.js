@@ -32,6 +32,29 @@ const ok = (cond, msg) => { if (!cond) { falhas++; console.error('  - ' + msg); 
 // 1. ROTEAMENTO — a pergunta cai na subespecialidade certa?
 // ─────────────────────────────────────────────────────────────────────────────
 const CAMINHO = [
+  // ⚠️ O BLOCO DEDICADO DE CHECKPOINT ERA INALCANÇÁVEL PELAS FRASES NATURAIS
+  // (14/08/2026). As três primeiras caíam em NENHUMA área — o médico recebia
+  // zero conteúdo profundo. As quatro seguintes são os CONTROLES: a frase
+  // específica não pode roubar a pergunta que NOMEIA o órgão, que foi
+  // exatamente o motivo de `imunoterapia` sozinha ter sido rejeitada.
+  ['imunoterapia oncologica: rastreio endocrino antes de cada ciclo', 'Endocrinopatias'],
+  ['toxicidade endocrina da imunoterapia: quais eixos?', 'Endocrinopatias'],
+  ['efeito adverso endocrino de anti-PD1', 'Endocrinopatias'],
+  ['efeito adverso endocrino de anti-PD-1', 'Endocrinopatias'],
+  ['imunoterapia e tireoide', 'Tireoide'],
+  ['imunoterapia para melanoma: e o hipotireoidismo?', 'Tireoide'],
+  ['atezolizumabe e insuficiencia adrenal', 'Adrenal'],
+  ['diabetes por inibidor de checkpoint', 'Endocrinopatias'],
+
+  // A sigla inglesa nua caía em nenhuma área (14/08/2026). As duas últimas são
+  // o CONTROLE: `uti` continua fora (3 letras, filtrada) e a vinheta real já
+  // roteava sem chave nenhuma.
+  ['DKA', 'Diabetes'],
+  ['conduta na DKA', 'Diabetes'],
+  ['o que e HHS', 'Diabetes'],
+  ['paciente na UTI com hiperglicemia', 'Diabetes'],
+  ['DKA com pH 7,1: quando comeco a insulina?', 'Diabetes'],
+
   // Os defeitos históricos, cada um com o seu nome no cofre.
   ['osteoporose refrataria com fosfatase alcalina baixa: posso dar bisfosfonato?', 'Osteometabolismo'],
   ['mulher de 30 anos com testosterona total normal: trato o hirsutismo?', 'Endocrinologia Feminina'],
@@ -796,7 +819,15 @@ for (const [pergunta, marca] of CHEGADA) {
 const PRIMEIRO = [
   ['Pre-diabetes pode reverter sozinho?', 'pré-diabetes'],
   ['Como confirmo prediabetes?', 'pré-diabetes'],
-  ['paciente com CAD e pH 7,1: quando comeco a insulina?', 'cetoacidose'],
+  // ⚠️ TROCA DE MARCA, E ELA FICOU MAIS ESTRITA (14/08/2026). Com a entrada do
+  // consenso ADA/EASD/JBDS/AACE/DTS 2024, o 1º bloco desta pergunta passou a ser
+  // ele — o que é o comportamento CERTO: é o documento dedicado e mais novo.
+  // A asserção reprovou por um artefato de MEDIDA: ela lê os 80 primeiros
+  // caracteres do cabeçalho, e "CETOACIDOSE" está no caractere 85 do tema novo.
+  // Trocar a marca por "crises hiperglicêmicas no adulto" NOMEIA o bloco de 2024
+  // (o Primer de 2020 começa com "cetoacidose diabética (cad) e as demais crises
+  // hiperglicêmicas", então não casa) — passou a exigir MAIS, não menos.
+  ['paciente com CAD e pH 7,1: quando comeco a insulina?', 'crises hiperglicêmicas no adulto'],
   ['maratonista com diabetes tipo 1: alvo de glicose antes do treino', 'exerc'],
   // ⚠️ EM OBESIDADE A CHEGADA NÃO DISCRIMINA MAIS, e por isso estas vieram para
   // cá. A área passou a 338k contra teto de 120k e o bloco nutricional sozinho

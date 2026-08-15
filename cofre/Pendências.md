@@ -1,42 +1,124 @@
 ---
 tags: [cofre, pendencias]
-atualizado: 2026-08-09
+atualizado: 2026-08-15
 ---
 
 # Pendências
 
-## ⏸️ PARADA COMBINADA — retomar na SEXTA, 14/08/2026 (2026-08-09, 21:34 UTC)
+## 🔴 O QUE SÓ O PROFESSOR RESOLVE — a lista curta (atualizada 2026-08-15)
 
-O professor pediu pausa e retomada na sexta. **Estado exato em que paramos**, para
-não perder tempo redescobrindo:
+Isto é o que sobrou, e **nenhum item depende de mais trabalho meu — depende de
+uma resposta dele.**
+
+1. ✅ **RESOLVIDO — o consenso ADA/EASD 2024 chegou pelo professor** (PDF, 14/08).
+   Extraído (153 fatos, cobertura das 19 páginas) e, em **15/08**, os **três erros
+   ativos do núcleo** que ele expôs foram corrigidos: o corte de potássio (3,5 sem
+   exigir sintoma, não 3,3 com sintoma), a cetonemia de volta à gravidade (BOHB
+   >6,0 = grave) e o gatilho da cetona (história de diabetes basta). Ver
+   [[Decisões]] e a nota [[Crises Hiperglicêmicas no Adulto — CAD e EHH (consenso ADA-EASD 2024)]].
+2. **Os 17 extratos com 5+ anos** — quais valem substituir é decisão editorial.
+   ⚠️ Os dois de **cetoacidose (2020)** deixaram de ser o pior caso: o adulto está
+   coberto pelo consenso de 2024. **A CRIANÇA NÃO** — o consenso é de adultos e
+   diz isso; a CAD pediátrica e o edema cerebral seguem só com 2020. Os outros
+   sensíveis: insuficiência adrenal (2021), crise tireotóxica (2021).
+3. **`nivolumabe`/`pembrolizumabe` → Tireoide** (reponderação — ver a seção do
+   teste de caminho; a medição deu empate com troca de lado).
+4. **As divergências clínicas do EndoTEEM** — sobretudo **finerenona ×
+   espironolactona, cujos limiares de potássio estão invertidos entre a aula de
+   2025 e a de 2026**. Arbitrar seria inventar medicina. Estão sinalizadas dentro
+   dos capítulos como divergência, não como fato.
+5. 🟡 **PR aberto em 15/08** com os 43 commits do ramo para a `main` — **o merge é
+   dele.** Contém as três correções de núcleo acima (essas **são** de segurança e
+   **ainda não estão no ar**), a propagação do EndoTEEM 2026 e a base clínica.
+6. **Dividir capítulos grandes** — *Complicações Crônicas do Diabetes* **já foi
+   dividido em 4** (14/08). Faltam: ***Osteoporose*** (25,3k), e decidir se
+   ***Tratamento do DM2*** (18,8k) e ***Carcinoma Diferenciado*** (17,4k) também
+   entram, se ***Retinopatia, Neuropatia e Pé Diabético*** (11,2k — 1,6× o teto)
+   pede segunda divisão, e se **MODY** merece capítulo próprio.
+
+
+## ✅ AUDITORIA ADVERSARIAL DA BASE FECHADA — 47/47 extratos, 7.087/7.087 fatos (2026-08-14)
+
+Os dois últimos caíram hoje: **endocrinopatia por checkpoint** (111 fatos) e
+**acromegalia** (212). Achados graves, todos conferidos por mim na fonte antes de
+aceitar:
 
 | | |
 |---|---|
-| Base profunda | **47 artigos · 7.164 fatos** |
-| Auditoria adversarial | **45/47 (96%)** |
-| Acervo do Drive | **42 de 259 (16,2%)** |
-| Teste de caminho | **299 roteamentos + 10 chegadas + 35 ordens + 9 completudes** |
-| `ci-validate` | verde · harness A/B em Chromium igual à main |
-| Árvore | limpa, tudo commitado e empurrado |
-| Ramo | `claude/open-access-article-discussion-zrgpkp`, **65 commits à frente da main** |
-| ⚠️ Produção | **v214**. O ramo está em **v219** |
+| Checkpoint `[48]`/`[104]` | A ordem **glicocorticoide antes da levotiroxina** não sobrevivia à atomização. A prova estava 130 chars depois do fim da fatia (base0@30847). Saída 1 + saída 2. |
+| Checkpoint — hidrocortisona | Divergência interna **real e já registrada** pelo extrato: Tabela 1 @20776 `20 mg morning and 10 mg evening` × corpo @37051 `10-20 mg` + `5-10 mg`. |
+| Acromegalia `[149]` | Sobreafirmação: promovia achado de **um estudo** a critério de cura, contra a frase 8 chars antes, que diz que limiar e momento **`remain unknown`**. |
+| Acromegalia `[114]` | A fatia provava 1 de 3 cláusulas; as outras estavam nos 122 chars contíguos seguintes. |
 
-**As DUAS primeiras coisas a fazer na sexta**, nesta ordem:
+⚠️ **Ressalva ao verificador, não ao extrato:** ele aprova um fato que cita
+"20 mg/10 mg" contra citação do corpo, porque "20" e "10" existem dentro de
+"10-20"/"5-10" **com outro sentido**. Verde mecânico — quem garante é o ponteiro.
 
-1. **Auditoria adversarial dos dois extratos que faltam** — acromegalia (212
-   fatos) e endocrinopatia por inibidor de checkpoint (111). Um auditor por vez.
-   Pelo risco, comece pelo **checkpoint**: ele tem a ordem glicocorticoide →
-   levotiroxina (a inversa precipita crise adrenal), a divergência interna da
-   dose de hidrocortisona entre a Tabela 1 e o corpo, e o diabetes que abre em
-   cetoacidose. O brief pronto é `scratchpad/brief-auditoria.md`.
-2. **A decisão de deploy é do professor** (ver abaixo) — cinco correções de
-   núcleo estão represadas no ramo, e nenhuma chegou a médico nenhum.
+## ✅ Teste de caminho — o buraco do anexo, investigado e fechado no que dava (2026-08-14)
 
-⚠️ **O que está represado em v219 e NÃO está no ar:** régua da obesidade
-pediátrica (P95 × P97), cautela do romosozumabe em quem usa corticoide, as **duas**
-correções da copeptina (condição de coleta com sódio >150, e o basal como
-porteiro para não ler DI nefrogênico como polidipsia primária) e o corte do GH
-no TOTG por ensaio (0,4 com ultrassensível × 1,0 com o antigo).
+Os 59 blocos são alcançáveis. As três asserções sondam a **400k**, e produção com
+anexo usa **120k** — mas **duplicar a asserção nos dois tetos seria enfeite**: a
+marca sobrevive até a 15k, porque o 1º bloco sempre sai inteiro.
+
+**Fechado:** as três frases naturais de imunoterapia que caíam em NENHUMA área
+agora alcançam o bloco dedicado, com 4 controles no teste (303 → **311**
+roteamentos).
+
+⚠️ **`imunoterapia` sozinha foi testada e REJEITADA**, e o motivo é medido: ela
+rouba `imunoterapia e tireoide` de Tireoide, e a comparação do que cada área
+entrega deu **empate com troca de lado** — Tireoide traz `tionamida` e não traz
+`crise adrenal`; Endocrinopatias traz `crise adrenal` e não traz `tionamida`.
+
+**O que sobra e é decisão dele:** `nivolumabe`/`pembrolizumabe` continuam
+apontando para Tireoide (linha ~552, decisão explícita). Com anexo, a pergunta
+*"nivolumabe: quais toxicidades endócrinas rastrear"* entrega 62k de tireoide na
+gestação e perde `crise adrenal`. **Mudar isso é reponderação, não conserto.**
+
+## 🟡 EndoTEEM 2026 — 8 decisões que ficaram para o professor (2026-08-14)
+
+Detalhe completo em `scratchpad/endoteem2026/revisar.md` (15 seções). O que precisa
+de decisão dele:
+
+1. **Dividir capítulos que ficaram grandes.** *Complicações Crônicas do Diabetes* está
+   em **27,7 mil caracteres** (sugestão: retinopatia · neuropatia+pé · doença renal ·
+   comorbidades). *Osteoporose* está em **25,3 mil**.
+2. **Divergências numéricas entre a revisão de 2025 e a aula de 2026** — ~20 pontos,
+   sinalizados dentro dos capítulos. O par **finerenona × espironolactona** (limiar de
+   potássio) está **invertido** entre as duas aulas.
+3. **MODY** entrou dentro de *Diagnóstico e Classificação do Diabetes*; existe uma
+   diretriz **pública** "MODY (diabetes monogênico)". Decidir se merece capítulo próprio.
+4. **Fluxograma de insulinização do DM2 veio truncado por OCR** ("2001", ">301", lidos
+   como 20 e 30 UI) e há dois esquemas de início que não conversam (10/16 UI fixos ×
+   0,1–0,2 UI/kg). Confirmar no slide original.
+5. **6 aulas sem capítulo correspondente**: DHEM, Lipodistrofias, Diabetes monogênico,
+   Diabetes no SUS e Disruptores Endócrinos (×2 — uma anunciada e ausente da pasta).
+6. **Capítulos duplicados** entre a aba Resumos e a aba Diretrizes (mesmo `tema`).
+7. **A fonte original da diretriz pública `Hipopituitarismo` foi perdida** num update
+   meu de sessão anterior e reposta como "Endocrine Society" — **conferir**.
+8. **JPEG de 238 KB embutido** em *Regulação do Apetite* (242 mil caracteres, dos quais
+   4,1 mil são texto). Único capítulo com `data:image` — não toquei.
+
+
+## ✅ PARADA COMBINADA — encerrada (2026-08-14)
+
+As duas tarefas da sexta foram feitas: **auditoria adversarial 47/47 (100%)** e o
+**roteamento do checkpoint**.
+
+⚠️ **E a linha do deploy estava VELHA.** Ela dizia "produção v214, ramo v219".
+Conferi o `origin/main` de hoje — **pelo texto, não pela contagem**:
+
+| Correção represada | Em `origin/main`? |
+|---|---|
+| Régua da obesidade pediátrica (P95 × P97) | ✅ no ar |
+| Cautela do romosozumabe com corticoide | ✅ no ar |
+| Copeptina — coleta só com sódio **>150** | ✅ no ar (e **0 ocorrências** do "147" errado) |
+| Copeptina — **o basal é o porteiro** | ✅ no ar |
+| Corte do GH no TOTG **por ensaio** | ✅ no ar |
+
+`sw.js` está em **v239** nos dois lados. **As cinco correções já chegaram a
+médico.** O que separa o ramo da `main` hoje são **36 commits de trabalho novo**
+(as duas auditorias, o EndoTEEM e o roteamento) — mérito de PR, não de correção
+represada.
 
 ## 📅 AUDITORIA DE ATUALIDADE DO ACERVO — resultado, e o que só o professor resolve (2026-08-09)
 

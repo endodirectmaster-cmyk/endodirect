@@ -1,9 +1,69 @@
 ---
 tags: [cofre, processo]
-atualizado: 2026-08-13
+atualizado: 2026-08-14
 ---
 
 # Convenções de Trabalho
+
+## 🔢 `privado` É BOOLEANO NO BANCO — eu escrevi "string" num brief e o agente me corrigiu (2026-08-14)
+
+Ao mandar dividir *Complicações Crônicas*, escrevi no brief que todo capítulo novo
+nasce com `privado: 'true'` **(string, como os existentes)**. O agente foi conferir
+antes de obedecer e achou o contrário: **156 itens do payload usam `privado` como
+booleano jsonb e ZERO usam string**. Ele herdou `item->'privado'` do original e
+os capítulos novos saíram na convenção real.
+
+⚠️ **Por que isso passou despercebido tanto tempo:** `d->>'privado'` devolve a
+string `'true'` tanto para o booleano quanto para a string, então o filtro
+`coalesce(d->>'privado','') = 'true'` — que eu usei a sessão inteira — funciona
+nos dois casos. O erro só apareceria ao **criar** item novo.
+
+**As regras:**
+1. **Ao criar item, herde o campo do irmão** (`item->'privado'`), não redigite o
+   literal. Herdar é imune ao tipo.
+2. **Brief de agente é instrução, e instrução errada vira defeito.** Antes de
+   afirmar o tipo de um campo num brief, `jsonb_typeof` nele.
+3. **Agente que confere antes de obedecer está fazendo o trabalho certo.** Este
+   conferiu e me corrigiu; aceitar a correção é mais barato que o defeito.
+
+
+## 🧱 CORRIGIR O EXTRATO NÃO CORRIGE O QUE O MÉDICO LÊ (2026-08-14)
+
+Auditei o extrato de endocrinopatia por checkpoint, achei o defeito grave — a
+ordem *glicocorticoide antes da levotiroxina*, cuja inversa precipita crise
+adrenal — estendi a citação, conferi o `cit_sha`, rodei sete verificadores,
+commitei e **anunciei fechado**. Só que **`lib/clinical-deep-data.js` é gerado**,
+e eu não remontei. A frase `"reposição de GLICOCORTICOIDE, se necessário, ANTES
+de começar o hormônio tireoidiano, para não precipitar CRISE ADRENAL"` **não
+estava** no arquivo que o HEAD entregaria. O conserto ficou dentro do JSON.
+
+Quem viu foi o auditor seguinte, que relatou o `ci-validate` vermelho **antes**
+do commit dele. **Eu duvidei — e é aí que mora a segunda lição.**
+
+⚠️ **Minhas duas primeiras sondas deram FALSO "iguais":**
+1. Rodei o montador num `git worktree` limpo. Mas `scratchpad/acervo/textos/` é
+   **gitignored**: sem o corpus o montador **aborta e não escreve nada**, e o
+   arquivo intocado do worktree é, claro, igual ao commitado. Eu tinha mandado o
+   stderr para `/dev/null` e não vi o `exit=1`.
+2. Comparei os **80 primeiros caracteres** da afirmação. A afirmação havia
+   crescido **no fim** — o prefixo era idêntico.
+
+A terceira sonda, pela **cauda**, fechou. E o controle que faltava desde o começo
+era trivial: **o montador é determinístico?** (Duas montagens seguidas, byte a
+byte. É.) Sem esse controle, "difere" não prova nada.
+
+**As regras:**
+1. **Mexeu em extrato, remonte.** Só a `afirmacao` chega ao modelo; corrigir o
+   JSON sem `monta-base-profunda.js` é conserto que não sai do lugar.
+2. **Nunca engula o stderr de uma sonda.** `2>/dev/null` transformou um `exit=1`
+   em prova de que estava tudo bem.
+3. **Sonda que compara prefixo não vê crescimento no fim.** Compare a cauda, ou
+   a string inteira.
+4. **Antes de dizer "difere", prove que a ferramenta é determinística.** E antes
+   de dizer "igual", prove que ela rodou.
+5. **Quando um agente acusa o estado anterior, teste — e aceite quando ele
+   estiver certo.** Este estava.
+
 
 ## 🔒 O RÓTULO MENTIA E EU REPETI A MENTIRA A SESSÃO INTEIRA (2026-08-13)
 
@@ -2350,6 +2410,10 @@ Instrução direta do Rodolpho: *"Evite termos genéricos de IA. Deixe linguagem
 - **O que manter:** o texto continua **didático e direto** — frase curta, dado antes do adjetivo, e a limitação dita por extenso. Formal não quer dizer empolado nem impessoal; quer dizer **preciso**.
 - **⚠️ Eu havia reposto uma frase que o professor tinha apagado de propósito.** No comparativo do SURPASS faltavam 82 caracteres — *"Vencer placebo é uma coisa; medir-se contra um fármaco já cardioprotetor é outra"* — e eu tratei como perda por clobber, porque era o modo de falha documentado. Ele respondeu: *"eu tirei porque isso é jargão de IA"*. Frase removida de novo, no banco e na fonte.
   - **A lição não é "não repor".** É que **a hipótese de clobber não é a única** quando some texto: uma edição deliberada do professor produz o mesmo rastro. Antes de repor, olhar **o que** sumiu — se for exatamente o tipo de frase que ele vem cortando, o mais provável é que tenha sido ele.
+- **⚠️ A regra vale para os CAPÍTULOS do banco, não só para os `trials*.js` (2026-08-13).** O professor apontou "Ganho de Peso Induzido por Fármacos" — *"Muita linguagem de IA. Deixar mais técnico e formal"*. A varredura de 07-28 tinha coberto só os arquivos de trial; os 218 capítulos em `global_state.payload->'diretrizes'` nunca foram varridos. **Ao escrever ou refazer capítulo, aplicar a regra na hora** — é mais barato que varrer depois.
+  - **Os tiques que apareceram lá,** além dos já listados: **personificação do fármaco** ("o fármaco *ganha peso*" — quem ganha é o paciente; usar "associa-se a ganho ponderal"), **coloquialismo** ("é o campeão", "engana", "não resolve", "de verdade", "mexem menos na glicose"), **aforismo** ("só se reage ao que se mede", "a duração muda o sinal"), **adjetivo avaliativo** ("alternativa atraente", "o mais marcante", "caso clássico"), **`Numa` no lugar de `Em`** e **⚠️ dentro da prosa**.
+  - **Como medir a extensão** (SQL, não `grep` — o conteúdo está no banco): contar capítulos que casam `ganha peso|engana|é o campeão|de verdade|não resolve|Numa comparação|vale (perguntar|dizer|notar)|só se reage|caso clássico|atraente|impressiona|robusto`. Em 13/08 deu **9 de 218** depois da correção deste. **A regex é proxy grosseiro** — o julgamento do professor é mais largo que ela; não tratar "0 casos" como "está limpo".
+  - **O que NÃO tocar ao reescrever:** dado numérico, `{barra:...}`, títulos de seção (⚠️ "Armadilhas de prova" é seção padrão em 15 capítulos), flashcards, mapa e fluxograma. Conferir depois que **todo token numérico do texto antigo sobreviveu** — extrair os números do resumo antigo por SQL e casar contra o novo.
 - **Varredura de 2026-07-28:** 16 ocorrências corrigidas em `trials.js`, `trials2.js`, `trials4.js` e `comparativos.js` — títulos de seção ("divisor de águas", "cemitério de estudos negativos", "O paradoxo que…", "A pergunta incômoda…"), autoelogio de método ("com honestidade", "vale dizer em voz alta") e ênfase vazia ("a magnitude impressiona" → a redução absoluta em pontos percentuais). Fonte local e banco em sincronia; 43/43 e 40/40 conferidos depois.
   - **Como reencontrar o resto,** quando aparecer mais: `grep -o -n "divisor de águas\|cemitério\|com honestidade\|em voz alta\|vale dizer\|incômoda\|paradoxo\|impressiona\|chave de tudo\|não pode ser omitida\|desconfortável" trials*.js info*.js comparativos.js`
 
@@ -2435,3 +2499,28 @@ Pergunta do Rodolpho: *"resolva pendência do vercel. qual a melhor recomendaç�
   1. **Lotes de no máximo 2 itens** por `execute_sql` (~9 KB). Truncagem escala com o tamanho do bloco.
   2. **Conferir por md5, não por olho.** Depois de inserir, comparar banco × fonte local campo a campo: `md5(v->>'resumo')`, `md5(string_agg)` dos `pts`/`flashcards`, `md5(concat_ws)` dos metadados — e diferenciar por script, não visualmente. Contagem de itens não pega nada: o item truncado **está lá**.
   3. **Se o lote carrega um flag de segurança** (`rascunho`, `privado`), reaplicá-lo em um `update` separado depois do insert — idempotente e imune à truncagem: `set payload = jsonb_set(..., jsonb_agg(case when v->>'tipo'='artigo' then v || '{"rascunho":true}'::jsonb else v end order by ord))`. Flag correto não pode depender de o insert ter saído inteiro.
+
+## 🎯 FILTRAR POR `privado` SEMPRE, não só por `sub` e `tema` (2026-08-14)
+
+Ao atualizar os capítulos pela pasta do EndoTEEM 2026, escrevi um `update` que
+casava por `sub` **e** `tema` — e atingiu junto a **diretriz pública** de mesmo
+nome. `Hipopituitarismo`, `Craniofaringioma`, `Acromegalia` e vários outros
+**existem duas vezes** no `payload->'diretrizes'`: uma vez como capítulo da aba
+Resumos (`privado: true`) e outra como diretriz pública. Casar só por `tema`
+pega as duas.
+
+O texto não se perdeu porque o `replace()` não achou a âncora de seção na versão
+pública — mas os `pts` e a `fonte`, que eu concatenava **incondicionalmente**,
+foram sobrescritos. E **a fonte original não era recuperável**: o payload é um
+blob jsonb, sem histórico.
+
+**As regras:**
+1. **Todo `update` em `diretrizes` filtra por `coalesce(d->>'privado','')` também.**
+   Capítulo e diretriz pública são coisas diferentes e têm dono diferente.
+2. **O que é concatenado incondicionalmente (`|| pts`, `|| fonte`) escapa da
+   proteção da âncora.** O `replace()` falha em silêncio; a concatenação, não.
+   Se o alvo pode estar errado, a concatenação é que denuncia — tarde demais.
+3. **Antes de rodar, LISTE quantas linhas o `case` vai casar.** Um `select` com o
+   mesmo predicado custa um segundo e mostra a duplicata.
+4. **Depois de rodar, audite o efeito colateral**, não só o efeito pretendido:
+   procurei por diretrizes públicas com fonte do EndoTEEM e achei a única vítima.
