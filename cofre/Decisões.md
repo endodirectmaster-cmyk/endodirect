@@ -1,6 +1,6 @@
 ---
 tags: [cofre, decisoes]
-atualizado: 2026-08-14
+atualizado: 2026-08-15
 ---
 
 # Decisões
@@ -8,6 +8,15 @@ atualizado: 2026-08-14
 Log de decisões de produto e técnicas (mais recentes no topo).
 
 ## 2026-08
+- **🩺 TRÊS ERROS ATIVOS NA EMERGÊNCIA DA CETOACIDOSE CORRIGIDOS NO NÚCLEO (2026-08-15).** `sw.js` v239 → **v240**. Ordem do professor: *"Corrige os 3 itens e faz o PR"*. A fonte é o consenso **ADA/EASD/JBDS/AACE/DTS 2024** (Diabetes Care 2024;47:1257-1275) que ele mandou por PDF — a base respondia a cetoacidose com material de 2020. Nota nova: [[Crises Hiperglicêmicas no Adulto — CAD e EHH (consenso ADA-EASD 2024)]].
+  1. **O corte de potássio que segura a insulina.** O núcleo dizia *"ADULTO com hipocalemia **SINTOMÁTICA** → adiar a insulina até o K passar de **3,3**"*. O consenso não condiciona a sintoma e usa outro número: **K <3,5 → repor a 10 mmol/h e adiar a insulina até passar de 3,5** (ocorre em 5–10% das admissões). Exigir sintoma para segurar a insulina é o defeito que mais pesa dos três: hipocalemia é a causa provável do excesso de mortalidade na CAD.
+  2. **A cetonemia estava excluída da gravidade.** O núcleo dizia *"gravidade se mede por acidose e nível de consciência — nunca pela glicemia **nem pela cetonemia**"*. A metade da **glicemia** continua certa (é ≥200 mg/dL nas três faixas, então não separa nada). A da **cetonemia** está superada no adulto: **BOHB >6,0 mmol/L marca a CAD grave**, e leve e moderada compartilham 3,0–6,0. A faixa **pediátrica** do núcleo não foi tocada — este consenso é de adultos e diz isso.
+  3. **O gatilho para pedir cetona perdia quem já tem diabetes.** O núcleo mandava medir *"se sintomas ou glicemia >200"*. O critério de 2024 desacopla da glicemia: **glicemia ≥200 OU história prévia de diabetes, independentemente do valor** — quem já sabe ser diabético e chega com glicemia normal escapava do gatilho antigo.
+  - ⚠️ **A ressalva do próprio artigo virou mentira no mesmo instante em que o núcleo melhorou** — ela citava as quatro frases antigas. O `confere-ressalvas.js` pegou as quatro **e mais uma que eu não tinha previsto**: `nucleo_ausente` afirmava que o núcleo não falava de "beta-hidroxibutirato", e a correção (2) acabara de introduzir o termo. Os itens (1), (3) e (4) do `conflito` foram reescritos como **concordância com trava** ("NÃO reintroduza o corte de 3,3"), não apagados: ressalva que só some deixa a versão velha livre para voltar. `conflito_direcao` segue **`misto`** — (2), (5), (6), (7) e (9) continuam divergência ou lacuna reais.
+  - **Prova de que a mudança é só onde deveria ser:** diff sentença a sentença do `CLINICAL_GUIDELINES` contra `origin/main` — **4 trechos saem, 8 entram, todos dentro do bloco de crises hiperglicêmicas**; 73.651 → 74.205 chars. O harness A/B em Chromium mediu **exatamente +554 bytes** no maior script, com `nodes`, `botoes` e `listeners` idênticos aos da main e 0 pageerror.
+  - **26 fatos, em 7 extratos, foram RELIDOS um a um antes de recarimbar** o `nucleo_sha` (e420852b1d09 → cb1b27a472e5). Nenhum deles trata de cetoacidose — são vitamina D, fosfatase alcalina, hiperparatireoidismo, teplizumabe, semaglutida/NASH, mitotano e a série de hipertireoidismo. O `--selar` só vale depois da leitura; carimbar sem ler transforma a peneira em enfeite.
+  - **Conservação no extrato:** 153/153 fatos idênticos e 153/153 `cit_sha` preservados — só `conflito`, `nucleo_citado` e `nucleo_ausente` mudaram.
+  - ci-validate **verde** (inclui o teste de caminho clínico), `confere-ressalvas` 41/41.
 - **📚 EndoTEEM 2026 propagado para os capítulos: 66 aulas do Canva, ~3.200 slides, 82 capítulos enriquecidos (2026-08-14).** Instrução do professor: *"Entre no Canva, na pasta EndoTEEM 2026, e atualize todos os resumos dos capítulos da plataforma baseado nas aulas dessa pasta"* — depois escalada para *"faça tudo"* e *"siga tudo e termine a tarefa toda"*.
   - **Cobertura final:** 61 aulas aplicadas · 6 sem capítulo correspondente (DHEM, Lipodistrofias, Diabetes monogênico, Diabetes no SUS, Disruptores ×2) · 0 pendentes. Duas pastas ficaram fora do escopo por não corresponderem a capítulo (Inaugural, Hot Topics e Multimídia).
   - **Por área** (capítulos com fonte EndoTEEM 2026): Tireoide 11 · Obesidade 10 · Diabetes 8 · Adrenal 7 · Osteometabolismo 7 · Neuroendocrinologia 7 · Endocrinologia Feminina 6 · Lípides 6 · Endocrinologia do Esporte 6 · Transgeneridade 5 · Endocrinologia Básica 4 · Endocrinologia Masculina 4 · Endocrinopatias 1.

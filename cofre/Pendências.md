@@ -1,34 +1,40 @@
 ---
 tags: [cofre, pendencias]
-atualizado: 2026-08-14
+atualizado: 2026-08-15
 ---
 
 # Pendências
 
-## 🔴 O QUE SÓ O PROFESSOR RESOLVE — a lista curta (2026-08-14)
+## 🔴 O QUE SÓ O PROFESSOR RESOLVE — a lista curta (atualizada 2026-08-15)
 
-Zerei hoje tudo o que era meu. Isto é o que sobrou, e **nenhum item depende de
-mais trabalho meu — depende de uma resposta dele.**
+Isto é o que sobrou, e **nenhum item depende de mais trabalho meu — depende de
+uma resposta dele.**
 
-1. ⚠️ **O CONSENSO ADA/EASD 2024 DE CRISES HIPERGLICÊMICAS NÃO EXISTE NO DRIVE.**
-   A base responde **cetoacidose com material de 2020**. Busquei a fila inteira
-   por `hyperglycemic crisis`, `ketoacidosis`, `hiperosmolar`. Cetoacidose é
-   emergência e é dos assuntos mais consultados. **É o maior risco da lista, e a
-   única saída é ele mandar o documento.** Não dá para extrair o que não está lá.
+1. ✅ **RESOLVIDO — o consenso ADA/EASD 2024 chegou pelo professor** (PDF, 14/08).
+   Extraído (153 fatos, cobertura das 19 páginas) e, em **15/08**, os **três erros
+   ativos do núcleo** que ele expôs foram corrigidos: o corte de potássio (3,5 sem
+   exigir sintoma, não 3,3 com sintoma), a cetonemia de volta à gravidade (BOHB
+   >6,0 = grave) e o gatilho da cetona (história de diabetes basta). Ver
+   [[Decisões]] e a nota [[Crises Hiperglicêmicas no Adulto — CAD e EHH (consenso ADA-EASD 2024)]].
 2. **Os 17 extratos com 5+ anos** — quais valem substituir é decisão editorial.
-   Os mais sensíveis: cetoacidose diabética (2020), cetoacidose euglicêmica
-   (2020), insuficiência adrenal (2021), crise tireotóxica (2021).
+   ⚠️ Os dois de **cetoacidose (2020)** deixaram de ser o pior caso: o adulto está
+   coberto pelo consenso de 2024. **A CRIANÇA NÃO** — o consenso é de adultos e
+   diz isso; a CAD pediátrica e o edema cerebral seguem só com 2020. Os outros
+   sensíveis: insuficiência adrenal (2021), crise tireotóxica (2021).
 3. **`nivolumabe`/`pembrolizumabe` → Tireoide** (reponderação — ver a seção do
    teste de caminho; a medição deu empate com troca de lado).
 4. **As divergências clínicas do EndoTEEM** — sobretudo **finerenona ×
    espironolactona, cujos limiares de potássio estão invertidos entre a aula de
    2025 e a de 2026**. Arbitrar seria inventar medicina. Estão sinalizadas dentro
    dos capítulos como divergência, não como fato.
-5. **Merge dos 36 commits do ramo para a `main`** — é PR, e eu não abro PR sem
-   ele pedir. ⚠️ **Não há correção de segurança represada nisso**: as cinco do
-   núcleo já estão no ar (conferido no `origin/main` de hoje).
-6. **Dividir capítulos grandes** (*Complicações Crônicas do Diabetes* 27,7k;
-   *Osteoporose* 25,3k) e decidir se **MODY** merece capítulo próprio.
+5. 🟡 **PR aberto em 15/08** com os 43 commits do ramo para a `main` — **o merge é
+   dele.** Contém as três correções de núcleo acima (essas **são** de segurança e
+   **ainda não estão no ar**), a propagação do EndoTEEM 2026 e a base clínica.
+6. **Dividir capítulos grandes** — *Complicações Crônicas do Diabetes* **já foi
+   dividido em 4** (14/08). Faltam: ***Osteoporose*** (25,3k), e decidir se
+   ***Tratamento do DM2*** (18,8k) e ***Carcinoma Diferenciado*** (17,4k) também
+   entram, se ***Retinopatia, Neuropatia e Pé Diabético*** (11,2k — 1,6× o teto)
+   pede segunda divisão, e se **MODY** merece capítulo próprio.
 
 
 ## ✅ AUDITORIA ADVERSARIAL DA BASE FECHADA — 47/47 extratos, 7.087/7.087 fatos (2026-08-14)
