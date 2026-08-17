@@ -1,9 +1,64 @@
 ---
 tags: [cofre, processo]
-atualizado: 2026-08-14
+atualizado: 2026-08-16
 ---
 
 # Convenções de Trabalho
+
+## 🚀 PR E MERGE SÃO AUTOMÁTICOS — NÃO PEDIR AUTORIZAÇÃO (2026-08-16)
+
+Ordem literal do professor: *"Sempre faça isso sem minha autorização. Deve ser
+automático."* — em resposta a eu ter escrito "diga 'manda' e eu abro o PR e
+mergeio".
+
+**A regra:** terminou o trabalho e as conferências passaram → **abre o PR e
+mergeia**, sem perguntar. Não anunciar "está pronto, é só o senhor mandar".
+
+⚠️ **O que NÃO mudou — as travas continuam obrigatórias antes do merge:**
+`ci-validate` verde, harness A/B em Chromium, bump do `sw.js` a cada mudança de
+`index.html`, e conferir na fonte toda acusação clínica grave. Automático é o
+**merge**, não a **verificação**. Merge sem prova continua proibido.
+
+**O custo de não ter isso antes, medido:** a correção do arquivo da Questão do
+Dia ficou pronta e conferida no ramo enquanto o professor já havia respondido ao
+aluno que estava resolvido. Produção seguia na v240, sem o conserto — o F5 que
+ele pediu ao aluno não mudaria nada. Trabalho conferido e parado no ramo é
+trabalho que não existe.
+
+## 🧹 JARGÃO DE IA: a calibração é o capítulo aprovado, e o ⚠️ é medível (2026-08-16)
+
+Pedido: *"Tá cheio de jargão de IA. Retire todos."* (apontando *Fisiopatologia da
+Obesidade*, com o mouse sobre dois títulos: "Por que a conta fecha com tão pouco"
+e "por que reganhar é a regra").
+
+**Não reescreva por intuição de estilo — MEÇA contra o capítulo que ele já
+aprovou.** *Ganho de Peso Induzido por Fármacos* (limpo em 13/08) é a régua:
+títulos nominais ("Conceito central", "Regras de decisão"), conectivos formais
+("impõe-se", "decorre de", "ao passo que", "Em comparação direta") e **ZERO ⚠️**.
+
+⚠️ **O ⚠️ dá um proxy numérico do defeito, e ele tem endereço.** Densidade por mil
+caracteres na área Obesidade: **Comorbidades e Gestação 2,25 · Fisiopatologia
+1,76 · Avaliação Clínica 1,49**; todo o resto da base ≤0,97, a maioria em zero.
+Os três primeiros são exatamente os três que a propagação do EndoTEEM 2026
+engordou. **Não é o estilo da casa — é resíduo daquele lote.**
+
+**Os tiques, além do ⚠️ na prosa:** título retórico ("Por que…", "…é a regra"),
+subtítulo coloquial ("Gasta menos", "Come mais"), aforismo ("É o contrário do
+senso comum", "não uma falha de disciplina", "fechando o círculo"), personificação
+("alimentos *desligam* o apetite"), metáfora ("o braço protetor"), adjetivo
+avaliativo ("a parcela mais controlável") e coloquialismo entre aspas
+("cicladoras", "efeito sanfona").
+
+**Como provar que só o estilo mudou:**
+1. **Histograma numérico medido NO SERVIDOR** (não transcrito): 91 tokens antes,
+   91 depois, 0 perdidos e 0 inventados. Transcrever o texto antigo para comparar
+   localmente introduz o erro que se quer medir.
+2. Seções, linhas de tabela e tabelas `📊` conservadas (21 / 31 / 3).
+3. Lista de **frases proibidas** conferida no texto novo (24 padrões, 0 sobreviveram).
+4. ⭐ **`md5` como prova final:** calcule o md5 do texto auditado localmente e exija
+   que o `md5()` da linha no servidor bata. É o que garante que o que está no ar é
+   byte a byte o que passou pelas guardas.
+5. **Snapshot em `endodirect_backup_diretriz` ANTES do update**, sempre.
 
 ## 🔢 `privado` É BOOLEANO NO BANCO — eu escrevi "string" num brief e o agente me corrigiu (2026-08-14)
 
