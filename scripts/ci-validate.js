@@ -251,6 +251,19 @@ try {
   fail('regressão da enquete de Educação Médica Continuada falhou:\n' + out);
 }
 
+// 17d. CADÊNCIA DO RADAR: o mural precisa de mais de uma varredura por dia. Com
+//      uma só (07:30 BRT), notícia publicada depois dela só aparece no dia
+//      seguinte — foi a queixa de 17/08/2026 (ANVISA aprovando canetas de
+//      semaglutida às 11:02, 3h32 após a varredura). Nada estava quebrado: a
+//      fonte funciona e o filtro deixaria passar; o defeito era a latência.
+try {
+  execFileSync(process.execPath, [path.join('scripts', 'test-radar-cadencia.js')], { stdio: 'pipe' });
+  ok('cadência do radar: mais de uma varredura por dia e fontes regulatórias preservadas');
+} catch (e) {
+  const out = (e.stdout ? e.stdout.toString() : '') + (e.stderr ? e.stderr.toString() : '');
+  fail('regressão da cadência do radar falhou:\n' + out);
+}
+
 // 18. ARTIGO é conteúdo só de Resumos, nunca da aba Diretrizes. O card do artigo
 //     trazia "📢 Publicar", que move o item para as Diretrizes — leitura crítica
 //     de um trial no meio das recomendações de sociedade, e para todo mundo.

@@ -8,6 +8,17 @@ atualizado: 2026-08-17
 Log de decisões de produto e técnicas (mais recentes no topo).
 
 ## 2026-08
+- **📡 O RADAR NÃO ESTAVA QUEBRADO — RODAVA POUCO (2026-08-17).** O professor mandou o print de uma notícia da ANVISA (*"Anvisa aprova duas novas canetas para tratamento de diabetes"*, princípio ativo semaglutida, publicada **11:02**) e disse: *"Não captou essa notícia no mural."* **Só `vercel.json`** — nada de `index.html`, logo sem bump de `sw.js`.
+  - ⚠️ **ANTES DE MEXER, DESCARTEI AS TRÊS SUSPEITAS ÓBVIAS — e todas estavam inocentes:**
+    1. **A fonte funciona.** O mural tem um item da própria ANVISA de **29/07/2026** (*"Anvisa registra cinco novas canetas de semaglutida"*), do mesmo assunto. O feed oficial está em `lib/news.js` com `official: true`.
+    2. **O filtro deixaria passar.** `isRelevant()` exige termo de aprovação **E** termo de área: *"aprova"* casa `aprov` e *"diabetes"* casa `diabet`.
+    3. **O cron rodou no dia** — o item mais recente do radar é de 17/08 às 08:06.
+  - **A causa era CADÊNCIA:** `"30 10 * * *"` = **uma varredura por dia, 07:30 BRT**. A notícia saiu **3h32 depois** e só entraria na manhã seguinte. Para notícia de agência reguladora sobre a classe de fármacos que é o centro da plataforma, ~24 h de latência **é o defeito, mesmo sem erro nenhum no caminho**.
+  - **Conserto:** `"30 10,20 * * *"` — **duas varreduras** (07:30 e 17:30 BRT). A de 17:30 teria pego a de hoje.
+  - ⚠️ **Confirmei o plano antes de mexer no cron:** `vercel.json` já declara `maxDuration: 120` para `api/ai.js`, e o teto do Hobby é 60 s — logo o projeto é **Pro**, que aceita agendamento sub-diário. Mexer em cron sem isso quebraria o deploy.
+  - ⚠️ **NÃO CONSEGUI TESTAR O FEED DAQUI, e não acusei a fonte por isso.** O sandbox devolveu 403 para `gov.br` — mas devolveu 403 igual para o feed da FDA, que comprovadamente funciona em produção. Era o *allowlist* do meu ambiente, não a ANVISA. Diagnostiquei pelo que é observável: o histórico no banco e o código do filtro.
+  - **Guarda:** `scripts/test-radar-cadencia.js` no `ci-validate` (17d) — falha se o radar voltar a 1×/dia, e trava as fontes ANVISA em `lib/news.js`. **Verificado por mutação.**
+  - **Para hoje:** o professor pode puxar a notícia agora pelo botão de atualizar radar do painel (`api/admin/refresh-radar`), sem esperar as 17:30.
 - **🎓 ENQUETE DO PROGRAMA DE EDUCAÇÃO MÉDICA CONTINUADA — SÓ PARA O GOLD (2026-08-17).** `sw.js` v241 → **v242**. Pedido do professor: *"Para os assinantes do plano gold, joga uma enquete na tela inicial de quais aulas eles têm interesse que sejam dadas no nosso programa de educação médica continuada… Disponível apenas para os assinantes do plano gold."*
   - **Onde:** card no topo do `panel-dash`, por `renderEnqueteCme()` dentro do `refreshDash()`. Temas = os 14 de `DIR_SUBS`, mais campo livre de 120 caracteres. Painel do professor em `🎓 Enquete EMC`, com ranking em barras e as sugestões livres.
   - ⚠️ **DECISÃO DE PRODUTO QUE EU TOMEI, E QUE ELE PODE REVERTER: teto de 3 escolhas** (`CME_MAX`). Enquete de marcar-quantos-quiser tende a "todo mundo marca tudo" e **não produz ordem de prioridade** — que é exatamente o que ele precisa para montar o calendário mensal. Trocar o número reverte.
