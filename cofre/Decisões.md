@@ -1,6 +1,6 @@
 ---
 tags: [cofre, decisoes]
-atualizado: 2026-08-15
+atualizado: 2026-08-16
 ---
 
 # Decisões
@@ -8,6 +8,13 @@ atualizado: 2026-08-15
 Log de decisões de produto e técnicas (mais recentes no topo).
 
 ## 2026-08
+- **🧠 A QUESTÃO DE HOJE ERA A ÚLTIMA LINHA DA LISTA DO ALUNO (2026-08-16).** `sw.js` v240 → **v241**. Reclamação real pelo Suporte: *"Questões diárias não estão mais aparecendo para serem respondidas desde o dia 5 de agosto."* Detalhe completo em [[Instagram Stories (Questão do Dia)]].
+  - **A publicação nunca falhou um dia.** O cron promoveu uma questão por dia de 01/08 a 16/08, sem buraco (52 postadas, 14 na fila). O defeito era de **ordenação na tela do aluno**: `renderQotdArchive()` renderizava na **ordem crua do array** (mais antiga primeiro), então a do dia era a **52ª linha**. E o modal só aparece **no Mural**, 1× por sessão — quem entra pela aba nunca o vê.
+  - ⚠️ **O rastro do aluno prova o efeito:** até 06/08 ele respondia a do dia no próprio dia; de 10/08 em diante respondeu as posições **1, 2, 3, 4, 5…** do array — questões de **junho** —, uma por dia. Achou a lista, começou do topo, nunca chegou na de hoje.
+  - ⚠️⚠️ **Por que sobreviveu 10 dias: o arquivo do PROFESSOR já ordenava por data** (`admQotdArchSort='recent'`, com seletor). Da tela dele a de hoje era a primeira linha. **A tela com o defeito era a única que ninguém da casa abre.** Lição: quando existem duas telas do mesmo dado, o padrão de ordenação tem de ser o mesmo nas duas — e a guarda tem de travar os dois.
+  - **Conserto:** padrão `'recent'` no aluno com o mesmo seletor do professor (a varredura cronológica continua possível); selo **`🧠 De hoje`** vindo de **`qotdTodays()`**, a mesma fonte do modal, para as telas nunca discordarem; e abertura automática da de hoje na 1ª entrada do painel — **só se não respondida**, senão abriria direto no gabarito.
+  - **🐛 Segundo furo, no mesmo caminho:** `igStories` nasce da cópia local (`lsGet`), e o hydrate do payload redesenhava só o **mural**. Quem abria a aba antes de o servidor responder ficava preso na cópia velha — inclusive em *"Nenhuma questão publicada ainda"* — até sair e voltar. Agora o hydrate redesenha o arquivo também.
+  - **Guarda:** `scripts/test-qotd-arquivo-aluno.js` no `ci-validate` (17b) — 52 questões em JSDOM, exige a de hoje na 1ª linha, marcada e aberta. **Verificado por mutação nas três pontas** (ordem crua, sem abertura automática, sem selo → reprova). ci-validate verde e harness A/B em Chromium idêntico à `main` (0 pageerror).
 - **🩺 TRÊS ERROS ATIVOS NA EMERGÊNCIA DA CETOACIDOSE CORRIGIDOS NO NÚCLEO (2026-08-15).** `sw.js` v239 → **v240**. Ordem do professor: *"Corrige os 3 itens e faz o PR"*. A fonte é o consenso **ADA/EASD/JBDS/AACE/DTS 2024** (Diabetes Care 2024;47:1257-1275) que ele mandou por PDF — a base respondia a cetoacidose com material de 2020. Nota nova: [[Crises Hiperglicêmicas no Adulto — CAD e EHH (consenso ADA-EASD 2024)]].
   1. **O corte de potássio que segura a insulina.** O núcleo dizia *"ADULTO com hipocalemia **SINTOMÁTICA** → adiar a insulina até o K passar de **3,3**"*. O consenso não condiciona a sintoma e usa outro número: **K <3,5 → repor a 10 mmol/h e adiar a insulina até passar de 3,5** (ocorre em 5–10% das admissões). Exigir sintoma para segurar a insulina é o defeito que mais pesa dos três: hipocalemia é a causa provável do excesso de mortalidade na CAD.
   2. **A cetonemia estava excluída da gravidade.** O núcleo dizia *"gravidade se mede por acidose e nível de consciência — nunca pela glicemia **nem pela cetonemia**"*. A metade da **glicemia** continua certa (é ≥200 mg/dL nas três faixas, então não separa nada). A da **cetonemia** está superada no adulto: **BOHB >6,0 mmol/L marca a CAD grave**, e leve e moderada compartilham 3,0–6,0. A faixa **pediátrica** do núcleo não foi tocada — este consenso é de adultos e diz isso.

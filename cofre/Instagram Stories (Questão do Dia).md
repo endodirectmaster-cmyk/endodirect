@@ -1,9 +1,56 @@
 ---
 tags: [cofre, integracoes, marketing]
-atualizado: 2026-07-23
+atualizado: 2026-08-16
 ---
 
 # Instagram Stories — "Questão do Dia"
+
+## 🚨 A QUESTÃO DE HOJE ESTAVA NA ÚLTIMA LINHA DA LISTA DO ALUNO (2026-08-16)
+
+Reclamação real pelo Suporte (15/08, assinante): *"Questões diárias não estão
+mais aparecendo para serem respondidas desde o dia 5 de agosto."*
+
+**A publicação nunca falhou.** Medido no `ig_stories` de produção: o cron promoveu
+**uma questão por dia, todos os dias**, de 01/08 a 16/08, sem buraco — 52 postadas,
+14 ainda na fila. O defeito era de **ORDENAÇÃO, na tela do aluno**:
+
+- `renderQotdArchive()` (aba 🧠 Questão do Dia) renderizava `qotdPublished()` na
+  **ordem crua do array**, que é a de publicação — **mais ANTIGA primeiro**. Com 52
+  publicadas, a do dia era a **52ª linha**.
+- O modal do mural (`renderQotd`) só aparece **no Mural**, 1× por sessão. Quem entra
+  pela aba nunca o vê.
+
+⚠️ **O rastro do aluno prova o efeito.** Até 06/08 ele respondia a questão do dia
+**no próprio dia** (04/08→04/08, 05/08→05/08, 06/08→06/08). De 10/08 em diante
+respondeu as posições **1, 2, 3, 4, 5…** do array — questões de **junho** —, uma por
+dia. Ele achou a lista, começou do topo e nunca chegou na de hoje.
+
+⚠️⚠️ **POR QUE ISSO SOBREVIVEU 10 DIAS: o arquivo do PROFESSOR já ordenava por
+data**, com padrão `admQotdArchSort='recent'` e seletor de ordem. Da tela dele a
+questão de hoje era a primeira linha. **As duas telas divergiam, e a que tinha o
+defeito era a que ninguém da casa abre.**
+
+**O conserto** (`sw.js` v240 → v241):
+1. `qotdArchSort='recent'` no aluno — mesmo padrão do professor — com o mesmo
+   seletor "mais recentes / mais antigas primeiro" (a varredura cronológica que ele
+   estava fazendo à força continua possível, só não é mais o padrão).
+2. Selo **`🧠 De hoje`** na linha, vindo de **`qotdTodays()`** — a mesma fonte que o
+   modal usa, para as duas telas nunca apontarem questões diferentes.
+3. A de hoje **abre sozinha** na 1ª entrada do painel, se ainda não respondida
+   (`qotdArchAuto`). Se já foi respondida, **não** abre — senão o painel abriria
+   direto no gabarito.
+4. 🐛 **Segundo furo, achado no mesmo caminho:** `igStories` nasce de
+   `lsGet('ig_stories')` (cópia do navegador), e o hydrate do payload só redesenhava
+   o **mural**. Quem abria a aba antes de o servidor responder ficava preso na cópia
+   velha — inclusive em *"Nenhuma questão publicada ainda"* — até sair e voltar.
+   Agora o hydrate redesenha o arquivo também, no mesmo padrão da linha do
+   `payload.qotd`.
+
+**Guarda:** `scripts/test-qotd-arquivo-aluno.js`, no `ci-validate` (item 17b).
+Monta 52 questões em JSDOM e exige que a de hoje seja a **1ª** linha, marcada e
+aberta. **Verificado por mutação nas três pontas** — voltar à ordem crua, tirar a
+abertura automática ou tirar o selo reprova o teste. Ele também trava o padrão
+`'recent'` **nas duas telas**, que é a divergência que escondeu tudo.
 
 ## Dificuldade 60/40 prova de título / muito avançado (2026-07-23)
 - **Pedido do usuário:** "deixa então 60/40" (refina o "vá alternando" anterior — agora com proporção fixa).

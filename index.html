@@ -679,6 +679,7 @@ html[data-theme="light"] .mural-text .mural-h1,html[data-theme="light"] .mural-t
 .qa-badge.ok{background:var(--grn-l);color:var(--grn)}
 .qa-badge.err{background:var(--red-l);color:var(--red)}
 .qa-badge.new{background:var(--gold-l);color:var(--gold)}
+.qa-badge.hoje{background:var(--blue-l);color:var(--blue)}
 .qa-body{padding:0 .85rem .85rem}
 .mural-admin-toolbar{display:flex;align-items:flex-start;justify-content:space-between;gap:1rem;flex-wrap:wrap}
 .tag-muted{background:var(--s2);color:var(--tx)}
@@ -4434,7 +4435,13 @@ function applyStatePayload(payload,personalOnly){
     if(Array.isArray(payload.curso_mods_extra))admCursoModsExtra=payload.curso_mods_extra;
     if(Array.isArray(payload.acessos))userAcessos=payload.acessos;
     if(Array.isArray(payload.cursos))catalogoCursos=payload.cursos;
-    if(Array.isArray(payload.ig_stories)){igStories=payload.ig_stories;try{lsSet('ig_stories',igStories);}catch(e){}try{var _mp=document.getElementById('panel-mural'),_qm=document.getElementById('qotd-modal');if(_mp&&_mp.classList.contains('on')&&(!_qm||_qm.style.display==='none'))renderQotd();}catch(e){}}
+    if(Array.isArray(payload.ig_stories)){igStories=payload.ig_stories;try{lsSet('ig_stories',igStories);}catch(e){}try{var _mp=document.getElementById('panel-mural'),_qm=document.getElementById('qotd-modal');if(_mp&&_mp.classList.contains('on')&&(!_qm||_qm.style.display==='none'))renderQotd();}catch(e){}
+      // ⚠️ O ARQUIVO TAMBÉM PRECISA SER REDESENHADO AQUI. `igStories` nasce da CÓPIA
+      // LOCAL (linha do var: lsGet('ig_stories')), que pode estar velha ou vazia. Sem
+      // este redesenho, quem abre a aba "Questão do Dia" antes de o payload chegar fica
+      // preso no que o navegador tinha guardado — inclusive em "Nenhuma questão
+      // publicada ainda" — até sair da aba e voltar. Mesmo padrão da linha do `payload.qotd`.
+      try{var _qp=document.getElementById('panel-qotd');if(_qp&&_qp.classList.contains('on'))renderQotdArchive();}catch(e){}}
     if(payload.aovivo!==undefined)aoVivoAgendada=(payload.aovivo&&typeof payload.aovivo==='object')?payload.aovivo:null;
   if(Array.isArray(payload.ig_pending)){igPending=payload.ig_pending;try{lsSet('ig_pending',igPending);}catch(e){}try{updateAdmPendBadge();}catch(e){}try{maybePendAlert();}catch(e){}}
     // Preserva chaves geridas pelo servidor (newsletter + lembrete IG) p/ o save do admin não apagá-las.
@@ -7322,6 +7329,16 @@ function qotdPick(q,letter){
 }
 // ── ARQUIVO DA QUESTÃO DO DIA (aluno responde/revê; profs revisam) ──
 var qotdArchOpen=null;     // id aberto no arquivo do aluno
+// ⚠️ O arquivo do ALUNO nascia SEM ordenação — renderizava `qotdPublished()` na
+// ordem crua do array, que é a de PUBLICAÇÃO (mais ANTIGA primeiro). Com dezenas
+// de questões acumuladas, a DE HOJE caía no fim da lista e o aluno nunca chegava
+// nela: reclamação real de 15/08/2026 ("questões diárias não estão mais
+// aparecendo desde o dia 5 de agosto"), e os dados dele mostram exatamente isso —
+// parou de responder a do dia e passou a responder as posições 1,2,3,4… do array,
+// de junho, uma por dia. O arquivo do PROFESSOR já ordenava por data com padrão
+// 'recent', então da tela dele o defeito era invisível.
+var qotdArchSort='recent'; // aluno: 'recent' = mais recente primeiro; 'old' = mais antiga
+var qotdArchAuto=true;     // 1ª abertura do painel escancara a de hoje, se ainda não respondida
 var admQotdArchOpen=null;  // id aberto no arquivo do professor
 var admQotdArchSub='';     // filtro de subespecialidade no arquivo do professor ('' = todas)
 var admQotdArchSort='recent'; // ordenação por data ('recent' = mais recente; 'old' = mais antiga)
@@ -7340,19 +7357,30 @@ function qotdArchAnswer(q,letter){
 }
 function renderQotdArchive(){
   var el=document.getElementById('panel-qotd-body');if(!el)return;
-  var list=qotdPublished(),mm=qotdReadAns();
-  if(!list.length){el.innerHTML='<div class="empty">Nenhuma questão publicada ainda. Volte em breve. 🧠</div>';return;}
-  var done=0;list.forEach(function(q){if(mm[q.id])done++;});
-  el.innerHTML='<div style="font-size:.74rem;color:var(--t3);margin-bottom:.7rem">'+done+' de '+list.length+' respondida'+(list.length===1?'':'s')+'</div>'
+  var all=qotdPublished(),mm=qotdReadAns();
+  if(!all.length){el.innerHTML='<div class="empty">Nenhuma questão publicada ainda. Volte em breve. 🧠</div>';return;}
+  // A "de hoje" vem de qotdTodays(), a MESMA fonte do modal do mural — se as duas
+  // telas discordassem, o selo apontaria uma questão e a janela outra.
+  var hoje=qotdTodays();
+  if(qotdArchAuto){qotdArchAuto=false;if(hoje&&!mm[hoje.id])qotdArchOpen=hoje.id;}
+  var list=all.slice().sort(function(a,b){var da=qotdArchDate(a),db=qotdArchDate(b);return qotdArchSort==='old'?(da-db):(db-da);});
+  var done=0;all.forEach(function(q){if(mm[q.id])done++;});
+  var sortOpts='<option value="recent"'+(qotdArchSort!=='old'?' selected':'')+'>Mais recentes primeiro</option><option value="old"'+(qotdArchSort==='old'?' selected':'')+'>Mais antigas primeiro</option>';
+  el.innerHTML='<div style="display:flex;gap:.6rem;flex-wrap:wrap;align-items:center;justify-content:space-between;margin-bottom:.7rem">'
+      +'<span style="font-size:.74rem;color:var(--t3)">'+done+' de '+all.length+' respondida'+(all.length===1?'':'s')+'</span>'
+      +'<select id="qa-sort" style="font-size:.74rem;padding:.3rem .5rem;max-width:220px">'+sortOpts+'</select>'
+    +'</div>'
     +list.map(function(q){
       var ans=mm[q.id]||null,open=(qotdArchOpen===q.id);
       var badge=ans?(ans.ok?'<span class="qa-badge ok">✓ Acertou</span>':'<span class="qa-badge err">✗ Errou</span>'):'<span class="qa-badge new">Responder</span>';
       var pd=qotdArchDate(q);
       var dstr=pd?new Date(pd).toLocaleDateString('pt-BR'):'—';
-      var head='<button type="button" class="qa-head" data-qa-toggle="'+esc(q.id)+'"><span class="qa-snip">'+esc(dstr)+'</span>'+badge+'<span class="qa-caret">'+(open?'▴':'▾')+'</span></button>';
+      var hj=(hoje&&q.id===hoje.id)?'<span class="qa-badge hoje">🧠 De hoje</span>':'';
+      var head='<button type="button" class="qa-head" data-qa-toggle="'+esc(q.id)+'"><span class="qa-snip">'+esc(dstr)+'</span>'+hj+badge+'<span class="qa-caret">'+(open?'▴':'▾')+'</span></button>';
       var body=open?'<div class="qa-body">'+qotdCardHTML(q,ans)+'</div>':'';
       return '<div class="qa-item'+(open?' open':'')+'">'+head+body+'</div>';
     }).join('');
+  var so=document.getElementById('qa-sort');if(so)so.addEventListener('change',function(){qotdArchSort=so.value;renderQotdArchive();});
   el.querySelectorAll('[data-qa-toggle]').forEach(function(h){h.addEventListener('click',function(){var id=h.getAttribute('data-qa-toggle');qotdArchOpen=(qotdArchOpen===id)?null:id;renderQotdArchive();});});
   if(qotdArchOpen){
     el.querySelectorAll('[data-qotd-opt]').forEach(function(b){b.addEventListener('click',function(){

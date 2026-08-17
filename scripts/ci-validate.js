@@ -223,6 +223,20 @@ try {
   fail('regressão da curadoria da Questão do Dia falhou (verifique QOTD_CURATORS/DIR_SUBS/loteSubs no index.html):\n' + out);
 }
 
+// 17b. ARQUIVO da Questão do Dia na tela do ALUNO: a de HOJE tem de ser a 1ª
+//      linha. O arquivo do aluno renderizava na ordem crua do array (mais ANTIGA
+//      primeiro) e, com 52 publicadas, a do dia era a 52ª — enquanto o arquivo do
+//      PROFESSOR já ordenava por data, o que tornava o defeito invisível da tela
+//      dele. Reclamação real de 15/08/2026: "questões diárias não estão mais
+//      aparecendo desde o dia 5 de agosto". A publicação nunca falhou um dia.
+try {
+  execFileSync(process.execPath, [path.join('scripts', 'test-qotd-arquivo-aluno.js')], { stdio: 'pipe' });
+  ok('arquivo da QdD do aluno: a de hoje é a 1ª linha, marcada e aberta — e as duas telas ordenam igual');
+} catch (e) {
+  const out = (e.stdout ? e.stdout.toString() : '') + (e.stderr ? e.stderr.toString() : '');
+  fail('regressão do arquivo da Questão do Dia (aluno) falhou:\n' + out);
+}
+
 // 18. ARTIGO é conteúdo só de Resumos, nunca da aba Diretrizes. O card do artigo
 //     trazia "📢 Publicar", que move o item para as Diretrizes — leitura crítica
 //     de um trial no meio das recomendações de sociedade, e para todo mundo.
