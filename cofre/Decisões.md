@@ -14,7 +14,16 @@ Log de decisões de produto e técnicas (mais recentes no topo).
   - **Prova de que só o estilo mudou.** Histograma numérico medido **no servidor** (para não transcrever o texto antigo, que é onde o erro entraria): **91 tokens antes, 91 depois, 0 perdidos e 0 inventados**. Seções 21→21, linhas de tabela 31→31, tabelas 📊 3→3, `pts` 40, flashcards 5, mapa presente, `privado` segue **booleano**. Base 226 itens e 66 públicas, inalteradas.
   - ⭐ **`md5` como prova final:** o md5 do texto auditado localmente (`2d1a385cf00a984b848fea2744e63fe4`) bate com o `md5()` da linha no servidor. O que está no ar é **byte a byte** o que passou pelas guardas.
   - **Snapshot em `endodirect_backup_diretriz` antes do update** (17.011 chars). Gerador: `scratchpad/obesidade/reescreve-fisiopatologia.js`, com 24 padrões de jargão travados.
-  - ⚠️ **Faltam os outros dois do mesmo lote:** *Comorbidades e Gestação* (16.024 chars, 36 ⚠️) e *Avaliação Clínica e Diagnóstico* (10.062 chars, 15 ⚠️).
+  - ✅ **O LOTE INTEIRO FOI LIMPO NO MESMO DIA — os três capítulos, com as mesmas guardas e `md5` em cada um:**
+
+    | Capítulo | ⚠️ | chars | tokens numéricos | md5 confere |
+    |---|---|---|---|---|
+    | Fisiopatologia da Obesidade | 30 → **0** | 17.011 → 17.141 | 91 → **91** | ✓ `2d1a385c…` |
+    | Obesidade: Comorbidades e Gestação | 36 → **0** | 16.024 → 16.042 | 166 → **166** | ✓ `958848c8…` |
+    | Obesidade: Avaliação Clínica e Diagnóstico | 15 → **0** | 10.062 → 10.125 | 60 → **60** | ✓ `a6ae7ead…` |
+
+    **81 ⚠️ removidos, 317 tokens numéricos conservados, 0 perdidos e 0 inventados.** Seções, linhas de tabela, `pts` (40/31/24), flashcards (5 cada) e `privado` booleano preservados nos três; base segue em 226 itens e 66 públicas. Snapshot em `endodirect_backup_diretriz` antes de cada update. Geradores: `reescreve-fisiopatologia.js`, `reescreve-comorbidades.js` e `reescreve-avaliacao.js`.
+    ⚠️ **Além do ⚠️, caíram nos outros dois:** "e o que muda é a resposta ao tratamento", "por que a obesidade NÃO é Cushing", "O que separa os dois", "Números da gestação", "Prognóstico ruim", "dor abdominal… não é *normal da gravidez*", "O que perguntar e o que examinar", "um a um", "Diga sempre qual régua está usando".
 - **🧠 A QUESTÃO DE HOJE ERA A ÚLTIMA LINHA DA LISTA DO ALUNO (2026-08-16).** `sw.js` v240 → **v241**. Reclamação real pelo Suporte: *"Questões diárias não estão mais aparecendo para serem respondidas desde o dia 5 de agosto."* Detalhe completo em [[Instagram Stories (Questão do Dia)]].
   - **A publicação nunca falhou um dia.** O cron promoveu uma questão por dia de 01/08 a 16/08, sem buraco (52 postadas, 14 na fila). O defeito era de **ordenação na tela do aluno**: `renderQotdArchive()` renderizava na **ordem crua do array** (mais antiga primeiro), então a do dia era a **52ª linha**. E o modal só aparece **no Mural**, 1× por sessão — quem entra pela aba nunca o vê.
   - ⚠️ **O rastro do aluno prova o efeito:** até 06/08 ele respondia a do dia no próprio dia; de 10/08 em diante respondeu as posições **1, 2, 3, 4, 5…** do array — questões de **junho** —, uma por dia. Achou a lista, começou do topo, nunca chegou na de hoje.
