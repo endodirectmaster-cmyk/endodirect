@@ -1,6 +1,6 @@
 ---
 tags: [cofre, decisoes]
-atualizado: 2026-08-16
+atualizado: 2026-08-17
 ---
 
 # Decisões
@@ -8,6 +8,15 @@ atualizado: 2026-08-16
 Log de decisões de produto e técnicas (mais recentes no topo).
 
 ## 2026-08
+- **🎓 ENQUETE DO PROGRAMA DE EDUCAÇÃO MÉDICA CONTINUADA — SÓ PARA O GOLD (2026-08-17).** `sw.js` v241 → **v242**. Pedido do professor: *"Para os assinantes do plano gold, joga uma enquete na tela inicial de quais aulas eles têm interesse que sejam dadas no nosso programa de educação médica continuada… Disponível apenas para os assinantes do plano gold."*
+  - **Onde:** card no topo do `panel-dash`, por `renderEnqueteCme()` dentro do `refreshDash()`. Temas = os 14 de `DIR_SUBS`, mais campo livre de 120 caracteres. Painel do professor em `🎓 Enquete EMC`, com ranking em barras e as sugestões livres.
+  - ⚠️ **DECISÃO DE PRODUTO QUE EU TOMEI, E QUE ELE PODE REVERTER: teto de 3 escolhas** (`CME_MAX`). Enquete de marcar-quantos-quiser tende a "todo mundo marca tudo" e **não produz ordem de prioridade** — que é exatamente o que ele precisa para montar o calendário mensal. Trocar o número reverte.
+  - **Onde o voto mora:** `app_state` do próprio aluno (`payload.enquete_cme`), como o mapa da Questão do Dia. **NÃO vai para o `global_state`:** aquela é uma linha ÚNICA, e voto simultâneo de muita gente em linha única é perda silenciosa por *lost update* — defeito já registrado no cofre.
+  - **Apuração:** RPC `endodirect_admin_enquete_cme`, `SECURITY DEFINER` + `endodirect_is_admin()`, no mesmo padrão de `endodirect_admin_students`. ⭐ **Conferi o portão: a RPC recusou a minha própria conexão** (`forbidden`, 42501), porque ela não é sessão de admin. O cliente **nunca** varre `endodirect_app_state` — a RLS não deixaria, e o teste proíbe.
+  - **A apuração ordena pelo voto de quem é GOLD HOJE**, não pelo total: quem votou e caiu para Standard aparece entre parênteses, mas não decide o calendário de um programa exclusivo. Público atual: **39 assinantes Gold elegíveis**.
+  - 🐛 **DEFEITO QUE EU MESMA INTRODUZI E PEGUEI ANTES DE SUBIR.** Na 1ª versão o clique no chip gravava a seleção **parcial** em `DB.enqueteCme`. Como `persist()` é chamado por dezenas de outras ações do app (responder questão, revisar card, salvar nota), **meio voto seria enviado ao servidor sem o aluno clicar em Enviar** e entraria na apuração como voto real. A seleção em andamento passou a viver fora de `DB` (`cmeSel`); só o Enviar escreve.
+  - **Guarda:** `scripts/test-enquete-cme.js` no `ci-validate` (17c). A invariante principal é a **exclusividade**: degustação, Standard e curso-avulso não podem ver a enquete **nem sobrar marcação no DOM** (esconder por CSS não basta — o benefício que o plano vende deixaria de ser exclusivo, sem erro nenhum). **Verificado por mutação nas quatro pontas** — abrir o portão do Gold, tirar o teto, fazer o chip gravar em `DB`, ou tirar `enquete_cme` do `persist` reprova o teste.
+  - ci-validate verde e harness A/B em Chromium com **0 pageerror** (+2 nós: o card e o botão do painel).
 - **🧹 JARGÃO DE IA REMOVIDO DE *FISIOPATOLOGIA DA OBESIDADE* (2026-08-16).** Ordem do professor apontando a tela: *"Tá cheio de jargão de IA. Retire todos."* — com o mouse sobre "Por que a conta fecha com tão pouco" e "por que reganhar é a regra". **Só banco** (Supabase), sem tocar `index.html` → sem bump de `sw.js` e sem CI.
   - **Medi antes de escrever, contra o capítulo que ele já aprovou.** *Ganho de Peso Induzido por Fármacos* (limpo em 13/08) tem **zero ⚠️** e títulos nominais — é a régua. Densidade de ⚠️ por mil chars na área: **Comorbidades e Gestação 2,25 · Fisiopatologia 1,76 · Avaliação Clínica 1,49**, contra ≤0,97 em todo o resto e zero na maioria. ⚠️ **Os três primeiros são exatamente os três que a propagação do EndoTEEM 2026 engordou** — não é estilo da casa, é resíduo daquele lote.
   - **O que saiu:** 30 ⚠️ da prosa e das tabelas; títulos retóricos (→ "Termogênese adaptativa", "Magnitude do balanço energético positivo", "Determinantes do gasto em repouso", "Ciclagem ponderal e memória epigenética"); subtítulos coloquiais ("Gasta menos"/"Come mais" → "Redução do gasto energético"/"Aumento da ingestão"); aforismos ("É o contrário do senso comum", "não uma falha de disciplina", "fechando o círculo", "a leptina simplesmente não chega"); personificação ("alimentos *desligam* o apetite"); metáfora ("o braço protetor da microbiota"); e coloquialismos entre aspas ("cicladoras", "efeito sanfona", "falta de força de vontade").

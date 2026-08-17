@@ -237,6 +237,20 @@ try {
   fail('regressão do arquivo da Questão do Dia (aluno) falhou:\n' + out);
 }
 
+// 17c. ENQUETE do programa de Educação Médica Continuada: é benefício EXCLUSIVO
+//      do plano Gold — se vazar para Standard ou degustação, a exclusividade que
+//      o plano vende deixa de existir, e isso não dá erro nenhum: some da tela do
+//      professor e só o cliente enxerga. Cobre também o teto de 3 escolhas e a
+//      trava de não gravar seleção parcial (defeito real da 1ª versão: o clique
+//      no chip escrevia em DB e qualquer persist() do app mandava meio voto).
+try {
+  execFileSync(process.execPath, [path.join('scripts', 'test-enquete-cme.js')], { stdio: 'pipe' });
+  ok('enquete EMC: só Gold enxerga, teto de 3, e seleção parcial não vira voto');
+} catch (e) {
+  const out = (e.stdout ? e.stdout.toString() : '') + (e.stderr ? e.stderr.toString() : '');
+  fail('regressão da enquete de Educação Médica Continuada falhou:\n' + out);
+}
+
 // 18. ARTIGO é conteúdo só de Resumos, nunca da aba Diretrizes. O card do artigo
 //     trazia "📢 Publicar", que move o item para as Diretrizes — leitura crítica
 //     de um trial no meio das recomendações de sociedade, e para todo mundo.
