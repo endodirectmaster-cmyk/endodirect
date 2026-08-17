@@ -680,6 +680,12 @@ html[data-theme="light"] .mural-text .mural-h1,html[data-theme="light"] .mural-t
 .qa-badge.err{background:var(--red-l);color:var(--red)}
 .qa-badge.new{background:var(--gold-l);color:var(--gold)}
 .qa-badge.hoje{background:var(--blue-l);color:var(--blue)}
+/* Enquete do programa de Educação Médica Continuada (só plano Gold, no dashboard) */
+.cme-chip{display:inline-flex;align-items:center;gap:.3rem;padding:.4rem .68rem;border-radius:999px;border:1px solid var(--bd);background:var(--s2);color:var(--t2);font-size:.76rem;font-weight:600;cursor:pointer;transition:all .12s}
+.cme-chip:hover{border-color:var(--gold)}
+.cme-chip.on{background:var(--gold-l);border-color:var(--gold);color:var(--gold)}
+.cme-chip[disabled]{opacity:.45;cursor:not-allowed}
+.cme-chip[disabled]:hover{border-color:var(--bd)}
 .qa-body{padding:0 .85rem .85rem}
 .mural-admin-toolbar{display:flex;align-items:flex-start;justify-content:space-between;gap:1rem;flex-wrap:wrap}
 .tag-muted{background:var(--s2);color:var(--tx)}
@@ -2146,6 +2152,7 @@ input.dmm-inp-subsub{flex:1;min-width:0;background:transparent;color:var(--t2);f
       <div class="breadcrumb">Dashboard <b>/ Visão Geral</b></div>
       <div class="ph"><h1 id="dash-greeting">Bem-vindo.</h1><p>Continue seus estudos.</p></div>
       <div class="pc">
+        <div id="cme-card" style="display:none;margin-bottom:10px"></div>
         <div id="qotd-card" style="display:none;margin-bottom:10px"></div>
         <div id="streak-card" style="margin-bottom:10px"></div>
         <div class="g4" style="margin-bottom:10px">
@@ -2694,6 +2701,7 @@ input.dmm-inp-subsub{flex:1;min-width:0;background:transparent;color:var(--t2);f
           <button class="adm-nav" data-asec="provas">📝 Provas &amp; Questões</button>
           <button class="adm-nav" data-asec="cursos">🎬 Cursos</button>
           <button class="adm-nav" data-asec="estudantes">👥 Estudantes</button>
+          <button class="adm-nav" data-asec="cme">🎓 Enquete EMC</button>
           <button class="adm-nav" data-asec="conteudo">🎧 Podcasts</button>
           <button class="adm-nav" data-asec="mapas">✦ Mapas Mentais</button>
           <button class="adm-nav" data-asec="flashcards">🃏 Flashcards</button>
@@ -4354,7 +4362,7 @@ function persistPodcasts(){lsSet('podcasts',podcasts);queueRemoteStateSave();}
 
 function userStatePayload(){
   // adm_perfil é PESSOAL (vai no app_state do próprio admin, não no global).
-  var p={q:DB.q,fc:DB.fc,mm:DB.mm,notes:DB.notes,crono:DB.crono,sf_results:DB.sf_results,perf:DB.perf,perfTema:DB.perfTema,act:DB.act,srs:DB.srs,goal:DB.goal,cursoProg:DB.cursoProg,plan:DB.plan,qotd:DB.qotd,user_profile:lsGet('user_profile'),deg_trials:degTrials,ck_billing:lsGet('ck_billing'),presc_emitidas:lsGet('presc_emitidas')||[]};
+  var p={q:DB.q,fc:DB.fc,mm:DB.mm,notes:DB.notes,crono:DB.crono,sf_results:DB.sf_results,perf:DB.perf,perfTema:DB.perfTema,act:DB.act,srs:DB.srs,goal:DB.goal,cursoProg:DB.cursoProg,plan:DB.plan,qotd:DB.qotd,enquete_cme:DB.enqueteCme,user_profile:lsGet('user_profile'),deg_trials:degTrials,ck_billing:lsGet('ck_billing'),presc_emitidas:lsGet('presc_emitidas')||[]};
   if(currentUser&&currentUser.role==='admin'){
     // Nunca persiste o perfil de OUTRO admin: se o e-mail do perfil em memória
     // não bater com o da sessão (resíduo de localStorage antigo), reconstrói da
@@ -4414,6 +4422,15 @@ function applyStatePayload(payload,personalOnly){
   if(payload.goal&&typeof payload.goal==='object')DB.goal=payload.goal;
   if(payload.cursoProg&&typeof payload.cursoProg==='object')DB.cursoProg=payload.cursoProg;
   if(payload.plan!==undefined)DB.plan=payload.plan;
+  // Voto da enquete de Educação Médica Continuada: o SERVIDOR manda, para o aluno
+  // que votou no celular não reencontrar a enquete em branco no computador.
+  if(payload.enquete_cme&&typeof payload.enquete_cme==='object'&&Array.isArray(payload.enquete_cme.temas)){
+    var _vl=DB.enqueteCme;
+    // Mantém o mais RECENTE dos dois: quem acabou de votar aqui não perde o voto
+    // para uma resposta antiga que ainda estava viajando.
+    if(!_vl||!Array.isArray(_vl.temas)||(payload.enquete_cme.em||0)>=(_vl.em||0))DB.enqueteCme=payload.enquete_cme;
+    try{if(document.getElementById('cme-card'))renderEnqueteCme();}catch(e){}
+  }
   if(payload.qotd&&typeof payload.qotd==='object'){DB.qotd=Object.assign({},payload.qotd,DB.qotd||{});try{localStorage.setItem('qotd_answered',JSON.stringify(DB.qotd));}catch(e){}try{var _qp=document.getElementById('panel-qotd');if(_qp&&_qp.classList.contains('on'))renderQotdArchive();}catch(e){}}
   if(!personalOnly){
     if(Array.isArray(payload.provas))provasDB=canonProvaArea(payload.provas);
@@ -7239,7 +7256,101 @@ function refreshDash(){
   var due=srSessionCount();
   setText('d-qn',DB.q.length);setText('d-fcn',DB.fc.length);setText('d-sr-due',due);setText('d-mmn',DB.mm.length);
   try{renderStreakCard();}catch(e){}
+  try{renderEnqueteCme();}catch(e){}
   renderPerfBars();updateDashRec();renderDashCrono();renderDashNotas();
+}
+
+// ---------- ENQUETE DO PROGRAMA DE EDUCAÇÃO MÉDICA CONTINUADA ----------
+// Pedido do professor (2026-08-17): "Para os assinantes do plano gold, joga uma
+// enquete na tela inicial de quais aulas eles têm interesse que sejam dadas no
+// nosso programa de educação médica continuada. Serão aulas todos os meses dos
+// diversos temas de endocrinologia. Disponível apenas para os assinantes do plano
+// gold."
+//
+// ⚠️ O VOTO É PESSOAL, e por isso mora no `app_state` do próprio aluno
+// (`payload.enquete_cme`), como o mapa de respostas da Questão do Dia. NÃO vai
+// para o `global_state`: aquela é uma linha ÚNICA, e voto de muita gente ao mesmo
+// tempo em linha única é perda silenciosa por lost update — o defeito que já está
+// registrado no cofre. A apuração é feita no servidor pela RPC
+// `endodirect_admin_enquete_cme`, admin-gated.
+//
+// ⚠️ TETO DE 3 ESCOLHAS, e é decisão de produto, não limitação técnica: enquete
+// de marcar-quantos-quiser tende a "todo mundo marca tudo" e não produz ordem de
+// prioridade — que é justamente o que o professor precisa para montar o calendário.
+var CME_MAX = 3;
+// ⚠️ A seleção EM ANDAMENTO vive aqui, fora de `DB`. Na primeira versão eu a
+// guardava em `DB.enqueteCme` com uma marca `parcial:true` — e isso é uma
+// armadilha: `persist()` é chamado por dezenas de outras ações do app (responder
+// questão, revisar card, salvar nota), então meio voto seria gravado no servidor
+// sem o aluno ter clicado em Enviar, e entraria na apuração como se fosse voto.
+// Só o botão Enviar escreve em `DB`.
+var cmeSel = null, cmeEditando = false, cmeOutroRascunho = '';
+function cmeVoto(){
+  var v = DB.enqueteCme;
+  if (!v || typeof v !== 'object') return null;
+  return Array.isArray(v.temas) ? v : null;
+}
+// Elegibilidade: SÓ Gold. `currentPlanKey()` já resolve o escopo legado `plano`.
+function cmeElegivel(){ return currentPlanKey() === 'gold'; }
+function renderEnqueteCme(){
+  var el = document.getElementById('cme-card'); if (!el) return;
+  if (!cmeElegivel()) { el.style.display = 'none'; el.innerHTML = ''; return; }
+  el.style.display = '';
+  var voto = cmeVoto();
+  if (voto && !cmeEditando) {
+    el.innerHTML = '<div class="card" style="border:1px solid var(--gold);margin:0">'
+      + '<div style="display:flex;justify-content:space-between;align-items:center;gap:.5rem;flex-wrap:wrap">'
+      + '<span style="font-weight:800;color:var(--gold);font-size:.9rem">🎓 Educação Médica Continuada</span>'
+      + '<button type="button" class="btn btn-ghost btn-sm" id="cme-editar">Alterar</button></div>'
+      + '<div style="margin-top:.5rem;font-size:.8rem;color:var(--t2);line-height:1.55">Sua indicação foi registrada: <b style="color:var(--tx)">'
+      + esc(voto.temas.join(' · ')) + '</b>'
+      + (voto.outro ? '<div style="margin-top:.3rem">Sugestão livre: <b style="color:var(--tx)">' + esc(voto.outro) + '</b></div>' : '')
+      + '</div></div>';
+    var be = document.getElementById('cme-editar');
+    if (be) be.addEventListener('click', function(){ cmeEditando = true; cmeSel = null; renderEnqueteCme(); });
+    return;
+  }
+  if (!cmeSel) cmeSel = (voto && voto.temas.slice(0, CME_MAX)) || [];
+  var sel = cmeSel;
+  var chips = DIR_SUBS.map(function(s){
+    var on = sel.indexOf(s) >= 0;
+    var bloq = !on && sel.length >= CME_MAX;
+    return '<button type="button" class="cme-chip' + (on ? ' on' : '') + '"' + (bloq ? ' disabled' : '')
+      + ' data-cme-tema="' + esc(s) + '">' + (on ? '✓ ' : '') + esc(s) + '</button>';
+  }).join('');
+  el.innerHTML = '<div class="card" style="border:1px solid var(--gold);margin:0">'
+    + '<div style="font-weight:800;color:var(--gold);font-size:.9rem;margin-bottom:.35rem">🎓 Programa de Educação Médica Continuada</div>'
+    + '<div style="font-size:.8rem;color:var(--t2);line-height:1.55;margin-bottom:.7rem">'
+    + 'Serão aulas <b>mensais</b> de atualização e aperfeiçoamento nos diversos temas de endocrinologia, <b>exclusivas do plano Gold</b>. '
+    + 'Indique <b>até ' + CME_MAX + ' temas</b> que você quer ver primeiro.</div>'
+    + '<div style="display:flex;flex-wrap:wrap;gap:.4rem;margin-bottom:.7rem">' + chips + '</div>'
+    + '<input type="text" id="cme-outro" maxlength="120" placeholder="Outro tema que não está na lista (opcional)" '
+    + 'value="' + esc(cmeOutroRascunho || (voto && voto.outro) || '') + '" style="width:100%;margin-bottom:.6rem">'
+    + '<div style="display:flex;align-items:center;gap:.6rem;flex-wrap:wrap">'
+    + '<button type="button" class="btn btn-primary btn-sm" id="cme-enviar">Enviar</button>'
+    + '<span style="font-size:.72rem;color:var(--t3)" id="cme-conta">' + sel.length + ' de ' + CME_MAX + ' selecionados</span>'
+    + '</div></div>';
+  el.querySelectorAll('[data-cme-tema]').forEach(function(b){
+    b.addEventListener('click', function(){
+      if (b.hasAttribute('disabled')) return;
+      var t = b.getAttribute('data-cme-tema'), i = sel.indexOf(t);
+      if (i >= 0) sel.splice(i, 1); else if (sel.length < CME_MAX) sel.push(t);
+      // guarda o texto já digitado para não perdê-lo no redesenho
+      var cx = document.getElementById('cme-outro');
+      cmeOutroRascunho = cx ? cx.value : cmeOutroRascunho;
+      cmeEditando = true; renderEnqueteCme();
+    });
+  });
+  var bt = document.getElementById('cme-enviar');
+  if (bt) bt.addEventListener('click', function(){
+    var cx = document.getElementById('cme-outro');
+    var outro = cx ? String(cx.value || '').trim().slice(0, 120) : '';
+    if (!sel.length && !outro) { alert('Selecione ao menos um tema ou escreva uma sugestão.'); return; }
+    DB.enqueteCme = { temas: sel.slice(), outro: outro, em: Date.now(), plano: currentPlanKey() };
+    try { persist(); } catch (e) {}
+    cmeEditando = false; cmeSel = null; cmeOutroRascunho = '';
+    renderEnqueteCme();
+  });
 }
 // ---------- QUESTÃO DO DIA (card clicável do aluno) ----------
 // Mostra a questão aprovada mais recente da fila do professor (igStories, vinda do
@@ -13168,12 +13279,68 @@ function kickDiscussaoCadeia(){
     }).catch(function(){});
   }catch(e){}
 }
+// ---------- APURAÇÃO DA ENQUETE DE EDUCAÇÃO MÉDICA CONTINUADA ----------
+// O voto vive no app_state de cada aluno; o agregado vem da RPC
+// `endodirect_admin_enquete_cme`, que é SECURITY DEFINER e recusa quem não é
+// admin (`endodirect_is_admin()`). O cliente NÃO varre app_state por conta
+// própria: a RLS não deixaria, e é assim que tem de ser.
+var admCmeData=null,admCmeErr='',admCmeLoading=false;
+function renderAdmCme(){
+  var el=document.getElementById('adm-cme-body');if(!el)return;
+  if(admCmeData){el.innerHTML=admCmeHTML(admCmeData);return;}
+  if(admCmeErr){el.innerHTML='<div class="empty">Não consegui apurar: '+esc(admCmeErr)+'</div>';return;}
+  if(admCmeLoading)return;
+  var client=getSupabaseClient();
+  if(!client){admCmeErr='Supabase indisponível.';renderAdmCme();return;}
+  admCmeLoading=true;
+  client.rpc('endodirect_admin_enquete_cme').then(function(res){
+    admCmeLoading=false;
+    if(res&&res.error){admCmeErr=res.error.message||'erro';}else{admCmeData=(res&&res.data)||{};}
+    if(admCurrentSec==='cme')renderAdmCme();
+  }).catch(function(e){admCmeLoading=false;admCmeErr=String(e&&e.message||e);if(admCurrentSec==='cme')renderAdmCme();});
+}
+function admCmeHTML(d){
+  var rank=Array.isArray(d.ranking)?d.ranking:[];
+  var sug=Array.isArray(d.sugestoes_livres)?d.sugestoes_livres:[];
+  var totalG=Number(d.votantes_gold||0),eleg=Number(d.gold_elegiveis||0);
+  var adesao=eleg?Math.round(totalG/eleg*100):0;
+  var topo=Math.max.apply(null,[1].concat(rank.map(function(r){return Number(r.votos_gold||0);})));
+  var cab='<div class="g4" style="margin-bottom:1rem">'
+    +'<div class="card" style="text-align:center"><div style="font-size:1.45rem;font-weight:700;color:var(--gold)">'+totalG+'</div><div style="font-size:.66rem;color:var(--t3)">Gold que responderam</div></div>'
+    +'<div class="card" style="text-align:center"><div style="font-size:1.45rem;font-weight:700;color:var(--blue)">'+eleg+'</div><div style="font-size:.66rem;color:var(--t3)">Gold elegíveis</div></div>'
+    +'<div class="card" style="text-align:center"><div style="font-size:1.45rem;font-weight:700;color:var(--grn)">'+adesao+'%</div><div style="font-size:.66rem;color:var(--t3)">Adesão</div></div>'
+    +'<div class="card" style="text-align:center"><div style="font-size:1.45rem;font-weight:700;color:var(--pur)">'+Number(d.total_votantes||0)+'</div><div style="font-size:.66rem;color:var(--t3)">Respostas no total</div></div>'
+    +'</div>';
+  if(!rank.length&&!sug.length){
+    return cab+'<div class="empty">Ninguém respondeu ainda. A enquete aparece no Dashboard dos assinantes Gold.</div>';
+  }
+  // ⚠️ A ordem é pelo voto GOLD, não pelo total: o programa é exclusivo do Gold,
+  // então quem não é mais Gold aparece na contagem mas não decide o calendário.
+  var barras=rank.map(function(r){
+    var g=Number(r.votos_gold||0),t=Number(r.votos||0);
+    var pct=Math.round(g/topo*100);
+    return '<div style="margin-bottom:.55rem">'
+      +'<div style="display:flex;justify-content:space-between;font-size:.76rem;margin-bottom:.2rem">'
+      +'<span style="font-weight:600;color:var(--tx)">'+esc(r.tema)+'</span>'
+      +'<span style="color:var(--t3)"><b style="color:var(--gold)">'+g+'</b>'+(t>g?' <span title="inclui quem não é mais Gold">(+'+(t-g)+')</span>':'')+'</span></div>'
+      +'<div style="height:8px;border-radius:5px;background:var(--s2);overflow:hidden"><div style="height:100%;width:'+pct+'%;background:var(--gold)"></div></div>'
+      +'</div>';
+  }).join('');
+  var livres=sug.length?'<div class="card" style="margin-top:1rem"><div class="card-head"><span class="card-title">💬 Sugestões livres ('+sug.length+')</span></div>'
+    +sug.map(function(s){return '<div style="padding:.45rem 0;border-bottom:1px solid var(--bd);font-size:.79rem;color:var(--tx)">'
+      +esc(s.texto)+'<div style="font-size:.68rem;color:var(--t3);margin-top:.15rem">'+esc(s.email||'')+'</div></div>';}).join('')
+    +'</div>':'';
+  return cab
+    +'<div class="card"><div class="card-head"><span class="card-title">Temas mais pedidos</span>'
+    +'<span style="font-size:.68rem;color:var(--t3)">barra = votos de quem é Gold hoje</span></div>'+barras+'</div>'
+    +livres;
+}
 function renderAdmSec(sec){
   if(sec==='stories'&&!isQotdOwner())sec='pendencias'; // o gerador da Questão do Dia é só do dono; os demais caem nas Pendências
   admCurrentSec=sec;
   try{lsSet('adm_sec',sec);}catch(e){}
   document.querySelectorAll('.adm-nav[data-asec]').forEach(function(b){b.classList.toggle('on',b.dataset.asec===sec);});
-  var titles={provas:'Provas & Questões',cursos:'Cursos',estudantes:'Estudantes',analytics:'Analytics',mural:'Mural',ref:'Diretrizes',resumos:'Resumos',conteudo:'Podcasts',mapas:'Mapas Mentais',flashcards:'Flashcards',stories:'Questão do Dia (Stories)',qotdarq:'Questão do Dia',pendencias:'Pendências',favs:'Favoritos',calc:'Calculadoras',consultorio:'Consultório',rx:'Prescrição Comentada',chat:'Chat',perfil:'Perfil',suporte:'Suporte'};
+  var titles={provas:'Provas & Questões',cursos:'Cursos',estudantes:'Estudantes',analytics:'Analytics',mural:'Mural',ref:'Diretrizes',resumos:'Resumos',conteudo:'Podcasts',mapas:'Mapas Mentais',flashcards:'Flashcards',stories:'Questão do Dia (Stories)',qotdarq:'Questão do Dia',pendencias:'Pendências',favs:'Favoritos',calc:'Calculadoras',consultorio:'Consultório',rx:'Prescrição Comentada',chat:'Chat',perfil:'Perfil',suporte:'Suporte',cme:'Enquete — Educação Médica Continuada'};
   setText('adm-sec-title',titles[sec]||sec);
   var m=document.getElementById('adm-main');if(!m)return;
   // SEMPRE devolve os painéis movidos (#panel-presc / #mm-live) para o lugar de
@@ -13183,6 +13350,12 @@ function renderAdmSec(sec){
   try{restorePrescPanel();}catch(e){}
   try{restoreRxPanel();}catch(e){}
   try{restoreMMLive();}catch(e){}
+  if(sec==='cme'){
+    m.innerHTML='<div class="adm-ph"><h1>🎓 Enquete — Educação Médica Continuada</h1>'
+      +'<p>O que os assinantes <b>Gold</b> pediram para o programa mensal. Cada aluno indica até 3 temas.</p></div>'
+      +'<div class="adm-pc" id="adm-cme-body"><div class="empty">Apurando…</div></div>';
+    renderAdmCme();bindAdmSec(sec);return;
+  }
   if(sec==='consultorio'){
     m.innerHTML='<div class="adm-ph"><h1>Consultório</h1></div><div class="adm-pc" id="adm-presc-host"></div>';
     var pp=document.getElementById('panel-presc'),host=document.getElementById('adm-presc-host');

@@ -1,9 +1,36 @@
 ---
 tags: [cofre, processo]
-atualizado: 2026-08-16
+atualizado: 2026-08-17
 ---
 
 # Convenções de Trabalho
+
+## 🔤 NUNCA ESCREVER MARKDOWN COM CRASE DENTRO DE COMANDO DE SHELL (2026-08-16/17)
+
+Errei isto **três vezes na mesma sessão**. `node -e "..."`, heredoc sem aspas e
+`git commit -m` tratam a crase como **substituição de comando**: o shell executa
+o que está entre elas e deixa o buraco no arquivo. O resultado é uma nota do
+cofre com frases mutiladas — *"sem tocar  → sem bump de  e sem CI"* — que só
+aparece relendo o arquivo depois.
+
+**A regra:** conteúdo com crase (nome de arquivo, campo, função, tabela) vai por
+**Write/Edit**, que não passa por shell, ou por **arquivo de mensagem**
+(`git commit -F`). Nunca por `-m`, nunca por `node -e` com o texto embutido.
+
+## 🧪 O TESTE QUE PROTEGE UM BENEFÍCIO COMERCIAL É TÃO SÉRIO QUANTO O CLÍNICO (2026-08-17)
+
+A enquete de Educação Médica Continuada é **exclusiva do plano Gold**. Se ela
+vazar para Standard ou para a degustação, **não acontece erro nenhum**: a tela
+funciona, o CI passa, e o que se perde é a exclusividade que o plano vende — o
+professor não vê, e só o cliente enxerga.
+
+Por isso o teste exige **duas coisas**, não uma: que o card **não apareça** *e*
+que **não sobre marcação no DOM**. Esconder por CSS passaria no primeiro e
+falharia no segundo, que é o que realmente importa.
+
+⚠️ **E vale para o gate de escopo legado:** `currentPlanKey()` devolve `'gold'`
+tanto para `plano:gold` quanto para o escopo antigo `plano`. O teste cobre os
+dois — um assinante antigo perder o benefício é falha tão real quanto o vazamento.
 
 ## 🚀 PR E MERGE SÃO AUTOMÁTICOS — NÃO PEDIR AUTORIZAÇÃO (2026-08-16)
 
