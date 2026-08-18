@@ -1,6 +1,6 @@
 ---
 tags: [cofre, decisoes]
-atualizado: 2026-08-17
+atualizado: 2026-08-18
 ---
 
 # Decisões
@@ -8,6 +8,16 @@ atualizado: 2026-08-17
 Log de decisões de produto e técnicas (mais recentes no topo).
 
 ## 2026-08
+- **🚨 OS BACKUPS ESTAVAM ABERTOS PARA O MUNDO, E O CONSERTO ACHOU UM 500 EM PRODUÇÃO (2026-08-18).** Só banco — nada de `index.html`, sem bump de `sw.js`. Detalhe completo em [[Segurança e Exposição de Dados]]. Pergunta do professor: *"tem que saber se alguém está tentando hackerar/xeretar... pra saber se tem algum DEV querendo copiar a ideia"*.
+  - **A resposta honesta não foi sobre alunos.** `endodirect_global_state_backup` (57 MB) e `endodirect_backup_diretriz` estavam **sem RLS e com `SELECT` para `anon`**. Provei de fora com a chave pública: `HTTP 206`, 14 e 8 registros. A tabela **viva** (RLS ligada) devolveu **0 registros** — controle que prova que o método funciona e que a RLS trabalha onde está ligada.
+  - ⚠️ **A chave publishable vive no HTML por design; quem protege é a RLS.** Sem ela, um `GET` devolvia snapshots inteiros — 226 capítulos, banco de questões, mural.
+  - ⚠️⚠️ **Eu ajudei a piorar isso na véspera:** os snapshots dos 3 capítulos reescritos em 17/08 foram para `endodirect_backup_diretriz`. **Tabela de apoio sem RLS é porta.** Regra nova: toda tabela nova em `public` nasce com RLS ligada e sem grant para `anon`/`authenticated`.
+  - **Conserto:** RLS + `revoke` nas sete tabelas de backup/estágio. Reconferido de fora: `42501`.
+  - 🐌 **O controle do conserto achou outro defeito:** `endodirect_public_content` dava **500 consistente** — `57014` (timeout), não permissão. Medido em **16.137 ms** contra `statement_timeout` de **3 s** (`anon`) e 8 s (`authenticated`): a **vitrine e o funil de aquisição** estavam quebrados para todo visitante não logado. Ninguém via porque o professor está sempre logado e a rota do assinante é outra função (253 ms, saudável).
+  - ⚠️ **Minha primeira hipótese estava errada e medir salvou:** suspeitei do `order by md5(v::text)` sobre 4,7 MB; medi e deu **55 ms**. A causa era a versão SQL referenciar `payload->` ~15 vezes, e o Postgres **re-descomprimir o jsonb a cada referência**.
+  - **Conserto:** `plpgsql` lendo o payload **uma vez**. **16.137 ms → 326 ms (49×)**, buffers 478.589 → 6.890. Saída provada **byte a byte idêntica** (mesmo md5, 11 chaves, 0 divergências) **antes** de trocar.
+  - **Telemetria medida:** 102 contas, máx. **2 aparelhos** por conta, **zero** user-agent de script; 1.029 requisições em 24 h sem padrão de sondagem. ⭐ **O detector pega script — pegou a mim:** as 19 requisições de ferramenta do período eram meu `curl` da rede Anthropic, testando a exposição.
+  - ⚠️ **Limite honesto:** o assinante recebe **1,86 MB** de conteúdo numa chamada porque o app é assim. Quem quiser copiar não precisa raspar — basta assinar e abrir o DevTools. Nenhum detector resolve isso.
 - **📡 O RADAR NÃO ESTAVA QUEBRADO — RODAVA POUCO (2026-08-17).** O professor mandou o print de uma notícia da ANVISA (*"Anvisa aprova duas novas canetas para tratamento de diabetes"*, princípio ativo semaglutida, publicada **11:02**) e disse: *"Não captou essa notícia no mural."* **Só `vercel.json`** — nada de `index.html`, logo sem bump de `sw.js`.
   - ⚠️ **ANTES DE MEXER, DESCARTEI AS TRÊS SUSPEITAS ÓBVIAS — e todas estavam inocentes:**
     1. **A fonte funciona.** O mural tem um item da própria ANVISA de **29/07/2026** (*"Anvisa registra cinco novas canetas de semaglutida"*), do mesmo assunto. O feed oficial está em `lib/news.js` com `official: true`.
