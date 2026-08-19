@@ -68,10 +68,18 @@ const PAYLOAD = {
 
 // ---- 2. ⚠️ A TRAVA CONTRA MANDAR TODO DIA -----------------------------------
 {
-  ok('⚠️ existe cooldown, e ele vai para a RPC', REENG_COOLDOWN >= 14 && /p_cooldown:\s*REENG_COOLDOWN/.test(SRC),
+  // ⚠️ ANTES este teste exigia o literal `p_cooldown: REENG_COOLDOWN`. Em
+  // 19/08/2026 o envio foi parametrizado para ter DOIS níveis (3 e 14 dias), e o
+  // literal virou `p_cooldown: cooldown` — o comportamento continuou idêntico e
+  // o teste reprovou mesmo assim. Teste preso a texto reprova refatoração e
+  // ensina a mexer no teste em vez de no código. Passa a exigir que o cooldown
+  // EXISTA e SEJA ENVIADO à RPC, seja por constante ou por variável.
+  ok('⚠️ existe cooldown, e ele vai para a RPC', REENG_COOLDOWN >= 14 && /p_cooldown:\s*[A-Za-z_]+/.test(SRC),
      'sem isso as mesmas pessoas recebem o mesmo e-mail todo dia até marcarem como spam');
   ok('a ausência que dispara é de 2 semanas', REENG_DIAS === 14);
-  ok('o envio grava a data no ledger', /reengajamento:\s*hoje/.test(SRC),
+  // Idem: a chave do ledger passou a ser dinâmica (`[chave]: hoje`), porque cada
+  // nível precisa da sua própria memória de envio.
+  ok('o envio grava a data no ledger', /(reengajamento:\s*hoje|\[chave\]:\s*hoje)/.test(SRC),
      'é a data gravada que o cooldown lê no dia seguinte');
   ok('⚠️ e a chave do ledger é a MESMA que a RPC consulta', /'reengajamento'/.test(SRC) || /reengajamento:/.test(SRC));
 }
@@ -79,7 +87,7 @@ const PAYLOAD = {
 // ---- 3. ⚠️ SEM NOVIDADE, SEM E-MAIL ----------------------------------------
 {
   ok('⚠️ aborta o envio quando não há título nenhum na janela',
-     /if \(!revisoes\.length && !diretrizes\.length\)/.test(SRC),
+     /if \(!(?:cedo && !)?revisoes\.length && !diretrizes\.length\)/.test(SRC),
      'sem isto o e-mail sai dizendo "olha o que entrou" com a lista vazia');
   // ⚠️ Asserção RECORTADA na função certa: `unsub.has(email)` e o teto por
   // execução também existem nas campanhas vizinhas do mesmo arquivo, então
@@ -127,3 +135,25 @@ const PAYLOAD = {
 
 if (bad) { console.error('\n' + bad + ' verificação(ões) do reengajamento falharam.'); process.exit(1); }
 console.log('Reengajamento (assinante parado 14+ dias): OK');
+
+// ── NÍVEL CEDO (3 dias), criado em 19/08/2026 ───────────────────────────────
+// O toque de 14 dias dispara certo e é inócuo: dos 20 que o receberam, 1 voltou
+// a estudar (5%). A perda medida acontece entre o dia 1 e o dia 2.
+{
+  const T = require('../lib/trial-emails.js');
+  ok('⚠️ o toque cedo dispara BEM antes do de 14 dias',
+     T.REENG_CEDO_DIAS > 0 && T.REENG_CEDO_DIAS <= 5 && T.REENG_CEDO_DIAS < T.REENG_DIAS,
+     'se os dois prazos convergirem, o nível cedo perde a razão de existir');
+  ok('⚠️ o toque cedo tem CHAVE DE LEDGER PRÓPRIA',
+     typeof T.REENG_CEDO_CHAVE === 'string' && T.REENG_CEDO_CHAVE && T.REENG_CEDO_CHAVE !== 'reengajamento',
+     'com a mesma chave, os dois níveis dividem o cooldown de 30 dias e um cala o outro sem erro nenhum');
+  ok('o toque cedo tem cooldown próprio e não-trivial',
+     T.REENG_CEDO_COOLDOWN >= 7, 'cooldown curto demais vira insistência e vira spam');
+  // o corpo do cedo é OUTRO: leva questão, não lista de novidades
+  ok('⚠️ o e-mail cedo NÃO depende de novidade no mural',
+     /!cedo && !revisoes\.length/.test(SRC),
+     'travá-lo no mesmo gate do de 14 dias o mataria em silêncio nos dias sem novidade');
+  ok('⚠️ o e-mail cedo NÃO entrega o gabarito',
+     /Sem gabarito no e-mail/.test(SRC),
+     'com a resposta no corpo, o aluno resolve de cabeça e não abre o app — e é a abertura que tira ele do balde "nunca estudou"');
+}

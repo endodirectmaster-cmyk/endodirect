@@ -251,6 +251,18 @@ try {
   fail('regressão da enquete de Educação Médica Continuada falhou:\n' + out);
 }
 
+// 17d. ATIVAÇÃO DA PRIMEIRA SESSÃO + META ESCOLHIDA. Medido em 19/08/2026: de
+//      112 cadastrados, 58 nunca responderam nada — e 53 DELES fizeram login.
+//      E dos 91 com meta gravada, todos os 91 tinham exatamente 50, o valor com
+//      que o DB nasce: nenhum aluno jamais tocou no seletor.
+try {
+  execFileSync(process.execPath, [path.join('scripts', 'test-ativacao.js')], { stdio: 'pipe' });
+  ok('ativação: card não-dispensável nas duas entradas, responder conta como estudo, meta escolhida');
+} catch (e) {
+  const out = (e.stdout ? e.stdout.toString() : '') + (e.stderr ? e.stderr.toString() : '');
+  fail('regressão da ativação da primeira sessão falhou:\n' + out);
+}
+
 // 17d. CADÊNCIA DO RADAR: o mural precisa de mais de uma varredura por dia. Com
 //      uma só (07:30 BRT), notícia publicada depois dela só aparece no dia
 //      seguinte — foi a queixa de 17/08/2026 (ANVISA aprovando canetas de
