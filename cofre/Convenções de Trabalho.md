@@ -5,6 +5,42 @@ atualizado: 2026-08-19
 
 # Convenções de Trabalho
 
+## 🧨 LIMITE DE PLANO DA VERCEL DERRUBA O DEPLOY INTEIRO, E EM SILÊNCIO (2026-08-19)
+
+**Custou 33 horas de produção congelada.** Em 17/08 18:43 troquei o agendamento
+do radar para `30 10,20 * * *` — duas execuções na **mesma** entrada de cron —
+para atender o pedido de duas varreduras por dia. O plano aceita 2 crons, mas
+**cada um só pode disparar uma vez por dia**. A Vercel recusou o `vercel.json`
+inteiro **antes de criar qualquer implantação**.
+
+O que isso produziu, e por que ninguém viu:
+
+- **nenhum deploy** entre 17/08 18:43 e 19/08 — cinco PRs mergeados que nunca
+  chegaram ao aluno, incluindo a enquete na tela de entrada e o pacote de
+  engajamento inteiro. Produção parada na `sw.js v242`;
+- o `ci-validate` **passava**: nada no repositório acusa limite de plano;
+- o status no GitHub dizia só **"Deployment failed"**, com um link `vercel.link`
+  encurtado — e o sandbox não alcança esse domínio;
+- a lista de implantações **não mostra a falha**: como o deploy nem é criado,
+  o sintoma é a ausência de implantações novas, não uma implantação vermelha.
+
+**Como eu descobri, e é o jeito de descobrir de novo:** comparar a data da
+implantação mais recente com a data do último merge. Se a mais recente for
+anterior ao último merge, os deploys estão falhando. Confirmar pelo que está no
+ar: `sw.js` da produção traz a versão do cache.
+
+⚠️ **E a "prova" de que o projeto era Pro não provava nada.** Argumentei que
+`maxDuration: 120` declarado no `vercel.json` só faria sentido no Pro, porque o
+teto do Hobby é 60 s. **A Vercel corta em silêncio pelo limite do plano** —
+declarar um valor acima do teto não falha nada, então declará-lo não é prova de
+plano nenhum. Os sinais reais apontam para o plano restrito: o teto de 12 funções
+e agora a recusa do cron sub-diário.
+
+**A regra:** para rodar algo mais de uma vez por dia, ponha a execução extra
+**dentro de outra entrada diária de cron** — é o que a varredura das 17h faz,
+morando no `api/cron/healthcheck.js`. Guarda: `scripts/test-radar-cadencia.js`,
+que agora reprova **qualquer** cron agendado acima de 1×/dia.
+
 ## 🧮 ANTES DE CRIAR ARQUIVO EM `api/`, CONTE OS QUE JÁ EXISTEM (2026-08-19)
 
 A Vercel só aceita **12 funções serverless**, e **cada arquivo `.js` em `api/` é
