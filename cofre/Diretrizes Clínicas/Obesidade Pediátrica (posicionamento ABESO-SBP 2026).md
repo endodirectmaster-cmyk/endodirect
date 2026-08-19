@@ -174,10 +174,98 @@ um a um** (cortes de DP, RCEst, ALT, TG, doses, percentuais dos ensaios, CFM
 novo nasce na régua**, e a régua se confere contra o capítulo aprovado antes de
 escrever — não depois de o professor abrir a tela.
 
-## Pendência
+## ✅ A CAMADA PROFUNDA SAIU — e a pendência era o caminho certo
 
-A **camada profunda** de Endocrinologia Pediátrica **não recebeu extrato deste
-documento**. O pipeline exige texto-fonte em `scratchpad/acervo/textos/`
-(gitignored) + extrato com `cit`/`cit_sha` ancorados por offset. É trabalho
-próprio, do tamanho de uma sessão — e é o caminho certo para a profundidade que
-não coube no núcleo.
+**161 fatos**, cada um com citação literal ancorada por *offset + hash*, extraídos
+das seções 1 a 12. Endocrinologia Pediátrica saiu de **ZERO bloco** para dois.
+
+O `tema` de cada fato foi escrito para voltar **sozinho** à IA (o montador só
+envia `afirmacao`), com a **faixa etária colada ao número** — porque neste
+documento o mesmo número muda de sentido com a idade: **+3 DP** é limiar de
+obesidade abaixo dos 5 anos e de obesidade grave dos 5 aos 19; e o
+**triglicerídeo alterado é >100 mg/dL dos 2 aos 9 e >130 dos 10 aos 19** — o
+corte do menor é o mais baixo.
+
+---
+
+## 🚨 O PRIMEIRO ARTIGO DE UMA ÁREA VAZIA MEXE NO ROTEAMENTO DA BASE INTEIRA
+
+Este é o achado que vale mais que o conteúdo, e ele **não é sobre obesidade**.
+
+`deepFor` só desce para a segunda área classificada **quando a primeira está
+vazia**. Enquanto Endocrinologia Pediátrica não tinha bloco nenhum, a vinheta
+*"menina de 9 anos com cefaleia, baixa estatura e calcificação suprasselar"*
+roteava para a pediatria e chegava em Neuroendocrinologia **por acidente**, pela
+descida. No instante em que a pediatria ganhou o primeiro artigo, a descida parou
+e essa menina passou a receber **53k de obesidade pediátrica no lugar dos 295k de
+craniofaringioma** — o assunto exato da pergunta.
+
+⚠️ **O próprio arquivo já tinha previsto isso, por escrito**, para a área
+masculina: *"Só não dói porque a área masculina está vazia; no dia em que entrar
+o 1º artigo de hipogonadismo, vira resposta errada."* Hoje foi esse dia, na
+pediatria. **Toda área vazia da base é uma dessas esperando.**
+
+**Consertado por medição, não por palpite.** Duas correções foram medidas em 14
+perguntas:
+
+| correção | resolve a vinheta? | efeito colateral |
+|---|---|---|
+| reclassificar `baixa estatura` como ACHADO | **não** (1014 × 1011 — os dois viram achado e o comprimento continua decidindo) | move "baixa estatura após transplante e corticoide" para Adrenal |
+| chave composta **`calcificação suprasselar`** | **sim**, nas duas vinhetas | **nenhum** — as outras 12 perguntas não mudam |
+
+Ficou a que mede. Calcificação suprasselar é o achado de imagem clássico do
+craniofaringioma adamantinomatoso — não é chave genérica.
+
+## ⚠️ O EXTRATO NASCEU PARTIDO EM DOIS, E ISSO FOI DECISÃO DE ARQUITETURA
+
+Obesidade tinha 8 blocos e **356k de um teto de 400.000 (89%)**. O documento
+inteiro num bloco só levava a área a **405.254** — acima do teto os últimos
+blocos **somem em silêncio**, e **400k já é o `TETO_MAXIMO`**: não há para onde
+subir. A saída documentada em `lib/clinical-deep.js` é **dividir**.
+
+⚠️ **E não dava para simplesmente arquivar só na pediatria.** Medido em **12
+perguntas realistas**: **10 canonizam para Obesidade e nenhuma para
+Endocrinologia Pediátrica** — quem pergunta escreve *"obesidade"*, não o nome da
+subespecialidade. Pior: *"adolescente com obesidade grave, quando indicar
+cirurgia?"* receberia os **8 blocos de ADULTO sem o pediátrico junto** — a
+inversão de régua que o núcleo existe para impedir. E não dá para consertar com
+chave de roteamento: *"criança … obesidade"* é **co-ocorrência**, e o roteador só
+casa substring.
+
+**O corte é por USO, não por tamanho:**
+
+| bloco | o que leva | áreas |
+|---|---|---|
+| **conduta** (128 fatos) | diagnóstico, avaliação, comorbidades e exames, estilo de vida, farmacoterapia, cirurgia | Endocrinologia Pediátrica **+ Obesidade** |
+| **contexto** (33 fatos) | epidemiologia, linguagem inclusiva, síndromes genéticas, ECAP/EDE-Q, equidade, conclusão | só Endocrinologia Pediátrica |
+
+**Nenhum fato foi descartado** — o documento inteiro continua inteiro na
+subespecialidade. Obesidade ficou em **397.001/400.000 (99%, folga de 2.999)**.
+
+## ⚠️ O `tema` PROMETIA O QUE TINHA IDO PARA O BLOCO IRMÃO
+
+Ao partir o extrato eu deixei o `tema` original nos dois lados. O do bloco de
+conduta continuava anunciando **Prader-Willi, Bardet-Biedl, ECAP, EDE-Q,
+linguagem inclusiva e equidade** — tudo que acabara de sair dele. É exatamente o
+defeito do prolactinoma (o campo anunciava seções que o extrato não tinha), e
+aqui o risco é **estrutural**: dois blocos do mesmo documento, e a tentação é
+reaproveitar o tema inteiro. O `tema` não é decoração — ele **pontua a escolha do
+bloco**. Reescrito contra a lista de fatos que de fato ficaram em cada lado.
+
+## Guarda
+
+`scripts/test-pediatria-obesidade.js`, no `ci-validate`. Cobre as quatro coisas
+que quebram calado: a conduta pediátrica **deixar de chegar** a quem pergunta
+(se alguém tirar `Obesidade` da declaração de área), a pediatria **roubar** o
+craniofaringioma, o `tema` prometer o que está no irmão, e Obesidade voltar a
+estourar o teto. **Verificado por mutação nas três primeiras — as três reprovam.**
+
+## ⚠️ A ÂNCORA DESTE EXTRATO NÃO É UM PDF
+
+O texto-fonte é a **transcrição que eu fiz dos prints do professor**, porque o
+proxy bloqueia `abeso.org.br` e o documento é de véspera. O `cit_sha` prova que a
+citação bate com a **transcrição** — ele **não prova, e não pode provar**, que a
+transcrição bate com o documento publicado. Todo o resto da cadeia é igual à dos
+outros extratos. Registrado dentro do próprio extrato (`auditoria.texto_fonte`)
+para que ninguém o leia supondo a mesma procedência dos que vieram do Drive.
+**Quando o PDF ficar acessível, vale reancorar contra ele.**

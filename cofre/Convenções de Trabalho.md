@@ -5,6 +5,35 @@ atualizado: 2026-08-19
 
 # Convenções de Trabalho
 
+## 🧨 ÁREA VAZIA DA BASE PROFUNDA É UM ACIDENTE AGENDADO (2026-08-19)
+
+`deepFor` só desce para a segunda área classificada **quando a primeira está
+vazia**. Isso significa que, hoje, algumas perguntas chegam ao bloco certo **por
+acidente** — e o acidente termina no dia em que a subespecialidade vazia receber
+o primeiro artigo.
+
+Aconteceu com a **Endocrinologia Pediátrica**. A vinheta *"menina de 9 anos com
+cefaleia, baixa estatura e calcificação suprasselar"* roteava para a pediatria e
+chegava em Neuroendocrinologia pela descida. No instante em que a pediatria
+ganhou o primeiro extrato, a descida parou e a menina passou a receber **53k de
+obesidade pediátrica no lugar dos 295k de craniofaringioma**.
+
+⚠️ **O `lib/clinical-deep.js` já tinha previsto isso, por escrito**, para outra
+área: *"Só não dói porque a área masculina está vazia; no dia em que entrar o 1º
+artigo de hipogonadismo, vira resposta errada."*
+
+**A convenção, daqui em diante:** ao acrescentar o **primeiro** extrato de
+qualquer subespecialidade, rodar a varredura diferencial **antes de commitar** —
+comparar `deepFor` com a área vazia e com a área cheia, sobre perguntas
+realistas, e olhar TODAS as que mudarem. Áreas ainda vazias hoje: Endocrinologia
+Masculina, Transgeneridade, Endocrinologia Básica.
+
+⚠️ **E o conserto se escolhe por medição.** Aqui, entre reclassificar
+`baixa estatura` como achado (não resolvia e mexia em outra pergunta) e criar a
+chave composta `calcificação suprasselar` (resolvia as duas vinhetas e não mexia
+em mais nada), ficou a que mede.
+
+
 ## 🧨 LIMITE DE PLANO DA VERCEL DERRUBA O DEPLOY INTEIRO, E EM SILÊNCIO (2026-08-19)
 
 **Custou 33 horas de produção congelada.** Em 17/08 18:43 troquei o agendamento
