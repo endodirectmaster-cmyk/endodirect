@@ -146,6 +146,34 @@ MOCA**. Vale perguntar à ABESO.
   divisão se o professor preferir.**
 - Base: 226 → **227 itens**; públicas seguem **66**, `privado` booleano nos dois.
 
+## ⚠️ ESCREVI OS DOIS CAPÍTULOS COM O JARGÃO QUE EU TINHA ACABADO DE LIMPAR
+
+Resposta do professor ao abrir o capítulo novo: *"Mais uma vez com jargão de IA"*.
+E ele tem razão — em **17/08** eu removi 81 alertas e títulos retóricos de três
+capítulos de Obesidade, e em **19/08** escrevi dois capítulos novos exatamente no
+mesmo vício: **26 alertas na prosa** (10 + 16) e títulos como *"A lógica do
+tratamento"*, *"Estilo de vida: a intensidade é o ingrediente ativo"*, *"O eixo
+psicossocial não é acessório"*, *"Farmacoterapia pediátrica em uma tela"*.
+
+**A régua da casa, que já estava decidida:** títulos **nominais**, conectivos
+formais, **zero alerta na prosa**. O capítulo de referência é *Ganho de Peso
+Induzido por Fármacos*.
+
+Também caíram as construções de IA: *"nunca sai de cena"*, *"o número que define
+eficácia é a dose de contato"*, *"não é o tipo de dieta que separa quem responde,
+é a quantidade de contato"*, *"deixam de ser teóricos e viram alternativa real"*,
+*"a dose tolerada é uma opção válida, não um fracasso"*, *"a pista continua sendo
+a estatura"*, *"contraintuitivo e cobrado"*.
+
+**Conservação provada, não presumida:** 26 → **0 alertas**, títulos todos
+nominais, tabelas 📊 preservadas nos dois, e os **49 números clínicos conferidos
+um a um** (cortes de DP, RCEst, ALT, TG, doses, percentuais dos ensaios, CFM
+2.429/2025) — **nenhum perdido**. Tamanhos: 7.284 → 7.170 e 9.776 → 9.774.
+
+⚠️ **A lição que fica:** limpar jargão de um lote não conserta o hábito. **Capítulo
+novo nasce na régua**, e a régua se confere contra o capítulo aprovado antes de
+escrever — não depois de o professor abrir a tela.
+
 ## Pendência
 
 A **camada profunda** de Endocrinologia Pediátrica **não recebeu extrato deste

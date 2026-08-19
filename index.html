@@ -13465,6 +13465,27 @@ function kickDiscussaoCadeia(){
 // não vira uso e não renova. A lista é NOMINAL de propósito: automação não
 // resolve isto, uma mensagem do professor resolve.
 var admRiscoData=null,admRiscoErr='',admRiscoLoading=false;
+// ⚠️ AS DUAS LISTAS NASCEM FECHADAS (pedido do professor, 19/08/2026: "minimiza").
+// Elas são NOMINAIS e crescem com a base — 11 + 13 nomes já empurravam o painel
+// de Estudantes inteiro para baixo da dobra. O contador fica no cabeçalho, que é
+// o que ele precisa ver todo dia; a lista abre quando ele vai agir.
+// O estado vive fora do HTML porque `admRiscoHTML()` é RE-RENDERIZADO quando a
+// RPC responde: guardado no DOM, o que ele abriu fecharia sozinho meio segundo
+// depois, sem nenhum erro para acusar.
+var admRiscoAberto={};
+if(!window.__admRiscoTogInit){
+  window.__admRiscoTogInit=true;
+  document.addEventListener('click',function(e){
+    var b=e.target&&e.target.closest?e.target.closest('[data-risco-tog]'):null;
+    if(!b)return;
+    var k=b.getAttribute('data-risco-tog');
+    admRiscoAberto[k]=!admRiscoAberto[k];
+    var body=document.getElementById('risco-body-'+k);
+    if(body)body.style.display=admRiscoAberto[k]?'':'none';
+    var ch=b.querySelector('[data-risco-chev]');
+    if(ch)ch.textContent=admRiscoAberto[k]?'▾':'▸';
+  });
+}
 function carregaAdmRisco(cb){
   if(admRiscoData||admRiscoErr){cb&&cb();return;}
   if(admRiscoLoading)return;
@@ -13488,6 +13509,13 @@ function admRiscoHTML(){
       +'<b style="color:var(--grn)">✅ Nenhum assinante pagante sem uso.</b> '
       +'<span style="font-size:.78rem;color:var(--t2)">'+Number(d.total_pagantes||0)+' pagantes, '+Number(d.pagantes_ativos_7d||0)+' ativos nos últimos 7 dias.</span></div>';
   }
+  // Cabeçalho clicável: título + contagem sempre visíveis, lista atrás do galho.
+  function cab(k,cor,titulo,cont){
+    return '<div data-risco-tog="'+k+'" role="button" tabindex="0" aria-expanded="'+(admRiscoAberto[k]?'true':'false')+'"'
+      +' style="display:flex;justify-content:space-between;align-items:center;gap:.5rem;cursor:pointer;user-select:none">'
+      +'<span style="font-weight:800;color:'+cor+';font-size:.9rem">'+titulo+' '+cont+'</span>'
+      +'<span data-risco-chev style="color:'+cor+';font-size:.9rem;line-height:1">'+(admRiscoAberto[k]?'▾':'▸')+'</span></div>';
+  }
   function linha(p,extra){
     return '<div style="display:flex;justify-content:space-between;gap:.6rem;flex-wrap:wrap;padding:.45rem 0;border-bottom:1px solid var(--bd)">'
       +'<span style="font-size:.8rem;color:var(--tx)"><b>'+esc(p.nome||'(sem nome)')+'</b> · '+esc(p.email||'')+'</span>'
@@ -13496,18 +13524,20 @@ function admRiscoHTML(){
   var h='';
   if(sem.length){
     h+='<div class="card" style="margin-bottom:1rem;border:1px solid var(--red)">'
-      +'<div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:.5rem;margin-bottom:.5rem">'
-      +'<span style="font-weight:800;color:var(--red);font-size:.9rem">🚨 Pagantes que nunca estudaram ('+sem.length+' de '+Number(d.total_pagantes||0)+')</span></div>'
-      +'<div style="font-size:.78rem;color:var(--t2);line-height:1.55;margin-bottom:.6rem">'
+      +cab('sem','var(--red)','🚨 Pagantes que nunca estudaram','('+sem.length+' de '+Number(d.total_pagantes||0)+')')
+      +'<div id="risco-body-sem"'+(admRiscoAberto.sem?'':' style="display:none"')+'>'
+      +'<div style="font-size:.78rem;color:var(--t2);line-height:1.55;margin:.55rem 0 .6rem">'
       +'Pagaram e não usaram nenhuma vez. É o grupo com maior chance de não renovar — e o que mais responde a um contato pessoal.</div>'
       +sem.map(function(p){
         return linha(p,(p.nunca_logou?'nunca entrou · ':'')+'assinou há '+Number(p.dias_desde_cadastro||0)+' dia'+(Number(p.dias_desde_cadastro)===1?'':'s'));
-      }).join('')+'</div>';
+      }).join('')+'</div></div>';
   }
   if(cedo.length){
     h+='<div class="card" style="margin-bottom:1rem;border:1px solid var(--gold)">'
-      +'<div style="font-weight:800;color:var(--gold);font-size:.9rem;margin-bottom:.5rem">⚠️ Pagantes que estudaram uma vez e sumiram ('+cedo.length+')</div>'
-      +cedo.map(function(p){return linha(p,Number(p.dias_estudados||0)+' dia(s) · último em '+esc(p.ultimo_estudo||'—'));}).join('')+'</div>';
+      +cab('cedo','var(--gold)','⚠️ Pagantes que estudaram uma vez e sumiram','('+cedo.length+')')
+      +'<div id="risco-body-cedo"'+(admRiscoAberto.cedo?'':' style="display:none"')+'>'
+      +'<div style="height:.55rem"></div>'
+      +cedo.map(function(p){return linha(p,Number(p.dias_estudados||0)+' dia(s) · último em '+esc(p.ultimo_estudo||'—'));}).join('')+'</div></div>';
   }
   return h;
 }
