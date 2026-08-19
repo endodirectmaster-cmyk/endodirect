@@ -920,5 +920,21 @@ try {
   fail('regressão dos blocos de risco minimizados falhou:\n' + out);
 }
 
+// ⚠️ O PRIMEIRO ARTIGO DE UMA SUBESPECIALIDADE VAZIA MEXE NO ROTEAMENTO DA BASE
+//     INTEIRA. `deepFor` só desce para a segunda área classificada quando a
+//     primeira está VAZIA — então uma vinheta podia estar chegando ao bloco certo
+//     POR ACIDENTE, pela descida. Ao entrar o primeiro extrato de Endocrinologia
+//     Pediátrica (19/08/2026), a descida parou e a menina com calcificação
+//     suprasselar passou a receber obesidade pediátrica no lugar de
+//     craniofaringioma. Este guarda cobre as duas pontas: a conduta pediátrica
+//     CHEGA a quem pergunta por ela, e não ROUBA de quem tem a resposta.
+try {
+  execFileSync(process.execPath, [path.join('scripts', 'test-pediatria-obesidade.js')], { stdio: 'pipe' });
+  ok('obesidade pediátrica: chega pelas perguntas reais, não rouba do craniofaringioma, e o corte em dois blocos não perdeu fato');
+} catch (e) {
+  const out = (e.stdout ? e.stdout.toString() : '') + (e.stderr ? e.stderr.toString() : '');
+  fail('regressão da obesidade pediátrica na base profunda falhou:\n' + out);
+}
+
 if (errors) { console.error(`\n${errors} verificação(ões) falharam.`); process.exit(1); }
 console.log('\nTodas as verificações passaram.');
