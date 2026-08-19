@@ -140,10 +140,14 @@ MOCA**. Vale perguntar à ABESO.
 - **Capítulo reescrito:** *Obesidade na Infância e Adolescência* — 3.858 → **7.284**
   caracteres, 12 pontos, 8 flashcards, mapa e tabela 📊.
 - **Capítulo novo:** *Tratamento da Obesidade na Infância e Adolescência* —
-  **9.776** caracteres, 13 pontos, 9 flashcards, mapa e tabela 📊. ⚠️ Acima da
-  banda da casa (4.845–7.234); mantido inteiro porque estilo de vida,
-  farmacoterapia, cirurgia e psicossocial formam um fluxo único. **Candidato a
-  divisão se o professor preferir.**
+  **9.774** caracteres, 13 pontos, 9 flashcards, mapa e tabela 📊.
+  ✅ **FICA INTEIRO — decisão do professor em 19/08**, quando ofereci dividir.
+  Está acima da banda da casa (4.845–7.234), e a razão de manter é clínica:
+  estilo de vida, farmacoterapia, cirurgia e aspectos psicossociais formam **um
+  fluxo único de decisão** — partir ao meio obrigaria o aluno a saltar de
+  capítulo no meio do raciocínio de quando escalonar. **Deixou de ser pendência.**
+  ⚠️ Não reabrir "candidato a divisão" numa próxima varredura de tamanho: a banda
+  é régua de estilo, e aqui ela foi conscientemente excedida.
 - Base: 226 → **227 itens**; públicas seguem **66**, `privado` booleano nos dois.
 
 ## ⚠️ ESCREVI OS DOIS CAPÍTULOS COM O JARGÃO QUE EU TINHA ACABADO DE LIMPAR

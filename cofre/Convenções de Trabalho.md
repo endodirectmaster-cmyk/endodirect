@@ -5,6 +5,22 @@ atualizado: 2026-08-19
 
 # Convenções de Trabalho
 
+## 📏 A BANDA DE TAMANHO DO CAPÍTULO É RÉGUA DE ESTILO, NÃO INVARIANTE (2026-08-19)
+
+Capítulo da casa fica entre **4.845 e 7.234 caracteres** de resumo, com tabela
+`## 📊`, ~10 pontos, ~5 flashcards e mapa de 3 níveis. Isso é **régua**, e régua
+se excede quando há razão clínica escrita.
+
+Primeiro caso registrado: *Tratamento da Obesidade na Infância e Adolescência*,
+**9.774 caracteres**, mantido inteiro **por decisão do professor** — estilo de
+vida, farmacoterapia, cirurgia e psicossocial formam um fluxo único de decisão, e
+partir ao meio faria o aluno saltar de capítulo dentro do raciocínio.
+
+⚠️ **Quem varrer tamanhos no futuro:** um capítulo fora da banda **com decisão
+registrada** não é pendência. Antes de propor divisão, procurar a decisão em
+[[Decisões]] — repropor o que já foi decidido gasta o tempo dele duas vezes.
+
+
 ## 🧨 ÁREA VAZIA DA BASE PROFUNDA É UM ACIDENTE AGENDADO (2026-08-19)
 
 `deepFor` só desce para a segunda área classificada **quando a primeira está
