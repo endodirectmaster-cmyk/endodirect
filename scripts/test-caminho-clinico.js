@@ -69,7 +69,14 @@ const CAMINHO = [
   ['DM1 vai correr 10 km, como ajusto o CGM e o carboidrato', 'Endocrinologia do Esporte'],
   ['nadar com diabetes tipo 1', 'Endocrinologia do Esporte'],
   ['pedalar com diabetes tipo 1', 'Endocrinologia do Esporte'],
-  ['quando pode ocorrer hipoglicemia noturna no DM1', 'Diabetes'],
+  // ⚠️ Este controle passou a esperar `Hipoglicemia` em 19/08/2026, quando a
+  // subespecialidade foi criada para acomodar o compêndio da ADA (Diabetes
+  // estava em 93% do teto). Ele continua provando o que existia para provar —
+  // que a promoção do Esporte NÃO engole pergunta sem exercício —, e o que ele
+  // mede agora é melhor: conferi que a resposta entregue traz a bradicardia da
+  // hipoglicemia noturna e a supressão contrarreguladora pelo sono, que é o
+  // assunto exato da pergunta e não estava em bloco nenhum de Diabetes.
+  ['quando pode ocorrer hipoglicemia noturna no DM1', 'Hipoglicemia'],
   ['encaminhar paciente com DM2 para nefrologista', 'Diabetes'],
   ['DM1 em cetoacidose apos treino intenso', 'Diabetes'],
   ['maratonista com hipotireoidismo', 'Tireoide'],
@@ -227,7 +234,9 @@ const CAMINHO = [
   // …e os controles que a chave nova poderia ter sequestrado:
   ['tireoidectomia total por cancer: qual a extensao?', 'Tireoide'],
   ['crise tireotoxica apos tireoidectomia', 'Tireoide'],
-  ['hipoglicemia grave no diabetico', 'Diabetes'],
+  // Mesma troca de expectativa da linha ~72, e pela mesma razão: o controle
+  // segue provando que a chave nova de Osteometabolismo não sequestra nada.
+  ['hipoglicemia grave no diabetico', 'Hipoglicemia'],
   // ⚠️⚠️ SENTINELA DE UMA OMISSÃO DELIBERADA, e a razão não é dominância — é DANO.
   // `tetania`, `chvostek` e `trousseau` NÃO podem rotear enquanto a base só tiver
   // a diretriz CRÔNICA de 2022. Conferi na fonte: ZERO ocorrência de tetany,

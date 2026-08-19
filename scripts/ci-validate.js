@@ -936,5 +936,19 @@ try {
   fail('regressão da obesidade pediátrica na base profunda falhou:\n' + out);
 }
 
+// ⚠️ HIPOGLICEMIA VIROU SUBESPECIALIDADE, e criar uma área mexe no roteamento de
+//     TODAS as outras. A palavra "hipoglicemia" aparece 88 vezes em Diabetes, 76
+//     em Esporte, 49 em Obesidade e 13 em Adrenal — a área nova pode roubar de
+//     quem responde melhor. Foi assim que a criação quebrou, em silêncio, a
+//     promoção condicional do Esporte: a pergunta de exercício no DM1 passou a
+//     casar três áreas e perdeu o consenso que é o assunto exato dela.
+try {
+  execFileSync(process.execPath, [path.join('scripts', 'test-hipoglicemia.js')], { stdio: 'pipe' });
+  ok('hipoglicemia: o compêndio da ADA chega a quem pergunta, não rouba de Esporte/Obesidade/Adrenal, e a ressalva do AID segue no núcleo');
+} catch (e) {
+  const out = (e.stdout ? e.stdout.toString() : '') + (e.stderr ? e.stderr.toString() : '');
+  fail('regressão da subespecialidade Hipoglicemia falhou:\n' + out);
+}
+
 if (errors) { console.error(`\n${errors} verificação(ões) falharam.`); process.exit(1); }
 console.log('\nTodas as verificações passaram.');
