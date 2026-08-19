@@ -1,6 +1,6 @@
 ---
 tags: [cofre, decisoes]
-atualizado: 2026-08-18
+atualizado: 2026-08-19
 ---
 
 # Decisões
@@ -8,6 +8,13 @@ atualizado: 2026-08-18
 Log de decisões de produto e técnicas (mais recentes no topo).
 
 ## 2026-08
+- **🚪 A ENQUETE NÃO ESTAVA NA TELA DE ENTRADA — E EU AFIRMEI QUE ESTAVA (2026-08-19).** `sw.js` v242 → **v243**. O professor perguntou: *"Essa enquete aparece na janela de entrada do aluno no aplicativo, certo?"* A resposta honesta era **não**.
+  - **O código me contradisse:** `homePanel()` diz literalmente *"Tela inicial do aluno é SEMPRE o Mural quando visível"* e devolve `'mural'`. Eu tinha posto a enquete só no `panel-dash`, supondo que o Dashboard fosse a entrada. **Só via a enquete quem clicava em "Dashboard" no menu.**
+  - ⚠️ **A lição não é o bug, é a suposição.** `panel-dash` tem `class="panel on"` no HTML — parece a tela inicial e não é; existe uma função que decide isso e eu não a li antes de escolher onde pendurar o card. **Ao posicionar qualquer coisa "na entrada", ler `homePanel()` primeiro.**
+  - **Conserto:** o card passa a ser desenhado nos **dois** alvos (`cme-card` e `cme-card-mural`), com `renderEnqueteCmeEm(alvoId)`; abrir o Mural chama `renderEnqueteCme()` (o `refreshDash()` só roda no Dashboard).
+  - 🐛 **Defeito que o conserto quase criou:** dois cards com os **mesmos ids** internos fariam `getElementById` devolver sempre o do Dashboard — interagir no Mural mexeria no formulário errado. Os ids passaram a ser por alvo (`cme-enviar-<alvo>`).
+  - **Guarda ampliada** em `scripts/test-enquete-cme.js`: exige a enquete no Mural, ids únicos entre os alvos, o wrapper escondido para não-Gold, e que abrir o Mural desenhe. **Verificado por mutação nas quatro pontas.** ⚠️ **A mutação dos ids "passou" na primeira tentativa por aspas aninhadas no shell — a mutação não tinha sido aplicada.** Conferi que o arquivo mudou de verdade antes de acreditar no verde, e ainda troquei o `TypeError` por mensagem explicativa.
+  - **Por que isso importa agora:** medi a adesão e ela é **0 de 39 Gold**. Parte é alcance (este defeito); parte é que **só 3 dos 105 alunos estudaram nos últimos 7 dias**.
 - **🚨 OS BACKUPS ESTAVAM ABERTOS PARA O MUNDO, E O CONSERTO ACHOU UM 500 EM PRODUÇÃO (2026-08-18).** Só banco — nada de `index.html`, sem bump de `sw.js`. Detalhe completo em [[Segurança e Exposição de Dados]]. Pergunta do professor: *"tem que saber se alguém está tentando hackerar/xeretar... pra saber se tem algum DEV querendo copiar a ideia"*.
   - **A resposta honesta não foi sobre alunos.** `endodirect_global_state_backup` (57 MB) e `endodirect_backup_diretriz` estavam **sem RLS e com `SELECT` para `anon`**. Provei de fora com a chave pública: `HTTP 206`, 14 e 8 registros. A tabela **viva** (RLS ligada) devolveu **0 registros** — controle que prova que o método funciona e que a RLS trabalha onde está ligada.
   - ⚠️ **A chave publishable vive no HTML por design; quem protege é a RLS.** Sem ela, um `GET` devolvia snapshots inteiros — 226 capítulos, banco de questões, mural.

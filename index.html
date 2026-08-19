@@ -2614,6 +2614,7 @@ input.dmm-inp-subsub{flex:1;min-width:0;background:transparent;color:var(--t2);f
     <div class="panel" id="panel-mural">
       <div class="breadcrumb">Dashboard <b>/ Mural</b></div>
       <div class="ph mural-ph"><h1>Mural <span class="mural-updated" id="mural-updated"></span></h1></div>
+      <div class="pc" id="cme-mural-wrap" style="display:none;padding-bottom:0"><div id="cme-card-mural"></div></div>
       <div class="pc" id="qotd-mural-wrap" style="display:none;padding-bottom:0"><div id="qotd-card-mural"></div></div>
       <div class="pc" id="mural-pc"></div>
     </div>
@@ -4429,7 +4430,7 @@ function applyStatePayload(payload,personalOnly){
     // Mantém o mais RECENTE dos dois: quem acabou de votar aqui não perde o voto
     // para uma resposta antiga que ainda estava viajando.
     if(!_vl||!Array.isArray(_vl.temas)||(payload.enquete_cme.em||0)>=(_vl.em||0))DB.enqueteCme=payload.enquete_cme;
-    try{if(document.getElementById('cme-card'))renderEnqueteCme();}catch(e){}
+    try{if(document.getElementById('cme-card')||document.getElementById('cme-card-mural'))renderEnqueteCme();}catch(e){}
   }
   if(payload.qotd&&typeof payload.qotd==='object'){DB.qotd=Object.assign({},payload.qotd,DB.qotd||{});try{localStorage.setItem('qotd_answered',JSON.stringify(DB.qotd));}catch(e){}try{var _qp=document.getElementById('panel-qotd');if(_qp&&_qp.classList.contains('on'))renderQotdArchive();}catch(e){}}
   if(!personalOnly){
@@ -7223,6 +7224,9 @@ function goPanel(id){
   if(bc)bc.textContent=PANEL_LABELS[id]||id;
   if(id==='dash')refreshDash();
   try{var _qm=document.getElementById('qotd-modal');if(_qm&&id!=='mural')_qm.style.display='none';if(id==='mural')renderQotd();}catch(e){}
+  // A enquete tem de ser desenhada ao ABRIR o Mural: ele e a tela de entrada do
+  // aluno (homePanel), e refreshDash() so roda no Dashboard.
+  try{if(id==='mural'||id==='dash')renderEnqueteCme();}catch(e){}
   if(id==='mural')try{kickDiscussaoCadeia();}catch(e){}
   if(id==='qotd'){try{renderQotdArchive();}catch(e){}}
   if(id==='quest'){applyQuestDegustacao();renderSavedQ();populateInst('q-inst');updateProvaInfo();}
@@ -7293,20 +7297,31 @@ function cmeVoto(){
 // Elegibilidade: SÓ Gold. `currentPlanKey()` já resolve o escopo legado `plano`.
 function cmeElegivel(){ return currentPlanKey() === 'gold'; }
 function renderEnqueteCme(){
-  var el = document.getElementById('cme-card'); if (!el) return;
-  if (!cmeElegivel()) { el.style.display = 'none'; el.innerHTML = ''; return; }
-  el.style.display = '';
+  // ⚠️ DOIS PONTOS DE ENTREGA, e o do MURAL e o que importa. Eu tinha posto a
+  // enquete so no Dashboard, supondo que fosse a tela inicial. Nao e:
+  // `homePanel()` devolve 'mural' sempre que o Mural esta visivel, e o Dashboard
+  // so aparece para quem clica nele no menu. O professor perguntou "aparece na
+  // janela de entrada, certo?" e a resposta honesta era NAO.
+  ['cme-card', 'cme-card-mural'].forEach(function (id) { renderEnqueteCmeEm(id); });
+}
+function renderEnqueteCmeEm(alvoId){
+  var el = document.getElementById(alvoId); if (!el) return;
+  // No Mural o card mora dentro de um wrapper que tambem precisa sumir, senao
+  // sobra o respiro do container numa tela sem conteudo.
+  var wrap = (alvoId === 'cme-card-mural') ? document.getElementById('cme-mural-wrap') : null;
+  if (!cmeElegivel()) { el.style.display = 'none'; el.innerHTML = ''; if (wrap) wrap.style.display = 'none'; return; }
+  el.style.display = ''; if (wrap) wrap.style.display = '';
   var voto = cmeVoto();
   if (voto && !cmeEditando) {
     el.innerHTML = '<div class="card" style="border:1px solid var(--gold);margin:0">'
       + '<div style="display:flex;justify-content:space-between;align-items:center;gap:.5rem;flex-wrap:wrap">'
       + '<span style="font-weight:800;color:var(--gold);font-size:.9rem">🎓 Educação Médica Continuada</span>'
-      + '<button type="button" class="btn btn-ghost btn-sm" id="cme-editar">Alterar</button></div>'
+      + '<button type="button" class="btn btn-ghost btn-sm" id="cme-editar-' + alvoId + '">Alterar</button></div>'
       + '<div style="margin-top:.5rem;font-size:.8rem;color:var(--t2);line-height:1.55">Sua indicação foi registrada: <b style="color:var(--tx)">'
       + esc(voto.temas.join(' · ')) + '</b>'
       + (voto.outro ? '<div style="margin-top:.3rem">Sugestão livre: <b style="color:var(--tx)">' + esc(voto.outro) + '</b></div>' : '')
       + '</div></div>';
-    var be = document.getElementById('cme-editar');
+    var be = el.querySelector('[id^="cme-editar"]');
     if (be) be.addEventListener('click', function(){ cmeEditando = true; cmeSel = null; renderEnqueteCme(); });
     return;
   }
@@ -7324,11 +7339,11 @@ function renderEnqueteCme(){
     + 'Serão aulas <b>mensais</b> de atualização e aperfeiçoamento nos diversos temas de endocrinologia, <b>exclusivas do plano Gold</b>. '
     + 'Indique <b>até ' + CME_MAX + ' temas</b> que você quer ver primeiro.</div>'
     + '<div style="display:flex;flex-wrap:wrap;gap:.4rem;margin-bottom:.7rem">' + chips + '</div>'
-    + '<input type="text" id="cme-outro" maxlength="120" placeholder="Outro tema que não está na lista (opcional)" '
+    + '<input type="text" id="cme-outro-' + alvoId + '" maxlength="120" placeholder="Outro tema que não está na lista (opcional)" '
     + 'value="' + esc(cmeOutroRascunho || (voto && voto.outro) || '') + '" style="width:100%;margin-bottom:.6rem">'
     + '<div style="display:flex;align-items:center;gap:.6rem;flex-wrap:wrap">'
-    + '<button type="button" class="btn btn-primary btn-sm" id="cme-enviar">Enviar</button>'
-    + '<span style="font-size:.72rem;color:var(--t3)" id="cme-conta">' + sel.length + ' de ' + CME_MAX + ' selecionados</span>'
+    + '<button type="button" class="btn btn-primary btn-sm" id="cme-enviar-' + alvoId + '">Enviar</button>'
+    + '<span style="font-size:.72rem;color:var(--t3)">' + sel.length + ' de ' + CME_MAX + ' selecionados</span>'
     + '</div></div>';
   el.querySelectorAll('[data-cme-tema]').forEach(function(b){
     b.addEventListener('click', function(){
@@ -7336,14 +7351,14 @@ function renderEnqueteCme(){
       var t = b.getAttribute('data-cme-tema'), i = sel.indexOf(t);
       if (i >= 0) sel.splice(i, 1); else if (sel.length < CME_MAX) sel.push(t);
       // guarda o texto já digitado para não perdê-lo no redesenho
-      var cx = document.getElementById('cme-outro');
+      var cx = el.querySelector('[id^="cme-outro-"]');
       cmeOutroRascunho = cx ? cx.value : cmeOutroRascunho;
       cmeEditando = true; renderEnqueteCme();
     });
   });
-  var bt = document.getElementById('cme-enviar');
+  var bt = el.querySelector('[id^="cme-enviar-"]');
   if (bt) bt.addEventListener('click', function(){
-    var cx = document.getElementById('cme-outro');
+    var cx = el.querySelector('[id^="cme-outro-"]');
     var outro = cx ? String(cx.value || '').trim().slice(0, 120) : '';
     if (!sel.length && !outro) { alert('Selecione ao menos um tema ou escreva uma sugestão.'); return; }
     DB.enqueteCme = { temas: sel.slice(), outro: outro, em: Date.now(), plano: currentPlanKey() };

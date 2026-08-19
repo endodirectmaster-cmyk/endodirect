@@ -33,7 +33,8 @@ if (!fonte) { console.error('✗ enquete EMC:\n  - ' + falhas[0]); process.exit(
 
 const corpo = fonte.replace(/^\s*\(function\(\)\{\s*/, '').replace(/^\s*['"]use strict['"];\s*/, '').replace(/\}\)\(\);?\s*$/, '');
 const vc = new VirtualConsole(); vc.on('jsdomError', function () {});
-const dom = new JSDOM('<body><div id="cme-card"></div></body>',
+const dom = new JSDOM('<body><div id="cme-card"></div>'
+  + '<div id="cme-mural-wrap"><div id="cme-card-mural"></div></div></body>',
   { url: 'https://www.endodirect.com.br/', runScripts: 'outside-only', virtualConsole: vc });
 const ctx = vm.createContext(dom.getInternalVMContext());
 try { vm.runInContext(corpo, ctx); } catch (e) { /* CDN ausente: esperado */ }
@@ -47,10 +48,13 @@ function monta(acessos, voto) {
   vm.runInContext('DB=(typeof DB==="object"&&DB)?DB:{};DB.enqueteCme=' + JSON.stringify(voto || null) + ';', ctx);
   vm.runInContext('cmeSel=null;cmeEditando=false;cmeOutroRascunho="";__persists=0;', ctx);
   const el = dom.window.document.getElementById('cme-card');
-  el.innerHTML = ''; el.style.display = '';
+  const mu = dom.window.document.getElementById('cme-card-mural');
+  el.innerHTML = ''; el.style.display = ''; mu.innerHTML = ''; mu.style.display = '';
   vm.runInContext('renderEnqueteCme();', ctx);
   return el;
 }
+const muralEl = () => dom.window.document.getElementById('cme-card-mural');
+const muralWrap = () => dom.window.document.getElementById('cme-mural-wrap');
 const chips = (el) => [...el.querySelectorAll('[data-cme-tema]')];
 
 // ── 1. ⚠️ NÃO-GOLD NÃO VÊ A ENQUETE ─────────────────────────────────────────
@@ -96,7 +100,15 @@ ok(SUBS >= 10, 'DIR_SUBS não foi lido do index.html (veio ' + SUBS + ')');
     '⚠️ MARCAR CHIP ESCREVEU EM DB.enqueteCme — outro persist() do app gravaria meio voto como se fosse voto');
 
   // ── 4. Enviar grava, uma vez só ───────────────────────────────────────────
-  dom.window.document.getElementById('cme-enviar').dispatchEvent(new dom.window.Event('click', { bubbles: true }));
+  // ⚠️ Busca DENTRO do card do Dashboard e por prefixo: se os ids voltarem a ser
+  // iguais nos dois alvos, isto não acha o botão e o teste diz o porquê, em vez
+  // de estourar um TypeError que não explica nada a quem for consertar.
+  const btEnviar = dom.window.document.getElementById('cme-card').querySelector('[id^="cme-enviar-"]');
+  ok(!!btEnviar,
+    '⚠️ não achei o botão Enviar com id por alvo (cme-enviar-<alvo>) dentro do card do Dashboard — '
+    + 'se os ids voltaram a ser fixos, interagir no card do Mural mexeria no formulário do Dashboard');
+  if (!btEnviar) { console.error('✗ enquete EMC:'); falhas.forEach((f) => console.error('  - ' + f)); process.exit(1); }
+  btEnviar.dispatchEvent(new dom.window.Event('click', { bubbles: true }));
   ok(vm.runInContext('__persists', ctx) === 1, 'o Enviar tinha de chamar persist() exatamente 1×');
   const v = vm.runInContext('JSON.stringify(DB.enqueteCme||null)', ctx);
   const voto = JSON.parse(v);
@@ -112,7 +124,7 @@ ok(SUBS >= 10, 'DIR_SUBS não foi lido do index.html (veio ' + SUBS + ')');
   ok(chips(el).length === 0, 'quem já votou não deve reabrir na lista de chips');
   ok(/Diabetes/.test(el.textContent) && /Tireoide/.test(el.textContent), 'a confirmação não mostra os temas escolhidos');
   ok(/Nódulo adrenal/.test(el.textContent), 'a sugestão livre sumiu da confirmação');
-  ok(!!el.querySelector('#cme-editar'), 'faltou o botão de alterar o voto');
+  ok(!!el.querySelector('[id^="cme-editar"]'), 'faltou o botão de alterar o voto');
 }
 
 // ── 6. o voto tem de SAIR do navegador e VOLTAR ─────────────────────────────
@@ -125,6 +137,40 @@ ok(/endodirect_admin_enquete_cme/.test(codigo),
   'o painel do professor não chama a RPC de apuração');
 ok(!/from\s+endodirect_app_state/i.test(codigo),
   '⚠️ o cliente não pode varrer `endodirect_app_state` direto — a apuração é da RPC admin-gated');
+
+// ── 7. ⚠️ A ENQUETE TEM DE ESTAR NA TELA DE ENTRADA, QUE É O MURAL ──────────
+// Eu a coloquei só no Dashboard supondo que fosse a tela inicial. NÃO É:
+// `homePanel()` devolve 'mural' sempre que o Mural está visível, e o Dashboard
+// só aparece para quem clica nele no menu. O professor perguntou "aparece na
+// janela de entrada, certo?" e a resposta honesta era NÃO — daí esta guarda.
+{
+  const el = monta(['plano:gold'], null);
+  ok(chips(muralEl()).length === SUBS,
+    '⚠️ a enquete NÃO aparece no Mural, que é a tela de entrada do aluno (homePanel) — '
+    + 'só no Dashboard ela é invisível para quem faz login e não clica no menu');
+  ok(muralWrap().style.display !== 'none', 'o wrapper do Mural continuou escondido');
+  ok(chips(el).length === SUBS, 'a enquete sumiu do Dashboard ao ganhar o Mural');
+
+  // ids únicos por alvo: sem isso, interagir no Mural mexeria no formulário do Dashboard
+  const ids = [...dom.window.document.querySelectorAll('[id^="cme-outro-"],[id^="cme-enviar-"]')].map((n) => n.id);
+  ok(new Set(ids).size === ids.length,
+    '⚠️ ids repetidos entre os dois cards (' + ids.join(', ') + ') — getElementById devolveria sempre o do Dashboard');
+  ok(ids.length === 4, 'esperava 2 campos por alvo (2 alvos), vieram ' + ids.length);
+}
+
+// ── 8. e o não-Gold não pode ver a enquete NEM no Mural ─────────────────────
+{
+  monta(['plano:standard'], null);
+  ok(chips(muralEl()).length === 0 && muralEl().innerHTML === '',
+    '⚠️ VAZOU NO MURAL: assinante Standard viu a enquete exclusiva do Gold');
+  ok(muralWrap().style.display === 'none',
+    '⚠️ o wrapper da enquete ficou visível no Mural para quem não é Gold');
+}
+
+// ── 9. o Mural precisa DESENHAR a enquete ao abrir ──────────────────────────
+const codigoMural = html.split('\n').filter((l) => !/^\s*\/\//.test(l)).join('\n');
+ok(/id==='mural'\|\|id==='dash'\)renderEnqueteCme\(\)/.test(codigoMural),
+  "⚠️ abrir o Mural não chama renderEnqueteCme() — refreshDash() só roda no Dashboard, então o card nasceria vazio na tela de entrada");
 
 if (falhas.length) {
   console.error('✗ enquete EMC:');
