@@ -101,6 +101,25 @@ resumo em vez do app. Corrigido em duas frentes (v244 → v245):
 - **O texto do payload é escapado antes de virar HTML.** Sem isso, um `<script>`
   dentro de um resumo viraria script executado na página pública.
 
+## Conferido no ar (19/08/2026, logo após o merge)
+
+Buscado em `www.endodirect.com.br`, não no preview:
+
+| endereço | resultado |
+|---|---|
+| `/robots.txt` | 200, aponta o sitemap |
+| `/sitemap.xml` | 200, **68 URLs** (home + índice + 66 capítulos), todas absolutas e distintas |
+| `/resumos` | 200, 66 temas agrupados em 14 subespecialidades |
+| `/resumo/nodulo-tireoidiano-e-cancer-diferenciado` | 200, `<title>`, description, canonical e JSON-LD corretos; `x-robots-tag: index, follow` |
+| `/resumo/slug-que-nao-existe-teste` | **404** de verdade, não soft-404 |
+
+Nenhum flashcard, mapa mental, fluxograma ou figura no HTML servido.
+
+⚠️ **Detalhe cosmético conhecido:** a página de "não encontrado" sai com
+`X-Robots-Tag: index, follow` porque a regra do `vercel.json` casa
+`/resumo/(.*)`. É inofensivo — o **status 404 prevalece** e o Google não indexa
+404 —, mas se um dia isso for arrumado, o lugar é o bloco `headers`.
+
 ## Como desligar
 
 Tirar os três `rewrites` do `vercel.json`. As páginas somem na hora; nada mais

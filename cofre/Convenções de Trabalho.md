@@ -29,6 +29,11 @@ implantação mais recente com a data do último merge. Se a mais recente for
 anterior ao último merge, os deploys estão falhando. Confirmar pelo que está no
 ar: `sw.js` da produção traz a versão do cache.
 
+**Conferido:** com o agendamento diário, a implantação voltou a sair — deu
+`READY` em 11 s, a primeira desde 17/08 17:30, e a produção passou da v242 para
+a v245. **Conferir o deploy antes de mergear virou parte do fluxo**, não só
+`ci-validate` verde: o CI não sabe nada sobre limite de plano.
+
 ⚠️ **E a "prova" de que o projeto era Pro não provava nada.** Argumentei que
 `maxDuration: 120` declarado no `vercel.json` só faria sentido no Pro, porque o
 teto do Hobby é 60 s. **A Vercel corta em silêncio pelo limite do plano** —
