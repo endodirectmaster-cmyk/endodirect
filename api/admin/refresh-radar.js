@@ -1,8 +1,16 @@
 // Atualiza o radar do mural sob demanda, acionado pelo PROFESSOR no painel.
+//
+// ⚠️ TAMBEM SERVE A PREVIA DA NEWSLETTER (action: 'newsletter-teste'), que antes
+// era api/newsletter/test.js. A Vercel so aceita 12 funcoes serverless e cada
+// arquivo em api/ e uma funcao; o projeto estava no teto. Aquele endpoint estava
+// SEM GATILHO NA UI desde 15/06/2026 (o botao foi removido a pedido do
+// professor) e so era chamado a mao, entao juntar aqui nao tira nada de ninguem
+// — e a autenticacao e a mesma: token de admin ou CRON_SECRET.
 // Autenticacao: o front envia Authorization: Bearer <access_token da sessao
 // Supabase do admin>. Validamos o token, conferimos que o e-mail esta em
 // endodirect_admins e so entao rodamos o radar (lib/radar.js).
 const { runRadar } = require('../../lib/radar');
+const { sendTestNewsletter } = require('../../lib/newsletter');
 const { gerarDiscussao } = require('../../lib/discussao');
 const { selecionar } = require('../../lib/discussao-auto');
 const { dispararCadeia } = require('../../lib/discussao-kick');
@@ -69,6 +77,19 @@ module.exports = async function handler(req, res) {
   // no celular dos alunos inscritos (avisos/breaking news). Sem action → radar.
   let payload = {};
   try { payload = JSON.parse((await readRawBody(req)).toString('utf8') || '{}'); } catch (e) { payload = {}; }
+
+  // Previa da newsletter para UM endereco (nao mexe na trava do dia nem na base).
+  if (payload && payload.action === 'newsletter-teste') {
+    const to = String(payload.to || '').trim().toLowerCase();
+    if (!to || to.indexOf('@') < 1) return json(res, 400, { ok: false, error: 'Informe "to" com um e-mail valido.' });
+    try {
+      const result = await sendTestNewsletter(to);
+      return json(res, result && result.sent ? 200 : 500, { ok: !!(result && result.sent), result });
+    } catch (error) {
+      console.error('[refresh-radar:newsletter-teste] erro:', (error && error.stack) || error);
+      return json(res, 500, { ok: false, error: (error && error.message) || 'Falha ao enviar a previa.' });
+    }
+  }
 
   if (payload && payload.action === 'push') {
     const title = String(payload.title || '').trim();

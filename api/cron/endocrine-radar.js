@@ -4,7 +4,7 @@
 const { runRadar } = require('../../lib/radar');
 const { sendDailyNewsletter } = require('../../lib/newsletter');
 const { refreshPodcastsFromFeed } = require('../../lib/podcasts');
-const { sendTrialEmails, sendWinbackNovidades, sendReengajamento, REENG_CEDO_DIAS, REENG_CEDO_COOLDOWN, REENG_CEDO_CHAVE } = require('../../lib/trial-emails');
+const { sendTrialEmails, sendWinbackNovidades, sendReengajamento, sendRenovacao, REENG_CEDO_DIAS, REENG_CEDO_COOLDOWN, REENG_CEDO_CHAVE } = require('../../lib/trial-emails');
 const { sendIgDailyNotice, autoPostDailyQotd } = require('../../lib/instagram');
 const { sendAvisoAoVivo } = require('../../lib/aovivo');
 // Dá a partida na cadeia de discussões: uma requisição ao próprio backend, que
@@ -85,6 +85,14 @@ module.exports = async function handler(req, res) {
         dias: REENG_CEDO_DIAS, cooldown: REENG_CEDO_COOLDOWN, chave: REENG_CEDO_CHAVE
       });
     } catch (e) { console.error('[cron-radar] reengajamento cedo erro:', (e && e.stack) || e); reengCedo = { sent: false, reason: 'erro' }; }
+
+    // ⚠️ AVISO DE RENOVACAO (30/7/1 dias antes). Medido em 19/08/2026: 31 das 36
+    // assinaturas ativas sao ANUAIS AVULSAS e venciam EM SILENCIO - nao cobram
+    // sozinhas e nao havia nenhum e-mail avisando. A onda cai em jun-ago/2027.
+    // Recorrente e excluido pela propria RPC: ele cobra sozinho.
+    let renovacao = { sent: false, reason: 'skipped' };
+    try { renovacao = await sendRenovacao(); }
+    catch (e) { console.error('[cron-radar] renovacao erro:', (e && e.stack) || e); renovacao = { sent: false, reason: 'erro' }; }
     // Aviso da AULA AO VIVO do dia (e-mail + push). Pega carona aqui porque o
     // plano limita os cron jobs e a Vercel está em 12/12 funções serverless.
     // Idempotente por aula (ledger em payload.aovivo_sent). Fail-safe.

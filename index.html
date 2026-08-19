@@ -1983,7 +1983,7 @@ input.dmm-inp-subsub{flex:1;min-width:0;background:transparent;color:var(--t2);f
       </div>
     </div>
   </div>
-  <div class="lp-foot"><div class="lp-wrap">© <span id="lp-year"></span> Endodirect · Educação médica em Endocrinologia · <a href="mailto:contato@endodirect.com.br">contato@endodirect.com.br</a> · <a href="/privacidade" target="_blank" rel="noopener">Privacidade</a> · <a href="/termos" target="_blank" rel="noopener">Termos</a></div></div>
+  <div class="lp-foot"><div class="lp-wrap">© <span id="lp-year"></span> Endodirect · Educação médica em Endocrinologia · <a href="mailto:contato@endodirect.com.br">contato@endodirect.com.br</a> · <a href="/resumos">Resumos de diretrizes</a> · <a href="/privacidade" target="_blank" rel="noopener">Privacidade</a> · <a href="/termos" target="_blank" rel="noopener">Termos</a></div></div>
 </div>
 
 <div id="login-screen" style="display:none">
@@ -7307,8 +7307,15 @@ function precisaAtivacao(){
   if(currentUser.role==='admin')return false;        // a casa não é público-alvo
   if(ativacaoFeitaAgora)return true;                 // acabou de responder: mostra o desfecho
   var act=(DB&&DB.act&&typeof DB.act==='object')?DB.act:null;
-  if(!act)return true;
-  return Object.keys(act).length===0;                // nunca respondeu nada
+  if(act&&Object.keys(act).length)return false;
+  // ⚠️ `act` NÃO É A ÚNICA PROVA DE QUE JÁ ESTUDOU. Sete contas têm questões em
+  // DB.perf e `act` vazio: responderam entre 25/06 e 05/07/2026, antes de
+  // studyEvent() existir (25/07/2026, commit e633bca). Olhando só para `act`, o
+  // card de "comece por aqui" reapareceria para sempre para quem já respondeu —
+  // exatamente o contrário do que ele existe para fazer.
+  var perf=(DB&&DB.perf&&typeof DB.perf==='object')?DB.perf:null;
+  if(perf){for(var a in perf){if(perf[a]&&Number(perf[a].total)>0)return false;}}
+  return true;                                       // nunca respondeu nada
 }
 function renderAtivacao(){
   ['ativa-card','ativa-card-mural'].forEach(function(id){renderAtivacaoEm(id);});

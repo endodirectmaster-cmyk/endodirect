@@ -2,8 +2,12 @@
   "$schema": "https://openapi.vercel.sh/vercel.json",
   "cleanUrls": true,
   "functions": {
-    "api/ai.js": { "maxDuration": 120 },
-    "api/admin/refresh-radar.js": { "maxDuration": 120 }
+    "api/ai.js": {
+      "maxDuration": 120
+    },
+    "api/admin/refresh-radar.js": {
+      "maxDuration": 120
+    }
   },
   "headers": [
     {
@@ -32,16 +36,48 @@
           "value": "public, max-age=0, must-revalidate"
         }
       ]
+    },
+    {
+      "source": "/resumo/(.*)",
+      "headers": [
+        {
+          "key": "X-Robots-Tag",
+          "value": "index, follow, max-image-preview:large"
+        }
+      ]
+    },
+    {
+      "source": "/resumos",
+      "headers": [
+        {
+          "key": "X-Robots-Tag",
+          "value": "index, follow"
+        }
+      ]
     }
   ],
   "crons": [
     {
       "path": "/api/cron/endocrine-radar",
-      "schedule": "30 10,20 * * *"
+      "schedule": "30 10 * * *"
     },
     {
       "path": "/api/cron/healthcheck",
-      "schedule": "0 13 * * *"
+      "schedule": "0 20 * * *"
+    }
+  ],
+  "rewrites": [
+    {
+      "source": "/sitemap.xml",
+      "destination": "/api/publico?rota=sitemap"
+    },
+    {
+      "source": "/resumos",
+      "destination": "/api/publico?rota=indice"
+    },
+    {
+      "source": "/resumo/:slug",
+      "destination": "/api/publico?rota=resumo&slug=:slug"
     }
   ]
 }
