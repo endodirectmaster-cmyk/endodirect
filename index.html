@@ -2152,6 +2152,7 @@ input.dmm-inp-subsub{flex:1;min-width:0;background:transparent;color:var(--t2);f
       <div class="breadcrumb">Dashboard <b>/ Visão Geral</b></div>
       <div class="ph"><h1 id="dash-greeting">Bem-vindo.</h1><p>Continue seus estudos.</p></div>
       <div class="pc">
+        <div id="ativa-card" style="display:none;margin-bottom:10px"></div>
         <div id="cme-card" style="display:none;margin-bottom:10px"></div>
         <div id="qotd-card" style="display:none;margin-bottom:10px"></div>
         <div id="streak-card" style="margin-bottom:10px"></div>
@@ -2614,6 +2615,7 @@ input.dmm-inp-subsub{flex:1;min-width:0;background:transparent;color:var(--t2);f
     <div class="panel" id="panel-mural">
       <div class="breadcrumb">Dashboard <b>/ Mural</b></div>
       <div class="ph mural-ph"><h1>Mural <span class="mural-updated" id="mural-updated"></span></h1></div>
+      <div class="pc" id="ativa-mural-wrap" style="display:none;padding-bottom:0"><div id="ativa-card-mural"></div></div>
       <div class="pc" id="cme-mural-wrap" style="display:none;padding-bottom:0"><div id="cme-card-mural"></div></div>
       <div class="pc" id="qotd-mural-wrap" style="display:none;padding-bottom:0"><div id="qotd-card-mural"></div></div>
       <div class="pc" id="mural-pc"></div>
@@ -7227,6 +7229,7 @@ function goPanel(id){
   // A enquete tem de ser desenhada ao ABRIR o Mural: ele e a tela de entrada do
   // aluno (homePanel), e refreshDash() so roda no Dashboard.
   try{if(id==='mural'||id==='dash')renderEnqueteCme();}catch(e){}
+  try{if(id==='mural'||id==='dash')renderAtivacao();}catch(e){}
   if(id==='mural')try{kickDiscussaoCadeia();}catch(e){}
   if(id==='qotd'){try{renderQotdArchive();}catch(e){}}
   if(id==='quest'){applyQuestDegustacao();renderSavedQ();populateInst('q-inst');updateProvaInfo();}
@@ -7260,8 +7263,116 @@ function refreshDash(){
   var due=srSessionCount();
   setText('d-qn',DB.q.length);setText('d-fcn',DB.fc.length);setText('d-sr-due',due);setText('d-mmn',DB.mm.length);
   try{renderStreakCard();}catch(e){}
+  try{renderAtivacao();}catch(e){}
   try{renderEnqueteCme();}catch(e){}
   renderPerfBars();updateDashRec();renderDashCrono();renderDashNotas();
+}
+
+// ---------- ATIVAÇÃO DA PRIMEIRA SESSÃO ----------
+// MEDIDO EM 19/08/2026, e foi o pior número do funil: de 112 cadastrados, 58
+// nunca responderam nada — e 53 DELES FIZERAM LOGIN. Entraram, olharam e saíram.
+// Só 5 nunca nem entraram. A perda não é de memória, é de PRIMEIRA SESSÃO.
+//
+// ⚠️ E o mecanismo que deveria resolver isso JÁ EXISTIA: o modal da Questão do
+// Dia aparece no Mural (a tela de entrada) e responder ali já conta como estudo,
+// porque `qotdSaveAns` chama `studyEvent`, que incrementa `DB.act`. O que falta
+// não é a questão — é que o modal:
+//   · some com um clique em "Agora não" (`qotdDismissed`), e
+//   · fala como se o aluno já soubesse o que é aquilo.
+//
+// Este card é diferente em três coisas deliberadas:
+//   1. NÃO é dispensável — fica até a primeira questão ser respondida;
+//   2. só existe para quem tem ZERO atividade (some sozinho depois, para sempre);
+//   3. diz o que vai acontecer, em vez de só mostrar alternativas.
+// Só oferece push quando há chance real de dar certo: navegador com suporte,
+// permissão ainda NÃO decidida (nem concedida nem negada) e, no iPhone, só com o
+// app instalado na tela inicial — fora disso a API nem existe.
+function pushDeveOferecer(){
+  try{
+    if(typeof pushSupported!=='function'||!pushSupported())return false;
+    if(typeof pushIsIOS==='function'&&pushIsIOS()&&typeof pushStandalone==='function'&&!pushStandalone())return false;
+    if(typeof Notification==='undefined')return false;
+    return Notification.permission==='default';
+  }catch(e){return false;}
+}
+// ⚠️ `ativacaoFeitaAgora` existe por causa de um defeito que o teste pegou: no
+// instante em que o aluno responde, `DB.act` deixa de estar vazio, logo
+// `precisaAtivacao()` vira false e o card SUMIA na mesma hora. O aluno fazia o
+// esforço e a recompensa desaparecia junto — sem confirmação, sem o convite de
+// notificação, sem próximo passo. A marca segura o card até o fim desta sessão;
+// no próximo carregamento ele não volta, e é isso que se quer.
+var ativacaoFeitaAgora=false;
+function precisaAtivacao(){
+  if(!currentUser)return false;                      // visitante não tem o que ativar
+  if(currentUser.role==='admin')return false;        // a casa não é público-alvo
+  if(ativacaoFeitaAgora)return true;                 // acabou de responder: mostra o desfecho
+  var act=(DB&&DB.act&&typeof DB.act==='object')?DB.act:null;
+  if(!act)return true;
+  return Object.keys(act).length===0;                // nunca respondeu nada
+}
+function renderAtivacao(){
+  ['ativa-card','ativa-card-mural'].forEach(function(id){renderAtivacaoEm(id);});
+}
+function renderAtivacaoEm(alvoId){
+  var el=document.getElementById(alvoId);if(!el)return;
+  var wrap=(alvoId==='ativa-card-mural')?document.getElementById('ativa-mural-wrap'):null;
+  var q=(typeof qotdTodays==='function')?qotdTodays():null;
+  // Sem questão publicada não há o que oferecer — melhor nada que um card vazio.
+  if(!precisaAtivacao()||!q){el.style.display='none';el.innerHTML='';if(wrap)wrap.style.display='none';return;}
+  el.style.display='';if(wrap)wrap.style.display='';
+  var ans=qotdReadAns()[q.id]||null;
+  var cab='<div style="display:flex;align-items:center;gap:.5rem;margin-bottom:.4rem">'
+    +'<span style="font-size:1.15rem">👋</span>'
+    +'<span style="font-weight:800;color:var(--blue2);font-size:.92rem">Comece por aqui</span></div>';
+  var txt=ans
+    ? '<div style="font-size:.82rem;color:var(--t2);line-height:1.6;margin-bottom:.6rem">'
+      +'<b style="color:var(--grn)">✓ Pronto — essa foi a sua primeira questão.</b> '
+      +'A partir de agora o app acompanha seu desempenho por área, guarda o que você errou para revisão e conta sua sequência de dias.</div>'
+    : '<div style="font-size:.82rem;color:var(--t2);line-height:1.6;margin-bottom:.7rem">'
+      +'Responda <b>uma questão</b> para começar. Leva menos de um minuto, e é o que liga o seu acompanhamento: '
+      +'desempenho por área, revisão do que você errar e a sua sequência de dias de estudo.</div>';
+  el.innerHTML='<div class="card" style="border:1px solid var(--blue);margin:0">'+cab+txt
+    +'<div id="'+alvoId+'-q"></div>'
+    +(ans?'<div style="display:flex;gap:.5rem;flex-wrap:wrap;margin-top:.7rem">'
+        +'<button type="button" class="btn btn-primary btn-sm" id="'+alvoId+'-ir">Ver meu painel →</button>'
+        // ⚠️ O PEDIDO DE NOTIFICAÇÃO VEM AQUI, e não na chegada. O CTA passivo do
+        // Mural converte 15% (17 de 112). Pedir permissão a quem acabou de
+        // ENTRAR é pedir antes de mostrar valor; pedir a quem acabou de
+        // RESPONDER é pedir depois. Só aparece se o navegador suporta e ainda
+        // não foi decidido — nunca insiste com quem já negou.
+        +(pushDeveOferecer()?'<button type="button" class="btn btn-sm" id="'+alvoId+'-push" style="background:var(--gold-l);color:var(--gold);border:1px solid var(--gold)">🔔 Avisar quando sair a próxima</button>':'')
+      +'</div>':'')
+    +'</div>';
+  var host=document.getElementById(alvoId+'-q');
+  if(host)host.innerHTML=qotdCardHTML(q,ans,'🧠 Sua primeira questão');
+  if(!ans&&host){
+    host.querySelectorAll('[data-qotd-opt]').forEach(function(b){
+      b.addEventListener('click',function(){
+        var letra=b.getAttribute('data-qotd-opt');
+        var ok=(letra===q.answer);
+        var mm=qotdReadAns();mm[q.id]={letter:letra,ok:ok,at:Date.now()};
+        // qotdSaveAns → studyEvent → DB.act: é ISTO que tira o aluno do balde
+        // "nunca estudou". Mesma contabilidade do modal, sem o modal.
+        qotdSaveAns(mm,q,ok);
+        ativacaoFeitaAgora=true;   // segura o card para o aluno VER que conseguiu
+        renderAtivacao();
+        try{renderPerfBars();updateDashRec();refreshDash();}catch(e){}
+      });
+    });
+  }
+  var ir=document.getElementById(alvoId+'-ir');
+  if(ir)ir.addEventListener('click',function(){try{goPanel('dash');}catch(e){}});
+  var bp=document.getElementById(alvoId+'-push');
+  if(bp)bp.addEventListener('click',function(){
+    bp.disabled=true;bp.textContent='Ativando…';
+    pushEnable().then(function(){
+      bp.textContent='🔔 Avisos ativados';
+      try{notify('Pronto — você será avisado da próxima questão.','ok');}catch(e){}
+    }).catch(function(e){
+      bp.disabled=false;bp.textContent='🔔 Avisar quando sair a próxima';
+      try{notify(String(e&&e.message||e),'err');}catch(e2){}
+    });
+  });
 }
 
 // ---------- ENQUETE DO PROGRAMA DE EDUCAÇÃO MÉDICA CONTINUADA ----------
@@ -7441,6 +7552,11 @@ function qotdRenderModal(q,ans){
 function renderQotd(){
   var q=qotdTodays();var m=qotdModalEl();
   if(!q){m.style.display='none';return;}
+  // ⚠️ Quem ainda não respondeu NADA recebe o card "Comece por aqui", que traz
+  // esta mesma questão embutida e NÃO se dispensa. Abrir o modal por cima
+  // mostraria a questão duas vezes e devolveria ao aluno o botão "Agora não",
+  // que é justamente o que se quer tirar do caminho na primeira sessão.
+  try{if(precisaAtivacao()){m.style.display='none';return;}}catch(e){}
   var ans=qotdReadAns()[q.id];
   if(ans||qotdDismissed){m.style.display='none';return;}
   qotdRenderModal(q,null);m.style.display='';
@@ -7626,6 +7742,36 @@ function renderStreakCard(){
   var act=DB.act||{};var streak=computeStreak(act);var best=Math.max(bestStreak(act),streak);
   var goal=(DB.goal&&DB.goal.weekly)||50;var wc=weekCount(act);var hoje=act[todayKey()]||0;
   var pct=Math.min(100,Math.round(wc/goal*100));var met=wc>=goal;
+  // ⚠️ MEDIDO EM 19/08/2026: dos 91 alunos com meta gravada, TODOS OS 91 tinham
+  // exatamente 50 — o valor com que `DB` nasce. NENHUM aluno jamais tocou no
+  // seletor. E o efeito era o inverso do pretendido: quem respondeu ~15 questões
+  // via a barra em 30% de uma meta que não escolheu, ou seja, a tela feita para
+  // motivar entregava "você está atrás" toda vez.
+  // Enquanto ele não escolher, PERGUNTA-SE — sem barra, sem porcentagem.
+  var escolheu=!!(DB.goal&&DB.goal.escolhida);
+  if(!escolheu&&Object.keys(act).length>0){
+    var op2=[20,35,50,75,100,150].map(function(n){return '<option value="'+n+'">'+n+' questões por semana</option>';}).join('');
+    el.innerHTML='<div class="card" style="background:linear-gradient(135deg,var(--surface),var(--s2))">'
+      +'<div style="display:flex;align-items:center;gap:.6rem;margin-bottom:.45rem">'
+        +'<span style="font-size:1.4rem;filter:'+(streak>0?'none':'grayscale(1);opacity:.6')+'">🔥</span>'
+        +'<span style="font-size:.86rem;font-weight:800;color:var(--tx)">'
+        +(streak>0?('Você está em '+streak+(streak===1?' dia':' dias')+' de ofensiva'):'Bom te ver por aqui')+'</span></div>'
+      +'<div style="font-size:.8rem;color:var(--t2);line-height:1.6;margin-bottom:.7rem">'
+      +'Qual ritmo faz sentido para a sua rotina? A meta é sua — dá para mudar quando quiser.</div>'
+      +'<div style="display:flex;gap:.5rem;flex-wrap:wrap;align-items:center">'
+      +'<select id="streak-goal-novo" style="font-size:.78rem;padding:.4rem .6rem;border-radius:8px;background:var(--surface);color:var(--tx);border:1px solid var(--bd)">'+op2+'</select>'
+      +'<button type="button" class="btn btn-primary btn-sm" id="streak-escolher">Definir minha meta</button>'
+      +'</div></div>';
+    var e2=document.getElementById('streak-escolher');
+    if(e2)e2.addEventListener('click',function(){
+      var v=parseInt((document.getElementById('streak-goal-novo')||{}).value)||0;
+      if(!v)return;
+      DB.goal=DB.goal||{};DB.goal.weekly=v;DB.goal.escolhida=true;
+      try{persist();}catch(e){}
+      renderStreakCard();
+    });
+    return;
+  }
   var opts=[20,35,50,75,100,150].map(function(n){return '<option value="'+n+'"'+(n===goal?' selected':'')+'>'+n+' questões/sem</option>';}).join('');
   el.innerHTML='<div class="card" style="display:flex;flex-wrap:wrap;align-items:center;gap:1rem;background:linear-gradient(135deg,var(--surface),var(--s2))">'
     +'<div style="display:flex;align-items:center;gap:.6rem;min-width:140px">'
@@ -7640,7 +7786,17 @@ function renderStreakCard(){
     +((!hoje&&streak>0)?'<div style="width:100%;font-size:.68rem;color:var(--gold)">⏰ Estude hoje para manter sua ofensiva de '+streak+(streak===1?' dia':' dias')+'!</div>':'')
     +(function(){var d=planDaysLeft();if(d==null)return '';return '<div style="width:100%;font-size:.68rem;color:var(--blue2)">🎯 '+(d>0?('Faltam '+d+(d===1?' dia':' dias')+' para '+esc((DB.plan&&DB.plan.exam)||'sua prova')):(d===0?'Sua prova é hoje! 🍀':'Prova-alvo já passou — atualize no Plano de estudo'))+'</div>';})()
   +'</div>';
-  var sel=document.getElementById('streak-goal');if(sel)sel.addEventListener('change',function(){DB.goal=DB.goal||{};DB.goal.weekly=parseInt(this.value)||50;persist();renderStreakCard();});
+  var sel=document.getElementById('streak-goal');if(sel)sel.addEventListener('change',function(){
+    // ⚠️ `escolhida` distingue META DO ALUNO de valor que o sistema pôs. Sem esta
+    // marca não dá para saber a diferença: `DB` nasce com {weekly:50} e o
+    // persist() grava isso no servidor, então TODO mundo aparece "com meta".
+    DB.goal=DB.goal||{};DB.goal.weekly=parseInt(this.value)||50;DB.goal.escolhida=true;persist();renderStreakCard();});
+  var esc1=document.getElementById('streak-escolher');
+  if(esc1)esc1.addEventListener('click',function(){
+    var v=parseInt((document.getElementById('streak-goal-novo')||{}).value)||0;
+    if(!v)return;
+    DB.goal=DB.goal||{};DB.goal.weekly=v;DB.goal.escolhida=true;persist();renderStreakCard();
+  });
 }
 // ── PLANO DE ESTUDO ATÉ A PROVA (amarra desempenho + erros + ofensiva + simulado) ──
 function planDaysLeft(){if(!DB.plan||!DB.plan.date)return null;return Math.ceil((new Date(DB.plan.date+'T23:59:59')-new Date())/86400000);}
@@ -13294,6 +13450,59 @@ function kickDiscussaoCadeia(){
     }).catch(function(){});
   }catch(e){}
 }
+// ---------- PAGANTES EM RISCO (assinou, pagou e nunca usou) ----------
+// MEDIDO EM 19/08/2026: 10 dos 37 assinantes ativos (27%) nunca responderam uma
+// questão sequer. É o churn mais previsível que existe — dinheiro já pago que
+// não vira uso e não renova. A lista é NOMINAL de propósito: automação não
+// resolve isto, uma mensagem do professor resolve.
+var admRiscoData=null,admRiscoErr='',admRiscoLoading=false;
+function carregaAdmRisco(cb){
+  if(admRiscoData||admRiscoErr){cb&&cb();return;}
+  if(admRiscoLoading)return;
+  var client=getSupabaseClient();
+  if(!client){admRiscoErr='Supabase indisponível.';cb&&cb();return;}
+  admRiscoLoading=true;
+  client.rpc('endodirect_admin_pagantes_risco').then(function(res){
+    admRiscoLoading=false;
+    if(res&&res.error)admRiscoErr=res.error.message||'erro';else admRiscoData=(res&&res.data)||{};
+    cb&&cb();
+  }).catch(function(e){admRiscoLoading=false;admRiscoErr=String(e&&e.message||e);cb&&cb();});
+}
+function admRiscoHTML(){
+  if(admRiscoErr)return '<div class="card" style="margin-bottom:1rem"><div class="empty">Não consegui apurar o risco: '+esc(admRiscoErr)+'</div></div>';
+  if(!admRiscoData)return '<div class="card" style="margin-bottom:1rem"><div class="empty">Apurando risco…</div></div>';
+  var d=admRiscoData;
+  var sem=Array.isArray(d.sem_uso_nenhum)?d.sem_uso_nenhum:[];
+  var cedo=Array.isArray(d.parou_cedo)?d.parou_cedo:[];
+  if(!sem.length&&!cedo.length){
+    return '<div class="card" style="margin-bottom:1rem;border:1px solid var(--grn)">'
+      +'<b style="color:var(--grn)">✅ Nenhum assinante pagante sem uso.</b> '
+      +'<span style="font-size:.78rem;color:var(--t2)">'+Number(d.total_pagantes||0)+' pagantes, '+Number(d.pagantes_ativos_7d||0)+' ativos nos últimos 7 dias.</span></div>';
+  }
+  function linha(p,extra){
+    return '<div style="display:flex;justify-content:space-between;gap:.6rem;flex-wrap:wrap;padding:.45rem 0;border-bottom:1px solid var(--bd)">'
+      +'<span style="font-size:.8rem;color:var(--tx)"><b>'+esc(p.nome||'(sem nome)')+'</b> · '+esc(p.email||'')+'</span>'
+      +'<span style="font-size:.72rem;color:var(--t3)">'+extra+'</span></div>';
+  }
+  var h='';
+  if(sem.length){
+    h+='<div class="card" style="margin-bottom:1rem;border:1px solid var(--red)">'
+      +'<div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:.5rem;margin-bottom:.5rem">'
+      +'<span style="font-weight:800;color:var(--red);font-size:.9rem">🚨 Pagantes que nunca estudaram ('+sem.length+' de '+Number(d.total_pagantes||0)+')</span></div>'
+      +'<div style="font-size:.78rem;color:var(--t2);line-height:1.55;margin-bottom:.6rem">'
+      +'Pagaram e não usaram nenhuma vez. É o grupo com maior chance de não renovar — e o que mais responde a um contato pessoal.</div>'
+      +sem.map(function(p){
+        return linha(p,(p.nunca_logou?'nunca entrou · ':'')+'assinou há '+Number(p.dias_desde_cadastro||0)+' dia'+(Number(p.dias_desde_cadastro)===1?'':'s'));
+      }).join('')+'</div>';
+  }
+  if(cedo.length){
+    h+='<div class="card" style="margin-bottom:1rem;border:1px solid var(--gold)">'
+      +'<div style="font-weight:800;color:var(--gold);font-size:.9rem;margin-bottom:.5rem">⚠️ Pagantes que estudaram uma vez e sumiram ('+cedo.length+')</div>'
+      +cedo.map(function(p){return linha(p,Number(p.dias_estudados||0)+' dia(s) · último em '+esc(p.ultimo_estudo||'—'));}).join('')+'</div>';
+  }
+  return h;
+}
+
 // ---------- APURAÇÃO DA ENQUETE DE EDUCAÇÃO MÉDICA CONTINUADA ----------
 // O voto vive no app_state de cada aluno; o agregado vem da RPC
 // `endodirect_admin_enquete_cme`, que é SECURITY DEFINER e recusa quem não é
@@ -13385,7 +13594,17 @@ function renderAdmSec(sec){
   }
   if(sec==='provas')m.innerHTML=admProvasSecHTML();
   else if(sec==='cursos')m.innerHTML=admCursosHTML();
-  else if(sec==='estudantes'){m.innerHTML=admEstudantesHTML();loadAdmEstudantes();}
+  else if(sec==='estudantes'){
+    // O bloco de RISCO vai no topo dos Estudantes: e onde o professor ja olha
+    // para ver quem sao os alunos, e nao acrescenta mais um item de menu.
+    m.innerHTML=admRiscoHTML()+admEstudantesHTML();loadAdmEstudantes();
+    carregaAdmRisco(function(){
+      if(admCurrentSec!=='estudantes')return;
+      var m2=document.getElementById('adm-main');
+      if(m2)m2.innerHTML=admRiscoHTML()+admEstudantesHTML();
+      try{bindAdmSec('estudantes');}catch(e){}
+    });
+  }
   else if(sec==='analytics'){m.innerHTML=admAnalyticsHTML();loadAdmOverview();loadAdmEstudantes();var rtA=document.getElementById('adm-analytics-retry');if(rtA)rtA.addEventListener('click',function(){loadAdmOverview(true);});}
   else if(sec==='mural')m.innerHTML=admMuralSecHTML();
   else if(sec==='ref'||sec==='resumos'){

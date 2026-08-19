@@ -4,7 +4,7 @@
 const { runRadar } = require('../../lib/radar');
 const { sendDailyNewsletter } = require('../../lib/newsletter');
 const { refreshPodcastsFromFeed } = require('../../lib/podcasts');
-const { sendTrialEmails, sendWinbackNovidades, sendReengajamento } = require('../../lib/trial-emails');
+const { sendTrialEmails, sendWinbackNovidades, sendReengajamento, REENG_CEDO_DIAS, REENG_CEDO_COOLDOWN, REENG_CEDO_CHAVE } = require('../../lib/trial-emails');
 const { sendIgDailyNotice, autoPostDailyQotd } = require('../../lib/instagram');
 const { sendAvisoAoVivo } = require('../../lib/aovivo');
 // Dá a partida na cadeia de discussões: uma requisição ao próprio backend, que
@@ -73,6 +73,18 @@ module.exports = async function handler(req, res) {
     let reengajamento = { sent: false, reason: 'skipped' };
     try { reengajamento = await sendReengajamento(); }
     catch (e) { console.error('[cron-radar] reengajamento erro:', (e && e.stack) || e); reengajamento = { sent: false, reason: 'error' }; }
+
+    // ⚠️ TOQUE CEDO (3 dias), acrescentado em 19/08/2026. O de 14 dias fica —
+    // ele pega quem sumiu de vez. Este pega quem ACABOU de sumir, que e onde a
+    // medicao mostrou a perda: 27 dos 54 que estudaram um dia nunca voltaram.
+    // Chave de ledger propria, cooldown proprio, e a RPC ja garante que quem
+    // recebeu o de 14 dias ha pouco NAO recebe este junto.
+    let reengCedo = { sent: false, reason: 'skipped' };
+    try {
+      reengCedo = await sendReengajamento({
+        dias: REENG_CEDO_DIAS, cooldown: REENG_CEDO_COOLDOWN, chave: REENG_CEDO_CHAVE
+      });
+    } catch (e) { console.error('[cron-radar] reengajamento cedo erro:', (e && e.stack) || e); reengCedo = { sent: false, reason: 'erro' }; }
     // Aviso da AULA AO VIVO do dia (e-mail + push). Pega carona aqui porque o
     // plano limita os cron jobs e a Vercel está em 12/12 funções serverless.
     // Idempotente por aula (ledger em payload.aovivo_sent). Fail-safe.
