@@ -7,7 +7,7 @@
    - /api/*: NUNCA cacheado (sempre rede).
    - Cross-origin (Supabase, jsDelivr, Vimeo, etc.): passa direto, sem interceptar.
    - Estáticos do próprio domínio: stale-while-revalidate. */
-var CACHE = 'endodirect-v244';
+var CACHE = 'endodirect-v245';
 var ASSETS = [
   '/icons/icon-192.png',
   '/icons/icon-512.png',
@@ -38,12 +38,22 @@ self.addEventListener('fetch', function (e) {
   if (url.origin !== self.location.origin) return;      // cross-origin: não intercepta
   if (url.pathname.indexOf('/api/') === 0) return;       // API: sempre rede
 
+  // Paginas publicas (SEO), servidas pelo servidor: sempre rede, nunca cache.
+  // ⚠️ E o motivo de nao caber no ramo de navegacao abaixo: aquele ramo grava
+  // TODA resposta de navegacao como '/index.html'. Sem esta saida, um aluno que
+  // abrisse /resumo/<slug> substituiria a casca do app pela pagina do capitulo,
+  // e no proximo acesso offline o app abriria mostrando um resumo em vez do app.
+  if (/^\/(resumos|resumo\/|sitemap\.xml|robots\.txt)/.test(url.pathname)) return;
+
   if (req.mode === 'navigate') {
     // HTML: rede primeiro; offline cai no index cacheado.
     e.respondWith(
       fetch(req).then(function (r) {
-        var copy = r.clone();
-        caches.open(CACHE).then(function (c) { c.put('/index.html', copy); });
+        // So a casca do app vira '/index.html' no cache.
+        if (url.pathname === '/' || url.pathname === '/index.html') {
+          var copy = r.clone();
+          caches.open(CACHE).then(function (c) { c.put('/index.html', copy); });
+        }
         return r;
       }).catch(function () {
         return caches.match('/index.html');

@@ -1,9 +1,27 @@
 ---
 tags: [cofre, processo]
-atualizado: 2026-08-17
+atualizado: 2026-08-19
 ---
 
 # Convenções de Trabalho
+
+## 🧮 ANTES DE CRIAR ARQUIVO EM `api/`, CONTE OS QUE JÁ EXISTEM (2026-08-19)
+
+A Vercel só aceita **12 funções serverless**, e **cada arquivo `.js` em `api/` é
+uma função**. O projeto vive exatamente no teto. Criei duas rotas novas de uma
+vez e fui para 14 — o que quebra **o deploy inteiro**, não só a novidade.
+
+Quem pega isso é o `scripts/test-aula-ao-vivo.js` (conta os arquivos e reprova
+acima de 12), e ele pegou. O conserto tem duas formas, nesta ordem:
+
+1. **a rota nova pega carona** numa função que já existe (parâmetro `rota=`/
+   `action=`), como a inscrição da newsletter dentro de `api/publico.js`;
+2. **absorver uma função morta.** `api/newsletter/test.js` estava sem gatilho na
+   UI desde 15/06/2026 e virou `action: 'newsletter-teste'` do
+   `api/admin/refresh-radar.js` — mesma autenticação, ninguém perdeu nada.
+
+Vale a mesma lógica dos crons: o plano limita, então **e-mail nenhum tem função
+própria** — todos pegam carona no cron do radar.
 
 ## 🔤 NUNCA ESCREVER MARKDOWN COM CRASE DENTRO DE COMANDO DE SHELL (2026-08-16/17)
 

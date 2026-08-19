@@ -862,5 +862,48 @@ try {
   fail('regressão da capa dos cursos falhou (verifique cursoCapaHTML/CURSO_TEMAS no index.html):\n' + out);
 }
 
+// ⚠️ CORPO DE E-MAIL TEM DE RENDERIZAR, não só parsear. Escrevi `cedoHtml`
+//     chamando `wrap(...)` — helper que não existe neste módulo (é `shell`).
+//     `node --check` passava (erro de referência, não de sintaxe), o teste antigo
+//     passava (conferia o texto-fonte), e em produção o try/catch do cron
+//     engoliria o ReferenceError: o e-mail simplesmente não sairia, calado.
+try {
+  execFileSync(process.execPath, [path.join('scripts', 'test-emails-renderizam.js')], { stdio: 'pipe' });
+  ok('corpos de e-mail: renderizam de verdade, com data em pt-BR e a retrospectiva do assinante');
+} catch (e) {
+  const out = (e.stdout ? e.stdout.toString() : '') + (e.stderr ? e.stderr.toString() : '');
+  fail('algum corpo de e-mail não renderiza:\n' + out);
+}
+
+// ⚠️ PÁGINAS PÚBLICAS (SEO). Elas servem o MESMO conteúdo que o visitante anônimo
+//     já recebe hoje (privado <> true, rascunho <> true) — só que num endereço por
+//     capítulo, que o Google consegue indexar. Duas coisas quebram em silêncio:
+//     (1) material de assinante (flashcards, mapa mental, fluxogramas, figuras)
+//     escapar para a página aberta — não dá erro, e a exclusividade acaba sem
+//     ninguém ver; (2) o texto do payload ser injetado sem escape na página.
+//     Cobre também o 404 de verdade: soft-404 com status 200 faz o Google
+//     indexar o aviso de "não achei" como se fosse conteúdo.
+try {
+  execFileSync(process.execPath, [path.join('scripts', 'test-publico-seo.js')], { stdio: 'pipe' });
+  ok('páginas públicas: escapam HTML, não vazam material de assinante, captam e-mail e roteiam 200/404');
+} catch (e) {
+  const out = (e.stdout ? e.stdout.toString() : '') + (e.stderr ? e.stderr.toString() : '');
+  fail('regressão das páginas públicas falhou (verifique lib/publico.js e api/publico.js):\n' + out);
+}
+
+// ⚠️ CAPTAÇÃO PÚBLICA DA NEWSLETTER. A invariante é o OPT-OUT: um campo público
+//     pode ser preenchido por qualquer um, com o endereço de qualquer um. Se a
+//     lista nova entrar por cima do descadastro, a plataforma manda e-mail para
+//     quem pediu para não receber — sem erro, sem log, e a primeira notícia é
+//     uma denúncia de spam. A rota também não pode responder diferente para
+//     "novo" e "já inscrito", senão vira consulta de "fulano assina?".
+try {
+  execFileSync(process.execPath, [path.join('scripts', 'test-newsletter-optin.js')], { stdio: 'pipe' });
+  ok('newsletter: opt-out vence toda lista nova, e a rota pública não enumera nem finge sucesso');
+} catch (e) {
+  const out = (e.stdout ? e.stdout.toString() : '') + (e.stderr ? e.stderr.toString() : '');
+  fail('regressão da captação da newsletter falhou:\n' + out);
+}
+
 if (errors) { console.error(`\n${errors} verificação(ões) falharam.`); process.exit(1); }
 console.log('\nTodas as verificações passaram.');

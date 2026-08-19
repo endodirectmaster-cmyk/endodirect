@@ -1,6 +1,6 @@
 ---
 tags: [cofre, newsletter, radar]
-atualizado: 2026-08-05
+atualizado: 2026-08-19
 ---
 
 # Newsletter e Radar
@@ -434,7 +434,56 @@ O PubMed entrega a data como `2026 Jun 13` / `2026 May` / `2026` / `2026/06/13`.
 `RESEND_API_KEY`, `NEWSLETTER_FROM`, `NEWSLETTER_REPLYTO`, `CRON_SECRET`.
 
 ## Pendência
-Confirmar entrega para Eduardo/Bruno (checar spam). O botão "✉️ Enviar teste da newsletter" no Mural do admin foi **removido** a pedido do usuário (2026-06-15); o endpoint `/api/newsletter/test` continua existindo, mas sem gatilho na UI. Ver [[Pendências]].
+Confirmar entrega para Eduardo/Bruno (checar spam). O botão "✉️ Enviar teste da newsletter" no Mural do admin foi **removido** a pedido do usuário (2026-06-15). ⚠️ **O endpoint mudou de endereço em 19/08/2026:** `/api/newsletter/test` deixou de existir como função própria (a Vercel só aceita 12, e o projeto estava no teto) e virou uma ação de `/api/admin/refresh-radar`, com `POST {"action":"newsletter-teste","to":"..."}` e a mesma autenticação de antes (token de admin ou `CRON_SECRET`). Ver [[Páginas Públicas e SEO]] e [[Pendências]].
+
+## A newsletter agora alcança quem NUNCA criou conta (2026-08-19)
+
+Até aqui `getMemberEmails()` lia `auth.users`: a newsletter só chegava a quem já
+tinha cadastro. Quem chegava pelo site e não queria criar conta ia embora sem
+deixar nada — **e a newsletter é justamente o produto de quem não abre o app**
+(dos 112 cadastrados, ~50 nunca responderam nada; a maioria deles logou).
+
+- Formulário nas páginas públicas → `POST /api/publico?rota=inscrever`.
+- Grava em **tabela própria** `endodirect_newsletter_optin` (email, criado_em,
+  origem), **nunca** no `payload` do `endodirect_global_state`: aquela é UMA
+  linha de 4,7 MB, e um formulário público que a reescrevesse a cada inscrição
+  seria vetor de custo e de *lost update*.
+- RLS ligada e **sem policy nenhuma**: `anon`/`authenticated` não leem nem
+  escrevem. Quem grava é a função serverless com service role.
+- A RPC `endodirect_newsletter_subscribe` valida o formato, tem trava de
+  enxurrada (>60 inscrições em 5 min) e **responde igual para e-mail novo e para
+  já inscrito** — um formulário que diferencia os dois vira consulta de "fulano
+  assina?".
+
+⚠️ **O OPT-OUT É A ÚLTIMA PALAVRA, e vale para as três listas** (membros, lista
+manual, inscritos públicos). Quem se descadastrou **não volta** por ter aparecido
+numa lista nova — inclusive porque um campo público pode ser preenchido por
+qualquer um, com o endereço de qualquer um. A regra virou a função pura
+`destinatarios()` justamente porque, se ela quebrar, a plataforma manda e-mail
+para quem pediu para não receber **sem dar erro nenhum**, e a primeira notícia
+disso seria uma denúncia de spam. Guarda: `scripts/test-newsletter-optin.js`.
+
+## Aviso de renovação com "Seu ano no Endodirect" (2026-08-19)
+
+O e-mail de vencimento (`renovacaoHtml`) passou a carregar o que a pessoa FEZ, e
+não só a data: dias de estudo, questões respondidas, acerto e área mais estudada,
+vindos de `endodirect_renovacao_alvos`.
+
+- **Um só recorte de tempo**, e ele é a conta inteira ("desde que você entrou").
+  Misturar "dias no período pago" com "acerto geral" produz números que não
+  fecham entre si, e o assinante percebe.
+- **Só mostra o que existe.** Célula com zero ("0 questões", "0% de acerto") em
+  e-mail de renovação é argumento CONTRA renovar, escrito por nós mesmos. Quem
+  nunca usou não vê o painel — vê o que a plataforma PRODUZIU no período.
+- **Porcentagem só a partir de 5 questões.** "33% de acerto" para quem respondeu
+  três é ruído apresentado como nota.
+- **`act` não é a única prova de que estudou.** Sete contas têm questões em
+  `perf` e `act` vazio: responderam entre 25/06 e 05/07/2026, **antes de
+  `studyEvent()` existir** (25/07/2026, commit `e633bca`). Conferido pelos
+  carimbos de `DB.qotd` — é dado legado, não defeito vivo. Olhando só para os
+  dias, o e-mail diria "você não estudou" a quem respondeu 41 questões.
+- A data de vencimento sai em **dd/mm/aaaa**: a RPC devolve `YYYY-MM-DD`, e
+  "vence em 2027-06-17" numa frase em português lê-se como defeito.
 
 ## ⚠️ O ledger do reengajamento prova ALVO, não ENTREGA (2026-08-07)
 

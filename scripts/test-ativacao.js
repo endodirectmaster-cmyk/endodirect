@@ -47,11 +47,12 @@ vm.runInContext('__persists=0;persist=function(){__persists++;};notify=function(
   + 'renderPerfBars=function(){};updateDashRec=function(){};refreshDash=function(){};srsAdd=function(){};'
   + 'classifyTema=function(){return "Geral";};', ctx);
 
-function monta(user, act, goal) {
+function monta(user, act, goal, perf) {
   vm.runInContext('currentUser=' + JSON.stringify(user) + ';', ctx);
   vm.runInContext('igStories=' + JSON.stringify([QUESTAO]) + ';', ctx);
   vm.runInContext('DB=(typeof DB==="object"&&DB)?DB:{};DB.act=' + JSON.stringify(act || {})
-    + ';DB.qotd={};DB.perf={};DB.perfTema={};DB.goal=' + JSON.stringify(goal === undefined ? { weekly: 50 } : goal) + ';__persists=0;', ctx);
+    + ';DB.qotd={};DB.perf=' + JSON.stringify(perf || {})
+    + ';DB.perfTema={};DB.goal=' + JSON.stringify(goal === undefined ? { weekly: 50 } : goal) + ';__persists=0;', ctx);
   const d = dom.window.document;
   ['ativa-card', 'ativa-card-mural', 'streak-card'].forEach((id) => { d.getElementById(id).innerHTML = ''; });
   vm.runInContext('ativacaoFeitaAgora=false;renderAtivacao();', ctx);
@@ -84,6 +85,22 @@ const alts = (el) => [...el.querySelectorAll('[data-qotd-opt]')];
   ok(el.style.display === 'none' && el.innerHTML === '',
     'quem já estudou não pode continuar vendo "Comece por aqui"');
   ok(mural().innerHTML === '', 'o card sobrou no Mural para quem já estudou');
+}
+
+// ── 3b. ⚠️ CONTA ANTIGA: TEM QUESTÕES EM `perf` E `act` VAZIO ───────────────
+// Sete contas reais estão assim: responderam entre 25/06 e 05/07/2026, ANTES de
+// studyEvent() existir (25/07/2026, commit e633bca), então nunca registraram um
+// dia de atividade. Se a ativação olhar só para `act`, essas pessoas veem
+// "Comece por aqui" para sempre — inclusive quem já respondeu 41 questões.
+{
+  const el = monta({ role: 'aluno' }, {}, undefined, { Adrenal: { total: 41, correct: 36 } });
+  ok(el.innerHTML === '' && mural().innerHTML === '',
+    '⚠️ a ativação apareceu para quem tem questões em DB.perf e `act` vazio — é a conta legada, e para ela o card nunca mais sairia da tela');
+}
+{
+  // e `perf` zerado não pode ser confundido com atividade
+  const el = monta({ role: 'aluno' }, {}, undefined, { Adrenal: { total: 0, correct: 0 } });
+  ok(el.innerHTML !== '', 'perf com total 0 foi tratado como estudo — quem nunca respondeu deixaria de ver o card');
 }
 
 // ── 4. admin não é público-alvo ─────────────────────────────────────────────
