@@ -905,5 +905,20 @@ try {
   fail('regressão da captação da newsletter falhou:\n' + out);
 }
 
+// ⚠️ PAGANTES EM RISCO, MINIMIZADOS. O professor pediu "minimiza" ao ver 11 + 13
+//     nomes empurrando o painel de Estudantes para baixo da dobra. Três coisas
+//     quebram isso em silêncio: o bloco voltar a nascer aberto; a CONTAGEM sair
+//     do cabeçalho (fechado e sem número, ele não informa nada); e o estado de
+//     "aberto" passar a morar no DOM — como admRiscoHTML() é renderizado duas
+//     vezes (uma com "Apurando…", outra quando a RPC responde), o que ele acabou
+//     de abrir fecharia sozinho e pareceria que o clique não pegou.
+try {
+  execFileSync(process.execPath, [path.join('scripts', 'test-risco-minimizado.js')], { stdio: 'pipe' });
+  ok('pagantes em risco: nascem fechados com a contagem à vista e sobrevivem ao re-render');
+} catch (e) {
+  const out = (e.stdout ? e.stdout.toString() : '') + (e.stderr ? e.stderr.toString() : '');
+  fail('regressão dos blocos de risco minimizados falhou:\n' + out);
+}
+
 if (errors) { console.error(`\n${errors} verificação(ões) falharam.`); process.exit(1); }
 console.log('\nTodas as verificações passaram.');
