@@ -8,6 +8,14 @@ atualizado: 2026-08-19
 Log de decisões de produto e técnicas (mais recentes no topo).
 
 ## 2026-08
+- **📉 O FUNIL DE ENGAJAMENTO, MEDIDO: A PERDA NÃO ESTÁ ONDE O REENGAJAMENTO OLHA (2026-08-19).** Só medição — nenhum código de produto mudou. Consultas reproduzíveis em `scratchpad/engajamento/funil.sql`. Pedido: *"precisamos deixar o aluno sempre engajado"*.
+  - **O funil, com contas da casa excluídas:** 112 cadastrados → **54 estudaram ao menos 1 dia** → **27 voltaram para um 2º dia** → 8 chegaram a 5 dias → **3 ativos nos últimos 7 dias**.
+  - ⚠️⚠️ **A MAIOR PERDA É ANTES DE QUALQUER GAMIFICAÇÃO: 58 nunca estudaram, e 53 DELES FIZERAM LOGIN.** Entraram, olharam e saíram sem responder nada. Só 5 nunca nem logaram. **É problema de primeira sessão, não de memória.**
+  - ⚠️ **10 PAGANTES nunca estudaram** — 27% dos 37 assinantes ativos. É receita já paga com risco alto de não renovar.
+  - **O reengajamento funciona e é inócuo:** dispara certo (20 pessoas, 07–15/08, RPC e ledger íntegros, 38 novidades elegíveis no mural), mas **apenas 1 dos 20 voltou a estudar — 5%**. O gatilho é **14 dias de ausência**, e a perda acontece entre o **dia 1 e o dia 2**: o e-mail chega duas semanas depois da desistência.
+  - ⚠️ **A gamificação que já existe não está pegando, e há prova dura:** dos 91 alunos com meta semanal gravada, **todos os 91 têm exatamente `50`** — o valor padrão. **Nenhum aluno jamais tocou no seletor.** Pior: quem respondeu ~15 questões vê uma barra em 30% de uma meta que não escolheu — a tela que deveria motivar entrega a sensação de estar sempre atrás.
+  - **Push instalado em 17 de 112** (15%) — o canal mais imediato é o menos usado.
+  - **Conclusão registrada:** construir mais medalha/ranking agora seria resolver o problema errado. A ordem de impacto é (1) ativação na primeira sessão, (2) os 10 pagantes sem uso, (3) meta que o aluno escolha, e só então (4) gamificação nova.
 - **🚪 A ENQUETE NÃO ESTAVA NA TELA DE ENTRADA — E EU AFIRMEI QUE ESTAVA (2026-08-19).** `sw.js` v242 → **v243**. O professor perguntou: *"Essa enquete aparece na janela de entrada do aluno no aplicativo, certo?"* A resposta honesta era **não**.
   - **O código me contradisse:** `homePanel()` diz literalmente *"Tela inicial do aluno é SEMPRE o Mural quando visível"* e devolve `'mural'`. Eu tinha posto a enquete só no `panel-dash`, supondo que o Dashboard fosse a entrada. **Só via a enquete quem clicava em "Dashboard" no menu.**
   - ⚠️ **A lição não é o bug, é a suposição.** `panel-dash` tem `class="panel on"` no HTML — parece a tela inicial e não é; existe uma função que decide isso e eu não a li antes de escolher onde pendurar o card. **Ao posicionar qualquer coisa "na entrada", ler `homePanel()` primeiro.**
