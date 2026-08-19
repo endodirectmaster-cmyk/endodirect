@@ -1,0 +1,2557 @@
+{
+ "fileId": "1XRNvp-jd5Z4GMJIY9HbBNW-YvxAyGCvh",
+ "titulo": "A Practical Guide to Hypoglycemia: New Approaches to Overcoming a Persistent Barrier to Optimal Glycemic Management (ADA Clinical Compendia Series, 2026)",
+ "fonte": "Ratzki-Leewing A, McCoy RG, Aleppo G, Neumiller JJ, Pilla SJ, Riddell MC. A Practical Guide to Hypoglycemia: New Approaches to Overcoming a Persistent Barrier to Optimal Glycemic Management. Arlington, VA, American Diabetes Association, 2026. https://doi.org/10.2337/db20261",
+ "area": "Hipoglicemia",
+ "tipo": "consenso",
+ "ano": 2026,
+ "tema": "HIPOGLICEMIA NO DIABETES, de ponta a ponta, pelo compêndio da American Diabetes Association de 2026 — fisiologia, consequências, classificação, epidemiologia, avaliação clínica, prevenção e tratamento. FISIOLOGIA: cascata contrarreguladora e os limiares de cada defesa (queda da insulina endógena, glucagon, epinefrina), sintomas neurogênicos e neuroglicopênicos, por que a defesa falha em quem usa insulina ou secretagogo, falência autonômica associada à hipoglicemia, hipoglicemia noturna e o idoso. CONSEQUÊNCIAS: arritmia e prolongamento de QT, bradicardia noturna, estado pró-trombótico que persiste por dias, quedas e acidentes, demência, eventos cardiovasculares, mortalidade, medo de hipoglicemia e sobrecarga do parceiro de cuidado. CLASSIFICAÇÃO E EPIDEMIOLOGIA: níveis 1, 2 e 3, diurna e noturna, o que o sensor contínuo capta e o que ele não capta, frequência por sensor e por autorrelato, concentração dos eventos graves numa minoria, subnotificação e por que as pessoas não contam. AVALIAÇÃO: como perguntar, janela de recordação, precipitantes, eventos evitados, percepção prejudicada da hipoglicemia e os instrumentos que a medem (Pedersen-Bjergaard, escore de Gold, escore de Clarke, HypoA-Q), medo de hipoglicemia, determinantes sociais, jejum religioso, disfunção cognitiva. PREVENÇÃO: quais hipoglicemiantes evitar, Critérios de Beers e sulfonilureia no idoso, glibenclamida na doença renal, sobrebasalização, análogos basais de segunda geração, combinações fixas de basal com GLP-1, simplificação e desintensificação do esquema, sensor contínuo e sistemas automatizados de entrega de insulina, ensaios DIAMOND, HypoDE, GOLD, WISDM e RELIEF, educação, empilhamento de insulina, fator de correção, álcool, exercício, direção de veículo, programas de percepção (BGAT-2, DAFNE, HARPdoc, Hypo COMPaSS), medicamentos que causam ou mascaram hipoglicemia, insegurança alimentar. TRATAMENTO: regra dos 15, fontes de carboidrato rápido, a dose menor em usuários de sistema automatizado, glucagon e as formulações prontas para uso (intranasal, subcutâneo e dasiglucagon), o que ensinar ao cuidador, atendimento de emergência e dextrose a 10% contra 50%, e a reavaliação do esquema depois do evento.",
+ "conflito": "LACUNA DO NÚCLEO, e é lacuna de PROFUNDIDADE. O núcleo traz o essencial de hipoglicemia dos Standards of Care da ADA 2026 — os três níveis, as metas de tempo abaixo de 70 e de 54 mg/dL, a regra 15-15 e a prescrição de glucagon — e está de acordo com esta fonte, que é da mesma ADA e do mesmo ano. Esta fonte é a referência para o que NÃO cabia no núcleo.\n\n⚠️ O PONTO EM QUE A FONTE ACRESCENTA UMA RESSALVA À REGRA DO NÚCLEO: o núcleo ensina a regra 15-15 sem qualificação. Em quem usa SISTEMA AUTOMATIZADO DE ENTREGA DE INSULINA, 8 a 10 g de carboidrato rápido podem bastar, porque quando a glicose do sensor chega à faixa hipoglicêmica o algoritmo já reduziu ou suspendeu a insulina — dar os 15 g nesse contexto pode causar HIPERGLICEMIA DE REBOTE. A regra do núcleo continua valendo para todos os demais.\n\n⚠️ NO ATENDIMENTO DE EMERGÊNCIA, D10 ANTES DE D50. O núcleo não fala de dextrose intravenosa. Esta fonte estabelece que a dextrose a 10% é preferida à de 50% por menores taxas de eventos adversos e de hiperglicemia pós-tratamento, com sucesso comparável.\n\n⚠️ ESCOPO: este bloco é sobre hipoglicemia NO DIABETES tratado com insulina ou secretagogo. Ele NÃO cobre hipoglicemia de outras causas — insulinoma, hipoglicemia pós-bariátrica (síndrome de dumping), insuficiência adrenal, hipoglicemia neonatal — cujas referências são os extratos das áreas correspondentes.",
+ "conflito_direcao": "lacuna",
+ "nucleo_ausente": [
+  "dasiglucagon",
+  "D10",
+  "regra dos 15",
+  "percepção prejudicada",
+  "Pedersen-Bjergaard",
+  "HypoA-Q",
+  "HypoDE",
+  "DIAMOND",
+  "WISDM",
+  "RELIEF",
+  "BGAT",
+  "HARPdoc",
+  "Hypo COMPaSS",
+  "DAFNE",
+  "falência autonômica",
+  "empilhamento",
+  "sobrebasalização",
+  "Beers",
+  "glibenclamida",
+  "glipizida",
+  "iGlarLixi",
+  "IdegLira",
+  "degludeca",
+  "glargina U-300",
+  "fluoroquinolona",
+  "pentamidina",
+  "quinina",
+  "indometacina",
+  "medo de hipoglicemia",
+  "insegurança alimentar",
+  "dirigir",
+  "bradicardia",
+  "demência",
+  "parceiro de cuidado",
+  "ursodesoxicólico",
+  "letramento"
+ ],
+ "auditoria": {
+  "data": "2026-08-19",
+  "achado": "Extração das seções 1 a 5 e da conclusão do compêndio (as referências, que ocupam a maior parte do arquivo, não entram). Cada afirmação foi escrita para voltar SOZINHA à IA — o montador da base profunda só envia `afirmacao` — carregando a população (diabetes tipo 1 ou tipo 2, em insulina ou em secretagogo), o corte glicêmico em mg/dL e, nos ensaios, o n, a duração e o comparador. Os limiares fisiológicos foram gravados com a faixa, não com um valor único, porque é assim que a fonte os dá.",
+  "texto_fonte": "⚠️ PDF DE DUAS COLUNAS COM AS COLUNAS INTERCALADAS na extração de texto: em vários trechos do capítulo 3 e do 4 a linha alterna metade de uma coluna com metade da outra. Uma fatia contígua ali NÃO seria a citação — seria duas frases embaralhadas, e o risco é inverter o sentido quando a negação fica do outro lado. Esses fatos usam ELISÃO DECLARADA (`cit` com vários pedaços), com cada pedaço literal e buraco dentro do limite de 400 caracteres que o verificador impõe. Onde a elisão não era possível sem costurar trechos distantes, o fato foi PARTIDO EM DOIS em vez de forçado.",
+  "escopo": "⚠️ O compêndio é sobre hipoglicemia NO DIABETES tratado com insulina ou secretagogo, e diz explicitamente que as demais classes não são consideradas causadoras de hipoglicemia significativa quando usadas sem esses agentes. Não cobre insulinoma, hipoglicemia pós-bariátrica, hipoglicemia da insuficiência adrenal nem hipoglicemia neonatal — o escopo está escrito no campo `conflito` para que a IA não estenda a régua.",
+  "direito_autoral": "O compêndio traz \"©2026 by American Diabetes Association. All rights reserved. None of the contents may be reproduced without the written permission\" — ou seja, NÃO é material de reprodução livre. O texto integral ficou em scratchpad/acervo/textos/, que está no .gitignore; o repositório guarda apenas offsets e hash."
+ },
+ "fatos": [
+  {
+   "afirmacao": "Hipoglicemia é definida pela ADA e por outras sociedades como glicose sanguínea abaixo de 70 mg/dL (3,9 mmol/L), INDEPENDENTEMENTE DE SINTOMAS, e classificada em três níveis: nível 1 (<70 mas ≥54 mg/dL), nível 2 (<54 mg/dL) e nível 3, definido não por um limiar de glicose mas por comprometimento mental ou físico grave que exija assistência de outra pessoa para a recuperação.",
+   "secao": "1. Definição",
+   "cit": [
+    [
+     0,
+     11342,
+     470
+    ]
+   ],
+   "cit_sha": "2217e8edd4609265"
+  },
+  {
+   "afirmacao": "Em pessoas SEM diabetes, a defesa contra a hipoglicemia é uma cascata hierárquica: a secreção endógena de insulina cai quando a glicose desce abaixo do limiar euglicêmico de cerca de 80 a 85 mg/dL; se a glicose continua caindo, por volta de 65 a 70 mg/dL o glucagon — o principal hormônio contrarregulador — sobe rapidamente na circulação porta hepática, estimulando glicogenólise e gliconeogênese hepáticas.",
+   "secao": "1. Cascata de defesa",
+   "cit": [
+    [
+     0,
+     14249,
+     365
+    ]
+   ],
+   "cit_sha": "61aeb443dfa7172f"
+  },
+  {
+   "afirmacao": "Abaixo de 65 mg/dL a secreção de epinefrina aumenta, potencializando a glicogenólise hepática e a gliconeogênese renal. Outros hormônios contrarreguladores também sobem — noradrenalina, hormônio de crescimento e cortisol —, elevando a produção hepática de glicose e limitando a captação periférica em músculo esquelético e tecido adiposo.",
+   "secao": "1. Cascata de defesa",
+   "cit": [
+    [
+     0,
+     14620,
+     440
+    ]
+   ],
+   "cit_sha": "cd51ed59fadc9286"
+  },
+  {
+   "afirmacao": "Entre 50 e 55 mg/dL dispara uma resposta simpatoadrenal mais intensa, que causa sintomas NEUROGÊNICOS — tremor, fraqueza e fome — servindo de aviso para ingerir carboidrato. Se esses sintomas são ignorados ou a pessoa não consegue ingerir carboidrato, a glicose cai mais e surgem sintomas NEUROGLICOPÊNICOS: confusão, dificuldade de concentração, convulsão e perda de consciência, por privação cerebral direta de glicose.",
+   "secao": "1. Limiares de sintoma",
+   "cit": [
+    [
+     0,
+     15062,
+     487
+    ]
+   ],
+   "cit_sha": "cbdaf8f25179c8b0"
+  },
+  {
+   "afirmacao": "Em repouso, a maior parte da glicose é usada pelo cérebro (45 a 60%), seguido de músculo esquelético (15 a 20%), rins (10 a 15%), células sanguíneas (5 a 10%), órgãos esplâncnicos (3 a 6%) e tecido adiposo (2 a 4%). Durante atividade física e no estado pós-prandial, o músculo esquelético responde pela maior parte do consumo.",
+   "secao": "1. Consumo cerebral",
+   "cit": [
+    [
+     0,
+     13270,
+     323
+    ]
+   ],
+   "cit_sha": "9eddb8bfd4e70b8e"
+  },
+  {
+   "afirmacao": "O cérebro depende da glicose entregue pela corrente sanguínea porque não consegue sintetizar nem estocar glicogênio em quantidade significativa. A redução aguda e grave da oferta cerebral de glicose leva a prejuízo de função cognitiva, reflexos e controle autonômico e pode resultar em convulsão, perda de consciência, lesão cerebral permanente e irreversível e morte.",
+   "secao": "1. Dependência cerebral",
+   "cit": [
+    [
+     0,
+     13599,
+     400
+    ]
+   ],
+   "cit_sha": "cede02cc1e6e6064"
+  },
+  {
+   "afirmacao": "No diabetes tipo 1 e no tipo 2 tratado com insulina ou secretagogo, a cascata de defesa existe mas está gravemente comprometida: a insulina exógena produz níveis circulantes determinados pela absorção e pela depuração do que foi administrado, e não pela glicemia, de modo que a insulina NÃO cai quando a glicose plasmática cai. Sulfonilureias e glinidas estimulam secreção endógena independente de glicose, que também não diminui apropriadamente durante a hipoglicemia.",
+   "secao": "1. Defesa comprometida",
+   "cit": [
+    [
+     0,
+     15617,
+     688
+    ]
+   ],
+   "cit_sha": "53f7f5bf0d10b835"
+  },
+  {
+   "afirmacao": "Mesmo com sistemas automatizados de entrega de insulina, em que a liberação é acoplada ao sensor contínuo de glicose, hipoglicemia de nível 1 e de nível 2 continua ocorrendo, muitas vezes com certa regularidade, por resposta imperfeita do algoritmo, bólus inadequado para refeições e lanches, exercício não antecipado e a meia-vida longa da insulina administrada por via subcutânea.",
+   "secao": "1. Hipoglicemia com AID",
+   "cit": [
+    [
+     0,
+     16312,
+     410
+    ]
+   ],
+   "cit_sha": "d0feb20764d3c0ff"
+  },
+  {
+   "afirmacao": "Com a progressão do diabetes, a disfunção da célula beta rompe a sinalização intra-ilhota e enfraquece a resposta de glucagon mediada pela célula beta, provavelmente agravada pela elevação local de somatostatina de células delta disfuncionais. Sem uma elevação adequada da razão glucagon/insulina, a produção hepática de glicose não aumenta apropriadamente e a glicose continua caindo, a menos que se consuma carboidrato.",
+   "secao": "1. Glucagon na progressão",
+   "cit": [
+    [
+     0,
+     16729,
+     698
+    ]
+   ],
+   "cit_sha": "f8831e88e5a77b43"
+  },
+  {
+   "afirmacao": "Alterações fisiológicas da idade agravam o risco de hipoglicemia: a função renal reduzida prolonga a exposição a sulfonilureias e insulina, a menor atividade enzimática hepática prolonga a duração de ação das sulfonilureias, e a sensibilidade beta-adrenérgica atenuada com respostas contrarreguladoras embotadas enfraquece a defesa contra a queda da glicose.",
+   "secao": "1. Idoso",
+   "cit": [
+    [
+     0,
+     17436,
+     430
+    ]
+   ],
+   "cit_sha": "9cd7d2818a4bdf18"
+  },
+  {
+   "afirmacao": "No idoso os sintomas autonômicos de alerta podem ser menos intensos, e a apresentação desloca-se de características adrenérgicas (palpitação, sudorese e tremor) para predominantemente neuroglicopênicas (confusão, delirium e tontura) — sobretudo em quem usa outros medicamentos, com destaque para os BETABLOQUEADORES cardiovasculares.",
+   "secao": "1. Idoso — sintomas",
+   "cit": [
+    [
+     0,
+     17896,
+     341
+    ]
+   ],
+   "cit_sha": "7ae62b033701716d"
+  },
+  {
+   "afirmacao": "Na hipoglicemia, a onda de catecolaminas somada à ativação neural simpática impõe estresse hemodinâmico ao coração. O potássio plasmático também cai rapidamente, produzindo alterações eletrofisiológicas — condução e repolarização anormais e prolongamento do intervalo QT — que aumentam o risco de arritmias ventriculares, efeito amplificado pela supressão de correntes de potássio e pela sobrecarga intracelular de cálcio induzida por catecolaminas.",
+   "secao": "1. Cardiovascular agudo",
+   "cit": [
+    [
+     0,
+     19280,
+     673
+    ]
+   ],
+   "cit_sha": "4a19511e7264d3e3"
+  },
+  {
+   "afirmacao": "A hipoglicemia induz alterações de curto prazo na coagulabilidade (maior ativação plaquetária e menor equilíbrio fibrinolítico), em moléculas de adesão celular (ICAM-1, VCAM-1 e E-selectina), disfunção endotelial e marcadores inflamatórios (interleucina-6, interleucina-8 e TNF-alfa). No diabetes tipo 2 a resposta pró-inflamatória pode persistir por VÁRIOS DIAS, sustentando um estado pró-trombótico muito depois de restaurada a normoglicemia.",
+   "secao": "1. Protrombótico",
+   "cit": [
+    [
+     0,
+     19960,
+     484
+    ]
+   ],
+   "cit_sha": "705fbaa2c6fa04e5"
+  },
+  {
+   "afirmacao": "A resposta cardíaca à hipoglicemia difere conforme o horário: a hipoglicemia NOTURNA causa BRADICARDIA e a hipoglicemia diurna causa taquicardia e batimentos ectópicos atriais, documentado tanto no diabetes tipo 1 quanto no tipo 2. A diferença parece dever-se à ativação vagal compensatória excessiva após a fase contrarreguladora nos episódios noturnos, o que responde pela bradicardia e pelas arritmias associadas.",
+   "secao": "1. Bradicardia noturna",
+   "cit": [
+    [
+     0,
+     20457,
+     454
+    ]
+   ],
+   "cit_sha": "cd392a686227926f"
+  },
+  {
+   "afirmacao": "Sintomas neuroglicopênicos — confusão, prejuízo de atenção, disfunção cognitiva, tontura, visão borrada ou dupla, tremor e parestesia — costumam surgir quando a glicose cai abaixo de 54 mg/dL. Nesse limiar a função executiva fica mensuravelmente comprometida, afetando cálculo, atenção, memória de trabalho, flexibilidade cognitiva, tempo de reação, velocidade de processamento e desempenho psicomotor.",
+   "secao": "1. Neuroglicopenia",
+   "cit": [
+    [
+     0,
+     21386,
+     443
+    ]
+   ],
+   "cit_sha": "aec83323521b477b"
+  },
+  {
+   "afirmacao": "A hipoglicemia com neuroglicopenia associa-se a risco mais que DUAS VEZES maior de quedas, de acidentes automobilísticos e de lesões, com alterações de atividade neural em várias regiões cerebrais, incluindo o córtex pré-frontal e o lobo temporal medial.",
+   "secao": "1. Quedas e acidentes",
+   "cit": [
+    [
+     0,
+     21831,
+     253
+    ]
+   ],
+   "cit_sha": "96718e40553bc81c"
+  },
+  {
+   "afirmacao": "Por dados de sensor contínuo, pessoas com diabetes tipo 1 em insulinoterapia intensiva têm MEDIANA de 6,7 episódios de hipoglicemia por semana (intervalo interquartil 3,9 a 10,8), enquanto pessoas com diabetes tipo 2 que aplicam ao menos uma injeção de insulina por dia têm mediana de 2,1 episódios semanais (intervalo interquartil 1,0 a 4,3).",
+   "secao": "1. Frequência por CGM",
+   "cit": [
+    [
+     0,
+     22449,
+     349
+    ]
+   ],
+   "cit_sha": "80a888f4d9d62870"
+  },
+  {
+   "afirmacao": "A hipoglicemia recorrente desloca o limiar glicêmico de ativação simpatoadrenal para concentrações MAIS BAIXAS de glicose, contribuindo tanto para a percepção prejudicada da hipoglicemia quanto para a contrarregulação defeituosa — fenômeno chamado de falência autonômica associada à hipoglicemia. A hipoglicemia antecedente recente atenua as defesas contra os episódios seguintes, sobretudo a secreção de epinefrina e a geração de sintomas, criando um ciclo vicioso de recorrência.",
+   "secao": "1. HAAF",
+   "cit": [
+    [
+     0,
+     22805,
+     557
+    ]
+   ],
+   "cit_sha": "b60779d78b247b66"
+  },
+  {
+   "afirmacao": "A hipoglicemia noturna é particularmente problemática porque o próprio sono suprime as respostas contrarreguladoras e sintomáticas, somando-se ao efeito da hipoglicemia antecedente.",
+   "secao": "1. Hipoglicemia noturna",
+   "cit": [
+    [
+     0,
+     23514,
+     178
+    ]
+   ],
+   "cit_sha": "d570b8f935e386f7"
+  },
+  {
+   "afirmacao": "A hipoglicemia grave, tanto na meia-idade quanto na velhice, associa-se a risco aproximadamente DOBRADO de demência, com associação observada para os subtipos doença de Alzheimer e demência vascular. A relação parece bidirecional: a função cognitiva reduzida aumenta o risco de hipoglicemia, provavelmente por prejuízo do reconhecimento de sintomas e do autocuidado.",
+   "secao": "1. Demência",
+   "cit": [
+    [
+     0,
+     24035,
+     377
+    ]
+   ],
+   "cit_sha": "1ac5b2a7a67a4a29"
+  },
+  {
+   "afirmacao": "Eventos recorrentes de hipoglicemia associam-se a aumento de cerca de DUAS VEZES em eventos cardiovasculares (infarto do miocárdio, acidente vascular cerebral, arritmias e morte cardiovascular) e também na mortalidade por todas as causas. Mesmo a hipoglicemia NÃO GRAVE foi ligada a complicações cardiovasculares de longo prazo.",
+   "secao": "1. Desfecho cardiovascular",
+   "cit": [
+    [
+     0,
+     24414,
+     312
+    ]
+   ],
+   "cit_sha": "d515f966c423183b"
+  },
+  {
+   "afirmacao": "Tanto a hipoglicemia grave quanto a não grave prejudicam a qualidade de vida. No diabetes tipo 1 e no tipo 2, a hipoglicemia grave associou-se a redução estatisticamente significativa e clinicamente relevante do estado geral de saúde e do bem-estar psicológico, além de maior sofrimento relacionado ao diabetes.",
+   "secao": "1. Qualidade de vida",
+   "cit": [
+    [
+     0,
+     25239,
+     317
+    ]
+   ],
+   "cit_sha": "1146d18b0673650e"
+  },
+  {
+   "afirmacao": "A hipoglicemia contribui para o MEDO DE HIPOGLICEMIA, preocupação específica do diabetes que induz comportamentos contraproducentes: relutância em iniciar ou intensificar a insulinoterapia, subdosagem deliberada e manutenção intencional de glicemias elevadas. Maior medo de hipoglicemia correlaciona-se com pior estado geral de saúde, menor bem-estar psicológico e mais sofrimento relacionado ao diabetes.",
+   "secao": "1. Medo de hipoglicemia",
+   "cit": [
+    [
+     0,
+     25761,
+     446
+    ]
+   ],
+   "cit_sha": "840cd4a19432b104"
+  },
+  {
+   "afirmacao": "A hipoglicemia sobrecarrega também quem cuida: em vários estudos, 50 a 80% dos parceiros de cuidado descrevem ansiedade ou preocupação persistente com hipoglicemia, e muitos relatam sacrifícios pessoais, como ajustar rotinas ou abrir mão de atividades. Alguns relatam ter sofrido agressão verbal ou física durante os episódios, atribuída às alterações cognitivas e comportamentais da neuroglicopenia.",
+   "secao": "1. Cuidador",
+   "cit": [
+    [
+     0,
+     26390,
+     468
+    ]
+   ],
+   "cit_sha": "a145a1d288933551"
+  },
+  {
+   "afirmacao": "A interferência da hipoglicemia no dia a dia — dirigir, trabalhar, atividades sociais e qualidade do sono — parece determinada menos pelo episódio fisiológico em si do que pela PERCEPÇÃO do episódio pela pessoa e pela necessidade de tomar uma ação corretiva, seja por sintomas, seja por alerta do sensor.",
+   "secao": "1. Percepção do episódio",
+   "cit": [
+    [
+     0,
+     25001,
+     230
+    ]
+   ],
+   "cit_sha": "86aa4d4c8b4443a9"
+  },
+  {
+   "afirmacao": "A classificação em três níveis da hipoglicemia foi criada em 2017 pelo International Hypoglycaemia Study Group em conjunto com a ADA e a EASD, para padronizar avaliação clínica e relato, depois de inconsistências prolongadas nas definições e na medida.",
+   "secao": "2. Origem da classificação",
+   "cit": [
+    [
+     0,
+     29507,
+     233
+    ]
+   ],
+   "cit_sha": "979b4aa4b1bd1c0e"
+  },
+  {
+   "afirmacao": "Hipoglicemia de nível 1 (<70 mas ≥54 mg/dL) e de nível 2 (<54 mg/dL) são AUTOTRATÁVEIS, sendo o nível 2 considerado clinicamente sério e importante. O nível 3 envolve comprometimento mental ou físico grave a ponto de exigir assistência externa para a recuperação, independentemente do valor de glicose.",
+   "secao": "2. Autotratável × grave",
+   "cit": [
+    [
+     0,
+     29801,
+     368
+    ]
+   ],
+   "cit_sha": "bfba20b4653ea45f"
+  },
+  {
+   "afirmacao": "A hipoglicemia de nível 2 (glicose abaixo de 54 mg/dL) pode envolver neuroglicopenia, mas TAMBÉM PODE SER ASSINTOMÁTICA, e associa-se a maior risco de percepção prejudicada da hipoglicemia, de hipoglicemia grave, de prejuízo cognitivo, de arritmias cardíacas e de mortalidade. Ainda assim, o autotratamento é possível.",
+   "secao": "2. Nível 2 — o que significa",
+   "cit": [
+    [
+     0,
+     31527,
+     225
+    ]
+   ],
+   "cit_sha": "f17a1ebaff12f040"
+  },
+  {
+   "afirmacao": "A hipoglicemia de nível 1 (glicose abaixo de 70 e igual ou acima de 54 mg/dL) funciona como limiar de alerta precoce, pode ser assintomática e deve motivar revisão terapêutica.",
+   "secao": "2. Nível 1 — o que significa",
+   "cit": [
+    [
+     0,
+     31330,
+     115
+    ]
+   ],
+   "cit_sha": "7c7c1970b9973d48"
+  },
+  {
+   "afirmacao": "Além da gravidade, a hipoglicemia também se categoriza pelo momento: episódios durante a vigília são diurnos e os que ocorrem durante o sono ou no processo de adormecer são NOTURNOS. Janelas por relógio (por exemplo, da meia-noite às 8 da manhã) são uma alternativa, porém menos precisas do que a definição ancorada no estado de consciência da pessoa.",
+   "secao": "2. Diurno × noturno",
+   "cit": [
+    [
+     0,
+     30171,
+     445
+    ]
+   ],
+   "cit_sha": "6bd22fb78b81d174"
+  },
+  {
+   "afirmacao": "O sensor contínuo de glicose NÃO identifica hipoglicemia de nível 3, que é definida por comprometimento funcional e não por limiar glicêmico. Em compensação, permite identificação de alta resolução dos eventos de nível 1 e 2, detecta eventos assintomáticos e os que ocorrem durante o sono. Devem ser considerados, porém, as imprecisões conhecidas na faixa hipoglicêmica e os artefatos de compressão.",
+   "secao": "2. Limites do CGM",
+   "cit": [
+    [
+     0,
+     32658,
+     539
+    ]
+   ],
+   "cit_sha": "8ff4dfa134d10769"
+  },
+  {
+   "afirmacao": "Em estudo observacional global com sensor cego por 10 semanas, adultos com diabetes tipo 1 tiveram mediana de 6,5 episódios por semana (intervalo interquartil 3,8 a 10,4) de hipoglicemia de nível 1 e 1,2 episódio por semana (intervalo interquartil 0,4 a 2,5) de nível 2. No diabetes tipo 2 tratado com insulina as taxas correspondentes foram 2,1 (intervalo interquartil 0,8 a 4,0) e 0,2 (intervalo interquartil 0,0 a 0,5) episódios por semana.",
+   "secao": "2. Frequência por CGM",
+   "cit": [
+    [
+     0,
+     33298,
+     475
+    ]
+   ],
+   "cit_sha": "170343f89652a3a8"
+  },
+  {
+   "afirmacao": "Expresso como tempo abaixo da faixa, adultos com diabetes tipo 1 passam 2,7 a 5,1% do tempo (39 a 73 minutos por dia) com glicose abaixo de 70 mg/dL e 0,79 a 1,89% do tempo abaixo de 54 mg/dL; no diabetes tipo 2 tratado com insulina são cerca de 1,0% do tempo abaixo de 70 mg/dL e 0,17 a 0,38% abaixo de 54 mg/dL.",
+   "secao": "2. Tempo abaixo da faixa",
+   "cit": [
+    [
+     0,
+     33780,
+     409
+    ]
+   ],
+   "cit_sha": "4444711065af9c61"
+  },
+  {
+   "afirmacao": "Pelo menos 65% dos eventos detectados por sensor com glicose abaixo de 70 mg/dL e 50% dos eventos abaixo de 54 mg/dL são ASSINTOMÁTICOS, proporção que sobe para 80% em quem tem exposição diária à hipoglicemia.",
+   "secao": "2. Assintomático",
+   "cit": [
+    [
+     0,
+     34191,
+     239
+    ]
+   ],
+   "cit_sha": "47a19c631d9b3714"
+  },
+  {
+   "afirmacao": "Apenas cerca de 50 a 60% dos adultos com diabetes tipo 1 e 10 a 13% dos com diabetes tipo 2 nos Estados Unidos usam sensor contínuo de glicose, com disparidades raciais, étnicas e socioeconômicas expressivas no acesso — por isso o autorrelato permanece uma abordagem pragmática e centrada na pessoa para vigilância.",
+   "secao": "2. Acesso ao CGM",
+   "cit": [
+    [
+     0,
+     34733,
+     395
+    ]
+   ],
+   "cit_sha": "772aa602d4dee248"
+  },
+  {
+   "afirmacao": "Nos grandes estudos prospectivos, 50 a 77% dos adultos com diabetes tipo 1 e 39 a 54% dos com diabetes tipo 2 em insulina e/ou secretagogo autorrelatam pelo menos um evento hipoglicêmico não grave em período de recordação de 1 a 12 meses, com taxas de 55 a 80 eventos por pessoa-ano no tipo 1 e de 19 a 28 eventos por pessoa-ano no tipo 2 tratado com insulina ou sulfonilureia.",
+   "secao": "2. Autorrelato",
+   "cit": [
+    [
+     0,
+     35130,
+     413
+    ]
+   ],
+   "cit_sha": "a2739d21b73ab57e"
+  },
+  {
+   "afirmacao": "Aproximadamente 1 a 3% dos adultos com diabetes tipo 1 ou tipo 2 têm por ano uma ida ao pronto-socorro ou internação por hipoglicemia, com taxas de 8 a 32 por 1.000 pessoas-ano. Entre adultos americanos com diabetes tipo 2, as internações por hipoglicemia continuam superando as atribuíveis a hiperglicemia.",
+   "secao": "2. Hipoglicemia grave — incidência",
+   "cit": [
+    [
+     0,
+     35748,
+     335
+    ]
+   ],
+   "cit_sha": "2a74cf450699407f"
+  },
+  {
+   "afirmacao": "Os registros de saúde capturam apenas uma pequena fração dos eventos de hipoglicemia de nível 3: estima-se que 90 a 95% das pessoas que sofrem esses eventos sejam atendidas FORA de ambientes médicos formais, por familiares ou amigos.",
+   "secao": "2. O que o prontuário não vê",
+   "cit": [
+    [
+     0,
+     36090,
+     226
+    ]
+   ],
+   "cit_sha": "381b45b354467c35"
+  },
+  {
+   "afirmacao": "Grandes estudos prospectivos sugerem que cerca de 33 a 45% dos adultos com diabetes tipo 1 e 31 a 47% dos com diabetes tipo 2 tratado com insulina e/ou secretagogo têm ao menos um evento de hipoglicemia de nível 3 por ano, com taxas de 2,5 a 4,9 eventos por pessoa-ano no tipo 1 e de 2,5 a 5,3 eventos por pessoa-ano no tipo 2.",
+   "secao": "2. Grave — autorrelato",
+   "cit": [
+    [
+     0,
+     36410,
+     356
+    ]
+   ],
+   "cit_sha": "2591acd69f7f0f9a"
+  },
+  {
+   "afirmacao": "A ocorrência de hipoglicemia grave é MUITO ASSIMÉTRICA: mais de 90% dos eventos acontecem em menos de 15% das pessoas, independentemente do tipo de diabetes. Ou seja, o problema não está distribuído — está concentrado numa minoria, que é onde a busca ativa rende mais.",
+   "secao": "2. Concentração do risco",
+   "cit": [
+    [
+     0,
+     36782,
+     152
+    ]
+   ],
+   "cit_sha": "855fc1878414567f"
+  },
+  {
+   "afirmacao": "O relato ANÔNIMO capta duas a três vezes mais eventos de hipoglicemia do que o relato identificado. Em vários estudos, 50 a 65% dos adultos com diabetes tipo 1 ou tipo 2 dizem que raramente ou nunca contam ao clínico geral ou ao especialista que tiveram hipoglicemia.",
+   "secao": "2. Subnotificação",
+   "cit": [
+    [
+     0,
+     36941,
+     301
+    ]
+   ],
+   "cit_sha": "e2f19fc429a8fc41"
+  },
+  {
+   "afirmacao": "As barreiras mais citadas para não relatar hipoglicemia ao médico são o estigma antecipado, o medo de suspensão ou cassação da carteira de motorista e o constrangimento social. A subdetecção clínica agrava: a hipoglicemia é discutida em apenas 24 a 32% das consultas de atenção primária, mesmo entre pessoas de alto risco.",
+   "secao": "2. Por que não contam",
+   "cit": [
+    [
+     0,
+     37252,
+     323
+    ]
+   ],
+   "cit_sha": "26746e843eaa4077"
+  },
+  {
+   "afirmacao": "A frequência de hipoglicemia é maior em quem usa insulinoterapia intensiva, seguida de quem usa apenas insulina basal e depois de quem usa sulfonilureia ou glinida. Esquemas de dose alta, uso combinado de insulina com secretagogo e uso concomitante de certos medicamentos não glicêmicos, como muitos antimicrobianos, agravam ainda mais o risco.",
+   "secao": "2. Gradiente de risco por terapia",
+   "cit": [
+    [
+     0,
+     37611,
+     375
+    ]
+   ],
+   "cit_sha": "fb3d2ed316e2b90f"
+  },
+  {
+   "afirmacao": "O tempo de terapia importa: adultos com diabetes tipo 2 em insulina há MENOS de 2 anos relatam taxas de hipoglicemia semelhantes às de quem usa sulfonilureia, enquanto os que estão em insulina há MAIS de 5 anos relatam taxas comparáveis às de pessoas com diabetes tipo 1 recém-diagnosticado (menos de 5 anos de duração).",
+   "secao": "2. Tempo de insulina",
+   "cit": [
+    [
+     0,
+     37992,
+     292
+    ]
+   ],
+   "cit_sha": "7816c6d5dbec8e6f"
+  },
+  {
+   "afirmacao": "Outros contribuintes clínicos para o risco de hipoglicemia: hipoglicemia recente ou recorrente (grave ou não), maior duração do diabetes, percepção prejudicada da hipoglicemia, idade avançada (75 anos ou mais), A1C acima OU ABAIXO da faixa-alvo recomendada, alta variabilidade glicêmica, polifarmácia, e presença de doença cardiovascular, doença renal crônica avançada, falência renal, neuropatia, retinopatia, depressão e comprometimento cognitivo.",
+   "secao": "2. Fatores clínicos",
+   "cit": [
+    [
+     0,
+     38286,
+     430
+    ]
+   ],
+   "cit_sha": "8975ce1b7e80aa17"
+  },
+  {
+   "afirmacao": "Fatores comportamentais e psicossociais amplificam o risco de hipoglicemia: uso de álcool, padrões alimentares irregulares, jejum por motivos culturais, religiosos ou outros, e uso inconsistente da medicação desestabilizam o manejo glicêmico tanto no diabetes tipo 1 quanto no tipo 2.",
+   "secao": "2. Fatores comportamentais",
+   "cit": [
+    [
+     0,
+     38829,
+     208
+    ]
+   ],
+   "cit_sha": "4f3e9f2889c2dcaf"
+  },
+  {
+   "afirmacao": "Fatores psicológicos como sofrimento relacionado ao diabetes, medo de hipoglicemia, depressão e ansiedade associam-se tanto à percepção prejudicada da hipoglicemia quanto ao risco de hipoglicemia grave. Os riscos individuais são agravados por fatores estruturais a montante: insegurança alimentar, instabilidade de moradia, cobertura de saúde insuficiente, baixa renda, residência em área socioeconomicamente carente e letramento em saúde limitado.",
+   "secao": "2. Estrutural",
+   "cit": [
+    [
+     0,
+     39046,
+     388
+    ]
+   ],
+   "cit_sha": "177e4ecc6485440a"
+  },
+  {
+   "afirmacao": "A avaliação de hipoglicemia é parte essencial do cuidado de quem tem diabetes e risco de hipoglicemia clinicamente significativa: pessoas tratadas com INSULINA, SULFONILUREIAS e/ou GLINIDAS. Embora teoricamente qualquer hipoglicemiante pudesse causar hipoglicemia, as demais classes têm taxas muito baixas de eventos clinicamente importantes ou graves e por isso NÃO são consideradas causadoras de hipoglicemia significativa quando usadas sem insulina, sulfonilureia ou glinida.",
+   "secao": "3. Quem avaliar",
+   "cit": [
+    [
+     0,
+     40755,
+     582
+    ]
+   ],
+   "cit_sha": "32a311fdf35a1980"
+  },
+  {
+   "afirmacao": "A avaliação de hipoglicemia tem três objetivos: entender a história, os padrões, os fatores de risco modificáveis e as abordagens atuais de prevenção e tratamento; estimar o risco global para decidir sobre a terapia do diabetes e as metas glicêmicas; e entender o impacto sobre a saúde e a qualidade de vida da pessoa e de seus parceiros de cuidado.",
+   "secao": "3. Objetivos",
+   "cit": [
+    [
+     0,
+     41347,
+     493
+    ]
+   ],
+   "cit_sha": "b065f0f100083040"
+  },
+  {
+   "afirmacao": "O clínico NÃO deve supor que a pessoa vai contar espontaneamente que teve hipoglicemia. Várias linhas de evidência mostram que as pessoas com diabetes relatam à equipe apenas uma minoria dos eventos, e múltiplos estudos mostram que os clínicos não avaliam rotineiramente a história de hipoglicemia nas consultas de quem está em risco.",
+   "secao": "3. Não esperar o relato",
+   "cit": [
+    [
+     0,
+     42166,
+     1006
+    ]
+   ],
+   "cit_sha": "e427f5803f770d62"
+  },
+  {
+   "afirmacao": "Ao perguntar sobre frequência de hipoglicemia, pode ajudar revisar antes a definição e os sintomas comuns, porque há evidência de que muitas pessoas com diabetes não têm esse conhecimento. Também é importante usar linguagem simples: um estudo americano mostrou que as pessoas com diabetes se referem à hipoglicemia mais comumente como \"açúcar baixo no sangue\" ou relatam apenas os sintomas associados.",
+   "secao": "3. Como perguntar",
+   "cit": [
+    [
+     0,
+     44190,
+     508
+    ]
+   ],
+   "cit_sha": "8402d958d96a4488"
+  },
+  {
+   "afirmacao": "Sobre o período de recordação da hipoglicemia: eventos recentes, como os das últimas 2 semanas, são os lembrados com mais exatidão, mas essa janela perde episódios clinicamente relevantes mais antigos. Perguntar pelos ÚLTIMOS 3 MESES é uma janela razoável e clinicamente relevante, embora períodos mais longos possam ser necessários para episódios infrequentes de hipoglicemia grave.",
+   "secao": "3. Janela de recordação",
+   "cit": [
+    [
+     0,
+     44705,
+     524
+    ]
+   ],
+   "cit_sha": "bba597070d864f22"
+  },
+  {
+   "afirmacao": "Em quem relata hipoglicemia, avaliar gravidade, momento, sintomas (inclusive a percepção da hipoglicemia) e precipitantes. A gravidade se avalia pelo menor valor de glicose, se medido e conhecido, e pelos sintomas concomitantes.",
+   "secao": "3. O que caracterizar",
+   "cit": [
+    [
+     0,
+     45392,
+     296
+    ]
+   ],
+   "cit_sha": "dbc6742d0659ed45"
+  },
+  {
+   "afirmacao": "É especialmente importante determinar se a pessoa teve hipoglicemia de NÍVEL 2 (glicose abaixo de 54 mg/dL) ou de NÍVEL 3 (estado mental e/ou físico alterado exigindo assistência, independentemente do valor de glicose), porque esses eventos são sempre clinicamente relevantes e são FORTES PREDITORES de hipoglicemia futura.",
+   "secao": "3. Nível 2 e 3 preditores",
+   "cit": [
+    [
+     0,
+     45690,
+     342
+    ]
+   ],
+   "cit_sha": "bdcf1c672a798c6d"
+  },
+  {
+   "afirmacao": "O clínico deve perguntar sobre despertares noturnos, PESADELOS e sono não reparador, que podem ser apresentações de HIPOGLICEMIA NOTURNA. Avaliar o momento dos eventos em relação a refeições, atividade, sono e administração de medicação ajuda a identificar as causas proximais.",
+   "secao": "3. Hipoglicemia noturna",
+   "cit": [
+    [
+     0,
+     46044,
+     315
+    ]
+   ],
+   "cit_sha": "5e2cf2095473be5d"
+  },
+  {
+   "afirmacao": "Também é útil perguntar especificamente sobre eventos hipoglicêmicos EVITADOS — tanto glicoses em queda quanto valores abaixo da meta preferida da pessoa mas ainda fora da faixa de hipoglicemia — que foram tratados preventivamente antes de a hipoglicemia acontecer. Isso revela a magnitude da exposição e do risco e a resposta da pessoa, inclusive o medo de hipoglicemia.",
+   "secao": "3. Eventos evitados",
+   "cit": [
+    [
+     0,
+     46367,
+     438
+    ]
+   ],
+   "cit_sha": "ec58502c54bdc9ec"
+  },
+  {
+   "afirmacao": "Os precipitantes de hipoglicemia a revisar com a pessoa são: refeições atrasadas ou puladas; mudanças na alimentação, na atividade física ou no sono; consumo de álcool ou uso de drogas; e mudanças na dose ou no horário da medicação.",
+   "secao": "3. Precipitantes",
+   "cit": [
+    [
+     0,
+     46807,
+     270
+    ]
+   ],
+   "cit_sha": "6192b87cbb7e7763"
+  },
+  {
+   "afirmacao": "Independentemente da prática de monitorização, o clínico deve SEMPRE perguntar sobre eventos hipoglicêmicos sintomáticos, porque algumas pessoas têm hipoglicemia não confirmada por medida de glicemia. Além disso, os dados de sensor são menos exatos em glicemias baixas e podem trazer valores baixos espúrios por erro de medida, como as quedas por compressão, que ocorrem quando há pressão sobre a área do sensor.",
+   "secao": "3. Sintoma sem confirmação",
+   "cit": [
+    [
+     0,
+     47607,
+     454
+    ]
+   ],
+   "cit_sha": "116ac17678ec4705"
+  },
+  {
+   "afirmacao": "A percepção prejudicada da hipoglicemia é a condição em que a pessoa com diabetes NÃO experimenta os sintomas típicos de hipoglicemia em glicemias baixas. Associa-se a maior duração do diabetes e a hipoglicemia recorrente, e é um FATOR DE RISCO MAIOR para hipoglicemia grave. Deve ser avaliada regularmente.",
+   "secao": "3. IAH — definição",
+   "cit": [
+    [
+     0,
+     51515,
+     616
+    ]
+   ],
+   "cit_sha": "96d895e52a8747df"
+  },
+  {
+   "afirmacao": "Para a prática clínica, é razoável rastrear a percepção prejudicada da hipoglicemia com uma ÚNICA PERGUNTA, baseada no método de Pedersen-Bjergaard ou no escore de Gold, e considerar um instrumento mais completo, como o escore de Clarke ou o HypoA-Q, quando for necessária avaliação detalhada. O rastreamento deve ocorrer PELO MENOS ANUALMENTE.",
+   "secao": "3. IAH — rastreio",
+   "cit": [
+    [
+     0,
+     54488,
+     594
+    ]
+   ],
+   "cit_sha": "ecf22c649d5b1cb7"
+  },
+  {
+   "afirmacao": "O escore de Gold é um instrumento de pergunta única — \"Você sabe quando suas hipoglicemias estão começando?\" — respondido em escala Likert de 7 pontos, em que 1 é \"sempre percebo\" e 7 é \"nunca percebo\"; escore igual ou maior que 4 indica percepção prejudicada da hipoglicemia.",
+   "secao": "3. IAH — Gold",
+   "cit": [
+    [
+     0,
+     49077,
+     235
+    ]
+   ],
+   "cit_sha": "248b11100b0d51c5"
+  },
+  {
+   "afirmacao": "O método de Pedersen-Bjergaard usa a pergunta \"Você consegue sentir quando seu açúcar está baixo?\", com opções sempre, geralmente, ocasionalmente, nunca e não sei, classificando em três grupos: percepção normal (\"sempre\"), percepção prejudicada (\"geralmente\") e ausência de percepção (\"ocasionalmente\" ou \"nunca\").",
+   "secao": "3. IAH — Pedersen-Bjergaard",
+   "cit": [
+    [
+     0,
+     48776,
+     299
+    ]
+   ],
+   "cit_sha": "16a857f4cfd8210f"
+  },
+  {
+   "afirmacao": "No escore de Clarke, cada um dos oito itens é classificado como \"A\" (aware, percebe) ou \"R\" (reduced, reduzido), e um total igual ou maior que 4 respostas \"R\" indica percepção prejudicada da hipoglicemia; 2 ou menos é percepção normal e 3 é percepção limítrofe. No HypoA-Q, com escala Likert de 5 pontos, escore igual ou maior que 12 indica percepção prejudicada.",
+   "secao": "3. IAH — Clarke e HypoA-Q",
+   "cit": [
+    [
+     0,
+     50239,
+     1222
+    ]
+   ],
+   "cit_sha": "673623b181493fcc"
+  },
+  {
+   "afirmacao": "Os instrumentos de percepção prejudicada da hipoglicemia foram desenvolvidos e validados predominantemente em pessoas com diabetes tipo 1, com poucos estudos no tipo 2. Os questionários de MEDO de hipoglicemia não foram examinados em quem não usa insulina nem em pessoas com comprometimento cognitivo.",
+   "secao": "3. IAH — limites dos instrumentos",
+   "cit": [
+    [
+     0,
+     53046,
+     374
+    ]
+   ],
+   "cit_sha": "0fb39e1cc00f1883"
+  },
+  {
+   "afirmacao": "Vários determinantes sociais de saúde afetam o risco de hipoglicemia e por isso devem ser avaliados rotineiramente: insegurança alimentar, baixa renda, baixo letramento em saúde, cobertura de saúde insuficiente, residência em área socioeconomicamente carente e situação de rua.",
+   "secao": "3. Determinantes sociais",
+   "cit": [
+    [
+     0,
+     55141,
+     355
+    ]
+   ],
+   "cit_sha": "a4d31f14130d090b"
+  },
+  {
+   "afirmacao": "Exemplo prático de conduta diante de determinante social: se a pessoa com diabetes tratada com insulina tem insegurança alimentar, o clínico deve acionar recursos do sistema de saúde e da comunidade para mitigá-la E, enquanto isso, criar um plano de ajuste da dose de insulina para o caso de ela perder uma refeição.",
+   "secao": "3. Insegurança alimentar",
+   "cit": [
+    [
+     0,
+     52024,
+     56
+    ],
+    [
+     0,
+     52139,
+     59
+    ],
+    [
+     0,
+     52257,
+     59
+    ],
+    [
+     0,
+     52371,
+     51
+    ],
+    [
+     0,
+     52483,
+     61
+    ],
+    [
+     0,
+     52604,
+     27
+    ]
+   ],
+   "cit_sha": "e62b2a36c6f13b00"
+  },
+  {
+   "afirmacao": "Pessoas com diabetes que jejuam por motivos religiosos ou culturais têm risco de hipoglicemia durante os períodos de jejum. Por isso o clínico deve perguntar rotineiramente sobre períodos de jejum e planejar modificações do tratamento conforme o calendário de jejum da pessoa.",
+   "secao": "3. Jejum religioso",
+   "cit": [
+    [
+     0,
+     52687,
+     455
+    ]
+   ],
+   "cit_sha": "65f1393f5a8cdd32"
+  },
+  {
+   "afirmacao": "Dados de um estudo em pessoas com HIV sugerem que só certos tipos de pergunta produzem relato acurado do comportamento de tomar medicação: perguntas com enquadramento NEGATIVO (\"Você deixou de tomar alguma dose?\") foram as que mais provocaram revelação de não adesão, enquanto perguntas abertas (\"Como você está indo com seus remédios?\") ou de esclarecimento do esquema (\"Você ainda está tomando a glipizida?\") dificilmente conseguiram isso.",
+   "secao": "3. Adesão — como perguntar",
+   "cit": [
+    [
+     0,
+     57065,
+     468
+    ]
+   ],
+   "cit_sha": "b3f6a54b091ec4ff"
+  },
+  {
+   "afirmacao": "Quando a pessoa relata não estar tomando a medicação como recomendado, é importante explorar os motivos, que podem envolver efeitos colaterais, o impacto do tratamento sobre a vida ou a jornada de trabalho, custo financeiro ou MEDO DE HIPOGLICEMIA.",
+   "secao": "3. Adesão — por quê",
+   "cit": [
+    [
+     0,
+     57644,
+     234
+    ]
+   ],
+   "cit_sha": "cacbdb788acef92a"
+  },
+  {
+   "afirmacao": "O clínico deve rastrear rotineiramente o impacto da hipoglicemia sobre a qualidade de vida em quem tem hipoglicemia grave ou recorrente, idealmente com instrumento validado, porque intervenções que melhoram o autocuidado e a percepção da hipoglicemia também reduzem o medo de hipoglicemia e melhoram a qualidade de vida.",
+   "secao": "3. Qualidade de vida",
+   "cit": [
+    [
+     0,
+     58187,
+     189
+    ]
+   ],
+   "cit_sha": "78cdc1d0386c2f0c"
+  },
+  {
+   "afirmacao": "O rastreador de medo de hipoglicemia (fear of hypoglycemia screener) foi desenvolvido especificamente para uso clínico e é o único que traz um PONTO DE CORTE indicando nível alto de medo, embora não seja validado no diabetes tipo 2. O instrumento Attitudes to Awareness of Hypoglycemia foca crenças modificáveis sobre hipoglicemia que atrapalham o autocuidado, sendo especialmente útil ao discutir mudança de comportamento.",
+   "secao": "3. Instrumentos de medo",
+   "cit": [
+    [
+     0,
+     59126,
+     443
+    ]
+   ],
+   "cit_sha": "96fe929d6685753e"
+  },
+  {
+   "afirmacao": "Pessoas com comprometimento cognitivo ou demência podem perder a capacidade de reconhecer os sintomas de hipoglicemia ou de responder a eles apropriadamente. Mudanças de apetite, de padrão alimentar, de comportamento e de sono também afetam a glicemia. Por isso é importante avaliar rotineiramente a cognição e as mudanças associadas de saúde e de funcionalidade.",
+   "secao": "3. Cognição",
+   "cit": [
+    [
+     0,
+     60572,
+     384
+    ]
+   ],
+   "cit_sha": "410c18ed0db37a1f"
+  },
+  {
+   "afirmacao": "A disfunção cognitiva complica a avaliação da história de hipoglicemia, porque os eventos podem NÃO se apresentar com sintomas típicos e sim com mudança de comportamento, sonolência ou confusão. Pode ser necessário depender mais da monitorização de glicose, inclusive do sensor contínuo, em quem tem alto risco e não consegue comunicar sintomas.",
+   "secao": "3. Apresentação atípica",
+   "cit": [
+    [
+     0,
+     60958,
+     500
+    ]
+   ],
+   "cit_sha": "01a84f6af71bdf1e"
+  },
+  {
+   "afirmacao": "Em pessoas com disfunção cognitiva, os parceiros de cuidado podem precisar assumir a monitorização de glicose, a administração da medicação e o acompanhamento da ingestão alimentar. O clínico deve avaliar o conhecimento e as habilidades de TODOS os cuidadores, formais e informais, para prevenir e tratar hipoglicemia, e especificamente se eles TÊM ACESSO A GLUCAGON e treinamento para usá-lo.",
+   "secao": "3. Parceiro de cuidado",
+   "cit": [
+    [
+     0,
+     61460,
+     633
+    ]
+   ],
+   "cit_sha": "35c70cfe4e5bb2a4"
+  },
+  {
+   "afirmacao": "O clínico deve reavaliar regularmente a complexidade do plano de tratamento do diabetes e simplificá-lo quando possível, para minimizar a polifarmácia e sobretudo o uso de medicamentos de alto risco de hipoglicemia. A estratégia é especialmente importante em pessoas com comprometimento cognitivo, que têm maior risco de efeitos adversos.",
+   "secao": "3. Simplificar",
+   "cit": [
+    [
+     0,
+     62098,
+     446
+    ]
+   ],
+   "cit_sha": "f1f919cb2ddc924f"
+  },
+  {
+   "afirmacao": "A estratégia terapêutica central para prevenir hipoglicemia é evitar e/ou suspender, sempre que possível, os hipoglicemiantes de alto risco: INSULINA — especialmente esquemas de escala móvel (sliding scale) —, SULFONILUREIAS e GLINIDAS.",
+   "secao": "4. Evitar alto risco",
+   "cit": [
+    [
+     0,
+     64764,
+     262
+    ]
+   ],
+   "cit_sha": "586c527d82583dbe"
+  },
+  {
+   "afirmacao": "No diabetes tipo 1, a ADA recomenda produtos de insulina ANÁLOGA ou insulina inalada em vez de insulina humana injetável, para minimizar o risco de hipoglicemia. O método de entrega da insulina também afeta o risco.",
+   "secao": "4. Insulina no DM1",
+   "cit": [
+    [
+     0,
+     65040,
+     276
+    ]
+   ],
+   "cit_sha": "6db6c872a840248f"
+  },
+  {
+   "afirmacao": "Hierarquia de proteção contra hipoglicemia no diabetes tipo 1, do maior benefício para o menor: sistemas automatizados de entrega de insulina; bombas com suspensão por limiar ou preditiva de glicose baixa; bombas sem função automatizada e múltiplas doses com análogo de ação longa mais análogo rápido ou ultrarrápido; múltiplas doses com NPH mais análogo rápido; e, por último, NPH com insulina regular, seja em múltiplas doses, seja em duas aplicações diárias ou pré-mistura.",
+   "secao": "4. Hierarquia de entrega",
+   "cit": [
+    [
+     0,
+     65626,
+     385
+    ]
+   ],
+   "cit_sha": "40d4236fc23c1f94"
+  },
+  {
+   "afirmacao": "No diabetes tipo 2, insulinas prandiais e pré-misturadas carregam risco importante de hipoglicemia, mas a escolha da insulina prandial específica tem MENOS impacto sobre esse risco do que no diabetes tipo 1: metanálises comparando análogos rápidos com insulina regular não encontraram diferença maior de risco de hipoglicemia no diabetes tipo 2.",
+   "secao": "4. Insulina no DM2",
+   "cit": [
+    [
+     0,
+     66269,
+     383
+    ]
+   ],
+   "cit_sha": "97cc4d8ef8178e46"
+  },
+  {
+   "afirmacao": "No diabetes tipo 2, as insulinas análogas de ação longa carregam risco MENOR de hipoglicemia de nível 2 (glicose abaixo de 54 mg/dL) e de hipoglicemia noturna do que a NPH.",
+   "secao": "4. Basal no DM2",
+   "cit": [
+    [
+     0,
+     66664,
+     210
+    ]
+   ],
+   "cit_sha": "00192577835792bf"
+  },
+  {
+   "afirmacao": "É importante evitar a SOBREBASALIZAÇÃO, isto é, dose de insulina basal maior que a apropriada, geralmente acompanhada de insulina prandial insuficiente. Os sinais clínicos de sobrebasalização são diferencial alto entre a glicemia ao deitar e a da manhã e/ou entre a pré e a pós-prandial, hipoglicemia incidente e aumento da variabilidade glicêmica.",
+   "secao": "4. Sobrebasalização",
+   "cit": [
+    [
+     0,
+     66882,
+     333
+    ]
+   ],
+   "cit_sha": "f096a9ae1955348f"
+  },
+  {
+   "afirmacao": "A atualização de 2023 dos Critérios de Beers da American Geriatrics Society recomenda FORTEMENTE contra o uso de sulfonilureias e glinidas em idosos com diabetes, em parte porque conferem alto risco de hipoglicemia. Quando a sulfonilureia for clinicamente necessária, a diretriz orienta preferir agentes de ação curta, como a glipizida, aos de ação longa, como a glibenclamida.",
+   "secao": "4. Beers 2023",
+   "cit": [
+    [
+     0,
+     67368,
+     554
+    ]
+   ],
+   "cit_sha": "9cdc0d88f46d899b"
+  },
+  {
+   "afirmacao": "A glibenclamida NÃO é recomendada em pessoas com diabetes tipo 2 e doença renal crônica, definida como taxa de filtração glomerular estimada abaixo de 60 mL/min/1,73 m², pelo risco de acúmulo da glibenclamida e de seus metabólitos ativos. O uso combinado de insulina com secretagogo também deve ser evitado.",
+   "secao": "4. Glibenclamida na DRC",
+   "cit": [
+    [
+     0,
+     67930,
+     347
+    ]
+   ],
+   "cit_sha": "74099701a5b57032"
+  },
+  {
+   "afirmacao": "A hipoglicemia — e o medo de hipoglicemia, tanto da pessoa com diabetes quanto do clínico — é um dos maiores contribuintes para a INÉRCIA TERAPÊUTICA, porque a intensificação do tratamento aumenta o risco de hipoglicemia, sobretudo quando envolve insulina e/ou secretagogo.",
+   "secao": "4. Inércia terapêutica",
+   "cit": [
+    [
+     0,
+     68627,
+     318
+    ]
+   ],
+   "cit_sha": "ac1051c10c42e3a9"
+  },
+  {
+   "afirmacao": "Os hipoglicemiantes com risco comprovadamente MENOR de hipoglicemia, a serem priorizados, são: metformina, inibidores de DPP-4, pioglitazona, agonistas do receptor de GLP-1, agonistas duplos GIP/GLP-1 e inibidores de SGLT2 — todos com pouco ou nenhum risco de hipoglicemia, EXCETO quando usados em combinação com insulina e/ou secretagogo.",
+   "secao": "4. Classes de baixo risco",
+   "cit": [
+    [
+     0,
+     69204,
+     400
+    ]
+   ],
+   "cit_sha": "83e78ad165f044a7"
+  },
+  {
+   "afirmacao": "A preferência por inibidores de SGLT2 e por terapias baseadas em GLP-1 se justifica porque esses agentes demonstram redução de A1C equivalente ou melhor, MENOR risco de hipoglicemia e ainda perda de peso ou neutralidade ponderal. Eles também conferem benefício adicional na minimização do risco de hipoglicemia em quem tem doença aterosclerótica estabelecida, insuficiência cardíaca e doença renal crônica — justamente as pessoas de maior risco de hipoglicemia.",
+   "secao": "4. Vantagem tripla",
+   "cit": [
+    [
+     0,
+     70345,
+     461
+    ]
+   ],
+   "cit_sha": "68196dd6f0dc8a36"
+  },
+  {
+   "afirmacao": "A ADA recomenda considerar a iniciação de um agonista do receptor de GLP-1 ou de um agonista duplo GIP/GLP-1 como PRIMEIRO INJETÁVEL, antes da insulina, na maioria das pessoas com diabetes tipo 2. As terapias baseadas em GLP-1 mostram redução de A1C semelhante ou maior que a da insulina basal, especialmente ao longo do tempo, com benefício claro sobre o peso e menor risco de hipoglicemia.",
+   "secao": "4. Primeiro injetável",
+   "cit": [
+    [
+     0,
+     71001,
+     397
+    ]
+   ],
+   "cit_sha": "13f82dd141b07a18"
+  },
+  {
+   "afirmacao": "Análogos basais de segunda geração — insulina glargina U-300 e insulina degludeca — reduzem ainda mais o risco de hipoglicemia, sobretudo a NOTURNA, em comparação com glargina U-100 e detemir, tanto em ensaios clínicos quanto em estudos de mundo real. Em ensaio randomizado cara a cara, ambos mostraram benefício geral, com a glargina U-300 apresentando menos eventos noturnos durante a fase de titulação dos primeiros 3 meses.",
+   "secao": "4. Segunda geração de basal",
+   "cit": [
+    [
+     0,
+     72145,
+     583
+    ]
+   ],
+   "cit_sha": "47d4d2308723a5fa"
+  },
+  {
+   "afirmacao": "Um análogo basal de segunda geração pode ser preferido se a hipoglicemia ocorrer com um análogo de primeira geração ou com NPH, desde que acesso e custo não sejam barreiras.",
+   "secao": "4. Quando trocar de basal",
+   "cit": [
+    [
+     0,
+     73066,
+     171
+    ]
+   ],
+   "cit_sha": "91c701d57dac89b2"
+  },
+  {
+   "afirmacao": "Quando a intensificação exige insulina prandial no diabetes tipo 2, ela pode ser introduzida em degraus, começando por uma única aplicação pré-prandial diária, geralmente na maior refeição do dia, ou pela abordagem mais antiga de iniciar uma combinação de dose fixa (insulina pré-misturada), em geral duas vezes ao dia. O risco de hipoglicemia AUMENTA com a adição de prandial e é preocupação particular com as formulações PRÉ-MISTURADAS.",
+   "secao": "4. Prandial e pré-mistura",
+   "cit": [
+    [
+     0,
+     73457,
+     481
+    ]
+   ],
+   "cit_sha": "0d01093522d68b03"
+  },
+  {
+   "afirmacao": "As combinações de razão fixa em aplicação única diária que juntam insulina basal de ação mais longa (glargina ou degludeca) com um agonista do receptor de GLP-1 — iGlarLixi (glargina com lixisenatida) e IdegLira (degludeca com liraglutida) — resultaram em menor necessidade de insulina, MENOR risco de hipoglicemia e ganho de peso mínimo em comparação com a insulina basal isolada.",
+   "secao": "4. Combinação fixa basal + GLP-1",
+   "cit": [
+    [
+     0,
+     74108,
+     346
+    ]
+   ],
+   "cit_sha": "42ab970f9476a1bb"
+  },
+  {
+   "afirmacao": "A iGlarLixi mostrou benefício adicional em comparação com a insulina pré-misturada 70/30 (70% de NPH com 30% de insulina rápida), com menor risco de hipoglicemia, efeito poupador de insulina e menor ganho de peso — sugerindo que a combinação de insulina basal com agonista de GLP-1 pode ter vantagem sobre a pré-mistura tradicional.",
+   "secao": "4. Fixa × pré-mistura",
+   "cit": [
+    [
+     0,
+     74635,
+     341
+    ]
+   ],
+   "cit_sha": "6801670f7f9d9721"
+  },
+  {
+   "afirmacao": "O risco de hipoglicemia aumenta com a intensidade e a complexidade do esquema hipoglicemiante, e ainda assim esquemas excessivamente intensivos e complexos são comuns na prática — particularmente entre quem tem MAIOR risco de hipoglicemia, como idosos e pessoas com multimorbidade e/ou complexidade clínica.",
+   "secao": "4. Simplificar",
+   "cit": [
+    [
+     0,
+     75012,
+     339
+    ]
+   ],
+   "cit_sha": "d19bf4c796edb825"
+  },
+  {
+   "afirmacao": "Simplificação é reduzir a complexidade e a carga do tratamento. A DESINTENSIFICAÇÃO é um componente da simplificação e pode ser suspender um medicamento (desprescrever), reduzir a dose, ou substituir um fármaco de uma classe por outro de classe com menor risco de precipitar hipoglicemia.",
+   "secao": "4. Simplificação × desintensificação",
+   "cit": [
+    [
+     0,
+     75584,
+     359
+    ]
+   ],
+   "cit_sha": "6260fb6b8f2c6d3e"
+  },
+  {
+   "afirmacao": "Revisão sistemática de estudos observacionais sobre desintensificação em idosos com diabetes — não havia ensaios randomizados — encontrou que desintensificar os hipoglicemiantes NÃO resultou em A1C mais alta, e reduziu as taxas de hipoglicemia em alguns, mas não em todos os estudos. A revisão foi conduzida ANTES do uso disseminado das terapias baseadas em GLP-1, que têm forte efeito glicêmico com baixo risco de hipoglicemia.",
+   "secao": "4. Evidência da desintensificação",
+   "cit": [
+    [
+     0,
+     75955,
+     478
+    ]
+   ],
+   "cit_sha": "e88563f084a8022a"
+  },
+  {
+   "afirmacao": "Abordagens para simplificar o esquema hipoglicemiante: substituir secretagogos por metformina, pioglitazona, inibidor de DPP-4, inibidor de SGLT2 ou medicação baseada em GLP-1; substituir insulina basal de dose baixa por medicações não insulínicas, sendo as baseadas em GLP-1 as de maior potência entre elas.",
+   "secao": "4. Como simplificar",
+   "cit": [
+    [
+     0,
+     77815,
+     266
+    ]
+   ],
+   "cit_sha": "6f8740bcb90d6e6a"
+  },
+  {
+   "afirmacao": "Preferir esquemas de insulina basal em aplicação ÚNICA diária em vez de duas vezes ao dia: insulinas basais de ação mais longa reduzem a frequência tanto da aplicação quanto da monitorização necessária. Quem não consegue aplicar a basal consistentemente no mesmo horário todo dia se beneficia de uma insulina de ação ULTRALONGA, como glargina U-300 ou degludeca.",
+   "secao": "4. Basal 1x ao dia",
+   "cit": [
+    [
+     0,
+     78450,
+     466
+    ]
+   ],
+   "cit_sha": "837d40d84032f6f3"
+  },
+  {
+   "afirmacao": "Ajustar o esquema à capacidade de autocuidado e ao suporte disponível: identificar as janelas do dia em que a pessoa consegue tomar ou receber a medicação e escolher o fármaco que se dose nesses horários. Por exemplo, se ela precisa de insulinoterapia intensiva mas não consegue medir a glicemia no meio do dia, a NPH pode ser preferível; e se ela pode receber medicação uma vez por semana durante visitas de atenção domiciliar, considerar preferencialmente uma medicação baseada em GLP-1 semanal.",
+   "secao": "4. Ajustar à capacidade",
+   "cit": [
+    [
+     0,
+     79019,
+     483
+    ]
+   ],
+   "cit_sha": "df3c25a7a7a1019d"
+  },
+  {
+   "afirmacao": "O esquema hipoglicemiante — tipos de medicação, doses e horários — deve ser alinhado à rotina diária da pessoa: ingestão alimentar (que tipos de alimento e bebida, e horário e duração das refeições), atividade física (tipo e duração), capacidade de autocuidado, que pode variar ao longo do dia, e a previsibilidade e consistência da agenda diária.",
+   "secao": "4. Alinhar à rotina",
+   "cit": [
+    [
+     0,
+     76732,
+     3217
+    ]
+   ],
+   "cit_sha": "1f52ebfdbf0eb7ab"
+  },
+  {
+   "afirmacao": "No diabetes tipo 1, o DCCT identificou aumento de TRÊS VEZES na hipoglicemia grave como o principal risco da insulinoterapia intensiva. Os avanços de análogos de insulina mais novos, de sistemas automatizados de entrega de insulina e do sensor contínuo ajudaram a baixar as taxas de hipoglicemia grave de cerca de 20 a 30 eventos por 100 pacientes-ano para cerca de 9,5 eventos por 100 pacientes-ano em quem usa entrega automatizada com análogo de ação rápida.",
+   "secao": "4. Tecnologia — DCCT",
+   "cit": [
+    [
+     0,
+     80437,
+     454
+    ]
+   ],
+   "cit_sha": "defb7c53a5fbefdf"
+  },
+  {
+   "afirmacao": "A percepção prejudicada da hipoglicemia desenvolve-se em 17 a 36% das pessoas com diabetes tipo 1 e em 6 a 8% das com diabetes tipo 2 — neste último grupo, tipicamente quem usa insulina ou sulfonilureia.",
+   "secao": "4. IAH — prevalência",
+   "cit": [
+    [
+     0,
+     81320,
+     199
+    ]
+   ],
+   "cit_sha": "82d5c79226318a1c"
+  },
+  {
+   "afirmacao": "A percepção prejudicada da hipoglicemia pode ser PARCIALMENTE RESTAURADA: há evidência de que o reconhecimento de sintomas volte, ao menos em parte, com a EVITAÇÃO ESCRUPULOSA de hipoglicemia por semanas a meses. Essa evitação estrita tem sido alcançada com programas psicoeducacionais estruturados e ficou mais viável com o uso do sensor contínuo e com ajustes da insulinoterapia, incluindo os sistemas automatizados de entrega.",
+   "secao": "4. IAH — reversível",
+   "cit": [
+    [
+     0,
+     81527,
+     555
+    ]
+   ],
+   "cit_sha": "746863b36411c8c6"
+  },
+  {
+   "afirmacao": "O sensor contínuo mede a glicose intersticial a cada 1 a 5 minutos e a exibe em leitor, aplicativo de celular e/ou tela da bomba de insulina, ao contrário da glicemia capilar tradicional, que dá valores estáticos em pontos isolados no tempo. Ele fornece informação dinâmica e contínua, além de SETAS DE TENDÊNCIA indicando se a glicose está subindo ou caindo, e emite alertas e alarmes sonoros para hiper e hipoglicemia iminentes.",
+   "secao": "4. CGM — o que faz",
+   "cit": [
+    [
+     0,
+     82771,
+     710
+    ]
+   ],
+   "cit_sha": "fca106ccef6a2919"
+  },
+  {
+   "afirmacao": "No estudo HypoDE, 149 pessoas com diabetes tipo 1 e história de percepção prejudicada da hipoglicemia ou de hipoglicemia grave no ano anterior usaram sensor cego por 28 dias e depois foram randomizadas para sensor aberto ou glicemia capilar por 26 semanas: ao final, os eventos hipoglicêmicos caíram 72% no grupo do sensor e ficaram inalterados no grupo da glicemia capilar.",
+   "secao": "4. HypoDE",
+   "cit": [
+    [
+     0,
+     84680,
+     413
+    ]
+   ],
+   "cit_sha": "c3486f262c141734"
+  },
+  {
+   "afirmacao": "No ensaio randomizado DIAMOND, com 158 pessoas com diabetes tipo 1 em múltiplas doses de insulina, a A1C melhorou 0,6% no grupo do sensor contínuo em relação ao da glicemia capilar após 6 meses; a análise secundária mostrou 50% menos tempo mediano de exposição à hipoglicemia e taxa de eventos 30% menor no grupo do sensor.",
+   "secao": "4. DIAMOND",
+   "cit": [
+    [
+     0,
+     84115,
+     563
+    ]
+   ],
+   "cit_sha": "5eda14d26ad3bffe"
+  },
+  {
+   "afirmacao": "No ensaio GOLD, quem usou sensor contínuo passou 2,79% do tempo abaixo da faixa (glicose abaixo de 70 mg/dL) contra 4,79% do tratamento convencional sem sensor; o tempo em hipoglicemia de nível 2 (abaixo de 54 mg/dL) foi de 0,79% com sensor contra 1,89% sem.",
+   "secao": "4. GOLD",
+   "cit": [
+    [
+     0,
+     85095,
+     396
+    ]
+   ],
+   "cit_sha": "84f5fdea2fe79b4a"
+  },
+  {
+   "afirmacao": "O benefício do sensor contínuo se estende ao idoso com diabetes tipo 1: no ensaio WISDM, com 203 adultos de 60 anos ou mais randomizados para sensor ou glicemia capilar por 26 semanas, o tempo abaixo da faixa caiu de 5,1% para 2,7% no grupo do sensor, enquanto no grupo da glicemia capilar foi de 4,7% para 4,9%. O tempo em hipoglicemia de nível 2 também caiu no grupo do sensor.",
+   "secao": "4. WISDM — idoso",
+   "cit": [
+    [
+     0,
+     85805,
+     484
+    ]
+   ],
+   "cit_sha": "375633c5ee977fe2"
+  },
+  {
+   "afirmacao": "Em ensaio de 2017 com 224 participantes com diabetes tipo 2 em insulinoterapia intensiva, randomizados para sensor contínuo ou glicemia capilar e seguidos por 6 meses, não houve diferença de A1C, mas o grupo do sensor teve redução 43% maior do tempo abaixo da faixa no geral e 54% maior da hipoglicemia noturna; o tempo com glicose abaixo de 55 mg/dL foi 53% menor no geral e 58% menor durante a noite.",
+   "secao": "4. CGM no DM2 em insulina",
+   "cit": [
+    [
+     0,
+     87063,
+     475
+    ]
+   ],
+   "cit_sha": "499a1f2d2fd08d8c"
+  },
+  {
+   "afirmacao": "No primeiro estudo RELIEF, com 74.011 pessoas com diabetes tipo 1 ou tipo 2 identificadas na base nacional francesa, as internações por hipoglicemia na coorte de diabetes tipo 2 caíram 10,8% nos 12 meses após o início do sensor contínuo em relação aos 12 meses anteriores, com redução adicional no seguimento de 24 meses entre 41.027 pessoas com diabetes tipo 2.",
+   "secao": "4. RELIEF",
+   "cit": [
+    [
+     0,
+     87738,
+     573
+    ]
+   ],
+   "cit_sha": "bf385faaa5543ab7"
+  },
+  {
+   "afirmacao": "Mesmo em diabetes tipo 2 NÃO tratado com insulina o sensor contínuo reduziu hipoglicemia: metanálise de seis ensaios com 407 pessoas, das quais 228 randomizadas para sensor, mostrou redução significativa do tempo em hipoglicemia de nível 2 (glicose abaixo de 54 mg/dL), com diferença média ponderada de 0,28 ponto percentual (IC95% 0,52 a 0,03).",
+   "secao": "4. CGM sem insulina",
+   "cit": [
+    [
+     0,
+     88742,
+     396
+    ]
+   ],
+   "cit_sha": "c62ab2b2f4ac66b4"
+  },
+  {
+   "afirmacao": "Bombas acopladas a sensor podem suspender AUTOMATICAMENTE a entrega de insulina quando a glicose atual ou prevista cai a um limiar. Os sistemas automatizados de entrega mais avançados modulam a entrega continuamente — aumentando, reduzindo ou suspendendo — conforme os valores e as tendências, e são chamados de \"sistemas híbridos de alça fechada\" porque ainda exigem que o usuário aplique bólus manualmente e ajuste para exercício e dias de doença.",
+   "secao": "4. Suspensão e AID",
+   "cit": [
+    [
+     0,
+     89712,
+     550
+    ]
+   ],
+   "cit_sha": "80a25cb80ed73982"
+  },
+  {
+   "afirmacao": "A diretriz de prática clínica da Endocrine Society de 2023 sobre manejo de pessoas com diabetes de ALTO RISCO DE HIPOGLICEMIA recomenda o sensor contínuo em vez da glicemia capilar para diabetes tipo 1 ou tipo 2 em múltiplas doses de insulina, enfatiza os sistemas automatizados de entrega para reduzir hipoglicemia no tipo 1, e recomenda o sensor também para diabetes tipo 2 em insulina ou sulfonilureia com risco de hipoglicemia.",
+   "secao": "4. Endocrine Society 2023",
+   "cit": [
+    [
+     0,
+     90993,
+     516
+    ]
+   ],
+   "cit_sha": "1b81ef62430a23fe"
+  },
+  {
+   "afirmacao": "Sulfonilureias como glibenclamida, glimepirida e, em menor grau, glipizida são depuradas principalmente pelos rins e podem causar hipoglicemia em várias circunstâncias — refeições puladas, jejum e especialmente em pessoas com filtração glomerular reduzida. É preciso educar a pessoa sobre esse risco e orientá-la a comer em intervalos regulares; se ela pular refeições, pode ser necessário reduzir a dose ou suspender a medicação, sobretudo se a função renal continuar caindo.",
+   "secao": "4. Sulfonilureia — educação",
+   "cit": [
+    [
+     0,
+     91965,
+     627
+    ]
+   ],
+   "cit_sha": "57678171ec2ef774"
+  },
+  {
+   "afirmacao": "As glinidas, classe com mecanismo semelhante ao das sulfonilureias, também podem causar hipoglicemia e são geralmente administradas junto às refeições. Quem usa glinida precisa ser orientado a OMITIR a medicação se pular a refeição, para evitar hipoglicemia.",
+   "secao": "4. Glinida",
+   "cit": [
+    [
+     0,
+     92600,
+     293
+    ]
+   ],
+   "cit_sha": "bad4abc511c2d989"
+  },
+  {
+   "afirmacao": "Insulinas de ação longa podem causar hipoglicemia quando usadas em doses excessivas, e a dose deve ser REDUZIDA se a hipoglicemia ocorrer em períodos de jejum, como durante a noite ou nas primeiras horas da manhã.",
+   "secao": "4. Insulina longa",
+   "cit": [
+    [
+     0,
+     92993,
+     195
+    ]
+   ],
+   "cit_sha": "ed041e4010eab48f"
+  },
+  {
+   "afirmacao": "É preciso ensinar quem usa insulina a considerar a duração de ação e a EVITAR O EMPILHAMENTO (insulin stacking), isto é, tomar uma dose adicional enquanto a anterior ainda está ativa, o que aumenta o risco de hipoglicemia. O melhor é esperar PELO MENOS 4 A 5 HORAS antes de tomar dose adicional de insulina rápida para corrigir hiperglicemia residual.",
+   "secao": "4. Empilhamento de insulina",
+   "cit": [
+    [
+     0,
+     93722,
+     415
+    ]
+   ],
+   "cit_sha": "e61ccb9738fb50ff"
+  },
+  {
+   "afirmacao": "Um fator de correção individualizado e PROATIVO, ajustado à sensibilidade à insulina da pessoa (por exemplo, \"acrescente 1 unidade à dose da refeição para cada 50 mg/dL que sua glicose estiver acima da meta antes da refeição\"), é preferível a uma escala móvel reativa padronizada (por exemplo, \"tome 2 unidades se sua glicose estiver entre 200 e 250 mg/dL\"), que não leva em conta a ingestão alimentar nem a insulina basal e por isso pode resultar em empilhamento de insulina.",
+   "secao": "4. Fator de correção",
+   "cit": [
+    [
+     0,
+     94335,
+     503
+    ]
+   ],
+   "cit_sha": "3871f4ca54da2d63"
+  },
+  {
+   "afirmacao": "Embora agonistas de GLP-1 e agonistas duplos GIP/GLP-1 não causem hipoglicemia por si, sua COMBINAÇÃO com sulfonilureia ou insulina pode causá-la, exigindo redução PROATIVA da dose da sulfonilureia ou da insulina. O uso de insulina com sulfonilureia também aumenta significativamente o risco e deve em geral ser evitado em pessoas de risco.",
+   "secao": "4. Combinação com GLP-1",
+   "cit": [
+    [
+     0,
+     95048,
+     447
+    ]
+   ],
+   "cit_sha": "787e493c0b5e066f"
+  },
+  {
+   "afirmacao": "O álcool precipita hipoglicemia por reduzir as respostas contrarreguladoras e por reduzir a gliconeogênese hepática POR HORAS após o consumo. Por isso quem tem diabetes deve ser orientado a reduzir doses de insulina e de outras medicações que causam hipoglicemia quando houver consumo de álcool, especialmente à noite, e quem usa insulina deve fazer um pequeno lanche ao deitar depois de ingerir álcool.",
+   "secao": "4. Álcool",
+   "cit": [
+    [
+     0,
+     96376,
+     600
+    ]
+   ],
+   "cit_sha": "960aaf4eb1ec7def"
+  },
+  {
+   "afirmacao": "Durante períodos de doença a pessoa pode ter apetite diminuído, produção endógena de glicose reduzida e utilização de glicose aumentada — qualquer um deles pode exigir redução ou suspensão das doses de hipoglicemiante. Estratégias de prevenção, inclusive ajuste de medicação, precisam estar definidas para jejum por qualquer motivo.",
+   "secao": "4. Doença aguda e jejum",
+   "cit": [
+    [
+     0,
+     96015,
+     359
+    ]
+   ],
+   "cit_sha": "76cf670453f180f3"
+  },
+  {
+   "afirmacao": "A hipoglicemia pode se desenvolver durante o sono pelo nadir noturno do cortisol, pela ausência de ingestão alimentar, pelo aumento da sensibilidade à insulina e pela resposta simpatoadrenal atenuada.",
+   "secao": "4. Sono",
+   "cit": [
+    [
+     0,
+     97473,
+     191
+    ]
+   ],
+   "cit_sha": "554879d522e95933"
+  },
+  {
+   "afirmacao": "Medicamentos usados para outras condições reconhecidamente causam hipoglicemia: FLUOROQUINOLONAS, INDOMETACINA, PENTAMIDINA, QUININA e LÍTIO. Quando a pessoa com diabetes recebe esses fármacos, é prudente monitorar a glicose de perto e eventualmente modificar o plano de manejo.",
+   "secao": "4. Fármacos que causam",
+   "cit": [
+    [
+     0,
+     97916,
+     334
+    ]
+   ],
+   "cit_sha": "7a182a37548088d3"
+  },
+  {
+   "afirmacao": "Quem usa sulfonilureia deve ser avisado de que muitos ANTIMICROBIANOS — fluoroquinolonas, sulfametoxazol/trimetoprim, claritromicina, metronidazol e fluconazol — interagem com a sulfonilureia aumentando o risco de hipoglicemia, e deve consultar a equipe e eventualmente SUSPENDER a sulfonilureia enquanto durar o tratamento antimicrobiano.",
+   "secao": "4. Antimicrobiano + sulfonilureia",
+   "cit": [
+    [
+     0,
+     98252,
+     389
+    ]
+   ],
+   "cit_sha": "a0f76348bae43a14"
+  },
+  {
+   "afirmacao": "Alguns medicamentos, como os BETABLOQUEADORES, podem MASCARAR os sintomas de hipoglicemia. Quem os usa deve ser orientado a monitorar a glicose com mais frequência ou, melhor ainda, a iniciar sensor contínuo para receber alertas de glicose baixa atual ou iminente.",
+   "secao": "4. Betabloqueador",
+   "cit": [
+    [
+     0,
+     98653,
+     280
+    ]
+   ],
+   "cit_sha": "d096ef04e59e9330"
+  },
+  {
+   "afirmacao": "Em pessoas com diabetes de longa data, idosos e quem tem episódios frequentes de hipoglicemia, pode se desenvolver percepção prejudicada da hipoglicemia, com resposta neural simpática atenuada e sintomas de alerta ausentes ou prejudicados. É CRUCIAL que essas pessoas façam glicemia capilar frequente ou usem sensor contínuo com alertas e alarmes PREDITIVOS de glicose baixa, para reduzir a frequência e a gravidade da hipoglicemia.",
+   "secao": "4. IAH — conduta",
+   "cit": [
+    [
+     0,
+     99135,
+     478
+    ]
+   ],
+   "cit_sha": "e891f0689408af80"
+  },
+  {
+   "afirmacao": "A maioria das formas de atividade física do dia a dia — tarefas e ocupações fisicamente exigentes, exercício planejado ou atividade habitual como o deslocamento para o trabalho — BAIXA a glicose e pode causar hipoglicemia, seja imediatamente, seja por VÁRIAS HORAS depois, em pessoas com diabetes tipo 1. No diabetes tipo 2 a atividade aeróbica prolongada também dispara hipoglicemia, embora com risco consideravelmente menor.",
+   "secao": "4. Exercício — quem tem risco",
+   "cit": [
+    [
+     0,
+     99883,
+     55
+    ],
+    [
+     0,
+     99996,
+     54
+    ],
+    [
+     0,
+     100104,
+     56
+    ],
+    [
+     0,
+     100219,
+     57
+    ],
+    [
+     0,
+     100328,
+     57
+    ],
+    [
+     0,
+     100439,
+     60
+    ],
+    [
+     0,
+     100552,
+     59
+    ],
+    [
+     0,
+     100669,
+     25
+    ]
+   ],
+   "cit_sha": "30787e9a150e524e"
+  },
+  {
+   "afirmacao": "Atividades predominantemente AERÓBICAS — caminhar, correr, pedalar e nadar — tendem a produzir reduções maiores da glicemia, e portanto maior risco de hipoglicemia, do que atividades ANAERÓBICAS ou de força, como levantamento de peso e tiros de velocidade, que se associam a risco menor.",
+   "secao": "4. Aeróbico × anaeróbico",
+   "cit": [
+    [
+     0,
+     100706,
+     26
+    ],
+    [
+     0,
+     100789,
+     55
+    ],
+    [
+     0,
+     100906,
+     58
+    ],
+    [
+     0,
+     101017,
+     60
+    ],
+    [
+     0,
+     101135,
+     56
+    ],
+    [
+     0,
+     101245,
+     56
+    ]
+   ],
+   "cit_sha": "0ea1cda9c50a13d9"
+  },
+  {
+   "afirmacao": "Regra prática antes do exercício em quem usa insulina ou secretagogo: uma pessoa com glicose PRÉ-EXERCÍCIO abaixo de 90 mg/dL pode precisar ingerir carboidrato antes da atividade — e durante a atividade, se a glicose estiver com tendência abaixo de 90 mg/dL —, MESMO QUE a entrega de insulina já tenha sido reduzida antes. A pessoa deve ser orientada a checar a glicose antes e depois da atividade física.",
+   "secao": "4. Antes do exercício",
+   "cit": [
+    [
+     0,
+     101845,
+     46
+    ],
+    [
+     0,
+     101944,
+     58
+    ],
+    [
+     0,
+     102060,
+     58
+    ],
+    [
+     0,
+     102173,
+     41
+    ],
+    [
+     0,
+     102288,
+     56
+    ],
+    [
+     0,
+     102514,
+     53
+    ],
+    [
+     0,
+     102620,
+     59
+    ]
+   ],
+   "cit_sha": "1656f3ad2e5ff8d5"
+  },
+  {
+   "afirmacao": "Pessoas com diabetes tipo 1 são particularmente suscetíveis à hipoglicemia DURANTE E DEPOIS do exercício, e a resposta glicêmica ao exercício é VARIÁVEL entre indivíduos — por isso as recomendações de tipo, intensidade e duração da atividade e as estratégias de mitigação da hipoglicemia devem ser individualizadas.",
+   "secao": "4. Resposta variável",
+   "cit": [
+    [
+     0,
+     103425,
+     309
+    ]
+   ],
+   "cit_sha": "4218c2a4c9796ac6"
+  },
+  {
+   "afirmacao": "Depois do exercício a resposta glicêmica vai nos DOIS sentidos: pode haver hipoglicemia PÓS-EXERCÍCIO PROLONGADA, por aumento da sensibilidade à insulina, e também HIPERGLICEMIA depois de exercício intenso — por isso a conduta pós-exercício não pode ser padronizada.",
+   "secao": "4. Pós-exercício",
+   "cit": [
+    [
+     0,
+     104205,
+     50
+    ],
+    [
+     0,
+     104310,
+     56
+    ],
+    [
+     0,
+     104424,
+     51
+    ]
+   ],
+   "cit_sha": "c2d1d60d58630b0a"
+  },
+  {
+   "afirmacao": "Ao iniciar terapia baseada em GLP-1 em quem já usa SULFONILUREIA: se a A1C for igual ou menor que 7,5% OU tiver havido hipoglicemia recente, SUSPENDER a sulfonilureia; se a A1C estiver entre 7,6 e 8,5%, REDUZIR a sulfonilureia em 50%; se a A1C for maior que 8,5%, manter a sulfonilureia e ajustar conforme a resposta e os dados de monitorização.",
+   "secao": "4. Iniciar GLP-1 com sulfonilureia",
+   "cit": [
+    [
+     0,
+     103094,
+     329
+    ]
+   ],
+   "cit_sha": "f1a0b56479e16daf"
+  },
+  {
+   "afirmacao": "Ao iniciar terapia baseada em GLP-1 em quem já usa INSULINA: se a A1C estiver no alvo individualizado ou abaixo dele, OU tiver havido hipoglicemia recente, REDUZIR a insulina basal em 20 a 30%; se a A1C for maior que 8,5%, manter o esquema atual e ajustar conforme a resposta. Quem está em múltiplas doses de insulina deve ser encaminhado ao endocrinologista para considerar a terapia baseada em GLP-1.",
+   "secao": "4. Iniciar GLP-1 com insulina",
+   "cit": [
+    [
+     0,
+     103771,
+     406
+    ]
+   ],
+   "cit_sha": "bcb269936bb096ae"
+  },
+  {
+   "afirmacao": "O ajuste PROATIVO da terapia de base também deve ser considerado ao acrescentar hipoglicemiantes para reduzir risco cardio-renal-metabólico. Como inibidor de SGLT2 e/ou terapia baseada em GLP-1 são recomendados para redução desse risco em pessoas de alto risco INDEPENDENTEMENTE da necessidade de baixar a glicose, pode ser necessário reduzir empiricamente a insulina e/ou o secretagogo de base para mitigar a hipoglicemia.",
+   "secao": "4. Ajuste ao adicionar CKM",
+   "cit": [
+    [
+     0,
+     101463,
+     51
+    ],
+    [
+     0,
+     101569,
+     54
+    ],
+    [
+     0,
+     101677,
+     52
+    ],
+    [
+     0,
+     101795,
+     42
+    ],
+    [
+     0,
+     101892,
+     51
+    ],
+    [
+     0,
+     102003,
+     56
+    ],
+    [
+     0,
+     102119,
+     53
+    ],
+    [
+     0,
+     102234,
+     53
+    ],
+    [
+     0,
+     102345,
+     29
+    ]
+   ],
+   "cit_sha": "910ae07eeef3448b"
+  },
+  {
+   "afirmacao": "Em levantamento com adultos com diabetes tipo 1 de pelo menos 1 ano de duração, quase 72% relataram já ter tido um episódio de hipoglicemia DIRIGINDO e 4,3% relataram acidente automobilístico por hipoglicemia nos 2 anos anteriores. Quem relatou acidente prévio era em média mais velho, tinha diabetes há mais tempo e maior prevalência de percepção prejudicada da hipoglicemia.",
+   "secao": "4. Direção — magnitude",
+   "cit": [
+    [
+     0,
+     105802,
+     393
+    ]
+   ],
+   "cit_sha": "0ad4f553f86df470"
+  },
+  {
+   "afirmacao": "Embora a maioria dos entrevistados com diabetes tipo 1 dissesse checar a glicose antes de dirigir (cerca de 80%) e carregar carboidrato de ação rápida no veículo (cerca de 95%), APENAS 40% relataram ter recebido educação sobre segurança ao dirigir relacionada ao diabetes.",
+   "secao": "4. Direção — lacuna educacional",
+   "cit": [
+    [
+     0,
+     106197,
+     224
+    ]
+   ],
+   "cit_sha": "414e9d81dacbed75"
+  },
+  {
+   "afirmacao": "Pontos de ensino para dirigir com segurança em quem tem risco de hipoglicemia: SEMPRE checar a glicose antes de dirigir; NUNCA iniciar uma viagem longa com a glicose na parte baixa da faixa normal (por exemplo, 70 a 90 mg/dL) sem consumo profilático de carboidrato; ter à mão um meio de checar a glicose durante a condução; sempre carregar carboidrato de ação rápida; PARAR de dirigir assim que surgir qualquer sinal ou sintoma de hipoglicemia, checar e tratar; e não retomar a direção até o episódio estar completamente resolvido.",
+   "secao": "4. Direção — regras",
+   "cit": [
+    [
+     0,
+     106926,
+     691
+    ]
+   ],
+   "cit_sha": "0b30c4cb6eefeb9c"
+  },
+  {
+   "afirmacao": "No diabetes tipo 2 o risco de hipoglicemia ao dirigir também é elevado em quem usa secretagogo ou insulina, e é maior em pessoas com autocuidado subótimo e naquelas que se deslocam muito ou dirigem para viver.",
+   "secao": "4. Direção — DM2",
+   "cit": [
+    [
+     0,
+     106429,
+     231
+    ]
+   ],
+   "cit_sha": "a3c4759a708bdfd3"
+  },
+  {
+   "afirmacao": "Os programas educacionais de percepção da hipoglicemia foram desenvolvidos para pessoas com diabetes tipo 1 em múltiplas doses de insulina ou em sistema automatizado de entrega. Embora o conteúdo seja relevante para pessoas com diabetes tipo 2 e percepção prejudicada da hipoglicemia, eles em grande parte NÃO foram avaliados nessa população.",
+   "secao": "4. Programas de percepção",
+   "cit": [
+    [
+     0,
+     105240,
+     55
+    ],
+    [
+     0,
+     105352,
+     52
+    ],
+    [
+     0,
+     105463,
+     52
+    ],
+    [
+     0,
+     105571,
+     59
+    ],
+    [
+     0,
+     105658,
+     55
+    ]
+   ],
+   "cit_sha": "a7e3859602c7ab14"
+  },
+  {
+   "afirmacao": "Todos os programas de percepção da hipoglicemia são LONGOS, com 8 horas ou mais de treinamento, com uma exceção: o Hypo COMPaSS, oferecido em sessão única de 3 horas com conteúdo abreviado em relação aos demais. Entre eles, o BGAT-2 é o único adaptado para entrega on-line.",
+   "secao": "4. Programas — formato",
+   "cit": [
+    [
+     0,
+     107619,
+     47
+    ],
+    [
+     0,
+     107667,
+     54
+    ],
+    [
+     0,
+     107722,
+     49
+    ],
+    [
+     0,
+     107772,
+     27
+    ],
+    [
+     0,
+     107920,
+     61
+    ],
+    [
+     0,
+     107982,
+     25
+    ],
+    [
+     0,
+     108108,
+     43
+    ],
+    [
+     0,
+     108152,
+     48
+    ]
+   ],
+   "cit_sha": "f99330a71f1609fd"
+  },
+  {
+   "afirmacao": "BGAT-2, HARPdoc e Hypo COMPaSS foram testados em ensaios randomizados com pessoas com diabetes tipo 1 e mostraram-se eficazes em reduzir as taxas de hipoglicemia enquanto melhoram a percepção da hipoglicemia e desfechos de qualidade de vida. Apesar da eficácia, esses programas NÃO estão amplamente disponíveis para uso clínico nos Estados Unidos.",
+   "secao": "4. Programas — eficácia",
+   "cit": [
+    [
+     0,
+     108208,
+     435
+    ]
+   ],
+   "cit_sha": "2f237fd5598e568c"
+  },
+  {
+   "afirmacao": "Os parceiros de cuidado devem acompanhar a pessoa com diabetes às consultas sempre que possível, para conhecer o plano e as metas, e devem receber toda a educação sobre prevenção de hipoglicemia, reconhecimento de sintomas e resposta apropriada. Cuidadores de idosos, especialmente de idosos com disfunção cognitiva, devem ser ensinados a observar MUDANÇAS DE COMPORTAMENTO ou confusão que possam indicar hipoglicemia e a checar a glicose quando isso ocorrer.",
+   "secao": "4. Cuidador — treinar",
+   "cit": [
+    [
+     0,
+     110592,
+     51
+    ],
+    [
+     0,
+     110644,
+     52
+    ],
+    [
+     0,
+     110697,
+     55
+    ],
+    [
+     0,
+     110753,
+     58
+    ],
+    [
+     0,
+     110812,
+     58
+    ],
+    [
+     0,
+     110871,
+     53
+    ],
+    [
+     0,
+     110925,
+     54
+    ],
+    [
+     0,
+     110980,
+     57
+    ],
+    [
+     0,
+     111099,
+     53
+    ],
+    [
+     0,
+     111212,
+     53
+    ],
+    [
+     0,
+     111322,
+     54
+    ],
+    [
+     0,
+     111434,
+     22
+    ]
+   ],
+   "cit_sha": "6bfc09fe74740b1d"
+  },
+  {
+   "afirmacao": "Os parceiros de cuidado têm necessidades e limitações próprias: cuidadores de idosos, como os cônjuges, muitas vezes eles mesmos têm limitações de função e cognição; e mesmo em cuidadores mais jovens, a demanda do cuidado pode gerar estresse crônico, ansiedade e depressão, prejudicando o próprio autocuidado e o cuidado que conseguem prestar. O clínico deve avaliar a sobrecarga do cuidador.",
+   "secao": "4. Cuidador — limites",
+   "cit": [
+    [
+     0,
+     111816,
+     635
+    ]
+   ],
+   "cit_sha": "27d64886e870c01b"
+  },
+  {
+   "afirmacao": "O risco de hipoglicemia GRAVE aumenta com a privação socioeconômica e com barreiras financeiras ao cuidado: baixa renda familiar anual, cobertura de saúde com franquia alta e insegurança alimentar foram todas associadas a hipoglicemia grave. Pessoas de menor renda têm menos acesso a GLUCAGON, o que potencialmente agrava a gravidade e as consequências da hipoglicemia de nível 3.",
+   "secao": "4. Determinantes financeiros",
+   "cit": [
+    [
+     0,
+     113140,
+     391
+    ]
+   ],
+   "cit_sha": "cd5cb282d94b65fd"
+  },
+  {
+   "afirmacao": "As taxas de hipoglicemia grave também são maiores em áreas geográficas com menos recursos, incluindo regiões com alto índice de privação e locais rurais. Pessoas com menor letramento em saúde têm mais chance de sofrer hipoglicemia grave, possivelmente por dificuldade de entender e executar esquemas hipoglicemiantes complexos.",
+   "secao": "4. Geografia e letramento",
+   "cit": [
+    [
+     0,
+     113533,
+     380
+    ]
+   ],
+   "cit_sha": "e42c62b1818157cb"
+  },
+  {
+   "afirmacao": "Pessoas com diabetes precisam de espaços seguros no trabalho ou na escola para manejar a condição — medir glicemia, tomar medicação e tratar hipoglicemia. O clínico deve perguntar a TODAS as pessoas com diabetes sobre possíveis barreiras para manejar o diabetes com segurança no trabalho ou na escola e advogar por elas quando necessário.",
+   "secao": "4. Trabalho e escola",
+   "cit": [
+    [
+     0,
+     118965,
+     789
+    ]
+   ],
+   "cit_sha": "2f670e3970b0173d"
+  },
+  {
+   "afirmacao": "Para que clínicos e sistemas de saúde tratem adequadamente a hipoglicemia, os modelos de pagamento baseados em valor precisam deixar de focar exclusivamente em baixar a A1C. A hipoglicemia deve ser considerada, acompanhada e reportada consistentemente como CONTRAMEDIDA ao lado da A1C e dos demais indicadores de manejo glicêmico.",
+   "secao": "4. Qualidade além da A1C",
+   "cit": [
+    [
+     0,
+     119802,
+     918
+    ]
+   ],
+   "cit_sha": "6bd42aa0ee96a287"
+  },
+  {
+   "afirmacao": "A ingestão de carboidrato de ação rápida é a pedra angular do tratamento da hipoglicemia. De preferência o carboidrato deve ser GLICOSE PURA, em comprimido ou gel. Ingerir alimentos que também contenham proteína ou gordura NÃO é aconselhável, porque ambas retardam a absorção do carboidrato e portanto atrasam a recuperação.",
+   "secao": "5. Carboidrato puro",
+   "cit": [
+    [
+     0,
+     122841,
+     436
+    ]
+   ],
+   "cit_sha": "95f0e46c1fd09a25"
+  },
+  {
+   "afirmacao": "A abordagem tradicional é ingerir 15 g de carboidrato, quantidade em geral suficiente para tratar a hipoglicemia com recuperação em cerca de 15 minutos; o processo deve ser REPETIDO se a glicose não normalizar nesse intervalo. É a chamada \"regra dos 15\" ou \"regra 15-15\", recomendada pela ADA, pela Association of Diabetes Care and Education Specialists e pelo CDC.",
+   "secao": "5. Regra dos 15",
+   "cit": [
+    [
+     0,
+     123279,
+     525
+    ]
+   ],
+   "cit_sha": "d23b2621c8795392"
+  },
+  {
+   "afirmacao": "Passos da regra dos 15: tratar a hipoglicemia (glicose abaixo de 70 mg/dL) com 15 g de carboidrato de ação rápida; esperar 15 minutos e checar a glicose; se ainda estiver abaixo de 70 mg/dL, consumir mais 15 g; repetir até a glicose passar de 70 mg/dL e/ou buscar atendimento se a hipoglicemia persistir ou piorar; e, uma vez acima de 70 mg/dL, fazer um lanche ou refeição com CARBOIDRATO COMPLEXO E PROTEÍNA.",
+   "secao": "5. Regra dos 15 — passos",
+   "cit": [
+    [
+     0,
+     125326,
+     553
+    ]
+   ],
+   "cit_sha": "5416648348043fbc"
+  },
+  {
+   "afirmacao": "ATENÇÃO — QUEM USA SISTEMA AUTOMATIZADO DE ENTREGA DE INSULINA TRATA COM MENOS CARBOIDRATO. Nesses usuários, 8 a 10 g de carboidrato de ação rápida podem bastar, porque na maioria dos casos, quando a glicose medida pelo sensor chega à faixa hipoglicêmica, o algoritmo JÁ reduziu ou suspendeu a entrega de insulina em resposta à tendência de queda. Ingerir a quantidade maior nesse contexto pode causar HIPERGLICEMIA DE REBOTE, e por isso esses usuários precisam de orientação específica.",
+   "secao": "5. ⚠️ 8 a 10 g com AID",
+   "cit": [
+    [
+     0,
+     124726,
+     563
+    ]
+   ],
+   "cit_sha": "25170131dee77ef0"
+  },
+  {
+   "afirmacao": "Fontes de carboidrato rápido para tratar hipoglicemia, com a quantidade recomendada e o conteúdo: suco de fruta (maçã, laranja ou uva) 4 oz (meia xícara) = 15 g; refrigerante comum 4 oz = 15 g; leite desnatado 8 oz (1 xícara) = 12 g; comprimidos de glicose 3 a 4 unidades = 4 g por comprimido, 12 a 16 g no total; shot de glicose, um frasco de 2 oz = 15 g; gel de glicose, um tubo = 15 a 25 g conforme a marca; jujubas 6 unidades = 15 g.",
+   "secao": "5. Fontes de 15 g",
+   "cit": [
+    [
+     0,
+     126049,
+     344
+    ]
+   ],
+   "cit_sha": "b84f41fea4c59f91"
+  },
+  {
+   "afirmacao": "Mesmo com carboidrato oral e com sensor ou sistema automatizado, a pessoa com diabetes ainda pode ter hipoglicemia clinicamente significativa (nível 2, glicose abaixo de 54 mg/dL) ou grave (nível 3, exigindo assistência independentemente do valor). O GLUCAGON está indicado se a pessoa NÃO consegue consumir carboidrato com segurança, tem sintomas que exigem assistência de outra pessoa, ou perde a consciência.",
+   "secao": "5. Quando usar glucagon",
+   "cit": [
+    [
+     0,
+     126613,
+     428
+    ]
+   ],
+   "cit_sha": "042eb2984ebe70f0"
+  },
+  {
+   "afirmacao": "O glucagon é um polipeptídeo de 29 aminoácidos produzido endogenamente nas células alfa das ilhotas pancreáticas, que quebra o glicogênio hepático liberando glicose na corrente sanguínea.",
+   "secao": "5. Glucagon — o que é",
+   "cit": [
+    [
+     0,
+     127047,
+     176
+    ]
+   ],
+   "cit_sha": "8cee5013cdccc20e"
+  },
+  {
+   "afirmacao": "O uso do glucagon foi por muito tempo limitado pela instabilidade das formulações: as antigas exigiam dispensação em PÓ e reconstituição para injeção intramuscular, e esse processo era barreira substancial para o cuidador administrar corretamente, rápido e com eficiência durante um episódio grave. As formulações PRONTAS PARA USO reduziram muito essa barreira.",
+   "secao": "5. Pó × pronto para uso",
+   "cit": [
+    [
+     0,
+     127454,
+     423
+    ]
+   ],
+   "cit_sha": "79f45409ccc10ab5"
+  },
+  {
+   "afirmacao": "Há três formulações de glucagon prontas para uso: GLUCAGON EM PÓ INTRANASAL, dose de 3 mg, duas doses por embalagem; GLUCAGON SUBCUTÂNEO em autoinjetor ou seringa preenchida, doses de 0,5 mg e 1 mg, duas doses por embalagem; e DASIGLUCAGON subcutâneo em autoinjetor ou seringa preenchida, dose de 0,6 mg, uma ou duas doses por embalagem.",
+   "secao": "5. As três formulações",
+   "cit": [
+    [
+     0,
+     130071,
+     282
+    ]
+   ],
+   "cit_sha": "d94d15bccad721cb"
+  },
+  {
+   "afirmacao": "TODAS as pessoas tratadas com insulina ou de outra forma consideradas de alto risco de hipoglicemia devem ter glucagon PRESCRITO e prontamente disponível. Além disso, o clínico deve perguntar sobre episódios de hipoglicemia grave A CADA CONSULTA e ATUALIZAR a prescrição de glucagon pelo menos ANUALMENTE.",
+   "secao": "5. Prescrever a todos",
+   "cit": [
+    [
+     0,
+     128056,
+     290
+    ]
+   ],
+   "cit_sha": "31ac0716e635ddd9"
+  },
+  {
+   "afirmacao": "A educação sobre uso do glucagon deve ser dada não só à pessoa com diabetes, mas também aos parceiros de cuidado e a outras pessoas em contato próximo — familiares, pessoal da escola e colegas de trabalho.",
+   "secao": "5. Educar o entorno",
+   "cit": [
+    [
+     0,
+     128352,
+     279
+    ]
+   ],
+   "cit_sha": "c549fc6ec5d40f0f"
+  },
+  {
+   "afirmacao": "Pontos-chave da educação sobre glucagon: a importância de RETIRAR a receita e de pedir nova prescrição quando o produto vencer; como armazenar conforme as instruções do produto; informar aos cuidadores e contatos próximos ONDE o glucagon fica guardado; QUANDO administrar; COMO administrar, o que varia conforme seja pó, glucagon pronto para injeção ou intranasal; quando chamar o serviço de emergência; e os efeitos adversos possíveis (náusea, vômito, cefaleia e dor no local da injeção).",
+   "secao": "5. Pontos da educação",
+   "cit": [
+    [
+     0,
+     128685,
+     706
+    ]
+   ],
+   "cit_sha": "c851d3a6a2eebe02"
+  },
+  {
+   "afirmacao": "Depois da resolução do episódio hipoglicêmico é preciso lembrar a pessoa de consumir carboidratos de ação RÁPIDA E LENTA para prevenir a reocorrência, e de que pode ser prudente buscar atendimento de emergência se houver preocupação com recorrência.",
+   "secao": "5. Depois do glucagon",
+   "cit": [
+    [
+     0,
+     129393,
+     267
+    ]
+   ],
+   "cit_sha": "74f47a71d1c80083"
+  },
+  {
+   "afirmacao": "Apesar da existência de produtos de glucagon mais novos e fáceis de usar, que podem até permitir a autoadministração quando apropriado, as taxas de PRESCRIÇÃO e de retirada de glucagon permanecem BAIXAS na prática clínica. É crucial aumentar a conscientização sobre as formulações novas e prescrevê-las a todas as pessoas com diabetes de alto risco de hipoglicemia.",
+   "secao": "5. Prescrição insuficiente",
+   "cit": [
+    [
+     0,
+     129662,
+     877
+    ]
+   ],
+   "cit_sha": "3f71fba78b73f4cb"
+  },
+  {
+   "afirmacao": "Embora a maioria dos eventos de hipoglicemia grave seja tratada por parceiros de cuidado no próprio local, MAIS DE 10% das pessoas que sofrem hipoglicemia grave são avaliadas e tratadas por um profissional de serviço médico de emergência.",
+   "secao": "5. EMS — quantos",
+   "cit": [
+    [
+     0,
+     132361,
+     44
+    ],
+    [
+     0,
+     132464,
+     64
+    ],
+    [
+     0,
+     132586,
+     61
+    ],
+    [
+     0,
+     132709,
+     55
+    ]
+   ],
+   "cit_sha": "becf4dc8865b9ebb"
+  },
+  {
+   "afirmacao": "ATENÇÃO — NO ATENDIMENTO DE EMERGÊNCIA, A DEXTROSE A 10% É PREFERIDA À DE 50%. As equipes de emergência tratam a hipoglicemia mais frequentemente com dextrose intravenosa, e o D10 (solução de dextrose a 10%) é preferido ao D50 (a 50%) por MENORES taxas de eventos adversos e de hiperglicemia pós-tratamento, com sucesso COMPARÁVEL na resolução da hipoglicemia.",
+   "secao": "5. ⚠️ D10 antes de D50",
+   "cit": [
+    [
+     0,
+     132884,
+     48
+    ],
+    [
+     0,
+     132933,
+     54
+    ],
+    [
+     0,
+     132988,
+     59
+    ],
+    [
+     0,
+     133059,
+     60
+    ],
+    [
+     0,
+     133120,
+     44
+    ]
+   ],
+   "cit_sha": "7257a6daffa2c4cd"
+  },
+  {
+   "afirmacao": "As equipes de emergência usam glucagon com pouca frequência, geralmente reservando-o para situações em que não conseguem acesso vascular para administrar dextrose intravenosa — prática provavelmente ligada ao custo maior do glucagon e à necessidade residual de ingestão de carboidrato depois da administração. Ampliar o acesso ao glucagon por socorristas que não podem administrar medicação intravenosa pode melhorar os desfechos.",
+   "secao": "5. Glucagon no pré-hospitalar",
+   "cit": [
+    [
+     0,
+     133272,
+     40
+    ],
+    [
+     0,
+     133379,
+     63
+    ],
+    [
+     0,
+     133499,
+     41
+    ],
+    [
+     0,
+     133608,
+     57
+    ],
+    [
+     0,
+     133711,
+     58
+    ],
+    [
+     0,
+     133784,
+     49
+    ],
+    [
+     0,
+     133892,
+     47
+    ],
+    [
+     0,
+     133981,
+     61
+    ],
+    [
+     0,
+     134101,
+     55
+    ],
+    [
+     0,
+     134201,
+     19
+    ]
+   ],
+   "cit_sha": "c65cb32afacebcb6"
+  },
+  {
+   "afirmacao": "Há variabilidade substancial no tratamento de emergência da hipoglicemia nos Estados Unidos, por falta de protocolos padronizados de serviço médico de emergência e de diretrizes de cuidado da hipoglicemia. As formulações novas de glucagon também têm PRAZO DE VALIDADE MAIS LONGO que o kit tradicional em pó, o que reduz o impacto financeiro de mantê-lo em estoque.",
+   "secao": "5. Protocolos heterogêneos",
+   "cit": [
+    [
+     0,
+     130641,
+     41
+    ],
+    [
+     0,
+     130838,
+     56
+    ],
+    [
+     0,
+     130895,
+     62
+    ],
+    [
+     0,
+     130958,
+     64
+    ],
+    [
+     0,
+     131023,
+     53
+    ],
+    [
+     0,
+     131136,
+     54
+    ],
+    [
+     0,
+     131251,
+     32
+    ]
+   ],
+   "cit_sha": "111f8db8fd813f2b"
+  },
+  {
+   "afirmacao": "A ADA recomenda que a ocorrência de UM OU MAIS episódios de hipoglicemia de nível 2 ou de nível 3 dispare a REAVALIAÇÃO da estratégia de tratamento, incluindo possivelmente desintensificar a terapia ou trocar medicamentos de alto risco por outros de baixo risco.",
+   "secao": "5. Reavaliar após o evento",
+   "cit": [
+    [
+     0,
+     131856,
+     53
+    ],
+    [
+     0,
+     131943,
+     57
+    ],
+    [
+     0,
+     132057,
+     58
+    ],
+    [
+     0,
+     132168,
+     53
+    ],
+    [
+     0,
+     132286,
+     39
+    ]
+   ],
+   "cit_sha": "9fb41cd8c8c7bbf4"
+  },
+  {
+   "afirmacao": "Na reavaliação após hipoglicemia, considerar mudanças no estado de saúde, no suporte disponível, na capacidade de autocuidado e na cognição, entre outros fatores, para decidir sobre alterações do plano de tratamento e/ou das metas terapêuticas que minimizem o risco de hipoglicemia.",
+   "secao": "5. O que revisar",
+   "cit": [
+    [
+     0,
+     132529,
+     56
+    ],
+    [
+     0,
+     132648,
+     60
+    ],
+    [
+     0,
+     132765,
+     57
+    ],
+    [
+     0,
+     132839,
+     35
+    ]
+   ],
+   "cit_sha": "6c9b7a85123268fb"
+  },
+  {
+   "afirmacao": "Alertas e alarmes de glicose baixa, assim como os alarmes PREDITIVOS de hipoglicemia iminente disponíveis em alguns sistemas de sensor contínuo, permitem prevenir ou detectar precocemente a hipoglicemia e mitigá-la a tempo.",
+   "secao": "5. Papel do sensor",
+   "cit": [
+    [
+     0,
+     131084,
+     51
+    ],
+    [
+     0,
+     131191,
+     59
+    ],
+    [
+     0,
+     131311,
+     57
+    ],
+    [
+     0,
+     131432,
+     37
+    ]
+   ],
+   "cit_sha": "060b153522b01132"
+  },
+  {
+   "afirmacao": "Síntese do compêndio: a hipoglicemia é uma das complicações mais consequentes e menos reconhecidas do tratamento farmacológico do diabetes. A hipoglicemia aguda precipita estresse hemodinâmico dirigido por catecolaminas com prejuízo cardiovascular potencialmente fatal, prejuízo neuroglicopênico da função cognitiva e um estado pró-trombótico e pró-inflamatório que pode persistir por DIAS após a normoglicemia ser restaurada.",
+   "secao": "Conclusão",
+   "cit": [
+    [
+     0,
+     134923,
+     523
+    ]
+   ],
+   "cit_sha": "1b1056bc9053ae1d"
+  },
+  {
+   "afirmacao": "Episódios recorrentes atenuam progressivamente as defesas contrarreguladoras pela falência autonômica associada à hipoglicemia, estabelecendo um ciclo AUTOSSUSTENTADO de percepção prejudicada e risco crescente de novos eventos.",
+   "secao": "Conclusão — ciclo",
+   "cit": [
+    [
+     0,
+     135448,
+     218
+    ]
+   ],
+   "cit_sha": "4d7130415aab4cf6"
+  },
+  {
+   "afirmacao": "A lacuna entre a carga de hipoglicemia e o seu reconhecimento clínico é sistemática: a maioria dos eventos, incluindo os episódios clinicamente sérios de nível 2 (glicose abaixo de 54 mg/dL), não é relatada aos clínicos, e a pergunta de rotina sobre hipoglicemia permanece inconsistente. Fechar essa lacuna exige avaliação estruturada e PROATIVA — história de hipoglicemia, dados de monitorização, estado de percepção da hipoglicemia e impacto psicossocial sobre a pessoa e seus cuidadores — em TODA consulta.",
+   "secao": "Conclusão — o que fazer",
+   "cit": [
+    [
+     0,
+     136229,
+     643
+    ]
+   ],
+   "cit_sha": "1c268cf4e0617883"
+  },
+  {
+   "afirmacao": "O arsenal de prevenção da hipoglicemia expandiu-se substancialmente: prescrição preferencial de hipoglicemiantes de baixo risco (metformina, terapias baseadas em GLP-1 e inibidores de SGLT2), priorização de análogos basais de ação mais longa em vez de insulina humana, e integração do sensor contínuo e dos sistemas automatizados de entrega ao cuidado. Para o resgate, as formulações de nova geração de glucagon resolveram barreiras antigas, mas as taxas de prescrição e dispensação seguem subótimas.",
+   "secao": "Conclusão — arsenal",
+   "cit": [
+    [
+     0,
+     136874,
+     739
+    ]
+   ],
+   "cit_sha": "88404b787ce7e03b"
+  },
+  {
+   "afirmacao": "A hipoglicemia é um DANO MODIFICÁVEL. Preveni-la em escala exige que as equipes de diabetes integrem sistematicamente à prática de rotina a avaliação da hipoglicemia, a seleção de medicação estratificada por risco, a otimização da entrega de insulina e a monitorização apoiada em tecnologia.",
+   "secao": "Conclusão — dano modificável",
+   "cit": [
+    [
+     0,
+     137970,
+     286
+    ]
+   ],
+   "cit_sha": "0aca504a95320cb6"
+  }
+ ]
+}

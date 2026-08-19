@@ -5,6 +5,33 @@ atualizado: 2026-08-19
 
 # Convenções de Trabalho
 
+## 🧨 CRIAR UMA SUBESPECIALIDADE NOVA É MEXER NO ROTEAMENTO DE TODAS (2026-08-19)
+
+Quando uma área da base profunda enche, a saída documentada é **dividir**. Só que
+a área nova nasce com uma chave de roteamento, e **essa chave compete com todas as
+outras** — inclusive com regras de desempate que ninguém lembra que existem.
+
+Ao criar **Hipoglicemia**, a chave `hipoglicemia` (que aparece 88 vezes em
+Diabetes, 76 em Esporte, 49 em Obesidade e 13 em Adrenal) **quebrou a promoção
+condicional do Esporte**, que só dispara quando exatamente DUAS áreas casam e o
+topo é Diabetes. A pergunta de exercício no DM1 passou a casar três áreas e perdeu
+o consenso que é o assunto dela. Nada acusou — só a varredura diferencial.
+
+**A convenção:** ao criar uma área nova, rodar a varredura diferencial **antes de
+commitar**, com pelo menos:
+1. **as perguntas que a área nova deve receber** — conferindo o CONTEÚDO entregue,
+   não só o nome da área;
+2. **as perguntas de outras áreas que contêm a palavra nova** — contadas no corpus
+   primeiro, para saber de quem ela pode roubar;
+3. **os contraexemplos das regras de desempate já existentes** — eles estão escritos
+   nos comentários de `lib/clinical-deep.js` e são o que se quebra em silêncio.
+
+⚠️ **E antes de escrever no comentário que "tal chave não existe", PROCURE.** Eu
+afirmei que `bypass gastrico` não era chave; era, e estava num tier baixo de
+propósito. Comentário errado no código é pior que comentário ausente — o próximo
+a ler acredita.
+
+
 ## 📏 A BANDA DE TAMANHO DO CAPÍTULO É RÉGUA DE ESTILO, NÃO INVARIANTE (2026-08-19)
 
 Capítulo da casa fica entre **4.845 e 7.234 caracteres** de resumo, com tabela
