@@ -252,6 +252,35 @@ aqui o risco é **estrutural**: dois blocos do mesmo documento, e a tentação �
 reaproveitar o tema inteiro. O `tema` não é decoração — ele **pontua a escolha do
 bloco**. Reescrito contra a lista de fatos que de fato ficaram em cada lado.
 
+## ⚠️ A RCEst ENTROU NA BASE E NÃO TINHA COMO SER PERGUNTADA
+
+Este documento é a **única fonte da base** que fala de relação cintura-estatura,
+e ele a recomenda como acréscimo ao IMC (>0,5 como limiar primário, >0,55 em
+contexto selecionado). Medido depois de montar a camada profunda: *"relação
+cintura-estatura em criança, qual o corte?"* e *"RCEst maior que 0,5 em
+adolescente"* canonizavam para **NENHUMA área** — zero caractere de bloco
+profundo, **com a resposta parada ao lado**. Conteúdo que ninguém alcança é
+conteúdo que não existe.
+
+Contado antes de criar a chave, que é a regra: `cintura-estatura` e `rcest`
+aparecem **só neste extrato** e em nenhum outro bloco da base; `cintura estatura`
+sem hífen é **zero** em toda a base. Não há de quem roubar. As chaves vão para
+**Obesidade**, e não para a pediatria, porque o bloco pediátrico está declarado
+nas **duas** áreas: por Obesidade o médico recebe a resposta pediátrica *e* o
+contexto do adulto; pela pediatria receberia só o primeiro.
+
+## ❌ O QUE EU **NÃO** CONSERTEI, E POR QUÊ
+
+*"Síndrome metabólica em criança de 8 anos"* também cai em **nenhuma área** — e a
+resposta (o IDF não permite o diagnóstico antes dos 10 anos) está no bloco novo.
+**Não criei a chave:** `síndrome metabólica` aparece em **seis áreas** da base
+(Obesidade 11, Lípides 9, Pediátrica 4, Neuroendocrino 2, Diabetes 1, Feminina 1).
+Chave genérica é como se sequestra área, e o arquivo já registra dois acidentes
+desses. A frase equivalente do adulto (*"síndrome metabólica em adulto com IMC
+32"*) já roteia, pelo `IMC`; o que falta é **co-ocorrência** (`criança` + assunto),
+que o roteador não sabe expressar — ele só casa substring. **Fica registrado como
+limitação conhecida do roteador, não como pendência de conteúdo.**
+
 ## Guarda
 
 `scripts/test-pediatria-obesidade.js`, no `ci-validate`. Cobre as quatro coisas
