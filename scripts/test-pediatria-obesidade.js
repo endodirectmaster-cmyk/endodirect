@@ -54,6 +54,19 @@ for (const [q, re, oque] of CHEGA) {
   ok(re.test(b), `⚠️ "${q.slice(0, 46)}…" NÃO recebeu ${oque} — o bloco de obesidade pediátrica não está chegando a quem pergunta por ele (saiu de Obesidade a declaração de área do extrato?)`);
 }
 
+// ── 1b. a RCEst é PERGUNTÁVEL ───────────────────────────────────────────────
+// ⚠️ Ela entrou na base por este documento — que é a ÚNICA fonte que fala dela —
+// e as duas formas naturais de perguntar canonizavam para NENHUMA área: zero
+// caractere de bloco profundo, com a resposta parada ao lado. Conteúdo que
+// ninguém alcança é conteúdo que não existe.
+for (const q of ['relacao cintura-estatura em crianca, qual o corte?',
+                 'rcest maior que 0,5 em adolescente',
+                 'relacao cintura estatura no adolescente com obesidade']) {
+  const b = deep.deepFor(q, deep.TETO_PROFUNDO, q);
+  ok(/cintura-estatura/i.test(b),
+    `⚠️ "${q.slice(0, 46)}…" não recebeu a relação cintura-estatura — ela só existe nesta fonte e voltou a ser inalcançável`);
+}
+
 // ── 2. e não ROUBA de quem tem o conteúdo certo ─────────────────────────────
 const NAO_ROUBA = [
   ['Menina de 9 anos com cefaleia, baixa estatura e calcificação suprasselar na tomografia. Conduta?', /craniofaringioma/i, 'craniofaringioma'],
