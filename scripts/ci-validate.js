@@ -458,6 +458,19 @@ try {
   fail('texto literal de artigo prestes a ser publicado:\n' + out);
 }
 
+// ⚠️ A peneira de citação truncada reprovava DIRETRIZ BRASILEIRA GRADUADA (21/08/2026).
+//     "Classe I / Nível A" fecha a recomendação da SBD, e o "A" final casava com o
+//     "a" preposição de CAUDA_RUIM: 8 de 16, 9 de 30 e 5 de 17 citações reprovadas
+//     nas três diretrizes SBD 2026, nenhuma truncada de verdade. Este teste trava as
+//     duas pontas — grau passa, cauda cortada de verdade continua reprovando.
+try {
+  execFileSync(process.execPath, [path.join('scripts', 'test-cauda-graduacao.js')], { stdio: 'pipe' });
+  ok('cauda truncada: grau de diretriz passa, frase cortada de verdade segue reprovando');
+} catch (e) {
+  const out = (e.stdout ? e.stdout.toString() : '') + (e.stderr ? e.stderr.toString() : '');
+  fail('peneira de citação truncada com comportamento errado:\n' + out);
+}
+
 // ⚠️ RESSALVAS × NÚCLEO. O campo `conflito` de um extrato é uma FOTOGRAFIA do
 //     núcleo no dia da leitura, e a varredura do acervo CORRIGE o núcleo — é
 //     metade do objetivo dela. Toda correção envelhece a ressalva do artigo que

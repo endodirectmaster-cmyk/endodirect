@@ -19,11 +19,28 @@ if (!fs.existsSync(DIR)) { console.log('✓ (sem extratos)'); process.exit(0); }
 
 // Só o que está RASTREADO pelo git importa: um extrato ainda não commitado pode
 // legitimamente ter texto, porque o agente acabou de escrevê-lo.
-let rastreados = [];
-try {
-  rastreados = execFileSync('git', ['ls-files', 'scratchpad/acervo/extratos'], { cwd: RAIZ, encoding: 'utf8' })
-    .split('\n').map((s) => s.trim()).filter(Boolean);
-} catch (e) { /* fora de um repo: confere tudo */ rastreados = null; }
+//
+// 🧨 O BURACO QUE ISSO DEIXAVA, E QUE ME MORDEU EM 21/08/2026. Extrato NOVO nasce
+// não rastreado — então este teste o PULAVA, o `ci-validate` passava, e o
+// `git add -A && git commit` seguinte publicava o texto integral do artigo. Foi
+// exatamente o que aconteceu com as três diretrizes SBD 2026: rodei o verificador,
+// refiz os extratos por causa de um número errado e esqueci de rodar
+// `protege-citacoes.js` de novo. O CI aprovou porque os arquivos ainda eram novos.
+//
+// Agora conta também o que está EM STAGE: é o último instante em que dá para
+// impedir, e um arquivo em stage não é mais "rascunho do agente" — é commit.
+const gitLista = (args) => {
+  try {
+    return execFileSync('git', args, { cwd: RAIZ, encoding: 'utf8' })
+      .split('\n').map((s) => s.trim()).filter(Boolean);
+  } catch (e) { return null; }
+};
+const versionados = gitLista(['ls-files', 'scratchpad/acervo/extratos']);
+const emStage = gitLista(['diff', '--cached', '--name-only', '--', 'scratchpad/acervo/extratos']);
+// fora de um repo (as duas chamadas falham): confere tudo.
+const rastreados = (versionados === null && emStage === null)
+  ? null
+  : (versionados || []).concat(emStage || []);
 
 const falhas = [];
 for (const arq of fs.readdirSync(DIR).filter((f) => f.endsWith('.json'))) {
