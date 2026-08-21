@@ -5,6 +5,23 @@ atualizado: 2026-08-21
 
 # Convenções de Trabalho
 
+## 🧨 CONTAR BLOCO NÃO VÊ CONTEÚDO ENTRANDO NO BLOCO (2026-08-21)
+
+Conferi uma mudança de renderizador contra os 227 capítulos reais medindo perda de
+texto, perda de `<li>` e **contagem** de `<table>`/`<h3>`/`<hr>`. Passou limpo. E
+tinha quebrado 141 capítulos: o `<h3>` estava absorvendo o parágrafo seguinte, e a
+**contagem de `<h3>` não muda** quando isso acontece — 2117 antes e depois. Os
+títulos continuavam lá, só que com o capítulo inteiro dentro.
+
+Regra que fica: ao mexer em renderizador, medir **tamanho de bloco**, não só
+quantidade. Um `<h3>` de 366 caracteres é um título que comeu o texto; um `<li>`
+que triplica é um item que comeu o vizinho. Contagem estável com tamanho explodindo
+é a assinatura de conteúdo migrando entre blocos — o defeito que a contagem esconde.
+
+⚠️ **E ao decidir se uma linha continua a anterior, olhar as DUAS.** Eu testava só
+a linha atual (`ela abre bloco?`) e esquecia a anterior (`ela FECHA na própria
+linha?`). Título, `---`, figura e gráfico se fecham sozinhos e nunca absorvem.
+
 ## 🧨 RENDERIZADOR DE MARKDOWN LÊ PARÁGRAFO, NÃO LINHA (2026-08-21)
 
 `mdToHtml` era linha a linha e começava com `trim()`. Isso apaga o recuo — o sinal
