@@ -1,9 +1,40 @@
 ---
 tags: [cofre, pendencias]
-atualizado: 2026-08-15
+atualizado: 2026-08-21
 ---
 
 # Pendências
+
+## 🚨 ABERTO EM 2026-08-21, ao carregar as 500 questões
+
+1. **As 254 questões de residência não são entregues a ninguém.** O `prosrc` de
+   `endodirect_member_content()` só tem ramo para `inst='Endodirect'` (plano ou
+   `curso:endoteem`) e `inst='TEEM'` (endoteem). As 11 instituições de residência
+   (`USP-R3 Endocrinologia` 90, `USP-FMUSP (FUVEST)` 29, `USP-SP` 26, `Einstein` 23,
+   `USP-RP` 21, `ENARE` 15, `Santa Casa-SP` 12, `SUS-SP` 12, `IAMSPE` 10,
+   `Enamed` 9, `UNIFESP-EPM R3` 7) **não caem em ramo nenhum**. O cofre de 21/07
+   registra a regra oposta. **Decisão do professor:** o assinante deve receber o
+   banco de residência? Se sim, é uma linha na RPC; se não, a nota de 21/07
+   precisa ser corrigida. Ver [[Banco de Questões]].
+2. **Rótulos de área fragmentados no banco — o filtro mostra buckets partidos.**
+   `AREA_CANON` só mapeia `'Andrologia' → 'Endocrinologia Masculina'`. Sobraram:
+   **`'Básica'` (141) × `'Endocrinologia Básica'` (26)**, `'Dislipidemia e
+   Aterosclerose'` (9) × `'Lípides'` (192), `'Endocrinologia Feminina e
+   Andrologia'` (20) × `'Endocrinologia Feminina'` (169). É pré-existente — o lote
+   novo usa os 14 rótulos canônicos de `DIR_SUBS`. Conserto é acrescentar três
+   entradas em `AREA_CANON`, mas **muda o que o aluno vê nos filtros**, então
+   depende de aval.
+3. **`bkp_provas_20260821` pode ser dropada** assim que o professor validar as 500.
+   Guarda o array `provas` anterior (2.403 questões, 1.886 kB).
+4. **Latente, baixa gravidade — `genCode()` pode repetir código.** Ele numera por
+   prefixo de área com `count+1` em **3 dígitos**: repete quando há exclusão no
+   prefixo, e **volta a zero depois de 999**. Só afeta `DB.q` (as questões que o
+   próprio aluno salva), **não o banco de provas** — mas código repetido funde o
+   estado de repetição espaçada via `srsKey`.
+5. **Cliente e servidor sorteiam a degustação por regras diferentes.**
+   `provasPool()` ordena por `degHash(code|stem)`; a RPC, por `md5(v::text)`. Os
+   dois entregam 50 questões válidas, mas **não as mesmas** — o comentário no
+   `index.html` diz "espelha a regra do member_content", e não espelha.
 
 ## 🔴 O QUE SÓ O PROFESSOR RESOLVE — a lista curta (atualizada 2026-08-15)
 

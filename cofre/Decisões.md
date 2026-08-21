@@ -1,6 +1,6 @@
 ---
 tags: [cofre, decisoes]
-atualizado: 2026-08-19
+atualizado: 2026-08-21
 ---
 
 # Decisões
@@ -8,6 +8,13 @@ atualizado: 2026-08-19
 Log de decisões de produto e técnicas (mais recentes no topo).
 
 ## 2026-08
+- **📝 500 QUESTÕES AUTORAIS ENTRARAM NO BANCO — e o tier "muito difícil" não existe (2026-08-21).** Pedido: *"produza 500 novas questões ao todo, de nível difícil/muito difícil, envolvendo todas as subespecialidades... instituição 'Endodirect' e ano 2026"*. Banco **2.403 → 2.903**, `ENDODIRECT-1506…2005`, as 14 subespecialidades de `DIR_SUBS`, gabarito equilibrado em **125/125/125/125**. Ver [[Banco de Questões]].
+  - 🧨 **PEDIU-SE "DIFÍCIL/MUITO DIFÍCIL" E SÓ HÁ TRÊS TIERS.** `diffTag()` é `lbl={basico:'F',intermediario:'M',avancado:'D'}` com **`lbl[d]||'M'`**: inventar `muito_avancado` **não daria erro** — renderizaria como **"M" (Médio)**, o inverso do pedido, em silêncio. Entregue tudo em `avancado`, o teto existente, com a dificuldade real embutida no caso clínico. **Criar um quarto tier mexe em `diffTag`, no filtro e na legenda** — é decisão do professor, não escolha de string.
+  - ⚠️ **O TOKENIZADOR DA CASA FOI PORTADO PARA SQL, NÃO REIMPLANTADO DE MEMÓRIA.** O sandbox não alcança o Supabase (proxy 403), então a varredura 500×2.403 tinha de rodar no servidor. Portei `igTokensStem` e **conferi contra o JS real** em três strings — inclusive uma com acento **maiúsculo**, onde `lower()` do Postgres e `.toLowerCase()` do JS podiam divergir. Batem byte a byte. Corte da casa (**0,32**), por índice invertido.
+  - ⚠️ **O CORTE DE 0,32 PEGA DUPLICATA LITERAL, NÃO "MESMA PERGUNTA COM OUTRA ROUPA".** Um par acima (0,333) e **dois abaixo** que eu só peguei lendo: 0,316 repetia a vinheta de uma TEEM (*homem 68 anos, UTI, sepse*) e 0,281 repetia a punch line ("corrigir o magnésio") **dentro do próprio lote**. As três foram reescritas em outro eixo clínico. A faixa 0,28–0,32 precisa de olho humano.
+  - 🧨 **`between 'ENDODIRECT-1506' and 'ENDODIRECT-2005'` MENTE.** A comparação é alfabética, então a faixa **inclui `ENDODIRECT-16`, `-17`, `-160`**. A conferência final acusou **509 questões e "9 com dificuldade errada"** — eram legado entrando pela porta dos fundos. Conferir por sufixo numérico. Quase passou como defeito do lote.
+  - **Merge atômico** e as 2.403 antigas conferidas **byte a byte** contra o backup, não por contagem. Backup em `bkp_provas_20260821` — **único rollback possível**, já que o banco não é versionado em git. Payload **4.806 → 5.124 kB**.
+  - 🚨 **DE QUEBRA: as 254 questões de residência não chegam a ninguém.** Ao ler o `prosrc` de `endodirect_member_content()` para garantir que as 500 seriam entregues, vi que o ramo de `provas` só devolve `inst='Endodirect'` (plano/endoteem) e `inst='TEEM'` (endoteem). Não há ramo para as outras 11 instituições — e o cofre de 21/07 registra a regra **oposta**. Não mexi: quem recebe qual banco é decisão de produto. Está em [[Pendências]].
 - **🩸 HIPOGLICEMIA VIROU SUBESPECIALIDADE PRÓPRIA — compêndio da ADA 2026 incorporado (2026-08-19).** Pedido: *"incorpore esse livro que está no drive"*. **172 fatos** do `A Practical Guide to Hypoglycemia` (ADA Clinical Compendia 2026), cada um com citação ancorada por offset+hash. Ver [[Hipoglicemia no Diabetes (compêndio ADA 2026)]].
   - ⚠️ **A DIVISÃO FOI POR TETO, e é a segunda.** Diabetes estava em **93% de 400.000**, que é o `TETO_MAXIMO`; o compêndio pesa ~64k e não cabia. **Por que aqui deu certo e na obesidade pediátrica não:** *"hipoglicemia"* é **uma palavra que roteia sozinha**, enquanto *"criança + obesidade"* é **co-ocorrência** e o roteador só casa substring. E o ganho não é só caber: a pergunta recebia 372k de Diabetes, dos quais hipoglicemia era uma fração; agora recebe **64k inteiramente sobre o assunto**.
   - 🚨 **CRIAR UMA ÁREA MEXE NO ROTEAMENTO DE TODAS.** Medido: *"hipoglicemia"* aparece 88× em Diabetes, 76× em Esporte, 49× em Obesidade, 13× em Adrenal. A varredura diferencial em **28 perguntas** pegou uma regressão real — *"hipoglicemia no exercício aeróbico prolongado no DM1"* perdeu o consenso de exercício, porque a **promoção condicional do Esporte** só dispara com `ordem.length === 2` e topo `Diabetes`, e agora casavam três áreas. Consertado tratando Hipoglicemia como parte do **mesmo aglomerado do diabetes**, não como terceira doença.
