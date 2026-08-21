@@ -7,15 +7,14 @@ atualizado: 2026-08-21
 
 ## 🚨 ABERTO EM 2026-08-21, ao carregar as 500 questões
 
-1. **As 254 questões de residência não são entregues a ninguém.** O `prosrc` de
-   `endodirect_member_content()` só tem ramo para `inst='Endodirect'` (plano ou
-   `curso:endoteem`) e `inst='TEEM'` (endoteem). As 11 instituições de residência
-   (`USP-R3 Endocrinologia` 90, `USP-FMUSP (FUVEST)` 29, `USP-SP` 26, `Einstein` 23,
-   `USP-RP` 21, `ENARE` 15, `Santa Casa-SP` 12, `SUS-SP` 12, `IAMSPE` 10,
-   `Enamed` 9, `UNIFESP-EPM R3` 7) **não caem em ramo nenhum**. O cofre de 21/07
-   registra a regra oposta. **Decisão do professor:** o assinante deve receber o
-   banco de residência? Se sim, é uma linha na RPC; se não, a nota de 21/07
-   precisa ser corrigida. Ver [[Banco de Questões]].
+1. ✅ **RESOLVIDO no mesmo dia — as 254 de residência já vão para o assinante.**
+   `endodirect_member_content()` empilhava `plano` e `curso:endoteem` no mesmo
+   ramo (`inst='Endodirect'`), e as 11 instituições de residência não caíam em
+   ramo nenhum. O professor decidiu — *"As 254 questões pode distribuir para os
+   assinantes"* — e a migração
+   `member_content_entrega_provas_residencia_ao_plano` separou os ramos:
+   assinante **1.769 → 2.023**; EndoTEEM sem plano e degustação inalterados.
+   Ver [[Banco de Questões]].
 2. **Rótulos de área fragmentados no banco — o filtro mostra buckets partidos.**
    `AREA_CANON` só mapeia `'Andrologia' → 'Endocrinologia Masculina'`. Sobraram:
    **`'Básica'` (141) × `'Endocrinologia Básica'` (26)**, `'Dislipidemia e

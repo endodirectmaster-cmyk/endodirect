@@ -13,22 +13,31 @@ atualizado: 2026-08-21
 - O aluno **não** lê o `global_state`; recebe as provas via **`endodirect_member_content()`**. Regra (2026-07-21): **assinante (plano) recebe todas as questões que NÃO são do TEEM** — ou seja, banco **Endodirect + todas as de residência**. EndoTEEM (sem plano) = só Endodirect (+TEEM). Degustação = 50 do Endodirect. Ver [[Dados e Supabase]].
 - ⚠️ Consequência: para o aluno ver questões novas de residência, elas só precisam ter `inst` ≠ 'TEEM' (não precisam ser 'Endodirect'). Não esquecer: inserir no `global_state` **e** garantir que o member_content as inclui.
 
-### 🚨 A RPC EM PRODUÇÃO NÃO FAZ O QUE ESTÁ ESCRITO ACIMA (lido em 2026-08-21)
-Li o `prosrc` de `endodirect_member_content()` no banco. O ramo de `provas` é:
+### ✅ A RPC NÃO FAZIA ISSO — CORRIGIDO EM 2026-08-21
+Ao ler o `prosrc` de `endodirect_member_content()` para garantir que as 500 novas
+chegariam ao aluno, achei o ramo de `provas` assim: **`plano` e `curso:endoteem`
+caíam no MESMO ramo**, `where v->>'inst' = 'Endodirect'`. Não havia ramo algum para
+as demais instituições — ou seja, **as 254 questões de residência (11 instituições,
+entre elas USP-R3 90 e FUVEST 29) não eram entregues a ninguém**, contrariando a
+regra registrada em 21/07 logo acima.
 
-- `plano` **ou** `curso:endoteem` → `where v->>'inst' = 'Endodirect'`;
-- sem nenhum acesso → 50 de `inst='Endodirect'`, `order by md5(v::text)`;
-- `curso:endoteem` soma, à parte, `where v->>'inst' = 'TEEM'`.
+O professor decidiu: *"As 254 questões pode distribuir para os assinantes"*. Migração
+`member_content_entrega_provas_residencia_ao_plano`. Os ramos agora são:
 
-Não há ramo algum para as demais instituições. Ou seja: **as 254 questões de residência
-(11 instituições) não são entregues a ninguém hoje** — nem a assinante, nem à degustação.
-A regra registrada em 21/07 ("assinante recebe todas as que NÃO são do TEEM") **não é a
-que está no ar**. Uma das duas coisas aconteceu: a RPC regrediu depois, ou a nota foi
-escrita descrevendo a intenção e não o que foi implantado.
+| perfil | recebe | antes → depois |
+|---|---|---|
+| `plano` | tudo que **não é TEEM** (Endodirect + residência) | 1.769 → **2.023** |
+| `curso:endoteem` sem plano | só Endodirect, + TEEM | 2.649 (inalterado) |
+| plano **+** endoteem | tudo | 2.903 |
+| degustação (sem acesso) | 50 do Endodirect, ordem `md5` | 50 (inalterado) |
 
-**Não mexi nisso** — quem recebe qual banco é decisão de produto e de licenciamento, não
-de faxina. Está em [[Pendências]]. As 500 do lote de 2026-08-21 **não dependem disso**:
-são `inst='Endodirect'` e caem no primeiro ramo, que funciona.
+⚠️ **A ORDEM DOS RAMOS PASSOU A IMPORTAR.** `plano` tem de ser testado **antes** de
+`curso:endoteem`: quem tem os dois precisa cair no ramo mais amplo e ainda receber o
+TEEM pela concatenação. Invertido, o assinante com EndoTEEM perderia as de residência.
+
+⚠️ **`coalesce(v->>'inst','')` no filtro, não `v->>'inst' <> 'TEEM'` puro.** Em SQL
+`null <> 'TEEM'` é **NULL, não true** — uma questão sem instituição sumiria em
+silêncio. Hoje são 0, mas o filtro não pode depender disso.
 
 ## Lote autoral Endodirect 2026 — 500 questões difíceis (2026-08-21)
 
@@ -102,6 +111,65 @@ baixa isso).
 - Os 28 JSON de origem e o validador ficaram em `scratchpad/questoes/` (**não versionados**,
   são scratch), com `checa.js` conferindo formato, vocabulário fechado, gabarito órfão,
   **citação de alternativa por letra no comentário** e duplicata interna.
+
+### Jargão de IA: medido contra a régua da casa, não contra o meu gosto (2026-08-21)
+Pedido do professor: *"evitar sempre jargões de IA. Deixar sempre os comentários em
+linguagem técnica"*. A régua não foi inventada — está escrita em `lib/discussao.js`
+(`SISTEMA`): metáfora de efeito, superlativo vago, autoelogio de método, a fórmula
+"não é apenas X, é Y", `profundo` como reforço e `FT4`/`FT3`.
+
+Rodada nos 500 comentários (301.719 caracteres): **jargão genérico de IA = 0**
+("desempenha um papel", "em suma", "mergulhar", "holístico" — nenhuma ocorrência).
+Mas **9 violações reais da régua da casa**, todas corrigidas por termo técnico:
+
+| onde | era | virou |
+|---|---|---|
+| 1553 | supressão **profunda** do eixo | supressão **sustentada** |
+| 1727 | evidência menos **robusta** | evidência mais **escassa** |
+| 1742 | testosterona **profundamente** reduzida | **redução discreta** da testosterona |
+| 1751 | suprimem **profundamente** o eixo | suprimem **de forma sustentada** |
+| 1765 | benefício mais **robusto** | benefício mais **consistente** |
+| 1772 | concentrações **extremamente** altas | **acima da faixa de medição** |
+| 1840 | evidências mais **robustos** | evidências mais **consistentes** |
+| 1960 | **supressão profunda** | **supressão do TSH abaixo da faixa de referência** |
+| 1995 | reduz **drasticamente** a espermatogênese | leva a **oligozoospermia ou azoospermia** |
+
+⚠️ **As 33 violações restantes no banco são do acervo antigo, não do lote** — medido
+separando as 2.403 das 500. Não mexi nelas: é conteúdo já publicado.
+
+📏 **Tique meu que sobrevive à régua:** `justamente` aparece **68×** em 500 comentários,
+com `é justamente o/a/essa` em 21 delas. Não é jargão de IA nem viola regra escrita —
+é ênfase repetida. Fica registrado; se o professor quiser, dá para afinar.
+
+### Variedade temática: medida, não afirmada (2026-08-21)
+Pergunta do professor: *"as questões estão variadas nos temas, correto?"*. Medido com
+o Jaccard da casa sobre os **124.750 pares** possíveis:
+
+| faixa | pares | % |
+|---|---:|---:|
+| ≥ 0,30 | 6 | 0,00% |
+| 0,25–0,30 | 16 | 0,01% |
+| 0,20–0,25 | 74 | 0,06% |
+| **< 0,20** | **124.654** | **99,92%** |
+
+Nenhum par ≥ 0,32. O maior de todos é **0,316** (SOP × HAC não clássica, que é a
+comparação didática de propósito). Endocrinopatias e Esporte não têm **nenhum** par
+acima de 0,20; as áreas com mais aproximação relativa são Pediátrica e Lípides, com
+10 pares cada acima de 0,20 — ainda assim longe do corte.
+
+### 📌 Ancoragem em diretriz: as 500 NÃO têm (regra nova de 2026-08-21)
+Pedido do professor: *"priorizar questões sobretudo referentes a consensos/diretrizes
+publicadas em 2026"*. Medido nas 500: **0 sociedades nomeadas** (ADA, SBD, ABESO, ATA,
+Endocrine Society…), **0 anos de publicação citados**, 5 menções genéricas à palavra
+"diretriz/consenso". Elas foram escritas sobre raciocínio clínico consolidado — o que
+não as torna erradas, mas **não atende ao critério novo**.
+
+A matéria-prima existe: **107 diretrizes com `ano='2026'`** já no `payload->'diretrizes'`,
+em 11 subespecialidades — Diabetes 20, Obesidade 17, Tireoide 13, Pediátrica 11,
+Neuroendocrinologia 8, Adrenal 7, Osteometabolismo 7, Lípides 6, Masculina 6, Feminina 6,
+Básica 6. Várias já nomeiam a fonte no tema: *Algoritmo AACE 2026 para o manejo do DM2*,
+*Tratamento do Diabetes Tipo 2 (ADA 2026 / SBD)*, *SURMOUNT-MAINTAIN (2026)*,
+*Hipogonadismo masculino — Posicionamento SBEM/SBU/ABEMSS (2026)*.
 
 ### Efeito na degustação (medido, não estimado)
 `provasPool()` no cliente ordena por `degHash(code|stem)` e corta em 50; a RPC do servidor

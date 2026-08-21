@@ -1,9 +1,46 @@
 ---
 tags: [cofre, processo]
-atualizado: 2026-08-19
+atualizado: 2026-08-21
 ---
 
 # Convenções de Trabalho
+
+## 📌 QUESTÃO NOVA NASCE ANCORADA EM DIRETRIZ DE 2026 (2026-08-21)
+
+Regra do professor: *"priorizar questões sobretudo referentes a consensos/diretrizes
+publicadas em 2026"*. Vale para **todo lote novo**, não só para o próximo.
+
+A fonte não precisa ser caçada: são **107 diretrizes com `ano='2026'`** já no
+`payload->'diretrizes'`, cobrindo 11 subespecialidades, várias já nomeando a
+publicação no próprio tema (*Algoritmo AACE 2026*, *ADA 2026 / SBD*,
+*SURMOUNT-MAINTAIN (2026)*, *Posicionamento SBEM/SBU/ABEMSS (2026)*). Começar pela
+diretriz e derivar a vinheta dela — não escrever a vinheta e procurar respaldo depois.
+
+⚠️ **As 500 do lote de 21/08 não seguem esta regra** e foi assim que ela nasceu:
+medidas depois de prontas, tinham **0 sociedades nomeadas e 0 anos citados**. Foram
+escritas sobre raciocínio consolidado, o que não as torna erradas — mas o critério
+novo só se cumpre se entrar **antes** de escrever. Ver [[Banco de Questões]].
+
+## ✍️ COMENTÁRIO DE QUESTÃO SEGUE A MESMA RÉGUA DE PROSA DOS CAPÍTULOS (2026-08-21)
+
+Regra do professor: *"evitar sempre jargões de IA. Deixar sempre os comentários em
+linguagem técnica"*. A régua **já existia** e estava escrita em `lib/discussao.js`
+(`SISTEMA`) — só não estava sendo aplicada ao banco de questões:
+
+- **metáfora de efeito** ("divisor de águas", "pedra angular");
+- **superlativo vago** ("robusto", "impressiona", "extremamente", "drasticamente");
+- **autoelogio de método** ("vale ressaltar", "é crucial", "cabe destacar");
+- a fórmula **"não é apenas X, é Y"**;
+- **`profundo/profunda` como reforço** de quadro clínico — permitido só quando a fonte
+  diz (hipotermia profunda) ou é anatomia (reflexos profundos);
+- **`FT4`/`FT3`** → escrever "T4 livre" / "T3 livre".
+
+⚠️ **O jargão que aparece não é o jargão que se procura.** Nas 500, os marcadores
+óbvios de IA deram **zero** ("desempenha um papel", "em suma", "mergulhar",
+"holístico"). O que passou foram **9 superlativos vagos e reforços com "profundo"** —
+que soam técnicos e por isso escapam da leitura. A troca certa não é apagar a palavra,
+é **pôr o dado no lugar dela**: "reduz drasticamente a espermatogênese" virou "leva a
+oligozoospermia ou azoospermia".
 
 ## 🧨 CRIAR UMA SUBESPECIALIDADE NOVA É MEXER NO ROTEAMENTO DE TODAS (2026-08-19)
 
