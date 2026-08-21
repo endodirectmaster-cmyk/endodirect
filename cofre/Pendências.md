@@ -24,22 +24,27 @@ Não corrigido de ofício: **é conteúdo já publicado e a correção não foi 
 trocas mecânicas e seguras (`HbAi`→`HbA1c`, `mEg/L`→`mEq/L`, `1,73m?`→`1,73 m²`), com
 backup e conferência por hash como nos lotes. **Decisão do professor.**
 
-## 🚨 DIABETES A 97,3% DO TETO — a folga acabou (2026-08-21)
+## ✅ RESOLVIDO — Diabetes voltou a 93% do teto (2026-08-21)
 
-Depois das três diretrizes SBD 2026, Diabetes está em **389.177/400.000**, folga
-de **10.330**. O 400k é o `TETO_MAXIMO`: não há para onde subir. **O próximo
-documento de diabetes não cabe.**
+Estourou para **415.302/400.000** com as três diretrizes SBD 2026 de 21/08 (DMPT,
+neuropatia periférica, perioperatório) e foi resolvido **dividindo**, não apagando:
+**Diabetes pós-transplante virou área própria** (43.328), e Diabetes voltou a
+**371.960 (93%)**, folga de **28.040**.
 
-Antes de dividir a área pela terceira vez, medir isto: a área tem **4 blocos
-sobre crises hiperglicêmicas somando 157.033 chars — 40% do total**, com
-sobreposição evidente entre eles (`CRISES HIPERGLICÊMICAS` ×2, `Cetoacidose
-diabética e as demais CRISES`, `Cetoacidose euglicêmica`). Consolidar libera
-mais espaço do que qualquer divisão, e sem mexer no roteamento de todas as
-outras áreas. **Decisão do professor** — é conteúdo já auditado.
+🧨 **A ALTERNATIVA QUE ESTAVA REGISTRADA AQUI NÃO EXISTIA.** Esta pendência dizia
+que a área tinha "4 blocos sobre crises hiperglicêmicas com **sobreposição
+evidente** (`CRISES HIPERGLICÊMICAS` ×2)" e que consolidar liberaria mais que
+dividir. Conferido no dado: os dois blocos de mesmo título têm **tema E fonte
+IDÊNTICOS** e são **"parte 1/2" e "parte 2/2" do MESMO consenso** (Umpierrez
+2024, ADA/EASD/JBDS/AACE/DTS), partido porque não cabia num bloco só. **Não é
+duplicata — é um documento em duas partes.** Os outros dois (Dhatariya 2020,
+Bonora 2020) são artigos distintos sobre assunto vizinho. Consolidar ali seria
+**descartar artigo auditado**, e é isso que a palavra "consolidar" escondia.
 
-⚠️ Obesidade (397.185, **99,3%**) e Tireoide (391.912, **98,0%**) estão na mesma
-situação, e Tireoide já tem a divisão por gestação registrada como obrigatória
-no próximo artigo.
+⚠️ **Obesidade (397.185, 99,3%) e Tireoide (391.912, 98,0%) seguem no limite** e
+não têm essa saída pronta. Para Tireoide a divisão por gestação já está
+registrada como obrigatória no próximo artigo. Para Obesidade, ainda não há
+palavra medida que roteie uma subárea — medir antes de dividir.
 
 ## 🚨 ABERTO EM 2026-08-21, ao carregar as 500 questões
 

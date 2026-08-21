@@ -659,7 +659,10 @@ const CAMINHO = [
   ['miopatia com CK 10 vezes o normal', 'Lípides'],
   ['paciente de risco extremo: qual a meta?', 'Lípides'],
   ['banda gastrica ainda se usa?', 'Obesidade'],
-  ['PTDM: quando rastrear?', 'Diabetes'],
+  // ⚠️ PTDM mudou de área em 2026-08-21: Diabetes estourou o teto com as três
+  // diretrizes SBD 2026 e o diabetes pós-transplante saiu para área própria.
+  // A expectativa aqui É o teste — se voltar a dar 'Diabetes', a divisão desfez.
+  ['PTDM: quando rastrear?', 'Diabetes pós-transplante'],
   ['hormonio tireoidiano no idoso', 'Tireoide'],
   ['funcao das celulas beta se recupera?', 'Diabetes'],
   // ⚠️ `mialgia` SOZINHA ficou de fora e estas duas guardam a decisão: 3
@@ -1009,7 +1012,7 @@ const COMPLETUDE = [
   // aqui com teto maior, ou com a área dividida, deve retestar aquela frase.
   ['dumping tardio dois anos apos bypass: como investigo?', 'Obesidade', 'dumping apos cirurgia', 'dumping', 90, 50],  // medido: 100%, 85
   ['esteatose hepatica com FIB-4 de 2,1: encaminho?', 'Obesidade', 'hepatica gordurosa', 'hepatica', 90, 40],          // medido: 100%, 88
-  ['PTDM: quando rastrear?', 'Diabetes', 'ptdm', 'ptdm', 90, 40],
+  ['PTDM: quando rastrear?', 'Diabetes pós-transplante', 'ptdm', 'ptdm', 90, 40],
   ['prolactina de 80 com macroprolactina: e prolactinoma?', 'Neuroendocrinologia', 'prolactinoma', 'prolactinoma', 90, 80], // medido: 100%, 187
   ['devo repor levotiroxina no doente grave com T3 baixo?', 'Tireoide', 'eutireoidiano', 'eutireoidiano', 90, 2],
   ['tempestade tireoidiana com Burch-Wartofsky 55', 'Tireoide', 'crise tireotoxica, tambem chamada tempestade tireoidiana', 'burch', 90, 10],

@@ -5,6 +5,39 @@ atualizado: 2026-08-21
 
 # Convenções de Trabalho
 
+## 🧨 VERIFICADOR PRÓPRIO NUNCA PODE SER MAIS FROUXO QUE O DE VERDADE (2026-08-21)
+
+Escrevi um construtor de extratos que conferia citação contra o texto-fonte e me deu
+"✓ tudo certo" três vezes. O `verifica-extracao.js` reprovou os três extratos, e cada
+rodada revelou uma régua que eu não tinha copiado:
+
+1. **filtrei o rodapé do PDF** antes de casar a citação — o verificador lê o arquivo CRU,
+   então citação que atravessa quebra de página só passa elidindo com ` […] `;
+2. **juntei trechos independentes com espaço**, criando texto que não existe em lugar
+   nenhum; o separador tem de ser a elisão que `lib/citacao.js` entende;
+3. **ignorei a ordem** — o verificador resolve a elisão avançando um cursor, então trecho
+   fora da ordem do fonte reprova;
+4. **ignorei o `GAP_MAX = 400`** — elisão serve para respingo de coluna, não para costurar
+   trechos distantes. Foi o que forçou **uma citação contígua por fato**, e por isso os
+   três extratos saíram com **122 fatos em vez de 44**.
+
+Regra que fica: **quando escrever verificação própria, espelhar a constante e a
+normalização do verificador real, importando ou copiando com o número à vista.** Régua
+própria mais generosa não acelera nada — só adia a reprovação e produz trabalho para
+refazer. É a mesma lição de 06/08 (validei filtro com fixtures que eu mesmo escrevi).
+
+## 📌 ÁREA NOVA DA BASE PROFUNDA SE REGISTRA EM DOIS MAPAS (2026-08-21)
+
+`CANON` casa o **nome da subespecialidade**; `TERMOS` casa **o que o médico escreve**.
+Registrei "Diabetes pós-transplante" só no `CANON` e as perguntas de teste continuaram
+recebendo os 372k de Diabetes inteiros — porque ninguém digita o rótulo da área, digita
+*"receptor de transplante renal em tacrolimo com hiperglicemia"*.
+
+E antes de dividir, **medir se a palavra roteia**: `transplant` aparece 140× em Diabetes
+contra no máximo 31 em qualquer outra área, então divide; `perioperat` está espalhado
+(Neuro 35, Obesidade 27, Diabetes 25, Adrenal 11), então **não** divide. Dividir por
+palavra que não discrimina rouba pergunta de outra área.
+
 ## 🧨 CAMPO QUE O AUTOR DECLARA NÃO PODE SER CARIMBADO PELO VALIDADOR (2026-08-21)
 
 `checa.js` carimbava `dificuldade` na entrada e **apagava, na reescrita, os campos que ele
