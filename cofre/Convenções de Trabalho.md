@@ -5,6 +5,29 @@ atualizado: 2026-08-21
 
 # Convenções de Trabalho
 
+## 🧨 RENDERIZADOR DE MARKDOWN LÊ PARÁGRAFO, NÃO LINHA (2026-08-21)
+
+`mdToHtml` era linha a linha e começava com `trim()`. Isso apaga o recuo — o sinal
+de continuação — e parte qualquer marcação que atravesse a quebra: `**negrito`
+numa linha e `fechado**` na outra saem como asterisco cru, porque o `.` do JS não
+atravessa `\n`. O acervo tinha 19 capítulos assim.
+
+Regra que fica: **antes de ler blocos, desdobrar a quebra rígida.** E o sinal de
+continuação, medido no acervo e não escolhido no olho, é a **pontuação**, em três
+níveis de certeza: recuo → negrito aberto → frase não terminada. Linha que termina
+em `.`/`:`/`;` acabou de propósito (47 pares do acervo são fatos distintos, um por
+linha) e não se junta.
+
+⚠️ **Marcador de bloco não é só o primeiro caractere.** `>` só abre citação
+seguido de ESPAÇO: `>130` é glicemia maior que 130, e lê-lo como citação **comia o
+sinal de maior de uma regra de dose**. Vale a mesma cautela para `-` (hífen de
+palavra), `|` (tabela com célula vazia) e `*` (multiplicação).
+
+⚠️ **Mudança em renderizador se confere contra o ACERVO INTEIRO**, medindo perda de
+texto, perda de item de lista e contagem de blocos — e contra o invariante de
+round-trip com o `htmlToMd`, que é como o professor salva pelo editor. Fixture
+própria não teria achado nem o `>130` nem os 47 pares deliberados.
+
 ## 🧨 VERIFICADOR PRÓPRIO NUNCA PODE SER MAIS FROUXO QUE O DE VERDADE (2026-08-21)
 
 Escrevi um construtor de extratos que conferia citação contra o texto-fonte e me deu

@@ -484,6 +484,21 @@ try {
   fail('regex de população da confere-ancoragem com comportamento errado:\n' + out);
 }
 
+// ── QUEBRA RÍGIDA no markdown do resumo ──────────────────────────────────────
+// O professor mandou print (21/08) de "Retinopatia, Neuropatia e Pé Diabético"
+// com `**` cru na tela e bullet fora do lugar: o `mdToHtml` lia LINHA A LINHA e
+// dava `trim()`, apagando o recuo que marcava a continuação. Medido no acervo:
+// 19 capítulos com negrito partido, 334 linhas. Depois da correção, ZERO.
+// O mesmo defeito comia o `>` de `>130` (glicemia maior que 130) lendo-o como
+// citação — um sinal de maior sumindo de uma regra de dose.
+try {
+  execFileSync(process.execPath, [path.join('scripts', 'test-quebra-rigida-no-resumo.js')], { stdio: 'pipe' });
+  ok('quebra rígida no resumo: negrito atravessa a quebra, `>130` não vira citação, e lista/tabela/linha deliberada ficam de pé');
+} catch (e) {
+  const out = (e.stdout ? e.stdout.toString() : '') + (e.stderr ? e.stderr.toString() : '');
+  fail('desdobramento da quebra rígida com comportamento errado:\n' + out);
+}
+
 // ⚠️ RESSALVAS × NÚCLEO. O campo `conflito` de um extrato é uma FOTOGRAFIA do
 //     núcleo no dia da leitura, e a varredura do acervo CORRIGE o núcleo — é
 //     metade do objetivo dela. Toda correção envelhece a ressalva do artigo que

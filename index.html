@@ -5255,8 +5255,79 @@ function barraHTML(linha){
   return '<figure class="wys-barra" data-barra="'+esc(linha)+'" role="img" aria-label="gráfico de barras">'
     +'<ul class="br-lista">'+linhas+'</ul></figure>';
 }
+// Junta a linha de CONTINUAÇÃO à anterior, ANTES de ler os blocos.
+//
+// ⚠️ O CASO REAL (21/08/2026). O professor abriu "Retinopatia, Neuropatia e Pé
+// Diabético" e viu `**` cru na tela e bullet encostado na margem. O resumo é
+// markdown com quebra de linha RÍGIDA, e o negrito atravessava a quebra:
+//
+//     - **Gestante com diabetes PRÉVIO**: **a cada trimestre** — alto risco…
+//       ⚠️ **Não confundir com diabetes gestacional: no DMG não há indicação de fundo de
+//       olho.**
+//
+// `mdToHtml` lia LINHA A LINHA e fazia `trim()` de saída, que apaga o recuo — o
+// ÚNICO sinal de que aquela linha continua a anterior. Daí os dois sintomas, que
+// são o mesmo defeito: (1) nenhuma das duas linhas tem um par `**…**` completo e
+// as marcas saem literais, porque `mdInline` casa `(.+?)` e o `.` do JS não
+// atravessa `\n`; (2) a continuação vira um `<p>` solto FORA do `<li>`.
+//
+// Medido no banco antes de mexer: 19 capítulos com negrito partido em 334 linhas
+// e 413 linhas de continuação. Não é um capítulo torto — é o formato em que o
+// conteúdo foi escrito.
+//
+// ⚠️ A PENEIRA É POR MARCADOR DE BLOCO, NÃO SÓ PELO RECUO. Das 473 linhas
+// indentadas de hoje, 59 são LISTA ANINHADA (`- item`) e 1 é citação: juntar
+// essas mudaria a estrutura em vez de restaurá-la. Ficam de fora também título,
+// tabela, figura, gráfico, marcador de alinhamento e regra horizontal — e a
+// linha anterior não pode ser linha de tabela, senão o texto entraria na célula.
+// ⚠️ `>` SÓ É CITAÇÃO SEGUIDO DE ESPAÇO (ou fim de linha). O caso real: a titulação
+// da basal quebrou como `  >130 ou −2 UI se <80**.` — glicemia MAIOR QUE 130, não
+// citação. Lido como bloco, a linha não se juntava à anterior e o negrito ficava
+// aberto. Mesma armadilha de `<80` no fim da frase anterior.
+function mdBlocoAbre(raw){
+  return /^[ \t]*(?:[-*+]\s|\d+\.\s|#{1,4}\s|>(?:\s|$)|---\s*$|\{(?:pizza|barra):|\{:(?:left|center|right)\}|!\[)/i.test(raw);
+}
+// ⚠️ MAIS FROUXO QUE O TESTE DE TABELA DO `mdToHtml`, DE PROPÓSITO. Lá a linha só
+// vira tabela com 2+ células preenchidas; aqui basta começar com `|`, porque
+// linha de tabela com célula vazia (`| Redução do câncer de cólon | |`) existe no
+// acervo e costurá-la ao texto seguinte destruiria a tabela.
+function mdLinhaDeTabela(raw){
+  var t=String(raw||'').trim();
+  return t.charAt(0)==='|'||(t.indexOf('|')>=0&&t.split('|').filter(function(c){return c.trim();}).length>=2);
+}
+// Fim de frase: depois de `.`, `!`, `?`, `:` ou `;` a linha ACABOU de propósito.
+// Antes de qualquer outra coisa — vírgula, seta, ou letra solta — ela foi CORTADA.
+function mdFrasePronta(raw){
+  return /[.!?:;]["'”’)\]]?\s*$/.test(String(raw||''));
+}
+function mdDesdobra(lines){
+  var out=[];
+  for(var i=0;i<lines.length;i++){
+    var raw=lines[i],ant=out.length?out[out.length-1]:'';
+    // ⚠️ CITAÇÃO QUEBRADA EM DUAS LINHAS é a MESMA citação, e o `>` da segunda é
+    // continuação, não abertura. Sem este ramo, `> **Macete**: CAS tem 3 letras…`
+    // / `> hiperemia**.` viravam dois <blockquote> e o negrito ficava aberto.
+    if(/^\s*>(?:\s|$)/.test(raw)&&/^\s*>(?:\s|$)/.test(ant)&&!mdFrasePronta(ant)){
+      out[out.length-1]=ant.replace(/\s+$/,'')+' '+raw.replace(/^\s*>\s?/,'').trim();
+      continue;
+    }
+    if(!raw.trim()||!ant.trim()||mdBlocoAbre(raw)||mdLinhaDeTabela(raw)||mdLinhaDeTabela(ant)){out.push(raw);continue;}
+    // Três sinais de que esta linha CONTINUA a anterior, em ordem de certeza:
+    //   1. recuo — o autor indentou a continuação do item;
+    //   2. negrito aberto e não fechado na linha anterior;
+    //   3. a linha anterior não terminou frase.
+    var recuada=/^[ \t]+\S/.test(raw);
+    var boldAberto=((ant.length-ant.replace(/\*\*/g,'').length)/2)%2===1;
+    if(recuada||boldAberto||!mdFrasePronta(ant)){
+      out[out.length-1]=ant.replace(/\s+$/,'')+' '+raw.trim();
+      continue;
+    }
+    out.push(raw);
+  }
+  return out;
+}
 function mdToHtml(md){
-  var lines=String(md||'').replace(/\r/g,'').split('\n');
+  var lines=mdDesdobra(String(md||'').replace(/\r/g,'').split('\n'));
   var out=[],list=[];
   function flushList(){
     if(list.length){out.push('<ul>'+list.map(function(x){return'<li>'+mdInline(x)+'</li>';}).join('')+'</ul>');list=[];}
