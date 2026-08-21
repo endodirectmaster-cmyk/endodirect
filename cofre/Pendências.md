@@ -5,6 +5,23 @@ atualizado: 2026-08-21
 
 # Pendências
 
+## 🚨 DIABETES A 97,3% DO TETO — a folga acabou (2026-08-21)
+
+Depois das três diretrizes SBD 2026, Diabetes está em **389.177/400.000**, folga
+de **10.330**. O 400k é o `TETO_MAXIMO`: não há para onde subir. **O próximo
+documento de diabetes não cabe.**
+
+Antes de dividir a área pela terceira vez, medir isto: a área tem **4 blocos
+sobre crises hiperglicêmicas somando 157.033 chars — 40% do total**, com
+sobreposição evidente entre eles (`CRISES HIPERGLICÊMICAS` ×2, `Cetoacidose
+diabética e as demais CRISES`, `Cetoacidose euglicêmica`). Consolidar libera
+mais espaço do que qualquer divisão, e sem mexer no roteamento de todas as
+outras áreas. **Decisão do professor** — é conteúdo já auditado.
+
+⚠️ Obesidade (397.185, **99,3%**) e Tireoide (391.912, **98,0%**) estão na mesma
+situação, e Tireoide já tem a divisão por gestação registrada como obrigatória
+no próximo artigo.
+
 ## 🚨 ABERTO EM 2026-08-21, ao carregar as 500 questões
 
 1. ✅ **RESOLVIDO no mesmo dia — as 254 de residência já vão para o assinante.**

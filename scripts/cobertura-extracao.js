@@ -59,6 +59,28 @@ const PROMESSAS = [
 // Citação que termina assim não prova nada sozinha — a frase foi cortada.
 const CAUDA_RUIM = /\b(and|or|with|for|of|in|to|the|a|an|that|which|as|by|from|is|are|was|were|but|than|se|de|do|da|e|ou|que|com|para|em|no|na)\s*$|[-–—]\s*$/i;
 
+// ⚠️ FALSO-POSITIVO QUE A PENEIRA NÃO PREVIA: DIRETRIZ BRASILEIRA GRADUADA (21/08/2026).
+//
+// A SBD fecha cada recomendação com o grau em duas linhas — "Classe I / Nível A" —
+// e a citação que inclui o grau (como deve, para sustentar a FORÇA da recomendação)
+// termina na letra do nível. `CAUDA_RUIM` tem `|a|` na lista, para o "a" preposição
+// do português e o artigo do inglês, e casa com o "A" de "Nível A".
+//
+// O tamanho do estrago, medido nas três diretrizes SBD 2026: 8 de 16 (DM2), 9 de 30
+// (doença renal) e 5 de 17 (IC) — exatamente o número de recomendações Nível A de
+// cada uma. Todas acima dos 25%, todas reprovadas, nenhuma truncada de verdade.
+//
+// A saída NÃO é afrouxar a peneira: é reconhecer que uma citação terminada em token
+// de graduação está COMPLETA por construção — o grau é o fim do bloco no documento,
+// não uma frase cortada na outra coluna. Fora desse padrão, `CAUDA_RUIM` segue valendo
+// letra por letra.
+const CAUDA_GRADUACAO = /\b(?:n[íi]vel\s+[ABC]|classe\s+(?:I{1,3}|IV|II[ab]))\s*$/i;
+function caudaTruncada(cit) {
+  const t = String(cit || '').trim();
+  if (CAUDA_GRADUACAO.test(t)) return false;
+  return CAUDA_RUIM.test(t);
+}
+
 // ⚠️ E A CABEÇA? O MESMO DEFEITO, DO OUTRO LADO (08/08/2026).
 //
 // A peneira acima só olha o FIM da citação. O reparo das 40 citações truncadas
@@ -168,7 +190,7 @@ function main() {
     }
 
     // ── 3. citações cortadas no meio da frase ───────────────────────────────
-    const truncadas = fatos.filter((f) => CAUDA_RUIM.test(String(f.citacao || '').trim()));
+    const truncadas = fatos.filter((f) => caudaTruncada(f.citacao));
     if (truncadas.length) {
       const pct = truncadas.length / fatos.length;
       // ⚠️ Desde 07/08/2026 isto TEM conserto: `verifica-extracao.js` aceita
