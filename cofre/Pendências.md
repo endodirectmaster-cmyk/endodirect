@@ -5,6 +5,25 @@ atualizado: 2026-08-21
 
 # Pendências
 
+## ⚠️ 25 QUESTÕES DO ACERVO LEGADO COM ARTEFATO DE OCR (2026-08-21)
+
+Achado ao varrer a dedup do lote SBD 2026, não procurado. São questões antigas
+(TEEM/residência), **nenhuma dos lotes autorais**, com unidades corrompidas na
+extração do PDF — o aluno lê o erro:
+
+| artefato | deveria ser | ocorrências |
+|---|---|---:|
+| `HbAi` | HbA1c | 5 |
+| `mEg/L` | mEq/L | 2 |
+| `1,73m?` | 1,73 m² | 2 |
+| demais suspeitas (`m?` solto) | m² | resto de 25 |
+
+`�` (caractere inválido): **0** — é perda de mapeamento no OCR, não erro de encoding.
+
+Não corrigido de ofício: **é conteúdo já publicado e a correção não foi pedida**. São
+trocas mecânicas e seguras (`HbAi`→`HbA1c`, `mEg/L`→`mEq/L`, `1,73m?`→`1,73 m²`), com
+backup e conferência por hash como nos lotes. **Decisão do professor.**
+
 ## 🚨 DIABETES A 97,3% DO TETO — a folga acabou (2026-08-21)
 
 Depois das três diretrizes SBD 2026, Diabetes está em **389.177/400.000**, folga
