@@ -5300,6 +5300,22 @@ function mdLinhaDeTabela(raw){
 function mdFrasePronta(raw){
   return /[.!?:;]["'”’)\]]?\s*$/.test(String(raw||''));
 }
+// ⚠️ BLOCO QUE SE FECHA NA PRÓPRIA LINHA — NUNCA absorve a linha seguinte.
+//
+// 🧨 Foi o buraco da primeira versão desta correção (21/08, mesma noite): eu
+// testava `mdBlocoAbre` na linha ATUAL e esquecia de olhar a ANTERIOR. Título não
+// termina em pontuação, então `!mdFrasePronta(ant)` dava true e o parágrafo
+// seguinte era costurado DENTRO do `<h3>`:
+//
+//     ## Precipitantes
+//     Infecção (a mais comum), omissão/insuficiência de insulina…
+//
+// virava um título gigante em negrito com o capítulo inteiro dentro. O professor
+// mandou print de "Emergências Hiperglicêmicas" e "Complicações Crônicas" assim.
+// Escapavam só os títulos seguidos de `- item`, porque a lista abre bloco.
+function mdBlocoFechado(raw){
+  return /^[ \t]*(?:#{1,4}\s|---\s*$|!\[|\{(?:pizza|barra):)/i.test(raw);
+}
 function mdDesdobra(lines){
   var out=[];
   for(var i=0;i<lines.length;i++){
@@ -5311,7 +5327,7 @@ function mdDesdobra(lines){
       out[out.length-1]=ant.replace(/\s+$/,'')+' '+raw.replace(/^\s*>\s?/,'').trim();
       continue;
     }
-    if(!raw.trim()||!ant.trim()||mdBlocoAbre(raw)||mdLinhaDeTabela(raw)||mdLinhaDeTabela(ant)){out.push(raw);continue;}
+    if(!raw.trim()||!ant.trim()||mdBlocoAbre(raw)||mdLinhaDeTabela(raw)||mdLinhaDeTabela(ant)||mdBlocoFechado(ant)){out.push(raw);continue;}
     // Três sinais de que esta linha CONTINUA a anterior, em ordem de certeza:
     //   1. recuo — o autor indentou a continuação do item;
     //   2. negrito aberto e não fechado na linha anterior;

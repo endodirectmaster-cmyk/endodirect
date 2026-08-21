@@ -50,7 +50,7 @@ vm.runInContext(
   + 'var mdAltRE="([^\\\\]]*)";function mdUnescAlt(a){return a;}\n'
   + 'var WYS_CORES_RE="azul|verde";\n'
   + corpo('wysAlignRead') + '\n' + corpo('mdInline') + '\n'
-  + corpo('mdBlocoAbre') + '\n' + corpo('mdLinhaDeTabela') + '\n' + corpo('mdFrasePronta') + '\n'
+  + corpo('mdBlocoAbre') + '\n' + corpo('mdLinhaDeTabela') + '\n' + corpo('mdBlocoFechado') + '\n' + corpo('mdFrasePronta') + '\n'
   + corpo('mdDesdobra') + '\n' + corpo('mdToHtml'), ctx);
 const mdToHtml = vm.runInContext('mdToHtml', ctx);
 const mdDesdobra = vm.runInContext('mdDesdobra', ctx);
@@ -133,6 +133,24 @@ const CIT = ['> **Macete**: CAS tem **3 letras** → avaliam-se **3 sinais**: **
 ok((mdToHtml(CIT).match(/<blockquote>/g) || []).length === 1, 'citação de 2 linhas virou 2 citações: ' + mdToHtml(CIT));
 ok(!/\*\*/.test(mdToHtml(CIT)), 'citação: sobrou `**` literal: ' + mdToHtml(CIT));
 
+// ── 3d. TÍTULO NUNCA ABSORVE O PARÁGRAFO SEGUINTE ────────────────────────────
+// 🧨 REGRESSÃO REAL da primeira versão desta correção (21/08, mesma noite). O
+// título não termina em pontuação, então a regra "frase não terminada" costurava
+// o parágrafo DENTRO do <h3> — e o capítulo inteiro virava um título gigante em
+// negrito. O professor mandou print de "Emergências Hiperglicêmicas" e
+// "Complicações Crônicas" assim. Escapavam só os títulos seguidos de `- item`.
+const TITULO = ['## Precipitantes', 'Infecção (a mais comum), omissão de insulina, evento agudo'].join('\n');
+const sT = mdToHtml(TITULO);
+ok(/<h3[^>]*>Precipitantes<\/h3>/.test(sT), 'o título absorveu o parágrafo seguinte: ' + sT);
+ok(/<p[^>]*>Infecção/.test(sT), 'o parágrafo depois do título sumiu: ' + sT);
+
+// Mesmo com o título carregando emoji e parêntese, como no acervo.
+const T2 = ['## Prevenção (base de tudo)', 'Controle glicêmico, pressórico e lipídico'].join('\n');
+ok(/<h3[^>]*>Prevenção \(base de tudo\)<\/h3>/.test(mdToHtml(T2)), 'título com parêntese absorveu: ' + mdToHtml(T2));
+
+// Regra horizontal e figura também se fecham na própria linha.
+ok(/<hr><p/.test(mdToHtml('---\nTexto depois')), 'o <hr> absorveu a linha seguinte: ' + mdToHtml('---\nTexto depois'));
+
 // ── 4. Parágrafo comum também se desdobra ────────────────────────────────────
 const PAR = ['Uma frase **que atravessa', '  a quebra** e continua.'].join('\n');
 ok(!/\*\*/.test(mdToHtml(PAR)) && /<strong>que atravessa a quebra<\/strong>/.test(mdToHtml(PAR)),
@@ -160,6 +178,15 @@ const MUTANTES = [
     }
     return o;
   }],
+  ['não olha se a linha ANTERIOR é título (a regressão de 21/08)', (ls) => {
+    const o = [];
+    for (const raw of ls) {
+      const ant = o.length ? o[o.length - 1] : '';
+      if (raw.trim() && ant.trim() && !/^[ \t]*[-*+#>]/.test(raw) && !/[.!?:;]\s*$/.test(ant)) o[o.length - 1] += ' ' + raw.trim();
+      else o.push(raw);
+    }
+    return o;
+  }],
   ['desdobra sem exigir recuo (junta linha solta)', (ls) => {
     const o = [];
     for (const raw of ls) {
@@ -173,7 +200,8 @@ for (const [nome, mut] of MUTANTES) {
   const errouCaso = mut(CASO.split('\n')).length !== 1;
   const errouAninhada = mut(ANINHADA.split('\n')).length !== 3;
   const errouSoltas = mut(SOLTAS.split('\n')).length !== 2;
-  if (!errouCaso && !errouAninhada && !errouSoltas) falhas.push('mutação NÃO detectada: ' + nome);
+  const errouTitulo = mut(TITULO.split('\n')).length !== 2;
+  if (!errouCaso && !errouAninhada && !errouSoltas && !errouTitulo) falhas.push('mutação NÃO detectada: ' + nome);
 }
 
 if (falhas.length) { console.error('✗ ' + falhas.length + ' falha(s):\n - ' + falhas.join('\n - ')); process.exit(1); }
