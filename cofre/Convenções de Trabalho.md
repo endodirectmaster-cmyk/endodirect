@@ -5,6 +5,38 @@ atualizado: 2026-08-21
 
 # Convenções de Trabalho
 
+## 🧨 CAMPO QUE O AUTOR DECLARA NÃO PODE SER CARIMBADO PELO VALIDADOR (2026-08-21)
+
+`checa.js` carimbava `dificuldade` na entrada e **apagava, na reescrita, os campos que ele
+mesmo carimba**. Enquanto o lote inteiro era `avancado` isso era invisível. No lote SBD
+2026, com a mistura **20% médio / 80% difícil pedida pelo professor**, o
+`--reequilibrar` do gabarito **zerou os 13 `intermediario`** — sem erro, sem aviso.
+
+É o **mesmo defeito do `lbl[d]||'M'` do `diffTag`, só que na entrada**: ausência de valor
+vira padrão silencioso em vez de falha. Regra que fica:
+
+- validador **deriva** `area`, `inst`, `ano` — pode carimbar e pode apagar;
+- validador **não decide** `dificuldade` — só preenche quando o autor não declarou, e
+  **nunca apaga**;
+- toda vez que um campo passar de derivado para declarado, **conferir o `delete` da
+  reescrita** antes de rodar qualquer passe que reescreva o arquivo.
+
+## 📏 LOTE ANCORADO EM UM DOCUMENTO SÓ TEM TETO DE QUANTIDADE (2026-08-21)
+
+Questões derivadas de uma única diretriz **batem no corte de dedup por construção** —
+herdam o vocabulário obrigatório dela. No lote SBD 2026 a primeira redação deu **18
+duplicatas internas na IC** (27 vinhetas) e **28 na doença renal**, onde *todos* os
+enunciados abriam com o mesmo esqueleto.
+
+A saída **não é afrouxar `IG_SIM_LIMITE`**. É:
+1. **uma questão por decisão clínica distinta** — a IC virou 19 em vez de 27;
+2. **variar o enquadramento**: quem pergunta (farmácia clínica, nutricionista, auditoria
+   de prontuário, sala de hemodiálise) e **como o dado é expresso** (estágio 3b,
+   creatinina, clearance — não sempre a TFGe em mL/min/1,73 m²).
+
+⚠️ **Planejar pelo número de decisões clínicas do documento, não por uma meta redonda.**
+Foi por isso que o lote pedido saiu com **62** questões.
+
 ## 📌 QUESTÃO NOVA NASCE ANCORADA EM DIRETRIZ DE 2026 (2026-08-21)
 
 Regra do professor: *"priorizar questões sobretudo referentes a consensos/diretrizes

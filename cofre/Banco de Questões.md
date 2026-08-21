@@ -177,6 +177,82 @@ ordena por **`md5(v::text)`** — **são ordenações diferentes**, cada caminho
 distinto. Pela regra do servidor (a que vale), das 50 atuais **43 permanecem** e **7 novas
 entram**. Pela do cliente, 36 e 14. Nada se perde; o recorte apenas se renova.
 
+## Lote SBD 2026 ancorado em diretriz — 62 questões (2026-08-21)
+
+Pedido: *"Pode fazer as questões sim, citando a fonte, mas não precisa citar o grau no
+comentário. 20% questões de nível médio e 80% de nível difícil"*. Primeiro lote a nascer
+sob a regra de ancoragem de 2026-08-21 (ver [[Convenções de Trabalho]]): a vinheta foi
+derivada **da diretriz**, não escrita antes e respaldada depois.
+
+Banco **2.903 → 2.965**. Códigos **`ENDODIRECT-2006` … `ENDODIRECT-2067`**, todas
+`area:'Diabetes'`, `inst:'Endodirect'`, `ano:2026`.
+
+| fonte (Diretriz SBD 2026) | questões | códigos |
+|---|---:|---|
+| Manejo do paciente DM2 com insuficiência cardíaca | 19 | 2006–2024 |
+| Manejo do Diabetes Mellitus Tipo 2 | 15 | 2025–2039 |
+| Doença renal do diabetes | 28 | 2040–2067 |
+
+- **Mistura de dificuldade: 13 `intermediario` (21,0%) · 49 `avancado` (79,0%)** — o
+  pedido era 20/80. Não há tier acima de `avancado` (ver a seção do lote de 500).
+- Gabarito **A=16 B=16 C=15 D=15**.
+- **Fonte citada em 62/62 comentários**; **grau de recomendação citado em 0** — o
+  professor pediu a fonte sem o grau, e isso foi medido, não presumido.
+
+### 🧨 `--reequilibrar` apagava a dificuldade em silêncio
+`checa.js` carimbava `dificuldade='avancado'` na entrada e, na reescrita, **apagava os
+campos que ele mesmo carimba** (`delete c.area; delete c.inst; delete c.ano; …`). Isso
+estava certo enquanto a dificuldade era uniforme. Com a mistura 20/80 **vinda do autor**,
+o rebalanceamento do gabarito zerou os 13 `intermediario` — sem erro, sem aviso.
+
+É **o mesmo defeito do `lbl[d]||'M'` do `diffTag`, só que na entrada**: valor ausente vira
+padrão silencioso em vez de falha. Corrigido — a dificuldade agora só recebe padrão quando
+o autor não declarou (`if (!q.dificuldade) q.dificuldade = 'avancado';`) e **não é mais
+apagada na reescrita**. Conferido depois: a mistura sobrevive a um `--reequilibrar`.
+
+### Lote ancorado em diretriz estreita bate no corte de dedup por construção
+Escritas de um documento só, as vinhetas compartilham o vocabulário obrigatório dele.
+Duplicatas **internas** na primeira redação: **18 no lote de IC** (27 vinhetas) e **28 no
+de DRD** — neste, *todos* os enunciados abriam com o mesmo esqueleto (*"Paciente com
+doença renal do diabetes e filtração glomerular estimada de X mL/min/1,73 m²"*).
+
+A correção **não foi afrouxar o corte**. Foi:
+1. **IC: 27 → 19 questões**, uma por decisão clínica distinta — daí o lote ter 62 e não 100.
+2. **DRD: 21 enunciados reescritos**, variando o cenário (farmácia clínica, nutricionista,
+   auditoria de prontuário, sala de hemodiálise) e **como a função renal é expressa**
+   (estágio 3b, creatinina, clearance) em vez de sempre a TFGe em mL/min/1,73 m².
+
+⚠️ Registro para o próximo lote ancorado: **mais questões por documento força quase-clone**.
+O limite não é a diretriz, é o número de decisões clínicas distintas que ela contém.
+
+### Dedup contra o banco inteiro: 62 × 2.903 = 180.000 pares
+Tokenizador `igTokensStem` inline em SQL (o `pg_temp` **não sobrevive entre chamadas** do
+`execute_sql` — cada chamada é uma sessão nova). Conferido contra o **JS real lido do
+`index.html`**, não contra uma reescrita de memória: os três pares de maior nota bateram
+com 4 casas.
+
+| par | nota |
+|---|---:|
+| `ENDODIRECT-2013` × `ENDODIRECT-1842` | 0,2553 |
+| `ENDODIRECT-2042` × `TEEM2026-037` | 0,2250 |
+| `ENDODIRECT-2020` × `ENDODIRECT-1543` | 0,2222 |
+
+Maior de todos **0,2553**, abaixo do corte de 0,32 e também da faixa 0,28–0,32 que exige
+olho humano. **Nenhuma reescrita foi necessária.** 0 colisão de `code` (o SRS está a salvo).
+
+### Merge e rollback
+`UPDATE ... jsonb_set(payload,'{provas}', (payload->'provas') || <agg order by code>)`.
+Conferência dos **dois lados**, por hash e não por contagem:
+- as **2.903 antigas** ficaram byte a byte iguais ao backup;
+- as **62 novas** hasheiam igual ao arquivo local (`md5` de stem+4 alternativas+gabarito+
+  dificuldade+comentário = `66f71d0b0c10c5eb4c4f5cf1f328de11` nos dois lados).
+
+Payload **5.146 → 5.181 kB**. Entrega pela RPC: `plano` **2.023 → 2.085**, `curso:endoteem`
+base 1.831, TEEM 880, **0 questões sem instituição**.
+
+- 💾 **`bkp_provas_20260821_sbd`** guarda o array anterior (2.903), sem grant para
+  `anon`/`authenticated`. Único caminho de rollback. `tmp_sbd_2026` dropada.
+
 ## Estado do banco de residência (2026-07-21) — total 254 questões
 Banco geral: **2401** questões (`payload.provas`). Das quais **254 de residência** (`origem='provas_residencia_drive'`), sourceIds distintos, 0 answer-fora, 0 sem-comentário.
 - **Lote 1 (124):** Einstein 2023/24/25, Enamed 2025, ENARE 2023/24, IAMSPE 2023/25, Santa Casa-SP 2025, SUS-SP 2023/25, USP-RP 2023/24/25, USP-SP 2023/24/25.
