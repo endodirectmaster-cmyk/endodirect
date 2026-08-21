@@ -471,6 +471,19 @@ try {
   fail('peneira de citação truncada com comportamento errado:\n' + out);
 }
 
+// ── POPULAÇÃO na guarda de âncora ambígua: "gravidade" não é "grávida" ───────
+// Mesma família de defeito do CAUDA_RUIM acima: um radical curto casando palavra
+// que não tem nada a ver. `gravid` marcava como DE RISCO 80 afirmações do acervo
+// que falam de GRAVIDADE do quadro, e — pior — NÃO casava "grávida" acentuada,
+// deixando passar exatamente o caso que a guarda existe para pegar.
+try {
+  execFileSync(process.execPath, [path.join('scripts', 'test-gravidade-nao-e-gestacao.js')], { stdio: 'pipe' });
+  ok('âncora ambígua: gravidade do quadro não vira gestante, e grávida acentuada não escapa');
+} catch (e) {
+  const out = (e.stdout ? e.stdout.toString() : '') + (e.stderr ? e.stderr.toString() : '');
+  fail('regex de população da confere-ancoragem com comportamento errado:\n' + out);
+}
+
 // ⚠️ RESSALVAS × NÚCLEO. O campo `conflito` de um extrato é uma FOTOGRAFIA do
 //     núcleo no dia da leitura, e a varredura do acervo CORRIGE o núcleo — é
 //     metade do objetivo dela. Toda correção envelhece a ressalva do artigo que

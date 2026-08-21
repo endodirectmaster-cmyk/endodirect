@@ -58,7 +58,18 @@ if (!fs.existsSync(dirExt)) { console.error('✗ não existe ' + dirExt); proces
 // transforma dose pediátrica em dose de adulto. O que separa os dois casos é a
 // afirmação falar de população: se o fato se diz pediátrico e o texto que o
 // prova também existe na seção de adulto, é exatamente o defeito conhecido.
-const POPULACAO = /\b(crianc|criança|pediatr|adolescent|adult|gestant|gravid|idos|neonat|lactent)/i;
+//
+// ⚠️ DOIS DEFEITOS NO MESMO RADICAL (2026-08-21). O radical de grávida
+// e o de gravidade são o mesmo até a 6ª letra, e "gravidade" é palavra corrente
+// em texto clínico — escala de gravidade, gravidade do quadro. Medido no acervo
+// inteiro: 80 afirmações casavam SÓ por isso, nenhuma sobre gestação, enquanto
+// as 1.147 legítimas continuam casando com o lookahead. Era acusação falsa, e
+// acusação falsa em guarda de CI ensina a ignorar a guarda.
+//
+// E o buraco oposto, que o teste de mutação achou: `gravid` sem acento NÃO casa
+// "grávida" — que é como a palavra é escrita. A guarda deixava passar o caso
+// que ela existe para pegar. Por isso `gr[áa]vid`, e não só o lookahead.
+const POPULACAO = /\b(crianc|criança|pediatr|adolescent|adult|gestant|gr[áa]vid(?!ade)|idos|neonat|lactent)/i;
 
 // Conta ocorrências sem regex (o texto tem metacaracteres a rodo).
 function ocorrencias(hay, alvo) {
