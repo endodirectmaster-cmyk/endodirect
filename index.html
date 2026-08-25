@@ -2129,6 +2129,9 @@ input.dmm-inp-subsub{flex:1;min-width:0;background:transparent;color:var(--t2);f
         <button class="sb-item" data-p="favs">⭐ Favoritos</button>
         <button class="sb-item" data-p="podcast">🎧 Podcasts</button>
         <button class="sb-item" data-p="cursos">🎬 Cursos</button>
+        <!-- Só aparece quando o curso está LIGADO no catálogo (ver emcAplicarNav),
+             como o `sb-aovivo`. Estreia 02/09; até lá o professor mantém desligado. -->
+        <button class="sb-item" data-p="emc" id="sb-emc" style="display:none">🎓 Educação Médica Continuada</button>
         <button class="sb-item" data-p="crono">📅 Cronograma</button>
         <button class="sb-item" data-p="sr">🔁 Revisão</button>
         <button class="sb-item" data-p="erros">📕 Caderno de erros</button>
@@ -6780,7 +6783,7 @@ function startGoogleOAuth(){
   });
 }
 
-var PANEL_LABELS={dash:'Dashboard',desemp:'Desempenho',plano:'Plano de estudo',quest:'Questões',qotd:'Questão do Dia',flash:'Flashcards',mmap:'Mapas Mentais',podcast:'Podcasts',cursos:'Cursos',crono:'Cronograma',sr:'Revisão',erros:'Caderno de erros',sim:'OSCE',simfull:'Simulado',calc:'Calculadoras',rx:'Prescrição Simulada',presc:'Consultório',art:'Resumidor',notas:'Caderno',favs:'Favoritos',mural:'Mural',aovivo:'Aula ao vivo',ref:'Diretrizes',resu:'Resumos',chat:'Chat IA',perfil:'Perfil',support:'Suporte',adm:'Painel Admin'};
+var PANEL_LABELS={dash:'Dashboard',desemp:'Desempenho',plano:'Plano de estudo',quest:'Questões',qotd:'Questão do Dia',flash:'Flashcards',mmap:'Mapas Mentais',podcast:'Podcasts',cursos:'Cursos',emc:'Educação Médica Continuada',crono:'Cronograma',sr:'Revisão',erros:'Caderno de erros',sim:'OSCE',simfull:'Simulado',calc:'Calculadoras',rx:'Prescrição Simulada',presc:'Consultório',art:'Resumidor',notas:'Caderno',favs:'Favoritos',mural:'Mural',aovivo:'Aula ao vivo',ref:'Diretrizes',resu:'Resumos',chat:'Chat IA',perfil:'Perfil',support:'Suporte',adm:'Painel Admin'};
 function closeMobileNav(){
   document.body.classList.remove('mobile-nav-open');
   var b=document.getElementById('btn-mobile-nav');
@@ -6906,6 +6909,19 @@ function consumeTrial(id){
 function canSeePanel(id){
   if(isAdminUser())return true;
   if(id==='presc'&&!prescAllowed())return false;
+  // ⚠️ EDUCAÇÃO MÉDICA CONTINUADA É PORTA DE ENTRADA, e por isso o PAINEL é aberto
+  // a todo mundo — inclusive à degustação já vencida, exatamente como o `aovivo`
+  // (decisão do professor em 06/08: "aberta para quem entrar na plataforma").
+  //
+  // O pedido de 24/08 foi: aula mensal só para o Gold, MAS a primeira liberada a
+  // quem se cadastrar, para converter. Se o painel fosse gateado, o não-assinante
+  // nem chegaria à aula grátis e o funil morreria antes de começar — `cursos` não
+  // está em DEGUSTACAO_PANELS, então era exatamente isso que aconteceria.
+  //
+  // ⚠️ ABRIR O PAINEL NÃO ABRE O CONTEÚDO: cada aula continua passando por
+  // `aulaLiberada()`, que só entrega a marcada como amostra (`free`) a quem não
+  // tem o curso. O não-assinante vê a aula 1 e mais nada.
+  if(id==='emc')return true;
   if(isDegustacao()){
     // Após os 7 dias, a degustação encerra: nenhuma funcionalidade (só conta/suporte → upsell).
     // ⚠️ `aovivo` sobrevive ao fim da degustação DE PROPÓSITO: a aula ao vivo é a
@@ -7109,6 +7125,7 @@ function applyProfileMenuLayout(){
 function markLockedNavItems(){
   try{updatePlanBadge();}catch(e){}
   var sp=document.getElementById('sb-presc');if(sp)sp.style.display=prescAllowed()?'':'none';
+  try{emcAplicarNav();}catch(e){}
   try{applyProfileMenuLayout();}catch(e){}
   document.querySelectorAll('#sb-aluno .sb-item[data-p]').forEach(function(b){
     var locked=!canSeePanel(b.dataset.p);
@@ -7315,14 +7332,20 @@ function goPanel(id){
   // nele a cada reload, só para ser desviado de novo.
   if(id==='aovivo'&&!AO_VIVO_ATIVO)id='dash';
   if(!canSeePanel(id)){showLockedPanel(id);return;}
+  // `emc` é ITEM DE MENU próprio e PAINEL REAPROVEITADO: abre o de Cursos já
+  // filtrado no curso da Educação Médica Continuada. Duplicar o painel
+  // duplicaria player, progresso e a regra de amostra grátis — três lugares para
+  // divergir. `menuAlvo` guarda o item que fica aceso e o que volta no reload.
+  var menuAlvo=id;
+  if(id==='emc'){cursoFilter='emc';cursoMod='';id='cursos';}
   try{deviceTickThrottled();}catch(e){} // valida o limite de dispositivos a cada navegação (throttle 4s)
-  try{if(currentUser&&currentUser.role!=='admin')lsSet('last_panel',id);}catch(e){} // lembra o painel p/ restaurar no reload
+  try{if(currentUser&&currentUser.role!=='admin')lsSet('last_panel',menuAlvo);}catch(e){} // lembra o item do MENU p/ restaurar no reload
   document.querySelectorAll('.panel').forEach(function(p){p.classList.remove('on');});
   var el=document.getElementById('panel-'+id);
   if(el)el.classList.add('on');
-  document.querySelectorAll('.sb-item[data-p]').forEach(function(b){b.classList.toggle('on',b.dataset.p===id);});
+  document.querySelectorAll('.sb-item[data-p]').forEach(function(b){b.classList.toggle('on',b.dataset.p===menuAlvo);});
   var bc=document.getElementById('tb-bc');
-  if(bc)bc.textContent=PANEL_LABELS[id]||id;
+  if(bc)bc.textContent=PANEL_LABELS[menuAlvo]||menuAlvo;
   if(id==='dash')refreshDash();
   try{var _qm=document.getElementById('qotd-modal');if(_qm&&id!=='mural')_qm.style.display='none';if(id==='mural')renderQotd();}catch(e){}
   // A enquete tem de ser desenhada ao ABRIR o Mural: ele e a tela de entrada do
@@ -8900,6 +8923,23 @@ function cursoAtivo(slug){
   var cat=Array.isArray(catalogoCursos)?catalogoCursos:[];
   for(var i=0;i<cat.length;i++)if(cat[i]&&cat[i].slug===slug)return cat[i].ativo!==false;
   return true;   // fora do catálogo: não é caso de esconder (nome de piso cuida do resto)
+}
+// Item de menu da Educação Médica Continuada: nasce escondido e só aparece
+// quando o curso está LIGADO no catálogo — mesmo padrão do `sb-aovivo`, que
+// também só existe no menu quando há aula. Enquanto o professor não liga o
+// curso (estreia 02/09), o aluno não vê item para um lugar vazio.
+// ⚠️ AQUI O PADRÃO SE INVERTE em relação a `cursoAtivo()`. Lá, curso ausente do
+// catálogo devolve `true` — não se esconde o que não se conhece. Aqui não: o
+// menu só mostra o item se a linha ESTIVER no catálogo e ligada. Com o catálogo
+// ainda não carregado (rede lenta, primeira pintura), `cursoAtivo` devolveria
+// `true` e o item apareceria ANTES da estreia, levando a uma tela vazia. Item de
+// menu que não leva a lugar nenhum é pior do que item ausente.
+function emcAplicarNav(){
+  var b=document.getElementById('sb-emc');if(!b)return;
+  if(isAdminUser()){b.style.display='';return;}
+  var cat=Array.isArray(catalogoCursos)?catalogoCursos:[],linha=null;
+  for(var i=0;i<cat.length;i++)if(cat[i]&&cat[i].slug==='emc'){linha=cat[i];break;}
+  b.style.display=(linha&&linha.ativo!==false)?'':'none';
 }
 function cursoVisivel(slug){
   if(!slug)return true;
@@ -15461,6 +15501,7 @@ function loadCursoCatalogo(cb){
   if(!client){if(cb)cb();return;}
   client.from('endodirect_cursos').select('*').order('ordem',{ascending:true}).then(function(res){
     if(!res.error&&Array.isArray(res.data))catalogoCursos=res.data;
+    try{emcAplicarNav();}catch(e){}
     if(cb)cb();
   },function(){if(cb)cb();});
 }
