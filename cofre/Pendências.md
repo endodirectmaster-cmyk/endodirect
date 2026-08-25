@@ -1,9 +1,28 @@
 ---
 tags: [cofre, pendencias]
-atualizado: 2026-08-21
+atualizado: 2026-08-25
 ---
 
 # Pendências
+
+## 📄 PDF DIGITALIZADO ENTRA POR AMOSTRA: 12 PÁGINAS, NÃO O CAPÍTULO INTEIRO (2026-08-25)
+
+O importador passou a **renderizar as páginas** quando o PDF não tem texto
+selecionável (ver Decisões), e com isso o arquivo grande deixou de ser recusado.
+Só que o orçamento de corpo da função serverless (~4,5 MB) limita o envio a
+**~10–12 páginas**: medido, uma diretriz de 20 páginas digitalizadas entrou com
+**10**. Para um capítulo de 46 páginas, isso é uma **amostra**, não o documento.
+
+A tela **diz quantas de quantas** foram lidas, então não há resumo silenciosamente
+parcial. Os caminhos para levantar isso, se o professor pedir, em ordem de custo:
+
+1. **Importar capítulo por capítulo** (funciona hoje, custo zero).
+2. Subir o PDF para armazenamento e ler no servidor, sem o teto de corpo.
+3. OCR no navegador antes de mandar (texto pesa muito menos que imagem).
+
+**Nada disso é urgente enquanto o site da diretriz oferecer o PDF com texto**
+— foi o que aconteceu com a SBD 2026 de DM2: a versão do site tem texto (1,06 MB,
+46 páginas, 132.591 chars) e entra inteira pelo caminho barato.
 
 ## ⚠️ 25 QUESTÕES DO ACERVO LEGADO COM ARTEFATO DE OCR (2026-08-21)
 
