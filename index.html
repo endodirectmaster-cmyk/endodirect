@@ -731,6 +731,16 @@ html[data-theme="light"] .mural-text .mural-h1,html[data-theme="light"] .mural-t
 .adm-table-head{font-size:.62rem;font-weight:800;text-transform:uppercase;letter-spacing:.08em;color:var(--t3);border-bottom:1px solid var(--bd);background:var(--surface)}
 .adm-table-row{min-height:58px;border-bottom:1px solid var(--bd)}
 .adm-table-row:last-child{border-bottom:0}
+/* Tabela com rolagem PRÓPRIA, para a página não crescer sem fim (pedido do
+   professor em 24/08, com 112 alunos na lista de Estudantes).
+   ⚠️ MODIFICADOR, e com dupla classe de propósito: `.adm-table` é usada por
+   várias telas do painel, e limitar a altura de todas mudaria o que ninguém
+   pediu. A dupla classe também vence a regra de `overflow-x` do mobile (mesma
+   especificidade), sem depender da ORDEM em que as regras aparecem.
+   O `overflow:auto` cobre os dois eixos, então no celular a rolagem lateral
+   continua funcionando no mesmo elemento — sem scroller aninhado. */
+.adm-table.adm-table-scroll{max-height:min(58vh,620px);overflow:auto}
+.adm-table.adm-table-scroll .adm-table-head{position:sticky;top:0;z-index:2}
 .adm-form{background:var(--surface);border:1px solid var(--bd);border-radius:var(--r);padding:1.1rem 1.3rem;margin-bottom:.9rem}
 .adm-field{margin-bottom:.75rem}
 .adm-field label{display:block;font-size:.62rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--t2);margin-bottom:3px}
@@ -13721,13 +13731,19 @@ function renderAdmSec(sec){
   if(sec==='provas')m.innerHTML=admProvasSecHTML();
   else if(sec==='cursos')m.innerHTML=admCursosHTML();
   else if(sec==='estudantes'){
-    // O bloco de RISCO vai no topo dos Estudantes: e onde o professor ja olha
-    // para ver quem sao os alunos, e nao acrescenta mais um item de menu.
-    m.innerHTML=admRiscoHTML()+admEstudantesHTML();loadAdmEstudantes();
+    // O bloco de RISCO fica nos Estudantes: e onde o professor ja olha para ver
+    // quem sao os alunos, e nao acrescenta mais um item de menu.
+    //
+    // ⚠️ VAI NO FIM DA PAGINA, nao no topo (pedido do professor em 24/08). Ele
+    // abre esta tela para ver a LISTA; dois blocos de alerta antes do titulo
+    // empurravam a lista para baixo da dobra. Embrulhados em `.adm-pc` para
+    // alinhar com a tabela — soltos, ficavam encostados na borda.
+    var riscoAoFim=function(){return '<div class="adm-pc">'+admRiscoHTML()+'</div>';};
+    m.innerHTML=admEstudantesHTML()+riscoAoFim();loadAdmEstudantes();
     carregaAdmRisco(function(){
       if(admCurrentSec!=='estudantes')return;
       var m2=document.getElementById('adm-main');
-      if(m2)m2.innerHTML=admRiscoHTML()+admEstudantesHTML();
+      if(m2)m2.innerHTML=admEstudantesHTML()+riscoAoFim();
       try{bindAdmSec('estudantes');}catch(e){}
     });
   }
@@ -13871,7 +13887,7 @@ function admEstudantesHTML(){
       +'</div></div>'
       +'<div class="adm-bigstat"><div class="adm-bigstat-n" style="color:var(--blue)">'+n(d.este_mes)+'</div><div class="adm-bigstat-l">Este mês</div></div>'
     +'</div>'
-    +'<div class="adm-table">'
+    +'<div class="adm-table adm-table-scroll">'
       +'<div class="adm-table-head"><span style="flex:2.2">Estudante</span><span style="flex:2.5">E-mail</span><span style="flex:1.2">Plano</span><span style="flex:1.1">Cadastro</span><span style="flex:1.2">Último acesso</span><span style="flex:1.1">Status</span></div>'
       +'<div id="adm-est-rows">'+admEstRowsHTML(admEstSearch)+'</div>'
     +'</div>'
