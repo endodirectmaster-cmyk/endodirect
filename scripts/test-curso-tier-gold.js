@@ -129,5 +129,53 @@ for (const [nome, mut] of MUTANTES) {
   if (!pegou) falhas.push('mutação NÃO detectada: ' + nome);
 }
 
+// ── O ITEM DE MENU e o PORTÃO DO PAINEL ─────────────────────────────────────
+// ⚠️ AQUI O FUNIL VIVE OU MORRE. O painel `cursos` NÃO está em
+// DEGUSTACAO_PANELS: se a Educação Médica Continuada dependesse dele, quem está
+// na degustação nem abriria a tela — e a "primeira aula grátis para quem se
+// cadastrar" não seria alcançável por ninguém que não assina.
+{
+  const src = html;
+  ok(/data-p="emc"[^>]*id="sb-emc"/.test(src) || /id="sb-emc"[^>]*data-p="emc"/.test(src),
+    'sumiu o item de menu da Educação Médica Continuada');
+  ok(/emc:'Educação Médica Continuada'/.test(src), 'o painel emc ficou sem rótulo (o breadcrumb mostraria "emc")');
+
+  // canSeePanel('emc') tem de ser TRUE mesmo na degustação vencida.
+  const ctx = vm.createContext({});
+  vm.runInContext(
+    'function isAdminUser(){return false;}function prescAllowed(){return false;}\n'
+    + 'function isDegustacao(){return true;}function degExpired(){return true;}\n'
+    + 'function muralTrialActive(){return false;}\n'
+    + 'var DEGUSTACAO_PANELS={};var TRIAL_PANELS={};function trialLeft(){return 0;}\n'
+    + corpo('canSeePanel'), ctx);
+  ok(ctx.canSeePanel('emc') === true,
+    '⚠️ o painel da EMC fechou para a degustação — o não-assinante não chega à aula grátis e o funil morre');
+  ok(ctx.canSeePanel('cursos') === false,
+    'o painel Cursos comum deveria seguir fechado na degustação vencida (só a EMC é porta de entrada)');
+
+  // O item do menu: só aparece com a linha NO catálogo e LIGADA.
+  function navVisivel(catalogo, admin) {
+    const c2 = vm.createContext({});
+    vm.runInContext(
+      'var catalogoCursos=' + JSON.stringify(catalogo) + ';\n'
+      + 'function isAdminUser(){return ' + (admin ? 'true' : 'false') + ';}\n'
+      + 'var _display=null;\n'
+      + 'var document={getElementById:function(){return {style:{set display(v){_display=v;},get display(){return _display;}}};}};\n'
+      + corpo('emcAplicarNav') + '\nemcAplicarNav();', c2);
+    return c2._display === '';
+  }
+  ok(navVisivel([{ slug: 'emc', ativo: true }]) === true, 'curso ligado e o item do menu não apareceu');
+  ok(navVisivel([{ slug: 'emc', ativo: false }]) === false, 'curso DESLIGADO e o item do menu apareceu — estreia vazada');
+  ok(navVisivel([]) === false,
+    '⚠️ catálogo ainda não carregado e o item apareceu — levaria a uma tela vazia antes da estreia');
+  ok(navVisivel([], true) === true, 'o professor (admin) precisa ver o item para preparar a estreia');
+
+  // goPanel: `emc` reaproveita o painel de Cursos, já filtrado.
+  const gp = src.slice(src.indexOf('function goPanel(id){'), src.indexOf('function goPanel(id){') + 1400);
+  ok(/if\(id==='emc'\)\{cursoFilter='emc';/.test(gp),
+    'goPanel deixou de filtrar o curso ao abrir a EMC — abriria o catálogo inteiro');
+  ok(/menuAlvo/.test(gp), 'goPanel perdeu o `menuAlvo`: o item aceso e o `last_panel` voltariam a ser o de Cursos');
+}
+
 if (falhas.length) { console.error('✗ ' + falhas.length + ' falha(s):\n - ' + falhas.join('\n - ')); process.exit(1); }
 console.log('✓ curso por tier: Gold entra, standard e degustação não, amostra grátis abre só a aula liberada, e sem catálogo o portão fecha');
