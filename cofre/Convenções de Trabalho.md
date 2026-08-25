@@ -1,9 +1,36 @@
 ---
 tags: [cofre, processo]
-atualizado: 2026-08-21
+atualizado: 2026-08-25
 ---
 
 # Convenções de Trabalho
+
+## 🧨 O TESTE QUE EU ESCREVI PASSOU EM CINCO MUTAÇÕES (2026-08-25)
+
+Escrevi um teste novo para o importador de PDF, rodei, verde. Depois mutei o
+`index.html` **de verdade**, doze vezes, e **cinco mutações passaram** — o teste
+estava cego justamente no que dizia vigiar. Os quatro furos, todos reaproveitáveis:
+
+1. **`indexOf(a) < indexOf(b)` é VERDADEIRO quando `a` some.** Eu afirmava
+   "o fundo branco é pintado antes do render" com `indexOf('fundo') < indexOf('render')`.
+   Apagar o fundo dá `-1 < 0` → passa. **Ordem exige presença primeiro.**
+2. **Texto no fonte prova que o código está ESCRITO, não que é ALCANÇADO.** Eu
+   afirmava `/pdfPaginasJpeg\(pdf/`; desviar o fluxo antes da chamada deixava a
+   linha escrita e o caminho morto. Afirmar o que o fluxo **devolve** pega.
+3. **Proibir a grafia antiga do defeito não proíbe o defeito.** Eu proibia
+   `.catch(function(){return null;})`; um `function(){return '';}` no lugar do
+   handler faz o mesmo estrago com outra escrita. **Afirmar o mecanismo pela
+   positiva** — "o handler GRAVA o motivo" — pega as duas.
+4. **"Pelo menos N ocorrências" autoriza apagar uma.** Contando `>=3` num código
+   com 4 chamadas, apagar de uma passava. A conta virou **exata e casada**:
+   toda chamada à decisão carrega o motivo, `comMotivo === chamadas`.
+
+E o quinto era meu: um mutante **mal construído**, que deixou no fonte a string
+que o teste procurava. **Mutante que não remove o alvo não testa nada** — antes de
+concluir "teste cego", conferir se a mutação de fato mudou o que o teste lê.
+
+Regra que fica: **teste novo só conta depois de mutar o arquivo real**. Verde na
+primeira rodada é a hipótese, não o resultado.
 
 ## 🧨 CONTAR BLOCO NÃO VÊ CONTEÚDO ENTRANDO NO BLOCO (2026-08-21)
 

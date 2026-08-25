@@ -5922,16 +5922,88 @@ function ensurePdfJs(){
   });
   return __pdfjsP;
 }
+// Abre o PDF UMA VEZ. A mesma instância serve para extrair o texto e, se o
+// documento for digitalizado, para renderizar as páginas em imagem — reabrir não
+// é opção: o pdf.js TRANSFERE o ArrayBuffer que recebe e o original fica vazio.
+function abrirPdf(arrayBuffer){
+  return ensurePdfJs().then(function(lib){return lib.getDocument({data:arrayBuffer}).promise;});
+}
+// Texto de um PDF já aberto. Limita a 60 páginas.
+function pdfTexto(pdf,maxPag){
+  var max=Math.min(pdf.numPages||0,maxPag||60),pages=[],chain=Promise.resolve();
+  for(var i=1;i<=max;i++){(function(p){chain=chain.then(function(){return pdf.getPage(p).then(function(page){return page.getTextContent().then(function(c){pages.push((c.items||[]).map(function(it){return it.str;}).join(' '));});});});})(i);}
+  return chain.then(function(){return pages.join('\n').replace(/\s+\n/g,'\n').trim();});
+}
 // Extrai o texto de um PDF (ArrayBuffer) no navegador — evita enviar o binário
 // (que estoura o limite de corpo da função serverless). Limita a 60 páginas.
 function extractPdfText(arrayBuffer){
-  return ensurePdfJs().then(function(lib){
-    return lib.getDocument({data:arrayBuffer}).promise.then(function(pdf){
-      var max=Math.min(pdf.numPages||0,60),pages=[],chain=Promise.resolve();
-      for(var i=1;i<=max;i++){(function(p){chain=chain.then(function(){return pdf.getPage(p).then(function(page){return page.getTextContent().then(function(c){pages.push((c.items||[]).map(function(it){return it.str;}).join(' '));});});});})(i);}
-      return chain.then(function(){return pages.join('\n').replace(/\s+\n/g,'\n').trim();});
+  return abrirPdf(arrayBuffer).then(function(pdf){return pdfTexto(pdf);});
+}
+// PDF DIGITALIZADO: renderiza as páginas em JPEG para a IA LER a imagem.
+//
+// ⚠️ Este é o caminho que faltava em 25/08/2026. Sem texto selecionável, a única
+// saída era mandar o PDF inteiro em base64 — e PDF digitalizado é grande JUSTO
+// porque é imagem, então batia no teto de ~3 MB e a importação morria. As duas
+// coisas têm a mesma causa e chegavam juntas; a saída tinha de ser renderizar.
+//
+// O orçamento é em BYTES, não em número fixo de páginas: página densa pesa mais,
+// e o que não pode estourar é o corpo da função serverless (~4,5 MB). A largura
+// para em 1400 px porque a API de visão já reduz acima de ~1568 px — resolução
+// extra vira upload jogado fora.
+//
+// ⚠️ QUALIDADE 0,72 É ESCOLHA CLÍNICA, NÃO ESTÉTICA. Comprimir mais caberia mais
+// página, e é a troca errada: o que se lê aqui é dose, alvo e corte de exame —
+// "10 mg" lido errado vale menos que dez páginas a menos. Quantas páginas
+// entraram é dito ao professor no fim; qualidade ruim não avisa ninguém.
+// Medido em Chromium real (25/08/2026) com uma diretriz de 20 páginas
+// digitalizadas em 6,9 MB: 10 páginas, 3.092.336 chars de base64, 5,0 s.
+var PDF_IMG_LARGURA=1400;
+var PDF_IMG_ORCAMENTO=3400000; // soma dos base64, em chars (~3,4 MB de corpo)
+var PDF_IMG_MAX_PAG=12;
+function pdfPaginasJpeg(pdf,onProgress){
+  var alvo=Math.min(pdf.numPages||0,PDF_IMG_MAX_PAG),imgs=[],total=0,chain=Promise.resolve();
+  for(var i=1;i<=alvo;i++){(function(p){
+    chain=chain.then(function(){
+      if(total>=PDF_IMG_ORCAMENTO)return;
+      return pdf.getPage(p).then(function(page){
+        var base=page.getViewport({scale:1});
+        var escala=Math.min(2,PDF_IMG_LARGURA/(base.width||PDF_IMG_LARGURA));
+        var vp=page.getViewport({scale:escala});
+        var cv=document.createElement('canvas');
+        cv.width=Math.max(1,Math.round(vp.width));cv.height=Math.max(1,Math.round(vp.height));
+        var ctx=cv.getContext('2d');
+        // JPEG não tem canal alfa: sem pintar o fundo, o transparente do PDF sai PRETO.
+        ctx.fillStyle='#ffffff';ctx.fillRect(0,0,cv.width,cv.height);
+        return page.render({canvasContext:ctx,viewport:vp}).promise.then(function(){
+          var b64=String(cv.toDataURL('image/jpeg',0.72)||'').split(',')[1]||'';
+          cv.width=cv.height=1; // solta o bitmap: 12 canvases grandes vivos estouram a memória do navegador
+          if(!b64)return;
+          if(imgs.length&&total+b64.length>PDF_IMG_ORCAMENTO)return; // a 1ª entra sempre; a partir daí, só o que cabe
+          imgs.push(b64);total+=b64.length;
+          if(onProgress)onProgress(imgs.length,alvo);
+        });
+      });
     });
-  });
+  })(i);}
+  return chain.then(function(){return imgs;});
+}
+function pdfMB(b64len){return (b64len*3/4/1048576).toFixed(1);}
+// Por qual caminho o PDF vai para a IA. Está separada do fluxo assíncrono de
+// propósito: é a REGRA que falhou em 25/08/2026, e regra escondida em callback
+// não se testa. Recebe o que já se sabe e devolve a rota — nada de I/O.
+//
+// `motivo` é por que o texto não serviu. Ele sobrevive até a mensagem de erro:
+// antes, o `catch` engolia a causa e o professor lia "PDF muito grande" quando o
+// tamanho era consequência, não o problema.
+var PDF_B64_MAX=4000000; // base64 (~3 MB de arquivo) — acima disso o corpo da função estoura
+function pdfRotaDeLeitura(r){
+  r=r||{};
+  var pre=r.motivo?(r.motivo+'. '):'';
+  if(String(r.texto||'').replace(/\s/g,'').length>=200)return {via:'texto'};
+  if((r.paginas||0)>0)return {via:'imagens'};
+  if(!r.base64Len)return {via:'erro',erro:pre+'Não consegui ler este PDF.'};
+  if(r.base64Len>PDF_B64_MAX)return {via:'erro',erro:pre+'E o arquivo tem '+pdfMB(r.base64Len)+' MB — não cabe inteiro no pedido (teto ~3 MB). Baixe o PDF com texto selecionável no site da diretriz, use um arquivo menor, ou cole o conteúdo nos campos.'};
+  return {via:'documento'};
 }
 // Lê um arquivo (PDF/TXT/imagem) para alimentar a IA. PDF e TXT viram TEXTO
 // (extração no navegador — evita o limite de corpo da função serverless);
@@ -16286,7 +16358,7 @@ function bindAdmSec(sec){
       if(f.size>30*1024*1024){notify('PDF muito grande (máx 30 MB).','err');return;}
       var st=document.getElementById('adm-ref-pdf-status');
       admRefPdfFile=f; // guarda o arquivo p/ extrair texto no navegador (pdf.js)
-      var rdr=new FileReader();rdr.onload=function(ev){admRefPdfB64=String(ev.target.result).split(',')[1];admRefPdfName=f.name;if(st){st.textContent='✓ '+f.name;}};rdr.readAsDataURL(f);
+      var rdr=new FileReader();rdr.onload=function(ev){admRefPdfB64=String(ev.target.result).split(',')[1];admRefPdfName=f.name;if(st){st.textContent='✓ '+f.name;st.style.color='';}};rdr.readAsDataURL(f);
     });
     var rPdfGen=document.getElementById('btn-adm-ref-pdfgen');
     if(rPdfGen)rPdfGen.addEventListener('click',function(){
@@ -16301,29 +16373,54 @@ function bindAdmSec(sec){
         return;
       }
       var st=document.getElementById('adm-ref-pdf-status');
-      rPdfGen.disabled=true;rPdfGen.innerHTML=ldHTML('Lendo PDF...');if(st)st.textContent='';
+      rPdfGen.disabled=true;rPdfGen.innerHTML=ldHTML('Lendo PDF...');if(st){st.textContent='';st.style.color='';}
       var SYS='Você é professor de endocrinologia. A partir de uma diretriz/artigo, produza material de estudo claro, correto e fiel ao documento, em português do Brasil.';
       var FMT='Retorne APENAS JSON, sem texto fora do JSON, no formato: {"titulo":"título curto","fonte":"sociedade/autor","ano":"ano","resumo":"resumo descritivo bem estruturado em markdown simples (parágrafos, **negrito**, listas com -)","bullets":["ponto-chave"],"flashcards":[{"q":"pergunta curta","a":"resposta direta"}],"mapa":{"central":"tema central curto","nodes":[{"label":"ramo","children":[{"label":"subramo","children":["detalhe concreto"]}]}]}}. Use 5 a 8 bullets, 5 a 8 flashcards e um mapa COMPLETO em 3 níveis (5 a 7 ramos; cada ramo com 3 a 5 subramos; onde couber, cada subramo com 2 a 4 sub-subramos, cada um com um dado concreto). Não invente dados fora do documento.';
-      // Documento (imagem/base64) só p/ PDF pequeno: o corpo da função serverless
-      // tem limite (~4,5 MB), e o base64 infla ~33% → PDF até ~3 MB.
-      function fromBase64(){
-        if(!admRefPdfB64)throw new Error('Não consegui extrair texto deste PDF.');
-        if(admRefPdfB64.length>4000000)throw new Error('PDF muito grande para leitura por imagem. Use um PDF com texto selecionável, ou um arquivo menor (até ~3 MB), ou cole o conteúdo nos campos.');
+      // Três caminhos, nesta ordem: TEXTO extraído no navegador (o normal),
+      // PÁGINAS RENDERIZADAS em imagem (PDF digitalizado) e, por último, o PDF
+      // inteiro em base64 — este só serve abaixo de ~3 MB, porque o corpo da
+      // função serverless tem limite (~4,5 MB) e o base64 infla ~33%.
+      var pdfMotivo='',pdfPaginasLidas=0,pdfTotalPaginas=0;
+      function viaDocumento(rota){
+        if(rota.via==='erro')throw new Error(rota.erro);
         if(st)st.textContent='Gerando com IA… (artigos longos podem levar até ~2 min)';
         return aiRequest({system:SYS,prompt:'Leia o documento e '+FMT,documentBase64:admRefPdfB64,mediaType:'application/pdf',maxTokens:8000});
       }
       var task;
       if(admRefPdfFile&&admRefPdfFile.arrayBuffer){
         if(st)st.textContent='Extraindo texto do PDF…';
-        task=admRefPdfFile.arrayBuffer().then(extractPdfText)
-          .then(function(t){return String(t||'').replace(/[ \t]+/g,' ').slice(0,90000);}) // 90k chars ≈ ~22k tokens: cobre o essencial de um artigo/diretriz e reduz o tempo de leitura da IA
-          .catch(function(){return null;}) // extração falhou → tenta documento
-          .then(function(text){
-            if(text&&text.replace(/\s/g,'').length>=200){if(st)st.textContent='Gerando com IA… (artigos longos podem levar até ~2 min)';return aiRequest({system:SYS,prompt:FMT+'\n\nTEXTO DO DOCUMENTO:\n'+text,maxTokens:8000});}
-            return fromBase64(); // PDF escaneado/sem texto selecionável
+        task=admRefPdfFile.arrayBuffer().then(abrirPdf).then(function(pdf){
+          pdfTotalPaginas=pdf.numPages||0;
+          return pdfTexto(pdf).then(
+            function(t){return String(t||'').replace(/[ \t]+/g,' ').slice(0,90000);}, // 90k chars ≈ ~22k tokens: cobre o essencial de um artigo/diretriz e reduz o tempo de leitura da IA
+            function(e){pdfMotivo='não consegui ler o texto do PDF ('+((e&&e.message)||'falha')+')';return '';}
+          ).then(function(text){
+            var rota=pdfRotaDeLeitura({texto:text,paginas:0,base64Len:(admRefPdfB64||'').length,motivo:pdfMotivo});
+            if(rota.via==='texto'){
+              if(st)st.textContent='Gerando com IA… (artigos longos podem levar até ~2 min)';
+              return aiRequest({system:SYS,prompt:FMT+'\n\nTEXTO DO DOCUMENTO:\n'+text,maxTokens:8000});
+            }
+            if(!pdfMotivo)pdfMotivo='PDF sem texto selecionável (digitalizado)';
+            if(st)st.textContent='PDF sem texto selecionável — convertendo páginas em imagem…';
+            return pdfPaginasJpeg(pdf,function(n,tot){if(st)st.textContent='Convertendo páginas em imagem… ('+n+'/'+tot+')';})
+              .then(function(imgs){return imgs;},function(){return [];})
+              .then(function(imgs){
+                var r2=pdfRotaDeLeitura({texto:'',paginas:imgs.length,base64Len:(admRefPdfB64||'').length,motivo:pdfMotivo});
+                if(r2.via!=='imagens')return viaDocumento(r2);
+                pdfPaginasLidas=imgs.length;
+                if(st)st.textContent='Gerando com IA a partir de '+imgs.length+' página(s)…';
+                return aiRequest({system:SYS,prompt:'Leia as páginas do documento e '+FMT,imagesBase64:imgs,mediaType:'image/jpeg',maxTokens:8000});
+              });
           });
+        },function(e){ // nem abrir o PDF deu certo: leitor não carregou, arquivo corrompido
+          pdfMotivo='não consegui abrir o PDF ('+((e&&e.message)||'falha')+')';
+          return viaDocumento(pdfRotaDeLeitura({texto:'',paginas:0,base64Len:(admRefPdfB64||'').length,motivo:pdfMotivo}));
+        });
       }else{
-        task=Promise.resolve().then(fromBase64);
+        pdfMotivo='o navegador não entregou o arquivo para leitura';
+        task=Promise.resolve().then(function(){
+          return viaDocumento(pdfRotaDeLeitura({texto:'',paginas:0,base64Len:(admRefPdfB64||'').length,motivo:pdfMotivo}));
+        });
       }
       task.then(function(raw){
         var d=parseJ(raw),partial=false;
@@ -16351,9 +16448,14 @@ function bindAdmSec(sec){
         }
         var pdfMapa=normDirMapa(d.mapa);
         if(pdfMapa){var mpEl=document.getElementById('adm-ref-mapa');if(mpEl)mpEl.value=mapaToText(pdfMapa);else if(admRefEdit!==null&&diretrizes[admRefEdit])diretrizes[admRefEdit].mapa=pdfMapa;}
-        if(st)st.textContent=partial?'✓ Gerado (parcial — resposta longa foi cortada). Revise e complete.':'✓ Gerado — revise e edite os campos.';
-        notify(partial?'Conteúdo gerado (parcial: a resposta foi longa e parte foi cortada). Revise e complete antes de salvar.':'Conteúdo gerado a partir do PDF. Revise e salve.',partial?'warn':'ok');
-      }).catch(function(e){var msg=(e&&e.message)||'falha';if(/\b413\b/.test(msg))msg='PDF muito grande. Use um PDF com texto selecionável ou um arquivo menor (até ~3 MB).';notify('Erro ao ler o PDF: '+msg,'err');if(st)st.textContent='';})
+        // PDF digitalizado: a IA leu IMAGENS de página, e nem sempre todas — o
+        // orçamento de corpo corta. Dizer QUANTAS de quantas é obrigação: um
+        // resumo de 12 de 46 páginas parece completo e não é.
+        var parcialPag=pdfPaginasLidas>0&&pdfTotalPaginas>pdfPaginasLidas;
+        var avisoPag=parcialPag?(' Li as '+pdfPaginasLidas+' primeiras de '+pdfTotalPaginas+' páginas (PDF sem texto selecionável) — confira o que ficou de fora.'):'';
+        if(st)st.textContent=(partial?'✓ Gerado (parcial — resposta longa foi cortada). Revise e complete.':'✓ Gerado — revise e edite os campos.')+avisoPag;
+        notify((partial?'Conteúdo gerado (parcial: a resposta foi longa e parte foi cortada). Revise e complete antes de salvar.':'Conteúdo gerado a partir do PDF. Revise e salve.')+avisoPag,(partial||parcialPag)?'warn':'ok');
+      }).catch(function(e){var msg=(e&&e.message)||'falha';if(/\b413\b/.test(msg))msg=(pdfMotivo?pdfMotivo+'. ':'')+'O pedido não coube no servidor. Use um PDF com texto selecionável, ou um arquivo menor.';notify('Erro ao ler o PDF: '+msg,'err');if(st){st.textContent='⚠️ '+msg;st.style.color='var(--red)';}})
       .then(function(){rPdfGen.disabled=false;rPdfGen.innerHTML='🤖 Gerar com IA';});
     });
     // Editar: edição INLINE (na própria tela), sem trocar para o formulário cheio.

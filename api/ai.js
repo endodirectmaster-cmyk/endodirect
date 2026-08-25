@@ -287,7 +287,16 @@ module.exports = async function handler(req, res) {
   // E ali a base profunda é apoio, não fundamento: a fonte daquele pedido é o
   // documento que ele acabou de mandar. Então o anexo manda, e o profundo recua
   // para o teto antigo, que conviveu com anexo o tempo todo sem incidente.
-  const temAnexo = !!(body.documentBase64 || body.url);
+  // ⚠️ PÁGINAS RENDERIZADAS contam como anexo — e contam por página. Um PDF
+  // digitalizado chega aqui como N imagens (index.html renderiza quando o PDF não
+  // tem texto selecionável). Cada página de ~1400x1980 custa ~3,7k tokens à API
+  // de visão: 12 páginas são ~44k tokens, mais que os 120k chars que o anexo
+  // fixo reservava. Cobrar por página é o que impede o contexto de estourar e a
+  // importação de falhar INTEIRA — que é o modo de falha que se quer evitar aqui.
+  const imagensPedidas = Array.isArray(body.imagesBase64)
+    ? body.imagesBase64.map((x) => String(x || '')).filter(Boolean).slice(0, 24)
+    : [];
+  const temAnexo = !!(body.documentBase64 || body.url || imagensPedidas.length);
   // ⚠️⚠️ E O ANEXO NÃO ERA O ÚNICO JEITO DE ESTOURAR — o `prompt` sozinho basta.
   // Medido em 09/08/2026, DEPOIS de eu subir o teto: `prompt` é cortado em
   // 200.000 caracteres (abaixo), o núcleo ocupa até 80.000 e o profundo até
@@ -303,7 +312,10 @@ module.exports = async function handler(req, res) {
   const CHARS_POR_TOKEN = 3.2;                 // conservador de propósito
   const RESERVA_SAIDA = 8000;                  // teto de `clampTokens`
   const ORCAMENTO_CHARS = Math.floor((200000 - RESERVA_SAIDA) * CHARS_POR_TOKEN);
-  const custoAnexo = temAnexo ? 120000 : 0;    // MAX_CHARS de lib/fetch-article
+  const CUSTO_POR_PAGINA = 12000;              // ~3,7k tokens x 3,2 chars/token
+  const custoAnexo = imagensPedidas.length
+    ? Math.max(120000, imagensPedidas.length * CUSTO_POR_PAGINA)
+    : (temAnexo ? 120000 : 0);                 // MAX_CHARS de lib/fetch-article
   // 200000 é o mesmo corte que o `prompt` sofre logo abaixo — medir o bruto
   // encolheria o profundo por causa de texto que nem chega a ser enviado.
   const custoPrompt = Math.min(String(body.prompt || '').length, 200000);
@@ -371,7 +383,14 @@ module.exports = async function handler(req, res) {
   // Imagens vão como bloco 'image'; PDF/texto como 'document'. (Antes era sempre
   // 'document', o que a Anthropic rejeita para media_type de imagem.)
   const isImage = /^image\//.test(mediaType);
-  const content = documentBase64
+  // Páginas de um PDF digitalizado: uma lista de blocos 'image' na ordem das
+  // páginas, seguida do pedido. `mediaType` vale para todas (o cliente manda JPEG).
+  const conteudoPaginas = imagensPedidas.length
+    ? imagensPedidas
+        .map((data) => ({ type: 'image', source: { type: 'base64', media_type: isImage ? mediaType : 'image/jpeg', data } }))
+        .concat([{ type: 'text', text: groundedPrompt || 'Analise estas paginas.' }])
+    : null;
+  const content = conteudoPaginas || (documentBase64
     ? [
         {
           type: isImage ? 'image' : 'document',
@@ -383,7 +402,7 @@ module.exports = async function handler(req, res) {
         },
         { type: 'text', text: groundedPrompt || 'Analise este documento.' }
       ]
-    : groundedPrompt;
+    : groundedPrompt);
 
   try {
     const model = pickModel(body.model);

@@ -512,6 +512,21 @@ try {
   fail('portão de acesso aos cursos com comportamento errado:\n' + out);
 }
 
+// ⚠️ IMPORTAR PDF. Em 25/08/2026 o professor gravou a tela importando a diretriz
+// SBD 2026 de DM2 e recebendo "PDF muito grande para leitura por imagem". O
+// tamanho era consequência: a extração de texto tinha falhado antes, e o `catch`
+// que a precedia apagava a causa. Pior, PDF digitalizado é grande PORQUE é
+// imagem — o único caso que precisava do fallback era exatamente o que ele
+// recusava. Agora as páginas são renderizadas no navegador; este teste guarda a
+// decisão, o orçamento de corpo e a honestidade da mensagem.
+try {
+  execFileSync(process.execPath, [path.join('scripts', 'test-import-pdf-digitalizado.js')], { stdio: 'pipe' });
+  ok('importar PDF: digitalizado grande vai pelas páginas renderizadas e o erro diz a causa real');
+} catch (e) {
+  const out = (e.stdout ? e.stdout.toString() : '') + (e.stderr ? e.stderr.toString() : '');
+  fail('importador de PDF das diretrizes com comportamento errado:\n' + out);
+}
+
 // ⚠️ RESSALVAS × NÚCLEO. O campo `conflito` de um extrato é uma FOTOGRAFIA do
 //     núcleo no dia da leitura, e a varredura do acervo CORRIGE o núcleo — é
 //     metade do objetivo dela. Toda correção envelhece a ressalva do artigo que

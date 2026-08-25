@@ -77,9 +77,21 @@ ok(/deepFor\(areaPedida, tetoDestePedido, areaPedida\)/.test(ai),
 // um PDF de diretriz estouram o contexto e a importação falha INTEIRA. Se alguém
 // remover esta linha para "simplificar", volta a falhar só em produção e só com
 // anexo — o pior tipo de defeito, porque o caminho comum continua verde.
-ok(/const temAnexo = !!\(body\.documentBase64 \|\| body\.url\)/.test(ai)
+ok(/const temAnexo = !!\(body\.documentBase64 \|\| body\.url \|\| imagensPedidas\.length\)/.test(ai)
   && /temAnexo \? TETO_COM_ANEXO : TETO_PROFUNDO/.test(ai),
-  '⚠️ sumiu a trava que recua o teto profundo quando há PDF ou URL no pedido — com anexo o contexto estoura');
+  '⚠️ sumiu a trava que recua o teto profundo quando há PDF, URL ou páginas renderizadas no pedido — com anexo o contexto estoura');
+// ⚠️ PÁGINA DE IMAGEM CUSTA POR PÁGINA (25/08/2026). PDF digitalizado passou a
+// chegar como N imagens renderizadas no navegador. Uma página de ~1400x1980 custa
+// ~3,7k tokens de visão; 12 páginas são ~44k tokens — mais que os 120.000 chars
+// que o anexo fixo reservava. Se voltar a ser valor fixo, o profundo pede espaço
+// que já foi gasto e o pedido falha INTEIRO, justamente na importação longa.
+ok(/CUSTO_POR_PAGINA = 12000/.test(ai)
+  && /imagensPedidas\.length\s*\r?\n?\s*\? Math\.max\(120000, imagensPedidas\.length \* CUSTO_POR_PAGINA\)/.test(ai),
+  '⚠️ as páginas de PDF digitalizado voltaram a custar um valor fixo no orçamento — 12 páginas custam ~44k tokens e estouram o contexto');
+// E elas têm de viajar como blocos 'image', na ordem das páginas. Como 'document'
+// a Anthropic recusa o media_type de imagem; fora de ordem, a IA lê o documento embaralhado.
+ok(/imagensPedidas\s*\r?\n?\s*\.map\(\(data\) => \(\{ type: 'image'/.test(ai),
+  'as páginas renderizadas têm de ir como blocos image, na ordem em que foram lidas');
 // ⚠️ E O ANEXO NÃO ERA O ÚNICO JEITO DE ESTOURAR. Medido em 09/08/2026, depois
 // de o teto profundo subir para 400k: `prompt` é cortado em 200.000 chars, o
 // núcleo ocupa até 80.000 e o profundo até 400.000 — a 3,2 chars/token isso dá
