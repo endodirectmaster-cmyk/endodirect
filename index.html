@@ -8886,18 +8886,53 @@ function isTestShowcase(){return String((currentUser&&currentUser.email)||'').to
 var SHOWCASE_ONLY_CURSOS={endoteem:1,hiperglicemia:1,lipides:1};
 // Se o CARD do curso aparece no catálogo do aluno. 'endo_essencial' aparece para
 // todos (bloqueado p/ não-Gold, com upsell); os demais só admin/demonstração.
+// Curso DESLIGADO no catálogo (`ativo=false`) — o professor prepara antes e
+// publica quando quiser.
+//
+// 🧨 O ALUNO ENXERGAVA CURSO DESLIGADO (achado em 24/08, ao criar a "Educação
+// Médica Continuada" desligada para estrear em 02/09). A RLS de
+// `endodirect_cursos` é `using (true)` para `anon` e `authenticated`, e
+// `loadCursoCatalogo` faz `select('*')` — de propósito, porque o PAINEL precisa
+// da linha desligada para poder ligá-la. Só que o aluno usa a mesma função, e o
+// catálogo dele não filtrava `ativo`: o card apareceria antes da estreia.
+// Nunca tinha aparecido porque até hoje nenhum curso ficou desligado.
+function cursoAtivo(slug){
+  var cat=Array.isArray(catalogoCursos)?catalogoCursos:[];
+  for(var i=0;i<cat.length;i++)if(cat[i]&&cat[i].slug===slug)return cat[i].ativo!==false;
+  return true;   // fora do catálogo: não é caso de esconder (nome de piso cuida do resto)
+}
 function cursoVisivel(slug){
   if(!slug)return true;
   if(isAdminUser()||isTestShowcase())return true;
-  return !SHOWCASE_ONLY_CURSOS[slug];
+  if(SHOWCASE_ONLY_CURSOS[slug])return false;
+  return cursoAtivo(slug);
 }
 // Se o curso está LIBERADO (desbloqueado) para o usuário atual.
+// Posto do curso, lido do CATÁLOGO — não de uma lista de slugs no código.
+var CURSO_RANK={standard:1,gold:2,premium:3};
+function cursoTier(slug){
+  var cat=Array.isArray(catalogoCursos)?catalogoCursos:[];
+  for(var i=0;i<cat.length;i++)if(cat[i]&&cat[i].slug===slug)return String(cat[i].tier||'');
+  return '';
+}
+// ⚠️ ERA `if(slug==='endo_essencial')` NO CÓDIGO (24/08/2026). Enquanto só existia
+// um curso Gold isso passava, mas o professor pediu a "Educação Médica
+// Continuada" também em Gold — e um segundo slug fixo aqui significaria que todo
+// curso de pacote novo depende de eu mexer no `index.html`. O posto já vive no
+// catálogo (coluna `tier`), que ele edita pelo painel; ler de lá é a mesma regra
+// que o servidor aplica em `endodirect_acessos_ativos()`.
+//
+// Comportamento preservado: `endo_essencial` é tier gold → rank 2 → `planRank()>=2`,
+// idêntico ao que a linha fixa fazia. Curso sem tier continua exigindo o acesso
+// nominal `curso:<slug>`; os de vitrine seguem barrados antes de tudo.
 function cursoAcessivel(slug){
   if(!slug)return true;
   if(isAdminUser()||isTestShowcase())return true;
   if(SHOWCASE_ONLY_CURSOS[slug])return false;               // demais cursos: ninguém acessa
-  if(slug==='endo_essencial')return planRank()>=2||(Array.isArray(userAcessos)&&userAcessos.indexOf('curso:'+slug)>=0); // só Gold (ou quem já tem o curso)
-  return (Array.isArray(userAcessos)&&userAcessos.indexOf('curso:'+slug)>=0);
+  if(!cursoAtivo(slug))return false;                        // desligado é desligado, para todo mundo
+  if(Array.isArray(userAcessos)&&userAcessos.indexOf('curso:'+slug)>=0)return true;
+  var rank=CURSO_RANK[cursoTier(slug)]||0;
+  return rank>0&&planRank()>=rank;
 }
 // Uma aula está liberada se o curso está acessível OU se foi marcada como amostra grátis
 // (c.free) — a amostra é liberada inclusive na degustação (sem pacote).
@@ -8949,7 +8984,11 @@ var CURSO_TEMAS=[
   {re:/masculin|testost|androl|hipogonad/i,                             k:'marte',    g:['#1e3a8a','#7dd3fc']},
   {re:/pedi[áa]tric|crian[çc]|infant|puberdad|crescim/i,                k:'crianca',  g:['#0f766e','#5eead4']},
   {re:/esporte|exerc[íi]cio|atleta|desempenho f[íi]sic/i,               k:'pulso',    g:['#4d7c0f','#a3e635']},
-  {re:/transg[êe]ner|afirma[çc][ãa]o de g[êe]nero|hormoniza/i,          k:'trans',    g:['#0369a1','#f9a8d4']}
+  {re:/transg[êe]ner|afirma[çc][ãa]o de g[êe]nero|hormoniza/i,          k:'trans',    g:['#0369a1','#f9a8d4']},
+  // Educação Médica Continuada: o capelo já seria o glifo do fallback, mas o
+  // gradiente do fallback é sorteado por hash do nome. Este card é a porta de
+  // entrada do plano Gold — merece cor escolhida, e não sorteada.
+  {re:/educa[çc][ãa]o m[ée]dica|continuada|\bemc\b/i,                    k:'capelo',   g:['#1e3a8a','#fbbf24']}
 ];
 var CURSO_GRAD_FALLBACK=[['#1e40af','#60a5fa'],['#5b21b6','#a78bfa'],['#0f766e','#2dd4bf'],['#9f1239','#fb7185'],['#a16207','#facc15']];
 function cursoCapa(nome,slug){
@@ -15406,7 +15445,7 @@ function cursoSlugOptions(selected,includeNone){
 // carregam `endodirect_cursos` (conta de demonstração, rede lenta, primeira
 // pintura antes do RPC responder). O catálogo do banco continua mandando; isto é
 // só o piso, para nunca haver nome técnico na tela do aluno.
-var CURSO_NOME_FALLBACK={hiperglicemia:'Hiperglicemia Hospitalar',lipides:'Lípides',endo_essencial:'Endocrinologia Essencial',endoteem:'EndoTEEM 2026'};
+var CURSO_NOME_FALLBACK={hiperglicemia:'Hiperglicemia Hospitalar',lipides:'Lípides',endo_essencial:'Endocrinologia Essencial',endoteem:'EndoTEEM 2026',emc:'Educação Médica Continuada'};
 function cursoNomeBySlug(slug){
   var cat=Array.isArray(catalogoCursos)?catalogoCursos:[];
   for(var i=0;i<cat.length;i++){if(cat[i].slug===slug&&cat[i].nome)return cat[i].nome;}
