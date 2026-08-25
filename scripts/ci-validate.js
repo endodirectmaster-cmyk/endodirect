@@ -499,6 +499,19 @@ try {
   fail('desdobramento da quebra rígida com comportamento errado:\n' + out);
 }
 
+// ── PORTÃO DE ACESSO aos cursos de pacote ────────────────────────────────────
+// O portão do Gold era um `if` com o slug no código. Ao criar a "Educação Médica
+// Continuada" (24/08) ele passou a ler o `tier` do catálogo — a mesma regra do
+// servidor. Isto separa quem pagou de quem não pagou: as duas pontas do erro
+// custam caro, então as duas são testadas.
+try {
+  execFileSync(process.execPath, [path.join('scripts', 'test-curso-tier-gold.js')], { stdio: 'pipe' });
+  ok('curso por tier: Gold entra, standard e degustação não, e a amostra grátis abre só a aula liberada');
+} catch (e) {
+  const out = (e.stdout ? e.stdout.toString() : '') + (e.stderr ? e.stderr.toString() : '');
+  fail('portão de acesso aos cursos com comportamento errado:\n' + out);
+}
+
 // ⚠️ RESSALVAS × NÚCLEO. O campo `conflito` de um extrato é uma FOTOGRAFIA do
 //     núcleo no dia da leitura, e a varredura do acervo CORRIGE o núcleo — é
 //     metade do objetivo dela. Toda correção envelhece a ressalva do artigo que
