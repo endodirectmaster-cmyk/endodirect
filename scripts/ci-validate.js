@@ -527,6 +527,19 @@ try {
   fail('importador de PDF das diretrizes com comportamento errado:\n' + out);
 }
 
+// ⚠️ AS PÁGINAS NO SERVIDOR. O importador manda PDF digitalizado como N imagens
+// de página, e até 26/08 a montagem desse pedido em `api/ai.js` era guardada só
+// por conferência de TEXTO do fonte. Texto não vê bloco fora de ordem, `type`
+// errado, pedido perdido nem teto que não recuou. Este chama o handler REAL e
+// inspeciona o corpo que sairia para a Anthropic. Nove mutações verificadas.
+try {
+  execFileSync(process.execPath, [path.join('scripts', 'test-ai-paginas-servidor.js')], { stdio: 'pipe' });
+  ok('páginas no servidor: blocos image na ordem certa, profundo recuando por página e caminhos antigos intactos');
+} catch (e) {
+  const out = (e.stdout ? e.stdout.toString() : '') + (e.stderr ? e.stderr.toString() : '');
+  fail('montagem do pedido com páginas de PDF com comportamento errado:\n' + out);
+}
+
 // ⚠️ RESSALVAS × NÚCLEO. O campo `conflito` de um extrato é uma FOTOGRAFIA do
 //     núcleo no dia da leitura, e a varredura do acervo CORRIGE o núcleo — é
 //     metade do objetivo dela. Toda correção envelhece a ressalva do artigo que
