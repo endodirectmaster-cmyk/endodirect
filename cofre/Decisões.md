@@ -1,6 +1,6 @@
 ---
 tags: [cofre, decisoes]
-atualizado: 2026-08-25
+atualizado: 2026-08-26
 ---
 
 # Decisões
@@ -8,6 +8,9 @@ atualizado: 2026-08-25
 Log de decisões de produto e técnicas (mais recentes no topo).
 
 ## 2026-08
+- **🧪 A MONTAGEM DO PEDIDO COM PÁGINAS VIROU TESTE DE COMPORTAMENTO (2026-08-26).** Pedido do professor. Até aqui o `api/ai.js` recebendo páginas de PDF digitalizado era guardado só por **conferência de texto do fonte**, dentro do `test-teto-diretrizes.js` — e texto do fonte não vê bloco fora de ordem, `type` errado, pedido perdido no fim da lista nem teto que não recuou. `scripts/test-ai-paginas-servidor.js` chama o **handler real** (autenticação stubada, `fetch` interceptado) e inspeciona o corpo que sairia para a Anthropic: 10 páginas viram 11 blocos, `image` na ordem das páginas com `media_type` correto e o pedido por último; teto de 24 páginas por requisição; entrada vazia não vira bloco; `mediaType` não-imagem cai para JPEG; e os dois caminhos antigos (PDF inteiro em base64 e pedido sem anexo) seguem intactos. **Nove mutações verificadas contra o `api/ai.js` real.**
+  - ⚠️ **O recuo do bloco profundo é medido por COMPARAÇÃO** (sem anexo × com páginas), com uma asserção de controle exigindo que sem anexo ele passe de 120.000 — senão a comparação não provaria nada. E o custo **por página** é exercitado no único cenário em que ele age: prompt no corte de 200k somado ao máximo de páginas, onde 24 páginas deixam o profundo menor que 2. Com prompt curto o teto de 120.000 domina e a conta por página fica invisível.
+  - 🧨 **A versão que rodei em 25/08 media NADA** — `system` sem o sentinela `SYS_SPLIT`, profundo calculado e descartado, `system` com 13 caracteres passando por `< 400000`. Lição em Convenções: asserção sobre caminho que o cenário não percorre passa de graça e passa verde. Nada mudou no produto; `sw.js` segue **v254**.
 - **📄 IMPORTAR PDF DIGITALIZADO: A IA PASSOU A LER AS PÁGINAS RENDERIZADAS (2026-08-25).** O professor gravou a tela importando a diretriz SBD 2026 de DM2 e recebendo *"Erro ao ler o PDF: PDF muito grande para leitura por imagem. Use um PDF com texto selecionável, ou um arquivo menor (até ~3 MB)"*. Vídeo sem texto nenhum — o relato era a tela.
   - 🧨 **A MENSAGEM CULPAVA A CONSEQUÊNCIA.** Para chegar naquela linha, a extração de texto já tinha falhado — e o `catch` imediatamente antes era `function(){return null;}`, que **apaga a causa**. O professor lia um diagnóstico do arquivo errado: o problema não era tamanho, era **PDF sem texto selecionável**. Regra que fica: *fallback que engole o motivo transforma erro em adivinhação* — o motivo real agora viaja em `pdfMotivo` até a mensagem, com o tamanho MEDIDO junto.
   - 🧨 **E O ÚNICO CASO QUE PRECISAVA DO FALLBACK ERA EXATAMENTE O QUE O FALLBACK RECUSAVA.** PDF digitalizado é grande **porque** é imagem: os dois sintomas têm a mesma causa e chegam sempre juntos. Mandar o arquivo inteiro em base64 tem teto de ~3 MB (corpo da função serverless ~4,5 MB, base64 infla ~33%) — ou seja, o caminho existia para um caso que ele nunca conseguiria atender.

@@ -89,7 +89,11 @@ ok(/CUSTO_POR_PAGINA = 12000/.test(ai)
   && /imagensPedidas\.length\s*\r?\n?\s*\? Math\.max\(120000, imagensPedidas\.length \* CUSTO_POR_PAGINA\)/.test(ai),
   '⚠️ as páginas de PDF digitalizado voltaram a custar um valor fixo no orçamento — 12 páginas custam ~44k tokens e estouram o contexto');
 // E elas têm de viajar como blocos 'image', na ordem das páginas. Como 'document'
-// a Anthropic recusa o media_type de imagem; fora de ordem, a IA lê o documento embaralhado.
+// a Anthropic recusa o media_type de imagem; fora de ordem, a IA lê o documento
+// embaralhado. ⚠️ Isto aqui é conferência de TEXTO, e texto não vê comportamento:
+// a prova de verdade — handler chamado, corpo inspecionado — está em
+// `scripts/test-ai-paginas-servidor.js`. Esta linha fica como sentinela barata
+// junto do orçamento; se ela e a de lá discordarem, a de lá manda.
 ok(/imagensPedidas\s*\r?\n?\s*\.map\(\(data\) => \(\{ type: 'image'/.test(ai),
   'as páginas renderizadas têm de ir como blocos image, na ordem em que foram lidas');
 // ⚠️ E O ANEXO NÃO ERA O ÚNICO JEITO DE ESTOURAR. Medido em 09/08/2026, depois

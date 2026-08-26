@@ -1,9 +1,33 @@
 ---
 tags: [cofre, processo]
-atualizado: 2026-08-25
+atualizado: 2026-08-26
 ---
 
 # Convenções de Trabalho
+
+## 🧨 A ASSERÇÃO PASSOU PORQUE O CENÁRIO NUNCA CHEGOU NO CÓDIGO (2026-08-26)
+
+Ao promover a prova do lado servidor a teste permanente, reli a versão que eu
+tinha rodado no dia anterior e ela **não media nada**. Eu afirmava "o bloco
+profundo recuou" com `system.length < 400000`. Só que a chamada de teste mandava
+um `system` **sem o sentinela `SYS_SPLIT`** — e sem sentinela o `api/ai.js`
+calcula o profundo e depois o **descarta**. O `system` enviado tinha **13
+caracteres**. A asserção passava por 13 < 400000, e não havia recuo nenhum
+acontecendo para ser medido.
+
+O furo não é o limiar; é o **cenário**. Uma asserção sobre um caminho que a
+chamada de teste nunca percorre passa de graça, e passa **verde**, que é pior do
+que falhar. Mutação também não pega: apagar o código sob teste não muda um
+resultado que já vinha de outro lugar.
+
+Duas regras que ficam:
+
+- **Antes de afirmar sobre um efeito, provar que o efeito EXISTE no cenário.**
+  Aqui virou uma asserção de controle: *sem* anexo o profundo tem de passar de
+  120.000 — se não passar, a comparação seguinte não prova nada e o teste diz isso.
+- **Medir por comparação, não contra número solto.** `com < sem` não tem como
+  passar por acidente; `< 400000` tem. Todo limiar frouxo é um teste que espera
+  para ficar cego.
 
 ## 🧨 O TESTE QUE EU ESCREVI PASSOU EM CINCO MUTAÇÕES (2026-08-25)
 
