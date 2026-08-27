@@ -46,6 +46,7 @@ function mundo(fonte) {
   vm.runInContext(
     'function esc(s){return String(s==null?"":s).replace(/[&<>"]/g,function(c){return {"&":"&amp;","<":"&lt;",">":"&gt;","\\"":"&quot;"}[c];});}\n'
     + trechoVar('LDL_METAS', fonte) + '\n'
+    + corpo('ldlFaixaEscore', fonte) + '\n'
     + corpo('sbcCategoria', fonte) + '\n'
     + corpo('ldlLinhaMeta', fonte) + '\n'
     + corpo('ldlConduta', fonte) + '\n'
@@ -105,29 +106,28 @@ ok(/escore de 5 a < 20%/.test(M.sbcCategoria(8, paciente({})).motivo),
 // ── O bloco na tela ────────────────────────────────────────────────────────
 {
   const h = M.ldlAlvoHTML(2, paciente({ pv_ldl: '195' }));
-  ok(/RISCO ALTO/.test(h) && /LDL-c &lt; 70/.test(h), 'o bloco não mostrou a meta da faixa em que o paciente caiu');
+  ok(/RISCO ALTO/.test(h) && /&lt; 70/.test(h), 'o bloco não mostrou a meta da faixa em que o paciente caiu');
   ok(/hipercolesterolemia familiar/.test(h), 'o bloco não disse por que o paciente é alto risco');
-  ok(/125 mg\/dL acima da meta/.test(h), 'o bloco não disse a distância medida até a meta (195 − 70)');
+  ok(/\+125 acima da meta/.test(h), 'o bloco não disse a distância medida até a meta (195 − 70)');
   ok(/estatina de alta potência/.test(h), 'a conduta do alto risco (estatina de alta potência ou + ezetimiba) sumiu');
-  // ⚠️ Achado ao OLHAR a tela renderizada, não no teste: o alto risco exibia
-  // "≥ 30: gatilho de tratamento farmacológico". Esse gatilho é regra do baixo e
-  // do intermediário; no alto se medica desde o diagnóstico. Ali a anotação
-  // sugeria esperar a distância crescer — o contrário da conduta logo abaixo.
-  ok(!/gatilho de tratamento farmacológico/.test(h),
+  // ⚠️ Achado ao OLHAR a tela renderizada, não no teste: o alto risco exibia o
+  // gatilho dos 30 mg/dL. Esse gatilho é regra do baixo e do intermediário; no
+  // alto se medica desde o diagnóstico, e a marca sugeria esperar a distância
+  // crescer — o contrário da conduta logo abaixo.
+  ok(!/≥ 30 · trata/.test(h),
     '⚠️ o gatilho dos 30 mg/dL voltou a aparecer no ALTO risco, onde se trata desde já — a tela contradiz a própria conduta');
 }
 {
   const h = M.ldlAlvoHTML(8, paciente({ pv_ldl: '145' })); // intermediário, 45 acima da meta de 100
-  ok(/gatilho de tratamento farmacológico/.test(h),
-    'no intermediário, distância ≥ 30 mg/dL tinha de acender o gatilho de tratamento');
-  const perto = M.ldlAlvoHTML(8, paciente({ pv_ldl: '115' })); // 15 acima: acima da meta, sem gatilho
-  ok(/15 mg\/dL acima da meta/.test(perto) && !/gatilho/.test(perto),
+  ok(/≥ 30 · trata/.test(h), 'no intermediário, distância ≥ 30 mg/dL tinha de acender o gatilho de tratamento');
+  const perto = M.ldlAlvoHTML(8, paciente({ pv_ldl: '115' })); // 15 acima: fora da meta, sem gatilho
+  ok(/\+15 acima da meta/.test(perto) && !/≥ 30 · trata/.test(perto),
     'a 15 mg/dL acima da meta o intermediário está fora da meta mas AINDA NÃO tem gatilho farmacológico');
 }
 {
   // não-HDL-c sai de CT − HDL, que já são campos do escore.
   const h = M.ldlAlvoHTML(2, paciente({ pv_ct: '260', pv_hdl: '40', pv_ldl: '100' }));
-  ok(/220<\/b> mg\/dL/.test(h), 'o não-HDL-c calculado (260 − 40 = 220) não apareceu');
+  ok(/>220<\/b>/.test(h), 'o não-HDL-c calculado (260 − 40 = 220) não apareceu');
 }
 {
   const h = M.ldlAlvoHTML(2, paciente({ pv_ldl: '90' }));
@@ -135,25 +135,51 @@ ok(/escore de 5 a < 20%/.test(M.sbcCategoria(8, paciente({})).motivo),
   ok(/30 mg\/dL ou mais acima da meta/.test(h),
     '⚠️ sumiu o GATILHO do baixo/intermediário: ali não se medica por estar acima da meta, e sim por persistir ≥ 30 acima dela');
 }
-{
-  const h = M.ldlAlvoHTML(2, paciente({}));
-  ok(/Muito alto/.test(h) && /prevenção primária/.test(h),
-    '⚠️ sumiu o aviso de que muito alto e extremo NÃO saem deste escore — sem ele a tela sugere que < 50 e < 40 nunca se aplicam');
-  ok(/SBC 2025 &lt; 115 e SBD &lt; 100/.test(h),
-    'sumiu a divergência registrada entre SBC e SBD no baixo risco — o cofre manda citar a fonte junto do número');
-  ok(/CAC &gt; 100 UA|percentil &gt; 75/.test(h), 'sumiu a lista do que RECLASSIFICA para cima, que o escore não enxerga');
-}
 
-// ── O campo novo não pode mexer no escore ──────────────────────────────────
+// ── Layout: o que NÃO se aplica a este paciente não entra ──────────────────
+// ⚠️ Ressalva constante ensina a pular o bloco inteiro, inclusive a que importa.
+// Pedido do professor em 27/08, olhando a tela cheia: o bloco virava um paredão
+// e ainda explicava a quem já era ALTO que "LDL 160–189 sobe para intermediário".
 {
-  const ctx = vm.createContext({ Math });
-  vm.runInContext(
-    html.slice(html.indexOf('var PREVENT_COEFS='), html.indexOf('\nvar CALCS=[')), ctx);
-  const base = { pv_sexo: '0', pv_idade: '60', pv_ct: '200', pv_hdl: '50', pv_pas: '130', pv_egfr: '90', pv_imc: '28', pv_dm: '0', pv_fum: '0', pv_ahas: '0', pv_est: '0' };
-  const semLdl = ctx.preventRisk(base);
-  const comLdl = ctx.preventRisk(Object.assign({}, base, { pv_ldl: '195' }));
-  ok(semLdl && comLdl && semLdl.ascvd === comLdl.ascvd,
-    '⚠️ o campo de LDL-c mudou o RISCO calculado — ele é só para a meta; o PREVENT usa CT e HDL, e contaminar o escore invalidaria a calculadora');
+  const alto = M.ldlAlvoHTML(2, paciente({ pv_ldl: '195' }));
+  ok(!/Sobe de faixa/.test(alto),
+    'no ALTO risco não há para onde subir pelo escore — a lista de reclassificação ali é ruído');
+  ok(!/fontes divergem/.test(alto),
+    'a divergência SBC × SBD só existe no BAIXO risco; mostrá-la no alto é ruído');
+  const baixo = M.ldlAlvoHTML(2, paciente({}));
+  ok(/Sobe de faixa/.test(baixo) && /fontes divergem/.test(baixo),
+    'no BAIXO risco as duas ressalvas TÊM de aparecer — são elas que evitam subclassificar');
+  // O teto do escore fica em toda faixa: é o que evita subtratar quem já tem doença.
+  ok(/não saem deste escore/.test(alto) && /não saem deste escore/.test(baixo),
+    '⚠️ o aviso de que muito alto e extremo não saem do escore tem de aparecer em TODAS as faixas');
+  // Com LDL já ≥ 160 a régua de LDL não acrescenta nada: ele já subiu por ela.
+  const porLdl = M.ldlAlvoHTML(2, paciente({ pv_ldl: '170' }));
+  // ⚠️ A régua é `LDL-c 160–189 → intermediário`; o MOTIVO ("por LDL-c de
+  // 160–189 mg/dL") cita a mesma faixa e tem de ficar — é o que explica a
+  // categoria. Procurar só "160–189" confundia os dois.
+  ok(/Sobe de faixa/.test(porLdl) && !/160–189 → intermediário/.test(porLdl),
+    'quem já subiu pelo próprio LDL não precisa ler a régua de LDL que o subiu');
+  ok(/por LDL-c de 160–189/.test(porLdl), 'o motivo da categoria não pode sumir junto com a régua');
+}
+{
+  // Categoria da SBC acima da faixa do escore: dizer por quê, senão a tarja
+  // "moderado" em cima e "ALTO" embaixo parecem contradição na tela.
+  const h = M.ldlAlvoHTML(13.4, paciente({ pv_dm: '1', pv_sexo: String(F), pv_idade: '62' }));
+  ok(/RISCO ALTO/.test(h) && /acima da faixa do escore \(moderado\)/.test(h),
+    '⚠️ a tarja do escore diz "moderado" e o bloco diz "ALTO" sem explicar — na tela isso lê como defeito');
+  const im = M.ldlAlvoHTML(8, paciente({}));
+  ok(/“moderado” da tarja acima/.test(im), 'no intermediário falta dizer que ele é o "moderado" da tarja acima');
+  const coerente = M.ldlAlvoHTML(25, paciente({}));
+  ok(!/acima da faixa do escore/.test(coerente),
+    'quando escore e categoria coincidem não há o que explicar — a frase vira ruído');
+}
+{
+  // Medida de leitura: em tela larga a linha corrida ia de ponta a ponta.
+  const h = M.ldlAlvoHTML(2, paciente({}));
+  ok(/max-width:52rem/.test(h),
+    '⚠️ sumiu o limite de largura do bloco — em tela cheia a linha corre 1.500 px e ninguém acompanha');
+  ok(/LDL-c<\/div>/.test(h) && /&lt; 115/.test(h),
+    'as metas deixaram de sair como fichas: em linha corrida o número que se procura se perde na frase');
 }
 
 // ── A fiação: a calculadora de 10 anos tem de CHAMAR o bloco ───────────────

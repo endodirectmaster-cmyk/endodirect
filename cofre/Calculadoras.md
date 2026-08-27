@@ -36,6 +36,28 @@ com LDL-c 195 é ALTO. O que o escore não vê fica escrito na tela.
 - ⚠️ No baixo risco **SBC (< 115) e SBD (< 100) divergem** — citar a fonte junto
   do número. A tela diz isso.
 
+### Layout: ressalva que não se aplica é ruído (2026-08-27, 2ª rodada)
+
+O professor abriu a calculadora em tela cheia e pediu para melhorar o final. Dois
+problemas, e o segundo não era de estética:
+
+1. **Linha corrida de ponta a ponta** num monitor de 1.600 px — nenhum olho
+   acompanha. O bloco ganhou `max-width: 52rem`, as metas viraram **fichas** (o
+   número é o que se procura ali, e em linha corrida ele se perde na frase), o
+   medido × meta virou linha alinhada com o delta, e a conduta ganhou barra
+   lateral.
+2. **O bloco explicava a uma paciente já de ALTO risco que "LDL 160–189 sobe
+   para intermediário"** e mostrava a divergência SBC × SBD, que só existe no
+   baixo risco. Ressalva constante ensina a pular o bloco inteiro — inclusive a
+   que importa. Agora entra só o que vale para aquele paciente; o teto do escore
+   (muito alto/extremo são clínicos) fica em **todas** as faixas, porque é ele
+   que evita subtratar quem já tem doença.
+
+⚠️ E quando a categoria da SBC fica **acima** da faixa do escore, a tela diz
+`acima da faixa do escore (moderado) — por diabetes em mulher ≥ 56 anos`. Sem
+isso a tarja dizia "moderado" e o bloco dizia "ALTO" logo abaixo, o que na tela
+lê como defeito.
+
 
 Painel **Calculadoras Clínicas**. Array `CALCS` em `index.html` (~linha 1707). Cada item:
 ```
