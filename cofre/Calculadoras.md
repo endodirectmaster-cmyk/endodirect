@@ -1,9 +1,41 @@
 ---
 tags: [cofre, calculadoras]
-atualizado: 2026-07-31
+atualizado: 2026-08-27
 ---
 
 # Calculadoras
+
+## 🎯 PREVENT entrega META DE LDL-c e CONDUTA (SBC 2025) — 2026-08-27
+
+A Diretriz Brasileira de Dislipidemias 2025 elege o PREVENT como ferramenta
+**preferencial** de estratificação (30–79 anos, sem doença aterosclerótica
+conhecida), então a meta mora na tela do escore.
+
+⚠️ **O escore dá o PISO da categoria, não a categoria.** Diabetes (corte 50 anos
+no homem, 56 na mulher), LDL-c (160–189 → intermediário; ≥ 190 → alto) e
+agravantes/aterosclerose subclínica **sobem** de faixa; nada desce. Escore de 2%
+com LDL-c 195 é ALTO. O que o escore não vê fica escrito na tela.
+
+| faixa | LDL-c | não-HDL-c | ApoB | redução |
+|---|---:|---:|---:|---:|
+| baixo | < 115 | < 145 | < 100 | ≥ 30% |
+| intermediário | < 100 | < 130 | < 90 | ≥ 30% |
+| alto | < 70 | < 100 | < 70 | ≥ 50% |
+| muito alto | < 50 | < 80 | < 55 | ≥ 50% |
+| extremo | < 40 | < 70 | < 45 | ≥ 50% |
+
+- **Gatilho farmacológico só no baixo e no intermediário**: ali não se medica por
+  estar acima da meta, e sim por persistir **≥ 30 mg/dL acima**. No alto se
+  medica desde o diagnóstico — exibir o gatilho ali foi defeito real, achado
+  olhando a tela renderizada.
+- **Muito alto e extremo não saem do escore** (são clínicos), e o **PREVENT de 30
+  anos não deriva meta**: a diretriz não define limiares para aquela estimativa.
+- O campo **LDL-c é opcional e inerte para o escore** (o PREVENT usa CT e HDL).
+- ⚠️ Números vêm da **tabela** de valores referenciais. No PDF de duas colunas os
+  bullets ao fim da seção do muito alto risco saem com os valores do extremo.
+- ⚠️ No baixo risco **SBC (< 115) e SBD (< 100) divergem** — citar a fonte junto
+  do número. A tela diz isso.
+
 
 Painel **Calculadoras Clínicas**. Array `CALCS` em `index.html` (~linha 1707). Cada item:
 ```

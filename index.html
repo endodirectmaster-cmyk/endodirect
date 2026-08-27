@@ -3236,17 +3236,103 @@ function sophiaTrajetoria(v){
     caminho12:z.caminho,caminho24:a.caminho,caminho60:b.caminho
   };
 }
+// ── META DE LDL-c E CONDUTA (Diretriz Brasileira de Dislipidemias 2025, SBC) ──
+// A própria diretriz elege o PREVENT como ferramenta PREFERENCIAL de
+// estratificação em adulto de 30–79 anos sem doença aterosclerótica conhecida —
+// por isso a meta entra aqui, na tela do escore, e não numa calculadora à parte.
+//
+// Metas da TABELA de valores referenciais (idênticas com e sem jejum). ⚠️ Não
+// tirar estes números dos bullets ao final da seção do muito alto risco no PDF:
+// a auditoria do acervo registrou que ali eles saem deslocados pela extração de
+// duas colunas, e os do muito alto risco aparecem com os valores do extremo.
+var LDL_METAS={
+  baixo:         {rot:'BAIXO',         ldl:115,nhdl:145,apob:100,red:30},
+  intermediario: {rot:'INTERMEDIÁRIO', ldl:100,nhdl:130,apob:90, red:30},
+  alto:          {rot:'ALTO',          ldl:70, nhdl:100,apob:70, red:50},
+  muitoalto:     {rot:'MUITO ALTO',    ldl:50, nhdl:80, apob:55, red:50},
+  extremo:       {rot:'EXTREMO',       ldl:40, nhdl:70, apob:45, red:50}
+};
+// ⚠️⚠️ O ESCORE DÁ O PISO DA CATEGORIA, NÃO A CATEGORIA. Na SBC 2025 a faixa do
+// PREVENT é UMA das entradas: diabetes, LDL-c e agravantes/aterosclerose
+// subclínica SOBEM o paciente de faixa, e nada o desce. Então aqui só se conclui
+// o que os campos preenchidos PROVAM, e o que pode subir fica escrito na tela.
+// Errar para cima medica quem não precisa; para baixo, deixa de tratar quem
+// precisa — e o segundo não aparece na consulta seguinte.
+//
+// Devolve também o MOTIVO: a regra que decidiu. Sem ele o médico teria de
+// acreditar na categoria em vez de conferi-la.
+function sbcCategoria(escore,v){
+  var ldl=parseFloat(v.pv_ldl),idade=parseFloat(v.pv_idade);
+  var dm=String(v.pv_dm||'0')==='1',homem=String(v.pv_sexo||'0')==='1';
+  if(isFinite(ldl)&&ldl>=190)return {k:'alto',motivo:'LDL-c ≥ 190 mg/dL (hipercolesterolemia familiar)'};
+  // DM2 por idade: a diretriz separa em 50 anos no homem e 56 na mulher.
+  if(dm&&isFinite(idade)&&((homem&&idade>=50)||(!homem&&idade>=56)))
+    return {k:'alto',motivo:'diabetes em '+(homem?'homem ≥ 50':'mulher ≥ 56')+' anos'};
+  if(isFinite(escore)&&escore>=20)return {k:'alto',motivo:'escore ≥ 20% em 10 anos'};
+  if(isFinite(ldl)&&ldl>=160)return {k:'intermediario',motivo:'LDL-c de 160–189 mg/dL'};
+  if(dm)return {k:'intermediario',motivo:'diabetes sem estratificador de risco'};
+  if(isFinite(escore)&&escore>=5)return {k:'intermediario',motivo:'escore de 5 a < 20% em 10 anos'};
+  return {k:'baixo',motivo:'escore < 5% em 10 anos, sem diabetes'};
+}
+function ldlLinhaMeta(m){
+  return '<b>LDL-c &lt; '+m.ldl+'</b> · não-HDL-c &lt; '+m.nhdl+' · redução do LDL-c ≥ '+m.red+'%'
+    +' <span style="opacity:.75">· ApoB &lt; '+m.apob+' (secundária)</span>';
+}
+// Conduta por faixa, como a diretriz a escreve — inclusive o GATILHO, que é o
+// que muda no dia a dia: no baixo e no intermediário não se medica por estar
+// acima da meta, e sim por persistir 30 mg/dL OU MAIS acima dela.
+function ldlConduta(k){
+  if(k==='alto')return 'Estilo de vida <b>e</b> terapia farmacológica desde já: estatina de alta potência <b>ou</b> estatina + ezetimiba. Se o LDL-c ou o não-HDL-c persistirem acima da meta, intensificar.';
+  return 'Estilo de vida para todos. Terapia farmacológica quando o LDL-c <b>ou</b> o não-HDL-c persistirem <b>30 mg/dL ou mais acima da meta</b> — não basta estar acima dela.';
+}
+function ldlAlvoHTML(escore,v){
+  var cat=sbcCategoria(escore,v),m=LDL_METAS[cat.k];
+  var ldl=parseFloat(v.pv_ldl),ct=parseFloat(v.pv_ct),hdl=parseFloat(v.pv_hdl);
+  var nhdl=(isFinite(ct)&&isFinite(hdl))?(ct-hdl):NaN; // não-HDL-c = CT − HDL, e os dois já são campos do escore
+  var cor=cat.k==='alto'?'tag-red':(cat.k==='intermediario'?'tag-gold':'tag-grn');
+  // ⚠️ O GATILHO DOS 30 mg/dL SÓ EXISTE NO BAIXO E NO INTERMEDIÁRIO. No risco
+  // alto se medica desde o diagnóstico, qualquer que seja a distância — anotar
+  // "≥ 30: gatilho" ali sugeriria esperar a distância crescer para tratar, que é
+  // o contrário da conduta escrita logo abaixo.
+  var usaGatilho=(cat.k==='baixo'||cat.k==='intermediario');
+  function situacao(rot,val,meta){
+    if(!isFinite(val))return '';
+    var d=val-meta;
+    return '<div style="margin-top:.2rem">'+rot+' <b>'+Math.round(val)+'</b> mg/dL — '
+      +(d<0?'<span style="color:var(--grn)">na meta</span>'
+           :'<span style="color:var(--red)">'+Math.round(d)+' mg/dL acima da meta</span>'
+             +(usaGatilho&&d>=30?' <b>(≥ 30: gatilho de tratamento farmacológico)</b>':''))+'</div>';
+  }
+  return '<div style="margin-top:.7rem;border:1px solid var(--bd);border-radius:var(--r);padding:.65rem .75rem">'
+    +'<div style="font-size:.72rem;font-weight:700;letter-spacing:.04em;text-transform:uppercase;color:var(--t3);margin-bottom:.45rem">Meta de LDL-c e conduta · Diretriz Brasileira de Dislipidemias 2025 (SBC)</div>'
+    +'<div style="margin-bottom:.4rem"><span class="tag '+cor+'" style="font-size:.68rem">RISCO '+m.rot+'</span> '
+    +'<span style="font-size:.72rem;color:var(--t3)">por '+esc(cat.motivo)+(cat.k==='intermediario'?' — o “moderado” da linha acima':'')+'</span></div>'
+    +'<div style="font-size:.78rem;color:var(--t2);line-height:1.6">'+ldlLinhaMeta(m)
+    +situacao('LDL-c informado:',ldl,m.ldl)
+    +situacao('não-HDL-c (CT − HDL):',nhdl,m.nhdl)
+    +'<div style="margin-top:.45rem">'+ldlConduta(cat.k)+'</div>'
+    // O que SOBE de faixa. Fica sempre visível porque o escore não enxerga nada
+    // disto, e a diretriz manda procurar agravante ATIVAMENTE no intermediário.
+    +'<div style="margin-top:.5rem;font-size:.72rem;color:var(--t3);line-height:1.55">'
+    +'<b>Sobe de faixa</b> (o escore não vê): fator agravante — procurar ativamente no risco intermediário; aterosclerose subclínica (CAC &gt; 100 UA ou percentil &gt; 75, placa carotídea &lt; 50%, placa na angio-TC de coronárias, aneurisma de aorta abdominal) → <b>alto</b>; LDL-c 160–189 → intermediário; LDL-c ≥ 190 → alto.'
+    +'<div style="margin-top:.3rem">⚠️ <b>Muito alto (LDL-c &lt; 50) e extremo (&lt; 40) não saem deste escore</b>: são clínicos — doença aterosclerótica estabelecida, evento maior prévio (extremo = múltiplos eventos maiores, ou 1 evento maior + ≥ 2 condições de alto risco). O PREVENT é de <b>prevenção primária</b> e não se aplica a quem já tem doença.</div>'
+    +'<div style="margin-top:.3rem">⚠️ No <b>baixo</b> risco as fontes divergem: SBC 2025 &lt; 115 e SBD &lt; 100 mg/dL. Cite a fonte junto do número.</div>'
+    +'</div></div></div>';
+}
 var CALCS=[
   {id:'prevent',name:'Risco CV — PREVENT (AHA)',area:'Lípides',desc:'Risco de DASCV, DCV total e IC em 10 anos (AHA PREVENT 2024; opcional: UACR/HbA1c)',
-   fields:[{id:'pv_sexo',label:'Sexo',type:'select',opts:['Feminino','Masculino'],vals:[0,1]},{id:'pv_idade',label:'Idade (anos)',type:'num'},{id:'pv_ct',label:'Colesterol total (mg/dL)',type:'num'},{id:'pv_hdl',label:'HDL (mg/dL)',type:'num'},{id:'pv_pas',label:'PA sistólica (mmHg)',type:'num'},{id:'pv_egfr',label:'TFGe (mL/min/1,73m²)',type:'num'},{id:'pv_imc',label:'IMC (kg/m²)',type:'num'},{id:'pv_dm',label:'Diabetes',type:'select',opts:['Não','Sim'],vals:[0,1]},{id:'pv_fum',label:'Tabagismo atual',type:'select',opts:['Não','Sim'],vals:[0,1]},{id:'pv_ahas',label:'Uso de anti-hipertensivo',type:'select',opts:['Não','Sim'],vals:[0,1]},{id:'pv_est',label:'Uso de estatina',type:'select',opts:['Não','Sim'],vals:[0,1]},{id:'pv_uacr',label:'RAC urinária / UACR (mg/g) — opcional',type:'num'},{id:'pv_hba1c',label:'HbA1c (%) — opcional',type:'num'}],
+   fields:[{id:'pv_sexo',label:'Sexo',type:'select',opts:['Feminino','Masculino'],vals:[0,1]},{id:'pv_idade',label:'Idade (anos)',type:'num'},{id:'pv_ct',label:'Colesterol total (mg/dL)',type:'num'},{id:'pv_hdl',label:'HDL (mg/dL)',type:'num'},{id:'pv_pas',label:'PA sistólica (mmHg)',type:'num'},{id:'pv_egfr',label:'TFGe (mL/min/1,73m²)',type:'num'},{id:'pv_imc',label:'IMC (kg/m²)',type:'num'},{id:'pv_dm',label:'Diabetes',type:'select',opts:['Não','Sim'],vals:[0,1]},{id:'pv_fum',label:'Tabagismo atual',type:'select',opts:['Não','Sim'],vals:[0,1]},{id:'pv_ahas',label:'Uso de anti-hipertensivo',type:'select',opts:['Não','Sim'],vals:[0,1]},{id:'pv_est',label:'Uso de estatina',type:'select',opts:['Não','Sim'],vals:[0,1]},{id:'pv_uacr',label:'RAC urinária / UACR (mg/g) — opcional',type:'num'},{id:'pv_hba1c',label:'HbA1c (%) — opcional',type:'num'},{id:'pv_ldl',label:'LDL-c (mg/dL) — opcional, só para a meta',type:'num'}],
    calc:function(v){var r=preventRisk(v);return r?r.ascvd:NaN;},
    interp:function(s,v){var r=preventRisk(v);if(!r)return{t:'Preencha sexo, idade, lípides, PAS, TFGe e IMC.',c:'tag-gold'};var idade=parseFloat(v.pv_idade);var fora=(idade>=30&&idade<=79)?'':' ⚠ fora de 30–79a';var cat=s<5?{t:'baixo',c:'tag-grn'}:(s<=20?{t:'moderado',c:'tag-gold'}:{t:'alto',c:'tag-red'});var mt=r.model==='full'?' · +UACR/HbA1c':(r.model==='uacr'?' · +UACR':(r.model==='hba1c'?' · +HbA1c':''));return{t:'DASCV '+cat.t+' ('+s.toFixed(1)+'%) · DCV total '+r.cvd.toFixed(1)+'% · IC '+r.hf.toFixed(1)+'%'+fora+mt,c:cat.c};},
+   // O `pv_ldl` NÃO entra no escore (o PREVENT usa CT e HDL): serve só para a
+   // meta — reclassificar em 160–189 e ≥ 190, e dizer se o paciente está nela.
+   extra:function(s,v){try{return ldlAlvoHTML(s,v);}catch(e){return '';}},
    unit:'% DASCV/10a',note:'AHA PREVENT (Khan, Circulation 2024) — risco em 10 anos de DASCV (doença aterosclerótica), DCV total e insuficiência cardíaca (IC). Validado para 30–79 anos, prevenção primária. Categorias de DASCV (Diretriz Brasileira 2025): baixo <5%, moderado 5–20%, alto >20%. Reestratificar o risco moderado pelo escore de cálcio coronário (CAC). Os campos opcionais RAC/UACR (albumina/creatinina urinária, mg/g) e HbA1c (%) ativam o modelo aprimorado do PREVENT — reproduz a calculadora oficial da AHA quando preenchidos.'},
   {id:'prevent30',name:'Risco CV — PREVENT 30 anos (AHA)',area:'Lípides',desc:'Risco de DASCV, DCV total e IC em 30 anos (AHA PREVENT 2024; 30–59 anos; opcional: UACR/HbA1c)',
    fields:[{id:'pv_sexo',label:'Sexo',type:'select',opts:['Feminino','Masculino'],vals:[0,1]},{id:'pv_idade',label:'Idade (anos)',type:'num'},{id:'pv_ct',label:'Colesterol total (mg/dL)',type:'num'},{id:'pv_hdl',label:'HDL (mg/dL)',type:'num'},{id:'pv_pas',label:'PA sistólica (mmHg)',type:'num'},{id:'pv_egfr',label:'TFGe (mL/min/1,73m²)',type:'num'},{id:'pv_imc',label:'IMC (kg/m²)',type:'num'},{id:'pv_dm',label:'Diabetes',type:'select',opts:['Não','Sim'],vals:[0,1]},{id:'pv_fum',label:'Tabagismo atual',type:'select',opts:['Não','Sim'],vals:[0,1]},{id:'pv_ahas',label:'Uso de anti-hipertensivo',type:'select',opts:['Não','Sim'],vals:[0,1]},{id:'pv_est',label:'Uso de estatina',type:'select',opts:['Não','Sim'],vals:[0,1]},{id:'pv_uacr',label:'RAC urinária / UACR (mg/g) — opcional',type:'num'},{id:'pv_hba1c',label:'HbA1c (%) — opcional',type:'num'}],
    calc:function(v){var r=preventRisk(v);if(!r)return NaN;var idade=parseFloat(v.pv_idade);if(idade<30||idade>59)return NaN;return r.ascvd30;},
    interp:function(s,v){var r=preventRisk(v);if(!r)return{t:'Preencha sexo, idade, lípides, PAS, TFGe e IMC.',c:'tag-gold'};var idade=parseFloat(v.pv_idade);if(idade<30||idade>59)return{t:'PREVENT 30 anos: validado apenas para 30–59 anos.',c:'tag-gold'};var mt=r.model==='full'?' · +UACR/HbA1c':(r.model==='uacr'?' · +UACR':(r.model==='hba1c'?' · +HbA1c':''));return{t:'DASCV '+s.toFixed(1)+'% · DCV total '+r.cvd30.toFixed(1)+'% · IC '+r.hf30.toFixed(1)+'% (em 30 anos)'+mt,c:'tag-blue'};},
-   unit:'% DASCV/30a',note:'AHA PREVENT (Khan, Circulation 2024) — risco em 30 anos de DASCV (aterosclerótica), DCV total e insuficiência cardíaca. Calculado apenas para 30–59 anos. Útil para comunicar a adultos mais jovens o risco ao longo da vida, que o risco de 10 anos costuma subestimar. Os campos opcionais RAC/UACR e HbA1c ativam o modelo aprimorado do PREVENT.'},
+   unit:'% DASCV/30a',note:'AHA PREVENT (Khan, Circulation 2024) — risco em 30 anos de DASCV (aterosclerótica), DCV total e insuficiência cardíaca. Calculado apenas para 30–59 anos. Útil para comunicar a adultos mais jovens o risco ao longo da vida, que o risco de 10 anos costuma subestimar. Os campos opcionais RAC/UACR e HbA1c ativam o modelo aprimorado do PREVENT. ⚠️ NÃO há limiares definidos para categorizar o risco pela estimativa de 30 anos (Diretriz Brasileira de Dislipidemias 2025), e por isso esta calculadora não deriva meta de LDL-c: a meta segue a categoria do risco de 10 anos. O risco em 30 anos serve para conscientizar sobre os fatores de risco e motivar o tratamento.'},
   {id:'imc',name:'IMC',area:'Obesidade',desc:'Índice de Massa Corporal',
    fields:[{id:'imc_peso',label:'Peso (kg)',type:'num'},{id:'imc_alt',label:'Altura (cm)',type:'num'}],
    calc:function(v){var p=parseFloat(v.imc_peso)||0;var a=(parseFloat(v.imc_alt)||0)/100;return a>0?p/(a*a):0;},
@@ -12977,35 +13063,15 @@ function admPendCardHTML(it){
 }
 // Subtítulo de seção dentro das Pendências.
 function admPendSubhead(t){return '<div style="font-size:.72rem;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--t3);margin:1.3rem 0 .65rem">'+esc(t)+'</div>';}
-// Tarefas de revisão CONTÍNUA do professor (sempre presentes p/ curadores), além
-// das Questões do Dia: (1) diretrizes das suas subespecialidades; (2) trilha de
-// estudo (resumo + questões) do Endocrinologia Essencial. Cada card leva à seção.
-function admRevTasksHTML(subs){
-  var subLbl=subs.length?esc(subs.join(' · ')):'suas subespecialidades';
-  function task(icon,titulo,desc,btnLabel,act){
-    return '<div class="card" style="margin-bottom:1rem"><div style="display:flex;justify-content:space-between;gap:.5rem;flex-wrap:wrap;align-items:center;margin-bottom:.45rem">'
-      +'<div style="font-size:.85rem;font-weight:700;color:var(--tx)">'+icon+' '+esc(titulo)+'</div>'
-      +'<span class="tag tag-gold">revisão contínua</span></div>'
-      +'<div style="font-size:.76rem;color:var(--t2);line-height:1.55;margin-bottom:.65rem">'+desc+'</div>'
-      +'<button class="btn btn-outline btn-sm" data-pend-goto="'+esc(act)+'">'+esc(btnLabel)+' →</button></div>';
-  }
-  return task('📋','Revisar a seção de Diretrizes',
-      'Confira e mantenha atualizadas as diretrizes das suas subespecialidades: <b>'+subLbl+'</b>.',
-      '📋 Ir para Diretrizes','ref')
-    +task('🎓','Revisar a trilha do Endocrinologia Essencial',
-      'Revise o <b>resumo</b> e as <b>questões</b> da trilha de estudo do curso Endocrinologia Essencial'+(subs.length?' — foque nas suas subespecialidades: <b>'+subLbl+'</b>':'')+'.',
-      '🎓 Ir para Cursos','cursos');
-}
 function admPendenciasHTML(){
   var subs=qotdSubsForEmail(admEmail());
   var mine=qotdMyPending();
   var head='<div class="adm-ph"><h1>📥 Pendências</h1></div><div class="adm-pc">';
-  var intro='<div class="card" style="margin-bottom:1rem"><div style="font-size:.78rem;color:var(--t2);line-height:1.6">Sua central de revisão: <b>tarefas de revisão contínua</b> (diretrizes e a trilha do Endocrinologia Essencial) e as <b>questões da Questão do Dia</b> distribuídas para você revisar e <b>aprovar</b>. Suas subespecialidades: <b>'+(subs.length?esc(subs.join(' · ')):'nenhuma atribuída')+'</b>.</div></div>';
+  var intro='<div class="card" style="margin-bottom:1rem"><div style="font-size:.78rem;color:var(--t2);line-height:1.6">Sua central de revisão: as <b>questões da Questão do Dia</b> distribuídas para você revisar e <b>aprovar</b>. Suas subespecialidades: <b>'+(subs.length?esc(subs.join(' · ')):'nenhuma atribuída')+'</b>.</div></div>';
   if(!subs.length)return head+intro+'<div class="card"><div class="empty">Você não tem subespecialidades atribuídas para curadoria.</div></div></div>';
-  var tasks=admPendSubhead('Tarefas de revisão')+admRevTasksHTML(subs);
   var qHead=admPendSubhead('Questão do Dia · aguardando aprovação'+(mine.length?' ('+mine.length+')':''));
   var qBody=mine.length?mine.map(admPendCardHTML).join(''):'<div class="card"><div class="empty">Nenhuma questão aguardando revisão no momento. 🎉</div></div>';
-  return head+intro+tasks+qHead+qBody+'</div>';
+  return head+intro+qHead+qBody+'</div>';
 }
 function pendFindIdx(id){for(var i=0;i<igPending.length;i++){if(igPending[i].id===id)return i;}return -1;}
 function pendApprove(id){
@@ -13028,7 +13094,6 @@ function bindAdmPendencias(){
   var host=document.getElementById('adm-main');if(!host)return;
   host.querySelectorAll('[data-pend-ok]').forEach(function(b){b.addEventListener('click',function(){pendApprove(b.dataset.pendOk);});});
   host.querySelectorAll('[data-pend-del]').forEach(function(b){b.addEventListener('click',function(){pendDiscard(b.dataset.pendDel);});});
-  host.querySelectorAll('[data-pend-goto]').forEach(function(b){b.addEventListener('click',function(){renderAdmSec(b.dataset.pendGoto);});});
 }
 var admStoriesView='lote'; // aba ativa da seção Questão do Dia (lote/manual/fila/promo)
 function igLoteTemas(sub){
