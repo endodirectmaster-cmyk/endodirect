@@ -527,6 +527,20 @@ try {
   fail('importador de PDF das diretrizes com comportamento errado:\n' + out);
 }
 
+// ⚠️ META DE LDL NO PREVENT (27/08/2026). A Diretriz Brasileira de Dislipidemias
+// 2025 elege o PREVENT como ferramenta preferencial, então a meta entra na tela
+// do escore. A armadilha: o escore dá o PISO da categoria, não a categoria —
+// diabetes, LDL-c e agravantes SOBEM de faixa e nada desce. Escore de 2% com
+// LDL-c 195 é ALTO risco, e ler só a faixa entregaria meta < 115 a quem precisa
+// de < 70. Este teste guarda a escada, os números da tabela e a fiação.
+try {
+  execFileSync(process.execPath, [path.join('scripts', 'test-meta-ldl-prevent.js')], { stdio: 'pipe' });
+  ok('meta de LDL no PREVENT: faixa sobe por diabetes/LDL-c, metas da tabela da SBC e gatilho de 30 mg/dL');
+} catch (e) {
+  const out = (e.stdout ? e.stdout.toString() : '') + (e.stderr ? e.stderr.toString() : '');
+  fail('meta de LDL-c da calculadora PREVENT com comportamento errado:\n' + out);
+}
+
 // ⚠️ AS PÁGINAS NO SERVIDOR. O importador manda PDF digitalizado como N imagens
 // de página, e até 26/08 a montagem desse pedido em `api/ai.js` era guardada só
 // por conferência de TEXTO do fonte. Texto não vê bloco fora de ordem, `type`
