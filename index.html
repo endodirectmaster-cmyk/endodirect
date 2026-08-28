@@ -15219,7 +15219,12 @@ function admMuralSecHTML(){
       +'<div class="mural-text">'+muralTextHTML(muralBodyText(a)||'Comunicado publicado pela equipe Endodirect.')+'</div>'
       +muralDiscussaoHTML(a)
       +'<div class="mural-source">Fonte: '+source+'</div>'
-      +'<div class="mural-card-actions">'+(isRadarAuto(a)?'<button class="btn btn-outline btn-sm" data-adm-hideradar="'+esc(avisoKeyStr(a))+'">🙈 Ocultar</button>':'<button class="btn btn-outline btn-sm" data-adm-editav="'+i+'">Editar</button><button class="btn btn-outline btn-sm" data-adm-delav="'+i+'" style="color:var(--red);border-color:var(--red)">🗑 Excluir</button>')+'</div>'
+      // ⚠️ NOTIFICAR VALE PARA QUALQUER CARD, inclusive os do radar. Até 28/08/2026
+      // o push só saía ao PUBLICAR um aviso manual: para avisar sobre uma notícia
+      // que o radar trouxe, era preciso convertê-la em aviso — e a conversão apaga
+      // `sourceId`, `breaking` e `auto` (ver o editar), o que quebra a dedup da
+      // próxima captação. Aqui o push lê o card e não toca nele.
+      +'<div class="mural-card-actions"><button class="btn btn-outline btn-sm" data-adm-pushav="'+esc(avisoKeyStr(a))+'">📲 Notificar</button>'+(isRadarAuto(a)?'<button class="btn btn-outline btn-sm" data-adm-hideradar="'+esc(avisoKeyStr(a))+'">🙈 Ocultar</button>':'<button class="btn btn-outline btn-sm" data-adm-editav="'+i+'">Editar</button><button class="btn btn-outline btn-sm" data-adm-delav="'+i+'" style="color:var(--red);border-color:var(--red)">🗑 Excluir</button>')+'</div>'
       +'</article>';
   }
   var formHTML=admMuralShowForm?(
@@ -16791,6 +16796,29 @@ function bindAdmSec(sec){
         notify('Erro: '+(e&&e.message||e),'err');
         b.disabled=false;b.textContent=rot;
       });
+    });});
+    // Push a partir do card do mural. O corpo da notificação é o TÍTULO do item:
+    // quem recebe precisa saber o que aconteceu, não que "há novidade".
+    main.querySelectorAll('[data-adm-pushav]').forEach(function(b){b.addEventListener('click',function(){
+      var key=b.dataset.admPushav;
+      var av=null;
+      (admAvisos||[]).concat(radarAvisos||[]).forEach(function(x){if(!av&&avisoKeyStr(x)===key)av=x;});
+      if(!av){notify('Não achei este item para notificar.','err');return;}
+      var titulo=String(av.titulo||'').trim();
+      // ⚠️ Envio para TODOS os aparelhos inscritos e não tem como cancelar depois.
+      // Confirmar com o texto à vista é o que separa "avisar" de "avisar errado".
+      if(!confirm('Notificar TODOS os alunos inscritos no celular?\n\n'+titulo+'\n\nNão dá para cancelar depois de enviado.'))return;
+      var bn=(av.breaking===true)||/breaking/i.test(String(av.tipo||''));
+      b.disabled=true;b.innerHTML=ldHTML('Enviando...');
+      admSendPush({title:bn?'🚨 Breaking News':'📣 '+(String(av.tipo||'Endodirect').trim()||'Endodirect'),body:titulo,url:'https://www.endodirect.com.br/#mural'})
+        .then(function(res){
+          if(res&&res.ok&&res.push){
+            var pp=res.push;var det=(pp.failed&&pp.errors&&pp.errors.length)?(' — '+pp.errors.join('; ')):'';
+            notify((pp.sent>0?'🔔 Notificação enviada para '+pp.sent+' aparelho(s)':'Nenhum aparelho inscrito recebeu')+(pp.failed?(' ('+pp.failed+' falha[s])'+det):'')+'.',pp.sent>0?'ok':'err');
+          }else notify('A notificação falhou'+((res&&res.error)?(': '+res.error):'.'),'err');
+        })
+        .catch(function(e){notify('Falha ao notificar: '+((e&&e.message)||e),'err');})
+        .then(function(){b.disabled=false;b.innerHTML='📲 Notificar';});
     });});
     main.querySelectorAll('[data-adm-hideradar]').forEach(function(b){b.addEventListener('click',function(){
       var key=b.dataset.admHideradar;

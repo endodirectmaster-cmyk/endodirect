@@ -5,6 +5,32 @@ atualizado: 2026-08-28
 
 # Newsletter e Radar
 
+## 📲 PUSH A PARTIR DO CARD DO MURAL (2026-08-28)
+
+O professor pediu para disparar no push a aprovação do Mounjaro. **O caminho não
+existia:** o push só saía ao PUBLICAR um aviso **manual**, pela caixinha do
+formulário. Para avisar sobre notícia trazida pelo radar seria preciso
+convertê-la em aviso — e a conversão **apaga `sourceId`, `breaking` e `auto`**,
+o que quebra a dedup: a mesma notícia voltaria como item novo assim que o feed a
+trouxesse.
+
+Agora todo card do mural tem **📲 Notificar**. Regras que ficam:
+
+- **Lê o card, não escreve nele.** É a razão de existir do botão; o teste proíbe
+  `saveRemoteState`, `persistAdm` e qualquer escrita dentro do handler.
+- **Confirma com o TÍTULO à vista.** Envio vai para todos os aparelhos inscritos
+  e não tem desfazer; "tem certeza?" sem o texto não impede disparo errado.
+- **O corpo da notificação é o título do item** — quem recebe precisa saber o que
+  aconteceu, não que "há novidade".
+- **O link leva ao mural**, não à fonte: mandar para o site da farmacêutica tira
+  o aluno da plataforma.
+- Botão trava durante o envio: dois cliques são duas notificações.
+
+⚠️ **O push NÃO pode ser disparado de fora do painel.** O endpoint exige token de
+sessão de admin (ou o `CRON_SECRET`), e a chave VAPID vive no servidor. Não há
+como um agente disparar por conta própria, e isso é proteção, não limitação —
+notificação em massa é irreversível.
+
 ## 🧨 FEED OFICIAL MUDO: ZERO ITEM DA LILLY EM 1.019 (2026-08-28)
 
 O professor mandou o print da aprovação do FDA para o **Mounjaro (tirzepatida)
