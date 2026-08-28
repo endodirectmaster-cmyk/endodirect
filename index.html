@@ -3245,12 +3245,21 @@ function sophiaTrajetoria(v){
 // tirar estes números dos bullets ao final da seção do muito alto risco no PDF:
 // a auditoria do acervo registrou que ali eles saem deslocados pela extração de
 // duas colunas, e os do muito alto risco aparecem com os valores do extremo.
+// `quando` é a definição da própria diretriz, e é o que torna o quadro didático:
+// sem ela o médico lê cinco linhas de números sem saber em qual o paciente cai.
+// `fora` marca as duas faixas que o escore NÃO alcança — são clínicas, e o
+// PREVENT é de prevenção primária.
 var LDL_METAS={
-  baixo:         {rot:'BAIXO',         ldl:115,nhdl:145,apob:100,red:30},
-  intermediario: {rot:'INTERMEDIÁRIO', ldl:100,nhdl:130,apob:90, red:30},
-  alto:          {rot:'ALTO',          ldl:70, nhdl:100,apob:70, red:50},
-  muitoalto:     {rot:'MUITO ALTO',    ldl:50, nhdl:80, apob:55, red:50},
-  extremo:       {rot:'EXTREMO',       ldl:40, nhdl:70, apob:45, red:50}
+  baixo:         {rot:'BAIXO',         ldl:115,nhdl:145,apob:100,red:30,
+    quando:'escore &lt; 5% em 10 anos, sem fator agravante e sem diabetes'},
+  intermediario: {rot:'INTERMEDIÁRIO', ldl:100,nhdl:130,apob:90, red:30,
+    quando:'escore 5 a &lt; 20%; ou &lt; 5% com agravante; ou diabetes em homem &lt; 50 / mulher &lt; 56 sem estratificador; ou LDL-c 160–189'},
+  alto:          {rot:'ALTO',          ldl:70, nhdl:100,apob:70, red:50,
+    quando:'escore ≥ 20%; ou intermediário com agravante; ou aterosclerose subclínica (CAC &gt; 100 UA ou percentil &gt; 75, placa carotídea &lt; 50%, placa na angio-TC, aneurisma de aorta abdominal); ou LDL-c ≥ 190; ou diabetes em homem ≥ 50 / mulher ≥ 56, ou com 1–2 estratificadores de alto risco'},
+  muitoalto:     {rot:'MUITO ALTO',    ldl:50, nhdl:80, apob:55, red:50, fora:1,
+    quando:'doença aterosclerótica estabelecida; no diabetes, estratificador de muito alto risco (EMAR) ou ≥ 3 estratificadores de alto risco'},
+  extremo:       {rot:'EXTREMO',       ldl:40, nhdl:70, apob:45, red:50, fora:1,
+    quando:'múltiplos eventos ateroscleróticos maiores; ou 1 evento maior somado a ≥ 2 condições de alto risco'}
 };
 // ⚠️⚠️ O ESCORE DÁ O PISO DA CATEGORIA, NÃO A CATEGORIA. Na SBC 2025 a faixa do
 // PREVENT é UMA das entradas: diabetes, LDL-c e agravantes/aterosclerose
@@ -3274,13 +3283,6 @@ function sbcCategoria(escore,v){
   if(isFinite(escore)&&escore>=5)return {k:'intermediario',motivo:'escore de 5 a < 20% em 10 anos'};
   return {k:'baixo',motivo:'escore < 5% em 10 anos, sem diabetes'};
 }
-function ldlLinhaMeta(m){
-  return '<b>LDL-c &lt; '+m.ldl+'</b> · não-HDL-c &lt; '+m.nhdl+' · redução do LDL-c ≥ '+m.red+'%'
-    +' <span style="opacity:.75">· ApoB &lt; '+m.apob+' (secundária)</span>';
-}
-// Conduta por faixa, como a diretriz a escreve — inclusive o GATILHO, que é o
-// que muda no dia a dia: no baixo e no intermediário não se medica por estar
-// acima da meta, e sim por persistir 30 mg/dL OU MAIS acima dela.
 function ldlConduta(k){
   if(k==='alto')return 'Estilo de vida <b>e</b> terapia farmacológica desde já: estatina de alta potência <b>ou</b> estatina + ezetimiba. Se o LDL-c ou o não-HDL-c persistirem acima da meta, intensificar.';
   return 'Estilo de vida para todos. Terapia farmacológica quando o LDL-c <b>ou</b> o não-HDL-c persistirem <b>30 mg/dL ou mais acima da meta</b> — não basta estar acima dela.';
@@ -3297,6 +3299,39 @@ function ldlFaixaEscore(escore){
 // "a faixa do escore é moderado" — e frase capenga em tela clínica tira a
 // autoridade do número que está do lado.
 var LDL_FAIXA_F={baixo:'baixa',moderado:'moderada',alto:'alta'};
+// O QUADRO INTEIRO das cinco categorias, e não só a linha do paciente. Pedido do
+// professor em 28/08: "deixa o quadro das metas ocupando toda a tela e bem
+// didático". Mostrar só a meta de quem está na tela responde ao caso; mostrar a
+// escada ENSINA — o médico vê onde o paciente caiu, o que teria mudado a meta e
+// para onde ele anda se piorar. O `quando` é a definição da própria diretriz.
+var LDL_COLS='<div style="flex:0 0 9.5rem">CATEGORIA</div><div style="flex:0 0 5.5rem">LDL-c</div><div style="flex:0 0 6rem">NÃO-HDL-c</div><div style="flex:0 0 5rem">REDUÇÃO</div><div style="flex:0 0 5rem">ApoB (2ª)</div><div style="flex:1 1 20rem">QUANDO SE APLICA</div>';
+function ldlQuadroHTML(atual){
+  var ordem=['baixo','intermediario','alto','muitoalto','extremo'];
+  var linhas=ordem.map(function(k){
+    var m=LDL_METAS[k],eu=(k===atual);
+    // ⚠️ A linha do paciente é marcada por FUNDO E ETIQUETA, não só por cor: num
+    // quadro de cinco linhas parecidas, cor sozinha some para quem imprime, para
+    // quem enxerga mal e no meio de outras tarjas coloridas da tela.
+    // ⚠️ `min-height:58px` vem da classe da casa, dimensionada para linha com
+    // botão. Aqui a linha é só texto: sem soltar essa amarra, um quadro de cinco
+    // linhas ocupa meia tela em espaço vazio e deixa de ser consultável de relance.
+    return '<div class="adm-table-row" style="min-height:0;padding:.5rem 1rem;font-size:.74rem;align-items:flex-start'
+      +(eu?';background:rgba(255,255,255,.05)':'')
+      +(m.fora?';opacity:.72':'')+'">'
+      +'<div style="flex:0 0 9.5rem;font-weight:700;color:var('+(eu?'--tx':'--t2')+')">'+m.rot
+        +(eu?' <span class="tag tag-blue" style="font-size:.58rem;vertical-align:middle">este paciente</span>':'')
+        +(m.fora?' <span title="fora do alcance do escore" style="color:var(--t3)">ⓘ</span>':'')+'</div>'
+      +'<div style="flex:0 0 5.5rem;font-weight:700;color:var('+(eu?'--tx':'--t2')+')">&lt; '+m.ldl+'</div>'
+      +'<div style="flex:0 0 6rem;color:var(--t2)">&lt; '+m.nhdl+'</div>'
+      +'<div style="flex:0 0 5rem;color:var(--t2)">≥ '+m.red+'%</div>'
+      +'<div style="flex:0 0 5rem;color:var(--t2)">&lt; '+m.apob+'</div>'
+      +'<div style="flex:1 1 20rem;color:var(--t3);line-height:1.5">'+m.quando+'</div></div>';
+  }).join('');
+  // O quadro rola sozinho no celular: seis colunas não cabem em 360 px, e
+  // espremê-las quebraria os números, que são o conteúdo.
+  return '<div style="overflow-x:auto"><div class="adm-table" style="min-width:56rem">'
+    +'<div class="adm-table-head" style="padding:.45rem 1rem">'+LDL_COLS+'</div>'+linhas+'</div></div>';
+}
 function ldlAlvoHTML(escore,v){
   var cat=sbcCategoria(escore,v),m=LDL_METAS[cat.k];
   var ldl=parseFloat(v.pv_ldl),ct=parseFloat(v.pv_ct),hdl=parseFloat(v.pv_hdl);
@@ -3304,17 +3339,9 @@ function ldlAlvoHTML(escore,v){
   var cor=cat.k==='alto'?'tag-red':(cat.k==='intermediario'?'tag-gold':'tag-grn');
   // ⚠️ O GATILHO DOS 30 mg/dL SÓ EXISTE NO BAIXO E NO INTERMEDIÁRIO. No risco
   // alto se medica desde o diagnóstico, qualquer que seja a distância — anotar
-  // "≥ 30: gatilho" ali sugeriria esperar a distância crescer para tratar, que é
-  // o contrário da conduta escrita logo abaixo.
+  // "≥ 30" ali sugeriria esperar a distância crescer para tratar, que é o
+  // contrário da conduta escrita logo abaixo.
   var usaGatilho=(cat.k==='baixo'||cat.k==='intermediario');
-  // As metas viram FICHAS: o número é o que se procura aqui, e em linha corrida
-  // ele se perde no meio da frase. Em tela larga a linha corrida ainda ia de
-  // ponta a ponta, o que nenhum olho acompanha.
-  function ficha(rot,val,forte){
-    return '<div style="flex:1 1 7.5rem;min-width:6.5rem;background:var(--bg2,rgba(255,255,255,.03));border:1px solid var(--bd);border-radius:var(--r);padding:.4rem .55rem">'
-      +'<div style="font-size:.62rem;letter-spacing:.05em;text-transform:uppercase;color:var(--t3)">'+rot+'</div>'
-      +'<div style="font-size:'+(forte?'.95rem':'.85rem')+';font-weight:700;color:'+(forte?'var(--tx)':'var(--t2)')+';margin-top:.1rem">'+val+'</div></div>';
-  }
   // Medido × meta: só entra o que foi informado. Linha vazia é ruído.
   function medido(rot,val,meta){
     if(!isFinite(val))return '';
@@ -3328,27 +3355,25 @@ function ldlAlvoHTML(escore,v){
       +'</div>';
   }
   // ⚠️ RESSALVA QUE NÃO SE APLICA É RUÍDO — e ruído constante ensina a pular o
-  // bloco inteiro, inclusive a ressalva que importa. Quem já é ALTO não precisa
-  // ler que LDL 160–189 sobe para intermediário, e a divergência SBC × SBD só
-  // existe no BAIXO risco. Entra só o que vale para ESTE paciente.
+  // bloco inteiro, inclusive a que importa. A escada de quem sobe para onde saiu
+  // daqui e virou a coluna "quando se aplica" do quadro, que a mostra INTEIRA;
+  // aqui ficam só as duas coisas que o quadro não diz.
   var notas=[];
-  if(cat.k!=='alto'){
-    notas.push('<b>Sobe de faixa</b> (o escore não vê): fator agravante — procurar ativamente no risco intermediário; aterosclerose subclínica (CAC &gt; 100 UA ou percentil &gt; 75, placa carotídea &lt; 50%, placa na angio-TC de coronárias, aneurisma de aorta abdominal) → <b>alto</b>'
-      +(isFinite(ldl)&&ldl>=160?'':'; LDL-c 160–189 → intermediário; LDL-c ≥ 190 → alto')+'.');
-  }
-  // Esta fica SEMPRE: é o teto do escore. Sem ela a tela sugere que < 50 e < 40
-  // nunca se aplicam, e quem já tem doença estabelecida sai subtratado.
-  notas.push('⚠️ <b>Muito alto (&lt; 50) e extremo (&lt; 40) não saem deste escore</b> — são clínicos (doença aterosclerótica estabelecida, evento maior prévio). O PREVENT é de <b>prevenção primária</b>.');
+  if(cat.k==='baixo'||cat.k==='intermediario')
+    notas.push('Procure <b>ativamente</b> fator agravante e aterosclerose subclínica: é no risco intermediário que a reclassificação é mais frequente, e ela muda a meta.');
+  notas.push('<span style="color:var(--t3)">ⓘ</span> <b>Muito alto e extremo não saem deste escore</b> — são definidos por critério clínico, e o PREVENT é de <b>prevenção primária</b>.');
   if(cat.k==='baixo')notas.push('⚠️ No baixo risco as fontes divergem: <b>SBC 2025 &lt; 115</b> e <b>SBD &lt; 100</b> mg/dL. Cite a fonte junto do número.');
   var faixa=ldlFaixaEscore(escore),subiu=faixa&&faixa!==m.rot.toLowerCase()&&!(cat.k==='intermediario'&&faixa==='moderado');
-  return '<div style="margin-top:.7rem;border:1px solid var(--bd);border-radius:var(--r);padding:.7rem .8rem;max-width:52rem">'
-    +'<div style="font-size:.68rem;font-weight:700;letter-spacing:.05em;text-transform:uppercase;color:var(--t3);margin-bottom:.5rem">Meta de LDL-c e conduta · Diretriz Brasileira de Dislipidemias 2025 (SBC)</div>'
+  // Texto corrido continua com medida de leitura própria: o QUADRO ocupa a tela
+  // (é tabela, e coluna larga ajuda), a PROSA não — linha de 1.500 px não se lê.
+  // ⚠️ Um só atributo `style` por elemento: concatenar um segundo faz o navegador
+  // IGNORAR o segundo em silêncio, e a largura não valia. Achado por mutação.
+  return '<div style="margin-top:.7rem;border:1px solid var(--bd);border-radius:var(--r);padding:.7rem .8rem">'
+    +'<div style="font-size:.68rem;font-weight:700;letter-spacing:.05em;text-transform:uppercase;color:var(--t3);margin-bottom:.5rem">Metas de LDL-c · Diretriz Brasileira de Dislipidemias 2025 (SBC)</div>'
     // ⚠️ DUAS MEDIDAS, DOIS NOMES — e dizer qual manda. A tarja acima é a FAIXA
-    // DO ESCORE (baixo/moderado/alto por % em 10 anos); esta é a CATEGORIA DA
-    // SBC, que é a que define meta e conduta. Enquanto as duas se chamavam
-    // "risco", a tela dava duas respostas para a mesma pergunta: o professor leu
-    // "moderado" em cima e "ALTO" embaixo e perguntou qual valia. Cada uma agora
-    // diz o que é, e a frase final diz qual decide.
+    // DO ESCORE (% em 10 anos); esta é a CATEGORIA DA SBC, que define meta e
+    // conduta. Enquanto as duas se chamavam "risco", a tela dava duas respostas
+    // para a mesma pergunta e o professor perguntou qual valia.
     +'<div style="display:flex;align-items:center;gap:.45rem;flex-wrap:wrap;margin-bottom:.55rem">'
       +'<span class="tag '+cor+'" style="font-size:.68rem">CATEGORIA SBC · '+m.rot+'</span>'
       +'<span style="font-size:.72rem;color:var(--t3)">'
@@ -3357,12 +3382,10 @@ function ldlAlvoHTML(escore,v){
                 ?'é o “moderado” da faixa do escore'
                 :'por '+esc(cat.motivo)))
       +' — <b>é ela que define a meta e a conduta</b>.</span></div>'
-    +'<div style="display:flex;gap:.45rem;flex-wrap:wrap">'
-      +ficha('LDL-c','&lt; '+m.ldl,true)+ficha('não-HDL-c','&lt; '+m.nhdl)
-      +ficha('Redução','≥ '+m.red+'%')+ficha('ApoB (2ª)','&lt; '+m.apob)+'</div>'
-    +(isFinite(ldl)||isFinite(nhdl)?'<div style="margin-top:.55rem">'+medido('LDL-c informado',ldl,m.ldl)+medido('não-HDL-c (CT − HDL)',nhdl,m.nhdl)+'</div>':'')
-    +'<div style="margin-top:.6rem;border-left:3px solid var(--bd);padding:.05rem 0 .05rem .6rem;font-size:.78rem;color:var(--t2);line-height:1.55">'+ldlConduta(cat.k)+'</div>'
-    +'<div style="margin-top:.6rem;font-size:.7rem;color:var(--t3);line-height:1.5">'
+    +ldlQuadroHTML(cat.k)
+    +(isFinite(ldl)||isFinite(nhdl)?'<div style="margin-top:.6rem;max-width:60rem">'+medido('LDL-c informado',ldl,m.ldl)+medido('não-HDL-c (CT − HDL)',nhdl,m.nhdl)+'</div>':'')
+    +'<div style="margin-top:.6rem;border-left:3px solid var(--bd);padding:.05rem 0 .05rem .6rem;font-size:.78rem;color:var(--t2);line-height:1.55;max-width:60rem">'+ldlConduta(cat.k)+'</div>'
+    +'<div style="margin-top:.6rem;font-size:.7rem;color:var(--t3);line-height:1.5;max-width:60rem">'
       +notas.map(function(n){return '<div style="margin-top:.28rem">'+n+'</div>';}).join('')
     +'</div></div>';
 }

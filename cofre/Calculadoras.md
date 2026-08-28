@@ -36,6 +36,35 @@ com LDL-c 195 é ALTO. O que o escore não vê fica escrito na tela.
 - ⚠️ No baixo risco **SBC (< 115) e SBD (< 100) divergem** — citar a fonte junto
   do número. A tela diz isso.
 
+### 📊 O QUADRO INTEIRO, EM LARGURA CHEIA (2026-08-28)
+
+Pedido do professor: *"deixa o quadro das metas ocupando toda a tela e bem
+didático"*. As quatro fichas do paciente viraram a **escada completa das cinco
+categorias** — LDL-c, não-HDL-c, redução, ApoB e uma coluna **QUANDO SE APLICA**
+com a definição da própria diretriz. Mostrar só a meta de quem está na tela
+responde ao caso; mostrar a escada **ensina**: dá para ver onde o paciente caiu,
+o que teria mudado a meta, e para onde ele anda se piorar.
+
+- A linha do paciente é marcada por **fundo e etiqueta**, não só por cor — cor
+  sozinha some ao imprimir, para quem enxerga mal, e no meio das outras tarjas.
+- **Muito alto e extremo levam ⓘ** na própria linha: são clínicos, fora do
+  alcance do escore. A marca substitui um parágrafo de rodapé.
+- O quadro **rola** no celular (`overflow-x:auto` + `min-width`): seis colunas não
+  cabem em 360 px, e espremer quebraria os números, que são o conteúdo.
+- ⚠️ `.adm-table-row` traz `min-height:58px` da casa, dimensionada para linha com
+  botão. Sem soltar essa amarra, cinco linhas de texto ocupam meia tela em vão.
+- **O quadro ocupa a tela; a prosa, não.** Conduta e ressalvas seguem com
+  `max-width: 60rem` — tabela ganha com coluna larga, texto corrido não.
+- A antiga lista de "sobe de faixa" **saiu do rodapé** e virou a coluna do
+  quadro. Ficou só o que o quadro não diz: procurar agravante ativamente, o teto
+  do escore e a divergência SBC × SBD no baixo risco.
+
+🧨 **Um `style` por elemento.** A largura da linha do medido vinha num SEGUNDO
+atributo `style` no mesmo `<div>` — o navegador **ignora o segundo em silêncio**,
+então a medida de leitura não valia ali, e o teste passava numa marcação que não
+fazia nada. Achado por mutação. Guarda no teste: nenhum elemento do bloco pode
+ter dois `style`.
+
 ### 🧨 DUAS MEDIDAS COM O MESMO NOME DÃO DUAS RESPOSTAS (2026-08-28)
 
 O professor olhou a tela e perguntou: **"risco alto ou moderado? ficou dúbio."**
