@@ -55,8 +55,9 @@ function mundo(fonte) {
     + corpo('ldlFaixaEscore', fonte) + '\n'
     + linhaVarSimples('LDL_FAIXA_F', fonte) + '\n'
     + corpo('sbcCategoria', fonte) + '\n'
-    + corpo('ldlLinhaMeta', fonte) + '\n'
+    + linhaVarSimples('LDL_COLS', fonte) + '\n'
     + corpo('ldlConduta', fonte) + '\n'
+    + corpo('ldlQuadroHTML', fonte) + '\n'
     + corpo('ldlAlvoHTML', fonte), ctx);
   return ctx;
 }
@@ -143,30 +144,67 @@ ok(/escore de 5 a < 20%/.test(M.sbcCategoria(8, paciente({})).motivo),
     '⚠️ sumiu o GATILHO do baixo/intermediário: ali não se medica por estar acima da meta, e sim por persistir ≥ 30 acima dela');
 }
 
-// ── Layout: o que NÃO se aplica a este paciente não entra ──────────────────
-// ⚠️ Ressalva constante ensina a pular o bloco inteiro, inclusive a que importa.
-// Pedido do professor em 27/08, olhando a tela cheia: o bloco virava um paredão
-// e ainda explicava a quem já era ALTO que "LDL 160–189 sobe para intermediário".
+// ── O QUADRO: a escada inteira, e a linha do paciente marcada ─────────────
+// Pedido do professor em 28/08: "deixa o quadro das metas ocupando toda a tela e
+// bem didático". Mostrar só a meta de quem está na tela responde ao caso;
+// mostrar a escada ENSINA — e é ela que substitui a antiga lista de "sobe de
+// faixa", que vivia como parágrafo de rodapé.
 {
+  const h = M.ldlAlvoHTML(12.7, paciente({ pv_dm: '1', pv_sexo: String(F), pv_idade: '62' }));
+  ok((h.match(/adm-table-row/g) || []).length === 5,
+    '⚠️ o quadro deixou de mostrar as CINCO categorias — sem a escada inteira ele volta a responder o caso sem ensinar nada');
+  ['BAIXO', 'INTERMEDIÁRIO', 'ALTO', 'MUITO ALTO', 'EXTREMO'].forEach((r) => {
+    ok(h.indexOf(r) >= 0, 'o quadro perdeu a linha do risco ' + r);
+  });
+  ['115', '100', '70', '50', '40'].forEach((n) => {
+    ok(h.indexOf('&lt; ' + n) >= 0, 'o quadro perdeu a meta de LDL-c < ' + n);
+  });
+  ok(/QUANDO SE APLICA/.test(h) && /escore ≥ 20%/.test(h) && /doença aterosclerótica estabelecida/.test(h),
+    '⚠️ sumiu a coluna que diz QUANDO cada faixa se aplica — sem ela são cinco linhas de números sem uso clínico');
+  // A linha do paciente: fundo E etiqueta. Cor sozinha some ao imprimir, para
+  // quem enxerga mal, e no meio das outras tarjas coloridas da tela.
+  ok(/este paciente/.test(h), '⚠️ a linha do paciente deixou de ser identificada dentro do quadro');
+  ok(/background:rgba\(255,255,255,\.05\)/.test(h),
+    'a linha do paciente perdeu o realce de fundo — só a etiqueta é fácil de pular num quadro de cinco linhas');
+  // As duas faixas fora do alcance do escore ficam marcadas na própria linha.
+  ok(/fora do alcance do escore/.test(h) && /não saem deste escore/.test(h),
+    '⚠️ muito alto e extremo deixaram de ser marcados como fora do alcance do escore');
+  // Seis colunas não cabem em 360 px: o quadro rola em vez de espremer o número.
+  ok(/overflow-x:auto/.test(h) && /min-width:56rem/.test(h),
+    'o quadro deixou de rolar no celular — espremido, quebra os números, que são o conteúdo');
+  // ⚠️ `.adm-table-row` traz `min-height:58px` da casa, dimensionada para linha
+  // com botão. Sem soltar a amarra, cinco linhas de texto ocupam meia tela em
+  // espaço vazio e o quadro deixa de ser consultável de relance.
+  ok(/min-height:0/.test(h),
+    'as linhas do quadro voltaram à altura mínima da tabela do painel — quadro de consulta não pode ter meia tela de vão');
+}
+{
+  // O quadro ocupa a tela; a PROSA não. Linha de texto de 1.500 px não se lê.
+  const h = M.ldlAlvoHTML(2, paciente({ pv_ldl: '90' }));
+  ok(!/max-width:52rem/.test(h), 'o quadro voltou a ficar preso à largura antiga em vez de ocupar a tela');
+  // ⚠️ "pelo menos N" autoriza apagar de um dos blocos sem o teste ver — foi o
+  // furo de 26/08 se repetindo. Cada bloco de prosa é cobrado por nome.
+  ok(/line-height:1\.55;max-width:60rem/.test(h), 'a CONDUTA perdeu a medida de leitura');
+  ok(/line-height:1\.5;max-width:60rem/.test(h), 'as RESSALVAS perderam a medida de leitura');
+  ok(/margin-top:\.6rem;max-width:60rem/.test(h), 'a linha do MEDIDO perdeu a medida de leitura');
+  // 🧨 Aqui a largura vinha num SEGUNDO atributo `style` no mesmo elemento, que o
+  // navegador ignora em silêncio: o teste passava numa marcação que não valia
+  // nada. Um só `style` por elemento — achado por mutação em 28/08.
+  ok(!/<div[^>]*style="[^"]*"[^>]*style="/.test(h),
+    '⚠️ elemento com DOIS atributos style: o segundo é ignorado e o estilo não vale');
+}
+{
+  // Ressalva que não se aplica é ruído. A escada saiu do rodapé (está no quadro);
+  // aqui ficam só as duas coisas que o quadro NÃO diz.
   const alto = M.ldlAlvoHTML(2, paciente({ pv_ldl: '195' }));
-  ok(!/Sobe de faixa/.test(alto),
-    'no ALTO risco não há para onde subir pelo escore — a lista de reclassificação ali é ruído');
-  ok(!/fontes divergem/.test(alto),
-    'a divergência SBC × SBD só existe no BAIXO risco; mostrá-la no alto é ruído');
+  ok(!/fontes divergem/.test(alto), 'a divergência SBC × SBD só existe no BAIXO risco; mostrá-la no alto é ruído');
+  ok(!/Procure <b>ativamente<\/b>/.test(alto),
+    'procurar agravante é conselho do baixo/intermediário — no alto o paciente já está no topo do que o escore alcança');
   const baixo = M.ldlAlvoHTML(2, paciente({}));
-  ok(/Sobe de faixa/.test(baixo) && /fontes divergem/.test(baixo),
+  ok(/fontes divergem/.test(baixo) && /Procure <b>ativamente<\/b>/.test(baixo),
     'no BAIXO risco as duas ressalvas TÊM de aparecer — são elas que evitam subclassificar');
-  // O teto do escore fica em toda faixa: é o que evita subtratar quem já tem doença.
   ok(/não saem deste escore/.test(alto) && /não saem deste escore/.test(baixo),
     '⚠️ o aviso de que muito alto e extremo não saem do escore tem de aparecer em TODAS as faixas');
-  // Com LDL já ≥ 160 a régua de LDL não acrescenta nada: ele já subiu por ela.
-  const porLdl = M.ldlAlvoHTML(2, paciente({ pv_ldl: '170' }));
-  // ⚠️ A régua é `LDL-c 160–189 → intermediário`; o MOTIVO ("por LDL-c de
-  // 160–189 mg/dL") cita a mesma faixa e tem de ficar — é o que explica a
-  // categoria. Procurar só "160–189" confundia os dois.
-  ok(/Sobe de faixa/.test(porLdl) && !/160–189 → intermediário/.test(porLdl),
-    'quem já subiu pelo próprio LDL não precisa ler a régua de LDL que o subiu');
-  ok(/por LDL-c de 160–189/.test(porLdl), 'o motivo da categoria não pode sumir junto com a régua');
 }
 {
   // ⚠️ DUAS MEDIDAS COM O MESMO NOME DÃO DUAS RESPOSTAS. A tarja do escore dizia
@@ -204,15 +242,6 @@ ok(/escore de 5 a < 20%/.test(M.sbcCategoria(8, paciente({})).motivo),
   const F2 = M.ldlAlvoHTML(13.4, paciente({ pv_dm: '1', pv_sexo: String(F), pv_idade: '62' }));
   ok(!/faixa do escore é moderado;/.test(F2), 'o bloco voltou a escrever "a faixa do escore é moderado"');
 }
-{
-  // Medida de leitura: em tela larga a linha corrida ia de ponta a ponta.
-  const h = M.ldlAlvoHTML(2, paciente({}));
-  ok(/max-width:52rem/.test(h),
-    '⚠️ sumiu o limite de largura do bloco — em tela cheia a linha corre 1.500 px e ninguém acompanha');
-  ok(/LDL-c<\/div>/.test(h) && /&lt; 115/.test(h),
-    'as metas deixaram de sair como fichas: em linha corrida o número que se procura se perde na frase');
-}
-
 // ── A fiação: a calculadora de 10 anos tem de CHAMAR o bloco ───────────────
 // ⚠️ Testar `ldlAlvoHTML` isolada prova que a função funciona, não que alguém a
 // usa. Sem esta asserção, apagar o `extra:` do PREVENT deixava a tela sem meta
