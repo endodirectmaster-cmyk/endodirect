@@ -41,12 +41,19 @@ function trechoVar(nome, fonte) {
   return src.slice(i + 1, fim + 3);
 }
 
+function linhaVarSimples(nome, fonte) {
+  const src = fonte || html;
+  const i = src.indexOf('\nvar ' + nome + '=');
+  if (i < 0) throw new Error('var não encontrada: ' + nome);
+  return src.slice(i + 1, src.indexOf('\n', i + 1));
+}
 function mundo(fonte) {
   const ctx = vm.createContext({});
   vm.runInContext(
     'function esc(s){return String(s==null?"":s).replace(/[&<>"]/g,function(c){return {"&":"&amp;","<":"&lt;",">":"&gt;","\\"":"&quot;"}[c];});}\n'
     + trechoVar('LDL_METAS', fonte) + '\n'
     + corpo('ldlFaixaEscore', fonte) + '\n'
+    + linhaVarSimples('LDL_FAIXA_F', fonte) + '\n'
     + corpo('sbcCategoria', fonte) + '\n'
     + corpo('ldlLinhaMeta', fonte) + '\n'
     + corpo('ldlConduta', fonte) + '\n'
@@ -106,7 +113,7 @@ ok(/escore de 5 a < 20%/.test(M.sbcCategoria(8, paciente({})).motivo),
 // ── O bloco na tela ────────────────────────────────────────────────────────
 {
   const h = M.ldlAlvoHTML(2, paciente({ pv_ldl: '195' }));
-  ok(/RISCO ALTO/.test(h) && /&lt; 70/.test(h), 'o bloco não mostrou a meta da faixa em que o paciente caiu');
+  ok(/CATEGORIA SBC · ALTO/.test(h) && /&lt; 70/.test(h), 'o bloco não mostrou a meta da faixa em que o paciente caiu');
   ok(/hipercolesterolemia familiar/.test(h), 'o bloco não disse por que o paciente é alto risco');
   ok(/\+125 acima da meta/.test(h), 'o bloco não disse a distância medida até a meta (195 − 70)');
   ok(/estatina de alta potência/.test(h), 'a conduta do alto risco (estatina de alta potência ou + ezetimiba) sumiu');
@@ -162,16 +169,40 @@ ok(/escore de 5 a < 20%/.test(M.sbcCategoria(8, paciente({})).motivo),
   ok(/por LDL-c de 160–189/.test(porLdl), 'o motivo da categoria não pode sumir junto com a régua');
 }
 {
-  // Categoria da SBC acima da faixa do escore: dizer por quê, senão a tarja
-  // "moderado" em cima e "ALTO" embaixo parecem contradição na tela.
+  // ⚠️ DUAS MEDIDAS COM O MESMO NOME DÃO DUAS RESPOSTAS. A tarja do escore dizia
+  // "DASCV moderado" e o bloco dizia "RISCO ALTO" — o professor olhou a tela em
+  // 27/08 e perguntou qual valia. As duas estão certas e são coisas diferentes:
+  // faixa do escore × categoria da SBC. Cada uma tem de dizer O QUE É, e a tela
+  // tem de dizer QUAL DECIDE — senão o médico escolhe uma das duas no chute.
   const h = M.ldlAlvoHTML(13.4, paciente({ pv_dm: '1', pv_sexo: String(F), pv_idade: '62' }));
-  ok(/RISCO ALTO/.test(h) && /acima da faixa do escore \(moderado\)/.test(h),
-    '⚠️ a tarja do escore diz "moderado" e o bloco diz "ALTO" sem explicar — na tela isso lê como defeito');
+  ok(/CATEGORIA SBC · ALTO/.test(h),
+    '⚠️ o bloco voltou a rotular sua medida como "risco", o mesmo nome da tarja do escore — duas respostas para a mesma pergunta');
+  ok(/a faixa do escore é moderada; sobe por diabetes em mulher ≥ 56 anos/.test(h),
+    '⚠️ a tela não reconcilia as duas medidas: sem isso "moderado" em cima e "ALTO" embaixo lê como defeito');
+  ok(/é ela que define a meta e a conduta/.test(h),
+    '⚠️ sumiu a frase que diz QUAL das duas decide — é ela que tira a dúvida do professor');
   const im = M.ldlAlvoHTML(8, paciente({}));
-  ok(/“moderado” da tarja acima/.test(im), 'no intermediário falta dizer que ele é o "moderado" da tarja acima');
+  ok(/é o “moderado” da faixa do escore/.test(im),
+    'no intermediário falta dizer que ele é o mesmo "moderado" da faixa do escore');
   const coerente = M.ldlAlvoHTML(25, paciente({}));
-  ok(!/acima da faixa do escore/.test(coerente),
-    'quando escore e categoria coincidem não há o que explicar — a frase vira ruído');
+  ok(!/a faixa do escore é/.test(coerente) && /é ela que define a meta e a conduta/.test(coerente),
+    'quando escore e categoria coincidem não há reconciliação a fazer, mas a frase de quem decide fica');
+}
+{
+  // A TARJA do escore também tem de dizer o que é. "DASCV moderado" era um
+  // veredito; "faixa moderada do escore" é uma medida com nome.
+  const i = html.indexOf("{id:'prevent',name:'Risco CV — PREVENT (AHA)'");
+  const bloco = html.slice(i, html.indexOf("{id:'prevent30'", i));
+  ok(/em 10 anos · faixa '\+cat\.t\+' do escore/.test(bloco),
+    '⚠️ a tarja voltou a chamar a faixa do escore de veredito ("DASCV moderado") — é ela que colide com a categoria da SBC');
+  ok(!/'DASCV '\+cat\.t/.test(bloco), 'a tarja voltou a abrir com a palavra da faixa em vez do número');
+  // A frase é "faixa X do escore": X concorda com "faixa". "faixa moderado" é
+  // frase capenga em tela clínica, e frase capenga tira a autoridade do número
+  // que está do lado.
+  ok(/\{t:'baixa',/.test(bloco) && /\{t:'moderada',/.test(bloco) && /\{t:'alta',/.test(bloco),
+    'a faixa do escore voltou ao masculino na tarja — a frase vira "faixa moderado do escore"');
+  const F2 = M.ldlAlvoHTML(13.4, paciente({ pv_dm: '1', pv_sexo: String(F), pv_idade: '62' }));
+  ok(!/faixa do escore é moderado;/.test(F2), 'o bloco voltou a escrever "a faixa do escore é moderado"');
 }
 {
   // Medida de leitura: em tela larga a linha corrida ia de ponta a ponta.

@@ -1,6 +1,6 @@
 ---
 tags: [cofre, decisoes]
-atualizado: 2026-08-27
+atualizado: 2026-08-28
 ---
 
 # Decisões
@@ -8,6 +8,9 @@ atualizado: 2026-08-27
 Log de decisões de produto e técnicas (mais recentes no topo).
 
 ## 2026-08
+- **🧨 DUAS MEDIDAS COM O MESMO NOME DÃO DUAS RESPOSTAS (2026-08-28).** O professor olhou a tela do PREVENT e perguntou: *"risco alto ou moderado? ficou dúbio."* A tarja dizia `DASCV moderado (12,5%)` e o bloco dizia `RISCO ALTO` — as duas certas, sobre coisas diferentes: **faixa do escore** (probabilidade em 10 anos) × **categoria da SBC** (o estrato que define meta e tratamento). Enquanto as duas se chamavam "risco", a tela dava duas respostas para a mesma pergunta. Conserto: a tarja passou a dizer `DASCV 12,5% em 10 anos · faixa moderada do escore`; o bloco passou a se chamar `CATEGORIA SBC · ALTO`; e a tela diz **qual decide** — *"é ela que define a meta e a conduta"* — reconciliando as duas (*"a faixa do escore é moderada; sobe por diabetes em mulher ≥ 56 anos"*).
+  - **Regra que fica: dois números na mesma tela precisam de dois nomes e de uma frase dizendo qual manda.** Na rodada anterior eu tinha só EXPLICADO a diferença ("acima da faixa do escore") e mantido os dois chamados de "risco" — não resolveu, e o professor voltou com a mesma dúvida. Explicação não substitui nomear.
+  - ⚠️ Concordância entra na conta: a frase virou "faixa X do escore", então X concorda com "faixa" (baixa/moderada/alta). 6 mutações verificadas; `sw.js` v256 → **v257**.
 - **🎨 LAYOUT DO BLOCO DE META: RESSALVA QUE NÃO SE APLICA É RUÍDO (2026-08-27).** O professor abriu a calculadora em tela cheia e pediu para melhorar o final. Além da medida de leitura (`max-width: 52rem`, metas em **fichas**, medido × meta alinhado, conduta com barra lateral), o conserto que importa é **contextual**: o bloco explicava a uma paciente já de ALTO risco que "LDL 160–189 sobe para intermediário", e mostrava a divergência SBC × SBD, que só existe no baixo risco. **Ressalva constante ensina a pular o bloco inteiro — inclusive a que importa.** Agora entra só o que vale para aquele paciente; o teto do escore (muito alto/extremo são clínicos) fica em TODAS as faixas, porque é ele que evita subtratar quem já tem doença. E quando a categoria da SBC fica ACIMA da faixa do escore, a tela agora diz por quê — antes a tarja dizia "moderado" e o bloco dizia "ALTO" logo abaixo, o que lê como defeito. 7 mutações verificadas; `sw.js` v255 → **v256**.
 - **🎯 META DE LDL-c E CONDUTA DENTRO DA CALCULADORA PREVENT (2026-08-27).** Pedido do professor. A Diretriz Brasileira de Dislipidemias 2025 (SBC) elege o **PREVENT como ferramenta preferencial** de estratificação em adulto de 30–79 anos sem doença aterosclerótica conhecida — por isso a meta entra na tela do próprio escore, e não numa calculadora à parte. Abaixo do risco aparecem: categoria com o **motivo** que a decidiu, metas de LDL-c/não-HDL-c/ApoB e a redução mínima, a distância medida até a meta, e a conduta da faixa.
   - 🧨 **O ESCORE DÁ O PISO DA CATEGORIA, NÃO A CATEGORIA.** Na SBC 2025 a faixa do escore é UMA das entradas: diabetes (corte de **50 anos no homem, 56 na mulher**), LDL-c (160–189 → intermediário; **≥ 190 → alto**) e agravantes/aterosclerose subclínica **sobem** o paciente de faixa, e **nada o desce**. Um escore de 2% com LDL-c 195 é ALTO risco: ler só a faixa entregaria meta < 115 a quem precisa de < 70. O que o escore não enxerga fica **escrito na tela**, não escondido no código.

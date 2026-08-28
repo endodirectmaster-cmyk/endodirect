@@ -36,6 +36,35 @@ com LDL-c 195 é ALTO. O que o escore não vê fica escrito na tela.
 - ⚠️ No baixo risco **SBC (< 115) e SBD (< 100) divergem** — citar a fonte junto
   do número. A tela diz isso.
 
+### 🧨 DUAS MEDIDAS COM O MESMO NOME DÃO DUAS RESPOSTAS (2026-08-28)
+
+O professor olhou a tela e perguntou: **"risco alto ou moderado? ficou dúbio."**
+E estava certo. A tarja dizia `DASCV moderado (12,5%)` e o bloco logo abaixo
+dizia `RISCO ALTO`. As duas corretas, e sobre coisas diferentes:
+
+| medida | o que é | responde |
+|---|---|---|
+| faixa do escore | % de DASCV em 10 anos (baixo <5, moderado 5–20, alto >20) | qual a probabilidade |
+| categoria da SBC | estrato de risco da diretriz de dislipidemias | **qual a meta e o tratamento** |
+
+Enquanto as duas se chamavam "risco", a tela dava **duas respostas para a mesma
+pergunta** e deixava o médico escolher no chute. Conserto em três partes:
+
+1. a tarja diz o que é — `DASCV 12,5% em 10 anos · faixa moderada do escore`;
+2. o bloco nomeia a sua — `CATEGORIA SBC · ALTO`;
+3. a tela diz **qual decide** — *"é ela que define a meta e a conduta"* — e
+   reconcilia as duas: *"a faixa do escore é moderada; sobe por diabetes em
+   mulher ≥ 56 anos"*.
+
+Regra que fica: **dois números na mesma tela precisam de dois nomes e de uma
+frase dizendo qual manda.** Explicar a diferença não basta se os dois continuam
+se chamando a mesma coisa — foi o que eu tinha feito na rodada anterior, e não
+resolveu.
+
+⚠️ E concordância importa: a frase virou "faixa X do escore", então X concorda
+com "faixa" (baixa/moderada/alta). "A faixa do escore é moderado" é frase
+capenga em tela clínica, e frase capenga tira a autoridade do número ao lado.
+
 ### Layout: ressalva que não se aplica é ruído (2026-08-27, 2ª rodada)
 
 O professor abriu a calculadora em tela cheia e pediu para melhorar o final. Dois
