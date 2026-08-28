@@ -3293,6 +3293,10 @@ function ldlFaixaEscore(escore){
   if(!isFinite(escore))return '';
   return escore<5?'baixo':(escore<=20?'moderado':'alto');
 }
+// A mesma faixa concordando com "faixa" (feminino). Sem isto a tela escrevia
+// "a faixa do escore é moderado" — e frase capenga em tela clínica tira a
+// autoridade do número que está do lado.
+var LDL_FAIXA_F={baixo:'baixa',moderado:'moderada',alto:'alta'};
 function ldlAlvoHTML(escore,v){
   var cat=sbcCategoria(escore,v),m=LDL_METAS[cat.k];
   var ldl=parseFloat(v.pv_ldl),ct=parseFloat(v.pv_ct),hdl=parseFloat(v.pv_hdl);
@@ -3339,11 +3343,20 @@ function ldlAlvoHTML(escore,v){
   var faixa=ldlFaixaEscore(escore),subiu=faixa&&faixa!==m.rot.toLowerCase()&&!(cat.k==='intermediario'&&faixa==='moderado');
   return '<div style="margin-top:.7rem;border:1px solid var(--bd);border-radius:var(--r);padding:.7rem .8rem;max-width:52rem">'
     +'<div style="font-size:.68rem;font-weight:700;letter-spacing:.05em;text-transform:uppercase;color:var(--t3);margin-bottom:.5rem">Meta de LDL-c e conduta · Diretriz Brasileira de Dislipidemias 2025 (SBC)</div>'
+    // ⚠️ DUAS MEDIDAS, DOIS NOMES — e dizer qual manda. A tarja acima é a FAIXA
+    // DO ESCORE (baixo/moderado/alto por % em 10 anos); esta é a CATEGORIA DA
+    // SBC, que é a que define meta e conduta. Enquanto as duas se chamavam
+    // "risco", a tela dava duas respostas para a mesma pergunta: o professor leu
+    // "moderado" em cima e "ALTO" embaixo e perguntou qual valia. Cada uma agora
+    // diz o que é, e a frase final diz qual decide.
     +'<div style="display:flex;align-items:center;gap:.45rem;flex-wrap:wrap;margin-bottom:.55rem">'
-      +'<span class="tag '+cor+'" style="font-size:.68rem">RISCO '+m.rot+'</span>'
+      +'<span class="tag '+cor+'" style="font-size:.68rem">CATEGORIA SBC · '+m.rot+'</span>'
       +'<span style="font-size:.72rem;color:var(--t3)">'
-      +(subiu?'acima da faixa do escore ('+faixa+') — ':'')+'por '+esc(cat.motivo)
-      +(cat.k==='intermediario'&&faixa==='moderado'?' — o “moderado” da tarja acima':'')+'</span></div>'
+      +(subiu?'a faixa do escore é '+(LDL_FAIXA_F[faixa]||faixa)+'; sobe por '+esc(cat.motivo)
+             :(cat.k==='intermediario'&&faixa==='moderado'
+                ?'é o “moderado” da faixa do escore'
+                :'por '+esc(cat.motivo)))
+      +' — <b>é ela que define a meta e a conduta</b>.</span></div>'
     +'<div style="display:flex;gap:.45rem;flex-wrap:wrap">'
       +ficha('LDL-c','&lt; '+m.ldl,true)+ficha('não-HDL-c','&lt; '+m.nhdl)
       +ficha('Redução','≥ '+m.red+'%')+ficha('ApoB (2ª)','&lt; '+m.apob)+'</div>'
@@ -3357,7 +3370,7 @@ var CALCS=[
   {id:'prevent',name:'Risco CV — PREVENT (AHA)',area:'Lípides',desc:'Risco de DASCV, DCV total e IC em 10 anos (AHA PREVENT 2024; opcional: UACR/HbA1c)',
    fields:[{id:'pv_sexo',label:'Sexo',type:'select',opts:['Feminino','Masculino'],vals:[0,1]},{id:'pv_idade',label:'Idade (anos)',type:'num'},{id:'pv_ct',label:'Colesterol total (mg/dL)',type:'num'},{id:'pv_hdl',label:'HDL (mg/dL)',type:'num'},{id:'pv_pas',label:'PA sistólica (mmHg)',type:'num'},{id:'pv_egfr',label:'TFGe (mL/min/1,73m²)',type:'num'},{id:'pv_imc',label:'IMC (kg/m²)',type:'num'},{id:'pv_dm',label:'Diabetes',type:'select',opts:['Não','Sim'],vals:[0,1]},{id:'pv_fum',label:'Tabagismo atual',type:'select',opts:['Não','Sim'],vals:[0,1]},{id:'pv_ahas',label:'Uso de anti-hipertensivo',type:'select',opts:['Não','Sim'],vals:[0,1]},{id:'pv_est',label:'Uso de estatina',type:'select',opts:['Não','Sim'],vals:[0,1]},{id:'pv_uacr',label:'RAC urinária / UACR (mg/g) — opcional',type:'num'},{id:'pv_hba1c',label:'HbA1c (%) — opcional',type:'num'},{id:'pv_ldl',label:'LDL-c (mg/dL) — opcional, só para a meta',type:'num'}],
    calc:function(v){var r=preventRisk(v);return r?r.ascvd:NaN;},
-   interp:function(s,v){var r=preventRisk(v);if(!r)return{t:'Preencha sexo, idade, lípides, PAS, TFGe e IMC.',c:'tag-gold'};var idade=parseFloat(v.pv_idade);var fora=(idade>=30&&idade<=79)?'':' ⚠ fora de 30–79a';var cat=s<5?{t:'baixo',c:'tag-grn'}:(s<=20?{t:'moderado',c:'tag-gold'}:{t:'alto',c:'tag-red'});var mt=r.model==='full'?' · +UACR/HbA1c':(r.model==='uacr'?' · +UACR':(r.model==='hba1c'?' · +HbA1c':''));return{t:'DASCV '+cat.t+' ('+s.toFixed(1)+'%) · DCV total '+r.cvd.toFixed(1)+'% · IC '+r.hf.toFixed(1)+'%'+fora+mt,c:cat.c};},
+   interp:function(s,v){var r=preventRisk(v);if(!r)return{t:'Preencha sexo, idade, lípides, PAS, TFGe e IMC.',c:'tag-gold'};var idade=parseFloat(v.pv_idade);var fora=(idade>=30&&idade<=79)?'':' ⚠ fora de 30–79a';var cat=s<5?{t:'baixa',c:'tag-grn'}:(s<=20?{t:'moderada',c:'tag-gold'}:{t:'alta',c:'tag-red'});var mt=r.model==='full'?' · +UACR/HbA1c':(r.model==='uacr'?' · +UACR':(r.model==='hba1c'?' · +HbA1c':''));return{t:'DASCV '+s.toFixed(1)+'% em 10 anos · faixa '+cat.t+' do escore · DCV total '+r.cvd.toFixed(1)+'% · IC '+r.hf.toFixed(1)+'%'+fora+mt,c:cat.c};},
    // O `pv_ldl` NÃO entra no escore (o PREVENT usa CT e HDL): serve só para a
    // meta — reclassificar em 160–189 e ≥ 190, e dizer se o paciente está nela.
    extra:function(s,v){try{return ldlAlvoHTML(s,v);}catch(e){return '';}},
