@@ -527,6 +527,20 @@ try {
   fail('importador de PDF das diretrizes com comportamento errado:\n' + out);
 }
 
+// ⚠️ PUSH A PARTIR DO CARD (28/08/2026). O professor pediu para disparar no push
+// a aprovação do Mounjaro, e o caminho não existia: o push só saía ao PUBLICAR um
+// aviso MANUAL. Notificar sobre notícia do radar exigiria convertê-la em aviso —
+// e a conversão apaga `sourceId`, `breaking` e `auto`, quebrando a dedup da
+// captação seguinte. O botão lê o card e não o altera; e confirma antes, porque
+// vai para todos os aparelhos e não tem desfazer.
+try {
+  execFileSync(process.execPath, [path.join('scripts', 'test-push-do-mural.js')], { stdio: 'pipe' });
+  ok('push do mural: botão em todo card, confirma com o texto à vista e não escreve no item');
+} catch (e) {
+  const out = (e.stdout ? e.stdout.toString() : '') + (e.stderr ? e.stderr.toString() : '');
+  fail('botão de notificar do mural com comportamento errado:\n' + out);
+}
+
 // ⚠️ FEED OFICIAL MUDO (28/08/2026). O professor mostrou a aprovação
 // cardiovascular do Mounjaro e disse "não pegou essa info no mural". O defeito
 // não era o filtro — era o silêncio: `fetchFeed` nunca lança (para não derrubar
