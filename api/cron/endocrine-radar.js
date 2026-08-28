@@ -35,6 +35,20 @@ module.exports = async function handler(req, res) {
     // MESMA questão que vai ao ar na plataforma (sincronizadas). Idempotente por dia
     // (qotd_autopost_date) — o cron healthcheck (10h BRT) só confirma, sem repostar.
     // Fail-safe: nunca derruba o cron.
+    // ⚠️ FEED OFICIAL MUDO. Em 28/08/2026 o professor mostrou a aprovação
+    // cardiovascular do Mounjaro e perguntou por que o mural não pegou. A medida
+    // no acervo: ZERO item da Lilly em 1.019, com o feed oficial na lista desde
+    // sempre. O radar é fail-safe por desenho — feed fora do ar não derruba o
+    // mural — e por isso o defeito durou o acervo inteiro em silêncio. Agora o
+    // silêncio vira alerta: fail-safe é para não derrubar, não para não contar.
+    if (result && Array.isArray(result.feedsMudos) && result.feedsMudos.length) {
+      try {
+        await sendAlert('Feed oficial do radar sem notícias', [
+          'Os feeds abaixo são OFICIAIS e não entregaram nada nesta rodada. Enquanto isso durar, aprovação anunciada por essa fonte não chega ao mural.',
+          ...result.feedsMudos.map((f) => '• ' + f.nome + ' — ' + (f.ok ? 'respondeu, 0 itens' : 'falhou (HTTP ' + f.status + (f.erro ? ', ' + f.erro : '') + ')') + ' — ' + f.url)
+        ]);
+      } catch (_) {}
+    }
     let qotd = { posted: false, reason: 'skipped' };
     try { qotd = await autoPostDailyQotd(); }
     catch (e) { console.error('[cron-radar] auto-post QdD erro:', (e && e.stack) || e); qotd = { posted: false, reason: 'error' }; }

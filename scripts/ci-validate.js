@@ -527,6 +527,20 @@ try {
   fail('importador de PDF das diretrizes com comportamento errado:\n' + out);
 }
 
+// ⚠️ FEED OFICIAL MUDO (28/08/2026). O professor mostrou a aprovação
+// cardiovascular do Mounjaro e disse "não pegou essa info no mural". O defeito
+// não era o filtro — era o silêncio: `fetchFeed` nunca lança (para não derrubar
+// o radar) e também não avisa. Medido: ZERO item da Lilly em 1.019 do acervo,
+// com o feed oficial na lista desde sempre. Fail-safe é para não derrubar, não
+// para não contar.
+try {
+  execFileSync(process.execPath, [path.join('scripts', 'test-radar-feed-mudo.js')], { stdio: 'pipe' });
+  ok('radar: a notícia atravessa o pipeline e feed oficial mudo vira alerta');
+} catch (e) {
+  const out = (e.stdout ? e.stdout.toString() : '') + (e.stderr ? e.stderr.toString() : '');
+  fail('radar de notícias com comportamento errado:\n' + out);
+}
+
 // ⚠️ META DE LDL NO PREVENT (27/08/2026). A Diretriz Brasileira de Dislipidemias
 // 2025 elege o PREVENT como ferramenta preferencial, então a meta entra na tela
 // do escore. A armadilha: o escore dá o PISO da categoria, não a categoria —

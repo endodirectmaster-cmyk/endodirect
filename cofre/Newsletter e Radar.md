@@ -1,9 +1,48 @@
 ---
 tags: [cofre, newsletter, radar]
-atualizado: 2026-08-19
+atualizado: 2026-08-28
 ---
 
 # Newsletter e Radar
+
+## 🧨 FEED OFICIAL MUDO: ZERO ITEM DA LILLY EM 1.019 (2026-08-28)
+
+O professor mandou o print da aprovação do FDA para o **Mounjaro (tirzepatida)
+reduzir risco cardiovascular no diabetes tipo 2** e disse: *"não pegou essa info
+no mural"*. Estava certo, e a causa não era o filtro.
+
+**O defeito era o SILÊNCIO.** `fetchFeed` nunca lança — de propósito, para que um
+feed fora do ar não derrube o radar. Só que ele também **não avisa**. Medido no
+acervo antes do conserto:
+
+| medida | valor |
+|---|---|
+| itens no `radar_avisos` | 1.019 |
+| itens que citam a Lilly | **0** |
+| feed oficial da Lilly na lista | desde sempre |
+| feed oficial do FDA | entregando (PCSK9 oral em julho) |
+
+Um feed morto degradou em silêncio pelo acervo inteiro, e quem descobriu foi o
+professor lendo a notícia na fonte. **Fail-safe é para NÃO DERRUBAR, não para não
+contar.**
+
+O que ficou:
+
+- **`saudeDosFeeds()`** registra a última rodada por feed (ok, status, nº de itens,
+  erro); `runRadar` devolve os **oficiais mudos** e o **cron alerta**.
+- ⚠️ **Mudo inclui HTTP 200 com zero itens** — o modo de falha que passa por
+  saudável para sempre. Contar resposta não basta; tem de contar **item**.
+- **Só os oficiais entram no alerta.** Feed de busca vazio num dia é rotina, e
+  alerta que dispara por rotina ensina a ignorar alerta.
+- **A Lilly deixou de ter rota única:** ganhou uma busca (Google News), como a
+  Novo Nordisk sempre teve. Ela era a única fabricante da lista com uma rota só —
+  e era justamente a que não entregava. Confiável pelo domínio `lilly.com`, então
+  a segunda rota não afrouxa a allowlist.
+- O comunicado foi **inserido à mão** no mural com o mesmo `sourceId` que o radar
+  geraria, para que a captação futura **deduplique em vez de repetir**.
+- ⚠️ **O `probeNews` existia e nunca foi chamado por ninguém** — diagnóstico que
+  ninguém roda não é rede de segurança. O que passou a valer é o alerta
+  automático, não a ferramenta que espera alguém lembrar dela.
 
 ## Os e-mails que saem sozinhos (e o que trava cada um)
 Todos pegam carona no cron diário do radar (10:30 UTC) — o plano limita o número de crons, então **nenhum e-mail tem função serverless própria**.
