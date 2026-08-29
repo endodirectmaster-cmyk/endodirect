@@ -527,6 +527,20 @@ try {
   fail('importador de PDF das diretrizes com comportamento errado:\n' + out);
 }
 
+// ⚠️ A BASE PUBLICADA NÃO PODE REPRODUZIR A FONTE (29/08/2026). As citações já
+// viajavam protegidas (offset+hash), mas a `afirmacao` vai INTEIRA para o
+// clinical-deep-data.js, que é versionado e servido. Ao assimilar uma apostila
+// cujo autor escreve "NÃO AUTORIZO A REPLICAÇÃO", a varredura achou SEIS trechos
+// em que a minha paráfrase reproduzia a frase dele — reescrever devagar uma frase
+// boa devolve a frase boa. Fato pode coincidir; a frase que o organiza, não.
+try {
+  execFileSync(process.execPath, [path.join('scripts', 'test-nao-reproduz-fonte.js')], { stdio: 'pipe' });
+  ok('base publicada não reproduz período do texto-fonte (pula, dizendo, se os textos não estiverem no clone)');
+} catch (e) {
+  const out = (e.stdout ? e.stdout.toString() : '') + (e.stderr ? e.stderr.toString() : '');
+  fail('a base clínica publicada reproduz texto da fonte:\n' + out);
+}
+
 // ⚠️ PUSH A PARTIR DO CARD (28/08/2026). O professor pediu para disparar no push
 // a aprovação do Mounjaro, e o caminho não existia: o push só saía ao PUBLICAR um
 // aviso MANUAL. Notificar sobre notícia do radar exigiria convertê-la em aviso —

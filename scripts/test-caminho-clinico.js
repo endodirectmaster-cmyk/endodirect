@@ -663,6 +663,16 @@ const CAMINHO = [
   // diretrizes SBD 2026 e o diabetes pós-transplante saiu para área própria.
   // A expectativa aqui É o teste — se voltar a dar 'Diabetes', a divisão desfez.
   ['PTDM: quando rastrear?', 'Diabetes pós-transplante'],
+  // ⚠️ Desprescrição de AR GLP-1 saiu para área própria em 2026-08-29: Obesidade
+  // estava com 2.402 caracteres de folga e não cabia mais nada. As três primeiras
+  // guardam a DIVISÃO; as três últimas guardam que ela não ROUBOU da Obesidade —
+  // reganho pós-bariátrica, meta de peso e dose inicial continuam sendo obesidade.
+  ['paciente atingiu a meta de peso, posso suspender a semaglutida?', 'Desprescrição de AR GLP-1'],
+  ['risco de reganho de peso apos parar tirzepatida', 'Desprescrição de AR GLP-1'],
+  ['como fazer o desmame do agonista de GLP-1', 'Desprescrição de AR GLP-1'],
+  ['reganho de peso apos bypass gastrico', 'Obesidade'],
+  ['qual a meta de peso na obesidade grau 2', 'Obesidade'],
+  ['semaglutida para perda de peso, qual a dose inicial', 'Obesidade'],
   ['hormonio tireoidiano no idoso', 'Tireoide'],
   ['funcao das celulas beta se recupera?', 'Diabetes'],
   // ⚠️ `mialgia` SOZINHA ficou de fora e estas duas guardam a decisão: 3

@@ -1,9 +1,27 @@
 ---
 tags: [cofre, pendencias]
-atualizado: 2026-08-25
+atualizado: 2026-08-29
 ---
 
 # Pendências
+
+## 📋 ~556 TRECHOS DE FONTE REPRODUZIDOS NA BASE PUBLICADA (2026-08-29)
+
+Ao criar o guarda de reprodução (ver Convenções), a varredura do acervo inteiro
+mediu **~556 janelas de 12 palavras** do texto-fonte presentes no
+`clinical-deep-data.js`. O guarda **não reprova** essas: quase todas vêm de
+**artigos de acesso aberto e diretrizes de sociedade**, onde reproduzir é
+licenciado, e reprovar tudo transformaria o teste em ruído.
+
+O que fica em aberto, para decisão do professor:
+
+1. **Não há metadado de licença por fonte** nos 58 extratos — só o extrato novo
+   tem `nota_licenca`. Sem isso não dá para separar "licenciado" de "não medido".
+2. Se quiser fechar de vez, o caminho é registrar a licença de cada extrato
+   (CC BY, CC BY-NC-ND, diretriz pública, restrito) e ligar o guarda para todas
+   as classes que proíbem derivado — não é trabalho de uma sessão.
+3. **Nada disso afeta o material com restrição declarada**, que já está guardado
+   e reprova no CI.
 
 ## 📄 PDF DIGITALIZADO ENTRA POR AMOSTRA: 12 PÁGINAS, NÃO O CAPÍTULO INTEIRO (2026-08-25)
 

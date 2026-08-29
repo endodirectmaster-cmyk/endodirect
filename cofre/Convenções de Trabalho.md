@@ -1,9 +1,36 @@
 ---
 tags: [cofre, processo]
-atualizado: 2026-08-26
+atualizado: 2026-08-29
 ---
 
 # Convenções de Trabalho
+
+## 🧨 PARÁFRASE LENTA DEVOLVE A FRASE DO AUTOR (2026-08-29)
+
+Assimilei uma apostila cujo autor escreve, no rodapé de todas as páginas, "NÃO
+AUTORIZO A REPLICAÇÃO DESTE MATERIAL". As citações já viajavam protegidas —
+offset e hash, nunca o texto. Achei que isso bastava.
+
+Não bastava: a **`afirmacao` é redação minha e vai INTEIRA** para o
+`clinical-deep-data.js`, que é versionado e servido. Varri a apostila contra o
+arquivo publicado em janelas de 12 palavras e achei **seis trechos** em que a
+minha paráfrase reproduzia a frase do autor. Não houve cópia deliberada — é o
+efeito de reescrever devagar uma frase que já estava bem escrita: ela volta.
+
+Regras que ficam:
+
+- **Fato pode coincidir; a frase que o organiza, não.** Número, dose, nome de
+  estudo e desenho são fatos — devem coincidir. O período é expressão.
+- **Proteger a citação guarda metade.** A outra metade é a afirmação, e ela é a
+  que sai publicada. Medir uma sem a outra dá falsa segurança.
+- **A medida é janela de 12 palavras** com espaço normalizado. Abaixo disso pega
+  coincidência inevitável do vocabulário clínico; acima, deixa passar período
+  inteiro. Guarda em `scripts/test-nao-reproduz-fonte.js`.
+- ⚠️ **Guarda vale onde a regra obriga.** Rodado no acervo inteiro, o teste acha
+  ~556 trechos, quase todos de acesso aberto e diretrizes, onde reproduzir é
+  licenciado. Reprovar tudo isso viraria ruído e o guarda seria desligado. Ele
+  reprova só a fonte com **restrição declarada** (extrato com `nota_licenca`) e
+  **imprime** o número das demais — dívida medida não é dívida esquecida.
 
 ## 🧨 A ASSERÇÃO PASSOU PORQUE O CENÁRIO NUNCA CHEGOU NO CÓDIGO (2026-08-26)
 
