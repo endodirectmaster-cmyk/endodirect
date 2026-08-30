@@ -1,6 +1,6 @@
 ---
 tags: [cofre, decisoes]
-atualizado: 2026-08-29
+atualizado: 2026-08-30
 ---
 
 # Decisões
@@ -8,6 +8,9 @@ atualizado: 2026-08-29
 Log de decisões de produto e técnicas (mais recentes no topo).
 
 ## 2026-08
+- **🎨 ESBOÇO DE LAYOUT: A LETRA É A MUDANÇA, A PALETA JÁ ESTÁ LÁ (2026-08-30).** O professor mandou o print de um painel de outra plataforma e pediu *"um esboço de um layout para nossa plataforma semelhante a esse; gostei da letra e das cores"*, nas duas telas. Ao comparar com o nosso CSS, a conclusão foi que **as cores não são o problema**: o `--blue:#3b6fd4` do tema claro é o **mesmo tom exato** do azul que ele elogiou, e a família navy/azul/verde/roxo/dourado já está montada nos dois temas desde sempre.
+  - ⚠️ **O QUE ELE RECONHECEU COMO "A LETRA" É A NOSSA AUSÊNCIA DE LETRA.** A plataforma roda em `--font:'Segoe UI',system-ui,sans-serif` — uma pilha de sistema. Isso significa que **o Endodirect tem uma cara diferente em cada máquina**: Segoe no Windows, San Francisco no iPhone, Roboto no Android. Não há tipografia própria para reconhecer porque não há tipografia escolhida. O esboço usa **Plus Jakarta Sans** na interface e **Newsreader** na prosa clínica — diretriz se lê, questão se opera, e a distinção merece duas famílias.
+  - O esboço tem os números reais (232 diretrizes, 2.965 questões, 1.075 avisos, 121 alunos) e **não foi aplicado ao `index.html`** — é exposição, não interface viva. Caminho proposto em três etapas independentes: **letra** (trocar `--font`, um token), **cards** (hierarquia e faixas de severidade), **trilho** lateral. Cada uma vale sozinha; a primeira é a que muda tudo.
 - **💊 DESPRESCRIÇÃO DE AR GLP-1 VIROU ÁREA PRÓPRIA DA BASE CLÍNICA (2026-08-29).** O professor mandou a apostila do CBEM 2026 sobre desprescrição de agonistas de GLP-1 e pediu *"apenas atualizar suas diretrizes"*. 28 fatos verificados entraram na base profunda — ensaios de retirada (STEP 4, extensão do STEP 1, SURMOUNT-4 e sua análise post hoc), metanálises de Berg e de Zhou, fenótipos de risco, as três estratégias de manutenção com a força de evidência de cada uma (SURMOUNT-MAINTAIN, ATTAIN-MAINTAIN, série do intervalo quinzenal), a cadência de reavaliação da ADA 2026, o roteiro de quatro passos e a perda de massa magra por modalidade.
   - ⚠️ **NÃO CABIA EM OBESIDADE:** a área estava com **397.598 de 400.000** caracteres — 2.402 de folga — e o CI vinha avisando desde 21/08 que o próximo documento exigiria dividir. Área nova, com **11.080 caracteres**, registrada no `CANON` e no `TERMOS`.
   - 🧨 **`desmame` SOZINHO ROUBAVA.** O teste de caminho clínico pegou: "desmame de prednisona" (Adrenal) e "ajustar a insulina no desmame" (Diabetes) caíam na área nova. Desmame é palavra de qualquer retirada — só vale com o objeto colado (`desmame do glp-1`). Mesma família do `enxerto` no DMPT.
