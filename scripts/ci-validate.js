@@ -263,6 +263,22 @@ try {
   fail('regressão da ativação da primeira sessão falhou:\n' + out);
 }
 
+// 17e. JANELAS DE ENTRADA (30/08/2026). O professor pediu a enquete da EMC
+//      "aparecendo na janela assim que o aluno abre a plataforma — depois que
+//      responder, não abrir novamente" e a primeira questão logo depois da
+//      janela inicial de perfil. ⚠️ A JANELA NÃO SUBSTITUI O CARD: o card
+//      não-dispensável do item 17d continua no Mural, senão volta o defeito
+//      que ele foi criado para consertar (modal que some com um clique e nunca
+//      mais volta na sessão). A fila é EXECUTADA no teste — conferir texto
+//      provaria que a linha existe, não que ela escolhe certo.
+try {
+  execFileSync(process.execPath, [path.join('scripts', 'test-janelas-de-entrada.js')], { stdio: 'pipe' });
+  ok('janelas de entrada: primeira questão depois do perfil, enquete só do Gold e só até o voto, uma de cada vez');
+} catch (e) {
+  const out = (e.stdout ? e.stdout.toString() : '') + (e.stderr ? e.stderr.toString() : '');
+  fail('regressão das janelas de entrada do aluno falhou:\n' + out);
+}
+
 // 17d. CADÊNCIA DO RADAR: o mural precisa de mais de uma varredura por dia. Com
 //      uma só (07:30 BRT), notícia publicada depois dela só aparece no dia
 //      seguinte — foi a queixa de 17/08/2026 (ANVISA aprovando canetas de

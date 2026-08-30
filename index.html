@@ -1469,6 +1469,45 @@ input.dmm-inp-subsub{flex:1;min-width:0;background:transparent;color:var(--t2);f
   </div>
 </div>
 
+<!-- ── JANELAS DE ENTRADA DO ALUNO ────────────────────────────────────
+     Pedido do professor (2026-08-30), sobre o print do Mural: a enquete da
+     Educação Médica Continuada "aparecendo na janela assim que o aluno abre a
+     plataforma — depois que responder, não abrir novamente", e a "Sua primeira
+     questão" "após a janela inicial" do aluno novo.
+
+     ⚠️ O CONTEÚDO NÃO É DUPLICADO. Estes dois hosts são um TERCEIRO alvo das
+     mesmas funções que desenham os cards do Mural e do Dashboard
+     (renderAtivacaoEm / renderEnqueteCmeEm). Markup copiado divergiria do card
+     na primeira correção — e a correção iria para a cópia errada.
+
+     Os cards do Mural CONTINUAM existindo: a janela é um convite a mais, não o
+     único caminho. Quem fecha sem responder acha o mesmo card na tela. -->
+<div class="modal-bg" id="ativa-modal">
+  <div class="modal-box" style="width:min(660px,94vw);max-height:92vh;display:flex;flex-direction:column">
+    <div class="modal-hdr">
+      <span class="modal-hdr-title">👋 Comece por aqui</span>
+      <button class="modal-close" id="ativa-modal-x" aria-label="Fechar">✕</button>
+    </div>
+    <div class="modal-body" style="overflow:auto">
+      <div id="ativa-card-modal"></div>
+      <div style="margin-top:.9rem"><button type="button" class="btn btn-outline btn-sm" id="ativa-modal-depois">Deixar para depois</button></div>
+    </div>
+  </div>
+</div>
+
+<div class="modal-bg" id="cme-modal">
+  <div class="modal-box" style="width:min(660px,94vw);max-height:92vh;display:flex;flex-direction:column">
+    <div class="modal-hdr">
+      <span class="modal-hdr-title">🎓 Programa de Educação Médica Continuada</span>
+      <button class="modal-close" id="cme-modal-x" aria-label="Fechar">✕</button>
+    </div>
+    <div class="modal-body" style="overflow:auto">
+      <div id="cme-card-modal"></div>
+      <div style="margin-top:.9rem"><button type="button" class="btn btn-outline btn-sm" id="cme-modal-depois">Responder depois</button></div>
+    </div>
+  </div>
+</div>
+
 <!-- Alerta de questões pendentes (professor): aparece no login quando há pendências das suas subespecialidades. -->
 <div class="modal-bg" id="pend-alert-modal">
   <div class="modal-box" style="max-width:420px">
@@ -4849,11 +4888,13 @@ function hydrateRemoteState(){
       try{prescScrubLog();}catch(e){} // remove PII de paciente de históricos legados
       refreshAfterRemoteState();
       maybeOnboardAfterHydrate();
+      try{filaEntradaAgendar();}catch(e){} // janelas de entrada: só agora o estado do servidor está em mãos
       try{maybePendAlert();}catch(e){} // garante o alerta de pendências mesmo se ig_pending não veio no payload (rede/cache)
       queueRemoteStateSave();
     }).catch(function(e){
       if(!remoteStateWarned){remoteStateWarned=true;console.warn('Supabase state unavailable',e);}
       try{maybeOnboardAfterHydrate();}catch(_e){}
+      try{filaEntradaAgendar();}catch(_e){}
     });
 }
 function queueRemoteStateSave(immediate){
@@ -6274,6 +6315,78 @@ function maybeShowWhatsNew(){
 function dismissWhatsNew(){
   var m=document.getElementById('whatsnew-modal');if(m)m.style.display='none';
   try{lsSet('whatsnew_seen',WHATSNEW_VER);}catch(e){}
+  try{filaEntradaAgendar();}catch(e){}   // fechou as novidades: a fila de entrada segue
+}
+// ---------- FILA DAS JANELAS DE ENTRADA (aluno) ----------
+// Pedido do professor (2026-08-30), sobre o print do Mural: a enquete da
+// Educação Médica Continuada "aparecendo na janela assim que o aluno abre a
+// plataforma — depois que responder, não abrir novamente"; e a "Sua primeira
+// questão" logo "depois" da janela inicial de perfil do aluno novo
+// ("no primeiro acesso ele vai ter aquela janela de se é endocrino, residente,
+// etc; depois de responder isso, aí sim mostrar a Primeira questão").
+//
+// ⚠️ AS DUAS SÓ PODEM ABRIR DEPOIS DO HYDRATE. Quem votou no celular tem o voto
+// em `payload.enquete_cme`, e quem já estuda tem `DB.act` — os dois vêm do
+// SERVIDOR. Decidir antes disso é decidir sobre o localStorage de um navegador
+// que pode estar vazio: a enquete voltaria para quem já respondeu (exatamente o
+// "não abrir novamente" que o professor pediu) e a primeira questão apareceria
+// para quem estuda há meses, só porque abriu no computador novo.
+//
+// ⚠️ E NUNCA EMPILHADAS. Onboarding, novidades e convite de feedback já disputam
+// a entrada; duas janelas sobrepostas viram uma ilegível e o aluno fecha as duas.
+// A fila espera a tela ficar livre e abre UMA de cada vez.
+var filaEntradaVista={};        // marcas de SESSÃO: cada janela abre uma vez por carregamento
+var filaEntradaTimer=null, filaEntradaTentativas=0;
+var FILA_ENTRADA_ESPERA_MS=1500, FILA_ENTRADA_MAX_TENT=120;  // ~3 min de espera; depois desiste calada
+// Qual janela está devendo, na ORDEM que o professor pediu. Devolve '' quando
+// não há nenhuma — que é o caso normal de quem já respondeu as duas.
+function filaEntradaPendente(){
+  if(!currentUser||currentUser.role!=='aluno')return '';
+  // 1º: a primeira questão. Mesma regra do card (`precisaAtivacao`), e por isso
+  // ela não aparece para quem já respondeu qualquer questão em qualquer aparelho.
+  if(!filaEntradaVista.ativa&&typeof precisaAtivacao==='function'&&precisaAtivacao()
+     &&typeof qotdTodays==='function'&&qotdTodays())return 'ativa';
+  // 2º: a enquete — SÓ plano Gold (`cmeElegivel`) e só enquanto não houver voto.
+  if(!filaEntradaVista.cme&&typeof cmeElegivel==='function'&&cmeElegivel()
+     &&typeof cmeVoto==='function'&&!cmeVoto())return 'cme';
+  return '';
+}
+function filaEntradaEsperar(){
+  if(filaEntradaTentativas++>=FILA_ENTRADA_MAX_TENT)return;   // não fica batendo para sempre
+  clearTimeout(filaEntradaTimer);
+  filaEntradaTimer=setTimeout(filaEntradaProxima,FILA_ENTRADA_ESPERA_MS);
+}
+function filaEntradaProxima(){
+  try{
+    var qual=filaEntradaPendente();
+    if(!qual){filaEntradaTentativas=0;return;}
+    // Estado do servidor ainda a caminho: decidir agora é decidir errado.
+    if(canUseRemoteState()&&!remoteStateLoaded){filaEntradaEsperar();return;}
+    // Onboarding, novidades, feedback, chat: espera a vez.
+    if(anyModalOpen()){filaEntradaEsperar();return;}
+    filaEntradaTentativas=0;
+    // Marca ANTES de abrir: se algo falhar no meio, a janela não volta em laço.
+    filaEntradaVista[qual]=true;
+    if(qual==='ativa'){
+      renderAtivacao();
+      var ma=document.getElementById('ativa-modal');if(ma)ma.style.display='flex';
+    }else{
+      renderEnqueteCme();
+      var mc=document.getElementById('cme-modal');if(mc)mc.style.display='flex';
+    }
+  }catch(e){}
+}
+// O atraso deixa a janela de novidades (que abre em 450 ms) chegar primeiro: a
+// fila então espera por ela em vez de disputar o mesmo instante.
+function filaEntradaAgendar(){
+  clearTimeout(filaEntradaTimer);
+  filaEntradaTentativas=0;
+  filaEntradaTimer=setTimeout(filaEntradaProxima,900);
+}
+// Fechar uma janela da fila considera a seguinte na mesma hora.
+function fecharJanelaEntrada(id){
+  var m=document.getElementById(id);if(m)m.style.display='none';
+  filaEntradaProxima();
 }
 function startApp(){
   var u=currentUser;
@@ -7668,17 +7781,21 @@ function precisaAtivacao(){
   return true;                                       // nunca respondeu nada
 }
 function renderAtivacao(){
-  ['ativa-card','ativa-card-mural'].forEach(function(id){renderAtivacaoEm(id);});
+  ['ativa-card','ativa-card-mural','ativa-card-modal'].forEach(function(id){renderAtivacaoEm(id);});
 }
 function renderAtivacaoEm(alvoId){
   var el=document.getElementById(alvoId);if(!el)return;
+  // Na JANELA DE ENTRADA quem desenha a moldura e o título é o modal: card com
+  // borda dentro de uma caixa com borda vira moldura dentro de moldura, e o
+  // cabeçalho apareceria duas vezes na mesma tela.
+  var emJanela=(alvoId==='ativa-card-modal');
   var wrap=(alvoId==='ativa-card-mural')?document.getElementById('ativa-mural-wrap'):null;
   var q=(typeof qotdTodays==='function')?qotdTodays():null;
   // Sem questão publicada não há o que oferecer — melhor nada que um card vazio.
   if(!precisaAtivacao()||!q){el.style.display='none';el.innerHTML='';if(wrap)wrap.style.display='none';return;}
   el.style.display='';if(wrap)wrap.style.display='';
   var ans=qotdReadAns()[q.id]||null;
-  var cab='<div style="display:flex;align-items:center;gap:.5rem;margin-bottom:.4rem">'
+  var cab=emJanela?'':'<div style="display:flex;align-items:center;gap:.5rem;margin-bottom:.4rem">'
     +'<span style="font-size:1.15rem">👋</span>'
     +'<span style="font-weight:800;color:var(--blue2);font-size:.92rem">Comece por aqui</span></div>';
   var txt=ans
@@ -7688,7 +7805,7 @@ function renderAtivacaoEm(alvoId){
     : '<div style="font-size:.82rem;color:var(--t2);line-height:1.6;margin-bottom:.7rem">'
       +'Responda <b>uma questão</b> para começar. Leva menos de um minuto, e é o que liga o seu acompanhamento: '
       +'desempenho por área, revisão do que você errar e a sua sequência de dias de estudo.</div>';
-  el.innerHTML='<div class="card" style="border:1px solid var(--blue);margin:0">'+cab+txt
+  el.innerHTML='<div'+(emJanela?' style="margin:0"':' class="card" style="border:1px solid var(--blue);margin:0"')+'>'+cab+txt
     +'<div id="'+alvoId+'-q"></div>'
     +(ans?'<div style="display:flex;gap:.5rem;flex-wrap:wrap;margin-top:.7rem">'
         +'<button type="button" class="btn btn-primary btn-sm" id="'+alvoId+'-ir">Ver meu painel →</button>'
@@ -7770,10 +7887,12 @@ function renderEnqueteCme(){
   // `homePanel()` devolve 'mural' sempre que o Mural esta visivel, e o Dashboard
   // so aparece para quem clica nele no menu. O professor perguntou "aparece na
   // janela de entrada, certo?" e a resposta honesta era NAO.
-  ['cme-card', 'cme-card-mural'].forEach(function (id) { renderEnqueteCmeEm(id); });
+  ['cme-card', 'cme-card-mural', 'cme-card-modal'].forEach(function (id) { renderEnqueteCmeEm(id); });
 }
 function renderEnqueteCmeEm(alvoId){
   var el = document.getElementById(alvoId); if (!el) return;
+  // Mesma razão do card de ativação: na janela, a moldura e o título são dela.
+  var emJanela = (alvoId === 'cme-card-modal');
   // No Mural o card mora dentro de um wrapper que tambem precisa sumir, senao
   // sobra o respiro do container numa tela sem conteudo.
   var wrap = (alvoId === 'cme-card-mural') ? document.getElementById('cme-mural-wrap') : null;
@@ -7801,8 +7920,8 @@ function renderEnqueteCmeEm(alvoId){
     return '<button type="button" class="cme-chip' + (on ? ' on' : '') + '"' + (bloq ? ' disabled' : '')
       + ' data-cme-tema="' + esc(s) + '">' + (on ? '✓ ' : '') + esc(s) + '</button>';
   }).join('');
-  el.innerHTML = '<div class="card" style="border:1px solid var(--gold);margin:0">'
-    + '<div style="font-weight:800;color:var(--gold);font-size:.9rem;margin-bottom:.35rem">🎓 Programa de Educação Médica Continuada</div>'
+  el.innerHTML = '<div' + (emJanela ? ' style="margin:0"' : ' class="card" style="border:1px solid var(--gold);margin:0"') + '>'
+    + (emJanela ? '' : '<div style="font-weight:800;color:var(--gold);font-size:.9rem;margin-bottom:.35rem">🎓 Programa de Educação Médica Continuada</div>')
     + '<div style="font-size:.8rem;color:var(--t2);line-height:1.55;margin-bottom:.7rem">'
     + 'Serão aulas <b>mensais</b> de atualização e aperfeiçoamento nos diversos temas de endocrinologia, <b>exclusivas do plano Gold</b>. '
     + 'Indique <b>até ' + CME_MAX + ' temas</b> que você quer ver primeiro.</div>'
@@ -7833,6 +7952,14 @@ function renderEnqueteCmeEm(alvoId){
     try { persist(); } catch (e) {}
     cmeEditando = false; cmeSel = null; cmeOutroRascunho = '';
     renderEnqueteCme();
+    // "Depois que responder, não abrir novamente": a janela fecha no envio, e o
+    // `cmeVoto()` que acabou de nascer já impede a fila de reabri-la — aqui e,
+    // porque o voto vai para o `app_state`, nos outros aparelhos do aluno.
+    var jm = document.getElementById('cme-modal');
+    if (jm && jm.style.display === 'flex') {
+      try { notify('Obrigado — sua indicação foi registrada.', 'ok'); } catch (e) {}
+      try { fecharJanelaEntrada('cme-modal'); } catch (e) {}
+    }
   });
 }
 // ---------- QUESTÃO DO DIA (card clicável do aluno) ----------
@@ -17156,6 +17283,7 @@ submitOnboard=function(){
     document.getElementById('onboard-modal').style.display='none';
     startApp();hydrateRemoteState();queueRemoteStateSave();
     try{markLockedNavItems();}catch(e){} // esconde Prescrição/Assistente para estudante
+    try{filaEntradaAgendar();}catch(e){} // respondeu o perfil: agora vem a primeira questão
     return;
   }
   if(perfil==='Outros'){
@@ -17188,6 +17316,7 @@ submitOnboard=function(){
   startApp();
   hydrateRemoteState();
   queueRemoteStateSave();
+  try{filaEntradaAgendar();}catch(e){} // respondeu o perfil: agora vem a primeira questão
   if(demoOnboardToPresc){demoOnboardToPresc=false;try{if(typeof canSeePanel==='function'&&canSeePanel('presc'))goPanel('presc');}catch(e){}}
 };
 // Opções de atuação por perfil. Os VALORES são o que fica gravado em
@@ -18706,6 +18835,22 @@ document.addEventListener('DOMContentLoaded',function(){
   });
   var paGo=document.getElementById('pend-alert-go');if(paGo)paGo.addEventListener('click',function(){closePendAlert();try{renderAdmSec('pendencias');}catch(e){}});
   var paCl=document.getElementById('pend-alert-close');if(paCl)paCl.addEventListener('click',closePendAlert);
+
+  // JANELAS DE ENTRADA (primeira questão + enquete da Educação Médica Continuada)
+  ['ativa-modal-x','ativa-modal-depois'].forEach(function(id){
+    var b=document.getElementById(id);if(b)b.addEventListener('click',function(){fecharJanelaEntrada('ativa-modal');});
+  });
+  ['cme-modal-x','cme-modal-depois'].forEach(function(id){
+    var b=document.getElementById(id);if(b)b.addEventListener('click',function(){fecharJanelaEntrada('cme-modal');});
+  });
+  // ⚠️ "Ver meu painel →" nasce no innerHTML do card e é REDESENHADO a cada
+  // render — um listener preso nele agora morre no primeiro redesenho. O clique
+  // é ouvido na janela, que não é redesenhada.
+  var jaM=document.getElementById('ativa-modal');
+  if(jaM)jaM.addEventListener('click',function(ev){
+    var t=ev&&ev.target;
+    if(t&&t.id==='ativa-card-modal-ir')fecharJanelaEntrada('ativa-modal');
+  });
 
   // USER MENU
   document.getElementById('tb-user-btn').addEventListener('click',function(e){e.stopPropagation();var m=document.getElementById('user-menu');m.style.display=m.style.display==='block'?'none':'block';});
