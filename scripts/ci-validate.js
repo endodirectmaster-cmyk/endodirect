@@ -308,6 +308,18 @@ try {
   fail('regressão da vitrine como conta real falhou:\n' + out);
 }
 
+// 17h. A LETRA DA PLATAFORMA (31/08/2026). O token era uma PILHA DE SISTEMA, e
+//      por isso o Endodirect tinha uma cara diferente em cada aparelho. ⚠️ As
+//      duas metades (token + carga da fonte) falham em SILÊNCIO quando
+//      separadas: a tela continua legível, só que com a letra errada.
+try {
+  execFileSync(process.execPath, [path.join('scripts', 'test-fonte-da-plataforma.js')], { stdio: 'pipe' });
+  ok('fonte: Inter na frente do token, carregada com swap e reserva de sistema intacta');
+} catch (e) {
+  const out = (e.stdout ? e.stdout.toString() : '') + (e.stderr ? e.stderr.toString() : '');
+  fail('regressão da fonte da plataforma falhou:\n' + out);
+}
+
 // 17d. CADÊNCIA DO RADAR: o mural precisa de mais de uma varredura por dia. Com
 //      uma só (07:30 BRT), notícia publicada depois dela só aparece no dia
 //      seguinte — foi a queixa de 17/08/2026 (ANVISA aprovando canetas de

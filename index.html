@@ -10,6 +10,18 @@
 <meta name="mobile-web-app-capable" content="yes">
 <title>Endodirect — Educação Médica</title>
 <link rel="icon" type="image/png" href="Icone%20-%20MD%202.png">
+<!-- ⚠️ A LETRA DA PLATAFORMA (31/08/2026). Até aqui o token era
+     `'Segoe UI', system-ui, sans-serif` — uma PILHA DE SISTEMA, não uma escolha:
+     o Endodirect tinha uma cara diferente em cada aparelho (Segoe no Windows,
+     San Francisco no Mac e no iPhone, Roboto no Android). Não havia tipografia
+     própria para reconhecer porque não havia tipografia escolhida.
+     O professor apontou o painel de referência e pediu "essa fonte aí das
+     letras". Inter é a que mais se aproxima daquele desenho e existe em todo
+     lugar — a pilha antiga fica como reserva, então uma falha da fonte devolve
+     exatamente a aparência de ontem, nunca uma serifada de navegador. -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap">
 <link rel="shortcut icon" type="image/png" href="Icone%20-%20MD%202.png">
 <link rel="apple-touch-icon" href="/icons/apple-touch-icon.png">
 <link rel="manifest" href="/manifest.webmanifest">
@@ -113,7 +125,7 @@ window.addEventListener('load',function(){initProfVideos();initVimeoClip();});
      amarelo puro sobre fundo branco fica ilegível. */
   --yel:#f5b32c;--yel-h:#f5b32c;--yel-ht:#1a1408;
   --warn-bg:#33210e;--warn-bd:#5a3a1e;--warn-tx:#fdba74;--code-bg:#241a40;--code-tx:#b794f6;
-  --r:12px;--rs:8px;--font:'Segoe UI',system-ui,sans-serif;
+  --r:12px;--rs:8px;--font:'Inter','Segoe UI',system-ui,sans-serif;
 }
 html[data-theme="light"]{
   --navy:#1a2744;--bg:#f0f2f7;--surface:#fff;--s2:#f8f9fc;
@@ -4748,7 +4760,7 @@ function renderDegustacaoBar(){
         msg.innerHTML='<span style="display:inline-flex;align-items:center;gap:.3rem;background:rgba(255,255,255,.5);border:1px solid rgba(120,80,0,.25);border-radius:999px;padding:.1rem .6rem;font-weight:800">⏳ Degustação encerrada</span> <span style="opacity:.92">seus '+DEG_DIAS+' dias gratuitos terminaram — assine para manter o acesso aos benefícios</span>';
       }else{
         var dd=degDiasRestantes();
-        msg.innerHTML='<span style="display:inline-flex;align-items:center;gap:.3rem;background:rgba(255,255,255,.5);border:1px solid rgba(120,80,0,.25);border-radius:999px;padding:.1rem .6rem;font-weight:800">🎁 Modo degustação</span> <span style="opacity:.92">acesso gratuito por mais <b>'+dd+' dia'+(dd===1?'':'s')+'</b> — flashcards, mapas mentais, 50 questões do banco e mural</span>';
+        msg.innerHTML='<span style="display:inline-flex;align-items:center;gap:.3rem;background:rgba(255,255,255,.5);border:1px solid rgba(120,80,0,.25);border-radius:999px;padding:.1rem .6rem;font-weight:800">🎁 Modo degustação</span> <span style="opacity:.92">acesso gratuito por mais <b>'+dd+' dia'+(dd===1?'':'s')+'</b> — 50 questões do banco, 10 diretrizes, podcasts, flashcards, mapas mentais e o mural</span>';
       }
     }
     bar.style.display='flex';
@@ -9736,7 +9748,7 @@ function aulaResumoHTML(c){
 function exportAulaPDF(c){
   var r=String(c.resumo||'').trim();if(!r){notify('Sem resumo para exportar.','err');return;}
   var body=resumoBlocksHTML(r);
-  var css='*{box-sizing:border-box}body{font-family:Arial,Helvetica,sans-serif;color:#222d44;line-height:1.6;max-width:720px;margin:0 auto;padding:32px}h1{font-size:21px;color:#0b1325;margin:0 0 3px}.sub{color:#6a7690;font-size:12px;margin-bottom:18px;padding-bottom:13px;border-bottom:1px solid #e4e9f2}h3{font-size:12px;font-weight:800;letter-spacing:.05em;text-transform:uppercase;color:#2c5fc4;margin:18px 0 7px;padding-left:9px;border-left:3px solid #2c5fc4}h4{font-size:13.5px;font-weight:700;color:#16233f;margin:13px 0 5px}ul{list-style:none;margin:0 0 6px;padding:0}li{position:relative;padding-left:16px;font-size:13px;margin-bottom:5px;color:#33405a}li:before{content:"•";position:absolute;left:3px;color:#2c5fc4;font-weight:800}b{color:#16233f}@media print{body{padding:6px}}';
+  var css='*{box-sizing:border-box}body{font-family:var(--font);color:#222d44;line-height:1.6;max-width:720px;margin:0 auto;padding:32px}h1{font-size:21px;color:#0b1325;margin:0 0 3px}.sub{color:#6a7690;font-size:12px;margin-bottom:18px;padding-bottom:13px;border-bottom:1px solid #e4e9f2}h3{font-size:12px;font-weight:800;letter-spacing:.05em;text-transform:uppercase;color:#2c5fc4;margin:18px 0 7px;padding-left:9px;border-left:3px solid #2c5fc4}h4{font-size:13.5px;font-weight:700;color:#16233f;margin:13px 0 5px}ul{list-style:none;margin:0 0 6px;padding:0}li{position:relative;padding-left:16px;font-size:13px;margin-bottom:5px;color:#33405a}li:before{content:"•";position:absolute;left:3px;color:#2c5fc4;font-weight:800}b{color:#16233f}@media print{body{padding:6px}}';
   var doc='<!doctype html><html><head><meta charset="utf-8"><title>'+esc(c.title||'Resumo')+'</title><style>'+css+'</style></head><body><h1>'+esc(c.title||'Resumo da aula')+'</h1><div class="sub">'+esc(cursoNomeBySlug(c.curso))+(c.modulo?' · '+esc(c.modulo):'')+' — Endodirect</div>'+body+'</body></html>';
   var w=window.open('','_blank','width=820,height=1000');
   if(!w){notify('Permita pop-ups para baixar o PDF.','err');return;}
@@ -10590,7 +10602,7 @@ function prescPrint(titulo,inner,vias){
       +'</div>';
   }
   var content=vias?(via('1ª via — Farmácia')+'<div class="pgb"></div>'+via('2ª via — Paciente')):via('');
-  var css='*{box-sizing:border-box}body{font-family:Arial,Helvetica,sans-serif;color:#111;margin:0;padding:24px;font-size:13px}'
+  var css='*{box-sizing:border-box}body{font-family:var(--font);color:#111;margin:0;padding:24px;font-size:13px}'
     +'.doc{max-width:720px;margin:0 auto 18px;border:1px solid #ccc;border-radius:8px;padding:26px 30px}'
     +'.dh{display:flex;justify-content:space-between;align-items:center;border-bottom:2px solid #1e3a5f;padding-bottom:8px;margin-bottom:14px}'
     +'.dt{font-size:16px;font-weight:bold;color:#1e3a5f;letter-spacing:.5px}.dv{font-size:11px;color:#666;font-weight:bold}'
@@ -10669,7 +10681,7 @@ function prescPrintLME(){
     +'<div class="row"><div class="f"><div class="fl"><b>22.</b> Assinatura do paciente</div><div class="fv" style="min-height:42px"></div></div>'
       +'<div class="f"><div class="fl"><b>23.</b> Assinatura do responsável pelo preenchimento</div><div class="fv" style="min-height:42px"></div></div></div>'
     +'</div>';
-  var css='*{box-sizing:border-box}body{font-family:Arial,Helvetica,sans-serif;color:#000;margin:0;padding:12px;font-size:10.5px}'
+  var css='*{box-sizing:border-box}body{font-family:var(--font);color:#000;margin:0;padding:12px;font-size:10.5px}'
     +'.lme{max-width:780px;margin:0 auto;border:1.5px solid #000}'
     +'.lme>*{border-bottom:1px solid #000}.lme>*:last-child{border-bottom:none}'
     +'.sus{display:flex;align-items:center;gap:10px;padding:6px 10px}'
