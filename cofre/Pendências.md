@@ -5,6 +5,27 @@ atualizado: 2026-08-29
 
 # Pendências
 
+## 🧹 `genPresc()` É CÓDIGO MORTO E LÊ TRÊS CAMPOS QUE NÃO EXISTEM (2026-08-30)
+
+A varredura de referências órfãs criada em `scripts/test-dashboard-aluno.js`
+achou, além das que a minha própria remoção tinha criado, uma **pré-existente**:
+
+- `genPresc()` lê `presc-dx`, `presc-med` e `presc-pac` com
+  `document.getElementById('…').value`, **sem guarda**. Nenhum dos três existe
+  no markup.
+- A função **não tem um único chamador** — nenhum listener, nenhuma referência.
+  Por isso ela nunca lançou: é código morto, não defeito em uso.
+
+Não é urgente e não foi tocada nesta mudança (não foi ela que a criou). Fica
+**nomeada** na lista de conhecidos do teste, não silenciada: dívida medida não é
+dívida esquecida. Quando a Prescrição Simulada for mexida de novo, apagar a
+função (ou religá-la a campos que existam) fecha isto.
+
+⚠️ E fica a lição junto: a mesma varredura apontou `adm-mq-a..d` (formulário de
+questão manual do professor) como inexistentes, e **não era verdade** — são
+criados por concatenação (`id="adm-mq-'+l.toLowerCase()+'"`). Conferir no fonte
+antes de acusar valeu de novo.
+
 ## 📋 ~556 TRECHOS DE FONTE REPRODUZIDOS NA BASE PUBLICADA (2026-08-29)
 
 Ao criar o guarda de reprodução (ver Convenções), a varredura do acervo inteiro
