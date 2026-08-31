@@ -171,6 +171,10 @@ function bloco(cab) {
   const ctx = vm.createContext({ console });
   vm.runInContext(
     'var diretrizes=' + JSON.stringify(fixture) + ';'
+    // ⚠️ Sem `acervoTotais` de propósito: este bloco compara o CÁLCULO LOCAL
+    // com `dirIsVisible`. É a reserva, e é ela que precisa bater com a aba —
+    // o número do servidor tem a própria guarda no bloco 2b.
+    + 'var acervoTotais=null;'
     + 'var provasDB=new Array(2965);var podcasts=new Array(199);'
     + 'var refPrivadoMode=false, refTipoSel="capitulo";'
     + bloco('function dirTipoOf(') + bloco('function dirIsRascunho(')
@@ -195,6 +199,81 @@ function bloco(cab) {
     '⚠️ rascunho entrou na contagem do acervo — o trilho diz "publicado e disponível hoje"');
   ok(nBRde(ctx, 2965) === '2.965', 'o separador de milhar do trilho sumiu: "2965" se lê pior que "2.965"');
   function nBRde(cx, n) { return vm.runInContext('nBR(' + n + ')', cx); }
+}
+
+// ── 2b. 🧨 O NÚMERO É O DA PLATAFORMA, NÃO O DA CONTA ─────────────────────
+// O card "Questões no banco" mostrava **50** onde o professor esperava 2.965:
+// "questões no banco está errado, são quase 3 mil questões". Não era erro de
+// contagem — `provasDB` no cliente é o que AQUELE aluno tem direito de ver
+// (assinante: tudo menos TEEM; degustação e a conta demo `alunopro`: amostra
+// fixa de 50). O total da plataforma nunca chegava ao navegador.
+//
+// Agora chega como CONTAGEM, pela RPC `endodirect_acervo_totais` (só números,
+// nenhum conteúdo — por isso pode ser servida a quem não é assinante).
+{
+  function contar(totais, locais) {
+    const ctx = vm.createContext({ console });
+    vm.runInContext(
+      'var acervoTotais=' + JSON.stringify(totais) + ';'
+      + 'var provasDB=new Array(' + locais.provas + ');'
+      + 'var podcasts=new Array(' + locais.podcasts + ');'
+      + 'var diretrizes=' + JSON.stringify(locais.diretrizes || []) + ';'
+      + bloco('function dirTipoOf(') + bloco('function dirIsRascunho(')
+      + bloco('function dirSoNosResumos(') + bloco('function acervoContagem('), ctx);
+    return vm.runInContext('acervoContagem()', ctx);
+  }
+  const emMaos = { provas: 50, podcasts: 0, diretrizes: [{ titulo: 'só uma pública' }] };
+  const doServidor = { provas: 2965, diretrizes: 71, resumos: 118, artigos: 43, podcasts: 199 };
+
+  const c = contar(doServidor, emMaos);
+  ok(c.questoes === 2965,
+    '🧨 o card voltou a mostrar o que a CONTA recebeu (' + c.questoes + ') e não o que a PLATAFORMA tem (2965) — '
+    + 'é exatamente o "50" que o professor viu no lugar de quase 3 mil');
+  ok(c.podcasts === 199,
+    '⚠️ os podcasts voltaram a contar só o que o aluno recebeu — quem não é assinante recebe zero e o card sumiria');
+  ok(c.diretrizes === 71 && c.resumos === 118 && c.artigos === 43,
+    'as demais contagens deixaram de vir do servidor: ' + JSON.stringify(c));
+
+  // Sem resposta do servidor (clone sem rede, primeira abertura): conta o que há
+  // em mãos, em vez de mostrar vazio.
+  const semServidor = contar(null, emMaos);
+  ok(semServidor.questoes === 50 && semServidor.diretrizes === 1,
+    '⚠️ sem `acervoTotais` a faixa deixou de cair na contagem local — a tela nasceria zerada até o servidor responder');
+
+  // ⚠️ CAMPO A CAMPO. Uma chave que falte (ou venha lixo) na resposta não pode
+  // ZERAR um card que já estava certo: `Number(undefined)` é NaN, e um `||`
+  // preguiçoso transformaria 2965 em 0 no dia em que o servidor mudar de forma.
+  const parcial = contar({ provas: 2965 }, emMaos);
+  ok(parcial.questoes === 2965 && parcial.diretrizes === 1,
+    '⚠️ resposta parcial do servidor zerou os campos ausentes: ' + JSON.stringify(parcial));
+  const lixo = contar({ provas: 'muitas', diretrizes: -3, resumos: null }, emMaos);
+  ok(lixo.questoes === 50 && lixo.diretrizes === 1,
+    '⚠️ valor inválido do servidor passou direto para a tela: ' + JSON.stringify(lixo));
+}
+
+// ── 2c. A chave que o servidor manda é a que o cliente lê ─────────────────
+// 🧨 Um nome trocado aqui não quebra nada visivelmente: a faixa continua
+// desenhando — com o número errado, que é o defeito original.
+{
+  // ⚠️ PROCURAR O TEXTO `payload.acervo_totais` NÃO BASTA: trocar a chave só na
+  // CONDIÇÃO (`if(payload.acervo_totaes…)`) deixava a outra linha do bloco
+  // casando com a busca, e a mutação passava cega. O trecho é EXECUTADO.
+  const i0 = html.indexOf('if(payload.acervo_totais');
+  const iAplica = i0 > 0 ? html.slice(i0, html.indexOf('\n    }', i0) + 6) : '';
+  ok(!!iAplica, '🧨 sumiu o trecho que aplica `acervo_totais` do payload');
+  const ctx = vm.createContext({ console });
+  ctx.__ls = {};
+  vm.runInContext(
+    'var acervoTotais=null;'
+    + 'function lsSet(k,v){__ls[k]=v;}'
+    + 'var document={getElementById:function(){return null;}};'
+    + 'function renderDashAcervo(){}'
+    + 'var payload={acervo_totais:{provas:2965,diretrizes:71,resumos:118,artigos:43,podcasts:199}};'
+    + iAplica, ctx);
+  ok(ctx.acervoTotais && Number(ctx.acervoTotais.provas) === 2965,
+    '🧨 o cliente não guardou o `acervo_totais` que o servidor mandou — volta a mostrar o tamanho da CONTA no lugar do da PLATAFORMA');
+  ok(ctx.__ls['acervo_totais'] && Number(ctx.__ls['acervo_totais'].provas) === 2965,
+    '⚠️ o total deixou de ser guardado no aparelho — a 2ª abertura mostraria o número errado até o servidor responder');
 }
 
 // ── 3. O progresso é UMA conta só, lida pelas duas telas ──────────────────

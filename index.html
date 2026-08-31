@@ -252,13 +252,13 @@ body{background:var(--bg);color:var(--tx);display:flex;flex-direction:column}
 .dash-wrap{display:grid;grid-template-columns:minmax(0,1fr) 292px;gap:12px;align-items:start}
 /* Os números do acervo ATRAVESSAM as duas colunas, no topo: o professor pediu
    "esses dados na frente". Espremidos no trilho eles eram nota de rodapé. */
-.dash-acervo{grid-column:1/-1;display:grid;grid-template-columns:repeat(auto-fit,minmax(168px,1fr));gap:10px}
-.acv{display:flex;align-items:center;gap:.7rem;background:var(--surface);border:1px solid var(--bd);border-radius:var(--r);padding:.85rem .9rem;cursor:pointer;text-align:left;font-family:var(--font);width:100%}
-.acv:hover{border-color:var(--blue)}
+.dash-acervo{grid-column:1/-1;display:grid;grid-template-columns:repeat(auto-fit,minmax(196px,1fr));gap:12px}
+.acv{display:flex;align-items:center;justify-content:space-between;gap:.8rem;background:var(--surface);border:1px solid var(--bd);border-radius:14px;padding:1.15rem 1.15rem;cursor:pointer;text-align:left;font-family:var(--font);width:100%;transition:border-color .15s,box-shadow .15s}
+.acv:hover{border-color:var(--blue);box-shadow:0 2px 10px rgba(0,0,0,.06)}
 .acv-txt{flex:1;min-width:0}
-.acv-lbl{font-size:.68rem;color:var(--t3);line-height:1.3}
-.acv-num{font-size:1.55rem;font-weight:800;color:var(--tx);line-height:1.15;margin-top:.1rem;font-variant-numeric:tabular-nums}
-.acv-ico{width:38px;height:38px;border-radius:11px;display:flex;align-items:center;justify-content:center;font-size:1.05rem;flex:none}
+.acv-lbl{font-size:.8rem;color:var(--t2);line-height:1.3;font-weight:400}
+.acv-num{font-size:1.95rem;font-weight:800;color:var(--tx);line-height:1.1;margin-top:.35rem;letter-spacing:-.02em;font-variant-numeric:tabular-nums}
+.acv-ico{width:44px;height:44px;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:1.15rem;flex:none}
 .dash-main{min-width:0}
 .dash-rail{position:sticky;top:0;display:flex;flex-direction:column;gap:10px}
 .rail-card{background:var(--surface);border:1px solid var(--bd);border-radius:var(--r);padding:.85rem .9rem}
@@ -3968,6 +3968,13 @@ function canonProvaArea(lista){
   return Array.isArray(lista)?lista:[];
 }
 var provasDB=canonProvaArea(lsGet('provas')||[]);
+// ⚠️ TAMANHO DA PLATAFORMA ≠ O QUE ESTE ALUNO RECEBE (31/08/2026). O card do
+// Dashboard mostrava "50" onde o professor esperava 2.965, e não era erro de
+// contagem: `provasDB` é o que AQUELE aluno tem direito de ver — assinante
+// recebe tudo menos TEEM, degustação e a conta demo recebem uma amostra fixa de
+// 50, e o total nunca chegava ao navegador. Agora chega, como CONTAGEM (a RPC
+// `endodirect_acervo_totais` devolve só números, nenhum conteúdo).
+var acervoTotais=lsGet('acervo_totais')||null;
 // Degustação: contagem de usos das ferramentas com cota (3 usos cada).
 var degTrials=lsGet('deg_trials')||{};
 var FC_SEED={
@@ -4668,6 +4675,11 @@ function applyStatePayload(payload,personalOnly){
   if(payload.qotd&&typeof payload.qotd==='object'){DB.qotd=Object.assign({},payload.qotd,DB.qotd||{});try{localStorage.setItem('qotd_answered',JSON.stringify(DB.qotd));}catch(e){}try{var _qp=document.getElementById('panel-qotd');if(_qp&&_qp.classList.contains('on'))renderQotdArchive();}catch(e){}}
   if(!personalOnly){
     if(Array.isArray(payload.provas))provasDB=canonProvaArea(payload.provas);
+    if(payload.acervo_totais&&typeof payload.acervo_totais==='object'){
+      acervoTotais=payload.acervo_totais;
+      try{lsSet('acervo_totais',acervoTotais);}catch(e){} // 2ª abertura já nasce com o número certo
+      try{if(document.getElementById('dash-acervo'))renderDashAcervo();}catch(e){}
+    }
     if(Array.isArray(payload.mm_shared)){sharedMM=payload.mm_shared;try{lsSet('mm_shared',sharedMM);}catch(e){}try{invalidateSharedMeta();}catch(e){}try{renderMMList();}catch(e){}}
     if(Array.isArray(payload.fc_shared)){fcShared=payload.fc_shared;try{lsSet('fc_shared',fcShared);}catch(e){}try{invalidateSharedMeta();}catch(e){}}
     if(Array.isArray(payload.radar_avisos))radarAvisos=payload.radar_avisos;
@@ -8281,12 +8293,28 @@ function acervoContagem(){
   var dir=(typeof diretrizes!=='undefined'&&Array.isArray(diretrizes))?diretrizes:[];
   var pub=dir.filter(function(d){return !dirIsRascunho(d);});
   var priv=pub.filter(function(d){return d&&d.privado===true;});
-  return {
+  // Reserva: contar o que ESTE aluno recebeu. Vale enquanto o servidor não
+  // responde e num clone sem rede; para `provas` e `podcasts` ela subestima de
+  // propósito (é o que existe em mãos), e é por isso que o número do servidor
+  // ganha quando chega.
+  var local={
     questoes:(typeof provasDB!=='undefined'&&Array.isArray(provasDB))?provasDB.length:0,
     diretrizes:pub.filter(function(d){return !(d&&d.privado)&&!dirSoNosResumos(d);}).length,
     resumos:priv.filter(function(d){return dirTipoOf(d)==='capitulo';}).length,
     artigos:priv.filter(function(d){return dirTipoOf(d)==='artigo';}).length,
     podcasts:(typeof podcasts!=='undefined'&&Array.isArray(podcasts))?podcasts.length:0
+  };
+  var t=acervoTotais;
+  if(!t||typeof t!=='object')return local;
+  // ⚠️ Campo a campo, e só quando o servidor manda um número de verdade: uma
+  // chave que faltar na resposta não pode zerar o card que já estava certo.
+  var num=function(v,reserva){var n=Number(v);return isFinite(n)&&n>=0?n:reserva;};
+  return {
+    questoes:num(t.provas,local.questoes),
+    diretrizes:num(t.diretrizes,local.diretrizes),
+    resumos:num(t.resumos,local.resumos),
+    artigos:num(t.artigos,local.artigos),
+    podcasts:num(t.podcasts,local.podcasts)
   };
 }
 function nBR(n){try{return Number(n||0).toLocaleString('pt-BR');}catch(e){return String(n||0);}}
