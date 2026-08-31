@@ -670,6 +670,25 @@ descompasso entre o que o aluno pergunta e o que a base sabe.
 RELATAM os termos que faltam em `TERMOS`; eu aplico. Dois agentes no mesmo arquivo
 perdem trabalho um do outro sem aviso.
 
+## 📦 `member_content` devolve 12,4 MB a um assinante Gold (2026-08-31)
+
+Medido ao conferir o login da vitrine, com token real:
+
+    POST /rpc/endodirect_member_content  ->  200, 12.465.614 bytes
+
+São 2.965 questões + 232 diretrizes (161 privadas) + 199 podcasts numa resposta
+só. **Não é regressão** — é o que qualquer Gold já recebia; a correção de hoje
+só *reduziu* o que o não-membro recebe (6,5 → 4,5 MB).
+
+⚠️ Mas o cofre registra em 05/08/2026 que "rede de celular derruba resposta
+grande (~1,8 MB) com frequência", e que por isso `carregarResumos` tenta 3×.
+12,4 MB é sete vezes aquilo. Vale medir quanto do primeiro carregamento no
+celular falha hoje antes de decidir o quê: paginar as provas, mandar só as
+áreas que o aluno abre, ou separar em rotas.
+
+Registrado agora porque a medida existe. Não urgente: os alunos usam a
+plataforma, então ela chega — a pergunta é a que custo.
+
 ## ✅ RESOLVIDO — Vitrine (`alunopro`) ganhou identidade no servidor (2026-08-31)
 Feito como planejado: conta real com `plano:gold` + cursos de vitrine, senha fora do bundle (aleatória e descartada), login pelo Supabase, `showcase_resumos` revogada. ⚠️ E revelou uma **segunda porta**: o `member_content` entregava os mesmos 161 itens privados a anônimos e foi corrigido junto. Ver [[Decisões]] 2026-08-31 e `supabase/vitrine-conta-real.sql`.
 
