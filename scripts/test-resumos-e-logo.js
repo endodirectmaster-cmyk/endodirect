@@ -58,8 +58,18 @@ const ok = (nome, cond, det) => { if (cond) return; bad++; console.log('  ✗ ' 
      /if\(resumosErro\)\{/.test(bloco) && /Não foi possível carregar os resumos/.test(bloco) && /btn-resumos-retry/.test(bloco));
   ok('ainda carregando → mostra que está carregando', /!remoteStateLoaded\)return _cab\+/.test(bloco) && /ldHTML\(/.test(bloco));
   ok('o botão de tentar de novo está ligado', /#btn-resumos-retry/.test(APP) && /recarregarResumos\(\)\.then/.test(APP));
-  ok('e recarregar escolhe a MESMA RPC do perfil (demo usa showcase)',
-     /function recarregarResumos\(\)[^]{0,420}isTestShowcase\(\)\)\?'endodirect_showcase_resumos'/.test(APP));
+  // ⚠️ ESTA GUARDA MUDOU DE ALVO EM 31/08/2026, e a razão importa. Antes ela
+  // cobrava que "recarregar escolhe a MESMA RPC do perfil (demo usa showcase)":
+  // a vitrine `alunopro` era conta LOCAL, sem sessão, e por isso precisava de
+  // uma rota própria — `endodirect_showcase_resumos`, que ficou ABERTA a `anon`
+  // e entregava 161 itens privados de assinante a qualquer um.
+  // A vitrine virou conta real; a rota especial saiu. O que a guarda cobra agora
+  // é o oposto: que ninguém volte a chamá-la, e que o recarregar use a rota
+  // comum de assinante.
+  ok('recarregar usa a rota comum de assinante',
+     /function recarregarResumos\(\)[^]{0,300}rpc='endodirect_member_resumos'/.test(APP));
+  ok("🧨 e ninguém volta a chamar a rota que ficou aberta a anônimos",
+     APP.split('\n').filter((l) => !/^\s*\/\//.test(l)).join('\n').indexOf('endodirect_showcase_resumos') < 0);
 }
 
 // ---- 3. ⚠️ O LOGO DO CELULAR SEGUE O TEMA -----------------------------------

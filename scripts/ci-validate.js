@@ -293,6 +293,21 @@ try {
   fail('regressão do dashboard do aluno falhou:\n' + out);
 }
 
+// 17g. VITRINE COMO CONTA REAL (31/08/2026). `alunopro` tinha a senha em texto
+//      puro no index.html — arquivo servido a qualquer um — e nenhuma sessão no
+//      servidor. ⚠️ Sem sessão, NENHUM gate conseguia distinguir a vitrine de um
+//      visitante: foi o que deixou `endodirect_showcase_resumos` aberta a `anon`
+//      com 161 itens privados de assinante. Este teste guarda a senha fora do
+//      bundle, a rota especial fora do cliente, e o login caindo no Supabase —
+//      sem quebrar as contas locais restantes, que dividem o mesmo fluxo.
+try {
+  execFileSync(process.execPath, [path.join('scripts', 'test-vitrine-conta-real.js')], { stdio: 'pipe' });
+  ok('vitrine: conta real, senha fora do bundle, rota aberta desligada e login do admin intacto');
+} catch (e) {
+  const out = (e.stdout ? e.stdout.toString() : '') + (e.stderr ? e.stderr.toString() : '');
+  fail('regressão da vitrine como conta real falhou:\n' + out);
+}
+
 // 17d. CADÊNCIA DO RADAR: o mural precisa de mais de uma varredura por dia. Com
 //      uma só (07:30 BRT), notícia publicada depois dela só aparece no dia
 //      seguinte — foi a queixa de 17/08/2026 (ANVISA aprovando canetas de
