@@ -3634,9 +3634,16 @@ var CALCS=[
 var USERS=[
   // Demo 1: aluno real em modo DEGUSTAÇÃO (sem pacote) — vê as degustações.
   {email:'aluno@endodirect.com.br',pass:'Aluno@2026',name:'Aluno Endodirect',role:'aluno',sub:'Residente',acessos:[]},
-  // Demo 2: aluno com acesso TOTAL (todos os pacotes e cursos) — testa o
-  // painel do estudante completo, sem limites de degustação.
-  {email:'alunopro@endodirect.com.br',pass:'AlunoPro@2026',name:'Aluno Premium',role:'aluno',sub:'Residente',acessos:['plano','curso:endoteem','curso:lipides','curso:hiperglicemia','curso:endo_essencial']},
+  // ⚠️ A VITRINE (alunopro) SAIU DAQUI EM 31/08/2026. Ela era conta LOCAL, com a
+  // senha em texto puro nesta linha — e este arquivo é servido a qualquer um: um
+  // `curl` na home devolvia a senha. Pior, sem sessão no Supabase **nenhum gate
+  // de servidor conseguia distinguir a vitrine de um visitante qualquer**, e foi
+  // por isso que `endodirect_showcase_resumos` ficou aberta a `anon`, entregando
+  // 161 itens privados de assinante a quem pedisse.
+  // Agora ela é conta REAL no Supabase, com `plano:gold` + os três cursos de
+  // vitrine, e entra pelo login normal — acesso revogável, auditável, e sem
+  // senha publicada. Continua FORA das contagens de aluno (a régua de conta de
+  // teste é por e-mail, no servidor). Pendência de 02/08/2026, fechada.
   {email:'admin@endodirect.com.br',pass:'Admin@2026',name:'Administrador',role:'admin',sub:'Professor'},
   {email:'nakamura.epm79@gmail.com',pass:null,name:'Nakamura',role:'admin',sub:'Professor',provider:'google'},
   {email:'rodolphomend@gmail.com',pass:null,name:'Rodolpho Mendonca',role:'admin',sub:'Professor',provider:'google'},
@@ -4859,8 +4866,9 @@ function carregarResumos(client,rpc,tentativa){
 function recarregarResumos(){
   var client=getSupabaseClient();
   if(!client)return Promise.resolve();
-  var rpc=(currentUser&&currentUser.id)?'endodirect_member_resumos'
-         :((typeof isTestShowcase==='function'&&isTestShowcase())?'endodirect_showcase_resumos':'endodirect_member_resumos');
+  // A vitrine tem sessão desde 31/08/2026: entra por `member_resumos` como
+  // qualquer assinante, e a rota especial deixou de ser necessária.
+  var rpc='endodirect_member_resumos';
   resumosErro=false;
   return carregarResumos(client,rpc);
 }
@@ -4875,12 +4883,11 @@ function hydratePublicContent(){
   // no `.then` de sucesso, uma falha ali pulava esta etapa inteira em silêncio.
   .catch(function(e){if(!remoteStateWarned){remoteStateWarned=true;console.warn('Supabase public content unavailable',e);}})
   .then(function(){
-    // Visitantes/degustação e a conta demo (alunopro, sem id) não passam pelo
-    // member_content; ainda assim buscam as diretrizes/Resumos pelo RPC dedicado.
-    // A conta de vitrine (alunopro) recebe TODOS os capítulos (showcase_resumos);
-    // os demais recebem públicas + 1 por área (member_resumos). Se falhar, mantém as públicas.
-    var _resuRpc=(typeof isTestShowcase==='function'&&isTestShowcase())?'endodirect_showcase_resumos':'endodirect_member_resumos';
-    return carregarResumos(client,_resuRpc);
+    // Visitantes e degustação não passam pelo member_content; ainda assim buscam
+    // as diretrizes/Resumos pelo RPC dedicado (públicas + 1 capítulo por área).
+    // ⚠️ A VITRINE NÃO CAI MAIS AQUI: desde 31/08/2026 ela tem sessão real e
+    // segue por `hydrateRemoteState`, como qualquer assinante.
+    return carregarResumos(client,'endodirect_member_resumos');
   }).then(function(){
     remoteStateLoaded=true;
     refreshAfterRemoteState();
