@@ -187,15 +187,20 @@ function mundo(cenario) {
 // 🧨 Markup duplicado diverge na primeira correção, e a correção vai para a
 // cópia errada. Os hosts da janela são um terceiro ALVO das mesmas funções.
 {
-  ok(/\['ativa-card','ativa-card-mural','ativa-card-modal'\]/.test(html),
+  ok(/\['ativa-card-modal'\]\.forEach/.test(html),
     '⚠️ o host da janela saiu da lista de alvos de `renderAtivacao` — a janela abriria vazia');
-  ok(/\['cme-card', 'cme-card-mural', 'cme-card-modal'\]/.test(html),
+  ok(/\['cme-card-modal'\]\.forEach/.test(html),
     '⚠️ o host da janela saiu da lista de alvos de `renderEnqueteCme`');
   ok(html.indexOf('id="ativa-card-modal"') > 0 && html.indexOf('id="cme-card-modal"') > 0,
     'os hosts das janelas sumiram do markup');
-  // Os cards do Mural CONTINUAM: a janela é um convite a mais, não o único caminho.
-  ok(html.indexOf('id="ativa-card-mural"') > 0 && html.indexOf('id="cme-card-mural"') > 0,
-    '⚠️ o card do Mural sumiu — quem fechar a janela sem responder ficaria sem caminho nenhum');
+  // ⚠️ A JANELA É O ÚNICO PONTO DE ENTREGA desde 31/08/2026 ("só devem aparecer
+  // naquela janela inicial de entrada na plataforma"). Os cards do Dashboard e
+  // do Mural saíram; quem guarda o "não some para sempre" é a marca de SESSÃO
+  // da fila, cobrada em `test-ativacao.js`.
+  ['ativa-card', 'cme-card', 'ativa-card-mural', 'cme-card-mural'].forEach(function (id) {
+    ok(html.indexOf('id="' + id + '"') < 0,
+      '⚠️ o host `' + id + '` voltou: os convites só podem aparecer na janela de entrada');
+  });
 }
 
 // ── 12. Os ganchos que fazem a fila rodar ─────────────────────────────────

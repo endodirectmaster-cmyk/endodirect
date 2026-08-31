@@ -250,6 +250,15 @@ body{background:var(--bg);color:var(--tx);display:flex;flex-direction:column}
 .g4{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}
 /* Trilho do Dashboard: acervo + progresso, sempre à vista na tela de início. */
 .dash-wrap{display:grid;grid-template-columns:minmax(0,1fr) 292px;gap:12px;align-items:start}
+/* Os números do acervo ATRAVESSAM as duas colunas, no topo: o professor pediu
+   "esses dados na frente". Espremidos no trilho eles eram nota de rodapé. */
+.dash-acervo{grid-column:1/-1;display:grid;grid-template-columns:repeat(auto-fit,minmax(168px,1fr));gap:10px}
+.acv{display:flex;align-items:center;gap:.7rem;background:var(--surface);border:1px solid var(--bd);border-radius:var(--r);padding:.85rem .9rem;cursor:pointer;text-align:left;font-family:var(--font);width:100%}
+.acv:hover{border-color:var(--blue)}
+.acv-txt{flex:1;min-width:0}
+.acv-lbl{font-size:.68rem;color:var(--t3);line-height:1.3}
+.acv-num{font-size:1.55rem;font-weight:800;color:var(--tx);line-height:1.15;margin-top:.1rem;font-variant-numeric:tabular-nums}
+.acv-ico{width:38px;height:38px;border-radius:11px;display:flex;align-items:center;justify-content:center;font-size:1.05rem;flex:none}
 .dash-main{min-width:0}
 .dash-rail{position:sticky;top:0;display:flex;flex-direction:column;gap:10px}
 .rail-card{background:var(--surface);border:1px solid var(--bd);border-radius:var(--r);padding:.85rem .9rem}
@@ -2223,9 +2232,14 @@ input.dmm-inp-subsub{flex:1;min-width:0;background:transparent;color:var(--t2);f
       <div class="breadcrumb">Dashboard <b>/ Visão Geral</b></div>
       <div class="ph"><h1 id="dash-greeting">Bem-vindo.</h1><p>Continue seus estudos.</p></div>
       <div class="pc dash-wrap">
+       <div class="dash-acervo" id="dash-acervo"></div>
        <div class="dash-main">
-        <div id="ativa-card" style="display:none;margin-bottom:10px"></div>
-        <div id="cme-card" style="display:none;margin-bottom:10px"></div>
+        <!-- ⚠️ AQUI FICAVAM OS CONVITES ("Comece por aqui" e a enquete da EMC).
+             Saíram em 31/08/2026 a pedido do professor, olhando o Dashboard
+             tomado por eles: "isso não era para aparecer no dashboard".
+             Os dois continuam onde alcançam quem precisa: na JANELA DE ENTRADA
+             (que abre sozinha) e no card do MURAL DE ARTIGOS. O Dashboard é
+             painel — o que ele mostra é estado, não pedido. -->
         <div id="qotd-card" style="display:none;margin-bottom:10px"></div>
         <div id="streak-card" style="margin-bottom:10px"></div>
         <div class="g3" style="margin-bottom:10px">
@@ -2667,8 +2681,17 @@ input.dmm-inp-subsub{flex:1;min-width:0;background:transparent;color:var(--t2);f
     <div class="panel" id="panel-mural">
       <div class="breadcrumb">Dashboard <b>/ Mural de artigos</b></div>
       <div class="ph mural-ph"><h1>Mural de artigos <span class="mural-updated" id="mural-updated"></span></h1></div>
-      <div class="pc" id="ativa-mural-wrap" style="display:none;padding-bottom:0"><div id="ativa-card-mural"></div></div>
-      <div class="pc" id="cme-mural-wrap" style="display:none;padding-bottom:0"><div id="cme-card-mural"></div></div>
+      <!-- ⚠️ AQUI TAMBÉM FICAVAM OS CONVITES, e saíram em 31/08/2026 a pedido
+           do professor: "'Sua primeira questão' e 'Programa de Educação Médica
+           Continuada' só devem aparecer naquela janela inicial de entrada na
+           plataforma". Agora existe UM ponto de entrega: a janela.
+           ⚠️ CONSEQUÊNCIA REGISTRADA: o card do Mural era o que NÃO se podia
+           dispensar — ele nasceu em 19/08/2026 justamente porque o modal
+           anterior "sumia com um clique e nunca mais voltava na sessão", e
+           53 de 112 cadastrados tinham feito login sem responder nada. O que
+           segura a ponta agora é a fila: a marca de "já mostrei" é de SESSÃO,
+           então quem fechar sem responder recebe a janela de novo na próxima
+           vez que abrir a plataforma. -->
       <div class="pc" id="qotd-mural-wrap" style="display:none;padding-bottom:0"><div id="qotd-card-mural"></div></div>
       <div class="pc" id="mural-pc"></div>
     </div>
@@ -4640,7 +4663,7 @@ function applyStatePayload(payload,personalOnly){
     // Mantém o mais RECENTE dos dois: quem acabou de votar aqui não perde o voto
     // para uma resposta antiga que ainda estava viajando.
     if(!_vl||!Array.isArray(_vl.temas)||(payload.enquete_cme.em||0)>=(_vl.em||0))DB.enqueteCme=payload.enquete_cme;
-    try{if(document.getElementById('cme-card')||document.getElementById('cme-card-mural'))renderEnqueteCme();}catch(e){}
+    try{if(document.getElementById('cme-card-modal'))renderEnqueteCme();}catch(e){}
   }
   if(payload.qotd&&typeof payload.qotd==='object'){DB.qotd=Object.assign({},payload.qotd,DB.qotd||{});try{localStorage.setItem('qotd_answered',JSON.stringify(DB.qotd));}catch(e){}try{var _qp=document.getElementById('panel-qotd');if(_qp&&_qp.classList.contains('on'))renderQotdArchive();}catch(e){}}
   if(!personalOnly){
@@ -7679,8 +7702,6 @@ function goPanel(id){
   try{var _qm=document.getElementById('qotd-modal');if(_qm&&id!=='mural')_qm.style.display='none';if(id==='mural')renderQotd();}catch(e){}
   // A enquete tem de ser desenhada ao ABRIR o Mural: ele e a tela de entrada do
   // aluno (homePanel), e refreshDash() so roda no Dashboard.
-  try{if(id==='mural'||id==='dash')renderEnqueteCme();}catch(e){}
-  try{if(id==='mural'||id==='dash')renderAtivacao();}catch(e){}
   if(id==='mural')try{kickDiscussaoCadeia();}catch(e){}
   if(id==='qotd'){try{renderQotdArchive();}catch(e){}}
   if(id==='quest'){applyQuestDegustacao();renderSavedQ();populateInst('q-inst');updateProvaInfo();}
@@ -7740,30 +7761,47 @@ function renderDashRail(){
         +' de '+DIR_SUBS.length+'.</div>'
       +'<div class="rail-nota">Seu acerto por área, os temas a reforçar e a atividade dos últimos 14 dias estão logo ao lado.</div>'
     : '<div class="rail-nota" style="margin-top:0">Seu acerto por área, a ofensiva de dias e o que revisar aparecem aqui assim que você responder a primeira questão.</div>';
-  var linha=function(painel,nome,valor){
-    return '<button type="button" class="rail-row" data-rail-ir="'+painel+'">'
-      +'<span class="nm">'+esc(nome)+'</span><span class="vl">'+nBR(valor)+'</span><span class="ar">›</span></button>';
-  };
-  var acervo=linha('quest','Questões no banco',ac.questoes)
-    +linha('ref','Diretrizes',ac.diretrizes)
-    +linha('resu','Resumos',ac.resumos)
-    +(ac.artigos?linha('resu','Artigos comentados',ac.artigos):'')
-    +(ac.podcasts?linha('podcast','Podcasts',ac.podcasts):'');
-  el.innerHTML='<div class="rail-card"><div class="rail-t">Seu progresso</div>'+progresso+'</div>'
-    +'<div class="rail-card"><div class="rail-t">No acervo</div>'+acervo
-    +'<div class="rail-nota">Publicado e disponível na plataforma hoje.</div></div>';
-  el.querySelectorAll('[data-rail-ir]').forEach(function(b){
-    b.addEventListener('click',function(){
-      var alvo=b.getAttribute('data-rail-ir');
-      // Painel bloqueado (degustação) tem o próprio upsell: `goPanel` resolve.
-      try{goPanel(alvo);}catch(e){}
-    });
+  // ⚠️ O ACERVO NÃO MORA MAIS AQUI. Ele subiu para a faixa larga do topo
+  // (`renderDashAcervo`) em 31/08/2026, a pedido do professor: "deixe o dashboard
+  // com esses dados na frente". Repeti-lo no trilho seria a mesma informação duas
+  // vezes na mesma tela — o erro que já corrigi nos KPIs do Desempenho.
+  el.innerHTML='<div class="rail-card"><div class="rail-t">Seu progresso</div>'+progresso+'</div>';
+}
+// ---------- OS NÚMEROS DO ACERVO, NA FRENTE ----------
+// "Deixe o dashboard com esses dados na frente (total de questões na plataforma,
+// número de resumos publicados, número de diretrizes publicadas...)" — professor,
+// 31/08/2026, mostrando um painel com a faixa de métricas no topo.
+//
+// Cada card LEVA à aba correspondente: número que não é caminho vira enfeite.
+// As contagens vêm de `acervoContagem()`, a mesma que usa os filtros das abas.
+function renderDashAcervo(){
+  var el=document.getElementById('dash-acervo');if(!el)return;
+  if(!currentUser||currentUser.role!=='aluno'){el.style.display='none';el.innerHTML='';return;}
+  el.style.display='';
+  var ac=acervoContagem();
+  var cards=[
+    {p:'quest',  n:'Questões no banco',  v:ac.questoes,   i:'📝', c:'var(--blue)'},
+    {p:'ref',    n:'Diretrizes',         v:ac.diretrizes, i:'📋', c:'var(--grn)'},
+    {p:'resu',   n:'Resumos publicados', v:ac.resumos,    i:'📚', c:'var(--pur)'},
+    {p:'resu',   n:'Artigos comentados', v:ac.artigos,    i:'🔬', c:'var(--gold)'},
+    {p:'podcast',n:'Podcasts',           v:ac.podcasts,   i:'🎧', c:'var(--blue2)'}
+  ].filter(function(c){return c.v>0;});   // categoria vazia não vira card de zero
+  el.innerHTML=cards.map(function(c){
+    return '<button type="button" class="acv" data-acv-ir="'+c.p+'">'
+      +'<span class="acv-txt"><span class="acv-lbl">'+esc(c.n)+'</span>'
+      +'<span class="acv-num" style="display:block">'+nBR(c.v)+'</span></span>'
+      +'<span class="acv-ico" style="background:'+c.c+'1f;color:'+c.c+'">'+c.i+'</span></button>';
+  }).join('');
+  el.querySelectorAll('[data-acv-ir]').forEach(function(b){
+    // Painel bloqueado (degustação) tem o próprio upsell: `goPanel` resolve.
+    b.addEventListener('click',function(){try{goPanel(b.getAttribute('data-acv-ir'));}catch(e){}});
   });
 }
 function refreshDash(){
   DB.fc.forEach(function(c){srInit(c);});
   var due=srSessionCount();
   setText('d-fcn',DB.fc.length);setText('d-sr-due',due);setText('d-mmn',DB.mm.length);
+  try{renderDashAcervo();}catch(e){}
   try{renderDashRail();}catch(e){}
   try{renderStreakCard();}catch(e){}
   try{renderAtivacao();}catch(e){}
@@ -7822,15 +7860,17 @@ function precisaAtivacao(){
   return true;                                       // nunca respondeu nada
 }
 function renderAtivacao(){
-  ['ativa-card','ativa-card-mural','ativa-card-modal'].forEach(function(id){renderAtivacaoEm(id);});
+  ['ativa-card-modal'].forEach(function(id){renderAtivacaoEm(id);});
 }
 function renderAtivacaoEm(alvoId){
   var el=document.getElementById(alvoId);if(!el)return;
-  // Na JANELA DE ENTRADA quem desenha a moldura e o título é o modal: card com
-  // borda dentro de uma caixa com borda vira moldura dentro de moldura, e o
-  // cabeçalho apareceria duas vezes na mesma tela.
+  // Hoje só existe um alvo — a janela de entrada —, e nela quem desenha a
+  // moldura e o título é o modal: card com borda dentro de caixa com borda vira
+  // moldura dentro de moldura, e o cabeçalho apareceria duas vezes.
+  // A função continua parametrizada por alvo: foi assim que ela serviu ao
+  // Dashboard, ao Mural e à janela sem nunca duplicar markup.
   var emJanela=(alvoId==='ativa-card-modal');
-  var wrap=(alvoId==='ativa-card-mural')?document.getElementById('ativa-mural-wrap'):null;
+  var wrap=null;
   var q=(typeof qotdTodays==='function')?qotdTodays():null;
   // Sem questão publicada não há o que oferecer — melhor nada que um card vazio.
   if(!precisaAtivacao()||!q){el.style.display='none';el.innerHTML='';if(wrap)wrap.style.display='none';return;}
@@ -7928,15 +7968,15 @@ function renderEnqueteCme(){
   // `homePanel()` devolve 'mural' sempre que o Mural esta visivel, e o Dashboard
   // so aparece para quem clica nele no menu. O professor perguntou "aparece na
   // janela de entrada, certo?" e a resposta honesta era NAO.
-  ['cme-card', 'cme-card-mural', 'cme-card-modal'].forEach(function (id) { renderEnqueteCmeEm(id); });
+  ['cme-card-modal'].forEach(function (id) { renderEnqueteCmeEm(id); });
 }
 function renderEnqueteCmeEm(alvoId){
   var el = document.getElementById(alvoId); if (!el) return;
   // Mesma razão do card de ativação: na janela, a moldura e o título são dela.
   var emJanela = (alvoId === 'cme-card-modal');
+  var wrap = null;
   // No Mural o card mora dentro de um wrapper que tambem precisa sumir, senao
   // sobra o respiro do container numa tela sem conteudo.
-  var wrap = (alvoId === 'cme-card-mural') ? document.getElementById('cme-mural-wrap') : null;
   if (!cmeElegivel()) { el.style.display = 'none'; el.innerHTML = ''; if (wrap) wrap.style.display = 'none'; return; }
   el.style.display = ''; if (wrap) wrap.style.display = '';
   var voto = cmeVoto();
