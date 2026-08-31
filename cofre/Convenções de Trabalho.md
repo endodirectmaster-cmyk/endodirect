@@ -5,6 +5,40 @@ atualizado: 2026-08-29
 
 # Convenções de Trabalho
 
+## 🧨 TEXTO DE VITRINE ENVELHECE JUNTO COM O PRODUTO (2026-08-31)
+
+Três vezes no MESMO DIA um texto que descreve a plataforma sobreviveu à mudança
+que ele descrevia:
+
+1. o **banner da degustação** anunciava "flashcards, mapas mentais, 50 questões
+   e mural" horas depois de os podcasts entrarem no pacote;
+2. o **FAQ dos planos** dizia que o Gold "acrescenta a Prescrição Comentada"
+   depois de ela passar para o Standard — e não mencionava o Programa de EMC,
+   acrescentado na hora anterior;
+3. a **landing** anunciava um card "Questões por IA" e o FAQ mandava clicar num
+   botão "Gerar questões", um dia depois de o recurso sair do painel do aluno.
+
+⚠️ **É um defeito que não quebra nada.** Nenhum teste falha, nenhuma tela some:
+só o anúncio deixa de corresponder ao produto. Por isso passa. E o custo cai
+inteiro sobre quem menos conhece a plataforma — o visitante decide por uma
+promessa que não se cumpre, e o aluno procura um botão que não existe e conclui
+que está quebrado.
+
+**Regras que ficam:**
+
+- **Toda remoção de recurso tem uma segunda metade**: procurar onde ele é
+  ANUNCIADO. Código e vitrine saem juntos.
+- **Instrução que cita um botão tem de citar um botão que existe.** Guardado em
+  `scripts/test-vitrine-nao-mente.js`, que extrai todo `clique em "X"` da
+  landing e do FAQ e exige que `X` exista como texto de controle no app.
+- **A mesma informação em lista e em prosa diverge.** Os planos estavam em
+  QUATRO lugares (card do Standard, card do Gold, `ENDO_TIERS` e a prosa do
+  FAQ) — e ainda havia um quinto que decide de verdade, o `PANEL_MIN_TIER`.
+  Card promete; portão entrega. Os cinco são cobrados juntos.
+- ⚠️ **A guarda tem de saber se está guardando.** A varredura de rótulos exige
+  achar pelo menos uma instrução: se a redação mudar e o padrão parar de casar,
+  o teste passaria para sempre sem medir nada.
+
 ## 🔢 CONTAR DIZ QUE SUMIU, NÃO O QUÊ (2026-08-30)
 
 O harness A/B reprovou a remoção da geração por IA com *"4 botões a menos no
