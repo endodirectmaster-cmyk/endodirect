@@ -82,5 +82,49 @@ const NOME = 'Programa de Educação Médica Continuada';
     'os benefícios comuns perderam o ✓: ' + (saida.match(/✓/g) || []).length + ' de 2');
 }
 
+// ── 4. 🧨 O CARD PROMETE; O PORTÃO É QUE ENTREGA ──────────────────────────
+// Pedido do professor (31/08/2026): "no plano standard libera a prescrição
+// comentada". Mudar só o card seria prometer o que a plataforma recusa — quem
+// assinasse o Standard veria "Prescrição Comentada" no anúncio e um cadeado na
+// tela. Quem decide de verdade é `PANEL_MIN_TIER`.
+{
+  const i = html.indexOf('var PANEL_MIN_TIER=');
+  const ctx = vm.createContext({});
+  vm.runInContext(html.slice(i, html.indexOf(';', i) + 1), ctx);
+  const T = ctx.PANEL_MIN_TIER || {};
+  ok(!(T.rx > 1),
+    '🧨 o painel `rx` (Prescrição Comentada) voltou a exigir Gold, mas o card do Standard a promete — '
+    + 'o assinante veria o benefício no anúncio e um cadeado na tela');
+  // ⚠️ E o Consultório NÃO acompanha: `presc` é a integração Memed, que emite
+  // receita de verdade, e não é o que o plano anuncia como Prescrição Comentada.
+  ok(T.presc === 2,
+    '⚠️ o Consultório (painel `presc`, Memed) deixou de exigir Gold — ele não entra no que o Standard anuncia');
+
+  // As três listas que descrevem os planos têm de concordar entre si.
+  const iS = html.indexOf('<div class="lp-plan"');
+  const stdCard = html.slice(iS, html.indexOf('</ul>', iS));
+  ok(stdCard.indexOf('Prescrição Comentada') >= 0 && stdCard.indexOf('class="x">Prescrição Comentada') < 0,
+    '⚠️ o card do Standard não lista a Prescrição Comentada como incluída');
+  const iT = html.indexOf('var ENDO_TIERS=');
+  const ctx2 = vm.createContext({});
+  vm.runInContext(html.slice(html.indexOf('var ENDO_TIER_BASE='), html.indexOf('\n];', iT) + 3), ctx2);
+  const std = ctx2.ENDO_TIERS.find((t) => t.key === 'standard');
+  ok(std.cursos.indexOf('Prescrição Comentada') >= 0 && std.excl.indexOf('Prescrição Comentada') < 0,
+    '⚠️ o pacote de compra do Standard não inclui a Prescrição Comentada');
+
+  // 🧨 E A PROSA DO FAQ TAMBÉM DESCREVE OS PLANOS — é o terceiro lugar, e o que
+  // mais envelhece calado. Hoje ele dava a Prescrição como exclusiva do Gold e
+  // não mencionava o Programa. Já aconteceu com o banner da degustação nesta
+  // mesma sessão: texto de vitrine envelhece junto com o produto.
+  const iF = html.indexOf('Qual a diferença entre os planos?');
+  const faq = iF > 0 ? html.slice(iF, iF + 700) : '';
+  ok(!!faq, 'o FAQ que compara os planos sumiu');
+  const gold = faq.slice(faq.indexOf('<b>Gold</b>'));
+  ok(gold.indexOf('Prescrição Comentada') < 0,
+    '🧨 o FAQ ainda anuncia a Prescrição Comentada como exclusiva do Gold — contradiz o card do Standard, na mesma página');
+  ok(gold.indexOf('Programa de Educação Médica Continuada') >= 0,
+    '⚠️ o FAQ não menciona o Programa entre os exclusivos do Gold, que os cards logo acima anunciam');
+}
+
 if (falhas.length) { console.error('✗ ' + falhas.length + ' falha(s):\n - ' + falhas.join('\n - ')); process.exit(1); }
-console.log('✓ Programa de EMC: benefício do Gold na landing E no pacote de compra, destacado como exclusivo e fora do Standard');
+console.log('✓ planos: EMC exclusivo do Gold, Prescrição liberada no Standard — card, pacote de compra, FAQ e PORTÃO de acesso concordando');
