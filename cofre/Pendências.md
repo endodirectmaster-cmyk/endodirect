@@ -670,8 +670,10 @@ descompasso entre o que o aluno pergunta e o que a base sabe.
 RELATAM os termos que faltam em `TERMOS`; eu aplico. Dois agentes no mesmo arquivo
 perdem trabalho um do outro sem aviso.
 
-## ⚠️ Vitrine (`alunopro`) sem identidade no servidor — decisão do professor (2026-08-02)
-- [ ] **Dar conta REAL no Supabase à vitrine.** Hoje `alunopro` é conta **local do bundle** (`var USERS` no `index.html`), com a senha publicada no código e **sem sessão no Supabase**. Consequência estrutural: **nenhum gate de servidor consegue distinguir a vitrine de um visitante qualquer** — qualquer regra que ela passe, um `curl` também passa. Foi isso que fez o gate de 01/08 devolver vazio e deixar a aba Resumos em branco por um dia (revertido; ver [[Auditoria 2026-08-01]]).
+## ✅ RESOLVIDO — Vitrine (`alunopro`) ganhou identidade no servidor (2026-08-31)
+Feito como planejado: conta real com `plano:gold` + cursos de vitrine, senha fora do bundle (aleatória e descartada), login pelo Supabase, `showcase_resumos` revogada. ⚠️ E revelou uma **segunda porta**: o `member_content` entregava os mesmos 161 itens privados a anônimos e foi corrigido junto. Ver [[Decisões]] 2026-08-31 e `supabase/vitrine-conta-real.sql`.
+
+- [x] **Dar conta REAL no Supabase à vitrine.** Hoje `alunopro` é conta **local do bundle** (`var USERS` no `index.html`), com a senha publicada no código e **sem sessão no Supabase**. Consequência estrutural: **nenhum gate de servidor consegue distinguir a vitrine de um visitante qualquer** — qualquer regra que ela passe, um `curl` também passa. Foi isso que fez o gate de 01/08 devolver vazio e deixar a aba Resumos em branco por um dia (revertido; ver [[Auditoria 2026-08-01]]).
   - **O que fazer:** criar o usuário `alunopro@endodirect.com.br` no Supabase, conceder o acesso de plano e fazer o cliente **logar de fato**. Aí a vitrine pode usar o **`member_resumos` comum** — a função especial `endodirect_showcase_resumos()` deixa de existir, e some junto a superfície aberta que a auditoria apontou. Acesso passa a ser revogável, auditável e com limite de taxa.
   - **⚠️ Mexe no fluxo de login**, que é compartilhado com as contas de admin — exige teste em navegador real antes de mergear, pela regra de [[Convenções de Trabalho]].
   - **Não aumenta exposição:** a senha da vitrine já está pública no bundle. O que muda é que o conteúdo deixa de ser alcançável por quem apenas chama a RPC, sem nem saber que a demo existe.
