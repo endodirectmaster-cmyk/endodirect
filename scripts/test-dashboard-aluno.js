@@ -185,18 +185,18 @@ function bloco(cab) {
     'refPrivadoMode=' + privado + ';refTipoSel=' + JSON.stringify(tipo) + ';'
     + 'diretrizes.filter(dirIsVisible).length', ctx);
 
-  ok(c.questoes === 2965, 'o trilho perdeu a contagem do banco de questões, veio ' + c.questoes);
-  ok(c.podcasts === 199, 'o trilho perdeu a contagem de podcasts, veio ' + c.podcasts);
-  ok(c.diretrizes === visiveis(false, 'capitulo'),
-    '⚠️ o trilho anuncia ' + c.diretrizes + ' diretriz(es) e a aba lista ' + visiveis(false, 'capitulo')
+  ok(c.questoes.total === 2965, 'a faixa perdeu a contagem do banco de questões, veio ' + c.questoes.total);
+  ok(c.podcasts.total === 199, 'a faixa perdeu a contagem de podcasts, veio ' + c.podcasts.total);
+  ok(c.diretrizes.total === visiveis(false, 'capitulo'),
+    '⚠️ a faixa anuncia ' + c.diretrizes.total + ' diretriz(es) e a aba lista ' + visiveis(false, 'capitulo')
     + ' — número que não bate com a tela de destino é pior que número nenhum');
-  ok(c.resumos === visiveis(true, 'capitulo'),
-    '⚠️ o trilho anuncia ' + c.resumos + ' resumo(s) e a aba de Capítulos lista ' + visiveis(true, 'capitulo'));
-  ok(c.artigos === visiveis(true, 'artigo'),
-    '⚠️ o trilho anuncia ' + c.artigos + ' artigo(s) e a aba de Artigos lista ' + visiveis(true, 'artigo'));
+  ok(c.resumos.total === visiveis(true, 'capitulo'),
+    '⚠️ a faixa anuncia ' + c.resumos.total + ' resumo(s) e a aba de Capítulos lista ' + visiveis(true, 'capitulo'));
+  ok(c.artigos.total === visiveis(true, 'artigo'),
+    '⚠️ a faixa anuncia ' + c.artigos.total + ' artigo(s) e a aba de Artigos lista ' + visiveis(true, 'artigo'));
   // Rascunho é trabalho em curso do professor: não é acervo publicado.
-  ok(c.diretrizes + c.resumos + c.artigos === 5,
-    '⚠️ rascunho entrou na contagem do acervo — o trilho diz "publicado e disponível hoje"');
+  ok(c.diretrizes.total + c.resumos.total + c.artigos.total === 5,
+    '⚠️ rascunho entrou na contagem do acervo — a faixa diz "publicado e disponível hoje"');
   ok(nBRde(ctx, 2965) === '2.965', 'o separador de milhar do trilho sumiu: "2965" se lê pior que "2.965"');
   function nBRde(cx, n) { return vm.runInContext('nBR(' + n + ')', cx); }
 }
@@ -217,6 +217,7 @@ function bloco(cab) {
       'var acervoTotais=' + JSON.stringify(totais) + ';'
       + 'var provasDB=new Array(' + locais.provas + ');'
       + 'var podcasts=new Array(' + locais.podcasts + ');'
+      + 'var sharedMM=new Array(' + (0) + ');'
       + 'var diretrizes=' + JSON.stringify(locais.diretrizes || []) + ';'
       + bloco('function dirTipoOf(') + bloco('function dirIsRascunho(')
       + bloco('function dirSoNosResumos(') + bloco('function acervoContagem('), ctx);
@@ -226,28 +227,40 @@ function bloco(cab) {
   const doServidor = { provas: 2965, diretrizes: 71, resumos: 118, artigos: 43, podcasts: 199 };
 
   const c = contar(doServidor, emMaos);
-  ok(c.questoes === 2965,
-    '🧨 o card voltou a mostrar o que a CONTA recebeu (' + c.questoes + ') e não o que a PLATAFORMA tem (2965) — '
+  ok(c.questoes.total === 2965,
+    '🧨 o card voltou a mostrar o que a CONTA recebeu (' + c.questoes.total + ') e não o que a PLATAFORMA tem (2965) — '
     + 'é exatamente o "50" que o professor viu no lugar de quase 3 mil');
-  ok(c.podcasts === 199,
+  ok(c.podcasts.total === 199,
     '⚠️ os podcasts voltaram a contar só o que o aluno recebeu — quem não é assinante recebe zero e o card sumiria');
-  ok(c.diretrizes === 71 && c.resumos === 118 && c.artigos === 43,
+  ok(c.diretrizes.total === 71 && c.resumos.total === 118 && c.artigos.total === 43,
     'as demais contagens deixaram de vir do servidor: ' + JSON.stringify(c));
+
+  // ⚠️ AS DUAS GRANDEZAS ANDAM JUNTAS. É a diferença entre `tem` e `total` que
+  // vira "50 de 2.965" na degustação — o pedido do professor em 31/08/2026.
+  ok(c.questoes.tem === 50,
+    '⚠️ a faixa perdeu o que ESTE aluno alcança: sem isso não há como escrever "50 de 2.965"');
+  ok(c.podcasts.tem === 0, 'o `tem` dos podcasts na degustação não é zero: ' + c.podcasts.tem);
+
+  // 🧨 `tem` NUNCA pode passar `total`. Com um total em cache mais velho que o
+  // conteúdo em mãos, a conta daria "120 de 118" — número impossível na tela.
+  const invertido = contar({ provas: 10 }, { provas: 999, podcasts: 0, diretrizes: [] });
+  ok(invertido.questoes.tem <= invertido.questoes.total,
+    '🧨 a faixa aceitou `tem` maior que `total` (' + JSON.stringify(invertido.questoes) + ') — escreveria "999 de 10"');
 
   // Sem resposta do servidor (clone sem rede, primeira abertura): conta o que há
   // em mãos, em vez de mostrar vazio.
   const semServidor = contar(null, emMaos);
-  ok(semServidor.questoes === 50 && semServidor.diretrizes === 1,
+  ok(semServidor.questoes.total === 50 && semServidor.diretrizes.total === 1,
     '⚠️ sem `acervoTotais` a faixa deixou de cair na contagem local — a tela nasceria zerada até o servidor responder');
 
   // ⚠️ CAMPO A CAMPO. Uma chave que falte (ou venha lixo) na resposta não pode
   // ZERAR um card que já estava certo: `Number(undefined)` é NaN, e um `||`
   // preguiçoso transformaria 2965 em 0 no dia em que o servidor mudar de forma.
   const parcial = contar({ provas: 2965 }, emMaos);
-  ok(parcial.questoes === 2965 && parcial.diretrizes === 1,
+  ok(parcial.questoes.total === 2965 && parcial.diretrizes.total === 1,
     '⚠️ resposta parcial do servidor zerou os campos ausentes: ' + JSON.stringify(parcial));
   const lixo = contar({ provas: 'muitas', diretrizes: -3, resumos: null }, emMaos);
-  ok(lixo.questoes === 50 && lixo.diretrizes === 1,
+  ok(lixo.questoes.total === 50 && lixo.diretrizes.total === 1,
     '⚠️ valor inválido do servidor passou direto para a tela: ' + JSON.stringify(lixo));
 }
 
@@ -317,7 +330,9 @@ function bloco(cab) {
     vm.runInContext(
       'var currentUser={role:"aluno"};var DIR_SUBS=new Array(14);'
       + 'function progressoDoAluno(){return ' + JSON.stringify(prog) + ';}'
-      + 'function acervoContagem(){return {questoes:2965,diretrizes:71,resumos:118,artigos:43,podcasts:199};}'
+      // A degustação, medida no servidor: tem parte, e a faixa mostra a fração.
+      + 'function acervoContagem(){return {questoes:{tem:50,total:2965},diretrizes:{tem:71,total:71},'
+      + 'resumos:{tem:14,total:118},artigos:{tem:4,total:43},mapas:{tem:41,total:82},podcasts:{tem:0,total:199}};}'
       + 'function goPanel(p){__ir.push(p);}'
       + 'var document={getElementById:function(id){return __hosts[id]||null;}};'
       + bloco('function esc(') + bloco('function nBR(')
@@ -358,10 +373,14 @@ function bloco(cab) {
   const A = r.acervo.innerHTML;
   ok(/2\.965/.test(A), '⚠️ "total de questões na plataforma" sumiu da faixa do Dashboard');
   ok(/>71</.test(A), '⚠️ "número de diretrizes publicadas" sumiu da faixa');
-  ok(/>118</.test(A), '⚠️ "número de resumos publicados" sumiu da faixa');
-  ['Questões no banco', 'Diretrizes', 'Resumos publicados'].forEach((t2) => {
+  ok(/118/.test(A), '⚠️ "número de resumos publicados" sumiu da faixa');
+  ['Questões no banco', 'Diretrizes', 'Resumos publicados', 'Mapas mentais'].forEach((t2) => {
     ok(A.indexOf(t2) >= 0, 'a faixa perdeu o rótulo "' + t2 + '"');
   });
+  // ⚠️ "Artigos comentados" saiu a pedido do professor (31/08/2026), trocado por
+  // "Mapas mentais". O card antigo não pode voltar sozinho.
+  ok(A.indexOf('Artigos comentados') < 0,
+    '⚠️ o card "Artigos comentados" voltou — foi trocado por "Mapas mentais" a pedido do professor');
 
   // Cada card LEVA à aba. Número que não é caminho vira enfeite.
   const alvos = [...A.matchAll(/data-acv-ir="([a-z]+)"/g)].map((m) => m[1]);
@@ -384,6 +403,48 @@ function bloco(cab) {
   ok(/2\.965/.test(novo.acervo.innerHTML), 'a faixa do acervo tem de aparecer mesmo para quem ainda não respondeu nada');
 }
 
+// ── 4b. 🧨 A FRAÇÃO "X DE Y" DA DEGUSTAÇÃO ────────────────────────────────
+// Pedido do professor (31/08/2026): "em Diretrizes aparecer 5 de 71, Resumos
+// 10 de 118, e assim vai". Os números reais, medidos no servidor: questões
+// 50/2.965, resumos 14/118, mapas 41/82, podcasts 0/199 — e **Diretrizes
+// 71/71**, porque a degustação recebe TODAS as públicas.
+{
+  const A = montar({ respondidas: 0, acertos: 0, acerto: 0, ofensiva: 0, hoje: 0, areas: 0 }).acervo.innerHTML;
+  ok(/50<span class="acv-de"> de 2\.965<\/span>/.test(A),
+    '⚠️ a faixa deixou de mostrar quanto do banco a degustação alcança ("50 de 2.965")');
+  ok(/14<span class="acv-de"> de 118<\/span>/.test(A), '⚠️ a fração dos Resumos sumiu');
+  ok(/41<span class="acv-de"> de 82<\/span>/.test(A), '⚠️ a fração dos Mapas mentais sumiu');
+
+  // ⚠️ FRAÇÃO SÓ ONDE O ACESSO É PARCIAL. Na degustação as Diretrizes são
+  // TODAS liberadas (71 de 71): escrever a fração ali insinuaria um limite que
+  // não existe, e é o único ponto do pedido do professor que a medida
+  // contradisse — ele supôs "5 de 71".
+  ok(!/71<span class="acv-de">/.test(A) && A.indexOf('>71<') >= 0,
+    '⚠️ "71 de 71" apareceu na faixa — não informa nada e insinua um limite que a degustação não tem');
+
+  // 🧨 E o card de acesso ZERO tem de FICAR. É ele que diz o que a assinatura
+  // abre; filtrar por "o que o aluno tem" faria a categoria sumir justamente
+  // para quem mais precisa vê-la.
+  ok(/0<span class="acv-de"> de 199<\/span>/.test(A),
+    '🧨 o card dos Podcasts sumiu para a degustação (acesso zero) — é o card que mostra o que a assinatura abre');
+
+  // Assinante com tudo: número seco, sem fração em card NENHUM.
+  const ctxG = vm.createContext({ console });
+  const hostG = { style: {}, _h: '', set innerHTML(v2) { this._h = v2; }, get innerHTML() { return this._h; }, querySelectorAll: () => [] };
+  vm.runInContext(
+    'var currentUser={role:"aluno"};'
+    + 'var document={getElementById:function(){return __h;}};'
+    + 'function goPanel(){}'
+    + 'function acervoContagem(){return {questoes:{tem:2965,total:2965},diretrizes:{tem:71,total:71},'
+    + 'resumos:{tem:118,total:118},artigos:{tem:43,total:43},mapas:{tem:82,total:82},podcasts:{tem:199,total:199}};}'
+    + bloco('function esc(') + bloco('function nBR(') + bloco('function renderDashAcervo(')
+    + 'renderDashAcervo();', Object.assign(ctxG, { __h: hostG }));
+  ok(hostG.innerHTML.indexOf('acv-de') < 0,
+    '⚠️ o assinante com acesso total viu fração ("2.965 de 2.965") — só polui; a fração é para quem tem parte');
+  ok(/2\.965/.test(hostG.innerHTML) && /82/.test(hostG.innerHTML),
+    'a faixa do assinante perdeu os números');
+}
+
 // ── 5. O trilho não é do professor ────────────────────────────────────────
 {
   const ctx = vm.createContext({ console });
@@ -391,7 +452,8 @@ function bloco(cab) {
   vm.runInContext('var currentUser={role:"admin"};'
     + 'var document={getElementById:function(){return __host;}};'
     + 'function progressoDoAluno(){return {respondidas:1,acerto:1,ofensiva:1,hoje:1,areas:1};}'
-    + 'function acervoContagem(){return {questoes:1,diretrizes:1,resumos:1,artigos:1,podcasts:1};}'
+    + 'function acervoContagem(){return {questoes:{tem:1,total:1},diretrizes:{tem:1,total:1},resumos:{tem:1,total:1},'
+    + 'artigos:{tem:1,total:1},mapas:{tem:1,total:1},podcasts:{tem:1,total:1}};}'
     + 'function goPanel(){}' + bloco('function esc(') + bloco('function nBR(')
     + bloco('function renderDashRail(') + bloco('function renderDashAcervo(')
     + 'renderDashRail();renderDashAcervo();',

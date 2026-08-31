@@ -670,6 +670,26 @@ descompasso entre o que o aluno pergunta e o que a base sabe.
 RELATAM os termos que faltam em `TERMOS`; eu aplico. Dois agentes no mesmo arquivo
 perdem trabalho um do outro sem aviso.
 
+## ⚠️ Flashcards: a trava de tier decidida em 2026-06-22 não está em vigor (2026-08-31)
+
+Medido ao aplicar a trava dos mapas, com chamada real:
+
+| conteúdo | degustação recebe | dos quais `tier:'member'` |
+|---|---|---|
+| mapas mentais | 41 (depois da trava) | 0 |
+| **flashcards** | **533** | **180** |
+
+O cofre registra em 2026-06-22 a decisão do professor: *"degustação mantém o
+combinado; a expansão é só para assinante"*, implementada por `tier` — e diz que
+as RPCs passariam a filtrar `fc_shared` (**degustação → só livre, 222**).
+`endodirect_public_content` filtra; **`endodirect_member_content` não**. Ou seja:
+o visitante deslogado recebe menos que o aluno em degustação, que está um passo
+mais perto de assinar.
+
+Não foi tocado porque o professor pediu **os mapas**. A correção é a mesma
+linha, no mesmo `case`. Decisão dele: os 180 flashcards de biblioteca continuam
+na degustação, ou voltam a ser benefício de assinante como está escrito?
+
 ## 📦 `member_content` devolve 12,4 MB a um assinante Gold (2026-08-31)
 
 Medido ao conferir o login da vitrine, com token real:
