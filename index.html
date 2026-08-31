@@ -2179,7 +2179,7 @@ input.dmm-inp-subsub{flex:1;min-width:0;background:transparent;color:var(--t2);f
       <div id="sb-aluno">
         <div class="sb-sec">Estudo</div>
         <button class="sb-item on" data-p="dash">📊 Dashboard</button>
-        <button class="sb-item" data-p="desemp">📈 Desempenho</button>
+        <button class="sb-item" data-p="mural">📢 Mural de artigos</button>
         <button class="sb-item" data-p="plano">🎯 Plano de estudo</button>
         <button class="sb-item" data-p="quest">📝 Banco de questões</button>
         <button class="sb-item" data-p="qotd">🧠 Questão do Dia</button>
@@ -2207,7 +2207,6 @@ input.dmm-inp-subsub{flex:1;min-width:0;background:transparent;color:var(--t2);f
         <button class="sb-item" data-p="notas">📓 Caderno</button>
         <!-- Só aparece quando existe aula agendada ou no ar (ver aoVivoAplicarNav). -->
         <button class="sb-item" data-p="aovivo" id="sb-aovivo" style="display:none">🔴 Aula ao vivo</button>
-        <button class="sb-item" data-p="mural">📢 Mural de artigos</button>
         <button class="sb-item" data-p="chat">💬 Chat IA</button>
         <button class="sb-item" data-p="perfil">👤 Perfil</button>
       </div>
@@ -2234,8 +2233,8 @@ input.dmm-inp-subsub{flex:1;min-width:0;background:transparent;color:var(--t2);f
           <div class="card" style="text-align:center;cursor:pointer" id="dc-sr"><div style="font-size:1.45rem;font-weight:700;color:var(--red)" id="d-sr-due">0</div><div style="font-size:.66rem;color:var(--t3)">Cards p/ revisar</div></div>
           <div class="card" style="text-align:center;cursor:pointer" id="dc-mm"><div style="font-size:1.45rem;font-weight:700;color:var(--gold)" id="d-mmn">0</div><div style="font-size:.66rem;color:var(--t3)">Mapas mentais</div></div>
         </div>
+        <div id="dash-desemp" style="margin-bottom:10px"></div>
         <div class="g2" style="margin-bottom:10px">
-          <div class="card"><div class="card-head"><span class="card-title">Desempenho por área</span></div><div id="perf-bars"><div class="empty">Responda questões para ver.</div></div></div>
           <div class="rec-box"><div style="font-size:1.3rem;margin-bottom:.4rem">⚡</div><div style="font-size:.56rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:rgba(255,255,255,.45);margin-bottom:.3rem">Recomendações IA</div><div style="font-size:.69rem;color:rgba(255,255,255,.65);line-height:1.55" id="d-rec">Gere questões para receber recomendações.</div><button class="btn btn-sm" id="d-chat-btn" style="margin-top:.7rem;background:rgba(255,255,255,.15);color:#fff;border:1px solid rgba(255,255,255,.2);font-size:.67rem">💬 Perguntar à IA</button></div>
         </div>
         <div class="g3">
@@ -7438,31 +7437,25 @@ function updatePlanBadge(){
     }
   }
 }
-// Layout do menu por perfil: médicos (residente/endocrinologista/outros) não
-// veem o Dashboard — o Mural assume o TOPO da seção Estudo, no lugar dele.
-// Estudantes mantêm o Dashboard no topo e o Mural em "Pessoal".
-function applyProfileMenuLayout(){
-  var box=document.getElementById('sb-aluno');if(!box)return;
-  var dash=box.querySelector('.sb-item[data-p="dash"]');
-  var mural=box.querySelector('.sb-item[data-p="mural"]');
-  if(!dash||!mural)return;
-  if(prescProfileOk()){
-    dash.style.display='none';
-    if(mural.getAttribute('data-moved')!=='1'){box.insertBefore(mural,dash);mural.setAttribute('data-moved','1');}
-  }else{
-    dash.style.display='';
-    if(mural.getAttribute('data-moved')==='1'){
-      var chat=box.querySelector('.sb-item[data-p="chat"]');
-      if(chat)box.insertBefore(mural,chat); // volta o Mural pra "Pessoal" (antes do Chat IA)
-      mural.removeAttribute('data-moved');
-    }
-  }
-}
+// 🧨 AQUI MORAVA `applyProfileMenuLayout()` (30/08/2026). Desde 12/06/2026 ela
+// ESCONDIA O DASHBOARD do menu de quem tem perfil de médico e subia o Mural para
+// o lugar dele — era a mesma decisão de "médico vive no Mural" que também estava
+// em `homePanel()` e em `maybeLandMedicoHome()`.
+//
+// Ao tornar o Dashboard a tela de início eu desfiz as outras duas e NÃO VI ESTA.
+// Resultado: a tela de entrada passou a ser uma tela sem porta — quem saísse do
+// Dashboard não tinha como voltar. Quem viu foi o professor: "não apareceu no
+// menu lateral Dashboard".
+//
+// A lição, que virou guarda em `test-dashboard-aluno.js`: provar que o DESTINO
+// está certo não prova que existe CAMINHO até ele. Uma regra de produto espalhada
+// por três lugares só está desfeita quando os três forem lidos.
+//
+// O menu agora é o MESMO para todos os perfis, na ordem do markup.
 function markLockedNavItems(){
   try{updatePlanBadge();}catch(e){}
   var sp=document.getElementById('sb-presc');if(sp)sp.style.display=prescAllowed()?'':'none';
   try{emcAplicarNav();}catch(e){}
-  try{applyProfileMenuLayout();}catch(e){}
   document.querySelectorAll('#sb-aluno .sb-item[data-p]').forEach(function(b){
     var locked=!canSeePanel(b.dataset.p);
     var has=b.querySelector('.sb-lock');
@@ -7697,7 +7690,7 @@ function goPanel(id){
   if(id==='podcast')renderPodcasts();
   if(id==='cursos')renderCursosAluno();
   if(id==='aovivo'){renderAoVivo();aoVivoIniciarPoll();}
-  if(id==='desemp')renderDesempenho();
+  if(id==='desemp')renderDesempenho(); // painel legado: sem item de menu, mas ainda montável
   if(id==='plano')renderPlano();
   if(id==='erros')renderErros();
   if(id==='crono')initCrono();
@@ -7745,7 +7738,7 @@ function renderDashRail(){
       +'</div>'
       +'<div class="rail-nota">'+pr.areas+(pr.areas===1?' subespecialidade estudada':' subespecialidades estudadas')
         +' de '+DIR_SUBS.length+'.</div>'
-      +'<button type="button" class="btn btn-outline btn-sm" id="rail-desemp" style="margin-top:.6rem;width:100%;justify-content:center">Ver desempenho completo →</button>'
+      +'<div class="rail-nota">Seu acerto por área, os temas a reforçar e a atividade dos últimos 14 dias estão logo ao lado.</div>'
     : '<div class="rail-nota" style="margin-top:0">Seu acerto por área, a ofensiva de dias e o que revisar aparecem aqui assim que você responder a primeira questão.</div>';
   var linha=function(painel,nome,valor){
     return '<button type="button" class="rail-row" data-rail-ir="'+painel+'">'
@@ -7759,8 +7752,6 @@ function renderDashRail(){
   el.innerHTML='<div class="rail-card"><div class="rail-t">Seu progresso</div>'+progresso+'</div>'
     +'<div class="rail-card"><div class="rail-t">No acervo</div>'+acervo
     +'<div class="rail-nota">Publicado e disponível na plataforma hoje.</div></div>';
-  var vd=document.getElementById('rail-desemp');
-  if(vd)vd.addEventListener('click',function(){try{goPanel('desemp');}catch(e){}});
   el.querySelectorAll('[data-rail-ir]').forEach(function(b){
     b.addEventListener('click',function(){
       var alvo=b.getAttribute('data-rail-ir');
@@ -7777,7 +7768,8 @@ function refreshDash(){
   try{renderStreakCard();}catch(e){}
   try{renderAtivacao();}catch(e){}
   try{renderEnqueteCme();}catch(e){}
-  renderPerfBars();updateDashRec();renderDashCrono();renderDashNotas();
+  try{renderDesempenhoNoDash();}catch(e){}
+  updateDashRec();renderDashCrono();renderDashNotas();
 }
 
 // ---------- ATIVAÇÃO DA PRIMEIRA SESSÃO ----------
@@ -8261,21 +8253,44 @@ function nBR(n){try{return Number(n||0).toLocaleString('pt-BR');}catch(e){return
 function kpiCard(label,val,col){
   return '<div class="card" style="flex:1;min-width:130px;padding:.8rem"><div style="font-size:.66rem;text-transform:uppercase;letter-spacing:.06em;color:var(--t3)">'+esc(label)+'</div><div style="font-size:1.4rem;font-weight:800;color:'+(col||'var(--tx)')+';margin-top:.2rem">'+val+'</div></div>';
 }
-// Painel de Desempenho do aluno: KPIs (acerto geral, respondidas, ofensiva, hoje),
-// "Onde focar" (temas mais fracos por DB.perfTema), barras por subespecialidade
+// Desempenho do aluno: KPIs (acerto geral, respondidas, ofensiva, hoje), "Onde
+// focar" (temas mais fracos por DB.perfTema), barras por subespecialidade
 // (DB.perf, histórico completo) e atividade dos últimos 14 dias (DB.act).
+//
+// ⚠️ ELE MORA NO DASHBOARD (30/08/2026, pedido do professor: "a ferramenta
+// desempenho deve ser incorporada nele e automaticamente desaparecer do menu
+// lateral"). Um construtor só, dois destinos: no Dashboard, sem o cabeçalho de
+// página e SEM OS KPIs — eles já estão no trilho, a dois palmos de distância, e
+// repetir os mesmos quatro números na mesma tela não informa nada.
+function desempenhoHTML(comoPagina){
+  var el={_h:'',set innerHTML(v){this._h=v;}};
+  renderDesempenhoEm(el,comoPagina);
+  return el._h;
+}
 function renderDesempenho(){
-  var el=document.getElementById('desemp-body');if(!el)return;
+  var alvo=document.getElementById('desemp-body');if(alvo)renderDesempenhoEm(alvo,true);
+}
+function renderDesempenhoNoDash(){
+  var alvo=document.getElementById('dash-desemp');if(!alvo)return;
+  renderDesempenhoEm(alvo,false);
+}
+function renderDesempenhoEm(el,comoPagina){
   var perf=DB.perf||{};var subs=Object.keys(perf);
   var pr=progressoDoAluno();
   var totT=pr.respondidas,totC=pr.acertos;
   var act=DB.act||{};var streak=pr.ofensiva;var hoje=pr.hoje;
   if(!totT){
-    el.innerHTML='<div class="ph"><h1>📈 Desempenho</h1><p>Acompanhe sua evolução por subespecialidade e tema.</p></div><div class="card"><div class="empty">Responda questões (no Banco, na Questão do Dia ou no Simulado) para ver seu desempenho aqui.</div></div>';
+    // Sem nenhuma questão respondida não há evolução para mostrar. No Dashboard
+    // isso é silêncio: o trilho já convida, e um bloco vazio embaixo do convite
+    // só ocuparia espaço repetindo o mesmo recado.
+    el.innerHTML=comoPagina
+      ?'<div class="ph"><h1>📈 Desempenho</h1><p>Acompanhe sua evolução por subespecialidade e tema.</p></div><div class="card"><div class="empty">Responda questões (no Banco, na Questão do Dia ou no Simulado) para ver seu desempenho aqui.</div></div>'
+      :'';
     return;
   }
   var ov=pr.acerto;
-  var kpis='<div style="display:flex;flex-wrap:wrap;gap:.7rem;margin-bottom:1rem">'
+  // No Dashboard os KPIs saem: o trilho já os mostra, na mesma tela.
+  var kpis=!comoPagina?'':'<div style="display:flex;flex-wrap:wrap;gap:.7rem;margin-bottom:1rem">'
     +kpiCard('Acerto geral',ov+'%',ov>=70?'var(--grn)':ov>=50?'var(--gold)':'var(--red)')
     +kpiCard('Respondidas',String(totT),'var(--blue)')
     +kpiCard('Ofensiva',streak+(streak===1?' dia':' dias')+' 🔥','var(--gold)')
@@ -8299,7 +8314,8 @@ function renderDesempenho(){
   var actHtml='<div class="card"><div style="font-weight:700;margin-bottom:.6rem">Atividade (14 dias)</div><div style="display:flex;align-items:flex-end;gap:4px;height:70px">'
     +days.map(function(d){var h=d.n?Math.max(8,Math.round(d.n/maxN*64)):3;var c=d.n?'var(--blue)':'var(--bd)';return '<div title="'+d.k+': '+d.n+' questões" style="flex:1;height:'+h+'px;background:'+c+';border-radius:3px 3px 0 0"></div>';}).join('')
     +'</div><div style="display:flex;justify-content:space-between;font-size:.62rem;color:var(--t3);margin-top:.3rem"><span>14 dias atrás</span><span>hoje</span></div></div>';
-  el.innerHTML='<div class="ph"><h1>📈 Desempenho</h1><p>Sua evolução por subespecialidade e tema — e onde focar.</p></div>'+kpis+foco+bars+actHtml;
+  el.innerHTML=(comoPagina?'<div class="ph"><h1>📈 Desempenho</h1><p>Sua evolução por subespecialidade e tema — e onde focar.</p></div>':'')
+    +kpis+foco+bars+actHtml;
 }
 // ── OFENSIVA (streak) + META SEMANAL ──
 function weekKeys(){var d=new Date();var dow=(d.getDay()+6)%7;var mon=new Date(d);mon.setDate(d.getDate()-dow);var ks=[];for(var i=0;i<7;i++){var x=new Date(mon);x.setDate(mon.getDate()+i);ks.push(todayKey(x));}return ks;}
