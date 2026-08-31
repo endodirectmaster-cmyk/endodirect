@@ -8,6 +8,18 @@ atualizado: 2026-08-31
 Log de decisões de produto e técnicas (mais recentes no topo).
 
 ## 2026-08
+- **🎁 O QUE A DEGUSTAÇÃO RECEBE, REDEFINIDO (2026-08-31).** Pedido do professor: *"na degustação, libera todos os podcasts e das diretrizes 10 de 71"* e *"flashcards, libera somente 10% do total"*. **Mudança só de servidor** — o `index.html` não foi tocado, porque a faixa do Dashboard já lê o que a conta recebeu contra o total da plataforma: "10 de 71" e "53 de 533" aparecem sozinhos, sem deploy nem bump do `sw.js`.
+  - A amostra virou função (`endodirect_amostra_espalhada`), **estável** (ordem por `md5`, como a das 50 questões — amostra que muda a cada carregamento faria o aluno perder de vista o que já leu) e **espalhada** (`row_number() over (partition by sub)`: uma de cada subespecialidade primeiro). ⚠️ Sem espalhar, 10 sorteadas ao acaso poderiam sair todas de Diabetes e o seletor da degustação apareceria quase vazio — **pareceria defeito, não amostra**. Medido: as 10 diretrizes cobrem 10 subespecialidades; os 53 flashcards cobrem as 12.
+  - ⚠️ **PODCASTS SÃO GATED POR *TER CONTA*, não por "sem escopo".** `member_content` é chamável por `anon`, e degustação é o aluno **cadastrado** sem pacote. Sem `auth.uid() is not null`, os 199 sairiam para quem tivesse a chave pública e **o cadastro deixaria de valer alguma coisa**. É hoje a única diferença entre visitante e degustação, e é deliberada.
+  - 🧨 **E O VISITANTE NÃO PODE RECEBER MAIS QUE O CADASTRADO.** Sem alinhar o `public_content`, ele ficaria com 71 diretrizes e 353 flashcards contra 10 e 53 de quem se cadastrou — **a mesma inversão que eu tinha acabado de corrigir nos mapas mentais, repetida no mesmo dia**. Regra que fica: ao apertar um nível de acesso, conferir o nível de baixo na mesma passada.
+  - Os 10% **superam a trava por tier de 2026-06-22**, que nunca chegou a valer no `member_content` (a degustação recebia os 533, inclusive os 180 de assinante). 53 é mais restrito que os 353 que a trava daria — fecha a dívida que estava em `Pendências`.
+  - **Medido nos três perfis** (a linha da degustação com o `sub` de um aluno REAL sem escopo, não por chamada anônima — os dois diferem justamente nos podcasts):
+
+    | | dir. públicas | privadas | questões | flashcards | mapas | podcasts |
+    |---|---|---|---|---|---|---|
+    | Visitante | 10 | 0 | 50 | 53 | 41 | 0 |
+    | **Degustação** | **10** | 18 | 50 | **53** | 41 | **199** |
+    | Gold | 71 | 161 | 2.965 | 533 | 82 | 199 |
 - **📊 A FAIXA DO DASHBOARD MOSTRA "X DE Y" NA DEGUSTAÇÃO (2026-08-31).** O professor gostou da faixa e pediu: *"como aparece para alunos recém cadastrados que vão fazer a degustação? A ideia é deixar assim só que em Diretrizes aparecer 5 de 71, Resumos 10 de 118, e assim vai"*. Depois: *"troca Artigos comentados por Mapas mentais"* e *"coloca a trava na degustação nos mapas mentais também"*.
   - ⚠️ **OS NÚMEROS DO EXEMPLO NÃO ERAM OS REAIS, e medir mudou o desenho.** Medido antes de escrever a tela: questões **50 de 2.965**, resumos **14 de 118**, artigos **4 de 43**, podcasts **0 de 199** — e **Diretrizes 71 de 71**, porque a degustação recebe *todas* as públicas. Por isso a fração aparece **só onde o acesso é parcial**: "71 de 71" não informa nada e ainda insinua um limite que não existe.
   - **O card de acesso ZERO fica** (Podcasts, "0 de 199"): é ele que diz o que a assinatura abre. Filtrar por "o que o aluno tem" faria a categoria sumir justamente para quem mais precisa vê-la — o filtro olha o TOTAL.

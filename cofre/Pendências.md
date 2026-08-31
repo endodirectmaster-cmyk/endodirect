@@ -670,7 +670,11 @@ descompasso entre o que o aluno pergunta e o que a base sabe.
 RELATAM os termos que faltam em `TERMOS`; eu aplico. Dois agentes no mesmo arquivo
 perdem trabalho um do outro sem aviso.
 
-## ⚠️ Flashcards: a trava de tier decidida em 2026-06-22 não está em vigor (2026-08-31)
+## ✅ RESOLVIDO — Flashcards na degustação: 10% do total (2026-08-31)
+O professor decidiu por um limite mais simples e mais restrito que a trava por tier: *"flashcards, libera somente 10% do total"* — **53 de 533**, contra os 353 que a trava por tier daria. Ver [[Decisões]] 2026-08-31 e `supabase/degustacao-amostras.sql`.
+
+### Contexto do achado
+
 
 Medido ao aplicar a trava dos mapas, com chamada real:
 
