@@ -107,6 +107,12 @@ async function medir(browser, url, rotulo) {
   const dom = await page.evaluate(() => ({
     nodes: document.querySelectorAll('*').length,
     botoes: document.querySelectorAll('button').length,
+    // ⚠️ CONTAR BOTÃO DIZ QUE ALGO SUMIU, NÃO O QUÊ. Em 30/08/2026 o harness
+    // reprovou "4 botões a menos" numa mudança que removia 4 botões DE
+    // PROPÓSITO (a geração por IA saiu do painel do aluno). Contagem sozinha só
+    // deixa a escolha entre desligar a guarda e ignorá-la — as duas ruins.
+    // Com os RÓTULOS, a diferença é legível e a remoção pode ser declarada.
+    rotulos: [...document.querySelectorAll('button')].map((x) => (x.textContent || '').trim().slice(0, 40)),
     scripts: document.scripts.length,
     maiorScript: Math.max.apply(null, Array.from(document.scripts).map((s) => (s.textContent || '').length)),
     corpoAlto: !!document.body && document.body.getBoundingClientRect().height > 100
@@ -136,7 +142,25 @@ async function medir(browser, url, rotulo) {
   if (b.bind['fb-submit'] < 1) p.push('#fb-submit sem listener no branch — o bloco grande NAO chegou ao fim (apagao)');
   SONDAS.forEach((id) => { if (b.bind[id] < a.bind[id]) p.push(`#${id}: ${b.bind[id]} listener(s) no branch vs ${a.bind[id]} na main`); });
   if (b.pageerrors.length > a.pageerrors.length) p.push('pageerrors novos no branch: ' + JSON.stringify(b.pageerrors));
-  if (b.botoes < a.botoes) p.push(`botoes a menos no branch (${b.botoes} vs ${a.botoes})`);
+  // Botões que existiam na main e sumiram no branch, por rótulo. Renomear um
+  // botão some com o rótulo antigo e cria o novo: por isso a conta é por
+  // diferença de multiconjunto, e um rótulo que reaparece com outro nome não
+  // vira alarme falso enquanto o TOTAL não cair.
+  const conta = (xs) => xs.reduce((m, x) => (m[x] = (m[x] || 0) + 1, m), {});
+  const ca = conta(a.rotulos || []), cb = conta(b.rotulos || []);
+  const sumiram = [];
+  Object.keys(ca).forEach((k) => { for (let i = 0; i < ca[k] - (cb[k] || 0); i++) sumiram.push(k); });
+  if (sumiram.length) console.log('  botoes que sumiram no branch: ' + JSON.stringify(sumiram));
+  // Remoção INTENCIONAL se declara: REMOCOES_ESPERADAS="rótulo|rótulo".
+  // Declarar é barato; sumir sem querer é o apagão. Um rótulo declarado que NÃO
+  // sumiu também reprova — declaração velha esconderia a próxima perda de vista.
+  const declarados = String(process.env.REMOCOES_ESPERADAS || '').split('|').map((x) => x.trim()).filter(Boolean);
+  const naoDeclarados = sumiram.filter((k) => !declarados.some((d) => k.indexOf(d) >= 0));
+  const semEfeito = declarados.filter((d) => !sumiram.some((k) => k.indexOf(d) >= 0));
+  if (naoDeclarados.length) p.push('botoes sumiram SEM declaracao: ' + JSON.stringify(naoDeclarados)
+    + ' (se for de proposito, rode com REMOCOES_ESPERADAS="' + naoDeclarados.join('|') + '")');
+  if (semEfeito.length) p.push('REMOCOES_ESPERADAS lista botao que NAO sumiu: ' + JSON.stringify(semEfeito)
+    + ' — declaracao velha esconde a proxima perda');
   if (!b.corpoAlto) p.push('corpo do branch nao renderizou');
 
   if (p.length) { console.error('\nREPROVADO:\n- ' + p.join('\n- ')); process.exit(1); }

@@ -248,6 +248,26 @@ body{background:var(--bg);color:var(--tx);display:flex;flex-direction:column}
 .calc-pills .pill-tab{padding:.4rem .8rem;font-size:.73rem}
 .calc-pill-n{opacity:.6;font-weight:600;font-size:.68rem}
 .g4{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}
+/* Trilho do Dashboard: acervo + progresso, sempre à vista na tela de início. */
+.dash-wrap{display:grid;grid-template-columns:minmax(0,1fr) 292px;gap:12px;align-items:start}
+.dash-main{min-width:0}
+.dash-rail{position:sticky;top:0;display:flex;flex-direction:column;gap:10px}
+.rail-card{background:var(--surface);border:1px solid var(--bd);border-radius:var(--r);padding:.85rem .9rem}
+.rail-t{font-size:.62rem;font-weight:800;letter-spacing:.12em;text-transform:uppercase;color:var(--t3);margin-bottom:.65rem}
+.rail-kpis{display:grid;grid-template-columns:1fr 1fr;gap:.45rem}
+.rail-kpi{background:var(--s2);border-radius:var(--rs);padding:.5rem .55rem}
+.rail-kpi b{display:block;font-size:1.15rem;font-weight:800;line-height:1.15;font-variant-numeric:tabular-nums}
+.rail-kpi span{font-size:.6rem;color:var(--t3);text-transform:uppercase;letter-spacing:.05em}
+.rail-row{display:flex;align-items:center;gap:.5rem;width:100%;padding:.4rem .3rem;border:none;background:transparent;border-radius:var(--rs);cursor:pointer;text-align:left;font-family:var(--font)}
+.rail-row:hover{background:var(--s2)}
+.rail-row .nm{flex:1;font-size:.76rem;color:var(--tx)}
+.rail-row .vl{font-size:.84rem;font-weight:800;color:var(--blue);font-variant-numeric:tabular-nums}
+.rail-row .ar{font-size:.7rem;color:var(--t3);opacity:0}
+.rail-row:hover .ar{opacity:1}
+.rail-nota{font-size:.66rem;color:var(--t3);line-height:1.5;margin-top:.55rem}
+/* ⚠️ Abaixo de 1080px o trilho vira uma faixa embaixo, sem `sticky`: grudado num
+   grid de uma coluna ele cobriria o conteúdo ao rolar. */
+@media (max-width:1080px){.dash-wrap{grid-template-columns:1fr}.dash-rail{position:static}}
 .btn{border:none;border-radius:var(--rs);padding:.42rem .88rem;font-family:var(--font);font-size:.75rem;font-weight:500;cursor:pointer;display:inline-flex;align-items:center;gap:5px;line-height:1}
 .btn-primary{background:var(--blue);color:#fff}
 .btn-primary:hover:not(:disabled){background:var(--blue2)}
@@ -2161,7 +2181,7 @@ input.dmm-inp-subsub{flex:1;min-width:0;background:transparent;color:var(--t2);f
         <button class="sb-item on" data-p="dash">📊 Dashboard</button>
         <button class="sb-item" data-p="desemp">📈 Desempenho</button>
         <button class="sb-item" data-p="plano">🎯 Plano de estudo</button>
-        <button class="sb-item" data-p="quest">📝 Questões</button>
+        <button class="sb-item" data-p="quest">📝 Banco de questões</button>
         <button class="sb-item" data-p="qotd">🧠 Questão do Dia</button>
         <button class="sb-item" data-p="flash">🃏 Flashcards</button>
         <button class="sb-item" data-p="mmap">✦ Mapas Mentais</button>
@@ -2187,7 +2207,7 @@ input.dmm-inp-subsub{flex:1;min-width:0;background:transparent;color:var(--t2);f
         <button class="sb-item" data-p="notas">📓 Caderno</button>
         <!-- Só aparece quando existe aula agendada ou no ar (ver aoVivoAplicarNav). -->
         <button class="sb-item" data-p="aovivo" id="sb-aovivo" style="display:none">🔴 Aula ao vivo</button>
-        <button class="sb-item" data-p="mural">📢 Mural</button>
+        <button class="sb-item" data-p="mural">📢 Mural de artigos</button>
         <button class="sb-item" data-p="chat">💬 Chat IA</button>
         <button class="sb-item" data-p="perfil">👤 Perfil</button>
       </div>
@@ -2203,13 +2223,13 @@ input.dmm-inp-subsub{flex:1;min-width:0;background:transparent;color:var(--t2);f
     <div class="panel on" id="panel-dash">
       <div class="breadcrumb">Dashboard <b>/ Visão Geral</b></div>
       <div class="ph"><h1 id="dash-greeting">Bem-vindo.</h1><p>Continue seus estudos.</p></div>
-      <div class="pc">
+      <div class="pc dash-wrap">
+       <div class="dash-main">
         <div id="ativa-card" style="display:none;margin-bottom:10px"></div>
         <div id="cme-card" style="display:none;margin-bottom:10px"></div>
         <div id="qotd-card" style="display:none;margin-bottom:10px"></div>
         <div id="streak-card" style="margin-bottom:10px"></div>
-        <div class="g4" style="margin-bottom:10px">
-          <div class="card" style="text-align:center;cursor:pointer" id="dc-quest"><div style="font-size:1.45rem;font-weight:700;color:var(--blue)" id="d-qn">0</div><div style="font-size:.66rem;color:var(--t3)">Questões</div></div>
+        <div class="g3" style="margin-bottom:10px">
           <div class="card" style="text-align:center;cursor:pointer" id="dc-flash"><div style="font-size:1.45rem;font-weight:700;color:var(--pur)" id="d-fcn">0</div><div style="font-size:.66rem;color:var(--t3)">Flashcards</div></div>
           <div class="card" style="text-align:center;cursor:pointer" id="dc-sr"><div style="font-size:1.45rem;font-weight:700;color:var(--red)" id="d-sr-due">0</div><div style="font-size:.66rem;color:var(--t3)">Cards p/ revisar</div></div>
           <div class="card" style="text-align:center;cursor:pointer" id="dc-mm"><div style="font-size:1.45rem;font-weight:700;color:var(--gold)" id="d-mmn">0</div><div style="font-size:.66rem;color:var(--t3)">Mapas mentais</div></div>
@@ -2223,37 +2243,18 @@ input.dmm-inp-subsub{flex:1;min-width:0;background:transparent;color:var(--t2);f
           <div class="card"><div class="card-head"><span class="card-title">🔁 Revisão</span><button class="btn btn-ghost btn-sm" id="d-sr-btn">Revisar</button></div><div id="d-sr-prev"><div style="font-size:.74rem;color:var(--t3)">Nenhum card.</div></div></div>
           <div class="card"><div class="card-head"><span class="card-title">📓 Notas</span><button class="btn btn-ghost btn-sm" id="d-notas-btn">Ver</button></div><div id="d-notas-prev"><div style="font-size:.74rem;color:var(--t3)">Nenhuma nota.</div></div></div>
         </div>
+       </div>
+       <aside class="dash-rail" id="dash-rail"></aside>
       </div>
     </div>
 
     <div class="panel" id="panel-quest">
-      <div class="breadcrumb">Dashboard <b>/ Questões</b></div>
-      <div class="ph"><h1>Questões</h1></div>
+      <div class="breadcrumb">Dashboard <b>/ Banco de questões</b></div>
+      <div class="ph"><h1>Banco de questões</h1></div>
       <div class="pc">
         <div class="tog-row" style="margin-bottom:.85rem" id="q-mode-row">
-          <button class="tog-btn on" data-qmode="provas">🏛️ Banco de Questões</button>
-          <button class="tog-btn" data-qmode="ia">🤖 Geradas por IA</button>
+          <button class="tog-btn on" data-qmode="provas">🏛️ Provas anteriores</button>
           <button class="tog-btn" data-qmode="salvo">💾 Banco Salvo</button>
-        </div>
-        <div class="gen-box" id="q-panel-ia" style="display:none">
-          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:.65rem;flex-wrap:wrap;gap:.45rem">
-            <span class="sec-title">Gerar com IA</span>
-            <div class="tog-row" id="qtype-row"><button class="tog-btn on" data-qt="mc">Múltipla escolha</button><button class="tog-btn" data-qt="disc">Discursiva</button></div>
-          </div>
-          <div class="g2" style="margin-bottom:.65rem">
-            <div class="fld2" style="margin:0"><label>Subespecialidade</label><select id="q-sub"><option value="">Todas</option><option>Diabetes</option><option>Obesidade</option><option>Tireoide</option><option>Adrenal</option><option>Neuroendocrinologia</option><option>Osteometabolismo</option><option>Endocrinologia Pediátrica</option><option>Endocrinologia Esportiva</option><option>Endocrinologia Masculina</option><option>Endocrinologia Feminina</option><option>Transgeneridade</option></select></div>
-            <div class="fld2" style="margin:0"><label>Quantidade</label><select id="q-qty"><option value="1">1</option><option value="3" selected>3</option><option value="5">5</option><option value="10">10</option></select></div>
-          </div>
-          <div class="fld2">
-            <label>Dificuldade</label>
-            <div style="display:flex;gap:.5rem;flex-wrap:wrap">
-              <label style="display:flex;align-items:center;gap:.4rem;cursor:pointer;font-size:.77rem;font-weight:400;text-transform:none;letter-spacing:0;color:var(--tx)"><input type="radio" name="q-diff" value="basico" style="width:auto;accent-color:var(--grn)"> <span class="tag tag-grn">Fácil</span></label>
-              <label style="display:flex;align-items:center;gap:.4rem;cursor:pointer;font-size:.77rem;font-weight:400;text-transform:none;letter-spacing:0;color:var(--tx)"><input type="radio" name="q-diff" value="intermediario" checked style="width:auto;accent-color:var(--blue)"> <span class="tag tag-blue">Médio</span></label>
-              <label style="display:flex;align-items:center;gap:.4rem;cursor:pointer;font-size:.77rem;font-weight:400;text-transform:none;letter-spacing:0;color:var(--tx)"><input type="radio" name="q-diff" value="avancado" style="width:auto;accent-color:var(--red)"> <span class="tag tag-red">Difícil</span></label>
-            </div>
-          </div>
-          <div class="fld2"><label>Tema específico (opcional)</label><input type="text" id="q-topic" placeholder="Ex: Cetoacidose diabética…"></div>
-          <button class="btn btn-primary" id="btn-genq">▶ Gerar questões</button>
         </div>
         <div class="gen-box" id="q-panel-provas">
           <span class="sec-title" style="display:block;margin-bottom:.7rem">🏛️ Questões de provas anteriores</span>
@@ -2269,7 +2270,7 @@ input.dmm-inp-subsub{flex:1;min-width:0;background:transparent;color:var(--t2);f
         <div id="q-gen-results"></div>
         <div id="q-panel-salvo" style="display:none">
           <div class="sec-h"><span class="sec-title">💾 Banco Salvo <span id="q-saved-count" style="font-weight:400;text-transform:none;letter-spacing:0;color:var(--t3)"></span></span></div>
-          <div style="font-size:.72rem;color:var(--t3);margin:-.3rem 0 .7rem">Questões geradas por IA que você salvou + as geradas no Resumidor de Artigos.</div>
+          <div style="font-size:.72rem;color:var(--t3);margin:-.3rem 0 .7rem">Questões que você salvou, incluindo as geradas no Resumidor de Artigos.</div>
           <div id="q-saved-list"></div>
         </div>
       </div>
@@ -2665,8 +2666,8 @@ input.dmm-inp-subsub{flex:1;min-width:0;background:transparent;color:var(--t2);f
     </div>
 
     <div class="panel" id="panel-mural">
-      <div class="breadcrumb">Dashboard <b>/ Mural</b></div>
-      <div class="ph mural-ph"><h1>Mural <span class="mural-updated" id="mural-updated"></span></h1></div>
+      <div class="breadcrumb">Dashboard <b>/ Mural de artigos</b></div>
+      <div class="ph mural-ph"><h1>Mural de artigos <span class="mural-updated" id="mural-updated"></span></h1></div>
       <div class="pc" id="ativa-mural-wrap" style="display:none;padding-bottom:0"><div id="ativa-card-mural"></div></div>
       <div class="pc" id="cme-mural-wrap" style="display:none;padding-bottom:0"><div id="cme-card-mural"></div></div>
       <div class="pc" id="qotd-mural-wrap" style="display:none;padding-bottom:0"><div id="qotd-card-mural"></div></div>
@@ -2750,7 +2751,7 @@ input.dmm-inp-subsub{flex:1;min-width:0;background:transparent;color:var(--t2);f
           <button class="adm-nav" data-asec="stories">📲 Questão do Dia</button>
           <button class="adm-nav" data-asec="qotdarq" style="display:none">🧠 Questão do Dia</button>
           <button class="adm-nav" data-asec="pendencias">📥 Pendências <span id="adm-pend-badge" style="display:none;margin-left:.2rem;font-weight:700"></span></button>
-          <button class="adm-nav" data-asec="mural">📣 Mural</button>
+          <button class="adm-nav" data-asec="mural">📣 Mural de artigos</button>
           <button class="adm-nav" data-asec="ref">📋 Diretrizes</button>
           <button class="adm-nav" data-asec="resumos">📄 Resumos</button>
           <button class="adm-nav" data-asec="provas">📝 Provas &amp; Questões</button>
@@ -7124,7 +7125,7 @@ function startGoogleOAuth(){
   });
 }
 
-var PANEL_LABELS={dash:'Dashboard',desemp:'Desempenho',plano:'Plano de estudo',quest:'Questões',qotd:'Questão do Dia',flash:'Flashcards',mmap:'Mapas Mentais',podcast:'Podcasts',cursos:'Cursos',emc:'Educação Médica Continuada',crono:'Cronograma',sr:'Revisão',erros:'Caderno de erros',sim:'OSCE',simfull:'Simulado',calc:'Calculadoras',rx:'Prescrição Simulada',presc:'Consultório',art:'Resumidor',notas:'Caderno',favs:'Favoritos',mural:'Mural',aovivo:'Aula ao vivo',ref:'Diretrizes',resu:'Resumos',chat:'Chat IA',perfil:'Perfil',support:'Suporte',adm:'Painel Admin'};
+var PANEL_LABELS={dash:'Dashboard',desemp:'Desempenho',plano:'Plano de estudo',quest:'Banco de questões',qotd:'Questão do Dia',flash:'Flashcards',mmap:'Mapas Mentais',podcast:'Podcasts',cursos:'Cursos',emc:'Educação Médica Continuada',crono:'Cronograma',sr:'Revisão',erros:'Caderno de erros',sim:'OSCE',simfull:'Simulado',calc:'Calculadoras',rx:'Prescrição Simulada',presc:'Consultório',art:'Resumidor',notas:'Caderno',favs:'Favoritos',mural:'Mural de artigos',aovivo:'Aula ao vivo',ref:'Diretrizes',resu:'Resumos',chat:'Chat IA',perfil:'Perfil',support:'Suporte',adm:'Painel Admin'};
 function closeMobileNav(){
   document.body.classList.remove('mobile-nav-open');
   var b=document.getElementById('btn-mobile-nav');
@@ -7182,28 +7183,25 @@ function prescAllowed(){
   if(al.length)return al.indexOf(e)>=0;
   return e==='memed.teste@endodirect.com.br';
 }
-// Tela inicial: médicos (residente/endocrinologista/outros) abrem direto no
-// Mural de atualizações; estudantes seguem no Dashboard. Cai pro dash se o
-// mural não estiver visível (ex.: degustação depois dos 7 dias).
+// ⚠️ TELA INICIAL = DASHBOARD (30/08/2026, pedido do professor: "o dashboard
+// deve ser a tela de início do aluno"). Até aqui a entrada era o Mural, e havia
+// até um reforço pós-hydrate que EMPURRAVA o médico para lá — os dois saíram.
+// O Dashboard agora abre com o trilho lateral (acervo + progresso), que é o que
+// justifica ele ser a primeira tela: quem entra vê onde parou antes de escolher
+// para onde ir. O Mural de artigos continua a um clique no menu.
 function homePanel(){
-  // Tela inicial do aluno é SEMPRE o Mural quando visível. Na degustação (onde
-  // o Mural fica bloqueado) cai num painel disponível — nunca num escondido.
+  if(canSeePanel('dash'))return 'dash';
+  // Só se o Dashboard estiver bloqueado (não é o caso hoje nem na degustação):
+  // cai num painel disponível — nunca num escondido.
   if(canSeePanel('mural'))return 'mural';
-  if(!prescProfileOk()&&canSeePanel('dash'))return 'dash';
   if(canSeePanel('quest'))return 'quest';
   return 'flash';
 }
-// Como perfil e acessos só chegam no hydrate, reforça a tela inicial do médico
-// depois que o estado remoto carrega — mas só se ele ainda estiver na tela
-// padrão (Dashboard), para não atrapalhar quem já navegou. Uma vez por sessão.
+// O empurrão para o Mural virou no-op: quem quiser o Mural clica nele. Fica como
+// função porque `maybeOnboardAfterHydrate` a chama, e um `try` mudo ali
+// esconderia um erro de digitação em vez de mostrar.
 var medicoHomeApplied=false;
-function maybeLandMedicoHome(){
-  if(medicoHomeApplied)return;
-  if(!(currentUser&&currentUser.role==='aluno')||isAdminUser())return;
-  if(!prescProfileOk()||!canSeePanel('mural'))return;
-  var dp=document.getElementById('panel-dash');
-  if(dp&&dp.classList.contains('on')){medicoHomeApplied=true;goPanel('mural');}
-}
+function maybeLandMedicoHome(){ medicoHomeApplied=true; }
 function planRank(){var k=currentPlanKey();return k==='gold'?2:(k==='standard'?1:0);}
 function isAdminUser(){return !!(currentUser&&currentUser.role==='admin');}
 function hasScope(scope){return !scope||isAdminUser()||userAcessos.indexOf(scope)>=0;}
@@ -7290,20 +7288,17 @@ function blockIfDegustacao(){
   return false;
 }
 function canAccessBanco(){return isDegustacao()||hasScope('plano')||hasScope('curso:endoteem');}
-// Na degustação, as questões geradas por IA ficam bloqueadas: esconde a aba
-// "Geradas por IA" e força o "Banco de Questões".
+// A geração por IA saiu do painel do aluno (30/08/2026, pedido do professor:
+// "retirar a opção de Geradas por IA"). Restam Provas anteriores e Banco Salvo.
+// Na degustação, força a aba de provas — que é a que a degustação libera.
 function applyQuestDegustacao(){
-  var iaTab=document.querySelector('[data-qmode="ia"]');
+  if(!isDegustacao())return;
   var provTab=document.querySelector('[data-qmode="provas"]');
-  var iaP=document.getElementById('q-panel-ia'),provP=document.getElementById('q-panel-provas');
-  if(isDegustacao()){
-    if(iaTab){iaTab.style.display='none';iaTab.classList.remove('on');}
-    if(provTab)provTab.classList.add('on');
-    if(iaP)iaP.style.display='none';
-    if(provP)provP.style.display='block';
-    var salvoP=document.getElementById('q-panel-salvo');if(salvoP)salvoP.style.display='none';
-    showBancoLock(false);
-  }else if(iaTab){iaTab.style.display='';}
+  var provP=document.getElementById('q-panel-provas');
+  if(provTab)provTab.classList.add('on');
+  if(provP)provP.style.display='block';
+  var salvoP=document.getElementById('q-panel-salvo');if(salvoP)salvoP.style.display='none';
+  showBancoLock(false);
 }
 function scopeNome(scope){
   if(scope==='plano')return'Assinatura';
@@ -7371,7 +7366,7 @@ function showLockedPanel(id){
       +'<div class="pc"><div class="card" style="max-width:520px;margin:1.2rem auto;text-align:center;padding:1.9rem 1.5rem">'
       +'<div style="font-size:2.3rem;margin-bottom:.5rem">🎁</div>'
       +'<div style="font-size:1.02rem;font-weight:800;color:var(--tx);margin-bottom:.4rem">Degustação do mural encerrada</div>'
-      +'<p style="font-size:.84rem;color:var(--t2);line-height:1.6;margin:.3rem 0 1.2rem">Seu acesso ao <b>Mural</b> na degustação durava <b>'+DEG_MURAL_DIAS+' dias</b> e já terminou. Adquira um pacote (Standard ou Gold) para continuar acompanhando as atualizações.</p>'
+      +'<p style="font-size:.84rem;color:var(--t2);line-height:1.6;margin:.3rem 0 1.2rem">Seu acesso ao <b>Mural de artigos</b> na degustação durava <b>'+DEG_MURAL_DIAS+' dias</b> e já terminou. Adquira um pacote (Standard ou Gold) para continuar acompanhando as atualizações.</p>'
       +'<button class="btn btn-primary" id="locked-cta" style="justify-content:center">Ver planos e cursos</button>'
       +'</div></div>';
     var bme=document.getElementById('locked-cta');
@@ -7721,10 +7716,64 @@ function goPanel(id){
   closeMobileNav();
 }
 
+// ---------- TRILHO DO DASHBOARD ----------
+// Pedido do professor (30/08/2026): "deixa um sidebar de dashboard para o painel
+// do aluno; nele, mostra o número de resumos publicados, diretrizes, questões no
+// banco; mostra também como está seu progresso" — e, apontando o print do
+// Desempenho, "joga esses dados já no dashboard do aluno".
+//
+// São as duas metades que a tela de início devia responder de cara: o que existe
+// para estudar e onde eu parei. As linhas do acervo LEVAM à aba correspondente —
+// número que não é caminho vira enfeite.
+function renderDashRail(){
+  var el=document.getElementById('dash-rail');if(!el)return;
+  // O trilho é do aluno. O professor tem o painel dele, com outros números.
+  if(!currentUser||currentUser.role!=='aluno'){el.style.display='none';el.innerHTML='';return;}
+  el.style.display='';
+  var pr=progressoDoAluno(),ac=acervoContagem();
+  var corAcerto=pr.acerto>=70?'var(--grn)':pr.acerto>=50?'var(--gold)':'var(--red)';
+  // ⚠️ QUEM AINDA NÃO RESPONDEU NADA NÃO LEVA UM PAINEL DE ZEROS. "0%" de acerto
+  // para quem nunca errou nada não é um dado, é um julgamento — e é a mesma
+  // lição do card de meta semanal, que mostrava "você está atrás" de uma meta
+  // que o aluno nunca escolheu.
+  var progresso = pr.respondidas
+    ? '<div class="rail-kpis">'
+        +'<div class="rail-kpi"><b style="color:'+corAcerto+'">'+pr.acerto+'%</b><span>Acerto geral</span></div>'
+        +'<div class="rail-kpi"><b style="color:var(--blue)">'+nBR(pr.respondidas)+'</b><span>Respondidas</span></div>'
+        +'<div class="rail-kpi"><b style="color:var(--gold)">'+pr.ofensiva+'</b><span>'+(pr.ofensiva===1?'Dia de ofensiva':'Dias de ofensiva')+'</span></div>'
+        +'<div class="rail-kpi"><b style="color:var(--pur)">'+nBR(pr.hoje)+'</b><span>Hoje</span></div>'
+      +'</div>'
+      +'<div class="rail-nota">'+pr.areas+(pr.areas===1?' subespecialidade estudada':' subespecialidades estudadas')
+        +' de '+DIR_SUBS.length+'.</div>'
+      +'<button type="button" class="btn btn-outline btn-sm" id="rail-desemp" style="margin-top:.6rem;width:100%;justify-content:center">Ver desempenho completo →</button>'
+    : '<div class="rail-nota" style="margin-top:0">Seu acerto por área, a ofensiva de dias e o que revisar aparecem aqui assim que você responder a primeira questão.</div>';
+  var linha=function(painel,nome,valor){
+    return '<button type="button" class="rail-row" data-rail-ir="'+painel+'">'
+      +'<span class="nm">'+esc(nome)+'</span><span class="vl">'+nBR(valor)+'</span><span class="ar">›</span></button>';
+  };
+  var acervo=linha('quest','Questões no banco',ac.questoes)
+    +linha('ref','Diretrizes',ac.diretrizes)
+    +linha('resu','Resumos',ac.resumos)
+    +(ac.artigos?linha('resu','Artigos comentados',ac.artigos):'')
+    +(ac.podcasts?linha('podcast','Podcasts',ac.podcasts):'');
+  el.innerHTML='<div class="rail-card"><div class="rail-t">Seu progresso</div>'+progresso+'</div>'
+    +'<div class="rail-card"><div class="rail-t">No acervo</div>'+acervo
+    +'<div class="rail-nota">Publicado e disponível na plataforma hoje.</div></div>';
+  var vd=document.getElementById('rail-desemp');
+  if(vd)vd.addEventListener('click',function(){try{goPanel('desemp');}catch(e){}});
+  el.querySelectorAll('[data-rail-ir]').forEach(function(b){
+    b.addEventListener('click',function(){
+      var alvo=b.getAttribute('data-rail-ir');
+      // Painel bloqueado (degustação) tem o próprio upsell: `goPanel` resolve.
+      try{goPanel(alvo);}catch(e){}
+    });
+  });
+}
 function refreshDash(){
   DB.fc.forEach(function(c){srInit(c);});
   var due=srSessionCount();
-  setText('d-qn',DB.q.length);setText('d-fcn',DB.fc.length);setText('d-sr-due',due);setText('d-mmn',DB.mm.length);
+  setText('d-fcn',DB.fc.length);setText('d-sr-due',due);setText('d-mmn',DB.mm.length);
+  try{renderDashRail();}catch(e){}
   try{renderStreakCard();}catch(e){}
   try{renderAtivacao();}catch(e){}
   try{renderEnqueteCme();}catch(e){}
@@ -8175,6 +8224,40 @@ function renderPerfBars(){
   }).join('');
 }
 function perfPct(d){return d&&d.total?Math.round(d.correct/d.total*100):0;}
+// ---------- PROGRESSO DO ALUNO E TAMANHO DO ACERVO ----------
+// ⚠️ UMA CONTA SÓ, DUAS TELAS. Os mesmos quatro números saem no painel de
+// Desempenho e no trilho do Dashboard. Se cada tela fizesse a sua conta, elas
+// divergiriam na primeira correção — e o aluno veria 74% num lugar e 71% no
+// outro, sem ter como saber em qual acreditar. Mesma razão pela qual as janelas
+// de entrada reaproveitam o render dos cards.
+function progressoDoAluno(){
+  var perf=(DB&&DB.perf&&typeof DB.perf==='object')?DB.perf:{};
+  var act=(DB&&DB.act&&typeof DB.act==='object')?DB.act:{};
+  var totT=0,totC=0,areas=0;
+  Object.keys(perf).forEach(function(sub){
+    var d=perf[sub]||{};var t=Number(d.total)||0;
+    totT+=t;totC+=Number(d.correct)||0;if(t>0)areas++;
+  });
+  return {respondidas:totT,acertos:totC,acerto:totT?Math.round(totC/totT*100):0,
+          ofensiva:computeStreak(act),hoje:act[todayKey()]||0,areas:areas};
+}
+// Números de PUBLICADO. ⚠️ Os filtros são os mesmos de `dirIsVisible` (rascunho
+// fora; `privado` separa Resumos de Diretrizes; `dirTipoOf` separa capítulo de
+// artigo). Contar por outro critério faria o trilho anunciar um número que a
+// aba correspondente não mostra — e quem clicasse veria menos do que o prometido.
+function acervoContagem(){
+  var dir=(typeof diretrizes!=='undefined'&&Array.isArray(diretrizes))?diretrizes:[];
+  var pub=dir.filter(function(d){return !dirIsRascunho(d);});
+  var priv=pub.filter(function(d){return d&&d.privado===true;});
+  return {
+    questoes:(typeof provasDB!=='undefined'&&Array.isArray(provasDB))?provasDB.length:0,
+    diretrizes:pub.filter(function(d){return !(d&&d.privado)&&!dirSoNosResumos(d);}).length,
+    resumos:priv.filter(function(d){return dirTipoOf(d)==='capitulo';}).length,
+    artigos:priv.filter(function(d){return dirTipoOf(d)==='artigo';}).length,
+    podcasts:(typeof podcasts!=='undefined'&&Array.isArray(podcasts))?podcasts.length:0
+  };
+}
+function nBR(n){try{return Number(n||0).toLocaleString('pt-BR');}catch(e){return String(n||0);}}
 function kpiCard(label,val,col){
   return '<div class="card" style="flex:1;min-width:130px;padding:.8rem"><div style="font-size:.66rem;text-transform:uppercase;letter-spacing:.06em;color:var(--t3)">'+esc(label)+'</div><div style="font-size:1.4rem;font-weight:800;color:'+(col||'var(--tx)')+';margin-top:.2rem">'+val+'</div></div>';
 }
@@ -8184,13 +8267,14 @@ function kpiCard(label,val,col){
 function renderDesempenho(){
   var el=document.getElementById('desemp-body');if(!el)return;
   var perf=DB.perf||{};var subs=Object.keys(perf);
-  var totT=0,totC=0;subs.forEach(function(s){totT+=perf[s].total||0;totC+=perf[s].correct||0;});
-  var act=DB.act||{};var streak=computeStreak(act);var hoje=act[todayKey()]||0;
+  var pr=progressoDoAluno();
+  var totT=pr.respondidas,totC=pr.acertos;
+  var act=DB.act||{};var streak=pr.ofensiva;var hoje=pr.hoje;
   if(!totT){
     el.innerHTML='<div class="ph"><h1>📈 Desempenho</h1><p>Acompanhe sua evolução por subespecialidade e tema.</p></div><div class="card"><div class="empty">Responda questões (no Banco, na Questão do Dia ou no Simulado) para ver seu desempenho aqui.</div></div>';
     return;
   }
-  var ov=Math.round(totC/totT*100);
+  var ov=pr.acerto;
   var kpis='<div style="display:flex;flex-wrap:wrap;gap:.7rem;margin-bottom:1rem">'
     +kpiCard('Acerto geral',ov+'%',ov>=70?'var(--grn)':ov>=50?'var(--gold)':'var(--red)')
     +kpiCard('Respondidas',String(totT),'var(--blue)')
@@ -8353,44 +8437,12 @@ function pickQuestions(data){
   // Embaralha as alternativas das questões de múltipla escolha (distribui o gabarito).
   return arr.map(function(q){return (q&&q.options&&q.answer)?igShuffleMCQ(q):q;});
 }
-function genQuestions(){
-  if(blockIfDegustacao())return;
-  var btn=document.getElementById('btn-genq');
-  var sub=document.getElementById('q-sub').value;
-  var qty=parseInt(document.getElementById('q-qty').value)||3;
-  var topic=(document.getElementById('q-topic').value||'').trim();
-  var diff=(document.querySelector('input[name="q-diff"]:checked')||{}).value||'intermediario';
-  var spec=sub?'Endocrinologia — '+sub:'Endocrinologia (todas as subespecialidades)';
-  var areaTag=sub||'Endocrinologia';
-  var isMC=qtype==='mc';
-  btn.disabled=true;btn.innerHTML=ldHTML();
-  var res=document.getElementById('q-gen-results');res.innerHTML=ldHTML();
-  var sys=isMC
-    ?authoringSys('Atue como examinador de prova de residência/título em endocrinologia. JSON APENAS: {"questions":[{"stem":"vinheta clínica de 3-4 linhas com dados objetivos (idade, sexo, quadro e exames com valores e unidades)","options":{"A":"texto","B":"texto","C":"texto","D":"texto"},"answer":"A","explanation":"justificativa técnica em 1-2 frases citando o critério/valor de corte/diretriz (refira-se ao CONTEÚDO das alternativas, não às letras A/B/C/D)","area":"'+areaTag+'","dificuldade":"'+diff+'"}]}')
-    :authoringSys('Atue como examinador de prova de endocrinologia. JSON APENAS: {"questions":[{"stem":"vinheta clínica de 3-4 linhas com dados objetivos e exames com valores/unidades","expected":"resposta-modelo objetiva e correta, citando o critério/diretriz","area":"'+areaTag+'","dificuldade":"'+diff+'"}]}');
-  // Lotes pequenos (3) em PARALELO p/ rapidez. Com o formato JSON já corrigido, cada
-  // chamada volta JSON compacto rápido; rodar os lotes juntos derruba o tempo total
-  // (10 questões ~ tempo de 1 lote, não de 4). Modelo fixo no Sonnet; acumula +
-  // dedup por enunciado; se nada vier, mostra o ERRO REAL; falha de um lote não
-  // derruba os demais.
-  var BATCH=3;
-  var sizes=[],rem=qty;while(rem>0){var bn=Math.min(BATCH,rem);sizes.push(bn);rem-=bn;}
-  var nb=sizes.length,firstErr=null;
-  function reqBatch(n,i){
-    var vary=nb>1?' Este é o conjunto '+(i+1)+' de '+nb+': gere questões DIFERENTES dos demais, variando temas e cenários.':'';
-    return aiRequest({system:sys,prompt:'Gere exatamente '+n+' questão(ões) de '+spec+', nível '+diff+(topic?', tema: '+topic:'')+'. Clinicamente precisas e alinhadas às diretrizes vigentes, com enunciados objetivos.'+vary+' Responda SOMENTE com um objeto JSON contendo a chave "questions" (array), sem nenhum texto fora do JSON.',maxTokens:Math.min(2600,600+n*550),model:AI_MODEL_SIM_GEN,grounding:(topic?(spec+' '+topic):'')})
-    .then(function(raw){return pickQuestions(parseJ(raw));},function(e){if(!firstErr)firstErr=e;return [];});
-  }
-  Promise.all(sizes.map(function(n,i){return reqBatch(n,i);}))
-  .then(function(lists){
-    var all=[];lists.forEach(function(l){all=all.concat(l||[]);});
-    var seen={},uniq=[];
-    all.forEach(function(q){if(!q||!q.stem)return;var k=String(q.stem).toLowerCase().replace(/\s+/g,' ').trim().slice(0,90);if(k&&!seen[k]){seen[k]=1;uniq.push(q);}});
-    if(!uniq.length)throw new Error((firstErr&&firstErr.message)?firstErr.message:'A IA não retornou questões. Tente de novo em instantes.');
-    genQs=uniq.slice(0,qty);genPage=0;renderGenQ(isMC);
-  }).catch(function(e){res.innerHTML='<div style="color:var(--red);font-size:.78rem;padding:.5rem;background:var(--red-l);border-radius:var(--rs)">❌ '+esc(e.message)+'</div>';})
-  .then(function(){btn.disabled=false;btn.innerHTML='▶ Gerar questões';});
-}
+// A geração de questões por IA saiu do painel do aluno em 30/08/2026 (pedido
+// do professor). A função `genQuestions` foi removida junto: sem a aba, ela
+// ficaria sem quem a chamasse e lendo três campos (`q-sub`, `q-qty`,
+// `q-topic`) que não existem mais — código morto apontando para elemento
+// inexistente é a semente do apagão que o cofre registra duas vezes.
+// O Resumidor de Artigos continua gerando questões, por outro caminho.
 var genPage=0;
 var GEN_PER_PAGE=3;
 function renderGenQ(isMC){
@@ -14113,7 +14165,7 @@ function renderAdmSec(sec){
   admCurrentSec=sec;
   try{lsSet('adm_sec',sec);}catch(e){}
   document.querySelectorAll('.adm-nav[data-asec]').forEach(function(b){b.classList.toggle('on',b.dataset.asec===sec);});
-  var titles={provas:'Provas & Questões',cursos:'Cursos',estudantes:'Estudantes',analytics:'Analytics',mural:'Mural',ref:'Diretrizes',resumos:'Resumos',conteudo:'Podcasts',mapas:'Mapas Mentais',flashcards:'Flashcards',stories:'Questão do Dia (Stories)',qotdarq:'Questão do Dia',pendencias:'Pendências',favs:'Favoritos',calc:'Calculadoras',consultorio:'Consultório',rx:'Prescrição Comentada',chat:'Chat',perfil:'Perfil',suporte:'Suporte',cme:'Enquete — Educação Médica Continuada'};
+  var titles={provas:'Provas & Questões',cursos:'Cursos',estudantes:'Estudantes',analytics:'Analytics',mural:'Mural de artigos',ref:'Diretrizes',resumos:'Resumos',conteudo:'Podcasts',mapas:'Mapas Mentais',flashcards:'Flashcards',stories:'Questão do Dia (Stories)',qotdarq:'Questão do Dia',pendencias:'Pendências',favs:'Favoritos',calc:'Calculadoras',consultorio:'Consultório',rx:'Prescrição Comentada',chat:'Chat',perfil:'Perfil',suporte:'Suporte',cme:'Enquete — Educação Médica Continuada'};
   setText('adm-sec-title',titles[sec]||sec);
   var m=document.getElementById('adm-main');if(!m)return;
   // SEMPRE devolve os painéis movidos (#panel-presc / #mm-live) para o lugar de
@@ -15362,7 +15414,7 @@ function admMuralSecHTML(){
     +'<div style="display:flex;gap:6px"><button class="btn btn-primary" id="btn-adm-addav">'+(admMuralEdit!==null?'💾 Salvar alterações':'+ Publicar no mural')+'</button><button class="btn btn-outline" id="btn-adm-av-cancel">Cancelar</button></div></div>'
   ):'';
 
-  return '<div class="adm-ph" style="display:flex;align-items:flex-start;justify-content:space-between;gap:.6rem;flex-wrap:wrap"><div><h1>Mural</h1></div><div style="display:flex;gap:.5rem;flex-wrap:wrap"><button class="btn btn-outline" id="btn-adm-radar" style="padding:.55rem 1rem">🔄 Atualizar radar agora</button><button class="btn btn-primary" id="btn-adm-newav" style="padding:.55rem 1.1rem">+ Novo aviso</button></div></div>'
+  return '<div class="adm-ph" style="display:flex;align-items:flex-start;justify-content:space-between;gap:.6rem;flex-wrap:wrap"><div><h1>Mural de artigos</h1></div><div style="display:flex;gap:.5rem;flex-wrap:wrap"><button class="btn btn-outline" id="btn-adm-radar" style="padding:.55rem 1rem">🔄 Atualizar radar agora</button><button class="btn btn-primary" id="btn-adm-newav" style="padding:.55rem 1.1rem">+ Novo aviso</button></div></div>'
   +'<div class="adm-pc">'
   +formHTML
   // banner de gestão
@@ -18363,7 +18415,7 @@ admMuralSecHTML=function(){
     +'<label class="adm-push-opt" style="display:flex;align-items:center;gap:.5rem;margin:.1rem 0 .8rem;font-size:.83rem;color:var(--t2);cursor:pointer"><input type="checkbox" id="adm-av-push"'+(admMuralEdit===null?' checked':'')+' style="width:16px;height:16px;flex-shrink:0"><span>📲 Notificar os alunos no celular (push)'+(admMuralEdit!==null?' — reenviar este aviso ao salvar':' ao publicar')+'. Use só para avisos e breaking news.</span></label>'
     +'<div style="display:flex;gap:6px"><button class="btn btn-primary" id="btn-adm-addav">'+(admMuralEdit!==null?'💾 Salvar alterações':'+ Publicar no mural')+'</button><button class="btn btn-outline" id="btn-adm-av-cancel">Cancelar</button></div></div>'
   ):'';
-  return '<div class="adm-ph" style="display:flex;align-items:flex-start;justify-content:space-between;gap:.6rem;flex-wrap:wrap"><div><h1>Mural</h1></div><div style="display:flex;gap:.5rem;flex-wrap:wrap"><button class="btn btn-outline" id="btn-adm-radar" style="padding:.55rem 1rem">🔄 Atualizar radar agora</button><button class="btn btn-primary" id="btn-adm-newav" style="padding:.55rem 1.1rem">+ Novo aviso</button></div></div>'
+  return '<div class="adm-ph" style="display:flex;align-items:flex-start;justify-content:space-between;gap:.6rem;flex-wrap:wrap"><div><h1>Mural de artigos</h1></div><div style="display:flex;gap:.5rem;flex-wrap:wrap"><button class="btn btn-outline" id="btn-adm-radar" style="padding:.55rem 1rem">🔄 Atualizar radar agora</button><button class="btn btn-primary" id="btn-adm-newav" style="padding:.55rem 1.1rem">+ Novo aviso</button></div></div>'
   +'<div class="adm-pc">'
   +(admMuralEdit===null?formHTML:'') // "Novo aviso" abre no topo; edição abre INLINE no próprio card (ver grid abaixo)
   +'<div class="card" style="margin-bottom:1.1rem"><div style="display:flex;align-items:flex-start;justify-content:space-between;gap:1rem;flex-wrap:wrap"><div style="flex:1;min-width:240px"><div style="font-size:.62rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--t3);margin-bottom:.3rem">Gestão do mural dos alunos</div><div style="font-size:1.15rem;font-weight:700;color:var(--tx);margin-bottom:.35rem">Edite avisos, notícias e comunicados importantes</div><div style="font-size:.79rem;color:var(--t2);line-height:1.55">Os cards abaixo alimentam a aba Mural do estudante. Use etiquetas por tipo de conteúdo e subespecialidade para organizar leituras e atualizações.</div></div></div></div>'
@@ -18875,7 +18927,6 @@ document.addEventListener('DOMContentLoaded',function(){
   document.getElementById('btn-feedback-cta').addEventListener('click',openFeedback);
 
   // DASHBOARD shortcuts
-  document.getElementById('dc-quest').addEventListener('click',function(){goPanel('quest');});
   document.getElementById('dc-flash').addEventListener('click',function(){goPanel('flash');});
   document.getElementById('dc-sr').addEventListener('click',function(){goPanel('sr');});
   document.getElementById('dc-mm').addEventListener('click',function(){goPanel('mmap');});
@@ -18892,19 +18943,17 @@ document.addEventListener('DOMContentLoaded',function(){
 
   // QUESTÕES
   document.querySelectorAll('[data-qmode]').forEach(function(b){b.addEventListener('click',function(){
-    var mode=b.dataset.qmode; // 'provas' | 'ia' | 'salvo'
+    var mode=b.dataset.qmode; // 'provas' | 'salvo'
     document.querySelectorAll('[data-qmode]').forEach(function(x){x.classList.toggle('on',x===b);});
     // Banco de Questões (provas) exige acesso: sem pacote, mostra o cadeado.
     if(mode==='provas'&&!canAccessBanco()){
-      document.getElementById('q-panel-ia').style.display='none';
-      document.getElementById('q-panel-provas').style.display='none';
-      document.getElementById('q-panel-salvo').style.display='none';
-      document.getElementById('q-gen-results').style.display='none';
+      ['q-panel-provas','q-panel-salvo','q-gen-results'].forEach(function(id){
+        var e=document.getElementById(id);if(e)e.style.display='none';
+      });
       showBancoLock(true);
       return;
     }
     showBancoLock(false);
-    document.getElementById('q-panel-ia').style.display=mode==='ia'?'block':'none';
     document.getElementById('q-panel-provas').style.display=mode==='provas'?'block':'none';
     document.getElementById('q-panel-salvo').style.display=mode==='salvo'?'block':'none';
     // Resultados de geração/banco pertencem às abas IA/Provas, não ao Banco Salvo.
@@ -18912,7 +18961,6 @@ document.addEventListener('DOMContentLoaded',function(){
     if(mode==='salvo')renderSavedQ();
   });});
   document.querySelectorAll('[data-qt]').forEach(function(b){b.addEventListener('click',function(){qtype=b.dataset.qt;document.querySelectorAll('[data-qt]').forEach(function(x){x.classList.toggle('on',x===b);});});});
-  document.getElementById('btn-genq').addEventListener('click',genQuestions);
   ['q-inst','q-ano','q-parea','q-ptype'].forEach(function(id){var e=document.getElementById(id);if(e)e.addEventListener('change',updateProvaInfo);});
   document.getElementById('btn-filter-provas').addEventListener('click',function(){
     var inst=document.getElementById('q-inst').value;var ano=document.getElementById('q-ano').value;var area=document.getElementById('q-parea').value;var type=(document.getElementById('q-ptype')||{}).value||'';

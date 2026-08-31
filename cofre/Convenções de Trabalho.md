@@ -5,6 +5,27 @@ atualizado: 2026-08-29
 
 # Convenções de Trabalho
 
+## 🔢 CONTAR DIZ QUE SUMIU, NÃO O QUÊ (2026-08-30)
+
+O harness A/B reprovou a remoção da geração por IA com *"4 botões a menos no
+branch"*. Estava certo em apitar e inútil no que disse: a mudança removia 4
+botões **de propósito**. Contagem sozinha só deixa duas saídas, ambas ruins —
+desligar a guarda ou aprender a ignorá-la.
+
+O harness passou a comparar os **rótulos**, e a diferença virou legível:
+
+    botoes que sumiram no branch: ["🤖 Geradas por IA","Múltipla escolha",
+                                   "Discursiva","▶ Gerar questões", …]
+
+E remoção intencional agora **se declara**: `REMOCOES_ESPERADAS="rótulo|rótulo"`.
+Declarar é barato; sumir sem querer é o apagão. ⚠️ E a declaração que **não
+corresponde a nada** também reprova — declaração velha, carregada de uma rodada
+para a outra, esconderia justamente a próxima perda de vista.
+
+Regra geral: **guarda que só sabe contar obriga a escolher entre desligá-la e
+ignorá-la.** Faça-a nomear o que mudou, e deixe a exceção ser declarada, não
+silenciada.
+
 ## 🧨 PARÁFRASE LENTA DEVOLVE A FRASE DO AUTOR (2026-08-29)
 
 Assimilei uma apostila cujo autor escreve, no rodapé de todas as páginas, "NÃO

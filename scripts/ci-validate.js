@@ -279,6 +279,20 @@ try {
   fail('regressão das janelas de entrada do aluno falhou:\n' + out);
 }
 
+// 17f. DASHBOARD DO ALUNO (30/08/2026). Trilho lateral com acervo e progresso,
+//      Dashboard como tela de início, "Mural de artigos"/"Banco de questões" e a
+//      saída da geração por IA. ⚠️ A varredura de REFERÊNCIAS ÓRFÃS mora aqui e
+//      é geral: `getElementById('x').algo` sobre elemento removido lança, e um
+//      throw na fiação mata todos os listeners depois dele — o apagão que o
+//      cofre registra duas vezes. Vale para qualquer remoção futura.
+try {
+  execFileSync(process.execPath, [path.join('scripts', 'test-dashboard-aluno.js')], { stdio: 'pipe' });
+  ok('dashboard do aluno: trilho batendo com as abas, Dashboard de entrada, nomes novos e nenhuma referência órfã');
+} catch (e) {
+  const out = (e.stdout ? e.stdout.toString() : '') + (e.stderr ? e.stderr.toString() : '');
+  fail('regressão do dashboard do aluno falhou:\n' + out);
+}
+
 // 17d. CADÊNCIA DO RADAR: o mural precisa de mais de uma varredura por dia. Com
 //      uma só (07:30 BRT), notícia publicada depois dela só aparece no dia
 //      seguinte — foi a queixa de 17/08/2026 (ANVISA aprovando canetas de
