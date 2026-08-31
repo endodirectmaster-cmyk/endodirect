@@ -333,6 +333,21 @@ try {
   fail('regressão do Programa de EMC no plano Gold falhou:\n' + out);
 }
 
+// 17j. A VITRINE NÃO MENTE (31/08/2026). 🧨 Três vezes no mesmo dia um texto de
+//      vitrine sobreviveu à mudança do produto: o banner da degustação, o FAQ
+//      dos planos e o card "Questões por IA". É um defeito que NÃO QUEBRA NADA —
+//      nenhum teste falha, nenhuma tela some, só o anúncio deixa de
+//      corresponder. A guarda cobre recurso retirado ainda anunciado, instrução
+//      que manda clicar em botão inexistente, e tamanho prometido acima do
+//      acervo real.
+try {
+  execFileSync(process.execPath, [path.join('scripts', 'test-vitrine-nao-mente.js')], { stdio: 'pipe' });
+  ok('vitrine: sem recurso retirado anunciado, instruções citam controles que existem, tamanho cabe no acervo');
+} catch (e) {
+  const out = (e.stdout ? e.stdout.toString() : '') + (e.stderr ? e.stderr.toString() : '');
+  fail('regressão da vitrine falhou:\n' + out);
+}
+
 // 17d. CADÊNCIA DO RADAR: o mural precisa de mais de uma varredura por dia. Com
 //      uma só (07:30 BRT), notícia publicada depois dela só aparece no dia
 //      seguinte — foi a queixa de 17/08/2026 (ANVISA aprovando canetas de
