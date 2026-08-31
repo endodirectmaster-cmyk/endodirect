@@ -100,3 +100,38 @@ revoke all on function public.endodirect_email_de_teste(text) from public, anon,
 -- deixaria um pacote em cache de service worker chamando função proibida — foi
 -- assim que a aba Resumos ficou em branco por um dia em 01/08/2026.
 revoke all on function public.endodirect_showcase_resumos() from public, anon, authenticated;
+
+-- =============================================================================
+-- 4. 🧨 A SEGUNDA PORTA DO MESMO VAZAMENTO
+-- =============================================================================
+-- Fechar `showcase_resumos` NÃO fechou o vazamento. Medido logo em seguida, com
+-- a chave pública e sem login:
+--   POST /rpc/endodirect_member_content -> 200, 6.530.717 bytes,
+--   232 diretrizes, **161 PRIVADAS**.
+--
+-- A causa estava na própria função, e é antiga. O comentário dela dizia
+--   "Diretrizes: nao sao gated por plano (PANEL_SCOPE nao tem 'ref')
+--    -> lista completa p/ todo membro"
+-- e entregava a lista inteira a QUALQUER chamador — inclusive `anon`, que não é
+-- membro nenhum. O raciocínio estava certo para as diretrizes PÚBLICAS e errado
+-- para os capítulos e artigos de assinante, que viajam na mesma chave.
+--
+-- ⚠️ LIÇÃO: fechar uma porta não é fechar o cômodo. A verificação que presta é
+-- MEDIR DE NOVO O DADO EXPOSTO, não conferir que a porta fechada está fechada.
+--
+-- A correção não inventa regra: `endodirect_member_resumos()` já tem a política
+-- freemium certa (públicas p/ todos; privadas completas só com `plano`; um
+-- capítulo por subespecialidade/tipo como amostra para os demais).
+-- `member_content` passa a CHAMÁ-LA, em vez de manter uma segunda resposta para
+-- a mesma pergunta.
+--
+-- Aplicado na migração `member_content_para_de_entregar_resumo_privado_a_anonimo`
+-- (reescreve a função a partir da própria definição, com âncoras conferidas e
+-- aborto em vez de corrupção; idempotente).
+--
+-- MEDIDO DEPOIS, nas duas pontas:
+--   anônimo  -> member_content: 89 diretrizes, 18 privadas (a amostra desenhada),
+--               4,5 MB (era 6,5); public_content: 71, 0 privadas;
+--               showcase_resumos: 401.
+--   Gold     -> 232 diretrizes, 161 privadas, 2.965 questões, 199 podcasts.
+--               Nada perdido para quem paga.
