@@ -320,6 +320,19 @@ try {
   fail('regressão da fonte da plataforma falhou:\n' + out);
 }
 
+// 17i. PROGRAMA DE EMC COMO BENEFÍCIO DO GOLD (31/08/2026). ⚠️ São DUAS listas
+//      separadas: a landing tem os benefícios em MARKUP, e a tela de compra
+//      monta a partir de `ENDO_TIERS`. Mexer numa e esquecer a outra dá a pior
+//      forma de erro comercial — a propaganda promete o que a tela de pagamento
+//      não lista, nada quebra e ninguém vê.
+try {
+  execFileSync(process.execPath, [path.join('scripts', 'test-emc-no-plano-gold.js')], { stdio: 'pipe' });
+  ok('Programa de EMC: benefício do Gold na landing E na compra, destacado e fora do Standard');
+} catch (e) {
+  const out = (e.stdout ? e.stdout.toString() : '') + (e.stderr ? e.stderr.toString() : '');
+  fail('regressão do Programa de EMC no plano Gold falhou:\n' + out);
+}
+
 // 17d. CADÊNCIA DO RADAR: o mural precisa de mais de uma varredura por dia. Com
 //      uma só (07:30 BRT), notícia publicada depois dela só aparece no dia
 //      seguinte — foi a queixa de 17/08/2026 (ANVISA aprovando canetas de
