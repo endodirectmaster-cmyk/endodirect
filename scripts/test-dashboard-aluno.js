@@ -68,6 +68,91 @@ function bloco(cab) {
     '⚠️ o reforço pós-hydrate ainda empurra o aluno para o ' + foiPara + ' — o Dashboard abriria e sumiria sozinho');
 }
 
+// ── 1b. 🧨 A TELA DE INÍCIO PRECISA DE PORTA ─────────────────────────────
+// Eu provei que `homePanel()` devolvia 'dash' e dei por encerrado. Só que
+// `applyProfileMenuLayout()` — uma TERCEIRA cópia da regra "médico vive no
+// Mural", que eu não tinha lido — escondia o item Dashboard do menu de quem tem
+// perfil de médico. A tela de entrada ficou sem porta: quem saísse dela não
+// tinha como voltar. Quem viu foi o professor: "não apareceu no menu lateral
+// Dashboard".
+//
+// A lição: **provar que o destino está certo não prova que existe caminho até
+// ele**, e regra de produto espalhada por três lugares só está desfeita quando
+// os três forem lidos.
+{
+  const menu = html.slice(html.indexOf('<div id="sb-aluno">'), html.indexOf('<div id="sb-admin"'));
+  ok(menu.indexOf('data-p="dash"') >= 0,
+    '🧨 o Dashboard não tem item no menu — é a tela de início; sem porta, quem sair dela não volta');
+  ok(menu.indexOf('data-p="desemp"') < 0,
+    '⚠️ o Desempenho voltou ao menu — ele foi incorporado ao Dashboard ("deve ser incorporada nele e automaticamente desaparecer do menu lateral")');
+
+  // A ORDEM pedida: "ele deve ser o primeiro, acima do mural de artigos".
+  const ordem = [...menu.matchAll(/data-p="([a-z]+)"/g)].map((m) => m[1]);
+  ok(ordem[0] === 'dash',
+    '⚠️ o Dashboard não é o primeiro item do menu, e sim `' + ordem[0] + '` — o pedido é literal');
+  ok(ordem[1] === 'mural',
+    '⚠️ o "Mural de artigos" deixou de vir logo abaixo do Dashboard, veio `' + ordem[1] + '`');
+
+  // 🧨 E ninguém pode voltar a mexer nesse item em tempo de execução. Foi
+  // exatamente uma linha de `dash.style.display='none'` que criou o defeito.
+  // ⚠️ Procurar o NOME pegava o comentário que explica a remoção. O que não
+  // pode voltar é a DEFINIÇÃO ou a CHAMADA.
+  ok(!/function applyProfileMenuLayout|applyProfileMenuLayout\(\);/.test(html),
+    '🧨 `applyProfileMenuLayout` voltou — era ela que escondia o Dashboard do menu do médico');
+  ok(html.indexOf('.sb-item[data-p="dash"]') < 0,
+    '🧨 alguém voltou a selecionar o item Dashboard do menu para manipulá-lo em tempo de execução');
+}
+
+// ── 1c. O Desempenho desenha DENTRO do Dashboard, sem repetir os KPIs ────
+{
+  ok(/renderDesempenhoNoDash\(\)/.test(bloco('function refreshDash(')),
+    '⚠️ o Dashboard parou de desenhar o Desempenho incorporado — e ele não está mais no menu, então sumiria da plataforma');
+  ok(html.indexOf('id="dash-desemp"') > 0, 'o host do Desempenho dentro do Dashboard sumiu do markup');
+  // O card resumido "Desempenho por área" tinha as MESMAS barras, em versão
+  // pobre. Os dois na mesma tela seriam a mesma informação duas vezes.
+  // ⚠️ O título "Desempenho por área" também é de um card do RELATÓRIO DO
+  // SIMULADO (`rep-area-row`), que é outra tela e continua válido. A âncora
+  // certa é o host que só o card do Dashboard tinha.
+  ok(html.indexOf('id="perf-bars"') < 0,
+    '⚠️ voltou o card resumido de barras do Dashboard: ele repete o "Acerto por subespecialidade" logo acima');
+
+  // Executa os dois destinos e compara.
+  const ctx = vm.createContext({ console });
+  vm.runInContext(
+    'var DB={perf:{Diabetes:{correct:8,total:10},Tireoide:{correct:4,total:10}},'
+    + 'perfTema:{Diabetes:{Cetoacidose:{correct:1,total:6}}},act:{"2026-08-31":3}};'
+    + 'function todayKey(){return "2026-08-31";}'
+    + bloco('function esc(') + bloco('function perfPct(') + bloco('function kpiCard(')
+    + bloco('function computeStreak(') + bloco('function progressoDoAluno(')
+    + bloco('function renderDesempenhoEm(') + bloco('function desempenhoHTML('), ctx);
+  const noDash = vm.runInContext('desempenhoHTML(false)', ctx);
+  const comoPagina = vm.runInContext('desempenhoHTML(true)', ctx);
+
+  ['Onde focar', 'Acerto por subespecialidade', 'Atividade (14 dias)'].forEach((t) => {
+    ok(noDash.indexOf(t) >= 0, '⚠️ "' + t + '" não foi incorporado ao Dashboard');
+  });
+  // ⚠️ OS QUATRO KPIs JÁ ESTÃO NO TRILHO, na mesma tela. Repetir os mesmos
+  // números a dois palmos de distância não informa — só ocupa espaço e cria a
+  // dúvida de se são a mesma coisa.
+  ok(noDash.indexOf('Acerto geral') < 0,
+    '⚠️ os KPIs voltaram ao corpo do Dashboard — eles já estão no trilho, na mesma tela');
+  ok(comoPagina.indexOf('Acerto geral') >= 0,
+    'o painel de Desempenho (caminho legado, sem trilho ao lado) perdeu os KPIs');
+  ok(noDash.indexOf('<h1>') < 0, 'o bloco do Dashboard não pode trazer cabeçalho de página');
+  ok(comoPagina.indexOf('<h1>') >= 0, 'o painel legado perdeu o cabeçalho');
+
+  // Aluno sem nenhuma resposta: silêncio no Dashboard (o trilho já convida).
+  const ctx0 = vm.createContext({ console });
+  vm.runInContext('var DB={perf:{},perfTema:{},act:{}};function todayKey(){return "2026-08-31";}'
+    + bloco('function esc(') + bloco('function perfPct(') + bloco('function kpiCard(')
+    + bloco('function computeStreak(') + bloco('function progressoDoAluno(')
+    + bloco('function renderDesempenhoEm(') + bloco('function desempenhoHTML('), ctx0);
+  ok(vm.runInContext('desempenhoHTML(false)', ctx0) === '',
+    '⚠️ o aluno que ainda não respondeu nada recebe um bloco de desempenho vazio embaixo do convite do trilho');
+  ok(vm.runInContext('desempenhoHTML(true)', ctx0).indexOf('Responda questões') >= 0,
+    'o painel legado deixou de explicar por que está vazio');
+}
+
 // ── 2. Os números do trilho batem com o que a aba mostra ──────────────────
 // 🧨 ESTE É O DEFEITO QUE IMPORTA. Se `acervoContagem` contar por um critério e
 // `dirIsVisible` (que a aba usa para listar) por outro, o trilho anuncia um
@@ -130,7 +215,7 @@ function bloco(cab) {
   ok(pr.areas === 2,
     '⚠️ área com ZERO questão contou como estudada — `DB.perf` ganha a chave antes de a questão ser respondida');
 
-  ok(/var pr=progressoDoAluno\(\)/.test(bloco('function renderDesempenho(')),
+  ok(/var pr=progressoDoAluno\(\)/.test(bloco('function renderDesempenhoEm(')),
     '⚠️ o painel de Desempenho voltou a fazer a própria conta — é assim que as duas telas passam a discordar');
   ok(/progressoDoAluno\(\)/.test(bloco('function renderDashRail(')),
     'o trilho deixou de usar a conta compartilhada');

@@ -39,7 +39,9 @@ atualizado: 2026-06-23
 - Catálogo de nomes: `member_content` já devolve `cursos`; a RPC `endodirect_public_content` passou a devolver `cursos` também (2026-06-15) para o **demo/preview** não exibir o slug ("endo_essencial" → "Endocrinologia Essencial"). `applyStatePayload` aplica `payload.cursos`→`catalogoCursos`.
 
 ### Menu lateral do aluno (ordem)
-- ESTUDO: Dashboard, Questões, Flashcards, Mapas Mentais, Podcasts, Cursos, Cronograma, Revisão, **Diretrizes** (movida de PESSOAL p/ logo após Revisão — 2026-06-15). `applyProfileMenuLayout()` (médicos) só move o Mural e esconde o Dashboard.
+- ESTUDO: **Dashboard** (1º), **Mural de artigos** (2º, subiu de PESSOAL em 2026-08-30), Plano de estudo, Banco de questões, Questão do Dia, Flashcards, Mapas Mentais, Favoritos, Podcasts, Cursos, Cronograma, Revisão, Caderno de erros, **Diretrizes**, Resumos.
+- ⚠️ **O menu é o MESMO para todos os perfis** desde 2026-08-30. `applyProfileMenuLayout()` — que escondia o Dashboard de quem tem perfil de médico e subia o Mural para o lugar dele — **foi removida**. Não voltar a manipular `.sb-item[data-p="dash"]` em tempo de execução: guardado em `test-dashboard-aluno.js`.
+- **Desempenho não é item de menu**: foi incorporado ao Dashboard (`renderDesempenhoNoDash`). O painel `#panel-desemp` continua montável por caminho legado, sem porta no menu.
 
 ## Backend
 
