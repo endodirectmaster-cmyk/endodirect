@@ -258,6 +258,7 @@ body{background:var(--bg);color:var(--tx);display:flex;flex-direction:column}
 .acv-txt{flex:1;min-width:0}
 .acv-lbl{font-size:.8rem;color:var(--t2);line-height:1.3;font-weight:400}
 .acv-num{font-size:1.95rem;font-weight:800;color:var(--tx);line-height:1.1;margin-top:.35rem;letter-spacing:-.02em;font-variant-numeric:tabular-nums}
+.acv-de{font-size:.92rem;font-weight:600;color:var(--t3);letter-spacing:0}
 .acv-ico{width:44px;height:44px;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:1.15rem;flex:none}
 .dash-main{min-width:0}
 .dash-rail{position:sticky;top:0;display:flex;flex-direction:column;gap:10px}
@@ -2245,7 +2246,7 @@ input.dmm-inp-subsub{flex:1;min-width:0;background:transparent;color:var(--t2);f
         <div class="g3" style="margin-bottom:10px">
           <div class="card" style="text-align:center;cursor:pointer" id="dc-flash"><div style="font-size:1.45rem;font-weight:700;color:var(--pur)" id="d-fcn">0</div><div style="font-size:.66rem;color:var(--t3)">Flashcards</div></div>
           <div class="card" style="text-align:center;cursor:pointer" id="dc-sr"><div style="font-size:1.45rem;font-weight:700;color:var(--red)" id="d-sr-due">0</div><div style="font-size:.66rem;color:var(--t3)">Cards p/ revisar</div></div>
-          <div class="card" style="text-align:center;cursor:pointer" id="dc-mm"><div style="font-size:1.45rem;font-weight:700;color:var(--gold)" id="d-mmn">0</div><div style="font-size:.66rem;color:var(--t3)">Mapas mentais</div></div>
+          <div class="card" style="text-align:center;cursor:pointer" id="dc-mm"><div style="font-size:1.45rem;font-weight:700;color:var(--gold)" id="d-mmn">0</div><div style="font-size:.66rem;color:var(--t3)">Meus mapas</div></div>
         </div>
         <div id="dash-desemp" style="margin-bottom:10px"></div>
         <div class="g2" style="margin-bottom:10px">
@@ -7802,13 +7803,25 @@ function renderDashAcervo(){
     {p:'quest',  n:'Questões no banco',  v:ac.questoes,   i:'📝', c:'var(--blue)'},
     {p:'ref',    n:'Diretrizes',         v:ac.diretrizes, i:'📋', c:'var(--grn)'},
     {p:'resu',   n:'Resumos publicados', v:ac.resumos,    i:'📚', c:'var(--pur)'},
-    {p:'resu',   n:'Artigos comentados', v:ac.artigos,    i:'🔬', c:'var(--gold)'},
+    {p:'mmap',   n:'Mapas mentais',      v:ac.mapas,      i:'✦', c:'var(--gold)'},
     {p:'podcast',n:'Podcasts',           v:ac.podcasts,   i:'🎧', c:'var(--blue2)'}
-  ].filter(function(c){return c.v>0;});   // categoria vazia não vira card de zero
+  // ⚠️ O filtro olha o TOTAL, não o que o aluno alcança: na degustação os
+  // podcasts são zero, e é justamente esse card ("0 de 199") que diz o que a
+  // assinatura abre. Filtrar por `tem` faria a categoria sumir para quem mais
+  // precisa vê-la. Some só a categoria que não existe na plataforma.
+  ].filter(function(c){return c.v&&c.v.total>0;});
   el.innerHTML=cards.map(function(c){
-    return '<button type="button" class="acv" data-acv-ir="'+c.p+'">'
+    // ⚠️ FRAÇÃO SÓ ONDE O ACESSO É PARCIAL. Quem tem tudo vê "2.965"; quem tem
+    // parte vê "50 de 2.965". "71 de 71" não informa nada e ainda insinua um
+    // limite que não existe — na degustação as Diretrizes são TODAS liberadas.
+    var parcial=c.v.tem<c.v.total;
+    var numero=parcial
+      ? nBR(c.v.tem)+'<span class="acv-de"> de '+nBR(c.v.total)+'</span>'
+      : nBR(c.v.total);
+    return '<button type="button" class="acv" data-acv-ir="'+c.p+'"'
+      +(parcial?' title="'+esc('Você tem acesso a '+nBR(c.v.tem)+' de '+nBR(c.v.total)+'. A assinatura abre o restante.')+'"':'')+'>'
       +'<span class="acv-txt"><span class="acv-lbl">'+esc(c.n)+'</span>'
-      +'<span class="acv-num" style="display:block">'+nBR(c.v)+'</span></span>'
+      +'<span class="acv-num" style="display:block">'+numero+'</span></span>'
       +'<span class="acv-ico" style="background:'+c.c+'1f;color:'+c.c+'">'+c.i+'</span></button>';
   }).join('');
   el.querySelectorAll('[data-acv-ir]').forEach(function(b){
@@ -8309,20 +8322,34 @@ function acervoContagem(){
     diretrizes:pub.filter(function(d){return !(d&&d.privado)&&!dirSoNosResumos(d);}).length,
     resumos:priv.filter(function(d){return dirTipoOf(d)==='capitulo';}).length,
     artigos:priv.filter(function(d){return dirTipoOf(d)==='artigo';}).length,
+    // ⚠️ `sharedMM` são os mapas PUBLICADOS pelo professor, não `DB.mm`, que é
+    // a coleção pessoal do aluno. A faixa fala do acervo da plataforma.
+    mapas:(typeof sharedMM!=='undefined'&&Array.isArray(sharedMM))?sharedMM.length:0,
     podcasts:(typeof podcasts!=='undefined'&&Array.isArray(podcasts))?podcasts.length:0
   };
-  var t=acervoTotais;
-  if(!t||typeof t!=='object')return local;
   // ⚠️ Campo a campo, e só quando o servidor manda um número de verdade: uma
   // chave que faltar na resposta não pode zerar o card que já estava certo.
+  var t=(acervoTotais&&typeof acervoTotais==='object')?acervoTotais:{};
   var num=function(v,reserva){var n=Number(v);return isFinite(n)&&n>=0?n:reserva;};
-  return {
+  var totais={
     questoes:num(t.provas,local.questoes),
     diretrizes:num(t.diretrizes,local.diretrizes),
     resumos:num(t.resumos,local.resumos),
     artigos:num(t.artigos,local.artigos),
+    mapas:num(t.mapas,local.mapas),
     podcasts:num(t.podcasts,local.podcasts)
   };
+  // Duas grandezas por categoria: o que ESTE aluno alcança e o que a plataforma
+  // tem. É a diferença entre as duas que vira "50 de 2.965" na degustação —
+  // pedido do professor em 31/08/2026. Para quem tem tudo, as duas coincidem e
+  // a fração não aparece.
+  var out={};
+  ['questoes','diretrizes','resumos','artigos','mapas','podcasts'].forEach(function(k){
+    // ⚠️ `tem` nunca pode passar `total`: com um total em cache mais VELHO que o
+    // conteúdo em mãos, a conta daria "120 de 118" — número impossível na tela.
+    out[k]={tem:Math.min(local[k],totais[k]),total:totais[k]};
+  });
+  return out;
 }
 function nBR(n){try{return Number(n||0).toLocaleString('pt-BR');}catch(e){return String(n||0);}}
 function kpiCard(label,val,col){

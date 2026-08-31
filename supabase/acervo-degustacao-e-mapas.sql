@@ -1,0 +1,47 @@
+-- =============================================================================
+-- FAIXA DO DASHBOARD: "X de Y" NA DEGUSTAÇÃO + TRAVA DE TIER NOS MAPAS
+-- (aplicado em 31/08/2026)
+-- =============================================================================
+--
+-- Pedidos do professor: mostrar na faixa quanto o aluno em degustação alcança
+-- ("5 de 71", "10 de 118", "e assim vai"); trocar "Artigos comentados" por
+-- "Mapas mentais"; e "coloca a trava na degustação nos mapas mentais também".
+--
+-- ⚠️ OS NÚMEROS DO EXEMPLO NÃO ERAM OS REAIS, e medir mudou o desenho. O que a
+-- degustação recebe de fato, medido antes de escrever a tela:
+--     Questões no banco  :  50 de 2.965
+--     Diretrizes         :  71 de 71     <- TODAS. Não há fração a mostrar.
+--     Resumos            :  14 de 118
+--     Artigos comentados :   4 de 43
+--     Mapas mentais      :  41 de 82     (depois da trava desta migração)
+--     Podcasts           :   0 de 199
+-- Por isso a fração aparece SÓ onde o acesso é parcial: "71 de 71" não informa
+-- nada e ainda insinua um limite que a degustação não tem.
+
+-- 1. `acervo_totais` ganha os mapas ------------------------------------------
+-- (definição completa na migração `acervo_totais_ganha_mapas_mentais`)
+
+-- 2. Trava de tier nos mapas para quem não tem plano --------------------------
+-- 🧨 A ASSIMETRIA MEDIDA. `endodirect_public_content` já filtrava `tier:'member'`
+-- dos mapas; `endodirect_member_content` NÃO filtrava. Resultado: um VISITANTE
+-- (sem login) recebia 41 mapas, e um ALUNO EM DEGUSTAÇÃO — que está um passo
+-- mais perto de assinar — recebia os 82, incluindo os 41 marcados como
+-- exclusivos de assinante. A rota mais permissiva era a de quem tinha conta.
+--
+-- Agora as duas seguem a mesma regra: com `plano`, tudo; sem `plano`, só os
+-- livres. É a política já registrada para os flashcards em 2026-06-22
+-- ("a expansão é só para assinante").
+--
+-- Aplicado na migração `trava_de_tier_nos_mapas_para_a_degustacao`, que
+-- reescreve `member_content` a partir da própria definição, com âncora
+-- conferida e aborto em vez de corrupção.
+--
+-- MEDIDO DEPOIS:
+--   degustação -> 41 mapas (nenhum de assinante), 50 questões
+--   Gold       -> 82 mapas, 2.965 questões, 199 podcasts
+--
+-- ⚠️ FICA UMA DÍVIDA IRMÃ, NÃO TOCADA: os FLASHCARDS têm exatamente o mesmo
+-- problema — a degustação recebe 533, dos quais 180 marcados `tier:'member'`.
+-- O cofre registra em 2026-06-22 a decisão de travá-los ("degustação/público/
+-- curso -> só livre"), e ela não está em vigor no `member_content`. Não mexi
+-- porque o professor pediu os mapas; está em cofre/Pendências.md.

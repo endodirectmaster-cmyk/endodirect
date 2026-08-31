@@ -670,6 +670,45 @@ descompasso entre o que o aluno pergunta e o que a base sabe.
 RELATAM os termos que faltam em `TERMOS`; eu aplico. Dois agentes no mesmo arquivo
 perdem trabalho um do outro sem aviso.
 
+## ⚠️ Flashcards: a trava de tier decidida em 2026-06-22 não está em vigor (2026-08-31)
+
+Medido ao aplicar a trava dos mapas, com chamada real:
+
+| conteúdo | degustação recebe | dos quais `tier:'member'` |
+|---|---|---|
+| mapas mentais | 41 (depois da trava) | 0 |
+| **flashcards** | **533** | **180** |
+
+O cofre registra em 2026-06-22 a decisão do professor: *"degustação mantém o
+combinado; a expansão é só para assinante"*, implementada por `tier` — e diz que
+as RPCs passariam a filtrar `fc_shared` (**degustação → só livre, 222**).
+`endodirect_public_content` filtra; **`endodirect_member_content` não**. Ou seja:
+o visitante deslogado recebe menos que o aluno em degustação, que está um passo
+mais perto de assinar.
+
+Não foi tocado porque o professor pediu **os mapas**. A correção é a mesma
+linha, no mesmo `case`. Decisão dele: os 180 flashcards de biblioteca continuam
+na degustação, ou voltam a ser benefício de assinante como está escrito?
+
+## 📦 `member_content` devolve 12,4 MB a um assinante Gold (2026-08-31)
+
+Medido ao conferir o login da vitrine, com token real:
+
+    POST /rpc/endodirect_member_content  ->  200, 12.465.614 bytes
+
+São 2.965 questões + 232 diretrizes (161 privadas) + 199 podcasts numa resposta
+só. **Não é regressão** — é o que qualquer Gold já recebia; a correção de hoje
+só *reduziu* o que o não-membro recebe (6,5 → 4,5 MB).
+
+⚠️ Mas o cofre registra em 05/08/2026 que "rede de celular derruba resposta
+grande (~1,8 MB) com frequência", e que por isso `carregarResumos` tenta 3×.
+12,4 MB é sete vezes aquilo. Vale medir quanto do primeiro carregamento no
+celular falha hoje antes de decidir o quê: paginar as provas, mandar só as
+áreas que o aluno abre, ou separar em rotas.
+
+Registrado agora porque a medida existe. Não urgente: os alunos usam a
+plataforma, então ela chega — a pergunta é a que custo.
+
 ## ✅ RESOLVIDO — Vitrine (`alunopro`) ganhou identidade no servidor (2026-08-31)
 Feito como planejado: conta real com `plano:gold` + cursos de vitrine, senha fora do bundle (aleatória e descartada), login pelo Supabase, `showcase_resumos` revogada. ⚠️ E revelou uma **segunda porta**: o `member_content` entregava os mesmos 161 itens privados a anônimos e foi corrigido junto. Ver [[Decisões]] 2026-08-31 e `supabase/vitrine-conta-real.sql`.
 
