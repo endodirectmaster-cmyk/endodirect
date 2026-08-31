@@ -43,32 +43,35 @@ revoke all on function public.endodirect_amostra_espalhada(jsonb, int) from publ
 --  · `endodirect_public_content`  → diretrizes e fc_shared alinhados às mesmas
 --                                   amostras.
 --
--- ⚠️ PODCASTS SÃO GATED POR **TER CONTA**, não por "sem escopo". `member_content`
--- é chamável por `anon`, e "degustação" é o aluno CADASTRADO sem pacote — não um
--- visitante qualquer. Sem essa distinção, os 199 podcasts sairiam para quem
--- tivesse a chave pública, e o cadastro deixaria de valer alguma coisa. É hoje a
--- ÚNICA diferença entre visitante e degustação, e é deliberada.
+-- ⚠️ CORRIGIDO NO MESMO DIA PELO PROFESSOR: "lembrando que visitante/degustação
+-- é a mesma coisa. Neles, deixa mapas 10/82. Podcast liberado pra todo mundo."
 --
--- 🧨 E O VISITANTE NÃO PODE RECEBER MAIS QUE O CADASTRADO. Sem alinhar o
--- `public_content`, ele ficaria com 71 diretrizes e 353 flashcards contra 10 e 53
--- de quem se cadastrou — a mesma inversão que eu tinha acabado de corrigir nos
--- mapas mentais, repetida no mesmo dia. (Definições completas nas migrações
--- `degustacao_dez_diretrizes_publicas`,
--- `degustacao_todos_os_podcasts_e_dez_por_cento_dos_flashcards` e
--- `public_content_alinhado_a_degustacao`.)
+-- 🧨 EU TINHA INVENTADO UM DEGRAU QUE O PRODUTO NÃO TEM. Liberei os podcasts por
+-- `auth.uid() is not null`, raciocinando sozinha que "o cadastro precisa valer
+-- alguma coisa". Não é assim que a plataforma é pensada: visitante e degustação
+-- são o MESMO nível de acesso. A regra que fica é dura e vale além daqui —
+-- **inferir o modelo de produto a partir do código é inventar requisito**. Era
+-- para eu ter perguntado, ou simplesmente não ter criado o degrau.
 --
--- ⚠️ Os 10% dos flashcards SUPERAM a trava por tier decidida em 2026-06-22, que
--- nunca chegou a valer no `member_content` — a degustação recebia os 533,
--- inclusive os 180 marcados como exclusivos de assinante. O professor foi
--- direto: "libera somente 10% do total". 53 de 533 é mais restrito que os 353
--- que a trava por tier daria.
+-- Agora os dois níveis são IDÊNTICOS em tudo, e os podcasts saem sem portão.
+-- (Migração `visitante_e_degustacao_sao_o_mesmo_mapas_dez_podcasts_todos`.)
+--
+-- ⚠️ Os 10% dos flashcards e os 10 mapas SUPERAM a trava por tier de 2026-06-22,
+-- que nunca chegou a valer no `member_content`. O professor foi direto, e os
+-- limites por contagem são mais restritos que a trava por tier daria
+-- (53 contra 353 nos flashcards; 10 contra 41 nos mapas).
 
--- 3. Medido depois, nos três perfis -------------------------------------------
---                   dir.púb.  privadas  questões  flashcards  mapas  podcasts
---   VISITANTE          10         0        50         53        41       0
---   DEGUSTAÇÃO         10        18        50         53        41     199
---   GOLD               71       161      2965        533        82     199
+-- 3. Medido depois — visitante e degustação são a MESMA linha ------------------
+--                        dir.púb.  privadas  questões  flashcards  mapas  podcasts
+--   VISITANTE = DEGUSTAÇÃO   10        18*       50         53       10      199
+--   GOLD                     71       161      2965        533       82      199
 --
--- (A linha da degustação foi medida com o `sub` de um aluno REAL sem escopo, não
---  com uma chamada anônima — anônimo e degustação diferem justamente nos
---  podcasts, e medir o errado teria escondido isso.)
+--   * o visitante pelo `public_content` recebe 0 privadas; pelo `member_content`
+--     (que também é chamável sem sessão) recebe as 18 da amostra freemium. As
+--     duas rotas convergem no resto.
+--
+--   As amostras cobrem a plataforma em largura: 10 diretrizes em 10
+--   subespecialidades, 10 mapas em 10, 53 flashcards nas 12.
+--
+--   (A linha da degustação foi medida com o `sub` de um aluno REAL sem escopo,
+--    não por chamada anônima.)
