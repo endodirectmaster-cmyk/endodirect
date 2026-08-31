@@ -28,8 +28,23 @@ if (!fonte) { console.error('✗ ativação:\n  - ' + falhas[0]); process.exit(1
 const corpo = fonte.replace(/^\s*\(function\(\)\{\s*/, '').replace(/^\s*['"]use strict['"];\s*/, '').replace(/\}\)\(\);?\s*$/, '');
 
 const vc = new VirtualConsole(); vc.on('jsdomError', function () {});
-const dom = new JSDOM('<body><div id="ativa-card"></div>'
-  + '<div id="ativa-mural-wrap"><div id="ativa-card-mural"></div></div>'
+// ⚠️ SOBROU UM PONTO DE ENTREGA: A JANELA DE ENTRADA (31/08/2026). O professor
+// tirou o convite do Dashboard ("isso não era para aparecer no dashboard") e,
+// em seguida, também do Mural: "só devem aparecer naquela janela inicial de
+// entrada na plataforma".
+//
+// 🧨 O QUE ISSO CUSTA, REGISTRADO: este card nasceu em 19/08/2026 porque o modal
+// que existia antes "sumia com um clique e nunca mais voltava na sessão", e a
+// medida era dura — 53 de 112 cadastrados fizeram login sem responder nada. Com
+// só a janela, o clique de dispensa volta a existir. O que segura a ponta é a
+// fila (`filaEntradaVista`): a marca é de SESSÃO, então quem fechar sem
+// responder recebe a janela DE NOVO na próxima vez que abrir a plataforma. O
+// item 4 abaixo cobra exatamente isso.
+//
+// O DOM é o de hoje: montar um host que a plataforma não tem faria este teste
+// aprovar um render que ninguém vê.
+const dom = new JSDOM('<body>'
+  + '<div id="ativa-card-modal"></div>'
   + '<div id="streak-card"></div></body>',
   { url: 'https://www.endodirect.com.br/', runScripts: 'outside-only', virtualConsole: vc });
 const ctx = vm.createContext(dom.getInternalVMContext());
@@ -54,21 +69,53 @@ function monta(user, act, goal, perf) {
     + ';DB.qotd={};DB.perf=' + JSON.stringify(perf || {})
     + ';DB.perfTema={};DB.goal=' + JSON.stringify(goal === undefined ? { weekly: 50 } : goal) + ';__persists=0;', ctx);
   const d = dom.window.document;
-  ['ativa-card', 'ativa-card-mural', 'streak-card'].forEach((id) => { d.getElementById(id).innerHTML = ''; });
+  ['ativa-card-modal', 'streak-card'].forEach((id) => { d.getElementById(id).innerHTML = ''; });
   vm.runInContext('ativacaoFeitaAgora=false;renderAtivacao();', ctx);
-  return d.getElementById('ativa-card');
+  return d.getElementById('ativa-card-modal');
 }
-const mural = () => dom.window.document.getElementById('ativa-card-mural');
+const janela = () => dom.window.document.getElementById('ativa-card-modal');
 const alts = (el) => [...el.querySelectorAll('[data-qotd-opt]')];
 
-// ── 1. ⚠️ APARECE PARA QUEM NUNCA ESTUDOU, NOS DOIS PONTOS DE ENTRADA ───────
+// ── 1. ⚠️ APARECE PARA QUEM NUNCA ESTUDOU, NO PONTO QUE SOBROU ──────────────
+// A medida que originou tudo isto continua valendo: 53 dos 112 cadastrados
+// fizeram login e nunca responderam nada. O que mudou foi ONDE o convite mora.
 {
   const el = monta({ role: 'aluno' }, {});
   ok(el.style.display !== 'none' && alts(el).length >= 2,
-    '⚠️ o card de ativação não apareceu para quem tem ZERO atividade — é exatamente o grupo dos 53 que logaram e não estudaram');
-  ok(alts(mural()).length >= 2,
-    '⚠️ a ativação não aparece no MURAL, que é a tela de entrada (homePanel) — só no Dashboard ela não alcança ninguém');
-  ok(/Comece por aqui/i.test(el.textContent), 'o card não se apresenta ao aluno');
+    '⚠️ o convite não apareceu para quem tem ZERO atividade — é exatamente o grupo dos 53 que logaram e não estudaram');
+  ok(alts(janela()).length >= 2,
+    '⚠️ a ativação não chega à JANELA DE ENTRADA — hoje é o ÚNICO ponto de entrega; sem ela o convite não existe em lugar nenhum');
+  // ⚠️ NA JANELA O TÍTULO É DO MODAL. O card omite o próprio cabeçalho de
+  // propósito (`emJanela`): moldura dentro de moldura e o mesmo título duas
+  // vezes na mesma tela. Então a apresentação é cobrada nos dois pedaços — o
+  // rótulo, no cabeçalho da janela; a explicação, no corpo.
+  ok(html.indexOf('👋 Comece por aqui') > 0,
+    '⚠️ a janela de entrada perdeu o rótulo "Comece por aqui" no cabeçalho');
+  ok(/Responda .{0,20}uma questão.{0,20} para começar/i.test(el.textContent.replace(/\s+/g, ' ')),
+    'o convite não explica ao aluno o que ele ganha respondendo — era o defeito do modal antigo, que só mostrava alternativas');
+}
+
+// ── 1b. ⚠️ E NÃO VOLTA AO DASHBOARD ─────────────────────────────────────────
+// "Isso não era para aparecer no dashboard" (professor, 31/08/2026). O
+// Dashboard é painel: mostra estado, não faz pedido. Cobrado no markup, porque
+// é lá que a volta aconteceria.
+{
+  ['ativa-card', 'cme-card', 'ativa-card-mural', 'cme-card-mural'].forEach((id) => {
+    ok(html.indexOf('id="' + id + '"') < 0,
+      '⚠️ o host `' + id + '` voltou — os dois convites só podem aparecer na janela inicial de entrada');
+  });
+  ok(/\['ativa-card-modal'\]/.test(html) && /\['cme-card-modal'\]/.test(html),
+    '⚠️ a lista de alvos voltou a citar um host que não existe — o render sairia para o vazio');
+  // 🧨 A COMPENSAÇÃO TEM DE EXISTIR. Sem o card não-dispensável, o que impede o
+  // "some com um clique e nunca mais volta" é a marca de SESSÃO da fila: no
+  // próximo carregamento ela está limpa e a janela volta. Se alguém gravar essa
+  // marca em localStorage ou no DB, o defeito de 19/08/2026 volta inteiro.
+  ok(/var filaEntradaVista=\{\};/.test(html),
+    '🧨 a marca de "já mostrei" da fila deixou de ser de sessão — quem fechar a janela sem responder nunca mais a veria');
+  ['lsSet(\'filaEntrada', 'DB.filaEntrada'].forEach((t2) => {
+    ok(html.indexOf(t2) < 0,
+      '🧨 a marca da fila passou a ser PERSISTIDA (`' + t2 + '`) — a janela some com um clique para sempre, que é o defeito que o card existia para consertar');
+  });
 }
 
 // ── 2. ⚠️ NÃO É DISPENSÁVEL — é a diferença para o modal que já existia ─────
@@ -84,7 +131,6 @@ const alts = (el) => [...el.querySelectorAll('[data-qotd-opt]')];
   const el = monta({ role: 'aluno' }, { '2026-08-19': 3 });
   ok(el.style.display === 'none' && el.innerHTML === '',
     'quem já estudou não pode continuar vendo "Comece por aqui"');
-  ok(mural().innerHTML === '', 'o card sobrou no Mural para quem já estudou');
 }
 
 // ── 3b. ⚠️ CONTA ANTIGA: TEM QUESTÕES EM `perf` E `act` VAZIO ───────────────
@@ -94,7 +140,7 @@ const alts = (el) => [...el.querySelectorAll('[data-qotd-opt]')];
 // "Comece por aqui" para sempre — inclusive quem já respondeu 41 questões.
 {
   const el = monta({ role: 'aluno' }, {}, undefined, { Adrenal: { total: 41, correct: 36 } });
-  ok(el.innerHTML === '' && mural().innerHTML === '',
+  ok(el.innerHTML === '',
     '⚠️ a ativação apareceu para quem tem questões em DB.perf e `act` vazio — é a conta legada, e para ela o card nunca mais sairia da tela');
 }
 {
@@ -159,4 +205,4 @@ if (falhas.length) {
   falhas.forEach((f) => console.error('  - ' + f));
   process.exit(1);
 }
-console.log('✓ ativação: card não-dispensável nas duas entradas, responder conta como estudo, e a meta passa a ser escolhida — não herdada');
+console.log('✓ ativação: convite só na janela de entrada (e ela volta na próxima sessão), responder conta como estudo, e a meta é escolhida — não herdada');

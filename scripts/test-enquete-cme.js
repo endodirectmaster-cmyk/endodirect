@@ -33,8 +33,11 @@ if (!fonte) { console.error('✗ enquete EMC:\n  - ' + falhas[0]); process.exit(
 
 const corpo = fonte.replace(/^\s*\(function\(\)\{\s*/, '').replace(/^\s*['"]use strict['"];\s*/, '').replace(/\}\)\(\);?\s*$/, '');
 const vc = new VirtualConsole(); vc.on('jsdomError', function () {});
-const dom = new JSDOM('<body><div id="cme-card"></div>'
-  + '<div id="cme-mural-wrap"><div id="cme-card-mural"></div></div></body>',
+// ⚠️ UM ALVO SÓ, A JANELA DE ENTRADA (31/08/2026). O professor tirou a enquete
+// do Dashboard e depois do Mural: "só devem aparecer naquela janela inicial de
+// entrada na plataforma". O DOM abaixo é o de hoje — montar hosts que a
+// plataforma não tem faria este teste aprovar um render que ninguém vê.
+const dom = new JSDOM('<body><div id="cme-card-modal"></div></body>',
   { url: 'https://www.endodirect.com.br/', runScripts: 'outside-only', virtualConsole: vc });
 const ctx = vm.createContext(dom.getInternalVMContext());
 try { vm.runInContext(corpo, ctx); } catch (e) { /* CDN ausente: esperado */ }
@@ -47,14 +50,11 @@ function monta(acessos, voto) {
   vm.runInContext('userAcessos=' + JSON.stringify(acessos) + ';', ctx);
   vm.runInContext('DB=(typeof DB==="object"&&DB)?DB:{};DB.enqueteCme=' + JSON.stringify(voto || null) + ';', ctx);
   vm.runInContext('cmeSel=null;cmeEditando=false;cmeOutroRascunho="";__persists=0;', ctx);
-  const el = dom.window.document.getElementById('cme-card');
-  const mu = dom.window.document.getElementById('cme-card-mural');
-  el.innerHTML = ''; el.style.display = ''; mu.innerHTML = ''; mu.style.display = '';
+  const el = dom.window.document.getElementById('cme-card-modal');
+  el.innerHTML = ''; el.style.display = '';
   vm.runInContext('renderEnqueteCme();', ctx);
   return el;
 }
-const muralEl = () => dom.window.document.getElementById('cme-card-mural');
-const muralWrap = () => dom.window.document.getElementById('cme-mural-wrap');
 const chips = (el) => [...el.querySelectorAll('[data-cme-tema]')];
 
 // ── 1. ⚠️ NÃO-GOLD NÃO VÊ A ENQUETE ─────────────────────────────────────────
@@ -86,7 +86,7 @@ ok(SUBS >= 10, 'DIR_SUBS não foi lido do index.html (veio ' + SUBS + ')');
 {
   const el = monta(['plano:gold'], null);
   for (let i = 0; i < 4; i++) {
-    const livre = chips(dom.window.document.getElementById('cme-card')).find((b) => !b.hasAttribute('disabled') && !/^✓/.test(b.textContent));
+    const livre = chips(dom.window.document.getElementById('cme-card-modal')).find((b) => !b.hasAttribute('disabled') && !/^✓/.test(b.textContent));
     if (livre) livre.dispatchEvent(new dom.window.Event('click', { bubbles: true }));
   }
   const marcados = chips(el).filter((b) => b.className.includes('on'));
@@ -100,12 +100,12 @@ ok(SUBS >= 10, 'DIR_SUBS não foi lido do index.html (veio ' + SUBS + ')');
     '⚠️ MARCAR CHIP ESCREVEU EM DB.enqueteCme — outro persist() do app gravaria meio voto como se fosse voto');
 
   // ── 4. Enviar grava, uma vez só ───────────────────────────────────────────
-  // ⚠️ Busca DENTRO do card do Dashboard e por prefixo: se os ids voltarem a ser
-  // iguais nos dois alvos, isto não acha o botão e o teste diz o porquê, em vez
+  // ⚠️ Busca por prefixo: os ids por alvo (`cme-enviar-<alvo>`) são o que
+  // permitiu servir Dashboard, Mural e janela sem um formulário mexer no outro, isto não acha o botão e o teste diz o porquê, em vez
   // de estourar um TypeError que não explica nada a quem for consertar.
-  const btEnviar = dom.window.document.getElementById('cme-card').querySelector('[id^="cme-enviar-"]');
+  const btEnviar = dom.window.document.getElementById('cme-card-modal').querySelector('[id^="cme-enviar-"]');
   ok(!!btEnviar,
-    '⚠️ não achei o botão Enviar com id por alvo (cme-enviar-<alvo>) dentro do card do Dashboard — '
+    '⚠️ não achei o botão Enviar com id por alvo (cme-enviar-<alvo>) dentro da janela de entrada — '
     + 'se os ids voltaram a ser fixos, interagir no card do Mural mexeria no formulário do Dashboard');
   if (!btEnviar) { console.error('✗ enquete EMC:'); falhas.forEach((f) => console.error('  - ' + f)); process.exit(1); }
   btEnviar.dispatchEvent(new dom.window.Event('click', { bubbles: true }));
@@ -138,39 +138,54 @@ ok(/endodirect_admin_enquete_cme/.test(codigo),
 ok(!/from\s+endodirect_app_state/i.test(codigo),
   '⚠️ o cliente não pode varrer `endodirect_app_state` direto — a apuração é da RPC admin-gated');
 
-// ── 7. ⚠️ A ENQUETE TEM DE ESTAR NA TELA DE ENTRADA, QUE É O MURAL ──────────
-// Eu a coloquei só no Dashboard supondo que fosse a tela inicial. NÃO É:
-// `homePanel()` devolve 'mural' sempre que o Mural está visível, e o Dashboard
-// só aparece para quem clica nele no menu. O professor perguntou "aparece na
-// janela de entrada, certo?" e a resposta honesta era NÃO — daí esta guarda.
+// ── 7. ⚠️ A ENQUETE VIVE NA JANELA DE ENTRADA — E SÓ NELA ───────────────────
+// HISTÓRICO, porque a guarda mudou de alvo duas vezes e cada mudança teve razão:
+//  · nasceu só no Dashboard, supondo que fosse a tela inicial. Não era, e a
+//    pergunta do professor ("aparece na janela de entrada, certo?") expôs isso;
+//  · ganhou o Mural, que era a tela de entrada de então;
+//  · em 31/08/2026 o professor tirou dos dois: "só devem aparecer naquela janela
+//    inicial de entrada na plataforma".
+// A guarda que sobrevive a todas essas mudanças é a que cobra o ALVO DE HOJE,
+// não a que lista os alvos de ontem.
 {
   const el = monta(['plano:gold'], null);
-  ok(chips(muralEl()).length === SUBS,
-    '⚠️ a enquete NÃO aparece no Mural, que é a tela de entrada do aluno (homePanel) — '
-    + 'só no Dashboard ela é invisível para quem faz login e não clica no menu');
-  ok(muralWrap().style.display !== 'none', 'o wrapper do Mural continuou escondido');
-  ok(chips(el).length === SUBS, 'a enquete sumiu do Dashboard ao ganhar o Mural');
+  ok(chips(el).length === SUBS,
+    '⚠️ a enquete não é desenhada na JANELA DE ENTRADA — hoje é o único ponto de entrega');
+  ok(el.style.display !== 'none', 'o host da janela ficou escondido para um Gold sem voto');
+  ['cme-card', 'cme-card-mural'].forEach((id) => {
+    ok(html.indexOf('id="' + id + '"') < 0,
+      '⚠️ o host `' + id + '` voltou ao markup — a enquete só pode aparecer na janela de entrada');
+  });
 
-  // ids únicos por alvo: sem isso, interagir no Mural mexeria no formulário do Dashboard
+  // ⚠️ IDS POR ALVO CONTINUAM OBRIGATÓRIOS. Hoje há um alvo só, mas foi essa
+  // regra que permitiu servir Dashboard, Mural e janela sem um formulário mexer
+  // no outro — e é o que permitirá acrescentar outro alvo sem quebrar nada.
   const ids = [...dom.window.document.querySelectorAll('[id^="cme-outro-"],[id^="cme-enviar-"]')].map((n) => n.id);
   ok(new Set(ids).size === ids.length,
-    '⚠️ ids repetidos entre os dois cards (' + ids.join(', ') + ') — getElementById devolveria sempre o do Dashboard');
-  ok(ids.length === 4, 'esperava 2 campos por alvo (2 alvos), vieram ' + ids.length);
+    '⚠️ ids repetidos entre alvos (' + ids.join(', ') + ') — getElementById devolveria sempre o primeiro');
+  ok(ids.length === 2, 'esperava 2 campos no alvo único, vieram ' + ids.length);
+  ok(ids.every((x) => /-modal$/.test(x)),
+    '⚠️ os ids do formulário deixaram de ser sufixados pelo alvo: ' + ids.join(', '));
 }
 
-// ── 8. e o não-Gold não pode ver a enquete NEM no Mural ─────────────────────
+// ── 8. e o não-Gold não vê a enquete NEM na janela ──────────────────────────
 {
-  monta(['plano:standard'], null);
-  ok(chips(muralEl()).length === 0 && muralEl().innerHTML === '',
-    '⚠️ VAZOU NO MURAL: assinante Standard viu a enquete exclusiva do Gold');
-  ok(muralWrap().style.display === 'none',
-    '⚠️ o wrapper da enquete ficou visível no Mural para quem não é Gold');
+  const el = monta(['plano:standard'], null);
+  ok(chips(el).length === 0 && el.innerHTML === '',
+    '⚠️ VAZOU NA JANELA: assinante Standard viu a enquete exclusiva do Gold');
+  ok(el.style.display === 'none', '⚠️ o host da enquete ficou visível para quem não é Gold');
 }
 
-// ── 9. o Mural precisa DESENHAR a enquete ao abrir ──────────────────────────
-const codigoMural = html.split('\n').filter((l) => !/^\s*\/\//.test(l)).join('\n');
-ok(/id==='mural'\|\|id==='dash'\)renderEnqueteCme\(\)/.test(codigoMural),
-  "⚠️ abrir o Mural não chama renderEnqueteCme() — refreshDash() só roda no Dashboard, então o card nasceria vazio na tela de entrada");
+// ── 9. quem desenha a enquete é a FILA, antes de abrir a janela ─────────────
+// ⚠️ Antes o gancho era `goPanel` ('mural'||'dash'), porque os cards moravam nos
+// painéis. Os cards saíram; se ninguém chamar `renderEnqueteCme()` antes de
+// `display='flex'`, a janela abre VAZIA — e o teste anterior continuaria
+// passando, porque cobrava um gancho que já não tem o que desenhar.
+const codigoFila = html.slice(html.indexOf('function filaEntradaProxima('), html.indexOf('function filaEntradaAgendar('));
+ok(codigoFila.indexOf('renderEnqueteCme();') >= 0 && codigoFila.indexOf('renderAtivacao();') >= 0,
+  '⚠️ a fila abre a janela sem desenhar o conteúdo antes — a janela apareceria vazia');
+ok(codigoFila.indexOf('renderEnqueteCme();') < codigoFila.indexOf("mc.style.display='flex'"),
+  '⚠️ a fila mostra a janela ANTES de desenhar — o aluno veria a caixa vazia por um instante');
 
 if (falhas.length) {
   console.error('✗ enquete EMC:');

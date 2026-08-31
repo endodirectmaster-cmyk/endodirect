@@ -224,6 +224,9 @@ function bloco(cab) {
   // passando, porque testa `renderDashRail` isolada. Cobrado no chamador.
   ok(/renderDashRail\(\)/.test(bloco('function refreshDash(')),
     '⚠️ `refreshDash` parou de desenhar o trilho — ele existiria no código e nunca apareceria na tela');
+  ok(/renderDashAcervo\(\)/.test(bloco('function refreshDash(')),
+    '⚠️ `refreshDash` parou de desenhar a faixa do acervo — os números que o professor pediu "na frente" sumiriam da tela');
+  ok(html.indexOf('id="dash-acervo"') > 0, 'o host da faixa do acervo sumiu do markup');
 }
 
 // ── 4. O trilho desenha, é do ALUNO, e cada linha leva a algum lugar ──────
@@ -237,56 +240,69 @@ function bloco(cab) {
       + 'function progressoDoAluno(){return ' + JSON.stringify(prog) + ';}'
       + 'function acervoContagem(){return {questoes:2965,diretrizes:71,resumos:118,artigos:43,podcasts:199};}'
       + 'function goPanel(p){__ir.push(p);}'
-      + 'var __el=' + 'null;'
-      + 'var document={getElementById:function(id){return id==="dash-rail"?__host:null;}};'
-      + bloco('function esc(') + bloco('function nBR(') + bloco('function renderDashRail('), ctx);
-    // host de mentira que registra os listeners por seletor
-    ctx.__host = {
-      style: {}, set innerHTML(v) { this._h = v; }, get innerHTML() { return this._h || ''; },
-      querySelectorAll(sel) {
-        const ids = [];
-        const re = /data-rail-ir="([a-z]+)"/g; let m;
+      + 'var document={getElementById:function(id){return __hosts[id]||null;}};'
+      + bloco('function esc(') + bloco('function nBR(')
+      + bloco('function renderDashRail(') + bloco('function renderDashAcervo('), ctx);
+    // hosts de mentira que registram os listeners que cada render pendura
+    const host = (attr) => ({
+      style: {}, _f: [],
+      set innerHTML(v) { this._h = v; }, get innerHTML() { return this._h || ''; },
+      querySelectorAll() {
+        const ids = []; const re = new RegExp(attr + '="([a-z]+)"', 'g'); let m;
         while ((m = re.exec(this._h || ''))) ids.push(m[1]);
-        return ids.map((p) => ({ getAttribute: () => p, addEventListener: (_, f) => { this._f = this._f || []; this._f.push(f); } }));
+        const self = this;
+        return ids.map((pn) => ({ getAttribute: () => pn, addEventListener: (_, f) => self._f.push(f) }));
       }
-    };
-    vm.runInContext('renderDashRail();', ctx);
-    return { h: ctx.__host.innerHTML, ctx, host: ctx.__host };
+    });
+    ctx.__hosts = { 'dash-rail': host('data-rail-ir'), 'dash-acervo': host('data-acv-ir') };
+    vm.runInContext('renderDashRail();renderDashAcervo();', ctx);
+    return { trilho: ctx.__hosts['dash-rail'], acervo: ctx.__hosts['dash-acervo'], ctx };
   }
 
   const r = montar({ respondidas: 312, acertos: 231, acerto: 74, ofensiva: 6, hoje: 12, areas: 9 });
-  ['Seu progresso', 'No acervo'].forEach((t) => {
-    ok(r.h.indexOf(t) >= 0, 'o trilho perdeu a seção "' + t + '"');
-  });
+
+  // ── O trilho: só o PROGRESSO ────────────────────────────────────────────
+  ok(r.trilho.innerHTML.indexOf('Seu progresso') >= 0, 'o trilho perdeu a seção "Seu progresso"');
   // Os quatro números do print do Desempenho que o professor mandou.
-  ['74%', '312', 'Acerto geral', 'Respondidas', 'ofensiva', 'Hoje'].forEach((t) => {
-    ok(r.h.toLowerCase().indexOf(t.toLowerCase()) >= 0,
-      '⚠️ "' + t + '" sumiu do trilho — são os dados do print que o professor mandou com "joga esses dados já no dashboard"');
+  ['74%', '312', 'Acerto geral', 'Respondidas', 'ofensiva', 'Hoje'].forEach((t2) => {
+    ok(r.trilho.innerHTML.toLowerCase().indexOf(t2.toLowerCase()) >= 0,
+      '⚠️ "' + t2 + '" sumiu do trilho — são os dados do print que o professor mandou com "joga esses dados já no dashboard"');
   });
-  // Os três números que ele pediu por nome, com separador de milhar.
-  ok(/2\.965/.test(r.h), '⚠️ o número de questões do banco sumiu do trilho');
-  ok(/>71</.test(r.h), '⚠️ o número de diretrizes sumiu do trilho');
-  ok(/>118</.test(r.h), '⚠️ o número de resumos publicados sumiu do trilho');
-  ok(r.h.indexOf('9 subespecialidades estudadas de 14') >= 0, 'a cobertura por subespecialidade sumiu');
+  ok(r.trilho.innerHTML.indexOf('9 subespecialidades estudadas de 14') >= 0, 'a cobertura por subespecialidade sumiu');
+  // ⚠️ O ACERVO SUBIU PARA A FAIXA DO TOPO ("deixe o dashboard com esses dados
+  // na frente"). Mantê-lo também no trilho seria a mesma informação duas vezes
+  // na mesma tela — o erro que já corrigi nos KPIs do Desempenho.
+  ok(!/2\.965/.test(r.trilho.innerHTML),
+    '⚠️ o acervo voltou ao trilho: ele já está na faixa do topo, na mesma tela');
 
-  // Cada linha do acervo LEVA à aba. Número que não é caminho vira enfeite.
-  const alvos = [...r.h.matchAll(/data-rail-ir="([a-z]+)"/g)].map((m) => m[1]);
-  ['quest', 'ref', 'resu', 'podcast'].forEach((p) => {
-    ok(alvos.indexOf(p) >= 0, '⚠️ a linha que leva ao painel `' + p + '` perdeu o destino');
+  // ── A faixa do topo: os números que ele pediu, na frente ────────────────
+  const A = r.acervo.innerHTML;
+  ok(/2\.965/.test(A), '⚠️ "total de questões na plataforma" sumiu da faixa do Dashboard');
+  ok(/>71</.test(A), '⚠️ "número de diretrizes publicadas" sumiu da faixa');
+  ok(/>118</.test(A), '⚠️ "número de resumos publicados" sumiu da faixa');
+  ['Questões no banco', 'Diretrizes', 'Resumos publicados'].forEach((t2) => {
+    ok(A.indexOf(t2) >= 0, 'a faixa perdeu o rótulo "' + t2 + '"');
   });
-  ok(r.host._f && r.host._f.length === alvos.length,
-    'as linhas do acervo ficaram sem listener: ' + ((r.host._f || []).length) + ' de ' + alvos.length);
-  r.host._f.forEach((f) => f());
-  ok(r.ctx.__ir.length === alvos.length, 'clicar numa linha do acervo não navegou');
 
-  // ⚠️ QUEM NUNCA RESPONDEU NÃO LEVA UM PAINEL DE ZEROS. "0% de acerto" para
-  // quem nunca errou nada não é dado, é julgamento — mesma lição da meta
-  // semanal, que mostrava "você está atrás" de uma meta jamais escolhida.
+  // Cada card LEVA à aba. Número que não é caminho vira enfeite.
+  const alvos = [...A.matchAll(/data-acv-ir="([a-z]+)"/g)].map((m) => m[1]);
+  ['quest', 'ref', 'resu', 'podcast'].forEach((pn) => {
+    ok(alvos.indexOf(pn) >= 0, '⚠️ o card que leva ao painel `' + pn + '` perdeu o destino');
+  });
+  ok(r.acervo._f.length === alvos.length,
+    'os cards do acervo ficaram sem listener: ' + r.acervo._f.length + ' de ' + alvos.length);
+  r.acervo._f.forEach((f) => f());
+  ok(r.ctx.__ir.length === alvos.length, 'clicar num card do acervo não navegou');
+
+  // ⚠️ QUEM NUNCA RESPONDEU NÃO LEVA UM PAINEL DE ZEROS no trilho. "0% de
+  // acerto" para quem nunca errou nada não é dado, é julgamento — mesma lição
+  // da meta semanal, que mostrava "você está atrás" de uma meta jamais
+  // escolhida. O ACERVO, esse, aparece igual: é fato da plataforma, não dele.
   const novo = montar({ respondidas: 0, acertos: 0, acerto: 0, ofensiva: 0, hoje: 0, areas: 0 });
-  ok(novo.h.indexOf('0%') < 0,
+  ok(novo.trilho.innerHTML.indexOf('0%') < 0,
     '⚠️ o aluno que ainda não respondeu nada recebe "0% de acerto" — é julgamento, não dado');
-  ok(novo.h.indexOf('primeira questão') >= 0, 'o estado inicial do trilho deixou de convidar');
-  ok(/2\.965/.test(novo.h), 'o acervo tem de aparecer mesmo para quem ainda não respondeu nada');
+  ok(novo.trilho.innerHTML.indexOf('primeira questão') >= 0, 'o estado inicial do trilho deixou de convidar');
+  ok(/2\.965/.test(novo.acervo.innerHTML), 'a faixa do acervo tem de aparecer mesmo para quem ainda não respondeu nada');
 }
 
 // ── 5. O trilho não é do professor ────────────────────────────────────────
@@ -298,10 +314,11 @@ function bloco(cab) {
     + 'function progressoDoAluno(){return {respondidas:1,acerto:1,ofensiva:1,hoje:1,areas:1};}'
     + 'function acervoContagem(){return {questoes:1,diretrizes:1,resumos:1,artigos:1,podcasts:1};}'
     + 'function goPanel(){}' + bloco('function esc(') + bloco('function nBR(')
-    + bloco('function renderDashRail(') + 'renderDashRail();',
+    + bloco('function renderDashRail(') + bloco('function renderDashAcervo(')
+    + 'renderDashRail();renderDashAcervo();',
     Object.assign(ctx, { __host: host }));
   ok(host.style.display === 'none' && host.innerHTML === '',
-    'o trilho do aluno apareceu para o professor, que tem o painel dele');
+    'o trilho/faixa do aluno apareceu para o professor, que tem o painel dele');
 }
 
 // ── 6. Os nomes que o professor trocou ────────────────────────────────────
@@ -365,4 +382,4 @@ function bloco(cab) {
 }
 
 if (falhas.length) { console.error('✗ ' + falhas.length + ' falha(s):\n - ' + falhas.join('\n - ')); process.exit(1); }
-console.log('✓ dashboard do aluno: trilho com acervo e progresso batendo com as abas, Dashboard como tela de início, nomes novos e geração por IA fora — sem referência órfã');
+console.log('✓ dashboard do aluno: acervo na faixa do topo batendo com as abas, progresso no trilho, Desempenho incorporado, Dashboard de entrada e no menu — sem referência órfã');
