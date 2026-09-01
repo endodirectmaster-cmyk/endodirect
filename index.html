@@ -16189,7 +16189,11 @@ function admCatalogoHTML(){
         +'<div style="flex:1;min-width:0"><div style="font-size:.68rem;color:var(--t3);margin-bottom:.4rem">slug: <code>'+esc(c.slug)+'</code></div>'
         +(podeCapa
           ?('<div class="fld2" style="margin:0"><label>Imagem de capa (link http, opcional)</label><input type="text" class="cat-capa" value="'+esc(c.capa||'')+'" placeholder="Deixe em branco para usar a capa gerada">'
-            +'<div style="font-size:.64rem;color:var(--t3);margin-top:.25rem">Em branco, usa o quadro da 1ª aula do curso; sem aula, o desenho gerado do nome. Aceita <code>https://…</code> ou um caminho do próprio site (<code>/img/cursos/…</code>).</div></div>')
+            +'<div style="display:flex;gap:.45rem;align-items:center;flex-wrap:wrap;margin-top:.4rem">'
+              +'<input type="file" class="cat-capa-file" accept="image/*" style="display:none">'
+              +'<button type="button" class="btn btn-outline btn-sm cat-capa-btn">🖼️ Enviar imagem…</button>'
+              +'<span class="cat-capa-msg" style="font-size:.68rem;font-weight:700"></span></div>'
+            +'<div style="font-size:.64rem;color:var(--t3);margin-top:.35rem">Envie a imagem daqui (fica no Storage e o link entra sozinho no campo) ou cole um link. Em branco, usa o quadro da 1ª aula do curso; sem aula, o desenho gerado do nome. Aceita <code>https://…</code> ou um caminho do próprio site (<code>/img/cursos/…</code>).</div></div>')
           :'<div style="font-size:.7rem;color:var(--t2);line-height:1.5">A capa é desenhada a partir do nome do curso. Para trocar por uma imagem própria, rode a coluna <code>capa</code> do <code>supabase-setup.sql</code>.</div>')
       +'</div></div>'
       +'<div class="g2" style="margin-bottom:.6rem"><div class="fld2" style="margin:0"><label>Nome</label><input type="text" class="cat-nome" value="'+esc(c.nome||'')+'"></div><div class="fld2" style="margin:0"><label>Preço avulso (R$)</label><input type="number" min="0" step="0.01" class="cat-preco" value="'+reais+'"></div></div>'
@@ -16558,6 +16562,38 @@ function bindAdmSec(sec){
     main.querySelectorAll('[data-csub]').forEach(function(b){b.addEventListener('click',function(){admCursoSubtab=b.dataset.csub;admCursoEditIdx=null;admCursoAddMod='';renderAdmSec('cursos');});});
     if(admCursoSubtab==='catalogo'){
       if(!(Array.isArray(catalogoCursos)&&catalogoCursos.length))loadCursoCatalogo(function(){renderAdmSec('cursos');});
+      // Envio da capa direto do computador. O upload NÃO salva o catálogo: ele
+      // só preenche o campo de link. Quem grava continua sendo o "Salvar
+      // catálogo" — por isso o aviso em dourado fica na tela até o professor
+      // clicar. Enviar e sair sem salvar perderia a capa em silêncio.
+      main.querySelectorAll('[data-cat-slug]').forEach(function(card){
+        var bt=card.querySelector('.cat-capa-btn'),fi=card.querySelector('.cat-capa-file');
+        if(!bt||!fi)return;
+        var msg=card.querySelector('.cat-capa-msg');
+        var diz=function(t,cor){if(msg){msg.textContent=t||'';msg.style.color=cor||'var(--t3)';}};
+        bt.addEventListener('click',function(){fi.click();});
+        fi.addEventListener('change',function(){
+          var f=fi.files&&fi.files[0];if(!f)return;
+          if(!/^image\//.test(f.type||'')){diz('Isso não é uma imagem.','var(--red)');fi.value='';return;}
+          if(f.size>8*1024*1024){diz('Imagem de '+formatBytes(f.size)+' — reduza para até 8 MB.','var(--red)');fi.value='';return;}
+          bt.disabled=true;diz('Enviando '+formatBytes(f.size)+'…','var(--t2)');
+          uploadAdminAsset(f,'capas').then(function(a){
+            var inp=card.querySelector('.cat-capa');if(inp)inp.value=a.url;
+            // Troca a prévia na hora: conferir a capa depois de salvar é tarde.
+            // A capa é um <img class="cc-img"> POR CIMA do desenho gerado (ver
+            // cursoCapaHTML) — mexer no fundo não apareceria.
+            var prev=card.querySelector('.curso-capa');
+            if(prev){
+              var im=prev.querySelector('img.cc-img');
+              if(!im){im=document.createElement('img');im.className='cc-img';im.alt='';prev.appendChild(im);}
+              im.onerror=function(){this.remove();};im.src=a.url;
+            }
+            diz('Enviada ✓ — clique em “Salvar catálogo” para valer.','var(--gold)');
+          }).catch(function(e){
+            diz(uploadErrorMessage(e),'var(--red)');
+          }).then(function(){bt.disabled=false;fi.value='';});
+        });
+      });
       var bCatSave=document.getElementById('btn-cat-save');
       if(bCatSave)bCatSave.addEventListener('click',function(){
         var rows=[];

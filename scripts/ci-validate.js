@@ -361,6 +361,18 @@ try {
   fail('regressão da videoaula falhou:\n' + out);
 }
 
+// 17c-ter. CAPA DO CURSO ENVIADA PELO PAINEL. O upload NÃO grava o catálogo:
+//      ele só preenche o campo de link, e quem grava é o "Salvar catálogo". Se
+//      o link não cair no input certo — ou se a URL do Storage não passar no
+//      `capaUrlOk` — a capa some sem erro nenhum, depois do "Enviada ✓".
+try {
+  execFileSync(process.execPath, [path.join('scripts', 'test-capa-do-curso.js')], { stdio: 'pipe' });
+  ok('capa do curso: envio cai no campo que o salvamento lê e a tela avisa que falta salvar');
+} catch (e) {
+  const out = (e.stdout ? e.stdout.toString() : '') + (e.stderr ? e.stderr.toString() : '');
+  fail('regressão da capa do curso falhou:\n' + out);
+}
+
 // 17d. CADÊNCIA DO RADAR: o mural precisa de mais de uma varredura por dia. Com
 //      uma só (07:30 BRT), notícia publicada depois dela só aparece no dia
 //      seguinte — foi a queixa de 17/08/2026 (ANVISA aprovando canetas de
