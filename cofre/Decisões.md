@@ -1,11 +1,23 @@
 ---
 tags: [cofre, decisoes]
-atualizado: 2026-08-31
+atualizado: 2026-09-01
 ---
 
 # Decisões
 
 Log de decisões de produto e técnicas (mais recentes no topo).
+
+## 2026-09
+- **🧨 A VIDEOAULA NÃO TOCAVA FORA DO SAFARI — 104 DAS 106 AULAS (2026-09-01).** Ao ligar os capítulos que o professor pediu, apareceu um defeito bem maior embaixo: `playerEmbed()` mandava o **`.m3u8` do Bunny direto para o atributo `src` de um `<video>`**. Medido em Chromium real, `canPlayType('application/vnd.apple.mpegurl')` devolve **string vazia** — não existe suporte nativo a HLS em Chrome, Edge, Firefox nem Android; só Safari/iOS. O elemento ficava **preto e mudo sobre o erro**.
+  - O `hls.js` **já estava carregado** no `<head>` desde sempre: a landing (players dos professores) e a **aula ao vivo** (`aoVivoMontarHls`) o usam há meses. Ele nunca tinha sido ligado no player da aula gravada. Não faltava biblioteca — faltava ligar.
+  - **Dois relatos do suporte descrevem exatamente isto**, de 07/08/2026: *"vídeo d aula de hipocalcemia não abre"* e *"a aula de hipogonadismo masculino tá incompleta… o vídeo acaba com 13 minutos"*. Ficaram três semanas sem diagnóstico porque o sintoma no meu lado (Safari, iPhone) não existe.
+  - Agora o `.m3u8` sai do HTML em **`data-hls`** e quem monta é `montarAulaHls(raiz)`: Safari nativo → `hls.js` → **espera até 10 s** (o script é `defer` de CDN e pode não ter chegado) → e, se desistir, **fala na tela** com botão de recarregar. O silêncio era metade do defeito.
+  - Fechar o player passou a **parar o vídeo** (`aulaSoltarHls()` + limpar a caixa). Antes só escondia a caixa: o áudio seguia tocando invisível.
+- **▶ CAPÍTULOS EMBAIXO DA AULA (2026-09-01).** Pedido do professor, com a referência à vista: *"deixar as aulas no formato parecido com o da foto, com a aula em cima e os capítulos aparecendo embaixo"*. A lista sai do campo `caps` da aula (`[{t: segundos, titulo}]`), numerada 01/02/03, com o horário à direita; clicar salta o vídeo e o capítulo em curso fica marcado enquanto o vídeo anda.
+  - **O campo do admin aceita o formato do Bunny colado como está** — `1  00:02:45 to 00:12:59  Importância do tema`. O índice e o horário de FIM são descartados (o fim de um capítulo é o início do próximo). Também aceita `02:45 Título` e `00:13:00 - Título`. Isso existe porque o professor **já tinha digitado tudo no painel do Bunny**: pedir para redigitar noutro formato seria cobrar duas vezes pelo mesmo trabalho.
+  - Os capítulos **NÃO vêm da API do Bunny**. A plataforma lê o `.m3u8`, não a conta deles; buscar na API pediria chave no cliente. É cópia, e a cópia é assumida.
+  - Os seis capítulos da primeira aula do **Programa de EMC** foram semeados por `supabase/aula-emc-capitulos.sql`, com os títulos **letra por letra** como ele os escreveu no Bunny.
+- **📝 O CAMPO DO VÍDEO DIZIA "YouTube / Vimeo" (2026-09-01).** 104 das 106 aulas são `.m3u8` do Bunny e o rótulo do formulário — e a mensagem de erro ao salvar — só citavam YouTube e Vimeo. Mais um texto que envelheceu junto com o produto; corrigido na mesma passagem.
 
 ## 2026-08
 - **🧹 QUESTÕES POR IA SAEM DA LANDING (2026-08-31).** Pedido do professor: *"tire essas questões de IA da landing page"* — o recurso saiu do painel do aluno na véspera e o anúncio continuou no ar. Saíram o card da vitrine e, junto, duas frases que ninguém tinha pedido mas que estavam igualmente erradas: o **FAQ do Suporte** ensinava a clicar num botão "Gerar questões" que não existe mais (virou a instrução real, com "Buscar questões"), e o card de Recomendações do Dashboard pedia *"Gere questões para receber recomendações"* — que além de impossível **sempre foi o gatilho errado**: `updateDashRec` lê `DB.perf`, que enche ao **responder**.

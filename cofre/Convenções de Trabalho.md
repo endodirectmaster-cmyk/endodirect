@@ -1,9 +1,41 @@
 ---
 tags: [cofre, processo]
-atualizado: 2026-08-29
+atualizado: 2026-09-01
 ---
 
 # Convenções de Trabalho
+
+## 🧨 BIBLIOTECA CARREGADA NÃO É BIBLIOTECA LIGADA (2026-09-01)
+
+O `hls.js` estava no `<head>` do `index.html` desde sempre. A landing usava. A
+aula ao vivo usava. E **o player da videoaula gravada não** — mandava o `.m3u8`
+do Bunny direto para o `src` de um `<video>`, que **nenhum navegador além do
+Safari reproduz**. Foram **104 das 106 aulas** sem tocar em Chrome, Edge,
+Firefox e Android, por meses.
+
+⚠️ **O que fez isto durar não foi a falta da biblioteca — foi o silêncio.** Um
+`<video>` com fonte que ele não entende fica preto e **não avisa nada**: nem
+erro no console do aluno, nem mensagem na tela, nem teste vermelho. Dois alunos
+escreveram para o suporte em 07/08 ("vídeo da aula não abre") e o relato ficou
+sem diagnóstico porque **do meu lado o sintoma não existe**: quem revisa em
+Safari/iPhone vê a aula tocar.
+
+**Regras que ficam:**
+
+- **Estar no `<head>` não é estar em uso.** Antes de assumir que um recurso
+  compartilhado (biblioteca, helper, polyfill) cobre uma tela nova, procurar
+  **quem o chama** — `grep` pelo nome, não pelo `<script src>`.
+- **Fonte de mídia é capacidade do navegador, não da página.** `.m3u8`, `.webm`,
+  `.avif`: conferir com `canPlayType`/`canPlayType`-equivalente **num Chromium
+  de verdade**, não pelo que funciona na máquina de quem escreve. Aqui,
+  `canPlayType('application/vnd.apple.mpegurl')` devolve `''`.
+- **Todo caminho que pode desistir tem de FALAR.** `montarAulaHls` tenta o
+  nativo, tenta o `hls.js`, **espera 10 s** por ele (é `defer` de CDN) e, se
+  desistir, escreve na tela com botão de recarregar. Guarda em
+  `scripts/test-aula-capitulos.js`, que falha se a mensagem sumir.
+- **Relato de aluno é medição.** Os dois feedbacks de 07/08 descreviam o defeito
+  com precisão e ficaram parados. Quando o suporte disser "não abre", reproduzir
+  **no navegador do aluno**, não no meu.
 
 ## 🧨 TEXTO DE VITRINE ENVELHECE JUNTO COM O PRODUTO (2026-08-31)
 

@@ -435,6 +435,20 @@ textarea{resize:vertical;line-height:1.6}
 .rsm li:before{content:"•";position:absolute;left:.2rem;top:-.02rem;color:var(--blue2);font-weight:800}
 .rsm li b,.rsm li strong{color:var(--tx)}
 .rsm p{margin:.3rem 0 .55rem;color:var(--t2)}
+/* Capitulos da videoaula: a aula em cima, os capitulos logo abaixo. Cada linha
+   e um botao (clicar salta o video para o minuto) e o capitulo em curso fica
+   marcado enquanto o video anda. */
+.aula-caps{margin-top:.95rem}
+.aula-caps-lbl{font-size:.66rem;font-weight:800;letter-spacing:.13em;text-transform:uppercase;color:var(--t3);margin-bottom:.5rem}
+.aula-caps-list{display:flex;flex-direction:column;gap:.3rem}
+.aula-cap{display:flex;align-items:center;gap:.7rem;width:100%;text-align:left;padding:.6rem .8rem;border:1px solid var(--bd);border-left:3px solid transparent;border-radius:var(--rs);background:var(--s2);color:var(--tx);font-family:var(--font);font-size:.8rem;cursor:pointer;transition:background .15s,border-color .15s}
+.aula-cap:hover{background:var(--surface);border-color:var(--bd2);border-left-color:var(--gold)}
+.aula-cap:focus-visible{outline:2px solid var(--blue2);outline-offset:2px}
+.aula-cap.on{border-left-color:var(--gold);background:var(--gold-l)}
+.aula-cap-n{font-size:.7rem;font-weight:800;color:var(--gold);font-variant-numeric:tabular-nums;flex-shrink:0}
+.aula-cap-t{flex:1;min-width:0;font-weight:600;line-height:1.4}
+.aula-cap.on .aula-cap-t{color:var(--tx)}
+.aula-cap-h{font-size:.72rem;color:var(--t3);font-variant-numeric:tabular-nums;flex-shrink:0}
 .crono-day{background:var(--surface);border:1px solid var(--bd);border-radius:var(--r);padding:.8rem .95rem;margin-bottom:.5rem}
 .crono-day-title{font-size:.76rem;font-weight:700;color:var(--tx);margin-bottom:.5rem;text-transform:uppercase;letter-spacing:.05em}
 .crono-sess{display:flex;align-items:center;gap:.6rem;padding:.42rem .65rem;background:var(--s2);border-radius:var(--rs);margin-bottom:3px;font-size:.77rem}
@@ -9708,13 +9722,128 @@ function renderAulaPlayer(){
   var body;
   if(curAulaTab==='resumo')body=aulaResumoHTML(c);
   else if(curAulaTab==='quest')body='<div id="aula-quest-box"></div>';
-  else body='<div style="background:#000;border-radius:var(--r);overflow:hidden">'+playerEmbed(c)+'</div>'+(c.desc?'<div style="font-size:.78rem;color:var(--t2);line-height:1.6;margin-top:.6rem">'+esc(c.desc)+'</div>':'')+'<div style="margin-top:.8rem"><button class="btn '+(done?'btn-outline':'btn-primary')+' btn-sm" id="aula-done">'+(done?'✓ Concluída (desfazer)':'Marcar como concluída')+'</button></div>';
+  else body='<div style="background:#000;border-radius:var(--r);overflow:hidden">'+playerEmbed(c)+'</div>'+aulaCapsHTML(c)+(c.desc?'<div style="font-size:.78rem;color:var(--t2);line-height:1.6;margin-top:.6rem">'+esc(c.desc)+'</div>':'')+'<div style="margin-top:.8rem"><button class="btn '+(done?'btn-outline':'btn-primary')+' btn-sm" id="aula-done">'+(done?'✓ Concluída (desfazer)':'Marcar como concluída')+'</button></div>';
+  aulaSoltarHls();
   box.innerHTML='<div class="card">'+head+tabs+'<div id="aula-tab-body">'+body+'</div></div>';
+  if(curAulaTab==='aula'){montarAulaHls(box);ligarAulaCaps(box);}
   box.querySelectorAll('[data-aulatab]').forEach(function(b){b.addEventListener('click',function(){curAulaTab=b.getAttribute('data-aulatab');renderAulaPlayer();});});
-  var cl=document.getElementById('curso-player-close');if(cl)cl.addEventListener('click',function(){box.style.display='none';});
+  // Fechar tem de PARAR o vídeo: esconder a caixa deixava o áudio tocando.
+  var cl=document.getElementById('curso-player-close');if(cl)cl.addEventListener('click',function(){aulaSoltarHls();box.style.display='none';box.innerHTML='';});
   var dn=document.getElementById('aula-done');if(dn)dn.addEventListener('click',function(){toggleAulaDone(c);});
   var pb=document.getElementById('aula-pdf');if(pb)pb.addEventListener('click',function(){exportAulaPDF(c);});
   if(curAulaTab==='quest')renderAulaQuest(c);
+}
+// ── CAPÍTULOS E PLAYER DA AULA ────────────────────────────────────────────────
+// 🧨 104 das 106 aulas são HLS (.m3u8 do Bunny) e o `playerEmbed` mandava o
+// .m3u8 direto para um <video>. NENHUM navegador além do Safari toca isso:
+// medido em Chromium, `canPlayType('application/vnd.apple.mpegurl')` devolve
+// string vazia. O <video> ficava preto, sem mensagem — e foi assim que "vídeo
+// da aula não abre" chegou pelo suporte em 07/08. O hls.js já estava carregado
+// no <head> (a landing e a aula ao vivo usam), só nunca tinha sido ligado aqui.
+var aulaHls=null;
+function aulaSoltarHls(){try{if(aulaHls){aulaHls.destroy();}}catch(e){}aulaHls=null;}
+function montarAulaHls(raiz,tent){
+  var v=raiz&&raiz.querySelector('video[data-hls]');if(!v)return;
+  var src=v.getAttribute('data-hls');if(!src)return;
+  if(!tent)aulaSoltarHls();
+  if(v.canPlayType('application/vnd.apple.mpegurl')){v.src=src;return;}   // Safari/iOS: nativo
+  if(window.Hls&&window.Hls.isSupported()){
+    try{aulaHls=new window.Hls();aulaHls.loadSource(src);aulaHls.attachMedia(v);return;}catch(e){}
+  }
+  // O hls.js entra por <script defer> de CDN: pode ainda não ter chegado quando
+  // o aluno abre a aula. Espera até 10s antes de desistir — e desistir é FALAR.
+  if((tent||0)<20){setTimeout(function(){montarAulaHls(raiz,(tent||0)+1);},500);return;}
+  var box=v.parentNode;if(!box)return;
+  box.innerHTML='<div style="padding:1.5rem;text-align:center;color:#e9eef8;font-size:.82rem;line-height:1.65">Não consegui carregar o reprodutor de vídeo neste navegador.'
+    +'<div style="color:#a7b2c6;font-size:.75rem;margin-top:.3rem">Costuma ser conexão. Recarregue a página; se continuar, avise pelo Suporte.</div>'
+    +'<div style="margin-top:.75rem"><button class="btn btn-outline btn-sm" type="button" id="aula-recarregar">↻ Recarregar</button></div></div>';
+  var rb=box.querySelector('#aula-recarregar');if(rb)rb.addEventListener('click',function(){location.reload();});
+}
+// "1  00:02:45 to 00:12:59  Importância do tema" é o formato que o painel do
+// Bunny mostra na aba Chapters — o professor copia de lá e cola aqui. Também
+// aceita "00:02:45 Título", "02:45 - Título" e o índice à frente ou ausente.
+function capSegundos(h,m,sg){return (h||0)*3600+(m||0)*60+(sg||0);}
+function capsParse(txt){
+  var out=[];
+  String(txt||'').split(/\r?\n/).forEach(function(ln){
+    var t=ln.trim();if(!t)return;
+    var re=/(?:(\d{1,3}):)?(\d{1,3}):([0-5]\d)/g,m,achados=[];
+    while((m=re.exec(t))){
+      achados.push({i:m.index,fim:re.lastIndex,seg:capSegundos(m[1]?parseInt(m[1],10):0,parseInt(m[2],10),parseInt(m[3],10))});
+      if(achados.length>=2)break;
+    }
+    if(!achados.length)return;
+    // Antes do primeiro horário só pode vir o índice ("1", "01.", "3)").
+    var antes=t.slice(0,achados[0].i).replace(/^[\s\d).:#-]+$/,'').trim();
+    // O segundo horário é o FIM do capítulo (o Bunny mostra "início to fim"):
+    // não guardamos, o fim de um é o início do próximo.
+    var corte=achados.length>1?achados[1].fim:achados[0].fim;
+    var titulo=t.slice(corte).replace(/^\s*(?:to|até|a)\b/i,'').replace(/^[\s\-–—:•|]+/,'').trim();
+    if(!titulo)titulo=antes;
+    if(!titulo)return;
+    out.push({t:achados[0].seg,titulo:titulo.slice(0,140)});
+  });
+  return capsNormaliza(out);
+}
+function capsNormaliza(a){
+  var vistos={},out=[];
+  (Array.isArray(a)?a:[]).forEach(function(x){
+    if(!x)return;
+    var seg=Math.floor(Number(x.t));
+    var ti=String(x.titulo||'').trim();
+    if(!isFinite(seg)||seg<0||!ti)return;
+    if(vistos[seg])return;
+    vistos[seg]=1;out.push({t:seg,titulo:ti});
+  });
+  out.sort(function(p,q){return p.t-q.t;});
+  return out;
+}
+function aulaCaps(c){return capsNormaliza(c&&c.caps);}
+// 165 → "02:45"; 3674 → "1:01:14". Hora só aparece quando existe.
+function capsFmt(seg){
+  seg=Math.max(0,Math.floor(Number(seg)||0));
+  var h=Math.floor(seg/3600),m=Math.floor((seg%3600)/60),s2=seg%60;
+  var p=function(x){return String(x).padStart(2,'0');};
+  return h?(h+':'+p(m)+':'+p(s2)):(p(m)+':'+p(s2));
+}
+// Volta ao formato de uma linha por capítulo, para o campo do admin.
+function capsTexto(caps){return capsNormaliza(caps).map(function(x){return capsFmt(x.t)+' '+x.titulo;}).join('\n');}
+function aulaCapsHTML(c){
+  var caps=aulaCaps(c);if(!caps.length)return '';
+  return '<div class="aula-caps"><div class="aula-caps-lbl">Nesta aula</div><div class="aula-caps-list">'
+    +caps.map(function(x,i){
+      return '<button type="button" class="aula-cap" data-cap="'+x.t+'">'
+        +'<span class="aula-cap-n">'+String(i+1).padStart(2,'0')+'</span>'
+        +'<span class="aula-cap-t">'+esc(x.titulo)+'</span>'
+        +'<span class="aula-cap-h">'+capsFmt(x.t)+'</span></button>';
+    }).join('')+'</div></div>';
+}
+// Saltar antes de o vídeo ter metadados é ignorado pelo navegador — no HLS isso
+// acontece o tempo todo, porque o manifesto ainda está carregando. Enfileira.
+function aulaSeek(v,t){
+  if(!v)return;
+  var ir=function(){try{v.currentTime=t;}catch(e){}};
+  if(v.readyState>=1)ir();else v.addEventListener('loadedmetadata',ir,{once:true});
+  try{var pr=v.play();if(pr&&pr.catch)pr.catch(function(){});}catch(e){}
+}
+function aulaCapAtivo(raiz,seg){
+  var btns=raiz.querySelectorAll('.aula-cap'),ativo=-1;
+  Array.prototype.forEach.call(btns,function(b,i){if((parseFloat(b.getAttribute('data-cap'))||0)<=seg+0.25)ativo=i;});
+  Array.prototype.forEach.call(btns,function(b,i){b.classList.toggle('on',i===ativo);});
+}
+function ligarAulaCaps(raiz){
+  if(!raiz)return;
+  var btns=raiz.querySelectorAll('.aula-cap');
+  if(!btns.length)return;
+  var v=raiz.querySelector('#aula-video');
+  Array.prototype.forEach.call(btns,function(b){
+    b.addEventListener('click',function(){
+      var t=parseFloat(b.getAttribute('data-cap'))||0;
+      aulaSeek(raiz.querySelector('#aula-video'),t);
+      aulaCapAtivo(raiz,t);
+    });
+  });
+  if(v)v.addEventListener('timeupdate',function(){aulaCapAtivo(raiz,v.currentTime);});
 }
 function toggleAulaDone(c){
   if(!DB.cursoProg||typeof DB.cursoProg!=='object')DB.cursoProg={};
@@ -9862,10 +9991,12 @@ function admRenderAulaPlayer(c){
     }
   }
   else if(admAulaTab==='quest')body='<div id="aula-quest-box"></div>';
-  else body='<div style="background:#000;border-radius:var(--r);overflow:hidden">'+playerEmbed(c)+'</div>'+(c.desc?'<div style="font-size:.78rem;color:var(--t2);line-height:1.6;margin-top:.6rem">'+esc(c.desc)+'</div>':'');
+  else body='<div style="background:#000;border-radius:var(--r);overflow:hidden">'+playerEmbed(c)+'</div>'+aulaCapsHTML(c)+(c.desc?'<div style="font-size:.78rem;color:var(--t2);line-height:1.6;margin-top:.6rem">'+esc(c.desc)+'</div>':'');
+  aulaSoltarHls();
   box.innerHTML='<div class="card">'+head+tabs+'<div id="adm-aula-tab-body">'+body+'</div></div>';
+  if(admAulaTab==='aula'){montarAulaHls(box);ligarAulaCaps(box);}
   box.querySelectorAll('[data-admaulatab]').forEach(function(b){b.addEventListener('click',function(){admAulaTab=b.getAttribute('data-admaulatab');admAulaResumoEditing=false;admRenderAulaPlayer(c);});});
-  var cl=document.getElementById('adm-curso-player-close');if(cl)cl.addEventListener('click',function(){box.style.display='none';box.innerHTML='';admAulaResumoEditing=false;});
+  var cl=document.getElementById('adm-curso-player-close');if(cl)cl.addEventListener('click',function(){aulaSoltarHls();box.style.display='none';box.innerHTML='';admAulaResumoEditing=false;});
   var eb=document.getElementById('adm-aula-edit');if(eb)eb.addEventListener('click',function(){admCursoEditIdx=admCursos.indexOf(c);admCursoSubtab='importar';renderAdmSec('cursos');});
   var re=document.getElementById('adm-aularesumo-edit');if(re)re.addEventListener('click',function(){admAulaResumoEditing=true;admRenderAulaPlayer(c);});
   var rs=document.getElementById('adm-aularesumo-save');if(rs)rs.addEventListener('click',function(){var ta=document.getElementById('adm-aularesumo-ta');if(ta)c.resumo=ta.value;admAulaResumoEditing=false;try{persistCursos();}catch(e){}admRenderAulaPlayer(c);try{renderCursosAluno();}catch(e){}notify('Resumo salvo. ✓','ok');});
@@ -16079,10 +16210,14 @@ function vimeoId(url){
 }
 function playerEmbed(c){
   if(!c)return '';
-  if(c.tipo==='file'||/^data:video\//.test(c.src||''))return '<video controls style="width:100%;max-height:62vh;display:block" src="'+esc(c.src||'')+'"></video>';
+  var estilo='width:100%;max-height:62vh;display:block';
+  if(c.tipo==='file'||/^data:video\//.test(c.src||''))return '<video id="aula-video" controls playsinline style="'+estilo+'" src="'+esc(c.src||'')+'"></video>';
   var y=ytId(c.src);if(y)return '<iframe title="'+esc(c.title||'Videoaula')+'" src="https://www.youtube.com/embed/'+y+'" style="width:100%;aspect-ratio:16/9;border:0;display:block" allowfullscreen></iframe>';
   var v=vimeoId(c.src);if(v)return '<iframe title="'+esc(c.title||'Videoaula')+'" src="https://player.vimeo.com/video/'+v+'" style="width:100%;aspect-ratio:16/9;border:0;display:block" allowfullscreen></iframe>';
-  return '<video controls style="width:100%;max-height:62vh;display:block" src="'+esc(c.src||'')+'"></video>';
+  // HLS do Bunny: o src fica em data-hls e quem monta é montarAulaHls(). Pôr o
+  // .m3u8 direto no src deixa a tela preta em tudo que não é Safari.
+  if(/\.m3u8(\?|$)/i.test(c.src||''))return '<video id="aula-video" controls playsinline preload="metadata" style="'+estilo+'" data-hls="'+esc(c.src)+'"></video>';
+  return '<video id="aula-video" controls playsinline style="'+estilo+'" src="'+esc(c.src||'')+'"></video>';
 }
 var admCursoFiltro='',admCursoVideoFile=null,admCursoVideoData=null,admCursoSubtab='ver',admCursoEditIdx=null,admCursoMod='',admCursoModAdd=false,admCursoAddMod='';
 // Agendamento da aula ao vivo. Fica no topo de Cursos porque é lá que a GRAVAÇÃO
@@ -16128,9 +16263,13 @@ function admCursosHTML(){
     +'<div class="g2" style="margin-bottom:.7rem"><div class="fld2" style="margin:0"><label>Título da aula</label><input type="text" id="adm-curso-title" value="'+(ed?esc(ed.title||''):'')+'" placeholder="Ex: Manejo da cetoacidose diabética"></div><div class="fld2" style="margin:0"><label>Curso (controla o acesso)</label><select id="adm-curso-curso">'+cursoSlugOptions(ed?(ed.curso||''):(admCursoFiltro||''),false)+'</select></div></div>'
     +'<div class="g2" style="margin-bottom:.7rem"><div class="fld2" style="margin:0"><label>Subespecialidade / módulo</label><input type="text" id="adm-curso-modulo" value="'+(ed?esc(ed.modulo||''):esc(admCursoAddMod||''))+'" placeholder="Ex: Diabetes, Tireoide…"></div><div class="fld2" style="margin:0"><label>Duração (opcional)</label><input type="text" id="adm-curso-dur" value="'+(ed?esc(ed.dur||''):'')+'" placeholder="Ex: 18 min"></div></div>'
     +'<div class="fld2"><label>Descrição</label><textarea id="adm-curso-desc" rows="2" placeholder="Breve descrição da aula…">'+(ed?esc(ed.desc||''):'')+'</textarea></div>'
-    +'<div class="fld2"><label>Vídeo (link YouTube / Vimeo)</label>'
-      +'<input type="text" id="adm-curso-link" value="'+(ed?esc(ed.src||''):'')+'" placeholder="Cole a URL do vídeo (YouTube ou Vimeo)">'
-      +'<div style="font-size:.66rem;color:var(--t3);margin-top:.3rem">Use links do YouTube ou Vimeo — o vídeo é reproduzido direto da fonte (sem ocupar armazenamento).</div>'
+    +'<div class="fld2"><label>Vídeo (link do Bunny, YouTube ou Vimeo)</label>'
+      +'<input type="text" id="adm-curso-link" value="'+(ed?esc(ed.src||''):'')+'" placeholder="Cole a URL do vídeo (.m3u8 do Bunny, YouTube ou Vimeo)">'
+      +'<div style="font-size:.66rem;color:var(--t3);margin-top:.3rem">O padrão da plataforma é o <b>.m3u8 do Bunny</b> (toca dentro da página, sem player de terceiro). YouTube e Vimeo também funcionam. Nada ocupa armazenamento aqui.</div>'
+    +'</div>'
+    +'<div class="fld2"><label>Capítulos (opcional — aparecem embaixo do vídeo)</label>'
+      +'<textarea id="adm-curso-caps" rows="6" placeholder="00:02:45 to 00:12:59 Importância do tema&#10;00:13:00 to 00:17:39 Conceitos fundamentais">'+(ed?esc(capsTexto(ed.caps)):'')+'</textarea>'
+      +'<div style="font-size:.66rem;color:var(--t3);margin-top:.3rem">Uma linha por capítulo. <b>Copie e cole da aba <i>Chapters</i> do Bunny</b> como está — o índice e o horário de fim são ignorados. Também aceita <code>02:45 Título</code>. O aluno clica e o vídeo salta para o minuto.</div>'
     +'</div>'
     +'<div class="g2" style="margin-bottom:.7rem"><div class="fld2" style="margin:0"><label>Tema da aula (p/ a trilha de questões — opcional)</label><input type="text" id="adm-curso-tema" value="'+(ed?esc(ed.tema||''):'')+'" placeholder="Ex: Cetoacidose, Hipotireoidismo…"></div><div class="fld2" style="margin:0"><label>PDF do resumo (link opcional)</label><input type="text" id="adm-curso-pdf" value="'+(ed?esc(ed.pdfUrl||''):'')+'" placeholder="URL de um PDF (opcional)"></div></div>'
     +'<div class="fld2"><label>Resumo da aula (o aluno lê e pode baixar em PDF)</label><textarea id="adm-curso-resumo" rows="5" placeholder="Resumo em tópicos da aula…">'+(ed?esc(ed.resumo||''):'')+'</textarea><div style="margin-top:.4rem"><button class="btn btn-outline btn-sm" id="btn-adm-curso-airesumo" type="button">✨ Gerar resumo com IA</button> <span style="font-size:.66rem;color:var(--t3)">A IA rascunha a partir do título/descrição/módulo — revise antes de salvar.</span></div></div>'
@@ -16445,9 +16584,9 @@ function bindAdmSec(sec){
       var title=(document.getElementById('adm-curso-title').value||'').trim();
       if(!title){notify('Informe o título da aula.','err');return;}
       var link=(document.getElementById('adm-curso-link').value||'').trim();
-      if(!link){notify('Cole a URL do vídeo (YouTube ou Vimeo).','err');return;}
+      if(!link){notify('Cole a URL do vídeo (.m3u8 do Bunny, YouTube ou Vimeo).','err');return;}
       var cursoSelEl=document.getElementById('adm-curso-curso');
-      var dados={title:title,curso:cursoSelEl?cursoSelEl.value:'',modulo:(document.getElementById('adm-curso-modulo').value||'').trim(),dur:(document.getElementById('adm-curso-dur').value||'').trim(),desc:(document.getElementById('adm-curso-desc').value||'').trim(),tema:((document.getElementById('adm-curso-tema')||{}).value||'').trim(),resumo:((document.getElementById('adm-curso-resumo')||{}).value||'').trim(),pdfUrl:((document.getElementById('adm-curso-pdf')||{}).value||'').trim(),tipo:'link',src:link};
+      var dados={title:title,curso:cursoSelEl?cursoSelEl.value:'',modulo:(document.getElementById('adm-curso-modulo').value||'').trim(),dur:(document.getElementById('adm-curso-dur').value||'').trim(),desc:(document.getElementById('adm-curso-desc').value||'').trim(),tema:((document.getElementById('adm-curso-tema')||{}).value||'').trim(),resumo:((document.getElementById('adm-curso-resumo')||{}).value||'').trim(),pdfUrl:((document.getElementById('adm-curso-pdf')||{}).value||'').trim(),caps:capsParse(((document.getElementById('adm-curso-caps')||{}).value||'')),tipo:'link',src:link};
       if(admCursoEditIdx!=null&&admCursos[admCursoEditIdx]){
         admCursos[admCursoEditIdx]=Object.assign({},admCursos[admCursoEditIdx],dados);
         admCursoEditIdx=null;
