@@ -348,6 +348,19 @@ try {
   fail('regressão da vitrine falhou:\n' + out);
 }
 
+// 17c-bis. A VIDEOAULA TOCA. 104 das 106 aulas são HLS (.m3u8 do Bunny) e o
+//      player mandava o .m3u8 direto para o `src` de um <video> — o que nenhum
+//      navegador além do Safari reproduz. Ficava preto, sem mensagem. A guarda
+//      exige o .m3u8 em `data-hls` com o hls.js montado nos dois players, e
+//      cobre os capítulos (formato do Bunny, ordem, escape, campo do admin).
+try {
+  execFileSync(process.execPath, [path.join('scripts', 'test-aula-capitulos.js')], { stdio: 'pipe' });
+  ok('videoaula: HLS montado nos dois players e capítulos clicáveis embaixo do vídeo');
+} catch (e) {
+  const out = (e.stdout ? e.stdout.toString() : '') + (e.stderr ? e.stderr.toString() : '');
+  fail('regressão da videoaula falhou:\n' + out);
+}
+
 // 17d. CADÊNCIA DO RADAR: o mural precisa de mais de uma varredura por dia. Com
 //      uma só (07:30 BRT), notícia publicada depois dela só aparece no dia
 //      seguinte — foi a queixa de 17/08/2026 (ANVISA aprovando canetas de
