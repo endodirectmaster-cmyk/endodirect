@@ -72,5 +72,31 @@ const render = corpo('renderCursosAluno');
     '🧨 o convite ao plano ficou em ' + (render.match(/cursoAmostraCTA\(cursoFilter\)/g) || []).length + ' dos 2 níveis — a isca do funil perde o pedido');
 }
 
+// ── 5. O cartão da aula não repete o que a tela já diz ───────────────────
+// Pedido do professor (02/09): tirar, de baixo do título da aula, o selo com o
+// nome do curso e o com a subespecialidade. O cartão só existe no nível 2 —
+// onde o botão de voltar JÁ nomeia o curso e o cabeçalho JÁ nomeia a
+// subespecialidade. Eram três vezes a mesma informação.
+{
+  const i = html.indexOf('  function lessonCard(c){');
+  const cartao = html.slice(i, html.indexOf('\n  }', i));
+  ok(i > 0 && cartao.length > 200, '⚠️ não consegui recortar `lessonCard` — as medidas abaixo mediriam o arquivo inteiro');
+  ok(!/cursoNomeBySlug\(c\.curso\)/.test(cartao),
+    '🧨 voltou o selo com o nome do curso embaixo do título da aula — a volta acima já nomeia o curso');
+  ok(!/esc\(c\.modulo\)/.test(cartao),
+    '🧨 voltou o selo da subespecialidade embaixo do título da aula — o cabeçalho acima já a nomeia');
+  // O que NÃO se repete em lugar nenhum fica: duração e amostra grátis.
+  ok(/esc\(c\.dur\)/.test(cartao),
+    '⚠️ a duração da aula saiu junto, e ela não está em nenhum outro lugar da tela');
+  ok(/Amostra grátis/.test(cartao),
+    '🧨 o selo de amostra grátis saiu junto: o não-assinante deixaria de saber por que aquela aula abre');
+  ok(/✓ concluída/.test(cartao), '⚠️ o selo de aula concluída saiu junto');
+
+  // O painel do professor é outra tela e não foi tocado.
+  const a2 = html.indexOf('function admLessonCard(c){');
+  ok(/cursoNomeBySlug\(c\.curso\)/.test(html.slice(a2, a2 + 2600)),
+    '⚠️ os selos sumiram também do cartão do PROFESSOR — ali eles não foram pedidos');
+}
+
 if (falhas.length) { console.error('✗ ' + falhas.length + ' falha(s):\n - ' + falhas.join('\n - ')); process.exit(1); }
 console.log('✓ navegação de cursos: nível 0 só a grade, nível 1 as subespecialidades do curso aberto, nível 2 as aulas — cada degrau com a sua volta');
