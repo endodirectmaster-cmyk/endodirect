@@ -1,9 +1,39 @@
 ---
 tags: [cofre, processo]
-atualizado: 2026-09-01
+atualizado: 2026-09-02
 ---
 
 # Convenções de Trabalho
+
+## 🧨 CÓDIGO ESCRITO NÃO É CÓDIGO ALCANÇÁVEL (2026-09-02)
+
+A tela de **Catálogo de cursos** do painel — nome, preço, pacote, ordem, o
+interruptor **Ativo** e a capa de cada curso — foi escrita inteira: render,
+salvamento, validador de URL, até uma guarda para o caso de a coluna `capa` não
+existir no banco. E **nunca teve um botão que a abrisse**:
+`admCursoSubtab==='catalogo'` era lido em dois lugares e escrito em nenhum.
+
+⚠️ **Não quebrava nada.** Nenhum erro, nenhum teste vermelho, nenhuma tela em
+branco — só uma parte do painel que ninguém alcança. Ficou assim desde que foi
+escrita, e só apareceu quando o professor precisou dela.
+
+🧨 **E eu mandei ele clicar lá.** Escrevi "Painel → Cursos → Catálogo" numa
+mensagem sem ter conferido o caminho. É a mesma regra de 31/08 — *instrução que
+cita um botão tem de citar um botão que existe* —, dessa vez quebrada por mim
+numa mensagem em vez de num FAQ. **A regra vale para o que eu digo, não só para
+o que eu escrevo na tela.**
+
+**Regras que ficam:**
+
+- **Antes de mandar o professor clicar em algo, procurar o controle no fonte.**
+  `grep` pelo rótulo ou pelo `data-`, não pela função que ele deveria abrir.
+- **Estado lido tem de ser estado escrito.** Guardado em
+  `scripts/test-telas-com-porta.js`, que varre todo `<var>Tab==='literal'` e
+  exige um caminho real até ele.
+- **Recorte de medida tem de parar onde a coisa acaba.** Duas mutações passaram
+  cegas nesta guarda antes de a medida ser apertada: uma porque a fatia da barra
+  de abas ia longe demais, outra porque a busca do valor varria o arquivo
+  inteiro em vez da função que monta os botões.
 
 ## 🧨 BIBLIOTECA CARREGADA NÃO É BIBLIOTECA LIGADA (2026-09-01)
 

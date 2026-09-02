@@ -16313,9 +16313,10 @@ function admCursosHTML(){
   +'<div class="pill-tab-row">'
     +'<button class="pill-tab'+(admCursoSubtab==='ver'?' on':'')+'" data-csub="ver">📺 Ver cursos</button>'
     +'<button class="pill-tab'+(admCursoSubtab==='importar'?' on':'')+'" data-csub="importar">⬆️ Importar videoaula</button>'
+    +'<button class="pill-tab'+(admCursoSubtab==='catalogo'?' on':'')+'" data-csub="catalogo">🗂️ Catálogo</button>'
   +'</div>'
   +(admCursoSubtab==='catalogo'?admCatalogoHTML():(admCursoSubtab==='importar'?formHTML:verHTML))
-  +'<div style="font-size:.7rem;color:var(--t3);margin-top:.7rem">ℹ️ As videoaulas são adicionadas por link (YouTube ou Vimeo) e reproduzidas diretamente da fonte — sem ocupar armazenamento.</div>'
+  +'<div style="font-size:.7rem;color:var(--t3);margin-top:.7rem">ℹ️ As videoaulas entram por link (o padrão é o <b>.m3u8 do Bunny</b>; YouTube e Vimeo também) e tocam direto da fonte — sem ocupar armazenamento. Em <b>Catálogo</b> ficam nome, capa, pacote e o interruptor <b>Ativo</b> de cada curso.</div>'
   +'</div>';
 }
 
