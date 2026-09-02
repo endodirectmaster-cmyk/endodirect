@@ -2229,9 +2229,6 @@ input.dmm-inp-subsub{flex:1;min-width:0;background:transparent;color:var(--t2);f
         <button class="sb-item" data-p="favs">⭐ Favoritos</button>
         <button class="sb-item" data-p="podcast">🎧 Podcasts</button>
         <button class="sb-item" data-p="cursos">🎬 Cursos</button>
-        <!-- Só aparece quando o curso está LIGADO no catálogo (ver emcAplicarNav),
-             como o `sb-aovivo`. Estreia 02/09; até lá o professor mantém desligado. -->
-        <button class="sb-item" data-p="emc" id="sb-emc" style="display:none">🎓 Educação Médica Continuada</button>
         <button class="sb-item" data-p="crono">📅 Cronograma</button>
         <button class="sb-item" data-p="sr">🔁 Revisão</button>
         <button class="sb-item" data-p="erros">📕 Caderno de erros</button>
@@ -7198,7 +7195,7 @@ function startGoogleOAuth(){
   });
 }
 
-var PANEL_LABELS={dash:'Dashboard',desemp:'Desempenho',plano:'Plano de estudo',quest:'Banco de questões',qotd:'Questão do Dia',flash:'Flashcards',mmap:'Mapas Mentais',podcast:'Podcasts',cursos:'Cursos',emc:'Educação Médica Continuada',crono:'Cronograma',sr:'Revisão',erros:'Caderno de erros',sim:'OSCE',simfull:'Simulado',calc:'Calculadoras',rx:'Prescrição Simulada',presc:'Consultório',art:'Resumidor',notas:'Caderno',favs:'Favoritos',mural:'Mural de artigos',aovivo:'Aula ao vivo',ref:'Diretrizes',resu:'Resumos',chat:'Chat IA',perfil:'Perfil',support:'Suporte',adm:'Painel Admin'};
+var PANEL_LABELS={dash:'Dashboard',desemp:'Desempenho',plano:'Plano de estudo',quest:'Banco de questões',qotd:'Questão do Dia',flash:'Flashcards',mmap:'Mapas Mentais',podcast:'Podcasts',cursos:'Cursos',crono:'Cronograma',sr:'Revisão',erros:'Caderno de erros',sim:'OSCE',simfull:'Simulado',calc:'Calculadoras',rx:'Prescrição Simulada',presc:'Consultório',art:'Resumidor',notas:'Caderno',favs:'Favoritos',mural:'Mural de artigos',aovivo:'Aula ao vivo',ref:'Diretrizes',resu:'Resumos',chat:'Chat IA',perfil:'Perfil',support:'Suporte',adm:'Painel Admin'};
 function closeMobileNav(){
   document.body.classList.remove('mobile-nav-open');
   var b=document.getElementById('btn-mobile-nav');
@@ -7329,19 +7326,21 @@ function consumeTrial(id){
 function canSeePanel(id){
   if(isAdminUser())return true;
   if(id==='presc'&&!prescAllowed())return false;
-  // ⚠️ EDUCAÇÃO MÉDICA CONTINUADA É PORTA DE ENTRADA, e por isso o PAINEL é aberto
-  // a todo mundo — inclusive à degustação já vencida, exatamente como o `aovivo`
-  // (decisão do professor em 06/08: "aberta para quem entrar na plataforma").
+  // ⚠️ CURSOS É PORTA DE ENTRADA, e por isso o PAINEL é aberto a todo mundo —
+  // inclusive à degustação já vencida, exatamente como o `aovivo` (decisão do
+  // professor em 06/08: "aberta para quem entrar na plataforma").
   //
-  // O pedido de 24/08 foi: aula mensal só para o Gold, MAS a primeira liberada a
-  // quem se cadastrar, para converter. Se o painel fosse gateado, o não-assinante
-  // nem chegaria à aula grátis e o funil morreria antes de começar — `cursos` não
-  // está em DEGUSTACAO_PANELS, então era exatamente isso que aconteceria.
+  // 02/09/2026: o item "Educação Médica Continuada" saiu do menu, a pedido do
+  // professor — ele e "Cursos" levavam à mesma tela. Esse item era, porém, a
+  // ÚNICA porta da degustação para a aula-amostra, porque `cursos` não está em
+  // DEGUSTACAO_PANELS. Tirar o item sem abrir `cursos` deixaria a isca do funil
+  // inalcançável justamente para quem ela existe. O acesso continua o mesmo de
+  // antes; o que sumiu foi o caminho duplicado.
   //
   // ⚠️ ABRIR O PAINEL NÃO ABRE O CONTEÚDO: cada aula continua passando por
   // `aulaLiberada()`, que só entrega a marcada como amostra (`free`) a quem não
-  // tem o curso. O não-assinante vê a aula 1 e mais nada.
-  if(id==='emc')return true;
+  // tem o curso. O não-assinante vê a aula-amostra e mais nada.
+  if(id==='cursos')return true;
   if(isDegustacao()){
     // Após os 7 dias, a degustação encerra: nenhuma funcionalidade (só conta/suporte → upsell).
     // ⚠️ `aovivo` sobrevive ao fim da degustação DE PROPÓSITO: a aula ao vivo é a
@@ -7537,7 +7536,6 @@ function updatePlanBadge(){
 function markLockedNavItems(){
   try{updatePlanBadge();}catch(e){}
   var sp=document.getElementById('sb-presc');if(sp)sp.style.display=prescAllowed()?'':'none';
-  try{emcAplicarNav();}catch(e){}
   document.querySelectorAll('#sb-aluno .sb-item[data-p]').forEach(function(b){
     var locked=!canSeePanel(b.dataset.p);
     var has=b.querySelector('.sb-lock');
@@ -7748,7 +7746,6 @@ function goPanel(id){
   // duplicaria player, progresso e a regra de amostra grátis — três lugares para
   // divergir. `menuAlvo` guarda o item que fica aceso e o que volta no reload.
   var menuAlvo=id;
-  if(id==='emc'){cursoFilter='emc';cursoMod='';id='cursos';}
   try{deviceTickThrottled();}catch(e){} // valida o limite de dispositivos a cada navegação (throttle 4s)
   try{if(currentUser&&currentUser.role!=='admin')lsSet('last_panel',menuAlvo);}catch(e){} // lembra o item do MENU p/ restaurar no reload
   document.querySelectorAll('.panel').forEach(function(p){p.classList.remove('on');});
@@ -9498,13 +9495,6 @@ function cursoAtivo(slug){
 // ainda não carregado (rede lenta, primeira pintura), `cursoAtivo` devolveria
 // `true` e o item apareceria ANTES da estreia, levando a uma tela vazia. Item de
 // menu que não leva a lugar nenhum é pior do que item ausente.
-function emcAplicarNav(){
-  var b=document.getElementById('sb-emc');if(!b)return;
-  if(isAdminUser()){b.style.display='';return;}
-  var cat=Array.isArray(catalogoCursos)?catalogoCursos:[],linha=null;
-  for(var i=0;i<cat.length;i++)if(cat[i]&&cat[i].slug==='emc'){linha=cat[i];break;}
-  b.style.display=(linha&&linha.ativo!==false)?'':'none';
-}
 function cursoVisivel(slug){
   if(!slug)return true;
   if(isAdminUser()||isTestShowcase())return true;
@@ -16221,7 +16211,6 @@ function loadCursoCatalogo(cb){
   if(!client){if(cb)cb();return;}
   client.from('endodirect_cursos').select('*').order('ordem',{ascending:true}).then(function(res){
     if(!res.error&&Array.isArray(res.data))catalogoCursos=res.data;
-    try{emcAplicarNav();}catch(e){}
     if(cb)cb();
   },function(){if(cb)cb();});
 }
