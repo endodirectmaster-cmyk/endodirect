@@ -129,18 +129,22 @@ for (const [nome, mut] of MUTANTES) {
   if (!pegou) falhas.push('mutação NÃO detectada: ' + nome);
 }
 
-// ── O ITEM DE MENU e o PORTÃO DO PAINEL ─────────────────────────────────────
-// ⚠️ AQUI O FUNIL VIVE OU MORRE. O painel `cursos` NÃO está em
-// DEGUSTACAO_PANELS: se a Educação Médica Continuada dependesse dele, quem está
-// na degustação nem abriria a tela — e a "primeira aula grátis para quem se
-// cadastrar" não seria alcançável por ninguém que não assina.
+// ── O PORTÃO DO PAINEL ──────────────────────────────────────────────────────
+// ⚠️ AQUI O FUNIL VIVE OU MORRE. A "primeira aula grátis para quem se cadastrar"
+// só converte se quem NÃO assina conseguir abrir a tela onde ela está.
+//
+// 🧨 RETARGETADO EM 02/09/2026. Este bloco media o item de menu "Educação
+// Médica Continuada" (`sb-emc`, `emcAplicarNav`) e o desvio `goPanel('emc')`.
+// O professor mandou tirar o item: ele e "Cursos" levavam à MESMA tela, e o
+// menu mostrava os dois. Só que aquele item era a ÚNICA porta da degustação
+// para a aula-amostra, porque `cursos` não está em DEGUSTACAO_PANELS. A porta
+// passou para o próprio painel `cursos`; o teste passou a medir a porta nova,
+// não a antiga — e a exigir que a antiga não deixe restos.
 {
   const src = html;
-  ok(/data-p="emc"[^>]*id="sb-emc"/.test(src) || /id="sb-emc"[^>]*data-p="emc"/.test(src),
-    'sumiu o item de menu da Educação Médica Continuada');
-  ok(/emc:'Educação Médica Continuada'/.test(src), 'o painel emc ficou sem rótulo (o breadcrumb mostraria "emc")');
 
-  // canSeePanel('emc') tem de ser TRUE mesmo na degustação vencida.
+  // A porta: `cursos` aberto a todo mundo, inclusive à degustação VENCIDA
+  // (mesma regra do `aovivo`), porque é por ela que se chega à aula-amostra.
   const ctx = vm.createContext({});
   vm.runInContext(
     'function isAdminUser(){return false;}function prescAllowed(){return false;}\n'
@@ -148,33 +152,31 @@ for (const [nome, mut] of MUTANTES) {
     + 'function muralTrialActive(){return false;}\n'
     + 'var DEGUSTACAO_PANELS={};var TRIAL_PANELS={};function trialLeft(){return 0;}\n'
     + corpo('canSeePanel'), ctx);
-  ok(ctx.canSeePanel('emc') === true,
-    '⚠️ o painel da EMC fechou para a degustação — o não-assinante não chega à aula grátis e o funil morre');
-  ok(ctx.canSeePanel('cursos') === false,
-    'o painel Cursos comum deveria seguir fechado na degustação vencida (só a EMC é porta de entrada)');
+  ok(ctx.canSeePanel('cursos') === true,
+    '🧨 o painel Cursos fechou para a degustação — sem o item de menu da EMC, que foi removido, o não-assinante não chega à aula-amostra e o funil morre');
+  ok(ctx.canSeePanel('resu') === false,
+    '⚠️ a abertura do painel Cursos vazou para outros painéis: a degustação vencida não deve ver Resumos');
 
-  // O item do menu: só aparece com a linha NO catálogo e LIGADA.
-  function navVisivel(catalogo, admin) {
-    const c2 = vm.createContext({});
-    vm.runInContext(
-      'var catalogoCursos=' + JSON.stringify(catalogo) + ';\n'
-      + 'function isAdminUser(){return ' + (admin ? 'true' : 'false') + ';}\n'
-      + 'var _display=null;\n'
-      + 'var document={getElementById:function(){return {style:{set display(v){_display=v;},get display(){return _display;}}};}};\n'
-      + corpo('emcAplicarNav') + '\nemcAplicarNav();', c2);
-    return c2._display === '';
-  }
-  ok(navVisivel([{ slug: 'emc', ativo: true }]) === true, 'curso ligado e o item do menu não apareceu');
-  ok(navVisivel([{ slug: 'emc', ativo: false }]) === false, 'curso DESLIGADO e o item do menu apareceu — estreia vazada');
-  ok(navVisivel([]) === false,
-    '⚠️ catálogo ainda não carregado e o item apareceu — levaria a uma tela vazia antes da estreia');
-  ok(navVisivel([], true) === true, 'o professor (admin) precisa ver o item para preparar a estreia');
+  // ⚠️ ABRIR O PAINEL NÃO ABRE O CONTEÚDO — quem garante isso é `aulaLiberada`,
+  // medido acima. Aqui só se confere que a porta existe.
 
-  // goPanel: `emc` reaproveita o painel de Cursos, já filtrado.
+  // A porta antiga não pode deixar restos: item de menu, função que o mostrava,
+  // desvio de painel e rótulo. Estado lido sem quem o escreva é tela sem porta.
+  ok(src.indexOf('sb-emc') < 0,
+    '🧨 voltou o item de menu `sb-emc` — ele e "Cursos" levam à mesma tela, e foi por isso que o professor mandou tirar');
+  ok(src.indexOf('emcAplicarNav') < 0,
+    '🧨 sobrou `emcAplicarNav` no arquivo: função que mostra um botão que não existe mais');
+  ok(!/id===.emc./.test(src),
+    '🧨 sobrou um caminho de painel `emc` que nenhum controle aciona — é a tela sem porta que a guarda de 02/09 existe para impedir');
+  ok(!/emc:'Educação Médica Continuada'/.test(src.slice(src.indexOf('var PANEL_LABELS='), src.indexOf('var PANEL_LABELS=') + 900)),
+    '⚠️ sobrou o rótulo do painel `emc` em PANEL_LABELS, para um painel que não existe');
+  // O nome do CURSO continua necessário — é outro mapa, e a EMC segue no catálogo.
+  ok(/emc:'Educação Médica Continuada'/.test(src),
+    '⚠️ o nome de reserva do curso `emc` sumiu junto: sem ele o card mostraria o slug cru');
+
+  // goPanel continua marcando o item certo do menu.
   const gp = src.slice(src.indexOf('function goPanel(id){'), src.indexOf('function goPanel(id){') + 1400);
-  ok(/if\(id==='emc'\)\{cursoFilter='emc';/.test(gp),
-    'goPanel deixou de filtrar o curso ao abrir a EMC — abriria o catálogo inteiro');
-  ok(/menuAlvo/.test(gp), 'goPanel perdeu o `menuAlvo`: o item aceso e o `last_panel` voltariam a ser o de Cursos');
+  ok(/menuAlvo/.test(gp), 'goPanel perdeu o `menuAlvo`: o item aceso e o `last_panel` sairiam errados');
 }
 
 if (falhas.length) { console.error('✗ ' + falhas.length + ' falha(s):\n - ' + falhas.join('\n - ')); process.exit(1); }
