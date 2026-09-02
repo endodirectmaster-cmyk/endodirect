@@ -8,6 +8,9 @@ atualizado: 2026-09-02
 Log de decisões de produto e técnicas (mais recentes no topo).
 
 ## 2026-09
+- **💸 PREÇO AVULSO SAI DO FORMULÁRIO DO CATÁLOGO (2026-09-02).** Pedido do professor: *"pode tirar a opção de preço avulso"*. Nenhum curso é vendido à parte hoje — todos estão em R$ 0,00 — e o campo só ocupava espaço ao lado do que decide de verdade, que é o **pacote (tier)**.
+  - ⚠️ **O preço saiu da TELA, não do BANCO.** `preco_avulso_cents` continua na linha, e o salvamento passa a devolver o valor guardado (`catalogoPrecoGuardado`). Mandar `0` daqui apagaria em silêncio o preço de um curso que viesse a ter um — o upsert grava a linha inteira.
+  - O texto de abertura dizia *"Nenhum = vendido só à parte (ex.: EndoTEEM)"*. Sem campo de preço isso deixaria de fazer sentido; passou a dizer o que **de fato** acontece: `tier` vazio significa que o curso **não entra em plano nenhum** e só abre para quem recebeu o acesso avulso (`curso:<slug>`).
 - **🧨 A TELA DE CATÁLOGO DE CURSOS NUNCA TEVE PORTA (2026-09-02).** O professor respondeu *"continua sem aparecer a imagem e não está aparecendo a opção de enviar imagem"*. Não estava mesmo: `admCursoSubtab==='catalogo'` era **lido** em dois pontos e **nunca escrito em lugar nenhum**. Não havia botão, link ou atalho. O histórico confirma — `data-csub="catalogo"` **nunca existiu** no repositório.
   - O que estava inalcançável: **nome, preço, pacote (tier), ordem, o interruptor Ativo e a capa** de todos os cursos. A tela inteira existia — render, salvamento, `capaUrlOk` — sem porta.
   - ⚠️ **E eu mandei o professor clicar lá.** Na mensagem anterior escrevi "Painel → Cursos → Catálogo" e "marque Ativo ali mesmo" sem ter conferido que o caminho existia. Instrução que cita um controle tem de citar um controle que existe — a mesma regra de 31/08, agora violada por mim numa mensagem em vez de num FAQ.

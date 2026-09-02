@@ -16128,6 +16128,15 @@ function cursoModList(curso){
 // ainda não a tem, o SELECT não a devolve — e mandá-la no upsert derrubaria o
 // salvamento INTEIRO do catálogo, não só a capa. Então a pergunta é feita ao
 // próprio dado carregado, e o campo só aparece/viaja quando existe de verdade.
+// O preço avulso saiu do formulário (pedido do professor, 02/09): nenhum curso
+// é vendido à parte hoje. Ele continua NO BANCO — o salvamento devolve o que já
+// estava lá. Mandar 0 daqui apagaria em silêncio o preço de um curso que
+// viesse a ter um, e o upsert grava a linha inteira.
+function catalogoPrecoGuardado(slug){
+  var cat=Array.isArray(catalogoCursos)?catalogoCursos:[];
+  for(var i=0;i<cat.length;i++)if(cat[i]&&cat[i].slug===slug)return Math.max(0,parseInt(cat[i].preco_avulso_cents,10)||0);
+  return 0;
+}
 function catalogoTemCapa(){
   var cat=Array.isArray(catalogoCursos)?catalogoCursos:[];
   for(var i=0;i<cat.length;i++){if(cat[i]&&Object.prototype.hasOwnProperty.call(cat[i],'capa'))return true;}
@@ -16175,12 +16184,11 @@ function saveCursoCatalogo(rows){
 }
 function admCatalogoHTML(){
   var cat=Array.isArray(catalogoCursos)?catalogoCursos:[];
-  var intro='<div style="font-size:.78rem;color:var(--t2);line-height:1.6;margin-bottom:.9rem">Defina nome, preço avulso e o <b>pacote</b> de cada curso. O pacote controla em qual nível (Standard / Gold) o curso é liberado. <b>Nenhum</b> = vendido só à parte (ex.: EndoTEEM).</div>';
+  var intro='<div style="font-size:.78rem;color:var(--t2);line-height:1.6;margin-bottom:.9rem">Defina nome, capa e o <b>pacote</b> de cada curso. O pacote controla em qual nível (Standard / Gold) o curso é liberado. <b>Nenhum</b> = não entra em plano nenhum: só quem receber o curso avulsamente abre.</div>';
   if(!cat.length)return intro+'<div class="card"><div class="empty">Carregando catálogo…</div></div>';
   function tierOpt(sel){var o=[['','Nenhum (à parte)'],['standard','Standard'],['gold','Gold']];return o.map(function(p){return '<option value="'+p[0]+'"'+((sel||'')===p[0]?' selected':'')+'>'+p[1]+'</option>';}).join('');}
   var podeCapa=catalogoTemCapa();
   return intro+cat.map(function(c){
-    var reais=((c.preco_avulso_cents||0)/100).toFixed(2);
     var nm=c.nome||cursoNomeBySlug(c.slug);
     return '<div class="card" style="margin-bottom:.9rem" data-cat-slug="'+esc(c.slug)+'">'
       +'<div style="display:flex;gap:.9rem;align-items:flex-start;margin-bottom:.6rem">'
@@ -16196,7 +16204,7 @@ function admCatalogoHTML(){
             +'<div style="font-size:.64rem;color:var(--t3);margin-top:.35rem">Envie a imagem daqui (fica no Storage e o link entra sozinho no campo) ou cole um link. Em branco, usa o quadro da 1ª aula do curso; sem aula, o desenho gerado do nome. Aceita <code>https://…</code> ou um caminho do próprio site (<code>/img/cursos/…</code>).</div></div>')
           :'<div style="font-size:.7rem;color:var(--t2);line-height:1.5">A capa é desenhada a partir do nome do curso. Para trocar por uma imagem própria, rode a coluna <code>capa</code> do <code>supabase-setup.sql</code>.</div>')
       +'</div></div>'
-      +'<div class="g2" style="margin-bottom:.6rem"><div class="fld2" style="margin:0"><label>Nome</label><input type="text" class="cat-nome" value="'+esc(c.nome||'')+'"></div><div class="fld2" style="margin:0"><label>Preço avulso (R$)</label><input type="number" min="0" step="0.01" class="cat-preco" value="'+reais+'"></div></div>'
+      +'<div class="fld2" style="margin-bottom:.6rem"><label>Nome</label><input type="text" class="cat-nome" value="'+esc(c.nome||'')+'"></div>'
       +'<div class="fld2"><label>Descrição</label><textarea rows="2" class="cat-desc">'+esc(c.descricao||'')+'</textarea></div>'
       +'<div class="g2" style="margin:.2rem 0"><div class="fld2" style="margin:0"><label>Pacote (tier)</label><select class="cat-tier">'+tierOpt(c.tier)+'</select></div><div class="fld2" style="margin:0"><label>Ordem</label><input type="number" class="cat-ordem" value="'+(c.ordem||0)+'"></div></div>'
       +'<div style="margin-top:.3rem"><label style="display:flex;align-items:center;gap:.4rem;font-size:.8rem;cursor:pointer;text-transform:none;letter-spacing:0;font-weight:400"><input type="checkbox" class="cat-ativo" '+(c.ativo!==false?'checked':'')+' style="width:auto"> Ativo</label></div>'
@@ -16599,7 +16607,7 @@ function bindAdmSec(sec){
       if(bCatSave)bCatSave.addEventListener('click',function(){
         var rows=[];
         main.querySelectorAll('[data-cat-slug]').forEach(function(card){
-          var row={slug:card.dataset.catSlug,nome:(card.querySelector('.cat-nome').value||'').trim(),descricao:(card.querySelector('.cat-desc').value||'').trim(),preco_avulso_cents:Math.round((parseFloat(card.querySelector('.cat-preco').value)||0)*100),tier:(card.querySelector('.cat-tier').value||null),ativo:card.querySelector('.cat-ativo').checked,ordem:parseInt(card.querySelector('.cat-ordem').value,10)||0};
+          var row={slug:card.dataset.catSlug,nome:(card.querySelector('.cat-nome').value||'').trim(),descricao:(card.querySelector('.cat-desc').value||'').trim(),preco_avulso_cents:catalogoPrecoGuardado(card.dataset.catSlug),tier:(card.querySelector('.cat-tier').value||null),ativo:card.querySelector('.cat-ativo').checked,ordem:parseInt(card.querySelector('.cat-ordem').value,10)||0};
           // `capa` só viaja se a coluna existir (ver catalogoTemCapa): mandar uma
           // coluna inexistente faz o upsert INTEIRO falhar, levando junto nome,
           // preço e pacote de todos os cursos.
