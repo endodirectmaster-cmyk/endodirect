@@ -435,6 +435,12 @@ textarea{resize:vertical;line-height:1.6}
 .rsm li:before{content:"•";position:absolute;left:.2rem;top:-.02rem;color:var(--blue2);font-weight:800}
 .rsm li b,.rsm li strong{color:var(--tx)}
 .rsm p{margin:.3rem 0 .55rem;color:var(--t2)}
+/* Convite ao plano, embaixo das aulas de um curso que o aluno só prova. */
+.amostra-cta{border:1px solid var(--gold);background:linear-gradient(180deg,var(--gold-l),transparent)}
+.amostra-cta .ac-selo{font-size:.66rem;font-weight:800;letter-spacing:.1em;text-transform:uppercase;color:var(--gold);margin-bottom:.35rem}
+.amostra-cta .ac-tit{font-size:.95rem;font-weight:700;color:var(--tx);line-height:1.35;margin-bottom:.4rem}
+.amostra-cta .ac-desc{font-size:.78rem;color:var(--t2);line-height:1.6;margin:0 0 .7rem}
+.amostra-cta .ac-desc b{color:var(--tx)}
 /* Capitulos da videoaula: a aula em cima, os capitulos logo abaixo. Cada linha
    e um botao (clicar salta o video para o minuto) e o capitulo em curso fica
    marcado enquanto o video anda. */
@@ -9537,6 +9543,38 @@ function cursoAcessivel(slug){
 function aulaLiberada(c){return !!(c&&(cursoAcessivel(c.curso)||c.free));}
 // Curso alcançável só por amostra grátis (professor liberou ≥1 aula, mas o curso não é acessível).
 function cursoTemLiberada(slug){return (Array.isArray(admCursos)?admCursos:[]).some(function(c){return c&&c.curso===slug&&aulaLiberada(c);});}
+// ── A AMOSTRA PRECISA FAZER O PEDIDO ────────────────────────────────────────
+// 🧨 O funil da Educação Médica Continuada tinha isca e não tinha anzol. O card
+// dizia "🎁 amostra grátis", o aluno abria, assistia a aula liberada — e a
+// lista de aulas FILTRA por `aulaLiberada`, então o que ele não pode ver
+// simplesmente não existe na tela. Nenhuma frase dizendo que o programa
+// continua, nenhum botão para assinar. O professor: "a ideia é utilizar essa
+// aula para conversão de mais alunos para o plano gold".
+// Genérico de propósito: o posto sai do `tier` do catálogo e o texto sai da
+// `descricao` que o professor escreve — o cofre registra em 24/08 que prender
+// um slug no código faz todo curso novo depender de mexer no index.html.
+var TIER_NOME={standard:'Standard',gold:'Gold',premium:'Premium'};
+function cursoDescricao(slug){
+  var cat=Array.isArray(catalogoCursos)?catalogoCursos:[];
+  for(var i=0;i<cat.length;i++)if(cat[i]&&cat[i].slug===slug)return String(cat[i].descricao||'').trim();
+  return '';
+}
+function cursoAmostraCTA(slug){
+  if(!slug||cursoAcessivel(slug))return '';        // quem já tem o curso não é convidado a comprá-lo
+  if(!cursoTemLiberada(slug))return '';            // sem amostra não há o que ancorar
+  var tier=TIER_NOME[cursoTier(slug)];
+  if(!tier)return '';                              // curso fora dos planos: não prometer plano nenhum
+  var todas=(Array.isArray(admCursos)?admCursos:[]).filter(function(c){return c&&c.curso===slug;});
+  var presas=todas.filter(function(c){return !aulaLiberada(c);}).length;
+  var desc=cursoDescricao(slug);
+  return '<div class="card amostra-cta" style="grid-column:1/-1">'
+    +'<div class="ac-selo">🎁 Amostra grátis</div>'
+    +'<div class="ac-tit">'+esc(cursoNomeBySlug(slug))+' faz parte do plano '+esc(tier)+'</div>'
+    +(desc?'<p class="ac-desc">'+esc(desc)+'</p>':'')
+    +(presas?'<p class="ac-desc"><b>'+presas+' aula'+(presas===1?'':'s')+'</b> deste programa '+(presas===1?'está':'estão')+' esperando no plano '+esc(tier)+'.</p>':'')
+    +'<button type="button" class="btn btn-primary btn-sm" data-curso-upsell="1">Ver o plano '+esc(tier)+'</button>'
+    +'</div>';
+}
 // ── CAPA DO CURSO ───────────────────────────────────────────────────────────
 // Todo curso mostrava o mesmo 🎓 — cards idênticos, sem hierarquia visual e sem
 // dizer nada sobre o conteúdo. Duas escolhas deliberadas:
@@ -9692,14 +9730,16 @@ function renderCursosAluno(){
   if(!cursoMod){
     var seen={};scope.forEach(function(c){var m=(c.modulo||'Geral').trim()||'Geral';seen[m]=(seen[m]||0)+1;});
     var mods=Object.keys(seen).sort(function(a,b){return a.localeCompare(b,'pt-BR');});
-    el.innerHTML=mods.map(function(m){return '<button class="dir-sub-btn" data-cursomod="'+esc(m)+'"><div class="dsb-ico">'+dirSubIcon(m)+'</div><h3>'+esc(m)+'</h3><div class="dsb-cnt">'+seen[m]+' aula'+(seen[m]===1?'':'s')+'</div></button>';}).join('');
+    el.innerHTML=mods.map(function(m){return '<button class="dir-sub-btn" data-cursomod="'+esc(m)+'"><div class="dsb-ico">'+dirSubIcon(m)+'</div><h3>'+esc(m)+'</h3><div class="dsb-cnt">'+seen[m]+' aula'+(seen[m]===1?'':'s')+'</div></button>';}).join('')
+      +cursoAmostraCTA(cursoFilter);
     return;
   }
   // Nível 2 — aulas da subespecialidade escolhida.
   var lessons=scope.filter(function(c){return (c.modulo||'Geral').trim()===cursoMod;});
   el.innerHTML='<button class="dir-back" data-cursoback style="grid-column:1/-1;margin-bottom:.4rem">← Subespecialidades</button>'
     +'<div class="ph" style="grid-column:1/-1;margin-top:0"><h1 style="font-size:1.05rem">'+dirSubIcon(cursoMod)+' '+esc(cursoMod)+'</h1></div>'
-    +(lessons.length?lessons.map(lessonCard).join(''):'<div class="empty" style="grid-column:1/-1">Nenhuma aula nesta subespecialidade.</div>');
+    +(lessons.length?lessons.map(lessonCard).join(''):'<div class="empty" style="grid-column:1/-1">Nenhuma aula nesta subespecialidade.</div>')
+    +cursoAmostraCTA(cursoFilter);
 }
 var curAulaIdx=null,curAulaTab='aula',aulaQ=[],aulaQAns={};
 function aulaKey(c){return String((c&&c.id)||(((c&&c.curso)||'')+'|'+((c&&c.modulo)||'')+'|'+((c&&c.title)||'')));}
