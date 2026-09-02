@@ -373,6 +373,19 @@ try {
   fail('regressão da capa do curso falhou:\n' + out);
 }
 
+// 17c-quater. TODA TELA TEM PORTA. `admCursoSubtab==='catalogo'` era LIDO em
+//      dois pontos e NUNCA escrito: a tela de Catálogo de cursos (nome, preço,
+//      pacote, ordem, o interruptor Ativo e a capa) nunca teve botão que a
+//      abrisse. Não quebrava nada — só era inalcançável. A varredura exige que
+//      todo valor de aba lido possa ser escrito por um controle real.
+try {
+  execFileSync(process.execPath, [path.join('scripts', 'test-telas-com-porta.js')], { stdio: 'pipe' });
+  ok('telas com porta: todo estado de aba lido é alcançável por um controle');
+} catch (e) {
+  const out = (e.stdout ? e.stdout.toString() : '') + (e.stderr ? e.stderr.toString() : '');
+  fail('regressão de tela sem porta falhou:\n' + out);
+}
+
 // 17d. CADÊNCIA DO RADAR: o mural precisa de mais de uma varredura por dia. Com
 //      uma só (07:30 BRT), notícia publicada depois dela só aparece no dia
 //      seguinte — foi a queixa de 17/08/2026 (ANVISA aprovando canetas de

@@ -1,6 +1,6 @@
 ---
 tags: [cofre, decisoes]
-atualizado: 2026-09-01
+atualizado: 2026-09-02
 ---
 
 # Decisões
@@ -8,6 +8,10 @@ atualizado: 2026-09-01
 Log de decisões de produto e técnicas (mais recentes no topo).
 
 ## 2026-09
+- **🧨 A TELA DE CATÁLOGO DE CURSOS NUNCA TEVE PORTA (2026-09-02).** O professor respondeu *"continua sem aparecer a imagem e não está aparecendo a opção de enviar imagem"*. Não estava mesmo: `admCursoSubtab==='catalogo'` era **lido** em dois pontos e **nunca escrito em lugar nenhum**. Não havia botão, link ou atalho. O histórico confirma — `data-csub="catalogo"` **nunca existiu** no repositório.
+  - O que estava inalcançável: **nome, preço, pacote (tier), ordem, o interruptor Ativo e a capa** de todos os cursos. A tela inteira existia — render, salvamento, `capaUrlOk` — sem porta.
+  - ⚠️ **E eu mandei o professor clicar lá.** Na mensagem anterior escrevi "Painel → Cursos → Catálogo" e "marque Ativo ali mesmo" sem ter conferido que o caminho existia. Instrução que cita um controle tem de citar um controle que existe — a mesma regra de 31/08, agora violada por mim numa mensagem em vez de num FAQ.
+  - Guarda em `scripts/test-telas-com-porta.js`: varre todo `<var>Tab==='literal'` e exige que o valor possa ser ESCRITO — por atribuição direta, por `data-…` literal no markup, ou por lista de botões montada por concatenação **na mesma função** que monta a barra. Medir a concatenação no arquivo inteiro deixava a lista do player do admin fazer as abas do player do aluno parecerem alcançáveis.
 - **🖼️ CAPA DO CURSO ENVIADA PELO PRÓPRIO PAINEL (2026-09-01).** O professor mandou a arte da capa do Programa de EMC e pediu para colocá-la no curso. O campo `capa` do catálogo só aceitava **link digitado**, e as quatro capas existentes são arquivos versionados em `img/cursos/`. Arte que nasce no computador dele não tinha caminho para dentro da plataforma sem passar por commit.
   - Agora o cartão do catálogo tem **🖼️ Enviar imagem…**: sobe pelo `uploadAdminAsset` (Storage `endodirect-assets`, pasta `capas/`), escreve a URL pública no campo de link e **troca a prévia na hora**. Recusa não-imagem e arquivo acima de 8 MB antes de subir.
   - ⚠️ **ENVIAR NÃO É SALVAR.** O upload preenche o campo; quem grava continua sendo o **Salvar catálogo**. O aviso fica **em dourado** ("clique em Salvar catálogo para valer") justamente porque em verde seria lido como pronto — e sair da tela perderia a capa em silêncio. Gravar sozinho seria pior: levaria junto tudo o que estivesse meio digitado nos outros cursos.
