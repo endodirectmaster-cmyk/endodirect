@@ -386,6 +386,20 @@ try {
   fail('regressão de tela sem porta falhou:\n' + out);
 }
 
+// 17c-quinquies. A AMOSTRA FAZ O PEDIDO. A Educação Médica Continuada existe
+//      para converter: aula mensal do Gold, primeira aberta a qualquer
+//      cadastrado. Mas a lista de aulas FILTRA por `aulaLiberada` — o que o
+//      aluno não pode ver não existe na tela —, então depois da amostra não
+//      havia frase nem botão. A guarda exige o convite ao plano certo, com a
+//      contagem real de aulas presas, e ausente para quem já paga.
+try {
+  execFileSync(process.execPath, [path.join('scripts', 'test-amostra-converte.js')], { stdio: 'pipe' });
+  ok('amostra converte: convite ao plano do catálogo, com as aulas presas contadas, e nunca para quem já tem');
+} catch (e) {
+  const out = (e.stdout ? e.stdout.toString() : '') + (e.stderr ? e.stderr.toString() : '');
+  fail('regressão da conversão pela amostra falhou:\n' + out);
+}
+
 // 17d. CADÊNCIA DO RADAR: o mural precisa de mais de uma varredura por dia. Com
 //      uma só (07:30 BRT), notícia publicada depois dela só aparece no dia
 //      seguinte — foi a queixa de 17/08/2026 (ANVISA aprovando canetas de
