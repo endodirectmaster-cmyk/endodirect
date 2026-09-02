@@ -50,7 +50,12 @@ vm.runInContext(corpo('capaUrlOk'), caixa);
 // algo que não viaja no upsert.
 {
   const i = html.indexOf('var podeCapa=catalogoTemCapa();');
-  const j = html.indexOf('<div class="g2" style="margin-bottom:.6rem"><div class="fld2" style="margin:0"><label>Nome</label>', i);
+  const j = html.indexOf('class="cat-desc"', i);
+  // ⚠️ Marcador que some faz `indexOf` devolver -1 e a fatia ir até o fim do
+  // arquivo — a medida passa a valer para o índex inteiro. Já aconteceu: ao
+  // tirar o campo de preço, o marcador antigo desapareceu e este teste acusou
+  // um segundo botão que era só a linha de ligação.
+  ok(i > 0 && j > i, '⚠️ não consegui recortar o cartão do catálogo (i=' + i + ', j=' + j + ') — os marcadores mudaram');
   const regiao = html.slice(i, j);
   const semCapa = regiao.indexOf('A capa é desenhada a partir do nome do curso');
   const campo = regiao.indexOf('class="cat-capa"');
@@ -107,6 +112,28 @@ ok(envio.length > 200 && envio.length < 3000,
     '🧨 a falha do upload voltou a ser silenciosa — `uploadErrorMessage` é quem explica bucket ausente e falta de permissão');
   ok(/\}\)\.then\(function\(\)\{bt\.disabled=false;fi\.value='';\}\)/.test(envio),
     '⚠️ o botão não é reabilitado depois do envio — uma falha deixaria o professor sem poder tentar de novo');
+}
+
+// ── 6. O preço avulso saiu do FORMULÁRIO, não do BANCO ───────────────────
+// Pedido do professor (02/09): nenhum curso é vendido à parte hoje. 🧨 Dois
+// modos de errar isto: deixar alguém lendo `.cat-preco` (o querySelector
+// devolve null e o "Salvar catálogo" INTEIRO quebra, levando junto nome, capa
+// e pacote de todos os cursos), ou mandar 0 no upsert — que apagaria em
+// silêncio o preço de um curso que viesse a ter um.
+{
+  ok(html.indexOf('cat-preco') < 0,
+    '🧨 ainda há referência a `.cat-preco` — o campo não existe mais, e `querySelector(...).value` derruba o salvamento inteiro do catálogo');
+  ok(html.indexOf('Preço avulso') < 0,
+    '⚠️ o rótulo "Preço avulso" voltou ao formulário do catálogo');
+  ok(/preco_avulso_cents:catalogoPrecoGuardado\(card\.dataset\.catSlug\)/.test(html),
+    '🧨 o upsert não carrega mais o preço guardado — gravaria 0 por cima do que estiver no banco');
+
+  vm.runInContext(corpo('catalogoPrecoGuardado'), caixa);
+  caixa.catalogoCursos = [{ slug: 'endoteem', preco_avulso_cents: 19900 }, { slug: 'emc', preco_avulso_cents: 0 }];
+  ok(caixa.catalogoPrecoGuardado('endoteem') === 19900,
+    '🧨 o preço guardado não volta: ' + caixa.catalogoPrecoGuardado('endoteem') + ' em vez de 19900 — salvar o catálogo zeraria o preço');
+  ok(caixa.catalogoPrecoGuardado('nao-existe') === 0 && caixa.catalogoPrecoGuardado('emc') === 0,
+    '⚠️ curso sem preço guardado devia devolver 0');
 }
 
 if (falhas.length) { console.error('✗ ' + falhas.length + ' falha(s):\n - ' + falhas.join('\n - ')); process.exit(1); }
