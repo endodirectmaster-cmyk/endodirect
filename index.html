@@ -9703,12 +9703,14 @@ function renderCursosAluno(){
   }
   var allCount=data.filter(function(c){return cursoAcessivel(c.curso);}).length;
   var catVis=catalog.filter(function(cc){return cursoVisivel(cc.slug);});
-  if(frow)frow.innerHTML='<div style="display:flex;flex-wrap:wrap;gap:.7rem;width:100%">'+catVis.map(function(cc){return aTile(cc.slug,cc.nome,cnt[cc.slug]||0,cc.capa);}).join('')+'</div>';
+  if(frow)frow.innerHTML=cursoFilter?''
+    :('<div style="font-size:.72rem;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--t3);margin-bottom:.6rem;width:100%">Escolha um curso para abrir</div>'
+      +'<div style="display:flex;flex-wrap:wrap;gap:.7rem;width:100%">'+catVis.map(function(cc){return aTile(cc.slug,cc.nome,cnt[cc.slug]||0,cc.capa);}).join('')+'</div>');
   if(cursoFilter&&!cursoAcessivel(cursoFilter)&&!cursoTemLiberada(cursoFilter)){cursoFilter='';cursoMod='';}
   var el=document.getElementById('curso-list');if(!el)return;
   // Primeira entrada: mostra só os cards de curso (frow). As subespecialidades
   // (módulos) só aparecem depois de escolher um curso acima.
-  if(!cursoFilter){el.innerHTML='<div class="empty" style="grid-column:1/-1">Escolha um curso acima para ver as subespecialidades.</div>';return;}
+  if(!cursoFilter){el.innerHTML='';return;}
   // Escopo: aulas do pacote selecionado (ou todas as acessíveis).
   var scope=cursoFilter?data.filter(function(c){return c.curso===cursoFilter&&aulaLiberada(c);}):data.filter(function(c){return aulaLiberada(c);});
   if(!scope.length){el.innerHTML='<div class="empty" style="grid-column:1/-1">Nenhuma videoaula '+(cursoFilter?'neste curso':'disponível no seu plano ainda')+'.</div>';return;}
@@ -9720,13 +9722,17 @@ function renderCursosAluno(){
   if(!cursoMod){
     var seen={};scope.forEach(function(c){var m=(c.modulo||'Geral').trim()||'Geral';seen[m]=(seen[m]||0)+1;});
     var mods=Object.keys(seen).sort(function(a,b){return a.localeCompare(b,'pt-BR');});
-    el.innerHTML=mods.map(function(m){return '<button class="dir-sub-btn" data-cursomod="'+esc(m)+'"><div class="dsb-ico">'+dirSubIcon(m)+'</div><h3>'+esc(m)+'</h3><div class="dsb-cnt">'+seen[m]+' aula'+(seen[m]===1?'':'s')+'</div></button>';}).join('')
+    var cnome=cursoNomeBySlug(cursoFilter);
+    var ccat=(Array.isArray(catalogoCursos)?catalogoCursos:[]).filter(function(x){return x&&x.slug===cursoFilter;})[0];
+    el.innerHTML='<button class="dir-back" data-cursobackcursos style="grid-column:1/-1;justify-self:start;margin-bottom:.4rem">← Voltar aos cursos</button>'
+      +'<div class="ph" style="grid-column:1/-1;margin-top:0;display:flex;align-items:center;gap:.7rem"><div style="width:62px;flex-shrink:0">'+cursoCapaHTML(cnome,cursoFilter,ccat&&ccat.capa,44,false)+'</div><h1 style="font-size:1.05rem;margin:0">'+esc(cnome)+'</h1></div>'
+      +mods.map(function(m){return '<button class="dir-sub-btn" data-cursomod="'+esc(m)+'"><div class="dsb-ico">'+dirSubIcon(m)+'</div><h3>'+esc(m)+'</h3><div class="dsb-cnt">'+seen[m]+' aula'+(seen[m]===1?'':'s')+'</div></button>';}).join('')
       +cursoAmostraCTA(cursoFilter);
     return;
   }
   // Nível 2 — aulas da subespecialidade escolhida.
   var lessons=scope.filter(function(c){return (c.modulo||'Geral').trim()===cursoMod;});
-  el.innerHTML='<button class="dir-back" data-cursoback style="grid-column:1/-1;margin-bottom:.4rem">← Subespecialidades</button>'
+  el.innerHTML='<button class="dir-back" data-cursoback style="grid-column:1/-1;justify-self:start;margin-bottom:.4rem">← '+esc(cursoNomeBySlug(cursoFilter))+'</button>'
     +'<div class="ph" style="grid-column:1/-1;margin-top:0"><h1 style="font-size:1.05rem">'+dirSubIcon(cursoMod)+' '+esc(cursoMod)+'</h1></div>'
     +(lessons.length?lessons.map(lessonCard).join(''):'<div class="empty" style="grid-column:1/-1">Nenhuma aula nesta subespecialidade.</div>')
     +cursoAmostraCTA(cursoFilter);
@@ -17559,6 +17565,7 @@ document.addEventListener('click',function(e){
   if(c('[data-curso-upsell]')){showAssineScreen((currentUser&&currentUser.email)||'',{upgrade:!isDegustacao()});return;}
   var cf=c('[data-cursofilter]');if(cf){cursoFilter=(cursoFilter===cf.dataset.cursofilter?'':cf.dataset.cursofilter);cursoMod='';renderCursosAluno();return;}
   var cmo=c('[data-cursomod]');if(cmo){cursoMod=cmo.dataset.cursomod;renderCursosAluno();return;}
+  if(c('[data-cursobackcursos]')){cursoFilter='';cursoMod='';renderCursosAluno();return;}
   if(c('[data-cursoback]')){cursoMod='';renderCursosAluno();return;}
   var cp=c('[data-curso-play]');if(cp){playCursoAluno(parseInt(cp.dataset.cursoPlay));return;}
   if(c('#curso-player-close')){var bx=document.getElementById('curso-player');if(bx){bx.style.display='none';bx.innerHTML='';}return;}

@@ -426,6 +426,20 @@ try {
   fail('regressão do leitor de jargão falhou:\n' + out);
 }
 
+// 17c-octies. NAVEGAÇÃO DE CURSOS DO ALUNO. A tela mostrava a grade de cursos
+//      E as subespecialidades ao mesmo tempo; o painel do professor já era
+//      hierárquico. Agora espelha: nível 0 só a grade, nível 1 as
+//      subespecialidades do curso aberto, nível 2 as aulas. A guarda mede cada
+//      degrau JUNTO COM A SUA VOLTA — esconder a grade sem caminho de retorno
+//      prende o aluno dentro do curso, sem erro nenhum na tela.
+try {
+  execFileSync(process.execPath, [path.join('scripts', 'test-navegacao-cursos.js')], { stdio: 'pipe' });
+  ok('navegação de cursos: um degrau por vez, cada um com a sua volta');
+} catch (e) {
+  const out = (e.stdout ? e.stdout.toString() : '') + (e.stderr ? e.stderr.toString() : '');
+  fail('regressão da navegação de cursos falhou:\n' + out);
+}
+
 // 17d. CADÊNCIA DO RADAR: o mural precisa de mais de uma varredura por dia. Com
 //      uma só (07:30 BRT), notícia publicada depois dela só aparece no dia
 //      seguinte — foi a queixa de 17/08/2026 (ANVISA aprovando canetas de
