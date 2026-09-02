@@ -5,6 +5,39 @@ atualizado: 2026-09-02
 
 # Convenções de Trabalho
 
+## 🧨 JARGÃO DE IA NO CONTEÚDO CLÍNICO (2026-09-02)
+
+O professor, sobre o resumo da 1ª aula de EMC: *"evite jargão de IA. Você está
+sempre escrevendo com jargão. Deixe sempre conteúdo estritamente técnico e
+formal."*
+
+⚠️ **A correção é sobre um HÁBITO, não sobre uma frase.** O que ele viu na tela:
+`POR QUE O TEMA IMPORTA` como título de seção, `Leitura Prática`,
+`Massa Magra Não É Sinônimo De Músculo`, "a ordem importa", "a balança sozinha
+não responde à pergunta", "a proteína precisa vir primeiro no prato", "o cenário
+que mais custa músculo", ênfase em CAIXA ALTA no meio da frase e ⚠️ dentro do
+material do aluno. Registro de blog num texto que o médico usa para decidir
+conduta.
+
+**O que vale no conteúdo da plataforma:**
+
+- **Cabeçalho nominal**, não pergunta nem exortação: `FUNDAMENTAÇÃO`,
+  `EVIDÊNCIA CLÍNICA`, `ESTRATIFICAÇÃO DE RISCO`, `CONDUTA`, `PERSPECTIVAS`.
+- **Terceira pessoa, impessoal.** Nada de "você", de metáfora ("no prato", "na
+  balança") ou de verbo figurado ("o fármaco consome músculo").
+- **Sem intensificador vazio**: crucial, fundamental, poderoso, robusto.
+- **Sem ênfase em caixa alta** no meio da frase. `CORRETA`/`INCORRETA` no
+  enunciado ficam — são a convenção do banco de questões do professor.
+- **Sem pictograma** em material clínico do aluno. No cofre e em comentário de
+  código, seguem valendo.
+- **Comentário de questão não cita letra de alternativa** — `igShuffleMCQ`
+  reordena as opções e a referência vira mentira.
+
+**Regra de processo:** todo texto que vai para a plataforma passa por
+`node scripts/checa-jargao.js <arquivo>` antes de publicar. O leitor está
+guardado por `scripts/test-jargao.js`, que exige que ele pegue os nove trechos
+reais publicados errados e não acuse nove trechos de prosa clínica legítima.
+
 ## 🧨 CÓDIGO ESCRITO NÃO É CÓDIGO ALCANÇÁVEL (2026-09-02)
 
 A tela de **Catálogo de cursos** do painel — nome, preço, pacote, ordem, o

@@ -413,6 +413,19 @@ try {
   fail('regressão da trilha da aula falhou:\n' + out);
 }
 
+// 17c-septies. LEITOR DE JARGÃO. O professor corrigiu um HÁBITO, não uma
+//      frase: "evite jargão de IA... deixe sempre conteúdo estritamente
+//      técnico e formal". `scripts/checa-jargao.js` é o leitor que roda em todo
+//      texto antes de publicar; este teste prova que ele pega os trechos que eu
+//      publiquei errado e não acusa prosa clínica legítima.
+try {
+  execFileSync(process.execPath, [path.join('scripts', 'test-jargao.js')], { stdio: 'pipe' });
+  ok('jargão: o leitor pega o que foi publicado errado e poupa a prosa clínica');
+} catch (e) {
+  const out = (e.stdout ? e.stdout.toString() : '') + (e.stderr ? e.stderr.toString() : '');
+  fail('regressão do leitor de jargão falhou:\n' + out);
+}
+
 // 17d. CADÊNCIA DO RADAR: o mural precisa de mais de uma varredura por dia. Com
 //      uma só (07:30 BRT), notícia publicada depois dela só aparece no dia
 //      seguinte — foi a queixa de 17/08/2026 (ANVISA aprovando canetas de
