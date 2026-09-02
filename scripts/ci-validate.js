@@ -400,6 +400,19 @@ try {
   fail('regressão da conversão pela amostra falhou:\n' + out);
 }
 
+// 17c-sexies. A TRILHA DIZ DE ONDE VÊM AS QUESTÕES. Sem `aulaQ`, a aba puxa do
+//      BANCO por área (`modulo`) e embaralha — útil, porque a alternativa é
+//      tela vazia em 105 das 106 aulas. O defeito era o rótulo: as duas telas
+//      chamavam isso de "questões da trilha". A guarda exige anúncios
+//      diferentes para questão própria e questão emprestada.
+try {
+  execFileSync(process.execPath, [path.join('scripts', 'test-trilha-da-aula.js')], { stdio: 'pipe' });
+  ok('trilha da aula: questão própria e questão emprestada do banco se anunciam diferente');
+} catch (e) {
+  const out = (e.stdout ? e.stdout.toString() : '') + (e.stderr ? e.stderr.toString() : '');
+  fail('regressão da trilha da aula falhou:\n' + out);
+}
+
 // 17d. CADÊNCIA DO RADAR: o mural precisa de mais de uma varredura por dia. Com
 //      uma só (07:30 BRT), notícia publicada depois dela só aparece no dia
 //      seguinte — foi a queixa de 17/08/2026 (ANVISA aprovando canetas de
