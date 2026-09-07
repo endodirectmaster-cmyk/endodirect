@@ -11,7 +11,7 @@ const { sendAvisoAoVivo } = require('../../lib/aovivo');
 // gera um artigo por invocação e chama a próxima. Não espera a resposta — o que
 // importa é a primeira invocação ter começado.
 const { dispararCadeia } = require('../../lib/discussao-kick');
-const { sendAlert } = require('../../lib/alert');
+const { sendAlert, alertarFeedsMudos } = require('../../lib/alert');
 
 function json(res, status, body) {
   res.statusCode = status;
@@ -41,13 +41,13 @@ module.exports = async function handler(req, res) {
     // sempre. O radar é fail-safe por desenho — feed fora do ar não derruba o
     // mural — e por isso o defeito durou o acervo inteiro em silêncio. Agora o
     // silêncio vira alerta: fail-safe é para não derrubar, não para não contar.
-    if (result && Array.isArray(result.feedsMudos) && result.feedsMudos.length) {
-      try {
-        await sendAlert('Feed oficial do radar sem notícias', [
-          'Os feeds abaixo são OFICIAIS e não entregaram nada nesta rodada. Enquanto isso durar, aprovação anunciada por essa fonte não chega ao mural.',
-          ...result.feedsMudos.map((f) => '• ' + f.nome + ' — ' + (f.ok ? 'respondeu, 0 itens' : 'falhou (HTTP ' + f.status + (f.erro ? ', ' + f.erro : '') + ')') + ' — ' + f.url)
-        ]);
-      } catch (_) {}
+    // 07/09/2026: o aviso passou a ser por MUDANÇA, não por dia — o professor
+    // recebia o mesmo e-mail toda manhã. `alertarFeedsMudos` guarda a assinatura
+    // do conjunto mudo e só volta a escrever quando ela muda, quando os feeds
+    // voltam, ou uma vez por mês. Chamada SEM o `.length`: conjunto vazio é o
+    // que dispara o aviso de recuperação.
+    if (result && Array.isArray(result.feedsMudos)) {
+      try { await alertarFeedsMudos(result.feedsMudos); } catch (_) {}
     }
     let qotd = { posted: false, reason: 'skipped' };
     try { qotd = await autoPostDailyQotd(); }

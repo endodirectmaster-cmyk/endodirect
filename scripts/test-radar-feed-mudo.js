@@ -139,8 +139,17 @@ function carregarNews() {
     ok(/feedsMudos,/.test(radar),
       '⚠️ o radar parou de DEVOLVER os feeds mudos — o cron não tem como alertar sobre o que não recebe');
     const cron = fs.readFileSync(path.join(REPO, 'api', 'cron', 'endocrine-radar.js'), 'utf8');
-    ok(/result\.feedsMudos.*length/s.test(cron) && /sendAlert\('Feed oficial do radar sem notícias'/.test(cron),
+    // 🧨 RETARGETADO EM 07/09/2026. Este bloco exigia `sendAlert('Feed oficial
+    // do radar sem notícias')` DENTRO do cron, e um `result.feedsMudos.length`
+    // como condição. O professor recebia o mesmo e-mail toda manhã e mandou
+    // parar; a decisão de enviar passou para `alertarFeedsMudos` (lib/alert.js),
+    // que avisa por MUDANÇA. Duas consequências medidas aqui: a chamada não pode
+    // mais filtrar por `.length` (conjunto VAZIO é o que dispara o aviso de
+    // recuperação), e o texto do assunto saiu do cron.
+    ok(/alertarFeedsMudos\(result\.feedsMudos\)/.test(cron),
       '⚠️ o cron parou de alertar sobre feed oficial mudo — volta o silêncio que durou 1.019 itens');
+    ok(!/result\.feedsMudos\s*&&\s*result\.feedsMudos\.length|feedsMudos\.length\)/.test(cron),
+      '🧨 o cron voltou a só chamar o aviso quando HÁ feed mudo — assim a recuperação nunca é anunciada e a trava nunca é limpa');
     // ⚠️ Procurar `catch (_) {}` "depois do alerta" achava o catch de OUTRO
     // trecho e passava com o alerta desprotegido. A janela é o bloco do alerta.
     const i0 = cron.indexOf('if (result && Array.isArray(result.feedsMudos)');
