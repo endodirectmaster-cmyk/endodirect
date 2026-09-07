@@ -440,6 +440,20 @@ try {
   fail('regressão da navegação de cursos falhou:\n' + out);
 }
 
+// 17c-nonies. O AVISO DE FEED MUDO NÃO É DIÁRIO — NEM MUDO. O alerta de 28/08
+//      repetia o mesmo e-mail toda manhã; o professor mandou parar. Calar de
+//      vez repetiria o defeito que ele existe para pegar (a Lilly fora de 1.019
+//      itens). A guarda exige aviso por MUDANÇA: conjunto novo, recuperação, e
+//      um lembrete por mês — executando a função de verdade contra um banco e
+//      um Resend de mentira.
+try {
+  execFileSync(process.execPath, [path.join('scripts', 'test-aviso-feed-mudo-sem-spam.js')], { stdio: 'pipe' });
+  ok('aviso de feed mudo: avisa na mudança e na recuperação, nunca todo dia');
+} catch (e) {
+  const out = (e.stdout ? e.stdout.toString() : '') + (e.stderr ? e.stderr.toString() : '');
+  fail('regressão do aviso de feed mudo falhou:\n' + out);
+}
+
 // 17d. CADÊNCIA DO RADAR: o mural precisa de mais de uma varredura por dia. Com
 //      uma só (07:30 BRT), notícia publicada depois dela só aparece no dia
 //      seguinte — foi a queixa de 17/08/2026 (ANVISA aprovando canetas de
