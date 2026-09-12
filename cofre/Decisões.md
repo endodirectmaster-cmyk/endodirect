@@ -1,6 +1,6 @@
 ---
 tags: [cofre, decisoes]
-atualizado: 2026-09-02
+atualizado: 2026-09-12
 ---
 
 # Decisões
@@ -8,6 +8,15 @@ atualizado: 2026-09-02
 Log de decisões de produto e técnicas (mais recentes no topo).
 
 ## 2026-09
+- **🆕 O ACERVO PASSA A DIZER O QUE ENTROU (2026-09-12).** Uma assinante Gold de 63 dias (izabella.cpg) avaliou 3/5: *"as diretrizes, mapas mentais e revisões precisam ser atualizadas"*. Varredura pedida pelo professor. Medido com os backups do banco (03/07 → 21/08 → 12/09):
+  - **Flashcards: 533 → 533.** Zero cards novos em 73 dias; o último entrou em 01/07, dez dias ANTES de ela assinar. A Revisão roda 100% em cima deles (`srDueReviews` filtra `DB.fc`) — a queixa sobre "revisões" está literalmente certa.
+  - **Mapas mentais: 62 → 82**, o último em 21/07 (53 dias).
+  - **Diretrizes (públicas, `privado=false`): 62 → 71.** ⚠️ **CORRIGINDO O QUE EU DISSE AO PROFESSOR NA PRIMEIRA LEITURA**: escrevi que "as diretrizes quase quadruplicaram" (65 → 232). O array `payload.diretrizes` guarda diretrizes E resumos; quem cresceu 30× foram os **resumos privados** (5 → 161). As diretrizes públicas cresceram 9. Conflacionei os dois e a correção foi dada na mesma conversa.
+  - **E o conteúdo das diretrizes é velho de fato**: das 71 públicas, só **12 são de 2026**, **29 são de 2022 ou anteriores** e 4 não têm ano. Tireoide 6/8 ≤2022, Adrenal 5/9, Neuroendocrinologia 5/10, Endocrinopatias 4/4 (mais recente: 2019), Osteometabolismo 4/7 (nenhuma de 2025+). Cushing na Endocrine Society **2008**, feocromocitoma **2014**, hiponatremia **2014** (o próprio bloco de IA da plataforma cita as revisões 2025–26 de sódio e o NOGG 2024 — o painel de Diretrizes mostra 2014 e AACE 2020). Nem tudo ≤2022 é superado (hiperparatireoidismo 2022, anaplásico 2021, orbitopatia 2022, WPATH 2022 são as edições vigentes) — a triagem clínica é do professor, a lista está com ele.
+  - 🧨 **A TELA NÃO MOSTRAVA NENHUM SINAL DE ENTRADA.** Item de diretriz/resumo **sem carimbo de data** (campos: ano, flashcards, fonte, mapa, privado, pts, resumo, sub, tema, titulo, url); grade com contagem total; Dashboard com o total. Quem volta depois de um mês não distingue "nada mudou" de "entraram 156 resumos".
+  - **O que entrou**: `at` gravado em toda diretriz/resumo (backfill por piso: 67 que já existiam em 03/07 → 03/07; 159 que entraram até 21/08 → 21/08; 6 depois → 12/09; todos com `atAprox:true`; item novo do admin recebe `at=Date.now()`, edição grava `atEdit` e preserva `at` — editar não é republicar). Selo **"Novo"** (30 dias) no card, ao lado de fonte·ano — **o selo é sobre a ENTRADA, o ano fica no cabeçalho: uma diretriz de 2016 publicada ontem é nova no acervo e continua sendo de 2016**. Novo primeiro na lista (ordenação estável). "N novas/novos" na grade de subespecialidades de Diretrizes, Mapas e Flashcards. Flashcard semeado guarda `pubAt` (data de publicação) — sem isso o selo usaria a data de semeadura, que é sempre hoje. Dashboard: *"Novos desde a sua última visita (dd/mm): …"* ou *"Nenhum conteúdo novo …"* — a ausência também é informação. Marca `acervoVisto` pessoal, fixada uma vez por sessão (repintar o dashboard zeraria a contagem), em `PERSONAL_STATE_KEYS`.
+  - 🧨 **ERREI O ANO NO BACKFILL**: gravei os pisos com epoch de **2025** (1751500800 = 03/07/2025). A conferência pós-gravação pegou (`to_timestamp` devolveu 2025-07-03). Corrigido valor a valor para 2026 e reconferido. Conferir depois de gravar não é zelo — foi o que pegou.
+  - Guarda: `scripts/test-acervo-novo.js`, **17/17 mutações**, incluindo "selo pelo ano em vez da entrada", "item sem data vira novo", "semeadura vence a publicação", "editar vira republicar" e "marca de visita atualizada a cada pintura".
 - **📭 O AVISO DE FEED MUDO DEIXA DE SER DIÁRIO (2026-09-07).** Pedido do professor: *"não precisa ficar enviando diariamente um email, informando desse erro."* O alerta criado em 28/08 fazia o certo — contar o silêncio de um feed oficial —, mas repetia o mesmo e-mail toda manhã às 07:30.
   - ⚠️ **CALAR NÃO ERA OPÇÃO**: foi o silêncio que deixou a Lilly fora de 1.019 itens. `alertarFeedsMudos` (lib/alert.js) passa a avisar por **mudança**: conjunto novo, mudança do erro (404→500 conta), recuperação, e no meio-tempo **um lembrete por mês** para que um feed quebrado não desapareça por um ano. A trava é a assinatura do conjunto, ordenada, em `payload.radar_feeds_aviso`.
   - A chamada no cron perdeu o `.length` **de propósito**: conjunto vazio é o que dispara o aviso de recuperação e limpa a trava.

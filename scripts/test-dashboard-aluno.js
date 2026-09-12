@@ -39,6 +39,18 @@ function bloco(cab) {
   }
 }
 
+// 12/09/2026: a faixa do acervo ganhou a linha "novos desde a sua última visita"
+// (`acervoNovosHTML`). Todo sandbox que roda `renderDashAcervo` recebe a função
+// DE VERDADE, com o estado mínimo que ela lê — stub só do que é infraestrutura
+// (DB, localStorage, sincronização). Stubar a própria linha faria este teste
+// aprovar um dashboard que na tela quebraria. Definido UMA vez: o erro que
+// motivou isto apareceu justamente porque havia dois sandboxes e eu corrigi um.
+const ACERVO_PRE = 'var DB={acervoVisto:0};function lsSet(){}function queueRemoteStateSave(){}'
+  + 'var diretrizes=[],sharedMM=[],fcShared=[];function dirIsVisibleAnyTipo(){return true;}'
+  + 'var ACERVO_NOVO_DIAS=30;var acervoVistoRef=null;'
+  + bloco('function acervoEhNovo(') + bloco('function acervoRefVisita(')
+  + bloco('function acervoNovosDesde(') + bloco('function acervoNovosHTML(');
+
 // ── 1. A tela de início do aluno é o DASHBOARD ────────────────────────────
 {
   const ctx = vm.createContext({ console });
@@ -336,7 +348,7 @@ function bloco(cab) {
       + 'function goPanel(p){__ir.push(p);}'
       + 'var document={getElementById:function(id){return __hosts[id]||null;}};'
       + bloco('function esc(') + bloco('function nBR(')
-      + bloco('function renderDashRail(') + bloco('function renderDashAcervo('), ctx);
+      + bloco('function renderDashRail(') + ACERVO_PRE + bloco('function renderDashAcervo('), ctx);
     // hosts de mentira que registram os listeners que cada render pendura
     const host = (attr) => ({
       style: {}, _f: [],
@@ -437,7 +449,7 @@ function bloco(cab) {
     + 'function goPanel(){}'
     + 'function acervoContagem(){return {questoes:{tem:2965,total:2965},diretrizes:{tem:71,total:71},'
     + 'resumos:{tem:118,total:118},artigos:{tem:43,total:43},mapas:{tem:82,total:82},podcasts:{tem:199,total:199}};}'
-    + bloco('function esc(') + bloco('function nBR(') + bloco('function renderDashAcervo(')
+    + bloco('function esc(') + bloco('function nBR(') + ACERVO_PRE + bloco('function renderDashAcervo(')
     + 'renderDashAcervo();', Object.assign(ctxG, { __h: hostG }));
   ok(hostG.innerHTML.indexOf('acv-de') < 0,
     '⚠️ o assinante com acesso total viu fração ("2.965 de 2.965") — só polui; a fração é para quem tem parte');
@@ -455,7 +467,7 @@ function bloco(cab) {
     + 'function acervoContagem(){return {questoes:{tem:1,total:1},diretrizes:{tem:1,total:1},resumos:{tem:1,total:1},'
     + 'artigos:{tem:1,total:1},mapas:{tem:1,total:1},podcasts:{tem:1,total:1}};}'
     + 'function goPanel(){}' + bloco('function esc(') + bloco('function nBR(')
-    + bloco('function renderDashRail(') + bloco('function renderDashAcervo(')
+    + bloco('function renderDashRail(') + ACERVO_PRE + bloco('function renderDashAcervo(')
     + 'renderDashRail();renderDashAcervo();',
     Object.assign(ctx, { __host: host }));
   ok(host.style.display === 'none' && host.innerHTML === '',
