@@ -454,6 +454,20 @@ try {
   fail('regressão do aviso de feed mudo falhou:\n' + out);
 }
 
+// 17c-decies. O ACERVO DIZ O QUE ENTROU. Uma assinante de 63 dias avaliou 3/5
+//      dizendo que o conteúdo "precisa ser atualizado" enquanto os resumos iam
+//      de 5 para 161 — a tela não mostrava nenhum sinal de entrada. Selo pela
+//      data de ENTRADA (não pelo ano da diretriz), novo primeiro, contagem na
+//      grade e "desde a sua última visita" no Dashboard. A guarda executa as
+//      funções de verdade e mede a fiação de quem grava e de quem lê.
+try {
+  execFileSync(process.execPath, [path.join('scripts', 'test-acervo-novo.js')], { stdio: 'pipe' });
+  ok('acervo novo: selo pela entrada, novo primeiro, contagem por área e linha do Dashboard');
+} catch (e) {
+  const out = (e.stdout ? e.stdout.toString() : '') + (e.stderr ? e.stderr.toString() : '');
+  fail('regressão do acervo novo falhou:\n' + out);
+}
+
 // 17d. CADÊNCIA DO RADAR: o mural precisa de mais de uma varredura por dia. Com
 //      uma só (07:30 BRT), notícia publicada depois dela só aparece no dia
 //      seguinte — foi a queixa de 17/08/2026 (ANVISA aprovando canetas de

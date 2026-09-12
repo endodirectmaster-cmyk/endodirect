@@ -982,6 +982,11 @@ html[data-theme="light"] .cat-pill.on{background:var(--blue);border-color:var(--
 .ref-card{background:var(--surface);border:1px solid var(--bd);border-left:4px solid var(--blue);border-radius:var(--r);padding:1.1rem 1.2rem;box-shadow:0 1px 2px rgba(0,0,0,.04)}
 .ref-card-top{display:flex;align-items:center;gap:.5rem;flex-wrap:wrap;margin-bottom:.55rem}
 .ref-badge{font-size:.62rem;font-weight:800;letter-spacing:.03em;background:var(--blue-l);color:var(--blue2);padding:.22rem .55rem;border-radius:5px}
+/* Selo de item recém-publicado (diretriz, resumo, mapa, flashcard). */
+.novo-selo{display:inline-block;font-size:.58rem;font-weight:800;letter-spacing:.08em;text-transform:uppercase;background:var(--gold-l);color:var(--gold);border:1px solid var(--gold);padding:.12rem .45rem;border-radius:999px;margin-left:.4rem;vertical-align:middle;line-height:1.3}
+.acv-novos{grid-column:1/-1;font-size:.8rem;color:var(--t2);padding:.55rem .2rem 0;line-height:1.5}
+.acv-novos b{color:var(--tx)}
+.acv-novos .n0{color:var(--t3)}
 .ref-card h3{font-size:.95rem;font-weight:800;color:var(--tx);line-height:1.35;margin-bottom:.55rem}
 .ref-card ul{list-style:none;margin:0 0 .75rem;padding:0}
 .ref-card li{font-size:.8rem;color:var(--t2);line-height:1.55;padding-left:1.05rem;position:relative;margin-bottom:.32rem}
@@ -3951,10 +3956,11 @@ var DB={
   goal:lsGet('goal')||{weekly:50},
   cursoProg:lsGet('cursoProg')||{},
   plan:lsGet('plan')||null,
+  acervoVisto:Number(lsGet('acervoVisto'))||0,
   qotd:(function(){try{return JSON.parse(localStorage.getItem('qotd_answered')||'{}')||{};}catch(e){return {};}})()
 };
 function persist(){
-  ['q','fc','mm','notes','crono','sf_results','perf','perfTema','act','srs','srNew','goal','cursoProg','plan'].forEach(function(k){lsSet(k,DB[k]);});
+  ['q','fc','mm','notes','crono','sf_results','perf','perfTema','act','srs','srNew','goal','cursoProg','plan','acervoVisto'].forEach(function(k){lsSet(k,DB[k]);});
   try{localStorage.setItem('qotd_answered',JSON.stringify(DB.qotd||{}));}catch(e){}
   queueRemoteStateSave();
 }
@@ -4113,7 +4119,7 @@ function seedFlashcards(){
         ledgerS[k]=1;return;
       }
       if(ledgerS[k])return;                 // semeado e depois deletado pelo aluno → respeita a deleção
-      DB.fc.push({id:Date.now()+Math.random(),front:card.front,back:card.back,cat:card.sub||card.cat||'Geral',due:Date.now(),box:1,at:Date.now(),seed:true,shared:true});
+      DB.fc.push({id:Date.now()+Math.random(),front:card.front,back:card.back,cat:card.sub||card.cat||'Geral',due:Date.now(),box:1,at:Date.now(),pubAt:Number(card.at)||null,seed:true,shared:true});
       byFrontS[k]=DB.fc[DB.fc.length-1];ledgerS[k]=1;added++;
     });
     lsSet('fc_shared_seeded',ledgerS);
@@ -4678,7 +4684,7 @@ function currentStatePayload(){
 // Chaves PESSOAIS (vivem no app_state do próprio usuário). As demais são
 // CONTEÚDO GLOBAL (provas, mural/radar, podcasts, cursos, diretrizes…), que só
 // vêm do estado global/RPC de membro.
-var PERSONAL_STATE_KEYS=['q','fc','mm','notes','crono','sf_results','perf','perfTema','act','srs','goal','cursoProg','plan','adm_perfil','user_profile','deg_trials','ck_billing','presc_emitidas','favs'];
+var PERSONAL_STATE_KEYS=['q','fc','mm','notes','crono','sf_results','perf','perfTema','act','srs','goal','cursoProg','plan','adm_perfil','user_profile','deg_trials','ck_billing','presc_emitidas','favs','acervoVisto'];
 // personalOnly=true quando o payload é o app_state do PRÓPRIO usuário: aplica só
 // as chaves pessoais e NUNCA toca no conteúdo global. Sem isso, um app_state com
 // resíduo antigo de chaves globais (ex.: radar_avisos defasado) podia, ao
@@ -7859,11 +7865,51 @@ function renderDashAcervo(){
       +'<span class="acv-txt"><span class="acv-lbl">'+esc(c.n)+'</span>'
       +'<span class="acv-num" style="display:block">'+numero+'</span></span>'
       +'<span class="acv-ico" style="background:'+c.c+'1f;color:'+c.c+'">'+c.i+'</span></button>';
-  }).join('');
+  }).join('')+acervoNovosHTML();
   el.querySelectorAll('[data-acv-ir]').forEach(function(b){
     // Painel bloqueado (degustação) tem o próprio upsell: `goPanel` resolve.
     b.addEventListener('click',function(){try{goPanel(b.getAttribute('data-acv-ir'));}catch(e){}});
   });
+}
+// Referência da visita: fixada UMA vez por sessão. O dashboard repinta várias
+// vezes; se a marca fosse atualizada a cada pintura, a contagem zeraria na
+// segunda. A marca nova é gravada já na primeira pintura (é a próxima visita
+// que a lê) e sincroniza entre aparelhos como o resto do estado pessoal.
+var acervoVistoRef=null;
+function acervoRefVisita(){
+  if(acervoVistoRef===null){
+    acervoVistoRef=Number(DB.acervoVisto)||0;
+    DB.acervoVisto=Date.now();
+    try{lsSet('acervoVisto',DB.acervoVisto);}catch(e){}
+    try{queueRemoteStateSave();}catch(e){}
+  }
+  return acervoVistoRef;
+}
+// Conta o que entrou depois de `ref` — diretrizes e resumos vêm do mesmo array
+// (separados por `privado`), mapas de `sharedMM`, flashcards de `fcShared` (a
+// coleção publicada, não a cópia do aluno). Só o que o aluno pode ver.
+function acervoNovosDesde(ref){
+  var n={diretrizes:0,resumos:0,mapas:0,flashcards:0};
+  (Array.isArray(diretrizes)?diretrizes:[]).forEach(function(d){
+    if(!d||!acervoEhNovo(d,ref))return;
+    try{if(typeof dirIsVisibleAnyTipo==='function'&&!dirIsVisibleAnyTipo(d))return;}catch(e){}
+    if(d.privado)n.resumos++;else n.diretrizes++;
+  });
+  (typeof sharedMM!=='undefined'&&Array.isArray(sharedMM)?sharedMM:[]).forEach(function(m){if(acervoEhNovo(m,ref))n.mapas++;});
+  (typeof fcShared!=='undefined'&&Array.isArray(fcShared)?fcShared:[]).forEach(function(c){if(acervoEhNovo(c,ref))n.flashcards++;});
+  return n;
+}
+function acervoNovosHTML(){
+  var visto=acervoRefVisita();
+  // Primeira visita (sem marca): janela de 30 dias, para não contar o acervo inteiro.
+  var ref=visto||(Date.now()-ACERVO_NOVO_DIAS*86400000);
+  var n=acervoNovosDesde(ref);
+  var partes=[[n.diretrizes,'diretriz','diretrizes'],[n.resumos,'resumo','resumos'],[n.mapas,'mapa mental','mapas mentais'],[n.flashcards,'flashcard','flashcards']]
+    .filter(function(p){return p[0]>0;})
+    .map(function(p){return '<b>'+nBR(p[0])+'</b> '+(p[0]===1?p[1]:p[2]);});
+  var quando=visto?('desde a sua última visita ('+new Date(visto).toLocaleDateString('pt-BR')+')'):'nos últimos 30 dias';
+  var txt=partes.length?('Novos '+quando+': '+partes.join(' · ')+'.'):('<span class="n0">Nenhum conteúdo novo '+quando+'.</span>');
+  return '<div class="acv-novos">'+txt+'</div>';
 }
 function refreshDash(){
   DB.fc.forEach(function(c){srInit(c);});
@@ -8803,9 +8849,9 @@ function renderFcCatPills(){
 // Subespecialidades fora da taxonomia (ex.: Transgeneridade, de cards de amostra
 // antigos) aparecem ao final para não esconder nenhum card.
 function fcSubList(){
-  var seen={};DB.fc.forEach(function(c){var s=subOf(c);seen[s]=(seen[s]||0)+1;});
-  var out=FC_CATS.map(function(s){return{sub:s,count:seen[s]||0};});
-  Object.keys(seen).forEach(function(s){if(FC_CATS.indexOf(s)<0)out.push({sub:s,count:seen[s]});});
+  var seen={},novos={};DB.fc.forEach(function(c){var s=subOf(c);seen[s]=(seen[s]||0)+1;if(c&&c.shared&&acervoEhNovo(c))novos[s]=(novos[s]||0)+1;});
+  var out=FC_CATS.map(function(s){return{sub:s,count:seen[s]||0,novos:novos[s]||0};});
+  Object.keys(seen).forEach(function(s){if(FC_CATS.indexOf(s)<0)out.push({sub:s,count:seen[s],novos:novos[s]||0});});
   return out;
 }
 // Selo de verificação: quantos flashcards publicados pelo professor já estão no
@@ -8872,7 +8918,7 @@ function renderFC(){
     if(frow)frow.style.display='none';
     el.className='';
     el.innerHTML='<div class="dir-sub-grid">'+fcSubList().map(function(o){
-      return '<button class="dir-sub-btn" data-fcsub="'+esc(o.sub)+'"><div class="dsb-ico">'+dirSubIcon(o.sub)+'</div><h3>'+esc(o.sub)+'</h3><div class="dsb-cnt">'+o.count+' card'+(o.count===1?'':'s')+'</div></button>';
+      return '<button class="dir-sub-btn" data-fcsub="'+esc(o.sub)+'"><div class="dsb-ico">'+dirSubIcon(o.sub)+'</div><h3>'+esc(o.sub)+novosSufixoHTML(o.novos,false)+'</h3><div class="dsb-cnt">'+o.count+' card'+(o.count===1?'':'s')+'</div></button>';
     }).join('')+'</div>';
     return;
   }
@@ -8891,7 +8937,7 @@ function renderFC(){
   el.innerHTML=list.map(function(c){var i=DB.fc.indexOf(c);var col=fcCatColor(c.cat);return'<div class="fc-card" data-fctoggle="'+i+'" data-fav-tit="'+esc(c.front||'')+'" data-fav-sub="'+esc(c.cat||'')+'"><button class="fc-del" data-fcdel="'+i+'" title="Excluir">✕</button>'
       // A estrela fica FORA do .fc-inner que gira: dentro, ela viraria de cabeca
       // para baixo junto com o card ao ser revelado.
-      +'<span style="position:absolute;top:.4rem;right:2rem;z-index:3">'+favStarHTML('flashcard',c)+'</span>'+'<div class="fc-inner"><div class="fc-face fc-face-front" style="border-left:5px solid '+col+'"><div class="fc-cat" style="color:'+col+'">'+esc(c.cat||'Geral')+'</div><div class="fc-front">'+esc(c.front)+'</div><div class="fc-hint">Clique para virar ↻</div></div><div class="fc-face fc-face-back" style="border-left:5px solid '+col+'"><div class="fc-cat" style="color:'+col+'">Resposta</div><div class="fc-back">'+esc(c.back)+'</div><div class="fc-hint">Clique para voltar ↺</div></div></div></div>';}).join('');
+      +'<span style="position:absolute;top:.4rem;right:2rem;z-index:3">'+favStarHTML('flashcard',c)+'</span>'+'<div class="fc-inner"><div class="fc-face fc-face-front" style="border-left:5px solid '+col+'"><div class="fc-cat" style="color:'+col+'">'+esc(c.cat||'Geral')+(c.shared?novoSeloHTML(c):'')+'</div><div class="fc-front">'+esc(c.front)+'</div><div class="fc-hint">Clique para virar ↻</div></div><div class="fc-face fc-face-back" style="border-left:5px solid '+col+'"><div class="fc-cat" style="color:'+col+'">Resposta</div><div class="fc-back">'+esc(c.back)+'</div><div class="fc-hint">Clique para voltar ↺</div></div></div></div>';}).join('');
 }
 function toggleFC(i){
   var cards=document.querySelectorAll('[data-fctoggle]');
@@ -9192,8 +9238,9 @@ function mmSubGrid(){
   var seen={};
   visibleSharedMM().forEach(function(m){var s=canonSub(m.sub);seen[s]=(seen[s]||0)+1;});
   (DB.mm||[]).forEach(function(m){if(m&&m.seed)return;var s=canonSub(m.sub);seen[s]=(seen[s]||0)+1;});
-  var out=DIR_SUBS.map(function(s){return {sub:s,count:seen[s]||0};});
-  Object.keys(seen).forEach(function(s){if(DIR_SUBS.indexOf(s)<0)out.push({sub:s,count:seen[s]});});
+  var novos={};visibleSharedMM().forEach(function(m){if(acervoEhNovo(m)){var s=canonSub(m.sub);novos[s]=(novos[s]||0)+1;}});
+  var out=DIR_SUBS.map(function(s){return {sub:s,count:seen[s]||0,novos:novos[s]||0};});
+  Object.keys(seen).forEach(function(s){if(DIR_SUBS.indexOf(s)<0)out.push({sub:s,count:seen[s],novos:novos[s]||0});});
   return out;
 }
 function renderMMList(){
@@ -9205,7 +9252,7 @@ function renderMMList(){
     if(panel)panel.classList.add('mm-grid');
     if(head)head.innerHTML='';
     var cards=mmSubGrid().map(function(s){
-      return '<button class="dir-sub-btn" data-mmsubsel="'+esc(s.sub)+'"><div class="dsb-ico">'+dirSubIcon(s.sub)+'</div><h3>'+esc(s.sub)+'</h3><div class="dsb-cnt">'+s.count+' mapa'+(s.count===1?'':'s')+'</div></button>';
+      return '<button class="dir-sub-btn" data-mmsubsel="'+esc(s.sub)+'"><div class="dsb-ico">'+dirSubIcon(s.sub)+'</div><h3>'+esc(s.sub)+novosSufixoHTML(s.novos,false)+'</h3><div class="dsb-cnt">'+s.count+' mapa'+(s.count===1?'':'s')+'</div></button>';
     }).join('');
     setText('mm-count','('+(shared.length+(DB.mm||[]).filter(function(m){return !(m&&m.seed);}).length)+')');
     el.innerHTML='<div class="dir-sub-grid">'+cards+'</div>';
@@ -9227,11 +9274,12 @@ function renderMMList(){
       +'<div style="display:flex;flex-wrap:wrap;gap:.3rem;margin-bottom:.7rem">'+mtabs+'</div>';
   }
   var shF=mmTema?sh.filter(function(m){return temaOf(m,mmSubSel)===mmTema;}):sh;
+  shF=shF.slice().sort(function(a,b){return (acervoEhNovo(b)?1:0)-(acervoEhNovo(a)?1:0);});
   var phF=mmTema?ph.filter(function(o){return temaOf(o.m,mmSubSel)===mmTema;}):ph;
   setText('mm-count','('+(shF.length+phF.length)+')');
   var html=shF.map(function(m){
     var j=(sharedMM||[]).indexOf(m); // índice no array GLOBAL (viewMMShared lê sharedMM), não no filtrado
-    return'<div class="mm-item" data-fav-tit="'+esc(m.topic||'')+'" data-fav-sub="'+esc(canonSub(m.sub)||'')+'"><div><div style="font-size:.8rem;font-weight:600">'+esc(m.topic)+' <span class="tag tag-pur" style="font-size:.55rem">Professor</span></div><div style="font-size:.63rem;color:var(--t3)">'+esc(canonSub(m.sub))+'</div></div><div style="display:flex;gap:4px;align-items:center">'+favStarHTML('mapa',m)+'<button class="btn btn-outline btn-sm" data-mmviewshared="'+j+'">Ver</button></div></div>';
+    return'<div class="mm-item" data-fav-tit="'+esc(m.topic||'')+'" data-fav-sub="'+esc(canonSub(m.sub)||'')+'"><div><div style="font-size:.8rem;font-weight:600">'+esc(m.topic)+novoSeloHTML(m)+' <span class="tag tag-pur" style="font-size:.55rem">Professor</span></div><div style="font-size:.63rem;color:var(--t3)">'+esc(canonSub(m.sub))+'</div></div><div style="display:flex;gap:4px;align-items:center">'+favStarHTML('mapa',m)+'<button class="btn btn-outline btn-sm" data-mmviewshared="'+j+'">Ver</button></div></div>';
   }).join('');
   html+=phF.map(function(o){var m=o.m,i=o.i;
     return'<div class="mm-item" data-fav-tit="'+esc(m.topic||'')+'" data-fav-sub="'+esc(canonSub(m.sub)||'')+'"><div><div style="font-size:.8rem;font-weight:600">'+esc(m.topic)+'</div><div style="font-size:.63rem;color:var(--t3)">'+new Date(m.at||Date.now()).toLocaleDateString('pt-BR')+'</div></div><div style="display:flex;gap:4px;align-items:center">'+favStarHTML('mapa',m)+'<button class="btn btn-outline btn-sm" data-mmview="'+i+'">Ver</button><button class="btn btn-ghost btn-sm" data-mmdel="'+i+'">×</button></div></div>';
@@ -11997,6 +12045,27 @@ function bindTemaDrag(root){
   });
 }
 // Renderiza um card de diretriz no formato escolhido.
+// ── NOVO NO ACERVO ──────────────────────────────────────────────────────────
+// 🧨 Uma assinante Gold de 63 dias avaliou 3/5 dizendo que "diretrizes, mapas
+// mentais e revisões precisam ser atualizadas" (12/09/2026). Medido: nesse
+// período o acervo cresceu (resumos 5→161, mapas 62→82, diretrizes 62→71) e a
+// tela não mostrava NENHUM sinal disso — item sem data, grade com contagem
+// total, nada de "novo". Quem volta depois de um mês não distingue "nada mudou"
+// de "entraram 150". O selo marca a data de ENTRADA na plataforma (`at`), não
+// o ano da diretriz: uma diretriz de 2016 publicada ontem é nova no acervo e
+// continua sendo de 2016 — os dois fatos aparecem, cada um no seu lugar.
+var ACERVO_NOVO_DIAS=30;
+function acervoEhNovo(it,ref){
+  var t=Number(it&&(it.pubAt||it.at))||0;if(!t)return false;
+  var lim=(ref!=null)?ref:(Date.now()-ACERVO_NOVO_DIAS*86400000);
+  return t>lim;
+}
+function novoSeloHTML(it,ref){return acervoEhNovo(it,ref)?'<span class="novo-selo">Novo</span>':'';}
+// Contagem de novos numa subespecialidade das Diretrizes/Resumos (grade do nível 1).
+function dirNovosNaSub(sub,vis){
+  return diretrizes.filter(function(d){return d&&(String(d.sub||'Geral').trim()||'Geral')===sub&&(!vis||vis(d))&&acervoEhNovo(d);}).length;
+}
+function novosSufixoHTML(n,fem){return n?' <span class="novo-selo">'+n+' nov'+(fem?(n===1?'a':'as'):(n===1?'o':'os'))+'</span>':'';}
 function dirCardHTML(d,i){
   // Sem título por card: o tema (cabeçalho da aba) já é o título da seção.
   // Cabeçalho com a fonte só nos formatos Resumo/Mapa; nos Flashcards ele é omitido.
@@ -12004,8 +12073,11 @@ function dirCardHTML(d,i){
   // publicadas ele é mantido, pois a fonte real é relevante. Flashcards nunca mostram.
   // Exceção: nos ARTIGOS (trials) o cabeçalho fica mesmo sendo privado — o
   // periódico/ano e o link do estudo original são parte do conteúdo.
-  var head=(refFormat==='flash'||(d.privado&&dirTipoOf(d)!=='artigo'))?'':('<div class="dir-card-top"><span class="ref-badge">'+esc(d.fonte||'—')+(d.ano?(' · '+esc(d.ano)):'')+'</span>'
+  var selo=novoSeloHTML(d);
+  var head=(refFormat==='flash'||(d.privado&&dirTipoOf(d)!=='artigo'))?'':('<div class="dir-card-top"><span class="ref-badge">'+esc(d.fonte||'—')+(d.ano?(' · '+esc(d.ano)):'')+'</span>'+selo
     +(safeHttpUrl(d.url)?'<a href="'+esc(d.url)+'" target="_blank" rel="noopener" class="ref-link" style="margin-left:auto">Fonte ↗</a>':'')+'</div>');
+  // Resumo privado não tem cabeçalho de fonte; o selo, quando houver, vai sozinho.
+  if(!head&&selo&&refFormat!=='flash')head='<div class="dir-card-top">'+selo+'</div>';
   var body='';
   if(refFormat==='flash'){
     // Um flashcard por vez, com navegação anterior/próximo.
@@ -12360,7 +12432,8 @@ function diretrizesViewHTML(){
     return '<div class="ph"><h1>'+_T+'</h1><p>'+_sub1+'</p></div>'
       +'<div class="dir-sub-grid">'+subs.map(function(s){
         var _c=refPrivadoMode?_cntSub(s.count,dirArtigoCount(s.sub)):_cnt(s.count);
-        return '<button class="dir-sub-btn" data-dir-sub="'+esc(s.sub)+'"><div class="dsb-ico">'+dirSubIcon(s.sub)+'</div><h3>'+esc(s.sub)+'</h3><div class="dsb-cnt">'+_c+'</div></button>';
+        var _nv=dirNovosNaSub(s.sub,refPrivadoMode?dirIsVisibleAnyTipo:dirIsVisible);
+        return '<button class="dir-sub-btn" data-dir-sub="'+esc(s.sub)+'"><div class="dsb-ico">'+dirSubIcon(s.sub)+'</div><h3>'+esc(s.sub)+novosSufixoHTML(_nv,!refPrivadoMode)+'</h3><div class="dsb-cnt">'+_c+'</div></button>';
       }).join('')+'</div>';
   }
   // Nível 2 — grade de temas dentro da subespecialidade.
@@ -12389,6 +12462,7 @@ function diretrizesViewHTML(){
   }
   // Nível 3 — itens do tema, no formato escolhido.
   var list=diretrizes.map(function(d,i){return {d:d,i:i};}).filter(function(x){return dirIsVisible(x.d)&&(String(x.d.sub||'Geral').trim()||'Geral')===refSubSel&&dirTemaOf(x.d)===refTemaSel;});
+  list.sort(function(a,b){return (acervoEhNovo(b.d)?1:0)-(acervoEhNovo(a.d)?1:0);});
   var head='<button class="dir-back" data-dir-temaback>← '+esc(refSubSel)+'</button>'
     +'<div class="ph" style="margin-top:0"><h1>'+esc(refTemaSel)+'</h1></div>';
   if(!list.length){
@@ -16926,7 +17000,10 @@ function bindAdmSec(sec){
         // artigos: capítulo é o padrão implícito de todo o acervo já existente.
         if(admRefMode==='res'&&admRefTipo==='artigo')obj.tipo='artigo';
       }
-      if(admRefEdit!==null&&diretrizes[admRefEdit])diretrizes[admRefEdit]=obj;else diretrizes.unshift(obj);
+      // Data de ENTRADA no acervo: só no item novo. Na edição `at` vem de `prev`
+      // (Object.assign) e a edição fica em `atEdit` — editar não é republicar.
+      if(admRefEdit!==null&&diretrizes[admRefEdit]){obj.atEdit=Date.now();diretrizes[admRefEdit]=obj;}
+      else{obj.at=Date.now();delete obj.atAprox;diretrizes.unshift(obj);}
       persistDiretrizes();admRefShowForm=false;admRefInline=null;admRefEdit=null;admRefPdfB64=null;admRefPdfName='';admRefPdfFile=null;
       admRefSub=String(obj.sub||'Geral');admRefTema=dirTemaOf(obj); // abre onde o item ficou
       if(admRefMode==='res')admRefTipo=dirTipoOf(obj); // …inclusive na aba certa (Capítulos × Artigos)
