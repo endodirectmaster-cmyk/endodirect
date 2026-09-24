@@ -42,9 +42,12 @@ const ok = (nome, cond, det) => { if (cond) return; bad++; console.log('  ✗ ' 
   // conteudoErro. hydrateRemoteState encadeia os Resumos no .then dessa promessa
   // — que, por construção, sempre roda. As duas metades são conferidas.
   const iConteudo = APP.indexOf('function carregarConteudo(client,tentativa');
-  const trechoConteudo = APP.slice(iConteudo, iConteudo + 900);
-  ok('⚠️ no caminho do aluno real, a carga do conteúdo engole a própria falha (.catch)',
-     iConteudo > 0 && trechoConteudo.indexOf("client.rpc('endodirect_member_content')") > 0 && trechoConteudo.indexOf('.catch(') > 0);
+  const trechoConteudo = APP.slice(iConteudo, iConteudo + 1600);
+  const iCatchC = trechoConteudo.indexOf('.catch(function(e){');
+  const corpoCatch = iCatchC > 0 ? trechoConteudo.slice(iCatchC, trechoConteudo.indexOf('if(tentativa===1){', iCatchC)) : '';
+  ok('⚠️ no caminho do aluno real, a carga do conteúdo engole a própria falha (.catch sem throw)',
+     iConteudo > 0 && trechoConteudo.indexOf("client.rpc('endodirect_member_content')") > 0 && iCatchC > 0 && corpoCatch.length > 0 && corpoCatch.indexOf('throw') < 0,
+     'um throw no .catch faria a promessa rejeitar e os Resumos encadeados no .then não rodariam');
   const iHyd = APP.indexOf('function hydrateRemoteState(');
   const trechoMembro = APP.slice(iHyd, APP.indexOf('function queueRemoteStateSave'));
   const iConteudoMem = trechoMembro.indexOf('carregarConteudo(client)');

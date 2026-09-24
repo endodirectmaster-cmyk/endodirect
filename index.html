@@ -4878,8 +4878,16 @@ function canUseRemoteState(){
 var resumosErro=false;   // a última tentativa esgotou as retentativas
 function carregarResumos(client,rpc,tentativa){
   tentativa=tentativa||1;
+  return tentarResumos(client,rpc,tentativa,contaAtual());
+}
+// `uid` é quem PEDIU (null = demo/visitante). Os capítulos privados de um
+// assinante em voo não podem ser aplicados — nem guardados no aparelho — na
+// sessão de quem entrar em seguida no mesmo navegador: o servidor os entregou
+// para A; B não tem direito a eles.
+function tentarResumos(client,rpc,tentativa,uid){
   return client.rpc(rpc).then(function(r2){
     if(r2.error)throw r2.error;
+    if(!mesmaContaQue(uid))return;
     if(r2.data&&Array.isArray(r2.data.diretrizes)&&r2.data.diretrizes.length){
       diretrizes=r2.data.diretrizes;
       diretrizes.forEach(function(d){if(d&&d.sub)d.sub=dirMigrateSub(d.sub);});
@@ -4887,11 +4895,12 @@ function carregarResumos(client,rpc,tentativa){
       resumosErro=false;
     }
   }).catch(function(e){
+    if(!mesmaContaQue(uid))return;
     // Rede de celular derruba resposta grande (~1,8 MB) com frequência; uma
     // tentativa só deixava o aluno sem Resumos pelo resto da sessão.
     if(tentativa<3){
       return new Promise(function(r){setTimeout(r,900*tentativa);})
-        .then(function(){return carregarResumos(client,rpc,tentativa+1);});
+        .then(function(){return tentarResumos(client,rpc,tentativa+1,uid);});
     }
     resumosErro=true;
     console.warn('Resumos indisponíveis após '+tentativa+' tentativas',e);
@@ -4919,7 +4928,13 @@ function recarregarResumos(){
 // por usuário; (2) o conteúdo tenta 3× com espera crescente e, se esgotar,
 // conteudoErro=true — o Banco diz o que houve e oferece tentar de novo.
 var conteudoErro=false;   // member_content esgotou as tentativas nesta sessão
-var conteudoEmVoo=null;   // promessa da carga em andamento: uma por vez
+var conteudoEmVoo=null;   // {uid,p}: carga em andamento — uma por CONTA
+// Conta atual normalizada (null para demo/visitante). Toda resposta em voo só
+// vale para quem a pediu; comparar `currentUser.id===uid` direto falharia
+// para a demo, cujo id é undefined.
+function contaAtual(){return (currentUser&&currentUser.id)||null;}
+function mesmaContaQue(uid){return contaAtual()===(uid||null);}
+function conteudoEmVooDesta(){return !!(conteudoEmVoo&&conteudoEmVoo.uid===contaAtual());}
 // Vale repetir só quando a REDE falhou. O supabase-js não lança quando a
 // conexão cai no meio do corpo: devolve {error} sem `code` (mensagem
 // "TypeError: Failed to fetch" / "SyntaxError: …"). Erro do servidor com código
@@ -4935,17 +4950,20 @@ function erroDeRede(e){
 // na nova.
 function carregarConteudo(client,tentativa,uid){
   tentativa=tentativa||1;
-  if(uid===undefined)uid=currentUser&&currentUser.id;
-  // Quem chamar com a 1ª carga ainda em voo recebe a mesma promessa — sem
-  // isso, um "Tentar de novo" em cima de um hydrate baixava tudo duas vezes.
-  if(tentativa===1&&conteudoEmVoo)return conteudoEmVoo;
+  if(uid===undefined)uid=contaAtual();
+  // Quem chamar com a 1ª carga DESTA conta ainda em voo recebe a mesma promessa
+  // — sem isso, um "Tentar de novo" em cima de um hydrate baixava tudo duas
+  // vezes. Por conta, não global: a promessa da conta anterior não serve à
+  // seguinte (a resposta dela é descartada abaixo, e a conta nova ficaria sem
+  // conteúdo, sem erro e sem botão pela sessão inteira).
+  if(tentativa===1&&conteudoEmVoo&&conteudoEmVoo.uid===uid)return conteudoEmVoo.p;
   var p=client.rpc('endodirect_member_content').then(function(res){
     if(res.error)throw res.error;
-    if(!(currentUser&&currentUser.id===uid))return;
+    if(!mesmaContaQue(uid))return;
     if(res.data)applyStatePayload(res.data);
     conteudoErro=false;
   }).catch(function(e){
-    if(!(currentUser&&currentUser.id===uid))return;
+    if(!mesmaContaQue(uid))return;
     if(tentativa<3&&erroDeRede(e)){
       return new Promise(function(r){setTimeout(r,900*tentativa);})
         .then(function(){return carregarConteudo(client,tentativa+1,uid);});
@@ -4954,8 +4972,8 @@ function carregarConteudo(client,tentativa,uid){
     console.warn('member_content indisponível após '+tentativa+' tentativa(s)',e);
   });
   if(tentativa===1){
-    var minha=p.then(function(){if(conteudoEmVoo===minha)conteudoEmVoo=null;});
-    conteudoEmVoo=minha;
+    var minha=p.then(function(){if(conteudoEmVoo&&conteudoEmVoo.p===minha)conteudoEmVoo=null;});
+    conteudoEmVoo={uid:uid,p:minha};
     return minha;
   }
   return p;
@@ -4979,9 +4997,11 @@ function definirAcessos(lista){
   try{renderDegustacaoBar();}catch(e){}
 }
 // Devolve os acessos guardados no aparelho para ESTE usuário (ou null).
+var ACESSOS_GUARDADOS_MS=30*86400000; // cópia local vale 30 dias; depois, só o servidor
 function acessosGuardados(uid){
   var g=lsGet('acessos');
   if(!g||!Array.isArray(g.lista)||String(g.uid||'')!==String(uid||'').toLowerCase())return null;
+  if(!(Number(g.at)>0)||Date.now()-Number(g.at)>ACESSOS_GUARDADOS_MS)return null;
   return g.lista.slice();
 }
 function carregarAcessos(client,tentativa,uid){
@@ -4990,10 +5010,10 @@ function carregarAcessos(client,tentativa,uid){
   if(uid===undefined)uid=currentUser.id;
   return client.rpc('endodirect_acessos_ativos').then(function(res){
     if(res.error)throw res.error;
-    if(!(currentUser&&currentUser.id===uid))return;
+    if(!mesmaContaQue(uid))return;
     if(Array.isArray(res.data))definirAcessos(res.data);
   }).catch(function(e){
-    if(!(currentUser&&currentUser.id===uid))return;
+    if(!mesmaContaQue(uid))return;
     if(tentativa<3){
       return new Promise(function(r){setTimeout(r,600*tentativa);})
         .then(function(){return carregarAcessos(client,tentativa+1,uid);});
@@ -5004,9 +5024,14 @@ function carregarAcessos(client,tentativa,uid){
 function hydratePublicContent(){
   var client=getSupabaseClient();
   if(!client||remoteStateLoaded)return;
+  // Demo/visitante: a resposta só vale se ninguém entrou com conta real no
+  // meio. Senão ela ligava remoteStateLoaded para a conta nova antes de o
+  // app_state dela chegar, e o save gravava o estado local por cima do remoto.
+  var gen=++remoteStateGen;
+  function mesmaSessao(){return gen===remoteStateGen&&!contaAtual();}
   client.rpc('endodirect_public_content').then(function(res){
     if(res.error)throw res.error;
-    if(res.data)applyStatePayload(res.data);
+    if(mesmaSessao()&&res.data)applyStatePayload(res.data);
   })
   // ⚠️ Os Resumos NÃO podem depender do sucesso da chamada anterior: encadeados
   // no `.then` de sucesso, uma falha ali pulava esta etapa inteira em silêncio.
@@ -5016,8 +5041,10 @@ function hydratePublicContent(){
     // as diretrizes/Resumos pelo RPC dedicado (públicas + 1 capítulo por área).
     // ⚠️ A VITRINE NÃO CAI MAIS AQUI: desde 31/08/2026 ela tem sessão real e
     // segue por `hydrateRemoteState`, como qualquer assinante.
+    if(!mesmaSessao())return;
     return carregarResumos(client,'endodirect_member_resumos');
   }).then(function(){
+    if(!mesmaSessao())return;
     remoteStateLoaded=true;
     refreshAfterRemoteState();
   }).catch(function(e){
@@ -5025,6 +5052,12 @@ function hydratePublicContent(){
   });
 }
 var remoteStateEmVoo=null; // {uid,p}: carga em andamento — chamadas repetidas compartilham a mesma
+// Geração da sessão: sobe a cada carga nova e a cada saída. Uma resposta só
+// vale se a conta E a geração forem as de quando foi pedida — sair e entrar de
+// novo com a MESMA conta, sem recarregar a página, é sessão nova: o app_state
+// da anterior foi descartado na janela deslogada, e a carga velha, ao terminar,
+// gravaria o estado local (vazio) por cima do remoto.
+var remoteStateGen=0;
 function hydrateRemoteState(){
   if(remoteStateLoaded)return;
   var client=getSupabaseClient();
@@ -5037,8 +5070,8 @@ function hydrateRemoteState(){
   // novo. Enquanto houver carga em voo para este usuário, quem chamar de novo
   // recebe a mesma promessa.
   if(remoteStateEmVoo&&remoteStateEmVoo.uid===currentUser.id)return remoteStateEmVoo.p;
-  var uid=currentUser.id;
-  function mesmaConta(){return !!(currentUser&&currentUser.id===uid);}
+  var uid=currentUser.id,gen=++remoteStateGen;
+  function mesmaConta(){return gen===remoteStateGen&&contaAtual()===uid;}
   var loads=[
     client.from('endodirect_app_state').select('payload').eq('user_id',uid).maybeSingle()
       .then(function(res){if(res.error)throw res.error;if(mesmaConta()&&res.data&&res.data.payload)applyStatePayload(res.data.payload,true);}),
@@ -5075,6 +5108,7 @@ function hydrateRemoteState(){
       queueRemoteStateSave();
     }).catch(function(e){
       if(!remoteStateWarned){remoteStateWarned=true;console.warn('Supabase state unavailable',e);}
+      if(!mesmaConta())return; // falha da carga de OUTRA sessão: não decide o onboarding desta
       try{maybeOnboardAfterHydrate();}catch(_e){}
       try{filaEntradaAgendar();}catch(_e){}
     }).then(function(){if(remoteStateEmVoo&&remoteStateEmVoo.p===emVoo)remoteStateEmVoo=null;});
@@ -6777,6 +6811,9 @@ function doLogout(){
   if(deviceWatcher){clearInterval(deviceWatcher);deviceWatcher=null;}
   currentUser=null;
   remoteStateLoaded=false;
+  // Nada da sessão que acabou pode "completar" a próxima: as cargas em voo
+  // ficam órfãs (geração nova) e plano/erro em memória voltam ao zero.
+  remoteStateGen++;remoteStateEmVoo=null;conteudoEmVoo=null;conteudoErro=false;userAcessos=[];
   document.body.classList.remove('mobile-nav-open','admin-menu-open');
   document.getElementById('app-screen').classList.remove('admin-mode');
   document.getElementById('app-screen').style.display='none';
@@ -7132,8 +7169,10 @@ function ckGrantSuccess(msg){
   try{notify(msg||'Pagamento aprovado! Acesso liberado. 🎉','ok');}catch(e){}
   var ap=document.getElementById('app-screen');if(ap&&currentUser)ap.style.display=(currentUser.role==='admin')?'block':'flex';
   try{goPanel(homePanel());}catch(e){}
-  // Acesso liberado: agora sim a carga inteira, depois de qualquer carga em voo.
-  try{(remoteStateEmVoo?remoteStateEmVoo.p:Promise.resolve()).then(function(){remoteStateLoaded=false;hydrateRemoteState();});}catch(e){}
+  // Acesso liberado: agora sim a carga inteira, depois de qualquer carga em voo
+  // — inclusive um "Tentar de novo" do Banco pedido ANTES da liberação, com
+  // escopo de degustação, que a carga nova não pode reaproveitar.
+  try{Promise.all([remoteStateEmVoo?remoteStateEmVoo.p:null,conteudoEmVoo?conteudoEmVoo.p:null]).then(function(){remoteStateLoaded=false;hydrateRemoteState();});}catch(e){}
 }
 function ckVerify(){
   try{notify('Verificando pagamento…','info');}catch(e){}
@@ -8966,7 +9005,7 @@ function updateProvaInfo(){
 function bancoEstado(){
   if(provasPool().length)return '';
   if(conteudoErro)return 'erro';
-  if(conteudoEmVoo)return 'carregando'; // inclusive durante o "Tentar de novo"
+  if(conteudoEmVooDesta())return 'carregando'; // inclusive durante o "Tentar de novo"
   if(!remoteStateLoaded&&!remoteStateWarned&&getSupabaseClient())return 'carregando';
   return '';
 }
@@ -17850,6 +17889,7 @@ doLogin=function(u){
   currentUser=u;
   remoteStateLoaded=false;
   remoteStateWarned=false;
+  conteudoErro=false; // o erro (se houve) era da sessão anterior
   pendingOnboardCheck=false;
   // A conta mudou neste navegador? Se sim (ou se não sabemos a quem o estado
   // local pertence), não confiamos no perfil salvo localmente — isso evita
@@ -17871,7 +17911,8 @@ doLogin=function(u){
     // (por usuário). Antes, o Gold nascia "Degustação" a cada abertura, com os
     // painéis trancados, até os megabytes do member_content chegarem.
     if(Array.isArray(u.acessos))userAcessos=u.acessos.slice();
-    else if(u.id){var _acG=acessosGuardados(u.id);if(_acG)userAcessos=_acG;}
+    else if(u.id){var _acG=acessosGuardados(u.id);userAcessos=_acG||[];} // sem cópia DESTA conta: nada herdado da anterior
+    else userAcessos=[];
     var prof=lsGet('user_profile');
     var isMember=!!(currentUser&&currentUser.id);
     if(ownLocal){
