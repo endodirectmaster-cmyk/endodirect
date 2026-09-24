@@ -1,6 +1,6 @@
 ---
 tags: [cofre, pendencias]
-atualizado: 2026-08-29
+atualizado: 2026-09-24
 ---
 
 # Pendências
@@ -694,24 +694,50 @@ Não foi tocado porque o professor pediu **os mapas**. A correção é a mesma
 linha, no mesmo `case`. Decisão dele: os 180 flashcards de biblioteca continuam
 na degustação, ou voltam a ser benefício de assinante como está escrito?
 
-## 📦 `member_content` devolve 12,4 MB a um assinante Gold (2026-08-31)
+## 🎯 Escolher o TEMA no OSCE e na Prescrição Comentada (2026-09-24, sugestão de aluno)
 
-Medido ao conferir o login da vitrine, com token real:
+Luis (Gold, 83 dias, 5/5): *"No osce e prescrição comentada, seria melhor poder
+escolher o tema a ser abordado e não somente a grande área."* Hoje `startSim`
+e a Prescrição Comentada recebem só a subespecialidade e o tema é sorteado no
+prompt. Desenho provável: lista de temas por subespecialidade (a mesma taxonomia
+das diretrizes/`dirTemas`) com a opção "sortear" preservada. Resposta ao aluno
+já redigida (24/09) dizendo que entrou na fila.
 
-    POST /rpc/endodirect_member_content  ->  200, 12.465.614 bytes
+## 📦 `member_content` — RESOLVIDO EM PARTE: 12,3 → 5,3 MB (2026-08-31 → 2026-09-24)
 
-São 2.965 questões + 232 diretrizes (161 privadas) + 199 podcasts numa resposta
-só. **Não é regressão** — é o que qualquer Gold já recebia; a correção de hoje
-só *reduziu* o que o não-membro recebe (6,5 → 4,5 MB).
+Medido em 31/08 com token real: 12.465.614 bytes para um Gold. Em 24/09, com o
+feedback da Renata ("as questoes nao aparecem para mim"), a resposta caiu para
+**5,31 MB** (sem `diretrizes` duplicadas, radar janelado em 200 — ver
+[[Decisões]] 2026-09-24 e `supabase/member-content-mais-leve.sql`) e o cliente
+passou a tentar 3×, dizer quando falha e não depender dessa resposta para saber
+o plano.
 
-⚠️ Mas o cofre registra em 05/08/2026 que "rede de celular derruba resposta
-grande (~1,8 MB) com frequência", e que por isso `carregarResumos` tenta 3×.
-12,4 MB é sete vezes aquilo. Vale medir quanto do primeiro carregamento no
-celular falha hoje antes de decidir o quê: paginar as provas, mandar só as
-áreas que o aluno abre, ou separar em rotas.
+**O que ainda fica em aberto:**
 
-Registrado agora porque a medida existe. Não urgente: os alunos usam a
-plataforma, então ela chega — a pergunta é a que custo.
+- [ ] **`provas` continua vindo inteira (3,79 MB, 2.085 questões)** numa
+      resposta só. É a maior fatia restante. Caminhos: paginar por área/instituição
+      (o filtro do Banco já é por área) ou RPC própria com retentativa separada.
+      Medir a taxa de falha depois desta rodada antes de decidir.
+- [ ] **Cota do `localStorage`:** `applyStatePayload` grava `provas` (3,8 MB),
+      `adm_avisos` (0,7 MB) e `carregarResumos` grava `diretrizes` (2,9 MB) chave a
+      chave; `lsSet` engole `QuotaExceeded` e cai em memória. No Safari (~5 MB por
+      origem, contado em UTF-16) a cópia local das provas provavelmente nunca existe
+      — cada abertura depende da rede. Não medido em aparelho.
+- [ ] **Dashboard durante falha do `member_resumos`:** a fração "8 de 71" com
+      tooltip "A assinatura abre o restante" aparece para um Gold cuja carga caiu.
+      Como o `member_content` não manda mais `diretrizes`, a falha da RPC de
+      resumos ficou visível na aba Diretrizes (aviso + "Tentar de novo", feito) mas
+      o card do Dashboard ainda não distingue "não chegou" de "não tem".
+- [ ] **`signOut()` sem escopo** em `doLogout`/`onSessionEvicted` revoga os
+      refresh tokens de TODOS os aparelhos do aluno: uma evicção por limite de 2
+      dispositivos derruba também os legítimos quando o token expira, e cada
+      relogin custa outra carga. Considerar `signOut({scope:'local'})` na evicção.
+- [ ] **`@supabase/supabase-js@2` é tag flutuante** no `<script>`: o comportamento
+      "queda de conexão devolve `{error}` sem `code`, não lança" — do qual
+      `erroDeRede` depende — foi lido no fonte de hoje (2.117.x). Pinar a versão.
+- [ ] **Mural sem estado de erro:** se o `member_content` falha, o Mural mostra a
+      cópia local (ou "Nenhum aviso encontrado" em aparelho novo) sem dizer por quê.
+      O Banco e as Diretrizes já dizem; o Mural não.
 
 ## ✅ RESOLVIDO — Vitrine (`alunopro`) ganhou identidade no servidor (2026-08-31)
 Feito como planejado: conta real com `plano:gold` + cursos de vitrine, senha fora do bundle (aleatória e descartada), login pelo Supabase, `showcase_resumos` revogada. ⚠️ E revelou uma **segunda porta**: o `member_content` entregava os mesmos 161 itens privados a anônimos e foi corrigido junto. Ver [[Decisões]] 2026-08-31 e `supabase/vitrine-conta-real.sql`.

@@ -468,6 +468,21 @@ try {
   fail('regressão do acervo novo falhou:\n' + out);
 }
 
+// 17c-undecies. O BANCO DE QUESTÕES NÃO FICA MUDO. Assinante Gold: "as questões
+//      não aparecem para mim". A RPC devolvia as 2.085 questões dela; o que caía
+//      era a resposta de 12 MB no celular, engolida num console.warn — e, como os
+//      acessos vinham junto, a Gold virava "degustação". Agora: acessos em
+//      chamada própria (com cache por usuário), conteúdo com 3 tentativas, três
+//      estados visíveis no Banco, uma carga por vez, poll do checkout leve e o
+//      .sql do member_content sem diretrizes e com o radar janelado.
+try {
+  execFileSync(process.execPath, [path.join('scripts', 'test-banco-nao-fica-mudo.js')], { stdio: 'pipe' });
+  ok('banco de questões: carga com tentativas, acessos próprios, estados visíveis e sql janelado');
+} catch (e) {
+  const out = (e.stdout ? e.stdout.toString() : '') + (e.stderr ? e.stderr.toString() : '');
+  fail('regressão do banco de questões falhou:\n' + out);
+}
+
 // 17d. CADÊNCIA DO RADAR: o mural precisa de mais de uma varredura por dia. Com
 //      uma só (07:30 BRT), notícia publicada depois dela só aparece no dia
 //      seguinte — foi a queixa de 17/08/2026 (ANVISA aprovando canetas de

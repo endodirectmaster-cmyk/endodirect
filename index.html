@@ -4738,7 +4738,7 @@ function applyStatePayload(payload,personalOnly){
     if(Array.isArray(payload.diretrizes)){diretrizes=payload.diretrizes;diretrizes.forEach(function(d){if(d&&d.sub)d.sub=dirMigrateSub(d.sub);});}
     if(Array.isArray(payload.diretrizes_temas))dirTemasExtra=payload.diretrizes_temas;
     if(Array.isArray(payload.curso_mods_extra))admCursoModsExtra=payload.curso_mods_extra;
-    if(Array.isArray(payload.acessos))userAcessos=payload.acessos;
+    if(Array.isArray(payload.acessos))definirAcessos(payload.acessos);
     if(Array.isArray(payload.cursos))catalogoCursos=payload.cursos;
     if(Array.isArray(payload.ig_stories)){igStories=payload.ig_stories;try{lsSet('ig_stories',igStories);}catch(e){}try{var _mp=document.getElementById('panel-mural'),_qm=document.getElementById('qotd-modal');if(_mp&&_mp.classList.contains('on')&&(!_qm||_qm.style.display==='none'))renderQotd();}catch(e){}
       // ⚠️ O ARQUIVO TAMBÉM PRECISA SER REDESENHADO AQUI. `igStories` nasce da CÓPIA
@@ -4878,8 +4878,16 @@ function canUseRemoteState(){
 var resumosErro=false;   // a última tentativa esgotou as retentativas
 function carregarResumos(client,rpc,tentativa){
   tentativa=tentativa||1;
+  return tentarResumos(client,rpc,tentativa,contaAtual());
+}
+// `uid` é quem PEDIU (null = demo/visitante). Os capítulos privados de um
+// assinante em voo não podem ser aplicados — nem guardados no aparelho — na
+// sessão de quem entrar em seguida no mesmo navegador: o servidor os entregou
+// para A; B não tem direito a eles.
+function tentarResumos(client,rpc,tentativa,uid){
   return client.rpc(rpc).then(function(r2){
     if(r2.error)throw r2.error;
+    if(!mesmaContaQue(uid))return;
     if(r2.data&&Array.isArray(r2.data.diretrizes)&&r2.data.diretrizes.length){
       diretrizes=r2.data.diretrizes;
       diretrizes.forEach(function(d){if(d&&d.sub)d.sub=dirMigrateSub(d.sub);});
@@ -4887,11 +4895,12 @@ function carregarResumos(client,rpc,tentativa){
       resumosErro=false;
     }
   }).catch(function(e){
+    if(!mesmaContaQue(uid))return;
     // Rede de celular derruba resposta grande (~1,8 MB) com frequência; uma
     // tentativa só deixava o aluno sem Resumos pelo resto da sessão.
     if(tentativa<3){
       return new Promise(function(r){setTimeout(r,900*tentativa);})
-        .then(function(){return carregarResumos(client,rpc,tentativa+1);});
+        .then(function(){return tentarResumos(client,rpc,tentativa+1,uid);});
     }
     resumosErro=true;
     console.warn('Resumos indisponíveis após '+tentativa+' tentativas',e);
@@ -4907,12 +4916,122 @@ function recarregarResumos(){
   resumosErro=false;
   return carregarResumos(client,rpc);
 }
+// ⚠️ CARGA DO CONTEÚDO DO ASSINANTE (24/09/2026). "As questões não aparecem
+// para mim" — feedback de uma assinante Gold. No servidor, a RPC devolvia as
+// 2.085 questões dela sem erro; o que falhava era a TRAVESSIA: 12 MB numa
+// resposta só, no celular. Aqui a falha era engolida num console.warn, sem
+// retentativa (só os Resumos tentavam 3×), e o Banco ficava em "seu banco tem
+// 0" como se não houvesse questão. Pior: os ACESSOS vinham dentro dessa mesma
+// resposta — sem ela, userAcessos ficava vazio e a plataforma tratava a
+// assinante como degustação (painéis trancados, faixa de teste).
+// Agora: (1) os acessos vêm numa chamada própria e minúscula, com cache local
+// por usuário; (2) o conteúdo tenta 3× com espera crescente e, se esgotar,
+// conteudoErro=true — o Banco diz o que houve e oferece tentar de novo.
+var conteudoErro=false;   // member_content esgotou as tentativas nesta sessão
+var conteudoEmVoo=null;   // {uid,p}: carga em andamento — uma por CONTA
+// Conta atual normalizada (null para demo/visitante). Toda resposta em voo só
+// vale para quem a pediu; comparar `currentUser.id===uid` direto falharia
+// para a demo, cujo id é undefined.
+function contaAtual(){return (currentUser&&currentUser.id)||null;}
+function mesmaContaQue(uid){return contaAtual()===(uid||null);}
+function conteudoEmVooDesta(){return !!(conteudoEmVoo&&conteudoEmVoo.uid===contaAtual());}
+// Vale repetir só quando a REDE falhou. O supabase-js não lança quando a
+// conexão cai no meio do corpo: devolve {error} sem `code` (mensagem
+// "TypeError: Failed to fetch" / "SyntaxError: …"). Erro do servidor com código
+// 4xx ou do PostgREST (PGRST…, 42501) não se resolve baixando tudo de novo;
+// 5xx (gateway, tempo esgotado) vale a repetição.
+function erroDeRede(e){
+  var c=String((e&&e.code)||'');
+  if(!c)return true;
+  return /^5\d\d$/.test(c);
+}
+// `uid` é a conta que PEDIU: se o aluno trocar de conta com a resposta em voo,
+// ela é descartada — senão o estado da conta anterior seria aplicado (e gravado)
+// na nova.
+function carregarConteudo(client,tentativa,uid){
+  tentativa=tentativa||1;
+  if(uid===undefined)uid=contaAtual();
+  // Quem chamar com a 1ª carga DESTA conta ainda em voo recebe a mesma promessa
+  // — sem isso, um "Tentar de novo" em cima de um hydrate baixava tudo duas
+  // vezes. Por conta, não global: a promessa da conta anterior não serve à
+  // seguinte (a resposta dela é descartada abaixo, e a conta nova ficaria sem
+  // conteúdo, sem erro e sem botão pela sessão inteira).
+  if(tentativa===1&&conteudoEmVoo&&conteudoEmVoo.uid===uid)return conteudoEmVoo.p;
+  var p=client.rpc('endodirect_member_content').then(function(res){
+    if(res.error)throw res.error;
+    if(!mesmaContaQue(uid))return;
+    if(res.data)applyStatePayload(res.data);
+    conteudoErro=false;
+  }).catch(function(e){
+    if(!mesmaContaQue(uid))return;
+    if(tentativa<3&&erroDeRede(e)){
+      return new Promise(function(r){setTimeout(r,900*tentativa);})
+        .then(function(){return carregarConteudo(client,tentativa+1,uid);});
+    }
+    conteudoErro=true;
+    console.warn('member_content indisponível após '+tentativa+' tentativa(s)',e);
+  });
+  if(tentativa===1){
+    var minha=p.then(function(){if(conteudoEmVoo&&conteudoEmVoo.p===minha)conteudoEmVoo=null;});
+    conteudoEmVoo={uid:uid,p:minha};
+    return minha;
+  }
+  return p;
+}
+// Recarrega sob demanda (botão "Tentar de novo" do Banco de questões).
+function recarregarConteudo(){
+  var client=getSupabaseClient();
+  if(!client||!(currentUser&&currentUser.id))return Promise.resolve();
+  conteudoErro=false;
+  return carregarConteudo(client).then(function(){try{refreshAfterRemoteState();}catch(e){}});
+}
+// Acessos do aluno (lista curta: 'plano', 'plano:gold', 'curso:emc'…). Define,
+// guarda no aparelho (por usuário) e refaz o que depende do plano na hora —
+// sem esperar os megabytes do conteúdo.
+function definirAcessos(lista){
+  if(!Array.isArray(lista))return;
+  userAcessos=lista.slice();
+  try{if(currentUser&&currentUser.id)lsSet('acessos',{uid:String(currentUser.id).toLowerCase(),lista:userAcessos,at:Date.now()});}catch(e){}
+  try{updatePlanBadge();}catch(e){}
+  try{markLockedNavItems();}catch(e){}
+  try{renderDegustacaoBar();}catch(e){}
+}
+// Devolve os acessos guardados no aparelho para ESTE usuário (ou null).
+var ACESSOS_GUARDADOS_MS=30*86400000; // cópia local vale 30 dias; depois, só o servidor
+function acessosGuardados(uid){
+  var g=lsGet('acessos');
+  if(!g||!Array.isArray(g.lista)||String(g.uid||'')!==String(uid||'').toLowerCase())return null;
+  if(!(Number(g.at)>0)||Date.now()-Number(g.at)>ACESSOS_GUARDADOS_MS)return null;
+  return g.lista.slice();
+}
+function carregarAcessos(client,tentativa,uid){
+  tentativa=tentativa||1;
+  if(!client||!(currentUser&&currentUser.id))return Promise.resolve();
+  if(uid===undefined)uid=currentUser.id;
+  return client.rpc('endodirect_acessos_ativos').then(function(res){
+    if(res.error)throw res.error;
+    if(!mesmaContaQue(uid))return;
+    if(Array.isArray(res.data))definirAcessos(res.data);
+  }).catch(function(e){
+    if(!mesmaContaQue(uid))return;
+    if(tentativa<3){
+      return new Promise(function(r){setTimeout(r,600*tentativa);})
+        .then(function(){return carregarAcessos(client,tentativa+1,uid);});
+    }
+    console.warn('acessos indisponíveis após '+tentativa+' tentativas',e);
+  });
+}
 function hydratePublicContent(){
   var client=getSupabaseClient();
   if(!client||remoteStateLoaded)return;
+  // Demo/visitante: a resposta só vale se ninguém entrou com conta real no
+  // meio. Senão ela ligava remoteStateLoaded para a conta nova antes de o
+  // app_state dela chegar, e o save gravava o estado local por cima do remoto.
+  var gen=++remoteStateGen;
+  function mesmaSessao(){return gen===remoteStateGen&&!contaAtual();}
   client.rpc('endodirect_public_content').then(function(res){
     if(res.error)throw res.error;
-    if(res.data)applyStatePayload(res.data);
+    if(mesmaSessao()&&res.data)applyStatePayload(res.data);
   })
   // ⚠️ Os Resumos NÃO podem depender do sucesso da chamada anterior: encadeados
   // no `.then` de sucesso, uma falha ali pulava esta etapa inteira em silêncio.
@@ -4922,22 +5041,40 @@ function hydratePublicContent(){
     // as diretrizes/Resumos pelo RPC dedicado (públicas + 1 capítulo por área).
     // ⚠️ A VITRINE NÃO CAI MAIS AQUI: desde 31/08/2026 ela tem sessão real e
     // segue por `hydrateRemoteState`, como qualquer assinante.
+    if(!mesmaSessao())return;
     return carregarResumos(client,'endodirect_member_resumos');
   }).then(function(){
+    if(!mesmaSessao())return;
     remoteStateLoaded=true;
     refreshAfterRemoteState();
   }).catch(function(e){
     if(!remoteStateWarned){remoteStateWarned=true;console.warn('Supabase public content unavailable',e);}
   });
 }
+var remoteStateEmVoo=null; // {uid,p}: carga em andamento — chamadas repetidas compartilham a mesma
+// Geração da sessão: sobe a cada carga nova e a cada saída. Uma resposta só
+// vale se a conta E a geração forem as de quando foi pedida — sair e entrar de
+// novo com a MESMA conta, sem recarregar a página, é sessão nova: o app_state
+// da anterior foi descartado na janela deslogada, e a carga velha, ao terminar,
+// gravaria o estado local (vazio) por cima do remoto.
+var remoteStateGen=0;
 function hydrateRemoteState(){
   if(remoteStateLoaded)return;
   var client=getSupabaseClient();
   if(!client)return;
   if(!(currentUser&&currentUser.id)){hydratePublicContent();return;}
+  // ⚠️ UMA CARGA POR VEZ (24/09/2026). Nos logs de borda, uma assinante Gold
+  // fez 15 chamadas ao member_content em 5 minutos, com pares a 20 ms de
+  // distância: mais de um caminho do boot chamava esta função antes de a
+  // primeira resposta chegar, e cada chamada baixava a resposta inteira de
+  // novo. Enquanto houver carga em voo para este usuário, quem chamar de novo
+  // recebe a mesma promessa.
+  if(remoteStateEmVoo&&remoteStateEmVoo.uid===currentUser.id)return remoteStateEmVoo.p;
+  var uid=currentUser.id,gen=++remoteStateGen;
+  function mesmaConta(){return gen===remoteStateGen&&contaAtual()===uid;}
   var loads=[
-    client.from('endodirect_app_state').select('payload').eq('user_id',currentUser.id).maybeSingle()
-      .then(function(res){if(res.error)throw res.error;if(res.data&&res.data.payload)applyStatePayload(res.data.payload,true);}),
+    client.from('endodirect_app_state').select('payload').eq('user_id',uid).maybeSingle()
+      .then(function(res){if(res.error)throw res.error;if(mesmaConta()&&res.data&&res.data.payload)applyStatePayload(res.data.payload,true);}),
     // Só a LISTA de quais artigos têm discussão completa (uns poucos KB). O texto
     // em si é buscado ao abrir — ver muralDiscussaoHTML. Falha aqui não quebra
     // nada: sem a lista, o bloco simplesmente não aparece.
@@ -4948,19 +5085,20 @@ function hydrateRemoteState(){
       .then(function(res){if(res.error)throw res.error;if(res.data){if(res.data.payload)applyStatePayload(res.data.payload);lastGlobalUpdatedAt=res.data.updated_at||null;captureGlobalBaseline(res.data.payload||{});}}));
     loads.push(new Promise(function(r){loadCursoCatalogo(r);}));
   }else{
-    loads.push(client.rpc('endodirect_member_content')
-      .then(function(res){if(res.error)throw res.error;if(res.data)applyStatePayload(res.data);})
-      // ⚠️ As diretrizes/Resumos vêm de um RPC próprio e leve. Ele roda DEPOIS do
-      // member_content (ordem determinística: senão as 66 públicas do
-      // member_content sobrescreveriam os capítulos privados), mas NUNCA
-      // dependendo do sucesso dele — o member_content já está em ~5 MB, e
-      // encadeado no `.then` de sucesso uma falha lá levava os Resumos junto,
-      // deixando a tela do aluno vazia sem nenhum sinal.
-      .catch(function(e){if(!remoteStateWarned){console.warn('member_content indisponível',e);}})
+    // Acessos numa chamada própria (bytes), em paralelo com o conteúdo — ver
+    // carregarAcessos. Sem isso, a carga grande caindo no meio deixava um Gold
+    // parecendo degustação.
+    loads.push(carregarAcessos(client));
+    // Conteúdo (questões, mural, aulas, mapas, flashcards) com 3 tentativas —
+    // ver carregarConteudo. As diretrizes/Resumos vêm de um RPC próprio e leve,
+    // DEPOIS do conteúdo (ordem determinística) mas NUNCA dependendo do sucesso
+    // dele: encadeado no sucesso, uma falha aqui levava os Resumos junto.
+    loads.push(carregarConteudo(client)
       .then(function(){return carregarResumos(client,'endodirect_member_resumos');}));
   }
-  Promise.all(loads)
+  var emVoo=Promise.all(loads)
     .then(function(){
+      if(!mesmaConta())return; // trocou de conta no meio: nada disto é desta sessão
       remoteStateLoaded=true;
       try{prescScrubLog();}catch(e){} // remove PII de paciente de históricos legados
       refreshAfterRemoteState();
@@ -4970,9 +5108,12 @@ function hydrateRemoteState(){
       queueRemoteStateSave();
     }).catch(function(e){
       if(!remoteStateWarned){remoteStateWarned=true;console.warn('Supabase state unavailable',e);}
+      if(!mesmaConta())return; // falha da carga de OUTRA sessão: não decide o onboarding desta
       try{maybeOnboardAfterHydrate();}catch(_e){}
       try{filaEntradaAgendar();}catch(_e){}
-    });
+    }).then(function(){if(remoteStateEmVoo&&remoteStateEmVoo.p===emVoo)remoteStateEmVoo=null;});
+  remoteStateEmVoo={uid:currentUser.id,p:emVoo};
+  return emVoo;
 }
 function queueRemoteStateSave(immediate){
   if(!canUseRemoteState())return null;
@@ -6670,6 +6811,9 @@ function doLogout(){
   if(deviceWatcher){clearInterval(deviceWatcher);deviceWatcher=null;}
   currentUser=null;
   remoteStateLoaded=false;
+  // Nada da sessão que acabou pode "completar" a próxima: as cargas em voo
+  // ficam órfãs (geração nova) e plano/erro em memória voltam ao zero.
+  remoteStateGen++;remoteStateEmVoo=null;conteudoEmVoo=null;conteudoErro=false;userAcessos=[];
   document.body.classList.remove('mobile-nav-open','admin-menu-open');
   document.getElementById('app-screen').classList.remove('admin-mode');
   document.getElementById('app-screen').style.display='none';
@@ -7025,11 +7169,14 @@ function ckGrantSuccess(msg){
   try{notify(msg||'Pagamento aprovado! Acesso liberado. 🎉','ok');}catch(e){}
   var ap=document.getElementById('app-screen');if(ap&&currentUser)ap.style.display=(currentUser.role==='admin')?'block':'flex';
   try{goPanel(homePanel());}catch(e){}
-  try{remoteStateLoaded=false;hydrateRemoteState();}catch(e){}
+  // Acesso liberado: agora sim a carga inteira, depois de qualquer carga em voo
+  // — inclusive um "Tentar de novo" do Banco pedido ANTES da liberação, com
+  // escopo de degustação, que a carga nova não pode reaproveitar.
+  try{Promise.all([remoteStateEmVoo?remoteStateEmVoo.p:null,conteudoEmVoo?conteudoEmVoo.p:null]).then(function(){remoteStateLoaded=false;hydrateRemoteState();});}catch(e){}
 }
 function ckVerify(){
   try{notify('Verificando pagamento…','info');}catch(e){}
-  try{remoteStateLoaded=false;hydrateRemoteState();}catch(e){}
+  try{carregarAcessos(getSupabaseClient());}catch(e){}
   setTimeout(function(){
     if(!isDegustacao()&&currentPlanKey()){ckGrantSuccess('Pagamento confirmado! Acesso liberado. 🎉');}
     else{try{notify('Ainda não identificamos o pagamento. PIX leva alguns segundos; boleto pode levar 1–2 dias úteis.','info');}catch(e){}}
@@ -7043,12 +7190,15 @@ var _ckPoll=null,_ckPollN=0;
 function ckStopAutoVerify(){if(_ckPoll){clearInterval(_ckPoll);_ckPoll=null;}_ckPollN=0;}
 function ckStartAutoVerify(){
   ckStopAutoVerify();
-  try{remoteStateLoaded=false;hydrateRemoteState();}catch(e){}
+  // ⚠️ Cada checagem lê só os ACESSOS (uma lista de texto). Antes, cada volta
+  // do poll refazia o hydrate inteiro — a resposta completa do member_content
+  // a cada 5 s, por até 5 minutos.
+  try{carregarAcessos(getSupabaseClient());}catch(e){}
   _ckPoll=setInterval(function(){
     _ckPollN++;
     if(!isDegustacao()&&currentPlanKey()){ckStopAutoVerify();ckGrantSuccess('Pagamento confirmado! Acesso liberado. 🎉');return;}
     if(_ckPollN>60){ckStopAutoVerify();return;}
-    try{remoteStateLoaded=false;hydrateRemoteState();}catch(e){}
+    try{carregarAcessos(getSupabaseClient());}catch(e){}
   },5000);
 }
 function ckRenderResult(html){var rs=document.getElementById('ck-result');if(!rs)return;rs.style.display='block';rs.innerHTML=html;
@@ -7158,7 +7308,14 @@ function startSupabaseAuthWatcher(){
   if(!client)return;
   client.auth.getSession().then(function(res){
     if(isPasswordRecoveryUrl())return;
-    if(res.data&&res.data.session)loginFromSupabaseSession(res.data.session);
+    var s=res.data&&res.data.session;
+    if(!s)return;
+    // SIGNED_IN (abaixo) pode ter chegado primeiro com esta mesma conta: aí o
+    // login já foi feito, e refazê-lo disparava um segundo boot e uma segunda
+    // carga do conteúdo (pares de chamadas a 20 ms nos logs de borda).
+    var sid=s.user&&s.user.id;
+    if(currentUser&&sid&&currentUser.id===sid)return;
+    loginFromSupabaseSession(s);
   });
   client.auth.onAuthStateChange(function(event,session){
     if(event==='PASSWORD_RECOVERY'){handlePasswordRecovery();return;}
@@ -8821,8 +8978,13 @@ function updateProvaInfo(){
   var n=filterProvas(inst,ano,area,type).length;
   var total=provasPool().length;
   var el=document.getElementById('q-prova-info');
+  var estado=bancoEstado();
   if(el){
-    if(isDegustacao()){
+    if(estado==='carregando'){
+      el.innerHTML=ldHTML('Carregando o banco de questões…');
+    }else if(estado==='erro'){
+      el.textContent='Não foi possível carregar o banco de questões.';
+    }else if(isDegustacao()){
       el.textContent='🎁 Degustação: mostrando '+n+' de '+total+' questões do banco Endodirect (amostra). Assine um pacote para o banco completo.';
     }else if(n>0){
       el.textContent='Mostrando '+n+' de '+total+' questão(ões) no seu banco.';
@@ -8830,9 +8992,42 @@ function updateProvaInfo(){
       el.textContent='Nenhuma questão com esses filtros (seu banco tem '+total+').';
     }
   }
+  // Enquanto carrega ou depois de falhar, a área de resultados explica — em vez
+  // de o aluno clicar em Buscar e ler "Nenhuma questão encontrada".
+  if(estado){var rs=document.getElementById('q-gen-results');if(rs)rs.innerHTML=bancoEstadoHTML(estado);}
+}
+// ⚠️ TELA VAZIA NUNCA (24/09/2026). O banco do aluno só existe no aparelho
+// depois de UM carregamento completo (applyStatePayload guarda as chaves de
+// REMOTE_STATE_KEYS) — e só se couber na cota do navegador, que uma resposta de
+// 12 MB estourava em silêncio (lsSet engole o erro). Aparelho novo, cota cheia
+// ou carga caída: o banco nasce vazio, e "seu banco tem 0" seria mentira — as
+// questões existem, não chegaram. Três estados: carregando, erro (com botão) e normal.
+function bancoEstado(){
+  if(provasPool().length)return '';
+  if(conteudoErro)return 'erro';
+  if(conteudoEmVooDesta())return 'carregando'; // inclusive durante o "Tentar de novo"
+  if(!remoteStateLoaded&&!remoteStateWarned&&getSupabaseClient())return 'carregando';
+  return '';
+}
+function bancoEstadoHTML(estado){
+  if(estado==='carregando')return '<div class="empty">'+ldHTML('Carregando o banco de questões…')+'</div>';
+  if(estado==='erro')return '<div class="ref-soon" style="margin-top:.2rem"><div class="ref-soon-ico">📡</div>'
+    +'<h2>Não foi possível carregar o banco de questões</h2>'
+    +'<p>A conexão falhou antes de a lista completa chegar. As questões estão no servidor; basta tentar de novo.</p>'
+    +'<button class="btn btn-primary btn-sm" id="btn-banco-retry" style="margin-top:.6rem">🔄 Tentar de novo</button></div>';
+  return '';
+}
+function bancoTentarDeNovo(btn){
+  if(btn){btn.disabled=true;btn.innerHTML=ldHTML('Carregando…');}
+  return recarregarConteudo().then(function(){
+    try{populateInst('q-inst');}catch(e){}
+    updateProvaInfo();
+    // Chegou: refaz a busca com os filtros que o aluno já escolheu.
+    if(!bancoEstado()){var b=document.getElementById('btn-filter-provas');if(b)b.click();}
+  });
 }
 function renderProvaResults(qs){
-  if(!qs.length){document.getElementById('q-gen-results').innerHTML='<div class="empty">Nenhuma questão encontrada.</div>';return;}
+  if(!qs.length){var _est=bancoEstado();document.getElementById('q-gen-results').innerHTML=_est?bancoEstadoHTML(_est):'<div class="empty">Nenhuma questão encontrada.</div>';return;}
   genQs=qs.map(function(q){return Object.assign({},q,{type:q.type||(q.options&&Object.keys(q.options).length?'mc':'disc')});});
   genAnswered={};
   genPage=0;
@@ -12429,7 +12624,20 @@ function diretrizesViewHTML(){
       return _cab+'<div class="ref-soon" style="margin-top:1rem"><div class="ref-soon-ico">🔜</div><h2>Em breve</h2>'
         +'<p>Os resumos de estudo ainda estão sendo preparados.</p></div>';
     }
-    return '<div class="ph"><h1>'+_T+'</h1><p>'+_sub1+'</p></div>'
+    // Aba Diretrizes (pública): a lista local sempre existe — a semente de 8
+    // itens num aparelho novo, ou a última cópia guardada — então uma falha de
+    // carga passava em silêncio, com a semente no lugar do acervo. Desde
+    // 24/09/2026 as diretrizes não vêm mais dentro do member_content (que as
+    // mandava em duplicata, 2,9 MB); a única fonte é member_resumos, e a aba
+    // precisa dizer quando ela falhou. O botão é o mesmo da aba Resumos.
+    var _avisoDir='';
+    if(!refPrivadoMode&&resumosErro){
+      _avisoDir='<div class="ref-soon" style="margin:.4rem 0 1rem"><div class="ref-soon-ico">📡</div>'
+        +'<h2>Não foi possível atualizar as diretrizes</h2>'
+        +'<p>A lista abaixo é a última cópia guardada neste aparelho. O acervo completo está no servidor; basta tentar de novo.</p>'
+        +'<button class="btn btn-primary btn-sm" id="btn-resumos-retry" style="margin-top:.6rem">🔄 Tentar de novo</button></div>';
+    }
+    return '<div class="ph"><h1>'+_T+'</h1><p>'+_sub1+'</p></div>'+_avisoDir
       +'<div class="dir-sub-grid">'+subs.map(function(s){
         var _c=refPrivadoMode?_cntSub(s.count,dirArtigoCount(s.sub)):_cnt(s.count);
         var _nv=dirNovosNaSub(s.sub,refPrivadoMode?dirIsVisibleAnyTipo:dirIsVisible);
@@ -17681,6 +17889,7 @@ doLogin=function(u){
   currentUser=u;
   remoteStateLoaded=false;
   remoteStateWarned=false;
+  conteudoErro=false; // o erro (se houve) era da sessão anterior
   pendingOnboardCheck=false;
   // A conta mudou neste navegador? Se sim (ou se não sabemos a quem o estado
   // local pertence), não confiamos no perfil salvo localmente — isso evita
@@ -17697,8 +17906,13 @@ doLogin=function(u){
   }
   if(u.role==='aluno'){
     // Contas demo carregam os acessos embutidos (degustação x acesso total).
-    // Alunos reais não têm esse campo: os acessos vêm do member_content.
+    // Alunos reais não têm esse campo: os acessos vêm de endodirect_acessos_ativos
+    // no hydrate — e, até a resposta chegar, da cópia guardada neste aparelho
+    // (por usuário). Antes, o Gold nascia "Degustação" a cada abertura, com os
+    // painéis trancados, até os megabytes do member_content chegarem.
     if(Array.isArray(u.acessos))userAcessos=u.acessos.slice();
+    else if(u.id){var _acG=acessosGuardados(u.id);userAcessos=_acG||[];} // sem cópia DESTA conta: nada herdado da anterior
+    else userAcessos=[];
     var prof=lsGet('user_profile');
     var isMember=!!(currentUser&&currentUser.id);
     if(ownLocal){
@@ -19411,6 +19625,11 @@ document.addEventListener('DOMContentLoaded',function(){
   document.getElementById('btn-filter-provas').addEventListener('click',function(){
     var inst=document.getElementById('q-inst').value;var ano=document.getElementById('q-ano').value;var area=document.getElementById('q-parea').value;var type=(document.getElementById('q-ptype')||{}).value||'';
     renderProvaResults(filterProvas(inst,ano,area,type));
+  });
+  // "Tentar de novo" do Banco (o botão é redesenhado a cada estado; delega no contêiner).
+  document.getElementById('q-gen-results').addEventListener('click',function(e){
+    var b=e.target&&e.target.closest?e.target.closest('#btn-banco-retry'):null;
+    if(b)bancoTentarDeNovo(b);
   });
 
   // FLASHCARDS

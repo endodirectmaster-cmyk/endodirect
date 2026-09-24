@@ -37,10 +37,23 @@ const ok = (nome, cond, det) => { if (cond) return; bad++; console.log('  ✗ ' 
      iCatchPub > 0 && iResuPub > iCatchPub,
      'encadeados no .then de sucesso, uma falha anterior pula os Resumos em silêncio');
 
-  const trechoMembro = APP.slice(APP.indexOf("client.rpc('endodirect_member_content')"), APP.indexOf("client.rpc('endodirect_member_content')") + 1400);
-  const iCatchMem = trechoMembro.indexOf('.catch(');
+  // Desde 24/09/2026 o member_content é chamado dentro de carregarConteudo (3
+  // tentativas), que NUNCA rejeita: o .catch dela engole a falha e marca
+  // conteudoErro. hydrateRemoteState encadeia os Resumos no .then dessa promessa
+  // — que, por construção, sempre roda. As duas metades são conferidas.
+  const iConteudo = APP.indexOf('function carregarConteudo(client,tentativa');
+  const trechoConteudo = APP.slice(iConteudo, iConteudo + 1600);
+  const iCatchC = trechoConteudo.indexOf('.catch(function(e){');
+  const corpoCatch = iCatchC > 0 ? trechoConteudo.slice(iCatchC, trechoConteudo.indexOf('if(tentativa===1){', iCatchC)) : '';
+  ok('⚠️ no caminho do aluno real, a carga do conteúdo engole a própria falha (.catch sem throw)',
+     iConteudo > 0 && trechoConteudo.indexOf("client.rpc('endodirect_member_content')") > 0 && iCatchC > 0 && corpoCatch.length > 0 && corpoCatch.indexOf('throw') < 0,
+     'um throw no .catch faria a promessa rejeitar e os Resumos encadeados no .then não rodariam');
+  const iHyd = APP.indexOf('function hydrateRemoteState(');
+  const trechoMembro = APP.slice(iHyd, APP.indexOf('function queueRemoteStateSave'));
+  const iConteudoMem = trechoMembro.indexOf('carregarConteudo(client)');
   const iResuMem = trechoMembro.indexOf('carregarResumos(');
-  ok('⚠️ no caminho do aluno real, idem', iCatchMem > 0 && iResuMem > iCatchMem);
+  ok('⚠️ no caminho do aluno real, os Resumos vêm DEPOIS do conteúdo, sem depender do sucesso dele',
+     iConteudoMem > 0 && iResuMem > iConteudoMem && /carregarConteudo\(client\)\s*\.then\(function\(\)\{return carregarResumos\(/.test(trechoMembro));
 
   ok('nenhum .catch mudo sobrou na carga dos Resumos',
      !/carregarResumos[^]{0,200}\.catch\(function\(\)\{\}\)/.test(APP));
