@@ -33,7 +33,8 @@ const MARCAS = [
 ];
 // Sigla e convenção do banco de questões do professor não são ênfase.
 const SIGLAS = new Set(['DXA','GLP','GIP','ESPEN','EASO','IMC','BIA','SURMOUNT','CORRETA','INCORRETA',
-  'HDL','LDL','TSH','ACTH','GnRH','TOTG','DRC','SUS','ANVISA','FDA','EMA','ADA','SBD','SBEM','PCR','TC','RM','US']);
+  'HDL','LDL','TSH','ACTH','GnRH','TOTG','DRC','SUS','ANVISA','FDA','EMA','ADA','SBD','SBEM','PCR','TC','RM','US',
+  'OSCE']); // OSCE: sigla do simulador de casos (item do menu), não ênfase
 
 function analisar(texto, origem) {
   const achados = [];

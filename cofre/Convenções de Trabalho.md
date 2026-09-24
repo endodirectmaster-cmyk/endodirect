@@ -1,9 +1,44 @@
 ---
 tags: [cofre, processo]
-atualizado: 2026-09-02
+atualizado: 2026-09-24
 ---
 
 # Convenções de Trabalho
+
+## 🧨 FUNÇÃO REESCRITA A PARTIR DE CÓPIA VELHA PERDE O QUE VEIO ANTES (2026-09-24)
+
+Segunda ocorrência da armadilha de 07/09 (trigger reescrito sem o `aovivo_sent`),
+agora com custo medido: a migração `member_content_capa_do_curso` (07/08) reescreveu
+o `endodirect_member_content` inteiro a partir de um corpo anterior a 23/07 e
+derrubou, em silêncio, a janela do radar (`limit 200`, 23/07) e o filtro de
+`radar_hidden` (03/08). Ninguém viu por sete semanas: todo Gold passou a baixar o
+radar inteiro (4,77 MB) e o botão "Carregar artigos mais antigos" nunca mais
+apareceu para assinante. Só veio à tona pelo feedback de uma aluna ("as questões
+não aparecem").
+
+**Regras:**
+
+- **Antes de `create or replace`, ler o `prosrc` em produção** — nunca partir de
+  um `.sql` do repositório nem da memória. O repositório tinha seis arquivos
+  citando a função e nenhum com o corpo atual.
+- **Versionar o corpo COMPLETO** no `supabase/*.sql` da mudança, não um patch
+  por `replace()` de trecho: o patch parcial passa se o trecho existir e não diz
+  nada sobre o que sumiu ao redor.
+- **Depois de aplicar, conferir as marcas das migrações anteriores** no resultado
+  (`select prosrc ... ilike '%limit 200%'`, `'%radar_hidden%'`), e medir o tamanho
+  da resposta com o `user_id` de uma conta real.
+
+## 🧨 ACESSO NÃO VIAJA JUNTO COM A CARGA PESADA (2026-09-24)
+
+O plano do aluno (`acessos`) vinha dentro da resposta de 12 MB do
+`member_content`. Quando ela caía — e no celular caía — `userAcessos` ficava
+vazio e o app tratava uma Gold como degustação: faixa amarela, cadeados, "0 de 0
+questões, assine um pacote". A mesma tela errada aparecia por alguns segundos a
+CADA abertura, até os megabytes chegarem. Regra: **o que decide o que o aluno
+pode ver chega por chamada própria e minúscula, com retentativa e cache local**;
+o conteúdo vem depois, e a sua falha vira aviso na tela — nunca rebaixamento de
+plano. E **retentativa que existe numa RPC (Resumos, desde 05/08) tem de existir
+nas irmãs**: a assimetria durou sete semanas.
 
 ## 🧨 JARGÃO DE IA NO CONTEÚDO CLÍNICO (2026-09-02)
 
