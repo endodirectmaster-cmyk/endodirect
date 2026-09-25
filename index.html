@@ -1509,6 +1509,13 @@ input.dmm-inp-subsub{flex:1;min-width:0;background:transparent;color:var(--t2);f
     <div class="modal-hdr"><span class="modal-hdr-title">✨ Novidades no Endodirect</span></div>
     <div class="modal-body">
       <div style="font-size:.82rem;color:var(--t2);margin-bottom:1rem;line-height:1.55">Novidades para deixar sua experiência ainda melhor:</div>
+      <div style="display:flex;gap:.7rem;align-items:flex-start;background:var(--s2,#f6f8fc);border-radius:12px;padding:.8rem .85rem;margin-bottom:.7rem">
+        <div style="font-size:1.5rem;line-height:1;flex:none">🩺</div>
+        <div>
+          <div style="font-weight:700;font-size:.9rem;margin-bottom:.2rem">Escolha o tema no OSCE e na Prescrição <span style="font-size:.64rem;font-weight:700;color:#15803d;background:rgba(34,197,94,.16);padding:.06rem .42rem;border-radius:99px;vertical-align:middle">novo</span></div>
+          <div style="font-size:.8rem;color:var(--t2);line-height:1.5">Além da subespecialidade, o caso pode ser gerado sobre um <b>tema específico</b>, com a mesma lista de temas dos Resumos. Sugestão de um assinante. Deixe em "Sortear" para treinar sem saber o assunto.</div>
+        </div>
+      </div>
       <div id="wn-consultorio" style="display:none;gap:.7rem;align-items:flex-start;background:var(--s2,#f6f8fc);border-radius:12px;padding:.8rem .85rem;margin-bottom:.7rem">
         <div style="font-size:1.5rem;line-height:1;flex:none">⚕️</div>
         <div>
@@ -2514,8 +2521,9 @@ input.dmm-inp-subsub{flex:1;min-width:0;background:transparent;color:var(--t2);f
       <div class="ph"><h1>OSCE — Caso Clínico</h1><p>Conduza um caso clínico no estilo OSCE, passo a passo (anamnese, exame, conduta), e receba nota e feedback ao final.</p></div>
       <div class="pc">
         <div class="gen-box" id="sim-setup">
-          <div class="g2" style="margin-bottom:.65rem">
-            <div class="fld2" style="margin:0"><label>Subespecialidade</label><select id="sim-sub"><option value="">Todas</option><option>Diabetes</option><option>Obesidade</option><option>Tireoide</option><option>Adrenal</option><option>Neuroendocrinologia</option><option>Osteometabolismo</option><option>Endocrinologia Pediátrica</option><option>Endocrinologia Esportiva</option><option>Endocrinologia Masculina</option><option>Endocrinologia Feminina</option><option>Transgeneridade</option></select></div>
+          <div class="g3" style="margin-bottom:.65rem">
+            <div class="fld2" style="margin:0"><label>Subespecialidade</label><select id="sim-sub"><option value="">Todas</option><option>Diabetes</option><option>Obesidade</option><option>Tireoide</option><option>Adrenal</option><option>Neuroendocrinologia</option><option>Osteometabolismo</option><option>Lípides</option><option>Endocrinopatias</option><option>Endocrinologia Pediátrica</option><option>Endocrinologia Esportiva</option><option>Endocrinologia Masculina</option><option>Endocrinologia Feminina</option><option>Transgeneridade</option></select></div>
+            <div class="fld2" style="margin:0"><label>Tema</label><select id="sim-tema"><option value="">Sortear</option></select></div>
             <div class="fld2" style="margin:0"><label>Complexidade</label><select id="sim-level"><option value="simples">Fácil</option><option value="moderado" selected>Médio</option><option value="complexo">Difícil</option></select></div>
           </div>
           <div class="fld2">
@@ -2604,8 +2612,9 @@ input.dmm-inp-subsub{flex:1;min-width:0;background:transparent;color:var(--t2);f
       <div class="ph"><h1>Prescrição Simulada</h1><p>Treine a conduta e a prescrição de um caso clínico simulado e receba uma correção comentada ao final.</p></div>
       <div class="pc">
         <div class="gen-box">
-          <div class="g2" style="margin-bottom:.65rem">
-            <div class="fld2" style="margin:0"><label>Subespecialidade</label><select id="rx-sub"><option value="">Todas</option><option>Diabetes</option><option>Obesidade</option><option>Tireoide</option><option>Adrenal</option><option>Neuroendocrinologia</option><option>Osteometabolismo</option><option>Endocrinologia Pediátrica</option><option>Endocrinologia Esportiva</option><option>Endocrinologia Masculina</option><option>Endocrinologia Feminina</option><option>Transgeneridade</option></select></div>
+          <div class="g3" style="margin-bottom:.65rem">
+            <div class="fld2" style="margin:0"><label>Subespecialidade</label><select id="rx-sub"><option value="">Todas</option><option>Diabetes</option><option>Obesidade</option><option>Tireoide</option><option>Adrenal</option><option>Neuroendocrinologia</option><option>Osteometabolismo</option><option>Lípides</option><option>Endocrinopatias</option><option>Endocrinologia Pediátrica</option><option>Endocrinologia Esportiva</option><option>Endocrinologia Masculina</option><option>Endocrinologia Feminina</option><option>Transgeneridade</option></select></div>
+            <div class="fld2" style="margin:0"><label>Tema</label><select id="rx-tema"><option value="">Sortear</option></select></div>
             <div class="fld2" style="margin:0"><label>Complexidade</label><select id="rx-level"><option value="simples">Fácil</option><option value="moderado" selected>Médio</option><option value="complexo">Difícil</option></select></div>
           </div>
           <button class="btn btn-primary" id="btn-rx-gen">▶ Gerar caso</button>
@@ -4859,6 +4868,7 @@ function refreshAfterRemoteState(){
   try{initMural();}catch(e){}
   try{populateInst('q-inst');}catch(e){}
   try{updateProvaInfo();}catch(e){}
+  try{popularTemasFerramentas();}catch(e){} // temas do OSCE/Prescrição: chegaram os Resumos
   try{renderSavedCrono();}catch(e){}
   try{renderNoteList();}catch(e){}
   try{markLockedNavItems();}catch(e){}
@@ -6508,7 +6518,7 @@ function hideMMModal(){var m=document.getElementById('lp-mm-modal');if(m)m.class
 // WHATSNEW_VER. Chamada de startApp() e de maybeOnboardAfterHydrate() — os
 // guards (perfil presente, onboarding fechado, já visto) e o flag de sessão
 // evitam exibição precoce ou dupla.
-var WHATSNEW_VER='2026-06-consultorio-app-push';
+var WHATSNEW_VER='2026-09-tema-osce-prescricao';
 var whatsNewShown=false;
 function maybeShowWhatsNew(){
   try{
@@ -7924,6 +7934,7 @@ function goPanel(id){
   if(id==='mural')try{kickDiscussaoCadeia();}catch(e){}
   if(id==='qotd'){try{renderQotdArchive();}catch(e){}}
   if(id==='quest'){applyQuestDegustacao();renderSavedQ();populateInst('q-inst');updateProvaInfo();}
+  if(id==='sim'||id==='rx')try{popularTemasFerramentas();}catch(e){}
   if(id==='flash'){fcFilter=null;renderFC();} // abre na grade de subespecialidades
   if(id==='favs')renderFavoritos();
   if(id==='mmap')renderMMList();
@@ -10625,16 +10636,18 @@ function calcUpdate(){
 var rxCase=null;
 function genRxCase(){
   var sub=document.getElementById('rx-sub').value;
+  var tema=((document.getElementById('rx-tema')||{}).value||'').trim();
+  if(!sub&&tema){var _o=document.querySelector('#rx-tema option[value="'+tema.replace(/"/g,'&quot;')+'"]');if(_o&&_o.dataset.sub)sub=_o.dataset.sub;}
   var level=document.getElementById('rx-level').value;
   var btn=document.getElementById('btn-rx-gen');
   btn.disabled=true;btn.innerHTML=ldHTML();
-  callAI(groundSys('Preceptor de endocrinologia BR. JSON APENAS: {"caso":"vinheta clínica com dados para prescrição (4-6 linhas)","area":"')+(sub||'Endocrinologia')+'"}','Caso clínico de '+(sub||'endocrinologia')+', complexidade '+level+', que demande prescrição.',900)
+  callAI(groundSys('Preceptor de endocrinologia BR. JSON APENAS: {"caso":"vinheta clínica com dados para prescrição (4-6 linhas)","area":"')+(sub||'Endocrinologia')+'"}','Caso clínico de '+(sub||'endocrinologia')+(tema?' — tema obrigatório do caso: '+tema:'')+', complexidade '+level+', que demande prescrição.',900)
   .then(function(raw){
     var d=parseJ(raw);if(!d||!d.caso)throw new Error('Resposta inválida.');
     rxCase=d;
     document.getElementById('rx-case-wrap').style.display='block';
     setText('rx-case-text',d.caso);
-    setText('rx-case-tag',d.area||sub||'Endocrinologia');
+    setText('rx-case-tag',(d.area||sub||'Endocrinologia')+(tema?' · '+tema:''));
     document.getElementById('rx-diag').value='';document.getElementById('rx-text').value='';
     document.getElementById('rx-feedback').innerHTML='';
   }).catch(function(e){notify('Erro: '+e.message,'err');})
@@ -11868,6 +11881,62 @@ function dirArtigoCount(sub){
 }
 // Tema (assunto) de uma diretriz; cai no título quando não definido.
 function dirTemaOf(d){return (String((d&&d.tema)||'').trim())||(String((d&&d.titulo)||'').trim())||'Geral';}
+// ── TEMAS PARA AS FERRAMENTAS (OSCE, Prescrição) — os mesmos dos Resumos ──
+// 25/09/2026, pedido do professor ("colocar filtro para o aluno escolher também
+// o tema de cada subespecialidade") a partir da sugestão de um assinante.
+// Duas fontes, na ordem em que o professor mantém os Resumos:
+//   1. `acervoTotais.temas` — nomes por subespecialidade, vindos do servidor
+//      para QUALQUER plano (a degustação só recebe 1 capítulo por área; sem a
+//      lista do servidor, o filtro dela teria um tema só);
+//   2. os capítulos privados que este navegador tem (assinante: todos;
+//      professor: a lista global) + os temas extras do professor.
+// Um nome só entra uma vez. Sem conteúdo em nenhuma das fontes, a lista fica
+// vazia e o select mostra só "Sortear".
+function temasDaSub(sub){
+  var canon=canonSub(sub);
+  var out=[],seen={};
+  function add(t){t=String(t||'').trim();if(!t)return;var k=t.toLowerCase();if(seen[k])return;seen[k]=1;out.push(t);}
+  var srv=(acervoTotais&&acervoTotais.temas&&typeof acervoTotais.temas==='object')?acervoTotais.temas[canon]:null;
+  if(Array.isArray(srv))srv.forEach(add);
+  // Os temas extras (sem capítulo) só entram pela lista local para o professor:
+  // o aluno não recebe `diretrizes_temas` do servidor (carregarResumos não os
+  // aplica) e a cópia guardada no aparelho poderia estar velha — para ele, os
+  // extras chegam pela lista do servidor acima.
+  var comExtras=!!(currentUser&&currentUser.role==='admin');
+  dirTemaList(canon,comExtras,function(d){return !!(d&&d.privado===true)&&!dirIsRascunho(d)&&dirTipoOf(d)==='capitulo';},'capitulo').forEach(function(x){add(x.tema);});
+  return out;
+}
+// Subespecialidades com tema, na ordem canônica das Diretrizes (+ extras do servidor).
+function subsComTema(){
+  var subs=DIR_SUBS.slice();
+  var srv=(acervoTotais&&acervoTotais.temas&&typeof acervoTotais.temas==='object')?acervoTotais.temas:{};
+  Object.keys(srv).forEach(function(s){if(subs.indexOf(s)<0)subs.push(s);});
+  return subs.filter(function(s){return temasDaSub(s).length>0;});
+}
+// Preenche o select de tema de uma ferramenta a partir da subespecialidade
+// escolhida; com "Todas", agrupa os temas por subespecialidade. Preserva o
+// tema já escolhido se ele continuar na lista.
+function popularTemas(selId,sub){
+  var sel=document.getElementById(selId);if(!sel)return;
+  var atual=sel.value;
+  var html='<option value="">Sortear</option>';
+  if(sub){
+    html+=temasDaSub(sub).map(function(t){return '<option value="'+esc(t)+'">'+esc(t)+'</option>';}).join('');
+  }else{
+    subsComTema().forEach(function(s){
+      html+='<optgroup label="'+esc(s)+'">'+temasDaSub(s).map(function(t){return '<option value="'+esc(t)+'" data-sub="'+esc(s)+'">'+esc(t)+'</option>';}).join('')+'</optgroup>';
+    });
+  }
+  sel.innerHTML=html;
+  if(atual){sel.value=atual;if(sel.value!==atual)sel.value='';}
+}
+// As duas ferramentas de uma vez (abertura do painel, troca de subespecialidade,
+// chegada do conteúdo remoto).
+function popularTemasFerramentas(){
+  var ss=document.getElementById('sim-sub'),rs=document.getElementById('rx-sub');
+  popularTemas('sim-tema',ss?ss.value:'');
+  popularTemas('rx-tema',rs?rs.value:'');
+}
 // Lista de temas (com contagem) dentro de uma subespecialidade.
 // withExtras=true (editor) inclui os temas criados pelo admin ainda sem
 // diretriz; o aluno só vê temas com conteúdo.
@@ -18905,15 +18974,18 @@ function updateSimCounter(){
 startSim=function(){
   if(!consumeTrial('sim'))return;
   var sub=document.getElementById('sim-sub').value;
+  var tema=((document.getElementById('sim-tema')||{}).value||'').trim();
+  // Com "Todas" e um tema escolhido, a subespecialidade vem do próprio tema.
+  if(!sub&&tema){var _o=document.querySelector('#sim-tema option[value="'+tema.replace(/"/g,'&quot;')+'"]');if(_o&&_o.dataset.sub)sub=_o.dataset.sub;}
   var level=document.getElementById('sim-level').value;
   var mode=(document.querySelector('input[name="sim-mode"]:checked')||{}).value||'mc';
   var btn=document.getElementById('btn-sim-start');
   btn.disabled=true;btn.innerHTML=ldHTML('Gerando...');
   var sys='Você é preceptor de endocrinologia conduzindo um caso clínico passo a passo (estilo OSCE), em português do Brasil, com RIGOR TÉCNICO. A vinheta (intro) deve trazer dados objetivos: idade, sexo, queixa, antecedentes, exame físico e EXAMES LABORATORIAIS com valores e unidades (ex.: TSH 8,4 mUI/L; cortisol 2,1 µg/dL). JSON APENAS: {"intro":"vinheta com dados objetivos e laboratoriais","steps":[{"pergunta":"conduta/raciocínio solicitado"'+(mode==='mc'?',"options":{"A":"","B":"","C":"","D":""},"correct":"A","feedback":"justificativa técnica (2-4 frases) citando alvo/critério/dose/diretriz (SBEM, SBD, ADA, Endocrine Society, AACE) quando pertinente"':',"ideal":"resposta ideal detalhada com valores de corte, doses e monitorização"')+'}]}. Use EXATAMENTE 4 passos PROGRESSIVOS (anamnese dirigida → exames complementares → diagnóstico → conduta/titulação). Os feedbacks podem ser ricos, mas mantenha SÓ 4 passos. Valores de corte, doses e diretrizes corretos. As distratoras devem ser plausíveis. Terminologia atual: use "doença renal do diabetes" (não "nefropatia diabética") e "albuminúria"/RAC (não "microalbuminúria" nem "macroalbuminúria").'+CLINICAL_GUIDELINES;
-  withTimeout(simRetry(function(){return callAIJson(sys,'Caso de '+(sub||'endocrinologia')+', complexidade '+level+', modo '+(mode==='mc'?'múltipla escolha':'resposta aberta')+'.',3200,0,AI_MODEL_SIM_GEN);}),59000,'A geração demorou demais. Tente de novo.')
+  withTimeout(simRetry(function(){return callAIJson(sys,'Caso de '+(sub||'endocrinologia')+(tema?' — tema obrigatório do caso: '+tema:'')+', complexidade '+level+', modo '+(mode==='mc'?'múltipla escolha':'resposta aberta')+'.',3200,0,AI_MODEL_SIM_GEN);}),59000,'A geração demorou demais. Tente de novo.')
   .then(function(d){
     if(!d||!d.steps||!d.steps.length)throw new Error('Resposta inválida.');
-    simState={data:d,step:0,mode:mode,score:0,answers:[],sub:sub||'Endocrinologia',level:level};
+    simState={data:d,step:0,mode:mode,score:0,answers:[],sub:sub||'Endocrinologia',tema:tema||'',level:level};
     document.getElementById('sim-setup').style.display='none';
     document.getElementById('sim-result').style.display='none';
     document.getElementById('sim-content').style.display='block';
@@ -18969,7 +19041,7 @@ function renderSimReport(d,pct,total){
   var nota=(d.nota!=null&&isFinite(parseFloat(d.nota)))?(String(d.nota).replace('.',',')+'/10'):null;
   var result=document.getElementById('sim-result');
   result.innerHTML='<div class="sim-report">'
-    +'<div class="sim-report-head"><div><div class="sim-report-kicker">Relatório final</div><h3>Simulação concluída</h3><p>'+esc(simState.sub)+' · '+esc(simState.level)+'</p></div><div class="sim-report-score"><strong>'+pct+'%</strong><span>'+simState.score+'/'+total+' passos'+(nota?' · nota '+esc(nota):'')+'</span></div></div>'
+    +'<div class="sim-report-head"><div><div class="sim-report-kicker">Relatório final</div><h3>Simulação concluída</h3><p>'+esc(simState.sub)+(simState.tema?' · '+esc(simState.tema):'')+' · '+esc(simState.level)+'</p></div><div class="sim-report-score"><strong>'+pct+'%</strong><span>'+simState.score+'/'+total+' passos'+(nota?' · nota '+esc(nota):'')+'</span></div></div>'
     +(d.veredito?'<div class="sim-report-verdict">'+esc(d.veredito)+'</div>':'')
     +'<div class="sim-report-grid"><div class="sim-report-box"><h4>✅ Pontos fortes</h4><ul>'+lis(d.fortes)+'</ul></div><div class="sim-report-box"><h4>⚠️ Pontos a melhorar</h4><ul>'+lis(d.fracos)+'</ul></div></div>'
     +(d.raciocinio?'<div class="sim-report-box" style="margin-top:.7rem"><h4>🧠 Raciocínio clínico</h4><p style="font-size:.85rem;line-height:1.6;color:var(--t2)">'+esc(d.raciocinio)+'</p></div>':'')
@@ -18999,7 +19071,7 @@ finishSim=function(){
   result.innerHTML='<div class="sim-report"><div class="sim-report-head"><div><div class="sim-report-kicker">Relatório final</div><h3>Gerando relatório do desempenho…</h3><p>'+esc(simState.sub)+' · '+esc(simState.level)+'</p></div><div class="sim-report-score"><strong>'+pct+'%</strong><span>'+simState.score+'/'+total+' passos</span></div></div><div style="margin-top:.6rem">'+ldHTML('Analisando suas condutas…')+'</div></div>';
   var transcript=(simState.answers||[]).map(function(a,i){return 'Passo '+(i+1)+'\nPergunta: '+a.question+'\nResposta do aluno: '+a.answer+'\nReferência ideal: '+(a.correct||'')+'\nResultado: '+(a.ok?'adequada':'inadequada')+(a.feedback?('\nFeedback: '+a.feedback):'');}).join('\n\n');
   var sys='Você é preceptor de endocrinologia avaliando o desempenho de um residente em um caso clínico simulado. Produza um RELATÓRIO técnico, específico e completo em português do Brasil. Responda em JSON APENAS: {"nota":<número 0-10 com uma casa decimal>,"veredito":"frase curta de síntese","fortes":["ponto específico 1","2","3"],"fracos":["ponto específico 1","2"],"raciocinio":"análise do raciocínio clínico, priorização diagnóstica e interpretação dos exames (3-5 frases)","conduta":"adequação das condutas, doses, titulação, monitorização e segurança (3-5 frases)","conclusao":"CONCLUSÃO FINAL detalhada: diagnóstico correto do caso, a conduta ideal completa (com valores de corte, doses e monitorização) e as principais mensagens de aprendizado (4-6 frases)","estudar":["tópico objetivo 1","2","3"]}. Cite alvos, valores de corte, doses e diretrizes (SBEM, SBD, ADA, Endocrine Society, AACE) quando pertinente. Baseie-se apenas nos dados do caso; não invente. Terminologia atual: use "doença renal do diabetes" (não "nefropatia diabética") e "albuminúria"/RAC (não "microalbuminúria" nem "macroalbuminúria").'+CLINICAL_GUIDELINES;
-  var usr='Caso ('+simState.sub+', complexidade '+simState.level+'):\n'+(simState.data.intro||'')+'\n\nDesempenho passo a passo (acertos '+simState.score+'/'+total+'):\n'+transcript;
+  var usr='Caso ('+simState.sub+(simState.tema?', tema: '+simState.tema:'')+', complexidade '+simState.level+'):\n'+(simState.data.intro||'')+'\n\nDesempenho passo a passo (acertos '+simState.score+'/'+total+'):\n'+transcript;
   simRetry(function(){return callAIJson(sys,usr,2400,0,AI_MODEL_CLINICO);})
   .then(function(d){renderSimReport(d,pct,total);})
   .catch(function(){renderSimReportFallback(pct,total);});
@@ -19736,6 +19808,10 @@ document.addEventListener('DOMContentLoaded',function(){
 
   // PRESCRIÇÃO
   document.getElementById('btn-rx-gen').addEventListener('click',genRxCase);
+  // Tema por subespecialidade nas duas ferramentas (ver temasDaSub).
+  var _simSub=document.getElementById('sim-sub');if(_simSub)_simSub.addEventListener('change',function(){popularTemas('sim-tema',_simSub.value);});
+  var _rxSub=document.getElementById('rx-sub');if(_rxSub)_rxSub.addEventListener('change',function(){popularTemas('rx-tema',_rxSub.value);});
+  try{popularTemasFerramentas();}catch(e){}
   document.getElementById('btn-rx-eval').addEventListener('click',evalRx);
   document.getElementById('btn-rx-new').addEventListener('click',genRxCase);
 

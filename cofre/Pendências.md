@@ -1,6 +1,6 @@
 ---
 tags: [cofre, pendencias]
-atualizado: 2026-09-24
+atualizado: 2026-09-25
 ---
 
 # Pendências
@@ -694,14 +694,22 @@ Não foi tocado porque o professor pediu **os mapas**. A correção é a mesma
 linha, no mesmo `case`. Decisão dele: os 180 flashcards de biblioteca continuam
 na degustação, ou voltam a ser benefício de assinante como está escrito?
 
-## 🎯 Escolher o TEMA no OSCE e na Prescrição Comentada (2026-09-24, sugestão de aluno)
+## ✅ RESOLVIDO — Escolher o TEMA no OSCE e na Prescrição (2026-09-24 → 2026-09-25)
 
 Luis (Gold, 83 dias, 5/5): *"No osce e prescrição comentada, seria melhor poder
-escolher o tema a ser abordado e não somente a grande área."* Hoje `startSim`
-e a Prescrição Comentada recebem só a subespecialidade e o tema é sorteado no
-prompt. Desenho provável: lista de temas por subespecialidade (a mesma taxonomia
-das diretrizes/`dirTemas`) com a opção "sortear" preservada. Resposta ao aluno
-já redigida (24/09) dizendo que entrou na fila.
+escolher o tema a ser abordado e não somente a grande área."* Feito em 25/09 a
+pedido do professor: select "Tema" nas duas ferramentas com os mesmos temas dos
+Resumos (servidor + local), "Sortear" preservado. Ver [[Decisões]] 2026-09-25.
+
+## 📲 O radar deve notificar sozinho as Breaking News? (2026-09-25, decisão do professor)
+
+O radar marca `breaking` em ~1 item por semana (5 em 8 semanas, 2 de fonte
+oficial) e hoje **nunca** dispara push: só o professor dispara (botão no card
+ou ao salvar com o tipo Breaking News). O texto da janela de novidades
+("Receba um aviso no celular quando sair um comunicado ou breaking news")
+descreve o que o professor dispara. Se ele quiser automático: só itens com
+`breaking && isBreakingTrusted`, no primeiro aparecimento (`fresh` do merge),
+com teto diário, e o envio depois do save do payload.
 
 ## 📦 `member_content` — RESOLVIDO EM PARTE: 12,3 → 5,3 MB (2026-08-31 → 2026-09-24)
 
