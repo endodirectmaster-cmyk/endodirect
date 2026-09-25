@@ -1,6 +1,6 @@
 ---
 tags: [cofre, newsletter, radar]
-atualizado: 2026-08-28
+atualizado: 2026-09-25
 ---
 
 # Newsletter e Radar
@@ -14,7 +14,14 @@ convertê-la em aviso — e a conversão **apaga `sourceId`, `breaking` e `auto`
 o que quebra a dedup: a mesma notícia voltaria como item novo assim que o feed a
 trouxesse.
 
-Agora todo card do mural tem **📲 Notificar**. Regras que ficam:
+Agora todo card do mural tem **📲 Notificar**. ⚠️ **Correção de 25/09/2026:** o
+botão tinha sido posto no card da versão ANTIGA do painel (`admMuralSecHTML`
+base), sobrescrita mais abaixo e nunca renderizada — o professor nunca o viu, e
+só apareceu quando ele relatou "mudei para breaking news e não gerou push". O
+botão está agora no card vivo (`muralNoticeCardHTML(a,true)`), e o editor do
+card ganhou a caixa "📲 Notificar os alunos ao salvar", marcada sozinha quando o
+tipo MUDA para Breaking News. O radar continua **não** notificando sozinho
+(decisão pendente com o professor; ~1 breaking por semana). Regras que ficam:
 
 - **Lê o card, não escreve nele.** É a razão de existir do botão; o teste proíbe
   `saveRemoteState`, `persistAdm` e qualquer escrita dentro do handler.

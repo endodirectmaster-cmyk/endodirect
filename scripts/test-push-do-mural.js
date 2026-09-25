@@ -18,16 +18,62 @@ const html = fs.readFileSync(path.join(__dirname, '..', 'index.html'), 'utf8');
 const falhas = [];
 const ok = (c, m) => { if (!c) falhas.push(m); };
 
-// ── O botão existe em TODO card, não só nos manuais ────────────────────────
+// ── O botão existe em TODO card, no card que o professor VÊ ─────────────────
+// 🧨 25/09/2026. Este teste conferia o card da versão ANTIGA do painel
+// (`admMuralSecHTML` base, l.~15964), que é sobrescrita mais abaixo e nunca é
+// renderizada. O professor relatou "mudei para breaking news e não gerou push"
+// — e a captura de tela dele mostrava o card sem o botão. Código escrito não é
+// código alcançável: a âncora agora é o card vivo, `muralNoticeCardHTML(a,true)`.
 {
-  const i = html.indexOf("+'<div class=\"mural-card-actions\">");
-  const linha = html.slice(i, html.indexOf('\n', i));
+  const i = html.indexOf("+(admin?'<div class=\"mural-card-actions\">");
+  ok(i > 0, '⚠️ o card vivo do painel (muralNoticeCardHTML, ramo admin) sumiu');
+  // O bloco de ações do card vivo se estende por várias linhas (até o </article>).
+  const linha = html.slice(i, html.indexOf('</article>', i));
   ok(/data-adm-pushav="'\+esc\(avisoKeyStr\(a\)\)\+'"/.test(linha),
     '⚠️ o botão de notificar sumiu do card do mural — sem ele, notícia do radar volta a exigir conversão em aviso manual');
   // Fora do ramo `isRadarAuto(a)?...:...`, ou seja: aparece nos dois tipos.
   const antesDoRamo = linha.slice(0, linha.indexOf('isRadarAuto(a)'));
-  ok(antesDoRamo.indexOf('data-adm-pushav') >= 0,
+  ok(linha.indexOf('isRadarAuto(a)') > 0 && antesDoRamo.indexOf('data-adm-pushav') >= 0,
     '⚠️ o botão de notificar caiu dentro do ramo de um tipo só — o item do radar (que é o caso do professor) ficaria sem push');
+  // E o card vivo é mesmo o que o override do painel usa.
+  const iOverride = html.indexOf('admMuralSecHTML=function(){');
+  ok(iOverride > 0 && html.indexOf('muralNoticeCardHTML(a,true)', iOverride) > 0,
+    '⚠️ o painel do professor deixou de renderizar os cards por muralNoticeCardHTML(a,true) — o botão pode ter voltado a ficar em código morto');
+}
+
+// ── Editor do card: tipo virou Breaking News → push proposto e enviado ao salvar ──
+// O professor mudou um card de Comunicado para Breaking News esperando o push.
+// A caixa marca sozinha quando o tipo MUDA para breaking (não ao reeditar um
+// card que já era breaking), e o salvar envia com o mesmo formato do botão.
+{
+  ok(/id="mural-inline-push"/.test(html), 'o editor do card perdeu a caixa de push');
+  const i = html.indexOf("var miTipo=document.getElementById('mural-inline-tipo'),miPush=document.getElementById('mural-inline-push');");
+  ok(i > 0, 'o listener do tipo (mural-inline-tipo → caixa de push) sumiu');
+  const bloco = html.slice(i, html.indexOf("var miSave=document.getElementById('btn-mural-inline-save')", i));
+  // Executa o listener de verdade num mundo de mentira.
+  function roda(tipoOrig, novoTipo) {
+    const ctx = vm.createContext({ console });
+    vm.runInContext(
+      'var admAvisos=[{tipo:' + JSON.stringify(tipoOrig) + '}];var muralInlineEdit=0;'
+      + 'function muralDisplayType(a){return a.tipo;}'
+      + 'var _tipo={value:' + JSON.stringify(tipoOrig) + ',addEventListener:function(ev,fn){this._fn=fn;}};var _push={checked:false};'
+      + 'var document={getElementById:function(id){return id==="mural-inline-tipo"?_tipo:(id==="mural-inline-push"?_push:null);}};'
+      + bloco
+      + '\n_tipo.value=' + JSON.stringify(novoTipo) + ';_tipo._fn();', ctx);
+    return ctx._push.checked;
+  }
+  ok(roda('Comunicado', 'Breaking News') === true, '⚠️ Comunicado → Breaking News não marcou o push (o caso do professor)');
+  ok(roda('Comunicado', 'Evento') === false, 'trocar para um tipo comum não pode propor push');
+  ok(roda('Breaking News', 'Breaking News') === false, 'reeditar um card que já era Breaking News não re-notifica sozinho');
+  ok(roda('Breaking News', 'Comunicado') === false, 'rebaixar de Breaking News não propõe push');
+  // O salvar envia quando a caixa está marcada, com corpo = título e link do mural.
+  const s = html.indexOf("var miSave=document.getElementById('btn-mural-inline-save')");
+  const salvar = html.slice(s, s + 4000);
+  ok(/var _wantPush=!!\(_miPush&&_miPush\.checked\);/.test(salvar), 'o salvar não lê a caixa de push');
+  ok(/if\(_wantPush\)\{[\s\S]*?admSendPush\(\{title:_bn\?'🚨 Breaking News'/.test(salvar), 'o salvar não envia o push de Breaking News');
+  ok(/body:_bnTitulo,url:'https:\/\/www\.endodirect\.com\.br\/#mural'/.test(salvar), 'o push do salvar tem de levar o TÍTULO e apontar para o Mural');
+  ok(salvar.indexOf('var _wantPush') < salvar.indexOf("muralInlineEdit=null;persistAdm();renderAdmSec('mural')"),
+    'a caixa tem de ser lida ANTES do re-render (renderAdmSec destrói o editor)');
 }
 
 // ── O handler: acha o item, confirma, envia, e NÃO altera o card ───────────
@@ -134,4 +180,4 @@ const ok = (c, m) => { if (!c) falhas.push(m); };
 }
 
 if (falhas.length) { console.error('✗ ' + falhas.length + ' falha(s):\n - ' + falhas.join('\n - ')); process.exit(1); }
-console.log('✓ push do mural: botão em todo card, confirma com o texto à vista, manda o título e não escreve no item');
+console.log('✓ push do mural: botão no card VIVO, confirma com o texto à vista, manda o título, não escreve no item; editor propõe o push quando o tipo vira Breaking News');
