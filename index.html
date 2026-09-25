@@ -10634,20 +10634,21 @@ function calcUpdate(){
 
 // ── PRESCRIÇÃO ──
 var rxCase=null;
+// ⚠️ FUNÇÃO MORTA: sobrescrita por `genRxCase=function(){…}` mais abaixo (o
+// botão usa a versão sobrescrita). Alterações vão LÁ — em 25/09/2026 o filtro
+// de tema foi posto aqui primeiro e a revisão pegou. Idem para startSim.
 function genRxCase(){
   var sub=document.getElementById('rx-sub').value;
-  var tema=((document.getElementById('rx-tema')||{}).value||'').trim();
-  if(!sub&&tema){var _o=document.querySelector('#rx-tema option[value="'+tema.replace(/"/g,'&quot;')+'"]');if(_o&&_o.dataset.sub)sub=_o.dataset.sub;}
   var level=document.getElementById('rx-level').value;
   var btn=document.getElementById('btn-rx-gen');
   btn.disabled=true;btn.innerHTML=ldHTML();
-  callAI(groundSys('Preceptor de endocrinologia BR. JSON APENAS: {"caso":"vinheta clínica com dados para prescrição (4-6 linhas)","area":"')+(sub||'Endocrinologia')+'"}','Caso clínico de '+(sub||'endocrinologia')+(tema?' — tema obrigatório do caso: '+tema:'')+', complexidade '+level+', que demande prescrição.',900)
+  callAI(groundSys('Preceptor de endocrinologia BR. JSON APENAS: {"caso":"vinheta clínica com dados para prescrição (4-6 linhas)","area":"')+(sub||'Endocrinologia')+'"}','Caso clínico de '+(sub||'endocrinologia')+', complexidade '+level+', que demande prescrição.',900)
   .then(function(raw){
     var d=parseJ(raw);if(!d||!d.caso)throw new Error('Resposta inválida.');
     rxCase=d;
     document.getElementById('rx-case-wrap').style.display='block';
     setText('rx-case-text',d.caso);
-    setText('rx-case-tag',(d.area||sub||'Endocrinologia')+(tema?' · '+tema:''));
+    setText('rx-case-tag',d.area||sub||'Endocrinologia');
     document.getElementById('rx-diag').value='';document.getElementById('rx-text').value='';
     document.getElementById('rx-feedback').innerHTML='';
   }).catch(function(e){notify('Erro: '+e.message,'err');})
@@ -11916,9 +11917,16 @@ function subsComTema(){
 // Preenche o select de tema de uma ferramenta a partir da subespecialidade
 // escolhida; com "Todas", agrupa os temas por subespecialidade. Preserva o
 // tema já escolhido se ele continuar na lista.
+// Subespecialidade da option selecionada no select de tema (modo "Todas": cada
+// option leva data-sub). Sem option ou sem data-sub, devolve ''.
+function subDaOptionSelecionada(selId){
+  var sel=document.getElementById(selId);if(!sel||!sel.options)return '';
+  var o=sel.options[sel.selectedIndex];
+  return (o&&o.getAttribute&&o.getAttribute('data-sub'))||'';
+}
 function popularTemas(selId,sub){
   var sel=document.getElementById(selId);if(!sel)return;
-  var atual=sel.value;
+  var atual=sel.value,atualSub=subDaOptionSelecionada(selId);
   var html='<option value="">Sortear</option>';
   if(sub){
     html+=temasDaSub(sub).map(function(t){return '<option value="'+esc(t)+'">'+esc(t)+'</option>';}).join('');
@@ -11928,7 +11936,17 @@ function popularTemas(selId,sub){
     });
   }
   sel.innerHTML=html;
-  if(atual){sel.value=atual;if(sel.value!==atual)sel.value='';}
+  // Reencontra a MESMA option: mesmo valor e, no modo "Todas", a mesma
+  // subespecialidade — o nome de um tema pode repetir entre grupos. Se ela
+  // não existe mais na nova lista, volta a "Sortear".
+  if(atual){
+    var achou=0;
+    for(var i=0;i<sel.options.length;i++){
+      var o=sel.options[i],os=o.getAttribute('data-sub')||'';
+      if(o.value===atual&&(!atualSub||!os||os===atualSub)){achou=i;break;}
+    }
+    sel.selectedIndex=achou;
+  }
 }
 // As duas ferramentas de uma vez (abertura do painel, troca de subespecialidade,
 // chegada do conteúdo remoto).
@@ -18975,8 +18993,9 @@ startSim=function(){
   if(!consumeTrial('sim'))return;
   var sub=document.getElementById('sim-sub').value;
   var tema=((document.getElementById('sim-tema')||{}).value||'').trim();
-  // Com "Todas" e um tema escolhido, a subespecialidade vem do próprio tema.
-  if(!sub&&tema){var _o=document.querySelector('#sim-tema option[value="'+tema.replace(/"/g,'&quot;')+'"]');if(_o&&_o.dataset.sub)sub=_o.dataset.sub;}
+  // Com "Todas" e um tema escolhido, a subespecialidade vem da option
+  // SELECIONADA (data-sub) — o mesmo nome de tema existe em duas subespecialidades.
+  if(!sub&&tema)sub=subDaOptionSelecionada('sim-tema');
   var level=document.getElementById('sim-level').value;
   var mode=(document.querySelector('input[name="sim-mode"]:checked')||{}).value||'mc';
   var btn=document.getElementById('btn-sim-start');
@@ -19078,21 +19097,28 @@ finishSim=function(){
 };
 genRxCase=function(){
   if(!consumeTrial('rx'))return;
-  var sub=document.getElementById('rx-sub').value||'Endocrinologia';
+  var sub=document.getElementById('rx-sub').value;
+  var tema=((document.getElementById('rx-tema')||{}).value||'').trim();
+  // Com "Todas" e um tema escolhido, a subespecialidade vem da option
+  // SELECIONADA (data-sub) — não de uma busca pelo valor, porque o mesmo
+  // nome de tema existe em duas subespecialidades (ex.: HAC em Adrenal e
+  // em Endocrinologia Pediátrica).
+  if(!sub&&tema)sub=subDaOptionSelecionada('rx-tema');
+  sub=sub||'Endocrinologia';
   var level=document.getElementById('rx-level').value;
   var btn=document.getElementById('btn-rx-gen');
   btn.disabled=true;
   btn.innerHTML=ldHTML('Gerando...');
   simRetry(function(){
-    return callAIJson('Você é preceptor de endocrinologia (Brasil). JSON APENAS: {"caso":"vinheta clínica em 4 a 6 linhas com dados objetivos (idade, sexo, queixa, antecedentes, exame físico e EXAMES LABORATORIAIS com valores e unidades) suficientes para uma prescrição segura e individualizada","area":"'+sub+'"}. Terminologia atual: use "doença renal do diabetes" (não "nefropatia diabética") e "albuminúria"/RAC (não "microalbuminúria" nem "macroalbuminúria").'+CLINICAL_GUIDELINES,'Caso clínico de '+sub+', complexidade '+level+', que demande prescrição (incluindo dose e monitorização). Português do Brasil.',1100,0,AI_MODEL_SIM_GEN);
+    return callAIJson('Você é preceptor de endocrinologia (Brasil). JSON APENAS: {"caso":"vinheta clínica em 4 a 6 linhas com dados objetivos (idade, sexo, queixa, antecedentes, exame físico e EXAMES LABORATORIAIS com valores e unidades) suficientes para uma prescrição segura e individualizada","area":"'+sub+'"}. Terminologia atual: use "doença renal do diabetes" (não "nefropatia diabética") e "albuminúria"/RAC (não "microalbuminúria" nem "macroalbuminúria").'+CLINICAL_GUIDELINES,'Caso clínico de '+sub+(tema?' — tema obrigatório do caso: '+tema:'')+', complexidade '+level+', que demande prescrição (incluindo dose e monitorização). Português do Brasil.',1100,0,AI_MODEL_SIM_GEN);
   }).then(function(d){return JSON.stringify(d);})
   .then(function(raw){
     var d=parseJ(raw);
     if(!d||!d.caso)throw new Error('Resposta inválida.');
-    rxCase={caso:d.caso,area:d.area||sub};
+    rxCase={caso:d.caso,area:d.area||sub,tema:tema||''};
     document.getElementById('rx-case-wrap').style.display='block';
     setText('rx-case-text',rxCase.caso);
-    setText('rx-case-tag',rxCase.area);
+    setText('rx-case-tag',rxCase.area+(rxCase.tema?' · '+rxCase.tema:''));
     document.getElementById('rx-diag').value='';
     document.getElementById('rx-text').value='';
     document.getElementById('rx-feedback').innerHTML='';

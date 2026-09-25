@@ -43,7 +43,8 @@ const FAKE_SUPABASE = `
       if (nome === 'endodirect_member_content') return Promise.resolve({ data:{ acessos:['plano','plano:gold'], member:true, provas:[], adm_avisos:[], podcasts:[], mm_shared:[], fc_shared:[], adm_cursos:[], cursos:[], radar_hidden:[],
         // O tema extra do professor (sem capítulo) chega pela lista do servidor:
         // carregarResumos não aplica diretrizes_temas ao aluno (os extras são do editor).
-        acervo_totais:{ provas:3, temas:{ 'Diabetes':['Diagnóstico e Classificação do Diabetes','Insulinoterapia','Rastreamento do diabetes mellitus tipo 1'], 'Endocrinologia do Esporte':['RED-S e Tríade da Mulher Atleta'] } } }, error:null });
+        // "HAC" existe em duas subespecialidades, como em produção.
+        acervo_totais:{ provas:3, temas:{ 'Diabetes':['Diagnóstico e Classificação do Diabetes','Insulinoterapia','Rastreamento do diabetes mellitus tipo 1'], 'Adrenal':['Hiperplasia Adrenal Congênita (HAC)','Síndrome de Cushing'], 'Endocrinologia Pediátrica':['Puberdade Precoce','Hiperplasia Adrenal Congênita (HAC)'], 'Endocrinologia do Esporte':['RED-S e Tríade da Mulher Atleta'] } } }, error:null });
       if (nome === 'endodirect_acessos_ativos') return Promise.resolve({ data:['plano','plano:gold'], error:null });
       if (nome === 'endodirect_member_resumos') return Promise.resolve({ data:{ diretrizes: CAPS, diretrizes_temas:[{ sub:'Diabetes', tema:'Rastreamento do diabetes mellitus tipo 1' }] }, error:null });
       if (nome === 'endodirect_mural_discussoes_ids') return Promise.resolve({ data:[], error:null });
@@ -82,8 +83,14 @@ function serve(dir, port) {
     localStorage.setItem('endodirect_v1_last_uid', JSON.stringify(uid));
     localStorage.setItem('endodirect_v1_user_profile', JSON.stringify({ perfil: 'Endocrinologista', graduacao: 'UFBA', residencia: 'HUPES', crm: '12345', uf: 'BA' }));
   }, { uid: UID, wn: WHATSNEW_VER });
+  // Pedidos à IA são capturados: é o que prova que o TEMA chegou ao prompt.
+  const pedidos = [];
   await page.route('**', (route) => {
     const u = route.request().url();
+    if (u.indexOf('/api/ai') >= 0) {
+      try { pedidos.push(JSON.parse(route.request().postData() || '{}')); } catch (e) { pedidos.push({ erro: String(e) }); }
+      return route.fulfill({ status: 500, contentType: 'application/json', body: '{"error":"stub"}' });
+    }
     if (u.startsWith('http://127.0.0.1:')) return route.continue();
     if (u.indexOf('supabase-js') >= 0) return route.fulfill({ status: 200, contentType: 'application/javascript', body: FAKE_SUPABASE });
     return route.fulfill({ status: 200, contentType: 'application/javascript', body: '/* stub offline */' });
@@ -114,12 +121,25 @@ function serve(dir, port) {
   await page.waitForTimeout(150);
   o = await opcoes('sim-tema');
   ok(JSON.stringify(o.opts) === JSON.stringify(['', 'RED-S e Tríade da Mulher Atleta']), 'OSCE "Endocrinologia Esportiva" acha os temas de "Endocrinologia do Esporte" (veio ' + JSON.stringify(o.opts) + ')');
-  await page.selectOption('#sim-sub', 'Adrenal');
+  await page.selectOption('#sim-sub', 'Obesidade');
   await page.waitForTimeout(150);
   o = await opcoes('sim-tema');
-  ok(JSON.stringify(o.opts) === JSON.stringify(['']), 'OSCE Adrenal sem tema: só Sortear');
+  ok(JSON.stringify(o.opts) === JSON.stringify(['']), 'OSCE Obesidade sem tema: só Sortear');
 
-  // Prescrição
+  // "Todas" + o HAC do grupo Pediátrica → o pedido à IA sai com a subespecialidade CERTA.
+  await page.selectOption('#sim-sub', '');
+  await page.waitForTimeout(150);
+  const iHacPed = await page.evaluate(() => [...document.querySelectorAll('#sim-tema option')].findIndex((op) => op.value === 'Hiperplasia Adrenal Congênita (HAC)' && op.getAttribute('data-sub') === 'Endocrinologia Pediátrica'));
+  ok(iHacPed > 0, 'OSCE "Todas": existe a option HAC do grupo Pediátrica (índice ' + iHacPed + ')');
+  await page.selectOption('#sim-tema', { index: iHacPed });
+  await semModais();
+  await page.click('#btn-sim-start');
+  await page.waitForTimeout(1500);
+  const pSim = pedidos.find((p) => p && typeof p.prompt === 'string' && p.prompt.indexOf('Caso de ') === 0);
+  ok(!!pSim && pSim.prompt.indexOf('Caso de Endocrinologia Pediátrica — tema obrigatório do caso: Hiperplasia Adrenal Congênita (HAC)') === 0,
+    '⚠️ OSCE: o pedido à IA leva a subespecialidade da option ESCOLHIDA (Pediátrica, não Adrenal) e o tema (veio ' + JSON.stringify(pSim && pSim.prompt) + ')');
+
+  // Prescrição: Tireoide + Hipotireoidismo → o pedido leva o tema (prova de que o OVERRIDE foi alterado).
   await semModais();
   await page.click('button.sb-item[data-p="rx"]');
   await page.waitForTimeout(300);
@@ -127,6 +147,13 @@ function serve(dir, port) {
   await page.waitForTimeout(150);
   o = await opcoes('rx-tema');
   ok(JSON.stringify(o.opts) === JSON.stringify(['', 'Hipotireoidismo']), 'Prescrição Tireoide: capítulo local (veio ' + JSON.stringify(o.opts) + ')');
+  await page.selectOption('#rx-tema', 'Hipotireoidismo');
+  const antes = pedidos.length;
+  await page.click('#btn-rx-gen');
+  await page.waitForTimeout(1500);
+  const pRx = pedidos.slice(antes).find((p) => p && typeof p.prompt === 'string' && p.prompt.indexOf('Caso clínico de ') === 0);
+  ok(!!pRx && pRx.prompt.indexOf('Caso clínico de Tireoide — tema obrigatório do caso: Hipotireoidismo') === 0,
+    '⚠️ Prescrição: o pedido à IA leva o tema — só acontece se o genRxCase VIVO (override) o lê (veio ' + JSON.stringify(pRx && pRx.prompt) + ')');
   ok(erros.length === 0, 'sem pageerror (' + JSON.stringify(erros) + ')');
   await page.screenshot({ path: path.join(__dirname, 'osce-tema.png') }).catch(() => {});
 

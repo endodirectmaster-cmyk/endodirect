@@ -57,9 +57,28 @@ function caixa(opts) {
   vm.runInContext([
     trecho('DIR_SUBS'),
     corpo('esc'), corpo('canonSub'), corpo('dirTemaOf'), corpo('dirIsRascunho'), corpo('dirTipoOf'),
-    corpo('dirTemaList'), corpo('temasDaSub'), corpo('subsComTema'), corpo('popularTemas'), corpo('popularTemasFerramentas'),
+    corpo('dirTemaList'), corpo('temasDaSub'), corpo('subsComTema'), corpo('subDaOptionSelecionada'), corpo('popularTemas'), corpo('popularTemasFerramentas'),
   ].join('\n'), c);
   return c;
+}
+// Um <select> de mentira que entende innerHTML de <option>/<optgroup>, options,
+// selectedIndex, value e getAttribute('data-sub') — o suficiente para exercitar
+// popularTemas e subDaOptionSelecionada de verdade.
+function selectFalso() {
+  const s = { options: [], selectedIndex: 0, _html: '' };
+  Object.defineProperty(s, 'innerHTML', {
+    get() { return s._html; },
+    set(h) {
+      s._html = h; s.options = []; s.selectedIndex = 0;
+      const re = /<option value="([^"]*)"(?: data-sub="([^"]*)")?>/g; let m;
+      while ((m = re.exec(h))) { const v = m[1], ds = m[2]; s.options.push({ value: v, getAttribute: (k) => (k === 'data-sub' ? (ds === undefined ? null : ds) : null) }); }
+    },
+  });
+  Object.defineProperty(s, 'value', {
+    get() { const o = s.options[s.selectedIndex]; return o ? o.value : ''; },
+    set(v) { const i = s.options.findIndex((o) => o.value === v); s.selectedIndex = i >= 0 ? i : 0; },
+  });
+  return s;
 }
 const cap = (sub, tema, extra) => Object.assign({ sub, tema, privado: true, tipo: 'capitulo', titulo: tema }, extra || {});
 
@@ -105,24 +124,32 @@ const cap = (sub, tema, extra) => Object.assign({ sub, tema, privado: true, tipo
 
 // ── 2. popularTemas: por subespecialidade, "Todas" agrupa, preserva a escolha ──
 {
-  const c = caixa({ acervoTotais: { temas: { 'Diabetes': ['A', 'B'], 'Tireoide': ['C'] } } });
-  c._docs['sim-tema'] = { value: '', innerHTML: '' };
+  // "HAC" existe em Adrenal E em Endocrinologia Pediátrica — o caso real que
+  // derruba qualquer busca por valor.
+  const c = caixa({ acervoTotais: { temas: { 'Diabetes': ['A', 'B'], 'Tireoide': ['C'], 'Adrenal': ['HAC', 'Cushing'], 'Endocrinologia Pediátrica': ['Puberdade Precoce', 'HAC'] } } });
+  c._docs['sim-tema'] = selectFalso();
   vm.runInContext('popularTemas("sim-tema","Diabetes")', c);
   const h = c._docs['sim-tema'].innerHTML;
   ok(/^<option value="">Sortear<\/option>/.test(h) && /<option value="A">A<\/option><option value="B">B<\/option>$/.test(h) && h.indexOf('optgroup') < 0, 'popularTemas: subespecialidade escolhida = Sortear + os temas dela, sem grupos — veio ' + h);
   vm.runInContext('popularTemas("sim-tema","")', c);
   const t = c._docs['sim-tema'].innerHTML;
-  ok(/<optgroup label="Diabetes">.*<\/optgroup><optgroup label="Tireoide">/.test(t) && /data-sub="Tireoide">C</.test(t), 'popularTemas: "Todas" agrupa por subespecialidade e marca a subespecialidade de cada tema — veio ' + t);
-  // Preserva a escolha se ela continuar na lista; zera se sumir.
-  const sel = { value: 'B', innerHTML: '' };
-  Object.defineProperty(sel, 'value', { get() { return this._v; }, set(v) { this._v = (this.innerHTML.indexOf('value="' + v + '"') >= 0 || v === '') ? v : ''; } });
-  sel.value = 'B'; sel._v = 'B';
-  c._docs['rx-tema'] = sel;
-  vm.runInContext('popularTemas("rx-tema","Diabetes")', c);
-  ok(sel._v === 'B', 'popularTemas: o tema já escolhido é preservado quando segue na lista');
-  vm.runInContext('popularTemas("rx-tema","Tireoide")', c);
-  ok(sel._v === '', 'popularTemas: tema que não existe na nova subespecialidade volta a Sortear');
-  ok(vm.runInContext('popularTemas("nao-existe","Diabetes"); true', c) === true, 'popularTemas: select ausente não quebra');
+  ok(/<optgroup label="Diabetes">.*<\/optgroup><optgroup label="Tireoide">.*<optgroup label="Adrenal">.*<optgroup label="Endocrinologia Pediátrica">/.test(t) && /data-sub="Tireoide">C</.test(t), 'popularTemas: "Todas" agrupa por subespecialidade na ordem canônica e marca a subespecialidade de cada tema — veio ' + t);
+  // A subespecialidade vem da option SELECIONADA, não do valor: escolhe o HAC do grupo Pediátrica.
+  const sel = c._docs['sim-tema'];
+  const iHacPed = sel.options.findIndex((o) => o.value === 'HAC' && o.getAttribute('data-sub') === 'Endocrinologia Pediátrica');
+  ok(iHacPed > 0 && sel.options.findIndex((o) => o.value === 'HAC') < iHacPed, 'sanidade: há dois HAC e o de Pediátrica vem depois do de Adrenal');
+  sel.selectedIndex = iHacPed;
+  ok(vm.runInContext('subDaOptionSelecionada("sim-tema")', c) === 'Endocrinologia Pediátrica', '⚠️ subDaOptionSelecionada: com dois temas de mesmo nome, devolve a subespecialidade da option ESCOLHIDA (Pediátrica), não a primeira que tem esse valor (Adrenal)');
+  // Repopular em "Todas" (abrir o painel de novo) reencontra a MESMA option, no mesmo grupo.
+  vm.runInContext('popularTemas("sim-tema","")', c);
+  ok(sel.selectedIndex === iHacPed, '⚠️ popularTemas: ao repopular, a escolha não pula para o outro grupo de mesmo nome');
+  // Trocar para a subespecialidade que também tem o tema mantém a escolha; para uma que não tem, volta a Sortear.
+  vm.runInContext('popularTemas("sim-tema","Adrenal")', c);
+  ok(sel.value === 'HAC', 'popularTemas: o tema escolhido é preservado quando segue na nova lista');
+  vm.runInContext('popularTemas("sim-tema","Tireoide")', c);
+  ok(sel.value === '' && sel.selectedIndex === 0, 'popularTemas: tema que não existe na nova subespecialidade volta a Sortear');
+  ok(vm.runInContext('subDaOptionSelecionada("sim-tema")', c) === '', 'subDaOptionSelecionada: fora do modo "Todas" não há data-sub → vazio');
+  ok(vm.runInContext('popularTemas("nao-existe","Diabetes"); subDaOptionSelecionada("nao-existe")', c) === '', 'popularTemas/subDaOptionSelecionada: select ausente não quebra');
 }
 
 // ── 3. Fiação no index.html ──────────────────────────────────────────────────
@@ -136,13 +163,22 @@ const cap = (sub, tema, extra) => Object.assign({ sub, tema, privado: true, tipo
   ok(/var tema=\(\(document\.getElementById\('sim-tema'\)\|\|\{\}\)\.value\|\|''\)\.trim\(\);/.test(sim), 'OSCE: lê o tema escolhido');
   ok(/\+\(tema\?' — tema obrigatório do caso: '\+tema:''\)\+', complexidade '/.test(sim), 'OSCE: o tema entra no pedido à IA como obrigatório');
   ok(/tema:tema\|\|'',level:level\}/.test(sim), 'OSCE: o tema fica no estado da simulação');
-  ok(/if\(!sub&&tema\)\{var _o=document\.querySelector\('#sim-tema option\[value="'/.test(sim), 'OSCE: com "Todas", o tema escolhido define a subespecialidade');
+  ok(/if\(!sub&&tema\)sub=subDaOptionSelecionada\('sim-tema'\);/.test(sim), 'OSCE: com "Todas", a subespecialidade vem da option SELECIONADA (não de uma busca pelo valor)');
+  ok(sim.indexOf('querySelector(') < 0 || sim.indexOf("option[value=") < 0, 'OSCE: sem busca de option por valor (dois temas de mesmo nome quebrariam)');
   ok(/esc\(simState\.sub\)\+\(simState\.tema\?' · '\+esc\(simState\.tema\):''\)\+' · '\+esc\(simState\.level\)/.test(html), 'OSCE: o relatório final mostra o tema');
   ok(/var usr='Caso \('\+simState\.sub\+\(simState\.tema\?', tema: '\+simState\.tema:''\)/.test(html), 'OSCE: o relatório da IA recebe o tema');
-  const rx = corpo('genRxCase');
-  ok(/var tema=\(\(document\.getElementById\('rx-tema'\)\|\|\{\}\)\.value\|\|''\)\.trim\(\);/.test(rx), 'Prescrição: lê o tema escolhido');
-  ok(/\+\(tema\?' — tema obrigatório do caso: '\+tema:''\)\+', complexidade '\+level\+', que demande prescrição\.'/.test(rx), 'Prescrição: o tema entra no pedido à IA');
-  ok(/setText\('rx-case-tag',\(d\.area\|\|sub\|\|'Endocrinologia'\)\+\(tema\?' · '\+tema:''\)\);/.test(rx), 'Prescrição: a etiqueta do caso mostra o tema');
+  // 🧨 A Prescrição tem DUAS definições: `function genRxCase(){` (morta) e o
+  // override `genRxCase=function(){` (o que o botão usa). O tema vive no override.
+  const iRx = html.lastIndexOf('genRxCase=function(){');
+  ok(iRx > 0, 'Prescrição: o override genRxCase=function existe');
+  const rx = html.slice(iRx, html.indexOf('evalRx=function', iRx));
+  ok(/var tema=\(\(document\.getElementById\('rx-tema'\)\|\|\{\}\)\.value\|\|''\)\.trim\(\);/.test(rx), 'Prescrição (override): lê o tema escolhido');
+  ok(/if\(!sub&&tema\)sub=subDaOptionSelecionada\('rx-tema'\);/.test(rx) && /sub=sub\|\|'Endocrinologia';/.test(rx), 'Prescrição (override): com "Todas", a subespecialidade vem da option selecionada; sem nada, "Endocrinologia"');
+  ok(/'Caso clínico de '\+sub\+\(tema\?' — tema obrigatório do caso: '\+tema:''\)\+', complexidade '\+level\+', que demande prescrição \(incluindo dose e monitorização\)\. Português do Brasil\.'/.test(rx), 'Prescrição (override): o tema entra no pedido à IA');
+  ok(/rxCase=\{caso:d\.caso,area:d\.area\|\|sub,tema:tema\|\|''\};/.test(rx) && /setText\('rx-case-tag',rxCase\.area\+\(rxCase\.tema\?' · '\+rxCase\.tema:''\)\);/.test(rx), 'Prescrição (override): o tema fica no caso e na etiqueta');
+  ok(rx.indexOf("consumeTrial('rx')") >= 0 && rx.indexOf("consumeTrial('rx')") < rx.indexOf("'rx-tema'"), 'Prescrição (override): a cota da degustação continua antes de ler o tema');
+  const rxMorta = corpo('genRxCase');
+  ok(rxMorta.indexOf('rx-tema') < 0 && /FUNÇÃO MORTA/.test(html.slice(html.indexOf('function genRxCase(){') - 400, html.indexOf('function genRxCase(){'))), 'Prescrição: a função morta não carrega o tema (e está marcada como morta) — foi nela que o filtro entrou primeiro');
   ok(/if\(id==='sim'\|\|id==='rx'\)try\{popularTemasFerramentas\(\);\}catch\(e\)\{\}/.test(html), 'abrir OSCE/Prescrição preenche os temas');
   ok(/try\{popularTemasFerramentas\(\);\}catch\(e\)\{\} \/\/ temas do OSCE\/Prescrição: chegaram os Resumos/.test(corpo('refreshAfterRemoteState')), 'a chegada do conteúdo remoto preenche os temas');
   ok(/_simSub\.addEventListener\('change',function\(\)\{popularTemas\('sim-tema',_simSub\.value\);\}\);/.test(html) && /_rxSub\.addEventListener\('change',function\(\)\{popularTemas\('rx-tema',_rxSub\.value\);\}\);/.test(html), 'trocar a subespecialidade repopula o tema nas duas ferramentas');
