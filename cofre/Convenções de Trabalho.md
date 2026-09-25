@@ -1,6 +1,6 @@
 ---
 tags: [cofre, processo]
-atualizado: 2026-09-24
+atualizado: 2026-09-25
 ---
 
 # Convenções de Trabalho
@@ -576,6 +576,14 @@ mergeio".
 
 **A regra:** terminou o trabalho e as conferências passaram → **abre o PR e
 mergeia**, sem perguntar. Não anunciar "está pronto, é só o senhor mandar".
+
+**Autorização permanente para SQL (2026-09-25):** o professor: *"Sempre
+autorizar o Execute SQL"*. A ferramenta `mcp__Supabase__execute_sql` entrou na
+lista `permissions.allow` de `.claude/settings.json` — leituras, ensaios em
+transação com rollback e aplicação de migrações não pedem mais confirmação.
+As travas de conteúdo continuam: corpo completo lido do `prosrc` antes de
+`create or replace`, ensaio com rollback antes de aplicar, conferência das
+marcas depois (ver o topo desta nota).
 
 ⚠️ **O que NÃO mudou — as travas continuam obrigatórias antes do merge:**
 `ci-validate` verde, harness A/B em Chromium, bump do `sw.js` a cada mudança de

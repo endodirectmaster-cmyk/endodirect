@@ -483,6 +483,18 @@ try {
   fail('regressão do banco de questões falhou:\n' + out);
 }
 
+// 17c-duodecies. TEMA NO OSCE E NA PRESCRIÇÃO. Pedido do professor a partir da
+//      sugestão de um assinante: além da subespecialidade, o aluno escolhe o
+//      tema, com a mesma lista dos Resumos (servidor + local, na ordem, sem
+//      repetição), e o tema entra no pedido à IA e no relatório.
+try {
+  execFileSync(process.execPath, [path.join('scripts', 'test-tema-no-osce-e-prescricao.js')], { stdio: 'pipe' });
+  ok('tema no OSCE/Prescrição: lista das duas fontes, selects nas duas ferramentas, tema no pedido e no relatório');
+} catch (e) {
+  const out = (e.stdout ? e.stdout.toString() : '') + (e.stderr ? e.stderr.toString() : '');
+  fail('regressão do tema no OSCE/Prescrição falhou:\n' + out);
+}
+
 // 17d. CADÊNCIA DO RADAR: o mural precisa de mais de uma varredura por dia. Com
 //      uma só (07:30 BRT), notícia publicada depois dela só aparece no dia
 //      seguinte — foi a queixa de 17/08/2026 (ANVISA aprovando canetas de
