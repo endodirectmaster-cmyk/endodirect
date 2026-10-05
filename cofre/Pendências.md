@@ -753,6 +753,26 @@ escolher o tema a ser abordado e não somente a grande área."* Feito em 25/09 a
 pedido do professor: select "Tema" nas duas ferramentas com os mesmos temas dos
 Resumos (servidor + local), "Sortear" preservado. Ver [[Decisões]] 2026-09-25.
 
+## 💬 Comunicação com os alunos por WhatsApp (2026-09-25, decisão do professor)
+
+Pergunta do professor: *"É possível gerar uma comunicação por whatsapp com os
+alunos?"* Avaliação entregue em chat (não estava no cofre; registrada em 05/10
+quando ele pediu para ser lembrado). Medido em 25/09: 135 contas, 40 planos
+ativos, 18 inscritos no push, 47 telefones vindos do checkout — e **nenhum
+consentimento registrado** para mensagens por WhatsApp (o telefone do checkout
+foi dado para a cobrança, não para comunicação).
+
+Dois caminhos, em ordem de custo:
+1. **Canal do WhatsApp (broadcast, sem número dos alunos)** + botão "Copiar para
+   WhatsApp" no card do Mural/comunicado do painel do professor. Sem API, sem
+   custo por mensagem, sem consentimento individual (quem quiser segue o canal).
+   Recomendado para começar.
+2. **Meta Cloud API** (mensagens individuais): exige conta Business verificada,
+   modelos aprovados, custo por conversa e **opt-in explícito** — campo novo no
+   perfil/checkout ("aceito receber avisos por WhatsApp") antes de qualquer envio.
+
+Aguarda o "manda" do professor para o caminho 1 (ou a escolha do 2).
+
 ## 📲 O radar deve notificar sozinho as Breaking News? (2026-09-25, decisão do professor)
 
 O radar marca `breaking` em ~1 item por semana (5 em 8 semanas, 2 de fonte
