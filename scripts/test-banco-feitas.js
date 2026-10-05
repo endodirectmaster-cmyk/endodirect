@@ -47,12 +47,17 @@ function caixa(extra) {
     provasDB: [],
     CLINICAL_GUIDELINES: '\n\nDIRETRIZES RECENTES (teste)',
     AI_MODEL_CLINICO: 'modelo-clinico',
-    chamadas: { persist: 0, info: 0, assine: 0, ia: [] },
+    chamadas: { persist: 0, info: 0, assine: 0, ia: [], notify: [] },
     persist() { c.chamadas.persist++; },
     updateProvaInfo() { c.chamadas.info++; },
     showAssineScreen() { c.chamadas.assine++; },
-    isDegustacao: () => false,
+    isAdminUser: () => false,
+    scopes: ['plano', 'plano:gold'],
+    hasScope(sc) { return !sc || c.scopes.indexOf(sc) >= 0; },
+    isDegustacao() { return !c.scopes.length; },
     acessosPendentes: () => false,
+    notify(m) { c.chamadas.notify.push(m); },
+    acessosRetentarSePendente() { c.chamadas.retenta = (c.chamadas.retenta || 0) + 1; },
     currentUser: { id: 'U1', role: 'aluno', email: 'u1@x' },
     iaResposta: null, // Promise devolvida por callAIJson
     callAIJson(sys, usr, maxTok, retries, model) { c.chamadas.ia.push({ sys, usr, maxTok, retries, model }); return c.iaResposta || Promise.resolve({ itens: [] }); },
@@ -64,7 +69,7 @@ function caixa(extra) {
   vm.createContext(c);
   vm.runInContext([
     'var altMemo={};',
-    corpo('esc'), corpo('ldHTML'), corpo('srsKey'),
+    corpo('esc'), corpo('ldHTML'), corpo('srsKey'), corpo('groundSys'), corpo('blockIfDegustacao'), corpo('planoAindaNaoConfirmado'), corpo('genCode'),
     'function provasPool(){return provasDB;}',
     corpo('filterProvas'),
     corpo('feitaChave'), corpo('mesclarFeitas'), corpo('feitaDe'), corpo('feitaRegistrar'), corpo('feitaSeloHTML'),
@@ -98,6 +103,11 @@ const Q = { code: 'ADR-01', stem: 'Paciente com hipercortisolismo…', area: 'Ad
     ok(run(c, 'feitaSeloHTML(genQs[0],"gen",7)').indexOf('id="qfeita-gen-7"') > 0, 'selo: carrega o id com a fonte e o índice do card');
     run(c, 'feitaRegistrar({},true,"gen",0)');
     ok(Object.keys(c.DB.feitas).length === 1, 'registrar: questão sem chave (sem código nem enunciado) é ignorada');
+    run(c, 'feitaRegistrar({code:"T-AN"},null,"gen",1,"anulada")');
+    ok(c.DB.feitas['t-an'] && c.DB.feitas['t-an'].ok === null && c.DB.feitas['t-an'].tipo === 'anulada', 'registrar: anulada entra como vista (ok null, tipo anulada) — não volta no sorteio');
+    ok(/tag-pur/.test(run(c, 'feitaSeloHTML({code:"T-AN"},"gen",1)')) && /Anulada · vista em/.test(run(c, 'feitaSeloHTML({code:"T-AN"},"gen",1)')), 'selo: anulada = "Anulada · vista em dd/mm"');
+    run(c, 'feitaRegistrar({code:"T-DI"},null,"gen",2,"disc")');
+    ok(/Respondida em/.test(run(c, 'feitaSeloHTML({code:"T-DI"},"gen",2)')) && c.DB.feitas['t-di'].tipo === 'disc', 'registrar/selo: discursiva avaliada = "Respondida em dd/mm"');
     c.DB.feitas = null;
     run(c, 'feitaRegistrar(genQs[0],true,"gen",0)');
     ok(c.DB.feitas && c.DB.feitas['adr-01'], 'registrar: DB.feitas corrompido (null) é recriado, não derruba a resposta');
@@ -144,9 +154,11 @@ const Q = { code: 'ADR-01', stem: 'Paciente com hipercortisolismo…', area: 'Ad
   {
     const c = caixa();
     const p = run(c, 'explicarAlternativasPrompt(' + JSON.stringify(Q) + ')');
-    ok(/registro técnico e formal/.test(p.sys) && /nunca pela letra/.test(p.sys) && /Responda somente com JSON/.test(p.sys), 'prompt: registro técnico, identifica pela alternativa (nunca pela letra), JSON');
-    ok(p.sys.slice(-c.CLINICAL_GUIDELINES.length) === c.CLINICAL_GUIDELINES, 'prompt: as diretrizes recentes vão no fim do sistema (ancoragem em 2026)');
-    ok(!/\bvocê\b/i.test(p.sys) && !/[A-ZÁ-Ú]{4,}/.test(p.sys.replace(/JSON|DIRETRIZES RECENTES/g, '')), 'prompt: sem segunda pessoa nem ênfase em caixa alta (regra do professor: sem jargão)');
+    const SENT = '__ENDODIRECT_SYS_SPLIT_b1f7__';
+    ok(p.sys.indexOf(c.CLINICAL_GUIDELINES + SENT) === 0, 'prompt: diretrizes recentes no NÚCLEO (prefixo cacheável) + sentinela — sem ela o servidor cortaria o system em 60 mil caracteres');
+    const persona = p.sys.slice(p.sys.indexOf(SENT) + SENT.length);
+    ok(/registro técnico e formal/.test(persona) && /nunca pela letra/.test(persona) && /Responda somente com JSON/.test(persona), 'prompt: registro técnico, identifica pela alternativa (nunca pela letra), JSON');
+    ok(!/\bvocê\b/i.test(persona) && !/[A-ZÁ-Ú]{4,}/.test(persona.replace(/JSON/g, '')), 'prompt: sem segunda pessoa nem ênfase em caixa alta (regra do professor: sem jargão)');
     ok(p.usr.indexOf('Enunciado: ' + Q.stem) === 0, 'pedido: começa pelo enunciado');
     ok(p.usr.indexOf('Cortisol sérico matinal | Cortisol salivar à meia-noite | ACTH basal | Teste de supressão com 8 mg') > 0, 'pedido: as alternativas vão pelo texto, sem letras');
     ok(/Gabarito: Cortisol salivar à meia-noite/.test(p.usr) && !/Gabarito: B/.test(p.usr), 'pedido: o gabarito vai pelo texto da alternativa certa, não pela letra');
@@ -157,18 +169,23 @@ const Q = { code: 'ADR-01', stem: 'Paciente com hipercortisolismo…', area: 'Ad
 
   // ── 4. O botão: degustação, pendência, memória, erro ──────────────────────
   {
-    const c = caixa({ isDegustacao: () => true });
+    const c = caixa({ scopes: [] });
     c.genQs = [Q];
     run(c, 'explicarAlternativas("gen","0",document.getElementById("btn"))');
-    ok(c.chamadas.assine === 1 && c.chamadas.ia.length === 0, 'degustação: vai para a tela de assinatura, sem gastar IA');
+    ok(c.chamadas.assine === 1 && c.chamadas.ia.length === 0 && /exclusiva dos pacotes/.test(c.chamadas.notify[0] || ''), 'degustação: aviso + tela de pacotes, sem gastar IA');
   }
   {
-    const c = caixa({ isDegustacao: () => true, acessosPendentes: () => true });
+    const c = caixa({ scopes: ['curso:endoteem'] });
     c.genQs = [Q];
-    c.iaResposta = Promise.resolve({ itens: [{ alternativa: 'ACTH basal', motivo: 'Não rastreia; diferencia a etiologia depois do diagnóstico.' }] });
+    run(c, 'explicarAlternativas("gen","0",document.getElementById("btn"))');
+    ok(c.chamadas.assine === 1 && c.chamadas.ia.length === 0, 'curso avulso (sem pacote): mesma regra dos outros geradores de IA — bloqueado');
+  }
+  {
+    const c = caixa({ acessosPendentes: () => true, scopes: [] });
+    c.genQs = [Q];
     run(c, 'explicarAlternativas("gen","0",document.getElementById("btn"))');
     await new Promise((r) => setImmediate(r));
-    ok(c.chamadas.assine === 0 && c.chamadas.ia.length === 1, 'acessos pendentes: não trata o aluno como degustação (não manda assinar)');
+    ok(c.chamadas.assine === 0 && c.chamadas.ia.length === 0 && /Confirmando o seu plano/.test(c.chamadas.notify[0] || '') && c.chamadas.retenta === 1, 'acessos pendentes: nem assina nem gasta IA — espera a confirmação e pede a lista de novo');
   }
   {
     const c = caixa();
@@ -225,6 +242,14 @@ const Q = { code: 'ADR-01', stem: 'Paciente com hipercortisolismo…', area: 'Ad
     ok(c.chamadas.ia.length === 1, 'índice inexistente: não chama a IA');
   }
 
+  // ── 4b. genCode não repete depois de uma exclusão ─────────────────────────
+  {
+    const c = caixa();
+    c.DB.q = [{ code: 'DM001' }, { code: 'DM003' }, { code: 'ADR-01' }];
+    ok(run(c, 'genCode("Diabetes")') === 'DM004', 'genCode: maior sufixo + 1 (não contagem) — excluir DM002 e salvar outra não repete DM003');
+    ok(run(c, 'genCode("Adrenal")') === 'ADR001', 'genCode: código original de prova (ADR-01) não é lido como sufixo');
+  }
+
   // ── 5. Fiação no index.html ───────────────────────────────────────────────
   {
     ok(/feitas:lsGet\('feitas'\)\|\|\{\},/.test(html), 'DB: nasce da cópia local');
@@ -235,10 +260,16 @@ const Q = { code: 'ADR-01', stem: 'Paciente com hipercortisolismo…', area: 'Ad
     const clr = corpo('clearLocalUserData');
     ok(/'perf','feitas','ck_billing'/.test(clr) && /DB\.feitas=\{\};/.test(clr), 'clearLocalUserData: trocar de conta no mesmo navegador não herda as respondidas da conta anterior');
     const so = corpo('selectOpt');
-    ok(/if\(!anulada&&q\)\{try\{feitaRegistrar\(q,ok,src,idx\);\}catch\(e\)\{\}\}/.test(so), 'selectOpt: toda resposta (exceto anulada) registra a questão como feita');
-    ok(/if\(!anulada&&q&&q\.options&&fb&&\(src==='gen'\|\|src==='saved'\)\)\{\s*fb\.innerHTML\+=.*data-exp-alt="'\+esc\(src\)\+'\|'\+esc\(String\(idx\)\)\+'".*Por que as outras alternativas estão incorretas\?/.test(so), 'selectOpt: depois de responder, oferece "Por que as outras alternativas estão incorretas?" (Banco e banco salvo)');
+    ok(/if\(q\)\{try\{feitaRegistrar\(q,anulada\?null:ok,src,idx,anulada\?'anulada':''\);\}catch\(e\)\{\}\}/.test(so), 'selectOpt: toda resposta registra a questão como feita — anulada inclusive (como vista)');
+    ok(/if\(!anulada&&q&&q\.options&&fb&&\(src==='gen'\|\|src==='saved'\)&&\(hasScope\('plano'\)\|\|acessosPendentes\(\)\)\)\{\s*fb\.innerHTML\+=.*data-exp-alt="'\+esc\(src\)\+'\|'\+esc\(String\(idx\)\)\+'".*Por que as outras alternativas estão incorretas\?/.test(so), 'selectOpt: depois de responder, oferece "Por que as outras alternativas estão incorretas?" só a quem tem pacote (ou enquanto não se sabe)');
+    ok(/try\{feitaRegistrar\(q,null,src,i,'disc'\);\}catch\(e\)\{\}/.test(corpo('evalDisc')), 'evalDisc: discursiva avaliada vira respondida');
     ok(/id="qalt-'\+esc\(src\)\+'-'\+esc\(String\(idx\)\)\+'"/.test(so), 'selectOpt: cria a caixa onde a explicação aparece');
-    ok(/\(mc\?feitaSeloHTML\(q,src,i\):''\)\+\(q\.code\?/.test(corpo('qFullHTML')), 'qFullHTML: o selo entra nas etiquetas do card (só objetivas)');
+    ok(/margin-bottom:\.45rem">'\+feitaSeloHTML\(q,src,i\)\+\(q\.code\?/.test(corpo('qFullHTML')), 'qFullHTML: o selo entra nas etiquetas do card (objetivas e discursivas)');
+    ok(/align-items:center">'\+feitaSeloHTML\(q,'saved',i\)\+\(q\.code\?/.test(corpo('renderSavedQ')), 'renderSavedQ: o banco salvo também mostra o selo');
+    ok((html.match(/\{code:q\.code\|\|genCode\(q\.area\),type:qtype,at:Date\.now\(\)\}/g) || []).length === 2, 'salvar: a cópia preserva o código original — responder no banco salvo marca a mesma questão do Banco');
+    ok(/lsSet\(k,k==='feitas'\?DB\.feitas:payload\[k\]\)/.test(corpo('applyStatePayload')), 'applyStatePayload: a cópia local recebe a UNIÃO, não o payload cru do servidor');
+    const iDl = html.lastIndexOf('doLogin=function(u){');
+    ok(/if\(!ownLocal\)\{try\{DB\.feitas=\{\};lsSet\('feitas',null\);\}catch\(e\)\{\}\}/.test(html.slice(iDl, iDl + 2500)), 'doLogin: trocou a conta neste navegador (qualquer papel) → as respondidas da anterior não se unem às desta');
     ok(/<input type="checkbox" id="q-naofeitas"[^>]*> Mostrar só as que ainda não respondi<\/label>/.test(html), 'tela: caixa "Mostrar só as que ainda não respondi"');
     ok(/<button class="btn btn-outline" id="btn-sortear-5"[^>]*>Sortear 5 não respondidas<\/button>/.test(html), 'tela: botão "Sortear 5 não respondidas"');
     const upi = corpo('updateProvaInfo');
@@ -246,9 +277,10 @@ const Q = { code: 'ADR-01', stem: 'Paciente com hipercortisolismo…', area: 'Ad
     ok(/' · '\+feitasN\+' já respondida'\+\(feitasN===1\?'':'s'\)\+\(soNao\?' \(ocultas\)':''\)/.test(upi), 'updateProvaInfo: "N já respondidas (ocultas)"');
     ok(/Todas as '\+lista\.length\+' questões desses filtros já foram respondidas\. Desmarque a opção para revê-las\./.test(upi), 'updateProvaInfo: quando tudo já foi respondido, diz isso em vez de "Nenhuma questão"');
     const iBind = html.indexOf("document.getElementById('btn-filter-provas').addEventListener('click',function(){");
-    const bind = html.slice(iBind, iBind + 1500);
+    const bind = html.slice(iBind, iBind + 2600);
     ok(/if\(soNao&&soNao\.checked\)qs=qs\.filter\(function\(q\)\{return !feitaDe\(q\);\}\);\s*renderProvaResults\(qs\);/.test(bind), 'Buscar: com a caixa marcada, tira as respondidas da lista');
     ok(/_soNao\.addEventListener\('change',updateProvaInfo\)/.test(bind), 'caixa: marcar/desmarcar refaz a contagem na hora');
+    ok(/if\(bancoEstado\(\)\)\{renderProvaResults\(\[\]\);return;\}/.test(bind) && /if\(!filterProvas\(inst,ano,area,type\)\.length\)\{notify\('Nenhuma questão com esses filtros\.','info'\);return;\}/.test(bind), 'Sortear 5: banco carregando/erro mostra o estado; filtro vazio diz "nenhuma questão" (não "todas respondidas")');
     ok(/var qs=sortearNaoFeitas\(5\);\s*if\(!qs\.length\)\{notify\('Todas as questões desses filtros já foram respondidas\. Troque o filtro para sortear outras\.','info'\);return;\}\s*renderProvaResults\(qs\);/.test(bind), 'Sortear 5: monta a sessão curta ou avisa que não sobrou nada');
     ok(/var ea=c\('\[data-exp-alt\]'\);\s*if\(ea\)\{var _p=String\(ea\.dataset\.expAlt\|\|''\)\.split\('\|'\);explicarAlternativas\(_p\[0\],_p\[1\],ea\);return;\}/.test(html), 'clique: o botão das alternativas está ligado (delegação global)');
     // O Simulado continua usando filterProvas com a semântica de sempre (sem feitas).

@@ -4780,7 +4780,9 @@ function applyStatePayload(payload,personalOnly){
   }
   if(payload.deg_trials&&typeof payload.deg_trials==='object')degTrials=payload.deg_trials;
   var lsKeys=personalOnly?PERSONAL_STATE_KEYS:REMOTE_STATE_KEYS;
-  lsKeys.forEach(function(k){if(payload[k]!==undefined)lsSet(k,payload[k]);});
+  // `feitas` grava a UNIÃO já feita acima (DB.feitas), não a cópia crua do
+  // servidor: senão a resposta dada aqui e ainda não salva sumia do aparelho.
+  lsKeys.forEach(function(k){if(payload[k]===undefined)return;lsSet(k,k==='feitas'?DB.feitas:payload[k]);});
 }
 function renderDegustacaoBar(){
   var app=document.getElementById('app-screen');if(!app)return;
@@ -5018,7 +5020,7 @@ function definirAcessos(lista){
   try{reavaliarPainelAtual();}catch(e){}
   // A janela de "degustação encerrada" foi adiada enquanto a lista não vinha;
   // agora que veio, quem está mesmo com a degustação vencida a recebe.
-  try{maybeTrialModal();}catch(e){}
+  try{if(!telaDeCompraAberta())maybeTrialModal();}catch(e){}
 }
 // Devolve os acessos guardados no aparelho para ESTE usuário (ou null).
 var ACESSOS_GUARDADOS_MS=30*86400000; // cópia local vale 30 dias; depois, só o servidor
@@ -6119,7 +6121,8 @@ function genCode(area){
   var pfx=null;
   for(var k in map){if((area||'').indexOf(k)>=0){pfx=map[k];break;}}
   if(!pfx)pfx=(area||'').replace(/[^A-Za-z]/g,'').substring(0,3).toUpperCase()||'END';
-  var n=DB.q.filter(function(q){return(q.code||'').indexOf(pfx)===0;}).length+1;
+  // Maior sufixo + 1 (não contagem): excluir uma salva e gerar outra não repete código.
+  var n=0;DB.q.forEach(function(q){var c=String(q.code||'');if(c.indexOf(pfx)===0){var m=parseInt(c.slice(pfx.length),10);if(m>n)n=m;}});n++;
   return pfx+('000'+n).slice(-3);
 }
 
@@ -6969,9 +6972,9 @@ function deviceTickThrottled(){
 function startDeviceWatcher(){
   if(deviceWatcher)return;
   deviceWatcher=setInterval(deviceTick,5000); // heartbeat curto: derruba o excedente em ~5s (era 60s)
-  try{document.addEventListener('visibilitychange',function(){if(!document.hidden)deviceTickThrottled();});}catch(e){}
-  try{window.addEventListener('focus',function(){deviceTickThrottled();});}catch(e){}
-  try{window.addEventListener('online',function(){deviceTick();});}catch(e){} // reconectou: checa na hora
+  try{document.addEventListener('visibilitychange',function(){if(!document.hidden){deviceTickThrottled();acessosRetentarSePendente();}});}catch(e){}
+  try{window.addEventListener('focus',function(){deviceTickThrottled();acessosRetentarSePendente();});}catch(e){}
+  try{window.addEventListener('online',function(){deviceTick();acessosRetentarSePendente();});}catch(e){} // reconectou: checa na hora (e pede a lista de acessos se ainda não veio)
 }
 function onSessionEvicted(){
   if(deviceWatcher){clearInterval(deviceWatcher);deviceWatcher=null;}
@@ -7420,6 +7423,22 @@ var userAcessos=[];
 // assim — melhor do que um "teste encerrado" falso.
 var acessosConhecidos=false; // true quando a lista veio do servidor, da cópia local ou da conta demo
 function acessosPendentes(){return !!(currentUser&&currentUser.id&&currentUser.role==='aluno'&&!acessosConhecidos);}
+// Navegar abre; o que custa dinheiro (IA) espera a confirmação do plano. Avisa,
+// pede a lista de novo e devolve true (= bloqueie a ação agora).
+function planoAindaNaoConfirmado(){
+  if(!acessosPendentes())return false;
+  notify('Confirmando o seu plano com o servidor. Tente de novo em instantes.','info');
+  acessosRetentarSePendente();
+  return true;
+}
+// "Pendente" não pode ser estado terminal: volta a pedir a lista ao voltar a
+// rede ou a aba (ver startDeviceWatcher) e a cada ação que depende do plano.
+function acessosRetentarSePendente(){if(acessosPendentes()){try{carregarAcessos(getSupabaseClient());}catch(e){}}}
+// Tela de pacotes ou checkout abertos: nenhuma janela de degustação por cima.
+function telaDeCompraAberta(){
+  function vis(e){return !!(e&&e.style&&e.style.display&&e.style.display!=='none');}
+  return vis(document.getElementById('assine-screen'))||vis(document.getElementById('checkout-modal'));
+}
 // Os acessos chegaram DEPOIS de o painel ter sido escolhido: se a tela atual é a
 // de bloqueio, ou o painel aberto deixou de ser permitido, refaz a navegação.
 function reavaliarPainelAtual(){
@@ -7431,7 +7450,13 @@ function reavaliarPainelAtual(){
   if(naTelaDeBloqueio||(id&&!canSeePanel(id))){goPanel(id||homePanel());return;}
   // O painel segue permitido, mas o que ele mostra depende do plano: o Banco de
   // questões da degustação (amostra, abas) foi montado sem saber do plano.
-  if(id==='quest'){try{applyQuestDegustacao();populateInst('q-inst');updateProvaInfo();}catch(e){}}
+  if(id==='quest'){try{applyQuestDegustacao();populateInst('q-inst');updateProvaInfo();
+    // Uma busca feita enquanto pendente mostrava o banco inteiro guardado no aparelho; se a lista
+    // chegou como degustação, refaz a busca para a amostra valer também no que já estava na tela.
+    if(isDegustacao()&&genQs.length){var _b=document.getElementById('btn-filter-provas');if(_b)_b.click();}}catch(e){}}
+  if(id==='mmap'){try{renderMMList();}catch(e){}}
+  if(id==='cursos'){try{renderCursosAluno();}catch(e){}}
+  if(id==='ref'||id==='resu'){try{var _rb=document.getElementById(id==='ref'?'ref-body':'resu-body');if(_rb&&(id==='resu'||DIRETRIZES_PUBLICADO)){refPrivadoMode=(id==='resu');renderDiretrizesInto(_rb);}}catch(e){}}
 }
 var catalogoCursos=[];
 // Escopo exigido para ABRIR cada painel. Ausente = livre para qualquer membro.
@@ -7521,7 +7546,8 @@ function trialLeft(id){return Math.max(0,TRIAL_LIMIT-trialUsed(id));}
 // Consome 1 uso da cota de degustação. Fora da degustação não há limite.
 // Retorna false (e mostra upsell) quando a cota acabou.
 function consumeTrial(id){
-  if(!isDegustacao()||acessosPendentes())return true;
+  if(acessosPendentes()){planoAindaNaoConfirmado();return false;} // a cota só é decidida com a lista na mão
+  if(!isDegustacao())return true;
   if(trialLeft(id)<=0){
     notify('Você usou suas '+TRIAL_LIMIT+' degustações de '+(PANEL_LABELS[id]||'recurso')+'. Adquira um pacote para liberar.','err');
     showAssineScreen((currentUser&&currentUser.email)||'');
@@ -7575,6 +7601,7 @@ function canSeePanel(id){
 // Bloqueia geração por IA na degustação (custo) — só conteúdo pré-salvo/banco.
 function blockIfDegustacao(){
   if(isAdminUser())return false;
+  if(acessosPendentes()){planoAindaNaoConfirmado();return true;}
   // Geração por IA exige um PACOTE (escopo 'plano'). Bloqueia degustação E quem
   // só comprou curso avulso (sem 'plano') — ambos não têm o escopo. (Mantém o
   // nome por compatibilidade; o efeito agora é "exige plano".)
@@ -7761,7 +7788,7 @@ function markLockedNavItems(){
 // Bloqueios visuais da DEGUSTAÇÃO: "Gerar com IA" (flashcards/mapas) e as fontes
 // IA/Misto do Simulado ficam travadas (só conteúdo pré-salvo/banco é liberado).
 function applyDegLocks(){
-  var deg=isDegustacao();
+  var deg=isDegustacao()&&!acessosPendentes(); // pendente não tranca nem força a fonte do Simulado
   [['fc-btn-gen','▶ Gerar com IA'],['btn-mmgen','🤖 Gerar com IA']].forEach(function(p){
     var b=document.getElementById(p[0]);if(!b)return;
     if(deg){b.innerHTML='🔒 Gerar com IA';b.style.opacity='.65';b.title='Disponível nos pacotes';b.dataset.degLock='1';}
@@ -8887,7 +8914,7 @@ function qRowHTML(q,i,src,isMC){
 }
 function qFullHTML(q,i,src,isMC){
   var mc=q.type?(q.type!=='disc'):isMC;
-  var tags='<div style="display:flex;gap:3px;justify-content:flex-end;margin-bottom:.45rem">'+(mc?feitaSeloHTML(q,src,i):'')+(q.code?'<span style="font-family:monospace;font-size:.59rem;font-weight:700;background:var(--code-bg);color:var(--code-tx);padding:1px 6px;border-radius:99px">'+esc(q.code)+'</span>':'')+diffTag(q.dificuldade||'intermediario')+(q.inst?'<span class="tag tag-pur" style="font-size:.57rem">'+esc(q.inst)+'</span>':'')+'</div>';
+  var tags='<div style="display:flex;gap:3px;justify-content:flex-end;margin-bottom:.45rem">'+feitaSeloHTML(q,src,i)+(q.code?'<span style="font-family:monospace;font-size:.59rem;font-weight:700;background:var(--code-bg);color:var(--code-tx);padding:1px 6px;border-radius:99px">'+esc(q.code)+'</span>':'')+diffTag(q.dificuldade||'intermediario')+(q.inst?'<span class="tag tag-pur" style="font-size:.57rem">'+esc(q.inst)+'</span>':'')+'</div>';
   var img=q.img?'<img src="'+esc(q.img)+'" alt="Figura" style="max-width:100%;display:block;border-radius:8px;margin:.55rem 0;border:1px solid var(--bd)">':'';
   var body;
   if(mc){
@@ -8935,12 +8962,12 @@ function selectOpt(letter,answer,explanation,src,idx){
     }
   }
   if(src==='gen'){genAnswered[parseInt(idx)]={ok:ok,anulada:anulada};updateGenCounter();}
-  if(!anulada&&q){try{feitaRegistrar(q,ok,src,idx);}catch(e){}}
+  if(q){try{feitaRegistrar(q,anulada?null:ok,src,idx,anulada?'anulada':'');}catch(e){}} // anulada também "foi vista": não volta no sorteio
   if(!anulada&&q&&q.area){if(!DB.perf[q.area])DB.perf[q.area]={correct:0,total:0};DB.perf[q.area].total++;if(ok)DB.perf[q.area].correct++;try{studyEvent(q,ok);}catch(e){}persist();try{refreshDash();}catch(e){}}
   // Alternativas incorretas: o banco só tem o comentário do gabarito. O botão
   // pede à IA, a partir do enunciado, do gabarito e do comentário do professor,
   // por que cada uma das outras está errada (pergunta de um assinante, 04/10/2026).
-  if(!anulada&&q&&q.options&&fb&&(src==='gen'||src==='saved')){
+  if(!anulada&&q&&q.options&&fb&&(src==='gen'||src==='saved')&&(hasScope('plano')||acessosPendentes())){
     fb.innerHTML+='<div style="margin-top:.45rem"><button type="button" class="btn btn-outline btn-sm" data-exp-alt="'+esc(src)+'|'+esc(String(idx))+'">Por que as outras alternativas estão incorretas?</button></div><div id="qalt-'+esc(src)+'-'+esc(String(idx))+'"></div>';
   }
 }
@@ -8961,21 +8988,30 @@ function mesclarFeitas(remoto,local){
   return out;
 }
 function feitaDe(q){var k=feitaChave(q);return (k&&DB.feitas&&typeof DB.feitas==='object'&&DB.feitas[k])||null;}
-function feitaRegistrar(q,ok,src,idx){
+// ok: true/false (objetiva), null (anulada ou discursiva); tipo: '' | 'anulada' | 'disc'.
+function feitaRegistrar(q,ok,src,idx,tipo){
   var k=feitaChave(q);if(!k)return;
   if(!DB.feitas||typeof DB.feitas!=='object')DB.feitas={};
-  DB.feitas[k]={ok:ok?1:0,at:Date.now()};
+  var reg={ok:(ok===null||ok===undefined)?null:(ok?1:0),at:Date.now()};
+  if(tipo)reg.tipo=tipo;
+  DB.feitas[k]=reg;
   persist();
   var el=document.getElementById('qfeita-'+src+'-'+idx);if(el)el.outerHTML=feitaSeloHTML(q,src,idx);
   try{updateProvaInfo();}catch(e){}
 }
-// Selo do card: "Acertou em dd/mm" / "Errou em dd/mm"; vazio quando nunca respondida.
+// Selo do card: "Acertou em dd/mm" / "Errou em dd/mm" (objetiva), "Respondida em"
+// (discursiva), "Anulada · vista em" (sem gabarito); vazio quando nunca respondida.
 function feitaSeloHTML(q,src,idx){
   var f=feitaDe(q);
   var id=' id="qfeita-'+esc(String(src))+'-'+esc(String(idx))+'"';
   if(!f)return '<span'+id+'></span>';
   var d=f.at?new Date(Number(f.at)).toLocaleDateString('pt-BR',{day:'2-digit',month:'2-digit'}):'';
-  return '<span'+id+' class="tag '+(f.ok?'tag-grn':'tag-red')+'" style="font-size:.57rem">'+(f.ok?'Acertou':'Errou')+(d?' em '+d:'')+'</span>';
+  var rot,cls;
+  if(f.tipo==='anulada'){rot='Anulada · vista';cls='tag-pur';}
+  else if(f.ok===1){rot='Acertou';cls='tag-grn';}
+  else if(f.ok===0){rot='Errou';cls='tag-red';}
+  else{rot='Respondida';cls='tag-pur';}
+  return '<span'+id+' class="tag '+cls+'" style="font-size:.57rem">'+rot+(d?' em '+d:'')+'</span>';
 }
 // Sorteia N questões ainda não respondidas dentro dos filtros atuais.
 function sortearNaoFeitas(n){
@@ -8990,13 +9026,16 @@ function sortearNaoFeitas(n){
 var altMemo={};
 function explicarAlternativasPrompt(q){
   var letras=Object.keys(q.options||{});
-  var sys='Endocrinologista que comenta questões de prova para médicos e residentes, em português do Brasil, registro técnico e formal. Tarefa: explicar, em uma a três frases cada, por que cada alternativa incorreta está errada, com base no enunciado, no gabarito e no comentário do professor fornecidos. Regras: não repita o comentário do gabarito; identifique cada alternativa pelo seu texto, nunca pela letra, porque a ordem pode variar; sem introdução, conclusão, símbolos ou emojis; não acrescente dados ausentes do enunciado; quando o erro for de valor de corte, dose ou critério, informe o valor correto. Responda somente com JSON: {"itens":[{"alternativa":"texto da alternativa incorreta","motivo":"por que está incorreta"}]}'+CLINICAL_GUIDELINES;
+  // ⚠️ groundSys, não concatenação: sem a sentinela o servidor corta o system em
+  // 60.000 caracteres e as diretrizes (≈80 mil) perderiam as ~30 últimas em silêncio.
+  var sys=groundSys('Endocrinologista que comenta questões de prova para médicos e residentes, em português do Brasil, registro técnico e formal. Tarefa: explicar, em uma a três frases cada, por que cada alternativa incorreta está errada, com base no enunciado, no gabarito e no comentário do professor fornecidos. Regras: não repita o comentário do gabarito; identifique cada alternativa pelo seu texto, nunca pela letra, porque a ordem pode variar; sem introdução, conclusão, símbolos ou emojis; não acrescente dados ausentes do enunciado; quando o erro for de valor de corte, dose ou critério, informe o valor correto. Responda somente com JSON: {"itens":[{"alternativa":"texto da alternativa incorreta","motivo":"por que está incorreta"}]}');
   var usr='Enunciado: '+String(q.stem||'')+'\nAlternativas: '+letras.map(function(k){return String(q.options[k]||'');}).join(' | ')+'\nGabarito: '+String(q.options[q.answer]||q.answer||'')+'\nComentário do professor: '+String(q.explanation||'(sem comentário)');
   return {sys:sys,usr:usr};
 }
 function explicarAlternativas(src,idx,btn){
   var q=src==='gen'?genQs[parseInt(idx)]:DB.q[parseInt(idx)];if(!q||!q.options)return;
-  if(isDegustacao()&&!acessosPendentes()){showAssineScreen((currentUser&&currentUser.email)||'');return;}
+  if(acessosPendentes()){planoAindaNaoConfirmado();return;}
+  if(blockIfDegustacao())return; // exige PACOTE (degustação e curso avulso ficam de fora), com aviso
   var box=document.getElementById('qalt-'+src+'-'+idx);if(!box)return;
   var k=feitaChave(q);
   function mostra(itens){
@@ -9030,7 +9069,7 @@ function evalDisc(i,src,btn){
   btn.disabled=true;btn.textContent='Avaliando…';
   var fb=document.getElementById('qfb-'+src+'-'+i);fb.innerHTML=ldHTML();
   callAI('Preceptor de medicina. Avalie em 3-4 frases.','Questão: '+q.stem+'\nEsperado: '+(q.expected||'')+'\nAluno: '+ta.value)
-  .then(function(r){fb.innerHTML='<div style="background:var(--blue-l);border-left:3px solid var(--blue);border-radius:0 var(--rs) var(--rs) 0;padding:.6rem .8rem;font-size:.75rem;color:var(--t2);line-height:1.6;margin-top:.65rem">'+esc(r)+'</div>';})
+  .then(function(r){fb.innerHTML='<div style="background:var(--blue-l);border-left:3px solid var(--blue);border-radius:0 var(--rs) var(--rs) 0;padding:.6rem .8rem;font-size:.75rem;color:var(--t2);line-height:1.6;margin-top:.65rem">'+esc(r)+'</div>';try{feitaRegistrar(q,null,src,i,'disc');}catch(e){}})
   .catch(function(e){fb.innerHTML='<div style="color:var(--red);font-size:.74rem">Erro: '+esc(e.message)+'</div>';})
   .then(function(){btn.disabled=false;btn.textContent='Avaliar';});
 }
@@ -9038,7 +9077,7 @@ function saveAllQ(){
   var n=0;
   genQs.forEach(function(q){
     if(!DB.q.find(function(x){return x.stem===q.stem;})){
-      DB.q.push(Object.assign({},q,{code:genCode(q.area),type:qtype,at:Date.now()}));n++;
+      DB.q.push(Object.assign({},q,{code:q.code||genCode(q.area),type:qtype,at:Date.now()}));n++;
     }
   });
   persist();refreshDash();renderSavedQ();notify(n+' questão(ões) salva(s)!','ok');
@@ -9046,7 +9085,7 @@ function saveAllQ(){
 function saveOneQ(i){
   var q=genQs[i];if(!q)return;
   if(!DB.q.find(function(x){return x.stem===q.stem;})){
-    DB.q.push(Object.assign({},q,{code:genCode(q.area),type:qtype,at:Date.now()}));
+    DB.q.push(Object.assign({},q,{code:q.code||genCode(q.area),type:qtype,at:Date.now()}));
     persist();refreshDash();renderSavedQ();notify('Questão salva!','ok');
   }else notify('Já salva.','info');
 }
@@ -9054,7 +9093,7 @@ function renderSavedQ(){
   var el=document.getElementById('q-saved-list');if(!el)return;
   setText('q-saved-count','('+DB.q.length+')');
   if(!DB.q.length){el.innerHTML='<div class="empty">Nenhuma questão salva.</div>';return;}
-  el.innerHTML='<div class="q-list">'+DB.q.map(function(q,i){return'<div><div class="q-row" data-qi="'+i+'" data-src="saved" data-mc="'+(q.type!=='disc')+'"><div class="q-row-top"><div class="q-stem-prev">'+esc((q.stem||'').substring(0,140))+'…</div><div style="display:flex;gap:3px;align-items:center">'+(q.code?'<span style="font-family:monospace;font-size:.59rem;font-weight:700;background:var(--code-bg);color:var(--code-tx);padding:1px 6px;border-radius:99px">'+esc(q.code)+'</span>':'')+diffTag(q.dificuldade)+'<button class="btn btn-ghost btn-sm" data-del-q="'+i+'" style="padding:2px 4px">✕</button></div></div></div><div id="qd-saved-'+i+'" style="display:none"></div></div>';}).join('')+'</div>';
+  el.innerHTML='<div class="q-list">'+DB.q.map(function(q,i){return'<div><div class="q-row" data-qi="'+i+'" data-src="saved" data-mc="'+(q.type!=='disc')+'"><div class="q-row-top"><div class="q-stem-prev">'+esc((q.stem||'').substring(0,140))+'…</div><div style="display:flex;gap:3px;align-items:center">'+feitaSeloHTML(q,'saved',i)+(q.code?'<span style="font-family:monospace;font-size:.59rem;font-weight:700;background:var(--code-bg);color:var(--code-tx);padding:1px 6px;border-radius:99px">'+esc(q.code)+'</span>':'')+diffTag(q.dificuldade)+'<button class="btn btn-ghost btn-sm" data-del-q="'+i+'" style="padding:2px 4px">✕</button></div></div></div><div id="qd-saved-'+i+'" style="display:none"></div></div>';}).join('')+'</div>';
 }
 var INST_PADRAO=[];
 // Em DEGUSTAÇÃO o aluno só enxerga uma amostra FIXA de 50 questões da
@@ -18112,6 +18151,9 @@ doLogin=function(u){
   var uid=String(u.id||u.email||'').toLowerCase();
   var ownLocal=!!(uid && String(lsGet('last_uid')||'').toLowerCase()===uid);
   lsSet('last_uid',uid);
+  // As respondidas se UNEM ao app_state (mescla por chave): as da conta anterior
+  // neste navegador nunca podem entrar nesta — inclusive na do professor.
+  if(!ownLocal){try{DB.feitas={};lsSet('feitas',null);}catch(e){}}
   if(u.role==='admin'){
     // Perfil do professor é PESSOAL: inicia pela identidade da sessão para
     // nunca mostrar dados de outro admin. O perfil salvo do próprio admin é
@@ -19893,6 +19935,9 @@ document.addEventListener('DOMContentLoaded',function(){
   var _soNao=document.getElementById('q-naofeitas');if(_soNao)_soNao.addEventListener('change',updateProvaInfo);
   var _sort5=document.getElementById('btn-sortear-5');
   if(_sort5)_sort5.addEventListener('click',function(){
+    if(bancoEstado()){renderProvaResults([]);return;} // carregando/erro: a área de resultados explica, como no Buscar
+    var inst=document.getElementById('q-inst').value;var ano=(document.getElementById('q-ano')||{}).value||'';var area=document.getElementById('q-parea').value;var type=(document.getElementById('q-ptype')||{}).value||'';
+    if(!filterProvas(inst,ano,area,type).length){notify('Nenhuma questão com esses filtros.','info');return;}
     var qs=sortearNaoFeitas(5);
     if(!qs.length){notify('Todas as questões desses filtros já foram respondidas. Troque o filtro para sortear outras.','info');return;}
     renderProvaResults(qs);
@@ -19905,7 +19950,7 @@ document.addEventListener('DOMContentLoaded',function(){
 
   // FLASHCARDS
   document.getElementById('fc-btn-create').addEventListener('click',function(){var d=document.getElementById('fc-create');d.style.display=d.style.display==='none'?'block':'none';document.getElementById('fc-gen').style.display='none';document.getElementById('fc-study').style.display='none';renderFcCatPills();});
-  document.getElementById('fc-btn-gen').addEventListener('click',function(){if(isDegustacao()){showAssineScreen((currentUser&&currentUser.email)||'');return;}var d=document.getElementById('fc-gen');d.style.display=d.style.display==='none'?'block':'none';document.getElementById('fc-create').style.display='none';document.getElementById('fc-study').style.display='none';});
+  document.getElementById('fc-btn-gen').addEventListener('click',function(){if(acessosPendentes()){planoAindaNaoConfirmado();return;}if(isDegustacao()){showAssineScreen((currentUser&&currentUser.email)||'');return;}var d=document.getElementById('fc-gen');d.style.display=d.style.display==='none'?'block':'none';document.getElementById('fc-create').style.display='none';document.getElementById('fc-study').style.display='none';});
   document.getElementById('fc-btn-study').addEventListener('click',startStudy);
   document.getElementById('fc-create-cancel').addEventListener('click',function(){document.getElementById('fc-create').style.display='none';});
   document.getElementById('fc-create-cancel2').addEventListener('click',function(){document.getElementById('fc-create').style.display='none';});

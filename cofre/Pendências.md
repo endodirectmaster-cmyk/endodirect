@@ -29,6 +29,24 @@ têm explicação?". `DB.feitas` + selo + "só as que ainda não respondi" +
 "Sortear 5" + explicação das alternativas pela IA. Ver [[Banco de Questões]]
 e [[Decisões]] 2026-10-05.
 
+## 🔎 TRÊS PRÉ-EXISTENTES QUE A REVISÃO DE 05/10 APONTOU (fora do diff, não tocados)
+
+1. **`seedFlashcards()` roda no `DOMContentLoaded` antes de qualquer login** (l.~19667):
+   `currentUser` ainda é null → `isDegustacao()` é false → o bloco `FC_MEMBER`
+   ("só p/ MEMBROS, não entram na degustação") é semeado para quem está em
+   degustação, e gravado no `app_state` dela no primeiro save. Correção
+   provável: pular o bloco de membro quando `!currentUser || acessosPendentes()`
+   e deixar a semeadura para `refreshAfterRemoteState`. Medir antes quantos
+   alunos de degustação já têm os cards de membro no baralho.
+2. **`/api/ai` não tem portão de plano nem cota por usuário** (comentário em
+   `api/ai.js` ~l.220: "O gate é ESTAR LOGADO, não ter plano"). Todo bloqueio
+   da degustação é do cliente; qualquer sessão logada pode gastar Opus pelo
+   endpoint. Decisão de produto do professor: cota no servidor (contador diário
+   por usuário + plano via `endodirect_acessos_ativos` com a service key)?
+3. **`applyDegLocks` força a fonte do Simulado para "Provas" e não a restaura**
+   ao destravar (degustação → assinante na mesma sessão). Desde hoje a janela
+   pendente não entra nisso; a transição real (compra) continua como estava.
+
 ## 🧹 `clearLocalUserData` não zera `perfTema`, `favs` nem `acervoVisto` (2026-10-05)
 
 Ao adicionar `feitas` à lista (trocar de conta no mesmo navegador não pode

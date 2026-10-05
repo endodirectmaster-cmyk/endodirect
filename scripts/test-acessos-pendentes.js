@@ -63,6 +63,7 @@ function documentoFalso(cfg) {
     getElementById(id) {
       if (id === 'panel-locked') return cfg.bloqueado ? { classList: { contains: (c) => c === 'on' } } : null;
       if (id === 'trial-modal-body') return modalBody;
+      if (id === 'checkout-modal' && cfg.comprando) return { style: { display: 'flex' } };
       return null;
     },
   };
@@ -88,6 +89,8 @@ function caixa(extra) {
     applyQuestDegustacao() { c.chamadas.quest++; }, populateInst() {}, updateProvaInfo() {},
     trialModalEl() { c.chamadas.modal++; return { style: {} }; },
     prescAllowed: () => true, // Consultório: regra de perfil (médico), fora do escopo daqui
+    carregarAcessos() { c.chamadas.acessos = (c.chamadas.acessos || 0) + 1; return Promise.resolve(); },
+    getSupabaseClient: () => ({}),
     document: documentoFalso(),
   }, extra || {});
   vm.createContext(c);
@@ -96,7 +99,8 @@ function caixa(extra) {
     decl('DEG_DIAS'), decl('DEG_MURAL_DIAS'), decl('TRIAL_LIMIT'),
     decl('DEGUSTACAO_PANELS'), decl('TRIAL_PANELS'), decl('PANEL_SCOPE'), decl('PANEL_MIN_TIER'), decl('PANEL_LABELS'),
     decl('ACESSOS_GUARDADOS_MS'),
-    corpo('acessosPendentes'), corpo('reavaliarPainelAtual'), corpo('definirAcessos'), corpo('acessosGuardados'),
+    corpo('acessosPendentes'), corpo('planoAindaNaoConfirmado'), corpo('acessosRetentarSePendente'), corpo('telaDeCompraAberta'),
+    corpo('reavaliarPainelAtual'), corpo('definirAcessos'), corpo('acessosGuardados'), corpo('blockIfDegustacao'),
     corpo('isAdminUser'), corpo('hasScope'), corpo('isDegustacao'), corpo('currentPlanKey'), corpo('planRank'),
     corpo('trialUsed'), corpo('trialLeft'), corpo('degStart'), corpo('degDiasRestantes'), corpo('degExpired'),
     corpo('muralDegDiasRestantes'), corpo('muralTrialActive'), corpo('consumeTrial'), corpo('canSeePanel'),
@@ -118,11 +122,27 @@ const run = (c, codigo) => vm.runInContext(codigo, c);
     ok(run(c, 'canSeePanel("' + p + '")') === true, 'pendente: o painel ' + p + ' abre (o conteúdo em si já vem filtrado do servidor)');
   });
   ok(run(c, 'homePanel()') === 'dash', 'pendente: a tela inicial é o Dashboard, não o cartão de bloqueio');
-  ok(run(c, 'consumeTrial("sim")') === true && c.degTrials.sim === undefined, 'pendente: a cota de degustação não é debitada (nem bloqueia)');
+  ok(run(c, 'consumeTrial("sim")') === false && c.degTrials.sim === undefined, 'pendente: a cota de degustação não é debitada — a ação que custa dinheiro espera a confirmação do plano');
+  ok(c.chamadas.notify.length === 1 && /Confirmando o seu plano/.test(c.chamadas.notify[0]) && c.chamadas.acessos === 1, 'pendente: avisa "confirmando o seu plano" e pede a lista de novo (não fica pendente para sempre)');
+  ok(run(c, 'blockIfDegustacao()') === true && c.chamadas.acessos === 2, 'pendente: a geração por IA também espera (blockIfDegustacao) e retenta a lista');
+  ok(run(c, 'planoAindaNaoConfirmado()') === true && c.chamadas.acessos === 3, 'pendente: planoAindaNaoConfirmado devolve true (bloqueie agora) e retenta');
+  run(c, 'acessosRetentarSePendente()');
+  ok(c.chamadas.acessos === 4, 'pendente: voltar a rede/aba pede a lista de novo');
   run(c, 'maybeTrialModal()');
   ok(c.trialModalSeen === false && c.chamadas.modal === 0, 'pendente: a janela "sua degustação terminou" não aparece');
   ok(run(c, 'provasPool().length') === 65, 'pendente: o banco não vira a amostra de 50 (o servidor já mandou só o que o aluno pode ver)');
   ok(c.chamadas.assine === 0, 'pendente: ninguém foi mandado para a tela de assinatura');
+}
+// Conhecida a lista, a espera some: Gold gera; curso avulso e degustação não.
+{
+  const c = caixa();
+  run(c, 'definirAcessos(["plano","plano:gold"])');
+  ok(run(c, 'planoAindaNaoConfirmado()') === false && run(c, 'blockIfDegustacao()') === false && c.chamadas.acessos === undefined, 'Gold: nada a confirmar, IA liberada, sem nova chamada');
+  const d = caixa();
+  run(d, 'definirAcessos(["curso:endoteem"])');
+  ok(run(d, 'blockIfDegustacao()') === true && d.chamadas.assine === 1 && /exclusiva dos pacotes/.test(d.chamadas.notify[0] || ''), 'curso avulso (sem pacote): IA bloqueada com aviso e tela de pacotes');
+  run(d, 'acessosRetentarSePendente()');
+  ok(d.chamadas.acessos === undefined, 'lista conhecida: voltar a aba NÃO refaz a chamada');
 }
 // degExpired não pode "inventar" o início da degustação enquanto pendente:
 // degStart() grava __start=agora se não houver — para um Gold sem lista ainda,
@@ -179,6 +199,12 @@ const run = (c, codigo) => vm.runInContext(codigo, c);
   ok(c.trialModalSeen === true && c.chamadas.modal >= 1 && /Sua degustação terminou/.test(c.document.modalBody.innerHTML), 'vencida: a janela "sua degustação terminou" aparece AGORA (foi adiada enquanto pendente)');
   ok(run(c, 'canSeePanel("sim")') === false && run(c, 'canSeePanel("flash")') === false, 'vencida: OSCE e Flashcards fecham (o portão é canSeePanel; a cota nem chega a ser consultada)');
 }
+// A lista chega vazia DURANTE a compra (poll do checkout): nenhuma janela por cima do PIX.
+{
+  const c = caixa({ document: documentoFalso({ painel: 'dash', comprando: true }) });
+  run(c, 'definirAcessos([])');
+  ok(run(c, 'telaDeCompraAberta()') === true && c.trialModalSeen === false && c.chamadas.modal === 0, 'checkout aberto: a janela "sua degustação terminou" espera (não cobre o pagamento)');
+}
 // Lista vazia com degustação em curso (começou hoje): abre o que a degustação libera.
 {
   const c = caixa({ degTrials: { __start: Date.now() - 1 * DIA }, document: documentoFalso({ painel: 'dash' }) });
@@ -200,7 +226,12 @@ const run = (c, codigo) => vm.runInContext(codigo, c);
   const iCursos = csp.indexOf("if(id==='cursos')return true;"), iPend = csp.indexOf('if(acessosPendentes())return true;'), iDeg = csp.indexOf('if(isDegustacao()){');
   ok(iCursos > 0 && iPend > iCursos && iDeg > iPend, 'canSeePanel: a guarda de pendência vem ANTES do ramo da degustação (e depois de cursos)');
   ok(/function degExpired\(\)\{return !acessosPendentes\(\)&&isDegustacao\(\)&&/.test(html), 'degExpired: pendente nunca está vencido — e a guarda vem primeiro (não chama degStart)');
-  ok(/function consumeTrial\(id\)\{\s*if\(!isDegustacao\(\)\|\|acessosPendentes\(\)\)return true;/.test(html), 'consumeTrial: pendente não debita cota');
+  ok(/function consumeTrial\(id\)\{\s*if\(acessosPendentes\(\)\)\{planoAindaNaoConfirmado\(\);return false;\}[^\n]*\n\s*if\(!isDegustacao\(\)\)return true;/.test(html), 'consumeTrial: pendente não debita cota e espera a confirmação');
+  ok(/function blockIfDegustacao\(\)\{\s*if\(isAdminUser\(\)\)return false;\s*if\(acessosPendentes\(\)\)\{planoAindaNaoConfirmado\(\);return true;\}/.test(html), 'blockIfDegustacao: pendente espera a confirmação (mesma regra da cota)');
+  ok(/fc-btn-gen'\)\.addEventListener\('click',function\(\)\{if\(acessosPendentes\(\)\)\{planoAindaNaoConfirmado\(\);return;\}if\(isDegustacao\(\)\)/.test(html), 'Gerar flashcards com IA: pendente espera; degustação → pacotes');
+  ok(/function applyDegLocks\(\)\{\s*var deg=isDegustacao\(\)&&!acessosPendentes\(\);/.test(html), 'applyDegLocks: pendente não tranca "Gerar com IA" nem força a fonte do Simulado');
+  const dw = corpo('startDeviceWatcher');
+  ok((dw.match(/acessosRetentarSePendente\(\)/g) || []).length === 3, 'startDeviceWatcher: voltar a aba, o foco e a rede pedem a lista de novo se ainda não veio');
   ok(/function maybeTrialModal\(\)\{\s*if\(trialModalSeen\|\|acessosPendentes\(\)\|\|!isDegustacao\(\)\)return;/.test(html), 'maybeTrialModal: pendente não mostra a janela');
   ok(/if\(isDegustacao\(\)&&!acessosPendentes\(\)\)\{\s*if\(!bar\)\{/.test(corpo('renderDegustacaoBar')), 'renderDegustacaoBar: pendente não mostra a faixa amarela');
   ok(/var label=k\?labels\[k\]:\(acessosPendentes\(\)\?'…':'Degustação'\);/.test(corpo('updatePlanBadge')), 'updatePlanBadge: pendente mostra "…", não "Degustação"');
@@ -208,9 +239,9 @@ const run = (c, codigo) => vm.runInContext(codigo, c);
   ok(/function provasPool\(\)\{\s*if\(!isDegustacao\(\)\|\|acessosPendentes\(\)\)return provasDB;/.test(html), 'provasPool: pendente não corta o banco em 50');
   const upi = corpo('updateProvaInfo');
   ok(/var hideAno=\(isDegustacao\(\)&&!acessosPendentes\(\)\)\|\|inst==='Endodirect';/.test(upi) && /else if\(isDegustacao\(\)&&!acessosPendentes\(\)\)\{/.test(upi), 'updateProvaInfo: pendente não escreve "Degustação: mostrando…" nem esconde o ano');
-  ok(/if\(isDegustacao\(\)&&!acessosPendentes\(\)\)\{showAssineScreen/.test(corpo('explicarAlternativas')), 'explicarAlternativas: pendente não manda para a tela de assinatura');
+  ok(/if\(acessosPendentes\(\)\)\{planoAindaNaoConfirmado\(\);return;\}\s*if\(blockIfDegustacao\(\)\)return;/.test(corpo('explicarAlternativas')), 'explicarAlternativas: pendente espera; depois, exige pacote (blockIfDegustacao)');
   const da = corpo('definirAcessos');
-  ok(/acessosConhecidos=true;/.test(da) && /reavaliarPainelAtual\(\)/.test(da) && /maybeTrialModal\(\)/.test(da), 'definirAcessos: marca a lista como conhecida, reavalia o painel e só então oferece a janela de degustação');
+  ok(/acessosConhecidos=true;/.test(da) && /reavaliarPainelAtual\(\)/.test(da) && /if\(!telaDeCompraAberta\(\)\)maybeTrialModal\(\)/.test(da), 'definirAcessos: marca a lista como conhecida, reavalia o painel e só então oferece a janela de degustação (nunca sobre a compra)');
   ok(da.indexOf('reavaliarPainelAtual()') < da.indexOf('maybeTrialModal()'), 'definirAcessos: reavaliar o painel vem antes da janela (a janela pode cobrir o cartão de bloqueio)');
   // O hydrate: a tela só é refeita (refreshAfterRemoteState → maybeTrialModal)
   // depois de carregarAcessos terminar — e carregarAcessos nunca rejeita.
@@ -224,6 +255,8 @@ const run = (c, codigo) => vm.runInContext(codigo, c);
   const rp = corpo('reavaliarPainelAtual');
   ok(/if\(!currentUser\|\|currentUser\.role==='admin'\)return;/.test(rp) && /querySelector\('\.sb-item\[data-p\]\.on'\)/.test(rp) && /getElementById\('panel-locked'\)/.test(rp), 'reavaliarPainelAtual: só aluno; lê o item aceso e a tela de bloqueio');
   ok(/if\(naTelaDeBloqueio\|\|\(id&&!canSeePanel\(id\)\)\)\{goPanel\(id\|\|homePanel\(\)\);return;\}/.test(rp), 'reavaliarPainelAtual: navega de novo só se estava bloqueado ou o painel deixou de ser permitido');
+  ok(/if\(isDegustacao\(\)&&genQs\.length\)\{var _b=document\.getElementById\('btn-filter-provas'\);if\(_b\)_b\.click\(\);\}/.test(rp), 'reavaliarPainelAtual: busca feita enquanto pendente é refeita se a lista chegou como degustação (amostra)');
+  ok(/if\(id==='mmap'\)\{try\{renderMMList\(\);/.test(rp) && /if\(id==='cursos'\)\{try\{renderCursosAluno\(\);/.test(rp) && /renderDiretrizesInto\(_rb\)/.test(rp), 'reavaliarPainelAtual: mapas, cursos e diretrizes/resumos são repintados (dependem do plano)');
   ok(/if\(bloq&&bloq\.classList\.contains\('on'\)\)/.test(corpo('showLockedPanel').replace(/\s+/g, ' ')) || /p\.classList\.add\('on'\)/.test(corpo('showLockedPanel')), 'showLockedPanel: o cartão de bloqueio é o painel #panel-locked com classe on (é o que reavaliarPainelAtual procura)');
 }
 
