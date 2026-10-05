@@ -773,15 +773,14 @@ Dois caminhos, em ordem de custo:
 
 Aguarda o "manda" do professor para o caminho 1 (ou a escolha do 2).
 
-## 📲 O radar deve notificar sozinho as Breaking News? (2026-09-25, decisão do professor)
+## ✅ RESOLVIDO — O radar notifica sozinho as Breaking News OFICIAIS (2026-09-25 → 2026-10-05)
 
-O radar marca `breaking` em ~1 item por semana (5 em 8 semanas, 2 de fonte
-oficial) e hoje **nunca** dispara push: só o professor dispara (botão no card
-ou ao salvar com o tipo Breaking News). O texto da janela de novidades
-("Receba um aviso no celular quando sair um comunicado ou breaking news")
-descreve o que o professor dispara. Se ele quiser automático: só itens com
-`breaking && isBreakingTrusted`, no primeiro aparecimento (`fresh` do merge),
-com teto diário, e o envio depois do save do payload.
+Decisão do professor em 05/10: *"oficial"* (entre manual, oficial e todas).
+Implementado em `lib/push-breaking.js`: só `breaking && isBreakingTrusted`, só no
+primeiro aparecimento (`fresh`), um por dia, marca `pushAutoAt` no item, envio
+antes do save (a marca vai no mesmo write). Ver [[Newsletter e Radar]].
+Fica anotado o caso raro: push enviado e gravação falhando depois → o item volta
+como `fresh` no run seguinte e pode ser notificado duas vezes.
 
 ## 📦 `member_content` — RESOLVIDO EM PARTE: 12,3 → 5,3 MB (2026-08-31 → 2026-09-24)
 

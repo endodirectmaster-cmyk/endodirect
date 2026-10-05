@@ -1,6 +1,6 @@
 ---
 tags: [cofre, newsletter, radar]
-atualizado: 2026-09-25
+atualizado: 2026-10-05
 ---
 
 # Newsletter e Radar
@@ -20,8 +20,10 @@ base), sobrescrita mais abaixo e nunca renderizada — o professor nunca o viu, 
 só apareceu quando ele relatou "mudei para breaking news e não gerou push". O
 botão está agora no card vivo (`muralNoticeCardHTML(a,true)`), e o editor do
 card ganhou a caixa "📲 Notificar os alunos ao salvar", marcada sozinha quando o
-tipo MUDA para Breaking News. O radar continua **não** notificando sozinho
-(decisão pendente com o professor; ~1 breaking por semana). Regras que ficam:
+tipo MUDA para Breaking News. **Desde 05/10/2026 o radar notifica sozinho as
+Breaking News de fonte OFICIAL** (decisão do professor entre manual/oficial/todas;
+ver a seção abaixo); as de fonte não oficial continuam dependendo do botão.
+Regras que ficam:
 
 - **Lê o card, não escreve nele.** É a razão de existir do botão; o teste proíbe
   `saveRemoteState`, `persistAdm` e qualquer escrita dentro do handler.
@@ -37,6 +39,36 @@ tipo MUDA para Breaking News. O radar continua **não** notificando sozinho
 sessão de admin (ou o `CRON_SECRET`), e a chave VAPID vive no servidor. Não há
 como um agente disparar por conta própria, e isso é proteção, não limitação —
 notificação em massa é irreversível.
+
+## 🚨 PUSH AUTOMÁTICO DAS BREAKING NEWS OFICIAIS (2026-10-05)
+
+Pergunta aberta em 25/09, respondida pelo professor em 05/10: *"oficial"* (entre
+manual, oficial e todas). Medido antes: ~1 breaking por semana, 2 de fonte
+oficial em 8 semanas. `lib/push-breaking.js`, chamado por `runRadar` logo
+**antes** do `saveGlobalPayload`:
+
+- **Quem:** item `breaking` que passe em `isBreakingTrusted` (feed oficial —
+  FDA, ANVISA, EMA, fabricantes — ou origem na allowlist de `lib/news.js`).
+- **Quando:** só no **primeiro aparecimento** (`merged.fresh`); o que já estava
+  gravado nunca dispara. Item publicado há mais de 7 dias não dispara (feed
+  voltando de pane traz coisa velha).
+- **Quanto:** **um por dia** (dia civil de Brasília). A marca `pushAutoAt` fica
+  no próprio item de `radar_avisos` — campo do servidor, preservado pelo save do
+  painel e pela mescla do radar (o spread do item vem antes do replacement) —
+  **sem chave nova no payload e sem tocar no gatilho** que preserva chaves (a
+  lição de 07/09 e 24/09). Dois oficiais no mesmo run: vai o mais recente; o
+  outro fica para o botão 📲.
+- **Como:** o mesmo formato do botão — título "🚨 Breaking News · FDA", corpo =
+  título do item, link `#mural`, tag `endodirect-aviso` — pelo `sendToAll`.
+  Sem VAPID no servidor, não tenta. Envio falho ou recusado **não marca**.
+- **Onde aparece:** `result.pushAuto` do `runRadar` (log do cron e resposta do
+  "Atualizar radar agora").
+- **Horário:** o dos runs (07:30 e 17:00 BRT) e o do botão do painel; sem regra
+  de horário própria.
+- **Caso raro anotado:** push enviado e gravação do payload falhando em seguida
+  → o item volta como `fresh` no run seguinte e pode ser notificado de novo.
+
+Prova: `scripts/test-push-breaking-oficial.js` (no `ci-validate`).
 
 ## 🧨 FEED OFICIAL MUDO: ZERO ITEM DA LILLY EM 1.019 (2026-08-28)
 
