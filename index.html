@@ -17818,7 +17818,9 @@ function bindAdmSec(sec){
         // uma unica vez, na entrada, e o artigo ficava fora para sempre.
         var repesc=Number(d.openAccessRepescados||0);
         var msgOA=repesc>0?(' · '+repesc+' viraram acesso livre 📖'):'';
-        notify((d.inserted>0?('Radar atualizado: '+d.inserted+' novo(s) artigo(s)!'):'Radar atualizado — nenhum artigo novo hoje.')+msgOA,'ok');
+        // Push automático de Breaking News oficial (05/10/2026): o professor precisa saber o que saiu para os alunos.
+        var msgPush=(d.pushAuto&&d.pushAuto.sent)?(' · notificação enviada: '+String(d.pushAuto.titulo||'').slice(0,80)):'';
+        notify((d.inserted>0?('Radar atualizado: '+d.inserted+' novo(s) artigo(s)!'):'Radar atualizado — nenhum artigo novo hoje.')+msgOA+msgPush,'ok');
         // ⚠️ Recarregar a LISTA de quais artigos tem discussao e obrigatorio aqui.
         // O texto nao vive no payload (fica em tabela propria), entao reler o
         // estado global nao traz noticia nenhuma da discussao recem-gravada:

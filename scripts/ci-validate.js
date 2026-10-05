@@ -537,6 +537,18 @@ try {
   fail('regressão da cadência do radar falhou:\n' + out);
 }
 
+// 17d-bis. O RADAR NOTIFICA SOZINHO AS BREAKING NEWS DE FONTE OFICIAL. Decisão do
+//      professor (05/10/2026) entre manual/oficial/todas: "oficial". Só item
+//      `breaking` confiável, só no primeiro aparecimento, um por dia (marca no
+//      próprio item), formato do botão do painel, envio antes do save.
+try {
+  execFileSync(process.execPath, [path.join('scripts', 'test-push-breaking-oficial.js')], { stdio: 'pipe' });
+  ok('push automático: só breaking oficial, só no primeiro aparecimento, um por dia, marca no item');
+} catch (e) {
+  const out = (e.stdout ? e.stdout.toString() : '') + (e.stderr ? e.stderr.toString() : '');
+  fail('regressão do push automático falhou:\n' + out);
+}
+
 // 18. ARTIGO é conteúdo só de Resumos, nunca da aba Diretrizes. O card do artigo
 //     trazia "📢 Publicar", que move o item para as Diretrizes — leitura crítica
 //     de um trial no meio das recomendações de sociedade, e para todo mundo.
