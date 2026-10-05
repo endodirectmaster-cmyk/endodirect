@@ -48,24 +48,24 @@ Vagas de fundador: 32 de 100.
 | Resend | US$ 20 | plano pago desde 03/08 (ver [[Integrações]]) |
 | Vercel | US$ 0 | Hobby: a API de cobrança devolve "Plan not found" |
 | IA do servidor | US$ 15–40 (usei 25) | 660 resumos/30d e classificação de notícias em `claude-sonnet-5` (≈US$ 0,004/item, system curto, sem cache); 86 discussões/30d em `claude-opus-4-8`, `max_tokens` 6000, ≈US$ 0,15 cada |
-| Bunny Stream | US$ ~10 | **não medido** — conferir na fatura |
-| Assinatura Claude (desenvolvimento) | US$ ~100 | **não medido** — ajustar ao plano contratado; é a maior linha |
+| Bunny Stream | US$ ~2 | professor (05/10): *"Bunny é bem baixo"* |
+| Assinatura Claude (desenvolvimento) | US$ 100 | professor (05/10): *"Claude max 100 dolares/mes"* — a maior linha |
 | Domínio e outros | R$ ~5 | estimado |
 
-Câmbio assumido R$ 5,40. **Custo fixo ≈ R$ 980/mês.** Variáveis por aluno:
+Câmbio assumido R$ 5,40. **Custo fixo ≈ R$ 935/mês.** Variáveis por aluno:
 IA usada pelo aluno (hoje baixíssima: 9 simulados e 8 prescrições em toda a
 base; ≈US$ 0,08–0,20 por ação com o núcleo de 20k tokens em cache — usei R$ 8/mês),
 taxa do pagar.me (assumi 4,5%) e impostos sobre a receita (assumi 6%).
 
 **Resultado com esses padrões (preço médio R$ 60):** contribuição R$ 45,70 por
-aluno; ponto de equilíbrio **22 alunos**; sobra hoje ≈ **R$ 120 por professor**.
-Para cada professor receber por mês: R$ 1.000 → **109 alunos**; R$ 2.500 →
-**241**; R$ 5.000 → **460**; R$ 10.000 → **897**. A R$ 45 (fundador) os números
+aluno; ponto de equilíbrio **21 alunos**; sobra hoje ≈ **R$ 130 por professor**.
+Para cada professor receber por mês: R$ 1.000 → **108 alunos**; R$ 2.500 →
+**240**; R$ 5.000 → **459**; R$ 10.000 → **896**. A R$ 45 (fundador) os números
 quase dobram; a R$ 99 (Gold mensal) caem a pouco mais da metade. Os custos
 fixos ficam estáveis até ~1.600 alunos (teto do plano de e-mail).
 
-**O que falta confirmar com o professor:** fatura do Bunny, plano do Claude,
-taxa contratada no pagar.me e enquadramento tributário.
+**O que falta confirmar com o professor:** taxa contratada no pagar.me e
+enquadramento tributário (Bunny e Claude confirmados em 05/10).
 
 ## FAQ
 - Direito de arrependimento: **7 dias** de uso e cancelamento (adicionado na FAQ, #147).
