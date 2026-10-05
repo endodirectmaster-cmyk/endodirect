@@ -753,11 +753,16 @@ escolher o tema a ser abordado e não somente a grande área."* Feito em 25/09 a
 pedido do professor: select "Tema" nas duas ferramentas com os mesmos temas dos
 Resumos (servidor + local), "Sortear" preservado. Ver [[Decisões]] 2026-09-25.
 
-## 💬 Comunicação com os alunos por WhatsApp (2026-09-25, decisão do professor)
+## ⏸️ DECIDIDO — Comunicação por WhatsApp fica de fora por ora (2026-09-25 → 2026-10-05)
 
-Pergunta do professor: *"É possível gerar uma comunicação por whatsapp com os
-alunos?"* Avaliação entregue em chat (não estava no cofre; registrada em 05/10
-quando ele pediu para ser lembrado). Medido em 25/09: 135 contas, 40 planos
+Decisão do professor em 05/10: *"Não vamos usar a comunicação de whatsapp por
+ora."* Nada a construir; a avaliação abaixo fica guardada para quando (e se) o
+tema voltar. Até lá, os canais com os alunos continuam sendo o push no celular,
+a newsletter e o Suporte.
+
+Pergunta original do professor: *"É possível gerar uma comunicação por whatsapp
+com os alunos?"* Avaliação entregue em chat (não estava no cofre; registrada em
+05/10 quando ele pediu para ser lembrado). Medido em 25/09: 135 contas, 40 planos
 ativos, 18 inscritos no push, 47 telefones vindos do checkout — e **nenhum
 consentimento registrado** para mensagens por WhatsApp (o telefone do checkout
 foi dado para a cobrança, não para comunicação).
@@ -771,7 +776,7 @@ Dois caminhos, em ordem de custo:
    modelos aprovados, custo por conversa e **opt-in explícito** — campo novo no
    perfil/checkout ("aceito receber avisos por WhatsApp") antes de qualquer envio.
 
-Aguarda o "manda" do professor para o caminho 1 (ou a escolha do 2).
+Em 05/10 o professor decidiu não seguir nenhum dos dois por ora.
 
 ## ✅ RESOLVIDO — O radar notifica sozinho as Breaking News OFICIAIS (2026-09-25 → 2026-10-05)
 
