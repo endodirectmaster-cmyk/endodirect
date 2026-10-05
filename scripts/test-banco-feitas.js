@@ -204,7 +204,7 @@ const Q = { code: 'ADR-01', stem: 'Paciente com hipercortisolismo…', area: 'Ad
     const box = c.dom['qalt-gen-0'];
     ok(/<b>Cortisol sérico matinal<\/b>: Sofre variação circadiana/.test(box.innerHTML) && /<b>ACTH basal<\/b>/.test(box.innerHTML), 'resultado: lista cada alternativa pelo texto, com o motivo');
     ok((box.innerHTML.match(/<li>/g) || []).length === 2, 'resultado: o item vazio não vira linha');
-    ok(/Comentário gerado por IA a partir do gabarito e do comentário do professor/.test(box.innerHTML), 'resultado: diz que é comentário gerado por IA (não é do professor)');
+    ok(!/gerado por IA/i.test(box.innerHTML), 'resultado: SEM rótulo "gerado por IA" (decisão do professor, 05/10/2026)');
     ok(btn.style.display === 'none', 'resultado: o botão some');
     ok(c.altMemo['adr-01'] && c.altMemo['adr-01'].length === 2, 'memória: guarda por questão');
     // Segunda vez (outra busca, outro card): sem nova chamada.
