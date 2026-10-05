@@ -149,6 +149,7 @@ for (const [nome, mut] of MUTANTES) {
   vm.runInContext(
     'function isAdminUser(){return false;}function prescAllowed(){return false;}\n'
     + 'function isDegustacao(){return true;}function degExpired(){return true;}\n'
+    + 'function acessosPendentes(){return false;}\n' // 05/10/2026: a lista de acessos já chegou (vazia) — ver test-acessos-pendentes.js
     + 'function muralTrialActive(){return false;}\n'
     + 'var DEGUSTACAO_PANELS={};var TRIAL_PANELS={};function trialLeft(){return 0;}\n'
     + corpo('canSeePanel'), ctx);

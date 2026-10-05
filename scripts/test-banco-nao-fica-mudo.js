@@ -265,13 +265,13 @@ function clienteQueFalha(nFalhas, dados) {
     const i = html.lastIndexOf('doLogin=function(u){');
     ok(i > 0, 'doLogin sobrescrito existe');
     const dl = html.slice(i, i + 4000);
-    ok(/else if\(u\.id\)\{var _acG=acessosGuardados\(u\.id\);userAcessos=_acG\|\|\[\];\}/.test(dl), 'doLogin: aluno real nasce com os acessos guardados neste aparelho — e com NADA quando não há cópia desta conta');
+    ok(/else if\(u\.id\)\{var _acG=acessosGuardados\(u\.id\);userAcessos=_acG\|\|\[\];acessosConhecidos=!!_acG;\}/.test(dl), 'doLogin: aluno real nasce com os acessos guardados neste aparelho — e com NADA (e nada decidido) quando não há cópia desta conta');
     ok(/conteudoErro=false; \/\/ o erro \(se houve\) era da sessão anterior/.test(dl), 'doLogin: o erro de conteúdo da sessão anterior não passa para a nova');
   }
   {
     const upi = corpo('updateProvaInfo');
     ok(/var estado=bancoEstado\(\);/.test(upi), 'updateProvaInfo: consulta o estado do banco');
-    const iCarr = upi.indexOf("if(estado==='carregando')"), iDeg = upi.indexOf('else if(isDegustacao()){');
+    const iCarr = upi.indexOf("if(estado==='carregando')"), iDeg = upi.indexOf('else if(isDegustacao()&&!acessosPendentes()){');
     ok(iCarr >= 0 && iDeg >= 0 && iCarr < iDeg, 'updateProvaInfo: carregando/erro vêm ANTES da faixa de degustação (sem acessos, um Gold pareceria degustação) — e os dois ramos existem');
     ok(/if\(estado\)\{var rs=document\.getElementById\('q-gen-results'\);if\(rs\)rs\.innerHTML=bancoEstadoHTML\(estado\);\}/.test(upi), 'updateProvaInfo: a área de resultados mostra o estado');
     const rpr = corpo('renderProvaResults');

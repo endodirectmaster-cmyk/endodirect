@@ -1,6 +1,6 @@
 ---
 tags: [cofre, processo]
-atualizado: 2026-09-25
+atualizado: 2026-10-05
 ---
 
 # Convenções de Trabalho
@@ -584,6 +584,13 @@ transação com rollback e aplicação de migrações não pedem mais confirmaç
 As travas de conteúdo continuam: corpo completo lido do `prosrc` antes de
 `create or replace`, ensaio com rollback antes de aplicar, conferência das
 marcas depois (ver o topo desta nota).
+
+**Ampliada em 2026-10-05:** o professor: *"Permito acesso total e irrestrito ao
+supabase"*. A entrada `mcp__Supabase` (todas as ferramentas do servidor, não só
+o `execute_sql`) entrou em `permissions.allow`. O que isso NÃO muda: nenhuma
+ferramenta destrutiva de projeto (pausar, restaurar, apagar branch/projeto)
+tem motivo para rodar sem o professor pedir aquilo nominalmente; as travas de
+migração acima seguem valendo.
 
 ⚠️ **O que NÃO mudou — as travas continuam obrigatórias antes do merge:**
 `ci-validate` verde, harness A/B em Chromium, bump do `sw.js` a cada mudança de

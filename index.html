@@ -2318,8 +2318,9 @@ input.dmm-inp-subsub{flex:1;min-width:0;background:transparent;color:var(--t2);f
             <div class="fld2" style="margin:0"><label>Subespecialidade</label><select id="q-parea"><option value="">Todas</option><option>Diabetes</option><option>Obesidade</option><option>Tireoide</option><option>Adrenal</option><option>Neuroendocrinologia</option><option>Osteometabolismo</option><option>Endocrinologia Pediátrica</option><option>Endocrinologia Esportiva</option><option>Endocrinologia Masculina</option><option>Endocrinologia Feminina</option><option>Transgeneridade</option></select></div>
             <div class="fld2" style="margin:0"><label>Tipo</label><select id="q-ptype"><option value="">Todas</option><option value="mc">Objetivas</option><option value="disc">Discursivas</option></select></div>
           </div>
+          <label style="display:flex;align-items:center;gap:.45rem;font-size:.78rem;color:var(--t2);margin:0 0 .6rem;cursor:pointer;font-weight:400;text-transform:none;letter-spacing:0"><input type="checkbox" id="q-naofeitas" style="width:16px;height:16px;flex-shrink:0"> Mostrar só as que ainda não respondi</label>
           <div style="background:var(--blue-l);border-radius:var(--rs);padding:.55rem .8rem;font-size:.74rem;color:var(--blue);margin-bottom:.7rem" id="q-prova-info">Selecione filtros para ver questões.</div>
-          <button class="btn btn-primary" id="btn-filter-provas">🔍 Buscar questões</button>
+          <div style="display:flex;gap:6px;flex-wrap:wrap"><button class="btn btn-primary" id="btn-filter-provas">🔍 Buscar questões</button><button class="btn btn-outline" id="btn-sortear-5" title="Cinco questões ainda não respondidas, dentro dos filtros escolhidos">Sortear 5 não respondidas</button></div>
         </div>
         <div id="q-gen-results"></div>
         <div id="q-panel-salvo" style="display:none">
@@ -3966,10 +3967,14 @@ var DB={
   cursoProg:lsGet('cursoProg')||{},
   plan:lsGet('plan')||null,
   acervoVisto:Number(lsGet('acervoVisto'))||0,
+  // Questões do Banco já respondidas: chave estável (srsKey) → {ok:1|0, at}.
+  // Pessoal, sincroniza entre aparelhos; é o que faz o Banco lembrar o que o
+  // aluno já fez quando ele filtra de novo (pedido de um assinante, 04/10/2026).
+  feitas:lsGet('feitas')||{},
   qotd:(function(){try{return JSON.parse(localStorage.getItem('qotd_answered')||'{}')||{};}catch(e){return {};}})()
 };
 function persist(){
-  ['q','fc','mm','notes','crono','sf_results','perf','perfTema','act','srs','srNew','goal','cursoProg','plan','acervoVisto'].forEach(function(k){lsSet(k,DB[k]);});
+  ['q','fc','mm','notes','crono','sf_results','perf','perfTema','act','srs','srNew','goal','cursoProg','feitas','plan','acervoVisto'].forEach(function(k){lsSet(k,DB[k]);});
   try{localStorage.setItem('qotd_answered',JSON.stringify(DB.qotd||{}));}catch(e){}
   queueRemoteStateSave();
 }
@@ -4654,7 +4659,7 @@ function persistPodcasts(){lsSet('podcasts',podcasts);queueRemoteStateSave();}
 
 function userStatePayload(){
   // adm_perfil é PESSOAL (vai no app_state do próprio admin, não no global).
-  var p={q:DB.q,fc:DB.fc,mm:DB.mm,notes:DB.notes,crono:DB.crono,sf_results:DB.sf_results,perf:DB.perf,perfTema:DB.perfTema,act:DB.act,srs:DB.srs,goal:DB.goal,cursoProg:DB.cursoProg,plan:DB.plan,qotd:DB.qotd,enquete_cme:DB.enqueteCme,user_profile:lsGet('user_profile'),deg_trials:degTrials,ck_billing:lsGet('ck_billing'),presc_emitidas:lsGet('presc_emitidas')||[]};
+  var p={q:DB.q,fc:DB.fc,mm:DB.mm,notes:DB.notes,crono:DB.crono,sf_results:DB.sf_results,perf:DB.perf,perfTema:DB.perfTema,act:DB.act,srs:DB.srs,goal:DB.goal,cursoProg:DB.cursoProg,plan:DB.plan,qotd:DB.qotd,feitas:DB.feitas,enquete_cme:DB.enqueteCme,user_profile:lsGet('user_profile'),deg_trials:degTrials,ck_billing:lsGet('ck_billing'),presc_emitidas:lsGet('presc_emitidas')||[]};
   if(currentUser&&currentUser.role==='admin'){
     // Nunca persiste o perfil de OUTRO admin: se o e-mail do perfil em memória
     // não bater com o da sessão (resíduo de localStorage antigo), reconstrói da
@@ -4693,7 +4698,7 @@ function currentStatePayload(){
 // Chaves PESSOAIS (vivem no app_state do próprio usuário). As demais são
 // CONTEÚDO GLOBAL (provas, mural/radar, podcasts, cursos, diretrizes…), que só
 // vêm do estado global/RPC de membro.
-var PERSONAL_STATE_KEYS=['q','fc','mm','notes','crono','sf_results','perf','perfTema','act','srs','goal','cursoProg','plan','adm_perfil','user_profile','deg_trials','ck_billing','presc_emitidas','favs','acervoVisto'];
+var PERSONAL_STATE_KEYS=['q','fc','mm','notes','crono','sf_results','perf','perfTema','act','srs','goal','cursoProg','plan','adm_perfil','user_profile','deg_trials','ck_billing','presc_emitidas','feitas','favs','acervoVisto'];
 // personalOnly=true quando o payload é o app_state do PRÓPRIO usuário: aplica só
 // as chaves pessoais e NUNCA toca no conteúdo global. Sem isso, um app_state com
 // resíduo antigo de chaves globais (ex.: radar_avisos defasado) podia, ao
@@ -4709,6 +4714,10 @@ function applyStatePayload(payload,personalOnly){
   if(Array.isArray(payload.sf_results))DB.sf_results=payload.sf_results;
   if(payload.perf&&typeof payload.perf==='object')DB.perf=payload.perf;
   if(payload.perfTema&&typeof payload.perfTema==='object')DB.perfTema=payload.perfTema;
+  // Respondidas: servidor e aparelho se somam; por questão, vale o registro mais
+  // recente — quem acabou de responder aqui não perde, e o que foi respondido
+  // depois em outro aparelho não é sobrescrito por uma cópia local velha.
+  if(payload.feitas&&typeof payload.feitas==='object')DB.feitas=mesclarFeitas(payload.feitas,DB.feitas);
   if(payload.act&&typeof payload.act==='object')DB.act=payload.act;
   if(Array.isArray(payload.srs))DB.srs=payload.srs;
   if(payload.goal&&typeof payload.goal==='object')DB.goal=payload.goal;
@@ -4776,7 +4785,7 @@ function applyStatePayload(payload,personalOnly){
 function renderDegustacaoBar(){
   var app=document.getElementById('app-screen');if(!app)return;
   var bar=document.getElementById('degustacao-bar');
-  if(isDegustacao()){
+  if(isDegustacao()&&!acessosPendentes()){
     if(!bar){
       bar=document.createElement('div');bar.id='degustacao-bar';
       bar.style.cssText='display:flex;align-items:center;justify-content:center;gap:.75rem;flex-wrap:wrap;background:linear-gradient(90deg,#fcd34d,#f59e0b);color:#3a2c05;font-size:.82rem;font-weight:600;padding:.6rem 1rem;text-align:center;box-shadow:inset 0 -1px 0 rgba(120,80,0,.18),0 1px 4px rgba(0,0,0,.08)';
@@ -4814,7 +4823,7 @@ function trialModalEl(){
   return m;
 }
 function maybeTrialModal(){
-  if(trialModalSeen||!isDegustacao())return;
+  if(trialModalSeen||acessosPendentes()||!isDegustacao())return;
   var expired=degExpired(),dd=degDiasRestantes();
   if(!expired&&dd>2)return; // só avisa na reta final (≤2 dias) ou já encerrada
   trialModalSeen=true;
@@ -5001,10 +5010,15 @@ function recarregarConteudo(){
 function definirAcessos(lista){
   if(!Array.isArray(lista))return;
   userAcessos=lista.slice();
+  acessosConhecidos=true;
   try{if(currentUser&&currentUser.id)lsSet('acessos',{uid:String(currentUser.id).toLowerCase(),lista:userAcessos,at:Date.now()});}catch(e){}
   try{updatePlanBadge();}catch(e){}
   try{markLockedNavItems();}catch(e){}
   try{renderDegustacaoBar();}catch(e){}
+  try{reavaliarPainelAtual();}catch(e){}
+  // A janela de "degustação encerrada" foi adiada enquanto a lista não vinha;
+  // agora que veio, quem está mesmo com a degustação vencida a recebe.
+  try{maybeTrialModal();}catch(e){}
 }
 // Devolve os acessos guardados no aparelho para ESTE usuário (ou null).
 var ACESSOS_GUARDADOS_MS=30*86400000; // cópia local vale 30 dias; depois, só o servidor
@@ -6673,8 +6687,8 @@ var pendingOnboardCheck=false; // decidir o onboarding após o hydrate (com base
 // trocar de conta no mesmo navegador. Não toca em conteúdo global/admin. O
 // hydrate em seguida traz o estado REMOTO do usuário correto.
 function clearLocalUserData(){
-  ['user_profile','q','fc','mm','notes','crono','sf_results','perf','ck_billing','deg_trials','fc_seeded','mm_seeded','fc_shared_seeded','fc_member_seeded'].forEach(function(k){lsSet(k,null);});
-  try{DB.q=[];DB.fc=[];DB.mm=[];DB.notes=[];DB.crono=null;DB.sf_results=[];DB.perf={};}catch(e){}
+  ['user_profile','q','fc','mm','notes','crono','sf_results','perf','feitas','ck_billing','deg_trials','fc_seeded','mm_seeded','fc_shared_seeded','fc_member_seeded'].forEach(function(k){lsSet(k,null);});
+  try{DB.q=[];DB.fc=[];DB.mm=[];DB.notes=[];DB.crono=null;DB.sf_results=[];DB.perf={};DB.feitas={};}catch(e){}
   try{degTrials={};}catch(e){}
 }
 // Após o hydrate: se o aluno (membro real) continuar sem perfil, é a 1ª vez —
@@ -6823,7 +6837,7 @@ function doLogout(){
   remoteStateLoaded=false;
   // Nada da sessão que acabou pode "completar" a próxima: as cargas em voo
   // ficam órfãs (geração nova) e plano/erro em memória voltam ao zero.
-  remoteStateGen++;remoteStateEmVoo=null;conteudoEmVoo=null;conteudoErro=false;userAcessos=[];
+  remoteStateGen++;remoteStateEmVoo=null;conteudoEmVoo=null;conteudoErro=false;userAcessos=[];acessosConhecidos=false;
   document.body.classList.remove('mobile-nav-open','admin-menu-open');
   document.getElementById('app-screen').classList.remove('admin-mode');
   document.getElementById('app-screen').style.display='none';
@@ -7394,6 +7408,31 @@ function toggleAdminNav(){
 // ── ACESSO / GATING (Etapa 4) ──
 // Escopos ativos do aluno (ex.: ['plano','curso:lipides']). Admin = acesso total.
 var userAcessos=[];
+// ⚠️ ACESSOS AINDA NÃO CHEGARAM (05/10/2026). Um assinante Gold de 46 dias
+// relatou: "toda vez que faço login aparece que meu período de teste de 7 dias
+// já foi encerrado". O painel (boot, link do e-mail, navegador sem a cópia
+// local) era julgado ANTES da resposta de endodirect_acessos_ativos:
+// userAcessos vazio = "degustação", e com o __start da degustação de meses
+// atrás = "Degustação de 7 dias encerrada". Enquanto a lista não chega, nada
+// decide contra o aluno: os painéis abrem (o conteúdo em si já é filtrado no
+// servidor), a faixa e a janela da degustação não aparecem, e definirAcessos
+// reavalia o painel aberto quando a resposta chega. Falhando a RPC 3×, fica
+// assim — melhor do que um "teste encerrado" falso.
+var acessosConhecidos=false; // true quando a lista veio do servidor, da cópia local ou da conta demo
+function acessosPendentes(){return !!(currentUser&&currentUser.id&&currentUser.role==='aluno'&&!acessosConhecidos);}
+// Os acessos chegaram DEPOIS de o painel ter sido escolhido: se a tela atual é a
+// de bloqueio, ou o painel aberto deixou de ser permitido, refaz a navegação.
+function reavaliarPainelAtual(){
+  if(!currentUser||currentUser.role==='admin')return;
+  var on=document.querySelector('.sb-item[data-p].on');
+  var id=on?on.dataset.p:'';
+  var bloq=document.getElementById('panel-locked');
+  var naTelaDeBloqueio=!!(bloq&&bloq.classList.contains('on'));
+  if(naTelaDeBloqueio||(id&&!canSeePanel(id))){goPanel(id||homePanel());return;}
+  // O painel segue permitido, mas o que ele mostra depende do plano: o Banco de
+  // questões da degustação (amostra, abas) foi montado sem saber do plano.
+  if(id==='quest'){try{applyQuestDegustacao();populateInst('q-inst');updateProvaInfo();}catch(e){}}
+}
 var catalogoCursos=[];
 // Escopo exigido para ABRIR cada painel. Ausente = livre para qualquer membro.
 // (banco de questoes = sub-aba Provas em 'quest', liberada por qualquer pacote.)
@@ -7477,12 +7516,12 @@ function muralTrialActive(){return isDegustacao()&&(Date.now()-degStart())<DEG_M
 // Degustação COMPLETA: 7 dias de acesso; depois bloqueia TODAS as funcionalidades.
 var DEG_DIAS=7;
 function degDiasRestantes(){return Math.max(0,Math.ceil((DEG_DIAS*86400000-(Date.now()-degStart()))/86400000));}
-function degExpired(){return isDegustacao()&&(Date.now()-degStart())>=DEG_DIAS*86400000;}
+function degExpired(){return !acessosPendentes()&&isDegustacao()&&(Date.now()-degStart())>=DEG_DIAS*86400000;}
 function trialLeft(id){return Math.max(0,TRIAL_LIMIT-trialUsed(id));}
 // Consome 1 uso da cota de degustação. Fora da degustação não há limite.
 // Retorna false (e mostra upsell) quando a cota acabou.
 function consumeTrial(id){
-  if(!isDegustacao())return true;
+  if(!isDegustacao()||acessosPendentes())return true;
   if(trialLeft(id)<=0){
     notify('Você usou suas '+TRIAL_LIMIT+' degustações de '+(PANEL_LABELS[id]||'recurso')+'. Adquira um pacote para liberar.','err');
     showAssineScreen((currentUser&&currentUser.email)||'');
@@ -7514,6 +7553,8 @@ function canSeePanel(id){
   // `aulaLiberada()`, que só entrega a marcada como amostra (`free`) a quem não
   // tem o curso. O não-assinante vê a aula-amostra e mais nada.
   if(id==='cursos')return true;
+  // Lista de acessos ainda não chegou: o painel abre (ver acessosPendentes).
+  if(acessosPendentes())return true;
   if(isDegustacao()){
     // Após os 7 dias, a degustação encerra: nenhuma funcionalidade (só conta/suporte → upsell).
     // ⚠️ `aovivo` sobrevive ao fim da degustação DE PROPÓSITO: a aula ao vivo é a
@@ -7545,7 +7586,7 @@ function canAccessBanco(){return isDegustacao()||hasScope('plano')||hasScope('cu
 // "retirar a opção de Geradas por IA"). Restam Provas anteriores e Banco Salvo.
 // Na degustação, força a aba de provas — que é a que a degustação libera.
 function applyQuestDegustacao(){
-  if(!isDegustacao())return;
+  if(!isDegustacao()||acessosPendentes())return;
   var provTab=document.querySelector('[data-qmode="provas"]');
   var provP=document.getElementById('q-panel-provas');
   if(provTab)provTab.classList.add('on');
@@ -7650,7 +7691,7 @@ function currentPlanKey(){
 function updatePlanBadge(){
   var k=currentPlanKey();
   var labels={standard:'Standard',gold:'Gold'};
-  var label=k?labels[k]:'Degustação';
+  var label=k?labels[k]:(acessosPendentes()?'…':'Degustação');
   var isAluno=!!(currentUser&&currentUser.role==='aluno')&&!isAdminUser();
   // Chip na topbar
   var chip=document.getElementById('tb-plan');
@@ -8846,7 +8887,7 @@ function qRowHTML(q,i,src,isMC){
 }
 function qFullHTML(q,i,src,isMC){
   var mc=q.type?(q.type!=='disc'):isMC;
-  var tags='<div style="display:flex;gap:3px;justify-content:flex-end;margin-bottom:.45rem">'+(q.code?'<span style="font-family:monospace;font-size:.59rem;font-weight:700;background:var(--code-bg);color:var(--code-tx);padding:1px 6px;border-radius:99px">'+esc(q.code)+'</span>':'')+diffTag(q.dificuldade||'intermediario')+(q.inst?'<span class="tag tag-pur" style="font-size:.57rem">'+esc(q.inst)+'</span>':'')+'</div>';
+  var tags='<div style="display:flex;gap:3px;justify-content:flex-end;margin-bottom:.45rem">'+(mc?feitaSeloHTML(q,src,i):'')+(q.code?'<span style="font-family:monospace;font-size:.59rem;font-weight:700;background:var(--code-bg);color:var(--code-tx);padding:1px 6px;border-radius:99px">'+esc(q.code)+'</span>':'')+diffTag(q.dificuldade||'intermediario')+(q.inst?'<span class="tag tag-pur" style="font-size:.57rem">'+esc(q.inst)+'</span>':'')+'</div>';
   var img=q.img?'<img src="'+esc(q.img)+'" alt="Figura" style="max-width:100%;display:block;border-radius:8px;margin:.55rem 0;border:1px solid var(--bd)">':'';
   var body;
   if(mc){
@@ -8894,7 +8935,87 @@ function selectOpt(letter,answer,explanation,src,idx){
     }
   }
   if(src==='gen'){genAnswered[parseInt(idx)]={ok:ok,anulada:anulada};updateGenCounter();}
+  if(!anulada&&q){try{feitaRegistrar(q,ok,src,idx);}catch(e){}}
   if(!anulada&&q&&q.area){if(!DB.perf[q.area])DB.perf[q.area]={correct:0,total:0};DB.perf[q.area].total++;if(ok)DB.perf[q.area].correct++;try{studyEvent(q,ok);}catch(e){}persist();try{refreshDash();}catch(e){}}
+  // Alternativas incorretas: o banco só tem o comentário do gabarito. O botão
+  // pede à IA, a partir do enunciado, do gabarito e do comentário do professor,
+  // por que cada uma das outras está errada (pergunta de um assinante, 04/10/2026).
+  if(!anulada&&q&&q.options&&fb&&(src==='gen'||src==='saved')){
+    fb.innerHTML+='<div style="margin-top:.45rem"><button type="button" class="btn btn-outline btn-sm" data-exp-alt="'+esc(src)+'|'+esc(String(idx))+'">Por que as outras alternativas estão incorretas?</button></div><div id="qalt-'+esc(src)+'-'+esc(String(idx))+'"></div>';
+  }
+}
+// ── QUESTÕES JÁ RESPONDIDAS NO BANCO (05/10/2026) ────────────────────────────
+// Chave estável da questão (código ou enunciado), a mesma do caderno de erros.
+function feitaChave(q){return srsKey(q);}
+// União de duas cópias (servidor e aparelho): por questão, fica a mais recente.
+function mesclarFeitas(remoto,local){
+  var out={};
+  [remoto,local].forEach(function(src){
+    if(!src||typeof src!=='object')return;
+    Object.keys(src).forEach(function(k){
+      var v=src[k];if(!v||typeof v!=='object')return;
+      var atual=out[k];
+      if(!atual||(Number(v.at)||0)>=(Number(atual.at)||0))out[k]=v;
+    });
+  });
+  return out;
+}
+function feitaDe(q){var k=feitaChave(q);return (k&&DB.feitas&&typeof DB.feitas==='object'&&DB.feitas[k])||null;}
+function feitaRegistrar(q,ok,src,idx){
+  var k=feitaChave(q);if(!k)return;
+  if(!DB.feitas||typeof DB.feitas!=='object')DB.feitas={};
+  DB.feitas[k]={ok:ok?1:0,at:Date.now()};
+  persist();
+  var el=document.getElementById('qfeita-'+src+'-'+idx);if(el)el.outerHTML=feitaSeloHTML(q,src,idx);
+  try{updateProvaInfo();}catch(e){}
+}
+// Selo do card: "Acertou em dd/mm" / "Errou em dd/mm"; vazio quando nunca respondida.
+function feitaSeloHTML(q,src,idx){
+  var f=feitaDe(q);
+  var id=' id="qfeita-'+esc(String(src))+'-'+esc(String(idx))+'"';
+  if(!f)return '<span'+id+'></span>';
+  var d=f.at?new Date(Number(f.at)).toLocaleDateString('pt-BR',{day:'2-digit',month:'2-digit'}):'';
+  return '<span'+id+' class="tag '+(f.ok?'tag-grn':'tag-red')+'" style="font-size:.57rem">'+(f.ok?'Acertou':'Errou')+(d?' em '+d:'')+'</span>';
+}
+// Sorteia N questões ainda não respondidas dentro dos filtros atuais.
+function sortearNaoFeitas(n){
+  var inst=(document.getElementById('q-inst')||{}).value||'',ano=(document.getElementById('q-ano')||{}).value||'',area=(document.getElementById('q-parea')||{}).value||'',type=(document.getElementById('q-ptype')||{}).value||'';
+  var pool=filterProvas(inst,ano,area,type).filter(function(q){return !feitaDe(q);});
+  for(var i=pool.length-1;i>0;i--){var j=Math.floor(Math.random()*(i+1));var t=pool[i];pool[i]=pool[j];pool[j]=t;}
+  return pool.slice(0,Math.max(1,n|0));
+}
+// Alternativas incorretas explicadas pela IA, com o registro do material da
+// plataforma: técnico, formal, sem citar letra (a ordem pode variar), sem
+// repetir o comentário do gabarito. Uma vez por questão por sessão.
+var altMemo={};
+function explicarAlternativasPrompt(q){
+  var letras=Object.keys(q.options||{});
+  var sys='Endocrinologista que comenta questões de prova para médicos e residentes, em português do Brasil, registro técnico e formal. Tarefa: explicar, em uma a três frases cada, por que cada alternativa incorreta está errada, com base no enunciado, no gabarito e no comentário do professor fornecidos. Regras: não repita o comentário do gabarito; identifique cada alternativa pelo seu texto, nunca pela letra, porque a ordem pode variar; sem introdução, conclusão, símbolos ou emojis; não acrescente dados ausentes do enunciado; quando o erro for de valor de corte, dose ou critério, informe o valor correto. Responda somente com JSON: {"itens":[{"alternativa":"texto da alternativa incorreta","motivo":"por que está incorreta"}]}'+CLINICAL_GUIDELINES;
+  var usr='Enunciado: '+String(q.stem||'')+'\nAlternativas: '+letras.map(function(k){return String(q.options[k]||'');}).join(' | ')+'\nGabarito: '+String(q.options[q.answer]||q.answer||'')+'\nComentário do professor: '+String(q.explanation||'(sem comentário)');
+  return {sys:sys,usr:usr};
+}
+function explicarAlternativas(src,idx,btn){
+  var q=src==='gen'?genQs[parseInt(idx)]:DB.q[parseInt(idx)];if(!q||!q.options)return;
+  if(isDegustacao()&&!acessosPendentes()){showAssineScreen((currentUser&&currentUser.email)||'');return;}
+  var box=document.getElementById('qalt-'+src+'-'+idx);if(!box)return;
+  var k=feitaChave(q);
+  function mostra(itens){
+    box.innerHTML='<div class="q-fb" style="margin-top:.5rem"><div style="font-weight:700;font-size:.78rem;margin-bottom:.3rem">Por que as outras alternativas estão incorretas</div>'
+      +'<ul style="margin:0;padding-left:1.1rem;font-size:.8rem;line-height:1.6">'+itens.map(function(it){return '<li><b>'+esc(it.alternativa||'')+'</b>: '+esc(it.motivo||'')+'</li>';}).join('')+'</ul>'
+      +'<div style="font-size:.68rem;color:var(--t3);margin-top:.35rem">Comentário gerado por IA a partir do gabarito e do comentário do professor.</div></div>';
+  }
+  if(k&&altMemo[k]){mostra(altMemo[k]);if(btn)btn.style.display='none';return;}
+  if(btn){btn.disabled=true;btn.innerHTML=ldHTML('Analisando as alternativas…');}
+  var p=explicarAlternativasPrompt(q);
+  callAIJson(p.sys,p.usr,1100,0,AI_MODEL_CLINICO).then(function(d){
+    var itens=(d&&Array.isArray(d.itens))?d.itens.filter(function(it){return it&&it.motivo;}):[];
+    if(!itens.length)throw new Error('Resposta vazia.');
+    if(k)altMemo[k]=itens;
+    mostra(itens);if(btn)btn.style.display='none';
+  }).catch(function(e){
+    box.innerHTML='<div style="color:var(--red);font-size:.75rem">Não foi possível comentar as alternativas agora: '+esc((e&&e.message)||e)+'</div>';
+    if(btn){btn.disabled=false;btn.textContent='Por que as outras alternativas estão incorretas?';}
+  });
 }
 function revealDisc(i,src){
   var q=src==='gen'?genQs[i]:DB.q[i];if(!q)return;
@@ -8942,7 +9063,7 @@ var INST_PADRAO=[];
 // valer também no login demo (que não passa pelo member_content).
 function degHash(s){var h=0,t=String(s||'');for(var i=0;i<t.length;i++){h=((h<<5)-h+t.charCodeAt(i))|0;}return h>>>0;}
 function provasPool(){
-  if(!isDegustacao())return provasDB;
+  if(!isDegustacao()||acessosPendentes())return provasDB;
   var endo=provasDB.filter(function(q){return (q.inst||'')==='Endodirect';});
   endo.sort(function(a,b){return degHash((a.code||'')+'|'+(a.stem||''))-degHash((b.code||'')+'|'+(b.stem||''));});
   return endo.slice(0,50);
@@ -8982,11 +9103,14 @@ function updateProvaInfo(){
   // (ex.: TEEM). Esconde o filtro para Endodirect / degustação.
   var anoField=document.getElementById('q-ano-field');
   if(anoField){
-    var hideAno=isDegustacao()||inst==='Endodirect';
+    var hideAno=(isDegustacao()&&!acessosPendentes())||inst==='Endodirect';
     anoField.style.display=hideAno?'none':'';
     if(hideAno){var anoSel=document.getElementById('q-ano');if(anoSel)anoSel.value='';ano='';}
   }
-  var n=filterProvas(inst,ano,area,type).length;
+  var lista=filterProvas(inst,ano,area,type);
+  var feitasN=lista.filter(function(q){return !!feitaDe(q);}).length;
+  var soNao=!!(document.getElementById('q-naofeitas')&&document.getElementById('q-naofeitas').checked);
+  var n=soNao?(lista.length-feitasN):lista.length;
   var total=provasPool().length;
   var el=document.getElementById('q-prova-info');
   var estado=bancoEstado();
@@ -8995,10 +9119,12 @@ function updateProvaInfo(){
       el.innerHTML=ldHTML('Carregando o banco de questões…');
     }else if(estado==='erro'){
       el.textContent='Não foi possível carregar o banco de questões.';
-    }else if(isDegustacao()){
+    }else if(isDegustacao()&&!acessosPendentes()){
       el.textContent='🎁 Degustação: mostrando '+n+' de '+total+' questões do banco Endodirect (amostra). Assine um pacote para o banco completo.';
     }else if(n>0){
-      el.textContent='Mostrando '+n+' de '+total+' questão(ões) no seu banco.';
+      el.textContent='Mostrando '+n+' de '+total+' questão(ões) no seu banco'+(feitasN?' · '+feitasN+' já respondida'+(feitasN===1?'':'s')+(soNao?' (ocultas)':''):'')+'.';
+    }else if(soNao&&lista.length){
+      el.textContent='Todas as '+lista.length+' questões desses filtros já foram respondidas. Desmarque a opção para revê-las.';
     }else{
       el.textContent='Nenhuma questão com esses filtros (seu banco tem '+total+').';
     }
@@ -17906,6 +18032,8 @@ document.addEventListener('click',function(e){
   if(rv){revealDisc(parseInt(rv.dataset.revealDisc),rv.dataset.revealSrc);return;}
   var sq=c('[data-save-q]');
   if(sq){saveOneQ(parseInt(sq.dataset.saveQ));return;}
+  var ea=c('[data-exp-alt]');
+  if(ea){var _p=String(ea.dataset.expAlt||'').split('|');explicarAlternativas(_p[0],_p[1],ea);return;}
   var dq=c('[data-del-q]');
   if(dq){if(!confirm('Excluir esta questão do seu banco salvo? Esta ação não pode ser desfeita.'))return;DB.q.splice(parseInt(dq.dataset.delQ),1);persist();renderSavedQ();refreshDash();return;}
   // flashcards
@@ -17997,8 +18125,9 @@ doLogin=function(u){
     // no hydrate — e, até a resposta chegar, da cópia guardada neste aparelho
     // (por usuário). Antes, o Gold nascia "Degustação" a cada abertura, com os
     // painéis trancados, até os megabytes do member_content chegarem.
-    if(Array.isArray(u.acessos))userAcessos=u.acessos.slice();
-    else if(u.id){var _acG=acessosGuardados(u.id);userAcessos=_acG||[];} // sem cópia DESTA conta: nada herdado da anterior
+    acessosConhecidos=false;
+    if(Array.isArray(u.acessos)){userAcessos=u.acessos.slice();acessosConhecidos=true;}
+    else if(u.id){var _acG=acessosGuardados(u.id);userAcessos=_acG||[];acessosConhecidos=!!_acG;} // sem cópia DESTA conta: nada herdado da anterior, e nada decidido até a RPC responder
     else userAcessos=[];
     var prof=lsGet('user_profile');
     var isMember=!!(currentUser&&currentUser.id);
@@ -19754,7 +19883,19 @@ document.addEventListener('DOMContentLoaded',function(){
   ['q-inst','q-ano','q-parea','q-ptype'].forEach(function(id){var e=document.getElementById(id);if(e)e.addEventListener('change',updateProvaInfo);});
   document.getElementById('btn-filter-provas').addEventListener('click',function(){
     var inst=document.getElementById('q-inst').value;var ano=document.getElementById('q-ano').value;var area=document.getElementById('q-parea').value;var type=(document.getElementById('q-ptype')||{}).value||'';
-    renderProvaResults(filterProvas(inst,ano,area,type));
+    var qs=filterProvas(inst,ano,area,type);
+    var soNao=document.getElementById('q-naofeitas');
+    if(soNao&&soNao.checked)qs=qs.filter(function(q){return !feitaDe(q);});
+    renderProvaResults(qs);
+  });
+  // "Só as que ainda não respondi" muda a contagem na hora; "Sortear 5" monta a
+  // sessão curta do dia (pedido de um assinante: ~5 questões por dia por tema).
+  var _soNao=document.getElementById('q-naofeitas');if(_soNao)_soNao.addEventListener('change',updateProvaInfo);
+  var _sort5=document.getElementById('btn-sortear-5');
+  if(_sort5)_sort5.addEventListener('click',function(){
+    var qs=sortearNaoFeitas(5);
+    if(!qs.length){notify('Todas as questões desses filtros já foram respondidas. Troque o filtro para sortear outras.','info');return;}
+    renderProvaResults(qs);
   });
   // "Tentar de novo" do Banco (o botão é redesenhado a cada estado; delega no contêiner).
   document.getElementById('q-gen-results').addEventListener('click',function(e){

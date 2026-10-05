@@ -1,9 +1,43 @@
 ---
 tags: [cofre, pendencias]
-atualizado: 2026-09-25
+atualizado: 2026-10-05
 ---
 
 # Pendências
+
+## ✅ RESOLVIDO — "Degustação de 7 dias encerrada" para um Gold em todo login (2026-10-05)
+
+Feedback de Victor (01/10, 3/5): *"toda vez que faço login aparece que meu
+período de teste de 7 dias já foi encerrado"*, também pelo link da Questão do
+Dia. Conferido no banco: Gold anual ativo até 08/2027, RPC devolvendo o plano.
+Era ordem no cliente — painel decidido antes de `endodirect_acessos_ativos`
+responder, sem reavaliação depois. Ver [[Decisões]] 2026-10-05.
+
+**O que fica em aberto, ligado a isso:** por que a cópia local dos acessos
+(`lsSet('acessos')`, desde 24/09) não o protegia no aparelho dele? Hipótese
+mais forte: `lsSet` falha em silêncio quando o `localStorage` está cheio
+(provas 3,8 MB + radar + flashcards numa cota de ~5 MB), e aí NENHUMA chave
+nova grava — nem `acessos`, nem `last_panel`. Não medido no aparelho dele. A
+correção de hoje não depende da cópia local, mas a cota continua um risco
+para tudo que é só local (ver o item do `member_content`, 24/09).
+
+## ✅ RESOLVIDO — O Banco não lembrava o que o aluno já respondeu (2026-10-05)
+
+Dúvida de Caio (04/10): 5 questões por dia por subespecialidade; "as questões
+que já fiz voltam como se eu não tivesse feito"; "as alternativas incorretas
+têm explicação?". `DB.feitas` + selo + "só as que ainda não respondi" +
+"Sortear 5" + explicação das alternativas pela IA. Ver [[Banco de Questões]]
+e [[Decisões]] 2026-10-05.
+
+## 🧹 `clearLocalUserData` não zera `perfTema`, `favs` nem `acervoVisto` (2026-10-05)
+
+Ao adicionar `feitas` à lista (trocar de conta no mesmo navegador não pode
+herdar as respondidas da conta anterior), vi que três chaves pessoais mais
+antigas também não estão nela: `perfTema` (desempenho por tema), `favs`
+(favoritos) e `acervoVisto` (marca da última visita). O mesmo vazamento
+local→conta nova existe para elas desde que entraram. Baixo impacto (o
+hydrate aplica o remoto por cima; `favs` é lista, então mescla), não tocado
+hoje para não alargar o diff. Fechar quando mexer em `PERSONAL_STATE_KEYS`.
 
 ## 🧹 `genPresc()` É CÓDIGO MORTO E LÊ TRÊS CAMPOS QUE NÃO EXISTEM (2026-08-30)
 

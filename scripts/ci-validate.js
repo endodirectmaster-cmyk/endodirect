@@ -495,6 +495,35 @@ try {
   fail('regressão do tema no OSCE/Prescrição falhou:\n' + out);
 }
 
+// 17c-terdecies. O ASSINANTE NÃO É JULGADO ANTES DE A LISTA DE ACESSOS CHEGAR.
+//      Gold de 46 dias: "toda vez que faço login aparece que meu período de
+//      teste de 7 dias já foi encerrado". O painel inicial era escolhido antes
+//      de `endodirect_acessos_ativos` responder; sem a cópia local, a lista
+//      vazia era "degustação", e o início de junho dizia "encerrada". Agora,
+//      enquanto a lista não vem, nada decide contra o aluno; quando vem, a tela
+//      é reavaliada; a degustação vencida de verdade continua bloqueada.
+try {
+  execFileSync(process.execPath, [path.join('scripts', 'test-acessos-pendentes.js')], { stdio: 'pipe' });
+  ok('acessos pendentes: painéis abrem até a lista chegar, reavaliação ao chegar, degustação vencida segue bloqueada');
+} catch (e) {
+  const out = (e.stdout ? e.stdout.toString() : '') + (e.stderr ? e.stderr.toString() : '');
+  fail('regressão dos acessos pendentes falhou:\n' + out);
+}
+
+// 17c-quaterdecies. O BANCO LEMBRA O QUE O ALUNO RESPONDEU. Assinante Gold:
+//      "as questões que eu já fiz voltam como se eu ainda não tivesse
+//      realizado"; "as alternativas incorretas possuem alguma explicação?".
+//      `DB.feitas` (pessoal, sincronizado, união pela data), selo no card,
+//      "só as que ainda não respondi", "Sortear 5" e a explicação das outras
+//      alternativas pela IA (registro técnico, pelo texto, com memória).
+try {
+  execFileSync(process.execPath, [path.join('scripts', 'test-banco-feitas.js')], { stdio: 'pipe' });
+  ok('banco: respondidas persistidas, selo, sorteio das não feitas e explicação das alternativas');
+} catch (e) {
+  const out = (e.stdout ? e.stdout.toString() : '') + (e.stderr ? e.stderr.toString() : '');
+  fail('regressão das questões respondidas falhou:\n' + out);
+}
+
 // 17d. CADÊNCIA DO RADAR: o mural precisa de mais de uma varredura por dia. Com
 //      uma só (07:30 BRT), notícia publicada depois dela só aparece no dia
 //      seguinte — foi a queixa de 17/08/2026 (ANVISA aprovando canetas de

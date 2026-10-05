@@ -1,6 +1,6 @@
 ---
 tags: [cofre, dados, supabase]
-atualizado: 2026-09-25
+atualizado: 2026-10-05
 ---
 
 # Dados e Supabase
@@ -35,7 +35,7 @@ Um item de `diretrizes` com **`rascunho:true`** é filtrado **no servidor**, nã
 ## Tabelas
 
 - `endodirect_global_state` — `id='main'`, coluna `payload` (JSONB). Estado global compartilhado (provas, avisos, radar, podcasts, cursos, estudantes, chaves de newsletter). Ver mecanismo `globalServerKeys` em [[Arquitetura]].
-- `endodirect_app_state` — estado por usuário: `email` + `payload` (JSONB). Inclui `user_profile`. **Só guarda chaves PESSOAIS** (`q/fc/mm/notes/crono/sf_results/perf/adm_perfil/user_profile/deg_trials/ck_billing/presc_emitidas` = `PERSONAL_STATE_KEYS`); o conteúdo global (provas, mural/`radar_avisos`, podcasts, cursos, diretrizes…) vive **só** no `endodirect_global_state`/RPC de membro. Por isso `applyStatePayload(payload, personalOnly=true)` é usado ao hidratar o `app_state` do próprio usuário: aplica apenas as chaves pessoais e **nunca** toca no conteúdo global. Sem isso, um `app_state` com resíduo antigo de `radar_avisos` defasado podia, ao resolver depois do estado global no `Promise.all` do hydrate, sobrescrever os artigos novos do radar — bug "F5 atualiza e ~2s depois volta ao antigo" (recorrente). Fix 2026-06-15.
+- `endodirect_app_state` — estado por usuário: `email` + `payload` (JSONB). Inclui `user_profile`. **Só guarda chaves PESSOAIS** (`q/fc/mm/notes/crono/sf_results/perf/perfTema/act/srs/goal/cursoProg/plan/adm_perfil/user_profile/deg_trials/ck_billing/presc_emitidas/feitas/favs/acervoVisto` = `PERSONAL_STATE_KEYS`; `feitas` = questões do Banco já respondidas, `{chave:{ok,at}}`, desde 2026-10-05); o conteúdo global (provas, mural/`radar_avisos`, podcasts, cursos, diretrizes…) vive **só** no `endodirect_global_state`/RPC de membro. Por isso `applyStatePayload(payload, personalOnly=true)` é usado ao hidratar o `app_state` do próprio usuário: aplica apenas as chaves pessoais e **nunca** toca no conteúdo global. Sem isso, um `app_state` com resíduo antigo de `radar_avisos` defasado podia, ao resolver depois do estado global no `Promise.all` do hydrate, sobrescrever os artigos novos do radar — bug "F5 atualiza e ~2s depois volta ao antigo" (recorrente). Fix 2026-06-15.
 - `endodirect_admins` — e-mails de administradores.
 - `endodirect_cursos` — cursos (coluna `tier`).
 - `endodirect_state_backup` — backups manuais do estado. (RLS ON sem policy = só service_role — padrão seguro, item INFO do linter.)
