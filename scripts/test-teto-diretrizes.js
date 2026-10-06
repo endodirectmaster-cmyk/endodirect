@@ -98,7 +98,7 @@ ok(/imagensPedidas\s*\r?\n?\s*\.map\(\(data\) => \(\{ type: 'image'/.test(ai),
   'as páginas renderizadas têm de ir como blocos image, na ordem em que foram lidas');
 // ⚠️ E O ANEXO NÃO ERA O ÚNICO JEITO DE ESTOURAR. Medido em 09/08/2026, depois
 // de o teto profundo subir para 400k: `prompt` é cortado em 200.000 chars, o
-// núcleo ocupa até 80.000 e o profundo até 400.000 — a 3,2 chars/token isso dá
+// núcleo ocupa até 80.000 (82.000 desde 06/10/2026) e o profundo até 400.000 — a 3,2 chars/token isso dá
 // 217k tokens contra um contexto de 200k, e o pedido falha INTEIRO. Antes do
 // aumento eram 129k, por isso ninguém tinha visto. A trava do anexo não pegava,
 // porque prompt grande não é anexo. O conserto é ORÇAMENTO: o profundo fica com
