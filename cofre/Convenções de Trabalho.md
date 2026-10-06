@@ -27,6 +27,13 @@ session limit · resets 11pm (UTC)") com 64 agentes perdidos de uma vez; só os
    run (`Workflow({scriptPath, resumeFromRunId})`): os agentes concluídos vêm
    do cache, só o que faltou roda.
 3. **Nunca relançar do zero** um workflow interrompido: perde o cache.
+4. ⚠️ **`budget.spent()` conta só o turno atual.** Medido em 06/10: parei um
+   run para relançá-lo com o teto e o relançamento nasceu com o contador em
+   zero — a janela de 5 h já estava quase gasta pelo run anterior e o novo
+   caiu no limite em 10 minutos, com 102 agentes perdidos. O teto tem de somar
+   o que a janela já consumiu (`args.jaGasto`, a partir de `subagent_tokens`
+   das notificações anteriores), e **parar um run que está indo bem para
+   "proteger" o restante custa mais do que deixá-lo cair**.
 
 ## 🧨 FUNÇÃO REESCRITA A PARTIR DE CÓPIA VELHA PERDE O QUE VEIO ANTES (2026-09-24)
 
