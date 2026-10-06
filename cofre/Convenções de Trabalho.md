@@ -1,9 +1,32 @@
 ---
 tags: [cofre, processo]
-atualizado: 2026-10-05
+atualizado: 2026-10-06
 ---
 
 # Convenções de Trabalho
+
+## ⏸️ LIMITE DA SESSÃO: PAUSAR PERTO DO TETO E RETOMAR NO HORÁRIO DA RENOVAÇÃO (2026-10-06)
+
+Pedido do professor: *"Programar pausa quando tiver em 95% da sessão e retornar
+ao reiniciar após o horário estabelecido."* Contexto: a auditoria do acervo
+(28 leitores + céticos) caiu no limite de uso da conta ("You've hit your
+session limit · resets 11pm (UTC)") com 64 agentes perdidos de uma vez; só os
+7 que já tinham terminado ficaram no cache.
+
+**O que vale a partir de agora, em todo trabalho longo com workflow:**
+
+1. **Teto de consumo no próprio script.** Antes de lançar cada agente, o
+   script confere `budget.spent()` contra um teto (`args.teto`, padrão
+   1,9 milhão de tokens — o primeiro turno da auditoria caiu com ~2,07 milhões
+   de tokens de agentes; ajustar quando houver medida melhor). Passado o teto,
+   nenhum agente novo é lançado; os itens restantes ficam para a retomada. Não
+   existe medidor de "95%" exposto à sessão — o teto é a aproximação.
+2. **Retomada no horário da renovação.** Quando o limite interrompe (ou o teto
+   para o run), agendar um lembrete (`send_later`) para 3 minutos depois do
+   horário informado na mensagem de limite, com a instrução de retomar o mesmo
+   run (`Workflow({scriptPath, resumeFromRunId})`): os agentes concluídos vêm
+   do cache, só o que faltou roda.
+3. **Nunca relançar do zero** um workflow interrompido: perde o cache.
 
 ## 🧨 FUNÇÃO REESCRITA A PARTIR DE CÓPIA VELHA PERDE O QUE VEIO ANTES (2026-09-24)
 
