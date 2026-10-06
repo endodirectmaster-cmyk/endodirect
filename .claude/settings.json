@@ -2,7 +2,11 @@
   "permissions": {
     "allow": [
       "mcp__Supabase",
-      "mcp__Supabase__execute_sql"
+      "mcp__Supabase__execute_sql",
+      "mcp__PubMed",
+      "mcp__PubMed__search_articles",
+      "mcp__PubMed__get_article_metadata",
+      "mcp__PubMed__find_related_articles"
     ]
   },
   "hooks": {

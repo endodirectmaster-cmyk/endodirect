@@ -1,9 +1,118 @@
 ---
 tags: [cofre, pendencias]
-atualizado: 2026-10-05
+atualizado: 2026-10-06
 ---
 
 # Pendências
+
+## 🩺 Auditoria do acervo — resultado e o que só o professor decide (2026-10-06)
+
+Pedido de 05/10: *"faça uma auditoria se os conteúdos dos resumos e das
+diretrizes na plataforma estão corretos e atualizados"*. Relatório completo,
+item por item, com trecho, problema, referência atual, correção sugerida e os
+votos dos céticos: [Auditoria do Acervo Endodirect](https://claude.ai/artifact/TXVreCG9akVaouQd8DUu8L)
+(artefato privado). **Nenhum conteúdo foi alterado: a correção é decisão do
+professor.**
+
+**Método.** Leitura integral dos 190 itens de `payload.diretrizes`: 72 da aba
+Diretrizes, públicos, e 118 capítulos dos Resumos, privados. Os leitores
+conferiram cada item contra a base da plataforma (`lib/clinical-deep-data.js`
+e o núcleo `CLINICAL_GUIDELINES`) e o PubMed. Cada achado grave ou médio
+passou por um cético independente, que localizou o trecho literal no banco,
+leu o contexto e conferiu a alegação. Cada achado grave teve ainda um segundo
+cético, com lente clínica. Os graves confirmados foram conferidos por mim no
+texto do banco antes de entrar no relatório. Os 268 achados leves não
+passaram por cético.
+
+| Medida | Resultado |
+|---|---|
+| Itens lidos | 190 de 190 |
+| Achados, na classificação do leitor | 470: 34 graves, 168 médios e 268 leves |
+| Confirmados pelos céticos | 195: 31 graves, 152 médios e 12 rebaixados a leves |
+| Refutados | 7 |
+| Veredito por item | 93 corrigir, 59 atualizar e 38 sem achado |
+| Ano ou fonte declarados que não conferem com o texto | 25 itens |
+
+**Os 31 graves confirmados** (idx entre parênteses; "pública" = aba Diretrizes):
+
+- **Adrenal:** pasireotida com metade da dose (90); cortisol salivar em pg/dL
+  em vez de ng/dL (90); aldosterona pós-salina em µg/dL em vez de ng/dL (91);
+  dexametasona de validação em ng/mL em vez de ng/dL (93).
+- **Diabetes:** beta-hidroxibutirato em nmol/L em vez de mmol/L (134); fórmula
+  do sódio corrigido sem a divisão por 100 (138).
+- **Endocrinologia Feminina:** insuficiência ovariana prematura com duas
+  dosagens de FSH atribuídas à ESHRE 2024, que exige uma (30 pública, duas
+  vezes; 124).
+- **Endocrinopatias:** amiodarona com "7 mg de iodo por comprimido de 200 mg",
+  quando o próprio capítulo diz ~75 mg (162).
+- **Lípides:** rabdomiólise por estatina exigindo CK acima de 50 vezes e
+  disfunção renal ao mesmo tempo; a diretriz brasileira de 2025 traz dois
+  critérios alternativos (114).
+- **Neuroendocrinologia:** cabergolina "1 a 3 mg/dia" no adenoma não
+  funcionante, quando a dose é semanal (99); corticoide como primeira linha na
+  hipofisite por fármaco, contra o próprio capítulo (100).
+- **Obesidade:** setmelanotide com "dose de ataque" (72); dumping tardio só aos
+  60 minutos do teste oral (75); tiamina abaixo da dose de tratamento (76);
+  FIB-4 com o ajuste de idade aplicado ao limiar alto (225); fenótipo de
+  Dunnigan poupando os membros superiores (226).
+- **Osteometabolismo:** calciúria acima de 400 mg/24 h no lugar do critério do
+  5º Workshop, acima de 250 mg em mulheres e 300 mg em homens (22 pública;
+  104); fratura atípica de fêmur com 2 critérios em vez de 4 de 5 (103);
+  herança da hipofosfatasia invertida (109).
+- **Tireoide:** hipotiroxinemia isolada "pode-se considerar após o 1º
+  trimestre", recomendação invertida (18 pública); levotiroxina no idoso
+  aumentada "por semana" (78); TR1 e TR2 com seguimento ultrassonográfico (81);
+  critérios de risco intermediário da ATA 2015 na coluna de alto risco (83);
+  tireoidectomia profilática do M918T "a partir de 1 ano" e
+  hiperparatireoidismo na NEM2B (84).
+- **Transgeneridade:** Resolução CFM nº 2.265/2019 apresentada como vigente. A
+  nº 2.427/2025 a revogou, veda o bloqueio puberal por incongruência de gênero
+  em menores e fixa 18 anos para a hormonioterapia (168; 171, duas vezes).
+
+**Também é código.** O núcleo `CLINICAL_GUIDELINES` do `index.html` repete o
+critério de calciúria do 4º Workshop sob o rótulo do 5º. A correção é um PR
+comum (`index.html`, `sw.js`, CI e harness) e entra quando o professor decidir
+as correções do acervo.
+
+**Temas que mais se repetem nos médios.** Diretriz nova que o texto não
+incorporou: Endocrine Society 2026 de puberdade precoce, ATA 2026 de gestação,
+ESHRE 2024, Bethesda 2023, ATA 2025 de carcinoma diferenciado, ESE/ENSAT 2023
+de incidentaloma, Pituitary Society 2023 de prolactinoma, Female Athlete Triad
+2025, teplizumabe registrado pela ANVISA em 03/2026 e romosozumabe sem corte de
+idade no SUS desde 09/2024. O outro tema frequente é a contradição entre
+seções do mesmo capítulo.
+
+**Itens com ano ou fonte que não conferem com o texto (25):** 3, 15, 16, 39,
+47, 49, 50, 58, 67, 98, 99, 100, 101, 102, 118, 119, 133, 155, 161, 162, 163,
+164, 165, 166 e 167.
+
+**O que só o professor decide:**
+
+1. Quais correções aplicar e em que ordem. O relatório traz a correção
+   sugerida de cada achado.
+2. Se a correção do núcleo `CLINICAL_GUIDELINES` entra junto.
+3. Se os 268 achados leves merecem uma rodada de conferência.
+
+**Auditoria trimestral.** Rotina "Auditoria trimestral do acervo Endodirect"
+(`trig_011i6yP2PuRFyg98ZpoWSzdT`): dia 5 de janeiro, abril, julho e outubro,
+às 8h47 de Brasília, com aviso por push e e-mail; a próxima é em 05/01/2027.
+⚠️ Ela roda em sessão nova e **sem conectores**, porque a organização não
+permite gravá-los na rotina. Para ler os Resumos privados, o professor precisa
+anexar o conector Supabase à rotina na tela de Rotinas do claude.ai ou
+cadastrar `SUPABASE_SERVICE_ROLE_KEY` nos segredos do ambiente. Sem isso, a
+rotina audita só os itens públicos e avisa.
+
+## 📊 Convite de feedback: 4ª verificação (2026-10-06)
+
+Um feedback novo desde 22/09: Victor, 02/10, nota 3, com o aviso de degustação
+encerrada apesar do Gold, corrigido no PR #821. Desde 01/09 são 6 feedbacks,
+com média 4,33. Alcance: 44 assinantes ativos, 39 com mais de 30 dias, 31 com
+o convite aberto e 8 que já responderam. O caso "as questões não aparecem"
+está resolvido desde 24/09. Continuam iguais: o EndoTEEM 2026 invisível a todo
+aluno real (68 aulas, `tier` nulo e slug em `SHOWCASE_ONLY_CURSOS`), os
+flashcards em 533 desde 01/07 e os mapas em 82 desde 21/07. As diretrizes
+públicas de 2022 ou antes caíram para 22 de 72 (eram 29 de 71 em 12/09).
+Próxima verificação em 20/10 (`trig_01QDCDys7z6fKKDJLVuhGYmZ`).
 
 ## ✅ RESOLVIDO — "Degustação de 7 dias encerrada" para um Gold em todo login (2026-10-05)
 

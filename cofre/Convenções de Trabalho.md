@@ -1,9 +1,84 @@
 ---
 tags: [cofre, processo]
-atualizado: 2026-10-05
+atualizado: 2026-10-06
 ---
 
 # Convenções de Trabalho
+
+## ⏸️ LIMITE DA SESSÃO: PAUSAR PERTO DO TETO E RETOMAR NO HORÁRIO DA RENOVAÇÃO (2026-10-06)
+
+Pedido do professor: *"Programar pausa quando tiver em 95% da sessão e retornar
+ao reiniciar após o horário estabelecido."* Contexto: a auditoria do acervo
+(28 leitores + céticos) caiu no limite de uso da conta ("You've hit your
+session limit · resets 11pm (UTC)") com 64 agentes perdidos de uma vez; só os
+7 que já tinham terminado ficaram no cache.
+
+**O que vale a partir de agora, em todo trabalho longo com workflow:**
+
+1. **Teto de consumo no próprio script.** Antes de lançar cada agente, o
+   script confere o consumo contra um teto (`args.teto`). Passado o teto,
+   nenhum agente novo é lançado; os itens restantes ficam para a retomada. Não
+   existe medidor de "95%" exposto à sessão, e o teto é a aproximação.
+   ⚠️ **A unidade é token de SAÍDA.** `budget.spent()` soma os tokens de saída
+   do turno, de todos os workflows juntos, e não os tokens totais que as
+   notificações mostram. Medido em 06/10: a janela de 5 h caiu com cerca de
+   1,1 milhão de tokens de saída, quando os agentes somavam 6,85 milhões de
+   tokens totais. O teto de 2,4 milhões, calibrado na unidade errada, nunca
+   disparou.
+   ⚠️ **Mas nem em tokens de saída o contador acompanha a janela.** Na janela
+   seguinte, o teto de 950 mil adiou as conferências às 16h00 UTC com a janela
+   ainda aberta: o run já somava 2,6 milhões sem mensagem de limite, e a
+   janela só caiu com cerca de 12,6 milhões de tokens totais. A janela das
+   10h20 tinha caído antes porque o modelo anterior já a gastara em parte. O
+   contador não mede a janela, e nenhum valor fixo de teto vale para todas.
+   **Regra prática:** teto alto (6 milhões de saída) apenas como trava de
+   segurança, agentes pequenos (regras 8 e 9) e a mensagem de limite como o
+   sinal de pausa. A retomada fica agendada para 3 minutos depois do horário
+   que a mensagem informa (regra 2). Com agentes pequenos, um corte perde
+   pouco: às 16h12 UTC caíram 36 céticos de um item cada, e a retomada das
+   20h23 os refez em 30 minutos.
+2. **Retomada no horário da renovação.** Quando o limite interrompe (ou o teto
+   para o run), agendar um lembrete (`send_later`) para 3 minutos depois do
+   horário informado na mensagem de limite, com a instrução de retomar o mesmo
+   run (`Workflow({scriptPath, resumeFromRunId})`): os agentes concluídos vêm
+   do cache, só o que faltou roda.
+3. **Nunca relançar do zero** um workflow interrompido: perde o cache.
+4. ⚠️ **`budget.spent()` não mede a janela de 5 h: ele acumula o turno.**
+   Duas medidas de 06/10 se contradisseram. Um relançamento nasceu com o
+   contador em zero e caiu no limite em 10 minutos, com 102 agentes perdidos.
+   Outro, já com a janela renovada, nasceu com 2,6 milhões e barrou todos os
+   leitores em 118 ms. O valor depende de quando o turno começou, não da
+   janela. Por isso o script acumula o consumo em passos desde o início do
+   run: a cada conferência soma a diferença para a leitura anterior e, se o
+   contador tiver voltado a zero num turno novo, soma a leitura inteira. O
+   total entra no teto junto com `args.jaGasto`, quando a mesma janela já foi
+   gasta em parte. E **parar um run que está indo
+   bem para "proteger" o restante custa mais do que deixá-lo cair**.
+5. **Há dois limites, com mensagens diferentes.** O da janela ("You've hit
+   your session limit · resets 9am (UTC)") traz o horário da renovação, e vale
+   a regra 2. O do modelo ("You've reached your … limit. Switch to another
+   model") não traz horário: em 06/10 ele derrubou 108 agentes de uma vez, e o
+   professor trocou o modelo da sessão para seguir. Nesse caso, avisar o
+   professor do que ficou feito e do que falta, em vez de agendar retomada.
+6. **Troca de modelo no meio do trabalho: run novo, não retomada.** Não há
+   como confirmar que o cache do run sobrevive à troca. Em 06/10 a etapa 1 da
+   auditoria foi salva a partir do resultado devolvido pelo workflow, os
+   achados a conferir foram para arquivos no scratchpad (um por item) e a
+   etapa final rodou como run novo que lê esses arquivos. Nada dependeu do
+   cache.
+7. **Neste ambiente, cada workflow roda só 2 agentes por vez** (4 CPUs). Para
+   escalar, dividir o trabalho em runs paralelos com partes disjuntas: em 06/10
+   foram 7 runs e 14 agentes simultâneos. O teto continua valendo para o
+   consumo somado, porque o contador é compartilhado entre os runs.
+8. **Agente de leitura com 2 a 3 itens, não 7.** Um corte por limite derruba
+   o agente inteiro: em 06/10 seis leitores de 5 a 7 capítulos caíram depois
+   de 17 minutos de trabalho, sem deixar nada no cache.
+9. **Ao retomar um run com prompts alterados**, os agentes já concluídos
+   precisam manter o texto original para voltar do cache. O script recebe a
+   lista desses rótulos (`args.feitos`) e só acrescenta a orientação nova aos
+   demais. ⚠️ **Nas retomadas seguintes, os args não mudam mais:** quem rodou
+   depois da primeira retomada já rodou com a orientação nova, e incluí-lo em
+   `feitos` mudaria o texto e perderia o cache. Só o teto pode subir.
 
 ## 🧨 FUNÇÃO REESCRITA A PARTIR DE CÓPIA VELHA PERDE O QUE VEIO ANTES (2026-09-24)
 
