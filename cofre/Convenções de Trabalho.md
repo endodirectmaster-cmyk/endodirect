@@ -27,13 +27,27 @@ session limit · resets 11pm (UTC)") com 64 agentes perdidos de uma vez; só os
    run (`Workflow({scriptPath, resumeFromRunId})`): os agentes concluídos vêm
    do cache, só o que faltou roda.
 3. **Nunca relançar do zero** um workflow interrompido: perde o cache.
-4. ⚠️ **`budget.spent()` conta só o turno atual.** Medido em 06/10: parei um
-   run para relançá-lo com o teto e o relançamento nasceu com o contador em
-   zero — a janela de 5 h já estava quase gasta pelo run anterior e o novo
-   caiu no limite em 10 minutos, com 102 agentes perdidos. O teto tem de somar
-   o que a janela já consumiu (`args.jaGasto`, a partir de `subagent_tokens`
-   das notificações anteriores), e **parar um run que está indo bem para
-   "proteger" o restante custa mais do que deixá-lo cair**.
+4. ⚠️ **`budget.spent()` não mede a janela de 5 h: ele acumula o turno.**
+   Duas medidas de 06/10 se contradisseram. Um relançamento nasceu com o
+   contador em zero e caiu no limite em 10 minutos, com 102 agentes perdidos.
+   Outro, já com a janela renovada, nasceu com 2,6 milhões e barrou todos os
+   leitores em 118 ms. O valor depende de quando o turno começou, não da
+   janela. Por isso o script guarda o valor no início do run (`BASE`) e o teto
+   vale sobre a diferença (`budget.spent() - BASE`), somada a `args.jaGasto`
+   quando a mesma janela já foi gasta em parte. E **parar um run que está indo
+   bem para "proteger" o restante custa mais do que deixá-lo cair**.
+5. **Há dois limites, com mensagens diferentes.** O da janela ("You've hit
+   your session limit · resets 9am (UTC)") traz o horário da renovação, e vale
+   a regra 2. O do modelo ("You've reached your … limit. Switch to another
+   model") não traz horário: em 06/10 ele derrubou 108 agentes de uma vez, e o
+   professor trocou o modelo da sessão para seguir. Nesse caso, avisar o
+   professor do que ficou feito e do que falta, em vez de agendar retomada.
+6. **Troca de modelo no meio do trabalho: run novo, não retomada.** Não há
+   como confirmar que o cache do run sobrevive à troca. Em 06/10 a etapa 1 da
+   auditoria foi salva a partir do resultado devolvido pelo workflow, os
+   achados a conferir foram para arquivos no scratchpad (um por item) e a
+   etapa final rodou como run novo que lê esses arquivos. Nada dependeu do
+   cache.
 
 ## 🧨 FUNÇÃO REESCRITA A PARTIR DE CÓPIA VELHA PERDE O QUE VEIO ANTES (2026-09-24)
 
