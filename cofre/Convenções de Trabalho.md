@@ -24,8 +24,19 @@ session limit · resets 11pm (UTC)") com 64 agentes perdidos de uma vez; só os
    notificações mostram. Medido em 06/10: a janela de 5 h caiu com cerca de
    1,1 milhão de tokens de saída, quando os agentes somavam 6,85 milhões de
    tokens totais. O teto de 2,4 milhões, calibrado na unidade errada, nunca
-   disparou. **Teto padrão: 950 mil**, deixando folga para os agentes que já
-   estão em voo quando ele dispara.
+   disparou.
+   ⚠️ **Mas nem em tokens de saída o contador acompanha a janela.** Na janela
+   seguinte, o teto de 950 mil adiou as conferências às 16h00 UTC com a janela
+   ainda aberta: o run já somava 2,6 milhões sem mensagem de limite, e a
+   janela só caiu com cerca de 12,6 milhões de tokens totais. A janela das
+   10h20 tinha caído antes porque o modelo anterior já a gastara em parte. O
+   contador não mede a janela, e nenhum valor fixo de teto vale para todas.
+   **Regra prática:** teto alto (6 milhões de saída) apenas como trava de
+   segurança, agentes pequenos (regras 8 e 9) e a mensagem de limite como o
+   sinal de pausa. A retomada fica agendada para 3 minutos depois do horário
+   que a mensagem informa (regra 2). Com agentes pequenos, um corte perde
+   pouco: às 16h12 UTC caíram 36 céticos de um item cada, e a retomada das
+   20h23 os refez em 30 minutos.
 2. **Retomada no horário da renovação.** Quando o limite interrompe (ou o teto
    para o run), agendar um lembrete (`send_later`) para 3 minutos depois do
    horário informado na mensagem de limite, com a instrução de retomar o mesmo
@@ -65,7 +76,9 @@ session limit · resets 11pm (UTC)") com 64 agentes perdidos de uma vez; só os
 9. **Ao retomar um run com prompts alterados**, os agentes já concluídos
    precisam manter o texto original para voltar do cache. O script recebe a
    lista desses rótulos (`args.feitos`) e só acrescenta a orientação nova aos
-   demais.
+   demais. ⚠️ **Nas retomadas seguintes, os args não mudam mais:** quem rodou
+   depois da primeira retomada já rodou com a orientação nova, e incluí-lo em
+   `feitos` mudaria o texto e perderia o cache. Só o teto pode subir.
 
 ## 🧨 FUNÇÃO REESCRITA A PARTIR DE CÓPIA VELHA PERDE O QUE VEIO ANTES (2026-09-24)
 

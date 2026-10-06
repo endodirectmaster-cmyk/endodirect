@@ -1,6 +1,6 @@
 ---
 tags: [cofre, decisoes]
-atualizado: 2026-10-05
+atualizado: 2026-10-06
 ---
 
 # Decisões
@@ -8,6 +8,7 @@ atualizado: 2026-10-05
 Log de decisões de produto e técnicas (mais recentes no topo).
 
 ## 2026-10
+- **🩺 AUDITORIA DO ACERVO: 190 ITENS LIDOS, 195 ACHADOS CONFIRMADOS, NENHUM CONTEÚDO ALTERADO (2026-10-06).** Pedido do professor em 05/10: *"faça uma auditoria se os conteúdos dos resumos e das diretrizes na plataforma estão corretos e atualizados"*. Leitura integral dos 72 itens da aba Diretrizes e dos 118 capítulos dos Resumos. Cada achado grave ou médio passou por um cético independente; cada grave teve ainda um cético clínico e a minha conferência do trecho no texto do banco. Resultado: 31 graves e 152 médios confirmados, 7 refutados; 93 itens para corrigir, 59 para atualizar e 38 sem achado. Relatório privado: [Auditoria do Acervo Endodirect](https://claude.ai/artifact/TXVreCG9akVaouQd8DUu8L). A correção é decisão do professor; a lista dos graves e o que ele decide estão em [[Pendências]]. Um caso foi adjudicado à mão e está marcado no relatório: no TRAb da gestação (idx 86), os dois céticos concordaram que o defeito existe, mas um registrou "refutado" com gravidade média; prevaleceu "confirmado" com a gravidade mais branda. A rotina trimestral `trig_011i6yP2PuRFyg98ZpoWSzdT` repete a auditoria no dia 5 de janeiro, abril, julho e outubro, sem conectores gravados. O trabalho atravessou várias janelas de uso de 5 h e caiu no limite mais de uma vez; as lições sobre teto, retomada e tamanho dos lotes estão em [[Convenções de Trabalho]].
 - **⏸️ WHATSAPP FICA DE FORA POR ORA (2026-10-05).** Diante das duas opções avaliadas em 25/09 (Canal de transmissão + botão "Copiar para WhatsApp", ou mensagens individuais pela API da Meta com consentimento), o professor: *"Não vamos usar a comunicação de whatsapp por ora."* Nada construído; a avaliação segue em [[Pendências]] para consulta futura.
 - **🚨 O RADAR NOTIFICA SOZINHO AS BREAKING NEWS DE FONTE OFICIAL (2026-10-05).** Pergunta aberta desde 25/09; o professor escolheu *"oficial"* entre manual, oficial e todas. `lib/push-breaking.js`, chamado por `runRadar` antes do save: só `breaking` + `isBreakingTrusted`, só no primeiro aparecimento (`merged.fresh`), um por dia civil de Brasília (marca `pushAutoAt` no próprio item de `radar_avisos` — nenhuma chave nova, nenhum toque no gatilho), item com mais de 7 dias não dispara, dois no mesmo run → o mais recente, formato do botão 📲 ("🚨 Breaking News · FDA", corpo = título, link `#mural`), falha de envio não marca, sem VAPID não tenta. Resultado em `result.pushAuto`. Prova: `scripts/test-push-breaking-oficial.js` (executa o módulo e o `mergeMuralItems` real: o item que volta pelo feed mantém a marca). Detalhes em [[Newsletter e Radar]].
 - **🔓 O ASSINANTE NÃO É JULGADO ANTES DE A LISTA DE ACESSOS CHEGAR (2026-10-05).** Feedback de Victor (Gold de 46 dias, 3/5, 01/10): *"toda vez que faço login aparece que meu período de teste de 7 dias já foi encerrado"* — também pelo link da Questão do Dia no e-mail. O professor: *"Vamos resolver esses dois problemas"* (com o de Caio, abaixo).
