@@ -16,11 +16,16 @@ session limit · resets 11pm (UTC)") com 64 agentes perdidos de uma vez; só os
 **O que vale a partir de agora, em todo trabalho longo com workflow:**
 
 1. **Teto de consumo no próprio script.** Antes de lançar cada agente, o
-   script confere `budget.spent()` contra um teto (`args.teto`, padrão
-   1,9 milhão de tokens — o primeiro turno da auditoria caiu com ~2,07 milhões
-   de tokens de agentes; ajustar quando houver medida melhor). Passado o teto,
+   script confere o consumo contra um teto (`args.teto`). Passado o teto,
    nenhum agente novo é lançado; os itens restantes ficam para a retomada. Não
-   existe medidor de "95%" exposto à sessão — o teto é a aproximação.
+   existe medidor de "95%" exposto à sessão, e o teto é a aproximação.
+   ⚠️ **A unidade é token de SAÍDA.** `budget.spent()` soma os tokens de saída
+   do turno, de todos os workflows juntos, e não os tokens totais que as
+   notificações mostram. Medido em 06/10: a janela de 5 h caiu com cerca de
+   1,1 milhão de tokens de saída, quando os agentes somavam 6,85 milhões de
+   tokens totais. O teto de 2,4 milhões, calibrado na unidade errada, nunca
+   disparou. **Teto padrão: 950 mil**, deixando folga para os agentes que já
+   estão em voo quando ele dispara.
 2. **Retomada no horário da renovação.** Quando o limite interrompe (ou o teto
    para o run), agendar um lembrete (`send_later`) para 3 minutos depois do
    horário informado na mensagem de limite, com a instrução de retomar o mesmo
@@ -32,9 +37,11 @@ session limit · resets 11pm (UTC)") com 64 agentes perdidos de uma vez; só os
    contador em zero e caiu no limite em 10 minutos, com 102 agentes perdidos.
    Outro, já com a janela renovada, nasceu com 2,6 milhões e barrou todos os
    leitores em 118 ms. O valor depende de quando o turno começou, não da
-   janela. Por isso o script guarda o valor no início do run (`BASE`) e o teto
-   vale sobre a diferença (`budget.spent() - BASE`), somada a `args.jaGasto`
-   quando a mesma janela já foi gasta em parte. E **parar um run que está indo
+   janela. Por isso o script acumula o consumo em passos desde o início do
+   run: a cada conferência soma a diferença para a leitura anterior e, se o
+   contador tiver voltado a zero num turno novo, soma a leitura inteira. O
+   total entra no teto junto com `args.jaGasto`, quando a mesma janela já foi
+   gasta em parte. E **parar um run que está indo
    bem para "proteger" o restante custa mais do que deixá-lo cair**.
 5. **Há dois limites, com mensagens diferentes.** O da janela ("You've hit
    your session limit · resets 9am (UTC)") traz o horário da renovação, e vale
@@ -48,6 +55,17 @@ session limit · resets 11pm (UTC)") com 64 agentes perdidos de uma vez; só os
    achados a conferir foram para arquivos no scratchpad (um por item) e a
    etapa final rodou como run novo que lê esses arquivos. Nada dependeu do
    cache.
+7. **Neste ambiente, cada workflow roda só 2 agentes por vez** (4 CPUs). Para
+   escalar, dividir o trabalho em runs paralelos com partes disjuntas: em 06/10
+   foram 7 runs e 14 agentes simultâneos. O teto continua valendo para o
+   consumo somado, porque o contador é compartilhado entre os runs.
+8. **Agente de leitura com 2 a 3 itens, não 7.** Um corte por limite derruba
+   o agente inteiro: em 06/10 seis leitores de 5 a 7 capítulos caíram depois
+   de 17 minutos de trabalho, sem deixar nada no cache.
+9. **Ao retomar um run com prompts alterados**, os agentes já concluídos
+   precisam manter o texto original para voltar do cache. O script recebe a
+   lista desses rótulos (`args.feitos`) e só acrescenta a orientação nova aos
+   demais.
 
 ## 🧨 FUNÇÃO REESCRITA A PARTIR DE CÓPIA VELHA PERDE O QUE VEIO ANTES (2026-09-24)
 
