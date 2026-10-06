@@ -257,7 +257,13 @@ module.exports = async function handler(req, res) {
   // O custo é pequeno: o núcleo é o prefixo CACHEADO e idêntico em toda geração,
   // então a 1ª chamada grava e as seguintes leem a ~0,1x. O que NÃO se pode é
   // deixar crescer sem teto: sem ele o corte volta a ser silencioso.
-  const TETO_NUCLEO = 80000;
+  // 80000 → 82000 em 06/10/2026, pelo mesmo motivo: as correções da auditoria do
+  // acervo (calciúria do 5º Workshop no hiperparatireoidismo, registro do
+  // teplizumabe na ANVISA e Resolução CFM nº 2.427/2025 no cuidado de pessoas
+  // trans) levaram o núcleo a 80.300 caracteres. No uso normal o profundo segue
+  // com os 400.000 inteiros: o orçamento de contexto abaixo só morde com prompt
+  // ou anexo grandes.
+  const TETO_NUCLEO = 82000;
   // O bloco PROFUNDO da subespecialidade entra no MESMO prefixo cacheável: o
   // prefixo passa a ser `núcleo + profundo(área)`, estável por área, então cada
   // subespecialidade reaproveita a própria entrada de cache.
@@ -299,7 +305,7 @@ module.exports = async function handler(req, res) {
   const temAnexo = !!(body.documentBase64 || body.url || imagensPedidas.length);
   // ⚠️⚠️ E O ANEXO NÃO ERA O ÚNICO JEITO DE ESTOURAR — o `prompt` sozinho basta.
   // Medido em 09/08/2026, DEPOIS de eu subir o teto: `prompt` é cortado em
-  // 200.000 caracteres (abaixo), o núcleo ocupa até 80.000 e o profundo até
+  // 200.000 caracteres (abaixo), o núcleo ocupa até 80.000 (82.000 desde 06/10/2026) e o profundo até
   // 400.000. A 3,2 chars/token — que é o realista para português clínico com
   // acento, não os 3,6 otimistas — isso dá **217k tokens contra um contexto de
   // 200k**: o pedido falha INTEIRO. Antes de eu subir o teto eram 129k, e por
