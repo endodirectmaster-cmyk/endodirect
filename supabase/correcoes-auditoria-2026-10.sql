@@ -78,3 +78,68 @@ update public.endodirect_global_state g
    and (select divergentes from novo) = 0
    and (select aplicados from novo) = (select aprovados from novo)
 returning (select aplicados from novo) as aplicados, jsonb_array_length(g.payload->'diretrizes') as n_itens;
+
+-- ── 2ª passada: campos auxiliares (pts, flashcards, mapa, fluxogramas) ──────────
+-- Os campos auxiliares de cada item foram derivados do resumo antigo e repetem os
+-- valores corrigidos na 1ª passada (ex.: a flashcard e o fluxograma da CAD ainda
+-- com K < 3,3 depois de o resumo passar a 3,5). Mesmo desenho: proposta por item
+-- numa tabela de trabalho, revisão e aplicação única guardada. A proposta é
+-- gravada por CAMINHO (jsonb_set em cada folha de texto), e a gravação só acontece
+-- se o texto atual de cada folha for exatamente o que o editor leu.
+create table if not exists public.endodirect_correcoes_auxiliares (
+  chave text primary key,
+  idx int not null,
+  campos_original jsonb not null,
+  campos_novo jsonb,
+  trocas jsonb,
+  sem_mudanca boolean not null default false,
+  notas text,
+  status text not null default 'proposto'
+    check (status in ('proposto', 'aprovado', 'rejeitado', 'aplicado')),
+  revisao jsonb,
+  criado_em timestamptz not null default now(),
+  revisado_em timestamptz,
+  aplicado_em timestamptz
+);
+
+alter table public.endodirect_correcoes_auxiliares enable row level security;
+revoke all on public.endodirect_correcoes_auxiliares from anon, authenticated;
+
+comment on table public.endodirect_correcoes_auxiliares is
+  'Correções da auditoria do acervo, 2ª passada (campos pts, flashcards, mapa e fluxogramas): campos originais, campos corrigidos e trocas por caminho de cada item de payload.diretrizes. Tabela de trabalho e de reversão; não é lida pelo app.';
+
+-- Aplicação da 2ª passada (uma única instrução, depois da revisão). Para cada
+-- linha 'aprovado' com campos_novo, confere que os campos atuais do item ainda são
+-- iguais (igualdade jsonb) a campos_original e substitui os campos; marca atEdit.
+-- Mesma guarda da 1ª passada: qualquer divergência cancela a instrução inteira.
+with c as (
+  select chave, campos_original, campos_novo
+  from public.endodirect_correcoes_auxiliares
+  where status = 'aprovado' and campos_novo is not null
+),
+itens as (
+  select o, v, c.chave as ch, c.campos_original, c.campos_novo,
+         (select jsonb_object_agg(k, v->k)
+            from jsonb_object_keys(coalesce(c.campos_original, '{}'::jsonb)) k) as atual
+  from public.endodirect_global_state g,
+       jsonb_array_elements(g.payload->'diretrizes') with ordinality t(v,o)
+       left join c on c.chave = coalesce(v->>'fonte','')||'|'||coalesce(nullif(v->>'tema',''), v->>'titulo','')||'|'||coalesce(v->>'sub','')
+  where g.id = 'main'
+),
+novo as (
+  select jsonb_agg(
+           case when ch is not null and atual = campos_original then
+             v || campos_novo || jsonb_build_object('atEdit', (extract(epoch from now()) * 1000)::bigint)
+           else v end
+           order by o) as arr,
+         count(*) filter (where ch is not null and atual = campos_original) as aplicados,
+         count(*) filter (where ch is not null and atual is distinct from campos_original) as divergentes,
+         (select count(*) from c) as aprovados
+  from itens
+)
+update public.endodirect_global_state g
+   set payload = jsonb_set(g.payload, '{diretrizes}', (select arr from novo))
+ where g.id = 'main'
+   and (select divergentes from novo) = 0
+   and (select aplicados from novo) = (select aprovados from novo)
+returning (select aplicados from novo) as aplicados, jsonb_array_length(g.payload->'diretrizes') as n_itens;

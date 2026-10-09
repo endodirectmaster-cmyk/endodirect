@@ -1,6 +1,6 @@
 ---
 tags: [cofre, processo]
-atualizado: 2026-10-06
+atualizado: 2026-10-09
 ---
 
 # Convenções de Trabalho
@@ -79,6 +79,33 @@ session limit · resets 11pm (UTC)") com 64 agentes perdidos de uma vez; só os
    demais. ⚠️ **Nas retomadas seguintes, os args não mudam mais:** quem rodou
    depois da primeira retomada já rodou com a orientação nova, e incluí-lo em
    `feitos` mudaria o texto e perderia o cache. Só o teto pode subir.
+10. **Há um terceiro limite, o semanal** ("You've hit your weekly limit ·
+   resets Oct 9, 8pm (UTC)"), e ele para tudo por dias, não por horas. Em
+   07/10 às 06h27 a retomada das correções do acervo caiu nele depois de 2
+   minutos, e o trabalho só voltou em 09/10 às 21h40, quando o professor
+   mandou *"voltar aos trabalhos"*. ⚠️ **Retomada em limite não renovado custa
+   caro:** cada um dos 8 runs gastou ~140 mil tokens só para 19 agentes
+   nascerem e morrerem na mensagem de limite (≈1,2 milhão no total, sem nada
+   feito). Regra: ao retomar depois de um limite, lançar **um run só, como
+   sentinela**, esperar o primeiro agente dele terminar e só então lançar os
+   demais. Se o sentinela cair, a janela não renovou: reagendar e avisar o
+   professor.
+11. **`update` e `delete` pelo MCP do Supabase travam quando partem de um
+   subagente** (60 s esperando uma confirmação que nunca chega); do laço
+   principal, `update` passa e `delete` continua travando. O `insert … on
+   conflict do update` passa dos dois lugares. Por isso, em 07/10, o revisor
+   deixou de gravar a decisão (sete tentativas expiradas no item 90) e passou
+   a devolvê-la no resultado; a coordenação grava as decisões em lote, de uma
+   vez, do laço principal. Linha de teste a descartar vira `status =
+   'rejeitado'`, nunca `delete`.
+12. **Edição feita direto no banco nunca mexe em `fonte`, `tema` ou `sub`.** Os
+   três formam a chave que o painel do professor usa para mesclar gravações
+   concorrentes (`GLOBAL_MERGE_KEYS.diretrizes`), e `mergeConcurrent` parte do
+   estado local: chave nova vinda do servidor é ACRESCENTADA, e chave local
+   que sumiu do servidor não é removida. Um painel aberto desde antes da
+   edição salvaria o item antigo (com o texto velho) ao lado do novo. Quem
+   troca a fonte de um item é o professor, pelo painel; a edição no banco
+   corrige o texto e, no máximo, o `ano`, que não entra na chave.
 
 ## 🧨 FUNÇÃO REESCRITA A PARTIR DE CÓPIA VELHA PERDE O QUE VEIO ANTES (2026-09-24)
 
