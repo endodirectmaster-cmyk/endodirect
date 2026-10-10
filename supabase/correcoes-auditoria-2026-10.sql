@@ -155,3 +155,96 @@ update public.endodirect_global_state g
    and (select divergentes from novo) = 0
    and (select aplicados from novo) = (select aprovados from novo)
 returning (select aplicados from novo) as aplicados, jsonb_array_length(g.payload->'diretrizes') as n_itens;
+
+-- ── Troca de fontes (10/10, autorizada pelo professor) ──────────────────────────
+-- A fonte é a chave de merge do painel (fonte|tema|sub). Cada troca fica
+-- registrada com a chave antiga e a nova; a reversão é trocar de volta pelo
+-- registro (ou pelo backup main-antes-trocar-fontes-2026-10-10). Painel aberto
+-- desde antes da troca precisa ser recarregado antes de salvar (senão o merge
+-- acrescenta o item novo e mantém o antigo).
+create table if not exists public.endodirect_correcoes_fontes (
+  idx int not null,
+  chave_antiga text primary key,
+  chave_nova text not null,
+  fonte_antiga text not null,
+  fonte_nova text not null,
+  extra jsonb,          -- ex.: {"fluxogramas_0_fonte": "..."} (metadado interno que não é chave)
+  motivo text not null,
+  aplicado_em timestamptz
+);
+alter table public.endodirect_correcoes_fontes enable row level security;
+revoke all on public.endodirect_correcoes_fontes from anon, authenticated;
+
+with f as (select * from public.endodirect_correcoes_fontes where aplicado_em is null),
+itens as (
+  select o, v, f.chave_antiga as ch, f.fonte_antiga, f.fonte_nova, f.extra
+  from public.endodirect_global_state g,
+       jsonb_array_elements(g.payload->'diretrizes') with ordinality t(v,o)
+       left join f on f.chave_antiga = coalesce(v->>'fonte','')||'|'||coalesce(nullif(v->>'tema',''), v->>'titulo','')||'|'||coalesce(v->>'sub','')
+  where g.id = 'main'
+),
+novo as (
+  select jsonb_agg(
+           case when ch is not null and v->>'fonte' = fonte_antiga then
+             (case when extra ? 'fluxogramas_0_fonte' and jsonb_typeof(v->'fluxogramas') = 'array' and jsonb_array_length(v->'fluxogramas') > 0
+                   then jsonb_set(v, '{fluxogramas,0,fonte}', to_jsonb(extra->>'fluxogramas_0_fonte'))
+                   else v end)
+             || jsonb_build_object('fonte', fonte_nova, 'atEdit', (extract(epoch from now()) * 1000)::bigint)
+           else v end
+           order by o) as arr,
+         count(*) filter (where ch is not null and v->>'fonte' = fonte_antiga) as aplicados,
+         (select count(*) from f) as pendentes
+  from itens
+)
+update public.endodirect_global_state g
+   set payload = jsonb_set(g.payload, '{diretrizes}', (select arr from novo))
+ where g.id = 'main' and (select aplicados from novo) = (select pendentes from novo) and (select pendentes from novo) > 0
+returning (select aplicados from novo) as aplicados;
+
+-- ── Rodada dos pontos fora dos achados (10/10) ───────────────────────────────────
+-- Mesmo desenho, em tabelas próprias para não sobrescrever o registro da 1ª
+-- rodada (resumo_original/campos_original de lá são a reversão da 1ª rodada).
+-- A aplicação é a mesma das duas passadas acima, trocando os nomes das tabelas
+-- por endodirect_correcoes_residuais e endodirect_correcoes_auxiliares_res.
+create table if not exists public.endodirect_correcoes_residuais
+  (like public.endodirect_correcoes_auditoria including all);
+alter table public.endodirect_correcoes_residuais enable row level security;
+revoke all on public.endodirect_correcoes_residuais from anon, authenticated;
+
+create table if not exists public.endodirect_correcoes_auxiliares_res
+  (like public.endodirect_correcoes_auxiliares including all);
+alter table public.endodirect_correcoes_auxiliares_res enable row level security;
+revoke all on public.endodirect_correcoes_auxiliares_res from anon, authenticated;
+
+-- Aplicada em 10/10, 11h41 UTC. 50 itens revisados: 49 aprovados e 1 aprovado com
+-- ajuste do revisor, nenhum rejeitado. 45 tiveram mudança no resumo (86 trocas) e
+-- 25 tiveram campos auxiliares alinhados (46 trocas); 5 ficaram como estavam
+-- porque nenhum ponto se confirmou. Retoques da coordenação antes de aplicar
+-- (anotados no "motivo" das trocas do item): no item da terapia combinada do DM2,
+-- a titulação da glargina + lixisenatida passou de "passos de 2 UI" a "2 a 4 UI"
+-- (bula do FDA), e a dulaglutida 3/4,5 mg passou de "só no exterior" a "aprovadas
+-- nos EUA e na Europa" (o registro no Brasil não foi conferido).
+-- Backup: main-antes-aplicar-residuais-2026-10-10. Verificação: 188 itens
+-- idênticos ao backup; nos 45 alterados, só resumo, campos auxiliares e atEdit.
+
+-- ── Limpeza mecânica (10/10): título "## Pontos-Chave" vazio no fim do resumo ────
+-- Dez resumos terminavam nesse título sem conteúdo; o app desenha os pontos-chave
+-- (campo pts) num bloco próprio, com cabeçalho, logo abaixo do texto, e o título
+-- aparecia vazio e duplicado. Backup: main-antes-limpar-titulos-vazios-2026-10-10.
+with itens as (
+  select o, v, (v->>'resumo') ~* '\n#+[ \t]*pontos[- ]chave\s*$' as alvo
+  from public.endodirect_global_state g, jsonb_array_elements(g.payload->'diretrizes') with ordinality t(v,o)
+  where g.id = 'main'
+),
+novo as (
+  select jsonb_agg(case when alvo then
+           v || jsonb_build_object('resumo', regexp_replace(v->>'resumo', '\s*\n#+[ \t]*pontos[- ]chave\s*$', '', 'i'),
+                                   'atEdit', (extract(epoch from now()) * 1000)::bigint)
+         else v end order by o) as arr,
+         count(*) filter (where alvo) as n
+  from itens
+)
+update public.endodirect_global_state g
+   set payload = jsonb_set(g.payload, '{diretrizes}', (select arr from novo))
+ where g.id = 'main' and (select n from novo) = 10
+returning (select n from novo) as limpos;
