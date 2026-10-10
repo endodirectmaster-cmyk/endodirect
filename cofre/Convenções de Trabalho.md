@@ -106,6 +106,26 @@ session limit · resets 11pm (UTC)") com 64 agentes perdidos de uma vez; só os
    edição salvaria o item antigo (com o texto velho) ao lado do novo. Quem
    troca a fonte de um item é o professor, pelo painel; a edição no banco
    corrige o texto e, no máximo, o `ano`, que não entra na chave.
+13. **O que rende a janela é o esforço e o modelo, não o paralelismo.**
+   Medido nas correções do acervo: em 09/10, 8 runs com 18 agentes
+   simultâneos, no modelo da sessão de então e com o esforço herdado (máximo),
+   gastaram a janela de 5 h em ~10 minutos (~3,8 milhões de tokens dos
+   agentes) e perderam todos os revisores que estavam no meio do trabalho. Em
+   10/10, com `effort: 'high'` nos agentes (`opts.effort` do `agent()`), o
+   modelo da sessão e 4 runs com 8 agentes, 199 agentes (48 editores e 151
+   revisores) terminaram em 35 minutos (~18,5 milhões de tokens) sem cair.
+   Regras: (a) workflow longo usa `effort: 'high'` nos agentes, salvo pedido
+   do professor; (b) paralelismo moderado (4 runs), porque o paralelismo não
+   aumenta o que a janela comporta, só o que se perde no corte; (c) quando o
+   segundo estágio depende do primeiro (editor → revisor), o run novo pula o
+   que já está pronto em vez de retomar o run antigo: os resultados dos
+   agentes concluídos ficam no `journal.jsonl` de cada run e são lidos de lá.
+14. **Registrar a lista de itens de cada run LENDO o arquivo de args, nunca
+   redigitando.** Em 10/10 lancei o R1 com uma lista digitada à mão que não
+   era a partição calculada; o erro só não custou nada porque a lista
+   digitada era válida, e as outras partes foram recalculadas sobre o que
+   sobrou. O args vai para o `Workflow` copiado do arquivo, e o arquivo é
+   conferido contra o que foi lançado antes de lançar os demais.
 
 ## 🧨 FUNÇÃO REESCRITA A PARTIR DE CÓPIA VELHA PERDE O QUE VEIO ANTES (2026-09-24)
 

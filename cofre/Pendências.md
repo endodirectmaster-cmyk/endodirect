@@ -1,106 +1,118 @@
 ---
 tags: [cofre, pendencias]
-atualizado: 2026-10-06
+atualizado: 2026-10-10
 ---
 
 # Pendências
 
-## 🩺 Auditoria do acervo — resultado e o que só o professor decide (2026-10-06)
+## 🩺 Auditoria do acervo — correções APLICADAS em 10/10 e o que fica com o professor
 
 Pedido de 05/10: *"faça uma auditoria se os conteúdos dos resumos e das
-diretrizes na plataforma estão corretos e atualizados"*. Relatório completo,
-item por item, com trecho, problema, referência atual, correção sugerida e os
-votos dos céticos: [Auditoria do Acervo Endodirect](https://claude.ai/artifact/TXVreCG9akVaouQd8DUu8L)
-(artefato privado). **Nenhum conteúdo foi alterado: a correção é decisão do
-professor.**
+diretrizes na plataforma estão corretos e atualizados"*; depois do relatório
+([Auditoria do Acervo Endodirect](https://claude.ai/artifact/TXVreCG9akVaouQd8DUu8L)),
+em 06/10: *"Corrigir tudo"*.
 
-**Método.** Leitura integral dos 190 itens de `payload.diretrizes`: 72 da aba
-Diretrizes, públicos, e 118 capítulos dos Resumos, privados. Os leitores
-conferiram cada item contra a base da plataforma (`lib/clinical-deep-data.js`
-e o núcleo `CLINICAL_GUIDELINES`) e o PubMed. Cada achado grave ou médio
-passou por um cético independente, que localizou o trecho literal no banco,
-leu o contexto e conferiu a alegação. Cada achado grave teve ainda um segundo
-cético, com lente clínica. Os graves confirmados foram conferidos por mim no
-texto do banco antes de entrar no relatório. Os 268 achados leves não
-passaram por cético.
+**O que foi aplicado no acervo (10/10, 03h12 UTC), em duas passadas:**
 
-| Medida | Resultado |
-|---|---|
-| Itens lidos | 190 de 190 |
-| Achados, na classificação do leitor | 470: 34 graves, 168 médios e 268 leves |
-| Confirmados pelos céticos | 195: 31 graves, 152 médios e 12 rebaixados a leves |
-| Refutados | 7 |
-| Veredito por item | 93 corrigir, 59 atualizar e 38 sem achado |
-| Ano ou fonte declarados que não conferem com o texto | 25 itens |
+| Passada | O que muda | Itens | Trocas |
+|---|---|---|---|
+| 1ª — `resumo` (e `ano` em 14) | os 195 achados confirmados, os leves conferidos um a um e as imprecisões extras dos leitores | 152 | 1.338 |
+| 2ª — `pts`, `flashcards`, `mapa`, `fluxogramas` | as mesmas correções onde os campos auxiliares repetiam o valor antigo | 133 | 601 |
 
-**Os 31 graves confirmados** (idx entre parênteses; "pública" = aba Diretrizes):
+- **Processo por item:** editor (correção mínima, conferida na base, no núcleo
+  e no PubMed) → revisor independente (aprova, ajusta ou rejeita e alinha os
+  campos auxiliares). Resultado: 154 revisados, 141 aprovados e 13 aprovados
+  com ajuste do revisor, nenhum rejeitado. Dois itens (66 e 102) ficaram sem
+  mudança porque a única troca proposta era a da fonte. Conferência mecânica
+  antes de aplicar: tabelas com a mesma contagem de colunas, negritos pareados,
+  marcas do `checa-jargao` (duas, retocadas pela coordenação nos itens 50 e 89)
+  e, nos auxiliares, cada "de" igual à folha do acervo e nada além das folhas
+  trocadas. Conferi eu mesma no PubMed o único acréscimo sem lastro na base: o
+  novo nome da SOP (item 11), do consenso da Lancet de 05/2026.
+- **Aplicação:** instruções únicas de `supabase/correcoes-auditoria-2026-10.sql`,
+  guardadas (texto atual = original de cada linha; qualquer divergência cancela
+  tudo). Verificado depois: 81 itens idênticos ao backup, nenhum item fora da
+  lista mudou, nenhum campo além dos previstos mudou.
+- **Reversão:** backup completo `main-antes-aplicar-correcoes-2026-10-10` em
+  `endodirect_global_state_backup`; item a item, pelas colunas
+  `resumo_original` (tabela `endodirect_correcoes_auditoria`) e
+  `campos_original` (tabela `endodirect_correcoes_auxiliares`).
+- **Fonte nunca foi trocada:** ela é a chave de merge do painel (ver
+  [[Convenções de Trabalho]], regra 12 do limite da sessão).
 
-- **Adrenal:** pasireotida com metade da dose (90); cortisol salivar em pg/dL
-  em vez de ng/dL (90); aldosterona pós-salina em µg/dL em vez de ng/dL (91);
-  dexametasona de validação em ng/mL em vez de ng/dL (93).
-- **Diabetes:** beta-hidroxibutirato em nmol/L em vez de mmol/L (134); fórmula
-  do sódio corrigido sem a divisão por 100 (138).
-- **Endocrinologia Feminina:** insuficiência ovariana prematura com duas
-  dosagens de FSH atribuídas à ESHRE 2024, que exige uma (30 pública, duas
-  vezes; 124).
-- **Endocrinopatias:** amiodarona com "7 mg de iodo por comprimido de 200 mg",
-  quando o próprio capítulo diz ~75 mg (162).
-- **Lípides:** rabdomiólise por estatina exigindo CK acima de 50 vezes e
-  disfunção renal ao mesmo tempo; a diretriz brasileira de 2025 traz dois
-  critérios alternativos (114).
-- **Neuroendocrinologia:** cabergolina "1 a 3 mg/dia" no adenoma não
-  funcionante, quando a dose é semanal (99); corticoide como primeira linha na
-  hipofisite por fármaco, contra o próprio capítulo (100).
-- **Obesidade:** setmelanotide com "dose de ataque" (72); dumping tardio só aos
-  60 minutos do teste oral (75); tiamina abaixo da dose de tratamento (76);
-  FIB-4 com o ajuste de idade aplicado ao limiar alto (225); fenótipo de
-  Dunnigan poupando os membros superiores (226).
-- **Osteometabolismo:** calciúria acima de 400 mg/24 h no lugar do critério do
-  5º Workshop, acima de 250 mg em mulheres e 300 mg em homens (22 pública;
-  104); fratura atípica de fêmur com 2 critérios em vez de 4 de 5 (103);
-  herança da hipofosfatasia invertida (109).
-- **Tireoide:** hipotiroxinemia isolada "pode-se considerar após o 1º
-  trimestre", recomendação invertida (18 pública); levotiroxina no idoso
-  aumentada "por semana" (78); TR1 e TR2 com seguimento ultrassonográfico (81);
-  critérios de risco intermediário da ATA 2015 na coluna de alto risco (83);
-  tireoidectomia profilática do M918T "a partir de 1 ano" e
-  hiperparatireoidismo na NEM2B (84).
-- **Transgeneridade:** Resolução CFM nº 2.265/2019 apresentada como vigente. A
-  nº 2.427/2025 a revogou, veda o bloqueio puberal por incongruência de gênero
-  em menores e fixa 18 anos para a hormonioterapia (168; 171, duas vezes).
+**O que fica com o professor:**
 
-**Também é código.** O núcleo `CLINICAL_GUIDELINES` do `index.html` repete o
-critério de calciúria do 4º Workshop sob o rótulo do 5º. A correção é um PR
-comum (`index.html`, `sw.js`, CI e harness) e entra quando o professor decidir
-as correções do acervo.
+1. **Recarregar (F5) o painel de administração** que estiver aberto desde antes
+   de 10/10 03h12 UTC antes de salvar qualquer coisa. O merge adota o texto
+   novo de item não tocado no painel, mas o recarregamento evita conflito.
+2. **Fonte (metadado) desatualizada, a trocar pelo painel:** série
+   Transgeneridade (168–172) ainda cita "CFM 2.265-2019", revogada pela
+   2.427/2025 (o texto já registra a revogação); 96 cita "Lancet 2020", que não
+   existe; 98 cita "Endocrine Society 2023", que não existe para acromegalia;
+   15 diz "Pituitary Society (2025)" e o consenso é de 2021; 84 sem ano e sem
+   LATS/ASCO 2026; o fluxograma do 86 cita "ATA Guidelines 2017".
+3. **Base profunda (`lib/clinical-deep-data.js`): três erros conferidos por mim
+   no PubMed, sem correção.** A base é gerada dos extratos com conferência das
+   citações contra o texto-fonte, e o corpus não está neste ambiente; corrigir
+   exige a máquina com o corpus (rodar `monta-base-profunda.js` depois de editar
+   o extrato):
+   - Kim & Mathioudakis (fato #7): a metanálise de Liu 2014
+     ([DOI](https://doi.org/10.1159/000365892)) é de pacientes SEM diabetes
+     prévio, com hiperglicemia em 32,3% e diabetes em 18,6%; a base atribui
+     18,6% à "GIH com diabetes prévio" e 32,3% à "GID".
+   - ABESO/SBP 2026 (fatos #76 e #122): no STEP TEENS
+     ([DOI](https://doi.org/10.1056/NEJMoa2208601)) os −16,1% contra +0,6% são
+     do IMC (desfecho primário), não do peso.
+   - ABESO/SBP 2026 (fatos #70 e #121): no ensaio da liraglutida
+     ([DOI](https://doi.org/10.1056/NEJMoa1916038)) −0,22 é a DIFERENÇA de
+     z-IMC contra o placebo (IC95% −0,37 a −0,08; p=0,002), não "−0,22 contra
+     +0,20 (diferença −0,42)".
+4. **Pontos fora dos achados, apontados por editores e revisores e NÃO
+   alterados** (precisam de conferência antes de mudar):
+   - CAD/EHH (133, 138): meta de glicemia durante a infusão ("até 100–180" ×
+     150–200 na CAD e 200–250 no EHH, consenso 2024); NaCl 0,45% pelo sódio
+     corrigido × só se a osmolalidade não cai; CAD grave sem o BHB > 6,0.
+     CAD (45): euglicêmica "< 200–250" × < 200; cetonúria sem o "2+".
+   - Prolactinoma (97): bromocriptina 2,5–20 × 2,5–15 mg/dia; a reposição
+     hormonal não restaura a fertilidade.
+   - HF (113): "placas obstrutivas em mais de um vaso" × "não obstrutivas"
+     (diretriz de 2021).
+   - Insulinas (130): a "regra de bolso" (glargina 300 ou degludeca mantém a
+     dose) conflita com a tabela (−20%).
+   - Incidentaloma (8, 93): corte cirúrgico "≥ 4 cm" isolado × ESE/ENSAT 2023
+     (lesão homogênea ≤ 10 UH é benigna em qualquer tamanho); o núcleo diz o
+     mesmo que o item.
+   - Adrenal primária (62): fludrocortisona condicionada × rotina (ESE 2022).
+   - Calcitonina (59): o corte > 150 pg/mL para imagem é do pós-operatório.
+   - Amiodarona (162): "cintilografia costuma não ajudar" × MIBI entre os
+     melhores diferenciadores; TIA tipo 2 "semanas a meses" × mediana de ~30
+     meses; conduta das formas mistas.
+   - Obesidade (74): SURMOUNT-5 "57% × 31%" sem conferência (o revisor lembra
+     48% × 27%); a bula do Xenical diz inibidor reversível.
+   - Divergências internas antigas: 79 (macroadenoma 80% × 70%), 81
+     (malignidade 5–10% × 5–15%), 117 (1ª testosterona 2–3 × 3–6 meses;
+     hematócrito 6–12 meses × anual), 70 (RCE "> 0,5" × "≥ 0,5").
+   - Formato: o resumo do 48 termina num título "## Pontos-Chave" vazio.
+   - Números a conferir: 126 ("15 vezes mais comum"), 108 (distribuição
+     esquelética do Paget), 67 (Vigitel por sexo e cifras do Atlas), 146
+     (z-IMC −0,95 × −0,06 e ≥ 20% em 36% × 5% do STEP TEENS), 66 (algoritmo
+     AACE 2026), 99 (intervalos de RM no seguimento), 3 (retorno puberal em
+     12–18 meses), 125 (grafia fezolinetante/fezolinetanto; atualização do ACOG
+     de 2026 não lida).
+   - Menores: 7, 17, 24, 47, 57, 61, 71, 73, 76, 94, 95, 103, 105, 111, 118,
+     121, 122, 127, 128, 129, 156, 161, 218, 222.
 
-**Temas que mais se repetem nos médios.** Diretriz nova que o texto não
-incorporou: Endocrine Society 2026 de puberdade precoce, ATA 2026 de gestação,
-ESHRE 2024, Bethesda 2023, ATA 2025 de carcinoma diferenciado, ESE/ENSAT 2023
-de incidentaloma, Pituitary Society 2023 de prolactinoma, Female Athlete Triad
-2025, teplizumabe registrado pela ANVISA em 03/2026 e romosozumabe sem corte de
-idade no SUS desde 09/2024. O outro tema frequente é a contradição entre
-seções do mesmo capítulo.
-
-**Itens com ano ou fonte que não conferem com o texto (25):** 3, 15, 16, 39,
-47, 49, 50, 58, 67, 98, 99, 100, 101, 102, 118, 119, 133, 155, 161, 162, 163,
-164, 165, 166 e 167.
-
-**O que só o professor decide:**
-
-1. Quais correções aplicar e em que ordem. O relatório traz a correção
-   sugerida de cada achado.
-2. Se a correção do núcleo `CLINICAL_GUIDELINES` entra junto.
-3. Se os 268 achados leves merecem uma rodada de conferência.
+**Também no código (PR de 10/10):** o núcleo `CLINICAL_GUIDELINES` passou a
+dizer que o consenso da Lancet de 05/2026 adotou o nome PMOS (antes: "tendência
+ainda não oficial"), mantendo a regra de usar SOP em enunciados, alternativas,
+flashcards e mapas; e a RM de sela no hipogonadismo masculino passou a ter
+critérios ALTERNATIVOS (T ≤ 150 ng/dL, outras deficiências hipofisárias,
+hiperprolactinemia ou sintomas de massa — basta um), conferidos no texto
+integral do posicionamento SBEM/SBU/ABEMSS 2026 (PMC13124176).
 
 **Auditoria trimestral.** Rotina "Auditoria trimestral do acervo Endodirect"
 (`trig_011i6yP2PuRFyg98ZpoWSzdT`): dia 5 de janeiro, abril, julho e outubro,
 às 8h47 de Brasília, com aviso por push e e-mail; a próxima é em 05/01/2027.
-⚠️ Ela roda em sessão nova e **sem conectores**, porque a organização não
-permite gravá-los na rotina. Para ler os Resumos privados, o professor precisa
-anexar o conector Supabase à rotina na tela de Rotinas do claude.ai ou
-cadastrar `SUPABASE_SERVICE_ROLE_KEY` nos segredos do ambiente. Sem isso, a
-rotina audita só os itens públicos e avisa.
 
 ## 📊 Convite de feedback: 4ª verificação (2026-10-06)
 
