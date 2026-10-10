@@ -1,6 +1,6 @@
 ---
 tags: [cofre, processo]
-atualizado: 2026-10-06
+atualizado: 2026-10-09
 ---
 
 # Convenções de Trabalho
@@ -79,6 +79,53 @@ session limit · resets 11pm (UTC)") com 64 agentes perdidos de uma vez; só os
    demais. ⚠️ **Nas retomadas seguintes, os args não mudam mais:** quem rodou
    depois da primeira retomada já rodou com a orientação nova, e incluí-lo em
    `feitos` mudaria o texto e perderia o cache. Só o teto pode subir.
+10. **Há um terceiro limite, o semanal** ("You've hit your weekly limit ·
+   resets Oct 9, 8pm (UTC)"), e ele para tudo por dias, não por horas. Em
+   07/10 às 06h27 a retomada das correções do acervo caiu nele depois de 2
+   minutos, e o trabalho só voltou em 09/10 às 21h40, quando o professor
+   mandou *"voltar aos trabalhos"*. ⚠️ **Retomada em limite não renovado custa
+   caro:** cada um dos 8 runs gastou ~140 mil tokens só para 19 agentes
+   nascerem e morrerem na mensagem de limite (≈1,2 milhão no total, sem nada
+   feito). Regra: ao retomar depois de um limite, lançar **um run só, como
+   sentinela**, esperar o primeiro agente dele terminar e só então lançar os
+   demais. Se o sentinela cair, a janela não renovou: reagendar e avisar o
+   professor.
+11. **`update` e `delete` pelo MCP do Supabase travam quando partem de um
+   subagente** (60 s esperando uma confirmação que nunca chega); do laço
+   principal, `update` passa e `delete` continua travando. O `insert … on
+   conflict do update` passa dos dois lugares. Por isso, em 07/10, o revisor
+   deixou de gravar a decisão (sete tentativas expiradas no item 90) e passou
+   a devolvê-la no resultado; a coordenação grava as decisões em lote, de uma
+   vez, do laço principal. Linha de teste a descartar vira `status =
+   'rejeitado'`, nunca `delete`.
+12. **Edição feita direto no banco nunca mexe em `fonte`, `tema` ou `sub`.** Os
+   três formam a chave que o painel do professor usa para mesclar gravações
+   concorrentes (`GLOBAL_MERGE_KEYS.diretrizes`), e `mergeConcurrent` parte do
+   estado local: chave nova vinda do servidor é ACRESCENTADA, e chave local
+   que sumiu do servidor não é removida. Um painel aberto desde antes da
+   edição salvaria o item antigo (com o texto velho) ao lado do novo. Quem
+   troca a fonte de um item é o professor, pelo painel; a edição no banco
+   corrige o texto e, no máximo, o `ano`, que não entra na chave.
+13. **O que rende a janela é o esforço e o modelo, não o paralelismo.**
+   Medido nas correções do acervo: em 09/10, 8 runs com 18 agentes
+   simultâneos, no modelo da sessão de então e com o esforço herdado (máximo),
+   gastaram a janela de 5 h em ~10 minutos (~3,8 milhões de tokens dos
+   agentes) e perderam todos os revisores que estavam no meio do trabalho. Em
+   10/10, com `effort: 'high'` nos agentes (`opts.effort` do `agent()`), o
+   modelo da sessão e 4 runs com 8 agentes, 199 agentes (48 editores e 151
+   revisores) terminaram em 35 minutos (~18,5 milhões de tokens) sem cair.
+   Regras: (a) workflow longo usa `effort: 'high'` nos agentes, salvo pedido
+   do professor; (b) paralelismo moderado (4 runs), porque o paralelismo não
+   aumenta o que a janela comporta, só o que se perde no corte; (c) quando o
+   segundo estágio depende do primeiro (editor → revisor), o run novo pula o
+   que já está pronto em vez de retomar o run antigo: os resultados dos
+   agentes concluídos ficam no `journal.jsonl` de cada run e são lidos de lá.
+14. **Registrar a lista de itens de cada run LENDO o arquivo de args, nunca
+   redigitando.** Em 10/10 lancei o R1 com uma lista digitada à mão que não
+   era a partição calculada; o erro só não custou nada porque a lista
+   digitada era válida, e as outras partes foram recalculadas sobre o que
+   sobrou. O args vai para o `Workflow` copiado do arquivo, e o arquivo é
+   conferido contra o que foi lançado antes de lançar os demais.
 
 ## 🧨 FUNÇÃO REESCRITA A PARTIR DE CÓPIA VELHA PERDE O QUE VEIO ANTES (2026-09-24)
 
