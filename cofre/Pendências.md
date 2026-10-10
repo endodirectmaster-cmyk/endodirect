@@ -128,6 +128,13 @@ flashcards e mapas; e a RM de sela no hipogonadismo masculino passou a ter
 critérios ALTERNATIVOS (T ≤ 150 ng/dL, outras deficiências hipofisárias,
 hiperprolactinemia ou sintomas de massa — basta um), conferidos no texto
 integral do posicionamento SBEM/SBU/ABEMSS 2026 (PMC13124176).
+No PR seguinte (rodada residual), a linha do incidentaloma adrenal no núcleo
+deixou de dar "≥ 4 cm" como critério cirúrgico isolado: pela ESE/ENSAT 2023
+(conferida no resumo; o texto integral não está no PMC), a lesão homogênea com
+HU ≤ 10 é benigna em qualquer tamanho, a cirurgia é a conduta habitual para
+lesão > 4 cm heterogênea ou com HU > 20, e no MACS a decisão é individualizada.
+Os 26 fatos que restituem o núcleo foram relidos e selados de novo
+(selo eca76a154356).
 
 **Auditoria trimestral.** Rotina "Auditoria trimestral do acervo Endodirect"
 (`trig_011i6yP2PuRFyg98ZpoWSzdT`): dia 5 de janeiro, abril, julho e outubro,
