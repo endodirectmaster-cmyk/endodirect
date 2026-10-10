@@ -48,9 +48,13 @@ comment on table public.endodirect_correcoes_auditoria is
 -- divergência, nada é gravado e a divergência aparece no retorno. O gatilho
 -- endodirect_global_state_touch_updated_at renova updated_at, e o painel do
 -- professor, ao ver o updated_at novo, mescla em vez de sobrescrever.
+-- Linha aprovada sem mudança nenhuma (texto, ano e fonte iguais; ex.: revisor
+-- anulou a única troca proposta, a da fonte) não entra: só marcaria atEdit.
 with c as (
   select chave, resumo_original, resumo_novo, ano_novo, fonte_novo
-  from public.endodirect_correcoes_auditoria where status = 'aprovado'
+  from public.endodirect_correcoes_auditoria
+  where status = 'aprovado'
+    and (resumo_novo is distinct from resumo_original or ano_novo is not null or fonte_novo is not null)
 ),
 itens as (
   select o, v, c.chave as ch, c.resumo_original, c.resumo_novo, c.ano_novo, c.fonte_novo
@@ -78,6 +82,14 @@ update public.endodirect_global_state g
    and (select divergentes from novo) = 0
    and (select aplicados from novo) = (select aprovados from novo)
 returning (select aplicados from novo) as aplicados, jsonb_array_length(g.payload->'diretrizes') as n_itens;
+
+-- Depois de conferir no acervo (resumo atual = resumo_novo em cada linha aplicada),
+-- marcar as linhas: as aplicadas e as aprovadas sem mudança.
+-- update public.endodirect_correcoes_auditoria c set status = 'aplicado', aplicado_em = now()
+--  from public.endodirect_global_state g, jsonb_array_elements(g.payload->'diretrizes') v
+--  where g.id = 'main' and c.status = 'aprovado'
+--    and c.chave = coalesce(v->>'fonte','')||'|'||coalesce(nullif(v->>'tema',''), v->>'titulo','')||'|'||coalesce(v->>'sub','')
+--    and v->>'resumo' = c.resumo_novo;
 
 -- ── 2ª passada: campos auxiliares (pts, flashcards, mapa, fluxogramas) ──────────
 -- Os campos auxiliares de cada item foram derivados do resumo antigo e repetem os
