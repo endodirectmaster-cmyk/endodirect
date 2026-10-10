@@ -40,19 +40,45 @@ em 06/10: *"Corrigir tudo"*.
 - **Fonte nunca foi trocada:** ela é a chave de merge do painel (ver
   [[Convenções de Trabalho]], regra 12 do limite da sessão).
 
+**Também aplicado em 10/10, depois do "Pode corrigir":**
+
+- **Fontes trocadas** (tabela `endodirect_correcoes_fontes`, backup
+  `main-antes-trocar-fontes-2026-10-10`): série Transgeneridade (168–172) de
+  "CFM 2.265-2019" para "CFM 2.427-2025"; 96 para "Lancet 2016 e 2024"; 98 para
+  "Endocrine Society 2014 / Consensos de Acromegalia 2018 e 2023"; 15 para
+  "Endocrine Society (2008) / Pituitary Society (2021)"; 84 com ATA 2015, LATS
+  2026 e AJCC 8ª ed.; o fluxograma do 86 passou a citar as diretrizes da ATA de
+  2017 e 2026. Verificado: nenhum outro campo mudou e nenhuma chave duplicou.
+- **Rodada dos pontos fora dos achados** (tabelas
+  `endodirect_correcoes_residuais` e `endodirect_correcoes_auxiliares_res`,
+  backup `main-antes-aplicar-residuais-2026-10-10`): os 71 pontos que editores
+  e revisores da 1ª rodada tinham anotado em 50 itens passaram pelo mesmo
+  processo (o editor confere e corrige só o que se confirma; o revisor
+  independente aprova, ajusta ou rejeita e alinha os campos auxiliares).
+  Resultado: 49 aprovados, 1 aprovado com ajuste do revisor (62), nenhum
+  rejeitado; 45 itens com mudança no resumo (86 trocas) e 25 com campos
+  auxiliares alinhados (46 trocas). Li as 86 trocas antes de aplicar, conferi no
+  texto-fonte a inversão do 113 ("placas NÃO obstrutivas em mais de um vaso",
+  diretriz brasileira de HF de 2021, seção 5.9.1) e retoquei o 129 (Soliqua: 2 a
+  4 UI por semana, pela bula do FDA; dulaglutida 3/4,5 mg "aprovadas nos EUA e na
+  Europa" em vez de "só no exterior", porque o registro no Brasil não foi
+  conferido). Verificado: 188 itens idênticos ao backup; nos 45 alterados, só
+  resumo, campos auxiliares e atEdit.
+- **Limpeza:** dez resumos (47, 49, 50, 51, 54, 55, 61, 62, 63, 65) terminavam
+  num título "## Pontos-Chave" vazio, como o 48; o título saiu (o app já desenha
+  os pontos-chave num bloco próprio). Backup
+  `main-antes-limpar-titulos-vazios-2026-10-10`.
+
 **O que fica com o professor:**
 
 1. **Recarregar (F5) o painel de administração** que estiver aberto desde antes
-   de 10/10 03h12 UTC antes de salvar qualquer coisa. O merge adota o texto
-   novo de item não tocado no painel, mas o recarregamento evita conflito.
-2. **Fonte (metadado) desatualizada, a trocar pelo painel:** série
-   Transgeneridade (168–172) ainda cita "CFM 2.265-2019", revogada pela
-   2.427/2025 (o texto já registra a revogação); 96 cita "Lancet 2020", que não
-   existe; 98 cita "Endocrine Society 2023", que não existe para acromegalia;
-   15 diz "Pituitary Society (2025)" e o consenso é de 2021; 84 sem ano e sem
-   LATS/ASCO 2026; o fluxograma do 86 cita "ATA Guidelines 2017".
-3. **Base profunda (`lib/clinical-deep-data.js`): três erros conferidos por mim
-   no PubMed, sem correção.** A base é gerada dos extratos com conferência das
+   de 10/10 11h45 UTC antes de salvar qualquer coisa. Com as fontes trocadas,
+   isto deixou de ser só precaução: o merge do painel usa fonte|tema|sub como
+   chave, e um painel antigo salvaria de volta os itens 15, 84, 96, 98 e 168–172
+   com a fonte antiga AO LADO dos novos. A conferência de duplicatas está
+   agendada para 11/10.
+2. **Base profunda (`lib/clinical-deep-data.js`): erros conferidos por mim no
+   PubMed, sem correção.** A base é gerada dos extratos com conferência das
    citações contra o texto-fonte, e o corpus não está neste ambiente; corrigir
    exige a máquina com o corpus (rodar `monta-base-profunda.js` depois de editar
    o extrato):
@@ -67,40 +93,33 @@ em 06/10: *"Corrigir tudo"*.
      ([DOI](https://doi.org/10.1056/NEJMoa1916038)) −0,22 é a DIFERENÇA de
      z-IMC contra o placebo (IC95% −0,37 a −0,08; p=0,002), não "−0,22 contra
      +0,20 (diferença −0,42)".
-4. **Pontos fora dos achados, apontados por editores e revisores e NÃO
-   alterados** (precisam de conferência antes de mudar):
-   - CAD/EHH (133, 138): meta de glicemia durante a infusão ("até 100–180" ×
-     150–200 na CAD e 200–250 no EHH, consenso 2024); NaCl 0,45% pelo sódio
-     corrigido × só se a osmolalidade não cai; CAD grave sem o BHB > 6,0.
-     CAD (45): euglicêmica "< 200–250" × < 200; cetonúria sem o "2+".
-   - Prolactinoma (97): bromocriptina 2,5–20 × 2,5–15 mg/dia; a reposição
-     hormonal não restaura a fertilidade.
-   - HF (113): "placas obstrutivas em mais de um vaso" × "não obstrutivas"
-     (diretriz de 2021).
-   - Insulinas (130): a "regra de bolso" (glargina 300 ou degludeca mantém a
-     dose) conflita com a tabela (−20%).
-   - Incidentaloma (8, 93): corte cirúrgico "≥ 4 cm" isolado × ESE/ENSAT 2023
-     (lesão homogênea ≤ 10 UH é benigna em qualquer tamanho); o núcleo diz o
-     mesmo que o item.
-   - Adrenal primária (62): fludrocortisona condicionada × rotina (ESE 2022).
-   - Calcitonina (59): o corte > 150 pg/mL para imagem é do pós-operatório.
-   - Amiodarona (162): "cintilografia costuma não ajudar" × MIBI entre os
-     melhores diferenciadores; TIA tipo 2 "semanas a meses" × mediana de ~30
-     meses; conduta das formas mistas.
-   - Obesidade (74): SURMOUNT-5 "57% × 31%" sem conferência (o revisor lembra
-     48% × 27%); a bula do Xenical diz inibidor reversível.
-   - Divergências internas antigas: 79 (macroadenoma 80% × 70%), 81
-     (malignidade 5–10% × 5–15%), 117 (1ª testosterona 2–3 × 3–6 meses;
-     hematócrito 6–12 meses × anual), 70 (RCE "> 0,5" × "≥ 0,5").
-   - Formato: o resumo do 48 termina num título "## Pontos-Chave" vazio.
-   - Números a conferir: 126 ("15 vezes mais comum"), 108 (distribuição
-     esquelética do Paget), 67 (Vigitel por sexo e cifras do Atlas), 146
-     (z-IMC −0,95 × −0,06 e ≥ 20% em 36% × 5% do STEP TEENS), 66 (algoritmo
-     AACE 2026), 99 (intervalos de RM no seguimento), 3 (retorno puberal em
-     12–18 meses), 125 (grafia fezolinetante/fezolinetanto; atualização do ACOG
-     de 2026 não lida).
-   - Menores: 7, 17, 24, 47, 57, 61, 71, 73, 76, 94, 95, 103, 105, 111, 118,
-     121, 122, 127, 128, 129, 156, 161, 218, 222.
+   - A conferir na mesma passada: os valores do SCALE Kids e do STEP TEENS nas
+     linhas 154 e 271 (no resumo do 146, os dois ensaios passaram ao desfecho
+     primário de cada um).
+3. **Observações dos revisores da rodada residual, fora do escopo dela e NÃO
+   alteradas** (precisam de conferência antes de mudar):
+   - DRD (222): na tabela por faixa de TFG, "Semaglutida se RAC ≥100" × "> 100"
+     do texto e da SBD; finerenona "TFG 25–60" × TFGe ≥ 25 sem teto; tabela de
+     estudos com "TFG > 25" (a inclusão dos ensaios era ≥ 25).
+   - Terapia combinada (129): dulaglutida com dose inicial de 1,5 mg e
+     escalonamento 0,75 → 1,5 na mesma linha; dose inicial da glargina +
+     lixisenatida (10 ou 20 UI) diverge entre fontes.
+   - CAD/EHH (138): redução da insulina "0,02 a 0,05 UI/kg/h" × 0,05 da base;
+     SG 5% abaixo de 250 também no EHH.
+   - Obesidade (74): o SURMOUNT-5 ficou sem a proporção de perda ≥ 20%
+     (provavelmente 48,4% × 27,3%, a conferir no texto integral); orlistate
+     "irreversível" × "reversível" (a literatura diverge).
+   - Valores a conferir: 24 (toxicidade da vitamina D > 150 ng/mL da ES 2011 ×
+     > 100 ng/mL da SBEM/SBPC), 45 (CAD euglicêmica "3–8,7% das CAD" × ~10% na
+     base), 122 (finasterida 5 × 2,5–5 mg/dia), 76 (B12 "20% (GV)" × faixa de 4
+     a 20%), 105 (dose no hipoparatireoidismo na gestação), 7 (falta o grupo
+     pós-menopausa sem estrogênio ou bisfosfonato da ATA 2016).
+   - Sem fonte confirmada: 67 (Vigitel por sexo e edição do Atlas), 108
+     (distribuição esquelética do Paget), 66 (algoritmo AACE 2026), 99
+     (intervalos de RM, Pituitary Society 2025), 79 (macroadenoma 70–80%, a
+     conferir na ETA 2013), 121 (SOP 2018: androstenediona e SDHEA).
+   - Núcleo da IA: grafia "FEZOLINETANTE" (o item 125 adotou "fezolinetanto",
+     nome da bula brasileira).
 
 **Também no código (PR de 10/10):** o núcleo `CLINICAL_GUIDELINES` passou a
 dizer que o consenso da Lancet de 05/2026 adotou o nome PMOS (antes: "tendência

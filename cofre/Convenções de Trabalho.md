@@ -106,6 +106,12 @@ session limit · resets 11pm (UTC)") com 64 agentes perdidos de uma vez; só os
    edição salvaria o item antigo (com o texto velho) ao lado do novo. Quem
    troca a fonte de um item é o professor, pelo painel; a edição no banco
    corrige o texto e, no máximo, o `ano`, que não entra na chave.
+   **Exceção, só com autorização expressa do professor** (usada em 10/10,
+   depois do "Pode corrigir", para as fontes de 15, 84, 96, 98 e 168–172):
+   backup completo antes; tabela de registro com a chave antiga e a nova
+   (`endodirect_correcoes_fontes`); aviso ao professor para recarregar o
+   painel antes de salvar; e conferência de duplicatas de chave no dia
+   seguinte, por rotina agendada.
 13. **O que rende a janela é o esforço e o modelo, não o paralelismo.**
    Medido nas correções do acervo: em 09/10, 8 runs com 18 agentes
    simultâneos, no modelo da sessão de então e com o esforço herdado (máximo),
