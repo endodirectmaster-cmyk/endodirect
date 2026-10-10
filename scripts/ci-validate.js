@@ -237,6 +237,20 @@ try {
   fail('regressão do arquivo da Questão do Dia (aluno) falhou:\n' + out);
 }
 
+// 17b2. A Questão do Dia CHEGA ao aluno logado e o link do e-mail abre NELA.
+//      Desde 07/08 o member_content não devolvia `ig_stories` (reescrita sem a
+//      chave) e o botão do e-mail levava à raiz do site, que o app abria no painel
+//      de sempre; a rota pública, por sua vez, entregava a fila com o gabarito das
+//      não postadas. Relato real de 06/10/2026: "no sistema não tem questão do dia
+//      disponível" e o link "não cai nela ao clicar".
+try {
+  execFileSync(process.execPath, [path.join('scripts', 'test-qotd-link-direto.js')], { stdio: 'pipe' });
+  ok('Questão do Dia: chega ao aluno por RPC própria, o link /#qotd/<id> abre na questão e a fila não vaza');
+} catch (e) {
+  const out = (e.stdout ? e.stdout.toString() : '') + (e.stderr ? e.stderr.toString() : '');
+  fail('regressão do link direto / entrega da Questão do Dia falhou:\n' + out);
+}
+
 // 17c. ENQUETE do programa de Educação Médica Continuada: é benefício EXCLUSIVO
 //      do plano Gold — se vazar para Standard ou degustação, a exclusividade que
 //      o plano vende deixa de existir, e isso não dá erro nenhum: some da tela do
