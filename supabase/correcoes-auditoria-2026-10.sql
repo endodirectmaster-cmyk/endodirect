@@ -155,3 +155,63 @@ update public.endodirect_global_state g
    and (select divergentes from novo) = 0
    and (select aplicados from novo) = (select aprovados from novo)
 returning (select aplicados from novo) as aplicados, jsonb_array_length(g.payload->'diretrizes') as n_itens;
+
+-- ── Troca de fontes (10/10, autorizada pelo professor) ──────────────────────────
+-- A fonte é a chave de merge do painel (fonte|tema|sub). Cada troca fica
+-- registrada com a chave antiga e a nova; a reversão é trocar de volta pelo
+-- registro (ou pelo backup main-antes-trocar-fontes-2026-10-10). Painel aberto
+-- desde antes da troca precisa ser recarregado antes de salvar (senão o merge
+-- acrescenta o item novo e mantém o antigo).
+create table if not exists public.endodirect_correcoes_fontes (
+  idx int not null,
+  chave_antiga text primary key,
+  chave_nova text not null,
+  fonte_antiga text not null,
+  fonte_nova text not null,
+  extra jsonb,          -- ex.: {"fluxogramas_0_fonte": "..."} (metadado interno que não é chave)
+  motivo text not null,
+  aplicado_em timestamptz
+);
+alter table public.endodirect_correcoes_fontes enable row level security;
+revoke all on public.endodirect_correcoes_fontes from anon, authenticated;
+
+with f as (select * from public.endodirect_correcoes_fontes where aplicado_em is null),
+itens as (
+  select o, v, f.chave_antiga as ch, f.fonte_antiga, f.fonte_nova, f.extra
+  from public.endodirect_global_state g,
+       jsonb_array_elements(g.payload->'diretrizes') with ordinality t(v,o)
+       left join f on f.chave_antiga = coalesce(v->>'fonte','')||'|'||coalesce(nullif(v->>'tema',''), v->>'titulo','')||'|'||coalesce(v->>'sub','')
+  where g.id = 'main'
+),
+novo as (
+  select jsonb_agg(
+           case when ch is not null and v->>'fonte' = fonte_antiga then
+             (case when extra ? 'fluxogramas_0_fonte' and jsonb_typeof(v->'fluxogramas') = 'array' and jsonb_array_length(v->'fluxogramas') > 0
+                   then jsonb_set(v, '{fluxogramas,0,fonte}', to_jsonb(extra->>'fluxogramas_0_fonte'))
+                   else v end)
+             || jsonb_build_object('fonte', fonte_nova, 'atEdit', (extract(epoch from now()) * 1000)::bigint)
+           else v end
+           order by o) as arr,
+         count(*) filter (where ch is not null and v->>'fonte' = fonte_antiga) as aplicados,
+         (select count(*) from f) as pendentes
+  from itens
+)
+update public.endodirect_global_state g
+   set payload = jsonb_set(g.payload, '{diretrizes}', (select arr from novo))
+ where g.id = 'main' and (select aplicados from novo) = (select pendentes from novo) and (select pendentes from novo) > 0
+returning (select aplicados from novo) as aplicados;
+
+-- ── Rodada dos pontos fora dos achados (10/10) ───────────────────────────────────
+-- Mesmo desenho, em tabelas próprias para não sobrescrever o registro da 1ª
+-- rodada (resumo_original/campos_original de lá são a reversão da 1ª rodada).
+-- A aplicação é a mesma das duas passadas acima, trocando os nomes das tabelas
+-- por endodirect_correcoes_residuais e endodirect_correcoes_auxiliares_res.
+create table if not exists public.endodirect_correcoes_residuais
+  (like public.endodirect_correcoes_auditoria including all);
+alter table public.endodirect_correcoes_residuais enable row level security;
+revoke all on public.endodirect_correcoes_residuais from anon, authenticated;
+
+create table if not exists public.endodirect_correcoes_auxiliares_res
+  (like public.endodirect_correcoes_auxiliares including all);
+alter table public.endodirect_correcoes_auxiliares_res enable row level security;
+revoke all on public.endodirect_correcoes_auxiliares_res from anon, authenticated;
