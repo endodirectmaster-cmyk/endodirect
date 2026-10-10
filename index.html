@@ -5047,6 +5047,34 @@ function carregarAcessos(client,tentativa,uid){
     console.warn('acessos indisponíveis após '+tentativa+' tentativas',e);
   });
 }
+// Questão do Dia do aluno logado: só as PUBLICADAS, numa RPC própria e leve
+// (~280 KB), em paralelo com o conteúdo e com 3 tentativas — mesmo desenho dos
+// acessos e dos Resumos.
+// ⚠️ POR QUE EXISTE (10/10/2026). Desde a reescrita `member_content_capa_do_curso`
+// (07/08) o `endodirect_member_content` não devolvia mais `ig_stories`: quem entrou
+// depois disso nunca recebeu a lista, e quem já tinha a cópia local ficou parado
+// nela. As respostas à Questão do Dia caíram de 86 por semana (junho) para zero, e
+// um assinante relatou "no sistema não tem questão do dia disponível" (06/10). A
+// lista não voltou ao member_content de propósito: ele já tem ~5,2 MB, perto do
+// limite empírico de ~5,3 MB em que a resposta deixa de chegar ao celular.
+// `data` nulo (RPC ausente ou resposta vazia) não apaga a cópia local.
+function carregarQotd(client,tentativa,uid){
+  tentativa=tentativa||1;
+  if(!client||!(currentUser&&currentUser.id))return Promise.resolve();
+  if(uid===undefined)uid=currentUser.id;
+  return client.rpc('endodirect_qotd_publicadas').then(function(res){
+    if(res.error)throw res.error;
+    if(!mesmaContaQue(uid))return;
+    if(Array.isArray(res.data))applyStatePayload({ig_stories:res.data});
+  }).catch(function(e){
+    if(!mesmaContaQue(uid))return;
+    if(tentativa<3&&erroDeRede(e)){
+      return new Promise(function(r){setTimeout(r,700*tentativa);})
+        .then(function(){return carregarQotd(client,tentativa+1,uid);});
+    }
+    console.warn('Questão do Dia indisponível após '+tentativa+' tentativa(s)',e);
+  });
+}
 function hydratePublicContent(){
   var client=getSupabaseClient();
   if(!client||remoteStateLoaded)return;
@@ -5115,6 +5143,8 @@ function hydrateRemoteState(){
     // carregarAcessos. Sem isso, a carga grande caindo no meio deixava um Gold
     // parecendo degustação.
     loads.push(carregarAcessos(client));
+    // Questão do Dia (só as publicadas) numa chamada própria e leve — ver carregarQotd.
+    loads.push(carregarQotd(client));
     // Conteúdo (questões, mural, aulas, mapas, flashcards) com 3 tentativas —
     // ver carregarConteudo. As diretrizes/Resumos vêm de um RPC próprio e leve,
     // DEPOIS do conteúdo (ordem determinística) mas NUNCA dependendo do sucesso
@@ -6671,13 +6701,16 @@ function startApp(){
     // Reload mantém a última seção (adm_sec persiste); logout limpa adm_sec, então
     // um login novo cai no padrão (Analytics) via admRestoreSec().
     goPanel('adm');
+    consumirLinkPainel(); // link de aluno (/#qotd…) não vale no painel do professor nem fica para o próximo login da aba
     try{loadAdmSupport();}catch(e){} // popula o badge "(N)" do Suporte já no login
     pendAlertShown=false; // re-arma o alerta de pendências a cada login (dispara após o hydrate)
     try{applyQotdNav();}catch(e){} // esconde o gerador "Questão do Dia" p/ não-donos + badge das Pendências
   }else{
-    // Reload mantém o último painel; logout limpa last_panel → cai no Mural (homePanel).
+    // Link direto (/#qotd, /#mural, /#aovivo — ver guardarLinkPainel) vence; senão,
+    // o reload mantém o último painel; logout limpa last_panel → cai no homePanel.
     var lastP=lsGet('last_panel');
-    goPanel((lastP&&lastP!=='adm'&&canSeePanel(lastP))?lastP:homePanel());initAll();
+    if(!abrirPainelDoLink(consumirLinkPainel()))goPanel((lastP&&lastP!=='adm'&&canSeePanel(lastP))?lastP:homePanel());
+    initAll();
     try{markLockedNavItems();}catch(e){}
     try{loadMyTickets({});}catch(e){} // popula o badge "nova resposta" do Suporte já no login
     try{maybeShowWhatsNew();}catch(e){} // janela de novidades (1x por versão), exceto durante o onboarding
@@ -6865,6 +6898,50 @@ function isAuthCallbackUrl(){
   var s=window.location.search+window.location.hash;
   return /access_token=|[?&#]code=|type=signup|type=magiclink|type=invite|type=email_change/.test(s);
 }
+// ── LINK DIRETO PARA UM PAINEL: /#qotd, /#qotd/<id da questão>, /#mural, /#aovivo ──
+// ⚠️ POR QUE EXISTE (10/10/2026). O e-mail diário manda "Conferir a resposta na
+// plataforma", a aula ao vivo manda /#aovivo e a notificação do mural manda
+// /#mural — e o app não lia endereço nenhum: abria no painel de sempre, e quem
+// clicou para ver a resposta não achava a questão (relato de assinante, 06/10).
+// O pedido fica guardado na ABA (sessionStorage) porque o login com Google sai do
+// site e volta sem o "#"; é consumido uma vez, na escolha do painel inicial, e o
+// "#" sai do endereço para um F5 depois não forçar o painel de novo.
+// Só os nomes da lista: "#planos" é âncora da landing, e o retorno do login
+// ("#access_token=…") nunca casa com o padrão.
+var LINK_PAINEIS={qotd:1,mural:1,aovivo:1};
+var LINK_PAINEL_KEY='endo_link_painel';
+function lerLinkDoEndereco(){
+  var m=/^#(qotd|mural|aovivo)(?:\/([A-Za-z0-9_-]{1,80}))?$/.exec(String(window.location.hash||''));
+  return m?{p:m[1],arg:m[2]||''}:null;
+}
+function guardarLinkPainel(){
+  var l=lerLinkDoEndereco();
+  if(!l)return null;
+  try{sessionStorage.setItem(LINK_PAINEL_KEY,JSON.stringify(l));}catch(e){}
+  try{history.replaceState(null,'',window.location.pathname+window.location.search);}catch(e){}
+  return l;
+}
+function consumirLinkPainel(){
+  var l=null;
+  try{l=JSON.parse(sessionStorage.getItem(LINK_PAINEL_KEY)||'null');sessionStorage.removeItem(LINK_PAINEL_KEY);}catch(e){}
+  return (l&&LINK_PAINEIS[l.p])?l:null;
+}
+// Abre o painel pedido se o aluno puder vê-lo; com o id de uma questão, o arquivo
+// já abre nela (e rola até ela quando a lista chegar). Devolve false se não abriu.
+function abrirPainelDoLink(l){
+  if(!l||!LINK_PAINEIS[l.p]||!canSeePanel(l.p))return false;
+  if(l.p==='qotd'&&l.arg){qotdArchOpen=l.arg;qotdArchAuto=false;qotdArchRolar=true;}
+  goPanel(l.p);
+  return true;
+}
+guardarLinkPainel();
+// App já aberto (a notificação navega a janela existente só trocando o "#").
+window.addEventListener('hashchange',function(){
+  var l=guardarLinkPainel();
+  if(!l||!currentUser||isAdminUser())return;
+  consumirLinkPainel();
+  abrirPainelDoLink(l);
+});
 function handlePasswordRecovery(){
   var client=getSupabaseClient();
   if(!client)return;
@@ -8394,8 +8471,9 @@ function renderEnqueteCmeEm(alvoId){
   });
 }
 // ---------- QUESTÃO DO DIA (card clicável do aluno) ----------
-// Mostra a questão aprovada mais recente da fila do professor (igStories, vinda do
-// member_content/public_content). O aluno toca a alternativa, vê na hora se acertou
+// Mostra a questão aprovada mais recente da fila do professor (igStories, vinda de
+// endodirect_qotd_publicadas para o aluno logado — ver carregarQotd — e do
+// public_content para o visitante; as duas entregam só as publicadas). O aluno toca a alternativa, vê na hora se acertou
 // + explicação, e a resposta fica registrada (não some no reload). É a "enquete"
 // da plataforma e o destino do funil dos Stories ("resposta no app").
 // Mapa de respostas da Questão do Dia. Fonte = DB.qotd (sincroniza entre
@@ -8496,6 +8574,7 @@ var qotdArchOpen=null;     // id aberto no arquivo do aluno
 // 'recent', então da tela dele o defeito era invisível.
 var qotdArchSort='recent'; // aluno: 'recent' = mais recente primeiro; 'old' = mais antiga
 var qotdArchAuto=true;     // 1ª abertura do painel escancara a de hoje, se ainda não respondida
+var qotdArchRolar=false;   // link direto (/#qotd/<id>): rola até a questão aberta quando ela aparecer na lista
 var admQotdArchOpen=null;  // id aberto no arquivo do professor
 var admQotdArchSub='';     // filtro de subespecialidade no arquivo do professor ('' = todas)
 var admQotdArchSort='recent'; // ordenação por data ('recent' = mais recente; 'old' = mais antiga)
@@ -8538,7 +8617,7 @@ function renderQotdArchive(){
       return '<div class="qa-item'+(open?' open':'')+'">'+head+body+'</div>';
     }).join('');
   var so=document.getElementById('qa-sort');if(so)so.addEventListener('change',function(){qotdArchSort=so.value;renderQotdArchive();});
-  el.querySelectorAll('[data-qa-toggle]').forEach(function(h){h.addEventListener('click',function(){var id=h.getAttribute('data-qa-toggle');qotdArchOpen=(qotdArchOpen===id)?null:id;renderQotdArchive();});});
+  el.querySelectorAll('[data-qa-toggle]').forEach(function(h){h.addEventListener('click',function(){var id=h.getAttribute('data-qa-toggle');qotdArchOpen=(qotdArchOpen===id)?null:id;qotdArchRolar=false;renderQotdArchive();});});
   if(qotdArchOpen){
     el.querySelectorAll('[data-qotd-opt]').forEach(function(b){b.addEventListener('click',function(){
       if(b.disabled)return;
@@ -8546,6 +8625,9 @@ function renderQotdArchive(){
       if(!q)return;qotdArchAnswer(q,b.getAttribute('data-qotd-opt'));renderQotdArchive();
     });});
   }
+  // Veio de link com o id da questão: rola até ela quando a lista já a tiver (o
+  // primeiro desenho pode ser o da cópia local, antes de a lista chegar).
+  if(qotdArchRolar&&qotdArchOpen){var _ab=el.querySelector('.qa-item.open');if(_ab){qotdArchRolar=false;try{_ab.scrollIntoView({block:'start'});}catch(e){}}}
 }
 // Card de REVISÃO (professores Rafa/Edu/Bruno): alternativa correta em destaque (verde) + comentário.
 function qotdReviewCardHTML(q){

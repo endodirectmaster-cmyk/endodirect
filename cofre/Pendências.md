@@ -5,6 +5,22 @@ atualizado: 2026-10-10
 
 # Pendências
 
+## 🧠 Questão do Dia — corrigida em 10/10; o que fica com o professor
+
+A lista voltou ao aluno logado (RPC `endodirect_qotd_publicadas`), o e-mail leva à
+questão (`/#qotd/<id>`) e a rota pública deixou de expor a fila com gabarito (ver
+[[Decisões]] 2026-10-10 e [[Dados e Supabase]]).
+
+1. **Responder o chamado de 06/10** (Suporte, categoria "Problema técnico", ainda
+   sem resposta). Texto sugerido no relatório da sessão de 10/10.
+2. **Decidir se a resposta pelo próprio e-mail vale a pena.** Duas formas:
+   (a) cada alternativa do e-mail vira um link `/#qotd/<id>/<letra>` que abre a
+   plataforma já registrando a escolha (exige estar logado; pouco código);
+   (b) link assinado por destinatário e questão, que grava a resposta sem login
+   (endpoint novo com token por e-mail, cuidado com pré-carregamento de links
+   pelos provedores de e-mail, que "clicariam" sozinhos na alternativa).
+3. **Lista crescendo:** ~3 KB por dia; se passar de ~1 MB, janelar no servidor.
+
 ## 🩺 Auditoria do acervo — correções APLICADAS em 10/10 e o que fica com o professor
 
 Pedido de 05/10: *"faça uma auditoria se os conteúdos dos resumos e das
