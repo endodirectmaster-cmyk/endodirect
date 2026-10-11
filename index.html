@@ -565,6 +565,7 @@ textarea{resize:vertical;line-height:1.6}
 .mural-card-tags{display:flex;align-items:center;gap:.45rem;flex-wrap:wrap;margin-bottom:.75rem}
 .mural-card h3{font-size:1.12rem;font-weight:800;color:var(--tx);line-height:1.35;margin-bottom:.42rem;overflow-wrap:anywhere}
 .mural-date{font-size:.78rem;font-weight:800;color:var(--t3);margin-bottom:.65rem}
+.mural-title-orig{font-size:.74rem;color:var(--t3);line-height:1.4;margin:-.35rem 0 .5rem;font-style:italic}
 .mural-text{font-size:.9rem;color:var(--t2);line-height:1.7;margin-bottom:.9rem;overflow-wrap:anywhere;word-break:break-word;text-align:justify;text-align-last:left}
 .mural-text .mural-p{margin:.55rem 0}
 .mural-text .mural-p:first-child{margin-top:0}
@@ -4685,6 +4686,15 @@ function isRadarAuto(a){
   return sid.indexOf('pubmed:')===0||sid.indexOf('journalrss:')===0||sid.indexOf('news:')===0||a.breaking===true||String(a.tipo||'').toLowerCase().indexOf('breaking')>=0;
 }
 function avisoKeyStr(a){return String((a&&(a.sourceId||a.link||a.titulo))||'');}
+// Título que o card EXIBE: a tradução gerada pelo radar (`titulo_pt`), quando existe;
+// senão, o título original. Pedido do professor em 11/10/2026 ("vamos deixar os
+// títulos dos artigos em português"). O original continua sendo a CHAVE (dedup
+// contra o PubMed e os feeds, radar_hidden, favoritos, newsletter) — a tradução só
+// muda o que se lê, por isso `titulo` nunca é substituído.
+function muralTitulo(a){var pt=String((a&&a.titulo_pt)||'').trim();return pt||String((a&&a.titulo)||'').trim();}
+// O original em linha discreta abaixo do título traduzido: o artigo é em inglês e é
+// por ele que se acha o texto no link; some quando não há tradução ou é igual.
+function muralTituloOriginalHTML(a){var pt=String((a&&a.titulo_pt)||'').trim(),t=String((a&&a.titulo)||'').trim();if(!pt||!t||pt===t)return '';return '<div class="mural-title-orig" title="Título original">'+esc(t)+'</div>';}
 function globalStatePayload(){
   // O radar (auto/PubMed) mora em radar_avisos (gravado só pelo cron); o
   // professor grava apenas os avisos manuais em adm_avisos. A leitura
@@ -13134,12 +13144,12 @@ function initMural(){
     var fonte=fonteOf(a);
     var source=(a.link&&safeHttpUrl(a.link))?'<a href="'+esc(a.link)+'" target="_blank" rel="noopener">'+esc(fonte)+'</a>'+(a.oa?' <span style="font-size:.66rem;font-weight:700;color:#16a34a;white-space:nowrap" title="Texto completo aberto ao público (PubMed Central)">· acesso livre 📖</span>':''):esc(fonte);
     return'<article class="mural-card'+cls.card+'" data-mural-card'
-      +' data-fav-tit="'+esc(a.titulo||'')+'" data-fav-sub="'+esc(a.subespecialidade||'')+'">'
+      +' data-fav-tit="'+esc(muralTitulo(a))+'" data-fav-sub="'+esc(a.subespecialidade||'')+'">'
       +'<div class="mural-card-tags"><span class="tag '+cls.tag+'">'+esc(tipo)+'</span><span class="tag tag-muted">'+esc(fonte)+'</span>'
         // A estrela vai na linha das tags (e nao junto do <h3>) para nao empurrar
         // o titulo nem quebrar a linha em telas estreitas.
         +'<span style="margin-left:auto">'+favStarHTML('mural',a)+'</span></div>'
-      +'<h3>'+esc(a.titulo||'Aviso aos alunos')+'</h3>'
+      +'<h3>'+esc(muralTitulo(a)||'Aviso aos alunos')+'</h3>'+muralTituloOriginalHTML(a)
       +'<div class="mural-date">'+dateBR(a.at)+'</div>'
       +'<div class="mural-text">'+muralTextHTML(muralBodyText(a)||'Comunicado publicado pela equipe Endodirect.')+'</div>'
       +muralDiscussaoHTML(a)
@@ -16325,7 +16335,7 @@ function admMuralSecHTML(){
         // A estrela vai na linha das tags (e nao junto do <h3>) para nao empurrar
         // o titulo nem quebrar a linha em telas estreitas.
         +'<span style="margin-left:auto">'+favStarHTML('mural',a)+'</span></div>'
-      +'<h3>'+esc(a.titulo||'Aviso aos alunos')+'</h3>'
+      +'<h3>'+esc(muralTitulo(a)||'Aviso aos alunos')+'</h3>'+muralTituloOriginalHTML(a)
       +'<div class="mural-date">'+dateBR(a.at)+'</div>'
       +'<div class="mural-text">'+muralTextHTML(muralBodyText(a)||'Comunicado publicado pela equipe Endodirect.')+'</div>'
       +muralDiscussaoHTML(a)
@@ -17972,7 +17982,7 @@ function bindAdmSec(sec){
       var av=null;
       (admAvisos||[]).concat(radarAvisos||[]).forEach(function(x){if(!av&&avisoKeyStr(x)===key)av=x;});
       if(!av){notify('Não achei este item para notificar.','err');return;}
-      var titulo=String(av.titulo||'').trim();
+      var titulo=muralTitulo(av);
       // ⚠️ Envio para TODOS os aparelhos inscritos e não tem como cancelar depois.
       // Confirmar com o texto à vista é o que separa "avisar" de "avisar errado".
       if(!confirm('Notificar TODOS os alunos inscritos no celular?\n\n'+titulo+'\n\nNão dá para cancelar depois de enviado.'))return;
@@ -19118,7 +19128,7 @@ function muralTextHTML(txt){
 function muralInlineEditHTML(a){
   var bodyHTML=mdToHtml(String((a&&a.texto)||''));
   if(!bodyHTML)bodyHTML='<p><br></p>';
-  var titulo=esc((a&&a.titulo)||''),fonte=esc((a&&a.fonte)||''),link=esc((a&&a.link)||''),img=esc((a&&a.img)||'');
+  var titulo=esc((a&&a.titulo)||''),tituloPt=esc((a&&a.titulo_pt)||''),fonte=esc((a&&a.fonte)||''),link=esc((a&&a.link)||''),img=esc((a&&a.img)||'');
   var curSub=muralSubspecialty(a),curTipo=muralDisplayType(a);
   var tipoOpts=MURAL_TYPES.map(function(t){return'<option'+(t===curTipo?' selected':'')+'>'+esc(t)+'</option>';}).join('');
   var subOpts=MURAL_SUBSPECIALTY_FILTERS.map(function(s){return'<option'+(s===curSub?' selected':'')+'>'+esc(s)+'</option>';}).join('');
@@ -19143,6 +19153,8 @@ function muralInlineEditHTML(a){
       +'<button type="button" class="btn btn-primary btn-sm" id="btn-mural-inline-save">💾 Salvar</button>'
     +'</div>'
     +'<div class="mural-inline-titlewrap"><label>Título</label><input type="text" id="mural-inline-title" class="mural-inline-titleinput" value="'+titulo+'"></div>'
+    // Título em português exibido ao aluno (gerado pelo radar; o professor pode corrigir). Vazio = mostra o original.
+    +'<div class="mural-inline-titlewrap"><label>Título em português (o que o aluno vê; vazio mostra o original)</label><input type="text" id="mural-inline-titulo-pt" class="mural-inline-titleinput" value="'+tituloPt+'"></div>'
     +'<details class="wys-details">'
       +'<summary>⚙️ Tipo, subespecialidade, fonte, link e imagem de capa</summary>'
       +'<div class="g2" style="margin:.4rem 0 .3rem"><div class="fld2" style="margin:0"><label>Tipo</label><select id="mural-inline-tipo">'+tipoOpts+'</select></div><div class="fld2" style="margin:0"><label>Subespecialidade</label><select id="mural-inline-sub">'+subOpts+'</select></div></div>'
@@ -19167,7 +19179,7 @@ function muralNoticeCardHTML(a,admin){
   var _wide=/!\[[^\]]*\]\(https?:\/\//.test(_txt)||tipo==='Discussão Clínica'||_txt.length>1100;
   return'<article class="mural-card '+meta.card+(_wide?' mural-card-wide':'')+'" data-mural-card>'
     +'<div class="mural-card-tags"><span class="tag tag-blue">'+esc(tipo)+'</span>'+(sub?('<span class="tag '+meta.tag+'">'+esc(sub)+'</span>'):'')+'</div>'
-    +'<h3>'+esc(a.titulo||'Aviso aos alunos')+'</h3>'
+    +'<h3>'+esc(muralTitulo(a)||'Aviso aos alunos')+'</h3>'+muralTituloOriginalHTML(a)
     +'<div class="mural-date">'+dateBR(a.at)+'</div>'
     +imgHTML
     +'<div class="mural-text">'+muralTextHTML(muralBodyText(a)||'Comunicado publicado pela equipe Endodirect.')+'</div>'
@@ -19711,6 +19723,7 @@ bindAdmSec=function(sec){
       var texto=bodyEl?htmlToMd(bodyEl):(orig.texto||'');
       var dados={
         titulo:t,
+        titulo_pt:((document.getElementById('mural-inline-titulo-pt')||{}).value||'').trim(),
         tipo:((document.getElementById('mural-inline-tipo')||{}).value||orig.tipo||'Comunicado'),
         subespecialidade:((document.getElementById('mural-inline-sub')||{}).value||'Endocrinologia Geral'),
         fonte:((document.getElementById('mural-inline-fonte')||{}).value||'').trim(),
@@ -19740,7 +19753,7 @@ bindAdmSec=function(sec){
       // TÍTULO (quem recebe precisa saber o que aconteceu) e link para o Mural.
       if(_wantPush){
         var _bn=/breaking/i.test(String(updatedAv.tipo||''));
-        var _bnTitulo=String(updatedAv.titulo||'').trim();
+        var _bnTitulo=muralTitulo(updatedAv);
         admSendPush({title:_bn?'🚨 Breaking News':'📣 '+(String(updatedAv.tipo||'Endodirect').trim()||'Endodirect'),body:_bnTitulo,url:'https://www.endodirect.com.br/#mural'})
           .then(function(res){
             if(res&&res.ok&&res.push){
