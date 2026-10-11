@@ -148,6 +148,8 @@ const ok = (c, m) => { if (!c) falhas.push(m); };
       + 'tipo:"Comunicado",breaking:true,sourceId:"news:abc",link:"https://investor.lilly.com/x"}];'
     + 'var antes=JSON.stringify(radarAvisos);'
     + 'function avisoKeyStr(a){return String((a&&(a.sourceId||a.link||a.titulo))||"");}'
+    // Título exibido (11/10/2026): o handler lê o título pelo helper, que prefere titulo_pt.
+    + 'function muralTitulo(a){var pt=String((a&&a.titulo_pt)||"").trim();return pt||String((a&&a.titulo)||"").trim();}'
     + 'function ldHTML(){return "...";}'
     + 'var _notify=[];function notify(m,t){_notify.push([m,t]);}'
     + 'var _conf=null;function confirm(m){_conf=m;return true;}'
@@ -169,6 +171,8 @@ const ok = (c, m) => { if (!c) falhas.push(m); };
   vm.runInContext(
     'var admAvisos=[];var radarAvisos=[{titulo:"x",tipo:"Comunicado",sourceId:"news:abc"}];'
     + 'function avisoKeyStr(a){return String((a&&(a.sourceId||a.link||a.titulo))||"");}'
+    // Título exibido (11/10/2026): o handler lê o título pelo helper, que prefere titulo_pt.
+    + 'function muralTitulo(a){var pt=String((a&&a.titulo_pt)||"").trim();return pt||String((a&&a.titulo)||"").trim();}'
     + 'function ldHTML(){return "...";}function notify(){}'
     + 'function confirm(){return false;}'
     + 'var _push=null;function admSendPush(p){_push=p;return Promise.resolve({ok:true,push:{sent:1}});}'
