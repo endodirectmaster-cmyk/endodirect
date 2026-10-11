@@ -251,6 +251,17 @@ try {
   fail('regressão do link direto / entrega da Questão do Dia falhou:\n' + out);
 }
 
+// 17b3. TÍTULOS DO MURAL EM PORTUGUÊS (11/10/2026). O radar grava a tradução em
+//      `titulo_pt` e o card a exibe; o original continua sendo a chave de dedup,
+//      radar_hidden, favoritos e newsletter, por isso nunca é substituído.
+try {
+  execFileSync(process.execPath, [path.join('scripts', 'test-mural-titulo-pt.js')], { stdio: 'pipe' });
+  ok('mural: título em português exibido, original preservado como chave, radar/newsletter/push alinhados');
+} catch (e) {
+  const out = (e.stdout ? e.stdout.toString() : '') + (e.stderr ? e.stderr.toString() : '');
+  fail('regressão dos títulos do mural em português falhou:\n' + out);
+}
+
 // 17c. ENQUETE do programa de Educação Médica Continuada: é benefício EXCLUSIVO
 //      do plano Gold — se vazar para Standard ou degustação, a exclusividade que
 //      o plano vende deixa de existir, e isso não dá erro nenhum: some da tela do
