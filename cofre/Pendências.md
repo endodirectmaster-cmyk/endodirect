@@ -1,9 +1,21 @@
 ---
 tags: [cofre, pendencias]
-atualizado: 2026-10-10
+atualizado: 2026-10-12
 ---
 
 # Pendências
+
+## 📚 Banco de questões — o que ficou do lote de 12/10 (estudos de 2025 e 2026)
+
+1. **Separar `provas` do `endodirect_member_content` antes do próximo lote.** Medido em
+   12/10 com um Gold ativo: 5,43 MB de resposta, 71% dela em `provas` (2.135 itens). O
+   cofre registra falha no celular perto de 5,3 MB. Mesmo desenho de `member_resumos` e
+   `qotd_publicadas`: RPC própria, chamada em paralelo e com 3 tentativas no cliente.
+   Não feito neste lote porque mexe no cliente, no servidor e nos testes de boot.
+2. **Dropar `tmp_estudos_2026`** pelo painel do Supabase (o `DROP` pelo conector espera
+   confirmação manual). Está privada, com RLS ligado e sem grant.
+3. **Backups `bkp_provas_*`** (21/08, 21/08 SBD e 12/10) podem sair quando o professor
+   confirmar os lotes.
 
 ## 🧠 Questão do Dia — corrigida em 10/10; o que fica com o professor
 

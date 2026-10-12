@@ -1,6 +1,6 @@
 ---
 tags: [cofre, questoes]
-atualizado: 2026-10-05
+atualizado: 2026-10-12
 ---
 
 # Banco de Questões
@@ -254,6 +254,124 @@ base 1.831, TEEM 880, **0 questões sem instituição**.
 
 - 💾 **`bkp_provas_20260821_sbd`** guarda o array anterior (2.903), sem grant para
   `anon`/`authenticated`. Único caminho de rollback. `tmp_sbd_2026` dropada.
+
+## Lote "estudos de 2025 e 2026" — 50 questões (2026-10-12)
+
+Pedido: *"Gere umas 50 questões de múltipla escolha para o banco de questões da plataforma
+sobre os estudos mais importantes publicados em 2025 e 2026"*. Banco **2.965 → 3.015**.
+Códigos **`ENDODIRECT-2068` … `ENDODIRECT-2117`**, `inst:'Endodirect'`, `ano:2026`, mesmo
+formato dos lotes de 21/08 (sem `id`; a chave de merge do painel fica `stem|answer|inst`).
+
+- **Fonte primeiro, vinheta depois** (regra de ancoragem): cada questão nasce de um ensaio
+  cujo resumo foi lido no PubMed antes da redação (ano, desenho, população, resultado
+  principal, eventos adversos). O comentário cita o estudo pelo nome, a revista e o ano,
+  sem PMID, DOI ou letra de alternativa. Tabela de fontes no fim desta seção.
+- **Distribuição:** Diabetes 11 · Obesidade 11 · Lípides 8 · Adrenal 3 ·
+  Neuroendocrinologia 3 · Tireoide 3 · Osteometabolismo 3 · Feminina 4 · Masculina 1 ·
+  Pediátrica 3. **Dificuldade: 10 `intermediario` (20%) · 40 `avancado` (80%)**, a mistura
+  do professor. Gabarito **A=13 B=12 C=13 D=12**.
+- 📏 **Pista da alternativa mais longa.** Na primeira redação, o gabarito era a
+  alternativa estritamente mais longa em **30 de 50** questões; o acaso daria cerca de
+  25%. Depois de reescrever 18 alternativas, ficou em **13 de 50**. Medir isso em todo
+  lote: quem já fez prova sabe que "a mais completa é a certa".
+- 🧨 **Distrator que o resumo não refuta.** Cinco alternativas erradas afirmavam coisas que
+  o resumo apenas não relata, como "mais eventos gastrointestinais com 5 mg"
+  (SURMOUNT-MAINTAIN) ou "mais hipoglicemia grave com a alça fechada" (CIRCUIT: um evento
+  contra zero, sem teste). Foram trocadas por afirmações que o próprio estudo contraria.
+  Regra: alternativa errada precisa ser refutável pela fonte, e não só ausente dela.
+- **Jargão:** o `checa-jargao` só acusou siglas (nomes dos ensaios, AVC, JAMA, PSA…),
+  nenhuma marca de registro.
+- **Duplicata interna** (Jaccard da casa, com o tokenizador lido do `index.html`): um par
+  acima do corte na primeira redação, CONFIDENCE × FINE-ONE (**0,354**), com o mesmo
+  esqueleto de filtração, relação albumina/creatinina, potássio e "dose máxima". O FINE-ONE
+  virou consulta de nefrologia com creatinina e albuminúria em amostra isolada. Maior par
+  no fim: 0,256.
+- **Duplicata contra o banco (50 × 2.965):** tokenizador inline em SQL, conferido contra o
+  JS nas 50 contagens de tokens (todas iguais). Um par acima do corte, elinzanetante ×
+  `ENDODIRECT-1675` (**0,364**, a mesma vinheta de tamoxifeno e fogachos), e dois na faixa de
+  olho humano, STAREE × `ENDODIRECT-1727` (0,294) e PaTHway × `ENDODIRECT-1890` (0,278). As
+  três vinhetas mudaram (letrozol; homem de 72 anos na atenção primária; homem com
+  hipoparatireoidismo depois de tireoidectomia por Graves). Maior par no fim: **0,2453**
+  (CONFIDENCE × `ENDODIRECT-2015`).
+
+### Merge e rollback
+- 💾 **`bkp_provas_20261012_estudos`** guarda o array anterior (2.965 itens, igual ao estado
+  ao vivo no momento da cópia), sem grant para `anon`/`authenticated` e com RLS ligado.
+- Carga em cinco blocos de dez na tabela de passagem `tmp_estudos_2026`, cada bloco com o
+  **mesmo hash do arquivo local** antes do merge; depois, um `UPDATE` único com guarda: o
+  `md5` do array `provas` tinha de ser o do backup, a passagem tinha de ter 50 itens e
+  nenhum código 2068–2117 podia existir.
+- Conferido depois: as **2.965 antigas idênticas ao backup** (igualdade de `jsonb`); as 50
+  novas com o hash do arquivo local (`7197648a9a26d2550e580498d1b75b4a`, sobre
+  code|stem|A|B|C|D|answer|dificuldade|explanation|area|ano|inst); 0 código repetido.
+- Entrega: assinante (`plano`) **2.085 → 2.135**; `curso:endoteem` **2.711 → 2.761**;
+  degustação: 46 das 50 seguem, entram as questões 2077, 2080, 2088 e 2089.
+- ⚠️ **`tmp_estudos_2026` não foi dropada.** O `DROP` pelo conector do Supabase espera
+  confirmação manual e expira em 60 s (três tentativas, nenhuma trava no banco). A tabela
+  está privada (RLS ligado, sem grant). Dropar pelo painel do Supabase.
+
+### 🧨 O `member_content` do Gold passou de ~5,34 para 5,43 MB
+Medido com um Gold ativo, simulando o JWT dele (`request.jwt.claims` com o `sub`, a mesma
+chamada que o app faz): **5.426.825 bytes**, dos quais `provas` 3.875.392 (2.135 itens) e as
+50 novas 83.815. Antes do lote, ~5,34 MB. O cofre registra desde 23/07 que respostas perto
+de ~5,3 MB deixam de chegar ao celular, e a poda de 24/09 deixou o Gold em 5,31 MB. As
+provas são **71% da resposta**. **Antes do próximo lote, separar `provas` numa RPC própria**,
+como já foi feito com `member_resumos` e `qotd_publicadas`; do contrário, cada lote empurra a
+resposta inteira para cima. Ver [[Pendências]].
+
+### Fontes (conferidas no PubMed; o DOI fica aqui, nunca no comentário)
+| código | área | estudo | revista, ano | DOI |
+|---|---|---|---|---|
+| `ENDODIRECT-2068` | Diabetes | SOUL (semaglutida oral, desfecho CV) | NEJM 2025 | 10.1056/NEJMoa2501006 |
+| `ENDODIRECT-2069` | Diabetes | SURPASS-CVOT (tirzepatida × dulaglutida) | NEJM 2025 | 10.1056/NEJMoa2505928 |
+| `ENDODIRECT-2070` | Diabetes | ACHIEVE-1 (orforglipron, DM2 inicial) | NEJM 2025 | 10.1056/NEJMoa2505669 |
+| `ENDODIRECT-2071` | Diabetes | Zimislecel, fase 1–2 (FORWARD) | NEJM 2025 | 10.1056/NEJMoa2506549 |
+| `ENDODIRECT-2072` | Diabetes | 2IQP (alça fechada no DM2) | NEJM 2025 | 10.1056/NEJMoa2415948 |
+| `ENDODIRECT-2073` | Diabetes | CONFIDENCE (finerenona + empagliflozina) | NEJM 2025 | 10.1056/NEJMoa2410659 |
+| `ENDODIRECT-2074` | Diabetes | STRIDE (semaglutida na DAP) | Lancet 2025 | 10.1016/S0140-6736(25)00509-4 |
+| `ENDODIRECT-2075` | Diabetes | QWINT-1 (efsitora em dose fixa) | NEJM 2025 | 10.1056/NEJMoa2502796 |
+| `ENDODIRECT-2076` | Diabetes | COMBINE 4 (IcoSema × glargina) | Lancet Diabetes Endocrinol 2026 | 10.1016/S2213-8587(26)00136-1 |
+| `ENDODIRECT-2077` | Diabetes | FINE-ONE (finerenona no DM1) | NEJM 2026 | 10.1056/NEJMoa2512854 |
+| `ENDODIRECT-2078` | Diabetes | Análise combinada SELECT/FLOW/SOUL (rim) | Lancet Diabetes Endocrinol 2026 | 10.1016/S2213-8587(26)00134-8 |
+| `ENDODIRECT-2079` | Obesidade | SURMOUNT-5 (tirzepatida × semaglutida) | NEJM 2025 | 10.1056/NEJMoa2416394 |
+| `ENDODIRECT-2080` | Obesidade | ATTAIN-1 (orforglipron, obesidade) | NEJM 2025 | 10.1056/NEJMoa2511774 |
+| `ENDODIRECT-2081` | Obesidade | REDEFINE 1 (CagriSema); REDEFINE 2 no comentário | NEJM 2025 | 10.1056/NEJMoa2502081 · 10.1056/NEJMoa2502082 |
+| `ENDODIRECT-2082` | Obesidade | STEP UP (semaglutida 7,2 mg) | Lancet Diabetes Endocrinol 2025 | 10.1016/S2213-8587(25)00226-8 |
+| `ENDODIRECT-2083` | Obesidade | OASIS 4 (semaglutida oral 25 mg) | NEJM 2025 | 10.1056/NEJMoa2500969 |
+| `ENDODIRECT-2084` | Obesidade | Maridebart cafraglutide, fase 2 | NEJM 2025 | 10.1056/NEJMoa2504214 |
+| `ENDODIRECT-2085` | Obesidade | ESSENCE, parte 1 (semaglutida na MASH) | NEJM 2025 | 10.1056/NEJMoa2413258 |
+| `ENDODIRECT-2086` | Obesidade | ATTAIN-MAINTAIN (orforglipron após injetável) | Nat Med 2026 | 10.1038/s41591-026-04386-7 |
+| `ENDODIRECT-2087` | Obesidade | SURMOUNT-MAINTAIN (dose de manutenção) | Lancet 2026 | 10.1016/S0140-6736(26)00656-2 |
+| `ENDODIRECT-2088` | Obesidade | TRIUMPH-1 (retatrutida); TRIUMPH-2 no comentário | NEJM 2026 · Lancet 2026 | 10.1056/NEJMoa2604169 · 10.1016/S0140-6736(26)01861-1 |
+| `ENDODIRECT-2089` | Obesidade | BARI-STEP (semaglutida após bariátrica) | Nat Med 2026 | 10.1038/s41591-026-04416-4 |
+| `ENDODIRECT-2090` | Lípides | VESALIUS-CV; subgrupo com diabetes | NEJM 2026 · JAMA 2026 | 10.1056/NEJMoa2514428 · 10.1001/jama.2026.3277 |
+| `ENDODIRECT-2091` | Lípides | PALISADE (plozasirana) | NEJM 2025 | 10.1056/NEJMoa2409368 |
+| `ENDODIRECT-2092` | Lípides | CORE-TIMI 72a e CORE2-TIMI 72b (olezarsena) | NEJM 2026 | 10.1056/NEJMoa2512761 |
+| `ENDODIRECT-2093` | Lípides | ALPACA (lepodisirana) | NEJM 2025 | 10.1056/NEJMoa2415818 |
+| `ENDODIRECT-2094` | Lípides | BROADWAY (obicetrapibe) | NEJM 2025 | 10.1056/NEJMoa2415820 |
+| `ENDODIRECT-2095` | Lípides | CORALreef Lipids (enlicitide) | NEJM 2026 | 10.1056/NEJMoa2511002 |
+| `ENDODIRECT-2096` | Lípides | STAREE (atorvastatina ≥70 anos) | NEJM 2026 | 10.1056/NEJMoa2607314 |
+| `ENDODIRECT-2097` | Lípides | AMUNDSEN (evolocumabe antes da ICP) | JAMA 2026 | 10.1001/jama.2026.17302 |
+| `ENDODIRECT-2098` | Adrenal | BaxHTN; Bax24 no comentário | NEJM 2025 · Lancet 2026 | 10.1056/NEJMoa2507109 · 10.1016/S0140-6736(25)02549-8 |
+| `ENDODIRECT-2099` | Adrenal | Launch-HTN (lorundrostate) | JAMA 2025 | 10.1001/jama.2025.9413 |
+| `ENDODIRECT-2100` | Neuroendocrinologia | GRACE (relacorilante) | Lancet Diabetes Endocrinol 2026 | 10.1016/S2213-8587(25)00362-6 |
+| `ENDODIRECT-2101` | Adrenal | LITESPARK-015 (belzutifano) | NEJM 2025 | 10.1056/NEJMoa2504964 |
+| `ENDODIRECT-2102` | Tireoide | IoN; ESTIMABL2 5 anos no comentário | Lancet 2025 · Lancet Diabetes Endocrinol 2025 | 10.1016/S0140-6736(25)00629-4 · 10.1016/S2213-8587(24)00276-6 |
+| `ENDODIRECT-2103` | Tireoide | THRIVE (veligrotugue) | Ophthalmology 2026 | 10.1016/j.ophtha.2026.04.022 |
+| `ENDODIRECT-2104` | Tireoide | SatraGO-1 e SatraGO-2 (satralizumabe) | Ophthalmology 2026 | 10.1016/j.ophtha.2026.08.039 |
+| `ENDODIRECT-2105` | Osteometabolismo | Zoledronato infrequente aos 50–60 anos | NEJM 2025 | 10.1056/NEJMoa2407031 |
+| `ENDODIRECT-2106` | Osteometabolismo | LIDA (romosozumabe 3 × 12 meses) | Lancet Diabetes Endocrinol 2026 | 10.1016/S2213-8587(25)00319-5 |
+| `ENDODIRECT-2107` | Osteometabolismo | PaTHway 52 semanas; 2 anos (renal) no comentário | JCEM 2025 · JBMR 2026 | 10.1210/clinem/dgae693 · 10.1093/jbmr/zjag085 |
+| `ENDODIRECT-2108` | Neuroendocrinologia | PATHFNDR-2 (paltusotina) | JCEM 2026 | 10.1210/clinem/dgaf579 |
+| `ENDODIRECT-2109` | Neuroendocrinologia | TRANSCEND (setmelanotida, obesidade hipotalâmica) | NEJM 2026 | 10.1056/NEJMoa2512275 |
+| `ENDODIRECT-2110` | Endocrinologia Feminina | OASIS-4 (elinzanetante, terapia endócrina do câncer de mama) | NEJM 2025 | 10.1056/NEJMoa2415566 |
+| `ENDODIRECT-2111` | Endocrinologia Feminina | Mio-inositol na gestação com SOP | JAMA 2025 | 10.1001/jama.2025.13668 |
+| `ENDODIRECT-2112` | Endocrinologia Feminina | SUGAR-DIP (orais × insulina no DMG) | JAMA 2025 | 10.1001/jama.2024.23410 |
+| `ENDODIRECT-2113` | Endocrinologia Feminina | CIRCUIT (alça fechada na gestação com DM1) | JAMA 2025 | 10.1001/jama.2025.19578 |
+| `ENDODIRECT-2114` | Endocrinologia Masculina | Testosterona após prostatectomia (fase 2) | JAMA Intern Med 2026 | 10.1001/jamainternmed.2026.1343 |
+| `ENDODIRECT-2115` | Endocrinologia Pediátrica | SURPASS-PEDS (tirzepatida no DM2 juvenil) | Lancet 2025 | 10.1016/S0140-6736(25)01774-X |
+| `ENDODIRECT-2116` | Endocrinologia Pediátrica | PROPEL 3 (infigratinibe na acondroplasia) | NEJM 2026 | 10.1056/NEJMoa2604565 |
+| `ENDODIRECT-2117` | Endocrinologia Pediátrica | TESTO (testosterona no lactente 47,XXY) | JCEM 2025 | 10.1210/clinem/dgaf217 |
 
 ## Estado do banco de residência (2026-07-21) — total 254 questões
 Banco geral: **2401** questões (`payload.provas`). Das quais **254 de residência** (`origem='provas_residencia_drive'`), sourceIds distintos, 0 answer-fora, 0 sem-comentário.
