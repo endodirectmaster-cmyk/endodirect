@@ -4965,7 +4965,10 @@ var conteudoEmVoo=null;   // {uid,p}: carga em andamento — uma por CONTA
 // vale para quem a pediu; comparar `currentUser.id===uid` direto falharia
 // para a demo, cujo id é undefined.
 function contaAtual(){return (currentUser&&currentUser.id)||null;}
-function mesmaContaQue(uid){return contaAtual()===(uid||null);}
+// Sessão derrubada por outro aparelho (onSessionEvicted): nenhuma resposta em
+// voo vale mais, nem a de quem pediu "sem conta".
+var sessaoEncerrada=false;
+function mesmaContaQue(uid){return !sessaoEncerrada&&contaAtual()===(uid||null);}
 function conteudoEmVooDesta(){return !!(conteudoEmVoo&&conteudoEmVoo.uid===contaAtual());}
 // Vale repetir só quando a REDE falhou. O supabase-js não lança quando a
 // conexão cai no meio do corpo: devolve {error} sem `code` (mensagem
@@ -6955,6 +6958,7 @@ function doLogout(){
   // senão o watcher reencontra a sessão e re-loga sozinho ao voltar/recarregar.
   if(client&&client.auth){try{client.auth.signOut().catch(function(){});}catch(e){}}
   if(deviceWatcher){clearInterval(deviceWatcher);deviceWatcher=null;}
+  deviceSlot={uid:null,ok:false,emVoo:false};
   currentUser=null;
   remoteStateLoaded=false;
   // Nada da sessão que acabou pode "completar" a próxima: as cargas em voo
@@ -7113,14 +7117,39 @@ function getDeviceId(){
   return id;
 }
 var deviceWatcher=null,lastDeviceTickAt=0;
+// ⚠️ O REGISTRO DO APARELHO VEM ANTES DA CHECAGEM (12/10/2026). O
+// `endodirect_session_check` responde false a aparelho sem registro — é o que
+// derruba o 3º aparelho. Mas o doLogin navega para o painel inicial, a navegação
+// dispara a checagem (deviceTickThrottled), e o claimDeviceSlot só é chamado
+// DEPOIS: num aparelho novo, a checagem chegava ao servidor antes do registro e
+// o aluno era derrubado logo após entrar ("sessão encerrada", login de novo).
+// Nos logs de borda: 11/10 18:21:13 (check 8 ms antes do claim) e 12/10
+// 12:42:40 — 2 de ~12 logins de aluno em 24 h. Agora a checagem só sai depois
+// de o registro DESTE login ter voltado true; até lá, a vez é do registro.
+var deviceSlot={uid:null,ok:false,emVoo:false};
 function claimDeviceSlot(){
   var client=getSupabaseClient();
   if(!client||!(currentUser&&currentUser.id)||currentUser.role!=='aluno')return;
-  try{client.rpc('endodirect_session_claim',{p_device_id:getDeviceId(),p_ua:(navigator.userAgent||'').slice(0,300)}).then(function(){},function(){});}catch(e){}
+  // Um registro por login: o doLogin já pode ter pedido este (pela navegação).
+  // Confirmado não se refaz — um aparelho derrubado que se registrasse de novo
+  // derrubaria o outro.
+  if(deviceSlot.uid===currentUser.id&&(deviceSlot.emVoo||deviceSlot.ok))return;
+  var meu={uid:currentUser.id,ok:false,emVoo:true};
+  deviceSlot=meu;
+  try{client.rpc('endodirect_session_claim',{p_device_id:getDeviceId(),p_ua:(navigator.userAgent||'').slice(0,300)}).then(function(res){
+    meu.emVoo=false;
+    if(res&&!res.error&&res.data===true)meu.ok=true;
+  },function(){meu.emVoo=false;});}catch(e){meu.emVoo=false;}
 }
 function deviceTick(){
   var client=getSupabaseClient();
   if(!client||!(currentUser&&currentUser.id)||currentUser.role!=='aluno')return;
+  // Registro deste login ainda não confirmado: checar agora derrubaria o próprio
+  // aparelho. Se o registro falhou (rede), tenta registrar de novo.
+  if(!(deviceSlot.ok&&deviceSlot.uid===currentUser.id)){
+    if(!(deviceSlot.emVoo&&deviceSlot.uid===currentUser.id))claimDeviceSlot();
+    return;
+  }
   lastDeviceTickAt=Date.now();
   try{client.rpc('endodirect_session_check',{p_device_id:getDeviceId()}).then(function(res){
     if(res&&res.data===false)onSessionEvicted();
@@ -7141,6 +7170,11 @@ function startDeviceWatcher(){
 }
 function onSessionEvicted(){
   if(deviceWatcher){clearInterval(deviceWatcher);deviceWatcher=null;}
+  // ⚠️ Depois do signOut abaixo, o que ainda estiver em voo volta sem a sessão
+  // do aluno — como anônimo: a próxima página das questões trazia a lista da
+  // degustação, que era aplicada e GRAVADA no aparelho (visto em 12/10). A aba
+  // só sai daqui recarregando; até lá, nenhuma resposta da rede vale.
+  sessaoEncerrada=true;remoteStateGen++;
   var client=getSupabaseClient();
   try{if(client&&client.auth)client.auth.signOut().catch(function(){});}catch(e){}
   if(document.getElementById('evicted-ov'))return;
@@ -18317,7 +18351,7 @@ doLogin=function(u){
   currentUser=u;
   remoteStateLoaded=false;
   remoteStateWarned=false;
-  conteudoErro=false;provasErro=false; // o erro (se houve) era da sessão anterior
+  conteudoErro=false;provasErro=false;sessaoEncerrada=false; // o erro (se houve) era da sessão anterior
   pendingOnboardCheck=false;
   // A conta mudou neste navegador? Se sim (ou se não sabemos a quem o estado
   // local pertence), não confiamos no perfil salvo localmente — isso evita

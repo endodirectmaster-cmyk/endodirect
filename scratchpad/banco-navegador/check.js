@@ -22,6 +22,14 @@
 //   5. (depois) O banco muda no meio da carga: nenhuma colcha de duas versões.
 //   6. Uma carga por vez no boot (getSession + SIGNED_IN).
 //   7. Rede muda desde o início com acessos guardados: o chip nasce "Gold".
+//   8. Aparelho NOVO, com o limite de 2 aparelhos ligado (12/10/2026): sem a
+//      correção, a checagem sai antes do registro, o aparelho cai no próprio
+//      login e as páginas seguintes, já anônimas, gravam a degustação; com
+//      ela, registro primeiro e o Banco inteiro.
+//   9. (com a correção) Derrubada de verdade com a página 0 em voo: nada mais
+//      é pedido nem gravado no aparelho.
+// As expectativas seguem o que o index.html servido TEM (questões em páginas;
+// registro antes da checagem), então o mesmo arquivo compara qualquer par.
 //
 // Como: o <script> do supabase-js é interceptado e substituído por um cliente
 // falso (window.supabase.createClient) com sessão de aluno real; os demais
@@ -35,6 +43,11 @@ const { chromium } = require(process.env.PLAYWRIGHT_CORE || 'playwright-core');
 const RAIZ = process.env.RAIZ_APP || path.join(__dirname, '..', '..');
 const LADO = process.env.LADO || 'depois';
 const DEPOIS = LADO === 'depois';
+// As expectativas seguem o que o index.html servido TEM, não o rótulo do lado:
+// assim o mesmo harness compara qualquer par de versões.
+const APP_HTML = fs.readFileSync(path.join(RAIZ, 'index.html'), 'utf8');
+const TEM_PAGINAS = /endodirect_member_provas_pagina/.test(APP_HTML);   // questões em páginas (#838)
+const TEM_REGISTRO = /var deviceSlot=/.test(APP_HTML);                   // registro do aparelho antes da checagem
 const CHROME = '/opt/pw-browsers/chromium-1194/chrome-linux/chrome';
 const UID = '11111111-2222-3333-4444-555555555555';
 const PORTA = DEPOIS ? 8811 : 8812;
@@ -52,9 +65,18 @@ const FAKE_SUPABASE = `
     paginaInstavel: null,     // {pagina, vezes}: só esta página cai
     versaoMuda: false,        // na 1ª volta, as páginas >= 1 vêm de outra versão
     conteudoFalha: false, acessosFalha: false,
+    limiteAparelhos: false,   // liga o limite de 2 aparelhos: check = "este aparelho está registrado?"
+    registrados: [],          // aparelhos já registrados no servidor
+    derrubar: false,          // outro aparelho tomou a vaga: check responde false
+    atrasoPagina0: 0,         // ms até a página 0 chegar (para cair algo no meio)
+    anon: false, saiu: 0,     // depois do signOut, tudo sai como anônimo
+    ordem: [],                // ordem de chegada de claim/check
     chamadas: {}, porPagina: {}, maiorResposta: 0
   }, window.__redeInicial || {});
   var R = window.__rede;
+  var registrados = {}; (R.registrados || []).forEach(function(d){ registrados[d] = 1; });
+  // Degustação: o que o anônimo recebe (50 do Endodirect, outra versão).
+  function degustacao(){ var out = []; for (var i = 0; i < 50; i++) out.push({ code:'DEG-'+(i+1), inst:'Endodirect', ano:2024, area:'Diabetes', stem:'D'+(i+1)+' enunciado deg', options:{A:'a',B:'b',C:'c',D:'d'}, answer:'A', explanation:'x' }); return out; }
   function conta(n){ R.chamadas[n] = (R.chamadas[n]||0)+1; }
   var session = { access_token:'t', user:{ id:${JSON.stringify(UID)}, email:'aluna@exemplo.com', user_metadata:{ nome:'Aluna Teste' } } };
   var cache = {};
@@ -90,7 +112,7 @@ const FAKE_SUPABASE = `
       getSession: function(){ return Promise.resolve({ data:{ session: session } }); },
       getUser: function(){ return Promise.resolve({ data:{ user: session.user } }); },
       onAuthStateChange: function(cb){ setTimeout(function(){ try{ cb('SIGNED_IN', session); }catch(e){} }, 5); return { data:{ subscription:{ unsubscribe: function(){} } } }; },
-      signOut: function(){ return Promise.resolve({ error:null }); },
+      signOut: function(){ R.anon = true; R.saiu++; return Promise.resolve({ error:null }); },
       signInWithPassword: function(){ return Promise.resolve({ data:{ session: session }, error:null }); }
     },
     rpc: function(nome, args){
@@ -103,6 +125,7 @@ const FAKE_SUPABASE = `
       // App NOVO: conteúdo sem as questões …
       if (nome === 'endodirect_member_content_sem_provas') {
         if (R.conteudoFalha) return Promise.reject(new TypeError('Failed to fetch'));
+        if (R.anon) { var dc = conteudo(); dc.acessos = []; dc.member = false; return entrega(dc); }
         return entrega(conteudo());
       }
       // … e as questões em páginas de 500.
@@ -113,12 +136,25 @@ const FAKE_SUPABASE = `
         if (R.paginaInstavel && R.paginaInstavel.pagina === pg && R.paginaInstavel.vezes > 0) { R.paginaInstavel.vezes--; return Promise.reject(new TypeError('Failed to fetch')); }
         var versao = 'v1';
         if (R.versaoMuda) versao = (pg >= 1 && (R.porPagina[0]||0) === 1) ? 'v2' : ((R.porPagina[0]||0) >= 2 ? 'v2' : 'v1');
-        var lista = provas(versao);
-        return entrega({ versao: versao, total: lista.length, por_pagina: 500, paginas: Math.max(1, Math.ceil(lista.length/500)), pagina: pg, itens: lista.slice(pg*500, (pg+1)*500) });
+        // A resposta é a do momento do PEDIDO: pedido depois do signOut é anônimo.
+        var lista = R.anon ? degustacao() : provas(versao);
+        if (R.anon) versao = 'deg';
+        var resp = entrega({ versao: versao, total: lista.length, por_pagina: 500, paginas: Math.max(1, Math.ceil(lista.length/500)), pagina: pg, itens: lista.slice(pg*500, (pg+1)*500) });
+        if (pg === 0 && R.atrasoPagina0) return new Promise(function(ok, ko){ setTimeout(function(){ resp.then(ok, ko); }, R.atrasoPagina0); });
+        return resp;
       }
       if (nome === 'endodirect_acessos_ativos') {
         if (R.acessosFalha) return Promise.reject(new TypeError('Failed to fetch'));
-        return Promise.resolve({ data:['plano','plano:gold'], error:null });
+        return Promise.resolve({ data: R.anon ? [] : ['plano','plano:gold'], error:null });
+      }
+      // Limite de aparelhos (desligado por padrão: os cenários 1–7 não o testam).
+      if (nome === 'endodirect_session_claim' && R.limiteAparelhos) {
+        R.ordem.push('claim'); if (args && args.p_device_id) registrados[args.p_device_id] = 1;
+        return Promise.resolve({ data:true, error:null });
+      }
+      if (nome === 'endodirect_session_check' && R.limiteAparelhos) {
+        R.ordem.push('check');
+        return Promise.resolve({ data: !R.derrubar && !!(args && registrados[args.p_device_id]), error:null });
       }
       if (nome === 'endodirect_member_resumos') return Promise.resolve({ data:{ diretrizes:[], diretrizes_temas:[] }, error:null });
       if (nome === 'endodirect_mural_discussoes_ids') return Promise.resolve({ data:[], error:null });
@@ -209,8 +245,8 @@ async function esperaBanco(page, ms) {
     await esperaBanco(page, 9000);
     await page.waitForTimeout(300);
     const b = await lerBanco(page);
-    achados.push(`${rotulo}: "${b.info.slice(0, 70)}" | maior resposta ${kb(b.rede.maior)} | chamadas ${JSON.stringify(b.rede.chamadas)}${DEPOIS ? ' páginas ' + JSON.stringify(b.rede.porPagina) : ''}`);
-    if (DEPOIS) {
+    achados.push(`${rotulo}: "${b.info.slice(0, 70)}" | maior resposta ${kb(b.rede.maior)} | chamadas ${JSON.stringify(b.rede.chamadas)}${TEM_PAGINAS ? ' páginas ' + JSON.stringify(b.rede.porPagina) : ''}`);
+    if (TEM_PAGINAS) {
       ok(new RegExp('Mostrando ' + n + ' de ' + n).test(b.info), rotulo + ': esperava "Mostrando ' + n + ' de ' + n + '" (veio "' + b.info.slice(0, 80) + '")');
       // A maior resposta passa a ser o próprio conteúdo (~1,55 MB); página ~0,9 MB.
       ok(b.rede.maior < 2e6, rotulo + ': nenhuma resposta chega perto do limite (maior: ' + kb(b.rede.maior) + ')');
@@ -245,7 +281,7 @@ async function esperaBanco(page, ms) {
     ok(/btn-banco-retry/.test(busca) && !/Nenhuma questão encontrada/.test(busca), '3: Buscar durante o erro mantém o aviso com o botão');
     await page.screenshot({ path: path.join(__dirname, LADO + '-banco-erro.png') });
     // a rede volta
-    const antesDoClique = a.rede.chamadas[DEPOIS ? 'endodirect_member_provas_pagina' : 'endodirect_member_content'] || 0;
+    const antesDoClique = a.rede.chamadas[TEM_PAGINAS ? 'endodirect_member_provas_pagina' : 'endodirect_member_content'] || 0;
     await semModais(page);
     await page.click('#btn-banco-retry');
     await page.waitForFunction(() => /Mostrando/.test((document.getElementById('q-prova-info') || {}).textContent || ''), null, { timeout: 6000 }).catch(() => {});
@@ -253,7 +289,7 @@ async function esperaBanco(page, ms) {
     const b = await lerBanco(page);
     ok(/Mostrando 3 de 3/.test(b.info), '3: depois do Tentar de novo, "Mostrando 3 de 3" (veio: "' + b.info.slice(0, 80) + '")');
     ok(/Q1 enunciado|Q2 enunciado|Q3 enunciado/.test(b.resultados) && !/btn-banco-retry/.test(b.resultados), '3: as questões aparecem e o botão some');
-    const depoisDoClique = b.rede.chamadas[DEPOIS ? 'endodirect_member_provas_pagina' : 'endodirect_member_content'] || 0;
+    const depoisDoClique = b.rede.chamadas[TEM_PAGINAS ? 'endodirect_member_provas_pagina' : 'endodirect_member_content'] || 0;
     ok(depoisDoClique - antesDoClique === 1, '3: o Tentar de novo custou exatamente UMA chamada a mais (' + antesDoClique + ' → ' + depoisDoClique + ')');
     achados.push(`3 rede caindo nas questões: erro "${a.info.slice(0, 50)}" → após o botão "${b.info.slice(0, 40)}" | chamadas ${JSON.stringify(b.rede.chamadas)}`);
     await page.screenshot({ path: path.join(__dirname, LADO + '-banco-recuperado.png') });
@@ -261,7 +297,7 @@ async function esperaBanco(page, ms) {
     await ctx.close();
   }
 
-  if (DEPOIS) {
+  if (TEM_PAGINAS) {
     // ── 4. Uma página instável: repetida sozinha, banco completo ──────────────
     {
       const { ctx, page, erros } = await novaPagina(browser, URL, { rede: { nProvas: 2135, paginaInstavel: { pagina: 2, vezes: 2 } } });
@@ -303,7 +339,7 @@ async function esperaBanco(page, ms) {
     const { ctx, page } = await novaPagina(browser, URL, { rede: { nProvas: 3 } });
     await page.waitForTimeout(2500);
     const d = await page.evaluate(() => ({ c: window.__rede.chamadas, p: window.__rede.porPagina }));
-    if (DEPOIS) {
+    if (TEM_PAGINAS) {
       ok(d.c.endodirect_member_content_sem_provas === 1 && d.p[0] === 1 && !d.c.endodirect_member_content, '6: boot com sessão + SIGNED_IN faz UMA chamada de conteúdo e UMA página 0 (' + JSON.stringify(d) + ')');
     } else {
       ok(d.c.endodirect_member_content === 1, '6 (antes): UMA chamada ao member_content (' + JSON.stringify(d.c) + ')');
@@ -319,6 +355,55 @@ async function esperaBanco(page, ms) {
     const c = await page.evaluate(() => ({ chip: (document.getElementById('tb-plan') || {}).textContent || '', degBar: !!document.getElementById('degustacao-bar') }));
     ok(c.chip === 'Gold' && !c.degBar, '7: com acessos guardados, o chip já nasce "Gold" e sem faixa de degustação (veio: "' + c.chip + '")');
     ok(erros.length === 0, '7: sem pageerror (' + JSON.stringify(erros) + ')');
+    await ctx.close();
+  }
+
+  // ── 8. Aparelho NOVO, login (com a página 0 demorando) ─────────────────────
+  // O que aconteceu em produção em 12/10 12:42:40: a checagem do limite saía antes
+  // do registro e derrubava o próprio aparelho; depois do signOut, as páginas
+  // seguintes saíam como anônimo e a degustação era aplicada e gravada.
+  {
+    const { ctx, page, erros } = await novaPagina(browser, URL, { rede: { nProvas: 2135, limiteAparelhos: true, registrados: [], atrasoPagina0: 2500 } });
+    await page.waitForTimeout(6500);
+    const r = await page.evaluate(() => {
+      let ls = null; try { ls = JSON.parse(localStorage.getItem('endodirect_v1_provas')); } catch (e) {}
+      return { derrubado: !!document.getElementById('evicted-ov'), saiu: window.__rede.saiu, ordem: window.__rede.ordem.slice(0, 4).join(','),
+               guardadas: Array.isArray(ls) ? ls.length : null, deg: Array.isArray(ls) ? ls.filter((q) => /^DEG-/.test(q.code || '')).length : 0,
+               paginas: window.__rede.porPagina, info: (document.getElementById('q-prova-info') || {}).textContent || '' };
+    });
+    achados.push(`8 aparelho novo: derrubado=${r.derrubado} signOut=${r.saiu} ordem=${r.ordem} | guardadas no aparelho=${r.guardadas} (degustação ${r.deg}) | páginas ${JSON.stringify(r.paginas)}`);
+    if (TEM_REGISTRO) {
+      ok(!r.derrubado && r.saiu === 0, '8: aparelho novo NÃO é derrubado no próprio login (ordem ' + r.ordem + ')');
+      ok(/^claim/.test(r.ordem), '8: o registro sai antes de qualquer checagem (ordem ' + r.ordem + ')');
+      ok(r.deg === 0, '8: nenhuma questão da degustação aplicada');
+      await abreBanco(page);
+      await esperaBanco(page, 6000);
+      const b = await lerBanco(page);
+      ok(/Mostrando 2135 de 2135/.test(b.info), '8: o Banco chega inteiro (veio "' + b.info.slice(0, 80) + '")');
+    } else {
+      ok(r.derrubado && r.saiu === 1, '8 (sem a correção): reproduz a derrubada no próprio login (ordem ' + r.ordem + ')');
+      if (TEM_PAGINAS) ok(r.deg === 50, '8 (sem a correção): reproduz a degustação gravada no aparelho depois da derrubada (' + r.deg + ')');
+    }
+    ok(erros.length === 0, '8: sem pageerror (' + JSON.stringify(erros) + ')');
+    await ctx.close();
+  }
+  // ── 9. (com a correção) Derrubada de VERDADE com a página 0 em voo ─────────
+  if (TEM_REGISTRO) {
+    const { ctx, page, erros } = await novaPagina(browser, URL, { rede: { nProvas: 2135, limiteAparelhos: true, registrados: [], atrasoPagina0: 3500 } });
+    await page.waitForTimeout(1200);
+    // Um 3º aparelho tomou a vaga; o foco da janela dispara a checagem.
+    await page.evaluate(() => { window.__rede.derrubar = true; window.dispatchEvent(new Event('focus')); });
+    await page.waitForTimeout(4500);
+    const r = await page.evaluate(() => {
+      let ls = null; try { ls = JSON.parse(localStorage.getItem('endodirect_v1_provas')); } catch (e) {}
+      return { derrubado: !!document.getElementById('evicted-ov'), saiu: window.__rede.saiu, paginas: window.__rede.porPagina,
+               guardadas: Array.isArray(ls) ? ls.length : null, deg: Array.isArray(ls) ? ls.filter((q) => /^DEG-/.test(q.code || '')).length : 0 };
+    });
+    achados.push(`9 derrubada com a página 0 em voo: derrubado=${r.derrubado} signOut=${r.saiu} | páginas ${JSON.stringify(r.paginas)} | guardadas no aparelho=${r.guardadas}`);
+    ok(r.derrubado && r.saiu === 1, '9: a derrubada de verdade continua derrubando');
+    ok(JSON.stringify(r.paginas) === JSON.stringify({ 0: 1 }), '9: depois dela, nenhuma página a mais é pedida (' + JSON.stringify(r.paginas) + ')');
+    ok(r.guardadas === null && r.deg === 0, '9: nada é gravado no aparelho depois da derrubada (guardadas: ' + r.guardadas + ')');
+    ok(erros.length === 0, '9: sem pageerror (' + JSON.stringify(erros) + ')');
     await ctx.close();
   }
 
