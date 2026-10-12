@@ -307,10 +307,16 @@ formato dos lotes de 21/08 (sem `id`; a chave de merge do painel fica `stem|answ
 - Entrega: assinante (`plano`) **2.085 → 2.135**; `curso:endoteem` **2.711 → 2.761**;
   degustação: 46 das 50 seguem, entram as questões 2077, 2080, 2088 e 2089.
 - ⚠️ **`tmp_estudos_2026` não foi dropada.** O `DROP` pelo conector do Supabase espera
-  confirmação manual e expira em 60 s (três tentativas, nenhuma trava no banco). A tabela
-  está privada (RLS ligado, sem grant). Dropar pelo painel do Supabase.
+  confirmação manual e expira em 60 s (nenhuma trava no banco). A tabela está privada (RLS
+  ligado, sem grant) e as 50 linhas foram conferidas idênticas no banco; o SQL com guarda
+  para o editor do Supabase está em [[Pendências]].
 
-### 🧨 O `member_content` do Gold passou de ~5,34 para 5,43 MB
+### ✅ (resolvido em 12/10) O `member_content` do Gold passou de ~5,34 para 5,43 MB
+> **Resolvido no mesmo dia:** as questões saíram do `member_content` e vêm em páginas de
+> 500 (`endodirect_member_provas_pagina`, ~0,9–1,1 MB cada); o conteúdo sem elas tem
+> ~1,55 MB. Lote novo aumenta o número de páginas, não o tamanho de nenhuma resposta. Ver
+> [[Decisões]] 2026-10-12 e [[Dados e Supabase]]. O texto abaixo é o registro de antes.
+
 Medido com um Gold ativo, simulando o JWT dele (`request.jwt.claims` com o `sub`, a mesma
 chamada que o app faz): **5.426.825 bytes**, dos quais `provas` 3.875.392 (2.135 itens) e as
 50 novas 83.815. Antes do lote, ~5,34 MB. O cofre registra desde 23/07 que respostas perto

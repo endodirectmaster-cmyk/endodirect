@@ -40,7 +40,10 @@ const FAKE_SUPABASE = `
       signOut: function(){ return Promise.resolve({ error:null }); }
     },
     rpc: function(nome){
-      if (nome === 'endodirect_member_content') return Promise.resolve({ data:{ acessos:['plano','plano:gold'], member:true, provas:[], adm_avisos:[], podcasts:[], mm_shared:[], fc_shared:[], adm_cursos:[], cursos:[], radar_hidden:[],
+      // Desde 12/10/2026 o app chama o conteúdo sem as questões e as questões em
+      // páginas; o nome antigo fica para o A/B contra a main de antes.
+      if (nome === 'endodirect_member_provas_pagina') return Promise.resolve({ data:{ versao:'v', total:0, por_pagina:500, paginas:1, pagina:0, itens:[] }, error:null });
+      if (nome === 'endodirect_member_content' || nome === 'endodirect_member_content_sem_provas') return Promise.resolve({ data:{ acessos:['plano','plano:gold'], member:true, provas:[], adm_avisos:[], podcasts:[], mm_shared:[], fc_shared:[], adm_cursos:[], cursos:[], radar_hidden:[],
         // O tema extra do professor (sem capítulo) chega pela lista do servidor:
         // carregarResumos não aplica diretrizes_temas ao aluno (os extras são do editor).
         // "HAC" existe em duas subespecialidades, como em produção.

@@ -7,15 +7,37 @@ atualizado: 2026-10-12
 
 ## 📚 Banco de questões — o que ficou do lote de 12/10 (estudos de 2025 e 2026)
 
-1. **Separar `provas` do `endodirect_member_content` antes do próximo lote.** Medido em
-   12/10 com um Gold ativo: 5,43 MB de resposta, 71% dela em `provas` (2.135 itens). O
-   cofre registra falha no celular perto de 5,3 MB. Mesmo desenho de `member_resumos` e
-   `qotd_publicadas`: RPC própria, chamada em paralelo e com 3 tentativas no cliente.
-   Não feito neste lote porque mexe no cliente, no servidor e nos testes de boot.
-2. **Dropar `tmp_estudos_2026`** pelo painel do Supabase (o `DROP` pelo conector espera
-   confirmação manual). Está privada, com RLS ligado e sem grant.
+1. ✅ **RESOLVIDO em 12/10: as questões saíram do `endodirect_member_content`** e vêm em
+   páginas de 500 (`endodirect_member_provas_pagina`), em paralelo com o conteúdo sem elas
+   (`endodirect_member_content_sem_provas`, ~1,55 MB). Nenhuma resposta do aluno passa de
+   ~1,6 MB, e lote novo só aumenta o número de páginas. O ensaio por perfil achou um caso
+   que já estava acima do limite antes do lote: Gold com EndoTEEM, 7,24 MB. Ver
+   [[Decisões]] 2026-10-12 e [[Dados e Supabase]].
+2. **Dropar `tmp_estudos_2026`** — as 50 linhas estão no banco, idênticas, e nada depende
+   da tabela (sem view, função ou chave estrangeira), mas o `DROP` pelo conector do
+   Supabase espera confirmação manual e expira em 60 s: todas as tentativas de 12/10
+   (pelo `execute_sql` e, depois, pelo `apply_migration`) expiraram, sem nenhuma trava no
+   banco. Está privada (RLS ligado, sem grant). Para rodar no editor SQL do Supabase,
+   com guarda:
+   ```sql
+   do $$ begin
+     if (select count(*) from public.tmp_estudos_2026 t where not exists (
+           select 1 from jsonb_array_elements((select payload->'provas' from public.endodirect_global_state where id='main')) v
+            where v = t.item)) > 0
+     then raise exception 'há linha fora do banco: não dropar'; end if;
+   end $$;
+   drop table public.tmp_estudos_2026;
+   ```
 3. **Backups `bkp_provas_*`** (21/08, 21/08 SBD e 12/10) podem sair quando o professor
    confirmar os lotes.
+
+## 🧪 Testes assíncronos sem guarda de parada (achado em 12/10)
+
+Um teste com `await` cuja promessa nunca resolve sai com código 0 no meio, sem imprimir
+nada, e o CI lê isso como aprovado (ver [[Convenções de Trabalho]] 2026-10-12). O
+`test-banco-nao-fica-mudo.js` já tem a guarda. Sem ela, hoje: `test-ai-paginas-servidor.js`, `test-ai-system.js`, `test-aula-ao-vivo.js`, `test-aviso-feed-mudo-sem-spam.js`, `test-banco-feitas.js`, `test-discussao-cadeia.js`, `test-feedback.js`, `test-mural-titulo-pt.js`, `test-newsletter-optin.js`, `test-ponte-rss-pubmed.js`, `test-publico-seo.js`, `test-push-breaking-oficial.js`, `test-radar-cadencia.js`, `test-radar-feed-mudo.js`, `test-reengajamento.js`, `test-support-inbox.js`, `test-winback-novidades.js`.
+Correção mecânica (bandeira `terminou` + `process.on('exit')`), um arquivo por vez, rodando
+cada um antes e depois.
 
 ## 🧠 Questão do Dia — corrigida em 10/10; o que fica com o professor
 

@@ -1,14 +1,27 @@
-// O Banco de questões em Chromium REAL quando o member_content cai — ponta a ponta.
+// O Banco de questões em Chromium REAL — ponta a ponta, com A/B contra a main.
 //
 // POR QUE ISTO EXISTE (24/09/2026): o teste em `vm` prova que as funções se
 // comportam; este prova que o app INTEIRO, com login de assinante e Supabase
-// falso, mostra na tela o que o aluno precisa ver:
-//   1. conteúdo caindo 3× → o Banco mostra "Não foi possível carregar…" com
-//      o botão "Tentar de novo", e a Gold NÃO vira "Degustação" (os acessos
-//      vêm por chamada própria);
-//   2. clicar em "Tentar de novo" com a rede de volta → as questões aparecem;
-//   3. ao abrir de novo com a rede muda desde o início, o chip de plano
-//      continua "Gold" graças aos acessos guardados no aparelho.
+// falso, mostra na tela o que o aluno precisa ver.
+//
+// 12/10/2026 — AS QUESTÕES VIERAM PARA PÁGINAS. O Supabase falso agora derruba
+// toda resposta acima de LIMITE bytes (padrão 5,3 MB, o limite empírico que o
+// cofre registra no celular desde 23/07) e tem os tamanhos medidos em produção:
+// conteúdo ~1,55 MB; Gold com 2.135 questões (3,88 MB); Gold com EndoTEEM com
+// 3.015. Roda dos dois lados:
+//   LADO=antes RAIZ_APP=<pasta com o index.html da main>  → o app antigo
+//   LADO=depois (padrão, pasta do repositório)            → o app novo
+// Cenários:
+//   1. Gold, 2.135 questões: antes, o member_content (5,43 MB) não passa e o
+//      Banco fica em erro; depois, conteúdo + 5 páginas chegam e o Banco mostra
+//      as 2.135.
+//   2. Gold com EndoTEEM, 3.015 questões: idem (antes 7,2 MB; depois 7 páginas).
+//   3. Rede caindo só nas questões, banco pequeno: erro com "Tentar de novo",
+//      a Gold segue Gold; com a rede de volta, o botão traz as questões.
+//   4. (depois) Uma página instável: repetida sozinha, banco completo.
+//   5. (depois) O banco muda no meio da carga: nenhuma colcha de duas versões.
+//   6. Uma carga por vez no boot (getSession + SIGNED_IN).
+//   7. Rede muda desde o início com acessos guardados: o chip nasce "Gold".
 //
 // Como: o <script> do supabase-js é interceptado e substituído por um cliente
 // falso (window.supabase.createClient) com sessão de aluno real; os demais
@@ -19,22 +32,49 @@ const fs = require('fs');
 const path = require('path');
 const { chromium } = require(process.env.PLAYWRIGHT_CORE || 'playwright-core');
 
-const RAIZ = path.join(__dirname, '..', '..');
+const RAIZ = process.env.RAIZ_APP || path.join(__dirname, '..', '..');
+const LADO = process.env.LADO || 'depois';
+const DEPOIS = LADO === 'depois';
 const CHROME = '/opt/pw-browsers/chromium-1194/chrome-linux/chrome';
 const UID = '11111111-2222-3333-4444-555555555555';
+const PORTA = DEPOIS ? 8811 : 8812;
 // Versão das novidades, lida do próprio index.html: a chave guardada tem de bater.
 const WHATSNEW_VER = (fs.readFileSync(path.join(RAIZ, 'index.html'), 'utf8').match(/var WHATSNEW_VER='([^']+)'/) || [])[1] || '';
 
 const FAKE_SUPABASE = `
 (function(){
-  window.__rede = Object.assign({ conteudoFalha: true, acessosFalha: false, chamadas: {} }, window.__redeInicial || {});
-  function conta(n){ window.__rede.chamadas[n] = (window.__rede.chamadas[n]||0)+1; }
+  window.__rede = Object.assign({
+    limite: 5300000,          // resposta maior que isto "não chega" (TypeError, como a rede do celular)
+    nProvas: 3,               // questões do aluno
+    pad: 1650,                // tamanho do comentário (~1,8 KB por questão, como em produção)
+    bytesConteudo: 1550000,   // tamanho do resto do conteúdo (medido: ~1,55 MB no Gold)
+    provasFalha: 0,           // quantas vezes CADA chamada de questões cai antes de responder
+    paginaInstavel: null,     // {pagina, vezes}: só esta página cai
+    versaoMuda: false,        // na 1ª volta, as páginas >= 1 vêm de outra versão
+    conteudoFalha: false, acessosFalha: false,
+    chamadas: {}, porPagina: {}, maiorResposta: 0
+  }, window.__redeInicial || {});
+  var R = window.__rede;
+  function conta(n){ R.chamadas[n] = (R.chamadas[n]||0)+1; }
   var session = { access_token:'t', user:{ id:${JSON.stringify(UID)}, email:'aluna@exemplo.com', user_metadata:{ nome:'Aluna Teste' } } };
-  var PROVAS = [
-    { code:'ED-1', inst:'Endodirect', ano:2024, area:'Diabetes', stem:'Q1 enunciado', options:{A:'a',B:'b',C:'c',D:'d'}, answer:'A', explanation:'x' },
-    { code:'ED-2', inst:'Endodirect', ano:2024, area:'Tireoide', stem:'Q2 enunciado', options:{A:'a',B:'b',C:'c',D:'d'}, answer:'B', explanation:'x' },
-    { code:'ED-3', inst:'USP', ano:2023, area:'Adrenal', stem:'Q3 enunciado', options:{A:'a',B:'b',C:'c',D:'d'}, answer:'C', explanation:'x' }
-  ];
+  var cache = {};
+  function provas(versao){
+    var PAD = new Array(R.pad + 1).join('x');
+    var k = versao + ':' + R.nProvas + ':' + R.pad;
+    if (cache[k]) return cache[k];
+    var out = [];
+    for (var i = 0; i < R.nProvas; i++) out.push({ code:'ED-'+(i+1), inst:(i%3===2?'USP':'Endodirect'), ano:2024, area:(i%2?'Tireoide':'Diabetes'),
+      stem:'Q'+(i+1)+' enunciado '+versao, options:{A:'a',B:'b',C:'c',D:'d'}, answer:'A', explanation:PAD });
+    return (cache[k] = out);
+  }
+  function conteudo(){ return { acessos:['plano','plano:gold'], member:true, adm_avisos:[], podcasts:[], mm_shared:[], fc_shared:[], adm_cursos:[], cursos:[], radar_hidden:[], acervo_totais:{provas:R.nProvas}, _enchimento:new Array(R.bytesConteudo+1).join('c') }; }
+  // A "travessia": acima do limite, a resposta não chega.
+  function entrega(data){
+    var n = JSON.stringify(data).length;
+    R.maiorResposta = Math.max(R.maiorResposta, n);
+    if (n > R.limite) return Promise.reject(new TypeError('Failed to fetch'));
+    return Promise.resolve({ data:data, error:null });
+  }
   function builder(){
     var st = { single:false };
     var b = {};
@@ -53,18 +93,36 @@ const FAKE_SUPABASE = `
       signOut: function(){ return Promise.resolve({ error:null }); },
       signInWithPassword: function(){ return Promise.resolve({ data:{ session: session }, error:null }); }
     },
-    rpc: function(nome){
+    rpc: function(nome, args){
       conta(nome);
+      // App ANTIGO: conteúdo e questões numa resposta só.
       if (nome === 'endodirect_member_content') {
-        if (window.__rede.conteudoFalha) return Promise.reject(new TypeError('Failed to fetch'));
-        return Promise.resolve({ data:{ acessos:['plano','plano:gold'], member:true, provas:PROVAS, adm_avisos:[], podcasts:[], mm_shared:[], fc_shared:[], adm_cursos:[], cursos:[], radar_hidden:[], acervo_totais:{provas:3} }, error:null });
+        if (R.conteudoFalha || R.provasFalha > 0) { if (R.provasFalha > 0) R.provasFalha--; return Promise.reject(new TypeError('Failed to fetch')); }
+        var d = conteudo(); d.provas = provas('v1'); return entrega(d);
+      }
+      // App NOVO: conteúdo sem as questões …
+      if (nome === 'endodirect_member_content_sem_provas') {
+        if (R.conteudoFalha) return Promise.reject(new TypeError('Failed to fetch'));
+        return entrega(conteudo());
+      }
+      // … e as questões em páginas de 500.
+      if (nome === 'endodirect_member_provas_pagina') {
+        var pg = (args && args.p_pagina) || 0;
+        R.porPagina[pg] = (R.porPagina[pg]||0)+1;
+        if (R.provasFalha > 0) { R.provasFalha--; return Promise.reject(new TypeError('Failed to fetch')); }
+        if (R.paginaInstavel && R.paginaInstavel.pagina === pg && R.paginaInstavel.vezes > 0) { R.paginaInstavel.vezes--; return Promise.reject(new TypeError('Failed to fetch')); }
+        var versao = 'v1';
+        if (R.versaoMuda) versao = (pg >= 1 && (R.porPagina[0]||0) === 1) ? 'v2' : ((R.porPagina[0]||0) >= 2 ? 'v2' : 'v1');
+        var lista = provas(versao);
+        return entrega({ versao: versao, total: lista.length, por_pagina: 500, paginas: Math.max(1, Math.ceil(lista.length/500)), pagina: pg, itens: lista.slice(pg*500, (pg+1)*500) });
       }
       if (nome === 'endodirect_acessos_ativos') {
-        if (window.__rede.acessosFalha) return Promise.reject(new TypeError('Failed to fetch'));
+        if (R.acessosFalha) return Promise.reject(new TypeError('Failed to fetch'));
         return Promise.resolve({ data:['plano','plano:gold'], error:null });
       }
       if (nome === 'endodirect_member_resumos') return Promise.resolve({ data:{ diretrizes:[], diretrizes_temas:[] }, error:null });
       if (nome === 'endodirect_mural_discussoes_ids') return Promise.resolve({ data:[], error:null });
+      if (nome === 'endodirect_qotd_publicadas') return Promise.resolve({ data:[], error:null });
       return Promise.resolve({ data:null, error:null });
     },
     from: function(){ return builder(); },
@@ -77,7 +135,7 @@ const FAKE_SUPABASE = `
 function serve(dir, port) {
   return new Promise((res) => {
     const s = http.createServer((req, r) => {
-      const p = path.join(dir, req.url === '/' ? 'index.html' : req.url.split('?')[0]);
+      const p = path.join(dir, req.url === '/' ? 'index.html' : decodeURIComponent(req.url.split('?')[0]));
       fs.readFile(p, (e, b) => {
         if (e) { r.statusCode = 404; return r.end('nao encontrado'); }
         r.setHeader('Content-Type', p.endsWith('.html') ? 'text/html; charset=utf-8' : 'application/javascript');
@@ -92,9 +150,7 @@ async function novaPagina(browser, url, opts) {
   const ctx = await browser.newContext({ viewport: { width: 1280, height: 900 } });
   const page = await ctx.newPage();
   const erros = [];
-  const consoleMsgs = [];
   page.on('pageerror', (e) => erros.push(String((e && e.message) || e).slice(0, 300)));
-  page.on('console', (m) => { if (m.type() === 'error' || m.type() === 'warning') consoleMsgs.push(m.type() + ': ' + m.text().slice(0, 300)); });
   // Estado local: mesmo usuário neste navegador, com perfil (senão abre o onboarding).
   await page.addInitScript(({ uid, acessos, rede, wn }) => {
     window.__redeInicial = rede || {};
@@ -111,105 +167,163 @@ async function novaPagina(browser, url, opts) {
     return route.fulfill({ status: 200, contentType: 'application/javascript', body: '/* stub offline */' });
   });
   await page.goto(url, { waitUntil: 'load', timeout: 60000 });
-  return { ctx, page, erros, consoleMsgs };
+  return { ctx, page, erros };
+}
+// Janelas modais (novidades, enquete, convite de feedback…) cobrem a tela e
+// engolem cliques; não são o objeto deste teste.
+const semModais = (page) => page.evaluate(() => { document.querySelectorAll('.modal-bg').forEach((m) => { m.style.display = 'none'; }); });
+async function abreBanco(page) {
+  await semModais(page);
+  await page.click('button.sb-item[data-p="quest"]', { timeout: 8000 });
+  await page.waitForTimeout(300);
+}
+const lerBanco = (page) => page.evaluate(() => ({
+  info: (document.getElementById('q-prova-info') || {}).textContent || '',
+  resultados: (document.getElementById('q-gen-results') || {}).innerHTML || '',
+  chip: (document.getElementById('tb-plan') || {}).textContent || '',
+  degBar: !!document.getElementById('degustacao-bar'),
+  rede: { chamadas: window.__rede.chamadas, porPagina: window.__rede.porPagina, maior: window.__rede.maiorResposta },
+}));
+// Espera a carga assentar: "Mostrando" ou o aviso de erro (com as tentativas e esperas do app).
+async function esperaBanco(page, ms) {
+  try {
+    await page.waitForFunction(() => {
+      const t = (document.getElementById('q-prova-info') || {}).textContent || '';
+      return /Mostrando|Não foi possível carregar o banco/.test(t);
+    }, null, { timeout: ms || 9000 });
+  } catch (e) { /* o estado lido em seguida diz o que houve */ }
 }
 
 (async () => {
-  const srv = await serve(RAIZ, 8811);
+  const srv = await serve(RAIZ, PORTA);
+  const URL = 'http://127.0.0.1:' + PORTA + '/';
   const browser = await chromium.launch({ executablePath: CHROME, args: ['--no-sandbox'] });
-  const problemas = [];
+  const problemas = [], achados = [];
   const ok = (c, m) => { if (!c) problemas.push(m); };
+  const kb = (n) => (n / 1e6).toFixed(2) + ' MB';
 
-  // ── Cenário A: primeira abertura, conteúdo cai 3×, acessos chegam ──────────
+  // ── 1 e 2. O tamanho real: Gold (2.135) e Gold com EndoTEEM (3.015) ─────────
+  for (const [rotulo, n] of [['1 Gold', 2135], ['2 Gold+EndoTEEM', 3015]]) {
+    const { ctx, page, erros } = await novaPagina(browser, URL, { rede: { nProvas: n } });
+    await abreBanco(page);
+    await esperaBanco(page, 9000);
+    await page.waitForTimeout(300);
+    const b = await lerBanco(page);
+    achados.push(`${rotulo}: "${b.info.slice(0, 70)}" | maior resposta ${kb(b.rede.maior)} | chamadas ${JSON.stringify(b.rede.chamadas)}${DEPOIS ? ' páginas ' + JSON.stringify(b.rede.porPagina) : ''}`);
+    if (DEPOIS) {
+      ok(new RegExp('Mostrando ' + n + ' de ' + n).test(b.info), rotulo + ': esperava "Mostrando ' + n + ' de ' + n + '" (veio "' + b.info.slice(0, 80) + '")');
+      // A maior resposta passa a ser o próprio conteúdo (~1,55 MB); página ~0,9 MB.
+      ok(b.rede.maior < 2e6, rotulo + ': nenhuma resposta chega perto do limite (maior: ' + kb(b.rede.maior) + ')');
+      ok(!b.rede.chamadas.endodirect_member_content, rotulo + ': o app novo não chama o member_content antigo');
+      const nPag = Math.ceil(n / 500);
+      ok(Object.keys(b.rede.porPagina).length === nPag && Object.values(b.rede.porPagina).every((v) => v === 1), rotulo + ': ' + nPag + ' páginas, uma chamada cada (' + JSON.stringify(b.rede.porPagina) + ')');
+      ok(b.chip === 'Gold' && !b.degBar, rotulo + ': chip "Gold", sem faixa de degustação');
+    } else {
+      // O defeito que esta mudança corrige: a resposta única não passa do limite.
+      ok(/Não foi possível carregar o banco de questões/.test(b.info), rotulo + ' (antes): esperava o Banco em erro com a resposta acima do limite (veio "' + b.info.slice(0, 80) + '")');
+      ok(b.rede.chamadas.endodirect_member_content === 3, rotulo + ' (antes): 3 tentativas do member_content (houve ' + b.rede.chamadas.endodirect_member_content + ')');
+    }
+    await page.screenshot({ path: path.join(__dirname, LADO + '-cenario' + rotulo[0] + '.png') });
+    ok(erros.length === 0, rotulo + ': sem pageerror (' + JSON.stringify(erros) + ')');
+    await ctx.close();
+  }
+
+  // ── 3. Rede caindo só nas questões (banco pequeno); depois "Tentar de novo" ──
   {
-    const { ctx, page, erros, consoleMsgs } = await novaPagina(browser, 'http://127.0.0.1:8811/', {});
-    // 3 tentativas com 900+1800 ms de espera: dá tempo.
-    await page.waitForTimeout(4500);
-    const chamadas = await page.evaluate(() => window.__rede.chamadas);
-    ok(chamadas.endodirect_member_content === 3, 'A: esperava 3 chamadas ao member_content, houve ' + chamadas.endodirect_member_content);
-    ok(chamadas.endodirect_acessos_ativos >= 1, 'A: os acessos foram pedidos por chamada própria');
-    await page.screenshot({ path: path.join(__dirname, 'a-boot.png') });
-    const estadoBoot = await page.evaluate(() => ({
-      login: (document.getElementById('login-screen') || {}).style ? document.getElementById('login-screen').style.display : '?',
-      app: (document.getElementById('app-screen') || {}).style ? document.getElementById('app-screen').style.display : '?',
-      onboard: (document.getElementById('onboard-modal') || {}).style ? document.getElementById('onboard-modal').style.display : '?',
-      erro: (document.getElementById('login-err') || {}).textContent || ''
-    }));
-    const storage = await page.evaluate(() => ({ profile: localStorage.getItem('endodirect_v1_user_profile'), last: localStorage.getItem('endodirect_v1_last_uid'), keys: Object.keys(localStorage) }));
-    console.log('estado após o boot (A):', JSON.stringify(estadoBoot), 'chamadas:', JSON.stringify(chamadas), 'storage:', JSON.stringify(storage));
-    console.log('pageerrors:', JSON.stringify(erros), 'console:', JSON.stringify(consoleMsgs.slice(0, 12)));
-    // Janelas modais (novidades, enquete CME, convite de feedback…) cobrem a tela
-    // e engolem cliques; não são o objeto deste teste.
-    const semModais = () => page.evaluate(() => { document.querySelectorAll('.modal-bg').forEach((m) => { m.style.display = 'none'; }); });
-    await semModais();
-    await page.click('button.sb-item[data-p="quest"]', { timeout: 8000 });
-    await page.waitForTimeout(400);
-    const a = await page.evaluate(() => ({
-      info: (document.getElementById('q-prova-info') || {}).textContent || '',
-      resultados: (document.getElementById('q-gen-results') || {}).innerHTML || '',
-      chip: (document.getElementById('tb-plan') || {}).textContent || '',
-      degBar: !!document.getElementById('degustacao-bar'),
-      appVisivel: (document.getElementById('app-screen') || {}).style ? document.getElementById('app-screen').style.display : ''
-    }));
-    ok(/Não foi possível carregar o banco de questões/.test(a.info), 'A: #q-prova-info diz que não carregou (veio: "' + a.info.slice(0, 80) + '")');
-    ok(/id="btn-banco-retry"/.test(a.resultados), 'A: a área de resultados tem o botão Tentar de novo');
-    ok(!/Nenhuma questão/.test(a.resultados), 'A: não diz "Nenhuma questão"');
-    ok(a.chip === 'Gold', 'A: chip de plano é "Gold", não "Degustação" (veio: "' + a.chip + '")');
-    ok(!a.degBar, 'A: a faixa de degustação NÃO aparece para a Gold com o conteúdo caído');
-    // Buscar com o banco vazio também explica, em vez de "Nenhuma questão encontrada".
-    await semModais();
+    const { ctx, page, erros } = await novaPagina(browser, URL, { rede: { nProvas: 3, provasFalha: 3 } });
+    await abreBanco(page);
+    await esperaBanco(page, 9000);
+    await page.waitForTimeout(200);
+    const a = await lerBanco(page);
+    ok(/Não foi possível carregar o banco de questões/.test(a.info), '3: #q-prova-info diz que não carregou (veio: "' + a.info.slice(0, 80) + '")');
+    ok(/id="btn-banco-retry"/.test(a.resultados) && !/Nenhuma questão/.test(a.resultados), '3: a área de resultados tem o botão Tentar de novo, sem "Nenhuma questão"');
+    ok(a.chip === 'Gold' && !a.degBar, '3: chip "Gold" e sem faixa de degustação com as questões caídas (veio: "' + a.chip + '")');
+    await semModais(page);
     await page.click('#btn-filter-provas');
     await page.waitForTimeout(200);
     const busca = await page.evaluate(() => (document.getElementById('q-gen-results') || {}).innerHTML || '');
-    ok(/btn-banco-retry/.test(busca) && !/Nenhuma questão encontrada/.test(busca), 'A: Buscar durante o erro mantém o aviso com o botão');
-    await page.screenshot({ path: path.join(__dirname, 'banco-erro.png') });
-
-    // ── Cenário B: rede volta, clique em "Tentar de novo" ───────────────────
-    await page.evaluate(() => { window.__rede.conteudoFalha = false; });
-    await semModais();
+    ok(/btn-banco-retry/.test(busca) && !/Nenhuma questão encontrada/.test(busca), '3: Buscar durante o erro mantém o aviso com o botão');
+    await page.screenshot({ path: path.join(__dirname, LADO + '-banco-erro.png') });
+    // a rede volta
+    const antesDoClique = a.rede.chamadas[DEPOIS ? 'endodirect_member_provas_pagina' : 'endodirect_member_content'] || 0;
+    await semModais(page);
     await page.click('#btn-banco-retry');
-    await page.waitForTimeout(1200);
-    await semModais();
-    const b = await page.evaluate(() => ({
-      info: (document.getElementById('q-prova-info') || {}).textContent || '',
-      resultados: (document.getElementById('q-gen-results') || {}).innerHTML || '',
-      chamadas: window.__rede.chamadas
-    }));
-    ok(/Mostrando 3 de 3/.test(b.info), 'B: depois do Tentar de novo, "Mostrando 3 de 3" (veio: "' + b.info.slice(0, 80) + '")');
-    ok(/Q1 enunciado|Q2 enunciado|Q3 enunciado/.test(b.resultados), 'B: as questões aparecem na tela');
-    ok(!/btn-banco-retry/.test(b.resultados), 'B: o botão de tentar de novo sumiu');
-    ok(b.chamadas.endodirect_member_content === 4, 'B: o Tentar de novo custou exatamente UMA chamada a mais (total ' + b.chamadas.endodirect_member_content + ')');
-    await page.screenshot({ path: path.join(__dirname, 'banco-recuperado.png') });
-    ok(erros.length === 0, 'A/B: sem pageerror (' + JSON.stringify(erros) + ')');
+    await page.waitForFunction(() => /Mostrando/.test((document.getElementById('q-prova-info') || {}).textContent || ''), null, { timeout: 6000 }).catch(() => {});
+    await semModais(page);
+    const b = await lerBanco(page);
+    ok(/Mostrando 3 de 3/.test(b.info), '3: depois do Tentar de novo, "Mostrando 3 de 3" (veio: "' + b.info.slice(0, 80) + '")');
+    ok(/Q1 enunciado|Q2 enunciado|Q3 enunciado/.test(b.resultados) && !/btn-banco-retry/.test(b.resultados), '3: as questões aparecem e o botão some');
+    const depoisDoClique = b.rede.chamadas[DEPOIS ? 'endodirect_member_provas_pagina' : 'endodirect_member_content'] || 0;
+    ok(depoisDoClique - antesDoClique === 1, '3: o Tentar de novo custou exatamente UMA chamada a mais (' + antesDoClique + ' → ' + depoisDoClique + ')');
+    achados.push(`3 rede caindo nas questões: erro "${a.info.slice(0, 50)}" → após o botão "${b.info.slice(0, 40)}" | chamadas ${JSON.stringify(b.rede.chamadas)}`);
+    await page.screenshot({ path: path.join(__dirname, LADO + '-banco-recuperado.png') });
+    ok(erros.length === 0, '3: sem pageerror (' + JSON.stringify(erros) + ')');
     await ctx.close();
   }
 
-  // ── Cenário C: rede muda desde o início; acessos guardados no aparelho ──────
-  {
-    // Conteúdo E acessos caindo desde o início: só o cache do aparelho segura o plano.
-    const { ctx, page, erros } = await novaPagina(browser, 'http://127.0.0.1:8811/', { acessosGuardados: ['plano', 'plano:gold'], rede: { conteudoFalha: true, acessosFalha: true } });
-    await page.waitForTimeout(300);
-    const c = await page.evaluate(() => ({
-      chip: (document.getElementById('tb-plan') || {}).textContent || '',
-      degBar: !!document.getElementById('degustacao-bar')
-    }));
-    ok(c.chip === 'Gold', 'C: com acessos guardados, o chip já nasce "Gold" antes de qualquer resposta (veio: "' + c.chip + '")');
-    ok(!c.degBar, 'C: sem faixa de degustação no boot');
-    ok(erros.length === 0, 'C: sem pageerror (' + JSON.stringify(erros) + ')');
-    await ctx.close();
+  if (DEPOIS) {
+    // ── 4. Uma página instável: repetida sozinha, banco completo ──────────────
+    {
+      const { ctx, page, erros } = await novaPagina(browser, URL, { rede: { nProvas: 2135, paginaInstavel: { pagina: 2, vezes: 2 } } });
+      await abreBanco(page);
+      await esperaBanco(page, 9000);
+      const b = await lerBanco(page);
+      ok(/Mostrando 2135 de 2135/.test(b.info), '4: com a página 2 caindo duas vezes, o banco chega inteiro (veio "' + b.info.slice(0, 80) + '")');
+      ok(b.rede.porPagina[2] === 3 && b.rede.porPagina[0] === 1 && b.rede.porPagina[4] === 1, '4: só a página instável é repetida (' + JSON.stringify(b.rede.porPagina) + ')');
+      achados.push(`4 página 2 instável: "${b.info.slice(0, 40)}" | páginas ${JSON.stringify(b.rede.porPagina)}`);
+      ok(erros.length === 0, '4: sem pageerror (' + JSON.stringify(erros) + ')');
+      await ctx.close();
+    }
+    // ── 5. O banco muda no meio da carga ─────────────────────────────────────
+    {
+      // Questões curtas aqui: a conferência lê a cópia gravada no aparelho, que tem cota.
+      const { ctx, page, erros } = await novaPagina(browser, URL, { rede: { nProvas: 1200, pad: 10, versaoMuda: true } });
+      await abreBanco(page);
+      await esperaBanco(page, 9000);
+      const b = await lerBanco(page);
+      const versoes = await page.evaluate(() => {
+        // O app roda numa IIFE (provasDB não é alcançável daqui): confere o que ele
+        // gravou no aparelho, que é exatamente a lista aplicada (applyStatePayload).
+        let lista = null;
+        try { lista = JSON.parse(localStorage.getItem('endodirect_v1_provas')); } catch (e) {}
+        if (!Array.isArray(lista)) return { erro: 'cópia local ausente' };
+        const s = {}; lista.forEach((q) => { const v = (q.stem || '').split(' ').pop(); s[v] = (s[v] || 0) + 1; }); return s;
+      });
+      ok(/Mostrando 1200 de 1200/.test(b.info), '5: banco completo depois da mudança no meio (veio "' + b.info.slice(0, 80) + '")');
+      ok(b.rede.porPagina[0] === 2, '5: a carga recomeçou uma vez (página 0 pedida ' + b.rede.porPagina[0] + '×)');
+      ok(JSON.stringify(versoes) === JSON.stringify({ v2: 1200 }), '5: todas as questões da MESMA versão, nenhuma colcha (' + JSON.stringify(versoes) + ')');
+      achados.push(`5 banco muda no meio: "${b.info.slice(0, 40)}" | versões na memória ${JSON.stringify(versoes)} | páginas ${JSON.stringify(b.rede.porPagina)}`);
+      ok(erros.length === 0, '5: sem pageerror (' + JSON.stringify(erros) + ')');
+      await ctx.close();
+    }
   }
 
-  // ── Cenário D: uma carga por vez — dois hydrates no boot não duplicam a chamada ──
+  // ── 6. Uma carga por vez: getSession e SIGNED_IN no boot ──────────────────
   {
-    const { ctx, page } = await novaPagina(browser, 'http://127.0.0.1:8811/', { rede: { conteudoFalha: false } });
+    const { ctx, page } = await novaPagina(browser, URL, { rede: { nProvas: 3 } });
     await page.waitForTimeout(2500);
-    const d = await page.evaluate(() => window.__rede.chamadas);
-    // getSession e SIGNED_IN entram os dois no boot; antes eram 2 member_content.
-    ok(d.endodirect_member_content === 1, 'D: boot com sessão + SIGNED_IN faz UMA chamada ao member_content (houve ' + d.endodirect_member_content + ')');
+    const d = await page.evaluate(() => ({ c: window.__rede.chamadas, p: window.__rede.porPagina }));
+    if (DEPOIS) {
+      ok(d.c.endodirect_member_content_sem_provas === 1 && d.p[0] === 1 && !d.c.endodirect_member_content, '6: boot com sessão + SIGNED_IN faz UMA chamada de conteúdo e UMA página 0 (' + JSON.stringify(d) + ')');
+    } else {
+      ok(d.c.endodirect_member_content === 1, '6 (antes): UMA chamada ao member_content (' + JSON.stringify(d.c) + ')');
+    }
+    achados.push(`6 boot: ${JSON.stringify(d.c)}`);
+    await ctx.close();
+  }
+
+  // ── 7. Rede muda desde o início; acessos guardados no aparelho ─────────────
+  {
+    const { ctx, page, erros } = await novaPagina(browser, URL, { acessosGuardados: ['plano', 'plano:gold'], rede: { conteudoFalha: true, acessosFalha: true, provasFalha: 99 } });
+    await page.waitForTimeout(300);
+    const c = await page.evaluate(() => ({ chip: (document.getElementById('tb-plan') || {}).textContent || '', degBar: !!document.getElementById('degustacao-bar') }));
+    ok(c.chip === 'Gold' && !c.degBar, '7: com acessos guardados, o chip já nasce "Gold" e sem faixa de degustação (veio: "' + c.chip + '")');
+    ok(erros.length === 0, '7: sem pageerror (' + JSON.stringify(erros) + ')');
     await ctx.close();
   }
 
   await browser.close(); srv.close();
-  if (problemas.length) { console.error('\nREPROVADO:\n- ' + problemas.join('\n- ')); process.exit(1); }
-  console.log('OK — em Chromium real: conteúdo caído 3× mostra o aviso com Tentar de novo e a Gold segue Gold; o botão recarrega e as questões aparecem; acessos guardados seguram o plano com a rede muda; o boot faz uma carga só.');
+  console.log('[' + LADO + '] ' + achados.join('\n[' + LADO + '] '));
+  if (problemas.length) { console.error('\n[' + LADO + '] REPROVADO:\n- ' + problemas.join('\n- ')); process.exit(1); }
+  console.log('[' + LADO + '] OK — todas as expectativas deste lado conferem em Chromium real.');
 })().catch((e) => { console.error('erro no harness:', e); process.exit(2); });

@@ -1,6 +1,6 @@
 ---
 tags: [cofre, processo]
-atualizado: 2026-10-09
+atualizado: 2026-10-12
 ---
 
 # Convenções de Trabalho
@@ -132,6 +132,21 @@ session limit · resets 11pm (UTC)") com 64 agentes perdidos de uma vez; só os
    digitada era válida, e as outras partes foram recalculadas sobre o que
    sobrou. O args vai para o `Workflow` copiado do arquivo, e o arquivo é
    conferido contra o que foi lançado antes de lançar os demais.
+
+## 🧨 TESTE ASSÍNCRONO QUE PARA NO MEIO SAI COM CÓDIGO 0 (2026-10-12)
+
+Na separação das questões do `member_content`, a mutação que tirava a guarda de carga
+em voo **passou** no `test-banco-nao-fica-mudo.js`. O teste não estava cego: sem a
+guarda, uma das cargas do caso ficou esperando uma resposta que o servidor falso nunca
+deu, a promessa ficou pendente, o laço de eventos do Node esvaziou e o processo saiu
+**com código 0, no meio do teste, sem imprimir nada** — nem "ok", nem falha. O
+`ci-validate` e o executor de mutações só olham o código de saída.
+
+**Regra:** teste com `(async () => { … })()` registra `process.on('exit')` com uma
+bandeira `terminou`, ligada só depois da última asserção; saída com 0 antes dela
+reprova ("o teste parou no meio"). E o caso de teste solta todas as respostas
+pendentes, para a regressão aparecer como asserção com mensagem, não só como parada.
+Os testes antigos com `await` e sem essa guarda estão listados em [[Pendências]].
 
 ## 🧨 FUNÇÃO REESCRITA A PARTIR DE CÓPIA VELHA PERDE O QUE VEIO ANTES (2026-09-24)
 

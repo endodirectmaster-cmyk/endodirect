@@ -1,9 +1,22 @@
 ---
 tags: [cofre, integracoes, marketing]
-atualizado: 2026-08-16
+atualizado: 2026-10-12
 ---
 
 # Instagram Stories — "Questão do Dia"
+
+## 🧑‍🏫 Lotes distribuídos aos professores (`ig_pending`, desde 11/10/2026)
+
+Preferência do professor (11/10): *"antes de lançar na fila, distribua essas questões
+para os professores aprovarem"*. Lote gerado pela coordenação entra em `ig_pending` com o
+formato de `igMakePending` (status `pending`, `distributedBy`), e cada professor aprova
+só as suas subespecialidades na aba Pendências (`QOTD_CURATORS`); só depois vai para a
+fila (`ig_stories`). Detalhes de cada lote em [[Decisões]].
+
+| data | lote | distribuição |
+|---|---|---|
+| 11/10 | 12 sobre as correções do acervo de 10/10 | Eduardo 5, Rafael 3, Rodolpho 3, Bruno 1 |
+| 12/10 | 5 sobre estudos de 2025–2026 (SYNCHRONIZE-1, ESSENCE-TIMI 73b, Bax24, REIMAGINE 2, Opti-DOR) | Rodolpho 3, Rafael 1, Eduardo 1 |
 
 ## 🚨 A QUESTÃO DE HOJE ESTAVA NA ÚLTIMA LINHA DA LISTA DO ALUNO (2026-08-16)
 

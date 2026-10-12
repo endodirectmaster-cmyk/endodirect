@@ -1,3 +1,8 @@
+-- ⚠️ SUBSTITUÍDO EM 12/10/2026 por supabase/provas-em-rpc-propria.sql: as questões
+-- saíram desta função (vêm em páginas por endodirect_member_provas_pagina) e o
+-- endodirect_member_content passou a ser a composição de duas funções. O corpo
+-- abaixo é o de 24/09, guardado como histórico — não reaplicar.
+--
 -- O member_content deixa de mandar o que o aluno não usa: 12,3 MB viram ~5,3 MB.
 --
 -- 24/09/2026. Uma assinante Gold escreveu no feedback: "as questões não aparecem
