@@ -4957,8 +4957,9 @@ function recarregarResumos(){
 // assinante como degustação (painéis trancados, faixa de teste).
 // Agora: (1) os acessos vêm numa chamada própria e minúscula, com cache local
 // por usuário; (2) o conteúdo tenta 3× com espera crescente e, se esgotar,
-// conteudoErro=true — o Banco diz o que houve e oferece tentar de novo.
-var conteudoErro=false;   // member_content esgotou as tentativas nesta sessão
+// conteudoErro=true. Desde 12/10/2026 as QUESTÕES não vêm mais nesta resposta
+// (ver carregarProvas): o Banco depende de provasErro, não daqui.
+var conteudoErro=false;   // o conteúdo esgotou as tentativas nesta sessão
 var conteudoEmVoo=null;   // {uid,p}: carga em andamento — uma por CONTA
 // Conta atual normalizada (null para demo/visitante). Toda resposta em voo só
 // vale para quem a pediu; comparar `currentUser.id===uid` direto falharia
@@ -4988,7 +4989,7 @@ function carregarConteudo(client,tentativa,uid){
   // seguinte (a resposta dela é descartada abaixo, e a conta nova ficaria sem
   // conteúdo, sem erro e sem botão pela sessão inteira).
   if(tentativa===1&&conteudoEmVoo&&conteudoEmVoo.uid===uid)return conteudoEmVoo.p;
-  var p=client.rpc('endodirect_member_content').then(function(res){
+  var p=client.rpc('endodirect_member_content_sem_provas').then(function(res){
     if(res.error)throw res.error;
     if(!mesmaContaQue(uid))return;
     if(res.data)applyStatePayload(res.data);
@@ -5000,7 +5001,7 @@ function carregarConteudo(client,tentativa,uid){
         .then(function(){return carregarConteudo(client,tentativa+1,uid);});
     }
     conteudoErro=true;
-    console.warn('member_content indisponível após '+tentativa+' tentativa(s)',e);
+    console.warn('conteúdo indisponível após '+tentativa+' tentativa(s)',e);
   });
   if(tentativa===1){
     var minha=p.then(function(){if(conteudoEmVoo&&conteudoEmVoo.p===minha)conteudoEmVoo=null;});
@@ -5009,12 +5010,85 @@ function carregarConteudo(client,tentativa,uid){
   }
   return p;
 }
-// Recarrega sob demanda (botão "Tentar de novo" do Banco de questões).
+// Recarrega sob demanda (o "Tentar de novo" do Banco o leva junto quando falhou).
 function recarregarConteudo(){
   var client=getSupabaseClient();
   if(!client||!(currentUser&&currentUser.id))return Promise.resolve();
   conteudoErro=false;
   return carregarConteudo(client).then(function(){try{refreshAfterRemoteState();}catch(e){}});
+}
+// ⚠️ AS QUESTÕES VÊM EM PÁGINAS, NUMA RPC PRÓPRIA (12/10/2026). Dentro do
+// member_content, eram 71% da resposta do Gold: 5,43 MB no total, acima do
+// limite empírico de ~5,3 MB em que a resposta deixa de chegar ao celular. Para
+// quem tem o EndoTEEM, só as questões somavam 5,67 MB, e cada lote novo
+// aumentava tudo. Agora o conteúdo vem sem elas (~1,55 MB) e as questões chegam
+// em páginas de 500 (~1 MB cada): a página 0 diz quantas são e a `versao` da
+// lista; as demais vêm em paralelo, cada uma com 3 tentativas. Páginas de
+// versões diferentes (o professor gravou o banco no meio da carga) nunca se
+// juntam: a carga recomeça uma vez e, se mudar de novo, vira erro com "Tentar
+// de novo". Nada parcial é aplicado — o Banco diria "seu banco tem 500" a quem
+// tem 2.135.
+var provasErro=false;   // as questões esgotaram as tentativas nesta sessão
+var provasEmVoo=null;   // {uid,p}: carga em andamento — uma por CONTA
+function provasEmVooDesta(){return !!(provasEmVoo&&provasEmVoo.uid===contaAtual());}
+// Uma página, com 3 tentativas só quando a REDE falhou (mesma regra do conteúdo).
+function carregarPaginaProvas(client,pagina,uid,tentativa){
+  tentativa=tentativa||1;
+  return client.rpc('endodirect_member_provas_pagina',{p_pagina:pagina}).then(function(res){
+    if(res.error)throw res.error;
+    var d=res.data;
+    if(!d||!Array.isArray(d.itens)||typeof d.versao!=='string')throw {message:'a página '+pagina+' das questões veio sem lista',code:'formato'};
+    return d;
+  }).catch(function(e){
+    if(mesmaContaQue(uid)&&tentativa<3&&erroDeRede(e)){
+      return new Promise(function(r){setTimeout(r,900*tentativa);})
+        .then(function(){return carregarPaginaProvas(client,pagina,uid,tentativa+1);});
+    }
+    throw e;
+  });
+}
+// `volta` 2 é a recarga depois de páginas de versões diferentes.
+function carregarProvas(client,uid,volta){
+  volta=volta||1;
+  if(uid===undefined)uid=contaAtual();
+  // Mesma guarda do conteúdo: quem chamar com a carga DESTA conta em voo recebe
+  // a mesma promessa; a da conta anterior não serve à seguinte.
+  if(volta===1&&provasEmVoo&&provasEmVoo.uid===uid)return provasEmVoo.p;
+  var p=carregarPaginaProvas(client,0,uid).then(function(p0){
+    if(!mesmaContaQue(uid))return null;
+    // Teto de 100 páginas (50 mil questões): uma resposta malformada não vira
+    // uma rajada de pedidos — passando disso, a conferência do total reprova.
+    var pedidos=[p0],n=Math.min(Number(p0.paginas)||1,100);
+    for(var i=1;i<n;i++)pedidos.push(carregarPaginaProvas(client,i,uid));
+    return Promise.all(pedidos);
+  }).then(function(pags){
+    if(!pags||!mesmaContaQue(uid))return;
+    var itens=[],mesma=true;
+    pags.forEach(function(pg){if(pg.versao!==pags[0].versao)mesma=false;itens=itens.concat(pg.itens);});
+    if(!mesma||itens.length!==Number(pags[0].total)){
+      if(volta<2)return carregarProvas(client,uid,volta+1);
+      throw {message:'as questões mudaram durante a carga',code:'versao'};
+    }
+    applyStatePayload({provas:itens});
+    provasErro=false;
+  }).catch(function(e){
+    if(!mesmaContaQue(uid))return;
+    provasErro=true;
+    console.warn('questões indisponíveis',e);
+  });
+  if(volta===1){
+    var minha=p.then(function(){if(provasEmVoo&&provasEmVoo.p===minha)provasEmVoo=null;});
+    provasEmVoo={uid:uid,p:minha};
+    return minha;
+  }
+  return p;
+}
+// Recarrega sob demanda (botão "Tentar de novo" do Banco de questões).
+function recarregarProvas(){
+  var client=getSupabaseClient();
+  if(!client||!(currentUser&&currentUser.id))return Promise.resolve();
+  provasErro=false;
+  return carregarProvas(client).then(function(){try{refreshAfterRemoteState();}catch(e){}});
 }
 // Acessos do aluno (lista curta: 'plano', 'plano:gold', 'curso:emc'…). Define,
 // guarda no aparelho (por usuário) e refaz o que depende do plano na hora —
@@ -5155,8 +5229,10 @@ function hydrateRemoteState(){
     loads.push(carregarAcessos(client));
     // Questão do Dia (só as publicadas) numa chamada própria e leve — ver carregarQotd.
     loads.push(carregarQotd(client));
-    // Conteúdo (questões, mural, aulas, mapas, flashcards) com 3 tentativas —
-    // ver carregarConteudo. As diretrizes/Resumos vêm de um RPC próprio e leve,
+    // Questões do Banco em páginas, em paralelo com o conteúdo — ver carregarProvas.
+    loads.push(carregarProvas(client));
+    // Conteúdo (mural, aulas, mapas, flashcards) com 3 tentativas — ver
+    // carregarConteudo. As diretrizes/Resumos vêm de um RPC próprio e leve,
     // DEPOIS do conteúdo (ordem determinística) mas NUNCA dependendo do sucesso
     // dele: encadeado no sucesso, uma falha aqui levava os Resumos junto.
     loads.push(carregarConteudo(client)
@@ -6883,7 +6959,7 @@ function doLogout(){
   remoteStateLoaded=false;
   // Nada da sessão que acabou pode "completar" a próxima: as cargas em voo
   // ficam órfãs (geração nova) e plano/erro em memória voltam ao zero.
-  remoteStateGen++;remoteStateEmVoo=null;conteudoEmVoo=null;conteudoErro=false;userAcessos=[];acessosConhecidos=false;
+  remoteStateGen++;remoteStateEmVoo=null;conteudoEmVoo=null;conteudoErro=false;provasEmVoo=null;provasErro=false;userAcessos=[];acessosConhecidos=false;
   document.body.classList.remove('mobile-nav-open','admin-menu-open');
   document.getElementById('app-screen').classList.remove('admin-mode');
   document.getElementById('app-screen').style.display='none';
@@ -7286,7 +7362,7 @@ function ckGrantSuccess(msg){
   // Acesso liberado: agora sim a carga inteira, depois de qualquer carga em voo
   // — inclusive um "Tentar de novo" do Banco pedido ANTES da liberação, com
   // escopo de degustação, que a carga nova não pode reaproveitar.
-  try{Promise.all([remoteStateEmVoo?remoteStateEmVoo.p:null,conteudoEmVoo?conteudoEmVoo.p:null]).then(function(){remoteStateLoaded=false;hydrateRemoteState();});}catch(e){}
+  try{Promise.all([remoteStateEmVoo?remoteStateEmVoo.p:null,conteudoEmVoo?conteudoEmVoo.p:null,provasEmVoo?provasEmVoo.p:null]).then(function(){remoteStateLoaded=false;hydrateRemoteState();});}catch(e){}
 }
 function ckVerify(){
   try{notify('Verificando pagamento…','info');}catch(e){}
@@ -9272,8 +9348,8 @@ function updateProvaInfo(){
 // questões existem, não chegaram. Três estados: carregando, erro (com botão) e normal.
 function bancoEstado(){
   if(provasPool().length)return '';
-  if(conteudoErro)return 'erro';
-  if(conteudoEmVooDesta())return 'carregando'; // inclusive durante o "Tentar de novo"
+  if(provasErro)return 'erro';
+  if(provasEmVooDesta())return 'carregando'; // inclusive durante o "Tentar de novo"
   if(!remoteStateLoaded&&!remoteStateWarned&&getSupabaseClient())return 'carregando';
   return '';
 }
@@ -9287,7 +9363,11 @@ function bancoEstadoHTML(estado){
 }
 function bancoTentarDeNovo(btn){
   if(btn){btn.disabled=true;btn.innerHTML=ldHTML('Carregando…');}
-  return recarregarConteudo().then(function(){
+  // A rede que derrubou as questões costuma ter derrubado o resto: se o
+  // conteúdo também falhou, vai junto, em paralelo.
+  var cargas=[recarregarProvas()];
+  if(conteudoErro)cargas.push(recarregarConteudo());
+  return Promise.all(cargas).then(function(){
     try{populateInst('q-inst');}catch(e){}
     updateProvaInfo();
     // Chegou: refaz a busca com os filtros que o aluno já escolheu.
@@ -18237,7 +18317,7 @@ doLogin=function(u){
   currentUser=u;
   remoteStateLoaded=false;
   remoteStateWarned=false;
-  conteudoErro=false; // o erro (se houve) era da sessão anterior
+  conteudoErro=false;provasErro=false; // o erro (se houve) era da sessão anterior
   pendingOnboardCheck=false;
   // A conta mudou neste navegador? Se sim (ou se não sabemos a quem o estado
   // local pertence), não confiamos no perfil salvo localmente — isso evita

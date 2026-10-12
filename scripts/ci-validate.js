@@ -500,9 +500,12 @@ try {
 //      chamada própria (com cache por usuário), conteúdo com 3 tentativas, três
 //      estados visíveis no Banco, uma carga por vez, poll do checkout leve e o
 //      .sql do member_content sem diretrizes e com o radar janelado.
+//      12/10/2026: as questões saíram do member_content (5,43 MB no Gold, acima do
+//      limite de ~5,3 MB) e vêm em páginas de 500, cada uma com 3 tentativas, sem
+//      juntar páginas de versões diferentes e sem aplicar nada parcial.
 try {
   execFileSync(process.execPath, [path.join('scripts', 'test-banco-nao-fica-mudo.js')], { stdio: 'pipe' });
-  ok('banco de questões: carga com tentativas, acessos próprios, estados visíveis e sql janelado');
+  ok('banco de questões: questões em páginas com versão única, conteúdo e acessos à parte, estados visíveis e sql em composição');
 } catch (e) {
   const out = (e.stdout ? e.stdout.toString() : '') + (e.stderr ? e.stderr.toString() : '');
   fail('regressão do banco de questões falhou:\n' + out);
