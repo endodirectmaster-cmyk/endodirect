@@ -511,6 +511,21 @@ try {
   fail('regressão do banco de questões falhou:\n' + out);
 }
 
+// 17c-undecies-b. O APARELHO NOVO NÃO É DERRUBADO NO PRÓPRIO LOGIN. O doLogin
+//      navegava (checagem do limite de 2 aparelhos) antes de registrar o aparelho:
+//      num aparelho novo a checagem chegava primeiro, respondia false e o aluno
+//      caía logo após entrar (2 de ~12 logins em 24 h, 11–12/10/2026). Depois do
+//      signOut, as páginas das questões ainda em voo saíam como anônimo e
+//      gravavam a degustação no aparelho. Agora: registro antes da checagem, e
+//      nenhuma resposta vale depois de uma derrubada.
+try {
+  execFileSync(process.execPath, [path.join('scripts', 'test-aparelho-registra-antes.js')], { stdio: 'pipe' });
+  ok('limite de aparelhos: registro antes da checagem, derrubada de verdade preservada e nada aplicado depois dela');
+} catch (e) {
+  const out = (e.stdout ? e.stdout.toString() : '') + (e.stderr ? e.stderr.toString() : '');
+  fail('regressão do limite de aparelhos falhou:\n' + out);
+}
+
 // 17c-duodecies. TEMA NO OSCE E NA PRESCRIÇÃO. Pedido do professor a partir da
 //      sugestão de um assinante: além da subespecialidade, o aluno escolhe o
 //      tema, com a mesma lista dos Resumos (servidor + local, na ordem, sem

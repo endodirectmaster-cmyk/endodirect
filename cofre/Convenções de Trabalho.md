@@ -148,6 +148,18 @@ reprova ("o teste parou no meio"). E o caso de teste solta todas as respostas
 pendentes, para a regressão aparecer como asserção com mensagem, não só como parada.
 Os testes antigos com `await` e sem essa guarda estão listados em [[Pendências]].
 
+## 🧨 NO LOG DE BORDA, O PRÉ-VOO (OPTIONS) NÃO É CHAMADA (2026-10-12)
+
+Na conferência pós-deploy das questões em páginas, contei as linhas do log de borda
+por rota e vi, no primeiro boot de cada aparelho, "duas cargas simultâneas" com 20 a
+70 ms de diferença. Não existiam: cada RPC do navegador gera **duas** linhas com a
+mesma rota — o pré-voo de CORS (`OPTIONS`) e o pedido (`POST`). **Regra:** ao contar
+chamadas em `edge_logs`, filtrar `log_attributes['request.method'] = 'POST'` (ou
+`GET` para tabelas). E, antes de concluir sobre um padrão, reconstruir uma sequência
+inteira de um navegador (`cityHash64` do IP com o user-agent, sem expor nenhum dos
+dois) — foi essa reconstrução que mostrou o defeito de verdade (o aparelho novo
+derrubado no próprio login, ver [[Decisões]] 2026-10-12).
+
 ## 🧨 FUNÇÃO REESCRITA A PARTIR DE CÓPIA VELHA PERDE O QUE VEIO ANTES (2026-09-24)
 
 Segunda ocorrência da armadilha de 07/09 (trigger reescrito sem o `aovivo_sent`),

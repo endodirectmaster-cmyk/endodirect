@@ -66,7 +66,7 @@ function caixa(extra) {
   }, extra || {});
   vm.createContext(c);
   vm.runInContext([
-    'var conteudoErro=false;var conteudoEmVoo=null;var provasErro=false;var provasEmVoo=null;',
+    'var conteudoErro=false;var conteudoEmVoo=null;var provasErro=false;var provasEmVoo=null;var sessaoEncerrada=false;',
     'var ACESSOS_GUARDADOS_MS=' + (html.match(/var ACESSOS_GUARDADOS_MS=([^;]+);/) || [, '0'])[1] + ';',
     corpo('esc'), corpo('ldHTML'), corpo('erroDeRede'),
     corpo('contaAtual'), corpo('mesmaContaQue'), corpo('conteudoEmVooDesta'),
@@ -336,6 +336,29 @@ process.on('exit', (code) => {
     await pB; await new Promise((r) => setImmediate(r));
     ok(c.provasDB.length === 700 && c.provasEmVoo === null && c.provasErro === false, 'troca (questões): a conta nova recebe as próprias questões');
   }
+  // Sessão derrubada por outro aparelho com a página 0 em voo (o caso de 12/10
+  // 12:42:40): depois do signOut, as páginas seguintes sairiam como ANÔNIMO e a
+  // degustação seria aplicada e gravada. Nada mais é pedido nem aplicado.
+  {
+    const c = caixa();
+    const srv = servidorDePaginas(banco(1200), { segura: { 0: true } });
+    c.client = srv;
+    const p = vm.runInContext('carregarProvas(client)', c);
+    c.sessaoEncerrada = true;                 // onSessionEvicted no meio da carga
+    while (srv.pend.length) srv.pend.shift()();
+    await p; await new Promise((r) => setImmediate(r));
+    ok(srv.chamadas === 1 && !srv.porPagina[1], 'derrubada (questões): depois dela, nenhuma página a mais é pedida (fez ' + JSON.stringify(srv.porPagina) + ')');
+    ok(c.aplicados.length === 0 && c.provasDB.length === 0, 'derrubada (questões): nada é aplicado nem gravado no aparelho');
+    ok(c.provasErro === false && c.provasEmVoo === null, 'derrubada (questões): sem aviso de erro e sem guarda presa');
+  }
+  {
+    const c = caixa();
+    const srv = clienteQueFalha(0, { podcasts: [{ id: 'anon' }] });
+    c.client = srv;
+    c.sessaoEncerrada = true;
+    await vm.runInContext('carregarConteudo(client)', c);
+    ok(c.aplicados.length === 0, 'derrubada (conteúdo): a resposta que chega depois dela não é aplicada');
+  }
   {
     const c = caixa();
     c.provasErro = true;
@@ -458,7 +481,7 @@ process.on('exit', (code) => {
     ok(i > 0, 'doLogin sobrescrito existe');
     const dl = html.slice(i, i + 4000);
     ok(/else if\(u\.id\)\{var _acG=acessosGuardados\(u\.id\);userAcessos=_acG\|\|\[\];acessosConhecidos=!!_acG;\}/.test(dl), 'doLogin: aluno real nasce com os acessos guardados neste aparelho — e com NADA (e nada decidido) quando não há cópia desta conta');
-    ok(/conteudoErro=false;provasErro=false; \/\/ o erro \(se houve\) era da sessão anterior/.test(dl), 'doLogin: os erros de conteúdo e de questões da sessão anterior não passam para a nova');
+    ok(/conteudoErro=false;provasErro=false;sessaoEncerrada=false; \/\/ o erro \(se houve\) era da sessão anterior/.test(dl), 'doLogin: os erros de conteúdo e de questões — e a marca de sessão derrubada — da sessão anterior não passam para a nova');
   }
   {
     const upi = corpo('updateProvaInfo');
