@@ -1,6 +1,6 @@
 ---
 tags: [cofre, processo]
-atualizado: 2026-10-12
+atualizado: 2026-10-13
 ---
 
 # Convenções de Trabalho
@@ -159,6 +159,15 @@ chamadas em `edge_logs`, filtrar `log_attributes['request.method'] = 'POST'` (ou
 inteira de um navegador (`cityHash64` do IP com o user-agent, sem expor nenhum dos
 dois) — foi essa reconstrução que mostrou o defeito de verdade (o aparelho novo
 derrubado no próprio login, ver [[Decisões]] 2026-10-12).
+
+⚠️ **E o log de borda não é completo.** Em 13/10, na mesma janela, o
+`pg_stat_statements` contou 70 páginas e 18 cargas de conteúdo vindas do PostgREST;
+o `edge_logs` tinha 62 e 14 — todas com uma tentativa no gateway, então não eram
+repetições: o log perdeu de 11% a 22% das entradas. Por isso apareciam cargas de
+"3 páginas" ou sem a chamada de conteúdo. **Para totais, usar o
+`pg_stat_statements`** (filtrando o texto gerado pelo PostgREST, `ilike '%pgrst%'`, e
+anotando o `stats_reset`); o log de borda serve para ordem e padrão, nunca para
+afirmar que uma carga veio incompleta.
 
 ## 🧨 FUNÇÃO REESCRITA A PARTIR DE CÓPIA VELHA PERDE O QUE VEIO ANTES (2026-09-24)
 
