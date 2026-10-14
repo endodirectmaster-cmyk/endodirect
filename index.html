@@ -19203,12 +19203,22 @@ function muralTextHTML(txt){
     // pelo htmlToMd). Justificado é o padrão (via CSS), então não tem marcador.
     var _ma=wysAlignRead(line);var _mal=_ma.align;line=_ma.rest;
     if(!line.trim()){flush();i++;continue;} // linha em branco: fecha o parágrafo
-    if(isRow(line)&&i+1<lines.length&&isSep(lines[i+1])){
+    // ⚠️ CABEÇALHO COM UMA CÉLULA SÓ PREENCHIDA também abre tabela (14/10/2026).
+    // O artigo de disruptores tireoidianos que o Eduardo filmou tinha tabelas
+    // cujo cabeçalho era um rótulo de largura total (`| ↓T4 ↑TSH | | | | |`).
+    // O `isRow` exige duas células com conteúdo, a tabela não abria e as
+    // dezenas de linhas apareciam como texto cru, cheio de barras. A guarda
+    // contra prosa é o SEPARADOR na linha seguinte, que prosa não tem; aqui
+    // basta a forma de linha. O rótulo sozinho ocupa a largura toda, em vez de
+    // espremer a primeira coluna.
+    if((isRow(line)||isRowCont(line))&&i+1<lines.length&&isSep(lines[i+1])){
       flush();
       var h=cells(line),rows=[];i+=2;
       while(i<lines.length&&isRowCont(lines[i])&&!isSep(lines[i])){rows.push(cells(lines[i]));i++;}
+      var _hCheias=h.filter(function(c){return c.html!=='';});
+      var _hRotulo=_hCheias.length===1&&h[0].html!=='';
       var _tab='<div class="mural-table-wrap"><table class="mural-table"><thead><tr>'
-        +h.map(function(c){return celTag('th',c);}).join('')+'</tr></thead><tbody>'
+        +(_hRotulo?'<th colspan="'+h.length+'"'+(h[0].cls?' class="'+h[0].cls+'"':'')+'>'+h[0].html+'</th>':h.map(function(c){return celTag('th',c);}).join(''))+'</tr></thead><tbody>'
         +rows.map(function(r){while(r.length<h.length)r.push({cls:'',html:''});return'<tr>'+r.slice(0,h.length).map(function(c){return celTag('td',c);}).join('')+'</tr>';}).join('')
         +'</tbody></table></div>';
       // ⚠️ TABELA LONGA FICA RECOLHIDA (pedido do professor, 02/08/2026:

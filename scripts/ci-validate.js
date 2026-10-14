@@ -135,6 +135,20 @@ try {
   fail('regressão do prompt da discussão falhou (verifique lib/fulltext.js + lib/discussao.js):\n' + out);
 }
 
+// 6e-bis. A TABELA DO ARTIGO CHEGA ALINHADA (14/10/2026). O `tableToMarkdown`
+//     ignorava o rowspan (a linha de baixo deslizava uma coluna para a esquerda,
+//     com o dado na coluna errada) e usava como cabeçalho a linha de cima de um
+//     `<thead>` de duas linhas, um rótulo de uma célula só que o mural mostrava
+//     como texto cru. Visto no vídeo do Eduardo, numa revisão de disruptores
+//     tireoidianos.
+try {
+  execFileSync(process.execPath, [path.join('scripts', 'test-tabela-do-artigo-alinhada.js')], { stdio: 'pipe' });
+  ok('tabela do artigo: rowspan reserva a coluna, e o rótulo do thead desce para o corpo');
+} catch (e) {
+  const out = (e.stdout ? e.stdout.toString() : '') + (e.stderr ? e.stderr.toString() : '');
+  fail('regressão da tabela do artigo alinhada falhou (verifique lib/fulltext.js):\n' + out);
+}
+
 // 11. %PEP pós-bariátrica: o denominador é o peso de IMC 25, e quem já operou
 //     abaixo disso não tem excesso de peso — a calculadora tem de recusar em vez
 //     de devolver número. Valores conferidos à mão no teste.

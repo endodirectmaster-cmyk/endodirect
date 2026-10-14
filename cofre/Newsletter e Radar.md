@@ -1,6 +1,6 @@
 ---
 tags: [cofre, newsletter, radar]
-atualizado: 2026-10-05
+atualizado: 2026-10-14
 ---
 
 # Newsletter e Radar
@@ -140,6 +140,23 @@ O caso previsto na pendência aconteceu no mesmo dia. `pubmed:42533758` ("Is Hyp
 - **⚠️ LICENÇA CC BY-NC-ND — e por isso as 3 tabelas do artigo NÃO foram reproduzidas.** `NC` proíbe uso comercial e a plataforma é paga; `ND` proíbe derivado, e traduzir/reformatar uma tabela é derivado. A discussão cita os **números** (fato não é protegido) com redação própria. Registrado em `meta.nota_licenca`.
   - ⚠️ **Isto expõe uma lacuna do caminho automático:** `parseLicense` calcula `redistribuivel` (só CC BY/CC0) mas o `lib/fulltext.js` usa esse campo **só para figuras** — as tabelas do JATS são reproduzidas independentemente da licença. Num artigo CC BY-NC-ND vindo do PMC, hoje, a tabela seria colada. Ver [[Pendências]].
 - **O que a discussão priorizou**, e vale como modelo: os números que separam **rastreio positivo de doença** (14,3% de DST anormal × 2,1% de Cushing confirmado), os **três passos que mudam conduta** (pedir o DST antes de somar droga; medir dexametasona sérica junto; desescalar insulina/anti-hipertensivo quando o cortisol cai) e o **conflito de interesse** — a edição temática foi financiada pela **Corcept**, que fabrica mifepristona e desenvolve relacorilante, as duas drogas com mais espaço no texto.
+
+### 🎬 Tabela do artigo em texto cru e com linhas deslocadas — o vídeo do Eduardo (2026-10-14)
+O Eduardo mandou ao professor um vídeo do celular (46 s, Android) rolando a discussão de uma revisão sistemática da Frontiers in Endocrinology sobre disruptores tireoidianos em roedores (`pubmed:42865381`, PMC13654789, CC BY). O áudio não pôde ser ouvido: os serviços de transcrição estão bloqueados no contêiner, e a leitura foi pelos quadros. **O que se via:** as Tabelas 4, 5 e 6 inteiras como texto cru (`| ↓T4 ↑TSH | | | | |`, `|---|---|…`, `| Arsenic | 3067 |…`) e, nas que abriam, linhas como `| 1081 | 7 w | 21 d | 10–300 ppm/d | |`.
+
+**Duas causas, as duas no `tableToMarkdown` (`lib/fulltext.js`), que converte a tabela do JATS:**
+1. **O rowspan era ignorado.** A célula mesclada na vertical ("Aroclor 1254" cobrindo três linhas) não reservava a coluna nas linhas de baixo, e cada célula deslizava uma posição para a esquerda: o número de referência caía na coluna do nome da substância, a duração na do número. **Dado na coluna errada, não só aparência.** Só nesse artigo eram 81 células com rowspan (56 na tabela de 193 linhas).
+2. **O `<thead>` de duas linhas.** A de cima era um rótulo de largura total (`↓T4↑TSH`, colspan 5), e ela virava o cabeçalho, com uma célula preenchida e quatro vazias. O `muralTextHTML` exige duas células cheias para ABRIR tabela (a regra de 02/08 só afrouxou a CONTINUAÇÃO), e a tabela inteira ia para o parágrafo.
+
+**Correção:**
+- **Conversor:** a grade é montada como o navegador monta. O rowspan reserva a coluna e repete o texto, para cada linha ficar legível sozinha. A linha de rótulo do `<thead>` desce para o topo do corpo como linha de agrupamento, e os nomes das colunas viram o cabeçalho. Cabeçalho de várias linhas se junta coluna a coluna (`Homens · n`). Sem `<thead>`, e com cabeçalho de uma linha só, nada muda. Teste: `scripts/test-tabela-do-artigo-alinhada.js`, no CI, com tabelas sintéticas (10 de 10 mutações pegas).
+- **Mural, como rede de proteção:** linha com forma de linha de tabela, seguida do separador, abre tabela mesmo com uma célula só preenchida. O separador continua sendo a guarda contra prosa. O rótulo sozinho vira `<th colspan>` da largura toda. Caso novo no `scripts/test-mural-render.js` (4 de 4 mutações pegas). sw v295 → v296.
+- **A/B no Chromium** (`scratchpad/mural-navegador/check.js`, celular de 392 px, app inteiro com Supabase falso, tabelas reais do artigo fora do repositório):
+  - A main reproduz o vídeo: 3 tabelas em texto cru, 3 de 6 abertas.
+  - O app novo abre as 6, mas, com a tabela como está gravada, as linhas de continuação seguem deslocadas (`104 | 4 w | 15 d`).
+  - Com a tabela reconvertida, nenhuma linha fica fora do número de colunas, e sai `Nonylphenol* | 104 | 4 w | 15 d`.
+  - Por isso as tabelas JÁ GRAVADAS precisam ser reconvertidas (ver a seção da reconversão, abaixo).
+- **O inglês das legendas e cabeçalhos ficou como está:** é o efeito colateral aceito pelo professor em 30/07 ("traduzir é reescrever"), descrito na seção da tabela do artigo.
 
 ### ⚠️ Tabela quebrava na LINHA DE AGRUPAMENTO e o resto virava markdown cru (2026-08-02)
 O professor mandou o print de um card e disse *"ficou estranho"*: a tabela de características de base renderizava **as 4 primeiras linhas** e, dali em diante, **dezenas de linhas de `| a | b | c |`** apareciam como texto na tela do aluno.
