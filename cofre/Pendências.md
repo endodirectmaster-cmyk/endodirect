@@ -1,9 +1,22 @@
 ---
 tags: [cofre, pendencias]
-atualizado: 2026-10-12
+atualizado: 2026-10-14
 ---
 
 # Pendências
+
+## 💳 Cobrança em dobro (14/10) — o que fica com o professor
+
+1. **Estornar a compra duplicada do Dr. Pedro Ivo Aranas** (`piaranas@gmail.com`): dois
+   Gold anuais de R$ 540 em 29/06. Passo a passo em [[Pagamentos pagar.me]] 2026-10-14
+   (manter o `or_wdm1lJJ3TeHAlW20`, estornar o outro pelo valor total). Depois, responder
+   no Instagram — a mensagem dele é de 28/09 e está como solicitação de contato não
+   aceita. Texto sugerido no relatório de 14/10.
+2. **Procurar outros pedidos duplicados** no pagar.me (mesmo cliente, mesmo plano, mesmo
+   dia). O banco não mostra (uma linha por e-mail + escopo). Pelo painel, ou pela API com a
+   chave secreta, se o professor autorizar a leitura.
+3. O furo foi fechado no código em 14/10 (quem já tem o plano não é cobrado de novo; "sem
+   resposta" não vira mais "não aprovado").
 
 ## 📚 Banco de questões — o que ficou do lote de 12/10 (estudos de 2025 e 2026)
 

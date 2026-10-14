@@ -7412,7 +7412,10 @@ function ckVerify(){
 // o checkout, ou após ~5 min (evita polling infinito; PIX cai em segundos).
 var _ckPoll=null,_ckPollN=0;
 function ckStopAutoVerify(){if(_ckPoll){clearInterval(_ckPoll);_ckPoll=null;}_ckPollN=0;}
-function ckStartAutoVerify(){
+// `escopo` (opcional): só conta como liberado quando ESTE plano aparecer nos
+// acessos — quem já tem outro plano (troca de Standard para Gold) não pode ver
+// "Pagamento confirmado" antes da hora.
+function ckStartAutoVerify(escopo){
   ckStopAutoVerify();
   // ⚠️ Cada checagem lê só os ACESSOS (uma lista de texto). Antes, cada volta
   // do poll refazia o hydrate inteiro — a resposta completa do member_content
@@ -7420,10 +7423,24 @@ function ckStartAutoVerify(){
   try{carregarAcessos(getSupabaseClient());}catch(e){}
   _ckPoll=setInterval(function(){
     _ckPollN++;
-    if(!isDegustacao()&&currentPlanKey()){ckStopAutoVerify();ckGrantSuccess('Pagamento confirmado! Acesso liberado. 🎉');return;}
+    var liberado=escopo?(Array.isArray(userAcessos)&&userAcessos.indexOf(escopo)>=0):(!isDegustacao()&&currentPlanKey());
+    if(liberado){ckStopAutoVerify();ckGrantSuccess('Pagamento confirmado! Acesso liberado. 🎉');return;}
     if(_ckPollN>60){ckStopAutoVerify();return;}
     try{carregarAcessos(getSupabaseClient());}catch(e){}
   },5000);
+}
+// ⚠️ NÃO CONFIRMADO ≠ NÃO APROVADO (14/10/2026). Um assinante viu na fatura duas
+// compras do Gold anual no mesmo dia: quando a resposta do checkout não chegava
+// (função passando dos 30 s depois de o pagar.me já ter cobrado) ou chegava com
+// falha depois da cobrança, a tela dizia "Pagamento não aprovado" / "tente
+// novamente" — e a nova tentativa cobrava de novo. Agora a tela pede para NÃO
+// pagar de novo, segura o botão por um minuto e confere sozinha se o plano chegou.
+function ckEscopoCompra(){return _ckPlan?('plano:'+_ckPlan):'';}
+function ckNaoConfirmado(msg,btn,done){
+  ckErr(msg||'Não conseguimos confirmar o pagamento. Não pague de novo: se ele foi aprovado, o acesso é liberado em alguns minutos — estamos conferindo para você.');
+  if(btn){btn.disabled=true;btn.textContent='Conferindo o pagamento…';}
+  ckStartAutoVerify(ckEscopoCompra());
+  if(done)setTimeout(done,60000);
 }
 function ckRenderResult(html){var rs=document.getElementById('ck-result');if(!rs)return;rs.style.display='block';rs.innerHTML=html;
   var cp=document.getElementById('ck-pix-copy');if(cp)cp.addEventListener('click',function(){var t=cp.getAttribute('data-copy')||'';try{navigator.clipboard.writeText(t);notify('Código PIX copiado!','ok');}catch(e){}});
@@ -7499,13 +7516,22 @@ function ckPay(){
       fetch('https://api.pagar.me/core/v5/tokens?appId='+encodeURIComponent(cfg.public_key),{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({type:'card',card:{number:num,holder_name:name,exp_month:Number(mm),exp_year:Number(yy),cvv:cvv}})})
       .then(function(r){return r.json().catch(function(){return {};});}).then(function(tok){
         if(!tok||!tok.id)throw new Error((tok&&tok.message)||'Não foi possível validar o cartão. Confira os dados.');
+        // Daqui em diante o servidor pode cobrar: resposta que não chega (ou não é
+        // JSON, como o 504 de tempo esgotado) é "não confirmado", nunca "não aprovado".
+        var semResposta=function(){return {semResposta:true};};
+        var lerResposta=function(r){return r.json().catch(semResposta);};
         if(!anual){
-          return fetch('/api/checkout/subscribe',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({plan:_ckPlan,card_token:tok.id,email:email,name:name,document:doc,phone:phone,address:address})});
+          return fetch('/api/checkout/subscribe',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({plan:_ckPlan,card_token:tok.id,email:email,name:name,document:doc,phone:phone,address:address})}).then(lerResposta,semResposta);
         }
         var inst=parseInt((document.getElementById('ck-inst')||{}).value,10)||1;
-        return fetch('/api/checkout/order',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({plan:_ckPlan,method:'credit_card',installments:inst,card_token:tok.id,email:email,name:name,document:doc,phone:phone,address:address,coupon:ckCouponVal()})});
-      }).then(function(r){return r.json().catch(function(){return {};});}).then(function(d){
+        return fetch('/api/checkout/order',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({plan:_ckPlan,method:'credit_card',installments:inst,card_token:tok.id,email:email,name:name,document:doc,phone:phone,address:address,coupon:ckCouponVal()})}).then(lerResposta,semResposta);
+      }).then(function(d){
+        if(d&&(d.semResposta||d.code==='nao_confirmado')){ckNaoConfirmado(d.semResposta?'':d.error,btn,done);return;}
+        // Já tem o plano: o servidor não cobrou. Confere os acessos (pode ser a 1ª compra que já liberou).
+        if(d&&d.code==='ja_ativo'){ckErr(d.error);done();ckStartAutoVerify(ckEscopoCompra());return;}
         if(!d||!d.ok)throw new Error(((d&&d.error)||'Pagamento não aprovado.')+((d&&d.status)?' [status: '+d.status+']':''));
+        // Cobrado, mas o acesso ainda não foi gravado: o webhook libera; espera aparecer.
+        if(d.acesso==='pendente'){ckNaoConfirmado('Pagamento aprovado! Estamos liberando o seu acesso — não pague de novo.',btn,done);return;}
         ckGrantSuccess(anual?'Plano anual ativado! Acesso liberado. 🎉':'Assinatura ativada! Acesso liberado. 🎉');
       }).catch(function(e){ckErr((e&&e.message)||'Falha ao processar o pagamento.');done();});
     }else{

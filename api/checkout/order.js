@@ -32,6 +32,8 @@ const ANNUAL_DIAS = 365;
 // promocional (padrão R$540 = "Gold pelo preço do Standard"). As regras +
 // o limite de vagas (auto-desativa ao esgotar) ficam em lib/founder.js.
 const { FOUNDER_COUPON, FOUNDER_AMOUNT, FOUNDER_ENABLED_ENV, FOUNDER_LIMIT, FOUNDER_PLAN, countFounderAccesses } = require('../../lib/founder');
+// Quem já tem o plano ativo não é cobrado de novo — ver lib/acesso-vigente.js.
+const { acessoVigente, mensagemJaAtivo } = require('../../lib/acesso-vigente');
 
 const SUPABASE_URL = process.env.SUPABASE_URL || process.env.NEXT_PUBLIC_SUPABASE_URL || 'https://auth.endodirect.com.br';
 const SERVICE_ROLE = process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.SUPABASE_SECRET_KEY || process.env.SUPABASE_SERVICE_KEY;
@@ -132,6 +134,12 @@ module.exports = async function handler(req, res) {
   const precisaEndereco = (method === 'credit_card' || method === 'boleto');
   if (precisaEndereco && (zip.length < 8 || !line1 || !city || state.length !== 2)) return json(res, 400, { ok: false, error: 'Endereco incompleto (CEP, endereco, cidade e UF).' });
 
+  // ⚠️ ANTES DE QUALQUER CHAMADA AO PAGAR.ME (14/10/2026): um Gold anual foi cobrado
+  // duas vezes no mesmo dia (29/06) porque a segunda tentativa cobrava de novo quem
+  // já tinha o plano liberado pela primeira. Ver lib/acesso-vigente.js.
+  const vigente = await acessoVigente(email, cfg.scope);
+  if (vigente) return json(res, 409, { ok: false, code: 'ja_ativo', error: mensagemJaAtivo(vigente, cfg.label) });
+
   const docType = document.length > 11 ? 'CNPJ' : 'CPF';
   const phones = { mobile_phone: { country_code: '55', area_code: phone.slice(0, 2), number: phone.slice(2) } };
   const enderecoPagarme = precisaEndereco ? { line_1: line1, zip_code: zip, city: city, state: state, country: 'BR' } : null;
@@ -188,16 +196,27 @@ module.exports = async function handler(req, res) {
       let reason = (lt.gateway_response && Array.isArray(lt.gateway_response.errors) && lt.gateway_response.errors[0] && lt.gateway_response.errors[0].message) || lt.acquirer_message || lt.acquirer_return_code || '';
       return json(res, 200, { ok: false, method: 'credit_card', status: status || 'failed', error: 'Pagamento nao aprovado.' + (reason ? ' (' + reason + ')' : '') });
     }
-    const user = await ensureUser(email, name);
-    await upsertAcesso({ user_id: user.id, email: email, scope: cfg.scope, status: 'active', tipo: 'avulso',
-      expires_at: new Date(Date.now() + ANNUAL_DIAS * 86400000).toISOString(),
-      provider: 'pagarme', provider_customer_id: customer.id || null, provider_order_id: order.id || null,
-      notes: planKey + ':anual' + (founderApplied ? ':fundador' : ''), updated_at: new Date().toISOString() });
-    await sendSetPasswordEmail(email);
-    return json(res, 200, { ok: true, method: 'credit_card', status: 'paid', order_id: order.id });
+    // ⚠️ DAQUI PARA BAIXO O CARTÃO JÁ FOI COBRADO. Nenhuma falha pode virar "tente
+    // novamente" — o aluno pagaria duas vezes. Se gravar o acesso falhar, o webhook
+    // (order.paid) libera, e o navegador espera o acesso aparecer.
+    let acesso = 'liberado';
+    try {
+      const user = await ensureUser(email, name);
+      await upsertAcesso({ user_id: user.id, email: email, scope: cfg.scope, status: 'active', tipo: 'avulso',
+        expires_at: new Date(Date.now() + ANNUAL_DIAS * 86400000).toISOString(),
+        provider: 'pagarme', provider_customer_id: customer.id || null, provider_order_id: order.id || null,
+        notes: planKey + ':anual' + (founderApplied ? ':fundador' : ''), updated_at: new Date().toISOString() });
+    } catch (e) {
+      acesso = 'pendente';
+      console.error('[order] cobranca aprovada e acesso nao gravado (o webhook libera) order=' + (order.id || '') + ' erro=' + ((e && e.message) || e));
+    }
+    try { await sendSetPasswordEmail(email); } catch (e) {}
+    return json(res, 200, { ok: true, method: 'credit_card', status: 'paid', order_id: order.id, acesso: acesso });
   } catch (e) {
     var st = (e && e.status) || 500;
-    if (st >= 500) { console.error('[order] erro', (e && e.message) || e); return json(res, 502, { ok: false, error: 'Pagamento temporariamente indisponível. Tente novamente em instantes.' }); }
+    // 5xx: o pedido ao pagar.me pode ter passado mesmo com a falha (tempo esgotado no
+    // meio). Não convidar a pagar de novo: o navegador confere se o acesso chegou.
+    if (st >= 500) { console.error('[order] erro', (e && e.message) || e); return json(res, 502, { ok: false, code: 'nao_confirmado', error: 'Não foi possível confirmar o pagamento agora. Não pague de novo: se o valor aparecer no seu cartão, o acesso é liberado em alguns minutos. Se não aparecer, tente de novo mais tarde.' }); }
     return json(res, st, { ok: false, error: (e && e.message) || 'Falha ao processar o pagamento.' });
   }
 };

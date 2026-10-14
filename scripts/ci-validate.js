@@ -511,6 +511,21 @@ try {
   fail('regressão do banco de questões falhou:\n' + out);
 }
 
+// 17c-undecies-c. O CHECKOUT NÃO COBRA DUAS VEZES A MESMA COMPRA. Um assinante
+//      Gold viu na fatura duas compras do Gold anual no mesmo dia (29/06/2026):
+//      a cobrança passava, algo falhava depois (ou a função passava dos 30 s), a
+//      tela dizia "Pagamento não aprovado" e a nova tentativa cobrava de novo.
+//      Agora: quem já tem o plano não é cobrado (order.js e subscribe.js), falha
+//      depois da cobrança nunca vira "tente novamente", e o navegador trata a
+//      resposta que não chega como "não confirmado" e confere o acesso sozinho.
+try {
+  execFileSync(process.execPath, [path.join('scripts', 'test-cobranca-unica.js')], { stdio: 'pipe' });
+  ok('checkout: quem já tem o plano não é cobrado de novo, e "sem resposta" não vira "não aprovado"');
+} catch (e) {
+  const out = (e.stdout ? e.stdout.toString() : '') + (e.stderr ? e.stderr.toString() : '');
+  fail('regressão da cobrança única falhou:\n' + out);
+}
+
 // 17c-undecies-b. O APARELHO NOVO NÃO É DERRUBADO NO PRÓPRIO LOGIN. O doLogin
 //      navegava (checagem do limite de 2 aparelhos) antes de registrar o aparelho:
 //      num aparelho novo a checagem chegava primeiro, respondia false e o aluno
