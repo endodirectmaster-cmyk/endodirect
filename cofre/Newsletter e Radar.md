@@ -158,6 +158,18 @@ O Eduardo mandou ao professor um vídeo do celular (46 s, Android) rolando a dis
   - Por isso as tabelas JÁ GRAVADAS precisam ser reconvertidas (ver a seção da reconversão, abaixo).
 - **O inglês das legendas e cabeçalhos ficou como está:** é o efeito colateral aceito pelo professor em 30/07 ("traduzir é reescrever"), descrito na seção da tabela do artigo.
 
+**Reconversão das tabelas já gravadas: preparada, aguardando autorização expressa (14/10).**
+- **Onde roda:** no próprio Supabase, para o texto dos artigos não trafegar pela sessão. É uma função TEMPORÁRIA, `retabelar-discussoes`, que exige JWT e um token próprio (responde 403 sem ele). Ela baixa o JATS do PMC e converte cada tabela com o conversor de antes e com o de agora.
+- **O que troca:** só o bloco de tabela idêntico, linha por linha, ao que o conversor de antes produziu. O texto, a legenda e a nota ficam intactos. A gravação é guardada pelo `updated_at` (se o professor regerar a discussão no meio, a linha não é tocada) e marca `meta.tabelas_reconvertidas`.
+- **Conferência da função publicada:** o hash de cada tabela, antes e depois, saiu idêntico ao calculado localmente em 4 artigos (18 tabelas).
+- **Auditoria sem gravar, nas 234 discussões:**
+  - 149 com tabela inserida, nenhuma falha no PMC;
+  - **41 discussões mudam, com 66 tabelas (67 ocorrências)**;
+  - o conversor novo não descarta nenhuma tabela já publicada;
+  - as 2 "ausências" são tabelas que nunca foram inseridas (fora de `tabelas_inseridas`).
+- **Backup integral:** `bkp_mural_discussoes_20261014`, com 234 linhas, assinatura `d597de00…` e RLS ligado sem política.
+- ⚠️ **A gravação foi barrada pela checagem de permissão do ambiente** (alteração de dado de produção) e ficou para a autorização expressa do professor. Ver [[Pendências]].
+
 ### ⚠️ Tabela quebrava na LINHA DE AGRUPAMENTO e o resto virava markdown cru (2026-08-02)
 O professor mandou o print de um card e disse *"ficou estranho"*: a tabela de características de base renderizava **as 4 primeiras linhas** e, dali em diante, **dezenas de linhas de `| a | b | c |`** apareciam como texto na tela do aluno.
 
