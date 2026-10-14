@@ -41,6 +41,8 @@ const SUB_PLANS = {
 
 const SUPABASE_URL = process.env.SUPABASE_URL || process.env.NEXT_PUBLIC_SUPABASE_URL || 'https://auth.endodirect.com.br';
 const SERVICE_ROLE = process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.SUPABASE_SECRET_KEY || process.env.SUPABASE_SERVICE_KEY;
+// Quem já tem o plano ativo não é cobrado de novo — ver lib/acesso-vigente.js.
+const { acessoVigente, mensagemJaAtivo } = require('../../lib/acesso-vigente');
 
 function json(res, status, body) {
   res.statusCode = status;
@@ -181,6 +183,12 @@ module.exports = async function handler(req, res) {
   // pagar.me exige ao menos um telefone do cliente.
   const phones = { mobile_phone: { country_code: '55', area_code: phone.slice(0, 2), number: phone.slice(2) } };
 
+  // ⚠️ ANTES DE CRIAR A ASSINATURA (14/10/2026): uma segunda tentativa depois de uma
+  // falha criava OUTRA assinatura — cobrança em dobro todo mês, e o id da primeira
+  // sobrescrito no banco. Quem já tem o plano ativo não é cobrado de novo.
+  const vigente = await acessoVigente(email, cfg.scope);
+  if (vigente) return json(res, 409, { ok: false, code: 'ja_ativo', error: mensagemJaAtivo(vigente, cfg.label) });
+
   try {
     // 1) Cliente.
     const docType = document.length > 11 ? 'CNPJ' : 'CPF';
@@ -243,22 +251,33 @@ module.exports = async function handler(req, res) {
     }
 
     // 3) Libera o acesso imediatamente; o webhook mantem sincronizado.
-    const user = await ensureUser(email, name);
-    const nextBilling = sub.next_billing_at || (sub.current_cycle && sub.current_cycle.end_at) || null;
-    await upsertAcesso({
-      user_id: user.id, email: email, scope: cfg.scope, status: 'active', tipo: 'recorrente',
-      expires_at: nextBilling ? new Date(Date.parse(nextBilling)).toISOString() : null,
-      provider: 'pagarme', provider_customer_id: customer.id || null,
-      provider_subscription_id: sub.id || null,
-      notes: planKey, updated_at: new Date().toISOString()
-    });
-    await sendSetPasswordEmail(email);
+    // ⚠️ DAQUI PARA BAIXO A ASSINATURA JÁ EXISTE E FOI COBRADA. Nenhuma falha pode
+    // virar "tente novamente" (criaria uma segunda assinatura). Se gravar o acesso
+    // falhar, o webhook libera, e o navegador espera o acesso aparecer.
+    let acesso = 'liberado';
+    try {
+      const user = await ensureUser(email, name);
+      const nextBilling = sub.next_billing_at || (sub.current_cycle && sub.current_cycle.end_at) || null;
+      await upsertAcesso({
+        user_id: user.id, email: email, scope: cfg.scope, status: 'active', tipo: 'recorrente',
+        expires_at: nextBilling ? new Date(Date.parse(nextBilling)).toISOString() : null,
+        provider: 'pagarme', provider_customer_id: customer.id || null,
+        provider_subscription_id: sub.id || null,
+        notes: planKey, updated_at: new Date().toISOString()
+      });
+    } catch (e) {
+      acesso = 'pendente';
+      console.error('[subscribe] assinatura criada e acesso nao gravado (o webhook libera) sub=' + (sub.id || '') + ' erro=' + ((e && e.message) || e));
+    }
+    try { await sendSetPasswordEmail(email); } catch (e) {}
 
-    return json(res, 200, { ok: true, status: status || 'active', subscriptionId: sub.id, email: email });
+    return json(res, 200, { ok: true, status: status || 'active', subscriptionId: sub.id, email: email, acesso: acesso });
   } catch (e) {
     var st = (e && e.status) || 500;
     // 5xx do gateway = indisponibilidade: mensagem amigável, não vaza detalhe técnico.
-    if (st >= 500) { console.error('[subscribe] erro', (e && e.message) || e); return json(res, 502, { ok: false, error: 'Pagamento temporariamente indisponível. Tente novamente em instantes.' }); }
+    // A assinatura pode ter sido criada mesmo com a falha (tempo esgotado no meio):
+    // não convidar a pagar de novo; o navegador confere se o acesso chegou.
+    if (st >= 500) { console.error('[subscribe] erro', (e && e.message) || e); return json(res, 502, { ok: false, code: 'nao_confirmado', error: 'Não foi possível confirmar o pagamento agora. Não pague de novo: se o valor aparecer no seu cartão, o acesso é liberado em alguns minutos. Se não aparecer, tente de novo mais tarde.' }); }
     return json(res, st, { ok: false, error: (e && e.message) || 'Falha ao criar a assinatura.' });
   }
 };
