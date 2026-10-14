@@ -5,6 +5,19 @@ atualizado: 2026-10-14
 
 # Pendências
 
+## 📊 Tabelas das discussões do mural (14/10) — reconversão aguardando autorização
+
+1. **Aplicar a reconversão nas 41 discussões** em que a tabela gravada tem linhas
+   deslocadas (66 tabelas). A correção do código já está no ar (#845): o mural não
+   mostra mais tabela em texto cru, e as discussões novas já saem alinhadas. A
+   auditoria, a função temporária e o backup estão descritos em
+   [[Newsletter e Radar]] 2026-10-14. A gravação foi barrada pela checagem de
+   permissão do ambiente e precisa do OK expresso do professor.
+2. **Depois da aplicação** (ou da decisão de não aplicar), substituir a função
+   `retabelar-discussoes` por uma que só responde 410: a ferramenta do Supabase
+   não tem como apagar função. Passadas algumas semanas sem queixa, apagar o
+   `bkp_mural_discussoes_20261014`.
+
 ## 💳 Cobrança em dobro (14/10) — o que fica com o professor
 
 1. ✅ **Estorno da compra duplicada do Dr. Pedro Ivo Aranas feito em 14/10**
