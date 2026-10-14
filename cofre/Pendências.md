@@ -13,8 +13,11 @@ atualizado: 2026-10-14
    no Instagram — a mensagem dele é de 28/09 e está como solicitação de contato não
    aceita. Texto sugerido no relatório de 14/10.
 2. **Procurar outros pedidos duplicados** no pagar.me (mesmo cliente, mesmo plano, mesmo
-   dia). O banco não mostra (uma linha por e-mail + escopo). Pelo painel, ou pela API com a
-   chave secreta, se o professor autorizar a leitura.
+   dia). O banco não mostra (uma linha por e-mail + escopo). A leitura da chave secreta foi
+   autorizada em 14/10, mas o conector da Vercel não tem permissão para ler as variáveis
+   (403) e a CLI não está no contêiner. Caminhos: o professor exporta os pedidos do painel
+   (CSV) para a sessão cruzar, ou dá ao conector leitura das variáveis de Production.
+   Detalhe em [[Pagamentos pagar.me]].
 3. O furo foi fechado no código em 14/10 (quem já tem o plano não é cobrado de novo; "sem
    resposta" não vira mais "não aprovado").
 

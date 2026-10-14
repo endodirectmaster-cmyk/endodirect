@@ -14,7 +14,8 @@ anuais de R$ 540.
 
 **O que o banco mostra:** uma linha só em `endodirect_acessos` (`plano:gold`, avulso,
 `gold:anual:fundador`, pedido `or_wdm1lJJ3TeHAlW20`, cliente `cus_JqQEk0AsMKh62Lpd`,
-criada 09:43:00 e regravada 09:43:24). ⚠️ **O pedido duplicado é invisível no banco:**
+criada às 09:43:00 e regravada às 09:43:25 UTC, 06:43 em Brasília). ⚠️ **O pedido
+duplicado é invisível no banco:**
 `order.js` e o webhook gravam por **e-mail + escopo**, então a 2ª compra só regrava a
 mesma linha (e o `provider_order_id` fica o do último a gravar). Confirmar os dois
 pedidos e estornar exige o pagar.me (painel ou API com a chave secreta).
@@ -50,6 +51,21 @@ na fatura e as futuras deixam de ser lançadas; quando isso aparece depende do e
 cartão.
 ⚠️ Nenhum outro caso conhecido, mas **não dá para descartar pelo banco**: auditar exige
 listar os pedidos por cliente no pagar.me (ver [[Pendências]]).
+
+**Auditoria pela API: bloqueada (14/10).** Com a leitura da `PAGARME_SECRET_KEY`
+autorizada pelo professor, o conector da Vercel leu o projeto, mas recusou a listagem das
+variáveis (403: *"You don't have permission to list the project environment variable"*);
+a CLI da Vercel não está no contêiner e não há token. Nada foi contornado, e **a chave não
+se pede no chat**. O banco também não reconstitui a 2ª compra: `auth.audit_log_entries`
+está vazio (o Auth não grava a auditoria na tabela), o Vault não guarda segredos,
+`endodirect_assinaturas` está vazia, e os logs de junho da Vercel (1 h no Hobby) e do
+Supabase expiraram. Os 25 s entre a criação e a regravação da linha cabem num pedido só
+(checkout e webhook do mesmo pedido), então nem confirmam nem descartam o 2º.
+**O que funciona:** o professor confere e estorna no painel; para auditar todos os
+clientes, exportar os pedidos do painel (CSV com cliente, valor, data e status) para a
+sessão cruzar, ou dar ao conector da Vercel leitura das variáveis de Production. Uma rota
+de auditoria no servidor teria de entrar numa função que já existe: `api/` já tem as 12
+funções do limite do Hobby.
 
 ## ⚠️ Mudanças de API do pagar.me — vigência 28/08/2026 (auditado 2026-07-14)
 E-mail "Atualização importante na API" + guia https://docs.pagar.me/docs/mudanças-de-apis. São 3 mudanças, com janela de 45 dias (comportamento antigo disponível até ~28/08/26). **Auditoria: nossa integração já é compatível — nenhuma quebra prevista.** Detalhe:

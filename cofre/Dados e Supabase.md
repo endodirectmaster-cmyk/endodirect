@@ -47,7 +47,7 @@ Um item de `diretrizes` com **`rascunho:true`** é filtrado **no servidor**, nã
 - `endodirect_admins` — e-mails de administradores.
 - `endodirect_cursos` — cursos (coluna `tier`).
 - `endodirect_state_backup` — backups manuais do estado. (RLS ON sem policy = só service_role — padrão seguro, item INFO do linter.)
-- `endodirect_acessos` — acessos liberados (escopo, status, validade). Alimentada pelo checkout e pelo [[Pagamentos pagar.me|webhook]].
+- `endodirect_acessos` — acessos liberados (escopo, status, validade). Alimentada pelo checkout e pelo [[Pagamentos pagar.me|webhook]]. ⚠️ **Uma linha por e-mail + escopo:** a 2ª compra do mesmo plano regrava a linha e não deixa rastro. `endodirect_assinaturas` existe, mas está vazia. Para reconstituir um pagamento antigo o banco não ajuda: `auth.audit_log_entries` está vazio e o Vault não guarda segredos (conferido em 14/10/2026).
 ### Contas institucionais (parceiros)
 Login único no domínio `endodirect.com.br` (não no do parceiro: a recuperação de senha tem de cair numa caixa que o professor controla). Criadas por SQL em `auth.users` **+ `auth.identities`** — sem a linha de identidade o login por senha não funciona — com `email_confirmed_at` já preenchido. ⚠️ `auth.identities.email` é **coluna gerada**, não aceita insert. Direito de acesso como qualquer cortesia: linha em `endodirect_acessos` com `provider='manual'` (para não contar como pagante). **O limite de 2 dispositivos vale para elas** — login compartilhado por 3+ pessoas simultâneas se autoexpulsa em ~5s.
 
