@@ -208,6 +208,29 @@ ok('rodapé mantém o texto da origem', rodape.indexOf('PMC 123') >= 0);
   ok('prosa com uma barra NAO vira tabela', prosa.indexOf('<table') < 0, prosa.slice(0, 120));
 }
 
+// ---- ⚠️ CABEÇALHO COM UMA CÉLULA SÓ PREENCHIDA (14/10/2026, vídeo do Eduardo)
+// Tabela do artigo cujo cabeçalho é um rótulo de largura total, como as
+// discussões gravadas antes da correção do conversor. O `isRow` exigia duas
+// células com conteúdo e a tabela não abria: as dezenas de linhas iam para a
+// tela como texto cru, cheio de barras.
+{
+  const tab = [
+    '| Padrão A | | | |',
+    '|---|---|---|---|',
+    '| Substância | Código | Duração | Dose |',
+    '| Composto A | 11 | 7 d | 4 - 32 |'
+  ].join('\n');
+  const h = ctx.muralTextHTML(tab);
+  ok('cabeçalho de uma célula abre a tabela', /<table class="mural-table">/.test(h), h.slice(0, 160));
+  ok('nada de markdown cru sobrando', h.indexOf('| Substância') < 0 && h.indexOf('|---') < 0 && h.indexOf('| Padrão A') < 0, h.slice(0, 200));
+  ok('o rótulo ocupa a largura toda', h.indexOf('<th colspan="4">Padrão A</th>') >= 0, h.slice(0, 200));
+  ok('as linhas seguem na tabela', (h.match(/<tr>/g) || []).length === 3 && h.indexOf('Composto A') > 0);
+  const meio = ctx.muralTextHTML('| | Grupo | |\n|---|---|---|\n| a | b | c |');
+  ok('célula preenchida fora da 1ª posição: tabela comum, sem colspan', /<table class="mural-table">/.test(meio) && meio.indexOf('colspan') < 0, meio.slice(0, 160));
+  const solta = ctx.muralTextHTML('| nota solta |\nOutra linha.');
+  ok('linha com barras SEM separador embaixo não vira tabela', solta.indexOf('<table') < 0, solta.slice(0, 120));
+}
+
 // ---- TABELA LONGA RECOLHIDA AO CLIQUE (pedido do professor, 02/08/2026) ------
 // "Ampliável ao clique para não ficar muito extensa a discussão": o escore de
 // Popoveniuc do consenso de coma mixedematoso tem 30 linhas e ocupava duas telas
