@@ -7,20 +7,20 @@ atualizado: 2026-10-14
 
 ## 💳 Cobrança em dobro (14/10) — o que fica com o professor
 
-1. **Estornar a compra duplicada do Dr. Pedro Ivo Aranas** (`piaranas@gmail.com`): dois
-   Gold anuais de R$ 540 em 29/06 (`Q12T5XANDR` às 06:42:57 e `1ML7SLAV34` às 06:43:12).
-   Passo a passo em [[Pagamentos pagar.me]] 2026-10-14: manter o pedido
-   `or_wdm1lJJ3TeHAlW20` (buscar o ID em Vendas → Pedidos) e estornar o outro pelo valor
-   total, **só com a correção do webhook de 14/10 no ar** (antes dela, o estorno de
-   qualquer um dos dois cancelava o Gold dele). Depois, responder
-   no Instagram — a mensagem dele é de 28/09 e está como solicitação de contato não
-   aceita. Texto sugerido no relatório de 14/10.
+1. ✅ **Estorno da compra duplicada do Dr. Pedro Ivo Aranas feito em 14/10**
+   (`piaranas@gmail.com`; cobrança `Q12T5XANDR`, pedido `or_dWJ0PX1HwltVQ0LD`, valor
+   total), com a correção do webhook já no ar. O Gold dele seguiu ativo (ver
+   [[Pagamentos pagar.me]]). **Falta:** responder no Instagram. A mensagem dele é de
+   28/09 e está como solicitação de contato não aceita; o texto sugerido está no
+   relatório de 14/10, depois do estorno.
 2. **Procurar outros pedidos duplicados** no pagar.me (mesmo cliente, mesmo plano, mesmo
    dia). O banco não mostra (uma linha por e-mail + escopo). A leitura da chave secreta foi
    autorizada em 14/10, mas o conector da Vercel não tem permissão para ler as variáveis
-   (403) e a CLI não está no contêiner. Caminhos: o professor exporta os pedidos do painel
-   (CSV) para a sessão cruzar, ou dá ao conector leitura das variáveis de Production.
-   Detalhe em [[Pagamentos pagar.me]].
+   (403) e a CLI não está no contêiner. **Caminho mais curto:** em Cobranças, o professor
+   tira o filtro (Remover), deixa "Últimos 6 meses", que cobre tudo desde a entrada em
+   produção em 10/06, e usa "Enviar relatório". O relatório chega por e-mail, e a sessão
+   lê pelo Gmail conectado e cruza os dados. Outro caminho: dar ao conector leitura das
+   variáveis de Production. Detalhe em [[Pagamentos pagar.me]].
 3. O furo foi fechado no código em 14/10 (quem já tem o plano não é cobrado de novo; "sem
    resposta" não vira mais "não aprovado").
 

@@ -54,6 +54,11 @@ Clientes → `piaranas@gmail.com` (`cus_JqQEk0AsMKh62Lpd`) → manter o pedido
 `or_wdm1lJJ3TeHAlW20` (é o que o acesso aponta) e **estornar o outro pelo valor total**.
 No parcelado, as parcelas já lançadas voltam como crédito na fatura e as futuras deixam
 de ser lançadas; quando isso aparece depende do emissor do cartão.
+✅ **Estorno feito em 14/10, às 15h48 UTC (12h48 em Brasília):** a cobrança `Q12T5XANDR`
+(pedido `or_dWJ0PX1HwltVQ0LD`), pelo valor total. O webhook corrigido registrou
+`nenhum acesso ligado ao evento … pedido=or_dWJ0PX1HwltVQ0LD`, e o Gold dele seguiu
+ativo até 29/06/2027, ligado ao `or_wdm1lJJ3TeHAlW20` (`1ML7SLAV34`). **Para o próximo
+caso:** no detalhe da cobrança, o campo **ID de origem** é o ID do pedido.
 ⚠️ Nenhum outro caso conhecido, mas **não dá para descartar pelo banco**: auditar exige
 listar os pedidos por cliente no pagar.me (ver [[Pendências]]).
 
@@ -97,10 +102,13 @@ estorno do duplicado cancela o Gold, o evento sem pedido cancela tudo e a cortes
 ⚠️ **Estornar o pedido que o acesso aponta cancela o acesso**, como deve ser num estorno
 de verdade. Em compra em dobro, estornar sempre o OUTRO; se o estornado for o que o acesso
 aponta, regravar a linha com o pedido que ficou e reativá-la.
-⚠️ O formato do evento de estorno não pôde ser conferido na documentação, bloqueada no
-contêiner. A regra lê o pedido em `data.order.id` ou `data.order_id`, e a assinatura em
-`data.invoice.subscription_id` ou `subscription.id`. Se um estorno do pedido que libera
-o acesso responder `nenhum_acesso_do_pedido`, o ID veio em outro campo.
+✅ **Formato do evento conferido no estorno real de 14/10** (a documentação está bloqueada
+no contêiner): o evento trouxe o pedido num campo que a regra lê, e o log registrou
+`pedido=or_dWJ0PX1HwltVQ0LD`. O metadata da cobrança traz o escopo
+(`"scope": "plano:gold"`, com `coupon`, `cycle` e `plan`), então a versão anterior teria
+de fato cancelado o Gold dele. A regra lê o pedido em `data.order.id` ou
+`data.order_id`, e a assinatura em `data.invoice.subscription_id` ou `subscription.id`.
+O caminho da assinatura ainda não passou por um evento real.
 
 ## ⚠️ Mudanças de API do pagar.me — vigência 28/08/2026 (auditado 2026-07-14)
 E-mail "Atualização importante na API" + guia https://docs.pagar.me/docs/mudanças-de-apis. São 3 mudanças, com janela de 45 dias (comportamento antigo disponível até ~28/08/26). **Auditoria: nossa integração já é compatível — nenhuma quebra prevista.** Detalhe:
