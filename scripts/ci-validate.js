@@ -526,6 +526,21 @@ try {
   fail('regressão da cobrança única falhou:\n' + out);
 }
 
+// 17c-undecies-d. ESTORNO VALE SÓ PARA O ACESSO DAQUELE PEDIDO. Com dois Gold
+//      anuais pagos pelo mesmo e-mail numa linha só, o webhook revogava por
+//      e-mail + escopo (ou todos os acessos do e-mail): estornar o pedido
+//      duplicado cancelava o Gold pago pelo outro, uma tentativa recusada
+//      deixava em atraso o plano pago, e a cortesia manual caía junto. Agora
+//      estorno, contestação, cancelamento e falha mudam só a linha cujo pedido
+//      ou assinatura é o do evento (14/10/2026).
+try {
+  execFileSync(process.execPath, [path.join('scripts', 'test-estorno-so-do-pedido.js')], { stdio: 'pipe' });
+  ok('webhook: estorno do pedido duplicado não derruba o acesso pago, e só a linha do pedido/assinatura muda');
+} catch (e) {
+  const out = (e.stdout ? e.stdout.toString() : '') + (e.stderr ? e.stderr.toString() : '');
+  fail('regressão do estorno só do pedido falhou:\n' + out);
+}
+
 // 17c-undecies-b. O APARELHO NOVO NÃO É DERRUBADO NO PRÓPRIO LOGIN. O doLogin
 //      navegava (checagem do limite de 2 aparelhos) antes de registrar o aparelho:
 //      num aparelho novo a checagem chegava primeiro, respondia false e o aluno

@@ -187,14 +187,41 @@ async function upsertAcesso(row) {
   throw new Error(`POST acesso ${ins.status}: ${(await ins.text().catch(() => '')).slice(0, 200)}`);
 }
 
-// Atualiza status dos acessos do e-mail; se scope for informado, so daquele escopo.
-async function setStatusByEmail(email, status, scope) {
-  let url = `${SUPABASE_URL}/rest/v1/endodirect_acessos?email=eq.${encodeURIComponent(email)}`;
-  if (scope) url += `&scope=eq.${encodeURIComponent(scope)}`;
-  await fetch(url, {
-    method: 'PATCH', headers: { ...sbHeaders(), Prefer: 'return=minimal' },
-    body: JSON.stringify({ status: status, updated_at: new Date().toISOString() })
-  });
+// Estorno, contestação, cancelamento e falha de pagamento valem SÓ para o
+// acesso que veio deste pedido ou desta assinatura (14/10/2026). Antes, a
+// mudança ia por e-mail + escopo (ou para todos os acessos do e-mail): com
+// duas compras do mesmo plano numa linha só, estornar a duplicada cancelava o
+// acesso pago pela outra; uma tentativa de compra recusada deixava em atraso
+// um plano já pago; e cortesia manual caía junto. Acesso manual ou interno
+// não tem pedido do pagar.me, então nunca é tocado. Evento sem pedido nem
+// assinatura identificável não muda nada e fica no log para conferência: um
+// estorno sem efeito no acesso se corrige à mão; um aluno pago sem acesso, não.
+async function acessosDoEvento(info) {
+  const filtros = [];
+  if (info.orderId) filtros.push(`provider_order_id=eq.${encodeURIComponent(info.orderId)}`);
+  if (info.subscriptionId) filtros.push(`provider_subscription_id=eq.${encodeURIComponent(info.subscriptionId)}`);
+  const vistos = {};
+  const linhas = [];
+  for (const filtro of filtros) {
+    const r = await fetch(`${SUPABASE_URL}/rest/v1/endodirect_acessos?${filtro}&select=id,scope,status`, { headers: sbHeaders() });
+    // Falha ao ler o banco vira 500: o pagar.me reenvia o evento depois.
+    if (!r.ok) throw new Error(`GET acessos ${r.status}`);
+    const rows = await r.json();
+    if (!Array.isArray(rows)) throw new Error('GET acessos: resposta inesperada');
+    for (const row of rows) {
+      if (row && row.id && !vistos[row.id]) { vistos[row.id] = true; linhas.push(row); }
+    }
+  }
+  return linhas;
+}
+
+async function setStatusDoEvento(info, status) {
+  const linhas = await acessosDoEvento(info);
+  for (const row of linhas) await patchById(row.id, { status: status, updated_at: new Date().toISOString() });
+  if (!linhas.length) {
+    console.warn('[webhook] nenhum acesso ligado ao evento (status ' + status + ' não aplicado) pedido=' + (info.orderId || '-') + ' assinatura=' + (info.subscriptionId || '-'));
+  }
+  return linhas;
 }
 
 // ---- Extracao do payload do pagar.me (TODO(pagarme): confirmar campos na doc v5) ----
@@ -363,21 +390,16 @@ module.exports = async function handler(req, res) {
       return json(res, 200, { ok: true, action: 'activated', email: info.email, scopes: scopes, authConfigured: auth !== null });
     }
 
-    if (REVOKE_EVENTS.indexOf(type) >= 0) {
-      // Revoga so o(s) escopo(s) afetado(s), se identificavel; senao, todos do e-mail.
-      if (info.email) {
-        if (scopes.length) { for (const s of scopes) await setStatusByEmail(info.email, 'canceled', s); }
-        else await setStatusByEmail(info.email, 'canceled');
-      }
-      return json(res, 200, { ok: true, action: 'revoked', email: info.email, scopes: scopes.length ? scopes : 'all', authConfigured: auth !== null });
-    }
-
-    if (PASTDUE_EVENTS.indexOf(type) >= 0) {
-      if (info.email) {
-        if (scopes.length) { for (const s of scopes) await setStatusByEmail(info.email, 'past_due', s); }
-        else await setStatusByEmail(info.email, 'past_due');
-      }
-      return json(res, 200, { ok: true, action: 'past_due', email: info.email, scopes: scopes.length ? scopes : 'all', authConfigured: auth !== null });
+    if (REVOKE_EVENTS.indexOf(type) >= 0 || PASTDUE_EVENTS.indexOf(type) >= 0) {
+      // Só o acesso deste pedido/assinatura (ver acessosDoEvento).
+      const status = REVOKE_EVENTS.indexOf(type) >= 0 ? 'canceled' : 'past_due';
+      const linhas = await setStatusDoEvento(info, status);
+      return json(res, 200, {
+        ok: true,
+        action: linhas.length ? (status === 'canceled' ? 'revoked' : 'past_due') : 'nenhum_acesso_do_pedido',
+        email: info.email, pedido: info.orderId || null, assinatura: info.subscriptionId || null,
+        scopes: linhas.map((l) => l.scope), authConfigured: auth !== null
+      });
     }
 
     return json(res, 200, { ok: true, ignored: type || '(sem type)', authConfigured: auth !== null });
