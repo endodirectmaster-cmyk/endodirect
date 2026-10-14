@@ -43,12 +43,17 @@ confirmado": a tela pede para não pagar de novo, trava o botão por 1 minuto e 
 sozinha se o plano comprado apareceu. Teste `scripts/test-cobranca-unica.js` (no CI, 13
 de 13 mutações) e harness `scratchpad/checkout-navegador/check.js`.
 
-**Como estornar (painel do pagar.me):** Clientes → `piaranas@gmail.com`
-(`cus_JqQEk0AsMKh62Lpd`) → os dois pedidos de 29/06 de R$ 540 → manter o
-`or_wdm1lJJ3TeHAlW20` (é o que o acesso aponta) e **cancelar/estornar a cobrança do
-outro, pelo valor total**. No parcelado, as parcelas já lançadas voltam como crédito
-na fatura e as futuras deixam de ser lançadas; quando isso aparece depende do emissor do
-cartão.
+**Os dois pedidos (print do painel, 14/10):** `Q12T5XANDR` às 06:42:57 (cliente "PEDRO
+IVO") e `1ML7SLAV34` às 06:43:12 ("PEDRO IVO S ARANAS"), ambos pagos no cartão, R$ 540
+cada, 15 s um do outro. As listas do painel mostram o código e o ID da cobrança (`ch_…`);
+o acesso guarda o ID do PEDIDO (`or_…`), que aparece no detalhe do pedido ou buscando
+`or_wdm1lJJ3TeHAlW20` em Vendas → Pedidos.
+
+**Como estornar (painel do pagar.me), só com o webhook corrigido no ar (seção abaixo):**
+Clientes → `piaranas@gmail.com` (`cus_JqQEk0AsMKh62Lpd`) → manter o pedido
+`or_wdm1lJJ3TeHAlW20` (é o que o acesso aponta) e **estornar o outro pelo valor total**.
+No parcelado, as parcelas já lançadas voltam como crédito na fatura e as futuras deixam
+de ser lançadas; quando isso aparece depende do emissor do cartão.
 ⚠️ Nenhum outro caso conhecido, mas **não dá para descartar pelo banco**: auditar exige
 listar os pedidos por cliente no pagar.me (ver [[Pendências]]).
 
@@ -66,6 +71,36 @@ clientes, exportar os pedidos do painel (CSV com cliente, valor, data e status) 
 sessão cruzar, ou dar ao conector da Vercel leitura das variáveis de Production. Uma rota
 de auditoria no servidor teria de entrar numa função que já existe: `api/` já tem as 12
 funções do limite do Hobby.
+
+## 🛡️ ESTORNO VALE SÓ PARA O ACESSO DAQUELE PEDIDO (2026-10-14)
+
+Achado ao preparar o estorno acima, quando o professor perguntou qual pedido manter: o
+webhook revogava por **e-mail + escopo** e, quando o evento não trazia escopo, **todos os
+acessos do e-mail**. Como as duas compras do mesmo plano são uma linha só, estornar
+QUALQUER um dos dois pedidos cancelaria o Gold do assinante. Pela mesma regra, uma
+tentativa de compra recusada (`charge.payment_failed`) deixava em atraso um plano já
+pago, e a cortesia manual do mesmo e-mail caía junto. O estorno foi segurado até a
+correção entrar no ar.
+
+**Correção:** estorno, contestação, cancelamento de assinatura e falha de pagamento mudam
+**só a linha cujo `provider_order_id` ou `provider_subscription_id` é o do evento**
+(`acessosDoEvento` em `api/webhooks/pagarme.js`), com PATCH pelo `id` da linha. Linha
+manual ou interna não tem pedido do pagar.me e nunca é tocada. Evento sem pedido nem
+assinatura não muda nada: responde `nenhum_acesso_do_pedido` e registra no log
+(`[webhook] nenhum acesso ligado ao evento`) para conferência à mão. Falha ao ler ou
+gravar no banco devolve 500, e o pagar.me reenvia (antes, o PATCH não era conferido e a
+revogação se perdia em silêncio). Conferido no banco em 14/10: todas as linhas do
+pagar.me têm o ID que a regra usa (as avulsas com pedido, as recorrentes com
+assinatura). Teste `scripts/test-estorno-so-do-pedido.js` (no CI; 9 de 9 mutações
+pegas). Os mesmos cenários contra a versão publicada antes reproduzem o problema: o
+estorno do duplicado cancela o Gold, o evento sem pedido cancela tudo e a cortesia cai.
+⚠️ **Estornar o pedido que o acesso aponta cancela o acesso**, como deve ser num estorno
+de verdade. Em compra em dobro, estornar sempre o OUTRO; se o estornado for o que o acesso
+aponta, regravar a linha com o pedido que ficou e reativá-la.
+⚠️ O formato do evento de estorno não pôde ser conferido na documentação, bloqueada no
+contêiner. A regra lê o pedido em `data.order.id` ou `data.order_id`, e a assinatura em
+`data.invoice.subscription_id` ou `subscription.id`. Se um estorno do pedido que libera
+o acesso responder `nenhum_acesso_do_pedido`, o ID veio em outro campo.
 
 ## ⚠️ Mudanças de API do pagar.me — vigência 28/08/2026 (auditado 2026-07-14)
 E-mail "Atualização importante na API" + guia https://docs.pagar.me/docs/mudanças-de-apis. São 3 mudanças, com janela de 45 dias (comportamento antigo disponível até ~28/08/26). **Auditoria: nossa integração já é compatível — nenhuma quebra prevista.** Detalhe:
