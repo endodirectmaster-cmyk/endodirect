@@ -1073,6 +1073,9 @@ html[data-theme="light"] .dir-back{background:#f8f9fc;border-color:var(--bd2);co
 .dir-pts-h{font-size:.72rem;font-weight:700;letter-spacing:.04em;text-transform:uppercase;color:var(--t2);margin-bottom:.35rem}
 .dir-card .dir-pts ul{margin:0;padding-left:1.15rem}
 .dir-card .dir-pts li{font-size:.88rem;line-height:1.55;margin:.22rem 0}
+/* Linha divisória dentro dos pontos-chave ("— Evidência e notas de aplicação —"):
+   é título de bloco, não ponto; sai sem marcador, como rótulo. */
+.dir-card .dir-pts li.dir-pts-sep{list-style:none;margin:.7rem 0 .2rem -1.15rem;font-size:.7rem;font-weight:700;letter-spacing:.05em;text-transform:uppercase;color:var(--t3)}
 /* --- Ficha visual do artigo (infográfico) --------------------------------- */
 .dir-ficha{margin:-1.1rem -1.25rem 0;font-variant-numeric:tabular-nums}
 .dir-ficha .fx-sec{padding:1rem 1.25rem;border-top:1px solid var(--bd)}
@@ -3356,17 +3359,27 @@ function sophiaTrajetoria(v){
 // sem ela o médico lê cinco linhas de números sem saber em qual o paciente cai.
 // `fora` marca as duas faixas que o escore NÃO alcança — são clínicas, e o
 // PREVENT é de prevenção primária.
+// `terapia` é o esquema INICIAL da tabela de recomendações da diretriz ("uso
+// combinado de estatina, ezetimiba, ácido bempedoico e terapias anti-PCSK9",
+// todas FORTE/ALTA): alto risco já começa com estatina de alta intensidade e
+// ezetimiba; muito alto acrescenta o anti-PCSK9 "potencialmente"; extremo, de
+// saída. No baixo e no intermediário o fármaco só entra pelo gatilho dos 30.
 var LDL_METAS={
   baixo:         {rot:'BAIXO',         ldl:115,nhdl:145,apob:100,red:30,
-    quando:'escore &lt; 5% em 10 anos, sem fator agravante e sem diabetes'},
+    quando:'escore &lt; 5% em 10 anos, sem fator agravante e sem diabetes',
+    terapia:'estilo de vida; estatina só se persistir ≥ 30 mg/dL acima da meta'},
   intermediario: {rot:'INTERMEDIÁRIO', ldl:100,nhdl:130,apob:90, red:30,
-    quando:'escore 5 a &lt; 20%; ou &lt; 5% com agravante; ou diabetes em homem &lt; 50 / mulher &lt; 56 sem estratificador; ou LDL-c 160–189'},
+    quando:'escore 5 a &lt; 20%; ou &lt; 5% com agravante; ou diabetes em homem &lt; 50 / mulher &lt; 56 sem estratificador; ou LDL-c 160–189',
+    terapia:'estilo de vida; estatina só se persistir ≥ 30 mg/dL acima da meta'},
   alto:          {rot:'ALTO',          ldl:70, nhdl:100,apob:70, red:50,
-    quando:'escore ≥ 20%; ou intermediário com agravante; ou aterosclerose subclínica (CAC &gt; 100 UA ou percentil &gt; 75, placa carotídea &lt; 50%, placa na angio-TC, aneurisma de aorta abdominal); ou LDL-c ≥ 190; ou diabetes em homem ≥ 50 / mulher ≥ 56, ou com 1–2 estratificadores de alto risco'},
+    quando:'escore ≥ 20%; ou intermediário com agravante; ou aterosclerose subclínica (CAC &gt; 100 UA ou percentil &gt; 75, placa carotídea &lt; 50%, placa na angio-TC, aneurisma de aorta abdominal); ou LDL-c ≥ 190; ou diabetes em homem ≥ 50 / mulher ≥ 56, ou com 1–2 estratificadores de alto risco',
+    terapia:'estatina de alta intensidade + ezetimiba desde o início'},
   muitoalto:     {rot:'MUITO ALTO',    ldl:50, nhdl:80, apob:55, red:50, fora:1,
-    quando:'doença aterosclerótica estabelecida; no diabetes, estratificador de muito alto risco (EMAR) ou ≥ 3 estratificadores de alto risco'},
+    quando:'doença aterosclerótica estabelecida; no diabetes, estratificador de muito alto risco (EMAR) ou ≥ 3 estratificadores de alto risco',
+    terapia:'estatina de alta intensidade + ezetimiba; anti-PCSK9 conforme a meta'},
   extremo:       {rot:'EXTREMO',       ldl:40, nhdl:70, apob:45, red:50, fora:1,
-    quando:'múltiplos eventos ateroscleróticos maiores; ou 1 evento maior somado a ≥ 2 condições de alto risco'}
+    quando:'múltiplos eventos ateroscleróticos maiores; ou 1 evento maior somado a ≥ 2 condições de alto risco',
+    terapia:'estatina de alta intensidade + ezetimiba + anti-PCSK9 desde o início'}
 };
 // ⚠️⚠️ O ESCORE DÁ O PISO DA CATEGORIA, NÃO A CATEGORIA. Na SBC 2025 a faixa do
 // PREVENT é UMA das entradas: diabetes, LDL-c e agravantes/aterosclerose
@@ -3390,9 +3403,85 @@ function sbcCategoria(escore,v){
   if(isFinite(escore)&&escore>=5)return {k:'intermediario',motivo:'escore de 5 a < 20% em 10 anos'};
   return {k:'baixo',motivo:'escore < 5% em 10 anos, sem diabetes'};
 }
+// ── CONDUTA TERAPÊUTICA (pedido do professor, 14/10/2026: "insira também a
+// conduta terapêutica (dose de estatina, ezetimiba, etc)") ──────────────────
+// Fonte das recomendações e das reduções esperadas: Diretriz Brasileira de
+// Dislipidemias 2025 (SBC), texto integral no PMC (PMC12674852). O que ela diz:
+//   - estatina é a primeira opção; alta intensidade = reduz o LDL-c em ≥ 50%,
+//     moderada = 30 a 50%;
+//   - alto risco: terapia INICIAL com estatina de alta intensidade + ezetimiba
+//     (FORTE/ALTA); muito alto: + anti-PCSK9 "potencialmente"; extremo: os
+//     três desde o início; LDL-c ≥ 190 (HF): alta intensidade + ezetimiba;
+//   - quem não atinge a meta com estatina de alta intensidade + ezetimiba:
+//     anti-PCSK9 ou ácido bempedoico; inclisirana é alternativa aos anticorpos;
+//   - intolerância à estatina: ácido bempedoico + ezetimiba, ou anti-PCSK9 com
+//     ou sem ezetimiba;
+//   - reduções esperadas: alta intensidade ≈ 50%; + ezetimiba até 65%;
+//     + anti-PCSK9 > 85%; ezetimiba isolada ≈ 24% (IMPROVE-IT); anticorpos
+//     anti-PCSK9 55–60% e inclisirana 50–55% em quem já usa estatina; ácido
+//     bempedoico 180 mg/dia (CLEAR Outcomes), com ezetimiba ≈ 38%.
+// As doses por intensidade e a posologia dos anti-PCSK9 seguem as sínteses do
+// acervo (Hipercolesterolemias Secundárias e Primárias), que batem com a
+// diretriz onde ela cita dose (atorvastatina 80 e rosuvastatina 40 como doses
+// altas; 10–20 mg das duas como moderada; 5 mg de rosuvastatina e 10 mg de
+// atorvastatina como as menores).
 function ldlConduta(k){
-  if(k==='alto')return 'Estilo de vida <b>e</b> terapia farmacológica desde já: estatina de alta potência <b>ou</b> estatina + ezetimiba. Se o LDL-c ou o não-HDL-c persistirem acima da meta, intensificar.';
-  return 'Estilo de vida para todos. Terapia farmacológica quando o LDL-c <b>ou</b> o não-HDL-c persistirem <b>30 mg/dL ou mais acima da meta</b> — não basta estar acima dela.';
+  if(k==='extremo')return 'Terapia inicial com <b>estatina de alta intensidade + ezetimiba + anti-PCSK9</b> (recomendação forte, evidência alta).';
+  if(k==='muitoalto')return 'Terapia inicial com <b>estatina de alta intensidade + ezetimiba</b>, e anti-PCSK9 conforme a meta (recomendação forte, evidência alta). Se não atingir a meta: acrescentar anti-PCSK9 ou ácido bempedoico.';
+  if(k==='alto')return 'Estilo de vida <b>e</b> terapia farmacológica desde já: <b>estatina de alta intensidade + ezetimiba</b> como esquema inicial (recomendação forte, evidência alta). Se o LDL-c ou o não-HDL-c persistirem acima da meta: acrescentar anti-PCSK9 ou ácido bempedoico.';
+  return 'Estilo de vida para todos. Terapia farmacológica quando o LDL-c <b>ou</b> o não-HDL-c persistirem <b>30 mg/dL ou mais acima da meta</b> — não basta estar acima dela. A redução pedida (≥ 30%) costuma vir de estatina de moderada intensidade; a de alta intensidade, ou estatina + ezetimiba, quando a distância exigir ≥ 50%.';
+}
+// Esquema compatível com a REDUÇÃO que falta, pelas reduções médias da
+// diretriz. `emEstatina`: o LDL-c informado já é sob tratamento, então o que
+// falta se obtém somando fármaco, não começando um.
+function ldlEsquemaPelaReducao(red,emEstatina){
+  if(!isFinite(red)||red<=0)return '';
+  if(emEstatina){
+    if(red<=24)return 'otimizar a estatina para alta intensidade e associar <b>ezetimiba</b> (≈ 24% a mais)';
+    if(red<=55)return 'associar <b>anti-PCSK9</b> (55–60% a mais; inclisirana 50–55%), com ezetimiba; na intolerância à estatina, ácido bempedoico + ezetimiba';
+    return 'associar <b>ezetimiba + anti-PCSK9</b>; o esquema triplo reduz mais de 85% em relação ao basal';
+  }
+  if(red<30)return '<b>estatina de moderada intensidade</b> (reduz 30–50%)';
+  if(red<50)return '<b>estatina de alta intensidade</b> (reduz ≥ 50%), ou estatina de moderada intensidade + ezetimiba';
+  if(red<65)return '<b>estatina de alta intensidade + ezetimiba</b> (reduz até 65%)';
+  return '<b>estatina de alta intensidade + ezetimiba + anti-PCSK9</b> (reduz mais de 85%)';
+}
+var LDL_DOSES=[
+  ['Estatina de alta intensidade','↓ LDL-c ≥ 50%','atorvastatina 40–80 mg ou rosuvastatina 20–40 mg, 1×/dia'],
+  ['Estatina de moderada intensidade','↓ 30–50%','atorvastatina 10–20 · rosuvastatina 5–10 · sinvastatina 20–40 · pravastatina 40–80 · pitavastatina 2–4 · lovastatina 40 · fluvastatina 80 mg/dia'],
+  ['Ezetimiba','↓ ≈ 24% a mais','10 mg/dia, junto da estatina'],
+  ['Ácido bempedoico','↓ ≈ 17%; com ezetimiba ≈ 38%','180 mg/dia; intolerância à estatina, ou meta não atingida com estatina + ezetimiba'],
+  ['Anti-PCSK9 (anticorpos)','↓ 55–60% a mais','evolocumabe 140 mg SC a cada 2 semanas ou 420 mg ao mês · alirocumabe 75–150 mg SC a cada 2 semanas'],
+  ['Inclisirana (siRNA)','↓ 50–55% a mais','284 mg SC no início, aos 3 meses e depois a cada 6 meses; alternativa aos anticorpos']
+];
+function ldlCondutaHTML(cat,m,ldl,emEstatina){
+  var red=(isFinite(ldl)&&ldl>0)?((ldl-m.ldl)/ldl*100):NaN;
+  var gatilho=(cat.k==='baixo'||cat.k==='intermediario');
+  var distancia='';
+  if(isFinite(red)){
+    if(red<=0)distancia='LDL-c informado já abaixo da meta: manter o esquema e reavaliar no seguimento.';
+    else if(gatilho&&(ldl-m.ldl)<30)distancia='LDL-c '+Math.round(ldl-m.ldl)+' mg/dL acima da meta: ainda sem gatilho farmacológico (é ≥ 30). Estilo de vida e nova dosagem.';
+    else distancia='Para chegar à meta (&lt; '+m.ldl+'), o LDL-c de '+Math.round(ldl)+' precisa cair <b>≥ '+Math.ceil(red)+'%</b>'
+      +(emEstatina?' <b>além do que a estatina atual já faz</b>':'')+': '+ldlEsquemaPelaReducao(red,emEstatina)+'.'
+      +((!emEstatina&&(cat.k==='alto'||cat.k==='muitoalto'||cat.k==='extremo')&&red<50)?' Mesmo assim, nesta categoria a diretriz começa pela combinação acima.':'');
+  }
+  var doses='<div style="overflow-x:auto;margin-top:.55rem"><div class="adm-table" style="min-width:40rem">'
+    +'<div class="adm-table-head" style="padding:.4rem .9rem"><div style="flex:0 0 14rem">FÁRMACO</div><div style="flex:0 0 9.5rem">EFEITO ESPERADO</div><div style="flex:1 1 20rem">DOSE E POSOLOGIA</div></div>'
+    +LDL_DOSES.map(function(l){
+      return '<div class="adm-table-row" style="min-height:0;padding:.42rem .9rem;font-size:.72rem;align-items:flex-start">'
+        +'<div style="flex:0 0 14rem;font-weight:700;color:var(--t2)">'+l[0]+'</div>'
+        +'<div style="flex:0 0 9.5rem;color:var(--t2)">'+l[1]+'</div>'
+        +'<div style="flex:1 1 20rem;color:var(--t3);line-height:1.5">'+l[2]+'</div></div>';
+    }).join('')+'</div></div>';
+  return '<div style="margin-top:.7rem;border-top:1px solid var(--bd);padding-top:.6rem">'
+    +'<div style="font-size:.68rem;font-weight:700;letter-spacing:.05em;text-transform:uppercase;color:var(--t3);margin-bottom:.45rem">Conduta terapêutica · SBC 2025</div>'
+    +'<div style="border-left:3px solid var(--bd);padding:.05rem 0 .05rem .6rem;font-size:.78rem;color:var(--t2);line-height:1.55;max-width:60rem">'+ldlConduta(cat.k)
+    +(distancia?'<div style="margin-top:.35rem">'+distancia+'</div>':'')+'</div>'
+    +doses
+    +'<div style="margin-top:.5rem;font-size:.7rem;color:var(--t3);line-height:1.5;max-width:60rem">'
+      +'<div>Intolerância à estatina: ácido bempedoico + ezetimiba, ou anti-PCSK9 com ou sem ezetimiba (recomendação forte, evidência alta).</div>'
+      +'<div style="margin-top:.28rem">Reavaliar o perfil lipídico 4 a 6 semanas depois de iniciar ou ajustar; se a meta não vier, intensificar na ordem: ezetimiba → anti-PCSK9 (ou ácido bempedoico). As reduções são médias da diretriz; a resposta individual varia.</div>'
+    +'</div></div>';
 }
 // Faixa do ESCORE, no vocabulário da diretriz de 2025 (baixo <5%, moderado
 // 5–20%, alto >20%) — é a categoria que aparece na tarja logo acima do bloco.
@@ -3411,7 +3500,7 @@ var LDL_FAIXA_F={baixo:'baixa',moderado:'moderada',alto:'alta'};
 // didático". Mostrar só a meta de quem está na tela responde ao caso; mostrar a
 // escada ENSINA — o médico vê onde o paciente caiu, o que teria mudado a meta e
 // para onde ele anda se piorar. O `quando` é a definição da própria diretriz.
-var LDL_COLS='<div style="flex:0 0 9.5rem">CATEGORIA</div><div style="flex:0 0 5.5rem">LDL-c</div><div style="flex:0 0 6rem">NÃO-HDL-c</div><div style="flex:0 0 5rem">REDUÇÃO</div><div style="flex:0 0 5rem">ApoB (2ª)</div><div style="flex:1 1 20rem">QUANDO SE APLICA</div>';
+var LDL_COLS='<div style="flex:0 0 9.5rem">CATEGORIA</div><div style="flex:0 0 5.5rem">LDL-c</div><div style="flex:0 0 6rem">NÃO-HDL-c</div><div style="flex:0 0 5rem">REDUÇÃO</div><div style="flex:0 0 5rem">ApoB (2ª)</div><div style="flex:1 1 20rem">QUANDO SE APLICA</div><div style="flex:0 0 15rem">TERAPIA INICIAL</div>';
 function ldlQuadroHTML(atual){
   var ordem=['baixo','intermediario','alto','muitoalto','extremo'];
   var linhas=ordem.map(function(k){
@@ -3432,11 +3521,12 @@ function ldlQuadroHTML(atual){
       +'<div style="flex:0 0 6rem;color:var(--t2)">&lt; '+m.nhdl+'</div>'
       +'<div style="flex:0 0 5rem;color:var(--t2)">≥ '+m.red+'%</div>'
       +'<div style="flex:0 0 5rem;color:var(--t2)">&lt; '+m.apob+'</div>'
-      +'<div style="flex:1 1 20rem;color:var(--t3);line-height:1.5">'+m.quando+'</div></div>';
+      +'<div style="flex:1 1 20rem;color:var(--t3);line-height:1.5">'+m.quando+'</div>'
+      +'<div style="flex:0 0 15rem;color:var('+(eu?'--t2':'--t3')+');line-height:1.5">'+m.terapia+'</div></div>';
   }).join('');
-  // O quadro rola sozinho no celular: seis colunas não cabem em 360 px, e
+  // O quadro rola sozinho no celular: sete colunas não cabem em 360 px, e
   // espremê-las quebraria os números, que são o conteúdo.
-  return '<div style="overflow-x:auto"><div class="adm-table" style="min-width:56rem">'
+  return '<div style="overflow-x:auto"><div class="adm-table" style="min-width:70rem">'
     +'<div class="adm-table-head" style="padding:.45rem 1rem">'+LDL_COLS+'</div>'+linhas+'</div></div>';
 }
 function ldlAlvoHTML(escore,v){
@@ -3491,7 +3581,7 @@ function ldlAlvoHTML(escore,v){
       +' — <b>é ela que define a meta e a conduta</b>.</span></div>'
     +ldlQuadroHTML(cat.k)
     +(isFinite(ldl)||isFinite(nhdl)?'<div style="margin-top:.6rem;max-width:60rem">'+medido('LDL-c informado',ldl,m.ldl)+medido('não-HDL-c (CT − HDL)',nhdl,m.nhdl)+'</div>':'')
-    +'<div style="margin-top:.6rem;border-left:3px solid var(--bd);padding:.05rem 0 .05rem .6rem;font-size:.78rem;color:var(--t2);line-height:1.55;max-width:60rem">'+ldlConduta(cat.k)+'</div>'
+    +ldlCondutaHTML(cat,m,ldl,String(v.pv_est||'0')==='1')
     +'<div style="margin-top:.6rem;font-size:.7rem;color:var(--t3);line-height:1.5;max-width:60rem">'
       +notas.map(function(n){return '<div style="margin-top:.28rem">'+n+'</div>';}).join('')
     +'</div></div>';
@@ -12745,6 +12835,18 @@ function dirNovosNaSub(sub,vis){
   return diretrizes.filter(function(d){return d&&(String(d.sub||'Geral').trim()||'Geral')===sub&&(!vis||vis(d))&&acervoEhNovo(d);}).length;
 }
 function novosSufixoHTML(n,fem){return n?' <span class="novo-selo">'+n+' nov'+(fem?(n===1?'a':'as'):(n===1?'o':'os'))+'</span>':'';}
+// Um ponto-chave vira <li>. ⚠️ Marcador dentro do texto ("• Na SBD 2026, …")
+// somava ao da lista e a tela mostrava dois: as sínteses da SBD 2026 (DMPT,
+// neuropatia, perioperatório) foram gravadas com "• " em cada ponto, e o
+// professor mandou o print em 14/10/2026. O marcador do texto sai aqui, para
+// qualquer item que venha assim de novo; e a linha "— Evidência e notas de
+// aplicação —" é título de bloco, não ponto: sai sem marcador, como rótulo.
+function dirPontoLI(p){
+  var s=String(p==null?'':p).replace(/^\s*[•▪◦‣·\-–*]\s+/,'');
+  var sep=/^\s*—\s*(.+?)\s*—\s*$/.exec(s);
+  if(sep)return '<li class="dir-pts-sep">'+mdInline(sep[1])+'</li>';
+  return '<li>'+mdInline(s)+'</li>';
+}
 function dirCardHTML(d,i){
   // Sem título por card: o tema (cabeçalho da aba) já é o título da seção.
   // Cabeçalho com a fonte só nos formatos Resumo/Mapa; nos Flashcards ele é omitido.
@@ -12803,7 +12905,7 @@ function dirCardHTML(d,i){
     // resumo e, quando o resumo termina numa lista (ex.: "Armadilhas de prova"),
     // virava visualmente uma continuação dela. mdInline (que já escapa) permite
     // **negrito** nos bullets, como no resto do conteúdo.
-    if(Array.isArray(d.pts)&&d.pts.length)parts.push('<div class="dir-pts"><div class="dir-pts-h">🔑 Pontos-chave</div><ul>'+d.pts.map(function(p){return '<li>'+mdInline(String(p))+'</li>';}).join('')+'</ul></div>');
+    if(Array.isArray(d.pts)&&d.pts.length)parts.push('<div class="dir-pts"><div class="dir-pts-h">🔑 Pontos-chave</div><ul>'+d.pts.map(dirPontoLI).join('')+'</ul></div>');
     if(figHTML&&!figInText)parts.push(figHTML); // sem marcador → após os pontos-chave (padrão)
     if(Array.isArray(d.fluxogramas)&&d.fluxogramas.length)parts.push(dirFluxoHTML(d.fluxogramas));
     // ARTIGO com ficha: o infográfico vem primeiro e o texto corrido desce para
