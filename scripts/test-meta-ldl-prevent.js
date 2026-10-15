@@ -57,6 +57,9 @@ function mundo(fonte) {
     + corpo('sbcCategoria', fonte) + '\n'
     + linhaVarSimples('LDL_COLS', fonte) + '\n'
     + corpo('ldlConduta', fonte) + '\n'
+    + corpo('ldlEsquemaPelaReducao', fonte) + '\n'
+    + (function () { const src = fonte || html; const i = src.indexOf('\nvar LDL_DOSES='); const f = src.indexOf('\n];', i); return src.slice(i + 1, f + 3); })() + '\n'
+    + corpo('ldlCondutaHTML', fonte) + '\n'
     + corpo('ldlQuadroHTML', fonte) + '\n'
     + corpo('ldlAlvoHTML', fonte), ctx);
   return ctx;
@@ -117,7 +120,7 @@ ok(/escore de 5 a < 20%/.test(M.sbcCategoria(8, paciente({})).motivo),
   ok(/CATEGORIA SBC · ALTO/.test(h) && /&lt; 70/.test(h), 'o bloco não mostrou a meta da faixa em que o paciente caiu');
   ok(/hipercolesterolemia familiar/.test(h), 'o bloco não disse por que o paciente é alto risco');
   ok(/\+125 acima da meta/.test(h), 'o bloco não disse a distância medida até a meta (195 − 70)');
-  ok(/estatina de alta potência/.test(h), 'a conduta do alto risco (estatina de alta potência ou + ezetimiba) sumiu');
+  ok(/estatina de alta intensidade \+ ezetimiba/.test(h), 'a conduta do alto risco (estatina de alta intensidade + ezetimiba) sumiu');
   // ⚠️ Achado ao OLHAR a tela renderizada, não no teste: o alto risco exibia o
   // gatilho dos 30 mg/dL. Esse gatilho é regra do baixo e do intermediário; no
   // alto se medica desde o diagnóstico, e a marca sugeria esperar a distância
@@ -151,7 +154,9 @@ ok(/escore de 5 a < 20%/.test(M.sbcCategoria(8, paciente({})).motivo),
 // faixa", que vivia como parágrafo de rodapé.
 {
   const h = M.ldlAlvoHTML(12.7, paciente({ pv_dm: '1', pv_sexo: String(F), pv_idade: '62' }));
-  ok((h.match(/adm-table-row/g) || []).length === 5,
+  // Só o quadro das metas: a tabela de doses da conduta (14/10) usa a mesma classe.
+  const quadro = h.slice(h.indexOf('QUANDO SE APLICA'), h.indexOf('Conduta terapêutica'));
+  ok((quadro.match(/adm-table-row/g) || []).length === 5,
     '⚠️ o quadro deixou de mostrar as CINCO categorias — sem a escada inteira ele volta a responder o caso sem ensinar nada');
   ['BAIXO', 'INTERMEDIÁRIO', 'ALTO', 'MUITO ALTO', 'EXTREMO'].forEach((r) => {
     ok(h.indexOf(r) >= 0, 'o quadro perdeu a linha do risco ' + r);
@@ -170,7 +175,7 @@ ok(/escore de 5 a < 20%/.test(M.sbcCategoria(8, paciente({})).motivo),
   ok(/fora do alcance do escore/.test(h) && /não saem deste escore/.test(h),
     '⚠️ muito alto e extremo deixaram de ser marcados como fora do alcance do escore');
   // Seis colunas não cabem em 360 px: o quadro rola em vez de espremer o número.
-  ok(/overflow-x:auto/.test(h) && /min-width:56rem/.test(h),
+  ok(/overflow-x:auto/.test(h) && /min-width:70rem/.test(h),
     'o quadro deixou de rolar no celular — espremido, quebra os números, que são o conteúdo');
   // ⚠️ `.adm-table-row` traz `min-height:58px` da casa, dimensionada para linha
   // com botão. Sem soltar a amarra, cinco linhas de texto ocupam meia tela em

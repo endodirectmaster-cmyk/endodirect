@@ -1,9 +1,61 @@
 ---
 tags: [cofre, calculadoras]
-atualizado: 2026-08-27
+atualizado: 2026-10-14
 ---
 
 # Calculadoras
+
+## 💊 CONDUTA TERAPÊUTICA NO PREVENT: ESQUEMA, DOSES E O QUE FALTA REDUZIR (2026-10-14)
+
+Pedido do professor, olhando a tela: *"insira também a conduta terapêutica (dose de
+estatina, ezetimiba, etc)"*. Fonte: a **Diretriz Brasileira de Dislipidemias 2025**
+(texto integral no PMC, `PMC12674852`, CC BY), lida nas tabelas de recomendações
+"farmacológicas" e "uso combinado de estatina, ezetimiba, ácido bempedoico e terapias
+anti-PCSK9" e no capítulo de tratamento:
+
+- **Esquema inicial por categoria** (todas FORTE/ALTA): alto risco = estatina de alta
+  intensidade **+ ezetimiba desde o início**; muito alto = os dois e anti-PCSK9
+  "potencialmente"; extremo = os três de saída; LDL-c ≥ 190 (HF) = alta intensidade +
+  ezetimiba; quem não atinge a meta com estatina + ezetimiba = anti-PCSK9 ou ácido
+  bempedoico; inclisirana é alternativa aos anticorpos; intolerância = ácido bempedoico
+  + ezetimiba, ou anti-PCSK9 com ou sem ezetimiba.
+- **Intensidade por redução**: alta = reduz o LDL-c em ≥ 50%; moderada = 30 a 50%.
+- **Reduções esperadas**: alta intensidade ≈ 50%; + ezetimiba até 65%; + anti-PCSK9
+  > 85%; ezetimiba isolada ≈ 24% (IMPROVE-IT); anticorpos anti-PCSK9 55–60% e
+  inclisirana 50–55% em quem já usa estatina; ácido bempedoico 180 mg/dia, ≈ 17% e
+  ≈ 38% com ezetimiba.
+- ⚠️ **A diretriz não traz tabela de doses por intensidade** nem posologia dos
+  anti-PCSK9. As doses (atorvastatina 40–80 / rosuvastatina 20–40 como alta;
+  atorvastatina 10–20, rosuvastatina 5–10, sinvastatina 20–40, pravastatina 40–80,
+  pitavastatina 2–4, lovastatina 40, fluvastatina 80 como moderada) e a posologia
+  (evolocumabe 140 mg SC/2 sem ou 420 mg/mês; alirocumabe 75–150 mg SC/2 sem;
+  inclisirana 284 mg SC no início, aos 3 meses e depois a cada 6 meses) vêm das
+  sínteses do acervo (Hipercolesterolemias Secundárias e Primárias), que batem com o
+  que a diretriz cita de dose (atorvastatina 80 e rosuvastatina 40 como doses altas;
+  10–20 mg das duas como moderada; 5 mg de rosuvastatina e 10 de atorvastatina como
+  as menores). O prazo de reavaliação (4 a 6 semanas) é o que a diretriz usa na SCA e
+  na abordagem da ESC que ela descreve.
+
+**O que entrou na tela** (`ldlCondutaHTML`, `ldlEsquemaPelaReducao`, `LDL_DOSES`):
+1. O quadro das metas ganhou a coluna **TERAPIA INICIAL** (sete colunas; `min-width`
+   subiu para 70rem e o quadro rola no celular).
+2. Bloco **Conduta terapêutica · SBC 2025**: o esquema da categoria do paciente; e,
+   com o LDL-c informado, **a redução que falta** até a meta (`(LDL − meta)/LDL`) e o
+   esquema compatível pelas reduções médias: < 30% moderada; 30–50% alta (ou moderada
+   + ezetimiba); 50–65% alta + ezetimiba; ≥ 65% + anti-PCSK9. **Em uso de estatina**
+   (campo do formulário), o LDL-c já é sob tratamento e o que falta se obtém SOMANDO
+   fármaco: ≤ 24% ezetimiba; ≤ 55% anti-PCSK9; acima, os dois. No alto risco sem
+   tratamento, distância pequena não dispensa a combinação inicial (a tela diz isso).
+   No baixo e no intermediário, a menos de 30 mg/dL da meta não há fármaco.
+3. Tabela de doses com os seis grupos, a linha da intolerância e o prazo de
+   reavaliação. Vocabulário da diretriz: **intensidade**, não "potência".
+
+Testes: `scripts/test-conduta-lipidica.js` (no CI; 10 de 10 mutações pegas na conduta),
+`test-meta-ldl-prevent.js` ajustado (conta as linhas só do quadro; vocabulário). A/B em
+Chromium (`scratchpad/calc-navegador/check.js`): formulário do print do professor
+(mulher de 62 anos com diabetes, em uso de estatina, LDL-c 150) → categoria ALTO, bloco
+de conduta, "≥ 54% além do que a estatina atual já faz → anti-PCSK9", tabela de doses;
+no celular, quadro e tabela rolam na horizontal sem a página rolar. sw v296→v297.
 
 ## 🎯 PREVENT entrega META DE LDL-c e CONDUTA (SBC 2025) — 2026-08-27
 

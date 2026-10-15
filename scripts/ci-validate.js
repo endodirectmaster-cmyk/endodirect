@@ -943,6 +943,31 @@ try {
   fail('meta de LDL-c da calculadora PREVENT com comportamento errado:\n' + out);
 }
 
+// 17c-undecies-e. CONDUTA TERAPÊUTICA NO PREVENT (14/10/2026). Pedido do
+//      professor: "insira também a conduta terapêutica (dose de estatina,
+//      ezetimiba, etc)". Esquema inicial por categoria pela tabela de
+//      recomendações da SBC 2025, coluna TERAPIA INICIAL no quadro, redução
+//      que falta mapeada pelas reduções médias da diretriz (e somando fármaco
+//      em quem já usa estatina), e a tabela de doses.
+try {
+  execFileSync(process.execPath, [path.join('scripts', 'test-conduta-lipidica.js')], { stdio: 'pipe' });
+  ok('conduta lipídica no PREVENT: esquema por categoria, redução que falta → esquema, doses e posologia');
+} catch (e) {
+  const out = (e.stdout ? e.stdout.toString() : '') + (e.stderr ? e.stderr.toString() : '');
+  fail('regressão da conduta lipídica falhou:\n' + out);
+}
+
+// 17c-undecies-f. PONTOS-CHAVE SEM MARCADOR DUPLICADO (14/10/2026). As sínteses
+//      da SBD 2026 vinham com "• " dentro de cada ponto e a tela mostrava dois
+//      marcadores; a linha "— Evidência e notas de aplicação —" saía como ponto.
+try {
+  execFileSync(process.execPath, [path.join('scripts', 'test-pontos-chave-marcador.js')], { stdio: 'pipe' });
+  ok('pontos-chave: marcador no texto não duplica o da lista, e a linha de título sai sem marcador');
+} catch (e) {
+  const out = (e.stdout ? e.stdout.toString() : '') + (e.stderr ? e.stderr.toString() : '');
+  fail('regressão dos pontos-chave falhou:\n' + out);
+}
+
 // ⚠️ AS PÁGINAS NO SERVIDOR. O importador manda PDF digitalizado como N imagens
 // de página, e até 26/08 a montagem desse pedido em `api/ai.js` era guardada só
 // por conferência de TEXTO do fonte. Texto não vê bloco fora de ordem, `type`
