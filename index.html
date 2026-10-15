@@ -233,10 +233,37 @@ body{background:var(--bg);color:var(--tx);display:flex;flex-direction:column}
 /* Calculadoras agrupadas por área. Título e sub-grade ocupam a LINHA INTEIRA da
    grade externa (grid-column:1/-1) — sem isso cada título cairia numa célula de
    um terço e a lista sairia intercalada com os cards. */
-.calc-area-tit{grid-column:1/-1;display:flex;align-items:center;gap:.4rem;font-size:.7rem;font-weight:700;letter-spacing:.04em;text-transform:uppercase;color:var(--t2);margin:.75rem 0 -.15rem}
+.calc-area-tit{grid-column:1/-1;display:flex;align-items:center;gap:.5rem;font-size:.7rem;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--t2);margin:1.05rem 0 .05rem}
+/* A régua à direita do título separa um grupo do outro sem ocupar linha própria. */
+.calc-area-tit::after{content:'';flex:1 1 auto;height:1px;background:var(--bd);margin-left:.3rem}
 .calc-area-tit span{font-size:.62rem;font-weight:600;letter-spacing:0;color:var(--t3);background:var(--s3,rgba(127,127,127,.12));border-radius:999px;padding:.05rem .4rem}
 .calc-area-tit:first-child{margin-top:0}
-.calc-area-grid{grid-column:1/-1;display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+/* Layout da grade (pedido do professor, 14/10/2026: "deixa mais bonito e
+   organizado"). As colunas seguem a largura da tela (auto-fill): num monitor
+   largo cabem 4 ou 5 cartões por linha, em vez de 3 cartões esticados com uma
+   linha de texto cada; a altura é igual na linha (stretch) e o rodapé do cartão
+   fica alinhado embaixo (margin-top:auto). */
+.calc-area-grid{grid-column:1/-1;display:grid;grid-template-columns:repeat(auto-fill,minmax(248px,1fr));gap:12px;align-items:stretch}
+.calc-area-grid .calc-card{display:flex;flex-direction:column;gap:.3rem;padding:.8rem .9rem .7rem;min-height:7.4rem;cursor:pointer;transition:transform .15s ease,box-shadow .15s ease}
+.calc-area-grid .calc-card:hover,.calc-area-grid .calc-card:focus-visible{transform:translateY(-2px);box-shadow:0 10px 26px rgba(0,0,0,.22);outline:none}
+.calc-area-grid .calc-card:focus-visible{box-shadow:0 0 0 2px var(--blue),0 10px 26px rgba(0,0,0,.22)}
+.calc-card-nm{font-size:.86rem;font-weight:700;color:var(--tx);line-height:1.3}
+.calc-card-ds{font-size:.72rem;color:var(--t2);line-height:1.45;display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden}
+.calc-card-ft{margin-top:auto;display:flex;align-items:center;justify-content:space-between;gap:.5rem;padding-top:.45rem}
+.calc-unit{font-size:.6rem;font-weight:700;letter-spacing:.05em;text-transform:uppercase;color:var(--t3);background:var(--s3,rgba(127,127,127,.12));border-radius:999px;padding:.12rem .5rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:72%}
+.calc-unit.calc-ext{color:var(--blue2)}
+.calc-go{font-size:.68rem;font-weight:700;color:var(--blue2);opacity:.7;white-space:nowrap}
+.calc-card:hover .calc-go,.calc-card:focus-visible .calc-go{opacity:1}
+/* Busca por nome, ao lado das abas de área. */
+.calc-busca{flex:0 1 17rem;min-width:11rem;position:relative;display:block}
+/* `input[type=search]` no seletor: a regra global de inputs (mais abaixo) tem a mesma
+   especificidade de `.calc-busca input` e vencia o padding, com a lupa em cima do texto. */
+.calc-busca input[type=search]{width:100%;box-sizing:border-box;padding:.5rem .85rem .5rem 2.1rem;border:1px solid var(--bd2);border-radius:999px;background:var(--surface);color:var(--tx);font-family:var(--font);font-size:.78rem}
+.calc-busca input[type=search]:focus{outline:none;border-color:var(--blue)}
+.calc-busca svg{position:absolute;left:.75rem;top:50%;transform:translateY(-50%);width:.9rem;height:.9rem;color:var(--t3);pointer-events:none}
+.calc-oculto{display:none!important}
+.calc-vazio{grid-column:1/-1;padding:1.2rem;text-align:center;color:var(--t3);font-size:.8rem;border:1px dashed var(--bd2);border-radius:var(--r)}
+@media (prefers-reduced-motion:reduce){.calc-area-grid .calc-card{transition:none}.calc-area-grid .calc-card:hover{transform:none}}
 /* ⚠️ `min-width:0` é o que impede a faixa de abas de ESTOURAR A PÁGINA no
    celular. Em telas estreitas o .pill-tab-row vira nowrap + overflow-x:auto;
    como item de grade, o padrão `min-width:auto` faz o item se recusar a encolher
@@ -246,6 +273,10 @@ body{background:var(--bg);color:var(--tx);display:flex;flex-direction:column}
 .calc-pills-wrap{grid-column:1/-1;min-width:0}
 .calc-area-grid{min-width:0}
 .calc-pills{margin:0 0 .35rem;max-width:100%}
+/* A faixa vira linha flex para a busca sentar ao lado das abas; em tela estreita
+   a busca desce para a linha de baixo (wrap). As abas continuam podendo encolher. */
+.calc-pills-wrap{display:flex;flex-wrap:wrap;align-items:center;gap:.4rem 1rem}
+.calc-pills{flex:1 1 32rem;min-width:0}
 /* A cor do card vem das classes `mural-card-*`, que só definem
    `border-left-color` — por isso a borda em si é declarada aqui. Card de área
    sem cor mapeada fica com a borda neutra, e não sem borda: alinhamento
@@ -935,6 +966,10 @@ html[data-theme="light"] .cat-pill.on{background:var(--blue);border-color:var(--
   .ph h1{font-size:1.18rem}
   .pc{max-width:none;padding:.7rem .9rem 4.5rem}
   .g2,.g3,.g4,.calc-area-grid{grid-template-columns:1fr}
+  /* Uma coluna: o cartão não precisa de altura mínima, e a aba não quebra o
+     número para a linha de baixo (a faixa rola na horizontal). */
+  .calc-area-grid .calc-card{min-height:0}
+  .calc-pills .pill-tab{white-space:nowrap;flex:0 0 auto}
   .mural-ph{padding:.85rem .9rem .75rem}
   .mural-hero{padding:1rem}
   .mural-hero h2{font-size:1.16rem}
@@ -11014,6 +11049,36 @@ function calcAreasIndex(){
 // O filtro NÃO fecha a calculadora aberta — trocar de aba com um resultado na
 // tela não pode apagar o que a pessoa estava lendo.
 var calcAreaFiltro='';
+// Busca por nome (14/10/2026), ao lado das abas: com 23 calculadoras em 8 áreas,
+// quem sabe o nome não precisa achar a área primeiro. Sem acento e sem caixa,
+// para "lipides" achar Lípides. O filtro esconde cartões e grupos sem redesenhar
+// a grade, senão cada tecla tiraria o foco do campo.
+var calcBusca='';
+function calcNormaliza(s){return String(s||'').toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g,'');}
+function calcAplicarBusca(el){
+  var q=calcNormaliza(calcBusca).trim(),algum=false;
+  el.querySelectorAll('.calc-area-grid').forEach(function(g){
+    var vis=0;
+    g.querySelectorAll('[data-calc]').forEach(function(card){
+      var ok=!q||(card.getAttribute('data-busca')||'').indexOf(q)>=0;
+      card.classList.toggle('calc-oculto',!ok);if(ok)vis++;
+    });
+    var tit=g.previousElementSibling,ehTit=!!(tit&&tit.classList&&tit.classList.contains('calc-area-tit'));
+    g.classList.toggle('calc-oculto',!vis);if(ehTit)tit.classList.toggle('calc-oculto',!vis);
+    if(vis)algum=true;
+  });
+  var vazio=el.querySelector('.calc-vazio');if(vazio)vazio.classList.toggle('calc-oculto',algum);
+}
+// O cartão diz o que a calculadora devolve (a unidade do resultado) e convida a
+// abrir; a ferramenta externa é marcada como tal, porque sai da plataforma.
+function calcCardHTML(c,meta){
+  var rodape=c.external?'<span class="calc-unit calc-ext">Ferramenta oficial ↗</span>'
+    :(c.unit?'<span class="calc-unit" title="Resultado em '+esc(c.unit)+'">'+esc(c.unit)+'</span>':'<span></span>');
+  return '<div class="card calc-card'+meta.card+'" data-calc="'+c.id+'" role="button" tabindex="0" data-busca="'+esc(calcNormaliza(c.name+' '+c.desc+' '+(c.area||'')))+'">'
+    +'<div class="calc-card-nm">'+esc(c.name)+'</div>'
+    +'<div class="calc-card-ds">'+esc(c.desc)+'</div>'
+    +'<div class="calc-card-ft">'+rodape+'<span class="calc-go">Abrir →</span></div></div>';
+}
 function renderCalcGrid(){
   var el=calcEl('#calc-grid');if(!el)return;
   var ix=calcAreasIndex();
@@ -11033,11 +11098,11 @@ function renderCalcGrid(){
     var meta=muralSubMeta(a);
     // Com uma área só na tela, o título do grupo repetiria a aba selecionada.
     return (calcAreaFiltro?'':'<div class="calc-area-tit"><i class="calc-dot '+meta.tag+'"></i>'+esc(a)+' <span>'+ix.porArea[a].length+'</span></div>')
-      +'<div class="calc-area-grid">'+ix.porArea[a].map(function(c){
-        return'<div class="card calc-card'+meta.card+'" style="cursor:pointer" data-calc="'+c.id+'"><div style="font-size:.84rem;font-weight:700;color:var(--tx);margin-bottom:2px">'+esc(c.name)+'</div><div style="font-size:.71rem;color:var(--t2)">'+esc(c.desc)+'</div></div>';
-      }).join('')+'</div>';
+      +'<div class="calc-area-grid">'+ix.porArea[a].map(function(c){return calcCardHTML(c,meta);}).join('')+'</div>';
   }).join('');
-  el.innerHTML='<div class="calc-pills-wrap">'+pills+'</div>'+grupos;
+  var busca='<label class="calc-busca"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><circle cx="11" cy="11" r="7"/><line x1="20" y1="20" x2="16.2" y2="16.2"/></svg>'
+    +'<input type="search" id="calc-busca" placeholder="Buscar calculadora" autocomplete="off" aria-label="Buscar calculadora" value="'+esc(calcBusca)+'"></label>';
+  el.innerHTML='<div class="calc-pills-wrap">'+pills+busca+'</div>'+grupos+'<div class="calc-vazio">Nenhuma calculadora com esse nome. Procure por outra palavra ou limpe a busca.</div>';
   // ⚠️ A grade é ESCONDIDA por `openCalc`, e quem redesenha tem de devolvê-la.
   // Sem esta linha, sair da aba com uma calculadora aberta e voltar depois de o
   // `activeCalc` ter sido zerado (o painel do professor zera em `bindAdmSec`)
@@ -11046,6 +11111,13 @@ function renderCalcGrid(){
   el.querySelectorAll('[data-calcarea]').forEach(function(b){
     b.addEventListener('click',function(){calcAreaFiltro=b.getAttribute('data-calcarea')||'';renderCalcGrid();});
   });
+  var campo=el.querySelector('#calc-busca');
+  if(campo)campo.addEventListener('input',function(){calcBusca=campo.value;calcAplicarBusca(el);});
+  // Teclado: o cartão é botão (role + tabindex), então Enter e espaço abrem.
+  el.querySelectorAll('[data-calc]').forEach(function(card){
+    card.addEventListener('keydown',function(e){if(e.key==='Enter'||e.key===' '){e.preventDefault();openCalc(card.getAttribute('data-calc'));}});
+  });
+  calcAplicarBusca(el);
 }
 // ⚠️ A CALCULADORA OCUPA A TELA SOZINHA (pedido do professor, 31/07). Antes ela
 // abria ABAIXO da grade, e com 30 cartões em 8 áreas o resultado nascia fora da
