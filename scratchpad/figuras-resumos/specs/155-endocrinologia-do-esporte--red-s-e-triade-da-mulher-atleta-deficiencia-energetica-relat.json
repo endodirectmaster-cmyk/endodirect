@@ -1,0 +1,47 @@
+{
+  "i": 155,
+  "sub": "Endocrinologia do Esporte",
+  "tema": "RED-S e Tríade da Mulher Atleta (deficiência energética relativa)",
+  "titulo": "Tríade da Mulher Atleta e RED-S: do déficit energético ao osso",
+  "subtitulo": "Eixo hipotálamo-hipófise-gonadal e resposta de conservação",
+  "tipo": "fluxo",
+  "fluxo": {
+    "orientacao": "vertical",
+    "nos": [
+      {"id": "lea", "tipo": "alerta", "texto": "Baixa disponibilidade energética\ningestão insuficiente para o gasto do treino e demandas basais"},
+      {"id": "hyp", "tipo": "orgao", "texto": "Hipotálamo\nsupressão do GnRH pulsátil"},
+      {"id": "metab", "tipo": "grupo", "texto": "Resposta de conservação\n• ↓ leptina, insulina, IGF-1, T3\n• ↑ cortisol, grelina, PYY"},
+      {"id": "pit", "tipo": "orgao", "texto": "Hipófise\nqueda de LH e FSH"},
+      {"id": "form", "tipo": "passo", "texto": "Baixo IGF-1 e T3\nreduzem a formação óssea"},
+      {"id": "gon", "tipo": "orgao", "texto": "Gônadas\nhipogonadismo hipogonadotrófico funcional\namenorreia hipotalâmica; no homem, queda de testosterona"},
+      {"id": "estro", "tipo": "hormonio", "texto": "Hipoestrogenemia\naumenta a reabsorção óssea"},
+      {"id": "bone", "tipo": "alerta", "texto": "Perda de DMO\nfraturas por estresse"}
+    ],
+    "setas": [
+      {"de": "lea", "para": "hyp", "tipo": "inibe", "rotulo": "suprime"},
+      {"de": "lea", "para": "metab", "rotulo": "proporcional ao déficit"},
+      {"de": "hyp", "para": "pit", "rotulo": "↓ GnRH"},
+      {"de": "pit", "para": "gon", "rotulo": "↓ LH/FSH"},
+      {"de": "gon", "para": "estro"},
+      {"de": "estro", "para": "bone", "rotulo": "↑ reabsorção"},
+      {"de": "metab", "para": "form"},
+      {"de": "form", "para": "bone", "rotulo": "↓ formação"}
+    ],
+    "notas": [
+      {"no": "lea", "lado": "direita", "texto": "DE = (ingestão − gasto do exercício) / massa livre de gordura, em kcal/kg FFM/dia"},
+      {"no": "bone", "lado": "direita", "texto": "Tratamento: corrigir a disponibilidade energética; o retorno da menstruação é o melhor marcador de recuperação"}
+    ],
+    "legenda": "Seta vermelha com barra: inibição. Setas douradas: sequência causal."
+  },
+  "lastro": [
+    "ingestão calórica insuficiente para cobrir o gasto do treino somado às demandas fisiológicas basais",
+    "A redução da DE ativa resposta adaptativa de conservação, de forma contínua e proporcional ao déficit",
+    "supressão do GnRH pulsátil → queda de LH/FSH → hipogonadismo hipogonadotrófico funcional (amenorreia hipotalâmica)",
+    "Há redução de leptina, insulina, IGF-1, T3 e elevação de cortisol, grelina, PYY",
+    "A hipoestrogenemia aumenta a reabsorção óssea; o baixo IGF-1/T3 reduz a formação óssea → perda de DMO e fraturas por estresse",
+    "Em homens: queda de testosterona, libido e desempenho, com menor sinalização clínica",
+    "Disponibilidade energética (DE) = (ingestão − gasto do exercício)/massa livre de gordura; expressa em kcal/kg FFM/dia",
+    "O retorno da menstruação é o melhor marcador de recuperação energética"
+  ],
+  "justificativa": "A fisiopatologia é o nó que liga os três eixos da Tríade (energia, menstruação, osso); o fluxo mostra as duas vias — supressão do GnRH e resposta de conservação — convergindo na perda de DMO."
+}

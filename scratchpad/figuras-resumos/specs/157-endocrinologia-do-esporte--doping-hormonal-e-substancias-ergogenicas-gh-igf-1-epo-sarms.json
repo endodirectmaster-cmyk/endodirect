@@ -1,0 +1,50 @@
+{
+  "i": 157,
+  "sub": "Endocrinologia do Esporte",
+  "tema": "Doping Hormonal e Substâncias Ergogênicas (GH, IGF-1, EPO, SARMs; código WADA)",
+  "titulo": "Doping hormonal: mecanismo, detecção e risco de cada substância",
+  "subtitulo": "GH, IGF-1 e EPO na classe S2; SARMs na S1 — proibidos dentro e fora de competição",
+  "tipo": "painel",
+  "painel": {
+    "colunas": [
+      {"titulo": "GH recombinante (S2)", "cor": "navy", "itens": [
+        "Liga-se ao GHR, ativa JAK2/STAT5 e eleva o IGF-1 hepático e a lipólise",
+        "Ergogênico modesto: massa magra em boa parte por retenção hídrica",
+        "Isoformas: o GH recombinante é só 22 kDa; razão rec/pit alta, janela de 12–36 h",
+        "IGF-1 + P-III-NP (escore GH-2000): janela de até ~2 semanas",
+        "Risco: acromegalia iatrogênica, resistência insulínica, túnel do carpo"
+      ]},
+      {"titulo": "IGF-1 / LR3 (S2)", "cor": "blue", "itens": [
+        "Receptor IGF-1R → PI3K/Akt/mTOR: síntese proteica muscular",
+        "Efeito anabólico e hipoglicemiante",
+        "Detecção: LC-MS/MS; IGF-1 sérico alto; janela curta (dias)",
+        "Risco: hipoglicemia, edema, cefaleia"
+      ]},
+      {"titulo": "EPO / ESA / CERA (S2)", "cor": "red", "itens": [
+        "Eleva eritropoiese, hematócrito e VO2máx: ganho aeróbio bem documentado",
+        "SDS-PAGE/IEF distingue a EPO recombinante da endógena (glicosilação/carga)",
+        "ABP hematológico: Hb e OFF-score (Hb + reticulócitos) ao longo do tempo",
+        "Risco: trombose, hipertensão, morte súbita por hiperviscosidade; aplasia pura da série vermelha"
+      ]},
+      {"titulo": "SARMs (S1)", "cor": "purple", "itens": [
+        "Ostarina, ligandrol, RAD-140: agonismo androgênico seletivo em músculo e osso",
+        "Suprimem o eixo gonadal (LH/FSH) e podem ser hepatotóxicos",
+        "Detecção: LC-MS/MS urinário (ng/mL a pg/mL); janela de semanas",
+        "Risco: DILI, hipogonadismo, ginecomastia, queda de HDL",
+        "Suplemento contaminado: strict liability, o atleta responde mesmo sem intenção"
+      ]}
+    ],
+    "rodape": "Testosterona exógena (S1): T/E > 4:1 dispara IRMS. Do outro lado da linha, permitidos (consenso COI 2018): creatina, whey, cafeína, beta-alanina e bicarbonato."
+  },
+  "lastro": [
+    "GH, IGF-1, EPO e SARMs são proibidos em todos os momentos (dentro e fora de competição)",
+    "GH: liga-se ao receptor GHR, ativa JAK2/STAT5, estimula produção hepática de IGF-1 e lipólise",
+    "o GH recombinante é isoforma pura de 22 kDa; a hipófise secreta uma mistura de isoformas. Razão rec/pit aumentada indica administração exógena (janela curta, ~12–36 h)",
+    "dosagem de IGF-1 e do P-III-NP (pró-peptídeo N-terminal do pró-colágeno tipo III) combinados em escore específico por sexo (método GH-2000). Janela mais longa (até ~1–2 semanas)",
+    "eletroforese em gel (SDS-PAGE/IEF) diferencia a EPO recombinante da endógena pelo padrão de glicosilação/carga. O Passaporte Biológico do Atleta (ABP) — módulo hematológico — monitora Hb e o OFF-score",
+    "agonismo androgênico tecido-seletivo (músculo/osso) com menor ação prostática, buscando anabolismo com menos virilização — porém suprimem o eixo gonadal e podem ser hepatotóxicos",
+    "T/E > 4:1 disparando investigação por espectrometria de massa de razão isotópica (IRMS/GC-C-IRMS)",
+    "Suplemento \"natural\" contaminado gera responsabilidade objetiva (strict liability): o atleta responde mesmo sem intenção"
+  ],
+  "justificativa": "O capítulo compara quatro substâncias com mecanismos distintos; um mecanismo isolado deixaria três de fora, e o painel reúne para cada uma o mecanismo, a lógica de detecção e o risco clínico, que é o que o capítulo ensina."
+}

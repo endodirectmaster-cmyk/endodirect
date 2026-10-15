@@ -1,0 +1,148 @@
+{
+  "i": 149,
+  "sub": "Endocrinologia Básica",
+  "tema": "Hormônios: Classes, Síntese e Transporte",
+  "titulo": "Três classes de hormônios: do precursor ao receptor",
+  "subtitulo": "A classe química define síntese, estoque, transporte, receptor e meia-vida",
+  "tipo": "fluxo",
+  "fluxo": {
+    "orientacao": "vertical",
+    "rotulos_camadas": [
+      "Precursor",
+      "Síntese",
+      "Estoque",
+      "Sangue e receptor"
+    ],
+    "nos": [
+      {
+        "id": "p1",
+        "tipo": "inicio",
+        "largura": 170,
+        "texto": "Peptídicos\npré-pró-hormônio (gene transcrito e traduzido)"
+      },
+      {
+        "id": "e1",
+        "tipo": "inicio",
+        "largura": 170,
+        "texto": "Esteroides\nderivados do colesterol (cortisol, aldosterona, estradiol)"
+      },
+      {
+        "id": "t1",
+        "tipo": "inicio",
+        "largura": 170,
+        "texto": "Tireoidianos (T4 e T3)\ntirosina + iodo"
+      },
+      {
+        "id": "p2",
+        "tipo": "passo",
+        "largura": 170,
+        "texto": "Clivagem\npeptídeo-sinal sai no retículo (pré → pró)\nPC1/3 e PC2 clivam a pró-proteína"
+      },
+      {
+        "id": "e2",
+        "tipo": "passo",
+        "largura": 170,
+        "texto": "StAR → CYP11A1\ncolesterol entra na mitocôndria (etapa limitante)\nvira pregnenolona; enzimas seguintes definem o produto"
+      },
+      {
+        "id": "t2",
+        "tipo": "passo",
+        "largura": 170,
+        "texto": "NIS → TPO\nNIS capta iodeto; TPO organifica na tireoglobulina\nMIT+DIT → T3; DIT+DIT → T4"
+      },
+      {
+        "id": "p3",
+        "tipo": "passo",
+        "largura": 170,
+        "texto": "Grânulos\nsecreção regulada por exocitose (Ca²⁺)"
+      },
+      {
+        "id": "e3",
+        "tipo": "passo",
+        "largura": 170,
+        "texto": "Sem estoque\no estímulo agudo aumenta a síntese em minutos"
+      },
+      {
+        "id": "t3",
+        "tipo": "passo",
+        "largura": 170,
+        "texto": "Coloide\nsecreta sobretudo T4; D1/D2 geram T3 na periferia"
+      },
+      {
+        "id": "p4",
+        "tipo": "fim",
+        "largura": 170,
+        "texto": "Circulam livres\nreceptor de membrana; meia-vida de minutos"
+      },
+      {
+        "id": "e4",
+        "tipo": "fim",
+        "largura": 170,
+        "texto": "Ligados a carreadoras\nCBG, SHBG; receptor nuclear; meia-vida de horas"
+      },
+      {
+        "id": "t4",
+        "tipo": "fim",
+        "largura": 170,
+        "texto": "Ligados à TBG\nreceptor nuclear; meia-vida de dias (T4 ≈ 7 dias)"
+      }
+    ],
+    "setas": [
+      {
+        "de": "p1",
+        "para": "p2"
+      },
+      {
+        "de": "p2",
+        "para": "p3"
+      },
+      {
+        "de": "p3",
+        "para": "p4"
+      },
+      {
+        "de": "e1",
+        "para": "e2"
+      },
+      {
+        "de": "e2",
+        "para": "e3"
+      },
+      {
+        "de": "e3",
+        "para": "e4"
+      },
+      {
+        "de": "t1",
+        "para": "t2"
+      },
+      {
+        "de": "t2",
+        "para": "t3"
+      },
+      {
+        "de": "t3",
+        "para": "t4"
+      }
+    ],
+    "notas": [
+      {
+        "no": "p4",
+        "lado": "abaixo",
+        "texto": "Catecolaminas comportam-se como peptídeos: grânulos, receptor de membrana, meia-vida curta"
+      }
+    ],
+    "legenda": "Só a fração livre é ativa: o que muda a carreadora muda o hormônio total, não o livre."
+  },
+  "lastro": [
+    "A classe química define síntese, estoque, transporte, receptor e meia-vida",
+    "sintetizados como pré-pró-hormônio → clivagem no retículo endoplasmático e Golgi → armazenados em grânulos → secreção regulada por exocitose (Ca²⁺-dependente)",
+    "o peptídeo-sinal é removido no retículo (pré→pró) e a pró-proteína é clivada por pró-hormônio-convertases (PC1/3, PC2) em vesículas de secreção",
+    "a etapa limitante é a entrada do colesterol na mitocôndria pela proteína StAR, seguida da conversão a pregnenolona pela CYP11A1",
+    "sintetizados sob demanda (não estocados — o estímulo agudo aumenta a síntese em minutos)",
+    "a TPO organifica o iodo sobre resíduos de tirosina da tireoglobulina (MIT/DIT) e acopla MIT+DIT → T3 e DIT+DIT → T4, estocados no coloide",
+    "A tireoide secreta predominantemente T4 (razão T4:T3 ≈ 14–20:1); a maior parte do T3 ativo é gerada na periferia pelas desiodases D1/D2",
+    "o que muda a proteína carreadora muda o hormônio total sem mudar o livre"
+  ],
+  "justificativa": "O fio do capítulo é que a classe química determina síntese, estoque, transporte e receptor; as três cadeias em paralelo mostram esse mecanismo de ponta a ponta e a comparação que a tabela só lista."
+}
