@@ -14634,6 +14634,13 @@ function admPostadosHTML(){
   var posted=(igStories||[]).filter(function(q){return q&&q.status==='posted';});
   var total=posted.length;
   if(!total)return '<div class="card"><div class="empty">Nenhuma questão postada ainda. Marque questões como "✓ Postada" na aba Fila.</div></div>';
+  // Notificação no celular (15/10/2026): a Questão do Dia vai por push junto com a
+  // newsletter das 7h30; este botão manda agora a atual (a última postada), para o
+  // professor conferir no próprio aparelho ou reenviar se o cron falhar.
+  var atual=posted[posted.length-1];
+  var avisoPush='<div class="card" style="margin-bottom:.8rem;display:flex;gap:.6rem;flex-wrap:wrap;align-items:center;justify-content:space-between">'
+    +'<div style="font-size:.76rem;color:var(--t2);line-height:1.5;flex:1 1 20rem"><b style="color:var(--tx)">🔔 Notificação no celular.</b> A Questão do Dia sai por notificação junto com a newsletter das 7h30; o toque abre o app na questão (no iPhone, o link do e-mail abre no Safari). Atual: <i>'+esc(String(atual.stem||'').slice(0,90))+(String(atual.stem||'').length>90?'…':'')+'</i></div>'
+    +'<button class="btn btn-outline btn-sm" id="ig-qotd-push" title="Envia a Questão do Dia atual para todos os celulares inscritos">🔔 Enviar a notificação agora</button></div>';
   var bySub={};
   posted.forEach(function(q){
     var sub=q.sub||'(sem subespecialidade)';
@@ -14679,7 +14686,7 @@ function admPostadosHTML(){
   }).join('');
   var listCard='<div class="card" style="margin-bottom:.7rem"><div class="card-head"><span class="card-title">✅ Questões postadas</span><span class="tag tag-grn">'+total+'</span></div>'
     +'<div style="font-size:.72rem;color:var(--t2);margin-bottom:.55rem;line-height:1.5">Já publicadas — saíram da fila. A mais recente é a Questão do Dia atual. Use <b>↺ Reabrir</b> para devolver à fila.</div>'+listHTML+'</div>';
-  return listCard
+  return avisoPush+listCard
     +'<div class="card" style="margin-bottom:.7rem"><div style="display:flex;justify-content:space-between;align-items:center"><span class="card-title">📊 Distribuição</span><span class="tag tag-grn" style="font-size:.95rem;padding:.25rem .6rem">'+total+'</span></div>'
     +'<div style="font-size:.74rem;color:var(--t2);margin-top:.35rem;line-height:1.55">Distribuição por <b>subespecialidade</b> e <b>tema</b> — use para equilibrar o que está sub-representado.</div></div>'
     +cards+gapsHTML;
@@ -15081,6 +15088,17 @@ function renderIgLote(){
 }
 function bindAdmStories(){
   igEditId=null;
+  // Notificação da Questão do Dia agora (aba Postados). Passa pelo endpoint admin
+  // com action 'qotd-push' (api/admin/refresh-radar.js), que monta a mensagem.
+  var qp=document.getElementById('ig-qotd-push');
+  if(qp)qp.addEventListener('click',function(){
+    if(!confirm('Enviar agora a notificação da Questão do Dia atual para todos os celulares inscritos?'))return;
+    qp.disabled=true;
+    admSendPush({action:'qotd-push'}).then(function(r){
+      if(r&&r.ok)notify('Notificação enviada a '+((r.push&&r.push.sent)||0)+' aparelho(s).','ok');
+      else notify((r&&(r.error||r.motivo))||'Falha ao enviar a notificação.','err');
+    }).catch(function(e){notify((e&&e.message)||'Falha ao enviar a notificação.','err');}).then(function(){qp.disabled=false;});
+  });
   // Navegação por abas (Gerar lote / Manual / Fila / Divulgação).
   document.querySelectorAll('[data-stview]').forEach(function(b){b.addEventListener('click',function(){stShowView(b.dataset.stview);});});
   // Tema do lote: popula conforme a subespecialidade (FC_SUBTOPICS).

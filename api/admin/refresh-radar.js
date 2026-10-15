@@ -10,7 +10,8 @@
 // Supabase do admin>. Validamos o token, conferimos que o e-mail esta em
 // endodirect_admins e so entao rodamos o radar (lib/radar.js).
 const { runRadar } = require('../../lib/radar');
-const { sendTestNewsletter } = require('../../lib/newsletter');
+const { sendTestNewsletter, loadPayload, serviceKey: newsletterServiceKey, currentQotd } = require('../../lib/newsletter');
+const { pushQotd } = require('../../lib/push-qotd');
 const { gerarDiscussao } = require('../../lib/discussao');
 const { selecionar } = require('../../lib/discussao-auto');
 const { dispararCadeia } = require('../../lib/discussao-kick');
@@ -88,6 +89,23 @@ module.exports = async function handler(req, res) {
     } catch (error) {
       console.error('[refresh-radar:newsletter-teste] erro:', (error && error.stack) || error);
       return json(res, 500, { ok: false, error: (error && error.message) || 'Falha ao enviar a previa.' });
+    }
+  }
+
+  // { action: 'qotd-push' } → manda AGORA a notificação da Questão do Dia atual (a
+  // última postada): conferência no aparelho do professor e reenvio se o cron
+  // falhar. Mesma mensagem do envio automático da newsletter (lib/push-qotd.js).
+  if (payload && payload.action === 'qotd-push') {
+    if (!push.isConfigured()) return json(res, 503, { ok: false, error: 'Notificacoes nao configuradas no servidor (VAPID_PRIVATE_KEY ausente).' });
+    try {
+      const estado = await loadPayload(newsletterServiceKey());
+      const q = currentQotd(estado);
+      if (!q) return json(res, 404, { ok: false, error: 'Nenhuma Questao do Dia postada ainda.' });
+      const r = await pushQotd({ qotd: q, enviar: (m) => push.sendToAll(m), configurado: push.isConfigured });
+      return json(res, r.sent ? 200 : 500, { ok: !!r.sent, motivo: r.motivo, push: r.push, id: q.id || '' });
+    } catch (error) {
+      console.error('[refresh-radar:qotd-push] erro:', (error && error.stack) || error);
+      return json(res, 500, { ok: false, error: (error && error.message) || 'Falha ao enviar a notificacao da Questao do Dia.' });
     }
   }
 

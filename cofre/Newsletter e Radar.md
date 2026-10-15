@@ -1,9 +1,58 @@
 ---
 tags: [cofre, newsletter, radar]
-atualizado: 2026-10-14
+atualizado: 2026-10-15
 ---
 
 # Newsletter e Radar
+
+## 🧠🔔 A QUESTÃO DO DIA VAI POR NOTIFICAÇÃO NO CELULAR (2026-10-15)
+
+Relato do professor, no iPhone: *"No e-mail, quando eu tentei responder a questão
+e clico na resposta, ele joga para o Explorer. Não tem como direcionar diretamente
+para o aplicativo?"*. Pelo link, não há como: o Mail abre todo link no navegador, e
+a Apple só desvia link para aplicativo da App Store; app instalado pela tela
+inicial fica de fora (no Android o link já abre no app instalado). O que abre
+DENTRO do app instalado é a notificação: o toque dispara o `notificationclick` do
+`sw.js`, que foca uma aba aberta (ou abre uma nova) na url da mensagem, e o app lê
+`/#qotd/<id>` desde 10/10. Com o OK do professor (*"Pode fazer"*):
+
+- **`lib/push-qotd.js`**: `mensagemPushQotd(q, base)` → título "🧠 Questão do Dia",
+  corpo = enunciado cortado no fim de palavra (200 caracteres), url
+  `base + '/#qotd/' + id` (id pelo mesmo filtro do botão do e-mail), tag própria
+  `endodirect-qotd` (não substitui uma breaking news ainda não lida).
+  `pushQotd({qotd, enviar, configurado, base})` nunca lança: sem questão, sem VAPID,
+  sem função de envio ou envio falho → `sent:false` com motivo.
+- **`lib/newsletter.js`**: depois de confirmar a entrega do e-mail (o ponto em que a
+  reserva do dia já não volta) e antes de gravar `newsletter_qotd_id`, chama
+  `pushQotd` **só quando a edição levou questão nova** (o mesmo `qotd` do e-mail).
+  O retorno traz `pushQotd` e o cron o registra na resposta. **Nenhuma chave nova no
+  payload**: `newsletter_qotd_id`, gravado no mesmo run e preservado pela lista de
+  chaves do servidor no `index.html`, é a marca de "já avisada".
+- **`api/admin/refresh-radar.js`**: ação `qotd-push` (token de admin): lê o estado pela
+  service key, pega a última postada (`currentQotd`) e manda a mesma mensagem. 503 sem
+  VAPID, 404 sem questão postada.
+- **`index.html`**: a aba **Postados** do painel da Questão do Dia ganhou o cartão
+  "🔔 Notificação no celular" com o botão **"Enviar a notificação agora"** (pede
+  confirmação; `admSendPush({action:'qotd-push'})`: o `Object.assign({action:'push'},
+  payload)` deixa o payload sobrescrever a ação). `sw.js` v299.
+- **Prova:** `scripts/test-push-qotd.js` (17c-undecies-h no `ci-validate`): mensagem,
+  envio fail-safe, posição do gancho na newsletter (entre a entrega confirmada e a
+  gravação da marca), ação admin com guarda, botão do painel e `sw.js` abrindo a url.
+  Harness de fumaça do app em Chromium verde.
+
+**Quando sai:** no cron das 07:30 BRT, logo depois do e-mail; o auto-post da questão
+vem antes da newsletter no mesmo cron, então a mensagem é a questão do dia. **Quem
+recebe:** todas as inscrições de `endodirect_push_subs` (15/10: 21 aparelhos, 19
+alunos, 9 iPhones). No iPhone é preciso ter o app na tela inicial e ter aceitado
+notificações, que é o que o app já pede no mural.
+
+**Limites, de propósito:** se a edição do dia não sair (menos de 3 artigos, sem
+destinatários, Resend fora), a notificação não sai; o botão do painel resolve na
+hora. Não há reenvio automático no run seguinte: a questão seria a mesma e o bloco
+do e-mail é omitido. Responder pela própria mensagem segue em [[Pendências]].
+
+**Conferir em 16/10:** a resposta do cron (`newsletter.pushQotd.sent` e `push.sent`)
+nos logs da Vercel, e o relato do professor pelo botão.
 
 ## 📲 PUSH A PARTIR DO CARD DO MURAL (2026-08-28)
 
