@@ -1,6 +1,6 @@
 ---
 tags: [cofre, pendencias]
-atualizado: 2026-10-14
+atualizado: 2026-10-15
 ---
 
 # Pendências
@@ -27,9 +27,9 @@ atualizado: 2026-10-14
 1. ✅ **Estorno da compra duplicada do Dr. Pedro Ivo Aranas feito em 14/10**
    (`piaranas@gmail.com`; cobrança `Q12T5XANDR`, pedido `or_dWJ0PX1HwltVQ0LD`, valor
    total), com a correção do webhook já no ar. O Gold dele seguiu ativo (ver
-   [[Pagamentos pagar.me]]). **Falta:** responder no Instagram. A mensagem dele é de
-   28/09 e está como solicitação de contato não aceita; o texto sugerido está no
-   relatório de 14/10, depois do estorno.
+   [[Pagamentos pagar.me]]). ✅ **Respondido no Instagram pelo professor em 15/10**
+   (*"ja respondi ao pedro e eduardo"*); o Eduardo também recebeu a resposta sobre o vídeo
+   das tabelas (ver [[Decisões]], 14/10).
 2. **Procurar outros pedidos duplicados** no pagar.me (mesmo cliente, mesmo plano, mesmo
    dia). O banco não mostra (uma linha por e-mail + escopo). A leitura da chave secreta foi
    autorizada em 14/10, mas o conector da Vercel não tem permissão para ler as variáveis
