@@ -32,12 +32,15 @@ const WHATSNEW_VER = (APP_HTML.match(/var WHATSNEW_VER='([^']+)'/) || [])[1] || 
 
 // Um capítulo das Diretrizes gravado como as sínteses da SBD 2026 vinham: "• "
 // dentro de cada ponto e uma linha de título entre travessões.
-const DIRETRIZ = {
+// ITEM_JSON=<arquivo> troca o capítulo pelo que está no arquivo (por exemplo, o
+// capítulo reorganizado, com seções e tabelas, para a foto).
+const DIRETRIZ = process.env.ITEM_JSON ? JSON.parse(fs.readFileSync(process.env.ITEM_JSON, 'utf8')) : {
   fonte: 'Sociedade Brasileira de Diabetes. Diretriz SBD 2026 — teste', ano: '2026', sub: 'Diabetes',
   tema: 'Diabetes Pós-Transplante (DMPT)', titulo: 'Diabetes Pós-Transplante (DMPT)', resumo: 'Texto de teste do capítulo.',
   pts: ['📌 DIRETRIZ SBD 2026 — Avaliação e tratamento do DMPT', '• Na SBD 2026, a meta de HbA1c é a faixa de 7,0% a 7,5%.',
     '• A atividade física regular é RECOMENDADA no DMPT.', '— Evidência e notas de aplicação —', '• A coorte mostrou menos eventos cardiovasculares.']
 };
+const SO_FOTO = !!process.env.ITEM_JSON;
 
 const FAKE_SUPABASE = `
 (function(){
@@ -188,16 +191,24 @@ const painel = (page, p) => page.evaluate((p) => { const b = document.querySelec
       s.click(); return 'sub';
     });
     await page.waitForTimeout(400);
-    const tema = await page.evaluate(() => {
-      const t = [...document.querySelectorAll('[data-dir-tema]')].find((e) => /DMPT/.test(e.getAttribute('data-dir-tema') || '') || /DMPT/.test(e.textContent || ''));
+    const tema = await page.evaluate((alvo) => {
+      const t = [...document.querySelectorAll('[data-dir-tema]')].find((e) => (e.getAttribute('data-dir-tema') || '') === alvo || (e.textContent || '').indexOf(alvo) >= 0);
       if (!t) return 'sem tema'; t.click(); return 'tema';
-    });
+    }, DIRETRIZ.tema);
     await page.waitForTimeout(500);
     // textContent, não innerText: o título tem text-transform: uppercase no CSS.
     const pts = await page.evaluate(() => [...document.querySelectorAll('.dir-pts li')].map((li) => ({ texto: li.textContent.trim(), classe: li.className, marcador: getComputedStyle(li).listStyleType })));
-    achados.push(`2 Diretrizes: ${abriu}/${tema}; ${pts.length} pontos; começam com "•": ${pts.filter((p) => /^•/.test(p.texto)).length}; título sem marcador: ${pts.filter((p) => p.classe === 'dir-pts-sep' && p.marcador === 'none').length}`);
-    ok(pts.length === 5, '2: esperava os 5 pontos do capítulo (vieram ' + pts.length + ')');
-    if (TEM_PONTO) {
+    const corpo = await page.evaluate(() => {
+      const t = document.querySelector('.dir-texto');
+      return { titulos: t ? t.querySelectorAll('h3').length : 0, tabelas: t ? t.querySelectorAll('table').length : 0, cru: t ? (t.innerText.match(/\|---/g) || []).length : 0 };
+    });
+    achados.push(`2 Diretrizes: ${abriu}/${tema}; ${pts.length} pontos; começam com "•": ${pts.filter((p) => /^•/.test(p.texto)).length}; título sem marcador: ${pts.filter((p) => p.classe === 'dir-pts-sep' && p.marcador === 'none').length}; corpo: ${corpo.titulos} títulos, ${corpo.tabelas} tabelas, ${corpo.cru} tabelas em texto cru`);
+    if (SO_FOTO) {
+      // Capítulo reorganizado: o que se confere é a estrutura do corpo.
+      ok(corpo.titulos >= 6 && corpo.tabelas >= 1 && corpo.cru === 0, '2 (foto): esperava seções e tabela renderizadas no corpo do capítulo');
+      ok(pts.length === DIRETRIZ.pts.length && pts.every((p) => !/^•/.test(p.texto)), '2 (foto): pontos-chave do capítulo reorganizado');
+    } else ok(pts.length === 5, '2: esperava os 5 pontos do capítulo (vieram ' + pts.length + ')');
+    if (SO_FOTO) { /* nada mais a conferir */ } else if (TEM_PONTO) {
       ok(pts.every((p) => !/^•/.test(p.texto)), '2: ainda há ponto começando com "•" (marcador duplicado)');
       ok(pts.some((p) => p.classe === 'dir-pts-sep' && p.marcador === 'none' && /^Evidência e notas de aplicação$/.test(p.texto)), '2: a linha de título não saiu como título sem marcador');
       ok(pts.some((p) => p.texto === 'Na SBD 2026, a meta de HbA1c é a faixa de 7,0% a 7,5%.'), '2: o texto do ponto não ficou limpo');
