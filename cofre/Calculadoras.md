@@ -1,9 +1,73 @@
 ---
 tags: [cofre, calculadoras]
-atualizado: 2026-10-14
+atualizado: 2026-10-15
 ---
 
 # Calculadoras
+
+## 🧮 A GRADE DAS CALCULADORAS: COLUNAS PELA LARGURA, CARTÃO COM UNIDADE E BUSCA (2026-10-15, #850)
+
+Pedido do professor, olhando a tela: *"Melhora o layout pra deixar mais bonito e
+organizado"*. A tela tinha os 23 cartões em **3 colunas fixas por área**
+(`repeat(3,1fr)`, sobrando espaço em tela larga e espremendo no notebook), cartão
+só com nome e descrição, sem nada que dissesse o que a calculadora devolve, e nenhum
+jeito de achar uma calculadora pelo nome além de rolar a página.
+
+**O que entrou** (`index.html`: CSS perto da linha 236, JS logo antes de `renderCalcGrid`):
+
+- **Colunas pela largura.** Sub-grade de cada área com
+  `repeat(auto-fill,minmax(248px,1fr))`: 5 colunas a 1600px, 3 no notebook, 1 no
+  celular. A regra de colapso (`.g2,.g3,.g4,.calc-area-grid{grid-template-columns:1fr}`
+  a ≤ 820px) ficou como estava.
+- **Cartão em três partes** (`calcCardHTML(c,meta)`): `.calc-card-nm` (nome),
+  `.calc-card-ds` (descrição, até 3 linhas por `line-clamp`) e `.calc-card-ft`
+  (rodapé com `margin-top:auto`): a **unidade do resultado** (`c.unit`, com
+  `title="Resultado em …"`), ou **"Ferramenta oficial ↗"** para a externa
+  (`c.external`), e o convite **"Abrir →"**. 21 dos 23 cartões têm unidade ou a
+  marca de externa; os dois sem unidade ficam só com "Abrir". `align-items:stretch`
+  deixa os cartões da mesma linha com a mesma altura. A cor da subespecialidade
+  continua vindo de `muralSubMeta(a)` (`meta.card` → `mural-card-*`), e a borda com
+  fallback neutro (`.calc-card{border-left:3px solid var(--bd2)}`) ficou intacta.
+- **Régua ao lado do título do grupo** (`.calc-area-tit::after`, `flex:1 1 auto`).
+- **Busca por nome.** `.calc-pills-wrap` virou linha flex (abas + campo
+  `#calc-busca`). `calcNormaliza` tira acento (`NFD` + remoção dos diacríticos) e
+  caixa; o cartão carrega `data-busca` com nome + descrição + área já normalizados.
+  `calcAplicarBusca(el)` só liga/desliga a classe `.calc-oculto` (`display:none
+  !important`) em cartão, sub-grade e título do grupo, **sem redesenhar a grade** (o
+  campo não perde o foco a cada tecla); `calcBusca` guarda o texto em memória, e o
+  campo nasce com `value=` dele, então trocar de aba (que redesenha) não apaga a
+  busca. `.calc-vazio` aparece quando nenhum cartão bate.
+- **Teclado.** Cartão com `role="button" tabindex="0"`; Enter e espaço chamam
+  `openCalc`; `:focus-visible` com anel azul; `prefers-reduced-motion` desliga a
+  animação do hover.
+- **Celular** (≤ 820px): cartão sem altura mínima (uma coluna não precisa de
+  alinhamento) e `.calc-pills .pill-tab{white-space:nowrap}`: a aba não quebra o
+  número para a linha de baixo, a faixa rola na horizontal.
+
+**⚠️ Especificidade: `.calc-busca input` perdia para a regra global de inputs.** A
+regra `input:not([type]),input[type=text],input[type=search],…{padding:.44rem .72rem;
+border-radius:var(--rs)}` (perto da linha 337) tem a **mesma especificidade** (0,1,1)
+de `.calc-busca input` e vem depois, então ganhava o padding e o raio: a lupa ficava
+em cima do "B" de "Buscar". Nenhum teste de texto pegaria isso; apareceu na captura
+do harness. O seletor passou a `.calc-busca input[type=search]` (0,2,1). **Regra
+geral:** campo de formulário com estilo próprio neste projeto precisa vencer a
+regra global com `[type=…]` ou mais uma classe, e a captura em Chromium é a prova.
+
+**O teste antigo prende o texto exato das regras.** `test-painel-professor.js`
+exige `.calc-pills-wrap{grid-column:1/-1;min-width:0}` e
+`.calc-pills{margin:0 0 .35rem;max-width:100%}` (a lição do iPhone, abaixo). As
+declarações novas (flex) entraram em **regras separadas**, logo depois, em vez de
+mexer no teste que guarda a lição.
+
+**Prova:** `scripts/test-calc-grade.js` (17c-undecies-g no `ci-validate`) e o
+cenário 3 de `scratchpad/calc-navegador/check.js`, rodado nos dois lados em
+Chromium (`LADO=antes` com o `index.html` da `main`): 1600px → 3 colunas antes, 5
+depois; "LDL" deixa só o cartão `ldl` e esconde 7 dos 8 grupos; "xyzxyz" mostra o
+aviso; limpar devolve os 23; Enter abre a calculadora (`#calc-close` aparece);
+392px → 1 coluna, sem rolagem horizontal, busca visível; sem `pageerror`. A
+medida de colunas no harness é `getComputedStyle(grade).gridTemplateColumns`
+(lista de faixas em px numa grade visível), e não "cartões com o mesmo
+`offsetTop`": o primeiro grupo tem 3 cartões e dava 3 mesmo com 5 colunas.
 
 ## 💊 CONDUTA TERAPÊUTICA NO PREVENT: ESQUEMA, DOSES E O QUE FALTA REDUZIR (2026-10-14)
 
