@@ -957,6 +957,16 @@ try {
   fail('regressão da conduta lipídica falhou:\n' + out);
 }
 
+// 17c-undecies-g. A GRADE DAS CALCULADORAS (14/10/2026): colunas por auto-fill,
+//      cartão com unidade e "Abrir", busca por nome sem redesenhar, teclado.
+try {
+  execFileSync(process.execPath, [path.join('scripts', 'test-calc-grade.js')], { stdio: 'pipe' });
+  ok('grade das calculadoras: auto-fill, cartão com unidade, busca por nome e teclado');
+} catch (e) {
+  const out = (e.stdout ? e.stdout.toString() : '') + (e.stderr ? e.stderr.toString() : '');
+  fail('regressão da grade das calculadoras falhou:\n' + out);
+}
+
 // 17c-undecies-f. PONTOS-CHAVE SEM MARCADOR DUPLICADO (14/10/2026). As sínteses
 //      da SBD 2026 vinham com "• " dentro de cada ponto e a tela mostrava dois
 //      marcadores; a linha "— Evidência e notas de aplicação —" saía como ponto.

@@ -25,6 +25,7 @@ const LADO = process.env.LADO || 'depois';
 const APP_HTML = fs.readFileSync(path.join(RAIZ, 'index.html'), 'utf8');
 const TEM_CONDUTA = /function ldlCondutaHTML\(/.test(APP_HTML);
 const TEM_PONTO = /function dirPontoLI\(/.test(APP_HTML);
+const TEM_GRADE = /function calcCardHTML\(/.test(APP_HTML);
 const CHROME = '/opt/pw-browsers/chromium-1194/chrome-linux/chrome';
 const UID = '11111111-2222-3333-4444-555555555555';
 const PORTA = LADO === 'depois' ? 8831 : 8832;
@@ -221,9 +222,106 @@ const painel = (page, p) => page.evaluate((p) => { const b = document.querySelec
     await ctx.close();
   }
 
+  // ── 3. A grade das calculadoras: colunas, busca, teclado, celular ───────────
+  {
+    const { ctx, page, erros } = await novaPagina(browser, URL, { width: 1600, height: 900 });
+    await semModais(page);
+    ok(await painel(page, 'calc'), '3: o painel Calculadoras não abriu');
+    await page.waitForTimeout(400);
+    const medir = () => page.evaluate(() => {
+      const vis = (e) => e.offsetParent !== null;
+      const cards = [...document.querySelectorAll('#calc-grid [data-calc]')];
+      const visiveis = cards.filter(vis);
+      const grade = document.querySelector('#calc-grid .calc-area-grid');
+      const primeiros = grade ? [...grade.querySelectorAll('[data-calc]')].filter(vis) : [];
+      const topo = primeiros.length ? primeiros[0].offsetTop : -1;
+      const linha1 = primeiros.filter((c) => c.offsetTop === topo);
+      // Colunas da grade: o valor computado de uma grade visível é a lista de faixas em px.
+      const colunas = grade && grade.offsetParent !== null ? getComputedStyle(grade).gridTemplateColumns.split(' ').length : 0;
+      const titulos = [...document.querySelectorAll('#calc-grid .calc-area-tit')];
+      const vazio = document.querySelector('#calc-grid .calc-vazio');
+      const busca = document.getElementById('calc-busca');
+      return {
+        total: cards.length, visiveis: visiveis.length, idsVisiveis: visiveis.map((c) => c.getAttribute('data-calc')),
+        porLinha: linha1.length, colunas, alturasIguais: linha1.every((c) => c.offsetHeight === linha1[0].offsetHeight),
+        esquerdas: [...new Set(visiveis.map((c) => c.offsetLeft))].length,
+        titulosVisiveis: titulos.filter(vis).length, titulos: titulos.length,
+        vazioVisivel: !!vazio && vis(vazio), busca: busca ? busca.value : null, buscaVisivel: !!busca && vis(busca),
+        unidades: [...document.querySelectorAll('#calc-grid .calc-unit')].filter((u) => (u.textContent || '').trim()).length,
+        abrir: document.querySelectorAll('#calc-grid .calc-go').length,
+        rolaX: document.documentElement.scrollWidth > document.documentElement.clientWidth + 1,
+      };
+    });
+    const m0 = await medir();
+    achados.push(`3 grade 1600px: ${m0.total} cartões, ${m0.colunas} colunas (${m0.porLinha} no 1º grupo), alturas iguais ${m0.alturasIguais}, ${m0.titulos} grupos, unidades ${m0.unidades}, "Abrir" ${m0.abrir}, busca ${m0.buscaVisivel}`);
+    ok(m0.total > 20 && m0.visiveis === m0.total, '3: cartões escondidos sem busca');
+    if (TEM_GRADE) {
+      ok(m0.colunas >= 4, '3: a 1600px esperava 4 ou mais colunas (' + m0.colunas + ')');
+      ok(m0.alturasIguais, '3: cartões da mesma linha com alturas diferentes');
+      ok(m0.unidades >= 15 && m0.abrir === m0.total, '3: unidade do resultado ou o "Abrir" não aparecem nos cartões');
+      ok(m0.buscaVisivel, '3: o campo de busca não está visível');
+    } else {
+      ok(m0.colunas === 3, '3 (antes): esperava 3 colunas fixas (' + m0.colunas + ')');
+      ok(!m0.buscaVisivel, '3 (antes): não deveria haver busca');
+    }
+    await page.screenshot({ path: path.join(__dirname, LADO + '-grade.png'), fullPage: false });
+    if (TEM_GRADE) {
+      // Busca por nome: "ldl" (sem acento, sem caixa) deixa só os cartões com LDL.
+      await page.focus('#calc-busca');
+      await page.keyboard.type('LDL');
+      await page.waitForTimeout(200);
+      const m1 = await medir();
+      const esperados = await page.evaluate(() => [...document.querySelectorAll('#calc-grid [data-calc]')].filter((c) => (c.getAttribute('data-busca') || '').indexOf('ldl') >= 0).map((c) => c.getAttribute('data-calc')));
+      achados.push(`3 busca "LDL": ${m1.visiveis} visíveis ${JSON.stringify(m1.idsVisiveis)}; grupos visíveis ${m1.titulosVisiveis}/${m1.titulos}; vazio ${m1.vazioVisivel}`);
+      ok(m1.visiveis >= 1 && m1.visiveis < m0.total && JSON.stringify(m1.idsVisiveis) === JSON.stringify(esperados), '3: a busca "LDL" não deixou exatamente os cartões com ldl');
+      ok(m1.titulosVisiveis < m1.titulos && !m1.vazioVisivel, '3: grupos sem resultado continuaram com título à mostra');
+      ok(await page.evaluate(() => document.activeElement && document.activeElement.id === 'calc-busca'), '3: o campo perdeu o foco ao digitar (redesenho?)');
+      // A busca sobrevive à troca de aba.
+      await page.evaluate(() => { const b = [...document.querySelectorAll('#calc-grid [data-calcarea]')].find((x) => x.getAttribute('data-calcarea')); if (b) b.click(); });
+      await page.waitForTimeout(200);
+      const m2 = await medir();
+      achados.push(`3 troca de aba com busca: campo "${m2.busca}", ${m2.visiveis} visíveis de ${m2.total}`);
+      ok(m2.busca === 'LDL' && m2.visiveis <= m2.total, '3: a busca não sobreviveu à troca de aba');
+      await page.evaluate(() => { const b = document.querySelector('#calc-grid [data-calcarea=""]'); if (b) b.click(); });
+      await page.waitForTimeout(200);
+      // Sem resultado.
+      await page.fill('#calc-busca', 'xyzxyz');
+      await page.waitForTimeout(200);
+      const m3 = await medir();
+      ok(m3.visiveis === 0 && m3.vazioVisivel && m3.titulosVisiveis === 0, '3: busca sem resultado não mostrou o aviso (visíveis ' + m3.visiveis + ', aviso ' + m3.vazioVisivel + ')');
+      await page.screenshot({ path: path.join(__dirname, LADO + '-grade-vazia.png') });
+      await page.fill('#calc-busca', '');
+      await page.waitForTimeout(200);
+      const m4 = await medir();
+      ok(m4.visiveis === m4.total && !m4.vazioVisivel && m4.titulosVisiveis === m4.titulos, '3: limpar a busca não devolveu todos os cartões');
+      // Teclado: Tab até um cartão e Enter abre a calculadora.
+      await page.evaluate(() => { const c = document.querySelector('#calc-grid [data-calc="ldl"]'); if (c) c.focus(); });
+      await page.keyboard.press('Enter');
+      await page.waitForTimeout(300);
+      const abriu = await page.evaluate(() => ({ fechar: !!document.getElementById('calc-close'), titulo: (document.querySelector('#calc-detail h2, #calc-detail h3, #calc-detail .calc-tit') || {}).textContent || '' }));
+      achados.push(`3 Enter no cartão LDL: voltar ${abriu.fechar}`);
+      ok(abriu.fechar, '3: Enter no cartão não abriu a calculadora');
+      await page.evaluate(() => { const b = document.getElementById('calc-close'); if (b) b.click(); });
+      await page.waitForTimeout(300);
+      const m5 = await medir();
+      ok(m5.visiveis === m5.total, '3: ao voltar da calculadora a grade não voltou inteira');
+    }
+    // Celular: uma coluna, busca visível, sem rolagem horizontal da página.
+    await page.setViewportSize({ width: 392, height: 850 });
+    await page.waitForTimeout(400);
+    const mc = await medir();
+    achados.push(`3 celular 392px: ${mc.esquerdas} coluna(s), rola horizontal ${mc.rolaX}, busca visível ${mc.buscaVisivel}`);
+    ok(mc.esquerdas === 1, '3: no celular esperava uma coluna (' + mc.esquerdas + ' posições de esquerda)');
+    ok(!mc.rolaX, '3: a página inteira ganhou rolagem horizontal no celular');
+    if (TEM_GRADE) ok(mc.buscaVisivel, '3: a busca sumiu no celular');
+    await page.screenshot({ path: path.join(__dirname, LADO + '-grade-celular.png') });
+    ok(erros.length === 0, '3: sem pageerror (' + JSON.stringify(erros) + ')');
+    await ctx.close();
+  }
+
   await browser.close();
   srv.close();
-  console.log('LADO=' + LADO + ' (conduta: ' + TEM_CONDUTA + ', pontos: ' + TEM_PONTO + ')');
+  console.log('LADO=' + LADO + ' (conduta: ' + TEM_CONDUTA + ', pontos: ' + TEM_PONTO + ', grade: ' + TEM_GRADE + ')');
   achados.forEach((a) => console.log('  · ' + a));
   if (problemas.length) { console.log('PROBLEMAS:'); problemas.forEach((p) => console.log('  ✗ ' + p)); process.exit(1); }
   console.log('ok');
