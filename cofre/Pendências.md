@@ -5,18 +5,22 @@ atualizado: 2026-10-14
 
 # Pendências
 
-## 📊 Tabelas das discussões do mural (14/10) — reconversão aguardando autorização
+## 📊 Tabelas das discussões do mural (14/10) — feito; só o backup fica
 
-1. **Aplicar a reconversão nas 41 discussões** em que a tabela gravada tem linhas
-   deslocadas (66 tabelas). A correção do código já está no ar (#845): o mural não
-   mostra mais tabela em texto cru, e as discussões novas já saem alinhadas. A
-   auditoria, a função temporária e o backup estão descritos em
-   [[Newsletter e Radar]] 2026-10-14. A gravação foi barrada pela checagem de
-   permissão do ambiente e precisa do OK expresso do professor.
-2. **Depois da aplicação** (ou da decisão de não aplicar), substituir a função
-   `retabelar-discussoes` por uma que só responde 410: a ferramenta do Supabase
-   não tem como apagar função. Passadas algumas semanas sem queixa, apagar o
-   `bkp_mural_discussoes_20261014`.
+1. ✅ **Reconversão aplicada em 14/10 (23h UTC)**, com o OK expresso do professor
+   ("Aplicar nas 41"): 41 discussões, 66 tabelas, 67 ocorrências, todas gravadas.
+   Conferido contra o backup nas 240 linhas: só linhas de tabela mudaram,
+   `updated_at` intacto, `meta` só ganhou a marca. Detalhe em
+   [[Newsletter e Radar]] 2026-10-14.
+2. ✅ A função temporária `retabelar-discussoes` foi substituída por uma que só
+   responde 410 (a ferramenta do Supabase não apaga função); o token foi apagado.
+3. [ ] **Apagar o `bkp_mural_discussoes_20261014`** (240 linhas) depois de algumas
+   semanas sem queixa. Se alguma tabela reconvertida sair errada, a linha original
+   está lá: `update public.endodirect_mural_discussoes d set markdown=b.markdown,
+   meta=b.meta from public.bkp_mural_discussoes_20261014 b where
+   b.source_id=d.source_id and d.source_id='<id>'` (não tocar em `updated_at`).
+4. Caso residual, 1 discussão (`pubmed:42676363`): tabela sem `<thead>` com rótulo
+   de largura total na 1ª linha. O mural a mostra como tabela; fica assim.
 
 ## 💳 Cobrança em dobro (14/10) — o que fica com o professor
 

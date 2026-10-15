@@ -158,7 +158,7 @@ O Eduardo mandou ao professor um vídeo do celular (46 s, Android) rolando a dis
   - Por isso as tabelas JÁ GRAVADAS precisam ser reconvertidas (ver a seção da reconversão, abaixo).
 - **O inglês das legendas e cabeçalhos ficou como está:** é o efeito colateral aceito pelo professor em 30/07 ("traduzir é reescrever"), descrito na seção da tabela do artigo.
 
-**Reconversão das tabelas já gravadas: preparada, aguardando autorização expressa (14/10).**
+**Reconversão das tabelas já gravadas: aplicada em 14/10, com o OK expresso do professor ("Aplicar nas 41").**
 - **Onde roda:** no próprio Supabase, para o texto dos artigos não trafegar pela sessão. É uma função TEMPORÁRIA, `retabelar-discussoes`, que exige JWT e um token próprio (responde 403 sem ele). Ela baixa o JATS do PMC e converte cada tabela com o conversor de antes e com o de agora.
 - **O que troca:** só o bloco de tabela idêntico, linha por linha, ao que o conversor de antes produziu. O texto, a legenda e a nota ficam intactos. A gravação é guardada pelo `updated_at` (se o professor regerar a discussão no meio, a linha não é tocada) e marca `meta.tabelas_reconvertidas`.
 - **Conferência da função publicada:** o hash de cada tabela, antes e depois, saiu idêntico ao calculado localmente em 4 artigos (18 tabelas).
@@ -167,8 +167,12 @@ O Eduardo mandou ao professor um vídeo do celular (46 s, Android) rolando a dis
   - **41 discussões mudam, com 66 tabelas (67 ocorrências)**;
   - o conversor novo não descarta nenhuma tabela já publicada;
   - as 2 "ausências" são tabelas que nunca foram inseridas (fora de `tabelas_inseridas`).
-- **Backup integral:** `bkp_mural_discussoes_20261014`, com 234 linhas, assinatura `d597de00…` e RLS ligado sem política.
-- ⚠️ **A gravação foi barrada pela checagem de permissão do ambiente** (alteração de dado de produção) e ficou para a autorização expressa do professor. Ver [[Pendências]].
+- **Backup integral:** `bkp_mural_discussoes_20261014`, com RLS ligado sem política: 234 linhas na auditoria (assinatura `d597de00…`), mais as 6 discussões que a cadeia gerou entre o backup e a aplicação, já com o conversor novo (240 no total).
+- ⚠️ A primeira tentativa de gravar foi barrada pela checagem de permissão do ambiente (dado de produção); a aplicação só saiu depois do OK expresso do professor, na mesma noite.
+- **Aplicação (23h UTC):** 41 discussões, 66 tabelas, 67 ocorrências, todas gravadas, nenhuma recusada pela guarda de versão.
+- **Conferido contra o backup, nas 240 linhas:** só as 41 marcadas mudaram; tirando as linhas de tabela, o texto é idêntico em todas; `updated_at` intacto (é ele que o estrangulamento da cadeia lê); `meta` só ganhou a marca `tabelas_reconvertidas`. 22 discussões ficaram com menos linhas de tabela (−34 no total): são as de cabeçalho em duas linhas, agora juntadas numa (`Homens · n`). A discussão do vídeo ficou com os 6 blocos exatamente iguais aos da conversão local (md5 a md5).
+- **Caso residual, 1 discussão** (`pubmed:42676363`): tabela SEM `<thead>` cujo primeiro lugar é um rótulo de largura total (`| GLP-1 receptor agonists | | | | |`). O conversor não tem como saber que a 2ª linha é o cabeçalho, e o mural a mostra como tabela, com o rótulo ocupando a largura e os nomes das colunas na 1ª linha do corpo. Legível; fica assim.
+- **Encerramento:** a função `retabelar-discussoes` foi substituída por uma que só responde 410 (a ferramenta do Supabase não apaga função), e o token foi apagado. O backup fica algumas semanas; a instrução de restauro por linha está em [[Pendências]].
 
 ### ⚠️ Tabela quebrava na LINHA DE AGRUPAMENTO e o resto virava markdown cru (2026-08-02)
 O professor mandou o print de um card e disse *"ficou estranho"*: a tabela de características de base renderizava **as 4 primeiras linhas** e, dali em diante, **dezenas de linhas de `| a | b | c |`** apareciam como texto na tela do aluno.
