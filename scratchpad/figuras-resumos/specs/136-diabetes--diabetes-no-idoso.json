@@ -45,25 +45,29 @@
         "id": "e",
         "tipo": "passo",
         "largura": 320,
-        "texto": "Avaliação geriátrica\ncognição, depressão, quedas, polifarmácia, função, nutrição, suporte\nA1c menos confiável (anemia, doença renal): apoiar na glicemia capilar/CGM"
+        "texto": "Avaliação geriátrica\ncognição, depressão, quedas, polifarmácia, função, nutrição, suporte\nA1c menos confiável (anemia, doença renal): apoiar na glicemia capilar/CGM",
+        "camada": 3
       },
       {
         "id": "p1",
         "tipo": "fim",
         "largura": 180,
-        "texto": "Baixo risco de hipoglicemia\npreferir metformina, SGLT2i, GLP-1 RA, iDPP-4\nse insulina: basal simples com análogo de longa ação"
+        "texto": "Baixo risco de hipoglicemia\npreferir metformina, SGLT2i, GLP-1 RA, iDPP-4\nse insulina: basal simples com análogo de longa ação",
+        "camada": 4
       },
       {
         "id": "p2",
         "tipo": "alerta",
         "largura": 180,
-        "texto": "Evitar\nglibenclamida (sulfonilureia de longa ação)\nesquemas de insulina complexos"
+        "texto": "Evitar\nglibenclamida (sulfonilureia de longa ação)\nesquemas de insulina complexos",
+        "camada": 4
       },
       {
         "id": "p3",
         "tipo": "fim",
         "largura": 180,
-        "texto": "Desintensificar\nA1c abaixo da meta com fármacos de risco\nreduzir ou retirar insulina e sulfonilureia"
+        "texto": "Desintensificar\nA1c abaixo da meta com fármacos de risco\nreduzir ou retirar insulina e sulfonilureia",
+        "camada": 4
       }
     ],
     "setas": [
@@ -74,8 +78,7 @@
       },
       {
         "de": "a",
-        "para": "h2",
-        "rotulo": "descompensação"
+        "para": "h2"
       },
       {
         "de": "h1",
@@ -86,11 +89,7 @@
         "para": "c2"
       },
       {
-        "de": "c1",
-        "para": "e"
-      },
-      {
-        "de": "c2",
+        "de": "a",
         "para": "e"
       },
       {
