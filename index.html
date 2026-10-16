@@ -19235,7 +19235,7 @@ function ensureLightbox(){
   var ov=document.createElement('div');
   ov.id='img-lightbox';
   ov.style.cssText='position:fixed;inset:0;z-index:99999;background:rgba(8,12,24,.92);display:none;align-items:center;justify-content:center;padding:20px;cursor:zoom-out';
-  ov.innerHTML='<img alt="" style="max-width:96vw;max-height:92vh;border-radius:10px;background:#fff;box-shadow:0 12px 50px rgba(0,0,0,.55)"><button type="button" aria-label="Fechar" style="position:absolute;top:12px;right:16px;width:42px;height:42px;border:0;border-radius:50%;background:rgba(255,255,255,.18);color:#fff;font-size:1.5rem;line-height:1;cursor:pointer">✕</button>';
+  ov.innerHTML='<img alt="" style="max-width:96vw;max-height:92vh;border-radius:10px;background:#fff;box-shadow:0 12px 50px rgba(0,0,0,.55)"><button type="button" aria-label="Fechar" style="position:fixed;top:12px;right:16px;width:42px;height:42px;border:1px solid rgba(255,255,255,.45);border-radius:50%;background:rgba(8,12,24,.78);color:#fff;font-size:1.5rem;line-height:1;cursor:pointer">✕</button>';
   document.body.appendChild(ov);
   function closeLb(){ov.style.display='none';var im=ov.firstChild;if(im&&im.tagName==='IMG')im.src='';}
   ov.addEventListener('click',closeLb);
@@ -19250,7 +19250,17 @@ function ensureLightbox(){
     var ok=t.classList.contains('mural-inline-img')
       ||(t.closest&&(t.closest('.mural-figure')||t.closest('.dir-texto')||t.closest('.dir-fig')));
     if(!ok)return;
-    ov.firstChild.src=t.src;ov.style.display='flex';
+    // Esquema em SVG mais largo que a tela (as figuras dos Resumos têm até 900 px): no
+    // celular ele aparece a menos da metade do tamanho e o texto fica pequeno demais. No
+    // ampliador ele abre no tamanho natural, com rolagem; foto continua cabendo na tela.
+    var im=ov.firstChild,svgLargo=/\.svg(\?|#|$)/i.test(t.src)&&t.naturalWidth>window.innerWidth*0.9;
+    ov.style.overflow=svgLargo?'auto':'';
+    ov.style.alignItems=svgLargo?'flex-start':'center';
+    ov.style.justifyContent=svgLargo?'flex-start':'center';
+    im.style.maxWidth=svgLargo?'none':'96vw';
+    im.style.maxHeight=svgLargo?'none':'92vh';
+    im.style.width=svgLargo?t.naturalWidth+'px':'';
+    im.src=t.src;ov.style.display='flex';
   });
 }
 // Renderiza o texto do card escapando tudo, mas convertendo imagens em markdown

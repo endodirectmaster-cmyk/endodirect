@@ -28,7 +28,7 @@ atualizado: 2026-10-16
    especificação de cada uma está em `scratchpad/figuras-resumos/specs/` e se refaz em
    minutos. Antes de editar qualquer Resumo no painel, **F5** (o painel aberto antes da
    gravação não tem o campo `figuras` e pode sobrescrevê-lo).
-2. **Função temporária `exportar-capitulos`** (Supabase): virar stub 410 depois da gravação.
+2. ✅ **Função temporária `exportar-capitulos`:** virou stub 410 (16/10), com JWT exigido.
 3. Capítulos novos dos Resumos nascem sem figura: seguir [[Figuras dos Resumos]].
 
 ## 💊 Bulário (16/10)
