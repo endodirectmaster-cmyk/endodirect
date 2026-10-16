@@ -1,0 +1,143 @@
+{
+  "i": 75,
+  "sub": "Obesidade",
+  "tema": "Tratamento Cirúrgico da Obesidade",
+  "titulo": "Como a cirurgia bariátrica age: além da restrição",
+  "subtitulo": "Mecanismos comuns às técnicas e por que o DM2 remite antes da perda de peso",
+  "tipo": "fluxo",
+  "fluxo": {
+    "orientacao": "vertical",
+    "nos": [
+      {
+        "id": "c",
+        "texto": "Cirurgia bariátrica\nsleeve ou bypass em Y-de-Roux",
+        "tipo": "inicio",
+        "camada": 0
+      },
+      {
+        "id": "gre",
+        "texto": "Grelina ↓\nsleeve remove o fundo gástrico",
+        "tipo": "hormonio",
+        "camada": 1
+      },
+      {
+        "id": "ab",
+        "texto": "Ácidos biliares ↑\nestímulo de FXR e TGR5",
+        "tipo": "passo",
+        "camada": 1
+      },
+      {
+        "id": "mic",
+        "texto": "Microbiota alterada\n↓ índice Firmicutes/Bacteroidetes",
+        "tipo": "passo",
+        "camada": 1
+      },
+      {
+        "id": "comp",
+        "texto": "Comportamento\nporções menores, menos craving hedônico",
+        "tipo": "passo",
+        "camada": 1
+      },
+      {
+        "id": "glp",
+        "texto": "GLP-1, PYY e oxintomodulina ↑",
+        "tipo": "hormonio",
+        "camada": 2
+      },
+      {
+        "id": "dm",
+        "texto": "Remissão do DM2\nefeito incretínico precoce no bypass",
+        "tipo": "fim",
+        "camada": 3
+      },
+      {
+        "id": "peso",
+        "texto": "Perda de peso sustentada\nsobretudo de gordura visceral",
+        "tipo": "fim",
+        "camada": 3
+      },
+      {
+        "id": "infl",
+        "texto": "Menos inflamação\nIL-6, TNF-α e PCR ↓",
+        "tipo": "fim",
+        "camada": 4
+      }
+    ],
+    "setas": [
+      {
+        "de": "c",
+        "para": "gre"
+      },
+      {
+        "de": "c",
+        "para": "ab"
+      },
+      {
+        "de": "c",
+        "para": "mic"
+      },
+      {
+        "de": "c",
+        "para": "comp"
+      },
+      {
+        "de": "c",
+        "para": "glp"
+      },
+      {
+        "de": "ab",
+        "para": "glp",
+        "rotulo": "mais secreção"
+      },
+      {
+        "de": "glp",
+        "para": "dm"
+      },
+      {
+        "de": "gre",
+        "para": "peso"
+      },
+      {
+        "de": "glp",
+        "para": "peso"
+      },
+      {
+        "de": "mic",
+        "para": "peso",
+        "tipo": "fraca"
+      },
+      {
+        "de": "comp",
+        "para": "peso"
+      },
+      {
+        "de": "peso",
+        "para": "infl"
+      }
+    ],
+    "notas": [
+      {
+        "no": "glp",
+        "texto": "Bypass: ↑↑ GLP-1 e PYY já no 2º dia, antes da perda de peso",
+        "lado": "direita"
+      },
+      {
+        "no": "c",
+        "texto": "Banda gástrica: só restrição mecânica, sem efeito neuroendócrino significativo",
+        "lado": "direita"
+      }
+    ],
+    "legenda": "Mecanismos de ação comuns às técnicas, segundo o capítulo; a queda de grelina é maior no sleeve que no bypass."
+  },
+  "lastro": [
+    "Hormonal: ↓ grelina; ↑ GLP-1, PYY e oxintomodulina.",
+    "Ácidos biliares: maior produção, com estímulo de FXR e TGR5 → mais secreção de GLP-1.",
+    "Microbiota: ↓ índice Firmicutes/Bacteroidetes",
+    "mastigação mais lenta, porções menores e redução do craving hedônico",
+    "↑↑ GLP-1 e PYY já a partir do 2º dia de pós-operatório — é o efeito incretínico precoce que explica a remissão do DM2 antes da perda de peso",
+    "remove o fundo gástrico (fonte da grelina)",
+    "redução da gordura corporal — sobretudo visceral —, queda do estado inflamatório (IL-6, TNF-α, AGL, PCR)",
+    "não tem efeito neuroendócrino significativo"
+  ],
+  "justificativa": "O capítulo já tem o fluxograma de indicação; a figura mostra o mecanismo de ação, ângulo de maior valor didático e ausente dos fluxogramas."
+}

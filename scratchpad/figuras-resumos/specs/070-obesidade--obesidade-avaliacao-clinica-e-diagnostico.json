@@ -1,0 +1,66 @@
+{
+  "i": 70,
+  "sub": "Obesidade",
+  "tema": "Obesidade: Avaliação Clínica e Diagnóstico",
+  "titulo": "Métodos de composição corporal: o que cada um mede e onde falha",
+  "subtitulo": "O IMC não distingue gordura de massa magra nem mostra a distribuição",
+  "tipo": "painel",
+  "painel": {
+    "colunas": [
+      {
+        "titulo": "Bioimpedância",
+        "cor": "gold",
+        "itens": [
+          "Portátil, barata, não operador-dependente",
+          "Não avalia VAT nem gordura ectópica",
+          "Depende da hidratação; ângulo de fase menor = pior prognóstico",
+          "Subestima massa magra no idoso",
+          "Contraindicada: marca-passo, gestação, implantes metálicos"
+        ]
+      },
+      {
+        "titulo": "DXA",
+        "cor": "navy",
+        "itens": [
+          "Padrão-ouro de composição corporal",
+          "Erro de 1% para osso e 3% para gordura",
+          "Imprecisa para VAT",
+          "Limite de peso do aparelho nos superobesos",
+          "Marcas não comparáveis entre si"
+        ]
+      },
+      {
+        "titulo": "TC e RM",
+        "cor": "green",
+        "itens": [
+          "Padrão-ouro da gordura abdominal segmentar",
+          "TC no corte L4-L5: VAT ≥ 100 cm² = risco cardiometabólico",
+          "Avaliam gordura ectópica",
+          "Alto custo; TC com radiação, RM sem"
+        ]
+      },
+      {
+        "titulo": "Ultrassonografia",
+        "cor": "purple",
+        "itens": [
+          "Simples, barata e reprodutível",
+          "Gordura ectópica hepática, epicárdica e intramuscular",
+          "Examinador-dependente",
+          "Só a gordura segmentar abdominal"
+        ]
+      }
+    ],
+    "rodape": "No idoso, preferir TC/RM e DXA: a bioimpedância subestima a massa magra justamente nessa faixa."
+  },
+  "lastro": [
+    "não distingue gordura de massa magra nem informa distribuição",
+    "não avalia VAT nem gordura ectópica",
+    "Contraindicações:* **marca-passo, gestação e implantes metálicos**",
+    "erro de 1% para massa óssea e 3% para massa gorda",
+    "as marcas (Hologic, GE-Lunar) não são comparáveis entre si",
+    "VAT ≥ 100 cm² indica risco cardiometabólico aumentado.",
+    "avalia gordura ectópica — hepática, epicárdica e intramuscular",
+    "Os métodos de escolha nessa faixa são TC/RM e DXA"
+  ],
+  "justificativa": "O capítulo já tem o algoritmo diagnóstico da Lancet 2025; a figura compara os métodos de composição corporal, ponto central e muito cobrado do capítulo."
+}

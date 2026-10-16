@@ -1,0 +1,111 @@
+{
+  "i": 71,
+  "sub": "Obesidade",
+  "tema": "Obesidade: Comorbidades e Gestação",
+  "titulo": "Como a adiposidade eleva a pressão arterial",
+  "subtitulo": "Mecanismos da hipertensão na obesidade e seu perfil hemodinâmico",
+  "tipo": "fluxo",
+  "fluxo": {
+    "orientacao": "vertical",
+    "nos": [
+      {
+        "id": "adip",
+        "texto": "Excesso de adiposidade\nsobretudo visceral",
+        "tipo": "orgao"
+      },
+      {
+        "id": "simp",
+        "texto": "Ativação simpática\npredomínio sobre o vagal",
+        "tipo": "passo"
+      },
+      {
+        "id": "ins",
+        "texto": "Hiperinsulinemia\nretém sódio e água",
+        "tipo": "hormonio"
+      },
+      {
+        "id": "comp",
+        "texto": "Compressão renal\ngordura retroperitoneal",
+        "tipo": "passo"
+      },
+      {
+        "id": "sraa",
+        "texto": "SRAA ativado\nATII e aldosterona do adipócito\n↑ reabsorção de sódio",
+        "tipo": "orgao"
+      },
+      {
+        "id": "hemo",
+        "texto": "Perfil hemodinâmico\n↑ débito cardíaco e volume plasmático\nresistência periférica normal",
+        "tipo": "passo"
+      },
+      {
+        "id": "has",
+        "texto": "Hipertensão arterial\n65 a 75% do risco da HAS primária",
+        "tipo": "fim"
+      },
+      {
+        "id": "lesao",
+        "texto": "Lesão de órgão-alvo\nmais HVE e lesão renal",
+        "tipo": "alerta"
+      }
+    ],
+    "setas": [
+      {
+        "de": "adip",
+        "para": "simp"
+      },
+      {
+        "de": "adip",
+        "para": "ins"
+      },
+      {
+        "de": "adip",
+        "para": "comp"
+      },
+      {
+        "de": "ins",
+        "para": "sraa",
+        "rotulo": "via parácrina"
+      },
+      {
+        "de": "comp",
+        "para": "sraa",
+        "rotulo": "ativa"
+      },
+      {
+        "de": "simp",
+        "para": "hemo"
+      },
+      {
+        "de": "sraa",
+        "para": "hemo"
+      },
+      {
+        "de": "hemo",
+        "para": "has"
+      },
+      {
+        "de": "has",
+        "para": "lesao"
+      }
+    ],
+    "notas": [
+      {
+        "no": "has",
+        "texto": "Aferição: manguito estreito superestima e largo subestima a pressão.",
+        "lado": "direita"
+      }
+    ]
+  },
+  "lastro": [
+    "desbalanço simpático-vagal com **predomínio SIMPÁTICO**",
+    "hiperinsulinemia levando à produção parácrina de **angiotensinogênio, angiotensina II e aldosterona pelos adipócitos**",
+    "**compressão renal** pela gordura intra-abdominal e retroperitoneal, que ativa o SRAA",
+    "**hiperinsulinemia** (retém sódio e água)",
+    "aumento do **débito cardíaco** e do **volume plasmático**, com **resistência periférica NORMAL**",
+    "responda por 65 a 75% do risco de hipertensão primária",
+    "maior risco de hipertrofia ventricular esquerda e lesão renal que no eutrófico",
+    "manguito **estreito SUPERESTIMA** e manguito **largo SUBESTIMA** a pressão"
+  ],
+  "justificativa": "O capítulo já tem o fluxograma da gestação; a figura mostra o mecanismo da hipertensão da obesidade, explicado em detalhe e com perfil hemodinâmico cobrado em prova."
+}

@@ -1,0 +1,49 @@
+{
+  "i": 225,
+  "sub": "Obesidade",
+  "tema": "DHEM: Esteatose Hepática Metabólica, Fibrose e MASH",
+  "titulo": "DHEM: da resistência insulínica ao carcinoma hepatocelular",
+  "subtitulo": "A fibrose é o fator preditivo mais forte de mortalidade",
+  "tipo": "fluxo",
+  "fluxo": {
+    "orientacao": "vertical",
+    "nos": [
+      {"id": "ri", "tipo": "inicio", "texto": "Resistência insulínica\ne gordura visceral"},
+      {"id": "mec", "tipo": "grupo", "texto": "Mecanismos\n• lipídio ectópico, ↓ beta-oxidação\n• ↑ ROS e citocinas, toxinas da disbiose"},
+      {"id": "masld", "tipo": "orgao", "texto": "DHEM / MASLD\nesteatose em ≥ 5% dos hepatócitos\n+ ≥ 1 fator de disfunção metabólica"},
+      {"id": "extra", "tipo": "alerta", "texto": "Fora do fígado\nmortalidade CV 64% maior\ncâncer extra-hepático 1,5×"},
+      {"id": "mash", "tipo": "orgao", "texto": "MASH\ninflamação e balonização"},
+      {"id": "fi", "tipo": "passo", "texto": "Fibrose inicial\nreversível no início"},
+      {"id": "fa", "tipo": "passo", "texto": "Fibrose avançada"},
+      {"id": "cir", "tipo": "alerta", "texto": "Cirrose\nnódulos, arquitetura distorcida"},
+      {"id": "chc", "tipo": "alerta", "texto": "Carcinoma hepatocelular"}
+    ],
+    "setas": [
+      {"de": "ri", "para": "mec"},
+      {"de": "mec", "para": "masld"},
+      {"de": "masld", "para": "extra", "tipo": "fraca"},
+      {"de": "masld", "para": "mash", "rotulo": "12–40%"},
+      {"de": "mash", "para": "fi"},
+      {"de": "mash", "para": "fa"},
+      {"de": "fi", "para": "cir", "rotulo": "15%"},
+      {"de": "fa", "para": "cir", "rotulo": "25%"},
+      {"de": "cir", "para": "chc", "rotulo": "7% se compensada"}
+    ],
+    "notas": [
+      {"no": "masld", "texto": "Perda de peso ≥ 5% reduz a esteatose", "lado": "direita"},
+      {"no": "mash", "texto": "Perda ≥ 7% reduz a MASH", "lado": "direita"},
+      {"no": "fa", "texto": "Perda ≥ 10% reduz a fibrose", "lado": "direita"}
+    ],
+    "legenda": "Percentuais: progressão em cerca de 10 anos. Notas: perda de peso que reduz cada estágio."
+  },
+  "lastro": [
+    "Fisiopatologia: resistência insulínica e gordura visceral → lipídio ectópico, ↓ beta-oxidação, ↑ ROS e citocinas e toxinas da disbiose.",
+    "esteatose em ≥ 5% dos hepatócitos, sem lesão hepatocelular, com ≥ 1 fator de disfunção metabólica",
+    "Fibrose — colágeno progressivo, reversível no início; cirrose — nódulos não regenerados e arquitetura distorcida.",
+    "Em ~10 anos: MASLD → MASH em 12% a 40%; MASH com fibrose inicial → cirrose em 15%; com fibrose avançada → cirrose em 25%",
+    "cirrose compensada → carcinoma hepatocelular em 7%. A fibrose é o fator preditivo mais forte de mortalidade",
+    "Mortalidade cardiovascular 64% maior, câncer extra-hepático 1,5× maior.",
+    "Perda de ≥ 5% reduz esteatose; ≥ 7%, MASH; ≥ 10%, fibrose."
+  ],
+  "justificativa": "O fluxograma existente é o algoritmo de rastreamento e tratamento; a figura mostra a fisiopatologia e a história natural, estágio por estágio, com a taxa de progressão e a perda de peso que reverte cada um."
+}

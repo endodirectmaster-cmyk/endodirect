@@ -1,0 +1,110 @@
+{
+  "i": 67,
+  "sub": "Obesidade",
+  "tema": "Obesidade: Definição e Epidemiologia",
+  "titulo": "Obesidade: da interação gene–ambiente à lesão multissistêmica",
+  "subtitulo": "Doença crônica, progressiva e recidivante, não falha de comportamento",
+  "tipo": "fluxo",
+  "fluxo": {
+    "orientacao": "vertical",
+    "nos": [
+      {
+        "id": "amb",
+        "texto": "Ambiente obesogênico\n• sedentarismo, ultraprocessados\n• sono, estresse, fármacos",
+        "tipo": "grupo"
+      },
+      {
+        "id": "gen",
+        "texto": "Genética\nfatores endócrinos e genéticos",
+        "tipo": "passo"
+      },
+      {
+        "id": "bal",
+        "texto": "Balanço energético positivo\nsustentado pela interação gene–ambiente",
+        "tipo": "passo"
+      },
+      {
+        "id": "tec",
+        "texto": "Tecido adiposo\nacúmulo disfuncional",
+        "tipo": "orgao"
+      },
+      {
+        "id": "meta",
+        "texto": "Metainflamação\ninflamação de baixo grau",
+        "tipo": "passo"
+      },
+      {
+        "id": "central",
+        "texto": "Gordura central\nandroide, abdominal e visceral\nmaior risco cardiovascular e metabólico",
+        "tipo": "alerta"
+      },
+      {
+        "id": "lesao",
+        "texto": "Lesão multissistêmica\n• DM2, doença cardiovascular, MASLD\n• apneia, osteoartrite, infertilidade, câncer",
+        "tipo": "grupo"
+      },
+      {
+        "id": "fim",
+        "texto": "Doença crônica e recidivante\nabordagem longitudinal e sem estigma",
+        "tipo": "fim"
+      }
+    ],
+    "setas": [
+      {
+        "de": "amb",
+        "para": "bal"
+      },
+      {
+        "de": "gen",
+        "para": "bal"
+      },
+      {
+        "de": "bal",
+        "para": "tec"
+      },
+      {
+        "de": "tec",
+        "para": "meta"
+      },
+      {
+        "de": "tec",
+        "para": "central"
+      },
+      {
+        "de": "meta",
+        "para": "lesao"
+      },
+      {
+        "de": "central",
+        "para": "lesao"
+      },
+      {
+        "de": "lesao",
+        "para": "fim"
+      }
+    ],
+    "notas": [
+      {
+        "no": "central",
+        "texto": "Gordura periférica (ginecoide, gluteofemoral) parece protetora; por isso a cintura complementa o IMC.",
+        "lado": "direita"
+      },
+      {
+        "no": "lesao",
+        "texto": "Ligada a 13 tipos de câncer; impacto psicossocial (estigma, depressão).",
+        "lado": "direita"
+      }
+    ]
+  },
+  "lastro": [
+    "Obesidade é **doença crônica, progressiva e recidivante**",
+    "**acúmulo disfuncional de tecido adiposo**, **inflamação de baixo grau (metainflamação)** e **lesão multissistêmica**",
+    "balanço energético positivo sustentado pela interação gene–ambiente",
+    "ambiente obesogênico, sedentarismo, ultraprocessados, sono, estresse, fármacos e fatores endócrinos/genéticos",
+    "**Central/andróide** (abdominal/visceral) → maior risco **cardiovascular e metabólico**",
+    "**periférica/ginecóide** (quadris e membros, subcutânea gluteofemoral) → parece **protetora**",
+    "DM2, doença cardiovascular, MASLD/MASH, apneia, osteoartrite, infertilidade e câncer",
+    "A abordagem deve ser **crônica, longitudinal e livre de estigma**"
+  ],
+  "justificativa": "Sem fluxograma prévio, a figura mostra o conceito central do capítulo: a cadeia que vai da interação gene–ambiente à lesão multissistêmica, com o papel da distribuição da gordura."
+}

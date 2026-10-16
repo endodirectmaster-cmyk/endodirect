@@ -1,0 +1,112 @@
+{
+  "i": 93,
+  "sub": "Adrenal",
+  "tema": "Incidentaloma Adrenal",
+  "titulo": "É maligno? Tamanho e densidade na TC (ESE 2023)",
+  "subtitulo": "A imagem responde à malignidade; a avaliação hormonal é feita em todos",
+  "tipo": "fluxo",
+  "fluxo": {
+    "orientacao": "vertical",
+    "nos": [
+      {
+        "id": "tc",
+        "texto": "TC sem contraste\ncortes finos de 3–5 mm",
+        "tipo": "inicio"
+      },
+      {
+        "id": "d1",
+        "texto": "Homogêneo e ≤ 10 UH?",
+        "tipo": "decisao"
+      },
+      {
+        "id": "ad",
+        "texto": "Adenoma rico em lipídios\nbenigno; dispensa imagem de seguimento",
+        "tipo": "fim"
+      },
+      {
+        "id": "d2",
+        "texto": "> 4 cm e também\n> 20 UH ou heterogêneo?",
+        "tipo": "decisao"
+      },
+      {
+        "id": "ic",
+        "texto": "Imagem complementar\nwashout, RM chemical shift ou PET",
+        "tipo": "passo"
+      },
+      {
+        "id": "d3",
+        "texto": "Achado suspeito?\nwashout < 60%, sem queda de sinal, PET captante",
+        "tipo": "decisao"
+      },
+      {
+        "id": "seg",
+        "texto": "Sem cirurgia de imediato\nTC ou RM em 6–12 meses\ncrescimento: considerar cirurgia",
+        "tipo": "passo"
+      },
+      {
+        "id": "cir",
+        "texto": "Adrenalectomia\nexcluir feocromocitoma antes",
+        "tipo": "alerta"
+      }
+    ],
+    "setas": [
+      {
+        "de": "tc",
+        "para": "d1"
+      },
+      {
+        "de": "d1",
+        "para": "ad",
+        "rotulo": "Sim"
+      },
+      {
+        "de": "d1",
+        "para": "d2",
+        "rotulo": "Não"
+      },
+      {
+        "de": "d2",
+        "para": "cir",
+        "rotulo": "Sim"
+      },
+      {
+        "de": "d2",
+        "para": "ic",
+        "rotulo": "Não"
+      },
+      {
+        "de": "ic",
+        "para": "d3"
+      },
+      {
+        "de": "d3",
+        "para": "cir",
+        "rotulo": "Sim"
+      },
+      {
+        "de": "d3",
+        "para": "seg",
+        "rotulo": "Não"
+      }
+    ],
+    "notas": [
+      {
+        "no": "d2",
+        "texto": "Risco de carcinoma: ~2% abaixo de 4 cm; ~6% entre 4,1 e 6 cm; ~25% acima de 6 cm",
+        "lado": "direita"
+      }
+    ],
+    "legenda": "Baixa densidade não exclui hiperfunção: supressão com 1 mg de dexametasona em todos os incidentalomas."
+  },
+  "lastro": [
+    "Cirurgia direta se > 4 cm associado a > 20 UH ou heterogeneidade.",
+    "ausência de queda de sinal no chemical shift da RM, washout < 60% ou hipercaptação no PET — indica cirurgia",
+    "abaixo de 4 cm, ~2%; entre 4,1 e 6 cm, ~6%; acima de 6 cm, ~25%",
+    "lesão homogênea com ≤ 10 HU dispensa imagem de seguimento",
+    "nova TC sem contraste (ou RM) em 6–12 meses, e crescimento significativo ou mudança de aspecto indica considerar cirurgia",
+    "Densidade baixa (≤ 10 HU) praticamente exclui malignidade, mas não exclui hiperfunção",
+    "Sempre excluir feocromocitoma antes de qualquer cirurgia",
+    "Todo incidentaloma faz supressão com 1 mg de dexametasona"
+  ],
+  "justificativa": "O fluxograma existente é o geral (ESE 2016); a figura detalha a pergunta 'é maligno?' com a matriz tamanho × densidade da ESE 2023 e o risco de carcinoma por tamanho."
+}
