@@ -1,0 +1,48 @@
+{
+  "i": 112,
+  "sub": "Lípides",
+  "tema": "Hipertrigliceridemias Secundárias",
+  "titulo": "Da resistência insulínica à tríade: TG alto, HDL baixo, LDL denso",
+  "subtitulo": "As causas convergem para mais VLDL hepático e menos atividade da lipase lipoproteica",
+  "tipo": "fluxo",
+  "fluxo": {
+    "orientacao": "vertical",
+    "nos": [
+      {"id": "alc", "texto": "Álcool e açúcar\ncarboidrato refinado, frutose", "tipo": "inicio"},
+      {"id": "ri", "texto": "Resistência insulínica\nobesidade, diabetes", "tipo": "inicio"},
+      {"id": "fig", "texto": "Fígado\nsuperprodução de VLDL", "tipo": "orgao"},
+      {"id": "apoc", "texto": "apoC-III elevada", "tipo": "hormonio"},
+      {"id": "lpl", "texto": "Lipase lipoproteica\nmenor depuração de VLDL\ne quilomícrons", "tipo": "passo"},
+      {"id": "tg", "texto": "Hipertrigliceridemia", "tipo": "alerta"},
+      {"id": "cetp", "texto": "CETP mais ativa\nleva TG do VLDL ao HDL e LDL", "tipo": "passo"},
+      {"id": "lh", "texto": "Lipase hepática\nremodela as partículas", "tipo": "passo"},
+      {"id": "hdl", "texto": "HDL baixo\nencolhe (HDL3)", "tipo": "alerta"},
+      {"id": "ldl", "texto": "LDL pequeno e denso\nfenótipo B, mais aterogênico", "tipo": "alerta"}
+    ],
+    "setas": [
+      {"de": "alc", "para": "fig"},
+      {"de": "ri", "para": "fig"},
+      {"de": "ri", "para": "apoc"},
+      {"de": "apoc", "para": "lpl", "tipo": "inibe", "rotulo": "inibe"},
+      {"de": "fig", "para": "tg"},
+      {"de": "lpl", "para": "tg"},
+      {"de": "tg", "para": "cetp"},
+      {"de": "cetp", "para": "lh"},
+      {"de": "lh", "para": "hdl"},
+      {"de": "lh", "para": "ldl"}
+    ],
+    "notas": [
+      {"no": "tg", "texto": "Com predisposição genética, pode chegar à quilomicronemia e à pancreatite", "lado": "direita"}
+    ],
+    "legenda": "Seta vermelha com barra: inibição. HDL baixo, TG alto e LDL denso formam a tríade da resistência insulínica."
+  },
+  "lastro": [
+    "A maioria das causas converge para superprodução hepática de VLDL (álcool, açúcar, resistência insulínica)",
+    "a resistência insulínica eleva a apoC-III, que inibe a lipase lipoproteica",
+    "o excesso de TG aumenta a atividade da CETP, que transfere TG do VLDL para o HDL",
+    "a lipase hepática então age sobre esse HDL enriquecido e o encolhe (HDL3)",
+    "a lipase hepática o remodela em partículas menores — o fenótipo B, mais aterogênico",
+    "o TG pode saltar para a faixa de quilomicronemia e desencadear pancreatite"
+  ],
+  "justificativa": "O capítulo já tem o algoritmo; a figura mostra a fisiopatologia que liga as causas ao TG alto e à tríade da resistência insulínica."
+}
