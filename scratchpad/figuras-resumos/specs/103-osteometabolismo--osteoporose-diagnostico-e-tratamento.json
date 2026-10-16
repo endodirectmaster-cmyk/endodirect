@@ -2,7 +2,7 @@
   "i": 103,
   "sub": "Osteometabolismo",
   "tema": "Osteoporose: Diagnóstico e Tratamento",
-  "titulo": "Remodelação óssea e onde agem os fármacos da osteoporose",
+  "titulo": "Remodelação óssea e o alvo de cada fármaco",
   "subtitulo": "Da via Wnt à reabsorção pelo osteoclasto; caixas brancas são os fármacos",
   "tipo": "fluxo",
   "fluxo": {
@@ -10,7 +10,7 @@
     "nos": [
       {
         "id": "oc",
-        "texto": "Osteócito\nmecanoceptor; 90–95% das células",
+        "texto": "Osteócito\nmecanoceptor",
         "tipo": "orgao",
         "camada": 0
       },
@@ -34,7 +34,7 @@
       },
       {
         "id": "pth",
-        "texto": "Análogos do PTH\nintermitente: teriparatida, abaloparatida",
+        "texto": "Análogos do PTH\nação intermitente\nteriparatida, abaloparatida",
         "tipo": "passo",
         "camada": 2
       },
@@ -131,7 +131,7 @@
         "tipo": "inibe"
       }
     ],
-    "legenda": "Verde: estimula. Vermelho com barra: inibe. Caixas brancas: fármacos e seu alvo."
+    "legenda": "Verde: estimula. Vermelho com barra: inibe. Dourado: produz. Caixas brancas: fármacos."
   },
   "lastro": [
     "Na ausência de estímulo, produz esclerostina, DKK-1 e SFRP1, inativando a via",

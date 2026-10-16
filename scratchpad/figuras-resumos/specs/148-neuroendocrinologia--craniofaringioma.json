@@ -10,13 +10,13 @@
     "nos": [
       {
         "id": "rk",
-        "texto": "Bolsa de Rathke\nremanescentes epiteliais e ducto faríngeo",
+        "texto": "Bolsa de Rathke\nremanescentes epiteliais",
         "tipo": "inicio",
         "camada": 0
       },
       {
         "id": "tu",
-        "texto": "Craniofaringioma\nselar e supraselar, grau 1\nlocalmente agressivo",
+        "texto": "Craniofaringioma\nselar e supraselar, localmente agressivo\nIII ventrículo: hidrocefalia, cefaleia",
         "tipo": "alerta",
         "camada": 1
       },
@@ -27,34 +27,34 @@
         "camada": 2
       },
       {
-        "id": "has",
-        "texto": "Haste\ndiabetes insípido\nPRL alta por desconexão",
-        "tipo": "orgao",
-        "camada": 2
-      },
-      {
-        "id": "ade",
-        "texto": "Adeno-hipófise\nhipopituitarismo",
-        "tipo": "orgao",
-        "camada": 2
-      },
-      {
         "id": "hip",
         "texto": "Hipotálamo\nsono, temperatura, sede",
         "tipo": "orgao",
         "camada": 2
       },
       {
+        "id": "has",
+        "texto": "Haste\ndiabetes insípido\nPRL alta por desconexão",
+        "tipo": "orgao",
+        "camada": 3
+      },
+      {
+        "id": "ade",
+        "texto": "Adeno-hipófise\nhipopituitarismo",
+        "tipo": "orgao",
+        "camada": 3
+      },
+      {
         "id": "fr",
         "texto": "Ao diagnóstico\n• GH 75%, gonadotrofinas 40%\n• ACTH e TSH 25%; DI 17 a 38%",
         "tipo": "grupo",
-        "camada": 3
+        "camada": 4
       },
       {
         "id": "ob",
         "texto": "Obesidade hipotalâmica\npiora no pós-operatório\nestilo de vida + agonista de GLP-1",
         "tipo": "fim",
-        "camada": 3
+        "camada": 4
       }
     ],
     "setas": [
@@ -68,15 +68,15 @@
       },
       {
         "de": "tu",
+        "para": "hip"
+      },
+      {
+        "de": "tu",
         "para": "has"
       },
       {
         "de": "tu",
         "para": "ade"
-      },
-      {
-        "de": "tu",
-        "para": "hip"
       },
       {
         "de": "has",
@@ -93,19 +93,8 @@
         "para": "ob"
       }
     ],
-    "notas": [
-      {
-        "no": "tu",
-        "texto": "Obstrução do III ventrículo: hidrocefalia e cefaleia",
-        "lado": "direita"
-      },
-      {
-        "no": "ob",
-        "texto": "DI e lesão hipotalâmica distinguem o craniofaringioma do adenoma hipofisário",
-        "lado": "direita"
-      }
-    ],
-    "legenda": "Setas douradas: compressão e sua consequência. Cinza: frequência das deficiências."
+    "notas": [],
+    "legenda": "DI e lesão hipotalâmica distinguem o craniofaringioma do adenoma. Cinza: frequência ao diagnóstico."
   },
   "lastro": [
     "O craniofaringioma nasce de remanescentes da bolsa de Rathke e do ducto faríngeo",
