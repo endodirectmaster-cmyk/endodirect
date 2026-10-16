@@ -1,0 +1,55 @@
+{
+  "i": 167,
+  "sub": "Endocrinopatias",
+  "tema": "Outras Endocrinopatias Iatrogênicas (opioides, quimioterapia, contraste iodado, biotina)",
+  "titulo": "Onde cada agente atua: eixo central, glândula ou ensaio",
+  "subtitulo": "Saber o nível da lesão prevê o padrão do laboratório e evita tratar o erro",
+  "tipo": "painel",
+  "painel": {
+    "colunas": [
+      {
+        "titulo": "Central: hipotálamo-hipófise",
+        "cor": "navy",
+        "itens": [
+          "Opioides: ↓ GnRH → hipogonadismo hipogonadotrófico, LH/FSH baixos",
+          "Opioides: ↓ CRH/ACTH → insuficiência adrenal secundária",
+          "Bexaroteno: suprime TSH → TSH baixo com T4L baixo",
+          "Anti-CTLA-4/anti-PD-1: hipofisite"
+        ]
+      },
+      {
+        "titulo": "Na própria glândula",
+        "cor": "red",
+        "itens": [
+          "Alquilantes: falência gonadal primária, LH/FSH altos",
+          "Inibidores de tirosina-quinase: tireoidite destrutiva → hipotireoidismo",
+          "Mitotano: adrenolítico → insuficiência adrenal",
+          "Contraste iodado: Jod-Basedow ou Wolff-Chaikoff"
+        ]
+      },
+      {
+        "titulo": "Só no ensaio (biotina)",
+        "cor": "purple",
+        "itens": [
+          "Não causa doença endócrina",
+          "Ensaio competitivo: T4L e T3L falsamente altos",
+          "Ensaio sanduíche: TSH falsamente baixo",
+          "Simula Graves sem clínica",
+          "Suspender ≥48–72 h e repetir"
+        ]
+      }
+    ],
+    "rodape": "Laboratório dissociado da clínica: pensar em interferência antes de tratar."
+  },
+  "lastro": [
+    "suprime a pulsatilidade de GnRH → hipogonadismo hipogonadotrófico (central). Também inibem CRH/ACTH (insuficiência adrenal secundária)",
+    "Bexaroteno (rexinoide): suprime TSH → hipotireoidismo central (TSH baixo com T4 livre baixo",
+    "falência gonadal primária (hipogonadismo hipergonadotrófico, insuficiência ovariana precoce, azoospermia)",
+    "tireoidite destrutiva e aumento da necessidade de levotiroxina → hipotireoidismo",
+    "Mitotano: adrenolítico → insuficiência adrenal",
+    "Em ensaios competitivos eleva falsamente T4L, T3L",
+    "T4L/T3L altos + TSH baixo simulando doença de Graves em paciente assintomático",
+    "suspender biotina por ≥48–72 h (até 8 dias em megadoses) e repetir"
+  ],
+  "justificativa": "A tabela do capítulo lista agente por agente; o painel reagrupa pelo nível da lesão (central, glandular ou artefato), que é o que define o padrão laboratorial e as armadilhas de prova."
+}

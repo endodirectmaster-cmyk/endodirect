@@ -1,0 +1,112 @@
+{
+  "i": 163,
+  "sub": "Endocrinopatias",
+  "tema": "Glicocorticoides: Supressão do Eixo HHA e Cushing Iatrogênico",
+  "titulo": "Glicocorticoide exógeno, eixo HHA e Cushing iatrogênico",
+  "subtitulo": "O mesmo excesso gera Cushing nos tecidos e insuficiência adrenal na retirada",
+  "tipo": "fluxo",
+  "fluxo": {
+    "orientacao": "vertical",
+    "nos": [
+      {
+        "id": "gc",
+        "texto": "Glicocorticoide exógeno\nacima da dose fisiológica\npor ≥ 3–4 semanas",
+        "tipo": "inicio"
+      },
+      {
+        "id": "cu",
+        "texto": "Cushing iatrogênico\ncausa mais comum de Cushing\ncortisol e ACTH baixos",
+        "tipo": "alerta",
+        "camada": 1
+      },
+      {
+        "id": "hip",
+        "texto": "Hipotálamo\nCRH",
+        "tipo": "orgao",
+        "camada": 1
+      },
+      {
+        "id": "pit",
+        "texto": "Hipófise\nACTH",
+        "tipo": "orgao"
+      },
+      {
+        "id": "fr",
+        "texto": "Fasciculada e reticular\natrofia: ↓cortisol, ↓androgênios",
+        "tipo": "orgao"
+      },
+      {
+        "id": "gl",
+        "texto": "Glomerulosa poupada\ndepende de angiotensina II e K",
+        "tipo": "orgao"
+      },
+      {
+        "id": "ia",
+        "texto": "IA secundária/terciária\nna retirada abrupta ou no estresse",
+        "tipo": "alerta"
+      },
+      {
+        "id": "k",
+        "texto": "Hipercalemia rara\naldosterona preservada\ndifere da IA primária",
+        "tipo": "fim"
+      }
+    ],
+    "setas": [
+      {
+        "de": "gc",
+        "para": "cu",
+        "rotulo": "excesso"
+      },
+      {
+        "de": "gc",
+        "para": "hip",
+        "tipo": "inibe"
+      },
+      {
+        "de": "gc",
+        "para": "pit",
+        "tipo": "inibe"
+      },
+      {
+        "de": "hip",
+        "para": "pit",
+        "rotulo": "↓CRH"
+      },
+      {
+        "de": "pit",
+        "para": "fr",
+        "rotulo": "↓ACTH"
+      },
+      {
+        "de": "pit",
+        "para": "gl",
+        "tipo": "fraca"
+      },
+      {
+        "de": "fr",
+        "para": "ia"
+      },
+      {
+        "de": "gl",
+        "para": "k"
+      }
+    ],
+    "notas": [
+      {
+        "no": "pit",
+        "texto": "Recuperação hierárquica: CRH/ACTH antes da adrenal; 6–12 meses ou mais"
+      }
+    ],
+    "legenda": "Barra vermelha: retroalimentação negativa do glicocorticoide. Cinza tracejado: a glomerulosa depende menos do ACTH."
+  },
+  "lastro": [
+    "Glicocorticoides (GC) exógenos exercem retroalimentação negativa sobre o hipotálamo (CRH) e a hipófise (ACTH)",
+    "**atrofia da zona fasciculada e reticular** com queda da produção de cortisol e androgênios adrenais",
+    "a zona glomerulosa/aldosterona é relativamente poupada, pois depende mais de angiotensina II/potássio",
+    "**Cushing iatrogênico** — a causa mais comum de síndrome de Cushing",
+    "**hipercalemia é rara** (aldosterona preservada) — diferencia da IA primária",
+    "qualquer dose acima da fisiológica (prednisona > 4-6 mg/dia) por ≥ 3-4 semanas",
+    "Recuperação do eixo é hierárquica (CRH/ACTH antes da adrenal) e pode levar 6-12 meses ou mais."
+  ],
+  "justificativa": "O capítulo não tem fluxograma; o eixo HHA suprimido explica de uma vez o Cushing iatrogênico, a IA na retirada e a ausência de hipercalemia."
+}

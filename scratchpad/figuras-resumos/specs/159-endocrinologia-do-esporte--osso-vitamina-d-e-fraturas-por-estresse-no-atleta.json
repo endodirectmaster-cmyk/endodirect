@@ -1,0 +1,47 @@
+{
+  "i": 159,
+  "sub": "Endocrinologia do Esporte",
+  "tema": "Osso, Vitamina D e Fraturas por Estresse no Atleta",
+  "titulo": "Fratura por estresse: carga, déficit energético e remodelação",
+  "subtitulo": "Quando o treino excede a reparação, o microdano vira fratura",
+  "tipo": "fluxo",
+  "fluxo": {
+    "orientacao": "vertical",
+    "nos": [
+      {"id": "carga", "texto": "Carga mecânica repetitiva\naumento abrupto de volume de treino", "tipo": "inicio", "camada": 0},
+      {"id": "lea", "texto": "Baixa disponibilidade energética\ncerne do RED-S e da Tríade", "tipo": "inicio", "camada": 0},
+      {"id": "micro", "texto": "Microdano acumulado", "tipo": "passo", "camada": 1},
+      {"id": "eixos", "texto": "Eixos suprimidos\n• hipoestrogenismo; IGF-1, T3, leptina ↓\n• cortisol ↑", "tipo": "grupo", "camada": 1},
+      {"id": "remod", "texto": "Osso em remodelação\nreabsorção osteoclástica antes da formação", "tipo": "orgao", "camada": 2},
+      {"id": "jan", "texto": "Janela de fragilidade\ntreino excede a reparação", "tipo": "passo", "camada": 3},
+      {"id": "fe", "texto": "Fratura por estresse\ndor focal que piora com a atividade", "tipo": "alerta", "camada": 4},
+      {"id": "alto", "texto": "Alto risco\ncolo femoral tensional, córtex tibial anterior\nescafoide tarsal, 5º metatarso, sesamoides", "tipo": "alerta", "camada": 5},
+      {"id": "baixo", "texto": "Baixo risco\ncalcâneo, sacro, metatarsos centrais\nrepouso relativo; progressão ~10%/semana", "tipo": "passo", "camada": 5}
+    ],
+    "setas": [
+      {"de": "carga", "para": "micro"},
+      {"de": "lea", "para": "eixos"},
+      {"de": "micro", "para": "remod", "rotulo": "ativa"},
+      {"de": "eixos", "para": "remod", "rotulo": "favorece reabsorção"},
+      {"de": "remod", "para": "jan"},
+      {"de": "jan", "para": "fe"},
+      {"de": "fe", "para": "alto", "rotulo": "tração"},
+      {"de": "fe", "para": "baixo", "rotulo": "trabecular"}
+    ],
+    "notas": [
+      {"no": "fe", "texto": "RM mostra edema na 1ª semana; a radiografia só após 2–3 semanas", "lado": "direita"}
+    ],
+    "legenda": "Setas douradas: sequência causal. Alto risco: descarga e, muitas vezes, fixação cirúrgica."
+  },
+  "lastro": [
+    "os osteoclastos criam lacunas de reabsorção antes da neoformação osteoblástica), gerando uma janela de fragilidade transitória",
+    "Quando o volume/frequência de treino excede a reparação, o microdano progride para fratura verdadeira",
+    "A LEA suprime o eixo hipotalâmico-hipofisário-gonadal (amenorreia hipotalâmica funcional, hipoestrogenismo), reduz IGF-1, T3 e leptina e eleva o cortisol, deslocando o balanço para reabsorção",
+    "baixa vascularização e submetidos a tração (córtex anterior da tíbia, colo femoral tensional, base do 5º metatarso, escafoide tarsal, sesamoides) são de ALTO RISCO",
+    "Ossos com predomínio trabecular e boa vascularização (calcâneo, sacro, tíbia proximal, diáfise dos metatarsos centrais) toleram melhor a carga",
+    "edema medular/periosteal em T2/STIR já na 1ª semana",
+    "retorno gradual guiado pela ausência de dor (progressão ~10%/semana)",
+    "FE de ALTO risco: descarga/imobilização, avaliação ortopédica; muitas exigem fixação cirúrgica"
+  ],
+  "justificativa": "O capítulo explica a fratura por estresse como desequilíbrio entre carga e remodelação agravado pela baixa disponibilidade energética; a figura liga esse mecanismo à estratificação de risco por sítio."
+}
