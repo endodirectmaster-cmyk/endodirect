@@ -1,0 +1,147 @@
+{
+  "i": 129,
+  "sub": "Diabetes",
+  "tema": "Tratamento do Diabetes Tipo 2 (ADA 2026 / SBD)",
+  "titulo": "Dois modos de estimular a célula β: incretinas e secretagogos",
+  "subtitulo": "A dependência da glicose explica quem causa hipoglicemia e quem não",
+  "tipo": "fluxo",
+  "fluxo": {
+    "orientacao": "vertical",
+    "nos": [
+      {
+        "id": "a1",
+        "tipo": "orgao",
+        "texto": "Células L intestinais\nGLP-1, do gene do proglucagon",
+        "largura": 185
+      },
+      {
+        "id": "a2",
+        "tipo": "orgao",
+        "texto": "Células K (intestino delgado)\nGIP: gene próprio; responde a gordura e proteína\nestimula o glucagon na normo/hipoglicemia, inibe na hiperglicemia",
+        "largura": 225
+      },
+      {
+        "id": "b1",
+        "tipo": "passo",
+        "texto": "Sulfonilureias e glinidas\nagonistas do SUR1 na célula β\nglinidas: meia-vida curta, glicemia pós-prandial",
+        "largura": 185
+      },
+      {
+        "id": "a3",
+        "tipo": "hormonio",
+        "largura": 230,
+        "texto": "Incretinas: GLP-1 e GIP\nGIP: 50–70% da insulina pós-prandial, potencializa o GLP-1\nGLP-1: saciedade e supressão do glucagon"
+      },
+      {
+        "id": "b2",
+        "tipo": "passo",
+        "texto": "Canal K-ATP fecha\ndespolarização"
+      },
+      {
+        "id": "a4",
+        "tipo": "passo",
+        "texto": "AGLP-1 e tirzepatida\nanálogos do GLP-1; tirzepatida: agonista duplo GIP/GLP-1\n↓ HbA1c de até 2 pontos (tirzepatida: > 2)"
+      },
+      {
+        "id": "a5",
+        "tipo": "passo",
+        "texto": "iDPP-4\nimpede a DPP-4 de clivar o GLP-1 endógeno\nefeito modesto: ↓ HbA1c < 1%",
+        "largura": 215
+      },
+      {
+        "id": "b3",
+        "tipo": "passo",
+        "texto": "Influxo de cálcio\nliberação dos grânulos de insulina"
+      },
+      {
+        "id": "a6",
+        "tipo": "orgao",
+        "texto": "Célula β (via incretina)\nsecreção de insulina GLICOSE-dependente"
+      },
+      {
+        "id": "b4",
+        "tipo": "orgao",
+        "texto": "Célula β (via SUR1)\nsecreção INDEPENDE da glicemia"
+      },
+      {
+        "id": "a7",
+        "tipo": "fim",
+        "texto": "Baixo risco de hipoglicemia\nsaciedade, ↓ glucagon, perda de peso (AGLP-1, tirzepatida)\n↓ desfechos CV e renais (AGLP-1 com benefício comprovado)",
+        "largura": 240
+      },
+      {
+        "id": "b5",
+        "tipo": "alerta",
+        "texto": "Hipoglicemia e ganho de peso\nevitar glibenclamida (metabólitos ativos)\npreferir gliclazida MR ou glimepirida",
+        "largura": 240
+      }
+    ],
+    "setas": [
+      {
+        "de": "a1",
+        "para": "a3",
+        "rotulo": "GLP-1"
+      },
+      {
+        "de": "a2",
+        "para": "a3",
+        "rotulo": "GIP"
+      },
+      {
+        "de": "a3",
+        "para": "a4"
+      },
+      {
+        "de": "a3",
+        "para": "a5",
+        "rotulo": "prolonga o GLP-1 próprio"
+      },
+      {
+        "de": "a4",
+        "para": "a6",
+        "tipo": "estimula",
+        "rotulo": "glicose-dependente"
+      },
+      {
+        "de": "a5",
+        "para": "a6",
+        "tipo": "estimula",
+        "rotulo": "efeito modesto"
+      },
+      {
+        "de": "a6",
+        "para": "a7"
+      },
+      {
+        "de": "b1",
+        "para": "b2"
+      },
+      {
+        "de": "b2",
+        "para": "b3"
+      },
+      {
+        "de": "b3",
+        "para": "b4",
+        "tipo": "estimula",
+        "rotulo": "independe da glicemia"
+      },
+      {
+        "de": "b4",
+        "para": "b5"
+      }
+    ],
+    "legenda": "Setas verdes: estímulo da célula β. iDPP-4: neutro no peso, sem benefício CV específico; não associar a AGLP-1."
+  },
+  "lastro": [
+    "Agonistas do SUR1: fecham o canal de K-ATP → despolarização → influxo de cálcio → liberação dos grânulos de insulina. Independe da glicemia — daí a hipoglicemia.",
+    "Preferir 2ª geração: gliclazida MR, glimepirida. Evitar glibenclamida — metabólitos ativos, alto risco de hipoglicemia.",
+    "GLP-1: produzido nas células L intestinais. Estimula síntese e secreção de insulina de forma glicose-dependente",
+    "induz saciedade (efeito no SNC + gastroparético) e suprime o glucagon",
+    "A DPP-4 cliva o GLP-1 endógeno; inibi-la prolonga a meia-vida do GLP-1 do próprio paciente — por isso o efeito é modesto e teto baixo",
+    "GIP vem de gene próprio (não do proglucagon), é secretado pelas células K em resposta a gordura/proteína e responde por 50–70% da insulina pós-prandial",
+    "GIP estimula o glucagon na normo/hipoglicemia e o inibe na hiperglicemia — ao contrário do GLP-1",
+    "iDPP-4: neutros em peso, bem tolerados, sem benefício CV específico; não associar a GLP-1 RA."
+  ],
+  "justificativa": "O capítulo já traz o algoritmo de escolha do fármaco; a figura cobre o mecanismo que ele explica em texto — a célula β estimulada pelas incretinas (glicose-dependente) ou pelo SUR1 (independente da glicemia), o que separa quem causa hipoglicemia de quem não."
+}

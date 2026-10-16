@@ -1,0 +1,48 @@
+{
+  "i": 224,
+  "sub": "Diabetes",
+  "tema": "Diabetes Monogênico: Subtipos de MODY e Diabetes Neonatal",
+  "titulo": "MODY2: limiar de glicose alto, sem complicações",
+  "subtitulo": "Nos demais MODY há complicações; na gestação, insulina só se o feto não herdou o GCK",
+  "tipo": "fluxo",
+  "fluxo": {
+    "orientacao": "vertical",
+    "rotulos_camadas": ["Gene", "Mecanismo", "Clínica", "Desfecho", "Feto", "Conduta"],
+    "nos": [
+      {"id": "a0", "tipo": "orgao", "texto": "GCK mutado: MODY2\nglucoquinase; portadores assintomáticos"},
+      {"id": "b0", "tipo": "orgao", "texto": "MODY1, 3, 4 e 5\nHNF-4 alfa, HNF-1 alfa, IPF-1, HNF-1 beta\ngenes que regulam a síntese de insulina"},
+      {"id": "a1", "tipo": "passo", "texto": "Setpoint da secreção alterado\nlimiar de glicose mais alto"},
+      {"id": "b1", "tipo": "passo", "texto": "Diabetes com complicações\nMODY3: glicosúria desproporcional; MODY5: cistos renais, malformações genitais\nMODY4: agenesia de pâncreas em homozigose"},
+      {"id": "a2", "tipo": "passo", "texto": "Hiperglicemia leve e estável\nigual em toda a família de eutróficos\nninguém rotulado como diabético"},
+      {"id": "b2", "tipo": "fim", "texto": "Tratamento\nsulfonilureia no MODY1 e MODY3\ninsulina no MODY4 e MODY5"},
+      {"id": "a3", "tipo": "fim", "texto": "Sem complicações crônicas\na única forma; tratamento: dieta"},
+      {"id": "d", "tipo": "decisao", "texto": "Gestante com GCK\no feto herdou a mutação?"},
+      {"id": "fs", "tipo": "fim", "texto": "Mesmo setpoint de glicose\nfeto portador: tratamento não se justifica"},
+      {"id": "fn", "tipo": "alerta", "texto": "Hiperinsulinismo fetal\nresponde à hiperglicemia materna e cresce demais"},
+      {"id": "ins", "tipo": "fim", "texto": "Insulina na gestante\npara evitar macrossomia"}
+    ],
+    "setas": [
+      {"de": "a0", "para": "a1"},
+      {"de": "a1", "para": "a2"},
+      {"de": "a2", "para": "a3"},
+      {"de": "a2", "para": "d", "rotulo": "na gestação"},
+      {"de": "d", "para": "fs", "rotulo": "Sim"},
+      {"de": "d", "para": "fn", "rotulo": "Não"},
+      {"de": "fn", "para": "ins"},
+      {"de": "b0", "para": "b1"},
+      {"de": "b1", "para": "b2"}
+    ],
+    "legenda": "Suspeita: IMC normal, início antes dos 25 anos, sem autoanticorpos, 3 ou mais gerações acometidas."
+  },
+  "lastro": [
+    "a mutação da glucoquinase altera o setpoint da secreção de insulina, elevando o limiar de glicose",
+    "O resultado é hiperglicemia leve, estável e sem complicações crônicas — a única forma em que isso vale",
+    "As mutações atingem genes que regulam a síntese de insulina",
+    "o feto responde à hiperglicemia materna com hiperinsulinismo e cresce demais: trata-se a gestante com insulina para evitar macrossomia",
+    "Se o feto for portador, ele tem o mesmo setpoint de glicose da mãe e o tratamento não se justifica",
+    "Tratamento farmacológico de MODY1 e MODY3: sulfonilureia",
+    "MODY2 trata-se com dieta; MODY4 e MODY5, com insulina",
+    "Forma associada a malformações genitourinárias e CISTOS: MODY5"
+  ],
+  "justificativa": "O fluxograma do capítulo já é o algoritmo de suspeita e classificação; a figura mostra o mecanismo que organiza a prova — o setpoint da glucoquinase explica a hiperglicemia leve sem complicações, a dieta como tratamento e a lógica da insulina na gestação — contrastado com os MODY que cursam com complicações."
+}

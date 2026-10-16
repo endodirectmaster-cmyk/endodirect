@@ -1,0 +1,46 @@
+{
+  "i": 221,
+  "sub": "Diabetes",
+  "tema": "Retinopatia, Neuropatia e Pé Diabético",
+  "titulo": "Neuropatia diabética: do rastreio ao diagnóstico clínico",
+  "subtitulo": "Um teste de fibras finas e um de fibras grossas; ENMG só diante de sinais de alarme",
+  "tipo": "fluxo",
+  "fluxo": {
+    "orientacao": "vertical",
+    "nos": [
+      {"id": "ini", "tipo": "inicio", "texto": "Rastrear a polineuropatia\nDM2: ao diagnóstico; DM1: após 5 anos; reavaliação anual"},
+      {"id": "fina", "tipo": "passo", "largura": 180, "texto": "Fibras finas: um teste\ntérmica (diapasão), dolorosa (alfinete) ou sudomotora"},
+      {"id": "grossa", "tipo": "passo", "largura": 180, "texto": "Fibras grossas: um teste\nvibratória (biotesiômetro)"},
+      {"id": "mono", "tipo": "alerta", "largura": 180, "camada": 1, "texto": "Monofilamento 10 g\navalia fibras grossas, com baixa sensibilidade\nnão é o teste de rastreio da polineuropatia"},
+      {"id": "ecn", "tipo": "passo", "texto": "Escore de comprometimento neuropático\nECN/NDS avalia fibras finas e grossas\ndiagnóstico definitivo e clínico: ENMG desnecessária"},
+      {"id": "pe", "tipo": "fim", "camada": 2, "texto": "Risco de ulceração\nmonofilamento 10 g ou Ipswich Touch Test\nexame no mínimo anual; até 1–3 meses pelo risco"},
+      {"id": "dec", "tipo": "decisao", "texto": "Outra causa afastada?\netilismo, B12, tireoide, fármacos, viroses crônicas"},
+      {"id": "alarme", "tipo": "alerta", "texto": "Sinais de alarme\nsó então ENMG ou ressonância"},
+      {"id": "dx", "tipo": "fim", "texto": "Polineuropatia diabética\ndiagnóstico clínico e de exclusão\ncomplicação crônica mais prevalente: até 90%"},
+      {"id": "outra", "tipo": "passo", "texto": "Não atribuir ao diabetes\nafastar a outra causa antes"}
+    ],
+    "setas": [
+      {"de": "ini", "para": "fina"},
+      {"de": "ini", "para": "grossa"},
+      {"de": "fina", "para": "ecn"},
+      {"de": "grossa", "para": "ecn"},
+      {"de": "ecn", "para": "dec"},
+      {"de": "ecn", "para": "alarme", "tipo": "fraca", "rotulo": "se houver"},
+      {"de": "dec", "para": "dx", "rotulo": "Sim"},
+      {"de": "dec", "para": "outra", "rotulo": "Não"},
+      {"de": "mono", "para": "pe", "rotulo": "serve para"}
+    ],
+    "legenda": "Tracejado cinza: exceção. Vermelho: o monofilamento é triagem do pé, não rastreio da polineuropatia."
+  },
+  "lastro": [
+    "Rastreamento: no diagnóstico do DM2, e após 5 anos no DM1, com reavaliação anual.",
+    "um teste para fibras finas e um para fibras grossas",
+    "Fibras finas: térmica (ponta e cabeça do diapasão), dolorosa (alfinete) ou sudomotora.",
+    "Diagnóstico definitivo: Escore de Comprometimento Neuropático (ECN/NDS), que avalia fibras finas e grossas. Não é necessária ENMG.",
+    "serve como triagem do risco de ulceração no pé diabético — não é o teste de rastreio da polineuropatia",
+    "não são necessários ressonância nem eletroneuromiografia, exceto diante de sinais de alarme",
+    "É um diagnóstico de exclusão: afastar etilismo, deficiência de B12, disfunção tireoidiana, fármacos e doenças virais crônicas antes de atribuir ao diabetes.",
+    "Mínimo anual, encurtando conforme o risco até 1–3 meses."
+  ],
+  "justificativa": "O capítulo não tem fluxograma e concentra suas pegadinhas no diagnóstico da neuropatia (clínico, por escore, de exclusão, sem ENMG, monofilamento não é rastreio); o fluxo ordena esses passos e separa o monofilamento para o pé."
+}

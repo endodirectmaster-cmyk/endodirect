@@ -1,0 +1,57 @@
+{
+  "i": 81,
+  "sub": "Tireoide",
+  "tema": "Nódulo Tireoidiano (TI-RADS e Bethesda)",
+  "titulo": "Nódulo tireoidiano: do padrão ultrassonográfico ao limiar de PAAF",
+  "subtitulo": "4 M da ATA: margens irregulares, além da tireoide, mais alto que largo, microcalcificações",
+  "tipo": "painel",
+  "painel": {
+    "colunas": [
+      {
+        "titulo": "ACR-TIRADS: o que pontua (C.E.M.FO.FO.)",
+        "cor": "navy",
+        "itens": [
+          "Composição: cístico ou espongiforme 0 · misto sólido-cístico 1 · sólido 2",
+          "Ecogenicidade: anecoico 0 · iso ou hiperecoico 1 · hipoecoico 2 · muito hipoecoico 3",
+          "Margem: lisas 0 · lobuladas ou irregulares 2 · extensão extratireoidiana 3",
+          "Forma: mais largo que alto 0 · mais alto que largo 3",
+          "Focos ecogênicos: nenhum 0 · macrocalcificações 1 · periféricas 2 · puntiformes (microcalcificações) 3"
+        ]
+      },
+      {
+        "titulo": "ACR-TIRADS: soma → categoria → conduta",
+        "cor": "gold",
+        "itens": [
+          "TR1 (0) e TR2 (2 pontos): sem PAAF e sem seguimento por US",
+          "TR3 (3): PAAF se ≥2,5 cm · US em 1–2 anos se ≥1,5 cm",
+          "TR4 (4–6): PAAF se ≥1,5 cm · US anual se ≥1 cm",
+          "TR5 (≥7): PAAF se ≥1 cm · US anual se ≥0,5 cm",
+          "Não pontuam: tamanho, localização e vascularização (o Doppler não é mais usado)"
+        ]
+      },
+      {
+        "titulo": "ATA 2015: padrão → conduta",
+        "cor": "red",
+        "itens": [
+          "Alto (>70–90%): sólido hipoecogênico + 1 achado de risco → PAAF ≥1 cm",
+          "Intermediário (10–20%): sólido hipoecogênico → PAAF ≥1 cm",
+          "Baixo (5–10%): sólido iso ou hiperecogênico → PAAF ≥1,5 cm",
+          "Muito baixo (<3%): espongiforme ou sólido-cístico → PAAF ≥2 cm",
+          "Benigno (<1%): puramente cístico → não puncionar"
+        ]
+      }
+    ],
+    "rodape": "Nos dois sistemas, quanto maior a suspeita, menor o limiar de tamanho — o tamanho só decide a conduta depois da categoria. Nódulo que capta no PET: PAAF se ≥1 cm."
+  },
+  "lastro": [
+    "quanto maior a suspeita, menor o limiar de tamanho para puncionar",
+    "Tamanho, localização e vascularização NÃO entram na pontuação — o tamanho só decide a conduta depois da categoria",
+    "As cinco categorias avaliadas são composição, ecogenicidade, margem, forma e focos ecogênicos",
+    "TR3 punciona ≥2,5 cm; TR4 ≥1,5 cm; TR5 ≥1 cm (com US anual a partir de 0,5 cm no TR5)",
+    "ATA: PAAF se ≥1 cm no alto e intermediário, ≥1,5 cm no baixo, ≥2 cm no muito baixo; cístico puro não punciona",
+    "Os 4 M da ATA: margens irregulares, margens além da tireoide, mais alto que largo e microcalcificações",
+    "O Doppler não é mais usado nas classificações de risco",
+    "Nódulo que capta no PET também tem indicação de PAAF se ≥1 cm, independentemente das demais características"
+  ],
+  "justificativa": "O fluxograma existente resume a abordagem e as condutas por Bethesda; a estratificação ultrassonográfica — pontos do ACR-TIRADS, categorias da ATA e os limiares de punção — é o que a prova cobra e só aparece como tabelas no texto."
+}

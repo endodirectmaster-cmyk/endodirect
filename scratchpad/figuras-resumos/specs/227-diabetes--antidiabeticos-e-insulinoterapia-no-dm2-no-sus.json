@@ -1,0 +1,46 @@
+{
+  "i": 227,
+  "sub": "Diabetes",
+  "tema": "Antidiabéticos e Insulinoterapia no DM2 no SUS",
+  "titulo": "As três classes orais do SUS: do alvo molecular ao efeito clínico",
+  "subtitulo": "O mecanismo explica peso, hipoglicemia, limite renal e quem fica no basal-bolus",
+  "tipo": "fluxo",
+  "fluxo": {
+    "orientacao": "vertical",
+    "rotulos_camadas": ["Fármaco", "Alvo", "Efeito", "Prescrição"],
+    "nos": [
+      {"id": "m0", "tipo": "inicio", "largura": 165, "texto": "Metformina\n1ª linha; 500–2000 mg/dia"},
+      {"id": "s0", "tipo": "inicio", "largura": 165, "texto": "Sulfonilureia\nglibenclamida, gliclazida MR"},
+      {"id": "g0", "tipo": "inicio", "largura": 165, "texto": "iSGLT-2: dapagliflozina\nfarmácia de alto custo"},
+      {"id": "m1", "tipo": "orgao", "largura": 165, "texto": "Mitocôndria\ninibe a cadeia respiratória: ↑AMP, ↓ATP"},
+      {"id": "s1", "tipo": "orgao", "largura": 165, "texto": "Receptor SUR1\nagonista: fecha o canal K-ATP"},
+      {"id": "g1", "tipo": "orgao", "largura": 165, "texto": "Arteríola aferente\nvasoconstrição: cai a pressão de filtração"},
+      {"id": "m2", "tipo": "passo", "largura": 165, "texto": "AMPK ativada\n↓ gliconeogênese e lipogênese\n↑ GLP-1; ↓ sinal do glucagon"},
+      {"id": "s2", "tipo": "passo", "largura": 165, "texto": "Secretagogo\nlibera insulina; ganho de peso"},
+      {"id": "g2", "tipo": "passo", "largura": 165, "texto": "Benefício renal\nqueda transitória de até 30% da TFG no início: não suspender"},
+      {"id": "m3", "tipo": "fim", "largura": 165, "texto": "↓HbA1c 1–2 pontos\npeso neutro, sem hipoglicemia; deficiência de B12\ncontraindicada se TFG < 30"},
+      {"id": "s3", "tipo": "alerta", "largura": 165, "texto": "↓HbA1c 1–2 pontos\nrisco alto de hipoglicemia\nsai no basal-bolus"},
+      {"id": "g3", "tipo": "fim", "largura": 165, "texto": "↓HbA1c < 1 ponto\n−2 a 3 kg; IC, doença cardiovascular e DRC\ncetoacidose euglicêmica: sair antes de cirurgia ou infecção"}
+    ],
+    "setas": [
+      {"de": "m0", "para": "m1"}, {"de": "m1", "para": "m2"}, {"de": "m2", "para": "m3"},
+      {"de": "s0", "para": "s1"}, {"de": "s1", "para": "s2"}, {"de": "s2", "para": "s3"},
+      {"de": "g0", "para": "g1"}, {"de": "g1", "para": "g2"}, {"de": "g2", "para": "g3"}
+    ],
+    "notas": [
+      {"no": "g3", "lado": "abaixo", "texto": "Fora do SUS: AR GLP-1 e tirzepatida — perda de peso; lembrar também em IC, doença cardiovascular e DRC"}
+    ],
+    "legenda": "Insulina (NPH, regular, asparte) também está no SUS: sem teto de redução da HbA1c, cabe em qualquer fase."
+  },
+  "lastro": [
+    "Inibe a cadeia respiratória mitocondrial (↑AMP, ↓ATP), ativa a AMPK, inibe gliconeogênese e lipogênese, estimula o GLP-1 e reduz o sinal do glucagon",
+    "A sulfonilureia é agonista do SUR1 e fecha o canal K-ATP",
+    "O benefício renal do iSGLT-2 vem da queda da pressão de filtração por vasoconstrição da aferente",
+    "a queda de até 30% da TFG no início é transitória, não motiva suspensão",
+    "Metformina é contraindicada com TFG < 30",
+    "No basal-bolus, secretagogo e iDPP-4 saem",
+    "iSGLT-2 causa cetoacidose euglicêmica e sai antes de cirurgia ou em infecção",
+    "Lembrar de iSGLT-2 e AR GLP-1: insuficiência cardíaca, doença cardiovascular ou alto risco e doença renal crônica"
+  ],
+  "justificativa": "O fluxograma do capítulo já traz o algoritmo de escolha e a insulinização; a figura mostra o mecanismo das três classes orais do SUS e como ele explica peso, hipoglicemia, limite renal e permanência no basal-bolus."
+}

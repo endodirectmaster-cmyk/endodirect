@@ -1,0 +1,122 @@
+{
+  "i": 136,
+  "sub": "Diabetes",
+  "tema": "Diabetes no Idoso",
+  "titulo": "Idoso com diabetes: os dois perigos e como evitá-los",
+  "subtitulo": "Metas e fármacos pelo estado de saúde e função, não pela idade cronológica",
+  "tipo": "fluxo",
+  "fluxo": {
+    "orientacao": "vertical",
+    "rotulos_camadas": [
+      "Início",
+      "Perigo",
+      "Efeito",
+      "Avaliar",
+      "Conduta"
+    ],
+    "nos": [
+      {
+        "id": "a",
+        "tipo": "inicio",
+        "largura": 280,
+        "texto": "Idoso com diabetes\nmais síndromes geriátricas: fragilidade, quedas, incontinência, polifarmácia"
+      },
+      {
+        "id": "h1",
+        "tipo": "alerta",
+        "texto": "Hipoglicemia\no maior risco no idoso"
+      },
+      {
+        "id": "h2",
+        "tipo": "alerta",
+        "texto": "Hiperglicemia sintomática\ntambém deve ser evitada"
+      },
+      {
+        "id": "c1",
+        "tipo": "passo",
+        "texto": "Consequências\nqueda, fratura, evento cardiovascular, arritmia\ndeclínio cognitivo, morte"
+      },
+      {
+        "id": "c2",
+        "tipo": "passo",
+        "texto": "Consequências\ndesidratação, infecções, incontinência, delirium\nmaior risco de EHH na descompensação"
+      },
+      {
+        "id": "e",
+        "tipo": "passo",
+        "largura": 320,
+        "texto": "Avaliação geriátrica\ncognição, depressão, quedas, polifarmácia, função, nutrição, suporte\nA1c menos confiável (anemia, doença renal): apoiar na glicemia capilar/CGM"
+      },
+      {
+        "id": "p1",
+        "tipo": "fim",
+        "largura": 180,
+        "texto": "Baixo risco de hipoglicemia\npreferir metformina, SGLT2i, GLP-1 RA, iDPP-4\nse insulina: basal simples com análogo de longa ação"
+      },
+      {
+        "id": "p2",
+        "tipo": "alerta",
+        "largura": 180,
+        "texto": "Evitar\nglibenclamida (sulfonilureia de longa ação)\nesquemas de insulina complexos"
+      },
+      {
+        "id": "p3",
+        "tipo": "fim",
+        "largura": 180,
+        "texto": "Desintensificar\nA1c abaixo da meta com fármacos de risco\nreduzir ou retirar insulina e sulfonilureia"
+      }
+    ],
+    "setas": [
+      {
+        "de": "a",
+        "para": "h1",
+        "rotulo": "supertratamento"
+      },
+      {
+        "de": "a",
+        "para": "h2",
+        "rotulo": "descompensação"
+      },
+      {
+        "de": "h1",
+        "para": "c1"
+      },
+      {
+        "de": "h2",
+        "para": "c2"
+      },
+      {
+        "de": "c1",
+        "para": "e"
+      },
+      {
+        "de": "c2",
+        "para": "e"
+      },
+      {
+        "de": "e",
+        "para": "p1"
+      },
+      {
+        "de": "e",
+        "para": "p2"
+      },
+      {
+        "de": "e",
+        "para": "p3"
+      }
+    ],
+    "legenda": "Demência prejudica o autocuidado e a aplicação de insulina: simplificar o esquema. CGM pode reduzir hipoglicemia e apoiar cuidadores."
+  },
+  "lastro": [
+    "As metas e o tratamento se individualizam pelo estado de saúde e função, não pela idade cronológica",
+    "O maior risco no idoso é a hipoglicemia (queda, fratura, evento cardiovascular, arritmia, declínio cognitivo, morte) — por isso se evita o supertratamento",
+    "A hiperglicemia sintomática (desidratação, infecções, incontinência, delirium) também deve ser evitada",
+    "idosos têm maior risco de desidratação e EHH na descompensação",
+    "A A1c pode ser menos confiável no idoso (anemia, doença renal, transfusões) — apoiar decisões também na glicemia capilar/CGM",
+    "Preferir fármacos de baixo risco de hipoglicemia (metformina, SGLT2i, GLP-1 RA, iDPP-4).",
+    "Evitar sulfonilureias de longa ação (glibenclamida) e esquemas de insulina complexos; se insulina necessária, preferir basal simples com análogo de longa ação",
+    "Desintensificar quando a A1c está abaixo da meta com fármacos de risco — reduzir/retirar insulina/sulfonilureia"
+  ],
+  "justificativa": "O fluxograma existente já estratifica as metas por estado de saúde; esta figura mostra o eixo de dano que justifica a estratégia (hipoglicemia e hiperglicemia sintomática → consequências) e os três pilares de conduta que o capítulo deriva dele."
+}

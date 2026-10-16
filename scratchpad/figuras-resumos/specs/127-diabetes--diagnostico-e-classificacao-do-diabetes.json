@@ -1,0 +1,93 @@
+{
+  "i": 127,
+  "sub": "Diabetes",
+  "tema": "Diagnóstico e Classificação do Diabetes",
+  "titulo": "HbA1c falseada: a lógica é o tempo de vida da hemácia",
+  "subtitulo": "O que prolonga a vida da hemácia eleva a HbA1c; o que a encurta reduz",
+  "tipo": "fluxo",
+  "fluxo": {
+    "orientacao": "vertical",
+    "rotulos_camadas": [
+      "Causa",
+      "Hemácia",
+      "HbA1c",
+      "Conduta"
+    ],
+    "nos": [
+      {
+        "id": "g1",
+        "tipo": "grupo",
+        "largura": 280,
+        "texto": "• Anemia por deficiência de ferro\n• Deficiência de vitamina B12\n• Álcool crônico, hiperbilirrubinemia, uremia"
+      },
+      {
+        "id": "g2",
+        "tipo": "grupo",
+        "largura": 280,
+        "texto": "• Hemólise e hemoglobinopatias\n• Transfusão ou sangramento recente\n• Ferro, B12, EPO; vitamina C/E em alta dose"
+      },
+      {
+        "id": "v1",
+        "tipo": "passo",
+        "texto": "Vida da hemácia PROLONGADA"
+      },
+      {
+        "id": "v2",
+        "tipo": "passo",
+        "texto": "Vida da hemácia ENCURTADA"
+      },
+      {
+        "id": "a1",
+        "tipo": "alerta",
+        "texto": "HbA1c falsamente ELEVADA"
+      },
+      {
+        "id": "a2",
+        "tipo": "alerta",
+        "texto": "HbA1c falsamente REDUZIDA"
+      },
+      {
+        "id": "c",
+        "tipo": "fim",
+        "largura": 300,
+        "texto": "Usar critérios glicêmicos\npriorizar glicemia de jejum ou TOTG\nanemias, hemoglobinopatias, gestação, uremia, transfusão"
+      }
+    ],
+    "setas": [
+      {
+        "de": "g1",
+        "para": "v1"
+      },
+      {
+        "de": "g2",
+        "para": "v2"
+      },
+      {
+        "de": "v1",
+        "para": "a1"
+      },
+      {
+        "de": "v2",
+        "para": "a2"
+      },
+      {
+        "de": "a1",
+        "para": "c"
+      },
+      {
+        "de": "a2",
+        "para": "c"
+      }
+    ],
+    "legenda": "Pós-transplante: evitar a HbA1c nos primeiros 3 meses; o teste de escolha é o TOTG com 75 g."
+  },
+  "lastro": [
+    "A lógica é o tempo de vida da hemácia: o que o PROLONGA eleva falsamente a HbA1c; o que o ENCURTA a reduz.",
+    "Deficiência de ferro, deficiência de B12, álcool crônico, hiperbilirrubinemia e uremia elevam falsamente a HbA1c.",
+    "Hemólise, transfusão, terapia com ferro, B12 ou EPO, sangramento e vitamina C ou E em alta dose reduzem falsamente.",
+    "Cuidado com condições que alteram a A1c: anemias, hemoglobinopatias, gestação, uremia, transfusão — nesses casos, usar critérios glicêmicos.",
+    "distorcem a A1c → nesses casos, priorizar glicemia de jejum/TOTG",
+    "O teste de escolha é o TOTG com 75 g — evita-se a HbA1c nos primeiros 3 meses, porque a anemia e as transfusões do período a distorcem."
+  ],
+  "justificativa": "O fluxograma existente cobre o algoritmo de rastreamento e diagnóstico; esta figura mostra o único mecanismo que o capítulo explica — o tempo de vida da hemácia como lógica das interferências na HbA1c — e a conduta que decorre dele."
+}

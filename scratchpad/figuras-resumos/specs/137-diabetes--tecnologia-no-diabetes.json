@@ -1,0 +1,128 @@
+{
+  "i": 137,
+  "sub": "Diabetes",
+  "tema": "Tecnologia no Diabetes",
+  "titulo": "Do sensor à decisão: os dois caminhos do dado do CGM",
+  "subtitulo": "Alça fechada híbrida (basal automática) e relatório AGP (decisão entre consultas)",
+  "tipo": "fluxo",
+  "fluxo": {
+    "orientacao": "vertical",
+    "nos": [
+      {
+        "id": "sensor",
+        "tipo": "orgao",
+        "texto": "Sensor de CGM\nmede a glicose no líquido intersticial\npequeno atraso em relação ao sangue",
+        "largura": 250
+      },
+      {
+        "id": "nuvem",
+        "tipo": "passo",
+        "largura": 170,
+        "texto": "Dados na nuvem\nCGM e bomba compartilhados à distância\nteleconsulta, ajustes, cuidadores e pais"
+      },
+      {
+        "id": "usuario",
+        "tipo": "passo",
+        "largura": 170,
+        "texto": "Usuário\nage sobre tendências e alarmes\nanuncia as refeições: bólus manual (híbrido)"
+      },
+      {
+        "id": "algoritmo",
+        "tipo": "passo",
+        "largura": 170,
+        "texto": "Algoritmo\nsuspensão preditiva: para a basal antes da hipoglicemia\nAID: ajusta a basal e aplica microcorreções"
+      },
+      {
+        "id": "agp",
+        "tipo": "grupo",
+        "largura": 240,
+        "texto": "Relatório AGP\n• TIR > 70% · TAR < 25% · CV ≤ 36%\n• TBR < 4% (< 70) e < 1% (< 54) · GMI"
+      },
+      {
+        "id": "bomba",
+        "tipo": "orgao",
+        "texto": "Bomba de insulina (CSII)\ninfusão subcutânea contínua de insulina rápida\nbasal programável por horário + bólus",
+        "largura": 250
+      },
+      {
+        "id": "fim_dados",
+        "tipo": "fim",
+        "texto": "Decisão entre consultas\nAGP interpretado junto com a A1c e a clínica"
+      },
+      {
+        "id": "fim_auto",
+        "tipo": "fim",
+        "texto": "Mais tempo no alvo\nmenos hipoglicemia (AID)\nCGM: recomendado no DM1 e no DM2 em insulina"
+      }
+    ],
+    "setas": [
+      {
+        "de": "sensor",
+        "para": "nuvem",
+        "rotulo": "compartilha"
+      },
+      {
+        "de": "sensor",
+        "para": "usuario",
+        "rotulo": "mostra tendências"
+      },
+      {
+        "de": "sensor",
+        "para": "algoritmo",
+        "rotulo": "minuto a minuto"
+      },
+      {
+        "de": "nuvem",
+        "para": "agp"
+      },
+      {
+        "de": "usuario",
+        "para": "bomba",
+        "rotulo": "bólus de refeição"
+      },
+      {
+        "de": "algoritmo",
+        "para": "bomba",
+        "rotulo": "basal automática"
+      },
+      {
+        "de": "agp",
+        "para": "fim_dados"
+      },
+      {
+        "de": "bomba",
+        "para": "fim_auto"
+      },
+      {
+        "de": "bomba",
+        "para": "sensor",
+        "tipo": "feedback",
+        "rotulo": "glicose"
+      }
+    ],
+    "notas": [
+      {
+        "no": "fim_dados",
+        "lado": "abaixo",
+        "texto": "Limitações: custo e acesso, letramento digital, reações cutâneas aos adesivos, sobrecarga de alarmes e informação"
+      },
+      {
+        "no": "fim_auto",
+        "lado": "abaixo",
+        "texto": "Canetas inteligentes e apps registram a dose e calculam o bólus: apoiam adesão e titulação"
+      }
+    ],
+    "legenda": "Tracejado vermelho: a insulina infundida muda a glicose, que o sensor lê de novo — a alça se fecha."
+  },
+  "lastro": [
+    "Mede a glicose no líquido intersticial (há um pequeno atraso fisiológico em relação ao sangue)",
+    "tempo no alvo (TIR) > 70%, tempo abaixo (TBR) < 4% (<70) / < 1% (<54), TAR < 25%, GMI e variabilidade (CV ≤ 36%)",
+    "A bomba (CSII) infunde insulina rápida de forma contínua (basal programável + bólus).",
+    "A suspensão preditiva interrompe a basal antes da hipoglicemia.",
+    "CGM + bomba + algoritmo ajustam a basal automaticamente (e aplicam microcorreções) minuto a minuto; reduzem hipoglicemia e aumentam o TIR",
+    "O usuário ainda anuncia as refeições (bólus manual) — por isso \"híbrido\"",
+    "O compartilhamento remoto dos dados de CGM/bomba (plataformas na nuvem) permite teleconsulta, ajustes à distância e acompanhamento por cuidadores/pais",
+    "interpretar o AGP em conjunto com a A1c e a clínica"
+  ],
+  "justificativa": "O capítulo já tem o algoritmo de escolha da tecnologia; a figura mostra o mecanismo que ele não desenha — o dado do sensor fechando a alça (algoritmo e bomba) e alimentando o relatório AGP que guia a decisão clínica."
+}

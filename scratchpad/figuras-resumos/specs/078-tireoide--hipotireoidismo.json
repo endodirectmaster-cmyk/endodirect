@@ -1,0 +1,47 @@
+{
+  "i": 78,
+  "sub": "Tireoide",
+  "tema": "Hipotireoidismo",
+  "titulo": "Eixo hipotálamo-hipófise-tireoide: onde falha cada tipo",
+  "subtitulo": "Primário: a glândula falha e o TSH sobe; central: o T4L cai sem TSH que responda",
+  "tipo": "fluxo",
+  "fluxo": {
+    "orientacao": "vertical",
+    "nos": [
+      {"id": "cen", "tipo": "alerta", "largura": 210, "camada": 0, "texto": "Central: hipófise/hipotálamo\ntumor/cirurgia selar, Sheehan, hipofisite (inclusive por ICI)\nT4L↓ · TSH baixo, normal ou discretamente alto (bioinativo)"},
+      {"id": "h", "tipo": "orgao", "texto": "Hipotálamo\nTRH (sobe TSH e PRL)"},
+      {"id": "pri", "tipo": "alerta", "largura": 210, "camada": 1, "texto": "Primário (>95%)\nglândula falha: Hashimoto, deficiência de iodo, cirurgia/radioiodo, fármacos\nTSH↑ · T4L↓ (franco) ou T4L normal (subclínico)"},
+      {"id": "p", "tipo": "orgao", "texto": "Hipófise\nTSH"},
+      {"id": "con", "tipo": "alerta", "largura": 210, "camada": 2, "texto": "Consumptivo (excesso de D3)\nD3 inativa T4 e T3 em T3 reverso\nhemangioma hepático, criança: TSH↑ · T4↓ · T3 reverso↑"},
+      {"id": "t", "tipo": "orgao", "texto": "Tireoide\nT4 e T3"},
+      {"id": "per", "tipo": "passo", "texto": "Tecidos\nação dos hormônios tireoidianos"}
+    ],
+    "setas": [
+      {"de": "h", "para": "p", "rotulo": "TRH"},
+      {"de": "cen", "para": "p", "tipo": "inibe"},
+      {"de": "p", "para": "t", "rotulo": "TSH"},
+      {"de": "pri", "para": "t", "tipo": "inibe"},
+      {"de": "t", "para": "per", "rotulo": "T4 e T3"},
+      {"de": "con", "para": "per", "tipo": "inibe"},
+      {"de": "t", "para": "p", "tipo": "feedback"},
+      {"de": "t", "para": "h", "tipo": "feedback"}
+    ],
+    "notas": [
+      {"no": "cen", "lado": "esquerda", "texto": "No central, antes de tratar: demais eixos (sobretudo cortisol) e RM de sela; dose guiada pelo T4L, não pelo TSH"},
+      {"no": "pri", "lado": "esquerda", "texto": "Anti-TPO confirma Hashimoto. Levotiroxina ~1,6 µg/kg/dia no jovem; 12,5–25 µg/dia no idoso ou cardiopata; meta: TSH normal"},
+      {"no": "per", "lado": "abaixo", "texto": "A queda de T4/T3 estimula o TRH, que sobe TSH e PRL: hiperprolactinemia acompanha o hipotireoidismo"}
+    ],
+    "legenda": "Vermelho ⊣: onde a lesão bloqueia o eixo. Tracejado vermelho: retroalimentação negativa de T4/T3."
+  },
+  "lastro": [
+    "Primário (>95%): falha da própria glândula → TSH↑ (com T4L baixo no franco, ou normal no subclínico)",
+    "Central (secundário/terciário): falha de hipófise/hipotálamo → T4L baixo com TSH baixo ou inapropriadamente normal",
+    "O hipotireoidismo central pode cursar com TSH discretamente elevado — o TSH secretado é biologicamente inativo",
+    "Consumptivo — produção excessiva de D3, que inativa T4 e T3 em T3 reverso",
+    "Hiperprolactinemia — a queda de T4/T3 estimula o TRH, que sobe TSH e PRL",
+    "solicitar os demais eixos hipofisários (atenção ao CORTISOL) e RM de sela ANTES de iniciar o tratamento",
+    "Anti-TPO (± anti-Tg) positivo confirma etiologia autoimune (Hashimoto)",
+    "Dose plena ~1,6 µg/kg/dia no adulto jovem hígido; iniciar baixo (12,5–25 µg/dia) e titular lentamente no idoso e no cardiopata"
+  ],
+  "justificativa": "O fluxograma existente trata só do subclínico; o eixo com os três pontos de lesão mostra por que o TSH sobe no primário e não responde no central, e onde entra o consumptivo — a base do algoritmo diagnóstico do capítulo."
+}

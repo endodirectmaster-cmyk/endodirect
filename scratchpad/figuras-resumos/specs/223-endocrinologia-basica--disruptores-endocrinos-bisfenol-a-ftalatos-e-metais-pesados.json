@@ -1,0 +1,123 @@
+{
+  "i": 223,
+  "sub": "Endocrinologia Básica",
+  "tema": "Disruptores Endócrinos: Bisfenol A, Ftalatos e Metais Pesados",
+  "titulo": "Disruptores endócrinos: da fonte ao efeito em cada eixo",
+  "subtitulo": "Lipofílicos e cumulativos, agem como agonistas ou antagonistas de receptores hormonais",
+  "tipo": "fluxo",
+  "fluxo": {
+    "orientacao": "vertical",
+    "nos": [
+      {
+        "id": "pl",
+        "tipo": "inicio",
+        "largura": 120,
+        "texto": "Plásticos\nbisfenol A"
+      },
+      {
+        "id": "co",
+        "tipo": "inicio",
+        "largura": 120,
+        "texto": "Cosméticos\nparabenos"
+      },
+      {
+        "id": "pe",
+        "tipo": "inicio",
+        "largura": 120,
+        "texto": "Pesticidas\nDDT"
+      },
+      {
+        "id": "me",
+        "tipo": "inicio",
+        "largura": 120,
+        "texto": "Metais pesados\nmercúrio"
+      },
+      {
+        "id": "org",
+        "tipo": "passo",
+        "largura": 300,
+        "texto": "No organismo\nlipofílicos: acumulam-se no tecido adiposo\nefeito cumulativo; atravessam a barreira placentária"
+      },
+      {
+        "id": "rec",
+        "tipo": "passo",
+        "largura": 280,
+        "texto": "Receptor hormonal\nbisfenol A: agonista do receptor estrogênico\nftalatos: antagonistas do receptor androgênico"
+      },
+      {
+        "id": "met",
+        "tipo": "alerta",
+        "largura": 145,
+        "texto": "Eixo metabólico\nPPARγ e adipogênese; microbiota alterada\nresistência à leptina e resistência insulínica"
+      },
+      {
+        "id": "tir",
+        "tipo": "alerta",
+        "largura": 145,
+        "texto": "Eixo tireoidiano\nTPO e NIS alterados; TSH aumenta"
+      },
+      {
+        "id": "adr",
+        "tipo": "alerta",
+        "largura": 145,
+        "texto": "Eixo adrenal\nciclo circadiano do cortisol alterado"
+      },
+      {
+        "id": "gon",
+        "tipo": "alerta",
+        "largura": 145,
+        "texto": "Eixo gonadal\npuberdade precoce em meninas; menor ação dos contraceptivos orais\nLH alterado → SOP"
+      }
+    ],
+    "setas": [
+      {
+        "de": "pl",
+        "para": "org"
+      },
+      {
+        "de": "co",
+        "para": "org"
+      },
+      {
+        "de": "pe",
+        "para": "org"
+      },
+      {
+        "de": "me",
+        "para": "org"
+      },
+      {
+        "de": "org",
+        "para": "rec"
+      },
+      {
+        "de": "rec",
+        "para": "met"
+      },
+      {
+        "de": "rec",
+        "para": "tir"
+      },
+      {
+        "de": "rec",
+        "para": "adr"
+      },
+      {
+        "de": "rec",
+        "para": "gon"
+      }
+    ],
+    "legenda": "Após as restrições ao bisfenol A, a indústria passou aos bisfenóis F e S — a inocuidade não se comprovou."
+  },
+  "lastro": [
+    "As fontes que a aula agrupa são plásticos (bisfenol A), cosméticos (parabenos), pesticidas (DDT) e metais pesados (mercúrio)",
+    "São lipofílicos, acumulam-se no tecido adiposo, têm efeito cumulativo e atravessam a barreira placentária.",
+    "o bisfenol A é agonista do receptor estrogênico e os ftalatos são antagonistas do receptor androgênico.",
+    "No eixo metabólico alteram a expressão de genes da adipogênese (PPARγ) e a diferenciação de pré-adipócitos em adipócitos maduros.",
+    "causam resistência à leptina, alteração da microbiota intestinal e resistência insulínica.",
+    "No eixo tireoidiano alteram a TPO e o NIS, com aumento do TSH; no adrenal, alteram o ciclo circadiano do cortisol.",
+    "a ligação ao receptor estrogênico causa puberdade precoce em meninas, reduz a ação dos contraceptivos orais e altera a secreção de LH, levando a SOP",
+    "a indústria passou a usar os bisfenóis F e S supondo que não seriam nocivos, o que não se comprovou"
+  ],
+  "justificativa": "O capítulo não tem fluxograma e sua espinha é o mecanismo: fonte → acúmulo no organismo → receptor (agonista/antagonista) → efeito em cada eixo; a cadeia vertical mostra esse encadeamento que o texto só lista."
+}

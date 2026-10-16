@@ -1,0 +1,34 @@
+{
+  "i": 131,
+  "sub": "Diabetes",
+  "tema": "Metas Glicêmicas e Monitorização (CGM)",
+  "titulo": "Métricas do CGM: meta de tempo em cada faixa de glicemia",
+  "subtitulo": "Para a maioria · idosos/alto risco: TIR > 50% e TBR < 1% · gestação (DM1): 63–140 > 70%",
+  "tipo": "espectro",
+  "espectro": {
+    "segmentos": [
+      {"rotulo": "TBR < 1%", "cor": "red", "detalhe": "abaixo de 54", "peso": 1},
+      {"rotulo": "TBR < 4%", "cor": "amber", "detalhe": "abaixo de 70, no total", "peso": 1},
+      {"rotulo": "TIR > 70%", "cor": "green", "detalhe": "tempo no alvo; cada +10% ≈ −0,5% de A1c", "peso": 3},
+      {"rotulo": "TAR < 25%", "cor": "amber", "detalhe": "acima de 180, no total", "peso": 1.5},
+      {"rotulo": "TAR < 5%", "cor": "red", "detalhe": "acima de 250", "peso": 1}
+    ],
+    "marcadores": [
+      {"pos": 13.33, "rotulo": "54"},
+      {"pos": 26.67, "rotulo": "70"},
+      {"pos": 66.67, "rotulo": "180"},
+      {"pos": 86.67, "rotulo": "250"}
+    ],
+    "eixo": "glicemia no CGM, em mg/dL (faixas fora de escala) · relatório AGP com ≥ 14 dias e > 70% de uso ativo →"
+  },
+  "lastro": [
+    "Tempo no alvo (TIR, 70–180 mg/dL): > 70% para a maioria (cada +10% de TIR ~ −0,5% de A1c)",
+    "Tempo abaixo do alvo (TBR): < 4% abaixo de 70 mg/dL e < 1% abaixo de 54 mg/dL",
+    "Tempo acima (TAR): < 25% acima de 180 (e < 5% acima de 250)",
+    "Relatório padronizado (AGP), idealmente com ≥ 14 dias de uso ativo (> 70% do tempo)",
+    "Alvos mais frouxos para idosos/alto risco: TIR > 50%, TBR < 1% (prioridade em minimizar hipoglicemia)",
+    "Na gestação (DM1), alvo específico TIR 63–140 mg/dL > 70%",
+    "Complementa a A1c ao mostrar variabilidade e hipoglicemia que a média esconde"
+  ],
+  "justificativa": "O capítulo já traz o algoritmo de definição de metas e uso do CGM; a figura cobre outro ângulo — onde cada meta de tempo cai na faixa de glicemia — que a lista de siglas (TIR, TBR, TAR) não deixa ver."
+}

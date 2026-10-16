@@ -1,0 +1,147 @@
+{
+  "i": 150,
+  "sub": "Endocrinologia Básica",
+  "tema": "Receptores Hormonais e Transdução de Sinal",
+  "titulo": "Receptores de membrana e nucleares: da ligação à resposta",
+  "subtitulo": "A especificidade vem do receptor, não do hormônio: sem receptor não há efeito",
+  "tipo": "fluxo",
+  "fluxo": {
+    "orientacao": "vertical",
+    "nos": [
+      {
+        "id": "hid",
+        "tipo": "inicio",
+        "largura": 300,
+        "texto": "Hormônio hidrossolúvel\nnão entra na célula: liga-se à porção extracelular"
+      },
+      {
+        "id": "lip",
+        "tipo": "inicio",
+        "largura": 290,
+        "texto": "Hormônio lipossolúvel\natravessa a membrana e age no núcleo"
+      },
+      {
+        "id": "gpcr",
+        "tipo": "orgao",
+        "largura": 160,
+        "texto": "Proteína G (GPCR)\n7 domínios transmembrana; a maior família\nACTH, TSH, LH e FSH, PTH, glucagon"
+      },
+      {
+        "id": "rtk",
+        "tipo": "orgao",
+        "largura": 135,
+        "texto": "Tirosina-quinase\ntem atividade enzimática própria\ninsulina e IGF-1"
+      },
+      {
+        "id": "jak",
+        "tipo": "orgao",
+        "largura": 135,
+        "texto": "Citocina (JAK-STAT)\nsem atividade enzimática própria; recruta quinases\nGH, prolactina, leptina"
+      },
+      {
+        "id": "nuc",
+        "tipo": "orgao",
+        "largura": 135,
+        "texto": "Receptor nuclear\nliga o DNA por dois dedos de zinco\nesteroides, T3, vitamina D"
+      },
+      {
+        "id": "mg",
+        "tipo": "passo",
+        "largura": 150,
+        "texto": "Gs, Gi, Gq\nGs: ↑AMPc → PKA\nGi: ↓AMPc; Gq: PLC → IP3/Ca²⁺ + DAG → PKC"
+      },
+      {
+        "id": "mr",
+        "tipo": "passo",
+        "largura": 135,
+        "texto": "Autofosforilação\nIRS-1/2 → PI3K/AKT (metabólica)\ne RAS/MAPK (crescimento)"
+      },
+      {
+        "id": "mj",
+        "tipo": "passo",
+        "largura": 135,
+        "texto": "JAK fosforila STAT\nSTAT migra ao núcleo\nSOCS fazem o feedback negativo"
+      },
+      {
+        "id": "mn",
+        "tipo": "passo",
+        "largura": 135,
+        "texto": "Fator de transcrição\nclasse I: citoplasma, ligado à HSP\nclasse II: no núcleo, com o RXR"
+      },
+      {
+        "id": "rap",
+        "tipo": "fim",
+        "largura": 350,
+        "texto": "Resposta rápida\nsegundos a minutos (proteína G); minutos a horas (quinases)\nmodifica proteínas já existentes, sem transcrição"
+      },
+      {
+        "id": "len",
+        "tipo": "fim",
+        "largura": 250,
+        "texto": "Resposta lenta\nhoras a dias: altera a expressão gênica\nexige nova síntese proteica"
+      }
+    ],
+    "setas": [
+      {
+        "de": "hid",
+        "para": "gpcr"
+      },
+      {
+        "de": "hid",
+        "para": "rtk"
+      },
+      {
+        "de": "hid",
+        "para": "jak"
+      },
+      {
+        "de": "lip",
+        "para": "nuc"
+      },
+      {
+        "de": "gpcr",
+        "para": "mg"
+      },
+      {
+        "de": "rtk",
+        "para": "mr"
+      },
+      {
+        "de": "jak",
+        "para": "mj"
+      },
+      {
+        "de": "nuc",
+        "para": "mn"
+      },
+      {
+        "de": "mg",
+        "para": "rap"
+      },
+      {
+        "de": "mr",
+        "para": "rap"
+      },
+      {
+        "de": "mj",
+        "para": "rap"
+      },
+      {
+        "de": "mn",
+        "para": "len"
+      }
+    ],
+    "legenda": "Resistência hormonal: defeito no receptor ou pós-receptor → hormônio alto com ação baixa."
+  },
+  "lastro": [
+    "Hormônios hidrossolúveis usam receptores de membrana e segundos mensageiros (resposta rápida).",
+    "GPCR-Gs ativa adenilil-ciclase → AMPc → PKA (ACTH, TSH, LH/FSH, PTH, glucagon).",
+    "GPCR-Gq ativa fosfolipase C → IP3/Ca²⁺ + DAG → PKC (TRH, GnRH, ADH-V1, angiotensina II).",
+    "Insulina e IGF-1 agem por receptor tirosina-quinase (autofosforilação → IRS → PI3K/AKT e MAPK).",
+    "GH, prolactina e leptina usam receptores associados a JAK-STAT.",
+    "Hormônios lipossolúveis (esteroides, T3, vitamina D) usam receptores nucleares e atuam como fatores de transcrição (resposta lenta).",
+    "Receptor nuclear classe I fica no CITOPLASMA ligado à HSP (glicocorticoide, aldosterona, estrógeno); classe II já está no NÚCLEO e dimeriza com o RXR",
+    "A especificidade da ação hormonal vem do receptor, não do hormônio: sem receptor não há efeito."
+  ],
+  "justificativa": "O capítulo não tem fluxograma e seu mecanismo central é a transdução: as duas classes de hormônio, as quatro famílias de receptor e a via de cada uma, convergindo em resposta rápida ou lenta."
+}

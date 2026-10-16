@@ -1,0 +1,140 @@
+{
+  "i": 84,
+  "sub": "Tireoide",
+  "tema": "Carcinoma Medular e Anaplásico de Tireoide",
+  "titulo": "Medular e anaplásico: dois tumores que não captam iodo",
+  "subtitulo": "Da célula de origem à conduta: por que radioiodo e supressão de TSH não têm papel",
+  "tipo": "fluxo",
+  "fluxo": {
+    "orientacao": "vertical",
+    "rotulos_camadas": [
+      "Origem",
+      "Genética",
+      "Tumor",
+      "Marcador e quadro",
+      "Conduta"
+    ],
+    "nos": [
+      {
+        "id": "m0",
+        "tipo": "orgao",
+        "largura": 185,
+        "texto": "Células C parafoliculares\nneuroendócrinas; produzem calcitonina\norigem diferente do epitélio folicular"
+      },
+      {
+        "id": "a0",
+        "tipo": "orgao",
+        "largura": 185,
+        "texto": "Célula indiferenciada\nde novo ou por desdiferenciação de um CDT preexistente"
+      },
+      {
+        "id": "m1",
+        "tipo": "passo",
+        "largura": 185,
+        "texto": "RET: ganho de função\nsomático em boa parte dos esporádicos (~75%)\ngerminativo nos hereditários (~25%): NEM 2A, 2B, FMTC"
+      },
+      {
+        "id": "a1",
+        "tipo": "passo",
+        "largura": 185,
+        "texto": "BRAF V600E, p53, TERT\nBRAF V600E em ~33%; p53 em 70%\npesquisar BRAF: define a terapia-alvo"
+      },
+      {
+        "id": "m2",
+        "tipo": "alerta",
+        "largura": 185,
+        "texto": "Carcinoma medular\nnão capta iodo, sem Tg, não responde a TSH\n~1–4% dos cânceres de tireoide"
+      },
+      {
+        "id": "a2",
+        "tipo": "alerta",
+        "largura": 185,
+        "texto": "Carcinoma anaplásico\nnão capta iodo; sem benefício em suprimir o TSH\nestágio IV por definição; sobrevida mediana em meses"
+      },
+      {
+        "id": "m3",
+        "tipo": "hormonio",
+        "largura": 185,
+        "texto": "Calcitonina e CEA\ncalcitonina acompanha a massa tumoral\ndoubling time: forte fator prognóstico"
+      },
+      {
+        "id": "a3",
+        "tipo": "passo",
+        "largura": 185,
+        "texto": "Massa de crescimento rápido\ncervical, no idoso; dispneia, disfagia, rouquidão, estridor\naté 50% com metástase a distância ao diagnóstico"
+      },
+      {
+        "id": "m4",
+        "tipo": "fim",
+        "largura": 185,
+        "texto": "Tireoidectomia total\n+ esvaziamento central; sem radioiodo nem supressão de TSH\navançado: inibidores de RET (selpercatinibe, pralsetinibe)"
+      },
+      {
+        "id": "a4",
+        "tipo": "fim",
+        "largura": 185,
+        "texto": "Via aérea + multimodal\nressecção se possível + radioterapia + sistêmica\nBRAF V600E+: dabrafenibe + trametinibe"
+      }
+    ],
+    "setas": [
+      {
+        "de": "m0",
+        "para": "m1"
+      },
+      {
+        "de": "m1",
+        "para": "m2"
+      },
+      {
+        "de": "m2",
+        "para": "m3"
+      },
+      {
+        "de": "m3",
+        "para": "m4",
+        "rotulo": "excluir feocromocitoma antes"
+      },
+      {
+        "de": "a0",
+        "para": "a1"
+      },
+      {
+        "de": "a1",
+        "para": "a2"
+      },
+      {
+        "de": "a2",
+        "para": "a3"
+      },
+      {
+        "de": "a3",
+        "para": "a4",
+        "rotulo": "prioridade: via aérea"
+      }
+    ],
+    "notas": [
+      {
+        "no": "a3",
+        "lado": "direita",
+        "texto": "Diferencial: linfoma de tireoide, que tem tratamento e prognóstico distintos"
+      },
+      {
+        "no": "a4",
+        "lado": "direita",
+        "texto": "Cuidados paliativos têm papel central desde o diagnóstico"
+      }
+    ],
+    "legenda": "Nenhum dos dois capta iodo nem produz tireoglobulina útil: radioiodo e supressão de TSH não têm papel."
+  },
+  "lastro": [
+    "originado das células C parafoliculares (produtoras de calcitonina) — origem diferente do epitélio folicular",
+    "não capta iodo, não produz tireoglobulina e não responde a TSH (radioiodo e supressão de TSH são ineficazes)",
+    "Hereditário (~25%): mutação germinativa do proto-oncogene RET (herança autossômica dominante)",
+    "o tempo de duplicação (doubling time) desses marcadores é um dos mais fortes fatores prognósticos",
+    "Surge de novo ou por desdiferenciação de um carcinoma diferenciado preexistente. Não capta iodo e não produz tireoglobulina útil",
+    "Estágio IV por definição (IVA/IVB/IVC conforme extensão); prognóstico muito ruim (sobrevida mediana em meses)",
+    "Mutações: BRAF V600E (~33%), com ampla variação entre séries (LATS 2026), e p53 (70%)",
+    "Nos BRAF V600E+, a combinação dabrafenibe + trametinibe produz respostas relevantes, inclusive como neoadjuvante para tornar tumores ressecáveis"
+  ],
+  "justificativa": "O capítulo já tem o algoritmo de abordagem do medular; a figura põe os dois tumores lado a lado, da célula de origem à conduta, e torna visível o fio comum que os separa do carcinoma diferenciado: não captam iodo nem dependem do TSH."
+}

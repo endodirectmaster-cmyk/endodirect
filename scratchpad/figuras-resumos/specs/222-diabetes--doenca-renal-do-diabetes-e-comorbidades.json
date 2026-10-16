@@ -1,0 +1,125 @@
+{
+  "i": 222,
+  "sub": "Diabetes",
+  "tema": "Doença Renal do Diabetes e Comorbidades",
+  "titulo": "Doença renal do diabetes: do rastreamento à proteção renal",
+  "subtitulo": "Quem recebe cada pilar, pela albuminúria (RAC) e pela TFG",
+  "tipo": "fluxo",
+  "fluxo": {
+    "orientacao": "vertical",
+    "rotulos_camadas": [
+      "Rastrear",
+      "Confirmar",
+      "Prevenir",
+      "Critério",
+      "Proteger",
+      "Associar"
+    ],
+    "nos": [
+      {
+        "id": "n1",
+        "tipo": "inicio",
+        "largura": 340,
+        "texto": "Rastreamento anual\nRAC em amostra isolada + TFGe pelo CKD-EPI 2021\nDM2: desde o diagnóstico; DM1: após 5 anos de doença"
+      },
+      {
+        "id": "n2",
+        "tipo": "passo",
+        "largura": 340,
+        "texto": "Confirmar a albuminúria\npelo menos 2 de 3 amostras, em 3 a 6 meses\nregride em cerca de 30% sem intervenção terapêutica"
+      },
+      {
+        "id": "m",
+        "tipo": "passo",
+        "largura": 410,
+        "texto": "Metas na DRD\nHbA1c <7,0% (7–7,9% se TFG <45); PA <130×80 mmHg\nproteína 0,8 g/kg/dia; sódio 1,5 g/dia; estatina de alta potência"
+      },
+      {
+        "id": "c1",
+        "tipo": "passo",
+        "texto": "Albuminúria > 30 mg/g\nA2/A3"
+      },
+      {
+        "id": "c2",
+        "tipo": "passo",
+        "texto": "TFG 20–60 mL/min\nG3a–G4, independentemente da RAC"
+      },
+      {
+        "id": "t1",
+        "tipo": "fim",
+        "largura": 176,
+        "texto": "IECA ou BRA\nmesmo sem hipertensão\ncreatinina pode subir até 30% no início: não suspender"
+      },
+      {
+        "id": "t2",
+        "tipo": "fim",
+        "largura": 176,
+        "texto": "iSGLT-2\npiso: empagliflozina ≥20, dapagliflozina ≥25, canagliflozina ≥45\nabaixo de 20, manter se já iniciado; suspender na diálise"
+      },
+      {
+        "id": "t4",
+        "tipo": "fim",
+        "largura": 176,
+        "texto": "Semaglutida\nse TFG ≥25 e RAC >100 mg/g (FLOW)\ndesfecho renal"
+      },
+      {
+        "id": "t3",
+        "tipo": "fim",
+        "largura": 340,
+        "texto": "Finerenona (ARM não esteroidal)\ncom IECA/BRA se TFG 25–60, RAC >30 e K ≤4,8\nnão usar se TFG <20; FIDELIO (renal), FIGARO (CV)"
+      }
+    ],
+    "setas": [
+      {
+        "de": "n1",
+        "para": "n2"
+      },
+      {
+        "de": "n2",
+        "para": "m"
+      },
+      {
+        "de": "m",
+        "para": "c1"
+      },
+      {
+        "de": "m",
+        "para": "c2"
+      },
+      {
+        "de": "c1",
+        "para": "t1"
+      },
+      {
+        "de": "c1",
+        "para": "t2"
+      },
+      {
+        "de": "c2",
+        "para": "t2"
+      },
+      {
+        "de": "c1",
+        "para": "t4",
+        "rotulo": "se RAC > 100"
+      },
+      {
+        "de": "t1",
+        "para": "t3",
+        "rotulo": "associar"
+      }
+    ],
+    "legenda": "Albuminúria sobe transitoriamente com exercício, IC, febre, infecção urinária, hiperglicemia ou hipertensão graves."
+  },
+  "lastro": [
+    "Albuminúria ou relação albuminúria/creatininúria em amostra isolada, anual desde o diagnóstico no DM2; no DM1, após 5 anos de doença",
+    "Pelo menos 2 de 3 amostras alteradas, em intervalos de 3 a 6 meses",
+    "A albuminúria regride em cerca de 30% dos pacientes — sem que isso dependa de intervenção terapêutica",
+    "Metas: HbA1c <7,0% (ou 7–7,9% se TFG <45); PA <130×80 mmHg; dieta com 0,8 g/kg/dia de proteína",
+    "iSGLT-2: se TFG 20–60 mL/min (G3a–G4), independentemente da RAC (SBD 2026), OU albuminúria >30 mg/g (A2/A3)",
+    "IECA/BRA: se albuminúria >30 mg/g (A2/A3), independentemente de haver hipertensão",
+    "Finerenona associada a IECA/BRA se TFG 25–60, RAC >30 e K ≤4,8 (FIDELIO renal, FIGARO cardiovascular)",
+    "Semaglutida para desfecho renal se TFG ≥25 e RAC >100 (FLOW)"
+  ],
+  "justificativa": "O capítulo não tem fluxograma e não explica mecanismo; o que mais ensina é o algoritmo de rastreamento, confirmação e escolha dos pilares de proteção renal pelos critérios de RAC e TFG que ele detalha."
+}

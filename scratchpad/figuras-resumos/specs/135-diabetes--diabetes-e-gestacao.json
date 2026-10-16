@@ -1,0 +1,52 @@
+{
+  "i": 135,
+  "sub": "Diabetes",
+  "tema": "Diabetes e Gestação",
+  "titulo": "Diabetes prévio × diabetes gestacional: dois caminhos até o pós-parto",
+  "subtitulo": "À esquerda, o risco da organogênese; à direita, a resistência à insulina placentária",
+  "tipo": "fluxo",
+  "fluxo": {
+    "orientacao": "vertical",
+    "nos": [
+      {"id": "a0", "tipo": "inicio", "texto": "Diabetes pré-gestacional\nDM1 ou DM2 anterior à gestação"},
+      {"id": "b0", "tipo": "orgao", "texto": "Hormônios placentários\nlactogênio placentário, cortisol, progesterona"},
+      {"id": "a1", "tipo": "alerta", "texto": "Organogênese\nmalformações cardíacas e do tubo neural; abortamento\nrisco proporcional à HbA1c periconcepcional"},
+      {"id": "b1", "tipo": "passo", "texto": "Resistência à insulina\nultrapassa a reserva secretora de insulina"},
+      {"id": "a2", "tipo": "passo", "texto": "Planejar a concepção\nHbA1c < 6,5% (ideal < 6%); > 9%: postergar\nácido fólico; suspender IECA/BRA e estatina"},
+      {"id": "b2", "tipo": "alerta", "texto": "Diabetes gestacional\ngeralmente no 2º–3º trimestre; sem diabetes franco prévio\nTOTG 75 g em 24–28 semanas: um valor alterado basta"},
+      {"id": "a3", "tipo": "passo", "texto": "Durante a gestação\nAAS 100 mg/dia da 12ª à 28ª semana até o parto\nDM2: trocar antidiabéticos orais por insulina; DM1: CGM"},
+      {"id": "b3", "tipo": "passo", "texto": "Tratar\ndieta e exercício 1–2 semanas; se falha, insulina\nmetas: jejum < 95, 1 h < 140, 2 h < 120"},
+      {"id": "a4", "tipo": "alerta", "texto": "DM1: riscos próprios\nhipoglicemia no 1º trimestre\nCAD, inclusive euglicêmica, no 2º–3º"},
+      {"id": "b4", "tipo": "passo", "texto": "Vigilância materno-fetal\nmacrossomia, polidrâmnio, pré-eclâmpsia, distocia de ombro, cesárea\nneonato: hipoglicemia, icterícia, desconforto respiratório"},
+      {"id": "a5", "tipo": "fim", "texto": "Pós-parto\nDM1: 50% da dose usada antes da gestação\nDM2: suspender a insulina; retornar a metformina"},
+      {"id": "b5", "tipo": "fim", "texto": "Pós-parto\nsuspender a insulina; TOTG 75 g em 4–12 semanas\ncerca de 50% de DM2 em 10 anos; amamentar"}
+    ],
+    "setas": [
+      {"de": "a0", "para": "a1"},
+      {"de": "a1", "para": "a2"},
+      {"de": "a2", "para": "a3"},
+      {"de": "a3", "para": "a4"},
+      {"de": "a4", "para": "a5", "rotulo": "queda abrupta da resistência"},
+      {"de": "b0", "para": "b1", "rotulo": "induzem"},
+      {"de": "b1", "para": "b2"},
+      {"de": "b2", "para": "b3"},
+      {"de": "b3", "para": "b4"},
+      {"de": "b4", "para": "b5", "rotulo": "parto"}
+    ],
+    "notas": [
+      {"no": "b3", "lado": "direita", "texto": "Insulina não atravessa a placenta de forma relevante; metformina e glibenclamida atravessam — glibenclamida não é recomendada (hipoglicemia neonatal, macrossomia)"}
+    ],
+    "legenda": "HbA1c é menos confiável na gestação: priorizar automonitorização e CGM (alvo 63–140 mg/dL, > 70% no alvo)."
+  },
+  "lastro": [
+    "Decorre da resistência à insulina induzida por hormônios placentários (lactogênio placentário, cortisol, progesterona) que ultrapassa a reserva secretora",
+    "maior risco de malformações (cardíacas, tubo neural) durante a organogênese e de abortamento, proporcional à HbA1c periconcepcional",
+    "Aumenta risco de macrossomia, distocia de ombro, pré-eclâmpsia, parto cesáreo, hipoglicemia e icterícia neonatais",
+    "insulina é o tratamento de escolha (não atravessa a placenta de forma relevante)",
+    "Metformina e glibenclamida atravessam a placenta",
+    "AAS 100 mg/dia, iniciado entre a 12ª e a 28ª semana e mantido até o parto, em gestantes com DM1 ou DM2",
+    "reclassificar com TOTG 75 g em 4–12 semanas (risco elevado de DM2 futuro — cerca de 50% em 10 anos",
+    "ajustar rapidamente a insulina no puerpério (queda abrupta da resistência)"
+  ],
+  "justificativa": "O fluxograma do capítulo já traz o rastreamento e a decisão de insulinizar; a figura mostra os dois cenários que o texto abre — o mecanismo da resistência à insulina placentária no DMG e o risco da organogênese no diabetes prévio — e como cada um termina no pós-parto."
+}
