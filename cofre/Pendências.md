@@ -90,6 +90,9 @@ questão (`/#qotd/<id>`) e a rota pública deixou de expor a fila com gabarito (
    (endpoint novo com token por e-mail, cuidado com pré-carregamento de links
    pelos provedores de e-mail, que "clicariam" sozinhos na alternativa).
 3. **Lista crescendo:** ~3 KB por dia; se passar de ~1 MB, janelar no servidor.
+4. **Conferir a notificação da Questão do Dia** no cron de 16/10 (07:30 BRT): `newsletter.pushQotd`
+   na resposta do cron e `push.sent` nos logs da Vercel; e o teste do professor pelo botão
+   "🔔 Enviar a notificação agora" da aba Postados (15/10).
 
 ## 🩺 Auditoria do acervo — correções APLICADAS em 10/10 e o que fica com o professor
 

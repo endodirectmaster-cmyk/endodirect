@@ -967,6 +967,17 @@ try {
   fail('regressão da grade das calculadoras falhou:\n' + out);
 }
 
+// 17c-undecies-h. NOTIFICAÇÃO DA QUESTÃO DO DIA NO CELULAR (15/10/2026): no iPhone o
+//      link do e-mail abre no Safari, não no app instalado; a notificação abre o
+//      app na questão. Sai junto com a newsletter e pelo botão do painel.
+try {
+  execFileSync(process.execPath, [path.join('scripts', 'test-push-qotd.js')], { stdio: 'pipe' });
+  ok('notificação da Questão do Dia: mensagem, envio fail-safe, gancho na newsletter, ação admin e botão');
+} catch (e) {
+  const out = (e.stdout ? e.stdout.toString() : '') + (e.stderr ? e.stderr.toString() : '');
+  fail('regressão da notificação da Questão do Dia falhou:\n' + out);
+}
+
 // 17c-undecies-f. PONTOS-CHAVE SEM MARCADOR DUPLICADO (14/10/2026). As sínteses
 //      da SBD 2026 vinham com "• " dentro de cada ponto e a tela mostrava dois
 //      marcadores; a linha "— Evidência e notas de aplicação —" saía como ponto.
