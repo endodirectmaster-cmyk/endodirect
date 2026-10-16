@@ -3,7 +3,7 @@
   "sub": "Transgeneridade",
   "tema": "Adolescentes: Bloqueio Puberal e Hormonização",
   "titulo": "Bloqueio puberal: como o análogo de GnRH pausa a puberdade",
-  "subtitulo": "Mecanismo nas diretrizes internacionais; no Brasil, vedado para incongruência de gênero",
+  "subtitulo": "Mecanismo segundo SOC-8 2022 e Endocrine Society 2017",
   "tipo": "fluxo",
   "fluxo": {
     "orientacao": "vertical",
@@ -33,28 +33,28 @@
         "camada": 2
       },
       {
+        "id": "o",
+        "texto": "Risco ósseo\nfase de aquisição de massa óssea\nvigiar crescimento, idade óssea, DMO",
+        "tipo": "alerta",
+        "camada": 3
+      },
+      {
         "id": "c",
-        "texto": "Caracteres sexuais secundários\nmama, engrossamento da voz\ndesenvolvimento pausado",
+        "texto": "Caracteres sexuais\nmama, engrossamento da voz\ndesenvolvimento pausado",
         "tipo": "passo",
         "camada": 3
       },
       {
+        "id": "f",
+        "texto": "Fertilidade\nlimita a maturação de gametas\ndiscutir preservação antes",
+        "tipo": "alerta",
+        "camada": 3
+      },
+      {
         "id": "r",
-        "texto": "Efeito reversível\nse interrompido, a puberdade retoma\nganha tempo para decidir",
+        "texto": "Efeito reversível\na puberdade endógena retoma\nganha tempo para decidir",
         "tipo": "fim",
         "camada": 4
-      },
-      {
-        "id": "o",
-        "texto": "Risco ósseo\nsupressão na fase de aquisição óssea\nvigiar crescimento, idade óssea, DMO",
-        "tipo": "alerta",
-        "camada": 5
-      },
-      {
-        "id": "f",
-        "texto": "Fertilidade\nlimita a maturação de gametas\ndiscutir preservação antes do bloqueio",
-        "tipo": "alerta",
-        "camada": 5
       }
     ],
     "setas": [
@@ -84,8 +84,7 @@
       {
         "de": "g",
         "para": "o",
-        "tipo": "fraca",
-        "rotulo": "supressão prolongada"
+        "tipo": "fraca"
       },
       {
         "de": "g",
@@ -95,17 +94,17 @@
     ],
     "notas": [
       {
-        "no": "a",
-        "texto": "No Brasil, a CFM 2.427/2025 veda o bloqueio para incongruência de gênero; segue permitido na puberdade precoce",
-        "lado": "direita"
-      },
-      {
         "no": "p",
         "texto": "Diretrizes internacionais: indicado com a puberdade já iniciada, a partir de Tanner 2",
         "lado": "direita"
+      },
+      {
+        "no": "g",
+        "texto": "No Brasil, a CFM 2.427/2025 veda o bloqueio para incongruência de gênero; segue permitido na puberdade precoce",
+        "lado": "direita"
       }
     ],
-    "legenda": "Barra vermelha: supressão. Cinza tracejado: consequência da supressão."
+    "legenda": "Barra vermelha: supressão. Cinza tracejado: riscos da supressão prolongada."
   },
   "lastro": [
     "veda o bloqueio puberal para incongruência ou disforia de gênero em crianças e adolescentes",
