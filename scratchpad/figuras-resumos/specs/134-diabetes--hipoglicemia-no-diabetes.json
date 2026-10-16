@@ -24,15 +24,9 @@
         "texto": "Fatores de risco\ndose excessiva, omissão de refeição, álcool, insuficiência renal\nrever a causa; ajustar insulina/secretagogo e metas"
       },
       {
-        "id": "whi",
-        "tipo": "passo",
-        "largura": 240,
-        "texto": "Confirmar a hipoglicemia\ntríade de Whipple\nhistória clínica direciona as causas"
-      },
-      {
         "id": "dos",
         "tipo": "passo",
-        "texto": "Dosagem pareada na hipoglicemia\nglicemia, insulina, peptídeo C, β-hidroxibutirato\nanti-insulina e hipoglicemiantes na urina, se houver suspeita"
+        "texto": "Whipple + dosagem pareada\nglicemia, insulina, peptídeo C, β-hidroxibutirato\ncolhida na vigência da hipoglicemia"
       },
       {
         "id": "d2",
@@ -79,12 +73,8 @@
       },
       {
         "de": "d1",
-        "para": "whi",
+        "para": "dos",
         "rotulo": "Não"
-      },
-      {
-        "de": "whi",
-        "para": "dos"
       },
       {
         "de": "dos",
@@ -123,10 +113,9 @@
     "O teste do glucagon com aumento acima de 25 mg/dL confirma excesso de ação insulínica.",
     "Após o episódio, rever a causa e ajustar insulina/secretagogo e as metas.",
     "No tumor produtor de IGF-2 a insulina está BAIXA e a pista é a relação IGF-2/IGF-1 acima de 10.",
-    "investigar tríade de Whipple se não houver terapia hipoglicemiante",
-    "Hiperinsulinêmica — a insulina suprime a cetogênese, por isso os cetoácidos ficam baixos",
     "Principais fatores de risco: insulina/sulfonilureia, omissão de refeição, álcool e insuficiência renal.",
-    "Confirmar a hipoglicemia pela tríade de Whipple."
+    "Confirmar a hipoglicemia pela tríade de Whipple.",
+    "A dosagem tem de ser PAREADA e colhida na vigência da hipoglicemia."
   ],
   "justificativa": "O fluxograma existente é o tratamento do episódio; a figura cobre o outro ângulo, o raciocínio diagnóstico que o texto apresenta em tabelas: primeiro separar a hipoglicemia do tratamento, depois as três perguntas da dosagem pareada."
 }
