@@ -7,29 +7,36 @@
   "tipo": "painel",
   "painel": {
     "colunas": [
-      {"titulo": "Variantes normais", "cor": "green", "itens": [
-        "Familiar: pais baixos, idade óssea = cronológica",
-        "Constitucional: idade óssea atrasada, puberdade tardia",
-        "Velocidade de crescimento normal",
-        "Estatura final no alvo ou normal"
-      ]},
-      {"titulo": "Patológica proporcionada", "cor": "navy", "itens": [
-        "Doença crônica: celíaca, DRC, cardiopatia",
-        "Desnutrição, privação psicossocial",
-        "Hipotireoidismo e síndrome de Cushing",
-        "Deficiência de GH: IGF-1 e IGFBP-3 baixos"
-      ]},
-      {"titulo": "Desproporcionada", "cor": "amber", "itens": [
-        "Displasias esqueléticas",
-        "Raquitismo",
-        "Envergadura e segmentos alterados"
-      ]},
-      {"titulo": "Síndrômica", "cor": "purple", "itens": [
-        "Turner: cariótipo em toda menina baixa",
-        "Prader-Willi e Noonan",
-        "Haploinsuficiência do SHOX",
-        "Silver-Russell"
-      ]}
+      {
+        "titulo": "Variantes normais",
+        "cor": "green",
+        "itens": [
+          "Familiar: pais baixos, idade óssea = cronológica",
+          "Constitucional: idade óssea atrasada, puberdade tardia",
+          "Velocidade de crescimento normal",
+          "Estatura final no alvo ou normal"
+        ]
+      },
+      {
+        "titulo": "Patológica proporcionada",
+        "cor": "navy",
+        "itens": [
+          "Doença crônica: celíaca, DRC, cardiopatia",
+          "Desnutrição, privação psicossocial",
+          "Hipotireoidismo e síndrome de Cushing",
+          "Deficiência de GH: IGF-1 e IGFBP-3 baixos"
+        ]
+      },
+      {
+        "titulo": "Desproporção ou síndrome",
+        "cor": "purple",
+        "itens": [
+          "Displasias esqueléticas, raquitismo",
+          "Turner: cariótipo em toda menina baixa",
+          "Prader-Willi, Noonan, SHOX",
+          "Silver-Russell"
+        ]
+      }
     ],
     "rodape": "Baixa estatura com sobrepeso aponta causa endócrina; com emagrecimento, causa nutricional ou sistêmica."
   },

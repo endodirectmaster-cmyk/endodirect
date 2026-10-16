@@ -2,7 +2,7 @@
   "i": 154,
   "sub": "Endocrinologia do Esporte",
   "tema": "Respostas e Adaptações Endócrinas ao Exercício",
-  "titulo": "Como o exercício agudo mantém a glicose: hormônios e contração",
+  "titulo": "Exercício agudo: como a glicose se mantém",
   "subtitulo": "A insulina cai, mas o músculo capta mais glicose",
   "tipo": "fluxo",
   "fluxo": {
@@ -41,7 +41,7 @@
       {
         "id": "ins",
         "tipo": "hormonio",
-        "texto": "Insulina cai\nfreio α2",
+        "texto": "Insulina\ncai: freio α2",
         "camada": 2
       },
       {
@@ -53,19 +53,19 @@
       {
         "id": "cort",
         "tipo": "hormonio",
-        "texto": "Cortisol\ngliconeogênese",
+        "texto": "Cortisol\nsobe; gliconeogênese",
         "camada": 2
       },
       {
         "id": "capt",
         "tipo": "fim",
-        "texto": "Captação de glicose\nsensível por 12–48 h",
+        "texto": "Captação de glicose\nmais sensível por 12–48 h",
         "camada": 3
       },
       {
         "id": "fig",
         "tipo": "orgao",
-        "texto": "Fígado\nproduz glicose",
+        "texto": "Fígado\nproduz glicose\nguiado por glucagon/insulina",
         "camada": 3
       }
     ],
@@ -107,13 +107,11 @@
       },
       {
         "de": "ins",
-        "para": "fig",
-        "rotulo": "razão"
+        "para": "fig"
       },
       {
         "de": "glu",
-        "para": "fig",
-        "rotulo": "glucagon/insulina"
+        "para": "fig"
       },
       {
         "de": "cort",
