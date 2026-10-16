@@ -1,0 +1,47 @@
+{
+  "i": 74,
+  "sub": "Obesidade",
+  "tema": "Tratamento Farmacológico da Obesidade",
+  "titulo": "Onde agem os fármacos antiobesidade",
+  "subtitulo": "Sistema homeostático, sistema hedônico e intestino: cada fármaco tem seu alvo",
+  "tipo": "fluxo",
+  "fluxo": {
+    "orientacao": "vertical",
+    "nos": [
+      {"id": "sib", "texto": "Sibutramina\n↑ serotonina e noradrenalina", "tipo": "inicio", "camada": 0},
+      {"id": "inc", "texto": "Análogos incretínicos\nliraglutida, semaglutida, tirzepatida", "tipo": "inicio", "camada": 0},
+      {"id": "bup", "texto": "Bupropiona + naltrexona", "tipo": "inicio", "camada": 0},
+      {"id": "orl", "texto": "Orlistate\nação não sistêmica", "tipo": "inicio", "camada": 0},
+      {"id": "arc", "texto": "Núcleo arqueado\n↑ POMC/CART, ↓ NPY/AgRP", "tipo": "orgao", "camada": 1},
+      {"id": "hed", "texto": "Sistema hedônico\nnúcleo accumbens, área tegmental ventral", "tipo": "orgao", "camada": 1},
+      {"id": "gi", "texto": "Estômago e pâncreas\nesvaziamento lento, glucagon ↓", "tipo": "orgao", "camada": 1},
+      {"id": "lip", "texto": "Lipases inibidas\n−30% na absorção de triglicerídeos", "tipo": "orgao", "camada": 1},
+      {"id": "fim", "texto": "Perda de peso\nsempre junto de dieta e estilo de vida", "tipo": "fim", "camada": 2}
+    ],
+    "setas": [
+      {"de": "sib", "para": "arc", "rotulo": "↓ NPY, ↑ POMC"},
+      {"de": "inc", "para": "arc"},
+      {"de": "inc", "para": "hed"},
+      {"de": "inc", "para": "gi"},
+      {"de": "bup", "para": "arc", "rotulo": "POMC"},
+      {"de": "bup", "para": "hed", "rotulo": "dopamina"},
+      {"de": "orl", "para": "lip"},
+      {"de": "arc", "para": "fim"},
+      {"de": "hed", "para": "fim"},
+      {"de": "gi", "para": "fim"},
+      {"de": "lip", "para": "fim"}
+    ],
+    "legenda": "Tirzepatida: agonista dual de GIP e GLP-1. Naltrexona bloqueia a retroinibição do POMC pela β-endorfina."
+  },
+  "lastro": [
+    "inibe a recaptação de serotonina e noradrenalina na fenda pré-sináptica; reduz NPY e aumenta POMC",
+    "Eleva POMC/CART e inibe NPY/AgRP pelo GLP1R do núcleo arqueado; reduz glucagon; retarda o esvaziamento gástrico",
+    "no hedônico (área tegmental ventral e núcleo accumbens)",
+    "a bupropiona aumenta dopamina no núcleo accumbens; a naltrexona antagoniza receptores opioides nesse circuito",
+    "a naltrexona bloqueia a retroinibição desses neurônios mediada pela β-endorfina",
+    "inibição IRREVERSÍVEL das lipases gástrica e pancreática, reduzindo a absorção de triglicerídeos em 30%. Ação não sistêmica.",
+    "só se justifica junto de orientação dietética e mudança de estilo de vida",
+    "agonista DUAL de GIP e GLP-1"
+  ],
+  "justificativa": "O capítulo já tem o algoritmo de indicação; a figura organiza os fármacos pelo alvo de ação, o mecanismo que o capítulo explica fármaco a fármaco."
+}
