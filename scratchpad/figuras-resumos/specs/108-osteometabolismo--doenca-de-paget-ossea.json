@@ -16,7 +16,7 @@
       },
       {
         "id": "ocl",
-        "texto": "Osteoclastos gigantes\nhiperativos: reabsorção acelerada\nFA elevada (normal em até 20%)",
+        "texto": "Osteoclastos gigantes\nhiperativos\nreabsorção acelerada e desorganizada",
         "tipo": "orgao",
         "camada": 1
       },
@@ -45,20 +45,14 @@
         "camada": 5
       },
       {
-        "id": "sar",
-        "texto": "Osteossarcoma\nraro e grave; suspeitar se dor piora subitamente",
-        "tipo": "alerta",
-        "camada": 5
-      },
-      {
         "id": "cr",
-        "texto": "Crânio\nsurdez, invaginação basilar",
+        "texto": "Crânio\nsurdez\ninvaginação basilar",
         "tipo": "passo",
         "camada": 6
       },
       {
         "id": "col",
-        "texto": "Coluna\ncompressão medular/radicular",
+        "texto": "Coluna\ncompressão medular\nou radicular",
         "tipo": "passo",
         "camada": 6
       },
@@ -66,6 +60,12 @@
         "id": "ic",
         "texto": "Hipervascularização\nIC de alto débito",
         "tipo": "passo",
+        "camada": 6
+      },
+      {
+        "id": "sar",
+        "texto": "Osteossarcoma\nraro e grave\nsuspeitar na piora súbita da dor",
+        "tipo": "alerta",
         "camada": 6
       }
     ],
@@ -103,13 +103,20 @@
         "para": "ic"
       },
       {
-        "de": "f",
+        "de": "os",
         "para": "sar",
         "tipo": "fraca",
         "rotulo": "doença de longa data"
       }
     ],
-    "legenda": "Dourado: sequência da doença. Cinza tracejado: evolução tardia. Vermelho: osso doente e complicação mais temida."
+    "legenda": "Dourado: sequência da doença. Cinza tracejado: evolução tardia. Vermelho: osso doente e complicação mais temida.",
+    "notas": [
+      {
+        "no": "ocl",
+        "texto": "Atividade: fosfatase alcalina elevada, mas normal em até 20% dos casos",
+        "lado": "direita"
+      }
+    ]
   },
   "lastro": [
     "Inicia com fase **osteoclástica** (osteoclastos grandes e hiperativos → reabsorção acelerada e desorganizada)",
