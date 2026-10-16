@@ -27,16 +27,16 @@
         "texto": "Testosterona exógena\nevitar se deseja\nfertilidade"
       },
       {
+        "id": "prim",
+        "tipo": "alerta",
+        "camada": 1,
+        "texto": "Falha primária\nKlinefelter, orquite, QT/RT\nLH/FSH ↑ → cariótipo"
+      },
+      {
         "id": "hipof",
         "tipo": "orgao",
         "camada": 1,
         "texto": "Hipófise anterior\nLH e FSH"
-      },
-      {
-        "id": "prim",
-        "tipo": "alerta",
-        "camada": 2,
-        "texto": "Falha primária\nKlinefelter, orquite, QT/RT\nLH/FSH ↑ → cariótipo"
       },
       {
         "id": "ser",

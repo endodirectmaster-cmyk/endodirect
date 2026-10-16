@@ -1,0 +1,48 @@
+{
+  "i": 170,
+  "sub": "Transgeneridade",
+  "tema": "Terapia Hormonal Masculinizante",
+  "titulo": "O que a testosterona faz no homem trans e o que vigiar",
+  "subtitulo": "Uma molécula, quatro frentes: eixo, tecidos-alvo, osso e sangue",
+  "tipo": "fluxo",
+  "fluxo": {
+    "orientacao": "vertical",
+    "nos": [
+      {"id": "t", "tipo": "hormonio", "texto": "Testosterona\nmeta de 400 a 700 ng/dL", "camada": 0},
+      {"id": "eixo", "tipo": "orgao", "texto": "Eixo gonadal\nsuprimido; menos estrogênio", "camada": 1},
+      {"id": "alvo", "tipo": "orgao", "texto": "Tecidos-alvo\nação androgênica", "camada": 1},
+      {"id": "conv", "tipo": "passo", "texto": "Conversão periférica\nem estradiol", "camada": 1},
+      {"id": "eri", "tipo": "passo", "texto": "Eritrocitose\nmenor com o gel", "camada": 1},
+      {"id": "ovu", "tipo": "fim", "texto": "Ovulação cessa\nmenstruação some em 2 a 6 meses", "camada": 2},
+      {"id": "vir", "tipo": "fim", "texto": "Virilização\npelos, músculo, voz, libido", "camada": 2},
+      {"id": "osso", "tipo": "fim", "texto": "Massa óssea\nmantida", "camada": 2},
+      {"id": "ht", "tipo": "alerta", "texto": "Hematócrito > 54%\nreduzir dose ou espaçar", "camada": 2},
+      {"id": "contr", "tipo": "alerta", "texto": "Não é contraceptivo\nDIU ou progestágeno", "camada": 3},
+      {"id": "irr", "tipo": "alerta", "texto": "Irreversíveis\nvoz grave e clitoromegalia", "camada": 3}
+    ],
+    "setas": [
+      {"de": "t", "para": "eixo", "tipo": "inibe", "rotulo": "suprime"},
+      {"de": "t", "para": "alvo"},
+      {"de": "t", "para": "conv"},
+      {"de": "t", "para": "eri"},
+      {"de": "eixo", "para": "ovu"},
+      {"de": "alvo", "para": "vir"},
+      {"de": "conv", "para": "osso", "tipo": "estimula", "rotulo": "protege"},
+      {"de": "eri", "para": "ht"},
+      {"de": "ovu", "para": "contr", "tipo": "fraca"},
+      {"de": "vir", "para": "irr", "tipo": "fraca"}
+    ],
+    "legenda": "Barra vermelha: supressão. Vermelho: pontos de atenção. Por isso costuma dispensar antiandrogênio."
+  },
+  "lastro": [
+    "costuma dispensar antiandrogênio, pois suprime o eixo e a produção estrogênica",
+    "Meta: testosterona de 400 a 700 ng/dL.",
+    "Cessação da menstruação em 2 a 6 meses",
+    "engrossamento da voz e clitoromegalia, ambos irreversíveis",
+    "a ação protetora sobre o osso pode se dar por sua conversão periférica em estradiol",
+    "Hematócrito > 54% durante o tratamento exige redução da dose, espaçamento das aplicações ou suspensão temporária",
+    "A testosterona não é método contraceptivo.",
+    "causa menos eritrocitose que a injetável"
+  ],
+  "justificativa": "O capítulo não tem fluxograma; a figura liga a ação da testosterona a cada efeito esperado e aos três pontos de vigilância (contracepção, irreversibilidade, hematócrito)."
+}
