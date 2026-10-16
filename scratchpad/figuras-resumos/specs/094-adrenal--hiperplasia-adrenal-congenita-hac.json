@@ -1,0 +1,131 @@
+{
+  "i": 94,
+  "sub": "Adrenal",
+  "tema": "Hiperplasia Adrenal Congênita (HAC)",
+  "titulo": "Deficiência de 21-hidroxilase: do bloqueio enzimático aos sinais",
+  "subtitulo": "Onde agem o glicocorticoide e o crinecerfonte",
+  "tipo": "fluxo",
+  "fluxo": {
+    "orientacao": "vertical",
+    "rotulos_camadas": [
+      "Tratamento",
+      "Hipófise",
+      "Adrenal",
+      "Produtos",
+      "Efeitos",
+      "Clínica"
+    ],
+    "nos": [
+      {
+        "id": "gc",
+        "texto": "Glicocorticoide\nrepõe cortisol, suprime ACTH",
+        "tipo": "passo"
+      },
+      {
+        "id": "cri",
+        "texto": "Crinecerfonte\nbloqueia receptor de CRH",
+        "tipo": "passo"
+      },
+      {
+        "id": "hip",
+        "texto": "Hipófise\nACTH elevado",
+        "tipo": "orgao"
+      },
+      {
+        "id": "adr",
+        "texto": "Adrenal hiperplásica\nbloqueio da 21-hidroxilase\ngene CYP21A2",
+        "tipo": "orgao"
+      },
+      {
+        "id": "aldo",
+        "texto": "Aldosterona baixa\nnas formas graves",
+        "tipo": "hormonio"
+      },
+      {
+        "id": "p17",
+        "texto": "17-OHP acumulada",
+        "tipo": "hormonio"
+      },
+      {
+        "id": "cort",
+        "texto": "Cortisol baixo",
+        "tipo": "hormonio"
+      },
+      {
+        "id": "sal",
+        "texto": "Perda de sal\nhiponatremia, hipercalemia\ncrise neonatal: emergência",
+        "tipo": "alerta"
+      },
+      {
+        "id": "and",
+        "texto": "Androgênios em excesso\ndesvio dos precursores",
+        "tipo": "passo"
+      },
+      {
+        "id": "vir",
+        "texto": "Hiperandrogenismo\natipia genital 46,XX\nhirsutismo, acne",
+        "tipo": "fim",
+        "camada": 5
+      }
+    ],
+    "setas": [
+      {
+        "de": "gc",
+        "para": "hip",
+        "tipo": "inibe"
+      },
+      {
+        "de": "cri",
+        "para": "hip",
+        "tipo": "inibe"
+      },
+      {
+        "de": "hip",
+        "para": "adr",
+        "rotulo": "ACTH"
+      },
+      {
+        "de": "adr",
+        "para": "cort"
+      },
+      {
+        "de": "adr",
+        "para": "aldo"
+      },
+      {
+        "de": "adr",
+        "para": "p17"
+      },
+      {
+        "de": "cort",
+        "para": "hip",
+        "tipo": "feedback",
+        "rotulo": "feedback perdido"
+      },
+      {
+        "de": "aldo",
+        "para": "sal"
+      },
+      {
+        "de": "p17",
+        "para": "and"
+      },
+      {
+        "de": "and",
+        "para": "vir"
+      }
+    ],
+    "notas": [],
+    "legenda": "Fludrocortisona na forma perdedora de sal. Na 17α e na 11β-hidroxilase acumula DOC: hipertensão com hipocalemia."
+  },
+  "lastro": [
+    "O bloqueio enzimático reduz a síntese de cortisol (e, nas formas graves, de aldosterona) → perda do feedback negativo → ACTH↑ → hiperplasia adrenal",
+    "acúmulo de precursores (notadamente 17-OH-progesterona) desviados para a via dos androgênios → hiperandrogenismo",
+    "crise adrenal neonatal na 1ª–3ª semanas (hiponatremia, hipercalemia, desidratação, hipotensão/choque)",
+    "para repor cortisol e suprimir ACTH/androgênios sem hipercortisolismo iatrogênico",
+    "Antagonista do receptor de CRH hipofisário (CRF-1R), que impede a clivagem da POMC e reduz o ACTH",
+    "as duas formas que hipertensam (17α e 11β) são as que acumulam DOC. A 21-hidroxilase, ao contrário, perde sal.",
+    "fludrocortisona (± suplementação de sal em lactentes) na forma perdedora de sal"
+  ],
+  "justificativa": "O capítulo já tem o algoritmo diagnóstico pela 17-OHP; a figura mostra o eixo ACTH-adrenal que explica perda de sal, virilização e onde cada tratamento age."
+}

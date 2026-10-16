@@ -1,0 +1,136 @@
+{
+  "i": 91,
+  "sub": "Adrenal",
+  "tema": "Hiperaldosteronismo Primário (Conn)",
+  "titulo": "Aldosterona autônoma: do rim à hipertensão e à renina suprimida",
+  "subtitulo": "Por que a relação aldosterona/renina rastreia e por que a hipocalemia pode faltar",
+  "tipo": "fluxo",
+  "fluxo": {
+    "orientacao": "vertical",
+    "rotulos_camadas": [
+      "Origem",
+      "Hormônio",
+      "Rim",
+      "Efeitos",
+      "Resultado",
+      "Risco"
+    ],
+    "nos": [
+      {
+        "id": "adr",
+        "texto": "Adrenal\nhiperplasia bilateral 50–60%\nadenoma 40–50%",
+        "tipo": "orgao"
+      },
+      {
+        "id": "al",
+        "texto": "Aldosterona autônoma\nindependente do SRA",
+        "tipo": "hormonio"
+      },
+      {
+        "id": "na",
+        "texto": "Retenção de sódio",
+        "tipo": "passo"
+      },
+      {
+        "id": "kh",
+        "texto": "Perda renal\nde K⁺ e de H⁺",
+        "tipo": "passo"
+      },
+      {
+        "id": "vol",
+        "texto": "Expansão volêmica",
+        "tipo": "passo"
+      },
+      {
+        "id": "hk",
+        "texto": "Hipocalemia\nem apenas um terço\nsua ausência não afasta",
+        "tipo": "passo"
+      },
+      {
+        "id": "alc",
+        "texto": "Alcalose metabólica",
+        "tipo": "passo"
+      },
+      {
+        "id": "ren",
+        "texto": "Renina suprimida\nRAR elevada no rastreio",
+        "tipo": "hormonio"
+      },
+      {
+        "id": "has",
+        "texto": "Hipertensão\n5–10% das HAS\n20% das resistentes",
+        "tipo": "alerta"
+      },
+      {
+        "id": "dano",
+        "texto": "Dano cardiovascular\ne renal: fibrose, HVE, AVC",
+        "tipo": "alerta"
+      }
+    ],
+    "setas": [
+      {
+        "de": "adr",
+        "para": "al"
+      },
+      {
+        "de": "al",
+        "para": "na"
+      },
+      {
+        "de": "al",
+        "para": "kh"
+      },
+      {
+        "de": "na",
+        "para": "vol"
+      },
+      {
+        "de": "kh",
+        "para": "hk"
+      },
+      {
+        "de": "kh",
+        "para": "alc"
+      },
+      {
+        "de": "vol",
+        "para": "has"
+      },
+      {
+        "de": "vol",
+        "para": "ren",
+        "tipo": "inibe",
+        "rotulo": "suprime"
+      },
+      {
+        "de": "has",
+        "para": "dano"
+      },
+      {
+        "de": "ren",
+        "para": "dano",
+        "tipo": "fraca",
+        "rotulo": "APR < 1"
+      }
+    ],
+    "notas": [
+      {
+        "no": "dano",
+        "texto": "Meta: desbloquear a renina (APR > 1 ng/mL/h), com menor risco cardiovascular",
+        "lado": "direita"
+      }
+    ],
+    "legenda": "Barra vermelha: supressão. Cinza tracejado: associação de risco."
+  },
+  "lastro": [
+    "Produção autônoma de aldosterona, independente do sistema renina-angiotensina → retenção de sódio, expansão volêmica, hipertensão e supressão da renina",
+    "alcalose metabólica por perda renal de H⁺",
+    "hipocalemia — espontânea ou induzida — em apenas um terço dos casos",
+    "Hiperplasia bilateral idiopática: 50–60%",
+    "Responde por 5 a 10% de todas as hipertensões e por 20% das hipertensões resistentes",
+    "dano cardiovascular e renal (fibrose, HVE, AVC)",
+    "associa-se à supressão da renina abaixo de 1 ng/mL/h",
+    "manter APR acima de 1 ng/mL/h associa-se a menor risco cardiovascular"
+  ],
+  "justificativa": "O capítulo já tem o algoritmo diagnóstico; a fisiopatologia explica a renina suprimida do rastreio, a hipocalemia inconstante e a meta de desbloquear a renina."
+}
