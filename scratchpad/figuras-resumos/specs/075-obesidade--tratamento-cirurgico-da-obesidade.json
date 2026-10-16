@@ -10,32 +10,26 @@
     "nos": [
       {
         "id": "c",
-        "texto": "Cirurgia bariátrica\nsleeve ou bypass em Y-de-Roux",
+        "texto": "Cirurgia bariátrica\nsleeve ou bypass",
         "tipo": "inicio",
         "camada": 0
       },
       {
         "id": "gre",
-        "texto": "Grelina ↓\nsleeve remove o fundo gástrico",
+        "texto": "Grelina ↓\nsleeve remove o fundo",
         "tipo": "hormonio",
         "camada": 1
       },
       {
         "id": "ab",
-        "texto": "Ácidos biliares ↑\nestímulo de FXR e TGR5",
+        "texto": "Ácidos biliares ↑\nativam FXR e TGR5",
         "tipo": "passo",
         "camada": 1
       },
       {
-        "id": "mic",
-        "texto": "Microbiota alterada\n↓ índice Firmicutes/Bacteroidetes",
-        "tipo": "passo",
-        "camada": 1
-      },
-      {
-        "id": "comp",
-        "texto": "Comportamento\nporções menores, menos craving hedônico",
-        "tipo": "passo",
+        "id": "out",
+        "texto": "Outros mecanismos\n• microbiota: ↓ Firmicutes/Bacteroidetes\n• menos craving hedônico",
+        "tipo": "grupo",
         "camada": 1
       },
       {
@@ -46,13 +40,13 @@
       },
       {
         "id": "dm",
-        "texto": "Remissão do DM2\nefeito incretínico precoce no bypass",
+        "texto": "Remissão do DM2\nefeito incretínico precoce",
         "tipo": "fim",
         "camada": 3
       },
       {
         "id": "peso",
-        "texto": "Perda de peso sustentada\nsobretudo de gordura visceral",
+        "texto": "Perda de peso sustentada\nsobretudo gordura visceral",
         "tipo": "fim",
         "camada": 3
       },
@@ -74,11 +68,7 @@
       },
       {
         "de": "c",
-        "para": "mic"
-      },
-      {
-        "de": "c",
-        "para": "comp"
+        "para": "out"
       },
       {
         "de": "c",
@@ -102,12 +92,7 @@
         "para": "peso"
       },
       {
-        "de": "mic",
-        "para": "peso",
-        "tipo": "fraca"
-      },
-      {
-        "de": "comp",
+        "de": "out",
         "para": "peso"
       },
       {
@@ -120,14 +105,9 @@
         "no": "glp",
         "texto": "Bypass: ↑↑ GLP-1 e PYY já no 2º dia, antes da perda de peso",
         "lado": "direita"
-      },
-      {
-        "no": "c",
-        "texto": "Banda gástrica: só restrição mecânica, sem efeito neuroendócrino significativo",
-        "lado": "direita"
       }
     ],
-    "legenda": "Mecanismos de ação comuns às técnicas, segundo o capítulo; a queda de grelina é maior no sleeve que no bypass."
+    "legenda": "Banda gástrica: só restrição mecânica, sem efeito neuroendócrino significativo. Queda de grelina maior no sleeve."
   },
   "lastro": [
     "Hormonal: ↓ grelina; ↑ GLP-1, PYY e oxintomodulina.",
