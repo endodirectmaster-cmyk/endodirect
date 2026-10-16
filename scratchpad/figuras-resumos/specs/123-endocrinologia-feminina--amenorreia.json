@@ -45,7 +45,7 @@
         "tipo": "alerta",
         "camada": 2,
         "largura": 220,
-        "texto": "Ovariana\nIOP, Turner 45,X\nFSH elevado (sem retroalimentação)"
+        "texto": "Ovariana\nIOP, Turner 45,X\nFSH elevado (perde a retroalimentação −)"
       },
       {
         "id": "ut",
@@ -106,15 +106,9 @@
         "de": "c4",
         "para": "ut",
         "tipo": "inibe"
-      },
-      {
-        "de": "ov",
-        "para": "pit",
-        "tipo": "feedback",
-        "rotulo": "feedback −"
       }
     ],
-    "legenda": "Vermelho ⊣: onde a lesão bloqueia o eixo. Tracejado: retroalimentação negativa. E2: estradiol; P4: progesterona."
+    "legenda": "Vermelho ⊣: onde a lesão bloqueia o eixo. E2: estradiol; P4: progesterona."
   },
   "lastro": [
     "hipotálamo (GnRH pulsátil) → hipófise (LH/FSH) → ovário (estradiol/progesterona) → endométrio responsivo → trato de saída pérvio",

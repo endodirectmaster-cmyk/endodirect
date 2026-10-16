@@ -8,27 +8,99 @@
   "fluxo": {
     "orientacao": "vertical",
     "nos": [
-      {"id": "cen", "texto": "Deficiência de AVP (central)\n• cirurgia ou tumor selar, apoplexia, trauma\n• hipofisite, infiltrativas, idiopático", "tipo": "grupo", "camada": 0},
-      {"id": "hh", "texto": "Hipotálamo e neuro-hipófise\nproduzem e secretam AVP", "tipo": "orgao", "camada": 1},
-      {"id": "avp", "texto": "AVP (ADH)", "tipo": "hormonio", "camada": 2},
-      {"id": "dd", "texto": "Desmopressina\nconcentra a urina no central", "tipo": "passo", "camada": 2},
-      {"id": "nef", "texto": "Resistência à AVP (nefrogênico)\n• lítio, hipercalcemia, hipocalemia\n• doença renal, hereditário (V2, AQP2)", "tipo": "grupo", "camada": 2},
-      {"id": "rim", "texto": "Ducto coletor\nreceptor V2", "tipo": "orgao", "camada": 3},
-      {"id": "aqp", "texto": "Aquaporinas\nreabsorção de água livre", "tipo": "passo", "camada": 4},
-      {"id": "ok", "texto": "Urina concentrada", "tipo": "fim", "camada": 5}
+      {
+        "id": "cen",
+        "texto": "Deficiência de AVP (central)\n• cirurgia ou tumor selar, apoplexia, trauma\n• hipofisite, infiltrativas, idiopático",
+        "tipo": "grupo",
+        "camada": 0
+      },
+      {
+        "id": "hh",
+        "texto": "Hipotálamo e neuro-hipófise\nproduzem e secretam AVP",
+        "tipo": "orgao",
+        "camada": 1
+      },
+      {
+        "id": "dd",
+        "texto": "Desmopressina\nconcentra só no central",
+        "tipo": "passo",
+        "camada": 2
+      },
+      {
+        "id": "avp",
+        "texto": "AVP (ADH)",
+        "tipo": "hormonio",
+        "camada": 2
+      },
+      {
+        "id": "nef",
+        "texto": "Resistência à AVP\nnefrogênico: lítio, Ca alto, K baixo\ndoença renal, hereditário (V2, AQP2)",
+        "tipo": "alerta",
+        "camada": 2
+      },
+      {
+        "id": "rim",
+        "texto": "Ducto coletor\nreceptor V2",
+        "tipo": "orgao",
+        "camada": 3
+      },
+      {
+        "id": "aqp",
+        "texto": "Aquaporinas\nreabsorção de água livre",
+        "tipo": "passo",
+        "camada": 4
+      },
+      {
+        "id": "ok",
+        "texto": "Urina concentrada",
+        "tipo": "fim",
+        "camada": 5
+      }
     ],
     "setas": [
-      {"de": "cen", "para": "hh", "tipo": "inibe"},
-      {"de": "hh", "para": "avp"},
-      {"de": "avp", "para": "rim"},
-      {"de": "dd", "para": "rim", "tipo": "estimula"},
-      {"de": "nef", "para": "rim", "tipo": "inibe"},
-      {"de": "rim", "para": "aqp"},
-      {"de": "aqp", "para": "ok"}
+      {
+        "de": "cen",
+        "para": "hh",
+        "tipo": "inibe"
+      },
+      {
+        "de": "hh",
+        "para": "avp"
+      },
+      {
+        "de": "avp",
+        "para": "rim"
+      },
+      {
+        "de": "dd",
+        "para": "rim",
+        "tipo": "estimula"
+      },
+      {
+        "de": "nef",
+        "para": "rim",
+        "tipo": "inibe"
+      },
+      {
+        "de": "rim",
+        "para": "aqp"
+      },
+      {
+        "de": "aqp",
+        "para": "ok"
+      }
     ],
     "notas": [
-      {"no": "aqp", "texto": "Sem ação da AVP: poliúria hipotônica acima de 50 mL/kg em 24 h, sede e polidipsia", "lado": "direita"},
-      {"no": "ok", "texto": "Polidipsia primária: o defeito é beber água em excesso; a urina concentra com a restrição", "lado": "direita"}
+      {
+        "no": "aqp",
+        "texto": "Sem ação da AVP: poliúria hipotônica (> 50 mL/kg/24 h), sede e polidipsia",
+        "lado": "direita"
+      },
+      {
+        "no": "ok",
+        "texto": "Polidipsia primária: excesso de água ingerida; concentra com a restrição",
+        "lado": "direita"
+      }
     ],
     "legenda": "Barra vermelha: onde cada forma bloqueia. Verde: a desmopressina repõe a AVP e não vence a resistência."
   },
