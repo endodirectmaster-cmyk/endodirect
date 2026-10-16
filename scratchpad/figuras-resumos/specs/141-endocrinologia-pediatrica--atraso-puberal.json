@@ -9,16 +9,16 @@
     "orientacao": "vertical",
     "nos": [
       {
+        "id": "cent",
+        "tipo": "alerta",
+        "camada": 0,
+        "texto": "Hipogonadismo central\nLH/FSH baixos\nKallmann, funcional, lesão do SNC"
+      },
+      {
         "id": "hip",
         "tipo": "orgao",
         "camada": 0,
         "texto": "Hipotálamo\nsecreção pulsátil de GnRH"
-      },
-      {
-        "id": "cent",
-        "tipo": "alerta",
-        "camada": 0,
-        "texto": "Hipogonadismo central\nLH/FSH baixos · Kallmann, funcional\nlesão do SNC, hiperprolactinemia"
       },
       {
         "id": "hipof",

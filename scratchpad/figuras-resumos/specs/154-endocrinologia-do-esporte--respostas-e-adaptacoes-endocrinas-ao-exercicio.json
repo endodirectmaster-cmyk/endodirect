@@ -1,0 +1,135 @@
+{
+  "i": 154,
+  "sub": "Endocrinologia do Esporte",
+  "tema": "Respostas e Adaptações Endócrinas ao Exercício",
+  "titulo": "Como o exercício agudo mantém a glicose: hormônios e contração",
+  "subtitulo": "A insulina cai, mas o músculo capta mais glicose",
+  "tipo": "fluxo",
+  "fluxo": {
+    "orientacao": "vertical",
+    "nos": [
+      {
+        "id": "ex",
+        "tipo": "inicio",
+        "texto": "Exercício\n% do VO2máx",
+        "camada": 0
+      },
+      {
+        "id": "mus",
+        "tipo": "orgao",
+        "texto": "Músculo\ncontração: AMPK, Ca2+",
+        "camada": 1
+      },
+      {
+        "id": "sna",
+        "tipo": "orgao",
+        "texto": "Simpatoadrenal\no mais precoce",
+        "camada": 1
+      },
+      {
+        "id": "hha",
+        "tipo": "orgao",
+        "texto": "Eixo HHA\n> 60% VO2máx ou > 60 min",
+        "camada": 1
+      },
+      {
+        "id": "glut",
+        "tipo": "passo",
+        "texto": "GLUT4\nsem insulina",
+        "camada": 2
+      },
+      {
+        "id": "ins",
+        "tipo": "hormonio",
+        "texto": "Insulina cai\nfreio α2",
+        "camada": 2
+      },
+      {
+        "id": "glu",
+        "tipo": "hormonio",
+        "texto": "Glucagon\nsobe",
+        "camada": 2
+      },
+      {
+        "id": "cort",
+        "tipo": "hormonio",
+        "texto": "Cortisol\ngliconeogênese",
+        "camada": 2
+      },
+      {
+        "id": "capt",
+        "tipo": "fim",
+        "texto": "Captação de glicose\nsensível por 12–48 h",
+        "camada": 3
+      },
+      {
+        "id": "fig",
+        "tipo": "orgao",
+        "texto": "Fígado\nproduz glicose",
+        "camada": 3
+      }
+    ],
+    "setas": [
+      {
+        "de": "ex",
+        "para": "mus"
+      },
+      {
+        "de": "ex",
+        "para": "sna"
+      },
+      {
+        "de": "ex",
+        "para": "hha"
+      },
+      {
+        "de": "mus",
+        "para": "glut",
+        "tipo": "estimula"
+      },
+      {
+        "de": "sna",
+        "para": "ins",
+        "tipo": "inibe"
+      },
+      {
+        "de": "sna",
+        "para": "glu",
+        "tipo": "estimula"
+      },
+      {
+        "de": "hha",
+        "para": "cort"
+      },
+      {
+        "de": "glut",
+        "para": "capt"
+      },
+      {
+        "de": "ins",
+        "para": "fig",
+        "rotulo": "razão"
+      },
+      {
+        "de": "glu",
+        "para": "fig",
+        "rotulo": "glucagon/insulina"
+      },
+      {
+        "de": "cort",
+        "para": "fig"
+      }
+    ],
+    "legenda": "Verde: estímulo. Barra vermelha: inibição. GH tem o maior pico contrarregulatório."
+  },
+  "lastro": [
+    "Catecolaminas são a resposta endócrina mais precoce; ativação relevante do eixo HHA a partir de ~60% VO2máx ou >60 min de esforço.",
+    "durante o esforço a insulina cai (freio α-adrenérgico) e o glucagon sobe",
+    "elevando a razão glucagon/insulina que dirige a produção hepática de glicose",
+    "translocação de GLUT4 mediada por contração (AMPK/Ca2+), independente de insulina",
+    "janela de maior sensibilidade insulínica (12–48 h)",
+    "cortisol é catabólico-permissivo (gliconeogênese, lipólise, proteólise)",
+    "GH tem o maior pico entre os hormônios contrarregulatórios"
+  ],
+  "justificativa": "O capítulo não tem fluxograma; a figura mostra o paradoxo central da resposta aguda: insulina em queda com captação muscular aumentada e produção hepática sustentada."
+}
