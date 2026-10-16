@@ -3,7 +3,7 @@
   "sub": "Diabetes",
   "tema": "Tratamento do Diabetes tipo 2",
   "titulo": "Tratamento do DM2: as cinco ações iniciais e a intensificação",
-  "subtitulo": "Glicemia, peso e risco cardiorrenal, tratados juntos: a síndrome cardiorrenal metabólica",
+  "subtitulo": "Controle glicêmico, controle de peso e prevenção do risco cardiorrenal, integrados",
   "tipo": "fluxo",
   "fluxo": {
     "orientacao": "vertical",
@@ -22,12 +22,12 @@
       {
         "id": "metf",
         "tipo": "passo",
-        "texto": "3. Metformina\nHbA1c < 7% previne complicações microvasculares\ncontrole precoce e intensivo no 1º ano (UKPDS 88)"
+        "texto": "3. Metformina\ncontrole glicêmico: HbA1c < 7% previne microvasculares\ncontrole precoce e intensivo no 1º ano (UKPDS 88)"
       },
       {
         "id": "rcr",
         "tipo": "passo",
-        "texto": "4. Redução do RCR\niSGLT2 e AR GLP-1 (AD1) reduzem eventos CV\nindicados se RCR aumentado, independentemente da HbA1c"
+        "texto": "4. Redução do RCR\niSGLT2 e AR GLP-1 (AD1) reduzem eventos CV\nindependentemente da HbA1c; indicados se RCR aumentado"
       },
       {
         "id": "peso",
@@ -68,11 +68,6 @@
         "no": "rcr",
         "lado": "abaixo",
         "texto": "RCR aumentado: homens > 50 e mulheres > 56 anos, mesmo sem outros estratificadores; categorias EAR, EMAR, ERE e EIC"
-      },
-      {
-        "no": "peso",
-        "lado": "abaixo",
-        "texto": "Exercício estruturado > 150 min/semana reduz a HbA1c em até 0,89% (metanálise de 47 ECRs)"
       }
     ],
     "legenda": "RCR: risco cardiorrenal. AD1: antidiabéticos de 1ª linha. TBI: terapia baseada em insulina."

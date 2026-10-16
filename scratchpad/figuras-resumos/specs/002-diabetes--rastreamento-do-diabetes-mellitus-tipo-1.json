@@ -3,32 +3,106 @@
   "sub": "Diabetes",
   "tema": "Rastreamento do diabetes mellitus tipo 1",
   "titulo": "Rastreamento do DM1: dos autoanticorpos ao estágio",
-  "subtitulo": "Quem, como e quando rastrear; ≥ 2 autoanticorpos confirmados = DM1 pré-clínico",
+  "subtitulo": "≥ 2 autoanticorpos confirmados, sem critério de DM: DM1 pré-clínico",
   "tipo": "fluxo",
   "fluxo": {
     "orientacao": "vertical",
     "nos": [
-      {"id": "ini", "tipo": "inicio", "texto": "Parente de 1º grau\nde pessoa com DM1: risco ~15 vezes maior\nidades: 2–4, 6–8 e 10–15 anos"},
-      {"id": "dos", "tipo": "passo", "texto": "Dosar autoanticorpos\nanti-GAD, anti-IA2, IAA; anti-ZnT8 se só um positivo\nse negativo: repetir; após 15 anos, uma única vez"},
-      {"id": "conf", "tipo": "passo", "texto": "Confirmar em nova amostra\ntoda positividade deve ser confirmada"},
-      {"id": "d2", "tipo": "decisao", "texto": "≥ 2 autoanticorpos confirmados?"},
-      {"id": "um", "tipo": "passo", "texto": "Um único autoanticorpo\nadulto com fatores de risco: anual; sem: trienal"},
-      {"id": "pre", "tipo": "fim", "texto": "DM1 pré-clínico\navaliar GJ, HbA1c, TTGO (padrão-ouro) e/ou CGM\npara definir o estágio"},
-      {"id": "e1", "tipo": "passo", "largura": 170, "texto": "Estágio 1\nnormoglicemia, assintomático\nmonitorar: criança trimestral a anual; adulto anual, depois bienal"},
-      {"id": "e2", "tipo": "passo", "largura": 170, "texto": "Estágio 2\ndisglicemia sem critério de DM, assintomático\nmonitorar: criança trimestral; adulto semestral"},
-      {"id": "e3", "tipo": "alerta", "largura": 170, "texto": "Estágio 3\nhiperglicemia com critérios de DM\n3A assintomático; 3B sintomático, insulina imediata"},
-      {"id": "tep", "tipo": "fim", "texto": "Teplizumabe (anti-CD3)\natrasa a progressão ao estágio 3 em ~24 meses\ninfusão IV diária por 14 dias; ANVISA 2026 (Tzield)"}
+      {
+        "id": "ini",
+        "tipo": "inicio",
+        "texto": "Parente de 1º grau\nde pessoa com DM1: risco ~15 vezes maior\nidades: 2–4, 6–8 e 10–15 anos"
+      },
+      {
+        "id": "dos",
+        "tipo": "passo",
+        "texto": "Dosar autoanticorpos\nanti-GAD, anti-IA2, IAA; anti-ZnT8 se só um positivo\nse negativo: repetir; após 15 anos, uma única vez"
+      },
+      {
+        "id": "conf",
+        "tipo": "passo",
+        "texto": "Confirmar em nova amostra\ntoda positividade deve ser confirmada"
+      },
+      {
+        "id": "d2",
+        "tipo": "decisao",
+        "texto": "≥ 2 autoanticorpos confirmados?"
+      },
+      {
+        "id": "um",
+        "tipo": "passo",
+        "texto": "Um único autoanticorpo\nadulto com fatores de risco: anual; sem: trienal"
+      },
+      {
+        "id": "pre",
+        "tipo": "passo",
+        "texto": "Avaliar perfil glicêmico\nGJ, HbA1c, TTGO (padrão-ouro) e/ou CGM\npara definir o estágio"
+      },
+      {
+        "id": "e1",
+        "tipo": "passo",
+        "largura": 170,
+        "texto": "Estágio 1\nnormoglicemia, assintomático\nmonitorar: criança trimestral a anual; adulto anual, depois bienal"
+      },
+      {
+        "id": "e2",
+        "tipo": "passo",
+        "largura": 170,
+        "texto": "Estágio 2\ndisglicemia sem critério de DM, assintomático\nmonitorar: criança trimestral; adulto semestral"
+      },
+      {
+        "id": "e3",
+        "tipo": "alerta",
+        "largura": 170,
+        "texto": "Estágio 3\nhiperglicemia com critérios de DM\n3A assintomático; 3B sintomático, insulina imediata"
+      },
+      {
+        "id": "tep",
+        "tipo": "fim",
+        "texto": "Teplizumabe (anti-CD3)\natrasa a progressão ao estágio 3 em ~24 meses\ninfusão IV diária por 14 dias; ANVISA 2026 (Tzield)"
+      }
     ],
     "setas": [
-      {"de": "ini", "para": "dos"},
-      {"de": "dos", "para": "conf", "rotulo": "positivo"},
-      {"de": "conf", "para": "d2"},
-      {"de": "d2", "para": "um", "rotulo": "Não"},
-      {"de": "d2", "para": "pre", "rotulo": "Sim"},
-      {"de": "pre", "para": "e1"},
-      {"de": "pre", "para": "e2"},
-      {"de": "pre", "para": "e3"},
-      {"de": "e2", "para": "tep", "rotulo": "estágio 2, ≥ 8 anos"}
+      {
+        "de": "ini",
+        "para": "dos"
+      },
+      {
+        "de": "dos",
+        "para": "conf",
+        "rotulo": "positivo"
+      },
+      {
+        "de": "conf",
+        "para": "d2"
+      },
+      {
+        "de": "d2",
+        "para": "um",
+        "rotulo": "Não"
+      },
+      {
+        "de": "d2",
+        "para": "pre",
+        "rotulo": "Sim"
+      },
+      {
+        "de": "pre",
+        "para": "e1"
+      },
+      {
+        "de": "pre",
+        "para": "e2"
+      },
+      {
+        "de": "pre",
+        "para": "e3"
+      },
+      {
+        "de": "e2",
+        "para": "tep",
+        "rotulo": "estágio 2, ≥ 8 anos"
+      }
     ],
     "legenda": "CGM: tempo > 140 mg/dL ≥ 10% indica estágio 2, mas deve ser confirmado por outro método; o TTGO é o padrão-ouro."
   },

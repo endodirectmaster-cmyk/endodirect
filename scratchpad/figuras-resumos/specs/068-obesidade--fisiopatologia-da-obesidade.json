@@ -15,15 +15,15 @@
         "camada": 0
       },
       {
-        "id": "ni",
-        "texto": "Neuroinflamação\nTLR4 → NF-κB e JNK\nbarreira glial de astrócitos",
-        "tipo": "alerta",
-        "camada": 0
-      },
-      {
         "id": "lep",
         "texto": "Leptina e insulina\nestado alimentado",
         "tipo": "hormonio",
+        "camada": 0
+      },
+      {
+        "id": "ni",
+        "texto": "Neuroinflamação\nTLR4 → NF-κB e JNK\nbarreira glial de astrócitos",
+        "tipo": "alerta",
         "camada": 0
       },
       {
@@ -97,8 +97,9 @@
         "tipo": "inibe"
       },
       {
-        "de": "npy",
-        "para": "hip"
+        "de": "ni",
+        "para": "hip",
+        "rotulo": "consequência"
       },
       {
         "de": "mc4r",
@@ -118,7 +119,7 @@
     "Neurônios orexígenos NPY/AgRP × anorexígenos POMC/CART, integrados pela via melanocortina (α-MSH → MC4R)",
     "↑ leptina e insulina → JAK2/STAT3 ativa POMC/CART e inibe NPY/AgRP",
     "Na obesidade há resistência à leptina com ↑ de SOCS3 e PTP1B",
-    "perpetuando a hiperfagia apesar de leptina elevada",
+    "Consequências. Hiperfagia, maior atividade dos neurônios NPY/AgRP, redução da termogênese por inibição do MC4R",
     "A grelina estimula o sistema endocanabinoide, que por sua vez inibe o sistema melanocortina.",
     "Ácidos graxos saturados ativam o TLR4 → NF-κB e JNK",
     "formam uma barreira glial que reduz o contato dos neurônios POMC/CART com os vasos e com os hormônios circulantes",

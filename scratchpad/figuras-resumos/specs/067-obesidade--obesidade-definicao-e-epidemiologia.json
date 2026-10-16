@@ -24,28 +24,23 @@
         "tipo": "passo"
       },
       {
-        "id": "tec",
-        "texto": "Tecido adiposo\nacúmulo disfuncional",
+        "id": "ob",
+        "texto": "Obesidade\ndoença crônica, progressiva e recidivante",
         "tipo": "orgao"
       },
       {
-        "id": "meta",
-        "texto": "Metainflamação\ninflamação de baixo grau",
-        "tipo": "passo"
+        "id": "car",
+        "texto": "Caracteriza-se por\n• acúmulo disfuncional de tecido adiposo\n• metainflamação e lesão multissistêmica",
+        "tipo": "grupo"
       },
       {
-        "id": "central",
-        "texto": "Gordura central\nandroide, abdominal e visceral\nmaior risco cardiovascular e metabólico",
-        "tipo": "alerta"
-      },
-      {
-        "id": "lesao",
-        "texto": "Lesão multissistêmica\n• DM2, doença cardiovascular, MASLD\n• apneia, osteoartrite, infertilidade, câncer",
+        "id": "assoc",
+        "texto": "Associa-se a\n• DM2, doença cardiovascular, MASLD\n• apneia, osteoartrite, infertilidade, câncer",
         "tipo": "grupo"
       },
       {
         "id": "fim",
-        "texto": "Doença crônica e recidivante\nabordagem longitudinal e sem estigma",
+        "texto": "Tratamento continuado\nabordagem crônica, longitudinal e sem estigma",
         "tipo": "fim"
       }
     ],
@@ -60,51 +55,44 @@
       },
       {
         "de": "bal",
-        "para": "tec"
+        "para": "ob"
       },
       {
-        "de": "tec",
-        "para": "meta"
+        "de": "ob",
+        "para": "car"
       },
       {
-        "de": "tec",
-        "para": "central"
+        "de": "ob",
+        "para": "assoc"
       },
       {
-        "de": "meta",
-        "para": "lesao"
-      },
-      {
-        "de": "central",
-        "para": "lesao"
-      },
-      {
-        "de": "lesao",
-        "para": "fim"
+        "de": "ob",
+        "para": "fim",
+        "rotulo": "legitima"
       }
     ],
     "notas": [
       {
-        "no": "central",
-        "texto": "Gordura periférica (ginecoide, gluteofemoral) parece protetora; por isso a cintura complementa o IMC.",
-        "lado": "direita"
+        "no": "car",
+        "texto": "Gordura central (androide, visceral): maior risco cardiovascular e metabólico; periférica (ginecoide) parece protetora.",
+        "lado": "abaixo"
       },
       {
-        "no": "lesao",
+        "no": "assoc",
         "texto": "Ligada a 13 tipos de câncer; impacto psicossocial (estigma, depressão).",
-        "lado": "direita"
+        "lado": "abaixo"
       }
     ]
   },
   "lastro": [
-    "Obesidade é **doença crônica, progressiva e recidivante**",
-    "**acúmulo disfuncional de tecido adiposo**, **inflamação de baixo grau (metainflamação)** e **lesão multissistêmica**",
-    "balanço energético positivo sustentado pela interação gene–ambiente",
+    "Obesidade é **doença crônica, progressiva e recidivante**, caracterizada por **acúmulo disfuncional de tecido adiposo**, **inflamação de baixo grau (metainflamação)** e **lesão multissistêmica**",
+    "Decorre de balanço energético positivo sustentado pela interação gene–ambiente",
     "ambiente obesogênico, sedentarismo, ultraprocessados, sono, estresse, fármacos e fatores endócrinos/genéticos",
+    "É formalmente reconhecida como doença (ABESO/OMS) — o que legitima o tratamento continuado",
     "**Central/andróide** (abdominal/visceral) → maior risco **cardiovascular e metabólico**",
     "**periférica/ginecóide** (quadris e membros, subcutânea gluteofemoral) → parece **protetora**",
     "DM2, doença cardiovascular, MASLD/MASH, apneia, osteoartrite, infertilidade e câncer",
     "A abordagem deve ser **crônica, longitudinal e livre de estigma**"
   ],
-  "justificativa": "Sem fluxograma prévio, a figura mostra o conceito central do capítulo: a cadeia que vai da interação gene–ambiente à lesão multissistêmica, com o papel da distribuição da gordura."
+  "justificativa": "Sem fluxograma prévio, a figura mostra o conceito central do capítulo: a obesidade como doença que decorre da interação gene–ambiente, o que a caracteriza, a que se associa e por que exige tratamento continuado."
 }

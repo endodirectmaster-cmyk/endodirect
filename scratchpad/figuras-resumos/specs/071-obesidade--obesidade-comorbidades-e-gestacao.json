@@ -10,7 +10,7 @@
     "nos": [
       {
         "id": "adip",
-        "texto": "Excesso de adiposidade\nsobretudo visceral",
+        "texto": "Excesso de peso\nsobretudo adiposidade visceral\n65 a 75% do risco de HAS primária",
         "tipo": "orgao"
       },
       {
@@ -34,14 +34,10 @@
         "tipo": "orgao"
       },
       {
-        "id": "hemo",
-        "texto": "Perfil hemodinâmico\n↑ débito cardíaco e volume plasmático\nresistência periférica normal",
-        "tipo": "passo"
-      },
-      {
         "id": "has",
-        "texto": "Hipertensão arterial\n65 a 75% do risco da HAS primária",
-        "tipo": "fim"
+        "texto": "Hipertensão arterial\n↑ débito cardíaco e volume plasmático\nresistência periférica normal",
+        "tipo": "fim",
+        "largura": 400
       },
       {
         "id": "lesao",
@@ -74,14 +70,10 @@
       },
       {
         "de": "simp",
-        "para": "hemo"
+        "para": "has"
       },
       {
         "de": "sraa",
-        "para": "hemo"
-      },
-      {
-        "de": "hemo",
         "para": "has"
       },
       {
@@ -102,8 +94,8 @@
     "hiperinsulinemia levando à produção parácrina de **angiotensinogênio, angiotensina II e aldosterona pelos adipócitos**",
     "**compressão renal** pela gordura intra-abdominal e retroperitoneal, que ativa o SRAA",
     "**hiperinsulinemia** (retém sódio e água)",
-    "aumento do **débito cardíaco** e do **volume plasmático**, com **resistência periférica NORMAL**",
-    "responda por 65 a 75% do risco de hipertensão primária",
+    "O perfil hemodinâmico é característico: aumento do débito cardíaco e do volume plasmático, com resistência periférica NORMAL",
+    "o excesso de peso, sobretudo com adiposidade visceral, responda por 65 a 75% do risco de hipertensão primária",
     "maior risco de hipertrofia ventricular esquerda e lesão renal que no eutrófico",
     "manguito **estreito SUPERESTIMA** e manguito **largo SUBESTIMA** a pressão"
   ],
