@@ -2,36 +2,128 @@
   "i": 142,
   "sub": "Endocrinologia Pediátrica",
   "tema": "Hipotireoidismo Congênito",
-  "titulo": "Onde está o defeito no hipotireoidismo congênito e o que o TSH mostra",
-  "subtitulo": "Causas primárias elevam o TSH; a central passa despercebida na triagem só por TSH",
+  "titulo": "Hipotireoidismo congênito: onde está o defeito e o que a triagem vê",
+  "subtitulo": "A forma central escapa da triagem baseada só em TSH",
   "tipo": "fluxo",
   "fluxo": {
     "orientacao": "vertical",
+    "rotulos_camadas": [
+      "",
+      "Onde",
+      "Etiologia",
+      "Consequência"
+    ],
     "nos": [
-      {"id": "cen", "texto": "Central (raro)\ndeficiência de TSH\nhipopituitarismo", "tipo": "alerta", "camada": 0},
-      {"id": "hip", "texto": "Hipófise\nlibera TSH", "tipo": "orgao", "camada": 0},
-      {"id": "dis", "texto": "Disgenesia\nagenesia, hipoplasia ou ectopia\nmais comum, esporádica", "tipo": "passo", "camada": 1},
-      {"id": "dor", "texto": "Disormonogênese\ndefeito de síntese, recessiva\npode cursar com bócio", "tipo": "passo", "camada": 1},
-      {"id": "tra", "texto": "Transitório\niodo, anticorpos ou drogas maternas\nprematuridade", "tipo": "passo", "camada": 1},
-      {"id": "tir", "texto": "Tireoide\nproduz T4", "tipo": "orgao", "camada": 2},
-      {"id": "t4", "texto": "T4 baixo", "tipo": "hormonio", "camada": 3},
-      {"id": "pri", "texto": "Primário: TSH elevado\ntriagem por TSH detecta", "tipo": "fim", "camada": 4},
-      {"id": "cfal", "texto": "Central: TSH normal ou baixo\ntriagem só por TSH não detecta", "tipo": "alerta", "camada": 4}
+      {
+        "id": "ini",
+        "texto": "Hipotireoidismo congênito\nquadro ao nascer sutil ou ausente",
+        "tipo": "inicio"
+      },
+      {
+        "id": "hip",
+        "texto": "Hipófise\nfalta de TSH",
+        "tipo": "orgao"
+      },
+      {
+        "id": "tir",
+        "texto": "Tireoide\nglândula ausente ou sem síntese",
+        "tipo": "orgao"
+      },
+      {
+        "id": "mat",
+        "texto": "Fatores externos\nmaternos, iodo, prematuridade",
+        "tipo": "orgao"
+      },
+      {
+        "id": "cen",
+        "texto": "Central (raro)\nhipopituitarismo",
+        "tipo": "alerta"
+      },
+      {
+        "id": "dis",
+        "texto": "Disgenesia\nagenesia, hipoplasia ou ectopia\nmais comum, esporádica",
+        "tipo": "passo"
+      },
+      {
+        "id": "dor",
+        "texto": "Disormonogênese\ndefeito de síntese, recessiva\npode cursar com bócio",
+        "tipo": "passo"
+      },
+      {
+        "id": "tra",
+        "texto": "Transitório\niodo, anticorpos ou drogas maternas",
+        "tipo": "passo"
+      },
+      {
+        "id": "cfal",
+        "texto": "TSH normal ou baixo\ntriagem só por TSH não detecta",
+        "tipo": "alerta"
+      },
+      {
+        "id": "pri",
+        "texto": "Permanente primário\ntratar com levotiroxina",
+        "tipo": "fim"
+      },
+      {
+        "id": "rev",
+        "texto": "Pode ser passageiro\nreavaliar após ~3 anos",
+        "tipo": "fim"
+      }
     ],
     "setas": [
-      {"de": "cen", "para": "hip", "tipo": "inibe"},
-      {"de": "hip", "para": "tir", "rotulo": "TSH"},
-      {"de": "dis", "para": "tir", "tipo": "inibe"},
-      {"de": "dor", "para": "tir", "tipo": "inibe"},
-      {"de": "tra", "para": "tir", "tipo": "inibe"},
-      {"de": "tir", "para": "t4"},
-      {"de": "t4", "para": "pri", "rotulo": "defeito na tireoide"},
-      {"de": "t4", "para": "cfal", "rotulo": "defeito na hipófise"}
+      {
+        "de": "ini",
+        "para": "hip"
+      },
+      {
+        "de": "ini",
+        "para": "tir"
+      },
+      {
+        "de": "ini",
+        "para": "mat"
+      },
+      {
+        "de": "hip",
+        "para": "cen"
+      },
+      {
+        "de": "tir",
+        "para": "dis"
+      },
+      {
+        "de": "tir",
+        "para": "dor"
+      },
+      {
+        "de": "mat",
+        "para": "tra"
+      },
+      {
+        "de": "cen",
+        "para": "cfal"
+      },
+      {
+        "de": "dis",
+        "para": "pri"
+      },
+      {
+        "de": "dor",
+        "para": "pri"
+      },
+      {
+        "de": "tra",
+        "para": "rev"
+      }
     ],
     "notas": [
-      {"no": "cfal", "texto": "Suspeitar em defeitos de linha média, hipoglicemia, micropênis ou icterícia colestática", "lado": "direita"}
+      {
+        "no": "cfal",
+        "texto": "Suspeitar em defeitos de linha média, hipoglicemia, micropênis ou icterícia colestática",
+        "lado": "esquerda"
+      }
     ],
-    "legenda": "Barra vermelha: falha da etapa. A imagem define a etiologia, mas não deve atrasar a levotiroxina."
+    "legenda": "A imagem (cintilografia ou ultrassom) define a etiologia, mas não deve atrasar a levotiroxina."
   },
   "lastro": [
     "Disgenesia tireoidiana (a mais comum, ~65% dos casos permanentes): agenesia, hipoplasia ou ectopia",
@@ -40,7 +132,7 @@
     "Transitório: excesso ou deficiência de iodo, anticorpos maternos bloqueadores, drogas antitireoidianas maternas, prematuridade.",
     "Programas baseados apenas em TSH podem não detectar o hipotireoidismo central (TSH baixo/normal)",
     "defeitos de linha média, hipoglicemia, micropênis ou icterícia colestática.",
-    "Disgenesia | Agenesia, ectopia, hipoplasia | Mais comum; geralmente esporádica"
+    "No hipotireoidismo possivelmente transitório, considerar reavaliação (trial off) após ~3 anos"
   ],
   "justificativa": "O fluxograma já cobre triagem e tratamento; a figura localiza cada etiologia no eixo e explica por que a triagem só por TSH deixa escapar a forma central."
 }

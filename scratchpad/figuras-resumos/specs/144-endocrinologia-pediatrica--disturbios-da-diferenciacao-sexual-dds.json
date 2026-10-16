@@ -1,0 +1,148 @@
+{
+  "i": 144,
+  "sub": "Endocrinologia Pediátrica",
+  "tema": "Distúrbios da Diferenciação Sexual (DDS)",
+  "titulo": "Onde falha a virilização nos DDS 46,XY e 46,XX",
+  "subtitulo": "No XY falta ação androgênica (subvirilização); no XX sobra andrógeno (virilização)",
+  "tipo": "fluxo",
+  "fluxo": {
+    "orientacao": "vertical",
+    "nos": [
+      {
+        "id": "tes",
+        "tipo": "orgao",
+        "camada": 0,
+        "texto": "Testículo\nfeto 46,XY"
+      },
+      {
+        "id": "dis",
+        "tipo": "alerta",
+        "camada": 0,
+        "texto": "Disgenesia gonadal\nou defeito de síntese\nde testosterona"
+      },
+      {
+        "id": "t",
+        "tipo": "hormonio",
+        "camada": 1,
+        "texto": "Testosterona"
+      },
+      {
+        "id": "d5",
+        "tipo": "alerta",
+        "camada": 1,
+        "texto": "Deficiência de 5α-redutase\nvirilização marcante na puberdade"
+      },
+      {
+        "id": "dht",
+        "tipo": "hormonio",
+        "camada": 2,
+        "texto": "Di-hidrotestosterona"
+      },
+      {
+        "id": "ia",
+        "tipo": "alerta",
+        "camada": 2,
+        "texto": "Insensibilidade androgênica\ndefeito do receptor\ncompleta: fenótipo feminino"
+      },
+      {
+        "id": "fxy",
+        "tipo": "fim",
+        "camada": 3,
+        "texto": "Virilização normal\nse falha: DDS 46,XY\n(subvirilização)"
+      },
+      {
+        "id": "mat",
+        "tipo": "passo",
+        "camada": 4,
+        "texto": "Andrógeno materno\ntumor ou fármacos"
+      },
+      {
+        "id": "hac",
+        "tipo": "orgao",
+        "camada": 4,
+        "texto": "Adrenal na HAC\nfeto 46,XX\ndeficiência de 21-hidroxilase"
+      },
+      {
+        "id": "exc",
+        "tipo": "hormonio",
+        "camada": 5,
+        "texto": "Excesso de andrógenos fetais"
+      },
+      {
+        "id": "fxx",
+        "tipo": "fim",
+        "camada": 6,
+        "texto": "DDS 46,XX\ngenitália virilizada"
+      }
+    ],
+    "setas": [
+      {
+        "de": "dis",
+        "para": "t",
+        "tipo": "inibe"
+      },
+      {
+        "de": "tes",
+        "para": "t"
+      },
+      {
+        "de": "t",
+        "para": "dht",
+        "rotulo": "5α-redutase"
+      },
+      {
+        "de": "d5",
+        "para": "dht",
+        "tipo": "inibe"
+      },
+      {
+        "de": "dht",
+        "para": "fxy",
+        "rotulo": "receptor"
+      },
+      {
+        "de": "ia",
+        "para": "fxy",
+        "tipo": "inibe"
+      },
+      {
+        "de": "hac",
+        "para": "exc"
+      },
+      {
+        "de": "mat",
+        "para": "exc"
+      },
+      {
+        "de": "exc",
+        "para": "fxx"
+      }
+    ],
+    "notas": [
+      {
+        "no": "hac",
+        "texto": "Causa mais comum de DDS 46,XX; excluir HAC perdedora de sal (17-OHP e eletrólitos)",
+        "lado": "direita"
+      }
+    ],
+    "legenda": "Dourado: via androgênica. Vermelho ⊣: ponto do defeito no DDS 46,XY.",
+    "rotulos_camadas": [
+      "46,XY",
+      "",
+      "",
+      "",
+      "46,XX",
+      "",
+      ""
+    ]
+  },
+  "lastro": [
+    "DDS 46,XX: cariótipo XX com virilização — causa mais comum: HAC por deficiência de 21-hidroxilase (excesso de andrógenos fetais)",
+    "também exposição androgênica materna (tumor, fármacos)",
+    "DDS 46,XY: subvirilização de indivíduo XY — insensibilidade androgênica (defeito do receptor de andrógeno; forma completa = fenótipo feminino",
+    "deficiência de 5α-redutase (↓di-hidrotestosterona → virilização na puberdade), defeitos de síntese de testosterona, disgenesia gonadal",
+    "genitália feminina/ambígua ao nascer com virilização marcante na puberdade",
+    "excluir HAC perdedora de sal (risco de vida por crise adrenal) — dosar 17-OHP e eletrólitos"
+  ],
+  "justificativa": "O fluxograma existente é a abordagem do recém-nascido; esta figura mostra o mecanismo: em que ponto da via androgênica cada DDS 46,XY falha e de onde vem o excesso androgênico no DDS 46,XX."
+}
