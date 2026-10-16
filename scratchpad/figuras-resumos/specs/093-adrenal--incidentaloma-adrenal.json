@@ -30,7 +30,7 @@
       },
       {
         "id": "ic",
-        "texto": "Imagem complementar\nwashout, RM chemical shift ou PET",
+        "texto": "Imagem complementar\nwashout, RM chemical shift ou PET\nou nova TC/RM em 6–12 meses",
         "tipo": "passo"
       },
       {
@@ -40,8 +40,8 @@
       },
       {
         "id": "seg",
-        "texto": "Sem cirurgia de imediato\nTC ou RM em 6–12 meses\ncrescimento: considerar cirurgia",
-        "tipo": "passo"
+        "texto": "Adenoma pobre em lipídios\nwashout ≥ 60% ou queda de sinal\nbenigno: acompanhar",
+        "tipo": "fim"
       },
       {
         "id": "cir",
@@ -94,6 +94,11 @@
         "no": "d2",
         "texto": "Risco de carcinoma: ~2% abaixo de 4 cm; ~6% entre 4,1 e 6 cm; ~25% acima de 6 cm",
         "lado": "direita"
+      },
+      {
+        "no": "ic",
+        "texto": "Na reimagem, crescimento significativo ou mudança de aspecto indica considerar cirurgia",
+        "lado": "direita"
       }
     ],
     "legenda": "Baixa densidade não exclui hiperfunção: supressão com 1 mg de dexametasona em todos os incidentalomas."
@@ -103,8 +108,9 @@
     "ausência de queda de sinal no chemical shift da RM, washout < 60% ou hipercaptação no PET — indica cirurgia",
     "abaixo de 4 cm, ~2%; entre 4,1 e 6 cm, ~6%; acima de 6 cm, ~25%",
     "lesão homogênea com ≤ 10 HU dispensa imagem de seguimento",
-    "nova TC sem contraste (ou RM) em 6–12 meses, e crescimento significativo ou mudança de aspecto indica considerar cirurgia",
-    "Densidade baixa (≤ 10 HU) praticamente exclui malignidade, mas não exclui hiperfunção",
+    "lesão indeterminada não operada requer imagem complementar imediata ou nova TC sem contraste (ou RM) em 6–12 meses",
+    "adenoma pobre em lipídios tem washout absoluto ≥ 60% / relativo ≥ 40%",
+    "crescimento significativo ou mudança de aspecto indica considerar cirurgia",
     "Sempre excluir feocromocitoma antes de qualquer cirurgia",
     "Todo incidentaloma faz supressão com 1 mg de dexametasona"
   ],
