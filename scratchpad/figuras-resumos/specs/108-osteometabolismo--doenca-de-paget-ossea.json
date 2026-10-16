@@ -16,7 +16,7 @@
       },
       {
         "id": "ocl",
-        "texto": "Osteoclastos gigantes\nhiperativos: reabsorção acelerada\nfoco único ou múltiplo",
+        "texto": "Osteoclastos gigantes\nhiperativos: reabsorção acelerada\nFA elevada (normal em até 20%)",
         "tipo": "orgao",
         "camada": 1
       },
@@ -53,19 +53,19 @@
       {
         "id": "cr",
         "texto": "Crânio\nsurdez, invaginação basilar",
-        "tipo": "fim",
+        "tipo": "passo",
         "camada": 6
       },
       {
         "id": "col",
-        "texto": "Coluna\ncompressão medular ou radicular",
-        "tipo": "fim",
+        "texto": "Coluna\ncompressão medular/radicular",
+        "tipo": "passo",
         "camada": 6
       },
       {
         "id": "ic",
         "texto": "Hipervascularização\nIC de alto débito",
-        "tipo": "fim",
+        "tipo": "passo",
         "camada": 6
       }
     ],
@@ -109,14 +109,7 @@
         "rotulo": "doença de longa data"
       }
     ],
-    "notas": [
-      {
-        "no": "ocl",
-        "texto": "Fosfatase alcalina elevada marca a atividade, mas é normal em até 20%",
-        "lado": "direita"
-      }
-    ],
-    "legenda": "Setas douradas: sequência da doença. Vermelho: osso doente e complicação mais temida."
+    "legenda": "Dourado: sequência da doença. Cinza tracejado: evolução tardia. Vermelho: osso doente e complicação mais temida."
   },
   "lastro": [
     "Inicia com fase **osteoclástica** (osteoclastos grandes e hiperativos → reabsorção acelerada e desorganizada)",
