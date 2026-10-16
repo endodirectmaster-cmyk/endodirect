@@ -15,15 +15,15 @@
         "camada": 0
       },
       {
-        "id": "gre",
-        "texto": "Grelina ↓\nsleeve remove o fundo",
+        "id": "glp",
+        "texto": "GLP-1, PYY, oxintomodulina ↑\nreforço dos ácidos biliares (FXR, TGR5)",
         "tipo": "hormonio",
         "camada": 1
       },
       {
-        "id": "ab",
-        "texto": "Ácidos biliares ↑\nativam FXR e TGR5",
-        "tipo": "passo",
+        "id": "gre",
+        "texto": "Grelina ↓\nsleeve remove o fundo",
+        "tipo": "hormonio",
         "camada": 1
       },
       {
@@ -33,62 +33,48 @@
         "camada": 1
       },
       {
-        "id": "glp",
-        "texto": "GLP-1, PYY e oxintomodulina ↑",
-        "tipo": "hormonio",
-        "camada": 2
-      },
-      {
         "id": "dm",
-        "texto": "Remissão do DM2\nefeito incretínico precoce",
+        "texto": "Remissão do DM2\nbypass: GLP-1 ↑↑ já no 2º dia\nantes da perda de peso",
         "tipo": "fim",
-        "camada": 3
+        "camada": 2
       },
       {
         "id": "peso",
         "texto": "Perda de peso sustentada\nsobretudo gordura visceral",
         "tipo": "fim",
-        "camada": 3
+        "camada": 2
       },
       {
         "id": "infl",
         "texto": "Menos inflamação\nIL-6, TNF-α e PCR ↓",
         "tipo": "fim",
-        "camada": 4
+        "camada": 3
       }
     ],
     "setas": [
+      {
+        "de": "c",
+        "para": "glp"
+      },
       {
         "de": "c",
         "para": "gre"
       },
       {
         "de": "c",
-        "para": "ab"
-      },
-      {
-        "de": "c",
         "para": "out"
       },
       {
-        "de": "c",
-        "para": "glp"
-      },
-      {
-        "de": "ab",
-        "para": "glp",
-        "rotulo": "mais secreção"
+        "de": "glp",
+        "para": "dm",
+        "rotulo": "efeito incretínico"
       },
       {
         "de": "glp",
-        "para": "dm"
-      },
-      {
-        "de": "gre",
         "para": "peso"
       },
       {
-        "de": "glp",
+        "de": "gre",
         "para": "peso"
       },
       {
@@ -100,13 +86,7 @@
         "para": "infl"
       }
     ],
-    "notas": [
-      {
-        "no": "glp",
-        "texto": "Bypass: ↑↑ GLP-1 e PYY já no 2º dia, antes da perda de peso",
-        "lado": "direita"
-      }
-    ],
+    "notas": [],
     "legenda": "Banda gástrica: só restrição mecânica, sem efeito neuroendócrino significativo. Queda de grelina maior no sleeve."
   },
   "lastro": [

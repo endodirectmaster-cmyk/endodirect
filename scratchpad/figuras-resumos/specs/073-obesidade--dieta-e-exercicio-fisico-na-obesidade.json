@@ -8,25 +8,80 @@
   "fluxo": {
     "orientacao": "vertical",
     "nos": [
-      {"id": "ex", "tipo": "inicio", "texto": "Exercício físico\naeróbico + resistido: o mais eficaz"},
-      {"id": "ben", "tipo": "grupo", "texto": "Além da balança\n• previne reganho, reduz pressão arterial\n• ↓ resistência insulínica e gordura visceral"},
-      {"id": "mus", "tipo": "orgao", "texto": "Músculo esquelético\n↑ PGC-1α e ativação da AMPK"},
-      {"id": "iri", "tipo": "hormonio", "texto": "Irisina"},
-      {"id": "ucp", "tipo": "passo", "texto": "UCP-1 aumenta"},
-      {"id": "bege", "tipo": "orgao", "texto": "Adipócito branco vira bege\nefeito browning"},
-      {"id": "termo", "tipo": "fim", "texto": "Termogênese"}
+      {
+        "id": "ex",
+        "tipo": "inicio",
+        "texto": "Exercício físico\naeróbico + resistido: o mais eficaz"
+      },
+      {
+        "id": "mus",
+        "tipo": "orgao",
+        "texto": "Músculo esquelético\n↑ PGC-1α e ativação da AMPK"
+      },
+      {
+        "id": "ben",
+        "tipo": "grupo",
+        "texto": "Além da balança\n• previne reganho, reduz pressão arterial\n• ↓ resistência insulínica e gordura visceral"
+      },
+      {
+        "id": "iri",
+        "tipo": "hormonio",
+        "texto": "Irisina"
+      },
+      {
+        "id": "ucp",
+        "tipo": "passo",
+        "texto": "UCP-1 aumenta"
+      },
+      {
+        "id": "bege",
+        "tipo": "orgao",
+        "texto": "Adipócito branco vira bege\nefeito browning"
+      },
+      {
+        "id": "termo",
+        "tipo": "fim",
+        "texto": "Termogênese"
+      }
     ],
     "setas": [
-      {"de": "ex", "para": "ben", "tipo": "estimula"},
-      {"de": "ex", "para": "mus"},
-      {"de": "mus", "para": "iri"},
-      {"de": "iri", "para": "ucp"},
-      {"de": "ucp", "para": "bege"},
-      {"de": "bege", "para": "termo"}
+      {
+        "de": "ex",
+        "para": "mus"
+      },
+      {
+        "de": "ex",
+        "para": "ben",
+        "tipo": "estimula"
+      },
+      {
+        "de": "mus",
+        "para": "iri"
+      },
+      {
+        "de": "iri",
+        "para": "ucp"
+      },
+      {
+        "de": "ucp",
+        "para": "bege"
+      },
+      {
+        "de": "bege",
+        "para": "termo"
+      }
     ],
     "notas": [
-      {"no": "ben", "texto": "Resistido atenua a perda de massa magra no tratamento farmacológico, como com agonistas do GLP-1", "lado": "direita"},
-      {"no": "bege", "texto": "Não é formação de gordura marrom dentro do músculo esquelético", "lado": "direita"}
+      {
+        "no": "ben",
+        "texto": "Resistido atenua a perda de massa magra no tratamento farmacológico, como com agonistas do GLP-1",
+        "lado": "direita"
+      },
+      {
+        "no": "bege",
+        "texto": "Não é formação de gordura marrom dentro do músculo esquelético",
+        "lado": "direita"
+      }
     ],
     "legenda": "Setas douradas: sequência do efeito browning. Verde: benefícios independentes da perda de peso."
   },
