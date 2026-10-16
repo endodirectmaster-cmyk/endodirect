@@ -8,7 +8,7 @@
   "fluxo": {
     "orientacao": "vertical",
     "nos": [
-      {"id": "ini", "tipo": "inicio", "largura": 260, "texto": "Hipoglicemia confirmada\ntríade de Whipple; história clínica direciona as causas"},
+      {"id": "ini", "tipo": "inicio", "largura": 260, "texto": "Hipoglicemia confirmada\ntríade de Whipple + história clínica"},
       {"id": "d1", "tipo": "decisao", "texto": "Usa insulina ou secretagogo?"},
       {"id": "trat", "tipo": "fim", "texto": "Hipoglicemia do tratamento\ndose excessiva, omissão de refeição, álcool, insuficiência renal\nrever a causa; ajustar insulina/secretagogo e metas"},
       {"id": "dos", "tipo": "passo", "texto": "Dosagem pareada na hipoglicemia\nglicemia, insulina, peptídeo C, β-hidroxibutirato\nanti-insulina e hipoglicemiantes na urina, se houver suspeita"},

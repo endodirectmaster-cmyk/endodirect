@@ -10,9 +10,9 @@
     "nos": [
       {"id": "e", "tipo": "inicio", "largura": 280, "texto": "Esquema basal-bólus\no mais fisiológico; padrão no DM1 desde o diagnóstico"},
       {"id": "b", "tipo": "hormonio", "largura": 230, "texto": "Basal (≈ 50% da dose)\nglargina, detemir, degludeca: sem pico pronunciado, menor hipoglicemia noturna\nNPH: pico 4–8 h, hipoglicemia entre refeições e noturna"},
-      {"id": "p", "tipo": "hormonio", "largura": 230, "texto": "Bólus prandial\nlispro, asparte, glulisina: início 10–15 min, pico ~1 h\nregular: início ~30 min; aplicar antes das refeições"},
+      {"id": "p", "tipo": "hormonio", "largura": 230, "texto": "Bólus prandial\ninício 10–15 min, pico ~1 h: lispro, asparte, glulisina\ninício ~30 min: regular; aplicar antes das refeições"},
       {"id": "tb", "tipo": "passo", "largura": 230, "texto": "Ajuste pela glicemia de jejum\nalvorecer: surto matinal de contrarreguladores → ajustar a basal noturna\nSomogyi: rebote pós-hipoglicemia; confirmar com CGM/madrugada antes de reduzir"},
-      {"id": "tp", "tipo": "passo", "largura": 230, "texto": "Cálculo e ajuste do bólus\nrelação insulina/carboidrato (regra dos 500); FS = 1800/DTD\ncorreção = (glicemia atual − alvo)/FS; ajustar pela pós-prandial"},
+      {"id": "tp", "tipo": "passo", "largura": 230, "texto": "Cálculo e ajuste do bólus\nregra dos 500 → relação insulina/carboidrato; FS = 1800/DTD\ncorreção = (glicemia atual − alvo)/FS; ajustar pela pós-prandial"},
       {"id": "v", "tipo": "alerta", "largura": 300, "texto": "Hipoglicemia: principal efeito adverso\nganho de peso comum; rodízio dos sítios evita lipo-hipertrofia\nno DM2: reavaliar sulfonilureia; manter SGLT2i/GLP-1 RA"}
     ],
     "setas": [
@@ -24,7 +24,7 @@
       {"de": "tp", "para": "v"}
     ],
     "notas": [
-      {"no": "b", "lado": "esquerda", "texto": "Icodeca semanal (700 UI/mL): aprovada para DM1 e DM2; no DM1 aumentou a hipoglicemia"}
+      {"no": "b", "lado": "esquerda", "texto": "Icodeca: basal semanal aprovada para DM1 e DM2; no DM1 aumentou a hipoglicemia"}
     ],
     "legenda": "Pílulas douradas: as duas insulinas do esquema; caixas brancas: como ajustar cada uma."
   },

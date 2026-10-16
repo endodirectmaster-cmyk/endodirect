@@ -3,7 +3,7 @@
   "sub": "Diabetes",
   "tema": "Emergências Hiperglicêmicas — CAD e EHH",
   "titulo": "CAD e EHH: do precipitante ao diagnóstico",
-  "subtitulo": "Dois caminhos: cetose e acidose (CAD) ou hiperosmolaridade e desidratação profunda (EHH)",
+  "subtitulo": "Dois caminhos: cetose e acidose (CAD) ou hiperosmolaridade e desidratação (EHH)",
   "tipo": "fluxo",
   "fluxo": {
     "orientacao": "vertical",
@@ -12,7 +12,7 @@
       {"id": "g", "tipo": "inicio", "largura": 300, "texto": "Precipitante\ninfecção (a mais comum), omissão de insulina, primo-descompensação\nIAM, AVC, glicocorticoide, SGLT2i, gestação"},
       {"id": "m", "tipo": "hormonio", "largura": 260, "texto": "Deficiência de insulina\n+ excesso de hormônios contrarreguladores\nglucagon, catecolaminas, cortisol"},
       {"id": "c1", "tipo": "passo", "texto": "Lipólise e cetogênese\ncetose: β-hidroxibutirato ≥ 3,0 mmol/L ou cetonúria"},
-      {"id": "e1", "tipo": "passo", "texto": "Glicemia ≥ 600 mg/dL\nosmolaridade efetiva > 300 mOsm/kg\n(ou total > 320)"},
+      {"id": "e1", "tipo": "passo", "largura": 215, "texto": "Glicemia ≥ 600 mg/dL\nosmolaridade efetiva > 300 mOsm/kg\n(ou total > 320)"},
       {"id": "c2", "tipo": "alerta", "texto": "Acidose\npH < 7,3 ou bicarbonato < 18\nânion-gap em geral aumentado"},
       {"id": "e2", "tipo": "alerta", "texto": "Desidratação profunda\ndéficit de água muito maior\nrebaixamento do sensório"},
       {"id": "cad", "tipo": "fim", "texto": "CAD\nglicemia ≥ 200 (ou normal) + cetose + acidose\ntípica do DM1; euglicêmica com SGLT2i, gestação, jejum"},
@@ -29,7 +29,7 @@
     ],
     "notas": [
       {"no": "cad", "lado": "abaixo", "texto": "CAD euglicêmica: não descartar CAD pela glicemia; guiar-se por cetonas e pH"},
-      {"no": "ehh", "lado": "abaixo", "texto": "Quadro misto: EHH com β-hidroxibutirato ≥ 3,0, pH < 7,3 ou bicarbonato < 18"}
+      {"no": "ehh", "lado": "abaixo", "texto": "Quadro misto: EHH com cetoacidose (β-hidroxibutirato ≥ 3,0 e pH < 7,3 ou bicarbonato < 18)"}
     ],
     "legenda": "Tratamento comum: hidratação, potássio antes da insulina, insulina IV e tratar o precipitante."
   },
