@@ -79,6 +79,40 @@ if (ov) {
   ok(ov.style.display === 'none', 'clicar no overlay tem de fechar');
 }
 
+// 7) Esquema SVG largo (figuras dos Resumos, 16/10/2026): no celular abre no tamanho
+//    natural, com rolagem, porque encolhido à largura da tela o texto fica ilegível.
+//    Foto e SVG estreito continuam cabendo na tela; no notebook nada muda.
+function abreComo(src, naturalWidth, largTela) {
+  Object.defineProperty(dom.window, 'innerWidth', { value: largTela, configurable: true });
+  ov.style.display = 'none'; ov.firstChild.src = '';
+  const box = doc.createElement('div');
+  box.innerHTML = '<figure class="dir-fig"><img alt=""></figure>';
+  doc.body.appendChild(box);
+  const img = box.querySelector('img');
+  Object.defineProperty(img, 'src', { value: src, configurable: true });
+  Object.defineProperty(img, 'naturalWidth', { value: naturalWidth, configurable: true });
+  img.dispatchEvent(new dom.window.MouseEvent('click', { bubbles: true }));
+  const im = ov.firstChild;
+  const r = { aberto: ov.style.display === 'flex', rola: ov.style.overflow === 'auto', largura: im.style.width, max: im.style.maxWidth };
+  box.remove();
+  return r;
+}
+if (ov) {
+  const SVG = 'https://www.endodirect.com.br/figuras/resumos/adrenal--feocromocitoma-e-paraganglioma.svg';
+  let r = abreComo(SVG, 873, 390);
+  ok(r.aberto && r.rola && r.largura === '873px' && r.max === 'none',
+     'no celular, o esquema SVG largo tem de abrir no tamanho natural e com rolagem: ' + JSON.stringify(r));
+  r = abreComo(PNG, 2000, 390);
+  ok(r.aberto && !r.rola && r.largura === '' && r.max === '96vw',
+     'foto continua cabendo na tela, sem rolagem (e o modo do SVG não vaza para ela): ' + JSON.stringify(r));
+  r = abreComo(SVG, 300, 390);
+  ok(r.aberto && !r.rola && r.max === '96vw', 'SVG estreito cabe na tela: ' + JSON.stringify(r));
+  r = abreComo(SVG, 873, 1280);
+  ok(r.aberto && !r.rola && r.max === '96vw', 'no notebook o esquema cabe na tela, sem mudança: ' + JSON.stringify(r));
+  const botao = ov.querySelector('button');
+  ok(botao && botao.style.position === 'fixed', 'o botão de fechar fica fixo na tela mesmo com a figura rolando');
+}
+
 // 5) A tela de Resumos precisa CRIAR o ampliador — quem entra direto em Resumos
 //    sem passar pelo mural não teria overlay nenhum.
 ok(/function bindDiretrizesView\(root\)\{[\s\S]{0,400}?ensureLightbox\(\)/.test(html),
