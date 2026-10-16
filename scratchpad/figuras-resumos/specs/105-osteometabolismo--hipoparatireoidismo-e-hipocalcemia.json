@@ -1,0 +1,148 @@
+{
+  "i": 105,
+  "sub": "Osteometabolismo",
+  "tema": "Hipoparatireoidismo e Hipocalcemia",
+  "titulo": "Sem PTH: por que o cálcio cai e o fósforo sobe",
+  "subtitulo": "Da falta de PTH aos sintomas e à lógica do tratamento crônico",
+  "tipo": "fluxo",
+  "fluxo": {
+    "orientacao": "vertical",
+    "rotulos_camadas": [
+      "Causa",
+      "Paratireoides",
+      "Rim sem PTH",
+      "Sangue",
+      "Consequência",
+      "Risco",
+      "Meta"
+    ],
+    "nos": [
+      {
+        "id": "c",
+        "texto": "Causas\n• pós-cirúrgica (80%)\n• autoimune (20%)",
+        "tipo": "grupo"
+      },
+      {
+        "id": "mg",
+        "texto": "Hipomagnesemia\nbloqueia secreção e ação do PTH",
+        "tipo": "alerta"
+      },
+      {
+        "id": "pt",
+        "texto": "PTH baixo\nou inapropriadamente normal",
+        "tipo": "orgao"
+      },
+      {
+        "id": "r1",
+        "texto": "Menos reabsorção\nde cálcio no túbulo",
+        "tipo": "passo"
+      },
+      {
+        "id": "r3",
+        "texto": "Sem 1α-hidroxilação\nfalta vitamina D ativa",
+        "tipo": "passo"
+      },
+      {
+        "id": "r2",
+        "texto": "Sem efeito fosfatúrico\nfósforo retido",
+        "tipo": "passo"
+      },
+      {
+        "id": "ca",
+        "texto": "Cálcio baixo",
+        "tipo": "hormonio"
+      },
+      {
+        "id": "p",
+        "texto": "Fósforo alto",
+        "tipo": "hormonio"
+      },
+      {
+        "id": "sx",
+        "texto": "Hiperexcitabilidade\ntetania, Chvostek e Trousseau\nQT longo; crônico: catarata, Fahr",
+        "tipo": "alerta"
+      },
+      {
+        "id": "tx",
+        "texto": "Cálcio oral + calcitriol\ncalcitriol supre a 1α-hidroxilação",
+        "tipo": "passo"
+      },
+      {
+        "id": "hc",
+        "texto": "Hipercalciúria\nsem PTH, falta reabsorção tubular\nnefrolitíase; tiazídico reduz calciúria",
+        "tipo": "alerta"
+      },
+      {
+        "id": "m",
+        "texto": "Cálcio 8–8,5 mg/dL\nmetade inferior da normalidade\ncalciúria < 4 mg/kg/dia",
+        "tipo": "fim"
+      }
+    ],
+    "setas": [
+      {
+        "de": "c",
+        "para": "pt"
+      },
+      {
+        "de": "mg",
+        "para": "pt",
+        "tipo": "inibe"
+      },
+      {
+        "de": "pt",
+        "para": "r1"
+      },
+      {
+        "de": "pt",
+        "para": "r3"
+      },
+      {
+        "de": "pt",
+        "para": "r2"
+      },
+      {
+        "de": "r1",
+        "para": "ca"
+      },
+      {
+        "de": "r3",
+        "para": "ca"
+      },
+      {
+        "de": "r2",
+        "para": "p"
+      },
+      {
+        "de": "ca",
+        "para": "sx"
+      },
+      {
+        "de": "ca",
+        "para": "tx",
+        "rotulo": "tratar"
+      },
+      {
+        "de": "tx",
+        "para": "hc",
+        "rotulo": "excesso"
+      },
+      {
+        "de": "hc",
+        "para": "m",
+        "rotulo": "evitar"
+      }
+    ],
+    "legenda": "Setas douradas: sequência. Barra vermelha: bloqueio do PTH pelo magnésio baixo."
+  },
+  "lastro": [
+    "tipicamente com cálcio baixo e fósforo alto (falta o efeito fosfatúrico do PTH)",
+    "hipomagnesemia (bloqueia a secreção e a ação do PTH — causa reversível!)",
+    "80% é pós-cirúrgico",
+    "20% autoimune",
+    "cálcio oral + calcitriol (vitamina D ativa, pois falta PTH para a 1α-hidroxilação)",
+    "evitar hipercalciúria e nefrolitíase (sem PTH, falta a reabsorção tubular de cálcio)",
+    "cálcio total corrigido na METADE INFERIOR da normalidade (8–8,5 mg/dL)",
+    "Tiazídicos ajudam a reduzir a calciúria"
+  ],
+  "justificativa": "O capítulo já tem o algoritmo diagnóstico; a figura mostra o mecanismo da falta de PTH no rim e por que o tratamento mira o cálcio baixo-normal."
+}

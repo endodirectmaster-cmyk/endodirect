@@ -1,0 +1,154 @@
+{
+  "i": 98,
+  "sub": "Neuroendocrinologia",
+  "tema": "Acromegalia",
+  "titulo": "Eixo GH–IGF-1 na acromegalia e onde cada fármaco atua",
+  "subtitulo": "Ações diretas do GH e indiretas via IGF-1; alvos dos análogos, cabergolina e pegvisomanto",
+  "tipo": "fluxo",
+  "fluxo": {
+    "orientacao": "vertical",
+    "nos": [
+      {
+        "id": "ssa",
+        "texto": "Análogos de somatostatina\noctreotida, lanreotida: SSTR2\npasireotida: SSTR 1, 2, 3 e 5",
+        "tipo": "passo",
+        "camada": 0
+      },
+      {
+        "id": "cab",
+        "texto": "Cabergolina\nreceptor D2 do somatotropinoma",
+        "tipo": "passo",
+        "camada": 0
+      },
+      {
+        "id": "ad",
+        "texto": "Adenoma somatotrófico\norigem hipofisária em 95%",
+        "tipo": "orgao",
+        "camada": 1
+      },
+      {
+        "id": "gh",
+        "texto": "GH\nsecreção pulsátil",
+        "tipo": "hormonio",
+        "camada": 2
+      },
+      {
+        "id": "peg",
+        "texto": "Pegvisomanto\nbloqueia o receptor do GH",
+        "tipo": "passo",
+        "camada": 2
+      },
+      {
+        "id": "dir",
+        "texto": "Ação direta do GH\n• lipólise\n• efeito anti-insulínico",
+        "tipo": "grupo",
+        "camada": 3
+      },
+      {
+        "id": "fig",
+        "texto": "Fígado\nproduz IGF-1",
+        "tipo": "orgao",
+        "camada": 3
+      },
+      {
+        "id": "glic",
+        "texto": "Intolerância à glicose\ndiabetes",
+        "tipo": "alerta",
+        "camada": 4
+      },
+      {
+        "id": "igf",
+        "texto": "IGF-1\nexame de rastreio e de seguimento",
+        "tipo": "hormonio",
+        "camada": 4
+      },
+      {
+        "id": "ind",
+        "texto": "Ação via IGF-1\n• mitogênica e antiapoptótica\n• proliferação de condrócitos",
+        "tipo": "grupo",
+        "camada": 5
+      },
+      {
+        "id": "cli",
+        "texto": "Acromegalia no adulto\nextremidades, prognatismo, macroglossia",
+        "tipo": "fim",
+        "camada": 6
+      }
+    ],
+    "setas": [
+      {
+        "de": "ssa",
+        "para": "ad",
+        "tipo": "inibe"
+      },
+      {
+        "de": "cab",
+        "para": "ad",
+        "tipo": "inibe"
+      },
+      {
+        "de": "ad",
+        "para": "gh"
+      },
+      {
+        "de": "gh",
+        "para": "dir"
+      },
+      {
+        "de": "gh",
+        "para": "fig"
+      },
+      {
+        "de": "peg",
+        "para": "fig",
+        "tipo": "inibe"
+      },
+      {
+        "de": "dir",
+        "para": "glic",
+        "tipo": "fraca"
+      },
+      {
+        "de": "fig",
+        "para": "igf"
+      },
+      {
+        "de": "igf",
+        "para": "ind"
+      },
+      {
+        "de": "ind",
+        "para": "cli"
+      }
+    ],
+    "notas": [
+      {
+        "no": "peg",
+        "texto": "Reduz o IGF-1 em 97%, mas não reduz o tumor; seguir só com IGF-1",
+        "lado": "direita"
+      },
+      {
+        "no": "ad",
+        "texto": "Cirurgia transesfenoidal é a 1ª linha, potencialmente curativa",
+        "lado": "direita"
+      },
+      {
+        "no": "cli",
+        "texto": "Antes do fechamento epifisário, o mesmo excesso causa gigantismo",
+        "lado": "direita"
+      }
+    ],
+    "legenda": "Setas douradas: estímulo. Barra vermelha: bloqueio farmacológico. Cinza: efeito metabólico."
+  },
+  "lastro": [
+    "Acromegalia decorre de excesso de GH, quase sempre por adenoma hipofisário somatotrófico, elevando o IGF-1.",
+    "Direta — lipólise e efeito anti-insulínico",
+    "Indireta, via IGF-1 — efeito mitogênico e antiapoptótico, com proliferação de condrócitos",
+    "Ligam-se sobretudo ao SSTR2",
+    "Liga-se a SSTR1, 2, 3 e 5",
+    "O receptor D2 é expresso na maioria dos somatotropinomas",
+    "Bloqueia a ligação do GH aos receptores periféricos, com eficácia de 97% na redução do IGF-1",
+    "Rastreio pelo IGF-1 (não pelo GH isolado, que é pulsátil)."
+  ],
+  "justificativa": "O capítulo já tem o algoritmo de diagnóstico e manejo; a figura mostra o eixo GH–IGF-1, as ações diretas e indiretas e o ponto de ação de cada fármaco."
+}

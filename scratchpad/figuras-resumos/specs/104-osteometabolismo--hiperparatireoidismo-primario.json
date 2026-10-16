@@ -1,0 +1,113 @@
+{
+  "i": 104,
+  "sub": "Osteometabolismo",
+  "tema": "Hiperparatireoidismo Primário",
+  "titulo": "Hiperparatireoidismo primário: PTH autônomo e órgãos-alvo",
+  "subtitulo": "A paratireoide deixa de obedecer ao cálcio; ossos, cálculos, gemidos e transtornos psíquicos",
+  "tipo": "fluxo",
+  "fluxo": {
+    "orientacao": "vertical",
+    "nos": [
+      {
+        "id": "par",
+        "texto": "Paratireoide autônoma\nadenoma único 80–85%\nhiperplasia 10–15%, carcinoma raro",
+        "tipo": "orgao",
+        "camada": 0
+      },
+      {
+        "id": "pth",
+        "texto": "PTH alto\nou inapropriadamente normal",
+        "tipo": "hormonio",
+        "camada": 1
+      },
+      {
+        "id": "ca",
+        "texto": "Hipercalcemia\nfósforo baixo ou normal-baixo\n80% assintomáticos",
+        "tipo": "alerta",
+        "camada": 2
+      },
+      {
+        "id": "os",
+        "texto": "Ossos\nperda cortical\nosteíte fibrosa (rara)",
+        "tipo": "passo",
+        "camada": 3
+      },
+      {
+        "id": "rim",
+        "texto": "Rim\nlitíase, nefrocalcinose\npoliúria (DI nefrogênico)",
+        "tipo": "passo",
+        "camada": 3
+      },
+      {
+        "id": "gi",
+        "texto": "TGI e neuropsiquiátrico\nconstipação, úlcera, pancreatite\nfadiga, depressão",
+        "tipo": "passo",
+        "camada": 3
+      },
+      {
+        "id": "dxa",
+        "texto": "DXA com 1/3 distal do rádio\nsítio cortical, mais afetado",
+        "tipo": "fim",
+        "camada": 4
+      },
+      {
+        "id": "ren",
+        "texto": "Imagem renal e TFG\nlitíase e função renal",
+        "tipo": "fim",
+        "camada": 4
+      }
+    ],
+    "setas": [
+      {
+        "de": "par",
+        "para": "pth"
+      },
+      {
+        "de": "pth",
+        "para": "ca"
+      },
+      {
+        "de": "ca",
+        "para": "par",
+        "tipo": "feedback",
+        "rotulo": "não suprime"
+      },
+      {
+        "de": "ca",
+        "para": "os"
+      },
+      {
+        "de": "ca",
+        "para": "rim"
+      },
+      {
+        "de": "ca",
+        "para": "gi"
+      },
+      {
+        "de": "os",
+        "para": "dxa",
+        "tipo": "fraca",
+        "rotulo": "avaliar"
+      },
+      {
+        "de": "rim",
+        "para": "ren",
+        "tipo": "fraca",
+        "rotulo": "avaliar"
+      }
+    ],
+    "legenda": "Tracejado vermelho: retroalimentação pelo cálcio, perdida no hiperparatireoidismo primário. Verde: avaliação de órgão-alvo."
+  },
+  "lastro": [
+    "Secreção **autônoma e excessiva de PTH** por uma ou mais paratireoides, gerando **hipercalcemia** com perda da retroalimentação normal pelo cálcio",
+    "**Adenoma único em 80–85%**, hiperplasia em 10–15% e **carcinoma em menos de 1%**",
+    "**Achado-chave: cálcio elevado com PTH inapropriadamente normal ou alto.**",
+    "dosar **fósforo** (tende a baixo/normal-baixo)",
+    "⚠️ **80% são assintomáticos** — o diagnóstico é laboratorial.",
+    "**diabetes insípido nefrogênico** (boca seca, poliúria, polidipsia); sonolência, depressão e pseudodemência",
+    "**DXA** incluindo o **1/3 distal do rádio** (sítio cortical, mais afetado), **imagem renal** para litíase/nefrocalcinose e função renal",
+    "(**osteíte fibrosa cística** clássica, hoje rara; mais comumente **osteoporose de predomínio cortical**)"
+  ],
+  "justificativa": "O capítulo já tem o algoritmo de investigação e os critérios cirúrgicos; a figura mostra o mecanismo (PTH autônomo sem freio do cálcio) e as repercussões de órgão-alvo que guiam a avaliação."
+}

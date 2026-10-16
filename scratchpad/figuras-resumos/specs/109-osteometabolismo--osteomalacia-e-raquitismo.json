@@ -1,0 +1,111 @@
+{
+  "i": 109,
+  "sub": "Osteometabolismo",
+  "tema": "Osteomalácia e Raquitismo",
+  "titulo": "Três caminhos para o mesmo defeito de mineralização",
+  "subtitulo": "Calcipênico, fosfopênico e hipofosfatasia levam ao osteoide não mineralizado",
+  "tipo": "fluxo",
+  "fluxo": {
+    "orientacao": "vertical",
+    "rotulos_camadas": [
+      "Causa",
+      "Distúrbio",
+      "Osso",
+      "Idade"
+    ],
+    "nos": [
+      {
+        "id": "vd",
+        "texto": "Falta de vitamina D\nprincipal causa\nsol, dieta, má absorção",
+        "tipo": "inicio"
+      },
+      {
+        "id": "fgf",
+        "texto": "Perda renal de fósforo\nFGF-23 alto\ntumor ou PHEX",
+        "tipo": "inicio"
+      },
+      {
+        "id": "alp",
+        "texto": "Hipofosfatasia\nALPL: TNSALP baixa",
+        "tipo": "inicio"
+      },
+      {
+        "id": "calc",
+        "texto": "Calcipênico\nPTH alto, 25-OH-D baixa",
+        "tipo": "hormonio"
+      },
+      {
+        "id": "fosf",
+        "texto": "Fosfopênico\nfósforo muito baixo\nPTH normal",
+        "tipo": "hormonio"
+      },
+      {
+        "id": "ppi",
+        "texto": "Pirofosfato acumulado\ninibe a mineralização",
+        "tipo": "hormonio"
+      },
+      {
+        "id": "ost",
+        "texto": "Osteoide não mineralizado\nosso amolecido\nFA alta em mais de 95%",
+        "tipo": "orgao"
+      },
+      {
+        "id": "raq",
+        "texto": "Raquitismo na criança\nfise aberta: deformidade\nbaixa estatura",
+        "tipo": "fim"
+      },
+      {
+        "id": "om",
+        "texto": "Osteomalácia no adulto\nzonas de Looser, dor, fraqueza",
+        "tipo": "fim"
+      }
+    ],
+    "setas": [
+      {
+        "de": "vd",
+        "para": "calc"
+      },
+      {
+        "de": "fgf",
+        "para": "fosf"
+      },
+      {
+        "de": "alp",
+        "para": "ppi"
+      },
+      {
+        "de": "calc",
+        "para": "ost"
+      },
+      {
+        "de": "fosf",
+        "para": "ost"
+      },
+      {
+        "de": "ppi",
+        "para": "ost",
+        "tipo": "inibe"
+      },
+      {
+        "de": "ost",
+        "para": "raq"
+      },
+      {
+        "de": "ost",
+        "para": "om"
+      }
+    ],
+    "legenda": "Setas douradas: causa e efeito. Barra vermelha: o pirofosfato bloqueia a mineralização. Na hipofosfatasia, a FA é baixa."
+  },
+  "lastro": [
+    "Deficiência de vitamina D — principal causa em crianças e adultos",
+    "Fósforo muito baixo com cálcio, vitamina D e PTH normais aponta FGF-23",
+    "mutação inativadora do PHEX",
+    "Queda da TNSALP com acúmulo de substratos: pirofosfato inorgânico, que inibe a mineralização",
+    "Defeito de mineralização da matriz óssea recém-formada (osteoide)",
+    "O raquitismo difere da osteomalácia por ocorrer com placa epifisária aberta, gerando deformidade e baixa estatura.",
+    "Zonas de Looser (pseudofraturas) e afilamento cortical são o achado radiográfico característico do adulto",
+    "A fosfatase alcalina está elevada em mais de 95% dos casos — se estiver BAIXA, pensar em hipofosfatasia."
+  ],
+  "justificativa": "O capítulo já tem o algoritmo laboratorial; a figura mostra os três mecanismos que convergem no osteoide não mineralizado e como ele se expressa na criança e no adulto."
+}

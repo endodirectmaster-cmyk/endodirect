@@ -1,0 +1,141 @@
+{
+  "i": 100,
+  "sub": "Neuroendocrinologia",
+  "tema": "Apoplexia Hipofisária e Hipofisite",
+  "titulo": "Apoplexia hipofisária: do infarto do adenoma às manifestações",
+  "subtitulo": "Isquemia ou hemorragia aguda comprimem estruturas vizinhas e derrubam o ACTH",
+  "tipo": "fluxo",
+  "fluxo": {
+    "orientacao": "vertical",
+    "nos": [
+      {
+        "id": "des",
+        "texto": "Desencadeantes\n• cirurgia, trauma craniano, radioterapia\n• anticoagulação, agonista dopaminérgico",
+        "tipo": "grupo",
+        "camada": 0
+      },
+      {
+        "id": "ad",
+        "texto": "Adenoma hipofisário\n2 a 12% evoluem com apoplexia",
+        "tipo": "orgao",
+        "camada": 1
+      },
+      {
+        "id": "isq",
+        "texto": "Isquemia\nexpansão supera o suprimento",
+        "tipo": "passo",
+        "camada": 2
+      },
+      {
+        "id": "hem",
+        "texto": "Hemorragia\nfragilidade vascular",
+        "tipo": "passo",
+        "camada": 2
+      },
+      {
+        "id": "ap",
+        "texto": "Apoplexia\ninfarto ou hemorragia aguda\ncefaleia súbita em trovoada",
+        "tipo": "alerta",
+        "camada": 3
+      },
+      {
+        "id": "qui",
+        "texto": "Quiasma\nhemianopsia bitemporal",
+        "tipo": "orgao",
+        "camada": 4
+      },
+      {
+        "id": "sc",
+        "texto": "Seio cavernoso\noftalmoplegia (III, IV, VI)",
+        "tipo": "orgao",
+        "camada": 4
+      },
+      {
+        "id": "acth",
+        "texto": "Queda de ACTH\ninsuficiência adrenal aguda",
+        "tipo": "hormonio",
+        "camada": 4
+      },
+      {
+        "id": "choq",
+        "texto": "Maior ameaça à vida\nhipotensão, choque\nhiponatremia, hipoglicemia",
+        "tipo": "alerta",
+        "camada": 5
+      },
+      {
+        "id": "gc",
+        "texto": "Glicocorticoide EV imediato\nhidrocortisona 100 a 200 mg\nou dexametasona 4 mg",
+        "tipo": "fim",
+        "camada": 6
+      }
+    ],
+    "setas": [
+      {
+        "de": "des",
+        "para": "ad"
+      },
+      {
+        "de": "ad",
+        "para": "isq"
+      },
+      {
+        "de": "ad",
+        "para": "hem"
+      },
+      {
+        "de": "isq",
+        "para": "ap"
+      },
+      {
+        "de": "hem",
+        "para": "ap"
+      },
+      {
+        "de": "ap",
+        "para": "qui"
+      },
+      {
+        "de": "ap",
+        "para": "sc"
+      },
+      {
+        "de": "ap",
+        "para": "acth"
+      },
+      {
+        "de": "acth",
+        "para": "choq"
+      },
+      {
+        "de": "choq",
+        "para": "gc",
+        "tipo": "estimula",
+        "rotulo": "tratar já"
+      }
+    ],
+    "notas": [
+      {
+        "no": "ap",
+        "texto": "Diagnóstico por RM; a TC pode ser normal nas primeiras horas",
+        "lado": "direita"
+      },
+      {
+        "no": "gc",
+        "texto": "Não esperar exames. Cirurgia só se rebaixamento ou perda visual importante",
+        "lado": "direita"
+      }
+    ],
+    "legenda": "Setas douradas: sequência causal. Verde: conduta."
+  },
+  "lastro": [
+    "isquemia, quando a expansão tumoral rápida supera o suprimento vascular; e hemorragia, pela fragilidade vascular intratumoral",
+    "A apoplexia atinge 2 a 12% dos portadores de adenoma hipofisário conhecido",
+    "São desencadeantes: cirurgia, trauma craniano, radioterapia, anticoagulação e agonista dopaminérgico.",
+    "Oftalmoplegia por comprometimento do III, IV e VI pares cranianos",
+    "A maior ameaça à vida é a insuficiência adrenal aguda por deficiência súbita de ACTH.",
+    "Hipotensão, hiponatremia e hipoglicemia denunciam a insuficiência adrenal aguda.",
+    "hidrocortisona 100 a 200 mg de ataque, ou dexametasona 4 mg",
+    "a TC pode ser normal nas primeiras horas"
+  ],
+  "justificativa": "O capítulo já tem o algoritmo de manejo; a figura mostra o mecanismo da apoplexia e liga cada estrutura comprimida à sua manifestação, destacando a insuficiência adrenal."
+}
