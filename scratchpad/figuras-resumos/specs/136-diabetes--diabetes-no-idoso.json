@@ -11,15 +11,14 @@
       "Início",
       "Perigo",
       "Efeito",
-      "Avaliar",
       "Conduta"
     ],
     "nos": [
       {
         "id": "a",
         "tipo": "inicio",
-        "largura": 280,
-        "texto": "Idoso com diabetes\nmais síndromes geriátricas: fragilidade, quedas, incontinência, polifarmácia"
+        "largura": 320,
+        "texto": "Idoso com diabetes\nsíndromes geriátricas: fragilidade, quedas, incontinência, polifarmácia\navaliação geriátrica: cognição, depressão, função, nutrição, suporte"
       },
       {
         "id": "h1",
@@ -42,32 +41,22 @@
         "texto": "Consequências\ndesidratação, infecções, incontinência, delirium\nmaior risco de EHH na descompensação"
       },
       {
-        "id": "e",
-        "tipo": "passo",
-        "largura": 320,
-        "texto": "Avaliação geriátrica\ncognição, depressão, quedas, polifarmácia, função, nutrição, suporte\nA1c menos confiável (anemia, doença renal): apoiar na glicemia capilar/CGM",
-        "camada": 3
-      },
-      {
         "id": "p1",
         "tipo": "fim",
         "largura": 180,
-        "texto": "Baixo risco de hipoglicemia\npreferir metformina, SGLT2i, GLP-1 RA, iDPP-4\nse insulina: basal simples com análogo de longa ação",
-        "camada": 4
+        "texto": "Baixo risco de hipoglicemia\npreferir metformina, SGLT2i, GLP-1 RA, iDPP-4\nse insulina: basal simples com análogo de longa ação"
       },
       {
         "id": "p2",
         "tipo": "alerta",
         "largura": 180,
-        "texto": "Evitar\nglibenclamida (sulfonilureia de longa ação)\nesquemas de insulina complexos",
-        "camada": 4
+        "texto": "Evitar\nglibenclamida (sulfonilureia de longa ação)\nesquemas de insulina complexos"
       },
       {
         "id": "p3",
         "tipo": "fim",
         "largura": 180,
-        "texto": "Desintensificar\nA1c abaixo da meta com fármacos de risco\nreduzir ou retirar insulina e sulfonilureia",
-        "camada": 4
+        "texto": "Desintensificar\nA1c abaixo da meta com fármacos de risco\nreduzir ou retirar insulina e sulfonilureia"
       }
     ],
     "setas": [
@@ -89,23 +78,19 @@
         "para": "c2"
       },
       {
-        "de": "a",
-        "para": "e"
-      },
-      {
-        "de": "e",
+        "de": "c1",
         "para": "p1"
       },
       {
-        "de": "e",
+        "de": "c1",
         "para": "p2"
       },
       {
-        "de": "e",
+        "de": "c1",
         "para": "p3"
       }
     ],
-    "legenda": "Demência prejudica o autocuidado e a aplicação de insulina: simplificar o esquema. CGM pode reduzir hipoglicemia e apoiar cuidadores."
+    "legenda": "A1c menos confiável (anemia, doença renal): apoiar na glicemia capilar/CGM."
   },
   "lastro": [
     "As metas e o tratamento se individualizam pelo estado de saúde e função, não pela idade cronológica",
@@ -117,5 +102,5 @@
     "Evitar sulfonilureias de longa ação (glibenclamida) e esquemas de insulina complexos; se insulina necessária, preferir basal simples com análogo de longa ação",
     "Desintensificar quando a A1c está abaixo da meta com fármacos de risco — reduzir/retirar insulina/sulfonilureia"
   ],
-  "justificativa": "O fluxograma existente já estratifica as metas por estado de saúde; esta figura mostra o eixo de dano que justifica a estratégia (hipoglicemia e hiperglicemia sintomática → consequências) e os três pilares de conduta que o capítulo deriva dele."
+  "justificativa": "O fluxograma existente já estratifica as metas por estado de saúde; esta figura mostra o eixo de dano que justifica a estratégia (hipoglicemia e hiperglicemia sintomática → consequências) e as condutas que o capítulo associa ao risco de hipoglicemia."
 }

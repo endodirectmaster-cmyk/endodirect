@@ -8,27 +8,83 @@
   "fluxo": {
     "orientacao": "vertical",
     "nos": [
-      {"id": "dna", "tipo": "orgao", "texto": "Gene (DNA)\nfatores de transcrição ligados a elementos responsivos no promotor"},
-      {"id": "pre", "tipo": "passo", "texto": "Pré-mRNA"},
-      {"id": "mrna", "tipo": "passo", "texto": "mRNA maduro\ncapping 5', cauda poli-A, splicing"},
-      {"id": "prot", "tipo": "passo", "texto": "Proteína\ntraduzida nos ribossomos"},
-      {"id": "horm", "tipo": "hormonio", "texto": "Hormônio ativo\narmazenado e secretado"},
-      {"id": "rn", "tipo": "orgao", "largura": 160, "texto": "Receptor nuclear\nesteroides, tireoidianos e vitamina D\nliga-se a HRE: latência de horas a dias"},
-      {"id": "rm", "tipo": "orgao", "largura": 160, "texto": "Receptor de membrana\nresposta em segundos a minutos"}
+      {
+        "id": "rn",
+        "tipo": "orgao",
+        "largura": 280,
+        "texto": "Receptor nuclear\nativado por esteroides, tireoidianos e vitamina D\nliga-se a HRE: latência de horas a dias"
+      },
+      {
+        "id": "dna",
+        "tipo": "orgao",
+        "texto": "Gene (DNA)\nfatores de transcrição ligados a elementos responsivos no promotor"
+      },
+      {
+        "id": "pre",
+        "tipo": "passo",
+        "texto": "Pré-mRNA"
+      },
+      {
+        "id": "mrna",
+        "tipo": "passo",
+        "texto": "mRNA maduro\ncapping 5', cauda poli-A, splicing"
+      },
+      {
+        "id": "prot",
+        "tipo": "passo",
+        "texto": "Proteína\ntraduzida nos ribossomos"
+      },
+      {
+        "id": "horm",
+        "tipo": "hormonio",
+        "texto": "Hormônio ativo\narmazenado e secretado"
+      }
     ],
     "setas": [
-      {"de": "dna", "para": "pre", "rotulo": "transcrição"},
-      {"de": "pre", "para": "mrna", "rotulo": "processamento"},
-      {"de": "mrna", "para": "prot", "rotulo": "tradução"},
-      {"de": "prot", "para": "horm", "rotulo": "modificações pós-traducionais"},
-      {"de": "horm", "para": "rn"},
-      {"de": "horm", "para": "rm"}
+      {
+        "de": "rn",
+        "para": "dna",
+        "rotulo": "regula a transcrição"
+      },
+      {
+        "de": "dna",
+        "para": "pre",
+        "rotulo": "transcrição"
+      },
+      {
+        "de": "pre",
+        "para": "mrna",
+        "rotulo": "processamento"
+      },
+      {
+        "de": "mrna",
+        "para": "prot",
+        "rotulo": "tradução"
+      },
+      {
+        "de": "prot",
+        "para": "horm",
+        "rotulo": "modificações pós-traducionais"
+      }
     ],
     "notas": [
-      {"no": "dna", "lado": "direita", "texto": "Mutações pontuais: silenciosa, missense (troca de aminoácido), nonsense (proteína truncada); frameshift desloca o quadro de leitura"},
-      {"no": "mrna", "lado": "direita", "texto": "Capping 5' protege e facilita a ligação do ribossomo; cauda poli-A dá estabilidade; splicing alternativo gera múltiplas variantes de mRNA"},
-      {"no": "prot", "lado": "direita", "texto": "Fosforilação, acetilação, metilação, ubiquitinação e glicosilação permitem que uma única proteína participe de vias diferentes"}
-    ]
+      {
+        "no": "dna",
+        "lado": "direita",
+        "texto": "Mutações pontuais: silenciosa, missense (troca de aminoácido), nonsense (proteína truncada); frameshift desloca o quadro de leitura"
+      },
+      {
+        "no": "mrna",
+        "lado": "direita",
+        "texto": "Capping 5' protege e facilita a ligação do ribossomo; cauda poli-A dá estabilidade; splicing alternativo gera múltiplas variantes de mRNA"
+      },
+      {
+        "no": "prot",
+        "lado": "direita",
+        "texto": "Fosforilação, acetilação, metilação, ubiquitinação e glicosilação permitem que uma única proteína participe de vias diferentes"
+      }
+    ],
+    "legenda": "Por receptor de membrana, a resposta vem em segundos a minutos."
   },
   "lastro": [
     "Fluxo: transcrição (DNA→RNAm, regulada por fatores de transcrição ligados a elementos responsivos no promotor) → splicing/processamento → tradução (RNAm→proteína nos ribossomos) → modificações pós-traducionais (clivagem do pró-hormônio, glicosilação, pontes dissulfeto) → hormônio ativo, armazenado e secretado",
@@ -36,7 +92,8 @@
     "O capping 5' protege o mRNA e facilita a ligação do ribossomo; a cauda poli-A dá estabilidade, permite a exportação nuclear e protege de nucleases",
     "O splicing alternativo gera múltiplas variantes de mRNA a partir de um único pré-mRNA",
     "As modificações pós-traducionais é que permitem a uma única proteína participar de vias diferentes",
-    "Frameshift é inserção ou deleção que desloca o quadro de leitura — não confundir com nonsense (códon de parada precoce) nem missense (troca de aminoácido)"
+    "Frameshift é inserção ou deleção que desloca o quadro de leitura — não confundir com nonsense (códon de parada precoce) nem missense (troca de aminoácido)",
+    "esteroides e T3 agem regulando a transcrição"
   ],
   "justificativa": "O capítulo abre com o fluxo gene → hormônio e dedica duas tabelas às modificações pós-transcricionais e pós-traducionais; o fluxo vertical com as notas reúne esse mecanismo e o contraste de latência entre receptor nuclear e de membrana."
 }
