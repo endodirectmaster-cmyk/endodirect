@@ -105,11 +105,31 @@ const pede = (run, hash) => run('history.replaceState(null,"",' + JSON.stringify
   ok(!el.querySelector('[data-qa-toggle="ig-4"]'), 'questão da FILA (não postada) apareceu no arquivo do aluno');
 }
 
+// ── 2b. professor: o link abre o arquivo do painel do professor na questão ────
+{
+  const { run } = carrega('https://www.endodirect.com.br/');
+  run('var __sec=[];renderAdmSec=function(s){__sec.push(s);};admQotdArchSub="Tireoide";admQotdArchOpen=null;admQotdArchRolar=false;');
+  ok(run('abrirLinkNoPainelDoProfessor({p:"qotd",arg:"ig-2"})') === true && run('__sec.join()') === 'qotdarq', 'o link da questão não abriu o arquivo do painel do professor (seções: ' + run('__sec.join()') + ')');
+  ok(run('admQotdArchOpen') === 'ig-2' && run('admQotdArchRolar') === true && run('admQotdArchSub') === '', 'o arquivo do professor tem de abrir NA questão do link, sem filtro de subespecialidade antigo');
+  const st = [1, 2, 3].map((i) => ({ id: 'ig-' + i, status: 'posted', postedAt: Date.UTC(2026, 9, i), sub: i === 2 ? 'Transgeneridade' : 'Tireoide', stem: 'Enunciado ' + i, answer: 'A', options: { A: 'a', B: 'b' }, explanation: 'Comentário ' + i }));
+  run('igStories=' + JSON.stringify(st) + ';var __h=admQotdArchiveHTML();');
+  const abertos = (run('__h').match(/class="qa-item open"><button type="button" class="qa-head" data-admqa-toggle="([^"]+)"/g) || []).map((x) => x.replace(/.*data-admqa-toggle="/, '').replace(/"$/, ''));
+  ok(abertos.length === 1 && abertos[0] === 'ig-2', 'o arquivo do professor não abriu na questão do link (abertas: ' + JSON.stringify(abertos) + ')');
+  run('__sec=[];');
+  ok(run('abrirLinkNoPainelDoProfessor({p:"mural",arg:""})') === true && run('__sec.join()') === 'mural', '/#mural tem de abrir o mural do painel do professor');
+  run('__sec=[];');
+  ok(run('abrirLinkNoPainelDoProfessor({p:"aovivo",arg:""})') === false && run('__sec.length') === 0, '/#aovivo não tem seção no painel do professor: fica a de sempre');
+  ok(run('abrirLinkNoPainelDoProfessor(null)') === false, 'sem pedido, o painel do professor fica na seção de sempre');
+}
+
 // ── 3. o login escolhe o painel do link antes do último painel ────────────────
 {
   const m = /var lastP=lsGet\('last_panel'\);\s*\n\s*if\(!abrirPainelDoLink\(consumirLinkPainel\(\)\)\)goPanel\(/.exec(fonte);
   ok(!!m, 'na entrada do aluno (doLogin), o painel do link tem de vir antes do último painel e do homePanel');
-  ok(/goPanel\('adm'\);\s*\n\s*consumirLinkPainel\(\);/.test(fonte), 'no login do professor o pedido de painel do aluno tem de ser descartado');
+  // 16/10/2026 (vídeo do Eduardo, professor): o link era descartado no painel do
+  // professor e ele caía em Analytics. Agora abre a seção correspondente do painel.
+  ok(/goPanel\('adm'\);[\s\S]{0,400}?abrirLinkNoPainelDoProfessor\(consumirLinkPainel\(\)\);/.test(fonte), 'no login do professor o link tem de abrir a seção do painel do professor (e não ser descartado)');
+  ok(/if\(!l\|\|!currentUser\)return;\s*\n\s*consumirLinkPainel\(\);\s*\n\s*if\(isAdminUser\(\)\)abrirLinkNoPainelDoProfessor\(l\);else abrirPainelDoLink\(l\);/.test(fonte), 'com o app aberto, o professor também tem de ser levado à questão (hashchange)');
   ok(/\nguardarLinkPainel\(\);\n/.test(fonte), 'o pedido tem de ser lido do endereço na CARGA da página (antes do login)');
   ok(/addEventListener\('hashchange'/.test(fonte), 'com o app aberto, a troca do "#" (clique na notificação) tem de abrir o painel');
 }
