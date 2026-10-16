@@ -8,33 +8,101 @@
   "fluxo": {
     "orientacao": "vertical",
     "nos": [
-      {"id": "hip", "tipo": "orgao", "texto": "Hipotálamo\nmais pulsos de GnRH", "camada": 0},
-      {"id": "pit", "tipo": "orgao", "texto": "Hipófise\nrelação LH/FSH elevada", "camada": 1},
-      {"id": "ri", "tipo": "alerta", "texto": "Resistência insulínica\nhiperinsulinemia compensatória", "camada": 1},
-      {"id": "fol", "tipo": "passo", "texto": "Foliculogênese parada\nAMH alto; FSH baixo, persistente", "camada": 2},
-      {"id": "teca", "tipo": "orgao", "texto": "Teca ovariana\nprodução de andrógenos", "camada": 2},
-      {"id": "adr", "tipo": "orgao", "texto": "Adrenal\n↑ androstenediona e SDHEA", "camada": 2},
-      {"id": "shbg", "tipo": "hormonio", "texto": "SHBG baixa\n↑ testosterona livre", "camada": 2},
-      {"id": "anov", "tipo": "fim", "texto": "Oligo/anovulação\noligoamenorreia em 80%", "camada": 3},
-      {"id": "ha", "tipo": "fim", "texto": "Hiperandrogenismo\nhirsutismo 80%; acne ~43%", "camada": 3}
+      {
+        "id": "hip",
+        "tipo": "orgao",
+        "texto": "Hipotálamo\n↑ pulsos de GnRH",
+        "camada": 0
+      },
+      {
+        "id": "pit",
+        "tipo": "orgao",
+        "texto": "Hipófise\nrelação LH/FSH alta",
+        "camada": 1
+      },
+      {
+        "id": "ri",
+        "tipo": "alerta",
+        "texto": "Resistência insulínica\n60% das eutróficas\n90% com obesidade",
+        "camada": 1
+      },
+      {
+        "id": "fol",
+        "tipo": "passo",
+        "texto": "Foliculogênese parada\nAMH alto",
+        "camada": 2
+      },
+      {
+        "id": "teca",
+        "tipo": "orgao",
+        "texto": "Teca ovariana\nandrógenos",
+        "camada": 2
+      },
+      {
+        "id": "adr",
+        "tipo": "orgao",
+        "texto": "Adrenal\nandrostenediona, SDHEA",
+        "camada": 2
+      },
+      {
+        "id": "anov",
+        "tipo": "fim",
+        "texto": "Oligo/anovulação\noligoamenorreia 80%",
+        "camada": 3
+      },
+      {
+        "id": "ha",
+        "tipo": "fim",
+        "texto": "Hiperandrogenismo\nhirsutismo 80%; acne ~43%",
+        "camada": 3
+      }
     ],
     "setas": [
-      {"de": "hip", "para": "pit", "rotulo": "GnRH"},
-      {"de": "pit", "para": "fol", "rotulo": "FSH baixo"},
-      {"de": "pit", "para": "teca", "rotulo": "LH"},
-      {"de": "ri", "para": "teca", "rotulo": "amplifica"},
-      {"de": "ri", "para": "shbg", "rotulo": "reduz"},
-      {"de": "fol", "para": "anov"},
-      {"de": "teca", "para": "ha"},
-      {"de": "adr", "para": "ha"},
-      {"de": "shbg", "para": "ha"},
-      {"de": "ri", "para": "hip", "tipo": "feedback", "rotulo": "↑ pulsos de GnRH"}
+      {
+        "de": "hip",
+        "para": "pit",
+        "rotulo": "GnRH"
+      },
+      {
+        "de": "pit",
+        "para": "fol",
+        "rotulo": "FSH baixo"
+      },
+      {
+        "de": "pit",
+        "para": "teca",
+        "rotulo": "LH"
+      },
+      {
+        "de": "ri",
+        "para": "teca",
+        "rotulo": "amplifica"
+      },
+      {
+        "de": "ri",
+        "para": "ha",
+        "rotulo": "↓ SHBG, ↑ T livre"
+      },
+      {
+        "de": "fol",
+        "para": "anov"
+      },
+      {
+        "de": "teca",
+        "para": "ha"
+      },
+      {
+        "de": "adr",
+        "para": "ha"
+      },
+      {
+        "de": "ri",
+        "para": "hip",
+        "tipo": "feedback",
+        "rotulo": "↑ pulsos de GnRH"
+      }
     ],
-    "notas": [
-      {"no": "hip", "lado": "esquerda", "texto": "Herdabilidade acima de 70%, somada a epigenética e ambiente"},
-      {"no": "ri", "lado": "direita", "texto": "Presente em 60% das eutróficas e 90% das mulheres com obesidade"}
-    ],
-    "legenda": "Tracejado vermelho: a resistência insulínica realimenta o primeiro nó, a pulsatilidade do GnRH."
+    "legenda": "Tracejado vermelho: a resistência insulínica realimenta o primeiro nó. Herdabilidade acima de 70%."
   },
   "lastro": [
     "Fisiopatologia em quatro nós: mais pulsos de GnRH com relação LH/FSH alta, parada da foliculogênese com AMH alto, hiperandrogenismo adrenal e resistência insulínica.",
