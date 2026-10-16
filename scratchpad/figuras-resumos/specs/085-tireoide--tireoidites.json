@@ -1,0 +1,123 @@
+{
+  "i": 85,
+  "sub": "Tireoide",
+  "tema": "Tireoidites",
+  "titulo": "Tireoidite destrutiva: o curso trifásico",
+  "subtitulo": "A lesão libera hormônio pré-formado: RAIU baixa e nenhum papel para a tionamida",
+  "tipo": "fluxo",
+  "fluxo": {
+    "orientacao": "vertical",
+    "nos": [
+      {
+        "id": "sub",
+        "tipo": "inicio",
+        "texto": "Subaguda (De Quervain)\npós-viral, dolorosa\nVHS e PCR muito altos"
+      },
+      {
+        "id": "aut",
+        "tipo": "inicio",
+        "texto": "Silenciosa e pós-parto\nautoimunes, indolores\nanti-TPO elevado, VHS normal"
+      },
+      {
+        "id": "farm",
+        "tipo": "inicio",
+        "texto": "Fármacos\namiodarona tipo 2\ninibidores de checkpoint"
+      },
+      {
+        "id": "les",
+        "tipo": "orgao",
+        "texto": "Lesão folicular\ndestruição dos tireócitos"
+      },
+      {
+        "id": "hor",
+        "tipo": "hormonio",
+        "texto": "Hormônio pré-formado\nliberado na circulação"
+      },
+      {
+        "id": "tox",
+        "tipo": "alerta",
+        "texto": "Fase tireotóxica\nRAIU BAIXA (no Graves, alta)\nnão há hiperprodução"
+      },
+      {
+        "id": "trat",
+        "tipo": "passo",
+        "texto": "Suporte\nbetabloqueador; AINE ou corticoide se dor\nsem tionamida nem radioiodo"
+      },
+      {
+        "id": "hipo",
+        "tipo": "passo",
+        "texto": "Hipotireoidismo\nreservas esgotadas"
+      },
+      {
+        "id": "eut",
+        "tipo": "fim",
+        "texto": "Eutireoidismo\na maioria se recupera"
+      },
+      {
+        "id": "def",
+        "tipo": "alerta",
+        "texto": "Hipotireoidismo definitivo\nminoria; repor levotiroxina"
+      }
+    ],
+    "setas": [
+      {
+        "de": "sub",
+        "para": "les"
+      },
+      {
+        "de": "aut",
+        "para": "les"
+      },
+      {
+        "de": "farm",
+        "para": "les"
+      },
+      {
+        "de": "les",
+        "para": "hor"
+      },
+      {
+        "de": "hor",
+        "para": "tox"
+      },
+      {
+        "de": "tox",
+        "para": "trat",
+        "tipo": "fraca",
+        "rotulo": "conduta"
+      },
+      {
+        "de": "tox",
+        "para": "hipo"
+      },
+      {
+        "de": "hipo",
+        "para": "eut"
+      },
+      {
+        "de": "hipo",
+        "para": "def",
+        "tipo": "fraca"
+      }
+    ],
+    "notas": [
+      {
+        "no": "def",
+        "lado": "abaixo",
+        "texto": "Prednisona alivia a dor, mas não reduz a evolução para hipotireoidismo"
+      }
+    ],
+    "legenda": "Setas cinza tracejadas: conduta e caminho menos frequente."
+  },
+  "lastro": [
+    "Tireoidite destrutiva libera hormônio pré-formado: tireotoxicose, depois hipotireoidismo, e a maioria volta ao eutireoidismo",
+    "hipotireoidismo (transitório ou definitivo, quando as reservas se esgotam) → recuperação",
+    "Esse padrão de RAIU baixa as separa da Doença de Graves (RAIU alta) e define a conduta",
+    "Tratamento é sintomático — betabloqueador e AINE/corticoide se dolorosa; tionamida não tem papel",
+    "Subaguda (De Quervain): dolorosa, pós-viral, HLA-B35, VHS/PCR muito altos; AINE/corticoide, betabloqueador, sem antitireoidiano.",
+    "Silenciosa e pós-parto: indolores, autoimunes, sem VHS elevado; curso trifásico.",
+    "Prednisona alivia a dor mas NÃO reduz a evolução para hipotireoidismo, e a maioria não evolui para hipotireoidismo definitivo",
+    "Amiodarona: AIT tipo 1 (iodo → tionamida) vs tipo 2 (destrutiva → corticoide); Doppler ajuda a diferenciar"
+  ],
+  "justificativa": "O fluxograma existente separa as causas de tireotoxicose com RAIU baixa; a figura mostra o mecanismo comum das tireoidites destrutivas — hormônio pré-formado, RAIU baixa e curso trifásico — que explica por que o tratamento é só de suporte."
+}
