@@ -27,16 +27,25 @@
         "camada": 1
       },
       {
-        "id": "ect",
-        "texto": "Gordura ectópica\nlipídio em fígado e músculo",
-        "tipo": "passo",
-        "camada": 2
-      },
-      {
         "id": "lep",
         "texto": "↓ Leptina e ↓ adiponectina",
         "tipo": "hormonio",
-        "camada": 2
+        "camada": 2,
+        "largura": 170
+      },
+      {
+        "id": "ect",
+        "texto": "Gordura ectópica\nlipídio em fígado e músculo",
+        "tipo": "passo",
+        "camada": 2,
+        "largura": 170
+      },
+      {
+        "id": "quad",
+        "texto": "Complicações metabólicas\nhipertrigliceridemia, ↓ HDL\nesteatose, ↑ transaminases",
+        "tipo": "fim",
+        "camada": 2,
+        "largura": 170
       },
       {
         "id": "ri",
@@ -45,16 +54,10 @@
         "camada": 3
       },
       {
-        "id": "quad",
-        "texto": "Quadro metabólico\nhipertrigliceridemia, ↓ HDL\nesteatose, ↑ transaminases",
-        "tipo": "fim",
-        "camada": 4
-      },
-      {
         "id": "panc",
         "texto": "Pancreatite\nna hipertrigliceridemia grave",
         "tipo": "alerta",
-        "camada": 5
+        "camada": 3
       }
     ],
     "setas": [
@@ -68,11 +71,15 @@
       },
       {
         "de": "perda",
+        "para": "lep"
+      },
+      {
+        "de": "perda",
         "para": "ect"
       },
       {
         "de": "perda",
-        "para": "lep"
+        "para": "quad"
       },
       {
         "de": "ect",
@@ -84,14 +91,6 @@
         "rotulo": "agrava"
       },
       {
-        "de": "ect",
-        "para": "quad"
-      },
-      {
-        "de": "ri",
-        "para": "quad"
-      },
-      {
         "de": "quad",
         "para": "panc"
       }
@@ -100,12 +99,12 @@
       {
         "no": "lep",
         "texto": "Metreleptina repõe a leptina: reduz fome, glicada, triglicerídeos e esteatose",
-        "lado": "direita"
+        "lado": "esquerda"
       },
       {
         "no": "ri",
         "texto": "Metformina é 1ª linha; insulina costuma exigir > 2 U/kg",
-        "lado": "direita"
+        "lado": "esquerda"
       }
     ],
     "legenda": "Leptina baixa não serve como critério diagnóstico."
@@ -115,6 +114,7 @@
     "Sem depósito subcutâneo a gordura vai para fígado e músculo — daí a resistência insulínica, com ↓ leptina e ↓ adiponectina.",
     "A resistência insulínica vem do lipídio ectópico em fígado e músculo, agravada por leptina e adiponectina baixas.",
     "hiperglicemia sem cetose, resistência insulínica, hipertrigliceridemia, ↓ HDL, ↓ leptina, ↑ transaminases",
+    "Complicações metabólicas menos graves que nas generalizadas.",
     "hipertrigliceridemia grave com ou sem pancreatite, hepatomegalia, esteatose",
     "Análogo da leptina, subcutâneo diário, reduz fome, glicada, triglicerídeos e esteatose.",
     "Metformina é 1ª linha",

@@ -22,6 +22,15 @@ atualizado: 2026-10-16
 4. Caso residual, 1 discussão (`pubmed:42676363`): tabela sem `<thead>` com rótulo
    de largura total na 1ª linha. O mural a mostra como tabela; fica assim.
 
+## 🖼️ Figuras dos Resumos (16/10)
+
+1. **Professor: olhar as figuras** (galeria enviada em 16/10) e apontar o que trocar; a
+   especificação de cada uma está em `scratchpad/figuras-resumos/specs/` e se refaz em
+   minutos. Antes de editar qualquer Resumo no painel, **F5** (o painel aberto antes da
+   gravação não tem o campo `figuras` e pode sobrescrevê-lo).
+2. **Função temporária `exportar-capitulos`** (Supabase): virar stub 410 depois da gravação.
+3. Capítulos novos dos Resumos nascem sem figura: seguir [[Figuras dos Resumos]].
+
 ## 💊 Bulário (16/10)
 
 1. **Professor: tocar uma vez o botão "Bula oficial na ANVISA"** de qualquer medicamento

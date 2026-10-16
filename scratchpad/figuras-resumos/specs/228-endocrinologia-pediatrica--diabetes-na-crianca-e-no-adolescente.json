@@ -72,7 +72,7 @@
         "id": "ec",
         "tipo": "alerta",
         "camada": 5,
-        "texto": "Edema cerebral\nprincipal causa de morte\nna CAD pediátrica"
+        "texto": "Risco: edema cerebral\nprincipal causa de morte\nna CAD pediátrica"
       }
     ],
     "setas": [
@@ -119,18 +119,12 @@
       {
         "de": "hid",
         "para": "k"
-      },
-      {
-        "de": "ins",
-        "para": "ec",
-        "tipo": "fraca",
-        "rotulo": "glicemia: sem queda rápida"
       }
     ],
     "notas": [
       {
         "no": "ec",
-        "texto": "Vigiar cefaleia e alteração de consciência",
+        "texto": "Evitar quedas rápidas de glicemia/osmolaridade e bolus excessivos; vigiar cefaleia e alteração de consciência",
         "lado": "direita"
       }
     ],
