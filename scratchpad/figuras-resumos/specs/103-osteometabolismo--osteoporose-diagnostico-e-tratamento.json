@@ -8,30 +8,128 @@
   "fluxo": {
     "orientacao": "vertical",
     "nos": [
-      {"id": "oc", "texto": "Osteócito\nmecanoceptor; 90–95% das células", "tipo": "orgao", "camada": 0},
-      {"id": "romo", "texto": "Romosozumabe\ninibe a esclerostina", "tipo": "passo", "camada": 0},
-      {"id": "scl", "texto": "Esclerostina\nproduzida sem estímulo mecânico", "tipo": "hormonio", "camada": 1},
-      {"id": "wnt", "texto": "Via Wnt/β-catenina\nLRP5/LRP6", "tipo": "hormonio", "camada": 2},
-      {"id": "pth", "texto": "PTH intermitente\nteriparatida, abaloparatida", "tipo": "passo", "camada": 2},
-      {"id": "ob", "texto": "Osteoblasto\nformação óssea", "tipo": "orgao", "camada": 3},
-      {"id": "opg", "texto": "Osteoprotegerina\nsequestra o RANK-L", "tipo": "hormonio", "camada": 3},
-      {"id": "deno", "texto": "Denosumabe\ninibe o RANK-L", "tipo": "passo", "camada": 3},
-      {"id": "rankl", "texto": "RANK-L\nde osteoblastos e osteócitos", "tipo": "hormonio", "camada": 4},
-      {"id": "bf", "texto": "Bisfosfonatos\napoptose do osteoclasto", "tipo": "passo", "camada": 4},
-      {"id": "ocl", "texto": "Osteoclasto\nreabsorção óssea", "tipo": "orgao", "camada": 5}
+      {
+        "id": "oc",
+        "texto": "Osteócito\nmecanoceptor; 90–95% das células",
+        "tipo": "orgao",
+        "camada": 0
+      },
+      {
+        "id": "romo",
+        "texto": "Romosozumabe\ninibe a esclerostina",
+        "tipo": "passo",
+        "camada": 0
+      },
+      {
+        "id": "scl",
+        "texto": "Esclerostina\nproduzida sem estímulo mecânico",
+        "tipo": "hormonio",
+        "camada": 1
+      },
+      {
+        "id": "wnt",
+        "texto": "Via Wnt/β-catenina\nLRP5/LRP6",
+        "tipo": "hormonio",
+        "camada": 2
+      },
+      {
+        "id": "pth",
+        "texto": "Análogos do PTH\nintermitente: teriparatida, abaloparatida",
+        "tipo": "passo",
+        "camada": 2
+      },
+      {
+        "id": "ob",
+        "texto": "Osteoblasto\nformação óssea",
+        "tipo": "orgao",
+        "camada": 3
+      },
+      {
+        "id": "opg",
+        "texto": "Osteoprotegerina\nsequestra o RANK-L",
+        "tipo": "hormonio",
+        "camada": 3
+      },
+      {
+        "id": "deno",
+        "texto": "Denosumabe\ninibe o RANK-L",
+        "tipo": "passo",
+        "camada": 3
+      },
+      {
+        "id": "rankl",
+        "texto": "RANK-L\nde osteoblastos e osteócitos",
+        "tipo": "hormonio",
+        "camada": 4
+      },
+      {
+        "id": "bf",
+        "texto": "Bisfosfonatos\napoptose do osteoclasto",
+        "tipo": "passo",
+        "camada": 4
+      },
+      {
+        "id": "ocl",
+        "texto": "Osteoclasto\nreabsorção óssea",
+        "tipo": "orgao",
+        "camada": 5
+      }
     ],
     "setas": [
-      {"de": "oc", "para": "scl", "rotulo": "sem estímulo"},
-      {"de": "romo", "para": "scl", "tipo": "inibe"},
-      {"de": "scl", "para": "wnt", "tipo": "inibe"},
-      {"de": "wnt", "para": "ob", "tipo": "estimula"},
-      {"de": "wnt", "para": "opg", "tipo": "estimula"},
-      {"de": "pth", "para": "ob", "tipo": "estimula"},
-      {"de": "ob", "para": "rankl"},
-      {"de": "opg", "para": "rankl", "tipo": "inibe"},
-      {"de": "deno", "para": "rankl", "tipo": "inibe"},
-      {"de": "rankl", "para": "ocl", "tipo": "estimula"},
-      {"de": "bf", "para": "ocl", "tipo": "inibe"}
+      {
+        "de": "oc",
+        "para": "scl",
+        "rotulo": "sem estímulo"
+      },
+      {
+        "de": "romo",
+        "para": "scl",
+        "tipo": "inibe"
+      },
+      {
+        "de": "scl",
+        "para": "wnt",
+        "tipo": "inibe"
+      },
+      {
+        "de": "wnt",
+        "para": "ob",
+        "tipo": "estimula"
+      },
+      {
+        "de": "wnt",
+        "para": "opg",
+        "tipo": "estimula"
+      },
+      {
+        "de": "pth",
+        "para": "ob",
+        "tipo": "estimula"
+      },
+      {
+        "de": "ob",
+        "para": "rankl"
+      },
+      {
+        "de": "opg",
+        "para": "rankl",
+        "tipo": "inibe"
+      },
+      {
+        "de": "deno",
+        "para": "rankl",
+        "tipo": "inibe"
+      },
+      {
+        "de": "rankl",
+        "para": "ocl",
+        "tipo": "estimula"
+      },
+      {
+        "de": "bf",
+        "para": "ocl",
+        "tipo": "inibe"
+      }
     ],
     "legenda": "Verde: estimula. Vermelho com barra: inibe. Caixas brancas: fármacos e seu alvo."
   },
