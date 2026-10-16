@@ -18,37 +18,43 @@
         "id": "hip",
         "texto": "Hipotálamo\nGnRH inibido",
         "tipo": "orgao",
-        "camada": 1
+        "camada": 1,
+        "largura": 150
       },
       {
         "id": "aro",
         "texto": "Aromatase\nestradiol alto",
         "tipo": "hormonio",
-        "camada": 1
+        "camada": 1,
+        "largura": 150
       },
       {
         "id": "epo",
         "texto": "Eritropoetina ↑",
         "tipo": "hormonio",
-        "camada": 1
+        "camada": 1,
+        "largura": 150
       },
       {
         "id": "hfi",
-        "texto": "Hipófise\nLH e FSH suprimidos (<1 U/L)",
+        "texto": "Hipófise\nLH e FSH suprimidos\n(<1 U/L)",
         "tipo": "orgao",
-        "camada": 2
+        "camada": 2,
+        "largura": 150
       },
       {
         "id": "gin",
         "texto": "Ginecomastia\nrazão estrogênio/androgênio ↑",
         "tipo": "passo",
-        "camada": 2
+        "camada": 2,
+        "largura": 190
       },
       {
         "id": "eri",
         "texto": "Eritrocitose\nHt >54%: risco trombótico",
         "tipo": "alerta",
-        "camada": 2
+        "camada": 2,
+        "largura": 150
       },
       {
         "id": "ley",
@@ -72,7 +78,8 @@
         "id": "pos",
         "texto": "Pós-ciclo\nrecupera em semanas a >12 meses\nàs vezes hipogonadismo persistente",
         "tipo": "fim",
-        "camada": 5
+        "camada": 5,
+        "largura": 240
       }
     ],
     "setas": [

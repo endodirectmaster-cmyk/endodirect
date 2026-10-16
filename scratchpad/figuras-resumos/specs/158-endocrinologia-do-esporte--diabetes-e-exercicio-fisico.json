@@ -40,7 +40,7 @@
       },
       {
         "id": "cat",
-        "texto": "Catecolaminas, lactato",
+        "texto": "Catecolaminas\ne lactato ↑",
         "tipo": "hormonio",
         "camada": 2
       },
@@ -51,28 +51,28 @@
         "camada": 3
       },
       {
+        "id": "sens",
+        "texto": "Sensibilidade à insulina ↑\npor 24–48 h após o esforço\nrepleção do glicogênio muscular",
+        "tipo": "passo",
+        "camada": 3
+      },
+      {
         "id": "hiper",
         "texto": "Hiperglicemia\ntransitória",
         "tipo": "passo",
         "camada": 3
       },
       {
-        "id": "sens",
-        "texto": "Sensibilidade à insulina ↑\npor 24–48 h após o esforço\nrepleção do glicogênio muscular",
-        "tipo": "passo",
-        "camada": 4
-      },
-      {
         "id": "tard",
         "texto": "Hipoglicemia tardia\nfrequentemente noturna",
         "tipo": "alerta",
-        "camada": 5
+        "camada": 4
       },
       {
         "id": "prev",
         "texto": "Prevenção no DM1\n• bolus −25–75%; basal −50–80%\n• sprints de 10 s; carboidrato extra",
         "tipo": "fim",
-        "camada": 6
+        "camada": 5
       }
     ],
     "setas": [
@@ -112,9 +112,9 @@
         "para": "hiper"
       },
       {
-        "de": "hipo",
+        "de": "mus",
         "para": "sens",
-        "rotulo": "após o treino"
+        "rotulo": "após o esforço"
       },
       {
         "de": "sens",

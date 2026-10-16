@@ -34,7 +34,7 @@
       },
       {
         "id": "prl",
-        "texto": "Prolactina ↑\ntípico 25–100 ng/mL\nrisperidona, haloperidol, metoclopramida",
+        "texto": "Prolactina ↑\ntípico 25–100 ng/mL\nrisperidona, haloperidol",
         "tipo": "hormonio",
         "camada": 2
       },
@@ -46,7 +46,7 @@
       },
       {
         "id": "hg",
-        "texto": "Hipogonadismo\nhipogonadotrófico\namenorreia, galactorreia, DE",
+        "texto": "Sintomas da hiperPRL\namenorreia, galactorreia, DE\nhipogonadismo hipogonadotrófico",
         "tipo": "alerta",
         "camada": 3
       },
@@ -92,7 +92,8 @@
       },
       {
         "de": "hg",
-        "para": "os"
+        "para": "os",
+        "rotulo": "cronicamente"
       },
       {
         "de": "h1",
@@ -116,12 +117,12 @@
   "lastro": [
     "Antipsicóticos e alguns antidepressivos bloqueiam D2 na via tuberoinfundibular, removendo o freio dopaminérgico e elevando a PRL",
     "Fármaco típico eleva PRL 25–100 ng/mL",
-    "o hipogonadismo hipogonadotrófico secundário causa perda de massa óssea/osteoporose",
     "antagonismo H1 e 5-HT2C (hiperfagia/ganho ponderal), efeito direto na sinalização insulínica e na secreção de insulina, e adiposidade visceral",
     "Olanzapina e clozapina são os de maior risco cardiometabólico",
     "risco de diabetes e, em casos raros mas graves, de cetoacidose",
     "Aripiprazol é o \"coringa\": neutro metabolicamente e reduz a PRL",
-    "PRL > 250 ng/mL sugere fortemente prolactinoma"
+    "PRL > 250 ng/mL sugere fortemente prolactinoma",
+    "Cronicamente, o **hipogonadismo hipogonadotrófico** secundário causa **perda de massa óssea/osteoporose**"
   ],
   "justificativa": "O capítulo não tem figura e se apoia em dois mecanismos independentes; mostrá-los lado a lado explica por que olanzapina e risperidona têm perfis opostos."
 }
