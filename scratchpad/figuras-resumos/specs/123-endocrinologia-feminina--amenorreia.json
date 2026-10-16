@@ -8,30 +8,111 @@
   "fluxo": {
     "orientacao": "vertical",
     "nos": [
-      {"id": "hip", "tipo": "orgao", "camada": 0, "texto": "Hipotálamo\nGnRH pulsátil"},
-      {"id": "c1", "tipo": "alerta", "camada": 0, "largura": 220, "texto": "Hipotalâmica\nfuncional (peso, exercício, estresse), Kallmann\nLH/FSH baixos ou normais · E2 baixo"},
-      {"id": "pit", "tipo": "orgao", "camada": 1, "texto": "Hipófise\nLH e FSH"},
-      {"id": "c2", "tipo": "alerta", "camada": 1, "largura": 220, "texto": "Hipofisária\nhiperprolactinemia, Sheehan, macroadenoma\nLH/FSH baixos · E2 baixo"},
-      {"id": "ov", "tipo": "orgao", "camada": 2, "texto": "Ovário\nestradiol e progesterona"},
-      {"id": "c3", "tipo": "alerta", "camada": 2, "largura": 220, "texto": "Ovariana\nIOP, Turner 45,X\nFSH elevado · E2 baixo"},
-      {"id": "ut", "tipo": "orgao", "camada": 3, "texto": "Útero e vagina\nendométrio responsivo, trato pérvio"},
-      {"id": "c4", "tipo": "alerta", "camada": 3, "largura": 220, "texto": "Trato de saída\nAsherman, agenesia mülleriana, hímen imperfurado\nFSH/LH e E2 normais"},
-      {"id": "men", "tipo": "fim", "camada": 4, "texto": "Menstruação"}
+      {
+        "id": "hip",
+        "tipo": "orgao",
+        "camada": 1,
+        "texto": "Hipotálamo\nGnRH pulsátil"
+      },
+      {
+        "id": "c1",
+        "tipo": "alerta",
+        "camada": 0,
+        "largura": 220,
+        "texto": "Hipotalâmica\nfuncional (peso, exercício, estresse), Kallmann\nLH/FSH baixos ou normais · E2 baixo"
+      },
+      {
+        "id": "pit",
+        "tipo": "orgao",
+        "camada": 2,
+        "texto": "Hipófise\nLH e FSH"
+      },
+      {
+        "id": "c2",
+        "tipo": "alerta",
+        "camada": 1,
+        "largura": 220,
+        "texto": "Hipofisária\nhiperprolactinemia (suprime GnRH), Sheehan\nLH/FSH baixos · E2 baixo"
+      },
+      {
+        "id": "ov",
+        "tipo": "orgao",
+        "camada": 3,
+        "texto": "Ovário\nestradiol e progesterona"
+      },
+      {
+        "id": "c3",
+        "tipo": "alerta",
+        "camada": 2,
+        "largura": 220,
+        "texto": "Ovariana\nIOP, Turner 45,X\nFSH elevado (sem retroalimentação)"
+      },
+      {
+        "id": "ut",
+        "tipo": "orgao",
+        "camada": 4,
+        "texto": "Útero e vagina\nendométrio responsivo, trato pérvio"
+      },
+      {
+        "id": "c4",
+        "tipo": "alerta",
+        "camada": 3,
+        "largura": 220,
+        "texto": "Trato de saída\nAsherman, agenesia mülleriana, hímen imperfurado\nFSH/LH e E2 normais"
+      },
+      {
+        "id": "men",
+        "tipo": "fim",
+        "camada": 5,
+        "texto": "Menstruação"
+      }
     ],
     "setas": [
-      {"de": "hip", "para": "pit", "rotulo": "GnRH"},
-      {"de": "c1", "para": "hip", "tipo": "inibe"},
-      {"de": "pit", "para": "ov", "rotulo": "LH/FSH"},
-      {"de": "c2", "para": "pit", "tipo": "inibe"},
-      {"de": "ov", "para": "ut", "rotulo": "E2 e P4"},
-      {"de": "c3", "para": "ov", "tipo": "inibe"},
-      {"de": "ut", "para": "men"},
-      {"de": "c4", "para": "ut", "tipo": "inibe"},
-      {"de": "ov", "para": "pit", "tipo": "feedback", "rotulo": "feedback −"}
-    ],
-    "notas": [
-      {"no": "c2", "lado": "direita", "texto": "Prolactina suprime o GnRH: causa comum e tratável"},
-      {"no": "c3", "lado": "direita", "texto": "FSH sobe por perda da retroalimentação negativa"}
+      {
+        "de": "hip",
+        "para": "pit",
+        "rotulo": "GnRH"
+      },
+      {
+        "de": "c1",
+        "para": "hip",
+        "tipo": "inibe"
+      },
+      {
+        "de": "pit",
+        "para": "ov",
+        "rotulo": "LH/FSH"
+      },
+      {
+        "de": "c2",
+        "para": "pit",
+        "tipo": "inibe"
+      },
+      {
+        "de": "ov",
+        "para": "ut",
+        "rotulo": "E2 e P4"
+      },
+      {
+        "de": "c3",
+        "para": "ov",
+        "tipo": "inibe"
+      },
+      {
+        "de": "ut",
+        "para": "men"
+      },
+      {
+        "de": "c4",
+        "para": "ut",
+        "tipo": "inibe"
+      },
+      {
+        "de": "ov",
+        "para": "pit",
+        "tipo": "feedback",
+        "rotulo": "feedback −"
+      }
     ],
     "legenda": "Vermelho ⊣: onde a lesão bloqueia o eixo. Tracejado: retroalimentação negativa. E2: estradiol; P4: progesterona."
   },

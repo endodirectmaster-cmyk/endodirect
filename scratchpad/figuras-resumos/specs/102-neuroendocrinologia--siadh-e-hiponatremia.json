@@ -1,0 +1,43 @@
+{
+  "i": 102,
+  "sub": "Neuroendocrinologia",
+  "tema": "SIADH e Hiponatremia",
+  "titulo": "SIADH: do ADH não suprimido à hiponatremia euvolêmica",
+  "subtitulo": "O ADH segue agindo apesar do plasma hipotônico; o rim retém água livre e concentra a urina",
+  "tipo": "fluxo",
+  "fluxo": {
+    "orientacao": "vertical",
+    "nos": [
+      {"id": "causas", "tipo": "grupo", "camada": 0, "texto": "Causas\n• neoplasia (pequenas células do pulmão), SNC, pneumopatia\n• fármacos (ISRS, carbamazepina), dor, náusea, pós-operatório"},
+      {"id": "adh", "tipo": "hormonio", "camada": 1, "texto": "ADH não suprimido"},
+      {"id": "rim", "tipo": "orgao", "camada": 2, "texto": "Rim\nretém água livre"},
+      {"id": "urina", "tipo": "passo", "camada": 3, "texto": "Urina inapropriadamente concentrada\nOsm urinária > 100 mOsm/kg\nNa urinário > 30 mEq/L"},
+      {"id": "hipo", "tipo": "fim", "camada": 3, "texto": "Hiponatremia hipotônica euvolêmica\nácido úrico e ureia baixos"},
+      {"id": "sf", "tipo": "alerta", "camada": 4, "texto": "Salina isotônica pode piorar\no rim excreta o sal e retém a água"},
+      {"id": "exc", "tipo": "alerta", "camada": 4, "texto": "Diagnóstico de exclusão\nexcluir hipotireoidismo e insuficiência adrenal\nsem diurético, sem hipovolemia ou edema"},
+      {"id": "trat", "tipo": "passo", "camada": 5, "texto": "SIADH crônico\nrestrição hídrica (1ª linha)\ntratar a causa de base"}
+    ],
+    "setas": [
+      {"de": "causas", "para": "adh"},
+      {"de": "adh", "para": "rim"},
+      {"de": "rim", "para": "urina"},
+      {"de": "rim", "para": "hipo"},
+      {"de": "urina", "para": "sf"},
+      {"de": "hipo", "para": "exc"},
+      {"de": "exc", "para": "trat"},
+      {"de": "hipo", "para": "adh", "tipo": "feedback", "rotulo": "não suprime"}
+    ],
+    "legenda": "Tracejado: o plasma hipotônico deveria suprimir o ADH — no SIADH, não suprime. SPCS: natriurese com hipovolemia."
+  },
+  "lastro": [
+    "secreção inapropriada de ADH (não suprimida apesar de plasma hipotônico) → retenção de água livre → hiponatremia hipotônica euvolêmica",
+    "neoplasias (carcinoma de pequenas células do pulmão — secreção ectópica), doenças do SNC",
+    "osmolaridade urinária > 100 (inapropriadamente concentrada), sódio urinário > 30 mEq/L",
+    "Ácido úrico e ureia tendem a estar baixos (diluição/expansão leve)",
+    "descartar sempre hipotireoidismo e insuficiência adrenal/glicocorticoide, que mimetizam o quadro",
+    "o soro fisiológico pode piorar a hiponatremia (retém a água e excreta o sal)",
+    "na SPCS (síndrome perdedora de sal cerebral) o paciente está hipovolêmico",
+    "SIADH crônico: restrição hídrica (1ª linha)"
+  ],
+  "justificativa": "O fluxograma existente é a abordagem diagnóstico-terapêutica; esta figura mostra o mecanismo — por que o SIADH dá urina concentrada, sódio urinário alto, euvolemia e piora com salina isotônica."
+}
