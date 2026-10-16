@@ -8,31 +8,113 @@
   "fluxo": {
     "orientacao": "vertical",
     "nos": [
-      {"id": "pre", "texto": "Predisposição\nSQSTM1/p62; idosos > 55 anos\npossível gatilho viral (debatido)", "tipo": "inicio", "camada": 0},
-      {"id": "ocl", "texto": "Osteoclastos gigantes\nhiperativos: reabsorção acelerada\nfoco único ou múltiplo", "tipo": "orgao", "camada": 1},
-      {"id": "q", "texto": "Fase quente\nosteolítica: destruição cortical e trabecular", "tipo": "passo", "camada": 2},
-      {"id": "m", "texto": "Fase mista\nesclerose e rarefação; a mais comum", "tipo": "passo", "camada": 3},
-      {"id": "f", "texto": "Fase fria\nespessamento cortical, alargamento ósseo", "tipo": "passo", "camada": 4},
-      {"id": "os", "texto": "Osso em mosaico\naumentado, hipervascularizado\nfrágil e deformado", "tipo": "alerta", "camada": 5},
-      {"id": "cr", "texto": "Crânio\nsurdez, invaginação basilar", "tipo": "fim", "camada": 6},
-      {"id": "col", "texto": "Coluna\ncompressão medular ou radicular", "tipo": "fim", "camada": 6},
-      {"id": "ic", "texto": "Hipervascularização\nIC de alto débito", "tipo": "fim", "camada": 6},
-      {"id": "sar", "texto": "Longa data\nosteossarcoma (raro, grave)", "tipo": "alerta", "camada": 6}
+      {
+        "id": "pre",
+        "texto": "Predisposição\nSQSTM1/p62; idosos > 55 anos\npossível gatilho viral (debatido)",
+        "tipo": "inicio",
+        "camada": 0
+      },
+      {
+        "id": "ocl",
+        "texto": "Osteoclastos gigantes\nhiperativos: reabsorção acelerada\nfoco único ou múltiplo",
+        "tipo": "orgao",
+        "camada": 1
+      },
+      {
+        "id": "q",
+        "texto": "Fase quente\nosteolítica: destruição cortical e trabecular",
+        "tipo": "passo",
+        "camada": 2
+      },
+      {
+        "id": "m",
+        "texto": "Fase mista\nesclerose e rarefação; a mais comum",
+        "tipo": "passo",
+        "camada": 3
+      },
+      {
+        "id": "f",
+        "texto": "Fase fria\nespessamento cortical, alargamento ósseo",
+        "tipo": "passo",
+        "camada": 4
+      },
+      {
+        "id": "os",
+        "texto": "Osso em mosaico\naumentado e hipervascularizado\nfrágil: dor, deformidade, fratura",
+        "tipo": "alerta",
+        "camada": 5
+      },
+      {
+        "id": "sar",
+        "texto": "Osteossarcoma\nraro e grave; suspeitar se dor piora subitamente",
+        "tipo": "alerta",
+        "camada": 5
+      },
+      {
+        "id": "cr",
+        "texto": "Crânio\nsurdez, invaginação basilar",
+        "tipo": "fim",
+        "camada": 6
+      },
+      {
+        "id": "col",
+        "texto": "Coluna\ncompressão medular ou radicular",
+        "tipo": "fim",
+        "camada": 6
+      },
+      {
+        "id": "ic",
+        "texto": "Hipervascularização\nIC de alto débito",
+        "tipo": "fim",
+        "camada": 6
+      }
     ],
     "setas": [
-      {"de": "pre", "para": "ocl"},
-      {"de": "ocl", "para": "q"},
-      {"de": "q", "para": "m"},
-      {"de": "m", "para": "f"},
-      {"de": "f", "para": "os"},
-      {"de": "os", "para": "cr"},
-      {"de": "os", "para": "col"},
-      {"de": "os", "para": "ic"},
-      {"de": "os", "para": "sar"}
+      {
+        "de": "pre",
+        "para": "ocl"
+      },
+      {
+        "de": "ocl",
+        "para": "q"
+      },
+      {
+        "de": "q",
+        "para": "m"
+      },
+      {
+        "de": "m",
+        "para": "f"
+      },
+      {
+        "de": "f",
+        "para": "os"
+      },
+      {
+        "de": "os",
+        "para": "cr"
+      },
+      {
+        "de": "os",
+        "para": "col"
+      },
+      {
+        "de": "os",
+        "para": "ic"
+      },
+      {
+        "de": "f",
+        "para": "sar",
+        "tipo": "fraca",
+        "rotulo": "doença de longa data"
+      }
     ],
     "notas": [
-      {"no": "ocl", "texto": "Fosfatase alcalina elevada marca a atividade, mas é normal em até 20%", "lado": "direita"},
-      {"no": "os", "texto": "Dor óssea 40–50%, deformidade 12–36%, fratura 4–16%", "lado": "direita"}
+      {
+        "no": "ocl",
+        "texto": "Fosfatase alcalina elevada marca a atividade, mas é normal em até 20%",
+        "lado": "direita"
+      }
     ],
     "legenda": "Setas douradas: sequência da doença. Vermelho: osso doente e complicação mais temida."
   },
