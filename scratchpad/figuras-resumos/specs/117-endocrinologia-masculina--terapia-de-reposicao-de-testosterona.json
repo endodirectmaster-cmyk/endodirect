@@ -1,0 +1,42 @@
+{
+  "i": 117,
+  "sub": "Endocrinologia Masculina",
+  "tema": "Terapia de Reposição de Testosterona",
+  "titulo": "Testosterona exógena, eixo gonadal e fertilidade",
+  "subtitulo": "Por que quem deseja fertilidade não recebe testosterona",
+  "tipo": "fluxo",
+  "fluxo": {
+    "orientacao": "vertical",
+    "nos": [
+      {"id": "exo", "tipo": "hormonio", "texto": "Testosterona exógena\ngel ou injetável", "camada": 0},
+      {"id": "clom", "tipo": "passo", "texto": "Clomifeno ou inibidor\nda aromatase", "camada": 0},
+      {"id": "hip", "tipo": "orgao", "texto": "Hipófise\nLH e FSH", "camada": 1},
+      {"id": "hcg", "tipo": "passo", "texto": "hCG ± FSH\nno hipogonadismo secundário", "camada": 1},
+      {"id": "test", "tipo": "orgao", "texto": "Testículo\nprodução testicular própria", "camada": 2},
+      {"id": "supr", "tipo": "alerta", "texto": "Espermatogênese suprimida\ncom a testosterona exógena", "camada": 3},
+      {"id": "fert", "tipo": "fim", "texto": "Fertilidade mantida\nfunção gonadal preservada", "camada": 3}
+    ],
+    "setas": [
+      {"de": "exo", "para": "hip", "tipo": "inibe", "rotulo": "suprime"},
+      {"de": "clom", "para": "hip", "tipo": "estimula", "rotulo": "eleva"},
+      {"de": "hip", "para": "test", "rotulo": "LH e FSH"},
+      {"de": "hcg", "para": "test", "tipo": "estimula", "rotulo": "estimula"},
+      {"de": "test", "para": "supr", "rotulo": "sem LH/FSH"},
+      {"de": "test", "para": "fert", "rotulo": "com estímulo"}
+    ],
+    "notas": [
+      {"no": "exo", "lado": "esquerda", "texto": "Desejo de fertilidade a curto prazo: contraindicação absoluta à reposição"},
+      {"no": "fert", "lado": "direita", "texto": "Escolha inicial: reposição sem desejo de fertilidade; indução de espermatogênese com desejo"}
+    ],
+    "legenda": "Seta verde: estímulo. Seta vermelha com barra: supressão."
+  },
+  "lastro": [
+    "Como a testosterona exógena suprime LH/FSH e a espermatogênese",
+    "usar agentes que preservam ou estimulam a produção testicular própria",
+    "hCG (± FSH) no hipogonadismo secundário",
+    "clomifeno/inibidor da aromatase (elevam as gonadotrofinas endógenas), mantendo função gonadal e fertilidade",
+    "desejo de fertilidade a curto prazo (a testosterona suprime a espermatogênese)",
+    "reposição hormonal se não há desejo de fertilidade, indução de espermatogênese se há"
+  ],
+  "justificativa": "O capítulo já tem o fluxograma de indicação e monitorização; a figura mostra o mecanismo do eixo que explica a contraindicação por desejo de fertilidade e as alternativas que preservam a espermatogênese."
+}

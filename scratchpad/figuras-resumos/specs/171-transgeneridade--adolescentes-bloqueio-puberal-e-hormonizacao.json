@@ -1,0 +1,121 @@
+{
+  "i": 171,
+  "sub": "Transgeneridade",
+  "tema": "Adolescentes: Bloqueio Puberal e Hormonização",
+  "titulo": "Bloqueio puberal: como o análogo de GnRH pausa a puberdade",
+  "subtitulo": "Mecanismo nas diretrizes internacionais; no Brasil, vedado para incongruência de gênero",
+  "tipo": "fluxo",
+  "fluxo": {
+    "orientacao": "vertical",
+    "nos": [
+      {
+        "id": "h",
+        "texto": "Hipotálamo",
+        "tipo": "orgao",
+        "camada": 0
+      },
+      {
+        "id": "a",
+        "texto": "Análogo de GnRH\nleuprolida, histrelina",
+        "tipo": "hormonio",
+        "camada": 0
+      },
+      {
+        "id": "p",
+        "texto": "Hipófise",
+        "tipo": "orgao",
+        "camada": 1
+      },
+      {
+        "id": "g",
+        "texto": "Gônadas",
+        "tipo": "orgao",
+        "camada": 2
+      },
+      {
+        "id": "c",
+        "texto": "Caracteres sexuais secundários\nmama, engrossamento da voz\ndesenvolvimento pausado",
+        "tipo": "passo",
+        "camada": 3
+      },
+      {
+        "id": "r",
+        "texto": "Efeito reversível\nse interrompido, a puberdade retoma\nganha tempo para decidir",
+        "tipo": "fim",
+        "camada": 4
+      },
+      {
+        "id": "o",
+        "texto": "Risco ósseo\nsupressão na fase de aquisição óssea\nvigiar crescimento, idade óssea, DMO",
+        "tipo": "alerta",
+        "camada": 5
+      },
+      {
+        "id": "f",
+        "texto": "Fertilidade\nlimita a maturação de gametas\ndiscutir preservação antes do bloqueio",
+        "tipo": "alerta",
+        "camada": 5
+      }
+    ],
+    "setas": [
+      {
+        "de": "h",
+        "para": "p"
+      },
+      {
+        "de": "a",
+        "para": "p",
+        "tipo": "inibe",
+        "rotulo": "suprime o eixo"
+      },
+      {
+        "de": "p",
+        "para": "g"
+      },
+      {
+        "de": "g",
+        "para": "c"
+      },
+      {
+        "de": "c",
+        "para": "r",
+        "rotulo": "se interrompido"
+      },
+      {
+        "de": "g",
+        "para": "o",
+        "tipo": "fraca",
+        "rotulo": "supressão prolongada"
+      },
+      {
+        "de": "g",
+        "para": "f",
+        "tipo": "fraca"
+      }
+    ],
+    "notas": [
+      {
+        "no": "a",
+        "texto": "No Brasil, a CFM 2.427/2025 veda o bloqueio para incongruência de gênero; segue permitido na puberdade precoce",
+        "lado": "direita"
+      },
+      {
+        "no": "p",
+        "texto": "Diretrizes internacionais: indicado com a puberdade já iniciada, a partir de Tanner 2",
+        "lado": "direita"
+      }
+    ],
+    "legenda": "Barra vermelha: supressão. Cinza tracejado: consequência da supressão."
+  },
+  "lastro": [
+    "veda o bloqueio puberal para incongruência ou disforia de gênero em crianças e adolescentes",
+    "o uso de análogos de GnRH segue permitido na puberdade precoce",
+    "quando a puberdade **já iniciou** (**a partir de Tanner 2**)",
+    "**Análogos de GnRH** (leuprolida, histrelina) suprimem o eixo hipotálamo-hipófise-gonadal e **pausam** o desenvolvimento das características sexuais secundárias",
+    "O efeito é considerado **reversível**: se interrompido, a puberdade endógena retoma",
+    "a supressão prolongada durante a fase de aquisição de massa óssea é a principal preocupação",
+    "Discutir **preservação de fertilidade antes do bloqueio puberal e antes de iniciar hormônios**",
+    "a supressão puberal precoce seguida de hormonização limita a maturação de gametas"
+  ],
+  "justificativa": "Sem fluxograma prévio; o mecanismo do análogo de GnRH sobre o eixo explica a reversibilidade, o risco ósseo e o de fertilidade, com a vedação brasileira em destaque."
+}

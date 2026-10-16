@@ -1,0 +1,129 @@
+{
+  "i": 120,
+  "sub": "Endocrinologia Masculina",
+  "tema": "Disfunção Erétil",
+  "titulo": "Eixo neurovascular da ereção e onde a disfunção erétil age",
+  "subtitulo": "Óxido nítrico, GMP cíclico e PDE5: o alvo dos inibidores orais",
+  "tipo": "fluxo",
+  "fluxo": {
+    "orientacao": "vertical",
+    "nos": [
+      {
+        "id": "risco",
+        "tipo": "alerta",
+        "camada": 0,
+        "texto": "Disfunção endotelial\nDM, HAS, dislipidemia\ntabagismo, obesidade"
+      },
+      {
+        "id": "est",
+        "tipo": "inicio",
+        "camada": 0,
+        "texto": "Estímulo sexual\nparassimpático"
+      },
+      {
+        "id": "inib",
+        "tipo": "passo",
+        "camada": 0,
+        "texto": "Inibidores da PDE5\nsildenafila, vardenafila\ntadalafila"
+      },
+      {
+        "id": "no",
+        "tipo": "hormonio",
+        "camada": 1,
+        "texto": "Óxido nítrico (NO)\nendotélio e nervos cavernosos"
+      },
+      {
+        "id": "pde5",
+        "tipo": "orgao",
+        "camada": 1,
+        "texto": "PDE5\ndegrada o GMPc"
+      },
+      {
+        "id": "gmpc",
+        "tipo": "hormonio",
+        "camada": 2,
+        "texto": "GMP cíclico ↑"
+      },
+      {
+        "id": "relax",
+        "tipo": "orgao",
+        "camada": 3,
+        "texto": "Músculo liso cavernoso\nrelaxa"
+      },
+      {
+        "id": "ingurg",
+        "tipo": "passo",
+        "camada": 4,
+        "texto": "Corpos cavernosos ingurgitam\noclusão venosa passiva"
+      },
+      {
+        "id": "ere",
+        "tipo": "fim",
+        "camada": 5,
+        "texto": "Ereção"
+      }
+    ],
+    "setas": [
+      {
+        "de": "est",
+        "para": "no"
+      },
+      {
+        "de": "risco",
+        "para": "no",
+        "tipo": "inibe",
+        "rotulo": "↓ NO"
+      },
+      {
+        "de": "inib",
+        "para": "pde5",
+        "tipo": "inibe"
+      },
+      {
+        "de": "no",
+        "para": "gmpc"
+      },
+      {
+        "de": "pde5",
+        "para": "gmpc",
+        "tipo": "inibe",
+        "rotulo": "degrada"
+      },
+      {
+        "de": "gmpc",
+        "para": "relax"
+      },
+      {
+        "de": "relax",
+        "para": "ingurg"
+      },
+      {
+        "de": "ingurg",
+        "para": "ere"
+      }
+    ],
+    "notas": [
+      {
+        "no": "gmpc",
+        "texto": "Inibidores da PDE5 exigem estímulo sexual; contraindicados com nitratos (hipotensão grave)",
+        "lado": "direita"
+      },
+      {
+        "no": "ere",
+        "texto": "Artérias penianas adoecem antes das coronárias: DE é marcador precoce de doença CV",
+        "lado": "direita"
+      }
+    ],
+    "legenda": "Dourado: sequência. Vermelho ⊣: inibe ou reduz. PDE5: fosfodiesterase tipo 5; GMPc: GMP cíclico."
+  },
+  "lastro": [
+    "estímulo parassimpático → liberação de **óxido nítrico (NO)** no endotélio e nos nervos cavernosos → ↑ **GMP cíclico**",
+    "relaxamento do músculo liso cavernoso, ingurgitamento dos corpos cavernosos e oclusão venosa passiva",
+    "A **fosfodiesterase tipo 5 (PDE5)** degrada o GMPc — é o alvo dos inibidores orais",
+    "todas geram **disfunção endotelial** e reduzem a biodisponibilidade de NO",
+    "as artérias penianas, de menor calibre, costumam manifestar aterosclerose **antes** das coronárias",
+    "Exigem **estímulo sexual** para agir. **Absolutamente contraindicados com nitratos** (vasodilatação e **hipotensão grave**)",
+    "sildenafila, vardenafila, **tadalafila**"
+  ],
+  "justificativa": "O fluxograma existente cobre a conduta; esta figura mostra o mecanismo NO–GMPc–PDE5 que explica por que a DE é vascular, marca risco CV e responde aos inibidores da PDE5."
+}
