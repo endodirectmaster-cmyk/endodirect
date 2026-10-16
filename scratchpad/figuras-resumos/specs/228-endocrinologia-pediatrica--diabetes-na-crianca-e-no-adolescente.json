@@ -1,0 +1,52 @@
+{
+  "i": 228,
+  "sub": "Endocrinologia Pediátrica",
+  "tema": "Diabetes na Criança e no Adolescente",
+  "titulo": "Cetoacidose diabética na criança: definição, gravidade e manejo",
+  "subtitulo": "Critérios ISPAD 2022; até cerca de 1/3 das crianças com DM1 abre o quadro com CAD",
+  "tipo": "fluxo",
+  "fluxo": {
+    "orientacao": "vertical",
+    "rotulos_camadas": ["Critérios", "", "Gravidade", "Manejo", "", "Risco"],
+    "nos": [
+      {"id": "gli", "tipo": "passo", "camada": 0, "texto": "Hiperglicemia\nglicemia > 200 mg/dL"},
+      {"id": "aci", "tipo": "passo", "camada": 0, "texto": "Acidose\npH venoso < 7,3\nou bicarbonato < 18 mmol/L"},
+      {"id": "cet", "tipo": "passo", "camada": 0, "texto": "Cetose\nβ-hidroxibutirato ≥ 3 mmol/L\nou cetonúria moderada/intensa"},
+      {"id": "cad", "tipo": "inicio", "camada": 1, "texto": "CAD confirmada\nemergência"},
+      {"id": "leve", "tipo": "passo", "camada": 2, "texto": "Leve\npH < 7,3 ou bicarbonato < 18"},
+      {"id": "mod", "tipo": "passo", "camada": 2, "texto": "Moderada\npH < 7,2 ou bicarbonato < 10"},
+      {"id": "grave", "tipo": "alerta", "camada": 2, "texto": "Grave\npH < 7,1 ou bicarbonato < 5"},
+      {"id": "hid", "tipo": "passo", "camada": 3, "texto": "Reidratação cuidadosa\nevitar bolus excessivos de fluido"},
+      {"id": "ins", "tipo": "passo", "camada": 4, "texto": "Insulina regular EV\n0,05–0,1 U/kg/h\napós início da volemia"},
+      {"id": "k", "tipo": "passo", "camada": 4, "texto": "Potássio\nreposição e monitorização"},
+      {"id": "ec", "tipo": "alerta", "camada": 5, "texto": "Edema cerebral\nprincipal causa de morte pediátrica\nevitar quedas rápidas de glicemia"}
+    ],
+    "setas": [
+      {"de": "gli", "para": "cad"},
+      {"de": "aci", "para": "cad"},
+      {"de": "cet", "para": "cad"},
+      {"de": "cad", "para": "leve"},
+      {"de": "cad", "para": "mod"},
+      {"de": "cad", "para": "grave"},
+      {"de": "leve", "para": "hid"},
+      {"de": "mod", "para": "hid"},
+      {"de": "grave", "para": "hid"},
+      {"de": "hid", "para": "ins"},
+      {"de": "hid", "para": "k"},
+      {"de": "ins", "para": "ec", "tipo": "fraca", "rotulo": "vigiar"}
+    ],
+    "notas": [
+      {"no": "ec", "texto": "Vigiar cefaleia e alteração de consciência", "lado": "direita"}
+    ],
+    "legenda": "Gravidade definida pela acidose (pH venoso, bicarbonato em mmol/L)."
+  },
+  "lastro": [
+    "hiperglicemia (> 200 mg/dL) + acidose (pH venoso < 7,3 ou bicarbonato < 18 mmol/L) + cetonemia (beta-hidroxibutirato ≥ 3 mmol/L) ou cetonúria moderada/intensa",
+    "leve pH < 7,3 ou bicarbonato < 18; moderada pH < 7,2 ou bicarbonato < 10; grave pH < 7,1 ou bicarbonato < 5 mmol/L",
+    "reidratação cuidadosa, insulina regular EV 0,05–0,1 U/kg/h (após início da volemia), reposição de potássio e monitorização",
+    "Risco de edema cerebral (principal causa de morte pediátrica na CAD)",
+    "evitar quedas rápidas de glicemia/osmolaridade e bolus excessivos de fluido; vigiar cefaleia, alteração de consciência",
+    "até ~1/3 abre com CAD"
+  ],
+  "justificativa": "O fluxograma existente classifica o tipo de diabetes e só diz 'tratar CAD'; esta figura detalha a emergência que o capítulo destaca: critérios, graus de gravidade e os passos e riscos do manejo."
+}
