@@ -24,7 +24,7 @@
         "id": "cet",
         "tipo": "passo",
         "camada": 0,
-        "texto": "Cetose\nβ-hidroxibutirato ≥ 3 mmol/L\nou cetonúria moderada"
+        "texto": "Cetose\nβ-hidroxibutirato ≥ 3 mmol/L\nou cetonúria moderada/intensa"
       },
       {
         "id": "cad",
@@ -72,7 +72,7 @@
         "id": "ec",
         "tipo": "alerta",
         "camada": 5,
-        "texto": "Edema cerebral\nprincipal causa de morte\nevitar queda rápida da glicemia"
+        "texto": "Edema cerebral\nprincipal causa de morte\nna CAD pediátrica"
       }
     ],
     "setas": [
@@ -124,7 +124,7 @@
         "de": "ins",
         "para": "ec",
         "tipo": "fraca",
-        "rotulo": "vigiar"
+        "rotulo": "glicemia: sem queda rápida"
       }
     ],
     "notas": [

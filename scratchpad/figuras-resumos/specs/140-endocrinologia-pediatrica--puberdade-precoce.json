@@ -1,0 +1,45 @@
+{
+  "i": 140,
+  "sub": "Endocrinologia Pediátrica",
+  "tema": "Puberdade Precoce",
+  "titulo": "Puberdade precoce central e periférica: duas origens, mesmo dano",
+  "subtitulo": "Os esteroides sexuais vêm do eixo ativado ou de fonte autônoma; ambos aceleram a idade óssea",
+  "tipo": "fluxo",
+  "fluxo": {
+    "orientacao": "vertical",
+    "nos": [
+      {"id": "hip", "texto": "Hipotálamo\nGnRH", "tipo": "orgao", "camada": 0},
+      {"id": "an", "texto": "Análogo de GnRH\nleuprolida de depósito\ndessensibiliza a hipófise", "tipo": "passo", "camada": 1},
+      {"id": "hipo", "texto": "Hipófise\nLH e FSH", "tipo": "orgao", "camada": 1},
+      {"id": "gon", "texto": "Gônadas\ncentral: LH puberal\nidiopática ou lesão do SNC", "tipo": "orgao", "camada": 2},
+      {"id": "per", "texto": "Fonte periférica\nHAC, tumor, McCune-Albright\nesteroides exógenos", "tipo": "alerta", "camada": 2},
+      {"id": "est", "texto": "Esteroides sexuais", "tipo": "hormonio", "camada": 3},
+      {"id": "car", "texto": "Caracteres sexuais\nmenina antes de 8 anos\nmenino antes de 9 anos", "tipo": "passo", "camada": 4},
+      {"id": "io", "texto": "Idade óssea avançada\nfechamento precoce das epífises", "tipo": "passo", "camada": 4},
+      {"id": "fim", "texto": "Baixa estatura final\napesar da alta estatura transitória", "tipo": "fim", "camada": 5}
+    ],
+    "setas": [
+      {"de": "hip", "para": "hipo", "rotulo": "GnRH"},
+      {"de": "an", "para": "hipo", "tipo": "inibe"},
+      {"de": "hipo", "para": "gon", "rotulo": "LH e FSH"},
+      {"de": "gon", "para": "est"},
+      {"de": "per", "para": "est", "rotulo": "sem GnRH"},
+      {"de": "est", "para": "car"},
+      {"de": "est", "para": "io"},
+      {"de": "io", "para": "fim"}
+    ],
+    "notas": [
+      {"no": "per", "texto": "LH suprimido: resposta pré-puberal ao GnRH; tratar a causa", "lado": "direita"}
+    ],
+    "legenda": "Setas douradas: estímulo. Barra vermelha: o análogo freia a progressão e preserva a estatura final."
+  },
+  "lastro": [
+    "Ativação precoce do eixo hipotálamo-hipófise-gonadal → puberdade isossexual, ordenada e progressiva",
+    "Esteroides sexuais produzidos sem ativação central → LH suprimido (resposta pré-puberal ao GnRH).",
+    "Causas: HAC, tumores (adrenal, gonadal, produtores de hCG), cistos ovarianos autônomos, síndrome de McCune-Albright",
+    "O excesso de esteroides acelera a idade óssea e o fechamento das epífises → risco de baixa estatura final apesar da alta estatura transitória",
+    "análogo de GnRH de depósito (ex.: leuprolida) — dessensibiliza a hipófise, freia a progressão, preserva a estatura final",
+    "antes dos 8 anos na menina e antes dos 9 anos no menino."
+  ],
+  "justificativa": "O fluxograma já traz a abordagem diagnóstica; a figura mostra o mecanismo comum às duas formas, onde age o análogo de GnRH e por que a estatura final cai."
+}
