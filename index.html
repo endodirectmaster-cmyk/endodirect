@@ -756,6 +756,12 @@ html[data-theme="light"] .mural-text .mural-h1,html[data-theme="light"] .mural-t
 .wys-edit .wys-cap:empty::before{content:attr(data-ph);opacity:.5}
 .mural-source a{color:#5cc8f5;text-decoration:none}
 .mural-source a:hover{text-decoration:underline}
+/* Botão do artigo original logo abaixo da data (16/10/2026): o "Fonte: <revista>" do
+   pé do card não era lido como link do artigo. Alvo de toque de 34px. */
+.mural-art-link{display:flex;flex-wrap:wrap;gap:.45rem;margin:.1rem 0 .6rem}
+.mural-art-link a{display:inline-flex;align-items:center;gap:.35rem;min-height:34px;padding:.3rem .85rem;border:1px solid var(--blue2);border-radius:999px;font-size:.78rem;font-weight:700;color:var(--blue2);text-decoration:none;background:transparent;overflow-wrap:anywhere}
+.mural-art-link a:hover,.mural-art-link a:focus-visible{background:rgba(85,133,232,.14);outline:none}
+.mural-art-link a.mural-art-sec{border-color:var(--bd2);color:var(--t2)}
 .mural-empty{grid-column:1/-1}
 .mural-card-actions{display:flex;gap:.45rem;flex-wrap:wrap;margin-top:1rem}
 .mural-admin-grid{margin-top:1rem}
@@ -6915,7 +6921,10 @@ function startApp(){
     // Reload mantém a última seção (adm_sec persiste); logout limpa adm_sec, então
     // um login novo cai no padrão (Analytics) via admRestoreSec().
     goPanel('adm');
-    consumirLinkPainel(); // link de aluno (/#qotd…) não vale no painel do professor nem fica para o próximo login da aba
+    // Link do e-mail ou da notificação (/#qotd/<id>, /#mural): abre a seção do painel
+    // do professor; sem link, fica a seção de sempre. Consumido aqui, o pedido não
+    // sobra para o próximo login da aba.
+    abrirLinkNoPainelDoProfessor(consumirLinkPainel());
     try{loadAdmSupport();}catch(e){} // popula o badge "(N)" do Suporte já no login
     pendAlertShown=false; // re-arma o alerta de pendências a cada login (dispara após o hydrate)
     try{applyQotdNav();}catch(e){} // esconde o gerador "Questão do Dia" p/ não-donos + badge das Pendências
@@ -7149,13 +7158,26 @@ function abrirPainelDoLink(l){
   goPanel(l.p);
   return true;
 }
+// PROFESSOR QUE TOCA O LINK (16/10/2026). Vídeo do Eduardo, professor, no Android:
+// "Conferir a resposta na plataforma" abria o painel do professor em Analytics,
+// porque o pedido era DESCARTADO na entrada do professor (o link era tratado como
+// coisa só de aluno). Professor também lê o e-mail e recebe a notificação. Agora
+// /#qotd/<id> abre o arquivo da Questão do Dia do painel do professor já naquela
+// questão (gabarito e comentário), e /#mural abre o mural do painel. /#aovivo não
+// tem seção no painel do professor: fica a seção de sempre.
+function abrirLinkNoPainelDoProfessor(l){
+  if(!l||!LINK_PAINEIS[l.p])return false;
+  if(l.p==='qotd'){admQotdArchSub='';admQotdArchOpen=l.arg||null;admQotdArchRolar=!!l.arg;renderAdmSec('qotdarq');return true;}
+  if(l.p==='mural'){renderAdmSec('mural');return true;}
+  return false;
+}
 guardarLinkPainel();
 // App já aberto (a notificação navega a janela existente só trocando o "#").
 window.addEventListener('hashchange',function(){
   var l=guardarLinkPainel();
-  if(!l||!currentUser||isAdminUser())return;
+  if(!l||!currentUser)return;
   consumirLinkPainel();
-  abrirPainelDoLink(l);
+  if(isAdminUser())abrirLinkNoPainelDoProfessor(l);else abrirPainelDoLink(l);
 });
 function handlePasswordRecovery(){
   var client=getSupabaseClient();
@@ -8847,6 +8869,7 @@ var qotdArchSort='recent'; // aluno: 'recent' = mais recente primeiro; 'old' = m
 var qotdArchAuto=true;     // 1ª abertura do painel escancara a de hoje, se ainda não respondida
 var qotdArchRolar=false;   // link direto (/#qotd/<id>): rola até a questão aberta quando ela aparecer na lista
 var admQotdArchOpen=null;  // id aberto no arquivo do professor
+var admQotdArchRolar=false; // chegou pelo link (/#qotd/<id>): rola até a questão quando ela estiver na lista
 var admQotdArchSub='';     // filtro de subespecialidade no arquivo do professor ('' = todas)
 var admQotdArchSort='recent'; // ordenação por data ('recent' = mais recente; 'old' = mais antiga)
 function qotdPublished(){
@@ -8943,6 +8966,12 @@ function admQotdArchiveHTML(){
     +'<div id="adm-qotd-arch">'+body+'</div></div>';
 }
 function bindAdmQotdArchive(){
+  // Chegou pelo link: rola até a questão quando ela já está na lista. A primeira
+  // pintura pode vir antes de o estado carregar; o re-render do hydrate tenta de novo.
+  if(admQotdArchRolar&&admQotdArchOpen){
+    var alvoQa=document.querySelector('[data-admqa-toggle="'+String(admQotdArchOpen).replace(/[^A-Za-z0-9_-]/g,'')+'"]');
+    if(alvoQa){admQotdArchRolar=false;try{alvoQa.scrollIntoView({block:'start'});}catch(e){}}
+  }
   var fs=document.getElementById('adm-qa-sub');if(fs)fs.addEventListener('change',function(){admQotdArchSub=fs.value;admQotdArchOpen=null;renderAdmSec('qotdarq');});
   var so=document.getElementById('adm-qa-sort');if(so)so.addEventListener('change',function(){admQotdArchSort=so.value;renderAdmSec('qotdarq');});
   document.querySelectorAll('[data-admqa-toggle]').forEach(function(h){h.addEventListener('click',function(){var id=h.getAttribute('data-admqa-toggle');admQotdArchOpen=(admQotdArchOpen===id)?null:id;renderAdmSec('qotdarq');});});
@@ -19510,6 +19539,31 @@ function muralInlineEditHTML(a){
     +'<input type="file" id="mural-inline-txtimgfile" accept="image/*" style="display:none">'
   +'</div>';
 }
+// LINK DO ARTIGO ORIGINAL NO POST AUTOMÁTICO (16/10/2026). Pedido do professor:
+// "Colocar o link para o artigo original nos posts automáticos do mural. Fica ruim
+// de ter que procurar pelo artigo manualmente." O card já linkava o NOME da revista
+// no pé ("Fonte: …"), depois do texto e da discussão, e ninguém lia aquilo como o
+// artigo. Agora um botão logo abaixo da data abre o artigo (o texto completo, quando
+// é acesso aberto) e o PubMed vem ao lado quando há PMID. Só nos posts do radar
+// (`auto`): o aviso escrito pelo professor segue com a fonte como ele a pôs.
+function muralLinkLimpo(u){
+  u=String(u||'').trim();
+  if(!safeHttpUrl(u))return '';
+  // `?af=R` é a marca do feed RSS da Wiley; utm_* são de campanha. Saem do endereço
+  // que o aluno abre: o artigo é o mesmo, e o link fica limpo para compartilhar.
+  try{var x=new URL(u);['af','utm_source','utm_medium','utm_campaign','utm_content','utm_term'].forEach(function(k){x.searchParams.delete(k);});return x.toString();}catch(e){return u;}
+}
+function muralLinkArtigoHTML(a){
+  if(!a||a.auto!==true)return '';
+  var href=muralLinkLimpo(a.link);
+  if(!href)return '';
+  var sid=String(a.sourceId||'');
+  var oficial=a.breaking===true||a.official===true||sid.indexOf('news:')===0||String(a.tipo||'').toLowerCase().indexOf('breaking')>=0;
+  var rotulo=oficial?'Abrir o comunicado oficial':(sid.indexOf('society:')===0?'Abrir a publicação original':(a.oa===true?'Ler o texto completo (acesso aberto)':'Ler o artigo original'));
+  var pmid=/^\d{5,9}$/.test(String(a.pmid||''))?String(a.pmid):'';
+  var pubmed=(pmid&&!/pubmed\.ncbi\.nlm\.nih\.gov/i.test(href))?'<a data-art="pubmed" class="mural-art-sec" href="https://pubmed.ncbi.nlm.nih.gov/'+pmid+'/" target="_blank" rel="noopener noreferrer">PubMed ↗</a>':'';
+  return '<div class="mural-art-link"><a data-art="artigo" href="'+esc(href)+'" target="_blank" rel="noopener noreferrer">📄 '+esc(rotulo)+' ↗</a>'+pubmed+'</div>';
+}
 function muralNoticeCardHTML(a,admin){
   function dateBR(v){var d=new Date(v||Date.now());if(isNaN(d.getTime()))d=new Date();return d.toLocaleDateString('pt-BR');}
   var sub=muralSubspecialty(a),meta=muralSubMeta(sub),tipo=muralDisplayType(a);
@@ -19523,6 +19577,7 @@ function muralNoticeCardHTML(a,admin){
     +'<div class="mural-card-tags"><span class="tag tag-blue">'+esc(tipo)+'</span>'+(sub?('<span class="tag '+meta.tag+'">'+esc(sub)+'</span>'):'')+'</div>'
     +'<h3>'+esc(muralTitulo(a)||'Aviso aos alunos')+'</h3>'+muralTituloOriginalHTML(a)
     +'<div class="mural-date">'+dateBR(a.at)+'</div>'
+    +muralLinkArtigoHTML(a)
     +imgHTML
     +'<div class="mural-text">'+muralTextHTML(muralBodyText(a)||'Comunicado publicado pela equipe Endodirect.')+'</div>'
       +muralDiscussaoHTML(a)

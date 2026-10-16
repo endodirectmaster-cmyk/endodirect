@@ -967,6 +967,17 @@ try {
   fail('regressão da grade das calculadoras falhou:\n' + out);
 }
 
+// 17c-undecies-i. LINK DO ARTIGO ORIGINAL NOS POSTS AUTOMÁTICOS DO MURAL (16/10/2026):
+//      o card só linkava o nome da revista no pé; agora um botão logo abaixo da
+//      data abre o artigo, com o PubMed ao lado quando há PMID.
+try {
+  execFileSync(process.execPath, [path.join('scripts', 'test-mural-link-artigo.js')], { stdio: 'pipe' });
+  ok('link do artigo original no mural: botão em todo post do radar, PubMed com PMID, sem marcas de feed');
+} catch (e) {
+  const out = (e.stdout ? e.stdout.toString() : '') + (e.stderr ? e.stderr.toString() : '');
+  fail('regressão do link do artigo no mural falhou:\n' + out);
+}
+
 // 17c-undecies-h. NOTIFICAÇÃO DA QUESTÃO DO DIA NO CELULAR (15/10/2026): no iPhone o
 //      link do e-mail abre no Safari, não no app instalado; a notificação abre o
 //      app na questão. Sai junto com a newsletter e pelo botão do painel.

@@ -1,9 +1,60 @@
 ---
 tags: [cofre, newsletter, radar]
-atualizado: 2026-10-15
+atualizado: 2026-10-16
 ---
 
 # Newsletter e Radar
+
+## 📄 BOTÃO DO ARTIGO ORIGINAL NOS POSTS AUTOMÁTICOS DO MURAL (2026-10-16)
+
+Pedido do professor: *"Colocar o link para o artigo original nos posts automáticos do
+mural. Fica ruim de ter que procurar pelo artigo manualmente."* O link existia, mas
+no NOME da revista, no pé do card ("Fonte: Frontiers in Endocrinology"), depois do
+texto e da discussão: ninguém o lia como o artigo (A/B no Chromium, celular e
+notebook: na versão publicada o card não tem nada que diga "artigo").
+
+- **`muralLinkArtigoHTML(a)`**, logo abaixo da data no card vivo (`muralNoticeCardHTML`,
+  o do aluno e o do professor): botão **"📄 Ler o artigo original ↗"**; **"Ler o texto
+  completo (acesso aberto) ↗"** quando `oa === true` (link do PMC); **"Abrir o comunicado
+  oficial ↗"** na breaking news (`news:`, `breaking`, `official`); **"Abrir a publicação
+  original ↗"** nos posts de sociedade (`society:`). **"PubMed ↗"** ao lado quando há
+  PMID (5 a 9 dígitos) e o link não é do PubMed. Aba nova, `noopener noreferrer`, alvo
+  de toque de 34px.
+- **Só posts do radar** (`auto === true`, booleano como no banco): o aviso escrito pelo
+  professor segue com a fonte como ele a pôs.
+- **`muralLinkLimpo`** tira `af` (marca do feed RSS da Wiley, `?af=R`) e `utm_*` do
+  endereço; o artigo é o mesmo e o link fica limpo para compartilhar. Endereço que o
+  `URL()` recusa volta cru e passa pelo `esc` (o teste cobre esse caminho: sem ele, a
+  mutação que tira o `esc` sobrevivia, porque o `URL()` já codifica aspas e sinais).
+- **No banco (16/10):** 2.175 posts do radar, todos com link (870 do PMC, 840 doi.org, 465
+  de revista) e 1.712 com PMID. Nada a migrar: o botão sai do que já está gravado.
+- **Prova:** `scripts/test-mural-link-artigo.js` (17c-undecies-i; 5 de 5 mutações mortas)
+  e `scratchpad/mural-link-navegador/check.js` nos dois lados (celular 392px e notebook).
+  `sw` v300.
+
+## 🧑‍🏫 O LINK DA QUESTÃO DO DIA TAMBÉM VALE PARA O PROFESSOR (2026-10-16)
+
+Vídeo do Eduardo (professor, Android, Gmail): *"ainda não está direcionando para a
+resposta da questão"*. Ele toca "Conferir a resposta na plataforma" e o app abre o
+painel do professor em **Analytics**. **Causa:** a entrada do professor (`startApp`,
+ramo admin) DESCARTAVA o pedido de painel (`consumirLinkPainel()` com o comentário
+"link de aluno não vale no painel do professor"), e o `hashchange` também saía cedo
+para admin. Para aluno o link funcionava desde 10/10 (o harness confirma). Professor
+também lê o e-mail e, desde 15/10, recebe a notificação da Questão do Dia.
+
+- **`abrirLinkNoPainelDoProfessor(l)`**: `/#qotd/<id>` → seção **Questão do Dia**
+  (`qotdarq`, o arquivo com gabarito em destaque e comentário) aberta NA questão, com o
+  filtro de subespecialidade zerado; `/#mural` → seção Mural do painel; `/#aovivo` não
+  tem seção no painel do professor e fica a de sempre. Vale na entrada e com o app
+  aberto (`hashchange`). A rolagem até a questão (`admQotdArchRolar`) espera a lista
+  chegar: a primeira pintura vem antes do hydrate, e o re-render do hydrate tenta de novo.
+- **Dono da Questão do Dia** (que não vê o `qotdarq` no menu, só o gerador): o link abre
+  o `qotdarq` mesmo assim; `renderAdmSec` não tem guarda para essa seção.
+- **Prova:** `scripts/test-qotd-link-direto.js` ganhou o ramo do professor (comportamento
+  em jsdom e a fiação no `startApp` e no `hashchange`; 4 de 4 mutações mortas) e
+  `scratchpad/qotd-link-navegador/check.js` (login de professor simulado, celular): a main
+  reproduz o vídeo (Analytics, nada aberto); a nova abre o arquivo na questão, com o
+  comentário à vista, e a troca do "#" com o app aberto também leva à questão.
 
 ## 🧠🔔 A QUESTÃO DO DIA VAI POR NOTIFICAÇÃO NO CELULAR (2026-10-15)
 
