@@ -33,28 +33,28 @@
         "camada": 2
       },
       {
-        "id": "o",
-        "texto": "Risco ósseo\nfase de aquisição de massa óssea\nvigiar crescimento, idade óssea, DMO",
-        "tipo": "alerta",
-        "camada": 3
-      },
-      {
         "id": "c",
         "texto": "Caracteres sexuais\nmama, engrossamento da voz\ndesenvolvimento pausado",
         "tipo": "passo",
         "camada": 3
       },
       {
+        "id": "o",
+        "texto": "Risco ósseo\nfase de aquisição de massa óssea\nvigiar crescimento, idade óssea, DMO",
+        "tipo": "alerta",
+        "camada": 4
+      },
+      {
         "id": "f",
         "texto": "Fertilidade\nlimita a maturação de gametas\ndiscutir preservação antes",
         "tipo": "alerta",
-        "camada": 3
+        "camada": 4
       },
       {
         "id": "r",
         "texto": "Efeito reversível\na puberdade endógena retoma\nganha tempo para decidir",
         "tipo": "fim",
-        "camada": 4
+        "camada": 5
       }
     ],
     "setas": [

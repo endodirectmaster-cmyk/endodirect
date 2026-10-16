@@ -8,32 +8,115 @@
   "fluxo": {
     "orientacao": "vertical",
     "nos": [
-      {"id": "sec", "tipo": "alerta", "camada": 0, "texto": "Falha secundária\nhiperprolactinemia, Kallmann\nopioides, obesidade"},
-      {"id": "hip", "tipo": "orgao", "camada": 0, "texto": "Hipotálamo\nGnRH"},
-      {"id": "prim", "tipo": "alerta", "camada": 1, "texto": "Falha primária\nKlinefelter, orquite, QT/RT"},
-      {"id": "hipof", "tipo": "orgao", "camada": 1, "texto": "Hipófise anterior\nLH e FSH"},
-      {"id": "ley", "tipo": "orgao", "camada": 2, "texto": "Célula de Leydig\nestimulada pelo LH"},
-      {"id": "ser", "tipo": "orgao", "camada": 2, "texto": "Célula de Sertoli\nestimulada pelo FSH"},
-      {"id": "t", "tipo": "hormonio", "camada": 3, "texto": "Testosterona"},
-      {"id": "esp", "tipo": "fim", "camada": 3, "texto": "Espermatogênese\ninibina"}
+      {
+        "id": "sec",
+        "tipo": "alerta",
+        "camada": 0,
+        "texto": "Falha secundária\nhiperprolactinemia, Kallmann\nopioides, obesidade"
+      },
+      {
+        "id": "hip",
+        "tipo": "orgao",
+        "camada": 0,
+        "texto": "Hipotálamo\nGnRH"
+      },
+      {
+        "id": "hipof",
+        "tipo": "orgao",
+        "camada": 1,
+        "texto": "Hipófise anterior\nLH e FSH"
+      },
+      {
+        "id": "prim",
+        "tipo": "alerta",
+        "camada": 2,
+        "texto": "Falha primária\nKlinefelter, orquite, QT/RT\nLH/FSH ↑ → cariótipo"
+      },
+      {
+        "id": "ser",
+        "tipo": "orgao",
+        "camada": 2,
+        "texto": "Célula de Sertoli\nestimulada pelo FSH"
+      },
+      {
+        "id": "ley",
+        "tipo": "orgao",
+        "camada": 2,
+        "texto": "Célula de Leydig\nestimulada pelo LH"
+      },
+      {
+        "id": "t",
+        "tipo": "hormonio",
+        "camada": 3,
+        "texto": "Testosterona"
+      },
+      {
+        "id": "esp",
+        "tipo": "fim",
+        "camada": 4,
+        "texto": "Espermatogênese\ninibina"
+      }
     ],
     "setas": [
-      {"de": "hip", "para": "hipof", "rotulo": "GnRH"},
-      {"de": "sec", "para": "hipof", "tipo": "inibe"},
-      {"de": "hipof", "para": "ley", "rotulo": "LH"},
-      {"de": "hipof", "para": "ser", "rotulo": "FSH"},
-      {"de": "prim", "para": "ley", "tipo": "inibe"},
-      {"de": "ley", "para": "t"},
-      {"de": "ser", "para": "esp"},
-      {"de": "t", "para": "hipof", "tipo": "feedback", "rotulo": "feedback −"},
-      {"de": "esp", "para": "hipof", "tipo": "feedback", "rotulo": "inibina"}
+      {
+        "de": "hip",
+        "para": "hipof",
+        "rotulo": "GnRH"
+      },
+      {
+        "de": "sec",
+        "para": "hipof",
+        "tipo": "inibe"
+      },
+      {
+        "de": "hipof",
+        "para": "ley",
+        "rotulo": "LH"
+      },
+      {
+        "de": "hipof",
+        "para": "ser",
+        "rotulo": "FSH"
+      },
+      {
+        "de": "prim",
+        "para": "ser",
+        "tipo": "inibe"
+      },
+      {
+        "de": "ley",
+        "para": "t"
+      },
+      {
+        "de": "ser",
+        "para": "esp"
+      },
+      {
+        "de": "t",
+        "para": "hipof",
+        "tipo": "feedback",
+        "rotulo": "feedback −"
+      },
+      {
+        "de": "esp",
+        "para": "hipof",
+        "tipo": "feedback",
+        "rotulo": "inibina"
+      }
     ],
     "notas": [
-      {"no": "sec", "texto": "T baixa com LH/FSH baixos ou inapropriadamente normais → prolactina, ferro, RM de sela", "lado": "esquerda"},
-      {"no": "prim", "texto": "T baixa com LH/FSH elevados (perda do feedback negativo) → cariótipo", "lado": "esquerda"},
-      {"no": "t", "texto": "Testosterona exógena suprime LH/FSH e a espermatogênese: evitar se deseja fertilidade", "lado": "esquerda"}
+      {
+        "no": "sec",
+        "texto": "T baixa com LH/FSH baixos ou inapropriadamente normais → prolactina, ferro, RM de sela",
+        "lado": "esquerda"
+      },
+      {
+        "no": "esp",
+        "texto": "Testosterona exógena suprime LH/FSH e a espermatogênese: evitar se deseja fertilidade",
+        "lado": "esquerda"
+      }
     ],
-    "legenda": "Dourado: estímulo. Vermelho ⊣: falha. Tracejado vermelho: retroalimentação negativa. QT/RT: quimio/radioterapia."
+    "legenda": "Vermelho ⊣: falha. Tracejado: retroalimentação negativa. QT/RT: quimio/radioterapia."
   },
   "lastro": [
     "**GnRH** hipotalâmico → **LH** (estimula as células de Leydig → testosterona) e **FSH** (estimula as células de Sertoli → espermatogênese)",
