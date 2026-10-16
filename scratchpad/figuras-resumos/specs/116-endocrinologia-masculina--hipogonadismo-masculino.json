@@ -12,13 +12,19 @@
         "id": "sec",
         "tipo": "alerta",
         "camada": 0,
-        "texto": "Falha secundária\nhiperprolactinemia, Kallmann\nopioides, obesidade"
+        "texto": "Falha secundária\nhiperprolactinemia, Kallmann\nLH/FSH baixos ou normais"
       },
       {
         "id": "hip",
         "tipo": "orgao",
         "camada": 0,
         "texto": "Hipotálamo\nGnRH"
+      },
+      {
+        "id": "exo",
+        "tipo": "alerta",
+        "camada": 0,
+        "texto": "Testosterona exógena\nevitar se deseja\nfertilidade"
       },
       {
         "id": "hipof",
@@ -69,6 +75,12 @@
         "tipo": "inibe"
       },
       {
+        "de": "exo",
+        "para": "hipof",
+        "tipo": "inibe",
+        "rotulo": "suprime"
+      },
+      {
         "de": "hipof",
         "para": "ley",
         "rotulo": "LH"
@@ -102,18 +114,6 @@
         "para": "hipof",
         "tipo": "feedback",
         "rotulo": "inibina"
-      }
-    ],
-    "notas": [
-      {
-        "no": "sec",
-        "texto": "T baixa com LH/FSH baixos ou inapropriadamente normais → prolactina, ferro, RM de sela",
-        "lado": "esquerda"
-      },
-      {
-        "no": "esp",
-        "texto": "Testosterona exógena suprime LH/FSH e a espermatogênese: evitar se deseja fertilidade",
-        "lado": "esquerda"
       }
     ],
     "legenda": "Vermelho ⊣: falha. Tracejado: retroalimentação negativa. QT/RT: quimio/radioterapia."

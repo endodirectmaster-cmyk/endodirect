@@ -40,21 +40,21 @@
       },
       {
         "id": "o",
-        "texto": "Risco ósseo\nfase de aquisição de massa óssea\nvigiar crescimento, idade óssea, DMO",
-        "tipo": "alerta",
-        "camada": 4
-      },
-      {
-        "id": "f",
-        "texto": "Fertilidade\nlimita a maturação de gametas\ndiscutir preservação antes",
+        "texto": "Risco ósseo\nvigiar crescimento\nidade óssea e DMO",
         "tipo": "alerta",
         "camada": 4
       },
       {
         "id": "r",
-        "texto": "Efeito reversível\na puberdade endógena retoma\nganha tempo para decidir",
+        "texto": "Reversível\npuberdade endógena retoma\nganha tempo para decidir",
         "tipo": "fim",
-        "camada": 5
+        "camada": 4
+      },
+      {
+        "id": "f",
+        "texto": "Fertilidade\nlimita maturação de gametas\npreservar antes: discutir",
+        "tipo": "alerta",
+        "camada": 4
       }
     ],
     "setas": [
