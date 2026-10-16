@@ -74,9 +74,18 @@ async function obterFontes() {
   return { csv, xlsx, arquivoCmed: (urlX.match(/(lista_pmc__[^/]+?)\.xlsx/) || [])[1] || 'lista_pmc' };
 }
 
-// CSV da ANVISA: latin1, ";" e aspas.
+// CSV da ANVISA: Windows-1252 (o latin1 com travessão, apóstrofo e aspas curvas em
+// 0x80–0x9F), ";" e aspas. A tabela é nossa porque o TextDecoder('latin1') muda entre
+// versões do Node: no 22 lê 0x96 como travessão; no 20, que roda no GitHub, como
+// caractere de controle invisível (16/10: "D’orto" virou "Dorto" na 1ª atualização).
+// As cinco posições que o Windows-1252 não define (0x81, 0x8D, 0x8F, 0x90, 0x9D) saem.
+const CP1252 = ['€', '', '‚', 'ƒ', '„', '…', '†', '‡', 'ˆ', '‰', 'Š', '‹', 'Œ', '', 'Ž', '',
+  '', '‘', '’', '“', '”', '•', '–', '—', '˜', '™', 'š', '›', 'œ', '', 'ž', 'Ÿ'];
+function decodificar1252(buf) {
+  return Buffer.from(buf).toString('latin1').replace(/[\u0080-\u009f]/g, (c) => CP1252[c.charCodeAt(0) - 0x80]);
+}
 function lerCsv(arq) {
-  const txt = new TextDecoder('latin1').decode(fs.readFileSync(arq));
+  const txt = decodificar1252(fs.readFileSync(arq));
   const linhas = txt.split(/\r?\n/).filter(Boolean);
   const campos = (l) => { const out = []; let cur = '', q = false; for (let i = 0; i < l.length; i++) { const c = l[i]; if (c === '"') { q = !q; continue; } if (c === ';' && !q) { out.push(cur); cur = ''; continue; } cur += c; } out.push(cur); return out; };
   const cab = campos(linhas[0]);
@@ -182,4 +191,5 @@ async function main() {
   fs.writeFileSync(path.join(RAIZ, 'bulario.json'), texto);
   console.log(JSON.stringify(meta.totais) + ' · ' + (texto.length / 1e6).toFixed(2) + ' MB · CMED: ' + fontes.arquivoCmed);
 }
-main().catch((e) => { console.error('bulário: ' + ((e && e.stack) || e)); process.exit(1); });
+if (require.main === module) main().catch((e) => { console.error('bulário: ' + ((e && e.stack) || e)); process.exit(1); });
+module.exports = { decodificar1252 };

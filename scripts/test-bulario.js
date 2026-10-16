@@ -21,8 +21,15 @@ const falhas = [];
 const ok = (c, m) => { if (!c) falhas.push(m); };
 
 // (1) arquivo
-let d = null;
-try { d = JSON.parse(fs.readFileSync(path.join(raiz, 'bulario.json'), 'utf8')); } catch (e) { falhas.push('(1) bulario.json ausente ou inválido: ' + e.message); }
+let d = null, bruto = '';
+try { bruto = fs.readFileSync(path.join(raiz, 'bulario.json'), 'utf8'); d = JSON.parse(bruto); } catch (e) { falhas.push('(1) bulario.json ausente ou inválido: ' + e.message); }
+// (1b) Codificação. O CSV da ANVISA é Windows-1252; na 1ª atualização semanal (16/10)
+// o Node 20 do GitHub leu travessão e apóstrofo como caractere de controle invisível
+// ("D’orto" virou "Dorto"). A leitura agora usa tabela própria, e o arquivo não passa
+// com caractere de controle.
+const { decodificar1252 } = require('./bulario/construir.js');
+ok(decodificar1252(Buffer.from([0x44, 0x92, 0x6f, 0x20, 0x96, 0x20, 0xe9, 0x81])) === 'D\u2019o \u2013 \u00e9', '(1b) leitura do CSV: 0x92, 0x96 e 0xE9 deveriam virar ’, – e é');
+ok(!/[\u0080-\u009f]/.test(bruto), '(1b) bulario.json com caractere de controle (U+0080 a U+009F) no lugar de travessão ou apóstrofo');
 if (d) {
   const t = d.tab, P = d.p;
   ok(d.meta && d.meta.v === 1 && /^\d{4}-\d{2}-\d{2}$/.test(d.meta.gerado || ''), '(1) meta sem versão ou data');

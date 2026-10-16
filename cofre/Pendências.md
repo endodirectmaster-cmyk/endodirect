@@ -27,8 +27,9 @@ atualizado: 2026-10-16
 1. **Professor: tocar uma vez o botão "Bula oficial na ANVISA"** de qualquer medicamento
    e dizer se abre a busca já com o nome. O formato do link não tem documentação pública
    e o Bulário Eletrônico não abre daqui (firewall da ANVISA).
-2. **Conferir a 1ª execução do GitHub Actions** `bulario.yml` (disparada à mão em 16/10
-   e, depois, toda segunda às 09h17 UTC): grava na main sem erro de permissão?
+2. ✅ **1ª execução do `bulario.yml` (16/10, à mão):** gravou na main sem erro de
+   permissão; estragou 5 nomes pela codificação do CSV, corrigido no mesmo dia
+   (`cofre/Bulário.md`). Conferir a execução programada de segunda, 19/10, 09h17 UTC.
 3. **Fase 2:** fichas próprias das medicações de endocrinologia; conferência contra a bula
    brasileira depende dos PDFs enviados pelo professor.
 4. **Consultório:** `presc-catalogo.json` (09/06) pode passar a sair do mesmo construtor.
