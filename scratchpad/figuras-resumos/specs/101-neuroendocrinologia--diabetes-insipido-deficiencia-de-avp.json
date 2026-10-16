@@ -1,0 +1,45 @@
+{
+  "i": 101,
+  "sub": "Neuroendocrinologia",
+  "tema": "Diabetes Insípido (Deficiência de AVP)",
+  "titulo": "Onde a ação da AVP falha: deficiência × resistência",
+  "subtitulo": "Da neuro-hipófise ao ducto coletor; falha em qualquer ponto gera poliúria hipotônica",
+  "tipo": "fluxo",
+  "fluxo": {
+    "orientacao": "vertical",
+    "nos": [
+      {"id": "cen", "texto": "Deficiência de AVP (central)\n• cirurgia ou tumor selar, apoplexia, trauma\n• hipofisite, infiltrativas, idiopático", "tipo": "grupo", "camada": 0},
+      {"id": "hh", "texto": "Hipotálamo e neuro-hipófise\nproduzem e secretam AVP", "tipo": "orgao", "camada": 1},
+      {"id": "avp", "texto": "AVP (ADH)", "tipo": "hormonio", "camada": 2},
+      {"id": "dd", "texto": "Desmopressina\nconcentra a urina no central", "tipo": "passo", "camada": 2},
+      {"id": "nef", "texto": "Resistência à AVP (nefrogênico)\n• lítio, hipercalcemia, hipocalemia\n• doença renal, hereditário (V2, AQP2)", "tipo": "grupo", "camada": 2},
+      {"id": "rim", "texto": "Ducto coletor\nreceptor V2", "tipo": "orgao", "camada": 3},
+      {"id": "aqp", "texto": "Aquaporinas\nreabsorção de água livre", "tipo": "passo", "camada": 4},
+      {"id": "ok", "texto": "Urina concentrada", "tipo": "fim", "camada": 5}
+    ],
+    "setas": [
+      {"de": "cen", "para": "hh", "tipo": "inibe"},
+      {"de": "hh", "para": "avp"},
+      {"de": "avp", "para": "rim"},
+      {"de": "dd", "para": "rim", "tipo": "estimula"},
+      {"de": "nef", "para": "rim", "tipo": "inibe"},
+      {"de": "rim", "para": "aqp"},
+      {"de": "aqp", "para": "ok"}
+    ],
+    "notas": [
+      {"no": "aqp", "texto": "Sem ação da AVP: poliúria hipotônica acima de 50 mL/kg em 24 h, sede e polidipsia", "lado": "direita"},
+      {"no": "ok", "texto": "Polidipsia primária: o defeito é beber água em excesso; a urina concentra com a restrição", "lado": "direita"}
+    ],
+    "legenda": "Barra vermelha: onde cada forma bloqueia. Verde: a desmopressina repõe a AVP e não vence a resistência."
+  },
+  "lastro": [
+    "O ADH age pelo receptor V2 nos ductos coletores ativando aquaporinas",
+    "Central: cirurgia/tumor selar, apoplexia, trauma, hipofisite, infiltrativas, idiopático.",
+    "Nefrogênico: lítio, hipercalcemia, hipocalemia, doença renal, hereditário.",
+    "Forma familiar por mutação do receptor V2 ou do gene AQP2",
+    "Após desmopressina, a urina concentra no central e não concentra no nefrogênico.",
+    "Poliúria é volume urinário acima de 50 mL/kg em 24 horas.",
+    "Na polidipsia primária, a osmolaridade urinária já se eleva com a restrição."
+  ],
+  "justificativa": "O capítulo já tem o algoritmo do teste de restrição; a figura mostra a fisiologia da AVP e o ponto em que cada forma falha, o que explica a resposta à desmopressina."
+}
