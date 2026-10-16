@@ -24,7 +24,8 @@ atualizado: 2026-10-16
 
 ## 🖼️ Figuras dos Resumos (16/10)
 
-1. **Professor: olhar as figuras** (galeria enviada em 16/10) e apontar o que trocar; a
+1. **Professor: olhar as figuras** (galeria de revisão, privada, em
+   https://claude.ai/artifact/XR2ZgeNxnWnfEy5B5z338G) e apontar o que trocar; a
    especificação de cada uma está em `scratchpad/figuras-resumos/specs/` e se refaz em
    minutos. Antes de editar qualquer Resumo no painel, **F5** (o painel aberto antes da
    gravação não tem o campo `figuras` e pode sobrescrevê-lo).

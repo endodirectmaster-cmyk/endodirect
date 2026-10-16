@@ -52,6 +52,9 @@ figura ganharam uma cada (os outros já tinham figura própria).
    antes, 233 itens antes e depois, nenhum outro campo nem outra chave alterados. A
    função temporária `exportar-capitulos` virou stub 410.
 
+**Galeria de revisão** (privada, do professor): https://claude.ai/artifact/XR2ZgeNxnWnfEy5B5z338G
+— as 115 figuras por seção, cada uma com o que a conferência corrigiu.
+
 ## Lições
 
 - **O erro não estava nos números, estava nas setas.** A peneira de números e de
