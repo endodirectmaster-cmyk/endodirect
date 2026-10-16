@@ -7,41 +7,138 @@
   "tipo": "fluxo",
   "fluxo": {
     "orientacao": "vertical",
-    "rotulos_camadas": ["Critérios", "", "Gravidade", "Manejo", "", "Risco"],
     "nos": [
-      {"id": "gli", "tipo": "passo", "camada": 0, "texto": "Hiperglicemia\nglicemia > 200 mg/dL"},
-      {"id": "aci", "tipo": "passo", "camada": 0, "texto": "Acidose\npH venoso < 7,3\nou bicarbonato < 18 mmol/L"},
-      {"id": "cet", "tipo": "passo", "camada": 0, "texto": "Cetose\nβ-hidroxibutirato ≥ 3 mmol/L\nou cetonúria moderada/intensa"},
-      {"id": "cad", "tipo": "inicio", "camada": 1, "texto": "CAD confirmada\nemergência"},
-      {"id": "leve", "tipo": "passo", "camada": 2, "texto": "Leve\npH < 7,3 ou bicarbonato < 18"},
-      {"id": "mod", "tipo": "passo", "camada": 2, "texto": "Moderada\npH < 7,2 ou bicarbonato < 10"},
-      {"id": "grave", "tipo": "alerta", "camada": 2, "texto": "Grave\npH < 7,1 ou bicarbonato < 5"},
-      {"id": "hid", "tipo": "passo", "camada": 3, "texto": "Reidratação cuidadosa\nevitar bolus excessivos de fluido"},
-      {"id": "ins", "tipo": "passo", "camada": 4, "texto": "Insulina regular EV\n0,05–0,1 U/kg/h\napós início da volemia"},
-      {"id": "k", "tipo": "passo", "camada": 4, "texto": "Potássio\nreposição e monitorização"},
-      {"id": "ec", "tipo": "alerta", "camada": 5, "texto": "Edema cerebral\nprincipal causa de morte pediátrica\nevitar quedas rápidas de glicemia"}
+      {
+        "id": "gli",
+        "tipo": "passo",
+        "camada": 0,
+        "texto": "Hiperglicemia\n> 200 mg/dL"
+      },
+      {
+        "id": "aci",
+        "tipo": "passo",
+        "camada": 0,
+        "texto": "Acidose\npH venoso < 7,3\nou HCO₃⁻ < 18 mmol/L"
+      },
+      {
+        "id": "cet",
+        "tipo": "passo",
+        "camada": 0,
+        "texto": "Cetose\nβ-hidroxibutirato ≥ 3 mmol/L\nou cetonúria moderada"
+      },
+      {
+        "id": "cad",
+        "tipo": "inicio",
+        "camada": 1,
+        "texto": "CAD confirmada\nemergência"
+      },
+      {
+        "id": "leve",
+        "tipo": "passo",
+        "camada": 2,
+        "texto": "Leve\npH < 7,3\nou HCO₃⁻ < 18"
+      },
+      {
+        "id": "mod",
+        "tipo": "passo",
+        "camada": 2,
+        "texto": "Moderada\npH < 7,2\nou HCO₃⁻ < 10"
+      },
+      {
+        "id": "grave",
+        "tipo": "alerta",
+        "camada": 2,
+        "texto": "Grave\npH < 7,1\nou HCO₃⁻ < 5"
+      },
+      {
+        "id": "hid",
+        "tipo": "passo",
+        "camada": 3,
+        "texto": "Reidratação cuidadosa\nsem bolus excessivos de fluido"
+      },
+      {
+        "id": "ins",
+        "tipo": "passo",
+        "camada": 4,
+        "texto": "Insulina regular EV\n0,05–0,1 U/kg/h\napós início da volemia"
+      },
+      {
+        "id": "k",
+        "tipo": "passo",
+        "camada": 4,
+        "texto": "Potássio\nreposição e monitorização"
+      },
+      {
+        "id": "ec",
+        "tipo": "alerta",
+        "camada": 5,
+        "texto": "Edema cerebral\nprincipal causa de morte\nevitar queda rápida da glicemia"
+      }
     ],
     "setas": [
-      {"de": "gli", "para": "cad"},
-      {"de": "aci", "para": "cad"},
-      {"de": "cet", "para": "cad"},
-      {"de": "cad", "para": "leve"},
-      {"de": "cad", "para": "mod"},
-      {"de": "cad", "para": "grave"},
-      {"de": "leve", "para": "hid"},
-      {"de": "mod", "para": "hid"},
-      {"de": "grave", "para": "hid"},
-      {"de": "hid", "para": "ins"},
-      {"de": "hid", "para": "k"},
-      {"de": "ins", "para": "ec", "tipo": "fraca", "rotulo": "vigiar"}
+      {
+        "de": "gli",
+        "para": "cad"
+      },
+      {
+        "de": "aci",
+        "para": "cad"
+      },
+      {
+        "de": "cet",
+        "para": "cad"
+      },
+      {
+        "de": "cad",
+        "para": "leve"
+      },
+      {
+        "de": "cad",
+        "para": "mod"
+      },
+      {
+        "de": "cad",
+        "para": "grave"
+      },
+      {
+        "de": "leve",
+        "para": "hid"
+      },
+      {
+        "de": "mod",
+        "para": "hid"
+      },
+      {
+        "de": "grave",
+        "para": "hid"
+      },
+      {
+        "de": "hid",
+        "para": "ins"
+      },
+      {
+        "de": "hid",
+        "para": "k"
+      },
+      {
+        "de": "ins",
+        "para": "ec",
+        "tipo": "fraca",
+        "rotulo": "vigiar"
+      }
     ],
     "notas": [
-      {"no": "ec", "texto": "Vigiar cefaleia e alteração de consciência", "lado": "direita"}
+      {
+        "no": "ec",
+        "texto": "Vigiar cefaleia e alteração de consciência",
+        "lado": "direita"
+      }
     ],
-    "legenda": "Gravidade definida pela acidose (pH venoso, bicarbonato em mmol/L)."
+    "legenda": "Gravidade definida pela acidose (pH venoso; HCO₃⁻: bicarbonato, mmol/L)."
   },
   "lastro": [
-    "hiperglicemia (> 200 mg/dL) + acidose (pH venoso < 7,3 ou bicarbonato < 18 mmol/L) + cetonemia (beta-hidroxibutirato ≥ 3 mmol/L) ou cetonúria moderada/intensa",
+    "hiperglicemia (> 200 mg/dL) + acidose (pH venoso < 7,3 ou bicarbonato < 18 mmol/L)",
+    "cetonemia (beta-hidroxibutirato ≥ 3 mmol/L) ou cetonúria moderada/intensa",
     "leve pH < 7,3 ou bicarbonato < 18; moderada pH < 7,2 ou bicarbonato < 10; grave pH < 7,1 ou bicarbonato < 5 mmol/L",
     "reidratação cuidadosa, insulina regular EV 0,05–0,1 U/kg/h (após início da volemia), reposição de potássio e monitorização",
     "Risco de edema cerebral (principal causa de morte pediátrica na CAD)",
