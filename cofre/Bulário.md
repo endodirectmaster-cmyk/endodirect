@@ -21,7 +21,7 @@ oficial na ANVISA ↗"**.
 
 **As fontes (ambas públicas e oficiais):**
 - **ANVISA, dados abertos** (`dados.anvisa.gov.br/dados/DADOS_ABERTOS_MEDICAMENTOS.csv`,
-  ~46 MB, latin1, `;`): todos os registros, com situação. Em 16/10: 228.870 linhas,
+  ~46 MB, Windows-1252, `;`): todos os registros, com situação. Em 16/10: 228.870 linhas,
   85.092 ativas, **12.390 produtos** com registro ativo (um por número de registro;
   sem número, por nome + detentor), 2.473 princípios ativos.
 - **CMED, lista de preços (PMC)** (`www.gov.br/anvisa/.../cmed/precos`, o arquivo
@@ -55,14 +55,29 @@ e o app o carrega sob demanda ao abrir o painel. **`.github/workflows/bulario.ym
 refaz o arquivo toda segunda-feira às 09h17 UTC, roda `scripts/test-bulario.js` e
 só então grava na main (a Vercel publica). Se a ANVISA ou a CMED mudarem o formato
 e o teste falhar, nada é gravado e os alunos seguem com a semana anterior.
-Disparo manual: `workflow_dispatch` no Actions.
+Disparo manual: `workflow_dispatch` no Actions. O `sw.js` serve o `bulario.json` em
+stale-while-revalidate: a semana nova aparece a partir da segunda abertura do painel,
+sem precisar subir a versão do service worker a cada atualização.
 
-**Prova:** `scripts/test-bulario.js` (17c-undecies-j no `ci-validate`; 7 de 7
+**1ª execução (16/10, disparada à mão):** baixou as duas fontes a partir do GitHub
+sem bloqueio, passou no teste e gravou na main pelo `github-actions[bot]`, sem erro
+de permissão; mas estragou 5 nomes (lição abaixo). Corrigido no mesmo dia. A próxima
+execução programada é a de segunda, 19/10, às 09h17 UTC.
+
+**Prova:** `scripts/test-bulario.js` (17c-undecies-j no `ci-validate`; 9 de 9
 mutações mortas: lista vazia sem busca, normalização de acento, link, ordenação,
-degustação…) e `scratchpad/bulario-navegador/check.js` (aluno no celular e no
+degustação, leitura do CSV, caractere de controle no arquivo…) e `scratchpad/bulario-navegador/check.js` (aluno no celular e no
 notebook e professor: busca, ficha, preço, link, área, sem rolagem horizontal).
 
 **Lições da construção:**
+- **Codificação do CSV da ANVISA (Windows-1252).** O `TextDecoder('latin1')` do
+  Node 22 (o daqui) lê 0x96 e 0x92 como travessão e apóstrofo; o do Node 20 (o do
+  GitHub) os leu como caracteres de controle invisíveis, e a 1ª atualização gravou
+  "Dorto" no lugar de "D’orto" e tirou o travessão de "Clonazepam (Port. 344/98 –
+  Lista B1)" (5 nomes). A leitura passou a usar tabela própria (`decodificar1252`,
+  conferida byte a byte contra o Windows-1252) e o teste barra o arquivo com
+  caractere de U+0080 a U+009F. Script que roda em outra máquina precisa de teste
+  que rode lá também: o CI usa o Node 20 e agora exercita essa leitura.
 - A tabela de três colunas escondia a situação à direita no celular; virou lista
   (apresentação em cima, preço e situação embaixo), com as sem venda recolhidas.
 - Capitalização: "GLIFAGE XR" virava "Glifage Xr" e "S/A" virava "S/a". A regra:
