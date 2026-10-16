@@ -8,39 +8,113 @@
   "fluxo": {
     "orientacao": "vertical",
     "nos": [
-      {"id": "cent", "tipo": "alerta", "camada": 0, "texto": "Hipogonadismo central\nKallmann, funcional, lesão do SNC\nhiperprolactinemia, pan-hipopituitarismo"},
-      {"id": "hip", "tipo": "orgao", "camada": 0, "texto": "Hipotálamo\nsecreção pulsátil de GnRH"},
-      {"id": "hipof", "tipo": "orgao", "camada": 1, "texto": "Hipófise\nLH e FSH"},
-      {"id": "gcause", "tipo": "alerta", "camada": 1, "texto": "Hipogonadismo gonadal\nTurner 45,X · Klinefelter 47,XXY\nquimio/radioterapia, autoimune"},
-      {"id": "gon", "tipo": "orgao", "camada": 2, "texto": "Gônadas\ntestículos ou ovários"},
-      {"id": "est", "tipo": "hormonio", "camada": 3, "texto": "Testosterona / estradiol"},
-      {"id": "rep", "tipo": "passo", "camada": 3, "texto": "Reposição de esteroides\nhipogonadismo permanente\ndoses crescentes"},
-      {"id": "car", "tipo": "fim", "camada": 4, "texto": "Caracteres sexuais\nmenina: telarca\nmenino: testículo ≥ 4 mL"}
+      {
+        "id": "hip",
+        "tipo": "orgao",
+        "camada": 0,
+        "texto": "Hipotálamo\nsecreção pulsátil de GnRH"
+      },
+      {
+        "id": "cent",
+        "tipo": "alerta",
+        "camada": 0,
+        "texto": "Hipogonadismo central\nLH/FSH baixos · Kallmann, funcional\nlesão do SNC, hiperprolactinemia"
+      },
+      {
+        "id": "hipof",
+        "tipo": "orgao",
+        "camada": 1,
+        "texto": "Hipófise\nLH e FSH"
+      },
+      {
+        "id": "gcause",
+        "tipo": "alerta",
+        "camada": 1,
+        "texto": "Hipogonadismo gonadal\nLH/FSH altos · Turner, Klinefelter\nquimio/radioterapia, autoimune"
+      },
+      {
+        "id": "gon",
+        "tipo": "orgao",
+        "camada": 2,
+        "texto": "Gônadas\ntestículos ou ovários"
+      },
+      {
+        "id": "est",
+        "tipo": "hormonio",
+        "camada": 3,
+        "texto": "Testosterona / estradiol"
+      },
+      {
+        "id": "rep",
+        "tipo": "passo",
+        "camada": 3,
+        "texto": "Reposição de esteroides\nhipogonadismo permanente\ndoses crescentes"
+      },
+      {
+        "id": "car",
+        "tipo": "fim",
+        "camada": 4,
+        "texto": "Caracteres sexuais\nmenina: telarca\nmenino: testículo ≥ 4 mL"
+      }
     ],
     "setas": [
-      {"de": "hip", "para": "hipof", "rotulo": "GnRH"},
-      {"de": "cent", "para": "hipof", "tipo": "inibe", "rotulo": "LH/FSH baixos"},
-      {"de": "hipof", "para": "gon", "rotulo": "LH/FSH"},
-      {"de": "gcause", "para": "gon", "tipo": "inibe", "rotulo": "LH/FSH altos"},
-      {"de": "gon", "para": "est"},
-      {"de": "est", "para": "car"},
-      {"de": "rep", "para": "car", "tipo": "estimula"}
+      {
+        "de": "hip",
+        "para": "hipof",
+        "rotulo": "GnRH"
+      },
+      {
+        "de": "cent",
+        "para": "hipof",
+        "tipo": "inibe"
+      },
+      {
+        "de": "hipof",
+        "para": "gon",
+        "rotulo": "LH/FSH"
+      },
+      {
+        "de": "gcause",
+        "para": "gon",
+        "tipo": "inibe"
+      },
+      {
+        "de": "gon",
+        "para": "est"
+      },
+      {
+        "de": "est",
+        "para": "car"
+      },
+      {
+        "de": "rep",
+        "para": "car",
+        "tipo": "estimula"
+      }
     ],
     "notas": [
-      {"no": "hip", "texto": "Retardo constitucional: variante normal, idade óssea atrasada; a puberdade ocorrerá espontaneamente", "lado": "direita"},
-      {"no": "gcause", "texto": "Cariótipo obrigatório no padrão hipergonadotrófico", "lado": "direita"}
+      {
+        "no": "hip",
+        "texto": "Retardo constitucional: variante normal, idade óssea atrasada; a puberdade ocorrerá espontaneamente",
+        "lado": "direita"
+      },
+      {
+        "no": "gcause",
+        "texto": "Cariótipo obrigatório no padrão hipergonadotrófico (Turner 45,X; Klinefelter 47,XXY)",
+        "lado": "direita"
+      }
     ],
     "legenda": "Dourado: eixo normal. Vermelho ⊣: nível do defeito. Verde: reposição."
   },
   "lastro": [
-    "O eixo é ativado pela secreção pulsátil de **GnRH**, elevando **LH/FSH** e os esteroides sexuais",
-    "**Hipogonadismo hipogonadotrófico (central; LH/FSH baixos):** **Kallmann**",
-    "**Hipogonadismo hipergonadotrófico (gonadal; LH/FSH altos):** **Turner (45,X)** na menina, **Klinefelter (47,XXY)** no menino",
-    "variante **normal** — **idade óssea atrasada**",
-    "A puberdade ocorrerá **espontaneamente**",
-    "**Cariótipo** obrigatório no padrão **hipergonadotrófico** (Turner/Klinefelter).",
-    "**Hipogonadismo permanente:** **reposição de esteroides sexuais em doses crescentes**",
-    "O primeiro sinal puberal é o **aumento do volume testicular (≥ 4 mL)** no menino e a **telarca** na menina."
+    "O eixo é ativado pela secreção pulsátil de GnRH, elevando LH/FSH e os esteroides sexuais",
+    "Hipogonadismo hipogonadotrófico (central; LH/FSH baixos): Kallmann",
+    "Hipogonadismo hipergonadotrófico (gonadal; LH/FSH altos): Turner (45,X) na menina, Klinefelter (47,XXY) no menino",
+    "variante normal — idade óssea atrasada",
+    "A puberdade ocorrerá espontaneamente",
+    "Cariótipo obrigatório no padrão hipergonadotrófico (Turner/Klinefelter).",
+    "Hipogonadismo permanente: reposição de esteroides sexuais em doses crescentes",
+    "O primeiro sinal puberal é o aumento do volume testicular (≥ 4 mL) no menino e a telarca na menina."
   ],
   "justificativa": "O fluxograma existente é o algoritmo laboratorial; esta figura mostra no eixo GnRH–LH/FSH–gônada onde cada grupo de causa atua e por que as gonadotrofinas ficam baixas ou altas."
 }

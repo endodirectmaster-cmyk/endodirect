@@ -1,0 +1,119 @@
+{
+  "i": 168,
+  "sub": "Transgeneridade",
+  "tema": "Princípios do Cuidado de Afirmação de Gênero",
+  "titulo": "Adulto trans no Brasil: do acolhimento ao início da hormonização",
+  "subtitulo": "Critérios da Resolução CFM nº 2.427/2025",
+  "tipo": "fluxo",
+  "fluxo": {
+    "orientacao": "vertical",
+    "nos": [
+      {
+        "id": "ini",
+        "texto": "Pessoa trans deseja hormonização",
+        "tipo": "inicio"
+      },
+      {
+        "id": "av",
+        "texto": "Avaliação inicial\n• nome social, rede de apoio, suicídio\n• fertilidade: opções antes de iniciar",
+        "tipo": "grupo"
+      },
+      {
+        "id": "cr",
+        "texto": "Critérios\nincongruência persistente e documentada\ncapacidade de decisão (TCLE)",
+        "tipo": "passo"
+      },
+      {
+        "id": "d1",
+        "texto": "≥ 18 anos e ≥ 1 ano de acompanhamento?",
+        "tipo": "decisao"
+      },
+      {
+        "id": "esp",
+        "texto": "Não iniciar\nhormonioterapia cruzada vedada antes",
+        "tipo": "alerta"
+      },
+      {
+        "id": "d2",
+        "texto": "Doença psiquiátrica grave ou contraindicação clínica?",
+        "tipo": "decisao"
+      },
+      {
+        "id": "ci",
+        "texto": "Contraindicado\np. ex., transtorno psicótico grave",
+        "tipo": "alerta"
+      },
+      {
+        "id": "cv",
+        "texto": "Avaliação cardiometabólica\nparecer favorável; comorbidades controladas",
+        "tipo": "passo"
+      },
+      {
+        "id": "fim",
+        "texto": "Iniciar hormonização\nTCLE cita efeitos permanentes",
+        "tipo": "fim"
+      }
+    ],
+    "setas": [
+      {
+        "de": "ini",
+        "para": "av"
+      },
+      {
+        "de": "av",
+        "para": "cr"
+      },
+      {
+        "de": "cr",
+        "para": "d1"
+      },
+      {
+        "de": "d1",
+        "para": "esp",
+        "rotulo": "Não"
+      },
+      {
+        "de": "d1",
+        "para": "d2",
+        "rotulo": "Sim"
+      },
+      {
+        "de": "d2",
+        "para": "ci",
+        "rotulo": "Sim"
+      },
+      {
+        "de": "d2",
+        "para": "cv",
+        "rotulo": "Não"
+      },
+      {
+        "de": "cv",
+        "para": "fim"
+      }
+    ],
+    "notas": [
+      {
+        "no": "d1",
+        "texto": "Acompanhamento com ênfase psiquiátrica e endocrinológica; impede o início imediato pelo modelo de consentimento informado",
+        "lado": "direita"
+      },
+      {
+        "no": "fim",
+        "texto": "Cirurgia: só a partir dos 18 anos, ou 21 se potencial esterilizador, após ≥ 1 ano de acompanhamento",
+        "lado": "direita"
+      }
+    ]
+  },
+  "lastro": [
+    "Nome social; identidade de gênero; rede de apoio; presença de transtornos mentais; **risco de suicídio**",
+    "**informar as opções antes de iniciar a terapia hormonal**",
+    "incongruência de gênero persistente e bem documentada; capacidade de decisão sobre o tratamento (TCLE)",
+    "**vedado o início da hormonioterapia cruzada antes dos 18 anos**",
+    "**no mínimo 1 ano de acompanhamento médico prévio**, com ênfase psiquiátrica e endocrinológica",
+    "avaliação cardiovascular e metabólica com parecer favorável; e controle de comorbidades clínicas e psiquiátricas",
+    "doença psiquiátrica grave além da disforia (p. ex., transtornos psicóticos graves",
+    "**Vedadas antes dos 18 anos** e, quando o procedimento tiver potencial efeito esterilizador"
+  ],
+  "justificativa": "Sem fluxograma prévio; a sequência de avaliação e critérios da régua brasileira é o que o endocrinologista aplica para decidir se e quando iniciar a hormonização."
+}
