@@ -1,0 +1,113 @@
+{
+  "i": 72,
+  "sub": "Obesidade",
+  "tema": "Obesidade Sindrômica e Monogênica",
+  "titulo": "Via leptina–melanocortina: onde cai cada defeito monogênico",
+  "subtitulo": "Cada defeito cai em um ponto da via, e isso explica quem responde a qual tratamento",
+  "tipo": "fluxo",
+  "fluxo": {
+    "orientacao": "vertical",
+    "nos": [
+      {
+        "id": "lep",
+        "texto": "Leptina\ndefeito: leptina baixa\nestatura normal, mais infecções",
+        "tipo": "hormonio"
+      },
+      {
+        "id": "metre",
+        "texto": "Metreleptina\nleptina recombinante\nsó no defeito de LEP",
+        "tipo": "passo"
+      },
+      {
+        "id": "lepr",
+        "texto": "Receptor de leptina (LEPR)\nno núcleo arqueado\ndefeito: estatura final baixa",
+        "tipo": "orgao"
+      },
+      {
+        "id": "pomc",
+        "texto": "POMC\ndefeito: cabelos ruivos, insuficiência adrenal",
+        "tipo": "orgao"
+      },
+      {
+        "id": "pcsk1",
+        "texto": "PCSK1 cliva a POMC\ndefeito: diarreia neonatal, pró-insulina alta",
+        "tipo": "orgao"
+      },
+      {
+        "id": "msh",
+        "texto": "α-MSH",
+        "tipo": "hormonio"
+      },
+      {
+        "id": "setm",
+        "texto": "Setmelanotide\nagonista do MC4R\nLEPR, POMC, PCSK1 e Bardet–Biedl",
+        "tipo": "passo",
+        "camada": 4
+      },
+      {
+        "id": "mc4r",
+        "texto": "MC4R\ndefeito: o mais comum (~5%)\nestatura elevada, DMO aumentada",
+        "tipo": "orgao"
+      }
+    ],
+    "setas": [
+      {
+        "de": "lep",
+        "para": "lepr"
+      },
+      {
+        "de": "metre",
+        "para": "lepr",
+        "tipo": "estimula",
+        "rotulo": "repõe a leptina"
+      },
+      {
+        "de": "lepr",
+        "para": "pomc"
+      },
+      {
+        "de": "pomc",
+        "para": "pcsk1"
+      },
+      {
+        "de": "pcsk1",
+        "para": "msh",
+        "rotulo": "clivagem"
+      },
+      {
+        "de": "msh",
+        "para": "mc4r"
+      },
+      {
+        "de": "setm",
+        "para": "mc4r",
+        "tipo": "estimula",
+        "rotulo": "agonista"
+      }
+    ],
+    "notas": [
+      {
+        "no": "lepr",
+        "texto": "Leptina proporcional à massa gorda; não responde à leptina exógena",
+        "lado": "direita"
+      },
+      {
+        "no": "mc4r",
+        "texto": "Sem terapia dirigida: o alvo do setmelanotide é o próprio receptor defeituoso",
+        "lado": "direita"
+      }
+    ],
+    "legenda": "Dourado: sequência do sinal; verde: onde o fármaco age. Qualquer defeito: hiperfagia e obesidade precoce."
+  },
+  "lastro": [
+    "A via é leptina → LEPR → POMC → PCSK1 → α-MSH → MC4R; todo defeito monogênico clássico cai em um ponto dela.",
+    "Deficiência de leptina: leptina baixa, estatura normal, mais infecções (células T) — responde à leptina recombinante.",
+    "Deficiência do receptor de leptina: leptina proporcional à massa gorda e estatura final BAIXA — responde a setmelanotide, não à leptina.",
+    "POMC: cabelos ruivos + insuficiência adrenal — mas o cabelo ruivo NÃO está em todos os pacientes.",
+    "PCSK1 abre com diarreia neonatal; a assinatura é PRÓ-INSULINA ALTA com insulina baixa e hipoglicemia pós-prandial.",
+    "MC4R é a monogênica mais comum (~5%): estatura elevada, DMO AUMENTADA, hiperinsulinismo — e NÃO tem terapia dirigida.",
+    "todos defeitos a montante do MC4R, que é onde a droga repõe o sinal",
+    "o receptor-alvo do setmelanotide é justamente o defeituoso"
+  ],
+  "justificativa": "O capítulo já tem o algoritmo de quando investigar; a via leptina–melanocortina explica a marca de cada defeito monogênico e quem responde a qual terapia."
+}

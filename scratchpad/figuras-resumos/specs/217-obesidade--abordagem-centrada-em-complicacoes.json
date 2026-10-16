@@ -1,0 +1,38 @@
+{
+  "i": 217,
+  "sub": "Obesidade",
+  "tema": "Abordagem Centrada em Complicações",
+  "titulo": "Estadiar a obesidade pela complicação: EOSS e CMDS",
+  "subtitulo": "Os dois preveem risco independentemente do IMC; só o EOSS inclui saúde mental e função",
+  "tipo": "painel",
+  "painel": {
+    "colunas": [
+      {"titulo": "EOSS · médico, mental e funcional", "cor": "navy", "itens": [
+        "0 · sem fator de risco, sem limitação funcional",
+        "1 · subclínico: pré-diabetes, síndrome metabólica, esteatose; limitação leve",
+        "2 · doença estabelecida: DM2, hipertensão, apneia do sono; limitação moderada",
+        "3 · lesão de órgão-alvo: infarto, insuficiência cardíaca, AVC; limitação importante",
+        "4 · incapacidade grave, potencialmente terminal"
+      ]},
+      {"titulo": "CMDS · só cardiometabólico", "cor": "gold", "itens": [
+        "0 · metabolicamente saudável, nenhum fator",
+        "1 · um ou dois fatores: cintura, PA, HDL, triglicerídeos",
+        "2 · uma só: síndrome metabólica, glicemia de jejum alterada ou intolerância à glicose",
+        "3 · duas dessas três",
+        "4 · DM2 e/ou doença cardiovascular ativa"
+      ]}
+    ],
+    "rodape": "DM2 em 10 anos pelo CMDS: 1,8% no estágio 0 contra 41,8% no 3. A gravidade da complicação, não a faixa de IMC, define a intensidade do tratamento."
+  },
+  "lastro": [
+    "EOSS: 0 a 4, integra comorbidade médica (metabólica e mecânica), saúde mental e limitação funcional/bem-estar; prevê mortalidade independentemente do IMC.",
+    "pré-diabetes, síndrome metabólica, esteatose hepática; limitação leve.",
+    "DM2, hipertensão, apneia do sono; limitação moderada.",
+    "infarto, insuficiência cardíaca, AVC; limitação importante.",
+    "destas três, isolada: síndrome metabólica, glicemia de jejum alterada (≥ 100 mg/dL) ou intolerância à glicose",
+    "o EOSS tem eixo funcional e de bem-estar; o CMDS é puramente cardiometabólico e desenhado para prever diabetes e mortalidade.",
+    "Incidência de diabetes em 10 anos pelo CMDS: 1,8% no estágio 0 contra 41,8% no estágio 3 (HR 2,83 → 23,5).",
+    "A intensidade do tratamento sai da gravidade da complicação, não da faixa de IMC"
+  ],
+  "justificativa": "O fluxograma do capítulo já cobre o algoritmo e só nomeia EOSS e CMDS; a figura mostra, estágio por estágio, o que cada sistema mede, que é o conteúdo do capítulo e a armadilha de confundi-los."
+}
