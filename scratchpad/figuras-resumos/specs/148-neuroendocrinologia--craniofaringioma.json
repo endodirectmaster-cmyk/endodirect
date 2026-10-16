@@ -2,8 +2,8 @@
   "i": 148,
   "sub": "Neuroendocrinologia",
   "tema": "Craniofaringioma",
-  "titulo": "Craniofaringioma: o que o tumor comprime e o que cada lesão causa",
-  "subtitulo": "Benigno, mas localmente agressivo: adere a quiasma, haste, hipófise e hipotálamo",
+  "titulo": "Craniofaringioma: estruturas comprimidas e suas consequências",
+  "subtitulo": "DI e lesão hipotalâmica separam o craniofaringioma do adenoma hipofisário",
   "tipo": "fluxo",
   "fluxo": {
     "orientacao": "vertical",
@@ -16,7 +16,7 @@
       },
       {
         "id": "tu",
-        "texto": "Craniofaringioma\nselar e supraselar, localmente agressivo\nIII ventrículo: hidrocefalia, cefaleia",
+        "texto": "Craniofaringioma\nbenigno, localmente agressivo\nIII ventrículo: hidrocefalia",
         "tipo": "alerta",
         "camada": 1
       },
@@ -27,34 +27,34 @@
         "camada": 2
       },
       {
+        "id": "has",
+        "texto": "Haste\ndiabetes insípido\nPRL alta: desconexão",
+        "tipo": "orgao",
+        "camada": 2
+      },
+      {
+        "id": "ade",
+        "texto": "Adeno-hipófise\nhipopituitarismo",
+        "tipo": "orgao",
+        "camada": 2
+      },
+      {
         "id": "hip",
         "texto": "Hipotálamo\nsono, temperatura, sede",
         "tipo": "orgao",
         "camada": 2
       },
       {
-        "id": "has",
-        "texto": "Haste\ndiabetes insípido\nPRL alta por desconexão",
-        "tipo": "orgao",
-        "camada": 3
-      },
-      {
-        "id": "ade",
-        "texto": "Adeno-hipófise\nhipopituitarismo",
-        "tipo": "orgao",
-        "camada": 3
-      },
-      {
         "id": "fr",
         "texto": "Ao diagnóstico\n• GH 75%, gonadotrofinas 40%\n• ACTH e TSH 25%; DI 17 a 38%",
         "tipo": "grupo",
-        "camada": 4
+        "camada": 3
       },
       {
         "id": "ob",
         "texto": "Obesidade hipotalâmica\npiora no pós-operatório\nestilo de vida + agonista de GLP-1",
         "tipo": "fim",
-        "camada": 4
+        "camada": 3
       }
     ],
     "setas": [
@@ -94,7 +94,7 @@
       }
     ],
     "notas": [],
-    "legenda": "DI e lesão hipotalâmica distinguem o craniofaringioma do adenoma. Cinza: frequência ao diagnóstico."
+    "legenda": "Cinza: frequência das deficiências ao diagnóstico."
   },
   "lastro": [
     "O craniofaringioma nasce de remanescentes da bolsa de Rathke e do ducto faríngeo",
