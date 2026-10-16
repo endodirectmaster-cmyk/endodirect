@@ -7,33 +7,92 @@
   "tipo": "fluxo",
   "fluxo": {
     "orientacao": "vertical",
-    "rotulos_camadas": ["Causa", "Mecanismo", "Lipidograma", "Conduta"],
     "nos": [
-      {"id": "meno", "texto": "Menopausa\nqueda do estradiol", "tipo": "inicio"},
-      {"id": "hipo", "texto": "Hipotireoidismo", "tipo": "inicio"},
-      {"id": "cole", "texto": "Colestase", "tipo": "inicio"},
-      {"id": "nefro", "texto": "Síndrome nefrótica\nproteinúria intensa", "tipo": "inicio"},
-      {"id": "rec", "texto": "Menos receptores de LDL\n(receptores B/E)\nmenor clearance de LDL", "tipo": "passo"},
-      {"id": "lpx", "texto": "Lipoproteína X\ncolesterol livre, apoE, sem apoB", "tipo": "passo"},
-      {"id": "pcsk", "texto": "Mais PCSK9 e síntese\nhepática de lipoproteínas", "tipo": "passo"},
-      {"id": "ldl", "texto": "Colesterol total e LDL altos", "tipo": "alerta"},
-      {"id": "trat", "texto": "Tratar a causa primeiro\nperfil melhora ou normaliza", "tipo": "fim"}
+      {
+        "id": "meno",
+        "texto": "Menopausa",
+        "tipo": "inicio"
+      },
+      {
+        "id": "hipo",
+        "texto": "Hipotireoidismo",
+        "tipo": "inicio"
+      },
+      {
+        "id": "cole",
+        "texto": "Colestase",
+        "tipo": "inicio"
+      },
+      {
+        "id": "nefro",
+        "texto": "Síndrome nefrótica",
+        "tipo": "inicio"
+      },
+      {
+        "id": "rec",
+        "texto": "Menos receptores LDL\nreceptores B/E\nmenor clearance de LDL",
+        "tipo": "passo"
+      },
+      {
+        "id": "lpx",
+        "texto": "Lipoproteína X\ncolesterol livre, apoE\nsem apoB",
+        "tipo": "passo"
+      },
+      {
+        "id": "pcsk",
+        "texto": "Mais PCSK9\ne síntese hepática\nde lipoproteínas",
+        "tipo": "passo"
+      },
+      {
+        "id": "ldl",
+        "texto": "Colesterol total e LDL altos",
+        "tipo": "alerta"
+      },
+      {
+        "id": "trat",
+        "texto": "Tratar a causa primeiro\nlevotiroxina antes da estatina\nperfil melhora ou normaliza",
+        "tipo": "fim"
+      }
     ],
     "setas": [
-      {"de": "meno", "para": "rec"},
-      {"de": "hipo", "para": "rec"},
-      {"de": "cole", "para": "rec"},
-      {"de": "cole", "para": "lpx"},
-      {"de": "nefro", "para": "pcsk"},
-      {"de": "rec", "para": "ldl"},
-      {"de": "lpx", "para": "ldl"},
-      {"de": "pcsk", "para": "ldl"},
-      {"de": "ldl", "para": "trat"}
+      {
+        "de": "meno",
+        "para": "rec"
+      },
+      {
+        "de": "hipo",
+        "para": "rec"
+      },
+      {
+        "de": "cole",
+        "para": "rec"
+      },
+      {
+        "de": "cole",
+        "para": "lpx"
+      },
+      {
+        "de": "nefro",
+        "para": "pcsk"
+      },
+      {
+        "de": "rec",
+        "para": "ldl"
+      },
+      {
+        "de": "lpx",
+        "para": "ldl"
+      },
+      {
+        "de": "pcsk",
+        "para": "ldl"
+      },
+      {
+        "de": "ldl",
+        "para": "trat"
+      }
     ],
-    "notas": [
-      {"no": "trat", "texto": "Hipotireoidismo: levotiroxina antes da estatina; refazer o perfil 3 meses após normalizar", "lado": "direita"}
-    ],
-    "legenda": "Hipotireoidismo e síndrome nefrótica também elevam a Lp(a). Na nefrótica, a dislipidemia resolve com a proteinúria."
+    "legenda": "Hipotireoidismo e nefrótica também elevam a Lp(a). Na nefrótica, a dislipidemia resolve com a proteinúria."
   },
   "lastro": [
     "reduz a expressão do receptor de LDL e o clearance de LDL → colesterol sobe",

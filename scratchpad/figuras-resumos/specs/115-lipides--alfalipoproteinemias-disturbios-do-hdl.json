@@ -8,29 +8,105 @@
   "fluxo": {
     "orientacao": "vertical",
     "nos": [
-      {"id": "cel", "texto": "Tecidos periféricos\ninclusive a parede arterial", "tipo": "orgao"},
-      {"id": "abca1", "texto": "ABCA1\nsaída do colesterol da célula", "tipo": "passo"},
-      {"id": "tang", "texto": "Doença de Tangier\nHDL < 10 e TG > 400\namígdalas alaranjadas", "tipo": "alerta"},
-      {"id": "lcat", "texto": "LCAT\nesterifica o colesterol no HDL", "tipo": "passo"},
-      {"id": "dlcat", "texto": "Deficiência de LCAT\nHDL < 10; córnea, rim, anemia", "tipo": "alerta"},
-      {"id": "cetp", "texto": "CETP\nleva ésteres do HDL a VLDL/LDL", "tipo": "passo"},
-      {"id": "dcetp", "texto": "Deficiência de CETP\nHDL > 100 mg/dL\nmenos doença coronariana", "tipo": "fim"},
-      {"id": "lh", "texto": "Lipase hepática\nhidrolisa TG, depura o HDL", "tipo": "passo"},
-      {"id": "dlh", "texto": "Deficiência de lipase hepática\nHDL e TG altos, LDL baixo", "tipo": "alerta"},
-      {"id": "fig", "texto": "Fígado\nrecebe o colesterol de volta", "tipo": "orgao"}
+      {
+        "id": "cel",
+        "texto": "Tecidos periféricos\ninclusive a parede arterial",
+        "tipo": "orgao"
+      },
+      {
+        "id": "abca1",
+        "texto": "ABCA1\nsaída do colesterol da célula",
+        "tipo": "passo"
+      },
+      {
+        "id": "tang",
+        "texto": "Doença de Tangier\nHDL < 10 e TG > 400\namígdalas alaranjadas",
+        "tipo": "alerta"
+      },
+      {
+        "id": "lcat",
+        "texto": "LCAT\nesterifica o colesterol no HDL",
+        "tipo": "passo"
+      },
+      {
+        "id": "dlcat",
+        "texto": "Deficiência de LCAT\nHDL < 10; córnea, rim, anemia",
+        "tipo": "alerta"
+      },
+      {
+        "id": "cetp",
+        "texto": "CETP\nleva ésteres do HDL a VLDL/LDL",
+        "tipo": "passo"
+      },
+      {
+        "id": "dcetp",
+        "texto": "Deficiência de CETP\nHDL > 100 mg/dL\nmenos doença coronariana",
+        "tipo": "fim"
+      },
+      {
+        "id": "lh",
+        "texto": "Lipase hepática\nhidrolisa TG, depura o HDL",
+        "tipo": "passo"
+      },
+      {
+        "id": "dlh",
+        "texto": "Deficiência de lipase hepática\nHDL e TG altos, LDL baixo",
+        "tipo": "alerta"
+      },
+      {
+        "id": "fig",
+        "texto": "Fígado\nrecebe o colesterol de volta",
+        "tipo": "orgao"
+      }
     ],
     "setas": [
-      {"de": "cel", "para": "abca1"},
-      {"de": "abca1", "para": "lcat", "rotulo": "para o HDL"},
-      {"de": "lcat", "para": "cetp"},
-      {"de": "cetp", "para": "lh"},
-      {"de": "lh", "para": "fig"},
-      {"de": "abca1", "para": "tang", "tipo": "fraca", "rotulo": "se falha"},
-      {"de": "lcat", "para": "dlcat", "tipo": "fraca", "rotulo": "se falha"},
-      {"de": "cetp", "para": "dcetp", "tipo": "fraca", "rotulo": "se falha"},
-      {"de": "lh", "para": "dlh", "tipo": "fraca", "rotulo": "se falha"}
+      {
+        "de": "cel",
+        "para": "abca1"
+      },
+      {
+        "de": "abca1",
+        "para": "lcat",
+        "rotulo": "para o HDL"
+      },
+      {
+        "de": "lcat",
+        "para": "cetp"
+      },
+      {
+        "de": "cetp",
+        "para": "lh"
+      },
+      {
+        "de": "lh",
+        "para": "fig"
+      },
+      {
+        "de": "abca1",
+        "para": "tang",
+        "tipo": "fraca",
+        "rotulo": "se falha"
+      },
+      {
+        "de": "lcat",
+        "para": "dlcat",
+        "tipo": "fraca",
+        "rotulo": "se falha"
+      },
+      {
+        "de": "cetp",
+        "para": "dcetp",
+        "tipo": "fraca",
+        "rotulo": "se falha"
+      },
+      {
+        "de": "lh",
+        "para": "dlh",
+        "tipo": "fraca",
+        "rotulo": "se falha"
+      }
     ],
-    "legenda": "Setas douradas: caminho do colesterol até o fígado. Tracejado cinza: doença quando a etapa falha. HDL e TG em mg/dL."
+    "legenda": "Tracejado: doença quando a etapa falha. Valores em mg/dL."
   },
   "lastro": [
     "retira colesterol dos tecidos periféricos e da parede arterial e o devolve ao fígado",
