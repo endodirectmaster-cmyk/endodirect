@@ -3,7 +3,7 @@
   "sub": "Transgeneridade",
   "tema": "Terapia Hormonal Feminilizante",
   "titulo": "Terapia feminilizante: onde agem o estradiol e cada antiandrogênio",
-  "subtitulo": "Estrogênio feminiliza; antiandrogênio derruba a testosterona endógena",
+  "subtitulo": "Estrogênio feminiliza; antiandrogênio suprime a testosterona endógena",
   "tipo": "fluxo",
   "fluxo": {
     "orientacao": "vertical",
@@ -46,7 +46,7 @@
       },
       {
         "id": "esp",
-        "texto": "Espironolactona\n100 a 300 mg/dia\nhipercalemia, poliúria, hipotensão",
+        "texto": "Espironolactona\n100 a 300 mg/dia; hipercalemia\nhipotensão, frequência urinária",
         "tipo": "hormonio",
         "camada": 3
       },
@@ -71,8 +71,7 @@
       },
       {
         "de": "hip",
-        "para": "tes",
-        "rotulo": "gonadotrofinas"
+        "para": "tes"
       },
       {
         "de": "e2",

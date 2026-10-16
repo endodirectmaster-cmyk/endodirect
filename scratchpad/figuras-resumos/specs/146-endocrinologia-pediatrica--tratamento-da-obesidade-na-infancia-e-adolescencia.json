@@ -1,0 +1,29 @@
+{
+  "i": 146,
+  "sub": "Endocrinologia Pediátrica",
+  "tema": "Tratamento da Obesidade na Infância e Adolescência",
+  "titulo": "Escada do tratamento da obesidade na criança e no adolescente",
+  "subtitulo": "Cada degrau soma-se ao anterior: remédio e cirurgia são adjuvantes, nunca substitutos",
+  "tipo": "escada",
+  "escada": {
+    "degraus": [
+      {"titulo": "Estilo de vida (base)", "detalhe": "5As; ≥ 26 h de contato em até 12 meses; sem restrição calórica isolada; mantido sempre"},
+      {"titulo": "Agonista de GLP-1", "detalhe": "1ª linha a partir dos 12 anos: semaglutida ou liraglutida; obesidade grave ou falha documentada"},
+      {"titulo": "Reavaliar em 6 meses", "detalhe": "IMC caiu < 5% em dose plena: trocar arGLP-1, associar off-label ou descontinuar"},
+      {"titulo": "Off-label (SUS)", "detalhe": "metformina, sibutramina, orlistate, topiramato; consentimento documentado"},
+      {"titulo": "Cirurgia bariátrica", "detalhe": "16 a 18 anos (CFM 2.429/2025); IMC ≥ 35 com comorbidade ou ≥ 40; bypass ou vertical"}
+    ],
+    "eixo": "gravidade e falta de resposta"
+  },
+  "lastro": [
+    "A farmacoterapia e a cirurgia são adjuvantes, não substitutivas.",
+    "Intervenções comportamentais intensivas com ≥ 26 horas em até 12 meses reduziram o IMC em −0,7 kg/m²",
+    "Restrição calórica explícita não deve ser usada isoladamente",
+    "Primeira linha farmacológica são os agonistas de GLP-1, com liraglutida e semaglutida aprovadas pela ANVISA a partir dos 12 anos.",
+    "Avaliar em 6 meses, em dose plena e com adesão documentada: redução do IMC < 5% indica considerar descontinuação.",
+    "trocar de arGLP-1, associar off-label em centro com experiência, ou reavaliar indicação cirúrgica",
+    "permite a cirurgia entre 16 e 18 anos",
+    "IMC ≥ 35 com comorbidades ou ≥ 40 sem"
+  ],
+  "justificativa": "O capítulo não tem fluxograma e se organiza como tratamento escalonado por gravidade e resposta; a escada mostra a ordem e o critério de cada degrau."
+}

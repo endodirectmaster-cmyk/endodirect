@@ -1,0 +1,44 @@
+{
+  "i": 119,
+  "sub": "Endocrinologia Masculina",
+  "tema": "Infertilidade Masculina",
+  "titulo": "Infertilidade masculina pelo nível da falha",
+  "subtitulo": "O padrão de FSH e o volume testicular apontam o nível e a conduta",
+  "tipo": "painel",
+  "painel": {
+    "colunas": [
+      {"titulo": "Pré-testicular (endócrina)", "cor": "navy", "itens": [
+        "Hipogonadismo secundário",
+        "LH/FSH e testosterona baixos",
+        "Hiperprolactinemia, esteroides exógenos",
+        "Responde a gonadotrofinas (hCG ± FSH)"
+      ]},
+      {"titulo": "Testicular", "cor": "amber", "itens": [
+        "Klinefelter, criptorquidia, orquite, QT/RT",
+        "Varicocele: causa corrigível mais comum",
+        "FSH ↑ com testículos pequenos",
+        "Azoospermia não obstrutiva: cariótipo e microdeleção do Y",
+        "microTESE recupera focos ± ICSI"
+      ]},
+      {"titulo": "Pós-testicular", "cor": "green", "itens": [
+        "Agenesia bilateral dos deferentes (CFTR)",
+        "Pós-vasectomia, obstrução ejaculatória",
+        "Disfunção ejaculatória: retrógrada, neurogênica",
+        "FSH e volume testicular normais",
+        "Recuperação (PESA/TESE) + ICSI"
+      ]}
+    ],
+    "rodape": "Nunca testosterona no hipogonadismo secundário: ela suprime a espermatogênese. QT/RT: quimio/radioterapia."
+  },
+  "lastro": [
+    "**Pré-testicular (endócrina):** hipogonadismo **secundário** (LH/FSH e testosterona baixos) — **responde a gonadotrofinas**",
+    "inclui hiperprolactinemia e uso de esteroides exógenos",
+    "**varicocele** (causa corrigível mais comum), QT/RT, orquite, idiopática — padrão típico de **FSH↑ com testículos pequenos**",
+    "ausência congênita bilateral dos deferentes (associada a **mutações do CFTR**",
+    "**Obstrutiva:** **FSH e volume testicular normais**, com espermatogênese preservada → **recuperação espermática (PESA/TESE)**",
+    "investigar **cariótipo e microdeleções do cromossomo Y** (região AZF); a **microTESE** pode recuperar focos isolados de espermatogênese",
+    "**gonadotrofinas (hCG isolado ou hCG + FSH)** — **nunca testosterona**, que **suprime a espermatogênese**",
+    "**disfunção ejaculatória** (retrógrada, neurogênica)"
+  ],
+  "justificativa": "O fluxograma existente cobre a sequência de investigação; este painel organiza a classificação pré-testicular, testicular e pós-testicular com o padrão hormonal e a conduta de cada nível."
+}
