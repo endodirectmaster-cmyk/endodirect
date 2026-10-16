@@ -3,16 +3,16 @@
   "sub": "Adrenal",
   "tema": "Hiperaldosteronismo Primário (Conn)",
   "titulo": "Aldosterona autônoma: do rim à hipertensão e à renina suprimida",
-  "subtitulo": "Por que a relação aldosterona/renina rastreia e por que a hipocalemia pode faltar",
+  "subtitulo": "Renina suprimida eleva a relação aldosterona/renina; hipocalemia em só um terço",
   "tipo": "fluxo",
   "fluxo": {
     "orientacao": "vertical",
     "rotulos_camadas": [
       "Origem",
       "Hormônio",
-      "Rim",
       "Efeitos",
-      "Resultado",
+      "Consequências",
+      "Clínica",
       "Risco"
     ],
     "nos": [
@@ -33,7 +33,7 @@
       },
       {
         "id": "kh",
-        "texto": "Perda renal\nde K⁺ e de H⁺",
+        "texto": "Espoliação de K⁺\nperda renal de H⁺",
         "tipo": "passo"
       },
       {
@@ -63,8 +63,9 @@
       },
       {
         "id": "dano",
-        "texto": "Dano cardiovascular\ne renal: fibrose, HVE, AVC",
-        "tipo": "alerta"
+        "texto": "Dano cardiovascular e renal\npelo excesso de aldosterona\nfibrose, HVE, AVC; maior que na HAS essencial",
+        "tipo": "alerta",
+        "camada": 5
       }
     ],
     "setas": [
@@ -97,14 +98,10 @@
         "para": "has"
       },
       {
-        "de": "vol",
+        "de": "al",
         "para": "ren",
         "tipo": "inibe",
         "rotulo": "suprime"
-      },
-      {
-        "de": "has",
-        "para": "dano"
       },
       {
         "de": "ren",
@@ -123,12 +120,12 @@
     "legenda": "Barra vermelha: supressão. Cinza tracejado: associação de risco."
   },
   "lastro": [
-    "Produção autônoma de aldosterona, independente do sistema renina-angiotensina → retenção de sódio, expansão volêmica, hipertensão e supressão da renina",
+    "Produção autônoma de aldosterona, independente do sistema renina-angiotensina → retenção de sódio, expansão volêmica, hipertensão e supressão da renina, com espoliação de potássio e alcalose",
     "alcalose metabólica por perda renal de H⁺",
     "hipocalemia — espontânea ou induzida — em apenas um terço dos casos",
     "Hiperplasia bilateral idiopática: 50–60%",
     "Responde por 5 a 10% de todas as hipertensões e por 20% das hipertensões resistentes",
-    "dano cardiovascular e renal (fibrose, HVE, AVC)",
+    "dano cardiovascular e renal (fibrose, HVE, AVC) maior que na HAS essencial de mesmo nível pressórico",
     "associa-se à supressão da renina abaixo de 1 ng/mL/h",
     "manter APR acima de 1 ng/mL/h associa-se a menor risco cardiovascular"
   ],

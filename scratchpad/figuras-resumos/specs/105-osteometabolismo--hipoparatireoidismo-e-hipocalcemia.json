@@ -10,9 +10,9 @@
     "rotulos_camadas": [
       "Causa",
       "Paratireoides",
-      "Rim sem PTH",
+      "Sem ação do PTH",
       "Sangue",
-      "Consequência",
+      "Clínica e tratamento",
       "Risco",
       "Meta"
     ],
@@ -31,11 +31,6 @@
         "id": "pt",
         "texto": "PTH baixo\nou inapropriadamente normal",
         "tipo": "orgao"
-      },
-      {
-        "id": "r1",
-        "texto": "Menos reabsorção\nde cálcio no túbulo",
-        "tipo": "passo"
       },
       {
         "id": "r3",
@@ -70,7 +65,8 @@
       {
         "id": "hc",
         "texto": "Hipercalciúria\nsem PTH, falta reabsorção tubular\nnefrolitíase; tiazídico reduz calciúria",
-        "tipo": "alerta"
+        "tipo": "alerta",
+        "largura": 290
       },
       {
         "id": "m",
@@ -90,19 +86,11 @@
       },
       {
         "de": "pt",
-        "para": "r1"
-      },
-      {
-        "de": "pt",
         "para": "r3"
       },
       {
         "de": "pt",
         "para": "r2"
-      },
-      {
-        "de": "r1",
-        "para": "ca"
       },
       {
         "de": "r3",

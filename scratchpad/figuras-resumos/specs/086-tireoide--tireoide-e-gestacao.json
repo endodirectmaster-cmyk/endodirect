@@ -47,8 +47,9 @@
       {
         "id": "pla",
         "tipo": "orgao",
+        "largura": 175,
         "camada": 3,
-        "texto": "Placenta\nD3 mais ativa degrada\nhormônio materno"
+        "texto": "Placenta\npassagem transplacentária;\nD3 degrada hormônio materno"
       },
       {
         "id": "rim",
@@ -60,7 +61,7 @@
         "id": "dem",
         "tipo": "fim",
         "camada": 4,
-        "texto": "Demanda de hormônio ↑\n~30–50%: TBG, metabolismo, feto"
+        "texto": "Demanda de hormônio ↑\n~30–50%: TBG, metabolismo e\npassagem transplacentária"
       },
       {
         "id": "iod",
@@ -88,6 +89,11 @@
         "para": "tsh"
       },
       {
+        "de": "tbg",
+        "para": "dem",
+        "tipo": "fraca"
+      },
+      {
         "de": "pla",
         "para": "dem"
       },
@@ -100,7 +106,7 @@
       {
         "no": "tsh",
         "lado": "abaixo",
-        "texto": "Por isso, referência por trimestre: no 1º, −0,4 no limite inferior e −0,5 no superior"
+        "texto": "Referência do TSH por trimestre: no 1º, −0,4 no limite inferior e −0,5 no superior"
       },
       {
         "no": "dem",

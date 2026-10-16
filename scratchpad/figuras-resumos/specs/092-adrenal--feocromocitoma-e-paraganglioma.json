@@ -3,7 +3,7 @@
   "sub": "Adrenal",
   "tema": "Feocromocitoma e Paraganglioma",
   "titulo": "Do excesso de catecolaminas ao preparo pré-operatório em três etapas",
-  "subtitulo": "Cada etapa do preparo corrige um efeito das catecolaminas",
+  "subtitulo": "Efeitos das catecolaminas, preparo pré-operatório e complicações após a ressecção",
   "tipo": "fluxo",
   "fluxo": {
     "orientacao": "vertical",
@@ -11,7 +11,6 @@
       "Tumor",
       "Hormônio",
       "Efeitos",
-      "Consequências",
       "1ª etapa",
       "2ª etapa",
       "3ª etapa",
@@ -30,12 +29,7 @@
       },
       {
         "id": "s",
-        "texto": "Crises paroxísticas\ncefaleia, sudorese, palpitações",
-        "tipo": "passo"
-      },
-      {
-        "id": "v",
-        "texto": "Vasoconstrição α\nperiférica e sustentada",
+        "texto": "Crises paroxísticas\ncefaleia, sudorese\npalpitações",
         "tipo": "passo"
       },
       {
@@ -45,37 +39,37 @@
       },
       {
         "id": "h",
-        "texto": "Hipertensão\nsustentada ou lábil",
+        "texto": "Hipertensão\nsustentada\nou lábil",
         "tipo": "alerta"
       },
       {
         "id": "hv",
-        "texto": "Hipovolemia\nADH inibido e natriurese\nhipotensão ortostática",
+        "texto": "Hipovolemia\nhipotensão ortostática\nvasoconstrição, ADH↓, natriurese",
         "tipo": "alerta"
       },
       {
         "id": "a",
         "texto": "Alfabloqueio\n10 a 14 dias antes\nalvo PA < 130×80 mmHg",
         "tipo": "passo",
-        "camada": 4
+        "camada": 3
       },
       {
         "id": "b",
         "texto": "Betabloqueio\nsó após o alfabloqueio\nalvo FC 60–80 bpm",
         "tipo": "passo",
-        "camada": 5
+        "camada": 4
       },
       {
         "id": "x",
         "texto": "Expansão\nsódio 5 g/dia e salina\nalfa suspenso 12 h antes",
         "tipo": "passo",
-        "camada": 6
+        "camada": 5
       },
       {
         "id": "p",
-        "texto": "Após a ressecção\nhipoglicemia 10–15% e hipotensão\ncessa a supressão da insulina",
+        "texto": "Após a ressecção\nhipoglicemia 10–15% e hipotensão\nqueda da supressão da insulina",
         "tipo": "fim",
-        "camada": 7
+        "camada": 6
       }
     ],
     "setas": [
@@ -89,18 +83,14 @@
       },
       {
         "de": "c",
-        "para": "v"
-      },
-      {
-        "de": "c",
         "para": "g"
       },
       {
-        "de": "v",
+        "de": "c",
         "para": "h"
       },
       {
-        "de": "v",
+        "de": "c",
         "para": "hv"
       },
       {
@@ -117,18 +107,13 @@
         "para": "x"
       },
       {
-        "de": "hv",
-        "para": "x",
-        "rotulo": "repor volume"
-      },
-      {
         "de": "x",
         "para": "p",
         "rotulo": "cirurgia"
       }
     ],
     "notas": [],
-    "legenda": "Vermelho: o que o preparo corrige. Betabloqueio nunca antes do alfa: vasoconstrição α sem oposição causa crise."
+    "legenda": "Betabloqueio nunca antes do alfabloqueio: risco de crise hipertensiva por vasoconstrição α sem oposição."
   },
   "lastro": [
     "Hipovolemia e hipotensão ortostática coexistem com a hipertensão — vasoconstrição periférica sustentada, inibição do ADH e natriurese.",

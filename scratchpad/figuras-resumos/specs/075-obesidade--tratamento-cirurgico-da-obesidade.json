@@ -40,15 +40,9 @@
       },
       {
         "id": "peso",
-        "texto": "Perda de peso sustentada\nsobretudo gordura visceral",
+        "texto": "Efeitos sistêmicos\n↓ gordura corporal, sobretudo visceral\n↓ inflamação: IL-6, TNF-α e PCR",
         "tipo": "fim",
         "camada": 2
-      },
-      {
-        "id": "infl",
-        "texto": "Menos inflamação\nIL-6, TNF-α e PCR ↓",
-        "tipo": "fim",
-        "camada": 3
       }
     ],
     "setas": [
@@ -80,10 +74,6 @@
       {
         "de": "out",
         "para": "peso"
-      },
-      {
-        "de": "peso",
-        "para": "infl"
       }
     ],
     "notas": [],

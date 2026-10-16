@@ -10,61 +10,54 @@
     "nos": [
       {
         "id": "par",
-        "texto": "Paratireoide autônoma\nadenoma único 80–85%\nhiperplasia 10–15%, carcinoma raro",
+        "texto": "Paratireoide autônoma\nadenoma único 80–85%\nhiperplasia 10–15%, carcinoma < 1%",
         "tipo": "orgao",
-        "camada": 0
-      },
-      {
-        "id": "pth",
-        "texto": "PTH alto\nou inapropriadamente normal",
-        "tipo": "hormonio",
-        "camada": 1
+        "camada": 0,
+        "largura": 260
       },
       {
         "id": "ca",
-        "texto": "Hipercalcemia\nfósforo baixo ou normal-baixo\n80% assintomáticos",
+        "texto": "Hiperparatireoidismo primário\ncálcio alto, PTH alto ou inapropriadamente normal\nfósforo baixo ou normal-baixo; 80% assintomáticos",
         "tipo": "alerta",
-        "camada": 2
+        "camada": 1,
+        "largura": 340
       },
       {
         "id": "os",
         "texto": "Ossos\nperda cortical\nosteíte fibrosa (rara)",
         "tipo": "passo",
-        "camada": 3
+        "camada": 2
       },
       {
         "id": "rim",
         "texto": "Rim\nlitíase, nefrocalcinose\npoliúria (DI nefrogênico)",
         "tipo": "passo",
-        "camada": 3
+        "camada": 2
       },
       {
         "id": "gi",
         "texto": "TGI e neuropsiquiátrico\nconstipação, úlcera, pancreatite\nfadiga, depressão",
         "tipo": "passo",
-        "camada": 3
+        "camada": 2
       },
       {
         "id": "dxa",
         "texto": "DXA com 1/3 distal do rádio\nsítio cortical, mais afetado",
         "tipo": "fim",
-        "camada": 4
+        "camada": 3
       },
       {
         "id": "ren",
         "texto": "Imagem renal e TFG\nlitíase e função renal",
         "tipo": "fim",
-        "camada": 4
+        "camada": 3
       }
     ],
     "setas": [
       {
         "de": "par",
-        "para": "pth"
-      },
-      {
-        "de": "pth",
-        "para": "ca"
+        "para": "ca",
+        "rotulo": "PTH em excesso"
       },
       {
         "de": "ca",

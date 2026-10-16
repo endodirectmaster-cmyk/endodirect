@@ -34,14 +34,9 @@
         "texto": "UCP-1 aumenta"
       },
       {
-        "id": "bege",
-        "tipo": "orgao",
-        "texto": "Adipócito branco vira bege\nefeito browning"
-      },
-      {
         "id": "termo",
         "tipo": "fim",
-        "texto": "Termogênese"
+        "texto": "Termogênese\ncom conversão de adipócito branco em bege (browning)"
       }
     ],
     "setas": [
@@ -64,10 +59,6 @@
       },
       {
         "de": "ucp",
-        "para": "bege"
-      },
-      {
-        "de": "bege",
         "para": "termo"
       }
     ],
@@ -78,7 +69,7 @@
         "lado": "direita"
       },
       {
-        "no": "bege",
+        "no": "termo",
         "texto": "Não é formação de gordura marrom dentro do músculo esquelético",
         "lado": "direita"
       }
@@ -92,7 +83,8 @@
     "Benefícios independentes da perda de peso: prevenção do reganho, melhora da resistência insulínica com redução da gordura visceral, redução da pressão arterial",
     "atenuação da perda de massa magra durante o tratamento farmacológico — item de relevância crescente com os agonistas do receptor de GLP-1.",
     "A combinação de aeróbico com resistido é a mais eficaz na redução do peso e do percentual de gordura.",
-    "O treino resistido preserva massa magra e atenua sua perda durante o tratamento farmacológico"
+    "O treino resistido preserva massa magra e atenua sua perda durante o tratamento farmacológico",
+    "a sequência é PGC-1α → irisina → UCP-1 → termogênese"
   ],
   "justificativa": "O fluxograma existente é o algoritmo de estilo de vida; a figura mostra o mecanismo que o capítulo explica e cobra em prova: a sequência PGC-1α → irisina → UCP-1 → termogênese e os ganhos do exercício que não dependem da balança."
 }

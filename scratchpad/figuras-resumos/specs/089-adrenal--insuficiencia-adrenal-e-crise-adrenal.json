@@ -16,13 +16,13 @@
       },
       {
         "id": "p",
-        "texto": "Hipófise\nPOMC → ACTH",
+        "texto": "Hipófise\nACTH",
         "tipo": "orgao",
         "camada": 1
       },
       {
         "id": "adr",
-        "texto": "Córtex adrenal",
+        "texto": "Adrenal",
         "tipo": "orgao",
         "camada": 2
       },
@@ -48,12 +48,6 @@
         "id": "k",
         "texto": "Hipercalemia, renina alta\nfalta de aldosterona: só na primária\nrepor fludrocortisona",
         "tipo": "alerta",
-        "camada": 4
-      },
-      {
-        "id": "na",
-        "texto": "Hiponatremia\ncomum às duas formas",
-        "tipo": "passo",
         "camada": 4
       }
     ],
@@ -83,12 +77,6 @@
         "para": "ald"
       },
       {
-        "de": "cort",
-        "para": "na",
-        "tipo": "fraca",
-        "rotulo": "falta"
-      },
-      {
         "de": "ald",
         "para": "k",
         "tipo": "fraca",
@@ -109,7 +97,7 @@
       },
       {
         "no": "p",
-        "texto": "Secundária: ACTH baixo; aldosterona preservada pela renina-angiotensina, sem hiperpigmentação",
+        "texto": "Secundária: ACTH baixo; aldosterona preservada pela renina-angiotensina, sem hiperpigmentação; hiponatremia comum às duas formas",
         "lado": "esquerda"
       },
       {

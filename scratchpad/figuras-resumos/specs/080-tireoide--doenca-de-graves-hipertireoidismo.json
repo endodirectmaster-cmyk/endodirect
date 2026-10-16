@@ -9,7 +9,7 @@
     "orientacao": "vertical",
     "rotulos_camadas": [
       "Gatilhos",
-      "Anticorpo × TSH",
+      "Anticorpo",
       "Alvos",
       "Efeitos",
       "Quadro"
@@ -24,12 +24,6 @@
         "id": "trab",
         "tipo": "hormonio",
         "texto": "TRAb estimulador (TSI)\nautoanticorpo que se liga ao receptor de TSH"
-      },
-      {
-        "id": "hip",
-        "tipo": "orgao",
-        "camada": 1,
-        "texto": "Hipófise\nTSH suprimido\nsegue suprimido por semanas a meses ao tratar"
       },
       {
         "id": "fol",
@@ -54,7 +48,7 @@
       {
         "id": "tox",
         "tipo": "alerta",
-        "texto": "Tireotoxicose\nT4L e/ou T3 elevados; T3-toxicose frequente\ntaquicardia, FA, perda de peso, tremor, osteoporose"
+        "texto": "Tireotoxicose\nTSH↓; T4L e/ou T3↑; T3-toxicose frequente\ntaquicardia, FA, perda de peso, tremor, osteoporose"
       }
     ],
     "setas": [
@@ -84,15 +78,16 @@
       {
         "de": "hiper",
         "para": "tox"
-      },
-      {
-        "de": "tox",
-        "para": "hip",
-        "tipo": "feedback",
-        "rotulo": "suprime o TSH"
       }
     ],
-    "legenda": "Tracejado vermelho: a tireotoxicose suprime o TSH. Tionamidas inibem a TPO; betabloqueador controla os sintomas."
+    "legenda": "Tionamidas inibem a TPO; betabloqueador controla os sintomas.",
+    "notas": [
+      {
+        "no": "tox",
+        "lado": "direita",
+        "texto": "Ao tratar, o TSH segue suprimido por semanas a meses: não titular pelo TSH no início"
+      }
+    ]
   },
   "lastro": [
     "Autoanticorpos TRAb estimuladores (TSI) ligam-se ao receptor de TSH nas células foliculares, ativando a via AMPc de forma contínua",
