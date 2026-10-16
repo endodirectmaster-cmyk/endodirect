@@ -8,35 +8,131 @@
   "fluxo": {
     "orientacao": "vertical",
     "nos": [
-      {"id": "ex", "texto": "Exercício no DM1\niniciar com glicemia 90–250 mg/dL", "tipo": "inicio", "camada": 0},
-      {"id": "aer", "texto": "Aeróbico\ninsulinemia exógena permanece alta", "tipo": "passo", "camada": 1},
-      {"id": "ana", "texto": "Anaeróbico ou HIIT\nsprints, força pesada", "tipo": "passo", "camada": 1},
-      {"id": "fig", "texto": "Fígado\nprodução de glicose suprimida", "tipo": "orgao", "camada": 2},
-      {"id": "mus", "texto": "Músculo\nGLUT4 via AMPK e contração", "tipo": "orgao", "camada": 2},
-      {"id": "cat", "texto": "Catecolaminas e lactato", "tipo": "hormonio", "camada": 2},
-      {"id": "hipo", "texto": "Hipoglicemia\ndurante o esforço", "tipo": "alerta", "camada": 3},
-      {"id": "hiper", "texto": "Hiperglicemia transitória", "tipo": "passo", "camada": 3},
-      {"id": "sens", "texto": "Sensibilidade à insulina ↑\npor 24–48 h após o esforço\nrepleção do glicogênio muscular", "tipo": "passo", "camada": 4},
-      {"id": "tard", "texto": "Hipoglicemia tardia\nfrequentemente noturna", "tipo": "alerta", "camada": 5},
-      {"id": "prev", "texto": "Prevenção no DM1\n• reduzir bolus 25–75% e basal 50–80%\n• sprints de 10 s; carboidrato extra", "tipo": "fim", "camada": 6}
+      {
+        "id": "ex",
+        "texto": "Exercício no DM1\niniciar com glicemia 90–250 mg/dL",
+        "tipo": "inicio",
+        "camada": 0
+      },
+      {
+        "id": "aer",
+        "texto": "Aeróbico\ninsulina exógena segue alta",
+        "tipo": "passo",
+        "camada": 1
+      },
+      {
+        "id": "ana",
+        "texto": "Anaeróbico ou HIIT\nsprints, força pesada",
+        "tipo": "passo",
+        "camada": 1
+      },
+      {
+        "id": "fig",
+        "texto": "Fígado\nglicose hepática suprimida",
+        "tipo": "orgao",
+        "camada": 2
+      },
+      {
+        "id": "mus",
+        "texto": "Músculo\nGLUT4: AMPK e contração",
+        "tipo": "orgao",
+        "camada": 2
+      },
+      {
+        "id": "cat",
+        "texto": "Catecolaminas, lactato",
+        "tipo": "hormonio",
+        "camada": 2
+      },
+      {
+        "id": "hipo",
+        "texto": "Hipoglicemia\ndurante o esforço\nHAAF embota a percepção",
+        "tipo": "alerta",
+        "camada": 3
+      },
+      {
+        "id": "hiper",
+        "texto": "Hiperglicemia\ntransitória",
+        "tipo": "passo",
+        "camada": 3
+      },
+      {
+        "id": "sens",
+        "texto": "Sensibilidade à insulina ↑\npor 24–48 h após o esforço\nrepleção do glicogênio muscular",
+        "tipo": "passo",
+        "camada": 4
+      },
+      {
+        "id": "tard",
+        "texto": "Hipoglicemia tardia\nfrequentemente noturna",
+        "tipo": "alerta",
+        "camada": 5
+      },
+      {
+        "id": "prev",
+        "texto": "Prevenção no DM1\n• bolus −25–75%; basal −50–80%\n• sprints de 10 s; carboidrato extra",
+        "tipo": "fim",
+        "camada": 6
+      }
     ],
     "setas": [
-      {"de": "ex", "para": "aer"},
-      {"de": "ex", "para": "ana"},
-      {"de": "aer", "para": "fig", "tipo": "inibe", "rotulo": "suprime"},
-      {"de": "aer", "para": "mus", "rotulo": "capta mais"},
-      {"de": "ana", "para": "cat"},
-      {"de": "fig", "para": "hipo"},
-      {"de": "mus", "para": "hipo"},
-      {"de": "cat", "para": "hiper"},
-      {"de": "hipo", "para": "sens", "rotulo": "após o treino"},
-      {"de": "sens", "para": "tard"},
-      {"de": "tard", "para": "prev", "tipo": "estimula", "rotulo": "prevenir"}
+      {
+        "de": "ex",
+        "para": "aer"
+      },
+      {
+        "de": "ex",
+        "para": "ana"
+      },
+      {
+        "de": "aer",
+        "para": "fig",
+        "tipo": "inibe",
+        "rotulo": "suprime"
+      },
+      {
+        "de": "aer",
+        "para": "mus",
+        "rotulo": "capta mais"
+      },
+      {
+        "de": "ana",
+        "para": "cat"
+      },
+      {
+        "de": "fig",
+        "para": "hipo"
+      },
+      {
+        "de": "mus",
+        "para": "hipo"
+      },
+      {
+        "de": "cat",
+        "para": "hiper"
+      },
+      {
+        "de": "hipo",
+        "para": "sens",
+        "rotulo": "após o treino"
+      },
+      {
+        "de": "sens",
+        "para": "tard"
+      },
+      {
+        "de": "tard",
+        "para": "prev",
+        "tipo": "estimula",
+        "rotulo": "prevenir"
+      }
     ],
     "notas": [
-      {"no": "ex", "texto": "Acima de 250 mg/dL com cetonemia ≥1,5 mmol/L: adiar e corrigir", "lado": "direita"},
-      {"no": "hipo", "texto": "HAAF embota a percepção e aumenta o risco de eventos graves", "lado": "esquerda"},
-      {"no": "prev", "texto": "Regra 15/15: 15 g de carboidrato rápido, reavaliar em 15 min", "lado": "direita"}
+      {
+        "no": "ex",
+        "texto": "Acima de 250 mg/dL com cetonemia ≥1,5 mmol/L: adiar e corrigir",
+        "lado": "direita"
+      }
     ],
     "legenda": "Setas douradas: sequência. Barra vermelha: supressão. Verde: conduta."
   },
@@ -47,8 +143,8 @@
     "A sensibilidade à insulina aumenta por 24–48 h após o esforço (repleção de glicogênio muscular)",
     "Glicemia-alvo **para iniciar o exercício: 90–250 mg/dL**",
     "Reduzir bolus prandial pré-esforço em 25-75% e a basal da bomba em 50-80% no DM1 aeróbico.",
-    "Regra 15/15: 15 g de carboidrato rápido e reavaliar em 15 min",
-    "Se glicemia >250 mg/dL com cetonemia ≥1,5 mmol/L: adiar e corrigir antes de treinar."
+    "Se glicemia >250 mg/dL com cetonemia ≥1,5 mmol/L: adiar e corrigir antes de treinar.",
+    "o exercício e a **hipoglicemia associada ao exercício com falência autonômica (HAAF)** embotam a percepção"
   ],
   "justificativa": "O capítulo gira em torno de por que o aeróbico derruba e o anaeróbico eleva a glicemia no DM1, e da hipoglicemia tardia; a figura mostra esse mecanismo e liga-o à prevenção."
 }

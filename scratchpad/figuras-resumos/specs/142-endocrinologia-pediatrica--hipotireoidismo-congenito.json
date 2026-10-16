@@ -7,16 +7,10 @@
   "tipo": "fluxo",
   "fluxo": {
     "orientacao": "vertical",
-    "rotulos_camadas": [
-      "",
-      "Onde",
-      "Etiologia",
-      "Consequência"
-    ],
     "nos": [
       {
         "id": "ini",
-        "texto": "Hipotireoidismo congênito\nquadro ao nascer sutil ou ausente",
+        "texto": "Hipotireoidismo congênito\nao nascer: sutil ou ausente",
         "tipo": "inicio"
       },
       {
@@ -26,12 +20,12 @@
       },
       {
         "id": "tir",
-        "texto": "Tireoide\nglândula ausente ou sem síntese",
+        "texto": "Tireoide\nausente ou sem síntese",
         "tipo": "orgao"
       },
       {
         "id": "mat",
-        "texto": "Fatores externos\nmaternos, iodo, prematuridade",
+        "texto": "Fatores externos\nmaternos ou iodo",
         "tipo": "orgao"
       },
       {
@@ -41,27 +35,27 @@
       },
       {
         "id": "dis",
-        "texto": "Disgenesia\nagenesia, hipoplasia ou ectopia\nmais comum, esporádica",
+        "texto": "Disgenesia\nagenesia, hipoplasia\nou ectopia (a mais comum)",
         "tipo": "passo"
       },
       {
         "id": "dor",
-        "texto": "Disormonogênese\ndefeito de síntese, recessiva\npode cursar com bócio",
+        "texto": "Disormonogênese\ndefeito de síntese\npode dar bócio",
         "tipo": "passo"
       },
       {
         "id": "tra",
-        "texto": "Transitório\niodo, anticorpos ou drogas maternas",
+        "texto": "Transitório\niodo, anticorpos\nou drogas maternas",
         "tipo": "passo"
       },
       {
         "id": "cfal",
-        "texto": "TSH normal ou baixo\ntriagem só por TSH não detecta",
+        "texto": "TSH normal ou baixo\nescapa à triagem só por TSH",
         "tipo": "alerta"
       },
       {
         "id": "pri",
-        "texto": "Permanente primário\ntratar com levotiroxina",
+        "texto": "Permanente primário\nlevotiroxina precoce",
         "tipo": "fim"
       },
       {
@@ -116,14 +110,7 @@
         "para": "rev"
       }
     ],
-    "notas": [
-      {
-        "no": "cfal",
-        "texto": "Suspeitar em defeitos de linha média, hipoglicemia, micropênis ou icterícia colestática",
-        "lado": "esquerda"
-      }
-    ],
-    "legenda": "A imagem (cintilografia ou ultrassom) define a etiologia, mas não deve atrasar a levotiroxina."
+    "legenda": "Central: suspeitar em defeitos de linha média, hipoglicemia, micropênis ou icterícia colestática."
   },
   "lastro": [
     "Disgenesia tireoidiana (a mais comum, ~65% dos casos permanentes): agenesia, hipoplasia ou ectopia",
@@ -132,7 +119,8 @@
     "Transitório: excesso ou deficiência de iodo, anticorpos maternos bloqueadores, drogas antitireoidianas maternas, prematuridade.",
     "Programas baseados apenas em TSH podem não detectar o hipotireoidismo central (TSH baixo/normal)",
     "defeitos de linha média, hipoglicemia, micropênis ou icterícia colestática.",
-    "No hipotireoidismo possivelmente transitório, considerar reavaliação (trial off) após ~3 anos"
+    "No hipotireoidismo possivelmente transitório, considerar reavaliação (trial off) após ~3 anos",
+    "Levotiroxina o mais precoce possível — idealmente nas 2 primeiras semanas de vida"
   ],
   "justificativa": "O fluxograma já cobre triagem e tratamento; a figura localiza cada etiologia no eixo e explica por que a triagem só por TSH deixa escapar a forma central."
 }

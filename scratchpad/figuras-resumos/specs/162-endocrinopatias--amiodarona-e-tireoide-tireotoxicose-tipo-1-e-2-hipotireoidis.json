@@ -3,40 +3,112 @@
   "sub": "Endocrinopatias",
   "tema": "Amiodarona e Tireoide (tireotoxicose tipo 1 e 2, hipotireoidismo)",
   "titulo": "Amiodarona e tireoide: do iodo e do fármaco às quatro apresentações",
-  "subtitulo": "Sobrecarga de iodo e ação intrínseca da molécula explicam hipo, TIA 1, TIA 2 e pseudo-TSHoma",
+  "subtitulo": "Sobrecarga de iodo e ação da molécula explicam as quatro apresentações",
   "tipo": "fluxo",
   "fluxo": {
     "orientacao": "vertical",
-    "rotulos_camadas": ["Fármaco", "Via", "Mecanismo", "Apresentação"],
     "nos": [
-      {"id": "a", "texto": "Amiodarona\n~75 mg de iodo por comprimido de 200 mg", "tipo": "inicio"},
-      {"id": "io", "texto": "Sobrecarga de iodo\n~7 mg/dia de iodo livre\n35 a 50× a necessidade", "tipo": "passo"},
-      {"id": "dr", "texto": "Ação do fármaco\nsemelhança estrutural com T4/T3", "tipo": "passo"},
-      {"id": "wc", "texto": "Wolff-Chaikoff\nbloqueio da organificação", "tipo": "orgao"},
-      {"id": "jb", "texto": "Jod-Basedow\niodo aumenta a síntese hormonal", "tipo": "orgao"},
-      {"id": "dd", "texto": "Inibe D1 e D2\n↓conversão T4→T3", "tipo": "orgao"},
-      {"id": "tx", "texto": "Toxicidade direta\napoptose e lise do tireócito", "tipo": "orgao"},
-      {"id": "hip", "texto": "Hipotireoidismo (HIA)\nfalha em escapar; Hashimoto\nLT4, mantém amiodarona", "tipo": "fim"},
-      {"id": "t1", "texto": "TIA tipo 1\nbócio nodular/Graves; Doppler ↑\ntiamazol ± perclorato", "tipo": "fim"},
-      {"id": "ps", "texto": "Pseudo-TSHoma\n↑TSH, ↑T4, ↓T3 no início\ntransitório, normaliza em ~3 meses", "tipo": "fim"},
-      {"id": "t2", "texto": "TIA tipo 2\ntireoidite destrutiva; Doppler ↓\nprednisona com desmame", "tipo": "fim"}
+      {
+        "id": "a",
+        "texto": "Amiodarona\n~75 mg de iodo/comprimido\nmeia-vida 40–100 dias",
+        "tipo": "inicio"
+      },
+      {
+        "id": "io",
+        "texto": "Sobrecarga de iodo\n35 a 50× a necessidade",
+        "tipo": "passo"
+      },
+      {
+        "id": "dr",
+        "texto": "Ação do fármaco\nsemelhante a T4/T3",
+        "tipo": "passo"
+      },
+      {
+        "id": "wc",
+        "texto": "Wolff-Chaikoff\nbloqueia organificação",
+        "tipo": "orgao"
+      },
+      {
+        "id": "jb",
+        "texto": "Jod-Basedow\niodo ↑ síntese",
+        "tipo": "orgao"
+      },
+      {
+        "id": "dd",
+        "texto": "Inibe D1 e D2\n↓conversão T4→T3",
+        "tipo": "orgao"
+      },
+      {
+        "id": "tx",
+        "texto": "Toxicidade direta\nlise do tireócito",
+        "tipo": "orgao"
+      },
+      {
+        "id": "hip",
+        "texto": "Hipotireoidismo\nfalha em escapar\nLT4; mantém a droga",
+        "tipo": "fim"
+      },
+      {
+        "id": "t1",
+        "texto": "TIA tipo 1\nGraves/bócio; Doppler ↑\ntiamazol ± perclorato",
+        "tipo": "fim"
+      },
+      {
+        "id": "ps",
+        "texto": "Pseudo-TSHoma\n↑TSH ↑T4 ↓T3\nnormaliza em ~3 meses",
+        "tipo": "fim"
+      },
+      {
+        "id": "t2",
+        "texto": "TIA tipo 2\ndestrutiva; Doppler ↓\nprednisona",
+        "tipo": "fim"
+      }
     ],
     "setas": [
-      {"de": "a", "para": "io"},
-      {"de": "a", "para": "dr"},
-      {"de": "io", "para": "wc"},
-      {"de": "io", "para": "jb", "rotulo": "doença de base"},
-      {"de": "dr", "para": "dd"},
-      {"de": "dr", "para": "tx"},
-      {"de": "wc", "para": "hip"},
-      {"de": "jb", "para": "t1"},
-      {"de": "dd", "para": "ps", "rotulo": "D2 hipofisária"},
-      {"de": "tx", "para": "t2"}
+      {
+        "de": "a",
+        "para": "io"
+      },
+      {
+        "de": "a",
+        "para": "dr"
+      },
+      {
+        "de": "io",
+        "para": "wc"
+      },
+      {
+        "de": "io",
+        "para": "jb",
+        "rotulo": "doença de base"
+      },
+      {
+        "de": "dr",
+        "para": "dd"
+      },
+      {
+        "de": "dr",
+        "para": "tx"
+      },
+      {
+        "de": "wc",
+        "para": "hip"
+      },
+      {
+        "de": "jb",
+        "para": "t1"
+      },
+      {
+        "de": "dd",
+        "para": "ps",
+        "rotulo": "D2 hipofisária"
+      },
+      {
+        "de": "tx",
+        "para": "t2"
+      }
     ],
-    "notas": [
-      {"no": "a", "texto": "Meia-vida de 40–100 dias: a TIA pode surgir meses após a suspensão", "lado": "direita"}
-    ],
-    "legenda": "HIA predomina em áreas iodo-suficientes; TIA em iodo-deficientes. TSH é o marcador mais confiável."
+    "legenda": "HIA: áreas iodo-suficientes. TIA: iodo-deficientes; pode surgir meses após suspender. TSH é o marcador mais confiável."
   },
   "lastro": [
     "Os efeitos combinam **sobrecarga de iodo** e **ação intrínseca do fármaco**",

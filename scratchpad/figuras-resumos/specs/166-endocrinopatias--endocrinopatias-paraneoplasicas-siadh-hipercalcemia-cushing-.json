@@ -1,0 +1,122 @@
+{
+  "i": 166,
+  "sub": "Endocrinopatias",
+  "tema": "Endocrinopatias Paraneoplásicas (SIADH, hipercalcemia, Cushing ectópico, hipoglicemia)",
+  "titulo": "Síndromes paraneoplásicas: do tumor ao mediador e à pista laboratorial",
+  "subtitulo": "Quatro síndromes clássicas, cada uma com um mediador e um achado que a denuncia",
+  "tipo": "fluxo",
+  "fluxo": {
+    "orientacao": "vertical",
+    "nos": [
+      {
+        "id": "t1",
+        "texto": "CPPC\n>70% das SIADH\ntumorais",
+        "tipo": "orgao"
+      },
+      {
+        "id": "t2",
+        "texto": "Escamoso\npulmão, cabeça/pescoço\nrenal, mama",
+        "tipo": "orgao"
+      },
+      {
+        "id": "t3",
+        "texto": "CPPC, carcinoide\nTNE pancreático\nmedular de tireoide",
+        "tipo": "orgao"
+      },
+      {
+        "id": "t4",
+        "texto": "Mesenquimal grande\nfibrosarcoma\nmesotelioma",
+        "tipo": "orgao"
+      },
+      {
+        "id": "m1",
+        "texto": "ADH",
+        "tipo": "hormonio"
+      },
+      {
+        "id": "m2",
+        "texto": "PTHrP",
+        "tipo": "hormonio"
+      },
+      {
+        "id": "m3",
+        "texto": "ACTH",
+        "tipo": "hormonio"
+      },
+      {
+        "id": "m4",
+        "texto": "IGF-2",
+        "tipo": "hormonio"
+      },
+      {
+        "id": "e1",
+        "texto": "SIADH\nNa <135, Osm urin. >100\nácido úrico <4",
+        "tipo": "fim"
+      },
+      {
+        "id": "e2",
+        "texto": "Hipercalcemia\nPTH suprimido (<20)\nPTHrP elevado",
+        "tipo": "fim"
+      },
+      {
+        "id": "e3",
+        "texto": "Cushing ectópico\nK baixo, ACTH elevado\nsem gradiente petroso",
+        "tipo": "fim"
+      },
+      {
+        "id": "e4",
+        "texto": "Hipoglicemia\ninsulina e pept. C baixos\nIGF-2/IGF-1 >10",
+        "tipo": "fim"
+      }
+    ],
+    "setas": [
+      {
+        "de": "t1",
+        "para": "m1"
+      },
+      {
+        "de": "t2",
+        "para": "m2"
+      },
+      {
+        "de": "t3",
+        "para": "m3"
+      },
+      {
+        "de": "t4",
+        "para": "m4"
+      },
+      {
+        "de": "m1",
+        "para": "e1",
+        "rotulo": "retém água"
+      },
+      {
+        "de": "m2",
+        "para": "e2",
+        "rotulo": "~80% dos casos"
+      },
+      {
+        "de": "m3",
+        "para": "e3",
+        "rotulo": ">90% dos casos"
+      },
+      {
+        "de": "m4",
+        "para": "e4"
+      }
+    ],
+    "legenda": "Efeito independe do tamanho tumoral e pode preceder o diagnóstico oncológico."
+  },
+  "lastro": [
+    "Causa oncológica clássica: **carcinoma de pequenas células de pulmão (CPPC)** — responsável por >70% dos casos tumorais",
+    "**humoral por PTHrP** (~80%) — carcinomas escamosos (pulmão, cabeça/pescoço), renal, mama, bexiga",
+    "**ACTH ectópico (>90%) por **CPPC**, tumores carcinoides brônquicos/tímicos, carcinoma medular de tireoide, feocromocitoma, TNE pancreático",
+    "grandes tumores mesenquimais (fibrosarcoma, mesotelioma) e hepatocarcinoma",
+    "| SIADH | ADH | CPPC | Na<135, Osm urin>100, ác. úrico<4 |",
+    "| Hipercalcemia | PTHrP | Escamoso de pulmão | Ca alto, PTH<20, PTHrP↑ |",
+    "| Cushing ectópico | ACTH | CPPC/carcinoide | K baixo, ACTH↑, sem gradiente petroso |",
+    "| Hipoglicemia | IGF-2 | Mesenquimal grande | Insulina/pept.C baixos, IGF-2/IGF-1>10 |"
+  ],
+  "justificativa": "Sem fluxograma prévio, a figura mostra o mecanismo comum (tumor → mediador ectópico → distúrbio) e a pista laboratorial de cada síndrome."
+}
