@@ -1,0 +1,124 @@
+{
+  "i": 86,
+  "sub": "Tireoide",
+  "tema": "Tireoide e Gestação",
+  "titulo": "O que a gestação muda na tireoide",
+  "subtitulo": "Estrogênio, hCG, placenta e rim explicam os exames e as demandas",
+  "tipo": "fluxo",
+  "fluxo": {
+    "orientacao": "vertical",
+    "nos": [
+      {
+        "id": "est",
+        "tipo": "hormonio",
+        "camada": 0,
+        "texto": "Estrogênio ↑"
+      },
+      {
+        "id": "hcg",
+        "tipo": "hormonio",
+        "camada": 0,
+        "texto": "β-hCG ↑\npico entre 7 e 11 semanas"
+      },
+      {
+        "id": "tbg",
+        "tipo": "passo",
+        "camada": 1,
+        "texto": "TBG ↑\nmeia-vida maior"
+      },
+      {
+        "id": "tir",
+        "tipo": "orgao",
+        "camada": 1,
+        "texto": "Tireoide materna\nhCG é agonista fraco\ndo receptor de TSH"
+      },
+      {
+        "id": "tot",
+        "tipo": "fim",
+        "camada": 2,
+        "texto": "Totais sobem ~50%\nplatô em 20 semanas\nT4L e T3L ficam normais"
+      },
+      {
+        "id": "tsh",
+        "tipo": "fim",
+        "camada": 2,
+        "texto": "TSH ↓ no 1º trimestre\npode ser fisiológico"
+      },
+      {
+        "id": "pla",
+        "tipo": "orgao",
+        "camada": 3,
+        "texto": "Placenta\nD3 mais ativa degrada\nhormônio materno"
+      },
+      {
+        "id": "rim",
+        "tipo": "orgao",
+        "camada": 3,
+        "texto": "Rim\n↑ TFG e iodúria"
+      },
+      {
+        "id": "dem",
+        "tipo": "fim",
+        "camada": 4,
+        "texto": "Demanda de hormônio ↑\n~30–50%: TBG, metabolismo, feto"
+      },
+      {
+        "id": "iod",
+        "tipo": "fim",
+        "camada": 4,
+        "texto": "Iodo ~250 mcg/dia\nperda renal e necessidade fetal"
+      }
+    ],
+    "setas": [
+      {
+        "de": "est",
+        "para": "tbg"
+      },
+      {
+        "de": "tbg",
+        "para": "tot"
+      },
+      {
+        "de": "hcg",
+        "para": "tir",
+        "rotulo": "estimula"
+      },
+      {
+        "de": "tir",
+        "para": "tsh"
+      },
+      {
+        "de": "pla",
+        "para": "dem"
+      },
+      {
+        "de": "rim",
+        "para": "iod"
+      }
+    ],
+    "notas": [
+      {
+        "no": "tsh",
+        "lado": "abaixo",
+        "texto": "Por isso, referência por trimestre: no 1º, −0,4 no limite inferior e −0,5 no superior"
+      },
+      {
+        "no": "dem",
+        "lado": "abaixo",
+        "texto": "A tireoide fetal só produz hormônio relevante por volta da 20ª semana: até lá, o feto depende do hormônio materno"
+      }
+    ],
+    "legenda": "Avaliar a fração livre, não o T4 total."
+  },
+  "lastro": [
+    "O estrogênio eleva a TBG e faz T4 e T3 TOTAIS subirem ~50% com platô em 20 semanas — mas T4L e T3L ficam normais",
+    "e a TBG ainda ganha meia-vida por maior conteúdo de ácido siálico",
+    "O hCG, por homologia estrutural com o TSH, é agonista fraco do receptor de TSH: hipertireoidismo transitório com pico entre 7 e 11 semanas",
+    "Gestação: TBG↑ (T4 total↑) e hCG TSH-like (reduz TSH no 1º trimestre — pode ser fisiológico).",
+    "Deiodinase placentária (D3) com atividade aumentada — degrada hormônio materno.",
+    "A necessidade de hormônio aumenta ~30–50% a partir de fases precoces, pela maior demanda metabólica, aumento da TBG e passagem transplacentária",
+    "↑TFG e iodúria → a necessidade de iodo sobe para ~250 mcg/dia",
+    "A produção de hormônio pela tireoide fetal só se torna relevante por volta da 20ª semana — até lá o feto depende do hormônio materno"
+  ],
+  "justificativa": "O fluxograma existente é o algoritmo de disfunção; a figura mostra a fisiologia que o capítulo usa para explicar tudo — por que o T4 total sobe, o TSH cai no 1º trimestre e a demanda de hormônio e iodo aumenta."
+}

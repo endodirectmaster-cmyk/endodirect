@@ -1,0 +1,50 @@
+{
+  "i": 79,
+  "sub": "Tireoide",
+  "tema": "Tireotoxicose: Abordagem e Diagnóstico Diferencial",
+  "titulo": "Tireotoxicose: de onde vem o hormônio em excesso",
+  "subtitulo": "Nem toda tireotoxicose é hipertireoidismo: a fonte do hormônio decide o tratamento",
+  "tipo": "fluxo",
+  "fluxo": {
+    "orientacao": "vertical",
+    "nos": [
+      {"id": "top", "tipo": "inicio", "texto": "Tireotoxicose\nexcesso de hormônio nos tecidos"},
+      {"id": "hip", "tipo": "orgao", "texto": "Hipertireoidismo\na glândula produz em excesso"},
+      {"id": "sem", "tipo": "orgao", "texto": "Sem hiperprodução\nhormônio pré-formado ou exógeno"},
+      {"id": "est", "tipo": "passo", "texto": "Estímulo\nTRAb: Graves (60–80%)"},
+      {"id": "aut", "tipo": "passo", "texto": "Autonomia\nadenoma tóxico, BMN tóxico"},
+      {"id": "des", "tipo": "passo", "texto": "Destruição\ntireoidites"},
+      {"id": "exo", "tipo": "passo", "texto": "Exógeno\nLT4 ou T3: factícia"},
+      {"id": "blo", "tipo": "fim", "texto": "Bloquear a produção\nantitireoidiano, radioiodo ou cirurgia"},
+      {"id": "sup", "tipo": "fim", "texto": "Suporte\nremover a fonte, se exógena\nsem antitireoidiano nem radioiodo"}
+    ],
+    "setas": [
+      {"de": "top", "para": "hip"},
+      {"de": "top", "para": "sem"},
+      {"de": "hip", "para": "est"},
+      {"de": "hip", "para": "aut"},
+      {"de": "sem", "para": "des"},
+      {"de": "sem", "para": "exo"},
+      {"de": "est", "para": "blo"},
+      {"de": "aut", "para": "blo"},
+      {"de": "des", "para": "sup"},
+      {"de": "exo", "para": "sup"}
+    ],
+    "notas": [
+      {"no": "blo", "lado": "abaixo", "texto": "Excesso de iodo, struma ovarii e metástases de carcinoma folicular produzem hormônio, mas a RAIU cervical é baixa"},
+      {"no": "sup", "lado": "abaixo", "texto": "Tireoglobulina baixa com RAIU baixa aponta factícia; na tireoidite, a Tg é elevada"}
+    ],
+    "legenda": "Betabloqueador controla os sintomas adrenérgicos em qualquer causa."
+  },
+  "lastro": [
+    "Tireotoxicose = excesso de hormônio nos tecidos; hipertireoidismo = tireotoxicose por hiperfunção da glândula.",
+    "Tireoidite libera hormônio PRÉ-FORMADO — não há aumento de produção",
+    "Doença de Graves responde por 60–80% da tireotoxicose",
+    "Causas com RAIU alta: Graves, bócio multinodular tóxico, adenoma tóxico.",
+    "Tireoidite é autolimitada: NÃO usar antitireoidiano nem radioiodo.",
+    "Hipertireoidismo (Graves / nodular): antitireoidianos, radioiodo ou cirurgia",
+    "Com hiperprodução, mas RAIU cervical baixa: excesso de iodo (Jod-Basedow",
+    "Tireoglobulina: baixa sugere tireotoxicose factícia (glândula suprimida, sem liberação); elevada nas tireoidites/hiperfunção."
+  ],
+  "justificativa": "O fluxograma existente percorre TRAb e captação; a figura mostra o conceito que o capítulo usa para decidir a conduta — de onde vem o hormônio (estímulo, autonomia, destruição ou fonte exógena) e por que só a hiperprodução se bloqueia."
+}

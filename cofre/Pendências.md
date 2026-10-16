@@ -1,6 +1,6 @@
 ---
 tags: [cofre, pendencias]
-atualizado: 2026-10-15
+atualizado: 2026-10-16
 ---
 
 # Pendências
@@ -21,6 +21,17 @@ atualizado: 2026-10-15
    b.source_id=d.source_id and d.source_id='<id>'` (não tocar em `updated_at`).
 4. Caso residual, 1 discussão (`pubmed:42676363`): tabela sem `<thead>` com rótulo
    de largura total na 1ª linha. O mural a mostra como tabela; fica assim.
+
+## 💊 Bulário (16/10)
+
+1. **Professor: tocar uma vez o botão "Bula oficial na ANVISA"** de qualquer medicamento
+   e dizer se abre a busca já com o nome. O formato do link não tem documentação pública
+   e o Bulário Eletrônico não abre daqui (firewall da ANVISA).
+2. **Conferir a 1ª execução do GitHub Actions** `bulario.yml` (disparada à mão em 16/10
+   e, depois, toda segunda às 09h17 UTC): grava na main sem erro de permissão?
+3. **Fase 2:** fichas próprias das medicações de endocrinologia; conferência contra a bula
+   brasileira depende dos PDFs enviados pelo professor.
+4. **Consultório:** `presc-catalogo.json` (09/06) pode passar a sair do mesmo construtor.
 
 ## 💳 Cobrança em dobro (14/10) — o que fica com o professor
 
