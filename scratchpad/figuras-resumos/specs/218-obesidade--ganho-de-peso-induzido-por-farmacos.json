@@ -1,0 +1,56 @@
+{
+  "i": 218,
+  "sub": "Obesidade",
+  "tema": "Ganho de Peso Induzido por Fármacos",
+  "titulo": "Fármacos e peso: o que engorda, o que é neutro e o que reduz",
+  "subtitulo": "Por classe, para escolher a alternativa de eficácia equivalente",
+  "tipo": "painel",
+  "painel": {
+    "colunas": [
+      {
+        "titulo": "Aumentam o peso",
+        "cor": "red",
+        "itens": [
+          "Insulina, sulfonilureias e glitazonas (até 10 kg)",
+          "Betabloqueadores tradicionais (↓ taxa metabólica até 10%)",
+          "Valproato, gabapentina e pregabalina",
+          "Olanzapina, clozapina, paroxetina, mirtazapina e lítio",
+          "Medroxiprogesterona de depósito e corticoides"
+        ]
+      },
+      {
+        "titulo": "Neutros ou discretos",
+        "cor": "slate",
+        "itens": [
+          "Metformina, inibidores da DPP-4 e acarbose",
+          "IECA, BRA e bloqueadores dos canais de cálcio",
+          "Lamotrigina, levetiracetam e fenitoína",
+          "Ziprasidona e aripiprazol",
+          "Loratadina, o anti-H1 mais neutro"
+        ]
+      },
+      {
+        "titulo": "Reduzem o peso",
+        "cor": "green",
+        "itens": [
+          "Agonistas do receptor de GLP-1 e tirzepatida",
+          "Inibidores do SGLT2 (glicosúria)",
+          "Topiramato e zonisamida",
+          "Bupropiona (perda discreta)"
+        ]
+      }
+    ],
+    "rodape": "Fluoxetina e sertralina reduzem o peso em uso inferior a 1 ano e o aumentam depois."
+  },
+  "lastro": [
+    "Associados a ganho ponderal: insulina, sulfonilureias e demais secretagogos, e glitazonas — o ganho pode alcançar 10 kg.",
+    "Os betabloqueadores tradicionais reduzem a taxa metabólica em até 10%.",
+    "Sem ganho ponderal e sem piora da resistência insulínica: IECA, BRA e bloqueadores dos canais de cálcio.",
+    "Neutros: lamotrigina, levetiracetam e fenitoína.",
+    "Redutores de peso: topiramato",
+    "Quando clinicamente viável, ziprasidona e aripiprazol constituem as alternativas mais neutras.",
+    "fluoxetina e sertralina reduzem o peso em uso inferior a 1 ano e o aumentam em uso superior a 1 ano.",
+    "os iSGLT2 em até 4,7 kg, por perda calórica decorrente da glicosúria"
+  ],
+  "justificativa": "O capítulo já tem o algoritmo de revisão da prescrição; o painel por efeito ponderal mostra, em cada classe, para onde trocar."
+}

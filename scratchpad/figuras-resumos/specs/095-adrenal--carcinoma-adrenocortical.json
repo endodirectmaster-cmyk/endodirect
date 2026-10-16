@@ -7,51 +7,136 @@
   "tipo": "fluxo",
   "fluxo": {
     "orientacao": "vertical",
-    "rotulos_camadas": ["Tumor", "Esteroide", "Quadro", "Pista", "Uso"],
     "nos": [
-      {"id": "t", "tipo": "orgao", "texto": "Carcinoma adrenocortical\nfuncionante em ~60%, muitas vezes misto"},
-      {"id": "cort", "tipo": "hormonio", "texto": "Cortisol"},
-      {"id": "andro", "tipo": "hormonio", "texto": "Androgênios"},
-      {"id": "estr", "tipo": "hormonio", "texto": "Estrogênios"},
-      {"id": "aldo", "tipo": "hormonio", "texto": "Aldosterona"},
-      {"id": "cush", "tipo": "passo", "texto": "Cushing\ninstalação rápida e progressiva"},
-      {"id": "viril", "tipo": "passo", "texto": "Virilização\nhirsutismo, acne, alopecia\nalteração da voz, oligomenorreia"},
-      {"id": "femin", "tipo": "passo", "texto": "Feminização\nàs vezes"},
-      {"id": "hal", "tipo": "passo", "texto": "Hiperaldosteronismo\nàs vezes"},
-      {"id": "misto", "tipo": "alerta", "texto": "Cushing + virilização\naltamente sugestivo de carcinoma"},
-      {"id": "sexo", "tipo": "alerta", "texto": "Esteroides sexuais\nbandeira de malignidade\ndistinguem carcinoma de adenoma"},
-      {"id": "perfil", "tipo": "fim", "texto": "Perfil hormonal pré-cirúrgico\norienta o diagnóstico\nvira marcador de seguimento"}
+      {
+        "id": "t",
+        "tipo": "orgao",
+        "texto": "Carcinoma adrenocortical\nfuncionante em ~60%, muitas vezes misto"
+      },
+      {
+        "id": "cort",
+        "tipo": "hormonio",
+        "texto": "Cortisol"
+      },
+      {
+        "id": "andro",
+        "tipo": "hormonio",
+        "texto": "Androgênios"
+      },
+      {
+        "id": "estr",
+        "tipo": "hormonio",
+        "texto": "Estrogênios"
+      },
+      {
+        "id": "cush",
+        "tipo": "passo",
+        "texto": "Cushing\nrápido e progressivo\nisolado em 45%"
+      },
+      {
+        "id": "viril",
+        "tipo": "passo",
+        "texto": "Virilização\nhirsutismo, acne, alopecia, voz\nna infância, mais de 80%"
+      },
+      {
+        "id": "femin",
+        "tipo": "passo",
+        "texto": "Feminização\nàs vezes"
+      },
+      {
+        "id": "misto",
+        "tipo": "alerta",
+        "texto": "Cushing + virilização\naltamente sugestivo de carcinoma\nCushing com hiperandrogenismo: 25%"
+      },
+      {
+        "id": "sexo",
+        "tipo": "alerta",
+        "texto": "Esteroides sexuais\nbandeira de malignidade\ndistinguem do adenoma"
+      },
+      {
+        "id": "perfil",
+        "tipo": "fim",
+        "texto": "Avaliar todos os eixos\nantes da cirurgia\nperfil vira marcador de seguimento"
+      }
     ],
     "setas": [
-      {"de": "t", "para": "cort"},
-      {"de": "t", "para": "andro"},
-      {"de": "t", "para": "estr"},
-      {"de": "t", "para": "aldo"},
-      {"de": "cort", "para": "cush"},
-      {"de": "andro", "para": "viril"},
-      {"de": "estr", "para": "femin"},
-      {"de": "aldo", "para": "hal"},
-      {"de": "cush", "para": "misto"},
-      {"de": "viril", "para": "misto"},
-      {"de": "viril", "para": "sexo"},
-      {"de": "femin", "para": "sexo"},
-      {"de": "misto", "para": "perfil"},
-      {"de": "sexo", "para": "perfil"}
+      {
+        "de": "t",
+        "para": "cort"
+      },
+      {
+        "de": "t",
+        "para": "andro"
+      },
+      {
+        "de": "t",
+        "para": "estr"
+      },
+      {
+        "de": "cort",
+        "para": "cush"
+      },
+      {
+        "de": "andro",
+        "para": "viril"
+      },
+      {
+        "de": "estr",
+        "para": "femin"
+      },
+      {
+        "de": "cush",
+        "para": "misto"
+      },
+      {
+        "de": "viril",
+        "para": "misto"
+      },
+      {
+        "de": "viril",
+        "para": "sexo"
+      },
+      {
+        "de": "femin",
+        "para": "sexo"
+      },
+      {
+        "de": "misto",
+        "para": "perfil"
+      },
+      {
+        "de": "sexo",
+        "para": "perfil"
+      }
     ],
     "notas": [
-      {"no": "t", "texto": "Não funcionante em ~40%: incidentaloma ou sintomas compressivos", "lado": "direita"},
-      {"no": "viril", "texto": "Na infância, mais de 80% se apresentam com hiperandrogenismo e virilização", "lado": "esquerda"},
-      {"no": "perfil", "texto": "Recidiva bioquímica pode preceder a radiológica", "lado": "direita"}
+      {
+        "no": "t",
+        "texto": "Não funcionante em ~40%: incidentaloma ou sintomas compressivos",
+        "lado": "direita"
+      },
+      {
+        "no": "femin",
+        "texto": "Às vezes, hiperaldosteronismo",
+        "lado": "direita"
+      },
+      {
+        "no": "perfil",
+        "texto": "Recidiva bioquímica pode preceder a radiológica",
+        "lado": "direita"
+      }
     ],
     "legenda": "Setas: esteroide secretado e quadro que ele produz. Vermelho: pistas de malignidade."
   },
   "lastro": [
     "a combinação Cushing + virilização é altamente sugestiva por refletir secreção desordenada de múltiplos esteroides",
     "Cushing de instalação rápida e progressiva, virilização por androgênios (hirsutismo, acne, alopecia, alteração da voz, oligomenorreia), às vezes feminização (estrogênios) ou hiperaldosteronismo",
+    "Funcionante em 60%: Cushing isolado em 45%, Cushing com hiperandrogenismo em 25%, hiperandrogenismo isolado em menos de 10%.",
     "Secreção de esteroides sexuais é bandeira de malignidade e distingue o carcinoma do adenoma.",
     "Na infância, mais de 80% se apresentam como hiperandrogenismo e virilização.",
     "Não funcionante em 40%: incidentaloma ou sintomas compressivos.",
-    "O perfil hormonal orienta o diagnóstico e funciona como marcador de seguimento (recidiva bioquímica pode preceder a radiológica)."
+    "O perfil hormonal orienta o diagnóstico e funciona como marcador de seguimento (recidiva bioquímica pode preceder a radiológica).",
+    "Sempre avaliar todos os eixos antes da cirurgia"
   ],
   "justificativa": "O fluxograma existente é o algoritmo da massa suspeita; a figura mostra a fisiopatologia da apresentação: cada esteroide secretado, o quadro que produz e por que a secreção mista e a de esteroides sexuais apontam carcinoma."
 }

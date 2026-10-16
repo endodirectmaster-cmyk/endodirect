@@ -1,0 +1,117 @@
+{
+  "i": 160,
+  "sub": "Endocrinologia do Esporte",
+  "tema": "Overtraining, Eixo Adrenal e Tireoide no Atleta",
+  "titulo": "Overtraining: o déficit energético reorganiza três eixos",
+  "subtitulo": "Baixa disponibilidade energética como elo entre gônadas, adrenal e tireoide",
+  "tipo": "fluxo",
+  "fluxo": {
+    "orientacao": "vertical",
+    "nos": [
+      {
+        "id": "lea",
+        "texto": "Baixa disponibilidade energética\ndéficit calórico persistente",
+        "tipo": "inicio",
+        "camada": 0
+      },
+      {
+        "id": "gon",
+        "texto": "Eixo gonadal\nGnRH, LH e FSH ↓",
+        "tipo": "orgao",
+        "camada": 1
+      },
+      {
+        "id": "adr",
+        "texto": "Eixo adrenal\nCRH, ACTH e cortisol ↑\nna OTS, resposta a estímulo atenuada",
+        "tipo": "orgao",
+        "camada": 1
+      },
+      {
+        "id": "lep",
+        "texto": "Leptina ↓",
+        "tipo": "hormonio",
+        "camada": 1
+      },
+      {
+        "id": "gonc",
+        "texto": "Estradiol ou testosterona ↓\namenorreia; menos libido e músculo",
+        "tipo": "passo",
+        "camada": 2
+      },
+      {
+        "id": "adrc",
+        "texto": "Efeitos do cortisol\n• catabolismo, resistência insulínica\n• imunossupressão, colágeno ↓",
+        "tipo": "grupo",
+        "camada": 2
+      },
+      {
+        "id": "tir",
+        "texto": "Eixo tireoidiano\nTRH, TSH, T3 ↓; rT3 ↑\ntaxa metabólica basal ↓",
+        "tipo": "orgao",
+        "camada": 2
+      },
+      {
+        "id": "ots",
+        "texto": "Overtraining\nqueda de desempenho ≥2 meses, humor alterado\ndiagnóstico de exclusão",
+        "tipo": "alerta",
+        "camada": 3
+      },
+      {
+        "id": "cond",
+        "texto": "Conduta\nrepouso relativo e restauração energética\nnão usar levotiroxina nem glicocorticoide",
+        "tipo": "fim",
+        "camada": 4
+      }
+    ],
+    "setas": [
+      {
+        "de": "lea",
+        "para": "gon"
+      },
+      {
+        "de": "lea",
+        "para": "adr"
+      },
+      {
+        "de": "lea",
+        "para": "lep"
+      },
+      {
+        "de": "gon",
+        "para": "gonc"
+      },
+      {
+        "de": "adr",
+        "para": "adrc"
+      },
+      {
+        "de": "lep",
+        "para": "tir",
+        "rotulo": "TRH ↓"
+      },
+      {
+        "de": "adrc",
+        "para": "ots"
+      },
+      {
+        "de": "ots",
+        "para": "cond",
+        "tipo": "estimula"
+      }
+    ],
+    "notas": [],
+    "legenda": "Setas douradas: sequência causal. Verde: conduta."
+  },
+  "lastro": [
+    "OTS é **diagnóstico de exclusão**",
+    "Queda da secreção de **GnRH** por supressão ligada ao estresse energético, com redução de **LH e FSH**",
+    "Aumento de **CRH e ACTH**, com elevação do **cortisol**",
+    "**catabolismo muscular**, **resistência insulínica**, **imunossupressão** com mais infecções e **queda da síntese de colágeno**",
+    "a LEA reduz leptina → reduz TRH hipotalâmico",
+    "Redução de **TRH e TSH**, queda do **T3** e **aumento do T3 reverso**, exacerbando o hipometabolismo. O resultado é **queda da taxa metabólica basal**",
+    "**NÃO** prescrever levotiroxina para T3 baixo adaptativo, nem glicocorticoide para hiporresponsividade do eixo",
+    "o achado mais consistente é **resposta atenuada de ACTH e cortisol a estímulos**",
+    "É este eixo que sustenta o quadro de **overtraining**"
+  ],
+  "justificativa": "O capítulo amarra overtraining, adrenal e tireoide pela baixa disponibilidade energética; a figura mostra os três eixos ao mesmo tempo e o eixo adrenal que sustenta o overtraining."
+}

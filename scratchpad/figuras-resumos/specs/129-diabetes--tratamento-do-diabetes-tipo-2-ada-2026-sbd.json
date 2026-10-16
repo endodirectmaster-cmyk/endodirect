@@ -3,7 +3,7 @@
   "sub": "Diabetes",
   "tema": "Tratamento do Diabetes Tipo 2 (ADA 2026 / SBD)",
   "titulo": "Dois modos de estimular a célula β: incretinas e secretagogos",
-  "subtitulo": "A dependência da glicose explica quem causa hipoglicemia e quem não",
+  "subtitulo": "Via SUR1: independe da glicemia, daí a hipoglicemia; via incretina: glicose-dependente",
   "tipo": "fluxo",
   "fluxo": {
     "orientacao": "vertical",
@@ -54,6 +54,13 @@
         "texto": "Influxo de cálcio\nliberação dos grânulos de insulina"
       },
       {
+        "id": "a7",
+        "tipo": "fim",
+        "texto": "Efeitos além da insulina\nsaciedade, ↓ glucagon, perda de peso\n↓ desfechos CV e renais (AGLP-1 com benefício comprovado)",
+        "largura": 240,
+        "camada": 3
+      },
+      {
         "id": "a6",
         "tipo": "orgao",
         "texto": "Célula β (via incretina)\nsecreção de insulina GLICOSE-dependente"
@@ -64,15 +71,9 @@
         "texto": "Célula β (via SUR1)\nsecreção INDEPENDE da glicemia"
       },
       {
-        "id": "a7",
-        "tipo": "fim",
-        "texto": "Baixo risco de hipoglicemia\nsaciedade, ↓ glucagon, perda de peso (AGLP-1, tirzepatida)\n↓ desfechos CV e renais (AGLP-1 com benefício comprovado)",
-        "largura": 240
-      },
-      {
         "id": "b5",
         "tipo": "alerta",
-        "texto": "Hipoglicemia e ganho de peso\nevitar glibenclamida (metabólitos ativos)\npreferir gliclazida MR ou glimepirida",
+        "texto": "Daí a hipoglicemia\nevitar glibenclamida (metabólitos ativos)\npreferir gliclazida MR ou glimepirida",
         "largura": 240
       }
     ],
@@ -94,7 +95,7 @@
       {
         "de": "a3",
         "para": "a5",
-        "rotulo": "prolonga o GLP-1 próprio"
+        "rotulo": "GLP-1 endógeno"
       },
       {
         "de": "a4",
@@ -109,7 +110,7 @@
         "rotulo": "efeito modesto"
       },
       {
-        "de": "a6",
+        "de": "a4",
         "para": "a7"
       },
       {

@@ -1,0 +1,110 @@
+{
+  "i": 148,
+  "sub": "Neuroendocrinologia",
+  "tema": "Craniofaringioma",
+  "titulo": "Craniofaringioma: estruturas comprimidas e suas consequências",
+  "subtitulo": "DI e lesão hipotalâmica separam o craniofaringioma do adenoma hipofisário",
+  "tipo": "fluxo",
+  "fluxo": {
+    "orientacao": "vertical",
+    "nos": [
+      {
+        "id": "rk",
+        "texto": "Bolsa de Rathke\nremanescentes epiteliais",
+        "tipo": "inicio",
+        "camada": 0
+      },
+      {
+        "id": "tu",
+        "texto": "Craniofaringioma\nbenigno, localmente agressivo\nIII ventrículo: hidrocefalia",
+        "tipo": "alerta",
+        "camada": 1
+      },
+      {
+        "id": "qui",
+        "texto": "Quiasma\nhemianopsia bitemporal",
+        "tipo": "orgao",
+        "camada": 2
+      },
+      {
+        "id": "has",
+        "texto": "Haste\ndiabetes insípido\nPRL alta: desconexão",
+        "tipo": "orgao",
+        "camada": 2
+      },
+      {
+        "id": "ade",
+        "texto": "Hipopituitarismo\nGH, gonadotrofinas,\nACTH e TSH",
+        "tipo": "passo",
+        "camada": 2
+      },
+      {
+        "id": "hip",
+        "texto": "Hipotálamo\nsono, temperatura, sede",
+        "tipo": "orgao",
+        "camada": 2
+      },
+      {
+        "id": "fr",
+        "texto": "Ao diagnóstico\n• GH 75%, gonadotrofinas 40%\n• ACTH e TSH 25%; DI 17 a 38%",
+        "tipo": "grupo",
+        "camada": 3
+      },
+      {
+        "id": "ob",
+        "texto": "Obesidade hipotalâmica\npiora no pós-operatório\nestilo de vida + agonista de GLP-1",
+        "tipo": "fim",
+        "camada": 3
+      }
+    ],
+    "setas": [
+      {
+        "de": "rk",
+        "para": "tu"
+      },
+      {
+        "de": "tu",
+        "para": "qui"
+      },
+      {
+        "de": "tu",
+        "para": "hip"
+      },
+      {
+        "de": "tu",
+        "para": "has"
+      },
+      {
+        "de": "tu",
+        "para": "ade"
+      },
+      {
+        "de": "has",
+        "para": "fr",
+        "tipo": "fraca"
+      },
+      {
+        "de": "ade",
+        "para": "fr",
+        "tipo": "fraca"
+      },
+      {
+        "de": "hip",
+        "para": "ob"
+      }
+    ],
+    "notas": [],
+    "legenda": "Cinza: frequência das deficiências ao diagnóstico."
+  },
+  "lastro": [
+    "O craniofaringioma nasce de remanescentes da bolsa de Rathke e do ducto faríngeo",
+    "É histologicamente benigno, mas localmente agressivo (adere a quiasma, hipotálamo e haste).",
+    "Ao diagnóstico, a deficiência de GH está em 75%, a de gonadotrofinas em 40%, e ACTH e TSH em 25% cada.",
+    "O diabetes insípido aparece em 17 a 38% dos craniofaringiomas — e é o que o separa do adenoma hipofisário.",
+    "Pode dar hiperprolactinemia de desconexão pela compressão da haste.",
+    "alterações do sono, desregulação da temperatura e do centro da sede",
+    "piora no pós-operatório e se trata com estilo de vida e agonista de GLP-1",
+    "hidrocefalia (obstrução do III ventrículo)"
+  ],
+  "justificativa": "O capítulo já tem o algoritmo de abordagem; a figura liga cada estrutura que o tumor comprime à sua manifestação, com as frequências que o capítulo traz."
+}

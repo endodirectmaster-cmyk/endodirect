@@ -1,0 +1,121 @@
+{
+  "i": 89,
+  "sub": "Adrenal",
+  "tema": "Insuficiência Adrenal e Crise Adrenal",
+  "titulo": "Onde o eixo falha: insuficiência adrenal primária × secundária",
+  "subtitulo": "O nível da lesão explica hiperpigmentação, hipercalemia e a necessidade de fludrocortisona",
+  "tipo": "fluxo",
+  "fluxo": {
+    "orientacao": "vertical",
+    "nos": [
+      {
+        "id": "h",
+        "texto": "Hipotálamo\nCRH",
+        "tipo": "orgao",
+        "camada": 0
+      },
+      {
+        "id": "p",
+        "texto": "Hipófise\nACTH",
+        "tipo": "orgao",
+        "camada": 1
+      },
+      {
+        "id": "adr",
+        "texto": "Adrenal",
+        "tipo": "orgao",
+        "camada": 2
+      },
+      {
+        "id": "hp",
+        "texto": "Hiperpigmentação\nexcesso de POMC no receptor de MSH\nsó na primária",
+        "tipo": "alerta",
+        "camada": 2
+      },
+      {
+        "id": "ald",
+        "texto": "Aldosterona",
+        "tipo": "hormonio",
+        "camada": 3
+      },
+      {
+        "id": "cort",
+        "texto": "Cortisol",
+        "tipo": "hormonio",
+        "camada": 3
+      },
+      {
+        "id": "k",
+        "texto": "Hipercalemia, renina alta\nfalta de aldosterona: só na primária\nrepor fludrocortisona",
+        "tipo": "alerta",
+        "camada": 4
+      }
+    ],
+    "setas": [
+      {
+        "de": "h",
+        "para": "p",
+        "rotulo": "CRH"
+      },
+      {
+        "de": "p",
+        "para": "adr",
+        "rotulo": "ACTH"
+      },
+      {
+        "de": "p",
+        "para": "hp",
+        "tipo": "fraca",
+        "rotulo": "ACTH alto"
+      },
+      {
+        "de": "adr",
+        "para": "cort"
+      },
+      {
+        "de": "adr",
+        "para": "ald"
+      },
+      {
+        "de": "ald",
+        "para": "k",
+        "tipo": "fraca",
+        "rotulo": "falta"
+      },
+      {
+        "de": "cort",
+        "para": "p",
+        "tipo": "feedback",
+        "rotulo": "feedback −"
+      }
+    ],
+    "notas": [
+      {
+        "no": "h",
+        "texto": "Terciária: supressão do CRH; causa mais comum é a suspensão de glicocorticoide exógeno",
+        "lado": "esquerda"
+      },
+      {
+        "no": "p",
+        "texto": "Secundária: ACTH baixo; aldosterona preservada pela renina-angiotensina, sem hiperpigmentação; hiponatremia comum às duas formas",
+        "lado": "esquerda"
+      },
+      {
+        "no": "adr",
+        "texto": "Primária (Addison): falha da própria adrenal, ACTH alto; autoimune em ~80%",
+        "lado": "esquerda"
+      }
+    ],
+    "legenda": "Tracejado vermelho: retroalimentação negativa. Cinza: efeito da deficiência."
+  },
+  "lastro": [
+    "Primária (Addison) = falha da própria adrenal → cortisol↓ e ACTH↑",
+    "terciária = supressão hipotalâmica do CRH/eixo (causa mais comum: suspensão de glicocorticoide exógeno",
+    "excesso de POMC estimulando o receptor de MSH; exclusiva da forma primária",
+    "sem hipercalemia (aldosterona preservada pela renina-angiotensina) e sem hiperpigmentação",
+    "hiponatremia (comum a ambas); na primária também hipercalemia e acidose metabólica leve (falta de aldosterona)",
+    "Mineralocorticoide (apenas na forma primária): fludrocortisona",
+    "Adrenalite autoimune responde por ~80%"
+  ],
+  "justificativa": "O capítulo já tem o algoritmo diagnóstico; a figura mostra o eixo e onde cada forma falha, o que explica as diferenças clínicas e de reposição."
+}

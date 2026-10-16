@@ -3,32 +3,107 @@
   "sub": "Diabetes",
   "tema": "Hipoglicemia no Diabetes",
   "titulo": "Hipoglicemia: as perguntas que separam as causas",
-  "subtitulo": "Com insulina ou secretagogo, a causa é o tratamento; sem eles, a dosagem pareada decide",
+  "subtitulo": "Com insulina ou secretagogo, rever a causa; sem eles, tríade de Whipple e dosagem pareada",
   "tipo": "fluxo",
   "fluxo": {
     "orientacao": "vertical",
     "nos": [
-      {"id": "ini", "tipo": "inicio", "largura": 260, "texto": "Hipoglicemia confirmada\ntríade de Whipple + história clínica"},
-      {"id": "d1", "tipo": "decisao", "texto": "Usa insulina ou secretagogo?"},
-      {"id": "trat", "tipo": "fim", "texto": "Hipoglicemia do tratamento\ndose excessiva, omissão de refeição, álcool, insuficiência renal\nrever a causa; ajustar insulina/secretagogo e metas"},
-      {"id": "dos", "tipo": "passo", "texto": "Dosagem pareada na hipoglicemia\nglicemia, insulina, peptídeo C, β-hidroxibutirato\nanti-insulina e hipoglicemiantes na urina, se houver suspeita"},
-      {"id": "d2", "tipo": "decisao", "texto": "Insulina > 3 µUI/mL\ne β-hidroxibutirato < 2,7 mmol/L?"},
-      {"id": "hiper", "tipo": "passo", "largura": 240, "texto": "Hiperinsulinêmica\na insulina suprime a cetogênese: cetoácidos baixos\nteste do glucagon: aumento > 25 mg/dL confirma"},
-      {"id": "hipo", "tipo": "passo", "largura": 240, "texto": "Insulina < 3 µUI/mL\ncetoácidos presentes: hipoinsulinêmica — etilismo, doença crítica, insuficiência adrenal\ncetoácidos suprimidos: tumor produtor de IGF-2 (IGF-2/IGF-1 > 10)"},
-      {"id": "d3", "tipo": "decisao", "texto": "Peptídeo C > 0,6 ng/mL?"},
-      {"id": "endo", "tipo": "fim", "texto": "Endógena\ninsulinoma, NIPHS, secretagogo (sulfonilureia na urina positiva)\nHirata: insulina muito alta e anti-insulina positivo"},
-      {"id": "exo", "tipo": "alerta", "texto": "Exógena\ninsulina aplicada: insulina muito alta com peptídeo C < 0,6"}
+      {
+        "id": "ini",
+        "tipo": "inicio",
+        "texto": "Hipoglicemia"
+      },
+      {
+        "id": "d1",
+        "tipo": "decisao",
+        "texto": "Usa insulina ou secretagogo?"
+      },
+      {
+        "id": "trat",
+        "tipo": "fim",
+        "texto": "Fatores de risco\ndose excessiva, omissão de refeição, álcool, insuficiência renal\nrever a causa; ajustar insulina/secretagogo e metas"
+      },
+      {
+        "id": "dos",
+        "tipo": "passo",
+        "texto": "Whipple + dosagem pareada\nglicemia, insulina, peptídeo C, β-hidroxibutirato\ncolhida na vigência da hipoglicemia"
+      },
+      {
+        "id": "d2",
+        "tipo": "decisao",
+        "texto": "Insulina > 3 µUI/mL\ne β-hidroxibutirato < 2,7 mmol/L?"
+      },
+      {
+        "id": "hiper",
+        "tipo": "passo",
+        "largura": 240,
+        "texto": "Hiperinsulinêmica\na insulina suprime a cetogênese: cetoácidos baixos\nteste do glucagon: aumento > 25 mg/dL confirma"
+      },
+      {
+        "id": "hipo",
+        "tipo": "passo",
+        "largura": 240,
+        "texto": "Insulina < 3 µUI/mL\ncetoácidos presentes: hipoinsulinêmica — etilismo, doença crítica, insuficiência adrenal\ncetoácidos suprimidos: tumor produtor de IGF-2 (IGF-2/IGF-1 > 10)"
+      },
+      {
+        "id": "d3",
+        "tipo": "decisao",
+        "texto": "Peptídeo C > 0,6 ng/mL?"
+      },
+      {
+        "id": "endo",
+        "tipo": "fim",
+        "texto": "Endógena\ninsulinoma, NIPHS, secretagogo (sulfonilureia na urina positiva)\nHirata: insulina muito alta e anti-insulina positivo"
+      },
+      {
+        "id": "exo",
+        "tipo": "alerta",
+        "texto": "Exógena\ninsulina aplicada: insulina muito alta com peptídeo C < 0,6"
+      }
     ],
     "setas": [
-      {"de": "ini", "para": "d1"},
-      {"de": "d1", "para": "trat", "rotulo": "Sim"},
-      {"de": "d1", "para": "dos", "rotulo": "Não"},
-      {"de": "dos", "para": "d2"},
-      {"de": "d2", "para": "hiper", "rotulo": "Sim"},
-      {"de": "d2", "para": "hipo", "rotulo": "Não"},
-      {"de": "hiper", "para": "d3"},
-      {"de": "d3", "para": "endo", "rotulo": "Sim"},
-      {"de": "d3", "para": "exo", "rotulo": "Não"}
+      {
+        "de": "ini",
+        "para": "d1"
+      },
+      {
+        "de": "d1",
+        "para": "trat",
+        "rotulo": "Sim"
+      },
+      {
+        "de": "d1",
+        "para": "dos",
+        "rotulo": "Não"
+      },
+      {
+        "de": "dos",
+        "para": "d2"
+      },
+      {
+        "de": "d2",
+        "para": "hiper",
+        "rotulo": "Sim"
+      },
+      {
+        "de": "d2",
+        "para": "hipo",
+        "rotulo": "Não"
+      },
+      {
+        "de": "hiper",
+        "para": "d3"
+      },
+      {
+        "de": "d3",
+        "para": "endo",
+        "rotulo": "Sim"
+      },
+      {
+        "de": "d3",
+        "para": "exo",
+        "rotulo": "Não"
+      }
     ],
     "legenda": "Causa factícia? Pedir hipoglicemiantes orais na urina. Hirata? Anticorpo anti-insulina."
   },
@@ -36,11 +111,11 @@
     "A primeira bifurcação é insulina acima ou abaixo de 3 µUI/mL, com beta-hidroxibutirato abaixo ou acima de 2,7 mmol/L.",
     "Peptídeo C acima de 0,6 ng/mL indica insulina endógena; abaixo de 0,6, insulina EXÓGENA aplicada.",
     "O teste do glucagon com aumento acima de 25 mg/dL confirma excesso de ação insulínica.",
-    "A dosagem tem de ser PAREADA e colhida na vigência da hipoglicemia.",
+    "Após o episódio, rever a causa e ajustar insulina/secretagogo e as metas.",
     "No tumor produtor de IGF-2 a insulina está BAIXA e a pista é a relação IGF-2/IGF-1 acima de 10.",
-    "investigar tríade de Whipple se não houver terapia hipoglicemiante",
-    "Hiperinsulinêmica — a insulina suprime a cetogênese, por isso os cetoácidos ficam baixos",
-    "Principais fatores de risco: insulina/sulfonilureia, omissão de refeição, álcool e insuficiência renal."
+    "Principais fatores de risco: insulina/sulfonilureia, omissão de refeição, álcool e insuficiência renal.",
+    "Confirmar a hipoglicemia pela tríade de Whipple.",
+    "A dosagem tem de ser PAREADA e colhida na vigência da hipoglicemia."
   ],
   "justificativa": "O fluxograma existente é o tratamento do episódio; a figura cobre o outro ângulo, o raciocínio diagnóstico que o texto apresenta em tabelas: primeiro separar a hipoglicemia do tratamento, depois as três perguntas da dosagem pareada."
 }

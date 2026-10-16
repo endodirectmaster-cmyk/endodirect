@@ -1,0 +1,128 @@
+{
+  "i": 92,
+  "sub": "Adrenal",
+  "tema": "Feocromocitoma e Paraganglioma",
+  "titulo": "Do excesso de catecolaminas ao preparo pré-operatório em três etapas",
+  "subtitulo": "Efeitos das catecolaminas, preparo pré-operatório e complicações após a ressecção",
+  "tipo": "fluxo",
+  "fluxo": {
+    "orientacao": "vertical",
+    "rotulos_camadas": [
+      "Tumor",
+      "Hormônio",
+      "Efeitos",
+      "1ª etapa",
+      "2ª etapa",
+      "3ª etapa",
+      "Pós-operatório"
+    ],
+    "nos": [
+      {
+        "id": "t",
+        "texto": "Tumor cromafim\nfeocromocitoma ou paraganglioma",
+        "tipo": "orgao"
+      },
+      {
+        "id": "c",
+        "texto": "Catecolaminas em excesso",
+        "tipo": "hormonio"
+      },
+      {
+        "id": "s",
+        "texto": "Crises paroxísticas\ncefaleia, sudorese\npalpitações",
+        "tipo": "passo"
+      },
+      {
+        "id": "g",
+        "texto": "Hiperglicemia\nefeito contrainsular",
+        "tipo": "passo"
+      },
+      {
+        "id": "h",
+        "texto": "Hipertensão\nsustentada\nou lábil",
+        "tipo": "alerta"
+      },
+      {
+        "id": "hv",
+        "texto": "Hipovolemia\nhipotensão ortostática\nvasoconstrição, ADH↓, natriurese",
+        "tipo": "alerta"
+      },
+      {
+        "id": "a",
+        "texto": "Alfabloqueio\n10 a 14 dias antes\nalvo PA < 130×80 mmHg",
+        "tipo": "passo",
+        "camada": 3
+      },
+      {
+        "id": "b",
+        "texto": "Betabloqueio\nsó após o alfabloqueio\nalvo FC 60–80 bpm",
+        "tipo": "passo",
+        "camada": 4
+      },
+      {
+        "id": "x",
+        "texto": "Expansão\nsódio 5 g/dia e salina\nalfa suspenso 12 h antes",
+        "tipo": "passo",
+        "camada": 5
+      },
+      {
+        "id": "p",
+        "texto": "Após a ressecção\nhipoglicemia 10–15% e hipotensão\nqueda da supressão da insulina",
+        "tipo": "fim",
+        "camada": 6
+      }
+    ],
+    "setas": [
+      {
+        "de": "t",
+        "para": "c"
+      },
+      {
+        "de": "c",
+        "para": "s"
+      },
+      {
+        "de": "c",
+        "para": "g"
+      },
+      {
+        "de": "c",
+        "para": "h"
+      },
+      {
+        "de": "c",
+        "para": "hv"
+      },
+      {
+        "de": "h",
+        "para": "a",
+        "rotulo": "bloquear α"
+      },
+      {
+        "de": "a",
+        "para": "b"
+      },
+      {
+        "de": "b",
+        "para": "x"
+      },
+      {
+        "de": "x",
+        "para": "p",
+        "rotulo": "cirurgia"
+      }
+    ],
+    "notas": [],
+    "legenda": "Betabloqueio nunca antes do alfabloqueio: risco de crise hipertensiva por vasoconstrição α sem oposição."
+  },
+  "lastro": [
+    "Hipovolemia e hipotensão ortostática coexistem com a hipertensão — vasoconstrição periférica sustentada, inibição do ADH e natriurese.",
+    "hiperglicemia (efeito contrainsular)",
+    "1ª etapa — alfabloqueio, 10 a 14 dias antes. Alvo: PA < 130×80 mmHg",
+    "2ª etapa — betabloqueio. Alvo: FC 60–80 bpm",
+    "nunca antes, pelo risco de crise hipertensiva por vasoconstrição α sem oposição",
+    "Dieta hipersódica (5 g de sódio ao dia, iniciada após 3 dias de alfabloqueio), hidratação com salina na véspera e suspensão do alfabloqueador 12 h antes",
+    "Hipoglicemia em 10 a 15%, por queda abrupta da supressão da secreção de insulina, e hipotensão — ambas prevenidas pela expansão pré-operatória"
+  ],
+  "justificativa": "O capítulo já tem o algoritmo diagnóstico; a figura liga a fisiopatologia das catecolaminas à lógica de cada etapa do preparo e às complicações pós-operatórias."
+}

@@ -1,0 +1,158 @@
+{
+  "i": 156,
+  "sub": "Endocrinologia do Esporte",
+  "tema": "Esteroides Anabolizantes Androgênicos: Abuso e Consequências Endócrinas",
+  "titulo": "Esteroides anabolizantes: como desligam o eixo gonadal",
+  "subtitulo": "Feedback negativo dos androgênios exógenos, aromatização e eritropoetina",
+  "tipo": "fluxo",
+  "fluxo": {
+    "orientacao": "vertical",
+    "nos": [
+      {
+        "id": "eaa",
+        "texto": "EAA supra-fisiológicos\n5–20× a produção endógena",
+        "tipo": "inicio",
+        "camada": 0
+      },
+      {
+        "id": "hip",
+        "texto": "Hipotálamo\nGnRH inibido",
+        "tipo": "orgao",
+        "camada": 1,
+        "largura": 150
+      },
+      {
+        "id": "aro",
+        "texto": "Aromatase\nestradiol alto",
+        "tipo": "hormonio",
+        "camada": 1,
+        "largura": 150
+      },
+      {
+        "id": "epo",
+        "texto": "Eritropoetina ↑",
+        "tipo": "hormonio",
+        "camada": 1,
+        "largura": 150
+      },
+      {
+        "id": "hfi",
+        "texto": "Hipófise\nLH e FSH suprimidos\n(<1 U/L)",
+        "tipo": "orgao",
+        "camada": 2,
+        "largura": 150
+      },
+      {
+        "id": "gin",
+        "texto": "Ginecomastia\nrazão estrogênio/androgênio ↑",
+        "tipo": "passo",
+        "camada": 2,
+        "largura": 190
+      },
+      {
+        "id": "eri",
+        "texto": "Eritrocitose\nHt >54%: risco trombótico",
+        "tipo": "alerta",
+        "camada": 2,
+        "largura": 150
+      },
+      {
+        "id": "ley",
+        "texto": "Células de Leydig\nmenos testosterona endógena",
+        "tipo": "orgao",
+        "camada": 3
+      },
+      {
+        "id": "esp",
+        "texto": "Espermatogênese\ncomprometida; inibina B cai",
+        "tipo": "orgao",
+        "camada": 3
+      },
+      {
+        "id": "hh",
+        "texto": "Hipogonadismo hipogonadotrófico\natrofia testicular, oligo/azoospermia",
+        "tipo": "alerta",
+        "camada": 4
+      },
+      {
+        "id": "pos",
+        "texto": "Pós-ciclo\nrecupera em semanas a >12 meses\nàs vezes hipogonadismo persistente",
+        "tipo": "fim",
+        "camada": 5,
+        "largura": 240
+      }
+    ],
+    "setas": [
+      {
+        "de": "eaa",
+        "para": "hip",
+        "tipo": "inibe",
+        "rotulo": "feedback −"
+      },
+      {
+        "de": "eaa",
+        "para": "aro"
+      },
+      {
+        "de": "eaa",
+        "para": "epo"
+      },
+      {
+        "de": "hip",
+        "para": "hfi",
+        "rotulo": "menos GnRH"
+      },
+      {
+        "de": "aro",
+        "para": "gin"
+      },
+      {
+        "de": "epo",
+        "para": "eri"
+      },
+      {
+        "de": "hfi",
+        "para": "ley",
+        "rotulo": "LH ↓"
+      },
+      {
+        "de": "hfi",
+        "para": "esp",
+        "rotulo": "FSH ↓"
+      },
+      {
+        "de": "ley",
+        "para": "hh"
+      },
+      {
+        "de": "esp",
+        "para": "hh"
+      },
+      {
+        "de": "hh",
+        "para": "pos",
+        "tipo": "estimula",
+        "rotulo": "suspender EAA"
+      }
+    ],
+    "notas": [
+      {
+        "no": "hh",
+        "texto": "Não é hipergonadotrófico: no hipogonadismo primário LH e FSH são altos",
+        "lado": "direita"
+      }
+    ],
+    "legenda": "Barra vermelha: inibição. Setas douradas: sequência. Verde: conduta."
+  },
+  "lastro": [
+    "O excesso androgênico exerce feedback negativo sobre GnRH hipotalâmico e LH/FSH hipofisários",
+    "causando **hipogonadismo hipogonadotrófico** com atrofia testicular e supressão da espermatogênese",
+    "Hipogonadismo primário (LH/FSH altos)",
+    "a ginecomastia decorre do aumento de estradiol pela aromatização das doses supra-fisiológicas, elevando a razão estrogênio/androgênio na mama",
+    "**Policitemia** pelo aumento da eritropoetina, com risco de trombose venosa profunda e embolia pulmonar",
+    "com LH e FSH suprimidos (<1 U/L)** — dissociação que distingue de hipogonadismo primário",
+    "a maioria dos homens recupera o eixo em cerca de 12 meses, mas o tempo varia e alguns evoluem com hipogonadismo persistente",
+    "doses supra-fisiológicas (frequentemente 5-20x a produção endógena"
+  ],
+  "justificativa": "O ponto central e o erro clássico do capítulo é o hipogonadismo hipogonadotrófico por feedback negativo; a figura mostra o eixo desligado ao lado da aromatização e da eritrocitose."
+}

@@ -1,0 +1,120 @@
+{
+  "i": 76,
+  "sub": "Obesidade",
+  "tema": "Suplementação Nutricional Pós-Bariátrica",
+  "titulo": "Por que faltam nutrientes após a cirurgia bariátrica",
+  "subtitulo": "Mecanismos das principais deficiências e o que cada uma exige",
+  "tipo": "fluxo",
+  "fluxo": {
+    "orientacao": "vertical",
+    "nos": [
+      {
+        "id": "cir",
+        "texto": "Cirurgia bariátrica",
+        "tipo": "inicio"
+      },
+      {
+        "id": "ing",
+        "texto": "Menor ingestão\nintolerância à carne",
+        "tipo": "passo"
+      },
+      {
+        "id": "mab",
+        "texto": "Má absorção\nbypass e DBP",
+        "tipo": "passo"
+      },
+      {
+        "id": "acid",
+        "texto": "↓ Acidez gástrica\n↓ fator intrínseco",
+        "tipo": "passo"
+      },
+      {
+        "id": "prot",
+        "texto": "Proteína\nedema: hipoalbuminemia\nrepor 60–75 g/dia",
+        "tipo": "alerta"
+      },
+      {
+        "id": "fe",
+        "texto": "Ferro\naté 60%; duodeno excluído no bypass\nIV se moderada/grave",
+        "tipo": "alerta"
+      },
+      {
+        "id": "osso",
+        "texto": "Osso\nfratura ↑ em 2–5 anos\ncitrato; vit. D 30–60",
+        "tipo": "alerta"
+      },
+      {
+        "id": "b12",
+        "texto": "Vitamina B12\ntambém por desabsorção ileal\n1.000 µg VO ou IM",
+        "tipo": "alerta"
+      },
+      {
+        "id": "fim",
+        "texto": "Suplementação vitalícia\nexames aos 3, 6, 12 meses e anual",
+        "tipo": "fim"
+      }
+    ],
+    "setas": [
+      {
+        "de": "cir",
+        "para": "ing"
+      },
+      {
+        "de": "cir",
+        "para": "acid"
+      },
+      {
+        "de": "cir",
+        "para": "mab"
+      },
+      {
+        "de": "ing",
+        "para": "prot"
+      },
+      {
+        "de": "acid",
+        "para": "osso"
+      },
+      {
+        "de": "acid",
+        "para": "fe"
+      },
+      {
+        "de": "acid",
+        "para": "b12"
+      },
+      {
+        "de": "mab",
+        "para": "fe"
+      },
+      {
+        "de": "prot",
+        "para": "fim"
+      },
+      {
+        "de": "osso",
+        "para": "fim"
+      },
+      {
+        "de": "fe",
+        "para": "fim"
+      },
+      {
+        "de": "b12",
+        "para": "fim"
+      }
+    ],
+    "legenda": "↓ acidez piora o ferro (férrico → ferroso) e o carbonato de cálcio. B12: o ácido metilmalônico sobe antes da B12 sérica cair. DBP: derivação biliopancreática."
+  },
+  "lastro": [
+    "redução da acidez gástrica e do fator intrínseco e **má absorção**",
+    "decorrente de restrição proteica e intolerância à carne vermelha",
+    "**edema por hipoalbuminemia (padrão kwashiorkor)**. Tratamento: suplementação de **60–75 g/dia de proteína**",
+    "risco de fratura osteoporótica aumenta 2–5 anos após a cirurgia",
+    "usar citrato em vez de carbonato, cuja absorção depende de acidez gástrica",
+    "A redução da acidez gástrica prejudica** a conversão do ferro férrico em ferroso",
+    "O ferro é absorvido no duodeno e no jejuno proximal** — exatamente o segmento excluído pelo bypass",
+    "por redução do fator intrínseco, elevação do pH gástrico, desabsorção ileal e menor ingestão"
+  ],
+  "justificativa": "O capítulo já tem o fluxograma da rotina de suplementação; a figura explica o mecanismo de cada deficiência, base para entender as escolhas de reposição."
+}

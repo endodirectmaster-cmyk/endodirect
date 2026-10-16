@@ -1,0 +1,129 @@
+{
+  "i": 147,
+  "sub": "Endocrinologia Pediátrica",
+  "tema": "Raquitismo",
+  "titulo": "Duas vias para o raquitismo: falta de vitamina D ou perda de fosfato",
+  "subtitulo": "As duas convergem no fósforo baixo e na fise mal mineralizada",
+  "tipo": "fluxo",
+  "fluxo": {
+    "orientacao": "vertical",
+    "rotulos_camadas": [
+      "Causa",
+      "Mediador",
+      "Laboratório",
+      "Osso",
+      "Clínica"
+    ],
+    "nos": [
+      {
+        "id": "vd",
+        "tipo": "inicio",
+        "texto": "Deficiência de vitamina D\npouco sol, pele escura\naleitamento sem suplementação",
+        "camada": 0
+      },
+      {
+        "id": "fg",
+        "tipo": "inicio",
+        "texto": "Excesso de FGF23\nligado ao X (PHEX)",
+        "camada": 0
+      },
+      {
+        "id": "pth",
+        "tipo": "hormonio",
+        "texto": "PTH alto\nmantém o cálcio normal-baixo",
+        "camada": 1
+      },
+      {
+        "id": "rim",
+        "tipo": "orgao",
+        "texto": "Rim\nfosfatúria; 1,25-OH-D baixa",
+        "camada": 1
+      },
+      {
+        "id": "cal",
+        "tipo": "passo",
+        "texto": "Calciopênico\nP baixo, 25-OH-D baixa",
+        "camada": 2
+      },
+      {
+        "id": "fos",
+        "tipo": "passo",
+        "texto": "Fosfopênico\nP baixo; PTH e 25-OH-D normais",
+        "camada": 2
+      },
+      {
+        "id": "hipo",
+        "tipo": "alerta",
+        "texto": "Hipocalcemia\ntetania ou convulsão no lactente",
+        "camada": 3
+      },
+      {
+        "id": "fise",
+        "tipo": "orgao",
+        "texto": "Placa de crescimento\nmineralização deficiente\nfosfatase alcalina alta",
+        "camada": 3
+      },
+      {
+        "id": "cli",
+        "tipo": "grupo",
+        "texto": "Sinais e radiografia\n• punhos largos, rosário, pernas arqueadas\n• RX: metáfises em taça, desfiadas",
+        "camada": 4
+      }
+    ],
+    "setas": [
+      {
+        "de": "vd",
+        "para": "pth",
+        "rotulo": "secundário"
+      },
+      {
+        "de": "fg",
+        "para": "rim"
+      },
+      {
+        "de": "pth",
+        "para": "cal"
+      },
+      {
+        "de": "rim",
+        "para": "fos"
+      },
+      {
+        "de": "cal",
+        "para": "hipo",
+        "tipo": "fraca",
+        "rotulo": "forma grave"
+      },
+      {
+        "de": "cal",
+        "para": "fise"
+      },
+      {
+        "de": "fos",
+        "para": "fise"
+      },
+      {
+        "de": "fise",
+        "para": "cli"
+      }
+    ],
+    "notas": [
+      {
+        "no": "fise",
+        "lado": "direita",
+        "texto": "Fosfatase alcalina baixa com clínica parecida sugere hipofosfatasia"
+      }
+    ],
+    "legenda": "Esquerda: via calciopênica (a mais comum). Direita: via fosfopênica. Tracejado: complicação."
+  },
+  "lastro": [
+    "Mineralização deficiente da placa de crescimento (fise)",
+    "cálcio normal-baixo (mantido às custas do PTH), fósforo baixo, fosfatase alcalina alta, PTH alto (hiperparatireoidismo secundário)",
+    "por excesso de FGF23, que causa fosfatúria e reduz a 1,25-OH-D",
+    "fósforo baixo, PTH normal (ou pouco alterado), cálcio normal, 25-OH-vitamina D normal",
+    "no calciopênico grave, hipocalcemia sintomática (tetania, convulsões)",
+    "metáfises alargadas, em taça e desfiadas/esgarçadas",
+    "fosfatase alcalina baixa com clínica semelhante sugere hipofosfatasia"
+  ],
+  "justificativa": "O capítulo já tem o algoritmo de investigação; a figura mostra a fisiopatologia das duas vias e por que o laboratório as separa."
+}

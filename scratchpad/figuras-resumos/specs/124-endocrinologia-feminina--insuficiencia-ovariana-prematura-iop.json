@@ -1,0 +1,87 @@
+{
+  "i": 124,
+  "sub": "Endocrinologia Feminina",
+  "tema": "Insuficiência Ovariana Prematura (IOP)",
+  "titulo": "IOP: das causas ao hipoestrogenismo e suas consequências",
+  "subtitulo": "Perda da função ovariana antes dos 40 anos; a terapia hormonal não é opcional",
+  "tipo": "fluxo",
+  "fluxo": {
+    "orientacao": "vertical",
+    "nos": [
+      {
+        "id": "cau",
+        "tipo": "grupo",
+        "camada": 0,
+        "texto": "Causas\n• idiopática 70–90% · iatrogênica 11,2%\n• genética 10–13% · autoimune 10,5%"
+      },
+      {
+        "id": "ov",
+        "tipo": "orgao",
+        "camada": 1,
+        "texto": "Ovário\ndepleção folicular (mais comum)\nou disfunção folicular"
+      },
+      {
+        "id": "hh",
+        "tipo": "hormonio",
+        "camada": 2,
+        "texto": "FSH > 25 UI/L · estradiol baixo"
+      },
+      {
+        "id": "th",
+        "tipo": "passo",
+        "camada": 2,
+        "texto": "Terapia hormonal até ~50 anos\nestrogênio em dose maior\n+ progestagênio se há útero"
+      },
+      {
+        "id": "cons",
+        "tipo": "alerta",
+        "camada": 3,
+        "texto": "Consequências\nfogachos; osso −20–30% trabecular, −5–10% cortical\nisquemia e insuficiência cardíaca"
+      }
+    ],
+    "setas": [
+      {
+        "de": "cau",
+        "para": "ov"
+      },
+      {
+        "de": "ov",
+        "para": "hh"
+      },
+      {
+        "de": "hh",
+        "para": "cons"
+      },
+      {
+        "de": "th",
+        "para": "cons",
+        "tipo": "inibe",
+        "rotulo": "previne"
+      }
+    ],
+    "notas": [
+      {
+        "no": "ov",
+        "lado": "direita",
+        "texto": "Função flutuante: 5 a 10% podem engravidar espontaneamente; oferecer contracepção"
+      },
+      {
+        "no": "cons",
+        "lado": "abaixo",
+        "texto": "Cognição: risco de demência maior quanto mais cedo a IOP"
+      }
+    ],
+    "legenda": "Dourado: causa e consequência. Vermelho ⊣: o que a terapia hormonal previne ou controla."
+  },
+  "lastro": [
+    "Idiopática | 70 a 90%",
+    "Iatrogênica | 11,2% | Cirurgia, quimioterapia, radioterapia",
+    "Genética | 10 a 13% | Síndrome de Turner, síndrome do X frágil",
+    "Depleção folicular é a causa mais comum; a alternativa é disfunção folicular",
+    "perda de 20 a 30% do osso trabecular e 5 a 10% do cortical",
+    "quanto mais cedo a IOP, maior o risco cognitivo",
+    "não é opcional: previne osteoporose e eventos cardiovasculares e controla sintomas",
+    "5 a 10% das mulheres com IOP podem engravidar espontaneamente"
+  ],
+  "justificativa": "O fluxograma existente é diagnóstico e manejo; a figura mostra a fisiopatologia — causas, falha folicular, hipoestrogenismo e consequências — e explica por que a terapia hormonal é obrigatória."
+}

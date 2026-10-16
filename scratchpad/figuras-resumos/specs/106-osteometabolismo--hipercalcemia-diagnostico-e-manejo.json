@@ -1,0 +1,150 @@
+{
+  "i": 106,
+  "sub": "Osteometabolismo",
+  "tema": "Hipercalcemia: Diagnóstico e Manejo",
+  "titulo": "PTH suprimido: os exames que definem a causa da hipercalcemia",
+  "subtitulo": "Cada exame aponta um grupo; o padrão da vitamina D separa granulomatose de intoxicação",
+  "tipo": "fluxo",
+  "fluxo": {
+    "orientacao": "vertical",
+    "nos": [
+      {
+        "id": "ini",
+        "texto": "PTH suprimido\nhipercalcemia PTH-independente",
+        "tipo": "inicio",
+        "camada": 0
+      },
+      {
+        "id": "e1",
+        "texto": "PTHrP",
+        "tipo": "passo",
+        "camada": 1
+      },
+      {
+        "id": "e2",
+        "texto": "Vitamina D\n25-OH e 1,25",
+        "tipo": "passo",
+        "camada": 1
+      },
+      {
+        "id": "e3",
+        "texto": "Eletroforese\ncadeias leves",
+        "tipo": "passo",
+        "camada": 1
+      },
+      {
+        "id": "e4",
+        "texto": "TSH, cortisol\nmetanefrinas",
+        "tipo": "passo",
+        "camada": 1
+      },
+      {
+        "id": "c1",
+        "texto": "Câncer humoral\n80% da hipercalcemia\nmaligna",
+        "tipo": "fim",
+        "camada": 2
+      },
+      {
+        "id": "dv",
+        "texto": "Qual fração sobe?",
+        "tipo": "decisao",
+        "camada": 2
+      },
+      {
+        "id": "c3",
+        "texto": "Mieloma\nosteólise local",
+        "tipo": "fim",
+        "camada": 2
+      },
+      {
+        "id": "c4",
+        "texto": "Endócrinas\nhipertireoidismo, feocromocitoma\ninsuficiência adrenal",
+        "tipo": "fim",
+        "camada": 2
+      },
+      {
+        "id": "gr",
+        "texto": "Granulomatose\nprodução macrofágica de 1α-hidroxilase",
+        "tipo": "fim",
+        "camada": 3
+      },
+      {
+        "id": "ix",
+        "texto": "Intoxicação por vitamina D\n1,25 normal ou pouco alterada",
+        "tipo": "fim",
+        "camada": 3
+      },
+      {
+        "id": "co",
+        "texto": "Corticoide\nna intoxicação, também restringir cálcio",
+        "tipo": "passo",
+        "camada": 4
+      }
+    ],
+    "setas": [
+      {
+        "de": "ini",
+        "para": "e1"
+      },
+      {
+        "de": "ini",
+        "para": "e2"
+      },
+      {
+        "de": "ini",
+        "para": "e3"
+      },
+      {
+        "de": "ini",
+        "para": "e4"
+      },
+      {
+        "de": "e1",
+        "para": "c1",
+        "rotulo": "elevado"
+      },
+      {
+        "de": "e2",
+        "para": "dv"
+      },
+      {
+        "de": "e3",
+        "para": "c3"
+      },
+      {
+        "de": "e4",
+        "para": "c4"
+      },
+      {
+        "de": "dv",
+        "para": "gr",
+        "rotulo": "só a 1,25"
+      },
+      {
+        "de": "dv",
+        "para": "ix",
+        "rotulo": "25-OH muito alta"
+      },
+      {
+        "de": "gr",
+        "para": "co"
+      },
+      {
+        "de": "ix",
+        "para": "co"
+      }
+    ],
+    "legenda": "Exames pedidos em conjunto após o PTH suprimido; em verde, o diagnóstico que cada um sustenta."
+  },
+  "lastro": [
+    "**PTH suprimido** → investigar **PTHrP**, **25-OH e 1,25-vitamina D**, **eletroforese de proteínas/cadeias leves** (mieloma), **TSH**",
+    "**80% por PTHrP** (mama, pulmão, escamosos, rim); 20% por osteólise local (metástase lítica, mieloma)",
+    "**1,25-vitamina D elevada com 25-OH normal**",
+    "Produção macrofágica de 1α-hidroxilase — tuberculose, hanseníase, sarcoidose",
+    "**25-OH muito elevada** (1,25 normal ou pouco alterada)",
+    "TSH, cortisol, metanefrinas | Hipertireoidismo, insuficiência adrenal, feocromocitoma",
+    "**Corticoide** quando a causa é **ativação macrofágica** — granulomatoses, linfoma — ou **intoxicação por vitamina D**",
+    "Restrição de cálcio na dieta e corticoide"
+  ],
+  "justificativa": "O fluxograma existente para em 'investigar' após o PTH suprimido; a figura mostra o que cada exame define, com o padrão da vitamina D que separa granulomatose de intoxicação."
+}

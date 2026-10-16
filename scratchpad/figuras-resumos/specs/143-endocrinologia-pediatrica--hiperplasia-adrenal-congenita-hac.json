@@ -1,0 +1,80 @@
+{
+  "i": 143,
+  "sub": "Endocrinologia Pediátrica",
+  "tema": "Hiperplasia Adrenal Congênita (HAC)",
+  "titulo": "HAC por 21-hidroxilase: quando cada forma se apresenta",
+  "subtitulo": "Da genitália atípica ao nascer à forma não clássica no adulto (escala de idade não proporcional)",
+  "tipo": "linha_tempo",
+  "linha_tempo": {
+    "largura": 640,
+    "faixas": [
+      {
+        "de": 0,
+        "ate": 50,
+        "rotulo": "Forma clássica",
+        "cor": "red"
+      },
+      {
+        "de": 62,
+        "ate": 100,
+        "rotulo": "Forma não clássica",
+        "cor": "gold"
+      }
+    ],
+    "marcos": [
+      {
+        "pos": 0,
+        "lado": "acima",
+        "cor": "navy",
+        "rotulo": "Nascimento",
+        "detalhe": "Menina: genitália ambígua (HAC até prova em contrário). Menino: fenotipicamente normal"
+      },
+      {
+        "pos": 16,
+        "lado": "abaixo",
+        "cor": "green",
+        "rotulo": "Triagem neonatal",
+        "detalhe": "17-OH-progesterona: permite tratar antes da crise"
+      },
+      {
+        "pos": 33,
+        "lado": "acima",
+        "cor": "red",
+        "rotulo": "2ª–3ª semana",
+        "detalhe": "Crise perdedora de sal: vômitos, desidratação, hiponatremia, hipercalemia, hipoglicemia, choque"
+      },
+      {
+        "pos": 50,
+        "lado": "abaixo",
+        "cor": "blue",
+        "rotulo": "Lactância",
+        "detalhe": "Hidrocortisona + fludrocortisona e sal em todo lactente com HAC clássica"
+      },
+      {
+        "pos": 76,
+        "lado": "acima",
+        "cor": "amber",
+        "rotulo": "Infância tardia e adolescência",
+        "detalhe": "Pubarca precoce, idade óssea avançada, hirsutismo, acne, sem perda de sal"
+      },
+      {
+        "pos": 100,
+        "lado": "abaixo",
+        "cor": "slate",
+        "rotulo": "Vida adulta",
+        "detalhe": "Não clássica achada ao investigar hiperandrogenismo ou SOP"
+      }
+    ]
+  },
+  "lastro": [
+    "crise adrenal neonatal",
+    "(tipicamente na 2ª–3ª semana): vômitos, recusa alimentar, desidratação, hiponatremia + hipercalemia, hipoglicemia, choque.",
+    "Menina: virilização/genitália ambígua ao nascer (clitoromegalia, fusão labial); menino aparece fenotipicamente normal ao nascer",
+    "Triagem neonatal: 17-OH-progesterona (permite tratar antes da crise).",
+    "Mineralocorticoide (fludrocortisona) + suplemento de sal em todo lactente com HAC clássica",
+    "hiperandrogenismo na infância tardia/adolescência (pubarca precoce, aceleração de idade óssea, hirsutismo, acne",
+    "muitas vezes diagnosticada só na vida adulta ou como achado em investigação de hiperandrogenismo/SOP.",
+    "Menina com genitália ambígua = HAC até prova em contrário"
+  ],
+  "justificativa": "O fluxograma cobre diagnóstico e manejo e a figura da seção Adrenal mostra o bloqueio enzimático; aqui a linha do tempo mostra quando cada forma aparece, da genitália atípica e da crise neonatal à forma não clássica."
+}

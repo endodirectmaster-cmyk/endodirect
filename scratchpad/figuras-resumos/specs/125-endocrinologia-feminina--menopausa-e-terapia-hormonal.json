@@ -1,0 +1,111 @@
+{
+  "i": 125,
+  "sub": "Endocrinologia Feminina",
+  "tema": "Menopausa e Terapia Hormonal",
+  "titulo": "Da depleção folicular aos sintomas da menopausa",
+  "subtitulo": "Como a queda e a oscilação do estradiol explicam o quadro clínico",
+  "tipo": "fluxo",
+  "fluxo": {
+    "orientacao": "vertical",
+    "nos": [
+      {
+        "id": "ov",
+        "tipo": "orgao",
+        "texto": "Ovário\ndepleção folicular",
+        "camada": 0
+      },
+      {
+        "id": "inib",
+        "tipo": "hormonio",
+        "texto": "Inibina B cai\nprimeira a cair",
+        "camada": 1
+      },
+      {
+        "id": "e2",
+        "tipo": "hormonio",
+        "texto": "Estradiol oscila e cai\noscilação gera sintomas",
+        "camada": 1
+      },
+      {
+        "id": "fsh",
+        "tipo": "hormonio",
+        "texto": "FSH sobe\n> 40 UI/L, se dosado",
+        "camada": 2
+      },
+      {
+        "id": "kndy",
+        "tipo": "orgao",
+        "texto": "Neurônios KNDy\nhiperativos (neurocinina B)\nalvo do fezolinetanto",
+        "camada": 2
+      },
+      {
+        "id": "vm",
+        "tipo": "fim",
+        "texto": "Fogachos\n80%; média de 7 anos",
+        "camada": 3
+      },
+      {
+        "id": "sgm",
+        "tipo": "fim",
+        "texto": "Geniturinária\n50%; progressiva",
+        "camada": 3
+      },
+      {
+        "id": "ol",
+        "tipo": "fim",
+        "texto": "Osso e lipídios\nperda óssea acelerada\n↑ LDL, TG, Lp(a); HDL −25%",
+        "camada": 3
+      }
+    ],
+    "setas": [
+      {
+        "de": "ov",
+        "para": "inib"
+      },
+      {
+        "de": "ov",
+        "para": "e2"
+      },
+      {
+        "de": "inib",
+        "para": "fsh",
+        "rotulo": "precede"
+      },
+      {
+        "de": "e2",
+        "para": "kndy"
+      },
+      {
+        "de": "kndy",
+        "para": "vm"
+      },
+      {
+        "de": "e2",
+        "para": "sgm"
+      },
+      {
+        "de": "e2",
+        "para": "ol"
+      }
+    ],
+    "notas": [
+      {
+        "no": "ov",
+        "lado": "direita",
+        "texto": "Testosterona sem mudança aguda: também vem das adrenais"
+      }
+    ],
+    "legenda": "Diagnóstico clínico: 12 meses de amenorreia; dosagens só em casos atípicos. Percentuais: frequência na menopausa."
+  },
+  "lastro": [
+    "A inibina B é o primeiro hormônio a cair e sua queda PRECEDE o aumento do FSH.",
+    "e é essa oscilação, não a queda simples, que produz os sintomas",
+    "Não há mudança aguda da testosterona na menopausa, porque ela também vem das adrenais.",
+    "FSH elevado (geralmente > 40 UI/L) confirma",
+    "e é essa hiperatividade que produz sudorese e vasodilatação",
+    "Sintomas vasomotores em 80%, com duração média de 7 anos; cada fogacho dura 3 a 4 minutos.",
+    "Na menopausa sobem LDL, triglicerídeos e Lp(a), e o HDL cai 25%.",
+    "O fármaco é antagonista do receptor de neurocinina B"
+  ],
+  "justificativa": "O capítulo já tem o algoritmo de decisão da terapia hormonal; a figura mostra a cadeia fisiopatológica (inibina B, FSH, estradiol, KNDy) que dá sentido ao diagnóstico clínico e aos alvos terapêuticos."
+}

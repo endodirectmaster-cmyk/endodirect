@@ -1,0 +1,131 @@
+{
+  "i": 164,
+  "sub": "Endocrinopatias",
+  "tema": "Endocrinopatias por Inibidores de Checkpoint Imunológico",
+  "titulo": "Inibidores de checkpoint: classe, glândula atingida e pista diagnóstica",
+  "subtitulo": "A quebra da tolerância imunológica gera endocrinopatias autoimunes iatrogênicas",
+  "tipo": "fluxo",
+  "fluxo": {
+    "orientacao": "vertical",
+    "nos": [
+      {
+        "id": "ici",
+        "texto": "Inibidor de checkpoint\nlibera os linfócitos T",
+        "tipo": "inicio"
+      },
+      {
+        "id": "c4",
+        "texto": "Anti-CTLA-4\nipilimumabe",
+        "tipo": "passo"
+      },
+      {
+        "id": "pd",
+        "texto": "Anti-PD-1/PD-L1\nex.: nivolumabe",
+        "tipo": "passo"
+      },
+      {
+        "id": "rr",
+        "texto": "Quadros raros\n<1%, potencialmente fatais",
+        "tipo": "passo"
+      },
+      {
+        "id": "hf",
+        "texto": "Hipofisite\n10–17% em dose alta",
+        "tipo": "orgao"
+      },
+      {
+        "id": "tr",
+        "texto": "Tireoidite\naté 10–15%",
+        "tipo": "orgao"
+      },
+      {
+        "id": "dm",
+        "texto": "DM1 autoimune\npor vezes fulminante",
+        "tipo": "orgao"
+      },
+      {
+        "id": "ad",
+        "texto": "Adrenalite\nprimária",
+        "tipo": "orgao"
+      },
+      {
+        "id": "ec",
+        "texto": "IA central\nACTH baixo\nsem fludrocortisona",
+        "tipo": "fim"
+      },
+      {
+        "id": "et",
+        "texto": "Tireotoxicose\ndepois hipotireoidismo\nsem tionamida",
+        "tipo": "fim"
+      },
+      {
+        "id": "ed",
+        "texto": "Peptídeo C baixo\nanti-GAD pode ser negativo\ninsulina imediata",
+        "tipo": "alerta"
+      },
+      {
+        "id": "ea",
+        "texto": "IA primária\nACTH alto, K alto\ncom fludrocortisona",
+        "tipo": "fim"
+      }
+    ],
+    "setas": [
+      {
+        "de": "ici",
+        "para": "c4"
+      },
+      {
+        "de": "ici",
+        "para": "pd"
+      },
+      {
+        "de": "ici",
+        "para": "rr"
+      },
+      {
+        "de": "c4",
+        "para": "hf"
+      },
+      {
+        "de": "pd",
+        "para": "tr"
+      },
+      {
+        "de": "rr",
+        "para": "dm"
+      },
+      {
+        "de": "rr",
+        "para": "ad"
+      },
+      {
+        "de": "hf",
+        "para": "ec"
+      },
+      {
+        "de": "tr",
+        "para": "et"
+      },
+      {
+        "de": "dm",
+        "para": "ed"
+      },
+      {
+        "de": "ad",
+        "para": "ea"
+      }
+    ],
+    "legenda": "Ipilimumabe + nivolumabe: ~30% de endocrinopatia, mais precoce. Repor cortisol antes da levotiroxina."
+  },
+  "lastro": [
+    "**Anti-CTLA-4**: a hipofisite é a marca (até 10-17% com doses altas de ipilimumabe",
+    "**Anti-PD-1/PD-L1**: predomina a **disfunção tireoidiana** (tireoidite destrutiva evoluindo a hipotireoidismo; até 10-15%).",
+    "Diabetes tipo 1 autoimune (por vezes fulminante) e insuficiência adrenal primária são raros (<1%), porém potencialmente fatais.",
+    "**adrenal primária** (ACTH alto, hipercalemia, necessita mineralocorticoide) versus **central/hipofisite** (ACTH baixo, sem hipercalemia, sem fludrocortisona)",
+    "A tireotoxicose por ICI é destrutiva (captação baixa): não usar tionamida.",
+    "Anti-GAD negativo NÃO exclui DM1 por ICI; peptídeo C baixo confirma.",
+    "Combinação ipilimumabe+nivolumabe eleva o risco global de endocrinopatia a cerca de 30%, com início mais precoce.",
+    "Sempre repor glicocorticoide ANTES da levotiroxina para não precipitar crise adrenal."
+  ],
+  "justificativa": "Sem fluxograma prévio, a figura liga cada classe de ICI à glândula que ela atinge e à pista que separa os quadros, incluindo central versus primária."
+}

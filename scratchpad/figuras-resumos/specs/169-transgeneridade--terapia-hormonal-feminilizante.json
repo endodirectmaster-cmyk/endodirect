@@ -1,0 +1,132 @@
+{
+  "i": 169,
+  "sub": "Transgeneridade",
+  "tema": "Terapia Hormonal Feminilizante",
+  "titulo": "Terapia feminilizante: onde agem o estradiol e cada antiandrogênio",
+  "subtitulo": "Estrogênio feminiliza; antiandrogênio suprime a testosterona endógena",
+  "tipo": "fluxo",
+  "fluxo": {
+    "orientacao": "vertical",
+    "nos": [
+      {
+        "id": "cip",
+        "texto": "Ciproterona\ninibe gonadotrofinas e bloqueia receptor\n10 mg/dia; prolactina, meningioma",
+        "tipo": "hormonio",
+        "camada": 0
+      },
+      {
+        "id": "hip",
+        "texto": "Hipófise\ngonadotrofinas",
+        "tipo": "orgao",
+        "camada": 1
+      },
+      {
+        "id": "e2",
+        "texto": "Estradiol\nmama, gordura, pele mais macia\nmeta 100 a 200 pg/mL",
+        "tipo": "hormonio",
+        "camada": 1
+      },
+      {
+        "id": "tes",
+        "texto": "Testículo",
+        "tipo": "orgao",
+        "camada": 2
+      },
+      {
+        "id": "gn",
+        "texto": "Agonista de GnRH\nosteoporose se estrogênio insuficiente",
+        "tipo": "hormonio",
+        "camada": 2
+      },
+      {
+        "id": "t",
+        "texto": "Testosterona\nmeta < 50 ng/dL",
+        "tipo": "hormonio",
+        "camada": 3
+      },
+      {
+        "id": "esp",
+        "texto": "Espironolactona\n100 a 300 mg/dia; hipercalemia\nhipotensão, frequência urinária",
+        "tipo": "hormonio",
+        "camada": 3
+      },
+      {
+        "id": "ra",
+        "texto": "Receptor androgênico",
+        "tipo": "orgao",
+        "camada": 4
+      },
+      {
+        "id": "m",
+        "texto": "Caracteres masculinos\npelos corporais, densidade capilar facial",
+        "tipo": "passo",
+        "camada": 5
+      }
+    ],
+    "setas": [
+      {
+        "de": "cip",
+        "para": "hip",
+        "tipo": "inibe"
+      },
+      {
+        "de": "hip",
+        "para": "tes"
+      },
+      {
+        "de": "e2",
+        "para": "tes",
+        "tipo": "inibe",
+        "rotulo": "atrofia testicular"
+      },
+      {
+        "de": "tes",
+        "para": "t"
+      },
+      {
+        "de": "gn",
+        "para": "t",
+        "tipo": "inibe",
+        "rotulo": "reduz"
+      },
+      {
+        "de": "t",
+        "para": "ra"
+      },
+      {
+        "de": "esp",
+        "para": "ra",
+        "tipo": "inibe",
+        "rotulo": "bloqueia"
+      },
+      {
+        "de": "ra",
+        "para": "m"
+      }
+    ],
+    "notas": [
+      {
+        "no": "e2",
+        "texto": "Evitar etinilestradiol (TEV) e estrogênios conjugados; transdérmico se > 45 anos ou TEV prévio",
+        "lado": "direita"
+      },
+      {
+        "no": "t",
+        "texto": "Inibidor da 5-alfa-redutase reduz a conversão em DHT, mas não tem uso rotineiro",
+        "lado": "esquerda"
+      }
+    ],
+    "legenda": "Barra vermelha: inibição ou bloqueio. Setas douradas: estímulo."
+  },
+  "lastro": [
+    "**Meta:** estradiol sérico de **100 a 200 pg/mL**",
+    "O estrogênio causa **atrofia testicular**",
+    "Bloqueia os andrógenos na interação com o receptor androgênico. **Dose: 100 a 300 mg/dia**",
+    "inibe a secreção de gonadotrofinas e bloqueia a ligação da testosterona ao receptor",
+    "Preferir a menor dose eficaz, 10 mg/dia (WPATH SOC-8 2022)",
+    "**Meta: testosterona sérica < 50 ng/dL.**",
+    "**podem causar osteoporose se o estrogênio não for administrado em dose adequada**",
+    "**idade acima de 45 anos** ou história prévia de tromboembolismo"
+  ],
+  "justificativa": "Sem fluxograma prévio; o mapa dos pontos de ação de estradiol, ciproterona, agonista de GnRH e espironolactona no eixo androgênico organiza doses, metas e efeitos adversos."
+}

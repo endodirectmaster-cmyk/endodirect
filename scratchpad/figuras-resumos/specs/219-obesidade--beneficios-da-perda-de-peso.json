@@ -1,0 +1,67 @@
+{
+  "i": 219,
+  "sub": "Obesidade",
+  "tema": "Benefícios da Perda de Peso",
+  "titulo": "DPP e DPPOS: o benefício precoce dura mesmo com reganho",
+  "subtitulo": "No DPPOS a incidência deixou de diferir: caiu nos outros braços, não houve rebote",
+  "tipo": "linha_tempo",
+  "linha_tempo": {
+    "eixo": "anos desde a randomização",
+    "faixas": [
+      {
+        "de": 0,
+        "ate": 19,
+        "rotulo": "DPP",
+        "cor": "gold"
+      },
+      {
+        "de": 19,
+        "ate": 100,
+        "rotulo": "DPPOS: todos recebem o currículo de estilo de vida",
+        "cor": "navy"
+      }
+    ],
+    "marcos": [
+      {
+        "pos": 0,
+        "rotulo": "Início",
+        "detalhe": "3.234 adultos de alto risco para DM2",
+        "cor": "navy"
+      },
+      {
+        "pos": 7,
+        "rotulo": "1 ano",
+        "detalhe": "intensivo perde ~7 kg e depois reganha boa parte",
+        "cor": "gold"
+      },
+      {
+        "pos": 19,
+        "rotulo": "2,8 anos",
+        "detalhe": "diabetes −58% com estilo de vida, −31% com metformina",
+        "cor": "green"
+      },
+      {
+        "pos": 67,
+        "rotulo": "10 anos",
+        "detalhe": "intensivo ainda ~2 kg abaixo do basal",
+        "cor": "gold"
+      },
+      {
+        "pos": 100,
+        "rotulo": "15 anos",
+        "detalhe": "diabetes −27% (HR 0,73), com perdas já equiparadas",
+        "cor": "green"
+      }
+    ]
+  },
+  "lastro": [
+    "3.234 adultos com sobrepeso ou obesidade e alto risco de DM2",
+    "Isso é 58% de redução de risco com estilo de vida e 31% com metformina.",
+    "O braço intensivo perdeu ~7 kg no 1º ano e reganhou boa parte; aos 10 anos estava ~2 kg abaixo do basal.",
+    "a taxa de incidência de diabetes seguia 27% menor no estilo de vida (HR 0,73; p < 0,0001) e 18% menor na metformina",
+    "Aos 15 anos as perdas médias eram parecidas nos três braços (2,3 a 3,5 kg)",
+    "isso não foi rebote do braço intensivo — foi queda nos outros dois, que passaram a receber o mesmo currículo de estilo de vida.",
+    "Seguimento médio de 2,8 anos (Knowler, NEJM 2002)."
+  ],
+  "justificativa": "O fluxograma existente responde quanto perder por complicação; a figura mostra o outro ângulo do capítulo, a evolução no tempo: o corte de risco obtido cedo no DPP persiste aos 15 anos apesar do reganho."
+}

@@ -1,0 +1,90 @@
+{
+  "i": 73,
+  "sub": "Obesidade",
+  "tema": "Dieta e Exercício Físico na Obesidade",
+  "titulo": "Exercício físico: do músculo ao adipócito bege",
+  "subtitulo": "Efeito browning e benefícios que independem da perda de peso",
+  "tipo": "fluxo",
+  "fluxo": {
+    "orientacao": "vertical",
+    "nos": [
+      {
+        "id": "ex",
+        "tipo": "inicio",
+        "texto": "Exercício físico\naeróbico + resistido: o mais eficaz"
+      },
+      {
+        "id": "mus",
+        "tipo": "orgao",
+        "texto": "Músculo esquelético\n↑ PGC-1α e ativação da AMPK"
+      },
+      {
+        "id": "ben",
+        "tipo": "grupo",
+        "texto": "Além da balança\n• previne reganho, reduz pressão arterial\n• ↓ resistência insulínica e gordura visceral"
+      },
+      {
+        "id": "iri",
+        "tipo": "hormonio",
+        "texto": "Irisina"
+      },
+      {
+        "id": "ucp",
+        "tipo": "passo",
+        "texto": "UCP-1 aumenta"
+      },
+      {
+        "id": "termo",
+        "tipo": "fim",
+        "texto": "Termogênese\ncom conversão de adipócito branco em bege (browning)"
+      }
+    ],
+    "setas": [
+      {
+        "de": "ex",
+        "para": "mus"
+      },
+      {
+        "de": "ex",
+        "para": "ben",
+        "tipo": "estimula"
+      },
+      {
+        "de": "mus",
+        "para": "iri"
+      },
+      {
+        "de": "iri",
+        "para": "ucp"
+      },
+      {
+        "de": "ucp",
+        "para": "termo"
+      }
+    ],
+    "notas": [
+      {
+        "no": "ben",
+        "texto": "Resistido atenua a perda de massa magra no tratamento farmacológico, como com agonistas do GLP-1",
+        "lado": "direita"
+      },
+      {
+        "no": "termo",
+        "texto": "Não é formação de gordura marrom dentro do músculo esquelético",
+        "lado": "direita"
+      }
+    ],
+    "legenda": "Setas douradas: sequência do efeito browning. Verde: benefícios independentes da perda de peso."
+  },
+  "lastro": [
+    "O exercício eleva o PGC-1α no músculo esquelético, com aumento de irisina e da UCP-1 e ativação da AMPK",
+    "promovendo a conversão de adipócito branco em bege (efeito browning).",
+    "com conversão de adipócito branco em bege — não formação de gordura marrom dentro do músculo esquelético",
+    "Benefícios independentes da perda de peso: prevenção do reganho, melhora da resistência insulínica com redução da gordura visceral, redução da pressão arterial",
+    "atenuação da perda de massa magra durante o tratamento farmacológico — item de relevância crescente com os agonistas do receptor de GLP-1.",
+    "A combinação de aeróbico com resistido é a mais eficaz na redução do peso e do percentual de gordura.",
+    "O treino resistido preserva massa magra e atenua sua perda durante o tratamento farmacológico",
+    "a sequência é PGC-1α → irisina → UCP-1 → termogênese"
+  ],
+  "justificativa": "O fluxograma existente é o algoritmo de estilo de vida; a figura mostra o mecanismo que o capítulo explica e cobra em prova: a sequência PGC-1α → irisina → UCP-1 → termogênese e os ganhos do exercício que não dependem da balança."
+}

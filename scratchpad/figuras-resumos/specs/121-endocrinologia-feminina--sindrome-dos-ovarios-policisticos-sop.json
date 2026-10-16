@@ -1,0 +1,118 @@
+{
+  "i": 121,
+  "sub": "Endocrinologia Feminina",
+  "tema": "Síndrome dos Ovários Policísticos (SOP)",
+  "titulo": "Os quatro nós da fisiopatologia da SOP",
+  "subtitulo": "Eixo neuroendócrino, folículo, adrenal e resistência insulínica, que realimenta o GnRH",
+  "tipo": "fluxo",
+  "fluxo": {
+    "orientacao": "vertical",
+    "nos": [
+      {
+        "id": "hip",
+        "tipo": "orgao",
+        "texto": "Hipotálamo\n↑ pulsos de GnRH",
+        "camada": 0
+      },
+      {
+        "id": "pit",
+        "tipo": "orgao",
+        "texto": "Hipófise\nrelação LH/FSH alta",
+        "camada": 1
+      },
+      {
+        "id": "ri",
+        "tipo": "alerta",
+        "texto": "Resistência insulínica\n60% das eutróficas\n90% com obesidade",
+        "camada": 1
+      },
+      {
+        "id": "fol",
+        "tipo": "passo",
+        "texto": "Foliculogênese parada\nAMH alto",
+        "camada": 2
+      },
+      {
+        "id": "teca",
+        "tipo": "orgao",
+        "texto": "Teca ovariana\nandrógenos",
+        "camada": 2
+      },
+      {
+        "id": "adr",
+        "tipo": "orgao",
+        "texto": "Adrenal\nandrostenediona, SDHEA",
+        "camada": 2
+      },
+      {
+        "id": "anov",
+        "tipo": "fim",
+        "texto": "Oligo/anovulação\noligoamenorreia 80%",
+        "camada": 3
+      },
+      {
+        "id": "ha",
+        "tipo": "fim",
+        "texto": "Hiperandrogenismo\nhirsutismo 80%; acne ~43%",
+        "camada": 3
+      }
+    ],
+    "setas": [
+      {
+        "de": "hip",
+        "para": "pit",
+        "rotulo": "GnRH"
+      },
+      {
+        "de": "pit",
+        "para": "fol",
+        "rotulo": "FSH baixo"
+      },
+      {
+        "de": "pit",
+        "para": "teca",
+        "rotulo": "LH"
+      },
+      {
+        "de": "ri",
+        "para": "adr",
+        "rotulo": "↑ andrógenos"
+      },
+      {
+        "de": "ri",
+        "para": "ha",
+        "rotulo": "↓ SHBG, ↑ T livre"
+      },
+      {
+        "de": "fol",
+        "para": "anov"
+      },
+      {
+        "de": "teca",
+        "para": "ha"
+      },
+      {
+        "de": "adr",
+        "para": "ha"
+      },
+      {
+        "de": "ri",
+        "para": "hip",
+        "tipo": "feedback",
+        "rotulo": "↑ pulsos de GnRH"
+      }
+    ],
+    "legenda": "Tracejado vermelho: a resistência insulínica realimenta o primeiro nó. Herdabilidade acima de 70%."
+  },
+  "lastro": [
+    "Fisiopatologia em quatro nós: mais pulsos de GnRH com relação LH/FSH alta, parada da foliculogênese com AMH alto, hiperandrogenismo adrenal e resistência insulínica.",
+    "o FSH é baixo, mas persistente —, sem chegar ao ponto de provocar maturação e ovulação",
+    "Níveis elevados de androstenediona e SDHEA",
+    "Reduz a **SHBG** → eleva a testosterona livre → aumenta a produção de andrógenos adrenais",
+    "hiperinsulinemia compensatória, que amplifica a produção androgênica e reduz a SHBG",
+    "A resistência insulínica está em 60% das eutróficas e 90% das mulheres com obesidade — ela derruba a SHBG e realimenta a pulsatilidade do GnRH.",
+    "Oligoamenorreia (80%), hirsutismo (80%), acne (cerca de 43%)",
+    "Herdabilidade estimada em mais de 70%"
+  ],
+  "justificativa": "O capítulo já tem o algoritmo de diagnóstico e manejo; a figura mostra os quatro nós fisiopatológicos e o circuito da resistência insulínica, que explicam os critérios e os alvos do tratamento."
+}

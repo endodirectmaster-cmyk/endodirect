@@ -1,0 +1,93 @@
+{
+  "i": 75,
+  "sub": "Obesidade",
+  "tema": "Tratamento Cirúrgico da Obesidade",
+  "titulo": "Como a cirurgia bariátrica age: além da restrição",
+  "subtitulo": "Mecanismos comuns às técnicas e por que o DM2 remite antes da perda de peso",
+  "tipo": "fluxo",
+  "fluxo": {
+    "orientacao": "vertical",
+    "nos": [
+      {
+        "id": "c",
+        "texto": "Cirurgia bariátrica\nsleeve ou bypass",
+        "tipo": "inicio",
+        "camada": 0
+      },
+      {
+        "id": "glp",
+        "texto": "GLP-1, PYY, oxintomodulina ↑\nreforço dos ácidos biliares (FXR, TGR5)",
+        "tipo": "hormonio",
+        "camada": 1
+      },
+      {
+        "id": "gre",
+        "texto": "Grelina ↓\nsleeve remove o fundo",
+        "tipo": "hormonio",
+        "camada": 1
+      },
+      {
+        "id": "out",
+        "texto": "Outros mecanismos\n• microbiota: ↓ Firmicutes/Bacteroidetes\n• menos craving hedônico",
+        "tipo": "grupo",
+        "camada": 1
+      },
+      {
+        "id": "dm",
+        "texto": "Remissão do DM2\nbypass: GLP-1 ↑↑ já no 2º dia\nantes da perda de peso",
+        "tipo": "fim",
+        "camada": 2
+      },
+      {
+        "id": "peso",
+        "texto": "Efeitos sistêmicos\n↓ gordura corporal, sobretudo visceral\n↓ inflamação: IL-6, TNF-α e PCR",
+        "tipo": "fim",
+        "camada": 2
+      }
+    ],
+    "setas": [
+      {
+        "de": "c",
+        "para": "glp"
+      },
+      {
+        "de": "c",
+        "para": "gre"
+      },
+      {
+        "de": "c",
+        "para": "out"
+      },
+      {
+        "de": "glp",
+        "para": "dm",
+        "rotulo": "efeito incretínico"
+      },
+      {
+        "de": "glp",
+        "para": "peso"
+      },
+      {
+        "de": "gre",
+        "para": "peso"
+      },
+      {
+        "de": "out",
+        "para": "peso"
+      }
+    ],
+    "notas": [],
+    "legenda": "Banda gástrica: só restrição mecânica, sem efeito neuroendócrino significativo. Queda de grelina maior no sleeve."
+  },
+  "lastro": [
+    "Hormonal: ↓ grelina; ↑ GLP-1, PYY e oxintomodulina.",
+    "Ácidos biliares: maior produção, com estímulo de FXR e TGR5 → mais secreção de GLP-1.",
+    "Microbiota: ↓ índice Firmicutes/Bacteroidetes",
+    "mastigação mais lenta, porções menores e redução do craving hedônico",
+    "↑↑ GLP-1 e PYY já a partir do 2º dia de pós-operatório — é o efeito incretínico precoce que explica a remissão do DM2 antes da perda de peso",
+    "remove o fundo gástrico (fonte da grelina)",
+    "redução da gordura corporal — sobretudo visceral —, queda do estado inflamatório (IL-6, TNF-α, AGL, PCR)",
+    "não tem efeito neuroendócrino significativo"
+  ],
+  "justificativa": "O capítulo já tem o fluxograma de indicação; a figura mostra o mecanismo de ação, ângulo de maior valor didático e ausente dos fluxogramas."
+}

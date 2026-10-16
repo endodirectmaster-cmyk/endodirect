@@ -1,0 +1,147 @@
+{
+  "i": 103,
+  "sub": "Osteometabolismo",
+  "tema": "Osteoporose: Diagnóstico e Tratamento",
+  "titulo": "Remodelação óssea e o alvo de cada fármaco",
+  "subtitulo": "Da via Wnt à reabsorção pelo osteoclasto; caixas brancas são os fármacos",
+  "tipo": "fluxo",
+  "fluxo": {
+    "orientacao": "vertical",
+    "nos": [
+      {
+        "id": "oc",
+        "texto": "Osteócito\nmecanoceptor",
+        "tipo": "orgao",
+        "camada": 0
+      },
+      {
+        "id": "romo",
+        "texto": "Romosozumabe\ninibe a esclerostina",
+        "tipo": "passo",
+        "camada": 0
+      },
+      {
+        "id": "scl",
+        "texto": "Esclerostina\nproduzida sem estímulo mecânico",
+        "tipo": "hormonio",
+        "camada": 1
+      },
+      {
+        "id": "wnt",
+        "texto": "Via Wnt/β-catenina\nLRP5/LRP6",
+        "tipo": "hormonio",
+        "camada": 2
+      },
+      {
+        "id": "pth",
+        "texto": "Análogos do PTH\nação intermitente\nteriparatida, abaloparatida",
+        "tipo": "passo",
+        "camada": 2
+      },
+      {
+        "id": "ob",
+        "texto": "Osteoblasto\nformação óssea",
+        "tipo": "orgao",
+        "camada": 3
+      },
+      {
+        "id": "opg",
+        "texto": "Osteoprotegerina\nsequestra o RANK-L",
+        "tipo": "hormonio",
+        "camada": 3
+      },
+      {
+        "id": "deno",
+        "texto": "Denosumabe\ninibe o RANK-L",
+        "tipo": "passo",
+        "camada": 3
+      },
+      {
+        "id": "rankl",
+        "texto": "RANK-L\nde osteoblastos e osteócitos",
+        "tipo": "hormonio",
+        "camada": 4
+      },
+      {
+        "id": "bf",
+        "texto": "Bisfosfonatos\napoptose do osteoclasto",
+        "tipo": "passo",
+        "camada": 4
+      },
+      {
+        "id": "ocl",
+        "texto": "Osteoclasto\nreabsorção óssea",
+        "tipo": "orgao",
+        "camada": 5
+      }
+    ],
+    "setas": [
+      {
+        "de": "oc",
+        "para": "scl",
+        "rotulo": "sem estímulo"
+      },
+      {
+        "de": "romo",
+        "para": "scl",
+        "tipo": "inibe"
+      },
+      {
+        "de": "scl",
+        "para": "wnt",
+        "tipo": "inibe"
+      },
+      {
+        "de": "wnt",
+        "para": "ob",
+        "tipo": "estimula"
+      },
+      {
+        "de": "wnt",
+        "para": "opg",
+        "tipo": "estimula"
+      },
+      {
+        "de": "pth",
+        "para": "ob",
+        "tipo": "estimula"
+      },
+      {
+        "de": "ob",
+        "para": "rankl"
+      },
+      {
+        "de": "opg",
+        "para": "rankl",
+        "tipo": "inibe"
+      },
+      {
+        "de": "deno",
+        "para": "rankl",
+        "tipo": "inibe"
+      },
+      {
+        "de": "rankl",
+        "para": "ocl",
+        "tipo": "estimula"
+      },
+      {
+        "de": "bf",
+        "para": "ocl",
+        "tipo": "inibe"
+      }
+    ],
+    "legenda": "Verde: estimula. Vermelho com barra: inibe. Dourado: produz. Caixas brancas: fármacos."
+  },
+  "lastro": [
+    "Na ausência de estímulo, produz esclerostina, DKK-1 e SFRP1, inativando a via",
+    "A esclerostina é produzida pelo osteócito e inibe a via Wnt/β-catenina — inibi-la é inibir o inibidor",
+    "a β-catenina dissocia-se e ativa a transcrição gênica no núcleo, aumentando a expressão de OPG",
+    "osteoprotegerina (OPG), produzida pelo osteoblasto, que sequestra o RANK-L e impede sua ligação ao RANK",
+    "O fator de diferenciação é o RANK-L, produzido por osteoblastos e osteócitos",
+    "Inibe o RANK-L e, portanto, a osteoclastogênese — antirreabsortivo",
+    "Bloqueiam a farnesil-pirofosfato-sintase do osteoclasto e induzem sua apoptose",
+    "O PTH em ação intermitente estimula a formação óssea (osteoanabólico)"
+  ],
+  "justificativa": "O capítulo já tem o algoritmo de abordagem; a figura mostra a biologia da remodelação que explica o alvo de cada fármaco."
+}

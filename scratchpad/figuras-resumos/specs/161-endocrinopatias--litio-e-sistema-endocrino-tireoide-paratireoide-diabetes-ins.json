@@ -1,0 +1,129 @@
+{
+  "i": 161,
+  "sub": "Endocrinopatias",
+  "tema": "Lítio e Sistema Endócrino (tireoide, paratireoide, diabetes insípido nefrogênico)",
+  "titulo": "Lítio: três alvos endócrinos, três mecanismos, três condutas",
+  "subtitulo": "Tireoide, paratireoide e ducto coletor renal: do mecanismo ao tratamento mantendo o lítio",
+  "tipo": "fluxo",
+  "fluxo": {
+    "orientacao": "vertical",
+    "rotulos_camadas": [
+      "Fármaco",
+      "Alvo e mecanismo",
+      "Distúrbio",
+      "Conduta"
+    ],
+    "nos": [
+      {
+        "id": "li",
+        "texto": "Lítio\nconcentra-se nos três alvos\nexcreção renal",
+        "tipo": "inicio",
+        "camada": 0
+      },
+      {
+        "id": "ti",
+        "texto": "Tireócito\ninibe a liberação de T4/T3",
+        "tipo": "orgao",
+        "camada": 1
+      },
+      {
+        "id": "pt",
+        "texto": "Paratireoide\neleva o set-point do CaSR",
+        "tipo": "orgao",
+        "camada": 1
+      },
+      {
+        "id": "rn",
+        "texto": "Ducto coletor\nentra pelo ENaC, ↓ aquaporina-2",
+        "tipo": "orgao",
+        "camada": 1
+      },
+      {
+        "id": "hipo",
+        "texto": "Hipotireoidismo e bócio\nTSH ↑, T4L ↓",
+        "tipo": "alerta",
+        "camada": 2
+      },
+      {
+        "id": "hal",
+        "texto": "Hiperparatireoidismo (HAL)\ncálcio ↑, PTH inapropriado\ncalciúria ↓",
+        "tipo": "alerta",
+        "camada": 2
+      },
+      {
+        "id": "din",
+        "texto": "AVP-R (antigo DIN)\nresistência à ADH, poliúria\nOsm U < 300 mOsm/kg",
+        "tipo": "alerta",
+        "camada": 2
+      },
+      {
+        "id": "lt4",
+        "texto": "Levotiroxina\ntitulada pelo TSH\nmantendo o lítio",
+        "tipo": "fim",
+        "camada": 3
+      },
+      {
+        "id": "cin",
+        "texto": "Cinacalcete\ncontrola o cálcio mantendo o lítio\nparatireoidectomia se grave",
+        "tipo": "fim",
+        "camada": 3
+      },
+      {
+        "id": "ami",
+        "texto": "Amilorida e hidratação\nbloqueia o ENaC\ntiazídico eleva a litemia",
+        "tipo": "fim",
+        "camada": 3
+      }
+    ],
+    "setas": [
+      {
+        "de": "li",
+        "para": "ti"
+      },
+      {
+        "de": "li",
+        "para": "pt"
+      },
+      {
+        "de": "li",
+        "para": "rn"
+      },
+      {
+        "de": "ti",
+        "para": "hipo"
+      },
+      {
+        "de": "pt",
+        "para": "hal"
+      },
+      {
+        "de": "rn",
+        "para": "din"
+      },
+      {
+        "de": "hipo",
+        "para": "lt4"
+      },
+      {
+        "de": "hal",
+        "para": "cin"
+      },
+      {
+        "de": "din",
+        "para": "ami"
+      }
+    ],
+    "legenda": "Antes do lítio: TSH, anti-TPO, cálcio, PTH, função renal e sódio; reavaliar a cada 6 meses."
+  },
+  "lastro": [
+    "concentra-se em tireoide, paratireoide e ducto coletor renal — os três alvos endócrinos clássicos",
+    "inibe a liberação de T4/T3",
+    "eleva o set-point do receptor sensor de cálcio (CaSR)",
+    "hipercalcemia com PTH normal-alto (inapropriado) e hipocalciúria (mimetiza a hipercalcemia hipocalciúrica familiar)",
+    "o lítio entra na célula principal do ducto coletor pelo canal ENaC, acumula-se e regula para baixo a aquaporina-2 (AQP2)",
+    "Hipotireoidismo → levotiroxina com alvo de TSH normal, mantendo o lítio",
+    "amilorida 5–10 mg/dia (bloqueia o ENaC e a entrada do lítio — de escolha, compatível com o lítio)",
+    "pode controlar o cálcio mantendo o lítio"
+  ],
+  "justificativa": "O capítulo organiza a doença em três alvos paralelos; ver lado a lado mecanismo, distúrbio e conduta de cada um fixa a lógica e a armadilha de manter o lítio."
+}

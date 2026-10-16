@@ -1,0 +1,41 @@
+{
+  "i": 145,
+  "sub": "Endocrinologia Pediátrica",
+  "tema": "Obesidade na Infância e Adolescência",
+  "titulo": "A régua do IMC muda aos 5 anos: diga a idade antes do número",
+  "subtitulo": "Escore-Z do IMC pelas curvas da OMS, padrão diagnóstico primário no Brasil",
+  "tipo": "painel",
+  "painel": {
+    "colunas": [
+      {"titulo": "Menor de 5 anos (OMS 2006)", "cor": "blue", "itens": [
+        "Sobrepeso: IMC > +2 DP",
+        "Obesidade: IMC > +3 DP",
+        "Aos 3 anos, Z +2,5 é sobrepeso",
+        "Z +1,5 fica abaixo do sobrepeso"
+      ]},
+      {"titulo": "5 a 19 anos (OMS 2007)", "cor": "navy", "itens": [
+        "Sobrepeso: IMC > +1 DP",
+        "Obesidade: IMC > +2 DP",
+        "Obesidade grave: Z ≥ +3",
+        "ou IMC ≥ 120% do P95"
+      ]},
+      {"titulo": "Somar ao IMC", "cor": "gold", "itens": [
+        "RCEst > 0,5: risco cardiometabólico aumentado",
+        "RCEst > 0,55: risco mais elevado",
+        "AAP/CDC: obesidade é IMC ≥ P95",
+        "P95 a P97: obesa pela AAP, sobrepeso pela OMS"
+      ]}
+    ],
+    "rodape": "O mesmo +3 DP é obesidade abaixo de 5 anos e obesidade grave dos 5 aos 19. Declare sempre a curva usada."
+  },
+  "lastro": [
+    "abaixo de 5 anos (OMS 2006) sobrepeso é IMC > +2 DP e obesidade > +3 DP; de 5 a 19 anos (OMS 2007) sobrepeso é > +1 DP e obesidade > +2 DP.",
+    "aos 3 anos, escore-Z +2,5 é sobrepeso (obesidade só acima de +3), e +1,5 está abaixo do corte de sobrepeso.",
+    "obesidade grave definida como IMC ≥ 120% do P95 ou escore-Z ≥ +3.",
+    "A criança entre P95 e P97 é obesa pela AAP/CDC e sobrepeso pela OMS.",
+    "> 0,5 — limiar primário de risco cardiometabólico aumentado",
+    "> 0,55 — risco mais elevado, em contextos selecionados.",
+    "O mesmo +3 DP é limiar de OBESIDADE abaixo dos 5 anos e de OBESIDADE GRAVE dos 5 aos 19"
+  ],
+  "justificativa": "O fluxograma trata da investigação etiológica; o ponto que o capítulo mais insiste é a troca de régua aos 5 anos, que um painel lado a lado torna visível."
+}

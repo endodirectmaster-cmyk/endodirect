@@ -1,0 +1,132 @@
+{
+  "i": 115,
+  "sub": "Lípides",
+  "tema": "Alfalipoproteinemias (Distúrbios do HDL)",
+  "titulo": "Transporte reverso do colesterol e as quatro alfalipoproteinemias",
+  "subtitulo": "Cada etapa tem um gene; quando ela falha, surge uma doença autossômica recessiva",
+  "tipo": "fluxo",
+  "fluxo": {
+    "orientacao": "vertical",
+    "nos": [
+      {
+        "id": "cel",
+        "texto": "Tecidos periféricos\ninclusive a parede arterial",
+        "tipo": "orgao",
+        "camada": 0
+      },
+      {
+        "id": "abca1",
+        "texto": "ABCA1\nsaída do colesterol da célula",
+        "tipo": "passo",
+        "camada": 1
+      },
+      {
+        "id": "tang",
+        "texto": "Doença de Tangier\nHDL < 10 e TG > 400\namígdalas alaranjadas",
+        "tipo": "alerta",
+        "camada": 2
+      },
+      {
+        "id": "lcat",
+        "texto": "LCAT\nesterifica o colesterol no HDL",
+        "tipo": "passo",
+        "camada": 2
+      },
+      {
+        "id": "dlcat",
+        "texto": "Deficiência de LCAT\nHDL < 10; córnea, rim, anemia",
+        "tipo": "alerta",
+        "camada": 3
+      },
+      {
+        "id": "cetp",
+        "texto": "CETP\nleva ésteres do HDL a VLDL/LDL",
+        "tipo": "passo",
+        "camada": 3
+      },
+      {
+        "id": "lh",
+        "texto": "Lipase hepática\nhidrolisa TG, depura o HDL",
+        "tipo": "passo",
+        "camada": 3
+      },
+      {
+        "id": "dcetp",
+        "texto": "Deficiência de CETP\nHDL > 100 mg/dL\nmenos doença coronariana",
+        "tipo": "fim",
+        "camada": 4
+      },
+      {
+        "id": "dlh",
+        "texto": "Deficiência de lipase hepática\nHDL e TG altos, LDL baixo",
+        "tipo": "alerta",
+        "camada": 4
+      },
+      {
+        "id": "fig",
+        "texto": "Fígado\nrecebe o colesterol de volta",
+        "tipo": "orgao",
+        "camada": 4
+      }
+    ],
+    "setas": [
+      {
+        "de": "cel",
+        "para": "abca1"
+      },
+      {
+        "de": "abca1",
+        "para": "lcat",
+        "rotulo": "para o HDL"
+      },
+      {
+        "de": "lcat",
+        "para": "cetp"
+      },
+      {
+        "de": "lcat",
+        "para": "lh"
+      },
+      {
+        "de": "lh",
+        "para": "fig"
+      },
+      {
+        "de": "abca1",
+        "para": "tang",
+        "tipo": "fraca",
+        "rotulo": "se falha"
+      },
+      {
+        "de": "lcat",
+        "para": "dlcat",
+        "tipo": "fraca",
+        "rotulo": "se falha"
+      },
+      {
+        "de": "cetp",
+        "para": "dcetp",
+        "tipo": "fraca",
+        "rotulo": "se falha"
+      },
+      {
+        "de": "lh",
+        "para": "dlh",
+        "tipo": "fraca",
+        "rotulo": "se falha"
+      }
+    ],
+    "legenda": "Tracejado: doença quando a etapa falha. Valores em mg/dL."
+  },
+  "lastro": [
+    "retira colesterol dos tecidos periféricos e da parede arterial e o devolve ao fígado",
+    "Falha na saída do colesterol da célula para o HDL",
+    "Falha na esterificação do colesterol no HDL",
+    "Menos ésteres de colesterol transferidos do HDL para VLDL/LDL",
+    "Menor hidrólise de TG e menor depuração hepática do HDL",
+    "A doença de Tangier decorre de mutação do ABCA1, com HDL abaixo de 10 mg/dL, triglicerídeos acima de 400",
+    "eleva o HDL acima de 100 mg/dL e associa-se a MENOR doença coronariana",
+    "eleva HDL e triglicerídeos e reduz o LDL, com xantomas e hepatoesplenomegalia"
+  ],
+  "justificativa": "O capítulo já tem o algoritmo; a figura mostra o mecanismo que liga cada gene do transporte reverso à doença que surge quando ele falha."
+}

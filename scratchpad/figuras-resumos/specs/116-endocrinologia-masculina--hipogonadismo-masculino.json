@@ -1,0 +1,125 @@
+{
+  "i": 116,
+  "sub": "Endocrinologia Masculina",
+  "tema": "Hipogonadismo Masculino",
+  "titulo": "Eixo hipotálamo-hipófise-testículo e os dois níveis de falha",
+  "subtitulo": "Onde o eixo falha define o LH/FSH: alto no primário, baixo ou normal no secundário",
+  "tipo": "fluxo",
+  "fluxo": {
+    "orientacao": "vertical",
+    "nos": [
+      {
+        "id": "sec",
+        "tipo": "alerta",
+        "camada": 0,
+        "texto": "Falha secundária\nhiperprolactinemia, Kallmann\nLH/FSH baixos ou normais"
+      },
+      {
+        "id": "hip",
+        "tipo": "orgao",
+        "camada": 0,
+        "texto": "Hipotálamo\nGnRH"
+      },
+      {
+        "id": "exo",
+        "tipo": "alerta",
+        "camada": 0,
+        "texto": "Testosterona exógena\nevitar se deseja\nfertilidade"
+      },
+      {
+        "id": "prim",
+        "tipo": "alerta",
+        "camada": 1,
+        "texto": "Falha primária\nKlinefelter, orquite, QT/RT\nLH/FSH ↑ → cariótipo"
+      },
+      {
+        "id": "hipof",
+        "tipo": "orgao",
+        "camada": 1,
+        "texto": "Hipófise anterior\nLH e FSH"
+      },
+      {
+        "id": "ser",
+        "tipo": "orgao",
+        "camada": 2,
+        "texto": "Célula de Sertoli\nestimulada pelo FSH"
+      },
+      {
+        "id": "ley",
+        "tipo": "orgao",
+        "camada": 2,
+        "texto": "Célula de Leydig\nestimulada pelo LH\nproduz testosterona"
+      },
+      {
+        "id": "esp",
+        "tipo": "fim",
+        "camada": 3,
+        "texto": "Espermatogênese\ninibina"
+      }
+    ],
+    "setas": [
+      {
+        "de": "hip",
+        "para": "hipof",
+        "rotulo": "GnRH"
+      },
+      {
+        "de": "sec",
+        "para": "hipof",
+        "tipo": "inibe"
+      },
+      {
+        "de": "exo",
+        "para": "hipof",
+        "tipo": "inibe",
+        "rotulo": "suprime"
+      },
+      {
+        "de": "hipof",
+        "para": "ley"
+      },
+      {
+        "de": "hipof",
+        "para": "ser"
+      },
+      {
+        "de": "prim",
+        "para": "ser",
+        "tipo": "inibe"
+      },
+      {
+        "de": "prim",
+        "para": "ley",
+        "tipo": "inibe"
+      },
+      {
+        "de": "ser",
+        "para": "esp"
+      },
+      {
+        "de": "ley",
+        "para": "hipof",
+        "tipo": "feedback",
+        "rotulo": "testosterona"
+      },
+      {
+        "de": "esp",
+        "para": "hipof",
+        "tipo": "feedback",
+        "rotulo": "inibina"
+      }
+    ],
+    "legenda": "Vermelho ⊣: falha. Tracejado: retroalimentação negativa. QT/RT: quimio/radioterapia."
+  },
+  "lastro": [
+    "**GnRH** hipotalâmico → **LH** (estimula as células de Leydig → testosterona) e **FSH** (estimula as células de Sertoli → espermatogênese)",
+    "O feedback negativo é feito por **testosterona e inibina**",
+    "falha **testicular** → testosterona↓ e **LH/FSH↑** (perda do feedback negativo)",
+    "falha **hipotálamo-hipofisária** → testosterona↓ com **LH/FSH baixos ou inapropriadamente normais**",
+    "Causas: **síndrome de Klinefelter (47,XXY — a mais comum, testículos pequenos e firmes)**, criptorquidia, **orquite** (caxumba), trauma/torção, **quimio/radioterapia**",
+    "Causas: **hiperprolactinemia**, tumor/doença selar (macroadenoma, apoplexia), **síndrome de Kallmann**",
+    "**Primário** (LH/FSH↑) → **cariótipo** (Klinefelter)",
+    "**Se deseja fertilidade, NÃO usar testosterona** (suprime LH/FSH e a espermatogênese)"
+  ],
+  "justificativa": "O fluxograma existente é o algoritmo laboratorial; esta figura mostra o eixo e os pontos de falha, que explicam por que o LH/FSH separa primário de secundário e por que a testosterona exógena prejudica a fertilidade."
+}

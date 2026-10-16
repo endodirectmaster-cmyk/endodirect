@@ -1,0 +1,57 @@
+{
+  "i": 172,
+  "sub": "Transgeneridade",
+  "tema": "Monitorização, Riscos e Manejo de Longo Prazo",
+  "titulo": "Seguimento da hormonização: o que vigiar na mulher e no homem trans",
+  "subtitulo": "Consultas a cada 3 meses no 1º ano e depois 1 a 2 vezes ao ano",
+  "tipo": "painel",
+  "painel": {
+    "colunas": [
+      {
+        "titulo": "Mulher trans — estrogênio",
+        "cor": "red",
+        "itens": [
+          "TEV: principal risco; transdérmico em quem tem risco",
+          "Dosar estradiol, testosterona, prolactina e lipídios; potássio se espironolactona",
+          "Mamografia a cada 1 a 2 anos a partir dos 50, se ≥ 5 anos de terapia",
+          "Próstata: PSA e toque a partir dos 50 (45 com risco), sem cortes de homem cis",
+          "Testículo: sem triagem de rotina; ultrassom só se suspeita"
+        ]
+      },
+      {
+        "titulo": "Homem trans — testosterona",
+        "cor": "navy",
+        "itens": [
+          "Hematócrito: basal, a cada 3 meses no 1º ano, depois 1 a 2 vezes ao ano",
+          "Ht > 54%: suspender até normalizar e retomar com dose menor",
+          "Dosar testosterona e lipídios (HDL cai); peso e pressão arterial",
+          "Mamografia a cada 1 a 2 anos: a atrofia não exclui câncer",
+          "Colpocitologia se útero e atividade sexual com penetração"
+        ]
+      },
+      {
+        "titulo": "Para ambos",
+        "cor": "green",
+        "itens": [
+          "DXA: escore Z pela referência do gênero de identificação",
+          "Considerar DXA basal em qualquer idade se > 1 ano sem reposição após gonadectomia",
+          "HPV: mesmas indicações de vacina da população geral",
+          "Preservar gametas antes da hormonização",
+          "Após gonadectomia, reposição hormonal contínua"
+        ]
+      }
+    ],
+    "rodape": "DXA sem fatores de risco a partir dos 65 anos; com fatores, a partir dos 50 (mulher trans) ou 60 (homem trans)."
+  },
+  "lastro": [
+    "Reavaliar clínica e laboratorialmente a cada **3 meses no 1º ano** e depois **1 a 2 vezes ao ano**",
+    "**Tromboembolismo venoso** é o principal risco",
+    "Mamografia a cada **1 a 2 anos, a partir dos 50 anos**, em quem usa terapia hormonal **há pelo menos 5 anos**",
+    "**não usar os pontos de corte de homens cis**",
+    "Com hematócrito **> 54%** em tratamento, suspender a testosterona até normalizar",
+    "A testosterona causa **atrofia mamária, mas não exclui a possibilidade de câncer**",
+    "calcula-se o **escore Z** pela **referência do gênero de identificação** (ISCD 2019)",
+    "Solicitar acima de **65 anos**, ou acima de **60 anos com fatores de risco**"
+  ],
+  "justificativa": "Sem fluxograma prévio; o capítulo é um roteiro de vigilância, e o painel lado a lado separa o que muda entre feminilização e masculinização do que vale para ambos."
+}

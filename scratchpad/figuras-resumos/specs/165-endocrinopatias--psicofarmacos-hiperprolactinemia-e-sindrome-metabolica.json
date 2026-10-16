@@ -1,0 +1,128 @@
+{
+  "i": 165,
+  "sub": "Endocrinopatias",
+  "tema": "Psicofármacos: Hiperprolactinemia e Síndrome Metabólica",
+  "titulo": "Psicofármacos: duas vias, prolactina e síndrome metabólica",
+  "subtitulo": "Bloqueio D2 eleva a prolactina; antagonismo H1/5-HT2C e efeito na insulina levam à SM",
+  "tipo": "fluxo",
+  "fluxo": {
+    "orientacao": "vertical",
+    "nos": [
+      {
+        "id": "ps",
+        "texto": "Psicofármaco\nsobretudo antipsicóticos",
+        "tipo": "inicio",
+        "camada": 0
+      },
+      {
+        "id": "d2",
+        "texto": "Bloqueio D2\nvia tuberoinfundibular\nsem freio dopaminérgico",
+        "tipo": "orgao",
+        "camada": 1
+      },
+      {
+        "id": "h1",
+        "texto": "Antagonismo H1 e 5-HT2C\nantipsicóticos de 2ª geração",
+        "tipo": "orgao",
+        "camada": 1
+      },
+      {
+        "id": "ins",
+        "texto": "Efeito na insulina\nsinalização e secreção",
+        "tipo": "orgao",
+        "camada": 1
+      },
+      {
+        "id": "prl",
+        "texto": "Prolactina ↑\ntípico 25–100 ng/mL\nrisperidona, haloperidol",
+        "tipo": "hormonio",
+        "camada": 2
+      },
+      {
+        "id": "peso",
+        "texto": "Hiperfagia\nganho ponderal\nadiposidade visceral",
+        "tipo": "passo",
+        "camada": 2
+      },
+      {
+        "id": "hg",
+        "texto": "Sintomas da hiperPRL\namenorreia, galactorreia, DE\nhipogonadismo hipogonadotrófico",
+        "tipo": "alerta",
+        "camada": 3
+      },
+      {
+        "id": "sm",
+        "texto": "Síndrome metabólica\nmaior risco: olanzapina, clozapina",
+        "tipo": "alerta",
+        "camada": 3
+      },
+      {
+        "id": "os",
+        "texto": "Perda de massa óssea\nosteoporose",
+        "tipo": "fim",
+        "camada": 4
+      },
+      {
+        "id": "dm",
+        "texto": "Diabetes\nraramente cetoacidose",
+        "tipo": "fim",
+        "camada": 4
+      }
+    ],
+    "setas": [
+      {
+        "de": "ps",
+        "para": "d2"
+      },
+      {
+        "de": "ps",
+        "para": "h1"
+      },
+      {
+        "de": "ps",
+        "para": "ins"
+      },
+      {
+        "de": "d2",
+        "para": "prl"
+      },
+      {
+        "de": "prl",
+        "para": "hg"
+      },
+      {
+        "de": "hg",
+        "para": "os",
+        "rotulo": "cronicamente"
+      },
+      {
+        "de": "h1",
+        "para": "peso"
+      },
+      {
+        "de": "peso",
+        "para": "sm"
+      },
+      {
+        "de": "ins",
+        "para": "sm"
+      },
+      {
+        "de": "sm",
+        "para": "dm"
+      }
+    ],
+    "legenda": "Aripiprazol: neutro no metabolismo e reduz a PRL. PRL > 250 ng/mL sugere prolactinoma."
+  },
+  "lastro": [
+    "Antipsicóticos e alguns antidepressivos bloqueiam D2 na via tuberoinfundibular, removendo o freio dopaminérgico e elevando a PRL",
+    "Fármaco típico eleva PRL 25–100 ng/mL",
+    "antagonismo H1 e 5-HT2C (hiperfagia/ganho ponderal), efeito direto na sinalização insulínica e na secreção de insulina, e adiposidade visceral",
+    "Olanzapina e clozapina são os de maior risco cardiometabólico",
+    "risco de diabetes e, em casos raros mas graves, de cetoacidose",
+    "Aripiprazol é o \"coringa\": neutro metabolicamente e reduz a PRL",
+    "PRL > 250 ng/mL sugere fortemente prolactinoma",
+    "Cronicamente, o **hipogonadismo hipogonadotrófico** secundário causa **perda de massa óssea/osteoporose**"
+  ],
+  "justificativa": "O capítulo não tem figura e se apoia em dois mecanismos independentes; mostrá-los lado a lado explica por que olanzapina e risperidona têm perfis opostos."
+}

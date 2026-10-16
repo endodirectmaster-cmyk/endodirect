@@ -8,31 +8,105 @@
   "fluxo": {
     "orientacao": "vertical",
     "nos": [
-      {"id": "top", "tipo": "inicio", "texto": "Tireotoxicose\nexcesso de hormônio nos tecidos"},
-      {"id": "hip", "tipo": "orgao", "texto": "Hipertireoidismo\na glândula produz em excesso"},
-      {"id": "sem", "tipo": "orgao", "texto": "Sem hiperprodução\nhormônio pré-formado ou exógeno"},
-      {"id": "est", "tipo": "passo", "texto": "Estímulo\nTRAb: Graves (60–80%)"},
-      {"id": "aut", "tipo": "passo", "texto": "Autonomia\nadenoma tóxico, BMN tóxico"},
-      {"id": "des", "tipo": "passo", "texto": "Destruição\ntireoidites"},
-      {"id": "exo", "tipo": "passo", "texto": "Exógeno\nLT4 ou T3: factícia"},
-      {"id": "blo", "tipo": "fim", "texto": "Bloquear a produção\nantitireoidiano, radioiodo ou cirurgia"},
-      {"id": "sup", "tipo": "fim", "texto": "Suporte\nremover a fonte, se exógena\nsem antitireoidiano nem radioiodo"}
+      {
+        "id": "top",
+        "tipo": "inicio",
+        "texto": "Tireotoxicose\nexcesso de hormônio nos tecidos"
+      },
+      {
+        "id": "hip",
+        "tipo": "orgao",
+        "texto": "Hipertireoidismo\na glândula produz em excesso"
+      },
+      {
+        "id": "sem",
+        "tipo": "orgao",
+        "texto": "Sem hiperprodução\nhormônio pré-formado ou exógeno"
+      },
+      {
+        "id": "est",
+        "tipo": "passo",
+        "texto": "Graves\nTRAb positivo; 60–80% dos casos"
+      },
+      {
+        "id": "aut",
+        "tipo": "passo",
+        "texto": "Autonomia\nadenoma tóxico, BMN tóxico"
+      },
+      {
+        "id": "des",
+        "tipo": "passo",
+        "texto": "Destruição\ntireoidites"
+      },
+      {
+        "id": "exo",
+        "tipo": "passo",
+        "texto": "Exógeno\nLT4 ou T3: factícia"
+      },
+      {
+        "id": "blo",
+        "tipo": "fim",
+        "texto": "Bloquear a produção\nantitireoidiano, radioiodo ou cirurgia"
+      },
+      {
+        "id": "sup",
+        "tipo": "fim",
+        "texto": "Suporte\nremover a fonte, se exógena\nsem antitireoidiano nem radioiodo"
+      }
     ],
     "setas": [
-      {"de": "top", "para": "hip"},
-      {"de": "top", "para": "sem"},
-      {"de": "hip", "para": "est"},
-      {"de": "hip", "para": "aut"},
-      {"de": "sem", "para": "des"},
-      {"de": "sem", "para": "exo"},
-      {"de": "est", "para": "blo"},
-      {"de": "aut", "para": "blo"},
-      {"de": "des", "para": "sup"},
-      {"de": "exo", "para": "sup"}
+      {
+        "de": "top",
+        "para": "hip"
+      },
+      {
+        "de": "top",
+        "para": "sem"
+      },
+      {
+        "de": "hip",
+        "para": "est"
+      },
+      {
+        "de": "hip",
+        "para": "aut"
+      },
+      {
+        "de": "sem",
+        "para": "des"
+      },
+      {
+        "de": "sem",
+        "para": "exo"
+      },
+      {
+        "de": "est",
+        "para": "blo"
+      },
+      {
+        "de": "aut",
+        "para": "blo"
+      },
+      {
+        "de": "des",
+        "para": "sup"
+      },
+      {
+        "de": "exo",
+        "para": "sup"
+      }
     ],
     "notas": [
-      {"no": "blo", "lado": "abaixo", "texto": "Excesso de iodo, struma ovarii e metástases de carcinoma folicular produzem hormônio, mas a RAIU cervical é baixa"},
-      {"no": "sup", "lado": "abaixo", "texto": "Tireoglobulina baixa com RAIU baixa aponta factícia; na tireoidite, a Tg é elevada"}
+      {
+        "no": "blo",
+        "lado": "abaixo",
+        "texto": "Excesso de iodo, struma ovarii e metástases de carcinoma folicular produzem hormônio, mas a RAIU cervical é baixa"
+      },
+      {
+        "no": "sup",
+        "lado": "abaixo",
+        "texto": "Tireoglobulina baixa com RAIU baixa aponta factícia; na tireoidite, a Tg é elevada"
+      }
     ],
     "legenda": "Betabloqueador controla os sintomas adrenérgicos em qualquer causa."
   },

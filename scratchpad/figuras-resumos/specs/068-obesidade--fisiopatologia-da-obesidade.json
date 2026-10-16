@@ -1,0 +1,129 @@
+{
+  "i": 68,
+  "sub": "Obesidade",
+  "tema": "Fisiopatologia da Obesidade",
+  "titulo": "Núcleo arqueado: como a obesidade desliga a saciedade",
+  "subtitulo": "Via melanocortina, grelina e endocanabinoides, e a neuroinflamação que bloqueia a leptina",
+  "tipo": "fluxo",
+  "fluxo": {
+    "orientacao": "vertical",
+    "nos": [
+      {
+        "id": "gr",
+        "texto": "Grelina\núnico orexígeno periférico",
+        "tipo": "hormonio",
+        "camada": 0
+      },
+      {
+        "id": "lep",
+        "texto": "Leptina e insulina\nestado alimentado",
+        "tipo": "hormonio",
+        "camada": 0
+      },
+      {
+        "id": "ni",
+        "texto": "Neuroinflamação\nTLR4 → NF-κB e JNK\nbarreira glial de astrócitos",
+        "tipo": "alerta",
+        "camada": 0
+      },
+      {
+        "id": "ecb",
+        "texto": "Endocanabinoide (CB1)\n↑ apetite e lipogênese\n↓ termogênese",
+        "tipo": "orgao",
+        "camada": 1
+      },
+      {
+        "id": "pomc",
+        "texto": "POMC/CART\nneurônios anorexígenos",
+        "tipo": "orgao",
+        "camada": 1
+      },
+      {
+        "id": "npy",
+        "texto": "NPY/AgRP\nneurônios orexígenos",
+        "tipo": "orgao",
+        "camada": 1
+      },
+      {
+        "id": "mc4r",
+        "texto": "α-MSH → MC4R\nvia melanocortina",
+        "tipo": "orgao",
+        "camada": 2
+      },
+      {
+        "id": "hip",
+        "texto": "Hiperfagia\napesar de leptina elevada",
+        "tipo": "alerta",
+        "camada": 2
+      },
+      {
+        "id": "sac",
+        "texto": "Saciedade\ncontrole central do peso",
+        "tipo": "fim",
+        "camada": 3
+      }
+    ],
+    "setas": [
+      {
+        "de": "lep",
+        "para": "pomc",
+        "tipo": "estimula",
+        "rotulo": "JAK2/STAT3"
+      },
+      {
+        "de": "lep",
+        "para": "npy",
+        "tipo": "inibe"
+      },
+      {
+        "de": "ni",
+        "para": "pomc",
+        "tipo": "inibe",
+        "rotulo": "bloqueia leptina"
+      },
+      {
+        "de": "gr",
+        "para": "ecb",
+        "tipo": "estimula"
+      },
+      {
+        "de": "pomc",
+        "para": "mc4r",
+        "rotulo": "α-MSH"
+      },
+      {
+        "de": "ecb",
+        "para": "mc4r",
+        "tipo": "inibe"
+      },
+      {
+        "de": "ni",
+        "para": "hip",
+        "rotulo": "consequência"
+      },
+      {
+        "de": "mc4r",
+        "para": "sac"
+      }
+    ],
+    "notas": [
+      {
+        "no": "hip",
+        "texto": "Resistência à leptina: ↑ SOCS3 e PTP1B perpetuam a hiperfagia",
+        "lado": "direita"
+      }
+    ],
+    "legenda": "Verde: estímulo. Vermelho com barra: inibição. Dourado: sequência da via."
+  },
+  "lastro": [
+    "Neurônios orexígenos NPY/AgRP × anorexígenos POMC/CART, integrados pela via melanocortina (α-MSH → MC4R)",
+    "↑ leptina e insulina → JAK2/STAT3 ativa POMC/CART e inibe NPY/AgRP",
+    "Na obesidade há resistência à leptina com ↑ de SOCS3 e PTP1B",
+    "Consequências. Hiperfagia, maior atividade dos neurônios NPY/AgRP, redução da termogênese por inibição do MC4R",
+    "A grelina estimula o sistema endocanabinoide, que por sua vez inibe o sistema melanocortina.",
+    "Ácidos graxos saturados ativam o TLR4 → NF-κB e JNK",
+    "formam uma barreira glial que reduz o contato dos neurônios POMC/CART com os vasos e com os hormônios circulantes",
+    "único hormônio periférico orexígeno"
+  ],
+  "justificativa": "O capítulo já tem o fluxograma da defesa do peso; o eixo hipotalâmico e suas falhas (resistência à leptina, endocanabinoides, neuroinflamação) é o mecanismo central ainda sem figura."
+}

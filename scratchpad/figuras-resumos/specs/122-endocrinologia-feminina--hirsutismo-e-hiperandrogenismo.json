@@ -1,0 +1,136 @@
+{
+  "i": 122,
+  "sub": "Endocrinologia Feminina",
+  "tema": "Hirsutismo e Hiperandrogenismo",
+  "titulo": "Do androgênio ao pelo terminal: onde age cada tratamento",
+  "subtitulo": "Hirsutismo = excesso de androgênio e/ou folículo piloso mais sensível",
+  "tipo": "fluxo",
+  "fluxo": {
+    "orientacao": "vertical",
+    "nos": [
+      {
+        "id": "chc",
+        "tipo": "passo",
+        "camada": 0,
+        "texto": "Contraceptivo combinado\n1ª linha: suprime LH\ne eleva a SHBG"
+      },
+      {
+        "id": "ov",
+        "tipo": "orgao",
+        "camada": 1,
+        "texto": "Ovário\nSOP (~80%), tumor"
+      },
+      {
+        "id": "adr",
+        "tipo": "orgao",
+        "camada": 1,
+        "texto": "Adrenal\nHAC não clássica, tumor"
+      },
+      {
+        "id": "and",
+        "tipo": "hormonio",
+        "camada": 2,
+        "texto": "Excesso de androgênios\ntestosterona, androstenediona, SDHEA"
+      },
+      {
+        "id": "shbg",
+        "tipo": "passo",
+        "camada": 2,
+        "texto": "SHBG\nbaixa na resistência insulínica"
+      },
+      {
+        "id": "tl",
+        "tipo": "hormonio",
+        "camada": 3,
+        "texto": "Androgênio livre"
+      },
+      {
+        "id": "fin",
+        "tipo": "passo",
+        "camada": 3,
+        "texto": "Finasterida\ninibe a 5α-redutase"
+      },
+      {
+        "id": "fol",
+        "tipo": "orgao",
+        "camada": 4,
+        "texto": "Folículo piloso mais sensível\nà conversão de testosterona\nem DHT pela 5α-redutase"
+      },
+      {
+        "id": "esp",
+        "tipo": "passo",
+        "camada": 4,
+        "texto": "Espironolactona\nantagonista do receptor androgênico"
+      },
+      {
+        "id": "pelo",
+        "tipo": "fim",
+        "camada": 5,
+        "texto": "Hirsutismo\npelo terminal, padrão masculino\nFerriman-Gallwey ≥ 4–6"
+      }
+    ],
+    "setas": [
+      {
+        "de": "chc",
+        "para": "ov",
+        "tipo": "inibe"
+      },
+      {
+        "de": "ov",
+        "para": "and"
+      },
+      {
+        "de": "adr",
+        "para": "and"
+      },
+      {
+        "de": "and",
+        "para": "tl"
+      },
+      {
+        "de": "shbg",
+        "para": "tl",
+        "tipo": "inibe",
+        "rotulo": "reduz"
+      },
+      {
+        "de": "fin",
+        "para": "fol",
+        "tipo": "inibe"
+      },
+      {
+        "de": "tl",
+        "para": "pelo"
+      },
+      {
+        "de": "fol",
+        "para": "pelo"
+      },
+      {
+        "de": "esp",
+        "para": "pelo",
+        "tipo": "inibe"
+      }
+    ],
+    "notas": [
+      {
+        "no": "pelo",
+        "lado": "direita",
+        "texto": "Ciclo do pelo dura meses: reavaliar após ~6 meses; laser complementa"
+      }
+    ],
+    "legenda": "Dourado: excesso de androgênio e/ou folículo mais sensível. Vermelho ⊣: o que reduz. Espironolactona exige contracepção."
+  },
+  "lastro": [
+    "Resulta de excesso de androgênios e/ou ↑ sensibilidade do folículo piloso à conversão de testosterona em di-hidrotestosterona pela 5α-redutase",
+    "suprime LH e a produção ovariana de androgênios, e aumenta a SHBG reduzindo androgênio livre",
+    "ele eleva a SHBG e derruba a testosterona livre, mascarando o resultado",
+    "a SHBG está baixa na resistência insulínica",
+    "Antagonista do receptor androgênico",
+    "Inibidor da 5-α-redutase",
+    "SOP — a mais comum (~80% dos casos de hirsutismo)",
+    "o efeito hormonal é lento porque o ciclo do pelo dura meses; reavaliar resposta só após ~6 meses",
+    "Hirsutismo com escore ≥ 4–6 (SOP 2023"
+  ],
+  "justificativa": "O fluxograma existente é a investigação; a figura mostra a cadeia do androgênio até o pelo terminal e o ponto em que cada fármaco a interrompe."
+}

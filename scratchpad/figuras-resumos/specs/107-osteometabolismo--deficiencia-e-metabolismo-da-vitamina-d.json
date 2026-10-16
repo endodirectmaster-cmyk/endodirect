@@ -1,0 +1,155 @@
+{
+  "i": 107,
+  "sub": "Osteometabolismo",
+  "tema": "Deficiência e Metabolismo da Vitamina D",
+  "titulo": "Da pele ao calcitriol: as duas hidroxilações da vitamina D",
+  "subtitulo": "Fontes, ativação hepática e renal, controle da 1α-hidroxilase e ações do calcitriol",
+  "tipo": "fluxo",
+  "fluxo": {
+    "orientacao": "vertical",
+    "nos": [
+      {
+        "id": "pele",
+        "texto": "Pele (UVB)\n7-desidrocolesterol → colecalciferol (D3)",
+        "tipo": "orgao",
+        "camada": 0
+      },
+      {
+        "id": "dieta",
+        "texto": "Dieta e suplementos\nD2 (fungos) e D3 (animal)",
+        "tipo": "passo",
+        "camada": 0
+      },
+      {
+        "id": "fig",
+        "texto": "Fígado\n25-hidroxilase (CYP2R1)",
+        "tipo": "orgao",
+        "camada": 1
+      },
+      {
+        "id": "cfd",
+        "texto": "Calcifediol (remédio)\njá é 25-OH-D: dispensa o fígado",
+        "tipo": "passo",
+        "camada": 1
+      },
+      {
+        "id": "est",
+        "texto": "Estimulam\n• PTH\n• hipofosfatemia",
+        "tipo": "grupo",
+        "camada": 2
+      },
+      {
+        "id": "d25",
+        "texto": "25-OH-vitamina D\nforma de estoque\nusada para avaliar o status",
+        "tipo": "hormonio",
+        "camada": 2
+      },
+      {
+        "id": "ini",
+        "texto": "Inibem\n• FGF23\n• hiperfosfatemia",
+        "tipo": "grupo",
+        "camada": 2
+      },
+      {
+        "id": "rim",
+        "texto": "Rim\n1α-hidroxilase (CYP27B1)",
+        "tipo": "orgao",
+        "camada": 3
+      },
+      {
+        "id": "ct",
+        "texto": "Calcitriol\nforma ativa, age via VDR",
+        "tipo": "hormonio",
+        "camada": 4
+      },
+      {
+        "id": "int",
+        "texto": "Intestino\n↑ absorção de cálcio e fósforo",
+        "tipo": "fim",
+        "camada": 5
+      },
+      {
+        "id": "osso",
+        "texto": "Osso\nfavorece a mineralização",
+        "tipo": "fim",
+        "camada": 5
+      },
+      {
+        "id": "pth",
+        "texto": "Paratireoide\nsuprime a secreção de PTH",
+        "tipo": "orgao",
+        "camada": 5
+      }
+    ],
+    "setas": [
+      {
+        "de": "pele",
+        "para": "fig"
+      },
+      {
+        "de": "dieta",
+        "para": "fig"
+      },
+      {
+        "de": "fig",
+        "para": "d25"
+      },
+      {
+        "de": "cfd",
+        "para": "d25",
+        "tipo": "fraca",
+        "rotulo": "eleva mais rápido"
+      },
+      {
+        "de": "d25",
+        "para": "rim"
+      },
+      {
+        "de": "est",
+        "para": "rim",
+        "tipo": "estimula"
+      },
+      {
+        "de": "ini",
+        "para": "rim",
+        "tipo": "inibe"
+      },
+      {
+        "de": "rim",
+        "para": "ct"
+      },
+      {
+        "de": "ct",
+        "para": "int",
+        "tipo": "estimula"
+      },
+      {
+        "de": "ct",
+        "para": "osso",
+        "tipo": "estimula"
+      },
+      {
+        "de": "ct",
+        "para": "pth",
+        "tipo": "inibe"
+      },
+      {
+        "de": "ct",
+        "para": "rim",
+        "tipo": "feedback",
+        "rotulo": "feedback −"
+      }
+    ],
+    "legenda": "Dourado: sequência da via. Verde: estímulo. Vermelho com barra: inibição. Vermelho tracejado: retroalimentação. Cinza: atalho farmacológico."
+  },
+  "lastro": [
+    "síntese cutânea de **colecalciferol (D3)** a partir do 7-desidrocolesterol sob ação da radiação **UVB**",
+    "**fígado (25-hidroxilase/CYP2R1) → 25-OH-vitamina D (calcidiol)**",
+    "**rim (1α-hidroxilase/CYP27B1) → 1,25-di-hidroxivitamina D (calcitriol)**, a forma biologicamente ativa",
+    "A 1α-hidroxilação renal é **estimulada por PTH e hipofosfatemia** e **inibida por FGF23, hiperfosfatemia e pelo próprio calcitriol** (retroalimentação)",
+    "O calcitriol atua via **receptor nuclear VDR**, promovendo **absorção intestinal de cálcio e fósforo**, favorecendo a **mineralização óssea**",
+    "**suprimindo a transcrição/secreção de PTH**",
+    "O calcifediol é a própria 25-OH-vitamina D e dispensa a hidroxilação hepática — eleva mais rápido"
+  ],
+  "justificativa": "O capítulo já tem o algoritmo de avaliação e reposição; a via metabólica com seus reguladores explica por que se dosa a 25-OH-D e quando se repõe a forma ativa."
+}

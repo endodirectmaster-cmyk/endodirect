@@ -7,31 +7,99 @@
   "tipo": "fluxo",
   "fluxo": {
     "orientacao": "vertical",
-    "rotulos_camadas": ["Gatilho", "Mecanismo", "Via", "Quadro", "Diagnóstico"],
+    "rotulos_camadas": [
+      "Gatilho",
+      "Mecanismo",
+      "Via",
+      "Quadro",
+      "Diagnóstico"
+    ],
     "nos": [
-      {"id": "g", "tipo": "inicio", "largura": 300, "texto": "Precipitante\ninfecção (a mais comum), omissão de insulina, primo-descompensação\nIAM, AVC, glicocorticoide, SGLT2i, gestação"},
-      {"id": "m", "tipo": "hormonio", "largura": 260, "texto": "Deficiência de insulina\n+ excesso de hormônios contrarreguladores\nglucagon, catecolaminas, cortisol"},
-      {"id": "c1", "tipo": "passo", "texto": "Lipólise e cetogênese\ncetose: β-hidroxibutirato ≥ 3,0 mmol/L ou cetonúria"},
-      {"id": "e1", "tipo": "passo", "largura": 215, "texto": "Glicemia ≥ 600 mg/dL\nosmolaridade efetiva > 300 mOsm/kg\n(ou total > 320)"},
-      {"id": "c2", "tipo": "alerta", "texto": "Acidose\npH < 7,3 ou bicarbonato < 18\nânion-gap em geral aumentado"},
-      {"id": "e2", "tipo": "alerta", "texto": "Desidratação profunda\ndéficit de água muito maior\nrebaixamento do sensório"},
-      {"id": "cad", "tipo": "fim", "texto": "CAD\nglicemia ≥ 200 (ou normal) + cetose + acidose\ntípica do DM1; euglicêmica com SGLT2i, gestação, jejum"},
-      {"id": "ehh", "tipo": "fim", "texto": "EHH\nsem cetoacidose: pH ≥ 7,3 e bicarbonato ≥ 15\nDM2/idoso; instala-se em dias; mortalidade mais alta"}
+      {
+        "id": "g",
+        "tipo": "inicio",
+        "largura": 300,
+        "texto": "Precipitante\ninfecção (a mais comum), omissão de insulina, primo-descompensação\nIAM, AVC, glicocorticoide, SGLT2i, gestação",
+        "camada": 0
+      },
+      {
+        "id": "m",
+        "tipo": "hormonio",
+        "largura": 230,
+        "texto": "CAD: deficiência de insulina\n+ excesso de hormônios contrarreguladores\nglucagon, catecolaminas, cortisol",
+        "camada": 1
+      },
+      {
+        "id": "c1",
+        "tipo": "passo",
+        "texto": "Lipólise e cetogênese\ncetose: β-hidroxibutirato ≥ 3,0 mmol/L ou cetonúria",
+        "camada": 2
+      },
+      {
+        "id": "c2",
+        "tipo": "alerta",
+        "texto": "Acidose\npH < 7,3 ou bicarbonato < 18\nânion-gap em geral aumentado",
+        "camada": 3
+      },
+      {
+        "id": "e1",
+        "tipo": "grupo",
+        "largura": 300,
+        "texto": "EHH: hiperosmolaridade\n• glicemia ≥ 600; osm. efetiva > 300 (total > 320)\n• desidratação profunda; rebaixamento do sensório",
+        "camada": 3
+      },
+      {
+        "id": "cad",
+        "tipo": "fim",
+        "texto": "CAD\nglicemia ≥ 200 (ou normal) + cetose + acidose\ntípica do DM1; euglicêmica com SGLT2i, gestação, jejum",
+        "camada": 4
+      },
+      {
+        "id": "ehh",
+        "tipo": "fim",
+        "texto": "EHH\nsem cetoacidose: pH ≥ 7,3 e bicarbonato ≥ 15\nDM2/idoso; instala-se em dias; mortalidade mais alta",
+        "camada": 4
+      }
     ],
     "setas": [
-      {"de": "g", "para": "m"},
-      {"de": "m", "para": "c1"},
-      {"de": "m", "para": "e1"},
-      {"de": "c1", "para": "c2"},
-      {"de": "e1", "para": "e2"},
-      {"de": "c2", "para": "cad"},
-      {"de": "e2", "para": "ehh"}
+      {
+        "de": "g",
+        "para": "m"
+      },
+      {
+        "de": "m",
+        "para": "c1"
+      },
+      {
+        "de": "g",
+        "para": "e1"
+      },
+      {
+        "de": "c1",
+        "para": "c2"
+      },
+      {
+        "de": "c2",
+        "para": "cad"
+      },
+      {
+        "de": "e1",
+        "para": "ehh"
+      }
     ],
     "notas": [
-      {"no": "cad", "lado": "abaixo", "texto": "CAD euglicêmica: não descartar CAD pela glicemia; guiar-se por cetonas e pH"},
-      {"no": "ehh", "lado": "abaixo", "texto": "Quadro misto: EHH com cetoacidose (β-hidroxibutirato ≥ 3,0 e pH < 7,3 ou bicarbonato < 18)"}
+      {
+        "no": "cad",
+        "lado": "abaixo",
+        "texto": "CAD euglicêmica: não descartar CAD pela glicemia; guiar-se por cetonas e pH"
+      },
+      {
+        "no": "ehh",
+        "lado": "abaixo",
+        "texto": "Quadro misto: β-hidroxibutirato ≥ 3,0, pH < 7,3 ou bicarbonato < 18"
+      }
     ],
-    "legenda": "Tratamento comum: hidratação, potássio antes da insulina, insulina IV e tratar o precipitante."
+    "legenda": "Tratamento: cristaloide, potássio (não iniciar insulina se K < 3,5), insulina IV e tratar o precipitante."
   },
   "lastro": [
     "deficiência de insulina + excesso de hormônios contrarreguladores (glucagon, catecolaminas, cortisol) → lipólise e cetogênese",
@@ -41,7 +109,7 @@
     "Infecção (a mais comum), omissão/insuficiência de insulina ou falha de bomba, primo-descompensação, evento agudo (IAM, AVC, pancreatite, sepse), fármacos (glicocorticoide, SGLT2i, antipsicóticos), gestação",
     "CAD euglicêmica: glicemia pode ser < 200 (uso de SGLT2i, gestação, jejum prolongado, hepatopatia, álcool) — não descartar CAD pela glicemia; guiar-se por cetonas/pH",
     "CAD é mais típica do DM1; EHH do DM2/idoso.",
-    "Hidratação com cristaloide é o primeiro pilar do tratamento."
+    "Não iniciar insulina se potássio < 3,5; repor potássio antes (a insulina baixa o K)."
   ],
   "justificativa": "O capítulo já tem o algoritmo de manejo como fluxograma; a figura mostra o outro ângulo, a fisiopatologia: do precipitante ao mecanismo comum e daí aos dois caminhos que definem CAD e EHH."
 }

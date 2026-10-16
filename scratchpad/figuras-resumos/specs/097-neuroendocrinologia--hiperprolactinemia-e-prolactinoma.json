@@ -1,0 +1,150 @@
+{
+  "i": 97,
+  "sub": "Neuroendocrinologia",
+  "tema": "Hiperprolactinemia e Prolactinoma",
+  "titulo": "Freio dopaminérgico da prolactina e por que o excesso dá sintomas",
+  "subtitulo": "Perder a dopamina ou estimular o lactotrofo eleva a PRL; a PRL suprime o GnRH via kisspeptina",
+  "tipo": "fluxo",
+  "fluxo": {
+    "orientacao": "vertical",
+    "nos": [
+      {
+        "id": "farm",
+        "tipo": "alerta",
+        "camada": 2,
+        "texto": "Fármacos\nantipsicóticos, metoclopramida, domperidona"
+      },
+      {
+        "id": "hip",
+        "tipo": "orgao",
+        "camada": 0,
+        "texto": "Hipotálamo\ncélulas tuberoinfundibulares"
+      },
+      {
+        "id": "haste",
+        "tipo": "alerta",
+        "camada": 0,
+        "texto": "Efeito de haste\nmassa selar corta a dopamina\nPRL em geral < 100–150 ng/mL"
+      },
+      {
+        "id": "da",
+        "tipo": "hormonio",
+        "camada": 1,
+        "texto": "Dopamina (receptor D2)"
+      },
+      {
+        "id": "est",
+        "tipo": "grupo",
+        "camada": 1,
+        "texto": "Estimulam a PRL\n• Estrogênio: transcrição do gene\n• TRH↑ no hipotireoidismo primário"
+      },
+      {
+        "id": "lac",
+        "tipo": "orgao",
+        "camada": 2,
+        "texto": "Lactotrofos (hipófise anterior)\nprolactinoma: secretor mais comum\nPRL > 250 ng/mL: sugere prolactinoma",
+        "largura": 300
+      },
+      {
+        "id": "prl",
+        "tipo": "hormonio",
+        "camada": 3,
+        "texto": "Prolactina ↑"
+      },
+      {
+        "id": "kiss",
+        "tipo": "passo",
+        "camada": 4,
+        "texto": "Núcleo arqueado\nkisspeptina ↓"
+      },
+      {
+        "id": "mama",
+        "tipo": "fim",
+        "camada": 4,
+        "texto": "Mama\ngalactorreia (ação direta)"
+      },
+      {
+        "id": "adr",
+        "tipo": "fim",
+        "camada": 4,
+        "texto": "Adrenais\nandrógenos ↑: acne, hirsutismo"
+      },
+      {
+        "id": "gnrh",
+        "tipo": "passo",
+        "camada": 5,
+        "texto": "GnRH pulsátil ↓"
+      },
+      {
+        "id": "hipog",
+        "tipo": "fim",
+        "camada": 6,
+        "texto": "Hipogonadismo hipogonadotrófico\namenorreia, ↓libido, infertilidade\nprolongado → osteoporose"
+      }
+    ],
+    "setas": [
+      {
+        "de": "farm",
+        "para": "prl"
+      },
+      {
+        "de": "hip",
+        "para": "da"
+      },
+      {
+        "de": "haste",
+        "para": "da",
+        "tipo": "inibe"
+      },
+      {
+        "de": "da",
+        "para": "lac",
+        "tipo": "inibe",
+        "rotulo": "freio principal"
+      },
+      {
+        "de": "est",
+        "para": "lac",
+        "tipo": "estimula"
+      },
+      {
+        "de": "lac",
+        "para": "prl"
+      },
+      {
+        "de": "prl",
+        "para": "kiss",
+        "tipo": "inibe"
+      },
+      {
+        "de": "prl",
+        "para": "mama"
+      },
+      {
+        "de": "prl",
+        "para": "adr"
+      },
+      {
+        "de": "kiss",
+        "para": "gnrh"
+      },
+      {
+        "de": "gnrh",
+        "para": "hipog"
+      }
+    ],
+    "legenda": "Vermelho ⊣: inibição. Verde: estímulo. O hipogonadismo é central, não ação direta da PRL na gônada."
+  },
+  "lastro": [
+    "A prolactina (PRL) é o único hormônio hipofisário sob inibição tônica — pela dopamina da haste",
+    "Dopamina — produzida pelas células tuberoinfundibulares, age nos receptores D2 dos lactotrofos. É o freio principal",
+    "Estrogênio — estimula a transcrição do gene da prolactina",
+    "hipotireoidismo primário (TRH↑ estimula PRL)",
+    "eleva a PRL, em geral < 100–150 ng/mL",
+    "a prolactina inibe a expressão da kisspeptina no núcleo arqueado, e a queda da kisspeptina suprime a secreção de GnRH. Não é ação direta na gônada.",
+    "a galactorreia decorre da ação direta da PRL na mama",
+    "estimula a liberação de andrógenos, cortisol e aldosterona pelas adrenais — o que ajuda a explicar acne e hirsutismo",
+    "> 250 ng/mL sugere fortemente prolactinoma"
+  ],
+  "justificativa": "O capítulo já tem o algoritmo de investigação; o eixo dopamina–lactotrofo–kisspeptina mostra de onde vêm as causas e por que a PRL alta produz hipogonadismo, galactorreia e hiperandrogenismo."
+}

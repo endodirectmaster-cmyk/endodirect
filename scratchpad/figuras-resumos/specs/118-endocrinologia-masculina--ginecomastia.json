@@ -1,0 +1,123 @@
+{
+  "i": 118,
+  "sub": "Endocrinologia Masculina",
+  "tema": "Ginecomastia",
+  "titulo": "Desequilíbrio estrogênio/androgênio e fases da ginecomastia",
+  "subtitulo": "Três mecanismos deslocam a razão; a fase histológica decide a resposta ao tratamento",
+  "tipo": "fluxo",
+  "fluxo": {
+    "orientacao": "vertical",
+    "nos": [
+      {
+        "id": "e",
+        "tipo": "passo",
+        "camada": 0,
+        "texto": "↑ Estrogênio\naromatização, anabolizantes\ntumor feminizante"
+      },
+      {
+        "id": "m",
+        "tipo": "passo",
+        "camada": 0,
+        "texto": "↓ Metabolismo\ndo estrogênio\ndoença hepática"
+      },
+      {
+        "id": "a",
+        "tipo": "passo",
+        "camada": 0,
+        "texto": "↓ Androgênio\nhipogonadismo\nresistência androgênica"
+      },
+      {
+        "id": "est",
+        "tipo": "hormonio",
+        "camada": 1,
+        "texto": "Estrogênio"
+      },
+      {
+        "id": "and",
+        "tipo": "hormonio",
+        "camada": 1,
+        "texto": "Androgênio"
+      },
+      {
+        "id": "mama",
+        "tipo": "orgao",
+        "camada": 2,
+        "texto": "Tecido glandular mamário\ndisco firme, concêntrico\nretroareolar"
+      },
+      {
+        "id": "flo",
+        "tipo": "passo",
+        "camada": 3,
+        "texto": "Fase florida\nepitélio ductal, dor\nresponde a fármacos"
+      },
+      {
+        "id": "fib",
+        "tipo": "alerta",
+        "camada": 4,
+        "texto": "Fase fibrótica\npredomínio estromal\nnão regride com fármacos"
+      }
+    ],
+    "setas": [
+      {
+        "de": "e",
+        "para": "est",
+        "tipo": "estimula"
+      },
+      {
+        "de": "m",
+        "para": "est",
+        "tipo": "estimula"
+      },
+      {
+        "de": "a",
+        "para": "and",
+        "tipo": "inibe"
+      },
+      {
+        "de": "est",
+        "para": "mama",
+        "tipo": "estimula",
+        "rotulo": "estimula"
+      },
+      {
+        "de": "and",
+        "para": "mama",
+        "tipo": "inibe",
+        "rotulo": "inibe"
+      },
+      {
+        "de": "mama",
+        "para": "flo"
+      },
+      {
+        "de": "flo",
+        "para": "fib",
+        "rotulo": "> 12 meses"
+      }
+    ],
+    "notas": [
+      {
+        "no": "flo",
+        "texto": "Recente e dolorosa (< 12 meses): ensaio com tamoxifeno",
+        "lado": "direita"
+      },
+      {
+        "no": "fib",
+        "texto": "Persistente há mais de 12 meses: cirurgia",
+        "lado": "direita"
+      }
+    ],
+    "legenda": "Verde: aumenta. Vermelho ⊣: reduz ou inibe. Após 1 ano a regressão é improvável."
+  },
+  "lastro": [
+    "O **estrogênio estimula** a proliferação do tecido mamário e o **androgênio a inibe**",
+    "**Redução da atividade androgênica** — hipogonadismo, resistência aos androgênios",
+    "**Menor metabolismo dos estrogênios** — doença hepática",
+    "tumores adrenais ou testiculares **feminizantes** (produtores de estrogênio)",
+    "**anabolizantes/abuso de testosterona** (aromatização a estradiol)",
+    "a fase **florida/proliferativa** (recente, < 12 meses) é rica em epitélio ductal e responde a fármacos",
+    "a fase **fibrótica** (crônica, > 12 meses) é predominantemente estromal e **não regride** com terapia clínica",
+    "**Recente e doloroso (< 12 meses):** ensaio com **tamoxifeno**"
+  ],
+  "justificativa": "O fluxograma existente cobre a investigação; esta figura mostra a fisiopatologia (razão estrogênio/androgênio) e a evolução histológica que explica por que a forma recente responde a fármaco e a crônica vai à cirurgia."
+}

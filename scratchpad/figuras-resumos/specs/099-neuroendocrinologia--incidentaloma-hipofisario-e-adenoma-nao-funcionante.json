@@ -1,0 +1,44 @@
+{
+  "i": 99,
+  "sub": "Neuroendocrinologia",
+  "tema": "Incidentaloma Hipofisário e Adenoma Não Funcionante",
+  "titulo": "Adenoma não funcionante: o que a massa comprime e o que isso produz",
+  "subtitulo": "Sem hipersecreção, o tumor se revela pelo efeito de massa — por isso o diagnóstico tende a ser tardio",
+  "tipo": "fluxo",
+  "fluxo": {
+    "orientacao": "vertical",
+    "nos": [
+      {"id": "ad", "tipo": "orgao", "camada": 0, "texto": "Adenoma não funcionante\nmaioria de linhagem gonadotrófica\nsem síndrome de hipersecreção"},
+      {"id": "q", "tipo": "passo", "camada": 1, "texto": "Quiasma óptico\ncontato ou compressão"},
+      {"id": "h", "tipo": "passo", "camada": 1, "texto": "Haste hipofisária\ncompressão"},
+      {"id": "t", "tipo": "passo", "camada": 1, "texto": "Hipófise normal\ncompressão"},
+      {"id": "s", "tipo": "passo", "camada": 1, "texto": "Seio cavernoso\ninvasão: Knosp 3A, 3B e 4"},
+      {"id": "q2", "tipo": "alerta", "camada": 2, "texto": "Hemianopsia bitemporal\nneuro-oftalmo obrigatória\nmesmo sem queixa visual"},
+      {"id": "h2", "tipo": "fim", "camada": 2, "texto": "Hiperprolactinemia\nefeito haste, não secreção"},
+      {"id": "t2", "tipo": "fim", "camada": 2, "texto": "Hipopituitarismo\nGH → LH/FSH → TSH\n→ ACTH → prolactina"},
+      {"id": "s2", "tipo": "fim", "camada": 2, "texto": "Cura cirúrgica\nmenos provável"}
+    ],
+    "setas": [
+      {"de": "ad", "para": "q"},
+      {"de": "ad", "para": "h"},
+      {"de": "ad", "para": "t"},
+      {"de": "ad", "para": "s"},
+      {"de": "q", "para": "q2"},
+      {"de": "h", "para": "h2"},
+      {"de": "t", "para": "t2"},
+      {"de": "s", "para": "s2"}
+    ],
+    "legenda": "Deficiência de AVP praticamente exclui adenoma: pensar em craniofaringioma, hipofisite ou metástase."
+  },
+  "lastro": [
+    "O diagnóstico costuma ser tardio, justamente por não haver síndrome de hipersecreção. A maioria é de linhagem gonadotrófica.",
+    "Efeito de massa: cefaleia e defeito de campo visual, tipicamente hemianopsia bitemporal.",
+    "Hiperprolactinemia por compressão da haste hipofisária",
+    "É o \"efeito haste\", e não secreção tumoral.",
+    "Hipopituitarismo por compressão do tecido normal, na ordem GH → LH/FSH → TSH → ACTH → prolactina.",
+    "Tumores que invadem o seio cavernoso (graus 3A, 3B e 4) têm menor chance de cura cirúrgica.",
+    "a avaliação neuro-oftalmológica é obrigatória em todo paciente com contato ou compressão do quiasma, mesmo sem queixa visual.",
+    "A presença de deficiência de AVP (antigo diabetes insípido central) praticamente EXCLUI adenoma"
+  ],
+  "justificativa": "O capítulo já tem o algoritmo de conduta; esta figura mostra o mecanismo da apresentação — cada estrutura comprimida ou invadida e a manifestação que ela gera."
+}

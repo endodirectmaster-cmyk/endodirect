@@ -9,7 +9,6 @@
     "orientacao": "vertical",
     "nos": [
       {"id": "trab", "tipo": "inicio", "largura": 170, "texto": "TRAb + linfócitos T\nautorreativos, da doença de Graves"},
-      {"id": "risco", "tipo": "alerta", "largura": 220, "texto": "Fatores de risco\ntabagismo (o mais importante, dose-dependente), radioiodo\nTRAb alto, hiper ou hipo descontrolado, sexo masculino, hipercolesterolemia"},
       {"id": "tepro", "tipo": "passo", "largura": 170, "camada": 0, "texto": "Teprotumumabe\nanticorpo anti-IGF-1R\nreduz proptose e diplopia"},
       {"id": "fib", "tipo": "orgao", "largura": 230, "texto": "Fibroblastos orbitários\nexpressam o receptor de TSH conjugado ao IGF-1R"},
       {"id": "gag", "tipo": "hormonio", "largura": 170, "texto": "Glicosaminoglicanos\nácido hialurônico: hidrofílico, puxa água → edema"},
@@ -22,7 +21,6 @@
     ],
     "setas": [
       {"de": "trab", "para": "fib", "rotulo": "ativam"},
-      {"de": "risco", "para": "fib", "rotulo": "agravam"},
       {"de": "tepro", "para": "fib", "tipo": "inibe", "rotulo": "bloqueia IGF-1R"},
       {"de": "fib", "para": "gag"},
       {"de": "fib", "para": "infl"},
@@ -35,6 +33,7 @@
       {"de": "vol", "para": "non"}
     ],
     "notas": [
+      {"no": "fib", "lado": "esquerda", "texto": "Fatores de risco: tabagismo (o mais importante, dose-dependente), radioiodo, TRAb alto, hiper ou hipo descontrolado, sexo masculino, hipercolesterolemia"},
       {"no": "dipl", "lado": "abaixo", "texto": "Curva de Rundle: fase ativa (inflamatória) de ~18–24 meses, depois inativa/fibrótica; a imunossupressão só age na fase ativa"},
       {"no": "non", "lado": "abaixo", "texto": "Neuropatia óptica compressiva: baixa acuidade, discromatopsia, defeito de campo; pulso de corticoide e descompressão se não responder"}
     ],

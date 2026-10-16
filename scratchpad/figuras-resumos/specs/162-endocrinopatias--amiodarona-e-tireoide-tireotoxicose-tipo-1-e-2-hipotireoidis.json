@@ -1,0 +1,124 @@
+{
+  "i": 162,
+  "sub": "Endocrinopatias",
+  "tema": "Amiodarona e Tireoide (tireotoxicose tipo 1 e 2, hipotireoidismo)",
+  "titulo": "Amiodarona e tireoide: do iodo e do fármaco às quatro apresentações",
+  "subtitulo": "Sobrecarga de iodo e ação da molécula explicam as quatro apresentações",
+  "tipo": "fluxo",
+  "fluxo": {
+    "orientacao": "vertical",
+    "nos": [
+      {
+        "id": "a",
+        "texto": "Amiodarona\n~75 mg de iodo/comprimido\nmeia-vida 40–100 dias",
+        "tipo": "inicio"
+      },
+      {
+        "id": "io",
+        "texto": "Sobrecarga de iodo\n35 a 50× a necessidade",
+        "tipo": "passo"
+      },
+      {
+        "id": "dr",
+        "texto": "Ação do fármaco\nsemelhante a T4/T3",
+        "tipo": "passo"
+      },
+      {
+        "id": "wc",
+        "texto": "Wolff-Chaikoff\nbloqueia organificação",
+        "tipo": "orgao"
+      },
+      {
+        "id": "jb",
+        "texto": "Jod-Basedow\niodo ↑ síntese",
+        "tipo": "orgao"
+      },
+      {
+        "id": "dd",
+        "texto": "Inibe D1 e D2\n↓conversão T4→T3",
+        "tipo": "orgao"
+      },
+      {
+        "id": "tx",
+        "texto": "Toxicidade direta\nlise do tireócito",
+        "tipo": "orgao"
+      },
+      {
+        "id": "hip",
+        "texto": "Hipotireoidismo\nfalha em escapar\nLT4; mantém a droga",
+        "tipo": "fim"
+      },
+      {
+        "id": "t1",
+        "texto": "TIA tipo 1\nGraves/bócio; Doppler ↑\ntiamazol ± perclorato",
+        "tipo": "fim"
+      },
+      {
+        "id": "ps",
+        "texto": "Pseudo-TSHoma\n↑TSH ↑T4 ↓T3\nnormaliza em ~3 meses",
+        "tipo": "fim"
+      },
+      {
+        "id": "t2",
+        "texto": "TIA tipo 2\ndestrutiva; Doppler ↓\nprednisona",
+        "tipo": "fim"
+      }
+    ],
+    "setas": [
+      {
+        "de": "a",
+        "para": "io"
+      },
+      {
+        "de": "a",
+        "para": "dr"
+      },
+      {
+        "de": "io",
+        "para": "wc"
+      },
+      {
+        "de": "io",
+        "para": "jb",
+        "rotulo": "doença de base"
+      },
+      {
+        "de": "dr",
+        "para": "dd"
+      },
+      {
+        "de": "dr",
+        "para": "tx"
+      },
+      {
+        "de": "wc",
+        "para": "hip"
+      },
+      {
+        "de": "jb",
+        "para": "t1"
+      },
+      {
+        "de": "dd",
+        "para": "ps",
+        "rotulo": "D2 hipofisária"
+      },
+      {
+        "de": "tx",
+        "para": "t2"
+      }
+    ],
+    "legenda": "HIA: áreas iodo-suficientes. TIA: iodo-deficientes; pode surgir meses após suspender. TSH é o marcador mais confiável."
+  },
+  "lastro": [
+    "Os efeitos combinam **sobrecarga de iodo** e **ação intrínseca do fármaco**",
+    "Fisiopatologia: falha em escapar do Wolff-Chaikoff, favorecida por tireoidite de Hashimoto.",
+    "Mecanismo Jod-Basedow: iodo aumenta a síntese hormonal.",
+    "Toxicidade direta ao tireócito (apoptose/lise → tireoidite destrutiva).",
+    "Pseudo-TSHoma da amiodarona: ↑TSH com ↑T4 e ↓T3, precoce e transitório, normaliza em ~3 meses",
+    "iniciar levotiroxina titulada pelo TSH; **não é necessário suspender a amiodarona**",
+    "Doppler colorido | Vascularização aumentada | Vascularização ausente",
+    "Meia-vida de 40–100 dias: disfunção tireoidiana pode surgir meses após a suspensão."
+  ],
+  "justificativa": "O capítulo não tem fluxograma; a figura mostra como os mecanismos do iodo e do fármaco geram cada uma das quatro apresentações e sua conduta."
+}

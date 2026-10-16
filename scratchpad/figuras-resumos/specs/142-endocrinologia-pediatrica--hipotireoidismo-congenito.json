@@ -1,0 +1,126 @@
+{
+  "i": 142,
+  "sub": "Endocrinologia Pediátrica",
+  "tema": "Hipotireoidismo Congênito",
+  "titulo": "Hipotireoidismo congênito: onde está o defeito e o que a triagem vê",
+  "subtitulo": "A forma central escapa da triagem baseada só em TSH",
+  "tipo": "fluxo",
+  "fluxo": {
+    "orientacao": "vertical",
+    "nos": [
+      {
+        "id": "ini",
+        "texto": "Hipotireoidismo congênito\nao nascer: sutil ou ausente",
+        "tipo": "inicio"
+      },
+      {
+        "id": "hip",
+        "texto": "Hipófise\nfalta de TSH",
+        "tipo": "orgao"
+      },
+      {
+        "id": "tir",
+        "texto": "Tireoide\ndefeito na glândula\nou na síntese hormonal",
+        "tipo": "orgao"
+      },
+      {
+        "id": "mat",
+        "texto": "Fatores externos\nmaternos ou iodo",
+        "tipo": "orgao"
+      },
+      {
+        "id": "cen",
+        "texto": "Central (raro)\nhipopituitarismo",
+        "tipo": "alerta"
+      },
+      {
+        "id": "dis",
+        "texto": "Disgenesia\nagenesia, hipoplasia\nou ectopia (a mais comum)",
+        "tipo": "passo"
+      },
+      {
+        "id": "dor",
+        "texto": "Disormonogênese\ndefeito de síntese\npode dar bócio",
+        "tipo": "passo"
+      },
+      {
+        "id": "tra",
+        "texto": "Transitório\niodo, anticorpos\nou drogas maternas",
+        "tipo": "passo"
+      },
+      {
+        "id": "cfal",
+        "texto": "TSH normal ou baixo\nescapa à triagem só por TSH",
+        "tipo": "alerta"
+      },
+      {
+        "id": "pri",
+        "texto": "Permanente primário\nlevotiroxina precoce",
+        "tipo": "fim"
+      },
+      {
+        "id": "rev",
+        "texto": "Pode ser passageiro\nreavaliar após ~3 anos",
+        "tipo": "fim"
+      }
+    ],
+    "setas": [
+      {
+        "de": "ini",
+        "para": "hip"
+      },
+      {
+        "de": "ini",
+        "para": "tir"
+      },
+      {
+        "de": "ini",
+        "para": "mat"
+      },
+      {
+        "de": "hip",
+        "para": "cen"
+      },
+      {
+        "de": "tir",
+        "para": "dis"
+      },
+      {
+        "de": "tir",
+        "para": "dor"
+      },
+      {
+        "de": "mat",
+        "para": "tra"
+      },
+      {
+        "de": "cen",
+        "para": "cfal"
+      },
+      {
+        "de": "dis",
+        "para": "pri"
+      },
+      {
+        "de": "dor",
+        "para": "pri"
+      },
+      {
+        "de": "tra",
+        "para": "rev"
+      }
+    ],
+    "legenda": "Central: suspeitar em defeitos de linha média, hipoglicemia, micropênis ou icterícia colestática."
+  },
+  "lastro": [
+    "Disgenesia tireoidiana (a mais comum, ~65% dos casos permanentes): agenesia, hipoplasia ou ectopia",
+    "Disormonogênese: defeitos hereditários da síntese hormonal (organificação, tireoglobulina, NIS), autossômicos recessivos, podem cursar com bócio.",
+    "Central (secundário): deficiência de TSH por hipopituitarismo (raro; TSH pode ser normal/baixo na triagem",
+    "Transitório: excesso ou deficiência de iodo, anticorpos maternos bloqueadores, drogas antitireoidianas maternas, prematuridade.",
+    "Programas baseados apenas em TSH podem não detectar o hipotireoidismo central (TSH baixo/normal)",
+    "defeitos de linha média, hipoglicemia, micropênis ou icterícia colestática.",
+    "No hipotireoidismo possivelmente transitório, considerar reavaliação (trial off) após ~3 anos",
+    "Levotiroxina o mais precoce possível — idealmente nas 2 primeiras semanas de vida"
+  ],
+  "justificativa": "O fluxograma já cobre triagem e tratamento; a figura localiza cada etiologia no eixo e explica por que a triagem só por TSH deixa escapar a forma central."
+}
