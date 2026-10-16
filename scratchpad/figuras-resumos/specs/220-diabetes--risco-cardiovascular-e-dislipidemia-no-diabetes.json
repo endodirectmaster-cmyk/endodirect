@@ -1,0 +1,132 @@
+{
+  "i": 220,
+  "sub": "Diabetes",
+  "tema": "Risco Cardiovascular e Dislipidemia no Diabetes",
+  "titulo": "Risco cardiovascular no diabetes: da estratificação à meta de LDL",
+  "subtitulo": "Com triglicerídeos acima de 200 mg/dL, a meta a perseguir é a do não HDL",
+  "tipo": "fluxo",
+  "fluxo": {
+    "orientacao": "vertical",
+    "nos": [
+      {
+        "id": "g_alto",
+        "tipo": "grupo",
+        "largura": 200,
+        "texto": "Estratificadores de ALTO risco\n• Hipertensão, tabagismo, síndrome metabólica, DM2 > 10 anos\n• Doença renal, DCV precoce na família, CAC 10–300 UA"
+      },
+      {
+        "id": "ini",
+        "tipo": "inicio",
+        "texto": "Pessoa com diabetes\nsem calculadora de risco no DM2\nDM1 com < 20 anos: STENO"
+      },
+      {
+        "id": "g_ma",
+        "tipo": "grupo",
+        "largura": 200,
+        "texto": "Estratificadores de MUITO ALTO risco\n• Prevenção secundária, estenose > 50%, CAC > 300 UA\n• LDL > 190, CT > 310, DM1 > 20 anos"
+      },
+      {
+        "id": "d1",
+        "tipo": "decisao",
+        "largura": 270,
+        "texto": "Muito alto risco?\nqualquer estratificador de muito alto risco\nou 3 ou mais estratificadores de alto risco"
+      },
+      {
+        "id": "d2",
+        "tipo": "decisao",
+        "largura": 230,
+        "texto": "Alto risco?\n1 a 2 estratificadores de alto risco\nou idade ♂ ≥ 50 · ♀ ≥ 56 anos"
+      },
+      {
+        "id": "f_ma",
+        "tipo": "alerta",
+        "texto": "Muito alto risco (qualquer idade)\nLDL < 50 · não HDL < 80 mg/dL\nestatina de alta potência ± ezetimiba / iPCSK9",
+        "largura": 250
+      },
+      {
+        "id": "d3",
+        "tipo": "decisao",
+        "largura": 230,
+        "texto": "Idade intermediária?\n♂ 38–49 · ♀ 46–55 anos\nsem estratificadores"
+      },
+      {
+        "id": "f_alto",
+        "tipo": "passo",
+        "texto": "Alto risco\nLDL < 70 · não HDL < 100 mg/dL\nqualquer estatina, desde que atinja a meta",
+        "largura": 250
+      },
+      {
+        "id": "f_baixo",
+        "tipo": "fim",
+        "texto": "Baixo risco\n♂ < 38 · ♀ < 46 anos, sem estratificadores\nLDL < 100 · não HDL < 130: estilo de vida (considerar estatina)",
+        "largura": 250
+      },
+      {
+        "id": "f_int",
+        "tipo": "fim",
+        "texto": "Risco intermediário (moderado)\nLDL < 100 · não HDL < 130 mg/dL\nqualquer estatina, desde que atinja a meta",
+        "largura": 250
+      }
+    ],
+    "setas": [
+      {
+        "de": "ini",
+        "para": "d1"
+      },
+      {
+        "de": "g_ma",
+        "para": "d1",
+        "tipo": "fraca",
+        "rotulo": "critérios"
+      },
+      {
+        "de": "g_alto",
+        "para": "d2",
+        "tipo": "fraca",
+        "rotulo": "critérios"
+      },
+      {
+        "de": "d1",
+        "para": "f_ma",
+        "rotulo": "Sim"
+      },
+      {
+        "de": "d1",
+        "para": "d2",
+        "rotulo": "Não"
+      },
+      {
+        "de": "d2",
+        "para": "f_alto",
+        "rotulo": "Sim"
+      },
+      {
+        "de": "d2",
+        "para": "d3",
+        "rotulo": "Não"
+      },
+      {
+        "de": "d3",
+        "para": "f_int",
+        "rotulo": "Sim"
+      },
+      {
+        "de": "d3",
+        "para": "f_baixo",
+        "rotulo": "Não"
+      }
+    ],
+    "legenda": "Setas cinza: critérios. Para chegar à meta: estatina de alta potência, depois ezetimiba e/ou iPCSK9 (dobrar a dose reduz o LDL só ~6%)."
+  },
+  "lastro": [
+    "Não usar calculadoras de risco no DM2 — elas são imprecisas nessa população",
+    "no DM1 com menos de 20 anos de duração, usar a STENO",
+    "A estratificação da SBD combina idade com estratificadores: alto risco em homens a partir de 50 anos e mulheres a partir de 56.",
+    "Muito alto risco: 3 ou mais estratificadores de alto risco, ou qualquer estratificador de muito alto risco, em qualquer idade.",
+    "Escore de cálcio entre 10 e 300 Agatston é marcador de doença aterosclerótica subclínica e estratificador de ALTO risco",
+    "Metas: LDL abaixo de 100 no risco baixo e moderado, abaixo de 70 no alto e abaixo de 50 no muito alto.",
+    "Com triglicerídeos acima de 200, perseguir a meta do NÃO HDL — o LDL calculado fica subestimado.",
+    "Dobrar a dose da estatina reduz o LDL só cerca de 6% — associar ezetimiba ou iPCSK9 rende muito mais."
+  ],
+  "justificativa": "O capítulo não traz mecanismo; o que ele ensina é a estratificação da SBD (idade + estratificadores) e a meta lipídica que decorre de cada faixa, e a figura percorre essa decisão de cima para baixo até a meta e o tratamento de cada faixa."
+}

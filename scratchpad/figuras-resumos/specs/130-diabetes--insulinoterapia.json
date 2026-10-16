@@ -1,0 +1,42 @@
+{
+  "i": 130,
+  "sub": "Diabetes",
+  "tema": "Insulinoterapia",
+  "titulo": "Esquema basal-bólus: cada insulina, seu papel e seu ajuste",
+  "subtitulo": "O bólus cobre a refeição e se ajusta pela pós-prandial; a basal, pela glicemia de jejum",
+  "tipo": "fluxo",
+  "fluxo": {
+    "orientacao": "vertical",
+    "nos": [
+      {"id": "e", "tipo": "inicio", "largura": 280, "texto": "Esquema basal-bólus\no mais fisiológico; padrão no DM1 desde o diagnóstico"},
+      {"id": "b", "tipo": "hormonio", "largura": 230, "texto": "Basal (≈ 50% da dose)\nglargina, detemir, degludeca: sem pico pronunciado, menor hipoglicemia noturna\nNPH: pico 4–8 h, hipoglicemia entre refeições e noturna"},
+      {"id": "p", "tipo": "hormonio", "largura": 230, "texto": "Bólus prandial\ninício 10–15 min, pico ~1 h: lispro, asparte, glulisina\ninício ~30 min: regular; aplicar antes das refeições"},
+      {"id": "tb", "tipo": "passo", "largura": 230, "texto": "Ajuste pela glicemia de jejum\nalvorecer: surto matinal de contrarreguladores → ajustar a basal noturna\nSomogyi: rebote pós-hipoglicemia; confirmar com CGM/madrugada antes de reduzir"},
+      {"id": "tp", "tipo": "passo", "largura": 230, "texto": "Cálculo e ajuste do bólus\nregra dos 500 → relação insulina/carboidrato; FS = 1800/DTD\ncorreção = (glicemia atual − alvo)/FS; ajustar pela pós-prandial"},
+      {"id": "v", "tipo": "alerta", "largura": 300, "texto": "Hipoglicemia: principal efeito adverso\nganho de peso comum; rodízio dos sítios evita lipo-hipertrofia\nno DM2: reavaliar sulfonilureia; manter SGLT2i/GLP-1 RA"}
+    ],
+    "setas": [
+      {"de": "e", "para": "b"},
+      {"de": "e", "para": "p"},
+      {"de": "b", "para": "tb"},
+      {"de": "p", "para": "tp"},
+      {"de": "tb", "para": "v"},
+      {"de": "tp", "para": "v"}
+    ],
+    "notas": [
+      {"no": "b", "lado": "esquerda", "texto": "Icodeca: basal semanal aprovada para DM1 e DM2; no DM1 aumentou a hipoglicemia"}
+    ],
+    "legenda": "Pílulas douradas: as duas insulinas do esquema; caixas brancas: como ajustar cada uma."
+  },
+  "lastro": [
+    "O esquema basal-bólus é o mais fisiológico e é padrão no DM1.",
+    "A basal ajusta-se pela glicemia de jejum; os bólus pela glicemia pós-prandial.",
+    "análogos ultrarrápidos (lispro, asparte, glulisina; início ~10–15 min, pico ~1 h) e regular (início ~30 min) — cobrem a refeição; aplicar antes das refeições",
+    "NPH (pico ~4–8 h → risco de hipoglicemia entre refeições e noturna",
+    "glargina, detemir, degludeca (mais estável, sem pico pronunciado, menor hipoglicemia noturna e maior flexibilidade de horário)",
+    "FS = 1800 / dose total diária",
+    "hiperglicemia de jejum por surto matinal de hormônios contrarreguladores → pode exigir ajuste da basal noturna",
+    "Hipoglicemia é o principal efeito adverso; ganho de peso é comum."
+  ],
+  "justificativa": "O fluxograma existente é o início e a intensificação no DM2; a figura mostra a lógica do esquema fisiológico que o texto espalha em várias seções: duas insulinas com perfis distintos, cada uma ajustada por uma glicemia diferente, e o que vigiar."
+}

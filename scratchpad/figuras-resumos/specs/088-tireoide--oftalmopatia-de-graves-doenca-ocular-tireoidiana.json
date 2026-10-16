@@ -1,0 +1,54 @@
+{
+  "i": 88,
+  "sub": "Tireoide",
+  "tema": "Oftalmopatia de Graves (Doença Ocular Tireoidiana)",
+  "titulo": "Oftalmopatia de Graves: do TRAb à proptose",
+  "subtitulo": "Fibroblastos orbitários com TSHR e IGF-1R, num compartimento ósseo inextensível",
+  "tipo": "fluxo",
+  "fluxo": {
+    "orientacao": "vertical",
+    "nos": [
+      {"id": "trab", "tipo": "inicio", "largura": 170, "texto": "TRAb + linfócitos T\nautorreativos, da doença de Graves"},
+      {"id": "risco", "tipo": "alerta", "largura": 220, "texto": "Fatores de risco\ntabagismo (o mais importante, dose-dependente), radioiodo\nTRAb alto, hiper ou hipo descontrolado, sexo masculino, hipercolesterolemia"},
+      {"id": "tepro", "tipo": "passo", "largura": 170, "camada": 0, "texto": "Teprotumumabe\nanticorpo anti-IGF-1R\nreduz proptose e diplopia"},
+      {"id": "fib", "tipo": "orgao", "largura": 230, "texto": "Fibroblastos orbitários\nexpressam o receptor de TSH conjugado ao IGF-1R"},
+      {"id": "gag", "tipo": "hormonio", "largura": 170, "texto": "Glicosaminoglicanos\nácido hialurônico: hidrofílico, puxa água → edema"},
+      {"id": "infl", "tipo": "hormonio", "largura": 170, "texto": "Inflamação\ndor, hiperemia, quemose (atividade)"},
+      {"id": "adip", "tipo": "hormonio", "largura": 170, "texto": "Adipogênese\nfibroblasto vira adipócito"},
+      {"id": "vol", "tipo": "orgao", "largura": 260, "texto": "Músculos extraoculares e gordura retro-orbitária\naumentam de volume num compartimento ósseo inextensível"},
+      {"id": "prop", "tipo": "passo", "largura": 170, "texto": "Proptose\nexoftalmia medida pelo exoftalmômetro de Hertel"},
+      {"id": "dipl", "tipo": "passo", "largura": 170, "texto": "Diplopia\nrestrição/fibrose muscular: retos inferior e medial"},
+      {"id": "non", "tipo": "alerta", "largura": 170, "texto": "Compressão do nervo óptico\nno ápice orbitário (2–5%): emergência, ameaça à visão"}
+    ],
+    "setas": [
+      {"de": "trab", "para": "fib", "rotulo": "ativam"},
+      {"de": "risco", "para": "fib", "rotulo": "agravam"},
+      {"de": "tepro", "para": "fib", "tipo": "inibe", "rotulo": "bloqueia IGF-1R"},
+      {"de": "fib", "para": "gag"},
+      {"de": "fib", "para": "infl"},
+      {"de": "fib", "para": "adip"},
+      {"de": "gag", "para": "vol"},
+      {"de": "infl", "para": "vol"},
+      {"de": "adip", "para": "vol"},
+      {"de": "vol", "para": "prop"},
+      {"de": "vol", "para": "dipl"},
+      {"de": "vol", "para": "non"}
+    ],
+    "notas": [
+      {"no": "dipl", "lado": "abaixo", "texto": "Curva de Rundle: fase ativa (inflamatória) de ~18–24 meses, depois inativa/fibrótica; a imunossupressão só age na fase ativa"},
+      {"no": "non", "lado": "abaixo", "texto": "Neuropatia óptica compressiva: baixa acuidade, discromatopsia, defeito de campo; pulso de corticoide e descompressão se não responder"}
+    ],
+    "legenda": "Vermelho ⊣: o teprotumumabe bloqueia o IGF-1R conjugado ao TSHR. Dourado: cadeia causal."
+  },
+  "lastro": [
+    "Os fibroblastos orbitários expressam o receptor de TSH e o receptor de IGF-1",
+    "TRAb + linfócitos T autorreativos ativam esses fibroblastos → produção de glicosaminoglicanos (hidrofílicos → edema), inflamação e adipogênese",
+    "aumento de volume dos músculos extraoculares e da gordura retro-orbitária dentro de um compartimento ósseo inextensível → proptose e, no ápice orbitário, compressão do nervo óptico",
+    "ali está conjugado ao receptor de IGF-1 (IGF-1R). Daí o alvo do teprotumumabe (anti-IGF-1R)",
+    "Tabagismo — o mais importante: aumenta risco e gravidade e reduz a resposta ao tratamento, de forma dose-dependente",
+    "Diplopia por restrição/fibrose dos músculos extraoculares (os retos inferior e medial são os mais acometidos)",
+    "fase ativa (inflamatória, ~18–24 meses) → fase inativa/fibrótica (sequelar e estável). A imunossupressão só age na fase ATIVA",
+    "Neuropatia óptica compressiva (2–5%): baixa da acuidade visual, discromatopsia (perda da visão de cores), defeito de campo visual"
+  ],
+  "justificativa": "O fluxograma existente é o algoritmo de conduta; a cadeia TRAb → fibroblasto (TSHR/IGF-1R) → edema, inflamação e gordura → proptose, diplopia e compressão do nervo explica os sinais, o alvo do teprotumumabe e a lógica do CAS."
+}

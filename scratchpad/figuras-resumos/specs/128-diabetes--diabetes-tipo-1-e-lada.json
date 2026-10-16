@@ -1,0 +1,114 @@
+{
+  "i": 128,
+  "sub": "Diabetes",
+  "tema": "Diabetes Tipo 1 e LADA",
+  "titulo": "História natural do DM1: da autoimunidade à insulina",
+  "subtitulo": "Estágios 1 a 3 e o LADA, a forma de evolução arrastada no adulto",
+  "tipo": "fluxo",
+  "fluxo": {
+    "orientacao": "vertical",
+    "nos": [
+      {
+        "id": "auto",
+        "tipo": "inicio",
+        "largura": 360,
+        "texto": "Autoimunidade contra a célula β\nlinfócitos T, HLA de risco (DR3/DR4) e autoanticorpos\nanti-GAD65, anti-IA2, anti-ZnT8, anti-insulina (IAA), ICA"
+      },
+      {
+        "id": "e1",
+        "tipo": "passo",
+        "largura": 260,
+        "texto": "Estágio 1\n≥ 2 autoanticorpos + normoglicemia\nassintomático"
+      },
+      {
+        "id": "e2",
+        "tipo": "passo",
+        "largura": 260,
+        "texto": "Estágio 2\nautoanticorpos + disglicemia (pré-diabetes)\nassintomático, alto risco de progressão"
+      },
+      {
+        "id": "e3",
+        "tipo": "alerta",
+        "largura": 260,
+        "texto": "Estágio 3: hiperglicemia clínica\npoliúria, polidipsia, perda de peso, cetose"
+      },
+      {
+        "id": "def",
+        "tipo": "alerta",
+        "texto": "Deficiência absoluta de insulina\ntendência à cetose e cetoacidose"
+      },
+      {
+        "id": "lada",
+        "tipo": "passo",
+        "texto": "LADA\nadulto com anti-GAD positivo\nsem insulina nos primeiros 6 meses; progressão mais lenta"
+      },
+      {
+        "id": "insA",
+        "tipo": "fim",
+        "texto": "Insulina obrigatória e vitalícia\nbasal-bólus ou bomba (CSII), idealmente com CGM\nlua de mel: remissão parcial transitória após o início"
+      },
+      {
+        "id": "insB",
+        "tipo": "fim",
+        "texto": "Insulina precoce no LADA\npreserva a função β residual\nevitar sulfonilureias: aceleram a exaustão das células β"
+      }
+    ],
+    "setas": [
+      {
+        "de": "auto",
+        "para": "e1"
+      },
+      {
+        "de": "e1",
+        "para": "e2"
+      },
+      {
+        "de": "e2",
+        "para": "e3",
+        "rotulo": "teplizumabe pode retardar"
+      },
+      {
+        "de": "e3",
+        "para": "def",
+        "rotulo": "início rápido, jovem"
+      },
+      {
+        "de": "e3",
+        "para": "lada",
+        "rotulo": "evolução arrastada, adulto"
+      },
+      {
+        "de": "def",
+        "para": "insA"
+      },
+      {
+        "de": "lada",
+        "para": "insB"
+      }
+    ],
+    "notas": [
+      {
+        "no": "e1",
+        "lado": "direita",
+        "texto": "Dois anticorpos com glicemia normal é estágio 1 — não é diagnóstico de diabetes"
+      },
+      {
+        "no": "lada",
+        "lado": "direita",
+        "texto": "Suspeitar em \"DM2\" magro, sem síndrome metabólica, com controle que se deteriora rápido apesar de orais"
+      }
+    ],
+    "legenda": "Pico na infância/adolescência, mas ocorre em qualquer idade. Confirmação: autoanticorpos e peptídeo C baixo."
+  },
+  "lastro": [
+    "Destruição autoimune das células β das ilhotas pancreáticas (mediada por linfócitos T, associação a HLA de risco — DR3/DR4 — e a autoanticorpos) → deficiência absoluta de insulina",
+    "Estágio 1: autoimunidade (≥ 2 autoanticorpos) + normoglicemia, assintomático",
+    "Estágio 2: autoanticorpos + disglicemia (pré-diabetes), assintomático — alto risco de progressão",
+    "Estágio 3: hiperglicemia clínica (sintomas: poliúria, polidipsia, perda de peso, cetose)",
+    "Clínica de início rápido, cetose, magro, jovem",
+    "Adulto com anti-GAD positivo, que não precisa de insulina nos primeiros 6 meses e progride mais lentamente para insulinodependência",
+    "Insulinoterapia é obrigatória e vitalícia — esquema basal-bólus (múltiplas doses diárias) ou bomba de infusão (CSII), idealmente com monitorização contínua (CGM)",
+    "LADA: iniciar insulina precocemente (preserva a função β residual); evitar sulfonilureias (aceleram a exaustão das células β)"
+  ],
+  "justificativa": "O fluxograma existente diferencia DM1/LADA de DM2 e decide o manejo inicial; esta figura mostra o mecanismo e a história natural que o capítulo explica — autoimunidade, estágios 1 a 3 e o desvio arrastado do LADA — convergindo na insulina."
+}

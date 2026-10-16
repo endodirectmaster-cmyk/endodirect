@@ -1,11 +1,46 @@
 ---
 tags: [cofre, processo]
-atualizado: 2026-10-13
+atualizado: 2026-10-16
 ---
 
 # Convenções de Trabalho
 
-## ⏸️ LIMITE DA SESSÃO: PAUSAR PERTO DO TETO E RETOMAR NO HORÁRIO DA RENOVAÇÃO (2026-10-06)
+## ⏸️ LIMITE DE USO: PAUSAR EM 90% E RETOMAR NO HORÁRIO DA RENOVAÇÃO (2026-10-06; 90% desde 2026-10-16)
+
+**Regra em vigor (16/10/2026).** Pedido do professor: *"Programe sempre para
+quando obter 90% do uso, suspender temporariamente e retomar quando reiniciar o
+limite."* Substitui o teto de 95% de 06/10.
+
+**O sinal que existe.** `get_session` (MCP claude-code-remote, sem argumento)
+devolve `external_metadata.rate_limit_info` = `{status: allowed | allowed_warning |
+rejected, rateLimitType: five_hour | seven_day | …, resetsAt: <epoch em segundos>,
+utilization?: 0 a 1}`. O cliente do Claude Code lê da API o uso de cada janela
+(cabeçalhos `anthropic-ratelimit-unified-5h/7d-utilization`) e o schema da linha de
+status expõe `rate_limits.five_hour/seven_day.used_percentage`, mas nesta sessão
+remota (stream-json, sem terminal) o percentual não chega até mim: em 16/10 o
+`get_session` trouxe só estado, tipo e renovação. `allowed_warning` é o aviso de
+"perto do limite" do próprio servidor, com limiar dele (pode ser abaixo de 90%).
+
+**Procedimento:**
+1. Consultar `get_session` antes de lançar agentes e sempre que um agente termina.
+2. Pausar quando `utilization` vier e for ≥ 0,90, ou quando o estado for
+   `allowed_warning` ou `rejected` (sem o percentual, o aviso do servidor é o
+   gatilho dos 90%): não lançar agente novo; parar os que rodam (`TaskStop`; o que
+   eles gravaram em arquivo fica); commitar o que existe; agendar `send_later` para
+   `resetsAt` + 5 minutos com a lista do que falta.
+3. Na retomada, consultar `get_session` de novo. Com `allowed`, relançar primeiro
+   um agente sentinela (regra 10 abaixo) e, quando ele terminar, os demais, com
+   `effort: 'high'` (regra 13). Sem `allowed`, reagendar e avisar o professor.
+4. Agente derrubado pela mensagem de limite ("resets HH (UTC)"): mesma retomada,
+   no horário da mensagem + 5 minutos.
+
+**Primeira aplicação (16/10, 14h40 UTC):** janela semanal em `allowed_warning`,
+renovação às 20h00 UTC. Os 7 agentes das figuras dos Resumos foram parados com 39
+de 115 especificações prontas (as de 072, 095 e 217 estavam em edição e voltam
+para conferência); retomada agendada para 20h05 UTC.
+
+### Histórico: a regra de 95% (06/10)
+
 
 Pedido do professor: *"Programar pausa quando tiver em 95% da sessão e retornar
 ao reiniciar após o horário estabelecido."* Contexto: a auditoria do acervo

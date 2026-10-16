@@ -1,0 +1,123 @@
+{
+  "i": 83,
+  "sub": "Tireoide",
+  "tema": "Carcinoma Diferenciado de Tireoide (papilífero e folicular)",
+  "titulo": "Carcinoma diferenciado: o que a célula folicular conserva",
+  "subtitulo": "Captar iodo, produzir tireoglobulina e responder ao TSH — o que muda quando isso se perde",
+  "tipo": "fluxo",
+  "fluxo": {
+    "orientacao": "vertical",
+    "rotulos_camadas": [
+      "Origem",
+      "Conserva",
+      "Permite",
+      "Perda",
+      "Conduta"
+    ],
+    "nos": [
+      {
+        "id": "cel",
+        "tipo": "orgao",
+        "texto": "Célula folicular\norigem do papilífero (~85%) e do folicular (~10%)"
+      },
+      {
+        "id": "nis",
+        "tipo": "passo",
+        "largura": 150,
+        "texto": "Capta iodo\npelo canal NIS"
+      },
+      {
+        "id": "tg",
+        "tipo": "passo",
+        "largura": 150,
+        "texto": "Produz tireoglobulina\nTg sérica como marcador de doença"
+      },
+      {
+        "id": "tsh",
+        "tipo": "passo",
+        "largura": 150,
+        "texto": "Responde ao TSH\no TSH é trófico ao tumor"
+      },
+      {
+        "id": "rai",
+        "tipo": "fim",
+        "largura": 150,
+        "texto": "Radioiodo (I-131)\nrotina no alto risco e na metástase a distância\ncom estímulo de TSH e dieta pobre em iodo"
+      },
+      {
+        "id": "seg",
+        "tipo": "fim",
+        "largura": 150,
+        "texto": "Seguimento por Tg\nTg + anti-Tg e US cervical seriados\nTg em elevação → suspeita de recidiva"
+      },
+      {
+        "id": "lt4",
+        "tipo": "fim",
+        "largura": 150,
+        "texto": "Supressão do TSH\nlevotiroxina; meta ajustada ao risco e à resposta\nmais supressão no alto risco ou doença persistente"
+      },
+      {
+        "id": "des",
+        "tipo": "alerta",
+        "texto": "Desdiferenciação: flip-flop\nperde o canal NIS, mantém o transportador GLUT\nTg detectável com PCI negativa (Tg+ / PCI−)"
+      },
+      {
+        "id": "pet",
+        "tipo": "passo",
+        "texto": "PET-FDG localiza a doença\nrefratária ao iodo com progressão estrutural →\nlenvatinibe ou sorafenibe; alvos BRAF, RET, NTRK"
+      }
+    ],
+    "setas": [
+      {
+        "de": "cel",
+        "para": "nis"
+      },
+      {
+        "de": "cel",
+        "para": "tg"
+      },
+      {
+        "de": "cel",
+        "para": "tsh"
+      },
+      {
+        "de": "nis",
+        "para": "rai"
+      },
+      {
+        "de": "tg",
+        "para": "seg"
+      },
+      {
+        "de": "tsh",
+        "para": "lt4"
+      },
+      {
+        "de": "rai",
+        "para": "des",
+        "rotulo": "PCI sem captação"
+      },
+      {
+        "de": "seg",
+        "para": "des",
+        "rotulo": "Tg em elevação"
+      },
+      {
+        "de": "des",
+        "para": "pet"
+      }
+    ],
+    "legenda": "Papilífero dissemina por via linfática; folicular, por via hematogênica."
+  },
+  "lastro": [
+    "papilífero (~85%) e folicular (~10%), que mantêm captação de iodo e produção de tireoglobulina — base do tratamento com radioiodo e do seguimento por Tg",
+    "o TSH é trófico ao tumor diferenciado — a meta de TSH é ajustada ao risco e à resposta ao tratamento",
+    "indicado de rotina após tireoidectomia total no alto risco e na metástase a distância",
+    "realizado com estímulo de TSH (suspensão de LT4 ou TSH recombinante humano – rhTSH) e dieta pobre em iodo",
+    "Tg em elevação (estimulada ou basal) → suspeita de recidiva",
+    "padrão \"Tg+ / PCI−\" (Tg detectável com PCI negativa) → PET-FDG para localizar doença desdiferenciada (que perdeu avidez por iodo)",
+    "é o efeito flip-flop: perde-se o canal NIS e mantém-se o transportador GLUT",
+    "Ausência de captação na PCI sugere refratariedade ao radioiodo → considerar terapia sistêmica"
+  ],
+  "justificativa": "O capítulo já tem o algoritmo pós-tireoidectomia; a figura mostra o princípio que o sustenta: as três propriedades conservadas da célula folicular explicam radioiodo, seguimento por Tg e supressão de TSH, e a perda do NIS explica PET-FDG e terapia sistêmica."
+}

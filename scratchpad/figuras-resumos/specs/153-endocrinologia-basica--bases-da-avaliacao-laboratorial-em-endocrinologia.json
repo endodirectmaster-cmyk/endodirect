@@ -1,0 +1,118 @@
+{
+  "i": 153,
+  "sub": "Endocrinologia Básica",
+  "tema": "Bases da Avaliação Laboratorial em Endocrinologia",
+  "titulo": "Do basal ao teste dinâmico: confirmar excesso ou deficiência",
+  "subtitulo": "Supressão confirma excesso; estímulo confirma deficiência — com os cortes do capítulo",
+  "tipo": "fluxo",
+  "fluxo": {
+    "orientacao": "vertical",
+    "nos": [
+      {
+        "id": "basal",
+        "tipo": "inicio",
+        "largura": 280,
+        "texto": "Dosagem basal pareada\nhormônio-alvo + trófico + clínica\nex.: TSH + T4 livre; cortisol + ACTH às 8 h"
+      },
+      {
+        "id": "d1",
+        "tipo": "decisao",
+        "texto": "Basal conclusivo?\ncortisol 8 h: < 3 sugere insuficiência adrenal, > 15–18 afasta",
+        "largura": 230
+      },
+      {
+        "id": "eixo",
+        "tipo": "fim",
+        "largura": 220,
+        "texto": "Interpretar no eixo\nalvo baixo: trófico alto = primária; baixo/normal = central\nalvo alto com trófico suprimido = excesso autônomo"
+      },
+      {
+        "id": "d2",
+        "tipo": "decisao",
+        "texto": "Suspeita de excesso?"
+      },
+      {
+        "id": "sup",
+        "tipo": "passo",
+        "texto": "Teste de supressão\nse não suprime, é autônomo"
+      },
+      {
+        "id": "est",
+        "tipo": "passo",
+        "texto": "Teste de estímulo\nse não responde, há falência"
+      },
+      {
+        "id": "gsup",
+        "tipo": "grupo",
+        "largura": 320,
+        "texto": "Cortes de supressão\n• Dexametasona 1 mg: cortisol 8 h > 1,8 µg/dL → Cushing\n• TOTG-GH: nadir de GH > 0,4 ng/mL → acromegalia"
+      },
+      {
+        "id": "gest",
+        "tipo": "grupo",
+        "largura": 320,
+        "texto": "Cortes de estímulo\n• Cortrosina 250 µg: cortisol > 18–20 µg/dL afasta insuficiência adrenal\n• ITT: GH > 3–5 ng/mL e cortisol > 18–20 µg/dL (glicemia < 40 mg/dL)"
+      },
+      {
+        "id": "fim",
+        "tipo": "fim",
+        "largura": 340,
+        "texto": "Confirmar antes de tratar\ndiretrizes: confirmar o diagnóstico antes de tratar\nresultado incoerente com a clínica: pensar em interferência"
+      }
+    ],
+    "setas": [
+      {
+        "de": "basal",
+        "para": "d1"
+      },
+      {
+        "de": "d1",
+        "para": "eixo",
+        "rotulo": "Sim"
+      },
+      {
+        "de": "d1",
+        "para": "d2",
+        "rotulo": "Não: zona cinzenta"
+      },
+      {
+        "de": "d2",
+        "para": "sup",
+        "rotulo": "Sim"
+      },
+      {
+        "de": "d2",
+        "para": "est",
+        "rotulo": "Não: deficiência"
+      },
+      {
+        "de": "sup",
+        "para": "gsup"
+      },
+      {
+        "de": "est",
+        "para": "gest"
+      },
+      {
+        "de": "gsup",
+        "para": "fim"
+      },
+      {
+        "de": "gest",
+        "para": "fim"
+      }
+    ],
+    "legenda": "Hormônios pulsáteis (LH, GH, prolactina): um valor isolado pode enganar."
+  },
+  "lastro": [
+    "Para confirmar excesso hormonal usa-se teste de supressão; para confirmar deficiência, teste de estímulo.",
+    "Cortisol basal < 3 µg/dL sugere insuficiência adrenal; > 15–18 µg/dL praticamente a exclui; a \"zona cinzenta\" intermediária exige teste dinâmico.",
+    "cortisol das 8 h > 1,8 µg/dL (50 nmol/L) é positivo para Cushing",
+    "nadir de GH > 0,4 ng/mL (ensaios ultrassensíveis) não suprime → acromegalia",
+    "cortisol aos 30–60 min > 18–20 µg/dL exclui insuficiência adrenal",
+    "exige glicemia < 40 mg/dL; resposta normal GH > 3–5 ng/mL e cortisol > 18–20 µg/dL",
+    "O laboratório endócrino é interpretado dentro do eixo: pareie sempre o hormônio-alvo com o trófico e a clínica.",
+    "reforçam confirmar diagnóstico antes de tratar excesso ou reposição crônica"
+  ],
+  "justificativa": "O fluxograma existente cobre as interferências do imunoensaio; a figura cobre o outro eixo do capítulo, a lógica basal → dinâmico (supressão para excesso, estímulo para deficiência) com os pontos de corte que caem em prova."
+}

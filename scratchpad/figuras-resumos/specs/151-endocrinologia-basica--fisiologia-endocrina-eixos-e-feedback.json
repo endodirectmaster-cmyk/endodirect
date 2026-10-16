@@ -1,0 +1,100 @@
+{
+  "i": 151,
+  "sub": "Endocrinologia Básica",
+  "tema": "Fisiologia Endócrina: Eixos e Feedback",
+  "titulo": "Eixo hipotálamo-hipófise-glândula-alvo e as alças de feedback",
+  "subtitulo": "O hormônio periférico inibe os andares superiores e estabiliza o set point",
+  "tipo": "fluxo",
+  "fluxo": {
+    "orientacao": "vertical",
+    "nos": [
+      {
+        "id": "h",
+        "tipo": "orgao",
+        "largura": 230,
+        "texto": "Hipotálamo\nCRH, TRH, GnRH (pulsátil), GHRH\nsomatostatina e dopamina inibem"
+      },
+      {
+        "id": "n",
+        "tipo": "orgao",
+        "largura": 200,
+        "texto": "Neuro-hipófise\nnão sintetiza: armazena e libera ADH e ocitocina\nproduzidos nos núcleos supraóptico e paraventricular"
+      },
+      {
+        "id": "p",
+        "tipo": "orgao",
+        "largura": 200,
+        "texto": "Adeno-hipófise\ntróficos: ACTH, TSH, LH e FSH, GH, prolactina"
+      },
+      {
+        "id": "g",
+        "tipo": "orgao",
+        "largura": 200,
+        "texto": "Glândula-alvo\nadrenal, tireoide, gônadas"
+      },
+      {
+        "id": "hp",
+        "tipo": "hormonio",
+        "largura": 200,
+        "texto": "Hormônio periférico\ncortisol; T4/T3; esteroides sexuais e inibina B"
+      },
+      {
+        "id": "exc",
+        "tipo": "alerta",
+        "largura": 280,
+        "texto": "Exceção: feedback positivo\nestradiol alto e sustentado no meio do ciclo\nestimula o eixo → pico de LH → ovulação"
+      }
+    ],
+    "setas": [
+      {
+        "de": "h",
+        "para": "n",
+        "rotulo": "fluxo axonal"
+      },
+      {
+        "de": "h",
+        "para": "p",
+        "rotulo": "sistema porta"
+      },
+      {
+        "de": "p",
+        "para": "g",
+        "rotulo": "trófico"
+      },
+      {
+        "de": "g",
+        "para": "hp"
+      },
+      {
+        "de": "hp",
+        "para": "exc",
+        "tipo": "fraca",
+        "rotulo": "estradiol (meio do ciclo)"
+      },
+      {
+        "de": "hp",
+        "para": "p",
+        "tipo": "feedback",
+        "rotulo": "alça longa"
+      },
+      {
+        "de": "hp",
+        "para": "h",
+        "tipo": "feedback",
+        "rotulo": "alça longa"
+      }
+    ],
+    "legenda": "Alça curta: hormônio hipofisário → hipotálamo. Ultracurta: hipotalâmico sobre a própria secreção."
+  },
+  "lastro": [
+    "A endocrinologia se organiza em eixos hierárquicos: hipotálamo → hipófise → glândula-alvo → hormônio periférico.",
+    "O hipotálamo age via sistema porta-hipofisário (CRH, TRH, GnRH, GHRH, somatostatina, dopamina).",
+    "A adeno-hipófise secreta os tróficos (ACTH, TSH, LH, FSH, GH, prolactina); a neuro-hipófise libera ADH e ocitocina.",
+    "A regra é o feedback negativo: o hormônio periférico inibe os andares superiores e estabiliza o set point.",
+    "As alças de feedback operam em três níveis: longa (hormônio periférico → hipotálamo/hipófise), curta (hormônio hipofisário → hipotálamo) e ultracurta",
+    "A exceção é o feedback positivo do estradiol no meio do ciclo, que gera o pico de LH e a ovulação.",
+    "armazena e libera ADH (vasopressina) e ocitocina, produzidos nos núcleos supraóptico e paraventricular e transportados por fluxo axonal",
+    "somatostatina (inibe GH e TSH) e dopamina (inibe prolactina)"
+  ],
+  "justificativa": "O fluxograma existente já faz o raciocínio diagnóstico primária × central; a figura mostra o mecanismo que o sustenta: a hierarquia do eixo, as alças de feedback negativo e a única exceção positiva."
+}

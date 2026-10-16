@@ -1,0 +1,43 @@
+{
+  "i": 132,
+  "sub": "Diabetes",
+  "tema": "Complicações Crônicas do Diabetes",
+  "titulo": "Da hiperglicemia crônica às complicações micro e macrovasculares",
+  "subtitulo": "Quatro vias lesam o endotélio; neuropatia e isquemia convergem no pé diabético",
+  "tipo": "fluxo",
+  "fluxo": {
+    "orientacao": "vertical",
+    "nos": [
+      {"id": "d", "tipo": "inicio", "texto": "Diabetes\nexposição crônica à hiperglicemia: grau e duração decidem"},
+      {"id": "v", "tipo": "grupo", "texto": "Quatro vias lesam o endotélio\n• polióis e AGEs (glicação avançada)\n• proteína cinase C e estresse oxidativo"},
+      {"id": "m", "tipo": "passo", "texto": "Risco aterosclerótico 2–4×\nprincipal causa de morte no diabetes"},
+      {"id": "r", "tipo": "passo", "largura": 132, "texto": "Retinopatia\nnão proliferativa → proliferativa\nedema macular: principal causa de baixa acuidade"},
+      {"id": "k", "tipo": "passo", "largura": 132, "texto": "Doença renal\nalbuminúria (RAC) e queda da TFGe\nprincipal causa de DRC terminal"},
+      {"id": "n", "tipo": "passo", "largura": 132, "texto": "Neuropatia\npolineuropatia distal simétrica, \"em bota e luva\"\nautonômica: gastroparesia, hipotensão postural"},
+      {"id": "a", "tipo": "passo", "largura": 132, "texto": "Aterosclerose\ncoronariana, cerebrovascular e arterial periférica"},
+      {"id": "p", "tipo": "alerta", "texto": "Pé diabético\nneuropatia: não percebe o trauma; isquemia: não cicatriza\nhiperglicemia favorece infecção; Charcot é emergência"}
+    ],
+    "setas": [
+      {"de": "d", "para": "v"},
+      {"de": "d", "para": "m"},
+      {"de": "v", "para": "r"},
+      {"de": "v", "para": "k", "rotulo": "microvasculares"},
+      {"de": "v", "para": "n"},
+      {"de": "m", "para": "a", "rotulo": "macrovascular"},
+      {"de": "n", "para": "p"},
+      {"de": "a", "para": "p"}
+    ],
+    "legenda": "Controle glicêmico precoce (memória metabólica) reduz complicações por anos, sobretudo as microvasculares."
+  },
+  "lastro": [
+    "lesão do endotélio por via dos polióis, produtos finais de glicação avançada (AGEs), proteína cinase C e estresse oxidativo",
+    "O grau e a duração da hiperglicemia são os principais determinantes",
+    "Evolui de não proliferativa (microaneurismas, exsudatos, hemorragias) para proliferativa (neovascularização, hemorragia vítrea, descolamento tracional)",
+    "a polineuropatia distal simétrica (padrão \"em bota e luva\", dependente do comprimento) é a mais comum",
+    "principal causa de morte no diabetes, com risco 2–4x maior",
+    "Interação de neuropatia + doença arterial periférica + infecção/deformidade",
+    "A neuropatia reduz a percepção de trauma; a isquemia impede a cicatrização; a hiperglicemia favorece infecção",
+    "efeito de memória metabólica — o controle precoce reduz complicações por anos"
+  ],
+  "justificativa": "O fluxograma do capítulo já cobre o rastreamento e o manejo; a figura mostra o mecanismo que o texto explica: a hiperglicemia crônica lesa o endotélio por quatro vias e gera as três complicações microvasculares, enquanto neuropatia e isquemia convergem no pé diabético."
+}

@@ -1,0 +1,91 @@
+{
+  "i": 1,
+  "sub": "Diabetes",
+  "tema": "Tratamento do Diabetes tipo 2",
+  "titulo": "Tratamento do DM2: as cinco ações iniciais e a intensificação",
+  "subtitulo": "Glicemia, peso e risco cardiorrenal, tratados juntos: a síndrome cardiorrenal metabólica",
+  "tipo": "fluxo",
+  "fluxo": {
+    "orientacao": "vertical",
+    "nos": [
+      {
+        "id": "aval",
+        "tipo": "inicio",
+        "texto": "1. Avaliação geral\nRCR, IMC, HbA1c e função renal (RAC e TFG)"
+      },
+      {
+        "id": "nf",
+        "tipo": "grupo",
+        "largura": 380,
+        "texto": "2. Medidas não farmacológicas\n• nutrição, atividade física, menos tempo sentado, sono adequado\n• cessação do tabagismo e vacinação — em todas as fases"
+      },
+      {
+        "id": "metf",
+        "tipo": "passo",
+        "texto": "3. Metformina\nHbA1c < 7% previne complicações microvasculares\ncontrole precoce e intensivo no 1º ano (UKPDS 88)"
+      },
+      {
+        "id": "rcr",
+        "tipo": "passo",
+        "texto": "4. Redução do RCR\niSGLT2 e AR GLP-1 (AD1) reduzem eventos CV\nindicados se RCR aumentado, independentemente da HbA1c"
+      },
+      {
+        "id": "peso",
+        "tipo": "passo",
+        "texto": "5. Controle de peso\nperda ≥ 15% reduz eventos macro e microvasculares\nDIRECT: remissão do DM2 com perda ≥ 15 kg"
+      },
+      {
+        "id": "intens",
+        "tipo": "fim",
+        "texto": "Intensificação\nconforme a meta de HbA1c\ndupla → tripla → quádrupla → TBI (terapia baseada em insulina)"
+      }
+    ],
+    "setas": [
+      {
+        "de": "aval",
+        "para": "nf"
+      },
+      {
+        "de": "nf",
+        "para": "metf"
+      },
+      {
+        "de": "nf",
+        "para": "rcr"
+      },
+      {
+        "de": "nf",
+        "para": "peso"
+      },
+      {
+        "de": "metf",
+        "para": "intens",
+        "rotulo": "HbA1c acima da meta"
+      }
+    ],
+    "notas": [
+      {
+        "no": "rcr",
+        "lado": "abaixo",
+        "texto": "RCR aumentado: homens > 50 e mulheres > 56 anos, mesmo sem outros estratificadores; categorias EAR, EMAR, ERE e EIC"
+      },
+      {
+        "no": "peso",
+        "lado": "abaixo",
+        "texto": "Exercício estruturado > 150 min/semana reduz a HbA1c em até 0,89% (metanálise de 47 ECRs)"
+      }
+    ],
+    "legenda": "RCR: risco cardiorrenal. AD1: antidiabéticos de 1ª linha. TBI: terapia baseada em insulina."
+  },
+  "lastro": [
+    "O tratamento do DM2 deve integrar controle glicêmico, controle de peso e prevenção do risco cardiorrenal (RCR)",
+    "Abordagem inicial (5 ações): avaliação geral, medidas não farmacológicas, metformina, redução do RCR, controle de peso",
+    "Intensificação: ajuste conforme meta de HbA1c, podendo evoluir para terapia dupla, tripla, quádrupla ou baseada em insulina (TBI)",
+    "HbA1c < 7% previne complicações microvasculares; o controle precoce (1º ano) reduz risco macrovascular a longo prazo (UKPDS, UKPDS 88)",
+    "iSGLT2 e AR GLP-1 (AD1) reduzem eventos CV independentemente da HbA1c e são indicados para RCR aumentado",
+    "Perda de peso ≥15% após diagnóstico reduz risco de eventos macro e microvasculares (estudo de coorte britânico); DIRECT mostrou remissão do DM2 com perda ≥15kg",
+    "O RCR é considerado aumentado em homens >50 anos e mulheres >56 anos, mesmo sem outros estratificadores de risco",
+    "Intervenção nutricional, atividade física, redução do tempo sentado, sono adequado, cessação do tabagismo e vacinação são recomendados em todas as fases"
+  ],
+  "justificativa": "O capítulo é uma visão geral sem mecanismo nem algoritmo diagnóstico; o que ele ensina é a estratégia (cinco ações iniciais sobre glicemia, peso e risco cardiorrenal, depois intensificação pela HbA1c), e a figura a mostra na ordem em que se aplica."
+}

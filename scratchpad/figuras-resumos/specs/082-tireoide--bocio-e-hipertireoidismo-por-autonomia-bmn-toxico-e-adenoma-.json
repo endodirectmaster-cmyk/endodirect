@@ -1,0 +1,122 @@
+{
+  "i": 82,
+  "sub": "Tireoide",
+  "tema": "Bócio e Hipertireoidismo por Autonomia (BMN tóxico e adenoma tóxico)",
+  "titulo": "Autonomia tireoidiana: do bócio ao nódulo que funciona sem TSH",
+  "subtitulo": "Deficiência de iodo e estímulo trófico geram clones autônomos por mutação do TSHR ou GNAS",
+  "tipo": "fluxo",
+  "fluxo": {
+    "orientacao": "vertical",
+    "rotulos_camadas": [
+      "Causa",
+      "Estímulo",
+      "Evolução",
+      "Mutação",
+      "Formas",
+      "Quadro"
+    ],
+    "nos": [
+      {
+        "id": "iodo",
+        "tipo": "inicio",
+        "texto": "Deficiência de iodo\ncausa mais comum de bócio no mundo\nbaixa oferta reduz a síntese hormonal"
+      },
+      {
+        "id": "tsh",
+        "tipo": "hormonio",
+        "texto": "TSH ↑\nestímulo trófico persistente; fatores locais IGF-1, EGF"
+      },
+      {
+        "id": "bocio",
+        "tipo": "orgao",
+        "texto": "Bócio\nhiperplasia difusa; folículos heterogêneos\nciclos de hiperplasia, involução e formação nodular"
+      },
+      {
+        "id": "aut",
+        "tipo": "passo",
+        "texto": "Clones autônomos\nmutação ativadora do TSHR (ou GNAS): AMPc ligado sem TSH\nantitireoidiano não induz remissão"
+      },
+      {
+        "id": "adn",
+        "tipo": "fim",
+        "largura": 150,
+        "texto": "Adenoma tóxico\num nódulo autônomo único, quente\nsupressão do parênquima extranodular"
+      },
+      {
+        "id": "bmn",
+        "tipo": "fim",
+        "largura": 150,
+        "texto": "BMN tóxico (Plummer)\nmúltiplas áreas autônomas\ncaptação heterogênea, em tabuleiro de xadrez"
+      },
+      {
+        "id": "jod",
+        "tipo": "alerta",
+        "largura": 150,
+        "camada": 4,
+        "texto": "Carga de iodo (Jod-Basedow)\ncontraste iodado, amiodarona, suplementos\ndesencadeia tireotoxicose em glândula já autônoma"
+      },
+      {
+        "id": "tox",
+        "tipo": "alerta",
+        "texto": "Tireotoxicose por autonomia\nTRAb negativo, sem oftalmopatia\nidoso: T3-toxicose, forma apática, fibrilação atrial"
+      }
+    ],
+    "setas": [
+      {
+        "de": "iodo",
+        "para": "tsh"
+      },
+      {
+        "de": "tsh",
+        "para": "bocio",
+        "rotulo": "hiperplasia"
+      },
+      {
+        "de": "bocio",
+        "para": "aut",
+        "rotulo": "ao longo de anos"
+      },
+      {
+        "de": "aut",
+        "para": "adn",
+        "rotulo": "um nódulo"
+      },
+      {
+        "de": "aut",
+        "para": "bmn",
+        "rotulo": "várias áreas"
+      },
+      {
+        "de": "adn",
+        "para": "tox"
+      },
+      {
+        "de": "bmn",
+        "para": "tox"
+      },
+      {
+        "de": "jod",
+        "para": "tox",
+        "rotulo": "desencadeia"
+      },
+      {
+        "de": "tox",
+        "para": "tsh",
+        "tipo": "feedback",
+        "rotulo": "TSH ↓"
+      }
+    ],
+    "legenda": "Tracejado vermelho: o hormônio autônomo suprime o TSH; o parênquima normal, suprimido, é poupado pelo radioiodo."
+  },
+  "lastro": [
+    "a baixa oferta de iodo reduz a síntese hormonal → TSH↑ → hiperplasia difusa → bócio → com o tempo, surgimento de clones autônomos",
+    "estímulo trófico persistente (TSH, fatores locais como IGF-1, EGF)",
+    "heterogeneidade funcional e genética dos folículos, que evoluem por ciclos de hiperplasia, involução e formação nodular",
+    "mutações somáticas ativadoras do receptor de TSH (TSHR) e, menos comumente, da subunidade Gsα (GNAS), que mantêm a via AMPc constitutivamente ligada",
+    "Adenoma tóxico: um nódulo autônomo único (\"quente\" na cintilografia, com supressão do parênquima extranodular)",
+    "Bócio multinodular tóxico (Plummer): múltiplas áreas autônomas coexistindo com áreas normais/frias (captação heterogênea, \"em tabuleiro de xadrez\")",
+    "Comuns no idoso e após carga de iodo (Jod-Basedow — contraste iodado, amiodarona, suplementos); frequentemente T3-toxicose e forma oligossintomática/apática",
+    "não induz remissão (a autonomia persiste e a tireotoxicose recorre ao suspender a droga)"
+  ],
+  "justificativa": "O capítulo já tem o algoritmo do bócio nodular com TSH suprimido; a figura mostra a fisiopatologia que ele pressupõe: iodo e TSH geram o bócio, a mutação do TSHR/GNAS cria a autonomia, e o hormônio autônomo suprime o TSH e o parênquima normal."
+}

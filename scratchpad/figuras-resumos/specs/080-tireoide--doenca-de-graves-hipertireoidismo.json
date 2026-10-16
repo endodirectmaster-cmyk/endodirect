@@ -1,0 +1,108 @@
+{
+  "i": 80,
+  "sub": "Tireoide",
+  "tema": "Doença de Graves (Hipertireoidismo)",
+  "titulo": "Patogênese da doença de Graves: o TRAb no lugar do TSH",
+  "subtitulo": "O anticorpo estimulador ativa o receptor de TSH na tireoide e nos fibroblastos orbitários",
+  "tipo": "fluxo",
+  "fluxo": {
+    "orientacao": "vertical",
+    "rotulos_camadas": [
+      "Gatilhos",
+      "Anticorpo × TSH",
+      "Alvos",
+      "Efeitos",
+      "Quadro"
+    ],
+    "nos": [
+      {
+        "id": "gat",
+        "tipo": "inicio",
+        "texto": "Predisposição e gatilhos\npredisposição HLA, CTLA-4, PTPN22; agregação familiar\nestresse, tabagismo, pós-parto, excesso de iodo, infecções"
+      },
+      {
+        "id": "trab",
+        "tipo": "hormonio",
+        "texto": "TRAb estimulador (TSI)\nautoanticorpo que se liga ao receptor de TSH"
+      },
+      {
+        "id": "hip",
+        "tipo": "orgao",
+        "camada": 1,
+        "texto": "Hipófise\nTSH suprimido\nsegue suprimido por semanas a meses ao tratar"
+      },
+      {
+        "id": "fol",
+        "tipo": "orgao",
+        "texto": "Célula folicular\nvia AMPc ativada de forma contínua"
+      },
+      {
+        "id": "fib",
+        "tipo": "orgao",
+        "texto": "Fibroblastos orbitários e pré-tibiais\ncoexpressam receptor de TSH e de IGF-1"
+      },
+      {
+        "id": "hiper",
+        "tipo": "passo",
+        "texto": "Hiperfunção difusa\nsíntese e secreção aumentadas\nbócio difuso com sopro e frêmito"
+      },
+      {
+        "id": "oft",
+        "tipo": "alerta",
+        "texto": "Oftalmopatia e dermopatia\nmixedema pré-tibial\nachados específicos de Graves"
+      },
+      {
+        "id": "tox",
+        "tipo": "alerta",
+        "texto": "Tireotoxicose\nT4L e/ou T3 elevados; T3-toxicose frequente\ntaquicardia, FA, perda de peso, tremor, osteoporose"
+      }
+    ],
+    "setas": [
+      {
+        "de": "gat",
+        "para": "trab",
+        "rotulo": "autoimunidade"
+      },
+      {
+        "de": "trab",
+        "para": "fol",
+        "rotulo": "ativa o receptor"
+      },
+      {
+        "de": "trab",
+        "para": "fib",
+        "rotulo": "mesmo anticorpo"
+      },
+      {
+        "de": "fol",
+        "para": "hiper"
+      },
+      {
+        "de": "fib",
+        "para": "oft"
+      },
+      {
+        "de": "hiper",
+        "para": "tox"
+      },
+      {
+        "de": "tox",
+        "para": "hip",
+        "tipo": "feedback",
+        "rotulo": "suprime o TSH"
+      }
+    ],
+    "legenda": "Tracejado vermelho: a tireotoxicose suprime o TSH. Tionamidas inibem a TPO; betabloqueador controla os sintomas."
+  },
+  "lastro": [
+    "Autoanticorpos TRAb estimuladores (TSI) ligam-se ao receptor de TSH nas células foliculares, ativando a via AMPc de forma contínua",
+    "hiperfunção difusa (síntese e secreção aumentadas) e crescimento glandular (bócio difuso)",
+    "Gatilhos: estresse, tabagismo, pós-parto, excesso de iodo, infecções, terapias imunomoduladoras; base HLA/genética",
+    "Os mesmos anticorpos, atuando sobre fibroblastos orbitários e pré-tibiais que coexpressam receptor de TSH e de IGF-1, explicam a oftalmopatia e a dermopatia",
+    "TSH suprimido + T4L e/ou T3 elevados",
+    "o TSH permanece suprimido por semanas a meses — não titular pelo TSH no início",
+    "bócio difuso com sopro/frêmito (hipervascularização), oftalmopatia, mixedema pré-tibial (dermopatia) e acropaquia tireoidiana",
+    "inibem a tireoperoxidase (TPO), bloqueando a síntese hormonal"
+  ],
+  "justificativa": "O capítulo já traz o algoritmo de escolha do tratamento; a figura mostra o mecanismo que o fundamenta: o TRAb substitui o TSH na tireoide e age também nos fibroblastos, explicando bócio, tireotoxicose, TSH suprimido e oftalmopatia."
+}

@@ -1,0 +1,46 @@
+{
+  "i": 0,
+  "sub": "Diabetes",
+  "tema": "Rastreio de autoanticorpos pancreáticos",
+  "titulo": "Rastreio populacional de autoanticorpos: por que e como",
+  "subtitulo": "Consenso internacional: detectar o DM1 pré-sintomático antes da cetoacidose",
+  "tipo": "fluxo",
+  "fluxo": {
+    "orientacao": "vertical",
+    "nos": [
+      {"id": "cad", "tipo": "alerta", "texto": "Diagnóstico em cetoacidose\n20–67% das crianças são diagnosticadas em CAD"},
+      {"id": "fam", "tipo": "passo", "texto": "> 85% sem história familiar\njustifica ir além do rastreio genético/familiar"},
+      {"id": "pop", "tipo": "orgao", "texto": "Rastrear a população geral\nintegrado à puericultura e à vacinação\naos 2–4 anos; repetir aos 6–8 e 10–15 se negativo"},
+      {"id": "s1", "tipo": "passo", "texto": "1. Triagem inicial\nensaio sensível para autoanticorpos ilhóticos (IAbs)"},
+      {"id": "s2", "tipo": "passo", "texto": "2. Confirmação\nensaio de alta especificidade, em amostra separada\nregra dos 2s: 2 IAbs, 2 ensaios, 2 amostras"},
+      {"id": "s3", "tipo": "passo", "texto": "3. Estagiamento metabólico\nestágio 1: ≥ 2 IAbs com normoglicemia\nestágio 2: disglicemia · estágio 3: diagnóstico clínico"},
+      {"id": "out1", "tipo": "fim", "texto": "Menos cetoacidose ao diagnóstico\nFr1da: de 21–36% para 3,2%; ASK: 4,5% vs 58%"},
+      {"id": "out2", "tipo": "fim", "texto": "HbA1c mais baixa\nmaior peptídeo C residual\nteplizumabe atrasa o estágio 2→3 em 2,7 anos (mediana)"}
+    ],
+    "setas": [
+      {"de": "cad", "para": "pop"},
+      {"de": "fam", "para": "pop", "rotulo": "justifica"},
+      {"de": "pop", "para": "s1"},
+      {"de": "s1", "para": "s2", "rotulo": "se positivo"},
+      {"de": "s2", "para": "s3", "rotulo": "se confirmado"},
+      {"de": "s3", "para": "out1", "rotulo": "com monitoramento"},
+      {"de": "s3", "para": "out2"}
+    ],
+    "notas": [
+      {"no": "pop", "lado": "direita", "texto": "Comunicação clara e pessoal (não automatizada), linguagem neutra, suporte psicossocial disponível; evitar estigma e ansiedade desnecessária"},
+      {"no": "out2", "lado": "direita", "texto": "Custo-efetividade: análises do ASK e Fr1da sugerem viabilidade se reduzir CAD e melhorar a HbA1c; dados ainda limitados"}
+    ],
+    "legenda": "Lacunas de evidência: rastreio em adultos, valor preditivo de um único IAb, diversidade étnica."
+  },
+  "lastro": [
+    "Entre 20–67% das crianças são diagnosticadas em cetoacidose diabética (CAD)",
+    "Mais de 85% dos casos novos não têm história familiar, o que justifica ir além do rastreamento por risco genético/familiar",
+    "integrado a atividades de saúde pública já estabelecidas (consultas de puericultura, vacinação)",
+    "(1) triagem inicial sensível, (2) confirmação com ensaio de alta especificidade em amostra separada, (3) avaliação metabólica (estagiamento)",
+    "regra dos 2s (2 IAbs, 2 ensaios, 2 amostras) para minimizar falsos positivos/negativos",
+    "Fr1da de 21–36% para 3,2%; ASK para 4,5% vs 58%",
+    "teplizumabe, que atrasa a progressão do estágio 2 para 3 em mediana de 2,7 anos",
+    "comunicação clara, contato pessoal (não automatizado), suporte psicossocial disponível e educação contínua para famílias, evitando estigmatização e ansiedade desnecessária"
+  ],
+  "justificativa": "O consenso é um argumento (por que rastrear todos) seguido de um método (triagem → confirmação → estagiamento) e de seus ganhos; o fluxo mostra essa cadeia inteira, que o texto expõe em blocos separados."
+}

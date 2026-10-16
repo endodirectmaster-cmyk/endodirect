@@ -1,0 +1,49 @@
+{
+  "i": 87,
+  "sub": "Tireoide",
+  "tema": "Emergências Tireoidianas: Crise Tireotóxica e Coma Mixedematoso",
+  "titulo": "Crise tireotóxica: onde cada fármaco bloqueia a cascata",
+  "subtitulo": "Tionamida antes do iodo: dado antes, o iodo alimenta a síntese",
+  "tipo": "fluxo",
+  "fluxo": {
+    "orientacao": "vertical",
+    "nos": [
+      {"id": "ori", "tipo": "inicio", "largura": 210, "texto": "Graves não tratada + gatilho\ncirurgia, infecção, parto, carga de iodo/contraste, suspensão do antitireoidiano"},
+      {"id": "d1", "tipo": "passo", "largura": 210, "camada": 0, "texto": "Tionamida\nmetimazol ou PTU bloqueiam a síntese\neficácia equivalente na crise"},
+      {"id": "c1", "tipo": "orgao", "texto": "Tireoide\nsíntese hormonal"},
+      {"id": "d2", "tipo": "passo", "largura": 220, "camada": 1, "texto": "Iodo (Lugol)\nbloqueia a liberação do hormônio pré-formado\n1 h DEPOIS da tionamida; antes, alimenta a síntese"},
+      {"id": "c2", "tipo": "hormonio", "texto": "Liberação na circulação\nhormônio pré-formado (T4 e T3)"},
+      {"id": "d3", "tipo": "passo", "largura": 220, "camada": 2, "texto": "Propranolol, PTU, corticoide\nreduzem a conversão periférica de T4 em T3\ncorticoide também trata a insuficiência adrenal relativa"},
+      {"id": "c3", "tipo": "passo", "texto": "Conversão periférica\nT4 → T3"},
+      {"id": "d4", "tipo": "passo", "largura": 220, "camada": 3, "texto": "Betabloqueador\npropranolol controla FC e sintomas adrenérgicos\nesmolol na disfunção ventricular, hipotensão ou choque"},
+      {"id": "c4", "tipo": "alerta", "largura": 230, "texto": "Descompensação sistêmica\nfebre alta, taquicardia/FA, agitação, delirium, icterícia\ndiagnóstico clínico: Burch-Wartofsky ≥45 = tempestade"}
+    ],
+    "setas": [
+      {"de": "ori", "para": "c1"},
+      {"de": "d1", "para": "c1", "tipo": "inibe"},
+      {"de": "c1", "para": "c2"},
+      {"de": "d2", "para": "c2", "tipo": "inibe"},
+      {"de": "c2", "para": "c3"},
+      {"de": "d3", "para": "c3", "tipo": "inibe"},
+      {"de": "c3", "para": "c4"},
+      {"de": "d4", "para": "c4", "tipo": "inibe"}
+    ],
+    "notas": [
+      {"no": "c2", "lado": "esquerda", "texto": "Colestiramina (adjuvante) interrompe a recirculação êntero-hepática. AAS desloca T4/T3 das proteínas e piora: resfriar com paracetamol"},
+      {"no": "c3", "lado": "esquerda", "texto": "A preferência pelo PTU (inibe a conversão) é teórica: estudos recentes não mostraram superioridade"},
+      {"no": "c4", "lado": "abaixo", "texto": "Suporte em UTI: volume, controle de arritmias, tratar o precipitante (ex.: antibiótico); refratários podem requerer plasmaférese"}
+    ],
+    "legenda": "Vermelho ⊣: onde o fármaco bloqueia. Dourado: o caminho do hormônio."
+  },
+  "lastro": [
+    "ambos bloqueiam a síntese, e o PTU também inibe a conversão periférica, sem superioridade clínica comprovada",
+    "inibe a liberação do hormônio pré-formado (efeito agudo principal na crise)",
+    "se dado antes da tionamida, \"alimenta\" a síntese/Jod-Basedow",
+    "propranolol — controla FC/sintomas adrenérgicos e reduz a conversão T4→T3",
+    "hidrocortisona — reduz a conversão T4→T3 e trata a insuficiência adrenal relativa associada",
+    "evitar AAS, que desloca T4/T3 das proteínas e piora a toxicose",
+    "Colestiramina como adjuvante (interrompe a recirculação êntero-hepática dos hormônios)",
+    "o que define a crise é a descompensação sistêmica"
+  ],
+  "justificativa": "O capítulo já tem o fluxograma com a ordem de administração; a cascata síntese → liberação → conversão → descompensação mostra o porquê de cada fármaco e da ordem (tionamida antes do iodo), que é o que a prova cobra."
+}

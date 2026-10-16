@@ -1,0 +1,32 @@
+{
+  "i": 138,
+  "sub": "Diabetes",
+  "tema": "Hiperglicemia Hospitalar",
+  "titulo": "Antes da cirurgia: o que suspender e quando",
+  "subtitulo": "Contagem regressiva até a cirurgia; o iDPP-4 se mantém e as pré-misturas não se usam",
+  "tipo": "linha_tempo",
+  "linha_tempo": {
+    "largura": 640,
+    "faixas": [
+      {"de": 0, "ate": 100, "rotulo": "iDPP-4: manter", "cor": "green"}
+    ],
+    "marcos": [
+      {"pos": 0, "lado": "acima", "cor": "red", "rotulo": "7 dias antes", "detalhe": "AR GLP-1 de longa ação: dulaglutida, semaglutida SC ou oral, tirzepatida. Exceção: dose estável há mais de 12 semanas e sem risco de broncoaspiração → manter"},
+      {"pos": 27, "lado": "abaixo", "cor": "amber", "rotulo": "3 a 4 dias antes", "detalhe": "iSGLT-2 (CAD euglicêmica). Degludeca e glargina U300: reduzir 20 a 30%, 3 dias antes"},
+      {"pos": 55, "lado": "acima", "cor": "gold", "rotulo": "1 dia antes (24 h)", "detalhe": "Secretagogos. AR GLP-1 de curta ação: liraglutida, lixisenatida"},
+      {"pos": 78, "lado": "abaixo", "cor": "blue", "rotulo": "Noite anterior", "detalhe": "Glargina e detemir: reduzir 20 a 30% a partir da noite anterior. NPH: manter a dose da noite"},
+      {"pos": 100, "lado": "acima", "cor": "navy", "rotulo": "Dia da cirurgia", "detalhe": "Metformina: suspender no dia. NPH: reduzir 50% na manhã. Ação rápida: suspender as doses fixas ao iniciar o jejum"}
+    ]
+  },
+  "lastro": [
+    "Antes da cirurgia: metformina no dia, secretagogo 24 h antes, iSGLT-2 3 a 4 dias, GLP-1 curto 1 dia e GLP-1 longo 7 dias",
+    "— o iDPP-4 se MANTÉM.",
+    "Em dose estável de agonista de GLP-1 há mais de 12 semanas e sem risco de broncoaspiração, pode-se manter a medicação.",
+    "Insulinas pré-mistura não devem ser usadas no perioperatório.",
+    "Degludeca / glargina U300 | Reduzir 20 a 30%, 3 dias antes",
+    "Glargina / detemir | Reduzir 20 a 30% a partir da noite anterior",
+    "NPH | Manter na noite anterior e reduzir 50% na manhã da cirurgia",
+    "Ação rápida | Suspender as doses fixas ao iniciar o jejum"
+  ],
+  "justificativa": "O fluxograma existente cobre o manejo na enfermaria e na UTI; o que o texto só lista em tabelas é o calendário pré-operatório, e uma linha do tempo mostra de uma vez quem sai 7 dias antes, quem sai no dia e quem fica."
+}
