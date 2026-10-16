@@ -11,52 +11,62 @@
       {
         "id": "cel",
         "texto": "Tecidos periféricos\ninclusive a parede arterial",
-        "tipo": "orgao"
+        "tipo": "orgao",
+        "camada": 0
       },
       {
         "id": "abca1",
         "texto": "ABCA1\nsaída do colesterol da célula",
-        "tipo": "passo"
+        "tipo": "passo",
+        "camada": 1
       },
       {
         "id": "tang",
         "texto": "Doença de Tangier\nHDL < 10 e TG > 400\namígdalas alaranjadas",
-        "tipo": "alerta"
+        "tipo": "alerta",
+        "camada": 2
       },
       {
         "id": "lcat",
         "texto": "LCAT\nesterifica o colesterol no HDL",
-        "tipo": "passo"
+        "tipo": "passo",
+        "camada": 2
       },
       {
         "id": "dlcat",
         "texto": "Deficiência de LCAT\nHDL < 10; córnea, rim, anemia",
-        "tipo": "alerta"
+        "tipo": "alerta",
+        "camada": 3
       },
       {
         "id": "cetp",
         "texto": "CETP\nleva ésteres do HDL a VLDL/LDL",
-        "tipo": "passo"
-      },
-      {
-        "id": "dcetp",
-        "texto": "Deficiência de CETP\nHDL > 100 mg/dL\nmenos doença coronariana",
-        "tipo": "fim"
+        "tipo": "passo",
+        "camada": 3
       },
       {
         "id": "lh",
         "texto": "Lipase hepática\nhidrolisa TG, depura o HDL",
-        "tipo": "passo"
+        "tipo": "passo",
+        "camada": 3
+      },
+      {
+        "id": "dcetp",
+        "texto": "Deficiência de CETP\nHDL > 100 mg/dL\nmenos doença coronariana",
+        "tipo": "fim",
+        "camada": 4
       },
       {
         "id": "dlh",
         "texto": "Deficiência de lipase hepática\nHDL e TG altos, LDL baixo",
-        "tipo": "alerta"
+        "tipo": "alerta",
+        "camada": 4
       },
       {
         "id": "fig",
         "texto": "Fígado\nrecebe o colesterol de volta",
-        "tipo": "orgao"
+        "tipo": "orgao",
+        "camada": 4
       }
     ],
     "setas": [
@@ -74,7 +84,7 @@
         "para": "cetp"
       },
       {
-        "de": "cetp",
+        "de": "lcat",
         "para": "lh"
       },
       {

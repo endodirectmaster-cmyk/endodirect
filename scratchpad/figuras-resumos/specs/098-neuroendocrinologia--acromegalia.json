@@ -34,13 +34,13 @@
       },
       {
         "id": "peg",
-        "texto": "Pegvisomanto\nbloqueia o receptor do GH",
+        "texto": "Pegvisomanto\nbloqueia o GH nos\nreceptores periféricos",
         "tipo": "passo",
         "camada": 2
       },
       {
         "id": "dir",
-        "texto": "Ação direta do GH\n• lipólise\n• efeito anti-insulínico",
+        "texto": "Ação direta do GH\n• lipólise; efeito anti-insulínico\n• ↑ gliconeogênese, ↓ captação muscular de glicose",
         "tipo": "grupo",
         "camada": 3
       },
@@ -49,12 +49,6 @@
         "texto": "Fígado\nproduz IGF-1",
         "tipo": "orgao",
         "camada": 3
-      },
-      {
-        "id": "glic",
-        "texto": "Intolerância à glicose\ndiabetes",
-        "tipo": "alerta",
-        "camada": 4
       },
       {
         "id": "igf",
@@ -104,11 +98,6 @@
         "tipo": "inibe"
       },
       {
-        "de": "dir",
-        "para": "glic",
-        "tipo": "fraca"
-      },
-      {
         "de": "fig",
         "para": "igf"
       },
@@ -138,11 +127,11 @@
         "lado": "direita"
       }
     ],
-    "legenda": "Setas douradas: estímulo. Barra vermelha: bloqueio farmacológico. Cinza: efeito metabólico."
+    "legenda": "Setas douradas: estímulo. Barra vermelha: bloqueio farmacológico."
   },
   "lastro": [
     "Acromegalia decorre de excesso de GH, quase sempre por adenoma hipofisário somatotrófico, elevando o IGF-1.",
-    "Direta — lipólise e efeito anti-insulínico",
+    "Direta — lipólise e efeito anti-insulínico, com aumento da gliconeogênese e menor captação muscular de glicose",
     "Indireta, via IGF-1 — efeito mitogênico e antiapoptótico, com proliferação de condrócitos",
     "Ligam-se sobretudo ao SSTR2",
     "Liga-se a SSTR1, 2, 3 e 5",

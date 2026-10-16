@@ -12,7 +12,7 @@
         "id": "auto",
         "tipo": "inicio",
         "largura": 360,
-        "texto": "Autoimunidade contra a célula β\nlinfócitos T, HLA de risco (DR3/DR4) e autoanticorpos\nanti-GAD65, anti-IA2, anti-ZnT8, anti-insulina (IAA), ICA"
+        "texto": "Destruição autoimune da célula β\nlinfócitos T, HLA de risco (DR3/DR4) e autoanticorpos\nanti-GAD65, anti-IA2, anti-ZnT8, anti-insulina (IAA), ICA"
       },
       {
         "id": "e1",
@@ -33,14 +33,10 @@
         "texto": "Estágio 3: hiperglicemia clínica\npoliúria, polidipsia, perda de peso, cetose"
       },
       {
-        "id": "def",
-        "tipo": "alerta",
-        "texto": "Deficiência absoluta de insulina\ntendência à cetose e cetoacidose"
-      },
-      {
         "id": "lada",
         "tipo": "passo",
-        "texto": "LADA\nadulto com anti-GAD positivo\nsem insulina nos primeiros 6 meses; progressão mais lenta"
+        "texto": "LADA\nadulto com anti-GAD positivo\nsem insulina nos primeiros 6 meses; progressão mais lenta",
+        "camada": 3
       },
       {
         "id": "insA",
@@ -50,7 +46,8 @@
       {
         "id": "insB",
         "tipo": "fim",
-        "texto": "Insulina precoce no LADA\npreserva a função β residual\nevitar sulfonilureias: aceleram a exaustão das células β"
+        "texto": "Insulina precoce no LADA\npreserva a função β residual\nevitar sulfonilureias: aceleram a exaustão das células β",
+        "camada": 4
       }
     ],
     "setas": [
@@ -69,17 +66,13 @@
       },
       {
         "de": "e3",
-        "para": "def",
-        "rotulo": "início rápido, jovem"
-      },
-      {
-        "de": "e3",
-        "para": "lada",
-        "rotulo": "evolução arrastada, adulto"
-      },
-      {
-        "de": "def",
         "para": "insA"
+      },
+      {
+        "de": "auto",
+        "para": "lada",
+        "tipo": "fraca",
+        "rotulo": "evolução arrastada, adulto"
       },
       {
         "de": "lada",
@@ -87,6 +80,11 @@
       }
     ],
     "notas": [
+      {
+        "no": "auto",
+        "lado": "direita",
+        "texto": "Resulta em deficiência absoluta de insulina e tendência à cetose/cetoacidose"
+      },
       {
         "no": "e1",
         "lado": "direita",
@@ -105,8 +103,8 @@
     "Estágio 1: autoimunidade (≥ 2 autoanticorpos) + normoglicemia, assintomático",
     "Estágio 2: autoanticorpos + disglicemia (pré-diabetes), assintomático — alto risco de progressão",
     "Estágio 3: hiperglicemia clínica (sintomas: poliúria, polidipsia, perda de peso, cetose)",
-    "Clínica de início rápido, cetose, magro, jovem",
     "Adulto com anti-GAD positivo, que não precisa de insulina nos primeiros 6 meses e progride mais lentamente para insulinodependência",
+    "forma de DM1 de evolução arrastada",
     "Insulinoterapia é obrigatória e vitalícia — esquema basal-bólus (múltiplas doses diárias) ou bomba de infusão (CSII), idealmente com monitorização contínua (CGM)",
     "LADA: iniciar insulina precocemente (preserva a função β residual); evitar sulfonilureias (aceleram a exaustão das células β)"
   ],

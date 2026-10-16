@@ -3,111 +3,42 @@
   "sub": "Neuroendocrinologia",
   "tema": "Hipopituitarismo",
   "titulo": "Interações entre as reposições no hipopituitarismo",
-  "subtitulo": "Por que a ordem é corticotrófico → tireotrófico → gonadotrófico → somatotrófico",
-  "tipo": "fluxo",
-  "fluxo": {
-    "orientacao": "vertical",
-    "nos": [
+  "subtitulo": "O que cada reposição faz nos outros eixos: a parte que decide a ordem",
+  "tipo": "painel",
+  "painel": {
+    "colunas": [
       {
-        "id": "lt4",
-        "tipo": "orgao",
-        "camada": 0,
-        "texto": "Levotiroxina\n↑ 11β-HSD2 renal\ncatabolismo do cortisol"
+        "titulo": "Levotiroxina",
+        "cor": "navy",
+        "itens": [
+          "↓ Cortisol: pode precipitar crise adrenal",
+          "Mecanismo: ↑ 11β-HSD2 renal, catabolismo do cortisol",
+          "↑ IGF-1",
+          "Tratar a insuficiência adrenal antes; monitorar o IGF-1 em quem repõe GH"
+        ]
       },
       {
-        "id": "gh",
-        "tipo": "orgao",
-        "camada": 0,
-        "texto": "GH\n↓ 11β-HSD1 (cortisona → cortisol)\n↑ deiodinase tipo 1 (T4 → T3)"
+        "titulo": "GH",
+        "cor": "gold",
+        "itens": [
+          "↓ Cortisol: ↓ 11β-HSD1 (cortisona → cortisol)",
+          "↓ T4 livre: ativa a deiodinase tipo 1 (T4 → T3)",
+          "Tratar a insuficiência adrenal antes de iniciar GH",
+          "Reajustar a levotiroxina 6 semanas após iniciar GH"
+        ]
       },
       {
-        "id": "est",
-        "tipo": "orgao",
-        "camada": 0,
-        "texto": "Estrogênio oral\nSOCS-2 bloqueia o GH no fígado\n↑ TBG: menos fração livre"
-      },
-      {
-        "id": "cort",
-        "tipo": "alerta",
-        "camada": 1,
-        "texto": "Cortisol ↓\npode precipitar crise adrenal"
-      },
-      {
-        "id": "igf",
-        "tipo": "passo",
-        "camada": 1,
-        "texto": "IGF-1\n↑ com LT4 · ↓ com estrogênio oral"
-      },
-      {
-        "id": "t4",
-        "tipo": "passo",
-        "camada": 1,
-        "texto": "T4 livre ↓"
-      },
-      {
-        "id": "c1",
-        "tipo": "fim",
-        "camada": 2,
-        "texto": "Corticoide primeiro\ntratar a IA antes de LT4 e de GH"
-      },
-      {
-        "id": "c3",
-        "tipo": "fim",
-        "camada": 2,
-        "texto": "Mulher em uso de GH\npreferir estrogênio transdérmico\nse oral: considerar ↑ dose de GH"
-      },
-      {
-        "id": "c2",
-        "tipo": "fim",
-        "camada": 2,
-        "texto": "Reajustar levotiroxina\n6 semanas após iniciar GH"
+        "titulo": "Estrogênio oral",
+        "cor": "purple",
+        "itens": [
+          "↓ IGF-1: SOCS-2 bloqueia o GH no fígado",
+          "↓ T4 livre: ↑ TBG reduz as frações livres",
+          "Mulher em uso de GH: preferir estrogênio transdérmico",
+          "Se oral: considerar aumentar a dose de GH, não reduzir"
+        ]
       }
     ],
-    "setas": [
-      {
-        "de": "lt4",
-        "para": "cort",
-        "tipo": "inibe"
-      },
-      {
-        "de": "lt4",
-        "para": "igf",
-        "tipo": "estimula"
-      },
-      {
-        "de": "gh",
-        "para": "cort",
-        "tipo": "inibe"
-      },
-      {
-        "de": "gh",
-        "para": "t4",
-        "tipo": "inibe"
-      },
-      {
-        "de": "est",
-        "para": "igf",
-        "tipo": "inibe"
-      },
-      {
-        "de": "est",
-        "para": "t4",
-        "tipo": "inibe"
-      },
-      {
-        "de": "cort",
-        "para": "c1"
-      },
-      {
-        "de": "igf",
-        "para": "c3"
-      },
-      {
-        "de": "t4",
-        "para": "c2"
-      }
-    ],
-    "legenda": "Vermelho ⊣: reduz. Verde: aumenta. IA: insuficiência adrenal; LT4: levotiroxina."
+    "rodape": "Prioridade de reposição: corticotrófico → tireotrófico → gonadotrófico → somatotrófico."
   },
   "lastro": [
     "Reduz o cortisol (pode precipitar crise adrenal) e aumenta o IGF-1",
@@ -116,8 +47,8 @@
     "O estrogênio oral induz a SOCS-2, que bloqueia a sinalização do GH no fígado; e eleva a TBG, reduzindo as frações livres",
     "Sempre descartar e tratar a insuficiência adrenal ANTES de iniciar levotiroxina e antes de iniciar GH.",
     "Reajustar a dose de levotiroxina 6 semanas após iniciar GH.",
-    "Em mulheres em uso de GH, preferir estrogênio TRANSDÉRMICO; se for oral, considerar aumentar a dose de GH",
-    "Prioridade de reposição: corticotrófico → tireotrófico → gonadotrófico → somatotrófico."
+    "Monitorar o IGF-1 após iniciar ou ajustar a levotiroxina em quem repõe GH.",
+    "Em mulheres em uso de GH, preferir estrogênio TRANSDÉRMICO; se for oral, considerar aumentar a dose de GH — e não reduzi-la."
   ],
-  "justificativa": "O fluxograma existente cobre investigação e ordem de reposição; esta figura mostra o mecanismo que justifica essa ordem — como cada reposição mexe no cortisol, no T4 livre e no IGF-1."
+  "justificativa": "O fluxograma existente cobre investigação e ordem de reposição; este painel mostra como cada reposição mexe no cortisol, no T4 livre e no IGF-1, o que justifica a ordem."
 }

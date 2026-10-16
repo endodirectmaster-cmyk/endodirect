@@ -48,18 +48,12 @@
         "id": "ley",
         "tipo": "orgao",
         "camada": 2,
-        "texto": "Célula de Leydig\nestimulada pelo LH"
-      },
-      {
-        "id": "t",
-        "tipo": "hormonio",
-        "camada": 3,
-        "texto": "Testosterona"
+        "texto": "Célula de Leydig\nestimulada pelo LH\nproduz testosterona"
       },
       {
         "id": "esp",
         "tipo": "fim",
-        "camada": 4,
+        "camada": 3,
         "texto": "Espermatogênese\ninibina"
       }
     ],
@@ -82,13 +76,11 @@
       },
       {
         "de": "hipof",
-        "para": "ley",
-        "rotulo": "LH"
+        "para": "ley"
       },
       {
         "de": "hipof",
-        "para": "ser",
-        "rotulo": "FSH"
+        "para": "ser"
       },
       {
         "de": "prim",
@@ -96,18 +88,19 @@
         "tipo": "inibe"
       },
       {
-        "de": "ley",
-        "para": "t"
+        "de": "prim",
+        "para": "ley",
+        "tipo": "inibe"
       },
       {
         "de": "ser",
         "para": "esp"
       },
       {
-        "de": "t",
+        "de": "ley",
         "para": "hipof",
         "tipo": "feedback",
-        "rotulo": "feedback −"
+        "rotulo": "testosterona"
       },
       {
         "de": "esp",
