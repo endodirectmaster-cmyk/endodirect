@@ -1,0 +1,124 @@
+{
+  "i": 226,
+  "sub": "Obesidade",
+  "tema": "Lipodistrofias: Congênitas, Adquiridas e por Insulina",
+  "titulo": "Lipodistrofia: da falta de adipócito à resistência insulínica",
+  "subtitulo": "Sem depósito subcutâneo, a gordura vai para fígado e músculo",
+  "tipo": "fluxo",
+  "fluxo": {
+    "orientacao": "vertical",
+    "nos": [
+      {
+        "id": "cong",
+        "texto": "Formas congênitas\nAGPAT2, BSCL2, LMNA, PPAR-gama",
+        "tipo": "inicio",
+        "camada": 0
+      },
+      {
+        "id": "adq",
+        "texto": "Formas adquiridas\nautoimune, complemento (↓ C3), HIV",
+        "tipo": "inicio",
+        "camada": 0
+      },
+      {
+        "id": "perda",
+        "texto": "Perda seletiva do adiposo\nadipócito não se forma ou não sobrevive",
+        "tipo": "orgao",
+        "camada": 1
+      },
+      {
+        "id": "ect",
+        "texto": "Gordura ectópica\nlipídio em fígado e músculo",
+        "tipo": "passo",
+        "camada": 2
+      },
+      {
+        "id": "lep",
+        "texto": "↓ Leptina e ↓ adiponectina",
+        "tipo": "hormonio",
+        "camada": 2
+      },
+      {
+        "id": "ri",
+        "texto": "Resistência insulínica\nhiperglicemia sem cetose",
+        "tipo": "alerta",
+        "camada": 3
+      },
+      {
+        "id": "quad",
+        "texto": "Quadro metabólico\nhipertrigliceridemia, ↓ HDL\nesteatose, ↑ transaminases",
+        "tipo": "fim",
+        "camada": 4
+      },
+      {
+        "id": "panc",
+        "texto": "Pancreatite\nna hipertrigliceridemia grave",
+        "tipo": "alerta",
+        "camada": 5
+      }
+    ],
+    "setas": [
+      {
+        "de": "cong",
+        "para": "perda"
+      },
+      {
+        "de": "adq",
+        "para": "perda"
+      },
+      {
+        "de": "perda",
+        "para": "ect"
+      },
+      {
+        "de": "perda",
+        "para": "lep"
+      },
+      {
+        "de": "ect",
+        "para": "ri"
+      },
+      {
+        "de": "lep",
+        "para": "ri",
+        "rotulo": "agrava"
+      },
+      {
+        "de": "ect",
+        "para": "quad"
+      },
+      {
+        "de": "ri",
+        "para": "quad"
+      },
+      {
+        "de": "quad",
+        "para": "panc"
+      }
+    ],
+    "notas": [
+      {
+        "no": "lep",
+        "texto": "Metreleptina repõe a leptina: reduz fome, glicada, triglicerídeos e esteatose",
+        "lado": "direita"
+      },
+      {
+        "no": "ri",
+        "texto": "Metformina é 1ª linha; insulina costuma exigir > 2 U/kg",
+        "lado": "direita"
+      }
+    ],
+    "legenda": "Leptina baixa não serve como critério diagnóstico."
+  },
+  "lastro": [
+    "Lipodistrofia é a perda seletiva de tecido adiposo com acúmulo de gordura ectópica",
+    "Sem depósito subcutâneo a gordura vai para fígado e músculo — daí a resistência insulínica, com ↓ leptina e ↓ adiponectina.",
+    "A resistência insulínica vem do lipídio ectópico em fígado e músculo, agravada por leptina e adiponectina baixas.",
+    "hiperglicemia sem cetose, resistência insulínica, hipertrigliceridemia, ↓ HDL, ↓ leptina, ↑ transaminases",
+    "hipertrigliceridemia grave com ou sem pancreatite, hepatomegalia, esteatose",
+    "Análogo da leptina, subcutâneo diário, reduz fome, glicada, triglicerídeos e esteatose.",
+    "Metformina é 1ª linha",
+    "A leptina não deve ser usada como critério diagnóstico."
+  ],
+  "justificativa": "O capítulo já tem o algoritmo de suspeita, classificação e tratamento; falta o mecanismo que liga a perda de adipócito à resistência insulínica e às complicações."
+}
