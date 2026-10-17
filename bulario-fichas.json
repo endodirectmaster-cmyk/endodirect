@@ -3,7 +3,18 @@
     "v": 1,
     "atualizado": "2026-10-17",
     "sobre": "Fichas da Endodirect por princípio ativo, exibidas no Bulário. Texto próprio, escrito a partir dos Resumos da plataforma; não reproduz a bula do fabricante. Chave: o princípio ativo sem sal nem hidratação, como em bulaBases() do index.html.",
-    "secoes": ["indicacao", "mecanismo", "resultados", "uso", "contraindicacoes", "precaucoes", "adversas", "interacoes", "populacoes", "superdose"]
+    "secoes": [
+      "indicacao",
+      "mecanismo",
+      "resultados",
+      "uso",
+      "contraindicacoes",
+      "precaucoes",
+      "adversas",
+      "interacoes",
+      "populacoes",
+      "superdose"
+    ]
   },
   "fichas": {
     "sibutramina": {
@@ -11,18 +22,19 @@
       "artigo": "a",
       "status": "rascunho",
       "atualizado": "2026-10-17",
-      "fonte": "Resumos Endodirect de Obesidade (Tratamento farmacológico da obesidade, com a aula EndoTEEM 2026 e o posicionamento ABESO/SBEM 2024; Tratamento da obesidade na infância e adolescência) e a indicação da bula brasileira.",
+      "fonte": "Resumos Endodirect: Tratamento farmacológico da obesidade (Obesidade; aula EndoTEEM 2026 e posicionamento ABESO/SBEM 2024) e Tratamento da obesidade na infância e adolescência (Endocrinologia Pediátrica; posicionamento ABESO/SBP 2026); bula brasileira do Biomag (indicação e contraindicação no DM2).",
       "secoes": {
-        "indicacao": "Terapia adjuvante da **obesidade em adultos com IMC ≥ 30 kg/m²**, dentro de um programa de controle de peso com dieta hipocalórica e atividade física.\n\nAprovada no Brasil desde 1998; a ANVISA a autoriza só para adultos.",
+        "indicacao": "Terapia adjuvante da **obesidade em adultos com IMC ≥ 30 kg/m²**, dentro de um programa de controle de peso com dieta hipocalórica e atividade física.\n\nAprovada no Brasil desde 1998; a ANVISA a aprova só para adultos.",
         "mecanismo": "Inibe a recaptação de **serotonina e noradrenalina** na fenda pré-sináptica; reduz o NPY e aumenta a POMC. **Prolonga a saciedade** mais do que reduz a fome, e eleva o gasto energético basal em cerca de 2 a 3%.\n\n**Farmacocinética:** metabolismo hepático pelo **CYP3A4**, com metabólitos ativos; meia-vida de cerca de 16 horas; excreção renal e fecal.",
         "resultados": "No estudo pivotal (**STORM**), perda média de **6 kg em 24 semanas**, com queda de 1,5 kg/m² no IMC.\n\n| Parâmetro | Efeito aproximado |\n| --- | --- |\n| Peso corporal | ↓ 5–10% em 12 meses |\n| Triglicerídeos | ↓ ~10–15% |\n| LDL | ↓ ~5% |\n| HDL | ↑ ~5–10% |\n| Glicemia de jejum | ↓ 5–10 mg/dL |\n| HbA1c | ↓ 0,3–0,5% |\n| Gasto energético basal | ↑ ~2–3% |",
-        "uso": "**10 a 15 mg por dia, pela manhã.**\n\n**Regra de parada:** perda menor que 2 kg em 4 semanas ou menor que 5% em 3 meses.",
+        "uso": "**10 a 15 mg por dia, pela manhã.**\n\n**Regra de parada (adultos):** perda menor que 2 kg em 4 semanas ou menor que 5% em 3 meses.",
         "contraindicacoes": "- **DM2 com pelo menos 1 fator de risco:** hipertensão, dislipidemia, tabagismo ou doença renal do diabetes com microalbuminúria\n- **Idade acima de 65 anos**\n- Doença arterial coronariana, arritmia, insuficiência cardíaca ou AVC\n- **Hipertensão descontrolada** (acima de 145 × 90 mmHg)\n- Bulimia e anorexia\n- Uso de inibidores da MAO\n\nA contraindicação em doença cardiovascular estabelecida vem do **SCOUT**: em cerca de 10 mil pacientes com 55 anos ou mais, IMC ≥ 27 e alto risco cardiovascular, o desfecho de IAM, AVC ou morte cardiovascular foi **16% maior** no grupo da sibutramina.",
-        "precaucoes": "**Pressão arterial e frequência cardíaca sobem:** taquicardia em 20,9% dos pacientes (4 a 5 bpm a mais) e hipertensão em 17,5%.\n\n**Síndrome serotoninérgica**, por interação com outros serotoninérgicos (ISRS, IMAO). Tríade: alteração do nível de consciência (agitação, delírio, torpor, coma), **disfunção autonômica** (taquicardia, hipertensão, sudorese, hipertermia, midríase, diarreia) e **excitação neuromuscular** (tremor, mioclonia, hiper-reflexia). O diagnóstico é clínico; não se dosa serotonina. Tratamento: estabilização hemodinâmica; nos casos leves, suspender a medicação; nos moderados a graves, benzodiazepínicos e ciproheptadina.",
+        "precaucoes": "**Pressão arterial e frequência cardíaca sobem:** taquicardia em 20,9% dos pacientes (4 a 5 bpm a mais) e hipertensão em 17,5%.\n\n**Síndrome serotoninérgica:** a interação medicamentosa (ISRS, IMAO) ou o envenenamento levam à hiperatividade serotoninérgica no SNC. Tríade: alteração do nível de consciência (agitação, delírio, torpor, coma), **disfunção autonômica** (taquicardia, hipertensão, sudorese, hipertermia, midríase, diarreia) e **excitação neuromuscular** (tremor, mioclonia, hiper-reflexia). O diagnóstico é clínico; não se dosa serotonina. Tratamento: estabilização hemodinâmica; nos casos leves, suspender a medicação; nos moderados a graves, benzodiazepínicos e ciproheptadina.",
         "adversas": "| Reação | Frequência |\n| --- | --- |\n| Xerostomia | 29,2% |\n| Taquicardia (4–5 bpm) | 20,9% |\n| Constipação | 18,9% |\n| Hipertensão | 17,5% |\n| Insônia | 17,2% |\n| Cefaleia | 11,3% |\n\nInclui ainda a **síndrome serotoninérgica** (ver Precauções).",
-        "interacoes": "- **Inibidores da MAO:** uso contraindicado.\n- **Outros serotoninérgicos (ISRS, IMAO):** risco de síndrome serotoninérgica.",
-        "populacoes": "- **Idosos:** contraindicada acima de 65 anos.\n- **Crianças e adolescentes:** a ANVISA a aprova só para adultos. Na obesidade pediátrica, o uso é **off-label**, de 10 a 15 mg/dia, com a maior magnitude entre os fármacos clássicos (IMC −1,70 kg/m² em metanálise em rede; −2,9 kg/m² no ensaio de 12 meses). **ECG e pressão arterial obrigatórios** e consentimento documentado."
-      }
+        "interacoes": "- **Inibidores da MAO:** uso contraindicado.\n- **ISRS e IMAO:** risco de síndrome serotoninérgica (interação medicamentosa).",
+        "populacoes": "- **Idosos:** contraindicada acima de 65 anos.\n- **Crianças e adolescentes:** a ANVISA a aprova só para adultos. Na obesidade pediátrica, a primeira linha são os agonistas de GLP-1; a sibutramina é **off-label**, de 10 a 15 mg/dia, com a maior magnitude entre os fármacos clássicos (IMC −1,70 kg/m² em metanálise em rede; −2,9 kg/m² no ensaio de 12 meses). No SUS, onde os agonistas de GLP-1 não estão incorporados, os off-label são alternativa real. **ECG e pressão arterial obrigatórios, antes e durante o uso**, e consentimento documentado. Avaliar em 6 meses, em dose plena e com adesão documentada: redução do IMC menor que 5% indica considerar a descontinuação."
+      },
+      "revisao": "2026-10-17: 76 afirmações conferidas por revisor independente contra as fontes (68 fiéis, 8 inferidas, nenhuma sem apoio ou em contradição); 4 inferências duvidosas corrigidas e 3 ajustes de adulto x criança aplicados."
     }
   }
 }
