@@ -73,8 +73,10 @@ baralhos foi junto (sw v314). Detalhes em [[Decisões]].
 4. [x] **Migrar SOP → SOMP no acervo do banco:** gravado em 17/10 (seção "SOMP no
    acervo do banco", no topo).
 3. [ ] **Apagar a tabela `public.tmp_jargao_qotd_20261017`.** Já foi aplicada, está com
-   RLS e sem grants. O DROP pelo conector pede confirmação e expirou; mesma situação da
-   `tmp_estudos_2026`.
+   RLS e sem grants. O professor autorizou em 17/10 ("Ok"), depois da checagem de zumbis
+   das 20h25 UTC, que ainda a usa. O DROP pelo conector expira (ver o item da
+   `tmp_estudos_2026`); o professor roda no editor SQL do Supabase, a partir das 20h30
+   UTC: `drop table public.tmp_jargao_qotd_20261017;`
 
 ## 📋 Questão do Dia na prancheta (17/10)
 
@@ -123,18 +125,22 @@ ficam em [[Bulário]], caso a ideia volte (por exemplo, com uma base licenciada)
    ~1,6 MB, e lote novo só aumenta o número de páginas. O ensaio por perfil achou um caso
    que já estava acima do limite antes do lote: Gold com EndoTEEM, 7,24 MB. Ver
    [[Decisões]] 2026-10-12 e [[Dados e Supabase]].
-2. **Dropar `tmp_estudos_2026`** — as 50 linhas estão no banco, idênticas, e nada depende
-   da tabela (sem view, função ou chave estrangeira), mas o `DROP` pelo conector do
-   Supabase espera confirmação manual e expira em 60 s: todas as tentativas de 12/10
-   (pelo `execute_sql` e, depois, pelo `apply_migration`) expiraram, sem nenhuma trava no
-   banco. Está privada (RLS ligado, sem grant). Para rodar no editor SQL do Supabase,
-   com guarda:
+2. **Dropar `tmp_estudos_2026`.** O professor autorizou em 17/10 ("Ok").
+   - **Situação:** as 50 questões estão no banco. São 49 idênticas e a ENDODIRECT-2111,
+     que só difere pela troca SOMP de 17/10. Nada depende da tabela (sem view, função,
+     chave estrangeira ou gatilho), e ela está privada (RLS ligado, sem grant).
+   - **Por que não saiu:** o `DROP` pelo conector do Supabase espera uma confirmação em
+     janela própria, que expira em 60 s. Expiraram todas as tentativas de 12/10 (pelo
+     `execute_sql` e pelo `apply_migration`) e as duas de 17/10, com o professor na
+     conversa. O "Ok" no chat não conta como essa confirmação. Não há trava no banco.
+   - **Para rodar no editor SQL do Supabase**, com guarda pelo código (a igualdade exata
+     barraria a 2111):
    ```sql
    do $$ begin
      if (select count(*) from public.tmp_estudos_2026 t where not exists (
-           select 1 from jsonb_array_elements((select payload->'provas' from public.endodirect_global_state where id='main')) v
-            where v = t.item)) > 0
-     then raise exception 'há linha fora do banco: não dropar'; end if;
+           select 1 from public.endodirect_global_state g, jsonb_array_elements(g.payload->'provas') v
+            where g.id='main' and v->>'code' = t.item->>'code')) > 0
+     then raise exception 'há código fora do banco: não dropar'; end if;
    end $$;
    drop table public.tmp_estudos_2026;
    ```
