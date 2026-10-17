@@ -71,9 +71,29 @@ sem cabeçalhos de navegador; testado em 16/10 depois de o professor liberar a r
 do ambiente). O botão leva à busca do Bulário Eletrônico pelo nome
 (`https://consultas.anvisa.gov.br/#/bulario/q/?nomeProduto=<NOME EM MAIÚSCULAS>`),
 que abre no navegador do aluno, no Brasil, sempre na versão vigente. O formato desse
-link não tem documentação pública e não pode ser aberto daqui; **o professor conferiu
-em 17/10**: abre a busca já com o medicamento, e na linha dele ficam os ícones da bula
-do paciente e da do profissional. A dica embaixo do botão diz isso.
+link não tem documentação pública e não pode ser aberto daqui. De manhã, em 17/10, o
+professor disse que abria a busca já com o medicamento; à tarde, mandou o print da
+página **com a busca vazia** (`#/bulario/`, sem o nome), aberta pelo botão. Por isso o
+botão passou a **copiar o nome** ao ser tocado (`bulaCopia`: a API de área de
+transferência, e o `execCommand('copy')` quando ela falta), com o aviso "Nome copiado:
+<nome>" ao lado, e a dica diz para colar no campo "Medicamento" e tocar em "Consultar".
+O link continua o mesmo; se a busca vier preenchida, melhor.
+
+**Portal de APIs e dados abertos da ANVISA (17/10).** O professor apontou os dois links do
+rodapé do Bulário Eletrônico. (1) **Portal de APIs** (api.anvisa.gov.br): credenciais
+(Client ID e Client Secret) só com login Gov.br; os serviços listados publicamente
+(filas, listas, UDI, GMDN, nomes técnicos, assuntos de petição) não incluem o bulário;
+daqui o endereço nem abre (rede do ambiente). (2) **Dados abertos**
+(dados.anvisa.gov.br/dados/CONSULTAS/DOCUMENTOS/, abre daqui): `TA_CONSULTA_BULA_PRODUTO.CSV`
+(8.824 produtos com a bula vigente: id, nome, registro, processo, CNPJ, empresa, id do
+documento, expediente, data, número da transação; sem cabeçalho, Windows-1252) e
+`TA_CONSULTA_BULA_DOCUMENTO.CSV` (85.949 documentos com a situação), ambos de 13/10/2026.
+**São metadados: nem texto nem PDF da bula.** Glifage XR, por exemplo: registro
+100890340, expediente 0953618269, documento 35552862, transação 12366362026, de
+14/09/2026. Uso possível: a data da bula vigente na ficha; e um link direto ao PDF, se o
+formato antigo da ANVISA (`www.anvisa.gov.br/datavisa/fila_bula/frmVisualizarBula.asp?
+pNuTransacao=<transação>&pIdAnexo=<documento>`) ainda funcionar no navegador. Daqui não dá
+para testar (www.anvisa.gov.br fora da rede do ambiente): **pedido ao professor**.
 
 **Como se atualiza.** `scripts/bulario/construir.js` (sem dependências; usa o
 `unzip` do sistema para o .xlsx) baixa as duas fontes, monta `bulario.json` na raiz

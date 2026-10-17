@@ -108,6 +108,12 @@ ok(!/a\[(1|5)\]/.test(corpo('bulaDetalheHTML')), '(6) o detalhe voltou a ler os 
 ok(!/R\$|bula-apr-preco|preço de fábrica|preço máximo|Apresentações e preços/.test(corpo('bulaDetalheHTML')), '(6) voltou preço, nota de preço ou "Apresentações e preços" na tela');
 ok(!/faixa de preço|preço máximo da CMED/.test(SRC), '(6) descrição do painel ainda promete preço');
 ok(/'<span class="bula-nome">'\+esc\(p\[0\]\)\+'<\/span>'/.test(corpo('bulaItemHTML')), '(4) o nome do medicamento não sai escapado');
+// (4b) O botão também copia o nome (17/10/2026: no navegador do professor, o link abriu a
+// busca vazia). O nome vai escapado no atributo, e o clique chama a cópia sem impedir o link.
+ok(/data-bula-oficial data-bula-nome="'\+esc\(p\[0\]\)\+'"/.test(corpo('bulaDetalheHTML')), '(4b) o botão da bula perdeu o nome a copiar (ou sem escape)');
+ok(/querySelectorAll\('a\[data-bula-oficial\]'\)[\s\S]{0,200}bulaCopia\(nome,/.test(corpo('bulaRenderLista')) && !/preventDefault/.test(corpo('bulaRenderLista').split('a[data-bula-oficial]')[1].split('});});')[0]), '(4b) o clique no botão não copia o nome, ou impede a abertura da ANVISA');
+ok(/navigator\.clipboard\.writeText/.test(corpo('bulaCopia')) && /execCommand\('copy'\)/.test(corpo('bulaCopiaAntiga')), '(4b) a cópia precisa da API moderna e do recurso antigo (navegador sem clipboard)');
+ok(/cole o nome no campo "Medicamento"/.test(corpo('bulaDetalheHTML')), '(4b) a dica não diz o que fazer se a busca abrir vazia');
 // (7) Fichas por princípio ativo. O texto é nosso (a bula é do fabricante); a ficha vale
 // para todos os produtos do mesmo princípio ativo, depois de tirar sal e hidratação.
 let FX = null;
