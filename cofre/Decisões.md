@@ -8,6 +8,19 @@ atualizado: 2026-10-17
 Log de decisões de produto e técnicas (mais recentes no topo).
 
 ## 2026-10
+- **🔤 SOMP ADOTADA NO LUGAR DE SOP (2026-10-17).** `sw.js` v312 → **v313**.
+  - **Pedido do professor:** *"Lembre que houve a mudança de síndrome dos ovários policísticos (SOP) para SOMP. Adote a partir de agora SOMP"*.
+  - **Antes:** a regra 7 do gerador proibia "SOMP" porque a sigla não aparecia em fonte nenhuma. Em 17/10 o PubMed ainda não tem fonte em português com SOMP, mas SOMP é a sigla literal da tradução do nome do consenso da Lancet (maio de 2026): *polyendocrine metabolic ovarian syndrome* (PMOS) → síndrome ovariana metabólica poliendócrina. A nomenclatura é decisão do professor.
+  - **Histórico:** em 25/06 a plataforma adotou SOMP e voltou a SOP no mesmo dia; agora, com o consenso publicado, SOMP passa a valer.
+  - **O que mudou no código:**
+    - regra 7 do `CLINICAL_AUTHORING`: SOMP em tudo; na 1ª menção, "síndrome ovariana metabólica poliendócrina (SOMP), antiga síndrome dos ovários policísticos (SOP)"; nota de transição (diretrizes e provas ainda usam SOP) só no comentário e no Chat IA; documento com o nome antigo mantém o título ("Diretriz Internacional de SOP 2023");
+    - entrada da SOP no `CLINICAL_GUIDELINES` (título, nomenclatura) e a lista de comorbidades do DM2 no jovem;
+    - rótulo do tema dos flashcards, mapa mental fixo e 8 flashcards fixos de Endocrinologia Feminina;
+    - roteador das perguntas (`lib/clinical-deep.js`): `somp`, `pmos` e o nome por extenso levam a Endocrinologia Feminina; 3 casos novos no `test-caminho-clinico.js` (sem as chaves, os 3 reprovam);
+    - `checa-jargao.js`: SOMP entre as siglas.
+  - **Selo do núcleo:** mudar o `CLINICAL_GUIDELINES` reprovou 26 fatos da base profunda que restituem o núcleo. Reli os 26: tratam de osteoporose, vitamina D, hipercalcemia, hiperparatireoidismo, DM1, esteato-hepatite, mitotano e hipertireoidismo, nenhum de SOP; selados de novo (`5a3944127c9a`).
+  - **Questões do Dia:** as 6 que citam SOP ou PMOS (posições 0, 27, 48, 54, 120 e 128) passam a SOMP no lote de correções de conteúdo, que espera o ok do professor.
+  - **Falta decidir:** o acervo no banco (Resumos, banco de questões, flashcards e mapas) continua com SOP. Ver [[Pendências]].
 - **🧹 JARGÃO DE IA FORA DOS COMENTÁRIOS DA QUESTÃO DO DIA (2026-10-17).** `sw.js` v310 → **v311**.
   - **Pedido do professor:** *"Remover esses jargões de IA"*, com print de "não ataca o mecanismo" e "não freada".
   - **Feito:**
