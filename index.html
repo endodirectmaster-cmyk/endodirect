@@ -296,6 +296,7 @@ body{background:var(--bg);color:var(--tx);display:flex;flex-direction:column}
 .bula-acoes{display:flex;flex-wrap:wrap;gap:.5rem;margin:.8rem 0 .4rem}
 .bula-link{display:inline-flex;align-items:center;gap:.35rem;min-height:36px;padding:.35rem .95rem;border:1px solid var(--blue2);border-radius:999px;font-size:.8rem;font-weight:700;color:var(--blue2);text-decoration:none}
 .bula-link:hover,.bula-link:focus-visible{background:rgba(85,133,232,.14);outline:none}
+.bula-copiado{align-self:center;font-size:.74rem;font-weight:700;color:var(--grn)}
 .bula-nota{font-size:.7rem;color:var(--t3);line-height:1.5;margin:.3rem 0 0}
 .bula-mais{margin:.6rem 0 0}
 .bula-vazio{padding:1.1rem;text-align:center;color:var(--t3);font-size:.8rem;border:1px dashed var(--bd2);border-radius:var(--r)}
@@ -11203,6 +11204,15 @@ function bulaNavSegue(){
 }
 window.addEventListener('scroll',bulaNavSegue,{passive:true});
 window.addEventListener('resize',function(){if(!BULA.root)return;BULA.root.querySelectorAll('.bula-nav.fixa').forEach(function(n){n.classList.remove('fixa');n.previousElementSibling.style.height='';});bulaNavSegue();});
+// Copia para a área de transferência: a API moderna; sem ela, o textarea com execCommand.
+function bulaCopia(txt,fim){
+  var feito=function(ok){try{fim(ok);}catch(e){}};
+  try{if(navigator.clipboard&&navigator.clipboard.writeText){navigator.clipboard.writeText(txt).then(function(){feito(true);},function(){feito(bulaCopiaAntiga(txt));});return;}}catch(e){}
+  feito(bulaCopiaAntiga(txt));
+}
+function bulaCopiaAntiga(txt){
+  try{var t=document.createElement('textarea');t.value=txt;t.setAttribute('readonly','');t.style.position='fixed';t.style.opacity='0';document.body.appendChild(t);t.select();var ok=document.execCommand('copy');document.body.removeChild(t);return !!ok;}catch(e){return false;}
+}
 function bulaVenc(mmaaaa){var m=/^(\d{2})(\d{4})$/.exec(String(mmaaaa||''));return m?(m[1]+'/'+m[2]):'';}
 function bulaCarregar(){
   if(BULA.d||BULA.carregando)return;
@@ -11270,8 +11280,10 @@ function bulaDetalheHTML(p){
     +(aVenda.length?('<ul class="bula-aprs">'+aVenda.map(itemApr).join('')+'</ul>'):'')
     +(semVenda.length?(aVenda.length?('<details class="bula-sem-det"><summary>Mais '+semVenda.length+' sem venda'+(ano?' em '+ano:'')+'</summary><ul class="bula-aprs">'+semVenda.map(itemApr).join('')+'</ul></details>'):('<ul class="bula-aprs">'+semVenda.map(itemApr).join('')+'</ul>')):''))
     :'<p class="bula-nota">Sem apresentação na lista da CMED (produto sem preço regulado ou não comercializado).</p>';
-  var acoes='<div class="bula-acoes"><a class="bula-link" data-bula-oficial href="'+esc(bulaLinkOficial(p[0]))+'" target="_blank" rel="noopener noreferrer">📄 Bula do profissional e do paciente ↗</a></div>'
-    +'<p class="bula-nota">O botão abre o Bulário Eletrônico da ANVISA já buscando pelo nome; na linha do medicamento, os ícones abrem a bula do paciente e a do profissional.</p>';
+  // O botão também COPIA o nome (17/10/2026): no navegador do professor, o link abriu o
+  // Bulário Eletrônico com a busca vazia. Com o nome copiado, basta colar e consultar.
+  var acoes='<div class="bula-acoes"><a class="bula-link" data-bula-oficial data-bula-nome="'+esc(p[0])+'" href="'+esc(bulaLinkOficial(p[0]))+'" target="_blank" rel="noopener noreferrer">📄 Bula do profissional e do paciente ↗</a><span class="bula-copiado" role="status" aria-live="polite"></span></div>'
+    +'<p class="bula-nota">O botão copia o nome do medicamento e abre o Bulário Eletrônico da ANVISA. Se a busca abrir vazia, cole o nome no campo "Medicamento" e toque em "Consultar"; na linha do medicamento, os ícones abrem a bula do paciente e a do profissional.</p>';
   var f=bulaFichaDe(p);
   if(f)return '<div class="bula-det">'+bulaFichaHTML(f,[['apresentacoes','Apresentações',tab],['registro','Registro na ANVISA',ficha],['bula','Bula oficial',acoes]])+'</div>';
   // Associação (dois princípios ativos): aponta as fichas que existem de cada um.
@@ -11292,6 +11304,11 @@ function bulaRenderLista(){
   el.innerHTML='<div class="bula-conta">'+res.length.toLocaleString('pt-BR')+' '+(res.length===1?'medicamento':'medicamentos')+(res.length>mostra.length?(' · mostrando '+mostra.length):'')+'</div>'
     +'<div class="bula-lista">'+mostra.map(bulaItemHTML).join('')+'</div>'
     +(res.length>mostra.length?'<button type="button" class="btn btn-outline btn-sm bula-mais">Mostrar mais</button>':'');
+  // Botão da bula: copia o nome antes de abrir a ANVISA (o link segue o href normalmente).
+  el.querySelectorAll('a[data-bula-oficial]').forEach(function(a){a.addEventListener('click',function(){
+    var nome=a.getAttribute('data-bula-nome')||'',av=a.parentNode.querySelector('.bula-copiado');
+    bulaCopia(nome,function(ok){if(av){av.textContent=ok?('Nome copiado: '+nome):'';setTimeout(function(){av.textContent='';},8000);}});
+  });});
   // Atalhos da ficha: rolam até a seção (sem âncora: o app usa o # nas rotas).
   el.querySelectorAll('[data-bula-ir]').forEach(function(b){b.addEventListener('click',function(){
     var det=b.closest('.bula-det'),alvo=det&&det.querySelector('[data-bula-sec="'+b.getAttribute('data-bula-ir')+'"]');

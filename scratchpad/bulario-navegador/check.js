@@ -134,6 +134,15 @@ async function estado(page, adm) {
     ok(/Bula do profissional e do paciente/.test(e.linkTexto) && e.notas.some((n) => /a bula do paciente e a do profissional/.test(n)), nome + ': o botão ou a dica não dizem que a bula do profissional está lá: ' + e.linkTexto);
     ok(e.foraDaTela === 0, nome + ': ' + e.foraDaTela + ' apresentações passam da largura da tela');
     achados.push(nome + ': Glifage XR → ' + e.linhas + ' apresentações, sem preço; link ' + e.link);
+    // O botão copia o nome (a busca da ANVISA abriu vazia no navegador do professor). A cópia
+    // é interceptada aqui; a aba nova vai para o stub do harness e é fechada.
+    await page.evaluate(() => { window.__copiado = null; Object.defineProperty(navigator, 'clipboard', { configurable: true, value: { writeText: (t) => { window.__copiado = t; return Promise.resolve(); } } }); });
+    const [aba] = await Promise.all([page.context().waitForEvent('page', { timeout: 5000 }).catch(() => null), page.click(raizSel(adm) + ' .bula-det a[data-bula-oficial]')]);
+    if (aba) await aba.close();
+    await page.waitForTimeout(300);
+    const cp = await page.evaluate((sel) => ({ copiado: window.__copiado, aviso: (document.querySelector(sel + ' .bula-det .bula-copiado') || {}).textContent || '' }), raizSel(adm));
+    ok(cp.copiado === 'Glifage XR' && cp.aviso === 'Nome copiado: Glifage XR' && !!aba, nome + ': o botão da bula não copiou o nome, não avisou ou não abriu a aba: ' + JSON.stringify(cp) + ' aba=' + !!aba);
+    achados.push(nome + ': botão da bula → copiou "' + cp.copiado + '", aviso "' + cp.aviso + '", aba nova ' + (aba ? 'aberta' : 'não aberta'));
     await page.screenshot({ path: path.join(__dirname, 'bulario-' + nome + '.png') });
     // Ozivy, o caso dos prints do professor: as 4 apresentações, nenhuma com preço.
     await page.fill(raizSel(adm) + ' .bula-q', 'ozivy');
