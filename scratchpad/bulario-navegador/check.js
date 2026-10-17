@@ -1,4 +1,6 @@
 // Harness do BULÁRIO (16/10/2026): aluno no celular e no notebook, e professor.
+// Desde 17/10/2026 o Bulário é só do professor (chave BULARIO_ALUNOS): para o aluno, o
+// harness confere que o item não aparece e que nem um clique forçado abre o painel.
 // Abre o painel, espera o bulario.json, busca por princípio ativo e por nome,
 // abre um medicamento (ficha, apresentações, preço, link da bula oficial), filtra
 // por área e confere que a página não rola na horizontal no celular.
@@ -84,8 +86,22 @@ async function estado(page, adm) {
   for (const [nome, vp, adm] of [['celular', { width: 392, height: 850 }, false], ['notebook', { width: 1280, height: 900 }, false], ['professor', { width: 1280, height: 900 }, true]]) {
     const email = adm ? 'admin@endodirect.com.br' : 'aluna@exemplo.com';
     const { ctx, page, erros } = await pagina(browser, 'http://127.0.0.1:' + PORTA + '/', vp, email, adm ? '99999999-2222-3333-4444-555555555555' : '11111111-2222-3333-4444-555555555555');
-    if (adm) await page.evaluate(() => { const b = document.querySelector('.adm-nav[data-asec="bula"]'); if (b) b.click(); });
-    else await page.evaluate(() => { const b = document.querySelector('button.sb-item[data-p="bula"]'); if (b) b.click(); });
+    if (!adm) {
+      const f = await page.evaluate(() => {
+        const b = document.querySelector('button.sb-item[data-p="bula"]');
+        const visivel = !!b && getComputedStyle(b).display !== 'none';
+        if (b) b.click();
+        const p = document.getElementById('panel-bula'), d = document.getElementById('panel-dash');
+        return { visivel, abriu: !!p && p.classList.contains('on'), dash: !!d && d.classList.contains('on') };
+      });
+      ok(!f.visivel, nome + ': o item Bulário apareceu no menu do aluno');
+      ok(!f.abriu && f.dash, nome + ': o clique forçado abriu o Bulário para o aluno (ou não voltou ao início): ' + JSON.stringify(f));
+      achados.push(nome + ': aluno sem Bulário (item oculto; clique forçado volta ao início)');
+      ok(erros.length === 0, nome + ': pageerror ' + JSON.stringify(erros));
+      await ctx.close();
+      continue;
+    }
+    await page.evaluate(() => { const b = document.querySelector('.adm-nav[data-asec="bula"]'); if (b) b.click(); });
     await page.waitForTimeout(2500);
     let e = await estado(page, adm);
     ok(e.raiz && /medicamentos com registro ativo/.test(e.topo), nome + ': o bulário não carregou (' + e.topo + ')');

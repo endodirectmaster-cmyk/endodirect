@@ -34,6 +34,8 @@ atualizado: 2026-10-16
 
 ## 💊 Bulário (16/10)
 
+0. **Só professores, por enquanto (17/10).** Liberar para os alunos quando o professor
+   pedir: `BULARIO_ALUNOS=true` no index.html e ajustar `scripts/test-bulario.js`.
 1. **Professor: tocar uma vez o botão "Bula oficial na ANVISA"** de qualquer medicamento
    e dizer se abre a busca já com o nome. O formato do link não tem documentação pública
    e o Bulário Eletrônico não abre daqui (firewall da ANVISA).
