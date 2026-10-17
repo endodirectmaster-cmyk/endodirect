@@ -262,65 +262,6 @@ body{background:var(--bg);color:var(--tx);display:flex;flex-direction:column}
 .calc-busca input[type=search]:focus{outline:none;border-color:var(--blue)}
 .calc-busca svg{position:absolute;left:.75rem;top:50%;transform:translateY(-50%);width:.9rem;height:.9rem;color:var(--t3);pointer-events:none}
 .calc-oculto{display:none!important}
-/* ── BULÁRIO (16/10/2026) ── */
-.bula-topo{font-size:.74rem;color:var(--t3);line-height:1.5;margin:0 0 .75rem}
-.bula-busca{position:relative;display:block;max-width:40rem;margin:0 0 .7rem}
-.bula-busca input[type=search]{width:100%;box-sizing:border-box;padding:.62rem .9rem .62rem 2.2rem;border:1px solid var(--bd2);border-radius:999px;background:var(--surface);color:var(--tx);font-family:var(--font);font-size:.86rem}
-.bula-busca input[type=search]:focus{outline:none;border-color:var(--blue)}
-.bula-busca svg{position:absolute;left:.8rem;top:50%;transform:translateY(-50%);width:.95rem;height:.95rem;color:var(--t3);pointer-events:none}
-.bula-areas{margin:0 0 .8rem;max-width:100%}
-.bula-areas .pill-tab{white-space:nowrap}
-.bula-conta{font-size:.74rem;color:var(--t2);margin:.1rem 0 .55rem}
-.bula-lista{display:flex;flex-direction:column;gap:.5rem}
-.bula-item{border:1px solid var(--bd);border-radius:var(--r);background:var(--card);overflow:hidden;overflow:clip}
-.bula-head{display:flex;flex-direction:column;align-items:flex-start;gap:.22rem;width:100%;text-align:left;background:transparent;border:0;padding:.7rem .9rem;cursor:pointer;color:var(--tx);font-family:var(--font)}
-.bula-head:hover,.bula-head:focus-visible{background:var(--s2);outline:none}
-.bula-nome{font-size:.92rem;font-weight:800}
-.bula-pa{font-size:.78rem;color:var(--t2)}
-.bula-tags{display:flex;flex-wrap:wrap;gap:.3rem;margin-top:.15rem}
-.bula-tarja{font-size:.66rem;font-weight:700;border-radius:999px;padding:.12rem .5rem;border:1px solid var(--bd2);color:var(--t2)}
-.bula-tarja.t-verm{border-color:#c0392b;color:#e57368}
-.bula-tarja.t-preta{border-color:var(--tx);color:var(--tx);background:rgba(127,127,127,.15)}
-.bula-det{padding:.2rem .9rem .9rem;border-top:1px solid var(--bd)}
-.bula-ficha{display:grid;grid-template-columns:minmax(9rem,max-content) 1fr;gap:.3rem .9rem;margin:.6rem 0 .8rem;font-size:.8rem}
-.bula-ficha dt{color:var(--t3);font-weight:700}
-.bula-ficha dd{margin:0;color:var(--tx);overflow-wrap:anywhere}
-.bula-apr-tit{font-size:.74rem;font-weight:800;color:var(--t2);text-transform:uppercase;letter-spacing:.05em;margin:.2rem 0 .4rem}
-.bula-aprs{list-style:none;margin:0;padding:0;border-top:1px solid var(--bd)}
-.bula-apr-it{display:flex;flex-direction:column;gap:.15rem;padding:.45rem 0;border-bottom:1px solid var(--bd);font-size:.78rem}
-.bula-apr-txt{color:var(--tx);overflow-wrap:anywhere}
-.bula-apr-info{color:var(--t2);font-size:.74rem}
-.bula-apr-it.bula-semvenda .bula-apr-txt{color:var(--t3)}
-.bula-sem-det{margin:.4rem 0 0}
-.bula-sem-det summary{cursor:pointer;font-size:.74rem;color:var(--t2);padding:.3rem 0}
-.bula-acoes{display:flex;flex-wrap:wrap;gap:.5rem;margin:.8rem 0 .4rem}
-.bula-link{display:inline-flex;align-items:center;gap:.35rem;min-height:36px;padding:.35rem .95rem;border:1px solid var(--blue2);border-radius:999px;font-size:.8rem;font-weight:700;color:var(--blue2);text-decoration:none}
-.bula-link:hover,.bula-link:focus-visible{background:rgba(85,133,232,.14);outline:none}
-.bula-copiado{align-self:center;font-size:.74rem;font-weight:700;color:var(--grn)}
-.bula-nota{font-size:.7rem;color:var(--t3);line-height:1.5;margin:.3rem 0 0}
-.bula-mais{margin:.6rem 0 0}
-.bula-vazio{padding:1.1rem;text-align:center;color:var(--t3);font-size:.8rem;border:1px dashed var(--bd2);border-radius:var(--r)}
-@media (max-width:820px){.bula-ficha{grid-template-columns:1fr}.bula-ficha dt{margin-top:.25rem}}
-/* Ficha por seções (17/10/2026): barra de atalhos fixa no alto enquanto se lê a ficha;
-   `overflow:clip` no .bula-item, porque `hidden` prenderia a barra dentro do cartão.
-   `.fixa`: onde a página rola (celular), ver bulaNavSegue(). */
-.bula-nav{position:sticky;top:0;z-index:3;display:flex;gap:.4rem;overflow-x:auto;padding:.55rem 0;margin:0 0 .2rem;background:var(--bg);border-bottom:1px solid var(--bd);scrollbar-width:thin}
-.bula-nav.fixa{position:fixed;top:0;z-index:40;box-shadow:0 6px 14px -10px rgba(0,0,0,.55)}
-@media (min-width:821px){.bula-nav{flex-wrap:wrap;overflow-x:visible}}
-.bula-nav-a{flex:0 0 auto;display:inline-flex;align-items:center;min-height:32px;padding:.25rem .75rem;border:1px solid var(--bd2);border-radius:999px;background:transparent;color:var(--t2);font-family:var(--font);font-size:.74rem;font-weight:700;white-space:nowrap;cursor:pointer;text-decoration:none}
-.bula-nav-a:hover,.bula-nav-a:focus-visible,.bula-nav-a.on{border-color:var(--blue2);color:var(--blue2);outline:none}
-.bula-sec{scroll-margin-top:3.6rem;padding:.1rem 0 .7rem;border-bottom:1px solid var(--bd)}
-.bula-sec:last-of-type{border-bottom:0}
-.bula-sec>h3{font-size:1rem;font-weight:800;line-height:1.3;color:var(--tx);margin:.8rem 0 .4rem;text-wrap:balance}
-.bula-md{font-size:.86rem;line-height:1.62;color:var(--tx);max-width:68ch}
-.bula-md p{margin:.35rem 0}
-.bula-md ul{margin:.35rem 0;padding-left:1.15rem}
-.bula-md li{margin:.2rem 0}
-.bula-md table{border-collapse:collapse;margin:.5rem 0;font-size:.8rem;width:100%;max-width:30rem}
-.bula-md th,.bula-md td{border-bottom:1px solid var(--bd);padding:.3rem .4rem;text-align:left;vertical-align:top}
-.bula-md th{color:var(--t2);font-weight:800}
-.bula-rascunho{margin:.7rem 0 .2rem;padding:.5rem .7rem;border:1px solid var(--warn-bd);border-radius:var(--r);background:var(--warn-bg);color:var(--warn-tx);font-size:.74rem;line-height:1.5}
-.bula-assoc{font-size:.8rem;color:var(--t2);line-height:1.55;margin:.6rem 0 .2rem}
 .calc-vazio{grid-column:1/-1;padding:1.2rem;text-align:center;color:var(--t3);font-size:.8rem;border:1px dashed var(--bd2);border-radius:var(--r)}
 @media (prefers-reduced-motion:reduce){.calc-area-grid .calc-card{transition:none}.calc-area-grid .calc-card:hover{transform:none}}
 /* ⚠️ `min-width:0` é o que impede a faixa de abas de ESTOURAR A PÁGINA no
@@ -2352,7 +2293,6 @@ input.dmm-inp-subsub{flex:1;min-width:0;background:transparent;color:var(--t2);f
         <button class="sb-item" data-p="resu">📚 Resumos</button>
         <div class="sb-sec">Clínica</div>
         <button class="sb-item" data-p="calc">🧮 Calculadoras</button>
-        <button class="sb-item" data-p="bula" id="sb-bula" style="display:none">💊 Bulário</button>
         <button class="sb-item" data-p="simfull">📝 Simulado</button>
         <button class="sb-item" data-p="rx">💊 Prescrição Simulada</button>
         <button class="sb-item" data-p="presc" id="sb-presc" style="display:none">⚕️ Consultório</button>
@@ -2713,12 +2653,6 @@ input.dmm-inp-subsub{flex:1;min-width:0;background:transparent;color:var(--t2);f
       <div class="pc"><div class="g3" id="calc-grid"></div><div id="calc-detail"></div></div>
     </div>
 
-    <div class="panel" id="panel-bula">
-      <div class="breadcrumb">Dashboard <b>/ Bulário</b></div>
-      <div class="ph"><h1>Bulário</h1><p>Todos os medicamentos com registro ativo na ANVISA, com apresentações e o link para a bula do profissional e do paciente.</p></div>
-      <div class="pc"><div class="bula-raiz"></div></div>
-    </div>
-
     <div class="panel" id="panel-rx">
       <div class="breadcrumb">Dashboard <b>/ Prescrição Simulada</b></div>
       <div class="ph"><h1>Prescrição Simulada</h1><p>Treine a conduta e a prescrição de um caso clínico simulado e receba uma correção comentada ao final.</p></div>
@@ -2940,7 +2874,6 @@ input.dmm-inp-subsub{flex:1;min-width:0;background:transparent;color:var(--t2);f
           <button class="adm-nav" data-asec="flashcards">🃏 Flashcards</button>
           <button class="adm-nav" data-asec="favs">⭐ Favoritos</button>
           <button class="adm-nav" data-asec="calc">🧮 Calculadoras</button>
-          <button class="adm-nav" data-asec="bula">💊 Bulário</button>
           <button class="adm-nav" data-asec="consultorio">⚕️ Consultório</button>
           <button class="adm-nav" data-asec="rx">💊 Prescrição Comentada</button>
           <button class="adm-nav" data-asec="chat">💬 Chat</button>
@@ -7822,7 +7755,7 @@ function startGoogleOAuth(){
   });
 }
 
-var PANEL_LABELS={dash:'Dashboard',desemp:'Desempenho',plano:'Plano de estudo',quest:'Banco de questões',qotd:'Questão do Dia',flash:'Flashcards',mmap:'Mapas Mentais',podcast:'Podcasts',cursos:'Cursos',crono:'Cronograma',sr:'Revisão',erros:'Caderno de erros',sim:'OSCE',simfull:'Simulado',calc:'Calculadoras',bula:'Bulário',rx:'Prescrição Simulada',presc:'Consultório',art:'Resumidor',notas:'Caderno',favs:'Favoritos',mural:'Mural de artigos',aovivo:'Aula ao vivo',ref:'Diretrizes',resu:'Resumos',chat:'Chat IA',perfil:'Perfil',support:'Suporte',adm:'Painel Admin'};
+var PANEL_LABELS={dash:'Dashboard',desemp:'Desempenho',plano:'Plano de estudo',quest:'Banco de questões',qotd:'Questão do Dia',flash:'Flashcards',mmap:'Mapas Mentais',podcast:'Podcasts',cursos:'Cursos',crono:'Cronograma',sr:'Revisão',erros:'Caderno de erros',sim:'OSCE',simfull:'Simulado',calc:'Calculadoras',rx:'Prescrição Simulada',presc:'Consultório',art:'Resumidor',notas:'Caderno',favs:'Favoritos',mural:'Mural de artigos',aovivo:'Aula ao vivo',ref:'Diretrizes',resu:'Resumos',chat:'Chat IA',perfil:'Perfil',support:'Suporte',adm:'Painel Admin'};
 function closeMobileNav(){
   document.body.classList.remove('mobile-nav-open');
   var b=document.getElementById('btn-mobile-nav');
@@ -7960,7 +7893,7 @@ function hasScope(scope){return !scope||isAdminUser()||userAcessos.indexOf(scope
 // Degustacao: aluno logado, sem nenhum acesso ativo (não comprou pacote/curso).
 function isDegustacao(){return !!(currentUser&&currentUser.role==='aluno'&&!isAdminUser()&&(!userAcessos||userAcessos.length===0));}
 // Paineis liberados na degustacao (o resto fica 🔒 com upsell).
-var DEGUSTACAO_PANELS={aovivo:1,dash:1,desemp:1,plano:1,flash:1,mmap:1,quest:1,qotd:1,perfil:1,support:1,calc:1,bula:1,podcast:1,crono:1,notas:1,ref:1,resu:1,erros:1};
+var DEGUSTACAO_PANELS={aovivo:1,dash:1,desemp:1,plano:1,flash:1,mmap:1,quest:1,qotd:1,perfil:1,support:1,calc:1,podcast:1,crono:1,notas:1,ref:1,resu:1,erros:1};
 // Ferramentas com IA liberadas na degustação por COTA (3 usos cada): simulador
 // de casos, simulado, prescrição e chat IA. Após esgotar, vira upsell.
 var TRIAL_PANELS={sim:1,simfull:1,rx:1,chat:1};
@@ -8418,7 +8351,7 @@ function goPanel(id){
   // senão o painel morto ainda seria gravado como `last_panel` e o aluno voltaria
   // nele a cada reload, só para ser desviado de novo.
   if(id==='aovivo'&&!AO_VIVO_ATIVO)id='dash';
-  if(id==='bula'&&!BULARIO_ALUNOS)id='dash'; // por enquanto só no painel do professor (ver BULARIO_ALUNOS)
+  if(id==='bula')id='dash'; // Bulário removido em 17/10/2026: painel salvo ou link antigo volta ao início
   if(!canSeePanel(id)){showLockedPanel(id);return;}
   // `emc` é ITEM DE MENU próprio e PAINEL REAPROVEITADO: abre o de Cursos já
   // filtrado no curso da Educação Médica Continuada. Duplicar o painel
@@ -8453,7 +8386,6 @@ function goPanel(id){
   if(id==='crono')initCrono();
   if(id==='sr')renderSR();
   if(id==='calc')initCalc();
-  if(id==='bula')initBulario();
   if(id==='notas')renderNoteList();
   if(id==='mural')initMural();
   if(id==='ref')renderRef();
@@ -11124,229 +11056,6 @@ function finishErr(){
 // no do professor (adm-main), escopando as buscas por id ao container ativo.
 var activeCalc=null,calcRoot=null;
 function calcEl(sel){return (calcRoot||document.getElementById('panel-calc')||document).querySelector(sel);}
-// ─────────────────────────────── BULÁRIO ────────────────────────────────
-// Pedido do professor (16/10/2026): "ferramenta de Bulário atualizada na
-// plataforma, se possível de todas as medicações disponíveis no Brasil".
-// `bulario.json` sai de scripts/bulario/construir.js (dados abertos da ANVISA +
-// lista de preços da CMED) e é refeito toda semana pelo GitHub Actions. O texto
-// da bula NÃO está aqui: pertence ao fabricante, e o Bulário Eletrônico da
-// ANVISA recusa servidores fora do Brasil. O botão leva à bula oficial, que abre
-// no navegador do aluno (no Brasil) e é sempre a versão vigente.
-// ⚠️ CHAVE DO BULÁRIO NO APP DO ALUNO. Pedido do professor (17/10/2026): "não libera
-// o bulário para os alunos; apenas por enquanto para os professores". Com `false`, o
-// item some do menu do aluno e goPanel desvia quem chegar por link ou pelo último
-// painel salvo; o painel do professor (adm-nav "bula") segue igual. Trocar para `true`
-// religa tudo, sem mexer em mais nada.
-var BULARIO_ALUNOS=false;
-(function(){var b=document.getElementById('sb-bula');if(b&&BULARIO_ALUNOS)b.style.display='';})();
-var BULA={d:null,carregando:false,erro:'',q:'',area:-1,aberto:-1,lim:40,root:null,idx:null,fichas:null};
-// Área do Bulário → subespecialidade, só para a COR da etiqueta (muralSubMeta).
-var BULA_AREA_SUB={'Diabetes':'Diabetes','Obesidade':'Obesidade','Lípides':'Lípides','Tireoide':'Tireoide','Adrenal e corticoides':'Adrenal','Hipófise':'Neuroendocrinologia','Osso e cálcio':'Osteometabolismo','Hormônios sexuais':'Endocrinologia Feminina'};
-function bulaNorm(s){return String(s||'').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'');}
-function bulaLinkOficial(nome){return 'https://consultas.anvisa.gov.br/#/bulario/q/?nomeProduto='+encodeURIComponent(String(nome||'').toUpperCase());}
-// ⚠️ SEM PREÇO NA TELA (decisão do professor, 17/10/2026). A CMED só publica tetos
-// (preço de fábrica e preço máximo ao consumidor), e o balcão pode ficar muito abaixo
-// deles: a Drogasil vendia o Ozivy 3 mL a R$ 464,81 com desconto de laboratório, abaixo
-// até do preço de fábrica (R$ 979,80). Mostrar o teto, e depois a faixa, só confundiu.
-// O bulario.json segue trazendo os dois preços (a[1] e a[5]), sem uso na tela: eles
-// servem de alarme para mudança no formato da planilha da CMED (test-bulario, bloco 6).
-// FICHAS POR PRINCÍPIO ATIVO (protótipo, 17/10/2026). O professor mandou como modelo
-// de estilo a bula do Biomag na Consulta Remédios: barra de atalhos das seções e cada
-// seção com título em pergunta. O texto da bula é do fabricante e não entra; a ficha é
-// texto nosso, tirado dos Resumos, e vale para todo produto do mesmo princípio ativo
-// (sibutramina: Biomag, Sibus, Vazy e genéricos). Mora em bulario-fichas.json, que
-// carrega junto com o bulario.json; se faltar, o Bulário segue com a ficha técnica.
-// Título: %o vira o artigo (a/o) e %d a contração (da/do) do nome da ficha.
-var BULA_SECOES=[
-  ['indicacao','Para que serve','Para que serve %o %n?'],
-  ['mecanismo','Como funciona','Como %o %n funciona?'],
-  ['resultados','Resultados','Que resultado esperar %d %n?'],
-  ['uso','Como usar','Como usar %o %n?'],
-  ['contraindicacoes','Contraindicações','Quando %o %n é contraindicad%o?'],
-  ['precaucoes','Precauções','Que cuidados %o %n exige?'],
-  ['adversas','Reações adversas','Quais as reações adversas %d %n?'],
-  ['interacoes','Interações','Com o que %o %n interage?'],
-  ['populacoes','Populações especiais','Em que pacientes o uso muda?'],
-  ['superdose','Superdose','O que fazer na superdose?']
-];
-function bulaTitSec(t,f){var o=f.artigo==='o'?'o':'a',n=String(f.nome||'');return t.replace(/%o %n/g,o+' '+n).replace(/%d %n/g,(o==='o'?'do':'da')+' '+n).replace(/%o/g,o);}
-// Princípio ativo sem o sal e sem a água de hidratação: "cloridrato de sibutramina
-// monoidratado" vira "sibutramina". A ANVISA separa os princípios ativos por vírgula;
-// dois diferentes, depois de limpos, fazem uma associação.
-var BULA_SAL=/\b(cloridrato|dicloridrato|maleato|fumarato|hemifumarato|succinato|acetato|fosfato|besilato|mesilato|tartarato|de|do|da|sodico|sodica|potassico|potassica|calcico|calcica|monoidratad[oa]|di-?hidratad[oa]|tri-?hidratad[oa]|hemi-?hidratad[oa]|anidr[oa])\b/g;
-function bulaBases(pa){var out=[];String(pa||'').split(/\s*,\s*/).forEach(function(c){var b=bulaNorm(c).replace(BULA_SAL,' ').replace(/\s+/g,' ').trim();if(b&&out.indexOf(b)<0)out.push(b);});return out;}
-function bulaFichaDe(p){var F=BULA.fichas,b=bulaBases(p[1]);return (F&&b.length===1&&Object.prototype.hasOwnProperty.call(F,b[0]))?F[b[0]]:null;}
-function bulaFichaHTML(f,blocos){
-  var sec=BULA_SECOES.filter(function(s){return f.secoes&&typeof f.secoes[s[0]]==='string'&&f.secoes[s[0]].trim();});
-  var extra=blocos.filter(function(b){return b[2];});
-  var nav='<div class="bula-nav-vaga"></div><nav class="bula-nav" aria-label="Seções da ficha">'
-    +sec.map(function(s){return '<button type="button" class="bula-nav-a" data-bula-ir="'+s[0]+'">'+esc(s[1])+'</button>';}).join('')
-    +extra.map(function(b){return '<button type="button" class="bula-nav-a" data-bula-ir="'+b[0]+'">'+esc(b[1])+'</button>';}).join('')+'</nav>';
-  var corpo=sec.map(function(s){return '<section class="bula-sec" data-bula-sec="'+s[0]+'"><h3>'+esc(bulaTitSec(s[2],f))+'</h3><div class="bula-md">'+mdToHtml(f.secoes[s[0]])+'</div></section>';}).join('')
-    +extra.map(function(b){return '<section class="bula-sec" data-bula-sec="'+b[0]+'"><h3>'+esc(b[1])+'</h3>'+b[2]+'</section>';}).join('');
-  var aviso=f.status==='rascunho'?'<p class="bula-rascunho">Rascunho para os professores aprovarem: texto da Endodirect a partir dos Resumos, ainda não conferido contra a bula do fabricante.</p>':'';
-  return aviso+nav+corpo+(f.fonte?('<p class="bula-nota">Fonte: '+esc(f.fonte)+' Não substitui a bula oficial.</p>'):'');
-}
-// A barra acompanha a leitura. No notebook o painel rola por dentro e o sticky basta.
-// No celular quem rola é a página, e os contêineres do app têm overflow:hidden, que
-// prende o sticky: quando a barra sai pelo alto com a ficha ainda na tela, ela vira
-// `fixed` no topo e a vaga logo acima guarda a altura dela (o texto não pula).
-function bulaNavSegue(){
-  if(!BULA.root)return;
-  BULA.root.querySelectorAll('.bula-nav').forEach(function(nav){
-    var vaga=nav.previousElementSibling,det=nav.parentNode;if(!vaga||!det)return;
-    var fixa=nav.classList.contains('fixa'),h=nav.offsetHeight,v=vaga.getBoundingClientRect(),d=det.getBoundingClientRect();
-    var deve=(fixa?v.top:nav.getBoundingClientRect().top)<0&&d.bottom>h*2;
-    if(deve===fixa)return;
-    if(deve){vaga.style.height=h+'px';nav.style.left=v.left+'px';nav.style.width=v.width+'px';nav.classList.add('fixa');}
-    else{nav.classList.remove('fixa');nav.style.left='';nav.style.width='';vaga.style.height='';}
-  });
-}
-window.addEventListener('scroll',bulaNavSegue,{passive:true});
-window.addEventListener('resize',function(){if(!BULA.root)return;BULA.root.querySelectorAll('.bula-nav.fixa').forEach(function(n){n.classList.remove('fixa');n.previousElementSibling.style.height='';});bulaNavSegue();});
-// Copia para a área de transferência: a API moderna; sem ela, o textarea com execCommand.
-function bulaCopia(txt,fim){
-  var feito=function(ok){try{fim(ok);}catch(e){}};
-  try{if(navigator.clipboard&&navigator.clipboard.writeText){navigator.clipboard.writeText(txt).then(function(){feito(true);},function(){feito(bulaCopiaAntiga(txt));});return;}}catch(e){}
-  feito(bulaCopiaAntiga(txt));
-}
-function bulaCopiaAntiga(txt){
-  try{var t=document.createElement('textarea');t.value=txt;t.setAttribute('readonly','');t.style.position='fixed';t.style.opacity='0';document.body.appendChild(t);t.select();var ok=document.execCommand('copy');document.body.removeChild(t);return !!ok;}catch(e){return false;}
-}
-function bulaVenc(mmaaaa){var m=/^(\d{2})(\d{4})$/.exec(String(mmaaaa||''));return m?(m[1]+'/'+m[2]):'';}
-function bulaCarregar(){
-  if(BULA.d||BULA.carregando)return;
-  BULA.carregando=true;BULA.erro='';
-  // As fichas são opcionais: falha aqui não impede o Bulário.
-  var fichas=fetch('bulario-fichas.json').then(function(r){return r.ok?r.json():null;}).then(function(x){BULA.fichas=(x&&x.fichas&&typeof x.fichas==='object')?x.fichas:null;}).catch(function(){BULA.fichas=null;});
-  fetch('bulario.json').then(function(r){if(!r.ok)throw new Error('HTTP '+r.status);return r.json();}).then(function(d){
-    if(!d||!Array.isArray(d.p)||!d.tab)throw new Error('formato');
-    BULA.d=d;BULA.idx=d.p.map(function(p){return bulaNorm(p[0]+' '+p[1]+' '+(d.tab.emp[p[4]]||''));});
-  }).catch(function(){BULA.erro='Não foi possível carregar o bulário agora. Verifique a conexão e toque em "Tentar de novo".';})
-  .then(function(){return fichas;}).then(function(){BULA.carregando=false;bulaRender();});
-}
-function initBulario(root){
-  BULA.root=root||document.querySelector('#panel-bula .bula-raiz');
-  bulaRender();bulaCarregar();
-}
-function bulaRank(i,q){var p=BULA.d.p[i],n=bulaNorm(p[0]),pa=bulaNorm(p[1]);return n.indexOf(q)===0?0:(pa.indexOf(q)===0?1:(n.indexOf(q)>=0?2:3));}
-function bulaFiltrar(){
-  var d=BULA.d;if(!d)return [];
-  var q=bulaNorm(BULA.q).trim(),termos=q.split(/\s+/).filter(Boolean),out=[];
-  if(!termos.length&&BULA.area<0)return out; // sem busca e sem área: não lista os 12 mil
-  for(var i=0;i<d.p.length;i++){
-    if(BULA.area>=0&&d.p[i][7]!==BULA.area)continue;
-    if(termos.length){var s=BULA.idx[i],ok=true;for(var k=0;k<termos.length;k++){if(s.indexOf(termos[k])<0){ok=false;break;}}if(!ok)continue;}
-    out.push(i);
-  }
-  if(q)out.sort(function(a,b){return bulaRank(a,q)-bulaRank(b,q);}); // estável: empate fica em ordem alfabética
-  return out;
-}
-function bulaTarjaHTML(t){
-  if(!t)return '';
-  var cls=/preta/i.test(t)?' t-preta':(/vermelha/i.test(t)?' t-verm':'');
-  return '<span class="bula-tarja'+cls+'">'+(/sem tarja/i.test(t)?'Sem tarja':'Tarja '+esc(t.toLowerCase()))+'</span>';
-}
-function bulaItemHTML(i){
-  var d=BULA.d,t=d.tab,p=d.p[i],aberto=(BULA.aberto===i);
-  var area=p[7]>=0?t.area[p[7]]:'';
-  var tags='<span class="tag">'+esc(t.cat[p[2]]||'')+'</span>'
-    +(area?('<span class="tag '+muralSubMeta(BULA_AREA_SUB[area]||'').tag+'">'+esc(area)+'</span>'):'')
-    +bulaTarjaHTML(t.tarja[p[8]]);
-  var h='<article class="bula-item" data-bula="'+i+'"><button type="button" class="bula-head" aria-expanded="'+(aberto?'true':'false')+'">'
-    +'<span class="bula-nome">'+esc(p[0])+'</span>'+(p[1]?('<span class="bula-pa">'+esc(p[1])+'</span>'):'')
-    +'<span class="bula-tags">'+tags+'</span></button>';
-  if(aberto)h+=bulaDetalheHTML(p);
-  return h+'</article>';
-}
-function bulaDetalheHTML(p){
-  var d=BULA.d,t=d.tab,ano=(d.meta&&d.meta.anoComercializacao)||'';
-  var venc=bulaVenc(p[6]);
-  var ficha='<dl class="bula-ficha">'
-    +(p[1]?('<dt>Princípio ativo</dt><dd>'+esc(p[1])+'</dd>'):'')
-    +'<dt>Detentor do registro</dt><dd>'+esc(t.emp[p[4]]||'—')+'</dd>'
-    +'<dt>Registro na ANVISA</dt><dd>'+(p[5]?esc(p[5]):'notificado, sem número')+(venc?(' · válido até '+venc):'')+'</dd>'
-    +'<dt>Categoria</dt><dd>'+esc(t.cat[p[2]]||'—')+'</dd>'
-    +'<dt>Classe terapêutica</dt><dd>'+esc(t.cl[p[3]]||'—')+'</dd></dl>';
-  var apr=p[9]||[];
-  // Lista, não tabela: no celular a tabela de três colunas escondia a situação à
-  // direita. O que está à venda vem aberto; o que não teve venda no ano, recolhido.
-  var itemApr=function(a){
-    var sit=[];if(a[3])sit.push('Uso hospitalar');sit.push(a[4]?'À venda':('Sem venda'+(ano?' em '+ano:'')));
-    return '<li class="bula-apr-it'+(a[4]?'':' bula-semvenda')+'"><span class="bula-apr-txt">'+esc(a[0])+'</span><span class="bula-apr-info">'+esc(sit.join(' · '))+'</span></li>';
-  };
-  var aVenda=apr.filter(function(a){return a[4];}),semVenda=apr.filter(function(a){return !a[4];});
-  var tab=apr.length?('<div class="bula-apr-tit">Apresentações ('+apr.length+')</div>'
-    +(aVenda.length?('<ul class="bula-aprs">'+aVenda.map(itemApr).join('')+'</ul>'):'')
-    +(semVenda.length?(aVenda.length?('<details class="bula-sem-det"><summary>Mais '+semVenda.length+' sem venda'+(ano?' em '+ano:'')+'</summary><ul class="bula-aprs">'+semVenda.map(itemApr).join('')+'</ul></details>'):('<ul class="bula-aprs">'+semVenda.map(itemApr).join('')+'</ul>')):''))
-    :'<p class="bula-nota">Sem apresentação na lista da CMED (produto sem preço regulado ou não comercializado).</p>';
-  // O botão também COPIA o nome (17/10/2026): no navegador do professor, o link abriu o
-  // Bulário Eletrônico com a busca vazia. Com o nome copiado, basta colar e consultar.
-  var acoes='<div class="bula-acoes"><a class="bula-link" data-bula-oficial data-bula-nome="'+esc(p[0])+'" href="'+esc(bulaLinkOficial(p[0]))+'" target="_blank" rel="noopener noreferrer">📄 Bula do profissional e do paciente ↗</a><span class="bula-copiado" role="status" aria-live="polite"></span></div>'
-    +'<p class="bula-nota">O botão copia o nome do medicamento e abre o Bulário Eletrônico da ANVISA. Se a busca abrir vazia, cole o nome no campo "Medicamento" e toque em "Consultar"; na linha do medicamento, os ícones abrem a bula do paciente e a do profissional.</p>';
-  var f=bulaFichaDe(p);
-  if(f)return '<div class="bula-det">'+bulaFichaHTML(f,[['apresentacoes','Apresentações',tab],['registro','Registro na ANVISA',ficha],['bula','Bula oficial',acoes]])+'</div>';
-  // Associação (dois princípios ativos): aponta as fichas que existem de cada um.
-  var bases=bulaBases(p[1]),F=BULA.fichas,comFicha=F?bases.filter(function(b){return Object.prototype.hasOwnProperty.call(F,b);}):[];
-  var assoc=bases.length>1&&comFicha.length?'<p class="bula-assoc">Associação. Há ficha de '+comFicha.map(function(b){return '<strong>'+esc(F[b].nome||b)+'</strong>';}).join(' e ')+': busque pelo nome.</p>':'';
-  return '<div class="bula-det">'+assoc+ficha+tab+acoes+'</div>';
-}
-function bulaRenderLista(){
-  var el=BULA.root&&BULA.root.querySelector('.bula-lista-wrap');if(!el)return;
-  if(!BULA.d){el.innerHTML='';return;}
-  var res=bulaFiltrar();
-  if(!res.length){
-    el.innerHTML=(BULA.q||BULA.area>=0)?'<div class="bula-vazio">Nenhum medicamento encontrado. Confira a grafia ou busque pelo princípio ativo.</div>'
-      :'<div class="bula-vazio">Digite o nome comercial, o princípio ativo ou o fabricante. Ou escolha uma área da endocrinologia acima.</div>';
-    return;
-  }
-  var mostra=res.slice(0,BULA.lim);
-  el.innerHTML='<div class="bula-conta">'+res.length.toLocaleString('pt-BR')+' '+(res.length===1?'medicamento':'medicamentos')+(res.length>mostra.length?(' · mostrando '+mostra.length):'')+'</div>'
-    +'<div class="bula-lista">'+mostra.map(bulaItemHTML).join('')+'</div>'
-    +(res.length>mostra.length?'<button type="button" class="btn btn-outline btn-sm bula-mais">Mostrar mais</button>':'');
-  // Botão da bula: copia o nome antes de abrir a ANVISA (o link segue o href normalmente).
-  el.querySelectorAll('a[data-bula-oficial]').forEach(function(a){a.addEventListener('click',function(){
-    var nome=a.getAttribute('data-bula-nome')||'',av=a.parentNode.querySelector('.bula-copiado');
-    bulaCopia(nome,function(ok){if(av){av.textContent=ok?('Nome copiado: '+nome):'';setTimeout(function(){av.textContent='';},8000);}});
-  });});
-  // Atalhos da ficha: rolam até a seção (sem âncora: o app usa o # nas rotas).
-  el.querySelectorAll('[data-bula-ir]').forEach(function(b){b.addEventListener('click',function(){
-    var det=b.closest('.bula-det'),alvo=det&&det.querySelector('[data-bula-sec="'+b.getAttribute('data-bula-ir')+'"]');
-    if(!alvo)return;
-    // A margem acompanha a altura real da barra (uma linha no celular, duas no notebook).
-    var nav=det.querySelector('.bula-nav');if(nav)alvo.style.scrollMarginTop=(nav.offsetHeight+8)+'px';
-    det.querySelectorAll('.bula-nav-a.on').forEach(function(x){x.classList.remove('on');});b.classList.add('on');
-    try{alvo.scrollIntoView({behavior:'smooth',block:'start'});}catch(e){alvo.scrollIntoView();}
-    setTimeout(bulaNavSegue,700);
-  });});
-  el.querySelectorAll('.bula-head').forEach(function(b){b.addEventListener('click',function(){
-    var i=parseInt(b.parentNode.getAttribute('data-bula'),10);BULA.aberto=(BULA.aberto===i)?-1:i;bulaRenderLista();
-    var it=BULA.root.querySelector('[data-bula="'+i+'"]');if(it&&BULA.aberto===i){try{it.scrollIntoView({block:'nearest'});}catch(e){}}
-  });});
-  var mais=el.querySelector('.bula-mais');if(mais)mais.addEventListener('click',function(){BULA.lim+=40;bulaRenderLista();});
-}
-function bulaRender(){
-  var el=BULA.root;if(!el)return;
-  var d=BULA.d,meta=d&&d.meta;
-  var topo=meta?('<p class="bula-topo">'+Number(meta.totais.produtos).toLocaleString('pt-BR')+' medicamentos com registro ativo · '+esc(meta.fontes.cmed)+' · atualizado em '+esc(String(meta.gerado||'').split('-').reverse().join('/'))+'</p>'):'';
-  var busca='<label class="bula-busca"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><circle cx="11" cy="11" r="7"/><line x1="20" y1="20" x2="16.2" y2="16.2"/></svg>'
-    +'<input type="search" class="bula-q" placeholder="Nome comercial, princípio ativo ou fabricante" autocomplete="off" aria-label="Buscar medicamento" value="'+esc(BULA.q)+'"></label>';
-  var areas=d?('<div class="bula-areas pill-tab-row" role="group" aria-label="Áreas da endocrinologia">'
-    +'<button type="button" class="pill-tab'+(BULA.area<0?' on':'')+'" data-bula-area="-1">Todos</button>'
-    +d.tab.area.map(function(a,k){return '<button type="button" class="pill-tab'+(BULA.area===k?' on':'')+'" data-bula-area="'+k+'">'+esc(a)+'</button>';}).join('')+'</div>'):'';
-  var corpo=BULA.erro?('<div class="bula-vazio">'+esc(BULA.erro)+' <button type="button" class="btn btn-outline btn-sm bula-tentar">Tentar de novo</button></div>')
-    :(d?'<div class="bula-lista-wrap"></div>':'<div class="bula-vazio">Carregando o bulário…</div>');
-  el.innerHTML=topo+busca+areas+corpo;
-  var q=el.querySelector('.bula-q'),tm=null;
-  if(q)q.addEventListener('input',function(){clearTimeout(tm);tm=setTimeout(function(){BULA.q=q.value;BULA.lim=40;BULA.aberto=-1;bulaRenderLista();},120);});
-  el.querySelectorAll('[data-bula-area]').forEach(function(b){b.addEventListener('click',function(){BULA.area=parseInt(b.getAttribute('data-bula-area'),10);BULA.lim=40;BULA.aberto=-1;bulaRender();});});
-  var tt=el.querySelector('.bula-tentar');if(tt)tt.addEventListener('click',function(){BULA.erro='';bulaRender();bulaCarregar();});
-  bulaRenderLista();
-}
-function admBulaHTML(){
-  return '<div class="adm-ph"><div><h1>Bulário</h1></div></div>'
-    +'<div class="adm-pc"><div style="font-size:.8rem;color:var(--t2);line-height:1.55;margin-bottom:1rem">Por enquanto só no painel dos professores: os alunos ainda não veem o Bulário. Medicamentos com registro ativo na ANVISA, apresentações e situação de venda, com o link para a bula do profissional e do paciente.</div><div class="bula-raiz"></div></div>';
-}
 function initCalc(root){
   calcRoot=root||document.getElementById('panel-calc')||document;
   var el=calcEl('#calc-grid');if(!el)return;
@@ -15564,7 +15273,7 @@ function bindAdmStories(){
   try{renderIgLote();}catch(e){}
 }
 function admRestoreSec(){
-  var ok=['analytics','mural','ref','provas','cursos','estudantes','conteudo','mapas','flashcards','stories','calc','bula','consultorio','rx','chat','perfil','suporte'];
+  var ok=['analytics','mural','ref','provas','cursos','estudantes','conteudo','mapas','flashcards','stories','calc','consultorio','rx','chat','perfil','suporte'];
   var s=lsGet('adm_sec');
   // Sem seção salva (após logout) → Analytics. Com seção salva (reload) → restaura.
   return ok.indexOf(s)>=0?s:'analytics';
@@ -15760,7 +15469,7 @@ function renderAdmSec(sec){
   admCurrentSec=sec;
   try{lsSet('adm_sec',sec);}catch(e){}
   document.querySelectorAll('.adm-nav[data-asec]').forEach(function(b){b.classList.toggle('on',b.dataset.asec===sec);});
-  var titles={provas:'Provas & Questões',cursos:'Cursos',estudantes:'Estudantes',analytics:'Analytics',mural:'Mural de artigos',ref:'Diretrizes',resumos:'Resumos',conteudo:'Podcasts',mapas:'Mapas Mentais',flashcards:'Flashcards',stories:'Questão do Dia (Stories)',qotdarq:'Questão do Dia',pendencias:'Pendências',favs:'Favoritos',calc:'Calculadoras',bula:'Bulário',consultorio:'Consultório',rx:'Prescrição Comentada',chat:'Chat',perfil:'Perfil',suporte:'Suporte',cme:'Enquete — Educação Médica Continuada'};
+  var titles={provas:'Provas & Questões',cursos:'Cursos',estudantes:'Estudantes',analytics:'Analytics',mural:'Mural de artigos',ref:'Diretrizes',resumos:'Resumos',conteudo:'Podcasts',mapas:'Mapas Mentais',flashcards:'Flashcards',stories:'Questão do Dia (Stories)',qotdarq:'Questão do Dia',pendencias:'Pendências',favs:'Favoritos',calc:'Calculadoras',consultorio:'Consultório',rx:'Prescrição Comentada',chat:'Chat',perfil:'Perfil',suporte:'Suporte',cme:'Enquete — Educação Médica Continuada'};
   setText('adm-sec-title',titles[sec]||sec);
   var m=document.getElementById('adm-main');if(!m)return;
   // SEMPRE devolve os painéis movidos (#panel-presc / #mm-live) para o lugar de
@@ -15817,7 +15526,6 @@ function renderAdmSec(sec){
   else if(sec==='conteudo')m.innerHTML=admConteudoHTML();
   else if(sec==='favs')m.innerHTML=admFavsHTML();
   else if(sec==='calc')m.innerHTML=admCalcHTML();
-  else if(sec==='bula')m.innerHTML=admBulaHTML();
   else if(sec==='chat')m.innerHTML=admChatHTML();
   else if(sec==='perfil')m.innerHTML=admPerfilHTML();
   else if(sec==='suporte'){m.innerHTML=admSuporteHTML();bindAdmSupportRefresh();loadAdmSupport();}
@@ -18724,7 +18432,6 @@ function bindAdmSec(sec){
 
   if(sec==='favs'){ try{renderFavoritos(document.getElementById('adm-favs-body'));}catch(e){} }
   if(sec==='calc'){ activeCalc=null; initCalc(main); }
-  if(sec==='bula'){ initBulario(main.querySelector('.bula-raiz')); }
 
   if(sec==='chat'){
     var send=document.getElementById('btn-adm-chat-send');
