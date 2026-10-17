@@ -11,7 +11,8 @@
 // apresentações e preço, levotiroxina na Tireoide, semaglutida no Diabetes);
 // (3) a busca do app (sem acento, por nome, princípio ativo ou fabricante) acha e
 // ordena certo, e sem busca nem área não lista os 12 mil; (4) o link da bula
-// oficial e o escape; (5) a fiação do painel no app do aluno e no do professor.
+// oficial e o escape; (5) a fiação do painel do professor e o app do aluno fechado
+// por enquanto (chave BULARIO_ALUNOS, 17/10/2026).
 'use strict';
 const fs = require('fs');
 const path = require('path');
@@ -87,7 +88,12 @@ ok(ctx.bulaLinkOficial('Glifage XR') === 'https://consultas.anvisa.gov.br/#/bula
 ok(/target="_blank" rel="noopener noreferrer">📄 Bula oficial na ANVISA ↗<\/a>/.test(corpo('bulaDetalheHTML')) && /href="'\+esc\(bulaLinkOficial\(p\[0\]\)\)\+'"/.test(corpo('bulaDetalheHTML')), '(4) o botão da bula oficial não abre em aba nova ou não escapa o endereço');
 ok(/'<span class="bula-nome">'\+esc\(p\[0\]\)\+'<\/span>'/.test(corpo('bulaItemHTML')), '(4) o nome do medicamento não sai escapado');
 // (5) fiação
-ok(/<button class="sb-item" data-p="bula">💊 Bulário<\/button>/.test(SRC) && /<div class="panel" id="panel-bula">/.test(SRC), '(5) o painel do aluno não está no menu ou no corpo');
+ok(/<button class="sb-item" data-p="bula" id="sb-bula" style="display:none">💊 Bulário<\/button>/.test(SRC) && /<div class="panel" id="panel-bula">/.test(SRC), '(5) o painel do aluno saiu do corpo, ou o item do menu não nasce escondido');
+// 17/10/2026, pedido do professor: "não libera o bulário para os alunos; apenas por enquanto para
+// os professores". A chave BULARIO_ALUNOS governa o item do menu e o desvio no goPanel.
+ok(/var BULARIO_ALUNOS=false;/.test(SRC), '(5) o Bulário voltou para os alunos sem o professor pedir (17/10: só professores, por enquanto)');
+ok(/if\(id==='bula'&&!BULARIO_ALUNOS\)id='dash';/.test(corpo('goPanel')), '(5) goPanel não desvia o aluno do Bulário fechado (link ou último painel salvo)');
+ok(/getElementById\('sb-bula'\);if\(b&&BULARIO_ALUNOS\)b\.style\.display='';/.test(SRC), '(5) a chave não religa o item do menu');
 ok(/<button class="adm-nav" data-asec="bula">💊 Bulário<\/button>/.test(SRC) && /else if\(sec==='bula'\)m\.innerHTML=admBulaHTML\(\);/.test(SRC) && /if\(sec==='bula'\)\{ initBulario\(main\.querySelector\('\.bula-raiz'\)\); \}/.test(SRC), '(5) o painel do professor não está ligado');
 ok(/if\(id==='bula'\)initBulario\(\);/.test(SRC), '(5) goPanel não inicia o bulário');
 ok(/support:1,calc:1,bula:1,/.test(SRC), '(5) o bulário saiu da degustação (mesmo acesso das calculadoras)');

@@ -2332,7 +2332,7 @@ input.dmm-inp-subsub{flex:1;min-width:0;background:transparent;color:var(--t2);f
         <button class="sb-item" data-p="resu">📚 Resumos</button>
         <div class="sb-sec">Clínica</div>
         <button class="sb-item" data-p="calc">🧮 Calculadoras</button>
-        <button class="sb-item" data-p="bula">💊 Bulário</button>
+        <button class="sb-item" data-p="bula" id="sb-bula" style="display:none">💊 Bulário</button>
         <button class="sb-item" data-p="simfull">📝 Simulado</button>
         <button class="sb-item" data-p="rx">💊 Prescrição Simulada</button>
         <button class="sb-item" data-p="presc" id="sb-presc" style="display:none">⚕️ Consultório</button>
@@ -8398,6 +8398,7 @@ function goPanel(id){
   // senão o painel morto ainda seria gravado como `last_panel` e o aluno voltaria
   // nele a cada reload, só para ser desviado de novo.
   if(id==='aovivo'&&!AO_VIVO_ATIVO)id='dash';
+  if(id==='bula'&&!BULARIO_ALUNOS)id='dash'; // por enquanto só no painel do professor (ver BULARIO_ALUNOS)
   if(!canSeePanel(id)){showLockedPanel(id);return;}
   // `emc` é ITEM DE MENU próprio e PAINEL REAPROVEITADO: abre o de Cursos já
   // filtrado no curso da Educação Médica Continuada. Duplicar o painel
@@ -11111,6 +11112,13 @@ function calcEl(sel){return (calcRoot||document.getElementById('panel-calc')||do
 // da bula NÃO está aqui: pertence ao fabricante, e o Bulário Eletrônico da
 // ANVISA recusa servidores fora do Brasil. O botão leva à bula oficial, que abre
 // no navegador do aluno (no Brasil) e é sempre a versão vigente.
+// ⚠️ CHAVE DO BULÁRIO NO APP DO ALUNO. Pedido do professor (17/10/2026): "não libera
+// o bulário para os alunos; apenas por enquanto para os professores". Com `false`, o
+// item some do menu do aluno e goPanel desvia quem chegar por link ou pelo último
+// painel salvo; o painel do professor (adm-nav "bula") segue igual. Trocar para `true`
+// religa tudo, sem mexer em mais nada.
+var BULARIO_ALUNOS=false;
+(function(){var b=document.getElementById('sb-bula');if(b&&BULARIO_ALUNOS)b.style.display='';})();
 var BULA={d:null,carregando:false,erro:'',q:'',area:-1,aberto:-1,lim:40,root:null,idx:null};
 // Área do Bulário → subespecialidade, só para a COR da etiqueta (muralSubMeta).
 var BULA_AREA_SUB={'Diabetes':'Diabetes','Obesidade':'Obesidade','Lípides':'Lípides','Tireoide':'Tireoide','Adrenal e corticoides':'Adrenal','Hipófise':'Neuroendocrinologia','Osso e cálcio':'Osteometabolismo','Hormônios sexuais':'Endocrinologia Feminina'};
@@ -11225,7 +11233,7 @@ function bulaRender(){
 }
 function admBulaHTML(){
   return '<div class="adm-ph"><div><h1>Bulário</h1></div></div>'
-    +'<div class="adm-pc"><div style="font-size:.8rem;color:var(--t2);line-height:1.55;margin-bottom:1rem">O mesmo bulário dos alunos: medicamentos com registro ativo na ANVISA, apresentações e preço máximo da CMED, com o link para a bula oficial.</div><div class="bula-raiz"></div></div>';
+    +'<div class="adm-pc"><div style="font-size:.8rem;color:var(--t2);line-height:1.55;margin-bottom:1rem">Por enquanto só no painel dos professores: os alunos ainda não veem o Bulário. Medicamentos com registro ativo na ANVISA, apresentações e preço máximo da CMED, com o link para a bula oficial.</div><div class="bula-raiz"></div></div>';
 }
 function initCalc(root){
   calcRoot=root||document.getElementById('panel-calc')||document;

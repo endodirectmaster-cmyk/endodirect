@@ -11,9 +11,17 @@ Pedido do professor: *"Programa também para ter uma ferramenta de 'Bulário'
 atualizada na plataforma. Se possível, de todas a medicações disponíveis no Brasil.
 Se não for possível, de pelo menos das medicações ligadas a endocrinologia."*
 
+**⚠️ Só professores, por enquanto (17/10/2026).** Pedido do professor: *"não libera o
+bulário para os alunos; apenas por enquanto para os professores"*. A chave
+`BULARIO_ALUNOS=false` (index.html, junto do `var BULA`) esconde o item do menu do
+aluno e faz o `goPanel` desviar para o início quem chegar por link ou pelo último
+painel salvo; o painel do professor (`adm-nav` "bula") segue igual. Para liberar:
+trocar para `true`, e o teste `scripts/test-bulario.js` precisa ser ajustado junto
+(ele prende a chave em `false` de propósito).
+
 **O que é.** Painel **💊 Bulário** na seção Clínica (aluno, logo abaixo de
-Calculadoras; também no painel do professor e na degustação, com o mesmo acesso
-das calculadoras). Busca por nome comercial, princípio ativo ou fabricante, sem
+Calculadoras, hoje oculto; no painel do professor; e na degustação, com o mesmo
+acesso das calculadoras, quando liberado). Busca por nome comercial, princípio ativo ou fabricante, sem
 acento e sem caixa; filtro por área da endocrinologia; ficha de cada medicamento
 com princípio ativo, detentor, registro e validade, categoria, classe terapêutica,
 apresentações com preço máximo ao consumidor e situação, e o botão **"📄 Bula
