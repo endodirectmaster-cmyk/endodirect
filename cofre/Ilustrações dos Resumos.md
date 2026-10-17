@@ -32,9 +32,25 @@ ampliador. O editor do professor preserva a figura ao salvar (ramo `figure` do
 
   A moldura é igual à das figuras do fim do capítulo (mesmo cartão, título, subtítulo e
   paleta).
-- **Sem recorte de livro.** O professor autorizou recortar figuras de livros com
-  legenda, mas não aceitei: a figura é da editora. Quando o conteúdo seguir um livro, a
-  legenda diz "Baseado em: <livro>".
+- **Recorte de livro: decisão do professor (17/10/2026).** Expliquei que a figura é da
+  editora e que traduzir ou adaptar exige licença (Lei 9.610/98, art. 29), e ofereci três
+  caminhos: livros de licença aberta, licença da editora ou desenho próprio. Ele decidiu:
+  *"Apenas faça recorte da gravura e abaixo coloque a referência do livro abreviado"*.
+  - **Como se faz:**
+    - recorte da figura sem nenhuma alteração (nem tradução);
+    - embaixo, a referência abreviada com autor, obra, edição e número da figura;
+    - só a figura que o trecho do capítulo pede.
+
+    É o formato mais próximo do direito de citação (art. 46, III).
+  - **Retirada:** se a editora pedir, a figura sai.
+  - **Desenho próprio:** onde o livro tiver figura equivalente, o recorte substitui o
+    desenho; onde não tiver, o desenho fica.
+  - **Origem dos livros:** estão no Drive, em Livros › Endocrino Geral (Williams,
+    Greenspan, Vilar 8ª ed. 2024, Essencial em Endocrinologia).
+    - O conector baixa arquivos de até 10 MB, e os livros têm de 30 a 68 MB.
+    - Ele não lê o texto do Williams nem do Greenspan, e do Vilar lê só até o capítulo 5.
+    - Por isso, o professor exporta as páginas (PDF de até 10 MB na pasta Plataforma ED)
+      ou manda o print da figura.
 - **Um arquivo por ilustração** (`ilus/<id>.js`), com:
   - capítulo (`tema`);
   - trecho depois do qual entra (`depoisDe`, que aparece uma vez só no capítulo);

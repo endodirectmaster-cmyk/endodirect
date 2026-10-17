@@ -301,5 +301,17 @@ ok(/Sua central de revisão: as <b>questões da Questão do Dia<\/b>/.test(html)
 ok(/admPendSubhead\('Questão do Dia · aguardando aprovação'/.test(html),
   'a seção da Questão do Dia, que é a que fica, saiu junto sem querer');
 
+// ── Regra 10 do gerador: o exemplo usa a meta da SBC 2025 (17/10/2026) ────
+// O exemplo dizia "muito alto risco, meta <55" na regra que manda seguir a SBC 2025
+// (muito alto <50). O gerador copiou o número: uma Questão do Dia atribuiu <55 à SBC.
+{
+  const i = html.indexOf("'10. LÍPIDES / LDL-c");
+  const regra10 = i < 0 ? '' : html.slice(i, html.indexOf("\n", i) < 0 ? i + 2000 : html.indexOf("',", i));
+  ok(regra10.length > 200, 'a regra 10 do CLINICAL_AUTHORING não foi encontrada');
+  ok(/muito alto <50/.test(regra10), 'a regra 10 perdeu a meta do muito alto risco da SBC 2025 (<50)');
+  ok(!/muito alto risco, meta <55/.test(regra10),
+    'o exemplo da regra 10 voltou a dar <55 ao muito alto risco: na SBC 2025 é <50 (<55 é a meta da ADA)');
+}
+
 if (falhas.length) { console.error('✗ ' + falhas.length + ' falha(s):\n - ' + falhas.join('\n - ')); process.exit(1); }
 console.log('✓ meta de LDL no PREVENT: faixa sobe por diabetes/LDL, metas da tabela da SBC, gatilho de 30 mg/dL, e o escore não vira meta de 30 anos');
