@@ -77,6 +77,19 @@ mutações mortas: lista vazia sem busca, normalização de acento, link, ordena
 degustação, leitura do CSV, caractere de controle no arquivo…) e `scratchpad/bulario-navegador/check.js` (aluno no celular e no
 notebook e professor: busca, ficha, preço, link, área, sem rolagem horizontal).
 
+**17/10: "os valores estão bem diferentes das farmácias" e "bula profissional".**
+- **Os preços batem com a CMED, centavo a centavo.** Conferido na planilha original
+  (Ozivy e Ozempic, colunas "PF 18 %" e "PMC 18 %"). A diferença para o balcão é de
+  natureza: o **PMC é o teto legal** de venda, e a farmácia costuma vender abaixo dele.
+  Exemplo: Ozempic, PMC R$ 1.314,37 e preço de fábrica (PF 18 %) R$ 979,80. A própria
+  lista da CMED põe o Ozivy 2 × 1,5 mL pelo mesmo preço do 2 × 3 mL (R$ 2.628,75), o
+  que parece erro dela.
+- **A ANVISA recusa qualquer servidor de nuvem, não só os de fora do Brasil.** Função
+  temporária no Supabase com `x-region: sa-east-1` (IP da AWS em São Paulo): 403, igual
+  aos EUA e a este ambiente. Logo, não dá para baixar nem guardar a bula pelo servidor;
+  o PDF só abre no navegador de quem usa (rede residencial ou celular no Brasil). A
+  função `teste-anvisa-bulario` virou stub 410.
+
 **Lições da construção:**
 - **Codificação do CSV da ANVISA (Windows-1252).** O `TextDecoder('latin1')` do
   Node 22 (o daqui) lê 0x96 e 0x92 como travessão e apóstrofo; o do Node 20 (o do
