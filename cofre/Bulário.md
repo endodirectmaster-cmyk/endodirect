@@ -96,7 +96,16 @@ pelo jeito do sistema atual dificilmente ainda responde.
 rodapé do Bulário Eletrônico. (1) **Portal de APIs** (api.anvisa.gov.br): credenciais
 (Client ID e Client Secret) só com login Gov.br; os serviços listados publicamente
 (filas, listas, UDI, GMDN, nomes técnicos, assuntos de petição) não incluem o bulário;
-daqui o endereço nem abre (rede do ambiente). (2) **Dados abertos**
+daqui o endereço nem abre (rede do ambiente). O cliente público `anvisa` 0.5.0 (PyPI, repositório
+vasfvitor/anvisa-api; lido sem executar) confirma: gateway
+`https://api-gateway.prd.apps.anvisa.gov.br/consultas-externas-api`, token por OpenID
+Connect em `https://acesso.prd.apps.anvisa.gov.br/auth/realms/externo/protocol/openid-connect/token`
+(Client ID e Client Secret), e só as famílias `/api/v1/fila`, `/api/v1/lista`,
+`/api/v1/nomeTecnico`, `/api/v1/udi` e `/api/v1/assunto`; nada de bula nem de
+medicamento. Em 17/10 o professor entrou no portal (login Gov.br) e perguntou se a API dá
+acesso ao bulário: pedido a ele que veja o catálogo de APIs do portal; se houver bulário,
+são preciso as credenciais dele guardadas como segredo do ambiente e a liberação dos dois
+endereços acima na rede (e ainda testar se o gateway aceita servidor de nuvem). (2) **Dados abertos**
 (dados.anvisa.gov.br/dados/CONSULTAS/DOCUMENTOS/, abre daqui): `TA_CONSULTA_BULA_PRODUTO.CSV`
 (8.824 produtos com a bula vigente: id, nome, registro, processo, CNPJ, empresa, id do
 documento, expediente, data, número da transação; sem cabeçalho, Windows-1252) e
