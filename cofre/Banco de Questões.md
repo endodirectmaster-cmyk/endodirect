@@ -1,6 +1,6 @@
 ---
 tags: [cofre, questoes]
-atualizado: 2026-10-12
+atualizado: 2026-10-17
 ---
 
 # Banco de Questões
@@ -306,10 +306,9 @@ formato dos lotes de 21/08 (sem `id`; a chave de merge do painel fica `stem|answ
   code|stem|A|B|C|D|answer|dificuldade|explanation|area|ano|inst); 0 código repetido.
 - Entrega: assinante (`plano`) **2.085 → 2.135**; `curso:endoteem` **2.711 → 2.761**;
   degustação: 46 das 50 seguem, entram as questões 2077, 2080, 2088 e 2089.
-- ⚠️ **`tmp_estudos_2026` não foi dropada.** O `DROP` pelo conector do Supabase espera
-  confirmação manual e expira em 60 s (nenhuma trava no banco). A tabela está privada (RLS
-  ligado, sem grant) e as 50 linhas foram conferidas idênticas no banco; o SQL com guarda
-  para o editor do Supabase está em [[Pendências]].
+- ✅ **`tmp_estudos_2026` apagada em 17/10/2026** pelo professor, no editor SQL do
+  Supabase, com guarda: nenhuma das 50 podia faltar no banco. Pelo conector, o `DROP`
+  espera confirmação manual e expira em 60 s.
 
 ### ✅ (resolvido em 12/10) O `member_content` do Gold passou de ~5,34 para 5,43 MB
 > **Resolvido no mesmo dia:** as questões saíram do `member_content` e vêm em páginas de

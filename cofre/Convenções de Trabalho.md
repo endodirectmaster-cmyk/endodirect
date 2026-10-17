@@ -5,6 +5,12 @@ atualizado: 2026-10-17
 
 # Convenções de Trabalho
 
+## 🇧🇷 TUDO EM PORTUGUÊS COM O PROFESSOR (2026-10-17)
+
+O professor, em 17/10: *"está tudo em inglês"*. As linhas curtas de andamento e uma
+resposta inteira tinham saído em inglês. **Toda mensagem ao professor é em português:**
+resposta final, linha de andamento durante o trabalho, legenda de arquivo e pergunta.
+
 ## ⏸️ LIMITE DE USO: PAUSAR EM 90% E RETOMAR NO HORÁRIO DA RENOVAÇÃO (2026-10-06; 90% desde 2026-10-16)
 
 **Regra em vigor (16/10/2026).** Pedido do professor: *"Programe sempre para

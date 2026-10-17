@@ -73,8 +73,10 @@ baralhos foi junto (sw v314). Detalhes em [[Decisões]].
 4. [x] **Migrar SOP → SOMP no acervo do banco:** gravado em 17/10 (seção "SOMP no
    acervo do banco", no topo).
 3. [ ] **Apagar a tabela `public.tmp_jargao_qotd_20261017`.** Já foi aplicada, está com
-   RLS e sem grants. O DROP pelo conector pede confirmação e expirou; mesma situação da
-   `tmp_estudos_2026`.
+   RLS e sem grants. O professor autorizou em 17/10 ("Ok"), depois da checagem de zumbis
+   das 20h25 UTC, que ainda a usa. O DROP pelo conector expira (ver o item da
+   `tmp_estudos_2026`); o professor roda no editor SQL do Supabase, a partir das 20h30
+   UTC: `drop table public.tmp_jargao_qotd_20261017;`
 
 ## 📋 Questão do Dia na prancheta (17/10)
 
@@ -123,21 +125,12 @@ ficam em [[Bulário]], caso a ideia volte (por exemplo, com uma base licenciada)
    ~1,6 MB, e lote novo só aumenta o número de páginas. O ensaio por perfil achou um caso
    que já estava acima do limite antes do lote: Gold com EndoTEEM, 7,24 MB. Ver
    [[Decisões]] 2026-10-12 e [[Dados e Supabase]].
-2. **Dropar `tmp_estudos_2026`** — as 50 linhas estão no banco, idênticas, e nada depende
-   da tabela (sem view, função ou chave estrangeira), mas o `DROP` pelo conector do
-   Supabase espera confirmação manual e expira em 60 s: todas as tentativas de 12/10
-   (pelo `execute_sql` e, depois, pelo `apply_migration`) expiraram, sem nenhuma trava no
-   banco. Está privada (RLS ligado, sem grant). Para rodar no editor SQL do Supabase,
-   com guarda:
-   ```sql
-   do $$ begin
-     if (select count(*) from public.tmp_estudos_2026 t where not exists (
-           select 1 from jsonb_array_elements((select payload->'provas' from public.endodirect_global_state where id='main')) v
-            where v = t.item)) > 0
-     then raise exception 'há linha fora do banco: não dropar'; end if;
-   end $$;
-   drop table public.tmp_estudos_2026;
-   ```
+2. ✅ **`tmp_estudos_2026` apagada em 17/10, 19h41 UTC**, pelo professor, no editor SQL
+   do Supabase ("Success. No rows returned"), com a guarda pelo código. Conferido depois:
+   a tabela não existe mais, e as 50 questões (ENDODIRECT-2068 a 2117) estão no banco.
+   O `DROP` pelo conector expirou duas vezes antes, com o professor na conversa: a
+   confirmação do conector abre em janela própria e expira em 60 s, e o "Ok" no chat não
+   conta. **Para apagar tabela, o caminho é o editor SQL** (ver [[Dados e Supabase]]).
 3. **Backups `bkp_provas_*`** (21/08, 21/08 SBD e 12/10) podem sair quando o professor
    confirmar os lotes.
 
