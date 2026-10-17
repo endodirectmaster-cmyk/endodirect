@@ -780,6 +780,41 @@ html[data-theme="light"] .mural-text .mural-h1,html[data-theme="light"] .mural-t
 .qa-badge.err{background:var(--red-l);color:var(--red)}
 .qa-badge.new{background:var(--gold-l);color:var(--gold)}
 .qa-badge.hoje{background:var(--blue-l);color:var(--blue)}
+/* Questão do Dia numa PRANCHETA (pedido do professor, 17/10/2026, com figura de
+   referência): madeira, prendedor de metal e folha branca com o caso. É um objeto
+   físico, com as mesmas cores nos dois temas — por isso a tinta da folha é FIXA e
+   escura, e não os tokens do tema (no escuro, var(--tx) daria texto claro no papel). */
+.qp{position:relative;margin:38px auto 0;max-width:780px;background:#c69c6d;border:5px solid #1c1714;border-radius:26px;padding:26px 16px 16px;box-shadow:0 8px 20px rgba(0,0,0,.22)}
+.qp-clip{position:absolute;left:50%;top:-16px;transform:translateX(-50%);width:clamp(112px,30%,190px);height:40px;border:4px solid #1c1714;border-radius:9px;background:linear-gradient(#cdd1d4 0 62%,#8d949a 62% 100%);z-index:2}
+.qp-clip::before{content:'';position:absolute;left:50%;bottom:100%;transform:translateX(-50%);width:56px;height:24px;border:4px solid #1c1714;border-bottom:0;border-radius:28px 28px 0 0;background:#cdd1d4}
+.qp-clip::after{content:'';position:absolute;left:50%;top:-20px;transform:translateX(-50%);width:16px;height:16px;box-sizing:border-box;border:4px solid #1c1714;border-radius:50%;background:#eef0f2}
+.qp-folha{position:relative;background:#fff;border:4px solid #1c1714;border-radius:8px;padding:26px 18px 16px;color:#1f2937}
+.qp-topo{position:relative;display:flex;justify-content:center;align-items:center;margin-bottom:.8rem;padding:0 2rem}
+.qp-tit{font-weight:800;font-size:1.3rem;line-height:1.25;color:#111827;text-align:center;text-wrap:balance}
+.qp-fav{position:absolute;right:-.4rem;top:50%;transform:translateY(-50%)}
+.qp .fav-star{color:#94a3b8}
+.qp .fav-star.on,.qp .fav-star:hover{color:#d97706}
+.qp-caso{font-size:.9rem;line-height:1.62;color:#1f2937;margin-bottom:.6rem}
+.qp-perg{font-size:.93rem;line-height:1.5;font-weight:700;color:#0b2545;margin:.1rem 0 .85rem}
+.qp-opts{display:flex;flex-direction:column;gap:.45rem}
+.qp-opt{display:flex;gap:.6rem;align-items:flex-start;width:100%;text-align:left;padding:.58rem .7rem;border-radius:10px;border:1.5px solid #cbd5e1;background:#f8fafc;color:#0f172a;font-family:var(--font);font-size:.85rem;line-height:1.45;cursor:pointer;transition:border-color .12s,background .12s}
+.qp-opt:hover:not([disabled]){border-color:#2563eb;background:#eff6ff}
+.qp-opt:focus-visible{outline:2px solid #2563eb;outline-offset:2px}
+.qp-opt[disabled]{cursor:default}
+.qp-letra{flex-shrink:0;width:1.55rem;height:1.55rem;border-radius:50%;display:inline-flex;align-items:center;justify-content:center;font-weight:800;font-size:.78rem;background:#e0e7ff;color:#1d4ed8}
+.qp-opt.certa{border-color:#16a34a;background:#ecfdf3;color:#14532d}
+.qp-opt.certa .qp-letra{background:#16a34a;color:#fff}
+.qp-opt.errada{border-color:#dc2626;background:#fef2f2;color:#7f1d1d}
+.qp-opt.errada .qp-letra{background:#dc2626;color:#fff}
+.qp-opt.apagada{opacity:.6}
+.qp-fb{margin-top:.75rem;padding:.65rem .8rem;border-radius:10px;border-left:4px solid transparent;font-size:.82rem;line-height:1.55;color:#1f2937}
+.qp-fb.ok{background:#ecfdf3;border-left-color:#16a34a}
+.qp-fb.err{background:#fef2f2;border-left-color:#dc2626}
+.qp-fb b{display:block;margin-bottom:.2rem}
+.qp-fb.ok b{color:#15803d}
+.qp-fb.err b{color:#b91c1c}
+@media(max-width:600px){.qp{border-width:4px;border-radius:20px;padding:24px 9px 10px}.qp-folha{border-width:3px;padding:24px 12px 13px}.qp-tit{font-size:1.15rem}}
+@media(prefers-reduced-motion:reduce){.qp-opt{transition:none}}
 /* Enquete do programa de Educação Médica Continuada (só plano Gold, no dashboard) */
 .cme-chip{display:inline-flex;align-items:center;gap:.3rem;padding:.4rem .68rem;border-radius:999px;border:1px solid var(--bd);background:var(--s2);color:var(--t2);font-size:.76rem;font-weight:600;cursor:pointer;transition:all .12s}
 .cme-chip:hover{border-color:var(--gold)}
@@ -8620,7 +8655,7 @@ function renderAtivacaoEm(alvoId){
       +'</div>':'')
     +'</div>';
   var host=document.getElementById(alvoId+'-q');
-  if(host)host.innerHTML=qotdCardHTML(q,ans,'🧠 Sua primeira questão');
+  if(host)host.innerHTML=qotdCardHTML(q,ans,'Sua primeira questão');
   if(!ans&&host){
     host.querySelectorAll('[data-qotd-opt]').forEach(function(b){
       b.addEventListener('click',function(){
@@ -8789,27 +8824,40 @@ function qotdTodays(){
   var posted=valid.filter(function(x){return x.status==='posted';});
   return posted.length?posted[posted.length-1]:null;
 }
+// O caso e a pergunta final ("Qual a melhor conduta inicial?") em separado: a pergunta
+// vai em destaque, abaixo do caso, como numa prancheta de plantão. Só separa quando a
+// última frase é mesmo uma pergunta que começa com maiúscula; senão o enunciado vai
+// inteiro (nunca corta no meio de "ex." ou de uma abreviação).
+function qotdPartes(txt){
+  var s=String(txt||'').trim();
+  var m=/^([\s\S]{40,}?[.!:;)\]])\s+([A-ZÁÉÍÓÚÂÊÔÃÕÇ][^.!?]{3,300}\?)$/.exec(s);
+  return m?{caso:m[1],perg:m[2]}:{caso:s,perg:''};
+}
+// A Questão do Dia numa PRANCHETA (pedido do professor, 17/10/2026): prendedor, folha
+// branca, o caso e a pergunta em destaque. O mesmo cartão no arquivo do aluno, na
+// janela do mural, no "Comece por aqui" e na aba "Como o aluno vê" do professor.
 function qotdCardHTML(q,ans,title){
   var ltrs=['A','B','C','D'].filter(function(L){return q.options[L];});
   var opts=ltrs.map(function(L){
-    var bd='1px solid #cdd6e6',bg='#ffffff',fg='#16233f';
-    if(ans){if(L===q.answer){bd='1px solid var(--grn)';bg='#e7f7ee';fg='#14512f';}else if(L===ans.letter){bd='1px solid var(--red)';bg='#fdeaea';fg='#7a1f1f';}}
-    return '<button type="button" '+(ans?'disabled ':'')+'data-qotd-opt="'+L+'" style="text-align:left;display:flex;gap:.55rem;align-items:flex-start;padding:.6rem .7rem;border-radius:var(--rs);width:100%;font-size:.82rem;line-height:1.45;cursor:'+(ans?'default':'pointer')+';border:'+bd+';background:'+bg+';color:'+fg+'"><span style="font-weight:800;color:#2c5fc4;flex-shrink:0">'+L+'</span><span>'+esc(q.options[L])+'</span></button>';
+    var cls='qp-opt';
+    if(ans)cls+=(L===q.answer)?' certa':(L===ans.letter?' errada':' apagada');
+    return '<button type="button" class="'+cls+'" '+(ans?'disabled ':'')+'data-qotd-opt="'+L+'"><span class="qp-letra">'+L+'</span><span>'+esc(q.options[L])+'</span></button>';
   }).join('');
   var fb='';
   if(ans){
-    fb='<div style="margin-top:.6rem;padding:.55rem .7rem;border-radius:var(--rs);font-size:.78rem;line-height:1.5;text-align:justify;background:'+(ans.ok?'var(--grn-l)':'var(--red-l)')+';color:var(--t2)"><b style="color:'+(ans.ok?'var(--grn)':'var(--red)')+'">'+(ans.ok?'✓ Você acertou!':'✗ Resposta correta: '+esc(q.answer))+'</b>'+(q.explanation?'<div style="margin-top:.35rem">'+esc(q.explanation)+'</div>':'')+'</div>';
+    fb='<div class="qp-fb '+(ans.ok?'ok':'err')+'"><b>'+(ans.ok?'✓ Você acertou!':'✗ Resposta correta: '+esc(q.answer))+'</b>'+(q.explanation?'<div>'+esc(q.explanation)+'</div>':'')+'</div>';
   }
-  return '<div class="card" style="border:1px solid var(--gold);margin:0" data-fav-tit="'+esc(String(q.stem||'').slice(0,180))+'" data-fav-sub="'+esc(q.area||q.sub||'')+'">'
-    +'<div style="display:flex;justify-content:space-between;align-items:center;gap:.5rem;flex-wrap:wrap;margin-bottom:.5rem">'
-    +'<span style="font-weight:800;color:var(--gold);font-size:.92rem">'+(title||'🧠 Questão do Dia')+'</span>'
-    +'<span style="margin-left:auto">'+favStarHTML('questao',q)+'</span>'
-    +'</div>'
-    +'<div style="font-size:.86rem;line-height:1.55;color:var(--tx);opacity:.82;text-align:justify;margin-bottom:.7rem">'+esc((q.teem?String(q.teem).trim()+' ':'')+String(q.stem).trim())+'</div>'
+  var p=qotdPartes(q.stem);
+  return '<div class="qp" data-fav-tit="'+esc(String(q.stem||'').slice(0,180))+'" data-fav-sub="'+esc(q.area||q.sub||'')+'">'
+    +'<div class="qp-clip" aria-hidden="true"></div>'
+    +'<div class="qp-folha">'
+    +'<div class="qp-topo"><span class="qp-tit">'+esc(title||'Questão do dia')+'</span><span class="qp-fav">'+favStarHTML('questao',q)+'</span></div>'
+    +'<div class="qp-caso">'+esc((q.teem?String(q.teem).trim()+' ':'')+p.caso)+'</div>'
     +qFigHTML(q)
-    +'<div style="display:flex;flex-direction:column;gap:.4rem">'+opts+'</div>'
+    +(p.perg?'<div class="qp-perg">'+esc(p.perg)+'</div>':'')
+    +'<div class="qp-opts">'+opts+'</div>'
     +'<div id="qotd-fb">'+fb+'</div>'
-    +'</div>';
+    +'</div></div>';
 }
 function qotdModalEl(){
   var m=document.getElementById('qotd-modal');
@@ -8886,6 +8934,28 @@ function qotdArchAnswer(q,letter){
   qotdSaveAns(mm,q,ok);
   try{renderPerfBars();updateDashRec();}catch(e){}
 }
+// A lista do arquivo, a mesma no painel do aluno e na aba "Como o aluno vê" do
+// professor: muda só o prefixo do id e do atributo (`pre`: 'qa' no aluno), para as
+// duas nunca se cruzarem quando o professor tem as duas telas no DOM.
+function qotdArchListHTML(all,mm,aberto,ordem,hoje,pre){
+  var list=all.slice().sort(function(a,b){var da=qotdArchDate(a),db=qotdArchDate(b);return ordem==='old'?(da-db):(db-da);});
+  var done=0;all.forEach(function(q){if(mm[q.id])done++;});
+  var sortOpts='<option value="recent"'+(ordem!=='old'?' selected':'')+'>Mais recentes primeiro</option><option value="old"'+(ordem==='old'?' selected':'')+'>Mais antigas primeiro</option>';
+  return '<div style="display:flex;gap:.6rem;flex-wrap:wrap;align-items:center;justify-content:space-between;margin-bottom:.7rem">'
+      +'<span style="font-size:.74rem;color:var(--t3)">'+done+' de '+all.length+' respondida'+(all.length===1?'':'s')+'</span>'
+      +'<select id="'+pre+'-sort" style="font-size:.74rem;padding:.3rem .5rem;max-width:220px">'+sortOpts+'</select>'
+    +'</div>'
+    +list.map(function(q){
+      var ans=mm[q.id]||null,open=(aberto===q.id);
+      var badge=ans?(ans.ok?'<span class="qa-badge ok">✓ Acertou</span>':'<span class="qa-badge err">✗ Errou</span>'):'<span class="qa-badge new">Responder</span>';
+      var pd=qotdArchDate(q);
+      var dstr=pd?new Date(pd).toLocaleDateString('pt-BR'):'—';
+      var hj=(hoje&&q.id===hoje.id)?'<span class="qa-badge hoje">🧠 De hoje</span>':'';
+      var head='<button type="button" class="qa-head" data-'+pre+'-toggle="'+esc(q.id)+'"><span class="qa-snip">'+esc(dstr)+'</span>'+hj+badge+'<span class="qa-caret">'+(open?'▴':'▾')+'</span></button>';
+      var body=open?'<div class="qa-body">'+qotdCardHTML(q,ans)+'</div>':'';
+      return '<div class="qa-item'+(open?' open':'')+'">'+head+body+'</div>';
+    }).join('');
+}
 function renderQotdArchive(){
   var el=document.getElementById('panel-qotd-body');if(!el)return;
   var all=qotdPublished(),mm=qotdReadAns();
@@ -8894,23 +8964,7 @@ function renderQotdArchive(){
   // telas discordassem, o selo apontaria uma questão e a janela outra.
   var hoje=qotdTodays();
   if(qotdArchAuto){qotdArchAuto=false;if(hoje&&!mm[hoje.id])qotdArchOpen=hoje.id;}
-  var list=all.slice().sort(function(a,b){var da=qotdArchDate(a),db=qotdArchDate(b);return qotdArchSort==='old'?(da-db):(db-da);});
-  var done=0;all.forEach(function(q){if(mm[q.id])done++;});
-  var sortOpts='<option value="recent"'+(qotdArchSort!=='old'?' selected':'')+'>Mais recentes primeiro</option><option value="old"'+(qotdArchSort==='old'?' selected':'')+'>Mais antigas primeiro</option>';
-  el.innerHTML='<div style="display:flex;gap:.6rem;flex-wrap:wrap;align-items:center;justify-content:space-between;margin-bottom:.7rem">'
-      +'<span style="font-size:.74rem;color:var(--t3)">'+done+' de '+all.length+' respondida'+(all.length===1?'':'s')+'</span>'
-      +'<select id="qa-sort" style="font-size:.74rem;padding:.3rem .5rem;max-width:220px">'+sortOpts+'</select>'
-    +'</div>'
-    +list.map(function(q){
-      var ans=mm[q.id]||null,open=(qotdArchOpen===q.id);
-      var badge=ans?(ans.ok?'<span class="qa-badge ok">✓ Acertou</span>':'<span class="qa-badge err">✗ Errou</span>'):'<span class="qa-badge new">Responder</span>';
-      var pd=qotdArchDate(q);
-      var dstr=pd?new Date(pd).toLocaleDateString('pt-BR'):'—';
-      var hj=(hoje&&q.id===hoje.id)?'<span class="qa-badge hoje">🧠 De hoje</span>':'';
-      var head='<button type="button" class="qa-head" data-qa-toggle="'+esc(q.id)+'"><span class="qa-snip">'+esc(dstr)+'</span>'+hj+badge+'<span class="qa-caret">'+(open?'▴':'▾')+'</span></button>';
-      var body=open?'<div class="qa-body">'+qotdCardHTML(q,ans)+'</div>':'';
-      return '<div class="qa-item'+(open?' open':'')+'">'+head+body+'</div>';
-    }).join('');
+  el.innerHTML=qotdArchListHTML(all,mm,qotdArchOpen,qotdArchSort,hoje,'qa');
   var so=document.getElementById('qa-sort');if(so)so.addEventListener('change',function(){qotdArchSort=so.value;renderQotdArchive();});
   el.querySelectorAll('[data-qa-toggle]').forEach(function(h){h.addEventListener('click',function(){var id=h.getAttribute('data-qa-toggle');qotdArchOpen=(qotdArchOpen===id)?null:id;qotdArchRolar=false;renderQotdArchive();});});
   if(qotdArchOpen){
@@ -8976,6 +9030,36 @@ function bindAdmQotdArchive(){
   var fs=document.getElementById('adm-qa-sub');if(fs)fs.addEventListener('change',function(){admQotdArchSub=fs.value;admQotdArchOpen=null;renderAdmSec('qotdarq');});
   var so=document.getElementById('adm-qa-sort');if(so)so.addEventListener('change',function(){admQotdArchSort=so.value;renderAdmSec('qotdarq');});
   document.querySelectorAll('[data-admqa-toggle]').forEach(function(h){h.addEventListener('click',function(){var id=h.getAttribute('data-admqa-toggle');admQotdArchOpen=(admQotdArchOpen===id)?null:id;renderAdmSec('qotdarq');});});
+}
+// ── ABA "COMO O ALUNO VÊ" (painel do professor, ao lado de "Postados") ──
+// Pedido do professor (17/10/2026): ver a Questão do Dia como o aluno vê. É o mesmo
+// arquivo do aluno, com a prancheta; a de hoje abre sozinha. A resposta aqui é só de
+// TESTE: fica na memória da página — nada em DB.qotd, nada de studyEvent, nada de
+// sincronizar —, senão o professor entraria nas contas de quem respondeu.
+var admQotdAlunoOpen=null,admQotdAlunoSort='recent',admQotdAlunoAuto=true,admQotdAlunoAns={};
+function admQotdAlunoHTML(){
+  return '<div class="card" style="margin-bottom:1rem"><div style="display:flex;gap:.6rem;flex-wrap:wrap;align-items:center;justify-content:space-between">'
+    +'<div style="font-size:.79rem;color:var(--t2);line-height:1.55;flex:1;min-width:220px">É assim que o aluno vê a Questão do Dia: a de hoje aberta no topo e as anteriores por data. Toque numa alternativa para ver o gabarito comentado como ele vê. Aqui a resposta <b>não é gravada</b> nem entra nas estatísticas.</div>'
+    +'<button type="button" class="btn btn-outline btn-sm" id="adm-qal-limpar">↺ Limpar respostas de teste</button></div></div>'
+    +'<div id="adm-qotd-aluno"></div>';
+}
+function renderAdmQotdAluno(){
+  var el=document.getElementById('adm-qotd-aluno');if(!el)return;
+  var all=qotdPublished();
+  if(!all.length){el.innerHTML='<div class="empty">Nenhuma questão publicada ainda.</div>';return;}
+  var hoje=qotdTodays();
+  if(admQotdAlunoAuto){admQotdAlunoAuto=false;if(hoje&&!admQotdAlunoAns[hoje.id])admQotdAlunoOpen=hoje.id;}
+  el.innerHTML=qotdArchListHTML(all,admQotdAlunoAns,admQotdAlunoOpen,admQotdAlunoSort,hoje,'admqal');
+  var so=document.getElementById('admqal-sort');if(so)so.addEventListener('change',function(){admQotdAlunoSort=so.value;renderAdmQotdAluno();});
+  el.querySelectorAll('[data-admqal-toggle]').forEach(function(h){h.addEventListener('click',function(){var id=h.getAttribute('data-admqal-toggle');admQotdAlunoOpen=(admQotdAlunoOpen===id)?null:id;renderAdmQotdAluno();});});
+  el.querySelectorAll('[data-qotd-opt]').forEach(function(b){b.addEventListener('click',function(){
+    if(b.disabled||!admQotdAlunoOpen)return;
+    var q=null;for(var i=0;i<all.length;i++){if(all[i].id===admQotdAlunoOpen){q=all[i];break;}}
+    if(!q)return;
+    var L=b.getAttribute('data-qotd-opt');
+    admQotdAlunoAns[q.id]={letter:L,ok:L===q.answer,at:Date.now()};
+    renderAdmQotdAluno();
+  });});
 }
 function setText(id,v){var e=document.getElementById(id);if(e)e.textContent=v;}
 function renderPerfBars(){
@@ -14630,7 +14714,7 @@ function bindAdmPendencias(){
   host.querySelectorAll('[data-pend-ok]').forEach(function(b){b.addEventListener('click',function(){pendApprove(b.dataset.pendOk);});});
   host.querySelectorAll('[data-pend-del]').forEach(function(b){b.addEventListener('click',function(){pendDiscard(b.dataset.pendDel);});});
 }
-var admStoriesView='lote'; // aba ativa da seção Questão do Dia (lote/manual/fila/promo)
+var admStoriesView='lote'; // aba ativa da seção Questão do Dia (lote/manual/fila/postados/aluno/promo)
 function igLoteTemas(sub){
   var temas=(typeof FC_SUBTOPICS!=='undefined'&&FC_SUBTOPICS[sub])?FC_SUBTOPICS[sub]:[];
   return '<option value="">Todos os temas</option>'+temas.map(function(t){return '<option>'+esc(t)+'</option>';}).join('');
@@ -14638,10 +14722,11 @@ function igLoteTemas(sub){
 // Alterna a aba visível (sem re-render — preserva o estado dos formulários).
 function stShowView(v){
   admStoriesView=v;
-  ['lote','manual','fila','postados','promo'].forEach(function(id){
+  ['lote','manual','fila','postados','aluno','promo'].forEach(function(id){
     var el=document.getElementById('stview-'+id);if(el)el.style.display=(id===v?'block':'none');
     var b=document.querySelector('[data-stview="'+id+'"]');if(b){b.classList.toggle('btn-primary',id===v);b.classList.toggle('btn-outline',id!==v);}
   });
+  if(v==='aluno')renderAdmQotdAluno(); // a lista do aluno se desenha ao abrir a aba
 }
 // Painel "Pendências por professor": quantas questões cada curador tem para aprovar.
 function admPendByProfHTML(){
@@ -14757,7 +14842,7 @@ function admStoriesHTML(){
   function nb(id,label){return '<button class="btn '+(view===id?'btn-primary':'btn-outline')+' btn-sm" data-stview="'+id+'" style="padding:.52rem 1.05rem">'+label+'</button>';}
   function vs(id){return (view===id)?'':'display:none';}
   return '<div class="adm-ph"><h1>📲 Questão do Dia</h1></div><div class="adm-pc">'
-   +'<div style="display:flex;gap:.5rem;flex-wrap:wrap;margin-bottom:1.1rem">'+nb('lote','🤖 Gerar lote')+nb('manual','✏️ Manual')+nb('fila','📋 Fila ('+q.length+')')+nb('postados','✅ Postados ('+nPosted+')')+'</div>'
+   +'<div style="display:flex;gap:.5rem;flex-wrap:wrap;margin-bottom:1.1rem">'+nb('lote','🤖 Gerar lote')+nb('manual','✏️ Manual')+nb('fila','📋 Fila ('+q.length+')')+nb('postados','✅ Postados ('+nPosted+')')+nb('aluno','👁 Como o aluno vê')+'</div>'
    +'<div id="stview-lote" style="'+vs('lote')+'">'
    +'<div class="card" style="margin-bottom:1rem"><div class="card-head"><span class="card-title">🤖 Gerar em lote</span></div>'
    +'<div style="font-size:.74rem;color:var(--t2);margin-bottom:.6rem">Gera várias questões de uma vez (modelo Opus). Revise cada uma e <b>edite</b>, <b>aprove</b> ou <b>descarte</b> — ou aprove todas.</div>'
@@ -14804,6 +14889,7 @@ function admStoriesHTML(){
    +'</div>'
    +'<div id="stview-fila" style="'+vs('fila')+'"><div class="card"><div class="card-head"><span class="card-title">📋 Fila de questões</span><span class="tag">'+q.length+'</span></div>'+fila+'</div></div>'
    +'<div id="stview-postados" style="'+vs('postados')+'">'+admPostadosHTML()+'</div>'
+   +'<div id="stview-aluno" style="'+vs('aluno')+'">'+admQotdAlunoHTML()+'</div>'
    +'<div id="stview-promo" style="'+vs('promo')+'"><div class="card"><div class="card-head"><span class="card-title">📣 Stories de divulgação (domingo)</span></div>'
    +'<div style="font-size:.74rem;color:var(--t2);margin-bottom:.6rem;line-height:1.6">Aos <b>domingos</b> o calendário sugere <b>divulgar uma ferramenta</b> da plataforma. Aqui você baixa um <b>fundo pronto</b> (logo + nome da ferramenta + chamada + moldura tracejada) e, no Instagram, <b>sobrepõe um print real</b> da ferramenta dentro da moldura. Escolha a ferramenta, baixe o fundo e copie a legenda.</div>'
    +'<div style="display:flex;gap:.5rem;flex-wrap:wrap;align-items:flex-end">'
@@ -15129,8 +15215,11 @@ function bindAdmStories(){
       else notify((r&&(r.error||r.motivo))||'Falha ao enviar a notificação.','err');
     }).catch(function(e){notify((e&&e.message)||'Falha ao enviar a notificação.','err');}).then(function(){qp.disabled=false;});
   });
-  // Navegação por abas (Gerar lote / Manual / Fila / Divulgação).
+  // Navegação por abas (Gerar lote / Manual / Fila / Postados / Como o aluno vê / Divulgação).
   document.querySelectorAll('[data-stview]').forEach(function(b){b.addEventListener('click',function(){stShowView(b.dataset.stview);});});
+  if(admStoriesView==='aluno')renderAdmQotdAluno();
+  var qalLimpar=document.getElementById('adm-qal-limpar');
+  if(qalLimpar)qalLimpar.addEventListener('click',function(){admQotdAlunoAns={};renderAdmQotdAluno();});
   // Tema do lote: popula conforme a subespecialidade (FC_SUBTOPICS).
   var loteSubSel=document.getElementById('ig-lote-sub'),loteTemaSel=document.getElementById('ig-lote-tema');
   function syncLoteTemas(){if(loteTemaSel)loteTemaSel.innerHTML=igLoteTemas((loteSubSel&&loteSubSel.value)||'__random__');}

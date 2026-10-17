@@ -22,6 +22,25 @@ atualizado: 2026-10-17
 4. Caso residual, 1 discussão (`pubmed:42676363`): tabela sem `<thead>` com rótulo
    de largura total na 1ª linha. O mural a mostra como tabela; fica assim.
 
+## 🖼️ Ilustrações no meio dos capítulos (17/10)
+
+1. [ ] **Gravar no banco as 3 ilustrações do capítulo 150.**
+   - Backup antes.
+   - Guarda pelo md5 do `resumo` (`69bd171bd02ea460ac6fc080c3035623`).
+   - Conferir que só o `resumo` mudou.
+   - Avisar o professor para dar F5.
+2. [ ] **Capítulo 149:**
+   - revisor independente da ilustração da tireoide;
+   - novas ilustrações: modos de ação, síntese dos peptídeos, StAR/CYP11A1, transporte e regra de ouro.
+3. [ ] Capítulos 151, 152, 153 e 223.
+4. [ ] **Professor:**
+   - dar retorno sobre o estilo;
+   - receber a sugestão de ajuste no texto do 150 ("sem depender de transcrição" × via JAK-STAT).
+
+## 📋 Questão do Dia na prancheta (17/10)
+
+1. [ ] Professor: retorno sobre a prancheta e a aba "Como o aluno vê".
+
 ## 🖼️ Figuras dos Resumos (16/10)
 
 1. **Professor: olhar as figuras** (galeria de revisão, privada, em

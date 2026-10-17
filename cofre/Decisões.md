@@ -8,6 +8,23 @@ atualizado: 2026-10-17
 Log de decisões de produto e técnicas (mais recentes no topo).
 
 ## 2026-10
+- **📋 QUESTÃO DO DIA NA PRANCHETA E ABA "COMO O ALUNO VÊ" (2026-10-17).** `sw.js` v308 → **v309**.
+  - **Pedido do professor**, com print e a figura de uma prancheta: ver a questão como o aluno vê, numa aba ao lado de "Postados", e um visual mais didático.
+  - **Prancheta:** o cartão único da questão (arquivo do aluno, janela do mural, "Comece por aqui") virou prancheta, com o caso e, em destaque, a pergunta final.
+    - A separação só acontece quando a última frase é uma pergunta limpa: separa 130 dos 133 enunciados do banco.
+    - A tinta da folha é fixa.
+  - **Aba "👁 Como o aluno vê"** (professor dono): mostra o mesmo arquivo do aluno. A resposta é de teste (memória da página): não vai a `DB.qotd` nem às estatísticas.
+  - **Provas:** `scripts/test-qotd-prancheta.js` (7/7 mutações) e o harness A/B no Chromium. Detalhes em [[Instagram Stories (Questão do Dia)]].
+- **🖼️ ILUSTRAÇÕES NO MEIO DOS CAPÍTULOS (2026-10-17, #871).**
+  - **O que é:** as primeiras ilustrações de mecanismo no corpo do `resumo`. São 3 no capítulo 150 (GPCR, quinases, nucleares) e 1 no 149 (tireoide).
+  - **Como são feitas:** SVG próprio, sem recorte de livro. O professor autorizou recortar figuras de livros, mas não aceitei: a figura é da editora.
+  - **Conferências:**
+    - lastro e números contra o capítulo;
+    - Chromium;
+    - prévia com o `mdToHtml` real;
+    - revisor independente, que achou 1 contradição e 6 itens sem apoio, todos corrigidos.
+  - **Lastro abreviado** ("início … fim"), porque o repositório é público.
+  - **Falta:** gravar no banco (capítulo 150) e os outros capítulos. Ver [[Ilustrações dos Resumos]].
 - **⛔ BULÁRIO REMOVIDO DA PLATAFORMA (2026-10-17).** `sw.js` v307 → **v308**. Pedido do professor: *"vamos abortar essa ideia do bulário de uma vez por todas. Vamos excluir da plataforma mesmo."* Motivo: a bula não chega até nós por nenhum caminho automático (Bulário Eletrônico recusa servidores de nuvem; a API de Consultas Externas não tem bulário; dados abertos de bulas são só metadados; Consulta Remédios proíbe reprodução; sites dos fabricantes fora da rede; bula por bula não escala). Saíram painéis, menu, CSS, JS, dados, construtor, atualização semanal, teste e harness; fica só a linha do `goPanel` que devolve ao início quem tinha o painel salvo. Prova: `scratchpad/remocao-bulario/check.js` (aluno no celular e no notebook e professor: menu sem Bulário, painel salvo "bula" volta ao início, sem pedido a `bulario.json`, sem erro de página; A/B) e `ci-validate`. Histórico em [[Bulário]]. **Ilustrações: o professor autorizou recortar figuras de livros com legenda; a decisão foi desenhar ilustrações próprias** (a figura do livro é da editora, e a legenda não afasta a notificação numa plataforma paga), com "Baseado em: <livro>" quando o conteúdo seguir um livro.
 - **📋 BOTÃO DA BULA COPIA O NOME (2026-10-17).** `sw.js` v306 → **v307**. O professor mandou o print do Bulário Eletrônico com a busca vazia, aberto pelo botão "Bula do profissional e do paciente": o link com `nomeProduto` não preencheu a busca no navegador dele. Sem como testar a ANVISA daqui (firewall), a saída que não depende do formato do link: o toque **copia o nome** (área de transferência, com recurso antigo para navegador sem ela), mostra "Nome copiado: <nome>" e abre a ANVISA; a dica manda colar no campo "Medicamento". Provas: `test-bulario` (4b), 6 de 6 mutações barradas; harness (cópia, aviso e aba nova no notebook e no celular), A/B. No mesmo pedido, o levantamento do portal de APIs (só com login Gov.br; sem bulário listado) e dos dados abertos de bulas (metadados, sem texto nem PDF); ver [[Bulário]].
 - **🚫 BULÁRIO SEM PREÇO (2026-10-17).** `sw.js` v305 → **v306**. Depois da faixa "de fábrica a teto", o professor mandou o print da Drogasil: Ozivy 3 mL a R$ 464,81 com desconto de laboratório, abaixo até do preço de fábrica da CMED (R$ 979,80; teto R$ 1.314,37). A descrição que eu tinha dado à faixa ("o balcão costuma cair nela") estava errada: **a CMED só publica tetos**, e o desconto de laboratório derruba o preço abaixo deles. Entre três opções (só o teto bem explicado, tirar os preços, manter a faixa), o professor escolheu **tirar os preços**. A tela mostra apresentação e situação de venda; sem valor, sem nota, sem "preço" no título nem nas descrições do painel. O `bulario.json` mantém PF e PMC como alarme do formato da planilha (`test-bulario`, bloco 6, 8 de 8 mutações barradas; harness A/B: a main falhou nos 6 itens). Substitui a decisão da faixa, logo abaixo. Detalhes em [[Bulário]].

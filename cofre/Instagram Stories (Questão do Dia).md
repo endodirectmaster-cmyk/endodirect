@@ -1,9 +1,43 @@
 ---
 tags: [cofre, integracoes, marketing]
-atualizado: 2026-10-12
+atualizado: 2026-10-17
 ---
 
 # Instagram Stories — "Questão do Dia"
+
+## 📋 PRANCHETA E ABA "COMO O ALUNO VÊ" (2026-10-17)
+
+Pedido do professor (17/10), com o print do painel e a figura de uma prancheta:
+*"Deixe a questão do dia aparecendo no perfil do professor de forma semelhante como
+aparece para o aluno. Deixa uma aba ao lado de 'postados'"* e *"Vamos deixar mais
+didático a visualização da questão do dia"*.
+
+- **Prancheta.** O `qotdCardHTML` é o único cartão da questão e aparece:
+  - no arquivo do aluno;
+  - na janela do mural;
+  - no "Comece por aqui";
+  - na aba nova do professor.
+
+  Virou uma prancheta: madeira, prendedor de metal e folha branca com "Questão do dia".
+  A tinta da folha é fixa e escura, porque com os tokens do tema o modo escuro poria
+  texto claro no papel branco.
+- **Caso + pergunta.** `qotdPartes` separa a pergunta final ("Qual a melhor conduta
+  inicial?") e a põe em destaque abaixo do caso.
+  - Só separa quando a última frase é uma pergunta que começa com maiúscula, sem ponto
+    no meio; nunca corta em "ex.".
+  - Nos 133 enunciados do banco (17/10), 130 se separam e 3 ficam inteiros (2 são uma
+    pergunta única).
+- **Aba "👁 Como o aluno vê"**, para o professor dono, ao lado de "Postados":
+  - mostra o mesmo arquivo do aluno, com a de hoje aberta;
+  - a lista vem de `qotdArchListHTML`, compartilhada, com prefixo próprio (`admqal`)
+    para não cruzar ids com o painel do aluno;
+  - a resposta ali é de **teste**: fica só na memória da página, sem `DB.qotd`, sem
+    `studyEvent` e sem sincronizar;
+  - "Limpar respostas de teste" zera.
+- **Provas:**
+  - `scripts/test-qotd-prancheta.js`, no `ci-validate`, barrou 7 de 7 mutações;
+  - `scratchpad/qotd-prancheta-navegador/check.js`, no Chromium, em A/B: aluno em 390
+    e 1280 px, tema claro, janela do mural e professor em 1280 e 390 px.
 
 ## 🧑‍🏫 Lotes distribuídos aos professores (`ig_pending`, desde 11/10/2026)
 
