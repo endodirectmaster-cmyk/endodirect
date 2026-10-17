@@ -2695,7 +2695,7 @@ input.dmm-inp-subsub{flex:1;min-width:0;background:transparent;color:var(--t2);f
 
     <div class="panel" id="panel-bula">
       <div class="breadcrumb">Dashboard <b>/ Bulário</b></div>
-      <div class="ph"><h1>Bulário</h1><p>Todos os medicamentos com registro ativo na ANVISA, com apresentações, preço máximo da CMED e o link para a bula oficial.</p></div>
+      <div class="ph"><h1>Bulário</h1><p>Todos os medicamentos com registro ativo na ANVISA, com apresentações, faixa de preço da CMED e o link para a bula do profissional e do paciente.</p></div>
       <div class="pc"><div class="bula-raiz"></div></div>
     </div>
 
@@ -11125,6 +11125,11 @@ var BULA_AREA_SUB={'Diabetes':'Diabetes','Obesidade':'Obesidade','Lípides':'Lí
 function bulaNorm(s){return String(s||'').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'');}
 function bulaLinkOficial(nome){return 'https://consultas.anvisa.gov.br/#/bulario/q/?nomeProduto='+encodeURIComponent(String(nome||'').toUpperCase());}
 function bulaPreco(v){return v>0?('R$ '+Number(v).toLocaleString('pt-BR',{minimumFractionDigits:2,maximumFractionDigits:2})):'—';}
+// Faixa da CMED (17/10/2026): do preço de fábrica (a[5]) ao preço máximo ao consumidor
+// (a[1]). O teto sozinho parecia caro perto do preço das farmácias (pedido do professor);
+// o balcão costuma ficar nessa faixa. Arquivo antigo, ainda sem a[5]: "até" o teto.
+// Uso hospitalar não tem preço ao consumidor: fica só o de fábrica.
+function bulaFaixa(a){var pf=a[5]>0?a[5]:0,pmc=a[1]>0?a[1]:0;if(pf&&pmc)return bulaPreco(pf)+' a '+bulaPreco(pmc);if(pmc)return 'até '+bulaPreco(pmc);if(pf)return bulaPreco(pf)+' de fábrica';return '—';}
 function bulaVenc(mmaaaa){var m=/^(\d{2})(\d{4})$/.exec(String(mmaaaa||''));return m?(m[1]+'/'+m[2]):'';}
 function bulaCarregar(){
   if(BULA.d||BULA.carregando)return;
@@ -11183,16 +11188,17 @@ function bulaDetalheHTML(p){
   // direita. O que está à venda vem aberto; o que não teve venda no ano, recolhido.
   var itemApr=function(a){
     var sit=[];if(a[3])sit.push('Uso hospitalar');sit.push(a[4]?'À venda':('Sem venda'+(ano?' em '+ano:'')));
-    return '<li class="bula-apr-it'+(a[4]?'':' bula-semvenda')+'"><span class="bula-apr-txt">'+esc(a[0])+'</span><span class="bula-apr-info"><span class="bula-apr-preco">'+bulaPreco(a[1])+'</span> · '+esc(sit.join(' · '))+'</span></li>';
+    return '<li class="bula-apr-it'+(a[4]?'':' bula-semvenda')+'"><span class="bula-apr-txt">'+esc(a[0])+'</span><span class="bula-apr-info"><span class="bula-apr-preco">'+bulaFaixa(a)+'</span> · '+esc(sit.join(' · '))+'</span></li>';
   };
   var aVenda=apr.filter(function(a){return a[4];}),semVenda=apr.filter(function(a){return !a[4];});
-  var tab=apr.length?('<div class="bula-apr-tit">Apresentações ('+apr.length+') · preço máximo ao consumidor</div>'
+  var tab=apr.length?('<div class="bula-apr-tit">Apresentações ('+apr.length+') · do preço de fábrica ao máximo ao consumidor</div>'
     +(aVenda.length?('<ul class="bula-aprs">'+aVenda.map(itemApr).join('')+'</ul>'):'')
     +(semVenda.length?(aVenda.length?('<details class="bula-sem-det"><summary>Mais '+semVenda.length+' sem venda'+(ano?' em '+ano:'')+'</summary><ul class="bula-aprs">'+semVenda.map(itemApr).join('')+'</ul></details>'):('<ul class="bula-aprs">'+semVenda.map(itemApr).join('')+'</ul>')):''))
     :'<p class="bula-nota">Sem apresentação na lista de preços da CMED (produto sem preço regulado ou não comercializado).</p>';
   return '<div class="bula-det">'+ficha+tab
-    +'<div class="bula-acoes"><a class="bula-link" data-bula-oficial href="'+esc(bulaLinkOficial(p[0]))+'" target="_blank" rel="noopener noreferrer">📄 Bula oficial na ANVISA ↗</a></div>'
-    +'<p class="bula-nota">O preço máximo ao consumidor varia com o ICMS de cada estado; os valores são com ICMS de 18%. Produto de uso hospitalar não tem preço ao consumidor.</p></div>';
+    +'<div class="bula-acoes"><a class="bula-link" data-bula-oficial href="'+esc(bulaLinkOficial(p[0]))+'" target="_blank" rel="noopener noreferrer">📄 Bula do profissional e do paciente ↗</a></div>'
+    +'<p class="bula-nota">O botão abre o Bulário Eletrônico da ANVISA já buscando pelo nome; na linha do medicamento, os ícones abrem a bula do paciente e a do profissional.</p>'
+    +(apr.length?'<p class="bula-nota">Preços da CMED com ICMS de 18% (o ICMS muda de um estado para outro). O primeiro valor é o preço de fábrica, o máximo que o fabricante ou o distribuidor pode cobrar da farmácia; o segundo é o preço máximo ao consumidor, o teto legal no balcão. Na farmácia o preço costuma ficar nessa faixa, e o genérico pode sair abaixo dela. Produto de uso hospitalar não tem preço ao consumidor, só o de fábrica.</p>':'')+'</div>';
 }
 function bulaRenderLista(){
   var el=BULA.root&&BULA.root.querySelector('.bula-lista-wrap');if(!el)return;
@@ -11233,7 +11239,7 @@ function bulaRender(){
 }
 function admBulaHTML(){
   return '<div class="adm-ph"><div><h1>Bulário</h1></div></div>'
-    +'<div class="adm-pc"><div style="font-size:.8rem;color:var(--t2);line-height:1.55;margin-bottom:1rem">Por enquanto só no painel dos professores: os alunos ainda não veem o Bulário. Medicamentos com registro ativo na ANVISA, apresentações e preço máximo da CMED, com o link para a bula oficial.</div><div class="bula-raiz"></div></div>';
+    +'<div class="adm-pc"><div style="font-size:.8rem;color:var(--t2);line-height:1.55;margin-bottom:1rem">Por enquanto só no painel dos professores: os alunos ainda não veem o Bulário. Medicamentos com registro ativo na ANVISA, apresentações e faixa de preço da CMED (do preço de fábrica ao máximo ao consumidor), com o link para a bula do profissional e do paciente.</div><div class="bula-raiz"></div></div>';
 }
 function initCalc(root){
   calcRoot=root||document.getElementById('panel-calc')||document;

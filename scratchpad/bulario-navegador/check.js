@@ -4,6 +4,10 @@
 // Abre o painel, espera o bulario.json, busca por princípio ativo e por nome,
 // abre um medicamento (ficha, apresentações, preço, link da bula oficial), filtra
 // por área e confere que a página não rola na horizontal no celular.
+// 17/10/2026: o preço virou faixa, do preço de fábrica ao máximo ao consumidor
+// (Glifage XR e Ozivy 3 mL: R$ 979,80 a R$ 1.314,37); o de uso hospitalar mostra só o
+// de fábrica (Acezo); o botão diz que leva à bula do profissional e do paciente. O
+// professor também no celular, porque o Bulário, por enquanto, é só dele.
 'use strict';
 const http = require('http');
 const fs = require('fs');
@@ -75,7 +79,9 @@ async function estado(page, adm) {
     const itens = [...r.querySelectorAll('.bula-item')].map((it) => ({ nome: (it.querySelector('.bula-nome') || {}).textContent || '', pa: (it.querySelector('.bula-pa') || {}).textContent || '' }));
     const det = r.querySelector('.bula-det');
     const link = det ? det.querySelector('a[data-bula-oficial]') : null;
-    return { raiz: true, topo: (r.querySelector('.bula-topo') || {}).textContent || '', conta: (r.querySelector('.bula-conta') || {}).textContent || '', itens, det: !!det, linhas: det ? det.querySelectorAll('.bula-apr-it').length : 0, precos: det ? [...det.querySelectorAll('.bula-apr-preco')].map((x) => x.textContent) : [], link: link ? link.getAttribute('href') : '', alvo: link ? link.getAttribute('target') : '', rolaX: document.documentElement.scrollWidth > document.documentElement.clientWidth + 1 };
+    const notas = det ? [...det.querySelectorAll('.bula-nota')].map((x) => x.textContent) : [];
+    const lis = det ? [...det.querySelectorAll('.bula-apr-it')].map((x) => x.getBoundingClientRect()) : [];
+    return { raiz: true, topo: (r.querySelector('.bula-topo') || {}).textContent || '', conta: (r.querySelector('.bula-conta') || {}).textContent || '', itens, det: !!det, linhas: det ? det.querySelectorAll('.bula-apr-it').length : 0, precos: det ? [...det.querySelectorAll('.bula-apr-preco')].map((x) => x.textContent) : [], link: link ? link.getAttribute('href') : '', alvo: link ? link.getAttribute('target') : '', linkTexto: link ? link.textContent : '', notas, titulo: det ? ((det.querySelector('.bula-apr-tit') || {}).textContent || '') : '', foraDaTela: lis.filter((r) => r.right > document.documentElement.clientWidth + 1).length, rolaX: document.documentElement.scrollWidth > document.documentElement.clientWidth + 1 };
   }, raizSel(adm));
 }
 (async () => {
@@ -83,7 +89,7 @@ async function estado(page, adm) {
   const browser = await chromium.launch({ executablePath: CHROME, args: ['--no-sandbox'] });
   const problemas = [], achados = [];
   const ok = (c, m) => { if (!c) problemas.push(m); };
-  for (const [nome, vp, adm] of [['celular', { width: 392, height: 850 }, false], ['notebook', { width: 1280, height: 900 }, false], ['professor', { width: 1280, height: 900 }, true]]) {
+  for (const [nome, vp, adm] of [['celular', { width: 392, height: 850 }, false], ['notebook', { width: 1280, height: 900 }, false], ['professor', { width: 1280, height: 900 }, true], ['professor-celular', { width: 392, height: 850 }, true]]) {
     const email = adm ? 'admin@endodirect.com.br' : 'aluna@exemplo.com';
     const { ctx, page, erros } = await pagina(browser, 'http://127.0.0.1:' + PORTA + '/', vp, email, adm ? '99999999-2222-3333-4444-555555555555' : '11111111-2222-3333-4444-555555555555');
     if (!adm) {
@@ -119,10 +125,33 @@ async function estado(page, adm) {
     await page.click(raizSel(adm) + ' .bula-item .bula-head');
     await page.waitForTimeout(300);
     e = await estado(page, adm);
-    ok(e.det && e.linhas >= 2 && e.precos.some((x) => /^R\$ \d+,\d{2}$/.test(x)), nome + ': a ficha do Glifage XR não mostrou apresentações com preço');
+    const FAIXA = /^R\$\s[\d.]+,\d{2} a R\$\s[\d.]+,\d{2}$/;
+    const valores = (x) => x.split(' a ').map((v) => Number(v.replace(/[^\d,]/g, '').replace(',', '.')));
+    ok(e.det && e.linhas >= 2 && e.precos.length === e.linhas && e.precos.every((x) => FAIXA.test(x) && valores(x)[0] < valores(x)[1]), nome + ': o Glifage XR não mostrou a faixa (fábrica menor que o teto) em todas as apresentações: ' + e.precos.join(' / '));
+    ok(/do preço de fábrica ao máximo ao consumidor/.test(e.titulo), nome + ': o título das apresentações não diz o que é a faixa: ' + e.titulo);
+    ok(e.notas.some((n) => /O primeiro valor é o preço de fábrica/.test(n) && /genérico pode sair abaixo/.test(n)), nome + ': a nota da faixa não aparece');
     ok(/^https:\/\/consultas\.anvisa\.gov\.br\/#\/bulario\/q\/\?nomeProduto=GLIFAGE%20XR$/.test(e.link) && e.alvo === '_blank', nome + ': link da bula oficial errado: ' + e.link);
+    ok(/Bula do profissional e do paciente/.test(e.linkTexto) && e.notas.some((n) => /a bula do paciente e a do profissional/.test(n)), nome + ': o botão ou a dica não dizem que a bula do profissional está lá: ' + e.linkTexto);
+    ok(e.foraDaTela === 0, nome + ': ' + e.foraDaTela + ' apresentações passam da largura da tela');
     achados.push(nome + ': Glifage XR → ' + e.linhas + ' apresentações, preços ' + e.precos.join(' / ') + ', link ' + e.link);
-    if (!adm) await page.screenshot({ path: path.join(__dirname, 'bulario-' + nome + '.png') });
+    await page.screenshot({ path: path.join(__dirname, 'bulario-' + nome + '.png') });
+    // Ozivy 3 mL, o caso do print do professor: fábrica R$ 979,80, teto R$ 1.314,37.
+    await page.fill(raizSel(adm) + ' .bula-q', 'ozivy');
+    await page.waitForTimeout(500);
+    await page.click(raizSel(adm) + ' .bula-item .bula-head');
+    await page.waitForTimeout(300);
+    e = await estado(page, adm);
+    ok(e.precos.some((x) => /^R\$\s979,80 a R\$\s1\.314,37$/.test(x)), nome + ': Ozivy 3 mL sem a faixa R$ 979,80 a R$ 1.314,37: ' + e.precos.join(' / '));
+    achados.push(nome + ': Ozivy → ' + e.precos.join(' / '));
+    if (adm) await page.screenshot({ path: path.join(__dirname, 'bulario-' + nome + '-ozivy.png') });
+    // Uso hospitalar: sem preço ao consumidor, só o de fábrica.
+    await page.fill(raizSel(adm) + ' .bula-q', 'acezo');
+    await page.waitForTimeout(500);
+    await page.click(raizSel(adm) + ' .bula-item .bula-head');
+    await page.waitForTimeout(300);
+    e = await estado(page, adm);
+    ok(e.precos.length >= 1 && e.precos.every((x) => /^R\$\s[\d.]+,\d{2} de fábrica$/.test(x)), nome + ': Acezo (uso hospitalar) devia mostrar só o preço de fábrica: ' + e.precos.join(' / '));
+    achados.push(nome + ': Acezo (hospitalar) → ' + e.precos.join(' / '));
     // área sem busca
     await page.fill(raizSel(adm) + ' .bula-q', '');
     await page.waitForTimeout(400);

@@ -4,8 +4,9 @@
 // de todas as medicações disponíveis no Brasil". Fontes:
 //   • ANVISA, dados abertos: DADOS_ABERTOS_MEDICAMENTOS.csv (todos os registros, com
 //     situação, categoria regulatória, classe, detentor, vencimento e princípio ativo);
-//   • CMED, Lista de Preços (PMC): apresentações, preço máximo ao consumidor por
-//     alíquota de ICMS, tarja, restrição hospitalar e se houve comercialização no ano.
+//   • CMED, Lista de Preços: apresentações, preço de fábrica e preço máximo ao
+//     consumidor por alíquota de ICMS, tarja, restrição hospitalar e se houve
+//     comercialização no ano.
 // A bula em si NÃO entra aqui: o texto pertence ao fabricante, e o Bulário Eletrônico
 // da ANVISA recusa servidores fora do Brasil. O app leva o aluno à bula oficial por link.
 //
@@ -153,17 +154,24 @@ async function main() {
     prod.set(chave, p);
   }
   // CMED: apresentações ligadas pelo registro (os 9 primeiros dígitos do código de 13).
+  // Os dois preços com ICMS de 18% (as colunas "ALC", de área de livre comércio, ficam
+  // fora). Preço de fábrica (PF): o máximo que o fabricante ou o distribuidor cobra da
+  // farmácia; preço máximo ao consumidor (PMC): o teto no balcão. Desde 17/10/2026 o app
+  // mostra a faixa entre os dois, porque o PMC sozinho parecia caro perto do preço das
+  // farmácias (pedido do professor). Produto de uso hospitalar só tem PF.
   const kPmc = Object.keys(cmed[0] || {}).find((k) => /^PMC 18\s*%$/.test(k));
+  const kPf = Object.keys(cmed[0] || {}).find((k) => /^PF 18\s*%$/.test(k));
   const kCom = Object.keys(cmed[0] || {}).find((k) => /^COMERCIALIZA/i.test(k)) || '';
   const anoCom = (kCom.match(/(\d{4})/) || [])[1] || '';
   if (!kPmc) throw new Error('coluna "PMC 18 %" não encontrada na lista da CMED');
+  if (!kPf) throw new Error('coluna "PF 18 %" não encontrada na lista da CMED');
   let ligadas = 0, soltas = 0;
   for (const c of cmed) {
     const reg = String(c.REGISTRO || '').replace(/\D/g, '').slice(0, 9);
     const p = prod.get(reg);
     if (!p) { soltas++; continue; }
     ligadas++;
-    p.apr.push({ a: c['APRESENTAÇÃO'], pmc: num(c[kPmc]), tarja: String(c.TARJA || '').replace(/^Tarja\s*/i, '').replace(/^-\s*\(\*\)\s*$/, '').trim(), hosp: /^sim/i.test(c['RESTRIÇÃO HOSPITALAR']) ? 1 : 0, com: /^sim/i.test(c[kCom] || '') ? 1 : 0, atc: String(c['CLASSE TERAPÊUTICA'] || ''), tipo: c['TIPO DE PRODUTO (STATUS DO PRODUTO)'] || '' });
+    p.apr.push({ a: c['APRESENTAÇÃO'], pmc: num(c[kPmc]), pf: num(c[kPf]), tarja: String(c.TARJA || '').replace(/^Tarja\s*/i, '').replace(/^-\s*\(\*\)\s*$/, '').trim(), hosp: /^sim/i.test(c['RESTRIÇÃO HOSPITALAR']) ? 1 : 0, com: /^sim/i.test(c[kCom] || '') ? 1 : 0, atc: String(c['CLASSE TERAPÊUTICA'] || ''), tipo: c['TIPO DE PRODUTO (STATUS DO PRODUTO)'] || '' });
   }
   // Tabelas de valores repetidos (o arquivo fica menor e o diff semanal, legível).
   const tab = { cat: [], cl: [], emp: [], tarja: [], area: AREAS.map((a) => a[0]) };
@@ -177,14 +185,14 @@ async function main() {
     p.apr.sort((x, y) => (y.com - x.com) || x.a.localeCompare(y.a, 'pt-BR'));
     const tarjaP = p.apr.map((a) => a.tarja).sort((x, y) => ORDEM_TARJA.indexOf(x) - ORDEM_TARJA.indexOf(y))[0] || '';
     saida.push([titulo(p.n), [...p.pa].join(' + '), idx('cat', p.cat), idx('cl', p.cl), idx('emp', titulo(p.emp)), p.reg, p.venc, area, idx('tarja', tarjaP),
-      p.apr.map((a) => [a.a, a.pmc, idx('tarja', a.tarja), a.hosp, a.com])]);
+      p.apr.map((a) => [a.a, a.pmc, idx('tarja', a.tarja), a.hosp, a.com, a.pf])]);
   }
   saida.sort((a, b) => a[0].localeCompare(b[0], 'pt-BR') || a[1].localeCompare(b[1], 'pt-BR'));
   const hoje = new Date().toISOString().slice(0, 10);
   const dataCmed = (fontes.arquivoCmed.match(/(\d{4})(\d{2})(\d{2})/) || []).slice(1).reverse().join('/');
-  const meta = { v: 1, gerado: hoje, fontes: { anvisa: 'ANVISA, dados abertos de medicamentos registrados (situação ativa), baixados em ' + hoje.split('-').reverse().join('/'), cmed: 'CMED, lista de preços máximos ao consumidor' + (dataCmed ? ' de ' + dataCmed : '') + ' (PMC com ICMS de 18%)' },
+  const meta = { v: 1, gerado: hoje, fontes: { anvisa: 'ANVISA, dados abertos de medicamentos registrados (situação ativa), baixados em ' + hoje.split('-').reverse().join('/'), cmed: 'CMED, lista de preços' + (dataCmed ? ' de ' + dataCmed : '') + ' (de fábrica e máximo ao consumidor, com ICMS de 18%)' },
     anoComercializacao: anoCom,
-    campos: ['nome', 'principio_ativo', 'categoria', 'classe', 'detentor', 'registro', 'vencimento_mmaaaa', 'area', 'tarja', 'apresentacoes[apresentacao, pmc18, tarja, restricao_hospitalar, comercializado]'],
+    campos: ['nome', 'principio_ativo', 'categoria', 'classe', 'detentor', 'registro', 'vencimento_mmaaaa', 'area', 'tarja', 'apresentacoes[apresentacao, pmc18, tarja, restricao_hospitalar, comercializado, pf18]'],
     totais: { produtos: saida.length, apresentacoes: ligadas, apresentacoesSemRegistroAtivo: soltas, endocrinologia: saida.filter((p) => p[7] >= 0).length } };
   // Uma linha por produto: o diff da atualização semanal mostra só o que mudou.
   const texto = '{"meta":' + JSON.stringify(meta) + ',\n"tab":' + JSON.stringify(tab) + ',\n"p":[\n' + saida.map((p) => JSON.stringify(p)).join(',\n') + '\n]}\n';
