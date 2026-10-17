@@ -11,7 +11,7 @@ module.exports = {
   depoisDe: 'forma **solúvel** ativada pelo **NO** (nitratos; sildenafila inibe a PDE5 e eleva o GMPc).',
   titulo: 'Receptores ligados a quinases: insulina (tirosina-quinase) e GH (JAK-STAT)',
   subtitulo: 'No primeiro, a atividade enzimática é do próprio receptor; no segundo, o receptor não a tem e recruta quinases do citoplasma.',
-  legenda: 'Receptores ligados a quinases: insulina (tirosina-quinase) e GH (JAK-STAT). Ilustração Endodirect a partir do texto do capítulo.',
+  legenda: 'Receptores ligados a quinases: insulina (tirosina-quinase) e GH (JAK-STAT).',
   lastro: [
     '**Tirosina-quinase (RTK):** o receptor tem atividade enzimática própria.',
     '**Insulina e IGF-1** — o receptor … metabólica) e **RAS/MAPK** (crescimento e mitogênese).',

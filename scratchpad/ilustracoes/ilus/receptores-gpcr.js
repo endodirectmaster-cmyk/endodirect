@@ -11,7 +11,7 @@ module.exports = {
   depoisDe: '(TRH, GnRH, ADH-V1, angiotensina II, α1-adrenérgico, receptor sensor de cálcio CaSR).',
   titulo: 'Receptor acoplado à proteína G: as vias Gs, Gi e Gq',
   subtitulo: 'A Gα troca GDP por GTP, solta-se do dímero Gβγ e age sobre o efetor; a atividade GTPásica da própria Gα encerra o sinal.',
-  legenda: 'Receptores acoplados à proteína G: as vias Gs, Gi e Gq. Ilustração Endodirect a partir do texto do capítulo.',
+  legenda: 'Receptores acoplados à proteína G: as vias Gs, Gi e Gq.',
   // trechos literais do capítulo que sustentam cada afirmação (conferidos por confere-lastro.js)
   lastro: [
     'receptores com **7 domínios transmembrana**',

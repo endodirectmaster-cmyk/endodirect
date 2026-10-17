@@ -8,6 +8,12 @@ atualizado: 2026-10-17
 Log de decisões de produto e técnicas (mais recentes no topo).
 
 ## 2026-10
+- **✍️ AJUSTES PEDIDOS PELO PROFESSOR OLHANDO O QUE FOI AO AR (2026-10-17).** `sw.js` v309 → **v310**.
+  - **Questão do Dia:** o caso, a pergunta e o comentário da prancheta ficam **justificados** (*"Deixa o texto em formato justificado"*). O harness da prancheta passou a exigir isso; o lado A reproduz o texto alinhado à esquerda.
+  - **Ilustrações:** a frase "Ilustração Endodirect a partir do texto do capítulo." saiu de todas as legendas (*"Retirar essa frase dos desenhos"*).
+    - No capítulo 150, foi corrigida no banco: backup `main-antes-legendas-cap150-2026-10-17`, guarda por md5, só o `resumo` mudou.
+    - O `texto.js` passou a refazer a linha de uma ilustração já gravada.
+    - O gerador do SQL (`scratchpad/ilustracoes/gera-sql.js`) entrou no repositório.
 - **📋 QUESTÃO DO DIA NA PRANCHETA E ABA "COMO O ALUNO VÊ" (2026-10-17).** `sw.js` v308 → **v309**.
   - **Pedido do professor**, com print e a figura de uma prancheta: ver a questão como o aluno vê, numa aba ao lado de "Postados", e um visual mais didático.
   - **Prancheta:** o cartão único da questão (arquivo do aluno, janela do mural, "Comece por aqui") virou prancheta, com o caso e, em destaque, a pergunta final.

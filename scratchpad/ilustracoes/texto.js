@@ -5,7 +5,7 @@
 // (`depoisDe`, que precisa aparecer UMA vez). A figura vai na linha seguinte à linha que
 // contém o trecho, como imagem de markdown com legenda — o `mdToHtml` do app a transforma
 // em <figure> com <figcaption>, com o ampliador ao toque. Idempotente: se a figura já está
-// no texto, não entra de novo.
+// no texto, não entra de novo — só a linha dela é refeita (legenda e endereço atuais).
 const fs = require('fs');
 const path = require('path');
 const { slugify } = require('../figuras-resumos/render.js');
@@ -20,11 +20,17 @@ function ilustracoesDo(cap) {
   return todas().filter((i) => i.tema === cap.tema).map((i) => ({ i, p: t.indexOf(i.depoisDe) })).sort((a, b) => a.p - b.p).map((x) => x.i);
 }
 const escAlt = (s) => String(s || '').replace(/\\/g, '\\\\').replace(/\]/g, '\\]');
+const escRe = (s) => String(s).replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+// a linha de imagem já gravada de uma ilustração (a leitura do alt é a do mdAltRE do app)
+const linhaGravada = (arq) => new RegExp('^!\\[(?:[^\\]\\\\]|\\\\.)*\\]\\([^)\\s]*/figuras/resumos/ilustracoes/' + escRe(arq) + '\\)(\\{\\d{1,3}\\})?$', 'm');
 function textoComIlustracoes(cap, base) {
   let t = String(cap.resumo || '');
   for (const i of ilustracoesDo(cap)) {
     const url = base.replace(/\/$/, '') + '/figuras/resumos/ilustracoes/' + arquivoDe(i);
-    if (t.indexOf('/figuras/resumos/ilustracoes/' + arquivoDe(i)) >= 0) continue; // já está
+    if (t.indexOf('/figuras/resumos/ilustracoes/' + arquivoDe(i)) >= 0) { // já está: refaz só a linha
+      t = t.replace(linhaGravada(arquivoDe(i)), (m0, w) => '![' + escAlt(i.legenda) + '](' + url + ')' + (w || ''));
+      continue;
+    }
     const n = t.split(i.depoisDe).length - 1;
     if (n !== 1) throw new Error(i.id + ': o trecho de inserção aparece ' + n + ' vez(es) no capítulo');
     const p = t.indexOf(i.depoisDe) + i.depoisDe.length;
@@ -33,4 +39,4 @@ function textoComIlustracoes(cap, base) {
   }
   return t;
 }
-module.exports = { todas, arquivoDe, ilustracoesDo, textoComIlustracoes };
+module.exports = { todas, arquivoDe, ilustracoesDo, textoComIlustracoes, linhaGravada, escAlt };

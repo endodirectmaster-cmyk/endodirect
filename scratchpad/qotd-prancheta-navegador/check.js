@@ -147,6 +147,7 @@ const medir = (page, raiz) => page.evaluate((raiz) => {
   r.perg = perg ? perg.textContent : '';
   r.opcoes = qp.querySelectorAll('.qp-opt .qp-letra').length;
   r.fundoFolha = fundo;
+  r.alinhamento = [caso, perg].filter(Boolean).map((e) => getComputedStyle(e).textAlign).join(',');
   r.contrasteCaso = +contraste(getComputedStyle(caso).color, fundo).toFixed(1);
   r.contrasteOpcao = +contraste(getComputedStyle(opt).color, getComputedStyle(opt).backgroundColor).toFixed(1);
   r.folgaPrendedor = Math.round(clip.top - 24 - teto); // topo da "cabeça" do prendedor − teto do contêiner
@@ -171,6 +172,7 @@ const medir = (page, raiz) => page.evaluate((raiz) => {
     ok(/bilateral\.$/.test(m.caso) && m.perg === 'Qual a melhor conduta inicial?', onde + ': caso e pergunta não se separaram (caso "…' + m.caso.slice(-30) + '", pergunta "' + m.perg + '")');
     ok(m.opcoes === 4, onde + ': ' + m.opcoes + ' alternativas com letra');
     ok(m.fundoFolha === 'rgb(255, 255, 255)', onde + ': a folha não é branca (' + m.fundoFolha + ')');
+    ok(m.alinhamento === 'justify,justify', onde + ': o caso e a pergunta não estão justificados (' + m.alinhamento + ')');
     ok(m.contrasteCaso >= 7 && m.contrasteOpcao >= 7, onde + ': contraste baixo na folha (caso ' + m.contrasteCaso + ', alternativa ' + m.contrasteOpcao + ')');
     ok(m.folgaPrendedor >= 0, onde + ': o prendedor sai do contêiner e é cortado (folga ' + m.folgaPrendedor + ' px)');
     ok(m.largura <= m.tela + 1 && m.direita <= m.tela, onde + ': passa da largura da tela (' + m.largura + '/' + m.tela + ', borda direita ' + m.direita + ')');
