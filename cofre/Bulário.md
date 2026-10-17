@@ -114,7 +114,7 @@ rolagem horizontal; A/B em 17/10: a main falhou nos 6 itens novos nas duas largu
   bula da Consulta Remédios (Biomag, sibutramina): barra de seções no topo (Para que
   serve, Como funciona, Contraindicação, Como usar, Superdose, Esquecimento,
   Precauções, Reações adversas, População especial, Interações) e cada seção com
-  título em pergunta. Ver "Fase 2" abaixo.
+  título em pergunta. Ver "Fichas por princípio ativo" abaixo.
 
 **Lições da construção:**
 - **Codificação do CSV da ANVISA (Windows-1252).** O `TextDecoder('latin1')` do
@@ -134,8 +134,79 @@ rolagem horizontal; A/B em 17/10: a main falhou nos 6 itens novos nas duas largu
   mesmas fontes num formato antigo e não se atualiza; pode passar a sair do mesmo
   construtor (pendência).
 
-**Fase 2 (pendente):** fichas próprias das medicações de endocrinologia (indicação,
-apresentações no Brasil, posologia e titulação, ajuste renal e hepático,
-contraindicações, interações, monitorização, gestação, SUS), escritas a partir de
-fontes oficiais acessíveis e do acervo, com o link para a bula oficial. A conferência
-contra a bula brasileira depende de o professor enviar os PDFs.
+## 📑 Fichas por princípio ativo, no estilo de bula por seções (protótipo, 17/10/2026)
+
+Depois da faixa de preço, o professor mandou o print da bula do Biomag na Consulta
+Remédios: *"pensei em deixar o bulário nesse estilo"*. O estilo: barra de seções no topo
+(Para que serve, Como funciona, Contraindicação, Como usar, Superdose, Precauções,
+Reações adversas, População especial, Interações) e cada seção com título em pergunta.
+
+**O que existe (protótipo no ar, só professores veem o Bulário):**
+- `bulario-fichas.json` na raiz, carregado junto com o `bulario.json`; se faltar ou
+  falhar, o Bulário segue com a ficha técnica de sempre.
+- **Uma ficha por princípio ativo**, sem sal nem hidratação (`bulaBases`: "cloridrato de
+  sibutramina monoidratado" → "sibutramina"). Vale para todos os produtos daquele
+  princípio ativo: a da sibutramina cobre 14 (Biomag, Sibus, Vazy, Nolipo, Sigran,
+  Slenfig e genéricos). **Associação** (dois princípios ativos) não herda ficha; o
+  detalhe só aponta a ficha de cada componente que exista.
+- Campos: `nome`; `artigo` (a/o, para o título em pergunta concordar: "Quando a
+  sibutramina é contraindicada?", "do orlistate"); `status` (`rascunho` mostra o aviso
+  amarelo, `aprovada` tira); `fonte`; `secoes` em markdown, passado pelo `mdToHtml`
+  do app (que escapa). Seções, sempre nesta ordem e só as preenchidas: indicacao,
+  mecanismo, resultados, uso, contraindicacoes, precaucoes, adversas, interacoes,
+  populacoes, superdose. Depois delas, Apresentações e preços, Registro na ANVISA e
+  Bula oficial, também na barra.
+- **Barra que acompanha a leitura.** No notebook, `position: sticky` (o painel rola por
+  dentro), em duas linhas. No celular a página é que rola, e os contêineres do app
+  (`.adm-content`, `.workspace`, `#app-screen`) têm `overflow: hidden`, que prende o
+  sticky; `bulaNavSegue()` deixa a barra `fixed` no topo enquanto a ficha está na tela,
+  com uma vaga que guarda a altura (o texto não pula). A margem da rolagem do atalho
+  acompanha a altura real da barra. Atalho é botão, não âncora: o app usa o `#` nas rotas.
+
+**Conteúdo do protótipo (sibutramina):** escrito só com o Resumo "Tratamento farmacológico
+da obesidade" (aula EndoTEEM 2026 e posicionamento ABESO/SBEM 2024), o de obesidade
+pediátrica e a indicação da bula que aparece no print (IMC ≥ 30). Superdose e esquecimento
+de dose ficaram de fora: os Resumos não tratam. Conferência: os 29 números da ficha estão
+na fonte; revisor independente (76 afirmações): 68 fiéis, 8
+inferidas (4 aceitáveis; 4 duvidosas, corrigidas: "autoriza" virou "aprova"; a síndrome
+serotoninérgica voltou a ter as duas causas da fonte, interação "ou" envenenamento; "outros
+serotoninérgicos" virou "ISRS e IMAO"; a fonte passou a nomear os dois Resumos e a bula),
+nenhuma sem apoio ou em contradição; e 3 ajustes de adulto × criança (regra de parada
+marcada "adultos"; ECG e PA "antes e durante"; a regra pediátrica de 6 meses).
+**Divergências para o professor**, que a ficha não resolve sozinha: (1) a população do SCOUT
+(074: ≥ 55 anos e alto risco cardiovascular; 146: "só em adultos com doença cardiovascular
+estabelecida"; o artigo, NEJM 2010, doi 10.1056/NEJMoa1003114: doença cardiovascular prévia,
+DM2 ou ambos); (2) o desfecho de 16% a mais é o composto (IAM não fatal, AVC não fatal,
+ressuscitação após parada ou morte cardiovascular), e a morte cardiovascular isolada não
+aumentou.
+
+**Limites:** o texto da bula não entra (é do fabricante). Daqui não se alcança a ANVISA
+(firewall) nem os sites dos fabricantes: a política de rede do ambiente recusou
+ache.com.br, eurofarma.com.br, novonordisk.com.br e ems.com.br (17/10). Para conferir as
+fichas contra a bula do profissional, o professor precisa liberar esses domínios no
+ambiente (Network access → Allowed domains) ou mandar os PDFs.
+
+**Cobertura dos Resumos (233 capítulos, 17/10):** 76 dos 80 princípios ativos centrais
+aparecem em pelo menos um capítulo; muitos com folga (testosterona 56, metformina 39,
+levotiroxina 38, semaglutida 37, tirzepatida 28), outros em 1 ou 2 (pitavastatina,
+tibolona, vildagliptina, glimepirida). Sinônimos contam: metimazol (10) é o tiamazol;
+asparte (4); "GH recombinante" (3) é a somatropina; fibratos (11). Com 1 ou 2 menções,
+a ficha sai curta, a menos que entre a bula como fonte. A limpeza do sal ainda precisa
+de mais termos ao escalar (sódio, dissódico, benzoato, butanodiol, propanodiol,
+pentaidratado, acetonida, micronizado).
+
+**Provas:** `scripts/test-bulario.js` bloco (7), 15 de 15 mutações barradas (sal que não
+sai, título sem concordância, seção ou fonte sem escape, ordem do arquivo, rascunho
+sempre, associação que herda ficha, detalhe que ignora a ficha, falha das fichas
+derrubando o Bulário, barra sem vaga, chave suja, HTML no texto, seção desconhecida, sem
+fonte, ficha sem produto) e o harness `scratchpad/bulario-navegador/check.js` (ficha do
+Biomag no notebook e no celular: 12 atalhos, títulos em pergunta, atalho que leva à
+seção logo abaixo da barra, barra opaca e fixa; produto sem ficha no formato de antes).
+A/B: a main falhou nos 5 itens da ficha nas duas larguras.
+
+**Lições:**
+- `var(--card)` não existe no CSS do app: o cartão do Bulário sempre foi transparente
+  sobre o `--bg`. Na barra fixa isso deixou o texto aparecendo por trás dos botões; a
+  barra usa `--bg`, e o harness exige fundo opaco.
+- `overflow: hidden` em qualquer ancestral vira o contêiner do sticky, mesmo sem rolar;
+  `overflow: clip` não vira (usado no `.bula-item`).

@@ -42,10 +42,14 @@ atualizado: 2026-10-17
 2. ✅ **1ª execução do `bulario.yml` (16/10, à mão):** gravou na main sem erro de
    permissão; estragou 5 nomes pela codificação do CSV, corrigido no mesmo dia
    (`cofre/Bulário.md`). Conferir a execução programada de segunda, 19/10, 09h17 UTC.
-3. **Fase 2:** fichas próprias das medicações de endocrinologia; conferência contra a bula
-   brasileira depende dos PDFs enviados pelo professor. 17/10: o professor mandou como
-   referência de estilo a bula do Biomag na Consulta Remédios (seções em abas, título em
-   pergunta); proposta de ficha por princípio ativo nesse formato em andamento.
+3. **Fichas por princípio ativo (estilo de bula por seções):** protótipo no ar em 17/10
+   (sibutramina, rascunho; busque "Biomag" no Bulário do professor). **Esperando o
+   professor:** aprovar o formato e a ficha (status `rascunho` → `aprovada`); decidir a
+   fonte para escalar (só Resumos; ou liberar no ambiente ache.com.br, eurofarma.com.br,
+   novonordisk.com.br, ems.com.br e os demais fabricantes; ou mandar os PDFs) e a
+   linguagem (técnica ou de paciente). Depois: escalar por área (obesidade e diabetes
+   primeiro), com revisor independente por lote e mais termos de sal em `BULA_SAL`.
+   Divergências do SCOUT entre os Resumos 074 e 146 anotadas em [[Bulário]].
 4. **Consultório:** `presc-catalogo.json` (09/06) pode passar a sair do mesmo construtor.
 
 ## 💳 Cobrança em dobro (14/10) — o que fica com o professor
