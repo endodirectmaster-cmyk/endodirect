@@ -21,7 +21,7 @@ module.exports = {
   depoisDe: 'Tionamidas (metimazol/propiltiouracila) bloqueiam a TPO; PTU também inibe a D1.',
   titulo: 'Síntese dos hormônios tireoidianos: do iodeto ao T3 na periferia',
   subtitulo: 'O NIS capta o iodeto; a TPO organifica o iodo na tireoglobulina e acopla MIT e DIT; os hormônios ficam estocados no coloide.',
-  legenda: 'Síntese dos hormônios tireoidianos no folículo e ativação periférica do T4. Ilustração Endodirect a partir do texto do capítulo.',
+  legenda: 'Síntese dos hormônios tireoidianos no folículo e ativação periférica do T4.',
   lastro: [
     '**Tireoidianos:** o **NIS** capta iodeto contra … DIT+DIT → **T4**, estocados no **coloide**.',
     'A tireoide secreta predominantemente **T4** (razão … enquanto a **D3** inativa (T4→rT3, T3→T2).',

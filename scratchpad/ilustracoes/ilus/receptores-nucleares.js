@@ -10,7 +10,7 @@ module.exports = {
   depoisDe: 'O receptor de T3 exige a conversão prévia de **T4 em T3** pelas deiodinases.',
   titulo: 'Receptores nucleares: o hormônio entra e o complexo vira fator de transcrição',
   subtitulo: 'O complexo hormônio-receptor age sobre elementos responsivos no DNA (HRE); a resposta é lenta, de horas a dias, porque depende de nova síntese proteica.',
-  legenda: 'Receptores nucleares: tipo I (esteroides) e tipo II (T3, vitamina D, ácido retinoico, PPAR). Ilustração Endodirect a partir do texto do capítulo.',
+  legenda: 'Receptores nucleares: tipo I (esteroides) e tipo II (T3, vitamina D, ácido retinoico, PPAR).',
   lastro: [
     'O hormônio **atravessa a membrana**, liga-se … (HRE) → altera a expressão gênica.',
     'Resposta **lenta** (horas a dias), pois depende de nova síntese proteica.',

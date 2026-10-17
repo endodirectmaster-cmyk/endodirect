@@ -40,6 +40,8 @@ ampliador. O editor do professor preserva a figura ao salvar (ramo `figure` do
   - trecho depois do qual entra (`depoisDe`, que aparece uma vez só no capítulo);
   - título, subtítulo e legenda;
   - `lastro`.
+- **Legenda: só a descrição da ilustração.** Por pedido do professor, em 17/10, sem a
+  frase "Ilustração Endodirect a partir do texto do capítulo.".
 - **Lastro abreviado.** O repositório é público, e o texto dos capítulos não entra
   nele. O trecho longo vai como "início … fim": o conferidor acha o início e, até 900
   caracteres adiante, o fim.
@@ -60,7 +62,7 @@ ampliador. O editor do professor preserva a figura ao salvar (ramo `figure` do
 
 | capítulo | ilustrações | estado |
 |---|---|---|
-| Receptores Hormonais e Transdução de Sinal (posição 150) | GPCR (Gs/Gi/Gq); quinases (insulina × GH, JAK-STAT); nucleares (tipo I × tipo II) | SVG no ar (#871); falta gravar no banco |
+| Receptores Hormonais e Transdução de Sinal (posição 150) | GPCR (Gs/Gi/Gq); quinases (insulina × GH, JAK-STAT); nucleares (tipo I × tipo II) | **no ar** (SVG #871; gravado em 17/10, 14h22 UTC — ver abaixo) |
 | Hormônios: Classes, Síntese e Transporte (149) | síntese dos hormônios tireoidianos | SVG no ar (#871); falta o revisor e as outras ilustrações do capítulo |
 
 ## Lições
@@ -94,3 +96,21 @@ ampliador. O editor do professor preserva a figura ao salvar (ramo `figure` do
   - conferência de que só o `resumo` mudou;
   - depois, aviso de F5 ao professor.
 - **Posições de Endocrinologia Básica:** 149, 150, 151, 152, 153 e 223.
+
+### Gravações feitas
+
+- **Capítulo 150, 17/10/2026, 14h22 UTC.**
+  - Backup: `endodirect_global_state_backup`, id `main-antes-ilustracoes-cap150-2026-10-17`.
+  - O `UPDATE` faz `replace()` no servidor. Só as âncoras e as linhas de imagem vão no SQL; o texto do capítulo não trafega.
+  - Guardas: o md5 de antes (`69bd171b…`) e o md5 esperado depois (`b64382f4…`, igual ao texto da prévia).
+  - Conferido na mesma instrução: o resto do item, os outros 232 itens e o estado fora de `diretrizes` ficaram idênticos.
+  - Gerador do SQL: o protótipo do `gera-sql.js` (ver abaixo).
+- **Capítulo 150, legendas, 17/10/2026.** A frase "Ilustração Endodirect a partir do
+  texto do capítulo." saiu das 3 legendas, a pedido do professor.
+  - Backup: `main-antes-legendas-cap150-2026-10-17`.
+  - md5 `b64382f4…` → `adf74b87…`.
+  - Só o `resumo` mudou.
+- **O gerador agora está no repositório:** `scratchpad/ilustracoes/gera-sql.js`.
+  - Monta as trocas por `replace()` no servidor: para ilustração nova, a âncora; para
+    ilustração já gravada, a linha da imagem inteira, com a legenda atual.
+  - Confere que as trocas reproduzem a prévia (`texto.js`).

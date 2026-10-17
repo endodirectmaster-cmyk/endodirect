@@ -21,6 +21,9 @@ didático a visualização da questão do dia"*.
   Virou uma prancheta: madeira, prendedor de metal e folha branca com "Questão do dia".
   A tinta da folha é fixa e escura, porque com os tokens do tema o modo escuro poria
   texto claro no papel branco.
+- **Texto justificado.** O caso, a pergunta e o comentário vão justificados, como no
+  cartão antigo. Foi pedido do professor, na mesma tarde, olhando a aba no ar
+  (`sw.js` v310).
 - **Caso + pergunta.** `qotdPartes` separa a pergunta final ("Qual a melhor conduta
   inicial?") e a põe em destaque abaixo do caso.
   - Só separa quando a última frase é uma pergunta que começa com maiúscula, sem ponto
