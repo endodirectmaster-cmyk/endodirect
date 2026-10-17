@@ -78,6 +78,13 @@ botão passou a **copiar o nome** ao ser tocado (`bulaCopia`: a API de área de
 transferência, e o `execCommand('copy')` quando ela falta), com o aviso "Nome copiado:
 <nome>" ao lado, e a dica diz para colar no campo "Medicamento" e tocar em "Consultar".
 O link continua o mesmo; se a busca vier preenchida, melhor.
+**Teste do professor (17/10, 09h55):** a busca feita à mão por "Glifage XR" gera
+`#/bulario/q/?nomeProduto=Glifage%20XR`, o mesmo formato do nosso link (a busca não
+diferencia maiúsculas), e mostra o expediente 0953618269 de 14/09/2026, igual aos dados
+abertos. Logo, o formato não é o problema; a hipótese é que a ANVISA não abre o resultado
+quando o endereço é carregado direto numa aba nova (o resultado depende da consulta feita
+na própria página). A cópia do nome cobre esse caso. Na linha do resultado ficam os
+ícones PDF de "Bula do Paciente" e "Bula do Profissional" e o "Histórico de Bulas".
 
 **Portal de APIs e dados abertos da ANVISA (17/10).** O professor apontou os dois links do
 rodapé do Bulário Eletrônico. (1) **Portal de APIs** (api.anvisa.gov.br): credenciais
