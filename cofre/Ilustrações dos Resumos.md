@@ -1,0 +1,96 @@
+---
+tags: [cofre, conteudo, resumos]
+atualizado: 2026-10-17
+---
+
+# Ilustrações dos Resumos (no meio do capítulo)
+
+Pedido do professor (17/10/2026): *"vamos nos concentrar na geração de
+imagens/ilustrações nos resumos dos capítulos. Podemos começar, por exemplo com
+endocrinologia básica. (...) a ideia é inserir ilustrações referentes a mecanismos de
+ação, etc, no meio do capítulo"*. Depois: *"pode ser de outra coisa também nos
+capítulos"*.
+
+É diferente das [[Figuras dos Resumos]] (campo `figuras`, no fim do capítulo). Aqui a
+ilustração entra **no corpo do `resumo`**, logo depois do parágrafo de que trata, como
+linha de imagem em markdown:
+
+`![legenda](https://www.endodirect.com.br/figuras/resumos/ilustracoes/<sub>--<id>.svg)`
+
+O `mdToHtml` transforma essa linha em `<figure class="wys-fig">` com legenda e
+ampliador. O editor do professor preserva a figura ao salvar (ramo `figure` do
+`htmlToMd`).
+
+## Como nasce
+
+- **Desenho próprio em SVG**, montado à mão com as primitivas de
+  `scratchpad/ilustracoes/lib.js`:
+  - membrana;
+  - receptores (7TM, insulina, citocina) e proteína G;
+  - núcleo e DNA;
+  - setas e barra de inibição.
+
+  A moldura é igual à das figuras do fim do capítulo (mesmo cartão, título, subtítulo e
+  paleta).
+- **Sem recorte de livro.** O professor autorizou recortar figuras de livros com
+  legenda, mas não aceitei: a figura é da editora. Quando o conteúdo seguir um livro, a
+  legenda diz "Baseado em: <livro>".
+- **Um arquivo por ilustração** (`ilus/<id>.js`), com:
+  - capítulo (`tema`);
+  - trecho depois do qual entra (`depoisDe`, que aparece uma vez só no capítulo);
+  - título, subtítulo e legenda;
+  - `lastro`.
+- **Lastro abreviado.** O repositório é público, e o texto dos capítulos não entra
+  nele. O trecho longo vai como "início … fim": o conferidor acha o início e, até 900
+  caracteres adiante, o fim.
+
+## Conferências (todas antes de gravar)
+
+1. **`confere-lastro.js`.** Confere o lastro no capítulo, a inserção única e se todo
+   número da ilustração está no capítulo. Num teste de mutação, reprovou um trecho
+   alterado.
+2. **`figuras-resumos/confere.js`**, no Chromium: procura texto sobreposto e traço
+   cruzando texto.
+3. **Revisor independente**, que classifica cada item (ok, inferida, sem apoio,
+   contradiz). Toda acusação é conferida no texto antes de corrigir.
+4. **`previa.js`.** Renderiza com o `mdToHtml` e o CSS reais do `index.html` em 390 e
+   em 1280 px. No celular, o toque abre a figura no tamanho natural, com rolagem.
+
+## Feito
+
+| capítulo | ilustrações | estado |
+|---|---|---|
+| Receptores Hormonais e Transdução de Sinal (posição 150) | GPCR (Gs/Gi/Gq); quinases (insulina × GH, JAK-STAT); nucleares (tipo I × tipo II) | SVG no ar (#871); falta gravar no banco |
+| Hormônios: Classes, Síntese e Transporte (149) | síntese dos hormônios tireoidianos | SVG no ar (#871); falta o revisor e as outras ilustrações do capítulo |
+
+## Lições
+
+- **O script do app é uma função autoexecutada.** Para a prévia extrair as funções:
+  - é preciso descer no corpo da função;
+  - as variáveis vão na ordem do código-fonte, porque o `RE_IMG_BLOCO` usa o
+    `mdAltRE`; fora de ordem, a figura cai num `<p>`.
+- **A revisão das 3 ilustrações de receptores** achou 1 contradição (o hormônio sumia
+  do dímero do tipo I) e 6 itens sem apoio no texto, todos corrigidos:
+  - fosfato na JAK2;
+  - alvo da SOCS;
+  - conversão T4→T3 dentro da célula;
+  - "transcrição" na via JAK-STAT;
+  - pontes S–S só entre as α;
+  - PLC-β atravessando a membrana.
+- **O capítulo 150 se contradiz:**
+  - diz que os receptores de membrana agem "sem depender de transcrição";
+  - mas, na via JAK-STAT, a STAT migra ao núcleo;
+  - e a tabela põe os ligados a quinases em "minutos a horas".
+
+  A ilustração não desenha transcrição. Falta sugerir ao professor um ajuste no texto.
+
+## Gravação no banco
+
+- **Onde:** `endodirect_global_state` (id `main`), em
+  `payload.diretrizes[<posição>].resumo`.
+- **Cuidados:**
+  - backup antes;
+  - guarda pelo md5 do `resumo`;
+  - conferência de que só o `resumo` mudou;
+  - depois, aviso de F5 ao professor.
+- **Posições de Endocrinologia Básica:** 149, 150, 151, 152, 153 e 223.
