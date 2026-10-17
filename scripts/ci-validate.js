@@ -967,15 +967,6 @@ try {
   fail('regressão da grade das calculadoras falhou:\n' + out);
 }
 
-// 17c-undecies-j. BULÁRIO (16/10/2026): bulario.json (ANVISA + CMED) no formato e no volume
-//      esperados, busca sem acento e ordenada, áreas, link da bula oficial e painéis.
-try {
-  execFileSync(process.execPath, [path.join('scripts', 'test-bulario.js')], { stdio: 'pipe' });
-  ok('bulário: dados da ANVISA e da CMED, busca, áreas, link da bula oficial e painéis');
-} catch (e) {
-  const out = (e.stdout ? e.stdout.toString() : '') + (e.stderr ? e.stderr.toString() : '');
-  fail('regressão do bulário falhou:\n' + out);
-}
 
 // 17c-undecies-i. LINK DO ARTIGO ORIGINAL NOS POSTS AUTOMÁTICOS DO MURAL (16/10/2026):
 //      o card só linkava o nome da revista no pé; agora um botão logo abaixo da

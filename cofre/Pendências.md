@@ -32,43 +32,11 @@ atualizado: 2026-10-17
 2. ✅ **Função temporária `exportar-capitulos`:** virou stub 410 (16/10), com JWT exigido.
 3. Capítulos novos dos Resumos nascem sem figura: seguir [[Figuras dos Resumos]].
 
-## 💊 Bulário (16/10)
+## 💊 Bulário — encerrado (17/10)
 
-0. **Só professores, por enquanto (17/10).** Liberar para os alunos quando o professor
-   pedir: `BULARIO_ALUNOS=true` no index.html e ajustar `scripts/test-bulario.js`.
-1. ✅ **Link da bula conferido pelo professor (17/10):** abre a busca da ANVISA com o
-   remédio e os ícones das duas bulas. Botão renomeado "Bula do profissional e do
-   paciente"; preço virou faixa de fábrica a teto (ver [[Decisões]], 17/10).
-2. ✅ **1ª execução do `bulario.yml` (16/10, à mão):** gravou na main sem erro de
-   permissão; estragou 5 nomes pela codificação do CSV, corrigido no mesmo dia
-   (`cofre/Bulário.md`). Conferir a execução programada de segunda, 19/10, 09h17 UTC.
-3. **Fichas por princípio ativo (estilo de bula por seções):** protótipo no ar em 17/10
-   (sibutramina, rascunho; busque "Biomag" no Bulário do professor).
-   **Decisão do professor (17/10):** fonte = **bula dos fabricantes** (esperar por ela),
-   linguagem **técnica, para médicos**. **Bloqueio: a rede do ambiente.** A política atual
-   recusa os sites dos fabricantes, e os produtos de referência da endocrinologia são de
-   **62 detentores** (Novo Nordisk 16, Organon 9, Besins 8, Lilly 8, Sanofi 7, Cosmed 6,
-   Biocon 6, Merck 6, Pfizer 6, Ferring 5, Abbott 5, Amgen 5…); listar domínio por
-   domínio, com os servidores de PDF de cada um, não se sustenta. **Pedido ao
-   professor:** subir o nível de acesso à rede do ambiente (menu do ambiente → Edit →
-   Network access) e avisar. A ANVISA continua fora de alcance de qualquer jeito (o
-   bloqueio é do lado dela). Com a rede aberta: baixar a bula do profissional do produto
-   de referência de cada princípio ativo (só para conferir e completar; o texto da bula
-   não entra no repositório nem na ficha), conferir também a da sibutramina, e escalar
-   por área (obesidade e diabetes primeiro), com revisor independente por lote, mais
-   termos de sal em `BULA_SAL` e sinônimos (metimazol/tiamazol, GH
-   recombinante/somatropina). Aprovar o formato e a ficha (`rascunho` → `aprovada`)
-   segue com o professor. Divergências do SCOUT entre os Resumos 074 e 146 anotadas em
-   [[Bulário]].
-4. **Consultório:** `presc-catalogo.json` (09/06) pode passar a sair do mesmo construtor.
-5. ✅ **Testes do professor no Bulário Eletrônico (17/10):** a busca à mão tem o mesmo
-   formato do nosso link, e o PDF é gerado pela página na hora, sem endereço fixo; link
-   direto ao PDF não é possível (ver [[Bulário]]). O botão segue copiando o nome.
-6. **Fonte alternativa para as fichas, sem mexer na rede:** o professor baixa da ANVISA
-   (dois cliques por produto, como fez com o Glifage XR) o PDF da bula do profissional dos
-   remédios prioritários e põe numa pasta do Google Drive; o conector do Drive desta
-   sessão lê os PDFs. É a bula oficial, melhor fonte que o site do fabricante. Oferecido
-   em 17/10; esperando a resposta.
+⛔ **Removido da plataforma em 17/10/2026**, a pedido do professor ("vamos abortar essa
+ideia do bulário de uma vez por todas"). Nada pendente. O histórico, as fontes e as lições
+ficam em [[Bulário]], caso a ideia volte (por exemplo, com uma base licenciada).
 
 ## 💳 Cobrança em dobro (14/10) — o que fica com o professor
 

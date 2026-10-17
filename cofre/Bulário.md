@@ -5,6 +5,29 @@ atualizado: 2026-10-17
 
 # Bulário
 
+## ⛔ REMOVIDO DA PLATAFORMA (17/10/2026)
+
+Pedido do professor, depois de verificar que a bula não chega até nós por nenhum caminho
+automático (o Bulário Eletrônico recusa servidores de nuvem; a API de Consultas Externas
+não tem bulário; os dados abertos de bulas são só metadados; a Consulta Remédios proíbe a
+reprodução; os sites dos fabricantes estão fora da rede do ambiente; e baixar bula por bula
+não escala para milhares de medicamentos): *"vamos abortar essa ideia do bulário de uma vez
+por todas. Vamos excluir da plataforma mesmo."*
+
+**O que saiu (PR de 17/10, `sw.js` v308):** o painel do aluno, o item do menu, o painel do
+professor, todo o CSS e o JavaScript do Bulário, os mapas (nome do painel, acesso na
+degustação, seções do professor), `bulario.json`, `bulario-fichas.json`,
+`scripts/bulario/construir.js`, a atualização semanal `.github/workflows/bulario.yml`,
+`scripts/test-bulario.js` (e o passo 17c-undecies-j do `ci-validate`) e o harness
+`scratchpad/bulario-navegador/`. **O que ficou:** uma linha no `goPanel` que devolve ao
+início quem tinha "bula" como último painel salvo (o painel do professor já cai em
+"analytics" pela lista de seções), e o harness `scratchpad/remocao-bulario/check.js`, que
+confere a remoção. As funções `teste-anvisa-bulario` e `exportar-capitulos` do Supabase
+seguem como stub 410.
+
+Tudo abaixo é o histórico, mantido para o caso de a ideia voltar (por exemplo, com uma base
+de medicamentos licenciada).
+
 ## 💊 O BULÁRIO DA PLATAFORMA (2026-10-16)
 
 Pedido do professor: *"Programa também para ter uma ferramenta de 'Bulário'
