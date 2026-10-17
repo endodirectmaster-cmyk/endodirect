@@ -125,25 +125,12 @@ ficam em [[Bulário]], caso a ideia volte (por exemplo, com uma base licenciada)
    ~1,6 MB, e lote novo só aumenta o número de páginas. O ensaio por perfil achou um caso
    que já estava acima do limite antes do lote: Gold com EndoTEEM, 7,24 MB. Ver
    [[Decisões]] 2026-10-12 e [[Dados e Supabase]].
-2. **Dropar `tmp_estudos_2026`.** O professor autorizou em 17/10 ("Ok").
-   - **Situação:** as 50 questões estão no banco. São 49 idênticas e a ENDODIRECT-2111,
-     que só difere pela troca SOMP de 17/10. Nada depende da tabela (sem view, função,
-     chave estrangeira ou gatilho), e ela está privada (RLS ligado, sem grant).
-   - **Por que não saiu:** o `DROP` pelo conector do Supabase espera uma confirmação em
-     janela própria, que expira em 60 s. Expiraram todas as tentativas de 12/10 (pelo
-     `execute_sql` e pelo `apply_migration`) e as duas de 17/10, com o professor na
-     conversa. O "Ok" no chat não conta como essa confirmação. Não há trava no banco.
-   - **Para rodar no editor SQL do Supabase**, com guarda pelo código (a igualdade exata
-     barraria a 2111):
-   ```sql
-   do $$ begin
-     if (select count(*) from public.tmp_estudos_2026 t where not exists (
-           select 1 from public.endodirect_global_state g, jsonb_array_elements(g.payload->'provas') v
-            where g.id='main' and v->>'code' = t.item->>'code')) > 0
-     then raise exception 'há código fora do banco: não dropar'; end if;
-   end $$;
-   drop table public.tmp_estudos_2026;
-   ```
+2. ✅ **`tmp_estudos_2026` apagada em 17/10, 19h41 UTC**, pelo professor, no editor SQL
+   do Supabase ("Success. No rows returned"), com a guarda pelo código. Conferido depois:
+   a tabela não existe mais, e as 50 questões (ENDODIRECT-2068 a 2117) estão no banco.
+   O `DROP` pelo conector expirou duas vezes antes, com o professor na conversa: a
+   confirmação do conector abre em janela própria e expira em 60 s, e o "Ok" no chat não
+   conta. **Para apagar tabela, o caminho é o editor SQL** (ver [[Dados e Supabase]]).
 3. **Backups `bkp_provas_*`** (21/08, 21/08 SBD e 12/10) podem sair quando o professor
    confirmar os lotes.
 

@@ -1,9 +1,18 @@
 ---
 tags: [cofre, dados, supabase]
-atualizado: 2026-10-14
+atualizado: 2026-10-17
 ---
 
 # Dados e Supabase
+
+
+## 🗑️ Apagar tabela: pelo editor SQL, não pelo conector (17/10/2026)
+
+O conector do Supabase segura `DROP TABLE` até uma confirmação em janela própria, que
+expira em 60 s. Expiraram todas as tentativas, inclusive com o professor na conversa
+(12/10 e 17/10), e o "Ok" no chat não conta como essa confirmação. O caminho que
+funciona: o professor cola o SQL com guarda no editor (SQL Editor → New query → Run).
+Assim saiu a `tmp_estudos_2026` em 17/10.
 
 ## Hydrate do conteúdo por perfil (RPCs) — IMPORTANTE
 Quem lê o quê no hydrate (`hydrateRemoteState`, index.html ~l.3593):
