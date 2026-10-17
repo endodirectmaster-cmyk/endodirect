@@ -46,8 +46,11 @@ atualizado: 2026-10-17
 
    As contradições internas eu conferi no texto; as de diretriz precisam de conferência
    na fonte. Lista na sessão de 17/10 e no relatório ao professor.
-2. [ ] **Questão 1:** o parágrafo "Lembrar que…" usa a sigla "SOMP". A regra 7 do
-   gerador diz que ela não existe; o nome é PMOS.
+2. [x] **Questão 1 (SOMP):** em 17/10 o professor adotou SOMP no lugar de SOP; a questão
+   fica com SOMP e a nota do consenso da Lancet (ver [[Decisões]]).
+4. [ ] **Professor: migrar SOP → SOMP no acervo do banco?** Resumos, banco de questões,
+   flashcards e mapas ainda escrevem SOP. O gerador, os rótulos fixos e as Questões do Dia
+   já usam SOMP (17/10).
 3. [ ] **Apagar a tabela `public.tmp_jargao_qotd_20261017`.** Já foi aplicada, está com
    RLS e sem grants. O DROP pelo conector pede confirmação e expirou; mesma situação da
    `tmp_estudos_2026`.

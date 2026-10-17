@@ -593,6 +593,10 @@ const CAMINHO = [
   // destino está conferido: Feminina responde (177 "SOP", 4 "GLP-1"), Obesidade
   // não tem SOP nenhuma. GLP-1 na SOP é pergunta de consultório, não hipótese.
   ['dulaglutida na SOP', 'Endocrinologia Feminina'],
+  // SOMP é o nome adotado pelo professor em 17/10/2026; o acervo ainda escreve SOP
+  ['metformina na SOMP', 'Endocrinologia Feminina'],
+  ['criterios da sindrome ovariana metabolica poliendocrina', 'Endocrinologia Feminina'],
+  ['PMOS e risco cardiovascular', 'Endocrinologia Feminina'],
   // ⚠️ SENTINELA DE ROTA VAZIA. `albiglutida`, `retatrutida`, `survodutida`,
   // `orforglipron` e `beinaglutida` foram conferidas uma a uma e têm ZERO
   // conteúdo na base. Rota para conteúdo que não existe devolve bloco vazio com

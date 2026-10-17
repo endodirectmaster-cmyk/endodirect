@@ -46,7 +46,7 @@ const SIGLAS = new Set(['DXA','GLP','GIP','ESPEN','EASO','IMC','BIA','SURMOUNT',
   // siglas endócrinas comuns nos comentários e nas ilustrações (17/10/2026)
   'PTH','TRH','CRH','GHRH','IGF','SHBG','TBG','CBG','DBP','TTR','DHEA','DHEAS','SDHEA','POMC','MSH','ADH','ANP','BNP',
   'TPO','NIS','MIT','DIT','HSP','HRE','RXR','JAK','STAT','SOCS','GLUT','IRS','MAPK','AKT','RAS','PKA','PKC','PIP','DAG',
-  'GTP','GDP','RNA','DNA','MEN','VHL','SOP','PMOS','DPP','SGLT','RAC','IECA','BRA','CAD','EHH','PAAF','USG','HbA']);
+  'GTP','GDP','RNA','DNA','MEN','VHL','SOP','SOMP','PMOS','DPP','SGLT','RAC','IECA','BRA','CAD','EHH','PAAF','USG','HbA']);
 
 function analisar(texto, origem) {
   const achados = [];
