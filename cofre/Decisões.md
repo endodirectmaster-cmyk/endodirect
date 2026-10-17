@@ -8,6 +8,29 @@ atualizado: 2026-10-17
 Log de decisões de produto e técnicas (mais recentes no topo).
 
 ## 2026-10
+- **🔤 SOMP NO ACERVO DO BANCO, NOS BARALHOS E NAS FIGURAS (2026-10-17).** `sw.js` v313 → **v314**.
+  - **Pedido do professor:** *"grava tudo e troca SOMP"*.
+  - **Efeito do #876 que motivou a parte do cliente:** a troca de 8 textos fixos de flashcard fez o painel do professor publicar 7 gêmeos em `fc_shared` (`fc-seed-1792262118386-*`), e os baralhos dos alunos recebiam a versão SOMP ao lado da SOP antiga. O #876 também deixou a lista de temas de Endocrinologia Feminina com "SOP" enquanto as regras já davam "SOMP" (o mesmo assunto em dois temas), e um verso fixo (rastreio de DM2) com SOP.
+  - **Cliente (`index.html`):**
+    - `sompTxt` troca o nome por extenso e a sigla e protege o nome citado como antigo ("antiga SOP", "o termo SOP") e o título de documento ("Diretriz Internacional de SOP 2023", "SOP 2023");
+    - `sompEstado`, no início do `seedFlashcards`, renomeia os cards SEED antes do `dedupFcDeck` (o card antigo fica, com o histórico de revisão; o do aluno não muda), dá aos ledgers a chave nova (a deleção continua valendo) e passa a marca de aula feita ao título novo (a aula sem id é chaveada pelo título; 1 aluno tinha a marca);
+    - a frente de Rotterdam ficou "Critérios de Rotterdam para SOMP (antiga SOP)?" na amostra, no `fc_shared` e nos baralhos, para nenhum lado publicar ou semear frente diferente;
+    - `FC_SUBTOPICS` com SOMP e o verso do rastreio de DM2 corrigido.
+  - **Provas do cliente:** `scripts/test-somp-flashcards.js` (9 de 9 mutações barradas; o teste achou o verso de DM2 e a lista de temas) e o harness A/B `scratchpad/somp/check.js` (a main reproduz os gêmeos e a volta do card deletado; o branch funde e não muda na 2ª carga), mais o harness de boot.
+  - **Servidor:** instrução única, backup `main-antes-somp-acervo-2026-10-17`, assinatura md5 da prévia conferida na gravação (`999f1fe6…`, 198 campos):
+    - 23 capítulos dos Resumos (todos os campos menos `fonte`), inclusive o título dos 2 capítulos de SOP;
+    - 62 questões: nas autorais Endodirect, enunciado, alternativas, comentário, categoria e esperado; nas de provas oficiais, só o comentário e a categoria;
+    - 14 flashcards e 3 mapas compartilhados; 3 itens de cursos (2 títulos de aula);
+    - os 7 gêmeos do `fc_shared` apagados (o verso de cada um era igual ao do original).
+  - **Regras da troca** (`scratchpad/somp/transforma.sql`): troca valor a valor no jsonb (no texto JSON, "\nSOP" escapava da fronteira de palavra); nos campos longos (resumo, comentário), a 1ª menção ganha a ponte "antiga síndrome dos ovários policísticos (SOP)" ou "SOMP (antiga SOP)", e "(SOP)" vira "(SOMP, antiga SOP)"; as duas notas sobre PMOS foram reescritas.
+  - **Conferido depois:** fora das 5 coleções nada mudou; em cada item, só os campos previstos; nenhum SOP sem proteção nem o nome antigo por extenso nos campos-alvo.
+  - **Figuras:** os 5 SVG que escreviam SOP foram refeitos com os mesmos nomes de arquivo (a URL gravada em `figuras` continua valendo); Chromium sem sobreposição; o lastro das figuras 122 e 143 acompanhou a ponte do capítulo (`confere-texto.js` sem pendência).
+  - **Uso:** a migração parou às 18h47 UTC por um `allowed_warning` da janela semanal e foi retomada a pedido do professor, que viu a semana em 26% (ver [[Convenções de Trabalho]]).
+- **🩺 CORREÇÕES DE CONTEÚDO DA QUESTÃO DO DIA GRAVADAS (2026-10-17).**
+  - **Pedido do professor:** *"corrigir tudo"* e, vista a página de revisão, *"grava tudo e troca SOMP"*.
+  - **Feito:** 110 trocas em 49 questões (enunciado, alternativas e comentário), cada afirmação conferida na fonte. Nenhuma letra de gabarito mudou; onde o comentário certo contradizia o caso, mudou o dado do caso. As 6 questões com SOP ou PMOS passaram a SOMP.
+  - **Gravação:** backup `main-antes-correcoes-conteudo-qotd-2026-10-17`; instrução única com guardas (trecho único, id e md5, nada fora de `ig_*`, nenhum outro campo). Depois: 110 de 110 trechos presentes, nenhum antigo.
+  - Detalhes em [[Instagram Stories (Questão do Dia)]].
 - **🔤 SOMP ADOTADA NO LUGAR DE SOP (2026-10-17).** `sw.js` v312 → **v313**.
   - **Pedido do professor:** *"Lembre que houve a mudança de síndrome dos ovários policísticos (SOP) para SOMP. Adote a partir de agora SOMP"*.
   - **Antes:** a regra 7 do gerador proibia "SOMP" porque a sigla não aparecia em fonte nenhuma. Em 17/10 o PubMed ainda não tem fonte em português com SOMP, mas SOMP é a sigla literal da tradução do nome do consenso da Lancet (maio de 2026): *polyendocrine metabolic ovarian syndrome* (PMOS) → síndrome ovariana metabólica poliendócrina. A nomenclatura é decisão do professor.

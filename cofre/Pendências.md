@@ -5,6 +5,27 @@ atualizado: 2026-10-17
 
 # Pendências
 
+## 🔤 SOMP no acervo do banco (17/10) — gravado; o que fica
+
+Decisão do professor (17/10): *"grava tudo e troca SOMP"*. Gravado em 17/10, 19h15 UTC,
+com o backup `main-antes-somp-acervo-2026-10-17`; o cliente que funde os gêmeos dos
+baralhos foi junto (sw v314). Detalhes em [[Decisões]].
+
+1. [ ] **Checagem de zumbis (agendada):**
+   - um painel aberto antes da gravação pode devolver o capítulo ou o curso com o título
+     antigo, porque o título é chave do merge;
+   - pode devolver também os 7 gêmeos do `fc_shared`;
+   - a mesma consulta confere os 110 trechos da Questão do Dia gravados às 18h36.
+2. [ ] **Professor:** F5 no painel antes de editar qualquer coisa.
+3. **Fica de fora, de propósito:**
+   - avisos do radar: resumos datados de artigos, que usam o nome antigo;
+   - newsletter e podcasts: já enviados ou gravados;
+   - discussões do mural: são de artigos;
+   - base profunda: citações literais;
+   - enunciados e alternativas das provas oficiais: texto da banca (o comentário e a
+     categoria, que são nossos, mudaram);
+   - o campo `fonte` dos Resumos: nome do documento e chave do merge.
+
 ## 📊 Tabelas das discussões do mural (14/10) — feito; só o backup fica
 
 1. ✅ **Reconversão aplicada em 14/10 (23h UTC)**, com o OK expresso do professor
@@ -38,7 +59,8 @@ atualizado: 2026-10-17
 
 ## 🧹 Questão do Dia: conteúdo apontado na varredura de jargão (17/10)
 
-1. [ ] **Professor: decidir os cerca de 40 problemas de conteúdo** que os revisores
+1. [x] **Os problemas de conteúdo foram corrigidos e gravados em 17/10** (110 trocas em
+   49 questões; ver [[Instagram Stories (Questão do Dia)]]). Eram os que os revisores
    apontaram nos comentários. São de três tipos:
    - comentário que não justifica o gabarito;
    - corte ou diretriz possivelmente errados;
@@ -48,9 +70,8 @@ atualizado: 2026-10-17
    na fonte. Lista na sessão de 17/10 e no relatório ao professor.
 2. [x] **Questão 1 (SOMP):** em 17/10 o professor adotou SOMP no lugar de SOP; a questão
    fica com SOMP e a nota do consenso da Lancet (ver [[Decisões]]).
-4. [ ] **Professor: migrar SOP → SOMP no acervo do banco?** Resumos, banco de questões,
-   flashcards e mapas ainda escrevem SOP. O gerador, os rótulos fixos e as Questões do Dia
-   já usam SOMP (17/10).
+4. [x] **Migrar SOP → SOMP no acervo do banco:** gravado em 17/10 (seção "SOMP no
+   acervo do banco", no topo).
 3. [ ] **Apagar a tabela `public.tmp_jargao_qotd_20261017`.** Já foi aplicada, está com
    RLS e sem grants. O DROP pelo conector pede confirmação e expirou; mesma situação da
    `tmp_estudos_2026`.
