@@ -152,6 +152,43 @@ async function estado(page, adm) {
     e = await estado(page, adm);
     ok(e.precos.length >= 1 && e.precos.every((x) => /^R\$\s[\d.]+,\d{2} de fábrica$/.test(x)), nome + ': Acezo (uso hospitalar) devia mostrar só o preço de fábrica: ' + e.precos.join(' / '));
     achados.push(nome + ': Acezo (hospitalar) → ' + e.precos.join(' / '));
+    // Ficha por seções (protótipo, 17/10/2026): Biomag abre a ficha da sibutramina, com a
+    // barra de atalhos (fixa ao rolar) e os títulos em pergunta, no modelo que o professor
+    // mandou. O atalho rola até a seção sem escondê-la sob a barra.
+    await page.fill(raizSel(adm) + ' .bula-q', 'biomag');
+    await page.waitForTimeout(500);
+    await page.click(raizSel(adm) + ' .bula-item .bula-head');
+    await page.waitForTimeout(400);
+    const fx = await page.evaluate((sel) => {
+      const det = document.querySelector(sel + ' .bula-det'); if (!det) return { det: false };
+      const nav = det.querySelector('.bula-nav');
+      return { det: true, nav: nav ? [...nav.querySelectorAll('.bula-nav-a')].map((b) => b.textContent) : [], titulos: [...det.querySelectorAll('.bula-sec > h3')].map((h) => h.textContent), rascunho: !!det.querySelector('.bula-rascunho'), tabelas: det.querySelectorAll('.bula-md table').length, link: !!det.querySelector('a[data-bula-oficial]'), largas: [...det.querySelectorAll('.bula-sec, .bula-md table')].filter((x) => x.getBoundingClientRect().right > document.documentElement.clientWidth + 1).length };
+    }, raizSel(adm));
+    ok(fx.det && fx.nav.length === 12 && fx.nav[0] === 'Para que serve' && fx.nav.includes('Apresentações e preços') && fx.nav[fx.nav.length - 1] === 'Bula oficial', nome + ': a ficha do Biomag não abriu a barra de seções: ' + JSON.stringify(fx.nav));
+    ok(fx.titulos[0] === 'Para que serve a sibutramina?' && fx.titulos.includes('Quando a sibutramina é contraindicada?') && fx.titulos.includes('Quais as reações adversas da sibutramina?'), nome + ': títulos em pergunta errados: ' + JSON.stringify(fx.titulos));
+    ok(fx.rascunho && fx.tabelas === 2 && fx.link && fx.largas === 0, nome + ': ficha sem aviso de rascunho, sem as tabelas, sem o link da bula, ou mais larga que a tela: ' + JSON.stringify(fx));
+    achados.push(nome + ': Biomag → ficha da sibutramina com ' + fx.nav.length + ' atalhos; títulos: ' + fx.titulos.slice(0, 3).join(' | '));
+    await page.screenshot({ path: path.join(__dirname, 'ficha-' + nome + '-topo.png') });
+    await page.evaluate((sel) => { const b = [...document.querySelectorAll(sel + ' .bula-nav-a')].find((x) => x.textContent === 'Contraindicações'); if (b) b.click(); }, raizSel(adm));
+    await page.waitForTimeout(1200);
+    const pos = await page.evaluate((sel) => {
+      const sec = document.querySelector(sel + ' [data-bula-sec="contraindicacoes"]'), nav = document.querySelector(sel + ' .bula-nav');
+      if (!sec || !nav) return { semFicha: true };
+      const r = sec.getBoundingClientRect(), n = nav.getBoundingClientRect(), on = nav.querySelector('.bula-nav-a.on');
+      return { secTop: Math.round(r.top), navTop: Math.round(n.top), navBottom: Math.round(n.bottom), vh: window.innerHeight, on: on ? on.textContent : '', fundo: getComputedStyle(nav).backgroundColor };
+    }, raizSel(adm));
+    ok(pos.navTop >= -1 && pos.navBottom <= pos.secTop + 2 && pos.secTop < pos.vh * 0.5 && pos.on === 'Contraindicações', nome + ': o atalho não levou à seção logo abaixo da barra fixa: ' + JSON.stringify(pos));
+    // A barra passa por cima do texto: fundo transparente deixaria as letras por trás
+    // dos botões (aconteceu no 1º desenho, com uma variável de cor que não existe).
+    ok(/^rgb\(/.test(pos.fundo), nome + ': a barra fixa ficou com fundo transparente: ' + pos.fundo);
+    achados.push(nome + ': atalho Contraindicações → seção a ' + pos.secTop + ' px do topo, barra fixa em ' + pos.navTop + '–' + pos.navBottom + ' px');
+    await page.screenshot({ path: path.join(__dirname, 'ficha-' + nome + '-contra.png') });
+    // Produto sem ficha (Glifage XR) segue no formato de antes, sem barra de seções.
+    await page.fill(raizSel(adm) + ' .bula-q', 'glifage xr');
+    await page.waitForTimeout(500);
+    await page.click(raizSel(adm) + ' .bula-item .bula-head');
+    await page.waitForTimeout(300);
+    ok(await page.evaluate((sel) => !!document.querySelector(sel + ' .bula-det') && !document.querySelector(sel + ' .bula-det .bula-nav'), raizSel(adm)), nome + ': produto sem ficha ganhou barra de seções');
     // área sem busca
     await page.fill(raizSel(adm) + ' .bula-q', '');
     await page.waitForTimeout(400);

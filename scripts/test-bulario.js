@@ -13,7 +13,9 @@
 // ordena certo, e sem busca nem área não lista os 12 mil; (4) o link da bula
 // oficial e o escape; (5) a fiação do painel do professor e o app do aluno fechado
 // por enquanto (chave BULARIO_ALUNOS, 17/10/2026); (6) a faixa de preço (17/10/2026):
-// preço de fábrica a preço máximo ao consumidor, com o de fábrica sempre abaixo.
+// preço de fábrica a preço máximo ao consumidor, com o de fábrica sempre abaixo;
+// (7) as fichas por princípio ativo (bulario-fichas.json, protótipo de 17/10/2026, no
+// modelo de bula por seções que o professor mandou).
 'use strict';
 const fs = require('fs');
 const path = require('path');
@@ -74,7 +76,7 @@ function corpo(nome) {
 }
 const ctx = vm.createContext({});
 vm.runInContext("var BULA={d:null,carregando:false,erro:'',q:'',area:-1,aberto:-1,lim:40,root:null,idx:null};", ctx);
-['esc', 'bulaNorm', 'bulaLinkOficial', 'bulaPreco', 'bulaFaixa', 'bulaRank', 'bulaFiltrar'].forEach((n) => vm.runInContext(corpo(n), ctx));
+['esc', 'bulaNorm', 'bulaLinkOficial', 'bulaPreco', 'bulaFaixa', 'bulaTitSec', 'bulaBases', 'bulaFichaDe', 'bulaFichaHTML', 'bulaVenc', 'bulaDetalheHTML', 'bulaRank', 'bulaFiltrar'].forEach((n) => vm.runInContext(corpo(n), ctx));
 if (d) {
   ctx.__d = d;
   vm.runInContext("BULA.d=__d;BULA.idx=__d.p.map(function(p){return bulaNorm(p[0]+' '+p[1]+' '+(__d.tab.emp[p[4]]||''));});", ctx);
@@ -108,6 +110,55 @@ ok(ctx.bulaFaixa(['x', 0, 0, 0, 0, 0]) === '—', '(6) sem preço nenhum tem de 
 ok(/<span class="bula-apr-preco">'\+bulaFaixa\(a\)\+'<\/span>/.test(corpo('bulaDetalheHTML')) && /do preço de fábrica ao máximo ao consumidor/.test(corpo('bulaDetalheHTML')), '(6) a apresentação não mostra a faixa, ou o título não diz o que é cada valor');
 ok(/O primeiro valor é o preço de fábrica/.test(corpo('bulaDetalheHTML')) && /genérico pode sair abaixo/.test(corpo('bulaDetalheHTML')), '(6) a nota não explica a faixa (fábrica, teto, genérico abaixo)');
 ok(/'<span class="bula-nome">'\+esc\(p\[0\]\)\+'<\/span>'/.test(corpo('bulaItemHTML')), '(4) o nome do medicamento não sai escapado');
+// (7) Fichas por princípio ativo. O texto é nosso (a bula é do fabricante); a ficha vale
+// para todos os produtos do mesmo princípio ativo, depois de tirar sal e hidratação.
+let FX = null;
+try { FX = JSON.parse(fs.readFileSync(path.join(raiz, 'bulario-fichas.json'), 'utf8')); } catch (e) { falhas.push('(7) bulario-fichas.json ausente ou inválido: ' + e.message); }
+const SECOES = vm.runInContext('BULA_SECOES.map(function(s){return s[0];})', ctx);
+ok(JSON.stringify(SECOES) === JSON.stringify(['indicacao', 'mecanismo', 'resultados', 'uso', 'contraindicacoes', 'precaucoes', 'adversas', 'interacoes', 'populacoes', 'superdose']), '(7) seções da ficha fora da ordem combinada: ' + SECOES.join(', '));
+const bases = (pa) => JSON.stringify(vm.runInContext('bulaBases(' + JSON.stringify(pa) + ')', ctx));
+ok(bases('cloridrato de sibutramina monoidratado') === '["sibutramina"]', '(7) sal e hidratação não saíram: ' + bases('cloridrato de sibutramina monoidratado'));
+ok(bases('cloridrato de sibutramina, cloridrato de sibutramina monoidratado') === '["sibutramina"]', '(7) o mesmo princípio ativo em dois sais virou associação');
+ok(bases('cloridrato de bupropiona, cloridrato de naltrexona di-hidratado') === '["bupropiona","naltrexona"]', '(7) associação não separou os princípios ativos: ' + bases('cloridrato de bupropiona, cloridrato de naltrexona di-hidratado'));
+ok(bases('levotiroxina sódica') === '["levotiroxina"]' && bases('fosfato de sitagliptina monoidratado') === '["sitagliptina"]', '(7) sal com acento ou fosfato não saiu');
+const tit = (t, f) => vm.runInContext('bulaTitSec(' + JSON.stringify(t) + ',' + JSON.stringify(f) + ')', ctx);
+ok(tit('Quando %o %n é contraindicad%o?', { nome: 'sibutramina', artigo: 'a' }) === 'Quando a sibutramina é contraindicada?' && tit('Quando %o %n é contraindicad%o?', { nome: 'orlistate', artigo: 'o' }) === 'Quando o orlistate é contraindicado?', '(7) concordância do título com o artigo da ficha');
+ok(tit('Quais as reações adversas %d %n?', { nome: 'orlistate', artigo: 'o' }) === 'Quais as reações adversas do orlistate?', '(7) contração "do/da" no título');
+// Montagem: seções na ordem combinada (não na do arquivo), texto escapado, rascunho avisado.
+ctx.mdToHtml = (m) => '<p>' + ctx.esc(m) + '</p>';
+const montada = vm.runInContext('bulaFichaHTML(' + JSON.stringify({ nome: 'teste', artigo: 'o', status: 'rascunho', fonte: 'Fonte <img src=x onerror=alert(1)>', secoes: { uso: 'Dose <b>x</b>', indicacao: 'Serve <script>alert(1)</script>', inexistente: 'não aparece' } }) + ',[["apresentacoes","Apresentações e preços","<ul class=\\"a\\"></ul>"],["vazio","Vazio",""]])', ctx);
+ok(!/<img|<script|<b>/.test(montada), '(7) texto da ficha ou da fonte entrou sem escape');
+ok(montada.indexOf('data-bula-sec="indicacao"') < montada.indexOf('data-bula-sec="uso"') && !/inexistente|não aparece/.test(montada), '(7) seções fora da ordem combinada ou seção desconhecida exibida');
+ok(/data-bula-ir="apresentacoes"/.test(montada) && !/data-bula-ir="vazio"/.test(montada), '(7) bloco extra sem conteúdo ganhou atalho, ou o de apresentações não ganhou');
+ok(/class="bula-rascunho"/.test(montada) && !/class="bula-rascunho"/.test(vm.runInContext('bulaFichaHTML({nome:"t",artigo:"o",status:"aprovada",secoes:{uso:"x"}},[])', ctx)), '(7) o aviso de rascunho não segue o status da ficha');
+ok(/<div class="bula-nav-vaga"><\/div><nav class="bula-nav"/.test(montada), '(7) a barra perdeu a vaga que segura a altura quando ela fica fixa no celular');
+if (FX && d) {
+  ok(FX.meta && FX.meta.v === 1 && FX.fichas && typeof FX.fichas === 'object', '(7) bulario-fichas.json sem meta.v = 1 ou sem fichas');
+  ctx.BULA.fichas = FX.fichas;
+  for (const [k, f] of Object.entries(FX.fichas || {})) {
+    ok(bases(k) === JSON.stringify([k]), '(7) chave "' + k + '" não é o princípio ativo limpo (' + bases(k) + ')');
+    ok(f.nome && (f.artigo === 'a' || f.artigo === 'o') && (f.status === 'rascunho' || f.status === 'aprovada') && typeof f.fonte === 'string' && f.fonte.length > 20, '(7) ficha "' + k + '" sem nome, artigo, status ou fonte');
+    const sec = Object.keys(f.secoes || {});
+    ok(sec.length >= 5 && sec.every((x) => SECOES.includes(x) && typeof f.secoes[x] === 'string' && f.secoes[x].trim()), '(7) ficha "' + k + '" com seção desconhecida ou vazia: ' + sec.join(', '));
+    ok(sec.every((x) => !/<[a-z\/]/i.test(f.secoes[x])), '(7) ficha "' + k + '" com HTML no texto (o texto é markdown)');
+    const prods = d.p.filter((p) => vm.runInContext('bulaFichaDe(' + JSON.stringify(p) + ')', ctx) === null ? false : vm.runInContext('bulaFichaDe(' + JSON.stringify(p) + ').nome', ctx) === f.nome);
+    ok(prods.length >= 1, '(7) a ficha "' + k + '" não casa com nenhum produto do Bulário');
+    if (k === 'sibutramina') ok(prods.length >= 10 && prods.some((p) => p[0] === 'Biomag'), '(7) a ficha da sibutramina devia valer para o Biomag e os genéricos: ' + prods.length);
+  }
+  const gx = d.p.find((p) => p[0] === 'Glifage XR');
+  ok(gx && vm.runInContext('bulaFichaDe(' + JSON.stringify(gx) + ')', ctx) === null, '(7) Glifage XR ganhou ficha sem haver ficha de metformina');
+  // Associação: mesmo com ficha de um dos componentes (aqui, uma de teste da bupropiona),
+  // o produto não herda a ficha; o detalhe só aponta que ela existe.
+  const assoc = d.p.find((p) => /bupropiona/.test(p[1]) && /naltrexona/.test(p[1]));
+  ctx.BULA.fichas = Object.assign({}, FX.fichas, { bupropiona: Object.assign({}, FX.fichas.sibutramina, { nome: 'bupropiona' }) });
+  ok(assoc && vm.runInContext('bulaFichaDe(' + JSON.stringify(assoc) + ')', ctx) === null, '(7) associação ganhou a ficha de um dos componentes como se fosse dela');
+  const detAssoc = assoc ? vm.runInContext('bulaDetalheHTML(' + JSON.stringify(assoc) + ')', ctx) : '';
+  ok(/Associação\. Há ficha de <strong>bupropiona<\/strong>/.test(detAssoc) && !/bula-nav/.test(detAssoc), '(7) a associação não aponta a ficha do componente, ou abriu a ficha dele');
+  ctx.BULA.fichas = FX.fichas;
+}
+ok(/var f=bulaFichaDe\(p\);\s*if\(f\)return '<div class="bula-det">'\+bulaFichaHTML\(f,/.test(corpo('bulaDetalheHTML')), '(7) o detalhe do produto não usa a ficha quando ela existe');
+ok(/fetch\('bulario-fichas\.json'\)[\s\S]{0,260}\.catch\(function\(\)\{BULA\.fichas=null;\}\)/.test(corpo('bulaCarregar')), '(7) falha ao carregar as fichas tem de deixar o Bulário funcionando, sem ficha');
+ok(/mdToHtml\(f\.secoes\[s\[0\]\]\)/.test(corpo('bulaFichaHTML')) && /esc\(f\.fonte\)/.test(corpo('bulaFichaHTML')), '(7) a ficha precisa passar o texto pelo mdToHtml (que escapa) e a fonte pelo esc');
 // (5) fiação
 ok(/<button class="sb-item" data-p="bula" id="sb-bula" style="display:none">💊 Bulário<\/button>/.test(SRC) && /<div class="panel" id="panel-bula">/.test(SRC), '(5) o painel do aluno saiu do corpo, ou o item do menu não nasce escondido');
 // 17/10/2026, pedido do professor: "não libera o bulário para os alunos; apenas por enquanto para
@@ -121,4 +172,4 @@ ok(/support:1,calc:1,bula:1,/.test(SRC), '(5) o bulário saiu da degustação (m
 ok(/fetch\('bulario\.json'\)/.test(corpo('bulaCarregar')) && /BULA\.erro=/.test(corpo('bulaCarregar')), '(5) o carregamento não avisa a falha de rede');
 
 if (falhas.length) { console.error('test-bulario: ' + falhas.length + ' falha(s)'); falhas.forEach((f) => console.error('  ✗ ' + f)); process.exit(1); }
-console.log('test-bulario: ok (' + (d ? d.p.length + ' produtos; ' : '') + 'busca sem acento por nome, princípio ativo e fabricante; áreas; faixa de preço de fábrica ao teto; link da bula oficial; painéis ligados)');
+console.log('test-bulario: ok (' + (d ? d.p.length + ' produtos; ' : '') + 'busca sem acento por nome, princípio ativo e fabricante; áreas; faixa de preço de fábrica ao teto; fichas por princípio ativo; link da bula oficial; painéis ligados)');
