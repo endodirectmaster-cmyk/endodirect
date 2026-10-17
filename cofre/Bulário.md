@@ -85,6 +85,12 @@ abertos. Logo, o formato não é o problema; a hipótese é que a ANVISA não ab
 quando o endereço é carregado direto numa aba nova (o resultado depende da consulta feita
 na própria página). A cópia do nome cobre esse caso. Na linha do resultado ficam os
 ícones PDF de "Bula do Paciente" e "Bula do Profissional" e o "Histórico de Bulas".
+**O PDF não tem endereço fixo (17/10, 10h02):** o ícone não é link (o clique direito só
+oferece opções de imagem), e o clique esquerdo baixa direto um arquivo chamado
+`bula_<milissegundos do clique>` (`bula_1792242123977`): a página busca o PDF e o gera na
+hora. Logo, **não dá para o nosso botão levar direto ao PDF**; fica a busca com o nome
+copiado. O link antigo (`datavisa/fila_bula/frmVisualizarBula.asp`) não foi testado, e
+pelo jeito do sistema atual dificilmente ainda responde.
 
 **Portal de APIs e dados abertos da ANVISA (17/10).** O professor apontou os dois links do
 rodapé do Bulário Eletrônico. (1) **Portal de APIs** (api.anvisa.gov.br): credenciais
