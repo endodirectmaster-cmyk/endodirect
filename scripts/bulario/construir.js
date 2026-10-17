@@ -156,9 +156,10 @@ async function main() {
   // CMED: apresentações ligadas pelo registro (os 9 primeiros dígitos do código de 13).
   // Os dois preços com ICMS de 18% (as colunas "ALC", de área de livre comércio, ficam
   // fora). Preço de fábrica (PF): o máximo que o fabricante ou o distribuidor cobra da
-  // farmácia; preço máximo ao consumidor (PMC): o teto no balcão. Desde 17/10/2026 o app
-  // mostra a faixa entre os dois, porque o PMC sozinho parecia caro perto do preço das
-  // farmácias (pedido do professor). Produto de uso hospitalar só tem PF.
+  // farmácia; preço máximo ao consumidor (PMC): o teto no balcão. Produto de uso
+  // hospitalar só tem PF. A TELA NÃO MOSTRA PREÇO (decisão do professor, 17/10/2026): a
+  // CMED só dá tetos, e o balcão chega a ficar abaixo do PF. Os dois seguem no arquivo
+  // como alarme de mudança no formato da planilha (test-bulario, bloco 6).
   const kPmc = Object.keys(cmed[0] || {}).find((k) => /^PMC 18\s*%$/.test(k));
   const kPf = Object.keys(cmed[0] || {}).find((k) => /^PF 18\s*%$/.test(k));
   const kCom = Object.keys(cmed[0] || {}).find((k) => /^COMERCIALIZA/i.test(k)) || '';
@@ -190,7 +191,7 @@ async function main() {
   saida.sort((a, b) => a[0].localeCompare(b[0], 'pt-BR') || a[1].localeCompare(b[1], 'pt-BR'));
   const hoje = new Date().toISOString().slice(0, 10);
   const dataCmed = (fontes.arquivoCmed.match(/(\d{4})(\d{2})(\d{2})/) || []).slice(1).reverse().join('/');
-  const meta = { v: 1, gerado: hoje, fontes: { anvisa: 'ANVISA, dados abertos de medicamentos registrados (situação ativa), baixados em ' + hoje.split('-').reverse().join('/'), cmed: 'CMED, lista de preços' + (dataCmed ? ' de ' + dataCmed : '') + ' (de fábrica e máximo ao consumidor, com ICMS de 18%)' },
+  const meta = { v: 1, gerado: hoje, fontes: { anvisa: 'ANVISA, dados abertos de medicamentos registrados (situação ativa), baixados em ' + hoje.split('-').reverse().join('/'), cmed: 'CMED, lista' + (dataCmed ? ' de ' + dataCmed : '') + ' (apresentações e situação de venda)' },
     anoComercializacao: anoCom,
     campos: ['nome', 'principio_ativo', 'categoria', 'classe', 'detentor', 'registro', 'vencimento_mmaaaa', 'area', 'tarja', 'apresentacoes[apresentacao, pmc18, tarja, restricao_hospitalar, comercializado, pf18]'],
     totais: { produtos: saida.length, apresentacoes: ligadas, apresentacoesSemRegistroAtivo: soltas, endocrinologia: saida.filter((p) => p[7] >= 0).length } };
