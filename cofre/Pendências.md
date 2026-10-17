@@ -11,12 +11,15 @@ Decisão do professor (17/10): *"grava tudo e troca SOMP"*. Gravado em 17/10, 19
 com o backup `main-antes-somp-acervo-2026-10-17`; o cliente que funde os gêmeos dos
 baralhos foi junto (sw v314). Detalhes em [[Decisões]].
 
-1. [ ] **Checagem de zumbis (agendada):**
-   - um painel aberto antes da gravação pode devolver o capítulo ou o curso com o título
-     antigo, porque o título é chave do merge;
-   - pode devolver também os 7 gêmeos do `fc_shared`;
-   - a mesma consulta confere os 110 trechos da Questão do Dia gravados às 18h36.
-2. [ ] **Professor:** F5 no painel antes de editar qualquer coisa.
+1. ✅ **Checagem de zumbis feita em 17/10, 20h00 UTC**, adiantada a pedido do professor
+   ("Pode fazer agora"). A última gravação no estado global foi às 19h22 UTC, já com o
+   painel na versão nova, e não trouxe nada de volta:
+   - capítulos e títulos de aula com SOMP (233 capítulos, 106 aulas);
+   - nenhum gêmeo nem cartão `fc-seed` novo no `fc_shared` (533 cartões);
+   - nenhum SOP sem proteção nos campos-alvo;
+   - as 140 questões do dia iguais ao backup `main-antes-somp-acervo-2026-10-17`, tirado
+     depois das correções.
+2. ✅ **Painel do professor:** não houve gravação por cima depois da migração.
 3. **Fica de fora, de propósito:**
    - avisos do radar: resumos datados de artigos, que usam o nome antigo;
    - newsletter e podcasts: já enviados ou gravados;
