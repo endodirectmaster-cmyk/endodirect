@@ -61,11 +61,13 @@ atualizado: 2026-10-17
    segue com o professor. Divergências do SCOUT entre os Resumos 074 e 146 anotadas em
    [[Bulário]].
 4. **Consultório:** `presc-catalogo.json` (09/06) pode passar a sair do mesmo construtor.
-5. **Professor: dois testes no navegador (17/10).** (a) No Bulário Eletrônico, buscar
-   "Glifage XR" à mão e mandar o endereço da barra (para descobrir o formato que já cai no
-   remédio); (b) abrir o link antigo do PDF montado com os dados abertos (Glifage XR:
-   `pNuTransacao=12366362026&pIdAnexo=35552862`) e dizer se abre a bula. Se (b) abrir, o
-   botão pode levar direto ao PDF da bula vigente de cada produto.
+5. **Professor: testes no navegador (17/10).** (a) ✅ Busca à mão por "Glifage XR": o
+   endereço tem o mesmo formato do nosso link (ver [[Bulário]]). Faltam: (b) copiar o
+   endereço do ícone PDF da "Bula do Profissional" (se trouxer o número do documento dos
+   dados abertos, 35552862 no Glifage XR, o botão pode levar direto ao PDF de cada
+   produto); (c) abrir o link antigo montado com os dados abertos
+   (`pNuTransacao=12366362026&pIdAnexo=35552862`); (d) colar o endereço do resultado numa
+   aba nova e ver se o resultado reaparece ou se a busca volta vazia.
 
 ## 💳 Cobrança em dobro (14/10) — o que fica com o professor
 
