@@ -1,6 +1,6 @@
 ---
 tags: [cofre, pendencias]
-atualizado: 2026-10-16
+atualizado: 2026-10-17
 ---
 
 # Pendências
@@ -36,14 +36,16 @@ atualizado: 2026-10-16
 
 0. **Só professores, por enquanto (17/10).** Liberar para os alunos quando o professor
    pedir: `BULARIO_ALUNOS=true` no index.html e ajustar `scripts/test-bulario.js`.
-1. **Professor: tocar uma vez o botão "Bula oficial na ANVISA"** de qualquer medicamento
-   e dizer se abre a busca já com o nome. O formato do link não tem documentação pública
-   e o Bulário Eletrônico não abre daqui (firewall da ANVISA).
+1. ✅ **Link da bula conferido pelo professor (17/10):** abre a busca da ANVISA com o
+   remédio e os ícones das duas bulas. Botão renomeado "Bula do profissional e do
+   paciente"; preço virou faixa de fábrica a teto (ver [[Decisões]], 17/10).
 2. ✅ **1ª execução do `bulario.yml` (16/10, à mão):** gravou na main sem erro de
    permissão; estragou 5 nomes pela codificação do CSV, corrigido no mesmo dia
    (`cofre/Bulário.md`). Conferir a execução programada de segunda, 19/10, 09h17 UTC.
 3. **Fase 2:** fichas próprias das medicações de endocrinologia; conferência contra a bula
-   brasileira depende dos PDFs enviados pelo professor.
+   brasileira depende dos PDFs enviados pelo professor. 17/10: o professor mandou como
+   referência de estilo a bula do Biomag na Consulta Remédios (seções em abas, título em
+   pergunta); proposta de ficha por princípio ativo nesse formato em andamento.
 4. **Consultório:** `presc-catalogo.json` (09/06) pode passar a sair do mesmo construtor.
 
 ## 💳 Cobrança em dobro (14/10) — o que fica com o professor

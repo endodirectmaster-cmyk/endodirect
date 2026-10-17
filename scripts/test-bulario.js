@@ -12,7 +12,8 @@
 // (3) a busca do app (sem acento, por nome, princípio ativo ou fabricante) acha e
 // ordena certo, e sem busca nem área não lista os 12 mil; (4) o link da bula
 // oficial e o escape; (5) a fiação do painel do professor e o app do aluno fechado
-// por enquanto (chave BULARIO_ALUNOS, 17/10/2026).
+// por enquanto (chave BULARIO_ALUNOS, 17/10/2026); (6) a faixa de preço (17/10/2026):
+// preço de fábrica a preço máximo ao consumidor, com o de fábrica sempre abaixo.
 'use strict';
 const fs = require('fs');
 const path = require('path');
@@ -42,10 +43,21 @@ if (d) {
   const porArea = {}; P.forEach((p) => { if (p[7] >= 0) porArea[t.area[p[7]]] = (porArea[t.area[p[7]]] || 0) + 1; });
   ['Diabetes', 'Lípides', 'Tireoide', 'Osso e cálcio', 'Hormônios sexuais'].forEach((a) => ok((porArea[a] || 0) >= 5, '(1) área ' + a + ' quase vazia: ' + (porArea[a] || 0)));
   ok(P.every((p) => Array.isArray(p) && p.length === 10 && typeof p[0] === 'string' && Array.isArray(p[9])), '(1) produto fora do formato de 10 campos');
+  // (6) Preço de fábrica (a[5], desde 17/10/2026). A CMED dá PF a toda apresentação e PMC
+  // a toda que não é de uso hospitalar; o PMC sai do PF por um fator de 1,34 a 1,38.
+  // PF acima do PMC, ou longe desse fator, é coluna trocada ou lida errada.
+  const aprs = P.flatMap((p) => p[9] || []);
+  ok(aprs.every((a) => Array.isArray(a) && a.length === 6 && typeof a[5] === 'number'), '(6) apresentação sem o preço de fábrica (6º campo)');
+  const comPf = aprs.filter((a) => a[5] > 0).length;
+  ok(comPf >= 0.95 * aprs.length, '(6) poucas apresentações com preço de fábrica: ' + comPf + ' de ' + aprs.length);
+  const foraFator = aprs.filter((a) => a[1] > 0 && a[5] > 0 && !(a[1] / a[5] >= 1.2 && a[1] / a[5] <= 1.6));
+  ok(foraFator.length <= 5, '(6) preço de fábrica fora da proporção esperada do teto (PF trocado com PMC?): ' + foraFator.length + ', ex. ' + JSON.stringify(foraFator.slice(0, 2)));
+  ok(aprs.filter((a) => a[3] && !(a[1] > 0)).every((a) => a[5] > 0) || aprs.filter((a) => a[3] && !(a[1] > 0) && !(a[5] > 0)).length <= 5, '(6) uso hospitalar sem nenhum preço');
   // (2) referências
   const acha = (re) => P.find((p) => re.test(p[0]));
   const gx = acha(/^Glifage XR$/);
   ok(gx && /metformina/.test(gx[1]) && gx[9].length >= 2 && gx[9].some((a) => a[1] > 0 && a[4] === 1), '(2) Glifage XR sem apresentações à venda com preço');
+  ok(gx && gx[9].every((a) => a[5] > 0 && a[5] < a[1]), '(6) Glifage XR sem preço de fábrica abaixo do teto');
   ok(P.some((p) => /levotiroxina/.test(p[1]) && t.area[p[7]] === 'Tireoide'), '(2) levotiroxina fora da área Tireoide');
   ok(P.some((p) => /semaglutida/.test(p[1]) && t.area[p[7]] === 'Diabetes'), '(2) semaglutida fora da área Diabetes');
   ok(P.some((p) => /atorvastatina|rosuvastatina/.test(p[1]) && t.area[p[7]] === 'Lípides'), '(2) estatina fora da área Lípides');
@@ -62,7 +74,7 @@ function corpo(nome) {
 }
 const ctx = vm.createContext({});
 vm.runInContext("var BULA={d:null,carregando:false,erro:'',q:'',area:-1,aberto:-1,lim:40,root:null,idx:null};", ctx);
-['esc', 'bulaNorm', 'bulaLinkOficial', 'bulaRank', 'bulaFiltrar'].forEach((n) => vm.runInContext(corpo(n), ctx));
+['esc', 'bulaNorm', 'bulaLinkOficial', 'bulaPreco', 'bulaFaixa', 'bulaRank', 'bulaFiltrar'].forEach((n) => vm.runInContext(corpo(n), ctx));
 if (d) {
   ctx.__d = d;
   vm.runInContext("BULA.d=__d;BULA.idx=__d.p.map(function(p){return bulaNorm(p[0]+' '+p[1]+' '+(__d.tab.emp[p[4]]||''));});", ctx);
@@ -85,7 +97,16 @@ if (d) {
 }
 // (4) link e escape
 ok(ctx.bulaLinkOficial('Glifage XR') === 'https://consultas.anvisa.gov.br/#/bulario/q/?nomeProduto=GLIFAGE%20XR', '(4) link da bula oficial: ' + ctx.bulaLinkOficial('Glifage XR'));
-ok(/target="_blank" rel="noopener noreferrer">📄 Bula oficial na ANVISA ↗<\/a>/.test(corpo('bulaDetalheHTML')) && /href="'\+esc\(bulaLinkOficial\(p\[0\]\)\)\+'"/.test(corpo('bulaDetalheHTML')), '(4) o botão da bula oficial não abre em aba nova ou não escapa o endereço');
+ok(/target="_blank" rel="noopener noreferrer">📄 Bula do profissional e do paciente ↗<\/a>/.test(corpo('bulaDetalheHTML')) && /href="'\+esc\(bulaLinkOficial\(p\[0\]\)\)\+'"/.test(corpo('bulaDetalheHTML')), '(4) o botão da bula oficial não abre em aba nova, não escapa o endereço ou não diz que leva à bula do profissional');
+// (6) Faixa de preço na tela. O espaço entre "R$" e o valor é o do toLocaleString do
+// próprio app (bulaPreco); o teste compara com a mesma função.
+const R = (v) => ctx.bulaPreco(v);
+ok(ctx.bulaFaixa(['x', 1314.37, 0, 0, 1, 979.8]) === R(979.8) + ' a ' + R(1314.37) && /^R\$ 979,80 a R\$ 1\.314,37$/.test(ctx.bulaFaixa(['x', 1314.37, 0, 0, 1, 979.8])), '(6) faixa do Ozivy 3 mL (PF 979,80; PMC 1.314,37): ' + ctx.bulaFaixa(['x', 1314.37, 0, 0, 1, 979.8]));
+ok(ctx.bulaFaixa(['x', 1314.37, 0, 0, 1]) === 'até ' + R(1314.37), '(6) arquivo antigo, sem preço de fábrica: tem de mostrar "até" o teto, e não "undefined"');
+ok(ctx.bulaFaixa(['x', 0, 0, 1, 1, 250.5]) === R(250.5) + ' de fábrica', '(6) uso hospitalar (só PF): ' + ctx.bulaFaixa(['x', 0, 0, 1, 1, 250.5]));
+ok(ctx.bulaFaixa(['x', 0, 0, 0, 0, 0]) === '—', '(6) sem preço nenhum tem de mostrar travessão');
+ok(/<span class="bula-apr-preco">'\+bulaFaixa\(a\)\+'<\/span>/.test(corpo('bulaDetalheHTML')) && /do preço de fábrica ao máximo ao consumidor/.test(corpo('bulaDetalheHTML')), '(6) a apresentação não mostra a faixa, ou o título não diz o que é cada valor');
+ok(/O primeiro valor é o preço de fábrica/.test(corpo('bulaDetalheHTML')) && /genérico pode sair abaixo/.test(corpo('bulaDetalheHTML')), '(6) a nota não explica a faixa (fábrica, teto, genérico abaixo)');
 ok(/'<span class="bula-nome">'\+esc\(p\[0\]\)\+'<\/span>'/.test(corpo('bulaItemHTML')), '(4) o nome do medicamento não sai escapado');
 // (5) fiação
 ok(/<button class="sb-item" data-p="bula" id="sb-bula" style="display:none">💊 Bulário<\/button>/.test(SRC) && /<div class="panel" id="panel-bula">/.test(SRC), '(5) o painel do aluno saiu do corpo, ou o item do menu não nasce escondido');
@@ -100,4 +121,4 @@ ok(/support:1,calc:1,bula:1,/.test(SRC), '(5) o bulário saiu da degustação (m
 ok(/fetch\('bulario\.json'\)/.test(corpo('bulaCarregar')) && /BULA\.erro=/.test(corpo('bulaCarregar')), '(5) o carregamento não avisa a falha de rede');
 
 if (falhas.length) { console.error('test-bulario: ' + falhas.length + ' falha(s)'); falhas.forEach((f) => console.error('  ✗ ' + f)); process.exit(1); }
-console.log('test-bulario: ok (' + (d ? d.p.length + ' produtos; ' : '') + 'busca sem acento por nome, princípio ativo e fabricante; áreas; link da bula oficial; painéis ligados)');
+console.log('test-bulario: ok (' + (d ? d.p.length + ' produtos; ' : '') + 'busca sem acento por nome, princípio ativo e fabricante; áreas; faixa de preço de fábrica ao teto; link da bula oficial; painéis ligados)');
