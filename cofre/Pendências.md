@@ -43,13 +43,23 @@ atualizado: 2026-10-17
    permissão; estragou 5 nomes pela codificação do CSV, corrigido no mesmo dia
    (`cofre/Bulário.md`). Conferir a execução programada de segunda, 19/10, 09h17 UTC.
 3. **Fichas por princípio ativo (estilo de bula por seções):** protótipo no ar em 17/10
-   (sibutramina, rascunho; busque "Biomag" no Bulário do professor). **Esperando o
-   professor:** aprovar o formato e a ficha (status `rascunho` → `aprovada`); decidir a
-   fonte para escalar (só Resumos; ou liberar no ambiente ache.com.br, eurofarma.com.br,
-   novonordisk.com.br, ems.com.br e os demais fabricantes; ou mandar os PDFs) e a
-   linguagem (técnica ou de paciente). Depois: escalar por área (obesidade e diabetes
-   primeiro), com revisor independente por lote e mais termos de sal em `BULA_SAL`.
-   Divergências do SCOUT entre os Resumos 074 e 146 anotadas em [[Bulário]].
+   (sibutramina, rascunho; busque "Biomag" no Bulário do professor).
+   **Decisão do professor (17/10):** fonte = **bula dos fabricantes** (esperar por ela),
+   linguagem **técnica, para médicos**. **Bloqueio: a rede do ambiente.** A política atual
+   recusa os sites dos fabricantes, e os produtos de referência da endocrinologia são de
+   **62 detentores** (Novo Nordisk 16, Organon 9, Besins 8, Lilly 8, Sanofi 7, Cosmed 6,
+   Biocon 6, Merck 6, Pfizer 6, Ferring 5, Abbott 5, Amgen 5…); listar domínio por
+   domínio, com os servidores de PDF de cada um, não se sustenta. **Pedido ao
+   professor:** subir o nível de acesso à rede do ambiente (menu do ambiente → Edit →
+   Network access) e avisar. A ANVISA continua fora de alcance de qualquer jeito (o
+   bloqueio é do lado dela). Com a rede aberta: baixar a bula do profissional do produto
+   de referência de cada princípio ativo (só para conferir e completar; o texto da bula
+   não entra no repositório nem na ficha), conferir também a da sibutramina, e escalar
+   por área (obesidade e diabetes primeiro), com revisor independente por lote, mais
+   termos de sal em `BULA_SAL` e sinônimos (metimazol/tiamazol, GH
+   recombinante/somatropina). Aprovar o formato e a ficha (`rascunho` → `aprovada`)
+   segue com o professor. Divergências do SCOUT entre os Resumos 074 e 146 anotadas em
+   [[Bulário]].
 4. **Consultório:** `presc-catalogo.json` (09/06) pode passar a sair do mesmo construtor.
 
 ## 💳 Cobrança em dobro (14/10) — o que fica com o professor
