@@ -1,6 +1,6 @@
 ---
 tags: [cofre, conteudo, resumos]
-atualizado: 2026-10-16
+atualizado: 2026-10-17
 ---
 
 # Figuras dos Resumos
@@ -54,6 +54,17 @@ figura ganharam uma cada (os outros já tinham figura própria).
 
 **Galeria de revisão** (privada, do professor): https://claude.ai/artifact/XR2ZgeNxnWnfEy5B5z338G
 — as 115 figuras por seção, cada uma com o que a conferência corrigiu.
+
+## SOMP no lugar de SOP (17/10)
+
+- As 5 figuras que escreviam SOP (especificações 121, 122, 126, 143 e 223) foram
+  refeitas com SOMP, com os mesmos nomes de arquivo.
+- ⚠️ **A 121 tem `slug` explícito na especificação.** O nome do SVG vem de `sub` +
+  `tema`, e o tema do capítulo mudou para "Síndrome Ovariana Metabólica Poliendócrina
+  (SOMP)". Sem o `slug`, o `render.js` gravaria outro arquivo, e a URL do campo
+  `figuras` apontaria para o SVG velho.
+- O `lastro` das 122 e 143 passou a citar a ponte "SOMP (antiga SOP)", que entrou na
+  1ª menção do capítulo.
 
 ## Lições
 

@@ -1,6 +1,6 @@
 ---
 tags: [cofre, processo]
-atualizado: 2026-10-16
+atualizado: 2026-10-17
 ---
 
 # Convenções de Trabalho
@@ -23,11 +23,11 @@ remota (stream-json, sem terminal) o percentual não chega até mim: em 16/10 o
 
 **Procedimento:**
 1. Consultar `get_session` antes de lançar agentes e sempre que um agente termina.
-2. Pausar quando `utilization` vier e for ≥ 0,90, ou quando o estado for
-   `allowed_warning` ou `rejected` (sem o percentual, o aviso do servidor é o
-   gatilho dos 90%): não lançar agente novo; parar os que rodam (`TaskStop`; o que
-   eles gravaram em arquivo fica); commitar o que existe; agendar `send_later` para
-   `resetsAt` + 5 minutos com a lista do que falta.
+2. Pausar quando `utilization` vier e for ≥ 0,90, quando o estado for `rejected` ou
+   quando o professor informar 90% no painel de uso: não lançar agente novo; parar os
+   que rodam (`TaskStop`; o que eles gravaram em arquivo fica); commitar o que existe;
+   agendar `send_later` para `resetsAt` + 5 minutos com a lista do que falta.
+   ⚠️ **`allowed_warning` sozinho não pausa** (desde 17/10; ver o alarme falso abaixo).
 3. Na retomada, consultar `get_session` de novo. Com `allowed`, relançar primeiro
    um agente sentinela (regra 10 abaixo) e, quando ele terminar, os demais, com
    `effort: 'high'` (regra 13). Sem `allowed`, reagendar e avisar o professor.
@@ -38,6 +38,17 @@ remota (stream-json, sem terminal) o percentual não chega até mim: em 16/10 o
 renovação às 20h00 UTC. Os 7 agentes das figuras dos Resumos foram parados com 39
 de 115 especificações prontas (as de 072, 095 e 217 estavam em edição e voltam
 para conferência); retomada agendada para 20h05 UTC.
+
+**Alarme falso (17/10, 18h47 UTC).** O `get_session` trouxe `allowed_warning` na
+janela semanal (`seven_day`, renovação em 23/10), e parei a migração SOP → SOMP antes de
+gravar. O painel de uso do professor mostrava outra coisa: semana em **26%** e sessão de
+5 h em 83%, com renovação em 59 minutos. O professor: *"Não precisa pausar a migração
+(...), pois o uso do limite semanal ainda está muito baixo, de apenas 26%. Pode
+continuar."* O limiar do aviso do servidor fica bem abaixo de 90%, e por isso o aviso
+deixou de ser gatilho (passo 2). Como o percentual não chega até mim:
+- o trabalho segue em passos atômicos (instrução única no banco, PR inteiro);
+- perto da renovação da janela de 5 h, fica agendado um `send_later` para logo depois
+  dela, que retoma o trabalho se o corte vier.
 
 ### Histórico: a regra de 95% (06/10)
 

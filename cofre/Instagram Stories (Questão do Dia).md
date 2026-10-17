@@ -5,6 +5,59 @@ atualizado: 2026-10-17
 
 # Instagram Stories — "Questão do Dia"
 
+## 🩺 CORREÇÕES DE CONTEÚDO GRAVADAS (2026-10-17)
+
+Sobre os problemas de conteúdo que os revisores apontaram nos comentários, o professor
+pediu *"corrigir tudo"* e, vista a página de revisão
+(https://claude.ai/artifact/8DTYUqo9XWuLWviHcpzoTh), *"grava tudo e troca SOMP"*.
+
+**O que foi gravado** (17/10, 18h36 UTC): **110 trocas em 49 questões**, no enunciado,
+nas alternativas e no comentário.
+- Cada afirmação apontada foi conferida na fonte (PubMed); o texto final passou por
+  revisor independente e pelo `checa-jargao.js`.
+- **Nenhuma letra de gabarito mudou.** Onde o comentário certo contradizia o caso, mudou
+  o dado do caso. Posições em `ig_stories` (P = `ig_pending`):
+  - 42: IGF-1 960/780, HbA1c 5,4% e 1 ano;
+  - 122: 7 dias por mês;
+  - 80: só a asa do ilíaco;
+  - 26: paciente que recusa a cirurgia; razão de depuração;
+  - 5: TSH confirmatório de 6,1 depois de 2 semanas;
+  - P2: reescrita como puberdade precoce central aos 6 anos e 6 meses;
+  - P3: LH de 0,1;
+  - 38: LDL de 44 e infarto há 3 anos;
+  - 8: 1,0 µg/L;
+  - 16 e 96: meio do intervalo;
+  - 44: 240 → 60 mL/h;
+  - 45: creatinina;
+  - 47: frases contraditórias retiradas;
+  - 52: TmP/TFG e 1,25-di-hidroxivitamina D;
+  - 63: macroadenoma;
+  - 89: cateterismo adequado;
+  - 110: mUI/L;
+  - 30: "firmes";
+  - 20: "7 a 14 dias antes da cirurgia";
+  - 68: peptídeo C;
+  - 102: alternativa com MACS.
+- **SOMP:** as 6 questões que citavam SOP ou PMOS (posições 0, 27, 48, 54, 120 e 128)
+  passaram a SOMP, com a nota de transição só no comentário (regra 7 do gerador).
+
+**Mecânica:**
+- Backup `main-antes-correcoes-conteudo-qotd-2026-10-17`.
+- Trocas na tabela temporária `public.tmp_jargao_qotd_20261017`, lote
+  `conteudo-2026-10-17-b`, com a assinatura md5 de cada campo conferida.
+  ⚠️ A chave primária da tabela não inclui o `lote`: cada lote usa uma faixa própria de
+  `ordem` (1, 1001, 2001).
+- Uma única instrução aplicou tudo e conferiu que:
+  - cada trecho aparecia uma vez;
+  - id e md5 de cada campo batiam;
+  - nada fora de `ig_stories`/`ig_pending` mudou, e os tamanhos das listas ficaram iguais;
+  - nenhum outro campo e nenhuma letra de gabarito mudaram.
+- Depois: 110 de 110 trechos novos presentes, nenhum antigo restante, nenhuma nota de
+  PMOS antiga. Reconferido às 18h47 UTC: intacto, sem gravação depois das 18h36.
+- A chave do merge das questões é o `id`, que não mudou: um painel aberto antes da
+  gravação pode devolver o texto antigo ao salvar. Professor avisado do F5; a checagem
+  de zumbis da migração SOMP confere também estes 110 trechos ([[Pendências]]).
+
 ## 🧹 JARGÃO DE IA TIRADO DOS COMENTÁRIOS (2026-10-17)
 
 O professor mandou o print do comentário da questão da sarcoidose, com "não ataca o

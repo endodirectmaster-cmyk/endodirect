@@ -4,7 +4,7 @@
 // de flashcard (FC_SEED e FC_MEMBER). Como a semente casa pelo texto da frente, o
 // painel do professor publicou 7 cartões gêmeos no fc_shared, e os baralhos dos alunos
 // receberam a versão SOMP ao lado da SOP antiga. Agora o seedFlashcards renomeia os
-// cards SEED (sompFcDeck) antes da auto-cura por frente (dedupFcDeck).
+// cards SEED (sompEstado) antes da auto-cura por frente (dedupFcDeck).
 //
 // 🧨 O QUE ESTE TESTE PRENDE, com as funções recortadas do index.html:
 // (1) a troca: nome por extenso, sigla e caixa alta; nomes antigos e títulos
@@ -14,7 +14,8 @@
 // (3) baralho de membro com o card antigo e os gêmeos: sobra um card por frente, o
 //     antigo (com o histórico de revisão), e o card criado pelo aluno não muda;
 // (4) o card que o aluno deletou antes não volta com o nome novo (ledger);
-// (5) a renomeação roda antes do dedupFcDeck;
+// (5) a renomeação roda antes do dedupFcDeck; a marca de aula feita (aulaKey, que usa
+//     o título) passa à chave com o título novo;
 // (6) todo rótulo das regras de tema (FC_TEMA_RULES) está na lista de temas da área
 //     (FC_SUBTOPICS). O #876 trocou o rótulo para 'SOMP' só nas regras, e a lista de
 //     Endocrinologia Feminina continuou com 'SOP': o mesmo assunto saía em dois temas.
@@ -39,16 +40,16 @@ function constante(nome) {
   if (i < 0) throw new Error('não achei var ' + nome);
   return SRC.slice(i, SRC.indexOf('\n};', i) + 3);
 }
-function mundo(fc, ledgers, fcShared) {
+function mundo(fc, ledgers, fcShared, cursoProg) {
   const store = Object.assign({}, JSON.parse(JSON.stringify(ledgers || {})));
   const ctx = vm.createContext({
-    console, DB: { fc: JSON.parse(JSON.stringify(fc || [])) }, fcShared: fcShared || [],
+    console, DB: { fc: JSON.parse(JSON.stringify(fc || [])), cursoProg: JSON.parse(JSON.stringify(cursoProg || {})) }, fcShared: fcShared || [],
     lsGet: (k) => (k in store ? JSON.parse(JSON.stringify(store[k])) : null),
     lsSet: (k, v) => { store[k] = JSON.parse(JSON.stringify(v)); },
     isDegustacao: () => false, canonSub: (s) => s, store,
   });
   vm.runInContext([constante('FC_SEED'), constante('FC_MEMBER'), trecho('sompTxt'), trecho('sompChaveFc'),
-    trecho('sompFcDeck'), trecho('dedupFcDeck'), trecho('seedFlashcards'),
+    trecho('sompEstado'), trecho('dedupFcDeck'), trecho('seedFlashcards'),
     'this.FC_SEED=FC_SEED;this.FC_MEMBER=FC_MEMBER;'].join('\n'), ctx);
   return ctx;
 }
@@ -116,7 +117,8 @@ const baralho = [
   { id: 4, front: 'Critérios de Rotterdam para SOMP (antiga SOP)?', back: ANTES_876[0][1], cat: FEM, seed: true, shared: true, box: 1, due: 444 },
   { id: 5, front: 'Minha anotação sobre SOP', back: 'SOP e insulina', cat: FEM, seed: false, box: 2, due: 555 },
 ];
-const W = mundo(baralho, { fc_member_seeded: ledgerMembro, fc_shared_seeded: { 'critérios de rotterdam para somp (antiga sop)?': 1 } });
+const AULA = 'endo_essencial|Endocrinologia Feminina|Síndrome dos Ovários Policísticos';
+const W = mundo(baralho, { fc_member_seeded: ledgerMembro, fc_shared_seeded: { 'critérios de rotterdam para somp (antiga sop)?': 1 } }, null, { [AULA]: 1790000000000, 'x|y|Tireoide': 5 });
 W.seedFlashcards();
 const fc = W.DB.fc;
 const frentes = fc.map((c) => String(c.front).trim().toLowerCase());
@@ -134,9 +136,12 @@ ok(meu && meu.front === 'Minha anotação sobre SOP' && meu.back === 'SOP e insu
 ok(!fc.some((c) => /metformina na SOMP/.test(c.front)), '(4) o card de metformina, deletado pelo aluno, voltou com o nome novo');
 ok(W.store.fc_member_seeded && W.store.fc_member_seeded['por que usar metformina na somp?'] === 1, '(4) o ledger do membro não ganhou a chave nova');
 
-// (5) a renomeação roda antes da auto-cura
+// (5) a renomeação roda antes da auto-cura; a marca de aula feita acompanha o título
 const corpo = trecho('seedFlashcards');
-ok(corpo.indexOf('sompFcDeck()') > 0 && corpo.indexOf('sompFcDeck()') < corpo.indexOf('dedupFcDeck()'), '(5) o sompFcDeck tem de rodar antes do dedupFcDeck');
+ok(corpo.indexOf('sompEstado()') > 0 && corpo.indexOf('sompEstado()') < corpo.indexOf('dedupFcDeck()'), '(5) o sompEstado tem de rodar antes do dedupFcDeck');
+const AULA2 = 'endo_essencial|Endocrinologia Feminina|Síndrome Ovariana Metabólica Poliendócrina';
+ok(W.DB.cursoProg[AULA2] === 1790000000000 && W.DB.cursoProg[AULA] === 1790000000000, '(5) a marca de aula feita não passou à chave nova: ' + JSON.stringify(W.DB.cursoProg));
+ok(Object.keys(W.DB.cursoProg).length === 3 && W.store.cursoProg && W.store.cursoProg[AULA2], '(5) o progresso dos cursos não foi gravado ou ganhou chave a mais');
 
 // (6) rótulos das regras de tema na lista de temas da área
 const T = vm.createContext({});
