@@ -72,11 +72,10 @@ baralhos foi junto (sw v314). Detalhes em [[Decisões]].
    fica com SOMP e a nota do consenso da Lancet (ver [[Decisões]]).
 4. [x] **Migrar SOP → SOMP no acervo do banco:** gravado em 17/10 (seção "SOMP no
    acervo do banco", no topo).
-3. [ ] **Apagar a tabela `public.tmp_jargao_qotd_20261017`.** Já foi aplicada, está com
-   RLS e sem grants. O professor autorizou em 17/10 ("Ok"), depois da checagem de zumbis
-   das 20h25 UTC, que ainda a usa. O DROP pelo conector expira (ver o item da
-   `tmp_estudos_2026`); o professor roda no editor SQL do Supabase, a partir das 20h30
-   UTC: `drop table public.tmp_jargao_qotd_20261017;`
+3. ✅ **`tmp_jargao_qotd_20261017` apagada em 17/10, 19h55 UTC**, pelo professor, no editor
+   SQL do Supabase. Antes, a última conferência com ela: 110 de 110 trechos presentes e
+   as questões iguais ao backup `main-antes-somp-acervo-2026-10-17`. A checagem de zumbis
+   das 20h25 UTC passou a comparar com esse backup. Não sobrou tabela `tmp_*` no banco.
 
 ## 📋 Questão do Dia na prancheta (17/10)
 
