@@ -8,6 +8,14 @@ atualizado: 2026-10-17
 Log de decisões de produto e técnicas (mais recentes no topo).
 
 ## 2026-10
+- **🧹 JARGÃO DE IA FORA DOS COMENTÁRIOS DA QUESTÃO DO DIA (2026-10-17).** `sw.js` v310 → **v311**.
+  - **Pedido do professor:** *"Remover esses jargões de IA"*, com print de "não ataca o mecanismo" e "não freada".
+  - **Feito:**
+    - a questão da sarcoidose foi reescrita, e a frase da Endocrine Society trocada com aprovação dele;
+    - nos outros 139 comentários, 261 trocas mínimas em 110 questões, propostas por três revisores, lidas uma a uma e gravadas numa instrução única com backup e guardas;
+    - 19 correções seguras de grafia.
+  - **Prevenção:** a regra 3 do gerador, o `checa-jargao.js` e o teste.
+  - **Pendente com o professor:** cerca de 40 problemas de conteúdo apontados (nenhum aplicado). Detalhes em [[Instagram Stories (Questão do Dia)]].
 - **✍️ AJUSTES PEDIDOS PELO PROFESSOR OLHANDO O QUE FOI AO AR (2026-10-17).** `sw.js` v309 → **v310**.
   - **Questão do Dia:** o caso, a pergunta e o comentário da prancheta ficam **justificados** (*"Deixa o texto em formato justificado"*). O harness da prancheta passou a exigir isso; o lado A reproduz o texto alinhado à esquerda.
   - **Ilustrações:** a frase "Ilustração Endodirect a partir do texto do capítulo." saiu de todas as legendas (*"Retirar essa frase dos desenhos"*).

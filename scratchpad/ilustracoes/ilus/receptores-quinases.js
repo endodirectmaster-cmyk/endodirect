@@ -92,7 +92,7 @@ module.exports = {
     s += L.linhas(gc - 100, yM + hM + 50, 'feedback negativo\nda via JAK-STAT', { size: 10.5, italic: true, fill: P.redD }).svg;
 
     // ── rodapé
-    s += L.nota(44, 476, 752, 'Resposta em minutos a horas. Pegadinha de prova: insulina e IGF-1 usam tirosina-quinase, não proteína G; GH, prolactina e leptina usam JAK-STAT, não tirosina-quinase.', { cor: 'gold', size: 11.2 }).svg;
+    s += L.nota(44, 476, 752, 'Resposta em minutos a horas. Insulina e IGF-1 usam tirosina-quinase, não proteína G; GH, prolactina e leptina usam JAK-STAT, não tirosina-quinase.', { cor: 'gold', size: 11.2 }).svg;
     return s;
   },
 };

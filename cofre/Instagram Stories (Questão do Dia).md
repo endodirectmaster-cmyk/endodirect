@@ -5,6 +5,70 @@ atualizado: 2026-10-17
 
 # Instagram Stories — "Questão do Dia"
 
+## 🧹 JARGÃO DE IA TIRADO DOS COMENTÁRIOS (2026-10-17)
+
+O professor mandou o print do comentário da questão da sarcoidose, com "não ataca o
+mecanismo" e "não freada" marcados, e pediu: *"Remover esses jargões de IA"*.
+
+**A questão da sarcoidose** foi reescrita à mão.
+- Backup `main-antes-jargao-qotd-sarcoidose-2026-10-17`.
+- Corrigi também "CYP27B" para "CYP27B1" e "25(OH)D no limite alto" para "dentro da
+  faixa de referência".
+- A frase atribuída à Endocrine Society virou "na doença granulomatosa, a reposição de
+  vitamina D exige cautela, com monitorização do cálcio". O professor aprovou a troca,
+  feita com o backup `main-antes-endocrine-society-sarcoidose-2026-10-17`.
+
+**Varredura dos outros 139 comentários** (95 publicados, 38 na fila, 7 pendentes):
+- três revisores independentes propuseram trocas mínimas;
+- li as 170 reescritas e conferi o contexto das 13 que dependiam dele;
+- **261 trocas** gravadas em 110 questões (116 campos), com o backup
+  `main-antes-jargao-comentarios-qotd-2026-10-17`.
+
+O que entrou nas trocas:
+- caixa alta de ênfase;
+- metáfora ("janela", "gatilho", "régua", "motor", "assinatura");
+- moldura ("a chave é", "armadilha", "pegadinha", "o ponto que decide");
+- julgamento coloquial de alternativa ("está errado", "é erro grave", "tornando
+  incorreta" → "não está indicado");
+- "justamente", "exatamente";
+- 19 correções seguras de grafia e digitação:
+  - "hipósfise";
+  - "nesipidioblastose";
+  - "litio";
+  - "transesfenoinal";
+  - "RM de sem alterações";
+  - "Kallmann)";
+  - TSH em mUI/mL;
+  - "ciproterona" num comentário cuja alternativa é medroxiprogesterona;
+  - "recém-nascido PIG" para um menino de 8 anos.
+- A nota sobre PMOS de uma questão foi alinhada à regra 7 do gerador (consenso da
+  Lancet, maio de 2026).
+
+**Mecânica:**
+- As trocas foram para uma tabela temporária protegida, com RLS e sem acesso de
+  anon/authenticated; a assinatura md5 do lote foi conferida contra a calculada aqui.
+- Uma única instrução aplicou tudo e conferiu que:
+  - cada trecho aparecia uma vez;
+  - id e md5 de cada comentário batiam;
+  - nada fora de `ig_stories`/`ig_pending` mudou;
+  - nenhum outro campo das questões mudou.
+- Depois, todos os 261 trechos novos estavam presentes, nenhum antigo restou, e a busca
+  por jargão e por caixa alta deu zero.
+
+**Ficou de fora, de propósito,** o parágrafo da questão 1, que parece escrito pelo
+professor ("Lembrar que…"). Ele traz a sigla "SOMP", que a regra 7 diz não existir em
+fonte nenhuma; está apontado ao professor.
+
+**Prevenção:**
+- a regra 3 do `CLINICAL_AUTHORING` proíbe metáfora, moldura, julgamento coloquial e
+  maiúscula de ênfase;
+- o `checa-jargao.js` ganhou as marcas novas e as siglas endócrinas;
+- o `test-jargao.js` leva os trechos reais.
+
+**Conteúdo:** os revisores também apontaram cerca de 40 problemas de conteúdo
+(comentário que não justifica o gabarito, corte de diretriz, referência). Nenhum foi
+corrigido sem o professor; ver [[Pendências]].
+
 ## 📋 PRANCHETA E ABA "COMO O ALUNO VÊ" (2026-10-17)
 
 Pedido do professor (17/10), com o print do painel e a figura de uma prancheta:

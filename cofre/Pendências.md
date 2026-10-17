@@ -36,6 +36,22 @@ atualizado: 2026-10-17
    - dar retorno sobre o estilo;
    - receber a sugestão de ajuste no texto do 150 ("sem depender de transcrição" × via JAK-STAT).
 
+## 🧹 Questão do Dia: conteúdo apontado na varredura de jargão (17/10)
+
+1. [ ] **Professor: decidir os cerca de 40 problemas de conteúdo** que os revisores
+   apontaram nos comentários. São de três tipos:
+   - comentário que não justifica o gabarito;
+   - corte ou diretriz possivelmente errados;
+   - enunciado que contradiz o achado clássico.
+
+   As contradições internas eu conferi no texto; as de diretriz precisam de conferência
+   na fonte. Lista na sessão de 17/10 e no relatório ao professor.
+2. [ ] **Questão 1:** o parágrafo "Lembrar que…" usa a sigla "SOMP". A regra 7 do
+   gerador diz que ela não existe; o nome é PMOS.
+3. [ ] **Apagar a tabela `public.tmp_jargao_qotd_20261017`.** Já foi aplicada, está com
+   RLS e sem grants. O DROP pelo conector pede confirmação e expirou; mesma situação da
+   `tmp_estudos_2026`.
+
 ## 📋 Questão do Dia na prancheta (17/10)
 
 1. [ ] Professor: retorno sobre a prancheta e a aba "Como o aluno vê".
