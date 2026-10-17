@@ -186,6 +186,17 @@ ache.com.br, eurofarma.com.br, novonordisk.com.br e ems.com.br (17/10). Para con
 fichas contra a bula do profissional, o professor precisa liberar esses domínios no
 ambiente (Network access → Allowed domains) ou mandar os PDFs.
 
+**Consulta Remédios não serve de fonte (17/10).** O professor perguntou se dava para
+"puxar" as bulas de consultaremedios.com.br. Não: os Termos de Uso deles
+(consultaremedios.com.br/termos) proíbem a reprodução total ou parcial do conteúdo sem
+autorização prévia e por escrito, e só permitem uso pessoal e não comercial; a Endodirect
+é paga. O texto das bulas, além disso, é dos fabricantes. O site também está fora da rede
+deste ambiente. Eles hospedam até o PDF da bula do profissional
+(uploads.consultaremedios.com.br/drug_leaflet/pro/…), mas usar isso como fonte de um
+produto comercial cai no mesmo veto. Caminhos legítimos: a bula no site do fabricante
+(plano em curso), uma licença por escrito da Consulta Remédios (decisão comercial do
+professor) ou só um link para a página deles, que não reproduz nada.
+
 **Cobertura dos Resumos (233 capítulos, 17/10):** 76 dos 80 princípios ativos centrais
 aparecem em pelo menos um capítulo; muitos com folga (testosterona 56, metformina 39,
 levotiroxina 38, semaglutida 37, tirzepatida 28), outros em 1 ou 2 (pitavastatina,
