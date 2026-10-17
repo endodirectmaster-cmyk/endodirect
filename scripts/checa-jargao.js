@@ -30,11 +30,23 @@ const MARCAS = [
   [/\bnão responde à pergunta\b/i, 'retórica'],
   [/\b(no prato|na balança|custa músculo)\b/i, 'metáfora'],
   [/\bé importante (que|ressaltar|notar)\b/i, 'preenchimento'],
+  // 17/10/2026, comentário da Questão do Dia da sarcoidose: "Remover esses jargões de IA"
+  // ("Bisfosfonato isolado não ataca o mecanismo", "1-alfa-hidroxilase … não freada").
+  [/\batac(a|am|ar)\b/i,          'verbo coloquial (atua sobre, age em)'],
+  [/\b(freada|freado|freia|freiam|frear)\b/i, 'metáfora (inibida, suprimida)'],
+  [/\ba chave (é|do|da)\b/i,      'moldura retórica'],
+  [/\b(pulo do gato|pegadinha|armadilha)\b/i, 'moldura retórica'],
+  [/\btornando (a|o|as|os) .{1,40}errad[ao]s?\b/i, 'julgamento coloquial (não está indicada)'],
+  [/(^|[^\wÀ-ÿ])é que faz parte\b/i, 'construção coloquial'], // \b não vale antes de "é" (não é letra ASCII)
 ];
 // Sigla e convenção do banco de questões do professor não são ênfase.
 const SIGLAS = new Set(['DXA','GLP','GIP','ESPEN','EASO','IMC','BIA','SURMOUNT','CORRETA','INCORRETA',
   'HDL','LDL','TSH','ACTH','GnRH','TOTG','DRC','SUS','ANVISA','FDA','EMA','ADA','SBD','SBEM','PCR','TC','RM','US',
-  'OSCE']); // OSCE: sigla do simulador de casos (item do menu), não ênfase
+  'OSCE', // OSCE: sigla do simulador de casos (item do menu), não ênfase
+  // siglas endócrinas comuns nos comentários e nas ilustrações (17/10/2026)
+  'PTH','TRH','CRH','GHRH','IGF','SHBG','TBG','CBG','DBP','TTR','DHEA','DHEAS','SDHEA','POMC','MSH','ADH','ANP','BNP',
+  'TPO','NIS','MIT','DIT','HSP','HRE','RXR','JAK','STAT','SOCS','GLUT','IRS','MAPK','AKT','RAS','PKA','PKC','PIP','DAG',
+  'GTP','GDP','RNA','DNA','MEN','VHL','SOP','PMOS','DPP','SGLT','RAC','IECA','BRA','CAD','EHH','PAAF','USG','HbA']);
 
 function analisar(texto, origem) {
   const achados = [];

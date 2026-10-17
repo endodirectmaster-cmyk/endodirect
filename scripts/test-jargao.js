@@ -22,6 +22,13 @@ const ERRADO = [
   '• Perda muito rápida com aporte energético e proteico muito baixo é o cenário que mais custa músculo.',
   '• ⚠️ Nenhuma dessas opções está aprovada para essa finalidade.',
   'o que muda com o incretínico é a MAGNITUDE da perda total',
+  // 17/10/2026, comentário da Questão do Dia da sarcoidose (marcado pelo professor)
+  'Bisfosfonato isolado não ataca o mecanismo (absorção intestinal mediada por vitamina D)',
+  'em macrófagos dos granulomas, não freada por cálcio nem por 1,25(OH)2D',
+  '— a chave é que a enzima depende do SUBSTRATO (banho de sol + cápsula)',
+  'PTH suprimido com 1,25(OH)2D alta afasta hiperparatireoidismo primário, tornando a paratireoidectomia errada.',
+  '— a hidratação (salina, não restrição) é que faz parte do suporte.',
+  'Pegadinha de prova: insulina e IGF-1 usam tirosina-quinase, não proteína G',
 ];
 ERRADO.forEach(t => {
   ok(analisar(t, 'x').length > 0,
@@ -40,6 +47,11 @@ const CERTO = [
   '• 1,0 a 1,5 g/kg/dia, calculados sobre o peso ajustado ou ideal.',
   'Qual é a leitura CORRETA desses dados?',
   'Ao interpretar a DXA, qual afirmação é INCORRETA?',
+  // a reescrita técnica do comentário da sarcoidose (17/10/2026)
+  'O bisfosfonato isolado não atua sobre o mecanismo da hipercalcemia (absorção intestinal de cálcio mediada pela vitamina D).',
+  'os macrófagos dos granulomas da sarcoidose expressam 1-alfa-hidroxilase extrarrenal (CYP27B1), que não é inibida pelo cálcio nem pela 1,25(OH)2D',
+  'PTH suprimido com 1,25(OH)2D elevada afasta hiperparatireoidismo primário; a paratireoidectomia, portanto, não está indicada.',
+  'o suporte inclui hidratação com solução salina, e não restrição hídrica.',
 ];
 CERTO.forEach(t => {
   const a = analisar(t, 'x');
