@@ -1014,6 +1014,18 @@ try {
   fail('regressão dos pontos-chave falhou:\n' + out);
 }
 
+// 17c-undecies-k. SOMP NO LUGAR DE SOP NOS BARALHOS (17/10/2026). O #876 trocou 8
+//      textos fixos de flashcard e a semente, que casa pela frente, criou gêmeos: o
+//      card SOP antigo e o SOMP novo no mesmo baralho. O seedFlashcards renomeia os
+//      cards SEED antes da auto-cura; a lista de temas acompanha as regras.
+try {
+  execFileSync(process.execPath, [path.join('scripts', 'test-somp-flashcards.js')], { stdio: 'pipe' });
+  ok('SOMP nos baralhos: troca com nomes antigos protegidos, gêmeos do #876 fundidos, deleção respeitada, temas alinhados');
+} catch (e) {
+  const out = (e.stdout ? e.stdout.toString() : '') + (e.stderr ? e.stderr.toString() : '');
+  fail('regressão do SOMP nos baralhos falhou:\n' + out);
+}
+
 // ⚠️ AS PÁGINAS NO SERVIDOR. O importador manda PDF digitalizado como N imagens
 // de página, e até 26/08 a montagem desse pedido em `api/ai.js` era guardada só
 // por conferência de TEXTO do fonte. Texto não vê bloco fora de ordem, `type`
