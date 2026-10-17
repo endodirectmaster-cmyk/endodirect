@@ -24,9 +24,8 @@ Calculadoras, hoje oculto; no painel do professor; e na degustação, com o mesm
 acesso das calculadoras, quando liberado). Busca por nome comercial, princípio ativo ou fabricante, sem
 acento e sem caixa; filtro por área da endocrinologia; ficha de cada medicamento
 com princípio ativo, detentor, registro e validade, categoria, classe terapêutica,
-apresentações com a **faixa de preço** (do preço de fábrica ao máximo ao consumidor)
-e situação, e o botão **"📄 Bula do profissional e do paciente ↗"** (até 17/10, "Bula
-oficial na ANVISA").
+apresentações e situação de venda (**sem preço**, desde 17/10), e o botão **"📄 Bula do
+profissional e do paciente ↗"** (até 17/10, "Bula oficial na ANVISA").
 
 **As fontes (ambas públicas e oficiais):**
 - **ANVISA, dados abertos** (`dados.anvisa.gov.br/dados/DADOS_ABERTOS_MEDICAMENTOS.csv`,
@@ -38,16 +37,27 @@ oficial na ANVISA").
   por alíquota de ICMS, tarja, restrição hospitalar e a coluna "COMERCIALIZAÇÃO
   <ano>". Ligação pelo registro: os 9 primeiros dígitos do código de 13 da CMED.
   **25.271 apresentações ligadas**; 1.364 sem registro ativo na ANVISA ficam de fora.
-- **Preço exibido (desde 17/10/2026): a faixa** "R$ PF a R$ PMC", do preço de fábrica
-  (coluna "PF 18 %") ao preço máximo ao consumidor ("PMC 18 %"), ambos com ICMS de 18%
-  (as colunas "ALC", de área de livre comércio, ficam fora). No `bulario.json`, o PF é o
-  6º campo de cada apresentação: `[apresentação, pmc18, tarja, hospitalar,
-  comercializado, pf18]`. Na lista de 09/10: PF em todas as 26.635 apresentações; PMC
-  em 22.674; as 3.961 só com PF são todas de uso hospitalar, que aparecem como "R$ X de
-  fábrica". O PMC sai do PF por um fator fixo por lista do PIS/Cofins: 1,340 a 1,342
-  (negativa), 1,351 (neutra), 1,377 a 1,380 (positiva); o PF nunca passa do PMC. Arquivo
-  antigo, sem o 6º campo (cache do navegador): "até R$ PMC". Até 17/10 a tela mostrava
-  só o PMC.
+- **⚠️ A TELA NÃO MOSTRA PREÇO (decisão do professor, 17/10/2026).** Caminho até aqui,
+  no mesmo dia: a tela mostrava o PMC 18 %; o professor achou "bem diferente das
+  farmácias", e o preço virou a faixa "R$ PF a R$ PMC" (opção dele, com a minha descrição
+  de que o balcão "costuma cair nessa faixa"); em seguida ele mandou o print da Drogasil:
+  Ozivy 3 mL a **R$ 464,81** com desconto de laboratório ("preço normal sugerido" R$
+  664,02), contra PF **R$ 979,80** e PMC **R$ 1.314,37** na CMED. Ou seja, o balcão ficou
+  abaixo até do preço de fábrica, e a minha descrição estava errada. **A CMED só publica
+  tetos**; o desconto de laboratório (vinculado ao CPF) derruba o preço abaixo deles.
+  Entre só o teto bem explicado, tirar os preços ou manter a faixa, o professor escolheu
+  **tirar**. A tela mostra a apresentação e a situação ("À venda", "Sem venda em 2025",
+  "Uso hospitalar"); o título é "Apresentações (N)"; a linha do topo diz "CMED, lista de
+  <data> (apresentações e situação de venda)".
+- **Os preços continuam no arquivo, sem uso na tela:** cada apresentação é
+  `[apresentação, pmc18, tarja, hospitalar, comercializado, pf18]`. Servem de **alarme do
+  formato da planilha**: o `test-bulario` (bloco 6) barra arquivo sem PF, com PF e PMC
+  trocados ou com a razão PMC/PF fora de 1,2 a 1,6 (na lista de 09/10: PF em todas as
+  26.635 apresentações; PMC em 22.674; as 3.961 só com PF são de uso hospitalar; razão
+  1,340 a 1,342 na lista negativa do PIS/Cofins, 1,351 na neutra, 1,377 a 1,380 na
+  positiva). Se um dia o preço voltar, os dados estão lá.
+- **Ozivy "Sem venda em 2025":** é o dado da CMED (coluna "COMERCIALIZAÇÃO 2025"); o
+  registro vale até 05/2036, isto é, é de 2026, e o produto não podia ter venda em 2025.
 - **Áreas** pela classe ATC (EphMRA) da CMED: Diabetes (A10, H4B), Obesidade (A8A),
   Lípides (C10), Tireoide (H3), Adrenal e corticoides (H2), Hipófise (H1C, H4C, H4D,
   H4X), Osso e cálcio (A11C2, A11C3, A12A, H4A, H4E, H4F, M5B), Hormônios sexuais
@@ -83,14 +93,15 @@ execução programada é a de segunda, 19/10, às 09h17 UTC.
 
 **Prova:** `scripts/test-bulario.js` (17c-undecies-j no `ci-validate`; 9 de 9
 mutações mortas: lista vazia sem busca, normalização de acento, link, ordenação,
-degustação, leitura do CSV, caractere de controle no arquivo…; e, desde 17/10, o bloco
-(6) da faixa de preço, com 10 de 10 mutações barradas: faixa invertida, sem o "até" do
-arquivo antigo, hospitalar sem PF, tela de volta ao só teto, nota sem explicação, botão
-antigo, arquivo sem o 6º campo, PF e PMC trocados, PF de outra alíquota, PF zerado) e
+degustação, leitura do CSV, caractere de controle no arquivo…; desde 17/10, o bloco (6),
+tela sem preço e preços do arquivo como alarme, com 8 de 8 mutações barradas: preço de
+volta na apresentação, "R$" escrito à mão, título com preço, nota de preço, atalho
+"Apresentações e preços", descrição do painel com "faixa de preço", PF e PMC trocados,
+arquivo sem PF; a saída montada de Ozivy, Acezo, Biomag e Glifage XR sem "R$") e
 `scratchpad/bulario-navegador/check.js` (aluno no celular e no notebook sem o Bulário;
-professor no notebook e no celular: busca, ficha, faixa do Glifage XR e do Ozivy 3 mL
-"R$ 979,80 a R$ 1.314,37", Acezo hospitalar "de fábrica", botão e dicas, área, sem
-rolagem horizontal; A/B em 17/10: a main falhou nos 6 itens novos nas duas larguras).
+professor no notebook e no celular: busca, ficha, Glifage XR, Ozivy, Acezo hospitalar e
+Biomag sem "R$", topo sem preço, botão e dica, área, sem rolagem horizontal; A/B da tela
+sem preço em 17/10: a main, ainda com a faixa, falhou nos 6 itens nas duas larguras).
 
 **17/10: "os valores estão bem diferentes das farmácias" e "bula profissional".**
 - **Os preços batem com a CMED, centavo a centavo.** Conferido na planilha original
@@ -105,8 +116,8 @@ rolagem horizontal; A/B em 17/10: a main falhou nos 6 itens novos nas duas largu
   o PDF só abre no navegador de quem usa (rede residencial ou celular no Brasil). A
   função `teste-anvisa-bulario` virou stub 410.
 - **Decisão do professor (17/10):** preço como **faixa de fábrica a teto** (opção
-  recomendada), e o link continua sendo a busca da ANVISA com o remédio, que ele
-  conferiu. Feito no mesmo dia: faixa por apresentação, título "do preço de fábrica ao
+  recomendada; **revogada no mesmo dia**, ver "A tela não mostra preço" acima), e o link
+  continua sendo a busca da ANVISA com o remédio, que ele conferiu. Feito no mesmo dia: faixa por apresentação, título "do preço de fábrica ao
   máximo ao consumidor", nota que explica os dois valores (o balcão costuma ficar na
   faixa; o genérico pode sair abaixo), botão "Bula do profissional e do paciente" com a
   dica de onde fica o PDF do profissional.

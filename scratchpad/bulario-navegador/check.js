@@ -4,10 +4,11 @@
 // Abre o painel, espera o bulario.json, busca por princípio ativo e por nome,
 // abre um medicamento (ficha, apresentações, preço, link da bula oficial), filtra
 // por área e confere que a página não rola na horizontal no celular.
-// 17/10/2026: o preço virou faixa, do preço de fábrica ao máximo ao consumidor
-// (Glifage XR e Ozivy 3 mL: R$ 979,80 a R$ 1.314,37); o de uso hospitalar mostra só o
-// de fábrica (Acezo); o botão diz que leva à bula do profissional e do paciente. O
-// professor também no celular, porque o Bulário, por enquanto, é só dele.
+// 17/10/2026: a tela não mostra preço (decisão do professor: a CMED só dá tetos, e a
+// Drogasil vendia o Ozivy 3 mL abaixo até do preço de fábrica). O harness confere que
+// nenhuma apresentação (Glifage XR, Ozivy, Acezo de uso hospitalar, Biomag com ficha)
+// mostra "R$"; o botão diz que leva à bula do profissional e do paciente. O professor
+// também no celular, porque o Bulário, por enquanto, é só dele.
 'use strict';
 const http = require('http');
 const fs = require('fs');
@@ -81,7 +82,7 @@ async function estado(page, adm) {
     const link = det ? det.querySelector('a[data-bula-oficial]') : null;
     const notas = det ? [...det.querySelectorAll('.bula-nota')].map((x) => x.textContent) : [];
     const lis = det ? [...det.querySelectorAll('.bula-apr-it')].map((x) => x.getBoundingClientRect()) : [];
-    return { raiz: true, topo: (r.querySelector('.bula-topo') || {}).textContent || '', conta: (r.querySelector('.bula-conta') || {}).textContent || '', itens, det: !!det, linhas: det ? det.querySelectorAll('.bula-apr-it').length : 0, precos: det ? [...det.querySelectorAll('.bula-apr-preco')].map((x) => x.textContent) : [], link: link ? link.getAttribute('href') : '', alvo: link ? link.getAttribute('target') : '', linkTexto: link ? link.textContent : '', notas, titulo: det ? ((det.querySelector('.bula-apr-tit') || {}).textContent || '') : '', foraDaTela: lis.filter((r) => r.right > document.documentElement.clientWidth + 1).length, rolaX: document.documentElement.scrollWidth > document.documentElement.clientWidth + 1 };
+    return { raiz: true, textoDet: det ? det.textContent : '', topo: (r.querySelector('.bula-topo') || {}).textContent || '', conta: (r.querySelector('.bula-conta') || {}).textContent || '', itens, det: !!det, linhas: det ? det.querySelectorAll('.bula-apr-it').length : 0, precos: det ? [...det.querySelectorAll('.bula-apr-preco')].map((x) => x.textContent) : [], link: link ? link.getAttribute('href') : '', alvo: link ? link.getAttribute('target') : '', linkTexto: link ? link.textContent : '', notas, titulo: det ? ((det.querySelector('.bula-apr-tit') || {}).textContent || '') : '', foraDaTela: lis.filter((r) => r.right > document.documentElement.clientWidth + 1).length, rolaX: document.documentElement.scrollWidth > document.documentElement.clientWidth + 1 };
   }, raizSel(adm));
 }
 (async () => {
@@ -111,6 +112,7 @@ async function estado(page, adm) {
     await page.waitForTimeout(2500);
     let e = await estado(page, adm);
     ok(e.raiz && /medicamentos com registro ativo/.test(e.topo), nome + ': o bulário não carregou (' + e.topo + ')');
+    ok(!/preço|R\$/.test(e.topo), nome + ': a linha do topo ainda fala de preço: ' + e.topo);
     // busca por princípio ativo
     await page.fill(raizSel(adm) + ' .bula-q', 'metformina');
     await page.waitForTimeout(500);
@@ -125,33 +127,31 @@ async function estado(page, adm) {
     await page.click(raizSel(adm) + ' .bula-item .bula-head');
     await page.waitForTimeout(300);
     e = await estado(page, adm);
-    const FAIXA = /^R\$\s[\d.]+,\d{2} a R\$\s[\d.]+,\d{2}$/;
-    const valores = (x) => x.split(' a ').map((v) => Number(v.replace(/[^\d,]/g, '').replace(',', '.')));
-    ok(e.det && e.linhas >= 2 && e.precos.length === e.linhas && e.precos.every((x) => FAIXA.test(x) && valores(x)[0] < valores(x)[1]), nome + ': o Glifage XR não mostrou a faixa (fábrica menor que o teto) em todas as apresentações: ' + e.precos.join(' / '));
-    ok(/do preço de fábrica ao máximo ao consumidor/.test(e.titulo), nome + ': o título das apresentações não diz o que é a faixa: ' + e.titulo);
-    ok(e.notas.some((n) => /O primeiro valor é o preço de fábrica/.test(n) && /genérico pode sair abaixo/.test(n)), nome + ': a nota da faixa não aparece');
+    const SEM_PRECO = (t) => !/R\$|preço de fábrica|preço máximo/.test(t);
+    ok(e.det && e.linhas >= 2 && e.precos.length === 0 && SEM_PRECO(e.textoDet), nome + ': o Glifage XR mostrou preço, ou não mostrou as apresentações');
+    ok(/^Apresentações \(\d+\)$/.test(e.titulo), nome + ': o título das apresentações voltou a falar de preço: ' + e.titulo);
     ok(/^https:\/\/consultas\.anvisa\.gov\.br\/#\/bulario\/q\/\?nomeProduto=GLIFAGE%20XR$/.test(e.link) && e.alvo === '_blank', nome + ': link da bula oficial errado: ' + e.link);
     ok(/Bula do profissional e do paciente/.test(e.linkTexto) && e.notas.some((n) => /a bula do paciente e a do profissional/.test(n)), nome + ': o botão ou a dica não dizem que a bula do profissional está lá: ' + e.linkTexto);
     ok(e.foraDaTela === 0, nome + ': ' + e.foraDaTela + ' apresentações passam da largura da tela');
-    achados.push(nome + ': Glifage XR → ' + e.linhas + ' apresentações, preços ' + e.precos.join(' / ') + ', link ' + e.link);
+    achados.push(nome + ': Glifage XR → ' + e.linhas + ' apresentações, sem preço; link ' + e.link);
     await page.screenshot({ path: path.join(__dirname, 'bulario-' + nome + '.png') });
-    // Ozivy 3 mL, o caso do print do professor: fábrica R$ 979,80, teto R$ 1.314,37.
+    // Ozivy, o caso dos prints do professor: as 4 apresentações, nenhuma com preço.
     await page.fill(raizSel(adm) + ' .bula-q', 'ozivy');
     await page.waitForTimeout(500);
     await page.click(raizSel(adm) + ' .bula-item .bula-head');
     await page.waitForTimeout(300);
     e = await estado(page, adm);
-    ok(e.precos.some((x) => /^R\$\s979,80 a R\$\s1\.314,37$/.test(x)), nome + ': Ozivy 3 mL sem a faixa R$ 979,80 a R$ 1.314,37: ' + e.precos.join(' / '));
-    achados.push(nome + ': Ozivy → ' + e.precos.join(' / '));
+    ok(e.linhas === 4 && SEM_PRECO(e.textoDet), nome + ': Ozivy mostrou preço, ou não mostrou as 4 apresentações (' + e.linhas + ')');
+    achados.push(nome + ': Ozivy → ' + e.linhas + ' apresentações, sem preço');
     if (adm) await page.screenshot({ path: path.join(__dirname, 'bulario-' + nome + '-ozivy.png') });
-    // Uso hospitalar: sem preço ao consumidor, só o de fábrica.
+    // Uso hospitalar: a situação diz "Uso hospitalar", e nenhum preço (antes saía "de fábrica").
     await page.fill(raizSel(adm) + ' .bula-q', 'acezo');
     await page.waitForTimeout(500);
     await page.click(raizSel(adm) + ' .bula-item .bula-head');
     await page.waitForTimeout(300);
     e = await estado(page, adm);
-    ok(e.precos.length >= 1 && e.precos.every((x) => /^R\$\s[\d.]+,\d{2} de fábrica$/.test(x)), nome + ': Acezo (uso hospitalar) devia mostrar só o preço de fábrica: ' + e.precos.join(' / '));
-    achados.push(nome + ': Acezo (hospitalar) → ' + e.precos.join(' / '));
+    ok(e.linhas >= 1 && /Uso hospitalar/.test(e.textoDet) && SEM_PRECO(e.textoDet) && !/de fábrica/.test(e.textoDet), nome + ': Acezo (uso hospitalar) mostrou preço, ou perdeu a situação');
+    achados.push(nome + ': Acezo (hospitalar) → ' + e.linhas + ' apresentação, "Uso hospitalar", sem preço');
     // Ficha por seções (protótipo, 17/10/2026): Biomag abre a ficha da sibutramina, com a
     // barra de atalhos (fixa ao rolar) e os títulos em pergunta, no modelo que o professor
     // mandou. O atalho rola até a seção sem escondê-la sob a barra.
@@ -164,7 +164,7 @@ async function estado(page, adm) {
       const nav = det.querySelector('.bula-nav');
       return { det: true, nav: nav ? [...nav.querySelectorAll('.bula-nav-a')].map((b) => b.textContent) : [], titulos: [...det.querySelectorAll('.bula-sec > h3')].map((h) => h.textContent), rascunho: !!det.querySelector('.bula-rascunho'), tabelas: det.querySelectorAll('.bula-md table').length, link: !!det.querySelector('a[data-bula-oficial]'), largas: [...det.querySelectorAll('.bula-sec, .bula-md table')].filter((x) => x.getBoundingClientRect().right > document.documentElement.clientWidth + 1).length };
     }, raizSel(adm));
-    ok(fx.det && fx.nav.length === 12 && fx.nav[0] === 'Para que serve' && fx.nav.includes('Apresentações e preços') && fx.nav[fx.nav.length - 1] === 'Bula oficial', nome + ': a ficha do Biomag não abriu a barra de seções: ' + JSON.stringify(fx.nav));
+    ok(fx.det && fx.nav.length === 12 && fx.nav[0] === 'Para que serve' && fx.nav.includes('Apresentações') && !fx.nav.some((x) => /preço/i.test(x)) && fx.nav[fx.nav.length - 1] === 'Bula oficial', nome + ': a ficha do Biomag não abriu a barra de seções: ' + JSON.stringify(fx.nav));
     ok(fx.titulos[0] === 'Para que serve a sibutramina?' && fx.titulos.includes('Quando a sibutramina é contraindicada?') && fx.titulos.includes('Quais as reações adversas da sibutramina?'), nome + ': títulos em pergunta errados: ' + JSON.stringify(fx.titulos));
     ok(fx.rascunho && fx.tabelas === 2 && fx.link && fx.largas === 0, nome + ': ficha sem aviso de rascunho, sem as tabelas, sem o link da bula, ou mais larga que a tela: ' + JSON.stringify(fx));
     achados.push(nome + ': Biomag → ficha da sibutramina com ' + fx.nav.length + ' atalhos; títulos: ' + fx.titulos.slice(0, 3).join(' | '));
