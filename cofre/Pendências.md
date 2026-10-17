@@ -61,13 +61,14 @@ atualizado: 2026-10-17
    segue com o professor. Divergências do SCOUT entre os Resumos 074 e 146 anotadas em
    [[Bulário]].
 4. **Consultório:** `presc-catalogo.json` (09/06) pode passar a sair do mesmo construtor.
-5. **Professor: testes no navegador (17/10).** (a) ✅ Busca à mão por "Glifage XR": o
-   endereço tem o mesmo formato do nosso link (ver [[Bulário]]). Faltam: (b) copiar o
-   endereço do ícone PDF da "Bula do Profissional" (se trouxer o número do documento dos
-   dados abertos, 35552862 no Glifage XR, o botão pode levar direto ao PDF de cada
-   produto); (c) abrir o link antigo montado com os dados abertos
-   (`pNuTransacao=12366362026&pIdAnexo=35552862`); (d) colar o endereço do resultado numa
-   aba nova e ver se o resultado reaparece ou se a busca volta vazia.
+5. ✅ **Testes do professor no Bulário Eletrônico (17/10):** a busca à mão tem o mesmo
+   formato do nosso link, e o PDF é gerado pela página na hora, sem endereço fixo; link
+   direto ao PDF não é possível (ver [[Bulário]]). O botão segue copiando o nome.
+6. **Fonte alternativa para as fichas, sem mexer na rede:** o professor baixa da ANVISA
+   (dois cliques por produto, como fez com o Glifage XR) o PDF da bula do profissional dos
+   remédios prioritários e põe numa pasta do Google Drive; o conector do Drive desta
+   sessão lê os PDFs. É a bula oficial, melhor fonte que o site do fabricante. Oferecido
+   em 17/10; esperando a resposta.
 
 ## 💳 Cobrança em dobro (14/10) — o que fica com o professor
 
