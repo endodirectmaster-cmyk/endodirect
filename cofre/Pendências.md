@@ -10,6 +10,7 @@ atualizado: 2026-10-18
 1. ✅ **19 recortes traduzidos gravados nos resumos 149–152** (backup `main-antes-figuras-livros-eb-2026-10-18`, 12:14 UTC). Professor avisado do F5; conferência de zumbi às 13:15 UTC.
    - Teto de altura no ar (PR #881, `sw.js` v315).
    - Depois dele, o `{60}`/`{75}` saiu do Netter e do ciclo menstrual no 151 (backup `main-antes-largura-livros-151-2026-10-18`, 12:24 UTC; md5 do 151 agora `891f49b2…`).
+   - ✅ **Conferência de zumbi (13:16 UTC):** os 4 resumos seguem com os md5 gravados (149 `416c1c7c…`, 150 `a5a99495…`, 151 `891f49b2…`, 152 `5fb2f669…`), com 19 recortes e nenhum `{N}`. O save de 12:31:52 UTC, posterior à última gravação, já carregou a versão nova.
 2. [ ] Refazer os recortes cortados embaixo: Williams 16.1 (catecolaminas, p. 670) e 11.6 (D2/D3, p. 428).
 3. [ ] **2º lote:** as outras 47 figuras nos capítulos de cada glândula.
    - Estão em português no zip `_PT` do bucket `livros`.
