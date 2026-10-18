@@ -1,6 +1,6 @@
 ---
 tags: [cofre, moc]
-atualizado: 2026-10-17
+atualizado: 2026-10-18
 ---
 
 # Cofre Endodirect — base de conhecimento
@@ -26,7 +26,8 @@ Este é o **cofre de conhecimento do projeto Endodirect**, mantido pelo assisten
 - [[Integrações]] — Resend, Anthropic, Memed, vídeo
 - [[Instagram Stories (Questão do Dia)]] — Questão do Dia: geração, fila, arquivo do aluno, prancheta
 - [[Figuras dos Resumos]] — uma figura didática no fim de cada capítulo dos Resumos
-- [[Ilustrações dos Resumos]] — ilustrações de mecanismo no meio do capítulo
+- [[Ilustrações dos Resumos]] — ilustrações de mecanismo no meio do capítulo (e os recortes de livros)
+- [[App nas Lojas]] — Google Play e App Store: decisões e caminho técnico
 - [[Pendências]] — o que falta (lado do usuário e do código)
 - [[Decisões]] — log de decisões de produto/técnicas
 - [[Convenções de Trabalho]] — fluxo de git, validação, regras

@@ -715,6 +715,13 @@ html[data-theme="light"] .mural-text .mural-h1,html[data-theme="light"] .mural-t
    grande demais". Com o teto, P/M/G têm tamanho físico previsível em qualquer
    monitor, e o texto continua mandando na largura em telas estreitas. */
 .dir-texto .wys-img,.wys-edit .wys-img{max-width:min(100%,820px)}
+/* Teto de ALTURA na leitura (pedido do professor, 18/10, vendo as figuras dos livros:
+   "Acho que pode reduzir mais o tamanho das imagens"). A figura em pé ocupava a tela
+   inteira no computador (820×986 px); com 60% da janela ela cabe com a legenda, e a
+   largura acompanha a proporção. No celular quem manda continua sendo a largura da
+   coluna. Fica fora a imagem com largura escolhida no editor (P/M/G): com largura fixa,
+   o teto de altura achataria a figura. */
+.dir-texto .wys-img:not([style*="width"]){max-height:60vh}
 /* Legenda abaixo da figura do corpo (pedido do professor, 10/08).
    ⚠️ A `figure` fica com a LARGURA TOTAL de propósito: a porcentagem da imagem
    (P/M/G) resolve contra o bloco que a contém, então encaixotar a figura num teto

@@ -7,6 +7,8 @@
 // ilustração que substitui), com legenda, carrega e cabe na coluna; o toque abre o ampliador.
 // As imagens vêm da pasta local dos recortes preparados (nunca do repositório).
 //   PLAYWRIGHT_CORE=… PRONTAS=<pasta dos recortes> node scratchpad/figuras-livros/previa.js <capítulo.json> <pasta das fotos>
+// INDEX_HTML troca o index.html (para comparar antes e depois); ALTURA_MAX=0.6 reprova, no
+// notebook, figura mais alta que essa fração da janela.
 const fs = require('fs');
 const http = require('http');
 const path = require('path');
@@ -16,7 +18,7 @@ const CHROME = '/opt/pw-browsers/chromium-1194/chrome-linux/chrome';
 const RAIZ = path.join(__dirname, '..', '..');
 const PORTA = 8875;
 const PRONTAS = process.env.PRONTAS;
-const html = fs.readFileSync(path.join(RAIZ, 'index.html'), 'utf8');
+const html = fs.readFileSync(process.env.INDEX_HTML || path.join(RAIZ, 'index.html'), 'utf8');
 
 // Extrai do index.html uma função ou variável de topo e, recursivamente, as de topo que
 // ela usa (o renderizador de markdown depende de umas quinze). O recorte é feito pelo
@@ -80,8 +82,8 @@ const css = [...html.matchAll(/<style>([\s\S]*?)<\/style>/g)].map((m) => m[1]).j
   const falhas = [];
   fs.mkdirSync(pastaFotos, { recursive: true });
   try {
-    for (const [nome, largura] of [['celular', 390], ['notebook', 1280]]) {
-      const pg = await nav.newPage({ viewport: { width: largura, height: 900 }, deviceScaleFactor: largura < 500 ? 2 : 1 });
+    for (const [nome, largura, alturaJanela] of [['celular', 390, 844], ['notebook', 1280, 800]]) {
+      const pg = await nav.newPage({ viewport: { width: largura, height: alturaJanela }, deviceScaleFactor: largura < 500 ? 2 : 1 });
       const erros = []; pg.on('pageerror', (e) => erros.push(String(e.message || e)));
       await pg.goto(base + '/', { waitUntil: 'load' });
       await pg.evaluate(async () => { for (let y = 0; y < document.documentElement.scrollHeight; y += 400) { window.scrollTo(0, y); await new Promise((r) => setTimeout(r, 30)); } window.scrollTo(0, 0); });
@@ -95,7 +97,7 @@ const css = [...html.matchAll(/<style>([\s\S]*?)<\/style>/g)].map((m) => m[1]).j
           const img = [...document.querySelectorAll('.dir-texto img')].find((i) => i.src.indexOf(id) >= 0);
           if (!img) return { id, achou: false };
           const fig = img.closest('figure'), ant = fig && fig.previousElementSibling;
-          return { id, achou: true, carregou: img.naturalWidth > 0, largura: Math.round(img.getBoundingClientRect().width), col, cabe: img.getBoundingClientRect().width <= col + 0.5, legenda: fig ? (fig.querySelector('figcaption') || {}).textContent || '' : '', antes: ant ? ant.textContent.slice(-90) : '' };
+          return { id, achou: true, carregou: img.naturalWidth > 0, largura: Math.round(img.getBoundingClientRect().width), altura: Math.round(img.getBoundingClientRect().height), janela: window.innerHeight, proporcao: Math.abs((img.getBoundingClientRect().width / img.getBoundingClientRect().height) / (img.naturalWidth / img.naturalHeight) - 1) < 0.02, col, cabe: img.getBoundingClientRect().width <= col + 0.5, legenda: fig ? (fig.querySelector('figcaption') || {}).textContent || '' : '', antes: ant ? ant.textContent.slice(-90) : '' };
         });
       }, ilus.map((i) => i.id));
       r.forEach((x, k) => {
@@ -103,9 +105,11 @@ const css = [...html.matchAll(/<style>([\s\S]*?)<\/style>/g)].map((m) => m[1]).j
         if (!x.carregou) falhas.push(nome + ': ' + x.id + ' não carregou');
         if (!x.cabe) falhas.push(nome + ': ' + x.id + ' mais larga que a coluna');
         if (!x.legenda) falhas.push(nome + ': ' + x.id + ' sem legenda');
+        if (!x.proporcao) falhas.push(nome + ': ' + x.id + ' deformada (proporção diferente da original)');
+        if (process.env.ALTURA_MAX && largura >= 1000 && x.altura > Number(process.env.ALTURA_MAX) * x.janela + 1) falhas.push(nome + ': ' + x.id + ' com ' + x.altura + ' px de altura, mais que ' + process.env.ALTURA_MAX + ' da janela (' + x.janela + ')');
         const ancora = ilus[k].substitui ? '' : ilus[k].depoisDe.replace(/\*\*/g, '').replace(/^\|\s*|\s*\|$/g, '').split('|').pop().trim().slice(-40);
         if (ancora && x.antes.replace(/\s+/g, ' ').indexOf(ancora.replace(/\s+/g, ' ')) < 0) falhas.push(nome + ': ' + x.id + ' não ficou logo depois do trecho combinado (antes: "…' + x.antes + '")');
-        console.log('  · ' + nome + ': ' + x.id + ' → ' + x.largura + ' px de ' + x.col + '; antes: "…' + x.antes.slice(-50) + '"');
+        console.log('  · ' + nome + ': ' + x.id + ' → ' + x.largura + '×' + x.altura + ' px (coluna ' + x.col + ', janela ' + x.janela + '); antes: "…' + x.antes.slice(-50) + '"');
       });
       // fotos: página inteira e cada ilustração com o texto em volta
       await pg.screenshot({ path: path.join(pastaFotos, 'capitulo-' + nome + '.png'), fullPage: true });
