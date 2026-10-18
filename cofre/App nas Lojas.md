@@ -30,6 +30,10 @@ entregues na conversa. Aqui ficam o resumo, as decisões e o que falta.
       possa ser comprado no app). Se recusarem, as saídas são acrescentar a compra pela
       Apple (com o link ao lado) ou manter no iPhone o atalho da tela inicial.
 
+## Andamento
+
+- **18/10, 13h54 de Brasília:** D-U-N-S pedido pela ferramenta da Apple; aguarda o e-mail da D&B.
+
 ## Caminho técnico
 
 - **Android:** Trusted Web Activity pelo PWABuilder (Bubblewrap), apontando para
