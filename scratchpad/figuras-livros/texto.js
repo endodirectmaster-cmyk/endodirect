@@ -4,7 +4,8 @@
 // fecha a linha), ou no lugar da ilustração própria que ela substitui (`substitui`). Como
 // imagem de markdown com legenda, o mdToHtml do app a transforma em <figure> com legenda e
 // ampliador. Idempotente: se a figura já está no texto, só a linha dela é refeita.
-const FIGURAS = require('./figuras.js');
+// lote 1 (Endocrinologia Básica) e lote de diabetes (figuras-diabetes.js, 18/10/2026)
+const FIGURAS = require('./figuras.js').concat(require('./figuras-diabetes.js'));
 const BASE = 'https://eutizblmrcypzyqzczgq.supabase.co/storage/v1/object/public/endodirect-assets/resumos/livros/';
 const escAlt = (s) => String(s || '').replace(/\\/g, '\\\\').replace(/\]/g, '\\]');
 const escRe = (s) => String(s).replace(/[.*+?^${}()|[\]\\]/g, '\\$&');

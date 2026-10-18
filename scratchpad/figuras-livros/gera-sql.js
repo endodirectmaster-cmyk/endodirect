@@ -1,7 +1,8 @@
 'use strict';
 // GERA O UPDATE QUE LEVA OS RECORTES DE LIVROS AOS CAPÍTULOS, numa instrução só e sem o texto
 // dos capítulos no SQL: só trocas pontuais por replace() no servidor —
-//   · recorte novo: "<trecho>\n" → "<trecho>\n\n![legenda](url)\n\n";
+//   · recorte novo: "<trecho>\n" → "<trecho>\n\n![legenda](url)\n\n" (no fim do capítulo,
+//     "<trecho>" → "<trecho>\n\n![legenda](url)\n");
 //   · ilustração própria substituída: a linha da imagem SVG → a linha do recorte;
 //   · recorte já gravado: a linha inteira → a linha atual (legenda nova).
 // Guardas: md5 do resumo de cada capítulo antes e o md5 esperado depois (o mesmo texto da
@@ -35,6 +36,8 @@ const caps = arqs.map((arq) => {
     }
     if (antes.split(f.depoisDe).length !== 2) throw new Error(f.id + ': o trecho não é único no capítulo');
     const p = antes.indexOf(f.depoisDe) + f.depoisDe.length;
+    // trecho no fim do capítulo (última linha de uma tabela, por exemplo): sem quebra depois
+    if (p === antes.length) { pares.push([f.depoisDe, f.depoisDe + '\n\n' + linha + '\n']); continue; }
     if (antes[p] !== '\n') throw new Error(f.id + ': o trecho não fecha a linha (a troca no servidor não reproduziria a prévia)');
     pares.push([f.depoisDe + '\n', f.depoisDe + '\n\n' + linha + '\n\n']);
   }

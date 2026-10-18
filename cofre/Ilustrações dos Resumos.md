@@ -65,6 +65,55 @@ ampliador. O editor do professor preserva a figura ao salvar (ramo `figure` do
     - **Tamanho na tela:** até 640 px de largura e 55% da altura da janela
       (`.dir-texto .wys-img` sem largura do editor; dois pedidos do professor em 18/10,
       `sw.js` v315 e v316). Por isso nenhum recorte usa mais `{N}`.
+  - **Lote de diabetes (18/10): prévia publicada, aguarda aprovação.**
+    - **Origem:** `livros/diabetes/imagens_diabetes_PT.zip` + `indice_PT.csv`, que o
+      professor subiu às 17h04 UTC. São 79 figuras já traduzidas por outra conversa dele.
+      O zip dos originais em inglês **não** veio.
+    - **Revisão:** 74 figuras em 9 lotes, um agente por lote. Cada agente conferiu a imagem,
+      escolheu o trecho e escreveu a legenda. Eu juntei e conferi tudo com `monta.js`
+      (pasta da sessão). As 5 restantes foram separadas antes:
+      - 2 do guia de hipoglicemia da ADA (Clinical Compendia 2026): a licença permite uso
+        educacional **sem alteração**, e estas são traduções;
+      - 3 tabelas do "Diabetes Technology Overview 2026" (Diabetotech): catálogo de
+        marcas que muda a cada poucos meses.
+    - **Resultado:** 51 entram em 16 capítulos (127–138, 221, 222, 224, 227, 231). Ficam de
+      fora 23:
+      - 12 contradizem o capítulo ou estão desatualizadas;
+      - 7 repetem uma figura melhor;
+      - 4 tratam de assunto que nenhum capítulo cobre.
+      Lista em `scratchpad/figuras-livros/figuras-diabetes.js`.
+    - **Rótulos corrigidos (10), com `corrige-diabetes.py`:**
+      - HAAF (Matfin 31-3): ↑ → ↓ nas respostas neurais simpáticas;
+      - Vilar 69.5: "sensibilidade motora" → "protetora";
+      - Vilar 70.5: rim rotulado "Fígado" → "Rim";
+      - Vilar 70.1: "contrarregulares" → "contrarreguladores" e "Função normal" → "renal";
+      - Vilar 68.2: "neutróficos" → "neurotróficos";
+      - Vilar 59.2: "neutrotransmissores" → "neurotransmissores";
+      - Vilar 63.5: "atuomatizado" → "automatizado";
+      - Williams 36.8: "Glicose" e "Sensor de glicose" estavam trocados; e "10:53 AM" → "10:53";
+      - Vilar 59.9: saiu uma caixa solta e repetida;
+      - Vilar 63.4: "< 63 mg/dℓ" → "< 70 mg/dℓ" na coluna do DM1/DM2.
+
+      A legenda dessas diz *"Fonte: adaptada de …"* (ou *"traduzida e adaptada de …"*).
+    - **Posições:** três figuras mudaram de lugar para não ficarem coladas:
+      - Williams 36.5 foi para a seção de estágios da SBD 2025 (cap. 128);
+      - a HAAF foi para "Fatores de risco" (cap. 134);
+      - a Vilar 70.4 foi para depois da tabela "Níveis de hipoglicemia", no fim do 134.
+    - **Fim do capítulo:** `gera-sql.js` agora aceita trecho que termina o capítulo (Netter
+      5-18 no 132 e Vilar 70.4 no 134). O ensaio gerou 51 trocas.
+    - **Conferências:**
+      - `previa.js` nos 16 capítulos (390 e 1280 px): todas carregam, cabem e ficam logo
+        depois do trecho. O único aviso é o do ampliador no celular, que abre a figura do
+        tamanho da tela, como no lote 1.
+      - Os md5 dos 16 resumos não mudaram desde a exportação (conferido às 19h UTC):
+        127 `447372ff`, 128 `4b717dc5`, 129 `f12064bc`, 130 `75b1e95f`, 131 `d8a587f3`,
+        132 `cf9e4072`, 133 `79a49efd`, 134 `ab841931`, 135 `9c02c14f`, 137 `7668d90f`,
+        138 `3d9a05b9`, 221 `87b887de`, 222 `f3ad1708`, 224 `92b2adaf`, 227 `b10356c8`,
+        231 `c5d2855f`.
+    - **Prévia:** [Figuras de Diabetes nos Resumos](https://claude.ai/artifact/Rrq4YVAH631CsABfiyZWHG).
+    - **Falta conferir:** as 22 traduzidas lado a lado com o original (pedi o zip em
+      inglês). Na Matfin 40-1, o rótulo "Úlcera do calcanhar – geralmente neuropática"
+      pode ser "neuroisquêmica" no original.
   - **Desenho próprio:** onde o livro tiver figura equivalente, o recorte substitui o
     desenho; onde não tiver, o desenho fica.
   - **Origem dos livros:** estão no Drive, em Livros › Endocrino Geral (Williams,
@@ -105,6 +154,21 @@ ampliador. O editor do professor preserva a figura ao salvar (ramo `figure` do
 
 ## Lições
 
+- **Trocar uma palavra numa figura (`corrige-diabetes.py`, 18/10).**
+  - Não chutar o corpo da fonte pela largura: a palavra nova sai fina e clara.
+  - O que funciona: desenhar a palavra errada em Liberation Sans a 8× e procurar a
+    fonte (normal ou negrito), o corpo, a espessura (em 1/8 de pixel), o desfoque e a
+    posição que a reproduzem pixel a pixel. Depois, escrever a certa com os mesmos
+    parâmetros.
+  - Fixar a cor da tinta, a dos 2% de pixels mais escuros. Com a cor solta, o ajuste
+    troca traço fino e escuro por grosso e claro.
+  - O erro quadrático sozinho puxa para traço mais claro quando as letras não coincidem.
+    Entre os ajustes até 4% piores que o melhor, ficar com o que tem a mesma
+    quantidade de tinta do original.
+  - Quando a mesma figura já tem o texto certo (a seta ↓ vizinha, o "< 70 mg/dℓ" da outra
+    coluna), copiar os pixels é melhor que desenhar.
+  - Conferir a caixa numa grade ampliada antes: na 1ª tentativa, a troca da 63.5 caiu na
+    linha de baixo.
 - **O script do app é uma função autoexecutada.** Para a prévia extrair as funções:
   - é preciso descer no corpo da função;
   - as variáveis vão na ordem do código-fonte, porque o `RE_IMG_BLOCO` usa o
