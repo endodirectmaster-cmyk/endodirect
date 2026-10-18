@@ -8,6 +8,18 @@ atualizado: 2026-10-18
 Log de decisões de produto e técnicas (mais recentes no topo).
 
 ## 2026-10
+- **📚 FIGURAS DE DIABETES: PRÉVIA COM 51 FIGURAS E 10 RÓTULOS CORRIGIDOS (2026-10-18).**
+  Nada foi gravado ainda; aguarda a aprovação do professor ([[Pendências]]).
+  - **Corrigir rótulo, não descartar:** onde o erro era de uma palavra ou seta (seta
+    invertida, órgão trocado, grafia, rótulos trocados, valor de corte), a figura foi
+    corrigida e entra. A legenda diz *"adaptada de"*.
+    - Quem contradiz o capítulo no conteúdo todo fica de fora: protocolos antigos de CAD,
+      de insulina no internado e de investigação da hipoglicemia, algoritmos do DM2 e da
+      dor neuropática.
+  - **Separadas antes da revisão:**
+    - figuras da ADA (licença sem alteração, e estas são traduções);
+    - tabelas de aparelhos da Diabetotech (catálogo de marcas).
+  - Detalhes em [[Ilustrações dos Resumos]].
 - **📚 FIGURAS TRADUZIDAS DOS LIVROS NOS RESUMOS 149–152 (2026-10-18).** `sw.js` v314 → **v315** (teto de altura).
   - **Decisão do professor:** expliquei que traduzir figura de livro exige autorização da editora (Lei 9.610/98, art. 29) e não fiz a tradução. Outra conversa dele traduziu os rótulos das 64 figuras do zip, e ele mandou *"Usar essas figuras"*. A decisão é dele. A legenda diz *"Fonte: traduzida de …"*; a do Guyton já vem da edição brasileira (*"Fonte: …"*).
   - **Revisão das 19 do lote 1:** o conteúdo das traduções está certo. Cinco tinham defeito de acabamento, corrigido por `scratchpad/figuras-livros/corrige.py` a partir da arte original:

@@ -15,6 +15,20 @@ Pedido do professor: *"Deixe como próxima tarefa melhorar a geração de quest�
 3. [ ] **Questões diretas** também, não só casos clínicos.
 - Código: `index.html`, `igGenOne`/`igGenOneUnica` (~l. 15100), prompt do `aiRequest` (~l. 15300), `igLoteTemas`.
 
+## 📚 Figuras de diabetes (18/10) — prévia publicada; aguarda o professor
+
+Prévia: [Figuras de Diabetes nos Resumos](https://claude.ai/artifact/Rrq4YVAH631CsABfiyZWHG).
+51 figuras em 16 capítulos, 10 com rótulo corrigido. Detalhes em [[Ilustrações dos Resumos]].
+1. [ ] **Aprovação do professor** (tirar, trocar ou mudar de lugar pelo número).
+2. [ ] **Originais em inglês:** pedi o zip para conferir as 22 traduzidas lado a lado,
+   como no lote 1. Conferir em especial o rótulo da úlcera de calcanhar da Matfin 40-1.
+3. [ ] **Depois da aprovação:**
+   - subir os 51 arquivos de `prontas/` com uma função temporária (`createClient` com a
+     chave de serviço) e depois deixá-la em 410;
+   - conferir de novo os md5 dos 16 resumos;
+   - gravar com `gera-sql.js` (backup, md5 de antes e depois);
+   - avisar o F5, conferir zumbi e atualizar o cofre.
+
 ## 📚 Figuras dos livros (18/10) — lote 1 gravado; o que fica
 
 1. ✅ **19 recortes traduzidos gravados nos resumos 149–152** (backup `main-antes-figuras-livros-eb-2026-10-18`, 12:14 UTC). Professor avisado do F5; conferência de zumbi às 13:15 UTC.
