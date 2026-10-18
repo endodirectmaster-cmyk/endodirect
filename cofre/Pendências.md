@@ -20,8 +20,11 @@ atualizado: 2026-10-18
 ## 📱 App nas lojas (18/10) — decisões tomadas; a fazer
 
 1. [ ] **Professor:**
-   - CNPJ → D-U-N-S;
-   - conta de organização no Google Play (US$ 25) e na Apple (US$ 99/ano).
+   - CNPJ → D-U-N-S: **pedido em 18/10, às 13h54 de Brasília**, pela ferramenta da Apple (developer.apple.com/enroll/duns-lookup). A empresa não constava na D&B; a tela confirmou "Suas informações estão sendo processadas". Agora:
+     - esperar o e-mail da Dun & Bradstreet (até 5 dias úteis); a D&B pode pedir o cartão CNPJ e o contrato social;
+     - depois do número, até 2 dias úteis para a Apple recebê-lo;
+     - se passar de 2 semanas, escrever à D&B.
+   - Conta de organização no Google Play (US$ 25) e na Apple (US$ 99/ano), com o mesmo D-U-N-S, a mesma razão social e o mesmo endereço.
 2. [ ] **Eu, na plataforma:**
    - exclusão de conta no app, mais a página pública;
    - política de privacidade (retenção e exclusão);
