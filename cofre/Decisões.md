@@ -23,7 +23,7 @@ Log de decisões de produto e técnicas (mais recentes no topo).
   - **Tamanho:** vendo no ar, o professor disse *"Acho que pode reduzir mais o tamanho das imagens"*.
     - Regra nova: `.dir-texto .wys-img:not([style*="width"]){max-height:60vh}`. A figura em pé cabe na tela com a legenda: no notebook de 800 px, a de 820×986 virou 400×480.
     - A larga não muda, e no celular manda a largura da coluna.
-    - Saiu o `{60}`/`{75}` do Netter e do ciclo menstrual: com a %, o teto não vale e, no celular, elas ficavam com 200 e 250 px.
+    - Saiu o `{60}`/`{75}` do Netter e do ciclo menstrual: com a %, o teto não vale e, no celular, elas ficavam com 200 e 250 px. Gravado depois do deploy da v315 (PR #881), com backup `main-antes-largura-livros-151-2026-10-18`.
     - A/B no Chromium com `previa.js` (`INDEX_HTML`, `ALTURA_MAX=0.6`).
   - **Envio:** pela função temporária `subir-figuras-livros` (token por hash e prazo), com `createClient` do supabase-js. O `fetch` direto com `Authorization: Bearer` + `SUPABASE_SERVICE_ROLE_KEY` deu 403 "Invalid Compact JWS". Depois do envio a função virou 410 e o token foi apagado.
 - **📱 APP NAS LOJAS: DECISÕES DO PROFESSOR (2026-10-18).** Pedido: *"Quero deixar transformar a plataforma do ED em aplicativo no google play e apple store"*.

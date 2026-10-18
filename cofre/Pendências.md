@@ -8,6 +8,8 @@ atualizado: 2026-10-18
 ## 📚 Figuras dos livros (18/10) — lote 1 gravado; o que fica
 
 1. ✅ **19 recortes traduzidos gravados nos resumos 149–152** (backup `main-antes-figuras-livros-eb-2026-10-18`, 12:14 UTC). Professor avisado do F5; conferência de zumbi às 13:15 UTC.
+   - Teto de altura no ar (PR #881, `sw.js` v315).
+   - Depois dele, o `{60}`/`{75}` saiu do Netter e do ciclo menstrual no 151 (backup `main-antes-largura-livros-151-2026-10-18`, 12:24 UTC; md5 do 151 agora `891f49b2…`).
 2. [ ] Refazer os recortes cortados embaixo: Williams 16.1 (catecolaminas, p. 670) e 11.6 (D2/D3, p. 428).
 3. [ ] **2º lote:** as outras 47 figuras nos capítulos de cada glândula.
    - Estão em português no zip `_PT` do bucket `livros`.
