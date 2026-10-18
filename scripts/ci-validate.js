@@ -1252,6 +1252,17 @@ try {
   fail('regressão da imagem da questão falhou (verifique igImgRelevante/IG_IMAGEQUERY_RULE no index.html):\n' + out);
 }
 
+// ⚠️ O lote da Questão do Dia saía só com casos clínicos em texto. O professor
+//     (18/10) pediu figura no enunciado, alternativas "três difíceis e uma um pouco
+//     mais fácil" e questões diretas, sem caso clínico.
+try {
+  execFileSync(process.execPath, [path.join('scripts', 'test-questao-formato.js')], { stdio: 'pipe' });
+  ok('lote da Questão do Dia: casos com figura, questões diretas e alternativas três difíceis e uma mais fácil');
+} catch (e) {
+  const out = (e.stdout ? e.stdout.toString() : '') + (e.stderr ? e.stderr.toString() : '');
+  fail('regressão do formato do lote falhou (verifique igPlanoLote/igSysQuestao/IG_ALTERNATIVAS_RULE no index.html):\n' + out);
+}
+
 // ⚠️ O save do painel apagava, em silêncio, edição feita direto no banco. Em
 //     06/08 as tabelas do posicionamento de hipogonadismo foram gravadas às 12:30
 //     e sumiram às 12:48 no save de uma aba aberta desde antes: mergeConcurrent só
