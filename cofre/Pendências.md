@@ -5,6 +5,16 @@ atualizado: 2026-10-18
 
 # Pendências
 
+## 🎯 PRÓXIMA TAREFA (pedida em 18/10): Questão do Dia › Gerar lote
+
+Pedido do professor: *"Deixe como próxima tarefa melhorar a geração de questões da questão do dia no campo de geração de lote."* Entra depois das figuras de diabetes.
+1. [ ] **Imagem no enunciado.** Os lotes saem só com texto; ele quer imagens que contextualizem os casos clínicos.
+   - O código já tem `imageQuery` + `igAttachExamImage` ("Buscando imagem do exame…"). Investigar por que quase nunca anexa.
+   - Só imagem de licença aberta (CC BY/CC0, com crédito) ou gráfico/tabela feitos por nós. Figura de livro não entra.
+2. [ ] **Alternativas mais difíceis:** cerca de 3 distratores difíceis e 1 um pouco mais fácil.
+3. [ ] **Questões diretas** também, não só casos clínicos.
+- Código: `index.html`, `igGenOne`/`igGenOneUnica` (~l. 15100), prompt do `aiRequest` (~l. 15300), `igLoteTemas`.
+
 ## 📚 Figuras dos livros (18/10) — lote 1 gravado; o que fica
 
 1. ✅ **19 recortes traduzidos gravados nos resumos 149–152** (backup `main-antes-figuras-livros-eb-2026-10-18`, 12:14 UTC). Professor avisado do F5; conferência de zumbi às 13:15 UTC.
