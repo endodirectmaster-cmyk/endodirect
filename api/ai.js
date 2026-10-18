@@ -91,9 +91,14 @@ function extractText(payload) {
 // "thyroid") e entrega curva ROC e gráfico de barras como se fosse exame — foi o
 // que o professor viu em 06/08. `mc` entrega lâmina de citologia no lugar do US.
 const OPENI_TIPOS = 'x,c,m,u,p';
-async function openiSearch(query, n) {
+// Fotografia clínica (`ph`), pedida à parte (tipo 'foto'): sinal visível no exame
+// físico — acantose, estrias, exoftalmia, mixedema pré-tibial (pedido do professor,
+// 18/10: casos clínicos com imagem). Nunca entra no balde de exames: o cliente só
+// pede foto para sinal da lista IG_IMG_SINAIS e confere a legenda (igImgRelevante).
+const OPENI_TIPOS_FOTO = 'ph';
+async function openiSearch(query, n, tipo) {
   const OPENI = 'https://openi.nlm.nih.gov';
-  const qs = new URLSearchParams({ query: String(query || '').slice(0, 300), m: '1', n: String(Math.max(1, Math.min(n || 4, 8))), it: OPENI_TIPOS });
+  const qs = new URLSearchParams({ query: String(query || '').slice(0, 300), m: '1', n: String(Math.max(1, Math.min(n || 4, 8))), it: tipo === 'foto' ? OPENI_TIPOS_FOTO : OPENI_TIPOS });
   const abs = function (p) { p = String(p || ''); return p && p.charAt(0) === '/' ? OPENI + p : p; };
   const r = await fetch(OPENI + '/api/search?' + qs.toString(), { headers: { Accept: 'application/json' } });
   if (!r.ok) return [];
@@ -200,7 +205,7 @@ module.exports = async function handler(req, res) {
       const q = String(sbody.query || '').trim().slice(0, 300);
       if (!q) return json(res, 400, { ok: false, error: 'query vazia' });
       try {
-        const items = await openiSearch(q, sbody.n);
+        const items = await openiSearch(q, sbody.n, sbody.tipo === 'foto' ? 'foto' : 'exame');
         return json(res, 200, { ok: true, items });
       } catch (e) {
         return json(res, 200, { ok: true, items: [] });

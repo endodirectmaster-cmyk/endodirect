@@ -14410,6 +14410,56 @@ var IG_IMG_ORGAOS=[
   {pt:['densitometria','coluna lombar','colo femoral','femur','vertebr','ossea','osso'],en:['bone','lumbar','spine','spinal','femoral','vertebral','skeletal']},
   {pt:['renal','rins','rim'],en:['kidney','renal']}
 ];
+// Sinais VISÍVEIS no exame físico que viram FOTO clínica (Open-i, tipo `ph`).
+// Pedido do professor (18/10): os casos clínicos do lote saíam só com texto e ele
+// quer "imagens no enunciado contextualizando os casos". Exame de imagem alterado
+// cobre parte; a outra parte da endocrinologia se vê na pele, no rosto e nos pés.
+// pt: como o ENUNCIADO escreve (prefixo, sem acento); en: como a BUSCA e a LEGENDA
+// da figura escrevem. A foto só entra se a busca nomear um destes sinais, se o
+// enunciado o descrever (sem negar) e se a legenda da própria figura o citar.
+var IG_IMG_SINAIS=[
+  {pt:['acantose'],en:['acanthosis nigricans','acanthosis']},
+  {pt:['estrias'],en:['striae']},
+  {pt:['face em lua','facies cushingoide','cushingoide','giba'],en:['moon face','cushingoid','buffalo hump']},
+  {pt:['acromegal','prognatismo'],en:['acromegaly','acromegalic','prognathism']},
+  {pt:['exoftalm','proptose','orbitopat','retracao palpebral'],en:['proptosis','exophthalm','orbitopathy','thyroid eye disease','eyelid retraction','lid retraction']},
+  {pt:['bocio'],en:['goiter','goitre']},
+  {pt:['mixedema pre','dermopatia'],en:['pretibial myxedema','pretibial myxoedema','thyroid dermopathy']},
+  {pt:['necrobiose'],en:['necrobiosis lipoidica','necrobiosis']},
+  {pt:['xantoma'],en:['xanthoma']},
+  {pt:['xantelasm'],en:['xanthelasma']},
+  {pt:['ulcera'],en:['foot ulcer','plantar ulcer','neuropathic ulcer']},
+  {pt:['charcot'],en:['charcot foot','charcot neuroarthropathy','charcot']},
+  {pt:['vitiligo'],en:['vitiligo']},
+  {pt:['hirsut'],en:['hirsutism']},
+  {pt:['ginecomast'],en:['gynecomastia','gynaecomastia']},
+  {pt:['hiperpigment','melanodermia'],en:['hyperpigmentation']},
+  {pt:['lipo-hipertrof','lipohipertrof','lipodistrof'],en:['lipohypertrophy','lipodystrophy']},
+  {pt:['pescoco alado'],en:['webbed neck']}
+];
+// Fotos que mostram outra coisa que não o sinal no paciente. Colhidas ao vivo no
+// Open-i em 18/10: "diabetic foot ulcer" trazia modelo de IA ("assessment
+// framework", "F1-score") e foto de rato Wistar; "pretibial myxedema", o antes e
+// depois do tratamento; a acantose, "neck wound progress at four months of
+// treatment" (legenda que fala de tratamento mostra evolução, não o sinal);
+// "eruptive xanthoma", a lesão já resolvida; "necrobiosis lipoidica", um carcinoma
+// nascido sobre ela; e há cirurgia e dermatoscopia em vários sinais. Prancha que
+// junta foto e exame (TC, radiografia) sai em igImgRelevante.
+var IG_IMG_NAO_FOTO=/(^|[^a-z])(rats?|mice|mouse|murine|wistar|rabbits?|porcine|framework|f1-score|deep learning|neural network|datasets?|algorithms?|model performance|dermoscopy|dermoscopic|before and after|treatments?|therapy|therapies|post-?treatment|resolved|resolution|improvement|improved|regression|carcinomas?|melanomas?|malignant|malignancy|intraoperative|post-?operative|surgery|surgical|incisions?|resected|specimens?)([^a-z]|$)/;
+// Índice do sinal que a BUSCA (inglês) nomeia; -1 se nenhum.
+function igImgSinalDaBusca(query){
+  var q=igImgDeacc(query),i,j;
+  for(i=0;i<IG_IMG_SINAIS.length;i++)
+    for(j=0;j<IG_IMG_SINAIS[i].en.length;j++)
+      if(igImgHasPref(q,IG_IMG_SINAIS[i].en[j]))return i;
+  return -1;
+}
+// Exame de imagem ou foto clínica? Modalidade na busca vence ("thyroid ultrasound
+// goiter" é ultrassom); sem modalidade e com sinal da lista, é foto.
+function igImgTipoDaBusca(query){
+  if(igImgModalDaBusca(query)>=0)return 'exame';
+  return igImgSinalDaBusca(query)>=0?'foto':'exame';
+}
 // Marcas de exame NORMAL no enunciado. Se a frase que cita o exame diz isso, não
 // existe figura certa: qualquer imagem real do achado CONTRADIZ o enunciado.
 var IG_IMG_NORMAL=/(^|[^a-z])(normal|normais|normalidade|sem alterac|sem anormalidade|sem imagem sugestiva|sem evidencia|sem sinais|sem nodul|sem lesa|inalterad|preservad|habitual)/;
@@ -14449,8 +14499,27 @@ function igImgOrgaos(txt,lado){
 //  1. o enunciado descreve o exame como NORMAL → nenhuma figura serve;
 //  2. a busca pede um ÓRGÃO que o enunciado nem menciona;
 //  3. a busca pede uma MODALIDADE que o enunciado nem menciona (pediu TC, o caso tem USG).
-function igImgPedidoCoerente(query,stem){
+// FOTO clínica (tipo 'foto') tem regra própria: só sinal da lista IG_IMG_SINAIS e só
+// se o enunciado o DESCREVE — "sem acantose" não é acantose, e a foto o contradiria.
+function igImgPedidoCoerente(query,stem,tipo){
   var s=igImgDeacc(stem);
+  if(tipo==='foto'){
+    var si=igImgSinalDaBusca(query);
+    if(si<0)return false;                              // (4) sinal fora da lista
+    if(!s)return true;
+    var pts=IG_IMG_SINAIS[si].pt,k,m,neg,ok=false;
+    for(k=0;k<pts.length&&!ok;k++){
+      var pre=String(pts[k]).replace(/[.*+?^${}()|[\]\\]/g,'\\$&').replace(/[\s-]+/g,'[\\s-]+');
+      var re=new RegExp('(^|[^a-z0-9])'+pre,'g');
+      while((m=re.exec(s))){
+        // negado se "sem/ausência de/nega/não há" vem até 2 palavras antes do sinal,
+        // sem vírgula no meio ("sem bócio, acantose…" tem a acantose)
+        neg=/(^|[^a-z])(sem|ausencia de|ausente|nega|negou|nao ha|nao tem)\s+([^\s,;.]+\s+){0,2}$/.test(s.slice(Math.max(0,m.index-40),m.index+m[1].length));
+        if(!neg){ok=true;break;}
+      }
+    }
+    return ok;                                         // (5) sinal que o enunciado não descreve
+  }
   if(!s)return true;                                   // sem enunciado, não há o que conferir
   var mi=igImgModalDaBusca(query);
   if(mi>=0){
@@ -14484,15 +14553,28 @@ function igImgPedidoCoerente(query,stem){
 // não é perfeito — a própria base classifica cintilografia ora como exame, ora
 // como gráfico.
 var IG_IMG_NAO_EXAME=/(^|[^a-z])(roc curve|kaplan|survival curve|flow ?chart|flow diagram|study design|bar graph|scatter ?plot|histogram|box ?plot|forest plot|consort|questionnaire|schematic|western blot|immunohistochem|histolog|cytolog|micrograph|hematoxylin|h&e stain)/;
-function igImgRelevante(query,it,stem){
+function igImgRelevante(query,it,stem,tipo){
   // ⚠️ `title` é o título do ARTIGO, não da figura — um artigo chamado "thyroid
   // scintigraphy in radioiodine therapy" faz qualquer figura sua parecer uma
   // cintilografia. Por isso a MODALIDADE é conferida só na LEGENDA; o título entra
   // apenas no casamento de órgão, que é mais tolerante.
-  var cap=igImgDeacc(String((it&&it.caption)||'')).trim();
-  var hay=igImgDeacc(String((it&&it.title)||'')+' '+String((it&&it.caption)||'')).trim();
+  // A legenda do Open-i vem com o realce da busca em HTML ("<b>acanthosis</b>
+  // <b>nigricans</b>"), que quebra termo de duas palavras: as marcas saem antes.
+  var tira=function(x){return String(x||'').replace(/<[^>]*>/g,' ');};
+  var cap=igImgDeacc(tira(it&&it.caption)).trim();
+  var hay=igImgDeacc(tira(it&&it.title)+' '+tira(it&&it.caption)).trim();
   if(!hay)return false;                       // sem metadado não há como conferir
   if(cap&&IG_IMG_NAO_EXAME.test(cap))return false;   // curva ROC, fluxograma, lâmina…
+  if(tipo==='foto'){
+    // A LEGENDA da própria foto tem de citar o sinal pedido (o título do artigo não
+    // basta) e não pode ser bicho, modelo de IA, cirurgia ou o "depois" do tratamento.
+    if(!cap||IG_IMG_NAO_FOTO.test(cap))return false;
+    // prancha que junta a foto com exame (TC, RM, radiografia) não é a foto do sinal
+    if(igImgModalDaBusca(cap)>=0||/(^|[^a-z])imaging([^a-z]|$)/.test(cap))return false;
+    var si=igImgSinalDaBusca(query),en=si>=0?IG_IMG_SINAIS[si].en:[],k;
+    for(k=0;k<en.length;k++)if(igImgHasPref(cap,en[k]))return true;
+    return false;
+  }
   var q=igImgDeacc(query),i,mi=igImgModalDaBusca(q),grupo=mi>=0?IG_IMG_MODAL[mi]:null;
   if(grupo){
     if(!cap)return false;                     // sem legenda não dá para checar a modalidade
@@ -14520,20 +14602,40 @@ function igImgRelevante(query,it,stem){
   }
   return false;
 }
+// Entre as fotos aprovadas, a que mostra SÓ o sinal pedido. Ao vivo (18/10), a busca
+// "pretibial myxedema" trouxe primeiro a prancha da síndrome EMO, cujo painel (a) é
+// a exoftalmia: a legenda cita o sinal, mas a foto é de outro. Nota menor é melhor:
+// +2 se a legenda cita OUTRO sinal da lista; +1 se tem painéis — (a), (A), B); e,
+// para desempatar, quanto mais cedo o sinal aparece na legenda, melhor.
+function igImgNotaFoto(query,it){
+  var cap=igImgDeacc(String((it&&it.caption)||'').replace(/<[^>]*>/g,' ')),si=igImgSinalDaBusca(query),nota=0,i,k,pos=1e9;
+  for(i=0;i<IG_IMG_SINAIS.length;i++){
+    if(i===si)continue;
+    for(k=0;k<IG_IMG_SINAIS[i].en.length;k++)if(igImgHasPref(cap,IG_IMG_SINAIS[i].en[k])){nota+=2;i=IG_IMG_SINAIS.length;break;}
+  }
+  if(/(^|[\s(])\(?[a-f]\)/i.test(cap))nota+=1;
+  if(si>=0)IG_IMG_SINAIS[si].en.forEach(function(t){var p=cap.indexOf(String(t).toLowerCase());if(p>=0&&p<pos)pos=p;});
+  return nota+Math.min(pos,600)/1000;
+}
 // Busca uma imagem de exame complementar (PubMed Central via Open-i) p/ ilustrar a
 // questão. Best-effort: qualquer falha — ou nenhum candidato relevante — devolve
 // null e a questão fica sem imagem.
-function igFetchExamImage(query,stem){
+function igFetchExamImage(query,stem,tipo){
   query=String(query||'').trim();if(!query)return Promise.resolve(null);
-  return fetch('/api/ai',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({kind:'openi',query:query,n:6})})
+  // tipo 'foto' busca fotografia clínica; o resto, exame de imagem (api/ai.js)
+  return fetch('/api/ai',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({kind:'openi',query:query,n:6,tipo:(tipo==='foto'?'foto':'exame')})})
     .then(function(r){return r.ok?r.json():null;})
     .then(function(d){
       if(!d||!d.ok||!d.items||!d.items.length)return null;
+      var melhor=null,nm=1e9;
       for(var i=0;i<d.items.length;i++){
         var it=d.items[i];
-        if(it&&it.img&&igImgRelevante(query,it,stem))return {img:it.img,imgRef:igFormatImgRef(it)};
+        if(!(it&&it.img&&igImgRelevante(query,it,stem,tipo)))continue;
+        if(tipo!=='foto')return {img:it.img,imgRef:igFormatImgRef(it)};   // exame: a 1ª aprovada
+        var n=igImgNotaFoto(query,it);
+        if(n<nm){nm=n;melhor=it;}
       }
-      return null;
+      return melhor?{img:melhor.img,imgRef:igFormatImgRef(melhor)}:null;
     })
     .catch(function(){return null;});
 }
@@ -14899,9 +15001,10 @@ function admStoriesHTML(){
    +'<div style="display:flex;gap:.5rem;flex-wrap:wrap;margin-bottom:1.1rem">'+nb('lote','🤖 Gerar lote')+nb('manual','✏️ Manual')+nb('fila','📋 Fila ('+q.length+')')+nb('postados','✅ Postados ('+nPosted+')')+nb('aluno','👁 Como o aluno vê')+'</div>'
    +'<div id="stview-lote" style="'+vs('lote')+'">'
    +'<div class="card" style="margin-bottom:1rem"><div class="card-head"><span class="card-title">🤖 Gerar em lote</span></div>'
-   +'<div style="font-size:.74rem;color:var(--t2);margin-bottom:.6rem">Gera várias questões de uma vez (modelo Opus). Revise cada uma e <b>edite</b>, <b>aprove</b> ou <b>descarte</b> — ou aprove todas.</div>'
+   +'<div style="font-size:.74rem;color:var(--t2);margin-bottom:.6rem">Gera várias questões de uma vez (modelo Opus). Revise cada uma e <b>edite</b>, <b>aprove</b> ou <b>descarte</b> — ou aprove todas. Em <b>Casos e diretas</b>, cerca de 1 em cada 3 sai direta, sem caso clínico, e 2 em cada 3 casos pedem figura (exame de imagem ou foto do sinal clínico), que entra quando o PubMed Central tem uma que combine com o enunciado.</div>'
    +'<div style="display:flex;gap:.6rem;flex-wrap:wrap;align-items:flex-end;margin-bottom:.7rem">'
    +'<label style="width:110px">'+igLbl('Quantidade')+'<select id="ig-lote-qty"><option>1</option><option>3</option><option selected>5</option><option>7</option><option>10</option></select></label>'
+   +'<label style="width:170px">'+igLbl('Formato')+'<select id="ig-lote-formato"><option value="misto" selected>Casos e diretas</option><option value="caso">Só casos clínicos</option><option value="direta">Só diretas</option></select></label>'
    +'<label style="flex:1;min-width:160px">'+igLbl('Subespecialidade')+'<select id="ig-lote-sub">'+loteSubs+'</select></label>'
    +'<label style="flex:1;min-width:150px">'+igLbl('Tema (opcional)')+'<select id="ig-lote-tema"><option value="">Todos os temas</option></select></label>'
    +'<button class="btn btn-primary btn-sm" id="ig-lote-gen">🤖 Gerar lote</button>'
@@ -14990,11 +15093,11 @@ function igShuffleMCQ(q){
 function igAttachExamImage(q,d){
   var iq=d&&d.imageQuery?String(d.imageQuery).trim():'';
   if(!iq)return Promise.resolve(q);
-  var stem=String((q&&q.stem)||'');
+  var stem=String((q&&q.stem)||''),tipo=igImgTipoDaBusca(iq);
   // Antes de gastar a busca: o pedido bate com o enunciado? (exame normal, órgão
-  // ou modalidade que a vinheta nem cita → questão fica sem figura)
-  if(!igImgPedidoCoerente(iq,stem))return Promise.resolve(q);
-  return igFetchExamImage(iq,stem).then(function(im){if(im){q.img=im.img;q.imgRef=im.imgRef;}return q;}).catch(function(){return q;});
+  // ou modalidade que a vinheta nem cita, sinal que ela não descreve → sem figura)
+  if(!igImgPedidoCoerente(iq,stem,tipo))return Promise.resolve(q);
+  return igFetchExamImage(iq,stem,tipo).then(function(im){if(im){q.img=im.img;q.imgRef=im.imgRef;}return q;}).catch(function(){return q;});
 }
 // ⚠️ Regra ESTREITA de propósito. A versão anterior mandava ilustrar sempre que a
 // vinheta "envolvesse um exame de imagem" — e o gerador pedia figura até para caso
@@ -15002,7 +15105,33 @@ function igAttachExamImage(q,d){
 // questão de macroprolactinemia, cujo enunciado diz "RM de sela normal, sem imagem
 // sugestiva de adenoma", veio com uma prancha de 6 painéis de um artigo de oncologia
 // com setas apontando lesões — a figura CONTRADIZIA o enunciado.
-var IG_IMAGEQUERY_RULE=' Campo "imageQuery": só preencha quando a figura for INDISPENSÁVEL para responder — quando o achado de imagem é o dado que decide a questão e o aluno precisa INTERPRETAR a figura. Use "imageQuery":"" (string vazia) em todos os outros casos, inclusive: (a) o enunciado DESCREVE o exame como normal, sem alterações ou negativo — NUNCA ilustre exame normal; (b) o exame aparece de passagem e o raciocínio se resolve pela clínica ou pelo laboratório; (c) o achado já está descrito por extenso no enunciado. Na dúvida, use "" — questão sem imagem é melhor do que questão com imagem que não corresponde ao caso. Quando preencher, use TERMOS DE BUSCA EM INGLÊS nomeando MODALIDADE + ÓRGÃO + ACHADO (ex.: "pituitary MRI macroadenoma", "thyroid ultrasound papillary carcinoma", "adrenal CT pheochromocytoma").';
+// ⚠️ Regra AMPLIADA em 18/10, a pedido do professor: "estão sendo geradas questões
+// somente com texto, sem nenhuma imagem contextualizando os casos clínicos". A regra
+// estreita ("só quando INDISPENSÁVEL") quase nunca pedia figura. Agora pede sempre
+// que o caso tiver um achado VISUAL ALTERADO — exame de imagem ou sinal da lista
+// IG_IMG_SINAIS (foto clínica) — e o achado continua escrito no enunciado, de modo
+// que a figura ilustra e a questão segue respondível sem ela. O que protegia contra
+// a figura errada fica: exame normal nunca é ilustrado, e a figura só entra se
+// passar por igImgPedidoCoerente e igImgRelevante.
+var IG_IMAGEQUERY_RULE=' Campo "imageQuery" (figura do caso, buscada no PubMed Central): em CASO CLÍNICO, preencha sempre que o caso tiver um achado VISUAL ALTERADO que uma figura possa mostrar: (a) exame de imagem alterado (RM, TC, USG, cintilografia, radiografia, densitometria) — TERMOS DE BUSCA EM INGLÊS com MODALIDADE + ÓRGÃO + ACHADO (ex.: "pituitary MRI macroadenoma", "thyroid ultrasound papillary carcinoma", "adrenal CT pheochromocytoma"); (b) sinal clínico VISÍVEL no exame físico — o nome do sinal em inglês, só desta lista: acanthosis nigricans, purple striae, moon face, acromegaly, proptosis, goiter, pretibial myxedema, necrobiosis lipoidica, xanthoma, xanthelasma, foot ulcer, Charcot foot, vitiligo, hirsutism, gynecomastia, hyperpigmentation, lipohypertrophy, webbed neck (ex.: "acanthosis nigricans neck", "proptosis thyroid eye disease"). O achado tem de estar DESCRITO no enunciado, com as palavras do exame ou do sinal: a figura ilustra, e a questão continua respondível sem ela. Use "imageQuery":"" (string vazia) quando: o enunciado DESCREVE o exame como normal, sem alterações ou negativo — NUNCA ilustre exame normal; o caso não tiver achado visual; o sinal não estiver na lista; ou a questão for direta, sem caso clínico. Na dúvida, use "" — questão sem imagem é melhor do que questão com imagem que não corresponde ao caso.';
+// Alternativas mais difíceis (pedido do professor, 18/10): "mais ou menos três
+// difíceis e uma um pouco mais fácil". Das 4, a correta e dois distratores ficam
+// muito próximos; o quarto é mais fácil de descartar, mas nunca absurdo.
+var IG_ALTERNATIVAS_RULE=' ALTERNATIVAS: das 4, TRÊS difíceis e UMA um pouco mais fácil. A correta e dois distratores devem ser muito próximos entre si — do mesmo tipo (três diagnósticos diferenciais reais do caso, três condutas que um residente escolheria, três valores da mesma ordem de grandeza) — e cada distrator deve ser a escolha de quem confunde um critério, uma exceção ou um valor de corte. O quarto distrator pode ser um pouco mais fácil de descartar, mas continua plausível: nunca absurdo, de outro assunto ou óbvio. Todas com tamanho e estrutura parecidos (a correta não pode ser a mais longa nem a mais detalhada), sem pista gramatical e sem "todas/nenhuma das anteriores".';
+// Questões diretas (pedido do professor, 18/10): "inclua questões mais diretas, sem
+// necessariamente serem casos clínicos". Direta não é fácil: a dificuldade vem da
+// precisão do que se pergunta e dos distratores.
+var IG_FORMATO_DIRETA=' FORMATO: questão DIRETA, sem caso clínico — enunciado de 1 a 2 frases que pergunta, de forma objetiva, um ponto que o especialista precisa saber: critério diagnóstico, valor de corte, mecanismo de ação, efeito adverso ou contraindicação, recomendação de diretriz, gene ou classificação. Sem paciente, sem história e sem exames. O enunciado TERMINA com a pergunta (ex.: Qual é o principal mecanismo de ação da tirzepatida?). A dificuldade vem da precisão do que se pergunta e dos distratores, não da história. Use "imageQuery":"".';
+// Caso montado em torno de um achado visual: é assim que a figura aparece no lote.
+var IG_CASO_COM_IMAGEM=' IMAGEM: monte este caso em torno de um achado VISUAL ALTERADO que combine com o subtema — exame de imagem alterado ou sinal clínico visível da lista do campo "imageQuery" — e preencha "imageQuery". Se o subtema não admitir nenhum achado visual, faça o caso sem imagem ("imageQuery":"").';
+// Eixos das questões diretas (os de IG_EIXOS pressupõem um paciente).
+var IG_EIXOS_DIRETA=[
+  'um CRITÉRIO diagnóstico ou VALOR DE CORTE',
+  'o MECANISMO de ação de um fármaco ou a fisiopatologia',
+  'um EFEITO ADVERSO, contraindicação ou interação',
+  'uma RECOMENDAÇÃO de diretriz (quem tratar, com quê e quando)',
+  'a GENÉTICA, a classificação ou um dado que cai em prova'
+];
 // Dois níveis de dificuldade, alternados no lote (pedido do Rodolpho 2026-07-23):
 // 'titulo' = padrão prova de título/especialista; 'muito_avancado' = banca difícil.
 // ── REPETIÇÃO DE QUESTÃO ─────────────────────────────────────────────────────
@@ -15085,7 +15214,12 @@ var IG_EIXOS=[
   'a COMPLICAÇÃO ou o efeito adverso do tratamento',
   'a INVESTIGAÇÃO seguinte (qual exame pedir e por quê)'
 ];
-function igNivelDesc(level){
+function igNivelDesc(level,formato){
+  // A questão direta não pode receber "evite questões diretas" do texto dos casos.
+  if(formato==='direta'){
+    if(level==='titulo')return 'nível PROVA DE TÍTULO (padrão especialista) — pergunte um ponto que separa quem estudou de quem não estudou, com distratores plausíveis; nada de definição de livro-texto';
+    return 'nível MUITO AVANÇADO / DIFÍCIL (banca difícil) — pergunte um detalhe fino: exceção de diretriz, valor-limite, mecanismo menos lembrado ou diferença sutil entre fármacos ou critérios, com distratores muito plausíveis; PROÍBA pergunta de definição óbvia';
+  }
   if(level==='titulo')return 'nível PROVA DE TÍTULO (padrão especialista) — raciocínio clínico exigente, com nuance clínica e distratores plausíveis (erros conceituais comuns), evitando questões óbvias/diretas';
   return 'nível MUITO AVANÇADO / DIFÍCIL (banca difícil, questão discriminativa acima do padrão prova de título) — exija raciocínio clínico de MÚLTIPLAS ETAPAS (integrar história + laboratório + imagem para chegar ao diagnóstico ou à melhor conduta), com nuance clínica fina, exceções e armadilhas de diretriz (cutoffs, casos-limite, quando NÃO tratar) e distratores muito plausíveis — erros conceituais sutis que até o especialista comete; PROÍBA questões óbvias, diretas ou de mera memorização de definição';
 }
@@ -15097,17 +15231,35 @@ function igBlocoEvitar(fichas){
 function igBlocoEixo(eixo){
   return eixo?(' A PERGUNTA no fim do enunciado deve ser sobre '+eixo+' — mantenha ESTE eixo, não troque por outro.'):'';
 }
-function igGenOne(sub,topic,level,eixo,fichasEvitar){
-  var sys=authoringSys('Atue como examinador de prova de título em endocrinologia. Gere UMA questão ORIGINAL de '+sub+', EXATAMENTE 4 alternativas (A–D), só uma correta.'+igBlocoEixo(eixo)+' O enunciado deve TERMINAR SEMPRE com a pergunta direta (ex.: Qual o diagnóstico mais provável? / Qual a melhor conduta?). Inclua os valores laboratoriais pertinentes INLINE no texto, com unidades e valores de referência (ex.: FSH 2,1 mUI/mL [VR 3,5–12,5]) — não resuma como exames normais nem use tabela. EXCEÇÃO: a hemoglobina glicada (HbA1c) NÃO leva valor de referência — cite só o valor (ex.: HbA1c 8,2%). Quando pertinente, descreva o achado de imagem no enunciado em texto (ex.: USG de tireoide, ECG, RM de sela). NÃO cite a subespecialidade no enunciado. Alternativas CURTAS e concisas (poucas palavras — também vão para o story).'+IG_IMAGEQUERY_RULE+' JSON APENAS: {"stem":"vinheta clínica curta; exames laboratoriais inline com valores, unidades e referência; achado de imagem descrito em texto quando pertinente; TERMINA com a pergunta direta","options":{"A":"alternativa curta","B":"alternativa curta","C":"alternativa curta","D":"alternativa curta"},"answer":"A","explanation":"comentário COMPLETO em 1-2 parágrafos (cerca de 4-8 linhas no total): explique por que a alternativa correta está certa E por que as principais erradas estão erradas, com o critério/valor de corte e citando a diretriz/fonte pelo NOME + ano (sem PMID nem DOI); refira-se ao CONTEÚDO das alternativas, NÃO às letras (A/B/C/D), pois a ordem é embaralhada","imageQuery":"termos em inglês p/ imagem de exame OU string vazia"}');
-  return aiRequest({system:sys,prompt:'Gere 1 questão de Endocrinologia — '+sub+(topic?(', subtema OBRIGATÓRIO (não troque por outro assunto da área): '+topic):'')+', '+igNivelDesc(level)+'; clinicamente precisa e alinhada às diretrizes vigentes.'+igBlocoEvitar(fichasEvitar)+' Responda SOMENTE com o objeto JSON.',maxTokens:1100,model:AI_MODEL_CLINICO,grounding:(topic?(sub+' '+topic):sub)})
-  .then(function(raw){var d=parseJ(raw);if(!d||!d.stem||!d.options)return null;var q=igShuffleMCQ({sub:sub,teem:'',stem:String(d.stem||''),options:{A:d.options.A||'',B:d.options.B||'',C:d.options.C||'',D:d.options.D||''},answer:String(d.answer||'A').toUpperCase().slice(0,1),explanation:String(d.explanation||'')});return igAttachExamImage(q,d);});
+// Instrução de sistema de UMA questão — a mesma para o lote e para o "Gerar 1 com
+// IA" do formulário manual. opts.formato: 'caso' (padrão) ou 'direta';
+// opts.imagem: monta o caso em torno de um achado visual (IG_CASO_COM_IMAGEM).
+function igSysQuestao(sub,eixo,opts){
+  opts=opts||{};
+  var direta=opts.formato==='direta';
+  var corpo=direta
+    ?IG_FORMATO_DIRETA+' NÃO cite a subespecialidade no enunciado. Alternativas CURTAS e concisas (poucas palavras — também vão para o story).'
+    :' O enunciado deve TERMINAR SEMPRE com a pergunta direta (ex.: Qual o diagnóstico mais provável? / Qual a melhor conduta?). Inclua os valores laboratoriais pertinentes INLINE no texto, com unidades e valores de referência (ex.: FSH 2,1 mUI/mL [VR 3,5–12,5]) — não resuma como exames normais nem use tabela. EXCEÇÃO: a hemoglobina glicada (HbA1c) NÃO leva valor de referência — cite só o valor (ex.: HbA1c 8,2%). Quando pertinente, descreva o achado de imagem no enunciado em texto (ex.: USG de tireoide, ECG, RM de sela). NÃO cite a subespecialidade no enunciado. Alternativas CURTAS e concisas (poucas palavras — também vão para o story).'+IG_IMAGEQUERY_RULE+(opts.imagem?IG_CASO_COM_IMAGEM:'');
+  var stem=direta
+    ?'pergunta direta de 1 a 2 frases, sem caso clínico; TERMINA com a pergunta'
+    :'vinheta clínica curta; exames laboratoriais inline com valores, unidades e referência; achado de imagem descrito em texto quando pertinente; TERMINA com a pergunta direta';
+  return authoringSys('Atue como examinador de prova de título em endocrinologia. Gere UMA questão ORIGINAL (não copie provas existentes), de '+sub+', com EXATAMENTE 4 alternativas (A–D), só uma correta.'+igBlocoEixo(eixo)+corpo+IG_ALTERNATIVAS_RULE+' JSON APENAS: {"stem":"'+stem+'","options":{"A":"alternativa curta","B":"alternativa curta","C":"alternativa curta","D":"alternativa curta"},"answer":"A","explanation":"comentário COMPLETO em 1-2 parágrafos (cerca de 4-8 linhas no total): explique por que a alternativa correta está certa E por que as principais erradas estão erradas, com o critério/valor de corte e citando a diretriz/fonte pelo NOME + ano (sem PMID nem DOI); refira-se ao CONTEÚDO das alternativas, NÃO às letras (A/B/C/D), pois a ordem é embaralhada","imageQuery":"'+(direta?'string vazia':'termos em inglês p/ imagem de exame ou sinal clínico OU string vazia')+'"}');
+}
+function igGenOne(sub,topic,level,eixo,fichasEvitar,opts){
+  opts=opts||{};
+  var sys=igSysQuestao(sub,eixo,opts);
+  return aiRequest({system:sys,prompt:'Gere 1 questão de Endocrinologia — '+sub+(topic?(', subtema OBRIGATÓRIO (não troque por outro assunto da área): '+topic):'')+', '+igNivelDesc(level,opts.formato)+'; clinicamente precisa e alinhada às diretrizes vigentes.'+igBlocoEvitar(fichasEvitar)+' Responda SOMENTE com o objeto JSON.',maxTokens:1100,model:AI_MODEL_CLINICO,grounding:(topic?(sub+' '+topic):sub)})
+  .then(function(raw){var d=parseJ(raw);if(!d||!d.stem||!d.options)return null;var q=igShuffleMCQ({sub:sub,teem:'',stem:String(d.stem||''),options:{A:d.options.A||'',B:d.options.B||'',C:d.options.C||'',D:d.options.D||''},answer:String(d.answer||'A').toUpperCase().slice(0,1),explanation:String(d.explanation||'')});
+    // a direta não leva figura, mesmo que o modelo tenha preenchido imageQuery
+    if(opts.formato==='direta'){q.formato='direta';return q;}
+    return igAttachExamImage(q,d);});
 }
 // Gera UMA questão que não repita o que já existe nem o que o próprio lote acabou de
 // produzir. Uma tentativa; se sair parecida demais, uma SEGUNDA dizendo qual saiu
 // repetida. Se ainda assim repetir, entrega MARCADA em vez de descartar: descartar em
 // silêncio esconderia do professor que o gerador está preso num caso só — que é
 // exatamente a informação que ele precisa ter.
-function igGenOneUnica(sub,topic,level,eixo,existentes,produzidas){
+function igGenOneUnica(sub,topic,level,eixo,existentes,produzidas,opts){
   function alvos(){
     return (existentes||[]).map(function(q){return String((q&&q.stem)||'');}).concat(produzidas||[]);
   }
@@ -15119,18 +15271,29 @@ function igGenOneUnica(sub,topic,level,eixo,existentes,produzidas){
     });
     return f.slice(-8);   // as 8 mais recentes: o suficiente para orientar sem inflar o prompt
   }
-  return igGenOne(sub,topic,level,eixo,fichas()).then(function(q){
+  return igGenOne(sub,topic,level,eixo,fichas(),opts).then(function(q){
     if(!q||!q.stem)return q;
     var p1=igMaisParecida(q.stem,alvos());
     if(p1.sim<IG_SIM_LIMITE)return q;
     var aviso=['• (ATENÇÃO: a tentativa anterior repetiu este caso — faça OUTRO cenário) '+String(q.stem).replace(/\s+/g,' ').slice(0,150)];
-    return igGenOne(sub,topic,level,eixo,fichas().concat(aviso)).then(function(q2){
+    return igGenOne(sub,topic,level,eixo,fichas().concat(aviso),opts).then(function(q2){
       if(!q2||!q2.stem)return q;
       var p2=igMaisParecida(q2.stem,alvos());
       if(p2.sim>=IG_SIM_LIMITE)q2.repetida=Math.round(p2.sim*100);
       return q2;
     },function(){return q;});
   });
+}
+// Plano do lote (pedido do professor, 18/10): formato e imagem de cada questão.
+// 'misto' (padrão): cerca de 30% diretas, sem caso clínico; dos casos, 2 em cada 3
+// montados em torno de um achado visual, que é o que traz a figura ao enunciado.
+// 'caso' e 'direta' fixam o formato de todas.
+function igPlanoLote(n,formato){
+  var nDir=formato==='direta'?n:(formato==='caso'?0:Math.round(n*0.3)),fm=[],i;
+  for(i=0;i<n;i++)fm.push(i<nDir?'direta':'caso');
+  fm=igShuffle(fm);
+  var nImg=Math.round((n-nDir)*2/3),c=0;
+  return fm.map(function(f){return {formato:f,imagem:(f==='caso'&&(c++)<nImg)};});
 }
 function igLoteToQueue(it){igStories.push({id:'ig-'+Date.now()+'-'+Math.round(Math.random()*1e6),sub:it.sub,teem:it.teem||'',stem:it.stem,options:it.options,answer:it.answer,explanation:it.explanation,img:it.img||'',imgRef:it.imgRef||'',status:'queued',createdAt:Date.now()});}
 function igLoteApprove(i){var it=igLoteDraft[i];if(!it)return;igLoteToQueue(it);igLoteDraft.splice(i,1);persistIgStories();notify('Aprovada e adicionada à fila.','ok');renderAdmSec('stories');}
@@ -15230,7 +15393,7 @@ function renderIgLote(){
     var _full='<div style="font-size:.74rem;color:var(--t2);line-height:1.55;white-space:pre-wrap">▾ '+esc(_stem)+'</div>'+_fig+'<div style="margin-top:.35rem;display:grid;gap:.18rem">'+['A','B','C','D'].map(function(L){var ok=(it.answer===L);return '<div style="font-size:.74rem;line-height:1.45;color:'+(ok?'#16a34a':'var(--t2)')+';font-weight:'+(ok?'700':'400')+'"><b>'+L+')</b> '+esc((it.options||{})[L]||'')+(ok?' ✓':'')+'</div>';}).join('')+'</div>'+(it.explanation?'<div style="margin-top:.35rem;font-size:.72rem;color:var(--t3);line-height:1.5"><b>Comentário:</b> '+esc(it.explanation)+'</div>':'');
     return '<div style="border:1px solid var(--bd);border-radius:12px;padding:.7rem .8rem;margin-bottom:.5rem;background:var(--s2)">'
       +'<div style="display:flex;justify-content:space-between;gap:.5rem;flex-wrap:wrap;align-items:center;margin-bottom:.35rem">'
-      +'<div style="font-size:.8rem;font-weight:700;color:var(--tx)">'+dirSubIcon(it.sub)+' '+esc(it.sub||'')+' <span class="tag tag-blue">Gab: '+esc(it.answer)+'</span>'+(it.img?' <span class="tag">🖼️ imagem</span>':'')
+      +'<div style="font-size:.8rem;font-weight:700;color:var(--tx)">'+dirSubIcon(it.sub)+' '+esc(it.sub||'')+' <span class="tag tag-blue">Gab: '+esc(it.answer)+'</span>'+(it.img?' <span class="tag">🖼️ imagem</span>':'')+(it.formato==='direta'?' <span class="tag">❓ direta</span>':'')
       // ⚠️ Marca a que continuou parecida com uma questão que já existe, mesmo depois
       // da segunda tentativa. Fica VISÍVEL em vez de sumir: descartar em silêncio
       // esconderia que o gerador está preso num caso só.
@@ -15293,7 +15456,9 @@ function bindAdmStories(){
     var sub=(document.getElementById('ig-sub')||{}).value||'Endocrinologia',topic=((document.getElementById('ig-topic')||{}).value||'').trim();
     var st=document.getElementById('ig-gen-status');
     gen.disabled=true;gen.innerHTML=ldHTML('Gerando...');if(st)st.textContent='';
-    var sys=authoringSys('Atue como examinador de prova de título em endocrinologia. Gere UMA questão ORIGINAL (não copie provas existentes), de '+sub+', com EXATAMENTE 4 alternativas (A–D), só uma correta. O enunciado deve TERMINAR SEMPRE com a pergunta direta (ex.: Qual o diagnóstico mais provável? / Qual a melhor conduta?). Inclua os valores laboratoriais pertinentes INLINE no texto, com unidades e valores de referência (ex.: FSH 2,1 mUI/mL [VR 3,5–12,5]) — não resuma como exames normais nem use tabela. EXCEÇÃO: a hemoglobina glicada (HbA1c) NÃO leva valor de referência — cite só o valor (ex.: HbA1c 8,2%). Quando pertinente, descreva o achado de imagem no enunciado em texto (ex.: USG de tireoide, ECG, RM de sela). NÃO cite a subespecialidade no enunciado. Alternativas CURTAS e concisas (poucas palavras — também vão para o story).'+IG_IMAGEQUERY_RULE+' JSON APENAS: {"stem":"vinheta clínica curta; exames laboratoriais inline com valores, unidades e referência; achado de imagem descrito em texto quando pertinente; TERMINA com a pergunta direta","options":{"A":"alternativa curta","B":"alternativa curta","C":"alternativa curta","D":"alternativa curta"},"answer":"A","explanation":"comentário COMPLETO em 1-2 parágrafos (cerca de 4-8 linhas no total): explique por que a alternativa correta está certa E por que as principais erradas estão erradas, com o critério/valor de corte e citando a diretriz/fonte pelo NOME + ano (sem PMID nem DOI); refira-se ao CONTEÚDO das alternativas, NÃO às letras (A/B/C/D), pois a ordem é embaralhada","imageQuery":"termos em inglês p/ imagem de exame OU string vazia"}');
+    // Mesma instrução do lote (igSysQuestao): caso clínico, alternativas difíceis e
+    // figura quando o caso tiver achado visual.
+    var sys=igSysQuestao(sub,'',{formato:'caso'});
     // O gerador avulso também recebe o "não repita": gerar uma a uma não deixa de
     // convergir para o mesmo caso canônico só porque é uma de cada vez.
     var _fichas=igStemsExistentes(sub).map(igFichaEvitar).filter(Boolean).slice(-8);
@@ -15336,11 +15501,14 @@ function bindAdmStories(){
     var nHard=Math.round(n*0.4),levels=[];
     for(var li=0;li<n;li++)levels.push(li<nHard?'muito_avancado':'titulo');
     levels=igShuffle(levels);
+    // Formato (caso clínico ou direta) e imagem de cada questão — ver igPlanoLote.
+    var plano=igPlanoLote(n,(document.getElementById('ig-lote-formato')||{}).value||'misto');
     // EIXO da pergunta, distinto entre as questões. Mesmo tema com eixos diferentes
     // vira questão diferente de verdade — no lote que o professor devolveu, as três
-    // perguntavam "qual a melhor conduta?" sobre a MESMA vinheta.
-    var eixos=[],bagE=igShuffle(IG_EIXOS.slice());
-    for(var xi=0;xi<n;xi++)eixos.push(bagE[xi%bagE.length]);
+    // perguntavam "qual a melhor conduta?" sobre a MESMA vinheta. A direta tem eixos
+    // próprios: os de IG_EIXOS pressupõem um paciente.
+    var eixos=[],bagE=igShuffle(IG_EIXOS.slice()),bagD=igShuffle(IG_EIXOS_DIRETA.slice()),nE=0,nD=0;
+    for(var xi=0;xi<n;xi++)eixos.push(plano[xi].formato==='direta'?bagD[(nD++)%bagD.length]:bagE[(nE++)%bagE.length]);
     loteGen.disabled=true;loteGen.innerHTML=ldHTML('Gerando '+n+'…');if(st)st.textContent='';if(res)res.innerHTML='';
     var done=0;
     // `produzidas` acumula, POR SUBESPECIALIDADE, o que o lote já gerou — e é lido no
@@ -15352,7 +15520,7 @@ function bindAdmStories(){
       var lvl=levels[idx]||'titulo';
       return function(){
         if(!produzidas[s])produzidas[s]=[];
-        return igGenOneUnica(s,topics[idx],lvl,eixos[idx],igStemsExistentes(s),produzidas[s]).then(function(r){
+        return igGenOneUnica(s,topics[idx],lvl,eixos[idx],igStemsExistentes(s),produzidas[s],plano[idx]).then(function(r){
           if(r&&r.stem)produzidas[s].push(r.stem);
           done++;if(st)st.textContent='Gerando… '+done+'/'+n;
           return r;

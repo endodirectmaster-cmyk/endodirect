@@ -1,9 +1,66 @@
 ---
 tags: [cofre, integracoes, marketing]
-atualizado: 2026-10-17
+atualizado: 2026-10-18
 ---
 
 # Instagram Stories — "Questão do Dia"
+
+## 🖼️ LOTE COM FIGURA, ALTERNATIVAS MAIS DIFÍCEIS E QUESTÕES DIRETAS (2026-10-18)
+
+Pedido do professor: *"Estão sendo geradas questões somente com texto, mas sem nenhuma
+imagem contextualizando os casos clínicos. Portanto, gerar questões também com imagens no
+enunciado. Além disso, deixar as alternativas um pouco mais difíceis, mais ou menos três
+difíceis e uma um pouco mais fácil. Na geração das questões também, inclua questões mais
+diretas, sem necessariamente serem casos clínicos."*
+
+- **Por que quase nunca vinha figura:** a regra do prompt (`IG_IMAGEQUERY_RULE`, de 06/08)
+  só pedia figura quando ela fosse *indispensável* para responder. A regra foi ampliada:
+  caso clínico com achado **visual alterado** pede figura. O achado continua escrito no
+  enunciado, e a figura ilustra; a questão segue respondível sem ela.
+  - **Exame de imagem alterado:** como antes, modalidade + órgão + achado em inglês.
+  - **Sinal visível no exame físico (novo):** foto clínica do Open-i, tipo `ph`
+    (`OPENI_TIPOS_FOTO` em `api/ai.js`, pedido com `tipo:'foto'`). Só sinal da lista
+    `IG_IMG_SINAIS` (18 sinais: acantose, estrias, fácies cushingoide, acromegalia,
+    exoftalmia, bócio, mixedema pré-tibial, necrobiose, xantoma, xantelasma, úlcera no pé,
+    Charcot, vitiligo, hirsutismo, ginecomastia, hiperpigmentação, lipo-hipertrofia,
+    pescoço alado).
+  - `igImgTipoDaBusca` decide pela busca: modalidade vence; sinal sem modalidade é foto.
+- **Guardas da foto (iguais em espírito às do exame):**
+  - o enunciado tem de **descrever** o sinal, sem negá-lo: "sem acantose" recusa, mas
+    "sem bócio, acantose…" não;
+  - a **legenda da própria foto** tem de citar o sinal;
+  - `IG_IMG_NAO_FOTO` recusa bicho, modelo de IA, cirurgia, dermatoscopia, antes e depois,
+    tratamento, lesão resolvida e carcinoma;
+  - recusa também prancha que junta foto com exame (TC, radiografia);
+  - entre as aprovadas, `igImgNotaFoto` escolhe a que mostra **só** o sinal: sem outro
+    sinal da lista na legenda, sem painéis (a)/(b).
+  - **Validado ao vivo no Open-i (18/10):** exoftalmia, acromegalia, acantose, necrobiose,
+    xantoma, bócio e mixedema pré-tibial deram foto certa, conferida no olho.
+  - A úlcera no pé não achou foto (o tipo `ph` traz modelo de IA e rato) e fica sem figura.
+  - O Open-i está lento: daqui, várias buscas estouraram o tempo. Sem resposta, a questão
+    fica sem figura.
+- **Alternativas:** `IG_ALTERNATIVAS_RULE`, nas duas formas de questão. Das 4, três
+  difíceis (a correta e dois distratores do mesmo tipo, que um residente escolheria) e uma
+  um pouco mais fácil, mas nunca absurda. A correta não pode ser a mais longa.
+- **Questões diretas:** `IG_FORMATO_DIRETA` + `IG_EIXOS_DIRETA` (critério ou corte,
+  mecanismo, efeito adverso, recomendação de diretriz, genética).
+  - Enunciado de 1 a 2 frases, sem paciente, e sem figura: `igGenOne` nem busca.
+  - `igNivelDesc(level,'direta')` não diz "evite questões diretas", como o texto dos casos.
+- **Plano do lote:** `igPlanoLote(n, formato)`, com o seletor **Formato** no lote:
+  - "Casos e diretas" (padrão): ~30% diretas, e 2 em cada 3 casos montados em torno de um
+    achado visual (`IG_CASO_COM_IMAGEM`);
+  - "Só casos clínicos";
+  - "Só diretas".
+
+  A revisão marca a direta com a etiqueta **❓ direta**.
+- **Uma instrução só:** `igSysQuestao(sub, eixo, opts)` serve o lote e o "Gerar 1 com IA"
+  do formulário manual (antes eram dois textos copiados).
+- **Testes:**
+  - `scripts/test-questao-formato.js` (novo, no `ci-validate`) roda o plano, a instrução,
+    o nível e a geração com `aiRequest` falso;
+  - `scripts/test-imagem-questao.js` ganhou a foto, com legendas reais colhidas ao vivo;
+  - 7 mutantes testados, todos pegos.
+- `sw.js` v316 → **v317**.
 
 ## 🩺 CORREÇÕES DE CONTEÚDO GRAVADAS (2026-10-17)
 

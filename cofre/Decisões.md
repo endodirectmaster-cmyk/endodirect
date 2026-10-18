@@ -8,6 +8,14 @@ atualizado: 2026-10-18
 Log de decisões de produto e técnicas (mais recentes no topo).
 
 ## 2026-10
+- **🖼️ QUESTÃO DO DIA: LOTE COM FIGURA, ALTERNATIVAS MAIS DIFÍCEIS E QUESTÕES DIRETAS (2026-10-18).** `sw.js` v317.
+  - **A figura pode ser foto clínica, além de exame de imagem.** Só de sinal da lista e só
+    se o enunciado o descreve. A legenda da própria foto tem de citar o sinal; o resto é
+    recusado.
+  - **A regra de 06/08 ("só quando indispensável") foi ampliada, não abandonada.** Exame
+    normal continua nunca ilustrado, e as duas conferências contra o enunciado continuam.
+  - **Questão direta não leva figura**, e o nível dela não pede "evite questões diretas".
+  - Detalhes em [[Instagram Stories (Questão do Dia)]].
 - **📚 FIGURAS DE DIABETES: PRÉVIA COM 51 FIGURAS E 10 RÓTULOS CORRIGIDOS (2026-10-18).**
   Nada foi gravado ainda; aguarda a aprovação do professor ([[Pendências]]).
   - **Corrigir rótulo, não descartar:** onde o erro era de uma palavra ou seta (seta

@@ -106,8 +106,8 @@ ok(sb.igBlocoEixo('o DIAGNÓSTICO mais provável').indexOf('DIAGNÓSTICO') >= 0,
 ok(sb.igBlocoEixo('') === '', 'sem eixo, nada é acrescentado');
 
 // ── Ligações no index.html (o que faz a correção valer no produto) ──────────────
-ok(/igGenOneUnica\(s,topics\[idx\],lvl,eixos\[idx\],igStemsExistentes\(s\),produzidas\[s\]\)/.test(html),
-   'o lote tem de gerar por igGenOneUnica, passando eixo, o que já existe e o que o lote já produziu');
+ok(/igGenOneUnica\(s,topics\[idx\],lvl,eixos\[idx\],igStemsExistentes\(s\),produzidas\[s\],plano\[idx\]\)/.test(html),
+   'o lote tem de gerar por igGenOneUnica, passando eixo, o que já existe, o que o lote já produziu e o plano (formato e imagem)');
 ok(/var IG_EIXOS=\[/.test(html) && (html.match(/var IG_EIXOS=\[[\s\S]*?\]/) || [''])[0].split("',").length >= 5,
    'precisa de uma lista de eixos de pergunta com pelo menos 5 opções');
 ok(/it\.repetida\?/.test(html),

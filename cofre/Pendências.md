@@ -5,15 +5,14 @@ atualizado: 2026-10-18
 
 # Pendências
 
-## 🎯 PRÓXIMA TAREFA (pedida em 18/10): Questão do Dia › Gerar lote
+## ✅ FEITO (18/10): Questão do Dia › Gerar lote — figura, alternativas e questões diretas
 
-Pedido do professor: *"Deixe como próxima tarefa melhorar a geração de questões da questão do dia no campo de geração de lote."* Entra depois das figuras de diabetes.
-1. [ ] **Imagem no enunciado.** Os lotes saem só com texto; ele quer imagens que contextualizem os casos clínicos.
-   - O código já tem `imageQuery` + `igAttachExamImage` ("Buscando imagem do exame…"). Investigar por que quase nunca anexa.
-   - Só imagem de licença aberta (CC BY/CC0, com crédito) ou gráfico/tabela feitos por nós. Figura de livro não entra.
-2. [ ] **Alternativas mais difíceis:** cerca de 3 distratores difíceis e 1 um pouco mais fácil.
-3. [ ] **Questões diretas** também, não só casos clínicos.
-- Código: `index.html`, `igGenOne`/`igGenOneUnica` (~l. 15100), prompt do `aiRequest` (~l. 15300), `igLoteTemas`.
+Pedido do professor em 18/10. Entregue no mesmo dia; ver [[Instagram Stories (Questão do Dia)]].
+- [x] Figura no enunciado: exame de imagem alterado ou foto do sinal clínico (Open-i `ph`).
+- [x] Alternativas: três difíceis e uma um pouco mais fácil.
+- [x] Questões diretas (~30% do lote no formato misto), com seletor de formato.
+- [ ] O professor gerar um lote e dizer se o equilíbrio está bom (proporção de diretas,
+  frequência de figura, dificuldade dos distratores).
 
 ## 📚 Figuras de diabetes (18/10) — prévia publicada; aguarda o professor
 
