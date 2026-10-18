@@ -1,6 +1,6 @@
 ---
 tags: [cofre, conteudo, resumos]
-atualizado: 2026-10-17
+atualizado: 2026-10-18
 ---
 
 # Ilustrações dos Resumos (no meio do capítulo)
@@ -43,6 +43,27 @@ ampliador. O editor do professor preserva a figura ao salvar (ramo `figure` do
 
     É o formato mais próximo do direito de citação (art. 46, III).
   - **Retirada:** se a editora pedir, a figura sai.
+  - **Tradução (18/10/2026):** não traduzi (art. 29). Outra conversa do professor
+    traduziu os rótulos das 64 figuras do zip, e ele mandou *"Usar essas figuras"*. Desde
+    então a versão usada é a traduzida (`<nome>_PT.png` no zip `_PT`), com a legenda
+    *"Fonte: traduzida de …"*. O Guyton já vem da edição brasileira e entra como está.
+  - **Lote 1 (Endocrinologia Básica, 149–152), gravado em 18/10:**
+    - 19 recortes; lista em `scratchpad/figuras-livros/figuras.js`.
+    - **Revisão:** cada tradução lado a lado com o original (`pares/`). O conteúdo estava
+      certo em todas.
+    - **Acabamento:** cinco tinham defeito (seta, borda ou arco apagados pela caixa do
+      rótulo, borrões). `corrige.py` traz a arte de volta do original só nos pontos
+      medidos, sem trazer texto em inglês. Ele monta o fundo do "Transcrição" sobre o
+      núcleo azul refazendo a curva da borda.
+    - **Preparo:** `prepara.py` (apara o topo de 15.4 e 17.1; o Netter vai em JPEG).
+    - **Prévia:** `previa.js` (com `INDEX_HTML` e `ALTURA_MAX` para comparar antes e
+      depois).
+    - **Envio:** função temporária `subir-figuras-livros` para
+      `endodirect-assets/resumos/livros/`, depois desativada (410).
+    - **Gravação:** `gera-sql.js`, numa instrução com guardas de md5, backup e conferência
+      do resto do estado.
+    - **Tamanho na tela:** teto de 60% da altura da janela (`.dir-texto .wys-img`, pedido
+      do professor em 18/10). Por isso nenhum recorte usa mais `{N}`.
   - **Desenho próprio:** onde o livro tiver figura equivalente, o recorte substitui o
     desenho; onde não tiver, o desenho fica.
   - **Origem dos livros:** estão no Drive, em Livros › Endocrino Geral (Williams,

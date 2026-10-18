@@ -1,9 +1,36 @@
 ---
 tags: [cofre, pendencias]
-atualizado: 2026-10-17
+atualizado: 2026-10-18
 ---
 
 # Pendências
+
+## 📚 Figuras dos livros (18/10) — lote 1 gravado; o que fica
+
+1. ✅ **19 recortes traduzidos gravados nos resumos 149–152** (backup `main-antes-figuras-livros-eb-2026-10-18`, 12:14 UTC). Professor avisado do F5; conferência de zumbi às 13:15 UTC.
+2. [ ] Refazer os recortes cortados embaixo: Williams 16.1 (catecolaminas, p. 670) e 11.6 (D2/D3, p. 428).
+3. [ ] **2º lote:** as outras 47 figuras nos capítulos de cada glândula.
+   - Estão em português no zip `_PT` do bucket `livros`.
+   - Revisar cada tradução contra o original, como no lote 1 (`pares/`, `corrige.py`).
+4. [ ] A página de prévia saiu também num link novo (`Lp7eetjE7zsAtctbPuKVEt`); apagar se o professor quiser. A de sempre (`1PdZcjpHFTp4q8Kw4Qx1Xq`) está atualizada.
+
+## 📱 App nas lojas (18/10) — decisões tomadas; a fazer
+
+1. [ ] **Professor:**
+   - CNPJ → D-U-N-S;
+   - conta de organização no Google Play (US$ 25) e na Apple (US$ 99/ano).
+2. [ ] **Eu, na plataforma:**
+   - exclusão de conta no app, mais a página pública;
+   - política de privacidade (retenção e exclusão);
+   - esconder preços e checkout dentro do app;
+   - conta de demonstração para o revisor;
+   - `/.well-known/assetlinks.json` no www (precisa do SHA-256 da chave de assinatura do Play Console).
+3. [ ] **iPhone (Capacitor; o professor tem Mac):**
+   - "Entrar com a Apple";
+   - login do Google pelo navegador do sistema;
+   - notificações nativas (APNs) e o envio pelo servidor;
+   - roteiro do Xcode e do App Store Connect.
+   - Ver [[App nas Lojas]].
 
 ## 🔤 SOMP no acervo do banco (17/10) — gravado; o que fica
 

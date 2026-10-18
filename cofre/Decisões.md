@@ -1,6 +1,6 @@
 ---
 tags: [cofre, decisoes]
-atualizado: 2026-10-17
+atualizado: 2026-10-18
 ---
 
 # Decisões
@@ -8,6 +8,29 @@ atualizado: 2026-10-17
 Log de decisões de produto e técnicas (mais recentes no topo).
 
 ## 2026-10
+- **📚 FIGURAS TRADUZIDAS DOS LIVROS NOS RESUMOS 149–152 (2026-10-18).** `sw.js` v314 → **v315** (teto de altura).
+  - **Decisão do professor:** expliquei que traduzir figura de livro exige autorização da editora (Lei 9.610/98, art. 29) e não fiz a tradução. Outra conversa dele traduziu os rótulos das 64 figuras do zip, e ele mandou *"Usar essas figuras"*. A decisão é dele. A legenda diz *"Fonte: traduzida de …"*; a do Guyton já vem da edição brasileira (*"Fonte: …"*).
+  - **Revisão das 19 do lote 1:** o conteúdo das traduções está certo. Cinco tinham defeito de acabamento, corrigido por `scratchpad/figuras-livros/corrige.py` a partir da arte original:
+    - seta do aPKC (Williams 34.4);
+    - caixa Insulina/IGFs, conectores do IRS, seta da translocação, "Transcrição" sobre o núcleo e o espaço entre Mitogênese e Síntese proteica (Molina 1-6);
+    - cisterna do retículo e borrões (Greenspan 7-7);
+    - setas de Ativação e Inativação (Greenspan 7-14);
+    - arcos do receptor de esteroide (Greenspan 1-17).
+  - **Gravado:**
+    - 19 recortes em `endodirect-assets/resumos/livros/`, conferidos byte a byte pela URL pública;
+    - resumos 149–152 numa instrução só (`gera-sql.js`), com backup `main-antes-figuras-livros-eb-2026-10-18` (12:14 UTC); só os 4 `resumo` mudaram.
+    - As SVG próprias `receptores-gpcr` e `receptores-quinases` saíram (no lugar: Molina 1-5 e 1-6). A dos receptores nucleares fica.
+  - **Tamanho:** vendo no ar, o professor disse *"Acho que pode reduzir mais o tamanho das imagens"*.
+    - Regra nova: `.dir-texto .wys-img:not([style*="width"]){max-height:60vh}`. A figura em pé cabe na tela com a legenda: no notebook de 800 px, a de 820×986 virou 400×480.
+    - A larga não muda, e no celular manda a largura da coluna.
+    - Saiu o `{60}`/`{75}` do Netter e do ciclo menstrual: com a %, o teto não vale e, no celular, elas ficavam com 200 e 250 px.
+    - A/B no Chromium com `previa.js` (`INDEX_HTML`, `ALTURA_MAX=0.6`).
+  - **Envio:** pela função temporária `subir-figuras-livros` (token por hash e prazo), com `createClient` do supabase-js. O `fetch` direto com `Authorization: Bearer` + `SUPABASE_SERVICE_ROLE_KEY` deu 403 "Invalid Compact JWS". Depois do envio a função virou 410 e o token foi apagado.
+- **📱 APP NAS LOJAS: DECISÕES DO PROFESSOR (2026-10-18).** Pedido: *"Quero deixar transformar a plataforma do ED em aplicativo no google play e apple store"*.
+  - O passo a passo foi entregue; o resumo está em [[App nas Lojas]].
+  - **Decisões:** pagamento **só no site** e **manter o login com Google** (no iPhone entra também "Entrar com a Apple").
+  - Ele propôs *"o que o app pode fazer é direcionar para o site"*. Expliquei que o Google (Brasil) não permite, e que a Apple (Brasil) só permite ao lado da compra pela Apple. O caminho é o app **só de acesso**.
+  - Ele tem Mac e vai fazer o app do iPhone com o meu roteiro, sem contratar desenvolvedor.
 - **🔤 SOMP NO ACERVO DO BANCO, NOS BARALHOS E NAS FIGURAS (2026-10-17).** `sw.js` v313 → **v314**.
   - **Pedido do professor:** *"grava tudo e troca SOMP"*.
   - **Efeito do #876 que motivou a parte do cliente:** a troca de 8 textos fixos de flashcard fez o painel do professor publicar 7 gêmeos em `fc_shared` (`fc-seed-1792262118386-*`), e os baralhos dos alunos recebiam a versão SOMP ao lado da SOP antiga. O #876 também deixou a lista de temas de Endocrinologia Feminina com "SOP" enquanto as regras já davam "SOMP" (o mesmo assunto em dois temas), e um verso fixo (rastreio de DM2) com SOP.

@@ -1,10 +1,23 @@
 ---
 tags: [cofre, dados, supabase]
-atualizado: 2026-10-17
+atualizado: 2026-10-18
 ---
 
 # Dados e Supabase
 
+
+## 📦 Armazenamento dos livros e dos recortes (18/10/2026)
+
+- **Bucket `livros` (privado):**
+  - limite de 200 MB; aceita pdf, zip, png, jpeg, webp e csv;
+  - o professor sobe pelo painel do Supabase;
+  - hoje: `endocrinologia_basica_figuras…zip` (68 recortes originais), `imagens_endocrinologia_b…` (os mesmos, traduzidos), `indice.csv` e `indice_PT.csv`.
+- **`endodirect-assets/resumos/livros/` (público):** os recortes prontos que os resumos usam (19 do lote 1). A URL vai direto no markdown do capítulo.
+- **Funções temporárias:**
+  - `baixar-livros` (URL assinada para baixar do `livros`) e `subir-figuras-livros` (envio para o público).
+  - Protegidas por token: só o hash fica no código, o token fica num arquivo da sessão.
+  - As duas estão desativadas (410), porque a ferramenta do Supabase não apaga função.
+- **⚠️ Chave de serviço na função:** use `createClient(SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY)` do supabase-js. Com `fetch` direto e `Authorization: Bearer <SUPABASE_SERVICE_ROLE_KEY>`, o Storage respondeu 403 "Invalid Compact JWS" (18/10).
 
 ## 🗑️ Apagar tabela: pelo editor SQL, não pelo conector (17/10/2026)
 
