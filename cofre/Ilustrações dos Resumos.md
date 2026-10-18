@@ -62,8 +62,9 @@ ampliador. O editor do professor preserva a figura ao salvar (ramo `figure` do
       `endodirect-assets/resumos/livros/`, depois desativada (410).
     - **Gravação:** `gera-sql.js`, numa instrução com guardas de md5, backup e conferência
       do resto do estado.
-    - **Tamanho na tela:** teto de 60% da altura da janela (`.dir-texto .wys-img`, pedido
-      do professor em 18/10). Por isso nenhum recorte usa mais `{N}`.
+    - **Tamanho na tela:** até 640 px de largura e 55% da altura da janela
+      (`.dir-texto .wys-img` sem largura do editor; dois pedidos do professor em 18/10,
+      `sw.js` v315 e v316). Por isso nenhum recorte usa mais `{N}`.
   - **Desenho próprio:** onde o livro tiver figura equivalente, o recorte substitui o
     desenho; onde não tiver, o desenho fica.
   - **Origem dos livros:** estão no Drive, em Livros › Endocrino Geral (Williams,

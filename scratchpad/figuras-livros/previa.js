@@ -8,7 +8,7 @@
 // As imagens vêm da pasta local dos recortes preparados (nunca do repositório).
 //   PLAYWRIGHT_CORE=… PRONTAS=<pasta dos recortes> node scratchpad/figuras-livros/previa.js <capítulo.json> <pasta das fotos>
 // INDEX_HTML troca o index.html (para comparar antes e depois); ALTURA_MAX=0.6 reprova, no
-// notebook, figura mais alta que essa fração da janela.
+// notebook, figura mais alta que essa fração da janela; LARGURA_MAX=640, figura mais larga.
 const fs = require('fs');
 const http = require('http');
 const path = require('path');
@@ -107,6 +107,7 @@ const css = [...html.matchAll(/<style>([\s\S]*?)<\/style>/g)].map((m) => m[1]).j
         if (!x.legenda) falhas.push(nome + ': ' + x.id + ' sem legenda');
         if (!x.proporcao) falhas.push(nome + ': ' + x.id + ' deformada (proporção diferente da original)');
         if (process.env.ALTURA_MAX && largura >= 1000 && x.altura > Number(process.env.ALTURA_MAX) * x.janela + 1) falhas.push(nome + ': ' + x.id + ' com ' + x.altura + ' px de altura, mais que ' + process.env.ALTURA_MAX + ' da janela (' + x.janela + ')');
+        if (process.env.LARGURA_MAX && x.largura > Number(process.env.LARGURA_MAX) + 0.5) falhas.push(nome + ': ' + x.id + ' com ' + x.largura + ' px de largura, mais que ' + process.env.LARGURA_MAX);
         const ancora = ilus[k].substitui ? '' : ilus[k].depoisDe.replace(/\*\*/g, '').replace(/^\|\s*|\s*\|$/g, '').split('|').pop().trim().slice(-40);
         if (ancora && x.antes.replace(/\s+/g, ' ').indexOf(ancora.replace(/\s+/g, ' ')) < 0) falhas.push(nome + ': ' + x.id + ' não ficou logo depois do trecho combinado (antes: "…' + x.antes + '")');
         console.log('  · ' + nome + ': ' + x.id + ' → ' + x.largura + '×' + x.altura + ' px (coluna ' + x.col + ', janela ' + x.janela + '); antes: "…' + x.antes.slice(-50) + '"');
