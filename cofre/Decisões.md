@@ -25,6 +25,7 @@ Log de decisões de produto e técnicas (mais recentes no topo).
     - A larga não muda, e no celular manda a largura da coluna.
     - Saiu o `{60}`/`{75}` do Netter e do ciclo menstrual: com a %, o teto não vale e, no celular, elas ficavam com 200 e 250 px. Gravado depois do deploy da v315 (PR #881), com backup `main-antes-largura-livros-151-2026-10-18`.
     - A/B no Chromium com `previa.js` (`INDEX_HTML`, `ALTURA_MAX=0.6`).
+    - **Segunda rodada (v316):** com o teto no ar, o professor mandou o print da célula beta (818×560 num monitor de 1920) e disse *"Algumas figuras ainda grandes"*. A larga ficava nos 820 px do teto geral. A regra passou a `max-width:min(100%,640px);max-height:55vh` (também só para a imagem sem largura do editor). No notebook de 800 px, todas ficam com até 640×440, e a célula beta passa de 820×563 para 640×439. O celular não muda (`LARGURA_MAX=640` no `previa.js`).
   - **Envio:** pela função temporária `subir-figuras-livros` (token por hash e prazo), com `createClient` do supabase-js. O `fetch` direto com `Authorization: Bearer` + `SUPABASE_SERVICE_ROLE_KEY` deu 403 "Invalid Compact JWS". Depois do envio a função virou 410 e o token foi apagado.
 - **📱 APP NAS LOJAS: DECISÕES DO PROFESSOR (2026-10-18).** Pedido: *"Quero deixar transformar a plataforma do ED em aplicativo no google play e apple store"*.
   - O passo a passo foi entregue; o resumo está em [[App nas Lojas]].
