@@ -245,5 +245,7 @@ ampliador. O editor do professor preserva a figura ao salvar (ramo `figure` do
     itens, o estado fora de `diretrizes` e o número de itens. Tudo verdadeiro nas 4.
   - Conferido depois: os 16 md5, os 4 backups e as 51 figuras, uma vez cada. O acervo
     tem agora 70 figuras de livros (19 do lote 1 e 51 de diabetes).
-  - Nenhum save do cliente entre as 4 partes. Professor avisado do F5. Conferência de
-    zumbi marcada para 01h30 UTC.
+  - Nenhum save do cliente entre as 4 partes. Professor avisado do F5.
+  - ✅ **Conferência de zumbi (01h31 UTC):** os 16 md5 e as 51 figuras seguem os gravados.
+    Os dois saves seguintes (00:34 e 01:24 UTC, ambos do Prof. Rafael) já carregaram a
+    versão nova.
