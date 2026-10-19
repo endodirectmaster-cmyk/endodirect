@@ -1,6 +1,6 @@
 ---
 tags: [cofre, decisoes]
-atualizado: 2026-10-18
+atualizado: 2026-10-19
 ---
 
 # Decisões
@@ -8,6 +8,13 @@ atualizado: 2026-10-18
 Log de decisões de produto e técnicas (mais recentes no topo).
 
 ## 2026-10
+- **📚 FIGURAS DE DIABETES GRAVADAS NOS RESUMOS (2026-10-19).** 51 figuras em 16 capítulos.
+  - **Aprovação sem os originais:** o professor aprovou a prévia (*"Pode fazer tudo"*) sem
+    mandar o zip em inglês. As 22 traduzidas não foram conferidas lado a lado; fica
+    opcional, se o zip vier.
+  - **Gravação em 4 partes de 4 capítulos**, cada uma com backup e guardas próprios. A
+    instrução única dos 16 estourou os 60 s do conector sem gravar nada.
+  - Detalhes em [[Ilustrações dos Resumos]].
 - **🖼️ QUESTÃO DO DIA: LOTE COM FIGURA, ALTERNATIVAS MAIS DIFÍCEIS E QUESTÕES DIRETAS (2026-10-18).** `sw.js` v317.
   - **A figura pode ser foto clínica, além de exame de imagem.** Só de sinal da lista e só
     se o enunciado o descreve. A legenda da própria foto tem de citar o sinal; o resto é
@@ -17,7 +24,7 @@ Log de decisões de produto e técnicas (mais recentes no topo).
   - **Questão direta não leva figura**, e o nível dela não pede "evite questões diretas".
   - Detalhes em [[Instagram Stories (Questão do Dia)]].
 - **📚 FIGURAS DE DIABETES: PRÉVIA COM 51 FIGURAS E 10 RÓTULOS CORRIGIDOS (2026-10-18).**
-  Nada foi gravado ainda; aguarda a aprovação do professor ([[Pendências]]).
+  Aprovada e gravada em 19/10 (ver acima).
   - **Corrigir rótulo, não descartar:** onde o erro era de uma palavra ou seta (seta
     invertida, órgão trocado, grafia, rótulos trocados, valor de corte), a figura foi
     corrigida e entra. A legenda diz *"adaptada de"*.

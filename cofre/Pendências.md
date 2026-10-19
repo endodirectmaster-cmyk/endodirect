@@ -1,6 +1,6 @@
 ---
 tags: [cofre, pendencias]
-atualizado: 2026-10-18
+atualizado: 2026-10-19
 ---
 
 # Pendências
@@ -14,19 +14,19 @@ Pedido do professor em 18/10. Entregue no mesmo dia; ver [[Instagram Stories (Qu
 - [ ] O professor gerar um lote e dizer se o equilíbrio está bom (proporção de diretas,
   frequência de figura, dificuldade dos distratores).
 
-## 📚 Figuras de diabetes (18/10) — prévia publicada; aguarda o professor
+## ✅ GRAVADO (19/10): Figuras de diabetes nos Resumos
 
-Prévia: [Figuras de Diabetes nos Resumos](https://claude.ai/artifact/Rrq4YVAH631CsABfiyZWHG).
-51 figuras em 16 capítulos, 10 com rótulo corrigido. Detalhes em [[Ilustrações dos Resumos]].
-1. [ ] **Aprovação do professor** (tirar, trocar ou mudar de lugar pelo número).
-2. [ ] **Originais em inglês:** pedi o zip para conferir as 22 traduzidas lado a lado,
-   como no lote 1. Conferir em especial o rótulo da úlcera de calcanhar da Matfin 40-1.
-3. [ ] **Depois da aprovação:**
-   - subir os 51 arquivos de `prontas/` com uma função temporária (`createClient` com a
-     chave de serviço) e depois deixá-la em 410;
-   - conferir de novo os md5 dos 16 resumos;
-   - gravar com `gera-sql.js` (backup, md5 de antes e depois);
-   - avisar o F5, conferir zumbi e atualizar o cofre.
+51 figuras em 16 capítulos, 10 com rótulo corrigido. O professor aprovou em 19/10
+(*"Pode fazer tudo"*). Gravadas das 00h22 às 00h28 UTC, em 4 partes com backup
+(`main-antes-figuras-diabetes-2026-10-19-parte1` a `parte4`). Detalhes e md5 em
+[[Ilustrações dos Resumos]]; prévia em
+[Figuras de Diabetes nos Resumos](https://claude.ai/artifact/Rrq4YVAH631CsABfiyZWHG).
+1. [x] Envio dos 51 arquivos pela `subir-figuras-livros`, que voltou a responder 410.
+2. [x] Gravação e conferência: 16 md5, 4 backups e as 51 figuras, uma vez cada.
+3. [x] Professor avisado do F5.
+4. [ ] **Conferência de zumbi às 01h30 UTC** (lembrete agendado nesta conversa).
+5. [ ] *Opcional:* se o zip dos originais em inglês vier, conferir as 22 traduzidas lado
+   a lado, em especial o rótulo da úlcera de calcanhar da Matfin 40-1.
 
 ## 📚 Figuras dos livros (18/10) — lote 1 gravado; o que fica
 
@@ -38,7 +38,7 @@ Prévia: [Figuras de Diabetes nos Resumos](https://claude.ai/artifact/Rrq4YVAH63
 3. [ ] **2º lote:** as outras 47 figuras nos capítulos de cada glândula.
    - Estão em português no zip `_PT` do bucket `livros`.
    - Revisar cada tradução contra o original, como no lote 1 (`pares/`, `corrige.py`).
-4. [ ] A página de prévia saiu também num link novo (`Lp7eetjE7zsAtctbPuKVEt`); apagar se o professor quiser. A de sempre (`1PdZcjpHFTp4q8Kw4Qx1Xq`) está atualizada.
+4. [x] A cópia da prévia (`Lp7eetjE7zsAtctbPuKVEt`) já não existe (conferido em 19/10). Fica a de sempre (`1PdZcjpHFTp4q8Kw4Qx1Xq`).
 
 ## 📱 App nas lojas (18/10) — decisões tomadas; a fazer
 

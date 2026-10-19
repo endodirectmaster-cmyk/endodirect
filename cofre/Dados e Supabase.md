@@ -1,6 +1,6 @@
 ---
 tags: [cofre, dados, supabase]
-atualizado: 2026-10-18
+atualizado: 2026-10-19
 ---
 
 # Dados e Supabase
@@ -12,11 +12,12 @@ atualizado: 2026-10-18
   - limite de 200 MB; aceita pdf, zip, png, jpeg, webp e csv;
   - o professor sobe pelo painel do Supabase;
   - hoje: `endocrinologia_basica_figuras…zip` (68 recortes originais), `imagens_endocrinologia_b…` (os mesmos, traduzidos), `indice.csv` e `indice_PT.csv`.
-- **`endodirect-assets/resumos/livros/` (público):** os recortes prontos que os resumos usam (19 do lote 1). A URL vai direto no markdown do capítulo.
+- **`endodirect-assets/resumos/livros/` (público):** os recortes prontos que os resumos usam (70: 19 do lote 1 e 51 de diabetes, em 19/10). A URL vai direto no markdown do capítulo.
 - **Funções temporárias:**
   - `baixar-livros` (URL assinada para baixar do `livros`) e `subir-figuras-livros` (envio para o público).
   - Protegidas por token: só o hash fica no código, o token fica num arquivo da sessão.
   - As duas estão desativadas (410), porque a ferramenta do Supabase não apaga função.
+  - A `subir-figuras-livros` voltou a funcionar em 19/10, com token novo e prazo, para as 51 de diabetes. Depois voltou ao 410 (versão 5), e o token foi apagado.
 - **⚠️ Chave de serviço na função:** use `createClient(SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY)` do supabase-js. Com `fetch` direto e `Authorization: Bearer <SUPABASE_SERVICE_ROLE_KEY>`, o Storage respondeu 403 "Invalid Compact JWS" (18/10).
 
 ## 🗑️ Apagar tabela: pelo editor SQL, não pelo conector (17/10/2026)
@@ -101,6 +102,15 @@ Três regras que ficaram:
    - **`d || o.novo` (merge de chaves de topo), nunca substituir o item inteiro:** preserva `rascunho`, `privado`, `ordem`, `id` e qualquer campo editorial que o professor tenha mexido. Substituir o objeto desfaria uma publicação feita entre a minha leitura e a minha escrita.
    - **`where updated_at = <lido antes>`:** se alguém gravou no meio, o `UPDATE` afeta **0 linhas** e eu fico sabendo. Sem isso, eu sobrescreveria em silêncio — sendo exatamente o problema de que estou me defendendo.
    - **`returning` sempre**, e conferir hash/tamanho logo depois. "Não deu erro" não é verificação.
+
+### ⏱️ Instrução grande demais: os 60 s do `execute_sql` (2026-10-19)
+- O `payload` tem 16,5 MB como texto (6,9 MB guardado), e cada `jsonb_set` encadeado
+  remonta o documento inteiro.
+- 16 capítulos numa instrução só passaram dos 60 s do conector. Nada foi gravado: sem
+  backup, md5 iguais, sem consulta presa nem trava.
+- **Regra:** no máximo 4 capítulos por instrução, cada grupo com o próprio backup e as
+  próprias guardas. Antes de repetir uma instrução que estourou o tempo, conferir que
+  ela não gravou: backup, md5, `pg_stat_activity` e travas.
 
 ### ACRESCENTAR itens novos: guarda de idempotência em vez de trava otimista (2026-07-28)
 Para **inserir** artigos/capítulos (em vez de editar os existentes), a trava por `updated_at` tem um efeito ruim: se ela falhar no meio de uma sequência de inserções, metade do lote entrou e a outra metade não, e reexecutar duplica. Para *append*, a guarda certa é **pelo `tema`**:

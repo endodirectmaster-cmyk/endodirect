@@ -1,6 +1,6 @@
 ---
 tags: [cofre, conteudo, resumos]
-atualizado: 2026-10-18
+atualizado: 2026-10-19
 ---
 
 # Ilustrações dos Resumos (no meio do capítulo)
@@ -65,7 +65,7 @@ ampliador. O editor do professor preserva a figura ao salvar (ramo `figure` do
     - **Tamanho na tela:** até 640 px de largura e 55% da altura da janela
       (`.dir-texto .wys-img` sem largura do editor; dois pedidos do professor em 18/10,
       `sw.js` v315 e v316). Por isso nenhum recorte usa mais `{N}`.
-  - **Lote de diabetes (18/10): prévia publicada, aguarda aprovação.**
+  - **Lote de diabetes (18/10): gravado em 19/10, das 00h22 às 00h28 UTC.**
     - **Origem:** `livros/diabetes/imagens_diabetes_PT.zip` + `indice_PT.csv`, que o
       professor subiu às 17h04 UTC. São 79 figuras já traduzidas por outra conversa dele.
       O zip dos originais em inglês **não** veio.
@@ -111,9 +111,16 @@ ampliador. O editor do professor preserva a figura ao salvar (ramo `figure` do
         138 `3d9a05b9`, 221 `87b887de`, 222 `f3ad1708`, 224 `92b2adaf`, 227 `b10356c8`,
         231 `c5d2855f`.
     - **Prévia:** [Figuras de Diabetes nos Resumos](https://claude.ai/artifact/Rrq4YVAH631CsABfiyZWHG).
-    - **Falta conferir:** as 22 traduzidas lado a lado com o original (pedi o zip em
-      inglês). Na Matfin 40-1, o rótulo "Úlcera do calcanhar – geralmente neuropática"
-      pode ser "neuroisquêmica" no original.
+    - **Aprovação:** o professor aprovou a prévia em 19/10 (*"Pode fazer tudo"*), sem
+      mandar o zip dos originais.
+      - Por isso as 22 traduzidas não foram conferidas lado a lado com o original. Fica
+        opcional, se o zip vier.
+      - Na Matfin 40-1, o rótulo "Úlcera do calcanhar – geralmente neuropática" pode ser
+        "neuroisquêmica" no original.
+    - **Envio:** os 51 arquivos de `prontas/` foram para `endodirect-assets/resumos/livros/`
+      pela `subir-figuras-livros`, que voltou a responder 410. Conferidos byte a byte pela
+      URL pública.
+    - **Gravação:** em 4 instruções de 4 capítulos cada (ver "Gravações feitas").
   - **Desenho próprio:** onde o livro tiver figura equivalente, o recorte substitui o
     desenho; onde não tiver, o desenho fica.
   - **Origem dos livros:** estão no Drive, em Livros › Endocrino Geral (Williams,
@@ -154,6 +161,13 @@ ampliador. O editor do professor preserva a figura ao salvar (ramo `figure` do
 
 ## Lições
 
+- **Gravar no máximo 4 capítulos por instrução (19/10).**
+  - O `payload` tem 16,5 MB como texto (6,9 MB guardado). Cada `jsonb_set` encadeado
+    remonta o documento inteiro.
+  - A instrução única dos 16 capítulos passou dos 60 s do `execute_sql` e não gravou
+    nada: sem backup, md5 iguais, sem consulta presa nem trava.
+  - Em 4 grupos de 4, todas passaram. Cada grupo tem o próprio backup e as próprias
+    guardas, então uma parte que falhe não deixa as outras pela metade.
 - **Trocar uma palavra numa figura (`corrige-diabetes.py`, 18/10).**
   - Não chutar o corpo da fonte pela largura: a palavra nova sai fina e clara.
   - O que funciona: desenhar a palavra errada em Liberation Sans a 8× e procurar a
@@ -216,3 +230,20 @@ ampliador. O editor do professor preserva a figura ao salvar (ramo `figure` do
   - Monta as trocas por `replace()` no servidor: para ilustração nova, a âncora; para
     ilustração já gravada, a linha da imagem inteira, com a legenda atual.
   - Confere que as trocas reproduzem a prévia (`texto.js`).
+- **Figuras de diabetes, 19/10/2026, das 00h22 às 00h28 UTC.** 51 figuras em 16
+  capítulos, gravadas em 4 instruções de `gera-sql.js` (a de 16 capítulos estourou o
+  tempo; ver "Lições").
+
+  | parte | capítulos | backup (`main-antes-figuras-diabetes-2026-10-19-…`) | md5 antes → depois |
+  |---|---|---|---|
+  | 1 | 127–130 | `parte1` | 127 `447372ff` → `9174744f`; 128 `4b717dc5` → `9c764c32`; 129 `f12064bc` → `70adde69`; 130 `75b1e95f` → `f9d4f87c` |
+  | 2 | 131–134 | `parte2` | 131 `d8a587f3` → `c569b512`; 132 `cf9e4072` → `b79b2ef1`; 133 `79a49efd` → `3da40d92`; 134 `ab841931` → `4ef268a1` |
+  | 3 | 135, 137, 138, 221 | `parte3` | 135 `9c02c14f` → `391dcf75`; 137 `7668d90f` → `4d2f405f`; 138 `3d9a05b9` → `5617c25b`; 221 `87b887de` → `f02df9dd` |
+  | 4 | 222, 224, 227, 231 | `parte4` | 222 `f3ad1708` → `7a765980`; 224 `92b2adaf` → `661f636c`; 227 `b10356c8` → `4d2ff4cf`; 231 `c5d2855f` → `8e8741c7` |
+
+  - Cada instrução conferiu: o backup, os md5 de depois, o resto de cada item, os outros
+    itens, o estado fora de `diretrizes` e o número de itens. Tudo verdadeiro nas 4.
+  - Conferido depois: os 16 md5, os 4 backups e as 51 figuras, uma vez cada. O acervo
+    tem agora 70 figuras de livros (19 do lote 1 e 51 de diabetes).
+  - Nenhum save do cliente entre as 4 partes. Professor avisado do F5. Conferência de
+    zumbi marcada para 01h30 UTC.
