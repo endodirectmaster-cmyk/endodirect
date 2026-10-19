@@ -14,19 +14,28 @@ Pedido do professor em 18/10. Entregue no mesmo dia; ver [[Instagram Stories (Qu
 - [ ] O professor gerar um lote e dizer se o equilíbrio está bom (proporção de diretas,
   frequência de figura, dificuldade dos distratores).
 
-## 📚 PRÓXIMO LOTE: figuras de tireoide, obesidade e osteometabolismo (pedido de 18/10)
+## 🖼️ EM APROVAÇÃO: figuras de tireoide, obesidade e osteometabolismo (19/10)
 
-O professor subiu ao bucket `livros` três pastas novas: `Tireoide/`, `Obesidade/` e
-`Osteometabolismo/`, cada uma com `imagens_<tema>_PT.zip` (já traduzidas) e
-`indice_PT.csv`. Pediu para começar **depois** de terminar o que estava em andamento
-(ajustes do app) e de o limite zerar. **Início agendado para 23/10, 17h05 de Brasília**
-(renovação do limite semanal), por um lembrete nesta conversa; se ele pedir antes, começa antes. Mesmo processo do lote de diabetes ([[Ilustrações dos Resumos]]):
-1. [ ] Baixar pela função temporária (`baixar-livros`, URL assinada) e conferir o índice.
-2. [ ] Revisão por agentes, um por lote: conteúdo contra o capítulo, rótulo, legenda e
-   trecho de ancoragem. Separar o que contradiz o capítulo ou está desatualizado.
-3. [ ] `monta.js` e a prévia (artifact) para a aprovação do professor.
-4. [ ] Envio (`subir-figuras-livros`, depois 410) e gravação com `gera-sql.js`, em
-   grupos de até 4 capítulos, com backup, F5 e conferência de zumbi.
+O professor subiu ao bucket `livros` os zips `_PT` de tireoide, obesidade e
+osteometabolismo e, em 19/10, pediu para começar já (*"Ja pode fazer agora"*), sem esperar
+a renovação do limite semanal. Processo e números em [[Ilustrações dos Resumos]].
+1. [x] Baixar (`baixar-livros`, depois 410) e conferir o índice: 190 figuras.
+   ⚠️ **Falta a parte 2 de tireoide** (42 figuras, seções 05 a 08): o "parte1" foi enviado
+   duas vezes, idêntico. Pedir ao professor `Tireoide/imagens_tireoide_PT_parte2.zip`.
+2. [x] Revisão por 17 agentes, um por lote; as acusações graves conferidas no texto dos
+   capítulos e na imagem.
+3. [x] 15 rótulos corrigidos (`corrige-tob.py`), `monta.js` e a prévia:
+   [Figuras de Tireoide, Obesidade e Osteometabolismo](https://claude.ai/artifact/VKAPr6P3dJ6KfFW34W77hQ).
+   105 entram em 31 capítulos; 85 ficam de fora.
+4. [ ] **Aprovação do professor**, e as respostas:
+   - Williams fig. 11.9 (TSH × T4 livre): conferir no livro o eixo do T4 livre (pula de
+     1,2 para 2,0). Com a resposta, corrijo e incluo no cap. 77.
+   - Williams fig. 39.1: manter com a mancha branca ou trocar pela 72-1 do Guyton.
+   - Williams fig. 39.4: foto de criança com tarja só nos olhos; manter ou tirar.
+5. [ ] Envio (`subir-figuras-livros`, depois 410) e gravação com `gera-sql.js`, em grupos
+   de até 4 capítulos, com md5 conferido antes, backup, F5 e conferência de zumbi.
+- **Achado de passagem (não mexido):** a manutenção depois do ataque de vitamina D
+  (50.000 UI/semana) é 1.500–2.000 UI/dia no cap. 107 e 800 UI/dia no cap. 109.
 
 ## ✅ GRAVADO (19/10): Figuras de diabetes nos Resumos
 

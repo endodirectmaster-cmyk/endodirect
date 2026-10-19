@@ -8,6 +8,12 @@ atualizado: 2026-10-19
 Log de decisões de produto e técnicas (mais recentes no topo).
 
 ## 2026-10
+- **📚 FIGURAS DE TIREOIDE, OBESIDADE E OSTEOMETABOLISMO: PRÉVIA COM 105 FIGURAS E 15 RÓTULOS CORRIGIDOS (2026-10-19).** Sem mudança no app (só `scratchpad/figuras-livros`). Pedido do professor: *"Ja pode fazer agora"* (o lote estava agendado para 23/10, depois da renovação semanal). Detalhes em [[Ilustrações dos Resumos]].
+  - **O capítulo é a referência.** Figura que diz o contrário dele não entra como está: corrige-se o rótulo quando o erro é pontual (porcentagens do HPTP, NEM1 com tireoide, linfoma na linha do mieloma, "tórax em funil", seta do GLP-1 no coração) ou ela fica de fora (22, entre elas as três com lorcasserina, os algoritmos do Vilar para bisfosfonato, AACE e orbitopatia, o NOGG e os do Matfin).
+  - **Seta do GLP-1 no coração:** a tradução pôs a captação de glicose ↓; a literatura (PMC6113423 e os estudos em coração isolado e em cães) descreve aumento. Virou ↑.
+  - **Figura com rótulo corrigido diz "adaptada de"** (ou "traduzida e adaptada de"), como no lote de diabetes. Recorte sem mudança de conteúdo (moldura do PDF) não conta como adaptação.
+  - **Tabela oficial da diretriz brasileira fica como está** (usa SOP e MASLD); a legenda diz que equivalem a SOMP e DHEM.
+  - **Williams 11.9 só entra conferida no livro:** as marcas do eixo do T4 livre são iguais e os números pulam de 1,2 para 2,0; sem o original não dá para saber se falta o 1,6 ou se os números andaram.
 - **📱 APP NAS LOJAS: EXCLUSÃO DE CONTA, APP SEM COMPRA E CONTA DE REVISÃO (2026-10-19).** `sw.js` v317 → **v318**. Autorizado pelo professor com *"Pode fazer tudo"*. Detalhes em [[App nas Lojas]].
   - **Exclusão dentro do app** (Meu perfil, com a palavra EXCLUIR) e página pública `/excluir-conta`. O servidor:
     - cancela a renovação no pagar.me **antes** de apagar; se não cancelar, nada sai;
