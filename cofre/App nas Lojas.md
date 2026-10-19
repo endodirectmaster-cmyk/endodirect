@@ -128,6 +128,18 @@ entregues na conversa. Aqui ficam o resumo, as decisões e o que falta.
   de degustação.
 - Harness em Chromium com 44 conferências (site e app; exclusão com sucesso, com falha e
   sem confirmar; link direto; aparelhos; cartão do professor; página pública no celular).
+- ✅ **Produção, 19/10, 01h20 UTC** (PR #889, `sw.js` v318):
+  - `/excluir-conta`, `/privacidade` e `/termos` no ar;
+  - sem sessão, as duas ações respondem 401, mesmo com um `p_user_id` no corpo;
+  - **ponta a ponta com uma conta descartável** (`teste.exclusao@endodirect.com.br`), criada no
+    banco com progresso, aparelho, notificação, newsletter (e-mail em maiúsculas), ticket,
+    cortesia e registro de degustação. A senha e o token ficaram só em arquivo, apagado no fim.
+    - Com o token dela, a conta de revisão deu 401 e "excluir" sem a palavra deu 400.
+    - A exclusão deu 200 em 3,8 s.
+    - **Tudo saiu do banco.** As contagens gerais voltaram ao que eram: 160 usuários,
+      57 acessos e 130 chaves no registro.
+    - Depois disso, o token antigo dá `user_not_found`, o login com a senha é recusado e a
+      API recusa o token.
 
 ## Caminho técnico
 
