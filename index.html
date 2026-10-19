@@ -26,6 +26,43 @@
 <link rel="apple-touch-icon" href="/icons/apple-touch-icon.png">
 <link rel="manifest" href="/manifest.webmanifest">
 <script>
+// ── APP DAS LOJAS (19/10/2026) ──────────────────────────────────────────────
+// No app do Google Play e da App Store não aparece preço, "assine" nem checkout:
+// o Google, no Brasil, não aceita app que leve a pagar fora da loja, e a Apple só
+// aceita o link para o site ao lado da compra pela própria Apple. O app é SÓ DE
+// ACESSO, e o aluno assina no site (cofre/App nas Lojas.md). No site nada muda.
+// Roda no <head> para a classe `app-loja` existir antes de a página aparecer, sem
+// piscar a landing de preços. O app se identifica por, em ordem:
+//   1. `?app=android|ios` no endereço com que o pacote do app abre o site;
+//   2. a marca guardada na ABA (sessionStorage): o login com Google sai do site e
+//      volta sem o parâmetro;
+//   3. o referrer `android-app://`, que o Chrome põe na abertura pelo app;
+//   4. o Capacitor (iPhone) ou a marca `EndodirectApp/<versão> (android|ios)` no
+//      user agent;
+//   5. a marca do aparelho (localStorage), mas SÓ em janela de app (display-mode
+//      standalone): o app do Android roda no Chrome do aparelho e divide o
+//      armazenamento com o site aberto no navegador. Sem essa trava, o site no
+//      Chrome passaria a esconder os preços de quem quer assinar. A marca cobre o
+//      app reaberto por uma notificação, que chega sem parâmetro.
+var APP_LOJA=(function(){
+  var v='';
+  try{var m=/[?&]app=(android|ios)(?:&|$)/.exec(location.search);if(m)v=m[1];}catch(e){}
+  if(!v){try{v=sessionStorage.getItem('endo_app_loja')||'';}catch(e){}}
+  if(!v){try{if(/^android-app:\/\//.test(document.referrer||''))v='android';}catch(e){}}
+  if(!v){try{var C=window.Capacitor;if(C&&typeof C.isNativePlatform==='function'&&C.isNativePlatform())v=(typeof C.getPlatform==='function'&&C.getPlatform())||'ios';}catch(e){}}
+  if(!v){try{var u=/EndodirectApp\/[\d.]+ \((android|ios)\)/i.exec(navigator.userAgent||'');if(u)v=u[1].toLowerCase();}catch(e){}}
+  if(!v){try{if(window.matchMedia&&window.matchMedia('(display-mode: standalone)').matches)v=localStorage.getItem('endo_app_loja')||'';}catch(e){}}
+  if(v!=='android'&&v!=='ios')v='';
+  if(v){
+    try{sessionStorage.setItem('endo_app_loja',v);}catch(e){}
+    try{localStorage.setItem('endo_app_loja',v);}catch(e){}
+    try{document.documentElement.classList.add('app-loja');}catch(e){}
+  }
+  return v;
+})();
+function isAppLoja(){return !!APP_LOJA;}
+</script>
+<script>
 // PWA: registra o service worker (instalável + offline básico). Não bloqueia o boot.
 if('serviceWorker' in navigator){window.addEventListener('load',function(){navigator.serviceWorker.register('/sw.js').catch(function(){});});}
 // Aviso de "nova versão disponível": uma aba aberta há horas pode ficar presa em
@@ -334,6 +371,21 @@ body{background:var(--bg);color:var(--tx);display:flex;flex-direction:column}
 .btn-ghost:hover:not(:disabled){color:var(--tx);background:var(--s2)}
 .btn-danger{background:var(--red-l);color:var(--red);border:1px solid #5a2326}
 .btn-sm{padding:.26rem .6rem;font-size:.68rem}
+/* App das lojas (APP_LOJA, no <head>): sem preço, "assine" nem checkout. As
+   portas para a tela de pacotes também param em showAssineScreen; aqui somem os
+   botões que levariam até ela. */
+html.app-loja #landing-screen,html.app-loja #assine-screen,html.app-loja #checkout-modal,
+html.app-loja #degustacao-cta,html.app-loja #perfil-upgrade,html.app-loja #btn-pf-upgrade,
+html.app-loja #q-banco-buy,html.app-loja #btn-aovivo-assinar,html.app-loja .amostra-cta,
+html.app-loja [data-dir-assine],html.app-loja .so-site{display:none!important}
+html:not(.app-loja) .so-app{display:none!important}
+/* Exclusão de conta (Meu perfil). */
+.pf-excluir{margin-top:1rem;border-color:#5a2326}
+.pf-excluir .card-title{color:var(--red)}
+.pf-excluir p{font-size:.78rem;color:var(--t2);line-height:1.6;margin:.1rem 0 .7rem}
+.pf-excluir ul{font-size:.78rem;color:var(--t2);line-height:1.6;margin:0 0 .8rem;padding-left:1.1rem}
+.pf-excluir-box{border-top:1px solid var(--bd);padding-top:.8rem;margin-top:.2rem}
+.pf-excluir-box input{max-width:220px;text-transform:uppercase;letter-spacing:.08em}
 .fld2{margin-bottom:.65rem}
 .flbl,.fld2 label{font-size:.62rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--t2);display:block;margin-bottom:3px}
 input:not([type]),input[type=text],input[type=search],input[type=number],input[type=email],input[type=date],input[type=password],input[type=tel],input[type=url],select,textarea{background:var(--surface);border:1px solid var(--bd2);border-radius:var(--rs);padding:.44rem .72rem;font-family:var(--font);font-size:.79rem;color:var(--tx);outline:none;width:100%;color-scheme:dark}
@@ -2223,7 +2275,7 @@ input.dmm-inp-subsub{flex:1;min-width:0;background:transparent;color:var(--t2);f
       <div class="fld" id="login-pass2-wrap" style="display:none"><label>Confirmar senha</label><input type="password" id="login-pass2" placeholder="Repita a senha"></div>
       <button class="login-btn" id="btn-login">Entrar</button>
       <button class="login-btn" id="btn-signup" type="button" style="display:none">Criar conta</button>
-      <div id="signup-hint" style="display:none;font-size:.72rem;color:var(--t3);text-align:center;margin-top:.6rem;line-height:1.55">Crie sua conta gratuita e explore no modo degustação. Assine quando quiser para liberar tudo.</div>
+      <div id="signup-hint" style="display:none;font-size:.72rem;color:var(--t3);text-align:center;margin-top:.6rem;line-height:1.55">Crie sua conta gratuita e explore no modo degustação.<span class="so-site"> Assine quando quiser para liberar tudo.</span></div>
       <button class="login-link" id="btn-forgot-pass" type="button">Esqueci minha senha</button>
       <button class="login-link" id="btn-toggle-mode" type="button">Não tem conta? <b>Cadastre-se</b></button>
       <div style="text-align:center;margin-top:1rem;font-size:.72rem;color:var(--t3)">© <span id="login-year"></span> Endodirect · <a href="/privacidade" target="_blank" rel="noopener" style="color:var(--t3);text-decoration:none">Privacidade</a> · <a href="/termos" target="_blank" rel="noopener" style="color:var(--t3);text-decoration:none">Termos</a></div>
@@ -2877,7 +2929,7 @@ input.dmm-inp-subsub{flex:1;min-width:0;background:transparent;color:var(--t2);f
           <div class="faq-item"><div class="faq-q">Como usar o Chat IA? <span>▾</span></div><div class="faq-a">Acesse Chat IA no menu e faça perguntas sobre endocrinologia. A IA responde com base em evidências científicas.</div></div>
           <div class="faq-item"><div class="faq-q">Como filtrar questões por subespecialidade? <span>▾</span></div><div class="faq-a">No Banco de questões, aba Provas anteriores, escolha a subespecialidade (diabetes, tireoide, etc.), a instituição, o ano e o tipo, e clique em "Buscar questões".</div></div>
           <div class="faq-item"><div class="faq-q">Como funciona a revisão espaçada? <span>▾</span></div><div class="faq-a">Utiliza o algoritmo SM-2. Os cards com maior dificuldade aparecem com mais frequência até serem dominados.</div></div>
-          <div class="faq-item"><div class="faq-q">📱 Como deixar o app na tela do iPhone/Android? <span>▾</span></div><div class="faq-a">O Endodirect é instalável (PWA): fica com ícone na tela inicial e abre em tela cheia, sem baixar nada da loja.<br><br><b>iPhone (Safari):</b> toque em <b>Compartilhar</b> (quadrado com a seta ↑) → <b>Adicionar à Tela de Início</b> → <b>Adicionar</b>.<br><br><b>Android (Chrome):</b> toque no menu <b>⋮</b> → <b>Instalar app</b> (ou <b>Adicionar à tela inicial</b>) → confirme.</div></div>
+          <div class="faq-item so-site"><div class="faq-q">📱 Como deixar o app na tela do iPhone/Android? <span>▾</span></div><div class="faq-a">O Endodirect é instalável (PWA): fica com ícone na tela inicial e abre em tela cheia, sem baixar nada da loja.<br><br><b>iPhone (Safari):</b> toque em <b>Compartilhar</b> (quadrado com a seta ↑) → <b>Adicionar à Tela de Início</b> → <b>Adicionar</b>.<br><br><b>Android (Chrome):</b> toque no menu <b>⋮</b> → <b>Instalar app</b> (ou <b>Adicionar à tela inicial</b>) → confirme.</div></div>
         </div>
         <div class="card" style="margin-top:.9rem">
           <div style="font-size:1rem;font-weight:700;margin-bottom:.2rem">Fale com a gente</div>
@@ -5029,7 +5081,7 @@ function renderDegustacaoBar(){
     var msg=bar.querySelector('#degustacao-msg');
     if(msg){
       if(degExpired()){
-        msg.innerHTML='<span style="display:inline-flex;align-items:center;gap:.3rem;background:rgba(255,255,255,.5);border:1px solid rgba(120,80,0,.25);border-radius:999px;padding:.1rem .6rem;font-weight:800">⏳ Degustação encerrada</span> <span style="opacity:.92">seus '+DEG_DIAS+' dias gratuitos terminaram — assine para manter o acesso aos benefícios</span>';
+        msg.innerHTML='<span style="display:inline-flex;align-items:center;gap:.3rem;background:rgba(255,255,255,.5);border:1px solid rgba(120,80,0,.25);border-radius:999px;padding:.1rem .6rem;font-weight:800">⏳ Degustação encerrada</span> <span style="opacity:.92">seus '+DEG_DIAS+' dias gratuitos terminaram'+textoCompra(' — assine para manter o acesso aos benefícios','')+'</span>';
       }else{
         var dd=degDiasRestantes();
         msg.innerHTML='<span style="display:inline-flex;align-items:center;gap:.3rem;background:rgba(255,255,255,.5);border:1px solid rgba(120,80,0,.25);border-radius:999px;padding:.1rem .6rem;font-weight:800">🎁 Modo degustação</span> <span style="opacity:.92">acesso gratuito por mais <b>'+dd+' dia'+(dd===1?'':'s')+'</b> — 50 questões do banco, 10 diretrizes, podcasts, flashcards, mapas mentais e o mural</span>';
@@ -5056,6 +5108,8 @@ function trialModalEl(){
 }
 function maybeTrialModal(){
   if(trialModalSeen||acessosPendentes()||!isDegustacao())return;
+  // No app das lojas a janela não abre: ela existe para levar aos pacotes.
+  if(isAppLoja())return;
   var expired=degExpired(),dd=degDiasRestantes();
   if(!expired&&dd>2)return; // só avisa na reta final (≤2 dias) ou já encerrada
   trialModalSeen=true;
@@ -7221,10 +7275,12 @@ function isAuthCallbackUrl(){
 // "#" sai do endereço para um F5 depois não forçar o painel de novo.
 // Só os nomes da lista: "#planos" é âncora da landing, e o retorno do login
 // ("#access_token=…") nunca casa com o padrão.
-var LINK_PAINEIS={qotd:1,mural:1,aovivo:1};
+// `#excluir-conta` vem da página pública /excluir-conta (19/10/2026): abre o Meu
+// perfil já no cartão de exclusão. Não é painel do menu.
+var LINK_PAINEIS={qotd:1,mural:1,aovivo:1,'excluir-conta':1};
 var LINK_PAINEL_KEY='endo_link_painel';
 function lerLinkDoEndereco(){
-  var m=/^#(qotd|mural|aovivo)(?:\/([A-Za-z0-9_-]{1,80}))?$/.exec(String(window.location.hash||''));
+  var m=/^#(qotd|mural|aovivo|excluir-conta)(?:\/([A-Za-z0-9_-]{1,80}))?$/.exec(String(window.location.hash||''));
   return m?{p:m[1],arg:m[2]||''}:null;
 }
 function guardarLinkPainel(){
@@ -7242,6 +7298,7 @@ function consumirLinkPainel(){
 // Abre o painel pedido se o aluno puder vê-lo; com o id de uma questão, o arquivo
 // já abre nela (e rola até ela quando a lista chegar). Devolve false se não abriu.
 function abrirPainelDoLink(l){
+  if(l&&l.p==='excluir-conta'){perfilRolarExclusao=true;goPanel('perfil');return true;}
   if(!l||!LINK_PAINEIS[l.p]||!canSeePanel(l.p))return false;
   if(l.p==='qotd'&&l.arg){qotdArchOpen=l.arg;qotdArchAuto=false;qotdArchRolar=true;}
   goPanel(l.p);
@@ -7256,6 +7313,7 @@ function abrirPainelDoLink(l){
 // tem seção no painel do professor: fica a seção de sempre.
 function abrirLinkNoPainelDoProfessor(l){
   if(!l||!LINK_PAINEIS[l.p])return false;
+  if(l.p==='excluir-conta'){notify('Conta de professor não é excluída pelo perfil. Fale com o suporte.','info');return false;}
   if(l.p==='qotd'){admQotdArchSub='';admQotdArchOpen=l.arg||null;admQotdArchRolar=!!l.arg;renderAdmSec('qotdarq');return true;}
   if(l.p==='mural'){renderAdmSec('mural');return true;}
   return false;
@@ -7363,9 +7421,15 @@ var deviceWatcher=null,lastDeviceTickAt=0;
 // 12:42:40 — 2 de ~12 logins de aluno em 24 h. Agora a checagem só sai depois
 // de o registro DESTE login ter voltado true; até lá, a vez é do registro.
 var deviceSlot={uid:null,ok:false,emVoo:false};
+// Conta de revisão das lojas (lib/conta-revisao.js) fica fora do limite: o revisor
+// do Google, o da Apple e os robôs do relatório de pré-lançamento do Play entram ao
+// mesmo tempo, de aparelhos diferentes, e um derrubaria o outro no meio da revisão.
+// A regra fica aqui, e não no banco, porque é o cliente que derruba.
+function contaRevisaoLojas(){return String((currentUser&&currentUser.email)||'').toLowerCase()==='revisao@endodirect.com.br';}
 function claimDeviceSlot(){
   var client=getSupabaseClient();
   if(!client||!(currentUser&&currentUser.id)||currentUser.role!=='aluno')return;
+  if(contaRevisaoLojas())return;
   // Um registro por login: o doLogin já pode ter pedido este (pela navegação).
   // Confirmado não se refaz — um aparelho derrubado que se registrasse de novo
   // derrubaria o outro.
@@ -7380,6 +7444,7 @@ function claimDeviceSlot(){
 function deviceTick(){
   var client=getSupabaseClient();
   if(!client||!(currentUser&&currentUser.id)||currentUser.role!=='aluno')return;
+  if(contaRevisaoLojas())return;
   // Registro deste login ainda não confirmado: checar agora derrubaria o próprio
   // aparelho. Se o registro falhou (rede), tenta registrar de novo.
   if(!(deviceSlot.ok&&deviceSlot.uid===currentUser.id)){
@@ -7503,7 +7568,16 @@ function cursoPrecoLabel(slug){
 }
 var assineHighlight='';
 var assineReturnPanel='';
+// App das lojas (APP_LOJA, no <head>): a mesma informação, sem mandar assinar.
+function textoCompra(site,app){return isAppLoja()?app:site;}
+// Toda porta para a tela de pacotes passa por showAssineScreen. No app, ela vira
+// um aviso neutro, sem preço e sem caminho de compra. O aviso só sai se não houver
+// outro na tela: quem chamou pode já ter explicado o bloqueio.
+function avisoSemCompraNoApp(){
+  if(!document.querySelector('.notify'))notify('Este conteúdo não está liberado na sua conta.','info');
+}
 function showAssineScreen(email,opts){
+  if(isAppLoja()){avisoSemCompraNoApp();return;}
   // Lembra a seção atual para o "Voltar à plataforma" retornar a ela.
   try{
     if(currentUser&&currentUser.role==='admin'){assineReturnPanel='adm';}
@@ -8008,7 +8082,7 @@ function consumeTrial(id){
   if(acessosPendentes()){planoAindaNaoConfirmado();return false;} // a cota só é decidida com a lista na mão
   if(!isDegustacao())return true;
   if(trialLeft(id)<=0){
-    notify('Você usou suas '+TRIAL_LIMIT+' degustações de '+(PANEL_LABELS[id]||'recurso')+'. Adquira um pacote para liberar.','err');
+    notify('Você usou suas '+TRIAL_LIMIT+' degustações de '+(PANEL_LABELS[id]||'recurso')+'.'+textoCompra(' Adquira um pacote para liberar.',''),'err');
     showAssineScreen((currentUser&&currentUser.email)||'');
     try{markLockedNavItems();}catch(e){}
     return false;
@@ -8064,7 +8138,7 @@ function blockIfDegustacao(){
   // Geração por IA exige um PACOTE (escopo 'plano'). Bloqueia degustação E quem
   // só comprou curso avulso (sem 'plano') — ambos não têm o escopo. (Mantém o
   // nome por compatibilidade; o efeito agora é "exige plano".)
-  if(!hasScope('plano')){notify('Geração por IA é exclusiva dos pacotes. Adquira um para liberar.','err');showAssineScreen((currentUser&&currentUser.email)||'');return true;}
+  if(!hasScope('plano')){notify(textoCompra('Geração por IA é exclusiva dos pacotes. Adquira um para liberar.','Geração por IA não está liberada na sua conta.'),'err');showAssineScreen((currentUser&&currentUser.email)||'');return true;}
   return false;
 }
 function canAccessBanco(){return isDegustacao()||hasScope('plano')||hasScope('curso:endoteem');}
@@ -8112,6 +8186,22 @@ function showLockedPanel(id){
   var via=minName
     ? (hasPlan?('fazendo upgrade para o plano '+minName):('assinando o plano '+minName))
     : (scope==='plano'?(hasPlan?'fazendo upgrade do seu plano':'adquirindo um pacote (Standard ou Gold)'):(hasPlan?'fazendo upgrade do seu plano':'adquirindo o '+nome));
+  // App das lojas: o bloqueio diz o que aconteceu, sem preço e sem botão de compra.
+  if(isAppLoja()){
+    var motivoApp=(isDegustacao()&&degExpired())?('Sua degustação gratuita de '+DEG_DIAS+' dias terminou.')
+      :(trialEsgotado?('Você usou suas '+TRIAL_LIMIT+' degustações de '+label+'.')
+      :((isDegustacao()&&id==='mural')?('A degustação do Mural de artigos ('+DEG_MURAL_DIAS+' dias) terminou.')
+      :'Este recurso não está liberado na sua conta.'));
+    p.innerHTML='<div class="breadcrumb">'+esc(label)+' <b>/ Bloqueado</b></div>'
+      +'<div class="ph"><h1>🔒 '+esc(label)+'</h1></div>'
+      +'<div class="pc"><div class="card" style="max-width:520px;margin:1.2rem auto;text-align:center;padding:1.9rem 1.5rem">'
+      +'<div style="font-size:2.3rem;margin-bottom:.5rem">🔒</div>'
+      +'<p style="font-size:.86rem;color:var(--t2);line-height:1.6;margin:.3rem 0 .6rem">'+esc(motivoApp)+'</p>'
+      +'<p style="font-size:.78rem;color:var(--t3);line-height:1.6;margin:0">Se você já tem um plano, confira se entrou com o mesmo e-mail da assinatura.</p>'
+      +'</div></div>';
+    closeMobileNav();
+    return;
+  }
   if(isDegustacao()&&degExpired()){
     p.innerHTML='<div class="breadcrumb">'+esc(label)+' <b>/ Bloqueado</b></div>'
       +'<div class="ph"><h1>🔒 '+esc(label)+'</h1></div>'
@@ -8272,7 +8362,7 @@ function showBancoLock(show){
   if(!el){
     var ref=document.getElementById('q-panel-provas');
     el=document.createElement('div');el.id='q-banco-lock';el.className='gen-box';el.style.display='none';
-    el.innerHTML='<div style="text-align:center;padding:1.1rem .5rem"><div style="font-size:2.1rem;margin-bottom:.4rem">🔒</div><div style="font-size:.96rem;font-weight:800;color:var(--tx);margin-bottom:.35rem">Banco de Questões</div><p style="font-size:.83rem;color:var(--t2);line-height:1.6;margin:.2rem auto 1rem;max-width:400px">O acervo de questões de provas é liberado ao adquirir <b>qualquer pacote</b> (Standard ou Gold).</p><button class="btn btn-primary" id="q-banco-buy" style="justify-content:center">Ver pacotes</button></div>';
+    el.innerHTML='<div style="text-align:center;padding:1.1rem .5rem"><div style="font-size:2.1rem;margin-bottom:.4rem">🔒</div><div style="font-size:.96rem;font-weight:800;color:var(--tx);margin-bottom:.35rem">Banco de Questões</div><p style="font-size:.83rem;color:var(--t2);line-height:1.6;margin:.2rem auto 1rem;max-width:400px">'+textoCompra('O acervo de questões de provas é liberado ao adquirir <b>qualquer pacote</b> (Standard ou Gold).','O acervo de questões de provas não está liberado na sua conta.')+'</p><button class="btn btn-primary" id="q-banco-buy" style="justify-content:center">Ver pacotes</button></div>';
     if(ref&&ref.parentNode)ref.parentNode.insertBefore(el,ref.nextSibling);
     var bb=el.querySelector('#q-banco-buy');if(bb)bb.addEventListener('click',function(){showAssineScreen((currentUser&&currentUser.email)||'');});
   }
@@ -9680,7 +9770,7 @@ function updateProvaInfo(){
     }else if(estado==='erro'){
       el.textContent='Não foi possível carregar o banco de questões.';
     }else if(isDegustacao()&&!acessosPendentes()){
-      el.textContent='🎁 Degustação: mostrando '+n+' de '+total+' questões do banco Endodirect (amostra). Assine um pacote para o banco completo.';
+      el.textContent='🎁 Degustação: mostrando '+n+' de '+total+' questões do banco Endodirect (amostra).'+textoCompra(' Assine um pacote para o banco completo.','');
     }else if(n>0){
       el.textContent='Mostrando '+n+' de '+total+' questão(ões) no seu banco'+(feitasN?' · '+feitasN+' já respondida'+(feitasN===1?'':'s')+(soNao?' (ocultas)':''):'')+'.';
     }else if(soNao&&lista.length){
@@ -10636,9 +10726,9 @@ function renderCursosAluno(){
     var sample=!acc&&cursoTemLiberada(slug); // acessível só via amostra grátis
     if(!acc&&!sample){
       // Não incluído no plano: capa dessaturada; ao clicar, abre o upgrade.
-      return '<button type="button" class="curso-tile lock" data-curso-upsell="1" title="Não incluído no seu plano — clique para fazer upgrade">'
+      return '<button type="button" class="curso-tile lock" data-curso-upsell="1" title="'+textoCompra('Não incluído no seu plano — clique para fazer upgrade','Não incluído na sua conta')+'">'
         +cursoCapaHTML(nome,slug,capa,0,true)
-        +'<span class="ct-nome" style="color:var(--t2)">'+esc(nome)+'</span><span class="ct-sub">🔒 Fazer upgrade</span></button>';
+        +'<span class="ct-nome" style="color:var(--t2)">'+esc(nome)+'</span><span class="ct-sub">'+textoCompra('🔒 Fazer upgrade','🔒 Não incluído')+'</span></button>';
     }
     var subline=sample?'<span class="ct-sub gold">🎁 amostra grátis</span>':'<span class="ct-sub">'+n+' aula'+(n===1?'':'s')+'</span>';
     return '<button type="button" class="curso-tile'+(active?' on':'')+'" data-cursofilter="'+esc(slug)+'">'
@@ -15675,6 +15765,53 @@ function carregaAdmRisco(cb){
     cb&&cb();
   }).catch(function(e){admRiscoLoading=false;admRiscoErr=String(e&&e.message||e);cb&&cb();});
 }
+// ── CONTA DE REVISÃO DAS LOJAS (19/10/2026) ──────────────────────────────────
+// O revisor do Google Play e o da App Store entram com ela para ver o app por
+// dentro; as duas lojas pedem usuário e senha no formulário do app. A senha nasce
+// no servidor (api/ai.js, kind:'conta_revisao', ver lib/conta-revisao.js) e só
+// aparece aqui, na hora. Fica em memória até recarregar a página, para o
+// re-desenho da seção (quando o risco chega) não apagá-la da tela.
+var admRevisaoUltima=null,admRevisaoErro='',admRevisaoGerando=false;
+function admContaRevisaoHTML(){
+  var d=admRevisaoUltima;
+  return '<div class="adm-pc"><div class="card" id="adm-revisao-card" style="margin-bottom:1rem">'
+    +'<div class="card-head"><span class="card-title">📱 Conta de revisão das lojas</span></div>'
+    +'<p style="font-size:.8rem;color:var(--t2);line-height:1.6;margin:.1rem 0 .6rem">O revisor do Google Play e o da App Store entram com esta conta para ver o app por dentro. Ela é Gold com o EndoTEEM, fica fora das contagens de aluno e não tem limite de aparelhos.</p>'
+    +'<p style="font-size:.8rem;color:var(--t2);line-height:1.6;margin:0 0 .8rem">E-mail: <b>revisao@endodirect.com.br</b>. A senha é gerada aqui e aparece uma vez só. Gerar outra faz a anterior parar de funcionar.</p>'
+    +'<button class="btn btn-primary" type="button" data-adm-revisao="1"'+(admRevisaoGerando?' disabled':'')+'>'+(admRevisaoGerando?'Gerando…':(d?'Gerar outra senha':'Gerar a senha'))+'</button>'
+    +(admRevisaoErro?'<div style="color:var(--red);font-size:.8rem;margin-top:.7rem">'+esc(admRevisaoErro)+'</div>':'')
+    +(d?'<div style="background:var(--s2);border:1px solid var(--bd);border-radius:var(--rs);padding:.7rem .85rem;font-size:.82rem;line-height:1.75;margin-top:.8rem">'
+      +'<div>'+(d.criada?'✅ Conta criada.':'✅ Senha nova pronta.')+'</div>'
+      +'<div>E-mail: <b>'+esc(d.email)+'</b></div>'
+      +'<div>Senha: <code style="font-size:.95rem;user-select:all">'+esc(d.senha)+'</code> <button class="btn btn-outline btn-sm" type="button" data-adm-revisao-copiar="1">Copiar</button></div>'
+      +'<div style="font-size:.72rem;color:var(--t3);margin-top:.3rem">Ela não fica guardada em lugar nenhum. Cole agora no formulário da loja: no Google Play, em Acesso ao app; na App Store, em Informações de login.</div>'
+      +'</div>':'')
+    +'</div></div>';
+}
+function admRevisaoRedesenha(){
+  var c=document.getElementById('adm-revisao-card');
+  if(!c||!c.parentNode)return;
+  var w=document.createElement('div');w.innerHTML=admContaRevisaoHTML();
+  c.parentNode.parentNode.replaceChild(w.firstChild,c.parentNode);
+}
+function admGerarContaRevisao(){
+  if(admRevisaoGerando)return;
+  if(admRevisaoUltima&&!confirm('Gerar outra senha para a conta de revisão? A senha atual para de funcionar.'))return;
+  admRevisaoGerando=true;admRevisaoErro='';admRevisaoRedesenha();
+  admSupportToken().then(function(token){
+    if(!token)throw new Error('Sua sessão expirou. Entre de novo.');
+    return fetch(AI_API_ENDPOINT,{method:'POST',headers:{'Content-Type':'application/json',Authorization:'Bearer '+token},credentials:'same-origin',body:JSON.stringify({kind:'conta_revisao'})});
+  }).then(function(r){
+    return r.json().catch(function(){return {};}).then(function(d){
+      if(!r.ok||!d||!d.ok||!d.senha)throw new Error((d&&d.error)||'Não foi possível gerar a senha.');
+      return d;
+    });
+  }).then(function(d){
+    admRevisaoUltima={email:d.email,senha:d.senha,criada:!!d.criada};
+  }).catch(function(e){
+    admRevisaoErro=(e&&e.message)||'Não foi possível gerar a senha.';
+  }).then(function(){admRevisaoGerando=false;admRevisaoRedesenha();});
+}
 function admRiscoHTML(){
   if(admRiscoErr)return '<div class="card" style="margin-bottom:1rem"><div class="empty">Não consegui apurar o risco: '+esc(admRiscoErr)+'</div></div>';
   if(!admRiscoData)return '<div class="card" style="margin-bottom:1rem"><div class="empty">Apurando risco…</div></div>';
@@ -15818,7 +15955,7 @@ function renderAdmSec(sec){
     // abre esta tela para ver a LISTA; dois blocos de alerta antes do titulo
     // empurravam a lista para baixo da dobra. Embrulhados em `.adm-pc` para
     // alinhar com a tabela — soltos, ficavam encostados na borda.
-    var riscoAoFim=function(){return '<div class="adm-pc">'+admRiscoHTML()+'</div>';};
+    var riscoAoFim=function(){return '<div class="adm-pc">'+admRiscoHTML()+'</div>'+admContaRevisaoHTML();};
     m.innerHTML=admEstudantesHTML()+riscoAoFim();loadAdmEstudantes();
     carregaAdmRisco(function(){
       if(admCurrentSec!=='estudantes')return;
@@ -18869,6 +19006,9 @@ document.addEventListener('click',function(e){
   var pf=c('[data-podfilter]');if(pf){podFilter=pf.dataset.podfilter;renderPodcasts();return;}
   // cursos
   if(c('[data-curso-upsell]')){showAssineScreen((currentUser&&currentUser.email)||'',{upgrade:!isDegustacao()});return;}
+  // conta de revisão das lojas (painel do professor, Estudantes)
+  if(c('[data-adm-revisao]')){admGerarContaRevisao();return;}
+  if(c('[data-adm-revisao-copiar]')){var _sr=admRevisaoUltima&&admRevisaoUltima.senha;if(_sr){try{navigator.clipboard.writeText(_sr).then(function(){notify('Senha copiada.','ok');},function(){notify('Não deu para copiar: selecione a senha e copie.','err');});}catch(e){notify('Não deu para copiar: selecione a senha e copie.','err');}}return;}
   var cf=c('[data-cursofilter]');if(cf){cursoFilter=(cursoFilter===cf.dataset.cursofilter?'':cf.dataset.cursofilter);cursoMod='';renderCursosAluno();return;}
   var cmo=c('[data-cursomod]');if(cmo){cursoMod=cmo.dataset.cursomod;renderCursosAluno();return;}
   if(c('[data-cursobackcursos]')){cursoFilter='';cursoMod='';renderCursosAluno();return;}
@@ -19174,21 +19314,104 @@ function renderPerfil(){
   var _planNice=_planK?_planNames[_planK]:'Degustação (gratuito)';
   var _planDesc;
   if(_planK==='gold')_planDesc='Seu acesso atual é o pacote <b>Gold</b> — o mais completo. Você pode cancelar a renovação quando quiser; o acesso permanece até o fim do período já pago.';
-  else if(_planK)_planDesc='Seu acesso atual é o pacote <b>'+esc(_planNice)+'</b>. Você pode fazer upgrade ou cancelar a renovação quando quiser — o acesso permanece até o fim do período já pago.';
-  else _planDesc='Você está no <b>modo degustação</b>. Assine um pacote para liberar todo o conteúdo.';
+  else if(_planK)_planDesc='Seu acesso atual é o pacote <b>'+esc(_planNice)+'</b>. '+textoCompra('Você pode fazer upgrade ou cancelar a renovação quando quiser','Você pode cancelar a renovação quando quiser')+' — o acesso permanece até o fim do período já pago.';
+  else _planDesc='Você está no <b>modo degustação</b>.'+textoCompra(' Assine um pacote para liberar todo o conteúdo.',' Parte do conteúdo está liberada para você conhecer a plataforma.');
   var assinaturaCard='<div class="card" style="margin-top:1rem"><div class="card-head"><span class="card-title">💳 Assinatura</span><span class="tag '+(_planK?'tag-grn':'tag-blue')+'">'+esc(_planNice)+'</span></div>'
     +'<p style="font-size:.78rem;color:var(--t2);margin:.1rem 0 .85rem;line-height:1.55">'+_planDesc+'</p>'
     +'<div style="display:flex;gap:6px;flex-wrap:wrap">'
     +(_planK==='gold'?'':'<button class="btn btn-primary" id="btn-pf-upgrade">'+(_planK?'⬆️ Fazer upgrade':'✨ Assinar agora')+'</button>')
     +(_planK?'<button class="btn btn-outline" id="btn-pf-cancel-sub">Cancelar assinatura</button>':'')
     +'</div></div>';
+  var excluirCard=podeExcluirConta()?excluirContaCardHTML():'';
   body.innerHTML='<div class="ph" style="display:flex;align-items:flex-start;justify-content:space-between;flex-wrap:wrap;gap:.6rem"><div><h1>Meu perfil</h1><p>Gerencie seus dados cadastrais.</p></div>'+(perfilEdit?'':'<button class="btn btn-primary" id="btn-perfil-edit">✏️ Editar perfil</button>')+'</div>'
     +'<div class="card" style="margin-bottom:1rem"><div style="display:flex;align-items:center;gap:1rem"><div class="tb-avatar" style="width:58px;height:58px;font-size:1.3rem;background:var(--navy);border-radius:14px">'+esc(nome.charAt(0))+'</div><div style="flex:1"><div style="font-size:1.3rem;font-weight:800">'+esc(nome)+'</div><div style="font-size:.8rem;color:var(--t2)">'+esc(label)+'</div><div style="margin-top:.4rem"><span class="tag tag-blue">'+esc(email)+'</span></div></div></div></div>'
-    +inner+(perfilEdit?'':themeCardHTML()+assinaturaCard+nlCard);
+    +inner+(perfilEdit?'':themeCardHTML()+assinaturaCard+nlCard+excluirCard);
   wirePerfil();
+  // Vindo da página pública /excluir-conta (link #excluir-conta): rola até o cartão.
+  if(perfilRolarExclusao&&!perfilEdit){
+    perfilRolarExclusao=false;
+    var _ce=document.getElementById('perfil-excluir');
+    if(_ce&&_ce.scrollIntoView)setTimeout(function(){try{_ce.scrollIntoView({behavior:'smooth',block:'center'});}catch(e){}},150);
+  }
+}
+// ── EXCLUSÃO DA CONTA PELO PRÓPRIO ALUNO (19/10/2026) ──────────────────────────
+// O Google Play e a App Store exigem que a conta criada no app possa ser excluída
+// DENTRO dele, com os dados, e uma página pública que explique como
+// (/excluir-conta). O servidor faz tudo em api/ai.js (kind:'excluir_conta', ver
+// lib/excluir-conta.js): cancela a renovação no pagar.me ANTES de apagar, apaga os
+// dados e o login, e guarda só o registro dos pagamentos, sem nome e sem e-mail.
+// Só aparece para conta real de aluno: professor não se exclui por aqui, e conta
+// de demonstração local não tem o que apagar no servidor.
+var perfilRolarExclusao=false;
+function podeExcluirConta(){
+  return !!(currentUser&&currentUser.id&&currentUser.role==='aluno'&&!isAdminUser());
+}
+function excluirContaCardHTML(){
+  var pago=!!currentPlanKey();
+  return '<div class="card pf-excluir" id="perfil-excluir"><div class="card-head"><span class="card-title">Excluir conta</span></div>'
+    +'<p>Apaga a sua conta e os seus dados. <b>Não dá para desfazer.</b></p>'
+    +'<ul><li>Saem o login, o progresso de estudo (questões feitas, flashcards, anotações, preferências), as mensagens ao suporte, as notificações no celular e a inscrição na newsletter.</li>'
+    +'<li>Fica só o registro dos pagamentos, sem o seu nome e o seu e-mail, que a lei e o estorno exigem.</li>'
+    +(pago?'<li>O seu plano termina agora, e a renovação mensal é cancelada. O período já pago não é devolvido automaticamente: para pedir reembolso, fale com o suporte antes de excluir.</li>':'')
+    +'</ul>'
+    +'<div id="pf-excluir-passo1"><button class="btn btn-outline" id="btn-pf-excluir" type="button">Excluir minha conta</button>'
+    +' <a href="/excluir-conta" target="_blank" rel="noopener" style="font-size:.74rem;color:var(--t3);margin-left:.4rem">Como funciona</a></div>'
+    +'<div id="pf-excluir-passo2" class="pf-excluir-box" style="display:none">'
+    +'<div class="fld2"><label for="pf-excluir-txt">Para confirmar, digite <b>EXCLUIR</b></label><input type="text" id="pf-excluir-txt" autocomplete="off" autocapitalize="characters" spellcheck="false"></div>'
+    +'<div id="pf-excluir-err" style="display:none;background:var(--red-l);border:1px solid #5a2326;border-radius:var(--rs);padding:.45rem .75rem;font-size:.73rem;color:var(--red);margin-bottom:.7rem"></div>'
+    +'<div style="display:flex;gap:6px;flex-wrap:wrap"><button class="btn btn-danger" id="btn-pf-excluir-ok" type="button">Excluir definitivamente</button>'
+    +'<button class="btn btn-outline" id="btn-pf-excluir-voltar" type="button">Voltar</button></div></div>'
+    +'</div>';
+}
+function wireExcluirConta(){
+  var b1=document.getElementById('btn-pf-excluir');
+  var p1=document.getElementById('pf-excluir-passo1'),p2=document.getElementById('pf-excluir-passo2');
+  if(b1)b1.addEventListener('click',function(){if(p1)p1.style.display='none';if(p2)p2.style.display='block';var t=document.getElementById('pf-excluir-txt');if(t)try{t.focus();}catch(e){}});
+  var bv=document.getElementById('btn-pf-excluir-voltar');
+  if(bv)bv.addEventListener('click',function(){if(p2)p2.style.display='none';if(p1)p1.style.display='block';});
+  var bok=document.getElementById('btn-pf-excluir-ok');
+  if(bok)bok.addEventListener('click',excluirContaConfirmada);
+  var tx=document.getElementById('pf-excluir-txt');
+  if(tx)tx.addEventListener('keydown',function(e){if(e.key==='Enter')excluirContaConfirmada();});
+}
+var excluindoConta=false;
+function excluirContaConfirmada(){
+  if(excluindoConta)return;
+  var txt=document.getElementById('pf-excluir-txt'),err=document.getElementById('pf-excluir-err'),bt=document.getElementById('btn-pf-excluir-ok');
+  var falha=function(m){excluindoConta=false;if(err){err.textContent=m;err.style.display='block';}if(bt){bt.disabled=false;bt.textContent='Excluir definitivamente';}};
+  if(err)err.style.display='none';
+  if(String((txt&&txt.value)||'').trim().toUpperCase()!=='EXCLUIR'){falha('Para confirmar, digite EXCLUIR.');return;}
+  excluindoConta=true;
+  if(bt){bt.disabled=true;bt.textContent='Excluindo…';}
+  supSessionToken().then(function(token){
+    if(!token){falha('Sua sessão expirou. Entre de novo e repita a exclusão.');return;}
+    return fetch(AI_API_ENDPOINT,{method:'POST',headers:{'Content-Type':'application/json',Authorization:'Bearer '+token},credentials:'same-origin',body:JSON.stringify({kind:'excluir_conta',confirmar:'EXCLUIR'})})
+      .then(function(r){return r.json().catch(function(){return {};}).then(function(d){return {ok:!!(r.ok&&d&&d.ok),d:d||{}};});})
+      .then(function(x){
+        if(!x.ok){falha(x.d.error||'A exclusão não terminou. Tente de novo em alguns minutos.');return;}
+        contaExcluidaNoAparelho();
+      });
+  }).catch(function(){falha('Não foi possível falar com o servidor. Confira a conexão e tente de novo.');});
+}
+// Depois da exclusão: nada da conta apagada fica neste aparelho, e nada é
+// regravado (o save pendente morreria no banco, mas nem chega a sair). A página
+// recarrega limpa no login, com o aviso.
+function contaExcluidaNoAparelho(){
+  try{clearTimeout(remoteStateSaveTimer);}catch(e){}
+  var client=getSupabaseClient();
+  try{if(client&&client.auth)client.auth.signOut({scope:'local'}).catch(function(){});}catch(e){}
+  try{doLogout();}catch(e){}
+  try{
+    var ks=[];
+    for(var i=0;i<localStorage.length;i++){var k=localStorage.key(i);if(k&&(k.indexOf('endodirect_v1_')===0||/^sb-.*-auth-token/.test(k)))ks.push(k);}
+    ks.forEach(function(k){localStorage.removeItem(k);});
+  }catch(e){}
+  try{mem={};}catch(e){}
+  try{window.location.replace('/?conta-excluida=1');}catch(e){window.location.href='/?conta-excluida=1';}
 }
 function wirePerfil(){
   try{wireThemeToggle();}catch(e){}
+  try{wireExcluirConta();}catch(e){}
   var bedit=document.getElementById('btn-perfil-edit');
   if(bedit)bedit.addEventListener('click',function(){perfilEdit=true;renderPerfil();});
   var bcancel=document.getElementById('btn-pf-cancel');
@@ -20506,6 +20729,23 @@ document.addEventListener('DOMContentLoaded',function(){
       setTimeout(function(){
         if(!currentUser){try{notify(__wasSignup?'E-mail confirmado! Faça login para entrar. ✅':'Tudo certo! Faça login para entrar.','ok');}catch(e){}}
       },2500);
+    }
+  }catch(e){}
+  // Três entradas que vão direto ao login, nunca à landing:
+  //  - conta recém-excluída (contaExcluidaNoAparelho): login com o aviso;
+  //  - app das lojas: a landing tem os preços (ver APP_LOJA);
+  //  - vindo de /excluir-conta (#excluir-conta) sem sessão: entra e cai no cartão.
+  try{
+    if(/[?&]conta-excluida=1(?:&|$)/.test(window.location.search)){
+      try{history.replaceState(null,'',window.location.pathname);}catch(e){}
+      showLoginScreen();
+      var __okx=document.getElementById('login-ok');
+      if(__okx){__okx.textContent='Sua conta foi excluída. Os seus dados foram apagados deste aparelho e dos nossos servidores.';__okx.style.display='block';}
+    }else{
+      var __pedeExcl=false;
+      try{__pedeExcl=(JSON.parse(sessionStorage.getItem(LINK_PAINEL_KEY)||'null')||{}).p==='excluir-conta';}catch(e){}
+      var __lsx=document.getElementById('login-screen');
+      if((isAppLoja()||__pedeExcl)&&__lsx&&__lsx.style.display!=='flex')showLoginScreen();
     }
   }catch(e){}
   startSupabaseAuthWatcher();

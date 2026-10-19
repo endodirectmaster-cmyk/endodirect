@@ -96,6 +96,8 @@ function caixa(extra) {
   vm.createContext(c);
   vm.runInContext([
     'var acessosConhecidos=false;var trialModalSeen=false;',
+    // App das lojas (19/10/2026): aqui é o site, sem a marca do app.
+    "var APP_LOJA='';", corpo('isAppLoja'), corpo('textoCompra'),
     decl('DEG_DIAS'), decl('DEG_MURAL_DIAS'), decl('TRIAL_LIMIT'),
     decl('DEGUSTACAO_PANELS'), decl('TRIAL_PANELS'), decl('PANEL_SCOPE'), decl('PANEL_MIN_TIER'), decl('PANEL_LABELS'),
     decl('ACESSOS_GUARDADOS_MS'),

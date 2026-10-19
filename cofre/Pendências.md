@@ -14,6 +14,19 @@ Pedido do professor em 18/10. Entregue no mesmo dia; ver [[Instagram Stories (Qu
 - [ ] O professor gerar um lote e dizer se o equilíbrio está bom (proporção de diretas,
   frequência de figura, dificuldade dos distratores).
 
+## 📚 PRÓXIMO LOTE: figuras de tireoide, obesidade e osteometabolismo (pedido de 18/10)
+
+O professor subiu ao bucket `livros` três pastas novas: `Tireoide/`, `Obesidade/` e
+`Osteometabolismo/`, cada uma com `imagens_<tema>_PT.zip` (já traduzidas) e
+`indice_PT.csv`. Pediu para começar **depois** de terminar o que estava em andamento
+(ajustes do app). Mesmo processo do lote de diabetes ([[Ilustrações dos Resumos]]):
+1. [ ] Baixar pela função temporária (`baixar-livros`, URL assinada) e conferir o índice.
+2. [ ] Revisão por agentes, um por lote: conteúdo contra o capítulo, rótulo, legenda e
+   trecho de ancoragem. Separar o que contradiz o capítulo ou está desatualizado.
+3. [ ] `monta.js` e a prévia (artifact) para a aprovação do professor.
+4. [ ] Envio (`subir-figuras-livros`, depois 410) e gravação com `gera-sql.js`, em
+   grupos de até 4 capítulos, com backup, F5 e conferência de zumbi.
+
 ## ✅ GRAVADO (19/10): Figuras de diabetes nos Resumos
 
 51 figuras em 16 capítulos, 10 com rótulo corrigido. O professor aprovou em 19/10
@@ -48,12 +61,15 @@ Pedido do professor em 18/10. Entregue no mesmo dia; ver [[Instagram Stories (Qu
      - depois do número, até 2 dias úteis para a Apple recebê-lo;
      - se passar de 2 semanas, escrever à D&B.
    - Conta de organização no Google Play (US$ 25) e na Apple (US$ 99/ano), com o mesmo D-U-N-S, a mesma razão social e o mesmo endereço.
-2. [ ] **Eu, na plataforma:**
-   - exclusão de conta no app, mais a página pública;
-   - política de privacidade (retenção e exclusão);
-   - esconder preços e checkout dentro do app;
-   - conta de demonstração para o revisor;
-   - `/.well-known/assetlinks.json` no www (precisa do SHA-256 da chave de assinatura do Play Console).
+2. **Eu, na plataforma** (detalhes em [[App nas Lojas]], seção "Ajustes da plataforma"):
+   - [x] exclusão de conta no app, mais a página pública `/excluir-conta` (19/10);
+   - [x] política de privacidade e termos: retenção, exclusão, login por e-mail (19/10);
+   - [x] preços, "assine" e checkout escondidos dentro do app (19/10);
+   - [x] conta de revisão `revisao@endodirect.com.br`, com a senha gerada pelo professor
+     em Estudantes (19/10);
+   - [ ] `/.well-known/assetlinks.json` no www (precisa do SHA-256 da chave de assinatura do Play Console).
+   - [ ] Professor: gerar a senha da conta de revisão quando for preencher os formulários
+     das lojas (Google Play: Acesso ao app; App Store: Informações de login).
 3. [ ] **iPhone (Capacitor; o professor tem Mac):**
    - "Entrar com a Apple";
    - login do Google pelo navegador do sistema;

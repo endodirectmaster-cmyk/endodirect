@@ -94,7 +94,7 @@ function caixa(srv) {
   vm.runInContext([
     declEnc, declSlot,
     'var deviceWatcher=null,lastDeviceTickAt=0;',
-    corpo('getDeviceId'), corpo('claimDeviceSlot'), corpo('deviceTick'), corpo('deviceTickThrottled'),
+    corpo('getDeviceId'), corpo('contaRevisaoLojas'), corpo('claimDeviceSlot'), corpo('deviceTick'), corpo('deviceTickThrottled'),
     corpo('startDeviceWatcher'), corpo('onSessionEvicted'), corpo('contaAtual'), corpo('mesmaContaQue'),
   ].join('\n'), c);
   return c;

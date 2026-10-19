@@ -8,6 +8,22 @@ atualizado: 2026-10-19
 Log de decisões de produto e técnicas (mais recentes no topo).
 
 ## 2026-10
+- **📱 APP NAS LOJAS: EXCLUSÃO DE CONTA, APP SEM COMPRA E CONTA DE REVISÃO (2026-10-19).** `sw.js` v317 → **v318**. Autorizado pelo professor com *"Pode fazer tudo"*. Detalhes em [[App nas Lojas]].
+  - **Exclusão dentro do app** (Meu perfil, com a palavra EXCLUIR) e página pública `/excluir-conta`. O servidor:
+    - cancela a renovação no pagar.me **antes** de apagar; se não cancelar, nada sai;
+    - apaga os dados e o login;
+    - guarda só os pagamentos, sem nome e sem e-mail, para estorno, contestação e obrigação fiscal.
+    - O período pago não é devolvido automaticamente; reembolso é com o suporte, antes de excluir.
+  - **App só de acesso:** dentro do app não há preço, botão de assinar nem checkout, e a landing não aparece. No site nada muda. O app abre o site com `?app=android|ios`.
+  - **Conta de revisão** `revisao@endodirect.com.br`: Gold + EndoTEEM, fora das contagens e sem limite de aparelhos. A senha é gerada pelo professor em Estudantes e só aparece para ele.
+  - 🧨 **O conector do Supabase segura todo SQL com DELETE, até dentro do corpo de uma função.** A primeira versão da função de exclusão travou duas vezes por 60 s sem aplicar nada. Não contornei a trava:
+    - a função do banco só lista e anonimiza (SELECT e UPDATE);
+    - quem apaga é o servidor do app, pela API REST e pela API do Auth, com a chave de serviço;
+    - o limite de aparelhos da conta de revisão ficou no cliente, porque a função do banco tem DELETE.
+  - **Testes:**
+    - `scripts/test-excluir-conta.js` no CI, com 20 de 20 mutantes pegos;
+    - a função do banco numa transação desfeita;
+    - A/B em Chromium com 44 conferências: no app, texto de compra em 26 de 26 painéis na main, contra 0 no branch.
 - **📚 FIGURAS DE DIABETES GRAVADAS NOS RESUMOS (2026-10-19).** 51 figuras em 16 capítulos.
   - **Aprovação sem os originais:** o professor aprovou a prévia (*"Pode fazer tudo"*) sem
     mandar o zip em inglês. As 22 traduzidas não foram conferidas lado a lado; fica
