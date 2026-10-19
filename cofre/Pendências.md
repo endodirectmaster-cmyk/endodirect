@@ -50,6 +50,8 @@ a renovação do limite semanal. Processo e números em [[Ilustrações dos Resu
     Não salvou mais desde 14h00. Se essa aba ainda estiver aberta, está na v318 com o 109
     antigo na memória e desfaz de novo no 2º save. O aviso "Nova versão disponível" aparece
     nela, mas não recarrega sozinho: Rodolpho precisa clicar em "Atualizar" ou dar F5.
+  - **Conferência às 17h52 UTC:** segue `c38d80f1`. Nenhum save no estado global desde
+    15h35; a aba do Rodolpho não salvou desde 14h00. Recarregamento ainda não confirmado.
   - [ ] Nova conferência de zumbi do 109 depois de o Rodolpho recarregar.
   - ⚠️ A gravação das figuras só começa com a v319 no ar e **todo painel de professor
     aberto antes das 14h44 UTC** (deploy da v319) recarregado, não só o do professor.
