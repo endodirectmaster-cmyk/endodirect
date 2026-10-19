@@ -42,8 +42,17 @@ a renovação do limite semanal. Processo e números em [[Ilustrações dos Resu
   - 🧟 **Voltou às 13h56 UTC** num save do painel aberto desde antes. Regravado às
     14h18 (`c38d80f1`); às 14h40 seguia certo. A causa era um defeito do save, corrigido
     no `sw.js` v319 (ver [[Dados e Supabase]]).
-  - [ ] Depois do deploy e do F5 do professor: nova conferência de zumbi do 109.
-  - ⚠️ A gravação das figuras só começa com a v319 no ar e o F5 confirmado.
+  - [x] **Conferência às 15h47 UTC:** segue `c38d80f1`. O save das 15h35 veio do iPhone
+    do Rafael Giorgi, com login às 15h35, já na v319 (a navegação é "rede primeiro" no
+    `sw.js`).
+  - **Quem desfez:** os saves das 13h54 às 14h00 (com 500/520/502 no meio) vieram de um
+    computador Windows com Edge, logado como **Rodolpho**, aberto desde antes das 13h11.
+    Não salvou mais desde 14h00. Se essa aba ainda estiver aberta, está na v318 com o 109
+    antigo na memória e desfaz de novo no 2º save. O aviso "Nova versão disponível" aparece
+    nela, mas não recarrega sozinho: Rodolpho precisa clicar em "Atualizar" ou dar F5.
+  - [ ] Nova conferência de zumbi do 109 depois de o Rodolpho recarregar.
+  - ⚠️ A gravação das figuras só começa com a v319 no ar e **todo painel de professor
+    aberto antes das 14h44 UTC** (deploy da v319) recarregado, não só o do professor.
   - O cap. 109 entra no grupo 7 da gravação das figuras: o `caps/109.json` da sessão já
     está com o texto novo, e o ensaio do grupo foi refeito (`c38d80f1 → 5dd222bd`).
   - A base do Chat IA cita a SBEM com manutenção de 1.000–2.000 UI/dia, faixa compatível;
