@@ -69,6 +69,8 @@ function caixa(extra) {
   vm.createContext(c);
   vm.runInContext([
     'var altMemo={};',
+    // App das lojas (19/10/2026): aqui é o site, sem a marca do app.
+    "var APP_LOJA='';", corpo('isAppLoja'), corpo('textoCompra'),
     corpo('esc'), corpo('ldHTML'), corpo('srsKey'), corpo('groundSys'), corpo('blockIfDegustacao'), corpo('planoAindaNaoConfirmado'), corpo('genCode'),
     'function provasPool(){return provasDB;}',
     corpo('filterProvas'),

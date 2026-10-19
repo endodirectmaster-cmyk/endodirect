@@ -20,6 +20,26 @@ atualizado: 2026-10-19
   - A `subir-figuras-livros` voltou a funcionar em 19/10, com token novo e prazo, para as 51 de diabetes. Depois voltou ao 410 (versão 5), e o token foi apagado.
 - **⚠️ Chave de serviço na função:** use `createClient(SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY)` do supabase-js. Com `fetch` direto e `Authorization: Bearer <SUPABASE_SERVICE_ROLE_KEY>`, o Storage respondeu 403 "Invalid Compact JWS" (18/10).
 
+## 🧨 O conector segura DELETE até dentro de função (19/10/2026)
+
+- `CREATE FUNCTION` com `delete from ...` no corpo ficou retido para confirmação e
+  expirou em 60 s, duas vezes (apply_migration e execute_sql), sem aplicar nada. A
+  mesma função só com SELECT e UPDATE foi criada na hora.
+- **Regra:**
+  - função nova que precisa apagar linhas não vai pelo conector;
+  - quem apaga é o servidor do app (REST com a chave de serviço), pela chave
+    primária que a função devolve;
+  - ou o professor cola o SQL no editor.
+  - Também vale para recriar função que já tem DELETE: `endodirect_session_claim`
+    não pôde receber a isenção da conta de revisão.
+- **Aplicado assim:** `endodirect_exclusao(uid, 'listar'|'anonimizar')`, só para
+  `service_role` (revoke de public/anon/authenticated e guarda por `auth.role()`).
+  Versionada em `supabase/excluir-conta-e-revisao-lojas.sql`; o resto da exclusão está
+  em `lib/excluir-conta.js`.
+- **Contas fora das contagens** (a régua `endodirect_email_de_teste` e as 4 listas das
+  RPCs do painel): `aluno@`, `alunopro@`, `memed.teste@` e, desde 19/10,
+  `revisao@endodirect.com.br`.
+
 ## 🗑️ Apagar tabela: pelo editor SQL, não pelo conector (17/10/2026)
 
 O conector do Supabase segura `DROP TABLE` até uma confirmação em janela própria, que

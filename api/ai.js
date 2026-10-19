@@ -44,6 +44,9 @@ const { fetchArticleText } = require('../lib/fetch-article');
 const { sendSupportEmail, storeSupportTicket, listSupportTickets, listMyTickets, replySupportTicket } = require('../lib/support');
 const { sendToEmail } = require('../lib/push');
 const { adminFromReq, userFromReq } = require('../lib/admin-auth');
+// Exclusão de conta pelo aluno e conta de revisão das lojas (módulos lib/).
+const { excluirConta } = require('../lib/excluir-conta');
+const { contaRevisao } = require('../lib/conta-revisao');
 function pickModel(requested) {
   return normModel(requested) || DEFAULT_MODEL;
 }
@@ -198,6 +201,27 @@ module.exports = async function handler(req, res) {
       if (!user) return json(res, 200, { ok: true, authed: false, tickets: [] });
       const tickets = await listMyTickets(user.email);
       return json(res, 200, { ok: true, authed: true, tickets });
+    }
+    // (d2) ALUNO exclui a própria conta (o Google Play e a App Store exigem a
+    // exclusão dentro do app). Identidade SÓ pelo token de sessão: o corpo apenas
+    // confirma, e ninguém exclui a conta de outro. Ver lib/excluir-conta.js.
+    if (sbody && sbody.kind === 'excluir_conta') {
+      const user = await userFromReq(req);
+      if (!user || !user.id) return json(res, 401, { ok: false, error: 'Entre na sua conta para excluí-la.' });
+      if (String(sbody.confirmar || '').trim().toUpperCase() !== 'EXCLUIR') {
+        return json(res, 400, { ok: false, error: 'Para confirmar, digite EXCLUIR.' });
+      }
+      const r = await excluirConta(user);
+      return json(res, r.ok ? 200 : (r.code || 400), r.ok ? { ok: true } : { ok: false, error: r.error });
+    }
+    // (d3) PROFESSOR cria ou renova a conta de revisão das lojas e recebe a senha
+    // nova, que só existe nesta resposta (sem cache). Ver lib/conta-revisao.js.
+    if (sbody && sbody.kind === 'conta_revisao') {
+      const admin = await adminFromReq(req);
+      if (!admin) return json(res, 401, { ok: false, error: 'Apenas administradores.' });
+      const r = await contaRevisao();
+      res.setHeader('Cache-Control', 'no-store');
+      return json(res, r.ok ? 200 : (r.code || 400), r.ok ? { ok: true, email: r.email, senha: r.senha, criada: r.criada } : { ok: false, error: r.error });
     }
     // (e) Busca de imagem de exame no Open-i (PubMed Central) p/ ilustrar a Questão
     // do Dia. Não usa Anthropic → tratado aqui. Best-effort: falha vira lista vazia.

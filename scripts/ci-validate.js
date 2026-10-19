@@ -1542,5 +1542,18 @@ try {
   fail('regressão da subespecialidade Hipoglicemia falhou:\n' + out);
 }
 
+// 🧨 EXCLUSÃO DE CONTA (19/10/2026): exigência do Google Play e da App Store. A
+//     ordem é a regra: nada sai antes de toda assinatura cancelar no pagar.me, e o
+//     usuário só sai depois dos dados e da anonimização dos pagamentos. A
+//     identidade vem do token, nunca do corpo. Junto, a conta de revisão das
+//     lojas: só professor gera a senha, que volta sem cache.
+try {
+  execFileSync(process.execPath, [path.join('scripts', 'test-excluir-conta.js')], { stdio: 'pipe' });
+  ok('exclusão de conta: assinatura cancelada antes de apagar, identidade só pelo token, e a conta de revisão só pelo professor');
+} catch (e) {
+  const out = (e.stdout ? e.stdout.toString() : '') + (e.stderr ? e.stderr.toString() : '');
+  fail('regressão da exclusão de conta / conta de revisão falhou (lib/excluir-conta.js, lib/conta-revisao.js, api/ai.js):\n' + out);
+}
+
 if (errors) { console.error(`\n${errors} verificação(ões) falharam.`); process.exit(1); }
 console.log('\nTodas as verificações passaram.');
