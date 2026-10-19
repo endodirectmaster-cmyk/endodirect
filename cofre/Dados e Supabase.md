@@ -101,6 +101,38 @@ Login único no domínio `endodirect.com.br` (não no do parceiro: a recuperaç�
 ## Save do estado global (admin) e concorrência
 O save do admin (`saveRemoteState`, role=admin) faz read-modify-write do `endodirect_global_state`: relê o payload, **preserva as chaves de servidor** (`radar_avisos`, `newsletter_*` — escritas só pelo cron) e, **se `updated_at` mudou desde o load** (`lastGlobalUpdatedAt`), MESCLA as coleções aditivas (`GLOBAL_MERGE_KEYS`: adm_cursos, podcasts, provas, mm_shared, diretrizes, diretrizes_temas, curso_mods_extra, adm_estudantes). A mescla é **baseada em baseline** (`mergeConcurrent`): parte do estado local atual (honra minhas exclusões/edições) e só acrescenta itens do servidor cuja chave é **nova desde o baseline da sessão** (`captureGlobalBaseline`, capturado junto com `lastGlobalUpdatedAt` no load e em cada save). Assim adições de outro editor/cron são preservadas e exclusões não voltam. **Histórico:** o #305 usava `unionBy` (server∪local), que ressuscitava exclusões — bug "apago tema de Diretrizes e volta no F5", disparado até pelo cron do radar bumpando `updated_at`. Substituído pelo merge com baseline em 2026-06-15.
 
+### 🐛 O 2º save desfazia o que o 1º tinha adotado do banco (2026-10-19)
+- **O caso:** o cap. 109 (vitamina D) foi gravado no banco às 13h11 UTC e voltou ao texto
+  antigo às 13h56, num save do painel do professor, que estava aberto desde antes.
+- **A causa:** o merge montava certo o objeto enviado (`p`), mas a memória do painel
+  continuava com a cópia velha. O save seguinte não fazia merge, porque o servidor não
+  tinha mudado desde o save deste mesmo painel; `p` saía da memória e a edição sumia.
+  Valia para toda coleção mesclada, inclusive item novo de outro editor.
+- **Segunda causa, nos mesmos minutos:** o GET do estado global devolveu 525 e 503, e o
+  save engolia o erro. Com `{}` no lugar do servidor, não havia merge, e as chaves que só
+  o cron escreve (`newsletter_sent` etc.) voltavam ao valor carregado. Uma `newsletter_sent`
+  revertida pode fazer a newsletter reenviar.
+- **A correção (`saveRemoteState`, `sw.js` v319):**
+  - coleção que trouxe algo do servidor no merge entra também na memória, por
+    `applyStatePayload` (o mesmo caminho da carga). As outras ficam como estão. A ordem
+    não muda: atualização fica no lugar e item novo vai para o fim, então o índice que o
+    editor guarda segue apontando para o mesmo capítulo;
+  - leitura com erro não grava. Tenta de novo em 4, 8, 16 e 32 s e depois a cada minuto,
+    até conseguir, com um timer só. Não há save ao fechar a aba, então desistir deixaria
+    a edição só na memória;
+  - na 3ª falha seguida, aviso vermelho para não fechar o painel; quando volta,
+    "Salvo: o servidor voltou…". Uma falha passageira não mostra nada (antes saía o
+    "Verifique o setup SQL").
+- **Testes:**
+  - `scripts/test-save-painel.js` (no `ci-validate`) roda o save real num `vm`. Na main
+    cai em 16 verificações;
+  - A/B em Chromium com supabase-js falso logado como admin (sessão
+    `scratchpad/ab-save/save.js`): a main desfaz a troca no 2º save e grava às cegas com
+    525; o branch mantém, espera e grava sozinho quando a leitura volta.
+- **O que não muda:** gravação minha pelo SQL ainda pede o F5 antes (regra abaixo). A
+  correção só vale para quem carregou a versão nova, e item apagado no banco continua
+  voltando pelo painel aberto (o merge parte da memória).
+
 ### ⚠️ Como gravar `diretrizes` pelo SQL sem ser atropelado (2026-07-27)
 O merge com baseline vale **entre saves do cliente**. Uma gravação minha, feita direto no Postgres, **não entra nesse baseline**: a aba que já estava aberta segue com o payload antigo em memória e, no save seguinte, reescreve o blob inteiro por cima. Foi assim que **três gravações minhas sumiram** (STEP-2 e os dois comparativos) — e o rastro é sempre o mesmo: `updated_at` recente com um UUID de usuário.
 
