@@ -4777,6 +4777,9 @@ var igStoryDraft=null; // rascunho em edição (gerado pela IA ou manual)
 // último save; se o servidor mudou desde então (outro admin gravou), o save mescla
 // as coleções aditivas em vez de sobrescrever (evita perder aulas/podcasts/etc.).
 var lastGlobalUpdatedAt=null;
+// Leitura do estado global que falhou antes do save: quantas seguidas e o timer da
+// próxima tentativa (ver saveRemoteState).
+var globalReadRetries=0,globalReadRetryTimer=null;
 // Coleções de conteúdo global geridas pelo admin e suas chaves de identidade.
 // Usadas no merge de concorrência (mergeConcurrent) e no baseline da sessão.
 var GLOBAL_MERGE_KEYS={
@@ -5560,6 +5563,24 @@ function saveRemoteState(){
     // servidor antes do upsert (read-modify-write, igual o cron faz). As chaves
     // que o professor edita (radar_hidden, adm_avisos, provas, etc.) seguem do admin.
     ops.push(client.from('endodirect_global_state').select('payload,updated_at').eq('id','main').maybeSingle().then(function(g){
+      // ⚠️🐛 FIX (19/10/2026): leitura que FALHOU não é "servidor vazio". Com o erro
+      // engolido, serverP virava {} e serverUpd null: o merge não rodava e o save
+      // gravava a cópia local inteira por cima do banco (13h55–13h56 UTC de 19/10, o
+      // GET devolveu 525 e 503 seguidos de saves). Sem a leitura, não grava: tenta de
+      // novo em 4, 8, 16 e 32 s e depois a cada minuto, até conseguir. Não há save ao
+      // fechar a aba, então desistir deixaria a edição do professor só na memória; por
+      // isso, na 3ª falha seguida, avisa para não fechar o painel.
+      if(g&&g.error){
+        globalReadRetries++;
+        clearTimeout(globalReadRetryTimer);
+        globalReadRetryTimer=setTimeout(function(){queueRemoteStateSave();},Math.min(60000,4000*Math.pow(2,globalReadRetries-1)));
+        console.warn('Leitura do estado global falhou antes do save; nova tentativa agendada',g.error);
+        if(globalReadRetries===3){try{notify('O servidor não respondeu e as últimas mudanças ainda NÃO foram salvas. Sigo tentando sozinho: não feche o painel até aparecer "Salvo".','err');}catch(e){}}
+        var erroLeitura=new Error('leitura do estado global falhou');erroLeitura.leituraGlobal=true;
+        throw erroLeitura;
+      }
+      var vinhaFalhando=globalReadRetries>=3;
+      globalReadRetries=0;clearTimeout(globalReadRetryTimer);
       var serverP=(g&&g.data&&g.data.payload)||{};
       var serverUpd=(g&&g.data&&g.data.updated_at)||null;
       var p=globalStatePayload();
@@ -5590,10 +5611,21 @@ function saveRemoteState(){
       // O union antigo ressuscitava itens excluídos (ex.: apagar um tema de Diretrizes
       // e ele voltar no F5), inclusive quando só o cron do radar bumpava o updated_at.
       if(lastGlobalUpdatedAt&&serverUpd&&serverUpd!==lastGlobalUpdatedAt){
-        var rep={added:0,updated:0,conflicts:[]};
+        var rep={added:0,updated:0,conflicts:[]},adotado={};
         Object.keys(GLOBAL_MERGE_KEYS).forEach(function(coll){
+          var antes=rep.added+rep.updated;
           p[coll]=mergeConcurrent(serverP[coll],p[coll],globalBaseline[coll],GLOBAL_MERGE_KEYS[coll],rep,coll);
+          if(rep.added+rep.updated>antes)adotado[coll]=p[coll];
         });
+        // ⚠️🐛 FIX (19/10/2026): o merge monta `p` (o que vai ao banco) com o que veio
+        // do servidor, mas a memória do painel ficava com a cópia velha. No save
+        // seguinte o servidor não tinha mudado desde o save deste painel, o merge não
+        // rodava e `p` saía da memória — desfazendo, um save depois, o que este mesmo
+        // painel tinha acabado de adotar. Foi assim que a troca do cap. 109 (gravada no
+        // banco às 13h11 UTC de 19/10) voltou às 13h56. As coleções que trouxeram algo
+        // do servidor entram também na memória, pelo mesmo caminho da carga (as outras
+        // ficam como estão: nada a adotar, e as 2.401 questões não são refeitas à toa).
+        if(Object.keys(adotado).length)applyStatePayload(adotado);
         // Conflito de verdade (os dois lados mexeram no MESMO item) é o único caso
         // em que algo do servidor não entra — então avisa em vermelho e nomeia.
         if(rep.conflicts.length){
@@ -5603,12 +5635,13 @@ function saveRemoteState(){
         }
       }
       var stamp=new Date().toISOString();
-      return client.from('endodirect_global_state').upsert({id:'main',payload:p,updated_by:currentUser.id,updated_at:stamp},{onConflict:'id'}).then(function(res){if(res.error)throw res.error;lastGlobalUpdatedAt=stamp;captureGlobalBaseline(p);});
+      return client.from('endodirect_global_state').upsert({id:'main',payload:p,updated_by:currentUser.id,updated_at:stamp},{onConflict:'id'}).then(function(res){if(res.error)throw res.error;lastGlobalUpdatedAt=stamp;captureGlobalBaseline(p);if(vinhaFalhando){try{notify('Salvo: o servidor voltou e as mudanças pendentes foram gravadas.','info');}catch(e){}}});
     }));
   }
   return Promise.all(ops)
     .then(function(){return true;})
     .catch(function(e){
+      if(e&&e.leituraGlobal)return false; // já reagendada (e avisada, se insiste) acima
       if(!remoteStateWarned){
         remoteStateWarned=true;
         console.warn('Supabase save failed',e);

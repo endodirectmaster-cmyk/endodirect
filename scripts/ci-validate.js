@@ -1275,6 +1275,19 @@ try {
   fail('regressão do merge com o servidor falhou (verifique mergeConcurrent/itemSig no index.html):\n' + out);
 }
 
+// ⚠️ O merge acima acertava o 1º save e o 2º desfazia. Em 19/10 a troca do cap. 109
+//     (gravada no banco às 13h11) voltou às 13h56: o merge adotava a edição só no
+//     objeto enviado, a memória do painel seguia velha e o save seguinte, sem merge,
+//     a regravava. E leitura do estado global que falhava (525/503) virava save às
+//     cegas, com `{}` no lugar do servidor.
+try {
+  execFileSync(process.execPath, [path.join('scripts', 'test-save-painel.js')], { stdio: 'pipe' });
+  ok('save do painel: o 2º save não desfaz o que o 1º adotou do servidor; leitura falha não grava às cegas');
+} catch (e) {
+  const out = (e.stdout ? e.stdout.toString() : '') + (e.stderr ? e.stderr.toString() : '');
+  fail('regressão do save do painel falhou (verifique saveRemoteState/applyStatePayload no index.html):\n' + out);
+}
+
 // ⚠️ Imagem inserida NO CORPO do resumo (diferente da figura do capítulo) passava
 //     pelo editor WYSIWYG e sumia no salvar: o `htmlToMd` só serializava <img> que
 //     estivesse DENTRO de um parágrafo, e ao inserir no cursor o navegador põe a
