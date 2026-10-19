@@ -34,8 +34,15 @@ a renovação do limite semanal. Processo e números em [[Ilustrações dos Resu
    - Williams fig. 39.4: foto de criança com tarja só nos olhos; manter ou tirar.
 5. [ ] Envio (`subir-figuras-livros`, depois 410) e gravação com `gera-sql.js`, em grupos
    de até 4 capítulos, com md5 conferido antes, backup, F5 e conferência de zumbi.
-- **Achado de passagem (não mexido):** a manutenção depois do ataque de vitamina D
-  (50.000 UI/semana) é 1.500–2.000 UI/dia no cap. 107 e 800 UI/dia no cap. 109.
+- **Achado de passagem, resolvido em 19/10:** a manutenção depois do ataque de vitamina D
+  (50.000 UI/semana) era 1.500–2.000 UI/dia no cap. 107 e 800 UI/dia no cap. 109. O
+  professor: *"deixa esse como correto"* (o do 107). O 109 foi gravado às 13h11 UTC com
+  1.500–2.000 UI/dia (backup `cap109-vitd-manutencao-20261019`; md5 `b1b9851b` →
+  `c38d80f1`). Conferência de zumbi agendada para 14h13 UTC.
+  - O cap. 109 entra no grupo 7 da gravação das figuras: o `caps/109.json` da sessão já
+    está com o texto novo, e o ensaio do grupo foi refeito (`c38d80f1 → 5dd222bd`).
+  - A base do Chat IA cita a SBEM com manutenção de 1.000–2.000 UI/dia, faixa compatível;
+    não foi mexida.
 
 ## ✅ GRAVADO (19/10): Figuras de diabetes nos Resumos
 
