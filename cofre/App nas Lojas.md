@@ -140,6 +140,9 @@ entregues na conversa. Aqui ficam o resumo, as decisões e o que falta.
       57 acessos e 130 chaves no registro.
     - Depois disso, o token antigo dá `user_not_found`, o login com a senha é recusado e a
       API recusa o token.
+    - O save do painel às 01:24 UTC (Prof. Rafael), depois da exclusão, não devolveu a
+      chave apagada de `trial_emails`. Confirma em produção que o cliente copia essa chave
+      do servidor ao gravar.
 
 ## Caminho técnico
 

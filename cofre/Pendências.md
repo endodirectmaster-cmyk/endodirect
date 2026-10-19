@@ -19,7 +19,8 @@ Pedido do professor em 18/10. Entregue no mesmo dia; ver [[Instagram Stories (Qu
 O professor subiu ao bucket `livros` três pastas novas: `Tireoide/`, `Obesidade/` e
 `Osteometabolismo/`, cada uma com `imagens_<tema>_PT.zip` (já traduzidas) e
 `indice_PT.csv`. Pediu para começar **depois** de terminar o que estava em andamento
-(ajustes do app). Mesmo processo do lote de diabetes ([[Ilustrações dos Resumos]]):
+(ajustes do app) e de o limite zerar. **Início agendado para 23/10, 17h05 de Brasília**
+(renovação do limite semanal), por um lembrete nesta conversa; se ele pedir antes, começa antes. Mesmo processo do lote de diabetes ([[Ilustrações dos Resumos]]):
 1. [ ] Baixar pela função temporária (`baixar-livros`, URL assinada) e conferir o índice.
 2. [ ] Revisão por agentes, um por lote: conteúdo contra o capítulo, rótulo, legenda e
    trecho de ancoragem. Separar o que contradiz o capítulo ou está desatualizado.
@@ -37,7 +38,9 @@ O professor subiu ao bucket `livros` três pastas novas: `Tireoide/`, `Obesidade
 1. [x] Envio dos 51 arquivos pela `subir-figuras-livros`, que voltou a responder 410.
 2. [x] Gravação e conferência: 16 md5, 4 backups e as 51 figuras, uma vez cada.
 3. [x] Professor avisado do F5.
-4. [ ] **Conferência de zumbi às 01h30 UTC** (lembrete agendado nesta conversa).
+4. [x] **Conferência de zumbi (01h31 UTC):** os 16 md5 seguem os gravados e as 51 figuras
+   aparecem uma vez cada (70 de livros no total). Os saves posteriores (00:34 e 01:24 UTC,
+   do Prof. Rafael) já carregaram a versão nova.
 5. [ ] *Opcional:* se o zip dos originais em inglês vier, conferir as 22 traduzidas lado
    a lado, em especial o rótulo da úlcera de calcanhar da Matfin 40-1.
 
