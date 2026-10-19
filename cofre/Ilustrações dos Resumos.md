@@ -121,6 +121,54 @@ ampliador. O editor do professor preserva a figura ao salvar (ramo `figure` do
       pela `subir-figuras-livros`, que voltou a responder 410. Conferidos byte a byte pela
       URL pública.
     - **Gravação:** em 4 instruções de 4 capítulos cada (ver "Gravações feitas").
+  - **Lote de tireoide, obesidade e osteometabolismo (19/10): prévia publicada, aguarda
+    aprovação.**
+    - **Origem:** bucket `livros`, zips `_PT` de tireoide (só a parte 1: o "parte1" veio
+      duas vezes e faltam as 42 figuras da parte 2), obesidade e osteometabolismo, com
+      190 figuras. O professor pediu *"Ja pode fazer agora"* em vez de esperar a
+      renovação semanal.
+    - **Revisão:** 17 lotes, um agente por lote, em duas levas. Ver `INSTRUCOES.md`,
+      `monta.js` e `ajustes.json` na pasta da sessão (`figuras-tob/`). Toda acusação grave
+      foi conferida na imagem e no texto do capítulo antes de aceitar.
+    - **Resultado:** 105 entram em 31 capítulos (65 traduzidas); ficam de fora 85:
+      - 22 contradizem o capítulo ou têm erro de conteúdo;
+      - 27 repetem uma figura melhor;
+      - 35 tratam de assunto que nenhum capítulo cobre;
+      - 1 para conferir no livro (Williams 11.9, eixo do T4 livre).
+
+      Lista em `scratchpad/figuras-livros/figuras-tireoide-obesidade-osteo.js` (já no
+      `texto.js`).
+    - **Rótulos corrigidos (15), com `corrige-tob.py`:**
+      - Apovian 2.6: captação de glicose no coração ↓ → ↑;
+      - Netter 2-16: tireoidite "aguda" → "subaguda";
+      - Apovian 3.1: DHEM, SOMP (antiga SOP) e cânceres sem colo do útero e próstata;
+      - Vilar 31.1: "gente" → "gene" e "Prejuízo";
+      - Williams 12.10: "P13K" → "PI3K";
+      - Golan 26.5: "Tioaminas" → "Tionamidas";
+      - Vilar 76.1: sai o rótulo repetido sob o fígado saudável;
+      - Essencial 89.5: "biliodigestiva" → "biliopancreática" e o "íleo" cortado;
+      - Igaz 24.2: sai o aviso do densitômetro;
+      - Vilar 86.7: Z "Média para a idade";
+      - Netter 6-4: 80–85%, 10–15% e < 1% (os números do cap. 104);
+      - Netter 6-5: NEM1 sem tireoide;
+      - Netter 6-6: "Mieloma múltiplo" sem o linfoma;
+      - Netter 6-21: "tórax em quilha";
+      - Netter 6-23: saem 4 linhas de chamada sem rótulo e o fio da moldura.
+    - **Ferramentas novas no `corrige-tob.py`:**
+      - `nitidez`: o texto refeito saía mais claro que o do livro, e escurecer a tinta
+        média engrossava o traço; a rampa na cobertura afina a borda sem engrossar;
+      - `risco`: apaga linha fina interpolando os dois lados;
+      - `junta`, `desloca`, `linhas`, `replica`, `move` e `corta`.
+
+      O `prepara.py` ganhou `corte` (moldura do PDF na Diretriz 2025, fig. 1).
+    - **Conferências:**
+      - `previa.js` nos 31 capítulos (390 e 1280 px): todas as figuras carregam, cabem e
+        ficam logo depois do trecho.
+      - Avisos só os conhecidos: o ampliador no celular e uma "deformação" de 1,9% numa
+        figura larga, que é a borda de 1 px entrando na medida.
+      - O contêiner perdeu o Pillow e o numpy ao reiniciar: `pip install pillow numpy`
+        antes de rodar.
+    - **Prévia:** [Figuras de Tireoide, Obesidade e Osteometabolismo](https://claude.ai/artifact/VKAPr6P3dJ6KfFW34W77hQ).
   - **Desenho próprio:** onde o livro tiver figura equivalente, o recorte substitui o
     desenho; onde não tiver, o desenho fica.
   - **Origem dos livros:** estão no Drive, em Livros › Endocrino Geral (Williams,

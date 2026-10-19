@@ -1,8 +1,9 @@
 # Prepara os recortes para o armazenamento: copia o PNG como veio; com `aparaTopo`, tira só a
 # faixa de cima acima do conteúdo da figura (o fio decorativo da página fica à direita, fora
-# da figura); com formato 'jpg', grava em JPEG de qualidade 90 (prancha pintada pesada).
+# da figura); com `corte` [x0, y0, x1, y1], fica só essa caixa (moldura e fio de página do PDF
+# saem); com formato 'jpg', grava em JPEG de qualidade 90 (prancha pintada pesada).
 # Nada dentro da figura muda.
-#   python prepara.py <pasta da extração> <pasta de saída> <lista.json: id, origem, formato, aparaTopo>
+#   python prepara.py <pasta da extração> <pasta de saída> <lista.json: id, origem, formato, aparaTopo, corte>
 import json, os, sys
 from PIL import Image
 orig, saida, lista = sys.argv[1], sys.argv[2], json.load(open(sys.argv[3], encoding='utf-8'))
@@ -19,10 +20,12 @@ for f in lista:
     if f.get('aparaTopo'):
         corte = max(0, topo_do_conteudo(im) - 12)
         im = im.crop((0, corte, im.size[0], im.size[1]))
+    recorte = f.get('corte')
+    if recorte: im = im.crop(tuple(recorte))
     ext = f.get('formato') or 'png'
     destino = os.path.join(saida, f['id'] + '.' + ext)
     if ext == 'jpg': im.convert('RGB').save(destino, 'JPEG', quality=90, optimize=True, progressive=True)
-    elif corte: im.save(destino, 'PNG', optimize=True)
+    elif corte or recorte: im.save(destino, 'PNG', optimize=True)
     else:
         with open(os.path.join(orig, f['origem']), 'rb') as a, open(destino, 'wb') as b: b.write(a.read())
-    print(f['id'], im.size, os.path.getsize(destino) // 1024, 'KB', ('aparado ' + str(corte) + ' px no topo') if corte else '')
+    print(f['id'], im.size, os.path.getsize(destino) // 1024, 'KB', ('aparado ' + str(corte) + ' px no topo') if corte else '', ('recortado em ' + str(recorte)) if recorte else '')
