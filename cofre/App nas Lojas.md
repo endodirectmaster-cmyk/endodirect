@@ -1,6 +1,6 @@
 ---
 tags: [cofre, app, lojas]
-atualizado: 2026-10-19
+atualizado: 2026-10-20
 ---
 
 # App nas Lojas (Google Play e App Store)
@@ -33,6 +33,15 @@ entregues na conversa. Aqui ficam o resumo, as decisões e o que falta.
 ## Andamento
 
 - **18/10, 13h54 de Brasília:** D-U-N-S pedido pela ferramenta da Apple; aguarda o e-mail da D&B.
+- **19/10, 22h17 de Brasília:** e-mail automático da D&B (iResearch) confirma o pedido:
+  rastreamento 11080153, caso 11138655, categoria "Add business" (cadastrar a empresa).
+  O número ainda não saiu; o resultado vem num e-mail separado. Prazos oficiais:
+  - **Apple:** até 5 dias úteis para a D&B emitir (por volta de 27/10). Depois de
+    emitido, até 2 dias úteis para a Apple recebê-lo. Se passar de duas semanas,
+    escrever à D&B.
+  - **Google:** até 30 dias ou mais. O nome jurídico e o endereço do perfil de pagamentos
+    do Google têm de ser iguais aos da D&B.
+  - O D-U-N-S é gratuito: não pagar "serviço expresso" nem intermediário.
 - **19/10:** ajustes da plataforma feitos (seção abaixo), autorizados pelo professor com
   *"Pode fazer tudo"*. Falta o `assetlinks.json`, que depende do Play Console.
 
