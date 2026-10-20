@@ -14,6 +14,26 @@ Pedido do professor em 18/10. Entregue no mesmo dia; ver [[Instagram Stories (Qu
 - [ ] O professor gerar um lote e dizer se o equilíbrio está bom (proporção de diretas,
   frequência de figura, dificuldade dos distratores).
 
+## 🖼️ EM APROVAÇÃO: parte 2 de tireoide (20/10)
+
+O professor subiu a parte 2 do zip de tireoide em 20/10 (*"parte 2 ta on; faz teu nome"*).
+Processo e números em [[Ilustrações dos Resumos]].
+1. [x] Baixar (`baixar-livros`, depois 410): 42 figuras, seções 05 a 08.
+2. [x] Revisão por 4 agentes (`t5` a `t8`); as 11 acusações graves conferidas no texto e na
+   imagem.
+3. [x] 9 rótulos corrigidos, `monta-p2.js` e a prévia:
+   [Figuras de Tireoide, Parte 2](https://claude.ai/artifact/W8g7X9zJD9TMUhiFH4QkCZ).
+   23 entram em 8 capítulos; 19 ficam de fora.
+4. [ ] **Aprovação do professor**, com duas perguntas:
+   - Williams 12.24 (síndromes do pós-parto): a curva de Graves sobe por volta do 3º mês, e a
+     tabela do cap. 86 diz que o Graves do puerpério é tardio (> 6 meses). Manter ou tirar os
+     números do eixo do tempo?
+   - Williams 14.6 (modelo BRAF-like × RAS-like): ficou de fora por uns 20 rótulos a refazer.
+     Quer que eu refaça?
+5. [ ] Envio (`subir-figuras-livros`, depois 410) e gravação com `gera-sql.js` em grupos de
+   até 4 capítulos: exportar os capítulos de novo antes (a guarda é o md5 de agora), backup,
+   F5 e conferência de zumbi.
+
 ## ✅ GRAVADO (20/10): figuras de tireoide, obesidade e osteometabolismo
 
 O professor subiu ao bucket `livros` os zips `_PT` de tireoide, obesidade e

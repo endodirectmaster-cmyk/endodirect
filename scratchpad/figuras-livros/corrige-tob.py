@@ -263,6 +263,40 @@ def replica(im, xs, y_ref, ys):
     faixa = im.crop((xs[0], y_ref, xs[1], y_ref + 1))
     for y in range(ys[0], ys[1]): im.paste(faixa, (xs[0], y))
 
+def traco(im, p0, p1, larg, cor, claro=200):
+    # refaz um trecho de curva que um rótulo de fundo branco apagou: reta de largura `larg`,
+    # desenhada a 8× e reduzida (borda suave), pintada só sobre pixels claros (o rótulo e o
+    # resto da curva ficam como estão)
+    x0, y0 = int(min(p0[0], p1[0]) - larg - 2), int(min(p0[1], p1[1]) - larg - 2)
+    x1, y1 = int(max(p0[0], p1[0]) + larg + 3), int(max(p0[1], p1[1]) + larg + 3)
+    w, h = x1 - x0, y1 - y0
+    c = Image.new('L', (w * S, h * S), 0); d = ImageDraw.Draw(c); r = larg * S / 2
+    q0, q1 = ((p0[0] - x0) * S, (p0[1] - y0) * S), ((p1[0] - x0) * S, (p1[1] - y0) * S)
+    d.line([q0, q1], fill=255, width=int(round(larg * S)))
+    for q in (q0, q1): d.ellipse([q[0] - r, q[1] - r, q[0] + r, q[1] + r], fill=255)
+    al = np.asarray(c, dtype=np.float32).reshape(h, S, w, S).mean(axis=(1, 3)) / 255
+    atual = np.asarray(im.crop((x0, y0, x1, y1))).astype(float)
+    al = al * (atual.mean(axis=2) >= claro)
+    novo = atual * (1 - al[..., None]) + np.array(cor, float) * al[..., None]
+    im.paste(Image.fromarray(np.clip(np.round(novo), 0, 255).astype(np.uint8)), (x0, y0))
+    return int((al > 0.5).sum())
+
+def permuta(im, faixa, regiao, pecas):
+    # troca letras de lugar na mesma linha, com os glifos da própria figura (texto borrado do
+    # livro, que uma fonte redesenhada não imita): recorta cada peça [(x0, x1, destino)] da
+    # faixa de linhas, pinta a região com o fundo e cola as peças nos destinos
+    a = np.asarray(im).astype(int); y0, y1 = faixa
+    cortes = [(im.crop((x0, y0, x1, y1)), d) for x0, x1, d in pecas]
+    limpa(im, (regiao[0], y0, regiao[1], y1), fundo_de(a, (regiao[0], y0, regiao[1], y1)))
+    for c, d in cortes: im.paste(c, (d, y0))
+
+def gira(im, caixa, ops, nome):
+    # rótulo vertical, lido de baixo para cima: a caixa gira 90° no sentido horário, as
+    # operações usam as coordenadas da caixa girada, e ela volta ao lugar
+    c = im.crop(caixa).transpose(Image.ROTATE_270)
+    c = aplica(c, ops, nome + ' (girada)')
+    im.paste(c.transpose(Image.ROTATE_90), caixa[:2])
+
 CORRECOES = {
     # Apovian 2.6 (ações do GLP-1): no coração, a tradução pôs "Captação de glicose ↓"; o GLP-1
     # AUMENTA a captação miocárdica de glicose. A seta ↑ do rótulo de cima (mesma fonte e
@@ -346,32 +380,101 @@ CORRECOES = {
         ('risco', (640, 540), (743, 633)), ('risco', (665, 630), (743, 633)), ('risco', (743, 633), (772, 652)),
         ('risco', (672, 942), (697, 1105)),
         ('corta', (0, 64, 1469, 2129))],
+    # ---- Parte 2 de tireoide (seções 05 a 08, enviada em 20/10/2026) ----
+    # Vilar 34.3 (curso da tireoidite subaguda): a 1ª fase é tireotoxicose por destruição, sem
+    # hiperprodução (caps. 79 e 85), e o eixo em meses punha a fase tireotóxica em ~3,4 meses,
+    # contra 2–8 semanas no cap. 85: saem os números, e "Meses" vira "Tempo".
+    'tireoide/05_tireoidites/curso_trifasico_da_tireoidite_subaguda__Vilar_p580.png': [
+        ('troca', (60, 12, 272, 50), 'Hipertireoidismo', 'Tireotoxicose', 'centro'),
+        ('limpa', (0, 562, 960, 600)),
+        ('troca', (430, 600, 535, 640), 'Meses', 'Tempo', 'centro'),
+        ('move', (436, 600, 528, 640), 0, -22, (255, 255, 255))],
+    # Netter 2-22 (tireoidite subaguda): o gráfico de febre em graus Fahrenheit perde os números
+    # (os picos passam de 105 °F, ~41 °C) e fica "Temperatura"; sai a linha de chamada solta
+    # abaixo de "Dor irradiada para o ouvido", resto da arte original.
+    'tireoide/05_tireoidites/tireoidite_subaguda_de_quervain__Netter_p70_PT.png': [
+        ('limpa', (722, 84, 786, 396)), ('limpa', (677, 158, 706, 362)), ('limpa', (664, 189, 674, 195)),
+        ('move', (648, 160, 680, 362), 70, 0, None),
+        ('risco', (729, 688), (695, 795))],
+    # Williams 12.24 (síndromes do pós-parto): o fundo branco do rótulo "Tireoidite de Hashimoto
+    # transitória" apagou um trecho da curva logo acima dele; o trecho é refeito.
+    'tireoide/05_tireoidites/sindromes_tireoidianas_pos_parto__Williams_p488_PT.png': [
+        ('traco', (605, 466.5), (630, 452.2), 5.5, (144, 64, 104), 150)],
+    # Vilar 24.2 (radioiodo no CDT): o asterisco de "Tg elevada*" remete a uma nota que ficou fora
+    # do recorte.
+    'tireoide/07_cancer_de_tireoide/fluxograma_de_indicacao_de_radioiodoterapia_no_cdt__Vilar_p423.png': [
+        ('limpa', (834, 244, 843, 253))],
+    # Netter 2-25 (carcinoma medular): o fígado estava entre os "sítios menos comuns", mas o cap.
+    # 84 o lista entre os sítios de metástase do CMT (linfonodal, óssea, pulmonar e hepática); e
+    # "nódulos discretos" é falso cognato de "discrete nodules" (bem definidos).
+    'tireoide/07_cancer_de_tireoide/carcinoma_medular_de_tireoide__Netter_p73_PT.png': [
+        ('troca', (865, 1598, 1362, 1648), 'Sítios menos comuns de metástase', 'Fígado: comum; rim: raro', 'centro'),
+        ('troca', (40, 1987, 312, 2028), '(nódulos discretos)', '(nódulos bem definidos)', 'centro')],
+    # Vilar 25.2 (tireoidectomia profilática por risco do RET): o esvaziamento no portador do RET
+    # é o do compartimento central, nível VI (o IV é jugular inferior, lateral); e "634,883" se lê
+    # como número decimal: viram os códons C634 e A883F, como no cap. 84.
+    'tireoide/07_cancer_de_tireoide/tireoidectomia_profilatica_conforme_mutacao_ret__Vilar_p439.png': [
+        ('troca', (546, 120, 642, 148), '634,883', 'C634, A883F', 'centro'),
+        # "IV" → "VI" trocando o I e o V de lugar (o redesenho saía mais escuro que o resto)
+        ('permuta', (300, 324), (405, 425), [(410, 425, 405), (405, 410, 420)]),
+        ('permuta', (324, 348), (653, 674), [(657, 673, 653), (653, 657, 669)])],
+    # Williams 14.2 (níveis linfonodais): o limite entre os níveis III e IV é o plano da borda
+    # INFERIOR da cartilagem cricóidea; e sai a letra "A", sem o "B" do painel de baixo.
+    'tireoide/07_cancer_de_tireoide/compartimentos_e_niveis_linfonodais_do_pescoco__Williams_p538_PT.png': [
+        ('limpa', (20, 858, 52, 892), (255, 255, 255)),
+        ('troca', (948, 1336, 1200, 1365), 'Margem anterior da', 'Margem inferior da', 'esq')],
+    # Greenspan 24-2 (paralisia periódica tireotóxica): sai "Fluxo noturno", sem sentido clínico
+    # claro na tradução (o cap. 79 não o cita entre os precipitantes), e o bloco volta a ficar
+    # centrado na seta; sai também o ponto solto antes do "K+".
+    'tireoide/08_tireoide_gestacao_emergencias/patogenese_da_paralisia_periodica_tireotoxica__Greenspan_p812_PT.png': [
+        ('limpa', (435, 403, 441, 409), (255, 255, 255)),
+        ('limpa', (770, 430, 975, 466), (255, 255, 255)),
+        ('move', (733, 355, 1012, 428), 0, 28, (255, 255, 255))],
+    # Williams 22.1 (hCG, TSH e T4 livre na gestação): unidade em português (UI/L × 1.000),
+    # vírgula decimal nos eixos e "TSH" sem o "h" (de human).
+    'tireoide/08_tireoide_gestacao_emergencias/hcg_e_tsh_ao_longo_da_gestacao__Williams_p1000_PT.png': [
+        ('troca', (76, 23, 129, 55), '1.5', '1,5', 'dir'), ('troca', (76, 189, 129, 221), '1.0', '1,0', 'dir'),
+        ('troca', (76, 362, 129, 394), '0.5', '0,5', 'dir'), ('troca', (76, 741, 129, 773), '2.0', '2,0', 'dir'),
+        ('troca', (76, 902, 129, 934), '1.5', '1,5', 'dir'), ('troca', (76, 1064, 129, 1096), '1.0', '1,0', 'dir'),
+        ('troca', (370, 1262, 632, 1305), 'hCG (IU/L×1000)', 'hCG (UI/L × 1.000)', 'centro'),
+        # o ajuste deste rótulo ficou mais fraco (o "×" do livro é de outra fonte) e o texto
+        # novo saiu cinza: a rampa da `nitidez` devolve o preto do resto da figura
+        ('nitidez', (360, 1262, 645, 1307), 0.12, 0.72),
+        ('gira', (8, 135, 70, 445), [('troca', (10, 8, 208, 56), 'hTSH (mU/L)', 'TSH (mU/L)', 'dir')]),
+        ('gira', (968, 80, 1032, 525), [('troca', (60, 4, 318, 54), 'hCG (IU/L×1000)', 'hCG (UI/L × 1.000)', 'dir'),
+                                        ('nitidez', (12, 4, 322, 56), 0.12, 0.72)])],
 }
 
 def acha(rel):
     return os.path.join(ORIG, rel)
+
+def aplica(im, ops, nome):
+    for op in ops:
+        if op[0] == 'limpa': limpa(im, op[1], op[2] if len(op) > 2 else None); print(nome, 'limpa', op[1])
+        elif op[0] == 'copia': copia(im, op[1], op[2]); print(nome, 'copia', op[1], '→', op[2])
+        elif op[0] == 'junta': print(nome, 'junta', junta(im, *op[1:]), 'px')
+        elif op[0] == 'linhas': linhas(im, *op[1:]); print(nome, 'linhas', op[1])
+        elif op[0] == 'move': move(im, *op[1:]); print(nome, 'move', op[1:4])
+        elif op[0] == 'risco': print(nome, 'risco', risco(im, *op[1:]))
+        elif op[0] == 'corta': im = im.crop(op[1]); print(nome, 'corta', op[1])
+        elif op[0] == 'replica': replica(im, *op[1:]); print(nome, 'replica', op[1:])
+        elif op[0] == 'contraste': print(nome, 'contraste', op[1], 'g =', contraste(im, *op[1:]))
+        elif op[0] == 'nitidez': nitidez(im, *op[1:]); print(nome, 'nitidez', op[1])
+        elif op[0] == 'desloca': desloca(im, *op[1:]); print(nome, 'desloca', op[1], op[2])
+        elif op[0] == 'traco': print(nome, 'traco', op[1], op[2], traco(im, *op[1:]), 'px')
+        elif op[0] == 'gira': gira(im, op[1], op[2], nome)
+        elif op[0] == 'permuta': permuta(im, *op[1:]); print(nome, 'permuta', op[1:])
+        else:
+            r = troca(im, *op[1:])
+            print(nome, op[2], '→', op[3], '|', {k: v for k, v in r.items() if k in ('fonte', 'corpo', 'ajuste', 'tinta_rel', 'apaga')})
+    return im
 
 if __name__ == '__main__':
     so = sys.argv[3] if len(sys.argv) > 3 else ''
     for rel, ops in CORRECOES.items():
         if so not in rel: continue
         im = Image.open(acha(rel)).convert('RGB')
-        nome = rel.split('/')[-1][:44]
-        for op in ops:
-            if op[0] == 'limpa': limpa(im, op[1], op[2] if len(op) > 2 else None); print(nome, 'limpa', op[1])
-            elif op[0] == 'copia': copia(im, op[1], op[2]); print(nome, 'copia', op[1], '→', op[2])
-            elif op[0] == 'junta': print(nome, 'junta', junta(im, *op[1:]), 'px')
-            elif op[0] == 'linhas': linhas(im, *op[1:]); print(nome, 'linhas', op[1])
-            elif op[0] == 'move': move(im, *op[1:]); print(nome, 'move', op[1:4])
-            elif op[0] == 'risco': print(nome, 'risco', risco(im, *op[1:]))
-            elif op[0] == 'corta': im = im.crop(op[1]); print(nome, 'corta', op[1])
-            elif op[0] == 'replica': replica(im, *op[1:]); print(nome, 'replica', op[1:])
-            elif op[0] == 'contraste': print(nome, 'contraste', op[1], 'g =', contraste(im, *op[1:]))
-            elif op[0] == 'nitidez': nitidez(im, *op[1:]); print(nome, 'nitidez', op[1])
-            elif op[0] == 'desloca': desloca(im, *op[1:]); print(nome, 'desloca', op[1], op[2])
-            else:
-                r = troca(im, *op[1:])
-                print(nome, op[2], '→', op[3], '|', {k: v for k, v in r.items() if k in ('fonte', 'corpo', 'ajuste', 'tinta_rel', 'apaga')})
+        im = aplica(im, ops, rel.split('/')[-1][:44])
         destino = os.path.join(SAIDA, rel)
         os.makedirs(os.path.dirname(destino), exist_ok=True)
         im.save(destino, 'PNG', optimize=True)

@@ -175,6 +175,48 @@ ampliador. O editor do professor preserva a figura ao salvar (ramo `figure` do
     - **Envio:** 105 arquivos para `endodirect-assets/resumos/livros/` pela
       `subir-figuras-livros`, que voltou a responder 410; conferidos byte a byte pela URL
       pública.
+  - **Parte 2 de tireoide (20/10): prévia publicada, aguarda aprovação.**
+    - **Origem:** `Tireoide/imagens_tireoide_PT_parte2.zip` (bucket `livros`), 42 figuras das
+      seções 05 a 08 (tireoidites, nódulos, câncer, gestação e emergências), em 4 lotes
+      (`t5` a `t8`), um agente por lote. Toda acusação grave (11) foi conferida na imagem e
+      no texto dos capítulos 81, 83, 84, 85, 86 e 87.
+    - **Capítulos exportados de novo** antes de montar (`exportar-capitulos`, depois 410): 79,
+      83, 85 e 142 tinham mudado com a gravação da parte 1. Os md5 bateram com os gravados.
+    - **Resultado:** 23 entram em 8 capítulos (79, 81, 83, 84, 85, 86, 87 e 142), 15
+      traduzidas e 9 com rótulo corrigido; 19 ficam de fora:
+      - 9 contradizem o capítulo ou têm erro de conteúdo (entre elas a Vilar 22.13, com cinco
+        pontos contra o cap. 81, a Vilar 33.4, contra a ATA 2026 do cap. 86, e a Igaz 13.3,
+        que condiciona a tempestade tireoidiana aos exames);
+      - 8 repetem o que já está no capítulo ou acrescentam pouco;
+      - 1 trata de assunto que nenhum capítulo cobre (ultrassom em modo B da subaguda);
+      - 1 exigiria refazer uns 20 rótulos (Williams 14.6, modelo BRAF-like × RAS-like).
+
+      Lista em `scratchpad/figuras-livros/figuras-tireoide-parte2.js` (já no `texto.js`).
+      Na sessão: `monta-p2.js`, `lista-p2.json`, `prontas-p2/` e `pagina-p2/`.
+    - **Rótulos corrigidos (9), com `corrige-tob.py`:**
+      - Vilar 34.3: "Hipertireoidismo" → "Tireotoxicose"; saem os números do eixo (punham a
+        fase tireotóxica em ~3,4 meses; o cap. 85 diz 2–8 semanas) e "Meses" → "Tempo";
+      - Netter 2-25: "Sítios menos comuns de metástase" (fígado e rim) → "Fígado: comum; rim:
+        raro"; "nódulos discretos" → "bem definidos";
+      - Vilar 25.2: esvaziamento "nível IV" → "VI" (o I e o V trocados de lugar com os glifos
+        da própria figura) e "634,883" → "C634, A883F";
+      - Williams 14.2: "Margem anterior" → "inferior" da cricoide; sai a letra "A" sem "B";
+      - Greenspan 24-2: sai "Fluxo noturno" (sem sentido clínico claro) e um ponto solto;
+      - Williams 22.1: "UI/L × 1.000", vírgula decimal e "TSH" sem o "h";
+      - Netter 2-22: o gráfico de febre em °F perde os números; sai uma linha de chamada solta;
+      - Williams 12.24: refeito o trecho de curva que o fundo do rótulo apagava;
+      - Vilar 24.2: sai o asterisco sem nota.
+    - **Ferramentas novas no `corrige-tob.py`:**
+      - `traco`: refaz trecho de curva, pintando só sobre pixel claro;
+      - `gira`: corrige rótulo vertical girando a caixa;
+      - `permuta`: troca letras de lugar com os glifos da própria figura. Serve quando o texto
+        do livro é borrado e a fonte redesenhada sai mais escura que o resto da linha.
+
+      O despacho das operações virou a função `aplica`.
+    - **Conferências:** `previa.js` nos 8 capítulos (390 e 1280 px), com as figuras da parte 1
+      junto (`prontas-todas/`). Todas carregam, cabem e ficam logo depois do trecho. Avisos só
+      os conhecidos (ampliador no celular e a "deformação" de 1,9% da Vilar 31.4, da parte 1).
+    - **Prévia:** [Figuras de Tireoide, Parte 2](https://claude.ai/artifact/W8g7X9zJD9TMUhiFH4QkCZ).
   - **Desenho próprio:** onde o livro tiver figura equivalente, o recorte substitui o
     desenho; onde não tiver, o desenho fica.
   - **Origem dos livros:** estão no Drive, em Livros › Endocrino Geral (Williams,
