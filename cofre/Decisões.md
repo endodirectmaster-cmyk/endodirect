@@ -8,6 +8,11 @@ atualizado: 2026-10-20
 Log de decisões de produto e técnicas (mais recentes no topo).
 
 ## 2026-10
+- **📚 PARTE 2 DE TIREOIDE: PRÉVIA COM 23 FIGURAS E 9 RÓTULOS CORRIGIDOS (2026-10-20).** Sem mudança no app (só `scratchpad/figuras-livros`). Detalhes em [[Ilustrações dos Resumos]].
+  - **Figura com vários pontos contra o capítulo fica de fora, mesmo que cada um tenha conserto.** É o caso do fluxograma do nódulo do Vilar (22.13): Bethesda "V e IV", US em 6–24 meses, cirurgia direta no Bethesda III repetido e o nódulo frio sem ACR-TIRADS. Corrigir rótulo só quando o erro é pontual.
+  - **Figura com muitos rótulos em inglês fica de fora** quando a troca passaria de uns poucos rótulos (Williams 14.6, com ~20 siglas, "Hürthle" e "Gas"). A oferta de refazer vai ao professor.
+  - **Rótulo de sentido duvidoso na tradução sai** quando o capítulo não o sustenta ("Fluxo noturno" na paralisia periódica). Eixo que contradiz o capítulo perde os números (curso da subaguda em meses; febre em °F com picos de ~41 °C).
+  - **Texto borrado do livro: trocar letras com os glifos da própria figura** (`permuta`). A fonte redesenhada saía mais escura e nítida que o resto da linha.
 - **📚 FIGURAS DE TIREOIDE, OBESIDADE E OSTEOMETABOLISMO GRAVADAS NOS RESUMOS (2026-10-20).** Sem mudança no app; só o `resumo` de 31 capítulos no banco. Aprovação do professor: *"da minha parte, pode prosseguir"*.
   - **105 figuras em 8 instruções** de até 4 capítulos (20h27–20h35 UTC). Cada uma tinha backup próprio, guarda pelo md5 de antes e de depois, e conferia que o resto ficou igual. O acervo passa a 175 figuras de livros.
   - **Perguntas sem resposta ficam como na prévia:** a Williams 39.1 (mancha sobre uma seta) e a 39.4 (tarja só nos olhos) entraram. A Williams 11.9 segue fora até a conferência no livro.
