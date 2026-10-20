@@ -52,6 +52,9 @@ a renovação do limite semanal. Processo e números em [[Ilustrações dos Resu
     nela, mas não recarrega sozinho: Rodolpho precisa clicar em "Atualizar" ou dar F5.
   - **Conferência às 17h52 UTC:** segue `c38d80f1`. Nenhum save no estado global desde
     15h35; a aba do Rodolpho não salvou desde 14h00. Recarregamento ainda não confirmado.
+  - **Conferência às 11h52 UTC de 20/10:** segue `c38d80f1`, depois de dois saves do
+    iPhone do Rafael (20h16 e 21h07 UTC) e de sete gravações do servidor (cron, 20h31 UTC e
+    10h46 UTC). A aba do Rodolpho segue sem salvar desde 14h00 de 19/10.
   - [ ] Nova conferência de zumbi do 109 depois de o Rodolpho recarregar.
   - ⚠️ A gravação das figuras só começa com a v319 no ar e **todo painel de professor
     aberto antes das 14h44 UTC** (deploy da v319) recarregado, não só o do professor.
