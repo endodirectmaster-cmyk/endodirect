@@ -1,6 +1,6 @@
 ---
 tags: [cofre, pendencias]
-atualizado: 2026-10-19
+atualizado: 2026-10-20
 ---
 
 # Pendências
@@ -408,17 +408,27 @@ Os 26 fatos que restituem o núcleo foram relidos e selados de novo
 (`trig_011i6yP2PuRFyg98ZpoWSzdT`): dia 5 de janeiro, abril, julho e outubro,
 às 8h47 de Brasília, com aviso por push e e-mail; a próxima é em 05/01/2027.
 
-## 📊 Convite de feedback: 4ª verificação (2026-10-06)
+## 📊 Convite de feedback: 5ª verificação (2026-10-20)
 
-Um feedback novo desde 22/09: Victor, 02/10, nota 3, com o aviso de degustação
-encerrada apesar do Gold, corrigido no PR #821. Desde 01/09 são 6 feedbacks,
-com média 4,33. Alcance: 44 assinantes ativos, 39 com mais de 30 dias, 31 com
-o convite aberto e 8 que já responderam. O caso "as questões não aparecem"
-está resolvido desde 24/09. Continuam iguais: o EndoTEEM 2026 invisível a todo
-aluno real (68 aulas, `tier` nulo e slug em `SHOWCASE_ONLY_CURSOS`), os
-flashcards em 533 desde 01/07 e os mapas em 82 desde 21/07. As diretrizes
-públicas de 2022 ou antes caíram para 22 de 72 (eram 29 de 71 em 12/09).
-Próxima verificação em 20/10 (`trig_01QDCDys7z6fKKDJLVuhGYmZ`).
+**Feedback:** nenhum novo desde 06/10. Desde 01/09 são 6, com média 4,33 (notas 5, 3,
+5, 5, 5, 3). A última resposta foi a do Victor, em 02/10, já corrigida no PR #821.
+
+**Alcance:** 50 assinantes ativos (6 novos entre 07/10 e 17/10), 40 com mais de 30
+dias, 32 com o convite aberto e 8 que já responderam. A conta de revisão das lojas
+não entra na conta.
+
+**Continuam iguais:**
+- o EndoTEEM 2026 invisível a todo aluno real (68 aulas, `tier` nulo e slug em
+  `SHOWCASE_ONLY_CURSOS`);
+- os flashcards em 533 desde 01/07 e os mapas em 82 desde 21/07.
+
+**Diretrizes públicas:**
+- Pelo critério de 06/10, 22 de 72 são de 2022 ou antes, como antes. Esse critério não
+  conta faixas como "2012–2019"; pelo ano mais recente do campo, são **30 de 72**.
+- As 2 que estavam sem ano ganharam ano. 14 são de 2026.
+- Última edição pública em 10/10.
+
+Próxima verificação em 03/11 (`trig_01QDCDys7z6fKKDJLVuhGYmZ`), já com os dois critérios.
 
 ## ✅ RESOLVIDO — "Degustação de 7 dias encerrada" para um Gold em todo login (2026-10-05)
 
