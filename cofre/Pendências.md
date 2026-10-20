@@ -14,26 +14,38 @@ Pedido do professor em 18/10. Entregue no mesmo dia; ver [[Instagram Stories (Qu
 - [ ] O professor gerar um lote e dizer se o equilíbrio está bom (proporção de diretas,
   frequência de figura, dificuldade dos distratores).
 
-## 🖼️ EM APROVAÇÃO: figuras de tireoide, obesidade e osteometabolismo (19/10)
+## ✅ GRAVADO (20/10): figuras de tireoide, obesidade e osteometabolismo
 
 O professor subiu ao bucket `livros` os zips `_PT` de tireoide, obesidade e
 osteometabolismo e, em 19/10, pediu para começar já (*"Ja pode fazer agora"*), sem esperar
 a renovação do limite semanal. Processo e números em [[Ilustrações dos Resumos]].
 1. [x] Baixar (`baixar-livros`, depois 410) e conferir o índice: 190 figuras.
-   ⚠️ **Falta a parte 2 de tireoide** (42 figuras, seções 05 a 08): o "parte1" foi enviado
-   duas vezes, idêntico. Pedir ao professor `Tireoide/imagens_tireoide_PT_parte2.zip`.
+   A parte 2 de tireoide (42 figuras, seções 05 a 08) chegou em 20/10 e está em revisão
+   (seção abaixo).
 2. [x] Revisão por 17 agentes, um por lote; as acusações graves conferidas no texto dos
    capítulos e na imagem.
 3. [x] 15 rótulos corrigidos (`corrige-tob.py`), `monta.js` e a prévia:
    [Figuras de Tireoide, Obesidade e Osteometabolismo](https://claude.ai/artifact/VKAPr6P3dJ6KfFW34W77hQ).
    105 entram em 31 capítulos; 85 ficam de fora.
-4. [ ] **Aprovação do professor**, e as respostas:
-   - Williams fig. 11.9 (TSH × T4 livre): conferir no livro o eixo do T4 livre (pula de
-     1,2 para 2,0). Com a resposta, corrijo e incluo no cap. 77.
-   - Williams fig. 39.1: manter com a mancha branca ou trocar pela 72-1 do Guyton.
-   - Williams fig. 39.4: foto de criança com tarja só nos olhos; manter ou tirar.
-5. [ ] Envio (`subir-figuras-livros`, depois 410) e gravação com `gera-sql.js`, em grupos
-   de até 4 capítulos, com md5 conferido antes, backup, F5 e conferência de zumbi.
+4. [x] **Aprovação do professor** em 20/10 (*"da minha parte, pode prosseguir"*). As duas
+   perguntas sem resposta ficaram como na prévia: a Williams 39.1 entrou com a mancha
+   branca e a 39.4 com a tarja só nos olhos. Se o professor pedir, troco a 39.1 pela 72-1
+   do Guyton e tiro a 39.4.
+   - [ ] Williams fig. 11.9 (TSH × T4 livre), fora do lote: conferir no livro (p. 431) o
+     eixo do T4 livre, que pula de 1,2 para 2,0. Com a resposta, corrijo e incluo no
+     cap. 77.
+5. [x] **Envio e gravação (20/10).** Os 105 arquivos foram pela `subir-figuras-livros`, que
+   voltou a responder 410, e foram conferidos byte a byte pela URL pública. A gravação
+   correu das 20h27 às 20h35 UTC, em 8 grupos de até 4 capítulos, com backups
+   `main-antes-figuras-tob-2026-10-20-g1` a `g8`. Antes, a legenda da Matfin 23-2 ganhou o
+   espaço que faltava em "(PO4): PTH". Conferido: as 105 figuras uma vez cada e os 31 md5.
+   Tabela em [[Ilustrações dos Resumos]].
+   - Às 20h32 houve um save do radar do Mural (cron das 20h, `node`), entre os grupos 5 e
+     6. O radar relê o estado logo antes de gravar, e a conferência final pegou os 31
+     capítulos certos.
+6. [x] **Conferência de zumbi às 20h38 UTC:** os 31 md5 seguem os gravados.
+   - [ ] Professor avisado do F5. Repetir a conferência mais tarde, porque a aba do
+     Rodolpho (Windows/Edge, v318) pode desfazer no 2º save se ainda estiver aberta.
 - **Achado de passagem, resolvido em 19/10:** a manutenção depois do ataque de vitamina D
   (50.000 UI/semana) era 1.500–2.000 UI/dia no cap. 107 e 800 UI/dia no cap. 109. O
   professor: *"deixa esse como correto"* (o do 107). O 109 foi gravado às 13h11 UTC com
@@ -55,11 +67,12 @@ a renovação do limite semanal. Processo e números em [[Ilustrações dos Resu
   - **Conferência às 11h52 UTC de 20/10:** segue `c38d80f1`, depois de dois saves do
     iPhone do Rafael (20h16 e 21h07 UTC) e de sete gravações do servidor (cron, 20h31 UTC e
     10h46 UTC). A aba do Rodolpho segue sem salvar desde 14h00 de 19/10.
-  - [ ] Nova conferência de zumbi do 109 depois de o Rodolpho recarregar.
-  - ⚠️ A gravação das figuras só começa com a v319 no ar e **todo painel de professor
-    aberto antes das 14h44 UTC** (deploy da v319) recarregado, não só o do professor.
-  - O cap. 109 entra no grupo 7 da gravação das figuras: o `caps/109.json` da sessão já
-    está com o texto novo, e o ensaio do grupo foi refeito (`c38d80f1 → 5dd222bd`).
+  - [ ] Nova conferência de zumbi do 109 depois de o Rodolpho recarregar. Desde a gravação
+    das figuras (grupo 7, 20/10), o md5 certo do 109 é `5dd222bd`, e não mais `c38d80f1`.
+  - A gravação das figuras esperava a v319 no ar e os painéis abertos antes das 14h44 UTC
+    recarregados. O professor liberou em 20/10 (*"da minha parte, pode prosseguir"*), sem
+    confirmação da aba do Rodolpho; por isso as conferências de zumbi dos 31 capítulos
+    continuam.
   - A base do Chat IA cita a SBEM com manutenção de 1.000–2.000 UI/dia, faixa compatível;
     não foi mexida.
 

@@ -1,6 +1,6 @@
 ---
 tags: [cofre, conteudo, resumos]
-atualizado: 2026-10-19
+atualizado: 2026-10-20
 ---
 
 # Ilustrações dos Resumos (no meio do capítulo)
@@ -121,11 +121,11 @@ ampliador. O editor do professor preserva a figura ao salvar (ramo `figure` do
       pela `subir-figuras-livros`, que voltou a responder 410. Conferidos byte a byte pela
       URL pública.
     - **Gravação:** em 4 instruções de 4 capítulos cada (ver "Gravações feitas").
-  - **Lote de tireoide, obesidade e osteometabolismo (19/10): prévia publicada, aguarda
-    aprovação.**
-    - **Origem:** bucket `livros`, zips `_PT` de tireoide (só a parte 1: o "parte1" veio
-      duas vezes e faltam as 42 figuras da parte 2), obesidade e osteometabolismo, com
-      190 figuras. O professor pediu *"Ja pode fazer agora"* em vez de esperar a
+  - **Lote de tireoide, obesidade e osteometabolismo (19–20/10): gravado em 20/10** (ver
+    "Gravações feitas"). A parte 2 de tireoide (42 figuras) chegou em 20/10 e está em
+    revisão, como lote à parte.
+    - **Origem:** bucket `livros`, zips `_PT` de tireoide (só a parte 1, porque o
+      "parte1" veio duas vezes), obesidade e osteometabolismo, com 190 figuras. O professor pediu *"Ja pode fazer agora"* em vez de esperar a
       renovação semanal.
     - **Revisão:** 17 lotes, um agente por lote, em duas levas. Ver `INSTRUCOES.md`,
       `monta.js` e `ajustes.json` na pasta da sessão (`figuras-tob/`). Toda acusação grave
@@ -169,6 +169,12 @@ ampliador. O editor do professor preserva a figura ao salvar (ramo `figure` do
       - O contêiner perdeu o Pillow e o numpy ao reiniciar: `pip install pillow numpy`
         antes de rodar.
     - **Prévia:** [Figuras de Tireoide, Obesidade e Osteometabolismo](https://claude.ai/artifact/VKAPr6P3dJ6KfFW34W77hQ).
+    - **Aprovação (20/10):** *"da minha parte, pode prosseguir"*. A Williams 39.1 (mancha
+      branca sobre uma seta) e a 39.4 (foto com tarja só nos olhos) ficaram como na prévia,
+      porque as duas perguntas não tiveram resposta.
+    - **Envio:** 105 arquivos para `endodirect-assets/resumos/livros/` pela
+      `subir-figuras-livros`, que voltou a responder 410; conferidos byte a byte pela URL
+      pública.
   - **Desenho próprio:** onde o livro tiver figura equivalente, o recorte substitui o
     desenho; onde não tiver, o desenho fica.
   - **Origem dos livros:** estão no Drive, em Livros › Endocrino Geral (Williams,
@@ -297,3 +303,27 @@ ampliador. O editor do professor preserva a figura ao salvar (ramo `figure` do
   - ✅ **Conferência de zumbi (01h31 UTC):** os 16 md5 e as 51 figuras seguem os gravados.
     Os dois saves seguintes (00:34 e 01:24 UTC, ambos do Prof. Rafael) já carregaram a
     versão nova.
+- **Figuras de tireoide, obesidade e osteometabolismo, 20/10/2026, das 20h27 às 20h35
+  UTC.** 105 figuras em 31 capítulos, em 8 instruções de `gera-sql.js` com até 4 capítulos
+  cada. Backups `main-antes-figuras-tob-2026-10-20-g1` a `g8`.
+
+  | grupo | figuras | md5 antes → depois |
+  |---|---|---|
+  | g1 | 15 | 67 `1e19c636` → `531a1988`; 68 `87d95417` → `e2b0ab39`; 69 `9bc187f2` → `bf1ff587`; 70 `26bdaee2` → `efb9988a` |
+  | g2 | 13 | 71 `efd198e5` → `4459ea3f`; 72 `55f3b8b4` → `8f3b8617`; 73 `b5484ee1` → `1dd6ec79`; 74 `84f7bbf6` → `b16057f1` |
+  | g3 | 13 | 75 `66369633` → `b9c19c5c`; 76 `d4a43869` → `179abcc9`; 77 `78b824fc` → `975d24c5`; 78 `4d02e0b7` → `c6b58fac` |
+  | g4 | 12 | 79 `83fc3cd2` → `9815d41e`; 80 `ca85d09e` → `e437e330`; 82 `d98a4139` → `9a869d53`; 83 `84c07811` → `e9378674` |
+  | g5 | 20 | 85 `5864c634` → `e6a32a78`; 88 `ee0d6348` → `0df77e3d`; 103 `47ab0ce0` → `270a0f25`; 104 `1542f26c` → `2ff265e5` |
+  | g6 | 14 | 105 `d901116e` → `bc1c0c49`; 106 `eec74816` → `b9d6f4a9`; 107 `9b5964a8` → `db6f8875`; 108 `ddef14ff` → `19e3b959` |
+  | g7 | 10 | 109 `c38d80f1` → `5dd222bd`; 142 `a4d16ae3` → `7c001f6b`; 145 `c3cae4d9` → `66ec9f83`; 146 `b0b0f5ad` → `a7a14034` |
+  | g8 | 8 | 147 `bbffa783` → `7362cc93`; 217 `fd43b021` → `f72cb8f9`; 225 `7bb87fc4` → `f226522e` |
+
+  - Antes do g6, a legenda da Matfin 23-2 ganhou o espaço que faltava em "(PO4): PTH".
+    O SQL do grupo foi refeito (`grava-6b.sql`) e a lista do repositório, corrigida.
+  - Cada instrução conferiu o backup, os md5 de depois, o resto de cada item, os outros
+    itens, o estado fora de `diretrizes` e o número de itens. Tudo verdadeiro nas 8.
+  - **Conferido no fim:** as 105 figuras aparecem uma vez cada, os 31 md5 estão certos e
+    os 8 backups existem. O acervo tem agora 175 figuras de livros (19 + 51 + 105).
+  - Às 20h32 entrou um save do radar do Mural (cron das 20h), entre o g5 e o g6. O radar
+    relê o estado logo antes de gravar (`lib/radar.js`) e não desfez nada.
+  - ✅ **Conferência de zumbi (20h38 UTC):** os 31 md5 seguem os gravados.
