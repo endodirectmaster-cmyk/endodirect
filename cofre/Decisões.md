@@ -1,6 +1,6 @@
 ---
 tags: [cofre, decisoes]
-atualizado: 2026-10-19
+atualizado: 2026-10-20
 ---
 
 # Decisões
@@ -8,6 +8,11 @@ atualizado: 2026-10-19
 Log de decisões de produto e técnicas (mais recentes no topo).
 
 ## 2026-10
+- **📚 FIGURAS DE TIREOIDE, OBESIDADE E OSTEOMETABOLISMO GRAVADAS NOS RESUMOS (2026-10-20).** Sem mudança no app; só o `resumo` de 31 capítulos no banco. Aprovação do professor: *"da minha parte, pode prosseguir"*.
+  - **105 figuras em 8 instruções** de até 4 capítulos (20h27–20h35 UTC). Cada uma tinha backup próprio, guarda pelo md5 de antes e de depois, e conferia que o resto ficou igual. O acervo passa a 175 figuras de livros.
+  - **Perguntas sem resposta ficam como na prévia:** a Williams 39.1 (mancha sobre uma seta) e a 39.4 (tarja só nos olhos) entraram. A Williams 11.9 segue fora até a conferência no livro.
+  - **Gravar sem a confirmação da aba antiga do Rodolpho** foi decisão do professor. Ela está na v318 e pode desfazer no 2º save; a defesa são as conferências de zumbi dos 31 md5.
+  - Detalhes e md5 em [[Ilustrações dos Resumos]]; acompanhamento em [[Pendências]].
 - **🐛 SAVE DO PAINEL: O 2º SAVE NÃO DESFAZ MAIS O QUE VEIO DO BANCO, E LEITURA QUE FALHA NÃO GRAVA (2026-10-19).** `sw.js` v318 → **v319**. A troca do cap. 109 voltou às 13h56 UTC num save do painel aberto desde antes. O merge adotava a edição só no objeto enviado e a memória seguia velha, então o save seguinte a regravava. Nos mesmos minutos, GET com 525/503 virava save às cegas.
   - **Decisão:** o que o merge adota entra na memória; sem leitura, não grava, e tenta de novo até conseguir. O aviso vermelho para não fechar o painel só sai na 3ª falha seguida.
   - **Antes da gravação das figuras** (31 capítulos): a versão nova tem de estar no ar e o professor tem de ter dado F5. Detalhes em [[Dados e Supabase]].
