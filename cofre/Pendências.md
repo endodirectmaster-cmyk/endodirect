@@ -25,7 +25,7 @@ Ver [[Instagram Stories (Questão do Dia)]].
     distrator "sódio acima de 150" seguem iguais.
   - O consenso de 2024 confirma o comentário: a alta inicial do sódio não indica fluido
     hipotônico, e o 0,45% fica para a osmolalidade que não cai.
-  - [ ] Conferência de zumbi deste `stem` junto com a dos capítulos, às 11h45 UTC de 21/10.
+  - [x] Conferência de zumbi às 11h48 UTC de 21/10: o `stem` segue `d3f11f90…`, na fila.
 
 ## ✅ FEITO (18/10): Questão do Dia › Gerar lote — figura, alternativas e questões diretas
 
@@ -57,6 +57,12 @@ Processo e números em [[Ilustrações dos Resumos]].
    Detalhes em [[Ilustrações dos Resumos]].
 6. [ ] F5 do professor e conferências de zumbi dos 35 capítulos. Os md5 de agora estão na
    tabela de [[Ilustrações dos Resumos]]; 79, 83, 85 e 142 mudaram de novo com a parte 2.
+   - [x] **Conferência de 11h48 UTC (21/10):** 35 de 35 md5 certos, 199 figuras de livros,
+     todas distintas, e o pts[29] do cap. 86 com "em geral >6 meses; pode começar a partir
+     do 3º mês".
+     - Saves desde 00h25 UTC: Windows Chrome/155 às 00h30 e 01h18, iPhone às 00h31,
+       servidor (`node`, a postagem diária) 6 vezes às 10h46 e Android Chrome/155 às 10h48.
+     - Nenhum save da aba Windows/Edge do Rodolpho, e nada foi desfeito.
 
 ## ✅ GRAVADO (20/10): figuras de tireoide, obesidade e osteometabolismo
 
