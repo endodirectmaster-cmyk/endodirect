@@ -5,6 +5,24 @@ atualizado: 2026-10-21
 
 # Pendências
 
+## 📋 AGENDADO (sexta, 23/10, 19h de Brasília): auditoria das Diretrizes
+
+Pedido do professor em 21/10, com prints de "Rastreio de autoanticorpos pancreáticos" e de
+"Tratamento do Diabetes tipo 2": *"Os resumos dos capítulos ficaram excelentes. Entretanto,
+as diretrizes estão muito pobres, muito enxutas, muito simples. A ideia é deixá-las mais
+completas, baseadas nas principais diretrizes [...] muito parecidas com as diretrizes
+originais [...] A tarefa não é para agora, mas deixe agendado para sexta-feira, a partir das
+19 horas."* Lembrete na sessão: `trig_0162e7q311i7pg4qxUgsmQnL` (22h UTC), com o plano
+completo.
+- **Ponto de partida (21/10):** 72 Diretrizes públicas, com ~4,3 mil caracteres em média
+  (mín. 765, máx. 10.730), ~10 pontos-chave e ~9 flashcards. Os 118 capítulos dos Resumos
+  têm ~12 mil caracteres e ~17,5 pontos.
+- [ ] Inventário e prioridade.
+- [ ] Piloto com 2 ou 3, conferido contra o documento original, e prévia ao professor.
+- [ ] Lotes por subespecialidade, com conferência independente.
+- [ ] Gravação com backup, F5 e conferência de zumbi.
+- [ ] Cofre e relatório.
+
 ## 🖼️ FEITO (21/10): Questão do Dia — figura no comentário
 
 Ver [[Instagram Stories (Questão do Dia)]].
