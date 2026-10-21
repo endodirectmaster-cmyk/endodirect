@@ -8,6 +8,9 @@ atualizado: 2026-10-21
 Log de decisões de produto e técnicas (mais recentes no topo).
 
 ## 2026-10
+- **🩺 QUESTÃO DE EHH NA FILA: OSMOLALIDADE CORRIGIDA (2026-10-21).** O professor: *"pode corrigir"*. Só o `stem`, com backup e guarda de md5; detalhes em [[Pendências]].
+  - **Correção de número clínico se confere também pela velocidade, não só pela conta.** A proposta aprovada fechava a osmolalidade, mas punha a glicemia a cair 103 mg/dL/h, acima do teto da JBDS (≈ 90 mg/dL/h no EHH). Gravei a versão que respeita os dois limites (glicemia ≤ 90 mg/dL/h e osmolalidade 3 a 8 mOsm/kg/h) e avisei o professor da diferença.
+- **📅 2º LOTE DE FIGURAS DOS LIVROS AGENDADO PARA SEXTA, 23/10, ÀS 18H (BRASÍLIA).** Pedido do professor. Lembrete na sessão às 21h UTC.
 - **🖼️ QUESTÃO DO DIA: FIGURA NO COMENTÁRIO, DOS RESUMOS OU DO PUBMED (2026-10-21).** `sw.js` v319 → **v320**. Pedido do professor: *"sempre que possível, jogar uma imagem nos comentários para contextualizar e reforçar o comentário por escrito"*. Só nas questões geradas daqui em diante. Detalhes em [[Instagram Stories (Questão do Dia)]].
   - **Ordem: Resumos, depois PubMed, depois nenhuma.** O PubMed só entra quando o enunciado não tem figura: duas imagens de exame do mesmo caso não somam nada. Imagem nova é a que o professor envia, e vai para o armazenamento, nunca em base64.
   - **A figura aparece só depois da resposta**, dentro do gabarito comentado. Antes, entregaria a resposta.

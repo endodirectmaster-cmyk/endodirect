@@ -74,13 +74,14 @@ questões geradas a partir de agora."* As já geradas e postadas ficam como est�
     Pendências → publicação, e o formulário com envio. A main faz o mesmo caminho sem
     figura e sem erro.
   - `sw.js` v320.
-- **Achado de passagem:** a questão de EHH na fila (Diabetes,
-  `ig-1791923591718-228416`, 31ª de 37) tem a osmolalidade efetiva incoerente.
-  - Com Na 149 e glicemia 860, dá ~346, e não 342. Com Na 156 e glicemia 610, dá ~346
+- **Achado de passagem, já corrigido:** a questão de EHH na fila (Diabetes,
+  `ig-1791923591718-228416`, 31ª de 37) tinha a osmolalidade efetiva incoerente.
+  - Com Na 149 e glicemia 860 dava ~346, e não 342. Com Na 156 e glicemia 610 dava ~346
     também, e não 334.
-  - Quem faz a conta vê a osmolalidade parada e, pela regra do próprio comentário,
+  - Quem fizesse a conta veria a osmolalidade parada e, pela regra do próprio comentário,
     marcaria 0,45%.
-  - Levado ao professor; ver [[Pendências]].
+  - Corrigida em 21/10 com a autorização do professor: entrada 820/148 (342) e 3 h
+    560/151 (333). Detalhes em [[Pendências]].
 
 ## 🖼️ LOTE COM FIGURA, ALTERNATIVAS MAIS DIFÍCEIS E QUESTÕES DIRETAS (2026-10-18)
 
