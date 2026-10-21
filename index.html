@@ -875,6 +875,16 @@ html[data-theme="light"] .mural-text .mural-h1,html[data-theme="light"] .mural-t
 .qp-fb b{display:block;margin-bottom:.2rem}
 .qp-fb.ok b{color:#15803d}
 .qp-fb.err b{color:#b91c1c}
+/* Figura do COMENTÁRIO (pedido do professor, 21/10/2026): dos Resumos, do PubMed ou
+   enviada por ele. Papel branco e tinta fixa, como o resto da prancheta, também no
+   cartão de revisão do tema escuro; toca e amplia (ensureLightbox, classe qp-zoom). */
+.qp-expfig{margin:.6rem 0 .1rem;padding:.45rem;background:#fff;border:1px solid #d1d5db;border-radius:8px}
+.qp-expfig img{display:block;max-width:100%;max-height:440px;margin:0 auto;border-radius:4px}
+.qp-expfig figcaption{margin-top:.4rem;font-size:.7rem;line-height:1.45;color:#4b5563;text-align:justify;text-align-last:left;-webkit-hyphens:auto;hyphens:auto;font-style:normal}
+/* a linha da origem não é justificada: com duas palavras e o nome do capítulo, ela
+   abria buracos ("📚      Resumos   ·   Tratamento") no celular */
+.qp-expfig-src{display:block;font-weight:700;color:#374151;margin-bottom:.1rem;text-align:left;-webkit-hyphens:manual;hyphens:manual}
+.qp-zoom{cursor:zoom-in}
 @media(max-width:600px){.qp{border-width:4px;border-radius:20px;padding:24px 9px 10px}.qp-folha{border-width:3px;padding:24px 12px 13px}.qp-tit{font-size:1.15rem}}
 @media(prefers-reduced-motion:reduce){.qp-opt{transition:none}}
 /* Enquete do programa de Educação Médica Continuada (só plano Gold, no dashboard) */
@@ -8833,6 +8843,7 @@ function renderAtivacaoEm(alvoId){
     +'</div>';
   var host=document.getElementById(alvoId+'-q');
   if(host)host.innerHTML=qotdCardHTML(q,ans,'Sua primeira questão');
+  try{ensureLightbox();}catch(e){}   // a figura do caso e a do comentário ampliam ao toque
   if(!ans&&host){
     host.querySelectorAll('[data-qotd-opt]').forEach(function(b){
       b.addEventListener('click',function(){
@@ -9022,7 +9033,7 @@ function qotdCardHTML(q,ans,title){
   }).join('');
   var fb='';
   if(ans){
-    fb='<div class="qp-fb '+(ans.ok?'ok':'err')+'"><b>'+(ans.ok?'✓ Você acertou!':'✗ Resposta correta: '+esc(q.answer))+'</b>'+(q.explanation?'<div>'+esc(q.explanation)+'</div>':'')+'</div>';
+    fb='<div class="qp-fb '+(ans.ok?'ok':'err')+'"><b>'+(ans.ok?'✓ Você acertou!':'✗ Resposta correta: '+esc(q.answer))+'</b>'+(q.explanation?'<div>'+esc(q.explanation)+'</div>':'')+qExpFigHTML(q)+'</div>';
   }
   var p=qotdPartes(q.stem);
   return '<div class="qp" data-fav-tit="'+esc(String(q.stem||'').slice(0,180))+'" data-fav-sub="'+esc(q.area||q.sub||'')+'">'
@@ -9054,6 +9065,7 @@ function qotdRenderModal(q,ans){
     ?'<button type="button" class="btn btn-primary" id="qotd-see-mural" style="width:100%;margin-top:.7rem">Ver o mural →</button>'
     :'<div style="text-align:center;margin-top:.7rem"><button type="button" class="btn" id="qotd-skip" style="background:var(--gold);color:#0b1325;font-weight:700;padding:.5rem 1.5rem">Agora não</button></div>';
   body.innerHTML=qotdCardHTML(q,ans)+footer;
+  try{ensureLightbox();}catch(e){}   // figura do caso e do comentário ampliam ao toque
   if(!ans)body.querySelectorAll('[data-qotd-opt]').forEach(function(b){b.addEventListener('click',function(){qotdPick(q,b.getAttribute('data-qotd-opt'));});});
   var see=document.getElementById('qotd-see-mural');if(see)see.addEventListener('click',qotdClose);
   var skip=document.getElementById('qotd-skip');if(skip)skip.addEventListener('click',qotdClose);
@@ -9142,6 +9154,7 @@ function renderQotdArchive(){
   var hoje=qotdTodays();
   if(qotdArchAuto){qotdArchAuto=false;if(hoje&&!mm[hoje.id])qotdArchOpen=hoje.id;}
   el.innerHTML=qotdArchListHTML(all,mm,qotdArchOpen,qotdArchSort,hoje,'qa');
+  try{ensureLightbox();}catch(e){}
   var so=document.getElementById('qa-sort');if(so)so.addEventListener('change',function(){qotdArchSort=so.value;renderQotdArchive();});
   el.querySelectorAll('[data-qa-toggle]').forEach(function(h){h.addEventListener('click',function(){var id=h.getAttribute('data-qa-toggle');qotdArchOpen=(qotdArchOpen===id)?null:id;qotdArchRolar=false;renderQotdArchive();});});
   if(qotdArchOpen){
@@ -9162,7 +9175,7 @@ function qotdReviewCardHTML(q){
     var c=(L===q.answer),bd=c?'1px solid var(--grn)':'1px solid var(--bd)',bg=c?'var(--grn-l)':'var(--s2)';
     return '<div style="display:flex;gap:.55rem;align-items:flex-start;padding:.55rem .7rem;border-radius:var(--rs);font-size:.82rem;line-height:1.45;border:'+bd+';background:'+bg+';color:var(--tx)"><span style="font-weight:800;color:'+(c?'var(--grn)':'var(--blue)')+';flex-shrink:0">'+L+'</span><span>'+esc(q.options[L])+'</span></div>';
   }).join('');
-  var cm=q.explanation?'<div style="margin-top:.55rem;padding:.55rem .7rem;border-radius:var(--rs);background:var(--s2);font-size:.8rem;line-height:1.5;color:var(--t2)"><b style="color:var(--tx)">Comentário:</b> '+esc(q.explanation)+'</div>':'';
+  var cm=q.explanation?'<div style="margin-top:.55rem;padding:.55rem .7rem;border-radius:var(--rs);background:var(--s2);font-size:.8rem;line-height:1.5;color:var(--t2)"><b style="color:var(--tx)">Comentário:</b> '+esc(q.explanation)+qExpFigHTML(q)+'</div>':qExpFigHTML(q);
   return '<div style="font-size:.86rem;line-height:1.55;color:var(--tx);margin-bottom:.6rem">'+esc((q.teem?String(q.teem).trim()+' ':'')+String(q.stem).trim())+'</div>'
     +qFigHTML(q)
     +'<div style="display:flex;flex-direction:column;gap:.4rem">'+opts+'</div>'+cm;
@@ -9204,6 +9217,7 @@ function bindAdmQotdArchive(){
     var alvoQa=document.querySelector('[data-admqa-toggle="'+String(admQotdArchOpen).replace(/[^A-Za-z0-9_-]/g,'')+'"]');
     if(alvoQa){admQotdArchRolar=false;try{alvoQa.scrollIntoView({block:'start'});}catch(e){}}
   }
+  try{ensureLightbox();}catch(e){}
   var fs=document.getElementById('adm-qa-sub');if(fs)fs.addEventListener('change',function(){admQotdArchSub=fs.value;admQotdArchOpen=null;renderAdmSec('qotdarq');});
   var so=document.getElementById('adm-qa-sort');if(so)so.addEventListener('change',function(){admQotdArchSort=so.value;renderAdmSec('qotdarq');});
   document.querySelectorAll('[data-admqa-toggle]').forEach(function(h){h.addEventListener('click',function(){var id=h.getAttribute('data-admqa-toggle');admQotdArchOpen=(admQotdArchOpen===id)?null:id;renderAdmSec('qotdarq');});});
@@ -9227,6 +9241,7 @@ function renderAdmQotdAluno(){
   var hoje=qotdTodays();
   if(admQotdAlunoAuto){admQotdAlunoAuto=false;if(hoje&&!admQotdAlunoAns[hoje.id])admQotdAlunoOpen=hoje.id;}
   el.innerHTML=qotdArchListHTML(all,admQotdAlunoAns,admQotdAlunoOpen,admQotdAlunoSort,hoje,'admqal');
+  try{ensureLightbox();}catch(e){}
   var so=document.getElementById('admqal-sort');if(so)so.addEventListener('change',function(){admQotdAlunoSort=so.value;renderAdmQotdAluno();});
   el.querySelectorAll('[data-admqal-toggle]').forEach(function(h){h.addEventListener('click',function(){var id=h.getAttribute('data-admqal-toggle');admQotdAlunoOpen=(admQotdAlunoOpen===id)?null:id;renderAdmQotdAluno();});});
   el.querySelectorAll('[data-qotd-opt]').forEach(function(b){b.addEventListener('click',function(){
@@ -11026,6 +11041,7 @@ function renderAulaQuestBody(c){
       +' — responda para fixar (conta no seu Desempenho).</div><div id="aula-q-list"></div><div id="aula-q-score" style="margin-top:.55rem;font-size:.78rem;color:var(--t2)"></div>';
     var list=document.getElementById('aula-q-list');
     list.innerHTML=aulaQ.map(function(q,i){return '<div style="margin-bottom:.7rem" id="aula-q-'+i+'">'+qotdCardHTML(q,null,'🧠 Questão '+(i+1))+'</div>';}).join('');
+    try{ensureLightbox();}catch(e){}
     aulaQ.forEach(function(q,i){var cont=document.getElementById('aula-q-'+i);if(!cont)return;cont.querySelectorAll('[data-qotd-opt]').forEach(function(b){b.addEventListener('click',function(){aulaAnswer(i,b.getAttribute('data-qotd-opt'));});});});
   }
   var gq=document.getElementById('aula-go-quest');if(gq)gq.addEventListener('click',function(e){e.preventDefault();goPanel('quest');});
@@ -11296,6 +11312,7 @@ function renderErrCard(){
   setText('err-prog','Erro '+(errIdx+1)+' de '+errQueue.length);
   var box=document.getElementById('err-card');if(!box)return;
   box.innerHTML=qotdCardHTML(it.q,null,'📕 Revisão de erro');
+  try{ensureLightbox();}catch(e){}
   document.getElementById('err-next').style.display='none';
   box.querySelectorAll('[data-qotd-opt]').forEach(function(b){b.addEventListener('click',function(){errAnswer(it,b.getAttribute('data-qotd-opt'));});});
 }
@@ -14497,6 +14514,9 @@ var IG_TOOLS=[
 var igEditId=null; // id do item da fila em edição (null = criando novo)
 var igDraftImg=''; // imagem (base64 ou URL) do enunciado no formulário manual
 var igDraftImgRef=''; // atribuição/minirreferência da imagem (quando vinda do PubMed/Open-i)
+// Figura do COMENTÁRIO no formulário manual (ver qExpFigHTML): URL, legenda, capítulo
+// de origem, origem ('resumo'|'pubmed'|'upload') e o porquê da escolha (só na tela).
+var igDraftExpImg='',igDraftExpImgRef='',igDraftExpImgTema='',igDraftExpImgOrigem='',igDraftExpMotivo='';
 // Sinônimos por MODALIDADE. A figura devolvida pelo Open-i tem de citar a MESMA
 // modalidade que foi pedida — senão uma TC entra no lugar de um ultrassom.
 var IG_IMG_MODAL=[
@@ -14788,7 +14808,28 @@ function igShortRef(s){
 function qFigHTML(q){
   if(!q||!q.img)return '';
   var cap=q.imgRef?'<div style="font-size:.66rem;color:var(--t3);line-height:1.4;margin:-.35rem 0 .7rem;font-style:italic">'+esc(igShortRef(q.imgRef))+'</div>':'';
-  return '<img src="'+esc(q.img)+'" alt="Figura do caso" referrerpolicy="no-referrer" onerror="this.style.display=\'none\'" style="max-width:100%;display:block;border-radius:8px;margin:0 0 '+(q.imgRef?'.35rem':'.7rem')+';border:1px solid var(--bd)">'+cap;
+  return '<img class="qp-zoom" src="'+esc(q.img)+'" alt="Figura do caso" referrerpolicy="no-referrer" onerror="this.style.display=\'none\'" style="max-width:100%;display:block;border-radius:8px;margin:0 0 '+(q.imgRef?'.35rem':'.7rem')+';border:1px solid var(--bd)">'+cap;
+}
+// Figura do COMENTÁRIO (pedido do professor, 21/10/2026: "sempre que possível, jogar
+// uma imagem nos comentários para contextualizar e reforçar o comentário por
+// escrito"). Origem em `expImgOrigem`: 'resumo' (figura dos Resumos dos capítulos,
+// com a legenda e a fonte do livro), 'pubmed' (Open-i, com a minirreferência) ou
+// 'upload' (enviada pelo professor). O mesmo bloco no cartão do aluno, no de
+// revisão, no lote e nas Pendências. Só URL de imagem (safeImgSrc); o resto não sai.
+function qExpFigHTML(q){
+  if(!q||!q.expImg||!safeImgSrc(q.expImg))return '';
+  var src=q.expImgOrigem==='resumo'?('📚 Resumos'+(q.expImgTema?' · '+String(q.expImgTema).trim():'')):'';
+  var ref=q.expImgOrigem==='pubmed'?igShortRef(q.expImgRef):String(q.expImgRef||'').trim();
+  var cap=(src||ref)?'<figcaption>'+(src?'<span class="qp-expfig-src">'+esc(src)+'</span>':'')+esc(ref)+'</figcaption>':'';
+  var alt=ref?ref.slice(0,160):'Figura do comentário';
+  return '<figure class="qp-expfig"><img class="qp-zoom" src="'+esc(q.expImg)+'" alt="'+esc(alt)+'" loading="lazy" referrerpolicy="no-referrer" onerror="this.parentNode.style.display=\'none\'">'+cap+'</figure>';
+}
+// Os campos da figura do comentário, para levar de um objeto a outro (lote → fila,
+// lote → Pendências, Pendências → fila, formulário → fila). Sem figura, nenhum campo:
+// a questão sem imagem continua com o mesmo formato de antes.
+function igExpCampos(it){
+  if(!it||!it.expImg||!safeImgSrc(it.expImg))return {};
+  return {expImg:String(it.expImg),expImgRef:String(it.expImgRef||''),expImgTema:String(it.expImgTema||''),expImgOrigem:String(it.expImgOrigem||'')};
 }
 function persistIgStories(immediate){try{lsSet('ig_stories',igStories);}catch(e){}return queueRemoteStateSave(immediate);}
 function igSetV(id,v){var e=document.getElementById(id);if(e)e.value=(v==null?'':v);}
@@ -14903,13 +14944,34 @@ function igCaptionA(it){
 function igCaptionPromo(t){return '📲 '+t.nome+' — Endodirect\n\n'+t.cta+'\n\nA plataforma completa de endocrinologia para sua aprovação e prática. Link na bio! 🔗\n#endocrinologia #residenciamedica #endodirect #medicina';}
 function igReadDraft(){
   function v(id){var e=document.getElementById(id);return e?String(e.value||'').trim():'';}
-  return {sub:v('ig-sub'),teem:v('ig-teem'),stem:v('ig-stem'),options:{A:v('ig-a'),B:v('ig-b'),C:v('ig-c'),D:v('ig-d')},answer:(document.getElementById('ig-ans')||{}).value||'A',explanation:v('ig-exp'),img:igDraftImg,imgRef:igDraftImgRef};
+  return {sub:v('ig-sub'),teem:v('ig-teem'),stem:v('ig-stem'),options:{A:v('ig-a'),B:v('ig-b'),C:v('ig-c'),D:v('ig-d')},answer:(document.getElementById('ig-ans')||{}).value||'A',explanation:v('ig-exp'),img:igDraftImg,imgRef:igDraftImgRef,
+    expImg:igDraftExpImg,expImgRef:igDraftExpImgRef,expImgTema:igDraftExpImgTema,expImgOrigem:igDraftExpImgOrigem};
 }
 function igFillForm(it){
   igSetV('ig-sub',it.sub);igSetV('ig-teem',it.teem||'');igSetV('ig-stem',it.stem||'');
   var op=it.options||{};igSetV('ig-a',op.A||'');igSetV('ig-b',op.B||'');igSetV('ig-c',op.C||'');igSetV('ig-d',op.D||'');
   var an=document.getElementById('ig-ans');if(an)an.value=it.answer||'A';igSetV('ig-exp',it.explanation||'');
   igDraftImg=it.img||'';igDraftImgRef=it.imgRef||'';igRenderImgPrev();
+  var ex=igExpCampos(it);
+  igDraftExpImg=ex.expImg||'';igDraftExpImgRef=ex.expImgRef||'';igDraftExpImgTema=ex.expImgTema||'';igDraftExpImgOrigem=ex.expImgOrigem||'';igDraftExpMotivo=ex.expImg?String(it._expMotivo||''):'';
+  igRenderExpImgPrev();
+}
+function igDraftExpLimpa(){igDraftExpImg='';igDraftExpImgRef='';igDraftExpImgTema='';igDraftExpImgOrigem='';igDraftExpMotivo='';}
+// Figura do comentário no formulário: a prévia como o aluno vê, a legenda editável
+// (é o texto que sai embaixo da figura) e o ✕ para tirar.
+function igRenderExpImgPrev(){
+  var pv=document.getElementById('ig-expimg-prev');if(!pv)return;
+  var it={expImg:igDraftExpImg,expImgRef:igDraftExpImgRef,expImgTema:igDraftExpImgTema,expImgOrigem:igDraftExpImgOrigem};
+  if(!qExpFigHTML(it)){pv.innerHTML='';return;}
+  var orig=igDraftExpImgOrigem==='resumo'?('dos Resumos'+(igDraftExpImgTema?' · '+esc(igDraftExpImgTema):'')):igDraftExpImgOrigem==='pubmed'?'do PubMed (Open-i)':'enviada por você';
+  pv.innerHTML='<div style="background:var(--s2);border:1px solid var(--bd);border-radius:var(--rs);padding:.5rem .7rem">'
+    +'<div style="display:flex;align-items:center;gap:.6rem;margin-bottom:.4rem"><span style="flex:1;font-size:.74rem;color:var(--t2)">Imagem do comentário '+orig+'</span><button class="btn btn-ghost btn-sm" id="ig-expimg-clear" type="button" title="Tirar a imagem do comentário">✕</button></div>'
+    +'<div style="max-width:520px">'+qExpFigHTML(it)+'</div>'
+    +(igDraftExpMotivo?'<div style="font-size:.68rem;color:var(--t3);line-height:1.45;margin-top:.3rem"><b>Por que esta figura:</b> '+esc(igDraftExpMotivo)+'</div>':'')
+    +'<label style="display:block;margin-top:.45rem">'+igLbl('Legenda embaixo da figura')+'<textarea id="ig-expimg-ref" rows="2" style="width:100%">'+esc(igDraftExpImgRef)+'</textarea></label>'
+    +'</div>';
+  var cl=document.getElementById('ig-expimg-clear');if(cl)cl.addEventListener('click',function(){igDraftExpLimpa();igRenderExpImgPrev();});
+  var rf=document.getElementById('ig-expimg-ref');if(rf)rf.addEventListener('input',function(){igDraftExpImgRef=rf.value;});
 }
 // Imagem opcional do enunciado (upload base64 OU sugestão do PubMed/Open-i por URL).
 function igRenderImgPrev(){
@@ -14947,6 +15009,12 @@ function admPendCardHTML(it){
     +(it.imgRef?'<div style="font-size:.66rem;color:var(--t3);line-height:1.4;font-style:italic;margin-top:.35rem">'+esc(igShortRef(it.imgRef))+'</div>':'')
     +'<label style="display:flex;gap:.4rem;align-items:center;font-size:.72rem;color:var(--t2);margin-top:.45rem;cursor:pointer"><input type="checkbox" id="pend-rmimg-'+id+'" style="width:auto"> remover imagem ao aprovar</label>'
     +'</div>'):'';
+  // Figura do comentário (Resumos, PubMed ou enviada): o mesmo conferir-e-tirar.
+  var expBlock=qExpFigHTML(it)?(igLbl('Imagem do comentário (sugerida — confira)')
+    +'<div style="background:var(--s2);border:1px solid var(--bd);border-radius:var(--rs);padding:.55rem .7rem;margin-bottom:.6rem">'
+    +qExpFigHTML(it)
+    +'<label style="display:flex;gap:.4rem;align-items:center;font-size:.72rem;color:var(--t2);margin-top:.45rem;cursor:pointer"><input type="checkbox" id="pend-rmexp-'+id+'" style="width:auto"> remover imagem do comentário ao aprovar</label>'
+    +'</div>'):'';
   return '<div class="card" data-pend-card="'+id+'" style="margin-bottom:1rem">'
     +'<div style="display:flex;justify-content:space-between;gap:.5rem;flex-wrap:wrap;align-items:center;margin-bottom:.55rem">'
       +'<div style="font-size:.85rem;font-weight:700;color:var(--tx)">'+dirSubIcon(it.sub)+' '+esc(it.sub||'')+(it.teem?' <span class="tag">'+esc(it.teem)+'</span>':'')+'</div>'
@@ -14956,6 +15024,7 @@ function admPendCardHTML(it){
     +igLbl('Alternativas')+'<div style="margin-bottom:.5rem">'+optRows+'</div>'
     +'<label style="display:block;width:90px;margin-bottom:.5rem">'+igLbl('Gabarito')+'<select id="pend-ans-'+id+'">'+ansOpts+'</select></label>'
     +igLbl('Comentário (resposta comentada no app)')+'<textarea id="pend-exp-'+id+'" rows="3" style="width:100%;margin-bottom:.6rem">'+esc(it.explanation||'')+'</textarea>'
+    +expBlock
     +'<div style="display:flex;gap:.5rem;flex-wrap:wrap;align-items:center"><button class="btn btn-primary btn-sm" data-pend-ok="'+id+'">✓ Aprovar e publicar</button><button class="btn btn-outline btn-sm" data-pend-del="'+id+'">🗑 Descartar</button></div>'
   +'</div>';
 }
@@ -14982,7 +15051,9 @@ function pendApprove(id){
   if(!stem||!options.A||!options.B||!options.C||!options.D){notify('Preencha o enunciado e as 4 alternativas.','err');return;}
   var rm=(document.getElementById('pend-rmimg-'+id)||{}).checked;
   var pImg=rm?'':(it.img||''),pRef=rm?'':(it.imgRef||'');
-  igStories.push({id:'ig-'+Date.now()+'-'+Math.round(Math.random()*1e6),sub:it.sub,teem:it.teem||'',stem:stem,options:options,answer:answer,explanation:explanation,img:pImg,imgRef:pRef,status:'queued',createdAt:Date.now()});
+  // A figura do comentário segue, salvo se o professor marcou para tirar.
+  var rmExp=(document.getElementById('pend-rmexp-'+id)||{}).checked;
+  igStories.push(Object.assign({id:'ig-'+Date.now()+'-'+Math.round(Math.random()*1e6),sub:it.sub,teem:it.teem||'',stem:stem,options:options,answer:answer,explanation:explanation,img:pImg,imgRef:pRef},rmExp?{}:igExpCampos(it),{status:'queued',createdAt:Date.now()}));
   igPending.splice(idx,1);
   persistIgStories();persistIgPending();updateAdmPendBadge();
   notify('Aprovada e publicada na Questão do Dia.','ok');renderAdmSec('pendencias');
@@ -14990,6 +15061,7 @@ function pendApprove(id){
 function pendDiscard(id){var idx=pendFindIdx(id);if(idx<0)return;if(!confirm('Descartar esta questão? Ela não será publicada.'))return;igPending.splice(idx,1);persistIgPending();updateAdmPendBadge();notify('Questão descartada.','ok');renderAdmSec('pendencias');}
 function bindAdmPendencias(){
   var host=document.getElementById('adm-main');if(!host)return;
+  try{ensureLightbox();}catch(e){}
   host.querySelectorAll('[data-pend-ok]').forEach(function(b){b.addEventListener('click',function(){pendApprove(b.dataset.pendOk);});});
   host.querySelectorAll('[data-pend-del]').forEach(function(b){b.addEventListener('click',function(){pendDiscard(b.dataset.pendDel);});});
 }
@@ -15156,6 +15228,14 @@ function admStoriesHTML(){
    +'</div>'
    +'<label style="display:block;width:76px;margin-bottom:.6rem">'+igLbl('Gabarito')+'<select id="ig-ans">'+ansOpts+'</select></label>'
    +igLbl('Explicação (resposta comentada no app)')+'<textarea id="ig-exp" rows="3" placeholder="Por que a resposta correta é essa, citando o critério/diretriz…"></textarea>'
+   // Figura do comentário: sugerida dos Resumos/PubMed ou enviada pelo professor.
+   +'<div style="margin-top:.6rem">'+igLbl('Imagem no comentário (opcional)')
+   +'<div style="display:flex;gap:.4rem;flex-wrap:wrap;align-items:center;margin-bottom:.4rem">'
+   +'<button class="btn btn-outline btn-sm" id="ig-expimg-sug" type="button" title="Procura nos Resumos dos capítulos (e, se nada servir e o enunciado não tiver figura, no PubMed) uma figura que sustente o comentário">🔎 Sugerir dos Resumos / PubMed</button>'
+   +'<button class="btn btn-outline btn-sm" id="ig-expimg-up" type="button">⬆ Enviar uma imagem</button>'
+   +'<input type="file" id="ig-expimg-file" accept="image/*" style="display:none">'
+   +'<span id="ig-expimg-status" style="font-size:.72rem;color:var(--t3)"></span></div>'
+   +'<div id="ig-expimg-prev"></div></div>'
    +'<div style="display:flex;gap:.5rem;flex-wrap:wrap;margin-top:.8rem">'
    +'<button class="btn btn-outline btn-sm" id="ig-preview">👁 Pré-visualizar</button>'
    +'<button class="btn btn-outline btn-sm" id="ig-dlq">⬇ Baixar imagem</button>'
@@ -15221,6 +15301,171 @@ function igAttachExamImage(q,d){
   // ou modalidade que a vinheta nem cita, sinal que ela não descreve → sem figura)
   if(!igImgPedidoCoerente(iq,stem,tipo))return Promise.resolve(q);
   return igFetchExamImage(iq,stem,tipo).then(function(im){if(im){q.img=im.img;q.imgRef=im.imgRef;}return q;}).catch(function(){return q;});
+}
+// ── FIGURA DO COMENTÁRIO (21/10/2026) ───────────────────────────────────────
+// Pedido do professor: "sempre que possível, jogar uma imagem nos comentários para
+// contextualizar e reforçar o comentário por escrito. Não precisa ser em todas as
+// questões [...] as imagens podem ser novas, retiradas do PubMed, ou dos próprios
+// resumos dos capítulos." Vale para as questões geradas daqui em diante. A ordem:
+//  1. uma figura dos RESUMOS (imagem do corpo, com a legenda e a fonte do livro, ou o
+//     esquema do capítulo) que mostre o ponto que JUSTIFICA a resposta;
+//  2. se nenhuma servir e o ponto for visual (achado de exame, sinal clínico), uma do
+//     PubMed Central pelo Open-i, com as conferências da figura do caso. Só quando o
+//     enunciado não tem figura: duas imagens de exame do mesmo caso não somam nada;
+//  3. senão, nenhuma. Figura que não sustenta o comentário é pior do que nenhuma.
+// A imagem NOVA entra pelo formulário manual: o professor envia a dele.
+//
+// Candidatas: toda imagem dos Resumos com endereço https e o esquema por URL de cada
+// capítulo. Ficam de fora a imagem embutida em base64 (iria inteira na Questão do Dia
+// de cada aluno) e os três esquemas em SVG embutido. Sem legenda não entra: não haveria
+// como julgar se a figura serve.
+var IG_EXP_RE_IMG=new RegExp('^[ \\t]*!\\['+mdAltRE+'\\]\\((https://[^\\s)]+)\\)(?:\\{\\d{1,3}\\})?[ \\t]*$','gm');
+// O TEXTO de cada esquema da plataforma (figuras/resumos/textos.json, gerado dos SVGs
+// por scripts/indice-figuras-resumos.js). O esquema do capítulo chega aqui só com o
+// título, e o que decide a escolha está no desenho: a meta de renina no de Conn, o
+// K ≤ 4,8 da finerenona. Na simulação com as questões reais (21/10), as duas figuras
+// certas que ficaram de fora eram esquemas lidos só pelo título. O texto entra na
+// pré-seleção e na escolha, nunca na legenda que o aluno vê. Falhou o download, segue
+// sem ele (e tenta de novo na próxima questão).
+var IG_EXP_TEXTOS=null;
+function igExpTextosFiguras(){
+  if(IG_EXP_TEXTOS)return Promise.resolve(IG_EXP_TEXTOS);
+  try{
+    return fetch('/figuras/resumos/textos.json').then(function(r){return r&&r.ok?r.json():null;}).then(function(j){
+      if(j&&typeof j==='object'&&!Array.isArray(j)){IG_EXP_TEXTOS=j;return j;}
+      return {};
+    }).catch(function(){return {};});
+  }catch(e){return Promise.resolve({});}
+}
+function igExpTextoDoDesenho(url,textos){
+  var m=/^https:\/\/www\.endodirect\.com\.br\/figuras\/resumos\/([A-Za-z0-9_\/.-]+\.svg)$/i.exec(String(url||''));
+  return (m&&textos&&typeof textos[m[1]]==='string')?textos[m[1]]:'';
+}
+function igExpCandidatas(textos){
+  var out=[],lista=(typeof diretrizes!=='undefined'&&Array.isArray(diretrizes))?diretrizes:[];
+  lista.forEach(function(d,pos){
+    if(!d||d.rascunho)return;
+    var tema=String(d.tema||'').trim(),txt=String(d.resumo||''),k=0,m;
+    IG_EXP_RE_IMG.lastIndex=0;
+    while((m=IG_EXP_RE_IMG.exec(txt))){
+      var leg=mdUnescAlt(m[1]).trim();
+      if(leg&&safeImgSrc(m[2]))out.push({id:'r'+pos+'-'+(k++),url:m[2],leg:leg,cap:leg,desenho:igExpTextoDoDesenho(m[2],textos),tema:tema,sub:String(d.sub||'')});
+    }
+    (Array.isArray(d.figuras)?d.figuras:[]).forEach(function(f,j){
+      if(!f||!/^https:\/\//i.test(String(f.url||''))||!safeImgSrc(f.url))return;
+      var tit=String(f.titulo||'').trim(),fonte=String(f.fonte||'').trim();
+      if(!tit)return;
+      out.push({id:'f'+pos+'-'+j,url:String(f.url),leg:tit,cap:tit+(fonte?(/[.!?]$/.test(tit)?' ':'. ')+fonte:''),desenho:igExpTextoDoDesenho(f.url,textos),tema:tema,sub:String(d.sub||'')});
+    });
+  });
+  return out;
+}
+// A legenda sem o "Fonte: traduzida de Williams…": o nome do livro não diz nada sobre
+// o que a figura mostra e casaria por acaso ("Clinical" × "clínica").
+function igExpSemFonte(s){return String(s||'').replace(/\s*\bFonte:[\s\S]*$/i,'').trim();}
+// Termos para a pré-seleção. Sigla fica inteira (TSH, T4L, TRAb, HbA1c, IGF-1, DM2:
+// curtas e decisivas); palavra de 4 letras ou mais, sem acento e cortada em 7 letras
+// (tireoide × tireoidite, cintilografia × cintilográfica casam).
+var IG_EXP_STOP={};
+('para pelo pela pelos pelas como mais menos muito pouca pouco entre sobre apos antes desde quando onde qual quais quanto este esta estes estas esse essa esses essas isso isto aquele aquela seus suas nao sim pode podem deve devem caso casos paciente pacientes doenca doencas quadro forma formas tipo tipos figura fonte cada outro outra outros outras mesmo mesma ainda tambem porque pois logo assim sendo seja sejam alem apenas sempre nunca anos meses dias valor valores exame exames resposta correta alternativa alternativas questao comentario').split(' ').forEach(function(w){IG_EXP_STOP[w]=1;});
+// Sigla e nome por extenso valem o mesmo termo: a questão diz "cetoacidose" e o esquema
+// diz "CAD"; a questão diz "SOP" e o capítulo, "SOMP".
+var IG_EXP_SINONIMOS={'#cad':['cetoaci'],'cetoaci':['#cad'],'#ehh':['hiperos'],'hiperos':['#ehh'],'#somp':['#sop','policis'],'#sop':['#somp','policis'],'policis':['#somp','#sop'],'#hac':['hiperpl'],'#feo':['feocrom'],'feocrom':['#feo'],'#hpp':['hiperpa'],'#drc':['renal'],'#masld':['esteato'],'esteato':['#masld']};
+function igExpTermos(txt){
+  var out={},partes=String(txt||'').split(/[^A-Za-z0-9À-ſ-]+/),i;
+  for(i=0;i<partes.length;i++){
+    var p=partes[i].replace(/^-+|-+$/g,'');if(!p)continue;
+    var mai=(p.match(/[A-Z]/g)||[]).length,dig=/[0-9]/.test(p);
+    if(mai>=2||(mai>=1&&dig)){out['#'+p.toLowerCase().replace(/-/g,'')]=1;continue;}   // GLP-1 = GLP1
+    var w=igImgDeacc(p).replace(/[^a-z]/g,'');
+    if(w.length<4||IG_EXP_STOP[w])continue;
+    out[w.length>7?w.slice(0,7):w]=1;
+  }
+  Object.keys(out).forEach(function(t){(IG_EXP_SINONIMOS[t]||[]).forEach(function(x){out[x]=1;});});
+  return out;
+}
+// Pré-seleção: as `n` candidatas com mais termos em comum com a questão. O comentário
+// e a alternativa correta pesam 2; o enunciado, 1. Termo que aparece em quase toda
+// candidata (o nome do órgão numa questão de tireoide) pesa pouco (IDF), e a legenda
+// LONGA pesa menos por termo (normalização de tamanho do BM25, k1 1,2 e b 0,75): sem
+// isso, as mesmas legendas compridas apareciam em toda questão, de pé diabético a
+// hipercalcemia. A do mesmo tema da questão sobe um pouco (×1,5) sem fechar a porta a
+// outro capítulo: uma questão de neuroendocrinologia sobre TSH-oma pode usar a figura
+// de tireoide. Duas coincidências no mínimo — uma só é acaso.
+var IG_EXP_MAX=10;
+function igExpRanking(q,cands,n){
+  if(!q||!cands||!cands.length)return [];
+  var op=q.options||{},peso={},t;
+  var forte=igExpTermos(String(q.explanation||'')+' '+String(op[q.answer]||'')),fraco=igExpTermos(q.stem);
+  for(t in fraco)peso[t]=1;
+  for(t in forte)peso[t]=2;
+  var sets=cands.map(function(c){return igExpTermos(igExpSemFonte(c.leg)+' '+(c.desenho||'')+' '+c.tema);}),df={},lens=[],soma=0;
+  sets.forEach(function(s){var L=0;for(var k in s){df[k]=(df[k]||0)+1;L++;}lens.push(L);soma+=L;});
+  var N=cands.length,media=(soma/N)||1,res=[];
+  cands.forEach(function(c,i){
+    var s=sets[i],nota=0,hits=0,norma=1.2*(0.25+0.75*lens[i]/media);
+    for(var k in peso)if(s[k]){hits++;nota+=peso[k]*Math.log(1+N/df[k])*2.2/(1+norma);}
+    if(hits<2)return;
+    if(c.sub&&c.sub===q.sub)nota*=1.5;
+    res.push({c:c,nota:nota});
+  });
+  res.sort(function(a,b){return b.nota-a.nota;});
+  return res.slice(0,n||IG_EXP_MAX).map(function(r){return r.c;});
+}
+function igExpSys(podePubmed){
+  return 'Você escolhe a figura que acompanha o COMENTÁRIO (o gabarito comentado) de uma questão de prova de título em endocrinologia.'
+    +' A figura serve só se mostrar o ponto que JUSTIFICA a resposta correta — o mecanismo, o critério, o achado, a classificação ou a conduta que o comentário usa para explicar por que aquela alternativa está certa — e se nada nela contradisser o enunciado, a resposta ou o comentário.'
+    +' Figura do mesmo assunto que não mostra esse ponto NÃO serve. Figura de outra doença ou de outra conduta NÃO serve. Figura que mostra o achado de um DISTRATOR, e não o do caso, NÃO serve. Julgue pelo que a figura MOSTRA, não pelo capítulo de onde ela vem.'
+    +' Na dúvida, não escolha: comentário sem figura é melhor do que figura que não sustenta o comentário. Se mais de uma servir, prefira a que mostra DIRETAMENTE o critério, o valor ou o mecanismo da resposta.'
+    +' As candidatas vêm dos Resumos dos capítulos, cada uma com id, subespecialidade, capítulo e legenda; nos esquemas, "No desenho:" traz o texto escrito dentro da figura. Escolha no máximo UMA, pelo id.'
+    +(podePubmed
+      ?' Se NENHUMA candidata servir e o ponto central da resposta for VISUAL — um achado de exame de imagem ou um sinal clínico visível que o enunciado ou o comentário DESCREVE como presente —, proponha em "busca" termos EM INGLÊS para achar a figura no PubMed Central: MODALIDADE + ÓRGÃO + ACHADO (ex.: "thyroid scintigraphy diffuse uptake Graves") ou o nome do sinal clínico (ex.: "pretibial myxedema"). Nunca busque achado HIPOTÉTICO — o resultado esperado de um exame que a resposta manda pedir, ou uma lesão citada só para ser afastada —, nem o achado de um distrator, nem exame descrito como normal. Se escolher uma candidata, ou se o ponto não for visual, "busca" fica vazia.'
+      :' "busca" fica sempre vazia.')
+    +' JSON APENAS: {"id":"id da candidata ou string vazia","busca":"termos em inglês ou string vazia","motivo":"até 25 palavras: o elemento da figura que sustenta a resposta; sem figura, o ponto que nenhuma mostra"}';
+}
+function igExpEscolha(q,cands,podePubmed){
+  var op=q.options||{},L=String(q.answer||'');
+  var alts=['A','B','C','D'].filter(function(x){return op[x];}).map(function(x){return x+') '+String(op[x]).trim();}).join(' | ');
+  var lista=(cands||[]).map(function(c){
+    var leg=igExpSemFonte(c.leg).slice(0,420),des=c.desenho?(' No desenho: '+String(c.desenho).slice(0,Math.max(160,620-leg.length))):'';
+    return '['+c.id+'] ('+c.sub+' · '+c.tema+') '+leg+des;
+  }).join('\n');
+  var prompt='Questão: '+String(q.stem||'').trim()
+    +'\nAlternativas: '+alts
+    +'\nResposta correta: '+L+') '+String(op[L]||'').trim()
+    +'\nComentário: '+String(q.explanation||'').trim()
+    +'\n\nCandidatas:\n'+(lista||'(nenhuma)')
+    +'\n\nResponda SOMENTE com o objeto JSON.';
+  return aiRequest({system:igExpSys(podePubmed),prompt:prompt,maxTokens:220,model:AI_MODEL_CLINICO}).then(function(raw){return parseJ(raw)||null;});
+}
+// Anexa (best-effort) a figura do comentário. Nunca falha a geração: qualquer erro, ou
+// nenhuma figura que sirva, devolve a questão como veio.
+function igAttachExpImage(q){
+  if(!q||!q.stem||!String(q.explanation||'').trim())return Promise.resolve(q);
+  var podePubmed=!q.img,cands=[];
+  return igExpTextosFiguras().then(function(textos){
+    try{cands=igExpRanking(q,igExpCandidatas(textos),IG_EXP_MAX);}catch(e){cands=[];}
+    if(!cands.length&&!podePubmed)return null;
+    return igExpEscolha(q,cands,podePubmed);
+  }).then(function(r){
+    if(!r)return q;
+    var id=String(r.id||'').replace(/[\[\]\s]/g,''),motivo=String(r.motivo||'').trim().slice(0,240),c=null,i;
+    for(i=0;id&&i<cands.length;i++)if(cands[i].id===id){c=cands[i];break;}
+    if(c){
+      q.expImg=c.url;q.expImgRef=c.cap;q.expImgTema=c.tema;q.expImgOrigem='resumo';q._expMotivo=motivo;
+      return q;
+    }
+    var busca=podePubmed?String(r.busca||'').trim():'';
+    if(!busca)return q;
+    // A figura do Open-i passa pelas MESMAS conferências da figura do caso, contra o
+    // enunciado E o comentário: o achado tem de estar escrito, não negado e não normal.
+    var texto=String(q.stem||'')+' '+String(q.explanation||''),tipo=igImgTipoDaBusca(busca);
+    if(!igImgPedidoCoerente(busca,texto,tipo))return q;
+    return igFetchExamImage(busca,texto,tipo).then(function(im){
+      if(im&&im.img&&im.img!==q.img&&safeImgSrc(im.img)){q.expImg=im.img;q.expImgRef=im.imgRef||'';q.expImgTema='';q.expImgOrigem='pubmed';q._expMotivo=motivo;}
+      return q;
+    });
+  }).catch(function(){return q;});
 }
 // ⚠️ Regra ESTREITA de propósito. A versão anterior mandava ilustrar sempre que a
 // vinheta "envolvesse um exame de imagem" — e o gerador pedia figura até para caso
@@ -15418,12 +15663,12 @@ function igPlanoLote(n,formato){
   var nImg=Math.round((n-nDir)*2/3),c=0;
   return fm.map(function(f){return {formato:f,imagem:(f==='caso'&&(c++)<nImg)};});
 }
-function igLoteToQueue(it){igStories.push({id:'ig-'+Date.now()+'-'+Math.round(Math.random()*1e6),sub:it.sub,teem:it.teem||'',stem:it.stem,options:it.options,answer:it.answer,explanation:it.explanation,img:it.img||'',imgRef:it.imgRef||'',status:'queued',createdAt:Date.now()});}
+function igLoteToQueue(it){igStories.push(Object.assign({id:'ig-'+Date.now()+'-'+Math.round(Math.random()*1e6),sub:it.sub,teem:it.teem||'',stem:it.stem,options:it.options,answer:it.answer,explanation:it.explanation,img:it.img||'',imgRef:it.imgRef||''},igExpCampos(it),{status:'queued',createdAt:Date.now()}));}
 function igLoteApprove(i){var it=igLoteDraft[i];if(!it)return;igLoteToQueue(it);igLoteDraft.splice(i,1);persistIgStories();notify('Aprovada e adicionada à fila.','ok');renderAdmSec('stories');}
 function igLoteApproveAll(){if(!igLoteDraft.length)return;var n=igLoteDraft.length;igLoteDraft.forEach(igLoteToQueue);igLoteDraft=[];persistIgStories();notify(n+' questões aprovadas.','ok');renderAdmSec('stories');}
 // DISTRIBUIR: envia a questão para a aba Pendências do professor responsável (pela
 // subespecialidade). Vive no estado global; o professor aprova/edita lá.
-function igMakePending(it){return {id:'igp-'+Date.now()+'-'+Math.round(Math.random()*1e6),sub:it.sub,teem:it.teem||'',stem:it.stem,options:it.options,answer:it.answer,explanation:it.explanation||'',img:it.img||'',imgRef:it.imgRef||'',status:'pending',distributedBy:admEmail(),distributedAt:Date.now()};}
+function igMakePending(it){return Object.assign({id:'igp-'+Date.now()+'-'+Math.round(Math.random()*1e6),sub:it.sub,teem:it.teem||'',stem:it.stem,options:it.options,answer:it.answer,explanation:it.explanation||'',img:it.img||'',imgRef:it.imgRef||''},igExpCampos(it),{status:'pending',distributedBy:admEmail(),distributedAt:Date.now()});}
 function igDistribute(i){var it=igLoteDraft[i];if(!it)return;igPending.push(igMakePending(it));igLoteDraft.splice(i,1);persistIgPending();var c=qotdCuratorForSub(it.sub);notify('Distribuída para '+(c?c.nome:'Pendências')+' ('+esc(it.sub||'')+').','ok');renderAdmSec('stories');}
 function igDistributeAll(){if(!igLoteDraft.length)return;var n=igLoteDraft.length;igLoteDraft.forEach(function(it){igPending.push(igMakePending(it));});igLoteDraft=[];persistIgPending();notify(n+' questões distribuídas.','ok');renderAdmSec('stories');}
 // Reordena a fila (ordem = ordem de publicação; topo = próxima). dir: -1 sobe, +1 desce.
@@ -15513,10 +15758,14 @@ function renderIgLote(){
     var _stem=String(it.stem||'');
     var _prev=esc(_stem.slice(0,220))+(_stem.length>220?'…':'');
     var _fig=it.img?'<div style="margin-top:.4rem"><img src="'+esc(it.img)+'" alt="Figura do caso" referrerpolicy="no-referrer" onerror="this.style.display=\'none\'" style="max-width:100%;max-height:200px;border-radius:6px;border:1px solid var(--bd)">'+(it.imgRef?'<div style="font-size:.66rem;color:var(--t3);font-style:italic;line-height:1.4;margin-top:.25rem">'+esc(igShortRef(it.imgRef))+'</div>':'')+'</div>':'';
-    var _full='<div style="font-size:.74rem;color:var(--t2);line-height:1.55;white-space:pre-wrap">▾ '+esc(_stem)+'</div>'+_fig+'<div style="margin-top:.35rem;display:grid;gap:.18rem">'+['A','B','C','D'].map(function(L){var ok=(it.answer===L);return '<div style="font-size:.74rem;line-height:1.45;color:'+(ok?'#16a34a':'var(--t2)')+';font-weight:'+(ok?'700':'400')+'"><b>'+L+')</b> '+esc((it.options||{})[L]||'')+(ok?' ✓':'')+'</div>';}).join('')+'</div>'+(it.explanation?'<div style="margin-top:.35rem;font-size:.72rem;color:var(--t3);line-height:1.5"><b>Comentário:</b> '+esc(it.explanation)+'</div>':'');
+    var _full='<div style="font-size:.74rem;color:var(--t2);line-height:1.55;white-space:pre-wrap">▾ '+esc(_stem)+'</div>'+_fig+'<div style="margin-top:.35rem;display:grid;gap:.18rem">'+['A','B','C','D'].map(function(L){var ok=(it.answer===L);return '<div style="font-size:.74rem;line-height:1.45;color:'+(ok?'#16a34a':'var(--t2)')+';font-weight:'+(ok?'700':'400')+'"><b>'+L+')</b> '+esc((it.options||{})[L]||'')+(ok?' ✓':'')+'</div>';}).join('')+'</div>'+(it.explanation?'<div style="margin-top:.35rem;font-size:.72rem;color:var(--t3);line-height:1.5"><b>Comentário:</b> '+esc(it.explanation)+'</div>':'')
+      // Figura do comentário: confira o porquê da escolha e tire se não servir.
+      +(qExpFigHTML(it)?('<div style="margin-top:.35rem;max-width:520px">'+qExpFigHTML(it)
+        +(it._expMotivo?'<div style="font-size:.68rem;color:var(--t3);line-height:1.45;margin-top:.25rem"><b>Por que esta figura:</b> '+esc(it._expMotivo)+'</div>':'')
+        +'<button class="btn btn-ghost btn-sm" data-iglote-rmexp="'+i+'" style="margin-top:.3rem">✕ Tirar a imagem do comentário</button></div>'):'');
     return '<div style="border:1px solid var(--bd);border-radius:12px;padding:.7rem .8rem;margin-bottom:.5rem;background:var(--s2)">'
       +'<div style="display:flex;justify-content:space-between;gap:.5rem;flex-wrap:wrap;align-items:center;margin-bottom:.35rem">'
-      +'<div style="font-size:.8rem;font-weight:700;color:var(--tx)">'+dirSubIcon(it.sub)+' '+esc(it.sub||'')+' <span class="tag tag-blue">Gab: '+esc(it.answer)+'</span>'+(it.img?' <span class="tag">🖼️ imagem</span>':'')+(it.formato==='direta'?' <span class="tag">❓ direta</span>':'')
+      +'<div style="font-size:.8rem;font-weight:700;color:var(--tx)">'+dirSubIcon(it.sub)+' '+esc(it.sub||'')+' <span class="tag tag-blue">Gab: '+esc(it.answer)+'</span>'+(it.img?' <span class="tag">🖼️ imagem</span>':'')+(qExpFigHTML(it)?' <span class="tag" title="O comentário tem figura ('+(it.expImgOrigem==='resumo'?'dos Resumos':it.expImgOrigem==='pubmed'?'do PubMed':'enviada')+')">🖼️ comentário</span>':'')+(it.formato==='direta'?' <span class="tag">❓ direta</span>':'')
       // ⚠️ Marca a que continuou parecida com uma questão que já existe, mesmo depois
       // da segunda tentativa. Fica VISÍVEL em vez de sumir: descartar em silêncio
       // esconderia que o gerador está preso num caso só.
@@ -15538,7 +15787,10 @@ function renderIgLote(){
   res.querySelectorAll('[data-iglote-ok]').forEach(function(b){b.addEventListener('click',function(){igLoteApprove(parseInt(b.dataset.igloteOk,10));});});
   res.querySelectorAll('[data-iglote-edit]').forEach(function(b){b.addEventListener('click',function(){igLoteEdit(parseInt(b.dataset.igloteEdit,10));});});
   res.querySelectorAll('[data-iglote-del]').forEach(function(b){b.addEventListener('click',function(){igLoteDraft.splice(parseInt(b.dataset.igloteDel,10),1);renderIgLote();});});
-  res.querySelectorAll('[data-iglote-toggle]').forEach(function(el){el.addEventListener('click',function(){var i=el.getAttribute('data-iglote-toggle');var p=res.querySelector('[data-iglote-prev="'+i+'"]'),f=res.querySelector('[data-iglote-full="'+i+'"]');if(!p||!f)return;var op=f.style.display!=='none';f.style.display=op?'none':'';p.style.display=op?'':'none';});});
+  res.querySelectorAll('[data-iglote-rmexp]').forEach(function(b){b.addEventListener('click',function(e){e.stopPropagation();var it=igLoteDraft[parseInt(b.dataset.igloteRmexp,10)];if(!it)return;['expImg','expImgRef','expImgTema','expImgOrigem','_expMotivo'].forEach(function(k){delete it[k];});renderIgLote();var f=res.querySelector('[data-iglote-full="'+b.dataset.igloteRmexp+'"]'),p=res.querySelector('[data-iglote-prev="'+b.dataset.igloteRmexp+'"]');if(f&&p){f.style.display='';p.style.display='none';}notify('Imagem do comentário retirada.','ok');});});
+  // Clicar na figura AMPLIA (ensureLightbox); não recolhe o cartão.
+  try{ensureLightbox();}catch(e){}
+  res.querySelectorAll('[data-iglote-toggle]').forEach(function(el){el.addEventListener('click',function(e){if(e&&e.target&&e.target.closest&&e.target.closest('.qp-expfig,button'))return;var i=el.getAttribute('data-iglote-toggle');var p=res.querySelector('[data-iglote-prev="'+i+'"]'),f=res.querySelector('[data-iglote-full="'+i+'"]');if(!p||!f)return;var op=f.style.display!=='none';f.style.display=op?'none':'';p.style.display=op?'':'none';});});
   var distall=document.getElementById('ig-lote-distall');if(distall)distall.addEventListener('click',igDistributeAll);
   var okall=document.getElementById('ig-lote-okall');if(okall)okall.addEventListener('click',igLoteApproveAll);
 }
@@ -15569,7 +15821,7 @@ function bindAdmStories(){
   function syncManTemas(){if(manTemaSel)manTemaSel.innerHTML=igLoteTemas((manSubSel&&manSubSel.value)||(typeof DIR_SUBS!=='undefined'?DIR_SUBS[0]:''));}
   if(manSubSel){manSubSel.addEventListener('change',syncManTemas);syncManTemas();}
   var manToggle=document.getElementById('ig-manual-toggle');
-  if(manToggle)manToggle.addEventListener('click',function(){var w=document.getElementById('ig-manual-wrap');if(!w)return;w.style.display='';igEditId=null;['ig-teem','ig-stem','ig-a','ig-b','ig-c','ig-d','ig-exp'].forEach(function(id){var e=document.getElementById(id);if(e)e.value='';});var an=document.getElementById('ig-ans');if(an)an.value='A';igDraftImg='';igDraftImgRef='';igRenderImgPrev();var pw=document.getElementById('ig-prev-wrap');if(pw)pw.style.display='none';try{document.getElementById('ig-stem').scrollIntoView({behavior:'smooth',block:'center'});}catch(e){}});
+  if(manToggle)manToggle.addEventListener('click',function(){var w=document.getElementById('ig-manual-wrap');if(!w)return;w.style.display='';igEditId=null;['ig-teem','ig-stem','ig-a','ig-b','ig-c','ig-d','ig-exp'].forEach(function(id){var e=document.getElementById(id);if(e)e.value='';});var an=document.getElementById('ig-ans');if(an)an.value='A';igDraftImg='';igDraftImgRef='';igRenderImgPrev();igDraftExpLimpa();igRenderExpImgPrev();var pw=document.getElementById('ig-prev-wrap');if(pw)pw.style.display='none';try{document.getElementById('ig-stem').scrollIntoView({behavior:'smooth',block:'center'});}catch(e){}});
   var promoToggle=document.getElementById('ig-promo-toggle');
   if(promoToggle)promoToggle.addEventListener('click',function(){var w=document.getElementById('ig-promo-wrap');if(!w)return;w.style.display=(w.style.display==='none'||!w.style.display)?'':'none';});
   var pendProfToggle=document.getElementById('ig-pendprof-toggle');
@@ -15592,8 +15844,11 @@ function bindAdmStories(){
       var q=igShuffleMCQ({sub:sub,stem:String(d.stem||''),options:{A:d.options.A||'',B:d.options.B||'',C:d.options.C||'',D:d.options.D||''},answer:String(d.answer||'A').toUpperCase().slice(0,1),explanation:String(d.explanation||'')});
       if(d.imageQuery&&String(d.imageQuery).trim()&&st)st.textContent='🔎 Buscando imagem do exame…';
       return igAttachExamImage(q,d).then(function(qq){
+        if(st)st.textContent='🔎 Procurando figura para o comentário…';
+        return igAttachExpImage(qq);
+      }).then(function(qq){
         igFillForm(qq);
-        if(st)st.textContent='✓ Gerada — revise, pré-visualize e aprove.';notify('Questão gerada. Revise antes de aprovar.','ok');
+        if(st)st.textContent='✓ Gerada'+(qq.expImg?' (com figura no comentário)':'')+' — revise, pré-visualize e aprove.';notify('Questão gerada. Revise antes de aprovar.','ok');
       });
     })
     .catch(function(e){notify('Erro ao gerar: '+((e&&e.message)||e),'err');})
@@ -15645,6 +15900,10 @@ function bindAdmStories(){
         if(!produzidas[s])produzidas[s]=[];
         return igGenOneUnica(s,topics[idx],lvl,eixos[idx],igStemsExistentes(s),produzidas[s],plano[idx]).then(function(r){
           if(r&&r.stem)produzidas[s].push(r.stem);
+          // Figura do comentário só com a questão PRONTA: a 2ª tentativa de
+          // igGenOneUnica troca o comentário, e a figura tem de casar com o que fica.
+          return (r&&r.stem)?igAttachExpImage(r):r;
+        }).then(function(r){
           done++;if(st)st.textContent='Gerando… '+done+'/'+n;
           return r;
         });
@@ -15679,17 +15938,46 @@ function bindAdmStories(){
   var appr=document.getElementById('ig-approve');
   if(appr)appr.addEventListener('click',function(){
     var d=igReadDraft();if(!igValidDraft(d))return;
-    if(igEditId){var it=igStories.filter(function(x){return x.id===igEditId;})[0];if(it){it.sub=d.sub;it.teem=d.teem;it.stem=d.stem;it.options=d.options;it.answer=d.answer;it.explanation=d.explanation;it.img=d.img||'';it.imgRef=d.imgRef||'';}notify('Questão atualizada na fila.','ok');}
-    else{igStories.push({id:'ig-'+Date.now()+'-'+Math.round(Math.random()*1e6),sub:d.sub,teem:d.teem,stem:d.stem,options:d.options,answer:d.answer,explanation:d.explanation,img:d.img||'',imgRef:d.imgRef||'',status:'queued',createdAt:Date.now()});notify('Questão aprovada e adicionada à fila.','ok');}
-    igEditId=null;persistIgStories();renderAdmSec('stories');
+    if(igEditId){var it=igStories.filter(function(x){return x.id===igEditId;})[0];if(it){it.sub=d.sub;it.teem=d.teem;it.stem=d.stem;it.options=d.options;it.answer=d.answer;it.explanation=d.explanation;it.img=d.img||'';it.imgRef=d.imgRef||'';['expImg','expImgRef','expImgTema','expImgOrigem'].forEach(function(k){delete it[k];});Object.assign(it,igExpCampos(d));}notify('Questão atualizada na fila.','ok');}
+    else{igStories.push(Object.assign({id:'ig-'+Date.now()+'-'+Math.round(Math.random()*1e6),sub:d.sub,teem:d.teem,stem:d.stem,options:d.options,answer:d.answer,explanation:d.explanation,img:d.img||'',imgRef:d.imgRef||''},igExpCampos(d),{status:'queued',createdAt:Date.now()}));notify('Questão aprovada e adicionada à fila.','ok');}
+    igEditId=null;igDraftExpLimpa();persistIgStories();renderAdmSec('stories');
   });
   var dist=document.getElementById('ig-distribute');
-  if(dist)dist.addEventListener('click',function(){var d=igReadDraft();if(!igValidDraft(d))return;igPending.push(igMakePending(d));persistIgPending();var c=qotdCuratorForSub(d.sub);igEditId=null;igDraftImg='';igDraftImgRef='';notify('Distribuída para '+(c?c.nome:'Pendências')+' ('+esc(d.sub||'')+').','ok');renderAdmSec('stories');});
+  if(dist)dist.addEventListener('click',function(){var d=igReadDraft();if(!igValidDraft(d))return;igPending.push(igMakePending(d));persistIgPending();var c=qotdCuratorForSub(d.sub);igEditId=null;igDraftImg='';igDraftImgRef='';igDraftExpLimpa();notify('Distribuída para '+(c?c.nome:'Pendências')+' ('+esc(d.sub||'')+').','ok');renderAdmSec('stories');});
   var clr=document.getElementById('ig-clear');
-  if(clr)clr.addEventListener('click',function(){igEditId=null;igDraftImg='';igDraftImgRef='';renderAdmSec('stories');});
+  if(clr)clr.addEventListener('click',function(){igEditId=null;igDraftImg='';igDraftImgRef='';igDraftExpLimpa();renderAdmSec('stories');});
   var idp=document.getElementById('ig-imgdrop'),ifl=document.getElementById('ig-imgfile');
   if(idp&&ifl){idp.addEventListener('click',function(){ifl.click();});['dragenter','dragover'].forEach(function(ev){idp.addEventListener(ev,function(e){e.preventDefault();idp.classList.add('drag');});});['dragleave','drop'].forEach(function(ev){idp.addEventListener(ev,function(e){e.preventDefault();idp.classList.remove('drag');});});idp.addEventListener('drop',function(e){if(e.dataTransfer.files&&e.dataTransfer.files[0])igHandleImg(e.dataTransfer.files[0]);});ifl.addEventListener('change',function(e){if(e.target.files[0])igHandleImg(e.target.files[0]);});}
   igRenderImgPrev();
+  // Imagem do COMENTÁRIO: sugerir (Resumos e, se nada servir, PubMed) ou enviar uma nova.
+  var exSug=document.getElementById('ig-expimg-sug'),exUp=document.getElementById('ig-expimg-up'),exFl=document.getElementById('ig-expimg-file');
+  function exStatus(t){var e=document.getElementById('ig-expimg-status');if(e)e.textContent=t||'';}
+  if(exSug)exSug.addEventListener('click',function(){
+    var d=igReadDraft();
+    if(!d.stem||!d.explanation){notify('Escreva o enunciado e o comentário antes de pedir a figura.','err');return;}
+    exSug.disabled=true;exStatus('🔎 Procurando nos Resumos…');
+    delete d.expImg;delete d.expImgRef;delete d.expImgTema;delete d.expImgOrigem;
+    igAttachExpImage(d).then(function(r){
+      if(r&&r.expImg){igDraftExpImg=r.expImg;igDraftExpImgRef=r.expImgRef||'';igDraftExpImgTema=r.expImgTema||'';igDraftExpImgOrigem=r.expImgOrigem||'';igDraftExpMotivo=r._expMotivo||'';igRenderExpImgPrev();exStatus('✓ Figura sugerida — confira antes de aprovar.');}
+      else exStatus('Nenhuma figura dos Resumos ou do PubMed sustenta este comentário.');
+    }).catch(function(){exStatus('Não consegui buscar agora. Tente de novo.');}).then(function(){exSug.disabled=false;});
+  });
+  if(exUp&&exFl){
+    exUp.addEventListener('click',function(){exFl.click();});
+    exFl.addEventListener('change',function(e){
+      var f=e.target.files&&e.target.files[0];exFl.value='';if(!f)return;
+      if(!/^image\//.test(f.type)){notify('Selecione uma imagem.','err');return;}
+      if(f.size>5*1024*1024){notify('Imagem muito grande (máx 5 MB).','err');return;}
+      // Vai para o armazenamento, e só a URL fica na questão: em base64 ela iria
+      // inteira na Questão do Dia de cada aluno.
+      exUp.disabled=true;exStatus('⬆ Enviando…');
+      uploadAdminAsset(f,'qotd').then(function(a){
+        igDraftExpImg=a.url;igDraftExpImgRef='';igDraftExpImgTema='';igDraftExpImgOrigem='upload';igDraftExpMotivo='';
+        igRenderExpImgPrev();exStatus('✓ Imagem enviada. Escreva a legenda, se quiser.');
+      }).catch(function(err){exStatus('');notify(uploadErrorMessage(err),'err');}).then(function(){exUp.disabled=false;});
+    });
+  }
+  igRenderExpImgPrev();
   var main=document.getElementById('adm-main');
   main.querySelectorAll('[data-ig-load]').forEach(function(b){b.addEventListener('click',function(){var it=igStories[parseInt(b.dataset.igLoad,10)];if(!it)return;igEditId=it.id;stShowView('manual');igFillForm(it);try{document.getElementById('ig-stem').scrollIntoView({behavior:'smooth',block:'center'});}catch(e){}notify('Editando — altere e clique em "Aprovar" para salvar.','ok');});});
   main.querySelectorAll('[data-ig-dlq]').forEach(function(b){b.addEventListener('click',function(){var it=igStories[parseInt(b.dataset.igDlq,10)];if(it)igDownload('q',it,'endodireto-'+igFnameSub(it)+'-pergunta.png').catch(function(e){notify((e&&e.message)||'Falha.','err');});});});
@@ -19641,7 +19929,8 @@ function ensureLightbox(){
     // jeito de redimensionar. O editor tem `class="wys-edit dir-texto"`, então a
     // checagem por `.dir-texto` sozinha o pegaria — esta guarda vem primeiro.
     if(t.closest&&t.closest('.wys-edit'))return;
-    var ok=t.classList.contains('mural-inline-img')
+    // `qp-zoom`: figura do caso e do comentário na Questão do Dia (21/10/2026)
+    var ok=t.classList.contains('mural-inline-img')||t.classList.contains('qp-zoom')
       ||(t.closest&&(t.closest('.mural-figure')||t.closest('.dir-texto')||t.closest('.dir-fig')));
     if(!ok)return;
     // Esquema em SVG mais largo que a tela (as figuras dos Resumos têm até 900 px): no

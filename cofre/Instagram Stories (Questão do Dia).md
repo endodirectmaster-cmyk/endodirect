@@ -1,9 +1,86 @@
 ---
 tags: [cofre, integracoes, marketing]
-atualizado: 2026-10-18
+atualizado: 2026-10-21
 ---
 
 # Instagram Stories — "Questão do Dia"
+
+## 🖼️ FIGURA NO COMENTÁRIO (2026-10-21)
+
+Pedido do professor: *"Vamos melhorar os comentários das questões do dia, no sentido de,
+sempre que possível, jogar uma imagem nos comentários para contextualizar e reforçar o
+comentário por escrito. Não precisa ser em todas as questões [...] as imagens podem ser
+novas, retiradas do PubMed, ou dos próprios resumos dos capítulos. [...] Podem ser das
+questões geradas a partir de agora."* As já geradas e postadas ficam como estão.
+
+- **Onde aparece:**
+  - no cartão do aluno, **só depois da resposta**, dentro do gabarito comentado (antes
+    entregaria o gabarito). Vale no arquivo, na janela do mural e em "Como o aluno vê";
+  - no cartão de revisão do arquivo dos professores;
+  - no lote, com a etiqueta **🖼️ comentário**, o *"Por que esta figura"* e o botão
+    **✕ Tirar a imagem do comentário**;
+  - nas Pendências, com *"remover imagem do comentário ao aprovar"*;
+  - no formulário manual: prévia, legenda editável, **🔎 Sugerir dos Resumos / PubMed**,
+    **⬆ Enviar uma imagem** e ✕.
+
+  Tocar na figura amplia (`ensureLightbox`, classe `qp-zoom`). A figura do caso no
+  enunciado passou a ampliar também.
+  - **Efeito nas outras telas que usam a prancheta** (questões da aula, caderno de erros,
+    "Comece por aqui"): a questão do banco que já tinha imagem no comentário (`expImg`,
+    enviada pelo professor no Banco) passa a mostrá-la depois da resposta, como a tela
+    do Banco já fazia.
+- **Campos da questão:** `expImg`, `expImgRef` (a legenda), `expImgTema` (o capítulo) e
+  `expImgOrigem` (`resumo`, `pubmed` ou `upload`). Questão sem figura não ganha campo
+  nenhum (`igExpCampos`). O porquê da escolha (`_expMotivo`) fica só na tela do professor
+  e não é gravado.
+- **De onde vem, em ordem:**
+  1. **Resumos.** Entram as imagens do corpo com URL `https` e legenda, e o esquema por URL
+     de cada capítulo (`figuras`). Ficam de fora a imagem em base64 do cap. 69 (iria
+     inteira na Questão do Dia de cada aluno), os 3 esquemas em SVG embutido, imagem sem
+     legenda e capítulo em rascunho. São 317 candidatas no banco de hoje.
+  2. **PubMed (Open-i)**, só quando nenhuma dos Resumos serve, o ponto da resposta é
+     visual e o enunciado **não** tem figura. Passa pelas mesmas guardas da figura do caso
+     (`igImgPedidoCoerente`, `igImgRelevante`), contra o enunciado **e** o comentário.
+  3. **Nenhuma.** Figura que não sustenta o comentário é pior do que nenhuma.
+
+  A imagem **nova** é a que o professor envia pelo formulário. Ela vai para o
+  armazenamento (`uploadAdminAsset(f,'qotd')`) e só a URL fica na questão.
+- **Como escolhe:**
+  - **Pré-seleção** (`igExpRanking`, as 10 melhores). Os termos vêm do comentário e da
+    alternativa correta (peso 2) e do enunciado (peso 1): sigla inteira, palavra cortada
+    em 7 letras, sinônimos de sigla (CAD/cetoacidose, EHH/hiperosmolar, SOP/SOMP…).
+    - O peso usa IDF e a normalização de tamanho do BM25.
+    - A figura da mesma subespecialidade ganha ×1,5, e são exigidos 2 termos em comum.
+    - A fonte do livro na legenda não conta.
+  - **Texto dos esquemas:** `figuras/resumos/textos.json`, gerado dos SVGs por
+    `scripts/indice-figuras-resumos.js`. O `ci-validate` falha se ele ficar velho. Sem ele,
+    o esquema chegava à escolha só com o título.
+  - **Escolha pela IA** (`igExpEscolha`, `AI_MODEL_CLINICO`, 220 tokens):
+    - a figura tem de mostrar o ponto que **justifica** a resposta e não contradizer nada;
+    - na dúvida, nenhuma; entre duas boas, a que mostra direto o critério ou o mecanismo;
+    - a busca no PubMed nunca vai atrás de achado hipotético (o resultado de um exame que a
+      resposta manda pedir) nem do achado de um distrator.
+
+    Custa uma chamada a mais por questão.
+- **Validação:**
+  - **Dados reais:** as 40 questões mais recentes têm pré-seleção com candidatas.
+  - **Simulação da escolha com 8 questões reais** (agente independente): 6 boas e 1
+    aceitável. Nas 2 que faltavam, a figura certa existia, mas era um esquema lido só pelo
+    título. Com o índice do texto dos SVGs, as duas ficaram em 1º lugar na pré-seleção.
+  - **Teste:** `scripts/test-imagem-comentario.js`, no `ci-validate`. As 19 sabotagens
+    feitas foram todas acusadas.
+  - **Harness A/B no Chromium:** `scratchpad/qotd-imagem-comentario-navegador/check.js`.
+    Cobre o aluno no celular e no notebook, escuro e claro, a janela do mural, lote →
+    Pendências → publicação, e o formulário com envio. A main faz o mesmo caminho sem
+    figura e sem erro.
+  - `sw.js` v320.
+- **Achado de passagem:** a questão de EHH na fila (Diabetes,
+  `ig-1791923591718-228416`, 31ª de 37) tem a osmolalidade efetiva incoerente.
+  - Com Na 149 e glicemia 860, dá ~346, e não 342. Com Na 156 e glicemia 610, dá ~346
+    também, e não 334.
+  - Quem faz a conta vê a osmolalidade parada e, pela regra do próprio comentário,
+    marcaria 0,45%.
+  - Levado ao professor; ver [[Pendências]].
 
 ## 🖼️ LOTE COM FIGURA, ALTERNATIVAS MAIS DIFÍCEIS E QUESTÕES DIRETAS (2026-10-18)
 

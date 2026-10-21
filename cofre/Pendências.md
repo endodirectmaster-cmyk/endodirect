@@ -5,6 +5,20 @@ atualizado: 2026-10-21
 
 # Pendências
 
+## 🖼️ FEITO (21/10): Questão do Dia — figura no comentário
+
+Ver [[Instagram Stories (Questão do Dia)]].
+- [x] Figura dos Resumos ou do PubMed no comentário das questões geradas daqui em diante;
+  envio de imagem nova no formulário; tirar no lote e nas Pendências.
+- [ ] O professor gerar um lote e dizer se a frequência e a pertinência das figuras estão
+  boas.
+- [ ] **Decisão do professor: a questão de EHH na fila** (`ig-1791923591718-228416`, 31ª
+  de 37) tem a osmolalidade efetiva incoerente com o sódio e a glicemia: ~346 → ~346 pela
+  conta, contra 342 → 334 escritos.
+  - Proposta: sódio de entrada 147 (dá 342) e sódio em 3 h 151 com glicemia 550 (dá 333),
+    o que mantém a resposta e o distrator "sódio acima de 150".
+  - Outra saída: tirar a questão da fila.
+
 ## ✅ FEITO (18/10): Questão do Dia › Gerar lote — figura, alternativas e questões diretas
 
 Pedido do professor em 18/10. Entregue no mesmo dia; ver [[Instagram Stories (Questão do Dia)]].

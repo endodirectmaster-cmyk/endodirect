@@ -1252,6 +1252,28 @@ try {
   fail('regressão da imagem da questão falhou (verifique igImgRelevante/IG_IMAGEQUERY_RULE no index.html):\n' + out);
 }
 
+// ⚠️ A figura do COMENTÁRIO da Questão do Dia (21/10/2026). O professor pediu, "sempre
+//     que possível", uma imagem no comentário para reforçar o texto, tirada dos Resumos
+//     dos capítulos, do PubMed ou enviada por ele. Tem de sustentar a resposta (na
+//     dúvida, nenhuma), aparecer só depois da resposta e não levar base64 ao aluno.
+try {
+  execFileSync(process.execPath, [path.join('scripts', 'test-imagem-comentario.js')], { stdio: 'pipe' });
+  ok('figura do comentário da Questão do Dia: dos Resumos ou do PubMed, conferida, só depois da resposta e mantida até a publicação');
+} catch (e) {
+  const out = (e.stdout ? e.stdout.toString() : '') + (e.stderr ? e.stderr.toString() : '');
+  fail('regressão da figura do comentário falhou (verifique igAttachExpImage/qExpFigHTML no index.html):\n' + out);
+}
+// O texto dos esquemas dos Resumos (figuras/resumos/textos.json), que a escolha da
+// figura do comentário lê, tem de acompanhar os SVGs: esquema redesenhado sem refazer o
+// índice seria escolhido (ou recusado) pelo texto antigo.
+try {
+  execFileSync(process.execPath, [path.join('scripts', 'indice-figuras-resumos.js'), '--check'], { stdio: 'pipe' });
+  ok('índice do texto dos esquemas dos Resumos em dia com os SVGs');
+} catch (e) {
+  const out = (e.stdout ? e.stdout.toString() : '') + (e.stderr ? e.stderr.toString() : '');
+  fail('figuras/resumos/textos.json desatualizado:\n' + out);
+}
+
 // ⚠️ O lote da Questão do Dia saía só com casos clínicos em texto. O professor
 //     (18/10) pediu figura no enunciado, alternativas "três difíceis e uma um pouco
 //     mais fácil" e questões diretas, sem caso clínico.
