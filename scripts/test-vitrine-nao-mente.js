@@ -78,19 +78,26 @@ RETIRADOS.forEach((r) => {
 }
 
 // ── 3. O que a landing promete de TAMANHO tem de existir ──────────────────
-// "Mais de 2.000 questões" é promessa de acervo. Não dá para conferir o número
+// "Mais de 3.000 questões" é promessa de acervo. Não dá para conferir o número
 // exato daqui (ele vive no servidor), mas dá para exigir que a ordem de grandeza
-// não seja maior que a que a plataforma comprovadamente tem.
-{
-  const m = LP.match(/Mais de ([\d.]+) quest[õo]es/i);
-  ok(!!m, 'a landing deixou de anunciar o tamanho do banco de questões');
-  if (m) {
-    const anunciado = parseInt(m[1].replace(/\./g, ''), 10);
-    ok(anunciado <= 2965,
-      '⚠️ a landing anuncia "mais de ' + m[1] + ' questões" e o banco tem 2.965 — '
+// não seja maior que a que a plataforma comprovadamente tem. Os tetos abaixo são
+// a contagem do banco no dia em que o anúncio mudou; ao subir o anúncio, conte de
+// novo no banco e atualize o teto junto, com a data.
+//   · 21/10/2026: 3.015 questões (`endodirect_acervo_totais().provas`) e 2.184
+//     flashcards (533 de `fc_shared` + 1.651 nos resumos). O professor pediu
+//     "mais de 3 mil"; vale para as questões, não para os flashcards.
+const TETO = { questoes: 3015, flashcards: 2184 };
+[['questoes', /Mais de ([\d.]+) (?:mil )?quest[õo]es/gi, 'questões'], ['flashcards', /Mais de ([\d.]+) (?:mil )?flashcards/gi, 'flashcards']].forEach(([chave, re, nome]) => {
+  const achados = [...LP.matchAll(re)];
+  ok(achados.length > 0, 'a landing deixou de anunciar o tamanho do acervo de ' + nome);
+  achados.forEach((m) => {
+    let anunciado = parseInt(m[1].replace(/\./g, ''), 10);
+    if (/mil/i.test(m[0]) || anunciado < 100) anunciado *= 1000;   // "2 mil" = 2.000
+    ok(anunciado <= TETO[chave],
+      '⚠️ a landing anuncia "' + m[0] + '" e o acervo tem ' + TETO[chave].toLocaleString('pt-BR') + ' ' + nome + ' — '
       + 'promessa acima do acervo é a única forma desse número virar mentira');
-  }
-}
+  });
+});
 
 if (falhas.length) { console.error('✗ ' + falhas.length + ' falha(s):\n - ' + falhas.join('\n - ')); process.exit(1); }
 console.log('✓ vitrine: nada de recurso retirado anunciado, toda instrução cita controle que existe, e o tamanho prometido cabe no acervo');
