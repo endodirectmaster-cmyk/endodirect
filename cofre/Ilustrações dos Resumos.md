@@ -1,6 +1,6 @@
 ---
 tags: [cofre, conteudo, resumos]
-atualizado: 2026-10-20
+atualizado: 2026-10-21
 ---
 
 # Ilustrações dos Resumos (no meio do capítulo)
@@ -175,7 +175,7 @@ ampliador. O editor do professor preserva a figura ao salvar (ramo `figure` do
     - **Envio:** 105 arquivos para `endodirect-assets/resumos/livros/` pela
       `subir-figuras-livros`, que voltou a responder 410; conferidos byte a byte pela URL
       pública.
-  - **Parte 2 de tireoide (20/10): prévia publicada, aguarda aprovação.**
+  - **Parte 2 de tireoide (20/10): gravada em 21/10** (ver "Gravações feitas").
     - **Origem:** `Tireoide/imagens_tireoide_PT_parte2.zip` (bucket `livros`), 42 figuras das
       seções 05 a 08 (tireoidites, nódulos, câncer, gestação e emergências), em 4 lotes
       (`t5` a `t8`), um agente por lote. Toda acusação grave (11) foi conferida na imagem e
@@ -188,8 +188,11 @@ ampliador. O editor do professor preserva a figura ao salvar (ramo `figure` do
         pontos contra o cap. 81, a Vilar 33.4, contra a ATA 2026 do cap. 86, e a Igaz 13.3,
         que condiciona a tempestade tireoidiana aos exames);
       - 8 repetem o que já está no capítulo ou acrescentam pouco;
-      - 1 trata de assunto que nenhum capítulo cobre (ultrassom em modo B da subaguda);
-      - 1 exigiria refazer uns 20 rótulos (Williams 14.6, modelo BRAF-like × RAS-like).
+      - 1 trata de assunto que nenhum capítulo cobre (ultrassom em modo B da subaguda).
+      - A Williams 14.6 (modelo BRAF-like × RAS-like) ficou de fora na prévia, por uns 20
+        rótulos em inglês. Na aprovação, o professor a quis assim mesmo (*"pode deixar em
+        inglês essa"*), e ela entrou no 81 com as siglas explicadas na legenda. Total: 24 em
+        8 capítulos, 10 com correção e 18 fora.
 
       Lista em `scratchpad/figuras-livros/figuras-tireoide-parte2.js` (já no `texto.js`).
       Na sessão: `monta-p2.js`, `lista-p2.json`, `prontas-p2/` e `pagina-p2/`.
@@ -206,11 +209,17 @@ ampliador. O editor do professor preserva a figura ao salvar (ramo `figure` do
       - Netter 2-22: o gráfico de febre em °F perde os números; sai uma linha de chamada solta;
       - Williams 12.24: refeito o trecho de curva que o fundo do rótulo apagava;
       - Vilar 24.2: sai o asterisco sem nota.
+      - Williams 14.6: as siglas ficam em inglês e saem só os remendos da tradução. Na caixa
+        "Carga mutacional aumentada", volta o degradê e a borda, e o texto fica centrado.
+        Atrás de "PDCA, RAS-like", sai o retângulo liso.
     - **Ferramentas novas no `corrige-tob.py`:**
       - `traco`: refaz trecho de curva, pintando só sobre pixel claro;
       - `gira`: corrige rótulo vertical girando a caixa;
       - `permuta`: troca letras de lugar com os glifos da própria figura. Serve quando o texto
         do livro é borrado e a fonte redesenhada sai mais escura que o resto da linha.
+      - `refundo`: tira o remendo de tradução (retângulo liso ou branco sobre o degradê). O
+        texto sai como cobertura sobre o fundo do remendo, o degradê volta pela linha de
+        referência e o texto é recolocado, centrado se preciso.
 
       O despacho das operações virou a função `aplica`.
     - **Conferências:** `previa.js` nos 8 capítulos (390 e 1280 px), com as figuras da parte 1
@@ -369,3 +378,28 @@ ampliador. O editor do professor preserva a figura ao salvar (ramo `figure` do
   - Às 20h32 entrou um save do radar do Mural (cron das 20h), entre o g5 e o g6. O radar
     relê o estado logo antes de gravar (`lib/radar.js`) e não desfez nada.
   - ✅ **Conferência de zumbi (20h38 UTC):** os 31 md5 seguem os gravados.
+- **Cap. 86, tempo do Graves no puerpério, 20/10/2026, 23h38 UTC.** Pedido do professor sobre
+  a Williams 12.24: *"mantenha a informação condizente com a figura"*. Na figura, a curva do
+  Graves sobe a partir do 3º mês. A tabela "Tireotoxicose no puerpério" e o ponto-chave 30
+  diziam "tardia (>6 meses)" e passaram a dizer "em geral >6 meses; pode começar a partir do
+  3º mês".
+  - A literatura sustenta as duas partes (Kuma Hospital): 83% dos Graves pós-parto começam a
+    partir do 6º mês, mas o início vai de 2 a 12 meses (Ide 2017, doi 10.1186/s13044-017-0039-0;
+    Ide 2014, doi 10.1089/thy.2013.0585).
+  - Backup `main-antes-cap86-graves-puerperio-2026-10-20`; md5 `f96792c2` → `9c35b512`.
+    Conferido que só o `resumo` e o `pts[29]` mudaram.
+  - ⚠️ A 1ª tentativa estourou os 60 s do conector sem gravar nada (sem backup, md5 igual).
+    Coincidiu com saves do painel entre 23h30 e 23h32 UTC. A 2ª passou.
+- **Parte 2 de tireoide, 21/10/2026, 00h22 e 00h24 UTC.** 24 figuras em 8 capítulos, em 2
+  instruções de `gera-sql.js`. Backups `main-antes-figuras-tireoide-p2-2026-10-21-g1` e `g2`.
+
+  | grupo | figuras | md5 antes → depois |
+  |---|---|---|
+  | g1 | 14 | 79 `9815d41e` → `ef21f770`; 81 `1a2c485c` → `1ef38ba9`; 83 `e9378674` → `cae5c4f9`; 84 `88c9884c` → `d3066567` |
+  | g2 | 10 | 85 `e6a32a78` → `450c5ffd`; 86 `9c35b512` → `a8762747`; 87 `568589ce` → `53980f64`; 142 `7c001f6b` → `9e07f8e6` |
+
+  - Envio: 24 arquivos pela `subir-figuras-livros` (depois 410), conferidos byte a byte.
+  - Cada instrução conferiu o backup, os md5, o resto de cada item, os outros itens, o estado
+    fora de `diretrizes` e o número de itens. Tudo verdadeiro nas 2.
+  - **Conferido no fim:** as 24 aparecem uma vez cada; o acervo tem 199 figuras de livros,
+    todas distintas; os 35 capítulos com figura das partes 1 e 2 estão com o md5 certo.

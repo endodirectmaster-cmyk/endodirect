@@ -1,6 +1,6 @@
 ---
 tags: [cofre, decisoes]
-atualizado: 2026-10-20
+atualizado: 2026-10-21
 ---
 
 # Decisões
@@ -8,6 +8,9 @@ atualizado: 2026-10-20
 Log de decisões de produto e técnicas (mais recentes no topo).
 
 ## 2026-10
+- **📚 PARTE 2 DE TIREOIDE GRAVADA, COM A 14.6 EM INGLÊS E O CAP. 86 CONDIZENTE COM A 12.24 (2026-10-21).** 24 figuras em 8 capítulos. Detalhes em [[Ilustrações dos Resumos]].
+  - **Figura mantida e texto ajustado a ela, por decisão do professor:** o Graves do puerpério passou a "em geral >6 meses; pode começar a partir do 3º mês". A literatura cobre as duas partes; ver a nota.
+  - **Figura com rótulos em inglês pode entrar** quando o professor quiser, com as siglas explicadas na legenda. A regra de corrigir só o pontual continua; os remendos de tradução saem.
 - **📚 PARTE 2 DE TIREOIDE: PRÉVIA COM 23 FIGURAS E 9 RÓTULOS CORRIGIDOS (2026-10-20).** Sem mudança no app (só `scratchpad/figuras-livros`). Detalhes em [[Ilustrações dos Resumos]].
   - **Figura com vários pontos contra o capítulo fica de fora, mesmo que cada um tenha conserto.** É o caso do fluxograma do nódulo do Vilar (22.13): Bethesda "V e IV", US em 6–24 meses, cirurgia direta no Bethesda III repetido e o nódulo frio sem ACR-TIRADS. Corrigir rótulo só quando o erro é pontual.
   - **Figura com muitos rótulos em inglês fica de fora** quando a troca passaria de uns poucos rótulos (Williams 14.6, com ~20 siglas, "Hürthle" e "Gas"). A oferta de refazer vai ao professor.
