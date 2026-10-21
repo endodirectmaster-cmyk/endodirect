@@ -8,6 +8,11 @@ atualizado: 2026-10-21
 Log de decisões de produto e técnicas (mais recentes no topo).
 
 ## 2026-10
+- **🖼️ QUESTÃO DO DIA: FIGURA NO COMENTÁRIO, DOS RESUMOS OU DO PUBMED (2026-10-21).** `sw.js` v319 → **v320**. Pedido do professor: *"sempre que possível, jogar uma imagem nos comentários para contextualizar e reforçar o comentário por escrito"*. Só nas questões geradas daqui em diante. Detalhes em [[Instagram Stories (Questão do Dia)]].
+  - **Ordem: Resumos, depois PubMed, depois nenhuma.** O PubMed só entra quando o enunciado não tem figura: duas imagens de exame do mesmo caso não somam nada. Imagem nova é a que o professor envia, e vai para o armazenamento, nunca em base64.
+  - **A figura aparece só depois da resposta**, dentro do gabarito comentado. Antes, entregaria a resposta.
+  - **A IA escolhe numa pré-seleção de 10 e pode recusar todas:** a figura tem de justificar a resposta, e na dúvida não entra. O professor vê o porquê no lote e pode tirá-la no lote, nas Pendências e no formulário.
+  - **O texto de dentro dos esquemas entra na escolha** (`figuras/resumos/textos.json`, conferido pela CI). Na simulação com questões reais, as duas figuras certas que faltaram eram esquemas lidos só pelo título.
 - **📚 PARTE 2 DE TIREOIDE GRAVADA, COM A 14.6 EM INGLÊS E O CAP. 86 CONDIZENTE COM A 12.24 (2026-10-21).** 24 figuras em 8 capítulos. Detalhes em [[Ilustrações dos Resumos]].
   - **Figura mantida e texto ajustado a ela, por decisão do professor:** o Graves do puerpério passou a "em geral >6 meses; pode começar a partir do 3º mês". A literatura cobre as duas partes; ver a nota.
   - **Figura com rótulos em inglês pode entrar** quando o professor quiser, com as siglas explicadas na legenda. A regra de corrigir só o pontual continua; os remendos de tradução saem.
