@@ -12,12 +12,20 @@ Ver [[Instagram Stories (Questão do Dia)]].
   envio de imagem nova no formulário; tirar no lote e nas Pendências.
 - [ ] O professor gerar um lote e dizer se a frequência e a pertinência das figuras estão
   boas.
-- [ ] **Decisão do professor: a questão de EHH na fila** (`ig-1791923591718-228416`, 31ª
-  de 37) tem a osmolalidade efetiva incoerente com o sódio e a glicemia: ~346 → ~346 pela
-  conta, contra 342 → 334 escritos.
-  - Proposta: sódio de entrada 147 (dá 342) e sódio em 3 h 151 com glicemia 550 (dá 333),
-    o que mantém a resposta e o distrator "sódio acima de 150".
-  - Outra saída: tirar a questão da fila.
+- [x] **Questão de EHH na fila corrigida** (`ig-1791923591718-228416`, 31ª de 37), com a
+  autorização do professor (*"pode corrigir"*). A osmolalidade efetiva escrita (342 → 334)
+  não batia com o sódio e a glicemia (~346 → ~346 pela conta).
+  - Gravado às 01h24 UTC de 21/10, só o `stem`, com guarda de md5 e o backup
+    `main-antes-qotd-ehh-osmolalidade-2026-10-21`.
+  - Na entrada, glicemia 820 e sódio 148 (osmolalidade 342). Em 3 h, glicemia 560 e sódio
+    151 (osmolalidade 333). O md5 do `stem` agora é `d3f11f90…`.
+  - **Ajuste sobre a proposta aprovada** (sódio 147; em 3 h, 151 com glicemia 550): a
+    glicemia cairia 103 mg/dL/h, acima do teto da JBDS (5 mmol/L/h ≈ 90 mg/dL/h). Com 820 →
+    560, cai 87 mg/dL/h, e a osmolalidade 3 mOsm/kg/h (alvo de 3 a 8). A resposta e o
+    distrator "sódio acima de 150" seguem iguais.
+  - O consenso de 2024 confirma o comentário: a alta inicial do sódio não indica fluido
+    hipotônico, e o 0,45% fica para a osmolalidade que não cai.
+  - [ ] Conferência de zumbi deste `stem` junto com a dos capítulos, às 11h45 UTC de 21/10.
 
 ## ✅ FEITO (18/10): Questão do Dia › Gerar lote — figura, alternativas e questões diretas
 
@@ -135,7 +143,10 @@ a renovação do limite semanal. Processo e números em [[Ilustrações dos Resu
    - Depois dele, o `{60}`/`{75}` saiu do Netter e do ciclo menstrual no 151 (backup `main-antes-largura-livros-151-2026-10-18`, 12:24 UTC; md5 do 151 agora `891f49b2…`).
    - ✅ **Conferência de zumbi (13:16 UTC):** os 4 resumos seguem com os md5 gravados (149 `416c1c7c…`, 150 `a5a99495…`, 151 `891f49b2…`, 152 `5fb2f669…`), com 19 recortes e nenhum `{N}`. O save de 12:31:52 UTC, posterior à última gravação, já carregou a versão nova.
 2. [ ] Refazer os recortes cortados embaixo: Williams 16.1 (catecolaminas, p. 670) e 11.6 (D2/D3, p. 428).
-3. [ ] **2º lote:** as outras 47 figuras nos capítulos de cada glândula.
+3. [ ] **2º lote:** as outras 47 figuras nos capítulos de cada glândula. **Agendado pelo
+   professor para sexta, 23/10, às 18h de Brasília** (*"começa 6a feira às 18h"*, 21/10),
+   logo depois da renovação semanal do limite. O lembrete na sessão é o
+   `trig_01NPdDbFuwcrJAM4JJK49Xat` (21h UTC).
    - Estão em português no zip `_PT` do bucket `livros`.
    - Revisar cada tradução contra o original, como no lote 1 (`pares/`, `corrige.py`).
 4. [x] A cópia da prévia (`Lp7eetjE7zsAtctbPuKVEt`) já não existe (conferido em 19/10). Fica a de sempre (`1PdZcjpHFTp4q8Kw4Qx1Xq`).
