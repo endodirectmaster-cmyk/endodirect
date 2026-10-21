@@ -290,6 +290,23 @@ def permuta(im, faixa, regiao, pecas):
     limpa(im, (regiao[0], y0, regiao[1], y1), fundo_de(a, (regiao[0], y0, regiao[1], y1)))
     for c, d in cortes: im.paste(c, (d, y0))
 
+def refundo(im, interior, y_ref, texto, dx=0, dy=0):
+    # remendo da tradução (retângulo liso ou branco por cima do degradê da caixa): o texto sai
+    # como cobertura sobre o fundo do remendo, o interior volta a ter o degradê da linha de
+    # referência, e o texto é recolocado, deslocado de (dx, dy) quando estava fora do centro
+    a = np.asarray(im).astype(float)
+    x0, y0, x1, y1 = texto
+    sub = a[y0:y1, x0:x1]; L = sub.mean(axis=2)
+    fundo = np.percentile(L, 90)
+    tinta = sub.reshape(-1, 3)[np.argsort(L.ravel())[: max(5, L.size // 100)]].mean(axis=0)
+    al = np.clip((fundo - L) / (fundo - tinta.mean()), 0, 1)
+    al[al < 0.08] = 0   # a borda arredondada do remendo não é texto
+    replica(im, (interior[0], interior[2]), y_ref, (interior[1], interior[3]))
+    b = np.asarray(im).astype(float)
+    reg = b[y0 + dy:y1 + dy, x0 + dx:x1 + dx]
+    novo = reg * (1 - al[..., None]) + tinta * al[..., None]
+    im.paste(Image.fromarray(np.clip(np.round(novo), 0, 255).astype(np.uint8)), (x0 + dx, y0 + dy))
+
 def gira(im, caixa, ops, nome):
     # rótulo vertical, lido de baixo para cima: a caixa gira 90° no sentido horário, as
     # operações usam as coordenadas da caixa girada, e ela volta ao lugar
@@ -430,6 +447,17 @@ CORRECOES = {
         ('limpa', (435, 403, 441, 409), (255, 255, 255)),
         ('limpa', (770, 430, 975, 466), (255, 255, 255)),
         ('move', (733, 355, 1012, 428), 0, 28, (255, 255, 255))],
+    # Williams 14.6 (modelo molecular BRAF-like × RAS-like): as siglas ficam em inglês, como pediu
+    # o professor (a legenda as explica); só saem os remendos da tradução. Na caixa "Carga
+    # mutacional aumentada", um retângulo branco cobria o degradê e a borda esquerda, e o texto
+    # saía da caixa: volta o degradê, a borda é refeita e o texto fica centrado. Atrás de
+    # "PDCA, RAS-like", um retângulo liso destoava do degradê.
+    'tireoide/07_cancer_de_tireoide/modelo_molecular_da_carcinogenese_tireoidiana_braf_ras__Williams_p552_PT.png': [
+        ('refundo', (1155, 223, 1411, 298), 295, (1145, 226, 1356, 282), 32, 6),
+        ('limpa', (1149, 223, 1155, 298), (72, 10, 5)),
+        # o "C" começava fora da caixa: sobra dele à esquerda da borda
+        ('limpa', (1140, 223, 1149, 293), (255, 255, 255)),
+        ('refundo', (934, 1289, 1139, 1320), 1280, (934, 1289, 1139, 1320), 0, 0)],
     # Williams 22.1 (hCG, TSH e T4 livre na gestação): unidade em português (UI/L × 1.000),
     # vírgula decimal nos eixos e "TSH" sem o "h" (de human).
     'tireoide/08_tireoide_gestacao_emergencias/hcg_e_tsh_ao_longo_da_gestacao__Williams_p1000_PT.png': [
@@ -464,6 +492,7 @@ def aplica(im, ops, nome):
         elif op[0] == 'traco': print(nome, 'traco', op[1], op[2], traco(im, *op[1:]), 'px')
         elif op[0] == 'gira': gira(im, op[1], op[2], nome)
         elif op[0] == 'permuta': permuta(im, *op[1:]); print(nome, 'permuta', op[1:])
+        elif op[0] == 'refundo': refundo(im, *op[1:]); print(nome, 'refundo', op[1])
         else:
             r = troca(im, *op[1:])
             print(nome, op[2], '→', op[3], '|', {k: v for k, v in r.items() if k in ('fonte', 'corpo', 'ajuste', 'tinta_rel', 'apaga')})

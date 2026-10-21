@@ -1,6 +1,6 @@
 ---
 tags: [cofre, pendencias]
-atualizado: 2026-10-20
+atualizado: 2026-10-21
 ---
 
 # Pendências
@@ -14,7 +14,7 @@ Pedido do professor em 18/10. Entregue no mesmo dia; ver [[Instagram Stories (Qu
 - [ ] O professor gerar um lote e dizer se o equilíbrio está bom (proporção de diretas,
   frequência de figura, dificuldade dos distratores).
 
-## 🖼️ EM APROVAÇÃO: parte 2 de tireoide (20/10)
+## ✅ GRAVADO (21/10): parte 2 de tireoide
 
 O professor subiu a parte 2 do zip de tireoide em 20/10 (*"parte 2 ta on; faz teu nome"*).
 Processo e números em [[Ilustrações dos Resumos]].
@@ -24,15 +24,17 @@ Processo e números em [[Ilustrações dos Resumos]].
 3. [x] 9 rótulos corrigidos, `monta-p2.js` e a prévia:
    [Figuras de Tireoide, Parte 2](https://claude.ai/artifact/W8g7X9zJD9TMUhiFH4QkCZ).
    23 entram em 8 capítulos; 19 ficam de fora.
-4. [ ] **Aprovação do professor**, com duas perguntas:
-   - Williams 12.24 (síndromes do pós-parto): a curva de Graves sobe por volta do 3º mês, e a
-     tabela do cap. 86 diz que o Graves do puerpério é tardio (> 6 meses). Manter ou tirar os
-     números do eixo do tempo?
-   - Williams 14.6 (modelo BRAF-like × RAS-like): ficou de fora por uns 20 rótulos a refazer.
-     Quer que eu refaça?
-5. [ ] Envio (`subir-figuras-livros`, depois 410) e gravação com `gera-sql.js` em grupos de
-   até 4 capítulos: exportar os capítulos de novo antes (a guarda é o md5 de agora), backup,
-   F5 e conferência de zumbi.
+4. [x] **Aprovação do professor (20/10)**, com as duas respostas:
+   - Williams 12.24: *"mantenha a informação condizente com a figura"*. A figura fica como
+     está, e o cap. 86 passou a dizer "em geral >6 meses; pode começar a partir do 3º mês"
+     (tabela e ponto-chave), gravado às 23h38 UTC com backup.
+   - Williams 14.6: *"pode deixar em inglês essa"*. Entrou no 81, com as siglas explicadas
+     na legenda.
+5. [x] Envio (24 arquivos, conferidos byte a byte) e gravação às 00h22 e 00h24 UTC de 21/10,
+   em 2 grupos com backup. Conferido: 35 md5 certos e 199 figuras de livros, todas distintas.
+   Detalhes em [[Ilustrações dos Resumos]].
+6. [ ] F5 do professor e conferências de zumbi dos 35 capítulos. Os md5 de agora estão na
+   tabela de [[Ilustrações dos Resumos]]; 79, 83, 85 e 142 mudaram de novo com a parte 2.
 
 ## ✅ GRAVADO (20/10): figuras de tireoide, obesidade e osteometabolismo
 
