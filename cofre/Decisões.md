@@ -8,6 +8,9 @@ atualizado: 2026-10-21
 Log de decisões de produto e técnicas (mais recentes no topo).
 
 ## 2026-10
+- **📣 LANDING: "MAIS DE 3 MIL QUESTÕES" (2026-10-21).** Pedido do professor. `sw.js` v320 → **v321**. Detalhes em [[Banco de Questões]].
+  - **Só o que o banco sustenta:** são 3.015 questões e 2.184 flashcards. As questões sobem para "mais de 3 mil"; os flashcards seguem "mais de 2 mil".
+  - **O teste da vitrine guarda os dois números** com o teto contado no dia. Anúncio maior que o acervo falha a CI.
 - **🩺 QUESTÃO DE EHH NA FILA: OSMOLALIDADE CORRIGIDA (2026-10-21).** O professor: *"pode corrigir"*. Só o `stem`, com backup e guarda de md5; detalhes em [[Pendências]].
   - **Correção de número clínico se confere também pela velocidade, não só pela conta.** A proposta aprovada fechava a osmolalidade, mas punha a glicemia a cair 103 mg/dL/h, acima do teto da JBDS (≈ 90 mg/dL/h no EHH). Gravei a versão que respeita os dois limites (glicemia ≤ 90 mg/dL/h e osmolalidade 3 a 8 mOsm/kg/h) e avisei o professor da diferença.
 - **📅 2º LOTE DE FIGURAS DOS LIVROS AGENDADO PARA SEXTA, 23/10, ÀS 18H (BRASÍLIA).** Pedido do professor. Lembrete na sessão às 21h UTC.
