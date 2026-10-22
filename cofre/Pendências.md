@@ -21,7 +21,7 @@ sessão: `trig_01PMo4FS7qqYwTMyeK1tia6N` (11h UTC), com o plano completo.
   "Não dispõe" explícito.
 - O site da Clarity é bloqueado no proxy desta sessão. Os prints das demais telas, se o
   professor mandar, ajudam a conferir o fluxo.
-- **Prints das telas de entrada recebidos em 22/10.** A tela de RESULTADO ainda não veio.
+- **Prints recebidos em 22/10: todas as telas de entrada e mais as de resultado e de conduta.**
   Campos da Clarity, na ordem (só como referência do que ela pergunta; nada de texto,
   desenho ou marca vai para a nossa):
   1. **Evento cardiovascular** (Sim/Não/Não dispõe): infarto, AVC, AIT, angina,
@@ -41,10 +41,39 @@ sessão: `trig_01PMo4FS7qqYwTMyeK1tia6N` (11h UTC), com o plano completo.
        estatina, hipercolesterolemia familiar, artrite reumatoide, psoríase, LES, doença
        inflamatória intestinal, HIV, transplante de órgãos, e cintura aumentada (> 80 cm
        mulher, > 94 cm homem) ou esteatose hepática.
+  - **Diabetes** (aparece quando se escolhe diabetes):
+    - "Diagnóstico de diabetes": não diabético / DM sem lesão de órgão-alvo / DM com lesão
+      de órgão-alvo / não dispõe;
+    - tipo (Tipo 2…) e ano de início (duração);
+    - neuropatia autonômica cardiovascular: presente / ausente;
+    - retinopatia diabética: ausente / leve não proliferativa / moderada, severa,
+      proliferativa ou em progressão;
+    - outra lista com ausente / incipiente / instalada (provavelmente a nefropatia).
+  - **Placa carotídea/coronária:** ausente / estenose < 50% / estenose > 50%.
   - **Leitura:** são as entradas do PREVENT completo (com RAC e HbA1c, que a nossa
-    `prevent` já aceita) mais os agravantes e as condições de alto risco da SBC 2025.
+    `prevent` já aceita) mais os estratificadores do diabetes e os agravantes da SBC 2025.
     Conferir na diretriz o papel de cada um (Lp(a), PCR, FIB-4/esteatose, doenças
-    inflamatórias, HIV, transplante) antes de usar.
+    inflamatórias, HIV, transplante, duração do DM, retinopatia, neuropatia autonômica)
+    antes de usar.
+  - **Tela de resultado:**
+    - categoria pela SBC, com o risco em 10 anos em destaque (no exemplo, "Alto risco",
+      21,9%);
+    - aviso de reclassificação pelos agravantes (diabetes, síndrome metabólica, HAS,
+      cintura ou esteatose);
+    - "Modelo usado: PREVENT + HbA1c";
+    - tabela de 10 e 30 anos com DCV total, DASCV, IC, doença coronariana e AVC (o pacote
+      de coeficientes do PREVENT que já usamos tem as colunas chd e stroke).
+  - **Tela de conduta:**
+    - classificação final e metas (LDL-c atual, meta de LDL-c e de não-HDL);
+    - "redução adicional do LDL-c" = (LDL atual − meta) / LDL atual (no exemplo,
+      (123 − 70)/123 = 43,1%), com "considerar terapias combinadas";
+    - gráfico da diretriz com a redução média por estratégia: EZE 20%, ABp 20%, EMI 30%,
+      EAI 50%, anti-PCSK9 55%, ABp+EZE 40%, EMI+EZE 50%, EAI+EZE 65%, EZE+anti-PCSK9 70%,
+      EAI+EZE+ABp 75%, EAI+anti-PCSK9 80%, EZE+ABp+anti-PCSK9 80%, EAI+EZE+anti-PCSK9 85%,
+      EAI+ABp+anti-PCSK9 85% e EAI+EZE+ABp+anti-PCSK9 > 90%;
+    - conferir esses números no texto da diretriz;
+    - na nossa, refazer como tabela própria, que aponta as estratégias que alcançam a
+      redução necessária, sem copiar a imagem.
 - [ ] Construir, testar (casos-ouro da diretriz), fazer o A/B, publicar e fazer o relatório.
 
 ## 📋 AGENDADO (sexta, 23/10, 19h de Brasília): auditoria das Diretrizes
