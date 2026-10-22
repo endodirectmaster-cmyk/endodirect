@@ -21,6 +21,30 @@ sessão: `trig_01PMo4FS7qqYwTMyeK1tia6N` (11h UTC), com o plano completo.
   "Não dispõe" explícito.
 - O site da Clarity é bloqueado no proxy desta sessão. Os prints das demais telas, se o
   professor mandar, ajudam a conferir o fluxo.
+- **Prints das telas de entrada recebidos em 22/10.** A tela de RESULTADO ainda não veio.
+  Campos da Clarity, na ordem (só como referência do que ela pergunta; nada de texto,
+  desenho ou marca vai para a nossa):
+  1. **Evento cardiovascular** (Sim/Não/Não dispõe): infarto, AVC, AIT, angina,
+     revascularização, doença arterial periférica, amputação de membros.
+  2. **Recorrência e gravidade:** "o último evento ocorreu há menos de 2 anos?".
+  3. **Variáveis clínicas:**
+     - sexo, idade, peso, altura e IMC (calculado);
+     - colesterol total, HDL e LDL (opcional);
+     - PAS e PAD;
+     - creatinina e TFGe (calculada; conferir se é a CKD-EPI 2021);
+     - RAC urinária, HbA1c, PCR (mg/L) e Lp(a) (mg/dL ou nmol/L);
+     - AST, ALT e plaquetas (pelo jeito para o FIB-4).
+  4. **Fatores agravantes:**
+     - em lista (Não dispõe/…): diagnóstico de diabetes, placa carotídea/coronária, DRC;
+     - Sim/Não/Não dispõe: aneurisma de aorta abdominal, tem escore de cálcio (CAC),
+       história familiar de DCV precoce, síndrome metabólica, fumante, anti-hipertensivo,
+       estatina, hipercolesterolemia familiar, artrite reumatoide, psoríase, LES, doença
+       inflamatória intestinal, HIV, transplante de órgãos, e cintura aumentada (> 80 cm
+       mulher, > 94 cm homem) ou esteatose hepática.
+  - **Leitura:** são as entradas do PREVENT completo (com RAC e HbA1c, que a nossa
+    `prevent` já aceita) mais os agravantes e as condições de alto risco da SBC 2025.
+    Conferir na diretriz o papel de cada um (Lp(a), PCR, FIB-4/esteatose, doenças
+    inflamatórias, HIV, transplante) antes de usar.
 - [ ] Construir, testar (casos-ouro da diretriz), fazer o A/B, publicar e fazer o relatório.
 
 ## 📋 AGENDADO (sexta, 23/10, 19h de Brasília): auditoria das Diretrizes
