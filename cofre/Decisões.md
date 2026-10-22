@@ -8,6 +8,7 @@ atualizado: 2026-10-21
 Log de decisões de produto e técnicas (mais recentes no topo).
 
 ## 2026-10
+- **🧮 CALCULADORA DE RISCO CV NO ESTILO DA CLARITY, AGENDADA PARA SÁBADO, 24/10, ÀS 8H (2026-10-22).** "Importar" a Clarity Prevention vira construir a nossa pela diretriz SBC 2025, sem copiar código, texto, desenho ou marca de um produto de terceiros patrocinado pela indústria. Reaproveita `LDL_METAS` e `sbcCategoria` e estende à prevenção secundária. Plano em [[Pendências]].
 - **📋 AUDITORIA DAS DIRETRIZES AGENDADA PARA SEXTA, 23/10, ÀS 19H (BRASÍLIA) (2026-10-21).** O professor achou as 72 Diretrizes "muito enxutas" perto dos capítulos dos Resumos (~4,3 mil contra ~12 mil caracteres em média) e quer cada uma completa e fiel ao documento original. Começa por um piloto de 2 ou 3, que vai ao professor antes dos lotes. Plano em [[Pendências]].
 - **📣 LANDING: "MAIS DE 3 MIL QUESTÕES" (2026-10-21).** Pedido do professor. `sw.js` v320 → **v321**. Detalhes em [[Banco de Questões]].
   - **Só o que o banco sustenta:** são 3.015 questões e 2.184 flashcards. As questões sobem para "mais de 3 mil"; os flashcards seguem "mais de 2 mil".

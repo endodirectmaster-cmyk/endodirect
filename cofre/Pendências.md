@@ -5,6 +5,24 @@ atualizado: 2026-10-21
 
 # Pendências
 
+## 🧮 AGENDADO (sábado, 24/10, 8h de Brasília): calculadora de risco CV no estilo da Clarity
+
+Pedido do professor em 22/10, com prints da Clarity Prevention (Clarity Health; apoio de
+Libbs, Novo Nordisk, Farmoquímica e Daiichi-Sankyo): *"Será que conseguiríamos importar essa
+calculadora para a nossa plataforma? Seria uma tarefa agendada para sábado 8h"*. Lembrete na
+sessão: `trig_01PMo4FS7qqYwTMyeK1tia6N` (11h UTC), com o plano completo.
+- **Não se copia a Clarity:** código, textos, desenho e marca são dela, e o produto é
+  patrocinado. Constrói-se a nossa calculadora pela Diretriz Brasileira de Dislipidemias 2025
+  (SBC), que é o que ela aplica.
+- **Base que já existe:** `LDL_METAS` e `sbcCategoria`, hoje só na calculadora PREVENT
+  (prevenção primária, sem "muito alto" e "extremo").
+- **O que falta:** a prevenção secundária (eventos, recorrência, gravidade), o diabetes com
+  estratificadores, a DRC, a aterosclerose subclínica e a HF, com o motivo da categoria e o
+  "Não dispõe" explícito.
+- O site da Clarity é bloqueado no proxy desta sessão. Os prints das demais telas, se o
+  professor mandar, ajudam a conferir o fluxo.
+- [ ] Construir, testar (casos-ouro da diretriz), fazer o A/B, publicar e fazer o relatório.
+
 ## 📋 AGENDADO (sexta, 23/10, 19h de Brasília): auditoria das Diretrizes
 
 Pedido do professor em 21/10, com prints de "Rastreio de autoanticorpos pancreáticos" e de
