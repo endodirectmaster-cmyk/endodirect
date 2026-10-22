@@ -21,6 +21,71 @@ sessão: `trig_01PMo4FS7qqYwTMyeK1tia6N` (11h UTC), com o plano completo.
   "Não dispõe" explícito.
 - O site da Clarity é bloqueado no proxy desta sessão. Os prints das demais telas, se o
   professor mandar, ajudam a conferir o fluxo.
+- **Prints recebidos em 22/10: todas as telas de entrada e mais as de resultado e de conduta.**
+  Campos da Clarity, na ordem (só como referência do que ela pergunta; nada de texto,
+  desenho ou marca vai para a nossa):
+  1. **Evento cardiovascular** (Sim/Não/Não dispõe): infarto, AVC, AIT, angina,
+     revascularização, doença arterial periférica, amputação de membros.
+  2. **Recorrência e gravidade:** "o último evento ocorreu há menos de 2 anos?".
+  3. **Variáveis clínicas:**
+     - sexo, idade, peso, altura e IMC (calculado);
+     - colesterol total, HDL e LDL (opcional);
+     - PAS e PAD;
+     - creatinina e TFGe (calculada; conferir se é a CKD-EPI 2021);
+     - RAC urinária, HbA1c, PCR (mg/L) e Lp(a) (mg/dL ou nmol/L);
+     - AST, ALT e plaquetas (pelo jeito para o FIB-4).
+  4. **Fatores agravantes:**
+     - em lista (Não dispõe/…): diagnóstico de diabetes, placa carotídea/coronária, DRC;
+     - Sim/Não/Não dispõe: aneurisma de aorta abdominal, tem escore de cálcio (CAC),
+       história familiar de DCV precoce, síndrome metabólica, fumante, anti-hipertensivo,
+       estatina, hipercolesterolemia familiar, artrite reumatoide, psoríase, LES, doença
+       inflamatória intestinal, HIV, transplante de órgãos, e cintura aumentada (> 80 cm
+       mulher, > 94 cm homem) ou esteatose hepática.
+  - **Diabetes** (aparece quando se escolhe diabetes):
+    - "Diagnóstico de diabetes": não diabético / DM sem lesão de órgão-alvo / DM com lesão
+      de órgão-alvo / não dispõe;
+    - tipo (Tipo 2…) e ano de início (duração);
+    - neuropatia autonômica cardiovascular: presente / ausente;
+    - retinopatia diabética: ausente / leve não proliferativa / moderada, severa,
+      proliferativa ou em progressão;
+    - outra lista com ausente / incipiente / instalada (provavelmente a nefropatia).
+  - **Placa carotídea/coronária:** ausente / estenose < 50% / estenose > 50%.
+  - **Leitura:** são as entradas do PREVENT completo (com RAC e HbA1c, que a nossa
+    `prevent` já aceita) mais os estratificadores do diabetes e os agravantes da SBC 2025.
+    Conferir na diretriz o papel de cada um (Lp(a), PCR, FIB-4/esteatose, doenças
+    inflamatórias, HIV, transplante, duração do DM, retinopatia, neuropatia autonômica)
+    antes de usar.
+  - **Tela de resultado:**
+    - categoria pela SBC, com o risco em 10 anos em destaque (no exemplo, "Alto risco",
+      21,9%);
+    - aviso de reclassificação pelos agravantes (diabetes, síndrome metabólica, HAS,
+      cintura ou esteatose);
+    - "Modelo usado: PREVENT + HbA1c";
+    - tabela de 10 e 30 anos com DCV total, DASCV, IC, doença coronariana e AVC (o pacote
+      de coeficientes do PREVENT que já usamos tem as colunas chd e stroke).
+  - **Tela de conduta:**
+    - classificação final e metas (LDL-c atual, meta de LDL-c e de não-HDL);
+    - "redução adicional do LDL-c" = (LDL atual − meta) / LDL atual (no exemplo,
+      (123 − 70)/123 = 43,1%), com "considerar terapias combinadas";
+    - gráfico da diretriz com a redução média por estratégia: EZE 20%, ABp 20%, EMI 30%,
+      EAI 50%, anti-PCSK9 55%, ABp+EZE 40%, EMI+EZE 50%, EAI+EZE 65%, EZE+anti-PCSK9 70%,
+      EAI+EZE+ABp 75%, EAI+anti-PCSK9 80%, EZE+ABp+anti-PCSK9 80%, EAI+EZE+anti-PCSK9 85%,
+      EAI+ABp+anti-PCSK9 85% e EAI+EZE+ABp+anti-PCSK9 > 90%;
+    - conferir esses números no texto da diretriz;
+    - na nossa, refazer como tabela própria, que aponta as estratégias que alcançam a
+      redução necessária, sem copiar a imagem.
+    - **Cartões no fim**, cada um com o atual, a meta, uma etiqueta e a conduta:
+      - pressão: no exemplo 135/80, meta < 130/80, "fora da meta", reavaliar e ajustar o
+        anti-hipertensivo;
+      - peso: IMC 27,8, "sobrepeso", meta 18,5–24,9, perda de peso e mudança de estilo
+        de vida;
+      - diabetes: "controle metabólico rigoroso", priorizar iSGLT2 ou aGLP-1 se houver
+        doença cardiovascular ou renal;
+      - HbA1c: 6,9%, meta < 7%, "controle adequado".
+    - Botões: voltar, exportar relatório e novo paciente.
+    - **Na nossa:** as metas desses cartões vêm de cada diretriz, com a fonte (SBC e SBH
+      para a pressão, SBD/ADA para a HbA1c, com meta individualizada), e o conselho de
+      diabetes segue o capítulo de tratamento do DM2.
 - [ ] Construir, testar (casos-ouro da diretriz), fazer o A/B, publicar e fazer o relatório.
 
 ## 📋 AGENDADO (sexta, 23/10, 19h de Brasília): auditoria das Diretrizes
