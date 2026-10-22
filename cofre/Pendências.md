@@ -74,6 +74,18 @@ sessão: `trig_01PMo4FS7qqYwTMyeK1tia6N` (11h UTC), com o plano completo.
     - conferir esses números no texto da diretriz;
     - na nossa, refazer como tabela própria, que aponta as estratégias que alcançam a
       redução necessária, sem copiar a imagem.
+    - **Cartões no fim**, cada um com o atual, a meta, uma etiqueta e a conduta:
+      - pressão: no exemplo 135/80, meta < 130/80, "fora da meta", reavaliar e ajustar o
+        anti-hipertensivo;
+      - peso: IMC 27,8, "sobrepeso", meta 18,5–24,9, perda de peso e mudança de estilo
+        de vida;
+      - diabetes: "controle metabólico rigoroso", priorizar iSGLT2 ou aGLP-1 se houver
+        doença cardiovascular ou renal;
+      - HbA1c: 6,9%, meta < 7%, "controle adequado".
+    - Botões: voltar, exportar relatório e novo paciente.
+    - **Na nossa:** as metas desses cartões vêm de cada diretriz, com a fonte (SBC e SBH
+      para a pressão, SBD/ADA para a HbA1c, com meta individualizada), e o conselho de
+      diabetes segue o capítulo de tratamento do DM2.
 - [ ] Construir, testar (casos-ouro da diretriz), fazer o A/B, publicar e fazer o relatório.
 
 ## 📋 AGENDADO (sexta, 23/10, 19h de Brasília): auditoria das Diretrizes
