@@ -64,14 +64,17 @@ function linhaVar(nome, fonte) {
   if (i < 0) throw new Error('var não encontrada: ' + nome);
   return src.slice(i + 1, src.indexOf('\n', i + 1));
 }
-const FUNCOES = ['ckdEpi2021', 'preventRisk', 'sbcN', 'sbcRenalDM', 'sbcEstratifica', 'sbcDadosDoPrevent', 'sbcCategoria', 'sbcPendenciasHTML',
+// 24/10/2026: o LDL-c estimado por Martin/Hopkins quando o laudo não traz LDL-c
+// (`ldlMartinHopkins`, `rcvLdlEstimadoTxt`); o teste dele é test-ldl-martin-hopkins.js.
+const FUNCOES = ['ckdEpi2021', 'ldlMartinHopkins', 'preventRisk', 'sbcN', 'sbcRenalDM', 'sbcEstratifica', 'sbcDadosDoPrevent', 'sbcCategoria', 'sbcPendenciasHTML',
   'ldlConduta', 'ldlEsquemaNivel', 'ldlEsquemaPelaReducao', 'ldlDosesHTML', 'sbcAlvoLDL', 'ldlCondutaHTML', 'ldlFaixaEscore', 'ldlQuadroHTML', 'ldlAlvoHTML',
-  'rcvDados', 'rcvRegime', 'rcvSeg', 'rcvChips', 'rcvNum', 'rcvFormHTML', 'rcvVisivel', 'rcvCategoriaHTML', 'rcvPreventHTML', 'rcvMetasHTML',
+  'rcvDados', 'rcvLdlEstimadoTxt', 'rcvRegime', 'rcvSeg', 'rcvChips', 'rcvNum', 'rcvFormHTML', 'rcvVisivel', 'rcvCategoriaHTML', 'rcvPreventHTML', 'rcvMetasHTML',
   'rcvEstrategiasHTML', 'rcvCartoesHTML', 'rcvVazio', 'rcvResultadoHTML', 'rcvResumoDados'];
 function mundo(fonte) {
   const ctx = vm.createContext({});
   vm.runInContext(
     'function esc(s){return String(s||"").replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;");}\n'
+    + linhaVar('MARTIN_TG', fonte) + '\n' + linhaVar('MARTIN_NHDL', fonte) + '\n' + trechoVar('MARTIN_FATOR', '\n];', fonte) + '\n'
     + linhaVar('PREVENT_COEFS', fonte) + '\n' + trechoVar('PREVENT_AUG', '\n};', fonte) + '\n'
     + trechoVar('LDL_METAS', '\n};', fonte) + '\n' + linhaVar('SBC_ORD', fonte) + '\n' + linhaVar('SBC_COR', fonte) + '\n'
     + linhaVar('LDL_FAIXA_F', fonte) + '\n' + linhaVar('LDL_COLS', fonte) + '\n' + trechoVar('LDL_DOSES', '\n];', fonte) + '\n'

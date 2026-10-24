@@ -7,7 +7,9 @@ atualizado: 2026-10-24
 
 ## ✅ FEITO (24/10): calculadora "Risco CV e metas — SBC 2025" (pedido de 22/10, com prints da Clarity)
 
-No ar: ver [[Calculadoras]] (motor único `sbcEstratifica`, PREVENT com DAC/AVC e a errata de 14/10/2026). Fica para decidir com o professor: a calculadora "LDL (Friedewald)" e a frase da Lp(a) nas perguntas e respostas (a SBC 2025 prefere Martin/Hopkins e Lp(a) uma vez na vida para todos).
+No ar: ver [[Calculadoras]] (motor único `sbcEstratifica`, PREVENT com DAC/AVC e a errata de 14/10/2026).
+- [x] **Calculadora "LDL (Friedewald)" → "LDL (Martin/Hopkins)" (24/10).** Resposta do professor à pergunta "Mantenho, troco ou retiro?": citou "SBC 2025 recomenda a fórmula de Martin/Hopkins" e escreveu *"mantenha essa"*. A de risco CV também passou a estimar o LDL-c quando o laudo não o traz. Detalhes em [[Calculadoras]].
+- [ ] **Professor decide:** as perguntas e respostas de Lípides (`index.html`, lista por área) ainda têm "Fórmula de Friedewald e sua limitação?" e a Lp(a) "dosar ao menos uma vez em risco aumentado". A SBC 2025 prefere Martin/Hopkins e recomenda dosar a Lp(a) uma vez na vida para todos. Proposta: acrescentar Martin/Hopkins à primeira e trocar a segunda.
 - [ ] **Professor decide:** a tabela "Estratificação de risco e metas na HF" do cap. 113 (Hipercolesterolemias Primárias) põe a HF heterozigótica em prevenção primária sem outros fatores como risco intermediário (LDL < 100). Na SBC 2025, LDL-c ≥ 190 já é alto (§4.1), HF com CAC > 100 é muito alto (T4.4) e a terapia inicial na HF é EAI + EZE (§7.13). Proposta: alinhar a tabela à SBC 2025.
 
 ### Registro do pedido (22/10)

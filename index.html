@@ -3596,6 +3596,105 @@ function ckdEpi2021(cr,idade,fem){
   var egfr=142*Math.pow(Math.min(cr/k,1),a)*Math.pow(Math.max(cr/k,1),-1.200)*Math.pow(0.9938,idade);
   return fem?egfr*1.012:egfr;
 }
+// ── LDL-c PELA EQUAÇÃO DE MARTIN/HOPKINS (decisão do professor, 24/10/2026) ────
+// A Diretriz Brasileira de Dislipidemias 2025 "recomenda-se a favor do uso da
+// equação de Martin/Hopkins para cálculo de LDL-c para todos os indivíduos"
+// (FORTE/MODERADA). LDL-c = CT − HDL-c − TG ÷ fator; o fator é a mediana de
+// TG/VLDL-c da tabela de 180 células de Martin SS et al. (JAMA 2013;310(19):2061-8,
+// Figura 2): 30 faixas de TG × 6 de não-HDL-c. Uma conta só, usada pela calculadora
+// "LDL (Martin/Hopkins)" e pela de risco CV da SBC 2025.
+// ⚠️ TABELA NÃO DIGITADA DE MEMÓRIA: saiu do pacote LDLcalc 2.1 (CRAN;
+// github.com/cran/LDLcalc, commit fd32807, R/sysdata.rda) e foi conferida célula a
+// célula, por programa, contra o EBMcalc v23.1 (a calculadora "Martin Equation" dos
+// MSD Manuals) e mais quatro implementações abertas: as 180 batem, e as faixas
+// também. A figura do artigo não abriu (o proxy barra o PMC); no texto, o PMC
+// confirma a última linha (PMC10623527) e a primeira célula (PMC4732787), e a
+// diretriz dá a faixa do fator, 3,1 a 11,9. A célula de TG 97–100 com não-HDL-c
+// ≥ 220 (4,3, abaixo do 4,4 da faixa anterior) é assim em todas as fontes.
+// Faixas: cada uma começa no seu piso (TG 50 já é 50–56; 49,5 ainda é 7–49), como
+// no EBMcalc. ⚠️ É aí que o LDLcalc erra: TG ou não-HDL-c IGUAL ao piso (50, 57…;
+// 100, 130…) cai na faixa de baixo — a tabela dele está certa, a busca não.
+// ⚠️ TG acima de 800: "os resultados de LDL-c pela fórmula de Martin podem estar
+// subestimados. Recomenda-se a avaliação do não-HDL-c" — a conta sai, com o aviso.
+// O limite é o da diretriz ("acima de 800"; ">800" no texto em inglês): o próprio
+// 800 ainda não leva o aviso. Fora da tabela (TG < 7 ou > 13.975, os extremos dos
+// dados de Martin) vale a linha da ponta, marcada em `fora`. ⚠️ Não é a "Martin/Hopkins estendida"
+// (Sajja 2021, outra tabela para TG de 400 a 799): a diretriz cita a original.
+// Entrada inválida (não número, ≤ 0, HDL-c ≥ CT): LDL-c e fator NaN.
+var MARTIN_TG=[7,50,57,62,67,72,76,80,84,88,93,97,101,106,111,116,121,127,133,139,147,155,164,174,186,202,221,248,293,400];
+var MARTIN_NHDL=[100,130,160,190,220];
+var MARTIN_FATOR=[
+  // não-HDL-c: < 100, 100–129, 130–159, 160–189, 190–219, ≥ 220
+  [3.5,3.4,3.3,3.3,3.2,3.1], // TG 7–49
+  [4.0,3.9,3.7,3.6,3.6,3.4], // TG 50–56
+  [4.3,4.1,4.0,3.9,3.8,3.6], // TG 57–61
+  [4.5,4.3,4.1,4.0,3.9,3.9], // TG 62–66
+  [4.7,4.4,4.3,4.2,4.1,3.9], // TG 67–71
+  [4.8,4.6,4.4,4.2,4.2,4.1], // TG 72–75
+  [4.9,4.6,4.5,4.3,4.3,4.2], // TG 76–79
+  [5.0,4.8,4.6,4.4,4.3,4.2], // TG 80–83
+  [5.1,4.8,4.6,4.5,4.4,4.3], // TG 84–87
+  [5.2,4.9,4.7,4.6,4.4,4.3], // TG 88–92
+  [5.3,5.0,4.8,4.7,4.5,4.4], // TG 93–96
+  [5.4,5.1,4.8,4.7,4.5,4.3], // TG 97–100
+  [5.5,5.2,5.0,4.7,4.6,4.5], // TG 101–105
+  [5.6,5.3,5.0,4.8,4.6,4.5], // TG 106–110
+  [5.7,5.4,5.1,4.9,4.7,4.5], // TG 111–115
+  [5.8,5.5,5.2,5.0,4.8,4.6], // TG 116–120
+  [6.0,5.5,5.3,5.0,4.8,4.6], // TG 121–126
+  [6.1,5.7,5.3,5.1,4.9,4.7], // TG 127–132
+  [6.2,5.8,5.4,5.2,5.0,4.7], // TG 133–138
+  [6.3,5.9,5.6,5.3,5.0,4.8], // TG 139–146
+  [6.5,6.0,5.7,5.4,5.1,4.8], // TG 147–154
+  [6.7,6.2,5.8,5.4,5.2,4.9], // TG 155–163
+  [6.8,6.3,5.9,5.5,5.3,5.0], // TG 164–173
+  [7.0,6.5,6.0,5.7,5.4,5.1], // TG 174–185
+  [7.3,6.7,6.2,5.8,5.5,5.2], // TG 186–201
+  [7.6,6.9,6.4,6.0,5.6,5.3], // TG 202–220
+  [8.0,7.2,6.6,6.2,5.9,5.4], // TG 221–247
+  [8.5,7.6,7.0,6.5,6.1,5.6], // TG 248–292
+  [9.5,8.3,7.5,7.0,6.5,5.9], // TG 293–399
+  [11.9,10.0,8.8,8.1,7.5,6.7] // TG 400–13.975
+];
+function ldlMartinHopkins(ct,hdl,tg){
+  // Aceita número ou texto do campo (vírgula decimal); vazio não é zero.
+  var n=function(x){if(typeof x==='string'){x=x.replace(',','.').trim();if(x==='')return NaN;x=Number(x);}return (typeof x==='number'&&isFinite(x))?x:NaN;};
+  ct=n(ct);hdl=n(hdl);tg=n(tg);
+  var nhdl=ct-hdl;
+  if(!(ct>0&&hdl>0&&tg>0&&nhdl>0))return {ldl:NaN,fator:NaN,nhdl:NaN,ct:ct,hdl:hdl,tg:tg,linha:-1,coluna:-1,tgAlto:false,fora:'',aviso:''};
+  var i=0,j=0;
+  while(i<MARTIN_TG.length-1&&tg>=MARTIN_TG[i+1])i++;
+  while(j<MARTIN_NHDL.length&&nhdl>=MARTIN_NHDL[j])j++;
+  var fator=MARTIN_FATOR[i][j],tgAlto=tg>800;
+  return {ldl:nhdl-tg/fator,fator:fator,nhdl:nhdl,ct:ct,hdl:hdl,tg:tg,linha:i,coluna:j,tgAlto:tgAlto,
+    fora:tg<MARTIN_TG[0]?'abaixo':(tg>13975?'acima':''),
+    aviso:tgAlto?'TG acima de 800 mg/dL: o LDL-c pela equação de Martin/Hopkins pode estar subestimado; avalie o não-HDL-c (SBC 2025, rec. §3).':''};
+}
+// A célula usada, em texto: "147–154" e "130–159" (para a conta à vista).
+function ldlMartinFaixas(r){
+  var i=r.linha,j=r.coluna,N=MARTIN_NHDL;
+  return {tg:i===MARTIN_TG.length-1?'400–13.975':MARTIN_TG[i]+'–'+(MARTIN_TG[i+1]-1),
+    nhdl:j===0?'< '+N[0]:(j===N.length?'≥ '+N[N.length-1]:N[j-1]+'–'+(N[j]-1))};
+}
+// A conta à vista, abaixo do número da calculadora "LDL (Martin/Hopkins)": o fator
+// com a célula da tabela, o não-HDL-c (meta coprimária, que não depende de estimar
+// o VLDL-c) e, com LDL-c de 160 ou mais, o que a SBC 2025 faz com ele sem depender
+// da categoria (§4.1). A meta em si depende da categoria: está na calculadora de
+// risco CV, e esta não a repete.
+function ldlMartinExtraHTML(r){
+  if(!r||!isFinite(r.ldl))return '';
+  var f=ldlMartinFaixas(r),L=[],ldl=Math.round(r.ldl);
+  // Os avisos primeiro: a etiqueta de cima é curta (não quebra linha no celular).
+  if(r.tgAlto)L.push('<b>⚠️ '+esc(r.aviso)+'</b>');
+  if(ldl<=0)L.push('<b>⚠️ Estimativa de 0 ou menos (TG alto para o colesterol): sem valor clínico — use o não-HDL-c.</b>');
+  L.push('LDL-c = CT − HDL-c − TG ÷ fator = '+sbcN(r.ct)+' − '+sbcN(r.hdl)+' − '+sbcN(r.tg)+' ÷ '+sbcN(r.fator,1)+' = <b>'+sbcN(r.ldl,1)+' mg/dL</b>');
+  L.push('Fator '+sbcN(r.fator,1)+': TG '+f.tg+' × não-HDL-c '+f.nhdl+' mg/dL (tabela de 180 células de Martin et al., JAMA 2013)'
+    +(r.fora?'; TG '+(r.fora==='acima'?'acima de 13.975':'abaixo de 7')+' mg/dL fica fora da tabela, e vale a linha da ponta':'')+'.');
+  L.push('Não-HDL-c = CT − HDL-c = <b>'+sbcN(r.nhdl)+' mg/dL</b> (meta coprimária).');
+  if(ldl>=160&&!r.tgAlto)L.push('LDL-c '+(ldl>=190?'≥ 190':'de 160–189')+' sem tratamento: risco no mínimo '+(ldl>=190?'alto, e investigar hipercolesterolemia familiar':'intermediário')+' (SBC 2025, §4.1).');
+  L.push('A meta de LDL-c e de não-HDL-c depende da categoria de risco: calculadora <b>Risco CV e metas — SBC 2025</b>.');
+  return '<div style="margin-top:.6rem;border:1px solid var(--bd);border-radius:var(--r);padding:.55rem .7rem;font-size:.74rem;color:var(--t2);line-height:1.6">'+L.join('<br>')+'</div>';
+}
 // ── META DE LDL-c E CONDUTA (Diretriz Brasileira de Dislipidemias 2025, SBC) ──
 // A própria diretriz elege o PREVENT como ferramenta PREFERENCIAL de
 // estratificação em adulto de 30–79 anos sem doença aterosclerótica conhecida —
@@ -3658,7 +3757,8 @@ var LDL_METAS={
 // anginaEst, dapSint, amputacao, revCor, revCar, revRenal, revPer}, revCorEletiva,
 // evMais1, evento2a, ldlPersist100, cac (UA), cacPct, carotida 'ausente'|'lt50'|
 // 'ge50', angioTC 'semplaca'|'lt50'|'ge50', obstrOutra, aaa, ct, hdl, tg, ldl (do
-// laudo), ldlBasal (sem tratamento), trat {estatina 'nao'|'moderada'|'alta'|'sim',
+// laudo ou, sem ele, o estimado por Martin/Hopkins em `rcvDados`, com
+// `ldlEstimado`), ldlBasal (sem tratamento), trat {estatina 'nao'|'moderada'|'alta'|'sim',
 // eze, abp, pcsk9}, lpa {v, un 'mg'|'nmol'}, pcr, has, tabagismo, tfge, rac,
 // dialise 'nao'|'hemo'|'peritoneal', hf (hipercolesterolemia familiar), prevent
 // (DASCV 10 anos, %), preventFaltam [...], nac, retino, ag {agravantes}, pas,
@@ -3978,7 +4078,9 @@ function sbcEstratifica(d){
   }
   if(temIdade&&idade>75)A.push('Acima de 75 anos: individualizar as doses e a intensidade do tratamento (§9.7–9.9).');
   if(num(d.tg)&&d.tg>=500)A.push('TG ≥ 500 mg/dL: fibrato para reduzir o risco de pancreatite (§5.5).');
-  if(num(d.tg)&&d.tg>800)A.push('TG > 800 mg/dL: o LDL-c calculado subestima o real; acompanhe pelo não-HDL-c (rec. §3).');
+  // O mesmo limite da estimativa de Martin/Hopkins (`ldlMartinHopkins`): acima de
+  // 800, como na diretriz.
+  if(num(d.tg)&&d.tg>800)A.push('TG acima de 800 mg/dL: o LDL-c calculado (Martin/Hopkins) pode estar subestimado; avalie o não-HDL-c (rec. §3).');
   if(ev.sca12m===true)A.push('Na SCA: estatina de alta intensidade + ezetimiba ainda na internação; perfil lipídico em até 24 h e 4–6 semanas após a alta; no muito alto e no extremo, considerar anti-PCSK9 precoce (rec. §9.13).');
   if(num(d.cac)&&d.cac===0)A.push('CAC = 0 é forte marcador negativo, mas não rebaixa a categoria (§4.5.1).');
 
@@ -4354,7 +4456,19 @@ function rcvDados(e,ano){
   var idade=n('idade'),peso=n('peso'),alt=n('altura'),pas=n('pas');
   var imc=(peso>0&&alt>0)?peso/Math.pow(alt/100,2):NaN;
   var tfge=sexo?ckdEpi2021(n('cr'),idade,fem):NaN;
-  var ct=n('ct'),hdl=n('hdl'),nhdl=(ct>0&&hdl>0)?ct-hdl:NaN;
+  var ct=n('ct'),hdl=n('hdl'),nhdl=(ct>0&&hdl>0)?ct-hdl:NaN,tg=n('tg');
+  // LDL-c: o do laudo vale. Sem ele, com CT, HDL-c e TG, a estimativa de
+  // Martin/Hopkins (`ldlMartinHopkins`; SBC 2025, rec. §3), arredondada ao inteiro
+  // como sai num laudo — o número que a tela mostra é o mesmo que entra nos cortes
+  // de 160 e 190 e na meta. ⚠️ Com TG acima de 800 não se estima (pode estar subestimado; a
+  // diretriz manda avaliar o não-HDL-c), nem quando a conta dá 0 ou menos (TG alto
+  // para pouco colesterol). `ldlMH` diz à tela o que aconteceu.
+  var ldlLaudo=n('ldl'),ldlMH=null;
+  if(!isFinite(ldlLaudo)&&ct>0&&hdl>0&&tg>0){
+    var mh=ldlMartinHopkins(ct,hdl,tg);
+    if(isFinite(mh.ldl))ldlMH={ldl:Math.round(mh.ldl),fator:mh.fator,nhdl:mh.nhdl,tgAlto:mh.tgAlto,usado:!mh.tgAlto&&Math.round(mh.ldl)>0};
+  }
+  var ldlUsado=ldlMH&&ldlMH.usado?ldlMH.ldl:ldlLaudo;
   var dm=(e.dm==='DM2'||e.dm==='DM1')?e.dm:(e.dm==='nao'?'nenhum':null),temDM=dm==='DM1'||dm==='DM2';
   // A duração sai do ANO do diagnóstico: erra até 1 ano, e o motor deixa o limite de
   // cada corte em aberto (`dmDuracaoAprox`; revisão de 24/10, B4).
@@ -4378,7 +4492,7 @@ function rcvDados(e,ano){
     carotida:({ausente:'ausente',lt50:'lt50',ge50:'ge50'})[e.carot]||null,
     angioTC:({semplaca:'semplaca',lt50:'lt50',ge50:'ge50'})[e.angio]||null,
     obstrOutra:e.obstr==='sim'?true:(e.obstr==='nao'?false:null),aaa:tri('aaa'),
-    ct:ct,hdl:hdl,tg:n('tg'),ldl:n('ldl'),ldlBasal:n('ldlb'),apob:n('apob'),
+    ct:ct,hdl:hdl,tg:tg,ldl:ldlUsado,ldlEstimado:!!(ldlMH&&ldlMH.usado),ldlBasal:n('ldlb'),apob:n('apob'),
     trat:{estatina:est,eze:tri('eze'),abp:tri('abp'),pcsk9:tri('pcsk9'),intol:tri('intol')},
     lpa:lpa,pcr:n('pcr'),has:has,tabagismo:tri('tab'),tfge:tfge,rac:n('rac'),
     dialise:e.dial==='hemo'?'hemo':(e.dial==='dp'?'peritoneal':(e.dial==='nao'?'nao':null)),
@@ -4397,7 +4511,18 @@ function rcvDados(e,ano){
   d.prevent=r?r.ascvd:NaN;d.preventFaltam=falta;
   var cat=sbcEstratifica(d);
   var alvo=cat.k?sbcAlvoLDL(cat.k,d.ldl,d.ldlBasal,cat.lip.emTrat,nhdl):null;
-  return {e:e,d:d,r:r,falta:falta,imc:imc,tfge:tfge,nhdl:nhdl,dur:dur,ano:ano,cat:cat,alvo:alvo};
+  return {e:e,d:d,r:r,falta:falta,imc:imc,tfge:tfge,nhdl:nhdl,dur:dur,ano:ano,cat:cat,alvo:alvo,ldlMH:ldlMH};
+}
+// O que a tela diz do LDL-c quando o laudo não o trouxe: o estimado por
+// Martin/Hopkins, ou por que não se estimou. Vazio com o LDL-c do laudo (ou sem CT,
+// HDL-c e TG). `curto`: a linha embaixo do campo (texto puro, vai por textContent).
+function rcvLdlEstimadoTxt(x,curto){
+  var mh=x&&x.ldlMH;if(!mh)return '';
+  var nh=Math.round(mh.nhdl);
+  if(curto)return mh.usado?'estimado por Martin/Hopkins: '+mh.ldl+' mg/dL':(mh.tgAlto?'TG > 800: sem estimativa (use o não-HDL-c)':'sem estimativa (use o não-HDL-c)');
+  if(mh.usado)return 'LDL-c estimado por Martin/Hopkins: <b>'+mh.ldl+' mg/dL</b> (CT − HDL-c − TG ÷ '+sbcN(mh.fator,1)+'; o laudo não trouxe LDL-c). Com o LDL-c do laudo, vale o do laudo.';
+  if(mh.tgAlto)return 'LDL-c não estimado: com TG acima de 800 mg/dL, o LDL-c pela equação de Martin/Hopkins pode estar subestimado — a SBC 2025 recomenda avaliar o não-HDL-c ('+nh+' mg/dL).';
+  return 'LDL-c não estimado: a equação de Martin/Hopkins deu '+mh.ldl+' mg/dL (TG alto para o colesterol) — avalie o não-HDL-c ('+nh+' mg/dL).';
 }
 // O esquema em uso, como linha da Figura 7.2 ({r: redução total, id}); sem
 // hipolipemiante, r = 0 (`estDesc`: a estatina não foi respondida). ⚠️ null = EM
@@ -4457,9 +4582,9 @@ function rcvFormHTML(e){
       +'<div data-rcv-se="sexo=F">'+rcvSeg('gest','Gestante?',SN,e)+'</div></div>'
       +'<div class="rcv-campos">'+rcvNum('idade','Idade (anos)',e)+rcvNum('peso','Peso (kg)',e)+rcvNum('altura','Altura (cm)',e,'imc')+'</div>'
       +'<div class="rcv-sub2">Lípides</div>'
-      +'<div class="rcv-campos">'+rcvNum('ct','Colesterol total (mg/dL)',e)+rcvNum('hdl','HDL-c (mg/dL)',e,'nhdl')+rcvNum('ldl','LDL-c do laudo (mg/dL)',e)
+      +'<div class="rcv-campos">'+rcvNum('ct','Colesterol total (mg/dL)',e)+rcvNum('hdl','HDL-c (mg/dL)',e,'nhdl')+rcvNum('ldl','LDL-c do laudo (mg/dL)',e,'ldlmh')
         +rcvNum('ldlb','LDL-c sem tratamento (mg/dL), se souber',e)+rcvNum('tg','Triglicérides (mg/dL)',e)+rcvNum('apob','ApoB (mg/dL), opcional',e)+'</div>'
-      +'<div class="rcv-dica rcv-bloco-dica">LDL-c: o do laudo (a SBC 2025 recomenda a equação de Martin/Hopkins; com TG &gt; 800, acompanhe pelo não-HDL-c). O LDL-c sem tratamento decide os cortes de 160–189 e ≥ 190 e a redução percentual; sem ele, o LDL-c de quem trata vale como piso.</div>'
+      +'<div class="rcv-dica rcv-bloco-dica">LDL-c: o do laudo vale. Sem ele, com CT, HDL-c e triglicérides, a tela estima o LDL-c pela equação de Martin/Hopkins, a que a SBC 2025 recomenda para todos; com TG acima de 800 não estima (pode estar subestimado): acompanhe pelo não-HDL-c. O LDL-c sem tratamento decide os cortes de 160–189 e ≥ 190 e a redução percentual; sem ele, o LDL-c de quem trata vale como piso.</div>'
       +rcvSeg('lpa_un','Lp(a)',[['nd','Não dosada'],['mg','mg/dL'],['nmol','nmol/L']],e,'sem converter entre as unidades')
       +'<div data-rcv-se="lpa_un=mg,nmol"><div class="rcv-campos">'+rcvNum('lpa','Valor da Lp(a)',e)+'</div></div>'
       +'<div class="rcv-sub2">Pressão, rim e glicemia</div>'
@@ -4523,6 +4648,10 @@ function rcvCategoriaHTML(x){
     if(cat.outros.length)h+='<div class="rcv-sub">Outros critérios presentes</div><ul class="rcv-ul">'
       +cat.outros.map(function(o){return '<li><span class="tag '+SBC_COR[o.k]+' rcv-mini">'+LDL_METAS[o.k].rot+'</span> '+esc(o.motivo)+' <span class="rcv-fonte">('+esc(o.fonte)+')</span></li>';}).join('')+'</ul>';
   }
+  // Logo abaixo do motivo: os cortes de LDL-c que decidem a categoria podem ter
+  // vindo da estimativa, e quem lê o relatório tem de saber disso.
+  var mhTxt=rcvLdlEstimadoTxt(x);
+  if(mhTxt)h+='<div class="rcv-nota">'+mhTxt+'</div>';
   h+=sbcPendenciasHTML(cat.pendencias,'O que ainda pode subir a categoria');
   if(cat.alertas.length)h+='<div class="rcv-sub">Atenção na conduta</div><ul class="rcv-ul">'+cat.alertas.map(function(a){return '<li>⚠️ '+esc(a)+'</li>';}).join('')+'</ul>';
   return h+'</div>';
@@ -4576,7 +4705,7 @@ function rcvMetasHTML(x){
   var val=function(v){return isFinite(v)?'<b>'+Math.round(v)+'</b>':'—';};
   var faltaPct=a&&a.porPct&&!a.naMeta;
   var linhas=[
-    ['LDL-c (primária)'+(lip.emTrat?' · sob tratamento':''),val(d.ldl),'&lt; '+m.ldl+(a&&a.porPct?' e ≤ '+Math.floor(a.alvo)+' (redução ≥ '+m.red+'%)':' · redução ≥ '+m.red+'% ao tratar'),sit(d.ldl,m.ldl,faltaPct)],
+    ['LDL-c (primária)'+(d.ldlEstimado?' · estimado por Martin/Hopkins':'')+(lip.emTrat?' · sob tratamento':''),val(d.ldl),'&lt; '+m.ldl+(a&&a.porPct?' e ≤ '+Math.floor(a.alvo)+' (redução ≥ '+m.red+'%)':' · redução ≥ '+m.red+'% ao tratar'),sit(d.ldl,m.ldl,faltaPct)],
     ['Não-HDL-c (coprimária; CT − HDL)',val(x.nhdl),'&lt; '+m.nhdl,sit(x.nhdl,m.nhdl)],
     ['ApoB (secundária)',val(d.apob),'&lt; '+m.apob,sit(d.apob,m.apob)],
     ['Triglicérides',val(d.tg),'&lt; 150 em jejum (&lt; 175 sem jejum)',isFinite(d.tg)?(d.tg<150?'<span class="rcv-vrd">na meta</span>':(d.tg<175?'<span class="rcv-t3">na meta só sem jejum</span>':'<span class="rcv-ver">acima</span>')):'<span class="rcv-t3">não informado</span>']
@@ -4590,7 +4719,10 @@ function rcvMetasHTML(x){
   // menor que o atual (o fármaco só baixa; revisão de 24/10, M2).
   var semBase=(a&&lip.emTrat&&!isFinite(a.base))?(lip.basal>0?' O LDL-c sem tratamento informado é menor que o atual, sob tratamento: não serve de base, e a redução mínima de '+m.red+'% fica sem conferência.'
     :' Sem o LDL-c sem tratamento, não dá para conferir a redução mínima de '+m.red+'%.'):'';
-  if(!a)red='Informe o LDL-c do laudo para calcular a redução necessária.';
+  // Sem LDL-c: o do laudo, ou CT, HDL-c e TG para a estimativa. Com TG acima de 800 (ou
+  // estimativa ≤ 0) a conta não sai, e o que vale é o não-HDL-c.
+  if(!a)red=(x.ldlMH&&!x.ldlMH.usado)?'Sem o LDL-c do laudo, e sem estimativa de Martin/Hopkins (veja acima), a redução necessária fica por conferir: acompanhe pelo não-HDL-c, meta coprimária.'
+    :'Informe o LDL-c do laudo — ou CT, HDL-c e triglicérides, para estimá-lo por Martin/Hopkins — para calcular a redução necessária.';
   else if(a.naMeta&&a.gatNhdl)red='LDL-c no alvo, mas há gatilho farmacológico pelo não-HDL-c (≥ 30 mg/dL acima da meta dele; rec. §5).';
   // ⚠️ Do alto para cima, não-HDL-c fora da meta (coprimária, §5.1; prioridade na
   // hipertrigliceridemia, §5.5) não é "manter" (revisão de 24/10, M3).
@@ -4674,7 +4806,8 @@ function rcvEstrategiasHTML(x){
   var topo='';
   if(d.gestante===true)topo='Na gestação, a conduta muda: veja o alerta acima.';
   else if(dial&&!cat.dcva&&!dpLibera)topo='Diálise sem doença cardiovascular: a diretriz recomenda contra INICIAR estatina (rec. §9.5); quem já usa mantém.';
-  else if(!a)topo='Informe o LDL-c do laudo para marcar as estratégias que alcançam a redução necessária.';
+  else if(!a)topo=(x.ldlMH&&!x.ldlMH.usado)?'Sem o LDL-c do laudo, e sem estimativa de Martin/Hopkins (veja acima), as estratégias não se marcam: informe o LDL-c do laudo.'
+    :'Informe o LDL-c do laudo — ou CT, HDL-c e triglicérides, para estimá-lo por Martin/Hopkins — para marcar as estratégias que alcançam a redução necessária.';
   else if(a.naMeta&&a.gatNhdl)topo='LDL-c no alvo, mas o não-HDL-c está ≥ 30 mg/dL acima da meta dele (&lt; '+LDL_METAS[k].nhdl+'): há gatilho pelo não-HDL-c, e é nele que se mede a redução que falta.';
   // M3: a figura mede o LDL-c; o não-HDL-c fora da meta, do alto para cima, também
   // pede intensificar.
@@ -4794,7 +4927,8 @@ function rcvAtualiza(root){
   root.querySelectorAll('[data-rcv-se]').forEach(function(el){el.hidden=!rcvVisivel(el.getAttribute('data-rcv-se'),e);});
   var x=rcvDados(e);
   var calc={imc:isFinite(x.imc)?'IMC '+sbcN(x.imc,1)+' kg/m²':'',nhdl:isFinite(x.nhdl)?'não-HDL-c '+Math.round(x.nhdl)+' mg/dL':'',
-    tfge:isFinite(x.tfge)?'TFGe '+Math.round(x.tfge)+' mL/min/1,73 m² (CKD-EPI 2021)':(e.cr&&!e.sexo?'informe o sexo para a TFGe':''),dur:isFinite(x.dur)?'≈ '+x.dur+' ano'+(x.dur===1?'':'s')+' de diabetes':''};
+    tfge:isFinite(x.tfge)?'TFGe '+Math.round(x.tfge)+' mL/min/1,73 m² (CKD-EPI 2021)':(e.cr&&!e.sexo?'informe o sexo para a TFGe':''),dur:isFinite(x.dur)?'≈ '+x.dur+' ano'+(x.dur===1?'':'s')+' de diabetes':'',
+    ldlmh:rcvLdlEstimadoTxt(x,true)};
   root.querySelectorAll('[data-rcv-calc]').forEach(function(el){el.textContent=calc[el.getAttribute('data-rcv-calc')]||'';});
   var res=root.querySelector('[data-rcv-res]');
   if(res)res.innerHTML=rcvResultadoHTML(e);
@@ -4828,7 +4962,7 @@ function rcvResumoDados(x){
   var s=function(r,v){if(v!==''&&v!=null)L.push('<b>'+r+':</b> '+v);};
   s('Sexo',e.sexo==='M'?'masculino':(e.sexo==='F'?'feminino':''));s('Idade',isFinite(d.idade)?sbcN(d.idade)+' anos':'');
   s('IMC',isFinite(x.imc)?sbcN(x.imc,1)+' kg/m²':'');s('PA',isFinite(d.pas)?Math.round(d.pas)+(isFinite(d.pad)?'/'+Math.round(d.pad):'')+' mmHg':'');
-  if([d.ct,d.hdl,d.ldl,d.tg].some(function(v){return isFinite(v);}))s('CT/HDL-c/LDL-c/TG',[d.ct,d.hdl,d.ldl,d.tg].map(function(v){return isFinite(v)?Math.round(v):'—';}).join(' / ')+' mg/dL');
+  if([d.ct,d.hdl,d.ldl,d.tg].some(function(v){return isFinite(v);}))s('CT/HDL-c/LDL-c/TG',[d.ct,d.hdl,d.ldl,d.tg].map(function(v,i){return isFinite(v)?Math.round(v)+(i===2&&d.ldlEstimado?' (Martin/Hopkins)':''):'—';}).join(' / ')+' mg/dL');
   s('LDL-c sem tratamento',isFinite(d.ldlBasal)?Math.round(d.ldlBasal)+' mg/dL':'');s('ApoB',isFinite(d.apob)?Math.round(d.apob)+' mg/dL':'');
   s('Lp(a)',d.lpa?sbcN(d.lpa.v)+(d.lpa.un==='nmol'?' nmol/L':' mg/dL'):(e.lpa_un==='nd'?'não dosada':''));s('PCR-us',isFinite(d.pcr)?sbcN(d.pcr)+' mg/L':'');
   s('TFGe',isFinite(x.tfge)?Math.round(x.tfge)+' mL/min/1,73 m²':'');s('RAC',isFinite(d.rac)?sbcN(d.rac)+' mg/g':'');s('HbA1c',isFinite(d.hba1c)?sbcN(d.hba1c,1)+'%':'');
@@ -4975,11 +5109,27 @@ var CALCS=[
    calc:function(v){var e=ckdEpi2021(parseFloat(v.ckd_cr),parseFloat(v.ckd_idade),parseInt(v.ckd_sexo)===1);return isFinite(e)?e:0;},
    interp:function(s){return s>=90?{t:'G1 — normal (≥90)',c:'tag-grn'}:s>=60?{t:'G2 — leve (60-89)',c:'tag-grn'}:s>=45?{t:'G3a — leve-moderada (45-59)',c:'tag-gold'}:s>=30?{t:'G3b — moderada-grave (30-44)',c:'tag-gold'}:s>=15?{t:'G4 — grave (15-29)',c:'tag-red'}:{t:'G5 — falência (<15)',c:'tag-red'};},
    unit:'mL/min/1,73m²',note:'CKD-EPI 2021, sem coeficiente de raça.'},
-  {id:'ldl',name:'LDL (Friedewald)',area:'Lípides',desc:'Cálculo do LDL-colesterol',
+  // LDL-c pela equação de Martin/Hopkins (decisão do professor, 24/10/2026; antes,
+  // Friedewald): a SBC 2025 a recomenda para todos. A conta é a `ldlMartinHopkins`,
+  // a mesma da calculadora de risco CV. ⚠️ O `id` continua 'ldl': favoritos e
+  // testes apontam para ele. O número grande sai inteiro, como num laudo; as faixas
+  // "ótimo/desejável" da tela antiga saíram, porque na SBC 2025 a meta depende da
+  // categoria de risco.
+  {id:'ldl',name:'LDL (Martin/Hopkins)',area:'Lípides',desc:'LDL-colesterol pela equação de Martin/Hopkins (SBC 2025), com o não-HDL-c',
    fields:[{id:'ldl_ct',label:'Colesterol total (mg/dL)',type:'num'},{id:'ldl_hdl',label:'HDL (mg/dL)',type:'num'},{id:'ldl_tg',label:'Triglicérides (mg/dL)',type:'num'}],
-   calc:function(v){var ct=parseFloat(v.ldl_ct)||0;var hdl=parseFloat(v.ldl_hdl)||0;var tg=parseFloat(v.ldl_tg)||0;return ct-hdl-(tg/5);},
-   interp:function(s,v){if((parseFloat(v.ldl_tg)||0)>400)return{t:'TG >400 — fórmula não válida',c:'tag-red'};return s<70?{t:'Ótimo (<70)',c:'tag-grn'}:s<100?{t:'Desejável (70-99)',c:'tag-grn'}:s<130?{t:'Limítrofe (100-129)',c:'tag-gold'}:s<160?{t:'Alto (130-159)',c:'tag-gold'}:{t:'Muito alto (≥160)',c:'tag-red'};},
-   unit:'mg/dL',note:'Fórmula de Friedewald. Inválida se TG > 400 mg/dL.'},
+   calc:function(v){var r=ldlMartinHopkins(v.ldl_ct,v.ldl_hdl,v.ldl_tg);return isFinite(r.ldl)?Math.round(r.ldl):NaN;},
+   // ⚠️ Etiqueta CURTA: `.tag` não quebra linha, e a 360 px o que passa de ~40
+   // caracteres é cortado. O aviso inteiro abre a conta à vista, logo abaixo.
+   interp:function(s,v){
+     var r=ldlMartinHopkins(v.ldl_ct,v.ldl_hdl,v.ldl_tg);
+     if(!isFinite(r.ldl))return{t:(v.ldl_ct&&v.ldl_hdl&&v.ldl_tg)?'Confira: valores > 0 e HDL < CT.':'Preencha CT, HDL e triglicérides.',c:'tag-gold'};
+     var nh='o não-HDL-c ('+Math.round(r.nhdl)+' mg/dL)';
+     if(r.tgAlto)return{t:'TG > 800: avalie '+nh,c:'tag-red'};
+     if(Math.round(r.ldl)<=0)return{t:'Sem valor: avalie '+nh,c:'tag-red'};
+     return{t:'Fator '+sbcN(r.fator,1)+' · não-HDL-c '+Math.round(r.nhdl)+' mg/dL',c:'tag-blue'};
+   },
+   extra:function(s,v){return ldlMartinExtraHTML(ldlMartinHopkins(v.ldl_ct,v.ldl_hdl,v.ldl_tg));},
+   unit:'mg/dL',note:'Equação de Martin/Hopkins (Martin SS et al., JAMA 2013;310(19):2061-8): LDL-c = CT − HDL-c − TG ÷ fator, com o fator (mediana de TG/VLDL-c, de 3,1 a 11,9) da tabela de 180 células, por faixa de triglicérides e de não-HDL-c. A Diretriz Brasileira de Dislipidemias 2025 (SBC) recomenda a equação de Martin/Hopkins para o cálculo do LDL-c em todos os indivíduos (forte, certeza moderada). Com triglicérides acima de 800 mg/dL, o LDL-c pela fórmula de Martin pode estar subestimado: avalie o não-HDL-c (CT − HDL-c). Valores em mg/dL.'},
   {id:'homa',name:'HOMA-IR',area:'Diabetes',desc:'Resistência à insulina',
    fields:[{id:'homa_gli',label:'Glicemia de jejum (mg/dL)',type:'num'},{id:'homa_ins',label:'Insulina de jejum (µUI/mL)',type:'num'}],
    calc:function(v){var g=parseFloat(v.homa_gli)||0;var ins=parseFloat(v.homa_ins)||0;return(g*ins)/405;},
