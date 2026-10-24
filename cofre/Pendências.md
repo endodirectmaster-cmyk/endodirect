@@ -93,6 +93,13 @@ sessão: `trig_01PMo4FS7qqYwTMyeK1tia6N` (11h UTC), com o plano completo.
       diabetes segue o capítulo de tratamento do DM2.
 - [ ] Construir, testar (casos-ouro da diretriz), fazer o A/B, publicar e fazer o relatório.
 
+## 🖼️ AGUARDA APROVAÇÃO (24/10): figuras de adrenal, neuroendocrinologia e lípides
+
+Pedido do professor em 24/10 (prints do bucket `livros`, pastas Adrenal, Neuroend e Lipides: "adrenal e neuroendocrino"). 232 figuras revisadas; 101 entram em 29 capítulos, 48 consertadas (10 com troca de número, corte ou conduta para bater com o capítulo). Detalhes em [[Ilustrações dos Resumos]].
+- [x] Revisão (13 lotes), curadoria, consertos (4 grupos) e prévia: [Figuras de Adrenal, Neuro e Lípides](https://claude.ai/artifact/4FCQK4oXCKMLXaTytxqsTs).
+- [ ] **Professor:** aprovar a prévia (e dizer se a fig. 1 do JAMA e a 41.18 do Williams entram com o defeito pequeno que ficou).
+- [ ] Depois da aprovação: lista no `texto.js`, reexportar os 29 capítulos, subir as imagens, gravar em grupos de até 4 com backup e md5, F5 e zumbi.
+
 ## 📋 EM ANDAMENTO (desde 23/10, 19h de Brasília): auditoria das Diretrizes
 
 Pedido do professor em 21/10, com prints de "Rastreio de autoanticorpos pancreáticos" e de

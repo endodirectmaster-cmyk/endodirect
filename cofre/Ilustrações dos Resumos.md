@@ -272,6 +272,38 @@ ampliador. O editor do professor preserva a figura ao salvar (ramo `figure` do
       carregam, cabem e ficam logo depois do trecho. Avisos só os conhecidos (ampliador no
       celular e a "deformação" de 1,9% da Vilar 31.4).
     - **Prévia:** [Figuras de Fisiologia das Glândulas](https://claude.ai/artifact/FvC4tVCW9BKbzv8NicJv7v).
+  - **Adrenal, neuroendocrinologia e lípides (24/10): prévia enviada em 24/10, aguarda aprovação.**
+    - **Origem:** três zips novos no bucket `livros` (pastas Adrenal, Neuroend e Lipides), 232
+      figuras (79 + 80 + 73), baixados pela `baixar-livros` (depois 410). Sem recorte em inglês
+      desta vez: a tradução foi julgada pela própria imagem. O índice de lípides lista 26 arquivos
+      sem o `_PT` que o zip usa (casar tentando com `_PT`) e não traz `status_traducao` (com `_PT`
+      = traduzida; sem, já em português ou sem texto). Fontes novas: Endocrine Hypertension
+      (Pappachan), Endocrine Emergencies (Loriaux), revisões (NEJM, JAMA, J Clin Med, Feingold e
+      Chait) e diretrizes (ES 2016/2018/2020, ESE 2016, SBC 2017 e 2025).
+    - **Revisão:** 13 lotes (`figuras-an/INSTRUCOES.md` na sessão), sobre os 60 capítulos
+      candidatos já com as figuras do 2º lote inseridas. Regra nova: diretriz conferida contra a
+      que o capítulo usa (a ESE 2016 de incidentaloma, a SBC 2017 e o algoritmo AHA/ACC 2018 ficaram
+      de fora por isso), foto de paciente com rosto = grave, e troca de sigla só para a do capítulo.
+    - **Resultado:** 101 entram em 29 capítulos (34 adrenal, 38 neuro, 29 lípides); 131 ficam de
+      fora (erro de conteúdo ou diretriz superada, repetição, assunto sem capítulo e 4 por
+      curadoria nos capítulos cheios: Cushing com 8, Hipertrigliceridemias e Hipercolesterolemias
+      Primárias com 7). Lista em `scratchpad/figuras-livros/figuras-adrenal-neuro-lipides.js`
+      (**ainda fora do `texto.js`**, até a aprovação: o 2º lote, também pendente, grava pelo
+      mesmo `texto.js`). Na sessão: `figuras-an-scripts/` (`monta-lotes.py`, `monta-an.js`,
+      `lista-cap.js`, `monta-correcoes.js`, `prepara-an.py`), `figuras-an/ajustes.json`
+      (curadoria e 14 legendas acertadas às siglas que ficaram na figura), `prontas/` e `pagina/`.
+    - **Consertos (48 figuras), com `corrige-an.py`:** operações em `correcoes-an/c1–c4.json`.
+      Ferramenta nova: `inverte` (exame de imagem que sai do PDF em negativo). 10 consertos mudam
+      número, corte ou conduta para bater com o capítulo, cada um com a frase do capítulo que o
+      sustenta (metanefrinas 4× o LSN; macroadenoma ≥ 10 mm; dose inicial de GH 0,1–0,3 mg/dia;
+      DI nefrogênico < 10%; glicocorticoide EV imediato na apoplexia; "rastrear todos os
+      hipertensos" no hiperaldosteronismo; ramo da RAR sem os cortes que o capítulo não usa; TG a
+      partir de 150; SM com PA ≥ 130/85; SMRE sem o "grau 2" errado). Conversão de LDL-c de mmol/L
+      para mg/dL (× 38,67) na figura da ES 2020, dita na legenda.
+    - **Prévia:** [Figuras de Adrenal, Neuro e Lípides](https://claude.ai/artifact/4FCQK4oXCKMLXaTytxqsTs).
+    - **Depois da aprovação:** pôr a lista no `texto.js`, exportar de novo os 29 capítulos (md5),
+      subir as imagens pela `subir-figuras-livros` (depois 410), gravar em grupos de até 4
+      capítulos com backup e guardas de md5, avisar o F5 e conferir zumbi.
   - **Desenho próprio:** onde o livro tiver figura equivalente, o recorte substitui o
     desenho; onde não tiver, o desenho fica.
   - **Origem dos livros:** estão no Drive, em Livros › Endocrino Geral (Williams,
