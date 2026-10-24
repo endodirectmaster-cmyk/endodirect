@@ -1,6 +1,6 @@
 ---
 tags: [cofre, decisoes]
-atualizado: 2026-10-21
+atualizado: 2026-10-24
 ---
 
 # Decisões
@@ -8,6 +8,9 @@ atualizado: 2026-10-21
 Log de decisões de produto e técnicas (mais recentes no topo).
 
 ## 2026-10
+- **🖼️ 2º LOTE DAS FIGURAS DOS LIVROS: 34 FIGURAS DE FISIOLOGIA, 19 CONSERTADAS (2026-10-24).** Começou na hora agendada pelo professor (23/10, 18h). Das 49 restantes do zip de Endocrinologia Básica, 34 entram em 31 capítulos de cada glândula; 15 ficam de fora (3 com erro de conteúdo, 8 repetidas, 3 sem capítulo, a Williams 11.6 cortada). Erros dos próprios livros corrigidos na figura: vias Δ4/Δ5 trocadas na Williams 19.8 e "21β-Hidroxilase" no Guyton 78-2. A prévia achou um defeito antigo do `texto.js`: dois capítulos com o mesmo tema (HAC, 94 e 143) recebiam a figura um do outro; agora a figura casa pela posição e pelo tema. Prévia em [Figuras de Fisiologia das Glândulas](https://claude.ai/artifact/FvC4tVCW9BKbzv8NicJv7v); gravação só depois da aprovação. Detalhes em [[Ilustrações dos Resumos]].
+- **📋 DIRETRIZES COMPLETAS: PILOTO COM DUAS, ESCRITAS PELO PDF E CONFERIDAS POR OUTRO AGENTE (2026-10-24).** A auditoria agendada para 23/10, 19h começou pelo inventário e por um piloto antes dos lotes, como no plano. Tireoide e gestação (ATA 2026) e Insuficiência adrenal primária (Endocrine Society 2016) foram reescritas a partir do documento original, seguindo as seções dele, com todas as recomendações e a força e a qualidade da evidência de cada uma (96 e 41), tabelas e fluxogramas refeitos com palavras próprias e uma seção "O que mudou". Um 2º agente conferiu cada recomendação e cada número contra o PDF: 0 graves, 12 e 17 menores, todos aplicados. Prévia ao professor em [Piloto das Diretrizes](https://claude.ai/artifact/K69iLMS8QHmuxg4vU1Jzuw); só depois da aprovação seguem as outras 70. Detalhes e lições em [[Pendências]].
+  - **Direito autoral:** o conferente achou recomendações traduzidas quase palavra a palavra, e a checagem automática do redator (n-gramas português × inglês) não tinha como pegar. Foram reescritas com construção própria; a conferência de cópia passa a ser leitura, não script.
 - **🧮 CALCULADORA DE RISCO CV NO ESTILO DA CLARITY, AGENDADA PARA SÁBADO, 24/10, ÀS 8H (2026-10-22).** "Importar" a Clarity Prevention vira construir a nossa pela diretriz SBC 2025, sem copiar código, texto, desenho ou marca de um produto de terceiros patrocinado pela indústria. Reaproveita `LDL_METAS` e `sbcCategoria` e estende à prevenção secundária. Plano em [[Pendências]].
 - **📋 AUDITORIA DAS DIRETRIZES AGENDADA PARA SEXTA, 23/10, ÀS 19H (BRASÍLIA) (2026-10-21).** O professor achou as 72 Diretrizes "muito enxutas" perto dos capítulos dos Resumos (~4,3 mil contra ~12 mil caracteres em média) e quer cada uma completa e fiel ao documento original. Começa por um piloto de 2 ou 3, que vai ao professor antes dos lotes. Plano em [[Pendências]].
 - **📣 LANDING: "MAIS DE 3 MIL QUESTÕES" (2026-10-21).** Pedido do professor. `sw.js` v320 → **v321**. Detalhes em [[Banco de Questões]].

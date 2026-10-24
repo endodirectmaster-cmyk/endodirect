@@ -1,6 +1,6 @@
 ---
 tags: [cofre, pendencias]
-atualizado: 2026-10-21
+atualizado: 2026-10-24
 ---
 
 # Pendências
@@ -88,7 +88,7 @@ sessão: `trig_01PMo4FS7qqYwTMyeK1tia6N` (11h UTC), com o plano completo.
       diabetes segue o capítulo de tratamento do DM2.
 - [ ] Construir, testar (casos-ouro da diretriz), fazer o A/B, publicar e fazer o relatório.
 
-## 📋 AGENDADO (sexta, 23/10, 19h de Brasília): auditoria das Diretrizes
+## 📋 EM ANDAMENTO (desde 23/10, 19h de Brasília): auditoria das Diretrizes
 
 Pedido do professor em 21/10, com prints de "Rastreio de autoanticorpos pancreáticos" e de
 "Tratamento do Diabetes tipo 2": *"Os resumos dos capítulos ficaram excelentes. Entretanto,
@@ -100,10 +100,33 @@ completo.
 - **Ponto de partida (21/10):** 72 Diretrizes públicas, com ~4,3 mil caracteres em média
   (mín. 765, máx. 10.730), ~10 pontos-chave e ~9 flashcards. Os 118 capítulos dos Resumos
   têm ~12 mil caracteres e ~17,5 pontos.
-- [ ] Inventário e prioridade.
-- [ ] Piloto com 2 ou 3, conferido contra o documento original, e prévia ao professor.
+- [x] **Inventário (23/10, 22h UTC):** as mais enxutas são DM2 e IC (765 caracteres),
+  Tratamento do DM2 (1,7 mil) e Rastreio de autoanticorpos (2,4 mil); DMPT, neuropatia,
+  perioperatório e hipogonadismo masculino estão sem flashcards nem mapa. Os documentos
+  originais de muitas estão no Drive do professor (Endocrine Society, ATA, ESE…); os sites da
+  SBD e o PMC dão 403 no proxy, mas o texto completo do PMC chega pelo conector do PubMed e o
+  PDF do Drive pelo conector do Drive (até 10 MB).
+- [x] **Piloto (24/10):** Tireoide e gestação (pos. 18, ATA 2026: 96 recomendações em 25
+  tabelas, 32,8 mil caracteres, 25 pts, 25 flashcards, 4 fluxogramas) e Insuficiência adrenal
+  primária (pos. 35, Endocrine Society 2016: 41 recomendações, 30 mil caracteres, 25 pts, 25
+  flashcards, 3 fluxogramas). Cada uma escrita por um agente a partir do PDF e conferida por
+  outro, recomendação por recomendação: 0 achados graves; 12 e 17 menores, todos aplicados.
+  Instruções na sessão: `scratchpad/diretrizes-piloto/INSTRUCOES-PILOTO.md` e
+  `VERIFICACAO-PILOTO.md`; prévia (`gera-previa.js` + `render-diretriz.js`, com o `mdToHtml`,
+  o `dirMapaHTML`, o `dirFluxoHTML` e o `drawDmap` do app) em
+  [Piloto das Diretrizes](https://claude.ai/artifact/K69iLMS8QHmuxg4vU1Jzuw).
+  - **Lições do piloto:** (1) a notação da Endocrine Society "1|⊕⊕⊕◯" quebra o texto, porque o
+    `mdToHtml` faz tabela de toda linha com "|" e duas células: usar "∣" (U+2223); (2) a
+    checagem de cópia por n-gramas compara português com inglês e não pega tradução literal:
+    o conferente achou recomendações traduzidas quase palavra a palavra, que foram reescritas;
+    (3) o conferente renderiza as tabelas e os fluxogramas do PDF em imagem, porque o texto
+    extraído perde as setas.
+  - [ ] **Professor:** aprovar o formato e a profundidade; decidir se os capítulos 86 e 89 dos
+    Resumos acompanham as diretrizes nos pontos divergentes (listados na prévia); e mandar o
+    PDF da SBD 2026 de tratamento do DM2, que não está no Drive.
 - [ ] Lotes por subespecialidade, com conferência independente.
-- [ ] Gravação com backup, F5 e conferência de zumbi.
+- [ ] Gravação com backup, F5 e conferência de zumbi. Manter o `at` de cada item (o selo
+  "Novo" depende dele) e atualizar o `atEdit`.
 - [ ] Cofre e relatório.
 
 ## 🖼️ FEITO (21/10): Questão do Dia — figura no comentário
@@ -249,13 +272,20 @@ a renovação do limite semanal. Processo e números em [[Ilustrações dos Resu
    - Teto de altura no ar (PR #881, `sw.js` v315).
    - Depois dele, o `{60}`/`{75}` saiu do Netter e do ciclo menstrual no 151 (backup `main-antes-largura-livros-151-2026-10-18`, 12:24 UTC; md5 do 151 agora `891f49b2…`).
    - ✅ **Conferência de zumbi (13:16 UTC):** os 4 resumos seguem com os md5 gravados (149 `416c1c7c…`, 150 `a5a99495…`, 151 `891f49b2…`, 152 `5fb2f669…`), com 19 recortes e nenhum `{N}`. O save de 12:31:52 UTC, posterior à última gravação, já carregou a versão nova.
-2. [ ] Refazer os recortes cortados embaixo: Williams 16.1 (catecolaminas, p. 670) e 11.6 (D2/D3, p. 428).
-3. [ ] **2º lote:** as outras 47 figuras nos capítulos de cada glândula. **Agendado pelo
-   professor para sexta, 23/10, às 18h de Brasília** (*"começa 6a feira às 18h"*, 21/10),
-   logo depois da renovação semanal do limite. O lembrete na sessão é o
-   `trig_01NPdDbFuwcrJAM4JJK49Xat` (21h UTC).
-   - Estão em português no zip `_PT` do bucket `livros`.
-   - Revisar cada tradução contra o original, como no lote 1 (`pares/`, `corrige.py`).
+2. [x] Williams 16.1 (catecolaminas): a versão traduzida está completa (só o original em
+   inglês saiu cortado); entra no 149 no 2º lote.
+   - [ ] Williams 11.6 (D2/D3, p. 428): segue cortada embaixo (~180 px). Precisa de recorte novo
+     da outra conversa do professor (o PDF do Williams no Drive tem 68 MB, acima dos 10 MB do
+     conector). Quando vier, entra no 77, no trecho da D3.
+3. [ ] **2º lote (fisiologia de cada glândula): prévia enviada em 24/10, aguarda aprovação.**
+   Começou na hora agendada (23/10, 18h de Brasília). 34 figuras em 31 capítulos, 19 com
+   conserto; 15 ficam de fora. Detalhes em [[Ilustrações dos Resumos]]; prévia em
+   [Figuras de Fisiologia das Glândulas](https://claude.ai/artifact/FvC4tVCW9BKbzv8NicJv7v).
+   - [ ] Professor: aprovar; dizer se troca "Iodinase" e "Resposta ao hormônio tireoidiano" na
+     fig. 77-5 do Guyton (edição brasileira, deixada como está).
+   - [ ] Depois da aprovação: exportar de novo os 31 capítulos, conferir os md5, subir as 34
+     pela `subir-figuras-livros` (depois 410), gravar em grupos de até 4 capítulos com backup e
+     guarda de md5, avisar o F5 e fazer a conferência de zumbi.
 4. [x] A cópia da prévia (`Lp7eetjE7zsAtctbPuKVEt`) já não existe (conferido em 19/10). Fica a de sempre (`1PdZcjpHFTp4q8Kw4Qx1Xq`).
 
 ## 📱 App nas lojas (18/10) — decisões tomadas; a fazer

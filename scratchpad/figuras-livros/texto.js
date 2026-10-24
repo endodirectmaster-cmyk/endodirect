@@ -6,8 +6,9 @@
 // ampliador. Idempotente: se a figura já está no texto, só a linha dela é refeita.
 // lote 1 (Endocrinologia Básica), lote de diabetes (figuras-diabetes.js, 18/10/2026), lote de
 // tireoide, obesidade e osteometabolismo (figuras-tireoide-obesidade-osteo.js, 19/10/2026) e parte
-// 2 de tireoide (figuras-tireoide-parte2.js, 20/10/2026)
-const FIGURAS = require('./figuras.js').concat(require('./figuras-diabetes.js'), require('./figuras-tireoide-obesidade-osteo.js'), require('./figuras-tireoide-parte2.js'));
+// 2 de tireoide (figuras-tireoide-parte2.js, 20/10/2026) e 2º lote da Endocrinologia Básica, a
+// fisiologia de cada glândula (figuras-fisiologia-glandulas.js, 23/10/2026)
+const FIGURAS = require('./figuras.js').concat(require('./figuras-diabetes.js'), require('./figuras-tireoide-obesidade-osteo.js'), require('./figuras-tireoide-parte2.js'), require('./figuras-fisiologia-glandulas.js'));
 const BASE = 'https://eutizblmrcypzyqzczgq.supabase.co/storage/v1/object/public/endodirect-assets/resumos/livros/';
 const escAlt = (s) => String(s || '').replace(/\\/g, '\\\\').replace(/\]/g, '\\]');
 const escRe = (s) => String(s).replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
@@ -18,7 +19,10 @@ const linhaGravada = (nome) => new RegExp('^!\\[(?:[^\\]\\\\]|\\\\.)*\\]\\([^)\\
 function figurasDo(cap) {
   const t = String(cap.resumo || '');
   const onde = (f) => (f.substitui ? t.search(linhaGravada(f.substitui)) : t.indexOf(f.depoisDe));
-  return FIGURAS.filter((f) => f.tema === cap.tema).sort((a, b) => onde(a) - onde(b));
+  // pela posição E pelo tema: dois capítulos podem ter o mesmo tema (HAC na Adrenal, 94, e na
+  // Pediatria, 143), e só o tema punha a figura de um no outro
+  const pos = cap.pos != null ? Number(cap.pos) : null;
+  return FIGURAS.filter((f) => f.tema === cap.tema && (pos == null || f.pos == null || Number(f.pos) === pos)).sort((a, b) => onde(a) - onde(b));
 }
 function textoComFiguras(cap, base) {
   let t = String(cap.resumo || '');

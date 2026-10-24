@@ -1,6 +1,6 @@
 ---
 tags: [cofre, conteudo, resumos]
-atualizado: 2026-10-21
+atualizado: 2026-10-24
 ---
 
 # Ilustrações dos Resumos (no meio do capítulo)
@@ -226,6 +226,52 @@ ampliador. O editor do professor preserva a figura ao salvar (ramo `figure` do
       junto (`prontas-todas/`). Todas carregam, cabem e ficam logo depois do trecho. Avisos só
       os conhecidos (ampliador no celular e a "deformação" de 1,9% da Vilar 31.4, da parte 1).
     - **Prévia:** [Figuras de Tireoide, Parte 2](https://claude.ai/artifact/W8g7X9zJD9TMUhiFH4QkCZ).
+  - **2º lote da Endocrinologia Básica, fisiologia de cada glândula (23–24/10): prévia
+    enviada em 24/10, aguarda aprovação.**
+    - **Origem:** as 49 figuras do zip `imagens_endocrinologia_basica_PT` que ficaram fora do
+      lote 1 (47 de fisiologia, mais as Williams 16.1 e 11.6, que vieram cortadas).
+    - **Capítulos exportados de novo** (`exportar-capitulos`, depois 410): 97, das posições
+      77–109, 116–172, 220–224, 227 e 228.
+    - **Revisão:** 7 lotes, um agente por lote (`figuras-eb2/INSTRUCOES.md` na sessão), com a
+      tradução comparada ao original rótulo por rótulo e a lista das 199 já gravadas, para não
+      repetir figura nem assunto.
+    - **Resultado:** 34 entram em 31 capítulos (32 traduzidas, 2 do Guyton já em português); 15
+      ficam de fora:
+      - 3 com erro de conteúdo: a Netter 6-2 (a tradução pôs "reabsorção óssea" onde o original
+        aponta a reabsorção tubular de cálcio), a Netter 5-4 ("Gs" no receptor que ativa a PLC,
+        que é Gq) e a Molina 1-1 (vasopressina e ocitocina entre os inibidores);
+      - 8 repetem uma figura melhor;
+      - 3 tratam de assunto que nenhum capítulo cobre;
+      - a Williams 11.6 aguarda recorte novo (faltam ~180 px embaixo; o PDF do Williams no
+        Drive tem 68 MB, acima dos 10 MB do conector).
+
+      Lista em `scratchpad/figuras-livros/figuras-fisiologia-glandulas.js` (já no `texto.js`).
+      Na sessão: `monta-eb2.js`, `ajustes.json` (5 decisões minhas sobre colisões de trecho),
+      `prepara-eb2.py`, `prontas/` e `pagina/`.
+    - **Consertos (19 figuras), com `corrige-eb2.py`:** as operações ficam em
+      `correcoes-eb2/*.json`, uma lista por grupo, para três agentes trabalharem em paralelo
+      (`figuras-eb2/CORRECOES.md` na sessão). Os que mudam o sentido:
+      - Williams 19.8: "Via Δ4" e "Via Δ5" trocadas já no livro (`troca_caixas`, só os
+        algarismos);
+      - Guyton 78-2: "21β-Hidroxilase" → "21-Hidroxilase" (erro do livro), com os glifos da
+        figura;
+      - Molina 7-5: a seta em degrau da fosforilase-cinase até a fosforilase b, cortada pelo
+        remendo, voltou;
+      - Netter 4-23: veio deitada (`girahor`) e "Lactância" → "Lactente".
+
+      Os outros são acabamento (caixas opacas, contornos e setas apagados, restos de texto em
+      inglês). Uma figura só aparada (Netter 3-5) não vira "adaptada".
+    - **Ferramentas novas no `corrige-eb2.py`:** `troca_caixas`, `girahor` e `restaura` (traz a
+      arte do recorte em inglês, nas mesmas coordenadas, só nos pixels claros do remendo; nunca
+      em caixa com texto em inglês).
+    - **Defeito achado pela prévia:** os capítulos 94 (Adrenal) e 143 (Pediatria) têm o mesmo
+      tema, "Hiperplasia Adrenal Congênita (HAC)", e o `texto.js` casava a figura só pelo tema:
+      a do 94 ia para o 143. Agora casa pela posição e pelo tema.
+    - **Conferências:** `previa.js` nos 31 capítulos (390 e 1280 px), com as 233 figuras de
+      livros numa pasta só (`prontas-todas/`, links para as dos lotes anteriores). As 34 novas
+      carregam, cabem e ficam logo depois do trecho. Avisos só os conhecidos (ampliador no
+      celular e a "deformação" de 1,9% da Vilar 31.4).
+    - **Prévia:** [Figuras de Fisiologia das Glândulas](https://claude.ai/artifact/FvC4tVCW9BKbzv8NicJv7v).
   - **Desenho próprio:** onde o livro tiver figura equivalente, o recorte substitui o
     desenho; onde não tiver, o desenho fica.
   - **Origem dos livros:** estão no Drive, em Livros › Endocrino Geral (Williams,
