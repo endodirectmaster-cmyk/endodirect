@@ -970,6 +970,22 @@ try {
   fail('regressão da conduta lipídica falhou:\n' + out);
 }
 
+// 17c-undecies-l. RISCO CV E METAS — SBC 2025 (24/10/2026). Pedido do professor:
+//      calculadora de risco cardiovascular pela Diretriz Brasileira de
+//      Dislipidemias 2025, com o motivo da categoria. Um motor só
+//      (`sbcEstratifica`) para ela e para o bloco de metas do PREVENT; o PREVENT
+//      com DAC e AVC e a errata de 14/10/2026 nos modelos com HbA1c, conferido
+//      contra a Tabela S12 e o preventr 0.12.1 (±0,05 p.p.); os casos-ouro F1–F27;
+//      "não sei" que nunca rebaixa a categoria; alvo de LDL-c com meta e redução
+//      mínima juntas; estratégias da Figura 7.2; cartões com fonte.
+try {
+  execFileSync(process.execPath, [path.join('scripts', 'test-risco-cv-sbc.js')], { stdio: 'pipe' });
+  ok('risco CV SBC 2025: motor único nos casos-ouro, PREVENT com DAC/AVC e errata, metas, estratégias e cartões');
+} catch (e) {
+  const out = (e.stdout ? e.stdout.toString() : '') + (e.stderr ? e.stderr.toString() : '');
+  fail('regressão da calculadora de risco CV (SBC 2025) falhou:\n' + out);
+}
+
 // 17c-undecies-g. A GRADE DAS CALCULADORAS (14/10/2026): colunas por auto-fill,
 //      cartão com unidade e "Abrir", busca por nome sem redesenhar, teclado.
 try {

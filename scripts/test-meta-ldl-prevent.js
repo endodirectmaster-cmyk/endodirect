@@ -47,18 +47,31 @@ function linhaVarSimples(nome, fonte) {
   if (i < 0) throw new Error('var não encontrada: ' + nome);
   return src.slice(i + 1, src.indexOf('\n', i + 1));
 }
+// 24/10/2026: `sbcCategoria` passou a montar a entrada do motor único da SBC 2025
+// (`sbcEstratifica`, o mesmo da calculadora "Risco CV e metas — SBC 2025") e a
+// chamá-lo. O mundo carrega o motor e os ajudantes junto.
 function mundo(fonte) {
   const ctx = vm.createContext({});
   vm.runInContext(
     'function esc(s){return String(s==null?"":s).replace(/[&<>"]/g,function(c){return {"&":"&amp;","<":"&lt;",">":"&gt;","\\"":"&quot;"}[c];});}\n'
     + trechoVar('LDL_METAS', fonte) + '\n'
+    + linhaVarSimples('SBC_ORD', fonte) + '\n'
+    + linhaVarSimples('SBC_COR', fonte) + '\n'
+    + corpo('sbcN', fonte) + '\n'
+    + corpo('sbcRenalDM', fonte) + '\n'
+    + corpo('sbcEstratifica', fonte) + '\n'
+    + corpo('sbcDadosDoPrevent', fonte) + '\n'
+    + corpo('sbcPendenciasHTML', fonte) + '\n'
     + corpo('ldlFaixaEscore', fonte) + '\n'
     + linhaVarSimples('LDL_FAIXA_F', fonte) + '\n'
     + corpo('sbcCategoria', fonte) + '\n'
     + linhaVarSimples('LDL_COLS', fonte) + '\n'
     + corpo('ldlConduta', fonte) + '\n'
+    + corpo('ldlEsquemaNivel', fonte) + '\n'
     + corpo('ldlEsquemaPelaReducao', fonte) + '\n'
     + (function () { const src = fonte || html; const i = src.indexOf('\nvar LDL_DOSES='); const f = src.indexOf('\n];', i); return src.slice(i + 1, f + 3); })() + '\n'
+    + corpo('ldlDosesHTML', fonte) + '\n'
+    + corpo('sbcAlvoLDL', fonte) + '\n'
     + corpo('ldlCondutaHTML', fonte) + '\n'
     + corpo('ldlQuadroHTML', fonte) + '\n'
     + corpo('ldlAlvoHTML', fonte), ctx);
@@ -104,8 +117,13 @@ ok(M.sbcCategoria(2, paciente({ pv_dm: '1', pv_sexo: String(F), pv_idade: '55' }
 ok(M.sbcCategoria(2, paciente({ pv_dm: '1', pv_sexo: String(F), pv_idade: '56' })).k === 'alto',
   'diabetes em mulher de 56 anos é risco ALTO');
 // Vence sempre a MAIS ALTA que se aplica.
-ok(M.sbcCategoria(2, paciente({ pv_dm: '1', pv_sexo: String(H), pv_idade: '40', pv_ldl: '200' })).k === 'alto',
-  'com duas regras aplicáveis tem de valer a faixa MAIS ALTA');
+// ⚠️ EXPECTATIVA ATUALIZADA em 24/10/2026: antes esperava ALTO. No diabetes,
+// LDL-c > 190 é "Hipercolesterolemia grave: CT > 310 mg/dL ou LDL-c > 190 mg/dL",
+// estratificador de MUITO ALTO risco (Tabela 4.8; T4.5 manda o EMAR para muito
+// alto). A regra antiga parava no "LDL-c ≥ 190 → alto" e dava meta < 70 a quem
+// precisa de < 50. As duas regras continuam disparando; vale a mais alta.
+ok(M.sbcCategoria(2, paciente({ pv_dm: '1', pv_sexo: String(H), pv_idade: '40', pv_ldl: '200' })).k === 'muitoalto',
+  'com duas regras aplicáveis tem de valer a faixa MAIS ALTA — no DM, LDL-c > 190 é EMAR (T4.8): muito alto');
 ok(M.sbcCategoria(30, paciente({ pv_ldl: '80' })).k === 'alto',
   'LDL-c dentro da meta não DESCE a faixa de quem tem escore ≥ 20% — nada desce de faixa');
 
@@ -220,13 +238,21 @@ ok(/escore de 5 a < 20%/.test(M.sbcCategoria(8, paciente({})).motivo),
   const h = M.ldlAlvoHTML(13.4, paciente({ pv_dm: '1', pv_sexo: String(F), pv_idade: '62' }));
   ok(/CATEGORIA SBC · ALTO/.test(h),
     '⚠️ o bloco voltou a rotular sua medida como "risco", o mesmo nome da tarja do escore — duas respostas para a mesma pergunta');
-  ok(/a faixa do escore é moderada; sobe por diabetes em mulher ≥ 56 anos/.test(h),
-    '⚠️ a tela não reconcilia as duas medidas: sem isso "moderado" em cima e "ALTO" embaixo lê como defeito');
+  // ⚠️ EXPECTATIVA ATUALIZADA em 24/10/2026: a faixa de 5 a < 20% chama-se
+  // "intermediário" na diretriz (Tabela 4.1 e Figura 4.1: "Escore de risco
+  // calculado 5 a < 20% em 10 anos"), não "moderado"; e o diabetes da regra 50/56 é
+  // o TIPO 2 (Tabela 4.5 — o DM1 tem regras próprias).
+  ok(/a faixa do escore é intermediária; sobe por diabetes tipo 2 em mulher ≥ 56 anos/.test(h),
+    '⚠️ a tela não reconcilia as duas medidas: sem isso "intermediária" em cima e "ALTO" embaixo lê como defeito');
   ok(/é ela que define a meta e a conduta/.test(h),
     '⚠️ sumiu a frase que diz QUAL das duas decide — é ela que tira a dúvida do professor');
   const im = M.ldlAlvoHTML(8, paciente({}));
-  ok(/é o “moderado” da faixa do escore/.test(im),
-    'no intermediário falta dizer que ele é o mesmo "moderado" da faixa do escore');
+  // ⚠️ EXPECTATIVA ATUALIZADA em 24/10/2026: antes a tela dizia "é o 'moderado' da
+  // faixa do escore". Com o nome da diretriz (T4.1: intermediário = escore 5 a
+  // < 20%), faixa e categoria têm o MESMO nome e não há o que reconciliar: a tela
+  // diz a regra.
+  ok(/por escore de 5 a &lt; 20% em 10 anos/.test(im) && !/a faixa do escore é/.test(im),
+    'no intermediário pelo escore, faixa e categoria têm o mesmo nome (T4.1): a tela diz a regra e não reconcilia nada');
   const coerente = M.ldlAlvoHTML(25, paciente({}));
   ok(!/a faixa do escore é/.test(coerente) && /é ela que define a meta e a conduta/.test(coerente),
     'quando escore e categoria coincidem não há reconciliação a fazer, mas a frase de quem decide fica');
@@ -242,8 +268,13 @@ ok(/escore de 5 a < 20%/.test(M.sbcCategoria(8, paciente({})).motivo),
   // A frase é "faixa X do escore": X concorda com "faixa". "faixa moderado" é
   // frase capenga em tela clínica, e frase capenga tira a autoridade do número
   // que está do lado.
-  ok(/\{t:'baixa',/.test(bloco) && /\{t:'moderada',/.test(bloco) && /\{t:'alta',/.test(bloco),
-    'a faixa do escore voltou ao masculino na tarja — a frase vira "faixa moderado do escore"');
+  // ⚠️ EXPECTATIVA ATUALIZADA em 24/10/2026: "intermediária", o nome da diretriz
+  // (Tabela 4.1/Figura 4.1), e 20,0% já é alto ("≥ 20%"; antes `s<=20` dizia
+  // "moderada" em 20,0%).
+  ok(/\{t:'baixa',/.test(bloco) && /\{t:'intermediária',/.test(bloco) && /\{t:'alta',/.test(bloco),
+    'a faixa do escore voltou ao masculino (ou ao "moderada" antigo) na tarja');
+  ok(/s<20\?\{t:'intermediária'/.test(bloco) && !/s<=20/.test(bloco),
+    '⚠️ 20,0% é alto (T4.1: "≥ 20%"): a tarja não pode chamar 20,0% de intermediária');
   const F2 = M.ldlAlvoHTML(13.4, paciente({ pv_dm: '1', pv_sexo: String(F), pv_idade: '62' }));
   ok(!/faixa do escore é moderado;/.test(F2), 'o bloco voltou a escrever "a faixa do escore é moderado"');
 }
@@ -269,15 +300,16 @@ ok(/escore de 5 a < 20%/.test(M.sbcCategoria(8, paciente({})).motivo),
 }
 
 // ── Mutação: cada uma destas devolve uma meta errada ───────────────────────
+// 24/10/2026: as regras moraram para o motor único (`sbcEstratifica`); as
+// mutações agora mexem nele, com a mesma intenção de antes.
 function mutante(de, para) {
-  const alvo = corpo('sbcCategoria');
+  const alvo = corpo('sbcEstratifica');
   if (alvo.indexOf(de) < 0) throw new Error('mutação não se aplica (o código mudou): ' + de);
   return mundo(html.replace(alvo, alvo.replace(de, para)));
 }
-// Sem a regra do ≥190, o 195 cai na regra seguinte (160–189) e vira
-// INTERMEDIÁRIO: meta < 100 em quem precisa de < 70. Errar por uma faixa é o
-// modo de falha realista aqui, não errar por três.
-ok(mutante("if(isFinite(ldl)&&ldl>=190)", "if(false)").sbcCategoria(2, paciente({ pv_ldl: '195' })).k !== 'alto',
+// Sem a regra do ≥190, o 195 deixa de ser alto e cai para o que o escore dá:
+// meta < 115 em quem precisa de < 70.
+ok(mutante("if(num(ldlMin)&&ldlMin>=190)", "if(false)").sbcCategoria(2, paciente({ pv_ldl: '195' })).k !== 'alto',
   'MUTAÇÃO: sem a regra do LDL ≥ 190, a hipercolesterolemia familiar deixaria de ser alto risco — o teste não veria');
 ok(mutante("idade>=56", "idade>=50").sbcCategoria(2, paciente({ pv_dm: '1', pv_sexo: '0', pv_idade: '52' })).k === 'alto',
   'MUTAÇÃO: trocar o corte da mulher de 56 para 50 devia mudar a faixa — o teste não vigia o corte por sexo');

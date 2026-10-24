@@ -85,8 +85,10 @@ const semComentarios = SRC.replace(/^\s*\/\/.*$/gm, '');
   // "fechar este bloco", que é o que ele era antes ("✕ Minimizar").
   ok('o botão diz Voltar, não Minimizar',
      semComentarios.indexOf('← Voltar') > 0 && semComentarios.indexOf('✕ Minimizar') < 0);
+  // 24/10/2026: um terceiro caminho, o da calculadora de tela própria (`render`,
+  // a de risco CV da SBC 2025) — também com o botão antes do cartão.
   ok('o botão de voltar vem antes do cartão',
-     (semComentarios.match(/det\.innerHTML=closeBtn\+'<div class="card">/g) || []).length === 2, 'esperava 2 (comum e external)');
+     (semComentarios.match(/det\.innerHTML=closeBtn\+'<div class="card">/g) || []).length === 3, 'esperava 3 (comum, external e tela própria)');
   // Voltar recoloca a rolagem no CARTÃO que estava aberto, não no topo da lista.
   ok('voltar volta para o cartão de origem', /querySelector\('\[data-calc="'\+anterior\+'"\]'\)/.test(semComentarios));
   ok('com uma área filtrada o título do grupo não repete a aba', /calcAreaFiltro\?'':'<div class="calc-area-tit">/.test(semComentarios));
@@ -139,7 +141,7 @@ const semComentarios = SRC.replace(/^\s*\/\/.*$/gm, '');
   while ((m = re.exec(bloco))) areaDe[m[1]] = m[2];
 
   const esperado = {
-    prevent: 'Lípides', prevent30: 'Lípides', ldl: 'Lípides',
+    riscocv: 'Lípides', prevent: 'Lípides', prevent30: 'Lípides', ldl: 'Lípides',
     imc: 'Obesidade', pep: 'Obesidade', sophia: 'Obesidade', fib4: 'Obesidade',
     bsa: 'Endocrinologia Pediátrica', alvo: 'Endocrinologia Pediátrica', zha: 'Endocrinologia Pediátrica',
     velcresc: 'Endocrinologia Pediátrica', idcorr: 'Endocrinologia Pediátrica',
@@ -151,7 +153,8 @@ const semComentarios = SRC.replace(/^\s*\/\/.*$/gm, '');
   Object.keys(esperado).forEach(function (id) {
     ok('"' + id + '" está em ' + esperado[id], areaDe[id] === esperado[id], String(areaDe[id]));
   });
-  ok('as 23 calculadoras estão mapeadas', Object.keys(areaDe).length === 23, String(Object.keys(areaDe).length));
+  // 24 desde 24/10/2026: entrou "Risco CV e metas — SBC 2025" (riscocv), em Lípides.
+  ok('as 24 calculadoras estão mapeadas', Object.keys(areaDe).length === 24, String(Object.keys(areaDe).length));
   ['Risco cardiovascular', 'Antropometria', 'Lipidologia', 'Função renal', 'Fígado (MASLD)', 'Crescimento'].forEach(function (velha) {
     ok('nenhuma calculadora ficou em "' + velha + '"',
        Object.keys(areaDe).every(function (id) { return areaDe[id] !== velha; }));
