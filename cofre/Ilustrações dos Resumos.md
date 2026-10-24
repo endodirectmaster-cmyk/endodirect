@@ -513,3 +513,5 @@ ampliador. O editor do professor preserva a figura ao salvar (ramo `figure` do
     Os 135 endereços públicos respondem 200 (53 JPG e 82 PNG, 45 MB).
   - Nenhum save do painel durante a gravação: o `updated_at` ficou no g12 e os logs não têm
     escrita no estado global desde as 22h UTC. Um acesso às 22h30 já carregou a versão nova.
+  - ✅ **Conferência de zumbi (22h45 UTC):** os 48 md5 seguem os gravados e o acervo segue com
+    334 figuras de livros; nenhum save desde o g12.
