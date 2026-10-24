@@ -25,7 +25,9 @@
 // (7) a calculadora de risco CV: laudo vazio + CT/HDL-c/TG → o estimado entra no
 //     motor e a tela diz; o do laudo vale; TG acima de 800 não estima; o número da tela é
 //     o que decide os cortes; o texto antigo ("o do laudo") saiu;
-// (8) mutações que cada asserção tem de pegar.
+// (8) mutações que cada asserção tem de pegar;
+// (9) os cartões de Lípides: Friedewald com a Martin/Hopkins e Lp(a) uma vez na vida, com
+//     a frente mantida (o cartão semente casa pela frente).
 'use strict';
 const fs = require('fs');
 const path = require('path');
@@ -347,6 +349,21 @@ function arredondaComoLaudo(W) {
   ok(!/Informe o LDL-c do laudo para/.test(html), '(7) nenhum texto pede só o LDL-c do laudo');
 }
 
+// ───────────────────── (9) os cartões de Lípides (FC_MEMBER) ─────────────────────
+// Decisão do professor (24/10): o cartão do Friedewald cita a Martin/Hopkins, e o da Lp(a)
+// diz "uma vez na vida em todos os adultos" (SBC 2025). ⚠️ Só o verso muda: o app casa o
+// cartão semente pela FRENTE (seedFlashcards → reconcile, que propaga o verso novo), e uma
+// frente nova viraria cartão duplicado no baralho de quem já tem o antigo (o caso do SOMP, #876).
+function versoDe(frente, fonte) {
+  const m = (fonte || html).match(new RegExp('\\["' + frente.replace(/[.*+?^${}()|[\]\\]/g, '\\$&') + '","([^"]*)"\\]'));
+  return m && m[1];
+}
+{
+  const fw = versoDe('Fórmula de Friedewald e sua limitação?'), lpa = versoDe('Relevância da lipoproteína(a)?');
+  ok(fw && /Martin\/Hopkins/.test(fw) && /SBC 2025/.test(fw) && /TG\/5/.test(fw), '(9) o verso do Friedewald tem de manter a fórmula e citar a Martin/Hopkins da SBC 2025: ' + fw);
+  ok(lpa && /uma vez na vida em todos os adultos/.test(lpa) && /SBC 2025/.test(lpa) && !/em risco aumentado/.test(lpa), '(9) o verso da Lp(a) tem de dizer "uma vez na vida em todos os adultos": ' + lpa);
+}
+
 // ───────────────────── (8) mutações ─────────────────────
 function mutante(fn, de, para) {
   const alvo = corpo(fn);
@@ -369,4 +386,4 @@ ok(!laudoVale(mutante('rcvDados', 'if(!isFinite(ldlLaudo)&&ct>0', 'if(ct>0')), '
 ok(!arredondaComoLaudo(mutante('rcvDados', 'ldlMH={ldl:Math.round(mh.ldl)', 'ldlMH={ldl:mh.ldl')), 'MUTAÇÃO: o motor usar 159,6 com a tela mostrando 160 tinha de aparecer');
 
 if (falhas.length) { console.error('test-ldl-martin-hopkins: ' + falhas.length + ' falha(s)'); falhas.forEach((f) => console.error('  ✗ ' + f)); process.exit(1); }
-console.log('test-ldl-martin-hopkins: ok (180 fatores e faixas contra a fonte, exemplo publicado e contas à mão, fronteiras, TG acima de 800 com aviso, entrada inválida, calculadora sem Friedewald, estimativa na de risco CV e mutações)');
+console.log('test-ldl-martin-hopkins: ok (180 fatores e faixas contra a fonte, exemplo publicado e contas à mão, fronteiras, TG acima de 800 com aviso, entrada inválida, calculadora sem Friedewald, estimativa na de risco CV, mutações e os cartões de Lípides)');

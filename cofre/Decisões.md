@@ -8,6 +8,9 @@ atualizado: 2026-10-24
 Log de decisões de produto e técnicas (mais recentes no topo).
 
 ## 2026-10
+- **🧬 CAP. 113: HIPERCOLESTEROLEMIA FAMILIAR ALINHADA À SBC 2025, E CARTÕES DE LÍPIDES ATUALIZADOS (2026-10-24).** O professor respondeu "siga esse" (alinhar a HF à diretriz) e "Pode sim" (cartões). Detalhes em [[Pendências]].
+  - **A HF em prevenção primária é risco no mínimo alto.** A tabela antiga a punha em intermediário, o que contrariava a SBC 2025. A diretriz não dá uma categoria explícita para a HF. A leitura vem de dois pontos: LDL ≥ 190 sem tratamento é alto (T4.1), e a terapia inicial na HF é a do alto (rec. §7.13). Capítulo e calculadora (E-12) dizem agora a mesma coisa.
+  - **Cartão semente: só o verso muda.** O app casa o cartão pela frente e propaga o verso aos baralhos (`reconcile`); uma frente nova duplicaria o cartão, como no SOMP (#876).
 - **🧪 CALCULADORA "LDL" PASSA A MARTIN/HOPKINS, E A DE RISCO CV ESTIMA O LDL-c SEM LAUDO (2026-10-24).** Perguntado se mantinha, trocava ou retirava a "LDL (Friedewald)", o professor citou "SBC 2025 recomenda a fórmula de Martin/Hopkins" e escreveu *"mantenha essa"*. `sw.js` v322 → **v323**. Detalhes em [[Calculadoras]].
   - **Tabela clínica não se digita de memória.** As 180 células vieram de um pacote aberto e foram conferidas em 5 fontes independentes, que batem todas, e no que o texto publicado confirma.
   - **O limite segue a letra da diretriz:** "acima de 800" é > 800. O "≥ 800" que o agente atribuiu ao professor vinha do meu briefing; a atribuição saiu e o limite voltou ao da diretriz. Quando agente escreve "a pedido do professor", conferir no histórico.
