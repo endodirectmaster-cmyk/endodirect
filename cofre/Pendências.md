@@ -116,6 +116,7 @@ Pedido do professor em 24/10 (prints do bucket `livros`, pastas Adrenal, Neuroen
 - [x] **Professor aprovou as duas prévias** (esta e a do 2º lote): *"Aprovo tudo."* A fig. 1 do JAMA e a 41.18 do Williams entram com o defeito pequeno que ficou; a fig. 77-5 do Guyton fica como na edição brasileira.
 - [x] Lista no `texto.js`; 48 capítulos reexportados (idênticos às prévias); 135 imagens subidas e conferidas; 12 grupos gravados das 22h17 às 22h29 UTC com backup e md5; conferência final (48 md5, 135 figuras uma vez cada, 334 figuras de livros); professor avisado do F5.
 - [x] **Conferência de zumbi (22h45 UTC):** os 48 md5 seguem os gravados, o acervo segue com 334 figuras de livros e nenhum save entrou desde o g12 (`updated_at` 22h29min21).
+- [x] **2ª conferência de zumbi (23h59 UTC):** tudo igual (o 113 com o md5 novo da HF). Os saves do painel das 23h46 e 23h58 UTC não desfizeram nada.
 
 ## 📋 EM ANDAMENTO (desde 23/10, 19h de Brasília): auditoria das Diretrizes
 
