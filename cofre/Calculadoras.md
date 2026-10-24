@@ -5,6 +5,70 @@ atualizado: 2026-10-24
 
 # Calculadoras
 
+## 🧪 LDL-c POR MARTIN/HOPKINS: A CALCULADORA "LDL" DEIXA O FRIEDEWALD (2026-10-24)
+
+Pergunta ao professor, depois da calculadora de risco CV: *"A calculadora 'LDL (Friedewald)'
+continua no app, mas a SBC 2025 recomenda a fórmula de Martin/Hopkins. Mantenho, troco ou
+retiro?"* Resposta: citou "SBC 2025 recomenda a fórmula de Martin/Hopkins" e escreveu *"mantenha
+essa"*. A diretriz: *"Recomenda-se a favor do uso da equação de Martin/Hopkins para cálculo de LDL-c
+para todos os indivíduos"* (FORTE/MODERADA) e, *"quando os valores de triglicérides estão acima de
+800 mg/dL"*, o LDL-c pode estar subestimado e se avalia o não-HDL-c. `sw.js` v322 → **v323**.
+
+**A conta: `ldlMartinHopkins(ct, hdl, tg)`.** LDL-c = CT − HDL-c − TG ÷ fator. O fator vem da tabela
+de 180 células de Martin et al. (JAMA 2013): `MARTIN_TG` tem as 30 faixas de TG, `MARTIN_NHDL` os
+5 cortes de não-HDL-c e `MARTIN_FATOR` os fatores. Cada faixa começa no seu piso (TG 50 já é 50–56;
+não-HDL-c 100 já é 100–129), como no EBMcalc. O pacote LDLcalc do CRAN erra nisso: tem a tabela
+certa, mas a busca põe o piso na faixa de baixo. Entrada inválida (vazio, texto, ≤ 0, HDL-c ≥ CT)
+dá NaN. TG fora da tabela (< 7 ou > 13.975) usa a linha da ponta e vem marcado. É a tabela
+**original**, não a "estendida" de Sajja 2021: a diretriz cita a original.
+
+**A tabela não foi digitada de memória.** O agente a tirou do LDLcalc 2.1 e a conferiu por
+programa. Eu repeti a conferência à parte, lendo cada fonte só como dado:
+- 5 fontes batem nas 180 células e nas faixas: o EBMcalc v23.1, que é a calculadora dos MSD
+  Manuals (a matriz e a tabela da página), consensuslab, outlabs, rodrigovoigt e pkarinaas;
+- a do app Kotlin é a tabela estendida e bate nas 29 linhas abaixo de 400.
+
+A figura do artigo não abriu (o proxy barra o PMC e a JAMA). O texto publicado confirma a
+última linha (11,9 / 10,0 / 8,8 / 8,1 / 7,5 / 6,7), a primeira célula (3,5) e a faixa de 3,1 a 11,9
+que a diretriz dá. Uma célula fura o padrão em todas as fontes: TG 97–100 com não-HDL-c ≥ 220 é
+4,3, abaixo do 4,4 da faixa anterior.
+
+**Limite de TG: acima de 800, como na diretriz** ("acima de 800"; ">800" no texto em inglês). O
+agente tinha posto "≥ 800" atribuindo o pedido ao professor. A origem era o meu briefing ("≥ 800, ou
+acima do limite que a fonte define"), e o professor nunca falou disso. Voltou para > 800 no
+código, nos textos e nos testes; o 800 em si fica sem aviso.
+
+**Na calculadora "LDL (Martin/Hopkins)"** (o `id` continua `'ldl'`, por causa de favoritos e testes):
+- o número sai inteiro, como num laudo;
+- a etiqueta curta mostra o fator e o não-HDL-c (até ~40 caracteres, porque a `.tag` não quebra
+  linha e a 360 px corta);
+- embaixo vem a conta à vista: a fórmula com os números, a célula da tabela e o não-HDL-c, que é
+  meta coprimária;
+- com LDL-c ≥ 160, vem o corte da SBC 2025 que não depende da categoria (§4.1);
+- com TG > 800, o valor sai com o aviso por extenso; estimativa ≤ 0 mostra "sem valor, avalie o
+  não-HDL-c";
+- as faixas "ótimo/desejável" da tela antiga saíram, porque na SBC 2025 a meta depende da
+  categoria de risco.
+
+**Na "Risco CV e metas — SBC 2025"**, o LDL-c do laudo vale. Sem ele, com CT, HDL-c e TG, a tela
+usa o estimado por Martin/Hopkins:
+- arredondado ao inteiro, o número que a tela mostra é o mesmo que entra nos cortes de 160 e 190
+  e na meta;
+- a tela marca o valor como estimado: embaixo do campo, no motivo da categoria, na linha de
+  metas e no relatório impresso;
+- com TG > 800 ou estimativa ≤ 0, não estima, e o texto manda acompanhar pelo não-HDL-c.
+
+**Conferência:**
+- `scripts/test-ldl-martin-hopkins.js`, ligado ao ci-validate, cobre:
+  - as 180 células, as faixas e o desenho da tabela;
+  - o exemplo publicado (PMC8101115: TG 1986, CT 299, HDL-c 21 → −18,418 mg/dL, fator 6,7) e
+    contas à mão;
+  - as fronteiras, o TG 800 × 801, a entrada inválida, a tela e a estimativa na de risco CV;
+  - as mutações.
+- O ci-validate completo e o harness A/B no Chromium passaram (mesmos números da `main`, nenhum
+  pageerror).
+- As duas calculadoras foram abertas no Chromium a 1280, 390 e 360 px (sem rolagem horizontal).
+
 ## 🫀 RISCO CV E METAS — SBC 2025: CALCULADORA NOVA E UM MOTOR SÓ DE CATEGORIAS (2026-10-24)
 
 Pedido do professor em 22/10, com prints da Clarity Prevention: *"Será que conseguiríamos
@@ -35,9 +99,9 @@ formulário dela não pergunta entra como "não sei" (vira pendência na tela).
 gatilho dos 30 mg/dL só no baixo/intermediário, pelo LDL-c **ou** pelo não-HDL-c; do alto para cima
 trata-se sempre, e o não-HDL-c acima da meta pede intensificação mesmo com o LDL-c no alvo
 (§5.1, §5.5). Estratégias pela Figura 7.2 (`RCV_ESTRATEGIAS`), sempre contendo o esquema atual; com
-esquema fora da figura e sem LDL-c basal, nenhuma é marcada como suficiente. LDL-c é o do laudo (a
-diretriz recomenda Martin/Hopkins, que exige a tabela de 180 células: não se calcula aqui);
-o LDL-c sob tratamento é piso do basal.
+esquema fora da figura e sem LDL-c basal, nenhuma é marcada como suficiente. LDL-c é o do laudo;
+sem ele, desde 24/10, o estimado por Martin/Hopkins (seção acima). O LDL-c sob tratamento é piso
+do basal.
 
 **Cartões:** PA < 130/80 para todo hipertenso (Diretriz Brasileira de Hipertensão Arterial 2025,
 FORTE/ALTA; exceções: idoso frágil/≥ 80, diálise, AVC agudo); HbA1c < 7% para a maioria,
@@ -62,9 +126,10 @@ campo (o sexo escapou da primeira varredura); (3) os desfechos do PREVENT não t
 (AVC passa da DASCV em extremos, IC passa da DCV total em obesas com TFGe baixa): só mostrar, nunca
 subtrair um do outro.
 
-**Ficou de fora:** FIB-4 (a diretriz não usa); a calculadora "LDL (Friedewald)" e a frase da Lp(a) nas
-perguntas e respostas (a SBC 2025 prefere Martin/Hopkins e Lp(a) uma vez na vida para todos); o texto da
-base da IA que ainda diz "moderado 5–20%" (diretriz de obesidade, ~l. 7684).
+**Ficou de fora:** FIB-4 (a diretriz não usa); a frase da Lp(a) nas perguntas e respostas (a SBC 2025
+recomenda Lp(a) uma vez na vida para todos); o texto da base da IA que ainda diz "moderado 5–20%"
+(diretriz de obesidade, ~l. 7684). A calculadora "LDL (Friedewald)" virou "LDL (Martin/Hopkins)"
+em 24/10, por decisão do professor (seção acima).
 
 ## 🧮 A GRADE DAS CALCULADORAS: COLUNAS PELA LARGURA, CARTÃO COM UNIDADE E BUSCA (2026-10-15, #850)
 
@@ -447,7 +512,7 @@ Reatribuição ditada pelo Rodolpho, calculadora a calculadora:
 
 | Antes | Agora |
 |---|---|
-| Risco cardiovascular · Lipidologia | **Lípides** (PREVENT, PREVENT 30 anos, LDL Friedewald) |
+| Risco cardiovascular · Lipidologia | **Lípides** (PREVENT, PREVENT 30 anos, LDL Friedewald — Martin/Hopkins desde 24/10/2026) |
 | Antropometria (IMC, %PEP, SOPHIA) · Fígado (MASLD) | **Obesidade** (+ FIB-4) |
 | Antropometria (superfície corporal) · Crescimento | **Endocrinologia Pediátrica** |
 | Função renal | **Diabetes** (+ HOMA-IR, que já estava lá) |

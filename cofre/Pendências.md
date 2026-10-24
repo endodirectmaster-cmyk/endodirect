@@ -7,7 +7,9 @@ atualizado: 2026-10-24
 
 ## ✅ FEITO (24/10): calculadora "Risco CV e metas — SBC 2025" (pedido de 22/10, com prints da Clarity)
 
-No ar: ver [[Calculadoras]] (motor único `sbcEstratifica`, PREVENT com DAC/AVC e a errata de 14/10/2026). Fica para decidir com o professor: a calculadora "LDL (Friedewald)" e a frase da Lp(a) nas perguntas e respostas (a SBC 2025 prefere Martin/Hopkins e Lp(a) uma vez na vida para todos).
+No ar: ver [[Calculadoras]] (motor único `sbcEstratifica`, PREVENT com DAC/AVC e a errata de 14/10/2026).
+- [x] **Calculadora "LDL (Friedewald)" → "LDL (Martin/Hopkins)" (24/10).** Resposta do professor à pergunta "Mantenho, troco ou retiro?": citou "SBC 2025 recomenda a fórmula de Martin/Hopkins" e escreveu *"mantenha essa"*. A de risco CV também passou a estimar o LDL-c quando o laudo não o traz. Detalhes em [[Calculadoras]].
+- [ ] **Professor decide:** as perguntas e respostas de Lípides (`index.html`, lista por área) ainda têm "Fórmula de Friedewald e sua limitação?" e a Lp(a) "dosar ao menos uma vez em risco aumentado". A SBC 2025 prefere Martin/Hopkins e recomenda dosar a Lp(a) uma vez na vida para todos. Proposta: acrescentar Martin/Hopkins à primeira e trocar a segunda.
 - [ ] **Professor decide:** a tabela "Estratificação de risco e metas na HF" do cap. 113 (Hipercolesterolemias Primárias) põe a HF heterozigótica em prevenção primária sem outros fatores como risco intermediário (LDL < 100). Na SBC 2025, LDL-c ≥ 190 já é alto (§4.1), HF com CAC > 100 é muito alto (T4.4) e a terapia inicial na HF é EAI + EZE (§7.13). Proposta: alinhar a tabela à SBC 2025.
 
 ### Registro do pedido (22/10)
@@ -99,7 +101,7 @@ Pedido do professor em 24/10 (prints do bucket `livros`, pastas Adrenal, Neuroen
 - [x] Revisão (13 lotes), curadoria, consertos (4 grupos) e prévia: [Figuras de Adrenal, Neuro e Lípides](https://claude.ai/artifact/4FCQK4oXCKMLXaTytxqsTs).
 - [x] **Professor aprovou as duas prévias** (esta e a do 2º lote): *"Aprovo tudo."* A fig. 1 do JAMA e a 41.18 do Williams entram com o defeito pequeno que ficou; a fig. 77-5 do Guyton fica como na edição brasileira.
 - [x] Lista no `texto.js`; 48 capítulos reexportados (idênticos às prévias); 135 imagens subidas e conferidas; 12 grupos gravados das 22h17 às 22h29 UTC com backup e md5; conferência final (48 md5, 135 figuras uma vez cada, 334 figuras de livros); professor avisado do F5.
-- [ ] Conferência de zumbi dos 48 md5 alguns minutos depois.
+- [x] **Conferência de zumbi (22h45 UTC):** os 48 md5 seguem os gravados, o acervo segue com 334 figuras de livros e nenhum save entrou desde o g12 (`updated_at` 22h29min21).
 
 ## 📋 EM ANDAMENTO (desde 23/10, 19h de Brasília): auditoria das Diretrizes
 

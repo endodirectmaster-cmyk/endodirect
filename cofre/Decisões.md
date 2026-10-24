@@ -8,6 +8,10 @@ atualizado: 2026-10-24
 Log de decisões de produto e técnicas (mais recentes no topo).
 
 ## 2026-10
+- **🧪 CALCULADORA "LDL" PASSA A MARTIN/HOPKINS, E A DE RISCO CV ESTIMA O LDL-c SEM LAUDO (2026-10-24).** Perguntado se mantinha, trocava ou retirava a "LDL (Friedewald)", o professor citou "SBC 2025 recomenda a fórmula de Martin/Hopkins" e escreveu *"mantenha essa"*. `sw.js` v322 → **v323**. Detalhes em [[Calculadoras]].
+  - **Tabela clínica não se digita de memória.** As 180 células vieram de um pacote aberto e foram conferidas em 5 fontes independentes, que batem todas, e no que o texto publicado confirma.
+  - **O limite segue a letra da diretriz:** "acima de 800" é > 800. O "≥ 800" que o agente atribuiu ao professor vinha do meu briefing; a atribuição saiu e o limite voltou ao da diretriz. Quando agente escreve "a pedido do professor", conferir no histórico.
+  - **Estimativa nunca se passa por laudo:** o LDL-c do laudo vale; o estimado só entra sem ele, arredondado como num laudo, e é marcado em todo lugar onde aparece.
 - **🖼️ 135 FIGURAS DE LIVROS GRAVADAS NOS RESUMOS: 2º LOTE E ADRENAL/NEURO/LÍPIDES (2026-10-24).** O professor aprovou as duas prévias: *"Aprovo tudo."* Sem mudança no app; só o `resumo` de 48 capítulos no banco, em 12 instruções de até 4 capítulos, cada uma com backup próprio e guardas de md5 (22h17–22h29 UTC). O acervo passa a 334 figuras de livros. Detalhes em [[Ilustrações dos Resumos]].
   - **As perguntas abertas das prévias ficam como estavam:** a fig. 1 do JAMA e a 41.18 do Williams entram com o defeito pequeno; a 77-5 do Guyton segue a edição brasileira.
   - **Formato de arquivo se decide pelo arquivo que vai subir.** A regra do jpg (acima de 700 KB) olhava o recorte original, não o corrigido, e a lista dizia jpg para um png. A conferência de nome × arquivo antes do envio pegou; agora o `monta-an.js` mede o corrigido.

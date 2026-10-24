@@ -986,6 +986,20 @@ try {
   fail('regressão da calculadora de risco CV (SBC 2025) falhou:\n' + out);
 }
 
+// 17c-undecies-m. LDL-c POR MARTIN/HOPKINS (24/10/2026). Decisão do professor: a
+//      SBC 2025 recomenda Martin/Hopkins para todos, e a calculadora "LDL" deixou o
+//      Friedewald. A tabela de 180 células conferida contra a fonte (LDLcalc 2.1,
+//      EBMcalc/MSD e mais quatro implementações), as fronteiras das faixas, TG acima de
+//      800 com o aviso do não-HDL-c, e o LDL-c estimado na calculadora de risco CV
+//      quando o laudo não o traz (o do laudo vale).
+try {
+  execFileSync(process.execPath, [path.join('scripts', 'test-ldl-martin-hopkins.js')], { stdio: 'pipe' });
+  ok('LDL-c por Martin/Hopkins: 180 fatores da fonte, faixas, TG acima de 800 com aviso, calculadora sem Friedewald e estimativa na de risco CV');
+} catch (e) {
+  const out = (e.stdout ? e.stdout.toString() : '') + (e.stderr ? e.stderr.toString() : '');
+  fail('regressão do LDL-c por Martin/Hopkins falhou (verifique ldlMartinHopkins/MARTIN_FATOR, a entrada {id:\'ldl\'} e rcvDados no index.html):\n' + out);
+}
+
 // 17c-undecies-g. A GRADE DAS CALCULADORAS (14/10/2026): colunas por auto-fill,
 //      cartão com unidade e "Abrir", busca por nome sem redesenhar, teclado.
 try {
